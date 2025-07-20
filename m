@@ -1,103 +1,98 @@
-Return-Path: <linux-kernel+bounces-738291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 668A6B0B6D0
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 17:58:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B59E1B0B6D3
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 18:02:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D246D7AC761
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 15:56:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E0091897D7C
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 16:03:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F0B421CC71;
-	Sun, 20 Jul 2025 15:58:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A554421CC4F;
+	Sun, 20 Jul 2025 16:02:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="V5yWvYoH"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ixQEtDsS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8141C33EC;
-	Sun, 20 Jul 2025 15:58:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753027086; cv=pass; b=FiWS8sgH8HA3TF7DHPzRgjiE4XMFDL5Pj9D3MlU3495M73ySHTl0O/5C8ehL3080MmGepEha8UPyQWlU5nrG3eWlmp7DqJ1V06dXd+r6c4kQwJw6NnC0K91WOSSiGjFvVnPtmqqv7x1g4YhBYLPR7MDePUF9JK20gdE8keS3bFI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753027086; c=relaxed/simple;
-	bh=C33JyrZ8qJl/+xZ7qldoQZL3cIHjbVwBfVLAKleuybE=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=GB4Xb2J2BWKN9DmFa0Uot1RKoqeBGSxvgkadA8L6iJsam4j1YpFH74eLP5GFtFwgwGGmWWw5XEUsa4BGV/UFzo5J0uOsa9gAoG9NegfMGvbOb0jdCyOYdPfX03yWVmRmQu/H1f0rsIJzZDBqR9ORyhOTs3+wMemMA+TSRxAKm2A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=V5yWvYoH; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1753027071; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ayHo4Mk9uUuyrK0r3FEU1eAlHwEbDDYjq/FJryh5bW79phAqe4DPEnktRggxesdEGy/zvthr5/PVPJ5Lm8z3P4g/k/M6wBsfeH1AhcG9HNwiwjuJ9nPaO+tCLbMIoA/M/Hdr9h7mnCkM2piMnwTjPK6LFqeqzlYLzEb0gE7SBiI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753027071; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=C33JyrZ8qJl/+xZ7qldoQZL3cIHjbVwBfVLAKleuybE=; 
-	b=SU1kAifHeiFe1vyer/8JdWxiFM0Kt7Mrh+VexNvbqM0tj0uSxLfElf5mMMkNlhVYgjCyAHHKFoiV0nEk05nSyk3JZaAuKFaEOf9/RjyUGZ3ZzvpmoO5eeLjAQ30MOXpPU0COG8Q1oXYaUu/1fBpwS2+prx0uJbNVB9LiKwb587U=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753027071;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=C33JyrZ8qJl/+xZ7qldoQZL3cIHjbVwBfVLAKleuybE=;
-	b=V5yWvYoHSK8s9KVaybq4OaO5hYKkauI3avvWWeDKLNhqoq953LPjm3H8OMWW9K4b
-	Q2DasfGpwR5hg2SAm3exaQoF00p09ozh5EcZ1ftYVC1eQUuDhGca1BSLzYLkM5CwA4z
-	uF5zaUVh/hFzm8YkR5ld2m9Y11Z3mIIt5BZKutRY=
-Received: by mx.zohomail.com with SMTPS id 1753027069575217.87290204128726;
-	Sun, 20 Jul 2025 08:57:49 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C32D2F50;
+	Sun, 20 Jul 2025 16:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753027368; cv=none; b=E3KqIfSZ2t9VfiBTn59TqzGP/mX7LNh+i0Ur9vV9ssX/fcToY8mMQWUeyf9fQMRfGYrHOdaqTanBTyd9mU+8MIEuJFaBai4odgX7exiPAYrrCK6Hyd+roclN9Ld7FPpPvSdZNWkVS4qAFISdL99jcjsSHx7y1LoRfrFDb86RcI4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753027368; c=relaxed/simple;
+	bh=KOvd9h12om46AdPENSwvdfV7AtkFhdLph8vblX3Fhc0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nzMBeLPMrhyv4UbMr467JcFhsG3xtIMIb7SAqUheVw07xf4KTEI6SR2os5NQ8lDebX0fPbwJ2QfO/CzTZBiJygzuuFcTmzFHWCrhuA6k818CXlrUBNb3+Pi9AMtnDpZLWr5Envbd195ENL87d24DbNOd8c030DjIS7+Z53PmH/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ixQEtDsS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1ECAC4CEE7;
+	Sun, 20 Jul 2025 16:02:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753027366;
+	bh=KOvd9h12om46AdPENSwvdfV7AtkFhdLph8vblX3Fhc0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ixQEtDsScMnevPaf4pvOisBwLgGFyzYOfQFA3u+uP3CDy9FyXqU3DOxV27oMtsa33
+	 mjl5YkvixKbkEqns/yfM2YFIsvS5Hbv0FLzP+nl8nNhKtzlJA21g+vhyDsZLbpUri8
+	 rJxIM6wXOb5OMDkcvN/ZlWtz/32sgKERH34EYQABzXZ9TXHljl7UDQWCeJv2Y5ox2T
+	 nPEnJ59ouqWQ8+N8MaHYYBnOmbpQZO7EvaVdNtx2yoMW2umg9AZRXbP9jNq07VQ3rB
+	 f2MU+7untXXzFhD2wQS2/ud+WHCLngOJ413HRnIdghqPEUjvKfn9Ifuvuv8CIsC+04
+	 WR56Jjexv1SBw==
+From: carlos.bilbao@kernel.org
+To: corbet@lwn.net,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: bilbao@vt.edu,
+	Carlos Bilbao <carlos.bilbao@kernel.org>
+Subject: [PATCH] docs/core-api: Fix circular buffer examples
+Date: Sun, 20 Jul 2025 11:02:43 -0500
+Message-ID: <20250720160243.149595-1-carlos.bilbao@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH 3/3] driver: rust: expand documentation for driver
- infrastructure
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250717224806.54763-4-dakr@kernel.org>
-Date: Sun, 20 Jul 2025 12:57:33 -0300
-Cc: gregkh@linuxfoundation.org,
- rafael@kernel.org,
- ojeda@kernel.org,
- alex.gaynor@gmail.com,
- boqun.feng@gmail.com,
- gary@garyguo.net,
- bjorn3_gh@protonmail.com,
- lossin@kernel.org,
- a.hindborg@kernel.org,
- aliceryhl@google.com,
- tmgross@umich.edu,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <5A1A13D0-9990-41F2-9F3F-280A126512A1@collabora.com>
-References: <20250717224806.54763-1-dakr@kernel.org>
- <20250717224806.54763-4-dakr@kernel.org>
-To: Danilo Krummrich <dakr@kernel.org>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-This also looks good to me.
+From: Carlos Bilbao <carlos.bilbao@kernel.org>
 
-> On 17 Jul 2025, at 19:45, Danilo Krummrich <dakr@kernel.org> wrote:
->=20
-> Add documentation about generic driver infrastructure, representing a
-> guideline on how the generic driver infrastructure is intended to be
-> used to implement bus specific driver APIs.
->=20
-> This covers aspects such as the bus specific driver trait, adapter
-> implementation, driver registration and custom device ID types.
->=20
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+Fix circular buffer usage in producer/consumer examples in
+circular-buffers.rst. They incorrectly access items using buffer[head] and
+buffer[tail], as if buffer was a flat array; but the examples also use
+buffer->head and buffer->tail, so it's a struct. Use buffer->vals[head] and
+buffer->vals[tail] instead to match the intended layout.
 
-Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+Signed-off-by: Carlos Bilbao <carlos.bilbao@kernel.org>
+---
+ Documentation/core-api/circular-buffers.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-=E2=80=94 Daniel=
+diff --git a/Documentation/core-api/circular-buffers.rst b/Documentation/core-api/circular-buffers.rst
+index 50966f66e398..b697915a2bd0 100644
+--- a/Documentation/core-api/circular-buffers.rst
++++ b/Documentation/core-api/circular-buffers.rst
+@@ -161,7 +161,7 @@ The producer will look something like this::
+ 
+ 	if (CIRC_SPACE(head, tail, buffer->size) >= 1) {
+ 		/* insert one item into the buffer */
+-		struct item *item = buffer[head];
++		struct item *item = buffer->vals[head];
+ 
+ 		produce_item(item);
+ 
+@@ -203,7 +203,7 @@ The consumer will look something like this::
+ 	if (CIRC_CNT(head, tail, buffer->size) >= 1) {
+ 
+ 		/* extract one item from the buffer */
+-		struct item *item = buffer[tail];
++		struct item *item = buffer->vals[tail];
+ 
+ 		consume_item(item);
+ 
+-- 
+2.43.0
+
 
