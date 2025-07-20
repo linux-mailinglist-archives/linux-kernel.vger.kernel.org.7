@@ -1,114 +1,110 @@
-Return-Path: <linux-kernel+bounces-738485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B87FB0B905
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 01:02:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36758B0B907
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 01:04:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C40171895B3F
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 23:02:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04D041895A85
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 23:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4174F1F4616;
-	Sun, 20 Jul 2025 23:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D561F4616;
+	Sun, 20 Jul 2025 23:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YhI1/6sI"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="WupPGB1Y"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0B0CA4E;
-	Sun, 20 Jul 2025 23:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9281DDA31;
+	Sun, 20 Jul 2025 23:03:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753052543; cv=none; b=U/5nyZWfIAZTIX8SQYGAd2OmUJGNDLb3FwokfLD/j8etxMV+0LfOsBxa6VDbLC8hlrPmOyFdRiGYk8KGxj64b7q88i+YYvgrpGBGFKXwfzTMI/ZXNIqMpO3tlmPM9hB8Db3FuZnHck+N+vXFxXzULvnSBYuK1gSYXcF/3BRVCf8=
+	t=1753052630; cv=none; b=Jm/YkaBspO+c4vXoEgIipB1zlgg+woCY0vXOShTvPh4tsM5qNTpkLakENydNfJhHxJssc0Xv8rFHztNn7nhurzRqLtCtQvUw9LO8kaHq/HsJDxUG/yweSqDqn2YCz8xXdbkYuyg0jxKOLbTTCE2RcYfRLj7zkM3ITJhqSyyWsS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753052543; c=relaxed/simple;
-	bh=bojz5YeZggk/9lojFQ3d6xcEP4ZQqP/6SS0bDQKkrxI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YNRlWTHvp3ryACAxcIs8C4+bTimXsg3DBv5HPreHTe+JUFpgfVgsOEuq79X3g6h6d/nweF2rkxQNXM5g3CasD9VBZzft+oPXJHA9U5/a2H+NfqupO4t/KDV+GNwfb+J+NsWbHUBQ/oYjcSHcxQPrBtiQ8/eEleit3Fo/mrI4UPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YhI1/6sI; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5561ab55c4dso3847122e87.2;
-        Sun, 20 Jul 2025 16:02:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753052540; x=1753657340; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AJ95xvQUm/kBpw7gVlmEOuHhj67FGfKcDHTGipklSuM=;
-        b=YhI1/6sIyJnRbLItWeUMeddwaSW1FwWbxdQtRCspQu5JR5y1mD+GAjbKuK/wYRT5CK
-         Sj+TYXEEJ04vnstafhH3CV7R/wXNAWrPZBTKqQuIbevHF3Uch2xsD3c6BngnypdM+eZr
-         nMhLpXeYcZ5JQ+XmMPlr536k2G+Qtyl/1q2gQCodAGgc+INu4Xn8v7YF8h9InVGdu2PG
-         qs1qymthlf8E+5pKgxWgVSzQrEjmONPc/3FdHm+YjhbrcFk2LWswEZF5MiBTYgdd73J0
-         jcR9pk7VEe7KjzGKhCgt/f6oE/mx7m+C5kuBpGrcxSAyE3j8cRAm8cK8oHnnGpLFox/6
-         68rQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753052540; x=1753657340;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AJ95xvQUm/kBpw7gVlmEOuHhj67FGfKcDHTGipklSuM=;
-        b=R415/yaJToQ4eE+CmBCfY6y8Lk33xNrpvbjz3EUBgleEMQPaha+nPohUVqG/+Jjz69
-         +Gvp888YicWRidTzS0kODIHZjWGVfWDfz3DcgTdp+5Z3aQot6+QeYKvuBAiQt8RXaWMW
-         UsbTI9U//qNL8ozxQWipnMuPWSkAIRvBls5DeLcIEPohdRzsJ9QEAQNd3QV2he51N4Fe
-         rkmiqV9BLbTd6OwPXQQS2EaNPtlGttljTGKBvBkzVNulPuAn9Y9Vn9ICyIW9nE8i6TfP
-         0UvyfTGYUfALvQ1w/Ah7tE7Ozo3TvTK6DQZ1715NyYHgnyo38p2FpkdxqGSpoRuN1Wci
-         9Xvg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3E0sH2ai56o1+F7nx/40RvpXHPDCf4n3W16PSqMjz+XHisyT5DWwCxTYOWgvZsE/OPupslCUwTCiStLB/+tQB@vger.kernel.org, AJvYcCWnqk/D49s0YjNCi9IbObCrv3nAydcJ46YHT+O9P46roATtBD9KiChW8XljgO5NmL4VMCsIMysHM7em6Z8ABVQ=@vger.kernel.org, AJvYcCXa8D1WmPDPwEhjgf9J5gbP/s7YqaJjYrLFt7F/RB9FRbzs1XQ56KgI+DPPy2WkYMte+ZnNOHO+0U28hB8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0zc3NcJawAWxZCtlgf+w5wz0yukZVxuofjZph9epogemN7Eje
-	s+jA7Z1Ifj6kpkEnXl2NDyKpNzqwmCxBHsN/PY8PrM4wKwJAM9dDDLFehiwPveYq5K3HqqCEOQd
-	SJrDJjr+Wrg+UMuoGit3ttjxbJg/hu2paVybkKEiCdA==
-X-Gm-Gg: ASbGncu8j8n/oWhAxGVuohQ2sR7l77pJRZ6AV0NbhpzdA7GdSMoc6i2JVPUQuL36Nqc
-	xpn41WRyzoO0AjcWWjFlJFhuvPnPzfiir3vnDON5MxEQHg5n7OAdf9UVrxlVNHzWvhMcfRHLygL
-	JS8iV9PuqqOfomcb0NywbV6hl1FGC4zaSOcZVysauzQa8nk76EVHquob9l0oyBxfyKJXoUwoA7x
-	7IyATZ2rt01tZ/L4rYDPuB2eyywW0v9m7PKvTIxWg==
-X-Google-Smtp-Source: AGHT+IE+FCX6UtXA190qovvKWqmj9Qc7kYrLAljsuFf21aT7QM/McGfFwDZUlU+YBrUNaOJ996gDs2QpBz6dlSHgjxE=
-X-Received: by 2002:a05:6512:3e0e:b0:55a:2735:fe6a with SMTP id
- 2adb3069b0e04-55a3177a061mr2942491e87.0.1753052539912; Sun, 20 Jul 2025
- 16:02:19 -0700 (PDT)
+	s=arc-20240116; t=1753052630; c=relaxed/simple;
+	bh=2azgmJQyi/V/5oJVXLyqKt6Ve/u0q6DRMwL7n3b7PU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=vBijKhWNcgNWdJBuLfQgHNUZ7opojYImQA93XSzMduchjTE/Lr6cKDMevDOH4M7mwmsPaZxuUkWo+HCRFtB0NcN5mtZN4g02VNkvsXyC8nTsvg5g87q7cNq861nWoTZE8yKAuVa6GZ2hzRP49oO7GiM6XBwm5qJ2QRm7eHuH59I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=WupPGB1Y; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753052476;
+	bh=EftNmhGRydtw2SiPltoJ9YuRJYgyVXJjGOFZFaBayi0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=WupPGB1Y04Ed5vL2RyGtYJUWUTX6W2ktT3OsX2k8l9Tfr6yXmnBLkD4Mqm3K/vHFV
+	 w9r0vkVlNGNvZFcbFe1SRtCo/9G7KELyC+tt0odnk3FAowCAbMu16KfGlG6tdW4QGU
+	 dD694DbJ9QYh+3+wZmLCkQgTlKIPd/DT/R1L86yeEfLLyLs3TViRWiV1D/b5NF4LPE
+	 t9xY6bk7nSFBxEmisjyYSyJiiesbKEAueGg88xgMZ92y69tn2aAcAJeLklbD01Hf+J
+	 YvgiaeN9DEp5iYoyLgdICrPb3JH8Ujw9VJa5GnpR70bMq2WkcsO5nP5XJSjtdYbQmS
+	 O1/140mgW5Vwg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4blfCb6k7mz4wbn;
+	Mon, 21 Jul 2025 09:01:15 +1000 (AEST)
+Date: Mon, 21 Jul 2025 09:03:43 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patches in the i2c-host-fixes tree
+Message-ID: <20250721090343.5cd192eb@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250529-idiomatic-match-slice-v2-0-4925ca2f1550@gmail.com>
- <20250529-idiomatic-match-slice-v2-2-4925ca2f1550@gmail.com> <CANiq72nb4LuwkZVjEseMubSX4VOMNTX-8wUV7LtS5FN80cMjyQ@mail.gmail.com>
-In-Reply-To: <CANiq72nb4LuwkZVjEseMubSX4VOMNTX-8wUV7LtS5FN80cMjyQ@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Sun, 20 Jul 2025 19:01:43 -0400
-X-Gm-Features: Ac12FXwksZ7ly4zRrODQBvaHDTk-pZqsw5wqhXOkkFG8bCEizzAQktr9SrphcoQ
-Message-ID: <CAJ-ks9mq_bPH84Mjb0csMQWNHMXuxBK3syuvAdkiRp5FiXOJLw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] rust: emit path candidates in panic message
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, 
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/9RYw+hyJ+._.P7t6.YcoToF";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/9RYw+hyJ+._.P7t6.YcoToF
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jul 20, 2025 at 6:20=E2=80=AFPM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Thu, May 29, 2025 at 3:15=E2=80=AFPM Tamir Duberstein <tamird@gmail.co=
-m> wrote:
-> >
-> > +                write!(&mut candidates, "    {path:?}").unwrap();
->
-> I assume this was supposed to be `writeln!`; otherwise, we lose the
-> newlines and the indent does not make much sense.
+Hi all,
 
-Duh, yes, that's right.
+The following commits are also in Linus Torvalds' tree as different
+commits (but the same patches):
 
-> I will fix it when applying.
+  975b02f641ed ("i2c: stm32f7: unmap DMA mapped buffer")
+  36ae42978569 ("i2c: stm32: fix the device used for the DMA map")
+  cfba2fe76b2b ("i2c: omap: Fix an error handling path in omap_i2c_probe()")
+  7c18e08f4c3a ("i2c: omap: Handle omap_i2c_init() errors in omap_i2c_probe=
+()")
 
-Thank you!
+These are commits
+
+  6aae87fe7f18 ("i2c: stm32f7: unmap DMA mapped buffer")
+  c870cbbd71fc ("i2c: stm32: fix the device used for the DMA map")
+  60c016afccac ("i2c: omap: Fix an error handling path in omap_i2c_probe()")
+  a9503a2ecd95 ("i2c: omap: Handle omap_i2c_init() errors in omap_i2c_probe=
+()")
+
+in Linus' tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/9RYw+hyJ+._.P7t6.YcoToF
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh9dc8ACgkQAVBC80lX
+0GwCIwf8DPG1kL5kkasd8/BQVvMAkRsQgAhdE01Xw6/gbYbuX2Qj89SpIcoVNHrX
+HUji4xJ3/Ygr8lZsQ4E4qjnTH80BPIewAb5M6WkjW6ROrtgUzP0SQGtyKzKyQBl1
+kl4knpLo7iIKHWWuz1sALufTh2Ss/voHsxsolhbwEFz+pAb339MouWXSngLDlEgq
+KnTxhA4zs97XlCyhGz6Nydo1gC6mddbKOSgTnWHi5B+C2COBrlmlIOgh50wmjm5C
+txDkfPRTqgOyT+VacRxVVcLPz53eiuHai6Axil1jh9jThNFArjqg/RrGn2M2srbE
+mVh6qGTsKjjwaqtuyVyL/+QPhI/Pyg==
+=yIgX
+-----END PGP SIGNATURE-----
+
+--Sig_/9RYw+hyJ+._.P7t6.YcoToF--
 
