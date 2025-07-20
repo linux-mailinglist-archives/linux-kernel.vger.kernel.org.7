@@ -1,336 +1,169 @@
-Return-Path: <linux-kernel+bounces-738488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72EA3B0B90C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 01:06:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9B35B0B910
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 01:07:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09F801895FF2
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 23:06:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 576241895FA4
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 23:07:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656F2221F06;
-	Sun, 20 Jul 2025 23:06:11 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6FD1DE3BA;
-	Sun, 20 Jul 2025 23:06:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E78FE223DDD;
+	Sun, 20 Jul 2025 23:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B9zY/gPg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F821DE3BA;
+	Sun, 20 Jul 2025 23:06:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753052770; cv=none; b=Q0tIhniei+bK6PKDHot41mrcGjb//yBNLDOd2TZEuyaYCXuW7LhcUeNjg9p8ggUucnSyqYxUXz6qzENmS947syKPI36LGDzC5ZuDcuLAtwOgzcQnYP4j+X46TeYpAcnK9qgJFiN/OFNAbC2Wg5LkE64YA4Lh45zZxupUSlFmlHw=
+	t=1753052815; cv=none; b=shTM4PKM9bqDKje8gt3Qh9uke0fH+RXFI/IiXwK1UEjoeb/iWuvbfgfTRAv2L32UUcj//e5KoSZXKXroQ3Ps1tc3kpSsdJLahNxI71BcBNDN8RtEtlyhaMr7lCclPXZbboxObdduzxqJQ0PVdWNBQ0DWGBRXX4hw77WG814zN7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753052770; c=relaxed/simple;
-	bh=vHvoB3e4D6hWq9C0Ss1Oq+RJ+ypW8an1UjK/yS2GH7U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HWdrcarF1yCfvEBCSgd/x1pOx9h3NDqpAZWeMl1dgfjDCP5TP8V2Txm5AEgB3x8WS4Xi14+5sVf+qKNDxfLvvEKlMmp7BEp/NiJPp+/6IbJ5YdfNoPWIHh1eEXBhKxe1BU4iKsnERe9zFurkPExbhBEE9o1bzjp5iikGiw4Qfwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 11D211595;
-	Sun, 20 Jul 2025 16:05:55 -0700 (PDT)
-Received: from [192.168.1.8] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CA71C3F59E;
-	Sun, 20 Jul 2025 16:06:00 -0700 (PDT)
-Message-ID: <4113b3de-918c-4140-9f0d-d1699d2efc32@arm.com>
-Date: Sun, 20 Jul 2025 18:05:59 -0500
+	s=arc-20240116; t=1753052815; c=relaxed/simple;
+	bh=emHV5RQ/RrniE4MPPCCTB1Pwwx//e94/Z9PsguhmOpk=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=kOMzAF4FmozDfZ4QQcB5t5ZnPK+R9eZKp7zejBatWD8ej2VvCrUVykP5WTU5wfmxO4QUf9EckQMWsMkHTuHeZRn30n6i6ntqM7vKvIcYB4F3AGfvkr9hoPPa46p8K+TxFDU5oovYOonNSiIHGoejyYqdGS7W1Y/5potwQajMMvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B9zY/gPg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97D56C4CEE7;
+	Sun, 20 Jul 2025 23:06:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753052814;
+	bh=emHV5RQ/RrniE4MPPCCTB1Pwwx//e94/Z9PsguhmOpk=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=B9zY/gPgqMz3F7IdOsfY7DjaSwvImwGVCx00hBMxc2qSLPfvk1fAi35R5xs542RFB
+	 5QEoBnPyRx8mdc9CV2+5mXfQnJawpZKHv1/IH6Zz1BtnDfDOzHhDvK0B/AKK8QuoRy
+	 rf75S+Yjn86phaTGRruXlelzORPX+iH7doH2yPiq3V9WlnY7m6QNs+cZHADlq3MPnH
+	 AlHxgcAUdUbg28hYQ30RLRT+vsajrVO/ESE6l0WAc07OsY259nUHDkCbQl9m/TKl07
+	 5DqHNspUf6Wio9bPmX/1mrWdwDchQB4Ii6DqF8qiQ8GD80/Yk9oDDW4jgZGo4HtXQb
+	 PYvrRGOcaILqg==
+Date: Sun, 20 Jul 2025 18:06:53 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 3/3] tpm_crb_ffa: handle tpm busy return code
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
- Stuart Yoder <stuart.yoder@arm.com>, linux-integrity@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250708225151.2473657-1-prachotan.bathi@arm.com>
- <20250708225151.2473657-4-prachotan.bathi@arm.com>
- <aHukoB5Xz4wyx7Yw@kernel.org>
-Content-Language: en-US
-From: Prachotan Bathi <prachotan.bathi@arm.com>
-In-Reply-To: <aHukoB5Xz4wyx7Yw@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ linux-arm-kernel@lists.infradead.org, Maxime Ripard <mripard@kernel.org>, 
+ linux-kernel@vger.kernel.org, Alain Volmat <alain.volmat@foss.st.com>, 
+ Conor Dooley <conor+dt@kernel.org>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, David Airlie <airlied@gmail.com>, 
+ Patrice Chotard <patrice.chotard@foss.st.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>
+To: Raphael Gallais-Pou <rgallaispou@gmail.com>
+In-Reply-To: <20250717-sti-rework-v1-0-46d516fb1ebb@gmail.com>
+References: <20250717-sti-rework-v1-0-46d516fb1ebb@gmail.com>
+Message-Id: <175305254683.3034354.17781723128972055309.robh@kernel.org>
+Subject: Re: [PATCH 0/4] STi device-tree display subsystem rework
 
-On 7/19/25 8:58 AM, Jarkko Sakkinen wrote:
 
-> On Tue, Jul 08, 2025 at 05:51:51PM -0500, Prachotan Bathi wrote:
->> Platforms supporting direct message request v2 [1] can support secure
->> partitions that support multiple services. For CRB over FF-A interface,
->> if the firmware TPM or TPM service [1] shares its Secure Partition (SP)
->> with another service, message requests may fail with a -EBUSY error.
->>
->> To handle this, replace the single check and call with a retry loop
->> that attempts the TPM message send operation until it succeeds or a
->> configurable timeout is reached. Implement a _try_send_receive function
->> to do a single send/receive and modify the existing send_receive to
->> add this retry loop.
->> The retry mechanism introduces a module parameter (`busy_timeout_ms`,
->> default: 2000ms) to control how long to keep retrying on -EBUSY
->> responses. Between retries, the code waits briefly (50-100 microseconds)
->> to avoid busy-waiting and handling TPM BUSY conditions more gracefully.
->>
->> The parameter can be modified at run-time as such:
->> echo 3000 | tee /sys/module/tpm_crb_ffa/parameters/busy_timeout_ms
->> This changes the timeout from the default 2000ms to 3000ms.
->>
->> [1] TPM Service Command Response Buffer Interface Over FF-A
->> https://developer.arm.com/documentation/den0138/latest/
->>
->> Signed-off-by: Prachotan Bathi <prachotan.bathi@arm.com>
->> ---
->>   .../admin-guide/kernel-parameters.txt         |  8 ++++
->>   drivers/char/tpm/tpm_crb_ffa.c                | 45 ++++++++++++++++---
->>   2 files changed, 46 insertions(+), 7 deletions(-)
->>
->> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
->> index 07e22ba5bfe3..343377538fe9 100644
->> --- a/Documentation/admin-guide/kernel-parameters.txt
->> +++ b/Documentation/admin-guide/kernel-parameters.txt
->> @@ -7214,6 +7214,14 @@
->>   			causing a major performance hit, and the space where
->>   			machines are deployed is by other means guarded.
->>   
->> +	tpm_crb_ffa.busy_timeout_ms= [ARM64,TPM]
->> +			Maximum time in milliseconds to retry sending a message
->> +			to the TPM service before giving up. This parameter controls
->> +			how long the system will continue retrying when the TPM
->> +			service is busy.
->> +			Format: <unsigned int>
->> +			Default: 2000 (2 seconds)
->> +
->>   	tpm_suspend_pcr=[HW,TPM]
->>   			Format: integer pcr id
->>   			Specify that at suspend time, the tpm driver
->> diff --git a/drivers/char/tpm/tpm_crb_ffa.c b/drivers/char/tpm/tpm_crb_ffa.c
->> index 7faed6f3bf66..06599c07b746 100644
->> --- a/drivers/char/tpm/tpm_crb_ffa.c
->> +++ b/drivers/char/tpm/tpm_crb_ffa.c
->> @@ -10,8 +10,16 @@
->>   #define pr_fmt(fmt) "CRB_FFA: " fmt
->>   
->>   #include <linux/arm_ffa.h>
->> +#include <linux/delay.h>
->> +#include <linux/moduleparam.h>
->>   #include "tpm_crb_ffa.h"
->>   
->> +static unsigned int busy_timeout_ms = 2000;
->> +
->> +module_param(busy_timeout_ms, uint, 0644);
->> +MODULE_PARM_DESC(busy_timeout_ms,
->> +		 "Maximum time in ms to retry before giving up on busy");
->> +
->>   /* TPM service function status codes */
->>   #define CRB_FFA_OK			0x05000001
->>   #define CRB_FFA_OK_RESULTS_RETURNED	0x05000002
->> @@ -178,17 +186,13 @@ int tpm_crb_ffa_init(void)
->>   }
->>   EXPORT_SYMBOL_GPL(tpm_crb_ffa_init);
->>   
->> -static int __tpm_crb_ffa_send_receive(unsigned long func_id,
->> -				      unsigned long a0,
->> -				      unsigned long a1,
->> -				      unsigned long a2)
->> +static int __tpm_crb_ffa_try_send_receive(unsigned long func_id,
->> +					  unsigned long a0, unsigned long a1,
->> +					  unsigned long a2)
->>   {
->>   	const struct ffa_msg_ops *msg_ops;
->>   	int ret;
->>   
->> -	if (!tpm_crb_ffa)
->> -		return -ENOENT;
->> -
->>   	msg_ops = tpm_crb_ffa->ffa_dev->ops->msg_ops;
->>   
->>   	if (ffa_partition_supports_direct_req2_recv(tpm_crb_ffa->ffa_dev)) {
->> @@ -214,6 +218,33 @@ static int __tpm_crb_ffa_send_receive(unsigned long func_id,
->>   			ret = tpm_crb_ffa_to_linux_errno(tpm_crb_ffa->direct_msg_data.data1);
->>   	}
->>   
->> +	return ret;
->> +}
->> +
->> +static int __tpm_crb_ffa_send_receive(unsigned long func_id, unsigned long a0,
->> +				      unsigned long a1, unsigned long a2)
->> +{
->> +	ktime_t start, stop;
->> +	int ret;
->> +
->> +	if (!tpm_crb_ffa)
->> +		return -ENOENT;
->> +
->> +	start = ktime_get();
->> +	stop = ktime_add(start, ms_to_ktime(busy_timeout_ms));
->> +
->> +	for (;;) {
->> +		ret = __tpm_crb_ffa_try_send_receive(func_id, a0, a1, a2);
->> +		if (ret != -EBUSY)
->> +			break;
->> +
->> +		usleep_range(50, 100);
->> +		if (ktime_after(ktime_get(), stop)) {
->> +			dev_warn(&tpm_crb_ffa->ffa_dev->dev,
->> +				 "Busy retry timed out\n");
->> +			break;
->> +		}
->> +	}
->>   
->>   	return ret;
->>   }
->> -- 
->> 2.43.0
->>
-> I think these patches look totally fine now. If you don't mind I'll add
-> suggested-by to 2/3?
->
-> Anyhow, I can pick these to my tree. Just coming from holiday but
-> they'll end up the 6.17 PR.
->
-> BR, Jarkko
+On Thu, 17 Jul 2025 21:15:31 +0200, Raphael Gallais-Pou wrote:
+> This serie aims to rework the display-subsystem node, which was
+> previously included directly within the SoC node.  This was wrong
+> because it is an abstraction and describes how IPs behave together, not
+> what the hardware is.  Instead, extract display-subsystem outside of the
+> SoC node, and let IPs describe their connections.  Doing so helps the
+> readability, and eases the understanding of the hardware.
+> 
+> Several nodes have been renamed to stick to the generic names defined in
+> the device-tree specification.
+> 
+> This series depends on another sent a few days ago.  It is not critical
+> though, since not having it only triggers warnings when building
+> deprecated device-trees.  Please see link below.
+> 
+> Link: https://lore.kernel.org/lkml/20250714-sti-rework-v2-0-f4274920858b@gmail.com
+> 
+> Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
+> ---
+> Raphael Gallais-Pou (4):
+>       drm/sti: check dma_set_coherent_mask return value
+>       drm/sti: make use of drm_of_component_probe
+>       ARM: dts: sti: extract display subsystem out of soc
+>       ARM: dts: sti: remove useless cells fields
+> 
+>  arch/arm/boot/dts/st/stih410.dtsi | 316 ++++++++++++++++++++++----------------
+>  drivers/gpu/drm/sti/sti_drv.c     |  18 +--
+>  2 files changed, 192 insertions(+), 142 deletions(-)
+> ---
+> base-commit: b9a572f471993d3e8bf874fcb57f331d66650440
+> change-id: 20250401-sti-rework-b009551a362c
+> 
+> Best regards,
+> --
+> Raphael Gallais-Pou <rgallaispou@gmail.com>
+> 
+> 
+> 
 
-Yes, of course, thanks for catching these and suggesting the needed changes.
 
-Best
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-Prachotan.
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
-On 7/19/25 8:58 AM, Jarkko Sakkinen wrote:
-> On Tue, Jul 08, 2025 at 05:51:51PM -0500, Prachotan Bathi wrote:
->> Platforms supporting direct message request v2 [1] can support secure
->> partitions that support multiple services. For CRB over FF-A interface,
->> if the firmware TPM or TPM service [1] shares its Secure Partition (SP)
->> with another service, message requests may fail with a -EBUSY error.
->>
->> To handle this, replace the single check and call with a retry loop
->> that attempts the TPM message send operation until it succeeds or a
->> configurable timeout is reached. Implement a _try_send_receive function
->> to do a single send/receive and modify the existing send_receive to
->> add this retry loop.
->> The retry mechanism introduces a module parameter (`busy_timeout_ms`,
->> default: 2000ms) to control how long to keep retrying on -EBUSY
->> responses. Between retries, the code waits briefly (50-100 microseconds)
->> to avoid busy-waiting and handling TPM BUSY conditions more gracefully.
->>
->> The parameter can be modified at run-time as such:
->> echo 3000 | tee /sys/module/tpm_crb_ffa/parameters/busy_timeout_ms
->> This changes the timeout from the default 2000ms to 3000ms.
->>
->> [1] TPM Service Command Response Buffer Interface Over FF-A
->> https://developer.arm.com/documentation/den0138/latest/
->>
->> Signed-off-by: Prachotan Bathi <prachotan.bathi@arm.com>
->> ---
->>   .../admin-guide/kernel-parameters.txt         |  8 ++++
->>   drivers/char/tpm/tpm_crb_ffa.c                | 45 ++++++++++++++++---
->>   2 files changed, 46 insertions(+), 7 deletions(-)
->>
->> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
->> index 07e22ba5bfe3..343377538fe9 100644
->> --- a/Documentation/admin-guide/kernel-parameters.txt
->> +++ b/Documentation/admin-guide/kernel-parameters.txt
->> @@ -7214,6 +7214,14 @@
->>   			causing a major performance hit, and the space where
->>   			machines are deployed is by other means guarded.
->>   
->> +	tpm_crb_ffa.busy_timeout_ms= [ARM64,TPM]
->> +			Maximum time in milliseconds to retry sending a message
->> +			to the TPM service before giving up. This parameter controls
->> +			how long the system will continue retrying when the TPM
->> +			service is busy.
->> +			Format: <unsigned int>
->> +			Default: 2000 (2 seconds)
->> +
->>   	tpm_suspend_pcr=[HW,TPM]
->>   			Format: integer pcr id
->>   			Specify that at suspend time, the tpm driver
->> diff --git a/drivers/char/tpm/tpm_crb_ffa.c b/drivers/char/tpm/tpm_crb_ffa.c
->> index 7faed6f3bf66..06599c07b746 100644
->> --- a/drivers/char/tpm/tpm_crb_ffa.c
->> +++ b/drivers/char/tpm/tpm_crb_ffa.c
->> @@ -10,8 +10,16 @@
->>   #define pr_fmt(fmt) "CRB_FFA: " fmt
->>   
->>   #include <linux/arm_ffa.h>
->> +#include <linux/delay.h>
->> +#include <linux/moduleparam.h>
->>   #include "tpm_crb_ffa.h"
->>   
->> +static unsigned int busy_timeout_ms = 2000;
->> +
->> +module_param(busy_timeout_ms, uint, 0644);
->> +MODULE_PARM_DESC(busy_timeout_ms,
->> +		 "Maximum time in ms to retry before giving up on busy");
->> +
->>   /* TPM service function status codes */
->>   #define CRB_FFA_OK			0x05000001
->>   #define CRB_FFA_OK_RESULTS_RETURNED	0x05000002
->> @@ -178,17 +186,13 @@ int tpm_crb_ffa_init(void)
->>   }
->>   EXPORT_SYMBOL_GPL(tpm_crb_ffa_init);
->>   
->> -static int __tpm_crb_ffa_send_receive(unsigned long func_id,
->> -				      unsigned long a0,
->> -				      unsigned long a1,
->> -				      unsigned long a2)
->> +static int __tpm_crb_ffa_try_send_receive(unsigned long func_id,
->> +					  unsigned long a0, unsigned long a1,
->> +					  unsigned long a2)
->>   {
->>   	const struct ffa_msg_ops *msg_ops;
->>   	int ret;
->>   
->> -	if (!tpm_crb_ffa)
->> -		return -ENOENT;
->> -
->>   	msg_ops = tpm_crb_ffa->ffa_dev->ops->msg_ops;
->>   
->>   	if (ffa_partition_supports_direct_req2_recv(tpm_crb_ffa->ffa_dev)) {
->> @@ -214,6 +218,33 @@ static int __tpm_crb_ffa_send_receive(unsigned long func_id,
->>   			ret = tpm_crb_ffa_to_linux_errno(tpm_crb_ffa->direct_msg_data.data1);
->>   	}
->>   
->> +	return ret;
->> +}
->> +
->> +static int __tpm_crb_ffa_send_receive(unsigned long func_id, unsigned long a0,
->> +				      unsigned long a1, unsigned long a2)
->> +{
->> +	ktime_t start, stop;
->> +	int ret;
->> +
->> +	if (!tpm_crb_ffa)
->> +		return -ENOENT;
->> +
->> +	start = ktime_get();
->> +	stop = ktime_add(start, ms_to_ktime(busy_timeout_ms));
->> +
->> +	for (;;) {
->> +		ret = __tpm_crb_ffa_try_send_receive(func_id, a0, a1, a2);
->> +		if (ret != -EBUSY)
->> +			break;
->> +
->> +		usleep_range(50, 100);
->> +		if (ktime_after(ktime_get(), stop)) {
->> +			dev_warn(&tpm_crb_ffa->ffa_dev->dev,
->> +				 "Busy retry timed out\n");
->> +			break;
->> +		}
->> +	}
->>   
->>   	return ret;
->>   }
->> -- 
->> 2.43.0
->>
-> I think these patches look totally fine now. If you don't mind I'll add
-> suggested-by to 2/3?
->
-> Anyhow, I can pick these to my tree. Just coming from holiday but
-> they'll end up the 6.17 PR.
->
-> BR, Jarkko
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: base-commit b9a572f471993d3e8bf874fcb57f331d66650440 not known, ignoring
+ Base: attempting to guess base-commit...
+ Base: tags/v6.16-rc1-11-g2436e190bbdd (exact match)
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/st/' for 20250717-sti-rework-v1-0-46d516fb1ebb@gmail.com:
+
+arch/arm/boot/dts/st/stih410-b2120.dtb: soc (simple-bus): sti-display-subsystem@0: 'anyOf' conditional failed, one must be fixed:
+	'reg' is a required property
+	'ranges' is a required property
+	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
+arch/arm/boot/dts/st/stih410-b2120.dtb: /soc/display-controller@9d11000: failed to match any schema with compatible: ['st,stih407-compositor']
+arch/arm/boot/dts/st/stih410-b2120.dtb: /soc/encoder@8d08000: failed to match any schema with compatible: ['st,stih407-tvout']
+arch/arm/boot/dts/st/stih410-b2120.dtb: encoder@8d08000 (st,stih407-tvout): 'anyOf' conditional failed, one must be fixed:
+	'clocks' is a required property
+	'#clock-cells' is a required property
+	from schema $id: http://devicetree.org/schemas/clock/clock.yaml#
+arch/arm/boot/dts/st/stih410-b2120.dtb: /soc/hdmi@8d04000: failed to match any schema with compatible: ['st,stih407-hdmi']
+arch/arm/boot/dts/st/stih410-b2260.dtb: /soc/display-controller@9d11000: failed to match any schema with compatible: ['st,stih407-compositor']
+arch/arm/boot/dts/st/stih410-b2120.dtb: /soc/analog@8d02000: failed to match any schema with compatible: ['st,stih407-hda']
+arch/arm/boot/dts/st/stih410-b2120.dtb: /soc/plane@9c00000: failed to match any schema with compatible: ['st,stih407-hqvdp']
+arch/arm/boot/dts/st/stih410-b2260.dtb: /soc/encoder@8d08000: failed to match any schema with compatible: ['st,stih407-tvout']
+arch/arm/boot/dts/st/stih410-b2260.dtb: encoder@8d08000 (st,stih407-tvout): 'anyOf' conditional failed, one must be fixed:
+	'clocks' is a required property
+	'#clock-cells' is a required property
+	from schema $id: http://devicetree.org/schemas/clock/clock.yaml#
+arch/arm/boot/dts/st/stih410-b2260.dtb: /soc/hdmi@8d04000: failed to match any schema with compatible: ['st,stih407-hdmi']
+arch/arm/boot/dts/st/stih410-b2260.dtb: /soc/analog@8d02000: failed to match any schema with compatible: ['st,stih407-hda']
+arch/arm/boot/dts/st/stih410-b2260.dtb: /soc/plane@9c00000: failed to match any schema with compatible: ['st,stih407-hqvdp']
+arch/arm/boot/dts/st/stih410-b2120.dtb: /display-subsystem: failed to match any schema with compatible: ['st,sti-display-subsystem']
+arch/arm/boot/dts/st/stih410-b2120.dtb: display-subsystem (st,sti-display-subsystem): 'anyOf' conditional failed, one must be fixed:
+	'clocks' is a required property
+	'#clock-cells' is a required property
+	from schema $id: http://devicetree.org/schemas/clock/clock.yaml#
+arch/arm/boot/dts/st/stih410-b2260.dtb: /display-subsystem: failed to match any schema with compatible: ['st,sti-display-subsystem']
+arch/arm/boot/dts/st/stih410-b2260.dtb: display-subsystem (st,sti-display-subsystem): 'anyOf' conditional failed, one must be fixed:
+	'clocks' is a required property
+	'#clock-cells' is a required property
+	from schema $id: http://devicetree.org/schemas/clock/clock.yaml#
+
+
+
+
+
 
