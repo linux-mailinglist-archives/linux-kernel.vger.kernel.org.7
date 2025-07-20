@@ -1,106 +1,134 @@
-Return-Path: <linux-kernel+bounces-738017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42CEEB0B32B
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 04:18:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D94DB0B32D
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 04:21:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0BA71764A7
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 02:18:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC8807B0B8D
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 02:20:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00CA6174EE4;
-	Sun, 20 Jul 2025 02:18:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9FC156678;
+	Sun, 20 Jul 2025 02:21:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p9zesbQE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HBIu0Llw"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541A4F9E8;
-	Sun, 20 Jul 2025 02:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BAA328382;
+	Sun, 20 Jul 2025 02:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752977906; cv=none; b=P1yWWn94xH9klYqV2M7RfCBL0baOrWLam3iYl/dMTalMNzFT3P7HNRMtHpdujki6mSVACmt/8TYpoIJzK/pQ+w/QnYHriBM1NG6M/xU50amnKSX7IJFMQ4embb8yw181EiZDUXR2z3n3g9244Qg+08t3tOXC4zZ061p26a8a0XU=
+	t=1752978093; cv=none; b=SusQn0wec21qxvD2TOUUcXQ3krRL45QOGa9BI1agihG/z6EAiT/0+0mWvFfNaPr8FM3gufsewSnBGs0ZHdnFVC459NwoXdt2FfNnijg71QC50WZGtJHGE7u12V9e4E8/xBYEDEOk6n1RZnocKB2qeDfP6n3+9Pi0yIAgXxiPuDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752977906; c=relaxed/simple;
-	bh=CIWtVBqjC3CNHLKXJxGywWbd9i7KkRe0Y6wKziL2x8k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eZmLuj04sfxvWQh/h1/FxYzqu9uc6R4XExCIVE6HrjQbyjpMQ41mpmqtnbNPspyq6D17E58MEfJdJieddGTM7k0T1fjYfnVrVACxkTHfVshDHMXefwFY+8S+JHKQVtOgnc7PKiRK2t5DFg3q+2GQ74bSq1CaSVUy2rq/VctLogM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p9zesbQE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B90D0C4CEF9;
-	Sun, 20 Jul 2025 02:18:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752977905;
-	bh=CIWtVBqjC3CNHLKXJxGywWbd9i7KkRe0Y6wKziL2x8k=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=p9zesbQET/vThWqorjXk/2fA1/iAxv6Yv7xV6i92m4r4KQDXpRuaqEP8HgEygU8VR
-	 LeYRa5hEj1td32lELf08UtHl9MjnOexpL/eEvziOwkdfui1DYDXukQiPFUo4tw0otT
-	 9WEjACmqeZ5Xo3ijITetDrAgukPpbUWqVgYgUOUEH89IPaIitIMRXtqvjxXtxDlsH5
-	 1l992jv8+c9giwrGi8bbu1td+yERu6gybb1hHBVRhiET8m2P404KPFShMJoYAxghht
-	 xDDZ2rVKKsUrUKYBjM/ToqpKWwj1FeOgxQCoUofnbLHRo2p2ToMeBTawl58VBubmBN
-	 v2m7KrtLO/fIg==
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ae0bc7aa21bso643278266b.2;
-        Sat, 19 Jul 2025 19:18:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU01VblCd0jc+zR0zS9Ed9x9io90Hxuvgu8Cg9wAm+ljfgTOxCYDQ4z4zj7ohcN2/dd8I32Hgewtran@vger.kernel.org, AJvYcCVRosJyKzSjX1Iw+wtY+z1fEck/NmwhCpEWp4B0RDkmgKb3TKiz5DJePG5df1wflgdRriWeo7kCz8/Wv7dN@vger.kernel.org, AJvYcCW12O13OUKcIIc8FBblnlDxc6KwThfepQkvKa9LCH15NNAKfQ5WUfs89teWCsnErYr56L+J/mDw@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHwDIrjlAOx0a1lq/bq1GADYrXlXbuQRP8H5VfpE67mTz9Ujzi
-	EBEMzYj3D9Z7WPnAg5tdITvRU9x0RXvX57o5Bd0ts68YPvut6NGERgR1q1kCDybHpDOwdRjYmJZ
-	PqiwVQhelcGI92Y4dI8KVeHw+jI/4+Q==
-X-Google-Smtp-Source: AGHT+IF73wL3Au0Ow4fJuaa8CNdtP9Vv+uineKG9cPG87uBliI18it3QFFJ6u3khp61UtQyoAQGWVTxdNcrQVO4osII=
-X-Received: by 2002:a17:907:96a2:b0:ade:3bec:ea40 with SMTP id
- a640c23a62f3a-ae9cdd85e2cmr1733577866b.10.1752977904268; Sat, 19 Jul 2025
- 19:18:24 -0700 (PDT)
+	s=arc-20240116; t=1752978093; c=relaxed/simple;
+	bh=hggDzZf3pokcQ15G96XECNvD2Szk1e/6quur3elF7i4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PBjdRtXUReuYSUs3zQNseFAOJL+fDqBAuC+w1HPXJtdltSZ6Z8l5JDx83/92VBLiIAZakr+3nII4OC4GIXvyVm2Ad38UHaRZaBYog/l+DhxLmdjV9s/MPEEpkVlqz70I9Chz1A3k8C0Cd4d+S7FMfc3ZaODWu7LhfJQ0VKbBa6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HBIu0Llw; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-70e302191a3so30411167b3.2;
+        Sat, 19 Jul 2025 19:21:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752978091; x=1753582891; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=20X0PhCRcRj6aFiBuS5mrmdrBSw8ydwTa695mVAjRJA=;
+        b=HBIu0Llw88PI827NOOYI3YHremADb2IP2z9srmBke0W7X9m4T6hN7B4rsdkFaV2ZRx
+         UO/glzauuW4Xz6AV8/0Xz/wZdLTxb6UvkYPszpqxnkej+Jok3W7qllP6AKw8iTzgre8S
+         58OqpmhAJbsQVfjRVOeRwuNiMwqArGZ5yU+/vH2zzKHgPruDyOVtQusJ1oLyxbRqU//m
+         Bk2RlztjLnZk8by9Zrvt1UGj+a1vH6CB0a2lo97XMCpbk6RxcC6ky7nlPSQic5WJkB11
+         yuW4OgIKu6dgzLdiT5koiQ51ESuE512tivsfG77tF66F/Kpmra4gCXs8wR7PmKbxiupw
+         GyzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752978091; x=1753582891;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=20X0PhCRcRj6aFiBuS5mrmdrBSw8ydwTa695mVAjRJA=;
+        b=ZD8MJfmlATbMt9CJqPS89eDOAGMu4f23p5JGbXiHQVrnBsntjr5xCFgJZ056EWIktQ
+         wSXHFdiCwCU/EWXQsBy/7InmiJwrR1dNm+UFIYs45S2SQ82UOKDGgxrzfshN3tcd7Z28
+         l6e5i9YgmCHqvUdaVLNAiY3iWsBsBGBsAbH3Ee49InDO7hQRk9NZ1pZedKoDXLV/6thv
+         hJk3LdCCc4iuT3EXR9i8cUjSf+Yfg5QOUwexkkHPzxNQZnFB5vVEEwjbhaVhBBbw8aRU
+         Z3wJRrNsKC3RvvXLwlih3THsARARCD2cOA3jmU4Gqpy2ZofaV1kfO/KxGEsE27dbYuAq
+         w2TQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUAHKaLtf6l9P2fmdaw8mWS5OY93nh2i00g9vtHFD0GmK9mUdrKOhHqowjCkd2zm0wIbUVLPdAbMChNbCXz@vger.kernel.org, AJvYcCUq3dpTyiU/7VysUt7/Ud+a4tACprdxGQgdYvMwBgapIIstUZfzj4tuuaQzWcDZDzQCm0sV7+zc90c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHv/drtFBQ7/TKH9QxY6uCEiUf8IIHk/oTH3g/V1slj/AgRnNm
+	wrEgXXe+eCCDMgwpX8j+fKStDoUCxTxIzKRIHP4wLaN4iYC9wChibbMsBuSYDQ==
+X-Gm-Gg: ASbGncujG7qtklIGrU6g831AdyyKcb1jV6+oIDgwgPmjHEk6Ygsat7M9lUNN8Q2YwqG
+	M5/5D75dStMAoDxU78yE7Cr+Hwtpudb0WXEhBFhXJLN5rKThFreVWZifOm6P4Y035ga7TD6UaOh
+	kcucMus0UgqFe4A0Md0rZiSgxBeUjvMq/z3i4TQ3EJKY4+v9dW5fGW6e/6oaJK3+AjX/QsfxyFh
+	dN/SAs8WoztYprrOYV+TeMKMduemdlXZsIA/grBBcLtduR8lKe4WSqcQOMlLirgwB6eo5oWZk7l
+	R5Jl/NG8eq7dyBUYvYl34uDDYg2Gp8DDnFKF5Dm7LUelzPtcR1IY1PjmDQrRfKORB+GevyoVvH7
+	3P80F0y/bHw7uz6vf5wY7nXVwhESXzV+Rt+oCXNqHs4Pc9lKu7mpDMQoKROTeLlfCScaF
+X-Google-Smtp-Source: AGHT+IGQeBqt1JgArpYmqU9CC64rnAVFyPtgmr6zEcLd7fPQHv+Rm+/NeKHZqrBKHF8zawaTftE66g==
+X-Received: by 2002:a05:690c:46ca:b0:70e:73ce:80de with SMTP id 00721157ae682-71835185a29mr205173357b3.25.1752978091242;
+        Sat, 19 Jul 2025 19:21:31 -0700 (PDT)
+Received: from localhost (c-73-224-175-84.hsd1.fl.comcast.net. [73.224.175.84])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-7195310a968sm11599877b3.2.2025.07.19.19.21.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 19 Jul 2025 19:21:30 -0700 (PDT)
+From: Yury Norov <yury.norov@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Yury Norov <yury.norov@gmail.com>
+Subject: [PATCH] ste_dma40: simplify d40_handle_interrupt()
+Date: Sat, 19 Jul 2025 22:21:28 -0400
+Message-ID: <20250720022129.437094-1-yury.norov@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250702222626.2761199-1-robh@kernel.org> <a965baaa-c4e9-4d99-9143-466b11bc19f8@redhat.com>
-In-Reply-To: <a965baaa-c4e9-4d99-9143-466b11bc19f8@redhat.com>
-From: Rob Herring <robh@kernel.org>
-Date: Sat, 19 Jul 2025 21:18:13 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqLUuMV7RNqziCPrxnXVN+m3LhjqTk2kBEEEwtdWzV6+SA@mail.gmail.com>
-X-Gm-Features: Ac12FXxcHbkIPVvaGIon8h_AG_UFUT6Pxckaj6PeYRO2ee1rlvOrMtuFN3jYRJQ
-Message-ID: <CAL_JsqLUuMV7RNqziCPrxnXVN+m3LhjqTk2kBEEEwtdWzV6+SA@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: net: Convert Marvell Armada NETA and BM to
- DT schema
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Marcin Wojtas <marcin.s.wojtas@gmail.com>, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 10, 2025 at 3:46=E2=80=AFAM Paolo Abeni <pabeni@redhat.com> wro=
-te:
->
-> On 7/3/25 12:26 AM, Rob Herring (Arm) wrote:
-> > diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/D=
-ocumentation/devicetree/bindings/vendor-prefixes.yaml
-> > index 5d2a7a8d3ac6..741b545e3ab0 100644
-> > --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> > +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> > @@ -21,6 +21,7 @@ patternProperties:
-> >    "^(pciclass|pinctrl-single|#pinctrl-single|PowerPC),.*": true
-> >    "^(pl022|pxa-mmc|rcar_sound|rotary-encoder|s5m8767|sdhci),.*": true
-> >    "^(simple-audio-card|st-plgpio|st-spics|ts),.*": true
-> > +  "^pool[0-3],.*": true
->
-> The 'DO NOT ADD NEW PROPERTIES TO THIS LIST' comment just above this
-> block is a bit scaring, even if the list has been indeed updated a few
-> times. @Rob: can you please confirm this chunk is intended?
+From: Yury Norov (NVIDIA) <yury.norov@gmail.com>
 
-Yes, it is intended. It's not new properties. It's properties added to
-the schemas which I suppose I missed when initially populating this
-list.
+Use for_each_set_bit() iterator and drop housekeeping code.
 
-> Also I understand you want this patch to go through the net-next tree,
-> could you please confirm?
+Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+---
+ drivers/dma/ste_dma40.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
-Yes.
+diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
+index d52e1685aed5..6cc76f935c7c 100644
+--- a/drivers/dma/ste_dma40.c
++++ b/drivers/dma/ste_dma40.c
+@@ -1664,7 +1664,7 @@ static irqreturn_t d40_handle_interrupt(int irq, void *data)
+ 	int i;
+ 	u32 idx;
+ 	u32 row;
+-	long chan = -1;
++	long chan;
+ 	struct d40_chan *d40c;
+ 	struct d40_base *base = data;
+ 	u32 *regs = base->regs_interrupt;
+@@ -1677,15 +1677,7 @@ static irqreturn_t d40_handle_interrupt(int irq, void *data)
+ 	for (i = 0; i < il_size; i++)
+ 		regs[i] = readl(base->virtbase + il[i].src);
+ 
+-	for (;;) {
+-
+-		chan = find_next_bit((unsigned long *)regs,
+-				     BITS_PER_LONG * il_size, chan + 1);
+-
+-		/* No more set bits found? */
+-		if (chan == BITS_PER_LONG * il_size)
+-			break;
+-
++	for_each_set_bit(chan, (unsigned long *)regs, BITS_PER_LONG * il_size) {
+ 		row = chan / BITS_PER_LONG;
+ 		idx = chan & (BITS_PER_LONG - 1);
+ 
+-- 
+2.43.0
 
-Rob
 
