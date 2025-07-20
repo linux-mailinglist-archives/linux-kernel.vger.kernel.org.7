@@ -1,50 +1,50 @@
-Return-Path: <linux-kernel+bounces-738139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BB33B0B4F4
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 12:46:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E255B0B4F6
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 12:46:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F11E1890B92
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 10:46:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 561141899759
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 10:47:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB6101F3FEC;
-	Sun, 20 Jul 2025 10:46:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB4271F2B90;
+	Sun, 20 Jul 2025 10:46:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MKTWR9S4"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LGMyiE9e"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067311EEA3C;
-	Sun, 20 Jul 2025 10:46:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A771A930;
+	Sun, 20 Jul 2025 10:46:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753008381; cv=none; b=HCmv5clXm2LkESKdhiNq77QMVad2JCIlbn3UDvS9J4qs6+K8BP/8fCL8zlBfKczENI/aq8BMNxhFWDY/iLXMI0R6n/Fc0F6kGzAP/ZcoiAyts0s7BT8U0r2WdxtxpyuCjJOW0JdlEWXePFiTjFueP92CKgh5pl4IGiguZDJ7elg=
+	t=1753008401; cv=none; b=uW7meqfRrifvrelW4sHKheLFGC+NVu97vq+EU9zVZta03NCWo+W4W6kPY2R9r310TZ+DDzdMfiH7wxKe9ktaYW+a3KmpeN9E7dRWSviNOSFygAf8IsKDmTm8wOO4p0upCaidz5LQXgsOdyeX3BpzsOwNU3GwCD+y5vF7Nze/aoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753008381; c=relaxed/simple;
-	bh=5mFPOzEa5FrjQ8IgOfWEqNd15g9Y38K4J8UtW6H9pwA=;
+	s=arc-20240116; t=1753008401; c=relaxed/simple;
+	bh=7WWhOhRwtbaiwl4NoaMbTlFWnvykC55S9j1bQmJKxYE=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=serJIIqHsxsXvLherdAyaXbyTGjTUMlxAXP6nkS+8748KYmJjJiJ1uJrWaV8Z4DzDkOCesB9aVqDZAZ5sYUfcb0wgWWwHh/v+WBKHqkCWDCyv2VfgzytWdx+PA8GcAgfCbEyWLhyN6/B8PsfDG9p4nApkSDTDg4R6E647/zgXnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MKTWR9S4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F37CEC4CEE7;
-	Sun, 20 Jul 2025 10:46:19 +0000 (UTC)
+	 Content-Disposition; b=mU+lni6rz9aB1GjBRfNsS4/QaxE+0xw1tyVyke9PvapcaasFzJ9Xnjh0FRk5NFtRnOixgpbScoYf5sIB/G0iqtdj5dmAwufagSPrD5JKlTuY62AP3M4VMp+BCM22vXKcO1NE7C2u78hmbEpIREJLT39E/FTEPRfROJGtvbfnML0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LGMyiE9e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E1CEC4CEE7;
+	Sun, 20 Jul 2025 10:46:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1753008380;
-	bh=5mFPOzEa5FrjQ8IgOfWEqNd15g9Y38K4J8UtW6H9pwA=;
+	s=korg; t=1753008400;
+	bh=7WWhOhRwtbaiwl4NoaMbTlFWnvykC55S9j1bQmJKxYE=;
 	h=Date:From:To:Cc:Subject:From;
-	b=MKTWR9S4Dt8Y17k7HukH31gDHbSNbXD0XkUFap3ZQ0Av6klqV1RIATCJryLoiCR88
-	 XK3TS8I5h3a9GCFp0jBxyLfjyaWETVH97yQTfEZjlSR7vNQxWzcQYaYsfqnkrAWChG
-	 dsWybNiYo3b9uRa5gkKaI5oi5p9Iy9LBm1m1MRFU=
-Date: Sun, 20 Jul 2025 12:46:17 +0200
+	b=LGMyiE9egIwP8wLPCUTWk1uSXA4Y63m+gEMWYOjhQSMOvzspyhJhE65HdoJeDKzo0
+	 4ZiDnoXccYM7SGeDguJikdF2j1Rfx383wnUnw4Ij1yp3yfmXloV+yKkQFm5gV5SQzI
+	 yEZ2PljFoxs/OxGGNPaLajPwsrRV8RqO+Wx+5rZY=
+Date: Sun, 20 Jul 2025 12:46:37 +0200
 From: Greg KH <gregkh@linuxfoundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jiri Slaby <jslaby@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>,
 	Andrew Morton <akpm@linux-foundation.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
-Subject: [GIT PULL] Staging driver fixes for 6.16-rc6
-Message-ID: <aHzI-b5Kiy_Nu6l-@kroah.com>
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: [GIT PULL] Serial driver fixes for 6.16-rc6
+Message-ID: <aHzJDbazSNDl7kv4@kroah.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,32 +60,32 @@ The following changes since commit d0b3b7b22dfa1f4b515fd3a295b3fd958f9e81af:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git tags/staging-6.16-rc6
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-6.16-rc6
 
-for you to fetch changes up to f2b8ebfb867011ddbefbdf7b04ad62626cbc2afd:
+for you to fetch changes up to 6c0e9f05c9d7875995b0e92ace71be947f280bbd:
 
-  staging: vchiq_arm: Make vchiq_shutdown never fail (2025-07-16 09:36:50 +0200)
+  pch_uart: Fix dma_sync_sg_for_device() nents value (2025-07-09 13:43:02 +0200)
 
 ----------------------------------------------------------------
-Staging driver fixes for 6.16-rc6
+Serial driver fixes for 6.16-rc6
 
-Here are some small driver fixes for the vchiq_arm staging driver:
-  - reverts of previous changes that turned out to caused problems.
-  - change to prevent a research leak
+Here are two serial driver fixes for 6.16-rc6 that do:
+  - fix for the serial core OF resource leak
+  - pch_uart driver fix for a "incorrect variable" issue
 
-All of these have been in linux-next this week with no reported
+Both of these have been in linux-next for over a week with no reported
 problems.
 
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ----------------------------------------------------------------
-Stefan Wahren (3):
-      Revert "staging: vchiq_arm: Improve initial VCHIQ connect"
-      Revert "staging: vchiq_arm: Create keep-alive thread during probe"
-      staging: vchiq_arm: Make vchiq_shutdown never fail
+Johan Hovold (1):
+      serial: core: fix OF node leak
 
- .../vc04_services/interface/vchiq_arm/vchiq_arm.c  | 98 ++++++++++++----------
- .../vc04_services/interface/vchiq_arm/vchiq_core.c |  1 -
- .../vc04_services/interface/vchiq_arm/vchiq_core.h |  2 -
- 3 files changed, 56 insertions(+), 45 deletions(-)
+Thomas Fourier (1):
+      pch_uart: Fix dma_sync_sg_for_device() nents value
+
+ drivers/tty/serial/pch_uart.c        | 2 +-
+ drivers/tty/serial/serial_base_bus.c | 3 +++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
