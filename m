@@ -1,133 +1,336 @@
-Return-Path: <linux-kernel+bounces-738487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B224B0B90A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 01:04:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72EA3B0B90C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 01:06:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 154777A604D
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 23:03:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09F801895FF2
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 23:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4730A22ACF3;
-	Sun, 20 Jul 2025 23:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fEEbA7qZ"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F008C74C08;
-	Sun, 20 Jul 2025 23:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656F2221F06;
+	Sun, 20 Jul 2025 23:06:11 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6FD1DE3BA;
+	Sun, 20 Jul 2025 23:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753052680; cv=none; b=p611KJjarUNSqDq/OiY2ua67t4pmcdHGW25ovdP6Jxix0yoWnNfmdSK1g5j8J514wPLQzZCpYx0L5PzTVqcONbHmNDpDHXgImDPNBCzXKwTD391pWTlJZq94o7fKS7c4bfnUUWhYwG5eaBfg0ejP+RO7LjE81j4PAnzX7Iwt7cw=
+	t=1753052770; cv=none; b=Q0tIhniei+bK6PKDHot41mrcGjb//yBNLDOd2TZEuyaYCXuW7LhcUeNjg9p8ggUucnSyqYxUXz6qzENmS947syKPI36LGDzC5ZuDcuLAtwOgzcQnYP4j+X46TeYpAcnK9qgJFiN/OFNAbC2Wg5LkE64YA4Lh45zZxupUSlFmlHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753052680; c=relaxed/simple;
-	bh=DqzhcMKuF4YJhM8qX6ANTGfJdeWxmY6ujyFF/XUbNew=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dYJU13gp1B2EHpPxLqbffgGnIzbLK8drteStKKrvIBRk06LBjKNtjeSSQkA8spxo1F8Y0hzyJqZLDKbm5WvHeKV+Wv1FCwivsPY9Kjfo8qKMm7iUU0bg2i9/WRIX3LbHOm5zUXHI+yAxELfEAmfvwsvhush+w31gutdqD7j48k4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fEEbA7qZ; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-32b2f5d91c8so28172281fa.0;
-        Sun, 20 Jul 2025 16:04:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753052675; x=1753657475; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7Xkw3NwxWxg5J2ji88ScO8XA3YV0z1vRakGJn9oB0XE=;
-        b=fEEbA7qZeaPKmbSGc0LpfkgCNPpcE1/aFE4WJCoVqvmDM15Ww2TFq+jr3yJtGV9EGJ
-         5zM9u58hJobhjXsajqOarwNyfhhS1Frux9teDdv4ysDGX3MZhiKc+TTyOpbkp9sqYhCE
-         oRW7piJaJM80B3Eo5pCbJD6USc0mdZjpNnPrE6Dn28x2qKcPNvdctVhAU8VuzCYkRg3e
-         m2g+s8uRJoq3EoPozbMMVQU2cQv3CQcu8owZH9TuxUo9/Wdpq33Pb6+t8N2b9wlhHC5X
-         iev6YvHXabzE8q8IZGo8yymG08he/MKxsIMzK3+xiFRUHO0Uwp3EjoFURGKFedrqFPiP
-         GoQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753052675; x=1753657475;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7Xkw3NwxWxg5J2ji88ScO8XA3YV0z1vRakGJn9oB0XE=;
-        b=imTAg288hzkPG3KQYl1vuOXH2NoGPZuevBKbbBya4LE5tLRX5pku93SjuHPBXF5ewG
-         Ucb31tSR4Tc4R4wMm4zO6aaovl3o+hV0tSUf47OEDhQm0/KLiUhYXshz1lUdEsRUY0uD
-         SbNGi8bxsut4CB0MjneEvgllIHQDWuLQoFpMGG8a1Khu18JeK7Ld23hEAe6pax4gRuxs
-         z80KWlrgPP5moNQUXsS/UprTH/CSzQAn6ZL1aRx/OXkT+Uxq06obQwJuE9AXe1pID/Ng
-         xrdG1c0gzq6xWgsd9YFGZ3TvxH3UXvZSkb0j+w+gk9v3Ghss5p+Gw2KI+O1qs8tBfnil
-         yi9w==
-X-Forwarded-Encrypted: i=1; AJvYcCUxt5Uip54nFm5RW4ghnUHoajYKL6h+RDFtmIELdPd+H10SaraTpWHOBJbhVtDojtL6O+dVvXK3gh7CLzY=@vger.kernel.org, AJvYcCXKId7rhchD3iQOWNLk5MLYTVpeZSj9/um7fR4GXpWbW0FIjlKGGCosZKDTqn0NAPtEd71FJk2HuR5QJzxhfUg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwC735Uv96s7pK10PFzWzFtCf+zuOHx9/NAWF0X0Cw26crWcgFq
-	8gClesC+7IGHGI9lIzTkQfVGqbNnkepcpfcBXfX2qVJKw2gPg5KH4wWozTSQaA0D5nEDeWSnI65
-	6z3jDX4yg0LHVn43cMfPUWwNJFuNPDeY=
-X-Gm-Gg: ASbGncuViHeh4MkXXx66vWzUlIDT5SA32leQ8rRfLXZhzcZ5EPRo2nGTcqaa0tc/p0Z
-	XXovd11zym8vEMsj9mTRSvG+3Dmu4K9KdKOVSUOcPfUSzE9I1CoMU788W/VLxYMf8gjZ4OBRR+I
-	TtMbKPnlT0ypasc2EijKsoBX+BOrm0WCStO1+CXIP78h1SO8cOnCtDNzPxJDTGBqHSTggeRnrya
-	5fHW1FqKSTcjnu/lY1GhXo+2Q3ollpbbNQmxH7RWw==
-X-Google-Smtp-Source: AGHT+IHU8gAlgJi0gfSerHmpP+XVcJCFlizdHXk2oE9KNpuvqKE3vWLus6ifQ6OwXOlfO0aS5Oo9wOl6ZRFYMwgCbm0=
-X-Received: by 2002:a05:651c:41d5:b0:32a:6aa0:2173 with SMTP id
- 38308e7fff4ca-3308f5b6b0emr51195791fa.20.1753052674651; Sun, 20 Jul 2025
- 16:04:34 -0700 (PDT)
+	s=arc-20240116; t=1753052770; c=relaxed/simple;
+	bh=vHvoB3e4D6hWq9C0Ss1Oq+RJ+ypW8an1UjK/yS2GH7U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HWdrcarF1yCfvEBCSgd/x1pOx9h3NDqpAZWeMl1dgfjDCP5TP8V2Txm5AEgB3x8WS4Xi14+5sVf+qKNDxfLvvEKlMmp7BEp/NiJPp+/6IbJ5YdfNoPWIHh1eEXBhKxe1BU4iKsnERe9zFurkPExbhBEE9o1bzjp5iikGiw4Qfwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 11D211595;
+	Sun, 20 Jul 2025 16:05:55 -0700 (PDT)
+Received: from [192.168.1.8] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CA71C3F59E;
+	Sun, 20 Jul 2025 16:06:00 -0700 (PDT)
+Message-ID: <4113b3de-918c-4140-9f0d-d1699d2efc32@arm.com>
+Date: Sun, 20 Jul 2025 18:05:59 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250704-core-cstr-prepare-v1-0-a91524037783@gmail.com> <20250704-core-cstr-prepare-v1-1-a91524037783@gmail.com>
-In-Reply-To: <20250704-core-cstr-prepare-v1-1-a91524037783@gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Sun, 20 Jul 2025 19:03:58 -0400
-X-Gm-Features: Ac12FXyBZv6-1-SR-r4N9df7hS6FD2nQrghFQr18iPYH2j0BNLVFQznx1RbMWtg
-Message-ID: <CAJ-ks9nBrT4C5xYk4eWUFX_nX5XXBYHEGo+fLtLWJE-D9Y5hKQ@mail.gmail.com>
-Subject: Re: [PATCH 1/6] rust: kernel: remove `fmt!`, fix clippy::uninlined-format-args
-To: "Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 3/3] tpm_crb_ffa: handle tpm busy return code
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Stuart Yoder <stuart.yoder@arm.com>, linux-integrity@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250708225151.2473657-1-prachotan.bathi@arm.com>
+ <20250708225151.2473657-4-prachotan.bathi@arm.com>
+ <aHukoB5Xz4wyx7Yw@kernel.org>
+Content-Language: en-US
+From: Prachotan Bathi <prachotan.bathi@arm.com>
+In-Reply-To: <aHukoB5Xz4wyx7Yw@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 4, 2025 at 4:16=E2=80=AFPM Tamir Duberstein <tamird@gmail.com> =
-wrote:
->
-> Rather than export a macro that delegates to `core::format_args`, simply
-> re-export `core::format_args` as `fmt` from the prelude. This exposes
-> clippy warnings which were previously obscured by this macro, such as:
->
->     warning: variables can be used directly in the `format!` string
->       --> ../drivers/cpufreq/rcpufreq_dt.rs:21:43
->        |
->     21 |     let prop_name =3D CString::try_from_fmt(fmt!("{}-supply", na=
-me)).ok()?;
->        |                                           ^^^^^^^^^^^^^^^^^^^^^^=
-^
->        |
->        =3D help: for further information visit https://rust-lang.github.i=
-o/rust-clippy/master/index.html#uninlined_format_args
->        =3D note: `-W clippy::uninlined-format-args` implied by `-W clippy=
-::all`
->        =3D help: to override `-W clippy::all` add `#[allow(clippy::uninli=
-ned_format_args)]`
->     help: change this to
->        |
->     21 -     let prop_name =3D CString::try_from_fmt(fmt!("{}-supply", na=
-me)).ok()?;
->     21 +     let prop_name =3D CString::try_from_fmt(fmt!("{name}-supply"=
-)).ok()?;
->        |
->
-> Thus fix them in the same commit. This could possibly be fixed in two
-> stages, but the diff is small enough (outside of kernel/str.rs) that I
-> hope it can taken in a single commit.
+On 7/19/25 8:58 AM, Jarkko Sakkinen wrote:
 
-Just noticed a tiny typo here: it should say "can *be* taken".
+> On Tue, Jul 08, 2025 at 05:51:51PM -0500, Prachotan Bathi wrote:
+>> Platforms supporting direct message request v2 [1] can support secure
+>> partitions that support multiple services. For CRB over FF-A interface,
+>> if the firmware TPM or TPM service [1] shares its Secure Partition (SP)
+>> with another service, message requests may fail with a -EBUSY error.
+>>
+>> To handle this, replace the single check and call with a retry loop
+>> that attempts the TPM message send operation until it succeeds or a
+>> configurable timeout is reached. Implement a _try_send_receive function
+>> to do a single send/receive and modify the existing send_receive to
+>> add this retry loop.
+>> The retry mechanism introduces a module parameter (`busy_timeout_ms`,
+>> default: 2000ms) to control how long to keep retrying on -EBUSY
+>> responses. Between retries, the code waits briefly (50-100 microseconds)
+>> to avoid busy-waiting and handling TPM BUSY conditions more gracefully.
+>>
+>> The parameter can be modified at run-time as such:
+>> echo 3000 | tee /sys/module/tpm_crb_ffa/parameters/busy_timeout_ms
+>> This changes the timeout from the default 2000ms to 3000ms.
+>>
+>> [1] TPM Service Command Response Buffer Interface Over FF-A
+>> https://developer.arm.com/documentation/den0138/latest/
+>>
+>> Signed-off-by: Prachotan Bathi <prachotan.bathi@arm.com>
+>> ---
+>>   .../admin-guide/kernel-parameters.txt         |  8 ++++
+>>   drivers/char/tpm/tpm_crb_ffa.c                | 45 ++++++++++++++++---
+>>   2 files changed, 46 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+>> index 07e22ba5bfe3..343377538fe9 100644
+>> --- a/Documentation/admin-guide/kernel-parameters.txt
+>> +++ b/Documentation/admin-guide/kernel-parameters.txt
+>> @@ -7214,6 +7214,14 @@
+>>   			causing a major performance hit, and the space where
+>>   			machines are deployed is by other means guarded.
+>>   
+>> +	tpm_crb_ffa.busy_timeout_ms= [ARM64,TPM]
+>> +			Maximum time in milliseconds to retry sending a message
+>> +			to the TPM service before giving up. This parameter controls
+>> +			how long the system will continue retrying when the TPM
+>> +			service is busy.
+>> +			Format: <unsigned int>
+>> +			Default: 2000 (2 seconds)
+>> +
+>>   	tpm_suspend_pcr=[HW,TPM]
+>>   			Format: integer pcr id
+>>   			Specify that at suspend time, the tpm driver
+>> diff --git a/drivers/char/tpm/tpm_crb_ffa.c b/drivers/char/tpm/tpm_crb_ffa.c
+>> index 7faed6f3bf66..06599c07b746 100644
+>> --- a/drivers/char/tpm/tpm_crb_ffa.c
+>> +++ b/drivers/char/tpm/tpm_crb_ffa.c
+>> @@ -10,8 +10,16 @@
+>>   #define pr_fmt(fmt) "CRB_FFA: " fmt
+>>   
+>>   #include <linux/arm_ffa.h>
+>> +#include <linux/delay.h>
+>> +#include <linux/moduleparam.h>
+>>   #include "tpm_crb_ffa.h"
+>>   
+>> +static unsigned int busy_timeout_ms = 2000;
+>> +
+>> +module_param(busy_timeout_ms, uint, 0644);
+>> +MODULE_PARM_DESC(busy_timeout_ms,
+>> +		 "Maximum time in ms to retry before giving up on busy");
+>> +
+>>   /* TPM service function status codes */
+>>   #define CRB_FFA_OK			0x05000001
+>>   #define CRB_FFA_OK_RESULTS_RETURNED	0x05000002
+>> @@ -178,17 +186,13 @@ int tpm_crb_ffa_init(void)
+>>   }
+>>   EXPORT_SYMBOL_GPL(tpm_crb_ffa_init);
+>>   
+>> -static int __tpm_crb_ffa_send_receive(unsigned long func_id,
+>> -				      unsigned long a0,
+>> -				      unsigned long a1,
+>> -				      unsigned long a2)
+>> +static int __tpm_crb_ffa_try_send_receive(unsigned long func_id,
+>> +					  unsigned long a0, unsigned long a1,
+>> +					  unsigned long a2)
+>>   {
+>>   	const struct ffa_msg_ops *msg_ops;
+>>   	int ret;
+>>   
+>> -	if (!tpm_crb_ffa)
+>> -		return -ENOENT;
+>> -
+>>   	msg_ops = tpm_crb_ffa->ffa_dev->ops->msg_ops;
+>>   
+>>   	if (ffa_partition_supports_direct_req2_recv(tpm_crb_ffa->ffa_dev)) {
+>> @@ -214,6 +218,33 @@ static int __tpm_crb_ffa_send_receive(unsigned long func_id,
+>>   			ret = tpm_crb_ffa_to_linux_errno(tpm_crb_ffa->direct_msg_data.data1);
+>>   	}
+>>   
+>> +	return ret;
+>> +}
+>> +
+>> +static int __tpm_crb_ffa_send_receive(unsigned long func_id, unsigned long a0,
+>> +				      unsigned long a1, unsigned long a2)
+>> +{
+>> +	ktime_t start, stop;
+>> +	int ret;
+>> +
+>> +	if (!tpm_crb_ffa)
+>> +		return -ENOENT;
+>> +
+>> +	start = ktime_get();
+>> +	stop = ktime_add(start, ms_to_ktime(busy_timeout_ms));
+>> +
+>> +	for (;;) {
+>> +		ret = __tpm_crb_ffa_try_send_receive(func_id, a0, a1, a2);
+>> +		if (ret != -EBUSY)
+>> +			break;
+>> +
+>> +		usleep_range(50, 100);
+>> +		if (ktime_after(ktime_get(), stop)) {
+>> +			dev_warn(&tpm_crb_ffa->ffa_dev->dev,
+>> +				 "Busy retry timed out\n");
+>> +			break;
+>> +		}
+>> +	}
+>>   
+>>   	return ret;
+>>   }
+>> -- 
+>> 2.43.0
+>>
+> I think these patches look totally fine now. If you don't mind I'll add
+> suggested-by to 2/3?
+>
+> Anyhow, I can pick these to my tree. Just coming from holiday but
+> they'll end up the 6.17 PR.
+>
+> BR, Jarkko
 
-Miguel, if you can fix that on apply, please do - but if not, no worries.
+Yes, of course, thanks for catching these and suggesting the needed changes.
+
+Best
+
+Prachotan.
+
+On 7/19/25 8:58 AM, Jarkko Sakkinen wrote:
+> On Tue, Jul 08, 2025 at 05:51:51PM -0500, Prachotan Bathi wrote:
+>> Platforms supporting direct message request v2 [1] can support secure
+>> partitions that support multiple services. For CRB over FF-A interface,
+>> if the firmware TPM or TPM service [1] shares its Secure Partition (SP)
+>> with another service, message requests may fail with a -EBUSY error.
+>>
+>> To handle this, replace the single check and call with a retry loop
+>> that attempts the TPM message send operation until it succeeds or a
+>> configurable timeout is reached. Implement a _try_send_receive function
+>> to do a single send/receive and modify the existing send_receive to
+>> add this retry loop.
+>> The retry mechanism introduces a module parameter (`busy_timeout_ms`,
+>> default: 2000ms) to control how long to keep retrying on -EBUSY
+>> responses. Between retries, the code waits briefly (50-100 microseconds)
+>> to avoid busy-waiting and handling TPM BUSY conditions more gracefully.
+>>
+>> The parameter can be modified at run-time as such:
+>> echo 3000 | tee /sys/module/tpm_crb_ffa/parameters/busy_timeout_ms
+>> This changes the timeout from the default 2000ms to 3000ms.
+>>
+>> [1] TPM Service Command Response Buffer Interface Over FF-A
+>> https://developer.arm.com/documentation/den0138/latest/
+>>
+>> Signed-off-by: Prachotan Bathi <prachotan.bathi@arm.com>
+>> ---
+>>   .../admin-guide/kernel-parameters.txt         |  8 ++++
+>>   drivers/char/tpm/tpm_crb_ffa.c                | 45 ++++++++++++++++---
+>>   2 files changed, 46 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+>> index 07e22ba5bfe3..343377538fe9 100644
+>> --- a/Documentation/admin-guide/kernel-parameters.txt
+>> +++ b/Documentation/admin-guide/kernel-parameters.txt
+>> @@ -7214,6 +7214,14 @@
+>>   			causing a major performance hit, and the space where
+>>   			machines are deployed is by other means guarded.
+>>   
+>> +	tpm_crb_ffa.busy_timeout_ms= [ARM64,TPM]
+>> +			Maximum time in milliseconds to retry sending a message
+>> +			to the TPM service before giving up. This parameter controls
+>> +			how long the system will continue retrying when the TPM
+>> +			service is busy.
+>> +			Format: <unsigned int>
+>> +			Default: 2000 (2 seconds)
+>> +
+>>   	tpm_suspend_pcr=[HW,TPM]
+>>   			Format: integer pcr id
+>>   			Specify that at suspend time, the tpm driver
+>> diff --git a/drivers/char/tpm/tpm_crb_ffa.c b/drivers/char/tpm/tpm_crb_ffa.c
+>> index 7faed6f3bf66..06599c07b746 100644
+>> --- a/drivers/char/tpm/tpm_crb_ffa.c
+>> +++ b/drivers/char/tpm/tpm_crb_ffa.c
+>> @@ -10,8 +10,16 @@
+>>   #define pr_fmt(fmt) "CRB_FFA: " fmt
+>>   
+>>   #include <linux/arm_ffa.h>
+>> +#include <linux/delay.h>
+>> +#include <linux/moduleparam.h>
+>>   #include "tpm_crb_ffa.h"
+>>   
+>> +static unsigned int busy_timeout_ms = 2000;
+>> +
+>> +module_param(busy_timeout_ms, uint, 0644);
+>> +MODULE_PARM_DESC(busy_timeout_ms,
+>> +		 "Maximum time in ms to retry before giving up on busy");
+>> +
+>>   /* TPM service function status codes */
+>>   #define CRB_FFA_OK			0x05000001
+>>   #define CRB_FFA_OK_RESULTS_RETURNED	0x05000002
+>> @@ -178,17 +186,13 @@ int tpm_crb_ffa_init(void)
+>>   }
+>>   EXPORT_SYMBOL_GPL(tpm_crb_ffa_init);
+>>   
+>> -static int __tpm_crb_ffa_send_receive(unsigned long func_id,
+>> -				      unsigned long a0,
+>> -				      unsigned long a1,
+>> -				      unsigned long a2)
+>> +static int __tpm_crb_ffa_try_send_receive(unsigned long func_id,
+>> +					  unsigned long a0, unsigned long a1,
+>> +					  unsigned long a2)
+>>   {
+>>   	const struct ffa_msg_ops *msg_ops;
+>>   	int ret;
+>>   
+>> -	if (!tpm_crb_ffa)
+>> -		return -ENOENT;
+>> -
+>>   	msg_ops = tpm_crb_ffa->ffa_dev->ops->msg_ops;
+>>   
+>>   	if (ffa_partition_supports_direct_req2_recv(tpm_crb_ffa->ffa_dev)) {
+>> @@ -214,6 +218,33 @@ static int __tpm_crb_ffa_send_receive(unsigned long func_id,
+>>   			ret = tpm_crb_ffa_to_linux_errno(tpm_crb_ffa->direct_msg_data.data1);
+>>   	}
+>>   
+>> +	return ret;
+>> +}
+>> +
+>> +static int __tpm_crb_ffa_send_receive(unsigned long func_id, unsigned long a0,
+>> +				      unsigned long a1, unsigned long a2)
+>> +{
+>> +	ktime_t start, stop;
+>> +	int ret;
+>> +
+>> +	if (!tpm_crb_ffa)
+>> +		return -ENOENT;
+>> +
+>> +	start = ktime_get();
+>> +	stop = ktime_add(start, ms_to_ktime(busy_timeout_ms));
+>> +
+>> +	for (;;) {
+>> +		ret = __tpm_crb_ffa_try_send_receive(func_id, a0, a1, a2);
+>> +		if (ret != -EBUSY)
+>> +			break;
+>> +
+>> +		usleep_range(50, 100);
+>> +		if (ktime_after(ktime_get(), stop)) {
+>> +			dev_warn(&tpm_crb_ffa->ffa_dev->dev,
+>> +				 "Busy retry timed out\n");
+>> +			break;
+>> +		}
+>> +	}
+>>   
+>>   	return ret;
+>>   }
+>> -- 
+>> 2.43.0
+>>
+> I think these patches look totally fine now. If you don't mind I'll add
+> suggested-by to 2/3?
+>
+> Anyhow, I can pick these to my tree. Just coming from holiday but
+> they'll end up the 6.17 PR.
+>
+> BR, Jarkko
 
