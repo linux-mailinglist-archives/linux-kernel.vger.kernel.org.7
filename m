@@ -1,101 +1,131 @@
-Return-Path: <linux-kernel+bounces-738289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F232EB0B6CB
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 17:56:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D9A9B0B6CF
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 17:57:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 479C73A6DF2
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 15:56:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E5067AC65D
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 15:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54FFE21C190;
-	Sun, 20 Jul 2025 15:56:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10A8021D5AF;
+	Sun, 20 Jul 2025 15:57:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="bs63e3Nl"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="vaQydxC+"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273991A23B5;
-	Sun, 20 Jul 2025 15:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753027003; cv=pass; b=d1ZgOOaF8uDKsD6oxgNgbJg6KkqxNjts73hYgS6i77jRDj4G5BpFzuASafJAABZKKLcJElXctl2DvDdICN5gi9/mnEmSCQljg/j+pnR0aDMBrNylHgwVD2joEMwkjrbYpn2myUXnOINqhYyexCDu9uQJGxU15nhYgNrHYpHpeNk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753027003; c=relaxed/simple;
-	bh=Kgf4ebbbmC8TJqXyyg3h4tJI/2IZL8J2RWSnHBNB46w=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=BTkwtGXG52Cx5tT2G2DJgmKYAEZBS4gLaCzsbojZTngUepXdwUNQibY3c4HESWO3/Qfs4Xaui3eNSBdjIqjWK0JNQXKyKu0mPL02G6ECeVSH1STd9ii6Ztu4dJXIL/rob/yARDPG+QOgxu3erM+cMQjpt1LE7BH9e3HJ1SJG0Fk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=bs63e3Nl; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1753026987; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=c0JEC5IJwdmsxYLINfk++Adwtmf3NvSn76tI1Ujh584KqxmypiSAvlqgnxf/JQbsGRg2ReJu/H07eUvoYAXrXXtlw8xxs48mrO3i+QVa3mZWwaqDhXppzANORNGK7vRjPC2tacn4SCY7oYsFF8INtm7Am61cA7UIALrTAeoUSUk=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753026987; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=+cxba+U6S+zEpagJWyQeVlVivVci989TuaHo0BdsYdw=; 
-	b=SWWgfX5qvVkDBVGmWOlCGpGx06gTLcmfeoVcjg/ss54gxW2k1RFXTHiplXHrnWauO84glYFPU5z55T9IBcnad/SKwV2RIPzqxrEvLGsBCXmIOHLdTlZc/2UIIHndvbY2UpMt8W/xOZ4dVKRHpgLaszsgcHgqF2mI93uwmaMFqg0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753026987;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=+cxba+U6S+zEpagJWyQeVlVivVci989TuaHo0BdsYdw=;
-	b=bs63e3NlZofJBnTsPFCfWUiE6J9z20YeLnn4ODvwxkAtC0XRT6PESq0nvhOh/jrt
-	gKYZmyeSWinuSAX24FeIm75mfS2Wla0WykS7w0llNhyz5z1LHzRHG4uyBhX0nvhQaHr
-	qM8DGjsGPsvRnLvQRMcDCHdT9AwLyB8LWP+a3JHw=
-Received: by mx.zohomail.com with SMTPS id 175302698407049.503546430246615;
-	Sun, 20 Jul 2025 08:56:24 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D4F20D4FC;
+	Sun, 20 Jul 2025 15:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753027030; cv=none; b=OgvsmgiUdlqKwww3i9nDP9XfQUosgJ/578P1Z2f8kj1PGoDAbwPdmIDmQvkEsKjPd8HXJiHsVDSg7LgAdd3OkxC+QJv7TcejF4U+m1e3izNdmrQU2w28lTDRIWNgdrKVPtQhkDS8YwpNFGhtYAShcnGlTg3rhNxwAlXn+Au7uJk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753027030; c=relaxed/simple;
+	bh=acbZNQ8wzNe9UhG8osyw9whHFhX2+PMv5SqAhvGrJxw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L/AEniIwqusWQWg/s19Nxp8a78/xRzw/E9qN9wj70xz42+vxnew5DQ/Whhj429exVt4LcCC3hJ9U/9cl/cnCvkzW2SkFRQwft312z+Y8tn7lOt3VsKCwh4NqP0MPk7+YfxWdLiXrV60q5rQinyUHJK91uqadhu2mSjSNVxfShAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=vaQydxC+; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=64nxx6o3UjsOD65DzGW1UiFh1tmvoBz5/OywLQywsuk=; b=vaQydxC+p99n0aFgzK9ODIGBcE
+	c76b8JTV9FtYQnKIKBUYRnVxAgRqBNSAog0CuByr5QNViO1mr7noGT96HP2S9J2aZnexf+OOdtvLR
+	BtlA2X5etCJ/8aBcZK1Ofb/cBSZZhlFLAMNxrzlFZPxcMFvZ9mvDizTm0cbnarAdYX/M=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1udWPE-002Cro-Fp; Sun, 20 Jul 2025 17:56:52 +0200
+Date: Sun, 20 Jul 2025 17:56:52 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Tristram.Ha@microchip.com
+Cc: Woojung Huh <woojung.huh@microchip.com>,
+	Vladimir Oltean <olteanv@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Marek Vasut <marex@denx.de>, UNGLinuxDriver@microchip.com,
+	devicetree@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v4 3/7] net: dsa: microchip: Transform register
+ for use with KSZ8463
+Message-ID: <4dd544ad-fa71-4759-bc23-d1dd7f554eb8@lunn.ch>
+References: <20250719012106.257968-1-Tristram.Ha@microchip.com>
+ <20250719012106.257968-4-Tristram.Ha@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH 2/3] device: rust: expand documentation for Device
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250717224806.54763-3-dakr@kernel.org>
-Date: Sun, 20 Jul 2025 12:56:07 -0300
-Cc: gregkh@linuxfoundation.org,
- rafael@kernel.org,
- ojeda@kernel.org,
- alex.gaynor@gmail.com,
- boqun.feng@gmail.com,
- gary@garyguo.net,
- bjorn3_gh@protonmail.com,
- lossin@kernel.org,
- a.hindborg@kernel.org,
- aliceryhl@google.com,
- tmgross@umich.edu,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <E4FAF7C9-F210-4EFF-AC29-C969A991205B@collabora.com>
-References: <20250717224806.54763-1-dakr@kernel.org>
- <20250717224806.54763-3-dakr@kernel.org>
-To: Danilo Krummrich <dakr@kernel.org>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250719012106.257968-4-Tristram.Ha@microchip.com>
 
-This looks good to me!
+> +static inline bool ksz_is_ksz8463(struct ksz_device *dev)
+> +{
+> +	return dev->chip_id == KSZ8463_CHIP_ID;
+> +}
+> +
+> +static inline u32 reg8(struct ksz_device *dev, u32 reg)
+> +{
+> +	if (ksz_is_ksz8463(dev))
+> +		return ((reg >> 2) << 4) | (1 << (reg & 3));
+> +	return reg;
+> +}
+> +
+> +static inline u32 reg16(struct ksz_device *dev, u32 reg)
+> +{
+> +	if (ksz_is_ksz8463(dev))
+> +		return ((reg >> 2) << 4) | (reg & 2 ? 0x0c : 0x03);
+> +	return reg;
+> +}
+> +
+> +static inline u32 reg32(struct ksz_device *dev, u32 reg)
+> +{
+> +	if (ksz_is_ksz8463(dev))
+> +		return ((reg >> 2) << 4) | 0xf;
+> +	return reg;
+> +}
+> +
+>  static inline int ksz_read8(struct ksz_device *dev, u32 reg, u8 *val)
+>  {
+>  	unsigned int value;
+> -	int ret = regmap_read(ksz_regmap_8(dev), reg, &value);
+> +	int ret = regmap_read(ksz_regmap_8(dev), reg8(dev, reg), &value);
 
-> On 17 Jul 2025, at 19:45, Danilo Krummrich <dakr@kernel.org> wrote:
-> 
-> The documentation for the generic Device type is outdated and deserves
-> much more detail.
-> 
-> Hence, expand the documentation and cover topics such as device types,
-> device contexts, as well as information on how to use the generic device
-> infrastructure to implement bus and class specific device types.
-> 
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+I'm wondering if there is a less intrusive way to do this. When you
+create a regmap, you can optionally pass it methods to use for
+read/write/update etc.
 
+struct regmap_config {
+...
+	int (*reg_read)(void *context, unsigned int reg, unsigned int *val);
+	int (*reg_write)(void *context, unsigned int reg, unsigned int val);
+	int (*reg_update_bits)(void *context, unsigned int reg,
+			       unsigned int mask, unsigned int val);
 
-Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+Could you provide your own methods for the ksz8463 which perform the
+register modification, and then call the normal regmap SPI function to
+do the operation?
+
+If you cannot get direct access to the regmap SPI functions, you can
+stack one regmap on top of another regmap. Have the top regmap do the
+register modifications, and then call a normal SPI regmap to do the
+read/write.
+
+What i don't like about the current code is that developers adding new
+code could miss they need to add reg8().. to all regmap calls. So
+ideally you want to hide that away so they don't need to care, it just
+works.
+
+	Andrew
 
