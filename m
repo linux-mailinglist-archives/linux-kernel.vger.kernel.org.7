@@ -1,110 +1,192 @@
-Return-Path: <linux-kernel+bounces-738441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A4B6B0B856
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 23:25:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88C2EB0B858
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 23:36:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 256B618958FF
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 21:25:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE6C31893EDE
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 21:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F62B2264A3;
-	Sun, 20 Jul 2025 21:25:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6EA9219A86;
+	Sun, 20 Jul 2025 21:36:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lu3ENT/z"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jWPYcm8S"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C8C1CFBC;
-	Sun, 20 Jul 2025 21:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0923E1A3150
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 21:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753046710; cv=none; b=rwktMeSXLncFQV87y5oD1FJvIRJNOFaDmT4XU4xrhHLleVGGBJ+iAX+NCQURMb14aTMghWeKWqmmSpt6CoN5fqyCfMsXsWFOWJvw0fDRrdOml9xM0U3be7bxGsOb8GZW3VU6/+dakBtRSzcBGXnGNHgUv1e1p0rwN4bQ4OFr3PU=
+	t=1753047367; cv=none; b=skzLaPFO2pzaayG3Vd7Qh1hYKo3HDNb4dfUPdxOXCcx8flzx1NZ0coyI/JxtMpjCT2Tc2HkFVuNq6/XO+o6J2HqYIg2XFOW5X8mG/d7HQnHP7KbTuGwMhLQ09GG9ghfBFU15zyQdBDV2zF3xZ2/wLMeImJ4dzixBwiPZn++uyAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753046710; c=relaxed/simple;
-	bh=kcLVWK5A7Ad1B963CRRuSvmVMkaDENWXxk94YxyzoyE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vjhh6RDHCvcI/aXRv/oTsrSY+BrPDqsZIGkWDi7Jzt4fZn6EAwlRy+gJZXhsThhHmoaszu9ppAWXSVBmAxfTObqL9YroqSh3qCBWXws++6Nxr9Bv+RsSLEClHDjMHw5WjyVd7x2iKmTb13Yqn5zzRSORs1R0eKVedz1mpqckXDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lu3ENT/z; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-23c71b21f72so6939095ad.2;
-        Sun, 20 Jul 2025 14:25:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753046708; x=1753651508; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZOfGo0Jsenpn6hZiffPRs915jB+hKQfehNQr85qBjhw=;
-        b=Lu3ENT/zp6JFLxXDnSqArRKU+p6usdy7pvYTuZBItPWTOSyQ6kcyZAgywChtte2hBn
-         YAF4QKRRg42JRgrZHLWTT/94iP7E2izAeo+gpk8nEc2K1GdHYdra/83EZqfYT5UlZz+4
-         fiFTGj1xciPtl5xjexU7x7MAdhQflqQvzZSZoIMVB3UHesBzUtzfnHBHq6Wo33PZeOtQ
-         mRLYzBa0r7HzFbnzXN/0rwrU4+wfx2pJcD3A2jK+kMblIauV2zS4zzpOzIui7a+/hk5L
-         3kjyudPHHQ0qZMlDu0BeiPw8OkaKJ0/WCiaNDeM1NEEWLgs5w5r3W/1MmWFewcn/T0DB
-         qMIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753046708; x=1753651508;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZOfGo0Jsenpn6hZiffPRs915jB+hKQfehNQr85qBjhw=;
-        b=Gs5omvXAS2sxn1WZHJWelVITtrkHF3QWdH+PgdCqbb2AvKv94d8fUEp2O6bDo7OZIS
-         +9mVZ6h4CcBK/w8KF515T8Q1ee6utfmKcJvxbRc1z8QdofpyydX5xkC/r2DYZFwrJVr+
-         Cz5O1HsL/53GHd8yMtiSDCTPgPXB0YMQDV+6+h5bW0gs3tBC056wXPwEA1MysLPG8V8b
-         yXzNJ3bE33cQM+2A4uy1MQH+YvMl3jOURLOQItKWLX9aP8xmjmXdGiH2POBsp9yuXkHX
-         SoYuF/5EMFFI2x+BhvfZZrvkasQoDIz4oKHFYK6WiU27BqEbyJbaYDlHC2j4lpCtPAzT
-         SvEA==
-X-Forwarded-Encrypted: i=1; AJvYcCVGxeODngY5wUELFWCZxB+xCkqb05FVt2TkdsX2AFYrmObsucgNW8q543H/1TgUDW91CXiNwv5JmRz/CIg=@vger.kernel.org, AJvYcCVHrCsCPPY8N+zW6ASfiFgUpz8RGpHzbV6oRQG15C2tbqsfZ+C5mI99WbHuvM2z4OvMu85rQbcuuVU=@vger.kernel.org, AJvYcCVIJjVOYKy+zxJjJKRCoNaMIaCp2MWRf51nIqzcVt6YJohjVTe+X5eATzX7WxaIoBaDWZ5VBaCrkQwBYAvzQwQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6KyN08Oc2B38WBueDy5mod7rol14b4eiYseg1sB5DU25k+KMw
-	HgpArd0zpvQg/GUqvsE+0JQDavkW+4HQIalwzs70bEcRPz40QrlPVfL3J1Mjonr5TP3GszyAtoM
-	10NmH9/1gh5+tQssR23MYBbMoMozy+i4IbKz9Rls=
-X-Gm-Gg: ASbGncuAk7Po+tTEXn+srCBEwPwEMMF5ah7tphwL1fGhCHkJDB7NG+opp/WOmTkY7pu
-	5CF6rEieHkQKh3QDc2jcW/VwwKJvZgQvXhwYvEu4FZGiRWOhn1zR7nzg05rmNgq57Cn7P9KezNE
-	CB0P0o1QNbXVOJO76G9FQt2BttN/s+96Muzbf0QApEXuVExHjc7Z2fraHJOmo3eFwWvJbqxrccB
-	o+j9jEZNzDdrgzWX+U=
-X-Google-Smtp-Source: AGHT+IEkcEPFJWVoqDC95ubnHjSmK+HgnV7Pk/LSgyHRbODBMgxYD03I2CuqEZBVSHRbSPTpfzdWXJRqkBiOadC0OLg=
-X-Received: by 2002:a17:903:18d:b0:235:f1e4:3381 with SMTP id
- d9443c01a7336-23e24f33804mr97588565ad.8.1753046707493; Sun, 20 Jul 2025
- 14:25:07 -0700 (PDT)
+	s=arc-20240116; t=1753047367; c=relaxed/simple;
+	bh=b4Z74NuZYX02vUEEbDNIZ6r046XXi26X/l8LNz8RVaw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=VOuO1xuk0KP+suxfQDHNDWxn0e6FgVmkhoTyh8+fJ+duGHoD38trPJxSREe8YUfAi27tbeLn3f0jiBYnkO8PeelRbgOKuSLwrqO6vHeGO0U3/Nt1E5QCT+QSuqdx+xoKUhtXfM+L+TG4nzpfc2Yb2dqFl2uJt2Au/ewFHywvXiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jWPYcm8S; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <f5e40d58-c956-4ade-9de8-f88c834772f1@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753047351;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yv081/txZuysT+wxl5AYc5FYJLhLSpKXz8nW3yIQPSA=;
+	b=jWPYcm8Slye/lYknIlX7JFTMaT+kYK12dyKq3PF+UpBroRnHPxLJGqdaCXG/KadGOBUCQR
+	bo56ivB/JavT3l3kmRKAZcIpE0rnWBeFwR285kCjJjR0vSBtPQ9nUiAXf2tLV0AG/uh7AM
+	pMs48w/nOSPhSNpOE+HSy28p5No4kBE=
+Date: Sun, 20 Jul 2025 22:35:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250704-core-cstr-prepare-v1-0-a91524037783@gmail.com> <20250704-core-cstr-prepare-v1-1-a91524037783@gmail.com>
-In-Reply-To: <20250704-core-cstr-prepare-v1-1-a91524037783@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sun, 20 Jul 2025 23:24:54 +0200
-X-Gm-Features: Ac12FXxNjw8Q4g3oEBeaU3nmS0KVSD6HWujMXOZAqRuJ_29r1bVUJEDsypVG_d0
-Message-ID: <CANiq72mjiBK+DE-NOx1p+wWuZpnK=aPtgnMUUEzig+4jHZzemA@mail.gmail.com>
-Subject: Re: [PATCH 1/6] rust: kernel: remove `fmt!`, fix clippy::uninlined-format-args
-To: Tamir Duberstein <tamird@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [RESEND PATCH net-next] amd-xgbe: Configure and retrieve
+ 'tx-usecs' for Tx coalescing
+To: "Badole, Vishal" <vishal.badole@amd.com>, Shyam-sundar.S-k@amd.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250719072608.4048494-1-Vishal.Badole@amd.com>
+ <509add4e-5dff-4f30-b96b-488919fedb77@linux.dev>
+ <e2ee64c4-4923-4691-bcfd-df9222f2c30b@amd.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <e2ee64c4-4923-4691-bcfd-df9222f2c30b@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Jul 4, 2025 at 10:16=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
- wrote:
->
->  drivers/cpufreq/rcpufreq_dt.rs    |  3 +--
->  drivers/gpu/nova-core/firmware.rs |  5 +++--
->  rust/kernel/opp.rs                |  2 +-
+On 20.07.2025 19:28, Badole, Vishal wrote:
+> 
+> 
+> On 7/19/2025 8:46 PM, Vadim Fedorenko wrote:
+>> On 19.07.2025 08:26, Vishal Badole wrote:
+>>> Ethtool has advanced with additional configurable options, but the
+>>> current driver does not support tx-usecs configuration.
+>>>
+>>> Add support to configure and retrieve 'tx-usecs' using ethtool, which
+>>> specifies the wait time before servicing an interrupt for Tx coalescing.
+>>>
+>>> Signed-off-by: Vishal Badole <Vishal.Badole@amd.com>
+>>> Acked-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+>>> ---
+>>>   drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c | 19 +++++++++++++++++--
+>>>   drivers/net/ethernet/amd/xgbe/xgbe.h         |  1 +
+>>>   2 files changed, 18 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c b/drivers/ net/ 
+>>> ethernet/amd/xgbe/xgbe-ethtool.c
+>>> index 12395428ffe1..362f8623433a 100644
+>>> --- a/drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c
+>>> +++ b/drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c
+>>> @@ -450,6 +450,7 @@ static int xgbe_get_coalesce(struct net_device *netdev,
+>>>       ec->rx_coalesce_usecs = pdata->rx_usecs;
+>>>       ec->rx_max_coalesced_frames = pdata->rx_frames;
+>>> +    ec->tx_coalesce_usecs = pdata->tx_usecs;
+>>>       ec->tx_max_coalesced_frames = pdata->tx_frames;
+>>>       return 0;
+>>> @@ -463,7 +464,7 @@ static int xgbe_set_coalesce(struct net_device *netdev,
+>>>       struct xgbe_prv_data *pdata = netdev_priv(netdev);
+>>>       struct xgbe_hw_if *hw_if = &pdata->hw_if;
+>>>       unsigned int rx_frames, rx_riwt, rx_usecs;
+>>> -    unsigned int tx_frames;
+>>> +    unsigned int tx_frames, tx_usecs;
+>>>       rx_riwt = hw_if->usec_to_riwt(pdata, ec->rx_coalesce_usecs);
+>>>       rx_usecs = ec->rx_coalesce_usecs;
+>>> @@ -485,9 +486,22 @@ static int xgbe_set_coalesce(struct net_device *netdev,
+>>>           return -EINVAL;
+>>>       }
+>>> +    tx_usecs = ec->tx_coalesce_usecs;
+>>>       tx_frames = ec->tx_max_coalesced_frames;
+>>> +    /* Check if both tx_usecs and tx_frames are set to 0 simultaneously */
+>>> +    if (!tx_usecs && !tx_frames) {
+>>> +        netdev_err(netdev,
+>>> +               "tx_usecs and tx_frames must not be 0 together\n");
+>>> +        return -EINVAL;
+>>> +    }
+>>> +
+>>>       /* Check the bounds of values for Tx */
+>>> +    if (tx_usecs > XGMAC_MAX_COAL_TX_TICK) {
+>>> +        netdev_err(netdev, "tx-usecs is limited to %d usec\n",
+>>> +               XGMAC_MAX_COAL_TX_TICK);
+>>> +        return -EINVAL;
+>>> +    }
+>>>       if (tx_frames > pdata->tx_desc_count) {
+>>>           netdev_err(netdev, "tx-frames is limited to %d frames\n",
+>>>                  pdata->tx_desc_count);
+>>> @@ -499,6 +513,7 @@ static int xgbe_set_coalesce(struct net_device *netdev,
+>>>       pdata->rx_frames = rx_frames;
+>>>       hw_if->config_rx_coalesce(pdata);
+>>> +    pdata->tx_usecs = tx_usecs;
+>>>       pdata->tx_frames = tx_frames;
+>>>       hw_if->config_tx_coalesce(pdata);
+>>>
+>>
+>> I'm not quite sure, but it looks like it never works. config_tx_coalesce()
+>> callback equals to xgbe_config_tx_coalesce() which is implemented as:
+>>
+>> static int xgbe_config_tx_coalesce(struct xgbe_prv_data *pdata)
+>> {
+>>          return 0;
+>> }
+>>
+>> How is it expected to change anything from HW side?
+>>
+> 
+> The code analysis reveals that pdata, a pointer to xgbe_prv_data, is obtained 
+> via netdev_priv(netdev). The tx_usecs member of the xgbe_prv_data structure is 
+> then updated with the user-specified value through this pdata pointer. This 
+> updated tx_usecs value propagates throughout the codebase wherever TX coalescing 
+> functionality is referenced.
+> 
+> We have validated this behavior through log analysis and transmission 
+> timestamps, confirming the parameter updates are taking effect.
+> 
+> Since this is a legacy driver implementation where xgbe_config_tx_coalesce() 
+> currently lacks actual hardware configuration logic for TX coalescing 
+> parameters, we plan to modernize the xgbe driver and eliminate redundant code 
+> segments in future releases.
 
-Danilo, Viresh: I assume you are OK with this, but let me know
-otherwise, thanks!
+Effectively, when the user asks for the coalescing configuration, the driver 
+reports values which are not really HW-configured values. At the same time
+driver reports correct configuration even though the configuration is not
+actually supported by the driver and it doesn't configure HW. This sounds odd.
 
-Cheers,
-Miguel
+Why didn't you start with the actual implementation instead of doing this
+useless copying of values?
+
+
+> 
+>>> @@ -830,7 +845,7 @@ static int xgbe_set_channels(struct net_device *netdev,
+>>>   }
+>>>   static const struct ethtool_ops xgbe_ethtool_ops = {
+>>> -    .supported_coalesce_params = ETHTOOL_COALESCE_RX_USECS |
+>>> +    .supported_coalesce_params = ETHTOOL_COALESCE_USECS |
+>>>                        ETHTOOL_COALESCE_MAX_FRAMES,
+>>>       .get_drvinfo = xgbe_get_drvinfo,
+>>>       .get_msglevel = xgbe_get_msglevel,
+>>> diff --git a/drivers/net/ethernet/amd/xgbe/xgbe.h b/drivers/net/ ethernet/ 
+>>> amd/xgbe/xgbe.h
+>>> index 42fa4f84ff01..e330ae9ea685 100755
+>>> --- a/drivers/net/ethernet/amd/xgbe/xgbe.h
+>>> +++ b/drivers/net/ethernet/amd/xgbe/xgbe.h
+>>> @@ -272,6 +272,7 @@
+>>>   /* Default coalescing parameters */
+>>>   #define XGMAC_INIT_DMA_TX_USECS        1000
+>>>   #define XGMAC_INIT_DMA_TX_FRAMES    25
+>>> +#define XGMAC_MAX_COAL_TX_TICK        100000
+>>>   #define XGMAC_MAX_DMA_RIWT        0xff
+>>>   #define XGMAC_INIT_DMA_RX_USECS        30
+>>
+> 
+
 
