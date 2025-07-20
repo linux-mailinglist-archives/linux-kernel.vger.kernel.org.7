@@ -1,53 +1,68 @@
-Return-Path: <linux-kernel+bounces-738051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEB23B0B3AA
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 08:04:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81940B0B3AE
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 08:05:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D2943B255F
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 06:04:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BAE97A7241
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 06:04:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D24419E7D0;
-	Sun, 20 Jul 2025 06:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AEzqdiX6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43E7C1B4233;
+	Sun, 20 Jul 2025 06:05:36 +0000 (UTC)
+Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D19876034;
-	Sun, 20 Jul 2025 06:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C788B76034;
+	Sun, 20 Jul 2025 06:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752991475; cv=none; b=rE+Wu+U4dqffL3VqW1j7QA8+Egtu36WQmebNPlBv8dcl+AfwaaAq3WziqhWIx/8v42PQMQNauRcDZt/YrDupmC+NgvkPMUZMvrn5qxay3xPzE9O3frlvMLgcNA6y8jL+Kx5gsX9EPZ9+iDZWETGahaaIGfVXcJ0ZWtlOYeyTIgU=
+	t=1752991535; cv=none; b=M0vpUFVN9ZTozj0SpkqQamF4fyh13RLT8b6CxHdiMt7urO21A0k3JG1H1UVcMVzxIjwI3AE60SKbGcXB3xZN7aLQ+LdNKJZ+k0xddezN1eJvFAQ2eOMfoUXM/bX1yY3lIZtcqwgVR1/sqvmsakSarPbK95aXSlqKMfTV6J5++NM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752991475; c=relaxed/simple;
-	bh=An5k17U29r42lEnUbQ1RUElgiWJiY418MpStyGNPHHs=;
+	s=arc-20240116; t=1752991535; c=relaxed/simple;
+	bh=EF/Qb2UN4gBLnYp6FUujHmxBrvle6XRCikDDgnkVLDo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZWM9vtpkxb6SncuVZfboucHheEBjh97ldVEQiA4bxfjTqfhc1W4ntCCWICYkNYx/njX0QQD+ddJ6EiYg411b8Hq9xBxI3u7z/8WPrsooKjLMrUePAMmDes8105wace1QdtBh83v6C3LHYSziztfqjzL5QIQ3AdV8fvM/F1x+hjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AEzqdiX6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F10BBC4CEE7;
-	Sun, 20 Jul 2025 06:04:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752991475;
-	bh=An5k17U29r42lEnUbQ1RUElgiWJiY418MpStyGNPHHs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AEzqdiX6gdkruyVUJVxRX3yMN9q8VsmeQ4dhsFv2814b5GsxZNIZ/AJ9wgDhJ1x6Z
-	 Ag6s5Q2Hk1ldVgDTYWSICQiisgjYulKcjG6lMSxJkKxdYinCyQ/NygGMuGLkqXibZm
-	 /n8BGdzOPFLZKizfJD2Ln2TbblcfYrxi9ugf0GTdACYWxbutDcOd+JntJWo0/2Wgiy
-	 H/9JhooRySRyid1k2L4pI5DidOIYXdVOHGkt6q8rlaQmcy4lk+2dCvOFRBazFwiSIy
-	 p/aOkngwVNrXakLUDw3xlyNSYLRqIVZx10RzA3wsTZEf05iT8k3A5MQX9dpC241/ZJ
-	 GY/2Ct0dqWGzA==
-Date: Sat, 19 Jul 2025 23:04:34 -0700
-From: Kees Cook <kees@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the kspp tree
-Message-ID: <202507192304.01CC58A0F@keescook>
-References: <20250718204039.5a3c3bfa@canb.auug.org.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=llGxCx4EubrCpbn+FfQhxay/ULyFHBI6J9dLOCcVoDhhvLWcwWoN26kfrgWEdCXCd6jIse2gQQUAJurm3Tcb7lct3GEdJUcwZgF0LGsSmXiPB3KbxIxRvDZo6/mvvtZviqy5vn1Tjowhnr6oYEBirBdZp7ecVaIH/NpN6ARqYs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout2.hostsharing.net (Postfix) with ESMTPS id 27A9320091AE;
+	Sun, 20 Jul 2025 08:05:25 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 11943CC674; Sun, 20 Jul 2025 08:05:25 +0200 (CEST)
+Date: Sun, 20 Jul 2025 08:05:25 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Mario Limonciello <superm1@kernel.org>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, David Airlie <airlied@gmail.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:INTEL IOMMU (VT-d)" <iommu@lists.linux.dev>,
+	"open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+	"open list:VFIO DRIVER" <kvm@vger.kernel.org>,
+	"open list:SOUND" <linux-sound@vger.kernel.org>,
+	Daniel Dadap <ddadap@nvidia.com>
+Subject: Re: [PATCH v9 9/9] PCI: Add a new 'boot_display' attribute
+Message-ID: <aHyHJZwIgEya_yfn@wunner.de>
+References: <20250718173648.GA2704349@bhelgaas>
+ <c7c8b0bf-8602-4030-acbe-ac56678b633c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,22 +71,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250718204039.5a3c3bfa@canb.auug.org.au>
+In-Reply-To: <c7c8b0bf-8602-4030-acbe-ac56678b633c@kernel.org>
 
-On Fri, Jul 18, 2025 at 08:40:39PM +1000, Stephen Rothwell wrote:
-> Hi all,
+On Fri, Jul 18, 2025 at 12:44:11PM -0500, Mario Limonciello wrote:
+> On 7/18/2025 12:36 PM, Bjorn Helgaas wrote:
+> > On Fri, Jul 18, 2025 at 12:29:05PM -0500, Mario Limonciello wrote:
+> > > On 7/18/2025 12:25 PM, Bjorn Helgaas wrote:
+> > > > In addition to Mani's question about whether /sys/bus/pci/ is the
+> > > > right place for this (which is a very good question), it's also been
+> > > > pointed out to me that we've been trying to get rid of
+> > > > pci_create_sysfs_dev_files() for years.
+> > > > 
+> > > > If it's possible to make this a static attribute that would be much,
+> > > > much cleaner.
+> > > 
+> > > Right - I tried to do this, but the problem is at the time the PCI device is
+> > > created the information needed to make the judgement isn't ready.  The
+> > > options end up being:
+> > > * a sysfs file for every display device with 0/1
+> > > * a sysfs file that is not accurate until later in the boot
+> > 
+> > What's missing?  The specifics might be helpful if someone has another
+> > crack at getting rid of pci_create_sysfs_dev_files() in the future.
 > 
-> After merging the kspp tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
+> The underlying SCREEN_INFO code tries to walk through all the PCI devices in
+> a loop, but at the time all the devices are walked the memory regions
+> associated with the device weren't populated.
 > 
-> ERROR: modpost: missing MODULE_LICENSE() in lib/tests/seq_buf_kunit.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/tests/seq_buf_kunit.o
+> So my earlier hack was to re-run the screen info check, and it was awful.
 
-Thanks for noticing this! I'm not sure why my local builds missed it.
-Now fixed.
+Well have you explored the sysfs_update_group() approach you mentioned
+earlier?
 
--Kees
+https://lore.kernel.org/r/5cc01163-1feb-4a18-8060-27f4da39b2e4@kernel.org/
 
--- 
-Kees Cook
+Thanks,
+
+Lukas
 
