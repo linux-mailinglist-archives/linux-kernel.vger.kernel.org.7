@@ -1,77 +1,143 @@
-Return-Path: <linux-kernel+bounces-738360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB02FB0B778
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 19:48:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA5B3B0B77A
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 19:49:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ADF61899F72
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 17:48:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22DC13AE0EE
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 17:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A55B21CA14;
-	Sun, 20 Jul 2025 17:47:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CEF1CA81;
+	Sun, 20 Jul 2025 17:49:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kCz8s7Kk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="n7/Hit4k"
+Received: from mx4.wp.pl (mx4.wp.pl [212.77.101.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E541CA81;
-	Sun, 20 Jul 2025 17:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE8B74C08
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 17:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753033673; cv=none; b=brTk9qBDfUDvC6hKTyZAULwo8dLhrILWT7TA0ei2FZ5Y0bdeTu9TymkkrFp4AsXFmfKrhdkuzGWfuc+wMwV+FxS3+ON9YXFcuDBQJoEakEy25NMQi+BDwuyKPk3AiP2vOqd7Uv9zYYHTGogHaYzLdVrumNhLdEyJGQb6eThXu24=
+	t=1753033751; cv=none; b=fQlnv1IElkQgPOpdwBAK7o0D89NfzGpLid/pUDvQOAh/GSCcnlYovej7d15fXcuvsMGoqmHlGAGBfS3ezVdnSDPOsc819Lm+QX+RT8sypHblnCyZ/IvBXU/Q3I9mN0VPJZpjT4UUvkhN+e5lhs5CgqN/l1CJq6PaRWse8j6APsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753033673; c=relaxed/simple;
-	bh=04mb5xS3cF3aZTiHfd2DG0BnChI/bOghUjbkJNj2gv4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=YbQwGza555XF86nQq7ezYg2jMabODTTOSObqTwsAIcU5nfAktJYePjQtCUPWKU8rbGbkcq77locAZFSmY7NAwV2Leqnln5CIpcqDK5iUlgKGuDiCAKsW2GZnt/2+gWwVYLNTWRaPcwjEpBD7znzQB2vAVEeO7KBPOdqm8OBIqgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kCz8s7Kk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49E93C4CEE7;
-	Sun, 20 Jul 2025 17:47:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753033672;
-	bh=04mb5xS3cF3aZTiHfd2DG0BnChI/bOghUjbkJNj2gv4=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=kCz8s7Kk8q8ON6QABEaRKWJCLOuq8JemkDhhm8DCZ5Y+kuoqAqXhW8R/aAaLOuVZ9
-	 gL5Ybkt/eomyw+Hj8ZrBYYW2tUlN+l3sMUKaj+h8NcYr45c+Aiq3gSRunAnQ0gh/cy
-	 28zfQfWjqohOGGAKVCn0VzOFIQI6x35eJUNYvKy764wUTERnWRmza8+5pqT07NZuo6
-	 nxNJIzWO27gVPIhFLxK7r2tcR0GWfzQmP8vV5Q3paXHI/U4tu+dmE2WI/xbJYH/DxI
-	 Lh7lIZnl+0qwX7tL5kK1mwgEdvqUl2PCRRc+CsbJJzlXXT2UGOd6l3SDTm+CLjdYAT
-	 G/Zdtj0mnwXxw==
+	s=arc-20240116; t=1753033751; c=relaxed/simple;
+	bh=KjZzS8XBgTZPPOnkKB3OMbLXCrHeBc/DuwjqhPGv1yk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=eYs1Rkfu0RqxbF5Vxj8p4+8Rf45mT6eCQR1HzdNCeLMzEN1s0URXrWx+9xrIF+LWwHDTTcLRD1xcDOuS7TeSl4qC3Z/pBs43msiYT5jZwz7iFPzR9a9KURP1XCNNSLHc6Yn8/7jyHqu7CJdPAUQytXz6ZIj1eBEbaF6OyjySkGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=n7/Hit4k; arc=none smtp.client-ip=212.77.101.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
+Received: (wp-smtpd smtp.wp.pl 39467 invoked from network); 20 Jul 2025 19:49:06 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
+          t=1753033746; bh=ZoV8pDRAyWULEp5ZRBitKk63UkguBuNR7jm0lOnkgcM=;
+          h=From:To:Cc:Subject;
+          b=n7/Hit4kzTHWgHPbjsYJTjEH9Qxe0xVT4tOZE6b7w738YiHZ8vNvtQVgSx6K8DlAr
+           Jx8p4aia2GHBhn+Xs9kefJjss58UlcEBvkYeaqzUnyLI6PgU6zAj3WviaCSE1H5HfP
+           1OCxNR6hjQANdcbH8XE4DZEN+3rsEWJnE+0RYFV/GyCFLSlGX1edHsrwaXPVytKP9y
+           EDb/IbCEMnqoDS7lPa3CV+N02bpgx1hF/gAVh9Spbu6Y/jkv5a7yuMfx/1MXs47P7x
+           9kLLjZodNlQz5rrPZprJYfLInFMhzuhQb/Qsiwxdg+Tkoq4mmxVt/xQB3Cuuf5JFMA
+           R4WXK7+RZ3Evw==
+Received: from 83.24.129.157.ipv4.supernova.orange.pl (HELO localhost.localdomain) (olek2@wp.pl@[83.24.129.157])
+          (envelope-sender <olek2@wp.pl>)
+          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <herbert@gondor.apana.org.au>; 20 Jul 2025 19:49:06 +0200
+From: Aleksander Jan Bajkowski <olek2@wp.pl>
+To: herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	atenart@kernel.org,
+	linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Cc: Aleksander Jan Bajkowski <olek2@wp.pl>,
+	Sam Shih <sam.shih@mediatek.com>,
+	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>
+Subject: [PATCH 1/2] dt-bindings: crypto: inside-secure,safexcel: make eip/mem IRQ optional
+Date: Sun, 20 Jul 2025 19:49:02 +0200
+Message-Id: <20250720174903.1321533-1-olek2@wp.pl>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Sun, 20 Jul 2025 19:47:48 +0200
-Message-Id: <DBH2KLK2GFHS.3FJY71WIOOOGJ@kernel.org>
-Subject: Re: [PATCH] rust: io: mem: enable IoRequest doc-tests
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
-To: "Daniel Almeida" <daniel.almeida@collabora.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250717-topics-tyr-platform_iomem-v15-0-beca780b77e3@collabora.com> <20250717-topics-tyr-platform_iomem-v15-2-beca780b77e3@collabora.com> <DBG2XI0UZ3B5.I9KLFJUYQUMC@kernel.org> <DBG39YMN2TX6.1VR4PEQSI8PSG@kernel.org>
-In-Reply-To: <DBG39YMN2TX6.1VR4PEQSI8PSG@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-WP-MailID: 1a3ebb6bead59a00b80590b1222a87ba
+X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
+X-WP-SPAM: NO 0000008 [ATvR]                               
 
-On Sat Jul 19, 2025 at 4:08 PM CEST, Danilo Krummrich wrote:
-> When introduced, the IoRequest doc-tests did depend on infrastructure
-> added in subsequent patches, hence they temporarily had to be disabled.
->
-> Now that we have the corresponding platform device infrastructure,
-> enable them.
->
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+Binding for this cryptographic engine defined 6 interrupts since its
+beginning. It seems however only 4 rings IRQs are really required for
+operating this hardware. Linux driver doesn't use "eip" or "mem" IRQs
+and it isn't clear if they are always available (MT7986 devicetree
+doesn't specify them).
 
-Applied to driver-core-testing, thanks!
+The hardware reference manual [1] for the EIP-197 IP core only defines
+ring interrupts and a global interrupt ("eip"). Ring interrupts can
+optionaly be routed via the main interrupt. Role of the "mem" interrupt
+is unknown.
+
+This deals with:
+arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dtb: crypto@10320000: interrupts: [[0, 116, 4], [0, 117, 4], [0, 118, 4], [0, 119, 4]] is too short
+        from schema $id: http://devicetree.org/schemas/crypto/inside-secure,safexcel.yaml#
+arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dtb: crypto@10320000: interrupt-names: ['ring0', 'ring1', 'ring2', 'ring3'] is too short
+        from schema $id: http://devicetree.org/schemas/crypto/inside-secure,safexcel.yaml#
+
+[1] https://www.scribd.com/document/665924595/Security-IP-197-HW3-4-Hardware-Reference-Manual-RevA
+Cc: Antoine Tenart <atenart@kernel.org>
+Cc: Sam Shih <sam.shih@mediatek.com>
+CC: Rafał Miłecki <rafal@milecki.pl>
+Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
+---
+ .../crypto/inside-secure,safexcel.yaml        | 21 ++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/crypto/inside-secure,safexcel.yaml b/Documentation/devicetree/bindings/crypto/inside-secure,safexcel.yaml
+index 343e2d04c797..97af96bfe5f6 100644
+--- a/Documentation/devicetree/bindings/crypto/inside-secure,safexcel.yaml
++++ b/Documentation/devicetree/bindings/crypto/inside-secure,safexcel.yaml
+@@ -26,16 +26,23 @@ properties:
+     maxItems: 1
+ 
+   interrupts:
++    minItems: 4
+     maxItems: 6
+ 
+   interrupt-names:
+-    items:
+-      - const: ring0
+-      - const: ring1
+-      - const: ring2
+-      - const: ring3
+-      - const: eip
+-      - const: mem
++    oneOf:
++      - items:
++          - const: ring0
++          - const: ring1
++          - const: ring2
++          - const: ring3
++          - const: eip
++          - const: mem
++      - items:
++          - const: ring0
++          - const: ring1
++          - const: ring2
++          - const: ring3
+ 
+   clocks:
+     minItems: 1
+-- 
+2.39.5
+
 
