@@ -1,93 +1,168 @@
-Return-Path: <linux-kernel+bounces-738455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6A3BB0B8B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 00:28:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5281BB0B8B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 00:29:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB61D177E6A
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 22:28:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B64FF3B3457
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 22:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC2F22CBE9;
-	Sun, 20 Jul 2025 22:28:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C25A1A2547;
+	Sun, 20 Jul 2025 22:29:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N/X8Z+9Y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="QZI4e7QO"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EA91A2547;
-	Sun, 20 Jul 2025 22:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BFBB22A4E4;
+	Sun, 20 Jul 2025 22:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753050527; cv=none; b=AqEBpfaQxVvIDGa4fPWqAa8Cz/xaSd3HdFOu8NmeFnsdzscWS51MOAI8O/AIyKUKUqnILZ4UbOsRm3JICKfqbosGrtfL4GZABhUWYZbsgtW8nz9UoSW3odkpIJwKF8DWIavc0XBF+N2hFtd+Qvx23/mtQ29ODRdz0qvOcQPqGFo=
+	t=1753050554; cv=none; b=Hi/Px4LW/6wrJ8B0UwS84FSWr/sOPJjoA6ZXamslBaDMs4zNS4sA6wmCrkBVj8ZQUBena7Qy2BH93s3yz05fpwSV3D3QvjOdJWWFHSFo+FocNII2H0fH9MGz5wpC9pO+XHNJZLijJQNnqDYasKBKkRTeS6f0m/bebctRhQnxvzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753050527; c=relaxed/simple;
-	bh=1eoLPf6ynvuzjLrZJv6wNDurB8M+vqGVwIM06bZvBgU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LVtWbtzy8q2VUwZsPX9XoQ3HGMsm0MgNlAjq/Yk6b724/CMXrxs3mRSUWLGlXqMP3gpacCS2nHcPweUfSvZ+YSYLAzeN2tXCpYNnRALGxq9loUcPZwAXHVSoJ3YlCAnbWBxJavn7kNDl9Ui/wCO3scT9S9rLk2kHEFmh/OFEt8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N/X8Z+9Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3794FC4CEE7;
-	Sun, 20 Jul 2025 22:28:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753050525;
-	bh=1eoLPf6ynvuzjLrZJv6wNDurB8M+vqGVwIM06bZvBgU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N/X8Z+9YU7yOfD4sLNrH1icV03ppZ1qiltTr4YWrBRA6cbWFqhBnhJ1ouomdtf/68
-	 J3AkB2bwDj7+5ZfajSrPtECGyrAyLL82lzFJmFuegcj1vjPWhcEDEoq667sLF1Ey6l
-	 bz1pmbyEKV3m+UoQIgKMLgiwR69HjxDgcgRQd3MBsag/pBOW06BjLCZC8oY4vzi3dX
-	 IsrJnl2OBMDBh3/r5Fva+hnCugtygqxrRUf4uoNAxGsVD5TWfNxM8tL4TJyJupgX95
-	 AEZ46LbXjRIJTdMrhIEbktYGYe+6uPV7vXs/ZJWPefqbVoHxMAYvo083mT8UmorEvv
-	 johHjqjSDnaNA==
-Date: Sun, 20 Jul 2025 17:28:44 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Aaron Kling <webgeek1234@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-	Mathias Nyman <mathias.nyman@intel.com>, devicetree@vger.kernel.org,
-	linux-usb@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>,
-	linux-clk@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	linux-phy@lists.infradead.org,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lukasz Luba <lukasz.luba@arm.com>, linux-tegra@vger.kernel.org,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
-	JC Kuo <jckuo@nvidia.com>, linux-kernel@vger.kernel.org,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Nagarjuna Kristam <nkristam@nvidia.com>
-Subject: Re: [PATCH 07/17] dt-bindings: clock: tegra124-dfll: Document
- Tegra210B01
-Message-ID: <175305052408.2895244.11019731313205948430.robh@kernel.org>
-References: <20250714-t210b01-v1-0-e3f5f7de5dce@gmail.com>
- <20250714-t210b01-v1-7-e3f5f7de5dce@gmail.com>
+	s=arc-20240116; t=1753050554; c=relaxed/simple;
+	bh=4fi13IptO9I7IQ2mQDhfsp+T+Sr6cBdKqgB2uRsOv3U=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=IX/Ymz78vYaRUPOVXfY2qmXx4vBNbXy4ACTGEo6pfmlMXdoCdvyBLz6R3uOAmPouOAPbmxqToiaLNeZtmQ9sQusqaWMzpiTsCFMyqSp2BdnwJfIgL6M98+s4cb445Vnn7KlqDpYhzc1D2Vo3Nq9KTKAKz/GE5qO9rylYffxb4gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=QZI4e7QO; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=MArfY4QX9yzCgxszYchqKjhK20OrChAEgRapbpg4+Xk=; b=QZI4e7QOJohnml8io0i/lXMhkM
+	E3RMaWpJnFOJH5/xGnKd44q0i2H8YVl+7o0Fura2FW8K+n0I6zTEHCJWhJOS6YX343+hxOw0AlQSB
+	HoxF5FRn5beIGx9c+smdCkbIeD2cy8lNWOBIaBXyoy/oQw8iw+KYr6KRHjl3wqh5ISp9YMW6kP5H5
+	dGC6VbMzEp2tM5iKsZBLk1R7LULuoz5JDWeBNwE5m9PdLq6HwoSwBbItCwGeY6aRzqPIdfwGFI/Y6
+	ckb22ataEnSfFD2i5zpjPoF59OI9rkahopP5SIjIKVunecqcRt5JQpwLuh6YodsM5etyi50IrtPY0
+	G0HhVVfg==;
+Received: from [187.57.76.50] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1udcWo-001Sqt-A2; Mon, 21 Jul 2025 00:29:06 +0200
+From: =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Subject: [PATCH v2 00/15] selftests/futex: Refactor tests to use
+ kselftest_harness.h
+Date: Sun, 20 Jul 2025 19:28:58 -0300
+Message-Id: <20250720-tonyk-robust_test_cleanup-v2-0-1f9bcb5b7294@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250714-t210b01-v1-7-e3f5f7de5dce@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAKptfWgC/32NQQqDMBREryJ/3ZQkRku76j2KlDT+6Kc2kSRKR
+ bx7U6HbbgbewLxZIWIgjHApVgg4UyTvMshDAabXrkNGbWaQXFb8xEuWvFueLPjHFNM9YQ4zoHb
+ TyFphS8Xrsq7aM+T9GNDSe3ffmsw9xeTDsl/N4tv+rOqPdRaMM8OtVVYqo1BcqdMD6aPxL2i2b
+ fsAKGu0X8MAAAA=
+X-Change-ID: 20250703-tonyk-robust_test_cleanup-d1f3406365d9
+To: Shuah Khan <shuah@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+ Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, 
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-dev@igalia.com, 
+ =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+X-Mailer: b4 0.14.2
 
+This patch series refactors all futex selftests to use
+kselftest_harness.h instead of futex's logging.h, as discussed here [1].
 
-On Mon, 14 Jul 2025 23:02:50 -0500, Aaron Kling wrote:
-> Add Tegra210B01 support for DFLL clock.
-> 
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> ---
->  Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
+This allows to remove a lot of boilerplate code and to simplify some
+parts of the test logic, mainly when the test needs to exit early. The
+result of this is more than 500 lines removed from
+tools/testing/selftests/futex/. Also, this enables new tests to use
+kselftest.h features like ASSERT_s and such.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+There are some caveats around this refactor:
+ - logging.h had verbosity levels, while kselftest_harness.h doesn't. I
+   created a new print function called ksft_print_dbg_msg() that prints
+   the message if the user uses the -d flag, so now there's an
+   equivalent of this feature.
+ - futex_requeue_pi test accepted command line arguments to be used as
+   test parameters (e.g. ./futex_requeue_pi -b -l -t 500000). This
+   doesn't work with kselftest_harness.h because there's no
+   straightforward way to send command line arguments to the test.
+   I used FIXTURE_VARIANT() to achieve the same result, but now the
+   parameters live inside of the test file, instead of on
+   functional/run.sh. This increased a little bit the number of test
+   cases for futex_requeue_pi, from 22 to 24.
+ - test_harness_run() calls mmap(MAP_SHARED) before running the test and
+   this has caused a side effect on test futex_numa_mpol.c. This test
+   also calls mmap() and then try to access an address out of
+   boundaries of this mapped memory for a "Memory out of range" subtest,
+   where the kernel should return -EACCESS. After the refactor, the test
+   address might be fall inside the first memory mapped region, thus
+   being a valid address and succeeding the syscall, making the test
+   fail. To fix that, I created a small "buffer zone" with
+   mmap(PROT_NONE) between both mmaps.
+
+I have compared the results of run.sh before and after this patchset and
+didn't find any regression from the test results.
+
+Thanks,
+	André
+
+[1] https://lore.kernel.org/lkml/87ecv6p364.ffs@tglx/
+
+---
+Changes in v2:
+- Rebased on top of tip/master
+- Dropped priv_hash global test variant now that this feature was
+  dropped
+- Added include <stdbool.h> in the first patch
+- Link to v1: https://lore.kernel.org/r/20250704-tonyk-robust_test_cleanup-v1-0-c0ff4f24c4e1@igalia.com
+
+---
+André Almeida (15):
+      selftests: kselftest: Create ksft_print_dbg_msg()
+      selftests/futex: Refactor futex_requeue_pi with kselftest_harness.h
+      selftests/futex: Refactor futex_requeue_pi_mismatched_ops with kselftest_harness.h
+      selftests/futex: Refactor futex_requeue_pi_signal_restart with kselftest_harness.h
+      selftests/futex: Refactor futex_wait_timeout with kselftest_harness.h
+      selftests/futex: Refactor futex_wait_wouldblock with kselftest_harness.h
+      selftests/futex: Refactor futex_wait_unitialized_heap with kselftest_harness.h
+      selftests/futex: Refactor futex_wait_private_mapped_file with kselftest_harness.h
+      selftests/futex: Refactor futex_wait with kselftest_harness.h
+      selftests/futex: Refactor futex_requeue with kselftest_harness.h
+      selftests/futex: Refactor futex_waitv with kselftest_harness.h
+      selftests/futex: Refactor futex_priv_hash with kselftest_harness.h
+      selftests/futex: Refactor futex_numa_mpol with kselftest_harness.h
+      selftests/futex: Drop logging.h include from futex_numa
+      selftests/futex: Remove logging.h file
+
+ tools/testing/selftests/futex/functional/Makefile  |   3 +-
+ .../selftests/futex/functional/futex_numa.c        |   3 +-
+ .../selftests/futex/functional/futex_numa_mpol.c   |  57 ++---
+ .../selftests/futex/functional/futex_priv_hash.c   |  49 +---
+ .../selftests/futex/functional/futex_requeue.c     |  76 ++----
+ .../selftests/futex/functional/futex_requeue_pi.c  | 261 ++++++++++-----------
+ .../functional/futex_requeue_pi_mismatched_ops.c   |  80 ++-----
+ .../functional/futex_requeue_pi_signal_restart.c   | 129 +++-------
+ .../selftests/futex/functional/futex_wait.c        | 103 +++-----
+ .../functional/futex_wait_private_mapped_file.c    |  83 ++-----
+ .../futex/functional/futex_wait_timeout.c          | 139 +++++------
+ .../functional/futex_wait_uninitialized_heap.c     |  76 ++----
+ .../futex/functional/futex_wait_wouldblock.c       |  75 ++----
+ .../selftests/futex/functional/futex_waitv.c       |  98 ++++----
+ tools/testing/selftests/futex/functional/run.sh    |  62 +----
+ tools/testing/selftests/futex/include/logging.h    | 148 ------------
+ tools/testing/selftests/kselftest.h                |  14 ++
+ tools/testing/selftests/kselftest_harness.h        |  13 +-
+ 18 files changed, 465 insertions(+), 1004 deletions(-)
+---
+base-commit: ed0272f0675f31642c3d445a596b544de9db405b
+change-id: 20250703-tonyk-robust_test_cleanup-d1f3406365d9
+
+Best regards,
+-- 
+André Almeida <andrealmeid@igalia.com>
 
 
