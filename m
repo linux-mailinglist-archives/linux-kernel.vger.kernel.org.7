@@ -1,208 +1,94 @@
-Return-Path: <linux-kernel+bounces-738373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3EDAB0B79F
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 20:24:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B19B4B0B7A4
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 20:27:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F5F03B5833
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 18:24:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AE7D1897A59
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 18:27:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C9B22256C;
-	Sun, 20 Jul 2025 18:24:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A8B222585;
+	Sun, 20 Jul 2025 18:27:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="sMJtuKPI"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HRQHuVxZ"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9B0382
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 18:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F2D382
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 18:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753035887; cv=none; b=iyE0LHqWMY1ZN15lohBn5Ui8sZiIh8mySMZrq9SQh1EVgz/kk2nzZZ37RE3ACF+aHB/TvQdjDrKqwyvDYZQ7kgYhM7c5AwOxXGm+E/rw7qjQou5RPtmqJNBh7IZIF3pR8+bgxtmuLUPXIN9X+lBse1bfK3W7WlCqh0L9y3nS3p0=
+	t=1753036046; cv=none; b=T1xev6hD0iAHrCLEF56eVyoq5oswb3foO7DTFLIhfXtsqnJ7+J5C+GfIZAzifzOIoJaskUbUD5QpdnYZyt4D0JgYvFbBxz4IsxmmvKqpJul7jumTsLGQeVWxC95zMbq93iMEoPurFOdxVVggDzOGdsC22bjzqm6kyJM2rY6MP2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753035887; c=relaxed/simple;
-	bh=ydpW8Njp3KSqwOIoOimXi6XR1dAniUYkHWCgNvJxom4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=LykjnX0eeJ+sPWmZnL+7uW6UJZwO798DGZX021ztdOmg3PeEWN/ufNx2FVcNVLMPrBsE7EGMN9r7LhzIh5QVb1r33vxgjC3uGo4AOgDxsxtgyTCFdVEgxA6uOXEvfgxLLLKs9T9/BaSir/fC6NszM4NMYsufibuWqYDxwv3PRiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=sMJtuKPI; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-3135f3511bcso3054483a91.0
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 11:24:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1753035884; x=1753640684; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=lEI6cO57sMy6BOcIlKL2Py4ZX+kLnCSrWclSXITen7c=;
-        b=sMJtuKPI9xvdBLBAYCl7Jxa8z/F3k2wNDsbRNnIe69hhtD0SBIr0rGGtQSsyqVNMeM
-         civhiedLx7IXeM+gYTLuX+Ug14e4U/fpK3g5WRB8V3cG0XjoRbtnf1r+SnctMfX6j8rD
-         Y4DSgAI0pZTbJl0ubWw6nGGPEYyZQYeY2yZbp3Wl5oWAUU6oibc6PHGGGqUPY+mhZkoK
-         NJnMIMyX1FfOMpJqw890BLPPD7ECT4Qgwqf5K8lT8Ei31YfN7VUNPLMyuGNv3rLyCcLs
-         lwVt/CgsXforiHNeFiF0KWVd0fqTsXVBODf7Z4Jv7EP4g63KPKI0IeEFglD8YBKGK95S
-         Te0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753035884; x=1753640684;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lEI6cO57sMy6BOcIlKL2Py4ZX+kLnCSrWclSXITen7c=;
-        b=EHKrwmysX5/TDuTY6q64sdRUweLySZcertVAZxA0WsUh3JCwe0ocRH21y+09qLc5KB
-         phs/eR6Y7xExj6p/yYTd7UoJCT5OQvVLxJJ8sSyjYLP/LzmYtE0loGMysq5UUhTIOzUa
-         cbTSo2W54DublO6oxNf2ISm8qcJOPJExNkg58zQH3ELAejFLWMB9eW8jjQQAAdoCjjwn
-         Zwk7WnncMSUoukkl0ETJzXlj/P54+gd19XNN9ztclvRFFfa94oxz1Gz5qo0uoU8yNNO4
-         CP01LuoolzP3cBEEc4BCn2iY/vskiDP1hrvbMWfciQxHmeVvd/YB7tfuJxHcjdEBbng6
-         7Ulw==
-X-Forwarded-Encrypted: i=1; AJvYcCVwnGl0QUeA4JoH++Rt8Hp4tQkuV4EWBw6rZHa9vcwVbKxoOQ7A2cfHQxsQOgGY7S2na27LVcQLFERFNMQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxk8pKKb8wL7amCPt+y6JwdUOdJIB4O9SM4veLkVZ8vJUJy0Wzu
-	KN0zIeFtnuhhwDRvh/V3ylsigJqv6ri1ARumwxwLzo1XbMy7J8PHFA0bzLhPZA+4lAc=
-X-Gm-Gg: ASbGnctgGmzq58PzywQ6nzu/cvVnVUWbdq1yltZRsjsfghJ7ce2UbWp+EFSwnuijs1k
-	8Fs/maJ04vh1yM4msMmWYV9fvTGi1aIYnKHbAKqZE68P+QE1DegxgaqzajfSJnyJZrw8yK24GZP
-	1w3UKiWX26iT7fsFk5sYoMuW+I1VONEdLZ2pOSzq7Ymi3azRnV24WllEvgZxIti0rZNeF2gIeaS
-	gtc5mxUP+n3/9oWcf6ScXR7LoVncoKMFWZUjwNfT27VP9bQWomAV+C2pAmPoIQw7AZe1mduRWHT
-	PL0eqqyFQXiFRIjioA7bHJF2Jglp2lO4kvA+Zs1yG0YjMKrA+yAdNGLPDP9DoFSy/9G5QiK7Qr4
-	XZVXK9otrxjUw/oGpx+7DFT8=
-X-Google-Smtp-Source: AGHT+IGvTom24Sq+7H1/82K08q2edQFzllo1kw0+BcYsYK3dhApPuYn4X2Oi5MruuLyYT37lLTS58w==
-X-Received: by 2002:a17:90b:4985:b0:312:25dd:1c99 with SMTP id 98e67ed59e1d1-31c9f45e1d0mr25108701a91.19.1753035883625;
-        Sun, 20 Jul 2025 11:24:43 -0700 (PDT)
-Received: from [100.74.100.100] ([12.129.159.196])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31c9f29e44dsm8505407a91.39.2025.07.20.11.24.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 20 Jul 2025 11:24:42 -0700 (PDT)
-Message-ID: <9385a1a6-8c10-4eb5-9ab9-87aaeb6a7766@kernel.dk>
-Date: Sun, 20 Jul 2025 12:24:41 -0600
+	s=arc-20240116; t=1753036046; c=relaxed/simple;
+	bh=X5xqs1ZP4P2RhnBgNzZid0V1n/QQZPwqie8VhCKeGfg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DEn1JIfY6dYMGNGHc72JFgB1djnyd5C73i6dVI90M/3yqZ1V8LiJMi7OYYp359zFnB8GgH6LFNMfr1saVrt2URYeH9VE/aRX+QM4aByozCT9w5BW1BaaGfJVTwQs0pPyjumkXUCOYx1d2193nrifa8WYUlv9tRz3SqWYe1WavZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HRQHuVxZ; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753036040;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KEkcY99JjeRt6Kj8QpuGyp3e5YKfE6FffJwx4zakCNE=;
+	b=HRQHuVxZJ56WcWGTQDyJKlDbffAoZe9YzaqooFMdD2Z/BI309pI8IDSWt33iIYpuG+ZWap
+	zS5rbkQFryiv0uXYPmVlXVl5/o2n8xqGNYK53AHwIqkivygZRoWOe1AmXdBlUSqSPEoFbz
+	ABQkYNbItNiko+dhI7z38xmnZjpF8sE=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] crypto: keembay - Use min() to simplify ocs_create_linked_list_from_sg()
+Date: Sun, 20 Jul 2025 20:26:05 +0200
+Message-ID: <20250720182605.427375-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] KASAN: slab-use-after-free Read in
- io_poll_remove_entries
-To: syzbot <syzbot+01523a0ae5600aef5895@syzkaller.appspotmail.com>,
- io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com, abbotti@mev.co.uk,
- hsweeten@visionengravers.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <687bd5fe.a70a0220.693ce.0091.GAE@google.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <687bd5fe.a70a0220.693ce.0091.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 7/19/25 11:29 AM, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    4871b7cb27f4 Merge tag 'v6.16-rc6-smb3-client-fixes' of gi..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1288c38c580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=fa738a4418f051ee
-> dashboard link: https://syzkaller.appspot.com/bug?extid=01523a0ae5600aef5895
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1688c38c580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=166ed7d4580000
-> 
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-4871b7cb.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/4a9dea51d821/vmlinux-4871b7cb.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/f96c723cdfe6/bzImage-4871b7cb.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+01523a0ae5600aef5895@syzkaller.appspotmail.com
-> 
-> ==================================================================
-> BUG: KASAN: slab-use-after-free in __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
-> BUG: KASAN: slab-use-after-free in _raw_spin_lock_irq+0x36/0x50 kernel/locking/spinlock.c:170
-> Read of size 1 at addr ffff88803c6f42b0 by task kworker/2:2/1339
-> 
-> CPU: 2 UID: 0 PID: 1339 Comm: kworker/2:2 Not tainted 6.16.0-rc6-syzkaller-00253-g4871b7cb27f4 #0 PREEMPT(full) 
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> Workqueue: events io_fallback_req_func
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:94 [inline]
->  dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
->  print_address_description mm/kasan/report.c:378 [inline]
->  print_report+0xcd/0x610 mm/kasan/report.c:480
->  kasan_report+0xe0/0x110 mm/kasan/report.c:593
->  __kasan_check_byte+0x36/0x50 mm/kasan/common.c:557
->  kasan_check_byte include/linux/kasan.h:399 [inline]
->  lock_acquire kernel/locking/lockdep.c:5845 [inline]
->  lock_acquire+0xfc/0x350 kernel/locking/lockdep.c:5828
->  __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
->  _raw_spin_lock_irq+0x36/0x50 kernel/locking/spinlock.c:170
->  spin_lock_irq include/linux/spinlock.h:376 [inline]
->  io_poll_remove_entry io_uring/poll.c:146 [inline]
->  io_poll_remove_entries.part.0+0x14e/0x7e0 io_uring/poll.c:179
->  io_poll_remove_entries io_uring/poll.c:159 [inline]
->  io_poll_task_func+0x4cd/0x1130 io_uring/poll.c:326
->  io_fallback_req_func+0x1c7/0x6d0 io_uring/io_uring.c:259
->  process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3238
->  process_scheduled_works kernel/workqueue.c:3321 [inline]
->  worker_thread+0x6c8/0xf10 kernel/workqueue.c:3402
->  kthread+0x3c5/0x780 kernel/kthread.c:464
->  ret_from_fork+0x5d4/0x6f0 arch/x86/kernel/process.c:148
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
->  </TASK>
-> 
-> Allocated by task 6154:
->  kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
->  kasan_save_track+0x14/0x30 mm/kasan/common.c:68
->  poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
->  __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
->  kmalloc_noprof include/linux/slab.h:905 [inline]
->  kzalloc_noprof include/linux/slab.h:1039 [inline]
->  __comedi_device_postconfig_async drivers/comedi/drivers.c:664 [inline]
->  __comedi_device_postconfig drivers/comedi/drivers.c:721 [inline]
->  comedi_device_postconfig+0x2cb/0xc80 drivers/comedi/drivers.c:756
->  comedi_device_attach+0x3cf/0x900 drivers/comedi/drivers.c:998
->  do_devconfig_ioctl+0x1a7/0x580 drivers/comedi/comedi_fops.c:855
->  comedi_unlocked_ioctl+0x15bb/0x2e90 drivers/comedi/comedi_fops.c:2136
->  vfs_ioctl fs/ioctl.c:51 [inline]
->  __do_sys_ioctl fs/ioctl.c:907 [inline]
->  __se_sys_ioctl fs/ioctl.c:893 [inline]
->  __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:893
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> Freed by task 6156:
->  kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
->  kasan_save_track+0x14/0x30 mm/kasan/common.c:68
->  kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:576
->  poison_slab_object mm/kasan/common.c:247 [inline]
->  __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
->  kasan_slab_free include/linux/kasan.h:233 [inline]
->  slab_free_hook mm/slub.c:2381 [inline]
->  slab_free mm/slub.c:4643 [inline]
->  kfree+0x2b4/0x4d0 mm/slub.c:4842
->  comedi_device_detach_cleanup drivers/comedi/drivers.c:171 [inline]
->  comedi_device_detach+0x2a4/0x9e0 drivers/comedi/drivers.c:208
->  do_devconfig_ioctl+0x46c/0x580 drivers/comedi/comedi_fops.c:833
->  comedi_unlocked_ioctl+0x15bb/0x2e90 drivers/comedi/comedi_fops.c:2136
->  vfs_ioctl fs/ioctl.c:51 [inline]
->  __do_sys_ioctl fs/ioctl.c:907 [inline]
->  __se_sys_ioctl fs/ioctl.c:893 [inline]
->  __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:893
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Use min() to simplify ocs_create_linked_list_from_sg() and improve its
+readability.
 
-I took a quick look at this, and surely looks like a comedi bug. If you
-call the ioctl part (do_devconfig_ioctl()) with a NULL arg, it just does
-a detach and frees the device, regardless of whether anyone has it
-opened or not?! It's got some odd notion of checking whether it's busy
-or not. For this case, someone has a poll active on the device, yet it
-still happily frees it.
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ drivers/crypto/intel/keembay/ocs-aes.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-CC'ing some folks, as this looks utterly broken.
-
+diff --git a/drivers/crypto/intel/keembay/ocs-aes.c b/drivers/crypto/intel/keembay/ocs-aes.c
+index be9f32fc8f42..b69e7bfce9cc 100644
+--- a/drivers/crypto/intel/keembay/ocs-aes.c
++++ b/drivers/crypto/intel/keembay/ocs-aes.c
+@@ -7,6 +7,7 @@
+ 
+ #include <linux/dma-mapping.h>
+ #include <linux/interrupt.h>
++#include <linux/minmax.h>
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+ #include <linux/swab.h>
+@@ -1473,8 +1474,7 @@ int ocs_create_linked_list_from_sg(const struct ocs_aes_dev *aes_dev,
+ 	ll = dll_desc->vaddr;
+ 	for (i = 0; i < dma_nents; i++, sg = sg_next(sg)) {
+ 		ll[i].src_addr = sg_dma_address(sg) + data_offset;
+-		ll[i].src_len = (sg_dma_len(sg) - data_offset) < data_size ?
+-				(sg_dma_len(sg) - data_offset) : data_size;
++		ll[i].src_len = min(sg_dma_len(sg) - data_offset, data_size);
+ 		data_offset = 0;
+ 		data_size -= ll[i].src_len;
+ 		/* Current element points to the DMA address of the next one. */
 -- 
-Jens Axboe
+2.50.1
+
 
