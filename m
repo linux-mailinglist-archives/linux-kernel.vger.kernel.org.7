@@ -1,99 +1,134 @@
-Return-Path: <linux-kernel+bounces-738146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 193B4B0B504
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 12:54:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7E85B0B506
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 12:56:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5C633B5C70
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 10:54:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1A4817B9CF
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 10:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1BA1F463E;
-	Sun, 20 Jul 2025 10:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ionic.de header.i=@ionic.de header.b="lRhPbFuD"
-Received: from mail.ionic.de (ionic.de [145.239.234.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE7E112E7F;
-	Sun, 20 Jul 2025 10:54:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=145.239.234.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD4151F4295;
+	Sun, 20 Jul 2025 10:55:58 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C74923DE;
+	Sun, 20 Jul 2025 10:55:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753008881; cv=none; b=ox9IbVyo/h0PyF/wErQg4M54bsvwg50YNDqPl14jm8bkoJHOB2lGTK/SUnIEZWTRPTt9Y4qSkQnYQGtDi10pMUiutvHP366Rk6P289nIOreU+WRiEneOh7e3uIt5Z2xGtioQ1+kV6NnHZc9BszTZgUYwMWB/cej85LNjeGw33NI=
+	t=1753008958; cv=none; b=j3nBW5ob1t4jYPWMo+mfkzCH5IiN+IMwUX8kVL5fTZJKQyubBoCmrANWy2ikYTK99CFNqFL1TV55+YptOtGPPlIv4dmxSYSi7NUC5DgGsvfX0OS8KKr3ANCCZb3y2lYOtDvhqH4ddApkTzr1gDqpeocbiVjmritmaONZ4GOAGls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753008881; c=relaxed/simple;
-	bh=bsx4MjC/xMe/JRYnsTAeDdsIFjvZS6CDMjQ0u/mAV7k=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=qI5l9zBUsiWOZ1jO7KC2uhPzfu+phQ87Bb4M8zFJBrLqOUNNI4ogRabthkelGbYDAj9+KGgkRNTk+/J5VFpfNJzGlEECbEZwa3QvdKlZICZ81Usa+/J2Yr9WVub23wxWhwuRxAMq3BnelJ4hFif+5fF5Stm+FSbgbPY6WitBTg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ionic.de; spf=pass smtp.mailfrom=ionic.de; dkim=pass (1024-bit key) header.d=ionic.de header.i=@ionic.de header.b=lRhPbFuD; arc=none smtp.client-ip=145.239.234.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ionic.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionic.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ionic.de; s=default;
-	t=1753008875; bh=bsx4MjC/xMe/JRYnsTAeDdsIFjvZS6CDMjQ0u/mAV7k=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=lRhPbFuDW7q1oGFuRSQLddSjVyndEgVPHzROSZdb628Vxeby54sxZTGi8R2DxADPb
-	 /00UwBRWMEzrMpA9ZO6YTEIjPeN6jPg0yBy6ZRO+FIFzvqGiySwguMDGtXONDne+MW
-	 jkbTNvmsdKsC+BHSIijO/+KhFc/6eFQnHmN2gbBo=
-Received: from [172.24.215.49] (unknown [185.102.219.57])
-	by mail.ionic.de (Postfix) with ESMTPSA id 2E5851480B21;
-	Sun, 20 Jul 2025 12:54:35 +0200 (CEST)
-Message-ID: <c7eeebdb-1ef5-4987-bf01-7890fb75e03b@ionic.de>
-Date: Sun, 20 Jul 2025 12:54:34 +0200
+	s=arc-20240116; t=1753008958; c=relaxed/simple;
+	bh=yTaoxejXwNQCn++pllekPZVksUSS8z4GbWq3pO1U1H8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L3nMHLkcQndAleYCNEsqwpmRUoKEPVKsWdS1j1bYTHuK07CZw9Vrqf/dZ1rEwmNGozWWtJ0hKU5BeJ5lhrHShWkFmLvRvTeXzEydqAgrLY+5V58mNw52jbU17Q8Pu0TF1JN0g9otYkiKQinYuBfRuz2OR3tNfbZMPz/yzawJD6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [223.64.68.193])
+	by gateway (Coremail) with SMTP id _____8Bx22owy3xoUSkuAQ--.59383S3;
+	Sun, 20 Jul 2025 18:55:44 +0800 (CST)
+Received: from localhost.localdomain (unknown [223.64.68.193])
+	by front1 (Coremail) with SMTP id qMiowJDxscIYy3xoyY8eAA--.18430S2;
+	Sun, 20 Jul 2025 18:55:42 +0800 (CST)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-kernel@vger.kernel.org,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH V2] init: Handle bootloader identifier in kernel parameters
+Date: Sun, 20 Jul 2025 18:55:09 +0800
+Message-ID: <20250720105509.2914898-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/10] QRTR Multi-endpoint support
-From: Ionic <ionic@ionic.de>
-To: linux-arm-msm@vger.kernel.org, Manivannan Sadhasivam <mani@kernel.org>
-Cc: Eric Dumazet <edumazet@google.com>, Kuniyuki Iwashima
- <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Willem de Bruijn <willemb@google.com>, "David S . Miller"
- <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org
-References: <cover.1752947108.git.ionic@ionic.de>
-Content-Language: en-US
-Organization: Root24
-In-Reply-To: <cover.1752947108.git.ionic@ionic.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJDxscIYy3xoyY8eAA--.18430S2
+X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoW7tw4fCr1rCFW3GF1xXr17XFc_yoW8uw43pF
+	s2qryrW3ykGw45Cr4kWrWvgrySvwnxZa17GanxWan8XFn8tFy0qrWFkF4aga4Dtr4fKF42
+	qFnrZF18CF17CFXCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUU9Yb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
+	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
+	XVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7V
+	AKI48JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v2
+	6r1Y6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17
+	CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF
+	0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIx
+	AIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIev
+	Ja73UjIFyTuYvjxU2MKZDUUUU
 
-* On 7/19/25 20:59, Mihai Moldovan wrote:
-> NOTE: There is 32-bit unsafe use of radix_tree_insert in this patch set.
-> This follows the existing usage inside net/qrtr/af_qrtr.c in
-> qrtr_tx_wait(), qrtr_tx_resume() and qrtr_tx_flow_failed().  This was
-> done deliberately in order to keep the changes as minimal as possible
-> until it is known whether the approach outlined is generally acceptable.
+BootLoader (Grub, LILO, etc) may pass an identifier such as "BOOT_IMAGE=
+/boot/vmlinuz-x.y.z" to kernel parameters. But these identifiers are not
+recognized by the kernel itself so will be passed to user space. However
+user space init program also doesn't recognized it.
 
-Since this is an actual problem and has to be eventually resolved, I'd like to 
-ask for some guidance.
+KEXEC may also pass an identifier such as "kexec" on some architectures.
 
-The Radix Tree API is fixed to using unsigned long keys, and my best idea (and 
-the easiest thing to implement) thus far is to just go with that and restrict 
-node IDs, endpoint IDs and port numbers to sizeof(unsigned long) / 2 bytes, 
-which for platforms with 32-bit longs would be 16 bits. Not quite ideal, but 
-probably good enough at the very least for port numbers (I figure).
+We cannot change BootLoader's behavior, because this behavior exists for
+many years, and there are already user space programs search BOOT_IMAGE=
+in /proc/cmdline to obtain the kernel image locations:
 
-Something like that:
+https://github.com/linuxdeepin/deepin-ab-recovery/blob/master/util.go
+(search getBootOptions)
+https://github.com/linuxdeepin/deepin-ab-recovery/blob/master/main.go
+(search getKernelReleaseWithBootOption)
 
-#define RADIX_TREE_HALF_INDEX_BITS (RADIX_TREE_INDEX_BITS >> 1)
-#define RADIX_TREE_HALF_INDEX_MAX_VALUE ((unsigned long)(-1) >> 
-RADIX_TREE_HALF_INDEX_BITS)
+So the the best way is handle (ignore) it by the kernel itself, which
+can avoid such boot warnings (if we use something like init=/bin/bash,
+bootloader identifier can even cause a crash):
 
-with checks to make sure that node IDs, endpoint IDs and port numbers fit within 
-RADIX_TREE_HALF_INDEX_MAX_VALUE.
+Kernel command line: BOOT_IMAGE=(hd0,1)/vmlinuz-6.x root=/dev/sda3 ro console=tty
+Unknown kernel command line parameters "BOOT_IMAGE=(hd0,1)/vmlinuz-6.x", will be passed to user space.
 
+Cc: stable@vger.kernel.org
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+---
+V2: Update comments and commit messages.
 
-Is this limitation acceptable? How big can node IDs get, also accounting for 
-uncommon (and maybe also unrealistic) but conceivable use cases?
+ init/main.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
+diff --git a/init/main.c b/init/main.c
+index 225a58279acd..c53863e5ad82 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -545,6 +545,7 @@ static int __init unknown_bootoption(char *param, char *val,
+ 				     const char *unused, void *arg)
+ {
+ 	size_t len = strlen(param);
++	const char *bootloader[] = { "BOOT_IMAGE=", "kexec", NULL };
+ 
+ 	/* Handle params aliased to sysctls */
+ 	if (sysctl_is_alias(param))
+@@ -552,6 +553,12 @@ static int __init unknown_bootoption(char *param, char *val,
+ 
+ 	repair_env_string(param, val);
+ 
++	/* Handle bootloader identifier */
++	for (int i = 0; bootloader[i]; i++) {
++		if (!strncmp(param, bootloader[i], strlen(bootloader[i])))
++			return 0;
++	}
++
+ 	/* Handle obsolete-style parameters */
+ 	if (obsolete_checksetup(param))
+ 		return 0;
+-- 
+2.47.3
 
-
-Mihai
 
