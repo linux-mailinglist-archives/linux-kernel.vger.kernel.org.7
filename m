@@ -1,123 +1,107 @@
-Return-Path: <linux-kernel+bounces-738276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75D40B0B6A2
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 17:17:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 708C7B0B6AD
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 17:25:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E83B3B931F
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 15:17:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C43B23BB074
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 15:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB83021CC48;
-	Sun, 20 Jul 2025 15:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF24C21B9E5;
+	Sun, 20 Jul 2025 15:25:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="6WsW40lE"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="B5lqnyDC"
+Received: from forward502b.mail.yandex.net (forward502b.mail.yandex.net [178.154.239.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FEB63FE4;
-	Sun, 20 Jul 2025 15:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA4B19049B;
+	Sun, 20 Jul 2025 15:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753024640; cv=none; b=cLODwFffD0E4O3vtH0QTatT2cMHfmCJfJoo+Dr+TwVP/XpDCnuUBQu3em6juJdCYtTe4I/CvNWP5OphvgWBK99SsSqZtf5ATP3LY7/9QYCd8/EFAgb5pLaWhl14oGGIZZ6XNBOSCpbIWcLwIUZE4t+ZQf7v05vDo32U72sZ94xo=
+	t=1753025145; cv=none; b=IDOR6jR6z1/6su1Q/jCUtjYa1SV2DwmgXz4Bks+ats7ug7SPmWsvirs67Map/G42PkbkmpoJ3U0WgyAXI35W2mB2iI/pDUcRJv4tuvPDaqmgMJnZ+iaOHlV9RmupOkMlXcU4kzWTiIuXBLTmhjCUMuLF8EFtvlsuBJzXKx/Bmiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753024640; c=relaxed/simple;
-	bh=iAz1FYQdJdIkdCmqXmtDdtw54PK547ppkD9AaNVMKRc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lxE9+wwYbsmzW1JmRgFxxTB0n8dLB9ZkzAzuKFq9y5QsuNUrKUUWZ2JrfJVtLD72xm77NAL+F++oz3bTQla9A9SdKgbiI4O5n0DSQHrtmJxy8FdpbIf6+4QjWJQnySsCxCNKQmCmbXlU1E4C+OqNQMgwlPQs8R5+6CnxvWrhi/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=6WsW40lE; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=iciTdbozgbEwpx/j+Tpe9MpyqER+JXwr8LFwyB0pkS8=; b=6WsW40lEAD7TZLkmADom+46xBC
-	aO9R8B1l4cvgNm3Av+QCn80uQhZNJVzKsKo0mUQBQ21RG/DsZgaZLswUGUGF/SSV5uDg65iOU1ry4
-	eebh0ZPMHSD1J1jSJCcuzQPEZ0WwxogXTY886yw2EHCQ7IULH0GeGm59T4b5C/R6sogI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1udVmX-002CZR-Qo; Sun, 20 Jul 2025 17:16:53 +0200
-Date: Sun, 20 Jul 2025 17:16:53 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	cros-qcom-dts-watchers@chromium.org, Vinod Koul <vkoul@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
-	Stephen Boyd <swboyd@chromium.org>,
-	Andre Draszik <andre.draszik@linaro.org>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	Elliot Berman <quic_eberman@quicinc.com>,
-	Srinivas Kandagatla <srini@kernel.org>
-Subject: Re: [PATCH v11 2/8] power: reset: reboot-mode: Add support for 64
- bit magic
-Message-ID: <6227828c-5db0-41c8-956f-eea6f790ccac@lunn.ch>
-References: <20250717-arm-psci-system_reset2-vendor-reboots-v11-0-df3e2b2183c3@oss.qualcomm.com>
- <20250717-arm-psci-system_reset2-vendor-reboots-v11-2-df3e2b2183c3@oss.qualcomm.com>
- <6vlm3ybjpy2jq3cr2pzj4vcmqwoissdml2xmhfzlulfbrpzakt@xrepu6c5zykb>
- <713b2cc8-1bc7-a8b7-678b-5fc7fe25615a@oss.qualcomm.com>
- <8d4a42b6-657f-4c30-8e25-4213d8d53a89@lunn.ch>
- <1653597d-4d6b-a771-fbd8-c129c630ac0a@oss.qualcomm.com>
+	s=arc-20240116; t=1753025145; c=relaxed/simple;
+	bh=uklG1HH6Nla92HVa7baSiFuu87JGy5bL2PCwTZplo3k=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dcLbMjtbnZ97GVhZz/zp8T+/8lWEIYUdSLngksScBDAGOnA9Ep5Tu1GjQSPzYzxlQkXKN++WMZ6UwVHg4Sb9mj5JLXWK99tnYAQoAVqWh1aoiaDDWtwLlnskssqh0/QEu8rf86/FYeT84jdTDDuXvkoHQMYtAVPq26ZtSMOBAcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=B5lqnyDC; arc=none smtp.client-ip=178.154.239.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
+Received: from mail-nwsmtp-smtp-production-main-85.iva.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-85.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:1baa:0:640:41d2:0])
+	by forward502b.mail.yandex.net (Yandex) with ESMTPS id D584880CAB;
+	Sun, 20 Jul 2025 18:17:27 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-85.iva.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id NHSJgBjMZa60-PKKBOdlr;
+	Sun, 20 Jul 2025 18:17:26 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=mail; t=1753024647;
+	bh=Hj7V4Z7PBdVEu39SNeu0UOxNfchWsPyzVJHxT+Qdctc=;
+	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
+	b=B5lqnyDCzrXD9KG8vgTMKl/8o5Q4t0zQs4DXJu3h2PTqBWhCSdUnCEIMNJcgN7O7p
+	 XW3PP9QL62AStUYmIddVKCoWzZDmNJhXkPuPIYOiZym41LJd8MQbt4FcICzX7LvPQk
+	 XIjt9OcmS8gss0jbcoAPKdW3V+IKdIuQ3xGYcG2U=
+Authentication-Results: mail-nwsmtp-smtp-production-main-85.iva.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
+Date: Sun, 20 Jul 2025 18:17:21 +0300
+From: Onur =?UTF-8?B?w5Z6a2Fu?= <work@onurozkan.dev>
+To: "Benno Lossin" <lossin@kernel.org>
+Cc: <rust-for-linux@vger.kernel.org>, <dakr@kernel.org>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <a.hindborg@kernel.org>,
+ <aliceryhl@google.com>, <tmgross@umich.edu>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 0/3] rust: make various `alloc` functions `const fn`
+Message-ID: <20250720181721.54ab9faf@nimda.home>
+In-Reply-To: <DBGYNQJJ0JI6.P280ZLVZUSO6@kernel.org>
+References: <20250720094838.29530-1-work@onurozkan.dev>
+	<DBGYNQJJ0JI6.P280ZLVZUSO6@kernel.org>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1653597d-4d6b-a771-fbd8-c129c630ac0a@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jul 19, 2025 at 11:07:47PM +0530, Shivendra Pratap wrote:
-> 
-> 
-> On 7/19/2025 10:27 PM, Andrew Lunn wrote:
-> >>>> +static int qcom_pon_reboot_mode_write(struct reboot_mode_driver *reboot, u64 magic)
-> >>>>  {
-> >>>>  	struct qcom_pon *pon = container_of
-> >>>>  			(reboot, struct qcom_pon, reboot_mode);
-> >>>> @@ -37,7 +36,7 @@ static int qcom_pon_reboot_mode_write(struct reboot_mode_driver *reboot,
-> >>>>  	ret = regmap_update_bits(pon->regmap,
-> >>>>  				 pon->baseaddr + PON_SOFT_RB_SPARE,
-> >>>>  				 GENMASK(7, pon->reason_shift),
-> >>>> -				 magic << pon->reason_shift);
-> >>>> +				 ((u32)magic) << pon->reason_shift);
-> > 
-> > As a general rule of thumb, code with casts is poor quality code. Try
-> > to write the code without casts.
-> > 
-> > Maybe something like
-> > 
-> >       If (magic > MAX_U32)
-> >       	   return -EINVAL;
-> > 
-> >       magic_32 = magic;
-> sure will update it. And in above, should it be recommended to add a explicit
-> cast(for any avoiding any compiler complains)?
->  like: magic_32 = (u32)magic;
+On Sun, 20 Jul 2025 16:43:49 +0200
+"Benno Lossin" <lossin@kernel.org> wrote:
 
-I would hope the compiler/optimiser can figure out from the test the
-line before that this is a safe conversion. So i don't think you need
-a cast.
+> On Sun Jul 20, 2025 at 11:48 AM CEST, Onur =C3=96zkan wrote:
+> > This patch series makes various functions in the
+> > `alloc` crate const fn.
+> >
+> > Each patch corresponds to a different module within
+> > the same `alloc` crate.
+> >
+> > Onur =C3=96zkan (3):
+> >   rust: make `allocator::aligned_size` a `const fn`
+> >   rust: make `ArrayLayout::new_unchecked` a `const fn`
+> >   rust: make `kvec::Vec` functions `const fn`
+> >
+> >  rust/kernel/alloc/allocator.rs |  2 +-
+> >  rust/kernel/alloc/kvec.rs      | 10 +++++-----
+> >  rust/kernel/alloc/layout.rs    |  2 +-
+> >  3 files changed, 7 insertions(+), 7 deletions(-)
+>=20
+> This looks sensible, any particular reason for why you need them
+> const?
+>=20
+> For the entire series:
+>=20
+> Reviewed-by: Benno Lossin <lossin@kernel.org>
+>=20
+> ---
+> Cheers,
+> Benno
 
-	Andrew
+Personally, I don't have a specific reason. I thought the change is
+harmless and might extend functionality for other people in the future.
+It could also (although less likely) help the compiler optimize things
+further.
+
+Regards,
+Onur
 
