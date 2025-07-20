@@ -1,112 +1,164 @@
-Return-Path: <linux-kernel+bounces-738246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC186B0B64D
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 15:56:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FD26B0B64E
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 15:56:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 128A23A78D1
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 13:55:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAC6317B1E8
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 13:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C67D20E002;
-	Sun, 20 Jul 2025 13:56:06 +0000 (UTC)
-Received: from smtp.blochl.de (mail.blochl.de [151.80.40.192])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767CA219A86;
+	Sun, 20 Jul 2025 13:56:09 +0000 (UTC)
+Received: from srv01.abscue.de (abscue.de [89.58.28.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EDD519D8BC;
-	Sun, 20 Jul 2025 13:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=151.80.40.192
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B8920C48A;
+	Sun, 20 Jul 2025 13:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.28.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753019765; cv=none; b=RuCAVm5c3PtDX4/OnVnGbKfi27biPyDBxkpxj7u84+RNOraMjHJy4IltEFtKB844jTq55n9jjeVswFyFlFR9DLdVRpcj81hW7O6NynNu3Fhsk6QIDoXiI0eCuKsfHxMdgD5bzzbknYA3ulXi6kTFWImXaD3WXQrLtkKLxfa89sQ=
+	t=1753019769; cv=none; b=RQ9yqQ2H+FBQXcO2rAfNe90e1IfSht/nNfKA3nkcFhHIkOXWIC+R2jCASY05TET70NABjxGV/w8g1z2vQp8bA12/B6ZmscQqYjS2yusIJpJe8C3rBZ61jm4F9545LBefKbvGSCQQNtvRKUvBA356FV84hfS0mBhj9Qh3vuFXVss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753019765; c=relaxed/simple;
-	bh=g/HYQQn93b9PDBOpEP6NnaPAqOg/efONOh0W5SjPU7M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=emXNf5TCFJNwW7h9YyX2f1nQvU3F7pfgWCpluMH0ZnTrZFDr9e75kES0rGaJMsBxjxQHf2VkSDiu4/cks5xTJko0mX+4nLphK529otLdnlK6jF1V6jfYnQdxTQ82Q+jJZb5bjUMOkvF6WGjbo9v8WFizJAWVK9IAt6j7MuKIwcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blochl.de; spf=pass smtp.mailfrom=blochl.de; arc=none smtp.client-ip=151.80.40.192
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blochl.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=blochl.de
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.blochl.de CCFB64465F69
-Authentication-Results: mail.blochl.de; dmarc=none (p=none dis=none) header.from=blochl.de
-Authentication-Results: mail.blochl.de; spf=fail smtp.mailfrom=blochl.de
-Received: from workknecht.fritz.box (ppp-93-104-0-143.dynamic.mnet-online.de [93.104.0.143])
-	by smtp.blochl.de (Postfix) with ESMTPSA id CCFB64465F69;
-	Sun, 20 Jul 2025 13:56:00 +0000 (UTC)
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 1.4.2 at 472b552e6fe8
-From: =?utf-8?q?Markus_Bl=C3=B6chl?= <markus@blochl.de>
-Date: Sun, 20 Jul 2025 15:54:51 +0200
-Subject: [PATCH v2] timekeeping: Always initialize use_nsecs when querying
- time from phc drivers
+	s=arc-20240116; t=1753019769; c=relaxed/simple;
+	bh=hTKwUnvtj0A0tq4ZN9BtDBtvHLfzofQo8pGcks5pqHY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kTd+My7ZMrGhHjCb5sUOCoJBHdzD7ibEe0Q4RkOoFLI/aFHkSpVm7UvBDBlME9nFELp9xxvkL3juo1ge9DyQG08XWY2/bxwfbChIzwApJcighZokQTHoKhJPHQVrX8iKdncLtvEhhfgS0vzjI7QsY6SDBeQbAmvDfvJ+x0qYoos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=abscue.de; spf=pass smtp.mailfrom=abscue.de; arc=none smtp.client-ip=89.58.28.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=abscue.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=abscue.de
+Received: from srv01.abscue.de (localhost [127.0.0.1])
+	by spamfilter.srv.local (Postfix) with ESMTP id 2E5941C025E;
+	Sun, 20 Jul 2025 15:55:56 +0200 (CEST)
+X-Spam-Level: 
+Date: Sun, 20 Jul 2025 15:55:51 +0200
+From: Otto =?iso-8859-1?Q?Pfl=FCger?= <otto.pflueger@abscue.de>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Kevin Tang <kevin.tang@unisoc.com>, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/12] dt-bindings: display: sprd: adapt for UMS9230
+ support
+Message-ID: <aHz1Z94swDewvriQ@abscue.de>
+References: <20250719-ums9230-drm-v1-0-e4344a05eb3d@abscue.de>
+ <20250719-ums9230-drm-v1-1-e4344a05eb3d@abscue.de>
+ <9966b9e4-399b-4446-81e4-15daf9acbff7@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250720-timekeeping_uninit_crossts-v2-1-f513c885b7c2@blochl.de>
-X-B4-Tracking: v=1; b=H4sIACr1fGgC/x3MSw6DIBAA0KsY1iVRrJp21Xs0jUEdZfwADqi0x
- rvXuHybtzMHhODYM9oZwYoOjT4hbhGrldQdcGxOMxGLLC5EzD1OMABY1F25aNToy5qMc97xOkl
- jgPzRVgmwM7AELYYrf39Ot2Qm7hWBvEofvkQiVwHSYOcUqrnKYBu6Va22CHI0XpplG5em9z22W
- irxKvzU1b9R36Ux7Dj+bv4JV74AAAA=
-X-Change-ID: 20250720-timekeeping_uninit_crossts-c130ee69fb1e
-To: Thomas Gleixner <tglx@linutronix.de>, John Stultz <jstultz@google.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, 
- Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>, 
- "Christopher S. Hall" <christopher.s.hall@intel.com>, 
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- markus.bloechl@ipetronik.com, 
- =?utf-8?q?Markus_Bl=C3=B6chl?= <markus@blochl.de>
-X-Mailer: b4 0.14.2
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.4 (smtp.blochl.de [0.0.0.0]); Sun, 20 Jul 2025 13:56:01 +0000 (UTC)
+In-Reply-To: <9966b9e4-399b-4446-81e4-15daf9acbff7@kernel.org>
 
-Most drivers only populate the fields cycles and cs_id in their
-get_time_fn() callback for get_device_system_crosststamp() unless
-they explicitly provide nanosecond values.
-When this new use_nsecs field was added and used most drivers did not
-care.
-Clock sources other than CSID_GENERIC could then get converted in
-convert_base_to_cs() based on an uninitialized use_nsecs which usually
-results in -EINVAL during the following range check.
+On Sun, Jul 20, 2025 at 02:26:19PM +0200, Krzysztof Kozlowski wrote:
+> On 19/07/2025 14:09, Otto Pfl�ger wrote:
+> > diff --git a/Documentation/devicetree/bindings/display/sprd/sprd,sharkl3-dpu.yaml b/Documentation/devicetree/bindings/display/sprd/sprd,sharkl3-dpu.yaml
+> > index 4ebea60b8c5ba5f177854e3a8d89e93e7304e18b..6fedb6e508b247eb71da17ced589b8ed09085592 100644
+> > --- a/Documentation/devicetree/bindings/display/sprd/sprd,sharkl3-dpu.yaml
+> > +++ b/Documentation/devicetree/bindings/display/sprd/sprd,sharkl3-dpu.yaml
+> > @@ -16,7 +16,12 @@ description: |
+> >  
+> >  properties:
+> >    compatible:
+> > -    const: sprd,sharkl3-dpu
+> > +    oneOf:
+> > +      - items:
+> > +          - enum:
+> > +              - sprd,ums9230-dpu
+> > +          - const: sprd,sharkl3-dpu
+> > +      - const: sprd,sharkl3-dpu
+> >  
+> >    reg:
+> >      maxItems: 1
+> > @@ -25,12 +30,15 @@ properties:
+> >      maxItems: 1
+> >  
+> >    clocks:
+> > -    minItems: 2
+> > +    minItems: 1
+> 
+> This is wrong. You miss maxItems. I will fix existing bindings.
 
-Pass in a fully initialized system_counterval_t.
+Will fix this, thanks.
 
-Fixes: 6b2e29977518 ("timekeeping: Provide infrastructure for converting to/from a base clock")
-Cc: stable@vger.kernel.org
-Signed-off-by: Markus Blöchl <markus@blochl.de>
----
-Changes in v2:
-- Initialize entire system_counterval_t, not just use_nsecs
-- Only initialize system_counterval_t once during instantiation instead
-  of every iteration.
-- Link to v1: https://lore.kernel.org/lkml/txyrr26hxe3xpq3ebqb5ewkgvhvp7xalotaouwludjtjifnah2@7tmgczln4aoo/
----
- kernel/time/timekeeping.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> >  
+> >    clock-names:
+> > -    items:
+> > -      - const: clk_src_128m
+> > -      - const: clk_src_384m
+> > +    oneOf:
+> > +      - items:
+> > +        - const: clk_src_128m
+> > +        - const: clk_src_384m
+> > +      - items:
+> > +        - const: enable
+> >  
+> >    power-domains:
+> >      maxItems: 1
+> > diff --git a/Documentation/devicetree/bindings/display/sprd/sprd,sharkl3-dsi-host.yaml b/Documentation/devicetree/bindings/display/sprd/sprd,sharkl3-dsi-host.yaml
+> > index bc5594d18643010b91376c92a8f235a522d7dc3d..8438d2da0a4277db03e30b13cb270684c0c360cb 100644
+> > --- a/Documentation/devicetree/bindings/display/sprd/sprd,sharkl3-dsi-host.yaml
+> > +++ b/Documentation/devicetree/bindings/display/sprd/sprd,sharkl3-dsi-host.yaml
+> > @@ -11,7 +11,9 @@ maintainers:
+> >  
+> >  properties:
+> >    compatible:
+> > -    const: sprd,sharkl3-dsi-host
+> > +    enum:
+> > +      - sprd,sharkl3-dsi-host
+> > +      - sprd,ums9230-dsi-host
+> >  
+> >    reg:
+> >      maxItems: 1
+> > @@ -23,8 +25,11 @@ properties:
+> >      minItems: 1
+> >  
+> >    clock-names:
+> > -    items:
+> > -      - const: clk_src_96m
+> > +    oneOf:
+> > +      - items:
+> > +          - const: clk_src_96m
+> > +      - items:
+> > +          - const: enable
+> 
+> Why this is completely different clock? How same class device could have
+> completely different clock INPUT?
 
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index a009c91f7b05fcb433073862a1b1a3de0345bffe..83c65f3afccaacff7a2e53e62f32657c201fbc8c 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -1256,7 +1256,7 @@ int get_device_system_crosststamp(int (*get_time_fn)
- 				  struct system_time_snapshot *history_begin,
- 				  struct system_device_crosststamp *xtstamp)
- {
--	struct system_counterval_t system_counterval;
-+	struct system_counterval_t system_counterval = {};
- 	struct timekeeper *tk = &tk_core.timekeeper;
- 	u64 cycles, now, interval_start;
- 	unsigned int clock_was_set_seq = 0;
+The clocks should be the same on sharkl3 (sc9863a) and ums9230, but
+the existing bindings don't really make sense here or are incomplete.
+AFAIK there is no SoC in which this display controller is directly
+connected to the PLL as shown in the example. The DSI controller is
+connected to a clock gate. The DPU actually does have two clocks, both
+of which are clock muxes that allow selecting different frequencies and
+one of which is behind a clock gate. I can add the second clock for the
+DPU if needed.
 
----
-base-commit: f4a40a4282f467ec99745c6ba62cb84346e42139
-change-id: 20250720-timekeeping_uninit_crossts-c130ee69fb1e
+Since nothing seems to be using these bindings at the moment, would it
+be okay to drop the old clock names that refer to specific frequencies?
 
-Best regards,
--- 
-Markus Blöchl <markus@blochl.de>
-
+> 
+> >  
+> >    power-domains:
+> >      maxItems: 1
+> > 
+> 
+> 
+> Best regards,
+> Krzysztof
 
