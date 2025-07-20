@@ -1,186 +1,129 @@
-Return-Path: <linux-kernel+bounces-738229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36183B0B61E
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 14:29:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADCC3B0B622
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 14:30:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE302189B848
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 12:30:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8F2E3B7FF8
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 12:29:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382861F4E59;
-	Sun, 20 Jul 2025 12:29:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B9E420E716;
+	Sun, 20 Jul 2025 12:30:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cmAsXNHG"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IvbgZWDA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B4C2F41
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 12:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E6F1DFE0B;
+	Sun, 20 Jul 2025 12:30:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753014581; cv=none; b=Hlxv/cWb26vg6SjPMLsyzo721Q/mUKTkztgYhGZVDjSQRtdPzTkrL8pGB/MBrBRPgpE6QvZhMHpTRKSJKSePoD+ZmENZo1EEwYKIFIvcfxXiWfs4fbOLQQ4Y4/2ja6C4+5E2yrsn9WTwC/8IOyCJYcST+D5mciRmeDg4/RyHX/Y=
+	t=1753014612; cv=none; b=j7M88TYcexN5GTnXsjUUVS1IAuF9fRLwevfHRhC01IQYUuAJzS72u34y6rvyQ+0Ol5F9jlwqXZzhDCcPsrVDGGRMN17UID0kKJyFTkqDnjc0+BHdY8Xodi65i11uAEHypASZ8894SXIOrizNweLVJDAi+FZE5UiaG04/kbr/ZfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753014581; c=relaxed/simple;
-	bh=G7UAIJ2INfFcC+bmW5eMgzW7c4+mUgdNKprOnCrXONU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tERb/1RAHMmZ83nIlA8WSNO17RFqZ7lZNy1AMXFHdyLswfbmDmgTRjDya6XjSvomKfJM5tISe3Xea0oOym6nTYyuhbfPEiAME2mnIyYLG8WUlzL9ksd8ckMEb1tcjUeAL/lTZ0K4ITpV30FIa72wovMm/SvTd8TMtZBtIYh9BOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cmAsXNHG; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a57c8e247cso3225080f8f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 05:29:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753014578; x=1753619378; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8YyRKB49KECbV96SeTe/YVTPsmnLn5hgHKKXODz95NE=;
-        b=cmAsXNHGevONB8F0WF98O9qndOOph7G/TdJ5TQ3i25+tQMB6rG9TDm92dxMs0XwyKk
-         41QSRQd+5UfIHscYNO5tgSkkUX2ZtCpwRhLivmq2DZ/oV7dIZEO0ULaYMkBjJotOyFnS
-         8ZBNo2SgFJrwSaS2K5iNfLnZhXDd+ulkag9oReGsWm/Mqq42FLv5LuxK1jrqmvm1tw1U
-         xZeQG1Rj8W7+gZYdj0YAL+glYBAMdtpoZH8F/BfQ2st18t2/6lu6apsVLoqX2bKMelFv
-         nhYUZtUBrEdCf5OgajdD0hWhXm0419CLebyhW3XBWOLHLeJpHaLCyra8pvakP+jXRD0c
-         aGvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753014578; x=1753619378;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8YyRKB49KECbV96SeTe/YVTPsmnLn5hgHKKXODz95NE=;
-        b=FQBey7ZAmRIZKKTYIsqFKkFnSZ7XfwDz3LYqr2QsW+BDIFvH1EbtNSETAi0Be/RWxo
-         /upy5d9bBO/gKeMWETZsFmDrrWdNSledapi5haL9+0gipDZaa8zoTl10M3Wywg36ScEo
-         xPOJcCG8nPGHZR1J8x/M6otljvWopwCqABXK7/MZION2dZSNgAR082bEwR1k2LxYvScW
-         Pp9BcCI3V6Qg+RltjJrooG1yp1bgmnXqcqkGWAc/r+n53E0sLlZyJ4WsAl1EILiC2dHh
-         lNqgN9GUcqyEbhaSDPjOMP7rX+uvu4SVn/VanZxYFaGeSnkTydO5GJZE62qcZyES/afP
-         au3A==
-X-Gm-Message-State: AOJu0YzvXe9SrIs292zgrXh+n8B15BD9aShFgW/19ohHnm0tr5Z4vVup
-	o86iLCCcWNyMpeKXvD3k3tSGx9brwEIS/sQ0qoaa/5O0TcaFoy+irc9s+LA7Z0TzwTw=
-X-Gm-Gg: ASbGncvRfPIYTm/VyNh6TNt0/v0iatf+i/R2jp2jmyz5YaJcN5km9LAmTITtC3fn4QQ
-	lZcgIIBIcBtmMUJ8cHWI+NvJ5Bpkdc0wZHu7TYn26q2yatxCr60gjhRUjAJ76gNggNx66RX511j
-	SjD6sFBime0EZ9oZiyNYnpac+7IOKn/BS9k8Go8vD6IUL4D2ZUDWdPIL2h4sEZ+WJEg/LXAoCXU
-	x+6nREP0zfJbYUQk5ZHkdfGba/NSmByjIzdButiDaU8BTqLOgiEqlBkwB7zqrl5pNq844SkaJtG
-	vR54II3CuBcOadJ6NujzgJsC1ktgKFrh9CxRnyorxmhqCw31ic/NdoZ2V5JzgPvKPGz+Rr/VJJ8
-	joxQrishCFAECsUx3FNnARdzizFPjFY2O7yQkXw==
-X-Google-Smtp-Source: AGHT+IFJcVEHvVJedlkCx1BdhB08z1haoEdmldeZpgdZLpYqYk5v9JO6rnTiblYKMRmQz8z4zK3M4Q==
-X-Received: by 2002:a05:6000:20ca:b0:3b6:162a:8e1c with SMTP id ffacd0b85a97d-3b6162a941amr6158784f8f.54.1753014577778;
-        Sun, 20 Jul 2025 05:29:37 -0700 (PDT)
-Received: from localhost.localdomain ([78.210.47.10])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca2553esm7238702f8f.13.2025.07.20.05.29.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Jul 2025 05:29:37 -0700 (PDT)
-From: Antoni Pokusinski <apokusinski01@gmail.com>
-To: 
-Cc: linux-kernel@vger.kernel.org,
-	apokusinski01@gmail.com,
-	syzkaller-bugs@googlegroups.com,
-	syzbot+fa88eb476e42878f2844@syzkaller.appspotmail.com
-Subject: 
-Date: Sun, 20 Jul 2025 14:29:04 +0200
-Message-Id: <20250720122904.131650-1-apokusinski01@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1753014612; c=relaxed/simple;
+	bh=Pi4SWubD7L9QbNR9J+qgTLLaeJVidEjGwCfMDjw9Lv8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QNyjxzoLTNLJYv6UIF2XldYqk2B6IP1E2Yqp23wpqfL/eKnFv6P0Q1hTekLGD0h9I50K2Xx58lzgFr/y1qAu5UfKIrrDoGfGS3CT0Byt3mWrsvuFO7+w5D7fl6IcC/LuMb3O69somJUY0+aFPAqi12luVjUDNS0HDJbkRlDSu+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IvbgZWDA; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753014611; x=1784550611;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Pi4SWubD7L9QbNR9J+qgTLLaeJVidEjGwCfMDjw9Lv8=;
+  b=IvbgZWDAFn8FgrCpT3scjkQtLVsmmRBOg2nYx8kR0mTUMGzDH+RsuKN7
+   TZVTiLhD0wrASu4x7ycgFaz1Xy76xCXeMnnVO+1Zv8aPF0vxNAerB9zOP
+   Zf4cHSu3jilR8mf/azNzSOPiFrV/AbDPEtT43QrXj94x/+7FHbKD6nunl
+   Tl1liFYAO0LjG7AZW936dzybcc0rOZ2fsBaOusndxLtIuQQIwN6Hxk9i2
+   iNiaXoeGKVH3ASNoDW0opbnPxOaF/cDzBHcZqXAn2M1vBXCUZx5P/T+sg
+   epCYQpi7rmRjkV9TNq59ROFE9mqA+FXPkfYWAac7suvwhdxrDgHlOka/C
+   Q==;
+X-CSE-ConnectionGUID: CrYa+vTxRR2JuW+SJH/BIQ==
+X-CSE-MsgGUID: gwp7KCsHR3Wamh8rXYc8GQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11498"; a="72813836"
+X-IronPort-AV: E=Sophos;i="6.16,326,1744095600"; 
+   d="scan'208";a="72813836"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jul 2025 05:30:10 -0700
+X-CSE-ConnectionGUID: vw7IUtZAQrmT/JKKal5jlg==
+X-CSE-MsgGUID: oeCuXcGERV6qLi/nIMCYdQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,326,1744095600"; 
+   d="scan'208";a="158272059"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 20 Jul 2025 05:30:08 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1udTB7-000G65-2v;
+	Sun, 20 Jul 2025 12:30:05 +0000
+Date: Sun, 20 Jul 2025 20:29:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Sidong Yang <sidong.yang@furiosa.ai>, Miguel Ojeda <ojeda@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org, Sidong Yang <sidong.yang@furiosa.ai>
+Subject: Re: [PATCH 1/4] rust: bindings: add io_uring headers in
+ bindings_helper.h
+Message-ID: <202507202006.8ZnBwBsW-lkp@intel.com>
+References: <20250719143358.22363-2-sidong.yang@furiosa.ai>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250719143358.22363-2-sidong.yang@furiosa.ai>
 
-Subject: [PATCH] hpfs: add checks for ea addresses
+Hi Sidong,
 
-The addresses of the extended attributes are computed using the
-fnode_ea() and next_ea() functions which refer to the fields residing in
-a given fnode. There are no sanity checks for the returned values, so in
-the case of corrupted data in the fnode, the ea addresses are invalid.
+kernel test robot noticed the following build warnings:
 
-Fix the bug by adding ea_valid_addr() function which checks if a given
-extended attribute resides within the range of the ea array of a given
-fnode.
+[auto build test WARNING on rust/rust-next]
+[also build test WARNING on char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus soc/for-next linus/master v6.16-rc6 next-20250718]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Reported-by: syzbot+fa88eb476e42878f2844@syzkaller.appspotmail.com
-Signed-off-by: Antoni Pokusinski <apokusinski01@gmail.com>
----
- fs/hpfs/anode.c   | 2 +-
- fs/hpfs/ea.c      | 6 +++---
- fs/hpfs/hpfs_fn.h | 5 +++++
- fs/hpfs/map.c     | 2 +-
- 4 files changed, 10 insertions(+), 5 deletions(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/Sidong-Yang/rust-bindings-add-io_uring-headers-in-bindings_helper-h/20250719-223630
+base:   https://github.com/Rust-for-Linux/linux rust-next
+patch link:    https://lore.kernel.org/r/20250719143358.22363-2-sidong.yang%40furiosa.ai
+patch subject: [PATCH 1/4] rust: bindings: add io_uring headers in bindings_helper.h
+config: x86_64-rhel-9.4-rust (https://download.01.org/0day-ci/archive/20250720/202507202006.8ZnBwBsW-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+rustc: rustc 1.88.0 (6b00bc388 2025-06-23)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250720/202507202006.8ZnBwBsW-lkp@intel.com/reproduce)
 
-diff --git a/fs/hpfs/anode.c b/fs/hpfs/anode.c
-index c14c9a035ee0..f347cdd94a5c 100644
---- a/fs/hpfs/anode.c
-+++ b/fs/hpfs/anode.c
-@@ -488,7 +488,7 @@ void hpfs_remove_fnode(struct super_block *s, fnode_secno fno)
- 	if (!fnode_is_dir(fnode)) hpfs_remove_btree(s, &fnode->btree);
- 	else hpfs_remove_dtree(s, le32_to_cpu(fnode->u.external[0].disk_secno));
- 	ea_end = fnode_end_ea(fnode);
--	for (ea = fnode_ea(fnode); ea < ea_end; ea = next_ea(ea))
-+	for (ea = fnode_ea(fnode); ea < ea_end && ea_valid_addr(fnode, ea); ea = next_ea(ea))
- 		if (ea_indirect(ea))
- 			hpfs_ea_remove(s, ea_sec(ea), ea_in_anode(ea), ea_len(ea));
- 	hpfs_ea_ext_remove(s, le32_to_cpu(fnode->ea_secno), fnode_in_anode(fnode), le32_to_cpu(fnode->ea_size_l));
-diff --git a/fs/hpfs/ea.c b/fs/hpfs/ea.c
-index 102ba18e561f..d7ada7f5a7ae 100644
---- a/fs/hpfs/ea.c
-+++ b/fs/hpfs/ea.c
-@@ -80,7 +80,7 @@ int hpfs_read_ea(struct super_block *s, struct fnode *fnode, char *key,
- 	char ex[4 + 255 + 1 + 8];
- 	struct extended_attribute *ea;
- 	struct extended_attribute *ea_end = fnode_end_ea(fnode);
--	for (ea = fnode_ea(fnode); ea < ea_end; ea = next_ea(ea))
-+	for (ea = fnode_ea(fnode); ea < ea_end  && ea_valid_addr(fnode, ea); ea = next_ea(ea))
- 		if (!strcmp(ea->name, key)) {
- 			if (ea_indirect(ea))
- 				goto indirect;
-@@ -135,7 +135,7 @@ char *hpfs_get_ea(struct super_block *s, struct fnode *fnode, char *key, int *si
- 	secno a;
- 	struct extended_attribute *ea;
- 	struct extended_attribute *ea_end = fnode_end_ea(fnode);
--	for (ea = fnode_ea(fnode); ea < ea_end; ea = next_ea(ea))
-+	for (ea = fnode_ea(fnode); ea < ea_end && ea_valid_addr(fnode, ea); ea = next_ea(ea))
- 		if (!strcmp(ea->name, key)) {
- 			if (ea_indirect(ea))
- 				return get_indirect_ea(s, ea_in_anode(ea), ea_sec(ea), *size = ea_len(ea));
-@@ -198,7 +198,7 @@ void hpfs_set_ea(struct inode *inode, struct fnode *fnode, const char *key,
- 	unsigned char h[4];
- 	struct extended_attribute *ea;
- 	struct extended_attribute *ea_end = fnode_end_ea(fnode);
--	for (ea = fnode_ea(fnode); ea < ea_end; ea = next_ea(ea))
-+	for (ea = fnode_ea(fnode); ea < ea_end && ea_valid_addr(fnode, ea); ea = next_ea(ea))
- 		if (!strcmp(ea->name, key)) {
- 			if (ea_indirect(ea)) {
- 				if (ea_len(ea) == size)
-diff --git a/fs/hpfs/hpfs_fn.h b/fs/hpfs/hpfs_fn.h
-index 237c1c23e855..c65ce60d7d9a 100644
---- a/fs/hpfs/hpfs_fn.h
-+++ b/fs/hpfs/hpfs_fn.h
-@@ -152,6 +152,11 @@ static inline struct extended_attribute *next_ea(struct extended_attribute *ea)
- 	return (struct extended_attribute *)((char *)ea + 5 + ea->namelen + ea_valuelen(ea));
- }
- 
-+static inline bool ea_valid_addr(struct fnode *fnode, struct extended_attribute *ea)
-+{
-+	return ((char *)ea >= (char *)&fnode->ea) && ((char *)ea < (char *)&fnode->ea + sizeof(fnode->ea));
-+}
-+
- static inline secno ea_sec(struct extended_attribute *ea)
- {
- 	return le32_to_cpu(get_unaligned((__le32 *)((char *)ea + 9 + ea->namelen)));
-diff --git a/fs/hpfs/map.c b/fs/hpfs/map.c
-index ecd9fccd1663..0016dcbf1b1f 100644
---- a/fs/hpfs/map.c
-+++ b/fs/hpfs/map.c
-@@ -202,7 +202,7 @@ struct fnode *hpfs_map_fnode(struct super_block *s, ino_t ino, struct buffer_hea
- 			}
- 			ea = fnode_ea(fnode);
- 			ea_end = fnode_end_ea(fnode);
--			while (ea != ea_end) {
-+			while (ea != ea_end && ea_valid_addr(fnode, ea)) {
- 				if (ea > ea_end) {
- 					hpfs_error(s, "bad EA in fnode %08lx",
- 						(unsigned long)ino);
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507202006.8ZnBwBsW-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> warning: `extern` fn uses type `io_tw_state`, which is not FFI-safe
+   --> rust/bindings/bindings_generated.rs:109725:28
+   |
+   109725 |     ::core::option::Option<unsafe extern "C" fn(req: *mut io_kiocb, tw: io_tw_token_t)>;
+   |                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ not FFI-safe
+   |
+   = help: consider adding a member to this struct
+   = note: this struct has no fields
+   note: the type is defined here
+   --> rust/bindings/bindings_generated.rs:109642:1
+   |
+   109642 | pub struct io_tw_state {}
+   | ^^^^^^^^^^^^^^^^^^^^^^
+   = note: `#[warn(improper_ctypes_definitions)]` on by default
+
 -- 
-2.25.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
