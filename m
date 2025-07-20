@@ -1,104 +1,144 @@
-Return-Path: <linux-kernel+bounces-738065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C542CB0B3CF
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 08:47:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F774B0B3F0
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 08:53:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ED9D189B017
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 06:47:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DE663BF3D0
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 06:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2F4D192598;
-	Sun, 20 Jul 2025 06:46:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA581E0E08;
+	Sun, 20 Jul 2025 06:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="z+4sxQuc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="YmW1K6X8"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B001EA65;
-	Sun, 20 Jul 2025 06:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA661C5F2C;
+	Sun, 20 Jul 2025 06:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752994014; cv=none; b=uMjJVM0s+rK7WUkqK+CJZCw/j+ifzHJS0r5j8ozTeZzJvnp7LMZNEM7jQqRCBv4BCySVmKj6hc46sMKeBA3CaeaO7WWJeilM1cvh3CvC97mMbwGOMImZIgSxSr+g+KlqiRBulHCat+FafpXdD0eem2GWdwbfS5eb7ZLgq+ZJ+ac=
+	t=1752994385; cv=none; b=MIqdEzJy+Zf3kKN3LTEvOYF93oZghmTH23FiBmpOPMk5alMPSUV8XCfjkkEn8QSI5ikbRClvh+6eaOSESvpNwtKxPhHPQZ1BaYy1kUnzlTqQDL5piTaqlddmOZwH7PQxQIYadQ4HvAUO+7yPZGV6QWoj87xocehrNFK8TFDyx/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752994014; c=relaxed/simple;
-	bh=4G77iiVz0cnG6W7mqdiFXyEcR7JkSteEAIvXb68rA4I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BFFLZIqtk8ZwNlBYLia6PwDmo7/yxXBNl1mmGqb9O8d1euwVQxrm7MMezpzjba9WWIsIcicVtB5woM5kz2z+1zhNQOp+LnehFK4AqvoDMr60Uw+7VMCUD3JNH/Lt7DYBASoXsPm5U6CBIxrT0KWVnLlhvPcsfHJPyDbrU+DfDL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=z+4sxQuc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A09EC4CEE7;
-	Sun, 20 Jul 2025 06:46:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752994013;
-	bh=4G77iiVz0cnG6W7mqdiFXyEcR7JkSteEAIvXb68rA4I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=z+4sxQucVpWJv54bzVM/oAehhIJtjYUv5eeuQycvclFs6e+sGyeJMojAJOJAPSOuc
-	 hNZtq0gnZPMvJFQ0Kabi/sgwQfWB9RFNsNToRmeQMmF36dPdBc5RnO3K777tsBae0a
-	 azJu7wm7Ge65WW1CmiISKBe628pUECQ6s3NLNXdI=
-Date: Sun, 20 Jul 2025 08:46:49 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Ali Nasrolahi <a.nasrolahi01@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
-Subject: Re: [PATCH] staging: rtl8723bs: fix coding style issues and improve
- readability
-Message-ID: <2025072034-universal-tanned-3d03@gregkh>
-References: <20250719172346.23573-1-A.Nasrolahi01@gmail.com>
+	s=arc-20240116; t=1752994385; c=relaxed/simple;
+	bh=6AF1DrYAjh9UiBobvuPlLao7ekzQEI/5JlPKdx9Vvu4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DJGPEj97MFMT0CVbRjJM/lAt3qGefWA2cTmGI8h5pnxyQ6hWQ+IKcQmpu+IRvtHAFTvtV7BrRzb/1UIV40ghQVdbisKm7ESopQZd+aw8yKNl94m4FxsXgZnreixAhJCPxtQe8I2NMC/2Ts9OiENDlRZF7rDxhgUBQGOr5iwBO7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=YmW1K6X8; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from mail.zytor.com ([IPv6:2601:646:8081:9484:f04a:f27d:fd66:5c61])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56K6oq0X3555973
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+	Sat, 19 Jul 2025 23:50:53 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56K6oq0X3555973
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025062101; t=1752994260;
+	bh=rTdzYvwFHc/obNMmPtvKZfNfhBVjDuwkEkiFsct/pho=;
+	h=From:To:Cc:Subject:Date:From;
+	b=YmW1K6X8nh5gvx+/lSaLL/0uVHsAorsxD+AVsaUyPiomu4l2Jbf0BfVqyQpPxeoO9
+	 kr5smMv1P2CI6IH4hiMwDx1+VV5DzlIMt8CxJShOD63VVlIfqYpUZYD7StXNc1s+as
+	 TlEMiqy2G350jxTX+x1Y2Ql+ORTOydINiaJq9CGtdg6A11P5c+PhVpuWEf5f5W1Q3O
+	 am/ZAB0HJioLUUtB4/sAiRstoaTRokISJSjRNjfFBOWIc5W5hlAH03xyxYGC+Z23Y0
+	 DEipT/5KCZeI5RAXsfCvHLzmp9kPkp3m0uETy1p5uCRXQ3MHxcJZAVKZdSLBLVbSG6
+	 nuRE85ysqy4ew==
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: 
+Cc: "H. Peter Anvin" <hpa@zytor.com>,
+        =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+        =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, Alexei Starovoitov <ast@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrii Nakryiko <andrii@kernel.org>, Arnd Bergmann <arnd@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Laight <David.Laight@ACULAB.COM>,
+        David Lechner <dlechner@baylibre.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Eduard Zingerman <eddyz87@gmail.com>,
+        Gatlin Newhouse <gatlin.newhouse@gmail.com>,
+        Hao Luo <haoluo@google.com>, Ingo Molnar <mingo@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jakub Sitnicki <jakub@cloudflare.com>,
+        Jan Hendrik Farr <kernel@jfarr.cc>, Jason Wang <jasowang@redhat.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Josh Poimboeuf <jpoimboe@kernel.org>, KP Singh <kpsingh@kernel.org>,
+        Kees Cook <kees@kernel.org>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Marc Herbert <Marc.Herbert@linux.intel.com>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Mateusz Guzik <mjguzik@gmail.com>, Michal Luczaj <mhal@rbox.co>,
+        Miguel Ojeda <ojeda@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
+        NeilBrown <neil@brown.name>, Peter Zijlstra <peterz@infradead.org>,
+        Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+        Sami Tolvanen <samitolvanen@google.com>, Shuah Khan <shuah@kernel.org>,
+        Song Liu <song@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Thorsten Blum <thorsten.blum@linux.dev>,
+        Uros Bizjak <ubizjak@gmail.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        Yafang Shao <laoar.shao@gmail.com>, Ye Bin <yebin10@huawei.com>,
+        Yonghong Song <yonghong.song@linux.dev>,
+        Yufeng Wang <wangyufeng@kylinos.cn>, bpf@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-sparse@vger.kernel.org,
+        virtualization@lists.linux.dev, x86@kernel.org
+Subject: [PATCH v2 0/7] Replace "__auto_type" with "auto"
+Date: Sat, 19 Jul 2025 23:50:37 -0700
+Message-ID: <20250720065045.2859105-1-hpa@zytor.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250719172346.23573-1-A.Nasrolahi01@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jul 19, 2025 at 08:53:46PM +0330, Ali Nasrolahi wrote:
-> This patch fixes several coding style issues reported by checkpatch.pl,
-> including:
-> 
-> 1. Comment formatting and alignment
-> 2. Clarifying parameter names for better readability
-> 3. Removing excess spaces and unnecessary semicolons
-> 
-> These changes are cosmetic and do not alter functionality.
-> 
-> Signed-off-by: Ali Nasrolahi <A.Nasrolahi01@gmail.com>
-> ---
->  drivers/staging/rtl8723bs/include/basic_types.h  | 15 +++++++--------
->  drivers/staging/rtl8723bs/include/hal_btcoex.h   |  8 ++++----
->  drivers/staging/rtl8723bs/os_dep/osdep_service.c | 11 ++++++-----
->  3 files changed, 17 insertions(+), 17 deletions(-)
+"auto" was defined as a keyword back in the K&R days, but as a storage
+type specifier.  No one ever used it, since it was and is the default
+storage type for local variables.
 
-Hi,
+C++11 recycled the keyword to allow a type to be declared based on the
+type of an initializer.  This was finally adopted into standard C in
+C23.
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+gcc and clang provide the "__auto_type" alias keyword as an extension
+for pre-C23, however, there is no reason to pollute the bulk of the
+source base with this temporary keyword; instead define "auto" as a
+macro unless the compiler is running in C23+ mode.
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+This macro is added in <linux/compiler_types.h> because that header is
+included in some of the tools headers, wheres <linux/compiler.h> is
+not as it has a bunch of very kernel-specific things in it.
 
-- Your patch did many different things all at once, making it difficult
-  to review.  All Linux kernel patches need to only do one thing at a
-  time.  If you need to do multiple things (such as clean up all coding
-  style issues in a file/driver), do it in a sequence of patches, each
-  one doing only one thing.  This will make it easier to review the
-  patches to ensure that they are correct, and to help alleviate any
-  merge issues that larger patches can cause.
+Changes in v2:
 
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
+- Restore indentation of macro backslashes (David Laight)
+- arch/nios2: Replace an adjacent typeof() with a similar "auto" construct
+  (Linus Torvalds)
+- fs/proc/inode.c: change "__auto_type" to "const auto" (Alexey Dobriyan)
 
-thanks,
-
-greg k-h's patch email bot
+--- 
+ arch/nios2/include/asm/uaccess.h                        |  8 ++++----
+ arch/x86/include/asm/bug.h                              |  2 +-
+ arch/x86/include/asm/string_64.h                        |  6 +++---
+ arch/x86/include/asm/uaccess_64.h                       |  2 +-
+ fs/proc/inode.c                                         | 16 ++++++++--------
+ include/linux/cleanup.h                                 |  6 +++---
+ include/linux/compiler.h                                |  2 +-
+ include/linux/compiler_types.h                          | 13 +++++++++++++
+ include/linux/minmax.h                                  |  6 +++---
+ tools/testing/selftests/bpf/prog_tests/socket_helpers.h |  9 +++++++--
+ tools/virtio/linux/compiler.h                           |  2 +-
+ 11 files changed, 45 insertions(+), 27 deletions(-)
 
