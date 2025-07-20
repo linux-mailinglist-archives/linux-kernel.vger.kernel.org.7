@@ -1,122 +1,234 @@
-Return-Path: <linux-kernel+bounces-738001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C30A2B0B305
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 02:46:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33546B0B307
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 02:49:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3494A3A88F3
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 00:46:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EECA7A1F95
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 00:47:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE8932C859;
-	Sun, 20 Jul 2025 00:46:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="QJ/wvtJv"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678D82AE7E;
+	Sun, 20 Jul 2025 00:49:05 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D0E186A;
-	Sun, 20 Jul 2025 00:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752972406; cv=pass; b=pn8rsmt2CAn6LAJ1ryFIinssnIDesBQjF32oiLt3TmMSuShkoPm3lz0w9pOACh23uUeCZHOBEr201y1sZJ3yaXdBSQbxoohgozJ1/7HDuIASytePEYjnU/vy/YjLYTHwer69J55NWQI8kNkDzQmi7Cbdf0sZdRSsnyu9boiPGb0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752972406; c=relaxed/simple;
-	bh=RCMhaNF73IsXyuAJ+j6RrC60q8zTRTKwzopHxGIjgSY=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=AA3dHaiTDyFDDol9nMZCGodiBpDA02Phv25KZ5/yg1XOiN3xvuWhm1Ka48d8qeR5mPzEA6zhu+E3xYBZVwRE3ebTBTbyhyqwmWjTlaMBn6rovPlsnDMce+2TeR4WLFFqQbYKtgLxWsM6h0aiaInVdx1F4ebZGGxEgJxllYO0efM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=QJ/wvtJv; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1752972362; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=g4COvUywzMSeRRyXvcFAnvKY3+hu+MDC6ae9mXd6c8fPl+us9VrDamaq6sC8XHEtJFsBmoY1Hzv4vZBMnc1gfarvsGsgU0DwXAmxSXJt/ijU+z92vQP1uoPNslX2Be7tyu1hatdu8+uzihvTEaOGqh3cOUDLglvij7zquiAubnw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1752972362; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=lMTx2r8Z+X9Aqblv0RaFBmOLKDhzz5NGNxEUj/Eml3Y=; 
-	b=h0bx7tYIXnVtHnMSs3vJSBueufe2O9QqnFm6QJL5Oa1bQ2hvOOB2vBHzAaCL8zkK83ED0jS9MkmmPfWWy9iF94RKpRFNU4NtxesuqJHBMARoDn8ByM2Bb994TSkLEPwO3mBbt6uZjT8kOCcKCVj6iHw6Z9GkjdsIw71aW/eSuwI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1752972362;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=lMTx2r8Z+X9Aqblv0RaFBmOLKDhzz5NGNxEUj/Eml3Y=;
-	b=QJ/wvtJvq6UH1xOGLLwv+6div3lICXpcQn2gmnJ7CBkmvUrxhOWRmfmMQmgQIjg2
-	oFdO47uul6gfLZ3qQFCabDVEkJDj11+fwuoPTjxB8G0o4a/2S0mvmlL6ZzRERSEkfxC
-	S7fKehhSYTczceOfdvhCn9e91fFXXklCvWKKyYbk=
-Received: by mx.zohomail.com with SMTPS id 1752972361237945.5987989359068;
-	Sat, 19 Jul 2025 17:46:01 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301084C97
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 00:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752972544; cv=none; b=tor/JgTD4gk1iYxfr890JuNpwySfkJavILL9vXX5BPyMTyC7ivSNkt2MFXt71p+TkuKvjO2WfZoNfTOUaeLGWLP9z2nmgAcx/49IHUBFMTBTT2393u18rV/S5UQP0185uRHBwNWP9YdhCh4GFZ7wo0T0KQe1fFc4SJx6F87lnLY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752972544; c=relaxed/simple;
+	bh=SyIw561S75HUB9HZLz+AMJVXYY18r6r3HIU5TAWd06s=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=n+0yLQM6ZslWzIWa27r/h/eDSxDWbrNtYlXo1D4QBcfe9FKJVv4tTeo0sGKJT/qQErgqCWktyjSPAFTUDGVFdZlGSsVyimIOY5Vpt9b1RqDSwu+o1NT6tF1GlbfZi0sZBc2bY6ZV6Xs+dalF5M3KCVyRIMoNhBmrLnCuIKLQtyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-8794f047611so359529839f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 19 Jul 2025 17:49:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752972542; x=1753577342;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xG7qngR7y21j9Z9LYHBRWnNSkwfERvghxDYDOziSJkk=;
+        b=wxt45qBxNvtRNX2WQhi9fM5W/g0nEguhPu5EOU+42bkWZDRVWccan3qyiSNCdqtza6
+         Ka0/OJotuOqRzMfdEvo1AbA0YK3gQf61sNAefke05YX49tboKQduNkice35w2yFf2SRK
+         jLKbjkuUxW3l3s/06ZeUNOi+z9XWoHGsBI2oscDKgno8LmTmAgm/KAmJ6V68Y9QJf1b3
+         lotVIymW3mnaPfoNBcX+GCeAxfdwFhgn/h33RrmasYoPuzNKO7HBa5iREUhNdXDBd+NZ
+         X0ZgXS8y6kewJCcBcmgWqjzEN8FCkELN5MSG4x1mgiio3x8WHA8vBtthW47kjyaK8J5k
+         p6zw==
+X-Forwarded-Encrypted: i=1; AJvYcCWHtgDtdfAiDyT5toRh3tBwiElWoJ2cc4QaIQEBB1zPokH+JpnYgRNwsDrFHIISrBnuK2LYA5ZBqQN4Wgo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyd68fHdDOCZ5zT9L4/U1LhYn9MFl14DPe0Xw6gLyXNy02pWTUx
+	xePpHdxs4L66VeeBW60+ddJxlshI4Xy+/PyZL2kYiZstdPKj8q9BaOaGLRtUUpCHtutyFxzVesK
+	t7SzvEXRyrT2QcZLAcWqBdN/fbWKOyR2kP2vsHfhA9Pcki8v10zj+EmIQo9s=
+X-Google-Smtp-Source: AGHT+IG3uxIG9+Yibj5IoSRQn4r8h/MCKJfsbYdF1AwrtVn3R1/LeymXummtUIrAloj5w9vZH8W/60cTkpFZypOuSL31dQ9zZJcY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH v6 3/6] rust: irq: add support for non-threaded IRQs and
- handlers
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <ce656239-08a1-49e8-86b1-b33d0cdfbcd3@gmail.com>
-Date: Sat, 19 Jul 2025 21:45:43 -0300
-Cc: Danilo Krummrich <dakr@kernel.org>,
- Benno Lossin <lossin@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Bjorn Helgaas <bhelgaas@google.com>,
- =?utf-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-pci@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <E1C5BFA7-9B72-4277-A7E9-BC6F19110AB7@collabora.com>
-References: <20250703-topics-tyr-request_irq-v6-0-74103bdc7c52@collabora.com>
- <20250703-topics-tyr-request_irq-v6-3-74103bdc7c52@collabora.com>
- <DBAE5TCBT8F8.25XWHTO92R9V4@kernel.org>
- <DAD3292B-2DBF-442A-8B60-A999AE0F6511@collabora.com>
- <DBAURC9BEFI0.1LQCRIDT6ZBV9@kernel.org>
- <DBAVXQTMR38Z.2782EGR84L7OP@kernel.org>
- <DBAWQG1PX5TO.6I2ARFGLX88N@kernel.org> <DBAX59YKO0FV.ANLOWRHDDS92@kernel.org>
- <DBAXP68U809C.2G8DMB52M3UZ7@kernel.org>
- <C4A101A7-282D-4A67-A966-CF39850952EA@collabora.com>
- <DBAZRNHGIGL8.3L2NGPCVXLI25@kernel.org>
- <DBAZXDRPYWPC.14RI91KYE16RM@kernel.org>
- <18B23FD3-56E9-4531-A50C-F204616E7D17@collabora.com>
- <DBB0NXU86D6G.2M3WZMS2NUV10@kernel.org>
- <1F0227F0-8554-4DD2-BADE-0184D0824AF8@collabora.com>
- <AACC99CD-086A-45AB-929C-7F25AABF8B6E@collabora.com>
- <ce656239-08a1-49e8-86b1-b33d0cdfbcd3@gmail.com>
-To: Dirk Behme <dirk.behme@gmail.com>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:1709:b0:3e2:9aea:8049 with SMTP id
+ e9e14a558f8ab-3e29aea823fmr56886345ab.13.1752972542356; Sat, 19 Jul 2025
+ 17:49:02 -0700 (PDT)
+Date: Sat, 19 Jul 2025 17:49:02 -0700
+In-Reply-To: <20250720003607.2491-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <687c3cfe.a70a0220.693ce.00a0.GAE@google.com>
+Subject: Re: [syzbot] [io-uring?] KASAN: slab-use-after-free Read in io_poll_remove_entries
+From: syzbot <syzbot+01523a0ae5600aef5895@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, hdanton@sina.com, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Dirk,
+Hello,
 
->=20
-> fn handle(&self) -> IrqReturn {
->  let dev =3D ??;
->  let io =3D self.iomem.access(dev);
->=20
-> Thanks,
->=20
-> Dirk
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KASAN: slab-use-after-free Read in io_poll_remove_entries
 
-FYI, until there is a patch to provide Device<Bound> as an argument, you =
-can
-resort to the slower try_access().
+==================================================================
+BUG: KASAN: slab-use-after-free in __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
+BUG: KASAN: slab-use-after-free in _raw_spin_lock_irq+0x36/0x50 kernel/locking/spinlock.c:170
+Read of size 1 at addr ffff888025296ab0 by task kworker/0:2/837
 
-=E2=80=94 Daniel=
+CPU: 0 UID: 0 PID: 837 Comm: kworker/0:2 Not tainted 6.16.0-rc6-syzkaller-00281-gf4a40a4282f4-dirty #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: events io_fallback_req_func
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xcd/0x610 mm/kasan/report.c:480
+ kasan_report+0xe0/0x110 mm/kasan/report.c:593
+ __kasan_check_byte+0x36/0x50 mm/kasan/common.c:557
+ kasan_check_byte include/linux/kasan.h:399 [inline]
+ lock_acquire kernel/locking/lockdep.c:5845 [inline]
+ lock_acquire+0xfc/0x350 kernel/locking/lockdep.c:5828
+ __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
+ _raw_spin_lock_irq+0x36/0x50 kernel/locking/spinlock.c:170
+ spin_lock_irq include/linux/spinlock.h:376 [inline]
+ io_poll_remove_entry io_uring/poll.c:148 [inline]
+ io_poll_remove_entries.part.0+0x17b/0x850 io_uring/poll.c:181
+ io_poll_remove_entries io_uring/poll.c:161 [inline]
+ io_poll_task_func+0x4cd/0x1130 io_uring/poll.c:328
+ io_fallback_req_func+0x1c7/0x6d0 io_uring/io_uring.c:259
+ process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3238
+ process_scheduled_works kernel/workqueue.c:3321 [inline]
+ worker_thread+0x6c8/0xf10 kernel/workqueue.c:3402
+ kthread+0x3c5/0x780 kernel/kthread.c:464
+ ret_from_fork+0x5d4/0x6f0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+Allocated by task 6579:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
+ kmalloc_noprof include/linux/slab.h:905 [inline]
+ kzalloc_noprof include/linux/slab.h:1039 [inline]
+ __comedi_device_postconfig_async drivers/comedi/drivers.c:664 [inline]
+ __comedi_device_postconfig drivers/comedi/drivers.c:721 [inline]
+ comedi_device_postconfig+0x2cb/0xc80 drivers/comedi/drivers.c:756
+ comedi_device_attach+0x3cf/0x900 drivers/comedi/drivers.c:998
+ do_devconfig_ioctl+0x1a7/0x580 drivers/comedi/comedi_fops.c:855
+ comedi_unlocked_ioctl+0x15bb/0x2e90 drivers/comedi/comedi_fops.c:2136
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl fs/ioctl.c:893 [inline]
+ __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 6581:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:576
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:233 [inline]
+ slab_free_hook mm/slub.c:2381 [inline]
+ slab_free mm/slub.c:4643 [inline]
+ kfree+0x2b4/0x4d0 mm/slub.c:4842
+ comedi_device_detach_cleanup drivers/comedi/drivers.c:171 [inline]
+ comedi_device_detach+0x2a4/0x9e0 drivers/comedi/drivers.c:208
+ do_devconfig_ioctl+0x46c/0x580 drivers/comedi/comedi_fops.c:833
+ comedi_unlocked_ioctl+0x15bb/0x2e90 drivers/comedi/comedi_fops.c:2136
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl fs/ioctl.c:893 [inline]
+ __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff888025296a00
+ which belongs to the cache kmalloc-256 of size 256
+The buggy address is located 176 bytes inside of
+ freed 256-byte region [ffff888025296a00, ffff888025296b00)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x25296
+head: order:1 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000040 ffff88801b842b40 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000000100010 00000000f5000000 0000000000000000
+head: 00fff00000000040 ffff88801b842b40 dead000000000122 0000000000000000
+head: 0000000000000000 0000000000100010 00000000f5000000 0000000000000000
+head: 00fff00000000001 ffffea000094a581 00000000ffffffff 00000000ffffffff
+head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000002
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 1, migratetype Unmovable, gfp_mask 0x252800(GFP_NOWAIT|__GFP_NORETRY|__GFP_COMP|__GFP_THISNODE), pid 6279, tgid 6279 (udevd), ts 91681288326, free_ts 91422215520
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1c0/0x230 mm/page_alloc.c:1704
+ prep_new_page mm/page_alloc.c:1712 [inline]
+ get_page_from_freelist+0x1321/0x3890 mm/page_alloc.c:3669
+ __alloc_frozen_pages_noprof+0x261/0x23f0 mm/page_alloc.c:4959
+ alloc_slab_page mm/slub.c:2453 [inline]
+ allocate_slab mm/slub.c:2619 [inline]
+ new_slab+0x94/0x330 mm/slub.c:2673
+ ___slab_alloc+0xd9c/0x1940 mm/slub.c:3859
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3949
+ __slab_alloc_node mm/slub.c:4024 [inline]
+ slab_alloc_node mm/slub.c:4185 [inline]
+ __do_kmalloc_node mm/slub.c:4327 [inline]
+ __kmalloc_node_noprof+0x2ed/0x500 mm/slub.c:4334
+ kmalloc_array_node_noprof include/linux/slab.h:1020 [inline]
+ alloc_slab_obj_exts+0x41/0xa0 mm/slub.c:1992
+ account_slab mm/slub.c:2578 [inline]
+ allocate_slab mm/slub.c:2638 [inline]
+ new_slab+0x283/0x330 mm/slub.c:2673
+ ___slab_alloc+0xd9c/0x1940 mm/slub.c:3859
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3949
+ __slab_alloc_node mm/slub.c:4024 [inline]
+ slab_alloc_node mm/slub.c:4185 [inline]
+ __do_kmalloc_node mm/slub.c:4327 [inline]
+ __kvmalloc_node_noprof+0x3b1/0x620 mm/slub.c:5015
+ simple_xattr_alloc+0x41/0xa0 fs/xattr.c:1238
+ simple_xattr_set+0x3d/0x3e0 fs/xattr.c:1358
+ shmem_xattr_handler_set+0x31b/0x3b0 mm/shmem.c:4331
+ __vfs_setxattr+0x172/0x1e0 fs/xattr.c:200
+page last free pid 33 tgid 33 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1248 [inline]
+ __free_frozen_pages+0x7fe/0x1180 mm/page_alloc.c:2706
+ rcu_do_batch kernel/rcu/tree.c:2576 [inline]
+ rcu_core+0x799/0x14e0 kernel/rcu/tree.c:2832
+ handle_softirqs+0x219/0x8e0 kernel/softirq.c:579
+ run_ksoftirqd kernel/softirq.c:968 [inline]
+ run_ksoftirqd+0x3a/0x60 kernel/softirq.c:960
+ smpboot_thread_fn+0x3f7/0xae0 kernel/smpboot.c:164
+ kthread+0x3c5/0x780 kernel/kthread.c:464
+ ret_from_fork+0x5d4/0x6f0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+Memory state around the buggy address:
+ ffff888025296980: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff888025296a00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff888025296a80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                     ^
+ ffff888025296b00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff888025296b80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+
+
+Tested on:
+
+commit:         f4a40a42 Merge tag 'efi-fixes-for-v6.16-2' of git://gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=110104f0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fa738a4418f051ee
+dashboard link: https://syzkaller.appspot.com/bug?extid=01523a0ae5600aef5895
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1799138c580000
+
 
