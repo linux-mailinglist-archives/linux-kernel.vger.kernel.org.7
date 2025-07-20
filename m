@@ -1,133 +1,183 @@
-Return-Path: <linux-kernel+bounces-738085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48D30B0B41C
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 09:33:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA945B0B423
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 09:49:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 349C43C1120
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 07:32:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1DE7178801
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 07:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1F21CF7AF;
-	Sun, 20 Jul 2025 07:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dzl2//Xd"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982E51CBEAA;
+	Sun, 20 Jul 2025 07:49:06 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA0A18FC91
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 07:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD2A78F4A
+	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 07:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752996795; cv=none; b=W7bFzFuaUlla4mJrc4UJCaVTCg3pxvNI81Sp989zqvct56mZkMLqA3cJfkj06UiF8+8q8WSNJ7XX2hrJCLVIgCVwDCqGlIwlkcdmvTgdOHRZSQlVLq9+F6V00OsKqrqqf3lIXIceFmzvufRLi+xvSZ8+mOfmbYpz4M3/02a2jgk=
+	t=1752997746; cv=none; b=RqjkmiqP5xSRzajEOQms+qoKj1y9gjBT7IFyxxofQE2KuVo0Gb6AAghAO1PaolClHqun3xmU8O+JK6+K/Lwv7tOA76e4qAYiP98QS1QQqxqLHgCT1msNHSR8CXSgnOnBbgU/92IaJT1mhMw9OKLO744RCKkrIGS7cuNk99ZNdyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752996795; c=relaxed/simple;
-	bh=UCPebKLxqBspyFjBExWlopI92nmsltDWUfczks4LkOA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B9t5uCaUb8r2v0VcHkDRcWvJWnX2l/ooIfAJ1cBgrTHJbiabxH7xCYiV7fVdCZXfma1RF0vMS/otvJbfVMuS/h1lRPjLvArkm2vM9Qp7R0UnpnHABuc/WpHBZOtSNLvjKJgoekiQ0Q4BlnWEFhrJvzyvOUan2DX3iVxkiUg20Wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dzl2//Xd; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-23636167afeso32733525ad.3
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 00:33:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752996793; x=1753601593; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zM+q+F/3AakFjugN8+T3F0cDtlqAbO5mNb+XTOdV2cE=;
-        b=dzl2//XdpsG1RJvVgLqKh8WKCNVk8hu3ZXMu6FaMyuxXvbwG13AOW+MZ0vJ8WJmOib
-         iDHLESPwfC3kdcQX7vL6L5VmdWQIVvFboJwUnhnn+2WSJHKvrPy7POKTQ5yQmoKavRiH
-         HVvsL7IS3R72Y+6Hkx5YtnEo/9O7uw0S3y04IPXAthsSgnyMgvR6uDrsroBTyZKcTOQE
-         i4tIrEETo/gq6fSEv+ggTXm7e1ZtwXYhFGw5YOjobn54ghJOw6QbPhJJwp5cymSvtmhd
-         dVY7Zeo0sw6Nx20MxcYg1d6AAoQ5qCRwi5uGt82tODb9FMk/fwoNhThH8tDD2Bmxbp7p
-         6OZw==
+	s=arc-20240116; t=1752997746; c=relaxed/simple;
+	bh=N26ZGLWPwoUAkNgftjAVDr+88CA5gLyx4SIrLsdMtpk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=hR/6FSzHndOSDNw5Nb5lZl87CLy4DbezmFSK8/GG3x6ebLaWvCNpdN2G8f2RhkrezfpVukkqogoroN3VDdlaXvoszOqF8VArtCcnguJM/4bFuLxXlOXjjjq91XtU6nK/TKqzjGBdeGeGo/0H+2/xwGCFBklrbuUkNWf6XqeEYbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-86f4e2434b6so378378439f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 00:49:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752996793; x=1753601593;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zM+q+F/3AakFjugN8+T3F0cDtlqAbO5mNb+XTOdV2cE=;
-        b=aqlBFTNC6Nc7B5t+qUkWD6xg9h7yNac1b3qUL/eeeUiCuhfDEcP7TtCpUOADff1kL7
-         WIonrWQw1rAQakX9+ZjMLIUC5ymfcd5FAg4N3sl7n5kW3OvGaiggRk7T33dVEEH0IIlV
-         Ph/IAM0bZ/P5WN8Y+iS7I9NhLVK9lG5clCCglf2TOPZMoYlPKQVIosmUdgkD9EBhImfl
-         +qpWd/q49tfgp8CYjajveMnM3xMipv7Oc+PIeAAY6gk4xVdtOi3QKtKmz4bYviFqHXTv
-         o887wblrRelLuUY9BYB+lqjebSWtPXa9jf560GOuT1Vf1Zdqcc3fYBsja9SFKtUVrBB+
-         Kdog==
-X-Forwarded-Encrypted: i=1; AJvYcCUZ+p6Mexk+RChMcwKn8p4Mtbh5iyDjX/bNFFvRxsbHA/1+YnVqB6eO8xEDxhtIRQx48oGXgejC7GIQUFs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxz2j/dwGtOYGro/5s4MfofZJuFErEiUEGjMSp362NFH7uO1Tt8
-	h5pzfIDZGclGhYgljeIDC1hPdvVYs8sxOu9BLvDU7tY2kS6+HoyBPlFg
-X-Gm-Gg: ASbGnctO2sht75SkJlIsZvaYGrWqnjmxWTzW/FQ+70UPFp9FPaPR2ugND11cD6YYEkR
-	0UJYb9V0JzBEzkwq0wam8fI679gGy2iwnRWPL6hdpGU1TkHCD7UIg4ISksxjWFuwv9jx+0QITCE
-	Z8UeYqPQ9nEg8dAI2CXovLGtUBlAKcivuHoA0KpkScynpNjFYAA+GUqIKR/LaUX+4zyvFmUv9MS
-	YLcW4GV3ODe3dyOOlaPa9bcAWQl0Qp1TJC59RRuy/b1Y8gPHz5JJTHrIb9R2CT4H3aGh0Qu7QkD
-	GpSvzwRDIflUNTFqcgurlU/o0VS6IE/8lEU8qyLxMZEddwqT68/dY/Q+wyoEAVz6cgddKEtcUx2
-	YOHTBea/jnd7N8wA/qgvpQNkaEEy7gYklErNkeQmIdSMt0w5YVS/20pcyXqoDGjXbGKxtHqnkww
-	==
-X-Google-Smtp-Source: AGHT+IE35sqZs22C2EiV2vT2ULDaWoB6RgEVfwqSmY4mmjUe+SwJdh5GwTnP61aOm3yMhFDf381o3A==
-X-Received: by 2002:a17:903:1aee:b0:234:a139:1215 with SMTP id d9443c01a7336-23e2573f322mr258918805ad.35.1752996793228;
-        Sun, 20 Jul 2025 00:33:13 -0700 (PDT)
-Received: from localhost.localdomain.oslab.amer.dell.com ([132.237.156.254])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b6cfa0esm37938125ad.145.2025.07.20.00.33.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Jul 2025 00:33:12 -0700 (PDT)
-From: Prabhakar Pujeri <prabhakar.pujeri@gmail.com>
-To: abbotti@mev.co.uk,
-	hsweeten@visionengravers.com
-Cc: gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	Super User <root@localhost.localdomain>,
-	syzbot+ab8008c24e84adee93ff@syzkaller.appspotmail.com,
-	Prabhakar Pujeri <prabhakar.pujeri@gmail.com>
-Subject: [PATCH] [PATCH] comedi: check for NULL get_valid_routes function pointer
-Date: Sun, 20 Jul 2025 02:33:50 -0500
-Message-ID: <20250720073350.22251-1-prabhakar.pujeri@gmail.com>
-X-Mailer: git-send-email 2.50.1
+        d=1e100.net; s=20230601; t=1752997743; x=1753602543;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=f7xAjgXtlwM/t7mVJXnXUconqhFA4R6rNmyrQ1x51rM=;
+        b=docUUPGzwTbGJnFr7m2XxZps0Uu66qe37JFwevogM46TiEgabAZOJOdpqoQVIjaHUB
+         0Q/dBWHNZHEPyw1mXijkEJxCmu+0QV0apQa0hLMOTgx2sc40KmAA9Xf40mTxQeL9cG/k
+         K0dlV5v2QLaunsbcF24amfl8/tun4jc+qWdhJhBzO0PbWZCqNGc03qQzYSXkOe3+4ovA
+         ZbfYLAZxq3Oq4x0iUumA2kPfnZ5powytJ1w2+fcKeGr8ZiwSpCDDm2BV1DEjoF3Urxao
+         gYLEys9/NxSzhTGq3j+vB4ZJBd48JCJlYw/deTxbvmJdWUEN10UAiTA4eeu2O/1TPQtM
+         XEOA==
+X-Gm-Message-State: AOJu0YwdbwnMdoLiG4k9nm8G9BhCcvRB+hASdSNcx0GDNRVHHH+ye92e
+	7tUt9W7iDsLghTj8OSxND88/JIX7ur2E3/8MYG6094gra3rmTo5ZO0EZglHm1nvVqFpN8HXB/7X
+	Esj+ryF3Ex4NabXlCjBt8T9YKoV3bwVFcHb3nMC1I4MRCKPH2vkepDs70Mc4=
+X-Google-Smtp-Source: AGHT+IEg4zMmsyIjQj0D37KKRze34ZchgL1Qtjq8GB0erLmjRuNX7c9MpOT+2yM0hLMNNtWgWKDZPt0h9crheQUszBN01kItzPTi
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:380f:b0:87c:1d65:3aeb with SMTP id
+ ca18e2360f4ac-87c1d653c78mr459226739f.2.1752997743684; Sun, 20 Jul 2025
+ 00:49:03 -0700 (PDT)
+Date: Sun, 20 Jul 2025 00:49:03 -0700
+In-Reply-To: <CAMp3bLWE1Q17He7mzu8S-VTe9Sackn8YryD6L0msjyPpifmyBg@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <687c9f6f.a70a0220.693ce.00b6.GAE@google.com>
+Subject: Re: [syzbot] [fs?] KASAN: use-after-free Read in hpfs_get_ea
+From: syzbot <syzbot+fa88eb476e42878f2844@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, purvayeshi550@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Super User <root@localhost.localdomain>
+Hello,
 
-The function get_valid_routes() calls the low-level driver's
-dev->get_valid_routes() callback directly without checking if it is
-set. If this function pointer is NULL, the kernel crashes with a
-NULL instruction pointer dereference.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KASAN: use-after-free Read in hpfs_get_ea
 
-This patch adds a check to ensure the callback is present before
-calling it, and returns -EINVAL if it is missing.
+hpfs: filesystem error: invalid number of hotfixes: 2066844986, used: 2066844985; already mounted read-only
+hpfs: filesystem error: improperly stopped
+hpfs: filesystem error: warning: spare dnodes used, try chkdsk
+hpfs: You really don't want any checks? You are crazy...
+hpfs: hpfs_map_sector(): read error
+hpfs: code page support is disabled
+==================================================================
+BUG: KASAN: use-after-free in hpfs_get_ea+0x1ee/0xc90 fs/hpfs/ea.c:144
+Read of size 1 at addr ffff88806051d8a3 by task syz.0.16/6564
 
-This prevents a kernel crash when user space invokes an ioctl that
-results in get_valid_routes() being called on drivers that do not
-implement the callback.
+CPU: 1 UID: 0 PID: 6564 Comm: syz.0.16 Not tainted 6.16.0-rc6-syzkaller-00281-gf4a40a4282f4-dirty #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xca/0x230 mm/kasan/report.c:480
+ kasan_report+0x118/0x150 mm/kasan/report.c:593
+ hpfs_get_ea+0x1ee/0xc90 fs/hpfs/ea.c:144
+ hpfs_read_inode+0x19d/0x1010 fs/hpfs/inode.c:63
+ hpfs_fill_super+0x12bd/0x2070 fs/hpfs/super.c:654
+ get_tree_bdev_flags+0x40e/0x4d0 fs/super.c:1681
+ vfs_get_tree+0x8f/0x2b0 fs/super.c:1804
+ do_new_mount+0x24a/0xa40 fs/namespace.c:3902
+ do_mount fs/namespace.c:4239 [inline]
+ __do_sys_mount fs/namespace.c:4450 [inline]
+ __se_sys_mount+0x317/0x410 fs/namespace.c:4427
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f2b0bb900ca
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f2b0ca8de68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f2b0ca8def0 RCX: 00007f2b0bb900ca
+RDX: 0000200000009e80 RSI: 0000200000009ec0 RDI: 00007f2b0ca8deb0
+RBP: 0000200000009e80 R08: 00007f2b0ca8def0 R09: 0000000000000041
+R10: 0000000000000041 R11: 0000000000000246 R12: 0000200000009ec0
+R13: 00007f2b0ca8deb0 R14: 0000000000009e02 R15: 0000200000009fc0
+ </TASK>
 
-Reported-by: syzbot+ab8008c24e84adee93ff@syzkaller.appspotmail.com
-Signed-off-by: Prabhakar Pujeri <prabhakar.pujeri@gmail.com>
----
- drivers/comedi/comedi_fops.c | 5 +++++
- 1 file changed, 5 insertions(+)
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x2 pfn:0x6051d
+flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+raw: 00fff00000000000 ffffea00017f91c8 ffffea0001814508 0000000000000000
+raw: 0000000000000002 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as freed
+page last allocated via order 0, migratetype Movable, gfp_mask 0x140cca(GFP_HIGHUSER_MOVABLE|__GFP_COMP), pid 6526, tgid 6526 (sed), ts 155457290558, free_ts 155502026680
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1704
+ prep_new_page mm/page_alloc.c:1712 [inline]
+ get_page_from_freelist+0x21d5/0x22b0 mm/page_alloc.c:3669
+ __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:4959
+ alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2419
+ folio_alloc_mpol_noprof mm/mempolicy.c:2438 [inline]
+ vma_alloc_folio_noprof+0xe4/0x200 mm/mempolicy.c:2473
+ folio_prealloc+0x30/0x180 mm/memory.c:-1
+ wp_page_copy mm/memory.c:3569 [inline]
+ do_wp_page+0x1231/0x5800 mm/memory.c:4030
+ handle_pte_fault mm/memory.c:6085 [inline]
+ __handle_mm_fault+0x1144/0x5620 mm/memory.c:6212
+ handle_mm_fault+0x2d5/0x7f0 mm/memory.c:6381
+ do_user_addr_fault+0xa81/0x1390 arch/x86/mm/fault.c:1336
+ handle_page_fault arch/x86/mm/fault.c:1476 [inline]
+ exc_page_fault+0x76/0xf0 arch/x86/mm/fault.c:1532
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+page last free pid 6526 tgid 6526 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1248 [inline]
+ free_unref_folios+0xcd2/0x1570 mm/page_alloc.c:2763
+ folios_put_refs+0x559/0x640 mm/swap.c:992
+ free_pages_and_swap_cache+0x4be/0x520 mm/swap_state.c:267
+ __tlb_batch_free_encoded_pages mm/mmu_gather.c:136 [inline]
+ tlb_batch_pages_flush mm/mmu_gather.c:149 [inline]
+ tlb_flush_mmu_free mm/mmu_gather.c:397 [inline]
+ tlb_flush_mmu+0x3a0/0x680 mm/mmu_gather.c:404
+ tlb_finish_mmu+0xc3/0x1d0 mm/mmu_gather.c:497
+ exit_mmap+0x44c/0xb50 mm/mmap.c:1297
+ __mmput+0x118/0x410 kernel/fork.c:1121
+ exit_mm+0x1da/0x2c0 kernel/exit.c:581
+ do_exit+0x648/0x22e0 kernel/exit.c:952
+ do_group_exit+0x21c/0x2d0 kernel/exit.c:1105
+ __do_sys_exit_group kernel/exit.c:1116 [inline]
+ __se_sys_exit_group kernel/exit.c:1114 [inline]
+ __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1114
+ x64_sys_call+0x21ba/0x21c0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-diff --git a/drivers/comedi/comedi_fops.c b/drivers/comedi/comedi_fops.c
-index 3383a7ce27ff..2b8cb280287b 100644
---- a/drivers/comedi/comedi_fops.c
-+++ b/drivers/comedi/comedi_fops.c
-@@ -1302,6 +1302,11 @@ static int check_insn_device_config_length(struct comedi_insn *insn,
- static int get_valid_routes(struct comedi_device *dev, unsigned int *data)
- {
- 	lockdep_assert_held(&dev->mutex);
-+	if (!dev->get_valid_routes) {
-+		dev_warn(dev->class_dev ?: dev->hw_dev,
-+				"get_valid_routes() not implemented\n");
-+		return -EINVAL;
-+	}
- 	data[1] = dev->get_valid_routes(dev, data[1], data + 2);
- 	return 0;
- }
--- 
-2.50.1
+Memory state around the buggy address:
+ ffff88806051d780: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ffff88806051d800: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+>ffff88806051d880: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+                               ^
+ ffff88806051d900: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ffff88806051d980: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+==================================================================
+
+
+Tested on:
+
+commit:         f4a40a42 Merge tag 'efi-fixes-for-v6.16-2' of git://gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=116f8b82580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f09d04131ef56b22
+dashboard link: https://syzkaller.appspot.com/bug?extid=fa88eb476e42878f2844
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16e5b7d4580000
 
 
