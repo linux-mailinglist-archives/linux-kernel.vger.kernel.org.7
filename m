@@ -1,97 +1,88 @@
-Return-Path: <linux-kernel+bounces-738475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E77EB0B8E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 00:35:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C3D1B0B8E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 00:37:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 720BE3A4CAD
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 22:34:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FE2F1898667
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 22:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07D2A221F06;
-	Sun, 20 Jul 2025 22:34:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AABF22A7FC;
+	Sun, 20 Jul 2025 22:37:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X+0e0fqW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aCC6EGbt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 624013BB48;
-	Sun, 20 Jul 2025 22:34:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF713BB48;
+	Sun, 20 Jul 2025 22:37:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753050892; cv=none; b=LE2Avul+Wa+73Unx2n0OZigSJdVkWR75Fldxc9YhM9ty7a6cDifSONkQeOxAQfhMilNS4AMUtzKHlVcz80rvSPVS0l5qlKdzezje0gS7v96vOHGUk8g9PEb35VjJXKoDsqtDCF1sARHynHTkZ8F7S0ayQBfFfm3wwkmYDThuahY=
+	t=1753051055; cv=none; b=lfI3b7de+3wl0dwrcAR5usaQ95RWnBT+2gKBc7OMnPI7+herfNEfHpBAro8V4kW3fsovianjlwH+xqmoe3kfkhPN+o7EevgQjZt80X1gIgk8NsFeywB3mDlt72juGdCbTgL/EK5lkNT0houHdrcp0mK01v1BcYkKdESY7rKYE2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753050892; c=relaxed/simple;
-	bh=MRccUioWmEokYe39hVS4NwT8VcEut9wQ1VPK++J3drI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c8jktcG+X0mQWhp7u/xqxPAteXJORlw0atIeqok1LiyynADrtMHlQ8jQ5WvoX059N0nKbWFauijcItcsZ+Wa8XKst51kAY3vIULQi9fW32JNyqIUcZ/X77XS2zX18d+rbr2/e9NM0QOpd+YelSklfa8d0v3p2QntzpMuG+A/5y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X+0e0fqW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C165CC4CEE7;
-	Sun, 20 Jul 2025 22:34:51 +0000 (UTC)
+	s=arc-20240116; t=1753051055; c=relaxed/simple;
+	bh=kdUw/pZMaU0Ir4P1orWl8JNS6xpN1Y3f1hcA0PcAv5o=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
+	 References:In-Reply-To; b=rr1VaNXF6kEJXhcjD012y4LwwNk759l8z1ItPTWhBGlURFL1IAJKzFGbq7kCx0OSSkVZqlO1CzqsmY5zJCb/wtJlk3PYFQCkppVCw+PibC9LACE5W6UrdMdBzD8KzS3xBimRV/ztHstHB2EYMcGohEqm8XFna8pNTl7Vk0KqdR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aCC6EGbt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C64BCC4CEE7;
+	Sun, 20 Jul 2025 22:37:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753050891;
-	bh=MRccUioWmEokYe39hVS4NwT8VcEut9wQ1VPK++J3drI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X+0e0fqWFsyowkUGbh5SkDx49D4KIt/ItmgkDqjkcdcaGnrrm5wwUXc+ttKKyzjlp
-	 qHTMiSzd0+IYOzLXIMJAJkyzFSQxp3/zFdpgSrstSGqb4+M8zvPAnncCH/eE5AmmF2
-	 d6nqKdIhmOVVJGIHwBOB0pubiP0G+NSLwoh5j5O3lNQ+bEyeGXiTzA+p5ZpHPlGJlZ
-	 lKVHW2bgfT2I/LSYqNOLssiX9S4xo94oBf9MgT3/OP1rN19few7MEM95UY3QdjaryG
-	 tlueu7znlS6RS3E5lNXMRdqpBEZHrgyOJkGlucpWZDCKmWB/Ub1BwI9qeop+XLCbHV
-	 +XLEfEgIq3uAQ==
-Date: Sun, 20 Jul 2025 17:34:51 -0500
-From: Rob Herring <robh@kernel.org>
-To: Arseniy Velikanov <me@adomerle.pw>
-Cc: Mark Brown <broonie@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Leilk Liu <leilk.liu@mediatek.com>, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v1] dt-bindings: spi: mt65xx: Add compatible for MT6789
-Message-ID: <20250720223451.GA2915764-robh@kernel.org>
-References: <20250715231921.4527-1-me@adomerle.pw>
+	s=k20201202; t=1753051054;
+	bh=kdUw/pZMaU0Ir4P1orWl8JNS6xpN1Y3f1hcA0PcAv5o=;
+	h=Date:To:From:Subject:Cc:References:In-Reply-To:From;
+	b=aCC6EGbt783gh3Ztm0yFdCp6NSvd5ya72MZ2dbBq/7HauFmIu2yZ5IwkeUBmbyBfL
+	 SxN0FcNk+U3B4aEE5efAFFXdE+ia2+oFY2My1f8oOAhkrx5qSLaxbNl1EBz/iADoOt
+	 KsnOHptvYVt3TRmODE+w133jbsQmvVFqrRl/ZZ2KYvjmxVP7Q2g4yd4Zk0O84BMsb6
+	 0ELvo/ZXACZNNla4GRFHdLdifbk8L1sMAJYajKi6TQFQo3uj16VLY+DUF0RWW8JlLY
+	 NirS+fB23fTSf1tyMIv2lQDlTQDP2TXe3QbruOTQjFQ+RpQ4ilKOXiH3Y8kZQCnnjZ
+	 yBTec5gu9/Xqw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250715231921.4527-1-me@adomerle.pw>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 21 Jul 2025 00:37:28 +0200
+Message-Id: <DBH8QE1NZVB4.2VJDAL24XIHG4@kernel.org>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH 1/6] rust: kernel: remove `fmt!`, fix
+ clippy::uninlined-format-args
+Cc: "Tamir Duberstein" <tamird@gmail.com>, "Viresh Kumar"
+ <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rafael@kernel.org>, "David
+ Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Nishanth
+ Menon" <nm@ti.com>, "Stephen Boyd" <sboyd@kernel.org>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+ <rust-for-linux@vger.kernel.org>
+References: <20250704-core-cstr-prepare-v1-0-a91524037783@gmail.com>
+ <20250704-core-cstr-prepare-v1-1-a91524037783@gmail.com>
+ <CANiq72mjiBK+DE-NOx1p+wWuZpnK=aPtgnMUUEzig+4jHZzemA@mail.gmail.com>
+In-Reply-To: <CANiq72mjiBK+DE-NOx1p+wWuZpnK=aPtgnMUUEzig+4jHZzemA@mail.gmail.com>
 
-On Wed, Jul 16, 2025 at 03:19:21AM +0400, Arseniy Velikanov wrote:
-> Add a SPI controller binding for the MT6789 SoC. As a note,
-> MT6893 SPI is fully compatible with this SoC.
+On Sun Jul 20, 2025 at 11:24 PM CEST, Miguel Ojeda wrote:
+> On Fri, Jul 4, 2025 at 10:16=E2=80=AFPM Tamir Duberstein <tamird@gmail.co=
+m> wrote:
+>>
+>>  drivers/cpufreq/rcpufreq_dt.rs    |  3 +--
+>>  drivers/gpu/nova-core/firmware.rs |  5 +++--
+>>  rust/kernel/opp.rs                |  2 +-
+>
+> Danilo, Viresh: I assume you are OK with this, but let me know
+> otherwise, thanks!
 
-Then you should have a fallback compatible. Otherwise, there is no 
-driver change here, so how would this even work?
+Sure, feel free to add
 
-> 
-> Signed-off-by: Arseniy Velikanov <me@adomerle.pw>
-> ---
->  Documentation/devicetree/bindings/spi/mediatek,spi-mt65xx.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/spi/mediatek,spi-mt65xx.yaml b/Documentation/devicetree/bindings/spi/mediatek,spi-mt65xx.yaml
-> index 3bf3eb1f8728..0635aec29aae 100644
-> --- a/Documentation/devicetree/bindings/spi/mediatek,spi-mt65xx.yaml
-> +++ b/Documentation/devicetree/bindings/spi/mediatek,spi-mt65xx.yaml
-> @@ -49,6 +49,7 @@ properties:
->                - mediatek,mt2712-spi
->                - mediatek,mt6589-spi
->                - mediatek,mt6765-spi
-> +              - mediatek,mt6789-spi
->                - mediatek,mt6893-spi
->                - mediatek,mt6991-spi
->                - mediatek,mt7622-spi
-> -- 
-> 2.50.0
-> 
+Acked-by: Danilo Krummrich <dakr@kernel.org>
 
