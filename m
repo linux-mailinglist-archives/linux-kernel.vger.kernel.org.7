@@ -1,200 +1,118 @@
-Return-Path: <linux-kernel+bounces-738286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3693B0B6C7
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 17:46:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05A3CB0B6C8
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 17:50:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C14DE3A2E1C
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 15:46:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7117D3A3A36
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 15:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C5721F1306;
-	Sun, 20 Jul 2025 15:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A97E51F4C8C;
+	Sun, 20 Jul 2025 15:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="HR1U3IRx"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DD/269yl"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD8A33EC;
-	Sun, 20 Jul 2025 15:46:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753026393; cv=pass; b=nJBzEaFeK1XGCYtvQkE4ix6OFMhhpBSKOLmgZn3LqwLLJMzxKCL6oIMBkG0U8uek+p7wzTqS7l2D8pdSjiLh76BSv4vIEZpFzbtaIuP3UJaW1/1ZQzWfHjTxDbIhdtsma7WYaLWmCVzgkaENz1SiFRtzKW1gtRgReUNh8gXCZHs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753026393; c=relaxed/simple;
-	bh=SWrdQ75/W3pdI1BG0oYfX92cV84Xc6bVcxLpW8kUZEs=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=VLAUi+omngXKmLKvsEKMnEd82+AkGkADZSrHFQEn+P26SezB/O5PpA0nE/MO24LZQcn8whDsHnIvTEWaJlNr57fc2XpXwMh9Tcnq9gDSbV9mcpZjHlAkJfqolWdlo36x52Gbiw0PZ2M+2DTzCqlMb6D/xbV5rP61eZSb9u4rJxc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=HR1U3IRx; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1753026376; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=GLBfcEeJGoXGMdN9u6VcG2NeTnCtZdrBFTBJOzhmy9iefzJuQw/1Egd70Z/IrFud9jbpAClMX/NU4JHkrXAKgHSP1WDMozIDlWRJ5hy5mFDggenxiWKLqx8ltGEmi25GtqlVFKEBXZyyw3XpFQe2iWzPVgZBXtIqL/qxT/nOPGE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753026376; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=1y2hcgr9LDGf6qQClQBmzWZPkkht65KCRDW2/a9pYp4=; 
-	b=k2y6Ar6WiiHr8tG0HSpqF5eK2SQssulp0Mf12zAoizbBwgcU662bxicsP862zzexyHXR+oruNHiOCO7b1pUmjnGD3St4CXU86tB7dJq9UbezOYuN3bpEpYFKcDSidFWHR2N3jELLPg6daa1HPTrdARVZLMdo2kQ8Lq6dSGasx4U=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753026376;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=1y2hcgr9LDGf6qQClQBmzWZPkkht65KCRDW2/a9pYp4=;
-	b=HR1U3IRxjEUXeho7fN9BbVIM/Q/HymA4AFb5OW7bkyQMRCaxkhvixTeGYyBOOtKG
-	vmFYgNRswBJWLEFTW1Ym1DYWuURwUC1Olkfh4IX2y/xa3TYxXIE5vWofrnc32MRYRMk
-	xuxL4lCyLJSWlja/CvPU4IbpwlZ5xx8NDkz6m178=
-Received: by mx.zohomail.com with SMTPS id 1753026374391872.1369164322014;
-	Sun, 20 Jul 2025 08:46:14 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF7E35973;
+	Sun, 20 Jul 2025 15:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753026597; cv=none; b=tPmurz6bNprqa+3T1XBWStuY4oR6cwmdYY7M7Qz8cRTv0OOHvIof99HskEfpqom2CsA8WWh2LjphFo2sTEXgkqvbxe3ZyV52WbFVGdCZRdLBOttLkXdeksdBGLk9Jot5QnLLUy9mWbj+7EtEr1IMPT+Yqkf75YYlpgmCEkUkCeM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753026597; c=relaxed/simple;
+	bh=WuFSV70CiHFeLwFjmoriru2B6DdN6PfYARb8HsIY09c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q5X5sgO8I3VL+TOO9rOlzZefrYrrn66ZbxxffpoBmbLQa0CG31R+HoPYQfy7e5AjvZlW9aaJ6xy4oWx73cxZV0va22mhlgy6o6CZoQ4L9cPLABZnbl0fa1kqtqMTpxo9A8zaCixUJ3q+o8cnwWPC/PjlqSiPxurlArBBwaFHxEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DD/269yl; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ae0b2ead33cso629370766b.0;
+        Sun, 20 Jul 2025 08:49:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753026594; x=1753631394; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=56IimgoFcz06vn4LfjzFPGxXnWUOYp9UN16wymaCQB8=;
+        b=DD/269ylfqAnsjOfp0+EqBwoYpazAvhi1mps1DOvpgsvVvPdI3nNg7jx1p0b1r5l0S
+         Xtk5dDXsajJmj7J/XN0bXNvM9qSvVhTkkVwOeAqQxIiH7nOQEiWquuyy6BzapCkw3UT9
+         R/KlKG3T/sMzk/axG14oh2D1a2gN8kK+sPDK8Qd6jLqWg+CZCFHtwLST/b1aquCHGUgv
+         HPJzaz1t15XwUgGcaV3cQ0aPyHZ/e8kVWRf11dG/pwqghs+Tqym5qyD0HSetoxt93bai
+         TeQUiQAIJZHOAPyEXKwgMTDvOUroHzirom9jeqeCJ+ZcPo7DFFR/3Ou1z6ykmTzAGkZE
+         +sGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753026594; x=1753631394;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=56IimgoFcz06vn4LfjzFPGxXnWUOYp9UN16wymaCQB8=;
+        b=C44AfZYOe8EpN2RiOJqdH//BNfdcGEeOV08KYTKnOKFM9KwzO5h7Ys0+779ar+Xgkk
+         8jfa04Lp7DPwB7Vag/mToZDZy+4qxorYAqXzobRbuokNcuG3Yux8a2e1KFx6k+iCQzEa
+         L++ejsY9vHOSOeXEyOvVGtwBPMFazpUq1mE+7J9huhVcjA5W9FxPTsy8mmvq//YEVLq8
+         fMjqIGAcSxPs1dEaNh0yhI9wrlpz90dnLTrxIY+UZ3DUNjozbyNsn5SOUJe3XgNrb23S
+         gs8cLv7bI7QVLR+z0SbwVitDcc7CwHHuRrQo4by5jBjqqkK90JDa9N3rR28rS0Qz+/DI
+         2icg==
+X-Forwarded-Encrypted: i=1; AJvYcCUbDNDlBW+ef7637TK/iIzT6mkQeZKfqZInRShZcOy7mBZsWJk5TWCmFu0HcRAvWA5D6xS64KHyQ3SZww0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYMs0NMwup7Ztoj4xP4nF4+k/O0UkLqy5hIim9DG/gx17ZMXWU
+	ybaFARPdaaOESfScxkFOLldBubbwL8l9+P/kjwjkIMHX2uSUih6SFeQh
+X-Gm-Gg: ASbGncuK9wg4lbf5gGpOM4luIQ54lsEZ0Z+8pPCq9M7aBFVzbcXgEsLBSUWRIsK8cmw
+	rLVSY4U7xElyMfe1c4tXwJ3CnyZ9yZOjjxUB/ZtTXbHABpLDFFH/qOis0KKWBVgcyjLve98B61+
+	Ur3h0w+cpH3Cq1xqXWH7H040WP1nJXBxjHAelUKJzgo4OfvMjgYYZUUbMRR3KEEHlS7Glb22tiU
+	d11ZFpLwmFcVEFB5u5BGlfn4K4qexaskMcEUwUJt09PTE4mYFVdwBsasNCFfZGVjQ3ylxn9cibw
+	IgmgesJqphMhyY4QpB+Ez+7OzCnt92SYP3PnAcUjqSrkf4097hDGKSoSmUUJFY0Rb0hp2SS3JOh
+	pD4C0DVDRMJai/odznBKqgyld/GEl7HONH3BPMX2wZYSBTTZCchHXGVHof+jD06+UvCESeRCQuQ
+	5RGZiV8Xk=
+X-Google-Smtp-Source: AGHT+IELAKp3pj/E85bGmMDRGjhbN9K2DOlpdV2DUARaJQybqQCf6aHPgdcDIhbNjoJn8DdHntVZyw==
+X-Received: by 2002:a17:907:7f87:b0:ad8:959c:c567 with SMTP id a640c23a62f3a-aec4de005efmr1315169366b.10.1753026593507;
+        Sun, 20 Jul 2025 08:49:53 -0700 (PDT)
+Received: from localhost.localdomain (46.205.192.124.nat.ftth.dynamic.t-mobile.pl. [46.205.192.124])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-612c903fb62sm3915620a12.44.2025.07.20.08.49.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Jul 2025 08:49:52 -0700 (PDT)
+From: Dawid Rezler <dawidrezler.patches@gmail.com>
+To: tiwai@suse.com,
+	perex@perex.cz
+Cc: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dawidrezler.patches@gmail.com
+Subject: [PATCH] ALSA: hda/realtek - Add mute LED support for HP Pavilion 15-eg0xxx
+Date: Sun, 20 Jul 2025 17:49:08 +0200
+Message-ID: <20250720154907.80815-2-dawidrezler.patches@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH 1/3] device: rust: documentation for DeviceContext
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <DBF8TZJ2SFLR.1I57R8BX2A9ZN@kernel.org>
-Date: Sun, 20 Jul 2025 12:45:58 -0300
-Cc: gregkh@linuxfoundation.org,
- rafael@kernel.org,
- ojeda@kernel.org,
- alex.gaynor@gmail.com,
- boqun.feng@gmail.com,
- gary@garyguo.net,
- bjorn3_gh@protonmail.com,
- lossin@kernel.org,
- a.hindborg@kernel.org,
- aliceryhl@google.com,
- tmgross@umich.edu,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <1551F811-1574-4F62-9A18-781A8A2E2D9E@collabora.com>
-References: <20250717224806.54763-1-dakr@kernel.org>
- <20250717224806.54763-2-dakr@kernel.org>
- <664AA6FF-4EFD-49FD-91A6-4D66B8614529@collabora.com>
- <DBF8TZJ2SFLR.1I57R8BX2A9ZN@kernel.org>
-To: Danilo Krummrich <dakr@kernel.org>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi Danilo,
+The mute LED on the HP Pavilion Laptop 15-eg0xxx,
+which uses the ALC287 codec, didn't work.
+This patch fixes the issue by enabling the ALC287_FIXUP_HP_GPIO_LED quirk.
 
+Tested on a physical device, the LED now works as intended.
 
-[=E2=80=A6]
+Signed-off-by: Dawid Rezler <dawidrezler.patches@gmail.com>
+---
+ sound/pci/hda/patch_realtek.c | 1 +
+ 1 file changed, 1 insertion(+)
 
->>> unsafe impl Sync for Device {}
->>>=20
->>> -/// Marker trait for the context of a bus specific device.
->>> +/// Marker trait for the context or scope of a bus specific device.
->>> ///
->>> -/// Some functions of a bus specific device should only be called =
-from a certain context, i.e. bus
->>> -/// callbacks, such as `probe()`.
->>> +/// [`DeviceContext`] is a marker trait for structures representing =
-the context of a bus specific
->>> +/// [`Device`].
->>> ///
->>> -/// This is the marker trait for structures representing the =
-context of a bus specific device.
->>> +/// The specific device context types are: [`CoreInternal`], =
-[`Core`], [`Bound`] and [`Normal`].
->>> +///
->>> +/// [`DeviceContext`] types are hierarchical, which means that =
-there is a strict hierarchy that
->>> +/// defines which [`DeviceContext`] type can be derived from =
-another. For instance, any
->>> +/// [`Device<Core>`] can dereference to a [`Device<Bound>`].
->>> +///
->>> +/// The following enunumeration illustrates the dereference =
-hierarchy of [`DeviceContext`] types.
->>> +///
->>> +/// - [`CoreInternal`] =3D> [`Core`] =3D> [`Bound`] =3D> [`Normal`]
->>> +/// - [`Core`] =3D> [`Bound`] =3D> [`Normal`]
->>> +/// - [`Bound`] =3D> [`Normal`]
->>> +/// - [`Normal`]
->>> +///
->>> +/// Bus devices can automatically implement the dereference =
-hierarchy by using
->>> +/// =
-[`impl_device_context_deref`](kernel::impl_device_context_deref).
->>> pub trait DeviceContext: private::Sealed {}
->>=20
->> Overall this looks good to me. I think that one point you could =
-perhaps
->> consider is that, to me at least, it wasn't clear that the contexts =
-were only
->> valid for a given scope. Or what was precisely meant by =E2=80=9Cscope=E2=
-=80=9D.
->=20
-> Scope really means scope in the sense of programming languages, which =
-is why I
-> didn't define it more specifically.
->=20
-> So, a reference to a Device<Bound> (i.e. &Device<Bound>) indicates =
-that the
-> device is guaranteed to be bound for the scope the reference is valid =
-in.
-
-
-Maybe this is the piece of information that I missed, i.e.: that scope =
-was
-being used in the usual sense in a programming language, and that the =
-term
-wasn't being borrowed to describe some other sort of device behavior. =
-This
-might look obvious now, but wasn't when I saw it the first time.
-
-Anyway, this is starting to look like I was the only one to get =
-confused, so
-scratch what I said :)
-
-Also, looking at this patch again, it looks like you already explain =
-this well
-enough, for example in the docs for Device<Core>, where "reference's =
-scope" is
-mentioned:
-
-/// The core context indicates that the [`Device<Core>`] reference's =
-scope is limited to the bus
-/// callback it appears in.=20
-
-[=E2=80=A6]
-
->=20
->>>=20
->>>> Fine, but can=E2=80=99t you get a &Device<Bound> from a =
-ARef<drm::Device>, for example?
->>>> Perhaps a nicer solution would be to offer this capability instead?
->>>=20
->>> I think you're confusing quite some things here.
->>>=20
->>>  [...]
->>>=20
->>>  (2) Owning a reference count of a device (i.e. ARef<Device>) does =
-*not*
->>>      guarantee that the device is bound. You can own a reference =
-count to the
->>>      device object way beyond it being bound. Instead, the guarantee =
-comes from
->>>      the scope.
->>>=20
-
-I wonder if it would be helpful to specifically state this in the docs =
-somehow?
-Perhaps as an extra "Note that ...". It doesn't hurt to repeat ourselves =
-a bit
-here, IMHO.
-
-=E2=80=94 Daniel
-
-
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index d91aac06a..0118b8c88 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -10694,6 +10694,7 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x103c, 0x8788, "HP OMEN 15", ALC285_FIXUP_HP_MUTE_LED),
+ 	SND_PCI_QUIRK(0x103c, 0x87b7, "HP Laptop 14-fq0xxx", ALC236_FIXUP_HP_MUTE_LED_COEFBIT2),
+ 	SND_PCI_QUIRK(0x103c, 0x87c8, "HP", ALC287_FIXUP_HP_GPIO_LED),
++	SND_PCI_QUIRK(0x103c, 0x87cc, "HP Pavilion 15-eg0xxx", ALC287_FIXUP_HP_GPIO_LED),
+ 	SND_PCI_QUIRK(0x103c, 0x87d3, "HP Laptop 15-gw0xxx", ALC236_FIXUP_HP_MUTE_LED_COEFBIT2),
+ 	SND_PCI_QUIRK(0x103c, 0x87df, "HP ProBook 430 G8 Notebook PC", ALC236_FIXUP_HP_GPIO_LED),
+ 	SND_PCI_QUIRK(0x103c, 0x87e5, "HP ProBook 440 G8 Notebook PC", ALC236_FIXUP_HP_GPIO_LED),
+-- 
+2.49.0
 
 
