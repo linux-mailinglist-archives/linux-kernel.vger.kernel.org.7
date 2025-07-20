@@ -1,77 +1,64 @@
-Return-Path: <linux-kernel+bounces-738499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C216B0B936
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 01:30:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01AC6B0B939
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 01:30:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3413F7A408B
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 23:28:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35E61176688
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 23:30:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1C622FF59;
-	Sun, 20 Jul 2025 23:29:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202FB230BE0;
+	Sun, 20 Jul 2025 23:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r8V/zCiy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bYQqNfdV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB1212CDA5;
-	Sun, 20 Jul 2025 23:29:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7819829CEB;
+	Sun, 20 Jul 2025 23:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753054193; cv=none; b=CGYVq/8qLSOSCF0qYU0kE6nucQzGCJOpt1Qb2Kadi2PaxTnNuUillVAPtf3KB62B/4whCX0UJcOv5xiKfDgo7oYbEhlZtzdUpqmiqAvs0r/4oP6o9We5ZeJgTGJIV5QyYFEwM1FQHWzrV3UQYu0m5KvOVfZxqMMf2zv6S1Rr2CY=
+	t=1753054219; cv=none; b=FC6HsYCM6gJ2RAVSPdp+bsmdlEbO8THXgWyxT4zKs6Yf1SDlLEG/5h2BY6LI5CCwDsb6czVnzvtF5O+0FtkQPKGdWGskqrYpehXXENonzDRJfNyVF/RXXjhZ3Y+VYxM98swaBUqmQHc9UAKCuYjz39NCM57ZVzsm25HKngvFEPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753054193; c=relaxed/simple;
-	bh=9vRFi57eCNNn/RDG1UsnpLJA0b2NK9C+iSXFxF1Bsu4=;
+	s=arc-20240116; t=1753054219; c=relaxed/simple;
+	bh=Uw7o8viWBAcFgkSMOuAiVgFI/VtnomVY/vJupcJsJDc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V1FrqveAG5O50zY4x126Ffp40SI63pGNJ+hLMKuGbD5Dk+gsYNCN2IUVuIIhg/3UmGPh1R/uuvKPqoenjfwlAF3/kGc8uKvQWcKZ3SeLoHgCSHmO/oAH/JJHNdNkxS8q0I0n7JzlPa8YUo/CCQs6BCDCzSKgWtrHQmbLKPteDuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r8V/zCiy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9C0CC4CEE7;
-	Sun, 20 Jul 2025 23:29:52 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kbe4LmMh63ORcu+Cx6oFgcgCIZd7Vkj9P0b//yCof4EVio/NyVrPYaSsRQ1T1KcN0pWuqx7prwogHptk9FX3X9Iw5rsCzWXukacaIkKS16ordwV080PjTgwUJy/7VzdKv24sW+tCKKfdPLHdi9URp7xwHyiVu7Ko4TIT19k7y2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bYQqNfdV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6832C4CEE7;
+	Sun, 20 Jul 2025 23:30:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753054193;
-	bh=9vRFi57eCNNn/RDG1UsnpLJA0b2NK9C+iSXFxF1Bsu4=;
+	s=k20201202; t=1753054219;
+	bh=Uw7o8viWBAcFgkSMOuAiVgFI/VtnomVY/vJupcJsJDc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r8V/zCiyA4u/5PyfBrhpwGiPbXUwMo0HTAx+K7zSRwdmp+PKBPT2vii+6hPfcbAjy
-	 2E+uTWZ8QZjdX4Z8defLdoE1RtHOnwdeMWfjGsGtRSXdWPp+pMDXXBmabMPFi0t7X5
-	 MTeg9th7oSkxf7MG4+Gj/EC+h26qOlzDV9EYcDUzPD1z6ls4lI+4MwTFzBqICzXShD
-	 7BLvUbAPGD84WrSLNxuwEP9AFhXNN7/0qmkEwJX5EABaJ2MSfEeTWET8LKrSJZcXeQ
-	 5uKxFu29ob4YwEuI5dYLikVQDIyrjpBvw2WgVNlD1qxkp1PFkSuYTK8vxJhWkGC+Yv
-	 UE+r0AgmhZ79w==
-Date: Sun, 20 Jul 2025 18:29:52 -0500
+	b=bYQqNfdVLiBlC1jA2b3qxIWsp6u90rsBEDuUjDPEHnL94DtSCB2nZoGUKlSddRA4O
+	 fb5bIdp9Qvh7LfG+S+KXowgIt5GZyPSbyVu2WuEj6IJhUz8ngWaYAzUChgWr/HAbx5
+	 XMru6fVsIDIFIj5Mikj5O7uOXyg0auJKIQA/X1of+9k4keNdrFtR30VORViU60IgGA
+	 khqGRzoccntp9a/fYdOTBYpSVwrFaWZbAnbXD4jt8m5/VHQj42d+2z9DumCfEuGOc1
+	 i6T1c5yaTC2mC6cRMq6h36vDrZOiaBWkxZvGrTiIMjB9uoVvUuboTEYvgJkmpalZL4
+	 c3I8xZwYgkvqg==
+Date: Sun, 20 Jul 2025 18:30:18 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: =?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
-	thomas.petazzoni@bootlin.com, Jakub Kicinski <kuba@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	davem@davemloft.net, Conor Dooley <conor+dt@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	=?iso-8859-1?Q?Nicol=F2?= Veronese <nicveronese@gmail.com>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-	Simon Horman <horms@kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Antoine Tenart <atenart@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Dimitri Fedrau <dimitri.fedrau@liebherr.com>,
-	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-	Daniel Golle <daniel@makrotopia.org>,
+To: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Kevin Hilman <khilman@baylibre.com>,
+	Yiting Deng <yiting.deng@amlogic.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	linux-amlogic@lists.infradead.org,
+	Jerome Brunet <jbrunet@baylibre.com>, linux-rtc@vger.kernel.org,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	Romain Gantois <romain.gantois@bootlin.com>, mwojtas@chromium.org,
-	Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Re: [PATCH net-next v9 01/15] dt-bindings: net: Introduce the
- ethernet-connector description
-Message-ID: <175305419142.3067276.17489545129976520306.robh@kernel.org>
-References: <20250717073020.154010-1-maxime.chevallier@bootlin.com>
- <20250717073020.154010-2-maxime.chevallier@bootlin.com>
+	linux-arm-kernel@lists.infradead.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: rtc: amlogic,a4-rtc: Add compatible
+ string for C3
+Message-ID: <175305421760.3067874.9815406474339904105.robh@kernel.org>
+References: <20250717-rtc-c3-node-v1-0-4f9ae059b8e6@amlogic.com>
+ <20250717-rtc-c3-node-v1-1-4f9ae059b8e6@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,40 +67,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250717073020.154010-2-maxime.chevallier@bootlin.com>
+In-Reply-To: <20250717-rtc-c3-node-v1-1-4f9ae059b8e6@amlogic.com>
 
 
-On Thu, 17 Jul 2025 09:30:05 +0200, Maxime Chevallier wrote:
-> The ability to describe the physical ports of Ethernet devices is useful
-> to describe multi-port devices, as well as to remove any ambiguity with
-> regard to the nature of the port.
+On Thu, 17 Jul 2025 17:38:37 +0800, Xianwei Zhao wrote:
+> Amlogic C3 SoCs uses the same rtc controller as A5 SoCs. There is
+> no need for an extra compatible line in the driver, but add C3
+> compatible line for documentation.
 > 
-> Moreover, describing ports allows for a better description of features
-> that are tied to connectors, such as PoE through the PSE-PD devices.
-> 
-> Introduce a binding to allow describing the ports, for now with 2
-> attributes :
-> 
->  - The number of lanes, which is a quite generic property that allows
->    differentating between multiple similar technologies such as BaseT1
->    and "regular" BaseT (which usually means BaseT4).
-> 
->  - The media that can be used on that port, such as BaseT for Twisted
->    Copper, BaseC for coax copper, BaseS/L for Fiber, BaseK for backplane
->    ethernet, etc. This allows defining the nature of the port, and
->    therefore avoids the need for vendor-specific properties such as
->    "micrel,fiber-mode" or "ti,fiber-mode".
-> 
-> The port description lives in its own file, as it is intended in the
-> future to allow describing the ports for phy-less devices.
-> 
-> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 > ---
->  .../bindings/net/ethernet-connector.yaml      | 45 +++++++++++++++++++
->  .../devicetree/bindings/net/ethernet-phy.yaml | 18 ++++++++
->  MAINTAINERS                                   |  1 +
->  3 files changed, 64 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/ethernet-connector.yaml
+>  Documentation/devicetree/bindings/rtc/amlogic,a4-rtc.yaml | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
 > 
 
 Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
