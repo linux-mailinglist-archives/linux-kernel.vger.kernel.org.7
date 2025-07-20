@@ -1,318 +1,242 @@
-Return-Path: <linux-kernel+bounces-738394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDAA6B0B7D6
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 21:01:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA51AB0B7D9
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 21:01:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57FB1189969F
-	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 19:01:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B470817890C
+	for <lists+linux-kernel@lfdr.de>; Sun, 20 Jul 2025 19:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE7721D63EE;
-	Sun, 20 Jul 2025 19:01:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96EBC223337;
+	Sun, 20 Jul 2025 19:01:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="n6JSzOiL"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hIAOrmRh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3FDD208A7
-	for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 19:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E978F6C;
+	Sun, 20 Jul 2025 19:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753038064; cv=none; b=JIMAdUoFmF0JTmVsTu79gogxherrfUSPo3Atw6TRCuNZywxL75Kkdqsfa2de//ENYGkhsao5oNoK4aAFxMAbgIb6Gp1Nc6lwUEiGur+XIqI4AZJ+LUWziynWERNfWl0U95WVVKSHoGjfavEVVZLKXmPHDzl5C8sj2EOo0iA2HQA=
+	t=1753038108; cv=none; b=LSsKFlweaVjE5IR3u7IbBO+Y3mFKV44qJcyzhYjgPjsv+PEol15W62ugK9Fv7/+ZpfxdHd1AkNt3aGXxHhxljVWPgB2NL7JdQpOURyDPosqwwbJeCQNUvZY/SPACxPtOCnnP7WrmHOkVf+PBFBMY0oKEaJMzHMeJUpBafL3n+e0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753038064; c=relaxed/simple;
-	bh=0mS1ug5jO2aEKMpln36VCoQHVyMHlzbrwP4CqPz5fvY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=ipRW75uWTSB5RT8gkjv4U5OXZzNmheZ4+Sthb3NQzR55aiyAKdSroRJNC4k7xP09pdA7eBW7UoYhjxQZkmcxTA9BijROKES5PrqH7k2smvrG/amVItanZ8XreFPwKquNIPQjTU18350aRPN0xq0sH8xv8i9ZDSivgC5uA+raXfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=n6JSzOiL; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-23694cec0feso32772125ad.2
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 12:01:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1753038061; x=1753642861; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:from:subject:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f0VcuzHsVpFd1pJThnmo8ltGCjgRYM30zloF0h6AJhY=;
-        b=n6JSzOiLPG698coINUodV6PcoXCnKh70uWaDe2Lbiee/d5sgEPLHfbNX7UYJeYcbVd
-         Us1XwZM8RmAvv5KtXB0mfbkzK6zrO3ln1e7MSW9KHsAToJLZIwej39M2oBwmVHiQtdR8
-         xAXlLrlFElqhUxR5tzHgBkeQyuSyjmGK24Nshcx5MQRDrYHV7Q2abpWa7Xb69aaG60Tx
-         SxFCeIzri+4bMNzD5CelWq3X73ALNu3FRxJ8ichvIW0RKibnRzgNk/PIi90L0qVXln04
-         ZSQzFJtkGBYfvD3fXQ+z+CMTtrtbXMxd7mN1XblYhb4oEUmlCXdcNNKRup0vnWybzoYb
-         OphA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753038061; x=1753642861;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=f0VcuzHsVpFd1pJThnmo8ltGCjgRYM30zloF0h6AJhY=;
-        b=VxutpCBpwVAXOB7CMQTrcsZPJR4XN1/Hku22LfJ/Rizc6Sf7FtB+1YFWUQ5rPNPYN3
-         heSnO1MKDKr4045x8kz0cwEaCZ5asNdBqUTsj+4tjAQRpDQ2s47hVXV3wFJlPru0CZE/
-         TqJAi3kw5WDN8ecCYV4Wk0YmvZvRRptDMjGwfi3OMW/wUrfcrogSENmNxdLrc40WCFuy
-         3uCXKnR6HEzMBzXblDrr4J2Pop52PLV0gnAGSkKaPdkSXHJHBEK3ez/4V0oABPMKMxMH
-         S/xZtU9nKpezJMh+Yb1261ht3ikyu/X35WH/2FlA992kw/RICHU5GJYULrKMzhsuH62L
-         mzHA==
-X-Forwarded-Encrypted: i=1; AJvYcCVVSlp1MlSNTxcf60ELiHAdR9MuklihVoxxwrPQvRxpjUdm75Lvf+K/u9YscT6iFtXtI75V8n4hQbsvrFs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzriQCMN98kojKS4HIlctXMai4i6LWcfifG1ytHCyMZOKseU37n
-	dW9963uz3yBtfEs01SWfo5/w9eEoErMKiV6aMQx0PZFJEaFGf270TQcfwgjLTc72XY4=
-X-Gm-Gg: ASbGncusY+KOhXCA4gUF9i62n9n00GqNQq56RfWVP7DwDI6FbwKRoRGU3KRUEZjViXB
-	BblvHBm3EkKTPJExsNMO+JSYp223DSsUR34mqyuMSd3wfhd0fTgSSumfb8fYbFE2Igsu53pkcnz
-	xD9WmzdDaD/cZJjUqw4DVYc6sd4xO8YgUYcxe8eIUJ+xgjoWCC6OD++/DX0nDh1veCeRvxOLzso
-	3oG55yG8t8BTo0SKtGJDQtvAK3rJ6nff8sX5HayqRS1csO39Yc1Ggueg59oXZXKdtpTCidDa+5A
-	tVoJtaZrHGqiDJIMzELSNuYIvRYnM0oy1ty7E0i7a2UK4lFkBeYPMtc/LnKIkg50E/0mE48GfKP
-	skdk7PcK7vGC13r1EGjKKbSYl1DeSyYdH0w==
-X-Google-Smtp-Source: AGHT+IFzOKspwboXoOK4V7ADha2ZoUMC2ec10BhIvkdPzxROexeZUZSKH006rrchLbTfOu8wpRi+aQ==
-X-Received: by 2002:a17:903:1a84:b0:234:8a4a:ada5 with SMTP id d9443c01a7336-23e24f59832mr243164615ad.37.1753038061000;
-        Sun, 20 Jul 2025 12:01:01 -0700 (PDT)
-Received: from [100.74.100.100] ([12.129.159.196])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b60f2b7sm44665445ad.79.2025.07.20.12.00.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 20 Jul 2025 12:00:59 -0700 (PDT)
-Message-ID: <d407c9f1-e625-4153-930f-6e44d82b32b5@kernel.dk>
-Date: Sun, 20 Jul 2025 13:00:59 -0600
+	s=arc-20240116; t=1753038108; c=relaxed/simple;
+	bh=fHbdFA2m9UXbEVt/aNDr7ogjvvtWResK7CxjVQJtUAs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KwIBacYezslkkztcBZ/j0pHalNceIbEYY8ciuDR/egTnUt0PFM07EvOI8nCnwS4x59Va5Rjn/UE4Ye2Td/8YwgjQwL4hPadqX+kTA8W7/5Cf9zNuK+HTJSrEFG56sK0bcln1c7mLDki1OpO40mFx7S9SwkyKhXHT0cvOn+HgMpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hIAOrmRh; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753038106; x=1784574106;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=fHbdFA2m9UXbEVt/aNDr7ogjvvtWResK7CxjVQJtUAs=;
+  b=hIAOrmRhjWUO00CeXlp8DjPRFk2mEE0TKu/GSoTCXnGTH7yPvnPfKx71
+   ojWbrJE0S4ij5yRQ8IECoVu6jdNlPhbwlI6dBwutO34gDRajrvOBdKllI
+   hD//s183pL+BDzQ9wLIZTcEJPL5FWTwbQJEL3GCtVSVUV2aeEFKnFx1/H
+   bv6Q4N29hytfIKkLz++PktlMi+8gEhscqjYOykKA9XaTzak3h5+pNGmbN
+   gpHeW1tkVIDL8zm6f7PBvTrpBBA3RLQKXPj/RLDaSGSJcNFIH5M4oMdSo
+   hKIJSIJiVcCKcDYnBXRJ303TOaIVijDC+jfTS2aai/iB2RzR18ueExo3U
+   g==;
+X-CSE-ConnectionGUID: d7x714UHRA6Hn7fKJkq6sw==
+X-CSE-MsgGUID: UQ+poP/DR8ODkaFOQhWpIw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11498"; a="54361648"
+X-IronPort-AV: E=Sophos;i="6.16,327,1744095600"; 
+   d="scan'208";a="54361648"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jul 2025 12:01:45 -0700
+X-CSE-ConnectionGUID: w243+E1vRxKq4fgHZ5tncA==
+X-CSE-MsgGUID: aw1+1HEOR/ekVYzZ8Dpx+g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,327,1744095600"; 
+   d="scan'208";a="158317029"
+Received: from ldmartin-desk2.corp.intel.com (HELO debox1-desk4.intel.com) ([10.124.221.227])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jul 2025 12:01:45 -0700
+From: "David E. Box" <david.e.box@linux.intel.com>
+To: rafael@kernel.org,
+	bhelgaas@google.com,
+	vicamo.yang@canonical.com,
+	kenny@panix.com,
+	ilpo.jarvinen@linux.intel.com,
+	nirmal.patel@linux.intel.com,
+	mani@kernel.org
+Cc: "David E. Box" <david.e.box@linux.intel.com>,
+	linux-pm@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] PCI/ASPM: Allow controller drivers to override default ASPM and CLKPM link state
+Date: Sun, 20 Jul 2025 12:01:37 -0700
+Message-ID: <20250720190140.2639200-1-david.e.box@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] KASAN: slab-use-after-free Read in
- io_poll_remove_entries
-From: Jens Axboe <axboe@kernel.dk>
-To: syzbot <syzbot+01523a0ae5600aef5895@syzkaller.appspotmail.com>,
- io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com, abbotti@mev.co.uk,
- hsweeten@visionengravers.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <687bd5fe.a70a0220.693ce.0091.GAE@google.com>
- <9385a1a6-8c10-4eb5-9ab9-87aaeb6a7766@kernel.dk>
- <ede52bb4-c418-45c0-b133-4b5fb6682b04@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <ede52bb4-c418-45c0-b133-4b5fb6682b04@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On 7/20/25 12:49 PM, Jens Axboe wrote:
-> On 7/20/25 12:24 PM, Jens Axboe wrote:
->> On 7/19/25 11:29 AM, syzbot wrote:
->>> Hello,
->>>
->>> syzbot found the following issue on:
->>>
->>> HEAD commit:    4871b7cb27f4 Merge tag 'v6.16-rc6-smb3-client-fixes' of gi..
->>> git tree:       upstream
->>> console output: https://syzkaller.appspot.com/x/log.txt?x=1288c38c580000
->>> kernel config:  https://syzkaller.appspot.com/x/.config?x=fa738a4418f051ee
->>> dashboard link: https://syzkaller.appspot.com/bug?extid=01523a0ae5600aef5895
->>> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
->>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1688c38c580000
->>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=166ed7d4580000
->>>
->>> Downloadable assets:
->>> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-4871b7cb.raw.xz
->>> vmlinux: https://storage.googleapis.com/syzbot-assets/4a9dea51d821/vmlinux-4871b7cb.xz
->>> kernel image: https://storage.googleapis.com/syzbot-assets/f96c723cdfe6/bzImage-4871b7cb.xz
->>>
->>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->>> Reported-by: syzbot+01523a0ae5600aef5895@syzkaller.appspotmail.com
->>>
->>> ==================================================================
->>> BUG: KASAN: slab-use-after-free in __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
->>> BUG: KASAN: slab-use-after-free in _raw_spin_lock_irq+0x36/0x50 kernel/locking/spinlock.c:170
->>> Read of size 1 at addr ffff88803c6f42b0 by task kworker/2:2/1339
->>>
->>> CPU: 2 UID: 0 PID: 1339 Comm: kworker/2:2 Not tainted 6.16.0-rc6-syzkaller-00253-g4871b7cb27f4 #0 PREEMPT(full) 
->>> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
->>> Workqueue: events io_fallback_req_func
->>> Call Trace:
->>>  <TASK>
->>>  __dump_stack lib/dump_stack.c:94 [inline]
->>>  dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
->>>  print_address_description mm/kasan/report.c:378 [inline]
->>>  print_report+0xcd/0x610 mm/kasan/report.c:480
->>>  kasan_report+0xe0/0x110 mm/kasan/report.c:593
->>>  __kasan_check_byte+0x36/0x50 mm/kasan/common.c:557
->>>  kasan_check_byte include/linux/kasan.h:399 [inline]
->>>  lock_acquire kernel/locking/lockdep.c:5845 [inline]
->>>  lock_acquire+0xfc/0x350 kernel/locking/lockdep.c:5828
->>>  __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
->>>  _raw_spin_lock_irq+0x36/0x50 kernel/locking/spinlock.c:170
->>>  spin_lock_irq include/linux/spinlock.h:376 [inline]
->>>  io_poll_remove_entry io_uring/poll.c:146 [inline]
->>>  io_poll_remove_entries.part.0+0x14e/0x7e0 io_uring/poll.c:179
->>>  io_poll_remove_entries io_uring/poll.c:159 [inline]
->>>  io_poll_task_func+0x4cd/0x1130 io_uring/poll.c:326
->>>  io_fallback_req_func+0x1c7/0x6d0 io_uring/io_uring.c:259
->>>  process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3238
->>>  process_scheduled_works kernel/workqueue.c:3321 [inline]
->>>  worker_thread+0x6c8/0xf10 kernel/workqueue.c:3402
->>>  kthread+0x3c5/0x780 kernel/kthread.c:464
->>>  ret_from_fork+0x5d4/0x6f0 arch/x86/kernel/process.c:148
->>>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
->>>  </TASK>
->>>
->>> Allocated by task 6154:
->>>  kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
->>>  kasan_save_track+0x14/0x30 mm/kasan/common.c:68
->>>  poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
->>>  __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
->>>  kmalloc_noprof include/linux/slab.h:905 [inline]
->>>  kzalloc_noprof include/linux/slab.h:1039 [inline]
->>>  __comedi_device_postconfig_async drivers/comedi/drivers.c:664 [inline]
->>>  __comedi_device_postconfig drivers/comedi/drivers.c:721 [inline]
->>>  comedi_device_postconfig+0x2cb/0xc80 drivers/comedi/drivers.c:756
->>>  comedi_device_attach+0x3cf/0x900 drivers/comedi/drivers.c:998
->>>  do_devconfig_ioctl+0x1a7/0x580 drivers/comedi/comedi_fops.c:855
->>>  comedi_unlocked_ioctl+0x15bb/0x2e90 drivers/comedi/comedi_fops.c:2136
->>>  vfs_ioctl fs/ioctl.c:51 [inline]
->>>  __do_sys_ioctl fs/ioctl.c:907 [inline]
->>>  __se_sys_ioctl fs/ioctl.c:893 [inline]
->>>  __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:893
->>>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->>>  do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
->>>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->>>
->>> Freed by task 6156:
->>>  kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
->>>  kasan_save_track+0x14/0x30 mm/kasan/common.c:68
->>>  kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:576
->>>  poison_slab_object mm/kasan/common.c:247 [inline]
->>>  __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
->>>  kasan_slab_free include/linux/kasan.h:233 [inline]
->>>  slab_free_hook mm/slub.c:2381 [inline]
->>>  slab_free mm/slub.c:4643 [inline]
->>>  kfree+0x2b4/0x4d0 mm/slub.c:4842
->>>  comedi_device_detach_cleanup drivers/comedi/drivers.c:171 [inline]
->>>  comedi_device_detach+0x2a4/0x9e0 drivers/comedi/drivers.c:208
->>>  do_devconfig_ioctl+0x46c/0x580 drivers/comedi/comedi_fops.c:833
->>>  comedi_unlocked_ioctl+0x15bb/0x2e90 drivers/comedi/comedi_fops.c:2136
->>>  vfs_ioctl fs/ioctl.c:51 [inline]
->>>  __do_sys_ioctl fs/ioctl.c:907 [inline]
->>>  __se_sys_ioctl fs/ioctl.c:893 [inline]
->>>  __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:893
->>>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->>>  do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
->>>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->>
->> I took a quick look at this, and surely looks like a comedi bug. If you
->> call the ioctl part (do_devconfig_ioctl()) with a NULL arg, it just does
->> a detach and frees the device, regardless of whether anyone has it
->> opened or not?! It's got some odd notion of checking whether it's busy
->> or not. For this case, someone has a poll active on the device, yet it
->> still happily frees it.
->>
->> CC'ing some folks, as this looks utterly broken.
-> 
-> Case in point, I added:
-> 
-> diff --git a/drivers/comedi/drivers.c b/drivers/comedi/drivers.c
-> index 376130bfba8a..4d5fde012558 100644
-> --- a/drivers/comedi/drivers.c
-> +++ b/drivers/comedi/drivers.c
-> @@ -167,6 +167,7 @@ static void comedi_device_detach_cleanup(struct comedi_device *dev)
->  				kfree(s->private);
->  			comedi_free_subdevice_minor(s);
->  			if (s->async) {
-> +				WARN_ON_ONCE(waitqueue_active(&s->async->wait_head));
->  				comedi_buf_alloc(dev, s, 0);
->  				kfree(s->async);
->  			}
-> 
-> and this is the first thing that triggers:
-> 
-> WARNING: CPU: 1 PID: 807 at drivers/comedi/drivers.c:170 comedi_device_detach+0x510/0x720
-> Modules linked in:
-> CPU: 1 UID: 0 PID: 807 Comm: comedi Not tainted 6.16.0-rc6-00281-gf4a40a4282f4-dirty #1438 NONE 
-> Hardware name: linux,dummy-virt (DT)
-> pstate: 21400005 (nzCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
-> pc : comedi_device_detach+0x510/0x720
-> lr : comedi_device_detach+0x1dc/0x720
-> sp : ffff80008aeb7880
-> x29: ffff80008aeb7880 x28: 1fffe00020251205 x27: ffff000101289028
-> x26: ffff00010578a000 x25: ffff000101289000 x24: 0000000000000007
-> x23: 1fffe00020af1437 x22: 1fffe00020af1438 x21: 0000000000000000
-> x20: 0000000000000000 x19: dfff800000000000 x18: ffff0000db102ec0
-> x17: ffff80008208e6dc x16: ffff80008362e120 x15: ffff800080a47c1c
-> x14: ffff8000826f5aec x13: ffff8000836a0cc4 x12: ffff700010adcd15
-> x11: 1ffff00010adcd14 x10: ffff700010adcd14 x9 : ffff8000836a105c
-> x8 : ffff800085bc0cc0 x7 : ffff00000b035b50 x6 : 0000000000000000
-> x5 : 0000000000000000 x4 : ffff800080960e08 x3 : 0000000000000001
-> x2 : ffff00000b4bf930 x1 : 0000000000000000 x0 : ffff0000d7e2b0d8
-> Call trace:
->  comedi_device_detach+0x510/0x720 (P)
->  do_devconfig_ioctl+0x37c/0x4b8
->  comedi_unlocked_ioctl+0x33c/0x2bd8
->  __arm64_sys_ioctl+0x124/0x1a0
->  invoke_syscall.constprop.0+0x60/0x2a0
->  el0_svc_common.constprop.0+0x148/0x240
->  do_el0_svc+0x40/0x60
->  el0_svc+0x44/0xe0
->  el0t_64_sync_handler+0x104/0x130
->  el0t_64_sync+0x170/0x178
-> 
-> Not sure what the right fix for comedi is here, it'd probably be at
-> least somewhat saner if it only allowed removal of the device when the
-> ref count would be 1 (for the ioctl itself). Just ignoring the file ref
-> and allowing blanket removal seems highly suspicious / broken.
-> 
-> As there's no comedi subsystem in syzbot, moving it to kernel:
-> 
-> #syz set subsystems: kernel
+Synthetic PCIe hierarchies, such as those created by Intel VMD, are not
+visible to firmware and do not receive BIOS-provided default ASPM and CLKPM
+configuration. As a result, devices behind such domains operate without
+proper power management, regardless of platform intent.
 
-Something like the below may help, at least it'll tell us the device is
-busy if there's a poll active on it.
+To address this, allow controller drivers to supply an override for the
+default link state by setting aspm_dflt_link_state for their associated
+pci_host_bridge. During link initialization, if this field is non-zero,
+ASPM and CLKPM defaults are derived from its value instead of being taken
+from BIOS.
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+This mechanism enables drivers like VMD to achieve platform-aligned power
+savings by statically defining the expected link configuration at
+enumeration time, without relying on runtime calls such as
+pci_enable_link_state(), which are ineffective when ASPM is disabled
+globally.
 
+This approach avoids per-controller hacks in ASPM core logic and provides a
+general mechanism for domains that require explicit control over link power
+state defaults.
 
-diff --git a/drivers/comedi/comedi_fops.c b/drivers/comedi/comedi_fops.c
-index 3383a7ce27ff..ea96bc4b818e 100644
---- a/drivers/comedi/comedi_fops.c
-+++ b/drivers/comedi/comedi_fops.c
-@@ -785,21 +785,31 @@ void comedi_device_cancel_all(struct comedi_device *dev)
- static int is_device_busy(struct comedi_device *dev)
- {
- 	struct comedi_subdevice *s;
--	int i;
-+	int i, is_busy = 0;
- 
- 	lockdep_assert_held(&dev->mutex);
- 	if (!dev->attached)
- 		return 0;
- 
-+	/* prevent new polls */
-+	down_write(&dev->attach_lock);
-+
- 	for (i = 0; i < dev->n_subdevices; i++) {
- 		s = &dev->subdevices[i];
--		if (s->busy)
--			return 1;
--		if (s->async && comedi_buf_is_mmapped(s))
--			return 1;
-+		if (s->busy) {
-+			is_busy = 1;
-+			break;
-+		}
-+		if (!s->async)
-+			continue;
-+		if (comedi_buf_is_mmapped(s) ||
-+		    waitqueue_active(&s->async->wait_head)) {
-+			is_busy = 1;
-+			break;
-+		}
- 	}
--
--	return 0;
-+	up_write(&dev->attach_lock);
-+	return is_busy;
+Link: https://lore.kernel.org/linux-pm/0b166ece-eeec-ba5d-2212-50d995611cef=
+@panix.com
+Signed-off-by: David E. Box <david.e.box@linux.intel.com>
+---
+
+Changes from RFC:
+
+  -- Rename field to aspm_dflt_link_state since it stores
+     PCIE_LINK_STATE_XXX flags, not a policy enum.
+  -- Move the field to struct pci_host_bridge since it's being applied to
+     the entire host bridge per Mani's suggestion.
+  -- During testing noticed that clkpm remained disabled and this was
+     also handled by the formerly used pci_enable_link_state(). Add a
+     check in pcie_clkpm_cap_init() as well to enable clkpm during init.
+
+ drivers/pci/controller/vmd.c | 12 +++++++++---
+ drivers/pci/pcie/aspm.c      | 13 +++++++++++--
+ include/linux/pci.h          |  4 ++++
+ 3 files changed, 24 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
+index 8df064b62a2f..6f0de95c87fd 100644
+--- a/drivers/pci/controller/vmd.c
++++ b/drivers/pci/controller/vmd.c
+@@ -730,7 +730,7 @@ static void vmd_copy_host_bridge_flags(struct pci_host_=
+bridge *root_bridge,
  }
- 
+=20
  /*
+- * Enable ASPM and LTR settings on devices that aren't configured by BIOS.
++ * Enable LTR settings on devices that aren't configured by BIOS.
+  */
+ static int vmd_pm_enable_quirk(struct pci_dev *pdev, void *userdata)
+ {
+@@ -770,7 +770,6 @@ static int vmd_pm_enable_quirk(struct pci_dev *pdev, vo=
+id *userdata)
+ 	 * PCIe r6.0, sec 5.5.4.
+ 	 */
+ 	pci_set_power_state_locked(pdev, PCI_D0);
+-	pci_enable_link_state_locked(pdev, PCIE_LINK_STATE_ALL);
+ 	return 0;
+ }
+=20
+@@ -785,6 +784,7 @@ static int vmd_enable_domain(struct vmd_dev *vmd, unsig=
+ned long features)
+ 	resource_size_t membar2_offset =3D 0x2000;
+ 	struct pci_bus *child;
+ 	struct pci_dev *dev;
++	struct pci_host_bridge *vmd_host_bridge;
+ 	int ret;
+=20
+ 	/*
+@@ -911,8 +911,14 @@ static int vmd_enable_domain(struct vmd_dev *vmd, unsi=
+gned long features)
+ 		return -ENODEV;
+ 	}
+=20
++	vmd_host_bridge =3D to_pci_host_bridge(vmd->bus->bridge);
++
++#ifdef CONFIG_PCIEASPM
++	vmd_host_bridge->aspm_dflt_link_state =3D PCIE_LINK_STATE_ALL;
++#endif
++
+ 	vmd_copy_host_bridge_flags(pci_find_host_bridge(vmd->dev->bus),
+-				   to_pci_host_bridge(vmd->bus->bridge));
++				   vmd_host_bridge);
+=20
+ 	vmd_attach_resources(vmd);
+ 	if (vmd->irq_domain)
+diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+index 29fcb0689a91..6f5b34b172f9 100644
+--- a/drivers/pci/pcie/aspm.c
++++ b/drivers/pci/pcie/aspm.c
+@@ -380,6 +380,7 @@ static void pcie_clkpm_cap_init(struct pcie_link_state =
+*link, int blacklist)
+ 	u16 reg16;
+ 	struct pci_dev *child;
+ 	struct pci_bus *linkbus =3D link->pdev->subordinate;
++	struct pci_host_bridge *host =3D pci_find_host_bridge(link->pdev->bus);
+=20
+ 	/* All functions should have the same cap and state, take the worst */
+ 	list_for_each_entry(child, &linkbus->devices, bus_list) {
+@@ -394,7 +395,10 @@ static void pcie_clkpm_cap_init(struct pcie_link_state=
+ *link, int blacklist)
+ 			enabled =3D 0;
+ 	}
+ 	link->clkpm_enabled =3D enabled;
+-	link->clkpm_default =3D enabled;
++	if (host && host->aspm_dflt_link_state & PCIE_LINK_STATE_CLKPM)
++		link->clkpm_default =3D 1;
++	else
++		link->clkpm_default =3D enabled;
+ 	link->clkpm_capable =3D capable;
+ 	link->clkpm_disable =3D blacklist ? 1 : 0;
+ }
+@@ -794,6 +798,7 @@ static void pcie_aspm_cap_init(struct pcie_link_state *=
+link, int blacklist)
+ 	u32 parent_lnkcap, child_lnkcap;
+ 	u16 parent_lnkctl, child_lnkctl;
+ 	struct pci_bus *linkbus =3D parent->subordinate;
++	struct pci_host_bridge *host;
+=20
+ 	if (blacklist) {
+ 		/* Set enabled/disable so that we will disable ASPM later */
+@@ -866,7 +871,11 @@ static void pcie_aspm_cap_init(struct pcie_link_state =
+*link, int blacklist)
+ 	}
+=20
+ 	/* Save default state */
+-	link->aspm_default =3D link->aspm_enabled;
++	host =3D pci_find_host_bridge(parent->bus);
++	if (host && host->aspm_dflt_link_state)
++		link->aspm_default =3D host->aspm_dflt_link_state;
++	else
++		link->aspm_default =3D link->aspm_enabled;
+=20
+ 	/* Setup initial capable state. Will be updated later */
+ 	link->aspm_capable =3D link->aspm_support;
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 05e68f35f392..930028bf52b4 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -614,6 +614,10 @@ struct pci_host_bridge {
+ 	unsigned int	size_windows:1;		/* Enable root bus sizing */
+ 	unsigned int	msi_domain:1;		/* Bridge wants MSI domain */
+=20
++#ifdef CONFIG_PCIEASPM
++	unsigned int    aspm_dflt_link_state;	/* Controller provided link state */
++#endif
++
+ 	/* Resource alignment requirements */
+ 	resource_size_t (*align_resource)(struct pci_dev *dev,
+ 			const struct resource *res,
 
--- 
-Jens Axboe
+base-commit: d0b3b7b22dfa1f4b515fd3a295b3fd958f9e81af
+--=20
+2.43.0
+
 
