@@ -1,114 +1,125 @@
-Return-Path: <linux-kernel+bounces-739589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 438B5B0C846
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:56:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6662DB0C784
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:25:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A6026C472A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:55:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AF5F1AA542C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191E52E03F8;
-	Mon, 21 Jul 2025 15:55:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60272DA743;
+	Mon, 21 Jul 2025 15:25:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="N7F21LPI"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="taG1IzCd"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397221F463A;
-	Mon, 21 Jul 2025 15:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99FD027CB02
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 15:25:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753113311; cv=none; b=KgkPPTdxv/QPjJrcB/t6fbIYFo6kcNbiROfC8963D9m+Gq6Cu2xRrRwKiDr1Rdh712/FAs86sfYY5062mGijb/2+rHR6sXk395BAveYtNX7DBkqBlxf3eSKdsC6EdY/ht0DevQJ6gEZwFdF6FkCQxD2mx4DxIxhqxOJ4e2zIMxM=
+	t=1753111503; cv=none; b=PqbnmwGizhWYZrtiWwrUpI2ZiW3jE/LniVJexfU6Cqt1q4QSewIf8O7R3TlHKY9WigK2dWJt/RRnijTsNDDdk7I6SvxTxR9MY4sGYbxCPjhXpDu0RYcu14+J3p0Tj1489tUQ9DO7/bQGcNAkvi8cw9fK9KDEx+/WTnoH3QcEYHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753113311; c=relaxed/simple;
-	bh=N1dy7xoxRKl1sQ1tb4Ipkebpw3UhPsQ6Fu34IdYEgOA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MR4RwdQ1g7KPdqbNqQSmE1CdwyJY3XMe6qeUXOYQz3Qf54u+O3uG6JjDTn9CLGNphLb1akLJa+AEKSosW9x8ToXa2qs/CEwqY0XtObbNJvhK1BY19PhtSwkBwhB1we3bQWyzVEDFqbJVytslxAzXlyZ1TuQ37SmEGZmxasLJSyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=N7F21LPI; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=N1dy7xoxRKl1sQ1tb4Ipkebpw3UhPsQ6Fu34IdYEgOA=; b=N7F21LPIdchD8+2O9CRvE6O6lI
-	gX1sGnojJnysvzXKgRZSVl3qksY/yK/9djn9/YWNxOIWo7kFQbymnEjUusxPGd1xxRZxoe4sKglj0
-	h5Dh1ridpadW6MvtjkAbPCgYeYBiRCxw1Sg96MnfuX+/9+opxxxztm6oYj0PzZmb1sgUJ4KI2NSYg
-	3BVv4bX1JAQbphTSLHK+Me/8AOwc2onF5MjEXKI8VCbzpWtbhsMOvO5HiV0lI01ilo91r6z1ubpOv
-	+Zu5Ulx51fV7sPn3ctWr48CQG/p3JV46sJ2rUHDQ9QNCIY9gs1FwB6HfVy+QTbCfCw1igvlrNNkf5
-	K4zSFjWA==;
-Received: from i53875b2e.versanet.de ([83.135.91.46] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1udsND-00047Z-91; Mon, 21 Jul 2025 17:24:15 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Tomeu Vizoso <tomeu@tomeuvizoso.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Oded Gabbay <ogabbay@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
- Kever Yang <kever.yang@rock-chips.com>, Robin Murphy <robin.murphy@arm.com>,
- Daniel Stone <daniel@fooishbar.org>, Da Xue <da@libre.computer>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Jeff Hugo <jeff.hugo@oss.qualcomm.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
- linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
- Robert Foss <rfoss@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v9 00/10] New DRM accel driver for Rockchip's RKNN NPU
-Date: Mon, 21 Jul 2025 17:24:13 +0200
-Message-ID: <4109088.mvXUDI8C0e@diego>
-In-Reply-To: <b48c6694-2bd1-44d0-9dd1-1b7a67e22d87@oss.qualcomm.com>
-References:
- <20250721-6-10-rocket-v9-0-77ebd484941e@tomeuvizoso.net>
- <b48c6694-2bd1-44d0-9dd1-1b7a67e22d87@oss.qualcomm.com>
+	s=arc-20240116; t=1753111503; c=relaxed/simple;
+	bh=0favzC7sjFak+NOmfIdl6eBf4vGYZIG748Kdib+w96s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BVRnmzjn/vlFbzmjUFwuMUSz/0qT088fHM15ULbsTCFai8ZCHXu1YIBego1uvv5uRMeeWaDWVLOIHuKuztQsGU8/GOqhVHMNEW/oXEWj/rBzUgipgNK9fi07xiMxc4Bt5FNyFyAyAb3Nf2O2kxAJ5oG9D3o7VGj7t0UWvuBLgA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=taG1IzCd; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2353a2bc210so40106775ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 08:25:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753111501; x=1753716301; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7JY0xubH/7CmP764RnN6ToDZYqOUUQxz6pVo9aMZtxs=;
+        b=taG1IzCdkUe+TFWhUQF9USFuo1JDps6/NQs2QeI0GDZWtdjuevGjCZxfrF5u/cz0Wq
+         yuEepkFM1zJXU/kaNmz8dp9ERfCot4CZYL2UrAvODP9PoUBLX1TWxZcEFME3xVgut9eK
+         EHeiF5qwH/xdR2dOsbWkaLIkaqTIgIfKdUD5vkU3l0ORtc6L40AYCPQkN6u/wzR4yWTz
+         75cPrnwxn6Up9vG8Dz5RevmMuslRN3pkWKuFuC9UR39ZNzO/hajIBg5oXS6G9c+Ltkr5
+         j8vsNVyIqFI4jwjcsJPgKkJTz02wEgBpSY/fq/l1EGcdL6cmimvUGIjpOGz3KaE/ijFk
+         mLUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753111501; x=1753716301;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7JY0xubH/7CmP764RnN6ToDZYqOUUQxz6pVo9aMZtxs=;
+        b=BShjT8YAafgl9RZxZTesSvCGqttTxwkCYW+1TC0i7k6PS5g7/nMCiSuQZ2SGM28Ulj
+         RsUTleB78gtY8xMQT8D0kJQzVDYQvXUnzOH+ZaKtizyJLj9mn2vkD6eVyE342wehGLuh
+         vAaZEYJTBxIsr5PkjtEr0Jsn8n/MtGWE8Y1dCQVyBNtoC8n38fYLZxeC4vzy9KtxJ0qo
+         qNR0tuyFtrUWpWv8YC+B5P+GS+ZTGRCJTkQOxBzv9gwubME4ML7gi93wh7oHsFOAVWLy
+         A67mQ70iM3MddYjvWDpPQQzlw50PmSgd0VOquMl/vRE+zzOodyUt+/QTg0oENsJ92qug
+         mSRw==
+X-Forwarded-Encrypted: i=1; AJvYcCU7GWKGIbn9eqeERKsH+gcs5ntyfx04XaN6i1yaYxRszue51A3Sia5A+l9wB1TIu/ib2GGAWDMjMOttdrI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywl2D5X4Ur8rm77Q/wAk6ui2/4w9uoM6GEM3eq1wWW3iJ+AuVA7
+	eLHGgtwKEse+hmYdh9KjfB2eSshEnJsNW7O98CDYPE1lo6HvLjIhLlWlwfDGN5Us7vc=
+X-Gm-Gg: ASbGnct+Va8BiWAOLj75a7tmfYedfZzG09cKPFTBBTOssXRHjtS9taJj7Seu/NoKbVu
+	cHVHohRbpdRKcMRYMnQqbVFmOUGrBcdM0b1qCL+URZDcMn0FpJHT3ZR+bcz3zYQeTF0hYw9bqvZ
+	mFBT6cH1W0X3S1ArZl51QYwm+r70aCY8TXTASisHm0l0neRp/ng9c/SHoDCVd3bkvwzZndjFQUE
+	UC3P+qKbc18sOitQPyXid4k1N1Ol7RA7U0VR+qNsl3+yO+gLC/QgheP08MadHQRCcEDldn54Gyy
+	HvjLZlxUH1WO21plzke8RLheuNcX6V6/DsMSdugiR1USUm+BmDewTgkO79E3O1OMSEMXuxAv9TZ
+	wA/5yUA+tmNotRc7tP0oXSBiU6A==
+X-Google-Smtp-Source: AGHT+IGZMNP1a6kskS6Pcfkl6H+Xt0CgudgU1mmF7mun002WwHrv7ePLTvnhYw/MIEXzvgrCpiiOtg==
+X-Received: by 2002:a17:903:166e:b0:235:c9a7:d5f5 with SMTP id d9443c01a7336-23e256adfcfmr234891115ad.13.1753111500845;
+        Mon, 21 Jul 2025 08:25:00 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:8fb5:9396:b7cf:1f69])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b5e3d4esm59730425ad.23.2025.07.21.08.24.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Jul 2025 08:25:00 -0700 (PDT)
+Date: Mon, 21 Jul 2025 09:24:58 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Tanmay Shah <tanmay.shah@amd.com>
+Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] remoteproc: xlnx: disable unsupported features
+Message-ID: <aH5bynQwaHbCJR3f@p14s>
+References: <20250716213048.2316424-1-tanmay.shah@amd.com>
+ <20250716213048.2316424-2-tanmay.shah@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250716213048.2316424-2-tanmay.shah@amd.com>
 
-Hi Jeff,
+Good morning,
 
-Am Montag, 21. Juli 2025, 16:55:01 Mitteleurop=C3=A4ische Sommerzeit schrie=
-b Jeff Hugo:
-> On 7/21/2025 3:17 AM, Tomeu Vizoso wrote:
-> > This series adds a new driver for the NPU that Rockchip includes in its
-> > newer SoCs, developed by them on the NVDLA base.
-> >=20
-> > In its current form, it supports the specific NPU in the RK3588 SoC.
-> >=20
-> > The userspace driver is part of Mesa and an initial draft can be found =
-at:
-> >=20
-> > https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/29698
-> >=20
-> > Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
->=20
-> This (and the userspace component) appear ready for merge from what I=20
-> can tell. Tomeu is still working on his drm-misc access so I've offered=20
-> to merge on his behalf. Planning on waiting until Friday for any final=20
-> feedback to come in before doing so.
+On Wed, Jul 16, 2025 at 02:30:47PM -0700, Tanmay Shah wrote:
+> AMD-Xilinx platform driver does not support iommu or recovery mechanism
+> yet. Disable both features in platform driver.
+> 
+> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+> ---
+>  drivers/remoteproc/xlnx_r5_remoteproc.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> index a51523456c6e..0ffd26a47685 100644
+> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
+> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> @@ -938,6 +938,8 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
+>  
+>  	rproc_coredump_set_elf_info(r5_rproc, ELFCLASS32, EM_ARM);
+>  
+> +	r5_rproc->recovery_disabled = true;
 
-sounds great.
+If recovery is not supported, and it is set explicitly here, does it mean the
+present upstream code is broken?  And if it is broken, how was this tested in
+the first place?
 
-Just to make sure, you're planning to merge patches 1-6 (driver + binding)
-into drm-misc and I'll pick up the "arm64: dts: " patches 7-10 afterwards?
-
-Heiko
-
-
+> +	r5_rproc->has_iommu = false;
+>  	r5_rproc->auto_boot = false;
+>  	r5_core = r5_rproc->priv;
+>  	r5_core->dev = cdev;
+> -- 
+> 2.34.1
+> 
 
