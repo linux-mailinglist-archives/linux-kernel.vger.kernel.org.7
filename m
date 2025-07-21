@@ -1,245 +1,118 @@
-Return-Path: <linux-kernel+bounces-739506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 571A0B0C718
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:00:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 07571B0C723
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:01:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 816E03AD938
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:59:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B2683B06DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70BC12DCC13;
-	Mon, 21 Jul 2025 15:00:05 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA672DCF40
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 15:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D3A2DD60E;
+	Mon, 21 Jul 2025 15:00:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gtUiAtrt"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDCF13C81B;
+	Mon, 21 Jul 2025 15:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753110005; cv=none; b=IWX2nRWZfNPsckn56FVa6HahsVypbm8X3ZctP14TIWuKgtpllkBGUv2tbQth18TGoVxrlWJwm8FXt1kIsPj1jItC9XPXxclSBc3wfXOzgTAl5xVYZZGdR3WTJfAtalJomo3yxgXmuHcgDwsAln+fbWfD0g/ITJy6UTMSxtIsLx0=
+	t=1753110032; cv=none; b=IBrLxGc0jqDqKl7NzzlgI6ZFO+CRG86+8qSapho27otyf3MQ57d7A6UjMkJv4tz7X+yE3al1EBISDTSbVhHSh+bTE27AUdvcMIj+N/3JT+vF2kRoy/EwnDDJ8wqLmvc9Ott9Rpdy62mntdN0INWURtsRSkKi7bTnL0S0ah8XfGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753110005; c=relaxed/simple;
-	bh=/h+BiP9gL45yMiNLBs3BZBI+spQn6H+y9ql1+NruU1Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lC0r2YBhc+WzyeqJ9y9uiwDqv2O5GdknuTx23JnRhhBkSwe4YJkqxw119HQRy+ZNqtQp/UqG33z0hrYetO7kn3BqJDVTvzA6cysUk31FVXtIKp+b5P6DV8MwSKS1xcyF7X3cF0jqTim1Whr3qQzWGNVOun51s3PHEsRCt4MEH4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CC9F0153B
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 07:59:56 -0700 (PDT)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 630A03F6A8
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 08:00:02 -0700 (PDT)
-Date: Mon, 21 Jul 2025 15:59:51 +0100
-From: Liviu Dudau <liviu.dudau@arm.com>
-To: Karunika Choo <karunika.choo@arm.com>
-Cc: dri-devel@lists.freedesktop.org, nd@arm.com,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	s=arc-20240116; t=1753110032; c=relaxed/simple;
+	bh=1u26kY1ws9cxhBGjecBiZxykAFQE/6GBsWlroHxvc6Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=S+ZC3BA1AYuSxLRudxhunMkArXYn9ZriWRJ1v3bpFHHm225C/IijcBlzVSuqhh1HkoMCkGiPsWhkNlc33On0m2u6onUxj7wppI6j2CkLxrB5tmZg54K6edFIOBwEZNL0XQKpem9zldTSE15M0lyrU3NJ61K4kF8Hom/rCHoq20E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gtUiAtrt; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a531fcaa05so1994522f8f.3;
+        Mon, 21 Jul 2025 08:00:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753110029; x=1753714829; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2PB0irW/PF5RfhguedJlSTXVHWilPTDJ158mA6czsCc=;
+        b=gtUiAtrteKyVTlB8t2xu64W+BzIrBelFx/mwl+jfI/duxwz6WFJI3cjUgGKCHauc31
+         1ZyjZZBhW5PW0rcOOBnHXx+2Rbx+oR1puUuT1LoDmvnr5hLKqj35QTVe2pUTvOvSB5sP
+         cIxsnjjMznSJ3VAGvZHA6U9hiXZn11GwvpO0hilSP7wWzi39M+s80HRhlMpA/NfDygOW
+         NKDyp/4EzIk8nPWkHD+vFIMJ71va/jTT4t+RwfH8ywEYq+d1wC6P5ksB0n9lKVoFdAOm
+         6mKQaCvIiRH1d7D/Ac8/u886SMM1LxIEGicKR6Y8CHDi8EJbqZrLxoSbq/p/31+QfiYA
+         X6ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753110029; x=1753714829;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2PB0irW/PF5RfhguedJlSTXVHWilPTDJ158mA6czsCc=;
+        b=lhBt+vf3iYFbu8EdNYEhCqnUdizqPDla/jPDJLiQZGx6kkEv9NUP4gYXedsdqFfEb/
+         PymULiOKmeCUbHXgm5Tn2VBx4rJunAxnEluBBUGOkCW6d1MkJ8F2OnDiJBM/uxRZB2so
+         gmMXNnj82iQ5reP835F/QSkKe41tFRYB/FSzLMIUBzRby0Pxv25r6tYNxjdYOzJZHEu7
+         q9Uph+v3Yx2ObhVmKWwFRBfrPfTlogjierFwgsFqnMpup6vLkmyikhU7Ix/jOeaNoTwl
+         +LfrVGT9YzM+I3LWLUbrHRcQIs6w1zD790pyUgGLxYgDbCWJiZjK2anBtUT8AB2H+Y/4
+         RtSw==
+X-Forwarded-Encrypted: i=1; AJvYcCVFVlnsdX+r/52pZrFvn9x0eI7UUZpw4nDH6BibU73ojk2VYkN+ESiEVmd/ZJis1TczF2I531f+UY49@vger.kernel.org, AJvYcCVTWqcdcJVUimvBSK1OjATmlmBbGafDwcGloShudmdAA7KG0J0w1uRgXS5Dy8DE7MCaXmRj9wJGGB4KiHOD@vger.kernel.org, AJvYcCWkmfmM141bnfFrUFPzpTUbHCsr1agx+oKz/jxJd2VmfvC+qjH/KtWdxZfQyFFhKESXY4XRL+R1l4cB@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4OkRVKJRgcyZbysDMAHtn4lKYZEWK7e1G1pDk3PxaUoVxlreK
+	XZtXYD29IbjU0NdzuaKk9u+iOz2Dx5g49ZaBnay/tK0Mimm831jOJ8ER2EpK1m/BnDQ=
+X-Gm-Gg: ASbGncs+FE2LmTYTS3sWoSp8yghMDEwowLpZF1jIxpIs+4M5vWBz5Ul7h20zcNsjBbn
+	7U4SgAiuNStKZP1zAq7iDtrfs9fjCXe33CiqMzdG3RE/ZdFxu2m2ajNeobiCHEhy4wxyAZJMZVx
+	sSMliwRcOFUywVjZPUdPBT8EtEsx/FFGcIIXcZFDzeijvhE5OSk4UoRDara+MgJn4iri3u+7Vgr
+	n2BAaaMHcGskVnRPiHf14iyZVEXgix5kLTN6znoUBgE3A/qBjUlpC9CuPG9yaVGW5YtwOlH5rIP
+	+U7YGhlsuz/PT2SqNw/Q7FOm95iLEkCnkgsrMmAqn9U7K3poMFlYQBsD4hloPhMfKWirUeLcFS2
+	eUGMoXUrk2wlz+BT5dsTM
+X-Google-Smtp-Source: AGHT+IEnm5Z2sHlscy3eq1RJ/Z17vAMa+liMVtNJyEdVCWAmNxBB9ZDteQYhEZsZXd+wtJZbuTe+Hw==
+X-Received: by 2002:a05:6000:40ca:b0:3a8:6262:e78 with SMTP id ffacd0b85a97d-3b60e513909mr14535725f8f.37.1753110028526;
+        Mon, 21 Jul 2025 08:00:28 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b61ca25410sm10808671f8f.1.2025.07.21.08.00.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Jul 2025 08:00:24 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	linux-pci@vger.kernel.org,
+	linux-acpi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 6/6] drm/panthor: Add support for Mali-Gx20 and
- Mali-Gx25 GPUs
-Message-ID: <aH5V5_sXBGp5XOBQ@e110455-lin.cambridge.arm.com>
-References: <20250721111344.1610250-1-karunika.choo@arm.com>
- <20250721111344.1610250-7-karunika.choo@arm.com>
+Subject: [PATCH][next] ACPI: pci_link: Remove space before \n newline
+Date: Mon, 21 Jul 2025 15:59:52 +0100
+Message-ID: <20250721145952.2601422-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250721111344.1610250-7-karunika.choo@arm.com>
 
-On Mon, Jul 21, 2025 at 12:13:44PM +0100, Karunika Choo wrote:
-> This patch adds firmware binary and GPU model naming support for
-> Mali-Gx20 and Mali-Gx25 GPUs.
-> 
-> It also introduces the following registers:
-> - GPU_COMMAND_ARG0~1
-> - SHADER_PWRFEATURES
-> - MCU_FEATURES
-> 
-> The GPU_COHERENCY_FEATURES macros are slightly reworked as the
-> assumption that FEATURE = BIT(PROTOCOL) no longer holds with the
-> introduction of the SHAREABLE_CACHE_SUPPORT, which is BIT(5) on the
-> GPU_COHERENCY_PROTOCOL register. As such, the feature bits are now
-> individually defined. Further changes were also made to enable
-> SHAREABLE_CACHE_SUPPORT if coherency is enabled and the feature is
-> supported.
-> 
-> This patch also fixes a minor bug that incorrectly writes ACE instead of
-> ACE_LITE to GPU_COHERENCY_PROTOCOL if coherency is enabled.
-> 
-> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
-> ---
->  drivers/gpu/drm/panthor/panthor_device.c |  2 +-
->  drivers/gpu/drm/panthor/panthor_fw.c     |  2 ++
->  drivers/gpu/drm/panthor/panthor_gpu.c    | 14 ++++++++++++--
->  drivers/gpu/drm/panthor/panthor_hw.c     | 18 ++++++++++++++++++
->  drivers/gpu/drm/panthor/panthor_regs.h   | 11 ++++++++++-
->  5 files changed, 43 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_device.c b/drivers/gpu/drm/panthor/panthor_device.c
-> index 81df49880bd8..f547aa4159ec 100644
-> --- a/drivers/gpu/drm/panthor/panthor_device.c
-> +++ b/drivers/gpu/drm/panthor/panthor_device.c
-> @@ -34,7 +34,7 @@ static int panthor_gpu_coherency_init(struct panthor_device *ptdev)
->  	 * ACE protocol has never been supported for command stream frontend GPUs.
->  	 */
->  	if ((gpu_read(ptdev, GPU_COHERENCY_FEATURES) &
-> -		      GPU_COHERENCY_PROT_BIT(ACE_LITE)))
-> +	     GPU_COHERENCY_FEATURE_ACE_LITE))
->  		return 0;
->  
->  	drm_err(&ptdev->base, "Coherency not supported by the device");
-> diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
-> index fa6e0b48a0b2..9bf06e55eaee 100644
-> --- a/drivers/gpu/drm/panthor/panthor_fw.c
-> +++ b/drivers/gpu/drm/panthor/panthor_fw.c
-> @@ -1405,3 +1405,5 @@ MODULE_FIRMWARE("arm/mali/arch10.8/mali_csffw.bin");
->  MODULE_FIRMWARE("arm/mali/arch10.10/mali_csffw.bin");
->  MODULE_FIRMWARE("arm/mali/arch10.12/mali_csffw.bin");
->  MODULE_FIRMWARE("arm/mali/arch11.8/mali_csffw.bin");
-> +MODULE_FIRMWARE("arm/mali/arch12.8/mali_csffw.bin");
-> +MODULE_FIRMWARE("arm/mali/arch13.8/mali_csffw.bin");
-> diff --git a/drivers/gpu/drm/panthor/panthor_gpu.c b/drivers/gpu/drm/panthor/panthor_gpu.c
-> index 5e2c3173ae27..df2419706fe0 100644
-> --- a/drivers/gpu/drm/panthor/panthor_gpu.c
-> +++ b/drivers/gpu/drm/panthor/panthor_gpu.c
-> @@ -45,8 +45,18 @@ struct panthor_gpu {
->  
->  static void panthor_gpu_coherency_set(struct panthor_device *ptdev)
->  {
-> -	gpu_write(ptdev, GPU_COHERENCY_PROTOCOL,
-> -		ptdev->coherent ? GPU_COHERENCY_PROT_BIT(ACE_LITE) : GPU_COHERENCY_NONE);
-> +	u32 coherency_protocol = GPU_COHERENCY_NONE;
-> +
-> +	if (ptdev->coherent) {
-> +		coherency_protocol = GPU_COHERENCY_ACE_LITE;
-> +
-> +		if ((gpu_read(ptdev, GPU_COHERENCY_FEATURES) &
-> +		     GPU_COHERENCY_FEATURE_SHAREABLE_CACHE_SUPPORT))
-> +			coherency_protocol |=
-> +				GPU_COHERENCY_SHAREABLE_CACHE_SUPPORT;
-> +	}
-> +
-> +	gpu_write(ptdev, GPU_COHERENCY_PROTOCOL, coherency_protocol);
->  }
->  
->  static void panthor_gpu_irq_handler(struct panthor_device *ptdev, u32 status)
-> diff --git a/drivers/gpu/drm/panthor/panthor_hw.c b/drivers/gpu/drm/panthor/panthor_hw.c
-> index a7583342d797..3fcb69a6f959 100644
-> --- a/drivers/gpu/drm/panthor/panthor_hw.c
-> +++ b/drivers/gpu/drm/panthor/panthor_hw.c
-> @@ -35,6 +35,24 @@ static char *get_gpu_model_name(struct panthor_device *ptdev)
->  		fallthrough;
->  	case GPU_PROD_ID_MAKE(11, 3):
->  		return "Mali-G615";
-> +	case GPU_PROD_ID_MAKE(12, 0):
-> +		if (shader_core_count >= 10 && ray_intersection)
-> +			return "Mali-G720-Immortalis";
-> +		else if (shader_core_count >= 6)
-> +			return "Mali-G720";
-> +
-> +		fallthrough;
-> +	case GPU_PROD_ID_MAKE(12, 1):
-> +		return "Mali-G620";
-> +	case GPU_PROD_ID_MAKE(13, 0):
-> +		if (shader_core_count >= 10 && ray_intersection)
-> +			return "Mali-G925-Immortalis";
-> +		else if (shader_core_count >= 6)
-> +			return "Mali-G725";
-> +
-> +		fallthrough;
-> +	case GPU_PROD_ID_MAKE(13, 1):
-> +		return "Mali-G625";
->  	}
->  
->  	return "(Unknown Mali GPU)";
-> diff --git a/drivers/gpu/drm/panthor/panthor_regs.h b/drivers/gpu/drm/panthor/panthor_regs.h
-> index e4c34f70a880..a9ea32e5fe39 100644
-> --- a/drivers/gpu/drm/panthor/panthor_regs.h
-> +++ b/drivers/gpu/drm/panthor/panthor_regs.h
-> @@ -87,6 +87,8 @@
->  
->  #define GPU_DOORBELL_FEATURES				0xC0
->  
-> +#define GPU_COMMAND_ARG(n)				(0xD0 + ((n) * 8))
+There is an extraneous space before a newline in an acpi_handle_debug
+message.  Remove it.
 
-This ...
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/acpi/pci_link.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +
->  #define GPU_SHADER_PRESENT				0x100
->  #define GPU_TILER_PRESENT				0x110
->  #define GPU_L2_PRESENT					0x120
-> @@ -96,6 +98,8 @@
->  #define L2_READY					0x160
->  
->  #define SHADER_PWRON					0x180
-> +#define SHADER_PWRFEATURES				0x188
-> +#define   SHADER_PWRFEATURES_RAY_TRACING_UNIT		BIT(0)
-
-... and this are not used anywhere. Can we remove them until we add code that uses them?
-
->  #define TILER_PWRON					0x190
->  #define L2_PWRON					0x1A0
->  
-> @@ -116,12 +120,15 @@
->  #define GPU_ASN_HASH(n)				(0x2C0 + ((n) * 4))
->  
->  #define GPU_COHERENCY_FEATURES				0x300
-> -#define GPU_COHERENCY_PROT_BIT(name)			BIT(GPU_COHERENCY_  ## name)
-> +#define   GPU_COHERENCY_FEATURE_ACE_LITE		BIT(0)
-> +#define   GPU_COHERENCY_FEATURE_ACE			BIT(1)
-> +#define   GPU_COHERENCY_FEATURE_SHAREABLE_CACHE_SUPPORT	BIT(5)
->  
->  #define GPU_COHERENCY_PROTOCOL				0x304
->  #define   GPU_COHERENCY_ACE_LITE			0
->  #define   GPU_COHERENCY_ACE				1
->  #define   GPU_COHERENCY_NONE				31
-> +#define   GPU_COHERENCY_SHAREABLE_CACHE_SUPPORT		BIT(5)
->  
->  #define GPU_SYSC_PBHA_OVERRIDE(n)			(0x320 + ((n) * 4))
->  #define GPU_SYSC_ALLOC(n)				(0x340 + ((n) * 4))
-> @@ -137,6 +144,8 @@
->  #define MCU_STATUS_HALT					2
->  #define MCU_STATUS_FATAL				3
->  
-> +#define MCU_FEATURES					0x708
-
-Same for this one.
-
-With that changed,
-
-Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
-
-Best regards,
-Liviu
-
-> +
->  /* Job Control regs */
->  #define JOB_INT_RAWSTAT					0x1000
->  #define JOB_INT_CLEAR					0x1004
-> -- 
-> 2.49.0
-> 
-
+diff --git a/drivers/acpi/pci_link.c b/drivers/acpi/pci_link.c
+index 08e10b6226dc..e4560b33b8ad 100644
+--- a/drivers/acpi/pci_link.c
++++ b/drivers/acpi/pci_link.c
+@@ -268,7 +268,7 @@ static int acpi_pci_link_get_current(struct acpi_pci_link *link)
+ 
+ 	link->irq.active = irq;
+ 
+-	acpi_handle_debug(handle, "Link at IRQ %d \n", link->irq.active);
++	acpi_handle_debug(handle, "Link at IRQ %d\n", link->irq.active);
+ 
+       end:
+ 	return result;
 -- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+2.50.0
+
 
