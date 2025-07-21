@@ -1,122 +1,235 @@
-Return-Path: <linux-kernel+bounces-739383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98F08B0C59F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:56:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76FFEB0C5A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:57:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C66871AA33B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:57:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F33E3B1729
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87CE42DA760;
-	Mon, 21 Jul 2025 13:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9AC2D9EE7;
+	Mon, 21 Jul 2025 13:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="lq8SPMXE"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WhYyygO8"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A0A2D9EFA
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 13:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75FEB2D9ED3
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 13:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753106195; cv=none; b=VZd9jI4ckFK5r/LV/rLsvtmevKkMLOvdxGom3j1fBg/to2pfrsHVEUvBi3bKVEF3urB81Jcmf+tkeKjXCChszNWqnNMusKys6SKPP6RQWYGItRWP4kcTY88/vUuIbh75KSAE6JJwQjzWkKzfooZSw8hZIRUxeCNzZ1B8Sc0mCU4=
+	t=1753106221; cv=none; b=pfG+HXtq3BnKUppFj6I6RoLcP9BEZ5BKd8eFR5L/5YmGEkx4+IPxCCdooeDK8LhbOmiDhyZBt2cCDI1/4oe9QP69qvQ9/k8uTXa9C65KDIr5JxQycqfcPc8WYlmFb7LrbSR42I62rexLyu8dyjoaDxDgchzyUmmXpinp9q0fmO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753106195; c=relaxed/simple;
-	bh=dPKCxPuKbnARZmFAvXLIPHV7lE2nBnxTOg798f9lPzE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HSPF/d9S7ogYAeoZfp2bzP2nPPdvApg3iRA5XiuokRSeV+SWe+tyoC8hY8pXwe+YPPKPG+e+DjBQN6PcWQ/Dv1NqYTqli1EJj+K4kejug115P2jIKQF5stgqizoVEGewpU/ZvflYkisd6oYKcpWHAdHPoZftxfR4GLlyzBs41Og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=lq8SPMXE; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7e34399cdb2so467946485a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 06:56:33 -0700 (PDT)
+	s=arc-20240116; t=1753106221; c=relaxed/simple;
+	bh=rHLuKPZS15Ci3FRNHUt3wjlIpfOccnEveLsn8wj5Hzw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WNkULAf+Kl9kh+BExC9yRlFGVwIo1FIt318+0gZgnUmdNdNQZHsbeHDfyV0b81lR5l56SWLNEXa3D2qLXIRtp4FdLToIZAfTpjFSoT9dDoYOX/Us88tc2CM2/93GHoiFB7/tHAz0BHUGmRtjbcDXZ/z+34ExlCZIw3T4cgZrxck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WhYyygO8; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45617887276so29594945e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 06:56:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1753106192; x=1753710992; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4mZizasBGrOKX286he/4jUYttTXz4ly7ZOMJ9seeQQ8=;
-        b=lq8SPMXESw0ds2oDEE2VLQPanYRHqnhhH3WDY0H7v62JpQJMRCzUjBQDkAaJZP5vFD
-         yN+vpd7q9h6Z5bCNqVsJEvjgRNqLqT0ahllfAD3ikzmCPfJRs9HfPPf/OMsFl85DTzUJ
-         rvkVgVb7v/WnSyp9sNJzEzs3X/ZzNYy5KbMq1v1hSNgClGXBxNhYOgaJYVU7s67tZtF8
-         g+ZgdLuCoCtkVXyMrM38DrpNQ65QKhRUtXB1eVKK6LmpT/MNW7fO1wYmkrTFUzoQ5Oh5
-         gkI/3AmB3KJYMcBf1xZzzHec4bjO4VpIECjXxZ75tz0WpNgs7OubPb4M5yjXVhP7VQRo
-         ioOA==
+        d=linaro.org; s=google; t=1753106216; x=1753711016; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JHT+Ky9a2/UvB6vMaIGkjzmNbUyHiZwcZw1UdHqqBQM=;
+        b=WhYyygO8jgGzYI+zkSc+DW7KHpdJolupUWNMnoXZO9w4t/kEKBLwxtsEYKC918bc9W
+         yOtksjzd+qwKmn2sVZ+nvf2nHjSGq4459z6ls0xJ3XIuHTFUPESfb1Ac3gRVmEA1WRiT
+         q5Mvj5yyFsY3d/8cCcukAD7Yzg/SPYsnWK8rwyCzICQilZMpc7uFnicEXh0vdAoVJ3VJ
+         kFNFiRvuHR3oGrn8RQtJokNY+7/QkAurx5uB3nFqUYf7T0/MYolXouQCUt/nJgc+dBKT
+         Nqib2YMojLqI2lRu3MjuKC3dZvWlroLH32cAWKLZZmIAphW5A89lJmJdR4m2n0D/KFNM
+         xaWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753106192; x=1753710992;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4mZizasBGrOKX286he/4jUYttTXz4ly7ZOMJ9seeQQ8=;
-        b=C09eO8lOSOZelgi3nLCMbQxU+btUm+XGw3T40lhPOOcnTRPU4a+E49w+mDwHGZqIt3
-         A7f5f1TADNO3UamUBYRFDl/5EveJ9/hmnt9C6cd9WNG6nsn8pei8xjI0k8cbPiDoFJNf
-         WPwZ26OShGn6oU/M0qf0t8xk/U1TAt8Tl3rJi5xF+0FgAsX9FUCCky2IUtXGPMt378cY
-         lmiMhFUGdNzOY5YxvaIN+c3i+Zts4enUYGQVYCLdPGnicgREHsm7ITIF2dU6Cpawo2QH
-         Tu0Aa1a4tgkbQ4qLVenvCy3Ynt/UM3cEy+tQHNvPloK41ET0oPCLEcINXGzNqkFcSCNE
-         Crzg==
-X-Forwarded-Encrypted: i=1; AJvYcCWanng99LvOaVVrdW+VbN2mxKpBd6STcHp7ka3fvDGn2QDXXk/Dneay1TD7mPPW1P6u1Hw07fnQQPKP94Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMxXzG+++EfF9b+65CDHVjVIaG8kvywCEmn8Nrp/PQ7T1F0LQu
-	lRN0qVbnNdCxwFjImMqUUlmIF2P6LBK9WFo+MkNhtunknNyb0PFl6JZfTsUVm5ymjw==
-X-Gm-Gg: ASbGnctvKrHWl2X3i7PJrQkZAgnYoz+JgdJlymoABNeIi39ZMIzc5QtcVcx7dOtKi1e
-	7m1ZR/jTQNn0Y1KWBtXAWPfMvNYcj2B1l3W5LZ2SosLC2rWdWTBM8w9sDkDpwZh34uyqtZdgdVH
-	XlZL7aHgwjX+WA/I8Mmbh74Oejgtppr/EDp8IBC/os3uMIhKmNtdo1KHtkJEfd261hOJBJL1w9c
-	RBfX6TGShOi2Hc2Iti7+m/bSjK4KClfqCPkH3LFknNGsUGiTMDDXibs8tFeaWaPB+VoA1bsKzjR
-	YHtJd7ZVwpVQVwTH1UN1Mcts9+jyIUN96bK2zzVpxB8qwbBQiraEyyuh1r78vmDK6zN8AQVW4x/
-	q89hE4SwYmH1amYG62iqruDHuZ9u0RmSz6Ljxa8dx
-X-Google-Smtp-Source: AGHT+IEFOjtze/GcOfDAyVlsxsDrjUvwqSQ9QbXI5FP3ajBJ7ugfJ765Hg7AXfE0JqMEmf5eEalp6w==
-X-Received: by 2002:a05:6214:801c:b0:705:16d9:16d8 with SMTP id 6a1803df08f44-70516d9181emr141743746d6.6.1753106192193;
-        Mon, 21 Jul 2025 06:56:32 -0700 (PDT)
-Received: from rowland.harvard.edu ([140.247.181.15])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7051b8bba61sm39397356d6.14.2025.07.21.06.56.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 06:56:31 -0700 (PDT)
-Date: Mon, 21 Jul 2025 09:56:29 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Benjamin Tissoires <bentiss@kernel.org>
-Cc: syzbot <syzbot+b63d677d63bcac06cf90@syzkaller.appspotmail.com>,
-	jikos@kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] HID: core: Reject report fields with a size or count of 0
-Message-ID: <bd033800-53f0-4d5a-a52b-b0e01ac48c12@rowland.harvard.edu>
-References: <68791b6f.a70a0220.693ce.004b.GAE@google.com>
- <8a4eb6b0-f640-4207-9f05-83e06080410b@rowland.harvard.edu>
- <lrhydvc7huuqck2kvqzobqt7hhwt36zwsa2i3fpegbpykt5q43@2md6gfitjlb3>
- <a2c3537a-8ddc-467f-a9f4-b4d413914914@rowland.harvard.edu>
- <voiysrjm3okjtaz7axqupr2jk5yyvxsqgagbwrsey4z24g6rf4@xb75ss3bwol5>
+        d=1e100.net; s=20230601; t=1753106216; x=1753711016;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JHT+Ky9a2/UvB6vMaIGkjzmNbUyHiZwcZw1UdHqqBQM=;
+        b=QQBDCyrJw1QgTdKOYPlQ4ueB123e7mE5Xj2dQLLLRz2IymDdWR9Zi2fHraLvlyho65
+         NFo9U9N+bYKOjY/7l5gV9UMsfeXB+FxyZlxzerGWTEguG5DhbeysoV8KFJT8GkmwKRSp
+         sqVk26FB4x3kopq187WNwbFgQTVyPE87GcAP7MsUSWnOoDcs3prTn982nhgLAftJel69
+         VK/pjw9nUCAAA2psmXBkvf4/W5d/1rHuGUCSFPaCgEgK6UDviUrWdM70vnPfqa9mCuKc
+         gnkPxiKq3gVj0qWMIwzzkkfM4IAVOhX/BujOoqI7zevuV2io8Ak2Bi2sKbufx9mhG/T8
+         a9OQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXMuWa3+rVG1Z7JykMS+/xKETQziKBMDHDGfUYhS7zV4rxa3CEVZdYuK+fRcT9Uv5lhe+6Asrf8G538SQI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpBsikRyn8YebWntdmcLTYvMWTaQSXPVx2WbcSlXrXpC/at+e0
+	mR56vqQHBIM8xTreLL25Hslfs+ek4I6bxJmLIrBYxOKnT92Qi9OxyCRwy1gz44umOu0=
+X-Gm-Gg: ASbGncvksvvom+g8BSKVLGpslpHRizgv/fwk67aDEcJ+ez/XjXQYzm20Dw/s5re5dVa
+	uzY/S01iddXuB8pWGkbcPeQUIpXPrKzzGSgumxniXci4/cNjAvMaeSX5N/i3la5/xBOFZs6usEn
+	WBu+mfDYTGnpDeaWUG9HF9j7renmKcF78htwWLwHlZp0XXC6Yr5Uq3/7GkR+OketFkd2F30dq/m
+	ebl2x1pWjeHhaR22bhSDVIBJ9R8NpgIlVTL5EZnU6YbeGkkVrgKKvkM7qvPehgj/jX3AqXJOph8
+	z+7R351p3uhXfwRJoOAgpVLPNWppXsUjik6yDdytf6UfGVuQWN1oqywP/500rOCl73rklAE4imd
+	s5if6x0g36qj07QGFgKV9SOJcmgzkGhsIK9XNWoI7DQ5/owN/Lo5J/Jt4PueBnok=
+X-Google-Smtp-Source: AGHT+IEnENRwxRTagl2ObT85GvHrjPuSySOktSH3L1SkrP+cMadSvWvWuVZBD4+Hw6mPbY0X9wHrDg==
+X-Received: by 2002:a05:600c:4706:b0:456:19eb:2e09 with SMTP id 5b1f17b1804b1-4562edaa08cmr189313405e9.8.1753106215717;
+        Mon, 21 Jul 2025 06:56:55 -0700 (PDT)
+Received: from [192.168.1.36] (p549d4bd0.dip0.t-ipconnect.de. [84.157.75.208])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4563b74f9c0sm102889435e9.28.2025.07.21.06.56.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Jul 2025 06:56:54 -0700 (PDT)
+Message-ID: <c21ff3ce-c81a-4419-84fd-d394d0a06af6@linaro.org>
+Date: Mon, 21 Jul 2025 15:56:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <voiysrjm3okjtaz7axqupr2jk5yyvxsqgagbwrsey4z24g6rf4@xb75ss3bwol5>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/7] nvmem: qcom-spmi-sdam: Migrate to
+ devm_spmi_subdevice_alloc_and_add()
+Content-Language: en-US
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ sboyd@kernel.org
+Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
+ andy@kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org,
+ srini@kernel.org, vkoul@kernel.org, kishon@kernel.org, sre@kernel.org,
+ krzysztof.kozlowski@linaro.org, u.kleine-koenig@baylibre.com,
+ linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-pm@vger.kernel.org, kernel@collabora.com, wenst@chromium.org
+References: <20250721075525.29636-1-angelogioacchino.delregno@collabora.com>
+ <20250721075525.29636-3-angelogioacchino.delregno@collabora.com>
+ <e724e6a2-21a8-436a-8809-ce73c0afa433@linaro.org>
+ <b06969d2-0c35-44c7-bb2c-162942186c53@collabora.com>
+From: Casey Connolly <casey.connolly@linaro.org>
+In-Reply-To: <b06969d2-0c35-44c7-bb2c-162942186c53@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 21, 2025 at 03:05:58PM +0200, Benjamin Tissoires wrote:
-> > So then would it be better to accept these report fields (perhaps with a 
-> > warning) and instead, harden the core HID code so that it doesn't choke 
-> > when it runs across one of them?
-> > 
+
+
+On 21/07/2025 14:45, AngeloGioacchino Del Regno wrote:
+> Il 21/07/25 12:44, Casey Connolly ha scritto:
+>> Hi Angelo,
+>>
+>> On 21/07/2025 09:55, AngeloGioacchino Del Regno wrote:
+>>> Some Qualcomm PMICs integrate a SDAM device, internally located in
+>>> a specific address range reachable through SPMI communication.
+>>>
+>>> Instead of using the parent SPMI device (the main PMIC) as a kind
+>>> of syscon in this driver, register a new SPMI sub-device for SDAM
+>>> and initialize its own regmap with this sub-device's specific base
+>>> address, retrieved from the devicetree.
+>>>
+>>> This allows to stop manually adding the register base address to
+>>> every R/W call in this driver, as this can be, and is now, handled
+>>> by the regmap API instead.
+>>
+>> This is honestly a really nice improvement :D>
 > 
-> Yeah, that seems like the best plan forward.
+> Thanks! :-D
 > 
-> [sorry on reduced setup for the next 3 weeks, so I can't really debug
-> the entire thing now.]
+>>> Signed-off-by: AngeloGioacchino Del Regno
+>>> <angelogioacchino.delregno@collabora.com>
+>>> ---
+>>>   drivers/nvmem/qcom-spmi-sdam.c | 41 +++++++++++++++++++++++++---------
+>>>   1 file changed, 30 insertions(+), 11 deletions(-)
+>>>
+>>> diff --git a/drivers/nvmem/qcom-spmi-sdam.c b/drivers/nvmem/qcom-
+>>> spmi-sdam.c
+>>> index 4f1cca6eab71..1b80e8563a33 100644
+>>> --- a/drivers/nvmem/qcom-spmi-sdam.c
+>>> +++ b/drivers/nvmem/qcom-spmi-sdam.c
+>>> @@ -9,6 +9,7 @@
+>>>   #include <linux/nvmem-provider.h>
+>>>   #include <linux/platform_device.h>
+>>>   #include <linux/regmap.h>
+>>> +#include <linux/spmi.h>
+>>>     #define SDAM_MEM_START            0x40
+>>>   #define REGISTER_MAP_ID            0x40
+>>> @@ -20,7 +21,6 @@
+>>>   struct sdam_chip {
+>>>       struct regmap            *regmap;
+>>>       struct nvmem_config        sdam_config;
+>>> -    unsigned int            base;
+>>>       unsigned int            size;
+>>>   };
+>>>   @@ -73,7 +73,7 @@ static int sdam_read(void *priv, unsigned int
+>>> offset, void *val,
+>>>           return -EINVAL;
+>>>       }
+>>>   -    rc = regmap_bulk_read(sdam->regmap, sdam->base + offset, val,
+>>> bytes);
+>>> +    rc = regmap_bulk_read(sdam->regmap, offset, val, bytes);
+>>>       if (rc < 0)
+>>>           dev_err(dev, "Failed to read SDAM offset %#x len=%zd,
+>>> rc=%d\n",
+>>>                           offset, bytes, rc);
+>>> @@ -100,7 +100,7 @@ static int sdam_write(void *priv, unsigned int
+>>> offset, void *val,
+>>>           return -EINVAL;
+>>>       }
+>>>   -    rc = regmap_bulk_write(sdam->regmap, sdam->base + offset, val,
+>>> bytes);
+>>> +    rc = regmap_bulk_write(sdam->regmap, offset, val, bytes);
+>>>       if (rc < 0)
+>>>           dev_err(dev, "Failed to write SDAM offset %#x len=%zd,
+>>> rc=%d\n",
+>>>                           offset, bytes, rc);
+>>> @@ -110,28 +110,47 @@ static int sdam_write(void *priv, unsigned int
+>>> offset, void *val,
+>>>     static int sdam_probe(struct platform_device *pdev)
+>>>   {
+>>> +    struct regmap_config sdam_regmap_config = {
+>>> +        .reg_bits = 16,
+>>> +        .val_bits = 16,
+>>
+>> I believe registers are 8 bits wide, at least on Qualcomm platforms.
+>>
 > 
-> Though, we should probably not annoy users unless we are trying to do
-> something that won't be needed. I doubt that Saitek gamepad will ever
-> call the faulty functions, so why putting an error in the logs when it's
-> working fine?
+> I used 16 because usually that's the usual default for SPMI - but if
+> you're sure
+> about Qualcomm platforms having 8-bits wide registers and you can
+> confirm that,
+> I can change both of those to 8 in a jiffy.
 
-All right.
+reg_bits should be 16, only val_bits needs changing.
 
-Probably the best way to do this is simply to revert the commit that's 
-already applied and then merge a new patch to harden the core.  Would 
-you like me to post the reversion patch or do you prefer to do it 
-yourself?
+> 
+> I anyway have to send a v2 because I forgot an error check - so changing
+> this is
+> not a problem at all for me.
+> 
+> But.
+> 
+> Before me changing - can you please please please double check and confirm?
+> 
+> If you can also check the register width of the others that I converted,
+> I'd really
+> appreciate that (I have no datasheets for qcom so it's a bit of a
+> guessing game for
+> me here... :-P), just so that we get everything right from the get-
+> go ... even if
+> a mismatch wouldn't really cause issues in the current state of things.
+> 
+> That's because - I just noticed - in qcom-spmi-pmic.c, reg_bits is 16,
+> but val_bits
+> is 8 (which basically means "the registers are 16-bits wide, but we
+> always only
+> care about the lower 8 bits).
 
-Alan Stern
+yeah that's right, so as of today where we don't have the subdevices we
+always get 8 bit values from the registers.
+
+I don't have so much access to docs anymore but I only ever remember
+seeing 8 bit wide registers on Qualcomm PMICs, I've never seen anything
+wider, I can think of a few drivers where changing this to 16 would for
+sure cause havoc.
+
+Kind regards,
+
+> 
+> Thanks again!
+> 
+> Cheers,
+> Angelo
+-- 
+// Casey (she/her)
+
 
