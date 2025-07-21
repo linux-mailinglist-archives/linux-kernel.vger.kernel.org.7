@@ -1,145 +1,141 @@
-Return-Path: <linux-kernel+bounces-738856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86532B0BE44
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:57:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2D97B0BE2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:55:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 012C83ABA72
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:56:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 368293AC313
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3E7A288CA0;
-	Mon, 21 Jul 2025 07:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="U62o6CsE"
-Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650A92853E7;
+	Mon, 21 Jul 2025 07:55:34 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B1B328642A;
-	Mon, 21 Jul 2025 07:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773FE1DE4E0
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 07:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753084549; cv=none; b=F5HeZo5+2ldhMBMyAz3R8UDkiQ5j/IL6RQBrPq731aKSs7ParcR7EVUNCujxewITTMozHH8DZETKrre4w/jX0END/8ETkEDn704yHcScIq+xw5MWgUq1jZSAkc4jKyV5c2kQWrUPiwuGNTnyP1Hg22EgjJe6W9gPjcFSiDZk39Q=
+	t=1753084534; cv=none; b=TzszHcVYDmNQf47VWOColfvBfYqWYk3UTbypr1IlpHqDS5Dx+vGLG1GiaqazTPIog33xDhTmZQbxAijMHEC578mesAU7OL9/iBw2ase8bLhElRgpF0WY/ReOZ84DfanE6u/tnqOfMjFty45WuR6hrCbmA4g3fH8MbBo2LxykD/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753084549; c=relaxed/simple;
-	bh=GfYSWy2/bPllWsKP6h2y/yqp/ar2fqpe1YUItF9giJs=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=HuZxmEaw1Xw4XDdBTGbrRrAIHV5GOCBif0b0pTuQIrxRHiTPW+raVATXLm9I3t/dY3mvP3MW8MyiiFRUpnDDGal4U45oh17ZKpRP/f9vlqV7bUietnXuKcUUpLzSmxEj2BAbiyTiirg+/r6Y4okE7F81jN40FrvVeGJghcHCxvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=U62o6CsE; arc=none smtp.client-ip=162.62.57.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1753084536; bh=vzHtSk9e8oJPlBSGhwoRmuy++jiGtDh+nLFG83OGlBg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=U62o6CsEHEwUdELkQ8y7bLxijI0FlDRV+dppaEoE+t/eFSgjThvgkSmp/W+F8fGwN
-	 dooSCObC+3WkfunOxL6GdOxflUW469timqv6fpeALJLsU9F3x4rkK3MXA/XkTTcdui
-	 AgthldQPiCZlAPEeHkarpxrnIeXg267K8vr/M2t8=
-Received: from VM-222-126-tencentos.localdomain ([14.116.239.34])
-	by newxmesmtplogicsvrszb21-0.qq.com (NewEsmtp) with SMTP
-	id DE28B8DB; Mon, 21 Jul 2025 15:55:34 +0800
-X-QQ-mid: xmsmtpt1753084534txvm8rmwv
-Message-ID: <tencent_46DA24BE77C8E62514B3346C5CDBDB327F07@qq.com>
-X-QQ-XMAILINFO: M2dBUVw0X9hnDfHShOjIB6LMbnLXMKJ9YsTXPcMTX4jTUnjPDMoM9NLLl9CLXK
-	 vLkDAPPKm8dOTHswZm5klAvYCA2kpnG4by0JYtSQiInokLIVGYxMVEXJCqGyWgl5xabdeS8KeRFV
-	 fZJtCCd58/alFjKXMUIJsscQq6omu/yeMSu+sO4Lnz6vKXaTT+GMZzUdhxOwBCZklngRQOVL6x++
-	 VcQbBQdjU0RGYF9+568uU3IhNI8TUmLzm68sUCcgAFklmFR5fIH3CcIU16lZbuTXYI3xgUPGhnGL
-	 CwB1s5eIJ7h7DFasWikk+iy0BRzewqdvcbJQg1VEpvrE3CJ9+zNhjc/rau219v24SZXOVQ3dB4VV
-	 tt2vPnzEzVkedjeRP1zJqeeJkVeMKbhUz02BEImpf2r4pNPfCPELY39aqZlNsPFfJnDsdpPoV9ql
-	 n0PO0QLguwAqYceVXaKtEpD269pVvP6F5J7J+5FBmM8SsyxE+BqDFENOJAI+4bzUM7I00ECrt2+p
-	 X934fCWZ4JuKWGawyvGeyKV5cwNls3/xiK5fADneT1nmNG2nc1JS8QStVc/klRTRK70dxTVfHtd+
-	 vVQqboPQlYOfCNnXsL/CVJspm82dKRdeqawIXonAzVSeOjEEWGa3CPB7fr8nz5pNgYVEynPAddJg
-	 Al38t7vBKpC6ffpqNCZ9VyLXaVHGhSpIzNiKeU99O1ph/1BZbfKD9RqqTtt18L1N7Od38z63BTuK
-	 Zt/p2cl/Cto3gVt3wcKKt0uJTO0aLgxhLoTX9anJLArUoqYlMwfT+vj5RSnwZMWyREj4+6s16lm5
-	 /AeluJno57mJ45nxnx0h1cCz2KLNWAaNfsEjkF1Vt2DpJkCOtdKaUg72d8GtsvGFA99YnPzg9/UH
-	 hB/c9DEW97Bgw2oWkOe06A95RPSTyEZL9fSOOM2mNQQVPs06VCB6497uI0gJxDwX2VAV65wbSQ79
-	 kzynJsSyymBdBiq2ba/SjhwIv9zd/pNsWiMMOLAyJISi9yGMVXg4NQUtXudx9hPy7K4OB6+heAFH
-	 IRqZUodn6Sc09nL2EZAlfjGzVjZ0fAD9s1UPwATarUf0mEh+DRNwi+0vtoW7MD5g7yOlxhT4CHLT
-	 92DhjReaQz63P4MyA=
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-From: jackysliu <1972843537@qq.com>
-To: markus.elfring@web.de
-Cc: 1972843537@qq.com,
-	andreas@gaisler.com,
-	davem@davemloft.net,
-	linux-kernel@vger.kernel.org,
-	sparclinux@vger.kernel.org
-Subject: [PATCH v3] sparc: fix resource leak in jbusmc_probe()
-Date: Mon, 21 Jul 2025 15:55:27 +0800
-X-OQ-MSGID: <20250721075527.365761-1-1972843537@qq.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <45b8941a-b6bf-4b48-ad1b-cc6ba46b8642@web.de>
-References: <45b8941a-b6bf-4b48-ad1b-cc6ba46b8642@web.de>
+	s=arc-20240116; t=1753084534; c=relaxed/simple;
+	bh=0lse8KOroGbQPPspT2o3Gt8TESQEfPdvvUFUEyZmqtI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XBIXO6Z8hJT6HrZd18379q5cLoR3oANFutxfS3bqmAFx6y7nCZMvyZcXmatbfMXnfuXMJqZgtt/GW/xSC+ltgvJbYFEo4IDPvx+wUefTTVVTdvHOWckc2kdKlZi1e5kSQOqPxkOyZJeFx2q1PVr6owvpdMcV9Jf+52mQWYE0h4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-87b2a58a4c0so373564239f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 00:55:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753084531; x=1753689331;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mpGtJjSTE4Hb4CxYNFdEl6s+ZrPvAdZM8nTLITHu/AU=;
+        b=Wda868rM00Ra2ajLb4kb/qf8CD/HUZ4pSse2znxESftmsmXhuML1D+oKHcZgmG0HKW
+         Tws0D/nZmQoHUrVU3iJZ4yrI8pkWHmdQ6WtVogScrAPOqjeeZOEmHQ3s26dFiEOn8Y6h
+         iDW62pJ0DRZQXQCwegjpAtfcohd+CO6DsAxbFTwLjJSeNiSy7CLPampyOPqLzq3k/XbV
+         yqVfQPBl8j3Xne625lByeNC8ZvKu8x5Zw7D/NuLSy0VJwWRP+jK5o9/E7E1Kdurh9eu7
+         GPnGVvHX7Ftq/NzUkuMBBAqSxnsWKKsXkA32DRuaPADqhZrbD3k/7AUVhmf42dfSnC6z
+         4lDA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDT3/c8SVKDYJqQu1g94wY5zjJ7o2cYJpexHTcuqKzSvSh6vEMs+n+3XHEAkT7nCtoChKhBU2S/LAQi5M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxkow9S+BzngMkNmeHfy4PjkQdExFsqlB7RaudeO34BbWLQtNe/
+	GrTlYehvBEdy9ew6ZzkWnaULr595Gx32sUXyBtMuf/csEhZGBTEUscb2U1BFGsQr+MjXphVcU0j
+	LMYKJHZ46oOpfXUEblidKwFe5uWmuFc4ssbCAjnBiLif/D8Oxu0TiqJ5CFo0=
+X-Google-Smtp-Source: AGHT+IFIii7JfNpq4baM+HOiCqn2j+ywL/ztT7mpBre9UykTQTr4wVD4CtdvbbnhWSyoT5DxFd/EvfOjyL0s3IfX+e1ASXPbA95t
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:3d1:b0:875:d675:55f2 with SMTP id
+ ca18e2360f4ac-879c28caec0mr2189233839f.7.1753084531607; Mon, 21 Jul 2025
+ 00:55:31 -0700 (PDT)
+Date: Mon, 21 Jul 2025 00:55:31 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <687df273.a70a0220.693ce.00e5.GAE@google.com>
+Subject: [syzbot] [wireless?] WARNING in cfg80211_switch_netns
+From: syzbot <syzbot+3515319a302224e081b4@syzkaller.appspotmail.com>
+To: johannes@sipsolutions.net, linux-kernel@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Siyang Liu <1972843537@qq.com>
+Hello,
 
-In the jbusmc_probe function, the device node mem_node fetched
-via of_find_node_by_path("/memory") is not properly freed
-on all code paths.
-This can lead to leakage of device node reference counts,
-which may result in kernel resources not being released.
+syzbot found the following issue on:
 
-This issue was detected by rule based static tools
-developed by Tencent.
+HEAD commit:    4701ee5044fb be2net: Use correct byte order and format str..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=142f77d4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1a940d1173246e73
+dashboard link: https://syzkaller.appspot.com/bug?extid=3515319a302224e081b4
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
 
-Fixes: e70140ba0d2b ("Get rid of 'remove_new' relic from platform driver struct")
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Signed-off-by: Siyang Liu <1972843537@qq.com>
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/5771927b98f6/disk-4701ee50.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e9e498c37560/vmlinux-4701ee50.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/377ae84313ff/bzImage-4701ee50.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3515319a302224e081b4@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 6759 at net/wireless/core.c:204 cfg80211_switch_netns+0x560/0x590 net/wireless/core.c:204
+Modules linked in:
+CPU: 1 UID: 0 PID: 6759 Comm: kworker/u8:18 Not tainted 6.16.0-rc6-syzkaller-01576-g4701ee5044fb #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Workqueue: netns cleanup_net
+RIP: 0010:cfg80211_switch_netns+0x560/0x590 net/wireless/core.c:204
+Code: e1 07 38 c1 7c 8c 4c 89 e7 e8 dc be 63 f7 eb 82 e8 45 b0 01 f7 e9 63 fe ff ff e8 3b b0 01 f7 e9 59 fe ff ff e8 31 b0 01 f7 90 <0f> 0b 90 e9 a9 fd ff ff 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c cb fa
+RSP: 0018:ffffc9001ba67860 EFLAGS: 00010293
+RAX: ffffffff8abe7a1f RBX: ffff888031530d78 RCX: ffff88802a70da00
+RDX: 0000000000000000 RSI: 00000000ffffffef RDI: 0000000000000000
+RBP: 00000000ffffffef R08: ffffffff8fa22af7 R09: 1ffffffff1f4455e
+R10: dffffc0000000000 R11: fffffbfff1f4455f R12: ffff888031530700
+R13: ffff888027fc9580 R14: dffffc0000000000 R15: ffff8880315308f0
+FS:  0000000000000000(0000) GS:ffff888125d16000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007faceb4e56c0 CR3: 0000000080016000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ cfg80211_pernet_exit+0xa2/0x140 net/wireless/core.c:1671
+ ops_exit_list net/core/net_namespace.c:198 [inline]
+ ops_undo_list+0x497/0x990 net/core/net_namespace.c:251
+ cleanup_net+0x4c5/0x800 net/core/net_namespace.c:682
+ process_one_work kernel/workqueue.c:3238 [inline]
+ process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3321
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
+ kthread+0x70e/0x8a0 kernel/kthread.c:464
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+
 ---
- arch/sparc/kernel/chmc.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/sparc/kernel/chmc.c b/arch/sparc/kernel/chmc.c
-index d4c74d6b2e1b..fd20e4ee0971 100644
---- a/arch/sparc/kernel/chmc.c
-+++ b/arch/sparc/kernel/chmc.c
-@@ -412,7 +412,7 @@ static int jbusmc_probe(struct platform_device *op)
- 	mem_regs = of_get_property(mem_node, "reg", &len);
- 	if (!mem_regs) {
- 		printk(KERN_ERR PFX "Cannot get reg property of /memory node.\n");
--		goto out;
-+		goto out_put;
- 	}
- 	num_mem_regs = len / sizeof(*mem_regs);
- 
-@@ -420,7 +420,7 @@ static int jbusmc_probe(struct platform_device *op)
- 	p = kzalloc(sizeof(*p), GFP_KERNEL);
- 	if (!p) {
- 		printk(KERN_ERR PFX "Cannot allocate struct jbusmc.\n");
--		goto out;
-+		goto out_put;
- 	}
- 
- 	INIT_LIST_HEAD(&p->list);
-@@ -473,6 +473,10 @@ static int jbusmc_probe(struct platform_device *op)
- 
- 	err = 0;
- 
-+out_put:
-+	of_node_put(mem_node);
-+	goto out;
-+
- out:
- 	return err;
- 
-@@ -481,7 +485,7 @@ static int jbusmc_probe(struct platform_device *op)
- 
- out_free:
- 	kfree(p);
--	goto out;
-+	goto out_put;
- }
- 
- /* Does BANK decode PHYS_ADDR? */
--- 
-2.43.5
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
