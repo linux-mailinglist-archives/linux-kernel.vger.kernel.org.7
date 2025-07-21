@@ -1,88 +1,59 @@
-Return-Path: <linux-kernel+bounces-738986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DFD7B0C017
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:22:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B214B0C022
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:23:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFC7C3A070F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:21:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0902E3C139E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD3B72601;
-	Mon, 21 Jul 2025 09:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 646AF28D827;
+	Mon, 21 Jul 2025 09:23:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HskNqwkz"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KOMVstTG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A145E288C8D;
-	Mon, 21 Jul 2025 09:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCCC528B4F0;
+	Mon, 21 Jul 2025 09:23:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753089705; cv=none; b=FaE4REic6If5PiMUN4y8lqsDkGcUwit4Z1nE8Ec6o2odIt89OT/nYnS0rZImzaSDTwxN6aYive2P9VnlSFp2/qmh96P7u3EDXRwL8gEmCw0M6ay6VciIQA3N+N+R4h6Q8FQe1Zg3Ho1V6Cbq3mTlwfdvQhZ7fwgb0Eup97KZRRM=
+	t=1753089814; cv=none; b=pZOpNOs8l+hKOYYr7ib4usmyhmtnnTWMK+nNL9Y6FQQbcIOikFUpsgpmceY8pNcBhVsiQ1QDJy0HzZZ3bX4p1Kb3X79C/88awDVDqaqch1dtxmKNsB6B4t9qS9OJK+Y4O9yKxSEhB7RMAH9rkH6SsYBFe906ZQ9x3uYLLt73qLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753089705; c=relaxed/simple;
-	bh=+/TElpPdYao+9Rd4FXtjzf7rWIlQdx/KEToLN7xS7hE=;
+	s=arc-20240116; t=1753089814; c=relaxed/simple;
+	bh=uxjP2gEJbOBmQlv81I1IvKh2j8a6dIhhumYLQw1WC38=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ric+3FPXP8UEXFpZLiO8wubnbp1nmNuVhY+hnh1njb5eATnjE1Lhjgyl90DBPiHwJ+4zPZxaOxEjJmbimlsAm++C0cuavF5U+ROZPDd+GP3avwswl2wF1xl/zfLYfSbODIlaQbyt9jiQ69zb4HfDqOr5+XHzKEQZSSUl1mHgojU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HskNqwkz; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-30194d82366so1427187fac.3;
-        Mon, 21 Jul 2025 02:21:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753089701; x=1753694501; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=NRLauZhbNLVf4xFZoSDTUJ1/uYBhYsUp8SR1mJmEK3U=;
-        b=HskNqwkzxg6T+l71RiB9KT4CLz3InNI1WSLczS2/Oe52p4TvCNuvDqPUb0O88GPvLG
-         aApPu5Qom7+K5CvUmqKmT4XyZQL9Z7DTUk2lrRXW0OeVh9OHxl39vrPuyRyDFn8u5dcV
-         KsOa0+krwRDzUzIUzGUkqrd+/erumMjUccfuwzgpHrxh/SnycnV1p3OJ+Lac07Rpksq1
-         Ri68fR2tdxuQlnsF+tLA1aGvTzPAWGYu8TQwrOCdVpQB5hlhX27WUkyEoB15iPJls8G3
-         gdjaPR+CvCNpYkoSHW1+472kovoW4ZHXg6Suo17AWLb0dJQz0S0pRmDGYVvPz0hPlmxZ
-         Tw6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753089701; x=1753694501;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NRLauZhbNLVf4xFZoSDTUJ1/uYBhYsUp8SR1mJmEK3U=;
-        b=KwKPLSyEL9F5DAys/4mPxWAK9Hs3jIVj0wAiy+QlN2C61lUn+Q8z7Gm5HeLSa90xV9
-         lVpPZhJL/gqVHmdJz1IWhYvaw2WMPGjdsAK5TPz6rvU/E2paD1vNKlJn2bqtgacZNHm0
-         KAMcjHerCrGwqA24xWnilLJ8bNhisoiQUok/3U2InYQ/sWu5YVnNGK0MvHCfy8P0Vf9s
-         e9TG57IUK7773UOoVRnZBvJIkag1cQk5688LugiMz46DGkKhEV76W5I1CjsNU2lOAJKI
-         rMmsbu3n3Pe8eMAUbJKZ4szOY9jH8Uoao0+IV0KLr+FCZGDCLlgK3/Bnl1B7hY7omosf
-         nibA==
-X-Forwarded-Encrypted: i=1; AJvYcCXE4Kn58NxcOoo6GzXEspKgsZRHbqBxcR3Va+C7g082KiymXrQ2g2mZXmx5IB0nJ5OuG5/ZHQnsFjqajJI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpZVMcF9WPt3IIE6qrbM9Rnw42Ryy5gWrGKvxlaRLf8HGPnGHP
-	KcSRxrQyiGb9wzSI24wktW7p9fZ8/T/WabsftB8BQ1wAojTmCYSd3XV8
-X-Gm-Gg: ASbGnctjF5ujRvjG4LeOvPA3Ny6nOpAZy1uSJ4zBHyS55/Di5UWQpM5CFw5FXxUHCL9
-	XqmBQMYXBkbwUTXgB1GQNi80P7gl5brcCZuVOd1dGyvUNjtFYLP2yJRadiDvb0WOzkl9yP7beap
-	x3fS8jBsN3ZXviLWJ70DCc5iv7EaR6p3zPIe2qvwz+OR+AgrFwJnUL0M3C8k4iLKuQjS13j4mDq
-	MuPoY8mFyrB6zb7tPr3qJKe1BcXC1IGKrbzz3Q+MjxZrKIX0vm/5JW3D9uMQXhuDByZcAawxGTf
-	OhxnmHuyWsyps0HOsZiM9v2FBfe5y/4nQU0Cdg8OmNSYSrGOUZ+FU9A2kdBSZN527ejulcGfg8n
-	J0LYrSP2PGPGU
-X-Google-Smtp-Source: AGHT+IEGapepDDnCdlBR92F/d8VFfGrS+O6XmCr8qCYQJdXD8+j545fTeV+grwPm6Q2lnpRgIwdoNA==
-X-Received: by 2002:a05:6870:8a1e:b0:2c1:ac88:4a8d with SMTP id 586e51a60fabf-2ffb246eec1mr14424447fac.30.1753089701580;
-        Mon, 21 Jul 2025 02:21:41 -0700 (PDT)
-Received: from nsa ([83.136.182.32])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-30103d23cdcsm3365279fac.21.2025.07.21.02.21.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 02:21:41 -0700 (PDT)
-Date: Mon, 21 Jul 2025 10:21:51 +0100
-From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	jic23@kernel.org, dan.carpenter@linaro.org, lars@metafoo.de, 
-	Michael.Hennerich@analog.com, dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org, 
-	Markus.Elfring@web.de, marcelo.schmitt1@gmail.com
-Subject: Re: [PATCH v2 1/1] iio: adc: ad4170-4: Correctly update filter_fs
- after filter type change
-Message-ID: <3rl5w6ydn4pzrflaakx5njft7ojx2anf2c4jpha7zkm2oltuec@4jbc7gis7awr>
-References: <1c354ff9f41ff964a66ece44b0d356e0bda3d210.1753024756.git.marcelo.schmitt@analog.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jm/5OcDF9GJl/zknxE+o6TpHX6hI/EydTuIimK4682wrpL2beR57lSbYspMHpfYos9tmAjOpwXehbOtcSXIg2Mz0t7SkqKyuDyXVoFEFq+POSPKH6co+ZPbwLZxZuaehLQpkYBN3SZBZvnhdxX8VsT1nu8p8LDs8acn6F5yGNZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KOMVstTG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCD45C4CEF1;
+	Mon, 21 Jul 2025 09:23:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753089814;
+	bh=uxjP2gEJbOBmQlv81I1IvKh2j8a6dIhhumYLQw1WC38=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KOMVstTGQRd2VVqlltIRirx/UjZsTgs+tGRJ2vk9tPMTNIthsL3LwKRCl2Nzc5gQS
+	 NrTF7WBojA/mhex9+9B1H3irU+dS0N6T/Hsj4GjMrd+OMH1CNCbVPMSegQxqTDKiWG
+	 Wf/jyUwF46O8oJacFEjy1aj/5y3TCAfTyiaiWfkEqePtk6vrP7e2TzRpFmj3QrJ8KO
+	 ISLrGoW1tBPlYRw4MCfyPRB5TJasGkxQD/shwa2ekiT6uZuelmmtimiIDrdEWAdsn5
+	 zZKjzFto9RUnrtypGKGECkudk5+Ba+or3Z6h9hrVKhtVleG3svcxI4WsmyktbWWm4k
+	 xFJWfSDwX8aDA==
+Date: Mon, 21 Jul 2025 11:23:31 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Ivan Vecera <ivecera@redhat.com>
+Cc: netdev@vger.kernel.org, Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>, Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Prathosh Satish <Prathosh.Satish@microchip.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Michal Schmidt <mschmidt@redhat.com>, Petr Oros <poros@redhat.com>
+Subject: Re: [PATCH net-next 1/2] dt-bindings: dpll: Add clock ID property
+Message-ID: <20250721-lean-strong-sponge-7ab0be@kuoka>
+References: <20250717171100.2245998-1-ivecera@redhat.com>
+ <20250717171100.2245998-2-ivecera@redhat.com>
+ <5ff2bb3e-789e-4543-a951-e7f2c0cde80d@kernel.org>
+ <6937b833-4f3b-46cc-84a6-d259c5dc842a@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,78 +62,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1c354ff9f41ff964a66ece44b0d356e0bda3d210.1753024756.git.marcelo.schmitt@analog.com>
+In-Reply-To: <6937b833-4f3b-46cc-84a6-d259c5dc842a@redhat.com>
 
-On Sun, Jul 20, 2025 at 12:37:24PM -0300, Marcelo Schmitt wrote:
-> Previously, the driver was directly using the filter type value to update
-> the filter frequency (filter_fs) configuration. That caused the driver to
-> switch to the lowest filter_fs configuration (highest sampling frequency)
-> on every update to the filter type. Correct the filter_fs collateral update
-> by clamping it to the range of supported values instead of mistakenly
-> using the filter type to update the filter_fs.
+On Fri, Jul 18, 2025 at 02:16:41PM +0200, Ivan Vecera wrote:
+> Hi Krzysztof,
 > 
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Link: https://lore.kernel.org/linux-iio/c6e54942-5b42-484b-be53-9d4606fd25c4@sabinyo.mountain/
-> Suggested-by: Jonathan Cameron <jic23@kernel.org>
-> Fixes: 8ab7434734cd ("iio: adc: ad4170-4: Add digital filter and sample frequency config support")
-> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> ---
-> Hi, this is the same fix as the fix provided in implied v1 patch but with the
-> difference of doing it the way Markus suggested in reply to v1.
-> I have a slight preference for v1 since that one keeps code contained within
-> 80 columns. Though, totally fine with whatever version of the fix gets picked up.
+> On 18. 07. 25 8:55 dop., Krzysztof Kozlowski wrote:
+> > On 17/07/2025 19:10, Ivan Vecera wrote:
+> > > Add property to specify the ID of the clock that the DPLL device
+> > > drives. The ID value represents Unique Clock Identified (EUI-64)
+> > > defined by IEEE 1588 standard.
+> > 
+> > With the exception of clock-output-names and gpio-hogs, we do not define
+> > how the output looks like in the provider bindings.
+> > 
+> > I also don't understand how this maps to channels and what "device
+> > drives a clock" means. Plus how this is not deducible from the compatible...
 > 
-> Change log v1 (implied) -> v2
-> - Replaces if by use of ternary operator as suggested by Markus in reply to v1.
-> - Fixed commit log typo: colateral -> collateral
-> - Fixed commit log typo: clampling -> clamping
+> The clock-id property name may have been poorly chosen. This ID is used by
+> the DPLL subsystem during the registration of a DPLL channel, along with its
+> channel ID. A driver that provides DPLL functionality can compute this
+> clock-id from any unique chip information, such as a serial number.
 > 
-> Thanks,
-> Marcelo
+> Currently, other drivers that implement DPLL functionality are network
+> drivers, and they generate the clock-id from one of their MAC addresses by
+> extending it to an EUI-64.
 > 
->  drivers/iio/adc/ad4170-4.c | 11 +++++------
->  1 file changed, 5 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/ad4170-4.c b/drivers/iio/adc/ad4170-4.c
-> index 6cd84d6fb08b..2e61f9a9a1ef 100644
-> --- a/drivers/iio/adc/ad4170-4.c
-> +++ b/drivers/iio/adc/ad4170-4.c
-> @@ -879,12 +879,11 @@ static int ad4170_set_filter_type(struct iio_dev *indio_dev,
->  		if (!iio_device_claim_direct(indio_dev))
->  			return -EBUSY;
->  
-> -		if (val == AD4170_SINC5_AVG || val == AD4170_SINC3)
-> -			setup->filter_fs = clamp(val, AD4170_SINC3_MIN_FS,
-> -						 AD4170_SINC3_MAX_FS);
-> -		else
-> -			setup->filter_fs = clamp(val, AD4170_SINC5_MIN_FS,
-> -						 AD4170_SINC5_MAX_FS);
-> +		setup->filter_fs = (val == AD4170_SINC5_AVG || val == AD4170_SINC3)
-> +				    ? clamp(setup->filter_fs,
-> +					    AD4170_SINC3_MIN_FS, AD4170_SINC3_MAX_FS)
-> +				    : clamp(setup->filter_fs,
-> +					    AD4170_SINC5_MIN_FS, AD4170_SINC5_MAX_FS);
+> A standalone DPLL device, like the zl3073x, could use a unique property such
+> as its serial number, but the zl3073x does not have one. This patch-set is
+> motivated by the need to support such devices by allowing the DPLL device ID
+> to be passed via the Device Tree (DT), which is similar to how NICs without
+> an assigned MAC address are handled.
 
-I very much prefer the approach in v1. To me, this code is just harder
-to read...
+You use words like "unique" and MAC, thus I fail to see how one fixed
+string for all boards matches this. MACs are unique. Property value set
+in DTS for all devices is not.
 
-Reminder to why is a good idea to wait a bit and don't rush into
-spinning new versions. Also, Markus has a very proven record of not
-being helpful at all in reviews (just look in lore :))
+You also need to explain who assigns this value (MACs are assigned) or
+if no one, then why you cannot use random? I also do not see how this
+property solves this...  One person would set it to value "1", other to
+"2" but third decide to reuse "1"? How do you solve it for all projects
+in the upstream?
 
-With that:
+All this must be clearly explained when you add new, generic property.
 
-Reviewed-by: Nuno Sá <nuno.sa@analog.com>
+Best regards,
+Krzysztof
 
-- Nuno Sá
-
->  
->  		setup->filter &= ~AD4170_FILTER_FILTER_TYPE_MSK;
->  		setup->filter |= FIELD_PREP(AD4170_FILTER_FILTER_TYPE_MSK,
-> 
-> base-commit: cd2731444ee4e35db76f4fb587f12d327eec5446
-> -- 
-> 2.47.2
-> 
 
