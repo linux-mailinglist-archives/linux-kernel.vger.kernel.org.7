@@ -1,343 +1,684 @@
-Return-Path: <linux-kernel+bounces-739362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFE4FB0C55B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:39:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 311AAB0C55E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:39:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEFCD16EE46
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:39:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BBBC16C167
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 712F72D94AE;
-	Mon, 21 Jul 2025 13:39:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95462D8DD3;
+	Mon, 21 Jul 2025 13:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t+s+tot5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YMEmf8BM"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C06A6F06B;
-	Mon, 21 Jul 2025 13:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4427A2D5C61
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 13:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753105165; cv=none; b=UkyahDfHlGhwAutocIa8wtXWEndVQuubpcd74zhyNs7FL8i/qPTaAo+xGKC68c4u8bJq/dNzMTDn9dhNujeWER16uIfrXjunCr7kDG4GilY+gublBFrKyNe0ZXRVKhj31z5aLkRDg6v7/6UrUOkpeaBP2y5Nf7wbJwwfmfR9DOM=
+	t=1753105185; cv=none; b=hBa6QmKwEVaf8mLS0MJD6gbCgqggDjSUKzNlbvVEaBoRm/ux58vKmfyFdqHZza5r2tkLtxeiEQRjeHRTspMgchI7qgQ4sJHkjIuPsFG7vLasMEZqyK0QiagnffhkrQyQoyGE6DppbV9FW19gUVrt9aqOIzMgkr4zBijpbJ4RKhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753105165; c=relaxed/simple;
-	bh=fsJ2MTskARLVf9CJ6jlBRYJCeVzPdTSVSzDZiEKuS/s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KX8PrUGhr2+1DCwNxT1828E+UUGB5+rPpB0QrlHOYZCsZRL2L6KcI4v3NPALM4xsz+QL3ETjW7YhIg+WkMtkRrqGdxOCOKoA8rhiGeKsS9dB9E/hv5kszZLj+XhL9huhQtZRy2qjrRzBlygBaOuuBf9nq1r+AsejBq4cGriVbwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t+s+tot5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 538EBC4CEED;
-	Mon, 21 Jul 2025 13:39:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753105165;
-	bh=fsJ2MTskARLVf9CJ6jlBRYJCeVzPdTSVSzDZiEKuS/s=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=t+s+tot5sPvNdxakPPsgdvUPppROXX+HcIUyIZ24u/Lf2UGzQXV9pFjrtbLQAkR+8
-	 uCbHWT7dtV72DxlupVqg2UHHRIXSpFsnUfgS79QEt53eggu/oLkV/PnKmCAH/fbmEV
-	 rXTRBKYTDm3oOJ31zLOhRf9bmgvpT79l5l6Gnd7sdfwUJAsQ0q1ON+iUY2nmrkkdzb
-	 d9+AuZo8Gg6TOBVE0P7okxK4UEgr5zmpSle6kxhw4+RPzbpmk4xTFtZxgqGC2u+5JB
-	 mZlU3uSldhHd93aBW5Csw+GPdlHluFuYa6WR9La8vLgWUVLhcux5Ft2AImJ+MqlMoe
-	 dOVwp1PhYqzbA==
-Message-ID: <b518093d927c52e4a7affce3a91fba618fd3fc09.camel@kernel.org>
-Subject: Re: [PATCH 2/7] VFS: introduce done_dentry_lookup()
-From: Jeff Layton <jlayton@kernel.org>
-To: NeilBrown <neil@brown.name>, Linus Torvalds
- <torvalds@linux-foundation.org>,  Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Mon, 21 Jul 2025 09:39:23 -0400
-In-Reply-To: <20250721084412.370258-3-neil@brown.name>
-References: <20250721084412.370258-1-neil@brown.name>
-	 <20250721084412.370258-3-neil@brown.name>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1753105185; c=relaxed/simple;
+	bh=2eNDLn+YyCIwsq1Es5lp0mqYeCo60XI8pnUkjNeuZn4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Bcr2d2XPKMwGi8hwy160aNF1bjNLLnXFj9ll7ytimB4X2zt+QlH2TODCfxEUhBeqffEOvOKD2LvwEiKKZkWtQyeIHFcEaByrlviedkBFArE4O7oTGmj3i1PkFE/RXs6JCKA0PnUXA0Teo1I5r1nJyA+GN/T/6dtsXLADPDcKbEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YMEmf8BM; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-73c17c770a7so4997321b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 06:39:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753105182; x=1753709982; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WU+koiRvPpWM3Lk9QRY8XW0AvpkpTpJai/G97RsHcJc=;
+        b=YMEmf8BMoIS/Lj62OhgZC9Fjt1M2AUZI2XNFgW1or6euA5Z23sVmDIuuN8hf33tABO
+         CBNWE+4yQV52gBwpQIe4ruipmO0JEVDNW4iU8+w5Z+aer1gyfsSv7r3XC/Nb/GlNQ9mx
+         kmcQA4vyyiFKkhYHL1zx7sn8gaz5WKhoy1ALD4VyZOHr8ofOO01Wb44P7Glu1jPW61ha
+         CYKtp0Et9qzQ3HJH+e9NM9DVvYKu1KNeHucT8sSNP/hWRZOq8yK296YdcsaT168p9rAK
+         XvRXglTsNlACI9iN1vO/rLecruMOQHRh6ixaRGutm1CDzK20ZzDzhonpGQpSW1vVbBVR
+         f7Vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753105182; x=1753709982;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WU+koiRvPpWM3Lk9QRY8XW0AvpkpTpJai/G97RsHcJc=;
+        b=VuVuEBtFqQSHN85InwNG2qHx/xD3E6ZAb279W+ekH6n3Jb3BuxYT2T9okXfJ8H/ASM
+         fq5LwssrjtZd1Zksh2QsBYefJRQC8buoqbUIREQgwLK35ws4Hb4wiMcWJwT3HbCYfosA
+         zHQwUV5+a7BOfO6NyqvtiMNnJWlJDHNV9yN5eGfBeVvcHEAJBfNPTxJY76RMT+a3yqag
+         hDEaaoZbii28nj5YKXhhpuY1LUkmyb0HYWp1WBoAPFHtEqi82FRndo7gzGffzRWRjcyf
+         Q79O71yod/MBDGx81Okpe9YlJiXQ9N1j2AYJjHzWIpM8s5FqKHSTQLfdIyhxPveo687f
+         cjRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXyP63GPlnic/HC9GqzusmNlxetUFZ/1q7viXQEFeqAxCItzzX16aKgdchamZXDmyQ+wKxtckN6bkgasIo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyK9uhL2WykrxP4ZfFINiyVYnH/bhrR42ve8QC7sIFPnjy3iqR+
+	hwwo+OmgNxIShE5RO+1Nroomxv+rhSZADA4xmYNgNjWvDva7SCquR5wza3QdAMVa3PadL8gnB9g
+	6YRG9bXuTFVCr6tDU4Gf1uHAt8Hr9j6wh89/YDeVFPA==
+X-Gm-Gg: ASbGncvF4UxbRhsKca7saFmsTFh9ORX3q6AlMy10K5nyLMb9ghP9T1LTsQ2pUaoYnDv
+	SqYTQdpTaOQFB7kBwRGyUNYj/JB0qFWegvxsRIhk9bMVDYOE6IUOEa1DSIBYSHxQDUR9QK6+9O9
+	vCyR8SNoZQUAy48KGL2441niy+NcK1sRvEEWj1VkuKLLS42Zsg4u8+Y7h+h+/ph1gsUTRFi/z23
+	qnsYeM3UCw3JOYWC3Q=
+X-Google-Smtp-Source: AGHT+IGAAtNUaXs33zAFno+P1tBKfElss1sdbqjfD7O5kTD+3hr1k7nPaHkkJvFCQeb8pIhtCClyTPIur4xOw4C8PxE=
+X-Received: by 2002:a05:6a20:3948:b0:220:4750:1fb1 with SMTP id
+ adf61e73a8af0-23810d560admr32797105637.4.1753105182347; Mon, 21 Jul 2025
+ 06:39:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250709104114.22240-1-songchai@qti.qualcomm.com>
+In-Reply-To: <20250709104114.22240-1-songchai@qti.qualcomm.com>
+From: Mike Leach <mike.leach@linaro.org>
+Date: Mon, 21 Jul 2025 14:39:30 +0100
+X-Gm-Features: Ac12FXwm3nrLBLlQiU2e8O43a5-gvnweUsazAiwwcewVJnj1Ww3j7vPds4vudN4
+Message-ID: <CAJ9a7Vgrm+Hog58C=Zknc1AiJ8MX6u6CRKjm333Qqt02A42Hug@mail.gmail.com>
+Subject: Re: [PATCH v6 0/7] Provides support for Trigger Generation Unit
+To: songchai <songchai@qti.qualcomm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark <james.clark@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Andy Gross <agross@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, quic_songchai@quicinc.com, 
+	linux-kernel@vger.kernel.org, coresight@lists.linaro.org, 
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2025-07-21 at 17:59 +1000, NeilBrown wrote:
-> done_dentry_lookup() is the first step in introducing a new API for
-> locked operation on names in directories - those that create or remove
-> names.  Rename operations will also be part of this API but will
-> use separate interfaces.
->=20
-> The plan is to lock just the dentry (or dentries), not the whole
-> directory.  A "dentry_lookup()" operation will perform the locking and
-> lookup with a corresponding "done_dentry_lookup()" releasing the
-> resulting dentry and dropping any locks.
->=20
-> This done_dentry_lookup() can immediately be used to complete updates
-> started with kern_path_locked() (much as done_path_create() already
-> completes operations started with kern_path_create()).
->=20
-> So this patch adds done_dentry_lookup() and uses it where
-> kern_path_locked() is used.  It also adds done_dentry_lookup_return()
-> which returns a reference to the dentry rather than dropping it.  This
-> is a less common need in existing code, but still worth its own interface=
-.
->=20
-> Signed-off-by: NeilBrown <neil@brown.name>
-> ---
->  drivers/base/devtmpfs.c |  7 ++-----
->  fs/bcachefs/fs-ioctl.c  |  3 +--
->  fs/namei.c              | 38 ++++++++++++++++++++++++++++++++++++++
->  include/linux/namei.h   |  3 +++
->  kernel/audit_fsnotify.c |  9 ++++-----
->  kernel/audit_watch.c    |  3 +--
->  6 files changed, 49 insertions(+), 14 deletions(-)
->=20
-> diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
-> index 31bfb3194b4c..47bee8166c8d 100644
-> --- a/drivers/base/devtmpfs.c
-> +++ b/drivers/base/devtmpfs.c
-> @@ -265,8 +265,7 @@ static int dev_rmdir(const char *name)
->  	else
->  		err =3D -EPERM;
-> =20
-> -	dput(dentry);
-> -	inode_unlock(d_inode(parent.dentry));
-> +	done_dentry_lookup(dentry);
->  	path_put(&parent);
->  	return err;
->  }
-> @@ -349,9 +348,7 @@ static int handle_remove(const char *nodename, struct=
- device *dev)
->  		if (!err || err =3D=3D -ENOENT)
->  			deleted =3D 1;
->  	}
-> -	dput(dentry);
-> -	inode_unlock(d_inode(parent.dentry));
-> -
-> +	done_dentry_lookup(dentry);
->  	path_put(&parent);
->  	if (deleted && strchr(nodename, '/'))
->  		delete_path(nodename);
-> diff --git a/fs/bcachefs/fs-ioctl.c b/fs/bcachefs/fs-ioctl.c
-> index 4e72e654da96..8077ddf4ddc4 100644
-> --- a/fs/bcachefs/fs-ioctl.c
-> +++ b/fs/bcachefs/fs-ioctl.c
-> @@ -351,8 +351,7 @@ static long bch2_ioctl_subvolume_destroy(struct bch_f=
-s *c, struct file *filp,
->  		d_invalidate(victim);
->  	}
->  err:
-> -	inode_unlock(dir);
-> -	dput(victim);
-> +	done_dentry_lookup(victim);
->  	path_put(&path);
->  	return ret;
->  }
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 1c80445693d4..da160a01e23d 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -1714,6 +1714,44 @@ struct dentry *lookup_one_qstr_excl(const struct q=
-str *name,
->  }
->  EXPORT_SYMBOL(lookup_one_qstr_excl);
-> =20
-> +/**
-> + * done_dentry_lookup - finish a lookup used for create/delete
-> + * @dentry:  the target dentry
-> + *
-> + * After locking the directory and lookup or validating a dentry
-> + * an attempt can be made to create (including link) or remove (includin=
-g
-> + * rmdir) a dentry.  After this, done_dentry_lookup() can be used to bot=
+Hi,
+
+On Wed, 9 Jul 2025 at 11:41, songchai <songchai@qti.qualcomm.com> wrote:
+>
+> From: Songwei Chai <quic_songchai@quicinc.com>
+>
+> Provide support for the TGU (Trigger Generation Unit), which can be
+> utilized to sense a plurality of signals and create a trigger into
+> the CTI or generate interrupts to processors once the input signal
+> meets the conditions. We can treat the TGU=E2=80=99s workflow as a flowsh=
+eet,
+> it has some =E2=80=9Csteps=E2=80=9D regions for customization. In each st=
+ep region,
+> we can set the signals that we want with priority in priority_group, set
+> the conditions in each step via condition_decode, and set the resultant
+> action by condition_select. Meanwhile, some TGUs (not all) also provide
+> timer/counter functionality. Based on the characteristics described
+> above, we consider the TGU as a helper in the CoreSight subsystem.
+> Its master device is the TPDM, which can transmit signals from other
+> subsystems, and we reuse the existing ports mechanism to link the TPDM to
+> the connected TGU.
+>
+> Here is a detailed example to explain how to use the TGU:
+>
+> In this example, the TGU is configured to use 2 conditions, 2 steps, and
+> the timer. The goal is to look for one of two patterns which are generate=
+d
+> from TPDM, giving priority to one, and then generate a trigger once the
+> timer reaches a certain value. In other words, two conditions are used
+> for the first step to look for the two patterns, where the one with the
+> highest priority is used in the first condition. Then, in the second step=
+,
+> the timer is enabled and set to be compared to the given value at each
+> clock cycle. These steps are better shown below.
+>
+>             |-----------------|
+>             |                 |
+>             |       TPDM      |
+>             |                 |
+>             |-----------------|
+>                      |
+>                      |
+>   --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ------
+>   |                  |                                                 |
+>   |                  |                          |--------------------| |
+>   |    |---- --->    |                          |  Go to next steps  | |
+>   |    |             |                |--- ---> |  Enable timer      | |
+>   |    |             v                |         |                    | |
+>   |    |    |-----------------|       |         |--------------------| |
+>   |    |    |                 |  Yes  |                    |           |
+>   |    |    |   inputs=3D=3D0xB   | ----->|                    | <-------=
+- |
+>   |    |    |                 |       |                    |      No | |
+>   | No |    |-----------------|       |                    v         | |
+>   |    |             |                |          |-----------------| | |
+>   |    |             |                |          |                 | | |
+>   |    |             |                |          |      timer>=3D3   |-- =
+|
+>   |    |             v                |          |                 |   |
+>   |    |    |-----------------|       |          |-----------------|   |
+>   |    |    |                 |  Yes  |                    |           |
+>   |    |--- |   inputs=3D=3D0xA   | ----->|                    | Yes     =
+  |
+>   |         |                 |                            |           |
+>   |         |-----------------|                            v           |
+>   |                                              |-----------------|   |
+>   |                                              |                 |   |
+>   |                                              |      Trigger    |   |
+>   |                                              |                 |   |
+>   |                                              |-----------------|   |
+>   |  TGU                                                   |           |
+>   |--- --- --- --- --- --- --- --- --- --- --- --- --- --- |--- --- -- |
+>                                                            |
+>                                                            v
+>                                                   |-----------------|
+>                                                   |The controllers  |
+>                                                   |which will use   |
+>                                                   |triggers further |
+>                                                   |-----------------|
+>
+> steps:
+>        1. Reset TGU /*it will disable tgu and reset dataset*/
+>        - echo 1 > /sys/bus/coresight/devices/<tgu-name>/reset_tgu
+>
+>        2. Set the pattern match for priority0 to 0xA =3D 0b1010 and for
+>           priority 1 to 0xB =3D 0b1011.
+>        - echo 0x11113232 > /sys/bus/coresight/devices/<tgu-name>/step0_pr=
+iority0/reg0
+>        - echo 0x11113233 > /sys/bus/coresight/devices/<tgu-name>/step0_pr=
+iority1/reg0
+>
+>        Note:
+>             Bit distribution diagram for each priority register
+>     |-------------------------------------------------------------------|
+>     |   Bits          |       Field Nam   |    Description              |
+>     |-------------------------------------------------------------------|
+>     |                 |                   | 00 =3D bypass for OR output  =
+ |
+>     |     29:28       |   SEL_BIT7_TYPE2  | 01 =3D bypass for AND output =
+ |
+>     |                 |                   | 10 =3D sense input '0' is tru=
+e|
+>     |                 |                   | 11 =3D sense input '1' is tru=
+e|
+>     |-------------------------------------------------------------------|
+>     |                 |                   | 00 =3D bypass for OR output  =
+ |
+>     |     25:24       |   SEL_BIT6_TYPE2  | 01 =3D bypass for AND output =
+ |
+>     |                 |                   | 10 =3D sense input '0' is tru=
+e|
+>     |                 |                   | 11 =3D sense input '1' is tru=
+e|
+>     |-------------------------------------------------------------------|
+>     |                 |                   | 00 =3D bypass for OR output  =
+ |
+>     |     21:20       |   SEL_BIT5_TYPE2  | 01 =3D bypass for AND output =
+ |
+>     |                 |                   | 10 =3D sense input '0' is tru=
+e|
+>     |                 |                   | 11 =3D sense input '1' is tru=
+e|
+>     |-------------------------------------------------------------------|
+>     |                 |                   | 00 =3D bypass for OR output  =
+ |
+>     |     17:16       |   SEL_BIT4_TYPE2  | 01 =3D bypass for AND output =
+ |
+>     |                 |                   | 10 =3D sense input '0' is tru=
+e|
+>     |                 |                   | 11 =3D sense input '1' is tru=
+e|
+>     |-------------------------------------------------------------------|
+>     |                 |                   | 00 =3D bypass for OR output  =
+ |
+>     |     13:12       |   SEL_BIT3_TYPE2  | 01 =3D bypass for AND output =
+ |
+>     |                 |                   | 10 =3D sense input '0' is tru=
+e|
+>     |                 |                   | 11 =3D sense input '1' is tru=
+e|
+>     |-------------------------------------------------------------------|
+>     |                 |                   | 00 =3D bypass for OR output  =
+ |
+>     |      9:8        |   SEL_BIT2_TYPE2  | 01 =3D bypass for AND output =
+ |
+>     |                 |                   | 10 =3D sense input '0' is tru=
+e|
+>     |                 |                   | 11 =3D sense input '1' is tru=
+e|
+>     |-------------------------------------------------------------------|
+>     |                 |                   | 00 =3D bypass for OR output  =
+ |
+>     |      5:4        |  SEL_BIT1_TYPE2   | 01 =3D bypass for AND output =
+ |
+>     |                 |                   | 10 =3D sense input '0' is tru=
+e|
+>     |                 |                   | 11 =3D sense input '1' is tru=
+e|
+>     |-------------------------------------------------------------------|
+>     |                 |                   | 00 =3D bypass for OR output  =
+ |
+>     |      1:0        |  SEL_BIT0_TYPE2   | 01 =3D bypass for AND output =
+ |
+>     |                 |                   | 10 =3D sense input '0' is tru=
+e|
+>     |                 |                   | 11 =3D sense input '1' is tru=
+e|
+>     |-------------------------------------------------------------------|
+>         These bits are used to identify the signals we want to sense, wit=
 h
-> + * unlock the parent directory and dput() the dentry.
-> + *
-> + * This interface allows a smooth transition from parent-dir based
-> + * locking to dentry based locking.
-> + */
-> +void done_dentry_lookup(struct dentry *dentry)
-> +{
-> +	inode_unlock(dentry->d_parent->d_inode);
-> +	dput(dentry);
-> +}
-> +EXPORT_SYMBOL(done_dentry_lookup);
-> +
-> +/**
-> + * done_dentry_lookup_return - finish a lookup sequence, returning the d=
-entry
-> + * @dentry:  the target dentry
-> + *
-> + * After locking the directory and lookup or validating a dentry
-> + * an attempt can be made to create (including link) or remove (includin=
-g
-> + * rmdir) a dentry.  After this, done_dentry_lookup_return() can be used=
- to
-> + * unlock the parent directory.  The dentry is returned for further use.
-> + *
-> + * This interface allows a smooth transition from parent-dir based
-> + * locking to dentry based locking.
-> + */
-> +struct dentry *done_dentry_lookup_return(struct dentry *dentry)
-> +{
-> +	inode_unlock(dentry->d_parent->d_inode);
-> +	return dentry;
-> +}
-> +EXPORT_SYMBOL(done_dentry_lookup_return);
-> +
->  /**
->   * lookup_fast - do fast lockless (but racy) lookup of a dentry
->   * @nd: current nameidata
-> diff --git a/include/linux/namei.h b/include/linux/namei.h
-> index 5d085428e471..e097f11587c9 100644
-> --- a/include/linux/namei.h
-> +++ b/include/linux/namei.h
-> @@ -81,6 +81,9 @@ struct dentry *lookup_one_positive_unlocked(struct mnt_=
-idmap *idmap,
->  					    struct qstr *name,
->  					    struct dentry *base);
-> =20
-> +void done_dentry_lookup(struct dentry *dentry);
-> +struct dentry *done_dentry_lookup_return(struct dentry *dentry);
-> +
->  extern int follow_down_one(struct path *);
->  extern int follow_down(struct path *path, unsigned int flags);
->  extern int follow_up(struct path *);
-> diff --git a/kernel/audit_fsnotify.c b/kernel/audit_fsnotify.c
-> index c565fbf66ac8..170836c3520f 100644
-> --- a/kernel/audit_fsnotify.c
-> +++ b/kernel/audit_fsnotify.c
-> @@ -85,8 +85,8 @@ struct audit_fsnotify_mark *audit_alloc_mark(struct aud=
-it_krule *krule, char *pa
->  	dentry =3D kern_path_locked(pathname, &path);
->  	if (IS_ERR(dentry))
->  		return ERR_CAST(dentry); /* returning an error */
-> -	inode =3D path.dentry->d_inode;
-> -	inode_unlock(inode);
-> +	inode =3D igrab(dentry->d_inode);
+>         a maximum signal number of 140. For example, to sense the signal
+>         0xA (binary 1010), we set the value of bits 0 to 13 to 3232, whic=
+h
+>         represents 1010. The remaining bits are set to 1, as we want to u=
+se
+>         AND gate to summarize all the signals we want to sense here. For
+>         rising or falling edge detection of any input to the priority, se=
+t
+>         the remaining bits to 0 to use an OR gate.
+>
+>        3. look for the pattern for priority_i i=3D0,1.
+>        - echo 0x3 > /sys/bus/coresight/devices/<tgu-name>/step0_condition=
+_decode/reg0
+>        - echo 0x30 > /sys/bus/coresight/devices/<tgu-name>/step0_conditio=
+n_decode/reg1
+>
+>     |--------------------------------------------------------------------=
+-----------|
+>     |   Bits          |    Field Nam        |            Description     =
+           |
+>     |--------------------------------------------------------------------=
+-----------|
+>     |                 |                     |For each decoded condition, =
+this       |
+>     |      24         |       NOT           |inverts the output. If the c=
+ondition   |
+>     |                 |                     |decodes to true, and the NOT=
+ field     |
+>     |                 |                     |is '1', then the output is N=
+OT true.   |
+>     |--------------------------------------------------------------------=
+-----------|
+>     |                 |                     |When '1' the output from the=
+ associated|
+>     |      21         |  BC0_COMP_ACTIVE    |comparator will be actively =
+included in|
+>     |                 |                     |the decoding of this particu=
+lar        |
+>     |                 |                     |condition.                  =
+           |
+>     |--------------------------------------------------------------------=
+-----------|
+>     |                 |                     |When '1' the output from the=
+ associated|
+>     |                 |                     |comparator will need to be 1=
+ to affect |
+>     |      20         |   BC0_COMP_HIGH     |the decoding of this conditi=
+on.        |
+>     |                 |                     |Conversely, a '0' here requi=
+res a '0'  |
+>     |                 |                     |from the comparator         =
+           |
+>     |--------------------------------------------------------------------=
+-----------|
+>     |                 |                     |When '1' the output from the=
+ associated|
+>     |      17         |                     |comparator will be actively =
+included in|
+>     |                 |  TC0_COMP_ACTIVE    |the decoding of this particu=
+lar        |
+>     |                 |                     |condition.                  =
+           |
+>     |--------------------------------------------------------------------=
+-----------|
+>     |                 |                     |When '1' the output from the=
+ associated|
+>     |                 |                     |comparator will need to be 1=
+ to affect |
+>     |      16         |  TC0_COMP_HIGH      |the decoding of this particu=
+lar        |
+>     |                 |                     |condition.Conversely, a 0 he=
+re         |
+>     |                 |                     |requires a '0' from the comp=
+arator     |
+>     |--------------------------------------------------------------------=
+-----------|
+>     |                 |                     |When '1' the output from Pri=
+ority_n    |
+>     |                 |                     |OR logic will be actively   =
+           |
+>     |     4n+3        | Priority_n_OR_ACTIVE|included in the decoding of =
+           |
+>     |                 |    (n=3D0,1,2,3)      |this particular condition.=
+             |
+>     |                 |                     |                            =
+           |
+>     |--------------------------------------------------------------------=
+-----------|
+>     |                 |                     |When '1' the output from Pri=
+ority_n    |
+>     |                 |                     |will need to be '1' to affec=
+t the      |
+>     |     4n+2        |  Priority_n_OR_HIGH |decoding of this particular =
+           |
+>     |                 |    (n=3D0,1,2,3)      |condition. Conversely, a '=
+0' here      |
+>     |                 |                     |requires a '0' from Priority=
+_n OR logic|
+>     |--------------------------------------------------------------------=
+-----------|
+>     |                 |                     |When '1' the output from Pri=
+ority_n    |
+>     |                 |                     |AND logic will be actively  =
+           |
+>     |     4n+1        |Priority_n_AND_ACTIVE|included in the decoding of =
+this       |
+>     |                 |  (n=3D0,1,2,3)        |particular condition.     =
+             |
+>     |                 |                     |                            =
+           |
+>     |--------------------------------------------------------------------=
+-----------|
+>     |                 |                     |When '1' the output from Pri=
+ority_n    |
+>     |                 |                     |AND logic will need to be '1=
+' to       |
+>     |      4n         | Priority_n_AND_HIGH |affect the decoding of this =
+           |
+>     |                 |   (n=3D0,1,2,3)       |particular condition. Conv=
+ersely,      |
+>     |                 |                     |a '0' here requires a '0' fr=
+om         |
+>     |                 |                     |Priority_n AND logic.       =
+           |
+>     |--------------------------------------------------------------------=
+-----------|
+>         Since we use `priority_0` and `priority_1` with an AND output in =
+step 2, we set `0x3`
+>         and `0x30` here to activate them.
+>
+>        4. Set NEXT_STEP =3D 1 and TC0_ENABLE =3D 1 so that when the condi=
+tions
+>           are met then the next step will be step 1 and the timer will be=
+ enabled.
+>        - echo 0x20008 > /sys/bus/coresight/devices/<tgu-name>/step0_condi=
+tion_select/reg0
+>        - echo 0x20008 > /sys/bus/coresight/devices/<tgu-name>/step0_condi=
+tion_select/reg1
+>
+>         |----------------------------------------------------------------=
+-------------|
+>         |   Bits          |       Field Nam   |            Description   =
+             |
+>         |----------------------------------------------------------------=
+-------------|
+>         |                 |                   |This field defines the nex=
+t step the   |
+>         |    18:17        |     NEXT_STEP     |TGU will 'goto' for the as=
+sociated     |
+>         |                 |                   |Condition and Step.       =
+             |
+>         |----------------------------------------------------------------=
+-------------|
+>         |                 |                   |For each possible output t=
+rigger       |
+>         |    13           |     TRIGGER       |available, set a '1' if yo=
+u want       |
+>         |                 |                   |the trigger to go active f=
+or the       |
+>         |                 |                   |associated condition and S=
+tep.         |
+>         |----------------------------------------------------------------=
+-------------|
+>         |                 |                   |This will cause BC0 to inc=
+rement if the|
+>         |    9            |     BC0_INC       |associated Condition is de=
+coded for    |
+>         |                 |                   |this step.                =
+             |
+>         |----------------------------------------------------------------=
+-------------|
+>         |                 |                   |This will cause BC0 to dec=
+rement if the|
+>         |    8            |     BC0_DEC       |associated Condition is de=
+coded for    |
+>         |                 |                   |this step.                =
+             |
+>         |----------------------------------------------------------------=
+-------------|
+>         |                 |                   |This will clear BC0 count =
+value to 0 if|
+>         |    7            |     BC0_CLEAR     |the associated Condition i=
+s decoded    |
+>         |                 |                   |for this step.            =
+             |
+>         |----------------------------------------------------------------=
+-------------|
+>         |                 |                   |This will cause TC0 to inc=
+rement until |
+>         |    3            |     TC0_ENABLE    |paused or cleared if the a=
+ssociated    |
+>         |                 |                   |Condition is decoded for t=
+his step.    |
+>         |----------------------------------------------------------------=
+-------------|
+>         |                 |                   |This will cause TC0 to pau=
+se until     |
+>         |    2            |     TC0_PAUSE     |enabled if the associated =
+Condition    |
+>         |                 |                   |is decoded for this step. =
+             |
+>         |----------------------------------------------------------------=
+-------------|
+>         |                 |                   |This will clear TC0 count =
+value to 0   |
+>         |    1            |     TC0_CLEAR     |if the associated Conditio=
+n is         |
+>         |                 |                   |decoded for this step.    =
+             |
+>         |----------------------------------------------------------------=
+-------------|
+>         |                 |                   |This will set the done sig=
+nal to the   |
+>         |    0            |     DONE          |TGU FSM if the associated =
+Condition    |
+>         |                 |                   |is decoded for this step. =
+             |
+>         |----------------------------------------------------------------=
+-------------|
+>         Based on the distribution diagram, we set `0x20008` for `priority=
+0` and `priority1` to
+>         achieve "jump to step 1 and enable TC0" once the signal is sensed=
+.
+>
+>        5. activate the timer comparison for this step.
+>        -  echo 0x30000  > /sys/bus/coresight/devices/<tgu-name>/step1_con=
+dition_decode/reg0
+>
+>         |----------------------------------------------------------------=
+---------------|
+>         |                 |                     |When '1' the output from=
+ the associated|
+>         |      17         |                     |comparator will be activ=
+ely included in|
+>         |                 |  TC0_COMP_ACTIVE    |the decoding of this par=
+ticular        |
+>         |                 |                     |condition.              =
+               |
+>         |----------------------------------------------------------------=
+---------------|
+>         |                 |                     |When '1' the output from=
+ the associated|
+>         |                 |                     |comparator will need to =
+be 1 to affect |
+>         |      16         |  TC0_COMP_HIGH      |the decoding of this par=
+ticular        |
+>         |                 |                     |condition.Conversely, a =
+0 here         |
+>         |                 |                     |requires a '0' from the =
+comparator     |
+>         |----------------------------------------------------------------=
+---------------|
+>         Accroding to the decode distribution diagram , we give 0x30000 he=
+re to set 16th&17th bit
+>         to enable timer comparison.
+>
+>        6. Set the NEXT_STEP =3D 0 and TC0_PAUSE =3D 1 and TC0_CLEAR =3D 1=
+ once the timer
+>           has reached the given value.
+>        - echo 0x6 > /sys/bus/coresight/devices/<tgu-name>/step1_condition=
+_select/reg0
+>
+>        7. Enable Trigger 0 for TGU when the condition 0 is met in step1,
+>           i.e. when the timer reaches 3.
+>        - echo 0x2000 > /sys/bus/coresight/devices/<tgu-name>/step1_condit=
+ion_select/default
+>
+>         Note:
+>             1. 'default' register allows for establishing the resultant a=
+ction for
+>             the default condition
+>
+>             2. Trigger:For each possible output trigger available from
+>             the Design document, there are three triggers: interrupts, CT=
+I,
+>             and Cross-TGU mapping.All three triggers can occur, but
+>             the choice of which trigger to use depends on the user's
+>             needs.
+>
+>        8. Compare the timer to 3 in step 1.
+>        - echo 0x3 > /sys/bus/coresight/devices/<tgu-name>/step1_timer/reg=
+0
+>
+>        9. enale tgu
+>        - echo 1 > /sys/bus/coresight/devices/<tgu-name>/enable_tgu
+> ---
+> Link to V5: https://lore.kernel.org/all/20250529081949.26493-1-quic_songc=
+hai@quicinc.com/
+>
+> Changes in V6:
+> - Replace spinlock with guard(spinlock) in tgu_enable.
+> - Remove redundant blank line.
+> - Update publish date and contact member's name in "sysfs-bus-coresight-d=
+evices-tgu".
+> ---
+> Link to V4: https://patchwork.kernel.org/project/linux-arm-msm/cover/2025=
+0423101054.954066-1-quic_songchai@quicinc.com/
+>
+> Changes in V5:
+> - Update publish date and kernel_version in "sysfs-bus-coresight-devices-=
+tgu"
+> ---
+> Link to V3: https://lore.kernel.org/all/20250227092640.2666894-1-quic_son=
+gchai@quicinc.com/
+>
+> Changes in V4:
+> - Add changlog in coverletter.
+> - Correct 'year' in Copyright in patch1.
+> - Correct port mechansim description in patch1.
+> - Remove 'tgu-steps','tgu-regs','tgu-conditions','tgu-timer-counters' fro=
+m dt-binding
+> and set them through reading DEVID register as per Mike's suggestion.
+> - Modify tgu_disable func to make it have single return point in patch2 a=
+s per
+> Mike's suggestion.
+> - Use sysfs_emit in enable_tgu_show func in ptach2.
+> - Remove redundant judgement in enable_tgu_store in patch2.
+> - Correct typo in description in patch3.
+> - Set default ret as SYSFS_GROUP_INVISIBLE, and returnret at end in pacth=
+3 as
+> per Mike's suggestion.
+> - Remove tgu_dataset_ro definition in patch3
+> - Use #define constants with explanations of what they are rather than
+> arbitrary magic numbers in patch3 and patch4.
+> - Check -EINVAL before using 'calculate_array_location()' in array in pat=
+ch4.
+> - Add 'default' in 'tgu_dataset_show''s switch part in patch4.
+> - Document the value needed to initiate the reset in pacth7.
+> - Check "value" in 'reset_tgu_store' and bail out with an error code if 0=
+ in patch7.
+> - Remove dev_dbg in 'reset_tgu_store' in patch7.
+> ---
+> Link to V2: https://lore.kernel.org/all/20241010073917.16023-1-quic_songc=
+hai@quicinc.com/
+>
+> Changes in V3:
+> - Correct typo and format in dt-binding in patch1
+> - Rebase to the latest kernel version
+> ---
+> Link to V1: https://lore.kernel.org/all/20240830092311.14400-1-quic_songc=
+hai@quicinc.com/
+>
+> Changes in V2:
+>  - Use real name instead of login name,
+>  - Correct typo and format in dt-binding and code.
+>  - Bring order in tgu_prob(declarations with and without assignments) as =
+per
+> Krzysztof's suggestion.
+>  - Add module device table in patch2.
+>  - Set const for tgu_common_grp and tgu_ids in patch2.
+>  - Initialize 'data' in tgu_ids to fix the warning in pacth2.
+> ---
+>
+> Songwei Chai (7):
+>   dt-bindings: arm: Add support for Coresight TGU trace
+>   coresight: Add coresight TGU driver
+>   coresight-tgu: Add signal priority support
+>   coresight-tgu: Add TGU decode support
+>   coresight-tgu: add support to configure next action
+>   coresight-tgu: add timer/counter functionality for TGU
+>   coresight-tgu: add reset node to initialize
+>
+>  .../testing/sysfs-bus-coresight-devices-tgu   |  51 ++
+>  .../bindings/arm/qcom,coresight-tgu.yaml      |  92 +++
+>  drivers/hwtracing/coresight/Kconfig           |  11 +
+>  drivers/hwtracing/coresight/Makefile          |   1 +
+>  drivers/hwtracing/coresight/coresight-tgu.c   | 776 ++++++++++++++++++
+>  drivers/hwtracing/coresight/coresight-tgu.h   | 255 ++++++
+>  6 files changed, 1186 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/sysfs-bus-coresight-devices=
+-tgu
+>  create mode 100644 Documentation/devicetree/bindings/arm/qcom,coresight-=
+tgu.yaml
+>  create mode 100644 drivers/hwtracing/coresight/coresight-tgu.c
+>  create mode 100644 drivers/hwtracing/coresight/coresight-tgu.h
+>
+>
 
-This is a little confusing. This patch changes "inode" from pointing to
-the parent inode to point to the child inode instead. That actually
-makes a bit more sense given the naming, but might best be done in a
-separate patch.
+As per the discussion here in v3 of this patchset
 
-> +	done_dentry_lookup(dentry);
-> =20
->  	audit_mark =3D kzalloc(sizeof(*audit_mark), GFP_KERNEL);
->  	if (unlikely(!audit_mark)) {
-> @@ -97,17 +97,16 @@ struct audit_fsnotify_mark *audit_alloc_mark(struct a=
-udit_krule *krule, char *pa
->  	fsnotify_init_mark(&audit_mark->mark, audit_fsnotify_group);
->  	audit_mark->mark.mask =3D AUDIT_FS_EVENTS;
->  	audit_mark->path =3D pathname;
-> -	audit_update_mark(audit_mark, dentry->d_inode);
-> +	audit_update_mark(audit_mark, inode);
->  	audit_mark->rule =3D krule;
-> =20
-> -	ret =3D fsnotify_add_inode_mark(&audit_mark->mark, inode, 0);
-> +	ret =3D fsnotify_add_inode_mark(&audit_mark->mark, path.dentry->d_inode=
-, 0);
->  	if (ret < 0) {
->  		audit_mark->path =3D NULL;
->  		fsnotify_put_mark(&audit_mark->mark);
->  		audit_mark =3D ERR_PTR(ret);
->  	}
->  out:
-> -	dput(dentry);
->  	path_put(&path);
->  	return audit_mark;
->  }
-> diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
-> index 0ebbbe37a60f..f6ecac2109d4 100644
-> --- a/kernel/audit_watch.c
-> +++ b/kernel/audit_watch.c
-> @@ -359,8 +359,7 @@ static int audit_get_nd(struct audit_watch *watch, st=
-ruct path *parent)
->  		watch->ino =3D d_backing_inode(d)->i_ino;
->  	}
-> =20
-> -	inode_unlock(d_backing_inode(parent->dentry));
-> -	dput(d);
-> +	done_dentry_lookup(d);
->  	return 0;
->  }
-> =20
+https://lists.infradead.org/pipermail/linux-arm-kernel/2025-March/1012896.h=
+tml
 
-It looks right to me though.
+this component is primarily a part of the qualcom proprietary QPMDA
+subsystem, and is capable of operating independently from the
+CoreSight hardware trace generation system.
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+The only link to Coresight is via the trigger input to CTI
+component(s).  CTI triggers can either be part of the ARM architected
+or recommended connections between Coresight infrastructure from the
+coresight specs and TRM documents, or platform specific triggers from
+components external to coresight. For example on the Juno board a
+trigger from the PL011 serial port is input to one of the system CTIs
+on the board.
+
+Having Coresight management registers does not necessarily mean that
+the component should be maintained under the hwtracing/coresight. Some
+ARM Corelink interconnect components have the capability to generate
+ATB trace into the coresight subsystem, and have some of the coresight
+management registers. However, I would not expect the drivers for
+these components to appear in hwtracing/coresight.
+
+As such this component could probably be better managed and maintained
+as part of the /drivers/soc/qcom or similar area.
+
+The only changes to the Coresight infrastructure you should need to
+get this component connected, is to alter the CTI declaration in board
+device tree to add the incoming trigger as per the CTI bindings.
+
+Regards
+
+Mike
+
+
+
+--
+Mike Leach
+Principal Engineer, ARM Ltd.
+Manchester Design Centre. UK
 
