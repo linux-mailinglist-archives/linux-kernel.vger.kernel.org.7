@@ -1,354 +1,398 @@
-Return-Path: <linux-kernel+bounces-739792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBE35B0CB06
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 21:36:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26020B0CB09
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 21:36:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DEC81AA81D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:36:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CE234E642E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5492235067;
-	Mon, 21 Jul 2025 19:35:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F7F23184A;
+	Mon, 21 Jul 2025 19:36:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iJLGNzlF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R6aBBL1v"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEEB71F418E;
-	Mon, 21 Jul 2025 19:35:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3015D221F06;
+	Mon, 21 Jul 2025 19:36:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753126547; cv=none; b=sUitDs0pGb2SCTVgqXRLmOqm1Gs5tV85jE486W2zvVq7XgkKccFX7IbgdBbhRKoDD63QRJvOkzZdOLDZCoY8EaEtqx7pTG6E4iuHjoOThd1HIJYIN+HNDw9TWwdKwJJRABfa3F1I9If59PtwfrIiqgcjgj3lshbi6do8EC+OeyU=
+	t=1753126563; cv=none; b=NKQudh7VYW5ccRdTtmHu3zOflqhq163yXO1JwSKY2p2j2S4x8ev6b4kDMcjZfHJ803sUi8ioiydqqeV6QKTZyME7JXiyYEjtGUBotJO8yvgRvihthk5e6SzJKFc+4ExGfwYTKhPQu3xQrVp3HvsJxUTQ1yegLXUyZeUXCDZJm7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753126547; c=relaxed/simple;
-	bh=qjouUFzxPYNotW041AuPIzLMf72AQH27dBeTZYw1Yz8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RplREynMY5S/E27h7QkEF1LP+y7H7kGFgS5wCRPGEeWURPtiwWcAf+7Jr+ihss+ojp22IGeKWT4AWpBsy8g6eYceMRdPRrabrWpw+7+wUPYFoS9T6CvCvoTcrUZK1SQQGHf2C2DnPkpv5ZL6sUGhXk4VXhYpH1YQITbxctIE8ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iJLGNzlF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B8E5C4CEED;
-	Mon, 21 Jul 2025 19:35:46 +0000 (UTC)
+	s=arc-20240116; t=1753126563; c=relaxed/simple;
+	bh=TB7rn67MajC8Jyg5Da1lj9LyQ2ZybUzjBr843rmIh84=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=qjsES9xM7wg8jktjTEcPzjOqclBKHNtU+edo0uNfx4TS/j6urDuRjWgGmSrvFRG1nZYnox8vah3hkIMf+9lmQRfxEHOi9TTUxAs4wwsNArjqdcl84qGbjK/RIUoCVA4MBBFL6EtgHGhkoiijpsAe0p0LJaJAEL7233ius0Jz6Pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R6aBBL1v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DBD3C4CEED;
+	Mon, 21 Jul 2025 19:36:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753126546;
-	bh=qjouUFzxPYNotW041AuPIzLMf72AQH27dBeTZYw1Yz8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iJLGNzlFYPgQacKD4XtBiQDOMY8iAHszXduqI57oUzq2TGz5yN8wVEtvGHjR4Z2EM
-	 +40Pxtyo15LNS6mWimMs/P8xlzXpXUUBxF3bHkK9L/ditDna+bg8+R8i/EPSpjtsXM
-	 CXI1RgTj4HNixP7mR/dS4J5T5Ngu9rcxtf3ixrZy4w4qmfRxKym687smWajkxHlva/
-	 UorLdnpn8f5ZPf9IMW1XMry4edR0F2re7+4uw3/sXb+tjvOZ6mtnS4uDshGUJybDic
-	 gSO08YvyCmas2rwPcYCv4bZXCpUvg7W1rhFo/VUu8y7KfJGoywCUZ7l+LFRxS69UWr
-	 rcj9MIVwqkDBQ==
-Date: Mon, 21 Jul 2025 14:35:45 -0500
-From: Rob Herring <robh@kernel.org>
-To: Luo Jie <quic_luoj@quicinc.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lei Wei <quic_leiwei@quicinc.com>,
-	Suruchi Agarwal <quic_suruchia@quicinc.com>,
-	Pavithra R <quic_pavir@quicinc.com>,
-	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-hardening@vger.kernel.org,
-	quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com
-Subject: Re: [PATCH net-next v6 01/14] dt-bindings: net: Add PPE for Qualcomm
- IPQ9574 SoC
-Message-ID: <20250721193545.GA1119033-robh@kernel.org>
-References: <20250720-qcom_ipq_ppe-v6-0-4ae91c203a5f@quicinc.com>
- <20250720-qcom_ipq_ppe-v6-1-4ae91c203a5f@quicinc.com>
+	s=k20201202; t=1753126562;
+	bh=TB7rn67MajC8Jyg5Da1lj9LyQ2ZybUzjBr843rmIh84=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=R6aBBL1v+Jac/gTJPVwUGLOuSxcdUoTjM2CZ0uHsM6v9ZtbEbYxfIYf3qgS8fVdUZ
+	 jjoin8kV/LPRelW8iVxYtHZ1GWxY8bRcxOX4IoqWoMZ25zTcAEAyuG+y3Q6WwJpGuK
+	 dDOWrQVmRWMH3+eFy80/am9w0icD0VsV2fsCXK79EiOmYEfVRrSjAnmeztcZe7ahg8
+	 Rwq84sT6xhO598gnhxIGq9EIQSJdzhdPQdX8NbO0H4Mcax2rh46R80iAY2gZWVT6qW
+	 rXIUTfbsa+ti4Wor7QjDIVUWVPClj0iVQVyordX1wm2QctV3JrhWCl8CTyidLs2YfC
+	 wyID6ZM3jpR8g==
+From: SeongJae Park <sj@kernel.org>
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	David Hildenbrand <david@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>,
+	Barry Song <baohua@kernel.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Jann Horn <jannh@google.com>,
+	Yafang Shao <laoar.shao@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH POC] prctl: extend PR_SET_THP_DISABLE to optionally exclude VM_HUGEPAGE
+Date: Mon, 21 Jul 2025 12:35:59 -0700
+Message-Id: <20250721193559.11503-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <4a8b70b1-7ba0-4d60-a3a0-04ac896a672d@gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250720-qcom_ipq_ppe-v6-1-4ae91c203a5f@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Jul 20, 2025 at 06:57:08PM +0800, Luo Jie wrote:
-> The PPE (packet process engine) hardware block is available in Qualcomm
-> IPQ chipsets that support PPE architecture, such as IPQ9574. The PPE in
-> the IPQ9574 SoC includes six ethernet ports (6 GMAC and 6 XGMAC), which
-> are used to connect with external PHY devices by PCS. It includes an L2
-> switch function for bridging packets among the 6 ethernet ports and the
-> CPU port. The CPU port enables packet transfer between the ethernet ports
-> and the ARM cores in the SoC, using the ethernet DMA.
+On Mon, 21 Jul 2025 18:27:38 +0100 Usama Arif <usamaarif642@gmail.com> wrote:
+
+[...]
+> >From ee9004e7d34511a79726ee1314aec0503e6351d4 Mon Sep 17 00:00:00 2001
+> From: Usama Arif <usamaarif642@gmail.com>
+> Date: Thu, 15 May 2025 14:33:33 +0100
+> Subject: [PATCH] selftests: prctl: introduce tests for
+>  PR_THP_DISABLE_EXCEPT_ADVISED
 > 
-> The PPE also includes packet processing offload capabilities for various
-> networking functions such as route and bridge flows, VLANs, different
-> tunnel protocols and VPN.
+> The test is limited to 2M PMD THPs. It does not modify the system
+> settings in order to not disturb other process running in the system.
+> It checks if the PMD size is 2M, if the 2M policy is set to inherit
+> and if the system global THP policy is set to "always", so that
+> the change in behaviour due to PR_THP_DISABLE_EXCEPT_ADVISED can
+> be seen.
 > 
-> The PPE switch is modeled according to the ethernet switch schema, with
-> additional properties defined for the switch node for interrupts, clocks,
-> resets, interconnects and Ethernet DMA. The switch port node is extended
-> with additional properties for clocks and resets.
+> This tests if:
+> - the process can successfully set the policy
+> - carry it over to the new process with fork
+> - if no hugepage is gotten when the process doesn't MADV_HUGEPAGE
+> - if hugepage is gotten when the process does MADV_HUGEPAGE
+> - the process can successfully reset the policy to PR_THP_POLICY_SYSTEM
+> - if hugepage is gotten after the policy reset
+
+Nice!  I added a few trivial comments below, though.
+
 > 
-> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+
+Acked-by: SeongJae Park <sj@kernel.org>
+
 > ---
->  .../devicetree/bindings/net/qcom,ipq9574-ppe.yaml  | 529 +++++++++++++++++++++
->  1 file changed, 529 insertions(+)
+>  tools/testing/selftests/prctl/Makefile      |   2 +-
+>  tools/testing/selftests/prctl/thp_disable.c | 207 ++++++++++++++++++++
+
+I once thought this might better fit on selftests/mm/, but I found we already
+have selftests/prctl/set-anon-vma-name-tests.c, no no strong opinion from my
+side.
+
+>  2 files changed, 208 insertions(+), 1 deletion(-)
+>  create mode 100644 tools/testing/selftests/prctl/thp_disable.c
 > 
-> diff --git a/Documentation/devicetree/bindings/net/qcom,ipq9574-ppe.yaml b/Documentation/devicetree/bindings/net/qcom,ipq9574-ppe.yaml
+> diff --git a/tools/testing/selftests/prctl/Makefile b/tools/testing/selftests/prctl/Makefile
+> index 01dc90fbb509..a3cf76585c48 100644
+> --- a/tools/testing/selftests/prctl/Makefile
+> +++ b/tools/testing/selftests/prctl/Makefile
+> @@ -5,7 +5,7 @@ ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
+>  
+>  ifeq ($(ARCH),x86)
+>  TEST_PROGS := disable-tsc-ctxt-sw-stress-test disable-tsc-on-off-stress-test \
+> -		disable-tsc-test set-anon-vma-name-test set-process-name
+> +		disable-tsc-test set-anon-vma-name-test set-process-name thp_disable
+>  all: $(TEST_PROGS)
+>  
+>  include ../lib.mk
+> diff --git a/tools/testing/selftests/prctl/thp_disable.c b/tools/testing/selftests/prctl/thp_disable.c
 > new file mode 100644
-> index 000000000000..d48169a8ba7c
+> index 000000000000..e524723b3313
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/net/qcom,ipq9574-ppe.yaml
-> @@ -0,0 +1,529 @@
-> +# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/net/qcom,ipq9574-ppe.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +++ b/tools/testing/selftests/prctl/thp_disable.c
+> @@ -0,0 +1,207 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * This test covers the PR_GET/SET_THP_DISABLE functionality of prctl calls
+> + * for PR_THP_DISABLE_EXCEPT_ADVISED
+> + */
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <string.h>
+> +#include <unistd.h>
+> +#include <sys/mman.h>
+> +#include <sys/prctl.h>
+> +#include <sys/wait.h>
 > +
-> +title: Qualcomm IPQ packet process engine (PPE)
+> +#ifndef PR_THP_DISABLE_EXCEPT_ADVISED
+> +#define PR_THP_DISABLE_EXCEPT_ADVISED (1 << 1)
+> +#endif
 > +
-> +maintainers:
-> +  - Luo Jie <quic_luoj@quicinc.com>
-> +  - Lei Wei <quic_leiwei@quicinc.com>
-> +  - Suruchi Agarwal <quic_suruchia@quicinc.com>
-> +  - Pavithra R <quic_pavir@quicinc.com>
+> +#define CONTENT_SIZE 256
+> +#define BUF_SIZE (12 * 2 * 1024 * 1024) // 12 x 2MB pages
 > +
-> +description: |
-> +  The Ethernet functionality in the PPE (Packet Process Engine) is comprised
-> +  of three components, the switch core, port wrapper and Ethernet DMA.
+> +enum system_policy {
+> +	SYSTEM_POLICY_ALWAYS,
+> +	SYSTEM_POLICY_MADVISE,
+> +	SYSTEM_POLICY_NEVER,
+> +};
 > +
-> +  The Switch core in the IPQ9574 PPE has maximum of 6 front panel ports and
-> +  two FIFO interfaces. One of the two FIFO interfaces is used for Ethernet
-> +  port to host CPU communication using Ethernet DMA. The other is used
-> +  communicating to the EIP engine which is used for IPsec offload. On the
-> +  IPQ9574, the PPE includes 6 GMAC/XGMACs that can be connected with external
-> +  Ethernet PHY. Switch core also includes BM (Buffer Management), QM (Queue
-> +  Management) and SCH (Scheduler) modules for supporting the packet processing.
+> +int system_thp_policy;
 > +
-> +  The port wrapper provides connections from the 6 GMAC/XGMACS to UNIPHY (PCS)
-> +  supporting various modes such as SGMII/QSGMII/PSGMII/USXGMII/10G-BASER. There
-> +  are 3 UNIPHY (PCS) instances supported on the IPQ9574.
+> +/* check if the sysfs file contains the expected substring */
+> +static int check_file_content(const char *file_path, const char *expected_substring)
+> +{
+> +	FILE *file = fopen(file_path, "r");
+> +	char buffer[CONTENT_SIZE];
 > +
-> +  Ethernet DMA is used to transmit and receive packets between the six Ethernet
-> +  ports and ARM host CPU.
-> +
-> +  The follow diagram shows the PPE hardware block along with its connectivity
-> +  to the external hardware blocks such clock hardware blocks (CMNPLL, GCC,
-> +  NSS clock controller) and ethernet PCS/PHY blocks. For depicting the PHY
-> +  connectivity, one 4x1 Gbps PHY (QCA8075) and two 10 GBps PHYs are used as an
-> +  example.
-> +
-> +           +---------+
-> +           |  48 MHZ |
-> +           +----+----+
-> +                |(clock)
-> +                v
-> +           +----+----+
-> +    +------| CMN PLL |
-> +    |      +----+----+
-> +    |           |(clock)
-> +    |           v
-> +    |      +----+----+           +----+----+  (clock) +----+----+
-> +    |  +---|  NSSCC  |           |   GCC   |--------->|   MDIO  |
-> +    |  |   +----+----+           +----+----+          +----+----+
-> +    |  |        |(clock & reset)      |(clock)
-> +    |  |        v                     v
-> +    |  |   +----+---------------------+--+----------+----------+---------+
-> +    |  |   |       +-----+               |EDMA FIFO |          | EIP FIFO|
-> +    |  |   |       | SCH |               +----------+          +---------+
-> +    |  |   |       +-----+                        |              |       |
-> +    |  |   |  +------+   +------+               +-------------------+    |
-> +    |  |   |  |  BM  |   |  QM  |  IPQ9574-PPE  |    L2/L3 Process  |    |
-> +    |  |   |  +------+   +------+               +-------------------+    |
-> +    |  |   |                                             |               |
-> +    |  |   | +-------+ +-------+ +-------+ +-------+ +-------+ +-------+ |
-> +    |  |   | |  MAC0 | |  MAC1 | |  MAC2 | |  MAC3 | | XGMAC4| |XGMAC5 | |
-> +    |  |   | +---+---+ +---+---+ +---+---+ +---+---+ +---+---+ +---+---+ |
-> +    |  |   |     |         |         |         |         |         |     |
-> +    |  |   +-----+---------+---------+---------+---------+---------+-----+
-> +    |  |         |         |         |         |         |         |
-> +    |  |     +---+---------+---------+---------+---+ +---+---+ +---+---+
-> +    +--+---->|                PCS0                 | |  PCS1 | | PCS2  |
-> +    |(clock) +---+---------+---------+---------+---+ +---+---+ +---+---+
-> +    |            |         |         |         |         |         |
-> +    |        +---+---------+---------+---------+---+ +---+---+ +---+---+
-> +    +------->|             QCA8075 PHY             | | PHY4  | | PHY5  |
-> +     (clock) +-------------------------------------+ +-------+ +-------+
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,ipq9574-ppe
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: PPE core clock from NSS clock controller
-> +      - description: PPE APB (Advanced Peripheral Bus) clock from NSS clock controller
-> +      - description: PPE ingress process engine clock from NSS clock controller
-> +      - description: PPE BM, QM and scheduler clock from NSS clock controller
+> +	if (!file) {
+> +		perror("Failed to open file");
+> +		return -1;
+> +	}
+> +	if (fgets(buffer, CONTENT_SIZE, file) == NULL) {
+> +		perror("Failed to read file");
+> +		fclose(file);
+> +		return -1;
+> +	}
+> +	fclose(file);
+> +	// Remove newline character from the buffer
 
-Drop 'from NSS clock controller'. That's outside the scope of this 
-binding.
+Nit.  I'd suggest using "/* */" consisetntly.
+
+> +	buffer[strcspn(buffer, "\n")] = '\0';
+> +	if (strstr(buffer, expected_substring))
+> +		return 0;
+> +	else
+> +		return 1;
+> +}
+> +
+> +/*
+> + * The test is designed for 2M hugepages only.
+> + * Check if hugepage size is 2M, if 2M size inherits from global
+> + * setting, and if the global setting is always.
+> + */
+> +static int sysfs_check(void)
+> +{
+> +	int res = 0;
+> +
+> +	res = check_file_content("/sys/kernel/mm/transparent_hugepage/hpage_pmd_size", "2097152");
+> +	if (res) {
+> +		printf("hpage_pmd_size is not set to 2MB. Skipping test.\n");
+> +		return -1;
+
+Nit.  Skipping is done by the caller, right?  I think it is more natural to say
+"Skipping test" from the caller.
+
+> +	}
+> +	res |= check_file_content("/sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled",
+> +				  "[inherit]");
+
+Nit.  I think we can drop '|' and just do 'res = '.
+
+> +	if (res) {
+> +		printf("hugepages-2048kB does not inherit global setting. Skipping test.\n");
+> +		return -1;
+> +	}
+> +
+> +	res = check_file_content("/sys/kernel/mm/transparent_hugepage/enabled", "[always]");
+> +	if (!res) {
+
+Seems 'res' is being used for only checking whether it is zero.  Maybe doing
+'if (check_file_content(...))' and removing 'res' can make code simpler?
+
+> +		system_thp_policy = SYSTEM_POLICY_ALWAYS;
+> +		return 0;
+> +	}
+
+Also, system_thp_policy is set only here, so we know 'system_thp_policy ==
+SYSTEM_POLICY_ALWAYS' if sysfs_check() returned zero.  Maybe system_thp_policy
+is not really required?
+
+> +	printf("Global THP policy not set to always. Skipping test.\n");
+> +	return -1;
+> +}
+> +
+> +static int check_smaps_for_huge(void)
+> +{
+> +	FILE *file = fopen("/proc/self/smaps", "r");
+> +	int is_anonhuge = 0;
+> +	char line[256];
+> +
+> +	if (!file) {
+> +		perror("fopen");
+> +		return -1;
+> +	}
+> +
+> +	while (fgets(line, sizeof(line), file)) {
+> +		if (strstr(line, "AnonHugePages:") && strstr(line, "24576 kB")) {
+> +			is_anonhuge = 1;
+> +			break;
+> +		}
+> +	}
+> +	fclose(file);
+> +	return is_anonhuge;
+> +}
+> +
+> +static int test_mmap_thp(int madvise_buffer)
+> +{
+> +	int is_anonhuge;
+> +
+> +	char *buffer = (char *)mmap(NULL, BUF_SIZE, PROT_READ | PROT_WRITE,
+> +				    MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+> +	if (buffer == MAP_FAILED) {
+> +		perror("mmap");
+> +		return -1;
+> +	}
+> +	if (madvise_buffer)
+> +		madvise(buffer, BUF_SIZE, MADV_HUGEPAGE);
+> +
+> +	// set memory to ensure it's allocated
+
+'/* */' for consistency?
+
+> +	memset(buffer, 0, BUF_SIZE);
+> +	is_anonhuge = check_smaps_for_huge();
+> +	munmap(buffer, BUF_SIZE);
+> +	return is_anonhuge;
+> +}
+> +
+> +/* Global policy is always, process is changed to "madvise only" */
+> +static int test_global_always_process_madvise(void)
+> +{
+> +	int is_anonhuge = 0, res = 0, status = 0;
+> +	pid_t pid;
+> +
+> +	if (prctl(PR_SET_THP_DISABLE, 1, PR_THP_DISABLE_EXCEPT_ADVISED, NULL, NULL) != 0) {
+
+Nit.  '!= 0' can be dropped.
+
+> +		perror("prctl failed to set policy to madvise");
+> +		return -1;
+> +	}
+> +
+> +	/* Make sure prctl changes are carried across fork */
+> +	pid = fork();
+> +	if (pid < 0) {
+> +		perror("fork");
+> +		exit(EXIT_FAILURE);
+> +	}
+> +
+> +	res = prctl(PR_GET_THP_DISABLE, NULL, NULL, NULL, NULL);
+> +	if (res != 3) {
+> +		printf("prctl PR_GET_THP_POLICY returned %d pid %d\n", res, pid);
+> +		goto err_out;
+> +	}
+> +
+> +	/* global = always, process = madvise, we shouldn't get HPs without madvise */
+> +	is_anonhuge = test_mmap_thp(0);
+> +	if (is_anonhuge) {
+> +		printf(
+> +		"PR_THP_POLICY_DEFAULT_NOHUGE set but still got hugepages without MADV_HUGEPAGE\n");
+> +		goto err_out;
+> +	}
+> +
+> +	is_anonhuge = test_mmap_thp(1);
+> +	if (!is_anonhuge) {
+> +		printf(
+> +		"PR_THP_POLICY_DEFAULT_NOHUGE set but did't get hugepages with MADV_HUGEPAGE\n");
+> +		goto err_out;
+> +	}
+> +
+> +	/* Reset to system policy */
+> +	if (prctl(PR_SET_THP_DISABLE, 0, NULL, NULL, NULL) != 0) {
+> +		perror("prctl failed to set policy to system");
+> +		goto err_out;
+> +	}
+> +
+> +	is_anonhuge = test_mmap_thp(0);
+> +	if (!is_anonhuge) {
+> +		printf("global policy is always but we still didn't get hugepages\n");
+> +		goto err_out;
+> +	}
+> +
+> +	is_anonhuge = test_mmap_thp(1);
+> +	if (!is_anonhuge) {
+> +		printf("global policy is always but we still didn't get hugepages\n");
+> +		goto err_out;
+> +	}
+
+Seems is_anonhugepage is used for only whether it is zero or not, just after
+being assigned from test_mmap_thp().  How about removing the variable?
+
+> +	printf("PASS\n");
+> +
+> +	if (pid == 0) {
+> +		exit(EXIT_SUCCESS);
+> +	} else {
+> +		wait(&status);
+> +		if (WIFEXITED(status))
+> +			return 0;
+> +		else
+> +			return -1;
+> +	}
+> +
+> +err_out:
+> +	if (pid == 0)
+> +		exit(EXIT_FAILURE);
+> +	else
+> +		return -1;
+> +}
+> +
+> +int main(void)
+> +{
+> +	if (sysfs_check())
+> +		return 0;
+
+May better to return KSFT_SKIP insted of 0?
 
 > +
-> +  clock-names:
-> +    items:
-> +      - const: ppe
-> +      - const: apb
-> +      - const: ipe
-> +      - const: btq
-> +
-> +  resets:
-> +    maxItems: 1
-> +    description: PPE reset, which is necessary before configuring PPE hardware
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +    description: PPE switch miscellaneous interrupt
-> +
-> +  interconnects:
-> +    items:
-> +      - description: Clock path leading to PPE switch core function
-> +      - description: Clock path leading to PPE register access
-> +      - description: Clock path leading to QoS generation
-> +      - description: Clock path leading to timeout reference
-> +      - description: Clock path leading to NSS NOC from memory NOC
-> +      - description: Clock path leading to memory NOC from NSS NOC
-> +      - description: Clock path leading to enhanced memory NOC from NSS NOC
+> +	if (system_thp_policy == SYSTEM_POLICY_ALWAYS)
 
-Clock path? This should be bus interconnect paths.
+This should be always true, since sysfs_check() returned zero, right?  I think
+we can remove this check.
 
+> +		return test_global_always_process_madvise();
 > +
-> +  interconnect-names:
-> +    items:
-> +      - const: ppe
-> +      - const: ppe_cfg
-> +      - const: qos_gen
-> +      - const: timeout_ref
-> +      - const: nssnoc_memnoc
-> +      - const: memnoc_nssnoc
-> +      - const: memnoc_nssnoc_1
-> +
-> +  ethernet-dma:
-> +    type: object
-> +    additionalProperties: false
-> +    description:
-> +      EDMA (Ethernet DMA) is used to transmit packets between PPE and ARM
-> +      host CPU. There are 32 TX descriptor rings, 32 TX completion rings,
-> +      24 RX descriptor rings and 8 RX fill rings supported.
-> +
-> +    properties:
-> +      clocks:
-> +        items:
-> +          - description: EDMA system clock from NSS Clock Controller
-> +          - description: EDMA APB (Advanced Peripheral Bus) clock from
-> +              NSS Clock Controller
-> +
-> +      clock-names:
-> +        items:
-> +          - const: sys
-> +          - const: apb
-> +
-> +      resets:
-> +        maxItems: 1
-> +        description: EDMA reset from NSS clock controller
-> +
-> +      interrupts:
-> +        minItems: 65
-> +        maxItems: 65
-> +
-> +      interrupt-names:
-> +        minItems: 65
-> +        maxItems: 65
-> +        description:
-> +          Interrupts "txcmpl_[0-31]" are the Ethernet DMA TX completion ring interrupts.
-> +          Interrupts "rxfill_[0-7]" are the Ethernet DMA RX fill ring interrupts.
-> +          Interrupts "rxdesc_[0-23]" are the Ethernet DMA RX Descriptor ring interrupts.
-> +          Interrupt "misc" is the Ethernet DMA miscellaneous error interrupt.
 
-items:
-  oneOf:
-    - pattern: '^txcmpl_([1-2]?[0-9]|3[01])$'
-    - pattern: '^rxfill_[0-7]$'
-    - pattern: '^rxdesc_(1?[0-9]|2[0-3])$'
-    - const: misc
+Nit.  Unnecessary blank line.
 
-> +
-> +    required:
-> +      - clocks
-> +      - clock-names
-> +      - resets
-> +      - interrupts
-> +      - interrupt-names
-> +
-> +patternProperties:
-> +  "^(ethernet-)?ports$":
+> +}
+> -- 
+> 2.47.1
+> 
+> 
+> 
 
-New binding, does 'ethernet-' part need to be optional? No.
 
-> +    patternProperties:
-> +      "^ethernet-port@[1-6]+$":
-> +        type: object
-> +        unevaluatedProperties: false
-> +        $ref: ethernet-switch-port.yaml#
-> +
-> +        properties:
-> +          reg:
-> +            minimum: 1
-> +            maximum: 6
-> +            description: PPE Ethernet port ID
-> +
-> +          clocks:
-> +            items:
-> +              - description: Port MAC clock from NSS clock controller
-> +              - description: Port RX clock from NSS clock controller
-> +              - description: Port TX clock from NSS clock controller
-> +
-> +          clock-names:
-> +            items:
-> +              - const: mac
-> +              - const: rx
-> +              - const: tx
-> +
-> +          resets:
-> +            items:
-> +              - description: Port MAC reset from NSS clock controller
-> +              - description: Port RX reset from NSS clock controller
-> +              - description: Port TX reset from NSS clock controller
-> +
-> +          reset-names:
-> +            items:
-> +              - const: mac
-> +              - const: rx
-> +              - const: tx
-> +
-> +        required:
-> +          - reg
-> +          - clocks
-> +          - clock-names
-> +          - resets
-> +          - reset-names
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - resets
-> +  - interconnects
-> +  - interconnect-names
-> +  - ethernet-dma
-> +
-> +allOf:
-> +  - $ref: ethernet-switch.yaml
-> +
-> +unevaluatedProperties: false
+Thanks,
+SJ
 
