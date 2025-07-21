@@ -1,170 +1,214 @@
-Return-Path: <linux-kernel+bounces-738624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2496B0BB28
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 05:02:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DB8FB0BB2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 05:02:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8A981896E78
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 03:02:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C15BE1897052
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 03:03:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F2E226D04;
-	Mon, 21 Jul 2025 03:01:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F43322DA0F;
+	Mon, 21 Jul 2025 03:01:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=huaqian.li@siemens.com header.b="fMGWOn8t"
-Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HjzaQHbw"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D48225414
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 03:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.227
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6B7226D0A;
+	Mon, 21 Jul 2025 03:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753066868; cv=none; b=gNBDpLOMYtWX2bm2Ck5RgyxA5NhafsgqS3C24XI//1Ci/xC0A/0m+KdNUWgugxG1M0XTllmD3mRWzupHGhZEKh3PW9yQ3FmJlRl3JOOCsU5J1KLVw7iVFFgz8q5GOQ7DmrqKw0CofkU5gRq87aQnX5tG0Yj9iIfheoRz9rnUyCA=
+	t=1753066871; cv=none; b=U2v7W7y09DN0rSqSySPb17OeGHOOqHgNyiSeAs8rm1Dr6SUGFZ98+3Oa+ps6oE65h/eWwRD2CtFH1F1BHmQlZG9MXn8Et2tJYfxfIWscAsGPduOCj5fFuq1/EfI+xzzegGygrYtrv71RJTgiEKRAQ+8DBb23xksZE1/qmw7L4Vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753066868; c=relaxed/simple;
-	bh=JcpLqjaUr9M1mi4dl/7gUP3Y3UTEl2H4ET8142ZGV6U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AQWXifZDoWhtZM3+hOHt+QCIIjqtlcAQ1HK7IpL4SvO+XEhBhzngg+kfwBBCYUQJ9JvyeQkFOzXYQr2hyw9t91kRAza26RQz6z3keOdG3pgrj9M0XtshFZDUUwYt3mVAVrsCNJV+ls7vRLfpTUQTpOIVWyCAF3YVfRTwgw9nzJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=huaqian.li@siemens.com header.b=fMGWOn8t; arc=none smtp.client-ip=185.136.65.227
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 20250721030106e6bdfce20b55d7cc3c
-        for <linux-kernel@vger.kernel.org>;
-        Mon, 21 Jul 2025 05:01:06 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=huaqian.li@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=+LaZDA/FCK3jvCwMvQup/hbQjkRk3GDFDbtf0l3xKc4=;
- b=fMGWOn8tYiM4HXxNXQ6tapgOIDFZy+c4bIU/C3sKXivaC/yS35CaJsYjA/yWC8KAKQKq2q
- UBLfXuOakK5uvUEnKw/CmZC2348yl8YrJYbAS7kolx2uyqj5imTAA+b31pWRcNXgSy95JiHY
- DkYwgUpgAG6Be3uVVWRs1yNEJXOL7a9t5G35j7wnwl9S4Cfz+DgSfVlxmLAAhq/j/aWmM+Wr
- 3oqSgLuqex67PPl/Rc0evphlS4BgiAm0LjmLusuC82OevzzDUQCJD1q03OuUzBfVmZ3ge2qy
- Q0xqRmVyOgMOP2T8YNbtBCsLascMhK1V9+cvIeFUN7O4v6REpecCRFhA==;
-From: huaqian.li@siemens.com
-To: s-vadapalli@ti.com
-Cc: baocheng.su@siemens.com,
-	bhelgaas@google.com,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	diogo.ivo@siemens.com,
-	helgaas@kernel.org,
-	huaqian.li@siemens.com,
-	jan.kiszka@siemens.com,
-	kristo@kernel.org,
-	krzk+dt@kernel.org,
-	kw@linux.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	lpieralisi@kernel.org,
-	nm@ti.com,
-	robh@kernel.org,
-	ssantosh@kernel.org,
-	vigneshr@ti.com
-Subject: [PATCH v10 7/7] arm64: dts: ti: iot2050: Add overlay for DMA isolation for devices behind PCI RC
-Date: Mon, 21 Jul 2025 10:59:45 +0800
-Message-Id: <20250721025945.204422-8-huaqian.li@siemens.com>
-In-Reply-To: <20250721025945.204422-1-huaqian.li@siemens.com>
-References: <20250721025945.204422-1-huaqian.li@siemens.com>
+	s=arc-20240116; t=1753066871; c=relaxed/simple;
+	bh=Nu/Vl9qRU9o6NkaUwTDQDHbqgwFFh2/bmVg/w5K5M8Q=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Jm3SM9ZaqH5d+t7DdCXWXHc7c+THg6PsFY8OblORmQSkqyW6rpOu+Y0sfBJRJZhtgQ3PQmnucpjKYa1HF2PW8EDV0YbZoC50Lrny7ef+tvns5FJT7qR7ML6AfsP/kLlJiosN6WLtsM7Ikkf+CWEXKHwV0ebTBc2bmzHixJ9f+ZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HjzaQHbw; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b2c4e46a89fso2805725a12.2;
+        Sun, 20 Jul 2025 20:01:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753066869; x=1753671669; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kP6DtfLcjEFW0sJ0juaz2BmJKAUOX7mLl5N7KYvqwqQ=;
+        b=HjzaQHbwNKCqk2BZOVDoPO2hh240kZ98xqCbI9Os3c/YIPPrHyfj9DfHAUGNwO08Lz
+         dh+kC49U/gPxdmClUcGnLnoOAcWfiD95cdkZDPI561a0KHPmSjyhWKUegXBe0fE5rHPa
+         Mcfzl/We2BLIOq7xDi/2A6CIRJtbZXsOp5vBVce5VsB+s1g0wHVasPVNfNCa5IQsT4pg
+         Gh67OZsztP6K2zVxItvaT0I7pL3qUloyvxCzNtsjWKRESzclc5hnfhW+L3dhxMPVYpzp
+         ODfyFp/S0Xw/r2PkkEp0gYybzpsjxYTUAzB0tyEDGdccG48F2rnR1L+LwIbr8S6PLGnG
+         qrcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753066869; x=1753671669;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kP6DtfLcjEFW0sJ0juaz2BmJKAUOX7mLl5N7KYvqwqQ=;
+        b=gzCMEPJuoTNIBozMuTDsJ4NJIPdrrHJHHTc4nR1kXY/U2uLOL/t3yYo9nAMlQW2Xv8
+         PjToWchV07hqLh09qNd5FSOSWEnPrDrHpprSdAYkPifnOn/oG9RV873UqppKtFl6VrgK
+         uxkbCCY/+UNZa4HRZNkI5s8RXcrCsHnRsJxBWP+32FbW82gZoiGAcviix1rI9PhifWqw
+         glrsxnVQyRSGfAeTjl3zqMnZ8Fgh8oZ6b9sDBiXlyIkj5+1wuFC2Xof3lTWp7egeP9Cj
+         0CqIdf4ClZQfTfc5tl6YS63aKHB1GwY5SZpAVzSTtSrL6Dv5YD6eq2xOzQ4nFu3v6RuX
+         sAHA==
+X-Forwarded-Encrypted: i=1; AJvYcCUjn+1XUwCSgMBfGXgLf3yBPSmFFchvOjIt8vkRt9PIgeO1kfcP3ZFHzFaochcxqS5AnBpvKpKs6XGjcew=@vger.kernel.org, AJvYcCV1DbrvUFXvvrir3g6Mlw1u/CQpjgDFhWdbDrve/T6HcV777uS0QaO49hYbc+iYFlmQhVOU/r5Ij/pNYjI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqRokb3hIZRJpIQGB3IwHwQc3E0rhUEi+NNBb7QQ7K/iaYSZDu
+	RXxoITEX1D6rZpDiH3wa4xBPwOY9sR32VxSJCBt8rzAd03KQxY1TC12n
+X-Gm-Gg: ASbGnctUlrmLPEL6zlm5sto1YKE1P/1/SG301iJsSs3KDaX5BqBG0sWrWUctopHwr5n
+	e3vMM/oLzm/oSA77eK5ZSx5M7i2h78h98/jwtSEG/cPio4tQZpPGmntRKQzmsdxUr7DD5ZuKagB
+	u243LWpmzpz+31o8tkRNShPemmCyDttMYKRj8DvDEllKjrwe2iAnKLwIvpvYqaeK3Bv9bA/58DM
+	oigfNXtrqeqcFq8J+sDPy9KrNiEt8EBhSWf7LeViTvhKXEXGmrbtI9dtC7vhW6C6EfKBgT5WwK8
+	ISeBcitfJGc+diMAKCFu73ij6tsjcgl5+UcV3qx7va+cmADtDc9i4G+FrPEdRbqQKXVwaSm2QJ7
+	4ziiCV2IRFoUPhhUPMeyonaF+Jly8TAbwqTSVc7A/aoHu4TZCGco=
+X-Google-Smtp-Source: AGHT+IHC5YpqSKWRri7rk5fu1QePjYKo2pweAe0uOj0zdiew0TvVAqes/0fbnU7iPkvxpGOm9Hcv+Q==
+X-Received: by 2002:a17:903:1590:b0:237:f7f8:7453 with SMTP id d9443c01a7336-23e257915a1mr237719295ad.51.1753066869032;
+        Sun, 20 Jul 2025 20:01:09 -0700 (PDT)
+Received: from [127.0.1.1] (211-23-39-77.hinet-ip.hinet.net. [211.23.39.77])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b6cfdbdsm48264795ad.150.2025.07.20.20.01.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Jul 2025 20:01:08 -0700 (PDT)
+From: LiangCheng Wang <zaq14760@gmail.com>
+Subject: [PATCH v3 0/3] Add support for Mayqueen Pixpaper e-ink panel
+Date: Mon, 21 Jul 2025 11:00:46 +0800
+Message-Id: <20250721-drm-v3-0-e16c3cee7263@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-959203:519-21489:flowmailer
+X-B4-Tracking: v=1; b=H4sIAF6tfWgC/1XMQQ6CMBCF4auQWVszM1KKrryHcdG0BZoImNY0G
+ tK7W3CDy38y31sguuBdhEu1QHDJRz9PJU6HCsygp94Jb0sDI0tU2AobRtEgk+1QkbQKyuczuM6
+ /t5XbvfTg42sOn2000Xr994kEilqilJ3V1rT62o/aP45mHmH1iXeG6p/hYqQlzY5YnRuzNznnL
+ wq2KjHKAAAA
+X-Change-ID: 20250708-drm-6021df0715d7
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Wig Cheng <onlywig@gmail.com>, LiangCheng Wang <zaq14760@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, 
+ linaro-mm-sig@lists.linaro.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753066865; l=4077;
+ i=zaq14760@gmail.com; h=from:subject:message-id;
+ bh=Nu/Vl9qRU9o6NkaUwTDQDHbqgwFFh2/bmVg/w5K5M8Q=;
+ b=OtkVDCc9rbFqK0SardhcA5STp5qHR8/AQ9ijEQVOp2pObcDTf74R3t3k+NU1R68i0Be6yK129
+ MprjY4A3A6YBGKm3KNP5rzsODMnJOnFI0s3nnzx2o37X4wLpbDepTY5
+X-Developer-Key: i=zaq14760@gmail.com; a=ed25519;
+ pk=5IaLhzvMqasgGPT47dsa8HEpfb0/Dv2BZC0TzSLj6E0=
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+This patch series adds support for the Mayqueen Pixpaper e-ink display panel,
+controlled via SPI.
 
-Reserve a 64M memory region and ensure that all PCI devices do their DMA
-only inside that region. This is configured via a restricted-dma-pool
-and enforced with the help of the first PVU.
+The series includes:
+- A new vendor-prefix entry for "mayqueen"
+- Device tree binding documentation for the Pixpaper panel
+- A DRM tiny driver implementation for the Pixpaper panel
+- A MAINTAINERS entry for the Pixpaper DRM driver and binding
 
-Applying this isolation is not totally free in terms of overhead and
-memory consumption. It  makes only sense for variants that support
-secure booting, and generally only when this is actually enable.
-Therefore model it as overlay that can be activated on demand. The
-firmware will take care of this via DT fixup during boot and will also
-provide a way to adjust the pool size.
+The panel supports 122x250 resolution with XRGB8888 format and uses SPI,
+along with GPIO lines for reset, busy, and data/command control.
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-Signed-off-by: Li Hua Qian <huaqian.li@siemens.com>
+The driver has been tested on:
+- Raspberry Pi 2 Model B
+with Linux kernel 6.16.
+
 ---
- arch/arm64/boot/dts/ti/Makefile               |  5 +++
- ...am6548-iot2050-advanced-dma-isolation.dtso | 33 +++++++++++++++++++
- 2 files changed, 38 insertions(+)
- create mode 100644 arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-dma-isolation.dtso
+Changes in v3:
+- MAINTAINERS
+    - Added pixpaper-regs.h
 
-diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
-index c6171de9fe88..66b1d8093fa2 100644
---- a/arch/arm64/boot/dts/ti/Makefile
-+++ b/arch/arm64/boot/dts/ti/Makefile
-@@ -84,8 +84,10 @@ k3-am654-gp-evm-dtbs := k3-am654-base-board.dtb \
- k3-am654-evm-dtbs := k3-am654-base-board.dtb k3-am654-icssg2.dtbo
- k3-am654-idk-dtbs := k3-am654-evm.dtb k3-am654-idk.dtbo k3-am654-pcie-usb2.dtbo
- k3-am6548-iot2050-advanced-m2-bkey-ekey-pcie-dtbs := k3-am6548-iot2050-advanced-m2.dtb \
-+	k3-am6548-iot2050-advanced-dma-isolation.dtbo \
- 	k3-am6548-iot2050-advanced-m2-bkey-ekey-pcie.dtbo
- k3-am6548-iot2050-advanced-m2-bkey-usb3-dtbs := k3-am6548-iot2050-advanced-m2.dtb \
-+	k3-am6548-iot2050-advanced-dma-isolation.dtbo \
- 	k3-am6548-iot2050-advanced-m2-bkey-usb3.dtbo
- dtb-$(CONFIG_ARCH_K3) += k3-am6528-iot2050-basic.dtb
- dtb-$(CONFIG_ARCH_K3) += k3-am6528-iot2050-basic-pg2.dtb
-@@ -288,7 +290,10 @@ DTC_FLAGS_k3-am62p5-sk += -@
- DTC_FLAGS_k3-am642-evm += -@
- DTC_FLAGS_k3-am642-phyboard-electra-rdk += -@
- DTC_FLAGS_k3-am642-tqma64xxl-mbax4xxl += -@
-+DTC_FLAGS_k3-am6548-iot2050-advanced += -@
- DTC_FLAGS_k3-am6548-iot2050-advanced-m2 += -@
-+DTC_FLAGS_k3-am6548-iot2050-advanced-pg2 += -@
-+DTC_FLAGS_k3-am6548-iot2050-advanced-sm += -@
- DTC_FLAGS_k3-am68-sk-base-board += -@
- DTC_FLAGS_k3-am69-sk += -@
- DTC_FLAGS_k3-j7200-common-proc-board += -@
-diff --git a/arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-dma-isolation.dtso b/arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-dma-isolation.dtso
-new file mode 100644
-index 000000000000..dfd75d2dc245
---- /dev/null
-+++ b/arch/arm64/boot/dts/ti/k3-am6548-iot2050-advanced-dma-isolation.dtso
-@@ -0,0 +1,33 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * IOT2050, overlay for isolating DMA requests via PVU
-+ * Copyright (c) Siemens AG, 2024
-+ *
-+ * Authors:
-+ *   Jan Kiszka <jan.kiszka@siemens.com>
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+&{/reserved-memory} {
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	pci_restricted_dma_region: restricted-dma@c0000000 {
-+		compatible = "restricted-dma-pool";
-+		reg = <0 0xc0000000 0 0x4000000>;
-+	};
-+};
-+
-+&pcie0_rc {
-+	memory-region = <&pci_restricted_dma_region>;
-+};
-+
-+&pcie1_rc {
-+	memory-region = <&pci_restricted_dma_region>;
-+};
-+
-+&ti_pvu0 {
-+	status = "okay";
-+};
+- Kconfig
+    - Rename config symbol to DRM_PIXPAPER (drop TINYDRM_ prefix).
+    - Reordered Kconfig select lines alphabetically.
+
+- Code structure & style
+    - Fix include order: move <linux/> headers above <drm/> headers.
+    - Removed forward declarations; placed static functions next to usage
+    - Switched logging to drm_err()/drm_warn()/drm_dbg() (legacy DRM_ERROR/WARN removed)
+    - Remove dev_info() statements.
+    - Switched encoder type to DRM_MODE_ENCODER_NONE
+    - Moved pixpaper_panel_hw_init() from atomic_enable() to probe() to avoid redundant hardware init.
+    - Use helper to_pixpaper_panel() instead of container_of() on crtc.
+
+- Robustness
+    - Added timeout + warning in pixpaper_wait_busy() to ensure robustness if BUSY line gets stuck.
+    - Introduced struct pixpaper_error_ctx to propagate SPI/GPIO errors
+
+- Clean‑ups
+    - Removed drm_plane_enable_fb_damage_clips() (full‑frame updates)
+    - Removed noisy info prints; kept drm_dbg() only where helpful
+    - Consolidated all magic register values/commands into new
+      pixpaper-regs.h with datasheet‑aligned naming
+
+- Memory helpers
+    - Driver now uses GEM SHMEM helpers; GEM DMA helpers dropped
+      (panel has no bus‑mastering DMA)
+
+- Functionality fixes
+    - Rewrote pack_pixels_to_byte() to correctly handle 4-color (B/W/R/Y) layout
+      based on expected panel color encoding
+
+- DRM callback safety
+    - Add missing drm_dev_enter()/drm_dev_exit() in callbacks.
+
+- Tags added
+    - Reviewed-by: Rob Herring <robh@kernel.org> (from v1)
+    - Acked-by: Rob Herring <robh@kernel.org> (from v1)
+    - Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> (from v2)
+
+- Link to v2: https://lore.kernel.org/r/20250714-drm-v2-0-5d1a2e12796c@gmail.com
+
+Changes in v2:
+- Reordered patches so that DT bindings come before the driver (suggested by Rob Herring)
+- Fixed sparse warning: removed duplicate `.reset` initializer in `pixpaper_plane_funcs`
+- Fixed checkpatch issues reported by Media CI:
+  - Removed unnecessary blank line before closing brace
+  - Moved opening parentheses up to function call lines (e.g., `DRM_WARN(...)`)
+  - Fixed alignment of conditionals
+  - Fixed `dev_warn(` and `drm_universal_plane_init(` formatting
+- Thanks to Rob Herring for ack on vendor-prefix patch
+- Link to v1: https://lore.kernel.org/r/20250708-drm-v1-0-45055fdadc8a@gmail.com
+
+Thanks to all reviewers for feedback across earlier versions.
+
+Best regards,
+LiangCheng Wang
+<zaq14760@gmail.com>
+
+---
+LiangCheng Wang (2):
+      dt-bindings: display: Add Mayqueen Pixpaper e-ink panel
+      drm: tiny: Add support for Mayqueen Pixpaper e-ink panel
+
+Wig Cheng (1):
+      dt-bindings: vendor-prefixes: Add Mayqueen name
+
+ .../bindings/display/mayqueen,pixpaper.yaml        |  63 ++
+ .../devicetree/bindings/vendor-prefixes.yaml       |   2 +
+ MAINTAINERS                                        |   7 +
+ drivers/gpu/drm/tiny/Kconfig                       |  15 +
+ drivers/gpu/drm/tiny/Makefile                      |   1 +
+ drivers/gpu/drm/tiny/pixpaper-regs.h               | 428 +++++++++++
+ drivers/gpu/drm/tiny/pixpaper.c                    | 790 +++++++++++++++++++++
+ 7 files changed, 1306 insertions(+)
+---
+base-commit: 6832a9317eee280117cd695fa885b2b7a7a38daf
+change-id: 20250708-drm-6021df0715d7
+
+Best regards,
 -- 
-2.34.1
+LiangCheng Wang <zaq14760@gmail.com>
 
 
