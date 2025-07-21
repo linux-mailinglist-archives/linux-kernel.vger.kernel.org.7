@@ -1,276 +1,403 @@
-Return-Path: <linux-kernel+bounces-739185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96725B0C2F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:30:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50BB4B0C2E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:28:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 515657AD23C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:28:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA31D1AA12A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:29:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E03A29B782;
-	Mon, 21 Jul 2025 11:29:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D20529B23E;
+	Mon, 21 Jul 2025 11:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="SQYTSDax";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="SQYTSDax"
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011022.outbound.protection.outlook.com [40.107.130.22])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lj4ANwo0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71D7829B224
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 11:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.22
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753097350; cv=fail; b=RPK2n4rNrk/MHNtIaeVc9+yLOsAa3QTQbjvXsXDiO0MFsHKhR3qD9yFSobgwf7VH3r2+zgCEEdzY46kN491Us5ngQzkkkT5/usmkrlLelFeKkxwIjGqy+mtDgrPzKAv3CBj5nsLKNIIvwxEtOqqunmR02H6WNnToh71NUZwGYMg=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753097350; c=relaxed/simple;
-	bh=F1/Y8vMP5Cuppejkf9TUfd1TG69qyJXdACmzBKg0Tu0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=mVBpx4YyzRwZmexJdTzYToExoXwJVqXLfQNoXCehfSb+xlCXIZIkQR/PzoaqE0ekr1sLUYcnnFHiC3/u3cDVRMrmMd0aE9ZfKt1ehvtdx3a2nF8enEM2OB4INwggfOc+mcyMqF5cXmAsuLuw6m3FPRqi0qHAj76VGgxwmmxMnOU=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=SQYTSDax; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=SQYTSDax; arc=fail smtp.client-ip=40.107.130.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=s5bvBmR5x24hD/AqedYSIq52qubZytIXJG867FPC2Qe+vl8xudMIEl8ybargA2t/u0WPinl4Nb5P8oDLBGcwRJhMhdQbvntUQ83Z6BNChN6EIonUoMg82Vs1g7NHaGWYu/VvgVePWBr+ejHcsVkPepE2ORpezfHL1bAwRE2ZlNj7q9p/1b1rkHnDNXib+nAwBBvaVdDK8NDDegyfNahQTrU1rbwsvYgSWBbpKZ8pqapWAI0wpcXSx3Hx/JDXEeSZSEWu1hfA+cJBogES4YNb1BaXblAhu8vU5ouBzyI6TmAOXbp6vMv3YznRuRuaKE3Ht1f6G0paoM3Qh/AcyXEM8A==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qi43eSbaBB0fL4U/42ZyQXVFl2zn+0AZP6W9eORzDYE=;
- b=mytolZusGTQVEoVtqDcKQ6uJmLCWGnl0t968Z7fMGQtuGMvmdkBoKRjrLtcO+qO7uDnS+aqspUfcB3J5Xqhnqz3MhpZ1Jwi94vGNQrMz145gFDGat4VJhl0HGLXMCAidW95W2ANEeIMmwoq9v2GLujRm8+dAAhlYESE1r/nyvuQkcYT7Jc24jAV+Og+7dRcCzFJGjDnJNaagWTvIKroemtj0Cj85a4nBxPX+/WndwQ1EEMi8dvUAJjoMlKoLG4ipYzgLXlAEEfNWuChhMVKW/xaYSk//wlHvuQkdvNuLtUosrFlWqHE9/aEuuzOLoNGpM4jPiFaYOFKHuaf0YWsQSg==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=gmail.com smtp.mailfrom=arm.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
- (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qi43eSbaBB0fL4U/42ZyQXVFl2zn+0AZP6W9eORzDYE=;
- b=SQYTSDaxzVhTlfj2OTsEAJB0LCkOymjUB/M0FypjkZFH7j5rLpXzug3yn4Z/cQ8g7MJF+lfmTIuuBVTNZoX3Ob6bHhCQlj/VlzUlAj9AWvGynVZqneasNsj4iQwUk3l7UyR3NKkmbYqrOXX0nSrQPCk7XK/FYAr11vjUoVRxVlM=
-Received: from AM9P195CA0025.EURP195.PROD.OUTLOOK.COM (2603:10a6:20b:21f::30)
- by AS2PR08MB10295.eurprd08.prod.outlook.com (2603:10a6:20b:647::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Mon, 21 Jul
- 2025 11:29:00 +0000
-Received: from AM4PEPF00027A60.eurprd04.prod.outlook.com
- (2603:10a6:20b:21f:cafe::e4) by AM9P195CA0025.outlook.office365.com
- (2603:10a6:20b:21f::30) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.23 via Frontend Transport; Mon,
- 21 Jul 2025 11:29:00 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- AM4PEPF00027A60.mail.protection.outlook.com (10.167.16.68) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8964.20
- via Frontend Transport; Mon, 21 Jul 2025 11:28:59 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vdjuJ6liKkEE6+7VHJTW2Jt2GTABopzAnIngcjSRkfGwQ9jbcG3r0QiqYFUZVp7A+G7AhWORcADMHXB5KsNyCorFhZvL3X6ytWJY7XTiKaUY2h0HbP8sNctQS8/Vx3dPDvcNgePp1sN0g2DhoHZtuR91zG6PecqNhrQ3Imjw47oXixKJWcFA9Sd1YgADJBRp/ZY+mCbMTkD+2Jp6AlHc8OVLp7lW1atv+GcXS97SJKAE3cu1Yav4v63QkzMBuKoqU1XIaNM9Y0L5wnHbPA9T1QHwZ9j6CP4MbKE8fHjVGRZCANPntDZaKtZ4CvstOBlwySKBC1swGOO8t1qOki9QHw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qi43eSbaBB0fL4U/42ZyQXVFl2zn+0AZP6W9eORzDYE=;
- b=Sp9aulsyEcs2O/Vqo5qtHrY1cvSNDftDQeidrOFMa2Vb2a9ONnlOoa+SknOtdfgC0l2TRfMuqIunV/AxbYI10Fzfdlkz4BRlFxB1Ic7hTERwFig9FWSD418W34I26OOQA+pY9evkFG0iWfnqEQBhVkqQOrpR08Q3cgAZ6OrYcmdt0PM3aMgG8cVObcok5N86lDagKX4nt0A99n76BJMRhu+3pt3tHXxx/7WJP/Wx5ugHWABySbyvKMBFaRw6jrse3D9aDd7ZOg+C4K3K/z6DtwBZNGXVqK5A8S/q5+TZTy+aWs4QFtuI+/HqOu6TXdy+BrYOnVNYkw53Aj19dnc9VA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qi43eSbaBB0fL4U/42ZyQXVFl2zn+0AZP6W9eORzDYE=;
- b=SQYTSDaxzVhTlfj2OTsEAJB0LCkOymjUB/M0FypjkZFH7j5rLpXzug3yn4Z/cQ8g7MJF+lfmTIuuBVTNZoX3Ob6bHhCQlj/VlzUlAj9AWvGynVZqneasNsj4iQwUk3l7UyR3NKkmbYqrOXX0nSrQPCk7XK/FYAr11vjUoVRxVlM=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from VI0PR08MB11200.eurprd08.prod.outlook.com
- (2603:10a6:800:257::18) by VI0PR08MB11063.eurprd08.prod.outlook.com
- (2603:10a6:800:24f::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Mon, 21 Jul
- 2025 11:28:24 +0000
-Received: from VI0PR08MB11200.eurprd08.prod.outlook.com
- ([fe80::d594:64a:dfc:db74]) by VI0PR08MB11200.eurprd08.prod.outlook.com
- ([fe80::d594:64a:dfc:db74%5]) with mapi id 15.20.8943.029; Mon, 21 Jul 2025
- 11:28:24 +0000
-Message-ID: <e509e1a1-a9ca-4b16-82ab-916ad735a67a@arm.com>
-Date: Mon, 21 Jul 2025 12:28:22 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/7] drm/panthor: Add GPU specific initialization
- framework
-Content-Language: en-GB
-To: Chia-I Wu <olvaffe@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, nd@arm.com,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- linux-kernel@vger.kernel.org
-References: <20250602143216.2621881-1-karunika.choo@arm.com>
- <20250602143216.2621881-2-karunika.choo@arm.com>
- <CAPaKu7TbzqjF+q7McOS3JppiKfg=zKFr4aYQZGsmvOnR+jEN3g@mail.gmail.com>
-From: Karunika Choo <karunika.choo@arm.com>
-In-Reply-To: <CAPaKu7TbzqjF+q7McOS3JppiKfg=zKFr4aYQZGsmvOnR+jEN3g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LO3P123CA0001.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:ba::6) To VI0PR08MB11200.eurprd08.prod.outlook.com
- (2603:10a6:800:257::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7CF29B8D2;
+	Mon, 21 Jul 2025 11:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753097318; cv=none; b=F6RLIU7deOpzjlQ+88lZw2gfVtSuqkm8Ba7UqZ02M8NRs5AMyOLtCtI5/MIlXZD0HYmb7A+6YXrzVXyajWNa0enWcD/fQpw1YWqMRoWLuh6I50v0eD6h6WSGlq7/R974segBjhXU0mph/3SRV/AM/juiwnjpJbDpq4DKhUHLxKU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753097318; c=relaxed/simple;
+	bh=eQezYz66/+XQz7IKViqI2K/mgmBuRA+/oJUk8NS0y3M=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=bRDdGtPzT0AG8CqnX3duvmfJwP508WoNRsuq6Te8vQ9sw2s9YpweP5mL5dVwMS6N/BiNZghtngXuHgoOQUb0rkOJUFklXenbdVrHuqcBSryOYAcPddwQYtGvG3eQWAymD+Q5wBJ/yX15qqCnDGhJQf/7KJc85ZNOb3oX0uvkvWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lj4ANwo0; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753097316; x=1784633316;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=eQezYz66/+XQz7IKViqI2K/mgmBuRA+/oJUk8NS0y3M=;
+  b=lj4ANwo0meC48397Hxv9AzSuT6pQuuOOwuIznqYjjcp+5jxreqN2rytu
+   PI55FQJ+yfUoc3J2/s/3jDvhXQc4YmpQ6D09fKrDkUeUW6DgESUOIG6nW
+   JtsiDKjJAoklUbMNJYit2El20Z5vbk8V1TdwLWtZmIlDDUsfq7CRXx1rp
+   gSH0OI6n0eRPDvllh6nyHyKURGDnyRea2DNiSrE4LlhfGfk8LkQf6cDch
+   AgHRoHuf0YEKmifGQI2hJsg9jF9aiF367bFNTWsc9utOb3YvF7p6CC/oS
+   aZEBLc3c8i9q9HG2ypfjbNZzfcgUmzPvjR3nH0d+i8Pa4gUdGC8/95n8N
+   Q==;
+X-CSE-ConnectionGUID: 8UA/VAeMT2qYOz6pBKNj+Q==
+X-CSE-MsgGUID: B/JnR9MGQomVEL/8K0hrnA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11498"; a="65568039"
+X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
+   d="scan'208";a="65568039"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 04:28:35 -0700
+X-CSE-ConnectionGUID: 1/T2S8u1Q2a/5Zgu9KCCcA==
+X-CSE-MsgGUID: p+6P3nXnQ1a2p9PTO3h6zA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
+   d="scan'208";a="158471166"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.225])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 04:28:28 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 21 Jul 2025 14:28:24 +0300 (EEST)
+To: Manivannan Sadhasivam <mani@kernel.org>, 
+    "Rafael J. Wysocki" <rafael@kernel.org>
+cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
+    Jeff Johnson <jjohnson@kernel.org>, 
+    Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kwilczynski@kernel.org>, 
+    Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+    Nirmal Patel <nirmal.patel@linux.intel.com>, 
+    Jonathan Derrick <jonathan.derrick@linux.dev>, 
+    linux-wireless@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    ath12k@lists.infradead.org, ath11k@lists.infradead.org, 
+    ath10k@lists.infradead.org, Bjorn Helgaas <helgaas@kernel.org>, 
+    linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, 
+    Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
+    Qiang Yu <qiang.yu@oss.qualcomm.com>
+Subject: Re: [PATCH 4/6] wifi: ath12k: Use pci_{enable/disable}_link_state()
+ APIs to enable/disable ASPM states
+In-Reply-To: <je7sz6lgig3picksxv4ncfjcnnw2sdsp5ja6bwofqjuydhc4v6@b3kavwicxggu>
+Message-ID: <fdfcc2c8-c749-2616-9295-7f4aa37fb0a4@linux.intel.com>
+References: <20250716-ath-aspm-fix-v1-0-dd3e62c1b692@oss.qualcomm.com> <20250716-ath-aspm-fix-v1-4-dd3e62c1b692@oss.qualcomm.com> <7a97d075-2e37-5f40-5247-867146938613@linux.intel.com> <3q2gqo6ipzyqr7i64yhndtpg4etwep4lgffk7emxluxuhjfya5@vt7czmsgpbuw>
+ <52baf40b-41ed-2588-7817-4d8cd859e0d1@linux.intel.com> <je7sz6lgig3picksxv4ncfjcnnw2sdsp5ja6bwofqjuydhc4v6@b3kavwicxggu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	VI0PR08MB11200:EE_|VI0PR08MB11063:EE_|AM4PEPF00027A60:EE_|AS2PR08MB10295:EE_
-X-MS-Office365-Filtering-Correlation-Id: 12a3c88f-e4c0-41cb-d924-08ddc849c968
-X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr,ExtAddr
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info-Original:
- =?utf-8?B?ZExTT21wRnovR1JrVUJxYlV4ZjFLKzRWeUswU2hHdE9jamk4d2grdi9rVjRm?=
- =?utf-8?B?K1k0Ui9WK2lVemFxYVhuSUlWSTVQRUdBZmd6ZVdESHBDUHlkMnFEOTRsZ0NH?=
- =?utf-8?B?VGlISDhtLzVzU2hTS0N4eCtZN2djaDVpZHlYcFVWTW4vcGdsbFg5VzQ3UFNh?=
- =?utf-8?B?YzdjN3h5ZDdHREJVeHphRUVockZpd1FJNW9nYXRMd0xKWGR1cVhrcUNaN3pY?=
- =?utf-8?B?aDBwYmRTT2VNOEJxSHNTUi9teXVjc3NvcUtnMElaSjZOOHE3bW1DdFc4NlNz?=
- =?utf-8?B?UFk2VTA2OHVYNWI4SlVjV1BBM2VLNXJPZWcvaDkyMmg4aFByc1pEZzZybjY5?=
- =?utf-8?B?anR5QU5TS25qTXN3MmdkZm5JZms5cTF1aTdpVTJBUmEvOWEyOVJ4THltelpu?=
- =?utf-8?B?U0xRQWx4MGV3TnUwanlOK3pJYTlUY04xZnNaV1JWRXdnVDZaSUNaUGkwTHdy?=
- =?utf-8?B?Q1dRbnJkazdTbUp0SlBWbGs3dGJyeHYxcFlzMmVlRzdPb0ErUXUrdm9aRzc5?=
- =?utf-8?B?SXY1N2VKRUIzQUdyU3cvYmVvWnkrOXVaYnVDbThVWExmTHNqaEloa1Z0S3pa?=
- =?utf-8?B?OXA4L1h3UzhvYmdLeVBnbFgwSGdBbDdQV3JIRmVXMnBUNEhuM1ppRW95UzVh?=
- =?utf-8?B?dWE3TlpOMHB5ZXU0K2ZHSjQzQjhJUEZDeVROR25PWVRvTDJoM1hUcG8zK1R0?=
- =?utf-8?B?VEsvQjY1cDRuNlJBSkQ3U3VLSkZDZUM3NGF4VWFSamNRSllNaktjUFcvbTh1?=
- =?utf-8?B?U0hSRWRFSUNodkQvL0RuSUdTdU0zaVJHbmdaNWFkL2Y0VDdUcnp2U2ZuVVRT?=
- =?utf-8?B?UzFFU3BQcjVGZ01DV3pHU0JpbDZnRk1jUFlabmVsRzZOWExwSk1MRXE2d1hR?=
- =?utf-8?B?L1VCWXZzaCtXci9JL3NkMFJHRzU0TkNnQUs1c3NaUkt0VHFYa3NteExKcWJX?=
- =?utf-8?B?MENkZXBmV3dKR0JPUSsrQWxYVnlya0xXWDNvbElZdDMwZ3RYaFZSYjZDOXBr?=
- =?utf-8?B?YTFkbEtlTE8wRGkzUkZiZlJ1eXdyZnpFSUZtZlBEMCtiZFQ4blZpV3FZNXRP?=
- =?utf-8?B?aUl6M25xRys5NGVlOWVvTkJIUFpnVHErck1qdkZUTm9kYXlVKzU5N0NqZ2RK?=
- =?utf-8?B?NWJkdmlNMDJIMG5NQkduOGplL1REcXh4ZlNxdmEvM1d0TFRTT0xBbTJxWElF?=
- =?utf-8?B?bG04Uk92cGZreEk5VE9adEY1Ry8wQkFIbjNrQkJVbjljcVk4WUxtNUpWMTQv?=
- =?utf-8?B?RHdaMkFQSHhWZ2l4cWF4elNjbW9MUlBGemJxNDFUazhTM3ZrK3ZaM3A0UnhD?=
- =?utf-8?B?TjY5UmFWOFF2TjNZb0hkTTFMOWwxN0VDNjlTVnlKMGVpc0NUU3J5QWcxQnVi?=
- =?utf-8?B?aytZQUZXVnVvTHNzbTZRRUxIS0c5UWtjUnRFRXc4RGxUMkJqckxETVJNODJy?=
- =?utf-8?B?NTNOS1R0MzdsZGdjMm0zMm9rS0ZyRVkzb2s4L1owMmFibVdhT1dZMjMyN1Nj?=
- =?utf-8?B?YWt0K3dFcTIzaWtvMnJwOTRNTFNtSTl4QzZMNjZOVy9XYm5aeWkyb2d3UWJk?=
- =?utf-8?B?VE44djhoekhQbDFkOGpJK0lPbHZuOXJ3bjBaMiswNnJ3RjAyb1JDY3oyS25h?=
- =?utf-8?B?NzNoVUdOR2hzZVNSWlJnSERKc21YQzBTeit5Z0tpVzBOd3BROGR2NU9sQ0dF?=
- =?utf-8?B?eVZOVGFZUlEyRGNEbzdWMkdmVmtLUUs2c1VpeGFhS3pzdUppejkyYVpHUmxC?=
- =?utf-8?B?S21MSEhKUGtNYUtnZCtkcnJocERQOEVuSFNIOFB4MjBxZWVIWUx1UEJzRjdk?=
- =?utf-8?B?TkdFN1pEbjdMbHY1SFNJejlNSzZqTDdUYXdSR1h3dlBmWUhZVzJPWGxDaUpS?=
- =?utf-8?B?akFEY005c2xlVXVYd0tSMmxndkpBQzhMNHR0ajNLQzJTZHJyN2dVNnhnUkpE?=
- =?utf-8?Q?AxbgpJqzTyc=3D?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI0PR08MB11200.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR08MB11063
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- AM4PEPF00027A60.eurprd04.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	d2529c7a-a374-4143-ec78-08ddc849b470
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|14060799003|376014|35042699022|1800799024|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dTFDNXFDdE5wNHBUSjNySHVvc0lSOXhHbmUza3NQWDVnbE4rOXo1NVNJSzlh?=
- =?utf-8?B?aXpVT2lJNGZnaWNpZm5qTkJpeDVoMEVwd0tKcWcranNNMWY1Wk5jVVUrTDBN?=
- =?utf-8?B?YldYSjVNT3dvTnBoN2xIQm04L1N1WDcvQlRlejk4bUM2eERwakdmS0JtdlV3?=
- =?utf-8?B?K09EMGN4RDZVTlVCT2pvZTVFNEdxbTdyWDZiK2V2SkFYVGgvbDRUd0RYQlJy?=
- =?utf-8?B?bXI1VDNhZ0RrTTJWSUh5WHI4cmxHZmxaVWZRb3hkVWs3NVlUQjRybGZUd0Iv?=
- =?utf-8?B?Qjg0SXpxYmVUNDBaQ1VoWWY1U0prWTc5akhzOFVWb1V0WVdObDYzeGtyaVpN?=
- =?utf-8?B?MGdzQkEzN0x1a2VKRXMzTHVReWhLWVpWWTI1OHhFbEY2NmVFc0xLWG5kK21a?=
- =?utf-8?B?cnIxZmlPL0wxdnl1VHVpMi90Qm1pTDJEYUtEQ200ejNKQUZ5VFA2YzZBRXc2?=
- =?utf-8?B?KzNseFdoMWIxUzBmNzZIZmovZHFEbUc2RUFBWFE1UVIxNHFlMjhEZTNFQWNF?=
- =?utf-8?B?Yi9qMGhZVERPVi9tcGN6VjFwWVFOeEY1b3crTzhscGlQOSs3UUlIdzI5NURF?=
- =?utf-8?B?SzNMblBuRmpvclByRE1XaGJFNGRkTVBISE5wd09XSk01N0kvaUV0QVZHQURt?=
- =?utf-8?B?WnJ4WXQ3cm9ycjJUcHVuSFRVK3VpT3AwaTkyNzloOVljeG5acmljZ1VoL1ly?=
- =?utf-8?B?VXF0OGROVXlUMEFPM2J6TEUyUkREWWpzclB1bGFYa3FTaHNDN1JIS3VrMXMy?=
- =?utf-8?B?NUhrL1B0VjVOYVFPek1IQ3dTSVNJckNuWUluV25RZUdtQTBSc0ZxNjFESU40?=
- =?utf-8?B?Qi9Nai8xSm1UZmNDR1JaN0xoZ0lHUHMrdU1KWlJpMS8yN1VCVDhZVmh0TDhO?=
- =?utf-8?B?WWdEa2ROazZ1ckdGN1M2VTBOdG4xRkRJSnlscmEzSkJoR1JnOTNvRzRqdkVC?=
- =?utf-8?B?Y3B0M3dIU3lXRkg4MDFJQ3BlVFRBRFBZVkpaSEdQYnBWMG96bVhTaHlZRThX?=
- =?utf-8?B?T0RNNnl0dzg2UkpvWDBQampTZ0x1dnJYQ1JXRnVNSE5hTlJoWThpTzZlQjd3?=
- =?utf-8?B?ZmxGUDdMQys2TXEveE05N2doS0tlczBLR0VrNWl5aXM4ZXF0U2c5ZVlPclZm?=
- =?utf-8?B?RlExT1gvSDdBMHNzSDUwSDlIcEFNYzBia0wrek1tUGlLOWI1STduaFVIcUlQ?=
- =?utf-8?B?dThEb1Bwb0lZcEVUZmtBV0lpQUltRmJVNEZySGNJVnlzTE1kM0hzdWI5empY?=
- =?utf-8?B?UlJmTHhoOUkrTnltaVlqYitobEVrSTZRN1d5aElqQSszN3NyaEQwS2VZYzRv?=
- =?utf-8?B?VHl0aUdWZXFGQ0VJeC9WSGVZRDdjek92SC81dEN6NUdRNzR6SGNzM0dmMk8z?=
- =?utf-8?B?U3dVVGV1KzI0UG9aelZsWG16M3VIdGp1bE55dG41KytiUjFNMzh3R0lrM2VZ?=
- =?utf-8?B?dmtMM3h4SEIxb0VlS0d4M2hyTytxSnRYQkFwK3B0c0FlOTdHMmNpV05Bb3Yy?=
- =?utf-8?B?M1FCME92azg4QXRvWE0xVWEzbHpkd0NOMTFJSC85MmRIaEZKZnFENHlZOWpI?=
- =?utf-8?B?QkkrVGNiNzdlMzBIRVJZOVk2SVVXYTZnQlFqenFhc2N3YmVyWGY4by9jd3Q3?=
- =?utf-8?B?YWpheVRibVQrMzFQSnRaMy9lZ05tWG1xK0FkVGYvckdNWmVsVnd3eGZoOEtQ?=
- =?utf-8?B?eUE4Q1BrdHAyd1lBS1FUQjdnQzZoUVlFVnY4SW1pbzY1a2R5ME1lcERIZk9v?=
- =?utf-8?B?NkNjM2REbVpNOENlMXFlRU5QRHlnQjNhNVJVNnNIY2hKM1hMUDNYb1BTVi9s?=
- =?utf-8?B?Y0ZScEZTcktxbUVZTlVQdFE0OUJydFJ6NFhSdVp0U0l1M1dTQTNUSm1sQnVZ?=
- =?utf-8?B?cVRJdFJDS3g4bTMrZUZRU2RlNEZsSHBySmZnTWJGb2xZRDQxMFp5N2M3WnVS?=
- =?utf-8?B?WkF0MHRMWnlOL2kzb2J0WGZhcDlRSzE3cGNhTnhPYWpEeDN0MmtXd25wWkdq?=
- =?utf-8?B?azJzS0Z2NzkvZ3ltdW51OW9haC9OTEpBdDlURWFBdHRUcUZEMGI2MElqaWF3?=
- =?utf-8?B?THczblJOdVlhU054akJpK25yVG5DNWpoTTQ2QT09?=
-X-Forefront-Antispam-Report:
-	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(14060799003)(376014)(35042699022)(1800799024)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2025 11:28:59.2842
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 12a3c88f-e4c0-41cb-d924-08ddc849c968
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM4PEPF00027A60.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR08MB10295
+Content-Type: multipart/mixed; boundary="8323328-1126931654-1753097304=:69097"
 
-On 11/06/2025 00:12, Chia-I Wu wrote:
-> On Mon, Jun 2, 2025 at 7:33 AM Karunika Choo <karunika.choo@arm.com> wrote:
->>
->> This patch provides an initialization framework for multiple Mali GPUs
->> by introducing a GPU support look-up table. Each entry contains, at
->> minimum, the architecture major version of the GPU, and may optionally
->> provide feature flags and register offset overrides.
-> <snipped>
->> +/**
->> + * struct panthor_hw - GPU specific register mapping and functions
->> + */
->> +struct panthor_hw {
->> +       /** @arch_major: Architecture major to match against */
->> +       u32 arch_major;
->> +
->> +       /** @features: Bitmap containing panthor_hw_feature */
->> +       DECLARE_BITMAP(features, PANTHOR_HW_FEATURES_END);
->> +
->> +       /** @map: Panthor regmap */
->> +       struct panthor_hw_regmap map;
->> +
->> +       /** @ops: Panthor HW specific operations */
->> +       struct panthor_hw_ops ops;
->> +};
-> None of the fields are really needed even at the end of this series.
-> 
-> Can we merge patch 1 & 2, introduce just panthor_hw_init and nothing
-> else, and let panthor_hw_init call panthor_gpu_init_info?
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Hello, I have tried to address this in PATCH 1/6 of v5:
-- https://lore.kernel.org/all/20250721111344.1610250-2-karunika.choo@arm.com/
+--8323328-1126931654-1753097304=:69097
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-> 
-> 
->> +
->> +int panthor_hw_init(struct panthor_device *ptdev);
->> +
->> +bool panthor_hw_supports(struct panthor_device *ptdev,
->> +                        enum panthor_hw_feature feature);
->> +
->> +#endif /* __PANTHOR_HW_H__ */
->> +
->> --
->> 2.49.0
->>
+On Mon, 21 Jul 2025, Manivannan Sadhasivam wrote:
 
+> On Mon, Jul 21, 2025 at 01:09:05PM GMT, Ilpo J=C3=A4rvinen wrote:
+> > On Mon, 21 Jul 2025, Manivannan Sadhasivam wrote:
+> > > On Mon, Jul 21, 2025 at 11:04:10AM GMT, Ilpo J=C3=A4rvinen wrote:
+> > > > On Wed, 16 Jul 2025, Manivannan Sadhasivam via B4 Relay wrote:
+> > > > > From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.c=
+om>
+> > > > >=20
+> > > > > It is not recommended to enable/disable the ASPM states on the ba=
+ck of the
+> > > > > PCI core directly using the LNKCTL register. It will break the PC=
+I core's
+> > > > > knowledge about the device ASPM states. So use the APIs exposed b=
+y the PCI
+> > > > > core to enable/disable ASPM states.
+> > > > >=20
+> > > > > Tested-on: WCN7850 hw2.0 PCI WLAN.HMT.1.0.c5-00481-QCAHMTSWPL_V1.=
+0_V2.0_SILICONZ-3
+> > > > >=20
+> > > > > Reported-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
+> > > > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.q=
+ualcomm.com>
+> > > > > ---
+> > > > >  drivers/net/wireless/ath/ath.h        | 14 ++++++++++++++
+> > > > >  drivers/net/wireless/ath/ath12k/pci.c | 10 ++++------
+> > > > >  2 files changed, 18 insertions(+), 6 deletions(-)
+> > > > >=20
+> > > > > diff --git a/drivers/net/wireless/ath/ath.h b/drivers/net/wireles=
+s/ath/ath.h
+> > > > > index 34654f710d8a1e63f65a47d4602e2035262a4d9e..ef685123b66bf4f41=
+428fec67c1967f242a9ef27 100644
+> > > > > --- a/drivers/net/wireless/ath/ath.h
+> > > > > +++ b/drivers/net/wireless/ath/ath.h
+> > > > > @@ -21,6 +21,8 @@
+> > > > >  #include <linux/skbuff.h>
+> > > > >  #include <linux/if_ether.h>
+> > > > >  #include <linux/spinlock.h>
+> > > > > +#include <linux/pci.h>
+> > > > > +#include <linux/pci_regs.h>
+> > > > >  #include <net/mac80211.h>
+> > > > > =20
+> > > > >  /*
+> > > > > @@ -336,4 +338,16 @@ static inline const char *ath_bus_type_to_st=
+ring(enum ath_bus_type bustype)
+> > > > >  =09return ath_bus_type_strings[bustype];
+> > > > >  }
+> > > > > =20
+> > > > > +static inline int ath_pci_aspm_state(u16 lnkctl)
+> > > > > +{
+> > > > > +=09int state =3D 0;
+> > > > > +
+> > > > > +=09if (lnkctl & PCI_EXP_LNKCTL_ASPM_L0S)
+> > > > > +=09=09state |=3D PCIE_LINK_STATE_L0S;
+> > > > > +=09if (lnkctl & PCI_EXP_LNKCTL_ASPM_L1)
+> > > > > +=09=09state |=3D PCIE_LINK_STATE_L1;
+> > > > > +
+> > > > > +=09return state;
+> > > > > +}
+> > > > > +
+> > > > >  #endif /* ATH_H */
+> > > > > diff --git a/drivers/net/wireless/ath/ath12k/pci.c b/drivers/net/=
+wireless/ath/ath12k/pci.c
+> > > > > index 489d546390fcdab8f615cc9184006a958d9f140a..a5e11509e3ab8faad=
+6638ff78ce6a8a5e9c3cbbd 100644
+> > > > > --- a/drivers/net/wireless/ath/ath12k/pci.c
+> > > > > +++ b/drivers/net/wireless/ath/ath12k/pci.c
+> > > > > @@ -16,6 +16,8 @@
+> > > > >  #include "mhi.h"
+> > > > >  #include "debug.h"
+> > > > > =20
+> > > > > +#include "../ath.h"
+> > > > > +
+> > > > >  #define ATH12K_PCI_BAR_NUM=09=090
+> > > > >  #define ATH12K_PCI_DMA_MASK=09=0936
+> > > > > =20
+> > > > > @@ -928,8 +930,7 @@ static void ath12k_pci_aspm_disable(struct at=
+h12k_pci *ab_pci)
+> > > > >  =09=09   u16_get_bits(ab_pci->link_ctl, PCI_EXP_LNKCTL_ASPM_L1))=
+;
+> > > > > =20
+> > > > >  =09/* disable L0s and L1 */
+> > > > > -=09pcie_capability_clear_word(ab_pci->pdev, PCI_EXP_LNKCTL,
+> > > > > -=09=09=09=09   PCI_EXP_LNKCTL_ASPMC);
+> > > > > +=09pci_disable_link_state(ab_pci->pdev, PCIE_LINK_STATE_L0S | PC=
+IE_LINK_STATE_L1);
+> > > >=20
+> > > > I'd remove to comment too as the code is self-explanatory after thi=
+s=20
+> > > > change.
+> > > >=20
+> > >=20
+> > > Ack
+> > >=20
+> > > > > =20
+> > > > >  =09set_bit(ATH12K_PCI_ASPM_RESTORE, &ab_pci->flags);
+> > > > >  }
+> > > > > @@ -958,10 +959,7 @@ static void ath12k_pci_aspm_restore(struct a=
+th12k_pci *ab_pci)
+> > > > >  {
+> > > > >  =09if (ab_pci->ab->hw_params->supports_aspm &&
+> > > > >  =09    test_and_clear_bit(ATH12K_PCI_ASPM_RESTORE, &ab_pci->flag=
+s))
+> > > > > -=09=09pcie_capability_clear_and_set_word(ab_pci->pdev, PCI_EXP_L=
+NKCTL,
+> > > > > -=09=09=09=09=09=09   PCI_EXP_LNKCTL_ASPMC,
+> > > > > -=09=09=09=09=09=09   ab_pci->link_ctl &
+> > > > > -=09=09=09=09=09=09   PCI_EXP_LNKCTL_ASPMC);
+> > > > > +=09=09pci_enable_link_state(ab_pci->pdev, ath_pci_aspm_state(ab_=
+pci->link_ctl));
+> > > > >  }
+> > > > > =20
+> > > > >  static void ath12k_pci_cancel_workqueue(struct ath12k_base *ab)
+> > > >=20
+> > > > As you now depend on ASPM driver being there, these should also add=
+ to=20
+> > > > Kconfig:
+> > > >=20
+> > > > depends on PCIEASPM
+> > > >=20
+> > >=20
+> > > I thought about it, but since this driver doesn't necessarily enable =
+ASPM for
+> > > all the devices it supports, I didn't add the dependency. But looking=
+ at it
+> > > again, I think makes sense to add the dependency since the driver can=
+not work
+> > > reliably without disabling ASPM (for the supported devices).
+> >=20
+> > PCIEASPM is already default y and if EXPERT so it is not something=20
+> > that is expected to be disabled.
+> >=20
+> > You also no longer need to move the ASPM link state defines LKP found o=
+ut=20
+> > about after adding the depends on.
+> >=20
+>=20
+> Yes, it will fix the reported issue, but guarding the definitions feels w=
+rong to
+> me still. Maybe that's something we can worry later.
+>=20
+> > I'm a bit worried this series will regress in the cases where OS doesn'=
+t=20
+> > control ASPM so it might be necessary to include something along the=20
+> > lines of the patch below too (the earlier discussion on this is in Link=
+=20
+> > tags):
+> >=20
+>=20
+> atheros drivers didn't have such comment (why they were manually changing=
+ the
+> LNKCTL register), but I agree that there is a chance that they could caus=
+e issue
+> on platforms where BIOS didn't give ASPM control to the OS.
+>=20
+> But as a non-ACPI developer, I don't know what does 'ACPI doesn't give
+> permission to manage ASPM' mean exactly. Does ACPI allow to disable ASPM =
+but not
+> enable it?
+
+While others are likely better qualified to answer this, my impression is=
+=20
+that even disabling ASPM is not allowed when OS does has not been granted=
+=20
+control over ASPM (OS should not change the value of ASPM Control in=20
+LNKCTL at all).
+
+The obvious trouble then is, if a driver/hw needs ASPM to be disabled over=
+=20
+certain period of its operation or entirely to ensure stable operation,=20
+and ASPM is enabled, we're between a rock and a hard place when changes to=
+=20
+ASPM Control field are disallowed.
+
+Because the ASPM driver took a hard stance of conformance here and did=20
+not let touching the ASPM Control field, we ended up having drivers that=20
+then write ASPM Control on their own to work around HW problems (see e.g.=
+=20
+the comments in drivers/net/ethernet/intel/e1000e/netdev.c that make it=20
+very clear it was intentional from the driver) so it was considered that=20
+allowing disabling ASPM might be acceptable compromise over drivers doing=
+=20
+it on their own (and leaving the ASPM driver out of the loop because it=20
+cannot be relied to disable ASPM consistently in all cases).
+
+--=20
+ i.
+
+> > -----
+> > From: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> > Subject: [PATCH] PCI/ASPM: Always disable ASPM when driver requests it
+> >=20
+> > PCI core/ASPM service driver allows controlling ASPM state through
+> > pci_disable_link_state() API. It was decided earlier (see the Link
+> > below), to not allow ASPM changes when OS does not have control over it
+> > but only log a warning about the problem (commit 2add0ec14c25
+> > ("PCI/ASPM: Warn when driver asks to disable ASPM, but we can't do
+> > it")).
+> >=20
+> > A number of drivers have added workarounds to force ASPM off with own
+> > writes into the Link Control Register (some even with comments
+> > explaining why PCI core does not disable it under some circumstances).
+> > According to the comments, some drivers require ASPM to be off for
+> > reliable operation.
+> >=20
+> > Having custom ASPM handling in drivers is problematic because the state
+> > kept in the ASPM service driver is not updated by the changes made
+> > outside the link state management API.
+> >=20
+> > As the first step to address this issue, make pci_disable_link_state()
+> > to unconditionally disable ASPM so the motivation for drivers to come
+> > up with custom ASPM handling code is eliminated.
+> >=20
+> > To fully take advantage of the ASPM handling core provides, the drivers
+> > that need to quirk ASPM have to be altered depend on PCIEASPM and the
+> > custom ASPM code is removed. This is to be done separately. As PCIEASPM
+> > is already behind EXPERT, it should be no problem to limit disabling it
+> > for configurations that do not require touching ASPM.
+> >=20
+> > Make pci_disable_link_state() function comment to comply kerneldoc
+> > formatting while changing the description.
+> >=20
+> > Link: https://lore.kernel.org/all/CANUX_P3F5YhbZX3WGU-j1AGpbXb_T9Bis2Er=
+hvKkFMtDvzatVQ@mail.gmail.com/
+> > Link: https://lore.kernel.org/all/20230511131441.45704-1-ilpo.jarvinen@=
+linux.intel.com/
+> > Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> >=20
+> > ---
+> >  drivers/pci/pcie/aspm.c | 33 ++++++++++++++++++++-------------
+> >  1 file changed, 20 insertions(+), 13 deletions(-)
+> >=20
+> > diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> > index 5721ebfdea71..11732031e342 100644
+> > --- a/drivers/pci/pcie/aspm.c
+> > +++ b/drivers/pci/pcie/aspm.c
+> > @@ -1382,16 +1382,23 @@ static int __pci_disable_link_state(struct pci_=
+dev *pdev, int state, bool locked
+> >  =09=09return -EINVAL;
+> >  =09/*
+> >  =09 * A driver requested that ASPM be disabled on this device, but
+> > -=09 * if we don't have permission to manage ASPM (e.g., on ACPI
+> > +=09 * if we might not have permission to manage ASPM (e.g., on ACPI
+> >  =09 * systems we have to observe the FADT ACPI_FADT_NO_ASPM bit and
+> > -=09 * the _OSC method), we can't honor that request.  Windows has
+> > -=09 * a similar mechanism using "PciASPMOptOut", which is also
+> > -=09 * ignored in this situation.
+> > +=09 * the _OSC method), previously we chose to not honor disable
+> > +=09 * request in that case. Windows has a similar mechanism using
+> > +=09 * "PciASPMOptOut", which is also ignored in this situation.
+> > +=09 *
+> > +=09 * Not honoring the requests to disable ASPM, however, led to
+> > +=09 * drivers forcing ASPM off on their own. As such changes of ASPM
+> > +=09 * state are not tracked by this service driver, the state kept her=
+e
+> > +=09 * became out of sync.
+> > +=09 *
+> > +=09 * Therefore, honor ASPM disable requests even when OS does not hav=
+e
+> > +=09 * ASPM control. Plain disable for ASPM is assumed to be slightly
+> > +=09 * safer than fully managing it.
+> >  =09 */
+> > -=09if (aspm_disabled) {
+> > -=09=09pci_warn(pdev, "can't disable ASPM; OS doesn't have ASPM control=
+\n");
+> > -=09=09return -EPERM;
+> > -=09}
+> > +=09if (aspm_disabled)
+> > +=09=09pci_warn(pdev, "OS doesn't have ASPM control, disabling ASPM any=
+way\n");
+> > =20
+> >  =09if (!locked)
+> >  =09=09down_read(&pci_bus_sem);
+> > @@ -1418,13 +1425,13 @@ int pci_disable_link_state_locked(struct pci_de=
+v *pdev, int state)
+> >  EXPORT_SYMBOL(pci_disable_link_state_locked);
+> > =20
+> >  /**
+> > - * pci_disable_link_state - Disable device's link state, so the link w=
+ill
+> > - * never enter specific states.  Note that if the BIOS didn't grant AS=
+PM
+> > - * control to the OS, this does nothing because we can't touch the LNK=
+CTL
+> > - * register. Returns 0 or a negative errno.
+> > - *
+> > + * pci_disable_link_state - Disable device's link state
+> >   * @pdev: PCI device
+> >   * @state: ASPM link state to disable
+> > + *
+> > + * Disable device's link state so the link will never enter specific s=
+tates.
+> > + *
+> > + * Return: 0 or a negative errno
+> >   */
+> >  int pci_disable_link_state(struct pci_dev *pdev, int state)
+> >  {
+> >=20
+> > --=20
+> > tg: (9f4972a5d481..) aspm/disable-always (depends on: pci/set-default-c=
+omment2)
+>=20
+>=20
+>=20
+--8323328-1126931654-1753097304=:69097--
 
