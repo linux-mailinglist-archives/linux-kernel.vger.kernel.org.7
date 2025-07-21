@@ -1,186 +1,289 @@
-Return-Path: <linux-kernel+bounces-739465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC9FFB0C69E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:40:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88896B0C6A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:41:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1162166DDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:40:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABDDD168D99
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:41:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A4D5298255;
-	Mon, 21 Jul 2025 14:40:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F682DAFC9;
+	Mon, 21 Jul 2025 14:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TbYFfBz+"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="X7472c1K"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668AF3FE4
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 14:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D1A298255
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 14:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753108835; cv=none; b=LgIxfB8eIPj+DMLElXvNJXmFqnozqvI6UFoaOGUZQS4O59PC2D/r/npO+ZhGrDHUfctD4raRhSvB9NfgNhamiJBfd7laANeFxcKbMdx1kBpV3XzH0GrOYO5MNo3kZQf7S8YOfW6bXsmk2SYHs/+4qxNEFmpBSnrxa0wmXKg6PuQ=
+	t=1753108870; cv=none; b=V2DWP0FQ5OQixaFFriSWlzpRk2f74OVl620h5Rj3dHmERBsdbHKktvm/HarBvinDmBVx0olfV5G1fe7D23QiLeU8Y/wRDthKWSeqGmrYuorpUnq03Lw7xu1Uyif72PikkBK0L5QtU8vQs3p08LI1281xq1xy68xYEgvDFuuxcUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753108835; c=relaxed/simple;
-	bh=iGUp0dU/j2ZdmVwOtmcSmdjuk0Qz8lvGofOd2PTtUTE=;
+	s=arc-20240116; t=1753108870; c=relaxed/simple;
+	bh=1RtQBzOEC4Zl0bIPrchjsS6gz98G25dZlBbimhRn9mg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nDvDorNJxYekKzBeOzWdGe55jlqq77GmjGT184ALDd7e82mFxv1mr8ME3w8zs3V2G1hzvFBPfAMsNVaissof4fieV6zBkk67LmVX011+e8k4R0CeXjUoZ6z08JaOD99wU4raVdWWHAzRaU3mJFIJIFY3OhU1Vjc2/Jn4Iib803k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TbYFfBz+; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-612b34ef0c2so7445938a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 07:40:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1753108831; x=1753713631; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8ulo84xZ7t36NNeL6qul+IkvI9anviU2HLbOPblgw/k=;
-        b=TbYFfBz+6aOKX9FecZwEa/TH9P1M1WrZJqFCnlwaOSeDRIn+chIeKyjlpwwpnMS/NL
-         2OkzEMFvaqT5k9GBw60NzYaaG629kO08nY3NBM9B9Ooegos6b5V/dvhTLZ0m9ejmpnct
-         5N/qbN7etEg2C6j+ePwi0SXs4p/79cdgBnFdXoYR/iFBuaNLhiqZioT9MNmqbxgXBSOL
-         b/LFTnzk2QkDWUo/o7acKTvRJrTEx+SIUdK+P8Et8C9u77/DdZUhFG1MYEAVvYbiSyIC
-         F5SQKbKi7VXBMRgU9QLNiEGybfu9fMjJ1ShLa2H+z3qM9bQgtIvISbEuLIrTxmwbD+/3
-         WMXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753108831; x=1753713631;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8ulo84xZ7t36NNeL6qul+IkvI9anviU2HLbOPblgw/k=;
-        b=Hem4xJUo4hXNS+cXj3yFpg/hULPEPUhCwXjFr+DA9J1gsVIWpvDz3AMukwKY9vH5hO
-         oCN415xZP3f7l2LORZWhd6i4Ejs1nGxeupYgY4s+63C27XqhpPWsrKYdyAAW4zUzl2c2
-         MlMB9Z8adeJOCrCLUPmXlPU2EQut423PkUucXpzj6JG8KAniK0IadfL1qknhNKLZbOwi
-         z6jXdPnYilOrsN5K5SBdtZuwU1WajgahSI3O7EtkExK9oE/ua1O0ImJuYyY8xqeuOWbi
-         g+aAcxJ9o0N4NQFIWd7iKi/mWVn/Fj3NfpX99WLlIACp/VPE5VpipcV10yzqH2j0FEBH
-         uQYw==
-X-Forwarded-Encrypted: i=1; AJvYcCWdc/+K5tvN5PngZmHpqsvUvM8FPnkEy5cW1yQzTm5e9IPfF3YRa+sUbS2G3s7hbhkYLT8JXU/5WYkgPBw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyM3pzQeno0Zn75i9iTb5kugkUEmzbNkyYGWt7Zqr9ndlPKm1WR
-	B1Odgdj8RQBLOeNLDTcqzynr5nBPd/oV4bAhOoL5XnLApSVzlCsa6aFf49AdntM5+M4=
-X-Gm-Gg: ASbGncvzNOlIU9rQU1kSq9D54MmxoEKSaz6PZoeAx1B60gY6ADodMAxSTAEJtyM56NT
-	gYyftHgrb4hwJ7YCM0km7Edv74jm3nf0oiOshHHqJ5d/BpUEjBYKHxTQ4hRtumfsDoSI0wt8fZI
-	W3+nAhLdeAbX3j6Kbs2kjIagktXtak9M/TJ9+zHJQaBHFxQaj2fs+cdVqCeSn77myZmjfmQvc8D
-	IbHu6y2A2lIhv+cbKgpI0nNZws1Ih4+jkL+lmjNSZmGdrjzgkcu06l8TWDTN02hZGtywwUWAKVR
-	vyxYiRpZTezn+OY0yjwOGQFm/0mDoLn9tSyYmReZtOH8fsSCDcZrwWyNr4JWoeNvA8KlhL7L73B
-	p02R4JzgYkLwZqty9tk/kxhXDlqqyU8pjouxrcsOs8vs=
-X-Google-Smtp-Source: AGHT+IEH6XXULLKH2PA+RJRxowZuccLIs/Ri/UE41Z0z9+TdJgKpFlvZ4BqpSMCYm1zFe2zzzylsNg==
-X-Received: by 2002:a17:907:c808:b0:ae3:a3f7:ad8e with SMTP id a640c23a62f3a-aec4fb05ee0mr1737210166b.25.1753108830669;
-        Mon, 21 Jul 2025 07:40:30 -0700 (PDT)
-Received: from [10.100.51.209] (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af11411f1b5sm28655266b.48.2025.07.21.07.40.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Jul 2025 07:40:30 -0700 (PDT)
-Message-ID: <3992b57d-3d8b-4d60-bc4a-f227f712dcca@suse.com>
-Date: Mon, 21 Jul 2025 16:40:29 +0200
+	 In-Reply-To:Content-Type; b=ACE/yUVinSfOpZuwujrtZ2r7eQAqsxgJcao1pavrdgQ7S6e+zYBIIn5iVDN5J0hRRo05ffatSGg41eVB7fAWm3tzghnBFTLK2w7JXidsXZBKZf7pRgl1ZPpT8ep3J8NDCUsDDaFzSkK/FGik0NOmXOqG3VfHgmqR27IBRNcqV2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=X7472c1K; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <165897af-fa84-428d-9e93-52be1f2d09e5@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753108854;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bDQ+R+MAd9ERvWMuuaknZR5JiVowZsZ4r7mCULkiSX0=;
+	b=X7472c1K55Kef8FN/3V41ZpFASwDxZ8NEelc6muTh7Lu1Nm6YpbFJHDyDkDCVqN3IMYd/c
+	zbqnCPhoaO5c5TGY1nmUO0Yw4W+zcrB4y1cgVz1aAAwv7As8hSkEm0MZVEb4/ZpoC0JUFB
+	asN2qpTveEFrXeu6TtAmRfIdC4yWNBE=
+Date: Mon, 21 Jul 2025 15:40:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] module: pr_debug when there is no version info
-To: Wang Jinchao <wangjinchao600@gmail.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Daniel Gomez <da.gomez@kernel.org>,
- Sami Tolvanen <samitolvanen@google.com>, linux-kernel@vger.kernel.org,
- linux-modules@vger.kernel.org
-References: <20250721045224.391745-1-wangjinchao600@gmail.com>
+Subject: Re: [PATCH v2 03/15] net: rnpgbe: Add basic mbx ops support
+To: Dong Yibo <dong100@mucse.com>, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, corbet@lwn.net, gur.stavi@huawei.com,
+ maddy@linux.ibm.com, mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+ gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+ Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+ alexanderduyck@fb.com, richardcochran@gmail.com
+Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250721113238.18615-1-dong100@mucse.com>
+ <20250721113238.18615-4-dong100@mucse.com>
 Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20250721045224.391745-1-wangjinchao600@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20250721113238.18615-4-dong100@mucse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On 7/21/25 6:52 AM, Wang Jinchao wrote:
-> When there is no version information, modprobe and insmod only
-> report "invalid format".
-> Print the actual cause to make it easier to diagnose the issue.
-> This helps developers quickly identify version-related module
-> loading failures.
-> Signed-off-by: Wang Jinchao <wangjinchao600@gmail.com>
-> ---
->  kernel/module/version.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+On 21/07/2025 12:32, Dong Yibo wrote:
+> Initialize basic mbx function.
 > 
-> diff --git a/kernel/module/version.c b/kernel/module/version.c
-> index 2beefeba82d9..bc28c697ff3a 100644
-> --- a/kernel/module/version.c
-> +++ b/kernel/module/version.c
-> @@ -42,8 +42,10 @@ int check_version(const struct load_info *info,
->  	}
->  
->  	/* No versions at all?  modprobe --force does this. */
-> -	if (versindex == 0)
-> +	if (versindex == 0) {
-> +		pr_debug("No version info for module %s\n", info->name);
->  		return try_to_force_load(mod, symname) == 0;
-> +	}
->  
->  	versions = (void *)sechdrs[versindex].sh_addr;
->  	num_versions = sechdrs[versindex].sh_size
+> Signed-off-by: Dong Yibo <dong100@mucse.com>
+> ---
+>   drivers/net/ethernet/mucse/rnpgbe/Makefile    |   5 +-
+>   drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    |  46 ++
+>   .../net/ethernet/mucse/rnpgbe/rnpgbe_chip.c   |   5 +-
+>   drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h |   2 +
+>   .../net/ethernet/mucse/rnpgbe/rnpgbe_main.c   |   1 +
+>   .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c    | 623 ++++++++++++++++++
+>   .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx.h    |  48 ++
+>   7 files changed, 727 insertions(+), 3 deletions(-)
+>   create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c
+>   create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.h
+> 
+> diff --git a/drivers/net/ethernet/mucse/rnpgbe/Makefile b/drivers/net/ethernet/mucse/rnpgbe/Makefile
+> index 42c359f459d9..41177103b50c 100644
+> --- a/drivers/net/ethernet/mucse/rnpgbe/Makefile
+> +++ b/drivers/net/ethernet/mucse/rnpgbe/Makefile
+> @@ -5,5 +5,6 @@
+>   #
+>   
+>   obj-$(CONFIG_MGBE) += rnpgbe.o
+> -rnpgbe-objs := rnpgbe_main.o\
+> -	       rnpgbe_chip.o
+> +rnpgbe-objs := rnpgbe_main.o \
+> +	       rnpgbe_chip.o \
+> +	       rnpgbe_mbx.o
+> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+> index 2ae836fc8951..46e2bb2fe71e 100644
+> --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+> +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+> @@ -63,9 +63,51 @@ struct mucse_mac_info {
+>   	int clk_csr;
+>   };
+>   
+> +struct mucse_hw;
+> +
+> +enum MBX_ID {
+> +	MBX_VF0 = 0,
+> +	MBX_VF1,
+> +	MBX_VF2,
+> +	MBX_VF3,
+> +	MBX_VF4,
+> +	MBX_VF5,
+> +	MBX_VF6,
+> +	MBX_VF7,
+> +	MBX_CM3CPU,
+> +	MBX_FW = MBX_CM3CPU,
+> +	MBX_VFCNT
+> +};
+> +
+> +struct mucse_mbx_operations {
+> +	void (*init_params)(struct mucse_hw *hw);
+> +	int (*read)(struct mucse_hw *hw, u32 *msg,
+> +		    u16 size, enum MBX_ID id);
+> +	int (*write)(struct mucse_hw *hw, u32 *msg,
+> +		     u16 size, enum MBX_ID id);
+> +	int (*read_posted)(struct mucse_hw *hw, u32 *msg,
+> +			   u16 size, enum MBX_ID id);
+> +	int (*write_posted)(struct mucse_hw *hw, u32 *msg,
+> +			    u16 size, enum MBX_ID id);
+> +	int (*check_for_msg)(struct mucse_hw *hw, enum MBX_ID id);
+> +	int (*check_for_ack)(struct mucse_hw *hw, enum MBX_ID id);
+> +	void (*configure)(struct mucse_hw *hw, int num_vec,
+> +			  bool enable);
+> +};
+> +
+> +struct mucse_mbx_stats {
+> +	u32 msgs_tx;
+> +	u32 msgs_rx;
+> +	u32 acks;
+> +	u32 reqs;
+> +	u32 rsts;
+> +};
+> +
+>   #define MAX_VF_NUM (8)
+>   
+>   struct mucse_mbx_info {
+> +	struct mucse_mbx_operations ops;
+> +	struct mucse_mbx_stats stats;
+>   	u32 timeout;
+>   	u32 usec_delay;
+>   	u32 v2p_mailbox;
+> @@ -99,6 +141,8 @@ struct mucse_mbx_info {
+>   	int share_size;
+>   };
+>   
+> +#include "rnpgbe_mbx.h"
+> +
+>   struct mucse_hw {
+>   	void *back;
+>   	u8 pfvfnum;
+> @@ -110,6 +154,8 @@ struct mucse_hw {
+>   	u16 vendor_id;
+>   	u16 subsystem_device_id;
+>   	u16 subsystem_vendor_id;
+> +	int max_vfs;
+> +	int max_vfs_noari;
+>   	enum rnpgbe_hw_type hw_type;
+>   	struct mucse_dma_info dma;
+>   	struct mucse_eth_info eth;
+> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+> index 38c094965db9..b0e5fda632f3 100644
+> --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+> +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+> @@ -6,6 +6,7 @@
+>   
+>   #include "rnpgbe.h"
+>   #include "rnpgbe_hw.h"
+> +#include "rnpgbe_mbx.h"
+>   
+>   /**
+>    * rnpgbe_get_invariants_n500 - setup for hw info
+> @@ -67,7 +68,7 @@ static void rnpgbe_get_invariants_n500(struct mucse_hw *hw)
+>   	mbx->fw_pf_mbox_mask = 0x2e200;
+>   	mbx->fw_vf_share_ram = 0x2b000;
+>   	mbx->share_size = 512;
+> -
+> +	memcpy(&hw->mbx.ops, &mucse_mbx_ops_generic, sizeof(hw->mbx.ops));
 
-I think it would be better to instead improve the behavior of
-try_to_force_load(). The function should print the error reason prior to
-returning -ENOEXEC. This would also help its two other callers,
-check_modinfo() and check_export_symbol_versions().
+that's bad pattern. it's better to have a constant set of callbacks per
+device type and assign const pointer to it. It will make further debugs
+much easier.
 
-Additionally, I suggest moving the check to ensure version information
-is available for imported symbols earlier in the loading process.
-A suitable place might be check_modstruct_version(). This way the check
-is performed only once per module.
+>   	/* setup net feature here */
+>   	hw->feature_flags |= M_NET_FEATURE_SG |
+>   			     M_NET_FEATURE_TX_CHECKSUM |
+> @@ -83,6 +84,7 @@ static void rnpgbe_get_invariants_n500(struct mucse_hw *hw)
+>   			     M_NET_FEATURE_STAG_OFFLOAD;
+>   	/* start the default ahz, update later */
+>   	hw->usecstocount = 125;
+> +	hw->max_vfs = 7;
+>   }
+>   
+>   /**
+> @@ -117,6 +119,7 @@ static void rnpgbe_get_invariants_n210(struct mucse_hw *hw)
+>   	/* update hw feature */
+>   	hw->feature_flags |= M_HW_FEATURE_EEE;
+>   	hw->usecstocount = 62;
+> +	hw->max_vfs_noari = 7;
+>   }
+>   
+>   const struct rnpgbe_info rnpgbe_n500_info = {
+> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
+> index 2c7372a5e88d..ff7bd9b21550 100644
+> --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
+> +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
+> @@ -14,6 +14,8 @@
+>   #define RNPGBE_RING_BASE (0x1000)
+>   #define RNPGBE_MAC_BASE (0x20000)
+>   #define RNPGBE_ETH_BASE (0x10000)
+> +
+> +#define RNPGBE_DMA_DUMY (0x000c)
+>   /* chip resourse */
+>   #define RNPGBE_MAX_QUEUES (8)
+>   /* multicast control table */
+> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
+> index 08f773199e9b..1e8360cae560 100644
+> --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
+> +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
+> @@ -114,6 +114,7 @@ static int rnpgbe_add_adapter(struct pci_dev *pdev,
+>   	hw->hw_addr = hw_addr;
+>   	hw->dma.dma_version = dma_version;
+>   	ii->get_invariants(hw);
+> +	hw->mbx.ops.init_params(hw);
+>   
+>   	return 0;
+>   
+> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c
+> new file mode 100644
+> index 000000000000..56ace3057fea
+> --- /dev/null
+> +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c
+> @@ -0,0 +1,623 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* Copyright(c) 2022 - 2025 Mucse Corporation. */
+> +
+> +#include <linux/pci.h>
+> +#include <linux/errno.h>
+> +#include <linux/delay.h>
+> +#include <linux/iopoll.h>
+> +#include "rnpgbe.h"
+> +#include "rnpgbe_mbx.h"
+> +#include "rnpgbe_hw.h"
+> +
+> +/**
+> + * mucse_read_mbx - Reads a message from the mailbox
+> + * @hw: Pointer to the HW structure
+> + * @msg: The message buffer
+> + * @size: Length of buffer
+> + * @mbx_id: Id of vf/fw to read
+> + *
+> + * @return: 0 on success, negative on failure
+> + **/
+> +int mucse_read_mbx(struct mucse_hw *hw, u32 *msg, u16 size,
+> +		   enum MBX_ID mbx_id)
+> +{
+> +	struct mucse_mbx_info *mbx = &hw->mbx;
+> +
+> +	/* limit read to size of mailbox */
+> +	if (size > mbx->size)
+> +		size = mbx->size;
+> +
+> +	if (!mbx->ops.read)
+> +		return -EIO;
 
-The following is a prototype patch:
+is it even possible? you control the set of callbacks, and these
+operations must be setup to have HW working. avoid defensive programming
+here and in other places you use callbacks.
 
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index c2c08007029d..c1ccd343e8c3 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -1053,6 +1053,7 @@ int try_to_force_load(struct module *mod, const char *reason)
- 	add_taint_module(mod, TAINT_FORCED_MODULE, LOCKDEP_NOW_UNRELIABLE);
- 	return 0;
- #else
-+	pr_err("%s: %s\n", mod->name, reason);
- 	return -ENOEXEC;
- #endif
- }
-diff --git a/kernel/module/version.c b/kernel/module/version.c
-index 2beefeba82d9..4d9ebf0834de 100644
---- a/kernel/module/version.c
-+++ b/kernel/module/version.c
-@@ -41,9 +41,9 @@ int check_version(const struct load_info *info,
- 		return 1;
- 	}
- 
--	/* No versions at all?  modprobe --force does this. */
-+	/* No versions? Ok, already tainted in check_modstruct_version(). */
- 	if (versindex == 0)
--		return try_to_force_load(mod, symname) == 0;
-+		return 1;
- 
- 	versions = (void *)sechdrs[versindex].sh_addr;
- 	num_versions = sechdrs[versindex].sh_size
-@@ -90,6 +90,11 @@ int check_modstruct_version(const struct load_info *info,
- 		have_symbol = find_symbol(&fsa);
- 	BUG_ON(!have_symbol);
- 
-+	/* No versions at all?  modprobe --force does this. */
-+	if (!info->index.vers && !info->index.vers_ext_crc)
-+		return try_to_force_load(
-+			       mod, "no versions for imported symbols") == 0;
-+
- 	return check_version(info, "module_layout", mod, fsa.crc);
- }
- 
+> +
+> +	return mbx->ops.read(hw, msg, size, mbx_id);
+> +}
+> +
 
-As a side note, I'm confused why with CONFIG_MODULE_FORCE_LOAD=y, the
-code treats missing modversions for imported symbols as ok, even without
-MODULE_INIT_IGNORE_MODVERSIONS. This is at least consistent with the
-handling of missing vermagic, but it seems this behavior should be
-stricter.
-
--- 
-Thanks,
-Petr
+[...]
 
