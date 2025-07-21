@@ -1,164 +1,402 @@
-Return-Path: <linux-kernel+bounces-739305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFE48B0C49A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:58:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4019B0C498
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:58:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EED9541FA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:58:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8E7C5426EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:57:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F7A22D662D;
-	Mon, 21 Jul 2025 12:57:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C38F2D7808;
+	Mon, 21 Jul 2025 12:56:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="0GGCxJo2"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dxrsgPIF"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08E12D5A1A;
-	Mon, 21 Jul 2025 12:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE08F2D6609;
+	Mon, 21 Jul 2025 12:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753102677; cv=none; b=mZPnObAeOk2xWZP3qnzHI6tSflYPE9lISUGK01bcJRpsjLVscoXCZELbl/YXfdZu1qgk6qWMMeT9491PTWdm/zgLi2hdPkKxdrp6umyW0Rx+Hg9FFz3dOf9eqSVfTVMu7TLzggs9pecuBTEPMvDEP57oNhRoT3/ciMwmXOc3nLk=
+	t=1753102593; cv=none; b=Jqq9AIpzzFoxKUf3uLrq9t4AvYWQqgOhUwbrE7jEa+PL0nly8aJLmZxisTY01KaQ2GV9lS9Tuw/yI6zSWQKPRBgYXL+sIeBibXebLi+ndujePHXs8ezKik5HW6peCKKJOBuPafIA8MnK2j+UPFqzomN8MkwmmI4p54QfcTSSNHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753102677; c=relaxed/simple;
-	bh=OuazLhBqqrXrceWtDPZrgryjzxWcncFwL5s0O5K+RK0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gGdIwLPeJBlxZqK7YvSKLAKclN4XwWRH/6U5Cfvhmq78bB2+ROexTWg61tOW/wFiI9H5PXDdcRrsb3Y9Ywjc7wP6pW4VQNqG/AD8JUulBsEmXMjpYnx5cujn7f4BxbWnF5Q4p2/D8lUi6ma7bHxQrsgiV0STSldJbP2m59LlKLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=0GGCxJo2; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56LBu24b002202;
-	Mon, 21 Jul 2025 14:57:32 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	QrwPvtm0Y3jVd4A8YMJUm1x2eIlSHpKGIqbTIjvz8DE=; b=0GGCxJo2waUxHJ5n
-	tpo0ZXAtI2x1IQX/mSnLBB2UWXUm8KIM1YYSdht2vwrAt8hPJ60gHkJ9BkepTsne
-	S6KPhuKi4YiazGtGYy5f5sIGs+ghPVjqj9+9VKWwaThEd7P9mYmLu8eNGwEF+kuH
-	VU323u+2uJqOfjh4cDh4NednVsafixyjGv9DsnOex5IwjRzRjQ9LH40CI/E6S/VG
-	hMXz2PONOqf/yvjBjBmz48SmTtMEoo8sKfROTPM2HNWb434oTuu/G2B2AM+6HQJa
-	lV06ykGVAFC8KcrkY6CBGg3schMPNtzYlYSC24vAmGVdCLnhnZbGadm1S2SADXcV
-	G62OpQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4802q211x4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 21 Jul 2025 14:57:32 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id BDF4C40057;
-	Mon, 21 Jul 2025 14:56:01 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5B8B37A63A1;
-	Mon, 21 Jul 2025 14:54:41 +0200 (CEST)
-Received: from [10.48.87.141] (10.48.87.141) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 21 Jul
- 2025 14:54:40 +0200
-Message-ID: <5c7dd351-2fca-4a96-b911-c79d326d82df@foss.st.com>
-Date: Mon, 21 Jul 2025 14:54:39 +0200
+	s=arc-20240116; t=1753102593; c=relaxed/simple;
+	bh=PfOYPiVGChUA1lb4czCViq+/vtUEEXAawmIkKLCLZ6Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZwYFW9pYMfNwjdFl+t73/mMe+lkn0Andd6+VgkWQUeXrtBSrf3X2mD5TT7JTMp4UMpYFOzCgYR+UppO/SUZlUvSARMoBeNdtqBwUSW+XXjYH4HVhv/cyy7uF43bQ9U+6EJwyxBuNAg2aKXhxxBA822nI/3XpZj3xtoBHDb5M7ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dxrsgPIF; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-23649faf69fso33701475ad.0;
+        Mon, 21 Jul 2025 05:56:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753102591; x=1753707391; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NTRKGfzOHatiL46xHxv71/tQ2NCbJIdvz6s8nypCsrM=;
+        b=dxrsgPIFy7KKHSV9lArAII4ZBIXpRyJVgSnLFJ1frVgxHmkKQHHFGuj6HQZR/bRC0I
+         7z9KOSew0YwjMjT218bKD7/o8O/SldubRXIHUeBtq0fiTKYThQGJzj9SGt9eqe08gQwh
+         y0UEu6+nw8aJJ0bod7PBkuzFUU0cXkETGqoFvQkB+6lPaXB+rynB8JRyW0QC8BczMZvp
+         yZTd3ycN8XH3y6sIEL0L9TJdRE/7VJUc3dTPOZBWKF330CDybR7tbMOuOiwEVlfrCulv
+         SmEmWjRA9PEM6qNsw6eo4ZNKPam04Jq+WpyXVKEYhNHmISzbVVtOrz5Av3YxM59M7Cux
+         jqbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753102591; x=1753707391;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NTRKGfzOHatiL46xHxv71/tQ2NCbJIdvz6s8nypCsrM=;
+        b=RwG0/UYeXfPne8u9tqiS97F8h/uSnbmVfJN926fu/aY4/w4OLqPzx4akSskvDy7OIF
+         Fqy1JDX+IxOez+KAnjl9Qyvyy6+dHwqRjoXdULexPFDUW2R8/Opg0kgLaXsRqxQSlpbp
+         f9gBwK7judjpvuGDwtkgSlxfN6mNz85CGFFdOUXnWwB2ziAwswGs5x2bJ31PCrQTcn4D
+         JOY7AsfWZg5pnZR8hWENKS7b2EZkq8kt0U8aC2fZoGTkCndtv7wLTP/F8AfDidGssqSe
+         toLutr5jXwMeyGIBPs8FGuPH+Px/Jt+It35Zzl0K9BLavzinSaT7zEP4MalB9YgdAH+B
+         2UZw==
+X-Forwarded-Encrypted: i=1; AJvYcCVqy9lbZG4oa8NFJ1vqniRwCmV1GfJ6Wr7QfP3evQQ1Df4IO1vPL/Tl8z/bsSAdnbUYiAeLVNKFGbzVBJE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy32MjODzzCCObj18QejtEgA9RIlT0+s8mUOP67ptKNDNEZYvwo
+	G/yyFN4miFlXQBblixvI2nK8oWrh/C2b9JhBn2h/C5lpZyDGEy2elU6W
+X-Gm-Gg: ASbGncsVsz315C9lnSBn8XLcKPjZ+SqWVeyqPkEmieeusn31AiCDxr+G05XZCXx+gfY
+	8GEPVgLnvOadUDcdAqE4kkjkQxLeGgYbOh9RnL04tntaa4xcxRIv/IPi8sNqbYj1Z+u2YGhtnMz
+	PpsSmox6XrzzJocxuPkW8nC332I8cM/6PCbrBk4J+weQnJ4klxTxS78AmFYrqBwuzgY5j3Ej/9G
+	DqZ2G8pY+RtBETJCekgKorJjOS6fVHVd0sAqTpZejXdrNVnbctciiquxL2ys/c7sUFf6wFQEdH8
+	l6tRF4e5Gu7d87lO+qeM7hfp089Fwqcv+AWYvDQyI9cZi6982xifEl/XrSJzQXwRKy131gSwwb2
+	MoSW+2jEdrt1OuXJ8AOHFJZiBU6oVkLZrVE8VSvePQPskPkFGiI/p4k2L0sYCV/0cbzOmpVGyAw
+	==
+X-Google-Smtp-Source: AGHT+IFamResX5lkIhYoIEIC7CTZPRcvOjSrboT2zvaKifB5ME1+0rD4aXdJdbbtOt1zPLxLSXzN2A==
+X-Received: by 2002:a17:902:ceca:b0:235:2375:7eaa with SMTP id d9443c01a7336-23e256c99bemr303453015ad.22.1753102590906;
+        Mon, 21 Jul 2025 05:56:30 -0700 (PDT)
+Received: from SIQOL-WIN-0002-DARSHAN.localdomain ([49.36.70.207])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b6d1d61sm58083435ad.159.2025.07.21.05.56.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Jul 2025 05:56:29 -0700 (PDT)
+From: "Darshan R." <rathod.darshan.0896@gmail.com>
+To: simona@ffwll.ch,
+	deller@gmx.de
+Cc: linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	dishank@siqol.com,
+	"Darshan R." <rathod.darshan.0896@gmail.com>
+Subject: [PATCH] fbdev: svgalib: Clean up coding style
+Date: Mon, 21 Jul 2025 12:56:47 +0000
+Message-ID: <20250721125648.27179-1-rathod.darshan.0896@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 1/4] dt-bindings: net: document st,phy-wol
- property
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Andrew Lunn
-	<andrew+netdev@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni
-	<pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Christophe Roullier <christophe.roullier@foss.st.com>,
-        Andrew Lunn
-	<andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King
-	<linux@armlinux.org.uk>, Simon Horman <horms@kernel.org>,
-        Tristram Ha
-	<Tristram.Ha@microchip.com>,
-        Florian Fainelli <florian.fainelli@broadcom.com>
-CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20250721-wol-smsc-phy-v1-0-89d262812dba@foss.st.com>
- <20250721-wol-smsc-phy-v1-1-89d262812dba@foss.st.com>
- <faea23d5-9d5d-4fbb-9c6a-a7bc38c04866@kernel.org>
- <f5c4bb6d-4ff1-4dc1-9d27-3bb1e26437e3@foss.st.com>
- <b220ae01-81b5-47f1-bf99-9aa0903995e1@kernel.org>
-Content-Language: en-US
-From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
-In-Reply-To: <b220ae01-81b5-47f1-bf99-9aa0903995e1@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-21_04,2025-07-21_01,2025-03-28_01
+Content-Transfer-Encoding: 8bit
 
+This patch addresses various coding style issues in `svgalib.c` to improve readability and better align the code with the Linux kernel's formatting standards.
 
+The changes primarily consist of:
+- Adjusting whitespace around operators and after keywords.
+- Standardizing brace placement for control flow statements.
+- Removing unnecessary braces on single-statement if/else blocks.
+- Deleting extraneous blank lines throughout the file.
 
-On 7/21/25 14:16, Krzysztof Kozlowski wrote:
-> On 21/07/2025 14:10, Gatien CHEVALLIER wrote:
->> Hello Krzysztof,
->>
->> On 7/21/25 13:30, Krzysztof Kozlowski wrote:
->>> On 21/07/2025 13:14, Gatien Chevallier wrote:
->>>> The "st,phy-wol" property can be set to use the wakeup capability of
->>>> the PHY instead of the MAC.
->>>
->>>
->>> And why would that be property of a SoC or board? Word "can" suggests
->>> you are documenting something which exists, but this does not exist.
->> Can you elaborate a bit more on the "not existing" part please?
-> 
-> 
-> Where does this property exist that you suggest that a new binding "can"
-> use it?
-> 
+These changes are purely stylistic and introduce no functional modifications.
 
-I'm not sure if you're only targeting the wording here?
+Signed-off-by: Darshan R. <rathod.darshan.0896@gmail.com>
+---
+ drivers/video/fbdev/core/svgalib.c | 95 +++++++++++++-----------------
+ 1 file changed, 42 insertions(+), 53 deletions(-)
 
-I found this property: "mediatek,mac-wol". Its non-presence sets the
-same flag AFAICT.
+diff --git a/drivers/video/fbdev/core/svgalib.c b/drivers/video/fbdev/core/svgalib.c
+index 821b89a0a645..5234ad109dfd 100644
+--- a/drivers/video/fbdev/core/svgalib.c
++++ b/drivers/video/fbdev/core/svgalib.c
+@@ -19,7 +19,6 @@
+ #include <asm/types.h>
+ #include <asm/io.h>
+ 
+-
+ /* Write a CRT register value spread across multiple registers */
+ void svga_wcrt_multi(void __iomem *regbase, const struct vga_regset *regset, u32 value)
+ {
+@@ -31,12 +30,13 @@ void svga_wcrt_multi(void __iomem *regbase, const struct vga_regset *regset, u32
+ 		while (bitnum <= regset->highbit) {
+ 			bitval = 1 << bitnum;
+ 			regval = regval & ~bitval;
+-			if (value & 1) regval = regval | bitval;
+-			bitnum ++;
++			if (value & 1)
++				regval = regval | bitval;
++			bitnum++;
+ 			value = value >> 1;
+ 		}
+ 		vga_wcrt(regbase, regset->regnum, regval);
+-		regset ++;
++		regset++;
+ 	}
+ }
+ 
+@@ -51,12 +51,13 @@ void svga_wseq_multi(void __iomem *regbase, const struct vga_regset *regset, u32
+ 		while (bitnum <= regset->highbit) {
+ 			bitval = 1 << bitnum;
+ 			regval = regval & ~bitval;
+-			if (value & 1) regval = regval | bitval;
+-			bitnum ++;
++			if (value & 1)
++				regval = regval | bitval;
++			bitnum++;
+ 			value = value >> 1;
+ 		}
+ 		vga_wseq(regbase, regset->regnum, regval);
+-		regset ++;
++		regset++;
+ 	}
+ }
+ 
+@@ -66,15 +67,13 @@ static unsigned int svga_regset_size(const struct vga_regset *regset)
+ 
+ 	while (regset->regnum != VGA_REGSET_END_VAL) {
+ 		count += regset->highbit - regset->lowbit + 1;
+-		regset ++;
++		regset++;
+ 	}
+ 	return 1 << count;
+ }
+ 
+-
+ /* ------------------------------------------------------------------------- */
+ 
+-
+ /* Set graphics controller registers to sane values */
+ void svga_set_default_gfx_regs(void __iomem *regbase)
+ {
+@@ -102,7 +101,7 @@ void svga_set_default_atc_regs(void __iomem *regbase)
+ 	vga_w(regbase, VGA_ATT_W, 0x00);
+ 
+ 	/* All standard ATC registers (AR00 - AR14) */
+-	for (count = 0; count <= 0xF; count ++)
++	for (count = 0; count <= 0xF; count++)
+ 		svga_wattr(regbase, count, count);
+ 
+ 	svga_wattr(regbase, VGA_ATC_MODE, 0x01);
+@@ -187,10 +186,8 @@ void svga_dump_var(struct fb_var_screeninfo *var, int node)
+ }
+ #endif  /*  0  */
+ 
+-
+ /* ------------------------------------------------------------------------- */
+ 
+-
+ void svga_settile(struct fb_info *info, struct fb_tilemap *map)
+ {
+ 	const u8 *font = map->data;
+@@ -229,7 +226,7 @@ void svga_tilecopy(struct fb_info *info, struct fb_tilearea *area)
+ 	    ((area->sy == area->dy) && (area->sx > area->dx))) {
+ 		src = fb + area->sx * colstride + area->sy * rowstride;
+ 		dst = fb + area->dx * colstride + area->dy * rowstride;
+-	    } else {
++	} else {
+ 		src = fb + (area->sx + area->width - 1) * colstride
+ 			 + (area->sy + area->height - 1) * rowstride;
+ 		dst = fb + (area->dx + area->width - 1) * colstride
+@@ -237,7 +234,7 @@ void svga_tilecopy(struct fb_info *info, struct fb_tilearea *area)
+ 
+ 		colstride = -colstride;
+ 		rowstride = -rowstride;
+-	    }
++	}
+ 
+ 	for (dy = 0; dy < area->height; dy++) {
+ 		u16 __iomem *src2 = src;
+@@ -284,19 +281,19 @@ void svga_tileblit(struct fb_info *info, struct fb_tileblit *blit)
+ 	u8 __iomem *fb = (u8 __iomem *)info->screen_base;
+ 	fb += blit->sx * colstride + blit->sy * rowstride;
+ 
+-	i=0;
+-	for (dy=0; dy < blit->height; dy ++) {
++	i = 0;
++	for (dy = 0; dy < blit->height; dy++) {
+ 		u8 __iomem *fb2 = fb;
+-		for (dx = 0; dx < blit->width; dx ++) {
++		for (dx = 0; dx < blit->width; dx++) {
+ 			fb_writeb(blit->indices[i], fb2);
+ 			fb_writeb(attr, fb2 + 1);
+ 			fb2 += colstride;
+-			i ++;
+-			if (i == blit->length) return;
++			i++;
++			if (i == blit->length)
++				return;
+ 		}
+ 		fb += rowstride;
+ 	}
+-
+ }
+ 
+ /* Set cursor in text (tileblit) mode */
+@@ -308,15 +305,15 @@ void svga_tilecursor(void __iomem *regbase, struct fb_info *info, struct fb_tile
+ 		+ (cursor->sy + (info->var.yoffset / 16))
+ 		   * (info->var.xres_virtual / 8);
+ 
+-	if (! cursor -> mode)
++	if (!cursor->mode)
+ 		return;
+ 
+ 	svga_wcrt_mask(regbase, 0x0A, 0x20, 0x20); /* disable cursor */
+ 
+-	if (cursor -> shape == FB_TILE_CURSOR_NONE)
++	if (cursor->shape == FB_TILE_CURSOR_NONE)
+ 		return;
+ 
+-	switch (cursor -> shape) {
++	switch (cursor->shape) {
+ 	case FB_TILE_CURSOR_UNDERLINE:
+ 		cs = 0x0d;
+ 		break;
+@@ -374,7 +371,6 @@ EXPORT_SYMBOL(svga_get_caps);
+ 
+ /* ------------------------------------------------------------------------- */
+ 
+-
+ /*
+  *  Compute PLL settings (M, N, R)
+  *  F_VCO = (F_BASE * M) / N
+@@ -385,7 +381,7 @@ int svga_compute_pll(const struct svga_pll *pll, u32 f_wanted, u16 *m, u16 *n, u
+ 	u16 am, an, ar;
+ 	u32 f_vco, f_current, delta_current, delta_best;
+ 
+-	pr_debug("fb%d: ideal frequency: %d kHz\n", node, (unsigned int) f_wanted);
++	pr_debug("fb%d: ideal frequency: %d kHz\n", node, (unsigned int)f_wanted);
+ 
+ 	ar = pll->r_max;
+ 	f_vco = f_wanted << ar;
+@@ -416,7 +412,7 @@ int svga_compute_pll(const struct svga_pll *pll, u32 f_wanted, u16 *m, u16 *n, u
+ 
+ 	while ((am <= pll->m_max) && (an <= pll->n_max)) {
+ 		f_current = (pll->f_base * am) / an;
+-		delta_current = abs_diff (f_current, f_vco);
++		delta_current = abs_diff(f_current, f_vco);
+ 
+ 		if (delta_current < delta_best) {
+ 			delta_best = delta_current;
+@@ -424,58 +420,55 @@ int svga_compute_pll(const struct svga_pll *pll, u32 f_wanted, u16 *m, u16 *n, u
+ 			*n = an;
+ 		}
+ 
+-		if (f_current <= f_vco) {
+-			am ++;
+-		} else {
+-			an ++;
+-		}
++		if (f_current <= f_vco)
++			am++;
++		else
++			an++;
+ 	}
+ 
+ 	f_current = (pll->f_base * *m) / *n;
+-	pr_debug("fb%d: found frequency: %d kHz (VCO %d kHz)\n", node, (int) (f_current >> ar), (int) f_current);
+-	pr_debug("fb%d: m = %d n = %d r = %d\n", node, (unsigned int) *m, (unsigned int) *n, (unsigned int) *r);
++	pr_debug("fb%d: found frequency: %d kHz (VCO %d kHz)\n", node, (int)(f_current >> ar), (int)f_current);
++	pr_debug("fb%d: m = %d n = %d r = %d\n", node, (unsigned int)*m, (unsigned int)*n, (unsigned int)*r);
+ 	return 0;
+ }
+ 
+-
+ /* ------------------------------------------------------------------------- */
+ 
+-
+ /* Check CRT timing values */
+ int svga_check_timings(const struct svga_timing_regs *tm, struct fb_var_screeninfo *var, int node)
+ {
+ 	u32 value;
+ 
+-	var->xres         = (var->xres+7)&~7;
+-	var->left_margin  = (var->left_margin+7)&~7;
+-	var->right_margin = (var->right_margin+7)&~7;
+-	var->hsync_len    = (var->hsync_len+7)&~7;
++	var->xres         = (var->xres + 7) & ~7;
++	var->left_margin  = (var->left_margin + 7) & ~7;
++	var->right_margin = (var->right_margin + 7) & ~7;
++	var->hsync_len    = (var->hsync_len + 7) & ~7;
+ 
+ 	/* Check horizontal total */
+ 	value = var->xres + var->left_margin + var->right_margin + var->hsync_len;
+-	if (((value / 8) - 5) >= svga_regset_size (tm->h_total_regs))
++	if (((value / 8) - 5) >= svga_regset_size(tm->h_total_regs))
+ 		return -EINVAL;
+ 
+ 	/* Check horizontal display and blank start */
+ 	value = var->xres;
+-	if (((value / 8) - 1) >= svga_regset_size (tm->h_display_regs))
++	if (((value / 8) - 1) >= svga_regset_size(tm->h_display_regs))
+ 		return -EINVAL;
+-	if (((value / 8) - 1) >= svga_regset_size (tm->h_blank_start_regs))
++	if (((value / 8) - 1) >= svga_regset_size(tm->h_blank_start_regs))
+ 		return -EINVAL;
+ 
+ 	/* Check horizontal sync start */
+ 	value = var->xres + var->right_margin;
+-	if (((value / 8) - 1) >= svga_regset_size (tm->h_sync_start_regs))
++	if (((value / 8) - 1) >= svga_regset_size(tm->h_sync_start_regs))
+ 		return -EINVAL;
+ 
+ 	/* Check horizontal blank end (or length) */
+ 	value = var->left_margin + var->right_margin + var->hsync_len;
+-	if ((value == 0) || ((value / 8) >= svga_regset_size (tm->h_blank_end_regs)))
++	if ((value == 0) || ((value / 8) >= svga_regset_size(tm->h_blank_end_regs)))
+ 		return -EINVAL;
+ 
+ 	/* Check horizontal sync end (or length) */
+ 	value = var->hsync_len;
+-	if ((value == 0) || ((value / 8) >= svga_regset_size (tm->h_sync_end_regs)))
++	if ((value == 0) || ((value / 8) >= svga_regset_size(tm->h_sync_end_regs)))
+ 		return -EINVAL;
+ 
+ 	/* Check vertical total */
+@@ -497,12 +490,12 @@ int svga_check_timings(const struct svga_timing_regs *tm, struct fb_var_screenin
+ 
+ 	/* Check vertical blank end (or length) */
+ 	value = var->upper_margin + var->lower_margin + var->vsync_len;
+-	if ((value == 0) || (value >= svga_regset_size (tm->v_blank_end_regs)))
++	if ((value == 0) || (value >= svga_regset_size(tm->v_blank_end_regs)))
+ 		return -EINVAL;
+ 
+ 	/* Check vertical sync end  (or length) */
+ 	value = var->vsync_len;
+-	if ((value == 0) || (value >= svga_regset_size (tm->v_sync_end_regs)))
++	if ((value == 0) || (value >= svga_regset_size(tm->v_sync_end_regs)))
+ 		return -EINVAL;
+ 
+ 	return 0;
+@@ -596,18 +589,15 @@ void svga_set_timings(void __iomem *regbase, const struct svga_timing_regs *tm,
+ 	vga_w(regbase, VGA_MIS_W, regval);
+ }
+ 
+-
+ /* ------------------------------------------------------------------------- */
+ 
+-
+ static inline int match_format(const struct svga_fb_format *frm,
+ 			       struct fb_var_screeninfo *var)
+ {
+ 	int i = 0;
+ 	int stored = -EINVAL;
+ 
+-	while (frm->bits_per_pixel != SVGA_FORMAT_END_VAL)
+-	{
++	while (frm->bits_per_pixel != SVGA_FORMAT_END_VAL) {
+ 		if ((var->bits_per_pixel == frm->bits_per_pixel) &&
+ 		    (var->red.length     <= frm->red.length)     &&
+ 		    (var->green.length   <= frm->green.length)   &&
+@@ -647,7 +637,6 @@ int svga_match_format(const struct svga_fb_format *frm,
+ 	return i;
+ }
+ 
+-
+ EXPORT_SYMBOL(svga_wcrt_multi);
+ EXPORT_SYMBOL(svga_wseq_multi);
+ 
+-- 
+2.43.0
 
-I need to set the flag so that the stmmac_set_wol() in
-drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c eventually
-reaches the PHY driver.
-
->>
->> For the WoL from PHY to be supported, the PHY line that is raised
->> (On nPME pin for this case) when receiving a wake up event has to be
->> wired to a wakeup event input of the Extended interrupt and event
->> controller(EXTI), and that's implementation dependent.
-> 
-> 
-> So it is not "can" but some implementations do not have proper wiring.
-> You need to justify your commits and changes.
-> 
-
-Ok, does:
-In case of proper wiring from the PHY to a wake up event input,
-set the "st,phy-wol" to indicate that the PHY WoL capability is
-preferred over the MAC one.
-
-seems better?
-
-> 
-> 
-> Best regards,
-> Krzysztof
 
