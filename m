@@ -1,63 +1,98 @@
-Return-Path: <linux-kernel+bounces-739901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05FC3B0CCDA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 23:50:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96E17B0CCDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 23:51:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21FBE6C39BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 21:50:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF7EC6C3B9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 21:51:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2953221DA8;
-	Mon, 21 Jul 2025 21:50:41 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C000923ABBF;
+	Mon, 21 Jul 2025 21:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="QoeufmB5"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C4CAD23;
-	Mon, 21 Jul 2025 21:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F772221297;
+	Mon, 21 Jul 2025 21:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753134641; cv=none; b=L4eaRH8KLLxYLw0DqdBwTrgZkI4+Qithd1ORFfOW2dRLzGdsxC+6bpQu8v9asoYPvREJo+67HSKZkexw/ai1danV9AWzcnC4+U3T967QgokU0GkJtJoJZ5rxhNBftFljdep0AkOrfSo68FBKIZucOSWINGggarclJ8jRi6qjSWQ=
+	t=1753134689; cv=none; b=S5aR+cSJc8qJm735JlJK/tTrrS+S+T663NFNMSmTGODy07D8j/l73RuUoXXTqQj+dJM3/h7JIhBFgVLLvPP0xgi/SzdC1hWyhSClcI+j5kqz9VIu9ns1Z89Unyu77IGhAcDERf+z/3VHUSHB7gpUcW+KphjWZePTshTdW76i4qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753134641; c=relaxed/simple;
-	bh=VTufIbNYvP7Qw/T6ARrTALc0fx6eJG4VewkKyeyeJhs=;
-	h=From:Subject:Date:Message-ID:To; b=SXJhr7UHwOeL3e8R2E0qun/jNSO+BKll2I4DFyRDF+tQk3koA7nXgA0Pvj8VbDBREg/0yvt8l6ee18mxb5dqSRUsVxWDCeTg+W0GLVOgSE84iv0R3ZDJhFNZRe4jXyRqjCR20MYP209ac2P9mkuUAkrxxj/FhduJ60MR1EEWq0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC06DC4CEED;
-	Mon, 21 Jul 2025 21:50:40 +0000 (UTC)
-From: Clark Williams <williams@redhat.com>
-Subject: [ANNOUNCE] 6.6.99-rt58
-Date: Mon, 21 Jul 2025 21:49:54 -0000
-Message-ID: <175313459468.257507.16071887743492103780@demetrius>
-To: LKML <linux-kernel@vger.kernel.org>,linux-rt-users <linux-rt-users@vger.kernel.org>,Steven Rostedt <rostedt@goodmis.org>,Thomas Gleixner <tglx@linutronix.de>,Carsten Emde <C.Emde@osadl.org>,John Kacur <jkacur@redhat.com>,Sebastian Andrzej Siewior <bigeasy@linutronix.de>,Daniel Wagner <daniel.wagner@suse.com>,Tom Zanussi <tom.zanussi@linux.intel.com>,Clark Williams <williams@redhat.com>,Pavel Machek <pavel@denx.de>,Joseph Salisbury <joseph.salisbury@oracle.com>,Luis Claudio R. Goncalves <lgoncalv@redhat.com>
+	s=arc-20240116; t=1753134689; c=relaxed/simple;
+	bh=QMFkSBrSXS4CvDe/aWesC9WGsdHoyu/5S+kCtUVYlYI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=FQZO5fJ5Ze9VEFX3M77yCdMKOtUMirWKONp16PuX8zes3i9YqLslDGJcvOMIuJiT602HEBA6V5lmfbxSl7uL/JCTY0Jfljj9SnDLFFAtjxQ1kAwowl7AkTUw6KO6myT5LIVYt6RjoyA0C++68TBWKKB9/iRDOPf8js44VNoKLG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=QoeufmB5; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753134527;
+	bh=4hOLQ1YnFHfeazq5prF47osutUz/9SaXOdaEgyoxeOU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=QoeufmB5g6vj5SLlKuGLvNpWgBUZKEQd2hLUyIRO1N22WgDHN/3sXh+Ow3bnUbdqs
+	 mxe11GHFEIKfl5C+3WB1GnsNX0rhK51Le4DA1W090gJbODn10RUzE15fqVs601yut2
+	 i3eXu1hIjkeUfYptSTPouDmbt/qj0bujFn4LvJ65cQodAfOY2neOHkeNAPXvCw80aS
+	 JCaUOfLeNaxsLf2z+b58rJoMotvBcpjWrgeViemp0jZ9C/wZtzjOfL11S4hO1nOVCt
+	 K43m4yKrmzJUQozZHTlNwSM8yrMDkHYNDTCAkjpvfktyj3vb5StqPtBySOpO9Ev2/Z
+	 75A4WPvnUwc/Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bmDYW2ZG1z4wbx;
+	Tue, 22 Jul 2025 07:48:47 +1000 (AEST)
+Date: Tue, 22 Jul 2025 07:51:21 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Abel Vesa <abelvesa@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the clk-imx tree
+Message-ID: <20250722075121.79d98b42@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/01S5eqr4Gb1u+yxlzVcrqvh";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hello RT-list!
+--Sig_/01S5eqr4Gb1u+yxlzVcrqvh
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I'm pleased to announce the 6.6.99-rt58 stable release.
+Hi all,
 
-You can get this release via the git tree at:
+Commit
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+  b2be1327a6ed ("clk: imx: Fix an out-of-bounds access in dispmix_csr_clk_d=
+ev_data")
 
-  branch: v6.6-rt
-  Head SHA1: 9ce90b76d5069580f8a3657c539be4c1b6ef9b4c
+is missing a Signed-off-by from its committer.
 
-Or to build 6.6.99-rt58 directly, the following patches should be applied:
+--=20
+Cheers,
+Stephen Rothwell
 
-  https://www.kernel.org/pub/linux/kernel/v6.x/linux-6.6.tar.xz
+--Sig_/01S5eqr4Gb1u+yxlzVcrqvh
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-  https://www.kernel.org/pub/linux/kernel/v6.x/patch-6.6.99.xz
+-----BEGIN PGP SIGNATURE-----
 
-  https://www.kernel.org/pub/linux/kernel/projects/rt/6.6/patch-6.6.99-rt58.patch.xz
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh+tlkACgkQAVBC80lX
+0Gzwbgf+IMLPUSQbAsLuFr+JZMLTsx02eJu2HMMeeuooJSJouvkQGsozFmiaTqNQ
+/OuebhaqwE/AlbfjghaQ5PKxp7OoTDN1CVRfPcqpwk/XiTnUV9dvfs7EnhQdZITf
+/cTz10qnVS002xRzNTop1OK93wQeZv+e4oMt/2Vkie/WLTAnn8Jq1LOCxFbwmGR5
+6K6Y2F0/uNyO0DKPvOhqft56RpHj4GKH2MSHm8sFFsnY4YIuu6RSQwVYADvriATp
+sqW0fBVaHbiIyuiTq53sEdQj4o7LpDFGOzulXXUKAa+zZDrcMhUYeCvPJM2yKkHN
+0CKtyWth/uFXzRibiS37hvzmgSrm6g==
+=dJUB
+-----END PGP SIGNATURE-----
 
-
-Enjoy!
-Clark
+--Sig_/01S5eqr4Gb1u+yxlzVcrqvh--
 
