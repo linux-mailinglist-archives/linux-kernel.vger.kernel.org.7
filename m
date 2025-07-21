@@ -1,158 +1,137 @@
-Return-Path: <linux-kernel+bounces-739520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7BDFB0C746
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:11:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46D5FB0C74D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:14:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31DD21AA26F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:11:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10D3F1AA25DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:14:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCE22DCF71;
-	Mon, 21 Jul 2025 15:11:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CDD02DECD8;
+	Mon, 21 Jul 2025 15:13:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="Hy1Tvr2U"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B4i2/fe0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66AC2E406;
-	Mon, 21 Jul 2025 15:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753110674; cv=pass; b=IQwdBScEMTolk/fJr6O2HUubvpfPpE42ZT0u4tQR4Flx+/utv39UWLEOSmTTfkLK/rSMNXGWlWcHVDYWV/8bywYz01e8DteNiKUZABf5bMSnunXCf2BrK7L76tHH187Ahh1KzQHn3aMoehmW53L9uwKabRjUEbRSDLoveCytRC0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753110674; c=relaxed/simple;
-	bh=tq6KhC1MGKI2JW90l7+Z3SyOwlMcu07eQT+YGKWbZ9Q=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=NCacGPzbHZKqojgO2WQBxiA9ayrpthfnvo66xG414e9njX5oQiq8l34/vDGA6nWXIgLkkZATax7L5vudaTptuH7j0Y6TKMH+1PiPIgcXQnl0u9cP68DrirLInodhkMCYjuMOE4h/uWonAoYeqbbrIkS/VNFMKI/qi5EicdaZo+w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=Hy1Tvr2U; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1753110628; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ZkMaSkhXdCS2Lkkb2yofjU9xGKUQQRxsNq2SW8N2ioJkfkQDcsqzWg30uFd7kMuv6xeatMPS5lQCVJ9UD3eEXjVen1vHjsG/pJaxLeZCgiG0yQT17CfyLtVDpR1W9FATHfkQqo4z9yxh9OwEhtKP0I7zAdthkbPKhFDko8TAyYo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753110628; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=tq6KhC1MGKI2JW90l7+Z3SyOwlMcu07eQT+YGKWbZ9Q=; 
-	b=dhXd1c0iS8pm369g4Z5M7VrYVjQc2VeWq7MPf5PLx7agunp43EBQoNjEyxRY2BaTzHQZXCLG0Bu3nDHZFx2fEZ4QATOZrH7etFH+9vO8rO62s7leDf0YwxFxS+g7HTc8CKgVNclsVnZsTfX2VwwwTzt23oMC/jNp1/FnWE628Lc=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753110628;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=tq6KhC1MGKI2JW90l7+Z3SyOwlMcu07eQT+YGKWbZ9Q=;
-	b=Hy1Tvr2UaprJN6+ixH9h4fRCM8ESONLG0JSAkEn+EPmGhxR0kn0kljufNqJ2HOnv
-	QgGghz5xkEqTxyspuIO/N6jCA/7BtxZ3wcrDEDCf/XNQ/7MVtkTqegHxA+m4U1eMN8u
-	DNwZ+YaoukzRB93loYC8+gfM+k7wLvSXyCLxwI8g=
-Received: by mx.zohomail.com with SMTPS id 1753110626585914.0594313125245;
-	Mon, 21 Jul 2025 08:10:26 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4952DEA66;
+	Mon, 21 Jul 2025 15:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753110829; cv=none; b=IQ4rHZ9KUUitYJaqCRcqcIfqspU5VNLgTAuEFKqerGJFdf+25SPbKrzLzWt1Z43F1XaoMwe7UN/MQRXBHJBeELfBvfrcmEDw4WUBIk7IUj6j7B09PhxiODE14Mmlw7QkBXjn17nB5IwZiticmy4h9GkMV3w6qcRr/nHm9mqsWoo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753110829; c=relaxed/simple;
+	bh=7p5feEnSZgKWMQ5RGkpU1rou+ucez0lt3Bdawv+W/rE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pobx5oQckPpZggwmakkMLpkdxYfGpJMF6XliZ25AJzUtIstHyRQTHXl5Kv0dRdsm6sIkxQDdd1mCKNcyJfiNYj6/joETIV0P3gmBu8HjPQZ/PVtzjGaKGln+apVsk5Dj2F6Wi/UdfXMhCvsRkchP4aCE1vN5RSY+RYD4tcYDblI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B4i2/fe0; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753110828; x=1784646828;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7p5feEnSZgKWMQ5RGkpU1rou+ucez0lt3Bdawv+W/rE=;
+  b=B4i2/fe0D9Fn1h5MtBpo9PC4HC6k96DK9b6MI2Wmqy5qfBSne78teDFN
+   0NJnxSa+1Ius8zZ+o+K977BYht0n5fXzSeY9cWuBuSzt2pItoRND1KDvr
+   K0SaZ0EZzLvb0cGanHuAgAeliNNoHlXqokfS60tDcb3ZTGHR6J4EfIK1Y
+   YmIKsqAV2x39QdIs8bKHZB4TYpZuIlk7U6Pg+jWsLIhKLpkKFFWSOj7fR
+   8nRTf4EE+IAYPhrtw3DVMw0eLPIK25rwMVszyux3DrP97ZpOXnkWxoGht
+   7+7VGnpHuQM4+i/uQ6MTImJDIZVtR1ofo7cSY0w8YOtY4zIoNKnA1xoPT
+   A==;
+X-CSE-ConnectionGUID: /2A52ywOQVWNNhDozaBrGA==
+X-CSE-MsgGUID: Vqve3BIlSvGbQjBci60Pmg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11499"; a="66018731"
+X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
+   d="scan'208";a="66018731"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 08:13:47 -0700
+X-CSE-ConnectionGUID: tWpQV+jnSkqFiGW4o2w4aQ==
+X-CSE-MsgGUID: OLI2gGAHSfShQmFVU8YyoA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
+   d="scan'208";a="189856365"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 21 Jul 2025 08:13:41 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1udsCw-000Guj-1z;
+	Mon, 21 Jul 2025 15:13:38 +0000
+Date: Mon, 21 Jul 2025 23:13:24 +0800
+From: kernel test robot <lkp@intel.com>
+To: Youngjun Park <youngjun.park@lge.com>, akpm@linux-foundation.org,
+	hannes@cmpxchg.org
+Cc: oe-kbuild-all@lists.linux.dev, mhocko@kernel.org,
+	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+	muchun.song@linux.dev, shikemeng@huaweicloud.com,
+	kasong@tencent.com, nphamcs@gmail.com, bhe@redhat.com,
+	baohua@kernel.org, chrisl@kernel.org, cgroups@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, gunho.lee@lge.com,
+	iamjoonsoo.kim@lge.com, taejoon.song@lge.com,
+	Youngjun Park <youngjun.park@lge.com>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+Subject: Re: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for
+ cgroup-based swap priority
+Message-ID: <202507212243.Lf8fSo0T-lkp@intel.com>
+References: <20250716202006.3640584-2-youngjun.park@lge.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH v7 3/6] rust: irq: add support for non-threaded IRQs and
- handlers
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <aH5SiKFESpnD4jvZ@google.com>
-Date: Mon, 21 Jul 2025 12:10:10 -0300
-Cc: Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Bjorn Helgaas <bhelgaas@google.com>,
- =?utf-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Benno Lossin <lossin@kernel.org>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-pci@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <1CC4638E-C682-4F68-A616-553169BB677C@collabora.com>
-References: <20250715-topics-tyr-request_irq2-v7-0-d469c0f37c07@collabora.com>
- <20250715-topics-tyr-request_irq2-v7-3-d469c0f37c07@collabora.com>
- <aH5SiKFESpnD4jvZ@google.com>
-To: Alice Ryhl <aliceryhl@google.com>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250716202006.3640584-2-youngjun.park@lge.com>
 
-Hi Alice, thanks for looking into this again :)
+Hi Youngjun,
 
+kernel test robot noticed the following build warnings:
 
-[=E2=80=A6]
+[auto build test WARNING on 347e9f5043c89695b01e66b3ed111755afcf1911]
 
->> diff --git a/rust/kernel/irq/request.rs b/rust/kernel/irq/request.rs
->> new file mode 100644
->> index =
-0000000000000000000000000000000000000000..2f4637d8bc4c9fda23cbc83076870359=
-57b0042a
->> --- /dev/null
->> +++ b/rust/kernel/irq/request.rs
->> @@ -0,0 +1,267 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +// SPDX-FileCopyrightText: Copyright 2025 Collabora ltd.
->> +
->> +//! This module provides types like [`Registration`] which allow =
-users to
->> +//! register handlers for a given IRQ line.
->> +
->> +use core::marker::PhantomPinned;
->> +
->> +use crate::alloc::Allocator;
->> +use crate::device::Bound;
->> +use crate::device::Device;
->=20
-> The usual style is to write this as:
->=20
-> use crate::device::{Bound, Device};
+url:    https://github.com/intel-lab-lkp/linux/commits/Youngjun-Park/mm-swap-memcg-Introduce-infrastructure-for-cgroup-based-swap-priority/20250717-042648
+base:   347e9f5043c89695b01e66b3ed111755afcf1911
+patch link:    https://lore.kernel.org/r/20250716202006.3640584-2-youngjun.park%40lge.com
+patch subject: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for cgroup-based swap priority
+config: loongarch-randconfig-r123-20250721 (https://download.01.org/0day-ci/archive/20250721/202507212243.Lf8fSo0T-lkp@intel.com/config)
+compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
+reproduce: (https://download.01.org/0day-ci/archive/20250721/202507212243.Lf8fSo0T-lkp@intel.com/reproduce)
 
-I dislike this syntax because I think it is a conflict magnet. Moreover, =
-when
-you get conflicts, they are harder to solve than they are when each =
-import
-is in its own line, at least IMHO. =20
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507212243.Lf8fSo0T-lkp@intel.com/
 
-In any case, I don't think we have a guideline for imports at the =
-moment?
+sparse warnings: (new ones prefixed by >>)
+>> mm/swap_cgroup_priority.c:115:16: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   mm/swap_cgroup_priority.c:115:16: sparse:    struct swap_cgroup_priority [noderef] __rcu *
+   mm/swap_cgroup_priority.c:115:16: sparse:    struct swap_cgroup_priority *
+   mm/swap_cgroup_priority.c:729:9: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   mm/swap_cgroup_priority.c:729:9: sparse:    struct swap_cgroup_priority [noderef] __rcu *
+   mm/swap_cgroup_priority.c:729:9: sparse:    struct swap_cgroup_priority *
+   mm/swap_cgroup_priority.c:638:25: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   mm/swap_cgroup_priority.c:638:25: sparse:    struct swap_cgroup_priority [noderef] __rcu *
+   mm/swap_cgroup_priority.c:638:25: sparse:    struct swap_cgroup_priority *
 
-[=E2=80=A6]
+vim +115 mm/swap_cgroup_priority.c
 
->> +/// A registration of an IRQ handler for a given IRQ line.
->> +///
->> +/// # Examples
->> +///
->> +/// The following is an example of using `Registration`. It uses a
->> +/// [`AtomicU32`](core::sync::AtomicU32) to provide the interior =
-mutability.
->> +///
->> +/// ```
->> +/// use core::sync::atomic::AtomicU32;
->> +/// use core::sync::atomic::Ordering;
->> +///
->> +/// use kernel::prelude::*;
->> +/// use kernel::device::Bound;
->> +/// use kernel::irq::flags;
->> +/// use kernel::irq::Registration;
->> +/// use kernel::irq::IrqRequest;
->> +/// use kernel::irq::IrqReturn;
->=20
-> /// use kernel::irq::{Flags, IrqRequest, IrqReturn, Registration};
+   108	
+   109	static struct swap_cgroup_priority *get_swap_cgroup_priority(
+   110		struct mem_cgroup *memcg)
+   111	{
+   112		if (!memcg)
+   113			return NULL;
+   114	
+ > 115		return rcu_dereference(memcg->swap_priority);
+   116	}
+   117	
 
-Same here. I=E2=80=99d rather not do this, if it=E2=80=99s ok with =
-others.
-
-=E2=80=94 Daniel=
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
