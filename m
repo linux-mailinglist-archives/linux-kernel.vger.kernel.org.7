@@ -1,144 +1,124 @@
-Return-Path: <linux-kernel+bounces-738880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE147B0BEA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:19:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3C7BB0BEA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:19:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 115F63BFA97
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:18:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D66A81748A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE142877E4;
-	Mon, 21 Jul 2025 08:17:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F40286D5D;
+	Mon, 21 Jul 2025 08:18:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="idGy9dVd"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FbRMkQGM"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90924280A20;
-	Mon, 21 Jul 2025 08:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F7B286D44
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 08:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753085872; cv=none; b=m7w6SZVdtkqDkPcoV9qhIkutIfaFlQUrSgeToFFeD7aIW0FX+OHW8XbqtdE7xqJqwvylDt8f9co+gDOW2L4VMTJhRM9/dlPTq83t6CF7ykjFVbJcbEx0lglr4OnKohi2tLzkemYQ1sYGmQ8q5qn4LIJNg9ILDeoDkFqnrIRlQKg=
+	t=1753085890; cv=none; b=IdVJjBi1SEYK7qYVGluCPgCGXmne1x8P1vh2NHyGpMlNLOuQiwzfhDT/emIawDgM2R8/ZdNQHIIgOFboKieY970ZlhBZrvhlm6UiidkPb1YfSyS49uZK2lsJZsarhFa24qSbK9lXhpwabjAju3yFW3lVb+dv3+F3OEtLDCAJypE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753085872; c=relaxed/simple;
-	bh=nBY3egso3wyBHb7G0mZCOwzZktaLtKxIiVx7NMVbz5c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dkVGHK47LH36tXQxze+WDPojmoc9e50/LgIm6nnMDYsmDpxAbrQMI90l4qgWl3TnmBdY2CYKQldOLnToIQHE5+YObj+Ff7cA50/EDVD4cXxZdW72Dqgqpnc/vnTsJcG3FwRHrZ4ZLY7gxdAmla5bhYEFPEVoqVsC5JNwzIqLeuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=idGy9dVd; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1753085861; x=1753690661; i=markus.elfring@web.de;
-	bh=tYRgRzV3RcH0tkCVqG+N8NqmPThlBnU78OJZ8xWqWUk=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=idGy9dVdsm22DxXMgXGX/Ek5K0gxsg/5dj2BU3KTvj6zhOzdS4u63117O2e7YT00
-	 MgqxuB7p7qxBne07r1+BrA6UWatu7WdsjjOKaswiem7AN5B9gye2EIT7NL740NW2M
-	 9UB2kzNJiuRvnFEvOcOQgWdY+DTipR88c4kaPwmhhxlB0nh5qyxhSlIhya+UuLeWW
-	 X9FU0dnKnsbQ3QpLc4WxRt/pmuXxkKUbiTce9E/mx1f80NeSJZNX+J6S4r2rmGvQ2
-	 xO7CddKp2h3nIZ5as5DHEeZf+NojWlM+iI8HrD3Y3+SNi2HkDMkyCZfT3e5hxI0sz
-	 pxPw78bEXQwY6U0smg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.235]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MVaYw-1uCAAj2EPk-00IvsH; Mon, 21
- Jul 2025 10:17:41 +0200
-Message-ID: <57b3f1cb-ce37-4026-8689-7bef61583b10@web.de>
-Date: Mon, 21 Jul 2025 10:17:39 +0200
+	s=arc-20240116; t=1753085890; c=relaxed/simple;
+	bh=4Ta0TLua0Rtt1YKOLIaPtKpMij5Yc4Q/7c3JdU81KHs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ign5rvtaI4GoNZT9o1kAXq4CCPLVn4qItXQ09VpzHmJAs3D+31u3Bxdn9pvF2yJUpdmhexz0Es/o2LiXapoDn1SXXy+svQX/sc0fxV6qypzUE96FVc7CgKKc3ZWmShk3qmnCpuU60pr0oDG0ilfMSXV+OWZe4EpvWq2p1Ylb/Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FbRMkQGM; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ae6d8584e08so75855966b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 01:18:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753085886; x=1753690686; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pPXELs5NvkX+PM7JY9uaPhAOXWpOOKXEuN/iIGPovgU=;
+        b=FbRMkQGM7VBrdpBGUvflQlloc2rn2yfEABtKdB10zr93jtXOcAs5tP/pvf3P1mN9sU
+         gm+7QIUOgZy7SX5TefXxuketzpL5qpyCKEDJvgTyd3DDHda8cC+j/nd/EhdcI1isWvBd
+         YeS+2uk/0sKbQNCLEEOOxnPEg1nBspW3dYRA3vPvBgAJ+n8Vri1oF0xWOsFb9xhGnuc2
+         HUV5RpmUV67As/ylhg9tSxBMw0oVbG3eaRveR2BaAYWQlraSKa6rkqh4HcBgfbReI7dc
+         MNbDsTA45X9hJ+PAe7p+hvQdQPLqEbArMJyk9JsxZiSk0trT1NkY+/lmnedel8zenInC
+         NIdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753085886; x=1753690686;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pPXELs5NvkX+PM7JY9uaPhAOXWpOOKXEuN/iIGPovgU=;
+        b=aanQTfNFxaB2xZkdRUSUC0ioT7aZrvTOWzdDtnh81MAQHoB6RRHpCKMJN36Vtw2ivE
+         LW53SmZr9MbG48exNbxqUNzg577p9lksfEkmUV0B7yKlvVgvyXnTIiKgcvt22dnHwTyw
+         mFh2H/C3L16lSRCRBmirc7iUzuozduthaBAvCX2eD0MlqGpkWGzBS0zvEWd1oftxr9o0
+         sPhcBLXaUn8qoHQyATlvGOx20L3mympzrQAqnN0FqUyL3O0rBsfJhMuYKbQJuo1P9bvK
+         mYOWMW53PLUKFZxVP9c5yeIzmozLpSnDNCTc+YkSDl9ZfXIInnC1fKpld/9SM5DhK2jY
+         xXkA==
+X-Forwarded-Encrypted: i=1; AJvYcCVmImB/aaYxPp28SPppxW43AMpgDZjDoKZON38ovObRQBvzExPVTx30z0LEWy+Af3fiOfoXNUrBXJk3lH8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqPri5s0QjmSTMcC2N2XcxtVbHxu+wktN9TIGLnxWHGpFkbu/p
+	Nt0auPjnziV6xskwKKed3mYleug0dZj0RyrFRjS960r6HXXYvtFuux3KYUAEUCNM7pE=
+X-Gm-Gg: ASbGncs7Xt/JmPPq719r2hPx3XrdspuwsBaQ4yT+kIDZJE5XQUzWgsE/SlmO2/gnz+0
+	4KjXWVEE5pRBoc0sgGaS3TcxJ6hDBSETKw4+++L6az17MHU9hij3ICuMgnZ2l6aJ5hQwazKXAQI
+	t8/MjCoqohq2QLVcrEltQCCwVmFZ/x6PVg8pXpyyT6CTyRYlWXcN0IWJ5BeoSZS2BDfpf9O/CnF
+	IrPVWnpKujacREjG6pmFqgHeCALNOWsxzu12VFNzsCeQN8Pvb5dCiuVahwTYJHQj0UKKhK6B3Si
+	0XMpYhXuWg263n6zRfnf79qasQvCU+mOnvmfXJ9puEfiUno+NdX8jhr9TeJe1CC9fcV3NIlW1Il
+	zpvyTJf5RtTVnHjGrhbnTNcsPZQXc7P65pTUznLnSMq8cB3fO
+X-Google-Smtp-Source: AGHT+IEwTbfpXXMQ3S49s4PgHyCV/u6H0Q8oR8adAG+0t/NE/c8sQ0/0zI+RNG/o7SXdvdd/cnUXsg==
+X-Received: by 2002:a17:907:7f20:b0:ad8:a282:1c2f with SMTP id a640c23a62f3a-ae9c9b2153cmr688926866b.12.1753085885643;
+        Mon, 21 Jul 2025 01:18:05 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.222.89])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6c7d524asm633642366b.45.2025.07.21.01.18.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Jul 2025 01:18:04 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>
+Cc: William Mcvicker <willmcvicker@google.com>, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel-team@android.com, sudeep.holla@arm.com
+In-Reply-To: <20250717-gs101-cpuidle-v7-1-33d51770114b@linaro.org>
+References: <20250717-gs101-cpuidle-v7-1-33d51770114b@linaro.org>
+Subject: Re: [PATCH v7] soc: samsung: exynos-pmu: Enable CPU Idle for gs101
+Message-Id: <175308588382.28993.16370211179082448125.b4-ty@linaro.org>
+Date: Mon, 21 Jul 2025 10:18:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] sparc: fix resource leak in jbusmc_probe()
-To: Siyang Liu <1972843537@qq.com>, sparclinux@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Andreas Larsson
- <andreas@gaisler.com>, "David S. Miller" <davem@davemloft.net>
-References: <45b8941a-b6bf-4b48-ad1b-cc6ba46b8642@web.de>
- <tencent_46DA24BE77C8E62514B3346C5CDBDB327F07@qq.com>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <tencent_46DA24BE77C8E62514B3346C5CDBDB327F07@qq.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:cd6849LtWxFBqAHJwAIJVDKNubR0oduILMPj5f9CeOWb54q1Oki
- nklMVyjr1dD/W+fl9aMWzqCDj5DDiI5kdjBR3jpVMcC10DlSZdGTY4ERX6p7NaU3sWyXIcB
- d7GFpDCwMQnjQggxEonG74/aMXccISka/zjoNsS2jSj+2puuMnERQuQJafhKI7BrcmomdB8
- 86kMF1C/XvJpwMcZ8yDKg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:tmpagtcfOis=;n2UFRFqOcdifgyk+JqnG7pI5i6K
- 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
- Ow7LY=
-
-=E2=80=A6> ---
->  arch/sparc/kernel/chmc.c | 10 +++++++---
-=E2=80=A6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
 
-Why did you overlook mentioned patch requirements once more?
+On Thu, 17 Jul 2025 17:22:36 +0100, Peter Griffin wrote:
+> Register cpu pm notifiers for gs101 which call the
+> gs101_cpu_pmu_online/offline callbacks which in turn program the ACPM
+> C2 hint. This hint is required to actually enter the C2 idle state in
+> addition to the PSCI calls due to limitations in the el3mon/ACPM firmware.
+> 
+> A couple of corner cases are handled, namely when the system is rebooting
+> or suspending we ignore the request. Additionally the request is ignored if
+> the CPU is in CPU hot plug. Some common code is refactored so that it can
+> be called from both the CPU hot plug callbacks and CPU PM notifier taking
+> into account that CPU PM notifiers are called with IRQs disabled whereas
+> CPU hotplug callbacks are not.
+> 
+> [...]
 
-https://lore.kernel.org/all/?q=3D%22This+looks+like+a+new+version+of+a+pre=
-viously+submitted+patch%22
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.16-rc6#n784
+Applied, thanks!
 
-Regards,
-Markus
+[1/1] soc: samsung: exynos-pmu: Enable CPU Idle for gs101
+      (no commit info)
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
