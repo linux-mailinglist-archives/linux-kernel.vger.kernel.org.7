@@ -1,120 +1,118 @@
-Return-Path: <linux-kernel+bounces-739472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D05BDB0C6B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:43:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 308AAB0C6B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:44:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C45486C07B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:42:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 629A017D7ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DB391DA10B;
-	Mon, 21 Jul 2025 14:42:25 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B63629E11B
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 14:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7162D949A;
+	Mon, 21 Jul 2025 14:44:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="c4IuoeH1"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CBF7283FC3;
+	Mon, 21 Jul 2025 14:44:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753108944; cv=none; b=F2bQ46eu7R8cGmz0j+UmqHOdj12CkVhEh7Qh11o7P2gLmDz97u98UlRJfD7EN3DEG9bssYH1hhBdzRUkb2u+6Xrau1XirKSKMZp4hKBihKK0dx2jO+TOFiECTjh2aJ/8WACaiINeEdMIYSJc8oLPM3eYpv/cHXL6Es+ISBFyNDg=
+	t=1753109050; cv=none; b=brvadNakMWiOrwdSQXpyvRLRCPvJ5l79LDyMWl8lUGL1pqi/0rtwWRgCwQQHt790Zn0YFkuFpcpP4n6yf7oH8VG0xTC3ai93o7QDS0OlOqotbEAjofi1ARsZU0QOFkEfwRDo/E+sesL04G4YODxjiEf3JJl3+Atnjr6GBNN5++4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753108944; c=relaxed/simple;
-	bh=vRI13+t3W6H9dwChMtH3yD9kkUrqad2cx8GfagUxlUE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xi4XY2ryN7qWnrjJ45v20deFwpsGDT1+rygSD6Ke7H2vsvkVBv1G8A9UyObnwKpeoBuvYdIcv0tzI7KkUNsrUopPPwQpjF7E8b0/BgN8efAY6k3TsgnpponGkn3uyPUgpouR8krSHHv/JwZZVXqWZrhNYRjUZiIv2R4iRMMDaao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EC006153B
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 07:42:16 -0700 (PDT)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 838153F66E
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 07:42:22 -0700 (PDT)
-Date: Mon, 21 Jul 2025 15:42:12 +0100
-From: Liviu Dudau <liviu.dudau@arm.com>
-To: Karunika Choo <karunika.choo@arm.com>
-Cc: dri-devel@lists.freedesktop.org, nd@arm.com,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 3/6] drm/panthor: Add support for Mali-G710, Mali-G510
- and Mali-G310
-Message-ID: <aH5RxPHhfO5msiT0@e110455-lin.cambridge.arm.com>
-References: <20250721111344.1610250-1-karunika.choo@arm.com>
- <20250721111344.1610250-4-karunika.choo@arm.com>
+	s=arc-20240116; t=1753109050; c=relaxed/simple;
+	bh=Jyt4F1VtYa+4ypVbjITcf2eTZjNkA9xO32+tYgnvyXY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=h81+4q2IDLrYAl/OOJ1GoTHfkXG83o6df7uDqPG4HWMlRJW1GPlpruqriTS0ht8O1yckGZByiEPTmAEnYYhvXQBa8txSEHzgUaATZDw+OcIbbVN2RK5ZxXy3gzuw3Xyhm/YE1tDYIRIRf/ItMDib+moSo9ur4GaVjvL+GmpFwIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=c4IuoeH1; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753108888;
+	bh=nppH31J2VfgugOYDtJTHIKotUypAC9L6zLq6aZBhYNs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=c4IuoeH1PMtqSUkSLT02dq/YIRL6ddAZYbB46t28GKX/MSJ8yRS5jKTKkLjHMEav3
+	 ReAFkWSSlhdJ+Jpa3Oxsydz/8wF3mTNbLJeMdqMDeDTDyeFgpSFitAexDruPt4vtDL
+	 eNm9EIIZI9VVWQuN/flgaHe3k04VWcW8undCfVW9ehzBfjYBn9IQW4hEVTioCKIjdU
+	 pwbsweYsiyyZ4TnaHCBtPJ2c02a09u57CqCgjSAi+T6Es3IW67qiyXC01lolygcxLF
+	 ZYBO0rn86UR52mN0bGiesy6Vkq8l4tOZ0svhDBIP3v7RRH+A2AQkFdZJyAJSlk7VPc
+	 HXtwKgFuVMq/A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bm34S0w4lz4wbY;
+	Tue, 22 Jul 2025 00:41:28 +1000 (AEST)
+Date: Tue, 22 Jul 2025 00:43:59 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Xu Yang <xu.yang_2@nxp.com>, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+ imx@lists.linux.dev
+Subject: Re: [PATCH] usb: core: add urb->sgt parameter description
+Message-ID: <20250722004359.598284ba@canb.auug.org.au>
+In-Reply-To: <2025072159-banjo-resisting-db29@gregkh>
+References: <20250721104417.3442530-1-xu.yang_2@nxp.com>
+	<2025072159-banjo-resisting-db29@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250721111344.1610250-4-karunika.choo@arm.com>
+Content-Type: multipart/signed; boundary="Sig_/vkjr2YnqWLWK1Vi_hilUwBL";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Mon, Jul 21, 2025 at 12:13:41PM +0100, Karunika Choo wrote:
-> This patch adds GPU model name and FW binary support for Mali-G710,
-> Mali-G510, and Mali-G310.
-> 
-> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
+--Sig_/vkjr2YnqWLWK1Vi_hilUwBL
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+Hi Greg,
 
-Best regards,
-Liviu
+On Mon, 21 Jul 2025 13:04:09 +0200 Greg KH <gregkh@linuxfoundation.org> wro=
+te:
+>
+> On Mon, Jul 21, 2025 at 06:44:17PM +0800, Xu Yang wrote:
+> > The parameter description of urb->sgt is lost, this will add it for
+> > completeness.
+> >=20
+> > Reported-by: Stephen Rothwell<sfr@canb.auug.org.au>
+> > Closes: https://lore.kernel.org/all/20250711182803.1d548467@canb.auug.o=
+rg.au/
+> > Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
+> > ---
+> >  include/linux/usb.h | 4 ++++
+> >  1 file changed, 4 insertions(+) =20
+>=20
+> What commit id does this fix?
 
-> ---
->  drivers/gpu/drm/panthor/panthor_fw.c | 2 ++
->  drivers/gpu/drm/panthor/panthor_hw.c | 6 ++++++
->  2 files changed, 8 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
-> index 36f1034839c2..b7b454d16f12 100644
-> --- a/drivers/gpu/drm/panthor/panthor_fw.c
-> +++ b/drivers/gpu/drm/panthor/panthor_fw.c
-> @@ -1402,3 +1402,5 @@ int panthor_fw_init(struct panthor_device *ptdev)
->  }
->  
->  MODULE_FIRMWARE("arm/mali/arch10.8/mali_csffw.bin");
-> +MODULE_FIRMWARE("arm/mali/arch10.10/mali_csffw.bin");
-> +MODULE_FIRMWARE("arm/mali/arch10.12/mali_csffw.bin");
-> diff --git a/drivers/gpu/drm/panthor/panthor_hw.c b/drivers/gpu/drm/panthor/panthor_hw.c
-> index f39010c0ca86..7f138974d43b 100644
-> --- a/drivers/gpu/drm/panthor/panthor_hw.c
-> +++ b/drivers/gpu/drm/panthor/panthor_hw.c
-> @@ -15,8 +15,14 @@ static char *get_gpu_model_name(struct panthor_device *ptdev)
->  						GPU_PROD_MAJOR(gpu_id));
->  
->  	switch (product_id) {
-> +	case GPU_PROD_ID_MAKE(10, 2):
-> +		return "Mali-G710";
->  	case GPU_PROD_ID_MAKE(10, 7):
->  		return "Mali-G610";
-> +	case GPU_PROD_ID_MAKE(10, 3):
-> +		return "Mali-G510";
-> +	case GPU_PROD_ID_MAKE(10, 4):
-> +		return "Mali-G310";
->  	}
->  
->  	return "(Unknown Mali GPU)";
-> -- 
-> 2.49.0
-> 
+Fixes: 488e6eaab88c ("usb: core: add dma-noncoherent buffer alloc and free =
+API")
 
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+from the usb tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/vkjr2YnqWLWK1Vi_hilUwBL
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh+Ui8ACgkQAVBC80lX
+0Gyt6wf/ZjOqYfOMLMsplfozjEP6D5R2itpN1CrM2YB6XCiglx2vk0GDP+ugcJAX
+mBLFa2TwK24wzLOmCDWhd2G5HpkwrjQKQvSabu29+/JB8dviFSsTBM9bvDMXl/qy
+HHZ/4Mljph4u6tJqazlgKQWG7wahzOtVtV4UbMCPMjWXxkn2xAPBgIsD3jSCIRCy
+jH75ELPzwUUy3JL6fX1clZ7VHMWvetORUmOQBbUny33JSa4CLeTNibV5YCbtgDMz
+xtVgXYP6RsS4r2roiGjCqgDIy1yR4lJKa3PuiyMXb7XBYh7wMlu1ZN4AXf4Di0gw
+Fi3F7kc+Or4sbPqauIWieoLiCSheoQ==
+=bOvl
+-----END PGP SIGNATURE-----
+
+--Sig_/vkjr2YnqWLWK1Vi_hilUwBL--
 
