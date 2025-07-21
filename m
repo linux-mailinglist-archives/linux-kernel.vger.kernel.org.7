@@ -1,163 +1,314 @@
-Return-Path: <linux-kernel+bounces-739562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42BA0B0C7EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:45:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34564B0C7ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:46:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44A086C0843
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:45:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B656E543A26
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:46:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF0062DFA5A;
-	Mon, 21 Jul 2025 15:45:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DDEA2989B4;
+	Mon, 21 Jul 2025 15:46:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sPOIJNi5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="I4vImvZt"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD4B209F45;
-	Mon, 21 Jul 2025 15:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F551F1522
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 15:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753112736; cv=none; b=biMTCu9k9NVxJAvYi9QaoIzDLyZqHT6sWyMmENhgHT78UG/j3BRpj+UhgpryqwgZqiznQy2IIr5CXofBKTNR48I3hYxCMR12Z+9O4lXY4CM2G/5ElKJ9j7kBQdz2ZlQx48//jAFrmFFYXIRoyKPEDkBqAwxiu7Ai8a05vFajaZE=
+	t=1753112759; cv=none; b=ODxDxCmkH46SKEo7Q2QPcm4q1pdKrBe5j4CWjANovAgu0eUUhismk5uMY6BHFT5Rl3S4V39LRYevy/tm++QLc+wBDINTJrCYaD/mEBGDhDq1cJTzovt1470bv6f7+26xiiuuR27TkNweN4+4z69eyl8RPQLJCeG0G5xBqATvh88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753112736; c=relaxed/simple;
-	bh=trQEnBNyEfAkk362wq/BjgTIn3ODld9E8i7xCagZlkU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ofr2XPLRRzhjMJMpElq5AxhPdYg3ON/uHXwPIWfEeI3FAeiXBFw59bm6cAqOEbmdjyo9uzymGf5+zqfqtfnib7juQTVdvrrwRqkDNnHrYMdPXbRauSEwRtvA0OHM61OtywSfHenEm6lSnFyykmK0/zIqqwKHkcsRml8bAyCvepw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sPOIJNi5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A20DBC4CEED;
-	Mon, 21 Jul 2025 15:45:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753112735;
-	bh=trQEnBNyEfAkk362wq/BjgTIn3ODld9E8i7xCagZlkU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sPOIJNi5c5iwG/SYu0pqCd88HJORXiLa4sWgRVobvy3eoPcpZkaONBaqaGXPDjjXd
-	 yw01eofdH6sTM4jTfSVErs59LKocjEQ8Atx7r78jbCe5fR5pGXZ9OkGpKE5xk1guzt
-	 n25YeWxHE4iosUgz63INXXtSMueSkLEDuur/IFkIbCKau7SCmkDdtX5gCdU6ny5zWs
-	 jo9jXq04wM7DYIu1gfy20C5Qo/JlLQmotF8B686ddbw7+tZNr6Qx425eSWHSXQzpS2
-	 6zy9iFqpkCdEf30BKEKoXeiQ/hM5e6kUItML4o4TBi6d9lWDieJv3MI+c4ENdIHWRU
-	 X0VVzfp98Vzdg==
-Date: Mon, 21 Jul 2025 21:15:26 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] PCI: qcom: Switch to bus notifier for enabling ASPM
- of PCI devices
-Message-ID: <hvny6e6jt6pqeqwmuudabdergkbq6qybzofvek62qhqv4hj44x@qgkl47v3rmld>
-References: <20250714-aspm_fix-v1-0-7d04b8c140c8@oss.qualcomm.com>
- <20250714-aspm_fix-v1-1-7d04b8c140c8@oss.qualcomm.com>
- <aH4JPBIk_GEoAezy@hovoldconsulting.com>
- <rmltahsjvllae3or7jjk5kwvdkcqohj4bbjsfv4mnfbuq7376s@wtsha4zorf2p>
- <aH43Sm3LWoipx5Yn@hovoldconsulting.com>
+	s=arc-20240116; t=1753112759; c=relaxed/simple;
+	bh=F+hDB3CZd3Cqu8uLS4XkAiJaedusYD9tKspEIZXjXcE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eJxV6Op3aHmgwzd+0lRleM59aQNVuOgqWVwKf95ZJ32QOPoB7Ugp+rxekWxA5YXUQ6dtolKla0sFutofpijp639rFKS6OAv1BqEcY3na3VkoZFnvFPkBlCGumYSVaARt7Q899gH005JE4+pWqtWQjFliA6sjulvpkcN+0iyaEQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=I4vImvZt; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-32b595891d2so35041141fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 08:45:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1753112756; x=1753717556; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=olhSj3aCODREUslaNcPPUu8iGAOhwVMYT/IJCTqYMn8=;
+        b=I4vImvZtaS7CeHHQ2EBZWjzvcmWXkZf4630Pk+fJkH5qc9Sqy9dl+F6PmAy79ml4ma
+         uZf/TWhWvR3nw6hziHR3FXRJtEhG7IUvCcn2SM/cpCuF0coBnb3CB/oYAwxrpwkW7U+G
+         XtPeNmonXcZ6qs2k2/cCdp5MaDWmqQTj65eUQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753112756; x=1753717556;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=olhSj3aCODREUslaNcPPUu8iGAOhwVMYT/IJCTqYMn8=;
+        b=S4nVnbDKip4IhDWoCkNl0TvwMTdFxss1qYdol4aPRKx5ile5ykvxXYW7sJDp8bPICc
+         1fGlNDMxa6JkKFnnsUOiN+vaFR4uwZJcxRnQD4+k1gfI0M432M96WVvJkb8FYef9A5uS
+         H7lsY3pCULXgFrMU8Zrfqs49s4qLIn7590vP0fu1Iy6I/zrO2tUJsX1Z6xhYh4+IWOl8
+         gITFLnEn0okj2AwDHpIiGKh62T1DFMvL5dKVk+5yQyBUEjIGl9ENObXMDzO6QWLpP8Vt
+         3peMwFxZQR8NeSgbR5gHTrHbl33H2aLyYxFpn/AbbJo6K26Ulje6+fNjCfWQzaQwv9pT
+         0nzg==
+X-Forwarded-Encrypted: i=1; AJvYcCUwE3I6ygvAHzR/mnuYo4TuWHsrqpXOCQiM8xWoT23GaMvgBblqK9XKTXlWGqUSIZtt2Acchvbkk8rCFZI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4E/v/q4aQyE9T9Xr26dhDMY84zTza36akadRHpld0QYb5tfP3
+	QywRFIhX463Zodc7knMOAJ3K4pwIpagolNQj/mUDV3j95HRlfQRvWFoFDFZzWVKpmECJA00yFQH
+	u+ia+AVTpnu4PTx8xCpIEjbnmPq8TUDmJ9WzS3yU=
+X-Gm-Gg: ASbGnctDYKgPZBrIaHPXUtytSO54Zxq/m402N1ZFzDHFR618sD1A9w0SfQ5JJaCAm/5
+	UOLdaCzTJVk9dtCVQhyVgT8nnmQvgKfEEri/O47kjxEDhBKiI9bdeATmMh7wPXuErIDPtTvU8NK
+	Elf1EplWpHOmqLVcbAja0ZGgu5+YxF+AIeD4RJymy0HpRT0IRpojGg8Fd9PlBeicqMVs5+2z397
+	jpw554=
+X-Google-Smtp-Source: AGHT+IHe+XfTIMCRAPUlFlbIkU/tflsFbW21MdMyfHp/6XCnDfQb6bDuEaT4rRTsszgpW5/nSEEe9gnMe/G5FaXzkrE=
+X-Received: by 2002:a2e:b890:0:b0:32a:8c12:babf with SMTP id
+ 38308e7fff4ca-330a7ae414amr30893801fa.2.1753112755706; Mon, 21 Jul 2025
+ 08:45:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aH43Sm3LWoipx5Yn@hovoldconsulting.com>
+References: <30f8ea8d-79c4-4e5c-b354-51ad8146a61c@acm.org> <20250717194025.3218107-1-salomondush@google.com>
+ <CAFdVvOx-xegmdGO8xgwpE3i0BvgXD0C1jKjNWKNjTFuifWmuxg@mail.gmail.com> <CAPE3x15Qxy5+C3_1v6a6YBoz03=NVoJMz-yfc6qih_=_js8=ug@mail.gmail.com>
+In-Reply-To: <CAPE3x15Qxy5+C3_1v6a6YBoz03=NVoJMz-yfc6qih_=_js8=ug@mail.gmail.com>
+From: Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>
+Date: Mon, 21 Jul 2025 09:45:37 -0600
+X-Gm-Features: Ac12FXw5DZe5BWwrJJeGdf__5xPK_A-GGmxWMXE3oIwKFHGDrodRAJm3PDz7znM
+Message-ID: <CAFdVvOw3pGhd2Y+C90jSOWNhq-+JiS1CRaWmHBm=SHBP_cjBSA@mail.gmail.com>
+Subject: Re: [PATCH v2] scsi: mpi3mr: Emit uevent on controller diagnostic fault
+To: Salomon Dushimirimana <salomondush@google.com>
+Cc: bvanassche@acm.org, James.Bottomley@hansenpartnership.com, 
+	kashyap.desai@broadcom.com, linux-kernel@vger.kernel.org, 
+	linux-scsi@vger.kernel.org, martin.petersen@oracle.com, 
+	mpi3mr-linuxdrv.pdl@broadcom.com, sreekanth.reddy@broadcom.com, 
+	sumit.saxena@broadcom.com
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000166636063a725f35"
 
-On Mon, Jul 21, 2025 at 02:49:14PM GMT, Johan Hovold wrote:
-> On Mon, Jul 21, 2025 at 04:26:41PM +0530, Manivannan Sadhasivam wrote:
-> > On Mon, Jul 21, 2025 at 11:32:44AM GMT, Johan Hovold wrote:
-> > > On Mon, Jul 14, 2025 at 11:31:04PM +0530, Manivannan Sadhasivam wrote:
-> > > > Commit 9f4f3dfad8cf ("PCI: qcom: Enable ASPM for platforms supporting 1.9.0
-> > > > ops") allowed the Qcom controller driver to enable ASPM for all PCI devices
-> > > > enumerated at the time of the controller driver probe. It proved to be
-> > > > useful for devices already powered on by the bootloader as it allowed
-> > > > devices to enter ASPM without user intervention.
-> > > > 
-> > > > However, it could not enable ASPM for the hotplug capable devices i.e.,
-> > > > devices enumerated *after* the controller driver probe. This limitation
-> > > > mostly went unnoticed as the Qcom PCI controllers are not hotplug capable
-> > > > and also the bootloader has been enabling the PCI devices before Linux
-> > > > Kernel boots (mostly on the Qcom compute platforms which users use on a
-> > > > daily basis).
-> > > > 
-> > > > But with the advent of the commit b458ff7e8176 ("PCI/pwrctl: Ensure that
-> > > > pwrctl drivers are probed before PCI client drivers"), the pwrctrl driver
-> > > > started to block the PCI device enumeration until it had been probed.
-> > > > Though, the intention of the commit was to avoid race between the pwrctrl
-> > > > driver and PCI client driver, it also meant that the pwrctrl controlled PCI
-> > > > devices may get probed after the controller driver and will no longer have
-> > > > ASPM enabled. So users started noticing high runtime power consumption with
-> > > > WLAN chipsets on Qcom compute platforms like Thinkpad X13s, and Thinkpad
-> > > > T14s, etc...
-> > > 
-> > > Note the ASPM regression for ath11k/ath12k only happened in 6.15, so
-> > > commit b458ff7e8176 ("PCI/pwrctl: Ensure that pwrctl drivers are probed
-> > > before PCI client drivers") in 6.13 does not seem to be the immediate
-> > > culprit here.
-> > 
-> > This series was intented to fix the ASPM issue which exist even before the
-> > introduction of pwrctrl framework.
-> 
-> But this limitation of the ASPM enable implementation wasn't really an
-> issue before pwrctrl since, as you point out above, these controllers
-> are not hotplug capable.
-> 
+--000000000000166636063a725f35
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Yeah, but nothing prevented an user from powering on the endpoint later and
-doing manual rescan.
+On Fri, Jul 18, 2025 at 5:31=E2=80=AFPM Salomon Dushimirimana
+<salomondush@google.com> wrote:
+>
+> When the controller encounters a fatal error event, we want to notify
+> our userspace tools to react to these events and pull the
+> corresponding logs/snapdump from the ioc. There's a list of other
+> drivers doing something similar, such as drivers/scsi/qla2xxx,
+> drivers/scsi/qedf/qedf_dbg.c, etc.
+>
+> So the mpi3mr_issue_reset function only supports two types of resets,
+> i.e MPI3_SYSIF_HOST_DIAG_RESET_ACTION_SOFT_RESET and
+> MPI3_SYSIF_HOST_DIAG_RESET_ACTION_DIAG_FAULT for now. From the code,
+> it seems like only diag fault reset generages a snapdump, soft resets
+> do not, hence why we only emit the fatal uevent on diag fault.
+The driver issues diag fault reset when it observes some anomaly at
+the driver level, however, the firmware can fault asynchronously when
+there is a problem detected at the firmware level and snapdumps will
+be created for those too. So just emitting the event only for diag
+fault reset will not help to capture diag data captured for firmware
+faults and we may need to filter only based on reset reason and not
+based on reset type.
+> Thanks,
+> Salomon Dushimirimana
+>
+> Salomon Dushimirimana
+>
+>
+> On Fri, Jul 18, 2025 at 8:43=E2=80=AFAM Sathya Prakash Veerichetty
+> <sathya.prakash@broadcom.com> wrote:
+> >
+> > On Thu, Jul 17, 2025 at 1:40=E2=80=AFPM Salomon Dushimirimana
+> > <salomondush@google.com> wrote:
+> > >
+> > > Introduces a uevent mechanism to notify userspace when the controller
+> > > undergoes a reset due to a diagnostic fault. A new function,
+> > > mpi3mr_fault_event_emit(), is added and called from the reset path. T=
+his
+> > > function filters for a diagnostic fault type
+> > > (MPI3_SYSIF_HOST_DIAG_RESET_ACTION_DIAG_FAULT) and generates a uevent
+> > > containing details about the event:
+> > >
+> > > - DRIVER: mpi3mr in this case
+> > > - HBA_NUM: scsi host id
+> > > - EVENT_TYPE: indicates fatal error
+> > > - RESET_TYPE: type of reset that has occurred
+> > > - RESET_REASON: specific reason for the reset
+> > >
+> > > This will allow userspace tools to subscribe to these events and take
+> > > appropriate action.
+> > What is the reason for userpace tools to know these events and what
+> > user space tools we are talking about here?  Also, on what basis it is
+> > decided only diag fault reset is considered as FATAL.  I would prefer
+> > to understand the actual requirement before ACKing this patch.  If we
+> > need this kind of user space notification then it would be better to
+> > make it generic and let the notification sent for all firmware fault
+> > codes.
+> >
+> > >
+> > > Signed-off-by: Salomon Dushimirimana <salomondush@google.com>
+> > > ---
+> > > Changes in v2:
+> > > - Addressed feedback from Bart regarding use of __free(kfree) and mor=
+e
+> > >
+> > >  drivers/scsi/mpi3mr/mpi3mr_fw.c | 37 +++++++++++++++++++++++++++++++=
+++
+> > >  1 file changed, 37 insertions(+)
+> > >
+> > > diff --git a/drivers/scsi/mpi3mr/mpi3mr_fw.c b/drivers/scsi/mpi3mr/mp=
+i3mr_fw.c
+> > > index 1d7901a8f0e40..a050c4535ad82 100644
+> > > --- a/drivers/scsi/mpi3mr/mpi3mr_fw.c
+> > > +++ b/drivers/scsi/mpi3mr/mpi3mr_fw.c
+> > > @@ -1623,6 +1623,42 @@ static inline void mpi3mr_set_diagsave(struct =
+mpi3mr_ioc *mrioc)
+> > >         writel(ioc_config, &mrioc->sysif_regs->ioc_configuration);
+> > >  }
+> > >
+> > > +/**
+> > > + * mpi3mr_fault_uevent_emit - Emit uevent for a controller diagnosti=
+c fault
+> > > + * @mrioc: Pointer to the mpi3mr_ioc structure for the controller in=
+stance
+> > > + * @reset_type: The type of reset that has occurred
+> > > + * @reset_reason: The specific reason code for the reset
+> > > + *
+> > > + * This function is invoked when the controller undergoes a reset. I=
+t specifically
+> > > + * filters for MPI3_SYSIF_HOST_DIAG_RESET_ACTION_DIAG_FAULT and igno=
+res other
+> > > + * reset types, such as soft resets.
+> > > + */
+> > > +static void mpi3mr_fault_uevent_emit(struct mpi3mr_ioc *mrioc, u16 r=
+eset_type,
+> > > +       u16 reset_reason)
+> > > +{
+> > > +       struct kobj_uevent_env *env __free(kfree);
+> > > +
+> > > +       if (reset_type !=3D MPI3_SYSIF_HOST_DIAG_RESET_ACTION_DIAG_FA=
+ULT)
+> > > +               return;
+> > > +
+> > > +       env =3D kzalloc(sizeof(*env), GFP_KERNEL);
+> > > +       if (!env)
+> > > +               return;
+> > > +
+> > > +       if (add_uevent_var(env, "DRIVER=3D%s", mrioc->driver_name))
+> > > +               return;
+> > > +       if (add_uevent_var(env, "HBA_NUM=3D%u", mrioc->id))
+> > > +               return;
+> > > +       if (add_uevent_var(env, "EVENT_TYPE=3DFATAL_ERROR"))
+> > > +               return;
+> > > +       if (add_uevent_var(env, "RESET_TYPE=3D%s", mpi3mr_reset_type_=
+name(reset_type)))
+> > > +               return;
+> > > +       if (add_uevent_var(env, "RESET_REASON=3D%s", mpi3mr_reset_rc_=
+name(reset_reason)))
+> > > +               return;
+> > > +
+> > > +       kobject_uevent_env(&mrioc->shost->shost_gendev.kobj, KOBJ_CHA=
+NGE, env->envp);
+> > > +}
+> > > +
+> > >  /**
+> > >   * mpi3mr_issue_reset - Issue reset to the controller
+> > >   * @mrioc: Adapter reference
+> > > @@ -1741,6 +1777,7 @@ static int mpi3mr_issue_reset(struct mpi3mr_ioc=
+ *mrioc, u16 reset_type,
+> > >             ioc_config);
+> > >         if (retval)
+> > >                 mrioc->unrecoverable =3D 1;
+> > > +       mpi3mr_fault_uevent_emit(mrioc, reset_type, reset_reason);
+> > >         return retval;
+> > >  }
+> > >
+> > > --
+> > > 2.50.0.727.gbf7dc18ff4-goog
+> > >
 
-> > But I also agree that the below commits made
-> > the issue more visible and caused regression on platforms where WLAN used to
-> > work.
-> > 
-> > > Candidates from 6.15 include commits like
-> > > 
-> > > 	957f40d039a9 ("PCI/pwrctrl: Move creation of pwrctrl devices to pci_scan_device()")
-> > > 	2489eeb777af ("PCI/pwrctrl: Skip scanning for the device further if pwrctrl device is created")
-> > > 
-> > > This is probably related to the reports of these drivers sometimes
-> > > failing to probe with
-> > > 
-> > > 	ath12k_pci 0004:01:00.0: of_irq_parse_pci: failed with rc=134
-> > > 
-> > > after pwrctrl was merged, and which since 6.15 should instead result in
-> > > the drivers not probing at all (as we've discussed off list).
-> > 
-> > We discussed about the ASPM issue IIRC. The above mentioned of_irq_parse_pci
-> > could also be related to the fact that we are turning off the supplies after
-> > pci_dev destruction. For this issue, I guess the patch from Brian could be the
-> > fix:
-> > 
-> > https://lore.kernel.org/linux-pci/20250711174332.1.I623f788178c1e4c5b1a41dbfc8c7fa55966373c0@changeid/
-> 
-> We've also discussed the rc=134 issue, which appears to be due to some
-> pwrctrl race. IIRC, you thought it may be the bluetooth driver powering
-> down the bt/wlan controller before the wlan bit has had a chance to
-> (complete its) probe. Not sure if that was fully confirmed, but I
-> remember you saying that the rc=134 symptom would no longer be visible
-> since 6.15 and instead wlan would never even probe at all if we hit this
-> issue...
-> 
+--000000000000166636063a725f35
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-Ah yes, this one was *before* the ASPM discussion we had.
-
-> The patch you link to above only appears to relate to drivers being
-> manually unbound. I hope we're not also hitting such issues during
-> regular boot?
-> 
-
-The patch makes sure that the pwrctrl doesn't power off the endpoint when
-'struct pci_dev' gets destroyed. But thinking more, I'm not sure if that's
-what happenning during the 'of_irq_parse_pci' issue.
-
-I need to dig more at some point.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+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
+v82E+npLwqC8bSHh1m6BJewfpawx72uKM9aFs6SVpLPtN6a5369OCwVeEwkk2FeFU9tZXWBnI4Wu
+d1Q4a3vhOColD6PdTWv74Ez2I3ahCkmpeEQ1YMt61TUH3W8NUJJeYN2xkR6OGsA1AgMBAAGjggHc
+MIIB2DAOBgNVHQ8BAf8EBAMCBaAwgaMGCCsGAQUFBwEBBIGWMIGTME4GCCsGAQUFBzAChkJodHRw
+Oi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAy
+MC5jcnQwQQYIKwYBBQUHMAGGNWh0dHA6Ly9vY3NwLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJz
+b25hbHNpZ24yY2EyMDIwME0GA1UdIARGMEQwQgYKKwYBBAGgMgEoCjA0MDIGCCsGAQUFBwIBFiZo
+dHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAJBgNVHRMEAjAAMEkGA1UdHwRC
+MEAwPqA8oDqGOGh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJj
+YTIwMjAuY3JsMCYGA1UdEQQfMB2BG3NhdGh5YS5wcmFrYXNoQGJyb2FkY29tLmNvbTATBgNVHSUE
+DDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQU
+VyBc/F5XGkYNCP9Rb96mru8lU4AwDQYJKoZIhvcNAQELBQADggEBACiysbqj0ggjcc9uzOpBkt1Q
+nGtvHhd9pbNmshJRUoNL11pQEzupSsUkDoAa6hPrOaJVobIO+yC84D4GXQc13Jk0QZQhRJJRYLwk
+vdq704JPh4ULIwofTWqwsiZ1OvINzX9h9KEw/+h+Mc3YUCO7tvKBGLJTUaUhrjxyjLQdEK1Xp/8B
+kYd5quZssxYPJ3nl37Moy/U9ZM2F0Ivv4U3wyP5y5cdmBUBAGOd94rH60fVDVogEo5F9gXrZhT/4
+jKzCG3LclOOzLinCkK2J5GYngIUHSmnqk909QPG6jkx5RJWwkpTzm+AAVbJ9a+1F/8iR3FiDddEK
+8wQJuWG84jqd/9wxggJgMIICXAIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxT
+aWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAy
+MDIwAgx2rp2oPFt1hdtt8l8wDQYJYIZIAWUDBAIBBQCggccwLwYJKoZIhvcNAQkEMSIEIBtoxiIA
+h63hxKyHmJQssK4VVoiaHhr78X/2DnTV642oMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJ
+KoZIhvcNAQkFMQ8XDTI1MDcyMTE1NDU1NlowXAYJKoZIhvcNAQkPMU8wTTALBglghkgBZQMEASow
+CwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQcwCwYJYIZI
+AWUDBAIBMA0GCSqGSIb3DQEBAQUABIIBAFc4srus64S7zRcEhjno3ItTIr10O+NyLM9G+LfXtCMr
+RGzu7ILkjPiR2kkowwEb1cMreMKYu43J7lYFVKiaxrRoeo+hdAY1hBpa3+T64oArVywbXxfQ6ysZ
+egOKwUze81T52Mo0ZNaqORrtrDz4ig6mT4588eJx9t2hJyt6JeFhjvWQUouS2yM8KceewBRWhQ7H
+DF5tcLwxssUVXABSScE84AqzJYlJjTbRmgW22wttq9Jg9fcy0pUnxIsTxpfPCvUYJls5tVDRCecx
+hEUSSLAh6/Em9GHaKy8zOsabGRJOFMquRAyK8BnFgO8/6w2MFTEQDSzVrxWHlmzCPULo2Io=
+--000000000000166636063a725f35--
 
