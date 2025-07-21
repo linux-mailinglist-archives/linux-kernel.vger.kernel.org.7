@@ -1,121 +1,136 @@
-Return-Path: <linux-kernel+bounces-739659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47405B0C949
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:14:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E636BB0C951
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:15:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8906516DE14
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:14:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF1514E770C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:14:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D44432E11BA;
-	Mon, 21 Jul 2025 17:14:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A8F11F8690;
+	Mon, 21 Jul 2025 17:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hnm5NpTk";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8Fva8l85"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KoUHjnpC"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A821F8690;
-	Mon, 21 Jul 2025 17:14:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD8328F95E;
+	Mon, 21 Jul 2025 17:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753118069; cv=none; b=trTBhavw7/aAIiLthoKZcxd/qiqh+4EIw0Fnsd5bqWhIRqRM0ujTMx0EYIIB5SMG/0MB2QvrU5X1qvONCjKLErIiwRRg0ho5EnfdHY0yjlwLIE83EERDSTt6xPIJmFE6mgzDJp6SuxU3SYxz0+kxTx87gRFf6dj0U0QKDkcJvMw=
+	t=1753118099; cv=none; b=O3aOURKazZTlf2uRIbjAjAeaag5hYyi8Bj7VDXyod2jPits6FiMPBroP0xiD5BF1FyypSEVudmhuPHHWns9BOVIXlDZoH++0Y71GLLrBRLCwdki19Ji/sAm0YMPHYe1rJiFIW/xmGvoeYxXbYplTr9Pi4KasIKGPXb61SRefhqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753118069; c=relaxed/simple;
-	bh=zbFpru6Ppf/KfQvFt8+fF05yu0oX1LG57Uu1Rok2wQ0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=VslXgbrsm0fBZQHQqpuKH1+N8zOSlM8CqS5HrBAdJLjp//j0b+xIIVFIacnZty/p690WPxBmAB7jlkGXhMynGu3EaiH/8wJXoWVVvVhJDvVF+a7GG8Tc2x7VW7HmYAnJhZlLyFVOiCBYRS0ZtTdclyOzQrc5G0AGB+eP5KVKMxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hnm5NpTk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8Fva8l85; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753118065;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6HtQaFsRn8UOT9lqlW5J2FlikhtRrn+UC61/UC7I4Lo=;
-	b=hnm5NpTktw2V72uQVlmKYFxxHiwtPKdVY01EG88EmvDdJgCo2pqGhceO/uQAW8O7Ck0A5D
-	xSviHp4v6sX6KUEhAlpprCblZGaExdDnN6D8YFqyvo2kD0STNV2dP4Jz11xhORUsKJ/Zv0
-	30MvZEaHnSeNptP/BCP92huqE2c6ttWzfv9J+x6cKubLlk9HvNQxsNeelJySkwR3HCJ0nR
-	Q9vS3hSPVUO3817dKhe7Aq4GjHmPliO1s/eQNneUKzNZKoyHBYxfmlF9pGUmA6j6Bxy3Rc
-	R58zNB7ZgtbEDSNXe+fXhkBbmfIY8b1eVySN2Lc1UmZhGC1ave9D9irdkQaoKg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753118065;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6HtQaFsRn8UOT9lqlW5J2FlikhtRrn+UC61/UC7I4Lo=;
-	b=8Fva8l85EfRdoa9Mp8ZgJUsH6Mmde8RANxY4hMlY9K4+8kp/tYWo+8fXEPwXjGNJrF88Y6
-	hxZ/KKx0iOslcNCA==
-To: Jakub Kicinski <kuba@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
- Richard Cochran <richardcochran@gmail.com>
-Cc: Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky
- <leon@kernel.org>, Mark Bloch <mbloch@nvidia.com>, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, Carolina Jubran
- <cjubran@nvidia.com>, Vladimir Oltean <vladimir.oltean@nxp.com>
-Subject: Re: [PATCH net-next 0/3] Support exposing raw cycle counters in PTP
- and mlx5
-In-Reply-To: <20250718162945.0c170473@kernel.org>
-References: <1752556533-39218-1-git-send-email-tariqt@nvidia.com>
- <20250718162945.0c170473@kernel.org>
-Date: Mon, 21 Jul 2025 19:14:24 +0200
-Message-ID: <87ldohtqj3.ffs@tglx>
+	s=arc-20240116; t=1753118099; c=relaxed/simple;
+	bh=EDwVEG1YcLrzyGWM3/+Lk5Mp3z0nij43S1kN6uWIoBs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TwTvXc8uZE+EFuXNf951t2oV+OgQ5fW4BVgkpMzmeeMHEdcdVome5kBB+uk611/3ntpnzeqDyhbxUnb83iazxtsGdYpMFahb029KDwB6L1wDxHovcwZSObDbRxkdTqZeuQZGdsOT5/y7CVZsfK4El+HT8Mb5L5olY0kYb2ZHRbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KoUHjnpC; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753118099; x=1784654099;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=EDwVEG1YcLrzyGWM3/+Lk5Mp3z0nij43S1kN6uWIoBs=;
+  b=KoUHjnpCEyHwO+V6s+lsdpf28u1D1Lj7JBw2Dxrz9KP/5w8i4L1HEWWz
+   FmDyMHEpxbp8RCGiD6f0HyZDkuGGUdQNqvl1yYou2mwaq5/4pA2cCburR
+   SlTNi4KDGNcfnO1axOS+RnMiH8NG5k8EXpVJJ4XFuSmP+hUfunKdEpCA3
+   FGfr2aNOTFTHFALwGwBGSMyQdnwiSZZPtUabmawvNAOiVbB7+xznaM6UM
+   QBtHeq3XZSZj/AeiNSfts3VbTDsWECCyX8S/KrBhwZJRrpv1RWF6IY7ge
+   j14q80skWN0ZjxO4/4l4F97V/9d7EaHbnISyimQXJFihCRg7XXbw7Qq0k
+   g==;
+X-CSE-ConnectionGUID: +v+C/ls0TviENcPYHlAQ6w==
+X-CSE-MsgGUID: gQAA4+yhQnKsFW4cvNSwzw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11499"; a="65909270"
+X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
+   d="scan'208";a="65909270"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 10:14:58 -0700
+X-CSE-ConnectionGUID: mE54dbTTSJWW6EhWVJ6OfA==
+X-CSE-MsgGUID: xIwlqI3hRfmb47Xue2ydPg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
+   d="scan'208";a="163196999"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 10:14:53 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1udu6D-0000000HOKx-2u52;
+	Mon, 21 Jul 2025 20:14:49 +0300
+Date: Mon, 21 Jul 2025 20:14:49 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: sboyd@kernel.org, jic23@kernel.org, dlechner@baylibre.com,
+	nuno.sa@analog.com, andy@kernel.org, arnd@arndb.de,
+	gregkh@linuxfoundation.org, srini@kernel.org, vkoul@kernel.org,
+	kishon@kernel.org, sre@kernel.org, krzysztof.kozlowski@linaro.org,
+	u.kleine-koenig@baylibre.com, linux-arm-msm@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org, linux-pm@vger.kernel.org,
+	kernel@collabora.com, wenst@chromium.org
+Subject: Re: [PATCH v1 3/7] power: reset: qcom-pon: Migrate to
+ devm_spmi_subdevice_alloc_and_add()
+Message-ID: <aH51idxbwW1SAExG@smile.fi.intel.com>
+References: <20250721075525.29636-1-angelogioacchino.delregno@collabora.com>
+ <20250721075525.29636-4-angelogioacchino.delregno@collabora.com>
+ <aH4mWfgQt_Q0O-7S@smile.fi.intel.com>
+ <f5d529c3-b898-48ac-8e5a-f587db72dc82@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f5d529c3-b898-48ac-8e5a-f587db72dc82@collabora.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Fri, Jul 18 2025 at 16:29, Jakub Kicinski wrote:
-> On Tue, 15 Jul 2025 08:15:30 +0300 Tariq Toukan wrote:
->> This patch series introduces support for exposing the raw free-running
->> cycle counter of PTP hardware clocks. Some telemetry and low-level
->> logging use cycle counter timestamps rather than nanoseconds.
->> Currently, there is no generic interface to correlate these raw values
->> with system time.
->> 
->> To address this, the series introduces two new ioctl commands that
->> allow userspace to query the device's raw cycle counter together with
->> host time:
->> 
->>  - PTP_SYS_OFFSET_PRECISE_CYCLES
->> 
->>  - PTP_SYS_OFFSET_EXTENDED_CYCLES
->> 
->> These commands work like their existing counterparts but return the
->> device timestamp in cycle units instead of real-time nanoseconds.
->> 
->> This can also be useful in the XDP fast path: if a driver inserts the
->> raw cycle value into metadata instead of a real-time timestamp, it can
->> avoid the overhead of converting cycles to time in the kernel. Then
->> userspace can resolve the cycle-to-time mapping using this ioctl when
->> needed.
->> 
->> Adds the new PTP ioctls and integrates support in ptp_ioctl():
->> - ptp: Add ioctl commands to expose raw cycle counter values
->> 
->> Support for exposing raw cycles in mlx5:
->> - net/mlx5: Extract MTCTR register read logic into helper function
->> - net/mlx5: Support getcyclesx and getcrosscycles
->
-> It'd be great to an Ack from Thomas or Richard on this (or failing that
-> at least other vendors?) Seems like we have a number of parallel
-> efforts to extend the PTP uAPI, I'm not sure how they all square
-> against each other, TBH.
+On Mon, Jul 21, 2025 at 03:05:46PM +0200, AngeloGioacchino Del Regno wrote:
+> Il 21/07/25 13:36, Andy Shevchenko ha scritto:
+> > On Mon, Jul 21, 2025 at 09:55:21AM +0200, AngeloGioacchino Del Regno wrote:
 
-I don't see a conflict vs. the aux clock support. These are orthogonal
-issues and from a conceptual point it makes sense to me to expose the
-raw cycles for the purposes Tariq described.
+...
 
-Thanks,
+> > > +	if (!pdev->dev.parent)
+> > > +		return -ENODEV;
+> > 
+> > You can start using
+> > 
+> > 	struct device *dev = &pdev->dev;
+> > 
+> > here and perhaps one may convert the rest to it...
+> > 
+> > ...
+> > 
+> > >   	error = of_property_read_u32(pdev->dev.of_node, "reg",
+> > 
+> > ...including, but not limited to, use of device_property_read_u32(dev, ...) here.
+> > 
+> 
+> I didn't do that for one single reason: I did not want to add noise to the commits
+> and wanted those to exclusively migrate the drivers to the new API, literally
+> without doing *anything* else unnecessary, even if I have located some almost
+> effortless improvements that I could've done to those drivers.
+> 
+> Please - I prefer to keep it this way: these are the first commits that add the
+> usage of the new functions and of the concept of SPMI subdevices, and I really
+> want those to contain just that and nothing else - because I suspect that these
+> will be taken as example and will be read by the next person that is implementing
+> a new SPMI (sub)driver or converting any remaining ones to subdevice.
 
-        tglx
+You can introduce a temporary variable in this change and use it only in the
+lines you have added/touched. We have similar approach in several drivers.
+Then somebody (not specifically should be you) can move it forward.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
