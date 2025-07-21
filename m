@@ -1,120 +1,255 @@
-Return-Path: <linux-kernel+bounces-739490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C917B0C6DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:49:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B6DCB0C6EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:52:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFB4E7A47F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:47:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49377540C3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:52:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2042DCC1A;
-	Mon, 21 Jul 2025 14:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F6C22D94A4;
+	Mon, 21 Jul 2025 14:52:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rs9hlKkK"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wiaj7mTd"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C752B2CCC1
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 14:48:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47572D63F3;
+	Mon, 21 Jul 2025 14:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753109303; cv=none; b=bxpJ2vG/67T5qQm59Obc1Dw80f2EdFe507I3QF2g5shg6999NzPAnsEQLH69KC7q3fLEiRLNAIwNj3LI9+ygpp1/s/WXG612N4NUy2PegMdWTF7wfB1Rcf84WJZvIL2EmDt9iR6MjoP+6wUYe2zWcNMYJcPLLgM5YFAK9cDwmmM=
+	t=1753109545; cv=none; b=W7O/l8dD4EI4HeNRPhEKIUL502Ee9n0ZPcld86G0J6XjViYPTByVsvFXK8gYCU0RFl27MfrTCKSbk5hKFB2R+lt0zFYen3lALYDzQF2Y25lcJzSCSIqkKUNOwFFB0WtDS40LKUhwJ4fbMy6iTUFSdsxctb+FUHUKZOU03VnJwhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753109303; c=relaxed/simple;
-	bh=I4jLIWmwGVUJJ/6bdkDboyVQrOENRDt9C4hsL58GpWQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=TtN7LVpOrTNmiMF2P4xx2knzhglYkt0bZP5XhX4vFdswbOMsgbxYJsetk648FRi6G4YLfkjgC6yN5138sWLXy1zA1YCrE+btGEli/6pyxGCwmmckmbBqiAqbfGTcgCqZ5krqW2UJfo1f3rWQbhwGdlT9E/OrIA4ooNAWPYBcXLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rs9hlKkK; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4538f375e86so40041545e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 07:48:21 -0700 (PDT)
+	s=arc-20240116; t=1753109545; c=relaxed/simple;
+	bh=iyqjDj45FHzKPDe29reOIdDLLuaVrUYOzWmSyD/0Grw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LY0fYHKElUTRsy27RNPhodzykAii6cSGRHzqlGBK3ilnOYaDvIBTla83iWagF95hHfYuXoBeSkRJ4g00Zs0Ij77dWuKLOWb+tLB3Tt4pNBEhJujBw4uDJBa/Els+F2WxZ2AefvVlWs2dbDFnsoHHd++wS+xzyMeTnRrZSkJU5LA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wiaj7mTd; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-54b10594812so4316521e87.1;
+        Mon, 21 Jul 2025 07:52:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753109300; x=1753714100; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jBPEQ6OO0ExtlokldbPFHvDP61N8dRWQ/XgYp6jRamc=;
-        b=rs9hlKkKHg42FVbsZcAESXc79G6FmMkFlsIPvkIYXfD4yu0sJzdaN8Pa9D6EbviyN/
-         AfLvkrwo9DUCycX2maseLqok3SAs47Rszc9fpwOo6DjrgImyIlA4A2ECStRW5zeo5ycQ
-         rFGsTBWYuFRnaqMKfNrhF4NbneBc9Nwkv1HG4pTFkWPsT0jclOJXuunh7ZhL5X5M0ciK
-         16VS1CfULCHPope4t3c/bR05X3/wmxcfjbU3YcYH4//LRIHcoCS6FWGCRRiI2x1XhOfF
-         kVdqdUepU9yKEQSy7/7LfQatU/umE1PDmslUqiyQJbBt3Ep/GTC2NLgBta50ioLMl4Nw
-         W/Lg==
+        d=gmail.com; s=20230601; t=1753109542; x=1753714342; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=u4JKTvsSyWeh3Xi7pSkUxMxZWl6P3uoFs0eZVsH4tRE=;
+        b=Wiaj7mTdbt7rYsY3ZfEfNiVVDiItx0ovMsn8Cxs3qmuOb1E1hEzgE4BcDbOHHx+eGL
+         Busq63MqN4qq/4Vt2vK82sQfzdEEjQ68wR3+mu9/p0I0hXDrApERuqt25nepSaamjBHN
+         FaShNbOQTDYjAf6hiEXR4QvE3Z1Nq1i6kr95Bdsy1zoEZ96ZHvwGTbNt1LWUTLjoeSqB
+         sgJPLf1xgX0hWQSbJNI73UvhdjP8mXMQ8P//S6sA9OwTt/i7bYYJ/Pe/5byGJAN1b4yi
+         07+kAWX8o9ALJ+BUTWTxZdCP7U7q3lF2HhIVCQMkfLNuwxfE1uth8qh2WkOAIv8VKnQi
+         ovYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753109300; x=1753714100;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jBPEQ6OO0ExtlokldbPFHvDP61N8dRWQ/XgYp6jRamc=;
-        b=ZiU45+RAU7cjrXgigIt3rfpmY29x5H8swFTE4yIjCd5BV2k/7A4osoLVh2E7ysX+95
-         8/6YKO9QLx3jSjx9rP2RjjONthThiZRcP9X3/9mhfagV7ldwrm8QVWJEwiQfsrQjj6MT
-         Pxc4Cs2u+1hIRsuZViGftItGB1sVjMae9SONY2/x+FlNkrUV2faXfSb4nu3Q467kBjib
-         UgXYpVjGsxhP+Gl35QXmvlz4eRqysRiDqFEaCFSXzJz+RKJNuNa+bO+YjUWFomopJMwt
-         5VzPQhAd5lhz5o8fu2ksNFZ27ihBbrrR5alTPSVdMPAUYQb0geqpqzrc9FxW4hXtAp/z
-         Zc+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWN2mmpFN2tpQLmDMTUw8XU4X8WrW38yyElfci8AkS0ZaYOcBROP3JoCG21LLLcrQMg6wvVBRahItOXM20=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxt79f4heTfiKa2rqI9kRJqa0c2BSzcVGaOmoINtu59QQxTv4I3
-	0ekIyq/KNelIEkPIILQSJJeGaDIarDJBmvltFCJuiXzsNjd4PsbrTGodjZImm0CupRjD9Abx5Ej
-	yf/97mKtagf5lAY0znQ==
-X-Google-Smtp-Source: AGHT+IFvYQFbKyyXgMmMx9nK9PaDmq8YZ8gpFhGULfqq/Qkd8G+UVvspeqGM9WubACmqo9Zb7EKKoa6Ux0XDoYY=
-X-Received: from wmth21.prod.google.com ([2002:a05:600c:8b75:b0:456:f62:301d])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:310a:b0:456:58e:318e with SMTP id 5b1f17b1804b1-4562e29c660mr212367875e9.30.1753109300316;
- Mon, 21 Jul 2025 07:48:20 -0700 (PDT)
-Date: Mon, 21 Jul 2025 14:48:19 +0000
-In-Reply-To: <20250715-topics-tyr-request_irq2-v7-4-d469c0f37c07@collabora.com>
+        d=1e100.net; s=20230601; t=1753109542; x=1753714342;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u4JKTvsSyWeh3Xi7pSkUxMxZWl6P3uoFs0eZVsH4tRE=;
+        b=uMCkZTb8xjVE/Jw4oeEqLCuV7RjhQI422Z+pKP/ALQq8CFPc4pY+q5lx2T1gS2GgdX
+         AaCkfY9ij8CUGbfylU6IKUoulhpq3e1yGFNNzqmY1+RLpTRyF1GHwW1Yommp5rnTtfKX
+         q+ncemu3O4p96VqyHSf1SDB2tQTiehxYm9Il3Mb9TBIzMHdV/NojigCr54iuRfROU75P
+         5aOLIUmxlyQVSjvgaP4ofXgLOrMJXxZQsQQmwMy349a00soeAYZNw/5FCeo6eP0FP7G/
+         y3LcrodRIQMnq6VBgVa2psshnb1CHNhYU+uxt23Z+eOzQnCPB5NLLE3ADBsUeT68Rdsf
+         gTiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVVdiHnbvgrMmx1ni2QhVYuGifSw4+xsq9td89qzMtz/htlOVWOi0GrIAv5+w72N11hmIpxDdOKsE7X1ng=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzm9GlNXDPCNmJMaSxTDqX6UL7j985TafAptR5fH2j7BPbct5ms
+	IbMm0ZA4ZENWmXD6pY7GetgObicOIU6lxz4kX2FYwXJyfHWfDCK5OSa3
+X-Gm-Gg: ASbGncuCqhWaKYQKQR1lEO43i+A0/GPV8ysWY3eiCTCQNa5IBa/GLuyf0MRDTyH4YKb
+	6P2i60apif/u1b4Q54i/RitbsVRnIcFPSkjNchdctvOlwK+4zpADGtavV6Tfo+d/k06BePLQ97C
+	E/GHWONupM+Q3nisHGJU9VIVIHx/4mvF8EKXp7keQCc4a7HLASq/UizDosHkGk0QLqDJhavPS0n
+	qvJlQ5u/7SADzylgdQMg3gIJyFRji5c4UO97WrVun/8fYzlaZUPykd1JXWyTMLLv2FVmP6u+yYs
+	u9v4a6Ilc4ChhFcmLxoCRDD36P+OpIpx9RWSttxOy8Lgwtll7i74xISva2UCbKHvWjh8i3NQaai
+	K8oTqIw7pYtwyu8wti7HzFW/L/zfpCtTbmup4nHQ3kbJevw4t
+X-Google-Smtp-Source: AGHT+IHp5tMrzbaw57CWCVYB0RoV0tEqsl85F1RSOYA13WIAtZmdCi0B3fYi5Do/od4mZYTslqfiMA==
+X-Received: by 2002:a05:6512:b99:b0:554:f76a:baba with SMTP id 2adb3069b0e04-55a23ee1deamr6945660e87.3.1753109541472;
+        Mon, 21 Jul 2025 07:52:21 -0700 (PDT)
+Received: from SC-WS-02452.corp.sbercloud.ru ([37.78.122.38])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55a31d9110bsm1587515e87.154.2025.07.21.07.52.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Jul 2025 07:52:21 -0700 (PDT)
+From: Sergey Bashirov <sergeybashirov@gmail.com>
+To: Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	NeilBrown <neil@brown.name>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>
+Cc: linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sergey Bashirov <sergeybashirov@gmail.com>
+Subject: [PATCH v2] NFSD: Rework encoding and decoding of nfsd4_deviceid
+Date: Mon, 21 Jul 2025 17:48:55 +0300
+Message-ID: <20250721145215.132666-1-sergeybashirov@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250715-topics-tyr-request_irq2-v7-0-d469c0f37c07@collabora.com> <20250715-topics-tyr-request_irq2-v7-4-d469c0f37c07@collabora.com>
-Message-ID: <aH5TMzJGqzg3wNjK@google.com>
-Subject: Re: [PATCH v7 4/6] rust: irq: add support for threaded IRQs and handlers
-From: Alice Ryhl <aliceryhl@google.com>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, 
-	"Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=" <kwilczynski@kernel.org>, Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 15, 2025 at 12:16:41PM -0300, Daniel Almeida wrote:
-> This patch adds support for threaded IRQs and handlers through
-> irq::ThreadedRegistration and the irq::ThreadedHandler trait.
-> 
-> Threaded interrupts are more permissive in the sense that further
-> processing is possible in a kthread. This means that said execution takes
-> place outside of interrupt context, which is rather restrictive in many
-> ways.
-> 
-> Registering a threaded irq is dependent upon having an IrqRequest that
-> was previously allocated by a given device. This will be introduced in
-> subsequent patches.
-> 
-> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+Compilers may optimize the layout of C structures, so we should not rely
+on sizeof struct and memcpy to encode and decode XDR structures. The byte
+order of the fields should also be taken into account.
 
-A few of the same nits as on the non-threaded patch apply here too.
+This patch adds the correct functions to handle the deviceid4 structure
+and removes the pad field, which is currently not used by NFSD, from the
+runtime state. The server's byte order is preserved because the deviceid4
+blob on the wire is only used as a cookie by the client.
 
-> +/// impl kernel::irq::request::ThreadedHandler for Handler {
+Signed-off-by: Sergey Bashirov <sergeybashirov@gmail.com>
+---
+Tested on the block layout setup, checked with smatch.
 
-If you import ThreadedHandler at the top of the example, then you don't
-need this. If you want it to say irq in the path here, then import
-kernel::irq::self and use `impl irq::ThreadedHandler for Handler` here.
+Changes in v2:
+ - Renamed new functions
+ - Removed byte swap operations
+ - Updated code comment and patch description
 
-The same could make sense for the flags. You can write
-irq::Flags::SHARED if you import the irq module.
+ fs/nfsd/blocklayoutxdr.c    |  7 ++-----
+ fs/nfsd/flexfilelayoutxdr.c |  3 +--
+ fs/nfsd/nfs4layouts.c       |  1 -
+ fs/nfsd/nfs4xdr.c           | 14 +-------------
+ fs/nfsd/xdr4.h              | 36 +++++++++++++++++++++++++++++++++++-
+ 5 files changed, 39 insertions(+), 22 deletions(-)
 
-(This requires a re-export in the irq module if you don't have one
-already. Also, I would make the irq module private so that end-users
-import everything via the irq:: path without a sub-module.)
+diff --git a/fs/nfsd/blocklayoutxdr.c b/fs/nfsd/blocklayoutxdr.c
+index bcf21fde91207..18de37ff28916 100644
+--- a/fs/nfsd/blocklayoutxdr.c
++++ b/fs/nfsd/blocklayoutxdr.c
+@@ -29,8 +29,7 @@ nfsd4_block_encode_layoutget(struct xdr_stream *xdr,
+ 	*p++ = cpu_to_be32(len);
+ 	*p++ = cpu_to_be32(1);		/* we always return a single extent */
+ 
+-	p = xdr_encode_opaque_fixed(p, &b->vol_id,
+-			sizeof(struct nfsd4_deviceid));
++	p = svcxdr_encode_deviceid4(p, &b->vol_id);
+ 	p = xdr_encode_hyper(p, b->foff);
+ 	p = xdr_encode_hyper(p, b->len);
+ 	p = xdr_encode_hyper(p, b->soff);
+@@ -156,9 +155,7 @@ nfsd4_block_decode_layoutupdate(__be32 *p, u32 len, struct iomap **iomapp,
+ 	for (i = 0; i < nr_iomaps; i++) {
+ 		struct pnfs_block_extent bex;
+ 
+-		memcpy(&bex.vol_id, p, sizeof(struct nfsd4_deviceid));
+-		p += XDR_QUADLEN(sizeof(struct nfsd4_deviceid));
+-
++		p = svcxdr_decode_deviceid4(p, &bex.vol_id);
+ 		p = xdr_decode_hyper(p, &bex.foff);
+ 		if (bex.foff & (block_size - 1)) {
+ 			goto fail;
+diff --git a/fs/nfsd/flexfilelayoutxdr.c b/fs/nfsd/flexfilelayoutxdr.c
+index aeb71c10ff1b9..f9f7e38cba13f 100644
+--- a/fs/nfsd/flexfilelayoutxdr.c
++++ b/fs/nfsd/flexfilelayoutxdr.c
+@@ -54,8 +54,7 @@ nfsd4_ff_encode_layoutget(struct xdr_stream *xdr,
+ 	*p++ = cpu_to_be32(1);			/* single mirror */
+ 	*p++ = cpu_to_be32(1);			/* single data server */
+ 
+-	p = xdr_encode_opaque_fixed(p, &fl->deviceid,
+-			sizeof(struct nfsd4_deviceid));
++	p = svcxdr_encode_deviceid4(p, &fl->deviceid);
+ 
+ 	*p++ = cpu_to_be32(1);			/* efficiency */
+ 
+diff --git a/fs/nfsd/nfs4layouts.c b/fs/nfsd/nfs4layouts.c
+index aea905fcaf87a..683bd1130afe2 100644
+--- a/fs/nfsd/nfs4layouts.c
++++ b/fs/nfsd/nfs4layouts.c
+@@ -120,7 +120,6 @@ nfsd4_set_deviceid(struct nfsd4_deviceid *id, const struct svc_fh *fhp,
+ 
+ 	id->fsid_idx = fhp->fh_export->ex_devid_map->idx;
+ 	id->generation = device_generation;
+-	id->pad = 0;
+ 	return 0;
+ }
+ 
+diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
+index ea91bad4eee2c..2acc9abee668f 100644
+--- a/fs/nfsd/nfs4xdr.c
++++ b/fs/nfsd/nfs4xdr.c
+@@ -587,18 +587,6 @@ nfsd4_decode_state_owner4(struct nfsd4_compoundargs *argp,
+ }
+ 
+ #ifdef CONFIG_NFSD_PNFS
+-static __be32
+-nfsd4_decode_deviceid4(struct nfsd4_compoundargs *argp,
+-		       struct nfsd4_deviceid *devid)
+-{
+-	__be32 *p;
+-
+-	p = xdr_inline_decode(argp->xdr, NFS4_DEVICEID4_SIZE);
+-	if (!p)
+-		return nfserr_bad_xdr;
+-	memcpy(devid, p, sizeof(*devid));
+-	return nfs_ok;
+-}
+ 
+ static __be32
+ nfsd4_decode_layoutupdate4(struct nfsd4_compoundargs *argp,
+@@ -1783,7 +1771,7 @@ nfsd4_decode_getdeviceinfo(struct nfsd4_compoundargs *argp,
+ 	__be32 status;
+ 
+ 	memset(gdev, 0, sizeof(*gdev));
+-	status = nfsd4_decode_deviceid4(argp, &gdev->gd_devid);
++	status = nfsd4_decode_deviceid4(argp->xdr, &gdev->gd_devid);
+ 	if (status)
+ 		return status;
+ 	if (xdr_stream_decode_u32(argp->xdr, &gdev->gd_layout_type) < 0)
+diff --git a/fs/nfsd/xdr4.h b/fs/nfsd/xdr4.h
+index a23bc56051caf..e65b552bf5f5a 100644
+--- a/fs/nfsd/xdr4.h
++++ b/fs/nfsd/xdr4.h
+@@ -595,9 +595,43 @@ struct nfsd4_reclaim_complete {
+ struct nfsd4_deviceid {
+ 	u64			fsid_idx;
+ 	u32			generation;
+-	u32			pad;
+ };
+ 
++static inline __be32 *
++svcxdr_encode_deviceid4(__be32 *p, const struct nfsd4_deviceid *devid)
++{
++	__be64 *q = (__be64 *)p;
++
++	*q = (__force __be64)devid->fsid_idx;
++	p += 2;
++	*p++ = (__force __be32)devid->generation;
++	*p++ = xdr_zero;
++	return p;
++}
++
++static inline __be32 *
++svcxdr_decode_deviceid4(__be32 *p, struct nfsd4_deviceid *devid)
++{
++	__be64 *q = (__be64 *)p;
++
++	devid->fsid_idx = (__force u64)(*q);
++	p += 2;
++	devid->generation = (__force u32)(*p++);
++	p++; /* NFSD does not use the remaining octets */
++	return p;
++}
++
++static inline __be32
++nfsd4_decode_deviceid4(struct xdr_stream *xdr, struct nfsd4_deviceid *devid)
++{
++	__be32 *p = xdr_inline_decode(xdr, NFS4_DEVICEID4_SIZE);
++
++	if (unlikely(!p))
++		return nfserr_bad_xdr;
++	svcxdr_decode_deviceid4(p, devid);
++	return nfs_ok;
++}
++
+ struct nfsd4_layout_seg {
+ 	u32			iomode;
+ 	u64			offset;
+-- 
+2.43.0
 
-Alice
 
