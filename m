@@ -1,141 +1,220 @@
-Return-Path: <linux-kernel+bounces-739048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31474B0C107
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:14:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D9F7B0C10E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:15:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A6B13A6733
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:13:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAA7718C21DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA77528D8EE;
-	Mon, 21 Jul 2025 10:14:08 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BF121D5B3;
-	Mon, 21 Jul 2025 10:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6341EA73;
+	Mon, 21 Jul 2025 10:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jHUZbcdG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84DB28B7FD;
+	Mon, 21 Jul 2025 10:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753092848; cv=none; b=ZiD/jeBMgh2zXYulUD88H8JtcWKDALrp/JVj77JQkXGz1JP1Lzirvjn3OAtvYy4t2pOsZ0Cxa82ecqNvbn3fw1s+IlcUmSLBBWf0fxmg3Vke7cN5lZ/uczhWAkDKELN189BF2Zbjjl7wFXW/XMGGkjQhZw4P8aIbtusPUOmrgcM=
+	t=1753092876; cv=none; b=u+XSnhwmN8Q+6k0RVXrJufaIhQZz3Gs/906vbSt3Qv10CLP7FGrmuGzkfQ+cQsptsdfc7JdAc8v3IhkjFYKrvDQU8p6RmsFrk6ONVOqfOwChun6ft6IQ4Px7RiLZlEFEYyh9EXXQQcCRoTvtmwRhxGIkcX2pBVGU9Vg5b/BkYfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753092848; c=relaxed/simple;
-	bh=nScyJZOEs7kGy1Cy1SeiFA+NP/2JL4BxBNTQORm1M3g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QfN+C9qx022cEra+Q/wIiNNmcqbmFXdc6p2m3H4FKBwJUB6wcVQc5axsiY3LASHE/Ebcvgd3oPTHsbXxTzaAxDlF2FY7ui6iybyWx6tgRRr0zmE5xSFVqvXhHXd0ZXwVny/7UH1XQTRDq7GhXXZhpYK6l4FVlS5GgxeZEcgZoEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.68.193])
-	by gateway (Coremail) with SMTP id _____8BxYa_qEn5od70uAQ--.55714S3;
-	Mon, 21 Jul 2025 18:14:02 +0800 (CST)
-Received: from localhost.localdomain (unknown [223.64.68.193])
-	by front1 (Coremail) with SMTP id qMiowJAxz8PgEn5oAg4gAA--.20199S2;
-	Mon, 21 Jul 2025 18:14:01 +0800 (CST)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	linux-kernel@vger.kernel.org,
-	Huacai Chen <chenhuacai@loongson.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH V3] init: Handle bootloader identifier in kernel parameters
-Date: Mon, 21 Jul 2025 18:13:43 +0800
-Message-ID: <20250721101343.3283480-1-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1753092876; c=relaxed/simple;
+	bh=ETu8KpCEGzAKbdZ8gkiUUREkFwgiR/4pTO1+nAPNLgA=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=tXuhcNBcUpdhkaoGe7UJoi5VEm1LllAvh9LjzlzXDKlTboZDvouryScBSfA7r2NkUkjoKpYTFKKED+PUgDwz5nzRtDoe4c002VyhbfisnF2G3UOc5qfbq1PcQGRUHFzBb+fpe/OO+D5NPAUK7MvcY6IJ+TbpKgtxpsTyUMEqemk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jHUZbcdG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3502C4CEED;
+	Mon, 21 Jul 2025 10:14:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753092875;
+	bh=ETu8KpCEGzAKbdZ8gkiUUREkFwgiR/4pTO1+nAPNLgA=;
+	h=Date:From:Subject:Cc:To:References:In-Reply-To:From;
+	b=jHUZbcdG1rf4AW7gjQ5sVONiWRCYWOMptP8kv9M0gDoOHoABgCSZk8JJB4ZmEIMxP
+	 z1GBUldg3bdAB6LxDBca5BP1Uqp4GYfvUSz43adzS5NRidmP5rh5RPOmAx3aL16VlT
+	 I4K/d5qDIzcYmNU1XodnduRI8/yRzm1mXCVsNPRf4e5zlATa5iBg85iFjDWmUcCIu5
+	 3DIIo9XQHDPveIySryO6427HHKJGYNcYHyDouKi+YeDsezFiRrUQAmkBQV8oItDXet
+	 Irmg6iw8ck3sNRfm+yK1LVJryA+HvOBc1beMwvGkOnNv3bs+JSOs38ztYQnhI+6Ydr
+	 rElpqKGcbY0Fg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAxz8PgEn5oAg4gAA--.20199S2
-X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoW7tw4fCr1rCFW3GF1xXr17XFc_yoW8KFWUpF
-	WktryfW3ykGws8Cr48Wr4vga4Skwn3Za1UGanxWws8XFn8tFyFqrWrtF1agasxtrWftF42
-	gFn8ZF18C3ZrCFXCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUU90b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVWxJr0_GcWln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12
-	xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y
-	6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64
-	vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_
-	Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
-	AY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAI
-	cVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42
-	IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVj
-	vjDU0xZFpf9x07je0PfUUUUU=
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 21 Jul 2025 12:14:31 +0200
+Message-Id: <DBHNK2XQHUIW.TQHV41LR5D8I@kernel.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH] drm/sched: Prevent stopped entities from being added to
+ the run queue.
+Cc: <phasta@kernel.org>, "James Flowers" <bold.zone2373@fastmail.com>,
+ <matthew.brost@intel.com>, <ckoenig.leichtzumerken@gmail.com>,
+ <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+ <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
+ <skhan@linuxfoundation.org>, <dri-devel@lists.freedesktop.org>,
+ <linux-kernel@vger.kernel.org>, <linux-kernel-mentees@lists.linux.dev>,
+ "Tvrtko Ursulin" <tvrtko.ursulin@igalia.com>
+To: "Philipp Stanner" <phasta@mailbox.org>
+References: <20250720235748.2798-1-bold.zone2373@fastmail.com>
+ <66a14b005fa3dc874f4f3261b93901af1292bde9.camel@mailbox.org>
+ <e7c0f63678a93261182b69aa526217821552a150.camel@mailbox.org>
+In-Reply-To: <e7c0f63678a93261182b69aa526217821552a150.camel@mailbox.org>
 
-BootLoader (Grub, LILO, etc) may pass an identifier such as "BOOT_IMAGE=
-/boot/vmlinuz-x.y.z" to kernel parameters. But these identifiers are not
-recognized by the kernel itself so will be passed to user space. However
-user space init program also doesn't recognized it.
+On Mon Jul 21, 2025 at 10:16 AM CEST, Philipp Stanner wrote:
+> On Mon, 2025-07-21 at 09:52 +0200, Philipp Stanner wrote:
+>> On Sun, 2025-07-20 at 16:56 -0700, James Flowers wrote:
+>> > diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/=
+scheduler/sched_main.c
+>> > index bfea608a7106..997a2cc1a635 100644
+>> > --- a/drivers/gpu/drm/scheduler/sched_main.c
+>> > +++ b/drivers/gpu/drm/scheduler/sched_main.c
+>> > @@ -172,8 +172,10 @@ void drm_sched_rq_update_fifo_locked(struct drm_s=
+ched_entity *entity,
+>> > =C2=A0
+>> > =C2=A0	entity->oldest_job_waiting =3D ts;
+>> > =C2=A0
+>> > -	rb_add_cached(&entity->rb_tree_node, &rq->rb_tree_root,
+>> > -		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 drm_sched_entity_compare_before);
+>> > +	if (!entity->stopped) {
+>> > +		rb_add_cached(&entity->rb_tree_node, &rq->rb_tree_root,
+>> > +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 drm_sched_entity_compare_before);
+>> > +	}
+>>=20
+>> If this is a race, then this patch here is broken, too, because you're
+>> checking the 'stopped' boolean as the callers of that function do, too
+>> =E2=80=93 just later. :O
+>>=20
+>> Could still race, just less likely.
+>>=20
+>> The proper way to fix it would then be to address the issue where the
+>> locking is supposed to happen. Let's look at, for example,
+>> drm_sched_entity_push_job():
+>>=20
+>>=20
+>> void drm_sched_entity_push_job(struct drm_sched_job *sched_job)
+>> {
+>> 	(Bla bla bla)
+>>=20
+>> =C2=A0	=E2=80=A6=E2=80=A6=E2=80=A6=E2=80=A6
+>>=20
+>> 	/* first job wakes up scheduler */
+>> 	if (first) {
+>> 		struct drm_gpu_scheduler *sched;
+>> 		struct drm_sched_rq *rq;
+>>=20
+>> 		/* Add the entity to the run queue */
+>> 		spin_lock(&entity->lock);
+>> 		if (entity->stopped) {=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 <---- Aha!
+>> 			spin_unlock(&entity->lock);
+>>=20
+>> 			DRM_ERROR("Trying to push to a killed entity\n");
+>> 			return;
+>> 		}
+>>=20
+>> 		rq =3D entity->rq;
+>> 		sched =3D rq->sched;
+>>=20
+>> 		spin_lock(&rq->lock);
+>> 		drm_sched_rq_add_entity(rq, entity);
+>>=20
+>> 		if (drm_sched_policy =3D=3D DRM_SCHED_POLICY_FIFO)
+>> 			drm_sched_rq_update_fifo_locked(entity, rq, submit_ts); <---- bumm!
+>>=20
+>> 		spin_unlock(&rq->lock);
+>> 		spin_unlock(&entity->lock);
+>>=20
+>> But the locks are still being hold. So that "shouldn't be happening"(tm)=
+.
+>>=20
+>> Interesting. AFAICS only drm_sched_entity_kill() and drm_sched_fini()
+>> stop entities. The former holds appropriate locks, but drm_sched_fini()
+>> doesn't. So that looks like a hot candidate to me. Opinions?
+>>=20
+>> On the other hand, aren't drivers prohibited from calling
+>> drm_sched_entity_push_job() after calling drm_sched_fini()? If the
+>> fuzzer does that, then it's not the scheduler's fault.
 
-KEXEC/KDUMP (kexec-tools) may also pass an identifier such as "kexec" on
-some architectures.
+Exactly, this is the first question to ask.
 
-We cannot change BootLoader's behavior, because this behavior exists for
-many years, and there are already user space programs search BOOT_IMAGE=
-in /proc/cmdline to obtain the kernel image locations:
+And I think it's even more restrictive:
 
-https://github.com/linuxdeepin/deepin-ab-recovery/blob/master/util.go
-(search getBootOptions)
-https://github.com/linuxdeepin/deepin-ab-recovery/blob/master/main.go
-(search getKernelReleaseWithBootOption)
+In drm_sched_fini()
 
-So the the best way is handle (ignore) it by the kernel itself, which
-can avoid such boot warnings (if we use something like init=/bin/bash,
-bootloader identifier can even cause a crash):
+	for (i =3D DRM_SCHED_PRIORITY_KERNEL; i < sched->num_rqs; i++) {
+		struct drm_sched_rq *rq =3D sched->sched_rq[i];
 
-Kernel command line: BOOT_IMAGE=(hd0,1)/vmlinuz-6.x root=/dev/sda3 ro console=tty
-Unknown kernel command line parameters "BOOT_IMAGE=(hd0,1)/vmlinuz-6.x", will be passed to user space.
+		spin_lock(&rq->lock);
+		list_for_each_entry(s_entity, &rq->entities, list)
+			/*
+			 * Prevents reinsertion and marks job_queue as idle,
+			 * it will be removed from the rq in drm_sched_entity_fini()
+			 * eventually
+			 */
+			s_entity->stopped =3D true;
+		spin_unlock(&rq->lock);
+		kfree(sched->sched_rq[i]);
+	}
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
----
-V2: Update comments and commit messages.
-V3: Document bootloader identifiers.
+In drm_sched_entity_kill()
 
- init/main.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+	static void drm_sched_entity_kill(struct drm_sched_entity *entity)
+	{
+		struct drm_sched_job *job;
+		struct dma_fence *prev;
 
-diff --git a/init/main.c b/init/main.c
-index 225a58279acd..b25e7da5347a 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -545,6 +545,12 @@ static int __init unknown_bootoption(char *param, char *val,
- 				     const char *unused, void *arg)
- {
- 	size_t len = strlen(param);
-+	/*
-+	 * Well-known bootloader identifiers:
-+	 * 1. LILO/Grub pass "BOOT_IMAGE=...";
-+	 * 2. kexec/kdump (kexec-tools) pass "kexec".
-+	 */
-+	const char *bootloader[] = { "BOOT_IMAGE=", "kexec", NULL };
- 
- 	/* Handle params aliased to sysctls */
- 	if (sysctl_is_alias(param))
-@@ -552,6 +558,12 @@ static int __init unknown_bootoption(char *param, char *val,
- 
- 	repair_env_string(param, val);
- 
-+	/* Handle bootloader identifier */
-+	for (int i = 0; bootloader[i]; i++) {
-+		if (!strncmp(param, bootloader[i], strlen(bootloader[i])))
-+			return 0;
-+	}
-+
- 	/* Handle obsolete-style parameters */
- 	if (obsolete_checksetup(param))
- 		return 0;
--- 
-2.47.3
+		if (!entity->rq)
+			return;
 
+		spin_lock(&entity->lock);
+		entity->stopped =3D true;
+		drm_sched_rq_remove_entity(entity->rq, entity);
+		spin_unlock(&entity->lock);
+
+		[...]
+	}
+
+If this runs concurrently, this is a UAF as well.
+
+Personally, I have always been working with the assupmtion that entites hav=
+e to
+be torn down *before* the scheduler, but those lifetimes are not documented
+properly.
+
+There are two solutions:
+
+  (1) Strictly require all entities to be torn down before drm_sched_fini()=
+,
+      i.e. stick to the natural ownership and lifetime rules here (see belo=
+w).
+
+  (2) Actually protect *any* changes of the relevent fields of the entity
+      structure with the entity lock.
+
+While (2) seems rather obvious, we run into lock inversion with this approa=
+ch,
+as you note below as well. And I think drm_sched_fini() should not mess wit=
+h
+entities anyways.
+
+The ownership here seems obvious:
+
+The scheduler *owns* a resource that is used by entities. Consequently, ent=
+ities
+are not allowed to out-live the scheduler.
+
+Surely, the current implementation to just take the resource away from the
+entity under the hood can work as well with appropriate locking, but that's=
+ a
+mess.
+
+If the resource *really* needs to be shared for some reason (which I don't =
+see),
+shared ownership, i.e. reference counting, is much less error prone.
 
