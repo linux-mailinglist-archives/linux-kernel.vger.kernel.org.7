@@ -1,97 +1,67 @@
-Return-Path: <linux-kernel+bounces-739284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55488B0C463
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:48:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFDE9B0C46C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A56384E3972
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:47:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C69C916542E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D110B2D4B58;
-	Mon, 21 Jul 2025 12:48:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D50A2D4B59;
+	Mon, 21 Jul 2025 12:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R8evXuR+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kGkvWwlF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E424502F;
-	Mon, 21 Jul 2025 12:48:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D420F2D46AE;
+	Mon, 21 Jul 2025 12:49:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753102089; cv=none; b=E8jZoPuVMg3Fp8eB1JExRdlxpUXTxuyaHxIVIDqfiW1CnTqRG7QkKUnTN7AwmtWQTfvIh3DHlGy0G/ojCya/Yc2/lTCjfQgahjwWT41RMTZNNiR5xC9xuOpyFcKRS4dnHEf72GjmTsfDQcK6QtLQCxnW1/FEfqH3Ns72O2GwfWc=
+	t=1753102166; cv=none; b=nbk3uBrh188UPOE3D3ymNSVpdA+F6QjiARvAIaWWoShLRWBTEdXwY/bjmcTPw2wKr63Fm38fFE2gexVgfueaDgnX4BGMkM3Q9z8GDZCbjxd4kXNGpMDZaFSBMObZcQ9JlJeFwiCyG31M5AW+YZKKU2qn/fJTTSOWJgNzt8mLWiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753102089; c=relaxed/simple;
-	bh=fhUrUAac/iSii6E8bCY5/2OzAP/25KtTiniEKeJQXGA=;
+	s=arc-20240116; t=1753102166; c=relaxed/simple;
+	bh=ohPHgBghu6f1fO7+k+hBTWWYaerI/ppVg0Kx1KUtBO0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PdSKdNjtBboMgd832HDbP+uXPaRLqk5gH43+jq8vlM1Hc4dWSbJ50xkdj0WNZbdnrejhlZFh0alyVYXwTE1HxqaXdlipy/qcX255Zo/Sd8XhRxZIm5OMID6J0an5xZ63VZTx10Wb++nILTSxyC0qtE01UAmwtUiiRLoJ/+c1UNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R8evXuR+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2550C4CEED;
-	Mon, 21 Jul 2025 12:47:58 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=rF1OAkc/l0bjVqCBbfL+Rdp64NNGPhdAqI+KoO7hfmn1GyWowDGRgBe906XtszD+de9p1N90HA5IU+jDRigfM8+PUA/hFrmPrpxtqdlb7cnDM+YXNqFwjyisCe+qACwTKDt6SrfwqcKQO6qpnh5Kgp658xe26IUe3GUzWTs/6Js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kGkvWwlF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 652E3C4CEF7;
+	Mon, 21 Jul 2025 12:49:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753102088;
-	bh=fhUrUAac/iSii6E8bCY5/2OzAP/25KtTiniEKeJQXGA=;
+	s=k20201202; t=1753102166;
+	bh=ohPHgBghu6f1fO7+k+hBTWWYaerI/ppVg0Kx1KUtBO0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R8evXuR+wAan3GKqOPc31OKb0HXwT1fcr9RAvjn3iXq9AafrC9dr+uhqKKHXhydc/
-	 ommMgMhlPSa10h8tXea70KugAvoZCogNM+Xt21kS9UmsttjWDnOELNHjux+Ju59MNY
-	 /URVoorMncYyCzvX9VeofQFk7WldoN/Ri5qk6rB1XFXfi+hA14lKHW1R2sRPlxfo/E
-	 LGLDW2D8KsMU/Gla3tq/bXrtgsgK9NPEPhMAYMtEgjB4rEKVqgNW9ZLANwHmFPzbv2
-	 KyzNMpjT5XzFw+NFZx3vex8f/0R9leYdi3PuQeMO27/gBBOFaJYqsNHIsKj7h+b3pJ
-	 6c41KggZR4CKg==
-Date: Mon, 21 Jul 2025 13:47:55 +0100
-From: Will Deacon <will@kernel.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Kees Cook <kees@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
-	Michal Wilczynski <michal.wilczynski@intel.com>,
-	Juergen Gross <jgross@suse.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Roger Pau Monne <roger.pau@citrix.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Usama Arif <usama.arif@bytedance.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Thomas Huth <thuth@redhat.com>, Brian Gerst <brgerst@gmail.com>,
-	kvm@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net,
-	platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
-	linux-mm@kvack.org, Ingo Molnar <mingo@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
-	kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v3 04/13] x86: Handle KCOV __init vs inline mismatches
-Message-ID: <aH42--h-ARsvX5Wk@willie-the-truck>
-References: <20250717231756.make.423-kees@kernel.org>
- <20250717232519.2984886-4-kees@kernel.org>
- <aHoHkDvvp4AHIzU1@kernel.org>
- <202507181541.B8CFAC7E@keescook>
- <CAMj1kXGAwjChyFvjQcTbL8dFXkFWnn9n47bkN7FP=+EsLNsJdg@mail.gmail.com>
+	b=kGkvWwlFd+DoY2STa58QgwK1FhyrZQBvUZQS4nlPmJs1YqknObFumP3LWwXtRTkaB
+	 DcNibY+5rsS+g140aekdJ/OaX/2rOcXmlLm8P8nyR5kioU7P5ZAVv4LsqzB3rX8dpA
+	 FwQFrQF6wzfDcZQg6N2gD6r0xffj6lNH6Yk2BiEAA+EoTIdrThYKumAwjScZRk5s4i
+	 RADw0bcKYNylyCMedR0iH5ByudY/jB6RooWapd7QRUv1aH1Yd06Kfqh+YQ+z/RzhWm
+	 HgVNwXVhn6xv4HVCxQhaMEszjkDgW5OtSlIxyhU1LZMYDBMzkPaNQCXvzRobLMcpi1
+	 E2tSYiyFsNh4g==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1udpxC-000000007uL-2QXv;
+	Mon, 21 Jul 2025 14:49:15 +0200
+Date: Mon, 21 Jul 2025 14:49:14 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] PCI: qcom: Switch to bus notifier for enabling ASPM
+ of PCI devices
+Message-ID: <aH43Sm3LWoipx5Yn@hovoldconsulting.com>
+References: <20250714-aspm_fix-v1-0-7d04b8c140c8@oss.qualcomm.com>
+ <20250714-aspm_fix-v1-1-7d04b8c140c8@oss.qualcomm.com>
+ <aH4JPBIk_GEoAezy@hovoldconsulting.com>
+ <rmltahsjvllae3or7jjk5kwvdkcqohj4bbjsfv4mnfbuq7376s@wtsha4zorf2p>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,66 +70,111 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMj1kXGAwjChyFvjQcTbL8dFXkFWnn9n47bkN7FP=+EsLNsJdg@mail.gmail.com>
+In-Reply-To: <rmltahsjvllae3or7jjk5kwvdkcqohj4bbjsfv4mnfbuq7376s@wtsha4zorf2p>
 
-On Sun, Jul 20, 2025 at 04:10:01PM +1000, Ard Biesheuvel wrote:
-> On Sat, 19 Jul 2025 at 08:51, Kees Cook <kees@kernel.org> wrote:
-> > On Fri, Jul 18, 2025 at 11:36:32AM +0300, Mike Rapoport wrote:
-> > > On Thu, Jul 17, 2025 at 04:25:09PM -0700, Kees Cook wrote:
-> > > > When KCOV is enabled all functions get instrumented, unless the
-> > > > __no_sanitize_coverage attribute is used. To prepare for
-> > > > __no_sanitize_coverage being applied to __init functions, we have to
-> > > > handle differences in how GCC's inline optimizations get resolved. For
-> > > > x86 this means forcing several functions to be inline with
-> > > > __always_inline.
-> > > >
-> > > > Signed-off-by: Kees Cook <kees@kernel.org>
-> > >
-> > > ...
-> > >
-> > > > diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-> > > > index bb19a2534224..b96746376e17 100644
-> > > > --- a/include/linux/memblock.h
-> > > > +++ b/include/linux/memblock.h
-> > > > @@ -463,7 +463,7 @@ static inline void *memblock_alloc_raw(phys_addr_t size,
-> > > >                                       NUMA_NO_NODE);
-> > > >  }
-> > > >
-> > > > -static inline void *memblock_alloc_from(phys_addr_t size,
-> > > > +static __always_inline void *memblock_alloc_from(phys_addr_t size,
-> > > >                                             phys_addr_t align,
-> > > >                                             phys_addr_t min_addr)
-> > >
-> > > I'm curious why from all memblock_alloc* wrappers this is the only one that
-> > > needs to be __always_inline?
-> >
-> > Thread-merge[1], adding Will Deacon, who was kind of asking the same
-> > question.
-> >
-> > Based on what I can tell, GCC has kind of fragile inlining logic, in the
-> > sense that it can change whether or not it inlines something based on
-> > optimizations. It looks like the kcov instrumentation being added (or in
-> > this case, removed) from a function changes the optimization results,
-> > and some functions marked "inline" are _not_ inlined. In that case, we end up
-> > with __init code calling a function not marked __init, and we get the
-> > build warnings I'm trying to eliminate.
-
-Got it, thanks for the explanation!
-
-> > So, to Will's comment, yes, the problem is somewhat fragile (though
-> > using either __always_inline or __init will deterministically solve it).
-> > We've tripped over this before with GCC and the solution has usually
-> > been to just use __always_inline and move on.
-> >
+On Mon, Jul 21, 2025 at 04:26:41PM +0530, Manivannan Sadhasivam wrote:
+> On Mon, Jul 21, 2025 at 11:32:44AM GMT, Johan Hovold wrote:
+> > On Mon, Jul 14, 2025 at 11:31:04PM +0530, Manivannan Sadhasivam wrote:
+> > > Commit 9f4f3dfad8cf ("PCI: qcom: Enable ASPM for platforms supporting 1.9.0
+> > > ops") allowed the Qcom controller driver to enable ASPM for all PCI devices
+> > > enumerated at the time of the controller driver probe. It proved to be
+> > > useful for devices already powered on by the bootloader as it allowed
+> > > devices to enter ASPM without user intervention.
+> > > 
+> > > However, it could not enable ASPM for the hotplug capable devices i.e.,
+> > > devices enumerated *after* the controller driver probe. This limitation
+> > > mostly went unnoticed as the Qcom PCI controllers are not hotplug capable
+> > > and also the bootloader has been enabling the PCI devices before Linux
+> > > Kernel boots (mostly on the Qcom compute platforms which users use on a
+> > > daily basis).
+> > > 
+> > > But with the advent of the commit b458ff7e8176 ("PCI/pwrctl: Ensure that
+> > > pwrctl drivers are probed before PCI client drivers"), the pwrctrl driver
+> > > started to block the PCI device enumeration until it had been probed.
+> > > Though, the intention of the commit was to avoid race between the pwrctrl
+> > > driver and PCI client driver, it also meant that the pwrctrl controlled PCI
+> > > devices may get probed after the controller driver and will no longer have
+> > > ASPM enabled. So users started noticing high runtime power consumption with
+> > > WLAN chipsets on Qcom compute platforms like Thinkpad X13s, and Thinkpad
+> > > T14s, etc...
+> > 
+> > Note the ASPM regression for ath11k/ath12k only happened in 6.15, so
+> > commit b458ff7e8176 ("PCI/pwrctl: Ensure that pwrctl drivers are probed
+> > before PCI client drivers") in 6.13 does not seem to be the immediate
+> > culprit here.
 > 
-> Given that 'inline' is already a macro in the kernel, could we just
-> add __attribute__((__always_inline__)) to it when KCOV is enabled?
+> This series was intented to fix the ASPM issue which exist even before the
+> introduction of pwrctrl framework.
 
-That sounds like a more robust approach and, by the sounds of it, we
-could predicate it on GCC too. That would also provide a neat place for
-a comment describing the problem.
+But this limitation of the ASPM enable implementation wasn't really an
+issue before pwrctrl since, as you point out above, these controllers
+are not hotplug capable.
 
-Kees, would that work for you?
+> But I also agree that the below commits made
+> the issue more visible and caused regression on platforms where WLAN used to
+> work.
+> 
+> > Candidates from 6.15 include commits like
+> > 
+> > 	957f40d039a9 ("PCI/pwrctrl: Move creation of pwrctrl devices to pci_scan_device()")
+> > 	2489eeb777af ("PCI/pwrctrl: Skip scanning for the device further if pwrctrl device is created")
+> > 
+> > This is probably related to the reports of these drivers sometimes
+> > failing to probe with
+> > 
+> > 	ath12k_pci 0004:01:00.0: of_irq_parse_pci: failed with rc=134
+> > 
+> > after pwrctrl was merged, and which since 6.15 should instead result in
+> > the drivers not probing at all (as we've discussed off list).
+> 
+> We discussed about the ASPM issue IIRC. The above mentioned of_irq_parse_pci
+> could also be related to the fact that we are turning off the supplies after
+> pci_dev destruction. For this issue, I guess the patch from Brian could be the
+> fix:
+> 
+> https://lore.kernel.org/linux-pci/20250711174332.1.I623f788178c1e4c5b1a41dbfc8c7fa55966373c0@changeid/
 
-Will
+We've also discussed the rc=134 issue, which appears to be due to some
+pwrctrl race. IIRC, you thought it may be the bluetooth driver powering
+down the bt/wlan controller before the wlan bit has had a chance to
+(complete its) probe. Not sure if that was fully confirmed, but I
+remember you saying that the rc=134 symptom would no longer be visible
+since 6.15 and instead wlan would never even probe at all if we hit this
+issue...
+
+The patch you link to above only appears to relate to drivers being
+manually unbound. I hope we're not also hitting such issues during
+regular boot?
+
+> > > Obviously, it is the pwrctrl change that caused regression, but it
+> > > ultimately uncovered a flaw in the ASPM enablement logic of the controller
+> > > driver. So to address the actual issue, switch to the bus notifier for
+> > > enabling ASPM of the PCI devices. The notifier will notify the controller
+> > > driver when a PCI device is attached to the bus, thereby allowing it to
+> > > enable ASPM more reliably. It should be noted that the
+> > > 'pci_dev::link_state', which is required for enabling ASPM by the
+> > > pci_enable_link_state_locked() API, is only set by the time of
+> > > BUS_NOTIFY_BIND_DRIVER stage of the notification. So we cannot enable ASPM
+> > > during BUS_NOTIFY_ADD_DEVICE stage.
+> > > 
+> > > So with this, we can also get rid of the controller driver specific
+> > > 'qcom_pcie_ops::host_post_init' callback.
+> > > 
+> > > Cc: stable@vger.kernel.org # v6.7
+> > > Fixes: 9f4f3dfad8cf ("PCI: qcom: Enable ASPM for platforms supporting 1.9.0 ops")
+> > 
+> > So whatever form this fix ends up taking it only needs to be backported
+> > to 6.15.
+> > 
+> > As you mention above these platforms do not support hotplug, but even if
+> > they were, enabling ASPM for hotplugged devices is arguably more of a
+> > new features than a bug fix.
+> 
+> FYI, I'm going to drop this series in favor this (with one yet-to-be-submitted
+> patch on top):
+> https://lore.kernel.org/linux-pci/20250720190140.2639200-1-david.e.box@linux.intel.com/
+
+Sounds good. Thanks.
+
+Johan
 
