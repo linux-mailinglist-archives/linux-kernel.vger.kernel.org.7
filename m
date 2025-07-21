@@ -1,122 +1,120 @@
-Return-Path: <linux-kernel+bounces-738686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBD98B0BBF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:52:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD210B0BBF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:56:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B66E179AC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 04:52:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C905189A5A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 04:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA6920C494;
-	Mon, 21 Jul 2025 04:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2E920485B;
+	Mon, 21 Jul 2025 04:56:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XrI1BPNl"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jn0PQfyY"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0F87DA95;
-	Mon, 21 Jul 2025 04:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B77167DA95
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 04:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753073563; cv=none; b=e4m/ESZnyKctXM9QzNGN/XwrTbyfytmGuSi1MstkArVeAI2XbvBIf3WPXGlpBF/VRfb0qBb9VlRih2PJ3AKcwEwMH471KhDYgY244GEZ4YIg2uvlZDJ4s2CKbd2K/6Rw9Ytr+He8FODuDLVPe38ZkX5TwK1XrbzGlSCllsfnCeM=
+	t=1753073802; cv=none; b=XrOug1FAN9z254mURcevS0Sa2+LwkeUnCoMgT5t1iEtd34IFpw1+ZMsiVduQ1ZMrJgQ29z+eEUTAjPAy4DjzYFVOqJTo9lYTBvuLJtI+NC779ok6V/QLA1Cc/lY8INKDxvY1uhjTj5woHZCLxNX9MET/NP0ngzwxZ4BjJCmdRHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753073563; c=relaxed/simple;
-	bh=iFIckDhmh46+JBvPEiXW40w2jmhdwOKLz3CH/4sGys4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CfocBkaQaBL8eaM63k6UKGJikqQMiUoSKg+V6LDgJHvXaIp1CNyWL6HQ+QF53peenKBQHetnsBLZJ5ld2/q+E2nJGEVwF5JyvdRdXr1p4/w7BPnVbB33tBUxPtSew4wQtK68ZHBri65gS314h0WxrYZTpKzi8LZXXkfMX3XG41o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XrI1BPNl; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-75001b1bd76so2330615b3a.2;
-        Sun, 20 Jul 2025 21:52:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753073561; x=1753678361; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=I/rwEe6pL2DF04u25wQFRb2SlRQeQrgkAGmuOAnxsCs=;
-        b=XrI1BPNl/hARoAVTV3JPwWy6+Sfeuqo11pMlxOrEKOb7KLhe9MdpCDfF4knmEOYsZb
-         kJt1N4dcbdgykx4x77qqB0u4ice3yOobei9WFuKgUr/TWeP4XkitppBGlRmBeCjVC1si
-         V4uCkaTXTKaNdvMhCJKhv1GQc2Z0NSmvxg3EtsOMB+3GWsY6zy7Okq0x3InF5P+4AMzq
-         NPIYeot0BE60iuSop2RmkclxJMPT6k5aO1VTqo5SiAKiDri+9b3ct4ThZwbcTI4Xr+ZO
-         1duGVWqdL17oxChr4+zykV0UMXVwlW1CrCwRDwNQd1hoB7hAm+MmTnD2gCi0xNPsDpAw
-         fdxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753073561; x=1753678361;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=I/rwEe6pL2DF04u25wQFRb2SlRQeQrgkAGmuOAnxsCs=;
-        b=IgAV+Qjgagqat0YxUJED/bWcOrzIpJe8w3rVLBi9Afuw0OBaRUmknsLuYNFT6LCNXd
-         e1tadn2LAQAco6lHwiFcXNX5I9glOw2neeffC9y9pit+jLaf7VvlOap+AZgtfIEY3q3d
-         FgyNz7TvmRfw1ylVQvTm+J5KACOats5djyukeAlh6lRdNqo6RsOHCkzIf7vi9RiDoodY
-         IXjSxyjEZlLqeHcbGjN8o9F+osXhPsEXkbCcrFppCBzW/Lu60oM6MyXd7jGpm9KqaTfi
-         iQpNEPPGU6U3sYtmAC5Wlmvakq9hjtdY9Wb0NHA/DvmY3252LlLLTVbYImyAojH5dilu
-         ZNHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW0cSWmrcBHOnrBx1tfLWwJRpNcOm4AtGVm34JpGwFmew+B6xPIW2ULd1f2BH6J3mK65DDMv+Jvfk9MPI0e@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqkAAovLEmtDXPrFQEIdYMrDwZgEALwO/hf/gMP+l5L59k94W/
-	/vQux/FLlcjQMYbKx4F17T/8zeETlbO30T8VndJ2GcPLsdfZN5dqHK/jkt/tKXVZfEU=
-X-Gm-Gg: ASbGncsRVqifWdmbnTrqtK24zDtZ+6ZjJbn/U406re3qZATApH6MS3j7QKJEsrwxgf/
-	LEPqOdRFinu5QrqyeH87z9tf4beo9OZHkODImZao1hN/je+ISudsRLNQJ+jRZK6qgrJ17OjlPIv
-	43ibLgXoqBnOu0Ey36zcHGbWkWSrGeCwTXChQt2lQvRcXZxgMIp5QHbqS5rZ6NgrFWzIFyB/qFm
-	jYn8PbTAx9H/YGe3vm+DMv4tvhEI+JSn/cFai+lS/UIJJKsqrBxJt/FBas61vI/GdPQkJkrn4ag
-	9uc4l+WWY8WURqFelLg3Icmq2N7OzqyR85r17VWuOTYzcU0acpqDrrITmZJcDVSWjzVFWu+dafB
-	9l098NEOE0v1BXdAOHcPpOSPufpA=
-X-Google-Smtp-Source: AGHT+IF07eh+CugTSLl+wj5WqVKAOwprNgaoF1PSpy+urZ+jDqq8P+VPJk1dfTzezt3dhZTK1L9Lrg==
-X-Received: by 2002:a05:6a20:6a05:b0:220:2d0f:f8e1 with SMTP id adf61e73a8af0-23810e500f4mr29784210637.3.1753073560750;
-        Sun, 20 Jul 2025 21:52:40 -0700 (PDT)
-Received: from localhost.localdomain ([2a11:3:200::4008])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759cb155e25sm4927365b3a.94.2025.07.20.21.52.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Jul 2025 21:52:40 -0700 (PDT)
-From: Wang Jinchao <wangjinchao600@gmail.com>
-To: Luis Chamberlain <mcgrof@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Daniel Gomez <da.gomez@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>
-Cc: linux-kernel@vger.kernel.org,
-	Wang Jinchao <wangjinchao600@gmail.com>,
-	linux-modules@vger.kernel.org
-Subject: [PATCH] module: pr_debug when there is no version info
-Date: Mon, 21 Jul 2025 12:52:22 +0800
-Message-ID: <20250721045224.391745-1-wangjinchao600@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1753073802; c=relaxed/simple;
+	bh=pyBu1GZtzP2913Y9O2Ctx1/PDGrpN4QegWgsbmvJ1EA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EuZO8WJjsTPfCOnDzk4hfbfcToblmxbuvN5mClWTIRm9mdv4VVTRnXmpR7e+WQArAeC8VOaa4lOQLFnmvpb8OwNeRGeGykK9jEm8A6c1PESdv0aMCnbyVkUXJFAtq5tEhC2EZcgCKaodDlfM122jbIT5Dd+etD8lQw/NiuA6mv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jn0PQfyY; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <0d15cf75-abbd-446d-86fa-49ea251f7a82@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753073796;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tpJk2In6xaDXHVkpnOgAC2P/JpOAk/YeUj8fHl7WN0I=;
+	b=jn0PQfyYpqbMkgr5RgA/tYdea1+rB5pG8DSRTGaOMvUSsj4o2JEtf7AwNCFHDWG/qjgBnl
+	QdjtjuNnGWGx7d6GR61FrUbcrP7eRCsfnuiTPTIkrS9naaGw1dHFKR50qqo9H9j+eaxaLO
+	VEvojzy9DhdEq99Awz0MedR9nUQ2a9U=
+Date: Mon, 21 Jul 2025 12:56:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] hung_task: add warning counter to blocked task report
+Content-Language: en-US
+To: Ye Liu <ye.liu@linux.dev>
+Cc: Ye Liu <liuye@kylinos.cn>, linux-kernel@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>, Zi Li <zi.li@linux.dev>
+References: <20250721031755.1418556-1-ye.liu@linux.dev>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <20250721031755.1418556-1-ye.liu@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-When there is no version information, modprobe and insmod only
-report "invalid format".
-Print the actual cause to make it easier to diagnose the issue.
-This helps developers quickly identify version-related module
-loading failures.
-Signed-off-by: Wang Jinchao <wangjinchao600@gmail.com>
----
- kernel/module/version.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Hi Ye,
 
-diff --git a/kernel/module/version.c b/kernel/module/version.c
-index 2beefeba82d9..bc28c697ff3a 100644
---- a/kernel/module/version.c
-+++ b/kernel/module/version.c
-@@ -42,8 +42,10 @@ int check_version(const struct load_info *info,
- 	}
- 
- 	/* No versions at all?  modprobe --force does this. */
--	if (versindex == 0)
-+	if (versindex == 0) {
-+		pr_debug("No version info for module %s\n", info->name);
- 		return try_to_force_load(mod, symname) == 0;
-+	}
- 
- 	versions = (void *)sechdrs[versindex].sh_addr;
- 	num_versions = sechdrs[versindex].sh_size
--- 
-2.43.0
+Thanks for your patch!
 
+On 2025/7/21 11:17, Ye Liu wrote:
+> From: Ye Liu <liuye@kylinos.cn>
+> 
+> Add a warning counter to each hung task message to make it easier
+> to analyze and locate issues in the logs.
+> 
+> Signed-off-by: Ye Liu <liuye@kylinos.cn>
+> ---
+>   kernel/hung_task.c | 6 ++++--
+>   1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+> index 8708a1205f82..9e5f86148d47 100644
+> --- a/kernel/hung_task.c
+> +++ b/kernel/hung_task.c
+> @@ -58,6 +58,7 @@ EXPORT_SYMBOL_GPL(sysctl_hung_task_timeout_secs);
+>   static unsigned long __read_mostly sysctl_hung_task_check_interval_secs;
+>   
+>   static int __read_mostly sysctl_hung_task_warnings = 10;
+> +static int hung_task_warning_count;
+>   
+>   static int __read_mostly did_panic;
+>   static bool hung_task_show_lock;
+> @@ -232,8 +233,9 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+>   	if (sysctl_hung_task_warnings || hung_task_call_panic) {
+>   		if (sysctl_hung_task_warnings > 0)
+>   			sysctl_hung_task_warnings--;
+> -		pr_err("INFO: task %s:%d blocked for more than %ld seconds.\n",
+> -		       t->comm, t->pid, (jiffies - t->last_switch_time) / HZ);
+> +		pr_err("INFO: task %s:%d blocked for more than %ld seconds. [Warning #%d]\n",
+> +		       t->comm, t->pid, (jiffies - t->last_switch_time) / HZ,
+> +		       ++hung_task_warning_count);
+>   		pr_err("      %s %s %.*s\n",
+>   			print_tainted(), init_utsname()->release,
+>   			(int)strcspn(init_utsname()->version, " "),
+
+A quick thought on this: we already have the hung_task_detect_count
+counter, which tracks the total number of hung tasks detected since
+boot ;)
+
+While this patch adds a counter inline with the warning message, the
+existing counter already provides a way to know how many hung task
+events have occurred.
+
+Could you elaborate on the specific benefit of printing this count
+directly in the log, compared to checking the global hung_task_detect_count?
+
+Also, if the goal is to give each warning a unique sequence number,
+I think the dmesg timestamp prefix serves the same purpose ;)
+
+Thanks,
+Lance
 
