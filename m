@@ -1,237 +1,126 @@
-Return-Path: <linux-kernel+bounces-739006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFC53B0C086
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:44:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06BE9B0C08D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:45:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76C6817E241
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:44:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2C18189E7DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:45:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68300285074;
-	Mon, 21 Jul 2025 09:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA0728D8D9;
+	Mon, 21 Jul 2025 09:44:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="dqtK07zg"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PR3Bce8Q"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C459F28C868
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 09:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C6628DEE9;
+	Mon, 21 Jul 2025 09:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753091035; cv=none; b=U4upJxoLBXxgMExRo3dQZcht9daVYkgJj4bzO/OrpkPwTusl30W5aTSkaojPjYCKMggNKcaUSKvxPMuVAgqSO9rqgLrlSSB0U+KNGTtC+7q25rfPSMwyK3ssYwQwk4DqQNQX4xLaP5Cr9LD/POrysLxyUkR3JmixZYizwPtqKe8=
+	t=1753091046; cv=none; b=dW+kP0Rbcff5SgncV+S9GLrBmVHdI7iqp8YF7dgt+C1NEe7hBc+4iJVetJDiJKaS/MAWKBpTTW766W0QA76cy0aTtMSEedvGXQixzTcMSZl4J6wWqcsu+BbhVF4e3gHuRl7R/K2bveai/V/LpQKxc3b9uq2/IQA8MyASWhxfUOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753091035; c=relaxed/simple;
-	bh=QHXGHFXuTsdjOdvOFvsVyCMBCyTudAbMgmdgOuKio7I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dvKC9pqO39icziB9ZUasJCKyU/v/+e96eRLqXvuTMWTx11IFocmpAXI0KgIOYsPKbCF7VWEvwJpSF9CBbDeMBZi72TuTbE2mkWL5uE/fR/YdWGFMwAS2seUpgbGi8Klwlf2mvNQ+tzP1hQFJpawsCmBD0vo5aLP+XHo2GnkugRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=dqtK07zg; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
-	t=1753091030;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=y9J8Q6nI+kE6dVKYCKcMhHtBZibz54RqJK7hL8Sg/lQ=;
-	b=dqtK07zgziOvMYG4HICBxksYSxrXoLe8gej8MuaecTskrorIiO/5rlzpWSGkRXfINx0ywr
-	uKBnBQ7zhKY53AM5JW2VrW4PGDbHCgWC7Z0gc/oGdTZwCI0k7srA2lRQTc9LAFNXtPo609
-	SEu22n7GUk1lLr8DHyYbrQ1uTTHsMes=
-From: Henrik Grimler <henrik@grimler.se>
-Date: Mon, 21 Jul 2025 11:43:19 +0200
-Subject: [PATCH 3/3] drm/bridge: sii9234: use extcon cable detection logic
- to detect MHL
+	s=arc-20240116; t=1753091046; c=relaxed/simple;
+	bh=hmoYtww9WpKw0vRY5u3Si1hp/r3D/QoCvulijGAxN1g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hL4NFo52i5H9qu6pjlJ3MIFpoOrLJXqjaAUJOHiMikbkzXyJ9CPTNq4CQ4KLQ+FT+tk1s1PWzmsvbmuYuw2myI6zjq3hvHHKBCeWNmZ1tMeyNXZUT2iDm1xKWdbDLslwegvvjc3dFpto8D9LD3OdxFSLcZSDFTPp6k8pG6wlk6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PR3Bce8Q; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56L6DWSN030800;
+	Mon, 21 Jul 2025 09:43:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=tEpwa1I8vQquEpZ5nxMXN7QA//IvLOwZDYDdNE2Ne/8=; b=PR
+	3Bce8QMP7Vg3z7Y69Ho9GdVYZUzczLiAlkV0CpVBDqbHdtC2oVFujeNUaLY+n28G
+	MRZyCs7LAWb+98YlDemBcJ5UVB94m3gCCShllwsiYEQJjAyFCKRzD79ToCYZzw78
+	48mJZHdY2ut+P7XNRSSDZ6Qd6zEv5ILirpa/0J9UhR7PzZHScSYzpLuczFgOVSDU
+	GqoCUyxZbYyQcVna/ZpaoA8Z/C/nSvUNvOoWZv5VRKrGjnC/yW/KAsKZ6Xd82efp
+	/oqpu68RmmP550gzTlv/otsEwjsR6HMsH8Xm+FDi6S8K8fzj6oZcUUTFQzuKRp3i
+	hNHPfkycRxuaQ+AAuHfA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 481g3egx7e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Jul 2025 09:43:49 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56L9hmXs030183
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Jul 2025 09:43:48 GMT
+Received: from hu-sayalil-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Mon, 21 Jul 2025 02:43:46 -0700
+From: Sayali Lokhande <quic_sayalil@quicinc.com>
+To: <ulf.hansson@linaro.org>, <wsa+renesas@sang-engineering.com>,
+        <avri.altman@wdc.com>, <adrian.hunter@intel.com>,
+        <shawn.lin@rock-chips.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH V1 0/1] Export an API to reinit SDIO card
+Date: Mon, 21 Jul 2025 15:13:27 +0530
+Message-ID: <20250721094328.6556-1-quic_sayalil@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250721-exynos4-sii9234-driver-v1-3-2e47ed02f677@grimler.se>
-References: <20250721-exynos4-sii9234-driver-v1-0-2e47ed02f677@grimler.se>
-In-Reply-To: <20250721-exynos4-sii9234-driver-v1-0-2e47ed02f677@grimler.se>
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Maciej Purski <m.purski@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, 
- ~postmarketos/upstreaming@lists.sr.ht, replicant@osuosl.org, 
- linux-kernel@vger.kernel.org, Henrik Grimler <henrik@grimler.se>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4173; i=henrik@grimler.se;
- h=from:subject:message-id; bh=QHXGHFXuTsdjOdvOFvsVyCMBCyTudAbMgmdgOuKio7I=;
- b=owEBbQGS/pANAwAKAbAHbkkLcWFrAcsmYgBofgvLFNVB0QWRIEgdw90xBe01dDqqpUqh3WSug
- 1b+WcQ27jqJATMEAAEKAB0WIQQsfymul4kfZBmp4s2wB25JC3FhawUCaH4LywAKCRCwB25JC3Fh
- a8t2CAC2Qa3XCkijFxzKacvil9jrKn6k9ZUuj6eCnPPxJ0+kakMvvk3fUIHtaZrCp+il5Mua7d5
- zISfM8/1fjP/8ywj4Wi1P44KikM2LK9MR7pXBYyf73RQ4Adtjg94Tj+jLVJNG8q0xFox0JY4pA/
- J/CiexNs+GYWMXrGVuMPBtvLVvAxGkiUwlSVcR7j1hWyhuhWSdPGPQUxnUANsZPHw79OT+TtZEV
- RhP5n/pHto2q48+sLv2rLiMjWtf1mB5Ab/1WGqI2l50RUTYWe+XOZWy6i6Cee/BIxjxRx/V4V7S
- ckxBDLDc11c72ZJBIblR9wcGqWGLg1HuRuu3Sm2p0ZphAucp
-X-Developer-Key: i=henrik@grimler.se; a=openpgp;
- fpr=2C7F29AE97891F6419A9E2CDB0076E490B71616B
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: NbIF0-jdFI_UfL1zelq3BH_ivbfPQPLo
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIxMDA4NiBTYWx0ZWRfXxhnBbKEQaYKY
+ PBg8VpoDU2ZNjqaXC89k9aGGsQIxCbFtpGmLV6pAS8juX7aMARMGh1Vu8I/pu3xlMCoF4eRzO7n
+ mDWioTQ0bn8TB7KR3GQKKqBOj9I7QndwEzfIfZR9QbCPYSELmKmP0AvN1JSGljijmrDqckZTmxz
+ 1c5PIal6lRlkzZ20nvA+vgPEnVjWAKJCnAsKJcwUvg07mnDjGPk5BhqsPQwINk5jkjwPvFkP65W
+ Hw22o8lta0S4ZFL5WuRdaOuZzCoQ6rrbx2xAtAxSKgCRfU0grYvGDtVDsW7IPcOKu9cy5izVDRw
+ a5wFDikFMGCnjjAsmbLGZNInfx06pKXFpfCMw1xHDut8e5eaGgGCP69vSRA/WwJo6qEOxSyPT/y
+ IQjZaBih2QTZAi/wp6dyfXxmmjXNNs3LgQPLNncwkAI24A+tsjXD8r0wemzfgW5yl6IQSwxy
+X-Authority-Analysis: v=2.4 cv=Q+fS452a c=1 sm=1 tr=0 ts=687e0bd5 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=Wb1JkmetP80A:10 a=VyeUceQKped4y59pgd4A:9
+X-Proofpoint-GUID: NbIF0-jdFI_UfL1zelq3BH_ivbfPQPLo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-21_02,2025-07-21_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 adultscore=0 phishscore=0 mlxscore=0 lowpriorityscore=0
+ mlxlogscore=770 suspectscore=0 spamscore=0 priorityscore=1501 malwarescore=0
+ bulkscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507210086
 
-To use MHL we currently need the MHL chip to be permanently on, which
-consumes unnecessary power. Let's use extcon attached to MUIC to enable
-the MHL chip only if it detects an MHL cable.
+Some SDIO client drivers, manage external power to the SDIO card.
+In such cases, the card may be power-cycled independently of the
+MMC core's runtime PM state.
+Currently, reinitialization of the SDIO card is tied to the runtime
+PM resume path. However, if the card is powered off and on again before
+the autosuspend delay expires, the runtime suspend/resume callbacks are
+not triggered, leaving the card in an uninitialized state.
 
-Signed-off-by: Henrik Grimler <henrik@grimler.se>
----
- drivers/gpu/drm/bridge/sii9234.c | 89 ++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 86 insertions(+), 3 deletions(-)
+To address this, export sdio_reinit_card() so that client drivers can
+explicitly trigger reinitialization after powering the card back on,
+ensuring proper device state regardless of runtime PM behavior.
 
-diff --git a/drivers/gpu/drm/bridge/sii9234.c b/drivers/gpu/drm/bridge/sii9234.c
-index 0e0bb1bf71fdcef788715cfd6fa158a6992def33..4d84ba01ea76816bebdbc29d48a041c9c6cd508e 100644
---- a/drivers/gpu/drm/bridge/sii9234.c
-+++ b/drivers/gpu/drm/bridge/sii9234.c
-@@ -19,6 +19,7 @@
- 
- #include <linux/delay.h>
- #include <linux/err.h>
-+#include <linux/extcon.h>
- #include <linux/gpio/consumer.h>
- #include <linux/i2c.h>
- #include <linux/interrupt.h>
-@@ -26,6 +27,7 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
-+#include <linux/of_graph.h>
- #include <linux/regulator/consumer.h>
- #include <linux/slab.h>
- 
-@@ -170,8 +172,12 @@ struct sii9234 {
- 	struct drm_bridge bridge;
- 	struct device *dev;
- 	struct gpio_desc *gpio_reset;
--	int i2c_error;
- 	struct regulator_bulk_data supplies[4];
-+	struct extcon_dev *extcon;
-+	struct notifier_block extcon_nb;
-+	struct work_struct extcon_wq;
-+	int cable_state;
-+	int i2c_error;
- 
- 	struct mutex lock; /* Protects fields below and device registers */
- 	enum sii9234_state state;
-@@ -864,6 +870,70 @@ static int sii9234_init_resources(struct sii9234 *ctx,
- 	return 0;
- }
- 
-+static void sii9234_extcon_work(struct work_struct *work)
-+{
-+	struct sii9234 *ctx =
-+		container_of(work, struct sii9234, extcon_wq);
-+	int state = extcon_get_state(ctx->extcon, EXTCON_DISP_MHL);
-+
-+	if (state == ctx->cable_state)
-+		return;
-+
-+	ctx->cable_state = state;
-+
-+	if (state > 0)
-+		sii9234_cable_in(ctx);
-+	else
-+		sii9234_cable_out(ctx);
-+}
-+
-+static int sii9234_extcon_notifier(struct notifier_block *self,
-+			unsigned long event, void *ptr)
-+{
-+	struct sii9234 *ctx =
-+		container_of(self, struct sii9234, extcon_nb);
-+
-+	schedule_work(&ctx->extcon_wq);
-+
-+	return NOTIFY_DONE;
-+}
-+
-+static int sii9234_extcon_init(struct sii9234 *ctx)
-+{
-+	struct extcon_dev *edev;
-+	struct device_node *musb, *muic;
-+	int ret;
-+
-+	/* Get micro-USB connector node */
-+	musb = of_graph_get_remote_node(ctx->dev->of_node, 1, -1);
-+	/* Then get micro-USB Interface Controller node */
-+	muic = of_get_next_parent(musb);
-+
-+	if (!muic) {
-+		dev_info(ctx->dev,
-+			 "no extcon found, switching to 'always on' mode\n");
-+		return 0;
-+	}
-+
-+	edev = extcon_find_edev_by_node(muic);
-+	of_node_put(muic);
-+	if (IS_ERR(edev)) {
-+		dev_err_probe(ctx->dev, PTR_ERR(edev),
-+			      "invalid or missing extcon\n");
-+	}
-+
-+	ctx->extcon = edev;
-+	ctx->extcon_nb.notifier_call = sii9234_extcon_notifier;
-+	INIT_WORK(&ctx->extcon_wq, sii9234_extcon_work);
-+	ret = extcon_register_notifier(edev, EXTCON_DISP_MHL, &ctx->extcon_nb);
-+	if (ret) {
-+		dev_err(ctx->dev, "failed to register notifier for MHL\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
- static enum drm_mode_status sii9234_mode_valid(struct drm_bridge *bridge,
- 					 const struct drm_display_info *info,
- 					 const struct drm_display_mode *mode)
-@@ -916,12 +986,17 @@ static int sii9234_probe(struct i2c_client *client)
- 	if (ret < 0)
- 		return ret;
- 
-+	ret = sii9234_extcon_init(ctx);
-+	if (ret < 0)
-+		return ret;
-+
- 	i2c_set_clientdata(client, ctx);
- 
- 	ctx->bridge.of_node = dev->of_node;
- 	drm_bridge_add(&ctx->bridge);
- 
--	sii9234_cable_in(ctx);
-+	if (!ctx->extcon)
-+		sii9234_cable_in(ctx);
- 
- 	return 0;
- }
-@@ -930,7 +1005,15 @@ static void sii9234_remove(struct i2c_client *client)
- {
- 	struct sii9234 *ctx = i2c_get_clientdata(client);
- 
--	sii9234_cable_out(ctx);
-+	if (ctx->extcon) {
-+		extcon_unregister_notifier(ctx->extcon, EXTCON_DISP_MHL,
-+					   &ctx->extcon_nb);
-+		flush_work(&ctx->extcon_wq);
-+		if (ctx->cable_state > 0)
-+			sii9234_cable_out(ctx);
-+	} else {
-+		sii9234_cable_out(ctx);
-+	}
- 	drm_bridge_remove(&ctx->bridge);
- }
- 
+This change enables more robust handling of power-managed SDIO devices
+in scenarios where runtime PM is disabled or insufficient.
+
+Sayali Lokhande (1):
+  mmc: sdio: Export an API to reinit the SDIO card
+
+ drivers/mmc/core/core.h       | 1 +
+ drivers/mmc/core/sdio.c       | 2 +-
+ drivers/mmc/core/sdio_io.c    | 6 ++++++
+ include/linux/mmc/sdio_func.h | 2 ++
+ 4 files changed, 10 insertions(+), 1 deletion(-)
 
 -- 
-2.50.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
 
