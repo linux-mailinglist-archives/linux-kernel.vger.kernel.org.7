@@ -1,165 +1,164 @@
-Return-Path: <linux-kernel+bounces-739807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 125E9B0CB3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 21:58:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DF1EB0CB47
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:03:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BD3A16FF9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:58:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A841D3BF869
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:02:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AB6B238C3A;
-	Mon, 21 Jul 2025 19:58:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6980238C3D;
+	Mon, 21 Jul 2025 20:02:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AViKdRQU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Q8Bzke5+"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F227230BE0;
-	Mon, 21 Jul 2025 19:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41CEF238157
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 20:02:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753127902; cv=none; b=oDFLVST1zvvvgoiyPB4Jv6xIPDTCgMMo/rY/3sXl8wHlVq0QOgXGlfyy1TfrubxMYxIhmo3uiSd95ivIBxqJkntHaw1eNGY7ZKzzuURktlQvF70Hd1wQvKaCAPmLIR93rbdEadRea3sJ3HP29/PAK1BVWNQkvNK31Mggt/4sD3s=
+	t=1753128177; cv=none; b=LhUUhbXNHqmO9HNTzjGDdMyGkNSzIIorGGbSo+ExDk5LETnySAnFCPGUrY3P30I72b/BP8PtKg0nFkQQDh9CJ7YOU4dRg+LFfV/NHPS+zkUp0y61T/j8n+NwxcDPSzeYd+e9y/AG+pEvlo06sWzZx7GHw+NHgIjmGeQaboGNF40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753127902; c=relaxed/simple;
-	bh=KuJmPdgYM52TyEfb5GOaYYy/Wz8zkqWtBSMWMCCCUXo=;
+	s=arc-20240116; t=1753128177; c=relaxed/simple;
+	bh=pXoWU9veiwZFqXfcQj4hfPSB156GlcTIOr4f0ulrhNc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hXuTxOVAwA2zQt5/08czuP0tiBVliatbnZBDswxHX1yiUO8Luuez2ugmiM9DISTe7PvvbNnO+I8yPQmTeBC7pbk5HKhZ5a9XXuVYiK/mPUGbH4YypTgRKOy0PdReuv0QGqEjEutCl4CvtCgdo0tPsNNmGCHcHLlXXl8Zll5R8g0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AViKdRQU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB1E7C4CEED;
-	Mon, 21 Jul 2025 19:58:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753127902;
-	bh=KuJmPdgYM52TyEfb5GOaYYy/Wz8zkqWtBSMWMCCCUXo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AViKdRQUgjZkH+Mbtvssorka8bkheIkitMNfiDbxUfb+690Dt1VuzCqU+7ttwe5Ad
-	 kMPF6GD1v1DRk3vz0S1w8yKh2jsTm5YgQeqEbAGIhhM9HefDaeosAA4fK27RVMkKfy
-	 qVsIHS6OB9L6yMwapvunD/anMfISkff2B8R0uhxqJkO8u/CFZlLgJdJcwAtJ+O8pr1
-	 l493eO1Ku7LwqQMqMStazmD7gJXCwEMZ/VQL+lvqHIMD+CeqOiNbr5zO4epfHrA7sS
-	 InnBoE+iqnd4Zpmy6wFJQOL3gt+1C1e8oyT6R8g3Rl78Kc8gaEU7F+Zhmlwo9piLu4
-	 35tiwJnZhQuGg==
-Date: Mon, 21 Jul 2025 14:58:21 -0500
-From: Rob Herring <robh@kernel.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-mediatek@lists.infradead.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, matthias.bgg@gmail.com, ulf.hansson@linaro.org,
-	y.oudjana@protonmail.com, fshao@chromium.org, wenst@chromium.org,
-	lihongbo22@huawei.com, mandyjh.liu@mediatek.com, mbrugger@suse.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	kernel@collabora.com,
-	=?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>
-Subject: Re: [PATCH v2 03/10] dt-bindings: power: mediatek: Document
- access-controllers property
-Message-ID: <20250721195821.GA1163453-robh@kernel.org>
-References: <20250707105605.98248-1-angelogioacchino.delregno@collabora.com>
- <20250707105605.98248-4-angelogioacchino.delregno@collabora.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UVM9dZfvX6W9/fLL1pkA3zrrcMey9kHZFK8vuGdRmbx+eSeoUWQlSBADuDostdcXPwitUz1kPP7tsz8+Ch2KeLPjdpLe8E4qNz/tWEXWPvgNde29+zkzMqNKGW1oZdUYQCwGJwqMOHWWUKxpUdOh3Rn3OVJWyKryJQ9wkOGUfQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Q8Bzke5+; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 21 Jul 2025 22:02:36 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753128162;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=faRHgN5I3SJaokyooR8tND95TU4Zl2EbUy+q1BeFqEE=;
+	b=Q8Bzke5+07H93rEHZBxSdaUZQO1HcSJZZbt3Y31GkjyWATtGLr9GYplTDdMz9XA5tI1+Qt
+	Mse4e9n9h6U8ANxFWVdiKbdr9BlxJ8bvJzeTJkJQtiXhOKptSQSGIlERkBNxVvepTZrk0w
+	VZSK32PGBIQJoDgradRp6NFwqNeMUhg=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Nicolas Schier <nicolas.schier@linux.dev>
+To: Kees Cook <kees@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Ingo Molnar <mingo@kernel.org>,
+	x86@kernel.org, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev, linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-efi@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
+	kasan-dev@googlegroups.com, sparclinux@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH v3 01/13] stackleak: Rename STACKLEAK to KSTACK_ERASE
+Message-ID: <20250721-spiked-adamant-hyrax-eea284@lindesnes>
+References: <20250717231756.make.423-kees@kernel.org>
+ <20250717232519.2984886-1-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="cgD5lPAL2MBjPn/0"
+Content-Disposition: inline
+In-Reply-To: <20250717232519.2984886-1-kees@kernel.org>
+X-Operating-System: Debian GNU/Linux 13.0
+X-Migadu-Flow: FLOW_OUT
+
+
+--cgD5lPAL2MBjPn/0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250707105605.98248-4-angelogioacchino.delregno@collabora.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 07, 2025 at 12:55:58PM +0200, AngeloGioacchino Del Regno wrote:
-> Allow specifying access-controllers in the main power controller
-> node and deprecate the old mediatek,infracfg, mediatek,infracfg-nao
-> and mediatek,smi properties located in the children.
-> 
-> This is done in order to both simplify the power controller
-> nodes and in preparation for adding support for new generation
-> SoCs like MT8196/MT6991 and other variants, which will need
-> to set protection on new busses.
-> 
-> Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+On Thu, Jul 17, 2025 at 04:25:06PM -0700, Kees Cook wrote:
+> In preparation for adding Clang sanitizer coverage stack depth tracking
+> that can support stack depth callbacks:
+>=20
+> - Add the new top-level CONFIG_KSTACK_ERASE option which will be
+>   implemented either with the stackleak GCC plugin, or with the Clang
+>   stack depth callback support.
+> - Rename CONFIG_GCC_PLUGIN_STACKLEAK as needed to CONFIG_KSTACK_ERASE,
+>   but keep it for anything specific to the GCC plugin itself.
+> - Rename all exposed "STACKLEAK" names and files to "KSTACK_ERASE" (named
+>   for what it does rather than what it protects against), but leave as
+>   many of the internals alone as possible to avoid even more churn.
+>=20
+> While here, also split "prev_lowest_stack" into CONFIG_KSTACK_ERASE_METRI=
+CS,
+> since that's the only place it is referenced from.
+>=20
+> Suggested-by: Ingo Molnar <mingo@kernel.org>
+> Signed-off-by: Kees Cook <kees@kernel.org>
 > ---
->  .../power/mediatek,power-controller.yaml      | 39 +++++++++++++++++++
->  1 file changed, 39 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/power/mediatek,power-controller.yaml b/Documentation/devicetree/bindings/power/mediatek,power-controller.yaml
-> index 9c7cc632abee..82bfd3899b22 100644
-> --- a/Documentation/devicetree/bindings/power/mediatek,power-controller.yaml
-> +++ b/Documentation/devicetree/bindings/power/mediatek,power-controller.yaml
-> @@ -44,6 +44,17 @@ properties:
->    '#size-cells':
->      const: 0
->  
-> +  access-controllers:
-> +    description:
-> +      A number of phandles to external blocks to set and clear the required
-> +      bits to enable or disable bus protection, necessary to avoid any bus
-> +      faults while enabling or disabling a power domain.
-> +      For example, this may hold phandles to INFRACFG and SMI.
-> +    minItems: 1
-> +    maxItems: 3
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: <x86@kernel.org>
+> Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+> Cc: <linux-doc@vger.kernel.org>
+> Cc: <linux-arm-kernel@lists.infradead.org>
+> Cc: <kvmarm@lists.linux.dev>
+> Cc: <linux-riscv@lists.infradead.org>
+> Cc: <linux-s390@vger.kernel.org>
+> Cc: <linux-efi@vger.kernel.org>
+> Cc: <linux-hardening@vger.kernel.org>
+> Cc: <linux-kbuild@vger.kernel.org>
+> Cc: <linux-security-module@vger.kernel.org>
+> Cc: <linux-kselftest@vger.kernel.org>
+> ---
+>  arch/Kconfig                                  |  4 +--
+>  arch/arm/Kconfig                              |  2 +-
+>  arch/arm64/Kconfig                            |  2 +-
+>  arch/riscv/Kconfig                            |  2 +-
+>  arch/s390/Kconfig                             |  2 +-
+>  arch/x86/Kconfig                              |  2 +-
+>  security/Kconfig.hardening                    | 36 ++++++++++---------
+>  arch/arm/boot/compressed/Makefile             |  2 +-
+>  arch/arm64/kernel/pi/Makefile                 |  2 +-
+>  arch/arm64/kvm/hyp/nvhe/Makefile              |  2 +-
+>  arch/riscv/kernel/pi/Makefile                 |  2 +-
+>  arch/riscv/purgatory/Makefile                 |  2 +-
+>  arch/x86/purgatory/Makefile                   |  2 +-
 
-> +    items:
-> +      maxItems: 1
+Did you miss arch/loongarch/Kconfig by accident?
 
-Drop 'items' as how many cells is up to the provider.
+$ git grep -Hrne ARCH_STACKLEAK
+arch/loongarch/Kconfig:127:     select HAVE_ARCH_STACKLEAK
 
-> +
->  patternProperties:
->    "^power-domain@[0-9a-f]+$":
->      $ref: "#/$defs/power-domain-node"
-> @@ -123,14 +134,17 @@ $defs:
->        mediatek,infracfg:
->          $ref: /schemas/types.yaml#/definitions/phandle
->          description: phandle to the device containing the INFRACFG register range.
-> +        deprecated: true
->  
->        mediatek,infracfg-nao:
->          $ref: /schemas/types.yaml#/definitions/phandle
->          description: phandle to the device containing the INFRACFG-NAO register range.
-> +        deprecated: true
->  
->        mediatek,smi:
->          $ref: /schemas/types.yaml#/definitions/phandle
->          description: phandle to the device containing the SMI register range.
-> +        deprecated: true
->  
->      required:
->        - reg
-> @@ -138,6 +152,31 @@ $defs:
->  required:
->    - compatible
->  
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - mediatek,mt8183-power-controller
-> +    then:
-> +      properties:
-> +        access-controllers:
-> +          minItems: 2
-> +          maxItems: 2
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - mediatek,mt8365-power-controller
-> +    then:
-> +      properties:
-> +        access-controllers:
-> +          minItems: 3
-> +          maxItems: 3
-> +
->  additionalProperties: false
->  
->  examples:
-> -- 
-> 2.49.0
-> 
+Kind regards,
+Nicolas
+
+--cgD5lPAL2MBjPn/0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEh0E3p4c3JKeBvsLGB1IKcBYmEmkFAmh+nNwACgkQB1IKcBYm
+EmlaKg/+Oulyjlzl6ITiwJiV1weZc0KBlop49wW3/ilmJ9U/16ChNrQlv9S6c21O
+ytwj5NZ3lgiznFSMFUOkOxA6ctKIXVyGyNPSmJIUJ6Sqk9iHm3zMakHBxpr2uemy
+DP6Nb6zORIiNJiTd3lVcdz1XQJRGfHfoMpUoW+GRKqQMtw4NyankD/eCESFv6mKh
+T27cet3p0OMQg5S3lM/AD8uuhCxYlLXnD2LJ1XC7z5v9s2QMFnm2FKuEbwwRikgZ
+k4V5IQ6fVjZRe7AuIZpAgOC2mWYkumx3EriVPGKNQu7L0MSQfUAjDF83NE4CBwIO
+EKdR7rp9ZBpJXIQwG0SNnVDCG/xfryC0LzVorLlZOR65GUHYiONL5Eq+J2QE8zwZ
+ugfv15CDaABIA5Rc6VW655EQePy0grJb6wQRpZAQRtsg5HQQfPgWXewm+OetC6sk
+1yqSuYqUrmJ0j4usrxCxbZRrRcGzfdDuGAmg4XpUKrEJIZRxfsV5InrSJ+o2nA14
+yjqgSeDRliPvyePCLddpnDyye4RgIyNgDQSuYJoivHQryIdrYJE3LIk+EoQdw3dv
+c+5c9ea/sNADpeyyA/RAzDrLGAEXAh2qZFu/o71KZIUOwOLp6IjYtZ9MfI54KyhK
+0TTlmcFody1uFinctfOk+8zBzO/foM1hkNF9knW0vJmnEV4khOU=
+=dSeG
+-----END PGP SIGNATURE-----
+
+--cgD5lPAL2MBjPn/0--
 
