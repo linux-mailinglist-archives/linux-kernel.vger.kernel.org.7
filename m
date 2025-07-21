@@ -1,121 +1,320 @@
-Return-Path: <linux-kernel+bounces-738885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57E23B0BEB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:23:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF41FB0BECD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:26:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2213918866BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:23:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7947A3B6C9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:26:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183D528315A;
-	Mon, 21 Jul 2025 08:23:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5029528A408;
+	Mon, 21 Jul 2025 08:24:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aucUChu8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Lz4cYFHJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6369327FB35;
-	Mon, 21 Jul 2025 08:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C15C28A407
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 08:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753086204; cv=none; b=SlYDzkvHGiltGnKpSO1pUbPoza35QF7lqRK/S/0Rri5WI2A4A4z5sGQZAOKl21F9DfO2NhXiYE5+9qkEvVsgjSZz6BjQNCEoMr64sTVQOlXAgvfc9PtrxjL+5sBpDW2qjPeiaFR0PIIXPTFu+xa1CDy5TyOMHu08dxjjVBOxbR8=
+	t=1753086294; cv=none; b=te/j+RU+17vNgW+08/TatwVKvxYA7INizZHnKn8SpZkWFRQMY3tdxQE+FvrqRTswk5Wt1+tLRKelOpSZwlzapfFrXP9FX6LpyunOsMo8W6eKhBWhGp+jRAjLyOQAg9A8wrhV3rxMp7alSCP6fVyDoYqGF4rSEW7kGu6obza7d8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753086204; c=relaxed/simple;
-	bh=1Uz4iGqA/+cc+qW2DgSX3la5rsy0xMSqJoDWqrQXkP4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NsYIL1oX5GPj0Ub3i+afNSKLCdw969m04qelRmJKlStOVS1GWxd+kpYQcV7ioi819Br+6777BJd2IBZqpP2RnjsH3zMZkvJgsQMbwqrO7z2rQSwViakSzbO7Gx0Kd2VmUPJ/suECq87zfdT2d/4L5lBeL96GXoFd4Q5XG5MEVKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aucUChu8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E90AC4CEED;
-	Mon, 21 Jul 2025 08:23:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753086203;
-	bh=1Uz4iGqA/+cc+qW2DgSX3la5rsy0xMSqJoDWqrQXkP4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aucUChu8+a3Fdv69Ce8ZRQvJA60QGCJAPFxlYq084F/dFR8gXiyMfaNEIuxE+Ak0K
-	 nIVz4me8S6r/4cqskJSpWB+FQuLvlWZvKIZts49jvw/ng6HH9rhzo0NJ/ZbDhD0C8k
-	 bUl32TedXq+1Qkmgecshn9FhiEMsa/TShz9hI2qSLJgTtvydpSu09LF4zfVvKkeJrj
-	 /HkgMiU6pSTiTEXbt3E5a2MTEguQ6F4OGatAF/KvdtHLWA000DkBbjrNFGFuv0IgyI
-	 yJh2YRmgp1UI5+khOutgfXUeNjzJILIci1+Pj3zP1cbalEyTyRDQZxjPbdil1mgzA/
-	 /RDhAvq+yvTNA==
+	s=arc-20240116; t=1753086294; c=relaxed/simple;
+	bh=dHLbKD+8meh2u38w/YkErCUaMGaQVgja7fDe1SmWlv8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=U/9WQu2VuQQUAgnUx/rX+D70ZTETIwyMVmVuooIiWuIL+c0wsufrMLpBQar5mcsdJnNnFMYifjIFlvJjyx6wfhIEkJgv9S5R01OJbTBvHPoZopI+H18TwMYGbjDFOlNSYozRZEXBBW8f1xaXkDrlBe3doX/Ppc3lQubNfgTh6YE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Lz4cYFHJ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753086291;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HZLBduP+vsoU/rX57De/2fx+EXCFbxbH1HDNxVnABOg=;
+	b=Lz4cYFHJukjp0tHLPEwPFPMSYoeUVXFbQq3e46EKcDgTOGn1XrFUNtepSYW4CVO9gdWEbv
+	JfUPumI4tuWb60rrtcgWWBc59G6d97N02Fm3h8pwMlMnz8NdISbVft4eZMeQdDEQOsV7xw
+	ZKtVhXW6Ek19canN7E2cBLqfdKMSQrw=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-264-j2zOUvKJPtKt5gGxxOjYmQ-1; Mon,
+ 21 Jul 2025 04:24:48 -0400
+X-MC-Unique: j2zOUvKJPtKt5gGxxOjYmQ-1
+X-Mimecast-MFC-AGG-ID: j2zOUvKJPtKt5gGxxOjYmQ_1753086286
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B0DBA19560A5;
+	Mon, 21 Jul 2025 08:24:46 +0000 (UTC)
+Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.44.32.136])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 48287195608D;
+	Mon, 21 Jul 2025 08:24:41 +0000 (UTC)
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-trace-kernel@vger.kernel.org
+Cc: Gabriele Monaco <gmonaco@redhat.com>,
+	Nam Cao <namcao@linutronix.de>,
+	Tomas Glozar <tglozar@redhat.com>,
+	Juri Lelli <jlelli@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	John Kacur <jkacur@redhat.com>
+Subject: [PATCH v4 11/14] sched: Adapt sched tracepoints for RV task model
 Date: Mon, 21 Jul 2025 10:23:21 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-Cc: Srinivas Kandagatla <srini@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	quic_pkumpatl@quicinc.com, kernel@oss.qualcomm.com
-Subject: Re: [PATCH v2 2/2] ASoC: codecs: wsa883x: Handle shared reset GPIO
- for WSA883x speakers
-Message-ID: <20250721-hairy-aardwolf-of-enterprise-bbc99f@kuoka>
-References: <20250718104628.3732645-1-mohammad.rafi.shaik@oss.qualcomm.com>
- <20250718104628.3732645-3-mohammad.rafi.shaik@oss.qualcomm.com>
+Message-ID: <20250721082325.71554-12-gmonaco@redhat.com>
+In-Reply-To: <20250721082325.71554-1-gmonaco@redhat.com>
+References: <20250721082325.71554-1-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250718104628.3732645-3-mohammad.rafi.shaik@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Fri, Jul 18, 2025 at 04:16:28PM +0530, Mohammad Rafi Shaik wrote:
-> On some Qualcomm platforms such as QCS6490-RB3Gen2, the multiple
-> WSA8830/WSA8835 speakers share a common reset (shutdown) GPIO.
-> To handle such cases, use the reset controller framework along
-> with the "reset-gpio" driver.
-> 
-> Register devm action to safely disable the regulator on device removal
-> to prevents a potential release warning from _regulator_put().
+Add the following tracepoint:
+* sched_set_need_resched(tsk, cpu, tif)
+    Called when a task is set the need resched [lazy] flag
 
-It is not possible to remove the device - suppress bind attrs. How did
-you trigger that?
+Remove the unused ip parameter from sched_entry and sched_exit and alter
+sched_entry to have a value of preempt consistent with the one used in
+sched_switch.
 
-> 
-> Signed-off-by: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-> ---
->  sound/soc/codecs/wsa883x.c | 93 +++++++++++++++++++++++++++++---------
->  1 file changed, 71 insertions(+), 22 deletions(-)
+Also adapt all monitors using sched_{entry,exit} to avoid breaking build.
 
-...
+These tracepoints are useful to describe the Linux task model and are
+adapted from the patches by Daniel Bristot de Oliveira
+(https://bristot.me/linux-task-model/).
 
->  static int wsa883x_probe(struct sdw_slave *pdev,
->  			 const struct sdw_device_id *id)
->  {
-> @@ -1566,13 +1615,18 @@ static int wsa883x_probe(struct sdw_slave *pdev,
->  	if (ret)
->  		return dev_err_probe(dev, ret, "Failed to enable vdd regulator\n");
->  
-> -	wsa883x->sd_n = devm_gpiod_get_optional(dev, "powerdown",
-> -						GPIOD_FLAGS_BIT_NONEXCLUSIVE | GPIOD_OUT_HIGH);
-> -	if (IS_ERR(wsa883x->sd_n)) {
-> -		ret = dev_err_probe(dev, PTR_ERR(wsa883x->sd_n),
-> -				    "Shutdown Control GPIO not found\n");
-> -		goto err;
-> -	}
-> +	ret = wsa883x_get_reset(dev, wsa883x);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/*
-> +	 * Register devm action to safely disable the regulator on device removal.
-> +	 * This prevents a potential release warning from _regulator_put().
-> +	 */
-> +	ret = devm_add_action_or_reset(dev, wsa883x_regulator_disable,
-> +				       wsa883x);
+Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+---
+ include/linux/sched.h                  |  7 ++++++-
+ include/trace/events/sched.h           | 12 ++++++++----
+ kernel/sched/core.c                    | 13 ++++++++++---
+ kernel/trace/rv/monitors/sco/sco.c     |  4 ++--
+ kernel/trace/rv/monitors/scpd/scpd.c   |  4 ++--
+ kernel/trace/rv/monitors/sncid/sncid.c |  4 ++--
+ kernel/trace/rv/monitors/snep/snep.c   |  4 ++--
+ kernel/trace/rv/monitors/tss/tss.c     |  4 ++--
+ 8 files changed, 34 insertions(+), 18 deletions(-)
 
-If removal is possible (but then explain in commit msg how), then this
-should be separate commit with fixes and cc-stable, because you are
-fixing actual bug - lack of regulator release on unbind.
-
-Best regards,
-Krzysztof
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index ba82d865df203..4dcde69996579 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -340,9 +340,11 @@ extern void io_schedule_finish(int token);
+ extern long io_schedule_timeout(long timeout);
+ extern void io_schedule(void);
+ 
+-/* wrapper function to trace from this header file */
++/* wrapper functions to trace from this header file */
+ DECLARE_TRACEPOINT(sched_set_state_tp);
+ extern void __trace_set_current_state(int state_value);
++DECLARE_TRACEPOINT(sched_set_need_resched_tp);
++extern void __trace_set_need_resched(struct task_struct *curr, int tif);
+ 
+ /**
+  * struct prev_cputime - snapshot of system and user cputime
+@@ -2026,6 +2028,9 @@ static inline int test_tsk_thread_flag(struct task_struct *tsk, int flag)
+ 
+ static inline void set_tsk_need_resched(struct task_struct *tsk)
+ {
++	if (tracepoint_enabled(sched_set_need_resched_tp) &&
++	    !test_tsk_thread_flag(tsk, TIF_NEED_RESCHED))
++		__trace_set_need_resched(tsk, TIF_NEED_RESCHED);
+ 	set_tsk_thread_flag(tsk,TIF_NEED_RESCHED);
+ }
+ 
+diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
+index 4e6b2910cec3f..c08893bde255d 100644
+--- a/include/trace/events/sched.h
++++ b/include/trace/events/sched.h
+@@ -882,18 +882,22 @@ DECLARE_TRACE(sched_compute_energy,
+ 	TP_ARGS(p, dst_cpu, energy, max_util, busy_time));
+ 
+ DECLARE_TRACE(sched_entry,
+-	TP_PROTO(bool preempt, unsigned long ip),
+-	TP_ARGS(preempt, ip));
++	TP_PROTO(bool preempt),
++	TP_ARGS(preempt));
+ 
+ DECLARE_TRACE(sched_exit,
+-	TP_PROTO(bool is_switch, unsigned long ip),
+-	TP_ARGS(is_switch, ip));
++	TP_PROTO(bool is_switch),
++	TP_ARGS(is_switch));
+ 
+ DECLARE_TRACE_CONDITION(sched_set_state,
+ 	TP_PROTO(struct task_struct *tsk, int state),
+ 	TP_ARGS(tsk, state),
+ 	TP_CONDITION(!!(tsk->__state) != !!state));
+ 
++DECLARE_TRACE(sched_set_need_resched,
++	TP_PROTO(struct task_struct *tsk, int cpu, int tif),
++	TP_ARGS(tsk, cpu, tif));
++
+ #endif /* _TRACE_SCHED_H */
+ 
+ /* This part must be outside protection */
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 2343f5691c54e..63bcaade2569d 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -1113,6 +1113,7 @@ static void __resched_curr(struct rq *rq, int tif)
+ 
+ 	cpu = cpu_of(rq);
+ 
++	trace_sched_set_need_resched_tp(curr, cpu, tif);
+ 	if (cpu == smp_processor_id()) {
+ 		set_ti_thread_flag(cti, tif);
+ 		if (tif == TIF_NEED_RESCHED)
+@@ -1128,6 +1129,11 @@ static void __resched_curr(struct rq *rq, int tif)
+ 	}
+ }
+ 
++void __trace_set_need_resched(struct task_struct *curr, int tif)
++{
++	trace_sched_set_need_resched_tp(curr, smp_processor_id(), tif);
++}
++
+ void resched_curr(struct rq *rq)
+ {
+ 	__resched_curr(rq, TIF_NEED_RESCHED);
+@@ -5279,7 +5285,7 @@ asmlinkage __visible void schedule_tail(struct task_struct *prev)
+ 	 * switched the context for the first time. It is returning from
+ 	 * schedule for the first time in this path.
+ 	 */
+-	trace_sched_exit_tp(true, CALLER_ADDR0);
++	trace_sched_exit_tp(true);
+ 	preempt_enable();
+ 
+ 	if (current->set_child_tid)
+@@ -6822,7 +6828,8 @@ static void __sched notrace __schedule(int sched_mode)
+ 	struct rq *rq;
+ 	int cpu;
+ 
+-	trace_sched_entry_tp(preempt, CALLER_ADDR0);
++	/* Trace preemptions consistently with task switches */
++	trace_sched_entry_tp(sched_mode == SM_PREEMPT);
+ 
+ 	cpu = smp_processor_id();
+ 	rq = cpu_rq(cpu);
+@@ -6961,7 +6968,7 @@ static void __sched notrace __schedule(int sched_mode)
+ 		__balance_callbacks(rq);
+ 		raw_spin_rq_unlock_irq(rq);
+ 	}
+-	trace_sched_exit_tp(is_switch, CALLER_ADDR0);
++	trace_sched_exit_tp(is_switch);
+ }
+ 
+ void __noreturn do_task_dead(void)
+diff --git a/kernel/trace/rv/monitors/sco/sco.c b/kernel/trace/rv/monitors/sco/sco.c
+index 66f4639d46ac4..04c36405e2e3d 100644
+--- a/kernel/trace/rv/monitors/sco/sco.c
++++ b/kernel/trace/rv/monitors/sco/sco.c
+@@ -24,12 +24,12 @@ static void handle_sched_set_state(void *data, struct task_struct *tsk, int stat
+ 	da_handle_start_event_sco(sched_set_state_sco);
+ }
+ 
+-static void handle_schedule_entry(void *data, bool preempt, unsigned long ip)
++static void handle_schedule_entry(void *data, bool preempt)
+ {
+ 	da_handle_event_sco(schedule_entry_sco);
+ }
+ 
+-static void handle_schedule_exit(void *data, bool is_switch, unsigned long ip)
++static void handle_schedule_exit(void *data, bool is_switch)
+ {
+ 	da_handle_start_event_sco(schedule_exit_sco);
+ }
+diff --git a/kernel/trace/rv/monitors/scpd/scpd.c b/kernel/trace/rv/monitors/scpd/scpd.c
+index 299703cd72b06..1e351ba52fee9 100644
+--- a/kernel/trace/rv/monitors/scpd/scpd.c
++++ b/kernel/trace/rv/monitors/scpd/scpd.c
+@@ -30,12 +30,12 @@ static void handle_preempt_enable(void *data, unsigned long ip, unsigned long pa
+ 	da_handle_start_event_scpd(preempt_enable_scpd);
+ }
+ 
+-static void handle_schedule_entry(void *data, bool preempt, unsigned long ip)
++static void handle_schedule_entry(void *data, bool preempt)
+ {
+ 	da_handle_event_scpd(schedule_entry_scpd);
+ }
+ 
+-static void handle_schedule_exit(void *data, bool is_switch, unsigned long ip)
++static void handle_schedule_exit(void *data, bool is_switch)
+ {
+ 	da_handle_event_scpd(schedule_exit_scpd);
+ }
+diff --git a/kernel/trace/rv/monitors/sncid/sncid.c b/kernel/trace/rv/monitors/sncid/sncid.c
+index 3e1ee715a0fbf..c8491f4263650 100644
+--- a/kernel/trace/rv/monitors/sncid/sncid.c
++++ b/kernel/trace/rv/monitors/sncid/sncid.c
+@@ -30,12 +30,12 @@ static void handle_irq_enable(void *data, unsigned long ip, unsigned long parent
+ 	da_handle_start_event_sncid(irq_enable_sncid);
+ }
+ 
+-static void handle_schedule_entry(void *data, bool preempt, unsigned long ip)
++static void handle_schedule_entry(void *data, bool preempt)
+ {
+ 	da_handle_start_event_sncid(schedule_entry_sncid);
+ }
+ 
+-static void handle_schedule_exit(void *data, bool is_switch, unsigned long ip)
++static void handle_schedule_exit(void *data, bool is_switch)
+ {
+ 	da_handle_start_event_sncid(schedule_exit_sncid);
+ }
+diff --git a/kernel/trace/rv/monitors/snep/snep.c b/kernel/trace/rv/monitors/snep/snep.c
+index 2adc3108d60c9..558950f524a52 100644
+--- a/kernel/trace/rv/monitors/snep/snep.c
++++ b/kernel/trace/rv/monitors/snep/snep.c
+@@ -30,12 +30,12 @@ static void handle_preempt_enable(void *data, unsigned long ip, unsigned long pa
+ 	da_handle_start_event_snep(preempt_enable_snep);
+ }
+ 
+-static void handle_schedule_entry(void *data, bool preempt, unsigned long ip)
++static void handle_schedule_entry(void *data, bool preempt)
+ {
+ 	da_handle_event_snep(schedule_entry_snep);
+ }
+ 
+-static void handle_schedule_exit(void *data, bool is_switch, unsigned long ip)
++static void handle_schedule_exit(void *data, bool is_switch)
+ {
+ 	da_handle_start_event_snep(schedule_exit_snep);
+ }
+diff --git a/kernel/trace/rv/monitors/tss/tss.c b/kernel/trace/rv/monitors/tss/tss.c
+index 0452fcd9edcfe..95ebd15131f52 100644
+--- a/kernel/trace/rv/monitors/tss/tss.c
++++ b/kernel/trace/rv/monitors/tss/tss.c
+@@ -27,12 +27,12 @@ static void handle_sched_switch(void *data, bool preempt,
+ 	da_handle_event_tss(sched_switch_tss);
+ }
+ 
+-static void handle_schedule_entry(void *data, bool preempt, unsigned long ip)
++static void handle_schedule_entry(void *data, bool preempt)
+ {
+ 	da_handle_event_tss(schedule_entry_tss);
+ }
+ 
+-static void handle_schedule_exit(void *data, bool is_switch, unsigned long ip)
++static void handle_schedule_exit(void *data, bool is_switch)
+ {
+ 	da_handle_start_event_tss(schedule_exit_tss);
+ }
+-- 
+2.50.1
 
 
