@@ -1,142 +1,195 @@
-Return-Path: <linux-kernel+bounces-739457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FCF7B0C688
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:38:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5707B0C68A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:38:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CB623B849C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:37:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D5ED3BC0D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:37:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8822C158F;
-	Mon, 21 Jul 2025 14:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="WBjYM/CT"
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F2932957BA;
+	Mon, 21 Jul 2025 14:38:09 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F021DA10B
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 14:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21ECE28C85A
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 14:38:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753108681; cv=none; b=Ja9P1rMcBFSk9uKHCNI+3RCXivx9tVw7sAGk55h5aiDdm2M5kqEDhRtArRc0d/s6WMuXi5mZDrf2XMVParkF7QaubErEHJdWo/PIMPtDhi82iwey4sbtXEcVMshZHzks7OAuyLBCo3Zv9RqVUTlewjqWoZh3vGFxZHG7i7DFMWU=
+	t=1753108688; cv=none; b=c+pEndSrHAUmZIh7HPl+gZiZk2xHZJlibph7+xv9OhrHRrc7e/J9CXNJOfSDOSEGtqmgWLN6ocOThVJyXqD/4br9Yf25ijKYtgBZw+D/Mshsy1jcAXFrKnLRbj/Bp8Ehw/DrF67muCw3VlOVDllWzjcSGIyR2rwgUmE7WpTv0dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753108681; c=relaxed/simple;
-	bh=IccSnGnUczyKc/44zvZoy4blD7YV7Ykzb64QaXHQ4Xk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CK7Lg+L1PbN4qoR0P6yTAl+Wu8kFqrYD3yw6z0Ewt0PTlN4ckV3i+roGsq/kKOn2IkOG7YZpb49kS+pfEExh8qqfVV+mq5jFVZbluJXoqnVNNlUUZS4bVHuH+/ChY5L5TNW4UY2v2XhVryyHN+TpBbnajQFXrVZTmX9Tcx/Vr+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=WBjYM/CT; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7e33d36491dso632609085a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 07:37:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1753108678; x=1753713478; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=C/9ylmxApnP7AxoWtezPRKBv6ZGPphJ0NlvJQQ3XOa8=;
-        b=WBjYM/CTI2GGKfMkfQ9I7jjys3vA97NGCBt61ORWUqUp3owhlM3bpSVxb9+CGCFxBP
-         BldHuTe5N3WREEsbGa2CMfcBMwElE1M9PB7WvUgWHq/rcnimXYQ79PSpQ9bCgJkdXi1U
-         lqVMnaaYUwrYyVtEtN2ie9DRNDJMsFK+sjo55elnZSAMdX6qg7uEnpK2nZKF3Z+rI63f
-         s6/DBkWzJjDf6l0UJ9/cw7QDzIaGElzSjFkjlFVt0+rsKxifdAniX3t2N/aIln7QkZ3/
-         kGQz4FpBNCVB+ZfhtHSr52aB2lx8yQkGufJeuoAyOrK4EomJujb+qafYsSrZFRXUmZ7Y
-         tX6w==
+	s=arc-20240116; t=1753108688; c=relaxed/simple;
+	bh=xsn36DzIqRNkENrwMmZy+qP/+UZiHwz0SK+p5taFEfg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=iAQQVlmuJTiA3DoGsbomodJa8roRpkFMXyv5GdhRAWJwxuA5q9M1OLSHqATslbEVJjLcLUxwR+UCHVY4eI2dFoFl7VV+X66AOE3VIAMRzI4KSCV1S22ZCeDHfhbPeOyirVQEmyqoMgwxnsYXKSHEtWod2msDdTs2DubJ6QLtUMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-86a5def8869so994626939f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 07:38:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753108678; x=1753713478;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C/9ylmxApnP7AxoWtezPRKBv6ZGPphJ0NlvJQQ3XOa8=;
-        b=Dz4XOlzkXOgCUSE4MOsU/lUvYw3UvaM2edg5kis3ixoalkIUoGo1nFyRcYMDpYTEPq
-         /XRuGaH1VpcZi3nsee5BEg9OH6apBRpUdlb9PL18IdgC8m59X0A67504nicaRLi0NvrD
-         8dCuT1l2v8BnNt7Z2NyNCvZNs8KJYsgE3utLAjuQvK5RAgyqU4E+rCifUHQ3Qt+MrJ2h
-         KcTBBFlUlW/t+I+2LF6xE7RtrTZvlaErONlLNBFERQX9E5IA2IYqIDuqWYjMJbBNbQOJ
-         1oMXHWwYtu6ujclQlbAr2H9E7bW7fKA1/jMfXQ4rtwGbVoKMp9jBpZa3ja2f75omXQrg
-         UWOg==
-X-Forwarded-Encrypted: i=1; AJvYcCX6sqwVuvtpG7RNez+kKma6CeMleoLQaCXSeWBDRKSFFiGZALnuS/o55VCRYIh17O3fFLgk6mym2IFY//8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw24g191upPlPFt3GwGxOvq7e1czmI4R2SNZwb6p+4KOSFVcUnk
-	0YA3p82UYM5O4DIb9H5mIfbUqSb27zbHm3uR3UwHSyjmrQMRYu500Wh/5TCC6gZ01w==
-X-Gm-Gg: ASbGnctkQU71rbI7a6wV9F2+d53F3K29N4WvrEppl5UZh8ljVmoOMBofLyFlHYDSGdU
-	pSiDCiSCPfB0CgrepFyhLiayk5TM0DimlMCbXFbDxF0mbvwl38F9DrofY/W5mPiI+Lt0PGI0iA7
-	buL3OPyZCTTGBTx09BlmF12vI/uQCIYDaM6pLfWFqG0jjouRmSyKFlrOCqdW/DyCujCdYPMmkbi
-	rxPf/X0BNnNAQoaVVjUS2IqX9Oq9kOu2Z9Ru7CKbRR2XpGvuFoD/rpw8hNkBL0eqH6FePIJT9wy
-	vFe8Oc9IfUAjHkb0VnU1vQ9X7BguEZ5qfYl+Z9I7zcgjGO/DIRcR/Iou8IxblnuCTegRwt8PuEu
-	e8s6G2pbIuiyWnV9tAG0BIR7zy9iIzlejeFLMofVd
-X-Google-Smtp-Source: AGHT+IFu9gQ4T/xGAbMTQXG3WPYgohMsmI9ueVB9rM2XMJClNzfOEU7Ji4LWWYs8o8fj+HmfjDCM5A==
-X-Received: by 2002:a05:620a:4443:b0:7e3:3996:f4a0 with SMTP id af79cd13be357-7e356b058dbmr1713007185a.43.1753108678345;
-        Mon, 21 Jul 2025 07:37:58 -0700 (PDT)
-Received: from rowland.harvard.edu ([140.247.181.15])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e356c9015dsm419569485a.92.2025.07.21.07.37.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 07:37:57 -0700 (PDT)
-Date: Mon, 21 Jul 2025 10:37:54 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: syzbot <syzbot+b63d677d63bcac06cf90@syzkaller.appspotmail.com>
-Cc: bentiss@kernel.org, jikos@kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [input?] [usb?] UBSAN: shift-out-of-bounds in s32ton (2)
-Message-ID: <cd6d1bff-7912-4c55-b2fc-ea2032658ca9@rowland.harvard.edu>
-References: <15723551-960b-4257-bfbd-073e136deaa2@rowland.harvard.edu>
- <68791b6f.a70a0220.693ce.004b.GAE@google.com>
+        d=1e100.net; s=20230601; t=1753108686; x=1753713486;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JwYYLiPvqaix5yHtuwZHRVuG84XTu7gs29fzwdxPmGw=;
+        b=Yq8SxJ99Gfwh3C3qay3Rvk4vhLCrbK/NqQP/MZRfj+b62m/BP5nWPRp2iFr59BHPPQ
+         5vCf1yGGnUs/SVIkO3NgYqgl3k4kdICuQdZOBSu4eH+prriXktKIxHy8zKtB8oqQ0jXj
+         JJnfynSi+xshdIU8S6M7+OS/ANLDc2xWlLHp5Yw/mgFrEI+urukYx96KjkPjcZUwZaRI
+         aYn6YM0kB967TIuD2hxD1qxICXIt5eunTSvYXvvc+22VEVcBAWHq/yr172NyB6r+noUH
+         Sm14MqqegKDZxhxXPw+EGTvaVU/W5mLZvQR1iaX3DabRf2S/aV7lWuFom3nhbeMmPwqE
+         N0LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUikQYQAr1Us+QPF7jEIbr357/sIyhIx/tTWxKCSWkB5cDGIkw2m5NT16f+4ALdwMzOTENVnLbRgQZU7zE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRGSeuOe+9lFIHZbJXBByJlh+P1t88FqmfkpRBuvN1veEdNsOq
+	T9nUsyTSp4K+4r0CdcFKi+/j43G6F/IEN7YB0uKwfBFS/8Ja2vOmT95FTFlUbD3W/egSCJmgMxr
+	695xj5BFEP+9z5jzcu/Eq9KgFTgFotL5Rk2svCTBUelbBE7fs5SPbNK6SJXI=
+X-Google-Smtp-Source: AGHT+IERNLU5RuHG5R/mnS5vt9XSd6zuQ4bwzG/jYrOr7dkzbDyfgXserzojSo3c6L+kruqlrR0mr0+ZziugDD+8iVtSsD4Gk40X
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <68791b6f.a70a0220.693ce.004b.GAE@google.com>
+X-Received: by 2002:a05:6602:485:b0:879:c608:d1d5 with SMTP id
+ ca18e2360f4ac-879c608d725mr2661096939f.14.1753108682751; Mon, 21 Jul 2025
+ 07:38:02 -0700 (PDT)
+Date: Mon, 21 Jul 2025 07:38:02 -0700
+In-Reply-To: <4118023.1753106607@warthog.procyon.org.uk>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <687e50ca.a70a0220.693ce.00ed.GAE@google.com>
+Subject: Re: [syzbot] [afs?] WARNING: ODEBUG bug in delete_node (3)
+From: syzbot <syzbot+ab13429207fe1c8c92e8@syzkaller.appspotmail.com>
+To: dhowells@redhat.com, linux-afs@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	marc.dionne@auristor.com, mathieu.desnoyers@efficios.com, mhiramat@kernel.org, 
+	rostedt@goodmis.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jul 17, 2025 at 08:49:03AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-> 
-> Reported-by: syzbot+b63d677d63bcac06cf90@syzkaller.appspotmail.com
-> Tested-by: syzbot+b63d677d63bcac06cf90@syzkaller.appspotmail.com
-> 
-> Tested on:
-> 
-> commit:         c2ca42f1 HID: core: do not bypass hid_hw_raw_request
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git
-> console output: https://syzkaller.appspot.com/x/log.txt?x=148b258c580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=ec692dfd475747ff
-> dashboard link: https://syzkaller.appspot.com/bug?extid=b63d677d63bcac06cf90
-> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> patch:          https://syzkaller.appspot.com/x/patch.diff?x=14dd1382580000
-> 
-> Note: testing is done by a robot and is best-effort only.
+Hello,
 
-Let's try a different approach: hardening against invalid field 
-attributes.  As far as I can tell on a quick scan through the code, only 
-one change is needed.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING: ODEBUG bug in delete_node
 
-Alan Stern
+------------[ cut here ]------------
+ODEBUG: activate active (active state 0) object: ffff888148ef4dd8 object type: rcu_head hint: 0x0
+WARNING: CPU: 1 PID: 6466 at lib/debugobjects.c:615 debug_print_object+0x16b/0x1e0 lib/debugobjects.c:612
+Modules linked in:
+CPU: 1 UID: 0 PID: 6466 Comm: syz-executor Not tainted 6.16.0-rc7-syzkaller-g89be9a83ccf1 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+RIP: 0010:debug_print_object+0x16b/0x1e0 lib/debugobjects.c:612
+Code: 4c 89 ff e8 e7 83 60 fd 4d 8b 0f 48 c7 c7 80 d1 e1 8b 48 8b 34 24 4c 89 ea 89 e9 4d 89 f0 41 54 e8 3a 0d c3 fc 48 83 c4 08 90 <0f> 0b 90 90 ff 05 f7 30 de 0a 48 83 c4 08 5b 41 5c 41 5d 41 5e 41
+RSP: 0018:ffffc90000a088e0 EFLAGS: 00010292
+RAX: 3ffe616a0f195300 RBX: dffffc0000000000 RCX: ffff88802d3a1e00
+RDX: 0000000000000100 RSI: 0000000000000000 RDI: 0000000000000002
+RBP: 0000000000000000 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffffbfff1bfaa6c R12: 0000000000000000
+R13: ffffffff8be1d300 R14: ffff888148ef4dd8 R15: ffffffff8b8bde80
+FS:  000055556b314500(0000) GS:ffff888125da5000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f26e42d56c0 CR3: 00000000342c0000 CR4: 00000000003526f0
+Call Trace:
+ <IRQ>
+ debug_object_activate+0x26a/0x420 lib/debugobjects.c:842
+ debug_rcu_head_queue kernel/rcu/rcu.h:236 [inline]
+ __call_rcu_common kernel/rcu/tree.c:3079 [inline]
+ call_rcu+0xaa/0x9c0 kernel/rcu/tree.c:3214
+ radix_tree_node_free lib/radix-tree.c:310 [inline]
+ delete_node+0x1b6/0xa50 lib/radix-tree.c:573
+ radix_tree_delete_item+0x2b6/0x400 lib/radix-tree.c:1430
+ afs_cell_destroy+0x16f/0x2c0 fs/afs/cell.c:522
+ rcu_do_batch kernel/rcu/tree.c:2576 [inline]
+ rcu_core+0xca5/0x1710 kernel/rcu/tree.c:2832
+ handle_softirqs+0x286/0x870 kernel/softirq.c:579
+ __do_softirq kernel/softirq.c:613 [inline]
+ invoke_softirq kernel/softirq.c:453 [inline]
+ __irq_exit_rcu+0xca/0x1f0 kernel/softirq.c:680
+ irq_exit_rcu+0x9/0x30 kernel/softirq.c:696
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1050 [inline]
+ sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1050
+ </IRQ>
+ <TASK>
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:check_preemption_disabled+0x17/0x120 lib/smp_processor_id.c:14
+Code: 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 55 41 57 41 56 53 48 83 ec 10 65 48 8b 05 ee 4d 3b 07 48 89 44 24 08 <65> 8b 05 f6 4d 3b 07 65 8b 0d eb 4d 3b 07 f7 c1 ff ff ff 7f 74 23
+RSP: 0018:ffffc90003def330 EFLAGS: 00000286
+RAX: 3ffe616a0f195300 RBX: 0000000000000001 RCX: 0000000000000000
+RDX: ffff88802d3a1e00 RSI: ffffffff8be1c7c0 RDI: ffffffff8be1c780
+RBP: ffff88801e0ffe10 R08: ffff88801e0ffe0b R09: 1ffff11003c1ffc1
+R10: dffffc0000000000 R11: ffffed1003c1ffc2 R12: ffffffff822c91ad
+R13: 0000000000000001 R14: 000000000007332c R15: 0000000000000001
+ rcu_is_watching_curr_cpu include/linux/context_tracking.h:128 [inline]
+ rcu_is_watching+0x15/0xb0 kernel/rcu/tree.c:745
+ rcu_read_unlock include/linux/rcupdate.h:869 [inline]
+ page_table_check_set+0x4ad/0x730 mm/page_table_check.c:124
+ page_table_check_ptes_set include/linux/page_table_check.h:76 [inline]
+ set_ptes include/linux/pgtable.h:292 [inline]
+ __copy_present_ptes mm/memory.c:973 [inline]
+ copy_present_ptes mm/memory.c:1056 [inline]
+ copy_pte_range mm/memory.c:1179 [inline]
+ copy_pmd_range+0x4262/0x7000 mm/memory.c:1267
+ copy_pud_range mm/memory.c:1304 [inline]
+ copy_p4d_range mm/memory.c:1328 [inline]
+ copy_page_range+0xc46/0x1270 mm/memory.c:1416
+ dup_mmap+0xf57/0x1ac0 mm/mmap.c:1838
+ dup_mm kernel/fork.c:1477 [inline]
+ copy_mm+0x13c/0x4b0 kernel/fork.c:1529
+ copy_process+0x16d3/0x3b80 kernel/fork.c:2169
+ kernel_clone+0x224/0x7f0 kernel/fork.c:2599
+ __do_sys_clone kernel/fork.c:2742 [inline]
+ __se_sys_clone kernel/fork.c:2726 [inline]
+ __x64_sys_clone+0x18b/0x1e0 kernel/fork.c:2726
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f26e35839d3
+Code: 1f 84 00 00 00 00 00 64 48 8b 04 25 10 00 00 00 45 31 c0 31 d2 31 f6 bf 11 00 20 01 4c 8d 90 d0 02 00 00 b8 38 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 35 89 c2 85 c0 75 2c 64 48 8b 04 25 10 00 00
+RSP: 002b:00007fff070e2f88 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f26e35839d3
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
+RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000001
+R10: 000055556b3147d0 R11: 0000000000000246 R12: 0000000000000000
+R13: 00000000000927c0 R14: 0000000000070948 R15: 00007fff070e3120
+ </TASK>
+----------------
+Code disassembly (best guess):
+   0:	00 00                	add    %al,(%rax)
+   2:	00 90 90 90 90 90    	add    %dl,-0x6f6f6f70(%rax)
+   8:	90                   	nop
+   9:	90                   	nop
+   a:	90                   	nop
+   b:	90                   	nop
+   c:	90                   	nop
+   d:	90                   	nop
+   e:	90                   	nop
+   f:	90                   	nop
+  10:	90                   	nop
+  11:	90                   	nop
+  12:	90                   	nop
+  13:	55                   	push   %rbp
+  14:	41 57                	push   %r15
+  16:	41 56                	push   %r14
+  18:	53                   	push   %rbx
+  19:	48 83 ec 10          	sub    $0x10,%rsp
+  1d:	65 48 8b 05 ee 4d 3b 	mov    %gs:0x73b4dee(%rip),%rax        # 0x73b4e13
+  24:	07
+  25:	48 89 44 24 08       	mov    %rax,0x8(%rsp)
+* 2a:	65 8b 05 f6 4d 3b 07 	mov    %gs:0x73b4df6(%rip),%eax        # 0x73b4e27 <-- trapping instruction
+  31:	65 8b 0d eb 4d 3b 07 	mov    %gs:0x73b4deb(%rip),%ecx        # 0x73b4e23
+  38:	f7 c1 ff ff ff 7f    	test   $0x7fffffff,%ecx
+  3e:	74 23                	je     0x63
 
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git c2ca42f190b6
+Tested on:
 
-Index: usb-devel/drivers/hid/hid-core.c
-===================================================================
---- usb-devel.orig/drivers/hid/hid-core.c
-+++ usb-devel/drivers/hid/hid-core.c
-@@ -66,8 +66,12 @@ static s32 snto32(__u32 value, unsigned
- 
- static u32 s32ton(__s32 value, unsigned int n)
- {
--	s32 a = value >> (n - 1);
-+	s32 a;
- 
-+	if (!value || !n)
-+		return 0;
-+
-+	a = value >> (n - 1);
- 	if (a && a != -1)
- 		return value < 0 ? 1 << (n - 1) : (1 << (n - 1)) - 1;
- 	return value & ((1 << n) - 1);
+commit:         89be9a83 Linux 6.16-rc7
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16517722580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8ba21f95b63d6db2
+dashboard link: https://syzkaller.appspot.com/bug?extid=ab13429207fe1c8c92e8
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
 
+Note: no patches were applied.
 
