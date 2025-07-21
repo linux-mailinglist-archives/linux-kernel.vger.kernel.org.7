@@ -1,117 +1,167 @@
-Return-Path: <linux-kernel+bounces-739592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85CBDB0C84A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:57:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6D6FB0C85D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:00:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D7C36C3707
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:56:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10BEE16BC76
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9DB2DFA28;
-	Mon, 21 Jul 2025 15:56:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427422E0402;
+	Mon, 21 Jul 2025 16:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mzesJ5k8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="UvbfVzpu"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC6072E03FA;
-	Mon, 21 Jul 2025 15:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48CA1A5BA4;
+	Mon, 21 Jul 2025 16:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753113376; cv=none; b=k+Tj3/w35dYai5ibkHmx9Mbrv5TFUgfQeQ9GLXLTmzLXeVY++8udMPaYSmSXODMeZzjmLIPlDR5l71fsZuX7pdcMGxz4OW6wRA/OYwcJMov2WXJEpyqK/XJGnYnbWx/34RupjwbAo9BgBrlDpmkTS19maxKR5zjbnMsYZSjuLTs=
+	t=1753113617; cv=none; b=bD5DhypN4nhkIor0H7lgkuZnKRd3LiEsidOXLh+t5IzSpTOzOjaXg7QCWjwLrav1ZR+fb9bkXSBN3Ugsw87QbrKpPVesbN9wE1I/NB2NciWfg4UY3dk0N/U5HqmyJj9aRmVnXIRtlOWz/6sQKzcjZkQL9nmwA9qwfNYgbm/Ii1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753113376; c=relaxed/simple;
-	bh=RmvVp8Cc5s3PNQobge2CUWiM9uh0u33UicVxKxhwc00=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Gyy3+xesZaGNd5ccBU6rwYv/c0XCxs9BtRTm/DEPtADCkalXmWeSYCau2+f9EllxXbQnRbLoNvgvqcRzprgLmYpyMOKuvM/otKR4uZUD6rudh7PTYlqC5IMA5I5WXXGXagH04STBj60CcYqfgN5mwScHbtPpixn0z9CuPdMaVZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mzesJ5k8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D872C4CEED;
-	Mon, 21 Jul 2025 15:56:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753113375;
-	bh=RmvVp8Cc5s3PNQobge2CUWiM9uh0u33UicVxKxhwc00=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=mzesJ5k8af1yqWf95XwEexGnQdlboi/uiIG5R/a5H2hgmcMzJqbwL3o3LTzr9PtHi
-	 n+I2d/MMeEqRRGxuoM+ZL/D/lgxAodi9PnUZQcq5J+e2c1hcHvJxDtlE6MC7K36ZN/
-	 MDVgMqXN5nS6Dsh38Q4AjUZcFB970DMHP8iNkmhyad2Wna6kdYHbgh22I3Ms1hl14x
-	 kPC93tv+L4Rfp3nTqjM3CP7ubRvOll5FU144rkE3RT1AumWpSyYLm8/u4Kmp//zugD
-	 f6B55wu4pf3Bp0tkrPFZk+KvH0aoWZ4OCmt0urScl8JFZdN4NLDHdr/oYzozquZfq5
-	 q7SBhclNl6j9Q==
-From: Mark Brown <broonie@kernel.org>
-To: linux-spi@vger.kernel.org, Heiko Schocher <hs@denx.de>
-Cc: linux-kernel@vger.kernel.org, Andrei Lalaev <andrey.lalaev@gmail.com>, 
- Chanh Nguyen <chanh@os.amperecomputing.com>, 
- Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
- Grant Peltier <grantpeltier93@gmail.com>, 
- Guenter Roeck <linux@roeck-us.net>, 
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Michal Simek <michal.simek@amd.com>, 
- Naresh Solanki <naresh.solanki@9elements.com>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Rob Herring <robh@kernel.org>, Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>, 
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
- devicetree@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org
-In-Reply-To: <20250719063355.73111-1-hs@denx.de>
-References: <20250719063355.73111-1-hs@denx.de>
-Subject: Re: (subset) [PATCH v1 0/3] spidev: introduce trivial abb sensor
- device
-Message-Id: <175311337130.327079.7374455187420344577.b4-ty@kernel.org>
-Date: Mon, 21 Jul 2025 16:56:11 +0100
+	s=arc-20240116; t=1753113617; c=relaxed/simple;
+	bh=0u/FkNt313+bbH04ZJjnyQgStvvud8cR+f/8Ru2O9/M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VjTyUuTZUY4uf3P3SKMSOSBE3+PxLv0Q4ba9uvpmNNIIDqLCQYLTaFnmaM72rTLfm9NbNLmbutB7kk+DrvrpIn89qQkUUeJByREKeMKRX79KdGqfPrP6fMo3r1sTSL29JBgiVy3eRfYdqIeq5++psX7S+Lbn30wmjEt8uk+tKLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=UvbfVzpu; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56LF5RUS011179;
+	Mon, 21 Jul 2025 17:59:52 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	rsxdTCztBKYXlx+C4LuG8AeZggJrpJdUJ0Xm76EVhB4=; b=UvbfVzpuufx4byKp
+	qcX7btJ++p/Dy6hnVJx1aUaEKMxpo1BBXfeXWmxfbJ1FmZnGrmlKIR21eP62pD3a
+	Xt7q5wtTkXo7k3/l9DPZMxYeZGnqnkFzbo+zlGTbs83v4JhpISvnaDaqs/c8+Fmz
+	WPGuk9MwHDXlF/xKTKnQ+9ieU5I/cjaGcsjLlgk8fwEvlLy3TV9NKigRQP94CTKq
+	XlIpIXEBxXv8/KMUp3Zyyf2HI8+58l6IR4Ykhgkbn31gV+Wytx78wXmnacjBM+sR
+	cM4tNVzKKl8At5JokIGjLbSPJH9dDz9ksPFtC+etuglhlBKhOXmswwzs8MzbtcT6
+	IbCvgw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48028g1d9g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Jul 2025 17:59:51 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A0CE040046;
+	Mon, 21 Jul 2025 17:58:12 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 34BFE76EA8F;
+	Mon, 21 Jul 2025 17:56:19 +0200 (CEST)
+Received: from [10.48.87.141] (10.48.87.141) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 21 Jul
+ 2025 17:56:18 +0200
+Message-ID: <38278e2a-5a1b-4908-907e-7d45a08ea3b7@foss.st.com>
+Date: Mon, 21 Jul 2025 17:56:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 1/4] dt-bindings: net: document st,phy-wol
+ property
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Krzysztof Kozlowski <krzk@kernel.org>,
+        Andrew Lunn
+	<andrew+netdev@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Christophe Roullier <christophe.roullier@foss.st.com>,
+        Heiner Kallweit
+	<hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>, Simon Horman
+	<horms@kernel.org>,
+        Tristram Ha <Tristram.Ha@microchip.com>,
+        Florian Fainelli
+	<florian.fainelli@broadcom.com>,
+        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20250721-wol-smsc-phy-v1-0-89d262812dba@foss.st.com>
+ <20250721-wol-smsc-phy-v1-1-89d262812dba@foss.st.com>
+ <faea23d5-9d5d-4fbb-9c6a-a7bc38c04866@kernel.org>
+ <f5c4bb6d-4ff1-4dc1-9d27-3bb1e26437e3@foss.st.com>
+ <e3c99bdb-649a-4652-9f34-19b902ba34c1@lunn.ch>
+Content-Language: en-US
+From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
+In-Reply-To: <e3c99bdb-649a-4652-9f34-19b902ba34c1@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cff91
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-21_04,2025-07-21_02,2025-03-28_01
 
-On Sat, 19 Jul 2025 08:33:51 +0200, Heiko Schocher wrote:
-> This series introduces the changes needed for trivial spi
-> based sensors from ABB, currently operated from userspace.
+Hello Andrew,
+
+On 7/21/25 15:18, Andrew Lunn wrote:
+> On Mon, Jul 21, 2025 at 02:10:48PM +0200, Gatien CHEVALLIER wrote:
+>> Hello Krzysztof,
+>>
+>> On 7/21/25 13:30, Krzysztof Kozlowski wrote:
+>>> On 21/07/2025 13:14, Gatien Chevallier wrote:
+>>>> The "st,phy-wol" property can be set to use the wakeup capability of
+>>>> the PHY instead of the MAC.
+>>>
+>>>
+>>> And why would that be property of a SoC or board? Word "can" suggests
+>>> you are documenting something which exists, but this does not exist.
+>> Can you elaborate a bit more on the "not existing" part please?
+>>
+>> For the WoL from PHY to be supported, the PHY line that is raised
+>> (On nPME pin for this case) when receiving a wake up event has to be
+>> wired to a wakeup event input of the Extended interrupt and event
+>> controller(EXTI), and that's implementation dependent.
 > 
-> The last patch adds the spidevices to the DTS files, already
-> in mainline.
+> How does this differ from normal interrupts from the PHY? Isn't the
+> presence of an interrupt in DT sufficient to indicate the PHY can wake
+> the system?
 > 
-> make dtbs_check showed no errors/warnings for the dts files
-> 
-> [...]
+> 	Andrew
 
-Applied to
+Here's an extract from the Microchip datasheet for the LAN8742A PHY:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+"In addition to the main interrupts described in this section, an nPME
+pin is provided exclusively for WoL specific interrupts."
 
-Thanks!
+I'm not an expert of the different PHYs, but I guess there may be a
+distinction needed between some "main" PHY interrupts and the WoL one
+at least for deep low-power use cases.
 
-[1/3] dt-bindings: trivial-devices: Document ABB sensors
-      commit: aad2f87cbcab56b322109d26d7b11842a09df91f
-[2/3] spi: spidev: Add an entry for the ABB spi sensors
-      commit: d60f7cab7c04944a79af16caa43c141e780a59c6
+Because this line is wired to a peripheral managed by our
+TEE, the ultimate goal here would be to declare the OP-TEE node as
+an interrupt provider and to forward the interrupt to the kernel using
+the asynchronous notification mechanism. Then, reference the OP-TEE
+node in the "interrupts-extended" property in the PHY node so that it
+can be acked by the PHY driver. As of now, this patch set at least allow
+to wakeup from a deep low power mode using the WoL capability of the
+PHY.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+Regarding this property, somewhat similar to "mediatek,mac-wol",
+I need to position a flag at the mac driver level. I thought I'd go
+using the same approach.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Best regards,
+Gatien
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
 
 
