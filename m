@@ -1,156 +1,113 @@
-Return-Path: <linux-kernel+bounces-739455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4975B0C67F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:36:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BF48BB0C684
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:37:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAF1E3A1E44
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:36:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34D463A6C22
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381932957BA;
-	Mon, 21 Jul 2025 14:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A639E298255;
+	Mon, 21 Jul 2025 14:36:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kqo2CLi4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ejmzv/xb"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802D41E1E19;
-	Mon, 21 Jul 2025 14:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7501DF990
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 14:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753108589; cv=none; b=oNpFcTxXY3aYaeDvxTLzPPI8/E9IN5wPWHQuCK9GiAQy/vFEmSdfs0iQOsh4VuCCOuO0zZxM2ghuwFYNkmGwTDtkvTJnroeslPX3JcHxByJotLhAM1KQgaBXPo6DT42egPDiPi/6OpmEqxqGWF8M16/bC4fnzcIfLw8QOQe7i6M=
+	t=1753108617; cv=none; b=F+dR8S1p3hBO4/hIhpvqRiU50zvYI5+Z/77dXthYMOUo6KJ19wzaTLgqcVuj+spfh0/6/IqL38oU2VS5x7tFKewwNTPiIkibCDcNBuLiUSWHuP9JBsolwGmVO4vMMLE8T2UCv11Q3paOglSHwJxnoEtFBluUrYzu4xorzhAd1FY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753108589; c=relaxed/simple;
-	bh=GbemJuEbDx2DcEHGgM/bz2PHyZcsmMU571yNx1Q7WNc=;
+	s=arc-20240116; t=1753108617; c=relaxed/simple;
+	bh=Cuo1H/j6PyYGZhqnOc7J+ZKmt4K5j3OPO3gVDNfi8Ds=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tIdWVt+kMfp7ENzh29YMnygwjZW75JlYtWyoeumtINBRqMWJL4bB8bGJjSAbXzCVm8jTT2k62NfEcvHxydyLdL4juO6VAyHAShHrvEqQL+FKLLse9DOfQuPzlxbLplh7lnwnust2Z1x9ScXvh7LCXM3sbxeO1wuirzxLqOtcc/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kqo2CLi4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 821F8C4CEED;
-	Mon, 21 Jul 2025 14:36:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753108589;
-	bh=GbemJuEbDx2DcEHGgM/bz2PHyZcsmMU571yNx1Q7WNc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Kqo2CLi4cjsgMT47sgoW/0glGTmLxub4GXibo2H23/f9xRqF6D/tZ1NoWCd13Q73C
-	 qjgGNpPRVqbgfpbd/fekLbABDGNfKhSuf4j+kfW/qkbRPKdtcFIBPWLmKXYCiqVy7K
-	 avoCpuf0X43/8yO8EkGfP5Tz6AbbEV62ObutkzUg+6ePynDVMuj6CoyJgAg+a2/HUj
-	 pwLwaGUFLa8Aoq2TGkfo/WFQCnSbiOyunaUFXjAp1V1FIvlgh3rkDGAmHMBPPqkIcA
-	 tgXEu69U+rgnPmSDwLgEv4iWBUvkK/VR6zacYlHMbz/3EBVaUcjqtXFROIgWkJ/VBe
-	 RG+3AW1npnVBA==
-Message-ID: <122bd07a-0993-4950-ab2e-c2c5289fd0af@kernel.org>
-Date: Mon, 21 Jul 2025 16:36:24 +0200
+	 In-Reply-To:Content-Type; b=UlTtZ7reBalxxHd+0rN620c/SbcAGWVYkTgWDECWimLZzhtFdcdIaPs3QqCobbgpT7NgWuST16kHCREKSwKBe6PXl0ohsqyKB+4vrpLY7++anVJXlzMCYgfhX5rvzv+hietja1dJkrPSzqQ7sIEC+67BTMUROf/vPjklYeRntNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ejmzv/xb; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <75da23a0-5351-4209-b8eb-236c8806b539@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753108612;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HVhKA1X+9r8f/FUH0A6kHrg/wVcnDzUKPcoSz/rjuDQ=;
+	b=ejmzv/xbtyuk3b0X3VyUQaw6Meb68Xt1+gu+HX+SaXgPb4XEwCRJgLnQmMP+thQ0lu6OgD
+	RMuytHSGkQxmYSOdJm11lyYzuFrtwFno4SJGowv0Fdiw3uUf9ZFJY+DiJWDSZgO3v6YUII
+	xEsBUAHmp0sAoqAMVGOBvVsbd8GudDA=
+Date: Mon, 21 Jul 2025 07:36:46 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: pinctrl: qcom: Add Glymur pinctrl
- bindings
-To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>, andersson@kernel.org,
- linus.walleij@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, quic_rjendra@quicinc.com
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250721143037.20983-1-pankaj.patil@oss.qualcomm.com>
- <20250721143037.20983-2-pankaj.patil@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250721143037.20983-2-pankaj.patil@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 21/07/2025 16:30, Pankaj Patil wrote:
-> Add DeviceTree binding for Glymur SoC TLMM block
-> ---
-> Changes in v2:
-> Updated gpio-line-names maxItems to 250
-> Fixed example node reg property
-> 
-> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-
-
-This is not correctly formatted patch. Your SoB is gone. Apply it
-yourself and see the result.
-
-> ---
->  .../bindings/pinctrl/qcom,glymur-tlmm.yaml    | 128 ++++++++++++++++++
->  1 file changed, 128 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,glymur-tlmm.yaml
-> 
-
-...
-
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    tlmm: pinctrl@f100000 {
-> +        compatible = "qcom,glymur-tlmm";
-> +        reg = <0x0f100000 0xf00000>;
-> +        interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
-> +        gpio-controller;
-> +        #gpio-cells = <2>;
-> +        interrupt-controller;
-> +        #interrupt-cells = <2>;
-> +        gpio-ranges = <&tlmm 0 0 249>;
-> +        wakeup-parent = <&pdc>;
-> +        gpio-reserved-ranges = <4 4>, <10 2>, <33 3>, <44 4>;
-> +        qup_uart21_default: qup-uart21-default-state {
-> +          tx-pins {
-
-Still messed indentation.
+Subject: Re: [PATCH] selftests/bpf: Add LPM trie microbenchmarks
+Content-Language: en-GB
+To: Matt Fleming <matt@readmodwrite.com>,
+ Jesper Dangaard Brouer <hawk@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Eduard Zingerman <eddyz87@gmail.com>,
+ Martin KaFai Lau <martin.lau@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ kernel-team@cloudflare.com, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ Matt Fleming <mfleming@cloudflare.com>, Netdev <netdev@vger.kernel.org>
+References: <20250718150554.48210-1-matt@readmodwrite.com>
+ <81cd8749-6212-4fcf-8e1a-5eba5a8e2a73@kernel.org>
+ <CAENh_ST_8XN2+QT8xz1gcKyovwEGwO-j2-YHbMj6GrWuZcgRag@mail.gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <CAENh_ST_8XN2+QT8xz1gcKyovwEGwO-j2-YHbMj6GrWuZcgRag@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
 
 
-Best regards,
-Krzysztof
+On 7/21/25 6:01 AM, Matt Fleming wrote:
+> On Sat, Jul 19, 2025 at 2:15 PM Jesper Dangaard Brouer <hawk@kernel.org> wrote:
+>> On 18/07/2025 17.05, Matt Fleming wrote:
+>>
+>>> [...]
+>>> diff --git a/tools/testing/selftests/bpf/progs/lpm_trie_bench.c b/tools/testing/selftests/bpf/progs/lpm_trie_bench.c
+>>> new file mode 100644
+>>> index 000000000000..c335718cc240
+>>> --- /dev/null
+>>> +++ b/tools/testing/selftests/bpf/progs/lpm_trie_bench.c
+>>> @@ -0,0 +1,175 @@
+>> [...]
+>>> +
+>>> +static __always_inline void atomic_inc(long *cnt)
+>>> +{
+>>> +     __atomic_add_fetch(cnt, 1, __ATOMIC_SEQ_CST);
+>>> +}
+>>> +
+>>> +static __always_inline long atomic_swap(long *cnt, long val)
+>>> +{
+>>> +     return __atomic_exchange_n(cnt, val, __ATOMIC_SEQ_CST);
+>>> +}
+>> For userspace includes we have similar defines in bench.h.
+>> Except they use __ATOMIC_RELAXED and here __ATOMIC_SEQ_CST.
+>> Which is the correct to use?
+>>
+>> For BPF kernel-side do selftests have another header file that define
+>> these `atomic_inc` and `atomic_swap` ?
+> Actually, we can side step this problem completely by consistently
+> using __sync_fetch_and_add() for duration_ns and hits and removing the
+> atomic operations for DELETE, which doesn't need atomicity anyway
+> since only a single producer can run.
+
+__sync_fetch_and_add() and __atomic_add_fetch() have the same
+semantics. So indeed tt would be good to just use one of them.
+
+>
+> I'll send a v2.
+
 
