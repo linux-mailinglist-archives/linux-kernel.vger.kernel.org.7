@@ -1,88 +1,118 @@
-Return-Path: <linux-kernel+bounces-738823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8392B0BDB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:33:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 279BFB0BDB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:34:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D633189D9C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:33:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F171318854C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F79D283FEB;
-	Mon, 21 Jul 2025 07:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WQVMx82I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD5C2283CB0;
+	Mon, 21 Jul 2025 07:34:08 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8021C2836B4;
-	Mon, 21 Jul 2025 07:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41035E55B;
+	Mon, 21 Jul 2025 07:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753083186; cv=none; b=okJ4BYliiaAEONJe5PxoUmRZlXHxPJ3vbdjgGODnl5f1j/PG4Lz9upMWwubLUFKeHJeNPw5ebuam/e9eP2hyNOpjPmwDF7GwZeZCsZ2aq4HuLoxEMWQzd2hF3EIBb7V1x4SRRwZJh28ljrnnCzTrZlss1Untq8+CoqyxXSEJrd4=
+	t=1753083248; cv=none; b=JaYbqY/k9Frls88iggwAG5TgPXBmLSAjyo5CCEBeLONQBwAw9OspCxClCOFe4NIyQewi0dX/DoHW9CpG+Jyj6Wb2F7JRxhMj5vYDHMg++h6sKSa754nkZO71qEvnCBFKpKqDsQlXUCqcRf32CeoxwdlRJ7juUTz5Y+2JcYt2ibU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753083186; c=relaxed/simple;
-	bh=mdw1CJUvpPFP7q0+Tbu+h7FrEywRakCiECzX+/r2WGE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gr9Q/cCP9PL5/vg4ZU7ahlHlm9P7/rPJgL8qYX7sjfiQwuH0Of60uFuVtNcfIspI+Mjw0hvs8FFtdlopdIcjIU4QtNkhlFnb0EDDC95m90JBYVtWaBVej7Cx5JTAk/2807mOgBr3kUQbEoBsUrVd3Ggo++GjKgRN44mfcW0OrWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WQVMx82I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E6E1C4CEED;
-	Mon, 21 Jul 2025 07:33:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753083186;
-	bh=mdw1CJUvpPFP7q0+Tbu+h7FrEywRakCiECzX+/r2WGE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WQVMx82I8bVkS4iAB/XBcHjAZN+OhmUhogG2a6aPNGFZLGTIRUdJ+WBnlccVGR+8P
-	 LfxhMHXvqI8vOZ7ABVpKYeYoFLtLKhtW9T5yvCVp46/OM/CfrGPH1urmhIOAEWZSvX
-	 W2KZwAUGG/oTmXoaUgQ07oYeT+0gubuEN3FBGwfZWsmBQGS4vU8e2Jo1VAqehDPfqH
-	 J0e660hGsA067rNtYNL6MoNdw9AvRanwG93tWFmsX9hyJAI7qsg+74XlsaHZutiMVA
-	 ds9o1mVOzxHqahjQ2F2L5BBU+e0CuLzCqHO8O3IFZNypfMuE1lVKAPGq/v7Z8bnMYS
-	 BhZDW8+x+8IxA==
-Date: Mon, 21 Jul 2025 09:33:03 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
-	kernel@oss.qualcomm.com, Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-Subject: Re: [PATCH v7 3/9] ASoC: dt-bindings: qcom,lpass-va-macro: Update
- bindings for clocks to support ADSP
-Message-ID: <20250721-fervent-panda-of-effort-f962b5@kuoka>
-References: <20250720173215.3075576-1-quic_pkumpatl@quicinc.com>
- <20250720173215.3075576-4-quic_pkumpatl@quicinc.com>
+	s=arc-20240116; t=1753083248; c=relaxed/simple;
+	bh=WoY52mdM6qL8jzyebF+SZbQq2npMHxjFoEKVnzShIyM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=e1EANdQdNuEmKx8bAjAcfyGOFwFg1LzOxXxABmhilA7KQGDcFack9TsgEc+qgC/fzLQxTRJYlgqNGiyuMNg05D++NHUGVaI3ndY+X0gZF1DZ1pmESimpjVtMi228+ncJrmRlxd5O8nEyh8adpoLIU1I/uEWUZN11kMqbLqxJops=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4blscK4LsPz27j2F;
+	Mon, 21 Jul 2025 15:34:57 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id B95C81402C4;
+	Mon, 21 Jul 2025 15:33:57 +0800 (CST)
+Received: from [10.174.179.113] (10.174.179.113) by
+ dggpemf500002.china.huawei.com (7.185.36.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 21 Jul 2025 15:33:56 +0800
+Message-ID: <6fdee098-230a-4c30-bfe8-1175fecb5dad@huawei.com>
+Date: Mon, 21 Jul 2025 15:33:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250720173215.3075576-4-quic_pkumpatl@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] net/mlx5e: Cleanup error handle in
+ mlx5e_tc_sample_init()
+To: <saeedm@nvidia.com>, <leon@kernel.org>, <tariqt@nvidia.com>,
+	<andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20250625102047.483300-1-yuehaibing@huawei.com>
+Content-Language: en-US
+From: Yue Haibing <yuehaibing@huawei.com>
+In-Reply-To: <20250625102047.483300-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-On Sun, Jul 20, 2025 at 11:02:09PM +0530, Prasad Kumpatla wrote:
-> From: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
+ping...
+
+On 2025/6/25 18:20, Yue Haibing wrote:
+> post_act is initialized in mlx5e_tc_post_act_init(), which never return
+> NULL. And if it is invalid, no need to alloc tc_psample mem.
 > 
-> Manage clock settings for ADSP solution. On Existing ADSP bypass
-> solutions, the macro and dcodec GDSCs are enabled using power domains
-> in lpass-va-macro which is not applicable for ADSP based platform.
-> 
-> Signed-off-by: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-> Co-developed-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-> Signed-off-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
 > ---
->  .../bindings/sound/qcom,lpass-va-macro.yaml   | 23 +++++++++++++++----
->  1 file changed, 18 insertions(+), 5 deletions(-)
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
-
+>  .../ethernet/mellanox/mlx5/core/en/tc/sample.c   | 16 ++++++++++------
+>  1 file changed, 10 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/tc/sample.c b/drivers/net/ethernet/mellanox/mlx5/core/en/tc/sample.c
+> index 5db239cae814..1b083afbe1bc 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/en/tc/sample.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en/tc/sample.c
+> @@ -619,26 +619,30 @@ mlx5e_tc_sample_init(struct mlx5_eswitch *esw, struct mlx5e_post_act *post_act)
+>  	struct mlx5e_tc_psample *tc_psample;
+>  	int err;
+>  
+> -	tc_psample = kzalloc(sizeof(*tc_psample), GFP_KERNEL);
+> -	if (!tc_psample)
+> -		return ERR_PTR(-ENOMEM);
+> -	if (IS_ERR_OR_NULL(post_act)) {
+> +	if (IS_ERR(post_act)) {
+>  		err = PTR_ERR(post_act);
+>  		goto err_post_act;
+>  	}
+> +
+> +	tc_psample = kzalloc(sizeof(*tc_psample), GFP_KERNEL);
+> +	if (!tc_psample) {
+> +		err = -ENOMEM;
+> +		goto err_post_act;
+> +	}
+>  	tc_psample->post_act = post_act;
+>  	tc_psample->esw = esw;
+>  	err = sampler_termtbl_create(tc_psample);
+>  	if (err)
+> -		goto err_post_act;
+> +		goto err_create;
+>  
+>  	mutex_init(&tc_psample->ht_lock);
+>  	mutex_init(&tc_psample->restore_lock);
+>  
+>  	return tc_psample;
+>  
+> -err_post_act:
+> +err_create:
+>  	kfree(tc_psample);
+> +err_post_act:
+>  	return ERR_PTR(err);
+>  }
+>  
 
