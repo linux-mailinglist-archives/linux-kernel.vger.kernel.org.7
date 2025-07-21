@@ -1,128 +1,458 @@
-Return-Path: <linux-kernel+bounces-739373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CA33B0C57C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:48:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA294B0C57E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:50:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FB851AA2EFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:48:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEDFD162B04
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E1662D97AD;
-	Mon, 21 Jul 2025 13:48:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53E31F03C5;
+	Mon, 21 Jul 2025 13:50:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="aNMhDQVz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ajk7lfZY";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="W2F72LhM"
+Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1C62D949A;
-	Mon, 21 Jul 2025 13:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2565B1420DD
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 13:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753105706; cv=none; b=MFWwzAW4l8n+xVMebZa7pyF5BPnEUEPA9PwOXaV001CdAesYYpkBl+0ZYpmacFKVcalQUeNHb2UoCHNn22QSdJNrjE+bpXOIUXD4c7QYLyCNWSpWes3v9uoug5DDwg5nRvIRwJdzFOwsnFIdxQ20PEHnICFehEwmQAJTMLOx5VQ=
+	t=1753105843; cv=none; b=Zuf6+5Xvf/cY6a+5+b5SozVo5lZ7lgbhR+XItQfdCIY1U/07EL8TYm0lzkvsm3/5EIN6zuPTpj7FHPmWskeEeKzu+xjAxX3KxOiEi81rOe7ki8Or4VDQlGuhloJNogIwD79AwyKugI21PMnKARyfzuK1LI9zMpbOavmGkeGwB1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753105706; c=relaxed/simple;
-	bh=RuuXVACjpr6OxTBTs3xZJKt8lhSYCQ+elVlHb9lJzTU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GDwygedTMLY/eV+4IqXADWFC6AlGIADs/7OsznqpISSYWfPuLs5M8XHI258Wy0GnLKKD6PSdDT/pKYL4gyuPjGDTaT0h69q/ik/Q5oFKzgfBLG7PzIdQz39OL/VqTVH3wtyciuBzONT2phe7IiXC2C0nbo1DDOQPac/xE/2jDB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=aNMhDQVz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4225C4CEED;
-	Mon, 21 Jul 2025 13:48:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1753105705;
-	bh=RuuXVACjpr6OxTBTs3xZJKt8lhSYCQ+elVlHb9lJzTU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aNMhDQVzgfijhBLtLAuXhThMkYDoic7hTjxR+AwatNg7zjM39MAI6taMf3d7DYTcw
-	 QQJGAPYeXUgkwM0f91Z5xQYWXuFrJ7BqdRFTe33cIeKFzM0dQLyhspkeB8KwoZ7hmy
-	 K+PZRKyFNccBmT9TkfuCnGtKaC2fwtYdths/wEWU=
-Date: Mon, 21 Jul 2025 15:48:22 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, stable@vger.kernel.org,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 5.15 000/411] 5.15.186-rc1 review
-Message-ID: <2025072105-tactics-flail-4035@gregkh>
-References: <20250623130632.993849527@linuxfoundation.org>
- <70823da1-a24d-4694-bf8a-68ca7f85e8a3@roeck-us.net>
- <CAFBinCD8MKFbqzG2ge5PFgU74bgZVhmCwCXt+1UK8b=QDndVuw@mail.gmail.com>
- <2025071238-decency-backboard-09dd@gregkh>
- <CAFBinCANe9oajzfZ_OGHoA-TtGC-CQdOm_O5TG8ke8m_NNE5NQ@mail.gmail.com>
+	s=arc-20240116; t=1753105843; c=relaxed/simple;
+	bh=ILxr/bFHsZQs7tbW2S85Udnnl7kY4GwyP9ljHLNR4Mg=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=LI4ZvDGaQNq518qKqV6UCVLxf+3UlWcc1lcV/gl4sw2xecun9Q3h/im4he+xQzjCT4w0grPunr0vzlFRdR9ZjR5k+Y/P13dGEVS5BXGJrSwD+BpnVvvbBiZXXzyfVh1fy7wGx/oSYs1+otFIeQi+mraKlWmDzcxSHtIabl65GIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ajk7lfZY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=W2F72LhM; arc=none smtp.client-ip=202.12.124.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id E2B771D00227;
+	Mon, 21 Jul 2025 09:50:38 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Mon, 21 Jul 2025 09:50:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1753105838;
+	 x=1753192238; bh=psLXjC0I/mMFjYdgP4H7159qK6/TIeCOrZEs0qZia+I=; b=
+	ajk7lfZY9UqUctfjhm5V0oAJvp6X1e9EWHFYbMbqMBRadQtGC9/9lLYZG84IPUXg
+	X11hwv5Hax1ANrThyB7SNhZ2KdPfxHv2lbm6CfCjuCCIZ0VBGfJNtQYmEPAL0HX4
+	srOByJJqmkfGdf9qKcO427YhsRFCQ4s7NCTbkxL81BOrhNTIK6PCKxzWKq6ZlqJC
+	VMzVGqhENdS71hAOAMBSx0IBx8YyqGobnSfO952lHfUyJHw3yUlliE1JnQSjgxYP
+	VZhT7OXq8r+ehwrMj5xVAyRV7Kp7H4hSHcqbbRIwN5xVEPy2psZxjLaoqlpzezB2
+	TTk3RXJhL2GdgiiV8eb0EQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1753105838; x=
+	1753192238; bh=psLXjC0I/mMFjYdgP4H7159qK6/TIeCOrZEs0qZia+I=; b=W
+	2F72LhMkykc9VpH9AdY885mquIq+cEBUJktlB9mvLvx+pDeQBfLNs9BmwG+rreBc
+	3Fz8jsa9IiAXfPv0se7UvtJumAqkI6Z5eMF8Uo91qxUHlwAc5fqpz5EjmpDampTi
+	HxWcMRcKEGNOIuhSt+fXSYGtUyYM1hsuuV95L1bVHP5E/zba6hBfKE7hBrjYCrRz
+	vDOImjnw2xvQ8mBiLxKZ/7CQl5KwutBqrC5OxL3PPC5XhyRruoAB1K8acyY2ajR2
+	bca277qr4tM3Y8jIFnROqpv5kS2n/qtBO0GG4CYf7G5RLm/q/Y76/6HL1TwUzE2K
+	o06S8vOyKAKjP1Y6gfjAg==
+X-ME-Sender: <xms:rkV-aMs7g6nQLSwCua3bibYmyhBskrKPPZAvv9yq7xyRF1ENYTmgXg>
+    <xme:rkV-aJfzsoXOB_xOxw-avMCYgntbG3CyIo7pQisw9CPRRH3FKF3Z-g_QQX1jM8mXH
+    wR0XQw8rq7u8tYR0ac>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejvddvgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpedvhfdvkeeuudevfffftefgvdevfedvleehvddvgeejvdefhedtgeegveehfeeljeen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopegrihhrlh
+    hivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepshgrthgrughruhesghhmrghilhdr
+    tghomhdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskh
+    htohhprdhorhhgpdhrtghpthhtohepnhhouhhvvggruheslhhishhtshdrfhhrvggvuggv
+    shhkthhophdrohhrghdprhgtphhtthhopegsshhkvghgghhssehnvhhiughirgdrtghomh
+    dprhgtphhtthhopehtthgrsghisehnvhhiughirgdrtghomhdprhgtphhtthhopegrihhr
+    lhhivggusehrvgguhhgrthdrtghomhdprhgtphhtthhopegsshhkvghgghhssehrvgguhh
+    grthdrtghomh
+X-ME-Proxy: <xmx:rkV-aBIiYwVAYjwUL_8fwB7To4aTm22s89WWSFP3a-ER3RWOpcH5NA>
+    <xmx:rkV-aDpN18Xq2YxFB9bEKR6V30-guLaDIb9UpYy03pvTrX_OvYnkbA>
+    <xmx:rkV-aHsIcMI3XXubulrRu27NhTLTxE7cAnVVk8Ve6vBa7hdNmrivmA>
+    <xmx:rkV-aFJqYPpuS9kIkLhfKC4khel-Aq3SfdcySqOvwswJRlFIEIznLw>
+    <xmx:rkV-aBv6PUCABo5mWiHxk_msm8GB8e18o8VfFhKTRD3l4OWyd13mcbwu>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 32F5C700065; Mon, 21 Jul 2025 09:50:38 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-ThreadId: T0fa10d1000c4a2fe
+Date: Mon, 21 Jul 2025 15:50:07 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Satadru Pramanik" <satadru@gmail.com>
+Cc: "Dave Airlie" <airlied@gmail.com>, "Dave Airlie" <airlied@redhat.com>,
+ "Ben Skeggs" <bskeggs@nvidia.com>, bskeggs@redhat.com, bskeggs@redhat.com,
+ "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+ "open list" <linux-kernel@vger.kernel.org>, "Lyude Paul" <lyude@redhat.com>,
+ nouveau@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+ "Simona Vetter" <simona@ffwll.ch>, "Timur Tabi" <ttabi@nvidia.com>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>
+Message-Id: <0d8287db-4943-4cce-87d1-25a22d3228ea@app.fastmail.com>
+In-Reply-To: 
+ <CAFrh3J-SpU03=Kgi8vj1XLsMfruQyF1Rew6L2+aYUgZnkTLJAw@mail.gmail.com>
+References: 
+ <CAFrh3J85tsZRpOHQtKgNHUVnn=EG=QKBnZTRtWS8eWSc1K1xkA@mail.gmail.com>
+ <c32114e7-a61a-4c2b-ab4b-b103d028d05f@app.fastmail.com>
+ <CAFrh3J-SpU03=Kgi8vj1XLsMfruQyF1Rew6L2+aYUgZnkTLJAw@mail.gmail.com>
+Subject: Re: [PATCH] drm/nouveau: check ioctl command codes better
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFBinCANe9oajzfZ_OGHoA-TtGC-CQdOm_O5TG8ke8m_NNE5NQ@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 14, 2025 at 09:56:11PM +0200, Martin Blumenstingl wrote:
-> Hi Greg,
-> 
-> On Sat, Jul 12, 2025 at 2:37 PM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Tue, Jul 08, 2025 at 06:05:14PM +0200, Martin Blumenstingl wrote:
-> > > Hi Guenter,
-> > >
-> > > On Mon, Jul 7, 2025 at 8:05 PM Guenter Roeck <linux@roeck-us.net> wrote:
-> > > >
-> > > > On Mon, Jun 23, 2025 at 03:02:24PM +0200, Greg Kroah-Hartman wrote:
-> > > > > This is the start of the stable review cycle for the 5.15.186 release.
-> > > > > There are 411 patches in this series, all will be posted as a response
-> > > > > to this one.  If anyone has any issues with these being applied, please
-> > > > > let me know.
-> > > > >
-> > > > > Responses should be made by Wed, 25 Jun 2025 13:05:51 +0000.
-> > > > > Anything received after that time might be too late.
-> > > > >
-> > > > ...
-> > > > > Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> > > > >     drm/meson: use unsigned long long / Hz for frequency types
-> > > > >
-> > > >
-> > > > This patch triggers:
-> > > >
-> > > > Building arm:allmodconfig ... failed
-> > > > --------------
-> > > > Error log:
-> > > > drivers/gpu/drm/meson/meson_vclk.c:399:17: error: this decimal constant is unsigned only in ISO C90 [-Werror]
-> > > >   399 |                 .pll_freq = 2970000000,
-> > > >
-> > > > and other similar problems. This is with gcc 13.4.0.
-> > > Sorry to hear that this is causing issues.
-> > > Are you only seeing this with the backport on top of 5.15 or also on
-> > > top of mainline or -next?
-> > >
-> > > If it's only for 5.15 then personally I'd be happy with just skipping
-> > > this patch (and the ones that depend on it).
-> >
-> > It's already merged, and I see these errors in the Android build reports
-> > now.  I think they've just disabled the driver entirely to get around it :(
-> Can you confirm that only 5.15 is affected - or do you also see
-> problems with other stable versions?
-> 
-> > > 5.15 is scheduled to be sunset in 16 months and I am not aware of many
-> > > people running Amlogic SoCs with mainline 5.15.
-> >
-> > Great, can we send a "CONFIG_BROKEN" patch for this then?
-> In my own words: you're asking for a patch for the next 5.15 release
-> which adds "depends on BROKEN" to the meson drm driver. Is this
-> correct?
+On Mon, Jul 21, 2025, at 14:50, Satadru Pramanik wrote:
+> Sure!
+>
+> Here you go.
+>
+> The command I ran was 'glxinfo -B'
+>
+> diff glxinfo_working.txt glxinfo_broken.txt
 
-Yes, given that it seems no one uses it there :)
+Unfortunately, the 'diff' output makes this a little harder,
+try 'diff -u' next time. I suppose passing "-X raw" to strace
+would also help since the ioctl commands are heavily overloaded.
 
-thanks,
+> < 10221 ioctl(6, _IOC(_IOC_WRITE, 0x64, 0x47, 0x48), 0x7ffc5a254340) =3D=
+ 0
+> < 10221 ioctl(6, _IOC(_IOC_READ|_IOC_WRITE, 0x64, 0x47, 0x88),
+> 0x7ffc5a254390) =3D 0
 
-greg k-h
+I think this is where it goes wrong first: (0x64, 0x47)
+is the correct type and number for NVIF, but after my patch
+I only accept the _IOC_READ|_IOC_WRITE caller but not _IOC_WRITE.
+
+> < 10221 ioctl(6, _IOC(_IOC_WRITE, 0x64, 0x47, 0x38), 0x7ffc5a254240) =3D=
+ 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_CPU_PREP, 0x7ffc5a254250) =3D 0
+> < 10221 ioctl(6, _IOC(_IOC_READ|_IOC_WRITE, 0x64, 0x47, 0xa0),
+> 0x7ffc5a254200) =3D 0
+> < 10221 ioctl(6, _IOC(_IOC_WRITE, 0x64, 0x47, 0x38), 0x7ffc5a254240) =3D=
+ 0
+> < 10221 ioctl(6, _IOC(_IOC_READ|_IOC_WRITE, 0x64, 0x47, 0xa0),
+> 0x7ffc5a254200) =3D 0
+> < 10221 ioctl(6, _IOC(_IOC_WRITE, 0x64, 0x47, 0x38), 0x7ffc5a254240) =3D=
+ 0
+> < 10221 ioctl(6, _IOC(_IOC_WRITE, 0x64, 0x47, 0x38), 0x7ffc5a254240) =3D=
+ 0
+> < 10221 ioctl(6, _IOC(_IOC_READ|_IOC_WRITE, 0x64, 0x47, 0xa0),
+> 0x7ffc5a254200) =3D 0
+> < 10221 ioctl(6, _IOC(_IOC_WRITE, 0x64, 0x47, 0x38), 0x7ffc5a254240) =3D=
+ 0
+
+> < 10221 ioctl(6, _IOC(_IOC_READ|_IOC_WRITE, 0x64, 0x47, 0xa0),
+> 0x7ffc5a254200) =3D 0
+> < 10221 ioctl(6, _IOC(_IOC_WRITE, 0x64, 0x47, 0x38), 0x7ffc5a254240) =3D=
+ 0
+
+More of the same
+
+> < 10221 ioctl(7, DRM_IOCTL_XE_EXEC_QUEUE_DESTROY, 0x7ffc5a2550e0) =3D =
+-1
+> EBADF (Bad file descriptor)
+
+This one manages to actually overload a command from another
+driver, but DRM_IOCTL_XE_EXEC_QUEUE_DESTROY happens to also work
+out to _IOC(_IOC_WRITE, 0x64, 0x47, 0x18).
+
+Obviously these commands still need to be supported, so we need
+to (at least) allow both _IOC_READ and _IOC_READ|_IOC_WRITE versions
+of it.
+
+Maintainers, do you prefer to just revert back to the original
+version, or should we do another round that allows exactly the
+necessary commands?
+
+It does get pretty ugly at that point, and is not that far off
+the origial version, with only really the _IOC_TYPE check remaining:
+
+diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nou=
+veau/nouveau_drm.c
+index 7bb64fcdd497..8bc61dfe7d9d 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_drm.c
++++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
+@@ -1284,7 +1284,7 @@ nouveau_ioctls[] =3D {
+ 	DRM_IOCTL_DEF_DRV(NOUVEAU_EXEC, nouveau_exec_ioctl_exec, DRM_RENDER_AL=
+LOW),
+ };
+=20
+-#define DRM_IOCTL_NOUVEAU_NVIF _IOC(_IOC_READ | _IOC_WRITE, DRM_IOCTL_B=
+ASE, \
++#define DRM_IOCTL_NOUVEAU_NVIF _IOC(_IOC_WRITE, DRM_IOCTL_BASE, \
+ 				    DRM_COMMAND_BASE + DRM_NOUVEAU_NVIF, 0)
+=20
+ long
+@@ -1300,7 +1300,7 @@ nouveau_drm_ioctl(struct file *file, unsigned int =
+cmd, unsigned long arg)
+ 		return ret;
+ 	}
+=20
+-	if ((cmd & ~IOCSIZE_MASK) =3D=3D DRM_IOCTL_NOUVEAU_NVIF)
++	if ((cmd & ~(IOCSIZE_MASK | IOC_OUT) =3D=3D DRM_IOCTL_NOUVEAU_NVIF)
+ 		ret =3D nouveau_abi16_ioctl(filp, (void __user *)arg, _IOC_SIZE(cmd));
+ 	else
+ 		ret =3D drm_ioctl(file, cmd, arg);
+
+    Arnd
+
+-----
+(full quote below, as the reply was off-list)
+
+> 1,129c1,20
+> < 10221 ioctl(4, DRM_IOCTL_VERSION, 0x5564c66a4e50) =3D 0
+> < 10221 ioctl(4, DRM_IOCTL_VERSION, 0x5564c66a4e50) =3D 0
+> < 10221 ioctl(4, DRM_IOCTL_ETNAVIV_GET_PARAM or
+> DRM_IOCTL_EXYNOS_GEM_CREATE or DRM_IOCTL_IVPU_GET_PARAM or
+> DRM_IOCTL_LIMA_GET_PARAM or DRM_IOCTL_NOUVEAU_GETPARAM or
+> DRM_IOCTL_OMAP_GET_PARAM or DRM_IOCTL_PVR_DEV_QUERY or
+> DRM_IOCTL_QAIC_MANAGE or DRM_IOCTL_TEGRA_GEM_CREATE, 0x7ffc5a254e20) =3D
+> 0
+> < 10221 ioctl(4, DRM_IOCTL_ETNAVIV_GET_PARAM or
+> DRM_IOCTL_EXYNOS_GEM_CREATE or DRM_IOCTL_IVPU_GET_PARAM or
+> DRM_IOCTL_LIMA_GET_PARAM or DRM_IOCTL_NOUVEAU_GETPARAM or
+> DRM_IOCTL_OMAP_GET_PARAM or DRM_IOCTL_PVR_DEV_QUERY or
+> DRM_IOCTL_QAIC_MANAGE or DRM_IOCTL_TEGRA_GEM_CREATE, 0x7ffc5a254e20) =3D
+> 0
+> < 10221 ioctl(5, DRM_IOCTL_VERSION, 0x5564c66a4e50) =3D 0
+> < 10221 ioctl(5, DRM_IOCTL_VERSION, 0x5564c66a4e50) =3D 0
+> < 10221 ioctl(5, DRM_IOCTL_ETNAVIV_GET_PARAM or
+> DRM_IOCTL_EXYNOS_GEM_CREATE or DRM_IOCTL_IVPU_GET_PARAM or
+> DRM_IOCTL_LIMA_GET_PARAM or DRM_IOCTL_NOUVEAU_GETPARAM or
+> DRM_IOCTL_OMAP_GET_PARAM or DRM_IOCTL_PVR_DEV_QUERY or
+> DRM_IOCTL_QAIC_MANAGE or DRM_IOCTL_TEGRA_GEM_CREATE, 0x7ffc5a254340) =3D
+> 0
+> < 10221 ioctl(5, DRM_IOCTL_ETNAVIV_GET_PARAM or
+> DRM_IOCTL_EXYNOS_GEM_CREATE or DRM_IOCTL_IVPU_GET_PARAM or
+> DRM_IOCTL_LIMA_GET_PARAM or DRM_IOCTL_NOUVEAU_GETPARAM or
+> DRM_IOCTL_OMAP_GET_PARAM or DRM_IOCTL_PVR_DEV_QUERY or
+> DRM_IOCTL_QAIC_MANAGE or DRM_IOCTL_TEGRA_GEM_CREATE, 0x7ffc5a254340) =3D
+> 0
+> < 10221 ioctl(6, DRM_IOCTL_VERSION, 0x5564c66a4e50) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_VERSION, 0x5564c66a4e50) =3D 0
+> < 10221 ioctl(6, _IOC(_IOC_WRITE, 0x64, 0x47, 0x48), 0x7ffc5a254340) =3D=
+ 0
+> < 10221 ioctl(6, _IOC(_IOC_READ|_IOC_WRITE, 0x64, 0x47, 0x88),
+> 0x7ffc5a254390) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_ETNAVIV_GET_PARAM or
+> DRM_IOCTL_EXYNOS_GEM_CREATE or DRM_IOCTL_IVPU_GET_PARAM or
+> DRM_IOCTL_LIMA_GET_PARAM or DRM_IOCTL_NOUVEAU_GETPARAM or
+> DRM_IOCTL_OMAP_GET_PARAM or DRM_IOCTL_PVR_DEV_QUERY or
+> DRM_IOCTL_QAIC_MANAGE or DRM_IOCTL_TEGRA_GEM_CREATE, 0x7ffc5a254330) =3D
+> 0
+> < 10221 ioctl(6, DRM_IOCTL_ETNAVIV_GET_PARAM or
+> DRM_IOCTL_EXYNOS_GEM_CREATE or DRM_IOCTL_IVPU_GET_PARAM or
+> DRM_IOCTL_LIMA_GET_PARAM or DRM_IOCTL_NOUVEAU_GETPARAM or
+> DRM_IOCTL_OMAP_GET_PARAM or DRM_IOCTL_PVR_DEV_QUERY or
+> DRM_IOCTL_QAIC_MANAGE or DRM_IOCTL_TEGRA_GEM_CREATE, 0x7ffc5a254330) =3D
+> 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_CHANNEL_ALLOC, 0x7ffc5a2541b0) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_PUSHBUF, 0x7ffc5a2541c0) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254110) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254110) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254110) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254110) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_ETNAVIV_GET_PARAM or
+> DRM_IOCTL_EXYNOS_GEM_CREATE or DRM_IOCTL_IVPU_GET_PARAM or
+> DRM_IOCTL_LIMA_GET_PARAM or DRM_IOCTL_NOUVEAU_GETPARAM or
+> DRM_IOCTL_OMAP_GET_PARAM or DRM_IOCTL_PVR_DEV_QUERY or
+> DRM_IOCTL_QAIC_MANAGE or DRM_IOCTL_TEGRA_GEM_CREATE, 0x7ffc5a254210) =3D
+> 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254260) =3D 0
+> < 10221 ioctl(6, _IOC(_IOC_WRITE, 0x64, 0x47, 0x38), 0x7ffc5a254240) =3D=
+ 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_CPU_PREP, 0x7ffc5a254250) =3D 0
+> < 10221 ioctl(6, _IOC(_IOC_READ|_IOC_WRITE, 0x64, 0x47, 0xa0),
+> 0x7ffc5a254200) =3D 0
+> < 10221 ioctl(6, _IOC(_IOC_WRITE, 0x64, 0x47, 0x38), 0x7ffc5a254240) =3D=
+ 0
+> < 10221 ioctl(6, _IOC(_IOC_READ|_IOC_WRITE, 0x64, 0x47, 0xa0),
+> 0x7ffc5a254200) =3D 0
+> < 10221 ioctl(6, _IOC(_IOC_WRITE, 0x64, 0x47, 0x38), 0x7ffc5a254240) =3D=
+ 0
+> < 10221 ioctl(6, _IOC(_IOC_WRITE, 0x64, 0x47, 0x38), 0x7ffc5a254240) =3D=
+ 0
+> < 10221 ioctl(6, _IOC(_IOC_READ|_IOC_WRITE, 0x64, 0x47, 0xa0),
+> 0x7ffc5a254200) =3D 0
+> < 10221 ioctl(6, _IOC(_IOC_WRITE, 0x64, 0x47, 0x38), 0x7ffc5a254240) =3D=
+ 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a2541e0) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254260) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_ETNAVIV_GET_PARAM or
+> DRM_IOCTL_EXYNOS_GEM_CREATE or DRM_IOCTL_IVPU_GET_PARAM or
+> DRM_IOCTL_LIMA_GET_PARAM or DRM_IOCTL_NOUVEAU_GETPARAM or
+> DRM_IOCTL_OMAP_GET_PARAM or DRM_IOCTL_PVR_DEV_QUERY or
+> DRM_IOCTL_QAIC_MANAGE or DRM_IOCTL_TEGRA_GEM_CREATE, 0x7ffc5a2542a0) =3D
+> 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254260) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254260) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254260) =3D 0
+> < 10221 ioctl(6, _IOC(_IOC_READ|_IOC_WRITE, 0x64, 0x47, 0xa0),
+> 0x7ffc5a254200) =3D 0
+> < 10221 ioctl(6, _IOC(_IOC_WRITE, 0x64, 0x47, 0x38), 0x7ffc5a254240) =3D=
+ 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_PUSHBUF, 0x7ffc5a254230) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_GET_CAP, 0x7ffc5a254270) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_PUSHBUF, 0x7ffc5a2549f0) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254940) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254940) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254940) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254940) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_CPU_PREP, 0x7ffc5a2548f0) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254a10) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a2546c0) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_PRIME_HANDLE_TO_FD, 0x7ffc5a2547a8) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_PRIME_HANDLE_TO_FD, 0x7ffc5a2547a8) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_PRIME_HANDLE_TO_FD, 0x7ffc5a2547a8) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_PRIME_HANDLE_TO_FD, 0x7ffc5a2547a8) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_PRIME_HANDLE_TO_FD, 0x7ffc5a2547a8) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_PUSHBUF, 0x7ffc5a254a10) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254960) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254960) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254960) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254960) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_CPU_PREP, 0x7ffc5a254a40) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254a30) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_PUSHBUF, 0x7ffc5a254d00) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254c70) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254ba0) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_PUSHBUF, 0x7ffc5a254c80) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254cc0) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254cc0) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254d00) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254d00) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254d00) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254d00) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254730) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_PRIME_HANDLE_TO_FD, 0x7ffc5a254818) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_PRIME_HANDLE_TO_FD, 0x7ffc5a254818) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_PRIME_HANDLE_TO_FD, 0x7ffc5a254818) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_PRIME_HANDLE_TO_FD, 0x7ffc5a254818) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_PRIME_HANDLE_TO_FD, 0x7ffc5a254818) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_PUSHBUF, 0x7ffc5a254a30) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254980) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254980) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254980) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254980) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_CPU_PREP, 0x7ffc5a254a60) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254a50) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_PUSHBUF, 0x7ffc5a254d00) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254c70) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254ba0) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_PUSHBUF, 0x7ffc5a254c80) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254cc0) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254cc0) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254d00) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254d00) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254d00) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254d00) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254730) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_PRIME_HANDLE_TO_FD, 0x7ffc5a254818) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_PRIME_HANDLE_TO_FD, 0x7ffc5a254818) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_PRIME_HANDLE_TO_FD, 0x7ffc5a254818) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_PRIME_HANDLE_TO_FD, 0x7ffc5a254818) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_PRIME_HANDLE_TO_FD, 0x7ffc5a254818) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_PUSHBUF, 0x7ffc5a254f70) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254ee0) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254e10) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_PUSHBUF, 0x7ffc5a254ef0) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254f30) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254f30) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254f70) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254f70) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254f70) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254f70) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a2550b0) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a2550b0) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a2550b0) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a2550b0) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a2550b0) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a2550b0) =3D 0
+> < 10221 ioctl(7, DRM_IOCTL_XE_EXEC_QUEUE_DESTROY, 0x7ffc5a2550e0) =3D =
+-1
+> EBADF (Bad file descriptor)
+> < 10221 ioctl(7, DRM_IOCTL_XE_EXEC_QUEUE_DESTROY, 0x7ffc5a2550e0) =3D =
+-1
+> EBADF (Bad file descriptor)
+> < 10221 ioctl(7, DRM_IOCTL_XE_EXEC_QUEUE_DESTROY, 0x7ffc5a2550e0) =3D =
+-1
+> EBADF (Bad file descriptor)
+> < 10221 ioctl(7, DRM_IOCTL_XE_EXEC_QUEUE_DESTROY, 0x7ffc5a2550e0) =3D =
+-1
+> EBADF (Bad file descriptor)
+> < 10221 ioctl(7, DRM_IOCTL_XE_EXEC_QUEUE_DESTROY, 0x7ffc5a2550e0) =3D =
+-1
+> EBADF (Bad file descriptor)
+> < 10221 ioctl(7, DRM_IOCTL_XE_EXEC_QUEUE_DESTROY, 0x7ffc5a2550e0) =3D =
+-1
+> EBADF (Bad file descriptor)
+> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a255060) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a255060) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a255060) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a255060) =3D 0
+> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_CHANNEL_FREE, 0x7ffc5a2550b8) =3D 0
+> < 10222 +++ exited with 0 +++
+> < 10221 +++ exited with 0 +++
+> ---
+>> 5236  ioctl(4, UDMABUF_CREATE, 0x7fffd017e990) =3D 6
+>> 5236  ioctl(6, DMA_BUF_IOCTL_EXPORT_SYNC_FILE, 0x7fffd017ea00) =3D 0
+>> 5252  +++ exited with 0 +++
+>> 5251  +++ exited with 0 +++
+>> 5249  +++ exited with 0 +++
+>> 5248  +++ exited with 0 +++
+>> 5250  +++ exited with 0 +++
+>> 5247  +++ exited with 0 +++
+>> 5246  +++ exited with 0 +++
+>> 5245  +++ exited with 0 +++
+>> 5237  +++ exited with 0 +++
+>> 5238  +++ exited with 0 +++
+>> 5239  +++ exited with 0 +++
+>> 5240  +++ exited with 0 +++
+>> 5241  +++ exited with 0 +++
+>> 5242  +++ exited with 0 +++
+>> 5243  +++ exited with 0 +++
+>> 5244  +++ exited with 0 +++
+>> 5253  +++ exited with 0 +++
+>> 5236  +++ exited with 0 +++
+>
+> On Mon, Jul 21, 2025 at 8:38=E2=80=AFAM Arnd Bergmann <arnd@arndb.de> =
+wrote:
+>>
+>> On Mon, Jul 21, 2025, at 14:22, Satadru Pramanik wrote:
+>> > Hello all,
+>> >
+>> > I suspect this commit in 6.16-rc7 has broken acceleration with Mesa=
+'s
+>> > nouveau drivers on my machine.
+>> >
+>> > glxinfo -B reports that I'm using llvmpipe.
+>>
+>> Thanks for the report!  Can you run the failing command with
+>> 'strace -f -o logfile.txt -e trace=3Dioctl ...' to see which command
+>> it tries?
+>>
+>> Either I made a stupid mistake in my patch and don't catch the
+>> intended command any more, or the command that gets sent is actually
+>> different from the one that the kernel expects.
+>>
+>>       Arnd
+>
+> Attachments:
+> * glxinfo_working.txt
+> * glxinfo_broken.txt
 
