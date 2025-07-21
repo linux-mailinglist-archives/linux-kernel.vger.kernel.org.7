@@ -1,390 +1,158 @@
-Return-Path: <linux-kernel+bounces-739516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52E67B0C738
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:05:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA686B0C73B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:05:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 130EE189367A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:05:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73B4718850E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:06:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3797A2DD5EB;
-	Mon, 21 Jul 2025 15:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E168328C85A;
+	Mon, 21 Jul 2025 15:05:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="HUW1xVUy"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ZcF02Cp5"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAFC02DCF4A
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 15:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5838F2DA763
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 15:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753110289; cv=none; b=Q++Xg3lXeJI60x6XOdzgBV0Y3a+bGgNnm4+Y2Cx745CnDncfxtWZDiEiTWK8w6nCo1FdReJ9rfO5bQU5TygFWwxh3o91b38XOgsqSPi5E1K0jXmcuk8dmRmHxTGOwjyzvzSR1QwEx2p1qzgwsw6zmG3IU7TZQOkPFY3tQ8V/2Og=
+	t=1753110342; cv=none; b=LV9QZcYKfDqigi0dlHWtm7txu3VKWarN4mlyxCV6FQK6SsTkv/sGOPSIa+fnC4JdXHNI5jJ+LYql85IufG2k1HrpZ0oWWxs9bF5qA3nGEqmaFF9DdGLu19gj63MMMIlIWf7u4SYJkxfWkH4+8LdvYRaaH2ke9tLUTPAEqgrt5/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753110289; c=relaxed/simple;
-	bh=tixhAVTruGjhh6AyMaRqhcxAHi0cSVcz3tj+sg7Q/tY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OSrUNG65XwzJ2mRo5Gyt992pdcT+5xwGxzaTxTGKufDasTfPsfpf9OiRNpDwllOiUXMAl1v5VANYeEvtOka+4zj7lelz6oC+DEcNW72NfeGMgu+1NcQfyqKmra+zgHizWc9IZgKzKS93aIoIrsDh3iThu6rTkzn6ko4SGMuBGps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=HUW1xVUy; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2369dd5839dso8735445ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 08:04:44 -0700 (PDT)
+	s=arc-20240116; t=1753110342; c=relaxed/simple;
+	bh=WYOX+aQvGuyRdaZClk3PbP48B++PEB6IQx4YMuZQvwk=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=pEaZn4maaYy6ToDamBaGSHRMSNHfcyhsy7tiX/YarKSfjvkuRX2bummUfoz3u8jgR6vbtt9J0sOLW02ykSCYNZJ8L20ORTVT9c90HnRqKP/uQTCmIBTls4a39mVyDJV/X83Gp5vtHw2GA/xSRRjo/y9C0zi+igyEVfSE0mCv11U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ZcF02Cp5; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-75001b1bd76so2746614b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 08:05:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1753110284; x=1753715084; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9UeaBSMK627UpClfBs39gvk2M76/e+MwuexRd0FIWTo=;
-        b=HUW1xVUyF9ADTZKmyZ1+TPcThk2okDNaocY0WkWSKaW42GVGrgWOxnv/5e6CSrJpTs
-         jzRp3APvPGE5Qkbhx7I8V1O52jf5bTP35zy5oj3TP2FqFUDgVob95b/69nWh1qTCjI/H
-         aAOhiV56W4uWuqoudNp7QVlTF9AHbNkFAny/EK4VA1d/HJwtWW95RE72C99mHhR5g+tW
-         sQ3XaHWoqTC0FSFU2PH+FlLUrSN774sTyD/RyK8EwQ7g/YYKwmoRh6DsPxIH3OQoaL0j
-         CM6JTNeplMxSBXyXTEW62dB6H7zqNF8mZgLlk8CquiW6hrd2yCWKmcPLYp6yD4qALvfr
-         DI9g==
+        d=bytedance.com; s=google; t=1753110340; x=1753715140; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=wfG08sQTzHZuDbwX1YtmSn4kKtcxsDK1qy1oCX+Hc90=;
+        b=ZcF02Cp5g10nrqDh1xgv4J7txRlVvzVL+hiiPFmo6lsEN/eHjAntPz+mrQ5cJ6ye3h
+         OmEY2ADcOHbPEcv5INRewVgnTbhnYd3ivftnVLRwiMAPbk6U/TiouuxGDcN1ULJnzRYN
+         qPwZkaWpOHgMKPc/65aJ8PcJJsnhgrW2HvqfYx6T0ulW3AoXUZ/LNX7veLOPMR+anP00
+         zh/mb72mtZOK2uSKw04HGDXu6KafnLCd0S+CAT8UT7o87pSH/qYCYseHhi5XXj1eVbT5
+         fyeQFrVrRZ/lZf7oLEOnNwtgwD6kOYtNX2DhxkC3stVa0Io/0jzsGNipj/hlqpEqeVQP
+         WXrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753110284; x=1753715084;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9UeaBSMK627UpClfBs39gvk2M76/e+MwuexRd0FIWTo=;
-        b=AjYhzHowBexy3V6pb10fTIVjY+eipszMLF3o7EQjhV8lVGdvYROyVSm988xh6QQif0
-         sbJDE5/MLhlHM4GsT+MhZTuZuz3pgPo+umWKbV4HQtaITk5exb7LLM/CAv9rHNPG+ejF
-         7r2P1yqxcudpWupqAv9RLjREiU21Gw22uH7ysj88QPynYb1kt9QZh/EvPZcEblB1Ph//
-         ZxyJSO3udWoW5w9Y6Rk/727EYczHFxlfpQvsRs/7BAOCTWGfcKba6GGPNk2fO+cXLV0s
-         e1mgFXNIetx/p2u9ja0WWKgEeu4z99y6PHeC1sSts5WEvTAeknvb9DPOhiRFVAgZh932
-         yMWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXRYIYiNHZx7nicCe18HjUfsIX4NuMCoUpLmTwQjjrj+HEXBmFPxv0Z58WjLyJcPEePKTlOoT76w4cXVq0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqAkbus2ZQd0Swz3hkqnEdCj8sFFY2K0tC21tcyKMzPMCFztPM
-	VKhZ+1yEYC3jMuiSd7ipAZfoq5ak3EjqsLK2sFQJCLdzVfgW6oPnBWby7kOW1YlIWgXyMDes5BB
-	kAHsvHlsMy3j2eYr5fqxIFAo/OivYepKycmYwQRQmwg==
-X-Gm-Gg: ASbGnctM8gDZC6MTgoZf/ElwdfSORPujyejEJM+tG6016DcVX+CQ/oCFuSTO5bYkd9L
-	U2nTeimg8FQ12s/VauH9wBxPk4P64uvbppYwnL5v1gWxlS2BamJc9M1uCCfudOsNt2JcCGVHhJA
-	2TTbuhmuv7w/nxrbpRRNQKH9/udqGBqjcr66qiqbOv05FbcXw5GQDuvjqwZh+y5G+I7m3+kVdAo
-	jngx6oP
-X-Google-Smtp-Source: AGHT+IGQMsgTs+h38VNGeRp4OBs+iEwP7qVfnWaLEldl4Pisqq0+Oumy4EvlY7bd6zpZuTRjL+n+yLcQ2tpBpDLshOQ=
-X-Received: by 2002:a17:903:2341:b0:235:ee04:dd2e with SMTP id
- d9443c01a7336-23e24f8ba34mr122336685ad.10.1753110284195; Mon, 21 Jul 2025
- 08:04:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753110340; x=1753715140;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wfG08sQTzHZuDbwX1YtmSn4kKtcxsDK1qy1oCX+Hc90=;
+        b=iK5xCDMUR4VCIO5pL162skKzMsXmX0w9bKshiftUUC3q570ovUmGNW95VazjWD4jSX
+         GE+HV5tzo3ukfASAH/Tqbm4VK9np8Um6DtsjhyeUCE0wouua/LUGPgM73YvidhlzgQXe
+         g3qfIWz8/W+2qTg9GniiRrx1oiEa2+PsW5Bkh8uHgVR/QdCo4JPgLUykC8B2SMqp5an/
+         8Z9XeHt6zr+Y4F/tYUy4b994L9qXoa0NmI5+fbQa7dkBn5jMAt3nXsZRtEtq3NV8Kl9q
+         9l6UkELl6xOHGm0z01sh8ubhL2b05p/6S5dPXX8FkRA0GTPctJz8grCqfl3OUOzgXYPT
+         UtFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWuBFaPj5Nql5McPPThbA0hkf0/XSxn0mChLEtgs5qGzLAQJSpvh1Em4uIkCiQYEoq3Uh/y63XgnIDWQH0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiWfXxV8x4USW1b7R62W1aQwsP2lnoD2PLJ4E72Z1YX2eXwsNx
+	zcgsqdkF44Zw5J2SJWNExR+VxdDl0iLUnpYuW5b/MngK9G2FlL+rcnIe6QpcXuzpkM0=
+X-Gm-Gg: ASbGncu3r/aNBe3VKzVZU8r8fTb6HeGZ45WJzPC9Xv2plQ36PLLnair5I/arG2mIIiy
+	cJwxyUpB1rbwnrk8f39J1X2yK8sMNPYBBlX/LwLaC8gPvo4h6NQfqynQjsXwQEWxJGv9wN7flau
+	I2AzchHD+xtIhi8HPBgt7C0UHM/M+lFZcqGhmUdFwF8KII87mmZy04tAt2bsZfkzfOA+fzrchMB
+	wYZBOe1zOWDm9Md6WCX6I/mIHJQJ4wYrDJXNbd5PoUykNTAxwD9ZHqnIgfeHTrcl5rc0IkjzUtk
+	fGFmMoeb6+0uP1nVD1y1mMI5/cKLxzsdmx5ZYjDfkZbQVRunwsm+3FvoFr7CaLZwXSPLXy20wOH
+	vYufdagNBCJGnHdkxQmQkqWv45X66/iSCZSHmr8h1vw==
+X-Google-Smtp-Source: AGHT+IEuZqAgbCqPJN/Z/JqXSrSZReTr9cVipbUfr9O+JL5UqFtmUZlL2hb4+/z33WcUxAR3xeqIRg==
+X-Received: by 2002:a05:6a21:b90:b0:216:5f67:98f7 with SMTP id adf61e73a8af0-23813249c87mr30073287637.33.1753110339519;
+        Mon, 21 Jul 2025 08:05:39 -0700 (PDT)
+Received: from [10.5.70.53] ([139.177.225.252])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759cb154755sm5967994b3a.69.2025.07.21.08.05.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Jul 2025 08:05:39 -0700 (PDT)
+From: Liangyan <liangyan.peng@bytedance.com>
+X-Google-Original-From: Liangyan <liangyan.peng@google.com>
+Message-ID: <de657285-cfbf-452a-a217-8069f074f9d6@google.com>
+Date: Mon, 21 Jul 2025 23:05:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250719143358.22363-1-sidong.yang@furiosa.ai>
- <20250719143358.22363-3-sidong.yang@furiosa.ai> <CADUfDZoBrnDpnTOxiDq6pBkctJ3NDJq7Wcqm2pUu_ooqMy8yyw@mail.gmail.com>
- <aH3OsKD6l18pLG92@sidongui-MacBookPro.local>
-In-Reply-To: <aH3OsKD6l18pLG92@sidongui-MacBookPro.local>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Mon, 21 Jul 2025 11:04:31 -0400
-X-Gm-Features: Ac12FXyA6cLU8jmVhtv4LQWdrgKU4vzK4eqWcW4K2Iw9UXja1c9Q4CXydQeOCro
-Message-ID: <CADUfDZrLKrf6evTXQ03cJ1W4kj0gxsF9Bopu+i2SjkBObXKnMA@mail.gmail.com>
-Subject: Re: [PATCH 2/4] rust: io_uring: introduce rust abstraction for
- io-uring cmd
-To: Sidong Yang <sidong.yang@furiosa.ai>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [External] [patch 0/4] genirq: Prevent migration live lock in
+ handle_edge_irq()
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Cc: Liangyan <liangyan.peng@bytedance.com>,
+ Yicong Shen <shenyicong.1023@bytedance.com>,
+ Jiri Slaby <jirislaby@kernel.org>
+References: <20250718184935.232983339@linutronix.de>
+Content-Language: en-US
+In-Reply-To: <20250718184935.232983339@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 21, 2025 at 1:23=E2=80=AFAM Sidong Yang <sidong.yang@furiosa.ai=
-> wrote:
->
-> On Sun, Jul 20, 2025 at 03:10:28PM -0400, Caleb Sander Mateos wrote:
-> > On Sat, Jul 19, 2025 at 10:34=E2=80=AFAM Sidong Yang <sidong.yang@furio=
-sa.ai> wrote:
-> > >
-> > > This patch introduces rust abstraction for io-uring sqe, cmd. IoUring=
-Sqe
-> > > abstracts io_uring_sqe and it has cmd_data(). and IoUringCmd is
-> > > abstraction for io_uring_cmd. From this, user can get cmd_op, flags,
-> > > pdu and also sqe.
-> > >
-> > > Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
-> > > ---
-> > >  rust/kernel/io_uring.rs | 114 ++++++++++++++++++++++++++++++++++++++=
-++
-> > >  rust/kernel/lib.rs      |   1 +
-> > >  2 files changed, 115 insertions(+)
-> > >  create mode 100644 rust/kernel/io_uring.rs
-> > >
-> > > diff --git a/rust/kernel/io_uring.rs b/rust/kernel/io_uring.rs
-> > > new file mode 100644
-> > > index 000000000000..7843effbedb4
-> > > --- /dev/null
-> > > +++ b/rust/kernel/io_uring.rs
-> > > @@ -0,0 +1,114 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +
-> > > +// Copyright (C) 2025 Furiosa AI.
-> > > +
-> > > +//! Files and file descriptors.
-> > > +//!
-> > > +//! C headers: [`include/linux/io_uring/cmd.h`](srctree/include/linu=
-x/io_uring/cmd.h) and
-> > > +//! [`include/linux/file.h`](srctree/include/linux/file.h)
-> > > +
-> > > +use core::mem::MaybeUninit;
-> > > +
-> > > +use crate::{fs::File, types::Opaque};
-> > > +
-> > > +pub mod flags {
-> > > +    pub const COMPLETE_DEFER: i32 =3D bindings::io_uring_cmd_flags_I=
-O_URING_F_COMPLETE_DEFER;
-> > > +    pub const UNLOCKED: i32 =3D bindings::io_uring_cmd_flags_IO_URIN=
-G_F_UNLOCKED;
-> > > +
-> > > +    pub const MULTISHOT: i32 =3D bindings::io_uring_cmd_flags_IO_URI=
-NG_F_MULTISHOT;
-> > > +    pub const IOWQ: i32 =3D bindings::io_uring_cmd_flags_IO_URING_F_=
-IOWQ;
-> > > +    pub const NONBLOCK: i32 =3D bindings::io_uring_cmd_flags_IO_URIN=
-G_F_NONBLOCK;
-> > > +
-> > > +    pub const SQE128: i32 =3D bindings::io_uring_cmd_flags_IO_URING_=
-F_SQE128;
-> > > +    pub const CQE32: i32 =3D bindings::io_uring_cmd_flags_IO_URING_F=
-_CQE32;
-> > > +    pub const IOPOLL: i32 =3D bindings::io_uring_cmd_flags_IO_URING_=
-F_IOPOLL;
-> > > +
-> > > +    pub const CANCEL: i32 =3D bindings::io_uring_cmd_flags_IO_URING_=
-F_CANCEL;
-> > > +    pub const COMPAT: i32 =3D bindings::io_uring_cmd_flags_IO_URING_=
-F_COMPAT;
-> > > +    pub const TASK_DEAD: i32 =3D bindings::io_uring_cmd_flags_IO_URI=
-NG_F_TASK_DEAD;
-> > > +}
-> > > +
-> > > +#[repr(transparent)]
-> > > +pub struct IoUringCmd {
-> > > +    inner: Opaque<bindings::io_uring_cmd>,
-> > > +}
-> > > +
-> > > +impl IoUringCmd {
-> > > +    /// Returns the cmd_op with associated with the io_uring_cmd.
-> > > +    #[inline]
-> > > +    pub fn cmd_op(&self) -> u32 {
-> > > +        // SAFETY: The call guarantees that the pointer is not dangl=
-ing and stays valid
-> > > +        unsafe { (*self.inner.get()).cmd_op }
-> > > +    }
-> > > +
-> > > +    /// Returns the flags with associated with the io_uring_cmd.
-> > > +    #[inline]
-> > > +    pub fn flags(&self) -> u32 {
-> > > +        // SAFETY: The call guarantees that the pointer is not dangl=
-ing and stays valid
-> > > +        unsafe { (*self.inner.get()).flags }
-> > > +    }
-> > > +
-> > > +    /// Returns the ref pdu for free use.
-> > > +    #[inline]
-> > > +    pub fn pdu(&mut self) -> MaybeUninit<&mut [u8; 32]> {
-> >
-> > Should be &mut MaybeUninit, right? It's the bytes that may be
-> > uninitialized, not the reference.
->
-> Yes, it should be &mut MaybeUninit.
-> >
-> > > +        // SAFETY: The call guarantees that the pointer is not dangl=
-ing and stays valid
-> > > +        unsafe { MaybeUninit::new(&mut (*self.inner.get()).pdu) }
-> > > +    }
-> > > +
-> > > +    /// Constructs a new `struct io_uring_cmd` wrapper from a file d=
-escriptor.
-> >
-> > Why "from a file descriptor"?
-> >
-> > Also, missing a comment documenting the safety preconditions?
->
-> Yes, it's a mistake in comment and also ptr should be NonNull.
-> >
-> > > +    #[inline]
-> > > +    pub unsafe fn from_raw<'a>(ptr: *const bindings::io_uring_cmd) -=
-> &'a IoUringCmd {
-> >
-> > Could take NonNull instead of a raw pointer.
-> >
-> > > +        // SAFETY: The caller guarantees that the pointer is not dan=
-gling and stays valid for the
-> > > +        // duration of 'a. The cast is okay because `File` is `repr(=
-transparent)`.
-> >
-> > "File" -> "IoUringCmd"?
-> >
-> > > +        unsafe { &*ptr.cast() }
-> > > +    }
-> > > +
-> > > +    // Returns the file that referenced by uring cmd self.
-> >
-> > I had a hard time parsing this comment. How about "Returns a reference
-> > to the uring cmd's file object"?
->
-> Agreed. thanks.
-> >
-> > > +    #[inline]
-> > > +    pub fn file<'a>(&'a self) -> &'a File {
-> >
-> > Could elide the lifetime.
->
-> Thanks, I didn't know about this.
-> >
-> > > +        // SAFETY: The call guarantees that the pointer is not dangl=
-ing and stays valid
-> > > +        let file =3D unsafe { (*self.inner.get()).file };
-> > > +        unsafe { File::from_raw_file(file) }
-> >
-> > Missing a SAFETY comment for File::from_raw_file()? I would expect
-> > something about io_uring_cmd's file field storing a non-null pointer
-> > to a struct file on which a reference is held for the duration of the
-> > uring cmd.
->
-> Yes, I missed. thanks.
-> >
-> > > +    }
-> > > +
-> > > +    // Returns the sqe  that referenced by uring cmd self.
-> >
-> > "Returns a reference to the uring cmd's SQE"?
->
-> Agreed, thanks.
-> >
-> > > +    #[inline]
-> > > +    pub fn sqe(&self) -> &IoUringSqe {
-> > > +        // SAFETY: The call guarantees that the pointer is not dangl=
-ing and stays valid
-> > > +        let ptr =3D unsafe { (*self.inner.get()).sqe };
-> >
-> > "ptr" isn't very descriptive. How about "sqe"?
->
-> Sounds good.
-> >
-> > > +        unsafe { IoUringSqe::from_raw(ptr) }
-> >
-> > Similar, missing SAFETY comment for IoUringSqe::from_raw()?
->
-> Thanks. I missed.
-> >
-> > > +    }
-> > > +
-> > > +    // Called by consumers of io_uring_cmd, if they originally retur=
-ned -EIOCBQUEUED upon receiving the command
-> > > +    #[inline]
-> > > +    pub fn done(self, ret: isize, res2: u64, issue_flags: u32) {
-> >
-> > I don't think it's safe to move io_uring_cmd. io_uring_cmd_done(), for
-> > example, calls cmd_to_io_kiocb() to turn struct io_uring_cmd *ioucmd
-> > into struct io_kiocb *req via a pointer cast. And struct io_kiocb's
-> > definitely need to be pinned in memory. For example,
-> > io_req_normal_work_add() inserts the struct io_kiocb into a linked
-> > list. Probably some sort of pinning is necessary for IoUringCmd.
->
-> Understood, Normally the users wouldn't create IoUringCmd than use borrow=
-ed cmd
-> in uring_cmd() callback. How about change to &mut self and also uring_cmd=
- provides
-> &mut IoUringCmd for arg.
 
-I'm still a little worried about exposing &mut IoUringCmd without
-pinning. It would allow swapping the fields of two IoUringCmd's (and
-therefore struct io_uring_cmd's), for example. If a struct
-io_uring_cmd belongs to a struct io_kiocb linked into task_list,
-swapping it with another struct io_uring_cmd would result in
-io_uring_cmd_work() being invoked on the wrong struct io_uring_cmd.
-Maybe it would be okay if IoUringCmd had an invariant that the struct
-io_uring_cmd is not on the task work list. But I would feel safer with
-using Pin<&mut IoUringCmd>. I don't have much experience with Rust in
-the kernel, though, so I would welcome other opinions.
 
-Best,
-Caleb
-
->
-> >
-> > > +        // SAFETY: The call guarantees that the pointer is not dangl=
-ing and stays valid
-> > > +        unsafe {
-> > > +            bindings::io_uring_cmd_done(self.inner.get(), ret, res2,=
- issue_flags);
-> > > +        }
-> > > +    }
-> > > +}
-> > > +
-> > > +#[repr(transparent)]
-> > > +pub struct IoUringSqe {
-> > > +    inner: Opaque<bindings::io_uring_sqe>,
-> > > +}
-> > > +
-> > > +impl<'a> IoUringSqe {
-> > > +    pub fn cmd_data(&'a self) -> &'a [Opaque<u8>] {
-> > > +        // SAFETY: The call guarantees that the pointer is not dangl=
-ing and stays valid
-> > > +        unsafe {
-> > > +            let cmd =3D (*self.inner.get()).__bindgen_anon_6.cmd.as_=
-ref();
-> > > +            core::slice::from_raw_parts(cmd.as_ptr() as *const Opaqu=
-e<u8>, 8)
-> >
-> > Why 8? Should be 16 bytes for a 64-byte SQE and 80 bytes for a
-> > 128-byte SQE, right?
->
-> Yes, it should be 16 bytes or 80 bytes. I'll fix this.
->
-> >
-> > > +        }
-> > > +    }
-> > > +
-> > > +    #[inline]
-> > > +    pub unsafe fn from_raw(ptr: *const bindings::io_uring_sqe) -> &'=
-a IoUringSqe {
-> >
-> > Take NonNull here too?
->
-> Yes, Thanks.
-> >
-> > > +        // SAFETY: The caller guarantees that the pointer is not dan=
-gling and stays valid for the
-> > > +        // duration of 'a. The cast is okay because `File` is `repr(=
-transparent)`.
-> > > +        //
-> > > +        // INVARIANT: The caller guarantees that there are no proble=
-matic `fdget_pos` calls.
-> >
-> > Why "File" and "fdget_pos"?
->
-> It's a bad mistake. thanks!
->
-> Thank you so much for deatiled review!
->
+On 2025/7/19 02:54, Thomas Gleixner wrote:
+> Yicon reported and Liangyan debugged a live lock in handle_edge_irq()
+> related to interrupt migration.
+> 
+> If the interrupt affinity is moved to a new target CPU and the interrupt is
+> currently handled on the previous target CPU for edge type interrupts the
+> handler might get stuck on the previous target:
+> 
+> CPU 0 (previous target)		CPU 1 (new target)
+> 
+>   handle_edge_irq()
+>    repeat:
+> 	handle_event()		handle_edge_irq()
+> 			        if (INPROGESS) {
+> 				  set(PENDING);
+> 				  mask();
+> 				  return;
+> 				}
+> 	if (PENDING) {
+> 	  clear(PENDING);
+> 	  unmask();
+> 	  goto repeat;
+> 	}
+> 
+> The migration in software never completes and CPU0 continues to handle the
+> pending events forever. This happens when the device raises interrupts with
+> a high rate and always before handle_event() completes and before the CPU0
+> handler can clear INPROGRESS so that CPU1 sets the PENDING flag over and
+> over. This has been observed in virtual machines.
+> 
+> The following series is addressing this by making the new target CPU wait
+> for the handler to complete on CPU1 and thereby completing the software
+> migration.
+> 
+> A draft combo patch of this has been tested by Liangyan:
+> 
+>   https://lore.kernel.org/all/87o6u0rpaa.ffs@tglx
+> 
+> The series splits up the draft patch and has proper changelogs.
+> 
 > Thanks,
-> Sidong
-> >
-> > Best,
-> > Caleb
-> >
-> > > +        unsafe { &*ptr.cast() }
-> > > +    }
-> > > +}
-> > > diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> > > index 6b4774b2b1c3..fb310e78d51d 100644
-> > > --- a/rust/kernel/lib.rs
-> > > +++ b/rust/kernel/lib.rs
-> > > @@ -80,6 +80,7 @@
-> > >  pub mod fs;
-> > >  pub mod init;
-> > >  pub mod io;
-> > > +pub mod io_uring;
-> > >  pub mod ioctl;
-> > >  pub mod jump_label;
-> > >  #[cfg(CONFIG_KUNIT)]
-> > > --
-> > > 2.43.0
-> > >
-> > >
+> 
+> 	tglx
+> ---
+>  chip.c      |   68 ++++++++++++++++++++++++++++++++++++++++++++++++++++--------
+>  internals.h |    6 ++---
+>  pm.c        |   16 +++++---------
+>  spurious.c  |   37 --------------------------------
+>  4 files changed, 69 insertions(+), 58 deletions(-)
+> 
+> 
+
+Tested-by: Liangyan <liangyan.peng@bytedance.com>
+
+Regards,
+Liangyan
+
+
 
