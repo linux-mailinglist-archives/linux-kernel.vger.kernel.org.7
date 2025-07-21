@@ -1,56 +1,72 @@
-Return-Path: <linux-kernel+bounces-739348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFB6BB0C511
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:21:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A6E7B0C517
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:23:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A669189D63E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:21:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01D343B8003
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:23:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 337D42D8DDC;
-	Mon, 21 Jul 2025 13:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B322E2D8DC0;
+	Mon, 21 Jul 2025 13:23:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oqQj/Jki"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="T3eT+XSs"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866642D59F7;
-	Mon, 21 Jul 2025 13:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B18D829E118;
+	Mon, 21 Jul 2025 13:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753104071; cv=none; b=a034YGiUaXHgw8gd64f+wjrxScja9Yn7YpWI6C5/wQZXmQF74BJsUBfGRS4v0caSqjtdlVRcJQ6gd5xJyOv/kNZwjv1DVKMjlDPW6Sk6WeYg8bY/68PkKzBam6FHtBG0nuzfNQqsA90QvoiMn/NoBgJcM4vM+BlncEucE8cDYIg=
+	t=1753104207; cv=none; b=rbtiaM+xw+KanNAq15SSSX1r2huYcPUyHdHgCt7NwqoInfygLAbT+tcD923APpllikUIDSFLE8pHKAxxJQkyOFmcBdKYM2PIcjMehFa6rGZbqgjY25rUhR79trvriOptddco8qg/blntriG+9l/MpLtAWp5Qk2BFF2gHzudiyHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753104071; c=relaxed/simple;
-	bh=+Rs7u8kTc1dBhO1Z31VFKO/SHgaW/BFajAQvzqyjiYs=;
+	s=arc-20240116; t=1753104207; c=relaxed/simple;
+	bh=owv97BZV9UmEKfh3hGiomBUmsYTO6yyYbzIdUmq8zts=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JPoAzA9xOL204OsvtSxUwwv6QhCrbsEneDoe03X896sRMLny4RQaB0hK4lFPbzdjC03uYewpydPmFjjhZgxP3uZNSZL0g+u11MyPP80cO3NhUFGgQnS9jdFABIEwAYUwrtjjuqDQt+EQsQTFxdl9hUNNM/+SJJGJi0KcAPxbW7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oqQj/Jki; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CBC6C4CEED;
-	Mon, 21 Jul 2025 13:21:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753104071;
-	bh=+Rs7u8kTc1dBhO1Z31VFKO/SHgaW/BFajAQvzqyjiYs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oqQj/Jki5T+/WgNKZRIa4TjprbZLIziLodKspyeiIB3vvvz4xTHhcFphB/Evp1c6/
-	 UQK6T5FrOvRqR1RUAlsYkk4TfVbpyrlCMvBLZVud5w4i31n0snbxU9nJJsAmvzhDtU
-	 5FHKvNPQX6Kt47DzhLdPKoTPL1Dxxg0ftR9G8FofdOWGtSejYaz7/3WWUN5zemfxlp
-	 xDwgtBeo0J1sQ1k7JnZcIWA+GXEAMbt5ddmLnWw4z8t+XrCTc8CSdjIXIyiNrLNB+n
-	 tsGKYbcZnUtQYKXl6ThksZR/UlpaDbsYSTSGShp3J45wsooZuTL8MQ0mvW67wVc4X7
-	 0LTfRhUvJ+YBA==
-Date: Mon, 21 Jul 2025 14:21:06 +0100
-From: Will Deacon <will@kernel.org>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: jgg@nvidia.com, joro@8bytes.org, robin.murphy@arm.com,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 1/2] iommu/arm-smmu-v3: Do not bother impl_ops if
- IOMMU_VIOMMU_TYPE_ARM_SMMUV3
-Message-ID: <aH4-wuIjtjyo3aOo@willie-the-truck>
-References: <20250718234822.1734190-1-nicolinc@nvidia.com>
- <20250718234822.1734190-2-nicolinc@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fcx/j2KahsgJQcUo4R5a6+Xjq2v1a03Xx0LleufaiOzBH/U5S2MonFxp/UN0DvXTgIKQidgxzEuugs80sR/yPzbrDDmY+k0MPwei2ykKsYv3JsNDx30W5+goHJzAxVHVXih0+GqqUltzaRJdgQPIhyLgRLaiIklP5JxSUZOgiU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=T3eT+XSs; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=6M2lfrqiVCmiF0Wc9FAkpPta+B8beY73GHDzTT0mJuM=; b=T3eT+XSsrzwbV1XqZcbUbrh7LZ
+	H776ohxzo3FqBHlR9iUOMKsWSekI3pZ2M4Q7fI3qVGcz8XFiL3A0Yco+hW77J4VJd3rKMznaLp8yp
+	MhkgVuYw+ssT8lWfZ9qJ5xN1I2wjh7NvJujhQpqfQm5ICcjwsvs0nSZJrBnvpAO6PuAGQZcA87TEN
+	UPVibCOP1YOVHX5l2Zwpe0VC6AATkYZ4hZKzd70J5wAi2Nm0jXmh5tW/s8Uk1NdxUopZSV1scRPsx
+	g0lzFIdaw3LFkEtZ3C62ZL7TK8ZXrnvYG7yTpAuzxv+1TZqlQkkSpJdv1B8ROa/69QRxMtWJapMgs
+	ky127NWw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1udqU5-0000000D9wk-1SEe;
+	Mon, 21 Jul 2025 13:23:13 +0000
+Date: Mon, 21 Jul 2025 14:23:13 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Yonatan Maman <ymaman@nvidia.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Leon Romanovsky <leon@kernel.org>, Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Alistair Popple <apopple@nvidia.com>,
+	Ben Skeggs <bskeggs@nvidia.com>,
+	Michael Guralnik <michaelgur@nvidia.com>,
+	Or Har-Toov <ohartoov@nvidia.com>,
+	Daisuke Matsuda <dskmtsd@gmail.com>, Shay Drory <shayd@nvidia.com>,
+	linux-mm@kvack.org, linux-rdma@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, Gal Shalom <GalShalom@nvidia.com>
+Subject: Re: [PATCH v2 1/5] mm/hmm: HMM API to enable P2P DMA for device
+ private pages
+Message-ID: <aH4_QaNtIJMrPqOw@casper.infradead.org>
+References: <20250718115112.3881129-1-ymaman@nvidia.com>
+ <20250718115112.3881129-2-ymaman@nvidia.com>
+ <aHpXXKTaqp8FUhmq@casper.infradead.org>
+ <20250718144442.GG2206214@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,73 +75,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250718234822.1734190-2-nicolinc@nvidia.com>
+In-Reply-To: <20250718144442.GG2206214@ziepe.ca>
 
-On Fri, Jul 18, 2025 at 04:48:21PM -0700, Nicolin Chen wrote:
-> When viommu type is IOMMU_VIOMMU_TYPE_ARM_SMMUV3, always return or init the
-> standard struct arm_vsmmu, instead of going through impl_ops that must have
-> its own viommu type than the standard IOMMU_VIOMMU_TYPE_ARM_SMMUV3.
+On Fri, Jul 18, 2025 at 11:44:42AM -0300, Jason Gunthorpe wrote:
+> On Fri, Jul 18, 2025 at 03:17:00PM +0100, Matthew Wilcox wrote:
+> > On Fri, Jul 18, 2025 at 02:51:08PM +0300, Yonatan Maman wrote:
+> > > +++ b/include/linux/memremap.h
+> > > @@ -89,6 +89,14 @@ struct dev_pagemap_ops {
+> > >  	 */
+> > >  	vm_fault_t (*migrate_to_ram)(struct vm_fault *vmf);
+> > >  
+> > > +	/*
+> > > +	 * Used for private (un-addressable) device memory only. Return a
+> > > +	 * corresponding PFN for a page that can be mapped to device
+> > > +	 * (e.g using dma_map_page)
+> > > +	 */
+> > > +	int (*get_dma_pfn_for_device)(struct page *private_page,
+> > > +				      unsigned long *dma_pfn);
+> > 
+> > This makes no sense.  If a page is addressable then it has a PFN.
+> > If a page is not addressable then it doesn't have a PFN.
 > 
-> Given that arm_vsmmu_init() is called after arm_smmu_get_viommu_size(), any
-> unsupported viommu->type must be a corruption. And missing a pairing impl's
-> vsmmu_init should be a driver bug too. Warn these two cases.
+> The DEVICE_PRIVATE pages have a PFN, but it is not usable for
+> anything.
+
+OK, then I don't understand what DEVICE PRIVATE means.
+
+I thought it was for memory on a PCIe device that isn't even visible
+through a BAR and so the CPU has no way of addressing it directly.
+But now you say that it has a PFN, which means it has a physical
+address, which means it's accessible to the CPU.
+
+So what is it?
+
+> This is effectively converting from a DEVICE_PRIVATE page to an actual
+> DMA'able address of some kind. The DEVICE_PRIVATE is just a non-usable
+> proxy, like a swap entry, for where the real data is sitting.
 > 
-> Suggested-by: Will Deacon <will@kernel.org>
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> ---
->  .../arm/arm-smmu-v3/arm-smmu-v3-iommufd.c     | 30 ++++++++++++-------
->  1 file changed, 19 insertions(+), 11 deletions(-)
+> Jason
 > 
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
-> index d9bea8f1f636..0b2acb80f41b 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
-> @@ -420,14 +420,13 @@ size_t arm_smmu_get_viommu_size(struct device *dev,
->  	    !(smmu->features & ARM_SMMU_FEAT_S2FWB))
->  		return 0;
->  
-> -	if (smmu->impl_ops && smmu->impl_ops->vsmmu_size &&
-> -	    viommu_type == smmu->impl_ops->vsmmu_type)
-> -		return smmu->impl_ops->vsmmu_size;
-> +	if (viommu_type == IOMMU_VIOMMU_TYPE_ARM_SMMUV3)
-> +		return VIOMMU_STRUCT_SIZE(struct arm_vsmmu, core);
->  
-> -	if (viommu_type != IOMMU_VIOMMU_TYPE_ARM_SMMUV3)
-> +	if (!smmu->impl_ops || !smmu->impl_ops->vsmmu_size ||
-> +	    viommu_type != smmu->impl_ops->vsmmu_type)
->  		return 0;
-> -
-> -	return VIOMMU_STRUCT_SIZE(struct arm_vsmmu, core);
-> +	return smmu->impl_ops->vsmmu_size;
->  }
->  
->  int arm_vsmmu_init(struct iommufd_viommu *viommu,
-> @@ -447,12 +446,21 @@ int arm_vsmmu_init(struct iommufd_viommu *viommu,
->  	/* FIXME Move VMID allocation from the S2 domain allocation to here */
->  	vsmmu->vmid = s2_parent->s2_cfg.vmid;
->  
-> -	if (smmu->impl_ops && smmu->impl_ops->vsmmu_init &&
-> -	    viommu->type == smmu->impl_ops->vsmmu_type)
-> -		return smmu->impl_ops->vsmmu_init(vsmmu, user_data);
-> +	if (viommu->type == IOMMU_VIOMMU_TYPE_ARM_SMMUV3) {
-> +		viommu->ops = &arm_vsmmu_ops;
-> +		return 0;
-> +	}
->  
-> -	viommu->ops = &arm_vsmmu_ops;
-> -	return 0;
-> +	/*
-> +	 * If a non standard type was supported in arm_smmu_get_viommu_size() by
-> +	 * an implementation, a pairing vsmmu_init op must exist.
-> +	 */
-> +	if (WARN_ON_ONCE(!smmu->impl_ops || !smmu->impl_ops->vsmmu_init))
-> +		return -EOPNOTSUPP;
-
-It might be cleaner to check the impl_ops in arm_smmu_impl_probe() where
-we're in a slightly better situation for failing gracefully and
-deterministically.
-
-Otherwise, looks good. Thanks!
-
-Will
 
