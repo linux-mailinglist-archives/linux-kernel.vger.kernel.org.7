@@ -1,64 +1,62 @@
-Return-Path: <linux-kernel+bounces-739402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE53FB0C5DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:10:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4881B0C5E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:11:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E82184E6DB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:09:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA2621790BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80FD2DAFA4;
-	Mon, 21 Jul 2025 14:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2260B2DA763;
+	Mon, 21 Jul 2025 14:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mrbhJo+2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FTRU1S7c"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D012DAFBD
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 14:09:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C332D8DCA;
+	Mon, 21 Jul 2025 14:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753106996; cv=none; b=BLyoukhhFKOyGAymLW937Q1sPerVaH1a9C/p30WY9jX6XxJ9HHw4RGyvhhggpGWuNTP2oGAtyoOIgvrpZm7wqvvTAu1SfJ9s7rkz8rArfelARDwhhZHgRJdpKC1MRfKBKCQu4d3EGXsGNX6rQAjA45bUqbTDy9dTL70qMvRfoxs=
+	t=1753107052; cv=none; b=hZRZxZGXrd6FNxyzA6XzY8GuQN3F3g7swbb+ZqrfkNU4eUzI7zTzB3D+dqLupgNjug0uMeKBwmZcwv976Nv8+vBwCVRQ5td5Xc664Ons9Wx+dLUgGi1vnKres1HauFleII756NzgX8xQ2kbgngY/nt/Hhqrv7Ve5Ecd/Y2yMMH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753106996; c=relaxed/simple;
-	bh=dSIrtDdv2SM+39KJ5biXd0t62Ny1WI8GaDZQxP0rtVI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mvYBdcGZBJNgieLgqvu5zkwpjvymPm7FS1tJWt4FpFFmDvTPbbbb/smwDrksjuENOhWyZHWfHjz9jP5ylTSPqXmZMfCddIUyolTHylDgCChIK6S0xcqNNNpx6aoO7LpPLjK+IQo5bPdinabQ+DxOcX3rA6Y4eYRIYgpzzuveaEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mrbhJo+2; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753106995; x=1784642995;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=dSIrtDdv2SM+39KJ5biXd0t62Ny1WI8GaDZQxP0rtVI=;
-  b=mrbhJo+2ZPrlT6zd0jymLwEWLAq4209vWoETFnlkdkQqDwPGEvRpzIQL
-   GIqR1CKd2KFdAXWkRzlXzfjidGrszRqjXHT5ifb5E9bci6WW6ohxtHfBC
-   tcCBGM7s3NcCenvhDNrfUVqAWAus+VjllVy0diwb9usFTd5xCKQ8YungG
-   TrNRJwHjb3PkJInW3TFIqVK15H+R0mokv9Q7+39NPdXxte1kYAhsF4ooT
-   Y2LoPL/2HZTZciisMQ5tJPtgEqiCIg8iKcWhCxJQRJgA8aHJ6j4ErUMSv
-   3zBLhbzQVfGhziMmg+Y689R7WwKFxYRVg6LyUNfyUG6GAuvlIkdKd+o/a
-   A==;
-X-CSE-ConnectionGUID: Vbj66KVaSdWuvUYSFZr8rg==
-X-CSE-MsgGUID: f2JI5FZZSuyg6s2vfdcH6w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11499"; a="54422806"
-X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
-   d="scan'208";a="54422806"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 07:09:54 -0700
-X-CSE-ConnectionGUID: m9ym5EkaSe6ZR+HI7hDSIw==
-X-CSE-MsgGUID: iVhj5o1BQcW0ewyCDRDE7g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
-   d="scan'208";a="164341913"
-Received: from ldmartin-desk2.corp.intel.com (HELO [10.125.108.75]) ([10.125.108.75])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 07:09:53 -0700
-Message-ID: <b3dbca94-8603-44ea-b778-97483fbbba94@intel.com>
-Date: Mon, 21 Jul 2025 07:09:52 -0700
+	s=arc-20240116; t=1753107052; c=relaxed/simple;
+	bh=gfBZrQM1TIPK5QmWH+MeLKo35k/zfTpYv/KPq8pP6XA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jTS/gWD2iKiymP8mvqLNdRUESP1h1SKtFRSuHhNEjJTgcgW6d1bPtQ3DD2AvQ3mzXRYTY42COdTlo+RkGMTVUkejYghV6I2l1e4q7suAmPWzJS5t1vw6FAJ/aCcswwgOCbsz5OLSHTv5NqbFaz3jMfGQcfgO1A0Nu4H0yn4lAyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FTRU1S7c; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56LEAaWw1287724;
+	Mon, 21 Jul 2025 09:10:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1753107036;
+	bh=Oywn0X9thZxpwHoq6E9zsRAlXFyL01BrvALB43n7K4o=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=FTRU1S7cFPcSOmGvp+kwZi/8aKS66qkks2Ksxniim52Ctpderbs5lhk1Ca0ixxBa0
+	 1mp962mxEfuENK2G2qCfkvcN+QVIxcCItvMZEPrJKPTioPdGTuXFzuQqUhqWstH6qO
+	 E2dKkijr6cdQ2UY5CjwACzT2tGFEgmdCFKT2P71c=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56LEAaWY922931
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 21 Jul 2025 09:10:36 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 21
+ Jul 2025 09:10:35 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Mon, 21 Jul 2025 09:10:35 -0500
+Received: from [10.249.141.75] ([10.249.141.75])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56LEAVjD3952843;
+	Mon, 21 Jul 2025 09:10:32 -0500
+Message-ID: <05a07a03-3f59-489b-ae55-5f454266bafb@ti.com>
+Date: Mon, 21 Jul 2025 19:40:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,79 +64,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/fpu: Fix potential NULL dereference in
- avx512_status()
-To: Sohil Mehta <sohil.mehta@intel.com>, Fushuai Wang <wangfushuai@baidu.com>
-Cc: aruna.ramakrishna@oracle.com, aubrey.li@intel.com, bp@alien8.de,
- brgerst@gmail.com, chang.seok.bae@intel.com, dave.hansen@linux.intel.com,
- hpa@zytor.com, linux-kernel@vger.kernel.org, mingo@redhat.com,
- oleg@redhat.com, peterz@infradead.org, rick.p.edgecombe@intel.com,
- seanjc@google.com, tglx@linutronix.de, vigbalas@amd.com, x86@kernel.org
-References: <89987231-37ce-4d49-a1d7-6e699e8ab0d2@intel.com>
- <20250718071250.36019-1-wangfushuai@baidu.com>
- <99baa18c-ae1c-47e1-8bbe-e411570df8f1@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH 1/7] arm64: dts: ti: k3-j721s2-main: Add interrupts
+ property
+To: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>, <nm@ti.com>,
+        <vigneshr@ti.com>
+CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <vaishnav.a@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <imx@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <u-kumar1@ti.com>
+References: <20250714092708.3944641-1-y-abhilashchandra@ti.com>
+ <20250714092708.3944641-2-y-abhilashchandra@ti.com>
+ <72545187-4605-40bb-9c68-54670c2e5332@ti.com>
 Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <99baa18c-ae1c-47e1-8bbe-e411570df8f1@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: "Kumar, Udit" <u-kumar1@ti.com>
+In-Reply-To: <72545187-4605-40bb-9c68-54670c2e5332@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 7/18/25 16:48, Sohil Mehta wrote:
-> +       /* Do not report AVX512 usage for kernel threads */
-> +       if (!(task->flags & (PF_KTHREAD | PF_USER_WORKER)))
-> +               timestamp = READ_ONCE(x86_task_fpu(task)->avx512_timestamp);
 
-But the original reason that folks wanted this was so they can go find
-all the AVX-512 users and cluster them together. They obviously can't do
-that today if they're oopsing their kernels.
+On 7/21/2025 7:37 PM, Kumar, Udit wrote:
+>
+> On 7/14/2025 2:57 PM, Yemike Abhilash Chandra wrote:
+>> Add interrupts property for CDNS CSI2RX. Interrupt IDs are taken from 
+>> the
+>> J721S2 TRM [0].
+>>
+>> Interrupt Line      | Source Interrupt
+>> --------------------|----------------------------
+>> GIC500SS_SPI_IN_153 | CSI_RX_IF1_CSI_ERR_IRQ_0
+>> GIC500SS_SPI_IN_152 | CSI_RX_IF1_CSI_IRQ_0
+>> GIC500SS_SPI_IN_157 | CSI_RX_IF2_CSI_ERR_IRQ_0
+>> GIC500SS_SPI_IN_156 | CSI_RX_IF2_CSI_IRQ_0
+>>
+>> [0]: https://www.ti.com/lit/zip/spruj28
+>>
+>> Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+>> ---
+>>   arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi 
+>> b/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
+>> index 62f45377a2c9..6f32a2b0c40c 100644
+>> --- a/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
+>> +++ b/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
+>> @@ -1248,6 +1248,9 @@ ti_csi2rx0: ticsi2rx@4500000 {
+>>           cdns_csi2rx0: csi-bridge@4504000 {
+>>               compatible = "ti,j721e-csi2rx", "cdns,csi2rx";
+>>               reg = <0x00 0x04504000 0x00 0x1000>;
+>> +            interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>,
+>> +                     <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
+>
+> Just cosmetic thing, if you are doing v2 then consider 152 first , 
+> followed by 153.
+>
+> Otherwise
+>
+> Reviewed-by: Udit Kumar <u-kumar1@ti.com>
 
-But the real question to ask here is whether kernel threads can use
-AVX-512, and whether it's important to let userspace know which threads
-are using it.
 
-Let's fix the oops, then circle around and figure out whether tracking
-AVX-512 use in kernel threads is needed.
+Sorry, sent too fast, offset of 32 missing .
+
+
+>
+>> +            interrupt-names = "error_irq", "irq";
+>>               clocks = <&k3_clks 38 3>, <&k3_clks 38 1>, <&k3_clks 38 
+>> 3>,
+>>                   <&k3_clks 38 3>, <&k3_clks 38 4>, <&k3_clks 38 4>;
+>>               clock-names = "sys_clk", "p_clk", "pixel_if0_clk",
+>> @@ -1301,6 +1304,9 @@ ti_csi2rx1: ticsi2rx@4510000 {
+>>           cdns_csi2rx1: csi-bridge@4514000 {
+>>               compatible = "ti,j721e-csi2rx", "cdns,csi2rx";
+>>               reg = <0x00 0x04514000 0x00 0x1000>;
+>> +            interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>,
+>> +                     <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
+>> +            interrupt-names = "error_irq", "irq";
+>>               clocks = <&k3_clks 39 3>, <&k3_clks 39 1>, <&k3_clks 39 
+>> 3>,
+>>                   <&k3_clks 39 3>, <&k3_clks 39 4>, <&k3_clks 39 4>;
+>>               clock-names = "sys_clk", "p_clk", "pixel_if0_clk",
 
