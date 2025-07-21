@@ -1,496 +1,219 @@
-Return-Path: <linux-kernel+bounces-739486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D365B0C6D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:48:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18CABB0C6D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:49:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30F5C1AA7AEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:48:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 201086C099F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22192E03E3;
-	Mon, 21 Jul 2025 14:46:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kyo83ChQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11762DCBEC;
-	Mon, 21 Jul 2025 14:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B064628C2B0;
+	Mon, 21 Jul 2025 14:46:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B5CB2D3236
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 14:46:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753109166; cv=none; b=HEMMXkhjI46DzWg8Drlh+7vopHrV7p/BWf7k08eeH9z65BnMSgE3WxwszAFYIlY6yxGx+/u3gKQ3VA4Ozmm9GB0dNhKbjpJuBd8MAQMuZI7VbaPK3RW2azt23JwDrg62VcIjlEX4ptFh34MrVqoxj2qq0lGusLgsx+9fR5vz2KM=
+	t=1753109205; cv=none; b=azMUBedwmzFmCLpLUxQ5o304pvK/b+iUcTan8bdcYgal3XT2omUmKo0g0UCgC+Fv9Mweiv7LOIQ52ZVvc4rh2tp6ChIvtepf/tWLsO4SzZV5MZEQ0hTO+vn014ZkNCR6S//NHRo4i5fDeRCI//mVwhiCEKPw/xRCtrOB9DNRVP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753109166; c=relaxed/simple;
-	bh=ay/dYox8e980gAgMaXCl20FznyRWYXV/WCWTf+Z3Zn0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=W0ZOYUnfSpOrW33096dTwubY9VvdMftkQjbTBReMXh6Qbm0AgGek1lamcoeLwW+Xa5UPECsrnrZE5agT+LrZONzDuPf8IV6hZFS4ghc8ALEHs8S/4CHGfoFTjKkO55Xl1u7BJbmKzBBVi43qC0gIlRQTfLa2w8j7T4UAppT4mrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kyo83ChQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9D9AC4CEED;
-	Mon, 21 Jul 2025 14:46:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753109166;
-	bh=ay/dYox8e980gAgMaXCl20FznyRWYXV/WCWTf+Z3Zn0=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=kyo83ChQa5jPeEXxbcVQmOS69a39jktO0Wuc9v/TVbHncBNPHRVfb+Ws/IcrlbqhC
-	 xE84yn9+LtjuGT0HnAKFAnGGRm9JVY8G9+1dA8AkK5Vd53w7Caxn4aE2GnmLo4i+GV
-	 Zyw3/yqTI3rjuAoPliP9mmdBWykXlTLgG55hX4IYBIG36Bn7yj7OEvXHSV/sfHL75o
-	 l9lBVAIPXqpAMvd4yknYc9oJEcQONz+uwdPbI8itY+3wkv8W+GfYyd6aHZud+qTPyJ
-	 S28ijNAr/zmuVvkXTvLXEuskHkWrux5iAzaNAYmulTVrvI0kQcj3l0HiYumUUl9hEo
-	 OMai6Adg4JDrg==
-Message-ID: <15970691ac14728701c4e94e91cb3614caf5b503.camel@kernel.org>
-Subject: Re: [PATCH 3/7] VFS: Change vfs_mkdir() to unlock on failure.
-From: Jeff Layton <jlayton@kernel.org>
-To: NeilBrown <neil@brown.name>, Linus Torvalds
- <torvalds@linux-foundation.org>,  Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Mon, 21 Jul 2025 10:46:04 -0400
-In-Reply-To: <20250721084412.370258-4-neil@brown.name>
-References: <20250721084412.370258-1-neil@brown.name>
-	 <20250721084412.370258-4-neil@brown.name>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1753109205; c=relaxed/simple;
+	bh=wuYODrr2iWFv8HaN91KSGOFVBZ0zVupE5R3XDV7yWOc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YMN5DtFhQ5dkwOXAGKYgxYSmSrGT4ornBm0FZZJUqQukGaW5OX/vAZSX5K9WAFy3u9cHSK3R3h9afzFfSJ5uKC9B1Xf30LYWfjAHFaW4qBY62LoeSHOjFIb4NPpKIqKMrkskmwnG7lkGIk1F+2P+JFBwqdSVNLeS+rB/KcMBFb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D1F25153B
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 07:46:36 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6BBF43F66E
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 07:46:42 -0700 (PDT)
+Date: Mon, 21 Jul 2025 15:46:31 +0100
+From: Liviu Dudau <liviu.dudau@arm.com>
+To: Karunika Choo <karunika.choo@arm.com>
+Cc: dri-devel@lists.freedesktop.org, nd@arm.com,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 4/6] drm/panthor: Add support for Mali-Gx15 family of
+ GPUs
+Message-ID: <aH5Sx15_pyMa1rmN@e110455-lin.cambridge.arm.com>
+References: <20250721111344.1610250-1-karunika.choo@arm.com>
+ <20250721111344.1610250-5-karunika.choo@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250721111344.1610250-5-karunika.choo@arm.com>
 
-On Mon, 2025-07-21 at 17:59 +1000, NeilBrown wrote:
-> Proposed changes to directory-op locking will lock the dentry rather
-> than the whole directory.  So the dentry will need to be unlocked.
->=20
-> vfs_mkdir() consumes the dentry on error, so there will be no dentry to
-> be unlocked.
->=20
-> So this patch changes vfs_mkdir() to unlock on error as well as
-> releasing the dentry.  This requires various other functions in various
-> callers to also unlock on error.
->=20
-> At present this results in some clumsy code.  Once the transition to
-> dentry locking is complete the clumsiness will be gone.
->
-> Signed-off-by: NeilBrown <neil@brown.name>
+On Mon, Jul 21, 2025 at 12:13:42PM +0100, Karunika Choo wrote:
+> Mali-Gx15 introduces a new GPU_FEATURES register that provides
+> information about GPU-wide supported features. The register value will
+> be passed on to userspace via gpu_info. It also adds the following
+> registers that are specific to the kernel driver only:
+> - ASN_HASH_0~2
+> - DOORBELL_FEATURES
+> - PRFCNT_FEATURES
+> - SYSC_ALLOC0~7
+> - SYSC_PBHA_OVERRIDE0~3
+> 
+> Additionally, Mali-Gx15 presents an 'Immortalis' naming variant
+> depending on the shader core count and presence of Ray Intersection
+> feature support.
+> 
+> This patch adds:
+> - support for correctly identifying the model names for Mali-Gx15 GPUs.
+> - arch 11.8 FW binary support
+> 
+> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
 > ---
->  fs/cachefiles/namei.c    |  9 +++++----
->  fs/ecryptfs/inode.c      |  3 ++-
->  fs/namei.c               | 24 ++++++++++++++++--------
->  fs/nfsd/nfs4recover.c    | 12 +++++-------
->  fs/nfsd/vfs.c            | 12 ++++++++++--
->  fs/overlayfs/dir.c       | 13 +++++++------
->  fs/overlayfs/overlayfs.h |  1 +
->  fs/overlayfs/super.c     |  5 +++--
->  fs/xfs/scrub/orphanage.c |  2 +-
->  9 files changed, 50 insertions(+), 31 deletions(-)
->=20
-> diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-> index d1edb2ac3837..732d78911bed 100644
-> --- a/fs/cachefiles/namei.c
-> +++ b/fs/cachefiles/namei.c
-> @@ -131,8 +131,11 @@ struct dentry *cachefiles_get_directory(struct cache=
-files_cache *cache,
->  		ret =3D cachefiles_inject_write_error();
->  		if (ret =3D=3D 0)
->  			subdir =3D vfs_mkdir(&nop_mnt_idmap, d_inode(dir), subdir, 0700);
-> -		else
-> +		else {
-> +			/* vfs_mkdir() unlocks on failure so we must too */
-> +			inode_unlock(d_inode(dir));
->  			subdir =3D ERR_PTR(ret);
-> +		}
->  		if (IS_ERR(subdir)) {
->  			trace_cachefiles_vfs_error(NULL, d_inode(dir), ret,
->  						   cachefiles_trace_mkdir_error);
-> @@ -196,9 +199,7 @@ struct dentry *cachefiles_get_directory(struct cachef=
-iles_cache *cache,
->  	return ERR_PTR(-EBUSY);
-> =20
->  mkdir_error:
-> -	inode_unlock(d_inode(dir));
-> -	if (!IS_ERR(subdir))
-> -		dput(subdir);
-> +	done_dentry_lookup(subdir);
->  	pr_err("mkdir %s failed with error %d\n", dirname, ret);
->  	return ERR_PTR(ret);
-> =20
-> diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
-> index abd954c6a14e..5d8cb042aa57 100644
-> --- a/fs/ecryptfs/inode.c
-> +++ b/fs/ecryptfs/inode.c
-> @@ -520,7 +520,7 @@ static struct dentry *ecryptfs_mkdir(struct mnt_idmap=
- *idmap, struct inode *dir,
->  				 lower_dentry, mode);
->  	rc =3D PTR_ERR(lower_dentry);
->  	if (IS_ERR(lower_dentry))
-> -		goto out;
-> +		goto out_unlocked;
->  	rc =3D 0;
->  	if (d_unhashed(lower_dentry))
->  		goto out;
-> @@ -532,6 +532,7 @@ static struct dentry *ecryptfs_mkdir(struct mnt_idmap=
- *idmap, struct inode *dir,
->  	set_nlink(dir, lower_dir->i_nlink);
->  out:
->  	inode_unlock(lower_dir);
-> +out_unlocked:
->  	if (d_really_is_negative(dentry))
->  		d_drop(dentry);
->  	return ERR_PTR(rc);
-> diff --git a/fs/namei.c b/fs/namei.c
-> index da160a01e23d..950a0d0d54da 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -1723,13 +1723,18 @@ EXPORT_SYMBOL(lookup_one_qstr_excl);
->   * rmdir) a dentry.  After this, done_dentry_lookup() can be used to bot=
-h
->   * unlock the parent directory and dput() the dentry.
->   *
-> + * If the dentry is an error - as can happen after vfs_mkdir() -
-> + * the unlock is skipped as unneeded.
-> + *
->   * This interface allows a smooth transition from parent-dir based
->   * locking to dentry based locking.
->   */
->  void done_dentry_lookup(struct dentry *dentry)
->  {
-> -	inode_unlock(dentry->d_parent->d_inode);
-> -	dput(dentry);
-> +	if (!IS_ERR(dentry)) {
-> +		inode_unlock(dentry->d_parent->d_inode);
-> +		dput(dentry);
-> +	}
+>  drivers/gpu/drm/panthor/panthor_fw.c   |  1 +
+>  drivers/gpu/drm/panthor/panthor_hw.c   | 15 +++++++++++++++
+>  drivers/gpu/drm/panthor/panthor_regs.h | 11 +++++++++++
+>  include/uapi/drm/panthor_drm.h         |  3 +++
+>  4 files changed, 30 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
+> index b7b454d16f12..fa6e0b48a0b2 100644
+> --- a/drivers/gpu/drm/panthor/panthor_fw.c
+> +++ b/drivers/gpu/drm/panthor/panthor_fw.c
+> @@ -1404,3 +1404,4 @@ int panthor_fw_init(struct panthor_device *ptdev)
+>  MODULE_FIRMWARE("arm/mali/arch10.8/mali_csffw.bin");
+>  MODULE_FIRMWARE("arm/mali/arch10.10/mali_csffw.bin");
+>  MODULE_FIRMWARE("arm/mali/arch10.12/mali_csffw.bin");
+> +MODULE_FIRMWARE("arm/mali/arch11.8/mali_csffw.bin");
+> diff --git a/drivers/gpu/drm/panthor/panthor_hw.c b/drivers/gpu/drm/panthor/panthor_hw.c
+> index 7f138974d43b..a7583342d797 100644
+> --- a/drivers/gpu/drm/panthor/panthor_hw.c
+> +++ b/drivers/gpu/drm/panthor/panthor_hw.c
+> @@ -13,6 +13,9 @@ static char *get_gpu_model_name(struct panthor_device *ptdev)
+>  	const u32 gpu_id = ptdev->gpu_info.gpu_id;
+>  	const u32 product_id = GPU_PROD_ID_MAKE(GPU_ARCH_MAJOR(gpu_id),
+>  						GPU_PROD_MAJOR(gpu_id));
+> +	const bool ray_intersection = !!(ptdev->gpu_info.gpu_features &
+> +					 GPU_FEATURES_RAY_INTERSECTION);
+> +	const u8 shader_core_count = hweight64(ptdev->gpu_info.shader_present);
+>  
+>  	switch (product_id) {
+>  	case GPU_PROD_ID_MAKE(10, 2):
+> @@ -23,6 +26,15 @@ static char *get_gpu_model_name(struct panthor_device *ptdev)
+>  		return "Mali-G510";
+>  	case GPU_PROD_ID_MAKE(10, 4):
+>  		return "Mali-G310";
+> +	case GPU_PROD_ID_MAKE(11, 2):
+> +		if (shader_core_count > 10 && ray_intersection)
+> +			return "Mali-G715-Immortalis";
+> +		else if (shader_core_count >= 7)
+> +			return "Mali-G715";
+> +
+> +		fallthrough;
+> +	case GPU_PROD_ID_MAKE(11, 3):
+> +		return "Mali-G615";
+>  	}
+>  
+>  	return "(Unknown Mali GPU)";
+> @@ -53,6 +65,9 @@ static void panthor_gpu_info_init(struct panthor_device *ptdev)
+>  	ptdev->gpu_info.shader_present = gpu_read64(ptdev, GPU_SHADER_PRESENT);
+>  	ptdev->gpu_info.tiler_present = gpu_read64(ptdev, GPU_TILER_PRESENT);
+>  	ptdev->gpu_info.l2_present = gpu_read64(ptdev, GPU_L2_PRESENT);
+> +
+> +	/* Introduced in arch 11.x */
+> +	ptdev->gpu_info.gpu_features = gpu_read64(ptdev, GPU_FEATURES);
+>  }
+>  
+>  static void panthor_hw_info_init(struct panthor_device *ptdev)
+> diff --git a/drivers/gpu/drm/panthor/panthor_regs.h b/drivers/gpu/drm/panthor/panthor_regs.h
+> index 48bbfd40138c..e4c34f70a880 100644
+> --- a/drivers/gpu/drm/panthor/panthor_regs.h
+> +++ b/drivers/gpu/drm/panthor/panthor_regs.h
+> @@ -70,6 +70,10 @@
+>  #define GPU_PWR_OVERRIDE0				0x54
+>  #define GPU_PWR_OVERRIDE1				0x58
+>  
+> +#define GPU_FEATURES					0x60
+> +#define   GPU_FEATURES_RAY_INTERSECTION			BIT(2)
+> +#define GPU_PRFCNT_FEATURES				0x68
+> +
+>  #define GPU_TIMESTAMP_OFFSET				0x88
+>  #define GPU_CYCLE_COUNT					0x90
+>  #define GPU_TIMESTAMP					0x98
+> @@ -81,6 +85,8 @@
+>  
+>  #define GPU_TEXTURE_FEATURES(n)				(0xB0 + ((n) * 4))
 
-nit: could you introduce these versions of done_dentry_lookup() and
-done_dentry_lookup_return() in patch #2, even if not strictly needed
-yet? Better to introduce it as ERR_PTR-safe from the start.=20
+Until they are actually used I would suggest that you remove the definitions for the
+registers that are following this line.
 
->  }
->  EXPORT_SYMBOL(done_dentry_lookup);
-> =20
-> @@ -1742,12 +1747,16 @@ EXPORT_SYMBOL(done_dentry_lookup);
->   * rmdir) a dentry.  After this, done_dentry_lookup_return() can be used=
- to
->   * unlock the parent directory.  The dentry is returned for further use.
->   *
-> + * If the dentry is an error - as can happen after vfs_mkdir() -
-> + * the unlock is skipped as unneeded.
-> + *
->   * This interface allows a smooth transition from parent-dir based
->   * locking to dentry based locking.
->   */
->  struct dentry *done_dentry_lookup_return(struct dentry *dentry)
->  {
-> -	inode_unlock(dentry->d_parent->d_inode);
-> +	if (!IS_ERR(dentry))
-> +		inode_unlock(dentry->d_parent->d_inode);
->  	return dentry;
->  }
->  EXPORT_SYMBOL(done_dentry_lookup_return);
-> @@ -4210,9 +4219,7 @@ EXPORT_SYMBOL(kern_path_create);
-> =20
->  void done_path_create(struct path *path, struct dentry *dentry)
->  {
-> -	if (!IS_ERR(dentry))
-> -		dput(dentry);
-> -	inode_unlock(path->dentry->d_inode);
-> +	done_dentry_lookup(dentry);
->  	mnt_drop_write(path->mnt);
->  	path_put(path);
->  }
-> @@ -4375,7 +4382,8 @@ SYSCALL_DEFINE3(mknod, const char __user *, filenam=
-e, umode_t, mode, unsigned, d
->   * negative or unhashes it and possibly splices a different one returnin=
-g it,
->   * the original dentry is dput() and the alternate is returned.
->   *
-> - * In case of an error the dentry is dput() and an ERR_PTR() is returned=
-.
-> + * In case of an error the dentry is dput(), the parent is unlocked, and
-> + * an ERR_PTR() is returned.
->   */
->  struct dentry *vfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
->  			 struct dentry *dentry, umode_t mode)
-> @@ -4413,7 +4421,7 @@ struct dentry *vfs_mkdir(struct mnt_idmap *idmap, s=
-truct inode *dir,
->  	return dentry;
-> =20
->  err:
-> -	dput(dentry);
-> +	done_dentry_lookup(dentry);
->  	return ERR_PTR(error);
->  }
->  EXPORT_SYMBOL(vfs_mkdir);
-> diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
-> index 82785db730d9..693fa95fa678 100644
-> --- a/fs/nfsd/nfs4recover.c
-> +++ b/fs/nfsd/nfs4recover.c
-> @@ -222,7 +222,8 @@ nfsd4_create_clid_dir(struct nfs4_client *clp)
->  	dentry =3D lookup_one(&nop_mnt_idmap, &QSTR(dname), dir);
->  	if (IS_ERR(dentry)) {
->  		status =3D PTR_ERR(dentry);
-> -		goto out_unlock;
-> +		inode_unlock(d_inode(dir));
-> +		goto out;
->  	}
->  	if (d_really_is_positive(dentry))
->  		/*
-> @@ -233,15 +234,12 @@ nfsd4_create_clid_dir(struct nfs4_client *clp)
->  		 * In the 4.0 case, we should never get here; but we may
->  		 * as well be forgiving and just succeed silently.
->  		 */
-> -		goto out_put;
-> +		goto out;
->  	dentry =3D vfs_mkdir(&nop_mnt_idmap, d_inode(dir), dentry, S_IRWXU);
->  	if (IS_ERR(dentry))
->  		status =3D PTR_ERR(dentry);
-> -out_put:
-> -	if (!status)
-> -		dput(dentry);
-> -out_unlock:
-> -	inode_unlock(d_inode(dir));
-> +out:
-> +	done_dentry_lookup(dentry);
->  	if (status =3D=3D 0) {
->  		if (nn->in_grace)
->  			__nfsd4_create_reclaim_record_grace(clp, dname,
-> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-> index a21940cadede..e85195e858a2 100644
-> --- a/fs/nfsd/vfs.c
-> +++ b/fs/nfsd/vfs.c
-> @@ -1489,7 +1489,9 @@ nfsd_check_ignore_resizing(struct iattr *iap)
->  		iap->ia_valid &=3D ~ATTR_SIZE;
->  }
-> =20
-> -/* The parent directory should already be locked: */
-> +/* The parent directory should already be locked.  The lock
-> + * will be dropped on error.
-> + */
->  __be32
->  nfsd_create_locked(struct svc_rqst *rqstp, struct svc_fh *fhp,
->  		   struct nfsd_attrs *attrs,
-> @@ -1555,8 +1557,11 @@ nfsd_create_locked(struct svc_rqst *rqstp, struct =
-svc_fh *fhp,
->  	err =3D nfsd_create_setattr(rqstp, fhp, resfhp, attrs);
-> =20
->  out:
-> -	if (!IS_ERR(dchild))
-> +	if (!IS_ERR(dchild)) {
-> +		if (err)
-> +			inode_unlock(dirp);
->  		dput(dchild);
-> +	}
->  	return err;
-> =20
->  out_nfserr:
-> @@ -1613,6 +1618,9 @@ nfsd_create(struct svc_rqst *rqstp, struct svc_fh *=
-fhp,
->  	if (err !=3D nfs_ok)
->  		goto out_unlock;
->  	err =3D nfsd_create_locked(rqstp, fhp, attrs, type, rdev, resfhp);
-> +	if (err)
-> +		/* lock will have been dropped */
-> +		return err;
->  	fh_fill_post_attrs(fhp);
->  out_unlock:
->  	inode_unlock(dentry->d_inode);
-> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> index 30619777f0f6..74b52595ea0e 100644
-> --- a/fs/overlayfs/dir.c
-> +++ b/fs/overlayfs/dir.c
-> @@ -161,14 +161,17 @@ int ovl_cleanup_and_whiteout(struct ovl_fs *ofs, st=
-ruct dentry *dir,
->  	goto out;
->  }
-> =20
-> +/* dir will be unlocked on return */
->  struct dentry *ovl_create_real(struct ovl_fs *ofs, struct dentry *parent=
-,
->  			       struct dentry *newdentry, struct ovl_cattr *attr)
->  {
->  	struct inode *dir =3D parent->d_inode;
->  	int err;
-> =20
-> -	if (IS_ERR(newdentry))
-> +	if (IS_ERR(newdentry)) {
-> +		inode_unlock(dir);
->  		return newdentry;
-> +	}
-> =20
->  	err =3D -ESTALE;
->  	if (newdentry->d_inode)
-> @@ -213,11 +216,11 @@ struct dentry *ovl_create_real(struct ovl_fs *ofs, =
-struct dentry *parent,
->  	}
->  out:
->  	if (err) {
-> -		if (!IS_ERR(newdentry))
-> -			dput(newdentry);
-> +		done_dentry_lookup(newdentry);
->  		return ERR_PTR(err);
-> +	} else {
-> +		return done_dentry_lookup_return(newdentry);
->  	}
-> -	return newdentry;
->  }
-> =20
->  struct dentry *ovl_create_temp(struct ovl_fs *ofs, struct dentry *workdi=
-r,
-> @@ -227,7 +230,6 @@ struct dentry *ovl_create_temp(struct ovl_fs *ofs, st=
-ruct dentry *workdir,
->  	inode_lock(workdir->d_inode);
->  	ret =3D ovl_create_real(ofs, workdir,
->  			      ovl_lookup_temp(ofs, workdir), attr);
-> -	inode_unlock(workdir->d_inode);
->  	return ret;
->  }
-> =20
-> @@ -335,7 +337,6 @@ static int ovl_create_upper(struct dentry *dentry, st=
-ruct inode *inode,
->  				    ovl_lookup_upper(ofs, dentry->d_name.name,
->  						     upperdir, dentry->d_name.len),
->  				    attr);
-> -	inode_unlock(udir);
->  	if (IS_ERR(newdentry))
->  		return PTR_ERR(newdentry);
-> =20
-> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-> index 4f84abaa0d68..238c26142318 100644
-> --- a/fs/overlayfs/overlayfs.h
-> +++ b/fs/overlayfs/overlayfs.h
-> @@ -250,6 +250,7 @@ static inline struct dentry *ovl_do_mkdir(struct ovl_=
-fs *ofs,
-> =20
->  	ret =3D vfs_mkdir(ovl_upper_mnt_idmap(ofs), dir, dentry, mode);
->  	pr_debug("mkdir(%pd2, 0%o) =3D %i\n", dentry, mode, PTR_ERR_OR_ZERO(ret=
-));
-> +	/* Note: dir will have been unlocked on failure */
->  	return ret;
->  }
-> =20
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index 4afa91882075..df99a6fa17ef 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -328,11 +328,11 @@ static struct dentry *ovl_workdir_create(struct ovl=
-_fs *ofs,
->  		}
-> =20
->  		work =3D ovl_do_mkdir(ofs, dir, work, attr.ia_mode);
-> -		inode_unlock(dir);
->  		err =3D PTR_ERR(work);
->  		if (IS_ERR(work))
->  			goto out_err;
-> =20
-> +		done_dentry_lookup_return(work);
->  		/* Weird filesystem returning with hashed negative (kernfs)? */
->  		err =3D -EINVAL;
->  		if (d_really_is_negative(work))
-> @@ -623,7 +623,8 @@ static struct dentry *ovl_lookup_or_create(struct ovl=
-_fs *ofs,
->  	child =3D ovl_lookup_upper(ofs, name, parent, len);
->  	if (!IS_ERR(child) && !child->d_inode)
->  		child =3D ovl_create_real(ofs, parent, child, OVL_CATTR(mode));
-> -	inode_unlock(parent->d_inode);
-> +	else
-> +		inode_unlock(parent->d_inode);
->  	dput(parent);
-> =20
->  	return child;
-> diff --git a/fs/xfs/scrub/orphanage.c b/fs/xfs/scrub/orphanage.c
-> index 9c12cb844231..c95bded4e8a7 100644
-> --- a/fs/xfs/scrub/orphanage.c
-> +++ b/fs/xfs/scrub/orphanage.c
-> @@ -170,7 +170,7 @@ xrep_orphanage_create(
->  					     orphanage_dentry, 0750);
->  		error =3D PTR_ERR(orphanage_dentry);
->  		if (IS_ERR(orphanage_dentry))
-> -			goto out_unlock_root;
-> +			goto out_dput_root;
->  	}
-> =20
->  	/* Not a directory? Bail out. */
+With that change,
 
-This does make for some awkward code. Fortunately there aren't that
-many vfs_mkdir() callers.
---=20
-Jeff Layton <jlayton@kernel.org>
+Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+
+Best regards,
+Liviu
+
+>  
+> +#define GPU_DOORBELL_FEATURES				0xC0
+> +
+>  #define GPU_SHADER_PRESENT				0x100
+>  #define GPU_TILER_PRESENT				0x110
+>  #define GPU_L2_PRESENT					0x120
+> @@ -107,6 +113,8 @@
+>  
+>  #define GPU_REVID					0x280
+>  
+> +#define GPU_ASN_HASH(n)				(0x2C0 + ((n) * 4))
+> +
+>  #define GPU_COHERENCY_FEATURES				0x300
+>  #define GPU_COHERENCY_PROT_BIT(name)			BIT(GPU_COHERENCY_  ## name)
+>  
+> @@ -115,6 +123,9 @@
+>  #define   GPU_COHERENCY_ACE				1
+>  #define   GPU_COHERENCY_NONE				31
+>  
+> +#define GPU_SYSC_PBHA_OVERRIDE(n)			(0x320 + ((n) * 4))
+> +#define GPU_SYSC_ALLOC(n)				(0x340 + ((n) * 4))
+> +
+>  #define MCU_CONTROL					0x700
+>  #define MCU_CONTROL_ENABLE				1
+>  #define MCU_CONTROL_AUTO				2
+> diff --git a/include/uapi/drm/panthor_drm.h b/include/uapi/drm/panthor_drm.h
+> index e1f43deb7eca..467d365ed7ba 100644
+> --- a/include/uapi/drm/panthor_drm.h
+> +++ b/include/uapi/drm/panthor_drm.h
+> @@ -327,6 +327,9 @@ struct drm_panthor_gpu_info {
+>  
+>  	/** @pad: MBZ. */
+>  	__u32 pad;
+> +
+> +	/** @gpu_features: Bitmask describing supported GPU-wide features */
+> +	__u64 gpu_features;
+>  };
+>  
+>  /**
+> -- 
+> 2.49.0
+> 
+
+-- 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
 
