@@ -1,395 +1,145 @@
-Return-Path: <linux-kernel+bounces-739442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FD65B0C653
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:30:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64204B0C656
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:31:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34FC4162C3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:30:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4381C3BE4AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:30:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6509E1922FD;
-	Mon, 21 Jul 2025 14:30:33 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 819D53FE4
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 14:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A5A41C6FFD;
+	Mon, 21 Jul 2025 14:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="L+WMDxcw"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171072A1C9
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 14:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753108232; cv=none; b=LxnQGVLLU82xra7zhW6CYLY3VmeD0FkyxEZXy8bD2avRZ6upbtToHNR27/dIwZJtp6xUs3OpM+86ulW9Kbjwqa2etlME4ZqPux/rt496uacBMSrXunoI+DXe5fYVbA0AW8XGQ4BTy0KELFuVOWxdQZIrwExjbWG12qyzZB5G8Lg=
+	t=1753108261; cv=none; b=kK0YD7LfAiRObP3vZxzWS9HWk//Sdti6wqJJOgTq0hhGxwFXwMN0yEglpJ2kOEBbHE5dAxSxuS7dnCalUH3yxEByeby8KTCMl7LV6ovRs0V3kFJ5VnMPTwXh+t18M3Ep8V4lIPR0vLGl/a5eR3liwdSpPBg7yZwD5aN2ZGYgdSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753108232; c=relaxed/simple;
-	bh=T7vgqE3rpeRu9NaOmeTQ6aB39rXr1mTtFVh1oY+aR/E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jT8Yp9MFAFUSC5Ci8PGO8mWDpMRG3prjqh1PwVfOPgx0HpxQ8Afk51WVHnhcEMQkU1ACRGm5w8c+uYPmrzNJYg2zx5NG+j3snQDli4EEPqPxVdWh5slsDUDZFoP8m3lBv+GFSw1c2wvfJN69owfehwE+f/dQMBViCvYU6HsqZS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1435D153B
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 07:30:24 -0700 (PDT)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A0C7A3F66E
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 07:30:29 -0700 (PDT)
-Date: Mon, 21 Jul 2025 15:30:18 +0100
-From: Liviu Dudau <liviu.dudau@arm.com>
-To: Karunika Choo <karunika.choo@arm.com>
-Cc: dri-devel@lists.freedesktop.org, nd@arm.com,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/6] drm/panthor: Add panthor_hw and move gpu_info
- initialization into it
-Message-ID: <aH5O-im06qJTOPkF@e110455-lin.cambridge.arm.com>
-References: <20250721111344.1610250-1-karunika.choo@arm.com>
- <20250721111344.1610250-2-karunika.choo@arm.com>
+	s=arc-20240116; t=1753108261; c=relaxed/simple;
+	bh=fZh+W/ZwxHCAw9UO9J/kStJAdZaEn8DxlAbvEqkaCIs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RKw10ANjy7Ll0F70F9nk24FcjJmQlJlrK2WcCmCerC1gRO/0qpTmoIMQFWgvqt70H6lhNU37y5CZ8UbyVJA6mdkenh0IzrrQCaTJUMtfDh+k1H4MiLGQjZnZ1oLV47h6mJc+mkhb0lRSH7oQoyvgnvNk13zhd+iMalREzBQCJbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=L+WMDxcw; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56LEK2R8025434
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 14:30:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=fB17acm6tcauz9EWmhrWe24ExKFYj74gkCn
+	0R6MI3YU=; b=L+WMDxcwc2/AOpU7X4q3PWQ6UfG2odLvmQgoQ5CBCefVM23hI2G
+	nUg2FjsGEI4iE3ygzXqho+/6BRVqxyNjslqWbmHsggHzq5OA4ORsbXavHwfvLOXI
+	yeiRURCZ7iJ7hcpVTLDqnhgAuSkFLq6Yh/yI2uZ989aru0v8XZG5zdkVkFP3bYn/
+	n3C4hF0lNRKfbNdDDJRP3D3ZrhNx3z3UjiUVb7XHuEtiKyeYWA+0CkG4I01FPEJu
+	TQzWEeJBP67MCQrbETx6qPr6ROieyfPqPzZ98wkJObN3Iyf8AfcM0cT+Xj2Tbinn
+	is8TEITIYfGjLhu4tj+QBLYftbaKy1+Ik8Q==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48045vvyg1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 14:30:58 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-74b29ee4f8bso3927328b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 07:30:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753108258; x=1753713058;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fB17acm6tcauz9EWmhrWe24ExKFYj74gkCn0R6MI3YU=;
+        b=tIJOgBRr2xozmMekKlxDdtIUyF0qW30ursg+ztZ434Dg376xAYhtRsgUmF4RVuDDWn
+         dTmVfPrgd9D8pDYWNF+dAEZ2i7wUKyPEH/qDZ1wXzB3Jd7W574B7Ap1sam67KZMFJ9mM
+         ng/HRb9kMFUycfAHV/QxCfgBDZCVpld6UT1se3ZdVmh8pnBh1HdCs9Zmks1R2YcW8UnQ
+         AICGq6vq8ycgV5hpJOAcqP74+fT/dBadhISGW8w1j8EtLgAm7BEdiWzNmRiRxfCKtXxI
+         5H5BDxrDtfHESXhb0YWoU/s9shJaNrySsIWxbiQRirPO7VBDvbMnshsaS7oZChlj2fqT
+         3sEw==
+X-Forwarded-Encrypted: i=1; AJvYcCUf33o7cMUI204dHN+BrfT04JzDqLvadoFTXZK3LSj7VS3/0GajpU4/s6Q5xIV98Sh19jGjmI1aKmuIpLo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyicKUBy6fQbWMDYfQvZBpf8r4cSnfFxPDx30rFVAsCs7U21UUw
+	g2rnbVgGhdD2jTpi9y274N0awDsc3r1CNI6n5Y6yuJAU4tXxdUkztmS40MEJbjP8jwA3vfnohhZ
+	+LypwYRBP7bQOIt7gzTNsyOx15BmQKtOaHR87CoMuRQh9xbVn7AFdlVvle4O+gclQVRY=
+X-Gm-Gg: ASbGncsQwinbloyo5txEeD+AY3fTPlv2skCSZGq1qgsclJxPdSqsGBLYhhO0YuefyTO
+	gYTGsdEiY8u2hCamhv4llLCYIM8bRrMjVcvu1ogVTsXzaJpbHUpPmAwyT+aGvS4qpiaKEs2NxAm
+	YPtIomKM7srCkZmYmKvWicBXs6ZzSPBQlHANZ8YNPV1oI9wHr0gML0wWK8ry82+uJgdqPYB7VSY
+	Dc23pCLHEgjTNc2wAtTkLwfz9TN4Ul8vUInx/4NxYJs1UgvQKgL4QbSUwQ3NHwikIStK8nEKL/U
+	e+TFiSCdXG8KldxvUoXDCeP+iYxwyWzyLou+CodSwZsRE09oNCZKoLTVvOMjX/uuBvsIL6OI9a9
+	mOYqtcVn/Bdm9MPTa6qDMOczQcXHPE2H3tUK2CxWOPR2uiRmT7FVbrnqwn5kU
+X-Received: by 2002:a05:6a00:3392:b0:73e:10ea:b1e9 with SMTP id d2e1a72fcca58-75722869545mr25840346b3a.6.1753108257990;
+        Mon, 21 Jul 2025 07:30:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGG6I7/YN/GntNBhpwxtH5G52Yy/1kSXDgvLDtnnNoxskhMPb+YeGocnDXdtpvZVJoL8l6lgg==
+X-Received: by 2002:a05:6a00:3392:b0:73e:10ea:b1e9 with SMTP id d2e1a72fcca58-75722869545mr25840277b3a.6.1753108257287;
+        Mon, 21 Jul 2025 07:30:57 -0700 (PDT)
+Received: from hu-pankpati-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759cb155e1asm5750110b3a.74.2025.07.21.07.30.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Jul 2025 07:30:56 -0700 (PDT)
+From: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+To: andersson@kernel.org, linus.walleij@linaro.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, quic_rjendra@quicinc.com
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] pinctrl: qcom: Introduce Pinctrl for Glymur
+Date: Mon, 21 Jul 2025 20:00:35 +0530
+Message-Id: <20250721143037.20983-1-pankaj.patil@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250721111344.1610250-2-karunika.choo@arm.com>
+X-Authority-Analysis: v=2.4 cv=LL1mQIW9 c=1 sm=1 tr=0 ts=687e4f23 cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=Wb1JkmetP80A:10 a=TVyXueylgh4vxAmsgxgA:9 a=zc0IvFSfCIW2DFIPzwfm:22
+X-Proofpoint-GUID: CkHvBwbY2xv-DragpyZrBMy8ydVzhJcm
+X-Proofpoint-ORIG-GUID: CkHvBwbY2xv-DragpyZrBMy8ydVzhJcm
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIxMDEyOSBTYWx0ZWRfX6ltrpeJXk6VK
+ V2AAeCTxLfBxqQVCCl4uW3oK2LfFxfy7ncLGu/not7ipqbgYfNBXAR/ej7njD0cA+JkJF2M9bvs
+ uQH60TBQo7F75Ij8t07qx/mbLafsSeYLFJ5bf7D9mjbcXZHR9f7HnuFiPsHsA/Jzk9On8pkoS2S
+ 4TGCrKRz3rvl4UHQQCTqYdsVBXKbQ+CGJtqeGDuWUb6a0ulmm3qerxejjxWNAuCWK1GUIxOAiOT
+ jnKcr/dPNRsQwERkVjTJVwADyA0yQMcyjqSfJOc10Ij2ThCMLILiLQAfSseY6dQGeJqgg/JEEHx
+ 8p0WqoI8p3y50wfEBG92oIu9NSpEtEBhqXwy2WxdtHbsS4jF2m5H3wPZS2wjDAwI10uOU5e5orB
+ S5V43crgNBONCJgELKlcH0JMTaapTHNMwV4Klrpp0mYSSRJuO2vn+a1JepOeEEdwEDcz6/dT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-21_04,2025-07-21_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 mlxlogscore=888 clxscore=1015 mlxscore=0 adultscore=0
+ suspectscore=0 spamscore=0 malwarescore=0 impostorscore=0 bulkscore=0
+ lowpriorityscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507210129
 
-On Mon, Jul 21, 2025 at 12:13:39PM +0100, Karunika Choo wrote:
-> This patch introduces panthor_hw and moves the initialization of the
-> gpu_info struct into panthor_hw.c in preparation of handling future GPU
-> register and naming changes.
-> 
-> Future GPU support can be added by extending panthor_gpu_info_init()
-> with the necessary register reads behind GPU architecture version guards
-> if the change is minor. For more complex changes, the function can be
-> forked and the appropriate function will need to be called based on the
-> GPU architecture version.
-> 
-> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
+Introduce Top Level Mode Multiplexer dt-binding and driver for
+Qualcomm's next gen compute SoC - Glymur.
 
-Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+--
+Changes in v2:
+Fixed dt-bindings error from example node's reg propery
+Fixed gpio-line-name maxItems
+Driver UFS_RESET macro updated
+Removed obsolete comment for pingroups
+Updated ngpio to include ufs_reset pin
 
-Best regards,
-Liviu
+Pankaj Patil (2):
+  dt-bindings: pinctrl: qcom: Add Glymur pinctrl bindings
+  pinctrl: qcom: Add glymur pinctrl driver
 
-> ---
->  drivers/gpu/drm/panthor/Makefile         |   1 +
->  drivers/gpu/drm/panthor/panthor_device.c |   5 +
->  drivers/gpu/drm/panthor/panthor_gpu.c    |  95 -------------------
->  drivers/gpu/drm/panthor/panthor_hw.c     | 113 +++++++++++++++++++++++
->  drivers/gpu/drm/panthor/panthor_hw.h     |  11 +++
->  5 files changed, 130 insertions(+), 95 deletions(-)
->  create mode 100644 drivers/gpu/drm/panthor/panthor_hw.c
->  create mode 100644 drivers/gpu/drm/panthor/panthor_hw.h
-> 
-> diff --git a/drivers/gpu/drm/panthor/Makefile b/drivers/gpu/drm/panthor/Makefile
-> index 15294719b09c..02db21748c12 100644
-> --- a/drivers/gpu/drm/panthor/Makefile
-> +++ b/drivers/gpu/drm/panthor/Makefile
-> @@ -8,6 +8,7 @@ panthor-y := \
->  	panthor_gem.o \
->  	panthor_gpu.o \
->  	panthor_heap.o \
-> +	panthor_hw.o \
->  	panthor_mmu.o \
->  	panthor_sched.o
->  
-> diff --git a/drivers/gpu/drm/panthor/panthor_device.c b/drivers/gpu/drm/panthor/panthor_device.c
-> index f0b2da5b2b96..81df49880bd8 100644
-> --- a/drivers/gpu/drm/panthor/panthor_device.c
-> +++ b/drivers/gpu/drm/panthor/panthor_device.c
-> @@ -18,6 +18,7 @@
->  #include "panthor_device.h"
->  #include "panthor_fw.h"
->  #include "panthor_gpu.h"
-> +#include "panthor_hw.h"
->  #include "panthor_mmu.h"
->  #include "panthor_regs.h"
->  #include "panthor_sched.h"
-> @@ -244,6 +245,10 @@ int panthor_device_init(struct panthor_device *ptdev)
->  			return ret;
->  	}
->  
-> +	ret = panthor_hw_init(ptdev);
-> +	if (ret)
-> +		goto err_rpm_put;
-> +
->  	ret = panthor_gpu_init(ptdev);
->  	if (ret)
->  		goto err_rpm_put;
-> diff --git a/drivers/gpu/drm/panthor/panthor_gpu.c b/drivers/gpu/drm/panthor/panthor_gpu.c
-> index cb7a335e07d7..5e2c3173ae27 100644
-> --- a/drivers/gpu/drm/panthor/panthor_gpu.c
-> +++ b/drivers/gpu/drm/panthor/panthor_gpu.c
-> @@ -37,40 +37,6 @@ struct panthor_gpu {
->  	wait_queue_head_t reqs_acked;
->  };
->  
-> -/**
-> - * struct panthor_model - GPU model description
-> - */
-> -struct panthor_model {
-> -	/** @name: Model name. */
-> -	const char *name;
-> -
-> -	/** @arch_major: Major version number of architecture. */
-> -	u8 arch_major;
-> -
-> -	/** @product_major: Major version number of product. */
-> -	u8 product_major;
-> -};
-> -
-> -/**
-> - * GPU_MODEL() - Define a GPU model. A GPU product can be uniquely identified
-> - * by a combination of the major architecture version and the major product
-> - * version.
-> - * @_name: Name for the GPU model.
-> - * @_arch_major: Architecture major.
-> - * @_product_major: Product major.
-> - */
-> -#define GPU_MODEL(_name, _arch_major, _product_major) \
-> -{\
-> -	.name = __stringify(_name),				\
-> -	.arch_major = _arch_major,				\
-> -	.product_major = _product_major,			\
-> -}
-> -
-> -static const struct panthor_model gpu_models[] = {
-> -	GPU_MODEL(g610, 10, 7),
-> -	{},
-> -};
-> -
->  #define GPU_INTERRUPTS_MASK	\
->  	(GPU_IRQ_FAULT | \
->  	 GPU_IRQ_PROTM_FAULT | \
-> @@ -83,66 +49,6 @@ static void panthor_gpu_coherency_set(struct panthor_device *ptdev)
->  		ptdev->coherent ? GPU_COHERENCY_PROT_BIT(ACE_LITE) : GPU_COHERENCY_NONE);
->  }
->  
-> -static void panthor_gpu_init_info(struct panthor_device *ptdev)
-> -{
-> -	const struct panthor_model *model;
-> -	u32 arch_major, product_major;
-> -	u32 major, minor, status;
-> -	unsigned int i;
-> -
-> -	ptdev->gpu_info.gpu_id = gpu_read(ptdev, GPU_ID);
-> -	ptdev->gpu_info.csf_id = gpu_read(ptdev, GPU_CSF_ID);
-> -	ptdev->gpu_info.gpu_rev = gpu_read(ptdev, GPU_REVID);
-> -	ptdev->gpu_info.core_features = gpu_read(ptdev, GPU_CORE_FEATURES);
-> -	ptdev->gpu_info.l2_features = gpu_read(ptdev, GPU_L2_FEATURES);
-> -	ptdev->gpu_info.tiler_features = gpu_read(ptdev, GPU_TILER_FEATURES);
-> -	ptdev->gpu_info.mem_features = gpu_read(ptdev, GPU_MEM_FEATURES);
-> -	ptdev->gpu_info.mmu_features = gpu_read(ptdev, GPU_MMU_FEATURES);
-> -	ptdev->gpu_info.thread_features = gpu_read(ptdev, GPU_THREAD_FEATURES);
-> -	ptdev->gpu_info.max_threads = gpu_read(ptdev, GPU_THREAD_MAX_THREADS);
-> -	ptdev->gpu_info.thread_max_workgroup_size = gpu_read(ptdev, GPU_THREAD_MAX_WORKGROUP_SIZE);
-> -	ptdev->gpu_info.thread_max_barrier_size = gpu_read(ptdev, GPU_THREAD_MAX_BARRIER_SIZE);
-> -	ptdev->gpu_info.coherency_features = gpu_read(ptdev, GPU_COHERENCY_FEATURES);
-> -	for (i = 0; i < 4; i++)
-> -		ptdev->gpu_info.texture_features[i] = gpu_read(ptdev, GPU_TEXTURE_FEATURES(i));
-> -
-> -	ptdev->gpu_info.as_present = gpu_read(ptdev, GPU_AS_PRESENT);
-> -
-> -	ptdev->gpu_info.shader_present = gpu_read64(ptdev, GPU_SHADER_PRESENT);
-> -	ptdev->gpu_info.tiler_present = gpu_read64(ptdev, GPU_TILER_PRESENT);
-> -	ptdev->gpu_info.l2_present = gpu_read64(ptdev, GPU_L2_PRESENT);
-> -
-> -	arch_major = GPU_ARCH_MAJOR(ptdev->gpu_info.gpu_id);
-> -	product_major = GPU_PROD_MAJOR(ptdev->gpu_info.gpu_id);
-> -	major = GPU_VER_MAJOR(ptdev->gpu_info.gpu_id);
-> -	minor = GPU_VER_MINOR(ptdev->gpu_info.gpu_id);
-> -	status = GPU_VER_STATUS(ptdev->gpu_info.gpu_id);
-> -
-> -	for (model = gpu_models; model->name; model++) {
-> -		if (model->arch_major == arch_major &&
-> -		    model->product_major == product_major)
-> -			break;
-> -	}
-> -
-> -	drm_info(&ptdev->base,
-> -		 "mali-%s id 0x%x major 0x%x minor 0x%x status 0x%x",
-> -		 model->name ?: "unknown", ptdev->gpu_info.gpu_id >> 16,
-> -		 major, minor, status);
-> -
-> -	drm_info(&ptdev->base,
-> -		 "Features: L2:%#x Tiler:%#x Mem:%#x MMU:%#x AS:%#x",
-> -		 ptdev->gpu_info.l2_features,
-> -		 ptdev->gpu_info.tiler_features,
-> -		 ptdev->gpu_info.mem_features,
-> -		 ptdev->gpu_info.mmu_features,
-> -		 ptdev->gpu_info.as_present);
-> -
-> -	drm_info(&ptdev->base,
-> -		 "shader_present=0x%0llx l2_present=0x%0llx tiler_present=0x%0llx",
-> -		 ptdev->gpu_info.shader_present, ptdev->gpu_info.l2_present,
-> -		 ptdev->gpu_info.tiler_present);
-> -}
-> -
->  static void panthor_gpu_irq_handler(struct panthor_device *ptdev, u32 status)
->  {
->  	gpu_write(ptdev, GPU_INT_CLEAR, status);
-> @@ -205,7 +111,6 @@ int panthor_gpu_init(struct panthor_device *ptdev)
->  	spin_lock_init(&gpu->reqs_lock);
->  	init_waitqueue_head(&gpu->reqs_acked);
->  	ptdev->gpu = gpu;
-> -	panthor_gpu_init_info(ptdev);
->  
->  	dma_set_max_seg_size(ptdev->base.dev, UINT_MAX);
->  	pa_bits = GPU_MMU_FEATURES_PA_BITS(ptdev->gpu_info.mmu_features);
-> diff --git a/drivers/gpu/drm/panthor/panthor_hw.c b/drivers/gpu/drm/panthor/panthor_hw.c
-> new file mode 100644
-> index 000000000000..3f7175cb0ab4
-> --- /dev/null
-> +++ b/drivers/gpu/drm/panthor/panthor_hw.c
-> @@ -0,0 +1,113 @@
-> +// SPDX-License-Identifier: GPL-2.0 or MIT
-> +/* Copyright 2025 ARM Limited. All rights reserved. */
-> +
-> +#include "panthor_device.h"
-> +#include "panthor_hw.h"
-> +#include "panthor_regs.h"
-> +
-> +/**
-> + * struct panthor_model - GPU model description
-> + */
-> +struct panthor_model {
-> +	/** @name: Model name. */
-> +	const char *name;
-> +
-> +	/** @arch_major: Major version number of architecture. */
-> +	u8 arch_major;
-> +
-> +	/** @product_major: Major version number of product. */
-> +	u8 product_major;
-> +};
-> +
-> +/**
-> + * GPU_MODEL() - Define a GPU model. A GPU product can be uniquely identified
-> + * by a combination of the major architecture version and the major product
-> + * version.
-> + * @_name: Name for the GPU model.
-> + * @_arch_major: Architecture major.
-> + * @_product_major: Product major.
-> + */
-> +#define GPU_MODEL(_name, _arch_major, _product_major) \
-> +{\
-> +	.name = __stringify(_name),				\
-> +	.arch_major = _arch_major,				\
-> +	.product_major = _product_major,			\
-> +}
-> +
-> +static const struct panthor_model gpu_models[] = {
-> +	GPU_MODEL(g610, 10, 7),
-> +	{},
-> +};
-> +
-> +static void panthor_gpu_info_init(struct panthor_device *ptdev)
-> +{
-> +	unsigned int i;
-> +
-> +	ptdev->gpu_info.gpu_id = gpu_read(ptdev, GPU_ID);
-> +	ptdev->gpu_info.csf_id = gpu_read(ptdev, GPU_CSF_ID);
-> +	ptdev->gpu_info.gpu_rev = gpu_read(ptdev, GPU_REVID);
-> +	ptdev->gpu_info.core_features = gpu_read(ptdev, GPU_CORE_FEATURES);
-> +	ptdev->gpu_info.l2_features = gpu_read(ptdev, GPU_L2_FEATURES);
-> +	ptdev->gpu_info.tiler_features = gpu_read(ptdev, GPU_TILER_FEATURES);
-> +	ptdev->gpu_info.mem_features = gpu_read(ptdev, GPU_MEM_FEATURES);
-> +	ptdev->gpu_info.mmu_features = gpu_read(ptdev, GPU_MMU_FEATURES);
-> +	ptdev->gpu_info.thread_features = gpu_read(ptdev, GPU_THREAD_FEATURES);
-> +	ptdev->gpu_info.max_threads = gpu_read(ptdev, GPU_THREAD_MAX_THREADS);
-> +	ptdev->gpu_info.thread_max_workgroup_size = gpu_read(ptdev, GPU_THREAD_MAX_WORKGROUP_SIZE);
-> +	ptdev->gpu_info.thread_max_barrier_size = gpu_read(ptdev, GPU_THREAD_MAX_BARRIER_SIZE);
-> +	ptdev->gpu_info.coherency_features = gpu_read(ptdev, GPU_COHERENCY_FEATURES);
-> +	for (i = 0; i < 4; i++)
-> +		ptdev->gpu_info.texture_features[i] = gpu_read(ptdev, GPU_TEXTURE_FEATURES(i));
-> +
-> +	ptdev->gpu_info.as_present = gpu_read(ptdev, GPU_AS_PRESENT);
-> +
-> +	ptdev->gpu_info.shader_present = gpu_read64(ptdev, GPU_SHADER_PRESENT);
-> +	ptdev->gpu_info.tiler_present = gpu_read64(ptdev, GPU_TILER_PRESENT);
-> +	ptdev->gpu_info.l2_present = gpu_read64(ptdev, GPU_L2_PRESENT);
-> +}
-> +
-> +static void panthor_hw_info_init(struct panthor_device *ptdev)
-> +{
-> +	const struct panthor_model *model;
-> +	u32 arch_major, product_major;
-> +	u32 major, minor, status;
-> +
-> +	panthor_gpu_info_init(ptdev);
-> +
-> +	arch_major = GPU_ARCH_MAJOR(ptdev->gpu_info.gpu_id);
-> +	product_major = GPU_PROD_MAJOR(ptdev->gpu_info.gpu_id);
-> +	major = GPU_VER_MAJOR(ptdev->gpu_info.gpu_id);
-> +	minor = GPU_VER_MINOR(ptdev->gpu_info.gpu_id);
-> +	status = GPU_VER_STATUS(ptdev->gpu_info.gpu_id);
-> +
-> +	for (model = gpu_models; model->name; model++) {
-> +		if (model->arch_major == arch_major &&
-> +		    model->product_major == product_major)
-> +			break;
-> +	}
-> +
-> +	drm_info(&ptdev->base,
-> +		 "mali-%s id 0x%x major 0x%x minor 0x%x status 0x%x",
-> +		 model->name ?: "unknown", ptdev->gpu_info.gpu_id >> 16,
-> +		 major, minor, status);
-> +
-> +	drm_info(&ptdev->base,
-> +		 "Features: L2:%#x Tiler:%#x Mem:%#x MMU:%#x AS:%#x",
-> +		 ptdev->gpu_info.l2_features,
-> +		 ptdev->gpu_info.tiler_features,
-> +		 ptdev->gpu_info.mem_features,
-> +		 ptdev->gpu_info.mmu_features,
-> +		 ptdev->gpu_info.as_present);
-> +
-> +	drm_info(&ptdev->base,
-> +		 "shader_present=0x%0llx l2_present=0x%0llx tiler_present=0x%0llx",
-> +		 ptdev->gpu_info.shader_present, ptdev->gpu_info.l2_present,
-> +		 ptdev->gpu_info.tiler_present);
-> +}
-> +
-> +int panthor_hw_init(struct panthor_device *ptdev)
-> +{
-> +	panthor_hw_info_init(ptdev);
-> +
-> +	return 0;
-> +}
-> \ No newline at end of file
-> diff --git a/drivers/gpu/drm/panthor/panthor_hw.h b/drivers/gpu/drm/panthor/panthor_hw.h
-> new file mode 100644
-> index 000000000000..0af6acc6aa6a
-> --- /dev/null
-> +++ b/drivers/gpu/drm/panthor/panthor_hw.h
-> @@ -0,0 +1,11 @@
-> +/* SPDX-License-Identifier: GPL-2.0 or MIT */
-> +/* Copyright 2025 ARM Limited. All rights reserved. */
-> +
-> +#ifndef __PANTHOR_HW_H__
-> +#define __PANTHOR_HW_H__
-> +
-> +struct panthor_device;
-> +
-> +int panthor_hw_init(struct panthor_device *ptdev);
-> +
-> +#endif /* __PANTHOR_HW_H__ */
-> -- 
-> 2.49.0
-> 
+ .../bindings/pinctrl/qcom,glymur-tlmm.yaml    |  128 ++
+ drivers/pinctrl/qcom/Kconfig.msm              |   10 +
+ drivers/pinctrl/qcom/Makefile                 |    1 +
+ drivers/pinctrl/qcom/pinctrl-glymur.c         | 1777 +++++++++++++++++
+ 4 files changed, 1916 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,glymur-tlmm.yaml
+ create mode 100644 drivers/pinctrl/qcom/pinctrl-glymur.c
 
 -- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+2.34.1
+
 
