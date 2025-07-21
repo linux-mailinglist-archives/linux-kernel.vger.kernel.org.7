@@ -1,165 +1,172 @@
-Return-Path: <linux-kernel+bounces-739417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DC8DB0C60E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:17:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 939A3B0C610
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:17:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5355168EE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:17:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45EDE7AF50B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A562298242;
-	Mon, 21 Jul 2025 14:16:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F180273FD;
+	Mon, 21 Jul 2025 14:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dLVqOXD3"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D++7aQYF"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B417462;
-	Mon, 21 Jul 2025 14:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0C41A2630
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 14:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753107418; cv=none; b=PDDjxc5lhnWw94fTrhfhKqYO1vkGtO2msO7LyqxY6z8FuyTrWaDPb4wWYF856oeb5QWWWvqPURdVshg2jcrvDx373wdcj4cEloqh8WN5u/JPwQntntCSYBdCieTKOrZlKAAsgVAoC1v4hpVHXSzctoSyxct+w6BsUrcVi+/j8OY=
+	t=1753107466; cv=none; b=JaEE5Va7G6w6KW7hQcDJ6cJPgvUXpmlv+Ymb15JTV9bvXZMqBUrMMfwjcCvjZg7SFybZkxCwkCkC6YR+qSphpl8L/spV+TRuktB2h+7thy2fyPFuHD8raXfC0GXXyERHI/YQ88b6UsrliHtCB2qYGspP8IYcGiZo+4iyKn0Y5UU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753107418; c=relaxed/simple;
-	bh=P3UIwtVZaRYvpiQ2hIC/+Fx6PVr1AcxjBxpzVopZ240=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pIyWoA7kJpv6EdN6JBnJ+HyV3UwIwezFKcgdo8esT8OMVHkXTj/9/5f3IWgZkZc07uCRnLJrlkNbeId7R5ssMcE7FSdyxDdzjPg7HXwmvM8oiDKVbYArMQ7rKb3DKvdem1ym2bVsB1w+jsiInvtfLS9wE5yYsrYfEsFKvQNShQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dLVqOXD3; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-7170344c100so36464467b3.0;
-        Mon, 21 Jul 2025 07:16:56 -0700 (PDT)
+	s=arc-20240116; t=1753107466; c=relaxed/simple;
+	bh=jx62/zzI69MGOw6Q1ltR2MwUC388v3A5IGqMmpKVPmI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c530s/djAb3Lm8RtZfZtH2clHgtQgXzsR27gaP7kVx2nAKCJa7Jo3p+b//CNYNcG2h1zFWP48FbqlfmX0pmVJrH7aDc2ObcndM1nJJtyqjWfpKIPmDOzFgZsnLr7FHRTWyXUnDpxCw9UDcQkXcdVmC9juRzM0fo0CdKJW71IFak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=D++7aQYF; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4563cfac19cso33318575e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 07:17:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753107415; x=1753712215; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1753107462; x=1753712262; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=r6YwRJnlJ+cRW/GyuJIckdpGwbgGAubB75oLrU1WLiU=;
-        b=dLVqOXD3H7MENcCKt6eeTYymvRAy2L/72gh5UTM1CRACgP1+1r+OQ04yZWk23WgR+I
-         ZeScofvp6bPG6neRtEnSY28YdPC0kC+5ajJH4aMXiMgueV99glOK79TsFrFk4ebfQUxf
-         KCpJFwFOj5bWTvA8OMyGAder8jV6VtDHfWXY3dUdsGNoALz0WtZEmXGIMFJyBD7bMe8g
-         LJriOGF0CWyGtl9f4WB35VO3SNjpGPfCsF+tGNO1nZkLd0VUP0/02AGIJBjIDHJXhXKj
-         WBbAxJva4rVOXfD7KbbVFBHpHoLpwPXcWISa8NQ/bpW+R44xs0DvnBFkuUastS46tohO
-         CB2w==
+        bh=aHTz2f/tCB5gJfHRUHusAnrHo0WkysiHKc8/HuxZcyk=;
+        b=D++7aQYFr5L68qNWwL/6zhUENYiKjmqUo1TJh2Z+2mF60qdLzy6CIZ+pGTEMtQM+HK
+         7YKl+TD5gKVwZ3EMqoX75nloA/j9A4+Ics/VJADr3c7MCue2dUtz2eDhJiPOeIDmj4Kj
+         woZ0BiltwOVZoVbDkT4AoIoq5NZlBAUoQu0I4sWUvmi6YoSdApdLKoHzn9h2mz+DKMKw
+         0DZYegFgRd+N6AxhW69vAmAJhKuWrX6zrBIEr4IL5AUpPzx8ZHobPTEvPFucknhKpSJ/
+         LMdwYMp2C5v812DMHr7QH0aWt7+fR96mCMpCJGDu18HnPppnpjQ7ayqkJvnUcBAr2RGI
+         EXMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753107415; x=1753712215;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1753107462; x=1753712262;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=r6YwRJnlJ+cRW/GyuJIckdpGwbgGAubB75oLrU1WLiU=;
-        b=Gab3vWZUa39DUyL66eSr95Qtw8+Lr4FNovgMZbJBAQDudN83XvmkWTnd7oHLQRXXOw
-         5ZAX2l6Q9yOsjoRoACPYqWHC6mw0rYME1x4CeQur3ESQl4qY89J3wYKp7XpSIpOu3mLM
-         sLaavOqkedHRnr2VHW844x2Tkssj9wqBpENcsekU2F9OBw14T6zwiyycswDdgKUKagBf
-         eEz79PAwcFo/kQsLtw9B8W2lfnkTMntNC3qRoUqXdaP1laJ2a2Y5/kgOEhXJNyKkyPGt
-         XFY39iSUk+MHBjy+bdxq0KJBV7ogrKE3qDE4LH4TgODdCTESaLDg2fbb0jJ4rcM6xxd0
-         l1lg==
-X-Forwarded-Encrypted: i=1; AJvYcCX1YYCqGQk0nfIgr29J0/vhztb2I4MkMy2lZoHnzSkqbdT9rZCcxP+PxPObbIQY3xu9a6bZUiUhQFU=@vger.kernel.org, AJvYcCXkIyXzhp5YCYzWzQwTx+YPGuloAfMo0pZA3vHRnHDXZ27KvvgV3AlP+32tX1otCg7xefcj649v+4h6mZ7P@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNif0UeID35WmitGDu+bk/IY/Wa8GSy8fnJ/bvhk1BtXxfLu4I
-	puxe+XCrLr+8/A8hVnP5rgBICPIRnXsFAzQs01CtkfzbDtRieJgu2mj9
-X-Gm-Gg: ASbGncsB60G2X9AuCCopj3L52qS2WP/YYKNBD/i0mJceot5cHj1IN9MDn1/3ULJzZkn
-	bUJ9D0xZfPkUADlBBduZa3wfpKOPoujq2WRLfN3uNIhw53bFC6X9MUEVSjr9Sn5hA3C0oBLbthy
-	yC42RGCosJhanHV1EslFc6aIHSPGKz9f5ZmRRABk7ue7xWNAhUt27p5LQeNRl0IZA0tSyiJ6WjN
-	pE0CQNfvyni4hdUx1eNx7PlEm/xluO+um+qChR49GQEzakpnclnVZcphRwRngFycU1b5Ra/YGVb
-	+kqQ53Z9KZkd7VlP5JY1qIJ32grdLq69Cl8C+UOubhvnbTryD/ypo04MKSCD31iDFWx3xkDEEN7
-	a89fSXEfCTWe1busbRqcayg==
-X-Google-Smtp-Source: AGHT+IHZxGyUoSg1wWSx4jtOTu/PK8Etqd9t7suc0yd/8NtrJm+MmtdYqXsqsve+b9X2vupNR2Pirw==
-X-Received: by 2002:a05:690c:4809:b0:70c:a57c:94a3 with SMTP id 00721157ae682-718374f0513mr215033837b3.19.1753107414959;
-        Mon, 21 Jul 2025 07:16:54 -0700 (PDT)
-Received: from localhost ([2a03:2880:25ff:5a::])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e8d7ce0e41fsm2518387276.26.2025.07.21.07.16.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 07:16:54 -0700 (PDT)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: Robert Richter <rrichter@amd.com>
-Cc: Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Gregory Price <gourry@gourry.net>,
-	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
-	Terry Bowman <terry.bowman@amd.com>
-Subject: Re: [PATCH v1 05/20] cxl/region: Separate cxl_region_alloc() from devm_cxl_add_region()
-Date: Mon, 21 Jul 2025 07:16:52 -0700
-Message-ID: <20250721141653.89805-1-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250715191143.1023512-6-rrichter@amd.com>
-References: 
+        bh=aHTz2f/tCB5gJfHRUHusAnrHo0WkysiHKc8/HuxZcyk=;
+        b=VSOO9gLcZE6ERCqZ0HbQcX8Ciy6F/rVu//2Q5O1ewEhsAMsn+df13csJpTDR0hP7BY
+         ctu9yjytxqYBJKoUxsrY8Tb6zuPemQUoQadWAnSoFujPUc3I62BM64PmvN1i1qjwfoWs
+         ka51QLEl4UV9bI6T15izkaWzHmKLoXuSn/Iw8QSPz6KtbbaCOuhtp+LkhOA6ZkSIa28L
+         G7RPQGkptZdoqbwmpu0VR4aoNvgQ7d7SILswSyliGrnnQJCy0Z2z7IwihunSI6GaNfnr
+         niB3Q2clDMUoEV6M6UGuaiJtdmBkaW9/3SYSSrVos3rIs1IU12RMtzcWfjxWu27kJZoV
+         kfDw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQ1fZ6cBKw/YvYq1M2KzehMn5NwbgrNiIttOr5+1hP5SAS9KQig7BSlOC4pKk0BbnufQiXDLg/D0AJJ0M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3NBWkogmYmWsZ3qxL3A7YdNwHnvvnXHEnBgfjSpLbMVUkq0hZ
+	xBBqJlKgl5jl3c9V7ly03q8Y9OZzh21XQNi6D/zM49115h9yxmmz9KzLqWTIiWY1vY+NqrYd0wn
+	HAvbEZZV+rMiINutylGcqo8RhtNWbx3R7qKXJeps1
+X-Gm-Gg: ASbGncvfCrP1/TKX1mIsUgrQN8P/8M/FpQ9G+90F9nSdBx0R4pYSRcdl6VffXXO8s75
+	zq5vgl90SM96KDr3i4P+1Oqcu2QE1NIjWupkoO9UYX7Lbx69HLkeC11NstkS/WeInk4d4RjUNUo
+	OCrtgYzeVhxuZiLG9xZTWsesSp8/zZWMI+K9Emrq8c4d87a7AFB7jcp1xM7dC+aj1GKSrOCRKfu
+	gpt33RqspzCcgHK8o7uD83EIjgC8NTFMf9jiA==
+X-Google-Smtp-Source: AGHT+IGjLzZ7/Km2FCbSNRsrArfXJV2GEMgIhjJN78UwwjSKkWJY+F2cHXQv40vfc3kSfYwQzfjjab4StDfPm4kGNEg=
+X-Received: by 2002:a05:600c:5253:b0:456:1efa:8fe9 with SMTP id
+ 5b1f17b1804b1-4562e03a678mr216153965e9.2.1753107462190; Mon, 21 Jul 2025
+ 07:17:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250715-topics-tyr-request_irq2-v7-3-d469c0f37c07@collabora.com>
+ <202507170718.AVqYqRan-lkp@intel.com> <9834736F-F70F-4290-9DE8-755A6D0D5EB8@collabora.com>
+In-Reply-To: <9834736F-F70F-4290-9DE8-755A6D0D5EB8@collabora.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 21 Jul 2025 16:17:29 +0200
+X-Gm-Features: Ac12FXzqc3WLYmS_rx0F_dtIhtQQ4LQMKVOtCM3xLb6rdTs9AmutrC95-1kYQiY
+Message-ID: <CAH5fLggfp36q0UmF_XNLCZKn+fc1xd2hMBsYX1UrtJqBFYrf+g@mail.gmail.com>
+Subject: Re: [PATCH v7 3/6] rust: irq: add support for non-threaded IRQs and handlers
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: kernel test robot <lkp@intel.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Bjorn Helgaas <helgaas@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Benno Lossin <lossin@kernel.org>, llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-pci@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 15 Jul 2025 21:11:28 +0200 Robert Richter <rrichter@amd.com> wrote:
+On Thu, Jul 17, 2025 at 6:21=E2=80=AFPM Daniel Almeida
+<daniel.almeida@collabora.com> wrote:
+>
+>
+>
+> > On 16 Jul 2025, at 20:45, kernel test robot <lkp@intel.com> wrote:
+> >
+> > Hi Daniel,
+> >
+> > kernel test robot noticed the following build errors:
+> >
+> > [auto build test ERROR on 3964d07dd821efe9680e90c51c86661a98e60a0f]
+> >
+> > url:    https://github.com/intel-lab-lkp/linux/commits/Daniel-Almeida/r=
+ust-irq-add-irq-module/20250715-232121
+> > base:   3964d07dd821efe9680e90c51c86661a98e60a0f
+> > patch link:    https://lore.kernel.org/r/20250715-topics-tyr-request_ir=
+q2-v7-3-d469c0f37c07%40collabora.com
+> > patch subject: [PATCH v7 3/6] rust: irq: add support for non-threaded I=
+RQs and handlers
+> > config: x86_64-rhel-9.4-rust (https://download.01.org/0day-ci/archive/2=
+0250717/202507170718.AVqYqRan-lkp@intel.com/config)
+> > compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87=
+f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+> > rustc: rustc 1.88.0 (6b00bc388 2025-06-23)
+> > reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/arc=
+hive/20250717/202507170718.AVqYqRan-lkp@intel.com/reproduce)
+> >
+> > If you fix the issue in a separate patch/commit (i.e. not just a new ve=
+rsion of
+> > the same patch/commit), kindly add following tags
+> > | Reported-by: kernel test robot <lkp@intel.com>
+> > | Closes: https://lore.kernel.org/oe-kbuild-all/202507170718.AVqYqRan-l=
+kp@intel.com/
+> >
+> > All errors (new ones prefixed by >>):
+> >
+> >>> error[E0425]: cannot find value `SHARED` in module `flags`
+> >   --> rust/doctests_kernel_generated.rs:4790:58
+> >   |
+> >   4790 |     let registration =3D Registration::new(request, flags::SHA=
+RED, c_str!("my_device"), handler);
+> >   |                                                          ^^^^^^ not=
+ found in `flags`
+> >   |
+> >   help: consider importing this constant
+> >   |
+> >   3    + use kernel::mm::virt::flags::SHARED;
+> >   |
+> >   help: if you import `SHARED`, refer to it directly
+> >   |
+> >   4790 -     let registration =3D Registration::new(request, flags::SHA=
+RED, c_str!("my_device"), handler);
+> >   4790 +     let registration =3D Registration::new(request, SHARED, c_=
+str!("my_device"), handler);
+> >   |
+> >
+> > --
+> > 0-DAY CI Kernel Test Service
+> > https://github.com/intel/lkp-tests/wiki
+> >
+>
+> This is a single character fix, so I am waiting for the discussion on the=
+ cover
+> letter [0] to advance before sending a new version.
+>
+> [0] https://lore.kernel.org/all/DBCQKJIBVGGM.1R0QNKO3TE4N0@kernel.org/#t
 
-> In interleaving configs multiple endpoint decoders connect to the same
-> region. The region's parameters must be the same for all endpoint
-> decoders that share the interleaving setup. During initialization, the
-> region's parameters are determined for each endpoint decoder.
-> If a region for the same hpa range already exists, no new region is
-> created and the existing one is reused.
-> 
-> To simplify region setup and the collection of the region parameters,
-> separate region allocation from its registration. This allows it to
-> allocate and setup a region before checking the parameters with
-> existing other regions and adding it to the cxl tree or releasing it
-> and instead reusing an existing region.
-> 
-> Here, only separate cxl_region_alloc() from devm_cxl_add_region().
-> 
-> Signed-off-by: Robert Richter <rrichter@amd.com>
-> ---
+My suggestion is to make the flags module private and re-export the
+Flags type from the irq module. That way you don't have to write
+use kernel::irq::flags::Flags;
 
-Hello Robert,
-
-Thank you for this great patch! I have one small nit:
-
->  /**
-> - * devm_cxl_add_region - Adds a region to a decoder
-> - * @cxlrd: root decoder
-> - * @id: memregion id to create, or memregion_free() on failure
-> - * @mode: mode for the endpoint decoders of this region
-> - * @type: select whether this is an expander or accelerator (type-2 or type-3)
-> + * devm_cxl_add_region - Adds a region to the CXL hierarchy.
-> + * @cxlr: region to be added
-> + * @id: memregion id to create must match current @port_id of the
-> + *      region's @cxlrd
->   *
->   * This is the second step of region initialization. Regions exist within an
->   * address space which is mapped by a @cxlrd.
->   *
-> - * Return: 0 if the region was added to the @cxlrd, else returns negative error
-> - * code. The region will be named "regionZ" where Z is the unique region number.
-> + * Return: Pointer to the region if the region could be registered
-> + * (for use in a tail call). The region will be named "regionZ" where
-> + * Z is the unique region number. On errors, devm_cxl_add_region()
-> + * returns an encoded negative error code and releases or unregisters
-> + * @cxlr.
->   */
-
-It seems like the changes that this new return description corresponds to
-were actually made in the previous patch. Would it make sense to move this
-new description to the previous patch?
-
-> -static struct cxl_region *devm_cxl_add_region(struct cxl_root_decoder *cxlrd,
-> -					      int id,
-> -					      enum cxl_partition_mode mode,
-> -					      enum cxl_decoder_type type)
-> +static struct cxl_region *devm_cxl_add_region(struct cxl_region *cxlr, int id)
-
-Otherwise, LGTM!
-
-Reviewed-by: Joshua Hahn <joshua.hahnjy@gmail.com>
-
-Sent using hkml (https://github.com/sjp38/hackermail)
+Alice
 
