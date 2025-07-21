@@ -1,336 +1,138 @@
-Return-Path: <linux-kernel+bounces-739819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C0FEB0CB78
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:15:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AD82B0CB7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:15:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69BED1C21645
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:15:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CF2C1AA7059
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12EBF23AB9C;
-	Mon, 21 Jul 2025 20:15:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C929E238D56;
+	Mon, 21 Jul 2025 20:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h5tBenri"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rpx+HCaC"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4BE22F164
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 20:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A910221DAE
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 20:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753128903; cv=none; b=inbSFFcPGC/m5xHQLx6RAIksKY+5T945eF23Yd6ENTfr4bemVU0ldUoQzRXWvGXrnDlNWUTFImZrXO9GvUSf+nVWwYzjc7WoAfe5lsQfjeafmLybOTCkaG2/Qi1zfZgGYUQmfB4/YrDvIskt816FugGD+zJNMRfp/v+r78/MiZY=
+	t=1753128931; cv=none; b=nMR7Bfi+HxPRtKkHkxCqwR8llGxbqpq0xKY+p5W8yikvQS1zMdCX7yaWqVA+8Lr7CpAmeI5/5RIgVUA1VpnQiX75vhpUEisUgnyz7Qdnpv0y5cJqxb3G2ezocc/IbD1sNAc0efJ0Ws4/DN4Usum6GUo7/w+++wAsKuzwDefzmfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753128903; c=relaxed/simple;
-	bh=4U+slSboXHsW6+5MWEOA5G518utqY099eMOyOV5YZ84=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=n7A9cLeu/xUeq8NtMsxRgwhEfsuCXRAuaWHIHz9io8+jNYkglG2Ba9mAE0mdoLH/+CoWFZPg/gl1dIZSBm8YrjOL/x2480Zck2KV9kGyJAAz0GkahcuK0Hpt8RYHpLxuhVv7TDTYyexiyXiaMOcZVutzmhfeAKpN3bQepU2ozgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h5tBenri; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753128899;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mYZKEdqgRvFGNOUG7NkuZ69kA4U0wg8LO6PmLUD9IFA=;
-	b=h5tBenriG0AHIhVHPvm9oXkXBUR0KwVqgwjsZxZjhLIe4i2enlCqnRcCNSRD3U4KOVOGCI
-	1Ylhg+TWmYqYlrDkuOqOO4sPOthmeGePgiw/4Lk4Xr1mrk5zQzWTSUZgQ8mwjbaj7/p48L
-	Q0eTu97+qpejwUxP+YNL/+y0b0v2t8c=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-249-6aGBFA_uMmKyyMEYrFXGqg-1; Mon,
- 21 Jul 2025 16:14:56 -0400
-X-MC-Unique: 6aGBFA_uMmKyyMEYrFXGqg-1
-X-Mimecast-MFC-AGG-ID: 6aGBFA_uMmKyyMEYrFXGqg_1753128894
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 91D8D1800283;
-	Mon, 21 Jul 2025 20:14:53 +0000 (UTC)
-Received: from [10.22.80.24] (unknown [10.22.80.24])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 87BB730001A4;
-	Mon, 21 Jul 2025 20:14:49 +0000 (UTC)
-Date: Mon, 21 Jul 2025 22:14:44 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Li Lingfeng <lilingfeng3@huawei.com>
-cc: dm-devel@lists.linux.dev, agk@redhat.com, snitzer@kernel.org, 
-    colin.i.king@gmail.com, linux-kernel@vger.kernel.org, houtao1@huawei.com, 
-    yi.zhang@huawei.com, yangerkun@huawei.com, yukuai3@huawei.com, 
-    chengzhihao1@huawei.com, lilingfeng@huaweicloud.com
-Subject: Re: [PATCH] dm: introduce ima_lock to prevent concurrent calls to
- dm_ima_measure_* functions
-In-Reply-To: <20250719164701.3147592-1-lilingfeng3@huawei.com>
-Message-ID: <b93b1ce8-5f1b-6a25-092a-fa8573f8be1b@redhat.com>
-References: <20250719164701.3147592-1-lilingfeng3@huawei.com>
+	s=arc-20240116; t=1753128931; c=relaxed/simple;
+	bh=HpnlzZIT9bQcR33RL87yRWIWyYWt5p3SMJjbULZbuZI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=ugkJjXMck0CGSe3euTpHP6bZf1vp82Ss8gysou99WrLs4vCiy9eoo3RLWGdqhIWw9JpYdnM4JSvelDGG+1Hm8t1AbLbeNXJyizu2BeQpBwoJLvYCyyhrElBHtsG7nA9vrrzUJjFJ1F+sAnPpLZ2iDpLGfJh7DZPmfRPHYevFz+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rpx+HCaC; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3ab112dea41so2799940f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 13:15:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753128927; x=1753733727; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:from:subject:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v1Evg1hMcS2lFe2FWgE2HGBuWpCsCs05VIKODyvEC8Q=;
+        b=rpx+HCaCj9+E+elS6lj2Nm7mHzEqFG67f4DRadAgi6l+Jio3+LH9IXaYuz3L8L7Klc
+         lWhkz+vdLxgOyUuxBo70dNdcdS79q87Z5/9AtCqtE0U7Tq2mGzMw4eN/9gxy/Yson5OX
+         8PmH+kht1M8CtFnLLksH9XVrGFQQrvp4eOqodg82r/V3ii/BF3Fvyb/ZV9FG674rG5zp
+         7u2gfD5oUcONptJ+Bl2Ly8ZxHuHMPjddBSO+pMNy/aVIzMQ4iZENrU67WUFmtAo/+qsg
+         hZUb28Ro4S3SOykagjTHHZOJHXqzj1mIyR225NfrTVANuhUCzErd/+vIWgADDkiR7EtY
+         iWDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753128927; x=1753733727;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=v1Evg1hMcS2lFe2FWgE2HGBuWpCsCs05VIKODyvEC8Q=;
+        b=v+xLMc/Ot9+RQkEOwWJsALwDvLzhH4Kuvv6CM1XSp2MLFAa9gAqWqIGdD/GD0kwH/U
+         W0UpCOg1TaedTTRdjaAClZVvdtsULsIyBedKOSTMFIWcrTMorzN9SZD+GplUOA19bC3U
+         vilUPmXsvV8AYG01yS68ijIqKji3Q53wYJieuTCCNlpFZxUCn2qg431VbaFNAH9Y1AJv
+         7muwA/cUzY2E5YoW5cbPDdY0BBAOuY+gU0RSoz2gADbsDDXuFN0tOAQcuCCJFZY8pFDi
+         1/zV/lCFR2xEd/2qGAHL05UyaVuCiQ9w+efDYfaddPfNpIVdbHehW999xIx2wspvLUXz
+         ZREg==
+X-Forwarded-Encrypted: i=1; AJvYcCVaezEDCR/fgF75fKYnWamUmz9ocGPd/PdzWWi1wAu7mQZYoBHSmINTShmrIREcivg4BDjaPvGPCLvikWw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz947aayaNNYpOMODVUzl1NrMJsp1jqEzIkwXozbyGNSTYBe5gN
+	uHdFrQl0nsdv2lQL5fb/NRgMPOgG4MJJEqABNVXLsVa2CjD+DySFZIeqqoB52Zp/SOA=
+X-Gm-Gg: ASbGncswVHbRlGqc5NLwLyqNKuR4U2Uq5F2GE/OuJs1H2fJa4r2uMSoB585h3uumKuW
+	8KKaVHKhW3PKnmZ082OP2lohOTSVSurHAxPVC5pNe7WFuZPyHz/XsNsYT7fhr2+lXE6d64/Qngf
+	m83dKDsUxuFCtatmaFSdmFpQjiE+l4ZNZS63/3H51QXeY9oGl2bHLTD+zSUdkbDeKt+i1s3LLGI
+	qn7FP11DYACWdJv5t5iYSQMrVjCdD+SoafViGWFy4qzrPBc9QeXWg6NbsEMc0kek/tASCJpf7rc
+	bNUaI+wlSzsBLVX6i4hTmg+KaD6XBMI6ljXaJaZo+ArIgYQbNN/pR3TFZPsQhMq2ZbjSxnh5ENp
+	p+1QWmGWfXNuKegT9UdQ6JLuxGPlNJa5oOCQAnbAvkDhvRjxfSG/gks119tOCr7xp51XhPsFvLF
+	o44MQ=
+X-Google-Smtp-Source: AGHT+IEs1SpeNsDlcNXymDwIPuOqH8vWQgXR2g+gfxRhvnHjkxrNi9d6JZdyI8+CcSx2oE6sMotV4Q==
+X-Received: by 2002:a05:6000:4701:b0:3a6:d92f:b7a0 with SMTP id ffacd0b85a97d-3b60ddc8c3emr13360626f8f.58.1753128926796;
+        Mon, 21 Jul 2025 13:15:26 -0700 (PDT)
+Received: from ?IPV6:2a0d:e487:135f:abd:1f99:991c:5b07:cd28? ([2a0d:e487:135f:abd:1f99:991c:5b07:cd28])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b61ca4d92csm11380731f8f.74.2025.07.21.13.15.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Jul 2025 13:15:25 -0700 (PDT)
+Message-ID: <151ac9e9-19e4-40d3-b6fa-cebc9978b9ae@linaro.org>
+Date: Mon, 21 Jul 2025 22:15:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/2] Add thermal sensors support for MT7981
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Aleksander Jan Bajkowski <olek2@wp.pl>, rafael@kernel.org,
+ rui.zhang@intel.com, lukasz.luba@arm.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
+ angelogioacchino.delregno@collabora.com, s.hauer@pengutronix.de,
+ rafal@milecki.pl, linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20250712195904.6988-1-olek2@wp.pl>
+ <23b3cd9e-50e2-4888-81a3-c6d340bb9583@linaro.org>
+Content-Language: en-US
+In-Reply-To: <23b3cd9e-50e2-4888-81a3-c6d340bb9583@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi
-
-I think that the race condition between dm_ima_measure_on_device_resume 
-and dm_ima_measure_on_device_remove is still possible. The patch prevents 
-it from triggering the use-after-free bug, but the race may still result 
-in these two events being randomly swapped.
-
-I think that a proper fix would be to move dm_ima_measure_on_device* calls 
-to a position where device mapper locks are held, so that the calls will 
-be serialized by the dm locks.
-
-Would it be possible to move them inside down_write(&_hash_lock)? Or, 
-would there be some problems with that?
-
-Mikulas
-
-
-On Sun, 20 Jul 2025, Li Lingfeng wrote:
-
-> There is a window between freeing md->ima.active_table.hash and setting
-> md->ima.active_table.hash to NULL in dm_ima_measure_on_device_resume().
-> If dm_ima_measure_on_device_remove() accesses md->ima.active_table.hash
-> concurrently during this window, it could lead to a double free or UAF,
-> as shown below:
+On 7/21/25 22:14, Daniel Lezcano wrote:
+> On 7/12/25 21:59, Aleksander Jan Bajkowski wrote:
+>> This patch adds support for the temperature sensor in the MT7981 SoC.
+>> This sensor is exactly the same as the one in the MT7986.
+>>
+>> Changes in v4:
+>>   - sorted bindings by fallback names
+>>   - dropped accepted patch
+>>
+>> Changes in v3:
+>>   - added fallback in bindings
+>>
+>> Changes in v2:
+>>   - added fallback to an existing compatible string
+>>   - removed second patch as obsolete
+>>
+>> Aleksander Jan Bajkowski (2):
+>>    dt-bindings: thermal: mediatek: add falback compatible string for
+>>      MT7981 and MT8516
+>>    arm64: dts: mediatek: add thermal sensor support on mt7981
+>>
+>>   .../bindings/thermal/mediatek,thermal.yaml    | 27 ++++++++++------
+>>   arch/arm64/boot/dts/mediatek/mt7981b.dtsi     | 31 ++++++++++++++++++-
+>>   2 files changed, 47 insertions(+), 11 deletions(-)
 > 
-> BUG: KASAN: slab-use-after-free in dm_ima_measure_on_device_remove...
-> Read of size 71 at addr ffff88817bb9e220 by task dmsetup/2303
-> 
-> CPU: 2 UID: 0 PID: 2303 Comm: dmsetup Not tainted 6.16.0-rc6-dirty...
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3...
-> Call Trace:
->  <TASK>
->  dump_stack_lvl+0x5b/0x80
->  print_address_description.constprop.0+0x88/0x310
->  print_report+0x12f/0x21d
->  kasan_report+0xcc/0x190
->  kasan_check_range+0x104/0x1b0
->  __asan_memcpy+0x23/0x60
->  dm_ima_measure_on_device_remove+0x3fc/0x6c0
->  dev_remove+0x123/0x1e0
->  ctl_ioctl+0x2a2/0x480
->  dm_ctl_ioctl+0xe/0x20
->  __x64_sys_ioctl+0xc7/0x110
->  do_syscall_64+0x72/0x390
->  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> 
-> To reproduce this issue, add a delay between freeing
-> md->ima.active_table.hash and setting it to NULL, using the following
-> steps:
-> dmsetup create mydevice --table "0 2097152 linear /dev/sda 0"
-> dmsetup suspend mydevice
-> dmsetup reload mydevice --table "0 2097152 linear /dev/sdb 0"
-> dmsetup resume mydevice &
-> dmsetup remove mydevice
-> 
-> Introduce ima_lock to prevent concurrent calls to dm_ima_measure_*
-> functions to fix it.
-> 
-> Fixes: 91ccbbac1747 ("dm ima: measure data on table load")
-> Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
-> ---
->  drivers/md/dm-core.h |  1 +
->  drivers/md/dm-ima.c  | 38 +++++++++++++++++++++++++++++++++-----
->  drivers/md/dm-ima.h  |  4 ++++
->  drivers/md/dm.c      |  3 ++-
->  4 files changed, 40 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/md/dm-core.h b/drivers/md/dm-core.h
-> index c889332e533b..24f321b2c2c4 100644
-> --- a/drivers/md/dm-core.h
-> +++ b/drivers/md/dm-core.h
-> @@ -145,6 +145,7 @@ struct mapped_device {
->  #endif
->  
->  #ifdef CONFIG_IMA
-> +	struct mutex ima_lock;
->  	struct dm_ima_measurements ima;
->  #endif
->  };
-> diff --git a/drivers/md/dm-ima.c b/drivers/md/dm-ima.c
-> index b90f34259fbb..0fefad6fbb9f 100644
-> --- a/drivers/md/dm-ima.c
-> +++ b/drivers/md/dm-ima.c
-> @@ -164,7 +164,7 @@ static int dm_ima_alloc_and_copy_capacity_str(struct mapped_device *md, char **c
->  }
->  
->  /*
-> - * Initialize/reset the dm ima related data structure variables.
-> + * Reset the dm ima related data structure variables.
->   */
->  void dm_ima_reset_data(struct mapped_device *md)
->  {
-> @@ -172,6 +172,23 @@ void dm_ima_reset_data(struct mapped_device *md)
->  	md->ima.dm_version_str_len = strlen(DM_IMA_VERSION_STR);
->  }
->  
-> +/*
-> + * Initialize the dm ima.
-> + */
-> +void dm_ima_init(struct mapped_device *md)
-> +{
-> +	dm_ima_reset_data(md);
-> +	mutex_init(&md->ima_lock);
-> +}
-> +
-> +/*
-> + * Destroy the dm ima related data structure.
-> + */
-> +void dm_ima_destroy(struct mapped_device *md)
-> +{
-> +	mutex_destroy(&md->ima_lock);
-> +}
-> +
->  /*
->   * Build up the IMA data for each target, and finally measure.
->   */
-> @@ -195,9 +212,10 @@ void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_fl
->  	const size_t hash_alg_prefix_len = strlen(DM_IMA_TABLE_HASH_ALG) + 1;
->  	char table_load_event_name[] = "dm_table_load";
->  
-> +	mutex_lock(&table->md->ima_lock);
->  	ima_buf = dm_ima_alloc(DM_IMA_MEASUREMENT_BUF_LEN, GFP_KERNEL, noio);
->  	if (!ima_buf)
-> -		return;
-> +		goto error;
->  
->  	target_metadata_buf = dm_ima_alloc(DM_IMA_TARGET_METADATA_BUF_LEN, GFP_KERNEL, noio);
->  	if (!target_metadata_buf)
-> @@ -361,6 +379,7 @@ void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_fl
->  	kfree(ima_buf);
->  	kfree(target_metadata_buf);
->  	kfree(target_data_buf);
-> +	mutex_unlock(&table->md->ima_lock);
->  }
->  
->  /*
-> @@ -376,9 +395,10 @@ void dm_ima_measure_on_device_resume(struct mapped_device *md, bool swap)
->  	bool nodata = true;
->  	int r;
->  
-> +	mutex_lock(&md->ima_lock);
->  	device_table_data = dm_ima_alloc(DM_IMA_DEVICE_BUF_LEN, GFP_KERNEL, noio);
->  	if (!device_table_data)
-> -		return;
-> +		goto error;
->  
->  	r = dm_ima_alloc_and_copy_capacity_str(md, &capacity_str, noio);
->  	if (r)
-> @@ -466,6 +486,7 @@ void dm_ima_measure_on_device_resume(struct mapped_device *md, bool swap)
->  error:
->  	kfree(capacity_str);
->  	kfree(device_table_data);
-> +	mutex_unlock(&md->ima_lock);
->  }
->  
->  /*
-> @@ -490,6 +511,7 @@ void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all)
->  	bool nodata = true;
->  	int r;
->  
-> +	mutex_lock(&md->ima_lock);
->  	device_table_data = dm_ima_alloc(DM_IMA_DEVICE_BUF_LEN*2, GFP_KERNEL, noio);
->  	if (!device_table_data)
->  		goto exit;
-> @@ -597,6 +619,7 @@ void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all)
->  
->  	kfree(dev_name);
->  	kfree(dev_uuid);
-> +	mutex_unlock(&md->ima_lock);
->  }
->  
->  /*
-> @@ -612,9 +635,10 @@ void dm_ima_measure_on_table_clear(struct mapped_device *md, bool new_map)
->  	bool nodata = true;
->  	int r;
->  
-> +	mutex_lock(&md->ima_lock);
->  	device_table_data = dm_ima_alloc(DM_IMA_DEVICE_BUF_LEN, GFP_KERNEL, noio);
->  	if (!device_table_data)
-> -		return;
-> +		goto error;
->  
->  	r = dm_ima_alloc_and_copy_capacity_str(md, &capacity_str, noio);
->  	if (r)
-> @@ -696,6 +720,8 @@ void dm_ima_measure_on_table_clear(struct mapped_device *md, bool new_map)
->  	kfree(capacity_str);
->  error1:
->  	kfree(device_table_data);
-> +error:
-> +	mutex_unlock(&md->ima_lock);
->  }
->  
->  /*
-> @@ -708,9 +734,10 @@ void dm_ima_measure_on_device_rename(struct mapped_device *md)
->  	bool noio = true;
->  	int r;
->  
-> +	mutex_lock(&md->ima_lock);
->  	if (dm_ima_alloc_and_copy_device_data(md, &new_device_data,
->  					      md->ima.active_table.num_targets, noio))
-> -		return;
-> +		goto error;
->  
->  	if (dm_ima_alloc_and_copy_name_uuid(md, &new_dev_name, &new_dev_uuid, noio))
->  		goto error;
-> @@ -745,4 +772,5 @@ void dm_ima_measure_on_device_rename(struct mapped_device *md)
->  	kfree(old_device_data);
->  	kfree(new_dev_name);
->  	kfree(new_dev_uuid);
-> +	mutex_unlock(&md->ima_lock);
->  }
-> diff --git a/drivers/md/dm-ima.h b/drivers/md/dm-ima.h
-> index 568870a1a145..36bbcf1b25a0 100644
-> --- a/drivers/md/dm-ima.h
-> +++ b/drivers/md/dm-ima.h
-> @@ -57,6 +57,8 @@ struct dm_ima_measurements {
->  };
->  
->  void dm_ima_reset_data(struct mapped_device *md);
-> +void dm_ima_init(struct mapped_device *md);
-> +void dm_ima_destroy(struct mapped_device *md);
->  void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_flags);
->  void dm_ima_measure_on_device_resume(struct mapped_device *md, bool swap);
->  void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all);
-> @@ -66,6 +68,8 @@ void dm_ima_measure_on_device_rename(struct mapped_device *md);
->  #else
->  
->  static inline void dm_ima_reset_data(struct mapped_device *md) {}
-> +static inline void dm_ima_init(struct mapped_device *md) {}
-> +static inline void dm_ima_destroy(struct mapped_device *md) {}
->  static inline void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_flags) {}
->  static inline void dm_ima_measure_on_device_resume(struct mapped_device *md, bool swap) {}
->  static inline void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all) {}
-> diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-> index 1726f0f828cc..b7eab324804c 100644
-> --- a/drivers/md/dm.c
-> +++ b/drivers/md/dm.c
-> @@ -2371,6 +2371,7 @@ static void free_dev(struct mapped_device *md)
->  	unlock_fs(md);
->  
->  	cleanup_mapped_device(md);
-> +	dm_ima_destroy(md);
->  
->  	WARN_ON_ONCE(!list_empty(&md->table_devices));
->  	dm_stats_cleanup(&md->stats);
-> @@ -2506,7 +2507,7 @@ int dm_create(int minor, struct mapped_device **result)
->  	if (!md)
->  		return -ENXIO;
->  
-> -	dm_ima_reset_data(md);
-> +	dm_ima_init(md);
->  
->  	*result = md;
->  	return 0;
-> -- 
-> 2.46.1
+> Applied, thanks
 
+Sorry, I meant applied patch 1/2
+
+Thanks
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
