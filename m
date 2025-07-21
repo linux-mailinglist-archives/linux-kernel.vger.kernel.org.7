@@ -1,189 +1,160 @@
-Return-Path: <linux-kernel+bounces-739178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60755B0C2D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:26:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C503B0C2DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:26:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69FE254114E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:26:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF7473B7633
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9CD229A313;
-	Mon, 21 Jul 2025 11:25:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1ACA29B8DB;
+	Mon, 21 Jul 2025 11:25:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="bEun1vs6"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZwAKtZ3u"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70EF629E0F3;
-	Mon, 21 Jul 2025 11:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69ABB29ACEA
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 11:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753097124; cv=none; b=K7Ah56dJ+4l1kfYhrZkqA5bS35124zKP8JQNr0/lzMKtn5zg/SJxAWTm+4AqXXOZUSfGZVdlg8jNLBnv88p/EkVJtZuICzlfQEIdi3MDHI+d9mWchE+nsGpVUnlsEmTINi056d5OAUebayIK8t9gOR8xSLOT7ZBeGvftaOrHsZ4=
+	t=1753097143; cv=none; b=QGXySV/fx8bb6oAu5rsYCJ2oWnm4PrKZZqhwsbXYp9O2aKjsHcphxqL/J+Zz6KSwrt0QqfsnEKJLU0ZZjUJW5yt/Xy4GOQ3V3VUKM6YLrNN7XL2tJExH9aDoeyWLmZsd+SdTv6vbWeyoCk/2Rcw7DC08BFT7+jCdygVw4t3YmxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753097124; c=relaxed/simple;
-	bh=8/uk1vqgAefd6fGn1RoqHepit2mR80dRJ2YpDpk0SnM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ox/1EYF5ny4SCmx4/xDvLBCaej9M1eVIdEJTBC0frIDuROTHx8kPfMO1umXQ1MMDVIPJsL2i/27Z3jod+Ix4EUL3efBZH6Ax8aqD4WrF7h30OmLW8lPKgrjTQ00AzBYE55joLn/1zq1GxTSN9F0hFntJu/jxyjL1wvyBIhrf9Tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=bEun1vs6; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56L8761B029685;
-	Mon, 21 Jul 2025 07:25:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=MKoRu
-	sqNRS/Ng1H1GDj0av6v4hssphyuvOtjJgWQ7sM=; b=bEun1vs6bKJsrR7LGD0LF
-	vSy9SE/78eaVTgCM23JnyjU1tB+AljIbJaln3IYDt+QVncF4jtTLSoDg9ISzBBPy
-	403joklfTjFdfM9QL9oE/5T0BhI0CzWGdn8fsVIEWyBPH9ARjSYFMQV+HLe0mGGq
-	sglA7EwCCxT0dicH4bFbvdLknqWPafDjia6JHOnL+dCTXozXM/Fme27X9S/2Gq+r
-	/XAbnm5xXzSpf35vnTnJtDjn8X0yr6bWGD7cgxfmMdH7/zdHDGeWObsGS3MC0vKX
-	wnsZMiG+MtERlhRSF81GCcNo2IseZa5oAfTQvHBDr5420X0UjVjcW3vQvOHAqKLI
-	w==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 481e8a1vu7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 21 Jul 2025 07:25:14 -0400 (EDT)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 56LBPDIF033325
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 21 Jul 2025 07:25:13 -0400
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 21 Jul
- 2025 07:25:13 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Mon, 21 Jul 2025 07:25:13 -0400
-Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.210])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 56LBOxBm007027;
-	Mon, 21 Jul 2025 07:25:08 -0400
-From: Antoniu Miclaus <antoniu.miclaus@analog.com>
-To: <jic23@kernel.org>, <robh@kernel.org>, <conor+dt@kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Subject: [PATCH v2 5/5] Documentation: ABI: iio: adc: add ade9000 ABI
-Date: Mon, 21 Jul 2025 14:24:45 +0300
-Message-ID: <20250721112455.23948-5-antoniu.miclaus@analog.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250721112455.23948-1-antoniu.miclaus@analog.com>
-References: <20250721112455.23948-1-antoniu.miclaus@analog.com>
+	s=arc-20240116; t=1753097143; c=relaxed/simple;
+	bh=+h0qgyFAIZh9TvE6JANV+tpEHP7rFWwM6prPwetA4d4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GzIOjjnB/kgTbD5uE3aWe4AE3RWsMzB5N/4SjEK1jncK0LJmcg2/eC3WvbJWI36IqYnMM8ICNy7pd6D6WEWsnmDR7APKzty9ADLieHb+0k02TG39G/N6fdo+oxh2CCJ7YkO3NV8b/onfvEqOq9u/3iEbWSnDy1Qg3x1G6C4wcbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZwAKtZ3u; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753097140;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I9xHIUZGDixZ4oA3O6QnP/ENCMTQ0evD0jQLzmoUP1s=;
+	b=ZwAKtZ3uXoeI8PUKGbY/Hl+IMkNaNznqN4mLlZQLeNvCrMfHoLpVKoAnrxY1R+qlFQbYRS
+	OE1gtXt+tfaol7u14XgRJPMGY90zbp3uxHl8etiqelatRRTkC7YpUrKtSoeGpGkVFVZS7v
+	N8zjZQj2TonAsogyCTRgjqLfCsj6nq0=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-681-WWWvZ43bP9aebbYimlf95w-1; Mon, 21 Jul 2025 07:25:39 -0400
+X-MC-Unique: WWWvZ43bP9aebbYimlf95w-1
+X-Mimecast-MFC-AGG-ID: WWWvZ43bP9aebbYimlf95w_1753097138
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3a579058758so1651829f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 04:25:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753097137; x=1753701937;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=I9xHIUZGDixZ4oA3O6QnP/ENCMTQ0evD0jQLzmoUP1s=;
+        b=VxYSKk24GHJsMNvs7oJAwr6QRckxNtadTTQHX4bSlRtnLGhxT1yliszYsne+z0Wuje
+         yN1q5eQwpdFKAda0AUFt82iKVlxYBcAeOk57OA9CiKmLwyZNBMxSQsgfttKwMc+8LtcS
+         GMOxKi74kXpLKPUnoqOkwGwxi04VLI3nZuxd7M/wFt48bfvBWUiRmp1qFmsfYIPuLSGS
+         TAbox2SEWHTYSzwxr/HJ6iJq3euO73CFUsYHJprIZq5ceCAC2fQNy7ntwQtk7lYBKZg3
+         GAmc15Y9TUwaAUv4hhuTtVYQaJpmdls+LjECtWmCX6/M6jDl5MayFXxwmH2zaDBwT7xT
+         zgmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXHStn0KFCHp9DixCqhgBLAdXmI8awiKEOGZy3bqiDUsqYIv/r1KR/p0dIqcnOx3remhfYOHzM3Al7qXO8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSsqfgbDJ9G4Coy+Hk0aB8wy2GNlCk/xS/0jPXtEQNjKMyOus3
+	2Rl4yvL+R2uhE8fgtsQTnZIDZ3CvduPfaKnM01fdw7X1VikP4uKZ5Ph7VaIX3H8j86PXIkhU/tu
+	rOLh5RCu0sRCsK0RWn+qNtdpIrs/a/yfxvRU/ej+otpKPsXqfcIYDLHyG6QfNoy3CebQi1lLXi7
+	ZrLLq75DEmrran42vlxhjmZbli3AMFNWLulV77MY51fXGBK2ORIw==
+X-Gm-Gg: ASbGncsjX/Dc4xEMygudlG8HsbyIPdPljW5aKH4f3+segVh/OFM0xTin6668VyHJtgh
+	J6RYwnesJJuzw9fFWhDg/0/NyXRGXvWKWDy1ja9tRki99DMNRsgnfRipYx5fevVnIidwyi447vs
+	IscwsFcju/0ZIhtEof/1NjvdmMZ9wJ5JzXe7NBMGwEdeetLSvNmGqj/qL5rcLeyyZkV47IgBXZ6
+	UUGulQgudPdW3Esxb8hNq31dTFlsWpFyWiM1/sMH9fhr52rjEFEK99IjXAVgFUVwxs9aZkgXUcd
+	QDXsl6zJDhn5dg/mGxl3iORMDfm2g1XYyWkROpiEoF/g37aYg4M6qSI99/+BxomGynjF+v/i2nj
+	AANfaium8wNOS/i1yh9DV0C2j
+X-Received: by 2002:a05:6000:2309:b0:3b5:dc05:79b with SMTP id ffacd0b85a97d-3b60e4d0099mr17510110f8f.14.1753097136991;
+        Mon, 21 Jul 2025 04:25:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE5qjUcgwoUH6h4Cn4yr43tPmB+jCm/2PCqBM5MSc3alqUkCaGQZXjrejWnZx0uQHpJY37V7A==
+X-Received: by 2002:a05:6000:2309:b0:3b5:dc05:79b with SMTP id ffacd0b85a97d-3b60e4d0099mr17510072f8f.14.1753097136525;
+        Mon, 21 Jul 2025 04:25:36 -0700 (PDT)
+Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-135-146.abo.bbox.fr. [213.44.135.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e89c87esm155841815e9.33.2025.07.21.04.25.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Jul 2025 04:25:35 -0700 (PDT)
+From: Valentin Schneider <vschneid@redhat.com>
+To: Vincent Guittot <vincent.guittot@linaro.org>, Huang Shijie
+ <shijie@os.amperecomputing.com>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+ patches@amperecomputing.com, cl@linux.com,
+ Shubhang@os.amperecomputing.com, dietmar.eggemann@arm.com,
+ rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] sched/fair: do not scan twice in detach_tasks()
+In-Reply-To: <CAKfTPtC7+V6ubaGDPy0MW2MFG7w_yrnYCPQ-b2=3uYgeM+-+EA@mail.gmail.com>
+References: <20250721023939.19703-1-shijie@os.amperecomputing.com>
+ <CAKfTPtC7+V6ubaGDPy0MW2MFG7w_yrnYCPQ-b2=3uYgeM+-+EA@mail.gmail.com>
+Date: Mon, 21 Jul 2025 13:25:34 +0200
+Message-ID: <xhsmhv7nleqfl.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: kcc4CjEsJjmLQMZap2KgqOtK364ZhVBF
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIxMDEwMSBTYWx0ZWRfX0QeEIDV5RtB2
- jTWcdzvSv6lbkzKGXLqs8PaJ0jbWGVIdvhos534nYPwWnDCu2sx1nTciUcwF1kEqx37j9n/eu6A
- lH9jKKKXtOXBgAzh/Nr5b2N1Cj92q43Fz1Ak28hWC3V0RwEOdz7ULHWQ+NljNO4k/8+mHyyGG1e
- sxcLMNWaRzHx4LrGU2F14QV3A8qWLl9+Sb3eASO6alGkBR2RJuHemm/8fiZoJKnCNHCzzzWjZtz
- 3jOJ0bFDbYld3U+HL2YNn+ue/pck1o4rgkJ6cOmGb1HdsiPr3MbCSR6SfQu5qh+33hl6j0N5s60
- Q40Sim38FrdbazvUZf65dHLlObwFeOWksd9Q1BNXNw7xySOoUm9kNuRreig8rb7d3UII3X7COuS
- Iak+MrbXsuCDg5xArlz4o/EP8mZ9nIrbPOM+zLSg55gq7InaRd7nAhZg/1YoWyUA5f6481kZ
-X-Authority-Analysis: v=2.4 cv=OdGYDgTY c=1 sm=1 tr=0 ts=687e239a cx=c_pps
- a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
- a=Wb1JkmetP80A:10 a=gAnH3GRIAAAA:8 a=VwQbUJbxAAAA:8 a=G9epBy2OD0CA4cr1lPEA:9
-X-Proofpoint-ORIG-GUID: kcc4CjEsJjmLQMZap2KgqOtK364ZhVBF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-21_03,2025-07-21_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 bulkscore=0 impostorscore=0 suspectscore=0 spamscore=0
- clxscore=1015 phishscore=0 adultscore=0 mlxscore=0 malwarescore=0
- lowpriorityscore=0 mlxlogscore=943 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507210101
 
-Add sysfs ABI documentation for the ADE9000 ADC driver,
-documenting the device-specific attributes and interfaces.
+On 21/07/25 11:40, Vincent Guittot wrote:
+> On Mon, 21 Jul 2025 at 04:40, Huang Shijie
+> <shijie@os.amperecomputing.com> wrote:
+>>
+>> detach_tasks() uses struct lb_env.loop_max as an env.src_rq->cfs_tasks
+>> iteration count limit. It is however set without the source RQ lock held,
+>> and besides detach_tasks() can be re-invoked after releasing and
+>> re-acquiring the RQ lock per LBF_NEED_BREAK.
+>>
+>> This means that env.loop_max and the actual length of env.src_rq->cfs_tasks
+>> as observed within detach_tasks() can differ. This can cause some tasks to
+>
+> why not setting env.loop_max only once rq lock is taken in this case ?
+>
+> side note : by default loop_max <= loop_break
+>
 
-Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+I thought so too and dismissed that due to LBF_NEED_BREAK, but I guess we
+could still do something like:
+
 ---
- new in v2.
- .../ABI/testing/sysfs-bus-iio-adc-ade9000     | 64 +++++++++++++++++++
- 1 file changed, 64 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-ade9000
-
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-ade9000 b/Documentation/ABI/testing/sysfs-bus-iio-adc-ade9000
-new file mode 100644
-index 000000000000..fa92fd67483f
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-ade9000
-@@ -0,0 +1,64 @@
-+What:		/sys/bus/iio/devices/iio:deviceX/wf_cap_en
-+KernelVersion:	6.13
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		Enable fixed data rate for waveform buffer instead of resampled data.
-+		When enabled (1), the waveform buffer uses a fixed data rate.
-+		When disabled (0), the waveform buffer uses resampled data.
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index b9b4bbbf0af6f..eef3a0d341661 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -11643,6 +11643,7 @@ static int sched_balance_rq(int this_cpu, struct rq *this_rq,
+ 		.dst_grpmask    = group_balance_mask(sd->groups),
+ 		.idle		= idle,
+ 		.loop_break	= SCHED_NR_MIGRATE_BREAK,
++		.loop_max       = UINT_MAX,
+ 		.cpus		= cpus,
+ 		.fbq_type	= all,
+ 		.tasks		= LIST_HEAD_INIT(env.tasks),
+@@ -11681,18 +11682,19 @@ static int sched_balance_rq(int this_cpu, struct rq *this_rq,
+ 	/* Clear this flag as soon as we find a pullable task */
+ 	env.flags |= LBF_ALL_PINNED;
+ 	if (busiest->nr_running > 1) {
++more_balance:
+ 		/*
+ 		 * Attempt to move tasks. If sched_balance_find_src_group has found
+ 		 * an imbalance but busiest->nr_running <= 1, the group is
+ 		 * still unbalanced. ld_moved simply stays zero, so it is
+ 		 * correctly treated as an imbalance.
+ 		 */
+-		env.loop_max  = min(sysctl_sched_nr_migrate, busiest->nr_running);
+-
+-more_balance:
+ 		rq_lock_irqsave(busiest, &rf);
+ 		update_rq_clock(busiest);
+ 
 +
-+		This attribute is shared by all channels and represents a device-wide
-+		setting that affects the entire waveform buffer configuration.
-+		Changes immediately update the hardware configuration.
++		env.loop_max = min3(env.loop_max, sysctl_sched_nr_migrate, busiest->h_nr_running);
 +
-+		Reading: Returns current setting (0 or 1)
-+		Writing: Accepts 0, 1
-+
-+What:		/sys/bus/iio/devices/iio:deviceX/wf_mode
-+KernelVersion:	6.13
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		Waveform buffer filling and trigger mode configuration.
-+
-+		Valid values:
-+		0 - Stop when waveform buffer is full
-+		1 - Continuous fill, stop only on enabled trigger events
-+		2 - Continuous filling, center capture around enabled trigger events
-+		3 - Streaming mode
-+
-+		This attribute is shared by all channels and represents a device-wide
-+		setting that affects the entire waveform buffer configuration.
-+		Changes immediately update the hardware configuration.
-+
-+		Reading: Returns current mode (0-3)
-+		Writing: Accepts values 0, 1, 2, or 3
-+
-+What:		/sys/bus/iio/devices/iio:deviceX/wf_in_en
-+KernelVersion:	6.13
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		Enable IN waveform samples readout from waveform buffer.
-+		When enabled (1), IN waveform samples are included in buffer readout.
-+		When disabled (0), IN waveform samples are excluded from buffer readout.
-+
-+		This attribute is shared by all channels and represents a device-wide
-+		setting that affects the entire waveform buffer configuration.
-+		Changes immediately update the hardware configuration.
-+
-+		Reading: Returns current setting (0 or 1)
-+		Writing: Accepts 0, 1
-+
-+What:		/sys/bus/iio/devices/iio:deviceX/egy_time
-+KernelVersion:	6.13
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		Energy accumulation time setting for energy registers.
-+		This value configures the time period over which energy
-+		measurements are accumulated in the ADE9000 device.
-+
-+		This attribute is shared by all channels and represents a device-wide
-+		setting that affects energy accumulation across all phases.
-+		Changes immediately update the hardware configuration.
-+
-+		Reading: Returns current energy accumulation time value
-+		Writing: Accepts any valid 32-bit unsigned integer value
-+
--- 
-2.49.0
+ 		/*
+ 		 * cur_ld_moved - load moved in current iteration
+ 		 * ld_moved     - cumulative load moved across iterations
 
 
