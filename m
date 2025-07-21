@@ -1,184 +1,143 @@
-Return-Path: <linux-kernel+bounces-739598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9852DB0C860
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:01:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E11D9B0C863
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:02:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 580243AE84D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:00:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D1833A6568
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888672E03E1;
-	Mon, 21 Jul 2025 16:01:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3DFA2DFA48;
+	Mon, 21 Jul 2025 16:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bBZ5mVls"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IuCa/DJM"
+Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69892D9489;
-	Mon, 21 Jul 2025 16:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2A8F1DF742;
+	Mon, 21 Jul 2025 16:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753113673; cv=none; b=U9D3tng4rhxF/RPUEz4mOOETGhW2zHQuuDxwYnJfImMC9r/52lx/4wPaoQjI1DWXn+41fkk85b/PELu+noQHKuNTVwQO6NZ0itGNV/O4nA7+/gMeBqSMcSg5VKO+QoAryHTcQVf04pug30VZ62SMGrHOXjl5HXDOrH84wrRuarU=
+	t=1753113742; cv=none; b=H5AF2paden5lejYV82JxJvySNi1yDEX6fGIKaiUAtdSQEJY4ciLvCuB1XXkVybYApkIykrKaquFBH2QMDgRDDe/7Vr6qUvpXxvHPjCZG5AuF/u1Z52UiXQAGRO9OlnRgbehXHCLtM93ruKynBx4+3D6ApUzmn2t00JpO8hhOv5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753113673; c=relaxed/simple;
-	bh=2utxpoucflcWLv6syaderiMGBaEAVdo65KQebvXa+QQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j9uLqo45wRITJvdnVW8bveZaI6Am075zGKM6541U6VriPo3IoLTkx0bwe0hBxTzndNYteoBRy4WXX4lakuLiwLTlzT1yb95lphrbrK7J7tOf14OK9Ykv46BJwI2Xa4Po14+igBRAWncVurTcDmtCeheGfsHk4D9BQBv3tjvRH0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bBZ5mVls; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E047BC4CEED;
-	Mon, 21 Jul 2025 16:01:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1753113672;
-	bh=2utxpoucflcWLv6syaderiMGBaEAVdo65KQebvXa+QQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bBZ5mVls/nzNF94Y+TQc7EMUqY5xSuJ7pr3Ax0yjdTyAU3wfMj/4RduJZ2gZB1zf7
-	 qDoK1fPHlzFo1yzG6Wl+LlqJ1x9cFuz6gsvpSmi3HnOHjRrmeqoMX/X12yyetpKayR
-	 6QOclH6vv/d5yH1i0+0goIXaRrRve10K4WZokEzc=
-Date: Mon, 21 Jul 2025 18:01:09 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: David Thompson <davthompson@nvidia.com>
-Cc: linus.walleij@linaro.org, brgl@bgdev.pl, davem@davemloft.net,
-	asmaa@nvidia.com, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Shravan Kumar Ramani <shravankr@nvidia.com>
-Subject: Re: [PATCH v2] gpio-mlxbf2: only get IRQ for device instances 0 and 3
-Message-ID: <2025072158-backpedal-immortal-9dfe@gregkh>
-References: <20250721155513.29636-1-davthompson@nvidia.com>
+	s=arc-20240116; t=1753113742; c=relaxed/simple;
+	bh=75iuN3yPbeOMpiSS34AD1qt/4araipS42FE6hGVHkCI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EZFFHg0OmObZ46pfP9J7LCcxXx/hy1LaHzWdlLfeyiXlPrQM1L3MYegIJhIC+4pss/0W8jZp+d8N7n+VTvSmwoNtOsCnhpZTRp7LAR7yjlhbME/95O5YkmGHZRqkzE8GNHmpByGLtxzTIbJgrihoV5kLybB3KBNudvQQm8a+uS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IuCa/DJM; arc=none smtp.client-ip=209.85.214.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-23636167b30so40843755ad.1;
+        Mon, 21 Jul 2025 09:02:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753113739; x=1753718539; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6LZOIw5e4/d1Ys1vEywwf3rOMyld2a0Motp3dRdK95s=;
+        b=IuCa/DJMANeH8mRTN/zrej9sgJHJFiJDGxI5SE0Lixrwcd9Jv6qN37vwEC0YrLxsmo
+         w++46J7S5nq2M2UbRdlGUSs2rZ6qQy2IOEypJAM+guY2xE/phnQSveYbVFA6HDtA0CLY
+         t04MzhHX1FIr32DvNqlCwTCBNN+uzt4RHC6bHog2QdOOcki/19cTW4/mddyV8st2pHu5
+         0Pa6YPIGSRiXMZx2gFnwOEbrvsy4imoEmy1JKmLO8g4e7HaKt+IHatgAAEw+DugDx1+3
+         c2qj3XgWu6RSRXDIWFlnq4qnCZraU8hNVqIDo+qCcvNgsAhF8TwNIJ+jenR/JXvN40jO
+         JwOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753113739; x=1753718539;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=6LZOIw5e4/d1Ys1vEywwf3rOMyld2a0Motp3dRdK95s=;
+        b=Aeo1NfDU4wMG7nazIVyXcFlP8jN2ccHmHJ9Dyzz5KfZo9CbXPmXifw627YA/v6KANI
+         S+5040bsLMEW6/7cWTyAWAvs3TMvPSKPw0CvsEZyV9gQzD8q+shGySD4LzijW3sd0XBg
+         9Xk7lOmPU3dlVxjJK8zBWfeXMYm0ZFA2QCgqP8foDMcdP5hdl1JzfM5sUBWLiFqJgL54
+         d/41IGWupJREhvGuv12f+HermuoNOp04qNG6C3viMkTLN0Dpm9Kam2U31rI5tTQsmVhm
+         mK1CVJkVsjkD46YLRSoFdgR+ETzlZclkRp4AXpLFgE/W8WbMqmZOV9lnlDORenl3bO1V
+         CRdg==
+X-Forwarded-Encrypted: i=1; AJvYcCUZFHPyT9rt+xedrPIYcxmb+pGgrt3YjsmwhHN365qt2esEf7M8FEiNmdSmUudEo6yV4fUx5v0GW3LCLEQ=@vger.kernel.org, AJvYcCX88YbsvfgM6Wo+u8J0VD9rl8xNCkeEk2hk5z+N/CKLS4m1p4eHkdJD/XlJ739JDWAHzrOLy7Gj60E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxECn0JIr0YIpU3Fs/KUAAhNy4GMPKFBBCQuiR3rfckbBxKl+On
+	r2W3eJywzySufKE+rjpZFLNRif+48wpArrpXatweUsRXThmf4Jxn7+TTuiMpRHJMO0c=
+X-Gm-Gg: ASbGncufwNETU7K8ViDCICZ5NYZ+yF5GzZg1VmWJDi+CiCj24m/MTbdcdrseCybD99i
+	WgsUzmLK6nRFkruxExYBWJ8pz/YpxHw4m2LW1hiNDi0vQrdtbuwMxKKpuXJ8sSVYeAGUBTBmnLG
+	mRU5RHIqJ1EDxWVRveBlMGnqa6sXwKL2lwDbmQu4Kxb3/6gw/+GDtbuJ1JGfKIhtVfYJri19SUV
+	MLqlNyf7eMsGMybzMTawor1K9hTwKCj2JvwZt4j7ka6FrFnjJC1feE2YaTPdZK+MAZuzyNTJS/3
+	27FyVdukiKONgyzfDEbHgUue1kq+M0xCRYDM+QILVoZQdXJLXIblv48j7dnZsaEZgsVUQW/HoMZ
+	24sBeqSGTSiLzo+Z/IDtT1TZv1igIF/wuCfGP5q4T3kssLYhc
+X-Google-Smtp-Source: AGHT+IFETu42y8ChWlez3rl2QpRCBASMj4fpCrx83eCEmI92ZUEgZEd9o/QS8SOZbmEyNl0aURvdSg==
+X-Received: by 2002:a17:902:da8b:b0:238:2990:6382 with SMTP id d9443c01a7336-23e25522cd7mr338406005ad.0.1753113738957;
+        Mon, 21 Jul 2025 09:02:18 -0700 (PDT)
+Received: from [192.168.1.101] ([223.166.23.203])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b6ef682sm60013325ad.192.2025.07.21.09.02.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Jul 2025 09:02:18 -0700 (PDT)
+Message-ID: <4581ac35-b879-4d32-91fd-ab486ec4b63c@gmail.com>
+Date: Tue, 22 Jul 2025 00:02:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250721155513.29636-1-davthompson@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] cpufreq: Avoid creating sysfs link for offline CPUs
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250721153656.5103-1-zzhwaxy.kernel@gmail.com>
+ <CAJZ5v0iyAWdh=_2jcc7P5umR4T4yoatiK8cE+yT2vTiY87mxxw@mail.gmail.com>
+From: Zihuan Zhang <zzhwaxy.kernel@gmail.com>
+In-Reply-To: <CAJZ5v0iyAWdh=_2jcc7P5umR4T4yoatiK8cE+yT2vTiY87mxxw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 21, 2025 at 11:55:13AM -0400, David Thompson wrote:
-> The gpio-mlxbf2 driver interfaces with four GPIO controllers,
-> device instances 0-3. There are two IRQ resources shared between
-> the four controllers, and they are found in the ACPI table for
-> device instances 0 and 3.  The driver should not attempt to get
-> an IRQ resource when probing device instance 1 or 2, otherwise
-> the following error is logged:
->   mlxbf2_gpio MLNXBF22:01: error -ENXIO: IRQ index 0 not found
-> 
-> Fixes: 2b725265cb08 ("gpio: mlxbf2: Introduce IRQ support")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: David Thompson <davthompson@nvidia.com>
-> Reviewed-by: Shravan Kumar Ramani <shravankr@nvidia.com>
-> ---
->  drivers/gpio/gpio-mlxbf2.c | 56 ++++++++++++++++++++++++--------------
->  1 file changed, 36 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-mlxbf2.c b/drivers/gpio/gpio-mlxbf2.c
-> index 6f3dda6b635f..fc56ac81e344 100644
-> --- a/drivers/gpio/gpio-mlxbf2.c
-> +++ b/drivers/gpio/gpio-mlxbf2.c
-> @@ -353,7 +353,9 @@ mlxbf2_gpio_probe(struct platform_device *pdev)
->  	struct gpio_chip *gc;
->  	unsigned int npins;
->  	const char *name;
-> +	char *colon_ptr;
->  	int ret, irq;
-> +	long num;
->  
->  	name = dev_name(dev);
->  
-> @@ -397,26 +399,40 @@ mlxbf2_gpio_probe(struct platform_device *pdev)
->  	gc->ngpio = npins;
->  	gc->owner = THIS_MODULE;
->  
-> -	irq = platform_get_irq(pdev, 0);
-> -	if (irq >= 0) {
-> -		girq = &gs->gc.irq;
-> -		gpio_irq_chip_set_chip(girq, &mlxbf2_gpio_irq_chip);
-> -		girq->handler = handle_simple_irq;
-> -		girq->default_type = IRQ_TYPE_NONE;
-> -		/* This will let us handle the parent IRQ in the driver */
-> -		girq->num_parents = 0;
-> -		girq->parents = NULL;
-> -		girq->parent_handler = NULL;
-> -
-> -		/*
-> -		 * Directly request the irq here instead of passing
-> -		 * a flow-handler because the irq is shared.
-> -		 */
-> -		ret = devm_request_irq(dev, irq, mlxbf2_gpio_irq_handler,
-> -				       IRQF_SHARED, name, gs);
-> -		if (ret) {
-> -			dev_err(dev, "failed to request IRQ");
-> -			return ret;
-> +	colon_ptr = strchr(dev_name(dev), ':');
-> +	if (!colon_ptr) {
-> +		dev_err(dev, "invalid device name format\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	ret = kstrtol(++colon_ptr, 16, &num);
-> +	if (ret) {
-> +		dev_err(dev, "invalid device instance\n");
-> +		return ret;
-> +	}
-> +
-> +	if (!num || num == 3) {
-> +		irq = platform_get_irq(pdev, 0);
-> +		if (irq >= 0) {
-> +			girq = &gs->gc.irq;
-> +			gpio_irq_chip_set_chip(girq, &mlxbf2_gpio_irq_chip);
-> +			girq->handler = handle_simple_irq;
-> +			girq->default_type = IRQ_TYPE_NONE;
-> +			/* This will let us handle the parent IRQ in the driver */
-> +			girq->num_parents = 0;
-> +			girq->parents = NULL;
-> +			girq->parent_handler = NULL;
-> +
-> +			/*
-> +			 * Directly request the irq here instead of passing
-> +			 * a flow-handler because the irq is shared.
-> +			 */
-> +			ret = devm_request_irq(dev, irq, mlxbf2_gpio_irq_handler,
-> +					       IRQF_SHARED, name, gs);
-> +			if (ret) {
-> +				dev_err(dev, "failed to request IRQ");
-> +				return ret;
-> +			}
->  		}
->  	}
->  
-> -- 
-> 2.30.1
-> 
-> 
 
-Hi,
+在 2025/7/21 23:51, Rafael J. Wysocki 写道:
+> On Mon, Jul 21, 2025 at 5:37 PM Zihuan Zhang <zzhwaxy.kernel@gmail.com> wrote:
+>> Currently, cpufreq_add_dev() attempts to create a sysfs link
+>> even when the target CPU is offline. Although guarded by a NULL
+>> check on cpufreq_policy, this behavior is not strictly correct,
+>> since offline CPUs shouldn't have their sysfs interface created.
+> Why?
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+Thanks for the comment.
 
-- This looks like a new version of a previously submitted patch, but you
-  did not list below the --- line any changes from the previous version.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/process/submitting-patches.rst for what
-  needs to be done here to properly describe this.
+The idea was to avoid unnecessary sysfs operations for CPUs that are 
+offline, even though the existing checks make it safe. But I understand 
+it's not strictly needed — I'm fine with dropping it.
 
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
+>> This patch cleans up the logic to only add the sysfs link
+>> when the CPU is online and cpufreq policy is properly initialized.
+> I don't really think that this change is necessary.  Thanks!
+>
+>> Signed-off-by: Zihuan Zhang <zzhwaxy.kernel@gmail.com>
+>> ---
+>>   drivers/cpufreq/cpufreq.c | 10 +++++-----
+>>   1 file changed, 5 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+>> index d7426e1d8bdd..0a77892d366c 100644
+>> --- a/drivers/cpufreq/cpufreq.c
+>> +++ b/drivers/cpufreq/cpufreq.c
+>> @@ -1660,12 +1660,12 @@ static int cpufreq_add_dev(struct device *dev, struct subsys_interface *sif)
+>>                  ret = cpufreq_online(cpu);
+>>                  if (ret)
+>>                          return ret;
+>> -       }
+>>
+>> -       /* Create sysfs link on CPU registration */
+>> -       policy = per_cpu(cpufreq_cpu_data, cpu);
+>> -       if (policy)
+>> -               add_cpu_dev_symlink(policy, cpu, dev);
+>> +               /* Create sysfs link on CPU registration */
+>> +               policy = per_cpu(cpufreq_cpu_data, cpu);
+>> +               if (policy)
+>> +                       add_cpu_dev_symlink(policy, cpu, dev);
+>> +       }
+>>
+>>          return 0;
+>>   }
+>> --
 
