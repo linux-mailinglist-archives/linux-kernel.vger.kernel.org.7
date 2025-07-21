@@ -1,90 +1,204 @@
-Return-Path: <linux-kernel+bounces-739607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A36C0B0C877
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:16:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9A86B0C87C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:17:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4668C1AA1BEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:16:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DBC23AA926
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:16:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3763D2DF3E8;
-	Mon, 21 Jul 2025 16:15:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 712861A3154
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 16:15:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 698D11917F1;
+	Mon, 21 Jul 2025 16:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ETIyWcs+"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2D928A71D
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 16:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753114553; cv=none; b=vBhh8OLXZHZRlSjVK6SLBVh9jvjcezYAWOgOU7VN0pvdlD6pHdx6VllRtyZlcczx4pzsKtlAecwgxSy59QBQT5XdbtExkzUXmefizY4xET2bdHGooVJKQbP7HWxlkc6JciNieoWG7/xkIJaUuG/w1QZlFTT/NH9LHBR5Agyi9jU=
+	t=1753114606; cv=none; b=ReS+VvL7yic2os/H07zU6reJP8qWPUf4DhqN0HK25PRKergF0GSvGYxgyQ0yIyabc8c1KhRQwL8VymyKSoNphMpP9srTR0qqmgsuM4cI1uAZoJkQSDH3jjeJAsAlSMvmmgOkhCNa0eu8cs97Fk9CnJX/fVK2nAQ7zefn0exBZnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753114553; c=relaxed/simple;
-	bh=96HexAJ8pgw5xnYaIoy2RO1Cl3uPEp0grH7rEZj9CjQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rvYvLzZYkd482cCF44uvQH0OHrxYpP+9DFylR6McF8xcF1ucOSuOpgjNFVIynqI6PsZw7ZXTDdD0cm/uN62mwIYl8DwoFsfbNVF0IYfHRIzmZXPcgPgWWtw5EdwObAKycY29GEiW62qGiW8P9XgMWhJc846B3xhDTk2jL3HMMWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DFB2D153B;
-	Mon, 21 Jul 2025 09:15:45 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 351323F66E;
-	Mon, 21 Jul 2025 09:15:49 -0700 (PDT)
-Date: Mon, 21 Jul 2025 17:15:46 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Jack Thomson <jackabt.amazon@gmail.com>
-Cc: mark.rutland@arm.com, lpieralisi@kernel.org, arnd@arndb.de,
-	wei.liu@kernel.org, romank@linux.microsoft.com,
-	mhklinux@outlook.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, maz@kernel.org,
-	Sudeep Holla <sudeep.holla@arm.com>, oliver.upton@linux.dev,
-	kvmarm@lists.linux.dev, roypat@amazon.com,
-	Jack Thomson <jackabt@amazon.com>
-Subject: Re: [PATCH] arm64: kvm, smccc: Fix vendor uuid
-Message-ID: <20250721-proficient-carrot-cockatoo-393ae1@sudeepholla>
-References: <20250721130558.50823-1-jackabt.amazon@gmail.com>
+	s=arc-20240116; t=1753114606; c=relaxed/simple;
+	bh=jQK7hBntJAzCfknBxU+rIfU3PYhCTohn9MDcOS0DpEw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E7AwVZ12PDrAHL7D5Juzgj9wEya+tgnR77aIVJ6y1TPtm9GBKxuqfqbOL5w2jFm76UDTcupFrLG+KlJwnrrkTRWZWeWqR5HMW0san0siNugo3AOAYrjdKI0u2jAs6PpcwjysPHcO7ZgN0ZlOiNYTOB7jGOzAdBo8JU97Nruy9os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ETIyWcs+; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45629703011so31474395e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 09:16:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753114603; x=1753719403; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=talQw3V8OesgOs/IENp8i6XaCvz9bMnhlCG20asaaGA=;
+        b=ETIyWcs+YPo8XDhJDpgLJRRmjk53btcpD+Jv4NgvUIonExIan2AUsbFDUtLwW75YHZ
+         gcXYc9LFldeZAQXjpv0HMR2/osV0pazOVFS+ONegPiBuui+qiaNFggUxhhMQqr1R6MAM
+         F0AKuFT2RJOPxO/3o1vgbtgPWb1iKhOE7GZHDZDiYEaldtbBosNvPf/4fbVVOijXrfne
+         i6ATrMR+U3yLfbQCk5u6yyfuq4XQR0ZM0/9Ilsc6P6v6PQl+Xicz7tx6HpGJ7Un/fYBt
+         CMfzm0gFXH6Ei/jt474QgTopB0tdtsqW0m+YSnzN77R4b9WMLG01tnHwch5czBxl98Sa
+         GRQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753114603; x=1753719403;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=talQw3V8OesgOs/IENp8i6XaCvz9bMnhlCG20asaaGA=;
+        b=Q8aqGitdJ7ZzQf4T69GQjByoHTp1uYikm8b1AdVh7Kp6hjkO4yFX75xB/nJT9QrwJd
+         hEIOHGHVDXAuXzduoCTQWTHL4Nz9kTFiX9u9kaoXgVojgswf5c9b1xdRMmrmd1H2NW3c
+         VVNyJznRGxZO1UJd0yq0mKrK/rhYs1i9djWpu1jhC8gj/4NJ0j7I/wqk0NgNQAY+0P1q
+         Tf0UVjhv6fOZK2n0Z5uvfqpdmOMPe+y0hY+UNaAuHancFn+hpgWU9WWjpSctvVDOZtP7
+         PvSgvELkbh083aoPNJ/Hb3p0H3860TL/EFNTtSQgssHTpqjyWNoQZu3VySHNJfEntZCJ
+         Bobg==
+X-Forwarded-Encrypted: i=1; AJvYcCVqbbIAOTq8WbyIZ60ybUb8krfYmdKh7iWavA+G+PndaXAIZM134UOyWh8OdBiCPVkVUh1FowkwLqgQQ9U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkmRk+/Qf4eurzyB7HjkWam07/BtZe4Mnkd4SadVlrPHnukshe
+	Zr7dqsCenOpHEUUXisFOBZYcVdKV3Ha9mjPZ9pMhwXEmFxwgBHocGr5e6eIcQn5X1Zw=
+X-Gm-Gg: ASbGncsK8h1Q7keXWE3zxo7a5+75/i1T2w7YZI8RmuvWlqtnivF7UEzgLeZOZi5ZKfW
+	OJLmw8uOznhhfemymmw5b+cQCnpmEUjKwrnj5ygOVGGtO2IrxDI/u+5Nv6sYZUh2BousT375s2B
+	TcsExLwcQqMW3dqGX2qzjEAFnpNK5GtpDDaFbEEDTzTVqDBKCW/vN91ScVNGmgjkT0Ov2Sayr6r
+	Utl5yiwoYBFRKsPHqeHKydgNljvdm17Kzo2FeLsDDO8h6TP9fPrvHjKpdAkpApXcTu9H4YDXBVr
+	ME+1Vm4yCuHsQkWLr8aXUnLzzRdcm7SJiKGzeZF8tokwDR1P5M2yE5xN2EoeNTytnp5oI/82Z7r
+	YZSS5pXLmx+eWHU2mPHZ9CvYUI0qBuzUIbrbft9vRpYXp0b+Ev5Ly8nFInIOHM+U=
+X-Google-Smtp-Source: AGHT+IERPoYUdYZmsWjMVuo3Vr62pGzsvinykMvY+4a+6Z+e8/5eRFFxtBVqU6BUs0+8JvGwVbgaTg==
+X-Received: by 2002:a05:600c:1f13:b0:43c:fbba:41ba with SMTP id 5b1f17b1804b1-456327bbf81mr138943345e9.28.1753114603099;
+        Mon, 21 Jul 2025 09:16:43 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e57200csm165190545e9.0.2025.07.21.09.16.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Jul 2025 09:16:42 -0700 (PDT)
+Message-ID: <57501e81-7e9c-4cb1-9a37-18307d1e06ca@linaro.org>
+Date: Mon, 21 Jul 2025 17:16:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250721130558.50823-1-jackabt.amazon@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] phy: qcom-mipi-csi2: Add a CSI2 MIPI D-PHY driver
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Vinod Koul
+ <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250710-x1e-csi2-phy-v1-0-74acbb5b162b@linaro.org>
+ <20250710-x1e-csi2-phy-v1-2-74acbb5b162b@linaro.org>
+ <11b573d5-ce4d-476c-b94c-216d427cd838@linaro.org>
+ <08261aa4-689b-4d6b-bfd2-221c1976d254@linaro.org>
+ <a7f64b31-4767-4281-b452-a2bc5351d745@mleia.com>
+ <c93624bb-ee7b-45ac-8b53-b5391f11c9c9@linaro.org>
+ <eac3a877-a4aa-4789-9013-ab8b6c91e0f3@linaro.org>
+ <0a12879f-dc4a-47fb-87a0-ac4b8bcd4d75@linaro.org>
+ <53a19b1d-5665-4937-a07c-5dd1fcde06c5@linaro.org>
+ <3b760685-97db-46e3-80a3-7fad69ad31cd@oss.qualcomm.com>
+ <94b75177-9401-4e0c-966b-5847a29cb6f7@linaro.org>
+ <427548c0-b0e3-4462-a15e-bd7843f00c7f@oss.qualcomm.com>
+ <3UXVZ6ANM9mDjVdMV4SXsiIx_pT3S1lp3RC_Q7mh_o7jF2dpYsni1Sl2TAWv6OCMCRTFmi9aE6BxDquGkOnwEg==@protonmail.internalid>
+ <8b908a20-0bf3-447d-82ea-a5ecee1bf54c@linaro.org>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <8b908a20-0bf3-447d-82ea-a5ecee1bf54c@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-(I can't see this original patch in my mailbox, got only Marc's response)
-
-On Mon, Jul 21, 2025 at 02:05:58PM +0100, Jack Thomson wrote:
-> From: Jack Thomson <jackabt@amazon.com>
+On 21/07/2025 16:46, neil.armstrong@linaro.org wrote:
+> On 15/07/2025 11:33, Konrad Dybcio wrote:
+>> On 7/15/25 11:20 AM, Vladimir Zapolskiy wrote:
+>>> On 7/15/25 12:01, Konrad Dybcio wrote:
+>>>> On 7/15/25 8:35 AM, Vladimir Zapolskiy wrote:
+>>>>> On 7/15/25 03:13, Bryan O'Donoghue wrote:
+>>>>>> On 14/07/2025 16:30, Vladimir Zapolskiy wrote:
+>>>>>>>>
+>>>>>>>> I think that is genuinely something we should handle in camss-csid.c
+>>>>>>>> maybe with some meta-data inside of the ports/endpoints..
+>>>>>>>>
+>>>>>>>
+>>>>>>> This is a CSIPHY property, a CSIPHY hardware configuration and a wiring
+>>>>>>> of sensors to a CSIPHY. Where is the relation to CSID here? There is no.
+>>>>>>
+>>>>>> All the PHY really needs to know is the # of lanes in aggregate, which
+>>>>>> physical lanes to map to which logical lanes and the pixel clock.
+>>>>>>
+>>>>>> We should add additional support to the Kernel's D-PHY API parameters
+>>>>>> mechanism to support that physical-to-logical mapping but, that's not
+>>>>>> required for this series or for any currently know upstream user of CAMSS.
+>>>>>>
+>>>>>>> Please share at least a device tree node description, which supports
+>>>>>>> a connection of two sensors to a single CSIPHY, like it shall be done
+>>>>>>> expectedly.
+>>>>>> &camss {
+>>>>>>          port@0 {
+>>>>>>              csiphy0_lanes01_ep: endpoint0 {
+>>>>>>                  data-lanes = <0 1>;
+>>>>>>                  remote-endpoint = <&sensor0_ep>;
+>>>>>>              };
+>>>>>>
+>>>>>>              csiphy0_lanes23_ep: endpoint0 {
+>>>>>>                  data-lanes = <2 3>;
+>>>>>>                  remote-endpoint = <&sensor1_ep>;
+>>>>>>              };
+>>>>>>           };
+>>>>>> };
+>>>>>
+>>>>> Don't you understand that this is broken?.. That's no good.
+>>>>>
+>>>>> Please listen and reread the messages given to you above, your proposed
+>>>>> "solution" does not support by design a valid hardware setup of two
+>>>>> sensors connected to the same CSIPHY.
+>>>>>
+>>>>> I would propose to stop force pushing an uncorrectable dt scheme, it
+>>>>> makes no sense.
+>>>>
+>>>> If all you're asking for is an ability to grab an of_graph reference
+>>>> from the camss (v4l2) driver, you can simply do something along the
+>>>> lines of of_graph_get_remote_port(phy->dev->of_node)
+>>>>
+>>>
+>>> It's not about the driver specifics, my comment is about a proper
+>>> hardware description in dts notation, please see the device tree node
+>>> names.
+>>
+>> I'm a little lost on what you're trying to argue for..
+>>
+>> I could make out:
+>>
+>> 1. "the phy should be a multimedia device"
+>> 2. "There is no ports at all, which makes the device tree node unusable,
+>>     since you can not provide a way to connect any sensors to the phy."
+>>
+>> I don't really understand #1.. maybe that could be the case if the PHY
+>> has a multitude of tunables (which I don't know if it does, but wouldn't
+>> be exactly surprised if it did) that may be usecase/pipeline-specific
+>>
+>> As for #2, I do think it makes sense to connect the sensors to the PHY,
+>> as that's a representation of electrical signals travelling from the
+>> producer to the consumer (plus the data passed in e.g. data-lanes is
+>> directly related to the PHY and necessarily consumed by its driver)
 > 
-> Commit 13423063c7cb ("arm64: kvm, smccc: Introduce and use API for
-> getting hypervisor UUID") replaced the explicit register constants
-> with the UUID_INIT macro. However, there is an endian issue, meaning
-> the UUID generated and used in the handshake didn't match UUID prior to
-> the commit.
+> The port/endpoint should represent the data flow, and if the signal is the following:
 > 
-> The change in UUID causes the SMCCC vendor handshake to fail with older
-> guest kernels, meaning devices such as PTP were not available in the
-> guest.
-> 
-> This patch updates the parameters to the macro to generate a UUID which
-> matches the previous value, and re-establish backwards compatibility
-> with older guest kernels.
-> 
+> sensor -> csiphy -> csid
 
-Nice catch. This is result of classic confusion with UUID and GUID especially
-coming from Microsoft who tend to use GUID more.
+I'll be honest.
 
-Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+I looked at your upstreamed code
 
-This also makes me wonder if the initialisation in arch/arm64/hyperv/mshyperv.c
-is also wrong or may be that's correct only MS guys can confirm as I couldn't
-find the UUID string for that.
+drivers/phy/amlogic/phy-meson-axg-mipi-dphy.c 
+Documentation/devicetree/bindings/parch/arm64/boot/dts/amlogic/meson-khadas-vim3-ts050.dtsoc/meson-axg.dtsi
 
--- 
-Regards,
-Sudeep
+And didn't really think CSIPHY needed to be included in the data-graph.
+
+---
+bod
 
