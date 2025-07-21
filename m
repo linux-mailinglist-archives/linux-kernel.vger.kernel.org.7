@@ -1,131 +1,115 @@
-Return-Path: <linux-kernel+bounces-738773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE6D4B0BCDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:42:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87714B0BCE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:43:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D469166136
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:42:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8A0F167A35
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:42:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B97327F019;
-	Mon, 21 Jul 2025 06:42:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF7627FB3A;
+	Mon, 21 Jul 2025 06:42:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gdgWa7zU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bDfUUXio";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GqCH6LtS"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04D627EC80;
-	Mon, 21 Jul 2025 06:42:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32DB927F187;
+	Mon, 21 Jul 2025 06:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753080159; cv=none; b=q8CrhTLiCskqxWK6PuLxMY8XSBWs13l6it0UWwR9p+xhlfhrYuZzX42LCOUfpNg4DYGTabUrEGoVQ/vzA0X1FiFx1w922OEs6tUz+7JkOvmY1bVlNgdyCFPru/Z2Nf/drnm80LDVMuTGcfzCK8lXoqsEYALbSufU4orsro7H/TY=
+	t=1753080167; cv=none; b=QWioLANpvkpcEs4yuHpXIqD/UpkS64uqzHIl0uUZJyd+SAAFE2fXWt5adgpzYUoWV1Gli9VQk/GTKvEyeNj9RTCNMrvUmqgedJ5mSBUHLQ4M20jbYFhngJuLPRMu+oTvkwfaoAFCfj+Cybt9Ln0mOIH++92BdF8Mjle3G4AeZaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753080159; c=relaxed/simple;
-	bh=R0y01Ira8vxCv34EaQba0Oh2JfMMnOt+9HcYYnrhJ8k=;
-	h=Content-Type:Date:Message-Id:Subject:Cc:From:To:References:
-	 In-Reply-To; b=P8Y7F4bJJC8l3mY/76P5dsGDoG1yAh67chvOW4ZFRKDXWimOpKnMlJ+VnK5HH9sjol7R6ziBooKM+WvpZAWnr8+enXaDg9YXjgDMtbPgCFUHOY4tZuvP/6XK6//cgZiOBRRj8TtXzCyui+fyzOQpWb9VxiCpjILuVNwVhDb60JU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gdgWa7zU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7184C4CEED;
-	Mon, 21 Jul 2025 06:42:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753080157;
-	bh=R0y01Ira8vxCv34EaQba0Oh2JfMMnOt+9HcYYnrhJ8k=;
-	h=Date:Subject:Cc:From:To:References:In-Reply-To:From;
-	b=gdgWa7zUKhWWxVb7zMuTgFjTlM1F+8XSUbzJPspaVX2xc0YJAT2JgY3r5NY6cIRAh
-	 zh92DAxdjN0+sk/aZHrW2NVRKdvOXB1rPZZrIb8P+xytL2AkWCnI4eXpnFR6jyvtaz
-	 3n2fufub4WDiqSlRrpxWad+N6tBteybAPGTG73n5qu7yD7UjmqgPLjnh7yNLJsaF/p
-	 PCn8rPS3j3SkC5HO1EVVqT1T3YYcFjqdIiKjOmGKxmbA79TUwZlCDZJmrVinsW0iC4
-	 yaOksr5ZNyRJ6S3Hj9LK8bk7dedaskp1gZD3WZDeIuFHtfzJ8LailcJqBEv/TuIifz
-	 NScTJ6JNUthtA==
-Content-Type: multipart/signed;
- boundary=6493458b0ac4188a6504b0b3b194601da3c29538be77290fa402a0754a70;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Mon, 21 Jul 2025 08:42:32 +0200
-Message-Id: <DBHJ1S8MTSA2.35ZZDZFQGFNB1@kernel.org>
-Subject: Re: [PATCH 1/3] dt-bindings: mfd: Add power-button option for TI
- TPS6594 PMIC
-Cc: "Job Sava" <jsava@criticallink.com>, "Krzysztof Kozlowski"
- <krzk@kernel.org>, "Lee Jones" <lee@kernel.org>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "Julien Panis" <jpanis@baylibre.com>,
- "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-input@vger.kernel.org>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Jon Cormier" <jcormier@criticallink.com>, "Jerome Neanne"
- <jneanne@baylibre.com>, "Markus Schneider-Pargmann" <msp@baylibre.com>
-X-Mailer: aerc 0.16.0
-References: <20250520-linux-stable-tps6594-pwrbutton-v1-0-0cc5c6e0415c@criticallink.com> <20250520-linux-stable-tps6594-pwrbutton-v1-1-0cc5c6e0415c@criticallink.com> <20250521-wandering-tested-porpoise-acbef7@kuoka> <CAKMwjwTP=xSsX3UuK02sKbXWaU7y-ErytNYCL_P0UveDytQW2A@mail.gmail.com> <20250529-wise-tremendous-stork-a7d091@kuoka> <CAKMwjwQOBE651A-5VVjwcv5TspO2eNZfgwWzMpTTWxhR3nGKUw@mail.gmail.com> <0fb4b411-1b27-43fc-8d48-e5220fc85478@kernel.org> <CAKMwjwSZEhXav2U-bd+JNyVDK3JdJoN1kJjnxpfKXBKsW2XxdQ@mail.gmail.com> <DBEDT0OKPYAC.EX6HDQCKUWIS@walle.cc> <CADL8D3bpVVrswNUvS5nSeQYuZbyPOfMoMFG_JrPSFb9YkNEKdg@mail.gmail.com>
-In-Reply-To: <CADL8D3bpVVrswNUvS5nSeQYuZbyPOfMoMFG_JrPSFb9YkNEKdg@mail.gmail.com>
+	s=arc-20240116; t=1753080167; c=relaxed/simple;
+	bh=Y87bhy5daZH8/4KCjU0hN1yCQ/40lLvGcZ4NSSiWxvQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rzg+V14IR86TPkjy3arSv9iaMw7Aacdois8YoOQ5IAOanc22+mbry0MWpF3+3QPs71hfe52GdrIYdER1eDAAoSHHJ1gnQ8c7hNxwQ8UpCtMQtJbq9Nz4531ak6Glnq4HRhxs/rH4e/2HYvmx1l6lngH//GaS8Xb/6frT6oiSw2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bDfUUXio; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GqCH6LtS; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 21 Jul 2025 08:42:40 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1753080163;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tyczl2pXIS5un450KeY12IY1AEuLzrL/JOTCmCTx0/Y=;
+	b=bDfUUXioek9CJPvHOobeJUFRkzBLUB4SxeE7NHC9ODhWlWmij0QEEU8AaC+a4Y8vHB+v/r
+	vjqq+jqE5ZJPQU9dvC9XKUfiDg9mOwznhjswrKSpysrWTHy5bRLE8uikKkLAD5Zj0iFTjz
+	YXKOIGPO6+m9pAIAi/Nk6QdDKFHyxPdQvI8ZCZgn0G+D8O2rGhRAhX4avhjPm65L3mMfhM
+	eLvE5drLzj0rJJtQaAS8tyxQnx5wSj6EFvrjmz8b2CZyh0b1b4xFdszwhisYWCEd4xlKfm
+	pCtRWmAXiLHgtnDgqW1LBlID3Jn6KiabOxhgfhscrpLFti4df0DlUCjKu7wZSQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1753080163;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tyczl2pXIS5un450KeY12IY1AEuLzrL/JOTCmCTx0/Y=;
+	b=GqCH6LtSDPllEmiW8hSXADeWdGxHElcJ8pEB2JVXeLV0OpRpMGQktzjDkwXz4EWuGmvo5Z
+	z33lXSs4UrMWhWAA==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Willy Tarreau <w@1wt.eu>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
+	Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Nicolas Schier <nicolas.schier@linux.dev>, Kees Cook <kees@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, linux-doc@vger.kernel.org, workflows@vger.kernel.org, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v5 06/15] fs,fork,exit: export symbols necessary for
+ KUnit UAPI support
+Message-ID: <20250721075849-b3cf33b6-2516-4707-bab6-53fe95afbffa@linutronix.de>
+References: <20250717-kunit-kselftests-v5-0-442b711cde2e@linutronix.de>
+ <20250717-kunit-kselftests-v5-6-442b711cde2e@linutronix.de>
+ <20250718164412.GD2580412@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250718164412.GD2580412@ZenIV>
 
---6493458b0ac4188a6504b0b3b194601da3c29538be77290fa402a0754a70
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On Fri, Jul 18, 2025 at 05:44:12PM +0100, Al Viro wrote:
+> On Thu, Jul 17, 2025 at 10:48:08AM +0200, Thomas Weiﬂschuh wrote:
+> > The KUnit UAPI infrastructure starts userspace processes.
+> > As it should be able to be built as a module, export the necessary symbols.
+> > 
+> > Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> 
+> No.  This is just plain wrong.  This is way too low-level; teach kernel/umh.c
+> to provide what you need, but do *not* add more kernel_execve() callers.
 
-[+ Jerome and Markus ]
+Sounds good.
 
-Hi,
+> And the situation with ramfs needs cleaning up, but "export put_filesystem()"
+> is not a solution.
 
-> > > > Someone knowing the device should come with arguments whether
-> > > > other states for this are useful at all. Or not useful and then arg=
-ument
-> > > > that in commit msg for example.
-> > > The other states are not useful for the kernel. Only the push button
-> > > has a need for an interrupt handler. The other states the PMIC handle=
-s
-> > > on its own.
-> > >
-> > > What exactly do you want me to change?
-> >
-> > Because the driver isn't setting the configuration anyway, wouldn't
-> > it be possible to read the config bits (Register 0x3c, bits 7-6) to
-> > figure out whether the pin is configured as power-button instead of
-> > having this property?
-> >
-> > I mean, the correct config is likely stored in the NVM anyway, and
-> > reconfiguring it to another value seems unlikely.
-> Currently, the TPS MFD driver only loads the power button driver if
-> the flag is set.  We could put that discovery code in the MFD driver,
-> but what if the system designer doesn't want the power button driver?
+Cleaning up would mean to stop calling put_filesystem(), as it is a no-op
+here anyways, right?
 
-The device tree is not for configuration. The designer can just
-ignore the input event in that case.
 
-> I'm not sure auto detecting it makes sense.
+This would still leave the exports for replace_fd(), create_pipe_files()
+and set_fs_pwd(). Instead of using kernel/umh.c, I can also extend
+kernel/usermode_driver.c to provide these in a way that works for me.
+But kernel/usermode_driver.c is dead code, unused since commit
+98e20e5e13d2 ("bpfilter: remove bpfilter")
+Would it be fine to export those symbols? And delete usermode_driver.c,
+as carrying around an unused generic framework seems pointless.
 
-Why?
 
-> We are basing this on the other TI PMIC drivers and how they are
-> configured. I'm not sure I want to reinvent the wheel, so to speak.
-
-That was never a good reason. Maybe there was a reason for the
-TPS65219. Markus? Jerome? I haven't found anything in the commit
-messages or cover letters. Only that it is "optional". Not sure what
-that means. According to the TPS65219 datasheet, that pin if not
-used shall be configured as EN and be connected to VSYS.
-
--michael
-
---6493458b0ac4188a6504b0b3b194601da3c29538be77290fa402a0754a70
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaH3hWRIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/hFtAF/d1kdDlZUxRD9dqbtdD3Pkp9siZiMMOkP
-A8dvPl4Q37apv3pBGU1xvF/RwwElPKGKAYCPjkNWw/8Pjy9QYI485mpRElbm8EqP
-Q4yItP4WaDZtZykP4FGO1RMMYyvT5pHWopY=
-=4oih
------END PGP SIGNATURE-----
-
---6493458b0ac4188a6504b0b3b194601da3c29538be77290fa402a0754a70--
+Thomas
 
