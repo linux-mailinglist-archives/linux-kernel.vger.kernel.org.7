@@ -1,96 +1,86 @@
-Return-Path: <linux-kernel+bounces-739767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 121FBB0CAA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:41:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ADB2BB0CAAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:47:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD3321AA0517
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:41:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89F121AA15B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:47:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C6B12D836F;
-	Mon, 21 Jul 2025 18:41:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43741EFF8E;
+	Mon, 21 Jul 2025 18:47:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OSrCbbQO"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fPojIFSs"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B9A2E267B;
-	Mon, 21 Jul 2025 18:41:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FECD3D6F;
+	Mon, 21 Jul 2025 18:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753123278; cv=none; b=sQGS+YWtzt7OF28544ZofF/6raEWjNrMEzUM0zKWhpP7upqrKtDJtbiYCS+8xU3EfKfb46hzCsmM1KA5PuevXgiy6jKArdnHczp34VFLdcJIZzeCiIULZdwnHzAytLy/j2PIdHhMTTA2x6vnEfUohJAD+1ssM7WP415ptH1KHM8=
+	t=1753123620; cv=none; b=UCc2pXDS29hb4wthZGR6rSSg5KB4/leCXrBLxj5R5Mtbks7oqFDM1pjOSz0JMYRD1eP8SzqB3otkV8pO/1rrzH0VUbOQUOD2WYeN/9Jw1cJ+r5AiYPZurf3E1wl5Y9E/NkKqPYuK/yLhct36DzpslTPGXVEP2cpntGoBkd4VrvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753123278; c=relaxed/simple;
-	bh=8hNG9wZ0JE6FoGtgzaIMtbuagmSpN6K4kVCvXzXp048=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HroOX/0fwK+yA0W64p0UBUpf/WTyBfN3z5weomRGs7IpSlQ4K/EHICREZfn7XGBf9NKxhYdS9WYSGTpErO+MTe+fQ+rVfmunfPJ3CAYqy8copdDPshagp0H/x3kRMAjOEz60r07mbHJQzLQpiZh74Fbk5KJP0Ns7seuRf9GxUic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OSrCbbQO; arc=none smtp.client-ip=209.85.208.182
+	s=arc-20240116; t=1753123620; c=relaxed/simple;
+	bh=qZW1n1QhSS4od7bhId40BZrOJv+InQvc6+pE7EoGBM4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=d/ysz9fcroJMHgo0+jPzt1eF8aquMJIJjFzffKLKu6ZUkjxTcPyuuftN6MGyogNzFyoI66+xz7Chqdzv3y8XhXe+LSjd6npMvQPQbYbj01VX9rrlj7pB1ulfNUcMNI709WTcnaWhofmVAGPOYualZduUeECDJM7GZaoXrJIbOeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fPojIFSs; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-32ce1b2188dso39727501fa.3;
-        Mon, 21 Jul 2025 11:41:15 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4537edf2c3cso49249005e9.3;
+        Mon, 21 Jul 2025 11:46:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753123274; x=1753728074; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f5ktcj173SDXe4/XzIGuJERLLK4dG9ApB39JQrJE8iI=;
-        b=OSrCbbQOn6IQXLdfQZwbLX70f8QMliuQjfWY58s3iecxNVuuZN8ZgON0NHdWBKpHnT
-         t/z6xYtj+paTO199KBv0J/9vCjnLXWAT8lRXdhfIjbtSI8YPVsdioHItFx3fiAnscSE8
-         xv5H73zOGUB0jdx9uzA5mir949Di6LrU92r25DnWCRSvBkfQy7rS1LhWXksG/OYCjMaB
-         09ERcwOYU17Ne2Gej2d0me0NvGkEXxcUWHNjR1Qz5FKmENt+1IE2NlCqfZidscQ9QyP4
-         VRO0MpDoWpE9WCbftmyImbUJQqA243SUZBYQuQMibrojujXS3atqL+xlUY9dpywoBirf
-         Jvxw==
+        d=gmail.com; s=20230601; t=1753123617; x=1753728417; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zm+WLqBQEhS8hgpzHKC7oKuQjFkM4xwWwbsQmbOv2D0=;
+        b=fPojIFSsK8H0tyJrS3pZ4JQtpNP/6M/yxhQdZk8lKLnCRJqS2NYvkUGPspMl2vTuEU
+         GJC5UA/wJ0ERWxPUhgvsXqsE7grB2/RWNwEINDpIi75tgXMFp8uFccJc0CaCv03SwG2K
+         GGaVXtWdtxQ+bMvPdUHm6EAD5nx3SIIRrrUV2ef8sX6BUDtdxhUg1uDxmP3AY29FA+Cz
+         tQ3LxIzglvzwubAf/ZlrJFLuCHl9iOp0ZPfjrmtX9wb0dk0PukTPgZEXO9MK+nqKyIH2
+         +5deo4BAlUWYGRWxe722z0XNNJmrBsCQIKGHv1XLq6NT18HcxD/3PIDX+/I+dxdj7gKM
+         hDCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753123274; x=1753728074;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f5ktcj173SDXe4/XzIGuJERLLK4dG9ApB39JQrJE8iI=;
-        b=eHBbOh+P4beN3VyBAjrZrhK9Gb2BPBAvNtoUTfQABelXm+m/Qfeu2sK+Jp0ZNLboMw
-         qBz4aA1oxw42To3ci61wMkLDDCgK01/YMePayHT9Po3ZKY5jwvjiiqqvCnP+uBvWaKGM
-         6wdJwLeN9sGmcq2f0pBsCd6sfcGBOvUD5xxEIeppRjvHhzDPZ2x73VwQQi0chqc8oqLX
-         Gg7vdyYCsn/avA2Oi4axtemCP7LETjTegKt6yUKI9IXkMzzcFpnKyzAbeRfz5Pa0sRUl
-         L3v8O7lavEpptJrl34/a/crvXRLQx9J+TLfxO706sd3PdVOYBG1PCvt8ZGU5qW4sXY0T
-         tXDg==
-X-Forwarded-Encrypted: i=1; AJvYcCU7/nvZNdhou2GkF7PRB//24x8bBR62qaYCZiAwEkKgFICousN0GviC1h9Yg+UfLULgqt2ueQ9ScCI4wMc=@vger.kernel.org, AJvYcCVPBwR+q1RCu1Jcn99JzuT+/RoXHu5WvhCu8B/1HHaj4/k+QrIdvid+Q6YweYpIkLDda2tBCxVU@vger.kernel.org, AJvYcCWnEkK+A7MnAQZ+KdP7kyeJLJlEuM6FVX9wwf+bTot15zbY6Kbmq8VIKbjLGEr3FM8S4Hw8QOg6AfX3@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx17nbPYPfTvMRAwKXerKaYJfVwkwuX0GgcXe0jloE76CSFRAYS
-	cOl8feGojbfal5ASVKCYL2hPo38VQIAYv0Z/iFvxDEPgCxIKmlW6sT5Z
-X-Gm-Gg: ASbGnctN714X+b9XLT2m6izb50V5WntyPj/Ky+/hfPrgNy2XAGyxH/SUFyAIx8EHNN7
-	nrf8HSrNXapyNwhHpSv3B7VMvKH8vsnRy8/CJtvXCD4xO2//fwFGcVUE/KncXoWpn0lncg7d+DK
-	0cz1obirhzi/0cRSxi0lPgyeJsY5qNYEdXg/hAzX+rKazJ58UyVlfsMlcIPG1HTYLKZIuSUgiXz
-	ouQYSjmL90BeVSAB9leJLqM/F2wE+zN5ST5BsjXDxE0TWw4SpfE6shCkag1grSY9iacNMRagrSi
-	QOQYsOKqbdccFRwOi+bR9QxQNQjz47Tge7NnG0pUk1rMCp/Lynbt2AN7DtmZoprZTA+A1/BKgNW
-	qu0GrQILMQRSJZutn4Ecdw7nJ+8ZwIugQG7OlScQA3r/d3ebzEsF1PITbiVI=
-X-Google-Smtp-Source: AGHT+IGFdgfQQ9oE8s8x5eWEmCVimaM2qWC8xpbOZFHE2zPoMEbfi3kg9s1xj/qIY0vo5leyRvOrrg==
-X-Received: by 2002:a2e:bc06:0:b0:32b:5272:3214 with SMTP id 38308e7fff4ca-3309a5a7b30mr50861711fa.30.1753123273630;
-        Mon, 21 Jul 2025 11:41:13 -0700 (PDT)
-Received: from SC-WS-02452.corp.sbercloud.ru ([37.78.122.38])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-330a910546bsm14116661fa.42.2025.07.21.11.41.12
+        d=1e100.net; s=20230601; t=1753123617; x=1753728417;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zm+WLqBQEhS8hgpzHKC7oKuQjFkM4xwWwbsQmbOv2D0=;
+        b=PLvGYKkYvHM6thaWHFHgWk3QzjzSmm3aiuHua1RIn1BlVT2jpsst3OoagUScySu/3W
+         Mkm78+zx7uUyWG36vZq8NkEx/93GLojfcLN1Iz5d2Fhd+cLpvwOuXiclQ8zVxQUhryiE
+         1Kr+ugnAu7b9EhDK6KiaY34dBNmGhNCetuKaon3rppi0QUvGefMYwoa7VvPNBoxth885
+         H2weir6KWyKuzMf9QwsE0Ioh7+I7WwTi4DWYy9og+LxEe/VQHDifDFjcxvmACnZoH6es
+         czVTY8AF+zNnwx/0rF0rrDbYFM7xwAqgg7MNKHu8EjbEWFJChfkjO98Jhttm4dOGGggR
+         wyOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVTP6S7+uNrtQQQEEg5bA64IeCLDYWQgA45xnmDlWLoyaAa+3VyfUF1SoIrDntjnBqXr5lcrKNn5Ghc@vger.kernel.org, AJvYcCXghLtRvypMkSQD+bUU9NeRpm5w5P4gHH9pLTJB82BY9Rfvz38RxH/6oIloAu/UkJpUqhfEGw7VhvX8hR+x@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/rQ1AU67j1sHzP3koBCyhzsSS2+7pPSwKu/0zsBZLpX1oS9s2
+	osL5RpVvBlQpDN5qRaGe+xWYnW8mavPfk04zLKYq4JUZlSBuiaZf8nyK
+X-Gm-Gg: ASbGncsiVPCiby40RbHaaWrPTMHm55XQKtZV75sUQm71A5Rd4qQdpa8SVqvHk8jzcI9
+	rQyHV5XsXv7fQvlP6mutl0oL5KuIvGT2KKb1Vahot2nXCE76m6KrneAwcxVGwHVmikA3odsLdZs
+	ZvK8Jxz+pn2HY7qZD9Gy6FkYoc2DGB6/nMV5546BkYhlP7zYk3f+ZvNsM/vA9SOJDXBiugtToq8
+	/xg4qp0+iG4Xzcf5kdNBUFESys33bnAI3fOwyVANMwsZGMQs8d7i5gp4N8OYgy2yR/52AlyZu9C
+	9IlNQ1RbGNFBhcMTqYPA9q1hI54sZibCWG4fdA7cGa6ULLfj12SkRH18NGUi1Gsi6vMhto53rHj
+	YvRZywWiEjlmMHjV0OejDbIw=
+X-Google-Smtp-Source: AGHT+IF87XkaGBkBz3u2HDbJiCSDIGew/MEmPV9GgBn4WDn0XrkCxvVqhHRdZgQHhZ1QDctZaggipw==
+X-Received: by 2002:a05:600c:858c:b0:442:f97f:8174 with SMTP id 5b1f17b1804b1-4562eb80e1amr161732795e9.18.1753123616392;
+        Mon, 21 Jul 2025 11:46:56 -0700 (PDT)
+Received: from Ansuel-XPS24 ([109.52.136.49])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b61ca48970sm11437043f8f.57.2025.07.21.11.46.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 11:41:13 -0700 (PDT)
-From: Sergey Bashirov <sergeybashirov@gmail.com>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Jeff Layton <jlayton@kernel.org>,
-	Christoph Hellwig <hch@lst.de>,
-	NeilBrown <neil@brown.name>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>,
-	linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sergey Bashirov <sergeybashirov@gmail.com>,
-	stable@vger.kernel.org,
-	Konstantin Evtushenko <koevtushenko@yandex.com>
-Subject: [PATCH 2/2] NFSD: Fix last write offset handling in layoutcommit
-Date: Mon, 21 Jul 2025 21:40:56 +0300
-Message-ID: <20250721184105.137015-3-sergeybashirov@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250721184105.137015-1-sergeybashirov@gmail.com>
-References: <20250721184105.137015-1-sergeybashirov@gmail.com>
+        Mon, 21 Jul 2025 11:46:55 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] dt-bindings: nvmem: airoha: add SMC eFuses schema
+Date: Mon, 21 Jul 2025 20:46:33 +0200
+Message-ID: <20250721184640.2885-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,108 +89,95 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The data type of loca_last_write_offset is newoffset4 and is switched
-on a boolean value, no_newoffset, that indicates if a previous write
-occurred or not. If no_newoffset is FALSE, an offset is not given.
-This means that client does not try to update the file size. Thus,
-server should not try to calculate new file size and check if it fits
-into the segment range. See RFC 8881, section 12.5.4.2.
+Add Airoha SMC eFuses schema to document new Airoha SoC AN7581/AN7583
+way of accessing the 2 eFuse bank via the SMC command.
 
-Sometimes the current incorrect logic may cause clients to hang when
-trying to sync an inode. If layoutcommit fails, the client marks the
-inode as dirty again.
+Each eFuse bank expose 64 eFuse cells of 32 bit used to give information
+on HW Revision, PHY Calibration,  Device Model, Private Key and
+all kind of other info specific to the SoC or the running system.
 
-Fixes: 9cf514ccfacb ("nfsd: implement pNFS operations")
-Cc: stable@vger.kernel.org
-Co-developed-by: Konstantin Evtushenko <koevtushenko@yandex.com>
-Signed-off-by: Konstantin Evtushenko <koevtushenko@yandex.com>
-Signed-off-by: Sergey Bashirov <sergeybashirov@gmail.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 ---
- fs/nfsd/blocklayout.c |  5 ++---
- fs/nfsd/nfs4proc.c    | 30 +++++++++++++++---------------
- 2 files changed, 17 insertions(+), 18 deletions(-)
+Changes v2:
+- Drop redundant description for reg
+- Improve example node name
 
-diff --git a/fs/nfsd/blocklayout.c b/fs/nfsd/blocklayout.c
-index 4c936132eb440..0822d8a119c6f 100644
---- a/fs/nfsd/blocklayout.c
-+++ b/fs/nfsd/blocklayout.c
-@@ -118,7 +118,6 @@ nfsd4_block_commit_blocks(struct inode *inode, struct nfsd4_layoutcommit *lcp,
- 		struct iomap *iomaps, int nr_iomaps)
- {
- 	struct timespec64 mtime = inode_get_mtime(inode);
--	loff_t new_size = lcp->lc_last_wr + 1;
- 	struct iattr iattr = { .ia_valid = 0 };
- 	int error;
- 
-@@ -128,9 +127,9 @@ nfsd4_block_commit_blocks(struct inode *inode, struct nfsd4_layoutcommit *lcp,
- 	iattr.ia_valid |= ATTR_ATIME | ATTR_CTIME | ATTR_MTIME;
- 	iattr.ia_atime = iattr.ia_ctime = iattr.ia_mtime = lcp->lc_mtime;
- 
--	if (new_size > i_size_read(inode)) {
-+	if (lcp->lc_size_chg) {
- 		iattr.ia_valid |= ATTR_SIZE;
--		iattr.ia_size = new_size;
-+		iattr.ia_size = lcp->lc_newsize;
- 	}
- 
- 	error = inode->i_sb->s_export_op->commit_blocks(inode, iomaps,
-diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
-index 656b2e7d88407..7043fc475458d 100644
---- a/fs/nfsd/nfs4proc.c
-+++ b/fs/nfsd/nfs4proc.c
-@@ -2475,7 +2475,6 @@ nfsd4_layoutcommit(struct svc_rqst *rqstp,
- 	const struct nfsd4_layout_seg *seg = &lcp->lc_seg;
- 	struct svc_fh *current_fh = &cstate->current_fh;
- 	const struct nfsd4_layout_ops *ops;
--	loff_t new_size = lcp->lc_last_wr + 1;
- 	struct inode *inode;
- 	struct nfs4_layout_stateid *ls;
- 	__be32 nfserr;
-@@ -2491,13 +2490,21 @@ nfsd4_layoutcommit(struct svc_rqst *rqstp,
- 		goto out;
- 	inode = d_inode(current_fh->fh_dentry);
- 
--	nfserr = nfserr_inval;
--	if (new_size <= seg->offset)
--		goto out;
--	if (new_size > seg->offset + seg->length)
--		goto out;
--	if (!lcp->lc_newoffset && new_size > i_size_read(inode))
--		goto out;
-+	lcp->lc_size_chg = false;
-+	if (lcp->lc_newoffset) {
-+		loff_t new_size = lcp->lc_last_wr + 1;
+ .../bindings/nvmem/airoha,smc-efuses.yaml     | 65 +++++++++++++++++++
+ 1 file changed, 65 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/nvmem/airoha,smc-efuses.yaml
+
+diff --git a/Documentation/devicetree/bindings/nvmem/airoha,smc-efuses.yaml b/Documentation/devicetree/bindings/nvmem/airoha,smc-efuses.yaml
+new file mode 100644
+index 000000000000..e21ce07c4f41
+--- /dev/null
++++ b/Documentation/devicetree/bindings/nvmem/airoha,smc-efuses.yaml
+@@ -0,0 +1,65 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/nvmem/airoha,smc-efuses.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+		nfserr = nfserr_inval;
-+		if (new_size <= seg->offset)
-+			goto out;
-+		if (new_size > seg->offset + seg->length)
-+			goto out;
++title: Airoha SMC eFuses
 +
-+		if (new_size > i_size_read(inode)) {
-+			lcp->lc_size_chg = true;
-+			lcp->lc_newsize = new_size;
-+		}
-+	}
- 
- 	nfserr = nfsd4_preprocess_layout_stateid(rqstp, cstate, &lcp->lc_sid,
- 						false, lcp->lc_layout_type,
-@@ -2513,13 +2520,6 @@ nfsd4_layoutcommit(struct svc_rqst *rqstp,
- 	/* LAYOUTCOMMIT does not require any serialization */
- 	mutex_unlock(&ls->ls_mutex);
- 
--	if (new_size > i_size_read(inode)) {
--		lcp->lc_size_chg = true;
--		lcp->lc_newsize = new_size;
--	} else {
--		lcp->lc_size_chg = false;
--	}
--
- 	nfserr = ops->proc_layoutcommit(inode, rqstp, lcp);
- 	nfs4_put_stid(&ls->ls_stid);
- out:
++description: |
++  Airoha new SoC (AN7581/AN7583) expose banks of eFuse accessible
++  via specific SMC commands.
++
++  2 different bank of eFuse or 64 cells of 32 bit are exposed
++  read-only used to give information on HW Revision, PHY Calibration,
++  Device Model, Private Key...
++
++maintainers:
++  - Christian Marangi <ansuelsmth@gmail.com>
++
++properties:
++  compatible:
++    enum:
++      - airoha,an7581-efuses
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 0
++
++patternProperties:
++  '^efuse-bank@[0-1]$':
++    type: object
++
++    allOf:
++      - $ref: nvmem.yaml#
++
++    properties:
++      reg:
++        description: Identify the eFuse bank.
++        enum: [0, 1]
++
++    required:
++      - reg
++
++    unevaluatedProperties: false
++
++required:
++  - compatible
++
++additionalProperties: false
++
++examples:
++  - |
++    efuse {
++        compatible = "airoha,an7581-efuses";
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        efuse-bank@0 {
++           reg = <0>;
++        };
++    };
++
++...
 -- 
-2.43.0
+2.50.0
 
 
