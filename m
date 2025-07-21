@@ -1,141 +1,219 @@
-Return-Path: <linux-kernel+bounces-739780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79B44B0CAD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 21:06:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEFE3B0CAD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 21:07:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A53F73BAA99
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:06:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD3073A8202
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:06:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DCB9226888;
-	Mon, 21 Jul 2025 19:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LA+1lhsk"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DD622CBE6;
+	Mon, 21 Jul 2025 19:06:41 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0A151E0DD8;
-	Mon, 21 Jul 2025 19:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AACA922541F
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 19:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753124792; cv=none; b=gQko07BU5NTD0W+vUj3iy+/D66OdrlMEN0XcFN5VNO6r29pwLKikisWVV9pHrG+MKV9rTbbAYd+YUTHCk3EgsRWEbzzf09JSbLzRbJJ8d/QoL/lpjXfAUX+sIw7MP2grHFbxU54LrY4F3Uj8k8RzE7VaBw+e313K27ZKEOf232w=
+	t=1753124801; cv=none; b=GaWvZT9ybb8hEj6cNTKTKYdia8eeIdfTOJ1d6MKJXCJ5xclddvoMhOqqgzIfb/6OwFR9jgB1zim3gDXlUMSLiTvapnwZDHEPKdOsUIQtlgFk4Fq9SPXkUipj2l0y5lKto/DPROeLxU7RwyQnf2V9KMKHf54GiDFLf2j2QKZ/5Ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753124792; c=relaxed/simple;
-	bh=Wamh0gHE9NcJWmoHNh25FMqPIjRNftLncjqnbOsx4/A=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dwdTue8nQCyOoYPQXYfZqmAxfP4Q+NXSc0Kkf2AHovThRGqZp4cQ3dkeLYU/oFy8YPb7dMGUTDI0U6mfys6Am+9tEgmDZFOY6vkgxlA6LBM13OGuVUfgd2yIOdpUAbpba6wNkSg2ztwgGlkjOQDgubILUiDDrNFowA6rWvCbVvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LA+1lhsk; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-451d3f72391so48041795e9.3;
-        Mon, 21 Jul 2025 12:06:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753124789; x=1753729589; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=yZ/RLl3admGJSZp+VkfQETMjtFkkuDrehLt1m0TEa5Q=;
-        b=LA+1lhsk4SXkbOLOegG+y9GYDrKKC4PQaUQbEJbOpYIoHn6DVHhbrH4M5XcusRuh20
-         JM2YSH/HS+yVnNL8xZMy3wEoUnY7DfN9b1SGR0441F+QFeDY1eTAE8wqiesyld+uu7rC
-         iUxJ5fCbe8gsPATKaAUo5RpUEU+xZeZcfWhdSOXvWNe7t1Oh6zRjTWauS3M+DBF6D4AJ
-         jOMEjHyD0bG0vHaz4Uq5oXk1zM0dc8sn7BffFrhlMEVmjWgSamtq9lOCN3Qmi3e/0KSs
-         /OVSaM8OOC7fzVuPMlc502mecENWM9qTJwdKSMlXgZXUJdrO+BVX94Nd64D/eROtwFgf
-         ty4A==
+	s=arc-20240116; t=1753124801; c=relaxed/simple;
+	bh=W7kBEV7c89kcPfds65jFKTlDtmUYepP1h4+CWTAKRE4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=UNP4BAwjn3ed/CSVgq3yusZH1MQzh146OgGwwAwz6XWgYC9eKhMrGDbJvmAGQzPCCK5WLBk3OPbQG0D72vdssTWQvAtAtclpOBeF87BvhvqXYO0XNFnOjMe4+EYQpcqc438H9fw2KfiX9moY2q8griaDmpKMW9MwDLEbBvxpzA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-87c1c2a4f9dso575577339f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 12:06:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753124789; x=1753729589;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yZ/RLl3admGJSZp+VkfQETMjtFkkuDrehLt1m0TEa5Q=;
-        b=ItV6zpSXJrewWifrEAK60/afGWRLXsfmHmOdSgiGLWBy5Ngg2fjHzpbrFN9iwavP9W
-         W7BTMR83QqW5dgBd634mV08HXACiGzCSx9XXIAZDTOAo+DzDVKb86puMvhece/3YJjFZ
-         cct9qQUK3cW8P5lUm08GcdBAR44xpxNeAoHIAH9ZbRteTlRbJwIdOhCByzGEi46SDv/A
-         OzYzxlBXERIOazAQdmLBYLdFo2wR1nVORm60JKTxMyee6EV/cK/+6Hrpc1Z0hALGysKc
-         w3fvX2YUtABGAVXC5G4/jUQwMpB+WqcQQIvm9Z50esejY8KKGZKxfVYtJoIcMCZFJeE8
-         iWWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW/5HuL2k8MQloblOIPksHtLOhiGc2VNaxb+spHu7RNsSxTKZ0EFfwfqwYgz4nK90kIGg1iEVpjEgFR@vger.kernel.org, AJvYcCWrfDTun/gU6Ro84Nb/1m+LQpsrvjdYi3vx8QEmdE7pVeG43DjhxQpVqGXjCjIQK5RRrJKWACSAsUJWkeJ2@vger.kernel.org, AJvYcCWtXzNe8oCC3d+SpTd4sHAJPbz0pPqDJGFVavDNQW54Gq+P19CQ3FZGzsux9dPwi8tMOwukhtw1ZK6g@vger.kernel.org
-X-Gm-Message-State: AOJu0YwreX/Geoyc7hLMfW/1f1Ma2iRqpZsw86rcQwVXTPuonVBg+SSM
-	WL3QURM0eCr6HRU5/2zxy5u6Q0DrRMPIkVQ5vbkB9K5KpGKygIP2z5Gq
-X-Gm-Gg: ASbGnctqYaLANx53PT5VLbBchP+q0wwaAdztvzqqaW6hFhxQ+ec+nybn0yQJ/3/v/AD
-	TJD1WwjwQpKvbpLw7hRQalBwGYWoTKmcAvEc7xmrm5Ut6Tc6JKsAZualAbQ82GlXKhYrhvmtjNK
-	eZC6ADF3x4HYarkImgDwNaSb0Jfb2ZnA5A3Z4r2kSOXmJwVF2SG74FsPUtu0KIwlo3ynPnrquv5
-	cuhzR8VPa4whwlb02/Rf2qWiWmYOjttMIBUYPS1jUabOb/46sjxSTZzxP+llCLjfCOLQzSyw+DJ
-	zOLLbPE73yidFJow6ftVpicVXVx8ag6kHQQXpVtjbJyuZz4tkkL8LcmZFef2Z5YSKgeXC7YHgcA
-	nniOCNMp8y9ZCCpw5DCblpQ==
-X-Google-Smtp-Source: AGHT+IFBmT+05ifZR454ZsVESbdVZWfFyD6xTKLS6M8LF9x1CYyc9regqDhx1oReUGpYKvUUBLc2rA==
-X-Received: by 2002:a05:600c:4fc5:b0:456:1156:e5f5 with SMTP id 5b1f17b1804b1-456359ee0a4mr171859865e9.31.1753124788877;
-        Mon, 21 Jul 2025 12:06:28 -0700 (PDT)
-Received: from Ansuel-XPS. ([109.52.136.49])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45862cf1d68sm274285e9.2.2025.07.21.12.06.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 12:06:28 -0700 (PDT)
-Message-ID: <687e8fb4.050a0220.1055b2.040b@mx.google.com>
-X-Google-Original-Message-ID: <aH6Pst_-oqR7AkVX@Ansuel-XPS.>
-Date: Mon, 21 Jul 2025 21:06:26 +0200
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 06/10] dt-bindings: clock: airoha: Document new
- property airoha,chip-scu
-References: <20250617130455.32682-1-ansuelsmth@gmail.com>
- <20250617130455.32682-7-ansuelsmth@gmail.com>
- <20250627-determined-helpful-rabbit-be2dfe@krzk-bin>
- <685e5446.df0a0220.369e9e.8cb1@mx.google.com>
- <8582dbad-c773-4f46-827a-83b00eed0882@kernel.org>
+        d=1e100.net; s=20230601; t=1753124799; x=1753729599;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gPx8+JEokfjkofjfDOhJT6DZZEclvZcdGwiXhl1pZQ0=;
+        b=v0ZA/U3q3uLscsbjM1cTr+0jRW1KG4ujlUB6fTS6jt72gPSKO+zbKYBoisildkm1iw
+         CebxPaVJJ2LtXmSoMpb6/TUST8unMzxYvsckhR3xyDWHh4BhOhI6NnSawmccTEr6wSRV
+         p8nk6wzzd7IzsHg6VGakzFvYT80QkuXOrrpfYR1Q3/BJzpbi0POqhWcEttL/21zo2vpd
+         dK0/L1+vHJ2cJxf/O5xvZIpJk0YHjC3PuPJHJ30OSicCT5ftvpvfN7SIZOieubdfEebo
+         Z6n3T0lIuCy/MxG6sgRMrLfENZc0xpE5eOVXg1wWvhiJ4FKyj5rn2Q71O81QB5LYdrRK
+         n7HA==
+X-Forwarded-Encrypted: i=1; AJvYcCVYAM+JeXyHDeYMl13sJyJLmjl9p2opS9dl7zkQTuCe1Heq7U0+aO+18jMiV4VWrKJqBSm2ZYHDpOcDIEU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnwrqtFQKjsFxRQsfaXZB7hAYbMx3DyWc/k9t4ZqFB7mCyGBj8
+	HhCdm8DRtRBAqnLCE0WxCff2GjOZhp2tQeed697hFsjjZzkN1CwEeT9UOUinWUFqgEe65z6N8HH
+	o1da7SM30pGGfij3KFQuP1vYyyjh3fKOWaIQswFquHQyRIB1v/JY+ls3g/io=
+X-Google-Smtp-Source: AGHT+IEiJ4Fb1oZt6NyM4ShD2ZHm//REnRAWU9mZsKxmaqSSpQalWUvKQcTzKUknPnwrrxPUW7zZQiP3MTl3aLKu89nLHMeHbH/X
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8582dbad-c773-4f46-827a-83b00eed0882@kernel.org>
+X-Received: by 2002:a05:6e02:2587:b0:3e2:9f78:3783 with SMTP id
+ e9e14a558f8ab-3e29f783956mr138838035ab.21.1753124798817; Mon, 21 Jul 2025
+ 12:06:38 -0700 (PDT)
+Date: Mon, 21 Jul 2025 12:06:38 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <687e8fbe.a70a0220.1224c.001d.GAE@google.com>
+Subject: [syzbot] [sctp?] UBSAN: shift-out-of-bounds in sctp_transport_update_rto
+From: syzbot <syzbot+2e455dd90ca648e48cea@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-sctp@vger.kernel.org, 
+	lucien.xin@gmail.com, marcelo.leitner@gmail.com, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jul 16, 2025 at 04:29:12PM +0200, Krzysztof Kozlowski wrote:
-> On 27/06/2025 10:20, Christian Marangi wrote:
-> > 
-> > Here the current DTS [1]. Nothing is stable for this and we can change
-> > it but I want to stress that the current HW block are VERY CONFUSING and
-> > SCRAMBELED. So it's really a matter of finding the least bad solution.
-> > 
-> > In SCU there are:
-> > - PART fot the clock register
-> > - 2 MDIO controller register
-> > 
-> > In chip SCU:
-> > - Other part of the clock register
-> > - Thermal driver register
-> > - PART of the pinctrl register
-> > 
-> > [1] https://github.com/Ansuel/openwrt/blob/openwrt-24.10-airoha-an7581-stable/target/linux/airoha/dts/an7583.dtsi#L361
-> 
-> 
-> Thanks and it proves: that's a no. You cannot have two devices with same
-> unit address. It means that chip-scu and scu ARE THE SAME devices.
-> 
+Hello,
 
-Thanks for checking it. Hope it's clear that
+syzbot found the following issue on:
 
-scuclk: system-controller@1fa20000
+HEAD commit:    6832a9317eee Merge tag 'net-6.16-rc7' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=137d9d8c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=693e2f5eea496864
+dashboard link: https://syzkaller.appspot.com/bug?extid=2e455dd90ca648e48cea
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-is a typo and should be
+Unfortunately, I don't have any reproducer for this issue yet.
 
-scuclk: system-controller@1fb00000
-(to follow the reg property reg = <0x0 0x1fb00000 0x0 0x970>;
- with the 0x970 taken from the documentation)
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/6a84ef6250f7/disk-6832a931.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/454efb0534f6/vmlinux-6832a931.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7a5841eb7e63/bzImage-6832a931.xz
 
-With this in mind and if your comment still apply do you have any hint
-how to better reorganize the 2 node?
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+2e455dd90ca648e48cea@syzkaller.appspotmail.com
 
--- 
-	Ansuel
+------------[ cut here ]------------
+UBSAN: shift-out-of-bounds in net/sctp/transport.c:509:41
+shift exponent 237 is too large for 32-bit type 'unsigned int'
+CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.16.0-rc6-syzkaller-00121-g6832a9317eee #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Call Trace:
+ <IRQ>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x16c/0x1f0 lib/dump_stack.c:120
+ ubsan_epilogue lib/ubsan.c:233 [inline]
+ __ubsan_handle_shift_out_of_bounds+0x27f/0x420 lib/ubsan.c:494
+ sctp_transport_update_rto.cold+0x1c/0x34b net/sctp/transport.c:509
+ sctp_check_transmitted+0x11c4/0x1c30 net/sctp/outqueue.c:1502
+ sctp_outq_sack+0x4ef/0x1b20 net/sctp/outqueue.c:1338
+ sctp_cmd_process_sack net/sctp/sm_sideeffect.c:840 [inline]
+ sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1372 [inline]
+ sctp_side_effects net/sctp/sm_sideeffect.c:1204 [inline]
+ sctp_do_sm+0x36df/0x5c80 net/sctp/sm_sideeffect.c:1175
+ sctp_assoc_bh_rcv+0x392/0x6f0 net/sctp/associola.c:1034
+ sctp_inq_push+0x1db/0x270 net/sctp/inqueue.c:88
+ sctp_rcv+0x14d8/0x3c60 net/sctp/input.c:243
+ ip_protocol_deliver_rcu+0x447/0x4c0 net/ipv4/ip_input.c:205
+ ip_local_deliver_finish+0x316/0x570 net/ipv4/ip_input.c:233
+ NF_HOOK include/linux/netfilter.h:317 [inline]
+ NF_HOOK include/linux/netfilter.h:311 [inline]
+ ip_local_deliver+0x18e/0x1f0 net/ipv4/ip_input.c:254
+ dst_input include/net/dst.h:469 [inline]
+ ip_rcv_finish net/ipv4/ip_input.c:448 [inline]
+ NF_HOOK include/linux/netfilter.h:317 [inline]
+ NF_HOOK include/linux/netfilter.h:311 [inline]
+ ip_rcv+0x2c3/0x5d0 net/ipv4/ip_input.c:568
+ __netif_receive_skb_one_core+0x197/0x1e0 net/core/dev.c:5977
+ __netif_receive_skb+0x1d/0x160 net/core/dev.c:6090
+ process_backlog+0x442/0x15e0 net/core/dev.c:6442
+ __napi_poll.constprop.0+0xb7/0x550 net/core/dev.c:7414
+ napi_poll net/core/dev.c:7478 [inline]
+ net_rx_action+0xa9f/0xfe0 net/core/dev.c:7605
+ handle_softirqs+0x219/0x8e0 kernel/softirq.c:579
+ __do_softirq kernel/softirq.c:613 [inline]
+ invoke_softirq kernel/softirq.c:453 [inline]
+ __irq_exit_rcu+0x109/0x170 kernel/softirq.c:680
+ irq_exit_rcu+0x9/0x30 kernel/softirq.c:696
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1050 [inline]
+ sysvec_apic_timer_interrupt+0xa4/0xc0 arch/x86/kernel/apic/apic.c:1050
+ </IRQ>
+ <TASK>
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:pv_native_safe_halt+0xf/0x20 arch/x86/kernel/paravirt.c:82
+Code: 0b 6f 02 c3 cc cc cc cc 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 66 90 0f 00 2d d3 77 25 00 fb f4 <e9> 8c fb 02 00 66 2e 0f 1f 84 00 00 00 00 00 66 90 90 90 90 90 90
+RSP: 0018:ffffffff8e207e08 EFLAGS: 000002c6
+RAX: 0000000000448811 RBX: 0000000000000000 RCX: ffffffff8b849c69
+RDX: 0000000000000000 RSI: ffffffff8de2d10c RDI: ffffffff8c157960
+RBP: fffffbfff1c52ef0 R08: 0000000000000001 R09: ffffed1017086645
+R10: ffff8880b843322b R11: 0000000000000001 R12: 0000000000000000
+R13: ffffffff8e297780 R14: ffffffff90a9a650 R15: 0000000000000000
+ arch_safe_halt arch/x86/include/asm/paravirt.h:107 [inline]
+ default_idle+0x13/0x20 arch/x86/kernel/process.c:749
+ default_idle_call+0x6d/0xb0 kernel/sched/idle.c:117
+ cpuidle_idle_call kernel/sched/idle.c:185 [inline]
+ do_idle+0x391/0x510 kernel/sched/idle.c:325
+ cpu_startup_entry+0x4f/0x60 kernel/sched/idle.c:423
+ rest_init+0x16b/0x2b0 init/main.c:745
+ start_kernel+0x3ee/0x4d0 init/main.c:1102
+ x86_64_start_reservations+0x18/0x30 arch/x86/kernel/head64.c:307
+ x86_64_start_kernel+0x130/0x190 arch/x86/kernel/head64.c:288
+ common_startup_64+0x13e/0x148
+ </TASK>
+---[ end trace ]---
+----------------
+Code disassembly (best guess):
+   0:	0b 6f 02             	or     0x2(%rdi),%ebp
+   3:	c3                   	ret
+   4:	cc                   	int3
+   5:	cc                   	int3
+   6:	cc                   	int3
+   7:	cc                   	int3
+   8:	0f 1f 00             	nopl   (%rax)
+   b:	90                   	nop
+   c:	90                   	nop
+   d:	90                   	nop
+   e:	90                   	nop
+   f:	90                   	nop
+  10:	90                   	nop
+  11:	90                   	nop
+  12:	90                   	nop
+  13:	90                   	nop
+  14:	90                   	nop
+  15:	90                   	nop
+  16:	90                   	nop
+  17:	90                   	nop
+  18:	90                   	nop
+  19:	90                   	nop
+  1a:	90                   	nop
+  1b:	f3 0f 1e fa          	endbr64
+  1f:	66 90                	xchg   %ax,%ax
+  21:	0f 00 2d d3 77 25 00 	verw   0x2577d3(%rip)        # 0x2577fb
+  28:	fb                   	sti
+  29:	f4                   	hlt
+* 2a:	e9 8c fb 02 00       	jmp    0x2fbbb <-- trapping instruction
+  2f:	66 2e 0f 1f 84 00 00 	cs nopw 0x0(%rax,%rax,1)
+  36:	00 00 00
+  39:	66 90                	xchg   %ax,%ax
+  3b:	90                   	nop
+  3c:	90                   	nop
+  3d:	90                   	nop
+  3e:	90                   	nop
+  3f:	90                   	nop
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
