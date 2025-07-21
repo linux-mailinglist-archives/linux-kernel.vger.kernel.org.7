@@ -1,180 +1,125 @@
-Return-Path: <linux-kernel+bounces-739285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFDE9B0C46C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:49:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED3B9B0C472
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:50:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C69C916542E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:49:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A44954125C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D50A2D4B59;
-	Mon, 21 Jul 2025 12:49:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29922D5431;
+	Mon, 21 Jul 2025 12:50:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kGkvWwlF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TVF/fyyL"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D420F2D46AE;
-	Mon, 21 Jul 2025 12:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3243D27FB22;
+	Mon, 21 Jul 2025 12:50:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753102166; cv=none; b=nbk3uBrh188UPOE3D3ymNSVpdA+F6QjiARvAIaWWoShLRWBTEdXwY/bjmcTPw2wKr63Fm38fFE2gexVgfueaDgnX4BGMkM3Q9z8GDZCbjxd4kXNGpMDZaFSBMObZcQ9JlJeFwiCyG31M5AW+YZKKU2qn/fJTTSOWJgNzt8mLWiE=
+	t=1753102217; cv=none; b=moLGo/05ObRIrDMjdh0p2R0bA8qr1Oq8QofDfsGwU6TmVdG610EBZwVYTzsaE+oG6drYNn1ShRiIEYxClGZvlskNFhKFH9E2zA5s5Wk5NetXUnqTxIWXgveh0FtaeYi4pnap21T7+l0t3qnteGROpSE/nN1oAHTRzm288occxQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753102166; c=relaxed/simple;
-	bh=ohPHgBghu6f1fO7+k+hBTWWYaerI/ppVg0Kx1KUtBO0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rF1OAkc/l0bjVqCBbfL+Rdp64NNGPhdAqI+KoO7hfmn1GyWowDGRgBe906XtszD+de9p1N90HA5IU+jDRigfM8+PUA/hFrmPrpxtqdlb7cnDM+YXNqFwjyisCe+qACwTKDt6SrfwqcKQO6qpnh5Kgp658xe26IUe3GUzWTs/6Js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kGkvWwlF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 652E3C4CEF7;
-	Mon, 21 Jul 2025 12:49:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753102166;
-	bh=ohPHgBghu6f1fO7+k+hBTWWYaerI/ppVg0Kx1KUtBO0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kGkvWwlFd+DoY2STa58QgwK1FhyrZQBvUZQS4nlPmJs1YqknObFumP3LWwXtRTkaB
-	 DcNibY+5rsS+g140aekdJ/OaX/2rOcXmlLm8P8nyR5kioU7P5ZAVv4LsqzB3rX8dpA
-	 FwQFrQF6wzfDcZQg6N2gD6r0xffj6lNH6Yk2BiEAA+EoTIdrThYKumAwjScZRk5s4i
-	 RADw0bcKYNylyCMedR0iH5ByudY/jB6RooWapd7QRUv1aH1Yd06Kfqh+YQ+z/RzhWm
-	 HgVNwXVhn6xv4HVCxQhaMEszjkDgW5OtSlIxyhU1LZMYDBMzkPaNQCXvzRobLMcpi1
-	 E2tSYiyFsNh4g==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1udpxC-000000007uL-2QXv;
-	Mon, 21 Jul 2025 14:49:15 +0200
-Date: Mon, 21 Jul 2025 14:49:14 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] PCI: qcom: Switch to bus notifier for enabling ASPM
- of PCI devices
-Message-ID: <aH43Sm3LWoipx5Yn@hovoldconsulting.com>
-References: <20250714-aspm_fix-v1-0-7d04b8c140c8@oss.qualcomm.com>
- <20250714-aspm_fix-v1-1-7d04b8c140c8@oss.qualcomm.com>
- <aH4JPBIk_GEoAezy@hovoldconsulting.com>
- <rmltahsjvllae3or7jjk5kwvdkcqohj4bbjsfv4mnfbuq7376s@wtsha4zorf2p>
+	s=arc-20240116; t=1753102217; c=relaxed/simple;
+	bh=nfONOnBrUIPIfQklNyqnZWtI5QFfM2AOm84lkmUoLZU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AIb/7NrIIix3MpcsDdPdid/WogZdgZfOO4cS3hq3/6+c+rdyLVrvmMgEPrfDD8TkTP2gzlXtuvEdOQidY6qm3c/s2u7RPaPv/+OuOfyObgJXDpfPlhuEPwaZ1B/H0gLmA3Hr0rp0LBaT4tp7egGHaPcku8GixP7lj7wXvyx1LP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TVF/fyyL; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56LCnOtE805016;
+	Mon, 21 Jul 2025 07:49:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1753102164;
+	bh=gl6XjWOd36sg6clLSodrsTq+/Bqq5Lfk1BOVUUxIzyg=;
+	h=From:To:CC:Subject:Date;
+	b=TVF/fyyL9+rKglDbVEtN+yMvMLu3FtzN3zG41NqtbKozP8K31Wu5FoHgKNPWhh2sK
+	 ebKcnGtYdut1NDUw7p/qnAmulScsbl9KcI9X5VavdI12aRMm/RwTwqu+wKaRp336qq
+	 t+gfuwrk1BBO+DfaaEkRLN3yCKBG9p01CkVz55vQ=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56LCnOtZ280684
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 21 Jul 2025 07:49:24 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 21
+ Jul 2025 07:49:23 -0500
+Received: from fllvem-mr07.itg.ti.com (10.64.41.89) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Mon, 21 Jul 2025 07:49:23 -0500
+Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
+	by fllvem-mr07.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56LCnNFK2685222;
+	Mon, 21 Jul 2025 07:49:23 -0500
+Received: from localhost (meghana-pc.dhcp.ti.com [10.24.69.13] (may be forged))
+	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 56LCnMVg012710;
+	Mon, 21 Jul 2025 07:49:22 -0500
+From: Meghana Malladi <m-malladi@ti.com>
+To: <namcao@linutronix.de>, <jacob.e.keller@intel.com>, <m-malladi@ti.com>,
+        <sdf@fomichev.me>, <john.fastabend@gmail.com>, <hawk@kernel.org>,
+        <daniel@iogearbox.net>, <ast@kernel.org>, <pabeni@redhat.com>,
+        <kuba@kernel.org>, <edumazet@google.com>, <davem@davemloft.net>,
+        <andrew+netdev@lunn.ch>
+CC: <bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Roger Quadros
+	<rogerq@kernel.org>, <danishanwar@ti.com>
+Subject: [PATCH net] net: ti: icssg-prueth: Fix skb handling for XDP_PASS
+Date: Mon, 21 Jul 2025 18:19:18 +0530
+Message-ID: <20250721124918.3347679-1-m-malladi@ti.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <rmltahsjvllae3or7jjk5kwvdkcqohj4bbjsfv4mnfbuq7376s@wtsha4zorf2p>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, Jul 21, 2025 at 04:26:41PM +0530, Manivannan Sadhasivam wrote:
-> On Mon, Jul 21, 2025 at 11:32:44AM GMT, Johan Hovold wrote:
-> > On Mon, Jul 14, 2025 at 11:31:04PM +0530, Manivannan Sadhasivam wrote:
-> > > Commit 9f4f3dfad8cf ("PCI: qcom: Enable ASPM for platforms supporting 1.9.0
-> > > ops") allowed the Qcom controller driver to enable ASPM for all PCI devices
-> > > enumerated at the time of the controller driver probe. It proved to be
-> > > useful for devices already powered on by the bootloader as it allowed
-> > > devices to enter ASPM without user intervention.
-> > > 
-> > > However, it could not enable ASPM for the hotplug capable devices i.e.,
-> > > devices enumerated *after* the controller driver probe. This limitation
-> > > mostly went unnoticed as the Qcom PCI controllers are not hotplug capable
-> > > and also the bootloader has been enabling the PCI devices before Linux
-> > > Kernel boots (mostly on the Qcom compute platforms which users use on a
-> > > daily basis).
-> > > 
-> > > But with the advent of the commit b458ff7e8176 ("PCI/pwrctl: Ensure that
-> > > pwrctl drivers are probed before PCI client drivers"), the pwrctrl driver
-> > > started to block the PCI device enumeration until it had been probed.
-> > > Though, the intention of the commit was to avoid race between the pwrctrl
-> > > driver and PCI client driver, it also meant that the pwrctrl controlled PCI
-> > > devices may get probed after the controller driver and will no longer have
-> > > ASPM enabled. So users started noticing high runtime power consumption with
-> > > WLAN chipsets on Qcom compute platforms like Thinkpad X13s, and Thinkpad
-> > > T14s, etc...
-> > 
-> > Note the ASPM regression for ath11k/ath12k only happened in 6.15, so
-> > commit b458ff7e8176 ("PCI/pwrctl: Ensure that pwrctl drivers are probed
-> > before PCI client drivers") in 6.13 does not seem to be the immediate
-> > culprit here.
-> 
-> This series was intented to fix the ASPM issue which exist even before the
-> introduction of pwrctrl framework.
+emac_rx_packet() is a common function for handling traffic
+for both xdp and non-xdp use cases. Use common logic for
+handling skb with or without xdp to prevent any incorrect
+packet processing. This patch fixes ping working with
+XDP_PASS for icssg driver.
 
-But this limitation of the ASPM enable implementation wasn't really an
-issue before pwrctrl since, as you point out above, these controllers
-are not hotplug capable.
+Fixes: 62aa3246f4623 ("net: ti: icssg-prueth: Add XDP support")
+Signed-off-by: Meghana Malladi <m-malladi@ti.com>
+---
+ drivers/net/ethernet/ti/icssg/icssg_common.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-> But I also agree that the below commits made
-> the issue more visible and caused regression on platforms where WLAN used to
-> work.
-> 
-> > Candidates from 6.15 include commits like
-> > 
-> > 	957f40d039a9 ("PCI/pwrctrl: Move creation of pwrctrl devices to pci_scan_device()")
-> > 	2489eeb777af ("PCI/pwrctrl: Skip scanning for the device further if pwrctrl device is created")
-> > 
-> > This is probably related to the reports of these drivers sometimes
-> > failing to probe with
-> > 
-> > 	ath12k_pci 0004:01:00.0: of_irq_parse_pci: failed with rc=134
-> > 
-> > after pwrctrl was merged, and which since 6.15 should instead result in
-> > the drivers not probing at all (as we've discussed off list).
-> 
-> We discussed about the ASPM issue IIRC. The above mentioned of_irq_parse_pci
-> could also be related to the fact that we are turning off the supplies after
-> pci_dev destruction. For this issue, I guess the patch from Brian could be the
-> fix:
-> 
-> https://lore.kernel.org/linux-pci/20250711174332.1.I623f788178c1e4c5b1a41dbfc8c7fa55966373c0@changeid/
+diff --git a/drivers/net/ethernet/ti/icssg/icssg_common.c b/drivers/net/ethernet/ti/icssg/icssg_common.c
+index 12f25cec6255..a0e7def33e8e 100644
+--- a/drivers/net/ethernet/ti/icssg/icssg_common.c
++++ b/drivers/net/ethernet/ti/icssg/icssg_common.c
+@@ -757,15 +757,12 @@ static int emac_rx_packet(struct prueth_emac *emac, u32 flow_id, u32 *xdp_state)
+ 		xdp_prepare_buff(&xdp, pa, PRUETH_HEADROOM, pkt_len, false);
+ 
+ 		*xdp_state = emac_run_xdp(emac, &xdp, page, &pkt_len);
+-		if (*xdp_state == ICSSG_XDP_PASS)
+-			skb = xdp_build_skb_from_buff(&xdp);
+-		else
++		if (*xdp_state != ICSSG_XDP_PASS)
+ 			goto requeue;
+-	} else {
+-		/* prepare skb and send to n/w stack */
+-		skb = napi_build_skb(pa, PAGE_SIZE);
+ 	}
+ 
++	/* prepare skb and send to n/w stack */
++	skb = napi_build_skb(pa, PAGE_SIZE);
+ 	if (!skb) {
+ 		ndev->stats.rx_dropped++;
+ 		page_pool_recycle_direct(pool, page);
 
-We've also discussed the rc=134 issue, which appears to be due to some
-pwrctrl race. IIRC, you thought it may be the bluetooth driver powering
-down the bt/wlan controller before the wlan bit has had a chance to
-(complete its) probe. Not sure if that was fully confirmed, but I
-remember you saying that the rc=134 symptom would no longer be visible
-since 6.15 and instead wlan would never even probe at all if we hit this
-issue...
+base-commit: 81e0db8e839822b8380ce4716cd564a593ccbfc5
+-- 
+2.43.0
 
-The patch you link to above only appears to relate to drivers being
-manually unbound. I hope we're not also hitting such issues during
-regular boot?
-
-> > > Obviously, it is the pwrctrl change that caused regression, but it
-> > > ultimately uncovered a flaw in the ASPM enablement logic of the controller
-> > > driver. So to address the actual issue, switch to the bus notifier for
-> > > enabling ASPM of the PCI devices. The notifier will notify the controller
-> > > driver when a PCI device is attached to the bus, thereby allowing it to
-> > > enable ASPM more reliably. It should be noted that the
-> > > 'pci_dev::link_state', which is required for enabling ASPM by the
-> > > pci_enable_link_state_locked() API, is only set by the time of
-> > > BUS_NOTIFY_BIND_DRIVER stage of the notification. So we cannot enable ASPM
-> > > during BUS_NOTIFY_ADD_DEVICE stage.
-> > > 
-> > > So with this, we can also get rid of the controller driver specific
-> > > 'qcom_pcie_ops::host_post_init' callback.
-> > > 
-> > > Cc: stable@vger.kernel.org # v6.7
-> > > Fixes: 9f4f3dfad8cf ("PCI: qcom: Enable ASPM for platforms supporting 1.9.0 ops")
-> > 
-> > So whatever form this fix ends up taking it only needs to be backported
-> > to 6.15.
-> > 
-> > As you mention above these platforms do not support hotplug, but even if
-> > they were, enabling ASPM for hotplugged devices is arguably more of a
-> > new features than a bug fix.
-> 
-> FYI, I'm going to drop this series in favor this (with one yet-to-be-submitted
-> patch on top):
-> https://lore.kernel.org/linux-pci/20250720190140.2639200-1-david.e.box@linux.intel.com/
-
-Sounds good. Thanks.
-
-Johan
 
