@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-739256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDBB0B0C3F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:15:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1751DB0C3F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:17:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01B8E1702EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:15:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E855618C0055
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:17:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18392D3744;
-	Mon, 21 Jul 2025 12:15:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80B302D29B5;
+	Mon, 21 Jul 2025 12:17:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QQ43a/ZX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kqXwlcND"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7BA2A1CA;
-	Mon, 21 Jul 2025 12:15:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49A542A9D;
+	Mon, 21 Jul 2025 12:17:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753100144; cv=none; b=FAxp+WcSijY/5iP4sr433oZIPMRPAbsWgyMoTJGHxa7CCyU3WGHGF7pQtejaxTDD9LtrNET00wd1AA7hUlYx1GLWOfbKlhtE3XZWOUUeBKba+QCcZsFuhYjXheGSJ6lQABKUZFD8Wmttfyu/iNTjs31WOVaZTBvoHdUjBf1OB+o=
+	t=1753100224; cv=none; b=d613ptq3I/3TqR6hMw95D4iCLphrozmESiDTJVmnkuD/V+rPiNartADKvnVsUF7dq4gKqrxn3HTiSFKFdIneeIDmr/R2e6M4rmfCTLXefhB8IBtxXo4BBHCyyWSO2CdYLgDmdKQLb3jIMG7gFHIvubMjWm5yj3Rnoe1jYq1uKnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753100144; c=relaxed/simple;
-	bh=ZPCvJFyfzlKb2X9uQJZaVJhpVk1gNVTr6MGbXoppWmQ=;
+	s=arc-20240116; t=1753100224; c=relaxed/simple;
+	bh=kgCjEGYS3HgjeN51ZAILuplVfvuuUImf1jdln2dlVxE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nkXLBHai8pkZ7wpQ6ruEut5bIbWppfW9fKkou8i7vnxoOrAkbCVNVF0vWfwOQDaQtdwmn5vKI1+1LLwK36fqxulQ/AeIyIdSR5681itoh5BH8yTBLtRDp453I30Xn9g/AdEe1Sli9kani8CFlwQa0PB4RqsNLJRc2KOaO3dakuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QQ43a/ZX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F56FC4CEED;
-	Mon, 21 Jul 2025 12:15:40 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=CxU6cW7WPMoTRObfckcALN4P7bKZBOa2+731+7YgQdk9FWVOhYmHeooyk2LNzLAQVeDYGaHCFcMMcdyRA9zc3bcmkjNi3nKvjenjZ+mUUhXR5VqcjA3j6hIbfXaWRFqoIVzEPBR6RhZAet0Yzm9CIef3LAAo4HzNgL7ewyxZF1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kqXwlcND; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A62DC4CEED;
+	Mon, 21 Jul 2025 12:16:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753100143;
-	bh=ZPCvJFyfzlKb2X9uQJZaVJhpVk1gNVTr6MGbXoppWmQ=;
+	s=k20201202; t=1753100224;
+	bh=kgCjEGYS3HgjeN51ZAILuplVfvuuUImf1jdln2dlVxE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QQ43a/ZXhqUCAYP/ip3UxqAHsw0tgCzsGg7lsNQaJWEGm5gwNkSY6uGVbLW8U1UUn
-	 43IgXMNcKZWhdQrqAZPXl+ZEhAtDERTbtC3hLe+Lwffbp02RQKFz9b4W78TbeQRQfC
-	 zdup83+C55n6GT/ROpsrWeYkR6YLQoUQXVXvLU3v0mTI44fIy3J3aeBrwHSAb2kk/O
-	 XbIkm7pnxjBOSeRpUAf/2O/TU/PA2+whDZdHEEREAoKxPKrp05Kw1khZo3IG+JV6aJ
-	 KnaloYhnp0xQi9EJgEh++GN6h8g63I7p7ptaivb95FTCOf7Q/CXGi/fiR479k4hod6
-	 sDrNysCsfzKYw==
-Message-ID: <ea2f30ff-b2cf-4b88-9fe8-78950a03d882@kernel.org>
-Date: Mon, 21 Jul 2025 14:15:38 +0200
+	b=kqXwlcNDa8JGGSlsevmKYZhWbE23aU+f9svTwzwiIcqLsWDdct4bHek5aFzxEEKan
+	 gBZLI5H3UWS8SB/VvBjk8/aQdEqqKSYpcmkfaqkd1gm7XsE6R9JlE5fK00v/DFevj2
+	 2odB5ohz9nVO0BpSfuUvlmWo1IDQlak1aC+W6gFoZ4bsdW10ASRQEYPzyuyzrwcnek
+	 eUizkd+gLTByOdmFrUUnyZjS20LP4YOgZIY9ehXryJb2oTg9LJmJVP+VOJDFk8pVi5
+	 QctZvUxO7Ye4FpaGphEvNs/P8hO+spS2PF5P9tyCiJ/Pd2qXUsbJi1KJekmYU9UnwQ
+	 43j47QS/uP03A==
+Message-ID: <b220ae01-81b5-47f1-bf99-9aa0903995e1@kernel.org>
+Date: Mon, 21 Jul 2025 14:16:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,28 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] ASoC: dt-bindings: Add FS2104/5S audio amplifiers
-To: Nick Li <nick.li@foursemi.com>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, perex@perex.cz, tiwai@suse.com,
- xiaoming.yang@foursemi.com, danyang.zheng@foursemi.com, like.xy@foxmail.com,
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250721103805.531758-1-nick.li@foursemi.com>
- <20250721103805.531758-3-nick.li@foursemi.com>
- <83f7c489-7001-49cd-97a5-4280eba95fe0@kernel.org>
- <F04DD98A69286426+aH4sT_P0GvttoCOq@foursemi.com>
+Subject: Re: [PATCH net-next 1/4] dt-bindings: net: document st,phy-wol
+ property
+To: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Christophe Roullier <christophe.roullier@foss.st.com>,
+ Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, Simon Horman <horms@kernel.org>,
+ Tristram Ha <Tristram.Ha@microchip.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250721-wol-smsc-phy-v1-0-89d262812dba@foss.st.com>
+ <20250721-wol-smsc-phy-v1-1-89d262812dba@foss.st.com>
+ <faea23d5-9d5d-4fbb-9c6a-a7bc38c04866@kernel.org>
+ <f5c4bb6d-4ff1-4dc1-9d27-3bb1e26437e3@foss.st.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,43 +116,38 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <F04DD98A69286426+aH4sT_P0GvttoCOq@foursemi.com>
+In-Reply-To: <f5c4bb6d-4ff1-4dc1-9d27-3bb1e26437e3@foss.st.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 21/07/2025 14:02, Nick Li wrote:
-> On Mon, Jul 21, 2025 at 12:48:24PM +0200, Krzysztof Kozlowski wrote:
->> On 21/07/2025 12:38, Nick wrote:
->>> +  firmware-name:
->>> +    maxItems: 1
->>> +    description: |
->>> +      The firmware(*.bin) contains:
->>> +      a. Register initialization settings
->>> +      b. DSP effect parameters
->>> +      c. Multi-scene sound effect configurations(optional)
->>> +      It's gernerated by FourSemi's tuning tool.
->>> +
->>> +required:
->>> +  - compatible
->>> +  - reg
->>> +  - '#sound-dai-cells'
->>> +  - reset-gpios
->>> +  - firmware-name
->>
->>
->> I do not see how you resolved my comment from v1 or v2. Nothing in the
->> changelog explains that either.
+On 21/07/2025 14:10, Gatien CHEVALLIER wrote:
+> Hello Krzysztof,
 > 
-> Change logs are in the cover letter:
+> On 7/21/25 13:30, Krzysztof Kozlowski wrote:
+>> On 21/07/2025 13:14, Gatien Chevallier wrote:
+>>> The "st,phy-wol" property can be set to use the wakeup capability of
+>>> the PHY instead of the MAC.
+>>
+>>
+>> And why would that be property of a SoC or board? Word "can" suggests
+>> you are documenting something which exists, but this does not exist.
+> Can you elaborate a bit more on the "not existing" part please?
 
 
-And as I said I do not see resolution of my comment.
+Where does this property exist that you suggest that a new binding "can"
+use it?
 
-If you reject reviewers comment, usually it should be mentioned in the
-changelog.
+> 
+> For the WoL from PHY to be supported, the PHY line that is raised
+> (On nPME pin for this case) when receiving a wake up event has to be
+> wired to a wakeup event input of the Extended interrupt and event
+> controller(EXTI), and that's implementation dependent.
 
-Otherwise you get now the same review as v1 or v2. Devices cannot work
-without power.
+
+So it is not "can" but some implementations do not have proper wiring.
+You need to justify your commits and changes.
+
+
 
 Best regards,
 Krzysztof
