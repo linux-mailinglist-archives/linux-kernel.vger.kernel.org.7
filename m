@@ -1,223 +1,285 @@
-Return-Path: <linux-kernel+bounces-739356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03201B0C536
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:30:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3459EB0C539
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:30:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DF2417F266
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:30:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 593A2540150
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152442D94B9;
-	Mon, 21 Jul 2025 13:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E1E521B9F5;
+	Mon, 21 Jul 2025 13:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oqtSgejU";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yTE9LxRL";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oqtSgejU";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yTE9LxRL"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ap3DUfUF"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8471372617
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 13:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CE0A47F4A
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 13:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753104624; cv=none; b=Phaf3NdMOamUsWybaygmuTURMFJwGhMq6Y4dTGA1lHjA6qdLWOhB5mVNttbSvhYZF7WfXFYHZuDKCqoU7QyjRfmNEzEUOEk7/JIGdjlPA2RkOPs9sKbKV+ZY8gKiu2z0ViKZuxysG5eGBONkVH7NEBcJIYJR7WEpLq5aP7a8+JA=
+	t=1753104650; cv=none; b=dZFk5WKGQnRY4zAv5iE7l08UCnk8YKG7KroXgCiBBbxQ1QNJSxEOgSuLREMf/TW8voDq2No3IUCo65/CmEVFiblST/p1bThn/BTAUuGQEPJkWwkfKmLCbkiZN7xUWTK68KQ+hzryDhdKgTp9BQpDMSb6GTMeT4OFy8wx/x/BBN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753104624; c=relaxed/simple;
-	bh=Xf3tL8TpHMcwIYWXK+Cl3ZYOiJTLp6Car2XMD35q4Yw=;
+	s=arc-20240116; t=1753104650; c=relaxed/simple;
+	bh=7F46WqsFvxAkaMC61oQQHlHQS0W2XJyVo1IJvx8xMm8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sJdmQjLJHyDLSn4TKLGpQkSoNA0JhbgGvZPxpiuYvUW1xhOftJBZxP37JyRfGVBgUkSlBwkCacPcEKM3U0K4m080DlIdC5mOfzWlq/ZHsJ7Ta1yerL568njrK/9AtSzaEri+toA4N5uYRRRFOqX4l8leswvKRNky1uL+ZPuX+Ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oqtSgejU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yTE9LxRL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oqtSgejU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yTE9LxRL; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A5B7921B86;
-	Mon, 21 Jul 2025 13:30:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753104619; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	 In-Reply-To:Content-Type; b=c2Cb6ZRlTcKviZdlfEO5AP6nGId6iabvBEzgYLxp8c5tILKpeOxbjrIwN+X3F6mfxh/VzSU9GvRW/omcMZuy0WR2FWt/MduFHkKH2a8mZ6sbsqGhqmK4jzdLhfprBWTZg1UkoVxkzja6uXLaTRY7lQ1R9c9blaA9WU1HGx6e0yM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ap3DUfUF; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <32fc367c-46a4-4c76-b8a8-494bf79a6409@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753104645;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=PaZCofBqOjUcg+lD1fg+YBI1f5pe8r67jPpNIhq9pe8=;
-	b=oqtSgejUTICJzhBKlkFyj8Tv6TBZ7b5g3f3pRqU00nqdP1pQZ9RYGgTbwWRP6bl3Ag5Q06
-	lNs65MNLmQSy2Ff6Hs0GVZm4tPio2688eBdEYgwOH8hL3HdC0pWQZxmAYyFS2/+RTjwvMS
-	j3hqomOAFHTsaSMg7P5cpqCNdD6gQwY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753104619;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=PaZCofBqOjUcg+lD1fg+YBI1f5pe8r67jPpNIhq9pe8=;
-	b=yTE9LxRLSxYvDfmv3jiW9tAHZ8xAAUcvWzT0IN4zAmkD+N8A8Z+CY7t30wiXUzWjokPN1k
-	UAwX92wHByIDrtAg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753104619; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=PaZCofBqOjUcg+lD1fg+YBI1f5pe8r67jPpNIhq9pe8=;
-	b=oqtSgejUTICJzhBKlkFyj8Tv6TBZ7b5g3f3pRqU00nqdP1pQZ9RYGgTbwWRP6bl3Ag5Q06
-	lNs65MNLmQSy2Ff6Hs0GVZm4tPio2688eBdEYgwOH8hL3HdC0pWQZxmAYyFS2/+RTjwvMS
-	j3hqomOAFHTsaSMg7P5cpqCNdD6gQwY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753104619;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=PaZCofBqOjUcg+lD1fg+YBI1f5pe8r67jPpNIhq9pe8=;
-	b=yTE9LxRLSxYvDfmv3jiW9tAHZ8xAAUcvWzT0IN4zAmkD+N8A8Z+CY7t30wiXUzWjokPN1k
-	UAwX92wHByIDrtAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3FB1D136A8;
-	Mon, 21 Jul 2025 13:30:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id fQA/D+tAfmikUwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 21 Jul 2025 13:30:19 +0000
-Message-ID: <651d0f59-990d-460e-829b-be5cb1ee7fe7@suse.cz>
-Date: Mon, 21 Jul 2025 15:30:19 +0200
+	 in-reply-to:in-reply-to:references:references;
+	bh=VsHGAxrG6cxSaMcuW0htUsPVqP/hCDwEeZCIAG9Dz/E=;
+	b=ap3DUfUFcKPtB5NdI0b2/5Y1cz46Or4gxlewqJ6ZoHV1gDxc2Fzx+e6EE7eBiWQ5Mz4/Vs
+	l0jfnLNro8y3G3W/Q7Kmgep2HnlR1yKrD7sgmmxYHUH/pYoUwXVKKDpuDgR4VNPfps4jhP
+	WE88tjuLTRroJc4NApm92mvtGZJGjbU=
+Date: Mon, 21 Jul 2025 14:30:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V9 6/7] KVM: guest_memfd: Enforce NUMA mempolicy using
- shared policy
+Subject: Re: [PATCH v2 01/15] net: rnpgbe: Add build support for rnpgbe
+To: Dong Yibo <dong100@mucse.com>, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, corbet@lwn.net, gur.stavi@huawei.com,
+ maddy@linux.ibm.com, mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+ gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+ Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+ alexanderduyck@fb.com, richardcochran@gmail.com
+Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250721113238.18615-1-dong100@mucse.com>
+ <20250721113238.18615-2-dong100@mucse.com>
 Content-Language: en-US
-To: Shivank Garg <shivankg@amd.com>, seanjc@google.com, david@redhat.com,
- willy@infradead.org, akpm@linux-foundation.org, shuah@kernel.org,
- pbonzini@redhat.com, brauner@kernel.org, viro@zeniv.linux.org.uk
-Cc: ackerleytng@google.com, paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com, tabba@google.com,
- vannapurve@google.com, chao.gao@intel.com, bharata@amd.com, nikunj@amd.com,
- michael.day@amd.com, shdhiman@amd.com, yan.y.zhao@intel.com,
- Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, michael.roth@amd.com,
- aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com, peterx@redhat.com,
- jack@suse.cz, rppt@kernel.org, hch@infradead.org, cgzones@googlemail.com,
- ira.weiny@intel.com, rientjes@google.com, roypat@amazon.co.uk,
- ziy@nvidia.com, matthew.brost@intel.com, joshua.hahnjy@gmail.com,
- rakie.kim@sk.com, byungchul@sk.com, gourry@gourry.net,
- kent.overstreet@linux.dev, ying.huang@linux.alibaba.com, apopple@nvidia.com,
- chao.p.peng@intel.com, amit@infradead.org, ddutile@redhat.com,
- dan.j.williams@intel.com, ashish.kalra@amd.com, gshan@redhat.com,
- jgowans@amazon.com, pankaj.gupta@amd.com, papaluri@amd.com,
- yuzhao@google.com, suzuki.poulose@arm.com, quic_eberman@quicinc.com,
- aneeshkumar.kizhakeveetil@arm.com, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-security-module@vger.kernel.org, kvm@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
-References: <20250713174339.13981-2-shivankg@amd.com>
- <20250713174339.13981-9-shivankg@amd.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <20250713174339.13981-9-shivankg@amd.com>
-Content-Type: text/plain; charset=UTF-8
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20250721113238.18615-2-dong100@mucse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[google.com,paul-moore.com,namei.org,hallyn.com,suse.cz,redhat.com,intel.com,amd.com,nvidia.com,amazon.com,kernel.org,infradead.org,googlemail.com,amazon.co.uk,gmail.com,sk.com,gourry.net,linux.dev,linux.alibaba.com,arm.com,quicinc.com,vger.kernel.org,kvack.org,lists.linux.dev];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[66];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[amd.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
+X-Migadu-Flow: FLOW_OUT
 
-On 7/13/25 19:43, Shivank Garg wrote:
-> Previously, guest-memfd allocations followed local NUMA node id in absence
-> of process mempolicy, resulting in arbitrary memory allocation.
-> Moreover, mbind() couldn't be used  by the VMM as guest memory wasn't
-> mapped into userspace when allocation occurred.
+On 21/07/2025 12:32, Dong Yibo wrote:
+> Add build options and doc for mucse.
+> Initialize pci device access for MUCSE devices.
 > 
-> Enable NUMA policy support by implementing vm_ops for guest-memfd mmap
-> operation. This allows the VMM to map the memory and use mbind() to set the
-> desired NUMA policy. The policy is stored in the inode structure via
-> kvm_gmem_inode_info, as memory policy is a property of the memory (struct
-> inode) itself. The policy is then retrieved via mpol_shared_policy_lookup()
-> and passed to filemap_grab_folio_mpol() to ensure that allocations follow
-> the specified memory policy.
+> Signed-off-by: Dong Yibo <dong100@mucse.com>
+> ---
+>   .../device_drivers/ethernet/index.rst         |   1 +
+>   .../device_drivers/ethernet/mucse/rnpgbe.rst  |  21 ++
+>   MAINTAINERS                                   |   8 +
+>   drivers/net/ethernet/Kconfig                  |   1 +
+>   drivers/net/ethernet/Makefile                 |   1 +
+>   drivers/net/ethernet/mucse/Kconfig            |  34 +++
+>   drivers/net/ethernet/mucse/Makefile           |   7 +
+>   drivers/net/ethernet/mucse/rnpgbe/Makefile    |   9 +
+>   drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    |  33 +++
+>   .../net/ethernet/mucse/rnpgbe/rnpgbe_main.c   | 226 ++++++++++++++++++
+>   10 files changed, 341 insertions(+)
+>   create mode 100644 Documentation/networking/device_drivers/ethernet/mucse/rnpgbe.rst
+>   create mode 100644 drivers/net/ethernet/mucse/Kconfig
+>   create mode 100644 drivers/net/ethernet/mucse/Makefile
+>   create mode 100644 drivers/net/ethernet/mucse/rnpgbe/Makefile
+>   create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+>   create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
 > 
-> This enables the VMM to control guest memory NUMA placement by calling
-> mbind() on the mapped memory regions, providing fine-grained control over
-> guest memory allocation across NUMA nodes.
-> 
-> The policy change only affect future allocations and does not migrate
-> existing memory. This matches mbind(2)'s default behavior which affects
-> only new allocations unless overridden with MPOL_MF_MOVE/MPOL_MF_MOVE_ALL
-> flags, which are not supported for guest_memfd as it is unmovable.
-> 
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Shivank Garg <shivankg@amd.com>
+> diff --git a/Documentation/networking/device_drivers/ethernet/index.rst b/Documentation/networking/device_drivers/ethernet/index.rst
+> index 40ac552641a3..0e03c5c10d30 100644
+> --- a/Documentation/networking/device_drivers/ethernet/index.rst
+> +++ b/Documentation/networking/device_drivers/ethernet/index.rst
+> @@ -61,6 +61,7 @@ Contents:
+>      wangxun/txgbevf
+>      wangxun/ngbe
+>      wangxun/ngbevf
+> +   mucse/rnpgbe
+>   
+>   .. only::  subproject and html
+>   
+> diff --git a/Documentation/networking/device_drivers/ethernet/mucse/rnpgbe.rst b/Documentation/networking/device_drivers/ethernet/mucse/rnpgbe.rst
+> new file mode 100644
+> index 000000000000..7562fb6b8f61
+> --- /dev/null
+> +++ b/Documentation/networking/device_drivers/ethernet/mucse/rnpgbe.rst
+> @@ -0,0 +1,21 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +===========================================================
+> +Linux Base Driver for MUCSE(R) Gigabit PCI Express Adapters
+> +===========================================================
+> +
+> +MUCSE Gigabit Linux driver.
+> +Copyright (c) 2020 - 2025 MUCSE Co.,Ltd.
+> +
+> +Identifying Your Adapter
+> +========================
+> +The driver is compatible with devices based on the following:
+> +
+> + * MUCSE(R) Ethernet Controller N500 series
+> + * MUCSE(R) Ethernet Controller N210 series
+> +
+> +Support
+> +=======
+> + If you have problems with the software or hardware, please contact our
+> + customer support team via email at techsupport@mucse.com or check our
+> + website at https://www.mucse.com/en/
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 1bc1698bc5ae..da0d12e77ddc 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -17033,6 +17033,14 @@ T:	git git://linuxtv.org/media.git
+>   F:	Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.yaml
+>   F:	drivers/media/i2c/mt9v111.c
+>   
+> +MUCSE ETHERNET DRIVER
+> +M:	Yibo Dong <dong100@mucse.com>
+> +L:	netdev@vger.kernel.org
+> +S:	Maintained
+> +W:	https://www.mucse.com/en/
+> +F:	Documentation/networking/device_drivers/ethernet/mucse/*
+> +F:	drivers/net/ethernet/mucse/*
+> +
+>   MULTIFUNCTION DEVICES (MFD)
+>   M:	Lee Jones <lee@kernel.org>
+>   S:	Maintained
+> diff --git a/drivers/net/ethernet/Kconfig b/drivers/net/ethernet/Kconfig
+> index f86d4557d8d7..77c55fa11942 100644
+> --- a/drivers/net/ethernet/Kconfig
+> +++ b/drivers/net/ethernet/Kconfig
+> @@ -202,5 +202,6 @@ source "drivers/net/ethernet/wangxun/Kconfig"
+>   source "drivers/net/ethernet/wiznet/Kconfig"
+>   source "drivers/net/ethernet/xilinx/Kconfig"
+>   source "drivers/net/ethernet/xircom/Kconfig"
+> +source "drivers/net/ethernet/mucse/Kconfig"
+>   
+>   endif # ETHERNET
+> diff --git a/drivers/net/ethernet/Makefile b/drivers/net/ethernet/Makefile
+> index 67182339469a..696825bd1211 100644
+> --- a/drivers/net/ethernet/Makefile
+> +++ b/drivers/net/ethernet/Makefile
+> @@ -107,3 +107,4 @@ obj-$(CONFIG_NET_VENDOR_XIRCOM) += xircom/
+>   obj-$(CONFIG_NET_VENDOR_SYNOPSYS) += synopsys/
+>   obj-$(CONFIG_NET_VENDOR_PENSANDO) += pensando/
+>   obj-$(CONFIG_OA_TC6) += oa_tc6.o
+> +obj-$(CONFIG_NET_VENDOR_MUCSE) += mucse/
+> diff --git a/drivers/net/ethernet/mucse/Kconfig b/drivers/net/ethernet/mucse/Kconfig
+> new file mode 100644
+> index 000000000000..be0fdf268484
+> --- /dev/null
+> +++ b/drivers/net/ethernet/mucse/Kconfig
+> @@ -0,0 +1,34 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +#
+> +# Mucse network device configuration
+> +#
+> +
+> +config NET_VENDOR_MUCSE
+> +	bool "Mucse devices"
+> +	default y
+> +	help
+> +	  If you have a network (Ethernet) card from Mucse(R), say Y.
+> +
+> +	  Note that the answer to this question doesn't directly affect the
+> +	  kernel: saying N will just cause the configurator to skip all
+> +	  the questions about Mucse(R) cards. If you say Y, you will
+> +	  be asked for your specific card in the following questions.
+> +
+> +if NET_VENDOR_MUCSE
+> +
+> +config MGBE
+> +	tristate "Mucse(R) 1GbE PCI Express adapters support"
+> +	depends on PCI
+> +	select PAGE_POOL
+> +	help
+> +	  This driver supports Mucse(R) 1GbE PCI Express family of
+> +	  adapters.
+> +
+> +	  More specific information on configuring the driver is in
+> +	  <file:Documentation/networking/device_drivers/ethernet/mucse/rnpgbe.rst>.
+> +
+> +	  To compile this driver as a module, choose M here. The module
+> +	  will be called rnpgbe.
+> +
+> +endif # NET_VENDOR_MUCSE
+> +
+> diff --git a/drivers/net/ethernet/mucse/Makefile b/drivers/net/ethernet/mucse/Makefile
+> new file mode 100644
+> index 000000000000..f0bd79882488
+> --- /dev/null
+> +++ b/drivers/net/ethernet/mucse/Makefile
+> @@ -0,0 +1,7 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +# Makefile for the Mucse(R) network device drivers.
+> +#
+> +
+> +obj-$(CONFIG_MGBE) += rnpgbe/
+> +
+> diff --git a/drivers/net/ethernet/mucse/rnpgbe/Makefile b/drivers/net/ethernet/mucse/rnpgbe/Makefile
+> new file mode 100644
+> index 000000000000..0942e27f5913
+> --- /dev/null
+> +++ b/drivers/net/ethernet/mucse/rnpgbe/Makefile
+> @@ -0,0 +1,9 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +# Copyright(c) 2020 - 2025 MUCSE Corporation.
+> +#
+> +# Makefile for the MUCSE(R) 1GbE PCI Express ethernet driver
+> +#
+> +
+> +obj-$(CONFIG_MGBE) += rnpgbe.o
+> +
+> +rnpgbe-objs := rnpgbe_main.o
+> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+> new file mode 100644
+> index 000000000000..224e395d6be3
+> --- /dev/null
+> +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+> @@ -0,0 +1,33 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/* Copyright(c) 2020 - 2025 Mucse Corporation. */
+> +
+> +#ifndef _RNPGBE_H
+> +#define _RNPGBE_H
+> +
+> +enum rnpgbe_boards {
+> +	board_n500,
+> +	board_n210,
+> +	board_n210L,
+> +};
+> +
+> +struct mucse {
+> +	struct net_device *netdev;
+> +	struct pci_dev *pdev;
+> +	/* board number */
+> +	u16 bd_number;
+> +
+> +	char name[60];
+> +};
+> +
+> +/* Device IDs */
+> +#ifndef PCI_VENDOR_ID_MUCSE
+> +#define PCI_VENDOR_ID_MUCSE 0x8848
+> +#endif /* PCI_VENDOR_ID_MUCSE */
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+this should go to include/linux/pci_ids.h without any ifdefs
 
+> +
+> +#define PCI_DEVICE_ID_N500_QUAD_PORT 0x8308
+> +#define PCI_DEVICE_ID_N500_DUAL_PORT 0x8318
+> +#define PCI_DEVICE_ID_N500_VF 0x8309
+> +#define PCI_DEVICE_ID_N210 0x8208
+> +#define PCI_DEVICE_ID_N210L 0x820a
+> +
+> +#endif /* _RNPGBE_H */
+
+[...]
 
