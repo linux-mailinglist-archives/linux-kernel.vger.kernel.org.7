@@ -1,339 +1,121 @@
-Return-Path: <linux-kernel+bounces-738899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 241C4B0BECB
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:26:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57E23B0BEB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:23:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBAE33BA61B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:25:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2213918866BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:23:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4929728A1EA;
-	Mon, 21 Jul 2025 08:24:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183D528315A;
+	Mon, 21 Jul 2025 08:23:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WgNZz/Vs"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aucUChu8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9907288C8F
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 08:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6369327FB35;
+	Mon, 21 Jul 2025 08:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753086288; cv=none; b=hIi/se8dZq9/uWt7+oeFEAen7uXF1OCNtRpxSUVDYM6AC9VZBMNUSQMd0+arypL6dhJXoy9hBC54FX1ClFmuigNIP2WBQOFt0v74+C6e3f/+iRquMjxEIXaxtyLUVKpIzgq187MyC27Nrw0PDTvxtQQhKLzU4iKB+Ml8dTntcRU=
+	t=1753086204; cv=none; b=SlYDzkvHGiltGnKpSO1pUbPoza35QF7lqRK/S/0Rri5WI2A4A4z5sGQZAOKl21F9DfO2NhXiYE5+9qkEvVsgjSZz6BjQNCEoMr64sTVQOlXAgvfc9PtrxjL+5sBpDW2qjPeiaFR0PIIXPTFu+xa1CDy5TyOMHu08dxjjVBOxbR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753086288; c=relaxed/simple;
-	bh=JOX4hE66CYjx46XG7yrX6CH/rhChnyM35RrAg1C3nC8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aH1RlspXYVJxswz2/cWI/zpLtBDx+qR939Nq588nA7cAltTJYs712G/j41gyDHqS2K/suaPGYMdwhd8MhgYjSreoO7sWYygHRUikI5OBHK5DFRgiakXQ4h3WNOcCs/eMX+cYua0ZqMLUWGsAy7mXVUJW7rVBB58uDPJEPSKirUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WgNZz/Vs; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753086285;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bh/HfMkkffmTPhCnzYMghVTtphrrxO/nARmJcY7im9o=;
-	b=WgNZz/VsYVQ2uhn/UVYOMtR4szQ8SvtVanOHyon0MyI7Ew8kVvYvpI0mHdn4sMaeNq+oE2
-	CSAF19hOUe7SIuuXFr2Y8ENL3X6Na4yEdn7p0rwfAcgDZpeL5jzut8YfL9e0vh0zwZtVn+
-	ZUEVgBPE8OzrXMP/ZEKg6EX4i6KC/2c=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-223-OAf3kBoDPm-SaiiNWjGxDg-1; Mon,
- 21 Jul 2025 04:24:41 -0400
-X-MC-Unique: OAf3kBoDPm-SaiiNWjGxDg-1
-X-Mimecast-MFC-AGG-ID: OAf3kBoDPm-SaiiNWjGxDg_1753086280
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8FE1119560B5;
-	Mon, 21 Jul 2025 08:24:40 +0000 (UTC)
-Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.44.32.136])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 02C1919560AD;
-	Mon, 21 Jul 2025 08:24:35 +0000 (UTC)
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-trace-kernel@vger.kernel.org
-Cc: Gabriele Monaco <gmonaco@redhat.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Nam Cao <namcao@linutronix.de>,
-	Tomas Glozar <tglozar@redhat.com>,
-	Juri Lelli <jlelli@redhat.com>,
-	Clark Williams <williams@redhat.com>,
-	John Kacur <jkacur@redhat.com>
-Subject: [PATCH v4 10/14] rv: Retry when da monitor detects race conditions
-Date: Mon, 21 Jul 2025 10:23:20 +0200
-Message-ID: <20250721082325.71554-11-gmonaco@redhat.com>
-In-Reply-To: <20250721082325.71554-1-gmonaco@redhat.com>
-References: <20250721082325.71554-1-gmonaco@redhat.com>
+	s=arc-20240116; t=1753086204; c=relaxed/simple;
+	bh=1Uz4iGqA/+cc+qW2DgSX3la5rsy0xMSqJoDWqrQXkP4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NsYIL1oX5GPj0Ub3i+afNSKLCdw969m04qelRmJKlStOVS1GWxd+kpYQcV7ioi819Br+6777BJd2IBZqpP2RnjsH3zMZkvJgsQMbwqrO7z2rQSwViakSzbO7Gx0Kd2VmUPJ/suECq87zfdT2d/4L5lBeL96GXoFd4Q5XG5MEVKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aucUChu8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E90AC4CEED;
+	Mon, 21 Jul 2025 08:23:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753086203;
+	bh=1Uz4iGqA/+cc+qW2DgSX3la5rsy0xMSqJoDWqrQXkP4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aucUChu8+a3Fdv69Ce8ZRQvJA60QGCJAPFxlYq084F/dFR8gXiyMfaNEIuxE+Ak0K
+	 nIVz4me8S6r/4cqskJSpWB+FQuLvlWZvKIZts49jvw/ng6HH9rhzo0NJ/ZbDhD0C8k
+	 bUl32TedXq+1Qkmgecshn9FhiEMsa/TShz9hI2qSLJgTtvydpSu09LF4zfVvKkeJrj
+	 /HkgMiU6pSTiTEXbt3E5a2MTEguQ6F4OGatAF/KvdtHLWA000DkBbjrNFGFuv0IgyI
+	 yJh2YRmgp1UI5+khOutgfXUeNjzJILIci1+Pj3zP1cbalEyTyRDQZxjPbdil1mgzA/
+	 /RDhAvq+yvTNA==
+Date: Mon, 21 Jul 2025 10:23:21 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
+Cc: Srinivas Kandagatla <srini@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	quic_pkumpatl@quicinc.com, kernel@oss.qualcomm.com
+Subject: Re: [PATCH v2 2/2] ASoC: codecs: wsa883x: Handle shared reset GPIO
+ for WSA883x speakers
+Message-ID: <20250721-hairy-aardwolf-of-enterprise-bbc99f@kuoka>
+References: <20250718104628.3732645-1-mohammad.rafi.shaik@oss.qualcomm.com>
+ <20250718104628.3732645-3-mohammad.rafi.shaik@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250718104628.3732645-3-mohammad.rafi.shaik@oss.qualcomm.com>
 
-DA monitor can be accessed from multiple cores simultaneously, this is
-likely, for instance when dealing with per-task monitors reacting on
-events that do not always occur on the CPU where the task is running.
-This can cause race conditions where two events change the next state
-and we see inconsistent values. E.g.:
+On Fri, Jul 18, 2025 at 04:16:28PM +0530, Mohammad Rafi Shaik wrote:
+> On some Qualcomm platforms such as QCS6490-RB3Gen2, the multiple
+> WSA8830/WSA8835 speakers share a common reset (shutdown) GPIO.
+> To handle such cases, use the reset controller framework along
+> with the "reset-gpio" driver.
+> 
+> Register devm action to safely disable the regulator on device removal
+> to prevents a potential release warning from _regulator_put().
 
-  [62] event_srs: 27: sleepable x sched_wakeup -> running (final)
-  [63] event_srs: 27: sleepable x sched_set_state_sleepable -> sleepable
-  [63] error_srs: 27: event sched_switch_suspend not expected in the state running
+It is not possible to remove the device - suppress bind attrs. How did
+you trigger that?
 
-In this case the monitor fails because the event on CPU 62 wins against
-the one on CPU 63, although the correct state should have been
-sleepable, since the task get suspended.
+> 
+> Signed-off-by: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
+> ---
+>  sound/soc/codecs/wsa883x.c | 93 +++++++++++++++++++++++++++++---------
+>  1 file changed, 71 insertions(+), 22 deletions(-)
 
-Detect if the current state was modified by using try_cmpxchg while
-storing the next value. If it was, try again reading the current state.
-After a maximum number of failed retries, react by calling a special
-tracepoint, print on the console and reset the monitor.
+...
 
-Remove the functions da_monitor_curr_state() and da_monitor_set_state()
-as they only hide the underlying implementation in this case.
+>  static int wsa883x_probe(struct sdw_slave *pdev,
+>  			 const struct sdw_device_id *id)
+>  {
+> @@ -1566,13 +1615,18 @@ static int wsa883x_probe(struct sdw_slave *pdev,
+>  	if (ret)
+>  		return dev_err_probe(dev, ret, "Failed to enable vdd regulator\n");
+>  
+> -	wsa883x->sd_n = devm_gpiod_get_optional(dev, "powerdown",
+> -						GPIOD_FLAGS_BIT_NONEXCLUSIVE | GPIOD_OUT_HIGH);
+> -	if (IS_ERR(wsa883x->sd_n)) {
+> -		ret = dev_err_probe(dev, PTR_ERR(wsa883x->sd_n),
+> -				    "Shutdown Control GPIO not found\n");
+> -		goto err;
+> -	}
+> +	ret = wsa883x_get_reset(dev, wsa883x);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*
+> +	 * Register devm action to safely disable the regulator on device removal.
+> +	 * This prevents a potential release warning from _regulator_put().
+> +	 */
+> +	ret = devm_add_action_or_reset(dev, wsa883x_regulator_disable,
+> +				       wsa883x);
 
-Monitors where this type of condition can occur must be able to account
-for racing events in any possible order, as we cannot know the winner.
+If removal is possible (but then explain in commit msg how), then this
+should be separate commit with fixes and cc-stable, because you are
+fixing actual bug - lack of regulator release on unbind.
 
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
----
- include/linux/rv.h         |   3 +-
- include/rv/da_monitor.h    | 105 ++++++++++++++++++-------------------
- kernel/trace/rv/Kconfig    |   5 ++
- kernel/trace/rv/rv_trace.h |  24 +++++++++
- 4 files changed, 83 insertions(+), 54 deletions(-)
-
-diff --git a/include/linux/rv.h b/include/linux/rv.h
-index 97baf58d88b28..0250a04f4524c 100644
---- a/include/linux/rv.h
-+++ b/include/linux/rv.h
-@@ -7,7 +7,8 @@
- #ifndef _LINUX_RV_H
- #define _LINUX_RV_H
- 
--#define MAX_DA_NAME_LEN	32
-+#define MAX_DA_NAME_LEN			32
-+#define MAX_DA_RETRY_RACING_EVENTS	3
- 
- #ifdef CONFIG_RV
- #include <linux/bitops.h>
-diff --git a/include/rv/da_monitor.h b/include/rv/da_monitor.h
-index ed3c34fe18d61..decf219cc0422 100644
---- a/include/rv/da_monitor.h
-+++ b/include/rv/da_monitor.h
-@@ -54,23 +54,6 @@ static inline void da_monitor_reset_##name(struct da_monitor *da_mon)				\
- 	da_mon->curr_state = model_get_initial_state_##name();					\
- }												\
- 												\
--/*												\
-- * da_monitor_curr_state_##name - return the current state					\
-- */												\
--static inline type da_monitor_curr_state_##name(struct da_monitor *da_mon)			\
--{												\
--	return da_mon->curr_state;								\
--}												\
--												\
--/*												\
-- * da_monitor_set_state_##name - set the new current state					\
-- */												\
--static inline void										\
--da_monitor_set_state_##name(struct da_monitor *da_mon, enum states_##name state)		\
--{												\
--	da_mon->curr_state = state;								\
--}												\
--												\
- /*												\
-  * da_monitor_start_##name - start monitoring							\
-  *												\
-@@ -127,63 +110,79 @@ static inline bool da_monitor_handling_event_##name(struct da_monitor *da_mon)
-  * Event handler for implicit monitors. Implicit monitor is the one which the
-  * handler does not need to specify which da_monitor to manipulate. Examples
-  * of implicit monitor are the per_cpu or the global ones.
-+ *
-+ * Retry in case there is a race between getting and setting the next state,
-+ * warn and reset the monitor if it runs out of retries. The monitor should be
-+ * able to handle various orders.
-  */
- #define DECLARE_DA_MON_MODEL_HANDLER_IMPLICIT(name, type)					\
- 												\
- static inline bool										\
- da_event_##name(struct da_monitor *da_mon, enum events_##name event)				\
- {												\
--	type curr_state = da_monitor_curr_state_##name(da_mon);					\
--	type next_state = model_get_next_state_##name(curr_state, event);			\
--												\
--	if (next_state != INVALID_STATE) {							\
--		da_monitor_set_state_##name(da_mon, next_state);				\
--												\
--		trace_event_##name(model_get_state_name_##name(curr_state),			\
--				   model_get_event_name_##name(event),				\
--				   model_get_state_name_##name(next_state),			\
--				   model_is_final_state_##name(next_state));			\
--												\
--		return true;									\
-+	enum states_##name curr_state, next_state;						\
-+												\
-+	curr_state = READ_ONCE(da_mon->curr_state);						\
-+	for (int i = 0; i < MAX_DA_RETRY_RACING_EVENTS; i++) {					\
-+		next_state = model_get_next_state_##name(curr_state, event);			\
-+		if (next_state == INVALID_STATE) {						\
-+			cond_react_##name(curr_state, event);					\
-+			trace_error_##name(model_get_state_name_##name(curr_state),		\
-+					   model_get_event_name_##name(event));			\
-+			return false;								\
-+		}										\
-+		if (likely(try_cmpxchg(&da_mon->curr_state, &curr_state, next_state))) {	\
-+			trace_event_##name(model_get_state_name_##name(curr_state),		\
-+					   model_get_event_name_##name(event),			\
-+					   model_get_state_name_##name(next_state),		\
-+					   model_is_final_state_##name(next_state));		\
-+			return true;								\
-+		}										\
- 	}											\
- 												\
--	cond_react_##name(curr_state, event);							\
--												\
--	trace_error_##name(model_get_state_name_##name(curr_state),				\
--			   model_get_event_name_##name(event));					\
--												\
-+	trace_rv_retries_error(#name, smp_processor_id());					\
-+	pr_warn("rv: " __stringify(MAX_DA_RETRY_RACING_EVENTS)					\
-+		" retries reached, resetting monitor %s", #name);				\
- 	return false;										\
- }												\
- 
- /*
-  * Event handler for per_task monitors.
-+ *
-+ * Retry in case there is a race between getting and setting the next state,
-+ * warn and reset the monitor if it runs out of retries. The monitor should be
-+ * able to handle various orders.
-  */
- #define DECLARE_DA_MON_MODEL_HANDLER_PER_TASK(name, type)					\
- 												\
- static inline bool da_event_##name(struct da_monitor *da_mon, struct task_struct *tsk,		\
- 				   enum events_##name event)					\
- {												\
--	type curr_state = da_monitor_curr_state_##name(da_mon);					\
--	type next_state = model_get_next_state_##name(curr_state, event);			\
--												\
--	if (next_state != INVALID_STATE) {							\
--		da_monitor_set_state_##name(da_mon, next_state);				\
--												\
--		trace_event_##name(tsk->pid,							\
--				   model_get_state_name_##name(curr_state),			\
--				   model_get_event_name_##name(event),				\
--				   model_get_state_name_##name(next_state),			\
--				   model_is_final_state_##name(next_state));			\
--												\
--		return true;									\
-+	enum states_##name curr_state, next_state;						\
-+												\
-+	curr_state = READ_ONCE(da_mon->curr_state);						\
-+	for (int i = 0; i < MAX_DA_RETRY_RACING_EVENTS; i++) {					\
-+		next_state = model_get_next_state_##name(curr_state, event);			\
-+		if (next_state == INVALID_STATE) {						\
-+			cond_react_##name(curr_state, event);					\
-+			trace_error_##name(tsk->pid,						\
-+					   model_get_state_name_##name(curr_state),		\
-+					   model_get_event_name_##name(event));			\
-+			return false;								\
-+		}										\
-+		if (likely(try_cmpxchg(&da_mon->curr_state, &curr_state, next_state))) {	\
-+			trace_event_##name(tsk->pid,						\
-+					   model_get_state_name_##name(curr_state),		\
-+					   model_get_event_name_##name(event),			\
-+					   model_get_state_name_##name(next_state),		\
-+					   model_is_final_state_##name(next_state));		\
-+			return true;								\
-+		}										\
- 	}											\
- 												\
--	cond_react_##name(curr_state, event);							\
--												\
--	trace_error_##name(tsk->pid,								\
--			   model_get_state_name_##name(curr_state),				\
--			   model_get_event_name_##name(event));					\
--												\
-+	trace_rv_retries_error(#name, tsk->pid);						\
-+	pr_warn("rv: " __stringify(MAX_DA_RETRY_RACING_EVENTS)					\
-+		" retries reached, resetting monitor %s", #name);				\
- 	return false;										\
- }
- 
-diff --git a/kernel/trace/rv/Kconfig b/kernel/trace/rv/Kconfig
-index 26017378f79b8..34164eb4ec913 100644
---- a/kernel/trace/rv/Kconfig
-+++ b/kernel/trace/rv/Kconfig
-@@ -3,12 +3,17 @@
- config RV_MON_EVENTS
- 	bool
- 
-+config RV_MON_MAINTENANCE_EVENTS
-+	bool
-+
- config DA_MON_EVENTS_IMPLICIT
- 	select RV_MON_EVENTS
-+	select RV_MON_MAINTENANCE_EVENTS
- 	bool
- 
- config DA_MON_EVENTS_ID
- 	select RV_MON_EVENTS
-+	select RV_MON_MAINTENANCE_EVENTS
- 	bool
- 
- config LTL_MON_EVENTS_ID
-diff --git a/kernel/trace/rv/rv_trace.h b/kernel/trace/rv/rv_trace.h
-index d38e0d3abdfde..044772515256a 100644
---- a/kernel/trace/rv/rv_trace.h
-+++ b/kernel/trace/rv/rv_trace.h
-@@ -176,6 +176,30 @@ DECLARE_EVENT_CLASS(error_ltl_monitor_id,
- #include <monitors/sleep/sleep_trace.h>
- // Add new monitors based on CONFIG_LTL_MON_EVENTS_ID here
- #endif /* CONFIG_LTL_MON_EVENTS_ID */
-+
-+#ifdef CONFIG_RV_MON_MAINTENANCE_EVENTS
-+/* Tracepoint useful for monitors development, currenly only used in DA */
-+TRACE_EVENT(rv_retries_error,
-+
-+	TP_PROTO(char *name, int id),
-+
-+	TP_ARGS(name, id),
-+
-+	TP_STRUCT__entry(
-+		__string(	name,	name	)
-+		__field(	int,	id	)
-+	),
-+
-+	TP_fast_assign(
-+		__assign_str(name);
-+		__entry->id = id;
-+	),
-+
-+	TP_printk(__stringify(MAX_DA_RETRY_RACING_EVENTS)
-+		" retries reached, resetting monitor %s-%d",
-+		__get_str(name), __entry->id)
-+);
-+#endif /* CONFIG_RV_MON_MAINTENANCE_EVENTS */
- #endif /* _TRACE_RV_H */
- 
- /* This part must be outside protection */
--- 
-2.50.1
+Best regards,
+Krzysztof
 
 
