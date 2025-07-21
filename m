@@ -1,79 +1,47 @@
-Return-Path: <linux-kernel+bounces-739612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B072EB0C88E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:23:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1D5BB0C893
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:24:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FDAE4E0517
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:22:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A73B71AA7E61
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:24:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E51283FC3;
-	Mon, 21 Jul 2025 16:23:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5022E2E041D;
+	Mon, 21 Jul 2025 16:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DEmk0UJS"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tH3N33YN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817592DFF04
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 16:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790D81F37D3;
+	Mon, 21 Jul 2025 16:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753114980; cv=none; b=I8+OIqhLPwFLOmiUtAhs1Kxkjy/Wh5NWRAVa3n4v04fZEVn/dpUS8deZHx/RQWUgPgSIcyK1V5/2llsvaz4oaUNy7l8xPhWOusQLncHzCt25ReLWUq3QUtD+SuYtP496/i0x5A1MJk56M87eXWZBvrvOIxm7Xq/8Wn6wFQ/1iLc=
+	t=1753115035; cv=none; b=Wu37EebPak7vbVUMDQzm1/EuRYR6+vD0xanFsYHk+28QtBGPkhtmqxLr0fU222mH2/kujQkukSjuGaityHDiuSuVYEJs+v9RAhWvOIkVcOearlpgIymoKNKsHgltcmwyXE+JxLBvGH0V3dsWe1YrB9bvgPYYA4gN2sv5SbomGmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753114980; c=relaxed/simple;
-	bh=O6I6F+JBtuzhpPwj1u61pe7YVmTjBrSZst347vFK+J4=;
+	s=arc-20240116; t=1753115035; c=relaxed/simple;
+	bh=kO/ojY0PKE/G0K4Aubf2edaZj4LmwtMDF2WwLrQ1IUU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iINOcXd/cyS3rToBq8TQGcOINqIcGnj/D6a48z50mXKAWDwMvRTpnyWniatGz4tYDI0nEhjPwKw276cY0WkLkzu+odjMm4S+1db8lZUROOGiGmcdvlT1av1Qk6v/FlGcIWbDyeYUXKB6N3d8cgHE1AtBrSVlvFTPkPd8BDLwRi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DEmk0UJS; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-454f428038eso38781625e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 09:22:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753114977; x=1753719777; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TxA1HkWcihAgiHesUgMnXVmrELXQs8wNZG5+2Hm4nPA=;
-        b=DEmk0UJSsid12IhrpLXiJXtFog3JemvWg/LklbuPAqxKfURTtRzYMrfXWiwRCaet57
-         w7SviqKiLa5mA9T2jwRS0QdX13WVwNYNEx5GXV4Hidj21aG2aCnp75q/ZViVx0raakkK
-         r1Xn3UnHiDUquIALYY3dgtwoZUWuNwNXw1RmBlkbRGLEuFQ2VGkFbX3Z6Jnayg74zsx0
-         ayJIWmQ8J/gIbLPu8ghCz+20bKOidC1c+BNALo1R4y0zGADZZ2pI5SOGkPpC0ze8Yl6i
-         58NzfwMWeD8kdBu+mZMCtjhBCnNoAMH6vhFH9l9gQ7DuGNPHMILWoH7iboQwLjdJiOU/
-         4gRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753114977; x=1753719777;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TxA1HkWcihAgiHesUgMnXVmrELXQs8wNZG5+2Hm4nPA=;
-        b=gMPr0VyBflhIH9llSD+jaNohDApBJy/uGMxAvTIpxRNgxADEoXimiK6PCL+wq+Dki5
-         79M5pz90hS+3EFGl/vRiul1rQqxdG3FknK04JCMEIXGOzSEQx1mJhDAHnSE/jWzhWL7j
-         VzjRBDZ5/mm7Y+xld8SZXGw3FvQIo7D5N+kNYEawuVjwaDtjcz6tT+q1U+6H9vVO+CTZ
-         h5a4WBuUYYDQwEEpwRYy1wtAeG3wfqCAPVfcBNjbbT4eX2SSWJW+dNSzApF++UbWt6w+
-         ywgN0nYvO/5+xUwdXWLswDriafGUm5/ryAdnHUT7nYs09C7lbsIsGHzxUD+fNrS91qfg
-         oEhA==
-X-Forwarded-Encrypted: i=1; AJvYcCXNZixpYRzS+k7A2y+nFF6x2dkn3x8pChLn3tYuiDYefrKT4Pp5CpTH3VVGubu5G0205qtcOMMt6C6gNIE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNlxagZqdHG2FF4RBK8odVJNczprjbdXwCsS9CMmeGH83kFGhc
-	/7StRVpQ5RaHBN+yV95ZEJ3tVGsF0XFEKRmXWuxsLlsoqBi2OLUftHk+TcCsrzy8td4=
-X-Gm-Gg: ASbGncuB2bf81Lrli74cGlba5Ep69fFkodkprK96AiAdpqg86vhWVadURXdYBP9KZyc
-	DR5UptgbH3/kAJ9fdZjchM1xFRzVlySiMWqgtgpTyEP8CtfxnhSWHFiynqWI3SqOOccQ9haBM8Z
-	cpK1+3JW1sWxeojg7cTrQ7ANX94HWuR/ZZOidIPf/q8Agu3vCucVAlH73Kd8v1TQ+5dbFHBMhrd
-	eWS0AwsWxTHx0RGeg1Z+ZsnZU5T1mBaQJ5itiS4e415y3YfguukWBCJd7qXvgzKtGCNVT/hXo8x
-	3ElImyFx+ZMRs7TpqWKvw4VYRYIPnRvZ6XKH3qBZQewJrV1xENPXizmAfsiT71K4eJrJRpXIbxB
-	KsFe6kWuLgLcFpoYt6M2eT3g/vvKfB0YnwYOPL7k+8d2XwOBrhiozevOwGT0Pb2o=
-X-Google-Smtp-Source: AGHT+IHp3F1bGKZQuLQleiP5LQBGh2HZeuuoCI3Px72hTP9M9DOLyNGcLbYw36OIyWjFyB5RpreVGg==
-X-Received: by 2002:a05:6000:658:b0:3b6:13a1:8861 with SMTP id ffacd0b85a97d-3b613a188a1mr12726134f8f.38.1753114976724;
-        Mon, 21 Jul 2025 09:22:56 -0700 (PDT)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca4d74asm10736869f8f.63.2025.07.21.09.22.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Jul 2025 09:22:56 -0700 (PDT)
-Message-ID: <90a896f0-7b67-494a-abe4-dceb52067e65@linaro.org>
-Date: Mon, 21 Jul 2025 17:22:55 +0100
+	 In-Reply-To:Content-Type; b=Hhu8Sl+C+UdrIHA8USTKdBpScS3OQ6GqatnXL0SZgPQBzSinyTppswccKIMb8R7rcFfjeqGFk2u8Osz92qo37dgiNmHwD3i/tuyiVHe5qrz6CHmAYhFeL9cmjaa0I0KtzrUwKONMyz2NXcwDxVgaypDTfYdfSAKgNOxF71Cte88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tH3N33YN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44C41C4CEED;
+	Mon, 21 Jul 2025 16:23:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753115035;
+	bh=kO/ojY0PKE/G0K4Aubf2edaZj4LmwtMDF2WwLrQ1IUU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tH3N33YNAGoUDzxav2ywGWPKinOWFxIp5t3GbrgF0ubIvy0u7H+GFTQZ/SZ5xj5iI
+	 9j0IQjlAVKDQXzuWqikwXYAWcE9ZhLBFrGa1HnEB3TI+jjUUyIdnEdf1XmfGjwkDVU
+	 5BgBRAh4x3Ndp+JlaBucVjjTrLBVqgyYYxACVob5jE3rBEGsrUC+1ajEDlqbWeMt0z
+	 4Po82Ff13FhV44Y0hoYeL4zL3xhR2/gd3z1xQSp3Rk4rTvMPGbrd1EL26uUcXC29nf
+	 MEj6+KfSnXS3PQXRX7ka+LcmYmUtGVjtsUUKVr782yFISn1KFYiP5EZCPmOKSyieiJ
+	 RuAHqpSNCm+ug==
+Message-ID: <6b0669fd-fef6-4f4e-b80d-512769e86938@kernel.org>
+Date: Mon, 21 Jul 2025 17:23:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,49 +49,388 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] phy: qcom-mipi-csi2: Add a CSI2 MIPI D-PHY driver
-To: Neil Armstrong <neil.armstrong@linaro.org>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250710-x1e-csi2-phy-v1-0-74acbb5b162b@linaro.org>
- <20250710-x1e-csi2-phy-v1-2-74acbb5b162b@linaro.org>
- <11b573d5-ce4d-476c-b94c-216d427cd838@linaro.org>
- <08261aa4-689b-4d6b-bfd2-221c1976d254@linaro.org>
- <a7f64b31-4767-4281-b452-a2bc5351d745@mleia.com>
- <c93624bb-ee7b-45ac-8b53-b5391f11c9c9@linaro.org>
- <eac3a877-a4aa-4789-9013-ab8b6c91e0f3@linaro.org>
- <0a12879f-dc4a-47fb-87a0-ac4b8bcd4d75@linaro.org>
- <53a19b1d-5665-4937-a07c-5dd1fcde06c5@linaro.org>
- <3b760685-97db-46e3-80a3-7fad69ad31cd@oss.qualcomm.com>
- <94b75177-9401-4e0c-966b-5847a29cb6f7@linaro.org>
- <427548c0-b0e3-4462-a15e-bd7843f00c7f@oss.qualcomm.com>
- <3UXVZ6ANM9mDjVdMV4SXsiIx_pT3S1lp3RC_Q7mh_o7jF2dpYsni1Sl2TAWv6OCMCRTFmi9aE6BxDquGkOnwEg==@protonmail.internalid>
- <8b908a20-0bf3-447d-82ea-a5ecee1bf54c@linaro.org>
- <57501e81-7e9c-4cb1-9a37-18307d1e06ca@linaro.org>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <57501e81-7e9c-4cb1-9a37-18307d1e06ca@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH bpf-next 1/2] bpftool: Add bpf_token show
+To: Tao Chen <chen.dylane@linux.dev>, ast@kernel.org, daniel@iogearbox.net,
+ andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, davem@davemloft.net,
+ kuba@kernel.org, hawk@kernel.org
+Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org
+References: <20250720173310.1334483-1-chen.dylane@linux.dev>
+From: Quentin Monnet <qmo@kernel.org>
+Content-Language: en-GB
+In-Reply-To: <20250720173310.1334483-1-chen.dylane@linux.dev>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 21/07/2025 17:16, Bryan O'Donoghue wrote:
-> drivers/phy/amlogic/phy-meson-axg-mipi-dphy.c Documentation/devicetree/ 
-> bindings/parch/arm64/boot/dts/amlogic/meson-khadas-vim3-ts050.dtsoc/ 
-> meson-axg.dtsi
+Thanks a lot for this!
 
-Documentation/devicetree/bindings/phDocumentation/devicetree/bindings/phy/amlogic,axg-mipi-dphy.yaml
 
-Rockchip, Broadcom, etc.
+2025-07-21 01:33 UTC+0800 ~ Tao Chen <chen.dylane@linux.dev>
+> Add `bpftool token show` command to get token info
+> from bpf fs in /proc/mounts.
+> 
+> Example plain output for `token show`:
+> token_info:
+>         /sys/fs/bpf/token
+> 
+> allowed_cmds:
+>         map_create          prog_load
+> 
+> allowed_maps:
+> 
+> allowed_progs:
+>         kprobe
+> 
+> allowed_attachs:
+>         xdp
+> 
+> Example json output for `token show`:
+> {
+>     "token_info": "/sys/fs/bpf/token",
+>     "allowed_cmds": ["map_create","prog_load"
+>     ],
+>     "allowed_maps":
 
-The allocation of lanes is known by CAMSS and easily communicated to a 
-separate standalone node.
 
----
-bod
+This is not valid JSON. You're missing a value for "allowed_maps" (here
+it should likely be an empty array), and the comma:
+
+	"allowed_maps": [],
+
+
+>     "allowed_progs": ["kprobe"
+>     ],
+>     "allowed_attachs": ["xdp"
+>     ]
+> }
+> 
+> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+> ---
+>  tools/bpf/bpftool/main.c  |   3 +-
+>  tools/bpf/bpftool/main.h  |   1 +
+>  tools/bpf/bpftool/token.c | 229 ++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 232 insertions(+), 1 deletion(-)
+>  create mode 100644 tools/bpf/bpftool/token.c
+> 
+> diff --git a/tools/bpf/bpftool/main.c b/tools/bpf/bpftool/main.c
+> index 2b7f2bd3a7d..0f1183b2ed0 100644
+> --- a/tools/bpf/bpftool/main.c
+> +++ b/tools/bpf/bpftool/main.c
+> @@ -61,7 +61,7 @@ static int do_help(int argc, char **argv)
+>  		"       %s batch file FILE\n"
+>  		"       %s version\n"
+>  		"\n"
+> -		"       OBJECT := { prog | map | link | cgroup | perf | net | feature | btf | gen | struct_ops | iter }\n"
+> +		"       OBJECT := { prog | map | link | cgroup | perf | net | feature | btf | gen | struct_ops | iter | token }\n"
+>  		"       " HELP_SPEC_OPTIONS " |\n"
+>  		"                    {-V|--version} }\n"
+>  		"",
+> @@ -87,6 +87,7 @@ static const struct cmd commands[] = {
+>  	{ "gen",	do_gen },
+>  	{ "struct_ops",	do_struct_ops },
+>  	{ "iter",	do_iter },
+> +	{ "token",	do_token },
+>  	{ "version",	do_version },
+>  	{ 0 }
+>  };
+> diff --git a/tools/bpf/bpftool/main.h b/tools/bpf/bpftool/main.h
+> index 6db704fda5c..a2bb0714b3d 100644
+> --- a/tools/bpf/bpftool/main.h
+> +++ b/tools/bpf/bpftool/main.h
+> @@ -166,6 +166,7 @@ int do_tracelog(int argc, char **arg) __weak;
+>  int do_feature(int argc, char **argv) __weak;
+>  int do_struct_ops(int argc, char **argv) __weak;
+>  int do_iter(int argc, char **argv) __weak;
+> +int do_token(int argc, char **argv) __weak;
+>  
+>  int parse_u32_arg(int *argc, char ***argv, __u32 *val, const char *what);
+>  int prog_parse_fd(int *argc, char ***argv);
+> diff --git a/tools/bpf/bpftool/token.c b/tools/bpf/bpftool/token.c
+> new file mode 100644
+> index 00000000000..2fcaff4f2ba
+> --- /dev/null
+> +++ b/tools/bpf/bpftool/token.c
+> @@ -0,0 +1,229 @@
+> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +
+> +#ifndef _GNU_SOURCE
+> +#define _GNU_SOURCE
+> +#endif
+> +#include <errno.h>
+> +#include <fcntl.h>
+> +#include <stdbool.h>
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <string.h>
+> +#include <unistd.h>
+> +#include <mntent.h>
+> +#include <sys/types.h>
+> +#include <sys/stat.h>
+> +
+> +#include "json_writer.h"
+> +#include "main.h"
+> +
+> +#define MOUNTS_FILE "/proc/mounts"
+> +
+> +#define zclose(fd) do { if (fd >= 0) close(fd); fd = -1; } while (0)
+
+
+Seems unused?
+
+
+> +
+> +static bool has_delegate_options(const char *mnt_ops)
+> +{
+> +	return strstr(mnt_ops, "delegate_cmds") != NULL ||
+> +	       strstr(mnt_ops, "delegate_maps") != NULL ||
+> +	       strstr(mnt_ops, "delegate_progs") != NULL ||
+> +	       strstr(mnt_ops, "delegate_attachs") != NULL;
+> +}
+> +
+> +static char *get_delegate_value(const char *opts, const char *key)
+> +{
+> +	char *token, *rest, *ret = NULL;
+> +	char *opts_copy = strdup(opts);
+> +
+> +	if (!opts_copy)
+> +		return NULL;
+> +
+> +	for (token = strtok_r(opts_copy, ",", &rest); token != NULL;
+> +			token = strtok_r(NULL, ",", &rest)) {
+> +		if (strncmp(token, key, strlen(key)) == 0 &&
+> +				token[strlen(key)] == '=') {
+> +			ret = token + strlen(key) + 1;
+> +			break;
+> +		}
+> +	}
+> +	free(opts_copy);
+> +
+> +	return ret;
+> +}
+> +
+> +static void print_items_per_line(const char *input, int items_per_line)
+> +{
+> +	char *str, *rest;
+> +	int cnt = 0;
+> +	char *strs = strdup(input);
+> +
+> +	if (!strs)
+> +		return;
+> +
+> +	for (str = strtok_r(strs, ":", &rest); str != NULL;
+> +			str = strtok_r(NULL, ":", &rest)) {
+> +		if (cnt % items_per_line == 0)
+> +			printf("\n\t");
+> +
+> +		printf("%-20s", str);
+> +		cnt++;
+> +	}
+> +
+> +	free(strs);
+> +}
+> +
+> +#define ITEMS_PER_LINE 4
+> +static void show_token_info_plain(struct mntent *mntent)
+> +{
+> +	char *value;
+> +
+> +	printf("\ntoken_info:");
+> +	printf("\n\t%s\n", mntent->mnt_dir);
+> +
+> +	printf("\nallowed_cmds:");
+> +	value = get_delegate_value(mntent->mnt_opts, "delegate_cmds");
+> +	if (value)
+> +		print_items_per_line(value, ITEMS_PER_LINE);
+> +	printf("\n");
+> +
+> +	printf("\nallowed_maps:");
+> +	value = get_delegate_value(mntent->mnt_opts, "delegate_maps");
+> +	if (value)
+> +		print_items_per_line(value, ITEMS_PER_LINE);
+> +	printf("\n");
+> +
+> +	printf("\nallowed_progs:");
+> +	value = get_delegate_value(mntent->mnt_opts, "delegate_progs");
+> +	if (value)
+> +		print_items_per_line(value, ITEMS_PER_LINE);
+> +	printf("\n");
+> +
+> +	printf("\nallowed_attachs:");
+> +	value = get_delegate_value(mntent->mnt_opts, "delegate_attachs");
+> +	if (value)
+> +		print_items_per_line(value, ITEMS_PER_LINE);
+> +	printf("\n");
+> +}
+> +
+> +static void __json_array_str(const char *input)
+
+
+Nit: Why the double underscore in the function name? Let's use a more
+explicit name also, maybe something like "split_to_json_array"?
+
+
+> +{
+> +	char *str, *rest;
+> +	char *strs = strdup(input);
+> +
+> +	if (!strs)
+> +		return;
+> +
+> +	jsonw_start_array(json_wtr);
+> +	for (str = strtok_r(strs, ":", &rest); str != NULL;
+> +			str = strtok_r(NULL, ":", &rest)) {
+> +		jsonw_string(json_wtr, str);
+> +	}
+> +	jsonw_end_array(json_wtr);
+> +
+> +	free(strs);
+> +}
+> +
+> +static void show_token_info_json(struct mntent *mntent)
+> +{
+> +	char *value;
+> +
+> +	jsonw_start_object(json_wtr);
+> +
+> +	jsonw_string_field(json_wtr, "token_info", mntent->mnt_dir);
+> +
+> +	jsonw_name(json_wtr, "allowed_cmds");
+> +	value = get_delegate_value(mntent->mnt_opts, "delegate_cmds");
+> +	if (value)
+> +		__json_array_str(value);
+
+
+As mentioned above, you need to change __json_array_str() to print
+something when you don't get a "value" here - just have it print an
+empty array.
+
+
+> +
+> +	jsonw_name(json_wtr, "allowed_maps");
+> +	value = get_delegate_value(mntent->mnt_opts, "delegate_maps");
+> +	if (value)
+> +		__json_array_str(value);
+> +
+> +	jsonw_name(json_wtr, "allowed_progs");
+> +	value = get_delegate_value(mntent->mnt_opts, "delegate_progs");
+> +	if (value)
+> +		__json_array_str(value);
+> +
+> +	jsonw_name(json_wtr, "allowed_attachs");
+> +	value = get_delegate_value(mntent->mnt_opts, "delegate_attachs");
+> +	if (value)
+> +		__json_array_str(value);
+> +
+> +	jsonw_end_object(json_wtr);
+> +}
+> +
+> +static int __show_token_info(struct mntent *mntent)
+> +{
+> +
+> +	if (json_output)
+> +		show_token_info_json(mntent);
+> +	else
+> +		show_token_info_plain(mntent);
+> +
+> +	return 0;
+> +}
+> +
+> +static int show_token_info(void)
+> +{
+> +	FILE *fp;
+> +	struct mntent *ent;
+> +	bool hit = false;
+> +
+> +	fp = setmntent(MOUNTS_FILE, "r");
+> +	if (!fp) {
+> +		p_err("Failed to open:%s", MOUNTS_FILE);
+
+
+Missing space after the colon, in the error message.
+
+
+> +		return -1;
+> +	}
+> +
+> +	while ((ent = getmntent(fp)) != NULL) {
+> +		if (strcmp(ent->mnt_type, "bpf") == 0) {
+
+
+File common.c has:
+
+		if (strncmp(mntent->mnt_type, "bpf", 3) != 0)
+			continue;
+
+Maybe do the same for consistency, and to avoid indenting too far right?
+
+
+> +			if (has_delegate_options(ent->mnt_opts)) {
+> +				hit = true;
+> +				break;
+
+
+Apologies, my knowledge of BPF tokens is limited. Can you have only one
+token exposed through a bpffs at a time? Asking because I know you can
+have several bpffs on your system, if each can have delegate options
+then why stop after the first bpffs mount point you find?
+
+
+> +			}
+> +		}
+> +	}
+> +
+> +	if (hit)
+> +		__show_token_info(ent);
+
+
+Maybe at least a p_info() message if you don't find anything to print?
+
+
+> +	endmntent(fp);
+> +
+> +	return 0;
+> +}
+> +
+> +static int do_show(int argc, char **argv)
+> +{
+> +	if (argc)
+> +		return BAD_ARG();
+> +
+> +	return show_token_info();
+> +}
+> +
+> +static int do_help(int argc, char **argv)
+> +{
+> +	if (json_output) {
+> +		jsonw_null(json_wtr);
+> +		return 0;
+> +	}
+> +
+> +	fprintf(stderr,
+> +		"Usage: %1$s %2$s { show | list }\n"
+> +		"	%1$s %2$s help\n"
+> +		"\n"
+> +		"",
+> +		bin_name, argv[-2]);
+> +	return 0;
+> +}
+> +
+> +static const struct cmd cmds[] = {
+> +	{ "show",	do_show },
+> +	{ "help",	do_help },
+> +	{ "list",	do_show },
+
+
+Nit: Can we have "help" coming third, below both "show" and "list" please?
+
+
+> +	{ 0 }
+> +};
+> +
+> +int do_token(int argc, char **argv)
+> +{
+> +	return cmd_select(cmds, argc, argv, do_help);
+> +}
+
 
