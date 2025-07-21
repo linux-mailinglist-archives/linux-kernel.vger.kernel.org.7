@@ -1,220 +1,162 @@
-Return-Path: <linux-kernel+bounces-739709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CB7AB0C9EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:44:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D133B0C9F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:46:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85EC67A6C4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:43:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0A9E3BAA9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B015B2E1C5B;
-	Mon, 21 Jul 2025 17:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1EB12E266A;
+	Mon, 21 Jul 2025 17:46:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GsuY0DoC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XYZ8wwlz"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCC7329E0F4;
-	Mon, 21 Jul 2025 17:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09D02E1742;
+	Mon, 21 Jul 2025 17:46:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753119884; cv=none; b=Im0IKRf9YMC+zZpkoy9T1vVZW2raT5gDmW2MpJFGodCYv10IGDaCCwFJ5yXykH14Eglp8ltnuCcF63EqrnyzdI+TG8j+7EjH/BFmiAGDXZj/MPbeZD7om/fbrWzyRqhTW+KeYmBv01W2xjBqP/Z81XXnemyQGfbGiCoAOkTa1NU=
+	t=1753119971; cv=none; b=PNVtqDm6P3TUUklnHwki+RZ4fjCrGYABr1RfjimqVTZAvVAr+mnSWlhil3kojbABLNPjiV7C7MpKyIMtCFMEj6vAB3+dnROGFAGl5PVqM1GnulISwl4G4LCTwNHRBhKnLn9aF4CztEAYljgMLZyutVBh1Et0uNKCOsd3TmEnmPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753119884; c=relaxed/simple;
-	bh=hwiJVOkPsDP+VbcOhbMS3wVsh07jJzA4kLK+6c47NJw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eC5eVKvCJfDQnXE848mAPgi0QLrv6vCoerZRPPoXMe6Ikze7VRaEUOrU1YiNsC95IGF5lU+hX6pFXKMkwlxGN8J96deMGQl/AmRd73E954SbhdtCLFH8oLID+N5D3gF2BbRWSZSnDmSpBKVuVOr0t/PQy7CIB7TO6U3RIF9JXqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GsuY0DoC; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753119881; x=1784655881;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=hwiJVOkPsDP+VbcOhbMS3wVsh07jJzA4kLK+6c47NJw=;
-  b=GsuY0DoCDtNnCNTtzBmK4Zw6yHsPnrvPm0Bwl73WIrV+FFvC+/H9z4gi
-   F6WEZcSW9oUr+GqLgjgTLpiUk+Y5QFZUQ8aN8GUifXqUrPxmL3L1Gk+Yp
-   /8M2RACMkmSQ880Qc6iQbHIl9c38gqa4yMXiGp6L+lxvB7Lm0owmEuvBS
-   n6cFkB62JWBjM1DWpSdLi/nJRqPGdFB4K8F1QAB80WB1tXyQ1ZxJyPS2O
-   7+GGTuInQ85AHhQskPqn6dK0AevwGUD8GUAJc/kcenPy0uEIe8Gbcf/6n
-   TBdKm25AovJyJipFHuu/3bW3jF0KGOu64jJ93VLeFm9eSibQtZ7dwrkYh
-   g==;
-X-CSE-ConnectionGUID: Yja2G+x4RRK6pkJUolBedQ==
-X-CSE-MsgGUID: 19+czQY/TaKu20u93HyoBA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11499"; a="55302250"
-X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
-   d="scan'208";a="55302250"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 10:44:41 -0700
-X-CSE-ConnectionGUID: GBqSdmuZTTuckkyKlm3+5A==
-X-CSE-MsgGUID: a+nYiIWLTmiMb3sFnN8yXg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
-   d="scan'208";a="159319342"
-Received: from vverma7-mobl3.amr.corp.intel.com (HELO [10.247.118.153]) ([10.247.118.153])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 10:44:31 -0700
-Message-ID: <29bc0425-7e04-4026-a9b4-d0319bb98855@intel.com>
-Date: Mon, 21 Jul 2025 10:44:20 -0700
+	s=arc-20240116; t=1753119971; c=relaxed/simple;
+	bh=SjytDc8WlpvqjacFKfLPp6CVFWgNIvdU9cdms1oGaUo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P1Q7PGmCXjE+lXajWGoyXLH2KtGL+lmwW6TsBl7pzcdeZzvK75D8CJ4Zn1NWvh2gWlJcJGR5lo99g9ZDpLz/yORYRu4CZ77unweWF0llVDfBWYL0qNk5KPBsmBQ4gPY/T3V3lg8BiChkwdzWkXOKskl931Fd07+sO4bfPBMIsWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XYZ8wwlz; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56LGTTnq000919;
+	Mon, 21 Jul 2025 17:45:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=5dtR7qlH8D4LRg2XdKu+ZYf/tjmhk0aNzJDd0i2GGxA=; b=XY
+	Z8wwlzP/xhEbzqLGMslC2MIncFnOQ+vNsyLcnBkDklXnnV3o/WBFZ5/9K+iUO4Go
+	xzA4swAtyzsZM0wXbRWfYMFdin2cPxbZUbADb/a8dstSWAPi/0JiCoY03Y/eA7Fx
+	1I6YjaO6OXt6XefSXGH7LhWpm0WPSsRL3gxQJ/z3q+IdzU7xIRXfrwWxPrUv+UA4
+	D9Bw2RKFpCji+zrTngMTD97XxIisirOzakLAPm9Yox6+xF8vamt05pNPQnwIPfpT
+	BPpVJrgxZCZNGK3y+VEArX4bX6lPaMatTvner9H6O/y2YlW4IwzBVrWwILtzAigp
+	i7YKjrKqDd6TSgkFYGfA==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48044degsu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Jul 2025 17:45:56 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56LHjtWH000861
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Jul 2025 17:45:55 GMT
+Received: from hu-ptalari-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Mon, 21 Jul 2025 10:45:50 -0700
+From: Praveen Talari <quic_ptalari@quicinc.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby
+	<jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Praveen
+ Talari" <quic_ptalari@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <dmitry.baryshkov@oss.qualcomm.com>, <bryan.odonoghue@linaro.org>
+CC: <psodagud@quicinc.com>, <djaggi@quicinc.com>, <quic_msavaliy@quicinc.com>,
+        <quic_vtanuku@quicinc.com>, <quic_arandive@quicinc.com>,
+        <quic_cchiluve@quicinc.com>, <quic_shazhuss@quicinc.com>
+Subject: [PATCH v7 0/8] Enable QUPs and Serial on SA8255p Qualcomm platforms
+Date: Mon, 21 Jul 2025 23:15:24 +0530
+Message-ID: <20250721174532.14022-1-quic_ptalari@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 18/20] cxl/pmem: Add support of cxl lsa 2.1 support in
- cxl pmem
-To: Neeraj Kumar <s.neeraj@samsung.com>
-Cc: dan.j.williams@intel.com, dave@stgolabs.net, jonathan.cameron@huawei.com,
- alison.schofield@intel.com, vishal.l.verma@intel.com, ira.weiny@intel.com,
- a.manzanares@samsung.com, nifan.cxl@gmail.com, anisa.su@samsung.com,
- vishak.g@samsung.com, krish.reddy@samsung.com, arun.george@samsung.com,
- alok.rathore@samsung.com, neeraj.kernel@gmail.com,
- linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
- nvdimm@lists.linux.dev, gost.dev@samsung.com, cpgs@samsung.com
-References: <20250617123944.78345-1-s.neeraj@samsung.com>
- <CGME20250617124058epcas5p2324bd3b1bf95d47f553d90fdc727e50d@epcas5p2.samsung.com>
- <592959754.121750165383213.JavaMail.epsvc@epcpadp2new>
- <45c254fe-fd74-46e7-bf06-5614810f7193@intel.com>
- <700072760.81752909483184.JavaMail.epsvc@epcpadp2new>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <700072760.81752909483184.JavaMail.epsvc@epcpadp2new>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=BJ6zrEQG c=1 sm=1 tr=0 ts=687e7cd4 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=Wb1JkmetP80A:10 a=wPpz0gULE6-aHRqVbM0A:9
+X-Proofpoint-GUID: VGAt20fRZM2vLkEJaoOEvzWmqcQTAbAa
+X-Proofpoint-ORIG-GUID: VGAt20fRZM2vLkEJaoOEvzWmqcQTAbAa
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIxMDE1NyBTYWx0ZWRfX9XT1HDrcxPkE
+ ssMUc5tzCQEKIWTRwvdjo1RiZ/iE7lJl72HA1PK/yeSLHsdBlWCEr0Gz6lx1r4TGpm0v6iUbtSZ
+ kFljE8RewDlBnmVhTEyVMRgdA9jjU+FX78WQkdRjCJ8WtqAvZvbkizmWaJQxI508DNxRNmTOb41
+ vgBE1cK/QJkwI9cXQ/PkRKcOFTs3toh5gzcLYyScwmg2jg0S3Rh3ayOun+vmYUwVpqgdPi++5tm
+ jT2SsPkstHktoKx2fS1UXM/rEewsMHBSNBdTZxtNjmu5BfUYIteiZprzTE+xzAe/wWsq0sCZc0M
+ zTpbZsrDnozk/kB8rIKb6HeQO1l7Hb7EI+kmVTh/so/KU4uSPzxXvz27DGtGU+4wBOgrDuDV3p3
+ 2Yl+XchrCHJcjfbeK41F+5gP5vKYd+F+h5DKXaCs8i3C19NwteDpkjXoIkHw0JtyNpRugyIz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-21_05,2025-07-21_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 lowpriorityscore=0 clxscore=1015 spamscore=0
+ mlxlogscore=790 suspectscore=0 impostorscore=0 phishscore=0 adultscore=0
+ mlxscore=0 malwarescore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507210157
+
+The Qualcomm automotive SA8255p SoC relies on firmware to configure
+platform resources, including clocks, interconnects and TLMM. The device
+drivers request resources operations over SCMI using power and
+performance protocols.
+
+The SCMI power protocol enables or disables resources like clocks,
+interconnect paths, and TLMM (GPIOs) using runtime PM framework APIs,
+such as resume/suspend, to control power states(on/off).
+
+The SCMI performance protocol manages UART baud rates, with each baud
+rate represented by a performance level. Drivers use the
+dev_pm_opp_set_level() API to request the desired baud rate by
+specifying the performance level.
+
+The QUP drivers are SCMI clients, with clocks, interconnects, pinctrl
+and power-domains abstracted by a SCMI server.
+
+The serial driver has a dependency on the dev_pm_opp_set_level() function,
+which is applied in the OPP tree's linux-next branch.
+
+Nikunj Kela (2):
+  dt-bindings: serial: describe SA8255p
+  dt-bindings: qcom: geni-se: describe SA8255p
+
+Praveen Talari (6):
+  soc: qcom: geni-se: Enable QUPs on SA8255p Qualcomm platforms
+  serial: qcom-geni: move resource initialization to separate function
+  serial: qcom-geni: move resource control logic to separate functions
+  serial: qcom-geni: move clock-rate logic to separate function
+  serial: qcom-geni: Enable PM runtime for serial driver
+  serial: qcom-geni: Enable Serial on SA8255p Qualcomm platforms
+---
+v3 -> v4
+- removed patch "[PATCH v3 1/9] opp: add new helper API dev_pm_opp_set_level()"
+  from series and serial driver has dependency of this API which is
+  applied in the OPP tree's linux-next branch.
+---
+
+ .../serial/qcom,sa8255p-geni-uart.yaml        |  69 ++++
+ .../soc/qcom/qcom,sa8255p-geni-se-qup.yaml    | 107 ++++++
+ drivers/soc/qcom/qcom-geni-se.c               |  13 +-
+ drivers/tty/serial/qcom_geni_serial.c         | 338 ++++++++++++++----
+ 4 files changed, 452 insertions(+), 75 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/serial/qcom,sa8255p-geni-uart.yaml
+ create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,sa8255p-geni-se-qup.yaml
 
 
-
-On 7/18/25 5:51 AM, Neeraj Kumar wrote:
-> On 10/07/25 10:18AM, Dave Jiang wrote:
->>
->>
->> On 6/17/25 5:39 AM, Neeraj Kumar wrote:
->>> Add support of cxl lsa 2.1 using NDD_CXL_LABEL flag. It also creates cxl
->>> region based on region information parsed from LSA.
->>>
->>> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
->>> ---
->>>  drivers/cxl/pmem.c | 59 ++++++++++++++++++++++++++++++++++++++++++++++
->>>  1 file changed, 59 insertions(+)
->>>
->>> diff --git a/drivers/cxl/pmem.c b/drivers/cxl/pmem.c
->>> index ffcebb8d382f..2733d79b32d5 100644
->>> --- a/drivers/cxl/pmem.c
->>> +++ b/drivers/cxl/pmem.c
->>> @@ -58,6 +58,63 @@ static const struct attribute_group *cxl_dimm_attribute_groups[] = {
->>>      NULL
->>>  };
->>>
->>> +static int match_ep_decoder(struct device *dev, void *data)
->>> +{
->>> +    struct cxl_decoder *cxld = to_cxl_decoder(dev);
->>> +
->>> +    if (!cxld->region)
->>> +        return 1;
->>> +    else
->>> +        return 0;
->>> +}
->>
->> return !cxld->region;
->>
-> 
-> Thanks, I will fix it in next patch-set
-> 
->>
->>> +
->>> +static struct cxl_decoder *cxl_find_free_decoder(struct cxl_port *port)
->>> +{
->>> +    struct device *dev;
->>> +
->>> +    dev = device_find_child(&port->dev, NULL, match_ep_decoder);
->>> +    if (!dev)
->>> +        return NULL;
->>> +
->>> +    return to_cxl_decoder(dev);
->>> +}
->>> +
->>> +static int create_pmem_region(struct nvdimm *nvdimm)
->>> +{
->>> +    struct cxl_nvdimm *cxl_nvd;
->>> +    struct cxl_memdev *cxlmd;
->>> +    struct cxl_nvdimm_bridge *cxl_nvb;
->>> +    struct cxl_pmem_region_params *params;
->>> +    struct cxl_root_decoder *cxlrd;
->>> +    struct cxl_decoder *cxld;
->>> +    struct cxl_region *cxlr;
->>> +
->>
->> probably need a lockdep_assert_held(&cxl_region_rwsem).
->>
-> 
-> Thanks Dave, Sure i will fix it with V2
-> 
->>> +    if (!nvdimm)
->>> +        return -ENOTTY;
->>
->> -ENODEV?
-> 
-> Sure I will fix it with V2
-> 
->>
->>> +
->>> +    if (!nvdimm_has_cxl_region(nvdimm))
->>> +        return 0;
->>> +
->>> +    cxl_nvd = nvdimm_provider_data(nvdimm);
->>> +    params = nvdimm_get_cxl_region_param(nvdimm);
->>> +    cxlmd = cxl_nvd->cxlmd;
->>> +    cxl_nvb = cxlmd->cxl_nvb;
->>> +    cxlrd = cxlmd->cxlrd;
->>> +
->>> +    /* FIXME: Limitation: Region creation only when interleave way == 1 */
->>> +    if (params->nlabel == 1) {
->>> +        cxld = cxl_find_free_decoder(cxlmd->endpoint);
->>> +        cxlr = cxl_create_pmem_region(cxlrd, cxld, params,
->>> +                atomic_read(&cxlrd->region_id));
->>> +        if (IS_ERR(cxlr))
->>> +            dev_dbg(&cxlmd->dev, "Region Creation failed\n");
->>
->> return PTR_ERR(cxlr); ?
->>
-> 
-> Thanks, I will fix it in next patch-set
-> 
->>> +    } else {
->>> +        dev_dbg(&cxlmd->dev, "Region Creation is not supported with iw > 1\n");
->>> +    }
->>> +
->>> +    return 0;
->>> +}
->>> +
->>>  static int cxl_nvdimm_probe(struct device *dev)
->>>  {
->>>      struct cxl_nvdimm *cxl_nvd = to_cxl_nvdimm(dev);
->>> @@ -74,6 +131,7 @@ static int cxl_nvdimm_probe(struct device *dev)
->>>          return rc;
->>>
->>>      set_bit(NDD_LABELING, &flags);
->>> +    set_bit(NDD_CXL_LABEL, &flags);
->>
->> Ok here's the NDD_CXL_LABEL set. I think the driver should be probing the label index block and retrieve the label version and determine how to support from there instead of hard coding a flag.
-> 
-> Hi Dave,
-> 
-> We actually write label index information into LSA during namespace/region label updation.
-> During that time we update its major/minor.
-> 
-> So during first time updation of LSA we must need some way to inform nvdimm about LSA versioning.
-
-Gotcha. I'm not sure I like adding just a single version (flag bit) to the flags for __nvdimm_create(). Maybe we need some refactoring on the nvdimm side to allow passing in an enum for LSA versioning looking to the future. Thoughts? Also I wonder on the CXL side we need to add some checking of LSA size when retrieved from Identify Memory Device payload in order to make sure the LSA we want is supported properly by the device. 
-> 
-> 
-> Regards,
-> Neeraj
-> 
+base-commit: 97987520025658f30bb787a99ffbd9bbff9ffc9d
+-- 
+2.17.1
 
 
