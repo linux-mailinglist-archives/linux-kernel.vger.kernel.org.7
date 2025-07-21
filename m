@@ -1,70 +1,138 @@
-Return-Path: <linux-kernel+bounces-739932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93267B0CD4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 00:33:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDFF8B0CD4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 00:34:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 741081AA4B5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:34:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2C573B31FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476A624110F;
-	Mon, 21 Jul 2025 22:33:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5641238D5A;
+	Mon, 21 Jul 2025 22:34:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="m8NxLEJ5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J6mGX++p"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F6A1A5BA4
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 22:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB06224113A
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 22:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753137221; cv=none; b=BPhL3em9NBC2N+SDzwaWbmNIWncVoG2Z+HF5Q9qt9h+dLJ+6e0Dr3w4xtPdw//93s2o9ZeFDkVr5zOzPdOvA3MljMdrrRfpcsi8oZe+IFQnCTGcM9IHOiJSo81zTb6y5ePz6QhsLpJk+8WOt2IrPru2IyDUiISuHru783fClkCE=
+	t=1753137263; cv=none; b=QhC86Y/k9Jvj+H4oVteyZVWLCNWhnXiLTkMs3Gbw64ObSeJQUKumqEbsxDJtTHc4OM3yuyy8eECdxEtTs5ii1LLqW0ZQohFEGVIN+xJ8u2WO7NpICipkf574IB3lEmWZyiVoCYgJflHs8/FY49lVsjckb+cXdvI+Ra9uX2T9H3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753137221; c=relaxed/simple;
-	bh=wqvtCvvxBtqckbBNrjXSNAcg18LE4Wi7SGUDbnm1u2Y=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=qC2S5zI3KktDCrLT+Y7ItshSm7LewrZCONMNM5gzARUUWAVEr6F46KWrGv9NXs3Unj4NlhKZhrTKMO6h92cYtz44sYcV5rblBNzg3LjFvtRrt0laBcauMa813kDLuNAGdCIlL4cPP4GuL3hax7cBzSSyiQP1MvENKXvEmRyJOlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=m8NxLEJ5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF3DEC4CEF4;
-	Mon, 21 Jul 2025 22:33:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1753137221;
-	bh=wqvtCvvxBtqckbBNrjXSNAcg18LE4Wi7SGUDbnm1u2Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=m8NxLEJ5UunsQnsYjSaP7q5QaFoSzldtDWqtoYAjAv26z9uh+UHMq8gh8pikpzYbd
-	 N/+6GlSRsE7fEAuz03t0n8TVTN5cCfw0NaBIEfOUrxCT9UcLo2Nwi3SVNdCDSfSGBZ
-	 ib9LFBAJYEJnuSEVuqiHw+2hdVUt2SaS12/27buc=
-Date: Mon, 21 Jul 2025 15:33:40 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Alexander Graf <graf@amazon.com>
-Cc: Pasha Tatashin <pasha.tatashin@soleen.com>, <kexec@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>, <nh-open-source@amazon.com>, Baoquan He
- <bhe@redhat.com>, Zhongkun He <hezhongkun.hzk@bytedance.com>
-Subject: Re: [PATCH v5] kexec: Enable CMA based contiguous allocation
-Message-Id: <20250721153340.5e033b1df1ac74c1a471c892@linux-foundation.org>
-In-Reply-To: <07b21458-832f-4b15-9bc8-43f21f902e34@amazon.com>
-References: <20250610085327.51817-1-graf@amazon.com>
-	<CA+CK2bBhUdEjD=-gM3=D6mKBYctbXh74_hq-bMf1fa8mfS2Edg@mail.gmail.com>
-	<07b21458-832f-4b15-9bc8-43f21f902e34@amazon.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753137263; c=relaxed/simple;
+	bh=a+ASCVeoINOJ/rJwNo5HpMowMoSlIe2HrM4tAoU7bWE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oSJmiat6w0kzUrDtDOJYXhyHFN7EoRzOMwCkzQeE8Fh+K5Fej8mr5tEcDhI6G2TTNvA7ppvArcaJmptyQngeBOLm5wEQntbhUbsDsDnDQXQ/Tga6gO/vzd/quLzjc+91tnLjed3sGW3H7tRvCOyZXORu3PrFq3JMeq/lRKmAQ5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J6mGX++p; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753137261; x=1784673261;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=a+ASCVeoINOJ/rJwNo5HpMowMoSlIe2HrM4tAoU7bWE=;
+  b=J6mGX++pNnsnMh0XG5z49oWhCQMeXQBDTTHCFtAJofrTScrACspEtrgM
+   AvpOm2mX2Jj+U1TZJlIlOMdxjngoDkMJZ51YC6p6ZeOXcqu+YaXt+YR8T
+   YNcdxNxE1theoHw7/dOaVsxh2TEZqcOJ9A7SpZl2j7JXUhqhP0WNBdaVW
+   6aaE2Kq7NZZr8ouCvK0ZB50tmMbRCZwPY5mrQEo9iYdZuMU/whSlscQCH
+   erDYcy1VWvCp/VO5aLuybsAde4sJ6MurGo0ZPUqHeUxI1JJMlq8/TDPSe
+   PY7lbVyKfliU4ZwZf9llhOSatxgFcSenQNtJpuAL7D4Pee/YFkfxSNiNy
+   g==;
+X-CSE-ConnectionGUID: T+jVeJpYQPGd8NNiD1memg==
+X-CSE-MsgGUID: IX3Q1n9DRC+Ay3LmqkdHcw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11499"; a="80814962"
+X-IronPort-AV: E=Sophos;i="6.16,330,1744095600"; 
+   d="scan'208";a="80814962"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 15:34:21 -0700
+X-CSE-ConnectionGUID: bPqQQlowRlaBUzXiABVDdw==
+X-CSE-MsgGUID: 0L1X92TXRW+N5E1nTZY1Iw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,330,1744095600"; 
+   d="scan'208";a="158264508"
+Received: from jdoman-mobl3.amr.corp.intel.com (HELO [10.125.108.89]) ([10.125.108.89])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 15:34:20 -0700
+Message-ID: <c1f9b3e1-b447-4c9e-956b-34b174203374@intel.com>
+Date: Mon, 21 Jul 2025 15:34:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] x86/fpu: Update the debug flow for x86_task_fpu()
+To: Sohil Mehta <sohil.mehta@intel.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
+Cc: Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Sean Christopherson <seanjc@google.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Vignesh Balasubramanian <vigbalas@amd.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, Oleg Nesterov
+ <oleg@redhat.com>, "Chang S . Bae" <chang.seok.bae@intel.com>,
+ Brian Gerst <brgerst@gmail.com>, Eric Biggers <ebiggers@google.com>,
+ Kees Cook <kees@kernel.org>, Chao Gao <chao.gao@intel.com>,
+ Fushuai Wang <wangfushuai@baidu.com>, linux-kernel@vger.kernel.org
+References: <20250721215302.3562784-1-sohil.mehta@intel.com>
+ <20250721215302.3562784-2-sohil.mehta@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250721215302.3562784-2-sohil.mehta@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Tue, 22 Jul 2025 00:01:25 +0200 Alexander Graf <graf@amazon.com> wrote:
+On 7/21/25 14:53, Sohil Mehta wrote:
+> Also, update the warning to include PF_USER_WORKER, as these tasks are
+> treated the same as kernel threads in the FPU context.
 
-> Andrew, I don't see this patch in linus/master. Is it still in your 
-> queue? :)
-
-Seems I dropped v3(?) to make way for v5 but then didn't add v5, sorry.
-
-Added now.
+How so?
 
