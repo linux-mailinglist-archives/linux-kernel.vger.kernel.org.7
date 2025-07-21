@@ -1,344 +1,395 @@
-Return-Path: <linux-kernel+bounces-738865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28BEDB0BE6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:05:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20A67B0BE6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:06:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B594189E3E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:06:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EF3B189E3D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:06:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D43286893;
-	Mon, 21 Jul 2025 08:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294E0285078;
+	Mon, 21 Jul 2025 08:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R5YW/cJ3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AaV6l15h"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD7E285074
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 08:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6023720E71C
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 08:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753085135; cv=none; b=tP4BMbinBzZR/+hxijB7fKldMjN5+Ptqb8Iz6Fumc2PrFPglYo2xxF3nQqmLD/4XdWcT9/HBISRtgLfOCBO9N1BDYDGl5kPsKEcBC017L1VIqQnvc4rHQehUhvx+CQuZA9x+ccYimiIn0+ynpROsuW22FGDSiD8Fx9wocJm5nt8=
+	t=1753085187; cv=none; b=QaBadbucRIm6JHfyYdS3VVi789NpDrJwwUU7EiQm4Of+/rrMChS4oC/IjNv8iLNhGRRmvmYUBp7PHmDl7b+6Dc5SnLSZIGFDD4rjg0nrk6HLm+mz1KrMU0UnPNu8bjonCR18Cnc2UB+kDtiSLhdT0cZsK/rCnBN2wnEBWV+cNws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753085135; c=relaxed/simple;
-	bh=OmacDHOgisi4/R/uJWi3N1yuxQnUS7GhOJDuFiXyVLA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b5P8HPbKnF8JtLndMaMwPqIumZSuqcQSHiVjLlAuzM5AAO+/pj2qfdZ/dd/35lnAq5oT4DFxF0rFTsf1Y6PuDANaGTaHwBPIkkPhbu2v8TRg149va9d9Ss1rqzQSVPlLNx4uNlnIxYMWxV6rLdYkpd6PAGwa7npBaCi8rLlQGGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R5YW/cJ3; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753085132;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=YZwimYc/XbFaUcGJkln+p9HtaqBU8QoZiA7E2Ky46WU=;
-	b=R5YW/cJ3a/PSn8GXIFL8YY9QyV74ji0ruqvf+zxSW2YwlNvuC6kD34j2n/aVk8bZjjKckA
-	oW4PQpA11YvZLNMvGLWePsMtRLkqVDgtTrTPx33DGlUnGQsMFYcY9SBwPCoinwIu1e3lyJ
-	4ojZDc82YLbgOE/TiwDnAL8dJT+9IDk=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-388-knfHYOCRNSWTyF00Fur6Bw-1; Mon, 21 Jul 2025 04:05:30 -0400
-X-MC-Unique: knfHYOCRNSWTyF00Fur6Bw-1
-X-Mimecast-MFC-AGG-ID: knfHYOCRNSWTyF00Fur6Bw_1753085129
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43e9b0fd00cso23500315e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 01:05:30 -0700 (PDT)
+	s=arc-20240116; t=1753085187; c=relaxed/simple;
+	bh=VXELd3PXuG2mdCtNaI7FpwdYmOddc5CGHnn+L5fRz4Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oESc2ilcZhLkHDm6XPWS7MEne+ANbyoihM6nuy0wbIKGFJElsqRreS+W1y0BkGPVvI3du4Y0eQSrb9SomKR7rTuZ2zoh8vvNKD9A8N04bYhZFoLO4VK2RC6bfBtsuqb+6/PTuTtsmtoWYQFQxx7M1UFfCs2tDOQLMPyXL9f7r9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AaV6l15h; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e8bbb02b887so3225270276.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 01:06:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753085184; x=1753689984; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QXjZydoegZQ2ZsNWUnq3mbu0ARbwzLhTN1MMUw8Kewk=;
+        b=AaV6l15hXyXMOq+P1nqWGvOUh5jDfOZM3eeWIMcQ97g9hljtx+03itbx4mStCqHuUp
+         BZNpJJusO7wNArokjV0za24HFxqtZCbNALeuwPvhVMxLkUOgnZ9ZHS1z4j73ZUcTRXNA
+         vNGAGvBfNXP94jdEhthl5GzU2OfY+JK0wTTNHVax/RalQpQMFjc5spHLybMUP+a5Ae/G
+         Qvwz7Zo8WcLsoLXNNq1xxJvrcckSzyjVvQVIU/GZ3vWPHpgzIw2UlA1K2DjLurBHporh
+         Uqvskfc5XZ2h2iFG04+YCTxZXAN045F8sovDPNBqSRwIudkDU6RREYb6NjPzBx5RYocS
+         rDtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753085129; x=1753689929;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=YZwimYc/XbFaUcGJkln+p9HtaqBU8QoZiA7E2Ky46WU=;
-        b=m1z3X6EMWgNAd4C03TNvVYVFQID7Gv68chA8rufFcTyKjR6RQAY/y9td4e63ikkkO7
-         AZtsaMr0bfnFSiD60CGJ1Aii8fX9uTkiWsaPy8XLWacE8w3xF3XP1zGj436ZXxJ7+K+S
-         gM5y8MWQgQ1EW7tNEQ29IWZCf2kO0Q7PaS/k2Ac9+Sj3JygfcyOnEj38N7RzND+/sR/B
-         viR13ht80krFMOyUakDjEAr/HIkL4i0MiBQSkMWTq0PEuZO816BCYSQj1euPuPJAqFmD
-         de6sYsTIue1yx7Fcu+KMMp5ngnHCz3GgB5pLFOg6jOGRfxP65MkTtgRuz8fN6OqQj+tq
-         Lmcg==
-X-Gm-Message-State: AOJu0YzhqcHlSKG6okyPAa9MbD/qx4Fd8iTGj6VdOHmt/JPkqmiyDYBt
-	ByNntrQ9oWnh1yKdBgWebBVUaMJsj/D0HrltQxqlshUmuGb5OFQeq8l/SQ2FpZGrfrcaHrYPlT+
-	id33VsKRFkPgVFBGfcFVNGDVxD1g7LHixeKsEBvqhfWRb6Hj2jAnAEn25z0M/zisuUQ==
-X-Gm-Gg: ASbGncsJyeZbnBdiUi6gO8QJy0ivnSfiV5XTeM9VO/30+8Q1MKb/CuICeU0xJlCWfH8
-	Mb9ky4KGye/lb1KB8jXuzUUX9GVxq6ZRHcEnvSk7Blq/TKnGJsX/k1xMrNyB5XhF8i5oGuOvp+q
-	Tmpf7XOFGyQQ9UPx+t2M8nTOsnN3s9Corc14wTey2KvOn4m3ApUV5oRcrFov+IGeibZSYuxyksX
-	bjk4h3awfW6uhXVBru3Glr0r5CIi89AG76V0egjrdGrUP1j4oxkSrhxBHnw/pBGpF3LKvupzCXw
-	CTUKHh72POcxMX8YFSTU25ti02bje4XqQUzeu5OZ7IqjfH4tSmBw9iVokOxIv2QWwKrlqeECCxW
-	WdFjJKa/CdBlfpiagG055OevpnKQz5rvHKhqXe/ARGbcvNsZCGwsBxPhftG5uoK1O
-X-Received: by 2002:a05:600c:6610:b0:456:942:b162 with SMTP id 5b1f17b1804b1-45637bc1e8fmr147848445e9.11.1753085128904;
-        Mon, 21 Jul 2025 01:05:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEaqPaRa97Ws7y+SPufWF2ofN23cpKrkKJ1mE+QB0PaxxEWaWruM697N59u6maQfQXxXtGBSA==
-X-Received: by 2002:a05:600c:6610:b0:456:942:b162 with SMTP id 5b1f17b1804b1-45637bc1e8fmr147847785e9.11.1753085128261;
-        Mon, 21 Jul 2025 01:05:28 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f4c:df00:a9f5:b75b:33c:a17f? (p200300d82f4cdf00a9f5b75b033ca17f.dip0.t-ipconnect.de. [2003:d8:2f4c:df00:a9f5:b75b:33c:a17f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45635fe6a92sm84696565e9.2.2025.07.21.01.05.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Jul 2025 01:05:27 -0700 (PDT)
-Message-ID: <e897e784-4403-467c-b3e4-4ac4dc7b2e25@redhat.com>
-Date: Mon, 21 Jul 2025 10:05:25 +0200
+        d=1e100.net; s=20230601; t=1753085184; x=1753689984;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QXjZydoegZQ2ZsNWUnq3mbu0ARbwzLhTN1MMUw8Kewk=;
+        b=EkEUGfOYYsShsc46M9/b5b43zESRYljwOgsO6D2NkmJ42g502iSRZkNRIgYHYULSWL
+         87xUONw5F16Tc0gLRQKMOnjsvI4MI0Yeja0k9vK/x3kfQ6X/VNVZ4i+7VP1BdBIo+DdV
+         BF4q1HLrIsksiKuUlVYZSE3YImuiTc6zb+u5j2d3P9AB77Nb0mna5z6ORsrtkDLmBJlR
+         allYRf2CEQiKX8kOoILIdxwok4tNRafyD10UFFf3n6lw5OoAntteRdMYCJ3MxypKeuc7
+         BcmrI901V1Sp8Cb1ucDK8Wy4QnX9jxm1OI/VRrWB0U2l6dH0OtwPHxMwEk/3ZnvIeBDe
+         9d5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXWTcJ5pZ7bwALo71G3lv8VMgG4rnrNlzyHDjD/+34XAla1y65N/pKoU9RpMJchVR5zBCH8KoOmwRnpi7Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHhVYmX6BauU5cFKwiCfKsim21IeJ6xDWphpQz1ZpR0wy6cSqi
+	3tURfir/VQUkCM5KWYLPY9yPCv+y6yIqVP+W89UMwivI1gBPtc3fczAD01nNT/9zYGUwdu6+2hR
+	Qdf6yTth34PgZ3JhAu6nlk6ul4RlnK6U4rcMYUi9/Sw==
+X-Gm-Gg: ASbGnctzD49KN+CccW459zb//hqtptSI3RnACgMLrbvs/m9S4QxBQD2g43qSlPS26n1
+	bgLcRvvXUkgZhn+Xo1vQ002wCK0f7/oR5smVyZYhEv6mCJ26YAIpV3ZnA42VvdLWP8Ckwz/wipN
+	4og9sVU5enyZxNtjIYrJzKPbi5W3/hidum10uAhjAOJxWr93tRu7x+ttW/Cb+2zBMNaOiSpbvrn
+	+NIpRg=
+X-Google-Smtp-Source: AGHT+IFQ1amy/ZZahM40X8cb+37Q8KwVejxmxIxsmKDog+M5sSU7+um7am/YJwzpORCNPb1FN60oKJvPa9bR+ya3E0E=
+X-Received: by 2002:a05:6902:2289:b0:e8b:9ef1:f9ef with SMTP id
+ 3f1490d57ef6-e8d7a5c06e3mr14034257276.45.1753085184308; Mon, 21 Jul 2025
+ 01:06:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm, page_pool: introduce a new page type for page pool in
- page type
-To: Byungchul Park <byungchul@sk.com>, linux-mm@kvack.org,
- netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
- harry.yoo@oracle.com, ast@kernel.org, daniel@iogearbox.net,
- davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
- john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com,
- leon@kernel.org, tariqt@nvidia.com, mbloch@nvidia.com,
- andrew+netdev@lunn.ch, edumazet@google.com, pabeni@redhat.com,
- akpm@linux-foundation.org, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com,
- mhocko@suse.com, horms@kernel.org, jackmanb@google.com, hannes@cmpxchg.org,
- ziy@nvidia.com, ilias.apalodimas@linaro.org, willy@infradead.org,
- brauner@kernel.org, kas@kernel.org, yuzhao@google.com,
- usamaarif642@gmail.com, baolin.wang@linux.alibaba.com,
- almasrymina@google.com, toke@redhat.com, asml.silence@gmail.com,
- bpf@vger.kernel.org, linux-rdma@vger.kernel.org
-References: <20250721054903.39833-1-byungchul@sk.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <20250721054903.39833-1-byungchul@sk.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250707-v6-16-rc2-quad-pipe-upstream-v12-0-67e3721e7d83@linaro.org>
+ <20250707-v6-16-rc2-quad-pipe-upstream-v12-10-67e3721e7d83@linaro.org> <khu6gwzn7gulubwoshdutl4d2nu3c6exnkv4cimjljc5wbxf7l@ho4gxsolq3hn>
+In-Reply-To: <khu6gwzn7gulubwoshdutl4d2nu3c6exnkv4cimjljc5wbxf7l@ho4gxsolq3hn>
+From: Jun Nie <jun.nie@linaro.org>
+Date: Mon, 21 Jul 2025 16:06:13 +0800
+X-Gm-Features: Ac12FXwkEB5hHMigCqH7XK813bTvGyxHvB3mIUQVlEvS1vlsVmEtmCJHtAk3gcQ
+Message-ID: <CABymUCPhjugvyQ2KQabjTn3XNEDRSnQgRX5te-tHKT8hBLPdMQ@mail.gmail.com>
+Subject: Re: [PATCH v12 10/12] drm/msm/dpu: support SSPP assignment for
+ quad-pipe case
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Dmitry Baryshkov <lumag@kernel.org>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 21.07.25 07:49, Byungchul Park wrote:
-> Hi,
-> 
-> I focused on converting the existing APIs accessing ->pp_magic field to
-> page type APIs.  However, yes.  Additional works would better be
-> considered on top like:
-> 
->     1. Adjust how to store and retrieve dma index.  Maybe network guys
->        can work better on top.
-> 
->     2. Move the sanity check for page pool in mm/page_alloc.c to on free.
-> 
->     Byungchul
-> 
-> ---8<---
->  From 7d207a1b3e9f4ff2a72f5b54b09e3ed0c4aaaca3 Mon Sep 17 00:00:00 2001
-> From: Byungchul Park <byungchul@sk.com>
-> Date: Mon, 21 Jul 2025 14:05:20 +0900
-> Subject: [PATCH] mm, page_pool: introduce a new page type for page pool in page type
-> 
-> ->pp_magic field in struct page is current used to identify if a page
-> belongs to a page pool.  However, page type e.i. PGTY_netpp can be used
-> for that purpose.
-> 
-> Use the page type APIs e.g. PageNetpp(), __SetPageNetpp(), and
-> __ClearPageNetpp() instead, and remove the existing APIs accessing
-> ->pp_magic e.g. page_pool_page_is_pp(), netmem_or_pp_magic(), and
-> netmem_clear_pp_magic() since they are totally replaced.
-> 
-> This work was inspired by the following link by Pavel:
-> 
-> [1] https://lore.kernel.org/all/582f41c0-2742-4400-9c81-0d46bf4e8314@gmail.com/
+Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> =E4=BA=8E2025=E5=B9=B4=
+7=E6=9C=8819=E6=97=A5=E5=91=A8=E5=85=AD 18:09=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Mon, Jul 07, 2025 at 02:18:05PM +0800, Jun Nie wrote:
+> > Currently, SSPPs are assigned to a maximum of two pipes. However,
+> > quad-pipe usage scenarios require four pipes and involve configuring
+> > two stages. In quad-pipe case, the first two pipes share a set of
+> > mixer configurations and enable multi-rect mode when certain
+> > conditions are met. The same applies to the subsequent two pipes.
+> >
+> > Assign SSPPs to the pipes in each stage using a unified method and
+> > to loop the stages accordingly.
+> >
+> > Signed-off-by: Jun Nie <jun.nie@linaro.org>
+> > ---
+> >  drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 143 +++++++++++++++++++---=
+--------
+> >  1 file changed, 89 insertions(+), 54 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/dr=
+m/msm/disp/dpu1/dpu_plane.c
+> > index 149e7066480b07f9f6d422748d89ffd6f9416f33..ecfebf7a2406d65930075cc=
+2a4b8a8a7d40b3d3c 100644
+> > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+> > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+> > @@ -954,6 +954,30 @@ static int dpu_plane_is_multirect_parallel_capable=
+(struct dpu_hw_sspp *sspp,
+> >               dpu_plane_is_parallel_capable(pipe_cfg, fmt, max_linewidt=
+h);
+> >  }
+> >
+> > +static bool dpu_plane_get_single_pipe(struct dpu_plane_state *pstate,
+> > +                                   struct dpu_sw_pipe **single_pipe,
+> > +                                   struct dpu_sw_pipe_cfg **single_pip=
+e_cfg,
+> > +                                   int *stage_index)
+> > +{
+> > +     int stage_idx, pipe_idx, i, valid_pipe =3D 0;
+> > +
+> > +     for (stage_idx =3D 0; stage_idx < STAGES_PER_PLANE; stage_idx++) =
+{
+> > +             for (i =3D 0; i < PIPES_PER_STAGE; i++) {
+> > +                     pipe_idx =3D stage_idx * PIPES_PER_STAGE + i;
+> > +                     if (drm_rect_width(&pstate->pipe_cfg[pipe_idx].sr=
+c_rect) !=3D 0) {
+> > +                             valid_pipe++;
+> > +                             if (valid_pipe > 1)
+> > +                                     return false;
+> > +
+> > +                             *single_pipe =3D &pstate->pipe[pipe_idx];
+> > +                             *single_pipe_cfg =3D &pstate->pipe_cfg[pi=
+pe_idx];
+> > +                             *stage_index =3D stage_idx;
+> > +                     }
+> > +             }
+> > +     }
+> > +
+> > +     return valid_pipe =3D=3D 1;
+> > +}
+> >
+> >  static int dpu_plane_atomic_check_sspp(struct drm_plane *plane,
+> >                                      struct drm_atomic_state *state,
+> > @@ -1021,18 +1045,23 @@ static int dpu_plane_try_multirect_shared(struc=
+t dpu_plane_state *pstate,
+> >                                         const struct msm_format *fmt,
+> >                                         uint32_t max_linewidth)
+> >  {
+> > -     struct dpu_sw_pipe *pipe =3D &pstate->pipe[0];
+> > -     struct dpu_sw_pipe *r_pipe =3D &pstate->pipe[1];
+> > -     struct dpu_sw_pipe_cfg *pipe_cfg =3D &pstate->pipe_cfg[0];
+> > -     struct dpu_sw_pipe *prev_pipe =3D &prev_adjacent_pstate->pipe[0];
+> > -     struct dpu_sw_pipe_cfg *prev_pipe_cfg =3D &prev_adjacent_pstate->=
+pipe_cfg[0];
+> > +     struct dpu_sw_pipe *pipe, *prev_pipe;
+> > +     struct dpu_sw_pipe_cfg *pipe_cfg, *prev_pipe_cfg;
+> >       const struct msm_format *prev_fmt =3D msm_framebuffer_format(prev=
+_adjacent_pstate->base.fb);
+> > +     int stage_index, prev_stage_index;
+> >       u16 max_tile_height =3D 1;
+> >
+> > -     if (prev_adjacent_pstate->pipe[1].sspp !=3D NULL ||
+> > +     if (!dpu_plane_get_single_pipe(pstate, &pipe, &pipe_cfg, &stage_i=
+ndex))
+> > +             return false;
+> > +
+> > +     if (!dpu_plane_get_single_pipe(prev_adjacent_pstate, &prev_pipe,
+> > +                                    &prev_pipe_cfg, &prev_stage_index)=
+ ||
+> >           prev_pipe->multirect_mode !=3D DPU_SSPP_MULTIRECT_NONE)
+> >               return false;
+> >
+> > +     if (stage_index !=3D prev_stage_index)
+> > +             return false;
+>
+> This should be handled other way around: save N pstates and then loop
+> over stage indices. If there is no rect at the corresponding stage for a
+> plane, skip assignment (and use prev_adjacent_pstate for the next plane).
 
-I'm, sure you saw my comment (including my earlier suggestion for using 
-a page type), in particular around ...
+You mean dpu_plane_virtual_assign_resources() shall notify its caller
+dpu_assign_plane_resources() to skip updating prev_adjacent_plane_state
+if dpu_plane_try_multirect_shared() return false? If so, we can add an
+argument "bool pipe_shared" in dpu_plane_virtual_assign_resources() to
+get the status. But that is an optimization to share pipes across multiple
+planes. Can we add new patches based on current patch set later?
 
-> ---
->   .../net/ethernet/mellanox/mlx5/core/en/xdp.c  |  2 +-
->   include/linux/mm.h                            | 28 ++-----------------
->   include/linux/page-flags.h                    |  6 ++++
->   include/net/netmem.h                          |  2 +-
->   mm/page_alloc.c                               |  4 +--
->   net/core/netmem_priv.h                        | 16 ++---------
->   net/core/page_pool.c                          | 10 +++++--
->   7 files changed, 24 insertions(+), 44 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c b/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c
-> index 5d51600935a6..def274f5c1ca 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c
-> @@ -707,7 +707,7 @@ static void mlx5e_free_xdpsq_desc(struct mlx5e_xdpsq *sq,
->   				xdpi = mlx5e_xdpi_fifo_pop(xdpi_fifo);
->   				page = xdpi.page.page;
->   
-> -				/* No need to check page_pool_page_is_pp() as we
-> +				/* No need to check PageNetpp() as we
->   				 * know this is a page_pool page.
->   				 */
->   				page_pool_recycle_direct(pp_page_to_nmdesc(page)->pp,
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index ae50c1641bed..736061749535 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -4135,10 +4135,9 @@ int arch_lock_shadow_stack_status(struct task_struct *t, unsigned long status);
->    * DMA mapping IDs for page_pool
->    *
->    * When DMA-mapping a page, page_pool allocates an ID (from an xarray) and
-> - * stashes it in the upper bits of page->pp_magic. We always want to be able to
-> - * unambiguously identify page pool pages (using page_pool_page_is_pp()). Non-PP
-> - * pages can have arbitrary kernel pointers stored in the same field as pp_magic
-> - * (since it overlaps with page->lru.next), so we must ensure that we cannot
-> + * stashes it in the upper bits of page->pp_magic. Non-PP pages can have
-> + * arbitrary kernel pointers stored in the same field as pp_magic (since
-> + * it overlaps with page->lru.next), so we must ensure that we cannot
->    * mistake a valid kernel pointer with any of the values we write into this
->    * field.
->    *
-> @@ -4168,25 +4167,4 @@ int arch_lock_shadow_stack_status(struct task_struct *t, unsigned long status);
->   
->   #define PP_DMA_INDEX_MASK GENMASK(PP_DMA_INDEX_BITS + PP_DMA_INDEX_SHIFT - 1, \
->   				  PP_DMA_INDEX_SHIFT)
-> -
-> -/* Mask used for checking in page_pool_page_is_pp() below. page->pp_magic is
-> - * OR'ed with PP_SIGNATURE after the allocation in order to preserve bit 0 for
-> - * the head page of compound page and bit 1 for pfmemalloc page, as well as the
-> - * bits used for the DMA index. page_is_pfmemalloc() is checked in
-> - * __page_pool_put_page() to avoid recycling the pfmemalloc page.
-> - */
-> -#define PP_MAGIC_MASK ~(PP_DMA_INDEX_MASK | 0x3UL)
-> -
-> -#ifdef CONFIG_PAGE_POOL
-> -static inline bool page_pool_page_is_pp(const struct page *page)
-> -{
-> -	return (page->pp_magic & PP_MAGIC_MASK) == PP_SIGNATURE;
-> -}
-> -#else
-> -static inline bool page_pool_page_is_pp(const struct page *page)
-> -{
-> -	return false;
-> -}
-> -#endif
-> -
->   #endif /* _LINUX_MM_H */
-> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-> index 4fe5ee67535b..906ba7c9e372 100644
-> --- a/include/linux/page-flags.h
-> +++ b/include/linux/page-flags.h
-> @@ -957,6 +957,7 @@ enum pagetype {
->   	PGTY_zsmalloc		= 0xf6,
->   	PGTY_unaccepted		= 0xf7,
->   	PGTY_large_kmalloc	= 0xf8,
-> +	PGTY_netpp		= 0xf9,
->   
->   	PGTY_mapcount_underflow = 0xff
->   };
-> @@ -1101,6 +1102,11 @@ PAGE_TYPE_OPS(Zsmalloc, zsmalloc, zsmalloc)
->   PAGE_TYPE_OPS(Unaccepted, unaccepted, unaccepted)
->   FOLIO_TYPE_OPS(large_kmalloc, large_kmalloc)
->   
-> +/*
-> + * Marks page_pool allocated pages.
-> + */
-> +PAGE_TYPE_OPS(Netpp, netpp, netpp)
-> +
->   /**
->    * PageHuge - Determine if the page belongs to hugetlbfs
->    * @page: The page to test.
-> diff --git a/include/net/netmem.h b/include/net/netmem.h
-> index f7dacc9e75fd..3667334e16e7 100644
-> --- a/include/net/netmem.h
-> +++ b/include/net/netmem.h
-> @@ -298,7 +298,7 @@ static inline struct net_iov *__netmem_clear_lsb(netmem_ref netmem)
->    */
->   #define pp_page_to_nmdesc(p)						\
->   ({									\
-> -	DEBUG_NET_WARN_ON_ONCE(!page_pool_page_is_pp(p));		\
-> +	DEBUG_NET_WARN_ON_ONCE(!PageNetpp(p));				\
->   	__pp_page_to_nmdesc(p);						\
->   })
->   
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 2ef3c07266b3..71c7666e48a9 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -898,7 +898,7 @@ static inline bool page_expected_state(struct page *page,
->   #ifdef CONFIG_MEMCG
->   			page->memcg_data |
->   #endif
-> -			page_pool_page_is_pp(page) |
-> +			PageNetpp(page) |
->   			(page->flags & check_flags)))
->   		return false;
->   
-> @@ -925,7 +925,7 @@ static const char *page_bad_reason(struct page *page, unsigned long flags)
->   	if (unlikely(page->memcg_data))
->   		bad_reason = "page still charged to cgroup";
->   #endif
-> -	if (unlikely(page_pool_page_is_pp(page)))
-> +	if (unlikely(PageNetpp(page)))
->   		bad_reason = "page_pool leak";
->   	return bad_reason;
->   }
+Or my understanding is not aligned with your thoughts?
 
-^ this
-
-This will not work they way you want it once you rebase on top of 
-linux-next, where we have (from mm/mm-stable)
-
-
-commit 2dfcd1608f3a96364f10de7fcfe28727c0292e5d
-Author: David Hildenbrand <david@redhat.com>
-Date:   Fri Jul 4 12:24:58 2025 +0200
-
-     mm/page_alloc: let page freeing clear any set page type
-
-
-I commented what to do already.
-
--- 
-Cheers,
-
-David / dhildenb
-
+- Jun
+>
+> > +
+> >       if (!dpu_plane_is_multirect_capable(pipe->sspp, pipe_cfg, fmt) ||
+> >           !dpu_plane_is_multirect_capable(prev_pipe->sspp, prev_pipe_cf=
+g, prev_fmt))
+> >               return false;
+> > @@ -1043,11 +1072,6 @@ static int dpu_plane_try_multirect_shared(struct=
+ dpu_plane_state *pstate,
+> >       if (MSM_FORMAT_IS_UBWC(prev_fmt))
+> >               max_tile_height =3D max(max_tile_height, prev_fmt->tile_h=
+eight);
+> >
+> > -     r_pipe->multirect_index =3D DPU_SSPP_RECT_SOLO;
+> > -     r_pipe->multirect_mode =3D DPU_SSPP_MULTIRECT_NONE;
+> > -
+> > -     r_pipe->sspp =3D NULL;
+> > -
+> >       if (dpu_plane_is_parallel_capable(pipe_cfg, fmt, max_linewidth) &=
+&
+> >           dpu_plane_is_parallel_capable(prev_pipe_cfg, prev_fmt, max_li=
+newidth) &&
+> >           (pipe_cfg->dst_rect.x1 >=3D prev_pipe_cfg->dst_rect.x2 ||
+> > @@ -1176,6 +1200,44 @@ static int dpu_plane_virtual_atomic_check(struct=
+ drm_plane *plane,
+> >       return 0;
+> >  }
+> >
+> > +static int dpu_plane_assign_resource_in_stage(struct dpu_sw_pipe *pipe=
+,
+> > +                                           struct dpu_sw_pipe_cfg *pip=
+e_cfg,
+> > +                                           struct drm_plane_state *pla=
+ne_state,
+> > +                                           struct dpu_global_state *gl=
+obal_state,
+> > +                                           struct drm_crtc *crtc,
+> > +                                           struct dpu_rm_sspp_requirem=
+ents *reqs)
+> > +{
+> > +     struct drm_plane *plane =3D plane_state->plane;
+> > +     struct dpu_kms *dpu_kms =3D _dpu_plane_get_kms(plane);
+> > +     struct dpu_sw_pipe *r_pipe =3D pipe + 1;
+> > +     struct dpu_sw_pipe_cfg *r_pipe_cfg =3D pipe_cfg + 1;
+> > +
+> > +     if (drm_rect_width(&pipe_cfg->src_rect) !=3D 0) {
+> > +             pipe->sspp =3D dpu_rm_reserve_sspp(&dpu_kms->rm, global_s=
+tate, crtc, reqs);
+> > +             if (!pipe->sspp)
+> > +                     return -ENODEV;
+> > +     }
+> > +
+> > +     if (drm_rect_width(&r_pipe_cfg->src_rect) !=3D 0 &&
+> > +         dpu_plane_try_multirect_parallel(pipe, pipe_cfg, r_pipe, r_pi=
+pe_cfg,
+> > +                                           pipe->sspp,
+> > +                                           msm_framebuffer_format(plan=
+e_state->fb),
+> > +                                           dpu_kms->catalog->caps->max=
+_linewidth)) {
+> > +             goto stage_assinged;
+> > +     }
+> > +
+> > +     if (drm_rect_width(&r_pipe_cfg->src_rect) !=3D 0) {
+> > +             r_pipe->sspp =3D dpu_rm_reserve_sspp(&dpu_kms->rm, global=
+_state, crtc, reqs);
+> > +             if (!r_pipe->sspp)
+> > +                     return -ENODEV;
+> > +             r_pipe->multirect_index =3D DPU_SSPP_RECT_SOLO;
+> > +             r_pipe->multirect_mode =3D DPU_SSPP_MULTIRECT_NONE;
+> > +     }
+> > +
+> > +stage_assinged:
+> > +     return 0;
+> > +}
+> > +
+> >  static int dpu_plane_virtual_assign_resources(struct drm_crtc *crtc,
+> >                                             struct dpu_global_state *gl=
+obal_state,
+> >                                             struct drm_atomic_state *st=
+ate,
+> > @@ -1188,11 +1250,9 @@ static int dpu_plane_virtual_assign_resources(st=
+ruct drm_crtc *crtc,
+> >       struct dpu_rm_sspp_requirements reqs;
+> >       struct dpu_plane_state *pstate, *prev_adjacent_pstate;
+> >       struct dpu_sw_pipe *pipe;
+> > -     struct dpu_sw_pipe *r_pipe;
+> >       struct dpu_sw_pipe_cfg *pipe_cfg;
+> > -     struct dpu_sw_pipe_cfg *r_pipe_cfg;
+> >       const struct msm_format *fmt;
+> > -     int i;
+> > +     int i, stage_id, ret;
+> >
+> >       if (plane_state->crtc)
+> >               crtc_state =3D drm_atomic_get_new_crtc_state(state,
+> > @@ -1202,11 +1262,6 @@ static int dpu_plane_virtual_assign_resources(st=
+ruct drm_crtc *crtc,
+> >       prev_adjacent_pstate =3D prev_adjacent_plane_state ?
+> >               to_dpu_plane_state(prev_adjacent_plane_state) : NULL;
+> >
+> > -     pipe =3D &pstate->pipe[0];
+> > -     r_pipe =3D &pstate->pipe[1];
+> > -     pipe_cfg =3D &pstate->pipe_cfg[0];
+> > -     r_pipe_cfg =3D &pstate->pipe_cfg[1];
+> > -
+> >       for (i =3D 0; i < PIPES_PER_PLANE; i++)
+> >               pstate->pipe[i].sspp =3D NULL;
+> >
+> > @@ -1220,44 +1275,24 @@ static int dpu_plane_virtual_assign_resources(s=
+truct drm_crtc *crtc,
+> >
+> >       reqs.rot90 =3D drm_rotation_90_or_270(plane_state->rotation);
+> >
+> > -     if (drm_rect_width(&r_pipe_cfg->src_rect) =3D=3D 0) {
+> > -             if (!prev_adjacent_pstate ||
+> > -                 !dpu_plane_try_multirect_shared(pstate, prev_adjacent=
+_pstate, fmt,
+> > -                                                 dpu_kms->catalog->cap=
+s->max_linewidth)) {
+> > -                     pipe->sspp =3D dpu_rm_reserve_sspp(&dpu_kms->rm, =
+global_state, crtc, &reqs);
+> > -                     if (!pipe->sspp)
+> > -                             return -ENODEV;
+> > -
+> > -                     r_pipe->sspp =3D NULL;
+> > -
+> > -                     pipe->multirect_index =3D DPU_SSPP_RECT_SOLO;
+> > -                     pipe->multirect_mode =3D DPU_SSPP_MULTIRECT_NONE;
+> > -
+> > -                     r_pipe->multirect_index =3D DPU_SSPP_RECT_SOLO;
+> > -                     r_pipe->multirect_mode =3D DPU_SSPP_MULTIRECT_NON=
+E;
+> > -             }
+> > -     } else {
+> > -             pipe->sspp =3D dpu_rm_reserve_sspp(&dpu_kms->rm, global_s=
+tate, crtc, &reqs);
+> > -             if (!pipe->sspp)
+> > -                     return -ENODEV;
+> > -
+> > -             if (!dpu_plane_try_multirect_parallel(pipe, pipe_cfg, r_p=
+ipe, r_pipe_cfg,
+> > -                                                   pipe->sspp,
+> > -                                                   msm_framebuffer_for=
+mat(plane_state->fb),
+> > -                                                   dpu_kms->catalog->c=
+aps->max_linewidth)) {
+> > -                     /* multirect is not possible, use two SSPP blocks=
+ */
+> > -                     r_pipe->sspp =3D dpu_rm_reserve_sspp(&dpu_kms->rm=
+, global_state, crtc, &reqs);
+> > -                     if (!r_pipe->sspp)
+> > -                             return -ENODEV;
+> > -
+> > -                     pipe->multirect_index =3D DPU_SSPP_RECT_SOLO;
+> > -                     pipe->multirect_mode =3D DPU_SSPP_MULTIRECT_NONE;
+> > +     if (prev_adjacent_pstate &&
+> > +         dpu_plane_try_multirect_shared(pstate, prev_adjacent_pstate, =
+fmt,
+> > +                                         dpu_kms->catalog->caps->max_l=
+inewidth)) {
+> > +             goto assigned;
+> > +     }
+> >
+> > -                     r_pipe->multirect_index =3D DPU_SSPP_RECT_SOLO;
+> > -                     r_pipe->multirect_mode =3D DPU_SSPP_MULTIRECT_NON=
+E;
+> > -             }
+> > +     for (stage_id =3D 0; stage_id < STAGES_PER_PLANE; stage_id++) {
+> > +             pipe =3D &pstate->pipe[stage_id * PIPES_PER_STAGE];
+> > +             pipe_cfg =3D &pstate->pipe_cfg[stage_id * PIPES_PER_STAGE=
+];
+> > +             ret =3D dpu_plane_assign_resource_in_stage(pipe, pipe_cfg=
+,
+> > +                                                      plane_state,
+> > +                                                      global_state,
+> > +                                                      crtc, &reqs);
+> > +             if (ret)
+> > +                     return ret;
+> >       }
+> >
+> > +assigned:
+> >       return dpu_plane_atomic_check_sspp(plane, state, crtc_state);
+> >  }
+> >
+> >
+> > --
+> > 2.34.1
+> >
+>
+> --
+> With best wishes
+> Dmitry
 
