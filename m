@@ -1,155 +1,121 @@
-Return-Path: <linux-kernel+bounces-738532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22EE6B0B9BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 03:14:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ED54B0B9BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 03:20:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86CF67A4FFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 01:12:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9682B172FF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 01:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCBCC172BB9;
-	Mon, 21 Jul 2025 01:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="csbDTtQ2"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711C017AE11;
+	Mon, 21 Jul 2025 01:20:46 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2011566A;
-	Mon, 21 Jul 2025 01:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD9272604;
+	Mon, 21 Jul 2025 01:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753060444; cv=none; b=uCm4LUabxvfyAyuO2o2e5BQfLIFEGTCDXlW7ppRG8d4tMJuLFiLkQT3QgsUHiKsvtEO1Iqaq2kTFQelxfzNFhqo/ZFOC6x+qQ/eQQ69e1tpFhP6JQp10Jt/F34koc3dLHp2zs3Q2ViSkNP8my4xDw8rzomIvFRGtb62XaI4R6w0=
+	t=1753060846; cv=none; b=p0xM6HrtJtw3jZsVDfbp81wAIx2zcPxU853kVDYprJLJ1CuW2GFinLelFBwNahJnKcIrRDvPMwMtu/H8ef72wQo6WUeXvHtUGaWZgO2cnv7rbOfgP6/tKXkkdZRMvQhiUGYait38CHMtNwyyBSHwDTHvv7Dg/dDebJvaLKMQH8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753060444; c=relaxed/simple;
-	bh=Ava61Vivu7w/mcZfCfpTOpBif8IfUW5XaEI9F1IJOB4=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=i1aTjzJKwsvZjhHqg0T3SpWZjEsP6XT/L+GOSrDJG4Uw8eY0OHQVSJxh1A8/dSPi/n5IXKA39h9EA+DXAS9Fxk6GDaz6O0uLo5dCq6Cjl4xljG3rVhELARBuBBbLABNxmK2FswnIcwyz945cue5ceSaaUvwJSi+vOjdQfL2HWVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=csbDTtQ2; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1753060440;
-	bh=Ava61Vivu7w/mcZfCfpTOpBif8IfUW5XaEI9F1IJOB4=;
-	h=Subject:From:To:Date:In-Reply-To:References;
-	b=csbDTtQ2jgTPppbMqU8+YPTQ1SgrQ9HL3Lbe0Dhffbn3xftWGJ66X4mI6t9ZdKgxH
-	 cesOBugB8X1kPhlHniy8n4njJnYdtELyIWEeQaQ+QB1ySQDFedAFu3RxUDdlyTGNpl
-	 hrtKLAp8anZzDl+T1H0zq2KMxEeUR6QLf+pINuDPOMjvmO65nTvCjUtanpyOz4hQDz
-	 ytAHYh/NAVuso/BsJMy85oZEmMco4h/VE2q4I+CnyeED8mVpVwoZkJbZKdD7pLQRJp
-	 y0sxTBLcUaTo2zMB8xDHqBJdqG9FPUQ1PVRFEg5Qp/azDvSBCCgDJQ7SKBOQvh+YFk
-	 S/n6bWfYWu6Yw==
-Received: from [192.168.68.112] (unknown [180.150.112.70])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id E86056443C;
-	Mon, 21 Jul 2025 09:13:59 +0800 (AWST)
-Message-ID: <f61d9b4f25e18c37e88c56e3222a387b9ece6c0d.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v2 6/9] ARM: dts: aspeed: Move flash layout out of
- Facebook netbmc-common.dtsi
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: rentao.bupt@gmail.com, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel
- Stanley <joel@jms.id.au>, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
- linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, Tao Ren
- <taoren@meta.com>
-Date: Mon, 21 Jul 2025 10:43:59 +0930
-In-Reply-To: <20250706042404.138128-7-rentao.bupt@gmail.com>
-References: <20250706042404.138128-1-rentao.bupt@gmail.com>
-	 <20250706042404.138128-7-rentao.bupt@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1753060846; c=relaxed/simple;
+	bh=BNkQIjOZSKu9ZGwc4tHzEhkbq/LUxVSJG18QsLj5xUE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TBwjpIZxb6qwtnlwMLnAovYAol9PmKdqBAl3poJmyB5pqnygzH8TsQJ3VaaLJNsHD7oB3YiXSGRS73KF0+T9pHtxls1gCWl6VWwpxPG+GGcJu4DYkcJQNDlBvf3fQ+5WhUfPILDiBRf/ry55b4xX/3YOdZDm8Towuz17OUouNms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bljJL4g3szYQv78;
+	Mon, 21 Jul 2025 09:20:34 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 5FF3B1A0ADC;
+	Mon, 21 Jul 2025 09:20:33 +0800 (CST)
+Received: from [10.174.176.88] (unknown [10.174.176.88])
+	by APP4 (Coremail) with SMTP id gCh0CgDnYhPblX1o4WHSAw--.16917S3;
+	Mon, 21 Jul 2025 09:20:29 +0800 (CST)
+Message-ID: <b60e4ef2-0128-4e56-a15f-ea85194a3af0@huaweicloud.com>
+Date: Mon, 21 Jul 2025 09:20:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs: Add additional checks for block devices during mount
+To: kernel test robot <lkp@intel.com>, viro@zeniv.linux.org.uk,
+ jack@suse.com, brauner@kernel.org, axboe@kernel.dk, hch@lst.de
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yukuai3@huawei.com, yangerkun@huawei.com
+References: <20250719024403.3452285-1-wozizhi@huawei.com>
+ <202507192025.N75TF4Gp-lkp@intel.com>
+From: Zizhi Wo <wozizhi@huaweicloud.com>
+In-Reply-To: <202507192025.N75TF4Gp-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDnYhPblX1o4WHSAw--.16917S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7uFyxuFW8XF15AFy8Ww18Grg_yoW8ZFyDpa
+	yrC39xtryrWr1rWa97KrWq9w1Yqws5JwnxGF18Cw47ZFWqvF17WrWI9r43Jryqqr1vgrWU
+	Jr9rurykKw1UAaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
+	7KsUUUUUU==
+X-CM-SenderInfo: pzr2x6tkl6x35dzhxuhorxvhhfrp/
 
-On Sat, 2025-07-05 at 21:23 -0700, rentao.bupt@gmail.com wrote:
-> From: Tao Ren <rentao.bupt@gmail.com>
->=20
-> Move BMC flash layout from ast2600-facebook-netbmc-common.dtsi to each
-> BMC platform so it's easier to apply different layout settings.
->=20
-> The fuji data0 partition was already extended to 64MB in Meta
-> environment. Elbert flash layout is not changed.
->=20
-> Signed-off-by: Tao Ren <rentao.bupt@gmail.com>
-> ---
-> Changes in v2:
-> =C2=A0 - None (the patch is introduced in v2).
->=20
-> =C2=A0arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-elbert.dts=C2=A0=C2=A0=
-=C2=A0=C2=A0 | 6 ++++++
-> =C2=A0arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji.dts=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 | 6 ++++++
-> =C2=A0.../arm/boot/dts/aspeed/ast2600-facebook-netbmc-common.dtsi | 2 --
-> =C2=A03 files changed, 12 insertions(+), 2 deletions(-)
->=20
-> diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-elbert.dts b/ar=
-ch/arm/boot/dts/aspeed/aspeed-bmc-facebook-elbert.dts
-> index 74f3c67e0eff..673cabbec92e 100644
-> --- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-elbert.dts
-> +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-elbert.dts
-> @@ -50,6 +50,12 @@ spi_gpio: spi {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0};
-> =C2=A0};
-> =C2=A0
-> +&fmc {
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0flash@0 {
-> +#include "facebook-bmc-flash-layout-128.dtsi"
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0};
-> +};
-> +
-> =C2=A0&lpc_ctrl {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0status =3D "okay";
-> =C2=A0};
-> diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji.dts b/arch=
-/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji.dts
-> index 840d19d6b1d4..71f58ad1ff06 100644
-> --- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji.dts
-> +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji.dts
-> @@ -223,6 +223,12 @@ eeprom@2 {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0};
-> =C2=A0};
-> =C2=A0
-> +&fmc {
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0flash@0 {
-> +#include "facebook-bmc-flash-layout-128-data64.dtsi"
 
-Please don't bury the change of flash layout in a patch that only
-claims to push the layout choice down to the platform dts.
 
-Also see my reply on patch 5/9 regarding maintenance for the Wedge400
-flash layout.
+在 2025/7/19 20:32, kernel test robot 写道:
+> Hi Zizhi,
+> 
+> kernel test robot noticed the following build errors:
+> 
+> [auto build test ERROR on brauner-vfs/vfs.all]
+> [also build test ERROR on jack-fs/for_next linus/master v6.16-rc6 next-20250718]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Zizhi-Wo/fs-Add-additional-checks-for-block-devices-during-mount/20250719-105053
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+> patch link:    https://lore.kernel.org/r/20250719024403.3452285-1-wozizhi%40huawei.com
+> patch subject: [PATCH] fs: Add additional checks for block devices during mount
+> config: i386-buildonly-randconfig-001-20250719 (https://download.01.org/0day-ci/archive/20250719/202507192025.N75TF4Gp-lkp@intel.com/config)
+> compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250719/202507192025.N75TF4Gp-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202507192025.N75TF4Gp-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>>> ld.lld: error: undefined symbol: disk_live
+>     >>> referenced by super.c:1385 (fs/super.c:1385)
+>     >>>               fs/super.o:(super_s_dev_test) in archive vmlinux.a
+> 
 
-Andrew
+Sorry, disk_live() is only declared but not defined when CONFIG_BLOCK is
+not set...
 
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0};
-> +};
-> +
-> =C2=A0&i2c0 {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0multi-master;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0bus-frequency =3D <100000=
-0>;
-> diff --git a/arch/arm/boot/dts/aspeed/ast2600-facebook-netbmc-common.dtsi=
- b/arch/arm/boot/dts/aspeed/ast2600-facebook-netbmc-common.dtsi
-> index 208cf6567ed4..4f819bf8c909 100644
-> --- a/arch/arm/boot/dts/aspeed/ast2600-facebook-netbmc-common.dtsi
-> +++ b/arch/arm/boot/dts/aspeed/ast2600-facebook-netbmc-common.dtsi
-> @@ -54,8 +54,6 @@ flash@0 {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0status =3D "okay";
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0m25p,fast-read;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0label =3D "spi0.0";
-> -
-> -#include "facebook-bmc-flash-layout-128.dtsi"
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0};
-> =C2=A0
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0flash@1 {
+Perhaps, as hch suggests, it can be verified through GD_DEAD?
+
+Thanks,
+Zizhi Wo
 
 
