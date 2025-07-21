@@ -1,132 +1,138 @@
-Return-Path: <linux-kernel+bounces-739725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F369B0CA20
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:49:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 687D4B0CA25
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:50:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 671AA6C1B30
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:48:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F6B316E922
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFA6A2E11BA;
-	Mon, 21 Jul 2025 17:47:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ADA32C1594;
+	Mon, 21 Jul 2025 17:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q5ZlYaGr"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b="rIxLisbL";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bmTEqRF9"
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 056BB21B9F4
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 17:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A242B9A8;
+	Mon, 21 Jul 2025 17:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753120075; cv=none; b=b9AfvoifyXFagb2MPYcpgVyu26gU6Swl1Gm6Hy3TWSUzVX8no+0PPhz0WXMGxWSJJoBny3jFqPxl+P1h9nhzR+ZYMh4tDayDGbW8yOgPSxqKXfPFM2/U2rgIOuKN7WP4GKVcEOtkHoRBdfyK19XvYyaF9Kj97ueTNcEKDtr7J/s=
+	t=1753120211; cv=none; b=odDMq/vwH5lTXR7g/FWpaGe9X32LLpen/8e7GX33zQE6hB9opGfIr8SNLcdAePfmtdjxKkbmco3cVjXIqrq+nxpcvOxIHA+K9skUG2zYz8L1IARQxHq74iyWvsH3YSrBskACQ5lTpt72Ku1dywLMDPkErsCRXEkfrDa3crqnGyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753120075; c=relaxed/simple;
-	bh=0YFqN0a4A6xpAiRDkR8q3z6mZvuOtA6mTOducRFFgOs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zj8q3ze+OuVohLW1+3d5tHTp4OLQW46EzfF8bp446558Ar6550nc+VQOFYA6CMDAP7x2HI/MHccmBscgfMF3lY07rLcmGeQ8AyQwN695t6QRB/OJVpHuIhGAxfE0zY8JxddQlEGY1Ec5moQMO5Y0g7UtPSfdAtahy4PceL2QQnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q5ZlYaGr; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-32cdc9544ceso41224751fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 10:47:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753120071; x=1753724871; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WoE3XADz+fZxJevoESosVUJSwk5B/k7LFoq6KDG5zto=;
-        b=Q5ZlYaGroaZkjDeyVfmaX4r7LjkxWSzBEcGCXWSJ+Gn/z5Ws54KcVFWe3d8gFBkqhJ
-         Z1QX8nirKyDQ2Ij3fQeXvbQ9JXppDnePLWSQRDhf27FqIq7QsD1GiOhy6upi+Z8ec1ta
-         glq8HtPpJxAQYWSt/xWHtDpeRsrI2PGHlI5NRXuqifwijJRe6yrZ/Z9mHZ0FGd0JoyMt
-         IGq0RZEdthleD8lzrx6EpxmzzdWLJm1wgWiOXHJMHPu5SmHAj79VJkgTSR7GYSnePJtB
-         oHUqokK505Z4SfklhXuCqadknFzg17gcVEskkh0dPg3jww9RzpFc6BNGaJi0AE9x3BJz
-         AR6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753120071; x=1753724871;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WoE3XADz+fZxJevoESosVUJSwk5B/k7LFoq6KDG5zto=;
-        b=FAEg35P6FtsCtluk9wA4O5C05L+lv89kw6DDJpRKVPRbciIE4jVD+O6fDW6Jb3XXi3
-         0NSRz3dVJe5Sbmnq5oC9ecq4KqeDteXE6j/qWWQYnAezhB2Mrf1I2+tbH7GpzG/lMOaM
-         tSzH3G4Swsy2dg9XTLkGfChzNua57uBcHGAjN/+tdGFL0sU9l3HxjHwSudwtv3q6wIwF
-         uLgXqwiiJTzWYLVjJG9dQ63r22tepFF/KlsP7NHuUUn+wxthgt5Zh2mwQIbpqd0BRUyo
-         hoV6HMPhFMiUWmAvW7XK40YTPlGmA+yOEtycWEFk9CJaDQ2LhAs+RkFAKx3swoMuzgGa
-         miGg==
-X-Gm-Message-State: AOJu0YzJtz70iJUbnPEpOJabQ8yd9/smFvq+OHF1MNXBBmNcRxIwSaqf
-	mW/0+nH4p8MUGIhne/opk/XjBffhFMLpKgcDB7TX6uaXrVAi5K8FAp65cA4AX5U0g48YZYsi0AI
-	NTgU5iuW6XeOHTZguZSxFZu+jzCM7jD/nBQ==
-X-Gm-Gg: ASbGnctaB4nNX9MO15kU24T0JLTWVf53sfUzCupbNj6Bfpl5975lonFxsQtjuR1tMax
-	7Y7wb/YYXgMfCtDh1gOcQrdNmV0IkEAYQdAs2n3SQDeiB69R2y/EZEPrER7CS2vqfBIGru5pymR
-	CnkJ9BksaYbWLEQBeg/SpZ9C2myEuzosC1Oadk3aB1AABhgT8sjgxa+wtJsDDogJCpNjEATrZf0
-	Hzb2F0dPiPXCXj5/VvqGGs/II7e
-X-Google-Smtp-Source: AGHT+IGccbbkLDNRZf5uGtuhQ4vvp8vhQfi4kdXMQXqsARiXZ4jWDxuVkdo6kRtbk3hjjxJFPNsHaMhDi/++eU5oIkY=
-X-Received: by 2002:a2e:a99a:0:b0:32d:fd9b:34d2 with SMTP id
- 38308e7fff4ca-3308f60d7e9mr50236951fa.31.1753120070277; Mon, 21 Jul 2025
- 10:47:50 -0700 (PDT)
+	s=arc-20240116; t=1753120211; c=relaxed/simple;
+	bh=toXsqUkTmteicEKvpexaaVyksVweh68agbAYBeLj+bs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sFWZAq+BqP3xGzMvdPI+v1eu6skvEayjtXvtZEb9S6wgYtHMhmsYkhWA6exOv7j/pzQw6zz/zwVMIhjcoIXQOW6bB4wlUC/5sI3w6GQcHkppEhsro1CeKBmj2WM/U+7FjSGLtGSd58Or+Vu+MFyreru5juzj5HQLz+qv6Qm4Xs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev; spf=pass smtp.mailfrom=svenpeter.dev; dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b=rIxLisbL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bmTEqRF9; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svenpeter.dev
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfout.phl.internal (Postfix) with ESMTP id 220DFEC0297;
+	Mon, 21 Jul 2025 13:50:07 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Mon, 21 Jul 2025 13:50:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm3;
+	 t=1753120207; x=1753206607; bh=hhfn5zrrmGTmLRR6l+UKwXZ9nQZfTtkt
+	5WevPFZSJ3c=; b=rIxLisbLWRhiIr0SlfpyoAeMxRIVxPpE8T7sSoJiX2+spTPb
+	JQmGYVKd2h8r0YYpMrp/vsgbTwDBe5zIfkfRh1UhSU8MaakrwQmUdAKKQKvmWDem
+	2lGr1S/qFZMu6GBXwJtdxXp8tpD2iefb6EL/Sq5yp1V/k3s6tmLX/50sujZWZ95a
+	jaceyr6TkYOYU4o/KYLGhnfxpE3veCaugFMybvqsWitDHgkwvpNESGhgxX6ndL29
+	1oPk24GZhacY01z9Ts622mMT4zVAYMI+it5ktyP2RTA5ntNbXxReXVMk1mQm46vT
+	1sVb9QSh1PVFbqEXQ2g83b4n73hbzn8jw4WC4w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1753120207; x=
+	1753206607; bh=hhfn5zrrmGTmLRR6l+UKwXZ9nQZfTtkt5WevPFZSJ3c=; b=b
+	mTEqRF9rqDXGmXzybvoRHsOSQiV22ItKE3TeECuwJpFPxLj6iXlrJQF9PI3MsIQD
+	77IGZ822Q36Tl/VDHf/lzE2dCmxt2Z5qT5EbMPFrkjIRViw24cjrtV56+aSrxPc5
+	sBJ9P3f4fV+Gvp2ZUsT/4ksAdhY+iycZ9ET2Kj6wygHcPaCExRc9joydUekz07Xd
+	sOvoOsU7klwDsqqiGWkgJjLWZKRlCl7/65AOajwoSRSJHqVbcqcFhZ4Lsj0d+5yW
+	Fp1PPl/07E7K9jaTE4o2/z9Gaj47BhynCxpyB1mNzWUJA5Oec78emykKXSJONtbe
+	SZ+JE0F9+HHam+4sinZqQ==
+X-ME-Sender: <xms:zX1-aHLyzzdH25O5_EFMckyHZjF3KGHML57Wlmnw3pOueHBSkgDB6w>
+    <xme:zX1-aDkBOD3ot_00EIbIOv_lZqqLEJr4VRIGSa96kxsaIGMDFWpSp_b9q7mi8RPtA
+    Nxd43ph3j_FYFSOsv4>
+X-ME-Received: <xmr:zX1-aAIra9RNfi2rzMEEcT14YIDF2EUW-eirzsYHM03WlB8J-rdkduwNqnbj_dPPIoQ6LskA2uEyn6AUbrNnMTQFLiOIceBkolYLXGf9avoYt504ruRfwA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejvdejvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepufhvvghnucfr
+    vghtvghruceoshhvvghnsehsvhgvnhhpvghtvghrrdguvghvqeenucggtffrrghtthgvrh
+    hnpeekteeffedvffeghfffgfdtvefftdejheegfefhhfehgedviefhgfduhffgkeehkeen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehsvhgvnh
+    esshhvvghnphgvthgvrhdruggvvhdpnhgspghrtghpthhtohephedpmhhouggvpehsmhht
+    phhouhhtpdhrtghpthhtohepshhfrhestggrnhgsrdgruhhughdrohhrghdrrghupdhrtg
+    hpthhtohepmhgrrhgtrghnsehmrghrtggrnhdrshhtpdhrtghpthhtohepshhvvghnsehk
+    vghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrd
+    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhnvgigthesvhhgvghrrdhk
+    vghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:zX1-aA7rkoLeFUxFUhEIl6uNCND2rVInhhDGMrLgavmTPIwtUJ0HlQ>
+    <xmx:zX1-aM3H1PsI1xtz_pNiF7s4GZop9kBt4Jql9AcOp8qQucmnRNOyOQ>
+    <xmx:zX1-aOe2H2qA3LjcgCHz4udweHVfEyu7nuRK2_mFgaxN9ZlSjgBQHA>
+    <xmx:zX1-aKdulpt3PNLGDavzpTAR47HhzsHP9fht35TeivsPGCObJEY5GQ>
+    <xmx:z31-aFkik1Oobyf4KLINSczho7fd5AVRQbT6k_-0R9bJb5KXC2AbWcya>
+Feedback-ID: i51094778:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 21 Jul 2025 13:50:04 -0400 (EDT)
+Message-ID: <80dff685-4bb2-4b10-b283-88573f0d9529@svenpeter.dev>
+Date: Mon, 21 Jul 2025 19:50:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250721174227.28002-1-ubizjak@gmail.com>
-In-Reply-To: <20250721174227.28002-1-ubizjak@gmail.com>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Mon, 21 Jul 2025 19:47:37 +0200
-X-Gm-Features: Ac12FXyzGELRWpYTywe1PCaK9FFHZEf2ogE6DV9X8_k2FaKDgf7fYzEOG1gbp_Y
-Message-ID: <CAFULd4Ya1Me0+-cnmVKBAxcJJfiEbzk+_AavM7vyJksUaOtnGQ@mail.gmail.com>
-Subject: Re: [PATCH RESEND 1/2] ucount: Fix atomic_long_inc_below argument typei()
-To: linux-kernel@vger.kernel.org
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Alexey Gladkov <legion@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	MengEn Sun <mengensun@tencent.com>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: Fixes tag needs some work in the asahi-soc tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Hector Martin <marcan@marcan.st>
+Cc: Sven Peter <sven@kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20250721084007.341abfe2@canb.auug.org.au>
+Content-Language: en-US
+From: Sven Peter <sven@svenpeter.dev>
+In-Reply-To: <20250721084007.341abfe2@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Sorry, patches in this series have some problems in their description,
-please expect v2.
+On 21.07.25 00:40, Stephen Rothwell wrote:
+> Hi all,
+> 
+> In commit
+> 
+>    a622259af9eb ("arm64: dts: apple: Add bit offset to PMIC NVMEM node names")
+> 
+> Fixes tag
+> 
+>    Fixes: 14b7178a76e2 ("arm64: dts: apple: Add PMIC NVMEM")
+> 
+> has these problem(s):
+> 
+>    - Target SHA1 does not exist
+> 
+> Maybe you meant
+> 
+> Fixes: d8bf82081c9e ("arm64: dts: apple: Add PMIC NVMEM")
+> 
 
-Uros.
+Yup, that other SHA1 is a stale commit in a branch that never went 
+upstream in my local tree.
+Thanks for catching it, should be fixed now.
 
-On Mon, Jul 21, 2025 at 7:42=E2=80=AFPM Uros Bizjak <ubizjak@gmail.com> wro=
-te:
->
-> The type of u argument of atomic_long_inc_below() should be long
-> to avoid unwanted truncation to int.
->
-> Fixes: f9c82a4ea89c ("Increase size of ucounts to atomic_long_t")
-> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> Reviewed-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Cc: "Paul E. McKenney" <paulmck@kernel.org>
-> Cc: Alexey Gladkov <legion@kernel.org>
-> Cc: Roman Gushchin <roman.gushchin@linux.dev>
-> Cc: MengEn Sun <mengensun@tencent.com>
-> Cc: "Thomas Wei=C3=9Fschuh" <linux@weissschuh.net>
-> ---
->  kernel/ucount.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/kernel/ucount.c b/kernel/ucount.c
-> index 8686e329b8f2..f629db485a07 100644
-> --- a/kernel/ucount.c
-> +++ b/kernel/ucount.c
-> @@ -199,7 +199,7 @@ void put_ucounts(struct ucounts *ucounts)
->         }
->  }
->
-> -static inline bool atomic_long_inc_below(atomic_long_t *v, int u)
-> +static inline bool atomic_long_inc_below(atomic_long_t *v, long u)
->  {
->         long c, old;
->         c =3D atomic_long_read(v);
-> --
-> 2.50.1
->
+
+Best,
+
+
+Sven
 
