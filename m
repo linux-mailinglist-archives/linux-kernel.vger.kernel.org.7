@@ -1,128 +1,116 @@
-Return-Path: <linux-kernel+bounces-739845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76F5AB0CBE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:34:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29B67B0CBE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:34:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB44B3A8715
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:33:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B13416E178
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:34:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F1223C39A;
-	Mon, 21 Jul 2025 20:34:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2EBB23A98E;
+	Mon, 21 Jul 2025 20:34:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TAX746Cb"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="pbggo5s3";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="XNSoo6wr"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298BE22F164;
-	Mon, 21 Jul 2025 20:34:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC42622F164
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 20:34:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753130043; cv=none; b=r36LqfXPUSmD+RTB2M94cRAR4sJTqqklM20d8uNAYTuVtWr5ekcx20Uwom42/4ddWlJbVLIZhrb3te5VFZmYWTvuuZp2+ZE7wUTD5Prx9+g07vexgBJRgxuy3bub1D2jJ7XHYqUqQZRaXLmGHDnwb7lzGry/2PZgeTxMY5qca/E=
+	t=1753130076; cv=none; b=HvMEEMoo5FsL+auRLL8LgqwVi5GDERELHt3pW9KzKxezPDAacF/HdxeS//9QWNKIKshEJBakLFn7TVL6PXK48smLAdlSUZ6kGTVs3P+egdfrOCcei83JwU1NT2uNtX4wTfg+HkegQkIKabh64/kTLRB3trdVuLmeIusprqBhino=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753130043; c=relaxed/simple;
-	bh=4Ul1sa4tbosUa9ruhwhtdcqNwp0uQWDOf/7Qd/o2M7Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y0G5uGSAjDhJTNFHmB05qQz5TSzYfQdHedqzJTJQi3FErxkfUInkCw1gKouGYT3ExERce0piCeCk1KzdY17Fp28fpHqPyHW/CSIbcpYyZa/eoJKw4OtR0IWHu6Uezo83z+5HstmbeuSunEI8DRO0kOj47I8+hJfNI4skIuhRENo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TAX746Cb; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-553b5165cf5so5623950e87.0;
-        Mon, 21 Jul 2025 13:34:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753130040; x=1753734840; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4Ul1sa4tbosUa9ruhwhtdcqNwp0uQWDOf/7Qd/o2M7Y=;
-        b=TAX746Cb4oCaK0LqA9/MfgYLwK5fIvJj12IQDFyoV4dNK2EeKpTpKAQmvdt/iqGJpi
-         0gQCae3lLLf1afL+0DSTMdKOgD/QNMyJ69zRWZl6DLkDScvr+BYPZyR+d7eq22IM2yoL
-         bCvST8CA7EX59qwXcpi5Nvg6ouBLVjE9B1rOP7a6rkzNfGWZOXXFffQOrytC+UkfJxGP
-         I5fz55CypA+mJ93MNXYRaXGDJtEa3EghZ5WCxkwMbdJbgC4LOHj9MhYNzcFy1KcWJmVF
-         tIJM/fdNlUL8Qgyxqgl4kYy9JQXBtsCkhG7w4VX+6yeATpjCKh4Tcm3rXygoXhADks96
-         tHSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753130040; x=1753734840;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4Ul1sa4tbosUa9ruhwhtdcqNwp0uQWDOf/7Qd/o2M7Y=;
-        b=av1UfpjOOjvFTcSacG5qRFLHp0RcPyfbZZlWo8W12iGp1AOLvBzDx8iiFEOJWPTqPw
-         xNzS47ZzPEz2SIfOHb4itU9CCP8DUxPjxhOak5mj3b1QEjqIb5hJXfbgmZwOqPEaK6rR
-         3+gyhQWUXgFMGTrhv79t+8DQ7intbXRgSfv7ye3iyom/hAuyaHlbzCBZY6EdY7+4jcjb
-         Vj5uK2SgMkfawiqMSjPwWDMzXdrp3cTsRR1zWkhSrVsY+I72LKG8dowDtPGRqL9eUXnA
-         NGVidmLjeXazYAuurLs0WL7+Cydwh59Rz+ZQoPPrpLHTDoz7je4Hl0MWUyZ/0UBK+AIB
-         NRZA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQQMrQySFEnzx5rV8RceTLEGoUX+f8QxT3rwZB4qHhI8FUPmn4ij3nMbO4RAM6ZD5VqEeYjCxEIQFXdYCa+PI=@vger.kernel.org, AJvYcCWVaoqEVhmILAKTVqQHZfBs0Am//bmPEdJHAeGng8OFPcnbxWrT8oSQn+yvh2t7iFwKVMzH7O1Jv5IKc3XZ@vger.kernel.org, AJvYcCXG05KfCoLRwpSDob17mm64p5jYJQbr//z01Uubh6oll2JStcWh9SqgIP5KiYgC9ZkWfOA1Rr9RYb1xRw==@vger.kernel.org, AJvYcCXv+e0qqgPQqHdIVoJkXBOh9fIR2uZpqNsqXxmtzZNILP+ohXqB2Gj0Szf5fTGKat/zzJCod2aRBrQTd5S9fvCn@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+vlpPYrtUM8uaux2CDHHChC7n+w98s6gBNiXqJVceFGv/zZU3
-	RRefDBwY5dmV0NQrIoziAPykggh0rnOivZUIRfR8W7lLWyeaBiXo/candqeZsd9h8wyeqaMIOkA
-	r8FoHRCZzIuC9tuBybLt5rv5VSO2QXko=
-X-Gm-Gg: ASbGncsABvKZbxK4xUre8ZIqpI6nmBsexNgXsBprgPHXRFe3MTarRUDu7m4OBcR573c
-	94e/88ngeXDIDSevBLT66ENIrYf6MGNFwKwtjh1ZDiBOEm2Q8Xn65BnPZv0/EAEHVoL2aMWc7R/
-	pCv831uj/HBadxhaBSeqkEEB5XHvq14Rv4bEqAA3KIDQ3/oNWFVv4D1Qv8ow1lrTRSbu+B4YbpZ
-	JEpZz7Q
-X-Google-Smtp-Source: AGHT+IH6A989z7ThsmWhcmnfnAuNOS7u4N0waP3LiQaOQAG3vGt/H7R2XFVf4RgsPjVfbzK8xHrD35QxEhunVNnKS14=
-X-Received: by 2002:a05:6512:1313:b0:54a:cc76:1676 with SMTP id
- 2adb3069b0e04-55a233d987cmr6580162e87.44.1753130040075; Mon, 21 Jul 2025
- 13:34:00 -0700 (PDT)
+	s=arc-20240116; t=1753130076; c=relaxed/simple;
+	bh=L8UNGGOIK0V9bTLJkf7/n3mqGkhzvKUB53owv5FItu8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g/SPTfXRdyNvXzkVOHfCrvOIe9eC83t1jTG8tJgsdppMLckuZtK5OqPs1HEfmyPP4oHYvoJYyw0rRc+41i2VlR0TF+ECjJltEnzzLHtNyuJNXAWtovKB99XKtCBZDpdvqPiUvBsusXc3gWBYJWQe0koK+oZHTAQ1ZlGq0AcmDTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=pbggo5s3; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=XNSoo6wr; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4bmBvr5vCnz9sxb;
+	Mon, 21 Jul 2025 22:34:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1753130072;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XjMHqHnrbR9uOHiktuTKqoY5zCg3GeGQDLjsSoyvOm0=;
+	b=pbggo5s3icq1EDv03NvOkzqtmk0anN/EGdZDMSq1RJuo59MEXMCMyQfuAUL8yivjDAUuiq
+	a1SwP0YBhyOa5iQEF3tKApjhI05iOSF1IJJNHefUYc1ZQ+ydNp6UrhjRoZ77kFSfQKiEKK
+	YQrF5DpCqhlSq0HuZciIHc1hO84Ug5Nd1R9RGeQkjqGca6cVUfV9N0BDq0Ed8NZMpwMRLV
+	NQ/I2oq3/UpGMLjgLdTUV6A9Y/gvF2JwU9VNqcuJ4DgA8hTPzuYS58vIEszBrZ9Fsw25eR
+	vQuxHdtbIaI8NYcGOeA2I7DV02lpUNhGQ1Ve/NFVrSxpf5e/N/Vy107K+W3zzA==
+Message-ID: <ada14a84-0b98-485b-bd84-26666f7a9b3b@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1753130070;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XjMHqHnrbR9uOHiktuTKqoY5zCg3GeGQDLjsSoyvOm0=;
+	b=XNSoo6wrVkYR7ROKG/Zx3v6+n5I3sVoXsdB5kVwc6jq3b5r9AIuC9X6q6MEY91GrTIoVVB
+	clBGyP9rZYOoCj0HN03Q+G2d/8dVAsrHONqGwvXnI8r+yLa8shfzzcFgK3kQ0XU1/X9L20
+	EqRqFOVSsPwyrLZ4XZHpcniarqodSwV+59GS0NH1DOUvHLYr70hhIpsLy1xPDW43/hzlQx
+	ia4OP2kY2ytTdoTyXt79+YVnwk4PdYUzREMwHCBADrlH0sbeco5+0vk8/GW3p9aY/tC52D
+	Aw96RJb7/+G5rD+5qj3/CHIcJ19aKGL4+QRM8MPHhf/GvymzcTjaqWg/7w3o6A==
+Date: Mon, 21 Jul 2025 22:34:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250719-core-cstr-fanout-1-v2-0-1ab5ba189c6e@gmail.com> <CANiq72nxL9RORJA-w=rtnkwMKcXcLva3dGbMDLc71o1bqAHUsw@mail.gmail.com>
-In-Reply-To: <CANiq72nxL9RORJA-w=rtnkwMKcXcLva3dGbMDLc71o1bqAHUsw@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Mon, 21 Jul 2025 16:33:23 -0400
-X-Gm-Features: Ac12FXwowT4js33aAd4KV3lt6ZaqxKq6jdaJgK1Y7dU7h4bgb1eTladvHGZwSF0
-Message-ID: <CAJ-ks9kQNDK5iNNT_wA_jrupiPepWhpqjE=cBQR61tgVP+5UZw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/8] rust: use `kernel::{fmt,prelude::fmt!}`
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Jens Axboe <axboe@kernel.dk>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
-	Rae Moar <rmoar@google.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Uladzislau Rezki <urezki@gmail.com>, nouveau@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-block@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] mtd: spi-nor: winbond: Add support for W77Q51NW
+To: Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Marek Vasut <marek.vasut+renesas@mailbox.org>, linux-mtd@lists.infradead.org
+Cc: Michael Walle <mwalle@kernel.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Pratyush Yadav <pratyush@kernel.org>, Richard Weinberger <richard@nod.at>,
+ Vignesh Raghavendra <vigneshr@ti.com>, linux-kernel@vger.kernel.org
+References: <20250720195625.413715-1-marek.vasut+renesas@mailbox.org>
+ <11349679-f1c4-4648-83ec-2292f1c2ae3f@linaro.org>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <11349679-f1c4-4648-83ec-2292f1c2ae3f@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-ID: 5e68372c44b02ec9c00
+X-MBO-RS-META: 53q8xj3dgsennxtkko5bfhn3beg8i7ir
 
-On Mon, Jul 21, 2025 at 4:25=E2=80=AFPM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Sun, Jul 20, 2025 at 12:42=E2=80=AFAM Tamir Duberstein <tamird@gmail.c=
-om> wrote:
-> >
-> > Subsystem maintainers: I would appreciate your `Acked-by`s so that this
-> > can be taken through Miguel's tree (where the other series must go).
->
-> Same here as in step 2b/5, i.e. Danilo's Acked-by was picked up for
-> things he didn't Acked-by.
+On 7/21/25 11:28 AM, Tudor Ambarus wrote:
 
-Yes, you are right.
+Hi,
 
->
-> I imagine it was automatically done by `b4`, but that is why we need
-> to be careful about automatically applying tags. I am mentioning this
-> mainly to confirm I am not confused and to avoid forgetting about it,
-> and also I hope it helps if you eventually apply patches yourself,
-> e.g. if you eventually take care of a branch yourself.
-
-You're not confused, and I appreciate you calling it out. I'll look
-out for this kind of thing in the future.
-
-Thanks Miguel.
-Tamir
+>> diff --git a/drivers/mtd/spi-nor/winbond.c b/drivers/mtd/spi-nor/winbond.c
+>> index 63a93c9eb917..dcb6c9ec862a 100644
+>> --- a/drivers/mtd/spi-nor/winbond.c
+>> +++ b/drivers/mtd/spi-nor/winbond.c
+>> @@ -343,6 +343,10 @@ static const struct flash_info winbond_nor_parts[] = {
+>>   		.id = SNOR_ID(0xef, 0x80, 0x20),
+>>   		.name = "w25q512nwm",
+>>   		.otp = SNOR_OTP(256, 3, 0x1000, 0x1000),
+>> +	}, {
+>> +		.id = SNOR_ID(0xef, 0x8a, 0x1a),
+>> +		.name = "w77q51nw",
+> 
+> we concluded that the name is not relevant, as there can be flashes
+> that update their name or worse, entirely different flashes that use
+> the same flash ID. So please add the name as a comment, above the flash
+> definition. See recent flash additions.
+> 
+> Also, we introduced some minimum testing requirements, so that we make
+> sure that the flash was tested at the time of submission and also to
+> save the dtb database in case other flashes reuse the flash ID, or
+> different flavors appear, etc. Please do the tests described at:
+> https://docs.kernel.org/driver-api/mtd/spi-nor.html#minimum-testing-requirements
+Should all be part of V2 I just posted, thanks .
 
