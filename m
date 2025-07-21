@@ -1,352 +1,511 @@
-Return-Path: <linux-kernel+bounces-738958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 420FDB0BFA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:05:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC23AB0BFA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:06:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCE393BCD19
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:05:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA55E3B3D47
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD6D289E0C;
-	Mon, 21 Jul 2025 09:05:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 319C3288C05;
+	Mon, 21 Jul 2025 09:05:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="L0uJSn30";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JLHNvto+"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Z/z5ZPtE";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Z/z5ZPtE"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012003.outbound.protection.outlook.com [52.101.66.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88183211A27;
-	Mon, 21 Jul 2025 09:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753088709; cv=none; b=Ocvz7SeMkEIEle5+Kr9inckAqWckPJ6osXw4JJ7jEDVeOGw4jT74GtHGXbAp/MaYXbdZUprn3VFDM1dSGXhYNALiv+po99R85CGSepLZSzzHmJpOGz67iU0McdPtvTqS0EysHULnWX+Hi4xkclVmGQWHa/GsqedpbRxvZr8QP18=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753088709; c=relaxed/simple;
-	bh=iOBH17w0ZfmjIqdV03ANhka+3PqNUYKXkRmFiiERdEs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=scxMNCCqhL+T789x9eoOEVQfMT7i7vIWbLGkzcrUfPmCJeyH3F7Y9uO/qF7ScDDu9dqgwlv1n3iRq/nLgFEQ27ndx4WlC1ejo+49WUiAh6M3D9n5bd++1RvZK7AA++gz7IofTPXM921+9j712LiKc/0bi63T3ZoVKEXjSG8+J1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=L0uJSn30; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JLHNvto+; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753088705;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YZ2msJqJ/vaREGPCHC7y6gOD7AxqqhvZjn/budPvPHo=;
-	b=L0uJSn30BhIO40l4NTJh80EUJil78Lh97hO2pknoonTYMt9/y7kv8QlhCWL3akqs0BHVOu
-	HGGs6EcxzU048qV+FvFMZOg3Jldu3yt/C/Y/HuEAOgjPG5fYMgMoYa5MdcWfHUtTgbWpWP
-	9dbFXwPLk/1oGQ3uKDwjBGz8Qbbzb1x8UFVgvRVfwOldMt2H+fb3TgvlZFmWVereSNqQyG
-	uDp/4X0wtuo9N203+ljw839HlCfe/PV3KBHvqjw+uJJJqAH2BL9QO24tCB6qXSn44XG4Xf
-	WiLsmJu+ffZiq/aTv3bG6xgxLBIdppD5CFclk5InB4aiK5TTKL5ztEEpkPc9vA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753088705;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YZ2msJqJ/vaREGPCHC7y6gOD7AxqqhvZjn/budPvPHo=;
-	b=JLHNvto+l8F0DOFa/FZf9JZES+0jXDO47TDhXGojkKOqAOHIIoEdKwbHWLkQdpA+IkuaLp
-	G1p2Gq7lW5O4P4Aw==
-Date: Mon, 21 Jul 2025 11:04:42 +0200
-Subject: [PATCH bpf-next 2/2] umd: Remove usermode driver framework
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4159D211A27
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 09:05:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.3
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753088729; cv=fail; b=JgzdycCTin5K5oORXbORZ89O+Bo4o12mPtMs+Ba/zVQyAzgG5dASZ5Bruu49ykwuWSiFNvBUb+g46X5NRHOZNQAlRoR9MhROSkiy3woBAB220fDHLm5dygX1PHfs2t27vthEzvs4iCbjNBp+tH7emnOj2v5MvS9f0gMA+UBnrlA=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753088729; c=relaxed/simple;
+	bh=S5y4Ox/OS1925nzNXlNpnJkZnDlR02KpR9dIrHXQYpk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=WuTkTOytwEpdGMxp2ttd4CuRlrr9tOCoanpWQpB8PM8DwRAeirLee9bkSvxI5l5SVzrhgttUkU+DGm8Eca1s3zeG9ReWp1d/NAPOWmO07DoCPdloeDjV9somEBQeVg9os4Smdpz0lYuyeDcESecLixNQoBRapuCrorR4gYWYhLA=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Z/z5ZPtE; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Z/z5ZPtE; arc=fail smtp.client-ip=52.101.66.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=U/cwsoZgMULSuBCHbwBLOwT/cVVBZ0gDK9m7IJN834YerCh5ht2kX/vykDfiLV+kavdq50L2jFkWW7DatajEDMrYJzw1nx+QsTxLuoIu/lW8sTWqf2PNGkUHUmNA/8rm4WR/kYZDK3NeAl/QPp6DUsVH92qtIS+aEMOjHs2fJHHf+1ZrHpvOXOy8J4DXJnwINXSa9NJkoEuQCTolqkMg8KL775z531AS8kAXDcfU6qJR4mWUVsJOG46dHz1050IyGk4PbukosAbjfOePSywxFe/64JlLRTse+pob4iDz/XGx34WWxs5PLl1wwKUCkVewXZpuE+o8TaQ3q8rndKQ0vw==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QS/ACHE6w47KFFNhWUrrspb5Latjmyt+SRKiEZgJAGU=;
+ b=WIN/yyovmClcnhu4XT24z11FKatDOxAfH3wb7kbsQfWOmEHrhhHBO3pQGlBvg8IeYTq4oa9JmrOqCR50L2X3e0sLu+2zNjdXa4VXhhyUGb+4iz/YFE6ZzlQWdTN1RY2fGzjuxTC1pqThOjFNekFALN0vBG+6ARk6BGw+AvPor0gTeSlnQj6kYHj/ERA2ROAl+TtGfxinbrKiyf5QWK/a066WkGO0D8zUgL3JuIDxiC94kRx0zAGY3n6FizpqDkuVW4qKfEefzbYBwotq9vTZUYFoEdOfox3q6HxFQ65O2DH6X9jOvD+XOEgtsUxNPsiPN9Fr+hwA9DGP4cCMGkxvRA==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 4.158.2.129) smtp.rcpttodomain=collabora.com smtp.mailfrom=arm.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
+ dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QS/ACHE6w47KFFNhWUrrspb5Latjmyt+SRKiEZgJAGU=;
+ b=Z/z5ZPtE5get2a7b8DKIPWApaMX5THkiXV8/c/ssy9sJ/QzHJE+U+cGmzJZgBsMFqgCkMZGNlwz1iH97tRt9JOQlT9FuwPu3lv4b9FE8AbCXLZlT3h2k/fV4500+yOfb9l3xb4iE9ScRvp5UeO3Yrn/AqWNnTeVZge3PrtrFxhk=
+Received: from DB9PR02CA0010.eurprd02.prod.outlook.com (2603:10a6:10:1d9::15)
+ by PAXPR08MB6719.eurprd08.prod.outlook.com (2603:10a6:102:137::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Mon, 21 Jul
+ 2025 09:05:22 +0000
+Received: from DB1PEPF000509F8.eurprd02.prod.outlook.com
+ (2603:10a6:10:1d9:cafe::a9) by DB9PR02CA0010.outlook.office365.com
+ (2603:10a6:10:1d9::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.29 via Frontend Transport; Mon,
+ 21 Jul 2025 09:05:22 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
+ client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
+Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
+ DB1PEPF000509F8.mail.protection.outlook.com (10.167.242.154) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8964.20
+ via Frontend Transport; Mon, 21 Jul 2025 09:05:21 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tr8B3XT43n+N1Oi5hRxWN5tQV4EZo+cU8WvnRvZ5RzdDtHo4yxVnX7TLDwaFcMXM2LwLWGtgpZxwttYNdxbCGvvbrpAhn4mF6WuRtoaX32zCgTFEN/Opy69pln5emtvV3RaAFPaxpCtGmCnbw6AHFIAGSNJcipsZAgOH+h7a5d+Yv5vbDgYk1F7jspPS54JnQ87wqcdfrXcHu+2rhjNoIBs/h8n3kzCkL/k8yvbfE0WybDESpJDdpctwt2GlXFkDKp9/K7QZSudBAHaMvmT1XnTp7ACnSN0f+8wWnRLMgNA/hZ1dH20bPQXGS5sD7JfZXFIWdaspyzwJq0us5lHUDA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QS/ACHE6w47KFFNhWUrrspb5Latjmyt+SRKiEZgJAGU=;
+ b=qs3fK7lFHNLVwkvDKXA7MgxDBdMJKCkLZzqOw+4TV9HujRfjpUOojo3Z25BaPLh1GOTYxi36lsExlTBRQ6oSmUe/qK2CxZH6a5ZdvGMpfD+WRTGIUMroZh5w/atdq8mHJyNiVQkBB34hmuM1EQwNw/I39DL00MclmYt8DnfVPKgc1Y72mtOrTDgjJ00UlKWpZzpAfW7tSlRzHO6MQF75Z42X/bvZhN6LQJ0XmwCiwGNgVtPvLcQWY5/w+nRBDBwrujXHrOaB7WuoGFmgOSRyeX3fjPvawiXqIiz62S9cbZ4IlP/485BhzGS7XL5DfRXx+RJ6Jq1XHgR3Z8nlEh0E4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QS/ACHE6w47KFFNhWUrrspb5Latjmyt+SRKiEZgJAGU=;
+ b=Z/z5ZPtE5get2a7b8DKIPWApaMX5THkiXV8/c/ssy9sJ/QzHJE+U+cGmzJZgBsMFqgCkMZGNlwz1iH97tRt9JOQlT9FuwPu3lv4b9FE8AbCXLZlT3h2k/fV4500+yOfb9l3xb4iE9ScRvp5UeO3Yrn/AqWNnTeVZge3PrtrFxhk=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from AM9PR08MB6820.eurprd08.prod.outlook.com (2603:10a6:20b:30f::8)
+ by AS4PR08MB7408.eurprd08.prod.outlook.com (2603:10a6:20b:4e3::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Mon, 21 Jul
+ 2025 09:04:47 +0000
+Received: from AM9PR08MB6820.eurprd08.prod.outlook.com
+ ([fe80::65e1:f4ac:8b74:fea0]) by AM9PR08MB6820.eurprd08.prod.outlook.com
+ ([fe80::65e1:f4ac:8b74:fea0%4]) with mapi id 15.20.8943.024; Mon, 21 Jul 2025
+ 09:04:47 +0000
+Message-ID: <3a9d8d2d-535b-475e-9ebd-9f9f772d7fa5@arm.com>
+Date: Mon, 21 Jul 2025 10:04:46 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/7] drm/panthor: Add DEV_QUERY.PERF_INFO handling for
+ Gx10
+Content-Language: en-GB
+To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>,
+ Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <cover.1747148172.git.lukas.zapolskas@arm.com>
+ <90e9521ad4deb13fd098f30ab3edae55cde8b5f5.1747148172.git.lukas.zapolskas@arm.com>
+ <tg24k25nbli6avakjx4nbjkminpkkw65jiqtwmnc5ozwsrghh6@52fvrd2t6hqh>
+From: Lukas Zapolskas <lukas.zapolskas@arm.com>
+In-Reply-To: <tg24k25nbli6avakjx4nbjkminpkkw65jiqtwmnc5ozwsrghh6@52fvrd2t6hqh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO4P123CA0101.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:191::16) To AM9PR08MB6820.eurprd08.prod.outlook.com
+ (2603:10a6:20b:30f::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250721-remove-usermode-driver-v1-2-0d0083334382@linutronix.de>
-References: <20250721-remove-usermode-driver-v1-0-0d0083334382@linutronix.de>
-In-Reply-To: <20250721-remove-usermode-driver-v1-0-0d0083334382@linutronix.de>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
- Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>, 
- Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, 
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753088703; l=7303;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=iOBH17w0ZfmjIqdV03ANhka+3PqNUYKXkRmFiiERdEs=;
- b=/Z9vyjGZmSZ1IX0p1tH/PO+H7hGhvwD6dOmq0QCXkue1wr2du3zwMnFJ7YHuildN7+Kg5fGNX
- ViMkvYDM78mDXE3smAvM+L9x5XXz5y40vNPhpz58hHLfVDBEp9YyTaw
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+X-MS-TrafficTypeDiagnostic:
+	AM9PR08MB6820:EE_|AS4PR08MB7408:EE_|DB1PEPF000509F8:EE_|PAXPR08MB6719:EE_
+X-MS-Office365-Filtering-Correlation-Id: b1b4760e-5a2e-45c4-ddec-08ddc835b901
+X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr,ExtAddr
+x-checkrecipientrouted: true
+NoDisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?utf-8?B?T08vdXJQZkNoV0R0MXpENjVsYlY1bzdIUTYrTHh3RWRqelU4bGoyc0RaNkVv?=
+ =?utf-8?B?QnplMU1vNDV0TEl3MUYxWkphVjNzb2RCblBEaHhSQ0RmRTVwdHozUXd2TWtx?=
+ =?utf-8?B?OXR6SFM4TGlSMEV1bERjNEhNRUlPQjdodHNHcWtYUi9xWnNjc2UyWVozUEhu?=
+ =?utf-8?B?dXFDaU5MM0I0dnJHUzFZSFc3d3AzeUEyN1hTVGRXbC9RVmJFbXZtWHd2c0Vw?=
+ =?utf-8?B?RExza05SYjR4dlJvVzMxZHJZaCtzWVBFcTZSVTFKSEtWdGY1MEk5Ui81b2RW?=
+ =?utf-8?B?Q2EwSGR1cTZVQnJadnJlUElGNGFrcEhQWVVzYVl2OTBtOCtPcGJtNGZDVk9n?=
+ =?utf-8?B?OWFrVXNRdTdFejdPcmNIQkFVT25UTWlTUVNCRGczcmVhcmRMd251TTVUUHRG?=
+ =?utf-8?B?UXU3UkNFUnVJcjhjTnU0aVFwQXBNakNQRUxvV0VNZVBQbDFoeTVlaDVqZCt1?=
+ =?utf-8?B?R0JNdmY2WGlxZGw3WG9iMjY4TXV5eE13RFc3MFZENHF0ajN4VGxteUhSUWRt?=
+ =?utf-8?B?VGdyYlhaYldIdHdYZzZrV0NWUlZRQjZOWmwvVzRnQVVSb3lVMk92RHE3bXUx?=
+ =?utf-8?B?UFhOemRVanRMNCtXSGZVeG5aNXlIa3A4dmlTaTA2dzZSaitEcjI3ekpiL0hZ?=
+ =?utf-8?B?MUFWVmlKN204d0FQTHJPK1p6UXN3akloQWVIalZYOXpPbXVFZnlhZjV5Skpt?=
+ =?utf-8?B?c3NVd0RscjU3eWZxdEZhMzFZdlNadzY3RUZFQTlFTzk0dy8vUm5kdHVPWXhK?=
+ =?utf-8?B?VDNBYVkxUjZ0R2N4SGF1cFBDNDZmUlRZdUJaOEt1MFpORFdGcWlZYllLWDkz?=
+ =?utf-8?B?RUlHOVBwc0VQQUZzbUlZbS9qN0o2cnhtSVBUd1dYbGpXTnVFSE01RCtxaGd0?=
+ =?utf-8?B?V1EzaHBIV05Yci93R3dLYTJkZXkwMkIzTXlXVEdSeXBEemRtYWhpY2NEZ0F6?=
+ =?utf-8?B?dmwrb25IbXF2dXhqNnJQVUJCaklObUNOdHNrRUU0bEM1b2VTOHFtMUdnYXcv?=
+ =?utf-8?B?RGduL2o0QnFiVWNTTlpVWVF2TU5WNUxhUStqMlZkdlpuMi83bm04OGZmRnhY?=
+ =?utf-8?B?WE45cHgwS3ZrM1JGYWlhZ0FSUlVhZjdZRzhTR1NTd29xOXRuRjcrR3NYbWd0?=
+ =?utf-8?B?WHU3OUlZTnJvMjhhUXR0Qk5CYllqbjdMMXRUbTNacnhFN3MzeDR5YTdLak1u?=
+ =?utf-8?B?Sm5DV283dlNzUi9DeVpwMjlKMDhTMTJhVUc4T3ZteXA0cFZ6R2E1Q1E1aWZR?=
+ =?utf-8?B?MGc0R21hTTErSXZ6dVZGVjJNS2dpS3dEQ00yUXdTb2FJNWd6enMrbFJ4TFVt?=
+ =?utf-8?B?QkZjSmI4VUhCVGFsQkVTWk45M21aZHJBSEI1aVJGSU4ySEcrSzE5OHR0aWps?=
+ =?utf-8?B?OGIvUWdQMHlvd1lJRHBZV2Jub3hoTkJqWnc3Y2dUVDRPUDBud1pPeGI3ZW1m?=
+ =?utf-8?B?ZThyTzhuQjdaNFlkWUtJUHBwVEVQcThyVnZDdElKdGpUMHdkaWhkbUJoYUIv?=
+ =?utf-8?B?RFNhdTBVSGVPbHBET3ExZlFXMnhMOW4vRWJxNUFvYWRaUXVRR3ZlSk1vNS80?=
+ =?utf-8?B?cjYwZ1lQd2ZGQXBZRXA4UTh1MEJRNVU5aE42Vy9CSzFlOHRvdFZVaWp5Sjhy?=
+ =?utf-8?B?WWQrZEZLeW5HV0wrYkp5dlhQVHdDUW93MmkxZ2Z6aEg1RWtkZi91NkpMczkv?=
+ =?utf-8?B?RlQwRjR3a3RlS2dJQ1JFWlV2VlNNSW1yeGhJdmdjRmFKN1pvM0tvZ3lMc3RO?=
+ =?utf-8?B?a2VWT1ZaMld3ZG1KcWtPWlgwUTdld0lMVHZuVXpxQzZNWHpxZHU3dU5nNzd2?=
+ =?utf-8?B?OFpFU2hoSHZYenNueUJsZzF0TVIvUzRuWkttN3dTWkw2Tm1MNFNnNGdOV0s5?=
+ =?utf-8?B?V0NxN2M3NDFsQUNvck90Y0RKbUVBY1gxZUJGUVdnaVkwT3c9PQ==?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR08MB6820.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR08MB7408
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ DB1PEPF000509F8.eurprd02.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	50666f43-35e2-4e20-6a87-08ddc835a44c
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700013|14060799003|35042699022|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WmV2bVVaWW9Vb0lWTmo2Kzl0TnI4dmpzVnlDUE4ySS9mcWtZY1BmTlc2RHB4?=
+ =?utf-8?B?cWMvU2JHUGo2V1lZajRnbEJUOXhVLzEwU1lkRldwUEFFV2gvMHNKdzNjdUlG?=
+ =?utf-8?B?OU9uRUhENUV4MHpWUnd4VnF5bk5HWTdOQmk2N05wa2FnR2hNSVYvWXRUblc0?=
+ =?utf-8?B?WmpNekNWMHpHeWExQzhZRmk5ckcycFYrSGxHdDhCTDNDMUNVM1lreWlxTlFP?=
+ =?utf-8?B?MW5yUWt3ODg0L3U4L3YrRVZCaldjL1I2Z2VWM2NjN2UwRXNVeDlZNjk4L294?=
+ =?utf-8?B?MHFGd0NYM2pEd1FoYVdSMllFN0FRSkdKL2JRY0xhVnJmZmFiN0ZPTFZaUjJz?=
+ =?utf-8?B?MU1qMFhkbG90M0MzckRWRE1wZ2dFQTFOVXYzZ29yRWJxNEtqRFZmekFETHNJ?=
+ =?utf-8?B?OVFWZHJZbUZxNEpDL2haTXlzU05PQzBZYkQzOXVVMDgyNlUzVjZWby9GdHJq?=
+ =?utf-8?B?TzNWL2d4QWZSeHFxLy9iN21wNzhoV29EVWJTNjFRWVo4b21vWmFsMVF4bGxa?=
+ =?utf-8?B?Rk5TS3BCbFZLdzRvY3lqT0RpOS9ucGFFeWgwTVdMeThXQ3M4MFhaL1ljcmNu?=
+ =?utf-8?B?TEpTdlhockNZTTBrNEcyclpqa2x3ZVdGRVNkWENNMmt6RWNiOVdsb0RxREF5?=
+ =?utf-8?B?N1FHajNrdUJyWjBpR0lJS3pTKzQwNUxRUjZPMUwzREZ0ZXVoRHhNVkdadW95?=
+ =?utf-8?B?VW5OVzc2M1hMak0zNmxVU1YzeFNyemwyd3JqQ2IvczdXRlNua2syelRpU1JV?=
+ =?utf-8?B?V3RrTEovSWNlVk5QYlNxaEs1SEZOY2JaVEExVW9PTU1jZGc1VFB0SzBxZ2hZ?=
+ =?utf-8?B?SUs5M2lyU2wrb2toWFBvMTk5WkJ6RXRiNXp6bXI3eVVMNXpnVmk0UUtCMG4x?=
+ =?utf-8?B?UHEySUFON3VCVlRGK3lFRXBPdFRXdmUyQjFyei9HSVMzZHhsOG5STGZIb1JI?=
+ =?utf-8?B?TXNQekc0NFVPL1RXbURML2V4YTNQNHh0OGcyNWRCQUZScTd2VHhVemZ2UXJS?=
+ =?utf-8?B?dmtpMUVvRnlSOXU2S3FpL1FSdXdNR0lSYU1WK09NUjF1ZndXc0ZBMlJIRWFX?=
+ =?utf-8?B?Uk1KWDliM0FvanRvWkRab3hVc1oycVJuNjNPNmV1KzN3Y1p1M3lSMzMxSTY5?=
+ =?utf-8?B?SWloRTFTZHQzb3RuYUZZMllJQ0NDTnIwYXduekhFM28vQ1d3ZmE4YWh6NGM2?=
+ =?utf-8?B?MEI5WDU2dktqT1VLd04xT0RFL29mUXU1Qjg3cGcrbmptZXUrTFJVdVArdi9G?=
+ =?utf-8?B?NmkydVlOWTJoTTg2QmJYdnJqcmJqY3ZvWktMR3FlT3VJWDNTblg0ZTZhU0d3?=
+ =?utf-8?B?azVuMzlYeEFmdElCclRYbU8rN0ZMZDNRTE1ZU2pzV1B0cWZla2hIaStHYW5Q?=
+ =?utf-8?B?R3h2R2ZoT3Z5Y0FBWEdCc0ZLZU1KTjJ2dHVFejhIUlhPdnA0dHJ0ZHNONmZ4?=
+ =?utf-8?B?K0JPZTRxaXRobmhOQnNTcGU2a0o5VDNHTWdyTU9ENS9YRGpodDd6TEphcXRS?=
+ =?utf-8?B?S2RMMCtZUlRSR085NjZnMk5MK05NSTZPaHdVSXhhZXBjbStsV1h5UlZ5Vkkw?=
+ =?utf-8?B?dmRvbFdEM3lsbjA1R2hPMlBHak1mVzlGOFcyUXhSbkZGeEZPZUZtOUMzNEcw?=
+ =?utf-8?B?SDdmL3VvSm1xa3dWOUhRZjlDWktZY2k5NGdld0NYQUVpL1pLbjJSblZvakZR?=
+ =?utf-8?B?dURyNW1KS2RyRTN3M3lXOXF6MDA4T04zU3lBa0JTQ240UktUQzV1ZldRZHZu?=
+ =?utf-8?B?SUVyN0cwL1N3Ynl4VWY4VWRWTWVic2JtYWZXbW04OGNpa21FV2kxM0RPZy9I?=
+ =?utf-8?B?eFFMN0tuY0xiSlYyN3N1QThYTGNUc1JsSWlYYTg5NVVoK2VwKzhPNW5aQldS?=
+ =?utf-8?B?RzFveldJaUpBaHVkSkxxY0hmMmc5LzA0Z1dJKzNyVkU4Um84Y01tR2E0QVRi?=
+ =?utf-8?B?UkxOeUdjSllqRVVLVVg2QVNRbXgyQ0ZZTGU0RGdCaS9ySnZuangzZHlZU1Zt?=
+ =?utf-8?B?SzR1OWhyeFcrRGhtMTMxTmN6cFhnakhjdGd2NFoxTzByTm1BNXdaQUlseENQ?=
+ =?utf-8?Q?0sK3qN?=
+X-Forefront-Antispam-Report:
+	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013)(14060799003)(35042699022)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2025 09:05:21.8103
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b1b4760e-5a2e-45c4-ddec-08ddc835b901
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB1PEPF000509F8.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR08MB6719
 
-The code is unused since commit 98e20e5e13d2 ("bpfilter: remove bpfilter"),
-remove it.
 
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- include/linux/usermode_driver.h |  19 ----
- kernel/Makefile                 |   1 -
- kernel/bpf/preload/Kconfig      |   4 -
- kernel/usermode_driver.c        | 191 ----------------------------------------
- 4 files changed, 215 deletions(-)
 
-diff --git a/include/linux/usermode_driver.h b/include/linux/usermode_driver.h
-deleted file mode 100644
-index ad970416260dd208b43098e17df9ad49b4da7693..0000000000000000000000000000000000000000
---- a/include/linux/usermode_driver.h
-+++ /dev/null
-@@ -1,19 +0,0 @@
--#ifndef __LINUX_USERMODE_DRIVER_H__
--#define __LINUX_USERMODE_DRIVER_H__
--
--#include <linux/umh.h>
--#include <linux/path.h>
--
--struct umd_info {
--	const char *driver_name;
--	struct file *pipe_to_umh;
--	struct file *pipe_from_umh;
--	struct path wd;
--	struct pid *tgid;
--};
--int umd_load_blob(struct umd_info *info, const void *data, size_t len);
--int umd_unload_blob(struct umd_info *info);
--int fork_usermode_driver(struct umd_info *info);
--void umd_cleanup_helper(struct umd_info *info);
--
--#endif /* __LINUX_USERMODE_DRIVER_H__ */
-diff --git a/kernel/Makefile b/kernel/Makefile
-index 32e80dd626af07d0c43290e3f5c64af5bff07b51..4332de7ffdee40f6a1cf77ff4b422b51142838e9 100644
---- a/kernel/Makefile
-+++ b/kernel/Makefile
-@@ -12,7 +12,6 @@ obj-y     = fork.o exec_domain.o panic.o \
- 	    notifier.o ksysfs.o cred.o reboot.o \
- 	    async.o range.o smpboot.o ucount.o regset.o ksyms_common.o
- 
--obj-$(CONFIG_USERMODE_DRIVER) += usermode_driver.o
- obj-$(CONFIG_MULTIUSER) += groups.o
- obj-$(CONFIG_VHOST_TASK) += vhost_task.o
- 
-diff --git a/kernel/bpf/preload/Kconfig b/kernel/bpf/preload/Kconfig
-index f9b11d01c3b50d4e98a33c686b55015766d17902..aef7b0bc96d6113dbca7ab4b9510c3dcf39a97f4 100644
---- a/kernel/bpf/preload/Kconfig
-+++ b/kernel/bpf/preload/Kconfig
-@@ -1,8 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0-only
--config USERMODE_DRIVER
--	bool
--	default n
--
- menuconfig BPF_PRELOAD
- 	bool "Preload BPF file system with kernel specific program and map iterators"
- 	depends on BPF
-diff --git a/kernel/usermode_driver.c b/kernel/usermode_driver.c
-deleted file mode 100644
-index 8303f4c7ca714a0aa96aeec4be8c8423ce8a200d..0000000000000000000000000000000000000000
---- a/kernel/usermode_driver.c
-+++ /dev/null
-@@ -1,191 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-only
--/*
-- * umd - User mode driver support
-- */
--#include <linux/shmem_fs.h>
--#include <linux/pipe_fs_i.h>
--#include <linux/mount.h>
--#include <linux/fs_struct.h>
--#include <linux/task_work.h>
--#include <linux/usermode_driver.h>
--
--static struct vfsmount *blob_to_mnt(const void *data, size_t len, const char *name)
--{
--	struct file_system_type *type;
--	struct vfsmount *mnt;
--	struct file *file;
--	ssize_t written;
--	loff_t pos = 0;
--
--	type = get_fs_type("tmpfs");
--	if (!type)
--		return ERR_PTR(-ENODEV);
--
--	mnt = kern_mount(type);
--	put_filesystem(type);
--	if (IS_ERR(mnt))
--		return mnt;
--
--	file = file_open_root_mnt(mnt, name, O_CREAT | O_WRONLY, 0700);
--	if (IS_ERR(file)) {
--		kern_unmount(mnt);
--		return ERR_CAST(file);
--	}
--
--	written = kernel_write(file, data, len, &pos);
--	if (written != len) {
--		int err = written;
--		if (err >= 0)
--			err = -ENOMEM;
--		filp_close(file, NULL);
--		kern_unmount(mnt);
--		return ERR_PTR(err);
--	}
--
--	fput(file);
--
--	/* Flush delayed fput so exec can open the file read-only */
--	flush_delayed_fput();
--	task_work_run();
--	return mnt;
--}
--
--/**
-- * umd_load_blob - Remember a blob of bytes for fork_usermode_driver
-- * @info: information about usermode driver
-- * @data: a blob of bytes that can be executed as a file
-- * @len:  The lentgh of the blob
-- *
-- */
--int umd_load_blob(struct umd_info *info, const void *data, size_t len)
--{
--	struct vfsmount *mnt;
--
--	if (WARN_ON_ONCE(info->wd.dentry || info->wd.mnt))
--		return -EBUSY;
--
--	mnt = blob_to_mnt(data, len, info->driver_name);
--	if (IS_ERR(mnt))
--		return PTR_ERR(mnt);
--
--	info->wd.mnt = mnt;
--	info->wd.dentry = mnt->mnt_root;
--	return 0;
--}
--EXPORT_SYMBOL_GPL(umd_load_blob);
--
--/**
-- * umd_unload_blob - Disassociate @info from a previously loaded blob
-- * @info: information about usermode driver
-- *
-- */
--int umd_unload_blob(struct umd_info *info)
--{
--	if (WARN_ON_ONCE(!info->wd.mnt ||
--			 !info->wd.dentry ||
--			 info->wd.mnt->mnt_root != info->wd.dentry))
--		return -EINVAL;
--
--	kern_unmount(info->wd.mnt);
--	info->wd.mnt = NULL;
--	info->wd.dentry = NULL;
--	return 0;
--}
--EXPORT_SYMBOL_GPL(umd_unload_blob);
--
--static int umd_setup(struct subprocess_info *info, struct cred *new)
--{
--	struct umd_info *umd_info = info->data;
--	struct file *from_umh[2];
--	struct file *to_umh[2];
--	int err;
--
--	/* create pipe to send data to umh */
--	err = create_pipe_files(to_umh, 0);
--	if (err)
--		return err;
--	err = replace_fd(0, to_umh[0], 0);
--	fput(to_umh[0]);
--	if (err < 0) {
--		fput(to_umh[1]);
--		return err;
--	}
--
--	/* create pipe to receive data from umh */
--	err = create_pipe_files(from_umh, 0);
--	if (err) {
--		fput(to_umh[1]);
--		replace_fd(0, NULL, 0);
--		return err;
--	}
--	err = replace_fd(1, from_umh[1], 0);
--	fput(from_umh[1]);
--	if (err < 0) {
--		fput(to_umh[1]);
--		replace_fd(0, NULL, 0);
--		fput(from_umh[0]);
--		return err;
--	}
--
--	set_fs_pwd(current->fs, &umd_info->wd);
--	umd_info->pipe_to_umh = to_umh[1];
--	umd_info->pipe_from_umh = from_umh[0];
--	umd_info->tgid = get_pid(task_tgid(current));
--	return 0;
--}
--
--static void umd_cleanup(struct subprocess_info *info)
--{
--	struct umd_info *umd_info = info->data;
--
--	/* cleanup if umh_setup() was successful but exec failed */
--	if (info->retval)
--		umd_cleanup_helper(umd_info);
--}
--
--/**
-- * umd_cleanup_helper - release the resources which were allocated in umd_setup
-- * @info: information about usermode driver
-- */
--void umd_cleanup_helper(struct umd_info *info)
--{
--	fput(info->pipe_to_umh);
--	fput(info->pipe_from_umh);
--	put_pid(info->tgid);
--	info->tgid = NULL;
--}
--EXPORT_SYMBOL_GPL(umd_cleanup_helper);
--
--/**
-- * fork_usermode_driver - fork a usermode driver
-- * @info: information about usermode driver (shouldn't be NULL)
-- *
-- * Returns either negative error or zero which indicates success in
-- * executing a usermode driver. In such case 'struct umd_info *info'
-- * is populated with two pipes and a tgid of the process. The caller is
-- * responsible for health check of the user process, killing it via
-- * tgid, and closing the pipes when user process is no longer needed.
-- */
--int fork_usermode_driver(struct umd_info *info)
--{
--	struct subprocess_info *sub_info;
--	const char *argv[] = { info->driver_name, NULL };
--	int err;
--
--	if (WARN_ON_ONCE(info->tgid))
--		return -EBUSY;
--
--	err = -ENOMEM;
--	sub_info = call_usermodehelper_setup(info->driver_name,
--					     (char **)argv, NULL, GFP_KERNEL,
--					     umd_setup, umd_cleanup, info);
--	if (!sub_info)
--		goto out;
--
--	err = call_usermodehelper_exec(sub_info, UMH_WAIT_EXEC);
--out:
--	return err;
--}
--EXPORT_SYMBOL_GPL(fork_usermode_driver);
--
--
+On 18/07/2025 03:52, Adrián Larumbe wrote:
+> On 16.05.2025 16:49, Lukas Zapolskas wrote:
+>> This change adds the IOCTL to query data about the performance counter
+>> setup. Some of this data was available via previous DEV_QUERY calls,
+>> for instance for GPU info, but exposing it via PERF_INFO
+>> minimizes the overhead of creating a single session to just the one
+>> aggregate IOCTL.
+>>
+>> Signed-off-by: Lukas Zapolskas <lukas.zapolskas@arm.com>
+>> Reviewed-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+>> ---
+>>  drivers/gpu/drm/panthor/Makefile         |  1 +
+>>  drivers/gpu/drm/panthor/panthor_device.c |  5 ++
+>>  drivers/gpu/drm/panthor/panthor_device.h |  3 +
+>>  drivers/gpu/drm/panthor/panthor_drv.c    | 10 +++-
+>>  drivers/gpu/drm/panthor/panthor_fw.h     |  3 +
+>>  drivers/gpu/drm/panthor/panthor_perf.c   | 76 ++++++++++++++++++++++++
+>>  drivers/gpu/drm/panthor/panthor_perf.h   | 15 +++++
+>>  drivers/gpu/drm/panthor/panthor_regs.h   |  1 +
+>>  8 files changed, 113 insertions(+), 1 deletion(-)
+>>  create mode 100644 drivers/gpu/drm/panthor/panthor_perf.c
+>>  create mode 100644 drivers/gpu/drm/panthor/panthor_perf.h
+>>
+>> diff --git a/drivers/gpu/drm/panthor/Makefile b/drivers/gpu/drm/panthor/Makefile
+>> index 15294719b09c..0df9947f3575 100644
+>> --- a/drivers/gpu/drm/panthor/Makefile
+>> +++ b/drivers/gpu/drm/panthor/Makefile
+>> @@ -9,6 +9,7 @@ panthor-y := \
+>>  	panthor_gpu.o \
+>>  	panthor_heap.o \
+>>  	panthor_mmu.o \
+>> +	panthor_perf.o \
+>>  	panthor_sched.o
+>>
+>>  obj-$(CONFIG_DRM_PANTHOR) += panthor.o
+>> diff --git a/drivers/gpu/drm/panthor/panthor_device.c b/drivers/gpu/drm/panthor/panthor_device.c
+>> index a9da1d1eeb70..76b4cf3dc391 100644
+>> --- a/drivers/gpu/drm/panthor/panthor_device.c
+>> +++ b/drivers/gpu/drm/panthor/panthor_device.c
+>> @@ -19,6 +19,7 @@
+>>  #include "panthor_fw.h"
+>>  #include "panthor_gpu.h"
+>>  #include "panthor_mmu.h"
+>> +#include "panthor_perf.h"
+>>  #include "panthor_regs.h"
+>>  #include "panthor_sched.h"
+>>
+>> @@ -259,6 +260,10 @@ int panthor_device_init(struct panthor_device *ptdev)
+>>  	if (ret)
+>>  		goto err_unplug_fw;
+>>
+>> +	ret = panthor_perf_init(ptdev);
+>> +	if (ret)
+>> +		goto err_unplug_fw;
+>                 goto err_unplug_sched;
+> 
+>                 [...]
+> 
+> err_disable_autosuspend:
+> 	pm_runtime_dont_use_autosuspend(ptdev->base.dev);
+> 
+> err_unplug_sched:
+> 	panthor_sched_unplug(ptdev);
+> 
+>         [...]
+> 
+>> +
+>>  	/* ~3 frames */
+>>  	pm_runtime_set_autosuspend_delay(ptdev->base.dev, 50);
+>>  	pm_runtime_use_autosuspend(ptdev->base.dev);
+>> diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/panthor/panthor_device.h
+>> index da6574021664..657ccc39568c 100644
+>> --- a/drivers/gpu/drm/panthor/panthor_device.h
+>> +++ b/drivers/gpu/drm/panthor/panthor_device.h
+>> @@ -120,6 +120,9 @@ struct panthor_device {
+>>  	/** @csif_info: Command stream interface information. */
+>>  	struct drm_panthor_csif_info csif_info;
+>>
+>> +	/** @perf_info: Performance counter interface information. */
+>> +	struct drm_panthor_perf_info perf_info;
+>> +
+>>  	/** @gpu: GPU management data. */
+>>  	struct panthor_gpu *gpu;
+>>
+>> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
+>> index 06fe46e32073..9d2b716cca45 100644
+>> --- a/drivers/gpu/drm/panthor/panthor_drv.c
+>> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
+>> @@ -175,7 +175,8 @@ panthor_get_uobj_array(const struct drm_panthor_obj_array *in, u32 min_stride,
+>>  		 PANTHOR_UOBJ_DECL(struct drm_panthor_sync_op, timeline_value), \
+>>  		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_submit, syncs), \
+>>  		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_create, ringbuf_size), \
+>> -		 PANTHOR_UOBJ_DECL(struct drm_panthor_vm_bind_op, syncs))
+>> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_vm_bind_op, syncs), \
+>> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_info, shader_blocks))
+>>
+>>  /**
+>>   * PANTHOR_UOBJ_SET() - Copy a kernel object to a user object.
+>> @@ -835,6 +836,10 @@ static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct d
+>>  			args->size = sizeof(priorities_info);
+>>  			return 0;
+>>
+>> +		case DRM_PANTHOR_DEV_QUERY_PERF_INFO:
+>> +			args->size = sizeof(ptdev->perf_info);
+>> +			return 0;
+>> +
+>>  		default:
+>>  			return -EINVAL;
+>>  		}
+>> @@ -859,6 +864,9 @@ static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct d
+>>  		panthor_query_group_priorities_info(file, &priorities_info);
+>>  		return PANTHOR_UOBJ_SET(args->pointer, args->size, priorities_info);
+>>
+>> +	case DRM_PANTHOR_DEV_QUERY_PERF_INFO:
+>> +		return PANTHOR_UOBJ_SET(args->pointer, args->size, ptdev->perf_info);
+>> +
+>>  	default:
+>>  		return -EINVAL;
+>>  	}
+>> diff --git a/drivers/gpu/drm/panthor/panthor_fw.h b/drivers/gpu/drm/panthor/panthor_fw.h
+>> index 6598d96c6d2a..8bcb933fa790 100644
+>> --- a/drivers/gpu/drm/panthor/panthor_fw.h
+>> +++ b/drivers/gpu/drm/panthor/panthor_fw.h
+>> @@ -197,8 +197,11 @@ struct panthor_fw_global_control_iface {
+>>  	u32 output_va;
+>>  	u32 group_num;
+>>  	u32 group_stride;
+>> +#define GLB_PERFCNT_FW_SIZE(x) ((((x) >> 16) << 8))
+>>  	u32 perfcnt_size;
+>>  	u32 instr_features;
+>> +#define PERFCNT_FEATURES_MD_SIZE(x) (((x) & GENMASK(3, 0)) << 8)
+> 
+> What does MD stand for here?
+> 
 
--- 
-2.50.1
+Metadata. I will spell this out fully in the next patch set, since shortening it is not 
+too helpful.
+
+>> +	u32 perfcnt_features;
+>>  };
+>>
+>>  struct panthor_fw_global_input_iface {
+>> diff --git a/drivers/gpu/drm/panthor/panthor_perf.c b/drivers/gpu/drm/panthor/panthor_perf.c
+>> new file mode 100644
+>> index 000000000000..66e9a197ac1f
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/panthor/panthor_perf.c
+>> @@ -0,0 +1,76 @@
+>> +// SPDX-License-Identifier: GPL-2.0 or MIT
+>> +/* Copyright 2023 Collabora Ltd */
+>> +/* Copyright 2025 Arm ltd. */
+>> +
+>> +#include <linux/bitops.h>
+>> +#include <drm/panthor_drm.h>
+>> +
+>> +#include "panthor_device.h"
+>> +#include "panthor_fw.h"
+>> +#include "panthor_perf.h"
+>> +
+>> +struct panthor_perf_counter_block {
+>> +	struct drm_panthor_perf_block_header header;
+>> +	u64 counters[];
+>> +};
+>> +
+> 
+>> +{
+>> +	return struct_size_t(struct panthor_perf_counter_block, counters, counters_per_block);
+>> +}
+>> +
+>> +static size_t session_get_user_sample_size(const struct drm_panthor_perf_info *const info)
+>> +{
+>> +	const size_t block_size = get_annotated_block_size(info->counters_per_block);
+>> +	const size_t block_nr = info->cshw_blocks + info->fw_blocks +
+>> +		info->tiler_blocks + info->memsys_blocks + info->shader_blocks;
+>> +
+>> +	return sizeof(struct drm_panthor_perf_sample_header) + (block_size * block_nr);
+>> +}
+> 
+> You're assining perf_info->counters_per_block the same sizeof() slightly further below
+> so maybe you can use that value here straight away.
+> 
+
+Will do, thanks.
+
+>> +
+>> +/**
+>> + * PANTHOR_PERF_COUNTERS_PER_BLOCK - On CSF architectures pre-11.x, the number of counters
+>> + * per block was hardcoded to be 64. Arch 11.0 onwards supports the PRFCNT_FEATURES GPU register,
+>> + * which indicates the same information.
+>> + */
+> 
+> I guess you're waiting for the commit in ML message <20250320111741.1937892-7-karunika.choo@arm.com>
+> ("drm/panthor: Add support for Mali-G715 family of GPUs) to check whether GPU_ARCH_MAJOR(ptdev->gpu_info.gpu_id)
+> returns anything equal or above 11 to add support for reading the number of counters from PRFCNT_FEATURES?
+> 
+> I don't remember whether that series is already merged, but it'd be nice to have it in this one too.
+> 
+
+That's right. For the moment, I was only targetting the Gx10, but can add that when the mentioned patch is merged
+(I don't think it is yet).
+
+>> +#define PANTHOR_PERF_COUNTERS_PER_BLOCK (64)
+>> +
+>> +static void panthor_perf_info_init(struct panthor_device *ptdev)
+>> +{
+>> +	struct panthor_fw_global_iface *glb_iface = panthor_fw_get_glb_iface(ptdev);
+>> +	struct drm_panthor_perf_info *const perf_info = &ptdev->perf_info;
+>> +
+>> +	if (PERFCNT_FEATURES_MD_SIZE(glb_iface->control->perfcnt_features))
+>> +		perf_info->flags |= DRM_PANTHOR_PERF_BLOCK_STATES_SUPPORT;
+>> +
+>> +	perf_info->counters_per_block = PANTHOR_PERF_COUNTERS_PER_BLOCK;
+>> +
+>> +	perf_info->sample_header_size = sizeof(struct drm_panthor_perf_sample_header);
+>> +	perf_info->block_header_size = sizeof(struct drm_panthor_perf_block_header);
+>> +
+>> +	if (GLB_PERFCNT_FW_SIZE(glb_iface->control->perfcnt_size))
+>> +		perf_info->fw_blocks = 1;
+>> +
+>> +	perf_info->cshw_blocks = 1;
+>> +	perf_info->tiler_blocks = 1;
+>> +	perf_info->memsys_blocks = GPU_MEM_FEATURES_L2_SLICES(ptdev->gpu_info.mem_features);
+>> +	perf_info->shader_blocks = hweight64(ptdev->gpu_info.shader_present);
+>> +
+>> +	perf_info->sample_size = session_get_user_sample_size(perf_info);
+>> +}
+>> +
+>> +/**
+>> + * panthor_perf_init - Initialize the performance counter subsystem.
+>> + * @ptdev: Panthor device
+>> + *
+>> + * Return: 0 on success, negative error code on failure.
+>> + */
+>> +int panthor_perf_init(struct panthor_device *ptdev)
+>> +{
+>> +	if (!ptdev)
+>> +		return -EINVAL;
+>> +
+>> +	panthor_perf_info_init(ptdev);
+>> +
+>> +	return 0;
+>> +}
+>> diff --git a/drivers/gpu/drm/panthor/panthor_perf.h b/drivers/gpu/drm/panthor/panthor_perf.h
+>> new file mode 100644
+>> index 000000000000..3c32c24c164c
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/panthor/panthor_perf.h
+>> @@ -0,0 +1,15 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 or MIT */
+>> +/* Copyright 2025 Collabora Ltd */
+>> +/* Copyright 2025 Arm ltd. */
+>> +
+>> +#ifndef __PANTHOR_PERF_H__
+>> +#define __PANTHOR_PERF_H__
+>> +
+>> +#include <linux/types.h>
+>> +
+>> +struct panthor_device;
+>> +
+>> +int panthor_perf_init(struct panthor_device *ptdev);
+>> +
+>> +#endif /* __PANTHOR_PERF_H__ */
+>> +
+>> diff --git a/drivers/gpu/drm/panthor/panthor_regs.h b/drivers/gpu/drm/panthor/panthor_regs.h
+>> index b7b3b3add166..d9e9379d1a20 100644
+>> --- a/drivers/gpu/drm/panthor/panthor_regs.h
+>> +++ b/drivers/gpu/drm/panthor/panthor_regs.h
+>> @@ -27,6 +27,7 @@
+>>  #define GPU_TILER_FEATURES				0xC
+>>  #define GPU_MEM_FEATURES				0x10
+>>  #define   GROUPS_L2_COHERENT				BIT(0)
+>> +#define   GPU_MEM_FEATURES_L2_SLICES(x)			((((x) & GENMASK(11, 8)) >> 8) + 1)
+>>
+>>  #define GPU_MMU_FEATURES				0x14
+>>  #define  GPU_MMU_FEATURES_VA_BITS(x)			((x) & GENMASK(7, 0))
+>> --
+>> 2.33.0.dirty
+> 
+> Adrian Larumbe
 
 
