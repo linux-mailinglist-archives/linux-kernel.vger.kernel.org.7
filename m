@@ -1,190 +1,162 @@
-Return-Path: <linux-kernel+bounces-738596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00AEAB0BAD5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 04:34:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8318DB0BAD7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 04:38:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 349473AEA51
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 02:33:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C294E163FE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 02:38:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC1D7DA7F;
-	Mon, 21 Jul 2025 02:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1735155A30;
+	Mon, 21 Jul 2025 02:38:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K0WwHctJ"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="nYVwxkes"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50D8C148;
-	Mon, 21 Jul 2025 02:34:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA59D2E36EE;
+	Mon, 21 Jul 2025 02:38:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753065252; cv=none; b=JF2ab+YdmrnpCRDds2T4XqWShsALZPsagWClksHn0O1ofl8dH4rWOws9ckouR8gSXiky1rf3qnjk7/9I6iSqcxvgIRq7WS+qNQap9cL1jP3Ab7zF3UWVvFxMWpX5Kn5pMypRNGwiF416GjRVSVAa/pHNES4sjg8wVQIjiGyUgGw=
+	t=1753065493; cv=none; b=Hd/mBSTRoOE1nsJXOMNeQAN2e8Ku7Yhvdt2eQnIReqQTijBk0ZuXtIuAHYJerzHB7tLkOCRaic8aRJL47/0du1zJ1LauT8uzfcAA2JRZzIBy3WWVq3muHExkttYoLmeor7CGDyh0g9GZ9bSnLNWk6/On0r8pjek02Xhid/t1cU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753065252; c=relaxed/simple;
-	bh=PopoNCPq9ppiCWC+dl5GgdYqCQe8ryfKGMsbDlVoKR4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RqOxLlVyvaz5LLHdEUOLLuQeS0TYbY7ZdLs4xFu5X3Mc3vRFYwa+5YtTFZl3WTagrRj9Q8el0q41WPZ2aPJ3WBB/UzroULNhEWWftL7yO3srUK8YnA+KXq1+5uXJiUCdll+/O94zjOlP7NrfrtlKMIm7Vf0CjPr2/nMw0zNyOs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K0WwHctJ; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ad56cbc7b07so621513966b.0;
-        Sun, 20 Jul 2025 19:34:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753065248; x=1753670048; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/kBgf/fjjAiaMnIaqjQvfUG02VDiWQa+NjmrJXxmXHE=;
-        b=K0WwHctJe7iOatadoFuulQgOUJS8BdojNg3qf4jdymN9D+xEZ3wJGVzVZEqZoW5kpq
-         8j9IGixBWywkH7wgoK1+jAhVnnU0UuAdrekzhvD7g5/4jGvGkBNnv1B0VeGzswlq9vdt
-         5Qh738VCcwz+4yJBIsd2XH8062sSPzK7wEnMhzcF+Fubupw79/D7xnvqs1AYjyldp2yj
-         mJmR3jgbFW/Jf8A3dkJVwZIqzxGPw3TeX8T+GFmxmm9b0qFpy5BZurKVLn9aAGA4vUmN
-         GttFK6C89PSFyBIDUAogezHkfiLcEIgR0ZJE72/bcwpQYelH7X3rLwoXhZw5PM9hkKB9
-         ojMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753065248; x=1753670048;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/kBgf/fjjAiaMnIaqjQvfUG02VDiWQa+NjmrJXxmXHE=;
-        b=L+NxtHppNT35j5QwVcXVf2fnkmYvbC5xAPBVMQXyPilN3NEJ4eeFEN3Lw09n1UXi8v
-         o8hzXFP99F4BKj3uvm7e5QCkVEcE7IXMKf4DRF4CKaM5uHHbHI6OpqwlIGvcxJRKr/9L
-         idU84aF0oWB/lhARmVRojd0h1uLEFzbqMxK3oo0Wn3rNFzKmT4BtjDRB/8wpYU36BIN2
-         p8C9eUrYPwDUYSU4wWV71qztzteZqqQm4CAWlk0aSUGOXFaLfx8xglnnSoWB62Hx6Ez0
-         XMjPdyZsRu5/JGsE9ljTnTMqBPP2U69pqSEUG3BJDuoku2BcmjrlGFDkfHhURI8vElzE
-         X9JQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUY2dzsfh2WLTuMGw0r3gZQbhfs70tvnNMgb9ai1/wT95vn18K8/6k6fOcDZHFkLx80hoB17YbpH6ETWpY=@vger.kernel.org, AJvYcCWFksBpE3cGAdZrIwhmlBYDlTHEtSjKD9Q27Mz3slkUZ8mItB9uf9LVCB5vgS0sbFgBKdo81ncM@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5nNc5g7NnllGaNo3nXbtHThditzYs9qfz7aFqR9RjfeHR7CXm
-	ijGdTJgtL9b9HXdc9qw58U7Fdfc0SPetuaj0GM3kqF3Y5wvIr9f4Kbcz5gaLi8maJAuqfg1AaC6
-	kSWM0FXoSwIhTVVZcJ8ClwHpimHlPf4E=
-X-Gm-Gg: ASbGncvUj4Yjc9cnZbgLdddOlXQdM+Yxy1F92+9GubQfGn08SQ/MqwK7Nx8UeMC0FCn
-	AfU7ClgiKQ8vjA7Abn3ykxz3v8fXnxDrfUp0jy4U0jX9C5/gGPymYo0H6BNRZbvYpwcwO3zX68O
-	3Ylo+suk4iPOjwi0q07zV44HuqqdR8IuhW/Irm7tpRFa6WDKQ/hZvxcqJMmjtLvrSIwNooEOp4j
-	Qp6eV8=
-X-Google-Smtp-Source: AGHT+IFzgPvwol0/zp/kUvQjkOlGAw5nsXcbgbAIewV/J/HVbTbxn/Gm7xN4fFzMnDfpkB1fheu6mxhWCT+AMJcMHVA=
-X-Received: by 2002:a17:906:d54d:b0:aec:578e:caef with SMTP id
- a640c23a62f3a-aec578ecd38mr1262813566b.35.1753065247785; Sun, 20 Jul 2025
- 19:34:07 -0700 (PDT)
+	s=arc-20240116; t=1753065493; c=relaxed/simple;
+	bh=YFCtjeuNRWirAmt0L2XzJ/hXjgV+AvGMigT27vrVUT8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=n+KNWOL56S6bzxvQFzGRRi2cfFXPRTK7mXWd5uar+RNBVpaScSv4mCVNaBwysxZfEqHbVoB+HYj+D9iTl763jcfs2K1wFgf0Faa5xVFofqvkeRmsW8fy4wez6+/CODmbsKZHQXkGBMWRZ0aTR7AK1FFoOAXCNsZCSEH3X+NpQJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=nYVwxkes; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753065333;
+	bh=yem6wahpDn+9vCFM4jztkJ4anRIFrDvhlGJ/aVZO4CE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=nYVwxkes4RQaPyEjpLH9ma6meX5E2RBbVMkbU46Qdu7TkwJCYcHM0APCooJ0og1cA
+	 RHOzhsAPp/jf+k6HIAb1T6P23yNYESHpsU3TOKBo1w3pmijT8lyBe9hSnclJkcugE4
+	 O1Q0o+DkaeLjxB6pifDHGBMRxFlx2Z9OwtlzG/+e26Qapx7GBTjRX3aAvt6FTjOa/2
+	 aY2AGeiiLHBDn9tAwqkgYCM4+XvRJR+v9RySnA9tctZjY0cb5ahWvFoLUWXYhFu+KW
+	 jUQCIloPvfCJx/zNptNo+HxdqbfbqQ05p08Q6EiEe3XdTjIKvt8tMu8dyKCkfrRc/L
+	 iqTtQYom+dqgw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4blkyr3CSkz4wbb;
+	Mon, 21 Jul 2025 12:35:32 +1000 (AEST)
+Date: Mon, 21 Jul 2025 12:38:01 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Ulf Hansson <ulf.hansson@linaro.org>, Michal Simek <monstr@monstr.eu>
+Cc: Jay Buddhabhatti <jay.buddhabhatti@amd.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Michal Simek <michal.simek@amd.com>
+Subject: linux-next: manual merge of the pmdomain tree with the xilinx tree
+Message-ID: <20250721123801.78841075@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250711140143.2105224-1-ricky_wu@realtek.com> <CAPDyKFpmt4eTfBOWphH3LtoW9jAujBs7oAFqqnxkJvP+r83tkw@mail.gmail.com>
-In-Reply-To: <CAPDyKFpmt4eTfBOWphH3LtoW9jAujBs7oAFqqnxkJvP+r83tkw@mail.gmail.com>
-From: Gavin Li <gfl3162@gmail.com>
-Date: Sun, 20 Jul 2025 22:33:56 -0400
-X-Gm-Features: Ac12FXxwmPKz7Qquc_zyZCFjOxIdrUEka9rluxakzV1DaHgWkr2db9qUIElP6Zk
-Message-ID: <CA+GxvY4x99MO-bd4s_ZRq54-+ELZ7UVPTFK0Fk=H1pnEGkPyxQ@mail.gmail.com>
-Subject: Re: [PATCH] misc: rtsx: usb: Ensure mmc child device is active when
- card is present
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Ricky Wu <ricky_wu@realtek.com>, linux-kernel@vger.kernel.org, arnd@arndb.de, 
-	gregkh@linuxfoundation.org, mingo@kernel.org, kai.heng.feng@canonical.com, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/A=0meQQ6qxiLxJJo5tba4hA";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/A=0meQQ6qxiLxJJo5tba4hA
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-I just tested out this patch, and it unfortunately does not address
-the issue I was running into (where the driver fails to detect
-inserting a SD card after the initial driver probe).
+Hi all,
 
-On Wed, Jul 16, 2025 at 6:39=E2=80=AFAM Ulf Hansson <ulf.hansson@linaro.org=
-> wrote:
->
-> + Gavin
->
-> On Fri, 11 Jul 2025 at 16:02, Ricky Wu <ricky_wu@realtek.com> wrote:
-> >
-> > When a card is present in the reader, the driver currently defers
-> > autosuspend by returning -EAGAIN during the suspend callback to
-> > trigger USB remote wakeup signaling. However, this does not guarantee
-> > that the mmc child device has been resumed, which may cause issues if
-> > it remains suspended while the card is accessible.
-> > This patch ensures that all child devices, including the mmc host
-> > controller, are explicitly resumed before returning -EAGAIN. This
-> > fixes a corner case introduced by earlier remote wakeup handling,
-> > improving reliability of runtime PM when a card is inserted.
-> >
-> > Fixes: 883a87ddf2f1 ("misc: rtsx_usb: Use USB remote wakeup signaling f=
-or card insertion detection")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Ricky Wu <ricky_wu@realtek.com>
->
-> This seems reasonable to me, but perhaps some of the USB maintainers
-> should have a closer look to see if this makes sense. Nevertheless,
-> feel free to add:
->
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
->
-> Moreover, we had a related bug-report/fix posted for the
-> rtsx_usb_sdmmc driver [1] not that long ago. Do you know if $subject
-> patch solves this problem too? I have looped in Gavin, if he has some
-> additional comments around this.
->
-> Kind regards
-> Uffe
->
-> [1]
-> https://lore.kernel.org/all/20250510031945.1004129-1-git@thegavinli.com/
->
-> > ---
-> >  drivers/misc/cardreader/rtsx_usb.c | 16 +++++++++-------
-> >  1 file changed, 9 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/drivers/misc/cardreader/rtsx_usb.c b/drivers/misc/cardread=
-er/rtsx_usb.c
-> > index 148107a4547c..d007a4455ce5 100644
-> > --- a/drivers/misc/cardreader/rtsx_usb.c
-> > +++ b/drivers/misc/cardreader/rtsx_usb.c
-> > @@ -698,6 +698,12 @@ static void rtsx_usb_disconnect(struct usb_interfa=
-ce *intf)
-> >  }
-> >
-> >  #ifdef CONFIG_PM
-> > +static int rtsx_usb_resume_child(struct device *dev, void *data)
-> > +{
-> > +       pm_request_resume(dev);
-> > +       return 0;
-> > +}
-> > +
-> >  static int rtsx_usb_suspend(struct usb_interface *intf, pm_message_t m=
-essage)
-> >  {
-> >         struct rtsx_ucr *ucr =3D
-> > @@ -713,8 +719,10 @@ static int rtsx_usb_suspend(struct usb_interface *=
-intf, pm_message_t message)
-> >                         mutex_unlock(&ucr->dev_mutex);
-> >
-> >                         /* Defer the autosuspend if card exists */
-> > -                       if (val & (SD_CD | MS_CD))
-> > +                       if (val & (SD_CD | MS_CD)) {
-> > +                               device_for_each_child(&intf->dev, NULL,=
- rtsx_usb_resume_child);
-> >                                 return -EAGAIN;
-> > +                       }
-> >                 } else {
-> >                         /* There is an ongoing operation*/
-> >                         return -EAGAIN;
-> > @@ -724,12 +732,6 @@ static int rtsx_usb_suspend(struct usb_interface *=
-intf, pm_message_t message)
-> >         return 0;
-> >  }
-> >
-> > -static int rtsx_usb_resume_child(struct device *dev, void *data)
-> > -{
-> > -       pm_request_resume(dev);
-> > -       return 0;
-> > -}
-> > -
-> >  static int rtsx_usb_resume(struct usb_interface *intf)
-> >  {
-> >         device_for_each_child(&intf->dev, NULL, rtsx_usb_resume_child);
-> > --
-> > 2.25.1
-> >
+Today's linux-next merge of the pmdomain tree got a conflict in:
+
+  drivers/firmware/xilinx/zynqmp.c
+
+between commit:
+
+  ef32394c6d34 ("drivers: firmware: xilinx: Add unique family code for all =
+platforms")
+
+from the xilinx tree and commits:
+
+  3da405ead651 ("firmware/pmdomain: xilinx: Move ->sync_state() support to =
+firmware driver")
+  29ea33866d6d ("firmware: xilinx: Use of_genpd_sync_state()")
+
+from the pmdomain tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/firmware/xilinx/zynqmp.c
+index 906a7aae719e,02da3e48bc8f..000000000000
+--- a/drivers/firmware/xilinx/zynqmp.c
++++ b/drivers/firmware/xilinx/zynqmp.c
+@@@ -2143,22 -2100,22 +2143,35 @@@ static void zynqmp_firmware_remove(stru
+  	platform_device_unregister(em_dev);
+  }
+ =20
++ static void zynqmp_firmware_sync_state(struct device *dev)
++ {
++ 	struct device_node *np =3D dev->of_node;
++=20
++ 	if (!of_device_is_compatible(np, "xlnx,zynqmp-firmware"))
++ 		return;
++=20
++ 	of_genpd_sync_state(np);
++=20
++ 	if (zynqmp_pm_init_finalize())
++ 		dev_warn(dev, "failed to release power management to firmware\n");
++ }
++=20
+ +static const struct platform_fw_data platform_fw_data_versal =3D {
+ +	.family_code =3D PM_VERSAL_FAMILY_CODE,
+ +};
+ +
+ +static const struct platform_fw_data platform_fw_data_versal_net =3D {
+ +	.family_code =3D PM_VERSAL_NET_FAMILY_CODE,
+ +};
+ +
+ +static const struct platform_fw_data platform_fw_data_zynqmp =3D {
+ +	.family_code =3D PM_ZYNQMP_FAMILY_CODE,
+ +};
+ +
+  static const struct of_device_id zynqmp_firmware_of_match[] =3D {
+ -	{.compatible =3D "xlnx,zynqmp-firmware"},
+ -	{.compatible =3D "xlnx,versal-firmware"},
+ +	{.compatible =3D "xlnx,zynqmp-firmware", .data =3D &platform_fw_data_zyn=
+qmp},
+ +	{.compatible =3D "xlnx,versal-firmware", .data =3D &platform_fw_data_ver=
+sal},
+ +	{.compatible =3D "xlnx,versal-net-firmware", .data =3D &platform_fw_data=
+_versal_net},
+  	{},
+  };
+  MODULE_DEVICE_TABLE(of, zynqmp_firmware_of_match);
+
+--Sig_/A=0meQQ6qxiLxJJo5tba4hA
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh9qAkACgkQAVBC80lX
+0GzXcAf7BsMKuk78CZfJkHzi3rwboosa7PMBRHmWLFCg1IHH5Uu08fFGlIA6O+xd
+ASpniuGWyT+0ugj9pov81RQFffB22AOYRQdNAgwWhksnEtPi/YUZhg3xmciWi1z4
+B06LY+wyZbi6zj+9Kvi2L2O48ecrudY6ggp76n7jfJ4VCjy+zFyeMfkCehQwM2IX
+7aj6VGXLD6Ig6a49ssom2DHKspI6mtpqKycEH7Pt+VAzh6jCjT4GZAA5mYcEMRms
+e+mtlijGmgjZE1swmpHVldU1aYy4CkMOlwXk1a63Nu3Yaueq2wrqeB/JbGlwCBCf
+tHJF9w0fNo0siJSyHnY2KWixPW6Xqw==
+=iafp
+-----END PGP SIGNATURE-----
+
+--Sig_/A=0meQQ6qxiLxJJo5tba4hA--
 
