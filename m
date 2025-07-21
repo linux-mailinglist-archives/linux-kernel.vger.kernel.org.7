@@ -1,125 +1,130 @@
-Return-Path: <linux-kernel+bounces-739929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43248B0CD45
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 00:26:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9B23B0CD4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 00:32:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 552466C597B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:25:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 354A83B4B4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:32:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05A2D24290B;
-	Mon, 21 Jul 2025 22:26:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E66D242925;
+	Mon, 21 Jul 2025 22:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Cmt1uubr"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W1o0xnaW"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F37F22173A
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 22:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457731D63E8;
+	Mon, 21 Jul 2025 22:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753136770; cv=none; b=fbJfpIa4m8qjLGVyqCriTJVBqe7CmbbLgEMVJqWyNi6NkCm30f6p287BPC6hqfVggK8tUl4hE+TtCxEjnWbwuS0FRYXg/XGHyYN6p8ARv9CLEZ2wmfrL8Ckf4TbnS/LDwlGTIAUCeJgENFpLtdrkBqZMOtz2TQM746YVjz9EbgY=
+	t=1753137162; cv=none; b=MuVm2L5dw0R6arRhqhVaPqnwOwK091cLCoTKIHvpAL6qV9sQILbqbXokStUt0p0ewg7joG0rtg8EI1ejpM8qAXIVBhoJ7fk4zpSWnlLPxNVz4ktP5q2Kbou/5sbsOKIMbFcu1GLr7aa9fw34OPVraJxWqRFDeeN+zdDGVbgweK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753136770; c=relaxed/simple;
-	bh=IyvP8QHlTa2QpWvqlFYR9SEvyFxbF/ATcjcrXYbVJ2I=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=qTsLXStQQ7FdFsoVFftXSLyEFFvIdkhBRF555xAvn8zQtdzGaJ238pTgQ38HRrYdNvCT4FMOds2JUbNYIUP5Fakdwp3RWdr2YuJKp478YBvtvlHKZcwYDDG6u7PbQz55LXvxuri3FlBzWuMrrXVrArNvsE48fGWWmgCOV/Avfw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Cmt1uubr; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31e3fdf1906so108190a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 15:26:08 -0700 (PDT)
+	s=arc-20240116; t=1753137162; c=relaxed/simple;
+	bh=ELPl9lWbCPvMx9ROUix88btEknHVjfc7IpFHv1NZmk0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=dOHL6d7jK2WLs0noyyILn0P8H9HvMXjxkk4OnlxUXrdwVLQz/g6R0Xp+hzzNXcGRGoZTvJfpVgMd4oXFwJXMvUIivPHWlnfb+Xg9uGa9uVjmVUnbmI8VTm609eD3weaoq3W/RyFDAwcg+mIufCbNloQaJpXHoBygsb0kZ5ZKw6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W1o0xnaW; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-23f8d8928efso124105ad.0;
+        Mon, 21 Jul 2025 15:32:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753136768; x=1753741568; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LL2cGKuHaaPjxufWOQkCjzE9tdmYpzd1lzvFg8IW6fY=;
-        b=Cmt1uubrOI27eeR6IElR2/K8H5Ao8oLkbwmkpeqXg0yb/32x9R8xWovsN7eo4mtTLE
-         4zSlf7BIESO3R3eOiyQrwraWES4zD2vS515QGrwV20KsZuxjB13ywDIxjnsRLGooapmj
-         mfGBHdRmtA7WcLk/YsvZuFfqKqbpdItENgw6YQuuznM2/rRYL+qR9TSfUSsjd/3E83TC
-         Ue3/Ui4A+rbt+2k8fS2EypynZhKNTOKfTSJBJCG1IcFDV8+zIzZcy4zL8c3+8fVrV4lj
-         dOOR35+2o4sq7jEC1Gh2eLRt3t9SlmMgB5oy+Or09UtKW1OUiY608+dUk7Yu7jO2TXP0
-         biDw==
+        d=gmail.com; s=20230601; t=1753137160; x=1753741960; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=VyDfV7rrZC5dmrjBy7MCe0nD1X8oWEIwHRrOY9MYlZc=;
+        b=W1o0xnaW4eZxtKC0HEvZDZ87KqcG693m7ewupGW/oFKPc8QCunolmCvCaUkKSKEAQA
+         nD2GuUqFU0cJFVlXcpmuMa0E7vZYBxAtpn3YtDrELoP+29omrqnMYNxAk8VcAtubC+Rs
+         c7yDua551obZjUv/hmQ0BKqY2uyQBP5Hqk3xkdCpZa6+6Ce9BG8kh0+YwVTSYWb2uhn0
+         6UCje6V1Ho9W3krFuwTDLTKGv0d2LLgiAqOcm8zkZYuFQUPvyE7zCEXErDvzrNB9+M2y
+         DfdhqA06IBgQQPB+74G5JIoCOSsuUbF4i++3e4BDpmdF/SguQOo1pbaRF8/LEBJjImWG
+         JcIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753136768; x=1753741568;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LL2cGKuHaaPjxufWOQkCjzE9tdmYpzd1lzvFg8IW6fY=;
-        b=f6iQZexZtqb7XzkLgoX4e7v0bhvRlHOQhx0jHA0wq5kSUZvzLlRv5FqGIxwxGjUO1l
-         77I17Wi1KxElPVbkVMpoCvc3Zs7oaxQJThXJzjPm9qDesrLjdDXVPsNhszpX0+VZoAnY
-         eCkKirST+fEkOGU1rIY0sUwufERDKcAuipRNXp1hDk/IGky05pYO6o0tkS1LsaJhB8Qq
-         I/dRqd0aNCicjne8Of3FY5P4JtZV5QFKlmtw1/BP+2Gya0TdAICFTMIrDDtTuDj0pV9v
-         ZOZWYUsYxx7Km1L8VKWdJu7SBLTjbWEA3qobRP7x3ySRIhoUomT+qvx1vkYl70LCPLok
-         dbDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWNwCcUnqP1GMeRUa+KcpOp0VG5cXcILmfhgTseSE6x7NFr4DeaRnMIy/UhCJWfHkL342529u/jcUN7L+o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzgq4Mw1kwG0ZnACz/cOSmO/vJgGj/Z3hw83uicmFvb1dh3xEmC
-	kkveefDV+7bKiIX0d2GVSzF0+C2y82uudSdmv4PqHkXD3SBlXpwuBdW9VW0c847cfdgamWCqe0n
-	bpOSmPw==
-X-Google-Smtp-Source: AGHT+IFOEfi1TplIejvNZRr/1MbPEFH8m6+GDazbtftWiE+uc1xJ4NSswHFa4ynpaZqg1Tm3n/YWoEjzkPQ=
-X-Received: from pjwx13.prod.google.com ([2002:a17:90a:c2cd:b0:313:230:89ed])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:50ce:b0:313:5d2f:54fc
- with SMTP id 98e67ed59e1d1-31cc25429b9mr22489997a91.10.1753136768428; Mon, 21
- Jul 2025 15:26:08 -0700 (PDT)
-Date: Mon, 21 Jul 2025 15:26:07 -0700
-In-Reply-To: <7t5qpdpc7cvkyvgj7i2fes56pvpfvrqcpbbdqqrhu3vgqgtjw2@6mpuc4ljmiey>
+        d=1e100.net; s=20230601; t=1753137160; x=1753741960;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VyDfV7rrZC5dmrjBy7MCe0nD1X8oWEIwHRrOY9MYlZc=;
+        b=cw0Fp2oswvKAtqp56CkyzQqmynH1+RWYorJEYE49qTA5DSMmqMQ3h2Mp5RsiT/DK9S
+         Bi3VbxcvdbE1dZM0QTJ46Dw8lxBaY2KXCIF7vk6gqcYghvlHxFtD+hRucQkEnU1gBUwe
+         iafGZUclxhGHvZ50WhpuNDVHWyh660/lU0GE20p7jjPdM/GcATp0YUBMjGhglbiOcyVZ
+         LszXW1Fl6AlHYV0kc7bmYkasDLadRcWnoMr1n/z6JlXBDkA6JXiVJYwV77clYfgdmqOo
+         AwQ1+rPK0iuD1ShYyagTvXSD8wbk6cpoIWYvON45UqJp2ojq5yq0GFevoN6O+y65GQXl
+         ZfMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1yoW5BDvHCVd6YHwJyftVGtLm9oqqeYULHI8qvUPz8FwXBOiblRxa49tYC/cwhSiOCrz0HzZ1ViIB4g3Q0EKrSg==@vger.kernel.org, AJvYcCU4NDHM/DbUI29abunDmc3x7nuRqP1rFBh0JR2ZS55ah36nTn6773UU4bapF+Cr+7j4l+ynODMJGAlvH/o6NC5CJ/5H@vger.kernel.org, AJvYcCUoZCv+uSLdYniGm1kdtANbigluRMp4cVMm8UawYlsjueBVMejar7r2r8AnUirnfdJoH68=@vger.kernel.org, AJvYcCWWXywy/70OEikAQM68NQB4t2VikYcKQjAO3jpOMrZUSlXJ2vvWOSvHqxZwmoloepkhGHvnVUZ1Pm1XSmQ5@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkN2aO8JzgRNNVB4BWidv0nFCVAre16+rM2zVzjm+t6oxWPX9E
+	A1WLhJKuQ2KePt3Xgkcj5tGoNsAFi4pFKBzwfLD0Xylya2iQnc/FBbaN
+X-Gm-Gg: ASbGncthaDAVPvSsCFMZTCKNJb0UGVczxqIYCgHokjKjsrnbeh+e+Cmsfm/2ZKUeBfk
+	2JieeEB4X4htgzx1mRpQ/za301J+gzt0u8qiWCrilTfW5XqlKID3anClF7lmfreAwvCbnUaQXqm
+	x+X7vEC/sp/SNRrIkN5NZ24UAGmSKNMuRbheGi/z9iLTZFJtPLxzehI85mjE1dA6ks0OEXoPE0B
+	tfOxR9v1Yiaj7dMQiaF9g/61qMDOPIMZfDWCDKTukn9sA6Oblj3FpGsIDq0ovX9nO98WfJRqINa
+	CAkPvfu9eZaNdQIryWpe5vMFW34pFy/tSC+u/YoXwajTJNoDRNmIMwOjZ6uwMMlPRd0iAviyTs+
+	B2aKqOQc6dSr94axAMVhgaVICe1tm
+X-Google-Smtp-Source: AGHT+IFxy0rmgZAbiSXgvLRGw/zEKapICvB3xXkOxn8uTPeRFBUpotCA5y8fyW59jrPG+IccPl/FbA==
+X-Received: by 2002:a17:902:dac1:b0:235:ecf2:393 with SMTP id d9443c01a7336-23e257a3b70mr339054145ad.53.1753137160347;
+        Mon, 21 Jul 2025 15:32:40 -0700 (PDT)
+Received: from ?IPv6:2620:10d:c096:14a::281? ([2620:10d:c090:600::1:7203])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31cc3e5b439sm6639389a91.14.2025.07.21.15.32.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Jul 2025 15:32:39 -0700 (PDT)
+Message-ID: <3790244e9b6f5508ef54eb799ed5b6e6a9d72b3a.camel@gmail.com>
+Subject: Re: [PATCH v1 2/7] bpf: Add bpf_perf_event_aux_pause kfunc
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Leo Yan <leo.yan@arm.com>, Yonghong Song <yonghong.song@linux.dev>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Adrian Hunter	
+ <adrian.hunter@intel.com>, Namhyung Kim <namhyung@kernel.org>, Jiri Olsa	
+ <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, James Clark	
+ <james.clark@linaro.org>, "Liang, Kan" <kan.liang@linux.intel.com>, Alexei
+ Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>,  Martin KaFai Lau
+ <martin.lau@linux.dev>, Song Liu <song@kernel.org>, John Fastabend
+ <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav
+ Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,  Matt Bobrowski
+ <mattbobrowski@google.com>, Steven Rostedt <rostedt@goodmis.org>, Masami
+ Hiramatsu	 <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, 	linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, 	bpf@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, Suzuki K Poulose	
+ <suzuki.poulose@arm.com>, Mike Leach <mike.leach@linaro.org>
+Date: Mon, 21 Jul 2025 15:32:31 -0700
+In-Reply-To: <20250718153801.GB3137075@e132581.arm.com>
+References: <20241215193436.275278-1-leo.yan@arm.com>
+	 <20241215193436.275278-3-leo.yan@arm.com>
+	 <80f412f1-a060-463b-9034-3128906e6929@linux.dev>
+	 <20250714174505.GA3020098@e132581.arm.com>
+	 <ba5c04f4-a33d-4d7f-9272-eee4a4389def@linux.dev>
+	 <20250718153801.GB3137075@e132581.arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1740036492.git.naveen@kernel.org> <330d10700c1172982bcb7947a37c0351f7b50958.1740036492.git.naveen@kernel.org>
- <aFngeQ5x6QiP7SsK@google.com> <6dl4vsf3k7qhx2aunc5vdhvtxpnwqp45lilpdsp4jksxtgdu6t@kubfenz4bdey>
- <aHpZD6sKamnPv9BG@google.com> <7t5qpdpc7cvkyvgj7i2fes56pvpfvrqcpbbdqqrhu3vgqgtjw2@6mpuc4ljmiey>
-Message-ID: <aH6-f1xOMU7dQLsX@google.com>
-Subject: Re: [PATCH v3 1/2] KVM: SVM: Increase X2AVIC limit to 4096 vcpus
-From: Sean Christopherson <seanjc@google.com>
-To: Naveen N Rao <naveen@kernel.org>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>, 
-	Vasant Hegde <vasant.hegde@amd.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 
-On Mon, Jul 21, 2025, Naveen N Rao wrote:
-> On Fri, Jul 18, 2025 at 07:24:15AM -0700, Sean Christopherson wrote:
-> > If there wasn't already an "x2AVIC enabled" print, I would probably lean toward
-> > doing nothing.  But since pr_info("x2AVIC enabled\n") already exists, and has
-> > plently of free space for adding extra information, there's basically zero downside
-> > to printing out the number of supported CPUs.  And it's not just a binary yes/no,
-> > e.g. I would wager most people couldn't state the number of vCPUs supported by
-> > the "old" x2AVIC.
-> 
-> Ok, this is what I have now. Let me know if you prefer different 
-> wording:
-> 
-> 	/* AVIC is a prerequisite for x2AVIC. */
->         x2avic_enabled = boot_cpu_has(X86_FEATURE_X2AVIC);
-> -       if (x2avic_enabled)
-> -               pr_info("x2AVIC enabled\n");
-> +       if (x2avic_enabled) {
-> +               if (cpu_feature_enabled(X86_FEATURE_X2AVIC_EXT))
-> +                       x2avic_max_physical_id = X2AVIC_4K_MAX_PHYSICAL_ID;
+On Fri, 2025-07-18 at 16:38 +0100, Leo Yan wrote:
 
-I actually like the approach you initially posted, where KVM explicitly sets
-x2avic_max_physical_id for both paths.  KVM could obviously rely on global
-initialization to set X2AVIC_MAX_PHYSICAL_ID, but it's not like this code is
-performance critical, and have all paths in one place makes it easy to understand
-what the "default" value is.
+[...]
 
-		if (cpu_feature_enabled(X86_FEATURE_X2AVIC_EXT))
-			x2avic_max_physical_id = X2AVIC_MAX_PHYSICAL_ID_4K;
-		else
-			x2avic_max_physical_id = X2AVIC_MAX_PHYSICAL_ID;
+> Just clarify one thing, I defined the kfunc in new patch:
+>=20
+>   int bpf_perf_event_aux_pause(void *p__map, u64 flags, u32 pause)
+>=20
+> Unlike your suggestion, I defined the first parameter as "void
+> *p__map" (I refers to bpf_arena_alloc_pages()) rather than
+> "struct bpf_map *map". This is because the BPF program will pass a
+> variable from the map section, rather than passing a map pointer.
 
-> +               pr_info("x2AVIC enabled (upto %lld vCPUs)\n", x2avic_max_physical_id + 1);
+This is correct,
+see commit 8d94f1357c00 ("bpf: Recognize '__map' suffix in kfunc arguments"=
+)
 
-Maybe s/upto/max?
-
-> +       }
-> 
-> 
-> - Naveen
+[...]
 
