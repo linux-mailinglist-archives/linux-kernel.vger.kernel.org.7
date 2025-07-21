@@ -1,169 +1,117 @@
-Return-Path: <linux-kernel+bounces-738631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3F60B0BB3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 05:13:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 581ECB0BB3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 05:13:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25B671756FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 03:13:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AF0B175744
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 03:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB31E1EBFE0;
-	Mon, 21 Jul 2025 03:13:41 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E53331EEA54;
+	Mon, 21 Jul 2025 03:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="OvINISGf"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18471E515;
-	Mon, 21 Jul 2025 03:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD7A1A3160;
+	Mon, 21 Jul 2025 03:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753067621; cv=none; b=q3vL0G5a2wNgOjqwe8AdNtS9EURC7M3w245btam1NlVNNYRzRHXWfjZBFgK+qxLVwkkZa4mReBaZ3Od0IwMXkCnB3zzdgXnT0nbcAzp2UbYTVF0ots9gx1B3yZ3YcHHI5c86Bhoaud/ypoiqfMuOsLbtQqmwat9vgR120dpzznQ=
+	t=1753067635; cv=none; b=s8FFRPqixjsgIo+iV2SUc8NqrZj+OAsBD46fQp3gjzYXbS7Ru9+rHPSa6/1TW+u35gLugqySWx9O9ZAb3zmvyng7NoA5JwLCU8qxMv5NXbvcnoY2xKacWQvOCA04bbjzM7hMUbsiO9Yg9oAy7X9GSlFpHw/lIKMEbout6qNKxBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753067621; c=relaxed/simple;
-	bh=Q/S828N21eNdTYCjDYLacFCB3Swcqk5fgY6jVStw5Ec=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=t5hAxE2FuaC7ZZI1yvjQmuo0kJg7zlZX3FFNd7kNyiLcAE2JmtAJck3nuKDiNlnc1PDv7ZQr1YzhoIygK34gwiLv0LI/WEwMGBqZ3VerAZBfpMhrNtrHLwsqHxwXB8NfE1y8xek9UFYN4C7Kd0TUiUIbSaGt8OLQoXiQvvnEywM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: a8aa3f6265e011f0b29709d653e92f7d-20250721
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:eed23872-68c1-434e-963e-4b27ddf0ade8,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:ec9d0ae682b2cba23291e0c9cac5afad,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102|817,TC:nil,Content:-10|-
-	8|-5|50,EDM:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,
-	OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 1,FCT|NGT
-X-CID-BAS: 1,FCT|NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: a8aa3f6265e011f0b29709d653e92f7d-20250721
-Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
-	(envelope-from <lijiayi@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 245598966; Mon, 21 Jul 2025 11:13:22 +0800
-Received: from node4.com.cn (localhost [127.0.0.1])
-	by node4.com.cn (NSMail) with SMTP id 51E6D16004282;
-	Mon, 21 Jul 2025 11:13:22 +0800 (CST)
-X-ns-mid: postfix-687DB050-9698871801
-Received: from kylin-pc.. (unknown [172.25.130.133])
-	by node4.com.cn (NSMail) with ESMTPA id 85BFB16004285;
-	Mon, 21 Jul 2025 03:13:20 +0000 (UTC)
-From: Jiayi Li <lijiayi@kylinos.cn>
-To: rafael@kernel.org
-Cc: jiayi_dec@163.com,
-	lenb@kernel.org,
-	lijiayi@kylinos.cn,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ACPI: Fix initial QoS constraint application order in PPC initialization
-Date: Mon, 21 Jul 2025 11:13:07 +0800
-Message-ID: <20250721031307.3451012-1-lijiayi@kylinos.cn>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <CAJZ5v0jJu2=MbdQ2z8a9JF8Lfz_Mci1+3oncHu8VCb4b3fA_Gg@mail.gmail.com>
-References: <CAJZ5v0jJu2=MbdQ2z8a9JF8Lfz_Mci1+3oncHu8VCb4b3fA_Gg@mail.gmail.com>
+	s=arc-20240116; t=1753067635; c=relaxed/simple;
+	bh=7PPVeVv3ncSmgWy5kT7Os6h3MKo+Zf//pmTUrjsEg/M=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=a0c8iUndnvfCSpXsQkzvW56WggU/QUTep5lMommixfqv1MiR/2CHLBi07hAoiiOTfZ09FbwOMblnL9ho3q3dfEBt+jY3uqODzvVZIrI9cA2bsUBG3OY5ruBAw3b0WP6+sLEKc8EhSchtx7A/92DAQDVBUXTcfFgIzoKeYH2XaCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=OvINISGf; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753067479;
+	bh=eIUAoe9cs1XgnuZmFk+NEW+rcfnvTGVPXZ99OmoldTU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=OvINISGflgC3V/8b4x/SgffHfS7kpxrEjT81wsIOH078Fgqi4SgplKfMmR1BkOJvE
+	 ZLSmnPrOoPO7+/7rXwhDSSzvqGMEMqyizIQ9T37DkIiZNtiQ297asa92jd+u6Cr6hZ
+	 dNbLrt35HmYdw2NPyzF2m6Q4FILFyWeFfiyZbHqlZXRE/eOiP/uWA2k4Xdc6ejigxL
+	 iGvxZNQ7xbd0ffhqUllMRu+NA7VSOfBZmKmhrUn5ps+b+uii7bl+qp2Kx4RuAtvlGy
+	 CC00+1EGkLMySaVL/67CIXqlNBHNDsdCWmxsA3/VQFq8s6Mz3Jp6okJu4LG9yaFtBy
+	 wR5fe52LSlicw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bllm714Phz4wcd;
+	Mon, 21 Jul 2025 13:11:19 +1000 (AEST)
+Date: Mon, 21 Jul 2025 13:13:48 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the mailbox tree
+Message-ID: <20250721131348.38ba6ec8@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/0.hjtAA3+MuH1qKXXC=WgQy";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/0.hjtAA3+MuH1qKXXC=WgQy
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
->>
->> The original initialization sequence was:
->>
->> cpufreq_policy_online()
->>     acpi_cpufreq_cpu_init()
->>         acpi_processor_get_platform_limit()
->>             freq_qos_update_request(&perflib_req)
->>     blocking_notifier_call_chain(...)
->>         acpi_processor_ppc_init()
->>             freq_qos_add_request(&perflib_req)
->>
->> This caused a race condition where the QoS request was added after the
->> initial platform limit update.
->
->To me, the description above is useless for figuring out what's going on=
-, sorry.
->
->This is not a race, but an ordering issue.
->
->The cpufreq driver calls acpi_processor_register_performance(), which
->among other things causes acpi_processor_get_platform_limit() to be
->called, from its ->init() callback which is invoked by the cpufreq
->core before CPUFREQ_CREATE_POLICY notifiers and the policy frequency
->QoS requests are added by acpi_processor_notifier(), so they don't
->exist when acpi_processor_register_performance() gets called and they
->cannot be updated by the acpi_processor_get_platform_limit().
->
->You want them to be updated as soon as they have been added, which is
->kind of reasonable, but it needs to be done only if
->acpi_processor_register_performance() has been called by the cpufreq
->driver.
->
+Hi all,
 
-Sorry, I didn't make the question clear.
+After merging the mailbox tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-This patch fixes an issue where _PPC frequency limits set by the BIOS
-failed to take effect due to incorrect call ordering. Previously,
-freq_qos_update_request() was being called before freq_qos_add_request(),
-causing the constraint updates to be ignored. With this fix, the frequenc=
-y
-limits are now properly enforced as intended.
+drivers/mailbox/mtk-tinysys-mailbox.c: In function 'mtk_tinysys_mhu_mbox_st=
+artup':
+drivers/mailbox/mtk-tinysys-mailbox.c:95:9: error: implicit declaration of =
+function 'irq_clear_status_flags' [-Wimplicit-function-declaration]
+   95 |         irq_clear_status_flags(priv->irq, IRQ_NOAUTOEN);
+      |         ^~~~~~~~~~~~~~~~~~~~~~
+drivers/mailbox/mtk-tinysys-mailbox.c:95:43: error: 'IRQ_NOAUTOEN' undeclar=
+ed (first use in this function); did you mean 'IRQF_NO_AUTOEN'?
+   95 |         irq_clear_status_flags(priv->irq, IRQ_NOAUTOEN);
+      |                                           ^~~~~~~~~~~~
+      |                                           IRQF_NO_AUTOEN
+drivers/mailbox/mtk-tinysys-mailbox.c:95:43: note: each undeclared identifi=
+er is reported only once for each function it appears in
 
->> The new sequence explicitly ensures:
->>
->> cpufreq_policy_online()
->>     acpi_cpufreq_cpu_init()
->>         acpi_processor_get_platform_limit()
->>             freq_qos_update_request(&perflib_req)
->>     blocking_notifier_call_chain(...)
->>         acpi_processor_ppc_init()
->>             freq_qos_add_request(&perflib_req)
->> +           acpi_processor_get_platform_limit()
->> +               freq_qos_update_request(&perflib_req)
->>
->> The critical change adds an immediate platform limit update after the
->> QoS request is registered. This guarantees that the initial P-state
->> constraint is applied before any subsequent updates, resolving the win=
-dow
->> where constraints could be applied out-of-order.
->>
->> Fixes: d15ce412737a ("ACPI: cpufreq: Switch to QoS requests instead of=
- cpufreq notifier")
->> Signed-off-by: Jiayi Li <lijiayi@kylinos.cn>
->> ---
->>  drivers/acpi/processor_perflib.c | 8 ++++++++
->>  1 file changed, 8 insertions(+)
->>
->> diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor=
-_perflib.c
->> index 64b8d1e19594..3e7fe95c21d1 100644
->> --- a/drivers/acpi/processor_perflib.c
->> +++ b/drivers/acpi/processor_perflib.c
->> @@ -173,6 +173,9 @@ void acpi_processor_ppc_init(struct cpufreq_policy=
- *policy)
->>  {
->>         unsigned int cpu;
->>
->> +       if (ignore_ppc =3D=3D 1)
->> +               return;
->> +
->>         for_each_cpu(cpu, policy->related_cpus) {
->>                 struct acpi_processor *pr =3D per_cpu(processors, cpu)=
-;
->>                 int ret;
->
->So AFAICS  this loop needs to check pr->performance in addition to pr.
->
+Caused by commit
 
-Thanks for the review. I agree and will add a check for pr->performance i=
-n v2.
+  43a9f5ab3d17 ("mailbox: Add MediaTek TinySYS MHU-like Mailbox")
 
---
-lijiayi
+Forgot to include linux/irq.h ...
+
+I have used the mailbox tree from next-20250718 for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/0.hjtAA3+MuH1qKXXC=WgQy
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh9sGwACgkQAVBC80lX
+0GwGWQf+P96K6Mg/kT5h7HAOJzsacxyiCdudtzwCnREUL+U/B3+X6xTpa4R9r/S5
+uBErNKdWsABBtgjX2DcnBoY+CMfJ7TUwHkMfXmbwFU2MrjC55Wu4qnlmeaneTBtO
+1kWTmL1TJtk15I7Yt+wSUpZpR+Ga9DGRzmnkeh7yn4hwNNQqQISknF/3NveAeGbn
+zYkspyeZloMQv3KUp8zXYjFuzqC+s+o3kaeQJAwduLNwcCEpkEDWTEidMi7kSa8I
+P4JNC/mt9SwNymLztLj6/RS9X16OuTP87wpB4d3WV6EhkzGOB+WXeX2usCZAx4xy
+eOVhQEdXN/OXWr5/rtbde1ehRSeFpw==
+=MmUu
+-----END PGP SIGNATURE-----
+
+--Sig_/0.hjtAA3+MuH1qKXXC=WgQy--
 
