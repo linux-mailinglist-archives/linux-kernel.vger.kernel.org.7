@@ -1,327 +1,320 @@
-Return-Path: <linux-kernel+bounces-738884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 767A0B0BEB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:21:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E07E2B0BEBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:23:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 959CE169449
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:21:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC34E17AD91
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:23:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3422868B4;
-	Mon, 21 Jul 2025 08:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3E02286D62;
+	Mon, 21 Jul 2025 08:23:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eM8nxIZe"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NAp3ii8d"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2535218593;
-	Mon, 21 Jul 2025 08:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4EE2868B3
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 08:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753086056; cv=none; b=cas9GNFMn260N1RdH9c4sGB8tHWNzNryq9YCtxY6vBrypMYrP2MPqgLwbEOMJ7xEskCziKoOG8UQS7FjVxf7mt1Nzb2z6340PJONxV0i0THwBFgYU5ShNMR68fjwU65YoQHUbac+8fzYn6db3i3VdwnSlZZ1/c1WK0lD9TGhGno=
+	t=1753086229; cv=none; b=hSruo0qHXDY7SeMoJXDTvL3clU+5BkKimeg67RVwN2IsMd8EOmEhF0jhHcH1S6eCptHBqYOvMUyIRBsDpLatipqZBEPJ2ZcMdgusCf9cVwVXa6XhVHU/3TuKHoMGqMo86hB5YhJP6dvYCM5q61e5qZeMQa5gogBRnr3xw50+NBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753086056; c=relaxed/simple;
-	bh=mwwy26YuAuU7rP6YljFYLkH6SdwYhat+AAosw36Hj2s=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=meMyAxoEi38qEsxlQRj25bG0fSpV+Lbkccq+CHO50vjneOgxQ+2VlTSWQSbk8DQbKUoGuOSzTw8MLqK+TRgbzkjeTV9/C5lzgTEJOULhR1mblgCH9ye8Bp9FdaEV+E3H+zmrKfGGZDc0loSmJCPCG05KWsoU1j3oSJ2YBqAIr24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eM8nxIZe; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753086054; x=1784622054;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=mwwy26YuAuU7rP6YljFYLkH6SdwYhat+AAosw36Hj2s=;
-  b=eM8nxIZeuVjDojRXOeMTjideALP6fqYCjdGPgt0ULPi/IXrMz9Sed7/G
-   ZaVDJAzobPRZiNE3eMOb3ijtVk611LeI0/tuFd15u2QKl3VXna77R6ySJ
-   rjUoKgRcnDn0Km1rSDlbgPPSK9c5m0Aix95/GTLjlooqVRYfbqT78g2U6
-   F4B+1j8hT1LYzqZ4MLv1F6eP6CFHljZb0YebzJ8CBBIb8O0YyB6GnYAoP
-   b7MggwatOcDU3XUkg5KFPcriW+FYgWzzlaJs6RXNjcwFeGvMEaeSpbUWa
-   T8Gloryo4tntE0fmzwFIrXSgzIFhNuUXIB7H0v6U5PonaRs9LLEB9rGLo
-   Q==;
-X-CSE-ConnectionGUID: /JguQsw9TnSfTNT7i7gCZg==
-X-CSE-MsgGUID: F7XzyhbUT6qg91tYEU7tVA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11498"; a="66642059"
-X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
-   d="scan'208";a="66642059"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 01:20:54 -0700
-X-CSE-ConnectionGUID: X9h7F1+/T4merf/BTnL3Jg==
-X-CSE-MsgGUID: 3aLyU92KSAaJwQXh+yAuPw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
-   d="scan'208";a="182479935"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.225])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 01:20:50 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 21 Jul 2025 11:20:46 +0300 (EEST)
-To: Hans Zhang <18255117159@163.com>
-cc: Bjorn Helgaas <helgaas@kernel.org>, lpieralisi@kernel.org, 
-    bhelgaas@google.com, mani@kernel.org, kwilczynski@kernel.org, 
-    robh@kernel.org, jingoohan1@gmail.com, linux-pci@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v13 3/6] PCI: Refactor capability search into common
- macros
-In-Reply-To: <903ea9c4-87d6-45a8-9825-4a0d45ec608f@163.com>
-Message-ID: <d59fde6e-3e4a-248a-ae56-c35b4c6ec44c@linux.intel.com>
-References: <20250715224705.GA2504490@bhelgaas> <903ea9c4-87d6-45a8-9825-4a0d45ec608f@163.com>
+	s=arc-20240116; t=1753086229; c=relaxed/simple;
+	bh=o1ZVe76ZyfRtJEfq2kmQlixLF+NBPgzDF2tM6nR4GvE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hVjLyFHK/JpZnuA2jQYvzkv4FYZM1AriX0L7cvVPLRyRl5RHjiGiPzZg2tQZYk2GbLupbqdSVInCF9S5RYaV0vj4dQ+PYc+rmdaNGPkLTEc61ubAhmjSgnNYkfWP9KVVUvqs4uQ38F6aJLT5Trli/L/2smmBCSaFvkmHW3WjDSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NAp3ii8d; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753086225;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=8x9BgD3tGK/B/BtL4ZwgBbDT5/k2ft0nNFrrHLC+VWM=;
+	b=NAp3ii8da0CGxGopjA72/KAKkqdeunQooBZNjsvuoyVk7q5SgS69YduJXIt8mzI2zwUu9w
+	NB5HvzikHowIAavTk+EzvpqysvLZUlj6SVDvgIU92tDbmPsroC1T9PHo++p4NkOHkKuEQ/
+	qxYDUCLSE4OxIwfOIGj9RQNkxdgYWP0=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-453-2k8bqMZzMLOD6OH11Ti1sA-1; Mon,
+ 21 Jul 2025 04:23:44 -0400
+X-MC-Unique: 2k8bqMZzMLOD6OH11Ti1sA-1
+X-Mimecast-MFC-AGG-ID: 2k8bqMZzMLOD6OH11Ti1sA_1753086223
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 978811800292;
+	Mon, 21 Jul 2025 08:23:42 +0000 (UTC)
+Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.44.32.136])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id F2234195608D;
+	Mon, 21 Jul 2025 08:23:37 +0000 (UTC)
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Nam Cao <namcao@linutronix.de>
+Cc: Gabriele Monaco <gmonaco@redhat.com>,
+	Tomas Glozar <tglozar@redhat.com>,
+	Juri Lelli <jlelli@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	John Kacur <jkacur@redhat.com>
+Subject: [PATCH v4 00/14] rv: Add monitors to validate task switch
+Date: Mon, 21 Jul 2025 10:23:10 +0200
+Message-ID: <20250721082325.71554-1-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Thu, 17 Jul 2025, Hans Zhang wrote:
+This series adds three monitors to the sched collection, extends and
+replaces previously existing monitors:
 
-> 
-> 
-> On 2025/7/16 06:47, Bjorn Helgaas wrote:
-> > On Sun, Jun 08, 2025 at 12:14:02AM +0800, Hans Zhang wrote:
-> > > The PCI Capability search functionality is duplicated across the PCI core
-> > > and several controller drivers. The core's current implementation requires
-> > > fully initialized PCI device and bus structures, which prevents controller
-> > > drivers from using it during early initialization phases before these
-> > > structures are available.
-> > > 
-> > > Move the Capability search logic into a header-based macro that accepts a
-> > > config space accessor function as an argument. This enables controller
-> > > drivers to perform Capability discovery using their early access
-> > > mechanisms prior to full device initialization while sharing the
-> > > Capability search code.
-> > > 
-> > > Convert the existing PCI core Capability search implementation to use this
-> > > new macro. Controller drivers can later use the same macros with their
-> > > early access mechanisms while maintaining the existing protection against
-> > > infinite loops through preserved TTL checks.
-> > > 
-> > > The ttl parameter was originally an additional safeguard to prevent
-> > > infinite loops in corrupted config space. However, the
-> > > PCI_FIND_NEXT_CAP_TTL() macro already enforces a TTL limit internally.
-> > > Removing redundant ttl handling simplifies the interface while maintaining
-> > > the safety guarantee. This aligns with the macro's design intent of
-> > > encapsulating TTL management.
-> > 
-> > This is a big gulp, but I think I like it :)  It really enables some
-> > nice cleanups later.
-> > 
-> > > -static u8 __pci_find_next_cap_ttl(struct pci_bus *bus, unsigned int
-> > > devfn,
-> > > -				  u8 pos, int cap, int *ttl)
-> > > -{
-> > > -	u8 id;
-> > > -	u16 ent;
-> > > -
-> > > -	pci_bus_read_config_byte(bus, devfn, pos, &pos);
-> > > -
-> > > -	while ((*ttl)--) {
-> > > -		if (pos < PCI_STD_HEADER_SIZEOF)
-> > > -			break;
-> > > -		pos = ALIGN_DOWN(pos, 4);
-> > > -		pci_bus_read_config_word(bus, devfn, pos, &ent);
-> > > -
-> > > -		id = FIELD_GET(PCI_CAP_ID_MASK, ent);
-> > > -		if (id == 0xff)
-> > > -			break;
-> > > -		if (id == cap)
-> > > -			return pos;
-> > > -		pos = FIELD_GET(PCI_CAP_LIST_NEXT_MASK, ent);
-> > > -	}
-> > > -	return 0;
-> > > -}
-> > > -
-> > >   static u8 __pci_find_next_cap(struct pci_bus *bus, unsigned int devfn,
-> > >   			      u8 pos, int cap)
-> > >   {
-> > > -	int ttl = PCI_FIND_CAP_TTL;
-> > > -
-> > > -	return __pci_find_next_cap_ttl(bus, devfn, pos, cap, &ttl);
-> > > +	return PCI_FIND_NEXT_CAP_TTL(pci_bus_read_config, pos, cap, bus,
-> > > devfn);
-> > >   }
-> > >     u8 pci_find_next_capability(struct pci_dev *dev, u8 pos, int cap)
-> > > @@ -554,42 +527,11 @@ EXPORT_SYMBOL(pci_bus_find_capability);
-> > >    */
-> > >   u16 pci_find_next_ext_capability(struct pci_dev *dev, u16 start, int
-> > > cap)
-> > >   {
-> > > -	u32 header;
-> > > -	int ttl;
-> > > -	u16 pos = PCI_CFG_SPACE_SIZE;
-> > > -
-> > > -	/* minimum 8 bytes per capability */
-> > > -	ttl = (PCI_CFG_SPACE_EXP_SIZE - PCI_CFG_SPACE_SIZE) / 8;
-> > > -
-> > >   	if (dev->cfg_size <= PCI_CFG_SPACE_SIZE)
-> > >   		return 0;
-> > >   -	if (start)
-> > > -		pos = start;
-> > > -
-> > > -	if (pci_read_config_dword(dev, pos, &header) != PCIBIOS_SUCCESSFUL)
-> > > -		return 0;
-> > > -
-> > > -	/*
-> > > -	 * If we have no capabilities, this is indicated by cap ID,
-> > > -	 * cap version and next pointer all being 0.
-> > > -	 */
-> > > -	if (header == 0)
-> > > -		return 0;
-> > > -
-> > > -	while (ttl-- > 0) {
-> > > -		if (PCI_EXT_CAP_ID(header) == cap && pos != start)
-> > > -			return pos;
-> > > -
-> > > -		pos = PCI_EXT_CAP_NEXT(header);
-> > > -		if (pos < PCI_CFG_SPACE_SIZE)
-> > > -			break;
-> > > -
-> > > -		if (pci_read_config_dword(dev, pos, &header) !=
-> > > PCIBIOS_SUCCESSFUL)
-> > > -			break;
-> > > -	}
-> > > -
-> > > -	return 0;
-> > > +	return PCI_FIND_NEXT_EXT_CAPABILITY(pci_bus_read_config, start, cap,
-> > > +					    dev->bus, dev->devfn);
-> > >   }
-> > >   EXPORT_SYMBOL_GPL(pci_find_next_ext_capability);
-> > >   @@ -649,7 +591,7 @@ EXPORT_SYMBOL_GPL(pci_get_dsn);
-> > >     static u8 __pci_find_next_ht_cap(struct pci_dev *dev, u8 pos, int
-> > > ht_cap)
-> > >   {
-> > > -	int rc, ttl = PCI_FIND_CAP_TTL;
-> > > +	int rc;
-> > >   	u8 cap, mask;
-> > >     	if (ht_cap == HT_CAPTYPE_SLAVE || ht_cap == HT_CAPTYPE_HOST)
-> > > @@ -657,8 +599,8 @@ static u8 __pci_find_next_ht_cap(struct pci_dev *dev,
-> > > u8 pos, int ht_cap)
-> > >   	else
-> > >   		mask = HT_5BIT_CAP_MASK;
-> > >   -	pos = __pci_find_next_cap_ttl(dev->bus, dev->devfn, pos,
-> > > -				      PCI_CAP_ID_HT, &ttl);
-> > > +	pos = PCI_FIND_NEXT_CAP_TTL(pci_bus_read_config, pos,
-> > > +				    PCI_CAP_ID_HT, dev->bus, dev->devfn);
-> > >   	while (pos) {
-> > >   		rc = pci_read_config_byte(dev, pos + 3, &cap);
-> > >   		if (rc != PCIBIOS_SUCCESSFUL)
-> > > @@ -667,9 +609,10 @@ static u8 __pci_find_next_ht_cap(struct pci_dev *dev,
-> > > u8 pos, int ht_cap)
-> > >   		if ((cap & mask) == ht_cap)
-> > >   			return pos;
-> > >   -		pos = __pci_find_next_cap_ttl(dev->bus, dev->devfn,
-> > > -					      pos + PCI_CAP_LIST_NEXT,
-> > > -					      PCI_CAP_ID_HT, &ttl);
-> > > +		pos = PCI_FIND_NEXT_CAP_TTL(pci_bus_read_config,
-> > > +					    pos + PCI_CAP_LIST_NEXT,
-> > > +					    PCI_CAP_ID_HT, dev->bus,
-> > > +					    dev->devfn);
-> > >   	}
-> > >     	return 0;
-> > > diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> > > index e7d31ed56731..46fb6b5a854e 100644
-> > > --- a/drivers/pci/pci.h
-> > > +++ b/drivers/pci/pci.h
-> > > @@ -2,6 +2,8 @@
-> > >   #ifndef DRIVERS_PCI_H
-> > >   #define DRIVERS_PCI_H
-> > >   +#include <linux/align.h>
-> > > +#include <linux/bitfield.h>
-> > >   #include <linux/pci.h>
-> > >     struct pcie_tlp_log;
-> > > @@ -93,6 +95,89 @@ bool pcie_cap_has_rtctl(const struct pci_dev *dev);
-> > >   int pci_bus_read_config(void *priv, unsigned int devfn, int where, u32
-> > > size,
-> > >   			u32 *val);
-> > >   +/* Standard Capability finder */
-> > > +/**
-> > > + * PCI_FIND_NEXT_CAP_TTL - Find a PCI standard capability
-> > 
-> > I don't think "_TTL" is relevant in the macro name here.  I see it
-> > copied the previous __pci_find_next_cap_ttl() name; "ttl" *was*
-> > relevant there, but it isn't anymore.
-> > 
-> 
-> Dear Bjorn,
-> 
-> Thank you very much for your reply.
-> 
-> The _TTL suffix will be removed.
-> 
-> 
-> > I would like this a lot better if it could be implemented as a
-> > function, but I assume it has to be a macro for some varargs reason.
-> > 
-> 
-> Yes. The macro definitions used in combination with the previous review
-> opinions of Ilpo.
+{tss,snroc} => sts:
+Not only prove that switches occur in scheduling context and scheduling
+needs interrupt disabled but also that each call to the scheduler
+disables interrupts to (optionally) switch.
 
-The other option would be to standardize the accessor interface signature 
-and pass the function as a pointer. One might immediately think of generic 
-PCI core accessors making it sound simpler than it is but here the 
-complication is the controller drivers want to pass some internal 
-structure due to lack of pci_dev so it would need to be void 
-*read_cfg_data. Then we'd need to deal with those voids also in some 
-generic PCI accessors which is a bit ugly.
+nrp (NEW):
+* preemption requires need resched which is cleared by any switch
+  (includes a non optimal workaround for /nested/ preemptions)
 
-> > > + * @read_cfg: Function pointer for reading PCI config space
-> > > + * @start: Starting position to begin search
-> > > + * @cap: Capability ID to find
-> > > + * @args: Arguments to pass to read_cfg function
-> > > + *
-> > > + * Iterates through the capability list in PCI config space to find
-> > > + * @cap. Implements TTL (time-to-live) protection against infinite loops.
-> > > + *
-> > > + * Returns: Position of the capability if found, 0 otherwise.
-> > > + */
-> > > +#define PCI_FIND_NEXT_CAP_TTL(read_cfg, start, cap, args...)
-> > > \
-> > > +({									\
-> > > +	int __ttl = PCI_FIND_CAP_TTL;					\
-> > > +	u8 __id, __found_pos = 0;					\
-> > > +	u8 __pos = (start);						\
-> > > +	u16 __ent;							\
-> > > +									\
-> > > +	read_cfg(args, __pos, 1, (u32 *)&__pos);			\
-> > > +									\
-> > > +	while (__ttl--) {						\
-> > > +		if (__pos < PCI_STD_HEADER_SIZEOF)			\
-> > > +			break;						\
-> > 
-> > I guess this is just lifted directly from __pci_find_next_cap_ttl(),
-> > but wow, I wish it weren't quite *so* subtle.  Totally fine though.
-> > 
-> > Maybe this could be split into one patch for standard capabilities and
-> > a second for extended capabilities, just so the connection between
-> > this and __pci_find_next_cap_ttl() would be clearer.
-> > 
-> 
-> I will split the two patches.
-> 
-> > > +									\
-> > > +		__pos = ALIGN_DOWN(__pos, 4);				\
-> > > +		read_cfg(args, __pos, 2, (u32 *)&__ent);		\
-> > > +									\
-> > > +		__id = FIELD_GET(PCI_CAP_ID_MASK, __ent);		\
-> > > +		if (__id == 0xff)					\
-> > > +			break;						\
-> > > +									\
-> > > +		if (__id == (cap)) {					\
-> > > +			__found_pos = __pos;				\
-> > > +			break;						\
-> > > +		}							\
-> > > +									\
-> > > +		__pos = FIELD_GET(PCI_CAP_LIST_NEXT_MASK, __ent);	\
-> > > +	}								\
-> > > +	__found_pos;							\
-> > > +})
+sssw (NEW):
+* suspension requires setting the task to sleepable and, after the
+  switch occurs, the task requires a wakeup to come back to runnable
+
+opid (NEW):
+* waking and need-resched operations occur with interrupts and
+  preemption disabled or in IRQ without explicitly disabling preemption
+
+Also include some minor cleanup patches (1-9) tracepoints (11) and
+preparatory fixes (10) covering some corner cases:
+
+The series is currently based on the next tree.
+
+Patch 1 fixes the behaviour of the rv tool with -s and idle tasks.
+
+Patch 2 allows the rv tool to gracefully terminate with SIGTERM
+
+Patch 3 adds da_handle_start_run_event_ also to per-task monitors
+
+Patch 4 removes a trailing whitespace from the rv tracepoint string
+
+Patch 5 returns the registration error in all DA monitor instead of 0
+
+Patch 6 fixes an out-of-bound memory access in DA tracepoints
+
+Patch 7 adjusts monitors to have minimised Kconfig dependencies
+
+Patch 8 properly orders nested monitors in the RV Kconfig file
+
+Patch 9 adjusts dot2c not to create lines over 100 columns
+
+Patch 10 detects race conditions when rv monitors run concurrently and
+retries applying the events
+
+Patch 11 adds the need_resched and removes unused arguments from
+schedule entry/exit tracepoints
+
+Patch 12 adds the sts monitor to replace tss and sncid
+
+Patch 13 adds the nrp and sssw monitors
+
+Patch 14 adds the opid monitor
+
+NOTES
+
+The nrp and sssw monitors include workarounds for racy conditions:
+
+* A sleeping task requires to set the state to sleepable, but in case of
+  a task sleeping on an rtlock, the set sleepable and wakeup events race
+  and we don't always see the right order:
+
+ 5d..2. 107.488369: event: 639: sleepable x set_sleepable -> sleepable
+ 4d..5. 107.488369: event: 639: sleepable x wakeup -> running (final)
+ 5d..3. 107.488385: error: 639: switch_suspend not expected in the state running
+
+    wakeup()                    set_state()
+        state=RUNNING
+                                    trace_set_state()
+        trace_wakeup()
+                                    state=SLEEPING
+
+  I added a special event (switch_block) but there may be a better way.
+  Taking a pi_lock in rtlock_slowlock_locked when setting the state to
+  TASK_RTLOCK_WAIT avoids this race, although this is likely not
+  something we want to do.
+
+* I consider preemption any scheduling with preempt==true and assume
+  this can happen only if need resched is set.
+  In practice, however, we may see a preemption where the flag
+  is not set. This can happen in one specific condition:
+
+  need_resched
+                  preempt_schedule()
+                                        preempt_schedule_irq()
+                                            __schedule()
+  !need_resched
+                      __schedule()
+
+  We start a standard preemption (e.g. from preempt_enable when the flag
+  is set), an interrupts occurs before we schedule and, on its exit path,
+  it schedules, which clears the need_resched flag.
+  When the preempted task runs again, we continue the standard
+  preemption started earlier, although the flag is no longer set.
+
+  I added a workaround to allow the model not to fail in this condition,
+  by allowing a preemption without need_resched if an interrupt is
+  received. This might catch false negatives too.
+
+Changes since V3 [1]:
+* Fix condition for lines shorter than 100 columns in dot2c.
+* Fix Kconfig tooltip for container monitors in rvgen.
+* Improve condition not to skip pid-0 in userspace tool.
+* Rearrange monitors to reduce needed tracepoints and arguments.
+* Separately track errors when DAs run out of retries due to races.
+* Fix issue in opid with multiple handlers in the same interrupt.
+* Cleanup patches by removing, squashing and reordering.
+
+Changes since RFC2:
+ * Arrange commits to prevent failed build while bisecting.
+ * Avoid dot2k generated files to reach the column limit. (Nam Cao)
+ * Rearrange and simplify da_monitor retry on racing events.
+ * Improve nrp monitor to handle /nested/ preemption on IRQ.
+ * Added minor patches (6-10).
+ * Cleanup and rearrange order.
+Changes since RFC [2]:
+ * Remove wakeup tracepoint in try_to_block_task and use a different
+   flavour of sched_set_state
+ * Split the large srs monitor in two separate monitors for preemption
+   and sleep. These no longer have a concept of running task, they just
+   enforce the requirements for the different types of sched out.
+ * Restore the snroc monitor to describe the relationship between
+   generic sched out and sched in.
+ * Add opid monitor.
+ * Fix some build errors and cleanup.
+
+[1] - https://lore.kernel.org/lkml/20250715071434.22508-1-gmonaco@redhat.com
+[2] - https://lore.kernel.org/lkml/20250404084512.98552-11-gmonaco@redhat.com
+
+To: Ingo Molnar <mingo@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Tomas Glozar <tglozar@redhat.com>
+Cc: Juri Lelli <jlelli@redhat.com>
+Cc: Clark Williams <williams@redhat.com>
+Cc: John Kacur <jkacur@redhat.com>
+
+Gabriele Monaco (14):
+  tools/rv: Do not skip idle in trace
+  tools/rv: Stop gracefully also on SIGTERM
+  rv: Add da_handle_start_run_event_ to per-task monitors
+  rv: Remove trailing whitespace from tracepoint string
+  rv: Return init error when registering monitors
+  rv: Use strings in da monitors tracepoints
+  rv: Adjust monitor dependencies
+  verification/rvgen: Organise Kconfig entries for nested monitors
+  tools/dot2c: Fix generated files going over 100 column limit
+  rv: Retry when da monitor detects race conditions
+  sched: Adapt sched tracepoints for RV task model
+  rv: Replace tss and sncid monitors with more complete sts
+  rv: Add nrp and sssw per-task monitors
+  rv: Add opid per-cpu monitor
+
+ Documentation/trace/rv/monitor_sched.rst      | 307 +++++++++++++++---
+ include/linux/rv.h                            |   3 +-
+ include/linux/sched.h                         |   7 +-
+ include/rv/da_monitor.h                       | 129 +++++---
+ include/trace/events/sched.h                  |  12 +-
+ kernel/sched/core.c                           |  13 +-
+ kernel/trace/rv/Kconfig                       |  16 +-
+ kernel/trace/rv/Makefile                      |   6 +-
+ kernel/trace/rv/monitors/{tss => nrp}/Kconfig |  12 +-
+ kernel/trace/rv/monitors/nrp/nrp.c            | 138 ++++++++
+ kernel/trace/rv/monitors/nrp/nrp.h            |  75 +++++
+ kernel/trace/rv/monitors/nrp/nrp_trace.h      |  15 +
+ kernel/trace/rv/monitors/opid/Kconfig         |  19 ++
+ kernel/trace/rv/monitors/opid/opid.c          | 169 ++++++++++
+ kernel/trace/rv/monitors/opid/opid.h          | 104 ++++++
+ .../sncid_trace.h => opid/opid_trace.h}       |   8 +-
+ kernel/trace/rv/monitors/sched/Kconfig        |   1 +
+ kernel/trace/rv/monitors/sched/sched.c        |   3 +-
+ kernel/trace/rv/monitors/sco/sco.c            |   7 +-
+ kernel/trace/rv/monitors/scpd/Kconfig         |   2 +-
+ kernel/trace/rv/monitors/scpd/scpd.c          |   7 +-
+ kernel/trace/rv/monitors/sncid/sncid.c        |  96 ------
+ kernel/trace/rv/monitors/sncid/sncid.h        |  49 ---
+ kernel/trace/rv/monitors/snep/Kconfig         |   2 +-
+ kernel/trace/rv/monitors/snep/snep.c          |   7 +-
+ kernel/trace/rv/monitors/snep/snep.h          |  14 +-
+ kernel/trace/rv/monitors/snroc/snroc.c        |   3 +-
+ .../trace/rv/monitors/{sncid => sssw}/Kconfig |  10 +-
+ kernel/trace/rv/monitors/sssw/sssw.c          | 116 +++++++
+ kernel/trace/rv/monitors/sssw/sssw.h          | 105 ++++++
+ kernel/trace/rv/monitors/sssw/sssw_trace.h    |  15 +
+ kernel/trace/rv/monitors/sts/Kconfig          |  19 ++
+ kernel/trace/rv/monitors/sts/sts.c            | 156 +++++++++
+ kernel/trace/rv/monitors/sts/sts.h            | 117 +++++++
+ .../{tss/tss_trace.h => sts/sts_trace.h}      |   8 +-
+ kernel/trace/rv/monitors/tss/tss.c            |  91 ------
+ kernel/trace/rv/monitors/tss/tss.h            |  47 ---
+ kernel/trace/rv/monitors/wip/Kconfig          |   2 +-
+ kernel/trace/rv/monitors/wip/wip.c            |   3 +-
+ kernel/trace/rv/monitors/wwnr/wwnr.c          |   3 +-
+ kernel/trace/rv/rv_trace.h                    | 114 ++++---
+ tools/verification/models/sched/nrp.dot       |  29 ++
+ tools/verification/models/sched/opid.dot      |  35 ++
+ tools/verification/models/sched/sncid.dot     |  18 -
+ tools/verification/models/sched/sssw.dot      |  30 ++
+ tools/verification/models/sched/sts.dot       |  38 +++
+ tools/verification/models/sched/tss.dot       |  18 -
+ tools/verification/rv/src/in_kernel.c         |   4 +-
+ tools/verification/rv/src/rv.c                |   1 +
+ tools/verification/rvgen/rvgen/container.py   |  10 +
+ tools/verification/rvgen/rvgen/dot2c.py       |  20 +-
+ tools/verification/rvgen/rvgen/generator.py   |  16 +-
+ 52 files changed, 1723 insertions(+), 526 deletions(-)
+ rename kernel/trace/rv/monitors/{tss => nrp}/Kconfig (51%)
+ create mode 100644 kernel/trace/rv/monitors/nrp/nrp.c
+ create mode 100644 kernel/trace/rv/monitors/nrp/nrp.h
+ create mode 100644 kernel/trace/rv/monitors/nrp/nrp_trace.h
+ create mode 100644 kernel/trace/rv/monitors/opid/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/opid/opid.c
+ create mode 100644 kernel/trace/rv/monitors/opid/opid.h
+ rename kernel/trace/rv/monitors/{sncid/sncid_trace.h => opid/opid_trace.h} (66%)
+ delete mode 100644 kernel/trace/rv/monitors/sncid/sncid.c
+ delete mode 100644 kernel/trace/rv/monitors/sncid/sncid.h
+ rename kernel/trace/rv/monitors/{sncid => sssw}/Kconfig (58%)
+ create mode 100644 kernel/trace/rv/monitors/sssw/sssw.c
+ create mode 100644 kernel/trace/rv/monitors/sssw/sssw.h
+ create mode 100644 kernel/trace/rv/monitors/sssw/sssw_trace.h
+ create mode 100644 kernel/trace/rv/monitors/sts/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/sts/sts.c
+ create mode 100644 kernel/trace/rv/monitors/sts/sts.h
+ rename kernel/trace/rv/monitors/{tss/tss_trace.h => sts/sts_trace.h} (67%)
+ delete mode 100644 kernel/trace/rv/monitors/tss/tss.c
+ delete mode 100644 kernel/trace/rv/monitors/tss/tss.h
+ create mode 100644 tools/verification/models/sched/nrp.dot
+ create mode 100644 tools/verification/models/sched/opid.dot
+ delete mode 100644 tools/verification/models/sched/sncid.dot
+ create mode 100644 tools/verification/models/sched/sssw.dot
+ create mode 100644 tools/verification/models/sched/sts.dot
+ delete mode 100644 tools/verification/models/sched/tss.dot
 
 
+base-commit: d086c886ceb9f59dea6c3a9dae7eb89e780a20c9
 -- 
- i.
+2.50.1
 
 
