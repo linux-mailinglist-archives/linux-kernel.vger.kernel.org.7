@@ -1,89 +1,156 @@
-Return-Path: <linux-kernel+bounces-739561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76EF3B0C7E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:44:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 732B4B0C7FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:48:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FBB61AA5B38
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:44:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E4586C14B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E572E03EA;
-	Mon, 21 Jul 2025 15:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 001662DFA26;
+	Mon, 21 Jul 2025 15:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wZtLBSZP";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5lJbHEMF"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="3xbpjXFn"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF9E6170A2B
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 15:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87CD32989B4;
+	Mon, 21 Jul 2025 15:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753112662; cv=none; b=eTcqlhfXjF5wfKxSLrZ/3bXcLAD+sSMEyWY6VXY0EWQ+sm15/q0mYCfAfscVr3VaZl5v7VRuAQA7BW4bwsiQgywFIgtm1kPie+ow43Cw2ugUg9E3NJwSpNPyFx4kB0R8CY77ut5Mbpd8HxVMZyVsP/BA7wFP2c4BxuPxWtJNysY=
+	t=1753112866; cv=none; b=WWJQvAhqaWdNm6+ERyMZU4NUFcCSiHmb1oHwIPpJXLTu+T3NYV8cOqHzb6GwVA6HFHOqT3PUhMF3Ek+FsTJ+fv9pIZ0IrWovmaE4sIz8x1GsW50IaClAXephqqXjitlK4FDF/klswi6Q5r5C8wfKUFjSMWDLqFpfGbB8TrbrNwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753112662; c=relaxed/simple;
-	bh=0jgzMwOqgB8VyKdwP0IAD2E6MIQfEZeKMMVcErTcotQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Qz83TjnPEIFZ/DA7tPYNNrTU0b1z28t8Mfs8f9bMsxeOy61scwUdGHMkciqTpUXdMDa7eljURRVU60ccWNm7flqfC7jaSDMTynxNzOpYddWkvL0GxMa9331wmHJ0ilEPlFDa4QwpDzfX8zBMeJTaeoBi7z2Ev9HOPU1jW9y45vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wZtLBSZP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5lJbHEMF; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753112658;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1iG5Dbh5sLGa6ridXZrbiD9xKf7SabseFeQZvslCyuM=;
-	b=wZtLBSZP/nMjn4jift2G/TF0x8ysCY+HgikcAdeLW+3JmDdAK883o5gJx4qqnHdkDd9cXJ
-	5tSKbYTVCpgZcoq1CmoPzQhMmfjldaAP7eAuCvQVQZnovPuBIz6WxVwwAYqZ0ewfvqlH+5
-	zZxKTRbfK1SUatoi6WAwQKXfDuzIVxOIsAZ67gDJ0Dy1xRTervlVZnrhpwwZa9H/sNdpI3
-	K3Lf1v+8G/9sjkqDeFCky1ZG5V2a9e7dSLBTQifxR2hTqMu/qtu3LX+yrTiHttr6tEoYBL
-	MQBcScPMb+0v8ctUOVGbLBYafzDPKP2sRALVW6JuSoxgbVQ/bcKsETPCh9KNHg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753112658;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1iG5Dbh5sLGa6ridXZrbiD9xKf7SabseFeQZvslCyuM=;
-	b=5lJbHEMFqm1YPRd9RbLnjlP9WokN0b7prZxgqWXvs934o1/hpXKpPloJCVWLdCPsYQy0zz
-	jwOkqDpVw5oZQgCg==
-To: Yury Norov <yury.norov@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Bartosz Golaszewski
- <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH] irq: simplify irq_im_handle_irq()
-In-Reply-To: <aH5OUChoFx55WnVG@yury>
-References: <20250719211818.402115-1-yury.norov@gmail.com>
- <87zfcxtz6t.ffs@tglx> <aH5OUChoFx55WnVG@yury>
-Date: Mon, 21 Jul 2025 17:44:16 +0200
-Message-ID: <87o6tdtupb.ffs@tglx>
+	s=arc-20240116; t=1753112866; c=relaxed/simple;
+	bh=yf93avLfOcBjv9y23grxTOASqvyH83/l7cM6ZlT0nAM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=URB4eYZzf6pObeOwSj72yKpxEBuzFT6MyPVHNuxnyKFKVv3Ml6r7tsUlAdtKj1Nisk+9Srv8gCy0b9QeINyUSyameQAy5dHG9T0cEwjJ7ZtcZSHzKsxMRjRRVVEL8zpjHDLm+zfIfeQhpU1Ncy6jyQzYF1iNZLr4hJMYv9HJleM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=3xbpjXFn; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56LDt62k020590;
+	Mon, 21 Jul 2025 17:47:23 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	P1ZuzEzRREiwLydWZlhzK+dlWBAxlIhEYuf20M8l1eU=; b=3xbpjXFnyMs0SC5A
+	i2NSTVksJj+qckbzFNDpYbQCrsNAuBlK574aC/pSgp9d95ovb31I7jR/KuivJ7Z7
+	vrlAF+Tjwygg8on9g8Nk5p0sTilTUvoy9mumnLwxZBwjmm5NG/irpmq9NNUmkiFu
+	0wrn5CM/J1V4wrupgXWM38kPE8qB0Av7ZcgyJMY415Yd2dEUQK7cZuJkMRI5BKp/
+	DW2K9XPdF4dI97k5wGLSQiynVfnweB2tJ1SZhLZSWwfrcbbY7ZWOHj3Oq1ycURsO
+	5wh+4Djrh+l9cQH6KWUDkkJClULDqjLBmk0Ufn2f8W5yGH6gc1qtD7k05Ef/cmMt
+	a3Wd6g==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4800g8hn2a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Jul 2025 17:47:23 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 822DF4007D;
+	Mon, 21 Jul 2025 17:46:05 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 36E51768F09;
+	Mon, 21 Jul 2025 17:44:23 +0200 (CEST)
+Received: from [10.252.5.249] (10.252.5.249) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 21 Jul
+ 2025 17:44:21 +0200
+Message-ID: <162aa05f-69df-4607-bf47-fbec60589f95@foss.st.com>
+Date: Mon, 21 Jul 2025 17:44:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 06/16] arm64: dts: st: add LPDDR channel to
+ stm32mp257f-dk board
+To: Rob Herring <robh@kernel.org>
+CC: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Gatien Chevallier
+	<gatien.chevallier@foss.st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Gabriel Fernandez
+	<gabriel.fernandez@foss.st.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Le
+ Goffic <legoffic.clement@gmail.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-perf-users@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+References: <20250711-ddrperfm-upstream-v2-0-cdece720348f@foss.st.com>
+ <20250711-ddrperfm-upstream-v2-6-cdece720348f@foss.st.com>
+ <20250715032020.GB4144523-robh@kernel.org>
+ <ae960a16-65ad-4b22-b9fb-89efbffacd3e@foss.st.com>
+ <20250715150224.GA1319886-robh@kernel.org>
+Content-Language: en-US
+From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
+In-Reply-To: <20250715150224.GA1319886-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-21_04,2025-07-21_02,2025-03-28_01
 
-On Mon, Jul 21 2025 at 10:27, Yury Norov wrote:
-> On Mon, Jul 21, 2025 at 04:07:22PM +0200, Thomas Gleixner wrote:
-> find_next_bit() and for_each_bit() cannot be used in concurrent
-> environment, and having atomic clear_bit() is meaningless here.
-> Two concurrent processes, if running in parallel, may pick the
-> same offset, ending up executing the handle_simple_irq() twice.
+Hi Rob
 
-The irq work cannot be run in parallel on multiple CPUs. It's guaranteed
-that only one irq work handler runs at a time. So irq_sim_handle_irq()
-is fully serialized by the irq work magic.
+On 7/15/25 17:02, Rob Herring wrote:
+> On Tue, Jul 15, 2025 at 10:32:09AM +0200, Clement LE GOFFIC wrote:
+>> Hi Rob,
+>>
+>> Thanks for the review !
+>>
+>> On 7/15/25 05:20, Rob Herring wrote:
+>>> On Fri, Jul 11, 2025 at 04:48:58PM +0200, Clément Le Goffic wrote:
+>>>> Add 32bits LPDDR4 channel to the stm32mp257f-dk board.
+>>>>
+>>>> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+>>>> ---
+>>>>    arch/arm64/boot/dts/st/stm32mp257f-dk.dts | 7 +++++++
+>>>>    1 file changed, 7 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm64/boot/dts/st/stm32mp257f-dk.dts b/arch/arm64/boot/dts/st/stm32mp257f-dk.dts
+>>>> index a278a1e3ce03..a97b41f14ecc 100644
+>>>> --- a/arch/arm64/boot/dts/st/stm32mp257f-dk.dts
+>>>> +++ b/arch/arm64/boot/dts/st/stm32mp257f-dk.dts
+>>>> @@ -54,6 +54,13 @@ led-blue {
+>>>>    		};
+>>>>    	};
+>>>> +	lpddr_channel: lpddr4-channel {
+>>>> +		#address-cells = <1>;
+>>>> +		#size-cells = <0>;
+>>>> +		compatible = "jedec,lpddr4-channel";
+>>>
+>>> Not tested because this doesn't match the binding.
+>>
+>> Hmm, I've tested with make dtbs_check and dt_binding_check and it didn't
+>> complain on my side.
+>> What I have miss ?
+> 
+> Oh wait, we already have a binding for that. I was confused with your
+> adding "jedec,ddr4-channel". Sorry for the noise.
 
-But the bitmap can be modified concurrently, which is not a problem.
+It's fine no worries.
+However, in the patch 8, I add the property "memory-channel" that is not 
+in the dtschema repo and I didn't get any reviews on it.
+Is it ok for you ? or maybe should we discuss it over there ?
+I can try to do a PR on the dtschema thought, if it is ok.
 
-Thanks,
-
-        tglx
-
-
+Best regards,
+Clément
 
