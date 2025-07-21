@@ -1,83 +1,88 @@
-Return-Path: <linux-kernel+bounces-738535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51537B0B9C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 03:26:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 784C4B0B9C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 03:29:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89F0D1734D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 01:26:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23C721896AD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 01:29:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA5C187554;
-	Mon, 21 Jul 2025 01:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8312218BC0C;
+	Mon, 21 Jul 2025 01:29:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M46I+PSO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="svI5CWy7"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C131369B4;
-	Mon, 21 Jul 2025 01:26:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C23D7260A
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 01:29:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753061178; cv=none; b=peOTN512kt9aJGiKlx8hXXo55CNcBk7IGa0Urnb0zgmC/oCqfXcGpv1QB6G1/cUw15oUCpl+QKRRajBIsZr/GkefWwsByV9WFiFFYAdDixvFB7pG9xjzqpNRgt3SVXVZl+b4MN+94xcxYGZyLUHQDogD1FJRCcwQk0cwX3TFMtk=
+	t=1753061364; cv=none; b=kJ3WVzqkYzV1qHtG2RHHNyu4KnPQb/eAHFJzFfc7ggH/fO9b0Vjp7ClsHsDCqrBKa9n3w5jCdret7zwTsQcmU5Ccavw53LfVtG1LH2/CZgoioj8AcUF/0lmNlb0kh7PIFnFYwhJmsSbHHhJkQNIcXcFVCbEQaRlkaQlcfj+GdgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753061178; c=relaxed/simple;
-	bh=pvhRCHGIucYdujSap+8QzPuzACWS4wsHi36ZbyRIfzU=;
+	s=arc-20240116; t=1753061364; c=relaxed/simple;
+	bh=qUZPqaVQzdx+KR3dhpj0J+Z89UTpW4E+eqFQDjtcZbw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r6NEHfH1lxjo2i+TazUQhorRI0KN7kvwUt7I+CpOV8LiM+RtKLWWJ9O3DVLLxLDZikl7vndxDTnGragow3HDAApXIVddzNVnDSUgL0d3HtLIoi5J9tAjQ7FKhbRFuNcni5p+nNZ6/Nec9d7aoLQYoEk2nFojpI5OTtRKoj/qQ5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M46I+PSO; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753061177; x=1784597177;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=pvhRCHGIucYdujSap+8QzPuzACWS4wsHi36ZbyRIfzU=;
-  b=M46I+PSOBL/MqgHhmUBcV496KG4+8xnNOLygDvVqnzNuFddfpUz4yQEP
-   /nM41GlPe7JNHIHpKKsnkihr/oJkG0B+DTEIgBBprvBFzM1zMTp+ppruP
-   BXaSIGf4h/knBmRy1DfqYS+FBny70JTVIVfbipEKwAXeaQ245dmJ3YsIF
-   K05LMFyAzumoodR+n+pj/FnM0vCgSP+MXQjLlqH1nMuh+TDdeJDupMcBC
-   TXlGR53YGhnay+StexCR+KfcIsRz6U4b64FhDrMYKXa2C0f2B9Ql02XXd
-   KISeMqS1VhIflDFrCfMXFz2YNf1qNwfQxMyrCUX30PiWbfNOF7cWTzGwZ
-   w==;
-X-CSE-ConnectionGUID: jlIOHFYxTNGpucPVMFtheg==
-X-CSE-MsgGUID: N9PlXQmWSHieTWsGPZWnJQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11498"; a="72838318"
-X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
-   d="scan'208";a="72838318"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jul 2025 18:26:16 -0700
-X-CSE-ConnectionGUID: yx9QBkAFRLO48bxGjUoV0A==
-X-CSE-MsgGUID: cBbe1sc/RRGUKZYvF5ur8w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
-   d="scan'208";a="162920814"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 20 Jul 2025 18:26:13 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1udfIA-000GOD-0D;
-	Mon, 21 Jul 2025 01:26:10 +0000
-Date: Mon, 21 Jul 2025 09:25:53 +0800
-From: kernel test robot <lkp@intel.com>
-To: Sami Tolvanen <samitolvanen@google.com>, bpf@vger.kernel.org,
-	Puranjay Mohan <puranjay@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Maxwell Bland <mbland@motorola.com>,
-	Sami Tolvanen <samitolvanen@google.com>
-Subject: Re: [PATCH bpf-next v11 2/3] cfi: Move BPF CFI types and helpers to
- generic code
-Message-ID: <202507210919.wPRFLcKb-lkp@intel.com>
-References: <20250718223345.1075521-7-samitolvanen@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nyQ3xWMsQrkQRSmzUO1aiI84PBP5p8YFpUqwFsomqCcSWHVxp1WoGzIs4tG5PHcNNFctQ1FazFNRShJfl5w0UqmYKkEtAfb3ty/Sxh38f7diI138YNalrSP+Ao2spwtDvn2H+8zcHoIkydv4cUYqD9dJdhy4BQi2Aq5Gn2POoos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=svI5CWy7; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4ab5e2ae630so45718031cf.3
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 18:29:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1753061361; x=1753666161; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rhntmyEypSEejVoCJCB83K3S3THmRRLjvAqFcWpLdTg=;
+        b=svI5CWy75M3nxeqoRbw8tNSf5j4TxDfSdxIQKTh+PElgFupxwN+SJ/SkJvBMMBq3wX
+         tagCWFOjZ9EbRUFexXD+05Y8jYDF8HcUZLfDayPpkkYfGO63gehIKv+TM/RJL/9phOO1
+         hyp0/TSOCza0UkUMM33BoM9XufvW4O9UK2DtVn2QBW3FgpU93+kl4n4VJlCwhyyxooi7
+         jXCAdyAZkTTla2aQ6IpqwMKepMAsapscvSy8rZtIAJowfIR/mdLofuHMPNbuKAt+0hcX
+         q3xd5wOXGygyZk14Su2yHhNLbYV7QguvsvICXhIhO1OS7MK/52l3Hkbjqfmz+U7nW45Q
+         yUXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753061361; x=1753666161;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rhntmyEypSEejVoCJCB83K3S3THmRRLjvAqFcWpLdTg=;
+        b=cfVjDgAZoKRz3uAwmpEh0OO74SrFS5vvXQI7GMfXrUMLknVdywlzQY6XS/xxBkioZW
+         y/Hc5417sjUjAvTwC8Fk9XgGcND4cAE+qJbtOW3ky24uv0GxEkmBRJuSdUMYc07ie+Ym
+         QneBw+VRGEUtK8xoJnHrhPl5+SCWDeAokXNSwth89V0cu7SJhH6Lcj0hTH8PU9qZPN/k
+         e1jW8KUEGQPBIks/hwilmoEfQvE8QPzUHTObF9ZCuQmeHx8KTlNWl7c2vhh21oWRVjt/
+         22v0r2G2FWsRzoB8E50CTk9Ck6T6ERfCNGm3vDJ7GNgAby8psWry7h8P8Vu6qF1KWKfX
+         k19g==
+X-Forwarded-Encrypted: i=1; AJvYcCWa7SGsTGlLguuAjLQJgYGXeR7gpcYmPDF6DrKJI5r0w0H/h0BFahVaKxw6ANdL6YpMU+61n+a05xKDpUg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1UqxjNm5IM8r9eLmlmspKmqlu166jo8bd8LJUEvZLSXjMOX5p
+	uKBRMgoxEzTfT4IPRcd71UXF8qEPZ33eszDe28sD0WiL/FsetFM4O2LApZvgnIEA5Q==
+X-Gm-Gg: ASbGnctwmjBb0Ikby/eZgeM6FS5x1Iu0tAf8WFK2InAytI4jKpYflfYUyHG/ELkFmoF
+	kn18xnCLFID4AleIzvTc4q+hb/uJiigktA7g29DLbVp9zm2RLoMDcg4oTznFgNSoFhczQQ6oYT3
+	IsoP890t9dtOGpq1URSaOcfiIbdCTR7Az9IHK2qQdAi4KAVMcJKiJvytSuZP905uofCFU/xMZvw
+	ykzDiZjL9gwGn/rg9YAxwKKa7MJNgQo5Z+MdqRwwzdve0kq9SQOUZnh69dMItExZsPz0xwkGDbS
+	X5p9LrxgnidisRX5vX4Ziz8gc+RkXPu7i9gdjn+abdKXaWqbBsr5HdAn/yHz1thlkVkUCXbgHMb
+	O9VUPlMixCBdEdtKvDABp66g=
+X-Google-Smtp-Source: AGHT+IGvZXN48xypC7e8hnBaSBqC9wAa/B1Fi8eCElwg2pmL3DV1fODaHlgST8LHhtda82WAIIis8g==
+X-Received: by 2002:a05:622a:1bab:b0:4ab:85a5:bf05 with SMTP id d75a77b69052e-4ab93dd693bmr259861401cf.45.1753061361320;
+        Sun, 20 Jul 2025 18:29:21 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::401d])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4abb497fe88sm36655191cf.5.2025.07.20.18.29.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Jul 2025 18:29:20 -0700 (PDT)
+Date: Sun, 20 Jul 2025 21:29:18 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Arnaud Lecomte <contact@arnaud-lcm.com>
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
+	snovitoll@gmail.com,
+	syzbot+86b6d7c8bcc66747c505@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] usb: mon: Fix slab-out-of-bounds in mon_bin_event due to
+ unsafe URB transfer_buffer access
+Message-ID: <8bbc84ee-44c9-4a85-b5bf-3980b3c81e5c@rowland.harvard.edu>
+References: <20250720200057.19720-1-contact@arnaud-lcm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,50 +91,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250718223345.1075521-7-samitolvanen@google.com>
+In-Reply-To: <20250720200057.19720-1-contact@arnaud-lcm.com>
 
-Hi Sami,
+On Sun, Jul 20, 2025 at 09:00:57PM +0100, Arnaud Lecomte wrote:
+> The syzkaller fuzzer uncovered a kernel slab-out-of-bounds
+>  write in the USB monitoring subsystem (mon_bin) when handling
+>  a malformed URB (USB Request Block) with the following properties:
+>  - transfer_buffer_length = 0xffff
+>  - actual_length = 0x0 (no data transferred)
+>  - number_of_packets = 0x0 (non-isochronous transfer)
 
-kernel test robot noticed the following build errors:
+This kind of problem is fixed not by changing the way mon_bin reacts to 
+malformed URBs, but rather by correcting the code that creates the URBs 
+in the first place so that they won't be malformed.
 
-[auto build test ERROR on 0ee30d937c147fc14c4b49535181d437cd2fde7a]
+> When reaching the mon_copy_to_buff function,
+>  we will try to copy into the mon rp bin with the following parameters:
+> off=0xcc0, from=0xffff8880246df5e1 "", length=0xf000
+> 
+> At the first iteration, the step_len is 0x340 and it is during the mem_cpy
+> that the slab-out-of-bounds happens.
+> As step_len < transfer_buffer_length, we can deduce that it is related
+>  to an issue with the transfer_buffer being invalid.
+> The patch proposes a safe access to the kernel
+>  kernel buffer urb->transfer_buffer with `copy_from_kernel_nofault`.
+> 
+> Reported-by: syzbot+86b6d7c8bcc66747c505@syzkaller.appspotmail.com
+> Fixes: 6f23ee1fefdc1 ("USB: add binary API to usbmon")
+> Closes: https://syzkaller.appspot.com/bug?extid=86b6d7c8bcc66747c505
+> Tested-by: syzbot+86b6d7c8bcc66747c505@syzkaller.appspotmail.com
+> Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
+> ---
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Sami-Tolvanen/cfi-add-C-CFI-type-macro/20250719-063535
-base:   0ee30d937c147fc14c4b49535181d437cd2fde7a
-patch link:    https://lore.kernel.org/r/20250718223345.1075521-7-samitolvanen%40google.com
-patch subject: [PATCH bpf-next v11 2/3] cfi: Move BPF CFI types and helpers to generic code
-config: arm-randconfig-r072-20250721 (https://download.01.org/0day-ci/archive/20250721/202507210919.wPRFLcKb-lkp@intel.com/config)
-compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 16534d19bf50bde879a83f0ae62875e2c5120e64)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250721/202507210919.wPRFLcKb-lkp@intel.com/reproduce)
+This is unnecessary.  The underlying cause of the problem was fixed by 
+commit 0d0777ccaa2d ("HID: core: ensure __hid_request reserves the 
+report ID as the first byte") in the HID tree.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507210919.wPRFLcKb-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> <inline asm>:2:41: error: expected '%<type>' or "<type>"
-       2 |         .pushsection    .data..ro_after_init,"aw",@progbits     
-         |                                                   ^
->> <inline asm>:3:21: error: expected STT_<TYPE_IN_UPPER_CASE>, '#<type>', '%<type>' or "<type>"
-       3 |         .type   cfi_bpf_hash,@object                            
-         |                              ^
->> <inline asm>:9:19: error: .popsection without corresponding .pushsection
-       9 |         .popsection                                             
-         |                                                                 ^
-   <inline asm>:10:41: error: expected '%<type>' or "<type>"
-      10 |         .pushsection    .data..ro_after_init,"aw",@progbits     
-         |                                                   ^
-   <inline asm>:11:29: error: expected STT_<TYPE_IN_UPPER_CASE>, '#<type>', '%<type>' or "<type>"
-      11 |         .type   cfi_bpf_subprog_hash,@object                            
-         |                                      ^
-   <inline asm>:17:19: error: .popsection without corresponding .pushsection
-      17 |         .popsection                                             
-         |                                                                 ^
-   6 errors generated.
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Alan Stern
 
