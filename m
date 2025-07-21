@@ -1,347 +1,221 @@
-Return-Path: <linux-kernel+bounces-739805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A686AB0CB34
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 21:55:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C5D1B0CB39
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 21:56:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E200F3A4E93
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:54:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCEB03A729A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1A2238C1F;
-	Mon, 21 Jul 2025 19:55:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F370238C3A;
+	Mon, 21 Jul 2025 19:56:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I+2LElkb"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fDFHJWdd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79C822F16C;
-	Mon, 21 Jul 2025 19:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76BAD23506A;
+	Mon, 21 Jul 2025 19:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753127709; cv=none; b=JTO16IFEeCaV++vqzOPEkCfvuCoObGQBTpRKmhnyvZyKbFKZo7xu/vobMcPzxpb9ed936UkgAVR4nX7BncnEP1kTLd3iM06sLvdhgFPIwvox5dTMxsDuqrjwnBNv5dUFnAoI5KY15b6TOuYFmD3B6xnEIoiAZwvygEZST/xLUdw=
+	t=1753127785; cv=none; b=BQ5DD8VLBq2GctlbsvGkV/HFZ+IWg47NxG1QuYSsZiW9yYV2yaGHy10y16G65EsJAuAq++VvIQspiwsin5Y6BjD3nLJKz7L21zwrQ2NxLQ6GpCmJxb5z8wNk9rxLeGa0xWVEcmCw45uqE34IQ9U1Y/dYuwKZdivPP4zsN1eED3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753127709; c=relaxed/simple;
-	bh=36sc+2rQOEbiC7h+soS3PwbETPbq7pjCVh7WYTk+tXQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Lkxag/bNiJ/Dn/UgA4R9E1jjpmeVtpkCdHHJpdqahV8PldvY/5tuCerscZ49Im2xOUprTkSE3p7dYdM01ptjrwNF2K+MPqCFjhY73X7Eh8Y9B+K0HaUXtvE6zEONwo+vWXV4kjSf/xVeJoaJItVOk3w24wKUZrCTqsC3PSA7cL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I+2LElkb; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-234b9dfb842so39458155ad.1;
-        Mon, 21 Jul 2025 12:55:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753127707; x=1753732507; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a2nMJpZVRXWba/G/41zaeR+U3GATl1oyyqdt2ZwTDv8=;
-        b=I+2LElkbAsFXBqbpxrVDf2o0jRopiMui24zerZ5LpofEWpWFowph1rJbS0LthqJD1x
-         8MulvQ0+CEJv64No8N9sqLoWaXVh9tYw28Kp92dA3r9QHMJoux71G5f7rmlymqnVXhFq
-         LCisdS9nUSKSpEJtPTBRKA7ztnJYFylYSG+wIrqZG4OaWfMykUhtG+U7+CYtyLZcczuz
-         wDgzSp/efEecNjH1VdUF78S9bKgMNxCBnPtstShnyJwReUCiiQmryylfR7NEce6YCN/H
-         8C/zv0uN4jPbS1U5aEBnWlOVCZvm4TU6/VJbJWMtwY1hX97Uujnor9UFP4Pb3tq1/3wO
-         HTWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753127707; x=1753732507;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=a2nMJpZVRXWba/G/41zaeR+U3GATl1oyyqdt2ZwTDv8=;
-        b=jemRNWYYRg8YPCD9/jFPZb+4QpwHMgm+fFWElIwxpfgnIycWI4Ttb/WD+Aga+g/fwL
-         t6eoavXRMlDT+NwxOKpxZeF7+d4ogZk3BzWHkTz5g/jaDRHGdIeArEONHZKq3JwvCC90
-         Q1oBe5HOQ60PcyK5Wpma9TKRgHzTlRwroMNngn/7HlvM773YUDHFwLa90IMam/EuE+Ij
-         cX/QwU/jq2wX0WfFotMFxd0meUNWWfL+EFjKHDY2mwn+jQfkFuBX4bVR4fwBcorlqxuP
-         GN/pd78z/jr1OjRP4dtIH6qcj/UCdttDrDWWSn2WiZUqnVSQYSUL1fdpi9wPGaWE1dsZ
-         oC0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUsKV+E/yjtw5VDBcLjeSxrWbh0NMotk9CaYs3h2pmUQcG8jP6i1pFwiqsh2a6IfYREYikCxUIynDSpuMdb@vger.kernel.org, AJvYcCWE0jeX/AbIXP0RjCEwkvtEuvR167rybQkHZ5QnhJBbFJn3AaNJOMYcyVgNM28DVatCUxnpHg8aTq4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywvn1PXY66eBsWGEi3VDw/opUEEt5nY4Lv5COPdy/bdCBXeCqVx
-	I0Yi8cG8UYiRugsnWUctmPidnrh2mjqeNPYwUehfxJZ2x7OF+NjuKtKY
-X-Gm-Gg: ASbGncsIA+FZAGrkkHSru/fyaWYb1SJ/dW/pPJ+tCxpxstMvPALkMhwOukwAILg3biQ
-	8/mHkozOmNTlQnNZzImkbMbS6XHQnZY2QrHfcPs3fDfcuuD8YYhuMgOWs0dbBV0L1KP2bF6QHeX
-	zmEPXgcVFs8ppvJD/8kPA24zfDJwfVZ+Q6vfGp0McabD4Ya4n5kWZOo36X6nJoA5vAyUmYg5bZY
-	MShoL/HFZXynE6MG5lKgg0myMuhYPCccGoGjV9Q5FZkIgImupHtmeeIaSTcIT7M3aoIQetqgtnP
-	qOMSblcNbI1kLj2Twj+WV41eY3G6yNJq5wqueHk9BxqUBYDPVV2n3K4GKDu8rVhvHevK4fWOJaW
-	p/aglmFmSBTuYKdhLwQZjgbv+R4qdGo+4vnSucQ==
-X-Google-Smtp-Source: AGHT+IGx7yYM9s11IgwlGe8dna0dcaEjOn3RAgzGFMHMPsfQ+TZHeJN6Cjt3qFAcPdtdmoHyxxdV/A==
-X-Received: by 2002:a17:902:c944:b0:234:8a4a:adac with SMTP id d9443c01a7336-23e256b741amr307676475ad.20.1753127707072;
-        Mon, 21 Jul 2025 12:55:07 -0700 (PDT)
-Received: from akshayaj-lenovo.. ([2401:4900:883b:7064:9455:3de4:d7bb:505e])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b60ed4dsm62035295ad.61.2025.07.21.12.55.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 12:55:06 -0700 (PDT)
-From: Akshay Jindal <akshayaj.lkd@gmail.com>
-To: anshulusr@gmail.com,
-	jic23@kernel.org,
-	dlechner@baylibre.com,
-	nuno.sa@analog.com,
-	andy@kernel.org
-Cc: shuah@kernel.org,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Akshay Jindal <akshayaj.lkd@gmail.com>
-Subject: [PATCH 2/2] iio: light: ltr390: Add conditional data freshness check with sysfs control
-Date: Tue, 22 Jul 2025 01:24:19 +0530
-Message-ID: <20250721195419.526920-2-akshayaj.lkd@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250721195419.526920-1-akshayaj.lkd@gmail.com>
-References: <20250721195419.526920-1-akshayaj.lkd@gmail.com>
+	s=arc-20240116; t=1753127785; c=relaxed/simple;
+	bh=86ZWFwENjjzEzuXZxiMpq5v1vY2VwtODGSuhLJSv+AA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WQnO4YU5UeboZL+y3TT2Laah/H5xmimatrh+/dPwmIUHjNML7JksKE/PRdmR1S8eaLWxkDAVp0IfpXL091sQ7KyYjrPOb37l/DQWPvT3Togtym9SH+Ke7UQARQCf98roYkqHSaGgfyvQoRi8NZggKqE++NrbEn4SjQ06BX88tkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fDFHJWdd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5D1CC4CEED;
+	Mon, 21 Jul 2025 19:56:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753127785;
+	bh=86ZWFwENjjzEzuXZxiMpq5v1vY2VwtODGSuhLJSv+AA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fDFHJWddZ7cOoD1rdl23jS380yXpGP3jgu8H0GTcX3CEzYMFzdeMgfP8EsGmtkjZS
+	 ALNrOY+luRpCH5w25UMwJOyxl76D9M6syN/3Klp8/cCkC1Gqj0symLbwhDOvogokZg
+	 WeHSGA9wqtUg0n+WAbZ6ZfNsmR2oMUF0j+0COrFXdaLtzcvYG1gMAta91GJPGoXCvV
+	 PehZMQxjbkeBBPdOf2nNmeC0rQ5iYcKgRT1BzH5K5Kwga9n7VeTvxkLvko8FWEA2GL
+	 cBnQq2dxg1Bi2dawSHOKjEDBRlkmnhR1rIHZZah/g0GlcgQxn48PqdnuKFgayE9wF8
+	 1KdQLn6B61OlA==
+Date: Mon, 21 Jul 2025 14:56:24 -0500
+From: Rob Herring <robh@kernel.org>
+To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+Cc: andersson@kernel.org, linus.walleij@linaro.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, quic_rjendra@quicinc.com,
+	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: pinctrl: qcom: Add Glymur pinctrl
+ bindings
+Message-ID: <20250721195624.GA1160054-robh@kernel.org>
+References: <20250721163221.310746-1-pankaj.patil@oss.qualcomm.com>
+ <20250721163221.310746-2-pankaj.patil@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250721163221.310746-2-pankaj.patil@oss.qualcomm.com>
 
-Add logic to check the sensor’s data freshness status bit before reading
-data, and skip reads if the data is stale.
+On Mon, Jul 21, 2025 at 10:02:20PM +0530, Pankaj Patil wrote:
+> Add DeviceTree binding for Glymur SoC TLMM block
+> 
+> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+> ---
+> Changes in v3:
+> Fixed indentation for example tlmm node
+> 
+> Changes in v2:
+> Updated gpio-line-names maxItems to 250
+> Fixed example node reg property
+> 
+> .../bindings/pinctrl/qcom,glymur-tlmm.yaml    | 128 ++++++++++++++++++
+>  1 file changed, 128 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,glymur-tlmm.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,glymur-tlmm.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,glymur-tlmm.yaml
+> new file mode 100644
+> index 000000000000..25ec99bde59d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,glymur-tlmm.yaml
+> @@ -0,0 +1,128 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/qcom,glymur-tlmm.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Technologies, Inc. Glymur TLMM block
+> +
+> +maintainers:
+> +  - Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+> +
+> +description:
+> +  Top Level Mode Multiplexer pin controller in Qualcomm Glymur SoC.
+> +
+> +allOf:
+> +  - $ref: /schemas/pinctrl/qcom,tlmm-common.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,glymur-tlmm
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  gpio-reserved-ranges:
+> +    minItems: 1
+> +    maxItems: 119
+> +
+> +  gpio-line-names:
+> +    maxItems: 250
+> +
+> +patternProperties:
+> +  "-state$":
+> +    oneOf:
+> +      - $ref: "#/$defs/qcom-glymur-tlmm-state"
+> +      - patternProperties:
+> +          "-pins$":
+> +            $ref: "#/$defs/qcom-glymur-tlmm-state"
+> +        additionalProperties: false
+> +
+> +$defs:
+> +  qcom-glymur-tlmm-state:
+> +    type: object
+> +    description:
+> +      Pinctrl node's client devices use subnodes for desired pin configuration.
+> +      Client device subnodes use below standard properties.
+> +    $ref: qcom,tlmm-common.yaml#/$defs/qcom-tlmm-state
+> +    unevaluatedProperties: false
+> +
+> +    properties:
+> +      pins:
+> +        description:
+> +          List of gpio pins affected by the properties specified in this
+> +          subnode.
+> +        items:
+> +          oneOf:
+> +            - pattern: "^gpio([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9])$"
+> +            - enum: [ ufs_reset, sdc2_clk, sdc2_cmd, sdc2_data ]
+> +        minItems: 1
+> +        maxItems: 36
+> +
+> +      function:
+> +        description:
+> +          Specify the alternative function to be configured for the specified
+> +          pins.
+> +        enum: [ gpio, RESOUT_GPIO_N, aoss_cti, asc_cci, atest_char, atest_usb, audio_ext_mclk0,
+> +                audio_ext_mclk1, audio_ref_clk, cam_asc_mclk4, cam_mclk, cci_async_in, cci_i2c_scl,
+> +                cci_i2c_sda, cci_timer, cmu_rng, cri_trng, dbg_out_clk, ddr_bist_complete,
+> +                ddr_bist_fail, ddr_bist_start, ddr_bist_stop, ddr_pxi, edp0_hot, edp0_lcd,
+> +                edp1_lcd, egpio, eusb0_ac_en, eusb1_ac_en, eusb2_ac_en, eusb3_ac_en, eusb5_ac_en,
+> +                eusb6_ac_en, gcc_gp1, gcc_gp2, gcc_gp3, host2wlan_sol, i2c0_s_scl, i2c0_s_sda,
+> +                i2s0_data, i2s0_sck, i2s0_ws, i2s1_data, i2s1_sck, i2s1_ws, ibi_i3c, jitter_bist,
+> +                mdp_vsync_out, mdp_vsync_e, mdp_vsync_p, mdp_vsync_s, pcie3a_clk, pcie3a_rst_n,
+> +                pcie3b_clk, pcie4_clk_req_n, pcie5_clk_req_n, pcie6_clk_req_n, phase_flag,
+> +                pll_bist_sync, pll_clk_aux, pmc_oca_n, pmc_uva_n, prng_rosc, qdss_cti, qdss_gpio,
+> +                qspi, qup0_se0, qup0_se1, qup0_se2, qup0_se3_l0, qup0_se3, qup0_se4, qup0_se5,
+> +                qup0_se6, qup0_se7, qup1_se0, qup1_se1, qup1_se2, qup1_se3, qup1_se4, qup1_se5,
+> +                qup1_se6, qup1_se7, qup2_se0, qup2_se1, qup2_se2, qup2_se3, qup2_se4, qup2_se5,
+> +                qup2_se6, qup2_se7, qup3_se0, qup3_se1, sd_write_protect, sdc4_clk,
+> +                sdc4_cmd, sdc4_data, smb_acok_n, sys_throttle, tb_trig_sdc2, tb_trig_sdc4,
+> +                tmess_prng, tsense_pwm, tsense_therm, usb0_dp, usb0_phy_ps, usb0_sbrx, usb0_sbtx,
+> +                usb0_tmu, usb1_dbg, usb1_dp, usb1_phy_ps, usb1_sbrx, usb1_sbtx, usb1_tmu, usb2_dp,
+> +                usb2_phy_ps, usb2_sbrx, usb2_sbtx, usb2_tmu, vsense_trigger_mirnat, wcn_sw,
+> +                wcn_sw_ctrl ]
 
-Introduce a new boolean sysfs attribute, `data_fresh_check_enable`, to allow
-users to enable or disable this behavior at runtime:
+Wrap lines at 80 char.
 
-  - 1: Enable data freshness check (default)
-  - 0: Disable data freshness check
-
-This provides flexibility to choose between ensuring fresh data and allowing
-faster reads when occasional staleness is acceptable.
-
-Document the new attribute under Documentation/ABI/testing/sysfs-bus-iio.
-
-Signed-off-by: Akshay Jindal <akshayaj.lkd@gmail.com>
----
--> Tested on Raspberrypi 4B. Follow for more details.
-
-akshayajpi@raspberrypi:~ $ uname -r
-6.12.35-v8+
-akshayajpi@raspberrypi:~ $ uname -a
-Linux raspberrypi 6.12.35-v8+ #5 SMP PREEMPT Tue Jul 15 17:38:06 IST 2025 aarch64 GNU/Linux
-
--> Sensor Detection, overlaying of device tree and Driver loading
-akshayajpi@raspberrypi:~ $ i2cdetect -y 1
-     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
-00:                         -- -- -- -- -- -- -- --
-10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-50: -- -- -- 53 -- -- -- -- -- -- -- -- -- -- -- --
-60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-70: -- -- -- -- -- -- -- --
-akshayajpi@raspberrypi:~ $ sudo dtoverlay i2c-sensor ltr390
-akshayajpi@raspberrypi:~ $ lsmod|grep ltr390
-ltr390                 16384  0
-industrialio          110592  1 ltr390
-regmap_i2c             12288  1 ltr390
-
--> Sysfs Attribute Creation validation
-akshayajpi@raspberrypi:~ $ ls -ltrh /sys/bus/iio/devices/iio\:device0/
-total 0
--rw-r--r-- 1 root root 4.0K Jul 21 23:52 uevent
--r--r--r-- 1 root root 4.0K Jul 21 23:52 name
--r--r--r-- 1 root root 4.0K Jul 21 23:52 waiting_for_supplier
-lrwxrwxrwx 1 root root    0 Jul 21 23:52 subsystem -> ../../../../../../../bus/iio
--r--r--r-- 1 root root 4.0K Jul 21 23:52 scale_available
--r--r--r-- 1 root root 4.0K Jul 21 23:52 sampling_frequency_available
--rw-r--r-- 1 root root 4.0K Jul 21 23:52 sampling_frequency
-drwxr-xr-x 2 root root    0 Jul 21 23:52 power
-lrwxrwxrwx 1 root root    0 Jul 21 23:52 of_node -> ../../../../../../../firmware/devicetree/base/soc/i2c@7e804000/ltr390@53
--rw-r--r-- 1 root root 4.0K Jul 21 23:52 in_uvindex_scale
--rw-r--r-- 1 root root 4.0K Jul 21 23:52 in_uvindex_raw
--r--r--r-- 1 root root 4.0K Jul 21 23:52 integration_time_available
--rw-r--r-- 1 root root 4.0K Jul 21 23:52 integration_time
--rw-r--r-- 1 root root 4.0K Jul 21 23:52 in_illuminance_scale
--rw-r--r-- 1 root root 4.0K Jul 21 23:52 in_illuminance_raw
-drwxr-xr-x 2 root root    0 Jul 21 23:52 events
--r--r--r-- 1 root root 4.0K Jul 21 23:52 dev
--rw-r--r-- 1 root root 4.0K Jul 21 23:52 data_fresh_check_enable<-----
--r--r--r-- 1 root root 4.0K Jul 21 23:52 data_fresh
-
--> Default value 1 for data_fresh_check_enable
-akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/data_fresh
-1
-akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/data_fresh_check_enable 
-1
-
--> Disable fresh measurement in the sensor
-akshayajpi@raspberrypi:~ $ i2cset -f -y 1 0x53 0x0 0x0
-akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/data_fresh_check_enable 
-1
-akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/data_fresh_check_enable 
-1
-akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
-647
-akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/data_fresh
-0
-
--> Since data_fresh_enable_check is enabled by default, driver skips
-   stale data read and emits -EAGAIN.
-akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
-cat: '/sys/bus/iio/devices/iio:device0/in_illuminance_raw': Resource temporarily unavailable
-akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
-cat: '/sys/bus/iio/devices/iio:device0/in_illuminance_raw': Resource temporarily unavailable
-akshayajpi@raspberrypi:~ $ 
-
--> Disable data_fresh_check_en
-akshayajpi@raspberrypi:~ $ echo 0 | sudo tee /sys/bus/iio/devices/iio\:device0/data_fresh_check_enable
-0
-akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/data_fresh_check_enable
-0
-akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/data_fresh
-0
-
--> Since freshness check is disabled, driver reads and prints stale
-   data.
-akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
-647
-akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
-647
-akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
-647
-
--> Re-enabling freshness check, results in driver emitting -EAGAIN.
-akshayajpi@raspberrypi:~ $ echo 1 | sudo tee /sys/bus/iio/devices/iio\:device0/data_fresh_check_enable
-1
-akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/data_fresh_check_enable
-1
-akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
-cat: '/sys/bus/iio/devices/iio:device0/in_illuminance_raw': Resource temporarily unavailable
-akshayajpi@raspberrypi:~ $ cat /sys/bus/iio/devices/iio\:device0/in_illuminance_raw
-cat: '/sys/bus/iio/devices/iio:device0/in_illuminance_raw': Resource temporarily unavailable
-
- Documentation/ABI/testing/sysfs-bus-iio | 12 ++++++
- drivers/iio/light/ltr390.c              | 55 ++++++++++++++++++++++++-
- 2 files changed, 66 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
-index 5d176d46c15d..da881e16ee3d 100644
---- a/Documentation/ABI/testing/sysfs-bus-iio
-+++ b/Documentation/ABI/testing/sysfs-bus-iio
-@@ -2397,3 +2397,15 @@ Description:
- 
- 		Provides userspace visibility into data_freshness status which
- 		can be used for debugging and informational use.
-+
-+What:		/sys/.../iio:deviceX/data_fresh_check_enable
-+KernelVersion:	6.16
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		Read-write boolean attribute controlling whether the driver
-+		checks the data freshness status bit before reading sensor data.
-+
-+		0 - Freshness check disabled
-+		1 - Enable check; driver will skip reading stale data (default)
-+
-+		This flag affects the behavior of data reads.
-diff --git a/drivers/iio/light/ltr390.c b/drivers/iio/light/ltr390.c
-index 5af0ffd3df1d..b13f01835aeb 100644
---- a/drivers/iio/light/ltr390.c
-+++ b/drivers/iio/light/ltr390.c
-@@ -98,6 +98,7 @@ struct ltr390_data {
- 	enum ltr390_mode mode;
- 	int gain;
- 	int int_time_us;
-+	bool data_fresh_check_en;
- };
- 
- static const struct regmap_config ltr390_regmap_config = {
-@@ -199,10 +200,40 @@ static ssize_t data_fresh_show(struct device *dev,
- 	return sysfs_emit(buf, "%d\n", !!(status & LTR390_DATA_STATUS_MASK));
- }
- 
-+static ssize_t data_fresh_check_enable_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	struct ltr390_data *data = iio_priv(dev_to_iio_dev(dev));
-+
-+	guard(mutex)(&data->lock);
-+
-+	return sysfs_emit(buf, "%d\n", data->data_fresh_check_en);
-+}
-+
-+static ssize_t data_fresh_check_enable_store(struct device *dev,
-+		struct device_attribute *attr,
-+		const char *buf, size_t len)
-+{
-+	int ret;
-+	bool data_fresh_check_en;
-+	struct ltr390_data *data = iio_priv(dev_to_iio_dev(dev));
-+
-+	ret = kstrtobool(buf, &data_fresh_check_en);
-+	if (ret)
-+		return ret;
-+
-+	guard(mutex)(&data->lock);
-+
-+	data->data_fresh_check_en = data_fresh_check_en;
-+	return len;
-+}
-+
- static IIO_DEVICE_ATTR_RO(data_fresh, 0);
-+static IIO_DEVICE_ATTR_RW(data_fresh_check_enable, 0);
- 
- static struct attribute *ltr390_attributes[] = {
- 	&iio_dev_attr_data_fresh.dev_attr.attr,
-+	&iio_dev_attr_data_fresh_check_enable.dev_attr.attr,
- 	NULL
- };
- 
-@@ -214,7 +245,7 @@ static int ltr390_read_raw(struct iio_dev *iio_device,
- 			   struct iio_chan_spec const *chan, int *val,
- 			   int *val2, long mask)
- {
--	int ret;
-+	int ret, status;
- 	struct ltr390_data *data = iio_priv(iio_device);
- 
- 	guard(mutex)(&data->lock);
-@@ -226,6 +257,16 @@ static int ltr390_read_raw(struct iio_dev *iio_device,
- 			if (ret < 0)
- 				return ret;
- 
-+			if (data->data_fresh_check_en) {
-+				ret = ltr390_register_read(data, LTR390_MAIN_STATUS);
-+				if (ret < 0)
-+					return ret;
-+
-+				status = ret;
-+				if (!(status & LTR390_DATA_STATUS_MASK))
-+					return -EAGAIN;
-+			}
-+
- 			ret = ltr390_register_read(data, LTR390_UVS_DATA);
- 			if (ret < 0)
- 				return ret;
-@@ -236,6 +277,16 @@ static int ltr390_read_raw(struct iio_dev *iio_device,
- 			if (ret < 0)
- 				return ret;
- 
-+			if (data->data_fresh_check_en) {
-+				ret = ltr390_register_read(data, LTR390_MAIN_STATUS);
-+				if (ret < 0)
-+					return ret;
-+
-+				status = ret;
-+				if (!(status & LTR390_DATA_STATUS_MASK))
-+					return -EAGAIN;
-+			}
-+
- 			ret = ltr390_register_read(data, LTR390_ALS_DATA);
- 			if (ret < 0)
- 				return ret;
-@@ -687,6 +738,8 @@ static int ltr390_probe(struct i2c_client *client)
- 	data->gain = 3;
- 	/* default mode for ltr390 is ALS mode */
- 	data->mode = LTR390_SET_ALS_MODE;
-+	/* default value for data_fresh_check_en is 1 */
-+	data->data_fresh_check_en = 1;
- 
- 	mutex_init(&data->lock);
- 
--- 
-2.43.0
-
+> +
+> +    required:
+> +      - pins
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    tlmm: pinctrl@f100000 {
+> +        compatible = "qcom,glymur-tlmm";
+> +        reg = <0x0f100000 0xf00000>;
+> +        interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
+> +        gpio-controller;
+> +        #gpio-cells = <2>;
+> +        interrupt-controller;
+> +        #interrupt-cells = <2>;
+> +        gpio-ranges = <&tlmm 0 0 249>;
+> +        wakeup-parent = <&pdc>;
+> +        gpio-reserved-ranges = <4 4>, <10 2>, <33 3>, <44 4>;
+> +        qup_uart21_default: qup-uart21-default-state {
+> +            tx-pins {
+> +                pins = "gpio86";
+> +                function = "qup2_se5";
+> +                drive-strength = <2>;
+> +                bias-disable;
+> +            };
+> +
+> +            rx-pins {
+> +                pins = "gpio87";
+> +                function = "qup2_se5";
+> +                drive-strength = <2>;
+> +                bias-disable;
+> +            };
+> +        };
+> +    };
+> +...
+> -- 
+> 2.34.1
+> 
 
