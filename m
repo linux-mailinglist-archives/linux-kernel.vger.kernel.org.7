@@ -1,204 +1,178 @@
-Return-Path: <linux-kernel+bounces-738915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDA56B0BF02
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:34:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49E95B0C08E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:45:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 228281798D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:34:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F4FB3BF683
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:44:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86519287250;
-	Mon, 21 Jul 2025 08:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDBBA28C87F;
+	Mon, 21 Jul 2025 09:44:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="j1oFO+qN"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013041.outbound.protection.outlook.com [40.107.159.41])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YvR4Chrj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1E7221267;
-	Mon, 21 Jul 2025 08:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753086854; cv=fail; b=P6S5m+uPF84+/hihOS1P4Fu0ijHrMKtzL1j80pD5/kG/ccKPzcq00depU81JfVYpl5cmXAq0MXyJx23X8fXjqrytDghzEo/zZG94wlFTwaTzxsT2iXWDSCUzVOAKtGi1Xrku+7Yvxb/GxdgFEwuyJ4ndhPCWNV2+5EdjXbiPZzk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753086854; c=relaxed/simple;
-	bh=G4NzZJ+wqLeHBg7vskrn9xvU1HhTwZzq2UsClBMiPHs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=PlplNl0vq9ATUAEEeREtKJPMsxOe/HeV6u+TYhihfImp2YtpfmaDWW68WQx9jL6qCYjrBcbhN5YvhJqMqKrWY+Yx0GAH+qlRCaTz/vDCuadKqBJwLylF7xJSpMnEMg3Zd34fOWY2/0dk6Wufaj/fLGutYDFowrLJIBtkmdy/PWk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=j1oFO+qN; arc=fail smtp.client-ip=40.107.159.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=m9d/VNJMk3YNTLo3FzqI8vHfWYUjkCazv+fkt/2Plsi4Tk4p55jIeTOeEzDlrOIxWYwHavQuhLfJj/dphcxI1ZOstAdYdpFKeHQqVpM57yrk9YgYIzd54s9c+099cAD1vbRN+bGkcEi47ebKu3f2SumTVpvc2/ZmFfD1O80ri5WfvAdlfH/iTiKCwOKwf1HupR0uc+yx5oYgtsv6eBI1iaPrKxCnWdpKbARs2MRIvtz8fmByDL7a0Rv06n/Ak+jBXEJhyhzdnN26+d5tcj/ivVA+kCKCrkE02mqgd4cbYqnJ8sMvkTgXJOOlhZ8TS+UaISy/z59S0pQ4CSmi0BhJbg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5P72AX2xUo3bdRBLk0+O28sQIlygGM83FUumUYsm+jI=;
- b=gYyH+6IfKSn+cj7THZpZwXLIr6UKzSzm1jOLnelM2mWXdkICDabBbOqsk8kAkriveYeWvTpojwQYWvmpGbCPPixq8HJKul0RCs/6u+e5zxoSTOWlmvEXiIw1n2ECoyUvlf7FfS/xm8R8NEXLlTash5Y0NhG7xJVhy1dKvHhnE7om8HukL0KOJ70giuSi+QaXIKGVKdTqb4F6ZrQFHJVthnYZzbyndWYFkxSwwHDIWcHknm9y7gNOcFgCYoe15EMKUMYiaXkEZB3rluv6/6Ty8dDuJFnOBpryjs2iP6/mZWOy7HurQxBlygp0eH+gvZRlYVpaIk6zVR3fHqiGcM+36w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5P72AX2xUo3bdRBLk0+O28sQIlygGM83FUumUYsm+jI=;
- b=j1oFO+qNSFi3+bNzH6hlzMIVJM3E4z8P+ATAqP/mt6tL9chO00HS7Ypg6WmM80Ma9Nm9jDHfeyHS12VbSiH/ZWwKruDXBjCVvyArj02DYSej5NFZ/qPojIJPA3QsIdWj6qWoiaS/0TnYn9rQuyp7iJsN+F0dgYZ6ebq4gj5/rw83zo1MrJGSKTeN25omen7x+wxYuHyXJYzs2F2th9/n0KEx3t5K4g3IgwyrDUR+Ucrqob+fDs09uojx9zWzxHcoc1pFBDHLVvQuTwSLFgjcT3BOm+lXP2ZShslrJPgVvG94t8TWFomyZ+xaH6QbpgR+3QiQFSJTtxoRX7nQ0atW4w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by GVXPR04MB9925.eurprd04.prod.outlook.com (2603:10a6:150:112::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Mon, 21 Jul
- 2025 08:34:09 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%7]) with mapi id 15.20.8943.029; Mon, 21 Jul 2025
- 08:34:09 +0000
-Date: Mon, 21 Jul 2025 17:44:35 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Primoz Fiser <primoz.fiser@norik.com>
-Cc: Wei Fang <wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>,
-	Clark Wang <xiaoning.wang@nxp.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	imx@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, upstream@lists.phytec.de
-Subject: Re: [PATCH 1/2] net: fec: fec_probe(): Populate netdev of_node
-Message-ID: <20250721094435.GE4844@nxa18884-linux.ap.freescale.net>
-References: <20250717090037.4097520-1-primoz.fiser@norik.com>
- <20250717090037.4097520-2-primoz.fiser@norik.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250717090037.4097520-2-primoz.fiser@norik.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: MA0PR01CA0103.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:af::17) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94CCF2770B;
+	Mon, 21 Jul 2025 09:44:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753091097; cv=none; b=r8BX/XI41JYKpcTQOwzJu5ldgJ2v5V7qeS16Gk5f2Lp/BI2rn3uvliRq0BvLBFCn3wd6MCCG1iwRapqlG86yrN4Axa2AHrAZ205cIAlYwhTi2HJ5vEbrKbeI4T1G+Q3f2kcsouHBZwPzkn9yad3pvKZIU7ZFydVqtfglOS1mZxs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753091097; c=relaxed/simple;
+	bh=t5PZvzGpGGUTKRstpGyXHuxNt3rjsNj8x3G0UrWpS2g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uFlHrbXHfV6BaUmsaBL+8m/SwxnU2PW/pgiLIJVmTZPPdQcxzt0x7FdNmJJa9AxjdeX+efzU74j6pq4L6+5UIfsRlkUuISRghqBgzOK5Ffubq89T+/kyoezNxKDMlgsPBRUm++wHPbdvhzStvbG0B96VE4JNzrbJSnIAvlaKEYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YvR4Chrj; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753091095; x=1784627095;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=t5PZvzGpGGUTKRstpGyXHuxNt3rjsNj8x3G0UrWpS2g=;
+  b=YvR4Chrj98ob5H0haAh2uHYkISE39vY4bRzhGNfpOry76iyeAsFAdbLs
+   IDGvhuReXI73G2QyJDylCqhAzE0QaTR2yPlHAU3bmC3PiAAx0qNn0vtD3
+   De+yP2u7Jt8GQpS+naaLt48JJ33Ky3hJgrzr/OATtjEKXVwT4d+bELsI/
+   4uG6ljpImmjlVRlb7/luzPmEsHUQAUxNMoo9jvxOtH4tuB0W49NVDRcij
+   Szo5jxJkj2IuqjOYo1bLsFs8AusHNY6As6A8tI3pqyafqAMOSrwhwZVHx
+   8kZ0bimI1fifMMEm+Cy1bWF5pbJ4KCaHKTgzJZ5sbwclo2hQd7j799L7V
+   w==;
+X-CSE-ConnectionGUID: DpnNfflJTyqV/BarIfLxyQ==
+X-CSE-MsgGUID: j9TdRIU2TpWZFvIltRz3ow==
+X-IronPort-AV: E=McAfee;i="6800,10657,11498"; a="55258442"
+X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
+   d="scan'208";a="55258442"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 02:44:55 -0700
+X-CSE-ConnectionGUID: /ymQFKQSTeqqS9DzxTObcQ==
+X-CSE-MsgGUID: SJLtCJXSQCqecVcGckIynw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
+   d="scan'208";a="164271168"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by fmviesa004.fm.intel.com with SMTP; 21 Jul 2025 02:44:51 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 21 Jul 2025 12:44:50 +0300
+Date: Mon, 21 Jul 2025 12:44:50 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Guenter Roeck <linux@roeck-us.net>, Yueyao Zhu <yueyao@google.com>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel@collabora.com, stable@vger.kernel.org
+Subject: Re: [PATCH] usb: typec: fusb302: cache PD RX state
+Message-ID: <aH4MEsYX43afRO79@kuha.fi.intel.com>
+References: <20250704-fusb302-race-condition-fix-v1-1-239012c0e27a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|GVXPR04MB9925:EE_
-X-MS-Office365-Filtering-Correlation-Id: cef9694b-70f5-417f-76b7-08ddc8315c85
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|7416014|366016|1800799024|19092799006|38350700014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?3TvQhEV2JcOo5TY/Tq4Vww+q+WfxaS5HMTj3E/zWVa/DGx9+A7bIylZw+o+O?=
- =?us-ascii?Q?n2D581F/Nv/GBqzRVzmmvUAQLIWGYCcluS2jo1SczuLoLU0cPme3UZufKK2W?=
- =?us-ascii?Q?7IJNsOkROkxZcbWVDvi1CnlAQj/0Kd5c9Y3oGynFxgm8zQh5KuqrkyJipKtB?=
- =?us-ascii?Q?+aCXeHDPlZoiFsbW8TbM/6ZotwMiJFk0yFAP63uJz4xVwF8Et/l9H/IK9PHK?=
- =?us-ascii?Q?63gr6wDPJ67Rc3jsc5knty9lLwRqyHeSljG6gaq8ZrzXiBJkq6Jm2orJ44ci?=
- =?us-ascii?Q?Rzoe7fDznyrzwE2xnyHVbO2cdlSQEZbB5EtVzT3u8Fl2kMs3TvfC+WwQvIik?=
- =?us-ascii?Q?InwDG0aMjAUpKrdVBccgJVsKDRY0GUK2W5pWtciyqdnGvQjPqTrBp+0wDivX?=
- =?us-ascii?Q?oNMjDMaRjqzug9YrxSjVIOoDHtRRJyG8FH7iAFDZx0pBuO/MD0zV24CCw/K9?=
- =?us-ascii?Q?e8YdAhA90y5BfQIxjpwvIGGBTvwYyevHEzwYYlFCKpsmCtGDnJ0xBRSnZ9zV?=
- =?us-ascii?Q?j3jR9To8mMpdraT62FPy8Kl7gpaHPOVFPDH+UznuS8fMkw4iZ6yMkblunyas?=
- =?us-ascii?Q?ndocJF3ob+OsxSzbf9d053zNfa/m7LXCprKmsZZfq3IYHHrKWLeuxXQUch2Z?=
- =?us-ascii?Q?s/6Jn3URjJfxVuvJ7N/rvkwJcA2mv4n8+5UGla5n39ZNvCq6PdmPDudzmAD7?=
- =?us-ascii?Q?O6KFIK4mPmfLK2c5MJq+ZE9dAgz/fgMORODyshEXEBrvGFIHzIiXX5wqKQVf?=
- =?us-ascii?Q?3so4bUYAUafBYy2NS/crNATW05UAHZo1QmH+IV/4JX0X5cNO95TVLaf2N7TL?=
- =?us-ascii?Q?9F84WzDcR5XNeONAGcU/ovXIsEBu8R78PF8I5wkn52WMRCAAGePkLpJ+rXwK?=
- =?us-ascii?Q?HCV8qXZsEuHp7WCEQjOdGyJfSayyuEanLFgoi6GxNf9DoH1tza8fAHpIBvTq?=
- =?us-ascii?Q?NjZ7RysaTcz3W0Kz9zHD9r6iMEIrO2z3SU5jmKDMcgXYPxvQaCny8JFJmPMW?=
- =?us-ascii?Q?MEo4N2Pj+CT0ymniM82OwsnL7lnaIPzLQI2Vb6EbY88vM9uKyCCfgWd1MK5P?=
- =?us-ascii?Q?k90WGPTdfIxL2QT1OUdYwWsxXDKrs5NyhOczBiib+I39nNQC/nhxbH4yNCA/?=
- =?us-ascii?Q?E5z4APRIFQj0S+YmcmHwfoWhmCP5tss/+1syW/4PqxCGI6g/7u6PPnPaXYDP?=
- =?us-ascii?Q?WdHXhCAk4FrUlzB5hYbdxma18Tq3XrKyJ+peDhMtacN3U29ZBdzSbUy5ySgb?=
- =?us-ascii?Q?pIZgopGpQUCZ7LtWhfiMaORSGEx2IOkPnNiZpjfrlj0wYXUPjGXikxiiIBIX?=
- =?us-ascii?Q?t818SOw2VqIwmYQ41a0EctUINYtwVPNARdrhNprBe5+j4e7LthkZ5YrkN5HI?=
- =?us-ascii?Q?vTYIsonjQ0D1hkarhJnUIvVRkq0f1XwRJD3c3b4PuIC28qtzesps2wRnmCdh?=
- =?us-ascii?Q?e5+Dy0ySPu7cgojlDjOO89XEhOrXOQ71Vw8s8C5CWJmsp0aJUnVT3g=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(7416014)(366016)(1800799024)(19092799006)(38350700014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?hYytAiy/I2sCcRNAQbJwG4M4DwgigmomJ1BwxpVjEumPeCZqU4QxizrBdtB+?=
- =?us-ascii?Q?dW28LTmqmUTSePqqic0Zzf13gYa6qOd1JLw7NTl7iXG6QSMsHH9TutZ3wv2D?=
- =?us-ascii?Q?fh1zgEV3/qOp6ocbt5crahWEstLpkWi0h/b5zd2Ypbbfa2lKRJlBBeI4XnJN?=
- =?us-ascii?Q?j33RRHRBScpo51egp02OQxFVkyEw2QgJoEZ+byfstKssSDaaD7rJTGO+PPdT?=
- =?us-ascii?Q?tjX2fCQAP4ov3LL9rGLeM/YpTU6VAC/frMVwYYbamh0d5QmC35u2r2k1OyBo?=
- =?us-ascii?Q?2nTXSsPPrmC4Nol/l0KaHIpsgc71JwpUF3gO19bxDRMEuJ5YoQ/zVwNRZsFa?=
- =?us-ascii?Q?05gEnRfNjsit/SoFRolzuDeVSoo8LSB+r6ijY1ipcUezcV1G7nnmJntVuFWh?=
- =?us-ascii?Q?4VAxQaUSxMV1mqbukOlZF9KE4SzI+EoWQgI9EUCFvH5TZ+gShfKZ7aQ0lTof?=
- =?us-ascii?Q?FYtWAm+vVglYR6T9XXl22938U1VBD3z2ifN7agbuyuO2Y7qliyYosqRrwp2g?=
- =?us-ascii?Q?bzKJTFIeeR2XYRjDAVl/PEpS7FsQiODswb1EZcdWzNGOmQpfc1O+ZQxeix/P?=
- =?us-ascii?Q?4MG92vG1SssEoT4hdEzmrKjzm5n3NGkQr/jKsE/ba56eirE9HnL5hsBhZdZ8?=
- =?us-ascii?Q?g8dEp0X6wSZbRuWGbv/med1bb6hth7WwA6QSL5K9a97ZgueeXhKYeQOIRNLv?=
- =?us-ascii?Q?TEgwr1uIBIKnLTIQ0XsQXYmM3Qlmp0ltvCwLG59/Y8ytcC0NmLUrcS71/EuU?=
- =?us-ascii?Q?YiHUetLDI0kFkIQK9c5fz6zz3gU+NwDUBOY4N2jq+1yoC7yhQA7uaK3MXyJp?=
- =?us-ascii?Q?JlU/q5aFlTDCCRyp508zmZbIp6SAEPNN76Rx73r1w7Fz73JR24u7swJcU4zk?=
- =?us-ascii?Q?Z4i2w+WgqphRGmfeAAeFDLiGaNy9F0syFeZXMbEhro9wqjJjgID49XZD8XlA?=
- =?us-ascii?Q?JS91F8SvRZ9s9Zw9pdx/7tfMgvdF/wD3ZSCNbs4HHvwUsAh8CL5AUvpgQTXQ?=
- =?us-ascii?Q?7DiK+0v869S6eWleXLOsDBwHyEa5lNVnAl4oLPIZuG/7+eq/WUbQzsqY35Rt?=
- =?us-ascii?Q?19G/sfil8umL9UmrLh6X0+BIW8Qkj7qHXBjQndsQW+XZnEq14kwsoPUzBKz0?=
- =?us-ascii?Q?uYtICUbsqfNUb9Y5v9WVMmzIXdCbeXshu03facIhKrOH925pNOvoVgeffjDq?=
- =?us-ascii?Q?m3OJc21pfZAOJ2hAd1jZ3Vwlrda0SIS6FXsh7SveJkDKu2WxOTEH5QvrNXsX?=
- =?us-ascii?Q?X7cwfqkIXYBRH3r1SXMlFU8iOjtlaVBdKTwRidKRu+7/a67k8JvG8RLvHmo7?=
- =?us-ascii?Q?5oWrJ5nwXLrQ0GTm5R4sGAZ7AONBMauSIVWsIlBvT/9kWgDjEKI+VE0xr9NJ?=
- =?us-ascii?Q?PVqntr6hQK8pjGlilLgvKY8B+2AhzybFIfhWjVjmVAzXRTsMFpviQRgGOaBe?=
- =?us-ascii?Q?a+Ye0Ov3wTWXyNPYidlAbc1o1AH8y+rkCD0EEXDPXR2JHGHFcXMYok2UFfp2?=
- =?us-ascii?Q?L12mfQxsxPARpIQcDjPHdFXqpdfoKVt9Gpr4JbPRREtdRKB/FtRqzN8IX3iY?=
- =?us-ascii?Q?QFCsOur3c2Y9uiZHsS50I69eYigMo6rLSEDHbcQ7?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cef9694b-70f5-417f-76b7-08ddc8315c85
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2025 08:34:08.9483
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XWaGtNDd1HdQGphMzdI69tYHikm6CHMdpEFRVlGcC8Q8s6dye3JHpouXqBb7JF/Mj+iZ+f2O0rBX4FOIlsA4cQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB9925
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250704-fusb302-race-condition-fix-v1-1-239012c0e27a@kernel.org>
 
-On Thu, Jul 17, 2025 at 11:00:36AM +0200, Primoz Fiser wrote:
->Populate netdev of_node with pdev of_node so that the network device
->inherits the device tree node information from the platform device and
->its of_node is available in sysfs.
->
->Without this, udev is unable to expose the OF_* properties (OF_NAME,
->OF_FULLNAME, OF_COMPATIBLE, OF_ALIAS, etc.) for the network interface.
->These properties are commonly used by udev rules and other userspace
->tools for device identification and configuration.
->
->Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
->---
-> drivers/net/ethernet/freescale/fec_main.c | 1 +
-> 1 file changed, 1 insertion(+)
->
->diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
->index 63dac4272045..5142fed08cba 100644
->--- a/drivers/net/ethernet/freescale/fec_main.c
->+++ b/drivers/net/ethernet/freescale/fec_main.c
->@@ -4359,6 +4359,7 @@ fec_probe(struct platform_device *pdev)
-> 		return -ENOMEM;
+On Fri, Jul 04, 2025 at 07:55:06PM +0200, Sebastian Reichel wrote:
+> This patch fixes a race condition communication error, which ends up in
+> PD hard resets when losing the race. Some systems, like the Radxa ROCK
+> 5B are powered through USB-C without any backup power source and use a
+> FUSB302 chip to do the PD negotiation. This means it is quite important
+> to avoid hard resets, since that effectively kills the system's
+> power-supply.
 > 
-> 	SET_NETDEV_DEV(ndev, &pdev->dev);
->+	ndev->dev.of_node = pdev->dev.of_node;
-
-You may need to use device_set_of_node_from_dev.
-
-Regards,
-Peng
-
+> I've found the following race condition while debugging unplanned power
+> loss during booting the board every now and then:
 > 
-> 	/* setup board info structure */
-> 	fep = netdev_priv(ndev);
->-- 
->2.34.1
->
+> 1. lots of TCPM/FUSB302/PD initialization stuff
+> 2. TCPM ends up in SNK_WAIT_CAPABILITIES (tcpm_set_pd_rx is enabled here)
+> 3. the remote PD source does not send anything, so TCPM does a SOFT RESET
+> 4. TCPM ends up in SNK_WAIT_CAPABILITIES for the second time
+>    (tcpm_set_pd_rx is enabled again, even though it is still on)
+> 
+> At this point I've seen broken CRC good messages being send by the
+> FUSB302 with a logic analyzer sniffing the CC lines. Also it looks like
+> messages are being lost and things generally going haywire with one of
+> the two sides doing a hard reset once a broken CRC good message was send
+> to the bus.
+> 
+> I think the system is running into a race condition, that the FIFOs are
+> being cleared and/or the automatic good CRC message generation flag is
+> being updated while a message is already arriving.
+> 
+> Let's avoid this by caching the PD RX enabled state, as we have already
+> processed anything in the FIFOs and are in a good state. As a side
+> effect that this also optimizes I2C bus usage :)
+> 
+> As far as I can tell the problem theoretically also exists when TCPM
+> enters SNK_WAIT_CAPABILITIES the first time, but I believe this is less
+> critical for the following reason:
+> 
+> On devices like the ROCK 5B, which are powered through a TCPM backed
+> USB-C port, the bootloader must have done some prior PD communication
+> (initial communication must happen within 5 seconds after plugging the
+> USB-C plug). This means the first time the kernel TCPM state machine
+> reaches SNK_WAIT_CAPABILITIES, the remote side is not sending messages
+> actively. On other devices a hard reset simply adds some extra delay and
+> things should be good afterwards.
+> 
+> Fixes: c034a43e72dda ("staging: typec: Fairchild FUSB302 Type-c chip driver")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+
+> ---
+>  drivers/usb/typec/tcpm/fusb302.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/drivers/usb/typec/tcpm/fusb302.c b/drivers/usb/typec/tcpm/fusb302.c
+> index f15c63d3a8f441569ec98302f5b241430d8e4547..870a71f953f6cd8dfc618caea56f72782e40ee1c 100644
+> --- a/drivers/usb/typec/tcpm/fusb302.c
+> +++ b/drivers/usb/typec/tcpm/fusb302.c
+> @@ -104,6 +104,7 @@ struct fusb302_chip {
+>  	bool vconn_on;
+>  	bool vbus_on;
+>  	bool charge_on;
+> +	bool pd_rx_on;
+>  	bool vbus_present;
+>  	enum typec_cc_polarity cc_polarity;
+>  	enum typec_cc_status cc1;
+> @@ -841,6 +842,11 @@ static int tcpm_set_pd_rx(struct tcpc_dev *dev, bool on)
+>  	int ret = 0;
+>  
+>  	mutex_lock(&chip->lock);
+> +	if (chip->pd_rx_on == on) {
+> +		fusb302_log(chip, "pd is already %s", str_on_off(on));
+> +		goto done;
+> +	}
+> +
+>  	ret = fusb302_pd_rx_flush(chip);
+>  	if (ret < 0) {
+>  		fusb302_log(chip, "cannot flush pd rx buffer, ret=%d", ret);
+> @@ -863,6 +869,8 @@ static int tcpm_set_pd_rx(struct tcpc_dev *dev, bool on)
+>  			    str_on_off(on), ret);
+>  		goto done;
+>  	}
+> +
+> +	chip->pd_rx_on = on;
+>  	fusb302_log(chip, "pd := %s", str_on_off(on));
+>  done:
+>  	mutex_unlock(&chip->lock);
+> 
+> ---
+> base-commit: c435a4f487e8c6a3b23dafbda87d971d4fd14e0b
+> change-id: 20250704-fusb302-race-condition-fix-9cc9de73f05d
+> 
+> Best regards,
+> -- 
+> Sebastian Reichel <sre@kernel.org>
+
+-- 
+heikki
 
