@@ -1,183 +1,253 @@
-Return-Path: <linux-kernel+bounces-739001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4C3EB0C076
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:41:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5167B0C07F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:43:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F469189549C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:41:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D271170890
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A60028C5A1;
-	Mon, 21 Jul 2025 09:41:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63F0728D8CE;
+	Mon, 21 Jul 2025 09:43:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A+2+NKEE"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iWGVFscA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B361E50B
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 09:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753090867; cv=none; b=Gc6SXVbjO4kqfaLxjCe6ZuTA6dlWVNHR5dhBLr6ZsaI9HAuYSOnEdoijQtUGCqqah3dSYgwKpdnbyWHEqXdxq6XdTHysxlj0OEhS+o9u0PBjc3dqknBjOe1IZVZY5KKKGtFNl0ediEsphTHx8yDciA7xhGRcZd/zMc+b0X3v39M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753090867; c=relaxed/simple;
-	bh=rqdEgD83J8iSzUNe7YgGx88uvb9b4GF6r9ZsVKjFd6g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IFqxYTc53sJ3iw5agWVw5LMDv2y1tmmNO8XOqjHNCp4jkVNpweUaSycyxeWQiC7udf5c0Ro1dWdrlIzbs3TQFg/zbHGEB3B8ZDhCoGl0zrxwbOR0g0p4/pAHk/+BC4ygihztMH1V7FKIFkbRwoyl0A5WYJntaVDoJ+V1xTYCDE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A+2+NKEE; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-60789b450ceso7878152a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 02:41:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753090864; x=1753695664; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kLHZQ8wbyNwUVTj57cdtnbIVhJCFkeSVcy7WyOu42oQ=;
-        b=A+2+NKEE6hIi5cyLtwxwwqEzO1/UbyDr04rIs6KDhG/cDQW9Oa0dxoPGEtnzYX9Myg
-         faKDy0suT1wUokETGMUxJUNlTCREs9+F8cRDkQ5kv2y3eUt5ZubGCZeUJ46YL8m/0ONr
-         FDbBF8XOR6lv328kgVS+hjl+VfVS/F9x8FvgBcm0mykobdOUEHwmztHGLrIIf7pyib4s
-         Y/noi3By29SBSAdw3BkgErqLup0fqagotM6BW141ZRE6VXJnOxKv+hLjykeZS+aGkTpS
-         +gbYYZ1+rh+hIPecv2JKGibp0+X8aNpEmwahwtpA99bc/lgBtJn/gWza7EqneH8af4Uu
-         Y7gA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753090864; x=1753695664;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kLHZQ8wbyNwUVTj57cdtnbIVhJCFkeSVcy7WyOu42oQ=;
-        b=um1D73UjRKdNUKYAHLe9v+dw8kJRMSn0XoXvRLO3UQDrCse+OuwSGkJqRaYKLlmQp8
-         gd70gVyDxcT7C4f3zjJZHFKEVnhAhsFO3WJGqZvvD+QiFl7JAB2eD25jJZadxA8/rldp
-         /n9H7/Ha3gAR5321CM0icAtkU+QBKxogKsyAXlTm0k4KS1RzQaBmFlS0NByBcLZkniFn
-         rmPv8caRtDJ/PgDOLx+7VpoUvTqv/+nzXTDM6CxFTDQMmK9KDSBRN+zuOxFvPmzk7hLT
-         lLwTrdlMUtHAhZuM5cFqZsRSXoMKFij8PWE6D/tJU2ilirpr+iI7WHH074DJtOMexa0F
-         J7Pg==
-X-Forwarded-Encrypted: i=1; AJvYcCV7MsirM24F9qYf2MAdypBA4xifRy/DBhTfkhniIVcMPwJy3OyvnBCb/GC3bP6oz1AI88BfQKr24S4xFQA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgNpVHD6nqfostmAiUWuhQ2ogrBEISxZk4cgJZyPRiwP3o6gYO
-	5Up+535Znfwe/LAJrKc8kPVLS4M35kWJXU/LuTVWW9vbQlzpLKx++XrtMSiwjMvxT6O58mC5w02
-	FTuGI9F4C1ZeMWCGFwTDXns6rBmyDTSag6Ttaq6MHSQ==
-X-Gm-Gg: ASbGncsIdknuTceE4S55HQDJEjZbq0XO93WiL5CUgZjgpSclcP3y/7/zrBouVvMbV4B
-	CHRYPM9Tg4vPARrghw1KQA/pVT7ukTkkVXG7piTnG7vA3+3LVFX84PBErfMkdR2igfp9xFbdnBZ
-	6nBfktP/mv0moUitGBFbFqF5musmTfCAfnXfNM36viBOuOb1eueVMWrrWvn9G5nUz2ZYOkf8E2R
-	ox2AdQkclbw0DDuyaj5VAVmJSZ7JCbLEig86bv7
-X-Google-Smtp-Source: AGHT+IG6G4ajdssc/YWvwb9of7mOBV21SiBFjpYyYjNuNDmhGrvw93kvZgBti4flreJEZuk1BBVKlt2cdJLcRSLQLiU=
-X-Received: by 2002:a17:907:7ba0:b0:ae3:4f80:ac4c with SMTP id
- a640c23a62f3a-ae9cdd834fdmr1817176966b.12.1753090863631; Mon, 21 Jul 2025
- 02:41:03 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D813E285074;
+	Mon, 21 Jul 2025 09:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753091002; cv=fail; b=pU9OhOGpLGrSw0lCxCKyecPcdzsCTCXK83jW/4wWtLZckrUItEAKSCm7FGObVa0k8hG0PRN0C7tK/aLLpU0u73kYeEXWAdrIIgarCxBrREhQ1O8R9hQdt45LCbesa/WS4j46JGzfU7OIxscBmW3C2vVYgv27KIox5KO7iurox5I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753091002; c=relaxed/simple;
+	bh=FRqC1+PbFnKrCaFsDPvEDt+5mdDFlEIXRdoOZDU6MiU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Fy8bGWxKltrVVwBTg4Ul4w1ot4j8EkELsioYpnwONuZqKzbMn5TdqzpVIxd+cBLKVh4dJdWVgPlukWUtMEQSJMB3kQsP535t6beNY7l0DMlpnGpfpz+PZ2ou8pyzeCgvTIrfgALlJF9+a+fSVq7Ll4qXe2c66GYxoqBNliiva2w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iWGVFscA; arc=fail smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753091001; x=1784627001;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=FRqC1+PbFnKrCaFsDPvEDt+5mdDFlEIXRdoOZDU6MiU=;
+  b=iWGVFscAFhviV6RA4+CKx+NFJ9Fpt2+VMl9Y32+xRVpGzs505k9YQ9gq
+   f2dMmNbRoC9QtjG7ODI74chi4TCf2bBfUktTNU10obVNUzpRlNenk0SP2
+   sdn1IApfLf6/o+NE3z2mEAjxwKcEq+dvoKECkmS7mf9oEezZKwwOaPLgJ
+   4+BHla0VN/C7KfdWRX97Nw+YIfGSDdVnr8FCHutIiyL3tlIjtw08qNcDz
+   VMtbzmayNC0WJq3Awv68XtZv8qBesQVrHtKEV0bAuWNRlv4l/WyfdUlP0
+   64z2CZCppLaTDHwJiQAXzX+tvJgm4+gEym5empBIuq7cfxAnwOjKW/VPz
+   A==;
+X-CSE-ConnectionGUID: /cdd3I3LR6aZEe2QJPG3Gw==
+X-CSE-MsgGUID: Yi598bGuSESJd+IzFEs2Zg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11498"; a="55243242"
+X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
+   d="scan'208";a="55243242"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 02:43:13 -0700
+X-CSE-ConnectionGUID: CgxTXmecSzuJCbZsRP4Ucg==
+X-CSE-MsgGUID: IIs/XncETgSPTSbdY5GUnA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
+   d="scan'208";a="158846229"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 02:43:13 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Mon, 21 Jul 2025 02:43:12 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Mon, 21 Jul 2025 02:43:12 -0700
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (40.107.100.70)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Mon, 21 Jul 2025 02:43:12 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hZ+MHKFIYHg9T6YIpdJ8MgYtFqCGNX8rcyn6mbcrlfNWumSc8rX4sBlSZq17kM3XSarMAtkgvD97ni38jnIcM0/VQ1TUP9B6kMmH5tVPS7HMjAzfw00PevBmxOiimrkACBvLp1Zm5EFnFyVqNYrOBDTMuQRhCSzWtAKPdqc90hPMrwlPkUxJVdhb1mM1zSGop4nHJMYknrieRu32KkeqMKKADzsAP6W7+l3VTaLqPxMOKhBCRoZ6fPbX79+NkksU1WAMQnHv5eM1u1AtxTgnOO4mJ0F7+LVngdHdxheR2D/FBi4D541+6UF8lhTFYaPPRAlS+G67dE2sYtiYVXrpwA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FRqC1+PbFnKrCaFsDPvEDt+5mdDFlEIXRdoOZDU6MiU=;
+ b=eYikfH0EcakbjLgRK2vZxOTz60Tkzi5KG27SvF2p3kzPLen/JMvc1pFmfvD2LCMbaZOlJnfmg4qVDRt03mK2O9GWhsvYX566jpZ7vW6xQVcT8CgmwKU+JaVKgdWYJTsBp+CtOXmv011OhnoKAkFhDv53IosKRaU8W4yIye5Hm1pOIV8D8vL4VeX/v9UidhoAJBNzOIqWRppuDa9S/q3fKZC7h91c3w51ETwBPv37G2/IjPv5ShzwlDWqQ1vTXj5DdttiwTekL2VfsGWipNUXVeWuz6/BE1OgTWOo4aaG1OgmifFibn0zNGTz5Dbe9KO5RN/vcJ1gkpP7IXCignTKSg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from IA3PR11MB8985.namprd11.prod.outlook.com (2603:10b6:208:575::17)
+ by IA1PR11MB6244.namprd11.prod.outlook.com (2603:10b6:208:3e6::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.29; Mon, 21 Jul
+ 2025 09:42:38 +0000
+Received: from IA3PR11MB8985.namprd11.prod.outlook.com
+ ([fe80::4955:174:d3ce:10e6]) by IA3PR11MB8985.namprd11.prod.outlook.com
+ ([fe80::4955:174:d3ce:10e6%6]) with mapi id 15.20.8922.037; Mon, 21 Jul 2025
+ 09:42:38 +0000
+From: "Romanowski, Rafal" <rafal.romanowski@intel.com>
+To: Simon Horman <horms@kernel.org>, Jamie Bainbridge
+	<jamie.bainbridge@gmail.com>
+CC: "Vecera, Ivan" <ivecera@redhat.com>, Brett Creeley
+	<brett.creeley@amd.com>, "Kitszel, Przemyslaw"
+	<przemyslaw.kitszel@intel.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, "Eric
+ Dumazet" <edumazet@google.com>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
+	"intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "David S.
+ Miller" <davem@davemloft.net>
+Subject: RE: [Intel-wired-lan] [PATCH v2 net] i40e: When removing VF MAC
+ filters, only check PF-set MAC
+Thread-Topic: [Intel-wired-lan] [PATCH v2 net] i40e: When removing VF MAC
+ filters, only check PF-set MAC
+Thread-Index: AQHb5V/m810HUfESBkWZLWqUFgRkg7QTlm0AgCjmWXA=
+Date: Mon, 21 Jul 2025 09:42:37 +0000
+Message-ID: <IA3PR11MB898544F2B6A499A11B1CAE638F5DA@IA3PR11MB8985.namprd11.prod.outlook.com>
+References: <c856f16e6ab37286733174c0fcf12bc72b677096.1750807588.git.jamie.bainbridge@gmail.com>
+ <20250625090734.GJ1562@horms.kernel.org>
+In-Reply-To: <20250625090734.GJ1562@horms.kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA3PR11MB8985:EE_|IA1PR11MB6244:EE_
+x-ms-office365-filtering-correlation-id: 0a82e67e-79a9-40cc-4495-08ddc83aedd6
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?b7/j3MrksDuJpWM4H3FdyqsFMPmdq1brXku6vdcr66DdJ+rjsSvlrLFKD0QG?=
+ =?us-ascii?Q?VQS2mFTOkUJDRhpKJhXfYFiI6kMR+qlbUo6Yx6ml9m9H+BiJ14+LdeJYZ/zt?=
+ =?us-ascii?Q?PuuALaMuyO1muIVhZmKiEWjlWYtmwI89dIfD4kJKUkcX+C6qVrh8A3LReDNI?=
+ =?us-ascii?Q?2kJ/9I0CgdKXozkxXRMGWqa1rtWOjI5n8PjZIp/rALk6aBGYP09+9Ps9zWj1?=
+ =?us-ascii?Q?wj9rA0C8AB85o/6pgOYkE8JawOAa/b4d2YdwYKaxE7HMTOjx1M9E0SoHXNH4?=
+ =?us-ascii?Q?yVITh9nTORTm3ucnyRDGlPfia11URavupadtl7vwfqNnR7CxRYbbnVe5B98u?=
+ =?us-ascii?Q?zCjPJb0H3Egat2cSPZWNHePo6GUO1BYutIhblW+QWdqGc0DxBKqgMvlM8lWb?=
+ =?us-ascii?Q?NRvskAWohsE9cRRcstRYsckTHAKjmAb/mo8N396HW0wsyWKn18JWiGit5+3h?=
+ =?us-ascii?Q?pC9Y8LVhSfkW2ke1ogYm5zmWBiRVDGrXjh+5DdbwP1ocFGk0twsr0l2C+ybM?=
+ =?us-ascii?Q?ysePVvu2v3WmU/I5x+slCEo/mwRKBTgb7KY7upy/tg8U9+/hQmx4k7QvTv07?=
+ =?us-ascii?Q?vLN0t91HlTsaeeNBL8atSfINIlq8rgFKxy/YKk1+dw7fFxMwiwwhA48KjuWS?=
+ =?us-ascii?Q?xiF96+rQDQNLVogRbBLeL9u8wUQk4HOHN4tR/8Upp7Vv/c8JEvlf8RNK0Rbd?=
+ =?us-ascii?Q?peAWKpDWXjjoBVLKtTRqd3IIxDbhfKaGfKtoyoIim4EN5YC2ZmwxAI611Mf5?=
+ =?us-ascii?Q?CePryTX1Bjw0DC4yewBVUz4dnfgLxm60b7t0MEZLvR9+4I/oqKAqbz1wpcCi?=
+ =?us-ascii?Q?QmAOaNURQhk2rgUsVnHpANfBApoaUceYYNQNW7d/mqWtJCagFQTwVkJwXyrN?=
+ =?us-ascii?Q?EzAGTLVJRhFlQr3kEuCsWJy+wZzmd/sIXY6QtbQbqcfev9G6yRDzc17rKzIU?=
+ =?us-ascii?Q?4Vk+1latORHepYrXT94U7hpZYYT55HwxJgQnaw2XLAIHvU+jN+/gFiUOcbaG?=
+ =?us-ascii?Q?CJ69Hfc+G5jb9zOUUBFMNiBRKoKzR2FiIQwP2D8Y9/Umy7NDUEvhwhKGNP4n?=
+ =?us-ascii?Q?sipGgecUcAIjCXGV2K0zaKbH+ayIXoTKDmppRyDMNh13kCBmY3urqbehyOEc?=
+ =?us-ascii?Q?l7wqMKTcyXQ3sTH0DVwUXYoC9u+oo2BawxJeFpEwpz7bQ07Xrpq1dzIFf600?=
+ =?us-ascii?Q?MO+0+PpONvh0dOqmv8DFpEAN2oMvj7BoYimuIaouOZv3pkle+4wxfjeccO70?=
+ =?us-ascii?Q?HKnHkb+N3NGoT94c4yI8D/HCxpDve1+psHpjFCPuIA++HWfXhmtzAoPBK7B8?=
+ =?us-ascii?Q?egH0nI/bH3oGUVB1NzfenRocBSd6zC3nGNjXxJEeaQxWmW98GVRBjeiOhUWg?=
+ =?us-ascii?Q?YxQSNOPNco3pziVXLvmFGQDZ7maaITLlFyLOpZ07dUbSXZXeHcEmgI3brj7S?=
+ =?us-ascii?Q?sxg44SxPKeZYUN4I8TrJBy4WgiHx/eJKVwSCE9wWSJnZ6ebau4T+lg=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA3PR11MB8985.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?DPM66JjSTwu9LhsvbAgU+XrPXOC8m/CBgxW/dSEQNxN3yZva70VvObUfZXNl?=
+ =?us-ascii?Q?34ZrXOfQOkmMv7ifasHqM0h6wu+w0MCuFIJ+UqOLFrd8Rgsq9sjx9XC1jloi?=
+ =?us-ascii?Q?OI1jjXO/Jc/P2hqxC+mz3mLYcqVMws1GAqFUADqAjNT8SXBECyLGZ18Ws41d?=
+ =?us-ascii?Q?iHnfn+lkYF0hnE+2qAYGbvNAOhvMg0nG9yKosOj1hhaQ3PcfZnw9YoSqlim0?=
+ =?us-ascii?Q?+N2KNKBF5w8BP7qWGnsK5oOOrOugONoM8Y7TWffVUpV+F7LX4f1YCaW4dzNR?=
+ =?us-ascii?Q?tFQGBL3CdzafjYH2l5fZBIRlFs1PSDh9UfXGrne0Fu80cKxzA6jhBk2a6ZEK?=
+ =?us-ascii?Q?LZkt5RvG9VzQXNfBNEA6Htk9S4V9snK4EO5OEpx808O/MlaOtYsCgFs4OR8/?=
+ =?us-ascii?Q?5LGmmkkuiV4Z/yDHLpslcVWHu2IhZPNEiMl2L9KPXfLbaX+VS90FNyw1zYLK?=
+ =?us-ascii?Q?9fWAwMOjFK1KGI+ona7vKT5jsr6/lbUseV4oeEKCq3BSjl3XCVGr8n8x7FdB?=
+ =?us-ascii?Q?f+13au5vI2SkfQQXg2CtukvkQ3VrXO1V5qvdkVDp+KVrJuNrso1zNXTg1+Wq?=
+ =?us-ascii?Q?+XNemiwzdpkTL3SYUrK0JFE+r0/v3DeQfnsaZJYNFaox9YKzOzfJzXohCGy7?=
+ =?us-ascii?Q?uGOoiJMwXb1BofAkk9g3Cw/wMGg/8k5eQoI0y6ztdl20ICBUbVQAtFz5rWcx?=
+ =?us-ascii?Q?sGDoBaDExnn4TS8MC4MO9PiOJVLAHky1rnDW9A4kuWCIqyOAeek2IXGVkniL?=
+ =?us-ascii?Q?EwRXJgwDWj6TQSe7fqvNtbwDivcN2AAUmp3GWwgKq7y5q0RIoS9mCOMswdzf?=
+ =?us-ascii?Q?fHJVDrrKgDclwsjxzSaMppiwgXhjuQNeE0VMHxeePBDozMylGeeu9kN/d9qJ?=
+ =?us-ascii?Q?AN5LSXxZq6xr77kImucyJqBGwb6Q/T4WD/L4nJdVpgHwEx53bTQXcILxXcaQ?=
+ =?us-ascii?Q?aZJb3bwEil62aqvRQRs3XqVG2ihUCYA9FrBR4ga3GeBOTURZVmN9T+IXzfoU?=
+ =?us-ascii?Q?83STR9rqb8Es8kaIdzWVc9WZxMKJNHwAStah2gUnzZ57PiNNZXF42AqRYHrC?=
+ =?us-ascii?Q?fXf9BKBbesqvmbtakjnKkS7V9h9houlKx1y/BvUY8BtmNSWiL571Ovw/+iTo?=
+ =?us-ascii?Q?FkyNF2al7itRk8tnS8ZEQdY8TtpW6tW/F1+FNbxnWJCD6elN5MQN+0vD5v5u?=
+ =?us-ascii?Q?j0YS9GJkBtUo7ogfHCVXjhiAvKzCzBFe4RFKVFpYkP80Gx6ssmGJ2u9FKF04?=
+ =?us-ascii?Q?QEqyBxPFswuOSEf3n7cdDQcw40GlPJFYweuOJEuRP2CoYyVDiHWgIEDvecI/?=
+ =?us-ascii?Q?w5PEqwRyT3HNN42HHUACRhcgncLOOUUkQaNT2Jw5xeyOxVHleEvbMSuCc7Ma?=
+ =?us-ascii?Q?uIWzVNXPpm7mE6gdS7nilzedyshLCuPYhW19qlj12O/2by9DJBTwU0iFKk57?=
+ =?us-ascii?Q?aRL3Boga3p9jcKZNyHqKDBdTQly98Kj8vz4exroaBWfMIY0BpbqMnnzucFGP?=
+ =?us-ascii?Q?NuQW6EKFWJ8ZpyusdC2l9pppc6Kyt4QpqtSwvf9qxN9/Pkq8jI0y16QlJfOc?=
+ =?us-ascii?Q?9YKXN5dptOA4G6KLgygTFdkN3qe2CftInG8OUGRD81omRxil7r/2plTVryWw?=
+ =?us-ascii?Q?Dg=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250721023939.19703-1-shijie@os.amperecomputing.com>
-In-Reply-To: <20250721023939.19703-1-shijie@os.amperecomputing.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Mon, 21 Jul 2025 11:40:52 +0200
-X-Gm-Features: Ac12FXzI1MXGDPatOw9rK3i3bzvmCgizdoo_IQxX5D7JpnwWUeRBGbICAxLwpLA
-Message-ID: <CAKfTPtC7+V6ubaGDPy0MW2MFG7w_yrnYCPQ-b2=3uYgeM+-+EA@mail.gmail.com>
-Subject: Re: [PATCH v4] sched/fair: do not scan twice in detach_tasks()
-To: Huang Shijie <shijie@os.amperecomputing.com>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
-	vschneid@redhat.com, patches@amperecomputing.com, cl@linux.com, 
-	Shubhang@os.amperecomputing.com, dietmar.eggemann@arm.com, 
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB8985.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0a82e67e-79a9-40cc-4495-08ddc83aedd6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jul 2025 09:42:37.9858
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 9bJbDYMyLns7LP7VZW7WLSM2IMnqFxP6W9sOSZCNjEgoaa8Lzr+P3hMS2dtbi/utiFkIPP7FQHNFY7FiDS69ZmK1aFkS13eY4y7o+I0j2hI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB6244
+X-OriginatorOrg: intel.com
 
-On Mon, 21 Jul 2025 at 04:40, Huang Shijie
-<shijie@os.amperecomputing.com> wrote:
->
-> detach_tasks() uses struct lb_env.loop_max as an env.src_rq->cfs_tasks
-> iteration count limit. It is however set without the source RQ lock held,
-> and besides detach_tasks() can be re-invoked after releasing and
-> re-acquiring the RQ lock per LBF_NEED_BREAK.
->
-> This means that env.loop_max and the actual length of env.src_rq->cfs_tasks
-> as observed within detach_tasks() can differ. This can cause some tasks to
+> -----Original Message-----
+> From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf Of S=
+imon
+> Horman
+> Sent: Wednesday, June 25, 2025 11:08 AM
+> To: Jamie Bainbridge <jamie.bainbridge@gmail.com>
+> Cc: Vecera, Ivan <ivecera@redhat.com>; Brett Creeley
+> <brett.creeley@amd.com>; Kitszel, Przemyslaw <przemyslaw.kitszel@intel.co=
+m>;
+> linux-kernel@vger.kernel.org; Andrew Lunn <andrew+netdev@lunn.ch>; Eric
+> Dumazet <edumazet@google.com>; netdev@vger.kernel.org; Nguyen, Anthony L
+> <anthony.l.nguyen@intel.com>; intel-wired-lan@lists.osuosl.org; Jakub Kic=
+inski
+> <kuba@kernel.org>; Paolo Abeni <pabeni@redhat.com>; David S. Miller
+> <davem@davemloft.net>
+> Subject: Re: [Intel-wired-lan] [PATCH v2 net] i40e: When removing VF MAC
+> filters, only check PF-set MAC
+>=20
+> On Wed, Jun 25, 2025 at 09:29:18AM +1000, Jamie Bainbridge wrote:
+> > When the PF is processing an Admin Queue message to delete a VF's MACs
+> > from the MAC filter, we currently check if the PF set the MAC and if
+> > the VF is trusted.
+> >
+> > This results in undesirable behaviour, where if a trusted VF with a
+> > PF-set MAC sets itself down (which sends an AQ message to delete the
+> > VF's MAC filters) then the VF MAC is erased from the interface.
+> >
+> > This results in the VF losing its PF-set MAC which should not happen.
+> >
+> > There is no need to check for trust at all, because an untrusted VF
+> > cannot change its own MAC. The only check needed is whether the PF set
+> > the MAC. If the PF set the MAC, then don't erase the MAC on link-down.
+> >
+> > Resolve this by changing the deletion check only for PF-set MAC.
+> >
+> > (the out-of-tree driver has also intentionally removed the check for
+> > VF trust here with OOT driver version 2.26.8, this changes the Linux
+> > kernel driver behaviour and comment to match the OOT driver behaviour)
+> >
+> > Fixes: ea2a1cfc3b201 ("i40e: Fix VF MAC filter removal")
+> > Signed-off-by: Jamie Bainbridge <jamie.bainbridge@gmail.com>
+> > ---
+> > v2: Reword commit message as suggested by Simon Horman.
+>=20
+> Thanks for the update.
+>=20
+> Reviewed-by: Simon Horman <horms@kernel.org>
 
-why not setting env.loop_max only once rq lock is taken in this case ?
 
-side note : by default loop_max <= loop_break
+Tested-by: Rafal Romanowski <rafal.romanowski@intel.com>
 
-> be unnecessarily iterated over more than once, for instance:
->
->   env.loop_max := 4
->   detach_tasks()
->     // Here env.src->cfs_tasks only contains two tasks which can't be
->     // migrated anywhere, so they're put back in the list each time.
->     env.src->cfs_tasks := [p1, p0]
->     // The iteration goes:
->     p0; cfs_tasks := [p0, p1]
->     p1; cfs_tasks := [p1, p0]
->     p0; cfs_tasks := [p0, p1]
->     p1; cfs_tasks := [p1, p0]
->
->     // IOW we iterate over each task twice
->
-> In the Specjbb test, the similar issues can be caught many times.
-> (Over 330,000 times in a 30-minites Specjbb test)
->
-> The patch introduces "first_back" to record the first task which
-> is put back to the task list. If we get a task which is equal to
-> first_back, we break the loop, and avoid to scan twice for it.
->
-> Reviewed-by: Valentin Schneider <vschneid@redhat.com>
-> Signed-off-by: Huang Shijie <shijie@os.amperecomputing.com>
-> ---
-> v3 --> v4:
->     Changed the commit message suggested by Valentin Schneider.
->     v3: https://lore.kernel.org/all/20250718063523.9232-1-shijie@os.amperecomputing.com/
->
-> v2 --> v3:
->     Fix a typo in the commit message.
->     v2: https://lore.kernel.org/all/20250718054709.8781-1-shijie@os.amperecomputing.com/
->
-> v1 --> v2:
->     Add more comment from Valentin Schneider
->     v1: https://lore.kernel.org/all/20250707083636.38380-1-shijie@os.amperecomputing.com/
-> ---
->  kernel/sched/fair.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 7e2963efe800..7cc9d50e3e11 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -9443,6 +9443,7 @@ static int detach_tasks(struct lb_env *env)
->  {
->         struct list_head *tasks = &env->src_rq->cfs_tasks;
->         unsigned long util, load;
-> +       struct task_struct *first_back = NULL;
->         struct task_struct *p;
->         int detached = 0;
->
-> @@ -9481,6 +9482,12 @@ static int detach_tasks(struct lb_env *env)
->                 }
->
->                 p = list_last_entry(tasks, struct task_struct, se.group_node);
-> +               /*
-> +                * We're back to an already visited task that couldn't be
-> +                * detached, we've seen all there is to see.
-> +                */
-> +               if (p == first_back)
-> +                       break;
->
->                 if (!can_migrate_task(p, env))
->                         goto next;
-> @@ -9562,6 +9569,8 @@ static int detach_tasks(struct lb_env *env)
->                         schedstat_inc(p->stats.nr_failed_migrations_hot);
->
->                 list_move(&p->se.group_node, tasks);
-> +               if (!first_back)
-> +                       first_back = p;
->         }
->
->         /*
-> --
-> 2.40.1
->
+
 
