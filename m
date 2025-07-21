@@ -1,219 +1,102 @@
-Return-Path: <linux-kernel+bounces-739487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18CABB0C6D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:49:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B72EBB0C6DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:49:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 201086C099F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:47:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A0F76C130D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B064628C2B0;
-	Mon, 21 Jul 2025 14:46:45 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B5CB2D3236
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 14:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA1462DE6E8;
+	Mon, 21 Jul 2025 14:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m/OS7QD4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09052DE6E7;
+	Mon, 21 Jul 2025 14:47:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753109205; cv=none; b=azMUBedwmzFmCLpLUxQ5o304pvK/b+iUcTan8bdcYgal3XT2omUmKo0g0UCgC+Fv9Mweiv7LOIQ52ZVvc4rh2tp6ChIvtepf/tWLsO4SzZV5MZEQ0hTO+vn014ZkNCR6S//NHRo4i5fDeRCI//mVwhiCEKPw/xRCtrOB9DNRVP4=
+	t=1753109246; cv=none; b=mOT9tUSRAkFU1IK9Gw+o5VasNRNY7OcBUpESmPCDHTIup32y03kjKIRtZDBNuAV1Z1OWZNcKqD6L8JBVXRbAc0ilNphmlLjp3BchEILAt/dZD0Rb4qJ1Xgs57XiJ0KoXWeVl7k6C6oRDP5CphL9nCYWWJegMRo+7uC3sv4WgCEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753109205; c=relaxed/simple;
-	bh=wuYODrr2iWFv8HaN91KSGOFVBZ0zVupE5R3XDV7yWOc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YMN5DtFhQ5dkwOXAGKYgxYSmSrGT4ornBm0FZZJUqQukGaW5OX/vAZSX5K9WAFy3u9cHSK3R3h9afzFfSJ5uKC9B1Xf30LYWfjAHFaW4qBY62LoeSHOjFIb4NPpKIqKMrkskmwnG7lkGIk1F+2P+JFBwqdSVNLeS+rB/KcMBFb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D1F25153B
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 07:46:36 -0700 (PDT)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6BBF43F66E
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 07:46:42 -0700 (PDT)
-Date: Mon, 21 Jul 2025 15:46:31 +0100
-From: Liviu Dudau <liviu.dudau@arm.com>
-To: Karunika Choo <karunika.choo@arm.com>
-Cc: dri-devel@lists.freedesktop.org, nd@arm.com,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 4/6] drm/panthor: Add support for Mali-Gx15 family of
- GPUs
-Message-ID: <aH5Sx15_pyMa1rmN@e110455-lin.cambridge.arm.com>
-References: <20250721111344.1610250-1-karunika.choo@arm.com>
- <20250721111344.1610250-5-karunika.choo@arm.com>
+	s=arc-20240116; t=1753109246; c=relaxed/simple;
+	bh=POu/6RcXAXPlWdUQ1qT/BoxmsEBrEVB56P9NerCYWXA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=og+kvtFU2G1sfeBCIDQW6CyfPduxq1b0iiRjmomk4CYkOhioUFP344ReWgGuOJkWH6G4u5iyib5K5qEUvUVCQX5ORH84HyrB2ASqF3jm6EisF8X/HpvdqKN52Xf0H2y8MjicfObjttTHNSaqHh68iIB8Szixll4aLA9SwSCfdGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m/OS7QD4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82E61C4CEF6;
+	Mon, 21 Jul 2025 14:47:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753109245;
+	bh=POu/6RcXAXPlWdUQ1qT/BoxmsEBrEVB56P9NerCYWXA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=m/OS7QD4PjEOHiqPVua/M/GbjGqpBGpwAzYznGumevTm5tzkrOHn5Cpc7DI3CLw2L
+	 QUZcs58AVvMPFzkrK6SUPoiB1bTr6/00d/1D7hZUGyRuQPcYBzYbj/6Kvchopsqcco
+	 g1y4vNzkAI/5FxhOhTCHCWQ/cjqsQPTFuowrYtvth96bMlKUp7NWSh/79XLQOSFO5E
+	 D5+RBk9NAzjalB2x3NLX24fXs3/8hYGeqzE9dcw8R2f3A+cVN23rc9r+A9A7V7Yhwp
+	 rlz385JAONbkQag6eMu3KpmWtYr1SsLIezsxHqvjnqWKgEyo4sFdOKYr4WmH8xwz09
+	 CpbOx/IA3++5g==
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-61593d5f92bso2517019eaf.1;
+        Mon, 21 Jul 2025 07:47:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVga2zwH5uH3TpUMFbzGLT2b/OgHs/ufcAhgbdxlvDFG84VcEYaXCu+ENKhRMvL3gHN7w4wZXuS3fyikw==@vger.kernel.org, AJvYcCWTuKlohwT+CxqGK87Q1zUmqvCCsUXMwqqC+ECg2EZAUsmD0q+PxnHQuBZX0LkqMI9bppR8u8p4ZvujAL6g@vger.kernel.org, AJvYcCX0b6L86YIRrkpYqb01aCdEpc/7b/yvp1eyF+R/52srgyFbksAkH68zfawfOelXwznQP4YeHDgmmwHD3OzOfGA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/eN0UVfcxb4h7SU9fN4ZFCC0XnxSKCFvs3+d0iXap2gnhtfZU
+	4TqMrDR7PuELyGo0CROIJE12Rk63K2+jIHpBdbenr5eZlsz2AuKGQVj/oNOGGsFB9PYelKMf/ty
+	pESj9FGFW/QtG6Ef3/DKfZzDRHVDm7Is=
+X-Google-Smtp-Source: AGHT+IEWdKVsxpzzKcxBaQkADZ6sERyQIlgfA82t1NIlBXHjio6fztFwfCBQrBDTOY4HMy0B7xBmmLv4qujQWpdVL8U=
+X-Received: by 2002:a05:6820:6ac7:b0:615:9a1e:8d30 with SMTP id
+ 006d021491bc7-615acc73b58mr12078604eaf.2.1753109244758; Mon, 21 Jul 2025
+ 07:47:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250721111344.1610250-5-karunika.choo@arm.com>
+References: <20250721135016.2500117-1-colin.i.king@gmail.com>
+In-Reply-To: <20250721135016.2500117-1-colin.i.king@gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 21 Jul 2025 16:47:13 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0i7tGiYOWX138ODmX6QTxuF09gCADHX-aVXD_h3y5iFjQ@mail.gmail.com>
+X-Gm-Features: Ac12FXxcjsguRVd_BYILBY4h1G6hudEeRQHcR3qRKDMhPSoFCr2obJ8c4H6N87k
+Message-ID: <CAJZ5v0i7tGiYOWX138ODmX6QTxuF09gCADHX-aVXD_h3y5iFjQ@mail.gmail.com>
+Subject: Re: [PATCH][next] ACPI: processor_throttling: Remove space before \n newline
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 21, 2025 at 12:13:42PM +0100, Karunika Choo wrote:
-> Mali-Gx15 introduces a new GPU_FEATURES register that provides
-> information about GPU-wide supported features. The register value will
-> be passed on to userspace via gpu_info. It also adds the following
-> registers that are specific to the kernel driver only:
-> - ASN_HASH_0~2
-> - DOORBELL_FEATURES
-> - PRFCNT_FEATURES
-> - SYSC_ALLOC0~7
-> - SYSC_PBHA_OVERRIDE0~3
-> 
-> Additionally, Mali-Gx15 presents an 'Immortalis' naming variant
-> depending on the shader core count and presence of Ray Intersection
-> feature support.
-> 
-> This patch adds:
-> - support for correctly identifying the model names for Mali-Gx15 GPUs.
-> - arch 11.8 FW binary support
-> 
-> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
+On Mon, Jul 21, 2025 at 3:50=E2=80=AFPM Colin Ian King <colin.i.king@gmail.=
+com> wrote:
+>
+> There is a extraneous space before a newline in a pr_warn message.
+> Remove it.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->  drivers/gpu/drm/panthor/panthor_fw.c   |  1 +
->  drivers/gpu/drm/panthor/panthor_hw.c   | 15 +++++++++++++++
->  drivers/gpu/drm/panthor/panthor_regs.h | 11 +++++++++++
->  include/uapi/drm/panthor_drm.h         |  3 +++
->  4 files changed, 30 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
-> index b7b454d16f12..fa6e0b48a0b2 100644
-> --- a/drivers/gpu/drm/panthor/panthor_fw.c
-> +++ b/drivers/gpu/drm/panthor/panthor_fw.c
-> @@ -1404,3 +1404,4 @@ int panthor_fw_init(struct panthor_device *ptdev)
->  MODULE_FIRMWARE("arm/mali/arch10.8/mali_csffw.bin");
->  MODULE_FIRMWARE("arm/mali/arch10.10/mali_csffw.bin");
->  MODULE_FIRMWARE("arm/mali/arch10.12/mali_csffw.bin");
-> +MODULE_FIRMWARE("arm/mali/arch11.8/mali_csffw.bin");
-> diff --git a/drivers/gpu/drm/panthor/panthor_hw.c b/drivers/gpu/drm/panthor/panthor_hw.c
-> index 7f138974d43b..a7583342d797 100644
-> --- a/drivers/gpu/drm/panthor/panthor_hw.c
-> +++ b/drivers/gpu/drm/panthor/panthor_hw.c
-> @@ -13,6 +13,9 @@ static char *get_gpu_model_name(struct panthor_device *ptdev)
->  	const u32 gpu_id = ptdev->gpu_info.gpu_id;
->  	const u32 product_id = GPU_PROD_ID_MAKE(GPU_ARCH_MAJOR(gpu_id),
->  						GPU_PROD_MAJOR(gpu_id));
-> +	const bool ray_intersection = !!(ptdev->gpu_info.gpu_features &
-> +					 GPU_FEATURES_RAY_INTERSECTION);
-> +	const u8 shader_core_count = hweight64(ptdev->gpu_info.shader_present);
->  
->  	switch (product_id) {
->  	case GPU_PROD_ID_MAKE(10, 2):
-> @@ -23,6 +26,15 @@ static char *get_gpu_model_name(struct panthor_device *ptdev)
->  		return "Mali-G510";
->  	case GPU_PROD_ID_MAKE(10, 4):
->  		return "Mali-G310";
-> +	case GPU_PROD_ID_MAKE(11, 2):
-> +		if (shader_core_count > 10 && ray_intersection)
-> +			return "Mali-G715-Immortalis";
-> +		else if (shader_core_count >= 7)
-> +			return "Mali-G715";
-> +
-> +		fallthrough;
-> +	case GPU_PROD_ID_MAKE(11, 3):
-> +		return "Mali-G615";
->  	}
->  
->  	return "(Unknown Mali GPU)";
-> @@ -53,6 +65,9 @@ static void panthor_gpu_info_init(struct panthor_device *ptdev)
->  	ptdev->gpu_info.shader_present = gpu_read64(ptdev, GPU_SHADER_PRESENT);
->  	ptdev->gpu_info.tiler_present = gpu_read64(ptdev, GPU_TILER_PRESENT);
->  	ptdev->gpu_info.l2_present = gpu_read64(ptdev, GPU_L2_PRESENT);
-> +
-> +	/* Introduced in arch 11.x */
-> +	ptdev->gpu_info.gpu_features = gpu_read64(ptdev, GPU_FEATURES);
->  }
->  
->  static void panthor_hw_info_init(struct panthor_device *ptdev)
-> diff --git a/drivers/gpu/drm/panthor/panthor_regs.h b/drivers/gpu/drm/panthor/panthor_regs.h
-> index 48bbfd40138c..e4c34f70a880 100644
-> --- a/drivers/gpu/drm/panthor/panthor_regs.h
-> +++ b/drivers/gpu/drm/panthor/panthor_regs.h
-> @@ -70,6 +70,10 @@
->  #define GPU_PWR_OVERRIDE0				0x54
->  #define GPU_PWR_OVERRIDE1				0x58
->  
-> +#define GPU_FEATURES					0x60
-> +#define   GPU_FEATURES_RAY_INTERSECTION			BIT(2)
-> +#define GPU_PRFCNT_FEATURES				0x68
-> +
->  #define GPU_TIMESTAMP_OFFSET				0x88
->  #define GPU_CYCLE_COUNT					0x90
->  #define GPU_TIMESTAMP					0x98
-> @@ -81,6 +85,8 @@
->  
->  #define GPU_TEXTURE_FEATURES(n)				(0xB0 + ((n) * 4))
+>  drivers/acpi/processor_throttling.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/acpi/processor_throttling.c b/drivers/acpi/processor=
+_throttling.c
+> index d1541a386fbc..f9c2bc1d4a3a 100644
+> --- a/drivers/acpi/processor_throttling.c
+> +++ b/drivers/acpi/processor_throttling.c
+> @@ -235,7 +235,7 @@ static int acpi_processor_throttling_notifier(unsigne=
+d long event, void *data)
+>                 if (pr->throttling_platform_limit > target_state)
+>                         target_state =3D pr->throttling_platform_limit;
+>                 if (target_state >=3D p_throttling->state_count) {
+> -                       pr_warn("Exceed the limit of T-state \n");
+> +                       pr_warn("Exceed the limit of T-state\n");
+>                         target_state =3D p_throttling->state_count - 1;
+>                 }
+>                 p_tstate->target_state =3D target_state;
+> --
 
-Until they are actually used I would suggest that you remove the definitions for the
-registers that are following this line.
-
-With that change,
-
-Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
-
-Best regards,
-Liviu
-
->  
-> +#define GPU_DOORBELL_FEATURES				0xC0
-> +
->  #define GPU_SHADER_PRESENT				0x100
->  #define GPU_TILER_PRESENT				0x110
->  #define GPU_L2_PRESENT					0x120
-> @@ -107,6 +113,8 @@
->  
->  #define GPU_REVID					0x280
->  
-> +#define GPU_ASN_HASH(n)				(0x2C0 + ((n) * 4))
-> +
->  #define GPU_COHERENCY_FEATURES				0x300
->  #define GPU_COHERENCY_PROT_BIT(name)			BIT(GPU_COHERENCY_  ## name)
->  
-> @@ -115,6 +123,9 @@
->  #define   GPU_COHERENCY_ACE				1
->  #define   GPU_COHERENCY_NONE				31
->  
-> +#define GPU_SYSC_PBHA_OVERRIDE(n)			(0x320 + ((n) * 4))
-> +#define GPU_SYSC_ALLOC(n)				(0x340 + ((n) * 4))
-> +
->  #define MCU_CONTROL					0x700
->  #define MCU_CONTROL_ENABLE				1
->  #define MCU_CONTROL_AUTO				2
-> diff --git a/include/uapi/drm/panthor_drm.h b/include/uapi/drm/panthor_drm.h
-> index e1f43deb7eca..467d365ed7ba 100644
-> --- a/include/uapi/drm/panthor_drm.h
-> +++ b/include/uapi/drm/panthor_drm.h
-> @@ -327,6 +327,9 @@ struct drm_panthor_gpu_info {
->  
->  	/** @pad: MBZ. */
->  	__u32 pad;
-> +
-> +	/** @gpu_features: Bitmask describing supported GPU-wide features */
-> +	__u64 gpu_features;
->  };
->  
->  /**
-> -- 
-> 2.49.0
-> 
-
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+Applied (as 6.17 material), thanks!
 
