@@ -1,156 +1,135 @@
-Return-Path: <linux-kernel+bounces-739315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3C3AB0C4BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:05:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07529B0C4D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:09:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADA7116EF95
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:03:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B42374E630C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 328902DAFDF;
-	Mon, 21 Jul 2025 13:02:22 +0000 (UTC)
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFCD72DECC2;
+	Mon, 21 Jul 2025 13:05:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Lms+fLCb"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F7B2D8798;
-	Mon, 21 Jul 2025 13:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2162DECD8
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 13:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753102941; cv=none; b=nEZaHiVrGgvR/21XBmmTxppGhL/BJRoaQogRbYUMQy/ZaTTyotSdCSM107guPii2EG/MumSpr87tvdelABTuqQj/PBx9rAOqutoU7GKc9m5nY0p8H65pl+oORe3fIg9lg03bKy20hgVPIEJ0UwtHjDyCt9WqqwVNzTv7D/L27Qg=
+	t=1753103133; cv=none; b=SM7dqwDiHTdpnoHTsSvfPQhH9o2eliPuDlg6ElWPhB+f/umOhNDUITfkLGYmYtSD5hf4XJPaLT3tNexnhjvv5SvnicqDdsiGFqsbg/vfcLIszjPCB1kJfcPZCb9SNdxqDEXE7VJOKZxEuOI0XLazOuDau6JT1qs/N29ui5RE684=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753102941; c=relaxed/simple;
-	bh=4JN0ATgLpCma7eYapT/JB0yvaXsB9QCd/f7n1PA3K/I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tEfsKwvDeByhpGMpzyj4Qk87+1jtbBsAiE0v5H7Uh2JGxIJU45X7BH8ro8Y43dvtrxDXs9bmS3HJFF7x5HkVGTz1CPIlPZ7A7c+szikWgTav03ff7w+tFcZEEukPc7hGvcOe0X1OneUOy68u9Qfj2BGUG1Um7t7YN9ZP+THmntk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-32b7113ed6bso32968571fa.1;
-        Mon, 21 Jul 2025 06:02:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753102937; x=1753707737;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wkOlTgVZdIpxOKYlGwV4g8bCfrBjHtQtpJ5LGJBlJ9g=;
-        b=O2ENEkThBkP6hzL22gPgdV2TWiyzQYY2t998wo9Gth/guj0wlrge+3JPAfTUbMMp/y
-         P2wokyVvrUVuZZoXAyXM40HLuudzmWs1gUUp2PVvIC72TotFzO43Uw8KDeCFXFu0HcQ9
-         MgtNV2oSGf+N6v2URgTi1eJrepG22oX0zZxZcidGgCMWJGqRAx+wAWH1dn0jULgfxzol
-         D5dmSZpVALV0OoMp6NiGRareeqI8H45tTf+VgNtYshFtwBRACGMsz34wiL9ZECZfkTxx
-         YJMJTTTvjBmNyeksqq40x96IbQ17tH5TN23Rqh1byM7BhXP7cKRCjhfuIcy/dJgEVAM0
-         Vehw==
-X-Forwarded-Encrypted: i=1; AJvYcCV2K1D8lPFhizqjmG/cowC48+oQUTkND46kYZZXs+DHsBGErpoTHm1kYA+MO3tz0uBQZxIcR3jZFAOQMqY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybAK5Azi8tDcYKDpvdhmLNUf9U9TddRMSSVLQdSyoACLELtBN3
-	TpkKERQzykLl3IbcWTLA64JMm8MsykKzktAJIE6PqLMmSvI0BCmZ52E7jtoMxA==
-X-Gm-Gg: ASbGncuLmYZ4OCegPtro5fPpy+K6p+l0onJbkeZLX46X+4h/yC4UEVrCt0zo0nctOkT
-	2M/ZAhrBZFT+nt9pqxxNBFmBf5dOsFO2QhzAwpy78c4E2KJMZrswXiC6spTiYNEnt4LBV6SicoC
-	39haYotxjJLiueFLsritwubaXXSBBJVW1w13zjE0o4y9mHI3Z54+Ejmegwx3DpkLNNZqkJ6G/Eq
-	y6Lb5cPo+MsH8jQ0fDSXqGyKaqw/POrW5L4STRwkC10jaiB9c5hTaZ6x23rGPCCyvCHti3WxtPd
-	H79RQS3fPLKQ5putXjdfRrJmFA12wfZk+cRY0PTxpBkxTee+Z6UATJ1sNBYZQxZhldEYKoXxgFo
-	rI712ePQeNEfk
-X-Google-Smtp-Source: AGHT+IGlgtXEcUO519UxUQeLhFSjYFtZl4JRfRX+I9/QfVF+ZoiJ+TuyoBIaVPBdEbhS0IIaiIit6A==
-X-Received: by 2002:a2e:a7ca:0:b0:32b:7111:95a7 with SMTP id 38308e7fff4ca-3308f65f8d6mr60856511fa.41.1753102936873;
-        Mon, 21 Jul 2025 06:02:16 -0700 (PDT)
-Received: from localhost ([2a03:2880:30ff:5::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6caf7e78sm673456366b.158.2025.07.21.06.02.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 06:02:16 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-Date: Mon, 21 Jul 2025 06:02:05 -0700
-Subject: [PATCH net-next v2 5/5] netconsole: use netpoll_parse_ip_addr in
- local_ip_store
+	s=arc-20240116; t=1753103133; c=relaxed/simple;
+	bh=Th1QW7VIgGaTx0b4fEZY7qgyPShbll/wzWSc2sU8P44=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=HKiobQ4sCyHw9ace6q2SL2iZFs9hZnUwbekk70PrIhlPvDw6Xkj8OXTzBDMzUpqiiDO5QUeDp2NJbmL6J7EM5UOMXcelgmPSofWoorEdy1RpIyVwHLK6S9Q+WxFeQkJa2DUl0K0IL/GCGVTiF1UdI16HgW3lALiV2c9MFCC+4sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Lms+fLCb; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753103130;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=5gxENCsb4R5H5BH/2kzZZWvwg59XUHk80ZD2DVRFzlQ=;
+	b=Lms+fLCbfQ8BrS8efU4epRpFr5bfv8TpQH5flccMIZbveeUyTafsRKDoLksxbCdEch1kAn
+	hwlGrFPQ6dXcuye1BO8fT5K76+Db3H5T35ZjjrpAuypQSwKnhsLWYOBG55atgm0y3l7hoj
+	utmoFl0RomPDx2CONW4OSRG9c9LQJJ8=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-340-oTjEZzH1NNqBLs4pXJtxJA-1; Mon,
+ 21 Jul 2025 09:05:25 -0400
+X-MC-Unique: oTjEZzH1NNqBLs4pXJtxJA-1
+X-Mimecast-MFC-AGG-ID: oTjEZzH1NNqBLs4pXJtxJA_1753103123
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D107E195FD2B;
+	Mon, 21 Jul 2025 13:05:22 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.34.109])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 4AF1330001B9;
+	Mon, 21 Jul 2025 13:05:16 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 21 Jul 2025 15:04:28 +0200 (CEST)
+Date: Mon, 21 Jul 2025 15:04:22 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: David Laight <david.laight.linux@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Li,Rongqing" <lirongqing@baidu.com>,
+	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Subject: [PATCH] x86/math64: handle #DE in mul_u64_u64_div_u64()
+Message-ID: <20250721130422.GA31640@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250721-netconsole_ref-v2-5-b42f1833565a@debian.org>
-References: <20250721-netconsole_ref-v2-0-b42f1833565a@debian.org>
-In-Reply-To: <20250721-netconsole_ref-v2-0-b42f1833565a@debian.org>
-To: "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- Breno Leitao <leitao@debian.org>, Andrew Lunn <andrew+netdev@lunn.ch>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-team@meta.com
-X-Mailer: b4 0.15-dev-dd21f
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1594; i=leitao@debian.org;
- h=from:subject:message-id; bh=4JN0ATgLpCma7eYapT/JB0yvaXsB9QCd/f7n1PA3K/I=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBofjpOItlTbQ1fnsmnflHZwrqxfL7AqqCqylI0E
- HRPfRUxkwOJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaH46TgAKCRA1o5Of/Hh3
- bbPJEACTo3JD8fIsSgevIhoiywuZoUxI4jePTwbBibl5B4P81BOhBhl9kJxA9P1Msx3dg1XMmSv
- anAUhSL0KbV/E0IrSZRW4oaDaIq4y6q77oghJqvVY6WxDUngmvtELFySDV2joJRmVCexJ84tPr4
- hlnl7G5paxHKDiM8hpisnUuF7A/9jZygnjQzgSwE6zJnHs4M6FKit0pfVIWT+1RkKS5NI0DeDnI
- mtpSk8N8zrlr3JYRfT3beNq5C3BQDh3WxBRbaiZiEYZT1wCzdUIQNx+5MHUIag6fz52zigi4gfZ
- wnvRRJAMLTqKcZXTsGZ2lB4cPOIXlVtVZqroOCrc8HjsNReWzSBVZxXXBpagmGUSZ8llOHOEyUz
- FjaafhsBrrnVW1wUI9XFBMc5SRmLXkXGfPvVoLILU0UXWf+16tvca2r3zzdccX4fjLvMUueIOP2
- VSUmOHer0PGXBwBA7JniIFo1CibpkYRavQ0a6TP01hLwIJ6Vg2Ng6kRu3L/XclitgE4bVsEE93U
- otlG1TqnSBRe5GM+7sl19nynPhfxdTxDfzJQVUX9s0tYQjwj4ZjN5WUvysKFXX7DOwNtVAJxYH6
- C1m4uNS9gpzK1mxqmuAK/9qAAQuNFKviOhlc4Q+gcc6598AQVD4ocfWJm2HeQYHyUiSbIRiRnV0
- v3Uk56elxvw9QMA==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Replace manual IP address parsing with a call to netpoll_parse_ip_addr
-in remote_ip_store(), simplifying the code and reducing the chance of
-errors.
+Change mul_u64_u64_div_u64() to return ULONG_MAX if the result doesn't
+fit u64, this matches the generic implementation in lib/math/div64.c.
 
-The error message got removed, since it is not a good practice to
-pr_err() if used pass a wrong value in configfs.
-
-Signed-off-by: Breno Leitao <leitao@debian.org>
+Reported-by: "Li,Rongqing" <lirongqing@baidu.com>
+Link: https://lore.kernel.org/all/78a0d7bb20504c0884d474868eccd858@baidu.com/
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
 ---
- drivers/net/netconsole.c | 22 +++++-----------------
- 1 file changed, 5 insertions(+), 17 deletions(-)
+ arch/x86/include/asm/div64.h | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-index b24e423a60268..7b394488384ea 100644
---- a/drivers/net/netconsole.c
-+++ b/drivers/net/netconsole.c
-@@ -776,6 +776,7 @@ static ssize_t remote_ip_store(struct config_item *item, const char *buf,
+diff --git a/arch/x86/include/asm/div64.h b/arch/x86/include/asm/div64.h
+index 9931e4c7d73f..dfd25cfd1c33 100644
+--- a/arch/x86/include/asm/div64.h
++++ b/arch/x86/include/asm/div64.h
+@@ -79,20 +79,27 @@ static inline u64 mul_u32_u32(u32 a, u32 b)
+ 
+ #else
+ # include <asm-generic/div64.h>
++# include <asm/asm.h>
++# include <asm/bug.h>
+ 
+ /*
+- * Will generate an #DE when the result doesn't fit u64, could fix with an
+- * __ex_table[] entry when it becomes an issue.
++ * Returns ULONG_MAX when the result doesn't fit u64.
+  */
+ static inline u64 mul_u64_u64_div_u64(u64 a, u64 mul, u64 div)
  {
- 	struct netconsole_target *nt = to_target(item);
- 	ssize_t ret = -EINVAL;
-+	int ipv6;
++	int ok = 0;
+ 	u64 q;
  
- 	mutex_lock(&dynamic_netconsole_mutex);
- 	if (nt->enabled) {
-@@ -784,23 +785,10 @@ static ssize_t remote_ip_store(struct config_item *item, const char *buf,
- 		goto out_unlock;
- 	}
+-	asm ("mulq %2; divq %3" : "=a" (q)
+-				: "a" (a), "rm" (mul), "rm" (div)
+-				: "rdx");
++	asm ("mulq %3; 1: divq %4; movl $1,%1; 2:\n"
++		_ASM_EXTABLE(1b, 2b)
++		: "=a" (q), "+r" (ok)
++		: "a" (a), "rm" (mul), "rm" (div)
++		: "rdx");
  
--	if (strnchr(buf, count, ':')) {
--		const char *end;
--
--		if (in6_pton(buf, count, nt->np.remote_ip.in6.s6_addr, -1, &end) > 0) {
--			if (*end && *end != '\n') {
--				pr_err("invalid IPv6 address at: <%c>\n", *end);
--				goto out_unlock;
--			}
--			nt->np.ipv6 = true;
--		} else
--			goto out_unlock;
--	} else {
--		if (!nt->np.ipv6)
--			nt->np.remote_ip.ip = in_aton(buf);
--		else
--			goto out_unlock;
--	}
-+	ipv6 = netpoll_parse_ip_addr(buf, &nt->np.remote_ip);
-+	if (ipv6 == -1)
-+		goto out_unlock;
-+	nt->np.ipv6 = ipv6;
+-	return q;
++	if (ok)
++		return q;
++	WARN_ON_ONCE(!div);
++	return ~(u64)0;
+ }
+ #define mul_u64_u64_div_u64 mul_u64_u64_div_u64
  
- 	ret = strnlen(buf, count);
- out_unlock:
-
 -- 
-2.47.1
+2.25.1.362.g51ebf55
+
 
 
