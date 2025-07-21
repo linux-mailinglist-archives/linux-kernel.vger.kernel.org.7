@@ -1,337 +1,210 @@
-Return-Path: <linux-kernel+bounces-738694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5587B0BC02
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:23:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6461DB0BC04
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:26:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19D183B5735
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 05:22:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0710718961E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 05:26:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCE2219E93;
-	Mon, 21 Jul 2025 05:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92BF421A457;
+	Mon, 21 Jul 2025 05:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="XlmQwrgA"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="4sKNO2+e"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2062.outbound.protection.outlook.com [40.107.220.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1917A2F32
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 05:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753075394; cv=none; b=S2Iux8wpcOl+F+suJ2SCKPe8hA3ZUcO19hFIIrjSRplKDXGKd5S9RvjumlQY66rd1i4DfIXeNmMW9pb77xyDPA/ZcXOy6qLK5/EZBmouHsH5ffMiz7LwlkJr8OuvNjm0bQNDwcS+NZdCaGPFh004cNQPqqEoSzbbYJPDMpdSEdQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753075394; c=relaxed/simple;
-	bh=W4QbuNm3eHXcSH0Ex2QdyPj6OuSlzQfZcAHEkhea0pQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CiXvv1ARbqKo3bAyqZLrkWIrKwyGclJA9+s5zEzjqLDLmTRYEJyeLWMDqgGqKaDSMpynsYlhFryqYrXAeDyBMLvPuxtpxl3fqvrvMEdkUNucB+4+ii+Nm83STyqQSWNypK3P2v+BrFZ/fOYLJRRquoGDzi9qe7rXzaJKxFaa26E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=XlmQwrgA; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b34a6d0c9a3so3902364a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 22:23:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=furiosa.ai; s=google; t=1753075392; x=1753680192; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=0SHACbHK9K6txcaxkzR12JtCEcLywtnifQd4zOB/+rQ=;
-        b=XlmQwrgAiSNiklZDmhykzdoaEuOYqoytA8dsY+u2rmdbNDX4Ez5R5oy+eMZToNB4bU
-         SO7hx8xfUbuhd0hjv4hFvZpUBxapcM4P+IuYaCyQ02q0czKnX333neGBv93odtapggkD
-         smGUZwiVdvt1zrUu/zArwLmuVHMGT+UMrf+js=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753075392; x=1753680192;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0SHACbHK9K6txcaxkzR12JtCEcLywtnifQd4zOB/+rQ=;
-        b=tHiWbvR64T+IgFPbqoZwE8ZlBNzS4LUwGiyqG+EXOA4+g8Yw6s/phvf5myGIOI7N0+
-         Fi/U5JieD1NO4IQa1gNuUpZk70lFDwKJRoZB100sZWyr7Hxn/1jKOfjkQO2kmS920hvd
-         Jq6dzKH35L/OGAbm1+HAYB2iGuCkvJRexBR/o9JhDy4N/RkQ0eNuZkm4IzLVeZfL6F9t
-         Qe9A+ts/KJpfHhzBfZfPkGqJVIHMox92qpQWxgkzFeyy1mY8vu3cjAPgPbl8fxSkfBt2
-         y1kIxtGG+g1wJIiXfU44sSGb6IGJ+1b29xUjgkkWl9la8yxmbQF8rjPJyZpgcdbIR0ew
-         PY/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVpaf99JJqkwUduBcNbcIJNXg7Jh6ptQ9fGXqmvbsolloS5lpSkG454w6FgqJukbYTXXsQnGD1DN4xS39U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywvrv7syYcbPgMjzw7tIx0wdeAPCfdE6OLx8DYweykwjYT9w2wC
-	18em+cdtmQg5K31lyl7lchuWPUlkAvI5GCcQgKkJ57nlcRcdvfddTp1F7fcITvj+aYw=
-X-Gm-Gg: ASbGnctRGAZio6/dA8DV8hpOe2IrsYCv6ymenSYm+ob6rVOoFyi7ujoS589gJQ3n4On
-	vFGj2bP7YDE/M5vxflnUJxRd636QPmIpjHEkvFbI0Qr0PwlIPnSVe/Hyc6vr2j1PQH6hgybIzmE
-	3oP5oyKbEQkddHGPnAvqfhsLginLAm1Sm7GkJVQ0gDZCiqAUFgwiKci+5SGcItspLnpJ6+Wfx55
-	h1MYpJ1I/yjhiAH0Wlqj3ZWkqbxpGVmsnVQQijdUr01q6yt/DnpWRKux5dGywvhEjgUFfo8X222
-	BlvJU/T/Os0fKipScTnP+eCoNFOcAVxohoVYAiZT1EQR0GjoyNqPbYZW5TEVea95w8kRzzhtrlo
-	3O3YT3L/txo8y7qoDbfo7B1IyTZ4oJjzeeyDly/R2VyVx+naTmix6/w==
-X-Google-Smtp-Source: AGHT+IHrxllh4+pFRTAoM/w2vfKqHEkM0kNphKoafaqRUKxLzGi1JLa2ju8qrT+3ee2/EMRl3RAndA==
-X-Received: by 2002:a17:902:e790:b0:235:f70:fd39 with SMTP id d9443c01a7336-23e2566aec9mr280364645ad.10.1753075392332;
-        Sun, 20 Jul 2025 22:23:12 -0700 (PDT)
-Received: from sidongui-MacBookPro.local ([221.148.76.1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b60ed72sm49769655ad.77.2025.07.20.22.23.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Jul 2025 22:23:11 -0700 (PDT)
-Date: Mon, 21 Jul 2025 14:22:56 +0900
-From: Sidong Yang <sidong.yang@furiosa.ai>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Jens Axboe <axboe@kernel.dk>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [PATCH 2/4] rust: io_uring: introduce rust abstraction for
- io-uring cmd
-Message-ID: <aH3OsKD6l18pLG92@sidongui-MacBookPro.local>
-References: <20250719143358.22363-1-sidong.yang@furiosa.ai>
- <20250719143358.22363-3-sidong.yang@furiosa.ai>
- <CADUfDZoBrnDpnTOxiDq6pBkctJ3NDJq7Wcqm2pUu_ooqMy8yyw@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8ECA3C30;
+	Mon, 21 Jul 2025 05:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753075587; cv=fail; b=QkcF0HwVgu56mF3puipyrMM5FVoDdZw4NlHtHXgDdgqfXc88ADRnxLKEOkYDmoxJexvS1PhzuQ7MFM9FcjN4pIF4C+X1Dc3qZJO0iG4BJBMSeJxcxzsLRNFsbcEGRzkTLtA6DZVrgXY5GjTgrAn3a/Zjg4RR8ZCFQiQn6SkT2s0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753075587; c=relaxed/simple;
+	bh=fWWQD0U6jqnud3Vt0fS0paoKz5Hxpr/f9XNNuzspaHw=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=A4j1bVM5QWY7ZUWHvCxmNGEaPCAjBM2RYDPwXpoXxJzjh08GG97XIi4ET9h9uS0J3w7V4I25gsLTLwK0B9TIvh3Bxr8lQ2XSh7LZOIVa44xEQ/S6E8aGFfwX2xiYOA1qqPrLeuo2FtFSR+e2AHm6MNSmNPcFIwTv4eSOxmnPbHU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=4sKNO2+e; arc=fail smtp.client-ip=40.107.220.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=N2FM7rsUSswX9pN1KOllOcqeRwZEejIVn6CvDi+8i2FAs7bTQgrjK7y6MOB8GeT0EBvcY6p82o72/z/siIHTf9vk26cOLpy63V43f5v8o39Zjkk93ydQmrO8SsaqTcPMlhWEtu+G4XXGAq1TpfQIjfcdjAhQfYtBEAdRuvexbUr/G2+q42/4GMv4hH/pZZwS478vpUqq8OTJkUn2QFNlzuXY2mOToALTaXwIvwJBw3+Tmn6dkEcHO+6T8XU5ny1WD3qTI8q0EtMazoCN9zRir7xPj0QJAyGoDJtEXZHhaRe99EYHs7e1ahnobYf432dJYsi4ly1gGz+aKLRgzFcxHw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fWWQD0U6jqnud3Vt0fS0paoKz5Hxpr/f9XNNuzspaHw=;
+ b=ONrcgOjjJC+Xe8bur6mCb679rpdi6ZeNl4qxCWJCgMlT6A+QOyrof7dV6gVQTOK4A1kTos8yYLiNAOvTYKRC7rmbD63tdtuGV2Q3916YnbeL/sEddC7AUBOi16DPhQo8kPKeR9FV43pnHY2Js9A+DfTNmdcFKi8MPlvUpe9zfudWR7VDLJrwDdp66mhNoq8sWkmQwqoYMUzAIlyIut1jtgFb6RuP3/n5U0IsExoMpCPjPt/nMcKdxYSyAMz3Cto276ru1NeLQQ2jUFY32T+v5LcO0IFOiohZfs149pvDluApujpuFEEz87ep1K8zbDbTC5kpa/3vdUxG0NPK+w3JDA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fWWQD0U6jqnud3Vt0fS0paoKz5Hxpr/f9XNNuzspaHw=;
+ b=4sKNO2+eZVgrOcreFxgBiCcNuC0zPMx5qFJbDWROthYGdx1b3ym6LTQXvoDzzNgU2qMvoeZ+Ag3yECEopAgsIbb13EaWZZ/BqvHEKmw0qG1FYx5cfxp1+vezOoI3I3Hvvhp8pVXibNE3uOWpSmIdlSlxiWKn38AB3BmvP2vMQOeAPcyp54vCPP3Rs/bL1qyWUTdWwMogc3WRdRwQQ948pHo6Xwox+0993R3TlQ5qQlkShk8Ly/kgvBv2YWc2+rYFPGckeGZ6L/YEQpps5op6GNx4EkW4ts8keuuvmmZkyEcQxPlq0Bq0Pc1GIJF+WuDlmIZroC6enZ3JviGENKImKw==
+Received: from IA3PR11MB9014.namprd11.prod.outlook.com (2603:10b6:208:583::17)
+ by SA1PR11MB8594.namprd11.prod.outlook.com (2603:10b6:806:3b1::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.39; Mon, 21 Jul
+ 2025 05:26:22 +0000
+Received: from IA3PR11MB9014.namprd11.prod.outlook.com
+ ([fe80::b229:255:43b1:7ae4]) by IA3PR11MB9014.namprd11.prod.outlook.com
+ ([fe80::b229:255:43b1:7ae4%6]) with mapi id 15.20.8857.038; Mon, 21 Jul 2025
+ 05:26:22 +0000
+From: <Varshini.Rajendran@microchip.com>
+To: <claudiu.beznea@tuxon.dev>, <Andrei.Simion@microchip.com>,
+	<lgirdwood@gmail.com>, <broonie@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <Nicolas.Ferre@microchip.com>,
+	<alexandre.belloni@bootlin.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ASoC: dt-bindings: atmel,at91-ssc: add
+ microchip,sam9x7-ssc
+Thread-Topic: [PATCH] ASoC: dt-bindings: atmel,at91-ssc: add
+ microchip,sam9x7-ssc
+Thread-Index: AQHb2dQNW3MKOC1fvkW4ldoW+ewb8LQ8TFaA
+Date: Mon, 21 Jul 2025 05:26:22 +0000
+Message-ID: <7989c547-2346-4e1e-8327-0c085885faf9@microchip.com>
+References: <20250610065005.64070-1-varshini.rajendran@microchip.com>
+In-Reply-To: <20250610065005.64070-1-varshini.rajendran@microchip.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-GB
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microchip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA3PR11MB9014:EE_|SA1PR11MB8594:EE_
+x-ms-office365-filtering-correlation-id: 6b228f18-24e8-4769-2eca-08ddc8172123
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|7416014|376014|366016|38070700018|921020;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?ZHI4b0VBUlQ3TnY3eVhQWU5pOEEvek9SMElVdnBJK2RyK2xrN2I0cnZvUVdB?=
+ =?utf-8?B?aG1sak1MQnBxN3p1NFUrci9Ma1VDWFR6Rms1L0RuOWZKajJOU3paNlNqcnlz?=
+ =?utf-8?B?ZWN2clpXMUdDR1M2RzNMSnV5d1ZWeExkTE5HbGNQTVRNY2IweHB4dU1GQjdZ?=
+ =?utf-8?B?QUVjTnpLNGVxcTAvSFRMYXNYSlFsM2RCcVFxZnZuVVJ4MVBybkk0V093RWV1?=
+ =?utf-8?B?eEVNM3VSb2RKdWI3eGw1K2ozRWRIRTRhcXdLUVlOMm14WXFJZ2dwZ0ZadWVq?=
+ =?utf-8?B?UHpHT0E0RStRaEpSRkFBVmhwWlJ2NWVLeUt4dE50K2RucU5sZjBjREdzSmJs?=
+ =?utf-8?B?c1A0cUlSc1hXK3R0WktRV1BNV20vYTNtYjluMm5KcTA2NnlmSEJXcEVWdG5G?=
+ =?utf-8?B?QUl3aGNRRmZFVWpsaGJYSlZ2MjFmOHRpRkFZVHJPYWRKMEhrT1NJVmdmU0hV?=
+ =?utf-8?B?QmZnVmNScDRib1RVRlA4dUp0b080eXdvSUs0THdpNm1Wbzdwb2cwaHhQb3pP?=
+ =?utf-8?B?Sm5WRytqSFVXU1p6aHplaWhqdlVoeW1yaExVY2hMMkVPaFc1VnNhMDJZN1Rj?=
+ =?utf-8?B?dE5jK3ZKdlRheXBOdWdsWDI5WHFJTnRmU3N1VDJ3YkJuOTU1UzBTZnYyNUlK?=
+ =?utf-8?B?bFpkdmtZZnhuVnI5Y0RQTFA3RFVKdFJXQzZmUStRZTc2NWJJQ1dkcEhra2tk?=
+ =?utf-8?B?RDNpTGNFa2NRUzRxSG01WThwUitSNms5STV0UzZYN3RDSEdhTjZUTVpORGtC?=
+ =?utf-8?B?Z0VESUNJLzNMT2hCcW5ET2ZvSmpIaXZscHczNUZkandOK3pCWFJOLzJGWGh3?=
+ =?utf-8?B?WVFra0NRUlFSdEtOdUE5bmlBYlMxb0RtQ3J3RERVTUFhd1o5WldqUVFyV0l0?=
+ =?utf-8?B?enhVeVhQR1pWL2s0MHJTZG5CQkYxcS90Rms2ZEJSVzRFaWJTcXdIbDJxeTNs?=
+ =?utf-8?B?RTdlR2YvM3BzN1UwWnVRM1ROVGNITWxXWjJNR1dreXRsOXdreElVVzRCYXhF?=
+ =?utf-8?B?R2o2TGxrcEZnVzBLTjBSdTljalZ0bEg0K05TTzRLSFU3eDNtSnRVNHJ4U2JY?=
+ =?utf-8?B?NnZWR2ZrSkNMMFRjbm80aUlKM0hmS2V2SEFGM3NYUkZSRVd5Y24xMW1xN0RE?=
+ =?utf-8?B?QmlVdkdlNjZKQTFBL2xqR3lNeXd2VG42ZWRlZFQrVHdQemduSFArWGg0REhC?=
+ =?utf-8?B?MmlaZ2NVVWdvcnZpT09pM0FKeEdRQVNKQjV4NHQxa1NVYjFFczk3ZDAwditz?=
+ =?utf-8?B?MGR6TWE1WnFxVnFtQkYwWERoYzVsK2Z1UlBNZjlUeWFYUHIvOWRwNzNjVGhU?=
+ =?utf-8?B?dXdIQWhlZ3RHODlFY1NwNmZScG1yS0RDSnBGSDNoMC9PUFRObld2b1VoSFUw?=
+ =?utf-8?B?VDRvenZuNUR4QnVSOWkzV1FoSnczb0RERTZXOWl4V3FTb3k3bTZ0RHcrNUc0?=
+ =?utf-8?B?RE4zOU5nZ3hKNHpJUVZSVHZWSlVFY1Foam5iMnZPdzVDVDYzZWcraFZIVExw?=
+ =?utf-8?B?SXprTWZHWnVtVkVsTGxNYWJhQmUwY1E1eGRNL2dFMDBNUTNSR0JPUm9LWXdM?=
+ =?utf-8?B?M3JzaXRtbExxd3FNdC9kSVA5MHJzanhZdlQ5T1FQY013K2FVaHlvV3lERTRZ?=
+ =?utf-8?B?WXpyZDllS1BXREN1MmNwNVVzSkhqeWtPNmNFbGVsR3FiZndScU93RTNNK3dw?=
+ =?utf-8?B?VlJrUHZjMGFMcGtHOFBHSWJZeklPcDRRcWR0d25ZZ0xNd3Y3ZkZCUk90Y09T?=
+ =?utf-8?B?V1JsSXY5ZXBiOCtZb2VjK1E5Q24xS2FCaFRqcFpkYXFteGRQRTJnY0xDa1V2?=
+ =?utf-8?B?eUV0aTYvSEJPenpBZVBScUhkK1dDWFFuRTVGMzB3WTVRSVRzNTRWdlZjNUdE?=
+ =?utf-8?B?NGRza1FLZHM3TTZUcFh3NGJ3RDFsbU11NGtaM1V0WVRGU056Skd0TEFMM1hZ?=
+ =?utf-8?B?Zi80TFhPZVdaaTJtYzBVMEsvSUNpazBXVU94eWVZU1I0bWdpQ2owU3NheWwx?=
+ =?utf-8?B?R3J0N3UrV0xGa0NEa3VEUGdFeHMybnZLcTloRzVBUkVKOE5ZKzVEb2dhVG5w?=
+ =?utf-8?Q?HgoksY?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA3PR11MB9014.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(38070700018)(921020);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?WWk1QjZUL0xoVUQ5bFpkRHlzZlQ3aHdhYnJZQUsvdmN4dXl4aE02V2lySlVB?=
+ =?utf-8?B?VGtXUTM2RXg0Z0FaKzkxRHFNRS9ZU1BiSXhIZlJaTTJLWXZFUUNOUlFNUW56?=
+ =?utf-8?B?UHAyVGhGeUkzYndydVBEc2pqbU1QQ3NHMFFVWU5kV01LMUk1SmorZXRQL3lj?=
+ =?utf-8?B?M04xWFVVUTVsbENSNDZ6TDEyU1hkTnpYL01lTW5jLzNLNXF5WllrOHByRFQ5?=
+ =?utf-8?B?OU11QmFUL1hkWi9MdFpoeWxPNm1ORWZaZWFVWEd3Vi9iQ252ZG91UWpudU90?=
+ =?utf-8?B?NERlTit2Wit2R2QrekVxSVhzVHJkTGFCeTBpcmZrSml1V0liU280aFJ3TG1X?=
+ =?utf-8?B?eWVycXltczRrQlVVc2FNSVpERWJmN1VDbVRsSDRzSDlkZGZsTklUcHVpMTN1?=
+ =?utf-8?B?clVTeDU1elk0RFVtVC8ySVlKSHZ3QWg5Qml4alJYYlA3RkE3YlNrd0hLWUp2?=
+ =?utf-8?B?VVAvc0gvcisvTzh0a0RyQVFUMXZvUWtTSDRnbjRDRmZWQWVsMmp2UURCMGRW?=
+ =?utf-8?B?Mk90eCs4SG5qaDRrNk1lNm8rT1R6Yld5cjlRdGI0TFhnTTIrMWZraGcxZlJE?=
+ =?utf-8?B?MFFUQ05DenhpZ0NRNEY2N3FzblI1dnBUNE9vMFlRbS9xMVJuRzRBbnNZWmdJ?=
+ =?utf-8?B?c3hWRkdkYjdlTFVBZWxyWGc0N0p3S2JHQ3EzazBnVXhvZWIwSHo3TmY1U2Nn?=
+ =?utf-8?B?a3NIdFRDVWl6Q3UzbDNWQkVRaTA4YXBxdnFacHp1cTNKZmYzOVVZOER1M21S?=
+ =?utf-8?B?ZHZqS2pnTjhGdmNvQy9iQkEwR3FoNEpEUTZOd1kwSDQ2Zkp4ZGhrK2VBNUxu?=
+ =?utf-8?B?Z01PWXR3a0o2czhqZzF2WENGM1lZY1NlblRzem9ESG9Na2VESkcrMXFoSzFY?=
+ =?utf-8?B?OHBPN05xZGl6dWVMYXYvZ3NmNENMNnNDekVsZmtkZ28xUU9Eall6bVVNNUhZ?=
+ =?utf-8?B?MmdIRFdtUWhZZlBJTkdtTlBlK3VNSEhwRWFhaGVMNnIyRFhTeUVvODRaUUEy?=
+ =?utf-8?B?LzdCOUNsVnlPeXJzc1NaMldRQ0RnSlFqN1R1UDhnMzhDRC9QaVR4MnFPRWtt?=
+ =?utf-8?B?aEhiblgrRlFUTzhlU1VJelgxc1NLSmVvSC80RkdPVnlQSUxZczFzV2twOFNX?=
+ =?utf-8?B?WVJLSkNIbG5MQkZCaUMvS1hzT1FQckhOckVqRUUyUVhib3BDNS9SaUF1VHNr?=
+ =?utf-8?B?bkdXcVBNTEo2WHJxTnVsN2FQNnplRmlBRzRTbVYxV25pUWVZTFczVkI5TFVn?=
+ =?utf-8?B?Mk1CZ0kvcFNYNkZMTllzMllHMGkrdXRGUCt5YmZjd3o1TmVLaTcwVDhuYzhM?=
+ =?utf-8?B?U0lwbDNxa25lRU5kcEM2blNEYkV1dnpoeDVrcVhoeTVXUDNXY1AvNUNmY0E4?=
+ =?utf-8?B?dW4raE12cjA4clFVLytEVFZhUEZrdTJkOWlsMDl1Y2V0Y1YrK0JMOVdjZjNN?=
+ =?utf-8?B?VkJheFo2dkRpNjFkbS8wRCs5Rmkza3ZGRFd2UkM5MmxFT2EvUndCY0pxZDdW?=
+ =?utf-8?B?UUtmbitNQnFJUUxSS3lNVERJUjFtWXl4ZHJZb0ZxcGlFeUxVeXgwc1pXcnBz?=
+ =?utf-8?B?UlFGamtUTzh5a0h4eFpqZm4vaEhkMHlrVWkxdXBZbkhqSTlXanNCL1VXR1pJ?=
+ =?utf-8?B?c1JHYm9RSjI4blhEbW9PRnFBTzM2MHQrVzFMV2dJSkEvUktxS3lhUFlxZVJh?=
+ =?utf-8?B?RDEvT3N3ZnZtbVpKL2tBeEx4S2tjSGkzVUIveCtnRkxua2h1U1FaQkQvTmVj?=
+ =?utf-8?B?MnkzdklBcCtWVFFaV1RoNmFWdmxKR0RtY3ZURllocW0xNDNLVTBJQVFGRXFM?=
+ =?utf-8?B?OFdEZWhrRUZ2UWFPbERNZzVFNmIrVCtjajNDenF4eUpXT0s0bUxBMVRLRSta?=
+ =?utf-8?B?bXZpdmgyQ3NyajNOZEVqd1JkUnhWNVRBWUVITzFSUDR2aTJpdmZtS1dFZ05x?=
+ =?utf-8?B?ZUR6bW9kak9vN29EZXpucUpXejB0TkZtSWtWS1lTRVNSWnpqd2hPZWlIQThh?=
+ =?utf-8?B?SW1yYXBQRmdzUEVDMmhMS1Y0TFJLV1IzZXJVUzVGWkRDeHVGcndTTEx4dmdm?=
+ =?utf-8?B?VFN3bll6U3hCTDZlM25rSGNWSkZ5c1JTVE9qakx6dXlxekQ0THpnTkl2T0NW?=
+ =?utf-8?B?cEJYc2k2OUt4UkRKTjFZTGF6cG9kcU9sUUxOMTF5elRnM0pKTDRQbVdMSFFT?=
+ =?utf-8?B?T2c9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <EABC458AF6B6064798A62F0F84242A2B@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADUfDZoBrnDpnTOxiDq6pBkctJ3NDJq7Wcqm2pUu_ooqMy8yyw@mail.gmail.com>
+X-OriginatorOrg: microchip.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB9014.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6b228f18-24e8-4769-2eca-08ddc8172123
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jul 2025 05:26:22.2154
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: aPg6NWnt9i+qNPS20jAQZfcOMcfjdRFFRSMqYleG53Bjejl7O/pr1cxqbRCgp7490fqwCvvS23npAFSn7xYZuq8vfurkCoTspM4v4DvQeoLhfEuTKqESzDQGDx3mBXme
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8594
 
-On Sun, Jul 20, 2025 at 03:10:28PM -0400, Caleb Sander Mateos wrote:
-> On Sat, Jul 19, 2025 at 10:34 AM Sidong Yang <sidong.yang@furiosa.ai> wrote:
-> >
-> > This patch introduces rust abstraction for io-uring sqe, cmd. IoUringSqe
-> > abstracts io_uring_sqe and it has cmd_data(). and IoUringCmd is
-> > abstraction for io_uring_cmd. From this, user can get cmd_op, flags,
-> > pdu and also sqe.
-> >
-> > Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
-> > ---
-> >  rust/kernel/io_uring.rs | 114 ++++++++++++++++++++++++++++++++++++++++
-> >  rust/kernel/lib.rs      |   1 +
-> >  2 files changed, 115 insertions(+)
-> >  create mode 100644 rust/kernel/io_uring.rs
-> >
-> > diff --git a/rust/kernel/io_uring.rs b/rust/kernel/io_uring.rs
-> > new file mode 100644
-> > index 000000000000..7843effbedb4
-> > --- /dev/null
-> > +++ b/rust/kernel/io_uring.rs
-> > @@ -0,0 +1,114 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +// Copyright (C) 2025 Furiosa AI.
-> > +
-> > +//! Files and file descriptors.
-> > +//!
-> > +//! C headers: [`include/linux/io_uring/cmd.h`](srctree/include/linux/io_uring/cmd.h) and
-> > +//! [`include/linux/file.h`](srctree/include/linux/file.h)
-> > +
-> > +use core::mem::MaybeUninit;
-> > +
-> > +use crate::{fs::File, types::Opaque};
-> > +
-> > +pub mod flags {
-> > +    pub const COMPLETE_DEFER: i32 = bindings::io_uring_cmd_flags_IO_URING_F_COMPLETE_DEFER;
-> > +    pub const UNLOCKED: i32 = bindings::io_uring_cmd_flags_IO_URING_F_UNLOCKED;
-> > +
-> > +    pub const MULTISHOT: i32 = bindings::io_uring_cmd_flags_IO_URING_F_MULTISHOT;
-> > +    pub const IOWQ: i32 = bindings::io_uring_cmd_flags_IO_URING_F_IOWQ;
-> > +    pub const NONBLOCK: i32 = bindings::io_uring_cmd_flags_IO_URING_F_NONBLOCK;
-> > +
-> > +    pub const SQE128: i32 = bindings::io_uring_cmd_flags_IO_URING_F_SQE128;
-> > +    pub const CQE32: i32 = bindings::io_uring_cmd_flags_IO_URING_F_CQE32;
-> > +    pub const IOPOLL: i32 = bindings::io_uring_cmd_flags_IO_URING_F_IOPOLL;
-> > +
-> > +    pub const CANCEL: i32 = bindings::io_uring_cmd_flags_IO_URING_F_CANCEL;
-> > +    pub const COMPAT: i32 = bindings::io_uring_cmd_flags_IO_URING_F_COMPAT;
-> > +    pub const TASK_DEAD: i32 = bindings::io_uring_cmd_flags_IO_URING_F_TASK_DEAD;
-> > +}
-> > +
-> > +#[repr(transparent)]
-> > +pub struct IoUringCmd {
-> > +    inner: Opaque<bindings::io_uring_cmd>,
-> > +}
-> > +
-> > +impl IoUringCmd {
-> > +    /// Returns the cmd_op with associated with the io_uring_cmd.
-> > +    #[inline]
-> > +    pub fn cmd_op(&self) -> u32 {
-> > +        // SAFETY: The call guarantees that the pointer is not dangling and stays valid
-> > +        unsafe { (*self.inner.get()).cmd_op }
-> > +    }
-> > +
-> > +    /// Returns the flags with associated with the io_uring_cmd.
-> > +    #[inline]
-> > +    pub fn flags(&self) -> u32 {
-> > +        // SAFETY: The call guarantees that the pointer is not dangling and stays valid
-> > +        unsafe { (*self.inner.get()).flags }
-> > +    }
-> > +
-> > +    /// Returns the ref pdu for free use.
-> > +    #[inline]
-> > +    pub fn pdu(&mut self) -> MaybeUninit<&mut [u8; 32]> {
-> 
-> Should be &mut MaybeUninit, right? It's the bytes that may be
-> uninitialized, not the reference.
-
-Yes, it should be &mut MaybeUninit.
-> 
-> > +        // SAFETY: The call guarantees that the pointer is not dangling and stays valid
-> > +        unsafe { MaybeUninit::new(&mut (*self.inner.get()).pdu) }
-> > +    }
-> > +
-> > +    /// Constructs a new `struct io_uring_cmd` wrapper from a file descriptor.
-> 
-> Why "from a file descriptor"?
-> 
-> Also, missing a comment documenting the safety preconditions?
-
-Yes, it's a mistake in comment and also ptr should be NonNull.
-> 
-> > +    #[inline]
-> > +    pub unsafe fn from_raw<'a>(ptr: *const bindings::io_uring_cmd) -> &'a IoUringCmd {
-> 
-> Could take NonNull instead of a raw pointer.
-> 
-> > +        // SAFETY: The caller guarantees that the pointer is not dangling and stays valid for the
-> > +        // duration of 'a. The cast is okay because `File` is `repr(transparent)`.
-> 
-> "File" -> "IoUringCmd"?
-> 
-> > +        unsafe { &*ptr.cast() }
-> > +    }
-> > +
-> > +    // Returns the file that referenced by uring cmd self.
-> 
-> I had a hard time parsing this comment. How about "Returns a reference
-> to the uring cmd's file object"?
-
-Agreed. thanks.
-> 
-> > +    #[inline]
-> > +    pub fn file<'a>(&'a self) -> &'a File {
-> 
-> Could elide the lifetime.
-
-Thanks, I didn't know about this.
-> 
-> > +        // SAFETY: The call guarantees that the pointer is not dangling and stays valid
-> > +        let file = unsafe { (*self.inner.get()).file };
-> > +        unsafe { File::from_raw_file(file) }
-> 
-> Missing a SAFETY comment for File::from_raw_file()? I would expect
-> something about io_uring_cmd's file field storing a non-null pointer
-> to a struct file on which a reference is held for the duration of the
-> uring cmd.
-
-Yes, I missed. thanks.
-> 
-> > +    }
-> > +
-> > +    // Returns the sqe  that referenced by uring cmd self.
-> 
-> "Returns a reference to the uring cmd's SQE"?
-
-Agreed, thanks.
-> 
-> > +    #[inline]
-> > +    pub fn sqe(&self) -> &IoUringSqe {
-> > +        // SAFETY: The call guarantees that the pointer is not dangling and stays valid
-> > +        let ptr = unsafe { (*self.inner.get()).sqe };
-> 
-> "ptr" isn't very descriptive. How about "sqe"?
-
-Sounds good.
-> 
-> > +        unsafe { IoUringSqe::from_raw(ptr) }
-> 
-> Similar, missing SAFETY comment for IoUringSqe::from_raw()?
-
-Thanks. I missed.
-> 
-> > +    }
-> > +
-> > +    // Called by consumers of io_uring_cmd, if they originally returned -EIOCBQUEUED upon receiving the command
-> > +    #[inline]
-> > +    pub fn done(self, ret: isize, res2: u64, issue_flags: u32) {
-> 
-> I don't think it's safe to move io_uring_cmd. io_uring_cmd_done(), for
-> example, calls cmd_to_io_kiocb() to turn struct io_uring_cmd *ioucmd
-> into struct io_kiocb *req via a pointer cast. And struct io_kiocb's
-> definitely need to be pinned in memory. For example,
-> io_req_normal_work_add() inserts the struct io_kiocb into a linked
-> list. Probably some sort of pinning is necessary for IoUringCmd.
-
-Understood, Normally the users wouldn't create IoUringCmd than use borrowed cmd
-in uring_cmd() callback. How about change to &mut self and also uring_cmd provides
-&mut IoUringCmd for arg.
-
-> 
-> > +        // SAFETY: The call guarantees that the pointer is not dangling and stays valid
-> > +        unsafe {
-> > +            bindings::io_uring_cmd_done(self.inner.get(), ret, res2, issue_flags);
-> > +        }
-> > +    }
-> > +}
-> > +
-> > +#[repr(transparent)]
-> > +pub struct IoUringSqe {
-> > +    inner: Opaque<bindings::io_uring_sqe>,
-> > +}
-> > +
-> > +impl<'a> IoUringSqe {
-> > +    pub fn cmd_data(&'a self) -> &'a [Opaque<u8>] {
-> > +        // SAFETY: The call guarantees that the pointer is not dangling and stays valid
-> > +        unsafe {
-> > +            let cmd = (*self.inner.get()).__bindgen_anon_6.cmd.as_ref();
-> > +            core::slice::from_raw_parts(cmd.as_ptr() as *const Opaque<u8>, 8)
-> 
-> Why 8? Should be 16 bytes for a 64-byte SQE and 80 bytes for a
-> 128-byte SQE, right?
-
-Yes, it should be 16 bytes or 80 bytes. I'll fix this.
-
-> 
-> > +        }
-> > +    }
-> > +
-> > +    #[inline]
-> > +    pub unsafe fn from_raw(ptr: *const bindings::io_uring_sqe) -> &'a IoUringSqe {
-> 
-> Take NonNull here too?
-
-Yes, Thanks.
-> 
-> > +        // SAFETY: The caller guarantees that the pointer is not dangling and stays valid for the
-> > +        // duration of 'a. The cast is okay because `File` is `repr(transparent)`.
-> > +        //
-> > +        // INVARIANT: The caller guarantees that there are no problematic `fdget_pos` calls.
-> 
-> Why "File" and "fdget_pos"?
-
-It's a bad mistake. thanks!
-
-Thank you so much for deatiled review!
-
-Thanks,
-Sidong
-> 
-> Best,
-> Caleb
-> 
-> > +        unsafe { &*ptr.cast() }
-> > +    }
-> > +}
-> > diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> > index 6b4774b2b1c3..fb310e78d51d 100644
-> > --- a/rust/kernel/lib.rs
-> > +++ b/rust/kernel/lib.rs
-> > @@ -80,6 +80,7 @@
-> >  pub mod fs;
-> >  pub mod init;
-> >  pub mod io;
-> > +pub mod io_uring;
-> >  pub mod ioctl;
-> >  pub mod jump_label;
-> >  #[cfg(CONFIG_KUNIT)]
-> > --
-> > 2.43.0
-> >
-> >
+SGksDQoNCkdlbnRsZSByZW1pbmRlciB0byBtZXJnZSB0aGlzIHBhdGNoLg0KDQpPbiAxMC8wNi8y
+NSAxMjoyMCBwbSwgVmFyc2hpbmkgUmFqZW5kcmFuIHdyb3RlOg0KPiBBZGQgbWljcm9jaGlwLHNh
+bTl4Ny1zc2MgdG8gRFQgYmluZGluZ3MgZG9jdW1lbnRhdGlvbi4NCj4gDQo+IFNpZ25lZC1vZmYt
+Ynk6IFZhcnNoaW5pIFJhamVuZHJhbiA8dmFyc2hpbmkucmFqZW5kcmFuQG1pY3JvY2hpcC5jb20+
+DQo+IC0tLQ0KPiANCj4gVGhpcyBwYXRjaCBpcyBhIHJld29yayAoYWRhcHRpbmcgdG8gdGhlIG5l
+d2x5IGNvbnZlcnRlZCB5YW1sIGZpbGUpIG9mIHRoZQ0KPiBsZWZ0b3V0IHBhdGNoIHNlbnQgWzFd
+IGFzIGEgcGFydCBvZiB0aGUgc2VyaWVzIGFkZGluZyBzdXBwb3J0IGZvciBzYW05eDcgU29DDQo+
+IGFuZCBzYW05eDc1IGN1cmlvc2l0eSBib2FyZC4NCj4gDQo+IFsxXSBodHRwczovL2xvcmUua2Vy
+bmVsLm9yZy9sa21sLzIwMjQxMDEwMTIwMzQ1LjkyODQ0LTEtdmFyc2hpbmkucmFqZW5kcmFuQG1p
+Y3JvY2hpcC5jb20vDQo+IA0KPiAtLS0NCj4gICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9zb3Vu
+ZC9hdG1lbCxhdDkxLXNzYy55YW1sICAgICB8IDExICsrKysrKysrLS0tDQo+ICAgMSBmaWxlIGNo
+YW5nZWQsIDggaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQg
+YS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mvc291bmQvYXRtZWwsYXQ5MS1zc2Mu
+eWFtbCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9zb3VuZC9hdG1lbCxhdDkx
+LXNzYy55YW1sDQo+IGluZGV4IGEwNWU2MTQzMTgyNC4uY2U5OWMyZDhjMzVkIDEwMDY0NA0KPiAt
+LS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mvc291bmQvYXRtZWwsYXQ5MS1z
+c2MueWFtbA0KPiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mvc291bmQv
+YXRtZWwsYXQ5MS1zc2MueWFtbA0KPiBAQCAtMTYsOSArMTYsMTQgQEAgZGVzY3JpcHRpb246DQo+
+ICAgDQo+ICAgcHJvcGVydGllczoNCj4gICAgIGNvbXBhdGlibGU6DQo+IC0gICAgZW51bToNCj4g
+LSAgICAgIC0gYXRtZWwsYXQ5MXJtOTIwMC1zc2MNCj4gLSAgICAgIC0gYXRtZWwsYXQ5MXNhbTln
+NDUtc3NjDQo+ICsgICAgb25lT2Y6DQo+ICsgICAgICAtIGVudW06DQo+ICsgICAgICAgICAgLSBh
+dG1lbCxhdDkxcm05MjAwLXNzYw0KPiArICAgICAgICAgIC0gYXRtZWwsYXQ5MXNhbTlnNDUtc3Nj
+DQo+ICsgICAgICAtIGl0ZW1zOg0KPiArICAgICAgICAgIC0gZW51bToNCj4gKyAgICAgICAgICAg
+ICAgLSBtaWNyb2NoaXAsc2FtOXg3LXNzYw0KPiArICAgICAgICAgIC0gY29uc3Q6IGF0bWVsLGF0
+OTFzYW05ZzQ1LXNzYw0KPiAgIA0KPiAgICAgcmVnOg0KPiAgICAgICBtYXhJdGVtczogMQ0KDQoN
+Ci0tIA0KVGhhbmtzLA0KVmFyc2hpbmkgUmFqZW5kcmFuLg0K
 
