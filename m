@@ -1,71 +1,61 @@
-Return-Path: <linux-kernel+bounces-739827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00BF2B0CB97
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:17:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0C15B0CB9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:17:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B3111C21E18
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:17:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B85AB4E0377
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3534123B62C;
-	Mon, 21 Jul 2025 20:16:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40DD823B61B;
+	Mon, 21 Jul 2025 20:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OZTE06mj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KNkNYQMb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE5B155CB3;
-	Mon, 21 Jul 2025 20:16:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796C623816D;
+	Mon, 21 Jul 2025 20:17:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753129017; cv=none; b=p3GqEjVGAMJh9cWySdtMWJq3XRp4wmrZuFhJD1GLujShljEWs0UNoTC466bD6vxyGyMOp9JwwSn/8eMesHRTA5l+w8AG9cUoPlpyaj6XfZUEd0pVXgQWY0NT7JmldOSx8SdeHfx7rErkbX0o0vBxptcZM7a3hh0gVv0lWcBImz0=
+	t=1753129032; cv=none; b=rvmnTd4+jGkZDuvOw/ZfuB/dLZkCzil0JrA6j1Z/u50ljOXah5TLQY5N8t70IepFJPi+Vj5BgJbrG7/FI1e7zi3AmLlRJGPWy0pBD38hsrnL9yJFpD3Mji0GU1H1fq6Wm0QWeskk4vCgq/sDMCiw929NEHHXpxoS8ehAMYQ2vrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753129017; c=relaxed/simple;
-	bh=fPCjBlrmUPA5mvNxfbJDvZCN5253HcHDupts84ahHrU=;
+	s=arc-20240116; t=1753129032; c=relaxed/simple;
+	bh=zsoAwwBko42CkVECzPsq8auhWL/xsEzIc97plmn6jec=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BrhjNNFXcHRqG3MQzhmHlvKtKEvhFvo0F4qKVd1TpEnyc86cbQgqgoW/E6dT1Z6cATP32YwPaADwwPX5nO8gFsbRp6cIBvexyAi9OZLF4035We+ghRNfqFHd1VQHP7ju2Ba1C+5EEV/F3oLZqCsOa2yqOSSwPpwmd8SfXqhN+E4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OZTE06mj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4CE8C4CEED;
-	Mon, 21 Jul 2025 20:16:56 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=AJkCaje7z4NBRXqEE7gDQdn2CTIPkCsE+r2pmIMwq8+DngO+MsVmrVth8DzHJJGa/F8QeZmVYR/GPOeSH6XtqSpDw5CtfScrQrODlTl+XUPCcyyU68iYMGe6g1mSbsMX6FgXfJpiEA84eLVspWV9dMCF9+d1bZUY3MEAgPhEZfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KNkNYQMb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E36CDC4CEED;
+	Mon, 21 Jul 2025 20:17:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753129016;
-	bh=fPCjBlrmUPA5mvNxfbJDvZCN5253HcHDupts84ahHrU=;
+	s=k20201202; t=1753129032;
+	bh=zsoAwwBko42CkVECzPsq8auhWL/xsEzIc97plmn6jec=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OZTE06mjfY3FbIlctpmaahVfBx8Ck81gl137LyK4mbMGhbJDdxgZK/YFqcRxcFs7I
-	 GSierzely0mYMlZOPybWzDeEuexgHHZCVMrKRQVScg0f6wZVQdH2kKnBn8v5iEkUBG
-	 jInQsZ0hyXk5meA5zT3I3fawRxEQdh2lWF2cvNxAQJ6enBocyTvzyTdbcth8dqtAQ4
-	 RSLNhSDI3SFe5TsIggOzjkufSSyP0wrf5sYgxy2kZQU3dHKQdvUYaYQmdoc+hS4nj+
-	 Rtw5TFIHe5eVMNmLMGYA80ueWZYHFnY0QHmC6Q6vRsAqK6arssfT0eivyT08pwrLsE
-	 K9Qv9Noqniu9g==
-Date: Mon, 21 Jul 2025 13:16:56 -0700
-From: Kees Cook <kees@kernel.org>
-To: Nicolas Schier <nicolas.schier@linux.dev>
-Cc: Arnd Bergmann <arnd@arndb.de>, Ingo Molnar <mingo@kernel.org>,
-	x86@kernel.org, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev, linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org, linux-efi@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
-	kasan-dev@googlegroups.com, sparclinux@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v3 01/13] stackleak: Rename STACKLEAK to KSTACK_ERASE
-Message-ID: <202507211315.5164A33E@keescook>
-References: <20250717231756.make.423-kees@kernel.org>
- <20250717232519.2984886-1-kees@kernel.org>
- <20250721-spiked-adamant-hyrax-eea284@lindesnes>
+	b=KNkNYQMbWATXsZca7uECJh52TBQOODxYQsDYpWchJQxNuXKrA3n6QxfTQqlyf2DXp
+	 8O9P3kApfSVThW5ioV5bC6VMj885JSOXK4utaVtFbCq2jmJdYe5W2BnwxgfbzmRvOy
+	 u2rE5/BPq2MCA2MKeRo6YZ5tz8KLk4/15NNF5ViPy/FAPnxNp5N3SXMjlgFXm7zKJ6
+	 sNpJQWhV9BpOxtx6vVmlXvKvHQBqJtZVSc3chFMUwXgQxqtuIP2rNwHJwnOVQchS3p
+	 coEqzM7h36xXVukQtHdWd1TJIkz4F0cvtz5Ym4kGZ9M/5jEaM2Oa27ue8o03jek+55
+	 NXaY/8AZThvKA==
+Date: Mon, 21 Jul 2025 15:17:10 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	Andi Shyti <andi.shyti@kernel.org>, Stefan Roese <sr@denx.de>,
+	linux-mediatek@lists.infradead.org,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH v2 3/5] dt-bindings: i2c: mt7621: Document an7581
+ compatible
+Message-ID: <175312902965.1260431.17671364110549858903.robh@kernel.org>
+References: <20250721180710.2116-1-ansuelsmth@gmail.com>
+ <20250721180710.2116-4-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,64 +64,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250721-spiked-adamant-hyrax-eea284@lindesnes>
+In-Reply-To: <20250721180710.2116-4-ansuelsmth@gmail.com>
 
-On Mon, Jul 21, 2025 at 10:02:36PM +0200, Nicolas Schier wrote:
-> On Thu, Jul 17, 2025 at 04:25:06PM -0700, Kees Cook wrote:
-> > In preparation for adding Clang sanitizer coverage stack depth tracking
-> > that can support stack depth callbacks:
-> > 
-> > - Add the new top-level CONFIG_KSTACK_ERASE option which will be
-> >   implemented either with the stackleak GCC plugin, or with the Clang
-> >   stack depth callback support.
-> > - Rename CONFIG_GCC_PLUGIN_STACKLEAK as needed to CONFIG_KSTACK_ERASE,
-> >   but keep it for anything specific to the GCC plugin itself.
-> > - Rename all exposed "STACKLEAK" names and files to "KSTACK_ERASE" (named
-> >   for what it does rather than what it protects against), but leave as
-> >   many of the internals alone as possible to avoid even more churn.
-> > 
-> > While here, also split "prev_lowest_stack" into CONFIG_KSTACK_ERASE_METRICS,
-> > since that's the only place it is referenced from.
-> > 
-> > Suggested-by: Ingo Molnar <mingo@kernel.org>
-> > Signed-off-by: Kees Cook <kees@kernel.org>
-> > ---
-> > Cc: Arnd Bergmann <arnd@arndb.de>
-> > Cc: <x86@kernel.org>
-> > Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-> > Cc: <linux-doc@vger.kernel.org>
-> > Cc: <linux-arm-kernel@lists.infradead.org>
-> > Cc: <kvmarm@lists.linux.dev>
-> > Cc: <linux-riscv@lists.infradead.org>
-> > Cc: <linux-s390@vger.kernel.org>
-> > Cc: <linux-efi@vger.kernel.org>
-> > Cc: <linux-hardening@vger.kernel.org>
-> > Cc: <linux-kbuild@vger.kernel.org>
-> > Cc: <linux-security-module@vger.kernel.org>
-> > Cc: <linux-kselftest@vger.kernel.org>
-> > ---
-> >  arch/Kconfig                                  |  4 +--
-> >  arch/arm/Kconfig                              |  2 +-
-> >  arch/arm64/Kconfig                            |  2 +-
-> >  arch/riscv/Kconfig                            |  2 +-
-> >  arch/s390/Kconfig                             |  2 +-
-> >  arch/x86/Kconfig                              |  2 +-
-> >  security/Kconfig.hardening                    | 36 ++++++++++---------
-> >  arch/arm/boot/compressed/Makefile             |  2 +-
-> >  arch/arm64/kernel/pi/Makefile                 |  2 +-
-> >  arch/arm64/kvm/hyp/nvhe/Makefile              |  2 +-
-> >  arch/riscv/kernel/pi/Makefile                 |  2 +-
-> >  arch/riscv/purgatory/Makefile                 |  2 +-
-> >  arch/x86/purgatory/Makefile                   |  2 +-
+
+On Mon, 21 Jul 2025 20:05:54 +0200, Christian Marangi wrote:
+> Airoha SoC implement the same Mediatek logic for I2C bus with the only
+> difference of not having a dedicated reset line to reset it.
 > 
-> Did you miss arch/loongarch/Kconfig by accident?
+> Add a dedicated compatible for the Airoha AN7581 SoC and reject the
+> unsupported property.
 > 
-> $ git grep -Hrne ARCH_STACKLEAK
-> arch/loongarch/Kconfig:127:     select HAVE_ARCH_STACKLEAK
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  .../bindings/i2c/mediatek,mt7621-i2c.yaml          | 14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
+> 
 
-Oh! Yes, I missed that when I rebased to v6.16 (which added loongarch
-support for stackleak). Thanks for catching that!
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
--- 
-Kees Cook
 
