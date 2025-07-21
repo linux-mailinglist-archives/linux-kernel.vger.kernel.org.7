@@ -1,136 +1,149 @@
-Return-Path: <linux-kernel+bounces-739338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1D0FB0C4F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:12:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 569EAB0C4F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:15:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 749891886108
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:11:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CE273AAA0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898B02D836C;
-	Mon, 21 Jul 2025 13:11:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D102E2D8DA9;
+	Mon, 21 Jul 2025 13:15:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="GJXuiBC/"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="YUxC9lvL"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9AA02957BA;
-	Mon, 21 Jul 2025 13:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61EB729E109
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 13:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753103470; cv=none; b=oEp4+MJYnwvQnQOUl1dgbJ4yu5Qe1rkJs24sCwwdsi78YW7BIlposbh0oYxibybxJAHbu/OdzF/JOKRtr1x/nRsBhQLJsh1gRfKDWUwRZNu9Id9gG2EvFN8u/xJArIcOEWSGnJKf8TPKMps48GTCLLgvopOgsO5Tqy45Y4mJSJk=
+	t=1753103722; cv=none; b=t2Dzh3ImlKaaaG6qSN/nFG8X2hKUTCJ6Cxf71usTj8MjKjDgFojFZuGa1GoIpOt5HIFCOhs/VLGvXkj2zvcSTiS1c3nzerIMWIfl+t/5TlLPPki0lQIBqoa0u9ofuP4dc3GvmmX5ewsVGYzEOCNn0sy/PFC3A+0jP5csUUIk1zU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753103470; c=relaxed/simple;
-	bh=GyzrlvwKW5tsANlW8MqKVrstmtRTarD+3tRn5itgUzI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X9rpWf98OoItxGKA07KFM+rOrDOhvwnIbLx3tYXsnwDWdc6MY8CnDlFSeKn0gg+NMJJIE3nM1ify9UrLgVDenVqAhWt9yATr8/IuRj7HkRj86I01CHoKxXifPJKzsAWT8BtePpujUf9jTfMkAgBVtcUVTozJRWfT6Vbn99abR9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=GJXuiBC/; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=2EDIiB7F78ZZl6mL2M2TE1SlEuzFD+iUDjhHgloH2UQ=; b=GJXuiBC/9awoiua23kOQl4lLOW
-	CFBVBr2ilT1eXsLt4slNEf2a9gf4h450QI1ETxHQgiF/Wsjr1DB4gTHOLzMfCNsnHM6XunnilUISW
-	GNoFh56TtE+Rd/JtZlZtO7oZCxgWmeODHCUp1c5Oo9nK2+L9eQjBBBvtqSSojLiiDLk8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1udqIB-002MCv-Vx; Mon, 21 Jul 2025 15:10:55 +0200
-Date: Mon, 21 Jul 2025 15:10:55 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: =?utf-8?B?5p2O5b+X?= <lizhi2@eswincomputing.com>
-Cc: weishangjuan@eswincomputing.com, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, rmk+kernel@armlinux.org.uk,
-	yong.liang.choong@linux.intel.com, vladimir.oltean@nxp.com,
-	jszhang@kernel.org, jan.petrous@oss.nxp.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com, inochiama@gmail.com,
-	boon.khai.ng@altera.com, dfustini@tenstorrent.com, 0x1207@gmail.com,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, ningyu@eswincomputing.com,
-	linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com
-Subject: Re: Re: Re: [PATCH v3 2/2] ethernet: eswin: Add eic7700 ethernet
- driver
-Message-ID: <6b3c8130-77f0-4266-b1ed-2de80e0113b0@lunn.ch>
-References: <20250703091808.1092-1-weishangjuan@eswincomputing.com>
- <20250703092015.1200-1-weishangjuan@eswincomputing.com>
- <c212c50e-52ae-4330-8e67-792e83ab29e4@lunn.ch>
- <7ccc507d.34b1.1980d6a26c0.Coremail.lizhi2@eswincomputing.com>
- <e734f2fd-b96f-4981-9f00-a94f3fd03213@lunn.ch>
- <6c5f12cd.37b0.1982ada38e5.Coremail.lizhi2@eswincomputing.com>
+	s=arc-20240116; t=1753103722; c=relaxed/simple;
+	bh=OLFyRAWYVCojqMOaG4pRHzi1oiXlwO7AEnKO0IReBPE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FfgDC1nx1C8C8iqqgpzbepvPRSf9gCTBGE1AY2kSEkYJRKGUp0VYjlfWdjMxzxYdTvpmXUZ5HeHXl9a9G1m5UR3T/dddV5Lz4j56DY2d6JMxXIqcaLt/gwmE63sqNm1Ya7KuuOarjKI++CmkiLrIOwE9VHE2MAhOkn/Kskie1d0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=YUxC9lvL; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45610582d07so33601555e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 06:15:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1753103719; x=1753708519; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TODX06Luzw1Bg3HrSiWsMUDdqd0hRUT9XELHjALG528=;
+        b=YUxC9lvL528yD1p5Pehs3jpGldRKS6H6OO97qa24H7c6/fCC0vVMn3Qo97jEqKjCw6
+         k8peAN+d31+0AblB+GVA/QEgGxgklA2PVGjebCIDZkED/3MLiGwd6sTq0zyMptv3HJwk
+         QKdm9Rht9aZWno6TUp5iGW60gYr+eCUWWxsrPfgGfjMZRM6FCDj5Bdt+bxOo64H7jGLn
+         qfHviwBEg/CrugDUA690oIhwh6Co1HYHt3if/+zaMnNR0SUwy6P/jfHFmMZHK/4kVfAD
+         lOhxRPUEwObLuT4gO+SDBVZ2pTn3eD/zB+b3d8FTkMjGgNx9zbOtBLDjbWnH9V4mvhFz
+         IaIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753103719; x=1753708519;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TODX06Luzw1Bg3HrSiWsMUDdqd0hRUT9XELHjALG528=;
+        b=UHXJOnDgVbD0FgZJ+R2tnL8ArsEGfUVQgXtx1/aedRuoBWpzibMX8wKK7UfLgczSw6
+         +KrlnBJH/97DXeEdyUqqvvlodM+YMvfW+NAGMCkoCJHgsRYtdEtn9MPJs4l4zgPTckbF
+         X0vLXyEQ2Mt2ZAH3KjWfWxPfUXVr18mT99nsypItjPJkCLqhjpAeNcC2CPgivu9I4gqQ
+         orRx7/1V/wdDcJZiCAynb5vVksTJ5ntM+kHddG39kHGTpRC+jyFluTIP61hhhQBBUVFe
+         KlTG3sUwV7LvVDaExHg0VAJiCF2tuLUmpX4S7yvMqyHZZxku+zDQtcxTV2negebff6Wq
+         Vk3A==
+X-Forwarded-Encrypted: i=1; AJvYcCWpNVxupRVJdYIHVPeEqsshBvUMLGChxEYJXqa1GQAIPxece1iffXG4UmAovxqhx1nwXnCYM730VSYJs5U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+tEEYPtR3DxpgXAI7oh8zt5LUlS7y04qRVtyBfOxWDU+C5K77
+	Sj5SQu1LsIZgkVbx9FKUFFBwZwdUdfEytJD2uN2gGD2zYrgNvxjSfKv0D9AT8E6hTtY=
+X-Gm-Gg: ASbGncvb5EKENJz/rSjycYDVJcQk/S0iLVO0043YrkW6ZPPRWdNLnbgc4Gq+VhKr4p1
+	Nu/D0IksoE2uwO5FBivVXsxeY5uU/FJhI1az9InRiiHaBoWnZV2gEN4pJKOM1HE0KQas3MMCOxo
+	hsDZa+0kyrX9l8or5qLYHPTNI9lhQvYtikFe9rAqz4yI08UG8Kzm2Phwip1Y5F2WK7aLMrXglfk
+	NVtjNCkFlhO/jJLWcMrjw8ZLH1Mi/8o5laDKW70+4Ngxo84/+08jqBj4sPraNJ9usnqTTG3BskV
+	sexdcU9npindzCLD8nn9Jjh+r595fqksoy7YnFN2b4RjjaZhvNsgjSSeYk31UkGzzO6Cg/OkNFb
+	lqkebXMYLquxXKQeqI+QFuhs=
+X-Google-Smtp-Source: AGHT+IE6hSA6IgSYZzhjcHqll782tZfplfgYxnmAitmMV8tqIpsaPAw0Kw0vQ/HRkVaESo1pggEX6Q==
+X-Received: by 2002:a05:6000:430c:b0:3a4:d939:62f8 with SMTP id ffacd0b85a97d-3b613e984ccmr12169355f8f.32.1753103718407;
+        Mon, 21 Jul 2025 06:15:18 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:a0b1:7516:7c6d:ded5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e818525sm159556685e9.16.2025.07.21.06.15.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Jul 2025 06:15:18 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Qiang Zhao <qiang.zhao@nxp.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] soc: fsl: qe: convert set_multiple() to returning an integer
+Date: Mon, 21 Jul 2025 15:15:11 +0200
+Message-ID: <20250721131511.75316-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6c5f12cd.37b0.1982ada38e5.Coremail.lizhi2@eswincomputing.com>
+Content-Transfer-Encoding: 8bit
 
-> > > Let me clarify the purpose of the three elements in each dly_param_* array:
-> > >   dly_param_[x][0]: Delay configuration for TXD signals
-> > >   dly_param_[x][1]: Delay configuration for control signals (e.g., TX_EN, RX_DV, RX_CLK)
-> > >   dly_param_[x][2]: Delay configuration for RXD signals
-> > 
-> > Maybe add a #define or an enum for the index.
-> > 
-> > Do these delays represent the RGMII 2ns delay?
-> > 
-> 
-> Yes, these delays refer to the RGMII delay, but they are not strictly 2ns. There are a few points that require further clarification:
-> 1. Regarding delay configuration logic:
->    As you mentioned in version V2, rx-internal-delay-ps and tx-internal-delay-ps will be mapped to and overwrite the corresponding bits in the EIC7700_DELAY_VALUE1 register, which controls the rx_clk and tx_clk delays. Is this understanding and approach correct and feasible?
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Please configure your email client to wrap at about 78
-characters. Standard network etiquette.
+The conversion to using the new GPIO line setter callbacks missed the
+set_multiple() in this file. Convert it to using the new callback.
 
-Yes, if rx-internal-delay-ps or/and tx-internal-delay-ps are in DT,
-they should configure the delay the MAC applies.
+Fixes: 52ccf19527fd ("soc: fsl: qe: use new GPIO line value setter callbacks")
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+This is a follow-up to commit 52ccf19527fd ("soc: fsl: qe: use new GPIO
+line value setter callbacks") in which I did not convert the second GPIO
+callback. Could you please apply it on top of Christophe's
+pull-request[1] and queue it for v6.17?
 
+[1] https://patchwork.kernel.org/project/linux-soc/patch/c947d537-cae5-44f0-abd8-0c558bac46d2@csgroup.eu/
 
-> 2. About the phy-mode setting:
->    In our platform, the internal delays are provided by the MAC. When configuring rx-internal-delay-ps and tx-internal-delay-ps in the device tree, is it appropriate to set phy-mode = "rgmii-id" in this case?
+ drivers/soc/fsl/qe/gpio.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-Please read:
+diff --git a/drivers/soc/fsl/qe/gpio.c b/drivers/soc/fsl/qe/gpio.c
+index 5391cce4e6ef..710a3a03758b 100644
+--- a/drivers/soc/fsl/qe/gpio.c
++++ b/drivers/soc/fsl/qe/gpio.c
+@@ -79,8 +79,8 @@ static int qe_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+ 	return 0;
+ }
+ 
+-static void qe_gpio_set_multiple(struct gpio_chip *gc,
+-				 unsigned long *mask, unsigned long *bits)
++static int qe_gpio_set_multiple(struct gpio_chip *gc,
++				unsigned long *mask, unsigned long *bits)
+ {
+ 	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+ 	struct qe_gpio_chip *qe_gc = gpiochip_get_data(gc);
+@@ -104,6 +104,8 @@ static void qe_gpio_set_multiple(struct gpio_chip *gc,
+ 	iowrite32be(qe_gc->cpdata, &regs->cpdata);
+ 
+ 	spin_unlock_irqrestore(&qe_gc->lock, flags);
++
++	return 0;
+ }
+ 
+ static int qe_gpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
+@@ -320,7 +322,7 @@ static int __init qe_add_gpiochips(void)
+ 		gc->direction_output = qe_gpio_dir_out;
+ 		gc->get = qe_gpio_get;
+ 		gc->set_rv = qe_gpio_set;
+-		gc->set_multiple = qe_gpio_set_multiple;
++		gc->set_multiple_rv = qe_gpio_set_multiple;
+ 
+ 		ret = of_mm_gpiochip_add_data(np, mm_gc, qe_gc);
+ 		if (ret)
+-- 
+2.48.1
 
-https://elixir.bootlin.com/linux/v6.15.7/source/Documentation/devicetree/bindings/net/ethernet-controller.yaml#L287
-
-It gives a detailed description of what phy-mode = "rmgii-id" means. 
-
-> 3. Delay values being greater than 2ns:
->    In our platform, the optimal delay values for rx_clk and tx_clk are determined based on the board-level timing adjustment, and both are greater than 2ns. Given this, is it reasonable and compliant with the RGMII specification to set both rx-internal-delay-ps and tx-internal-delay-ps to values greater than 2ns in the Device Tree?
-
-It is O.K. when the total delay is > 2ns. However, please note what is
-said, the normal way to implement delays in Linux. The PHY does the
-2ns delay. The MAC can then do fine tuning, adding additional small
-delays.
-
-> There is a question that needs clarification:
-> The EIC7700_DELAY_VALUE0 and EIC7700_DELAY_VALUE1 registers contain the optimal delay configurations determined through board-level phase adjustment. Therefore, they are also used as the default values in our platform. If the default delay is set to 0ps, the Ethernet interface may fail to function correctly in our platform.
-
-So there is only every going to be one board? There will never produce
-a cost optimised version with a different, cheaper PHY? You will never
-support connecting the MAC directly an Ethernet switch? You will never
-make use of a PHY which can translate to SGMII/1000BaseX, and then
-have an SFP cage?
-
-DT properties are there to make your hardware more flexible. You can
-use it to describe such setups, and handle the timing needed for each.
-
-By default, when phy-mode is rgmii-id, the MAC adds 0ns, the PHY 2ns,
-and most systems will just work. That 2ns is what the RGMII standard
-requires. You can then fine tune it with rx-internal-delay-ps and
-tx-internal-delay-ps if your design does not correctly follow the
-RGMII standard.
-
-	Andrew
 
