@@ -1,113 +1,79 @@
-Return-Path: <linux-kernel+bounces-739729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68816B0CA31
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:01:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3852B0CA34
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:02:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FD177A2EE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:59:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 368FF17F379
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:02:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D782E0B45;
-	Mon, 21 Jul 2025 18:01:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7982E0B6A;
+	Mon, 21 Jul 2025 18:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GBKxpzo4"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="T4TEAF7p"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E31E2D3748
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 18:01:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82A12D9EDD
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 18:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753120871; cv=none; b=A5pkTQookQtzzNczkr2wPQ+6a1zc0E+DuWKwbI3vYUhWBxO6Xg6brljU36pUj3D56U9Dx8atQekGRReUZZ9ahnmQEMPI+LneyhMAuFSq+QuigIN4y2AqKXU2MUjSX6CIi3KAcu7LG6YaCXgT6acDyt0ig+mPe69mYEI0dtQKTII=
+	t=1753120963; cv=none; b=tZ9OsVYQZAd3O6Hs2RDvn4imvWsazrOrv0vS7E6GtNAIlKC3SKFokG9bDeNom0Tp66WJMtTwBV/v7VVf5kJtImY38EFfi0j9TpEfhXCReyHE7ijwH7J/vIuNaCJy+RoCqyM+//tCc3sU2jeWqefkjiFx3a7g3DFaDv2sWjOZDZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753120871; c=relaxed/simple;
-	bh=pFi0iNg20dO512kniaVlxq0eQv3JXBjCcE9+ainODKU=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=LEWPqN3IYJ5DVFF4nk97x9ajR/qeNX9PtmwXXyefWjKFkw6/8helw0Er6r0yhkpY8Yd+qa2UuVh12SfRPr29x2rtfFIVhVfSRbgdhoW0AFjGp2OVPA21aUT+2hLgQITATrRNQcnmlrF+JAK5QpI5P3TnYSCLjBCQzFhgqx4LGXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--brho.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GBKxpzo4; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--brho.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3132c1942a1so6216226a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 11:01:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753120870; x=1753725670; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=nkwILaoRvCGTt3850C+OpAJVMyb+bC6KByMj+ffuFyY=;
-        b=GBKxpzo4jIZzmsmtFRmy4Ai2ztTkE98/cfShd+T5qQuDogeuTHR/0v/T8cuuvx7tXN
-         pzXluF6ypAH2eIGEzMVPA8zw5LArsc6TwjRtMkb6FYgVHQ6YCGkexRtezOC2JgY4jzds
-         GNrGI5OABDpr3XletwY2aHwiP7LISWu8uVkQBmyVmMmzfz+Us+GOSwVn7zkSTRnPmV6B
-         sgWNpB+4r00Q0RXlSWBh2r9n80707UoYI9TDHlKf9p0Tzyf4EQwP/WQPrm1rj4+7WkVy
-         J82EvENiGsMkKSXhRegPHV55Ceg0iMxSFrm0SPAZLN66X7ssLH2P7uaMiYb9PXbU6Bhm
-         QfDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753120870; x=1753725670;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nkwILaoRvCGTt3850C+OpAJVMyb+bC6KByMj+ffuFyY=;
-        b=fdC8xsr9X7X0WafjSPX+4vWUOn7m64zFCHQK3sk18Xm7u0yCVkyil5IuB6/Rg6DOuS
-         ++9ikhQRXf3tEdq+CxOxX0vjibBC7+NuQCmRT2NzSDWz3fN9rRNtvv8kzE/k7fwbJIKc
-         RZVbKX7G2MEnvKxlQFSu+RztL+Vf3F8lv+5c6qp/MTC4DrRyq2OFlA9D/dU9BbcJLNTA
-         xMI9fq4nVoPHi1BeiJS4l8xdbeSEKmLLEwjWDPpBQG2o8JD7m5pfg75ozZGp+Tv6t2I6
-         DtWYy8EY38LJOfktae7wuzhGj4E50JLPU7CHAKxoJfE/Xb2z3BwAWc57GUrOljgIFn5w
-         L55g==
-X-Forwarded-Encrypted: i=1; AJvYcCUfuHYO8DJWOUgcNKIdQNBFAlGxlc1RIIQCg7gFuEINULrocp2iuA6UbFqn5xiDsyXwQ2suIW4AUcayh8c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqUkxoq6b627332RT5XiUrGE1prb/rDShXGee8I0TvOGsXaqte
-	i2qg1DpHuSPAxGu/endYLPp9o2yJ87mrHhIh0AoGLzieg2ygxO4kaEt34/uDyEQ90UAiRLEPKw=
-	=
-X-Google-Smtp-Source: AGHT+IEMVgugN4IL+CFFSpkR2FwGQ9XHs+U2c8+mJb7PyriwEGtvZrHfeHjlWf5Bk3t3+bv1LkyTurDn
-X-Received: from qkab26.prod.google.com ([2002:a05:620a:89a:b0:7e0:f93f:98db])
- (user=brho job=prod-delivery.src-stubby-dispatcher) by 2002:a05:620a:4892:b0:7e3:54d8:3fdd
- with SMTP id af79cd13be357-7e354d84002mr1925664085a.16.1753120857996; Mon, 21
- Jul 2025 11:00:57 -0700 (PDT)
-Date: Mon, 21 Jul 2025 18:00:47 +0000
+	s=arc-20240116; t=1753120963; c=relaxed/simple;
+	bh=tXliXuiihE2ojoiN1uitPo5tH4fwY9tqh9by9KB8vSA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S+jd8ycTws5NunjZ1q3eCeP2LHkPs/KyGsGNiZ8DGiRM+PWWXpzQGT5hYs0hm2J1EIzg0ZTj2Ccvm+HFFin9wq6ahC7EsfhZX2VsWzYw5Nr32Ru3j/bBaix9VApS2Xd0OBEOrDsOYm6pPLSCy4rYg3EJdFvIWuS8TlRl3Z5SFdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=T4TEAF7p; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-122-135.bstnma.fios.verizon.net [173.48.122.135])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 56LI1YKr016142
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Jul 2025 14:01:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1753120897; bh=TI5P/7hSMDtpn4Ml4BdwPIlRlSskungxu1J6jKHAaeA=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=T4TEAF7pOpMipnC6OCCUVpU3w4yv01EK25aBiJoDhi0whRuTi6zR1t6fhzdG3Ldwp
+	 v0IOdCOENfgwCp3x5Ui/yfTH9fnIwbdiXI/DXisi7r3T0CgxijwpXualP4zyBIpOX4
+	 iRcPY5JbtcugardjbT22z7EiBahtavg+DEDe2coHvspoCNtalVG/t7eEIlfHdQJBEF
+	 iNUOyLwO6kOataKv/cqfDE+uvUugrCfGsaAjRaweQhL1tjwnEuenVMSBzfIhegU4Th
+	 K3PqyjoVgQdKeo7LL2sR2hqaIer4+r7wGoE2BhkN+kUyA/+WkjlKV+b+k4pVC742Xw
+	 KjHi/OXd3SwRg==
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id 71FD12E00D5; Mon, 21 Jul 2025 14:01:34 -0400 (EDT)
+Date: Mon, 21 Jul 2025 14:01:34 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Baokun Li <libaokun1@huawei.com>
+Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
+        adilger.kernel@dilger.ca, linux-kernel@vger.kernel.org,
+        ojaswin@linux.ibm.com, julia.lawall@inria.fr, yi.zhang@huawei.com,
+        yangerkun@huawei.com, libaokun@huaweicloud.com
+Subject: Re: [PATCH v3 15/17] ext4: convert free groups order lists to xarrays
+Message-ID: <20250721180134.GB1415603@mit.edu>
+References: <20250714130327.1830534-1-libaokun1@huawei.com>
+ <20250714130327.1830534-16-libaokun1@huawei.com>
+ <iulwol5ygqv7fry543vuoawhn7fjzlz7hmai5stjxqkkvvz6pc@wukeepjempwn>
+ <47e62021-fd2c-44ba-be34-e12b2a486efb@huawei.com>
+ <4b5a7a7a-a4db-4d4d-8931-c57ffd231006@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250721180051.3645697-1-brho@google.com>
-Subject: [PATCH] x86/resctrl: avoid divide by 0 num_rmid
-From: Barret Rhoden <brho@google.com>
-To: Tony Luck <tony.luck@intel.com>, Reinette Chatre <reinette.chatre@intel.com>
-Cc: Dave Martin <Dave.Martin@arm.com>, James Morse <james.morse@arm.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4b5a7a7a-a4db-4d4d-8931-c57ffd231006@huawei.com>
 
-x86_cache_max_rmid's default is -1.  If the hardware or VM doesn't set
-the right cpuid bits, num_rmid can be 0.
+Thanks, Baokun!  I've updated the ext4 dev branch with the spelling
+fixes integrated into "ext4: convert free groups order lists to
+xarrays".
 
-Signed-off-by: Barret Rhoden <brho@google.com>
-
----
-I ran into this on a VM on granite rapids.  I guess the VMM told the
-kernel it was a GNR, but didn't set all the cache/rsctl bits.
-
- arch/x86/kernel/cpu/resctrl/monitor.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
-index c261558276cd..226dee05f96e 100644
---- a/arch/x86/kernel/cpu/resctrl/monitor.c
-+++ b/arch/x86/kernel/cpu/resctrl/monitor.c
-@@ -359,6 +359,12 @@ int __init rdt_get_mon_l3_config(struct rdt_resource *r)
- 	else if (mbm_offset > MBM_CNTR_WIDTH_OFFSET_MAX)
- 		pr_warn("Ignoring impossible MBM counter offset\n");
- 
-+	if (r->num_rmid < 1) {
-+		pr_warn("Invalid num_rmid %d, cach_max_rmid was %d\n",
-+			r->num_rmid, boot_cpu_data.x86_cache_max_rmid);
-+		r->num_rmid = 1;
-+	}
-+
- 	/*
- 	 * A reasonable upper limit on the max threshold is the number
- 	 * of lines tagged per RMID if all RMIDs have the same number of
--- 
-2.50.0.727.gbf7dc18ff4-goog
-
+						- Ted
 
