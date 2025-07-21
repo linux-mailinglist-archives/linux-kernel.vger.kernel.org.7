@@ -1,83 +1,71 @@
-Return-Path: <linux-kernel+bounces-739337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F27BCB0C4E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:11:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1D0FB0C4F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:12:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79D3A3B7930
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:10:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 749891886108
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7EE42D876A;
-	Mon, 21 Jul 2025 13:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898B02D836C;
+	Mon, 21 Jul 2025 13:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iJfRudup"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="GJXuiBC/"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064D22C08D0;
-	Mon, 21 Jul 2025 13:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9AA02957BA;
+	Mon, 21 Jul 2025 13:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753103435; cv=none; b=LMJ7wsRATEDLR+qquid7mJppU0mCEx0WhOQDSP4rclT/g+RF6P8tH2b258iZJTqUfCnnl+eHfKg6ELXuvk6vConPFFLeus8MOMzhTgcvxHJSLY2kiCUNL9ZodljhHxbj4g1a1vswY08jiYRkgDlWs/9Xj4iGaGoN9tGwn2gCB7Y=
+	t=1753103470; cv=none; b=oEp4+MJYnwvQnQOUl1dgbJ4yu5Qe1rkJs24sCwwdsi78YW7BIlposbh0oYxibybxJAHbu/OdzF/JOKRtr1x/nRsBhQLJsh1gRfKDWUwRZNu9Id9gG2EvFN8u/xJArIcOEWSGnJKf8TPKMps48GTCLLgvopOgsO5Tqy45Y4mJSJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753103435; c=relaxed/simple;
-	bh=luwLkYm8gQFwFpI76K4uYcGeuowE05nWYbzbnD01+2g=;
+	s=arc-20240116; t=1753103470; c=relaxed/simple;
+	bh=GyzrlvwKW5tsANlW8MqKVrstmtRTarD+3tRn5itgUzI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ovcE18xK8tukxSiwEyaozLjaS3bh+byEvkIAdMOAp55CsP1WboyKkJQCgKomPJGzl/X8gDM9TZhTvSLYdJjOKzrfU1PHWC9l+sPVoWezIADAn/yFJn9LctDvfbDFSMForZjiWX+SSDsAc9uctDGVc9fs4TIQoV1LHP8k3NAg/bY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iJfRudup; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753103433; x=1784639433;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=luwLkYm8gQFwFpI76K4uYcGeuowE05nWYbzbnD01+2g=;
-  b=iJfRudupxUpaE3Tx+SV1QzQ40twgM/h6VSG6a6FXxo6BnizRYDdqskKO
-   LenkZcl3BQbF4eqvtT5rklixJCqdnoMbEkusJGMZneKIGCetKH54iiBl4
-   Nf+3hpYmG9BzWguARp115zL+61ussfU1G19eJmVV6uLYBfGgv7sKfXSdM
-   hA95P6Bdb4F3jjo7oi4J458HEtiRB3ioq7+kxegmDletgCdJAxCCk5pCz
-   4us2IrOckBHDybbUocZ8AI7msCVpHzFiIlOV0kwRsD66rZkMLhrt1fKqh
-   LUJX+dWfBvtFODorGnk1ryMMRd6DJKUdwh/czcmtBBRlu0In5zPi/PtER
-   A==;
-X-CSE-ConnectionGUID: Pml230paQ+6NLIWxVqVuug==
-X-CSE-MsgGUID: G9i80QoCSQanBYeH5Nv/vQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11499"; a="55197012"
-X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
-   d="scan'208";a="55197012"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 06:10:32 -0700
-X-CSE-ConnectionGUID: Y6R9J9HlTRaHSZntVq6X3A==
-X-CSE-MsgGUID: gY8tmDqDTPOp7DfZ78RoJA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
-   d="scan'208";a="158144253"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 21 Jul 2025 06:10:27 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1udqHh-000Goj-09;
-	Mon, 21 Jul 2025 13:10:25 +0000
-Date: Mon, 21 Jul 2025 21:10:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	sboyd@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, jic23@kernel.org,
-	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
-	arnd@arndb.de, gregkh@linuxfoundation.org, srini@kernel.org,
-	vkoul@kernel.org, kishon@kernel.org, sre@kernel.org,
-	krzysztof.kozlowski@linaro.org, u.kleine-koenig@baylibre.com,
-	angelogioacchino.delregno@collabora.com,
-	linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-pm@vger.kernel.org, kernel@collabora.com, wenst@chromium.org
-Subject: Re: [PATCH v1 4/7] phy: qualcomm: eusb2-repeater: Migrate to
- devm_spmi_subdevice_alloc_and_add()
-Message-ID: <202507212056.GmiGorFf-lkp@intel.com>
-References: <20250721075525.29636-5-angelogioacchino.delregno@collabora.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=X9rpWf98OoItxGKA07KFM+rOrDOhvwnIbLx3tYXsnwDWdc6MY8CnDlFSeKn0gg+NMJJIE3nM1ify9UrLgVDenVqAhWt9yATr8/IuRj7HkRj86I01CHoKxXifPJKzsAWT8BtePpujUf9jTfMkAgBVtcUVTozJRWfT6Vbn99abR9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=GJXuiBC/; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=2EDIiB7F78ZZl6mL2M2TE1SlEuzFD+iUDjhHgloH2UQ=; b=GJXuiBC/9awoiua23kOQl4lLOW
+	CFBVBr2ilT1eXsLt4slNEf2a9gf4h450QI1ETxHQgiF/Wsjr1DB4gTHOLzMfCNsnHM6XunnilUISW
+	GNoFh56TtE+Rd/JtZlZtO7oZCxgWmeODHCUp1c5Oo9nK2+L9eQjBBBvtqSSojLiiDLk8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1udqIB-002MCv-Vx; Mon, 21 Jul 2025 15:10:55 +0200
+Date: Mon, 21 Jul 2025 15:10:55 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: =?utf-8?B?5p2O5b+X?= <lizhi2@eswincomputing.com>
+Cc: weishangjuan@eswincomputing.com, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com, rmk+kernel@armlinux.org.uk,
+	yong.liang.choong@linux.intel.com, vladimir.oltean@nxp.com,
+	jszhang@kernel.org, jan.petrous@oss.nxp.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com, inochiama@gmail.com,
+	boon.khai.ng@altera.com, dfustini@tenstorrent.com, 0x1207@gmail.com,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, ningyu@eswincomputing.com,
+	linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com
+Subject: Re: Re: Re: [PATCH v3 2/2] ethernet: eswin: Add eic7700 ethernet
+ driver
+Message-ID: <6b3c8130-77f0-4266-b1ed-2de80e0113b0@lunn.ch>
+References: <20250703091808.1092-1-weishangjuan@eswincomputing.com>
+ <20250703092015.1200-1-weishangjuan@eswincomputing.com>
+ <c212c50e-52ae-4330-8e67-792e83ab29e4@lunn.ch>
+ <7ccc507d.34b1.1980d6a26c0.Coremail.lizhi2@eswincomputing.com>
+ <e734f2fd-b96f-4981-9f00-a94f3fd03213@lunn.ch>
+ <6c5f12cd.37b0.1982ada38e5.Coremail.lizhi2@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,108 +74,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250721075525.29636-5-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <6c5f12cd.37b0.1982ada38e5.Coremail.lizhi2@eswincomputing.com>
 
-Hi AngeloGioacchino,
+> > > Let me clarify the purpose of the three elements in each dly_param_* array:
+> > >   dly_param_[x][0]: Delay configuration for TXD signals
+> > >   dly_param_[x][1]: Delay configuration for control signals (e.g., TX_EN, RX_DV, RX_CLK)
+> > >   dly_param_[x][2]: Delay configuration for RXD signals
+> > 
+> > Maybe add a #define or an enum for the index.
+> > 
+> > Do these delays represent the RGMII 2ns delay?
+> > 
+> 
+> Yes, these delays refer to the RGMII delay, but they are not strictly 2ns. There are a few points that require further clarification:
+> 1. Regarding delay configuration logic:
+>    As you mentioned in version V2, rx-internal-delay-ps and tx-internal-delay-ps will be mapped to and overwrite the corresponding bits in the EIC7700_DELAY_VALUE1 register, which controls the rx_clk and tx_clk delays. Is this understanding and approach correct and feasible?
 
-kernel test robot noticed the following build warnings:
+Please configure your email client to wrap at about 78
+characters. Standard network etiquette.
 
-[auto build test WARNING on next-20250718]
-[cannot apply to jic23-iio/togreg sre-power-supply/for-next char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus linus/master v6.16-rc7 v6.16-rc6 v6.16-rc5 v6.16-rc7]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/AngeloGioacchino-Del-Regno/spmi-Implement-spmi_subdevice_alloc_and_add-and-devm-variant/20250721-155809
-base:   next-20250718
-patch link:    https://lore.kernel.org/r/20250721075525.29636-5-angelogioacchino.delregno%40collabora.com
-patch subject: [PATCH v1 4/7] phy: qualcomm: eusb2-repeater: Migrate to devm_spmi_subdevice_alloc_and_add()
-config: i386-buildonly-randconfig-002-20250721 (https://download.01.org/0day-ci/archive/20250721/202507212056.GmiGorFf-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250721/202507212056.GmiGorFf-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507212056.GmiGorFf-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/phy/qualcomm/phy-qcom-eusb2-repeater.c:221:59: warning: variable 'sparent' is uninitialized when used here [-Wuninitialized]
-     221 |         sub_sdev = devm_spmi_subdevice_alloc_and_add(&pdev->dev, sparent);
-         |                                                                  ^~~~~~~
-   drivers/phy/qualcomm/phy-qcom-eusb2-repeater.c:202:29: note: initialize the variable 'sparent' to silence this warning
-     202 |         struct spmi_device *sparent;
-         |                                    ^
-         |                                     = NULL
-   1 warning generated.
+Yes, if rx-internal-delay-ps or/and tx-internal-delay-ps are in DT,
+they should configure the delay the MAC applies.
 
 
-vim +/sparent +221 drivers/phy/qualcomm/phy-qcom-eusb2-repeater.c
+> 2. About the phy-mode setting:
+>    In our platform, the internal delays are provided by the MAC. When configuring rx-internal-delay-ps and tx-internal-delay-ps in the device tree, is it appropriate to set phy-mode = "rgmii-id" in this case?
 
-   193	
-   194	static int eusb2_repeater_probe(struct platform_device *pdev)
-   195	{
-   196		struct regmap_config eusb2_regmap_config = {
-   197			.reg_bits = 16,
-   198			.val_bits = 16,
-   199			.max_register = 0x100,
-   200			.fast_io = true
-   201		};
-   202		struct spmi_device *sparent;
-   203		struct eusb2_repeater *rptr;
-   204		struct spmi_subdevice *sub_sdev;
-   205		struct device *dev = &pdev->dev;
-   206		struct phy_provider *phy_provider;
-   207		struct device_node *np = dev->of_node;
-   208		int ret;
-   209	
-   210		rptr = devm_kzalloc(dev, sizeof(*rptr), GFP_KERNEL);
-   211		if (!rptr)
-   212			return -ENOMEM;
-   213	
-   214		rptr->dev = dev;
-   215		dev_set_drvdata(dev, rptr);
-   216	
-   217		rptr->cfg = of_device_get_match_data(dev);
-   218		if (!rptr->cfg)
-   219			return -EINVAL;
-   220	
- > 221		sub_sdev = devm_spmi_subdevice_alloc_and_add(&pdev->dev, sparent);
-   222		if (IS_ERR(sub_sdev))
-   223			return PTR_ERR(sub_sdev);
-   224	
-   225		ret = of_property_read_u32(np, "reg", &eusb2_regmap_config.reg_base);
-   226		if (ret < 0)
-   227			return ret;
-   228	
-   229		rptr->regmap = devm_regmap_init_spmi_ext(&sub_sdev->sdev, &eusb2_regmap_config);
-   230		if (IS_ERR(rptr->regmap))
-   231			return -ENODEV;
-   232	
-   233		ret = eusb2_repeater_init_vregs(rptr);
-   234		if (ret < 0) {
-   235			dev_err(dev, "unable to get supplies\n");
-   236			return ret;
-   237		}
-   238	
-   239		rptr->phy = devm_phy_create(dev, np, &eusb2_repeater_ops);
-   240		if (IS_ERR(rptr->phy)) {
-   241			dev_err(dev, "failed to create PHY: %d\n", ret);
-   242			return PTR_ERR(rptr->phy);
-   243		}
-   244	
-   245		phy_set_drvdata(rptr->phy, rptr);
-   246	
-   247		phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-   248		if (IS_ERR(phy_provider))
-   249			return PTR_ERR(phy_provider);
-   250	
-   251		return 0;
-   252	}
-   253	
+Please read:
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+https://elixir.bootlin.com/linux/v6.15.7/source/Documentation/devicetree/bindings/net/ethernet-controller.yaml#L287
+
+It gives a detailed description of what phy-mode = "rmgii-id" means. 
+
+> 3. Delay values being greater than 2ns:
+>    In our platform, the optimal delay values for rx_clk and tx_clk are determined based on the board-level timing adjustment, and both are greater than 2ns. Given this, is it reasonable and compliant with the RGMII specification to set both rx-internal-delay-ps and tx-internal-delay-ps to values greater than 2ns in the Device Tree?
+
+It is O.K. when the total delay is > 2ns. However, please note what is
+said, the normal way to implement delays in Linux. The PHY does the
+2ns delay. The MAC can then do fine tuning, adding additional small
+delays.
+
+> There is a question that needs clarification:
+> The EIC7700_DELAY_VALUE0 and EIC7700_DELAY_VALUE1 registers contain the optimal delay configurations determined through board-level phase adjustment. Therefore, they are also used as the default values in our platform. If the default delay is set to 0ps, the Ethernet interface may fail to function correctly in our platform.
+
+So there is only every going to be one board? There will never produce
+a cost optimised version with a different, cheaper PHY? You will never
+support connecting the MAC directly an Ethernet switch? You will never
+make use of a PHY which can translate to SGMII/1000BaseX, and then
+have an SFP cage?
+
+DT properties are there to make your hardware more flexible. You can
+use it to describe such setups, and handle the timing needed for each.
+
+By default, when phy-mode is rgmii-id, the MAC adds 0ns, the PHY 2ns,
+and most systems will just work. That 2ns is what the RGMII standard
+requires. You can then fine tune it with rx-internal-delay-ps and
+tx-internal-delay-ps if your design does not correctly follow the
+RGMII standard.
+
+	Andrew
 
