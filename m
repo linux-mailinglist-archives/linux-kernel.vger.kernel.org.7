@@ -1,83 +1,96 @@
-Return-Path: <linux-kernel+bounces-738991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 287C9B0C054
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:29:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C2EDB0C05A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:32:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5585F3BEB75
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:29:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E788C1893E27
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 904E128D857;
-	Mon, 21 Jul 2025 09:29:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC99428B511;
+	Mon, 21 Jul 2025 09:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g1uxGS41"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YAoj0vA4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F240028B400
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 09:29:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417D428A1DE;
+	Mon, 21 Jul 2025 09:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753090166; cv=none; b=afiBw0cIeOkhVVqNm+gy1Im9u8yFgRB7ec3uII3rc+Kme+eWEnTMpDzhW81y2SRqNOXDlZZLWOyW/52nWbxpOUUtcVMVouLAIqX0Dd6N7EvZSIi8s15Wlidd2QkQdVYUwwnWiqCzTRiZhJIFpjKosn7Jvl5Or/1uI+yMGYdZRl4=
+	t=1753090324; cv=none; b=GAN8QljHctOeVxWL/hk39i4Pt33mxCPqsjBlCwfob9lM4kUmjHCNNZfMeswt3vYdTuewd9enWUVB+NN9KNSbqHcg9IqVVpz2Gs2Pd2OltrwXmpPgRhuSRO02Ba0t4Gnkmc1N5gkoW3UlC6A1NTPONySZDMzhTESA1IxeLDnqrg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753090166; c=relaxed/simple;
-	bh=dSHvmJ7mbIS5KasPwwUPeZlFBFSMCYHiOvHBW84+ptE=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=RpTJgma8M/pSWsTdwsNv5pvmGHuiTfjv6SqliD3ZlIfJhJhzy8+x10fe6aB/IN6kGglrQXSHdh7pI7wBY8WowbLZf/CdZoYm9cczISOldDuHi1+bym+BfzSNfT2J5VFp92WbpiKqDrQNflPh0Ac/BheonDi2Z9Bb9HEnzxBNB28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g1uxGS41; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F210C4CEF1;
-	Mon, 21 Jul 2025 09:29:24 +0000 (UTC)
+	s=arc-20240116; t=1753090324; c=relaxed/simple;
+	bh=tMQd51DR2PhlSANSMzu8tnUKCfa7HWDsrUeedOQDGV8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aZm8dSXJs0kZ7UnB9T97thnzU3jS+de6IUSP+IceEgMK/9wcxirCjGGsitlFS4xUo4/hmnNOJvlDaiWMXc4fIO1hgVYzRqggaGfibxNogAtDzCT0WlE5s5gmp2D1NOtCdpfNH/FO3cwozdKxhYfWmpul2iLa1dU+/FCZtM1ICUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YAoj0vA4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67591C4CEED;
+	Mon, 21 Jul 2025 09:32:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753090165;
-	bh=dSHvmJ7mbIS5KasPwwUPeZlFBFSMCYHiOvHBW84+ptE=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=g1uxGS410mdQwGvjQTs4rGmq/G1SuyJTRQyjAbyZUz6e88K62W1ra8PVSR8Kfaci/
-	 uf+9qO+vNOtZTHQqClufBXJq9orgXSsXyRA/FYN8A+gBiOS3A1s4zdHJHB4pY54k9c
-	 nm1fyjj/GW+Zozyj80ReKoejBC73/3unLcLILrSQ1JT2wc3kFmYTF6hqkgzZ+I9JYo
-	 Tk1bQaGJ5kPyEgR5OQ5XSLjjjytlH9G9wEw/ySBogoWCLbs0duYLuzMsGy9PUbpfSJ
-	 qaRDTzjhqyzPBci7Yubu/PKn8I+dZQPutNyQH54XxmJI3PBpg5An0fpXRBfoAx2s8z
-	 MGwhJCXvqTRRQ==
-Message-ID: <fadcc64f-d95d-4902-ae4f-981c91babed6@kernel.org>
-Date: Mon, 21 Jul 2025 17:29:22 +0800
+	s=k20201202; t=1753090324;
+	bh=tMQd51DR2PhlSANSMzu8tnUKCfa7HWDsrUeedOQDGV8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YAoj0vA4RH1GRqkxXn895QzFv0xG59k/y01og9h9chrcRef6I1zl+kY8HjU/CScJO
+	 fY6cqeDqwoJnAHxHg5TT0pPw09FzspU5f5hyj8JuGqtHfoWALjOkzT+D1yKkCVCLir
+	 LkmBbUIU1HkWq/06QbM/t0zB4AjvW2jMyvv0tuPNjzt/l9bsiKFDea2bnq8JBtnwn4
+	 lEN+sm57+hqBfZ91Bs8LemSMzLfr5/ulb8jaQXyTYeM5sbgAtv1iZnB/jRYbe2Olce
+	 X0eZUchellO9l6S2rSHcDoS8eZy12eh7DMSKJ4kpvXVOYnAbij6mH1lfnqStNVZ6KI
+	 bFeg8JqF8qZPA==
+Date: Mon, 21 Jul 2025 11:32:01 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Stefan Roese <sr@denx.de>, Andi Shyti <andi.shyti@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 3/5] dt-bindings: i2c: mt7621: Document an7581 compatible
+Message-ID: <20250721-amorphous-perch-from-jupiter-cecfaa@kuoka>
+References: <20250719125617.8886-1-ansuelsmth@gmail.com>
+ <20250719125617.8886-4-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Bo Liu <liubo03@inspur.com>
-Subject: Re: [PATCH v6 2/2] erofs: implement metadata compression
-To: Gao Xiang <hsiangkao@linux.alibaba.com>, linux-erofs@lists.ozlabs.org
-References: <20250717070804.1446345-3-hsiangkao@linux.alibaba.com>
- <20250718031942.3052585-1-hsiangkao@linux.alibaba.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20250718031942.3052585-1-hsiangkao@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250719125617.8886-4-ansuelsmth@gmail.com>
 
-On 7/18/25 11:19, Gao Xiang wrote:
-> From: Bo Liu <liubo03@inspur.com>
+On Sat, Jul 19, 2025 at 02:56:13PM +0200, Christian Marangi wrote:
+> Airoha SoC implement the same Mediatek logic for I2C bus with the only
+> difference of not having a dedicated reset line to reset it.
 > 
-> Thanks to the meta buffer infrastructure, metadata-compressed inodes are
-> just read from the metabox inode instead of the blockdevice (or backing
-> file) inode.
+> Add a dedicated compatible for the Airoha AN7581 SoC and reject the
+> unsupported property.
 > 
-> The same is true for shared extended attributes.
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  .../bindings/i2c/mediatek,mt7621-i2c.yaml          | 14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
 > 
-> When metadata compression is enabled, inode numbers are divided from
-> on-disk NIDs because of non-LTS 32-bit application compatibility.
-> 
-> Co-developed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
-> Signed-off-by: Bo Liu <liubo03@inspur.com>
-> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+> diff --git a/Documentation/devicetree/bindings/i2c/mediatek,mt7621-i2c.yaml b/Documentation/devicetree/bindings/i2c/mediatek,mt7621-i2c.yaml
+> index 118ec00fc190..38118007b601 100644
+> --- a/Documentation/devicetree/bindings/i2c/mediatek,mt7621-i2c.yaml
+> +++ b/Documentation/devicetree/bindings/i2c/mediatek,mt7621-i2c.yaml
+> @@ -14,7 +14,9 @@ allOf:
+>  
+>  properties:
+>    compatible:
+> -    const: mediatek,mt7621-i2c
+> +    enum:
+> +      - mediatek,mt7621-i2c
+> +      - airoha,an7581-i2c
 
-Acked-by: Chao Yu <chao@kernel.org>
+Keep list ordered.
 
-Thanks,
+Best regards,
+Krzysztof
+
 
