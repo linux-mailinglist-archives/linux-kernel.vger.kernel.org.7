@@ -1,106 +1,157 @@
-Return-Path: <linux-kernel+bounces-738815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17280B0BD98
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:21:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBE43B0BD99
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:24:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CDAB171779
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:21:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 365F13A4343
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF9528315D;
-	Mon, 21 Jul 2025 07:21:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2CC2820CB;
+	Mon, 21 Jul 2025 07:24:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="j+v6Ue7B"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YFbp2Nei";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="68fM6nDr";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YFbp2Nei";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="68fM6nDr"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186623BB48;
-	Mon, 21 Jul 2025 07:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E9D2046A6
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 07:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753082497; cv=none; b=r0b/kniUdAPk4DCzEqOg9ySOb+mDim9ju0FDuTWAmPrep0YOa33ce82GOYTjOAQoTZ2TMylq/wMDs4ZyM6q4dk/j2wRX+3dfAtPfYsPEdTKEM72blMOPUnuty5T9RiJui3VaCNxaed+0ImOABC3e9s60TW16veKko/9M51ygJow=
+	t=1753082687; cv=none; b=GpTdbpgH2s9YnvmguA1/ug3t1j0reL2htmL/jp5smW22SxzyGlzDyJvmlZnUEF59Jw851EIs4O8x5EcDm02QTIfaFm7LtbI5soyWsz92Oo1fg9ONNv2mOX4Gma0H9vuLCaWztgBVTmCROmjbUrymDTP9Yf1a4OcNEZnhmidiUEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753082497; c=relaxed/simple;
-	bh=2oaGPuuDj0uRoNLZedS/V22QFQi9DwxfT2TGmhogcQg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s4hWmpLDlEB4N+H82WsZPhSemhH/Te37BozNK+1HvNS+SUx+73IZfpXLdaWX9nkElV7nb6beRnYLHUHNIMg+kFN+LSx+3iJDNW99X2N4628pzi4tuTXTtvC+8p0pYVjeAhbO542qC+hWcaPH9Xt8jGI1ZkbiTHP5eG/urwwT+Hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=j+v6Ue7B; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56L7L8OZ752519;
-	Mon, 21 Jul 2025 02:21:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1753082468;
-	bh=Pzzj8GjdEcvknYctYdwrrCPn6t7CVQ+ZlgbfQZ6H/f4=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=j+v6Ue7BX+/w4cxYeYVTxgnSHIQ5WQ69WF2IJcL9ZB5aK6MYNQgR+mUM8RullUQMu
-	 w+WDJWSFl2wfwCMNEzsIzxcFfL29cJKYvV3fu5XA+l53HIL+K0DrKJg9CrCFR/BLvr
-	 I1HR4R4Owy3C4clDneFh2BWpedm04C13z7vEATSs=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56L7L8lk107316
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 21 Jul 2025 02:21:08 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 21
- Jul 2025 02:21:08 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Mon, 21 Jul 2025 02:21:07 -0500
-Received: from localhost (uda0492258.dhcp.ti.com [172.24.227.169])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56L7L6gT3438091;
-	Mon, 21 Jul 2025 02:21:07 -0500
-Date: Mon, 21 Jul 2025 12:51:06 +0530
-From: s-vadapalli <s-vadapalli@ti.com>
-To: <huaqian.li@siemens.com>
-CC: <s-vadapalli@ti.com>, <baocheng.su@siemens.com>, <bhelgaas@google.com>,
-        <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        <diogo.ivo@siemens.com>, <helgaas@kernel.org>,
-        <jan.kiszka@siemens.com>, <kristo@kernel.org>, <krzk+dt@kernel.org>,
-        <kw@linux.com>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <lpieralisi@kernel.org>, <nm@ti.com>, <robh@kernel.org>,
-        <ssantosh@kernel.org>, <vigneshr@ti.com>
-Subject: Re: [PATCH v10 4/7] PCI: keystone: Add support for PVU-based DMA
- isolation on AM654
-Message-ID: <7eb6b36c-da94-4363-9ee2-d3d38ec46a22@ti.com>
-References: <20250721025945.204422-1-huaqian.li@siemens.com>
- <20250721025945.204422-5-huaqian.li@siemens.com>
+	s=arc-20240116; t=1753082687; c=relaxed/simple;
+	bh=PaGk3h625+x/13cV4FfN0b3wVFTm8eyIgp2uR1qODnY=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=f/m2/LrDE/wadWxUnG2WTqe3BUnWEscxRIDFxTFX6TOB0BgKzs38H9tTB2rXGBp0Tz7iTXXVrOoP6EEECP2BIvAJgHpxPACXy1BqcQaRDGpEnh1fJtBH3uOWpRwrytvpaIPgv1LsL7o1zrBXo2fnSIK09OxGo6vAKT5okicRrg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YFbp2Nei; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=68fM6nDr; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YFbp2Nei; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=68fM6nDr; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C1C581F453;
+	Mon, 21 Jul 2025 07:24:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753082677; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=glnE2PpY1lMHyHLtzV2WYcGDdz+bQLmmEGM8dshSHXM=;
+	b=YFbp2NeiaDSu+I4KXHbF2zpKg/KlnTjQesmxY+4Wa4rnNyd6T9yeacQULz7oHbYfvdQYJy
+	2dCWDm6tcMEXfmom7SsVXcDarwa6HOhT3XQIJO+BwXK9N+14fXvkwWzB7S835RExjeT5NI
+	A5g02/H/kUUWUD7ZIBs4RQIfSLneX3I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753082677;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=glnE2PpY1lMHyHLtzV2WYcGDdz+bQLmmEGM8dshSHXM=;
+	b=68fM6nDr0DaiWzYfj44TDhWqcnk6u4bxqa9yiEr0uim2WS26akERDOoNCAspMpLdaAkKPz
+	V1swFwyDrFOKA9Cw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=YFbp2Nei;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=68fM6nDr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753082677; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=glnE2PpY1lMHyHLtzV2WYcGDdz+bQLmmEGM8dshSHXM=;
+	b=YFbp2NeiaDSu+I4KXHbF2zpKg/KlnTjQesmxY+4Wa4rnNyd6T9yeacQULz7oHbYfvdQYJy
+	2dCWDm6tcMEXfmom7SsVXcDarwa6HOhT3XQIJO+BwXK9N+14fXvkwWzB7S835RExjeT5NI
+	A5g02/H/kUUWUD7ZIBs4RQIfSLneX3I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753082677;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=glnE2PpY1lMHyHLtzV2WYcGDdz+bQLmmEGM8dshSHXM=;
+	b=68fM6nDr0DaiWzYfj44TDhWqcnk6u4bxqa9yiEr0uim2WS26akERDOoNCAspMpLdaAkKPz
+	V1swFwyDrFOKA9Cw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 980C2136A8;
+	Mon, 21 Jul 2025 07:24:37 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id WsDwIzXrfWh9XQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Mon, 21 Jul 2025 07:24:37 +0000
+Date: Mon, 21 Jul 2025 09:24:37 +0200
+Message-ID: <878qki57m2.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Dawid Rezler <dawidrezler.patches@gmail.com>
+Cc: tiwai@suse.com,
+	perex@perex.cz,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ALSA: hda/realtek - Add mute LED support for HP Pavilion 15-eg0xxx
+In-Reply-To: <20250720154907.80815-2-dawidrezler.patches@gmail.com>
+References: <20250720154907.80815-2-dawidrezler.patches@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250721025945.204422-5-huaqian.li@siemens.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-2.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	TAGGED_RCPT(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:mid,suse.de:dkim]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: C1C581F453
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -2.01
 
-On Mon, Jul 21, 2025 at 10:59:42AM +0800, huaqian.li@siemens.com wrote:
-> From: Jan Kiszka <jan.kiszka@siemens.com>
+On Sun, 20 Jul 2025 17:49:08 +0200,
+Dawid Rezler wrote:
 > 
-> The AM654 lacks an IOMMU, thus does not support isolating DMA requests
-> from untrusted PCI devices to selected memory regions this way. Use
-> static PVU-based protection instead. The PVU, when enabled, will only
-> accept DMA requests that address previously configured regions.
+> The mute LED on the HP Pavilion Laptop 15-eg0xxx,
+> which uses the ALC287 codec, didn't work.
+> This patch fixes the issue by enabling the ALC287_FIXUP_HP_GPIO_LED quirk.
 > 
-> Use the availability of a restricted-dma-pool memory region as trigger
-> and register it as valid DMA target with the PVU. In addition, enable
-> the mapping of requester IDs to VirtIDs in the PCI RC. Use only a single
-> VirtID so far, catching all devices.
+> Tested on a physical device, the LED now works as intended.
 > 
-> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-> Signed-off-by: Li Hua Qian <huaqian.li@siemens.com>
+> Signed-off-by: Dawid Rezler <dawidrezler.patches@gmail.com>
 
-Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+Applied now.  Thanks.
 
-Regards,
-Siddharth.
+
+Takashi
 
