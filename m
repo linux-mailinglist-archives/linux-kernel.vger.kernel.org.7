@@ -1,256 +1,343 @@
-Return-Path: <linux-kernel+bounces-739264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95174B0C410
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:26:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AFE4FB0C55B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:39:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA4D854086D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:26:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEFCD16EE46
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 245E8283FE0;
-	Mon, 21 Jul 2025 12:26:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 712F72D94AE;
+	Mon, 21 Jul 2025 13:39:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="ncOqW8X9"
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011008.outbound.protection.outlook.com [40.107.130.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t+s+tot5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29BAA3C0C;
-	Mon, 21 Jul 2025 12:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753100796; cv=fail; b=LkhY6QoiFy+l8A9m3/NCDcdDLdRxR1Il6CvctVunCoyG0AKAGvX63RNKqnzZcqLxqdNUqT0t4Dp9fTjmRg23Xn9k6TLOHUhnibAIWtSW+FYgR1ICr+pSBmlr8/tGNPt+sxNTFZJ+KeVXR99BZ0jyd+/x/ZWa9oSUUEAzbq4kjpg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753100796; c=relaxed/simple;
-	bh=uu2qiwgtlP5QiTwPszxmRCFsDVVzqsVuAPqk3oVF1t4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=PKIxMJL4K4nhqJSm5psRQVLhohc4WtYixtzSow3AVfe4i4nEGxblGeSqozSVxw1Zc329eLE++oLcwE2BlrDc7ioPolZf0ZFcHmdiU2LEyOQm68ribdayCn1kJxZrwpb1FQRWhrst/ABfNu7oqBagw8ET78OK5oOCB6uqUasAe/w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=ncOqW8X9; arc=fail smtp.client-ip=40.107.130.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=w3GZNER4hoZrIIL5iWXmmUEsIcdAcbXkfr1zTm03QerXKXLYMfjDFxXouvdOvihkDvY09bAHAtiiLPhD6/CtRchVZ3q9WWfSHBtg4YwzsriLZ/tynOxdlyZOmbbKpasqAM/U7vd6RuuLbfJirD+PMnBakSTTTrPW+Tw31bs4ZsjJjIHKoc1dQLAUKM5+qUYIhyHQBrN3YtS0ZeaYHuosdtEOmnk/ihQpj3E3hU2RdHWGDPAri9MLkRhIDTsuUApnXUzfGB6qD3ypjkuzE3VKlX5nkDh797l9FziLEDW1CibqTmfkcTCaOozNjAXrMEHAYefgwPWcctL7jMsrxAq9zw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=piJwhJQ919phfQ5OxKysnUVS95zLVy0Ri9N7o+nxZk8=;
- b=nepNABozmhIK0AupjAxA/cWFW8tP5GHGajUxVRB6dsDZfG1qtVm4qqlmtMpNAXfnK6WpjOkfWXkQ+tEeWnIXtaBuP4/9hHmEue8AMRoWw7uiFU7FXMqncXqUMEV5Mo1BsQ4G0pbdBzeQHh4+NbyrlwwvLCO72FZINR5q4NGy4IOQKK3K49VnX3t3dkiUDOI2zx5s+6xDwINLRG5npFAWkCAUfZGPQARU3PP//e9guinkB4Yzr1Y3Oo5DkVNPX2o4OkKIPT87H2nmcIHuCGZMeOHW73+HyxcBmi2RMlz6WGd3+1lqDYYHdDIZDBZU9n2+oG4adEJ92HGKfZSSYlHMJQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=piJwhJQ919phfQ5OxKysnUVS95zLVy0Ri9N7o+nxZk8=;
- b=ncOqW8X9REHPBpnaNc/oA8hP+GDzv24TPV6a7K9QmOSeXsm58uyq7v/+W9r7vdQjqd050W2l7YFnXwI2FpbVbt1kEipZ75JNa5k/qVKfYpekYq8TdtcSDG73tD07ct5qPjgvxSybSBZeMknH10LIRVp/xqB6gLKABOZFdbKaIDhghyBb5I8p3mTD+zocfDIcoJGPZaHBwA/QIGUa+9GO5srju+RDe4l00aUDAPEOeFhcnBWM8dQOmpdrP4rrbaOmCzQylsiUnNSYEROiG9xNUEuAixMe3mqAxyam19927phX/S9V45i/YY0mQsQGzPnr1NJovNQ1rM+nNz7asP+EaA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by DB9PR04MB9260.eurprd04.prod.outlook.com (2603:10a6:10:370::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Mon, 21 Jul
- 2025 12:26:30 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%7]) with mapi id 15.20.8943.029; Mon, 21 Jul 2025
- 12:26:30 +0000
-Date: Mon, 21 Jul 2025 21:36:56 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-Cc: Peng Fan <peng.fan@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
-	Frank Li <frank.li@nxp.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Abel Vesa <abel.vesa@linaro.org>
-Subject: Re: [PATCH v3 6/6] arm64: dts: imx943: Add LVDS/DISPLAY CSR nodes
-Message-ID: <20250721133656.GB27698@nxa18884-linux.ap.freescale.net>
-References: <20250707-imx95-blk-ctl-7-1-v3-0-c1b676ec13be@nxp.com>
- <20250707-imx95-blk-ctl-7-1-v3-6-c1b676ec13be@nxp.com>
- <o4sxmotqixib4tqbvjb5m3l6tnbwbjzodywla4ezf66zmwd2t2@5bd27bkfnsy2>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <o4sxmotqixib4tqbvjb5m3l6tnbwbjzodywla4ezf66zmwd2t2@5bd27bkfnsy2>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: MA0PR01CA0049.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:ac::10) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C06A6F06B;
+	Mon, 21 Jul 2025 13:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753105165; cv=none; b=UkyahDfHlGhwAutocIa8wtXWEndVQuubpcd74zhyNs7FL8i/qPTaAo+xGKC68c4u8bJq/dNzMTDn9dhNujeWER16uIfrXjunCr7kDG4GilY+gublBFrKyNe0ZXRVKhj31z5aLkRDg6v7/6UrUOkpeaBP2y5Nf7wbJwwfmfR9DOM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753105165; c=relaxed/simple;
+	bh=fsJ2MTskARLVf9CJ6jlBRYJCeVzPdTSVSzDZiEKuS/s=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KX8PrUGhr2+1DCwNxT1828E+UUGB5+rPpB0QrlHOYZCsZRL2L6KcI4v3NPALM4xsz+QL3ETjW7YhIg+WkMtkRrqGdxOCOKoA8rhiGeKsS9dB9E/hv5kszZLj+XhL9huhQtZRy2qjrRzBlygBaOuuBf9nq1r+AsejBq4cGriVbwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t+s+tot5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 538EBC4CEED;
+	Mon, 21 Jul 2025 13:39:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753105165;
+	bh=fsJ2MTskARLVf9CJ6jlBRYJCeVzPdTSVSzDZiEKuS/s=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=t+s+tot5sPvNdxakPPsgdvUPppROXX+HcIUyIZ24u/Lf2UGzQXV9pFjrtbLQAkR+8
+	 uCbHWT7dtV72DxlupVqg2UHHRIXSpFsnUfgS79QEt53eggu/oLkV/PnKmCAH/fbmEV
+	 rXTRBKYTDm3oOJ31zLOhRf9bmgvpT79l5l6Gnd7sdfwUJAsQ0q1ON+iUY2nmrkkdzb
+	 d9+AuZo8Gg6TOBVE0P7okxK4UEgr5zmpSle6kxhw4+RPzbpmk4xTFtZxgqGC2u+5JB
+	 mZlU3uSldhHd93aBW5Csw+GPdlHluFuYa6WR9La8vLgWUVLhcux5Ft2AImJ+MqlMoe
+	 dOVwp1PhYqzbA==
+Message-ID: <b518093d927c52e4a7affce3a91fba618fd3fc09.camel@kernel.org>
+Subject: Re: [PATCH 2/7] VFS: introduce done_dentry_lookup()
+From: Jeff Layton <jlayton@kernel.org>
+To: NeilBrown <neil@brown.name>, Linus Torvalds
+ <torvalds@linux-foundation.org>,  Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 21 Jul 2025 09:39:23 -0400
+In-Reply-To: <20250721084412.370258-3-neil@brown.name>
+References: <20250721084412.370258-1-neil@brown.name>
+	 <20250721084412.370258-3-neil@brown.name>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
+ n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
+ egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
+ T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
+ 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
+ YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
+ VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
+ cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
+ CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
+ LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
+ MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
+ gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
+ 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
+ R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
+ rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
+ ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
+ Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
+ lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
+ iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
+ QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
+ YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
+ wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
+ LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
+ 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
+ c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
+ LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
+ TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
+ 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
+ xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
+ +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
+ Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
+ BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
+ N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
+ naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
+ RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
+ FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
+ 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
+ P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
+ aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
+ T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
+ dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
+ 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
+ kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
+ uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
+ AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
+ FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
+ 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
+ sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
+ qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
+ sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
+ IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
+ UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
+ dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
+ EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
+ apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
+ M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
+ dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
+ 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
+ jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
+ flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
+ BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
+ AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
+ 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
+ HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
+ 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
+ uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
+ DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
+ CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
+ Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
+ AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
+ aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
+ f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|DB9PR04MB9260:EE_
-X-MS-Office365-Filtering-Correlation-Id: 04c5fd78-7281-40eb-9c72-08ddc851d20e
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|19092799006|376014|52116014|7416014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?3kU+bgdIxyYZ23kfFxyAJxpJzyrLOsxvo4WL2pcynqveTmk1/oGmilXIdkP6?=
- =?us-ascii?Q?PC7WrYxpvgD2egRBdaSnzhTDe0Pv8s+EgToY9+rS6acnlya10LPExao2hw+u?=
- =?us-ascii?Q?ee+3G2QVk1m3sZVo6W0cuqBQpgr8ikiDrWKJfKqN75G3RqgJQDjKVqmu7cLn?=
- =?us-ascii?Q?asJyCg1cWdVN9BMel5iecFZHMrRaXhOd508GXy094yVHuwC09XrOs1pFpHQk?=
- =?us-ascii?Q?EggQ/i2hh76vCZRMHwOXLN5FVBxEZz1zPWI+UPIUNkIh2WCMmjKOSDc4p5fr?=
- =?us-ascii?Q?rTgoc+N99PedX6Rh7VaUCNmM6FXqXVtlDq/kPBfJDLWnpuf8JVu6CSkmO/L3?=
- =?us-ascii?Q?NTpeEuSYrUVJ+KyhxGaob8BLHbOrvP+2MQBXa8QbxbEzotSCGj1dEu+14T2i?=
- =?us-ascii?Q?hr9IHhyTdR0vWBNjZRDGCP3sCoeZHEDkw4+GGiqpJG7LqLaXj24hwzIkW4Sa?=
- =?us-ascii?Q?UN9WtTsiS+GrQfLOaRu95QnUHU6m9idbmaPfhdK+nuvuizc/ftI2wiCgGejO?=
- =?us-ascii?Q?kHwD8rGmhplJIgIYbnG+UHdXfSXT3oS7PfOAH/dWfFMVSqpvWGTScrEhUkJA?=
- =?us-ascii?Q?fSBaqcV9ule9uwJa6isqxekQA3276dyv8UxjZyZxk/NyOWKffmt2OSsMYcGE?=
- =?us-ascii?Q?tB/MkQMty8e1IWeiDXgmuA1P4a72LVVz2HJDHrCS/G2/ZvVrlzjjoo1xg3qI?=
- =?us-ascii?Q?GN8drObklwtUfpDXPiiYJkPBCnCSDBUkFlwyh4mqCVhXS/miBE7hWuAw/I/t?=
- =?us-ascii?Q?S6/lLX36k3u3+gQVnbCed3ebP7lmH9jjoFzJnzKyJ8HyHBrkkA57J/ajsSBc?=
- =?us-ascii?Q?svCzoBbccOslNIYU+o9YxCz8MAUUOUdAQtBv+685xXGM+eBatW6zKYeXpfTA?=
- =?us-ascii?Q?9Y8FR1EPA/ftLS4buuR0FmBTu3og0aeUMznh1xYVD+2mUByGEsX9hNpki0OR?=
- =?us-ascii?Q?rwf2yZtiUh3N8BMGeXdxgRINCgzOzrF5XNmPHgczCdHCe7u40wDZ/t0IyOcw?=
- =?us-ascii?Q?stxYSS7SZ7kKpIOIbGTqY2PJ/IErOj/VpEoumWG8f4McphExtIe8/vbaRMU8?=
- =?us-ascii?Q?tzJTVqYTG2OVjezc1fjxVcT79Zg6LXHCY0X5L4xhxb1dWxsDC2K5D8FhFMW7?=
- =?us-ascii?Q?yPvGokICgShL3tIqmIljKHnio8EYhgRNdEpY0HRecTwBiSwqGEJdxQUwU5S/?=
- =?us-ascii?Q?PC2uKymHFLYlRQMRXYg4xTLXYQ1CmJrG2GUfwhnFxm5/T8J29GomJIft6faK?=
- =?us-ascii?Q?tXmVi1C+2VCPsERSlF0at1OkO9awp9afx29SXVFBrDK3uxtT37eloBbWHXmC?=
- =?us-ascii?Q?epeQ531C3rKrF8u7edn898EXyLt4WqTn8geJdrt8bLAosSWU28avD1mU/ERT?=
- =?us-ascii?Q?XwKbOrFAm1BZVMLxjnggb29311Z/YaslYThzRJkfgltNw6e08BkfmRQ0KVnm?=
- =?us-ascii?Q?rzLud1EwWRGVMRN8l8HDbvP88FMelWdZ1/o/9MEXuPrr56yzDYVnmg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(376014)(52116014)(7416014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?xGTloRC7j/PNmuV3/AfGeKY25rlk7Yr4pQuSe4i6KXfB/aRkSGOcHJN3a5ng?=
- =?us-ascii?Q?HVwgXP+lhdvd6xp/RjnRJzojDcjzXCCDh6orkMyTCodEN2tixajETj7kAjLw?=
- =?us-ascii?Q?vnBgHFfyXcb4i4nZpgEnPGYz+nUM22EyPl1YAbobmdxLfVL+7QRmSL74/Dg9?=
- =?us-ascii?Q?nKQBP3X/4WcHHZ/qPRNopnIwlLewzppU1jBLRkAwTwnBcm1BYEbAR6xrNcH7?=
- =?us-ascii?Q?gc4uVlIsR6Lb44RZtnxKvAR7FYnLjVP87SLfWJr/+/f4ORlPN8mtWPUJzjLv?=
- =?us-ascii?Q?zrt9DRfXJtA8aw8gdAl6m2esTtjSxTZNpRZyfbmqBbmYLQjbf5nok/LWsCPB?=
- =?us-ascii?Q?UQRFEdWLTdaMZnkeuf2YbQ3DQsbEYEsd9QDPCprksQRRrEOkduAOVHNLo2fW?=
- =?us-ascii?Q?TfW/WI0JpLdxxwGL8oNObXttbercWV4OSBaK1NfQZbLtzQxtKUhQklDo0Pfi?=
- =?us-ascii?Q?VjFPcxopoaEeHFCC5BNsrd3IP+Xbd0W1HrtAzFXrvrUU3Q3g1EUYUwmoNIBZ?=
- =?us-ascii?Q?03MJJpHa82j0NN0cKGXWoPSMEPanDJXlv/BckfUISMcHoU0pjzaNlktGSu93?=
- =?us-ascii?Q?JaOUJ3K8x+TLWhJ8tSRq8k5z04L/LhwbHsqHDwZFIxEAuf5OnfDHZciJDScT?=
- =?us-ascii?Q?edyyNR7YXHoBdFjRypLH9SyNNitul4fi4m98ilamEMEGjwCCtzG8KH28Nl0o?=
- =?us-ascii?Q?CjGxVyc78Yya94DqL3ORj3L6iuseM0b/U2h91jvS74Mee7aAjuNwFeKcpbb4?=
- =?us-ascii?Q?/D6zLMG6Wx9iwSMiJd6Qw0U3E6JwbVFOAg3q53HvY3NBkEV+NY4cVJqJmoxB?=
- =?us-ascii?Q?5GOuguuP80I+cxE8ynrRRlrGFcUcqLV4UWAp3rL0ZwQDZwCjnZnyNvdDIoVz?=
- =?us-ascii?Q?VskgRCeUfA5rJL5pAV5SQr1HPCa548HZoyPpq1yhSRspB7PMHWhkFv7+NTug?=
- =?us-ascii?Q?PH9LklERc0NRqk2o5a5osPVccosQy/7zi4JUscGGHZKzVWdR8X58EzolzSB0?=
- =?us-ascii?Q?OoMnKQcaV82AKzixluRBz3ExQGa+ouhXZPj3NterAdAHooSQH4uOt4AiceFq?=
- =?us-ascii?Q?AsGNYpc+5/oWzMSOXRVk+aS35IweW8++cNil5kK1zd1VIPPk1LX+hFyecmyV?=
- =?us-ascii?Q?EbWhwp9JRnqDuLwDf3CztdcOmP6sGT8l31eWzgyuVOyonKP8N82HrQzKlS41?=
- =?us-ascii?Q?2yux2HYaGKjUSVgjNIbOK/RCCYQ5mo/nVwy5/gYaGP/FEW9JwyW8eUjlsVPF?=
- =?us-ascii?Q?Z2RhiV9dtoCDSrdu+YL5HY1Gx/l/tAbDgbOQQCdPQXUgfDDQ9Jl0dbF6X9Yj?=
- =?us-ascii?Q?20jACZzylR4vK3Dvp6UeRvMNOB3ySJuS07AL6rr6yHkDoOBVQ3q08A0c/eCs?=
- =?us-ascii?Q?ImS8BqrxKLE1nZzz8sdIUEOKCv2R7uG08IwIWQo87w3yFdke/78Dr2HfWLph?=
- =?us-ascii?Q?PADCSoOuucf+m77AIX5wZ1+RrMftR2Oa6ZUlzSrTS7ryQ02jPJU4/33l/tHL?=
- =?us-ascii?Q?YqTCcsnJoF1e0+5JCjwKDHFG5deN9Cbo6pvLwWW2fIp330/uw8in0E+0Tw2N?=
- =?us-ascii?Q?CMqK0mbbubnNwoTsky13rwjQmF4znxf51YcuBwcl?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 04c5fd78-7281-40eb-9c72-08ddc851d20e
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2025 12:26:30.1873
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XJoXwCk88/pQFmk6PtEVD3Lap0b+DHIoRbwP+rwbkFmk6ukM524intt99THniZ3Xvibh5Ff6GjkJktosAvuXIQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9260
 
-On Tue, Jul 08, 2025 at 03:19:26PM +0300, Laurentiu Palcu wrote:
->Hi Peng,
->
->On Mon, Jul 07, 2025 at 10:24:42AM +0800, Peng Fan wrote:
->> Add nodes for LVDS/DISPLAY CSR.
->> 
->> Add clock-ldb-pll-div7 node which is used for clock source of DISPLAY CSR.
->> 
->> Reviewed-by: Frank Li <Frank.Li@nxp.com>
->> Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
->> Signed-off-by: Peng Fan <peng.fan@nxp.com>
->> ---
->>  arch/arm64/boot/dts/freescale/imx943.dtsi | 34 +++++++++++++++++++++++++++++++
->>  1 file changed, 34 insertions(+)
->> 
->> diff --git a/arch/arm64/boot/dts/freescale/imx943.dtsi b/arch/arm64/boot/dts/freescale/imx943.dtsi
->> index 45b8da758e87771c0775eb799ce2da3aac37c060..657c81b6016f21270a1b13d636af72c14ab4f8ef 100644
->> --- a/arch/arm64/boot/dts/freescale/imx943.dtsi
->> +++ b/arch/arm64/boot/dts/freescale/imx943.dtsi
->> @@ -3,6 +3,8 @@
->>   * Copyright 2025 NXP
->>   */
->>  
->> +#include <dt-bindings/clock/nxp,imx94-clock.h>
->> +
->>  #include "imx94.dtsi"
->>  
->>  / {
->> @@ -145,4 +147,36 @@ l3_cache: l3-cache {
->>  			cache-unified;
->>  		};
->>  	};
->> +
->> +	clock-ldb-pll-div7 {
->
->You need to add a label to this node, so it can be referenced from
->other nodes. I hit this issue while trying to prepare the DCIF patches
->for sending upstream, using your latest patchset.
+On Mon, 2025-07-21 at 17:59 +1000, NeilBrown wrote:
+> done_dentry_lookup() is the first step in introducing a new API for
+> locked operation on names in directories - those that create or remove
+> names.  Rename operations will also be part of this API but will
+> use separate interfaces.
+>=20
+> The plan is to lock just the dentry (or dentries), not the whole
+> directory.  A "dentry_lookup()" operation will perform the locking and
+> lookup with a corresponding "done_dentry_lookup()" releasing the
+> resulting dentry and dropping any locks.
+>=20
+> This done_dentry_lookup() can immediately be used to complete updates
+> started with kern_path_locked() (much as done_path_create() already
+> completes operations started with kern_path_create()).
+>=20
+> So this patch adds done_dentry_lookup() and uses it where
+> kern_path_locked() is used.  It also adds done_dentry_lookup_return()
+> which returns a reference to the dentry rather than dropping it.  This
+> is a less common need in existing code, but still worth its own interface=
+.
+>=20
+> Signed-off-by: NeilBrown <neil@brown.name>
+> ---
+>  drivers/base/devtmpfs.c |  7 ++-----
+>  fs/bcachefs/fs-ioctl.c  |  3 +--
+>  fs/namei.c              | 38 ++++++++++++++++++++++++++++++++++++++
+>  include/linux/namei.h   |  3 +++
+>  kernel/audit_fsnotify.c |  9 ++++-----
+>  kernel/audit_watch.c    |  3 +--
+>  6 files changed, 49 insertions(+), 14 deletions(-)
+>=20
+> diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
+> index 31bfb3194b4c..47bee8166c8d 100644
+> --- a/drivers/base/devtmpfs.c
+> +++ b/drivers/base/devtmpfs.c
+> @@ -265,8 +265,7 @@ static int dev_rmdir(const char *name)
+>  	else
+>  		err =3D -EPERM;
+> =20
+> -	dput(dentry);
+> -	inode_unlock(d_inode(parent.dentry));
+> +	done_dentry_lookup(dentry);
+>  	path_put(&parent);
+>  	return err;
+>  }
+> @@ -349,9 +348,7 @@ static int handle_remove(const char *nodename, struct=
+ device *dev)
+>  		if (!err || err =3D=3D -ENOENT)
+>  			deleted =3D 1;
+>  	}
+> -	dput(dentry);
+> -	inode_unlock(d_inode(parent.dentry));
+> -
+> +	done_dentry_lookup(dentry);
+>  	path_put(&parent);
+>  	if (deleted && strchr(nodename, '/'))
+>  		delete_path(nodename);
+> diff --git a/fs/bcachefs/fs-ioctl.c b/fs/bcachefs/fs-ioctl.c
+> index 4e72e654da96..8077ddf4ddc4 100644
+> --- a/fs/bcachefs/fs-ioctl.c
+> +++ b/fs/bcachefs/fs-ioctl.c
+> @@ -351,8 +351,7 @@ static long bch2_ioctl_subvolume_destroy(struct bch_f=
+s *c, struct file *filp,
+>  		d_invalidate(victim);
+>  	}
+>  err:
+> -	inode_unlock(dir);
+> -	dput(victim);
+> +	done_dentry_lookup(victim);
+>  	path_put(&path);
+>  	return ret;
+>  }
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 1c80445693d4..da160a01e23d 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -1714,6 +1714,44 @@ struct dentry *lookup_one_qstr_excl(const struct q=
+str *name,
+>  }
+>  EXPORT_SYMBOL(lookup_one_qstr_excl);
+> =20
+> +/**
+> + * done_dentry_lookup - finish a lookup used for create/delete
+> + * @dentry:  the target dentry
+> + *
+> + * After locking the directory and lookup or validating a dentry
+> + * an attempt can be made to create (including link) or remove (includin=
+g
+> + * rmdir) a dentry.  After this, done_dentry_lookup() can be used to bot=
+h
+> + * unlock the parent directory and dput() the dentry.
+> + *
+> + * This interface allows a smooth transition from parent-dir based
+> + * locking to dentry based locking.
+> + */
+> +void done_dentry_lookup(struct dentry *dentry)
+> +{
+> +	inode_unlock(dentry->d_parent->d_inode);
+> +	dput(dentry);
+> +}
+> +EXPORT_SYMBOL(done_dentry_lookup);
+> +
+> +/**
+> + * done_dentry_lookup_return - finish a lookup sequence, returning the d=
+entry
+> + * @dentry:  the target dentry
+> + *
+> + * After locking the directory and lookup or validating a dentry
+> + * an attempt can be made to create (including link) or remove (includin=
+g
+> + * rmdir) a dentry.  After this, done_dentry_lookup_return() can be used=
+ to
+> + * unlock the parent directory.  The dentry is returned for further use.
+> + *
+> + * This interface allows a smooth transition from parent-dir based
+> + * locking to dentry based locking.
+> + */
+> +struct dentry *done_dentry_lookup_return(struct dentry *dentry)
+> +{
+> +	inode_unlock(dentry->d_parent->d_inode);
+> +	return dentry;
+> +}
+> +EXPORT_SYMBOL(done_dentry_lookup_return);
+> +
+>  /**
+>   * lookup_fast - do fast lockless (but racy) lookup of a dentry
+>   * @nd: current nameidata
+> diff --git a/include/linux/namei.h b/include/linux/namei.h
+> index 5d085428e471..e097f11587c9 100644
+> --- a/include/linux/namei.h
+> +++ b/include/linux/namei.h
+> @@ -81,6 +81,9 @@ struct dentry *lookup_one_positive_unlocked(struct mnt_=
+idmap *idmap,
+>  					    struct qstr *name,
+>  					    struct dentry *base);
+> =20
+> +void done_dentry_lookup(struct dentry *dentry);
+> +struct dentry *done_dentry_lookup_return(struct dentry *dentry);
+> +
+>  extern int follow_down_one(struct path *);
+>  extern int follow_down(struct path *path, unsigned int flags);
+>  extern int follow_up(struct path *);
+> diff --git a/kernel/audit_fsnotify.c b/kernel/audit_fsnotify.c
+> index c565fbf66ac8..170836c3520f 100644
+> --- a/kernel/audit_fsnotify.c
+> +++ b/kernel/audit_fsnotify.c
+> @@ -85,8 +85,8 @@ struct audit_fsnotify_mark *audit_alloc_mark(struct aud=
+it_krule *krule, char *pa
+>  	dentry =3D kern_path_locked(pathname, &path);
+>  	if (IS_ERR(dentry))
+>  		return ERR_CAST(dentry); /* returning an error */
+> -	inode =3D path.dentry->d_inode;
+> -	inode_unlock(inode);
+> +	inode =3D igrab(dentry->d_inode);
 
-Thanks for the comment. Let's add a label when there is a real reference
-in the file. Since you adds the label in your patch to support i.MX943
-DCIF as we talked, I will leave this patch at it is.
+This is a little confusing. This patch changes "inode" from pointing to
+the parent inode to point to the child inode instead. That actually
+makes a bit more sense given the naming, but might best be done in a
+separate patch.
 
-Thanks,
-Peng
+> +	done_dentry_lookup(dentry);
+> =20
+>  	audit_mark =3D kzalloc(sizeof(*audit_mark), GFP_KERNEL);
+>  	if (unlikely(!audit_mark)) {
+> @@ -97,17 +97,16 @@ struct audit_fsnotify_mark *audit_alloc_mark(struct a=
+udit_krule *krule, char *pa
+>  	fsnotify_init_mark(&audit_mark->mark, audit_fsnotify_group);
+>  	audit_mark->mark.mask =3D AUDIT_FS_EVENTS;
+>  	audit_mark->path =3D pathname;
+> -	audit_update_mark(audit_mark, dentry->d_inode);
+> +	audit_update_mark(audit_mark, inode);
+>  	audit_mark->rule =3D krule;
+> =20
+> -	ret =3D fsnotify_add_inode_mark(&audit_mark->mark, inode, 0);
+> +	ret =3D fsnotify_add_inode_mark(&audit_mark->mark, path.dentry->d_inode=
+, 0);
+>  	if (ret < 0) {
+>  		audit_mark->path =3D NULL;
+>  		fsnotify_put_mark(&audit_mark->mark);
+>  		audit_mark =3D ERR_PTR(ret);
+>  	}
+>  out:
+> -	dput(dentry);
+>  	path_put(&path);
+>  	return audit_mark;
+>  }
+> diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
+> index 0ebbbe37a60f..f6ecac2109d4 100644
+> --- a/kernel/audit_watch.c
+> +++ b/kernel/audit_watch.c
+> @@ -359,8 +359,7 @@ static int audit_get_nd(struct audit_watch *watch, st=
+ruct path *parent)
+>  		watch->ino =3D d_backing_inode(d)->i_ino;
+>  	}
+> =20
+> -	inode_unlock(d_backing_inode(parent->dentry));
+> -	dput(d);
+> +	done_dentry_lookup(d);
+>  	return 0;
+>  }
+> =20
 
->
->Thanks,
->Laurentiu
->
->> +		compatible = "fixed-factor-clock";
->> +		#clock-cells = <0>;
->> +		clocks = <&scmi_clk IMX94_CLK_LDBPLL>;
->> +		clock-div = <7>;
->> +		clock-mult = <1>;
->> +		clock-output-names = "ldb_pll_div7";
->> +	};
->> +
->> +	soc {
->> +		dispmix_csr: syscon@4b010000 {
->> +			compatible = "nxp,imx94-display-csr", "syscon";
->> +			reg = <0x0 0x4b010000 0x0 0x10000>;
->> +			clocks = <&scmi_clk IMX94_CLK_DISPAPB>;
->> +			#clock-cells = <1>;
->> +			power-domains = <&scmi_devpd IMX94_PD_DISPLAY>;
->> +			assigned-clocks = <&scmi_clk IMX94_CLK_DISPAXI>,
->> +					  <&scmi_clk IMX94_CLK_DISPAPB>;
->> +			assigned-clock-parents = <&scmi_clk IMX94_CLK_SYSPLL1_PFD1>,
->> +						 <&scmi_clk IMX94_CLK_SYSPLL1_PFD1_DIV2>;
->> +			assigned-clock-rates = <400000000>,  <133333333>;
->> +		};
->> +
->> +		lvds_csr: syscon@4b0c0000 {
->> +			compatible = "nxp,imx94-lvds-csr", "syscon";
->> +			reg = <0x0 0x4b0c0000 0x0 0x10000>;
->> +			clocks = <&scmi_clk IMX94_CLK_DISPAPB>;
->> +			#clock-cells = <1>;
->> +			power-domains = <&scmi_devpd IMX94_PD_DISPLAY>;
->> +		};
->> +	};
->>  };
->> 
->> -- 
->> 2.37.1
->> 
->> 
+It looks right to me though.
+
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
