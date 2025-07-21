@@ -1,135 +1,178 @@
-Return-Path: <linux-kernel+bounces-738995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 799FCB0C066
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:35:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A8952B0C069
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:35:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23B7A189A93B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:35:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0ABA189B798
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E88928C2D7;
-	Mon, 21 Jul 2025 09:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K4khWPmn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375CF28C5A0;
+	Mon, 21 Jul 2025 09:35:34 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DA5487A5;
-	Mon, 21 Jul 2025 09:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F8928C014
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 09:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753090521; cv=none; b=YyosiW2HoTr2WTo8HHxCChj8UEOfXZlBZT9kbwPql5hqEGBii8UfFCNsjlgemLDkR7mkp4SwIPCbXN60hXnA+1owZr8yCBvvq/vk7kpVwNDduG9M9ucQNje7uRYLny706PKwWyF54sADFK8PCHM1JxNBj+g73Rw7RG+e2O6EOFU=
+	t=1753090533; cv=none; b=C4bChQzRNRvbG687Ysl4XOZylvKjGYzG6Y4Ia1kJv9pdPvg1laj1KmHvZeuE4YYcXdGy15glleJsGWWu4TBiEZX9AoKgSoRoEr14K1spK7xKAdomvH+KEQUh+EKUqoeCRclhgWAXXSeJ6imJ//AUQAQBf1q281m8R6+1NrNuJjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753090521; c=relaxed/simple;
-	bh=X8v0vyphKABw6mn9MwF3K64kGeZMYpZRS3X8znvpDDY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pgYmc7LSPJ0YKmzRqpKPH+AW/D50OxPcBI1WmEiSXBDBoFcRdGi37ivXV3KyHK9hRA7b3jqT4ht1IvQWIOk6pjXa234HDtu5l9PRE7N8FE8KE7oZqd8/udikIndpYTWOhibWnQ1xaTNtvMjiSx37xd0Qn+2gQ0UNCTPnZLLh6h4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K4khWPmn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7C2BC4CEED;
-	Mon, 21 Jul 2025 09:35:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753090521;
-	bh=X8v0vyphKABw6mn9MwF3K64kGeZMYpZRS3X8znvpDDY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=K4khWPmnVZphjAbFKboI0FSmd3tz3XjB48JFWgQMxBkdhtRUqkLuPZ/WQM+YtW/Sk
-	 kvnT4Zbi1WHSjCOm+0CkRKFvOIRLJUPmbZjXpLpim8de/LSP0U/2wkiY4NgSCh8Dii
-	 rQ5f+nx2gWPmKs8InPBNUpBAB6/iMExS1HUuhuUguy8qeMiOCB3eYU5l8ORSDZdzuA
-	 9td3HTwLrd3thWxQ/LhgV6u9OSkjoZlMsGM93Zk74GSDZsUi4cxeysomfMlvjiF4kD
-	 SJjlDSvyWOOyEWFPCUQcla2SqaPzksJyBpIe2FQrW9ThzvInu6+oeAzLfebMclPQ9F
-	 +qRQF7pqt3fqA==
-Date: Mon, 21 Jul 2025 11:35:18 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Aleksander Jan Bajkowski <olek2@wp.pl>
-Cc: herbert@gondor.apana.org.au, davem@davemloft.net, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com, 
-	angelogioacchino.delregno@collabora.com, atenart@kernel.org, linux-crypto@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	Sam Shih <sam.shih@mediatek.com>, =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
-Subject: Re: [PATCH 1/2] dt-bindings: crypto: inside-secure,safexcel: make
- eip/mem IRQ optional
-Message-ID: <20250721-utopian-jumping-yak-8cc53e@kuoka>
-References: <20250720174903.1321533-1-olek2@wp.pl>
+	s=arc-20240116; t=1753090533; c=relaxed/simple;
+	bh=IKWSUoc2lmCa1ZM8P6Cy7IVnFLEsLv+kUIyNaVjpkDk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=WG07naO85ak1aLZtrqNhT/n3aCBoBYVsE5ZsJRutQHwFKzd0tVIaslJ/WYsnHw4FWIVocFAt4UZJECMEWGNkKnnXNERIFQE09uwbjwZNdu5ayHZIu/z0dMMI4cPCdjTdWHKC0CCD52hI76xwSNacpvO2nZKpzerVbnQrDLrG6Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-86cf753423cso392257639f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 02:35:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753090531; x=1753695331;
+        h=content-transfer-encoding:to:from:subject:message-id:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uYc/vDtNMTkmIow0Px2oZm6vbRSlAyud1JI5Tp027Wk=;
+        b=EzsGqtXe0kyswRH6bYhT278OByqdvjmWmhydoAnoHVDRuHUbwgXkUm08AhXWrcespR
+         KumWISNmnjO/kk70/b81lHuT/bl1JljTIsEuIpCfJ/Iy0U5GcI8mdABaPnIAWdajvX/b
+         GPBhoFiH7VEob3smpFQ1j5eppi9+6Xvx8NyLSVqn/BaruryprMvlwSz0to42k8PRClqv
+         UW6dJ3xDXGLvJ8l32bhucmg2qYDbo5NlBK1Qt911TKQ2VNSIOuG64uknB40A4zF7Ebx0
+         3tMDaXjEb16F275z+3f51C5K91hYxQ3EDsh2p4ovaTZx1DFL2DNPwfNxZ/6SRi3qm1+l
+         JE9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXGOhRAXRAFWdMrlQ1tSQErJQRAGQgcp5amdw7yNTV9lsfQ/9NGcpHTMrKs+jRJdWqlF9fqIAq42WMjvMQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy56R7Es+4YaGLA+zOef0Y8V4kVG8zh20nGtc4GQVooQBf2AiWA
+	BYsr9o1/mSHE0ywQso6fFvVPWEJ5jADVlYk2M1IOZvYwIhvdjCaAo9YmaU3qLJ8jxaa+4833xXU
+	BcP8SLOdfL6raQk9OXEYPPY1za8CFbFEH6RT7ISnbmB8SE+3tye3P4Ww0QZg=
+X-Google-Smtp-Source: AGHT+IE36MNzd0e64f6m1+Tts8MfnrEcPlLa/PxmLnThU6J0DiYR17Mzo8OX7AtvIC3BO5/vjSetMa49v6BW0mV1BOW9UYSiKaVX
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-Received: by 2002:a05:6602:400e:b0:87c:1542:8abc with SMTP id
+ ca18e2360f4ac-87c15428e5cmr1298312539f.4.1753090531132; Mon, 21 Jul 2025
+ 02:35:31 -0700 (PDT)
+Date: Mon, 21 Jul 2025 02:35:31 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <687e09e3.a70a0220.693ce.00eb.GAE@google.com>
+Subject: [syzbot] [apparmor?] linux-next test error: WARNING in apparmor_unix_stream_connect
+From: syzbot <syzbot+cd38ee04bcb3866b0c6d@syzkaller.appspotmail.com>
+To: apparmor@lists.ubuntu.com, jmorris@namei.org, john.johansen@canonical.com, 
+	john@apparmor.net, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, serge@hallyn.com, 
+	sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250720174903.1321533-1-olek2@wp.pl>
 
-On Sun, Jul 20, 2025 at 07:49:02PM +0200, Aleksander Jan Bajkowski wrote:
-> Binding for this cryptographic engine defined 6 interrupts since its
-> beginning. It seems however only 4 rings IRQs are really required for
-> operating this hardware. Linux driver doesn't use "eip" or "mem" IRQs
+Hello,
 
-Are the lines there in hardware or not? See writing bindings - they
-exactly cover this case.
+syzbot found the following issue on:
 
-> and it isn't clear if they are always available (MT7986 devicetree
-> doesn't specify them).
+HEAD commit:    979875200256 Add linux-next specific files for 20250721
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=3D13bf7f98580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3D9baac92c2ceb707
+dashboard link: https://syzkaller.appspot.com/bug?extid=3Dcd38ee04bcb3866b0=
+c6d
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-=
+1~exp1~20250616065826.132), Debian LLD 20.1.7
 
-You need SoC specific compatibles which will narrow this per variant of
-the block.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/9bf2232f3c8e/disk-=
+97987520.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ae51e7da64a4/vmlinux-=
+97987520.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e05ecb1741a9/bzI=
+mage-97987520.xz
 
->=20
-> The hardware reference manual [1] for the EIP-197 IP core only defines
-> ring interrupts and a global interrupt ("eip"). Ring interrupts can
-> optionaly be routed via the main interrupt. Role of the "mem" interrupt
-> is unknown.
->=20
-> This deals with:
-> arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dtb: crypto@10320000=
-: interrupts: [[0, 116, 4], [0, 117, 4], [0, 118, 4], [0, 119, 4]] is too s=
-hort
->         from schema $id: http://devicetree.org/schemas/crypto/inside-secu=
-re,safexcel.yaml#
-> arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dtb: crypto@10320000=
-: interrupt-names: ['ring0', 'ring1', 'ring2', 'ring3'] is too short
->         from schema $id: http://devicetree.org/schemas/crypto/inside-secu=
-re,safexcel.yaml#
->=20
-> [1] https://www.scribd.com/document/665924595/Security-IP-197-HW3-4-Hardw=
-are-Reference-Manual-RevA
-> Cc: Antoine Tenart <atenart@kernel.org>
-> Cc: Sam Shih <sam.shih@mediatek.com>
-> CC: Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl>
-> Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
-> ---
->  .../crypto/inside-secure,safexcel.yaml        | 21 ++++++++++++-------
->  1 file changed, 14 insertions(+), 7 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/crypto/inside-secure,safex=
-cel.yaml b/Documentation/devicetree/bindings/crypto/inside-secure,safexcel.=
-yaml
-> index 343e2d04c797..97af96bfe5f6 100644
-> --- a/Documentation/devicetree/bindings/crypto/inside-secure,safexcel.yaml
-> +++ b/Documentation/devicetree/bindings/crypto/inside-secure,safexcel.yaml
-> @@ -26,16 +26,23 @@ properties:
->      maxItems: 1
-> =20
->    interrupts:
-> +    minItems: 4
->      maxItems: 6
-> =20
->    interrupt-names:
-> -    items:
-> -      - const: ring0
-> -      - const: ring1
-> -      - const: ring2
-> -      - const: ring3
-> -      - const: eip
-> -      - const: mem
+IMPORTANT: if you fix the issue, please add the following tag to the commit=
+:
+Reported-by: syzbot+cd38ee04bcb3866b0c6d@syzkaller.appspotmail.com
 
-You just miss minItems: 4 and no need for all the rest.
+------------[ cut here ]------------
+AppArmor WARN apparmor_unix_stream_connect: ((({ typeof(*(new_ctx->label)) =
+*__UNIQUE_ID_rcu2213 =3D (typeof(*(new_ctx->label)) *)({ do { __attribute__=
+((__noreturn__)) extern void __compiletime_assert_2214(void) __attribute__(=
+(__error__("Unsupported access size for {READ,WRITE}_ONCE()."))); if (!((si=
+zeof((new_ctx->label)) =3D=3D sizeof(char) || sizeof((new_ctx->label)) =3D=
+=3D sizeof(short) || sizeof((new_ctx->label)) =3D=3D sizeof(int) || sizeof(=
+(new_ctx->label)) =3D=3D sizeof(long)) || sizeof((new_ctx->label)) =3D=3D s=
+izeof(long long))) __compiletime_assert_2214(); } while (0); (*(const volat=
+ile typeof( _Generic(((new_ctx->label)), char: (char)0, unsigned char: (uns=
+igned char)0, signed char: (signed char)0, unsigned short: (unsigned short)=
+0, signed short: (signed short)0, unsigned int: (unsigned int)0, signed int=
+: (signed int)0, unsigned long: (unsigned long)0, signed long: (signed long=
+)0, unsigned long long: (unsigned long long)0, signed long long: (signed lo=
+ng long)0, default: ((new_ctx->label)))) *)&((new_ctx->label))); }); ;=20
+WARNING: security/apparmor/lsm.c:1211 at apparmor_unix_stream_connect+0x5fa=
+/0x650 security/apparmor/lsm.c:1211, CPU#0: udevadm/5318
+Modules linked in:
+CPU: 0 UID: 0 PID: 5318 Comm: udevadm Not tainted 6.16.0-rc7-next-20250721-=
+syzkaller #0 PREEMPT(full)=20
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Goo=
+gle 05/07/2025
+RIP: 0010:apparmor_unix_stream_connect+0x5fa/0x650 security/apparmor/lsm.c:=
+1211
+Code: 1c 3b fd 48 89 ef e8 35 4d 00 00 e9 09 fe ff ff e8 ab 1c 3b fd 90 48 =
+c7 c7 40 31 fd 8b 48 c7 c6 2a 2e c7 8d e8 07 a4 fe fc 90 <0f> 0b 90 90 e9 2=
+7 fe ff ff e8 88 1c 3b fd be 02 00 00 00 eb 0a e8
+RSP: 0018:ffffc90003367c38 EFLAGS: 00010246
+RAX: 5674fa5d0d24c800 RBX: 1ffff1100fad97d0 RCX: ffff888026cd5a00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000002
+RBP: ffff88801ba8f8f8 R08: ffff8880b8624253 R09: 1ffff110170c484a
+R10: dffffc0000000000 R11: ffffed10170c484b R12: ffff88807d6cbe80
+R13: 1ffff1100fbc1bc8 R14: 0000000000000000 R15: 000000000000002f
+FS:  00007f8de3bff880(0000) GS:ffff8881257a6000(0000) knlGS:000000000000000=
+0
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f8de347ae00 CR3: 000000007fc96000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ security_unix_stream_connect+0xcb/0x2c0 security/security.c:4540
+ unix_stream_connect+0x8fc/0x1010 net/unix/af_unix.c:1753
+ __sys_connect_file net/socket.c:2086 [inline]
+ __sys_connect+0x313/0x440 net/socket.c:2105
+ __do_sys_connect net/socket.c:2111 [inline]
+ __se_sys_connect net/socket.c:2108 [inline]
+ __x64_sys_connect+0x7a/0x90 net/socket.c:2108
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f8de34a7407
+Code: 48 89 fa 4c 89 df e8 38 aa 00 00 8b 93 08 03 00 00 59 5e 48 83 f8 fc =
+74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0f 05 <5b> c3 0f 1f 80 0=
+0 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
+RSP: 002b:00007ffc79327430 EFLAGS: 00000202 ORIG_RAX: 000000000000002a
+RAX: ffffffffffffffda RBX: 00007f8de3bff880 RCX: 00007f8de34a7407
+RDX: 0000000000000013 RSI: 000055d4ba7cf948 RDI: 0000000000000003
+RBP: 000000000000001e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000202 R12: 00007ffc79327490
+R13: 0000000000000000 R14: 0000000000000007 R15: 0000000000000000
+ </TASK>
 
-Best regards,
-Krzysztof
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
