@@ -1,113 +1,95 @@
-Return-Path: <linux-kernel+bounces-739216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36A19B0C371
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:43:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D502B0C37B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:43:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 380A81AA3E1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:42:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDA5A188649A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:42:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0520029E0F4;
-	Mon, 21 Jul 2025 11:39:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hQ8w+mgj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64E42BD597;
-	Mon, 21 Jul 2025 11:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DE12D3ECD;
+	Mon, 21 Jul 2025 11:40:42 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0FAA2C375E
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 11:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753097980; cv=none; b=YaNOev9Zctrsi0V3EHSi8tlGXOcgqGMH5mNXolQXRxHXKRaYhFE7ODGPVfw9+2IU2e6b7adzAL3UtzShMqni+QZdw3j3XKriUPhpFtLYjaYn2EYwaw6CvsjmMe90Eg1aBrCDgmqZfPqrW+2MJvfKd1Yf8/hyleIK4H4gLod5Mgs=
+	t=1753098042; cv=none; b=uPaQKwWaDUzcEJD3V2AN8lnhmNWaRXsv2ZehsyZX5THvS0/5ce8cfM2Ee79buR9/yDO8SbDlfpywRWBv2yelj1Sn2mVfQFrpAh9PteoR0mTf7VLxZvfn4XS2NAlMcuVLjYKuR6lGZMrXCO63IzHad6YU5uqvqTqJVCAqkEmW3WI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753097980; c=relaxed/simple;
-	bh=7k7FIu9l8kyl4/XCWul7mElZtxHz78j3JA01FFPu7KI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z3VUzlbnMps/IwaJBziPzR0/533QW325gpcdzXl9esr1DrchfFBpXhTDiQvNTJyZSXudMbnrEnNXArsUah6IE0RkrIBGJjNctksNs6y3TluMXdumrSy+Dt9PBuJzYUoSR7aZwxGHiHV1OektETVOOdYb5wLMC0FgB0EiKq13MaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hQ8w+mgj; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753097979; x=1784633979;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7k7FIu9l8kyl4/XCWul7mElZtxHz78j3JA01FFPu7KI=;
-  b=hQ8w+mgjiZII5FuFYaACTjrrEha1y4bqNNugQnyuTWM6zMadj+VUqTWX
-   TEf9Uwdwru/+iQoH4Lx2ZH31g12YGxOhvPb6BR/oynwZ6/0XBR7nyJ5AX
-   Um7R0bF4DEoKv2IkpgS8fbNDDXiYcP7fikPQE/b/XgOE6bWy9TkV6J9Gp
-   uNlABabxdf5GdNXbMGA9ZlVdIcgEragw5hv/ygeh4uipwKbLga/xeI5cT
-   ego1Af4mohjlSSz3NxmDlvOSYJcWR/8yUP+hN6kNu7g3/SKSbvEjkAcaO
-   dwOqOzmyhoCcBAPS6vhDtZEY94pPYGzaHnLV1J8EPIbNuNGaMzRl5Rbwd
-   A==;
-X-CSE-ConnectionGUID: KC+unSYcTea3M1KOst7cmw==
-X-CSE-MsgGUID: pFdmo3rPRr64p6YT/4Dd3Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11498"; a="65569076"
-X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
-   d="scan'208";a="65569076"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 04:39:38 -0700
-X-CSE-ConnectionGUID: 08BeZg13QaiAd8iWiSkVqg==
-X-CSE-MsgGUID: 77qTiqY2QfWse4mCosciBw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
-   d="scan'208";a="158474759"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 04:39:34 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1udork-0000000HKNb-08Wq;
-	Mon, 21 Jul 2025 14:39:32 +0300
-Date: Mon, 21 Jul 2025 14:39:31 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Manikanta Guntupalli <manikanta.guntupalli@amd.com>
-Cc: git@amd.com, michal.simek@amd.com, lorenzo@kernel.org, jic23@kernel.org,
-	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	radhey.shyam.pandey@amd.com, srinivas.goud@amd.com,
-	manion05gk@gmail.com
-Subject: Re: [PATCH] iio: imu: lsm6dsx: Add shutdown callback support for I3C
- interface
-Message-ID: <aH4m84n5UbCsktCM@smile.fi.intel.com>
-References: <20250721110741.2380963-1-manikanta.guntupalli@amd.com>
- <aH4mwkh80TUTNXtS@smile.fi.intel.com>
+	s=arc-20240116; t=1753098042; c=relaxed/simple;
+	bh=qelmWF1xTMaYUjMsXWHlO7TF7AQn04EJmRk+xOhjksM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=te3tfsV8chX5Q2MqKnyNdenQ52mYuoT66oOfNZaLBpq8fPP2H5V/DBZxEWSMu8wCO6VELx7Fzv+C6aRlEzRXTK3LVMoQku7kYvMLIygy4uoS1WtVZzqpLWYolsK4fDNWFDKRzALBEF4S89rL06RWLMbXvHg+R5GtJi4DPSST7Mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6DD54153B;
+	Mon, 21 Jul 2025 04:40:34 -0700 (PDT)
+Received: from [10.57.30.25] (unknown [10.57.30.25])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 265A13F6A8;
+	Mon, 21 Jul 2025 04:40:39 -0700 (PDT)
+Message-ID: <607c03a2-267c-46e6-a7fa-e733c1970e60@arm.com>
+Date: Mon, 21 Jul 2025 12:40:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aH4mwkh80TUTNXtS@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 04/10] coresight: Appropriately disable programming
+ clocks
+Content-Language: en-GB
+To: Leo Yan <leo.yan@arm.com>
+Cc: Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250627-arm_cs_fix_clock_v4-v4-0-0ce0009c38f8@arm.com>
+ <20250627-arm_cs_fix_clock_v4-v4-4-0ce0009c38f8@arm.com>
+ <5a5f1355-563d-498a-9dec-3479a257b3e6@arm.com>
+ <20250721104834.GC3137075@e132581.arm.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20250721104834.GC3137075@e132581.arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 21, 2025 at 02:38:42PM +0300, Andy Shevchenko wrote:
-> On Mon, Jul 21, 2025 at 04:37:41PM +0530, Manikanta Guntupalli wrote:
-> > Add a shutdown handler for the ST LSM6DSx I3C driver to perform a hardware
-> > reset during system shutdown. This ensures the sensor is placed in a
-> > well-defined reset state, preventing issues during subsequent reboots,
-> > such as kexec, where the device may fail to respond correctly during
-> > enumeration.
+On 21/07/2025 11:48, Leo Yan wrote:
+> On Mon, Jul 21, 2025 at 10:15:22AM +0100, Suzuki Kuruppassery Poulose wrote:
 > 
-> Do you imply that tons of device drivers missing this? I don't think we have
-> even 5% of the drivers implementing the feature.
+> [...]
 > 
-> > To support this, the previously static st_lsm6dsx_reset_device() function
-> > is now exported via EXPORT_SYMBOL_NS() under the IIO_LSM6DSX namespace,
-> > allowing it to be invoked from the I3C-specific driver.
+>>> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+>>> index 4ac65c68bbf44b98db22c3dad2d83a224ce5278e..dd2b4cc7a2b70cf060a3207548fe80e3824c489f 100644
+>>> --- a/include/linux/coresight.h
+>>> +++ b/include/linux/coresight.h
+>>> @@ -480,26 +480,16 @@ static inline bool is_coresight_device(void __iomem *base)
+>>>     * Returns:
+>>>     *
+>>>     * clk   - Clock is found and enabled
+>>> - * NULL  - clock is not found
+>>
+>> This is still valid, right ?
 > 
-> Why system suspend callback can't do this?
+> No. Since this patch uses devm_clk_get_enabled() to get a clock, if the
+> pclk is not found, it returns -ENOENT (see of_parse_clkspec()).
+> 
+> Only the optional clock APIs (e.g., devm_clk_get_optional_enabled())
+> return a NULL pointer instead of -ENOENT when the clock is not found.
 
-Ah, and why only I3C is important? Doesn't I2C or SPI also broken in this sense?
+This will break ACPI based systems, as we may not have a "pclk" 
+described for them. We should be able to tolerate "no pclk"
 
--- 
-With Best Regards,
-Andy Shevchenko
+Suzuki
 
+
+> 
+> Thanks,
+> Leo
 
 
