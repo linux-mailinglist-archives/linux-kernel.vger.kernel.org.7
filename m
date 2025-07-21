@@ -1,209 +1,360 @@
-Return-Path: <linux-kernel+bounces-738539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D4F1B0B9CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 03:40:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33348B0B9CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 03:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FECC17639D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 01:40:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4127A7A35C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 01:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257F1167DB7;
-	Mon, 21 Jul 2025 01:40:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B95194A6C;
+	Mon, 21 Jul 2025 01:39:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b="imExka0Z"
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lUuIxxgs"
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677C38460
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 01:40:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71CAD8460;
+	Mon, 21 Jul 2025 01:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753062014; cv=none; b=UEPYk4fOjp2BjKBvMDON0ve9YPZlWLm29lXYrJ7lDGvwOupyY2LToK8LDxODgFbX0qY8Q8iGKVYo4K1W4e6UlcJCXaMU/VABgzDMVdhExkckvIODCOpRT6pPWgyxB0CxkhEMWwgYrkmvPifrpRUkKeAAZzInibPKaEISl9HJvjE=
+	t=1753061941; cv=none; b=WhEfeVmgJtgLjI63zEqZ24qijOxdSX/+zBc9DNljg+wrCYuxb6rghKxpHt8mapn+h5UkxBEofGmrUd25wZ0gU/hl/AundjdQqatV6d7RJgWdMalymjskMmwjxXF+RTTsbzYd9yOO8rhfmleDhYywHFIS7hzT57hIu+dX74uK+YQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753062014; c=relaxed/simple;
-	bh=N3wW2eu1qyMXQF02kZGDahsn2QDAVDyABmOZ9np5SEg=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=NYBdlmljdsbhNqq74Otl5ZORPl3+KBGC8GIzBnz94UPGRlgfwXtVZKLHxg4+ZgSP72Ky4zZhnh20L3PQpaOJq0xWnkOPEXXrg5mSvKu3D0UOBSHTn3LXZAn7MBzprenw+g+iYZ4WA4I44kOgjREgSaNL1G48kewXLnOrkZS4dLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b=imExka0Z; arc=none smtp.client-ip=18.194.254.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=m.fudan.edu.cn;
-	s=sorc2401; t=1753061935;
-	bh=YokeowYOqN0bv823NJO2f+EodILAT94bWPiCamJm/ws=;
-	h=Mime-Version:Subject:From:Date:Message-Id:To;
-	b=imExka0Za52l8qpT+5RiJSHKs+HgJ3OEPBxuBGMj2GRSjUI45UcgCiUy3fminSRfg
-	 SeZGwevs+UBrqhglu3GjuOFOmV/jAVbmlQAgnW76qvRwScpoLAxPzDNDxww+2cU/PG
-	 YTly2uQFfE2WcN+o24FGz0l2yupBSEljUfFHiWj4=
-X-QQ-mid: zesmtpgz5t1753061934t970ecd94
-X-QQ-Originating-IP: vUMC8Kz68tcwL1srvSMh7dmZ33wUuQQ2PmPHX3RZfkk=
-Received: from smtpclient.apple ( [202.120.235.142])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 21 Jul 2025 09:38:50 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 7993707601274274376
-EX-QQ-RecipientCnt: 5
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1753061941; c=relaxed/simple;
+	bh=PO4MwsGmW9qPk9qjtrdQ41wKEw14fK2NLOmzYqtm4Kw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xo3UX7jYG8cl57sVDJLDL6Alsp6zYwz59SHaODuJaHKZRxxNUaJeeSS0y/8SHqo1t1ytbZlg86GZkTCRDCN+WaauAxTNoDHV/NJmTLk0pygaQ39AxtQhohScey3TQ7e6CahdKPOIeN0e5QsPcf2W0qE5J1E598Ai0jaOqUFn0J8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lUuIxxgs; arc=none smtp.client-ip=209.85.167.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-41eaf6805ebso1580422b6e.3;
+        Sun, 20 Jul 2025 18:38:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753061938; x=1753666738; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+VvhFlhsZQMCnpfYYt4dMxY8vbQNulzPjC3pPcEi758=;
+        b=lUuIxxgsmuoG5B3Q0PvRXuHr46GUrYch/KLA0NfXQ8aXH1j0O2Zx+fPqRLbUOv46vh
+         oyfPEOP0UZAHDWWCAkmmTx9Lr2fvVFhRCmTyJn91A71/fWNdqgZFPnDsMwEs0EmA2CUm
+         IN19hKVVQC3PAPBvrZlMsa8HyM4Dhy8zbV1C1Gd7G+m4DV6p413s/uCw3dSfd7tjBqDl
+         LIEYmkFiJT3bBOyHxrTWuw/xNdiC3kcr8xBZAtFkQtP1Ffh0qSTkJZZAJvzOXGTr4aGM
+         vLoy2pzfkW2JKx7hWrvy/tRc6ZrwvrztrI8mK59WcjgcLZzps5BCAtNOETBgMT5siKqr
+         Zz2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753061938; x=1753666738;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+VvhFlhsZQMCnpfYYt4dMxY8vbQNulzPjC3pPcEi758=;
+        b=WiLauSkrDfra0aovu5Nuhw4KU8RKKB6Wmf2aDdpSAK52R6Upr4Pae8vJa7Hqavp3ik
+         N1csF00RHr0z/8EpRJBEYdAQyOGCiIrBV/zxhC9Vs9Q11bIs0Dx7T83rNWtdbFLq3vmk
+         mfJ3VkhxC9lWYwKE5nFqVHG4C5rCTalA38Jq/q/QfUvgEorZAoJguj/UU0o8Ocj7Ss4M
+         WJkoOFF4vdjuJxyca6VVeZIdJlIYqMx0rZ23ZISMx1Y4TcaGS+PehkApvrXZtCKfOhpQ
+         fUPm95a1kl9iYw3247Wtevo4A5zOp0AsJOk8Pnf24f4ggZ2kSGSLrcuXrfbaAOfKsv97
+         TLIg==
+X-Forwarded-Encrypted: i=1; AJvYcCV5VnUpmMc49g0pd/vXpbadsmIP9MWjZmYHVJXF16yWJoFsGKxqKlRS/kHORvbPfENMwTKfZvZyyWRWfBz1@vger.kernel.org, AJvYcCX05Tn9A/QlLB/d6txzJf13b4tK0fvYcoyJRmK6q88Q9w8FrZS28JTHEy59CmJxPFEzzFg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTdyzyhgCt54xbQjwiUVSM7GfxX8VWpRNkX5JM7my5+3HeiKx7
+	O0Am1HN0ZLEwUognHux6lfggBf7suMRNivpcRqJu5eX9m0IEP97exoAbf8TBaDlZzAM557ZOtKJ
+	wGPO3LUco3pE3spVg8BSmM5eRA3N/yKo=
+X-Gm-Gg: ASbGncsOjTiAgL1w8BWu+8DbiFKg1rKIMVUsdIrrmnyrAUMrz/AqVh2LkGsZ3lVK8Qc
+	QgMjIV8QhHODdag2ba35sIAaClqJpB5PxlsaeeV6/bXmAPxGgM/Z+CT2/QNl+Pt2P8QYLIGxoDM
+	nerB9uOkyuz9lRY7G0nZc1gJ6u2hpIAfKGlyw9pnNEBb8r3AyzncDvcjYbVmTWqPv1QNpgaxAf0
+	c5QMRo=
+X-Google-Smtp-Source: AGHT+IFGpEW1mdQOV07ps+z7zGHj/SHi0zMpi1/Owyf6XyhxVieE95N5nioKlkCZb5ZNc1b+Clyf7hTMNXm8rXNutzI=
+X-Received: by 2002:a05:6808:4f54:b0:41b:51c4:3db0 with SMTP id
+ 5614622812f47-41cee274b50mr15015805b6e.1.1753061938265; Sun, 20 Jul 2025
+ 18:38:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: possible deadlock in smp_call_function_many_cond
-From: =?utf-8?B?6IOh54Sc?= <huk23@m.fudan.edu.cn>
-In-Reply-To: <877c02vejr.ffs@tglx>
-Date: Mon, 21 Jul 2025 09:38:39 +0800
-Cc: =?utf-8?B?55m954OB5YaJ?= <baishuoran@hrbeu.edu.cn>,
- Peter Zijlstra <peterz@infradead.org>,
- "jjtan24@m.fudan.edu.cn" <jjtan24@m.fudan.edu.cn>,
- linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+References: <20250709055029.723243-1-duanchenghao@kylinos.cn>
+ <20250709055029.723243-5-duanchenghao@kylinos.cn> <CAEyhmHS__fqHS8Bpg7+4apO7OuXG1sP3miCcAMT+Y3uU0+_xjg@mail.gmail.com>
+ <20250717092746.GA993901@chenghao-pc> <CAEyhmHTpJ0OKbW1QEFV+XMxCC9kL2eSwKMkk7=YyLprjNxc8iA@mail.gmail.com>
+ <20250718021658.GA203872@chenghao-pc>
+In-Reply-To: <20250718021658.GA203872@chenghao-pc>
+From: Hengqi Chen <hengqi.chen@gmail.com>
+Date: Mon, 21 Jul 2025 09:38:47 +0800
+X-Gm-Features: Ac12FXzElR97SWvvE_bw_O8oDY9xd9oLIQXI1mxXQHZXvgj_GlG9MSrK1vSrj_k
+Message-ID: <CAEyhmHRL0FFwSqyir9DcKm24_k1idX02CtwFStwBL-Fxc2ukMQ@mail.gmail.com>
+Subject: Re: [PATCH v3 4/5] LoongArch: BPF: Add bpf_arch_xxxxx support for Loongarch
+To: Chenghao Duan <duanchenghao@kylinos.cn>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
+	yangtiezhu@loongson.cn, chenhuacai@kernel.org, martin.lau@linux.dev, 
+	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev, 
+	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me, 
+	haoluo@google.com, jolsa@kernel.org, kernel@xen0n.name, 
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, bpf@vger.kernel.org, 
+	guodongtai@kylinos.cn, youling.tang@linux.dev, jianghaoran@kylinos.cn
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <1D7CEA60-1893-409C-A332-F965D48D62E3@m.fudan.edu.cn>
-References: <758991c1.13f67.197f9cccf9b.Coremail.baishuoran@hrbeu.edu.cn>
- <877c02vejr.ffs@tglx>
-To: Thomas Gleixner <tglx@linutronix.de>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:m.fudan.edu.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MKDkAtdvnNvY7YFjTY8Gno6HrSagSbNe/zAjGDknpnlhqPJyRcrKYgT3
-	xPDVNOaqsrZ1T3DQUnp/LgcePW5Kk2xdPLoM7MdGHiyc39CSMEqvBF1rFjDwf7VQHz0KL6e
-	7WzJrueIvgtE/44WZDDgLprsKk04rM+IHF2g1A+pMB3pUgOZdMxvOQKlQgguQmpwY3EEkMY
-	TNf5ffqWpJQbQHK7Kogn5rWhuxafKsY9V8uuxCZ2Pn+nMwpmjLuFKS9mcVtcLjJZ0KNCf4p
-	TvL8y10E3C1P42hxx7e/bYhZgM8CWpqF6MAuIAZqy+LtToaCKurF9o+WIzI1phiWeUyI/Aq
-	ItE7AVM0AQLq2m8NBFRb/1iDWZ4KaxSp03bvJDzj6rJir3aKTfhW768YB/C/cng6tJBeAq+
-	B8z7NORGN3zEB/zwsybvmmpdXPvE63nqxKyhiqUds8X6syCehSL8QBUtKU1+pvUYwMPiQj9
-	e91WSG4J4Ov1BqAC3BIm9EIE9Bc0i6CtfLYKT7yLsi6Vj2tzfc4dcp/o95k8GNp9X2CXiqP
-	RFrtlzRvU5uW3nRYPAoOHEogOLYJIG8YyARbuEqbhh27EYTHjK499Ebl3w8UP5NXPB9ZWTB
-	6tjHpcYOO560gJgG/HSqqr1zt/0ZAZy8xYYqqiEq4obqWmvwo6PLqPWnSXj4OxLs/QskP+X
-	V0WS+Y8AyAt/mYEohWEW2HyKXrn9irRgD9r9rFf2NWOPZi55QiprfmbQJJn1AEQKb74ukHX
-	2rAPM+GaaUwT6hcDDQA/m9tbgHl5lL/zyJgUHbfPe0JGX86NOLNERUjG2DuZ5hnGH9hLELj
-	cdRdBy784JhKnyf+i52UIKSC+SDD0Cu7Otl1Wr7CDVr3x40VdoKQqu2ZR85qRDvIamdrl5s
-	UANdkCvXQOCsN4anKMXRXvRYs5LkT03vwHQ83kZNelG7eHWJ/KqjdPISHRFXEekm9p05DRQ
-	UZ97HHUTt0XPDVe31ScY8nRt6q2xoFxawCCKLxU8/nxabqNdeByJF8zoO2lmT4a6dn2tjC6
-	X6T9zRQ0Ii1UIj4YAk8yuA8PCvLt3umVXd2Qu3ZQ==
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-X-QQ-RECHKSPAM: 0
 
-Hi Thomas,
+On Fri, Jul 18, 2025 at 10:17=E2=80=AFAM Chenghao Duan <duanchenghao@kylino=
+s.cn> wrote:
+>
+> On Thu, Jul 17, 2025 at 06:12:55PM +0800, Hengqi Chen wrote:
+> > On Thu, Jul 17, 2025 at 5:27=E2=80=AFPM Chenghao Duan <duanchenghao@kyl=
+inos.cn> wrote:
+> > >
+> > > On Wed, Jul 16, 2025 at 08:21:59PM +0800, Hengqi Chen wrote:
+> > > > On Wed, Jul 9, 2025 at 1:50=E2=80=AFPM Chenghao Duan <duanchenghao@=
+kylinos.cn> wrote:
+> > > > >
+> > > > > Implement the functions of bpf_arch_text_poke, bpf_arch_text_copy=
+, and
+> > > > > bpf_arch_text_invalidate on the LoongArch architecture.
+> > > > >
+> > > > > On LoongArch, since symbol addresses in the direct mapping
+> > > > > region cannot be reached via relative jump instructions from the =
+paged
+> > > > > mapping region, we use the move_imm+jirl instruction pair as abso=
+lute
+> > > > > jump instructions. These require 2-5 instructions, so we reserve =
+5 NOP
+> > > > > instructions in the program as placeholders for function jumps.
+> > > > >
+> > > > > Co-developed-by: George Guo <guodongtai@kylinos.cn>
+> > > > > Signed-off-by: George Guo <guodongtai@kylinos.cn>
+> > > > > Signed-off-by: Chenghao Duan <duanchenghao@kylinos.cn>
+> > > > > ---
+> > > > >  arch/loongarch/include/asm/inst.h |  1 +
+> > > > >  arch/loongarch/kernel/inst.c      | 32 +++++++++++
+> > > > >  arch/loongarch/net/bpf_jit.c      | 90 +++++++++++++++++++++++++=
+++++++
+> > > > >  3 files changed, 123 insertions(+)
+> > > > >
+> > > > > diff --git a/arch/loongarch/include/asm/inst.h b/arch/loongarch/i=
+nclude/asm/inst.h
+> > > > > index 2ae96a35d..88bb73e46 100644
+> > > > > --- a/arch/loongarch/include/asm/inst.h
+> > > > > +++ b/arch/loongarch/include/asm/inst.h
+> > > > > @@ -497,6 +497,7 @@ void arch_simulate_insn(union loongarch_instr=
+uction insn, struct pt_regs *regs);
+> > > > >  int larch_insn_read(void *addr, u32 *insnp);
+> > > > >  int larch_insn_write(void *addr, u32 insn);
+> > > > >  int larch_insn_patch_text(void *addr, u32 insn);
+> > > > > +int larch_insn_text_copy(void *dst, void *src, size_t len);
+> > > > >
+> > > > >  u32 larch_insn_gen_nop(void);
+> > > > >  u32 larch_insn_gen_b(unsigned long pc, unsigned long dest);
+> > > > > diff --git a/arch/loongarch/kernel/inst.c b/arch/loongarch/kernel=
+/inst.c
+> > > > > index 674e3b322..8d6594968 100644
+> > > > > --- a/arch/loongarch/kernel/inst.c
+> > > > > +++ b/arch/loongarch/kernel/inst.c
+> > > > > @@ -4,6 +4,7 @@
+> > > > >   */
+> > > > >  #include <linux/sizes.h>
+> > > > >  #include <linux/uaccess.h>
+> > > > > +#include <linux/set_memory.h>
+> > > > >
+> > > > >  #include <asm/cacheflush.h>
+> > > > >  #include <asm/inst.h>
+> > > > > @@ -218,6 +219,37 @@ int larch_insn_patch_text(void *addr, u32 in=
+sn)
+> > > > >         return ret;
+> > > > >  }
+> > > > >
+> > > > > +int larch_insn_text_copy(void *dst, void *src, size_t len)
+> > > > > +{
+> > > > > +       unsigned long flags;
+> > > > > +       size_t wlen =3D 0;
+> > > > > +       size_t size;
+> > > > > +       void *ptr;
+> > > > > +       int ret =3D 0;
+> > > > > +
+> > > > > +       set_memory_rw((unsigned long)dst, round_up(len, PAGE_SIZE=
+) / PAGE_SIZE);
+> > > > > +       raw_spin_lock_irqsave(&patch_lock, flags);
+> > > > > +       while (wlen < len) {
+> > > > > +               ptr =3D dst + wlen;
+> > > > > +               size =3D min_t(size_t, PAGE_SIZE - offset_in_page=
+(ptr),
+> > > > > +                            len - wlen);
+> > > > > +
+> > > > > +               ret =3D copy_to_kernel_nofault(ptr, src + wlen, s=
+ize);
+> > > > > +               if (ret) {
+> > > > > +                       pr_err("%s: operation failed\n", __func__=
+);
+> > > > > +                       break;
+> > > > > +               }
+> > > > > +               wlen +=3D size;
+> > > > > +       }
+> > > >
+> > > > Again, why do you do copy_to_kernel_nofault() in a loop ?
+> > >
+> > > The while loop processes all sizes. I referred to how ARM64 and
+> > > RISC-V64 handle this using loops as well.
+> >
+> > Any pointers ?
+>
+> I didn't understand what you meant.
+>
 
-Thank you for your valuable suggestions! We will rerun the tests using =
-the latest kernel version.
+It's your responsibility to explain why we need a loop here, not mine.
+I checked every callsite of copy_to_kernel_nofault(), no one uses a loop.
 
-Additionally, we appreciate your tips on enabling these two options, as =
-they will help us capture more useful information for further analysis.
+> >
+> > >
+> > > > This larch_insn_text_copy() can be part of the first patch like
+> > > > larch_insn_gen_{beq,bne}. WDYT ?
+> > >
+> > > From my perspective, it is acceptable to include both
+> > > larch_insn_text_copy and larch_insn_gen_{beq,bne} in the same patch,
+> > > or place them in the bpf_arch_xxxx patch. larch_insn_text_copy is
+> > > solely used for BPF; the application scope of larch_insn_gen_{beq,bne=
+}
+> > > is not limited to BPF.
+> > >
+> >
+> > The implementation of larch_insn_text_copy() seems generic.
+>
+> The use of larch_insn_text_copy() requires page_size alignment.
+> Currently, only the size of the trampoline is page-aligned.
+>
 
-Thanks,
-Kun=20
+Then clearly document it.
 
-> 2025=E5=B9=B47=E6=9C=8821=E6=97=A5 03:38=EF=BC=8CThomas Gleixner =
-<tglx@linutronix.de> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> On Fri, Jul 11 2025 at 22:03, =E7=99=BD=E7=83=81=E5=86=89 wrote:
->> When using our customized Syzkaller to fuzz the latest Linux kernel,
->> the following crash (122th)was triggered.
->>=20
->> HEAD commit: 6537cfb395f352782918d8ee7b7f10ba2cc3cbf2
->> git tree: upstream
->=20
-> That's not the latest kernel.
->=20
->> =
-Output:https://github.com/pghk13/Kernel-Bug/blob/main/0702_6.14/INFO%3A%20=
-rcu%20detected%20stall%20in%20sys_select/122report.txt
->> Kernel =
-config:https://github.com/pghk13/Kernel-Bug/blob/main/0305_6.14rc3/config.=
-txt
->> C =
-reproducer:https:https://github.com/pghk13/Kernel-Bug/blob/main/0702_6.14/=
-INFO%3A%20rcu%20detected%20stall%20in%20sys_select/122repro.c
->> Syzlang reproducer: =
-https://github.com/pghk13/Kernel-Bug/blob/main/0702_6.14/INFO%3A%20rcu%20d=
-etected%20stall%20in%20sys_select/122repro.txt
->>=20
->> Our reproducer uses mounts a constructed filesystem image.
->>=20
->> The error occurred around line 880 of the code, specifically during
->> the call to csd_lock_wait. The status of CPU 1 (RCU GP kthread):
->> executing the perf_event_open system call, needs to update tracepoint
->=20
-> I can't find a perf_event_open() syscall in the C reproducer. So how =
-is
-> that supposed to be reproduced?
->=20
->> calls on all CPUs, and smp_call_function_many_cond is stuck waiting
->> for CPU 2 to respond to the IPI.  We have reproduced this issue
->> several times on 6.14 again.
->=20
-> Again not the latest kernel. Please run it against Linus latest tree =
-and
-> if it still triggers, provide proper information how to reproduce. If
-> not you should be able to bisect the fix.
->=20
->> rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
->> rcu: 	2-...!: (3 GPs behind) idle=3Db834/1/0x4000000000000000 =
-softirq=3D23574/23574 fqs=3D5
->> rcu: 	(detected by 1, t=3D10502 jiffies, g=3D19957, q=3D594 =
-ncpus=3D4)
->=20
-> So CPU 1 detects an RCU stall on CPU2
->=20
->> Sending NMI from CPU 1 to CPUs 2:
->> NMI backtrace for cpu 2
->> CPU: 2 UID: 0 PID: 9461 Comm: sshd Not tainted 6.14.0 #1
->> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS =
-1.13.0-1ubuntu1.1 04/01/2014
->> RIP: 0010:__lock_acquire+0x106/0x46b0
->> Code: ff df 4c 89 ea 48 c1 ea 03 80 3c 02 00 0f 85 ec 35 00 00 49 8b =
-45 00 48 3d a0 c7 8a 93 0f 84 29 0f 00 00 44 8b 05 2a dc 74 0c <45> 85 =
-c0 0f 84 ad 06 00 00 48 3d e0 c7 8a 93 0f 84 a1 06 00 00 41
->> RSP: 0018:ffffc90000568ac8 EFLAGS: 00000002
->> RAX: ffffffff9aab9a20 RBX: 0000000000000000 RCX: 1ffff920000ad16c
->> RDX: 1ffffffff35692cf RSI: 0000000000000000 RDI: ffffffff9ab49678
->> RBP: ffff8880201aa480 R08: 0000000000000001 R09: 0000000000000001
->> R10: 0000000000000001 R11: ffffffff90617d17 R12: 0000000000000000
->> R13: ffffffff9ab49678 R14: 0000000000000000 R15: 0000000000000000
->> FS:  00007fa644657900(0000) GS:ffff88802b900000(0000) =
-knlGS:0000000000000000
->> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> CR2: 00007f0fa92178a9 CR3: 0000000000e90000 CR4: 0000000000750ef0
->> PKRU: 55555554
->> Call Trace:
->> <NMI>
->> </NMI>
->> <IRQ>
->> lock_acquire+0x1b6/0x570
->> _raw_spin_lock_irqsave+0x3d/0x60
->> debug_object_deactivate+0x139/0x390
->> __hrtimer_run_queues+0x416/0xc30
->> hrtimer_interrupt+0x398/0x890
->> __sysvec_apic_timer_interrupt+0x114/0x400
->> sysvec_apic_timer_interrupt+0xa3/0xc0
->=20
-> which handles the timer interrupt. What you cut off in your report is:
->=20
-> [  321.491987][    C2] hrtimer: interrupt took 31336677795 ns
->=20
-> That means the hrtimer interrupt got stuck for 32 seconds (!!!). That
-> warning is only emitted once, so I assume there is something weird =
-going
-> on with hrtimers and one of their callbacks. But there is no =
-indication
-> where this comes from.
->=20
-> Can you enable the hrtimer_expire_entry/exit tracepoints on the kernel
-> command line and add 'ftrace_dump_on_oops' as well, so that the trace
-> gets dumped with the rcu stall splat?
->=20
-> Thanks,
->=20
->        tglx
->=20
->=20
->=20
-
+> >
+> > > >
+> > > > > +       raw_spin_unlock_irqrestore(&patch_lock, flags);
+> > > > > +       set_memory_rox((unsigned long)dst, round_up(len, PAGE_SIZ=
+E) / PAGE_SIZE);
+> > > > > +
+> > > > > +       if (!ret)
+> > > > > +               flush_icache_range((unsigned long)dst, (unsigned =
+long)dst + len);
+> > > > > +
+> > > > > +       return ret;
+> > > > > +}
+> > > > > +
+> > > > >  u32 larch_insn_gen_nop(void)
+> > > > >  {
+> > > > >         return INSN_NOP;
+> > > > > diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bp=
+f_jit.c
+> > > > > index 7032f11d3..9cb01f0b0 100644
+> > > > > --- a/arch/loongarch/net/bpf_jit.c
+> > > > > +++ b/arch/loongarch/net/bpf_jit.c
+> > > > > @@ -4,6 +4,7 @@
+> > > > >   *
+> > > > >   * Copyright (C) 2022 Loongson Technology Corporation Limited
+> > > > >   */
+> > > > > +#include <linux/memory.h>
+> > > > >  #include "bpf_jit.h"
+> > > > >
+> > > > >  #define REG_TCC                LOONGARCH_GPR_A6
+> > > > > @@ -1367,3 +1368,92 @@ bool bpf_jit_supports_subprog_tailcalls(vo=
+id)
+> > > > >  {
+> > > > >         return true;
+> > > > >  }
+> > > > > +
+> > > > > +static int emit_jump_and_link(struct jit_ctx *ctx, u8 rd, u64 ip=
+, u64 target)
+> > > > > +{
+> > > > > +       s64 offset =3D (s64)(target - ip);
+> > > > > +
+> > > > > +       if (offset && (offset >=3D -SZ_128M && offset < SZ_128M))=
+ {
+> > > > > +               emit_insn(ctx, bl, offset >> 2);
+> > > > > +       } else {
+> > > > > +               move_imm(ctx, LOONGARCH_GPR_T1, target, false);
+> > > > > +               emit_insn(ctx, jirl, rd, LOONGARCH_GPR_T1, 0);
+> > > > > +       }
+> > > > > +
+> > > > > +       return 0;
+> > > > > +}
+> > > > > +
+> > > > > +static int gen_jump_or_nops(void *target, void *ip, u32 *insns, =
+bool is_call)
+> > > > > +{
+> > > > > +       struct jit_ctx ctx;
+> > > > > +
+> > > > > +       ctx.idx =3D 0;
+> > > > > +       ctx.image =3D (union loongarch_instruction *)insns;
+> > > > > +
+> > > > > +       if (!target) {
+> > > > > +               emit_insn((&ctx), nop);
+> > > > > +               emit_insn((&ctx), nop);
+> > > > > +               return 0;
+> > > > > +       }
+> > > > > +
+> > > > > +       return emit_jump_and_link(&ctx, is_call ? LOONGARCH_GPR_T=
+0 : LOONGARCH_GPR_ZERO,
+> > > > > +                                 (unsigned long)ip, (unsigned lo=
+ng)target);
+> > > > > +}
+> > > > > +
+> > > > > +int bpf_arch_text_poke(void *ip, enum bpf_text_poke_type poke_ty=
+pe,
+> > > > > +                      void *old_addr, void *new_addr)
+> > > > > +{
+> > > > > +       u32 old_insns[5] =3D {[0 ... 4] =3D INSN_NOP};
+> > > > > +       u32 new_insns[5] =3D {[0 ... 4] =3D INSN_NOP};
+> > > > > +       bool is_call =3D poke_type =3D=3D BPF_MOD_CALL;
+> > > > > +       int ret;
+> > > > > +
+> > > > > +       if (!is_kernel_text((unsigned long)ip) &&
+> > > > > +               !is_bpf_text_address((unsigned long)ip))
+> > > > > +               return -ENOTSUPP;
+> > > > > +
+> > > > > +       ret =3D gen_jump_or_nops(old_addr, ip, old_insns, is_call=
+);
+> > > > > +       if (ret)
+> > > > > +               return ret;
+> > > > > +
+> > > > > +       if (memcmp(ip, old_insns, 5 * 4))
+> > > > > +               return -EFAULT;
+> > > > > +
+> > > > > +       ret =3D gen_jump_or_nops(new_addr, ip, new_insns, is_call=
+);
+> > > > > +       if (ret)
+> > > > > +               return ret;
+> > > > > +
+> > > > > +       mutex_lock(&text_mutex);
+> > > > > +       if (memcmp(ip, new_insns, 5 * 4))
+> > > > > +               ret =3D larch_insn_text_copy(ip, new_insns, 5 * 4=
+);
+> > > > > +       mutex_unlock(&text_mutex);
+> > > > > +       return ret;
+> > > > > +}
+> > > > > +
+> > > > > +int bpf_arch_text_invalidate(void *dst, size_t len)
+> > > > > +{
+> > > > > +       int i;
+> > > > > +       int ret =3D 0;
+> > > > > +       u32 *inst;
+> > > > > +
+> > > > > +       inst =3D kvmalloc(len, GFP_KERNEL);
+> > > > > +       if (!inst)
+> > > > > +               return -ENOMEM;
+> > > > > +
+> > > > > +       for (i =3D 0; i < (len/sizeof(u32)); i++)
+> > > > > +               inst[i] =3D INSN_BREAK;
+> > > > > +
+> > > > > +       if (larch_insn_text_copy(dst, inst, len))
+> > > > > +               ret =3D -EINVAL;
+> > > > > +
+> > > > > +       kvfree(inst);
+> > > > > +       return ret;
+> > > > > +}
+> > > > > +
+> > > > > +void *bpf_arch_text_copy(void *dst, void *src, size_t len)
+> > > > > +{
+> > > > > +       if (larch_insn_text_copy(dst, src, len))
+> > > > > +               return ERR_PTR(-EINVAL);
+> > > > > +
+> > > > > +       return dst;
+> > > > > +}
+> > > > > --
+> > > > > 2.43.0
+> > > > >
 
