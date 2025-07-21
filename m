@@ -1,176 +1,108 @@
-Return-Path: <linux-kernel+bounces-739261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C0B3B0C405
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:24:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC83CB0C406
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:25:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4D9D1892D41
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:24:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CFF17A5BA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE722D3EC5;
-	Mon, 21 Jul 2025 12:23:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A9372D3A72;
+	Mon, 21 Jul 2025 12:25:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s7fGIw3N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EDTBmJzy"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1AC6176AC8;
-	Mon, 21 Jul 2025 12:23:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE08176AC8;
+	Mon, 21 Jul 2025 12:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753100632; cv=none; b=A/31OfZPzCi5h/hOWUM7goRgfjZ3gI6l8sV6+UKXIxCoXhZ6jmqF+mVTR8hhomconEkSJdtca/uE9OYk+bh62NdsxeHP5SwADkQabH6cqfNbnYlomfsmMYB7J8MNqOfHzA0SgRRJV+SrdzZEWOuQXdDixR1O+7JwlM2gmMlheJ0=
+	t=1753100737; cv=none; b=um63cnWGVdPbxR2HWhJaYi2N6DZTSPv0dynpsjcwtJ4udrCj3KzbZTkgyczpfj+csdWSBR9jhX4IzM+smYtjL8/1JCq7aEJ3T1Au+qe5bi3phrKps4/+BkJHINDeKjeSLIWzI3u8GVhQccqkckp8wJI6c0TK+pGlZBrpjtPnm80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753100632; c=relaxed/simple;
-	bh=lK05y5EfyxlFdSQJMti7U0pF1916g64aU29cskH7E+E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZQG77On6In6+53CEQCutU2Jo0rlwo72q/TNfn5KdzgyANjmuLUgA9oNPhWjcgtjDKtM05DY4LryqrY7g5Vs0YC85vL6IdZQo8bUrG321j2VhLwArgkqSvjKmvik+gLquoAK/COJ9U2ZIYf6/JQ0c3U8dfxe3YHXSA6QSrLzKyb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s7fGIw3N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FFF3C4CEED;
-	Mon, 21 Jul 2025 12:23:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753100632;
-	bh=lK05y5EfyxlFdSQJMti7U0pF1916g64aU29cskH7E+E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=s7fGIw3NZXpV2Fk5Vf1Kp4PwBNjcUE/L3hCyjNwqc3Ozv0XfB3nd9uMQK7Bg/O6SY
-	 OYtkV655pHUDzzj1Wwkl6wtoCxSHtAtLpt9xyro42qX8YPEyMEveR2d1rOE71j7jzU
-	 hQm2zEAgDgYkqLzGELqH0oawrBvuVgntZCUEtIWBvQaZNQ+9U2PY4V3anZJBvKsSbt
-	 p8KaRnJJTUXrwQHmCdGDIr+uX8no7K8V/gDFsPLSul2hohIXNarZ991ImIBE6senma
-	 +nXfWRemvRin4baWmcZh4STewq3NEjhwDChCH28sQgN5q6W6msTKXq4APBo+b+opzp
-	 uYfmOfjWQcxQA==
-Message-ID: <79e28c65-8dbe-4449-b795-645029c37f88@kernel.org>
-Date: Mon, 21 Jul 2025 14:23:45 +0200
+	s=arc-20240116; t=1753100737; c=relaxed/simple;
+	bh=VvrUUaaaS1A9Plu5aXp5IFelzZbPO4LdzaBYLlZL09w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OikUqlfYd7gR/mZ3gXhoTakiSvkZb1tNc9JJMO1rHAuG32T7ierSTfc34kf+y1EeCB2+N7yXwZg14PHgbEgL7PbCsh8YSV3+73M8y/kALmmDCQz0frnvGMXtX1CtHh4L9KwerzJuKu+cr6FtLwH9XBPsBeuBUSx4Cf2E18ytad8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EDTBmJzy; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-312a806f002so809007a91.3;
+        Mon, 21 Jul 2025 05:25:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753100735; x=1753705535; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VvrUUaaaS1A9Plu5aXp5IFelzZbPO4LdzaBYLlZL09w=;
+        b=EDTBmJzyPWzis8/znnHk+zCRBsXT/OqOnytPcOBhfXc8Z1snqOSXEGRikkan+WYFxy
+         lIlkhFxvwM78Kf6dpiuCscmtYw1J/TN3svFiLuPOB6bTmFEZL0SDIk0cdw0Yfn6RY6sQ
+         Er6sWmYm6bhPzdniSBm6+iK7Wg88uitbwOK72mf3NGM1EdJcNMN5ikrZ2QeCj4OLuCvB
+         XH9M66DP02EmbHJ3SYTNqfLvKgmyqD5Z9c8ZsL8dar9C5vbdMBaj13LC7FLDCypykZtr
+         eNu+jgvdAeLPOy9SbGoag7FXUYiEga4ipGdCqdow4xATv79hvXwltVkOFqvkz8WyB/WQ
+         5svw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753100735; x=1753705535;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VvrUUaaaS1A9Plu5aXp5IFelzZbPO4LdzaBYLlZL09w=;
+        b=V9qyDxR7JKatG/sYKrF3UU+0b9sLQv/Ryzi2qQYoDOItOzjWmOEjUqz9ZR2RqJsfUQ
+         YzjcEfFMIyxEKkwFQ/FSIAWzjb41pLNobJGrC3HlxCcoxt2rhnuDjJ/CZD7rRcBo4CAQ
+         oHcBz+EqK6LOiK36JLrc0MwAlgA8KuoYaV2WfH6dBA2R5Y5UvNezevdqJa4+ut0SsZ0Q
+         kJPOfj55hUEsSny4WOgyfuzEU5VKSgdocuGCeVNTlG6fWdbyf4BlEEL2tI+pITYe6Ug9
+         RJXLDO5GQLN4m4kMSubk1taRs7STuUWy+a5f5KN9f6wChvWYwAS2Ex7V40nvmIFbnLaA
+         PcNA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/uEUoO8v8/ZySvi/ieRj0XBypuQvKZOzueKDh153+kOcgncQtPPlPmiAzVLmLx+B8r6EC+OVRxZdtKmt5Lb0=@vger.kernel.org, AJvYcCUaSpk/Qea8PXJ3kTq3vpBqTewTg2Zh57lfsiEMDUqLFugCDeTxpPjy30Hhui2QxWF35wuj69B4i5z3wXM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNPNxd3Dt46nunM1ecI0i4bkEUVRcGz7DhSL3vivqW+exqbYfv
+	Fw7k05vffR3DtXPiwysahrNy5rJdhFmOOeWjRJzKt/eB+fSfEi5qvEqih/F6e9BebON1V/dWRb6
+	s7Xu1HDR8kp/H5sbxer0qgifbu2uWgzE=
+X-Gm-Gg: ASbGncs8LD2aV8Lcq1nDgTUex/IkpmTvl3pvQOLPiY+latq0wL2E2qgTTJ3AuDmc7Y3
+	+sCGI2MYo3KGs2qF2By7G/5QMiQoC7XqJNBOzV25J2B3Ir6snGxdxApr+UGS6tNiUZavCzoY6kU
+	8Dfty0Qt4vXyY69gzYlkidU1m0eiyuuxcw8x4/c1CzdNu7AYDSMM0DeZoI8riVA+PBGnLyK4oGj
+	gLg3FFQ2Z00O5fnd0g=
+X-Google-Smtp-Source: AGHT+IFSXYIIli4TSxeo1ZPOpslV4UKNnj88g6IjbRZFu2bB/itpQKCh4nCk0WJXehDaaaH5XASiUY5JiMF59k2GYsc=
+X-Received: by 2002:a17:90b:518d:b0:312:ec:411a with SMTP id
+ 98e67ed59e1d1-31c9e76ae7amr11990299a91.3.1753100735502; Mon, 21 Jul 2025
+ 05:25:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 net-next 02/14] dt-bindings: net: add nxp,netc-timer
- property
-To: Vladimir Oltean <vladimir.oltean@nxp.com>,
- "richardcochran@gmail.com" <richardcochran@gmail.com>
-Cc: Wei Fang <wei.fang@nxp.com>, "robh@kernel.org" <robh@kernel.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- Claudiu Manoil <claudiu.manoil@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>,
- "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
- "davem@davemloft.net" <davem@davemloft.net>,
- "edumazet@google.com" <edumazet@google.com>,
- "kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com"
- <pabeni@redhat.com>, "vadim.fedorenko@linux.dev"
- <vadim.fedorenko@linux.dev>, Frank Li <frank.li@nxp.com>,
- "shawnguo@kernel.org" <shawnguo@kernel.org>,
- "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
- "festevam@gmail.com" <festevam@gmail.com>, "F.S. Peng" <fushi.peng@nxp.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "imx@lists.linux.dev" <imx@lists.linux.dev>,
- "kernel@pengutronix.de" <kernel@pengutronix.de>
-References: <20250716073111.367382-1-wei.fang@nxp.com>
- <20250716073111.367382-3-wei.fang@nxp.com>
- <20250717-sceptical-quoll-of-protection-9c2104@kuoka>
- <PAXPR04MB8510EB38C3DCF5713C6AC5C48851A@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <20250717-masterful-uppish-impala-b1d256@kuoka>
- <PAXPR04MB85109FE64C4FCAD6D46895428851A@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <af75073c-4ce8-44c1-9e48-b22902373e81@kernel.org>
- <PAXPR04MB8510426F58E3065B22943D8C8851A@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <20250718-enchanted-cornflower-llama-f7baea@kuoka>
- <20250718120105.b42gyo7ywj42fcw4@skbuf>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250718120105.b42gyo7ywj42fcw4@skbuf>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250720-rust-remove-compiler-builtins-deps-v3-1-0df3a493973f@gmail.com>
+In-Reply-To: <20250720-rust-remove-compiler-builtins-deps-v3-1-0df3a493973f@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 21 Jul 2025 14:25:23 +0200
+X-Gm-Features: Ac12FXwfu15JgSSGFDuasNnYbUMz5ZmreXnXxwEyuK0Q9LlY0uyygM1zt7qam9w
+Message-ID: <CANiq72m=vYbZZPwF9u9PQJ7Jce0KPR7jPybk3AHV50U9fOmEvQ@mail.gmail.com>
+Subject: Re: [PATCH v3] rust: remove spurious compiler_builtins dependents
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 18/07/2025 14:01, Vladimir Oltean wrote:
->> Maybe there is another property describing a time provider in the
->> kernel or dtschema. Please look for it. This all looks like you are
->> implementing typical use case in non-typical, but vendor-like, way.
->>
->> Best regards,
->> Krzysztof
-> 
-> An MII timestamper and a PTP clock (as integrated in a MAC or a PHY) are
-> similar but have some notable differences.
-> 
-> A timestamper is an external device with a free-running counter, which
-> sniffs the MII bus between the MAC and the PHY, and provides timestamps
-> when the first octet of a packet hits the wire.
-> 
-> A PTP clock is also a high precision counter, which can be free-running
-> or it can be precisely adjusted. It does not have packet timestamping
-> capabilities itself, instead the Ethernet MAC can snapshot this counter
-> when it places the first octet of a packet on the MII bus. PTP clocks
-> frequently have other auxiliary functions, like emitting external
-> signals based on the internal time, or snapshotting external signals.
-> 
-> The timestamper is not required to have these functions. In fact, I am
-> looking at ptp_ines.c, the only non-PHY MII timestamper supported by the
-> kernel, and I am noting the fact that it does not call ptp_clock_register()
-> at all, presumably because it has no controllable PTP clock to speak of.
-> 
-> That being said, my understanding is based on analyzing the public code
-> available to me, and I do not have practical experience with MII bus
-> snooping devices, so if Richard could chime in, it would be great.
-> 
-> I am also in favor of using the "ptp-timer" phandle to describe the link
+On Sun, Jul 20, 2025 at 7:20=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
+ wrote:
+>
+> Remove these dependency edges.
 
+I should have replied in previous versions: this is wrong -- the 3
+changes each individually break the build.
 
-And it is already used in other binding, so yes, that's the candidate.
+I guess that you are not cleaning everything in your tests before
+testing the build.
 
-> between the MAC and the internal PTP clock that will be snapshot when
-> taking packet timestamps. The fman-dtsec.yaml schema also uses it for an
-> identical purpose.
-
-
-Best regards,
-Krzysztof
+Cheers,
+Miguel
 
