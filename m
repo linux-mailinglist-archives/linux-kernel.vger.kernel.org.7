@@ -1,51 +1,47 @@
-Return-Path: <linux-kernel+bounces-739746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4659B0CA5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:13:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2ADFB0CA5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:13:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 081B316884B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:13:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D46B170C0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D3D2E1757;
-	Mon, 21 Jul 2025 18:13:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249F82E041F;
+	Mon, 21 Jul 2025 18:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="yJc04kwr"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lnzcuyCO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC33A155CB3;
-	Mon, 21 Jul 2025 18:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D4FE1A3154
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 18:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753121598; cv=none; b=pU70840kiMiSmbDcSZvEEJ5u+d68tJCmOXjg9Sj50AKay1yaEyawJuZA79JwfVL8+IFVmWvooP3OkJ7+e5RZHOmMGyhxsVlY84hfODA0cm3C3mOu4gMwqRHal/AIFbDSNawbTaWW/oaANJWd3VevvW2pEmAC+W8doJ1lmUx6tu8=
+	t=1753121610; cv=none; b=a93+xjHEuIuMwSx0z+nRy31JWyXg6vqZhl9qL0IuDc33sZxq4NcU7imjHeXyYh/bb4hFMumgX0WWX+iHJvA8kPyHwP6LZ9Z7TSWMTWV/14+wv9B9kb213Ue6JQnIUJ5W8fcKPdPlt49vSQodNURNfz5/KMRu9+U1WAikXavzvIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753121598; c=relaxed/simple;
-	bh=3PgcKhpIaXlMlRNGMqdPnU7Ne37vkZj31f11YeqXC84=;
+	s=arc-20240116; t=1753121610; c=relaxed/simple;
+	bh=0k4Ep98AIDWYfjT4YyfcsC89vreGR1g5sBXJkeCCX54=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hGmPR8oDwA2XT4eG6mrBGda4YjAvxnj1CJbv2jXyI2lYgHQAlQi8VDs9CiyBi8rF0tfb8XxIOGWeJoPw9vDYe3EsdD0wVvO4taSEC/algKRp7AOXpRM/iB4V3DCCpTA3//8L7zMp3yIp0t2KPk6g6JH8qFZVyENMUqYchLmHwGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=yJc04kwr; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=YIa0kKk/C8c2jce3V3xpos3VNuh0qirWQs9kAO9t8uA=; b=yJc04kwrwI98p907tw5o2Eoh4T
-	PCpcXrFfWNSLl+AkJp2u1hKiiv2WKibHBk5+Cunxj1qd0qHCfY4qLn98HA8WSEfcEW9EES3Qjmde4
-	6Zkb/JSPxE+OLOfykeqHo78z2YF6OXf5LP1n+r+QRQyODnLo2C2x9CxX2cxNvLgkNCLzdgo51kPdo
-	ULZPepYd/7y5u6UvKTAE1KW+VK0kf7MkFYCH07mZkF+r+eAm8152gi1m0GJRkz85LzvY2HpVFjqEH
-	8Z+KQ6HfRMTih3QCXF88kvxg/CbSnjcoONfnl21mGP8h/jyWQ2M/rFSP/lOrZhknW2Ga/CCgFDvwi
-	z0LdxihA==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1udv0l-00000000P1i-20bR;
-	Mon, 21 Jul 2025 18:13:15 +0000
-Message-ID: <53b1a47d-2338-44f3-8d78-8c4b02e0fa81@infradead.org>
-Date: Mon, 21 Jul 2025 11:13:14 -0700
+	 In-Reply-To:Content-Type; b=HA3T723i+7EiFcfdVAUor5Ht7A8UzbifnPaTwM7ZaVFFiNAxIKZwcD77KedDXNea5SJSnrPHKEcVWQLJQp2+2tShGgTY+zDjDwOMS2PG9ztKE2JaC0IOKngfnki57e8nqSpzLs5hgsRO6IL/WP7uPVjlXQ4J/IigL5DA9vsNWMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lnzcuyCO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A08FAC4CEED;
+	Mon, 21 Jul 2025 18:13:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753121610;
+	bh=0k4Ep98AIDWYfjT4YyfcsC89vreGR1g5sBXJkeCCX54=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lnzcuyCOFObuupJKwOhtjIS+S/3A5n+OyF4rHkjfoimOBE/tvPDjA2tcW8S6DzaSM
+	 uBoQ50QoM/TBgzAWzKnd9GbzEF1A50fp4BL5djDbFDetVmt+Nddy0S26GWRG5d6yKm
+	 tmUuO8c85+R4BecoKAuFss0SYADeUCqkIeAlXATQAGMCadDPB3Rs6NJ5OoR7roosWV
+	 H3xcKQi0ec1fe5ah83f3d/lkRqz12rS6ir4EdHL1aUt/Od98RciRhWY4Q9cLOO4nrK
+	 nIeOfdpia++vPQ14DxPlKNe6RGta0OI47uj9QR6riQ+dPR3w7Yp9YFigwyyaOfs1iC
+	 xU78LGDPhVWWQ==
+Message-ID: <c7f895b1-4f48-4d41-91ed-26ca857e3665@kernel.org>
+Date: Mon, 21 Jul 2025 13:13:27 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,53 +49,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: core: add urb->sgt parameter description
-To: Xu Yang <xu.yang_2@nxp.com>, gregkh@linuxfoundation.org,
- sfr@canb.auug.org.au
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-next@vger.kernel.org, imx@lists.linux.dev
-References: <20250721104417.3442530-1-xu.yang_2@nxp.com>
+Subject: Re: [PATCH] x86/CPU/AMD: Ignore invalid reset reason value
+To: Yazen Ghannam <yazen.ghannam@amd.com>, x86@kernel.org
+Cc: linux-kernel@vger.kernel.org, Libing He <libhe@redhat.com>,
+ David Arcari <darcari@redhat.com>
+References: <20250721181155.3536023-1-yazen.ghannam@amd.com>
 Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250721104417.3442530-1-xu.yang_2@nxp.com>
-Content-Type: text/plain; charset=UTF-8
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <20250721181155.3536023-1-yazen.ghannam@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-
-
-On 7/21/25 3:44 AM, Xu Yang wrote:
-> The parameter description of urb->sgt is lost, this will add it for
-> completeness.
+On 7/21/25 1:11 PM, Yazen Ghannam wrote:
+> The reset reason value may be "all bits set", e.g. 0xFFFFFFFF. This is a
+> commonly used error response from hardware. This may occur due to a real
+> hardware issue or when running in a VM.
 > 
-> Reported-by: Stephen Rothwell<sfr@canb.auug.org.au>
-> Closes: https://lore.kernel.org/all/20250711182803.1d548467@canb.auug.org.au/
-> Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
-
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks.
+> The user will see all reset reasons reported in this case.
+> 
+> Check for an error response value and return early to avoid decoding
+> invalid data.
+> 
+> Also, adjust the data variable type to match the hardware register size.
+> 
+> Fixes: ab8131028710 ("x86/CPU/AMD: Print the reason for the last reset")
+> Reported-by: Libing He <libhe@redhat.com>
+> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> Cc: David Arcari <darcari@redhat.com>
+> Cc: Mario Limonciello <mario.limonciello@amd.com>
+> Cc: stable@vger.kernel.org
+Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
 
 > ---
->  include/linux/usb.h | 4 ++++
->  1 file changed, 4 insertions(+)
+>   arch/x86/kernel/cpu/amd.c | 8 ++++++--
+>   1 file changed, 6 insertions(+), 2 deletions(-)
 > 
-> diff --git a/include/linux/usb.h b/include/linux/usb.h
-> index 535ac37198a1..9d662c6abb4d 100644
-> --- a/include/linux/usb.h
-> +++ b/include/linux/usb.h
-> @@ -1455,6 +1455,10 @@ typedef void (*usb_complete_t)(struct urb *);
->   * @sg: scatter gather buffer list, the buffer size of each element in
->   * 	the list (except the last) must be divisible by the endpoint's
->   * 	max packet size if no_sg_constraint isn't set in 'struct usb_bus'
-> + * @sgt: used to hold a scatter gather table returned by usb_alloc_noncoherent(),
-> + *      which describes the allocated non-coherent and possibly non-contiguous
-> + *      memory and is guaranteed to have 1 single DMA mapped segment. The
-> + *      allocated memory needs to be freed by usb_free_noncoherent().
->   * @num_mapped_sgs: (internal) number of mapped sg entries
->   * @num_sgs: number of entries in the sg list
->   * @transfer_buffer_length: How big is transfer_buffer.  The transfer may
+> diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+> index 50f88fe51816..db0f9e0d181a 100644
+> --- a/arch/x86/kernel/cpu/amd.c
+> +++ b/arch/x86/kernel/cpu/amd.c
+> @@ -1274,8 +1274,8 @@ static const char * const s5_reset_reason_txt[] = {
+>   
+>   static __init int print_s5_reset_status_mmio(void)
+>   {
+> -	unsigned long value;
+>   	void __iomem *addr;
+> +	u32 value;
+>   	int i;
+>   
+>   	if (!cpu_feature_enabled(X86_FEATURE_ZEN))
+> @@ -1288,12 +1288,16 @@ static __init int print_s5_reset_status_mmio(void)
+>   	value = ioread32(addr);
+>   	iounmap(addr);
+>   
+> +	/* Value with "all bits set" is an error response and should be ignored. */
+> +	if (value == U32_MAX)
+> +		return 0;
+> +
+>   	for (i = 0; i < ARRAY_SIZE(s5_reset_reason_txt); i++) {
+>   		if (!(value & BIT(i)))
+>   			continue;
+>   
+>   		if (s5_reset_reason_txt[i]) {
+> -			pr_info("x86/amd: Previous system reset reason [0x%08lx]: %s\n",
+> +			pr_info("x86/amd: Previous system reset reason [0x%08x]: %s\n",
+>   				value, s5_reset_reason_txt[i]);
+>   		}
+>   	}
+> 
+> base-commit: 65f55a30176662ee37fe18b47430ee30b57bfc98
 
--- 
-~Randy
 
