@@ -1,398 +1,186 @@
-Return-Path: <linux-kernel+bounces-739793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26020B0CB09
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 21:36:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A770AB0CB0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 21:37:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CE234E642E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:35:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B863E5456B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F7F23184A;
-	Mon, 21 Jul 2025 19:36:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32AC322FE10;
+	Mon, 21 Jul 2025 19:37:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R6aBBL1v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="NhobCdjH"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3015D221F06;
-	Mon, 21 Jul 2025 19:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38DA1F418E
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 19:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753126563; cv=none; b=NKQudh7VYW5ccRdTtmHu3zOflqhq163yXO1JwSKY2p2j2S4x8ev6b4kDMcjZfHJ803sUi8ioiydqqeV6QKTZyME7JXiyYEjtGUBotJO8yvgRvihthk5e6SzJKFc+4ExGfwYTKhPQu3xQrVp3HvsJxUTQ1yegLXUyZeUXCDZJm7c=
+	t=1753126652; cv=none; b=M2hJJWsTrIcDkCCBnOO/K4Ln5wv99Gcl0Vj1gYFEefWScO/tw2g7B41Rxoab29BYcrtS40U0xvxkAnOCw/HpqpRn2N9xt5ka0x5Df/y33zTBo9jH33XDjPc6yL/i/Q/je9Psu1C/954BYDkFfBtByG17ZFfOJoCbHcMNER1R5k0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753126563; c=relaxed/simple;
-	bh=TB7rn67MajC8Jyg5Da1lj9LyQ2ZybUzjBr843rmIh84=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qjsES9xM7wg8jktjTEcPzjOqclBKHNtU+edo0uNfx4TS/j6urDuRjWgGmSrvFRG1nZYnox8vah3hkIMf+9lmQRfxEHOi9TTUxAs4wwsNArjqdcl84qGbjK/RIUoCVA4MBBFL6EtgHGhkoiijpsAe0p0LJaJAEL7233ius0Jz6Pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R6aBBL1v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DBD3C4CEED;
-	Mon, 21 Jul 2025 19:36:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753126562;
-	bh=TB7rn67MajC8Jyg5Da1lj9LyQ2ZybUzjBr843rmIh84=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=R6aBBL1v+Jac/gTJPVwUGLOuSxcdUoTjM2CZ0uHsM6v9ZtbEbYxfIYf3qgS8fVdUZ
-	 jjoin8kV/LPRelW8iVxYtHZ1GWxY8bRcxOX4IoqWoMZ25zTcAEAyuG+y3Q6WwJpGuK
-	 dDOWrQVmRWMH3+eFy80/am9w0icD0VsV2fsCXK79EiOmYEfVRrSjAnmeztcZe7ahg8
-	 Rwq84sT6xhO598gnhxIGq9EIQSJdzhdPQdX8NbO0H4Mcax2rh46R80iAY2gZWVT6qW
-	 rXIUTfbsa+ti4Wor7QjDIVUWVPClj0iVQVyordX1wm2QctV3JrhWCl8CTyidLs2YfC
-	 wyID6ZM3jpR8g==
-From: SeongJae Park <sj@kernel.org>
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>,
-	Barry Song <baohua@kernel.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Jann Horn <jannh@google.com>,
-	Yafang Shao <laoar.shao@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH POC] prctl: extend PR_SET_THP_DISABLE to optionally exclude VM_HUGEPAGE
-Date: Mon, 21 Jul 2025 12:35:59 -0700
-Message-Id: <20250721193559.11503-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <4a8b70b1-7ba0-4d60-a3a0-04ac896a672d@gmail.com>
-References: 
+	s=arc-20240116; t=1753126652; c=relaxed/simple;
+	bh=fXKxtn/aSh3rKnt6u5UkOfJxz2a3BArVpWweUcEDLgg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S6SIoItWpSmaTNAOYGU0X3FN068fXP77EU4kj+z4I6CCNmYm9gIylVrtXVYLL8zoSwHVUbtsU1Qbd6gablR3Vjwps3PzxQsTWRM8kc7V6CM2bT3oBFdJlB4ogVotw/2fgPUKEmDLql2XCmAeTtzNTn7qP+4i6k5AtbWTmboeN5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=NhobCdjH; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56LD0IMw031219;
+	Mon, 21 Jul 2025 19:37:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=CiwYbi
+	spmNtUu13BflFhs/FLaYu2PLHQYtEYwhxmPUc=; b=NhobCdjHxN1mKfx0Ngs1YT
+	MESPknVp6763hLIzmvAPzDG2ij8Mh/29DepxmtnzXpTMcPaFD59fNtoRgFLmQweY
+	0GeB69Kp3UA/l+UHKNDLCZruyMSzFmyyaIfwGsBELiyoAbR1QyE8NFB8Kn1tCZTF
+	ldzgkNUyyAxBLYP8rZTNm/1XA/xLmFqCA4EvWhmgeO9vp4/QyJc97VOOVEcdW5sT
+	BOPrAzgzWJxU5HSI74GsaaKZ4CjpWGqfBhdfLHSi/ARUIAUwZbHpHqOY+mu7k9Sl
+	HfLXMg/Oi4L6R+eaJN731oqWb/tY4r/hYsQ9U974QclnXnA8NYRbS3dTnuvwk7IQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4805uqthkj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Jul 2025 19:37:16 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 56LJagKe004966;
+	Mon, 21 Jul 2025 19:37:15 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4805uqthkh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Jul 2025 19:37:15 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56LFqboI025138;
+	Mon, 21 Jul 2025 19:37:15 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 480nptfup1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Jul 2025 19:37:14 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56LJbDbR54460744
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 21 Jul 2025 19:37:13 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 359FF20043;
+	Mon, 21 Jul 2025 19:37:13 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D071520040;
+	Mon, 21 Jul 2025 19:37:10 +0000 (GMT)
+Received: from [9.39.18.215] (unknown [9.39.18.215])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 21 Jul 2025 19:37:10 +0000 (GMT)
+Message-ID: <cc582ddb-2f16-4c0b-be27-b9a1dedb646a@linux.ibm.com>
+Date: Tue, 22 Jul 2025 01:07:09 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/12] sched: Address schbench regression
+To: Peter Zijlstra <peterz@infradead.org>, clm@meta.com
+Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        vschneid@redhat.com
+References: <20250702114924.091581796@infradead.org>
+ <132949bc-f901-40e6-a34c-d1d67d03d8b6@linux.ibm.com>
+ <6e274729-af12-4e0f-9e67-5f2d5b099e99@linux.ibm.com>
+ <20250708190201.GE477119@noisy.programming.kicks-ass.net>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <20250708190201.GE477119@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 79GYl9vTeoUMMV_cHdbL7bBnEnTU3GGV
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIxMDE3MCBTYWx0ZWRfX2/TPpexSfZVN
+ u7fB9GYGhCeIMZctwBOMZYn5qRbqVGr+IPaR3FFoWzdGec1ZEWCsRMRsmv8GVyEnoLYVNWBaDku
+ P0kyIxLkbq5wVpEIS6by8hVktU9qgBBno4J7fAKXDiyXDkOzrKVs31FMLfvongJV/Vr4DhdGxe5
+ KsD8u86xbOmOAU/3kfyZG+4s+48nP9+TBSdaF4nkS4BWwb5wpBbG1mOOrEFh0I3Pv/lnLVyq5B9
+ REL9vUw1Z3s4srfnsaToivAmEs2Wb1T4bns6nrkrvsD5WXGlEop2VHM7paTcDLk5fTbsbJ0xS4C
+ V7GZTNsAg6n98Ng35mqnHAWjYbHQdusVXklSeLIKxDaERxk4f/GtOG/qrCpJBcx/0cREo3zJqr1
+ UP/Nyd2uxyvNi9ZWrgfPptahWgnpzSZVVAbVkYyb1cJs8ynAQCLudYhCCWwa8eSKqbARK7zB
+X-Authority-Analysis: v=2.4 cv=dpnbC0g4 c=1 sm=1 tr=0 ts=687e96ec cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=r6rNkULCFl-4_LuMYwIA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: Gsegn909I9XXRI-I00BJbAbScbcfD3dv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-21_05,2025-07-21_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 impostorscore=0 suspectscore=0 adultscore=0 phishscore=0
+ lowpriorityscore=0 priorityscore=1501 bulkscore=0 mlxscore=0 malwarescore=0
+ mlxlogscore=979 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507210170
 
-On Mon, 21 Jul 2025 18:27:38 +0100 Usama Arif <usamaarif642@gmail.com> wrote:
 
-[...]
-> >From ee9004e7d34511a79726ee1314aec0503e6351d4 Mon Sep 17 00:00:00 2001
-> From: Usama Arif <usamaarif642@gmail.com>
-> Date: Thu, 15 May 2025 14:33:33 +0100
-> Subject: [PATCH] selftests: prctl: introduce tests for
->  PR_THP_DISABLE_EXCEPT_ADVISED
+
+On 7/9/25 00:32, Peter Zijlstra wrote:
+> On Mon, Jul 07, 2025 at 11:49:17PM +0530, Shrikanth Hegde wrote:
 > 
-> The test is limited to 2M PMD THPs. It does not modify the system
-> settings in order to not disturb other process running in the system.
-> It checks if the PMD size is 2M, if the 2M policy is set to inherit
-> and if the system global THP policy is set to "always", so that
-> the change in behaviour due to PR_THP_DISABLE_EXCEPT_ADVISED can
-> be seen.
+>> Git bisect points to
+>> # first bad commit: [dc968ba0544889883d0912360dd72d90f674c140] sched: Add ttwu_queue support for delayed tasks
 > 
-> This tests if:
-> - the process can successfully set the policy
-> - carry it over to the new process with fork
-> - if no hugepage is gotten when the process doesn't MADV_HUGEPAGE
-> - if hugepage is gotten when the process does MADV_HUGEPAGE
-> - the process can successfully reset the policy to PR_THP_POLICY_SYSTEM
-> - if hugepage is gotten after the policy reset
-
-Nice!  I added a few trivial comments below, though.
-
+> Moo.. Are IPIs particularly expensive on your platform?
 > 
-> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+>
+It seems like the cost of IPIs is likely hurting here.
 
-Acked-by: SeongJae Park <sj@kernel.org>
+IPI latency really depends on whether CPU was busy, shallow idle state or deep idle state.
+When it is in deep idle state numbers show close to 5-8us on average on this small system.
+When system is busy, (could be doing another schbench thread) is around 1-2us.
 
-> ---
->  tools/testing/selftests/prctl/Makefile      |   2 +-
->  tools/testing/selftests/prctl/thp_disable.c | 207 ++++++++++++++++++++
-
-I once thought this might better fit on selftests/mm/, but I found we already
-have selftests/prctl/set-anon-vma-name-tests.c, no no strong opinion from my
-side.
-
->  2 files changed, 208 insertions(+), 1 deletion(-)
->  create mode 100644 tools/testing/selftests/prctl/thp_disable.c
-> 
-> diff --git a/tools/testing/selftests/prctl/Makefile b/tools/testing/selftests/prctl/Makefile
-> index 01dc90fbb509..a3cf76585c48 100644
-> --- a/tools/testing/selftests/prctl/Makefile
-> +++ b/tools/testing/selftests/prctl/Makefile
-> @@ -5,7 +5,7 @@ ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
->  
->  ifeq ($(ARCH),x86)
->  TEST_PROGS := disable-tsc-ctxt-sw-stress-test disable-tsc-on-off-stress-test \
-> -		disable-tsc-test set-anon-vma-name-test set-process-name
-> +		disable-tsc-test set-anon-vma-name-test set-process-name thp_disable
->  all: $(TEST_PROGS)
->  
->  include ../lib.mk
-> diff --git a/tools/testing/selftests/prctl/thp_disable.c b/tools/testing/selftests/prctl/thp_disable.c
-> new file mode 100644
-> index 000000000000..e524723b3313
-> --- /dev/null
-> +++ b/tools/testing/selftests/prctl/thp_disable.c
-> @@ -0,0 +1,207 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * This test covers the PR_GET/SET_THP_DISABLE functionality of prctl calls
-> + * for PR_THP_DISABLE_EXCEPT_ADVISED
-> + */
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <string.h>
-> +#include <unistd.h>
-> +#include <sys/mman.h>
-> +#include <sys/prctl.h>
-> +#include <sys/wait.h>
-> +
-> +#ifndef PR_THP_DISABLE_EXCEPT_ADVISED
-> +#define PR_THP_DISABLE_EXCEPT_ADVISED (1 << 1)
-> +#endif
-> +
-> +#define CONTENT_SIZE 256
-> +#define BUF_SIZE (12 * 2 * 1024 * 1024) // 12 x 2MB pages
-> +
-> +enum system_policy {
-> +	SYSTEM_POLICY_ALWAYS,
-> +	SYSTEM_POLICY_MADVISE,
-> +	SYSTEM_POLICY_NEVER,
-> +};
-> +
-> +int system_thp_policy;
-> +
-> +/* check if the sysfs file contains the expected substring */
-> +static int check_file_content(const char *file_path, const char *expected_substring)
-> +{
-> +	FILE *file = fopen(file_path, "r");
-> +	char buffer[CONTENT_SIZE];
-> +
-> +	if (!file) {
-> +		perror("Failed to open file");
-> +		return -1;
-> +	}
-> +	if (fgets(buffer, CONTENT_SIZE, file) == NULL) {
-> +		perror("Failed to read file");
-> +		fclose(file);
-> +		return -1;
-> +	}
-> +	fclose(file);
-> +	// Remove newline character from the buffer
-
-Nit.  I'd suggest using "/* */" consisetntly.
-
-> +	buffer[strcspn(buffer, "\n")] = '\0';
-> +	if (strstr(buffer, expected_substring))
-> +		return 0;
-> +	else
-> +		return 1;
-> +}
-> +
-> +/*
-> + * The test is designed for 2M hugepages only.
-> + * Check if hugepage size is 2M, if 2M size inherits from global
-> + * setting, and if the global setting is always.
-> + */
-> +static int sysfs_check(void)
-> +{
-> +	int res = 0;
-> +
-> +	res = check_file_content("/sys/kernel/mm/transparent_hugepage/hpage_pmd_size", "2097152");
-> +	if (res) {
-> +		printf("hpage_pmd_size is not set to 2MB. Skipping test.\n");
-> +		return -1;
-
-Nit.  Skipping is done by the caller, right?  I think it is more natural to say
-"Skipping test" from the caller.
-
-> +	}
-> +	res |= check_file_content("/sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled",
-> +				  "[inherit]");
-
-Nit.  I think we can drop '|' and just do 'res = '.
-
-> +	if (res) {
-> +		printf("hugepages-2048kB does not inherit global setting. Skipping test.\n");
-> +		return -1;
-> +	}
-> +
-> +	res = check_file_content("/sys/kernel/mm/transparent_hugepage/enabled", "[always]");
-> +	if (!res) {
-
-Seems 'res' is being used for only checking whether it is zero.  Maybe doing
-'if (check_file_content(...))' and removing 'res' can make code simpler?
-
-> +		system_thp_policy = SYSTEM_POLICY_ALWAYS;
-> +		return 0;
-> +	}
-
-Also, system_thp_policy is set only here, so we know 'system_thp_policy ==
-SYSTEM_POLICY_ALWAYS' if sysfs_check() returned zero.  Maybe system_thp_policy
-is not really required?
-
-> +	printf("Global THP policy not set to always. Skipping test.\n");
-> +	return -1;
-> +}
-> +
-> +static int check_smaps_for_huge(void)
-> +{
-> +	FILE *file = fopen("/proc/self/smaps", "r");
-> +	int is_anonhuge = 0;
-> +	char line[256];
-> +
-> +	if (!file) {
-> +		perror("fopen");
-> +		return -1;
-> +	}
-> +
-> +	while (fgets(line, sizeof(line), file)) {
-> +		if (strstr(line, "AnonHugePages:") && strstr(line, "24576 kB")) {
-> +			is_anonhuge = 1;
-> +			break;
-> +		}
-> +	}
-> +	fclose(file);
-> +	return is_anonhuge;
-> +}
-> +
-> +static int test_mmap_thp(int madvise_buffer)
-> +{
-> +	int is_anonhuge;
-> +
-> +	char *buffer = (char *)mmap(NULL, BUF_SIZE, PROT_READ | PROT_WRITE,
-> +				    MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-> +	if (buffer == MAP_FAILED) {
-> +		perror("mmap");
-> +		return -1;
-> +	}
-> +	if (madvise_buffer)
-> +		madvise(buffer, BUF_SIZE, MADV_HUGEPAGE);
-> +
-> +	// set memory to ensure it's allocated
-
-'/* */' for consistency?
-
-> +	memset(buffer, 0, BUF_SIZE);
-> +	is_anonhuge = check_smaps_for_huge();
-> +	munmap(buffer, BUF_SIZE);
-> +	return is_anonhuge;
-> +}
-> +
-> +/* Global policy is always, process is changed to "madvise only" */
-> +static int test_global_always_process_madvise(void)
-> +{
-> +	int is_anonhuge = 0, res = 0, status = 0;
-> +	pid_t pid;
-> +
-> +	if (prctl(PR_SET_THP_DISABLE, 1, PR_THP_DISABLE_EXCEPT_ADVISED, NULL, NULL) != 0) {
-
-Nit.  '!= 0' can be dropped.
-
-> +		perror("prctl failed to set policy to madvise");
-> +		return -1;
-> +	}
-> +
-> +	/* Make sure prctl changes are carried across fork */
-> +	pid = fork();
-> +	if (pid < 0) {
-> +		perror("fork");
-> +		exit(EXIT_FAILURE);
-> +	}
-> +
-> +	res = prctl(PR_GET_THP_DISABLE, NULL, NULL, NULL, NULL);
-> +	if (res != 3) {
-> +		printf("prctl PR_GET_THP_POLICY returned %d pid %d\n", res, pid);
-> +		goto err_out;
-> +	}
-> +
-> +	/* global = always, process = madvise, we shouldn't get HPs without madvise */
-> +	is_anonhuge = test_mmap_thp(0);
-> +	if (is_anonhuge) {
-> +		printf(
-> +		"PR_THP_POLICY_DEFAULT_NOHUGE set but still got hugepages without MADV_HUGEPAGE\n");
-> +		goto err_out;
-> +	}
-> +
-> +	is_anonhuge = test_mmap_thp(1);
-> +	if (!is_anonhuge) {
-> +		printf(
-> +		"PR_THP_POLICY_DEFAULT_NOHUGE set but did't get hugepages with MADV_HUGEPAGE\n");
-> +		goto err_out;
-> +	}
-> +
-> +	/* Reset to system policy */
-> +	if (prctl(PR_SET_THP_DISABLE, 0, NULL, NULL, NULL) != 0) {
-> +		perror("prctl failed to set policy to system");
-> +		goto err_out;
-> +	}
-> +
-> +	is_anonhuge = test_mmap_thp(0);
-> +	if (!is_anonhuge) {
-> +		printf("global policy is always but we still didn't get hugepages\n");
-> +		goto err_out;
-> +	}
-> +
-> +	is_anonhuge = test_mmap_thp(1);
-> +	if (!is_anonhuge) {
-> +		printf("global policy is always but we still didn't get hugepages\n");
-> +		goto err_out;
-> +	}
-
-Seems is_anonhugepage is used for only whether it is zero or not, just after
-being assigned from test_mmap_thp().  How about removing the variable?
-
-> +	printf("PASS\n");
-> +
-> +	if (pid == 0) {
-> +		exit(EXIT_SUCCESS);
-> +	} else {
-> +		wait(&status);
-> +		if (WIFEXITED(status))
-> +			return 0;
-> +		else
-> +			return -1;
-> +	}
-> +
-> +err_out:
-> +	if (pid == 0)
-> +		exit(EXIT_FAILURE);
-> +	else
-> +		return -1;
-> +}
-> +
-> +int main(void)
-> +{
-> +	if (sysfs_check())
-> +		return 0;
-
-May better to return KSFT_SKIP insted of 0?
-
-> +
-> +	if (system_thp_policy == SYSTEM_POLICY_ALWAYS)
-
-This should be always true, since sysfs_check() returned zero, right?  I think
-we can remove this check.
-
-> +		return test_global_always_process_madvise();
-> +
-
-Nit.  Unnecessary blank line.
-
-> +}
-> -- 
-> 2.47.1
-> 
-> 
-> 
+Measured the time it took for taking the remote rq lock in baseline, that is around 1-1.5us only.
+Also, here LLC is small core.(SMT4 core). So quite often the series would choose to send IPI.
 
 
-Thanks,
-SJ
+Did one more experiment, pin worker and message thread such that it always sends IPI.
+
+NO_TTWU_QUEUE_DELAYED
+
+./schbench -L -m 4 -M auto -t 64 -n 0 -r 5 -i 5
+average rps: 1549224.72
+./schbench -L -m 4 -M 0-3 -W 4-39 -t 64 -n 0 -r 5 -i 5
+average rps: 1560839.00
+
+TTWU_QUEUE_DELAYED
+
+./schbench -L -m 4 -M auto -t 64 -n 0 -r 5 -i 5             << IPI could be sent quite often ***
+average rps: 959522.31
+./schbench -L -m 4 -M 0-3 -W 4-39 -t 64 -n 0 -r 5 -i 5      << IPI are always sent. (M,W) don't share cache.
+average rps: 470865.00                                      << rps goes even lower
+
+
+=================================
+
+*** issues/observations in schbench.
+
+Chris,
+
+When one does -W auto or -M auto i think code is meant to run, n message threads on first n CPUs and worker threads
+on remaining CPUs?
+I don't see that happening.  above behavior can be achieved only with -M <cpus> -W <cpus>
+
+         int i = 0;
+         CPU_ZERO(m_cpus);
+         for (int i = 0; i < m_threads; ++i) {
+                 CPU_SET(i, m_cpus);
+                 CPU_CLR(i, w_cpus);
+         }
+         for (; i < CPU_SETSIZE; i++) {             << here i refers to the one in scope. which is 0. Hence w_cpus is set for all cpus.
+                                                       And hence workers end up running on all CPUs even with -W auto
+                 CPU_SET(i, w_cpus);
+         }
+
+
+Another issue, is that if CPU0 if offline, then auto pinning fails. Maybe no one cares about that case?
 
