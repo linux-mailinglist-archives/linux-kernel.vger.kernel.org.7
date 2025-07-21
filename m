@@ -1,140 +1,121 @@
-Return-Path: <linux-kernel+bounces-738717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E749B0BC47
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:05:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EF4EB0BC49
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:05:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EDDA18999FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:05:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD505179DED
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD690221297;
-	Mon, 21 Jul 2025 06:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="frGXxaEV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E31F21D3F8;
+	Mon, 21 Jul 2025 06:05:14 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E14213E74;
-	Mon, 21 Jul 2025 06:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3264EE56A
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 06:05:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753077890; cv=none; b=DhmhPjLtEqqqg2FatIkuoTszyNaZu1EO0oVdxYaxUKcsi2D4YwLqt7r1C6XH0PP6aonlaPeMlDHAn+enX8Vm+V55aur5OFk0zAAnfSWUQaRGcTas7V6mEfe03NgokqXZ2IFIWrkl1T3pIUjj1UJVCPHVTVTEkbIiNE5BQkni8Io=
+	t=1753077913; cv=none; b=bV5aunzYpT1a2sTu4PLea9QC7Pc7A+Gb4BJpEK6b+jeM0s0u0MOtwSd9In1oOIjK1UAlcu6CVvGHLeu35axslSWwJ1Zi9Ag0NgfuTLKvybUiGgDGWngZ+M+ArF2aA1zr/IUCXCBo4OLasKNFGhVfV71C/JQd3QYaTZ62brZc3Zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753077890; c=relaxed/simple;
-	bh=0YX/Lk0pR9kxlmL83u2hznqW/tfN7vcR/ymMlrSLwXM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fB/tbphqZqexo+hq9uBkLmAfwFQHHFVmLRkw3l8G6j5DW8C8Gs/eHlDUYpW+tty+lU5b4WWg2UMYjoOZHT07By4iWfrXGIbo7EOW+9KGI7qM6keqC5pgqb4JQvpO2mHVXwM6f3DdI5qcy2WNozSLJZpTY18/f7DZl2Kgknosp5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=frGXxaEV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B9947C4CEF7;
-	Mon, 21 Jul 2025 06:04:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753077889;
-	bh=0YX/Lk0pR9kxlmL83u2hznqW/tfN7vcR/ymMlrSLwXM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=frGXxaEVRluzpY+p76k4xE/LzLAk1GCjRwYFW1YSQRuJ/s0x863+GrQFCUFpKf+UO
-	 mQJG6VHTqfn6GoG0rdCTaoQWk5B9roIKlznQB42m5bxn09i+janH4ItHFEr50e0nHL
-	 lzBA4j3NTmW7OvM18gYt6o0vf5++Wb0RnWudLR4dE/ugPON2A45iHAgsiaiB8Ko4Sy
-	 dpH8Vd8+IoFK7VUmL3gtukVRz+i2t26sGoEcl4C1CjFiPRSP7gW1ud+FO4bChyL5Jk
-	 Svq+a2qWv0YMBpqGZX8C+FxwVol115pmvr8OJ3ldkq6aLIC+nPTdLJ953phSz+GgsD
-	 Gm871O3IS0l0Q==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0775C87FC8;
-	Mon, 21 Jul 2025 06:04:49 +0000 (UTC)
-From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
-Date: Mon, 21 Jul 2025 10:04:36 +0400
-Subject: [PATCH v5 2/2] arm64: dts: qcom: Update IPQ5018 xo_board_clk to
- use fixed factor clock
+	s=arc-20240116; t=1753077913; c=relaxed/simple;
+	bh=d1op7TC7QokF1G9nHrDrwL3lteFaG5LEUl3s4TBH8PA=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=aD4w1Iav1oXU+wI/OzFgc64jKGTqdTpXU+mDCZrhjtxVH3FPCJhZwnMKjst2BLKXjswsvjTIMqK2LTDVbXFRM+/qoK0//uX4adXun4ze+BIO9Lh/L2AiNmczZ5SsrpXvp4Q0VD/6FPljlc3huojr/6snAq8tqX3qmOtJGZC59uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4blqcj5tH6zKHMYF
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 14:05:09 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 7CD501A113D
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 14:05:08 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgCnIxSS2H1o8C_oAw--.24409S3;
+	Mon, 21 Jul 2025 14:05:08 +0800 (CST)
+Subject: Re: [PATCH] dm-raid: do not include dm-core.h
+To: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+ Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
+ Mikulas Patocka <mpatocka@redhat.com>
+Cc: Xiao Ni <xni@redhat.com>, dm-devel@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Konstantin Khorenko <khorenko@virtuozzo.com>,
+ Denis Lunev <den@virtuozzo.com>, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250721034929.374552-1-ptikhomirov@virtuozzo.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <afc231d5-6c49-3edf-fde4-3eff376c02bd@huaweicloud.com>
+Date: Mon, 21 Jul 2025 14:05:06 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250721-ipq5018-cmn-pll-v5-2-4cbf3479af65@outlook.com>
-References: <20250721-ipq5018-cmn-pll-v5-0-4cbf3479af65@outlook.com>
-In-Reply-To: <20250721-ipq5018-cmn-pll-v5-0-4cbf3479af65@outlook.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- George Moussalem <george.moussalem@outlook.com>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753077887; l=2156;
- i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
- bh=HWWUllR1trQyCJksWvP6XbezGjzhmGW/ycqYEMYXU0o=;
- b=utsEdfaeW7XHg+/IZpxEEnjkjK+t4jZoXJqHhi9Ol8NQinAfkXtaSRPf8RipZ+r6yZdb2GSZt
- bOIEvsohy5WBiun+EUBgi9NQvFNjkQcKL/VQvSvv8nkZNdfr1edgIpA
-X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
- pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
-X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
- with auth_id=364
-X-Original-From: George Moussalem <george.moussalem@outlook.com>
-Reply-To: george.moussalem@outlook.com
+In-Reply-To: <20250721034929.374552-1-ptikhomirov@virtuozzo.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCnIxSS2H1o8C_oAw--.24409S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxJr4kKF18GFWfJF4UJFW3GFg_yoW8GFW7pa
+	1DC3yYkr4rJrWqqF1DXan29a4YganxGryFgryxu340v3sxGr1q9r4kGa9IqF48JFZFqFy7
+	WF47AFn09F4FqFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU92b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
+	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
+	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
+	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYx
+	BIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-From: George Moussalem <george.moussalem@outlook.com>
+ÔÚ 2025/07/21 11:49, Pavel Tikhomirov Ð´µÀ:
+> In commit 4cc96131afce ("dm: move request-based code out to dm-rq.[hc]")
+> we have a note: "DM targets should _never_ include dm-core.h!". And it
+> is not used in any DM targets except dm-raid now, so let's remove it
+> from dm-raid for consistency, also use special helpers instead of
+> accessing dm_table and mapper_device fields directly. This change is
+> merely a cleanup and should not affect functionality.
+> 
+> Fixes: 7168be3c8a6b ("md: record dm-raid gendisk in mddev")
+> Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+> ---
+>   drivers/md/dm-raid.c | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+Reviewed-by: Yu Kuai <yukuai3@huawei.com>
+Thanks
 
-The xo_board_clk is fixed to 24 MHZ, which is routed from WiFi output
-clock 96 MHZ (also being the reference clock of CMN PLL) divided by 4
-to the analog block routing channel. Update the xo_board_clk nodes in
-the board DTS files to use clock-div/clock-mult accordingly.
-
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: George Moussalem <george.moussalem@outlook.com>
----
- arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts             | 3 ++-
- arch/arm64/boot/dts/qcom/ipq5018-tplink-archer-ax55-v1.dts | 3 ++-
- arch/arm64/boot/dts/qcom/ipq5018.dtsi                      | 3 ++-
- 3 files changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts b/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts
-index 43def95e9275258041e7522ba4098a3767be3df1..df3cbb7c79c4e6c58cba7695691827fb8b84e451 100644
---- a/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts
-+++ b/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts
-@@ -120,5 +120,6 @@ &usbphy0 {
- };
- 
- &xo_board_clk {
--	clock-frequency = <24000000>;
-+	clock-div = <4>;
-+	clock-mult = <1>;
- };
-diff --git a/arch/arm64/boot/dts/qcom/ipq5018-tplink-archer-ax55-v1.dts b/arch/arm64/boot/dts/qcom/ipq5018-tplink-archer-ax55-v1.dts
-index 5bb021cb29cd39cb95035bfac1bdbc976439838b..7a25af57749c8e8c9a6a185437886b04b0d99e8e 100644
---- a/arch/arm64/boot/dts/qcom/ipq5018-tplink-archer-ax55-v1.dts
-+++ b/arch/arm64/boot/dts/qcom/ipq5018-tplink-archer-ax55-v1.dts
-@@ -124,5 +124,6 @@ uart_pins: uart-pins-state {
- };
- 
- &xo_board_clk {
--	clock-frequency = <24000000>;
-+	clock-div = <4>;
-+	clock-mult = <1>;
- };
-diff --git a/arch/arm64/boot/dts/qcom/ipq5018.dtsi b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
-index 3ddcceaf760dccb39914a117d5dcc8955fdb94fe..8ae7d76e29c90cb27fae4904aec6442edada885e 100644
---- a/arch/arm64/boot/dts/qcom/ipq5018.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
-@@ -44,7 +44,8 @@ sleep_clk: sleep-clk {
- 		};
- 
- 		xo_board_clk: xo-board-clk {
--			compatible = "fixed-clock";
-+			compatible = "fixed-factor-clock";
-+			clocks = <&ref_96mhz_clk>;
- 			#clock-cells = <0>;
- 		};
- 
-
--- 
-2.50.1
-
+> diff --git a/drivers/md/dm-raid.c b/drivers/md/dm-raid.c
+> index e8c0a8c6fb51..4fb5ddf50560 100644
+> --- a/drivers/md/dm-raid.c
+> +++ b/drivers/md/dm-raid.c
+> @@ -14,7 +14,6 @@
+>   #include "raid5.h"
+>   #include "raid10.h"
+>   #include "md-bitmap.h"
+> -#include "dm-core.h"
+>   
+>   #include <linux/device-mapper.h>
+>   
+> @@ -3305,7 +3304,7 @@ static int raid_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+>   
+>   	/* Disable/enable discard support on raid set. */
+>   	configure_discard_support(rs);
+> -	rs->md.dm_gendisk = ti->table->md->disk;
+> +	rs->md.dm_gendisk = dm_disk(dm_table_get_md(ti->table));
+>   
+>   	mddev_unlock(&rs->md);
+>   	return 0;
+> 
 
 
