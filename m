@@ -1,185 +1,198 @@
-Return-Path: <linux-kernel+bounces-738948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9017B0BF6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:50:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DBBFB0BF74
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:54:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE43716784D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:50:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9830D179573
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 267DA2877E1;
-	Mon, 21 Jul 2025 08:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RYE+twWZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9656B2853EE;
+	Mon, 21 Jul 2025 08:54:05 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F5D1ABED9
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 08:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0411798F
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 08:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753087786; cv=none; b=Bz6NtUdckUJ3ffYQRV+UdQdpAsXEmP9fDGWG3epdCmgK3VtigWm8x1JwCndJDnb5k6MJAPGebqoG5nEeGfPl+WUSULYMhnMdfO50xnFpBDTEsIgmKO7mmAF+J3+wVRbMHU9RpGRUPpPYg2t5kae873vHumljQ8bcKj2fxEfIHWQ=
+	t=1753088045; cv=none; b=eASxQJwCCJdL1zqtnFu9OOQjjkXnXDyOrAH4Ce9m7wei/te571jUTFG6yeqz3p+CLaplGJCTH0LjEC3gIJ85kBen5GDrA/ut2Znsd/gWZZuBRTJvkrwj9FZHmxvNN492uJ7hPe9akcMmdtaUI/uHGOlTUChzQQ/FL1ufQlxyh4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753087786; c=relaxed/simple;
-	bh=O86pCKYYqFW3brRImFAd909wt+XrZ1IcPtW+VeAnRLs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZLLRo2QfU+TaqM5pX9WWpzy0uDDx9yND+p/sWmq5yQzbgCO9wqyUlTnYhv40dNHamicXt5BaruppQpl/t3SzlCXwLAtfIAjzyN22u8Yb+tZox83iLx0RuvSrJ7mrnws1t4WnlzEONoP9xrj6/JErv8NDe6Sec+aVnN6PZLdTE/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RYE+twWZ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753087783;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=eEyJkY9ZcW+iRGk8l+mt+fm3yxn1zcNir5mSzl4jwkA=;
-	b=RYE+twWZLmHIHlUDJqv7kPR1kKmLh6G7bvsCFgAlBX6k6hk5kPdfdb8zxWSVb5Pjm5CcJX
-	t4GKikXPu5dvf7NwgwIreI/USh0pvORrHp3InngGgIR2EQKTfkC+Z6bzF53E+cG2MFO94r
-	bqc97A2eDteH93YGuMiaOF8pDpe88HA=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-6-QjI7Z8MWODG9-eaRqOhTZw-1; Mon, 21 Jul 2025 04:49:41 -0400
-X-MC-Unique: QjI7Z8MWODG9-eaRqOhTZw-1
-X-Mimecast-MFC-AGG-ID: QjI7Z8MWODG9-eaRqOhTZw_1753087781
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43e9b0fd00cso23797115e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 01:49:41 -0700 (PDT)
+	s=arc-20240116; t=1753088045; c=relaxed/simple;
+	bh=Y1CFewEQ2pp4ssm+KGh+VlHd+V5xUXFR/2NzQKv5+R4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=nnydVGX8vZUan921r6s8UzJmA4I03OvtrTroPrfk8euj6jndM4fQVNIgWflnttdgZIBvx/fxPwdd+0h7vyaZyWRuTgAmMb8Kct3PeHigAv3ubrom1jmKj3hWzKqidA5x5uiRf+60r4/15lp9J5x1jyl1XBJp81sLcObkGIxPlqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-8760733a107so459604539f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 01:54:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753087780; x=1753692580;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=eEyJkY9ZcW+iRGk8l+mt+fm3yxn1zcNir5mSzl4jwkA=;
-        b=qjWPr1oM42QQ/0UeO9qpqU4gHIzs2Ax3jYXlOVT9VlaHo+Lxd3h5rQ3+XdptNocMSn
-         SqrlXLQpPdb/KfGXpSCY0/TSL45VfJiGNjmBbb2JtgmfZk/F8M//x9xAw81tNm5BEI7A
-         D+Ph4JaqRHbKyqcCfTPhJ4hxjdxfzC6f4cqxWcC8lz5cTpFdP/XS8JbCUKlKtmGTb7/8
-         lQv6oVbZfl1a2qbGTgmyuxjUGOJVV+emIQxy9BB/wqGX3dMnrjW5THtbPgpNwCqa70ph
-         hBIE7MYwBNMhWPHa3X/mwoSvKkjB2VcBFaG87jH7OufwnfxKhGmQplbwK78ubXGAlzIr
-         7XLg==
-X-Forwarded-Encrypted: i=1; AJvYcCWyitN5dNC4QDEPv3SKsMO54NBa2oYI9F1uZc57wBx43Cct0og65Pa1DOmS8lSXgCW4blW/q5hL5tOX7Yk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgUa8ouK6rB1I/Ogk0uX+vSvUevxiXZEyD0Jf8u7NbgewxyQ64
-	tBftI7QP6viNICXeFpvKZyCfF3w9yn2N8P7qy+NfUHAMCx9Z12Bfp5VCu01zqD40Yy2BDHJ18tR
-	fakXOwkLuJLMukzqDoxLG8HyudBvRt/c3oi0u84uiz+mb4stkYSo+JmPsqgcQQs8jBA==
-X-Gm-Gg: ASbGncsTFpYLA/Z5M7nMlJ8wETRM9F+vSkd7vUYqJ/APplnZ+/wEHlJqMtM1UtqdEBr
-	xjBJgek+M0LD2DC9Se5mvquZfSUt1Pwv7VW7BraHsUXSzqpos8J03qPK61X4xnomB4fcymOSOc0
-	qRaDc++e0e4cGZ/FzeDHWTZz2MazH5ght4NdQi+yp7fpTI/03AJkWlDPNTrDzPxROJ9mFS4VOLy
-	eOnd4MMVumlroHeV3ZxTO7Umtxie++4fL3qbX2+AXsWDtBVv/zlfVbr/0or0YxC9D+hYcJ6uhoS
-	BZlxat2qHpI1LJLkjAoQLYMcjrSWxzzrusa1ujNuhJ8Se52ObwHnHFGl2XE+ZO/LtAQWUd9C0Hn
-	zIjUS+Pve87YyNB0pr+fBpiRKCD565uStwUwutEAU6WDHjGi9Wtt7CL6PtN5Md/3v
-X-Received: by 2002:a05:600c:c0d0:b0:456:12ad:ec3d with SMTP id 5b1f17b1804b1-4563a54de9amr96245015e9.14.1753087780603;
-        Mon, 21 Jul 2025 01:49:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFGDXuvG/9c+M1TgLOa2nxRpw+VaS0oi8mIDcJ1ihrrncI17JDx29cO0dxPdF5voli4IFz5OQ==
-X-Received: by 2002:a05:600c:c0d0:b0:456:12ad:ec3d with SMTP id 5b1f17b1804b1-4563a54de9amr96244645e9.14.1753087780049;
-        Mon, 21 Jul 2025 01:49:40 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f4c:df00:a9f5:b75b:33c:a17f? (p200300d82f4cdf00a9f5b75b033ca17f.dip0.t-ipconnect.de. [2003:d8:2f4c:df00:a9f5:b75b:33c:a17f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca4d732sm9673327f8f.61.2025.07.21.01.49.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Jul 2025 01:49:39 -0700 (PDT)
-Message-ID: <8b6e6547-cb39-4e64-8dff-6e16e27e7055@redhat.com>
-Date: Mon, 21 Jul 2025 10:49:37 +0200
+        d=1e100.net; s=20230601; t=1753088042; x=1753692842;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BFk0vnsOjVJJwB6fgeHJsp9xTOMyXJhFILgTfAKT/fE=;
+        b=B2gERhB321P5jgHO3ueJM1+LEwC9D7iY3KKrPI88H54z2pIc/BRVpsMV+M1Xz+1/xj
+         6Qzmbk4AhcZz/6l2g+lOcuc5KmqL3y801oBBmlcHw7K8F2VHFeYDDoqgqhZMp8qAxYVl
+         ikhX1VsfhF7chNrtYMSM3SG0T8h78kyAWNFLYfgJH9QMtMVKpXd81O4VsCSawt4HY29S
+         oYUkIuM/qdUgV2FP4w8pIippGeN+qibNSDJxLyO3AH7IYpzklgASOTxNpzXrrjpkbkp7
+         +PJxvjD3eNUj2ZDxbm9gVvZaV3Emy+TnQvlIoyk1x/O4o40ArDXNcnMKjkYHIr+IWYdW
+         Q0VA==
+X-Forwarded-Encrypted: i=1; AJvYcCX70rlS77vKR3L5398ut4MPcaIOsS9FjRLNgVSVRKZXTMfFoV3eQ/iCOUim8MADCpcjbPOk5A2KGWcXr7I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6EA70YKnG0erfoGgbPdQeh4XFafjSkbQb+pRz/kIShygjhcmR
+	brk+MqPU9jvuombPW/8u/3udfbf7FV61QxC6gAtDnF7QCvEqH9YjUHnec4tIDzwOhD2Xh8aZFtv
+	WzVRG5o/LYIYh0RgFZo+EIv2+d5SFdbwUw0WWYlrn2vhE1upAFL96KpPnHWU=
+X-Google-Smtp-Source: AGHT+IG6sZyPocFqjIMhPTCerDVbWmx3DykSB8XogAPhzQ6O6cPF21A7egBZJAb/OcK6TUE+MweKNdNC7IRb7HELtWVNEPRswzgA
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm, page_pool: introduce a new page type for page pool in
- page type
-To: Byungchul Park <byungchul@sk.com>
-Cc: linux-mm@kvack.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel_team@skhynix.com, harry.yoo@oracle.com, ast@kernel.org,
- daniel@iogearbox.net, davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
- john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com,
- leon@kernel.org, tariqt@nvidia.com, mbloch@nvidia.com,
- andrew+netdev@lunn.ch, edumazet@google.com, pabeni@redhat.com,
- akpm@linux-foundation.org, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com,
- mhocko@suse.com, horms@kernel.org, jackmanb@google.com, hannes@cmpxchg.org,
- ziy@nvidia.com, ilias.apalodimas@linaro.org, willy@infradead.org,
- brauner@kernel.org, kas@kernel.org, yuzhao@google.com,
- usamaarif642@gmail.com, baolin.wang@linux.alibaba.com,
- almasrymina@google.com, toke@redhat.com, asml.silence@gmail.com,
- bpf@vger.kernel.org, linux-rdma@vger.kernel.org
-References: <20250721054903.39833-1-byungchul@sk.com>
- <e897e784-4403-467c-b3e4-4ac4dc7b2e25@redhat.com>
- <20250721081910.GA21207@system.software.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <20250721081910.GA21207@system.software.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6602:4c8a:b0:861:6f49:626 with SMTP id
+ ca18e2360f4ac-87c0f046bf2mr1342401639f.6.1753088042497; Mon, 21 Jul 2025
+ 01:54:02 -0700 (PDT)
+Date: Mon, 21 Jul 2025 01:54:02 -0700
+In-Reply-To: <20250721073815.2673-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <687e002a.a70a0220.693ce.00e8.GAE@google.com>
+Subject: Re: [syzbot] [mm?] [input?] [usb?] INFO: rcu detected stall in
+ devtmpfsd (3)
+From: syzbot <syzbot+5583f599fe40b819b3e7@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
->>
->> This will not work they way you want it once you rebase on top of
->> linux-next, where we have (from mm/mm-stable)
->>
->> commit 2dfcd1608f3a96364f10de7fcfe28727c0292e5d
-> 
-> I just checked this.
-> 
-> So is it sufficient that I rebase on mm/mm-stable?  Or should I wait for
-> something else?  Or should I achieve this in other ways?
+Hello,
 
-Probably best to rebase (+test) to linux-next, where that commit should 
-be in.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+INFO: rcu detected stall in worker_thread
 
-Whatever is in mm-stable is expected to go upstream in the next merge 
-window (iow, soon), with stable commit ids.
+rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-1):
+ P5957/2:b.el
 
--- 
-Cheers,
+rcu: 	(detected by 0, t=10502 jiffies, g=18161, q=3025 ncpus=2)
+task:kworker/1:5     state:R
+  running task     stack:25704 pid:5957  tgid:5957  ppid:2      task_flags:0x4208060 flags:0x00004000
+Workqueue: mld mld_dad_work
 
-David / dhildenb
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5397 [inline]
+ __schedule+0x16fd/0x4cf0 kernel/sched/core.c:6786
+ preempt_schedule_irq+0xb5/0x150 kernel/sched/core.c:7109
+ irqentry_exit+0x6f/0x90 kernel/entry/common.c:307
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:get_current arch/x86/include/asm/current.h:25 [inline]
+RIP: 0010:__sanitizer_cov_trace_pc+0x8/0x70 kernel/kcov.c:216
+Code: 8b 3d 14 d3 fb 0b 48 89 de 5b e9 93 b9 58 00 cc cc cc 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 48 8b 04 24 <65> 48 8b 0c 25 08 80 a0 92 65 8b 15 f8 4e e0 10 81 e2 00 01 ff 00
+RSP: 0018:ffffc90003f0f478 EFLAGS: 00000202
+
+RAX: ffffffff8a3aff12 RBX: 1ffff920007e1e9c RCX: 0000000000000000
+RDX: ffff88807d4cbc00 RSI: 0000000000000004 RDI: 0000000000000003
+RBP: ffffc90003f0f5a0 R08: ffff88807d4cbc00 R09: 0000000000000004
+R10: 0000000000000003 R11: ffffffff8a3afc80 R12: ffffc90003f0f660
+R13: ffff888026b59dc0 R14: dffffc0000000000 R15: 0000000000000004
+ ip6table_mangle_hook+0x292/0x6c0 net/ipv6/netfilter/ip6table_mangle.c:73
+ nf_hook_entry_hookfn include/linux/netfilter.h:157 [inline]
+ nf_hook_slow+0xc5/0x220 net/netfilter/core.c:623
+ nf_hook+0x217/0x380 include/linux/netfilter.h:272
+ NF_HOOK_COND include/linux/netfilter.h:305 [inline]
+ ip6_output+0x27d/0x3e0 net/ipv6/ip6_output.c:247
+ NF_HOOK+0x9e/0x380 include/linux/netfilter.h:317
+ mld_sendpack+0x800/0xd80 net/ipv6/mcast.c:1868
+ mld_dad_work+0x45/0x520 net/ipv6/mcast.c:2308
+ process_one_work kernel/workqueue.c:3238 [inline]
+ process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3321
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
+ kthread+0x70e/0x8a0 kernel/kthread.c:464
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+rcu: rcu_preempt kthread starved for 3335 jiffies! g18161 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=0
+rcu: 	Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
+rcu: RCU grace-period kthread stack dump:
+task:rcu_preempt     state:R
+  running task     stack:27128 pid:16    tgid:16    ppid:2      task_flags:0x208040 flags:0x00004000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5397 [inline]
+ __schedule+0x16fd/0x4cf0 kernel/sched/core.c:6786
+ __schedule_loop kernel/sched/core.c:6864 [inline]
+ schedule+0x165/0x360 kernel/sched/core.c:6879
+ schedule_timeout+0x12b/0x270 kernel/time/sleep_timeout.c:99
+ rcu_gp_fqs_loop+0x301/0x1540 kernel/rcu/tree.c:2054
+ rcu_gp_kthread+0x99/0x390 kernel/rcu/tree.c:2256
+ kthread+0x70e/0x8a0 kernel/kthread.c:464
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+rcu: Stack dump where RCU GP kthread last ran:
+CPU: 0 UID: 0 PID: 6854 Comm: syz.0.16 Not tainted 6.16.0-rc7-syzkaller-g89be9a83ccf1-dirty #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+RIP: 0010:csd_lock_wait kernel/smp.c:340 [inline]
+RIP: 0010:smp_call_function_many_cond+0xf69/0x12d0 kernel/smp.c:885
+Code: 00 45 8b 2f 44 89 ee 83 e6 01 31 ff e8 c0 78 0b 00 41 83 e5 01 49 bd 00 00 00 00 00 fc ff df 75 07 e8 6b 74 0b 00 eb 37 f3 90 <43> 0f b6 04 2c 84 c0 75 10 41 f7 07 01 00 00 00 74 1e e8 50 74 0b
+RSP: 0018:ffffc90003c47360 EFLAGS: 00000293
+
+RAX: ffffffff81b4bcd0 RBX: ffff8880b863b1c0 RCX: ffff888029e95a00
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffffc90003c474c0 R08: ffffffff8fa1faf7 R09: 1ffffffff1f43f5e
+R10: dffffc0000000000 R11: fffffbfff1f43f5f R12: 1ffff110170e7f5d
+R13: dffffc0000000000 R14: 0000000000000001 R15: ffff8880b873fae8
+FS:  0000000000000000(0000) GS:ffff888125c18000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fce0d3ddd58 CR3: 000000000df38000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ on_each_cpu_cond_mask+0x3f/0x80 kernel/smp.c:1052
+ __flush_tlb_multi arch/x86/include/asm/paravirt.h:91 [inline]
+ flush_tlb_multi arch/x86/mm/tlb.c:1361 [inline]
+ flush_tlb_mm_range+0x6b1/0x12c0 arch/x86/mm/tlb.c:1451
+ tlb_flush arch/x86/include/asm/tlb.h:23 [inline]
+ tlb_flush_mmu_tlbonly include/asm-generic/tlb.h:490 [inline]
+ tlb_flush_mmu+0x1a7/0x680 mm/mmu_gather.c:403
+ tlb_finish_mmu+0xc3/0x1d0 mm/mmu_gather.c:497
+ free_ldt_pgtables+0x17b/0x320 arch/x86/kernel/ldt.c:411
+ arch_exit_mmap arch/x86/include/asm/mmu_context.h:234 [inline]
+ exit_mmap+0x17c/0xb50 mm/mmap.c:1270
+ __mmput+0x118/0x420 kernel/fork.c:1121
+ exit_mm+0x1da/0x2c0 kernel/exit.c:581
+ do_exit+0x648/0x22e0 kernel/exit.c:952
+ do_group_exit+0x21c/0x2d0 kernel/exit.c:1105
+ get_signal+0x1286/0x1340 kernel/signal.c:3034
+ arch_do_signal_or_restart+0x9a/0x750 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop+0x75/0x110 kernel/entry/common.c:111
+ exit_to_user_mode_prepare include/linux/entry-common.h:330 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:414 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:449 [inline]
+ do_syscall_64+0x2bd/0x3b0 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f982ed8e929
+Code: Unable to access opcode bytes at 0x7f982ed8e8ff.
+RSP: 002b:00007f982fbef0e8 EFLAGS: 00000246
+ ORIG_RAX: 00000000000000ca
+RAX: fffffffffffffe00 RBX: 00007f982efb6088 RCX: 00007f982ed8e929
+RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007f982efb6088
+RBP: 00007f982efb6080 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f982efb608c
+R13: 0000000000000000 R14: 00007ffc8d99a7a0 R15: 00007ffc8d99a888
+ </TASK>
+
+
+Tested on:
+
+commit:         89be9a83 Linux 6.16-rc7
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=150f7f98580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8adfe52da0de2761
+dashboard link: https://syzkaller.appspot.com/bug?extid=5583f599fe40b819b3e7
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=155c338c580000
 
 
