@@ -1,231 +1,272 @@
-Return-Path: <linux-kernel+bounces-739702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B2B9B0C9DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:40:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 86BD6B0C9E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:40:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98CFC542CFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:40:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59E99163E0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF6562E1746;
-	Mon, 21 Jul 2025 17:39:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02022E1754;
+	Mon, 21 Jul 2025 17:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="KgKVN/49"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="lJGzhVqp"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2082.outbound.protection.outlook.com [40.107.100.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CBDA2E2647
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 17:39:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753119563; cv=none; b=RtsCq5+YD7mToPKg8N71fsiyR1zkRD0v0M61MBVlzJpZFq5XIKZQb2AxWMvDfernFtUitFwV9VudEJ7NEp+dSrZBGyxPNPVR8dSyRoa03DSA3Lrss1vBSPthjyPD1oSPjpRoYwJt5GYWQQrILtHgV/WmynBlE8tc4KoFpaKJHZ0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753119563; c=relaxed/simple;
-	bh=Y056pcbTs6RHBtSSLx5UX4StFs9gHnW29b2RHrxn65E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tdmtAsy4hr4RCeiXFge4XkoD5s34Bv33QIGH02Js4XUpPFUnJAv+dZWDdN782Gvv53dMSflAcMKBv7aN80cc5Wei7a6VUKNB7PsiUt5fg6BlnlE6oXB0wp8Y7Zh9PQSBoDmuL56k9ZskxtEsDvbDZFvOinzewSblUcyHujzrS1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=KgKVN/49; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1753119559;
-	bh=Y056pcbTs6RHBtSSLx5UX4StFs9gHnW29b2RHrxn65E=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=KgKVN/49crFNOWMycdX0yexy1FpVG7YFiotfrrj+R6b0pjcgV8bDTjm/zjORW0Yxb
-	 Ljm8z0X+vmlHi6N3bBKsJpcpAALGMeCPw6xOZqF0wO7i6skhRCdFKtprJHWUvaWpK3
-	 LQKvw5cxbu3moCJZYxvg9y/Q6UorrgI44elziEaou4tAGhzyNpjy3p1TCaL5IG872D
-	 fwF1TZQWxkoI4eHbErBovqmOKpsLxUyYOQ6j8K17EvgVoV0UF/30m6S3kiAGpjP2fg
-	 Z96dhoNtJUR3BSEG86aGh/aQMvwF3Toa4C7YmRuc++L63C1M6/x9SKL38jLe3P+akA
-	 p9AkzgUCGKD7Q==
-Received: from localhost (unknown [82.79.138.60])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id 47FF017E1540;
-	Mon, 21 Jul 2025 19:39:19 +0200 (CEST)
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Mon, 21 Jul 2025 20:39:08 +0300
-Subject: [PATCH 5/5] drm/rockchip: dw_hdmi_qp: Add high color depth support
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 808932E1741;
+	Mon, 21 Jul 2025 17:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753119614; cv=fail; b=rPqiNMibmoHN7Oa5+HUpLXVZZWK3q63o9E/h76UgGHlcdxrsG3b12UXu7blUYn8g/X4dOrRgq+CxBjxsh9jMB2fle40MwzWewQgD6YUQP2ATT9XxyDlGzPmZhl3k9Vv/EYzN4LZSyaxS5JtxW+UiU5KbJtuRuaBSeRMVLCHuIgY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753119614; c=relaxed/simple;
+	bh=IQjh9u6DWaw4/NKyXwvCIjvVGtSqfl6N9kuIhbtlP2Y=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=tTAFVawYBTdnONB6b+3KxOEwGgMg7UA5kJtVwbeAaKMnkD0K0aRy2OAP+gdkKuHD1+Rt8I9za0k6pBzm7QM1wl3te1Zp7PwAtbNMQ2gShMj3ahbj+H9SBpSHbUwm/FhCfoeDESxZeqcsGd8oqTqauqkFlJf0wFisQkRtpY0zd5I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=lJGzhVqp; arc=fail smtp.client-ip=40.107.100.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=whAnBvWQpkXprcWG29CqA99voKaKP3YdjYjeUw+PmMouhRwjgqLtf0TQkz297YsUf4WBzEr4+utdk6+71UtS2K2tMzDC+GSXW4hATQ2Ng3RrWW0D9t4gKn+sJP9JYOc18ln1ZJAbYV9HMpzBMro3Z5l7SYVSjzzk0T07XPyCv2qfKs0G3Fpj3Dh+pcOeYtvdn078HtGklWyRBoELBEVunvh25gK6V2dtBUDU95yjh3ItFoMtb9hkpxBKyroR3YKzgJb82DaDRbeErRshyag/aedAmvVAhEPOpgKkXambrgjTNkxsxGK872FpHtJNF7F/2Wu23Qy3inMexQ7LcHAu9w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=E1wfpFZZHcjynrLrPvqqmnz5sguCYEAxREXH6I3HEjI=;
+ b=I+xM1w0udQOLKTdRkC5kQQEUIfkO3SoMRoVjnoT0Tci7oP6hC+Z0CAexMLWL/ISQi0GyGTF/48wuTmMtJbRKQ5orBRYdpXYwG3djkQaZSBa/q1dMjr34X+RhZvQKYpaiNFN+OECdcCTnpOQrqJOnLnqPtGmDc5ZjvpSWoQItnHawfNX0tfqK4/kLwoy4LbZ4mk0gQGwxxBNBNGXla1jVzG+TmQfqwYbD5IqOkjkxMwR20BvrTmFhfEAgUa4ClFiv4cxkOgdGmRDkCcAMVM3f5yMIoY/d6dU3KIhgxJJK1uJ2OngqmIJHpEDzCR9ECr/i7m5vJeEICK468rC4kHF5dA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=E1wfpFZZHcjynrLrPvqqmnz5sguCYEAxREXH6I3HEjI=;
+ b=lJGzhVqpCxTXY1npXaJ8mZs8dFccuXJVMBK12aQNUN7ZqXY8IK1tRdVYJ7+IkRux8tOQTWPgRfSN3DRFqNxOJ9pF0FOUT5zuyq4PEKF+JWi8P/Xh+nnyaSYs0HQ0OKBZODO2lkhRLJK6HMOBNvqwg9w4h1/9d0zBQwjYSkQNc28=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
+ by PH7PR12MB8428.namprd12.prod.outlook.com (2603:10b6:510:243::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.30; Mon, 21 Jul
+ 2025 17:40:06 +0000
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87%3]) with mapi id 15.20.8943.028; Mon, 21 Jul 2025
+ 17:40:05 +0000
+Message-ID: <1e704b23-b36e-46fa-af28-f135d78a8ccd@amd.com>
+Date: Mon, 21 Jul 2025 12:40:01 -0500
+User-Agent: Mozilla Thunderbird
+Reply-To: babu.moger@amd.com
+Subject: Re: [PATCH v15 16/34] x86,fs/resctrl: Implement
+ resctrl_arch_config_cntr() to assign a counter with ABMC
+To: Reinette Chatre <reinette.chatre@intel.com>, corbet@lwn.net,
+ tony.luck@intel.com, james.morse@arm.com, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com
+Cc: Dave.Martin@arm.com, x86@kernel.org, hpa@zytor.com,
+ akpm@linux-foundation.org, paulmck@kernel.org, rostedt@goodmis.org,
+ Neeraj.Upadhyay@amd.com, david@redhat.com, arnd@arndb.de, fvdl@google.com,
+ seanjc@google.com, jpoimboe@kernel.org, pawan.kumar.gupta@linux.intel.com,
+ xin@zytor.com, manali.shukla@amd.com, tao1.su@linux.intel.com,
+ sohil.mehta@intel.com, kai.huang@intel.com, xiaoyao.li@intel.com,
+ peterz@infradead.org, xin3.li@intel.com, kan.liang@linux.intel.com,
+ mario.limonciello@amd.com, thomas.lendacky@amd.com, perry.yuan@amd.com,
+ gautham.shenoy@amd.com, chang.seok.bae@intel.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, peternewman@google.com, eranian@google.com
+References: <cover.1752013061.git.babu.moger@amd.com>
+ <f68d591f2471953e082ce03fef18c309a002bfb4.1752013061.git.babu.moger@amd.com>
+ <e525707b-9d62-49d0-9258-19ea936f6d52@intel.com>
+Content-Language: en-US
+From: "Moger, Babu" <babu.moger@amd.com>
+In-Reply-To: <e525707b-9d62-49d0-9258-19ea936f6d52@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA1PR04CA0007.namprd04.prod.outlook.com
+ (2603:10b6:806:2ce::12) To MW3PR12MB4553.namprd12.prod.outlook.com
+ (2603:10b6:303:2c::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250721-rk3588-10bpc-v1-5-e95a4abcf482@collabora.com>
-References: <20250721-rk3588-10bpc-v1-0-e95a4abcf482@collabora.com>
-In-Reply-To: <20250721-rk3588-10bpc-v1-0-e95a4abcf482@collabora.com>
-To: Sandy Huang <hjc@rock-chips.com>, 
- =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
- Andy Yan <andy.yan@rock-chips.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|PH7PR12MB8428:EE_
+X-MS-Office365-Filtering-Correlation-Id: 36fd5582-0904-4b08-8594-08ddc87da10c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Y3Nmd3VFcFl2TEllbzQ0MG54L3pmWWxjNURyYmtTTVN5ZzNSQTBQaFNDQkpm?=
+ =?utf-8?B?TjVTTDBCL1ZpaDhmR0VNM2FiMjVVUGVpa1EySjVsd002R1hZdmpwOFpjeHhJ?=
+ =?utf-8?B?bEdZU2wvUk5LZ1Ryb0g3dTFLYVVsbFNZdElWVW44Vy9lVTlrNzNoZjZkVzJi?=
+ =?utf-8?B?cnRWWXBveG4vbFRnd2pEdzczK2l6Tks0eVNxbWJDWmZRNlRZRG9qSC9BUEFU?=
+ =?utf-8?B?N3E1V0lYaVhEQzFzaDNnSE5BYlJqcmExUTR2TzlnUkwxUDlQSldMTmpGdzE3?=
+ =?utf-8?B?ODE5ZG9LUVhSSUoraWViK1RHYm1Hb1JSQ1VmNWdqM0Y3VHJmZ1I3dHJydTAx?=
+ =?utf-8?B?QTBpblk2UklJaDlzWWovSnlRbU9Ud0l3MmZFbWN4SU1EeVQvRWgwcUFYeEg2?=
+ =?utf-8?B?dGNNRFRZL0VwL25OeXNtb0ZuV3ZaV0UvQVF1UjhIWmhUNnNJYnNSeE1LUGk1?=
+ =?utf-8?B?QzVQTmYzTVlJZ3o0SGF5N3E5TmltN2RUcDdXaWx2TEJrblh5SE56SkFhUzl5?=
+ =?utf-8?B?Z1hFQXJpN3RzTWdick85ZVdjaEVIQWNCRUNieXVNVTB2WUJsZG5rdXN5Nnk1?=
+ =?utf-8?B?b1cyWWdmTkZFS1RLSHhBUnBlS3pzWGtuTXJGblhjM24wNHVHOTVURjZYODBl?=
+ =?utf-8?B?UnZEQVBnOWUwbFZIdzhkaExQTXhLWXJMZGk1RFJ5ODM3eFlaZWhjbDlIWkJj?=
+ =?utf-8?B?bHQrTERMNFpUamlJRWM1cVArRDQrR0dsM2N3bUU1VFRBWnA5d3pKaWM3NmdI?=
+ =?utf-8?B?MUhMR1JsNGZtd2dYNHlHOVEzSWgrN3Q5NjlFMDRFTi9Zc3lGWFZZOEdwSG93?=
+ =?utf-8?B?L3lLeVNna1ovQ1BTcE8rVG9PYnM5RDllTDdpMEs2YWtTNk9WNEVVWEdKRHdY?=
+ =?utf-8?B?aWg3Z1R6eWREWWdFWUVsNmw2WlhCZXRjYW1tdUg2UE8rVzQ2eG9iNHNDUXBR?=
+ =?utf-8?B?Tlo2VkZ5QTBydGZjT0pLaXZSVkRBMDZQWEVtTVQyQ25qL24rdGhvSTZqK3dM?=
+ =?utf-8?B?WWk4ckdyYlM1c0NEQ0EzcVlyYTFTQnNPeFFjU3dKR0I1Sm44RUR3Z2NYU2Jt?=
+ =?utf-8?B?eTh4czRIWWU1WUpuRkhBU3VabkdXbi92UmJmbSs4U0MxYlN2cW1XOUcyTXZ1?=
+ =?utf-8?B?d0RwR2dCRUdDTjZHTGZZNnZUL3oyMjMydWZ4U2ZYYVJKY3JNb3ovTlpwUDl1?=
+ =?utf-8?B?bDJKZVNmUGxkbE5lK1Ziemo5d0tWVUtGNHh4YkwwaW5vRzRGMEppSzRWWVFp?=
+ =?utf-8?B?UzZaWlF0MGVRUjNXUFI4c2s5RUxaT3VHSndCUStqeGV1VnBTTlpXNlhrTFJi?=
+ =?utf-8?B?UE5FOG5QcjNlbDloQjRmVUVEazJ6aXgzWCs0THgzMkZkL1IzR09HQm5UUjht?=
+ =?utf-8?B?K05TZ3ZFdzQvaUNNVnZoOTAwNTJRTmx2WXEzSlBMKzhNWDdmeHNzVzRuUlFT?=
+ =?utf-8?B?Z3M2ek42YVlTT2paVDA4eklTVTFvUkIrdW40d2lmUVVERjkycGQrQ3orNm1Q?=
+ =?utf-8?B?TW1QbkdiS3IwSTVBZTBtYi8ybGVudlBPbGhDWWhZdkQ1b2hzVkpzcEdEUzM1?=
+ =?utf-8?B?R3MrMi9pSmhCa3l0UjYwQWZ5dnFzTm05L3gvdkVTOXN1QnN3c084UmJBK1BZ?=
+ =?utf-8?B?eVd6b3NCVW53NU1yMWp4TmhWSHdvR3FIUjJtZlhwQzFsUTdhWm5vSnZkOGNn?=
+ =?utf-8?B?WUlQNGFOUmFPZVBkQnU0RkhzSU9qa01Ga0txSkVQcG5jOUlUbnVLWEQrY0h2?=
+ =?utf-8?B?TVNPRGE0UjRoSXdJekI0bVdOcGFCZmNkWmZNWWJXOVU0Z21pTjY2QzlUdkd0?=
+ =?utf-8?B?TUxsazh0WGREZFZTdVFxaTNVZ0xUaTVyR01FRExJZXkyb2Z0dDlSVVVkUFpw?=
+ =?utf-8?B?SFpnMHY1NDYzTVlnWDBKUjFjNVJqV1RVanhEbVd5Y1YrTG9xZ0xJZy9xSGdJ?=
+ =?utf-8?Q?wEmRb/jBlJE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WjIzMklwVU04ZjlpMTVsa0p1ajRrNXhxZHJyeTJNaW9ubDRaVjFFQ0dzMk8r?=
+ =?utf-8?B?TVBPdGl1US9jcHg1Mzg0NXpwNUN2SVN1bmZ3eCtDWWV4THRvaXFvVWhLTCs4?=
+ =?utf-8?B?MXdFMzFzV2Y3Vmt0cXFOYVFKUVdQUVRnRXVtRTFlTzVYSnROVnBoeEczVDNy?=
+ =?utf-8?B?SGhNYkM1aWYvc1ZIKzVOVnkvbmN2Qkw0RkpQYVdlbHFlcDI0ZW55SDdpZHlt?=
+ =?utf-8?B?Q29sWDVHbjNpUlFNeHN0MjFERkRwSyt6SXQreUNId3VETm9YMWJTZFIzSyt1?=
+ =?utf-8?B?MUZEZjZJc1Bnd1dJZzYxd3I0Q1Jxd3FXWURiSDhyNU5Hb1JDeWpUOXBUdWwz?=
+ =?utf-8?B?Nkw4OG1lTXBKbXpYZ25xN1VlOTJYUEFjSnFacDM2OVpQYnZ1eWp2bEtCTWVu?=
+ =?utf-8?B?djZVbzdHTGxOdkViZlZzMXZHUjI5UUlvTlFCU21qNENaa1UrR1EwUmFaaVlD?=
+ =?utf-8?B?dXBISEhXVGJ3SThKTGpXaGw1MjlXaDN0bmwwK0w5V29aRS8wOFFneVN4aGdY?=
+ =?utf-8?B?SUxMNWkrd25pa1QzR3BNbTRaQitTdmRmbEVLL3hyTTF1VDJxelhFSlFaOWZW?=
+ =?utf-8?B?TVQvRjI1Mmx6T0VBenRSZngrRXM1ZWFBVTFib0RBc0RpYXRWV3MySm5SWkpL?=
+ =?utf-8?B?bUNXY083MXdRMEVnZm01ZFBxQTdnSnp0dE40NFh6dnVzeXJKTXNnTlQ1RElm?=
+ =?utf-8?B?c0ZxdE43RzlPbVpIVFhiMTZ0emlXa0xHOVM2aVF4OWFPNWFRUFBzQ1FGNzdi?=
+ =?utf-8?B?SnNhb1lFeXRFMWNxSFhKL3MvdEllb3VwSU0zQm1tSVFUbWZHeGl2UWoxZ0RS?=
+ =?utf-8?B?YjEzZXBmS0paNzFVUWZuVWg0VmhtdHoxTTZFY25XUmxlS2pWRnJubXdWT3p6?=
+ =?utf-8?B?VmNHT1A1RWxyeklreGZ0K09wWitpQklDYWNYdXdZUnpoMWdMYnE1YTd0bWdF?=
+ =?utf-8?B?UWdYaEhjaCsvbXFSTjFPMWZ5UEdpWW5aZEJiQXNibk5CeWpoNnJwOGxXcTRX?=
+ =?utf-8?B?R3VaUTBrcDFNQXJIcG5acmVWNzRYcUxjcVFvbUdKeVdZK3d3QXM2ZEt1a0gr?=
+ =?utf-8?B?d3dObXI0Q2psbHRGek90d0NkSUxQWVdNeUZtM1Q5Q0pxbWkzck5nN3NKOGdS?=
+ =?utf-8?B?R3dNYWJiQWtuVDRrbUZHVDkwUERHR3F6SENwaWgxbExVdXN4YnY4QjFmWVVV?=
+ =?utf-8?B?b2RDLzFxWk5Vbzk0c2h5bldDdWxLdlpoTjlQMWsxdm5DZGVvdUFOdDNiZGo2?=
+ =?utf-8?B?cHYveVRCdGZVSEZiYnVEQTRxQWJTS0dlYUh0SmY4L3hGbUxQZkJTVG9Ba0Na?=
+ =?utf-8?B?QmIzQitSRzlDYm9IUzFsSUY5Lzh5Zy9YT0pnbzhhSHV6bytqMUVwZXduWGc2?=
+ =?utf-8?B?V0tLK0dwcmxCNnNwSHJRNzR5T1FqM0xZNThkU0VPa1VmMUd0WENWbDE0ZHZF?=
+ =?utf-8?B?eENTajVuLytZMG9wWmk0RHpTWStKeUdqS2hoS2dlYVZROHhOTkZsa1Z6ZVRi?=
+ =?utf-8?B?WkZXU2phT2hsR0QyYWJXK1ZIdkk0T1lBRXZLYWQ1UTh4TzBqSGI1Mml3UHFx?=
+ =?utf-8?B?OVJQSW5zanMvcXoyVFRVY2RjMVVLaXhFYTU0MTRpV2x4ZzM3QXpRS1JwSTBI?=
+ =?utf-8?B?TloxWG5XSk4xSnd5Q0xYck1aWjQ4b1FzdGRrV1lNRjJWVmp4RmF0dVQ5Vlky?=
+ =?utf-8?B?WnNYNFFDZVdqdW0wYzJXRXRvd0dwV2ZZU1hjejV5aXErbjBpYW90UFM1RTcy?=
+ =?utf-8?B?QVdDbk93b3RmYnRsU280VXlSWm96cWs0L0Vua2wyNmpHbUtBS0JNU0x0Uko3?=
+ =?utf-8?B?MTRCUDgzaEJod2pmeGdYQ1NmTU9oUW1VL29wVzIwcjdhRkhjcTRRK1RMS00z?=
+ =?utf-8?B?eDBmTE1NQTJ2L2cvYUVRR01hN1A0bWJlbndKWm14SVJ5L2dqbHZyMnRtY2p5?=
+ =?utf-8?B?ZHZEZktBMkRWSXBvWkwvV1RIZmNrK3BsSXFQYlUwVGtjVm9jM3FyYm9rWkhF?=
+ =?utf-8?B?dmM3aUl0c01iME1ZVkpaeUxHWDNtZ0lGTFV2QitRT2cvbnBXQTBZM2kyWEd2?=
+ =?utf-8?B?UUdTZndZdDROdTRUN0tzb2Y0dmV3Y01ZaytnaTh1UUhsSmlDa1RHbmVIWEM5?=
+ =?utf-8?Q?yaY0=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 36fd5582-0904-4b08-8594-08ddc87da10c
+X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2025 17:40:05.7180
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9RRUdk1EHrBkjUmAQRKQ+yJ3zgYivGYYA4LJ1cQTlbaWkIrV+vwMd/hgYhi95uxd
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8428
 
-Since both RK3576 and RK3588 SoCs are capable of handling 10 bpc color
-depth, introduce a pair of new helpers to program the necessary
-registers, as well as passing bpc at PHY configuration level.
+Hi Reinette,
 
-Note max_bpc is unconditionally set to 10 before initializing the QP
-bridge library, as there is no need to adjust it dynamically, i.e. per
-SoC variant, for now.
 
-While setting up .enc_init() callbacks of rockchip_hdmi_qp_ctrl_ops,
-also replace the unnecessary whitespace chars before .irq_callback()
-assignments.
+On 7/17/25 13:49, Reinette Chatre wrote:
+> Hi Babu,
+> 
+> On 7/8/25 3:17 PM, Babu Moger wrote:
+>> The ABMC feature allows users to assign a hardware counter to an RMID,
+>> event pair and monitor bandwidth usage as long as it is assigned. The
+>> hardware continues to track the assigned counter until it is explicitly
+>> unassigned by the user.
+>>
+>> Implement an architecture-specific handler to assign and unassign the
+>> counter. Configure counters by writing to the L3_QOS_ABMC_CFG MSR,
+>> specifying the counter ID, bandwidth source (RMID), and event
+>> configuration.
+> 
+>>From above description it is not obvious to me how configuring a counter
+> is connected to assign/unassign/configure. How about something like:
+> 
+>   Implement an x86 architecture-specific handler to configure a counter. This
+>   architecture specific handler is called by resctrl fs when a counter
+>   is assigned or unassigned as well as when an already assigned counter's
+>   configuration should be updated. Configure counters by writing to the
+>   L3_QOS_ABMC_CFG MSR, specifying the counter ID, bandwidth source (RMID),
+>   and event configuration.
 
-Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
----
- drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c | 59 ++++++++++++++++++++++++--
- 1 file changed, 56 insertions(+), 3 deletions(-)
+Looks good.
 
-diff --git a/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
-index 578ff5eb87f1e27b9bb9a6a299347b24b45381bb..49d58f1321034b325a0741794a62a279971d5f4c 100644
---- a/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
-@@ -7,6 +7,7 @@
-  * Author: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-  */
- 
-+#include <linux/bitfield.h>
- #include <linux/clk.h>
- #include <linux/gpio/consumer.h>
- #include <linux/mfd/syscon.h>
-@@ -68,6 +69,12 @@
- #define RK3588_HDMI1_LEVEL_INT		BIT(24)
- #define RK3588_GRF_VO1_CON3		0x000c
- #define RK3588_GRF_VO1_CON6		0x0018
-+#define RK3588_COLOR_DEPTH_MASK		GENMASK(7, 4)
-+#define RK3588_8BPC			0x0
-+#define RK3588_10BPC			0x6
-+#define RK3588_COLOR_FORMAT_MASK	GENMASK(3, 0)
-+#define RK3588_RGB			0x0
-+#define RK3588_YUV420			0x3
- #define RK3588_SCLIN_MASK		BIT(9)
- #define RK3588_SDAIN_MASK		BIT(10)
- #define RK3588_MODE_MASK		BIT(11)
-@@ -96,6 +103,7 @@ struct rockchip_hdmi_qp {
- 
- struct rockchip_hdmi_qp_ctrl_ops {
- 	void (*io_init)(struct rockchip_hdmi_qp *hdmi);
-+	void (*enc_init)(struct rockchip_hdmi_qp *hdmi, struct rockchip_crtc_state *state);
- 	irqreturn_t (*irq_callback)(int irq, void *dev_id);
- 	irqreturn_t (*hardirq_callback)(int irq, void *dev_id);
- };
-@@ -110,9 +118,16 @@ static struct rockchip_hdmi_qp *to_rockchip_hdmi_qp(struct drm_encoder *encoder)
- static void dw_hdmi_qp_rockchip_encoder_enable(struct drm_encoder *encoder)
- {
- 	struct rockchip_hdmi_qp *hdmi = to_rockchip_hdmi_qp(encoder);
-+	struct drm_crtc *crtc = encoder->crtc;
- 
- 	/* Unconditionally switch to TMDS as FRL is not yet supported */
- 	gpiod_set_value(hdmi->enable_gpio, 1);
-+
-+	if (!crtc || !crtc->state)
-+		return;
-+
-+	if (hdmi->ctrl_ops->enc_init)
-+		hdmi->ctrl_ops->enc_init(hdmi, to_rockchip_crtc_state(crtc->state));
- }
- 
- static int
-@@ -125,16 +140,19 @@ dw_hdmi_qp_rockchip_encoder_atomic_check(struct drm_encoder *encoder,
- 	union phy_configure_opts phy_cfg = {};
- 	int ret;
- 
--	if (hdmi->tmds_char_rate == conn_state->hdmi.tmds_char_rate)
-+	if (hdmi->tmds_char_rate == conn_state->hdmi.tmds_char_rate &&
-+	    s->output_bpc == conn_state->hdmi.output_bpc)
- 		return 0;
- 
- 	phy_cfg.hdmi.tmds_char_rate = conn_state->hdmi.tmds_char_rate;
-+	phy_cfg.hdmi.bpc = conn_state->hdmi.output_bpc;
- 
- 	ret = phy_configure(hdmi->phy, &phy_cfg);
- 	if (!ret) {
- 		hdmi->tmds_char_rate = conn_state->hdmi.tmds_char_rate;
- 		s->output_mode = ROCKCHIP_OUT_MODE_AAAA;
- 		s->output_type = DRM_MODE_CONNECTOR_HDMIA;
-+		s->output_bpc = conn_state->hdmi.output_bpc;
- 	} else {
- 		dev_err(hdmi->dev, "Failed to configure phy: %d\n", ret);
- 	}
-@@ -373,15 +391,49 @@ static void dw_hdmi_qp_rk3588_io_init(struct rockchip_hdmi_qp *hdmi)
- 	regmap_write(hdmi->regmap, RK3588_GRF_SOC_CON2, val);
- }
- 
-+static void dw_hdmi_qp_rk3576_enc_init(struct rockchip_hdmi_qp *hdmi,
-+				       struct rockchip_crtc_state *state)
-+{
-+	u32 val;
-+
-+	if (state->output_bpc == 10)
-+		val = HIWORD_UPDATE(FIELD_PREP(RK3576_COLOR_DEPTH_MASK, RK3576_10BPC),
-+				    RK3576_COLOR_DEPTH_MASK);
-+	else
-+		val = HIWORD_UPDATE(FIELD_PREP(RK3576_COLOR_DEPTH_MASK, RK3576_8BPC),
-+				    RK3576_COLOR_DEPTH_MASK);
-+
-+	regmap_write(hdmi->vo_regmap, RK3576_VO0_GRF_SOC_CON8, val);
-+}
-+
-+static void dw_hdmi_qp_rk3588_enc_init(struct rockchip_hdmi_qp *hdmi,
-+				       struct rockchip_crtc_state *state)
-+{
-+	u32 val;
-+
-+	if (state->output_bpc == 10)
-+		val = HIWORD_UPDATE(FIELD_PREP(RK3588_COLOR_DEPTH_MASK, RK3588_10BPC),
-+				    RK3588_COLOR_DEPTH_MASK);
-+	else
-+		val = HIWORD_UPDATE(FIELD_PREP(RK3588_COLOR_DEPTH_MASK, RK3588_8BPC),
-+				    RK3588_COLOR_DEPTH_MASK);
-+
-+	regmap_write(hdmi->vo_regmap,
-+		     hdmi->port_id ? RK3588_GRF_VO1_CON6 : RK3588_GRF_VO1_CON3,
-+		     val);
-+}
-+
- static const struct rockchip_hdmi_qp_ctrl_ops rk3576_hdmi_ctrl_ops = {
- 	.io_init		= dw_hdmi_qp_rk3576_io_init,
--	.irq_callback	        = dw_hdmi_qp_rk3576_irq,
-+	.enc_init		= dw_hdmi_qp_rk3576_enc_init,
-+	.irq_callback		= dw_hdmi_qp_rk3576_irq,
- 	.hardirq_callback	= dw_hdmi_qp_rk3576_hardirq,
- };
- 
- static const struct rockchip_hdmi_qp_ctrl_ops rk3588_hdmi_ctrl_ops = {
- 	.io_init		= dw_hdmi_qp_rk3588_io_init,
--	.irq_callback	        = dw_hdmi_qp_rk3588_irq,
-+	.enc_init		= dw_hdmi_qp_rk3588_enc_init,
-+	.irq_callback		= dw_hdmi_qp_rk3588_irq,
- 	.hardirq_callback	= dw_hdmi_qp_rk3588_hardirq,
- };
- 
-@@ -476,6 +528,7 @@ static int dw_hdmi_qp_rockchip_bind(struct device *dev, struct device *master,
- 
- 	plat_data.phy_ops = cfg->phy_ops;
- 	plat_data.phy_data = hdmi;
-+	plat_data.max_bpc = 10;
- 
- 	encoder = &hdmi->encoder.encoder;
- 	encoder->possible_crtcs = drm_of_find_possible_crtcs(drm, dev->of_node);
+> 
+> (please feel free to improve)
+> 
+>>
+>> The feature details are documented in the APM listed below [1].
+>> [1] AMD64 Architecture Programmer's Manual Volume 2: System Programming
+>>     Publication # 24593 Revision 3.41 section 19.3.3.3 Assignable Bandwidth
+>>     Monitoring (ABMC).
+>>
+>> Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537
+>> Signed-off-by: Babu Moger <babu.moger@amd.com>
+>> ---
+> 
+> ...
+> 
+>> +/*
+>> + * Send an IPI to the domain to assign the counter to RMID, event pair.
+>> + */
+>> +void resctrl_arch_config_cntr(struct rdt_resource *r, struct rdt_mon_domain *d,
+>> +			      enum resctrl_event_id evtid, u32 rmid, u32 closid,
+>> +			      u32 cntr_id, bool assign)
+>> +{
+>> +	struct rdt_hw_mon_domain *hw_dom = resctrl_to_arch_mon_dom(d);
+>> +	union l3_qos_abmc_cfg abmc_cfg = { 0 };
+>> +	struct arch_mbm_state *am;
+>> +
+>> +	abmc_cfg.split.cfg_en = 1;
+>> +	abmc_cfg.split.cntr_en = assign ? 1 : 0;
+>> +	abmc_cfg.split.cntr_id = cntr_id;
+>> +	abmc_cfg.split.bw_src = rmid;
+>> +	if (assign)
+>> +		abmc_cfg.split.bw_type = resctrl_get_mon_evt_cfg(evtid);
+>> +
+>> +	smp_call_function_any(&d->hdr.cpu_mask, resctrl_abmc_config_one_amd, &abmc_cfg, 1);
+>> +
+>> +	/*
+>> +	 * The hardware counter is reset (because cfg_en == 1) so there is no
+>> +	 * need to record initial non-zero counts.
+>> +	 */
+>> +	if (assign) {
+> 
+> We learned from patch #14 that the counter is reset whenever cfg_en = 1. Since this
+> is always the case it is not clear to me why the architectural state is not always
+> reset to match what hardware does. Even more, looking how this function is later used in
+> resctrl_config_cntr(), the caller resctrl_config_cntr() always resets non-architectural
+> state, why not always reset architectural state here?
+> 
+
+We initially had reset logic for both assign and unassign cases, but later
+thought it might not be necessary during unassign. However, it's better to
+keep it in both cases, since resctrl_config_cntr() resets the
+non-architectural state regardless."
+
 
 -- 
-2.50.0
-
+Thanks
+Babu Moger
 
