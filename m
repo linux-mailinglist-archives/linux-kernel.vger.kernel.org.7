@@ -1,184 +1,152 @@
-Return-Path: <linux-kernel+bounces-739092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E610B0C1A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:46:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C90C8B0C1A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:47:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFE0018C2864
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:47:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81A3954053E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:47:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E20A322156D;
-	Mon, 21 Jul 2025 10:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tUBAHWr8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6FE61F03C5;
+	Mon, 21 Jul 2025 10:46:38 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B2681F03C5
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 10:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638823B29E
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 10:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753094754; cv=none; b=mFBb4uqE8TlgL4KHs5+xn8QKRgjY7k9xu08JvWJclUwTGF/mZL3BhNVI/Srf76JTIHQnMnHz5HDTHe4rb1CH5qomBsIgoaynm0Ow/iJX8JTSMnrirBBCHBu1ZUuFzZDlU3if6q/D8RwNTUrL9MMd6KJXYUu2bckZJByqhnR9ThU=
+	t=1753094798; cv=none; b=sj38QTn2vt/OKY4Ndn+NpBkZvfvQ+bWWB+Ko4tRHlMzr/5yjAIIbkJhxCb9QCe2aS9A/VxwHfwga6RpSYThmvK39ydFVF5pc6dlptludfbWr76ZawY1O/WRbr3wiAvExBkDkeoIKDwqDAy8kFCGhUZPSxWy4Bx9pKMvokSA51FY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753094754; c=relaxed/simple;
-	bh=JTydR5BdkjW/STvnduR9ADHyVlGb0CvPo5AgcV7udnY=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X9wjCuT/48LUErD7uH0hE9xaUNmDAp7rCtLCdzdOTaRrj1/ruvjSYBI6KJc1YDezegjdP44paSBL7BVQ3CnMrg/cyAkYggUm4Ft6DnGgGHNSTi/wb7f5PW4sC6/a44APxqsgArYbG2j9+BSAERK8fmd4c7o9zTeknbXH1MZTd8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tUBAHWr8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDDBEC4CEF1;
-	Mon, 21 Jul 2025 10:45:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753094753;
-	bh=JTydR5BdkjW/STvnduR9ADHyVlGb0CvPo5AgcV7udnY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tUBAHWr8DqkY0FS3bOALdajoeNVjdrg+gO5GUvIopEcNAU64dx+2kK8hBZ9Evwwa6
-	 DpyNLZlIed+J4mjtis/jR6MECeXPWmKyccC+QTMOxnTI//t6rnqFf0tSE2eKKOT8PK
-	 5OlDCPyJo4sdmfRjr8loz5VH+6qRPVsWCoe9LS0NjA17cp/RTISxCKeD2bmN5QheQJ
-	 GA90nV26SxuPCVzfSxnVkvrzAozVKbq9DBRivWvJchSLW73oVVh4wZ76aXY0e0iUPw
-	 I+w2o2j2tOzsTdqul8zaEdn7t+nORZT+l5oqEIEW1mIWj2zsRyrK6ZDH90qX7EBE6L
-	 D4NBAxc3XT7zg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1udo1n-00HZc7-Nw;
-	Mon, 21 Jul 2025 11:45:51 +0100
-Date: Mon, 21 Jul 2025 11:45:51 +0100
-Message-ID: <86pldt9600.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: jackysliu <1972843537@qq.com>,
-	<tglx@linutronix.de>,
-	<herve.codina@bootlin.com>,
-	<antonio.borneo@foss.st.com>,
-	<anup@brainfault.org>,
-	<jirislaby@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] irqchip/gic-v3: fix resource leak in partition_domain_translate()
-In-Reply-To: <20250721112718.00002e23@huawei.com>
-References: <tencent_72EDAD7F6E52D8FB5933030A569A08AEC406@qq.com>
-	<86qzya7xwu.wl-maz@kernel.org>
-	<20250721112718.00002e23@huawei.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1753094798; c=relaxed/simple;
+	bh=7MKcg4H/F+/xBrLQGGes7UheZYshMdn8Ir7ZqR3W/E8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=guGs/DYXqnwegH3Cj7aC5bTRg1BERbNcUrk6JpCgF8lHQSurCmYvBQXJz/+8VIcTQJ1QoRTVqV/WybMWDWZNTcQwYE4AdRbUooArI5XYthkM3B6UOS8IlfPrJrMv+n0EsvdjoGoz9j3Dq0hE3rV5PBXjaJn1C3B8Ro0Sn0nGzmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3e2a7bb1d9cso7316755ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 03:46:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753094795; x=1753699595;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8n/U25luu3EiyWc2k9gUy4lXIT5EC9pJx9mumzbY51U=;
+        b=I1ztHiiNhYhD6Au9Zh0l171lKX5P7qRMsduKQKxAbp6G6SppGTwITCUXIk8FvBINEV
+         KCJK1O1LxErye+rgCwufLpMTUAlpp1tYTRMtQyUPPcd7Tyc/EWdj2DoqaVqrmhV42yAe
+         7dHiqo7KCNeb5GOR2Mt/xhgYO+T201bYzThVz+eS0l8O6p9PTi8fxWmQgxYBDksCfbmd
+         0xSzpxOG6bE7CcqLP6fC48DHlfBtJOAq+HcHxcmoQEBAHK2BZEDRiNZZVNoZlxQUAoxX
+         96tkXCTA6TG1Gn9IkhsY889AN8y6DivZ6BFZiyV0MvcNk22diP6lRB6Cad+a4ZPv9AXb
+         BTqg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxRvn5iM4CUpQMlTRgiSyTr3mvs3gHrQ7AlvpYoxGBJHdlXCjSOIgWSPcc919/hEZx6QEY3hzuCuLEG4Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0pr8V7GURvqper7UDvVCYVyVzYu9EuaCWOUXXUX8Blu4FMW9P
+	tyeZbVXe514UkPuPrYTmT7uG3j5ll/EclkGPUifwtaKwWM91fFB2f/PQBHo/IUM408JR1hSvQIM
+	9jY0MI4p2gfX2/QnK1APHaK9cpMU+zfWzHdUIUeyaUZ9YzYmfgWrRb6qckj8=
+X-Google-Smtp-Source: AGHT+IFg7cl4+SB46QB9tYhjZZQImWRwBTpMC6m3P9ZySXIwlP7KuTEeyzjVFVIxX0oi6S7l8poylt5g6tB4O9oNI+2WrRpzm0Q0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: Jonathan.Cameron@huawei.com, 1972843537@qq.com, tglx@linutronix.de, herve.codina@bootlin.com, antonio.borneo@foss.st.com, anup@brainfault.org, jirislaby@kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:3047:b0:3e2:77d9:f8fc with SMTP id
+ e9e14a558f8ab-3e28bdfb160mr183605185ab.10.1753094795589; Mon, 21 Jul 2025
+ 03:46:35 -0700 (PDT)
+Date: Mon, 21 Jul 2025 03:46:35 -0700
+In-Reply-To: <687c89c0.a70a0220.693ce.00b1.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <687e1a8b.a70a0220.693ce.00ec.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] kernel BUG in do_bch2_trans_commit_to_journal_replay
+From: syzbot <syzbot+e3f91c76099a777cbf16@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 21 Jul 2025 11:27:18 +0100,
-Jonathan Cameron <Jonathan.Cameron@huawei.com> wrote:
-> 
-> On Mon, 21 Jul 2025 09:25:53 +0100
-> Marc Zyngier <maz@kernel.org> wrote:
-> 
-> > On Mon, 21 Jul 2025 08:28:04 +0100,
-> > jackysliu <1972843537@qq.com> wrote:
-> > > 
-> > > There is a device node reference leak in partition_domain_translate().
-> > > After the function obtains the device node np via of_find_node_by_phandle,
-> > > it does not call of_node_put(np) to release the node reference
-> > > in both the error path and the normal return path.
-> > > This causes the node reference count to increase each time
-> > > the function is called, causing a resource leak.
-> > >
-> > > This issue was detected by rule based static tools
-> > > developed by Tencent.
-> > > 
-> > > Fixes: 87228532e7e9 ("irqchip: Switch to of_fwnode_handle()")
-> > > 
-> > > Signed-off-by: jackysliu <1972843537@qq.com>  
-> > 
-> > Drop the spurious blank line.
-> > 
-> > > ---
-> > >  drivers/irqchip/irq-gic-v3.c | 6 +++++-
-> > >  1 file changed, 5 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-> > > index efc791c43d44..61c1d404b726 100644
-> > > --- a/drivers/irqchip/irq-gic-v3.c
-> > > +++ b/drivers/irqchip/irq-gic-v3.c
-> > > @@ -1821,12 +1821,16 @@ static int partition_domain_translate(struct irq_domain *d,
-> > >  		return -EINVAL;
-> > >  
-> > >  	ret = gic_irq_domain_translate(d, fwspec, &ppi_intid, type);
-> > > -	if (WARN_ON_ONCE(ret))
-> > > +	if (WARN_ON_ONCE(ret)) {
-> > > +		of_node_put(np);
-> > >  		return 0;
-> > > +	}
-> > >  
-> > >  	ppi_idx = __gic_get_ppi_index(ppi_intid);
-> > >  	ret = partition_translate_id(gic_data.ppi_descs[ppi_idx],
-> > >  				     of_fwnode_handle(np));
-> > > +	of_node_put(np);
-> > > +
-> > >  	if (ret < 0)
-> > >  		return ret;
-> > >    
-> > 
-> > Frankly, this looks awful, and we have much better ways to solve this
-> > whole class of problems. Why can't the (untested) patch below do the
-> > right thing, without the ugliness?
-> > 
-> > 	M.
-> > 
-> > diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-> > index efc791c43d441..c4839032ce8d0 100644
-> > --- a/drivers/irqchip/irq-gic-v3.c
-> > +++ b/drivers/irqchip/irq-gic-v3.c
-> > @@ -1808,8 +1808,8 @@ static int partition_domain_translate(struct irq_domain *d,
-> >  				      unsigned long *hwirq,
-> >  				      unsigned int *type)
-> >  {
-> > +	struct device_node *np __free(device_node) = NULL;
-> 
-> Linus has expressed fairly strongly that he really doesn't like separation
-> of the constructor and destructor.  See guidance in cleanup.h which was
-> based on that and bunch of other early discussion around this stuff.
-> 
-> Here it's easy to solve though. Just move that declaration down to
-> give something like:
-> 
-> 
-> >  	unsigned long ppi_intid;
-> > -	struct device_node *np;
-> >  	unsigned int ppi_idx;
-> >  	int ret;
-> >  
-> 	if (!gic_data.ppi_descs)
-> 		return -ENOMEM;
-> 
-> 	struct device_node *np __free(device_node) =
-> 		of_find_node_by_phandle(fwspec->param[3]);
-> 
-> 
-> 	if (WARN_ON(!np))
-> 		return -EINVAL;
-> 
+syzbot has found a reproducer for the following issue on:
 
-Yeah, something like that -- it doesn't change a thing in this
-context, but I can see how that could degenerate if we added other
-cleanup statements.
+HEAD commit:    d086c886ceb9 Add linux-next specific files for 20250718
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=126b41bc580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cc0cd9fdf69889c3
+dashboard link: https://syzkaller.appspot.com/bug?extid=e3f91c76099a777cbf16
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12227722580000
 
-In any case, this is the sort of thing I want to see going forward.
-Nothing like the original patch.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/4435f80a19c4/disk-d086c886.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/9a7dc57a5ea3/vmlinux-d086c886.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/da9f2dc22ae1/bzImage-d086c886.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/f5e4ca95b41f/mount_0.gz
 
-	M.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e3f91c76099a777cbf16@syzkaller.appspotmail.com
 
--- 
-Without deviation from the norm, progress is not possible.
+  allowing incompatible features above 0.0: (unknown version)
+  features: lz4,new_siphash,inline_data,new_extent_overwrite,btree_ptr_v2,new_varint,journal_no_flush,alloc_v2,extents_across_btree_nodes
+bcachefs (loop0): Using encoding defined by superblock: utf8-12.1.0
+bcachefs (loop0): initializing new filesystem
+------------[ cut here ]------------
+kernel BUG at fs/bcachefs/btree_trans_commit.c:1027!
+Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
+CPU: 0 UID: 0 PID: 11141 Comm: syz.0.833 Not tainted 6.16.0-rc6-next-20250718-syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+RIP: 0010:do_bch2_trans_commit_to_journal_replay+0x10f3/0x1120 fs/bcachefs/btree_trans_commit.c:1027
+Code: 48 c7 c1 79 7b 99 8d 49 89 c0 e8 f8 7a 2b 00 4c 89 ff e8 10 c7 0d 00 48 8b 7c 24 68 e8 d6 1b 00 00 90 0f 0b e8 4e e3 92 fd 90 <0f> 0b e8 46 e3 92 fd eb ad e8 3f e3 92 fd eb a6 e8 38 e3 92 fd 90
+RSP: 0018:ffffc9000401edb8 EFLAGS: 00010293
+RAX: ffffffff842ccdc2 RBX: 00000000fffff7ab RCX: ffff888030303c00
+RDX: 0000000000000000 RSI: 00000000fffff7ab RDI: 0000000000000000
+RBP: ffff888076024000 R08: ffff888045c049e3 R09: 1ffff11008b8093c
+R10: dffffc0000000000 R11: ffffed1008b8093d R12: ffff888076024028
+R13: 0000000000000000 R14: ffff8880760240d2 R15: ffff888030a90080
+FS:  00007f01a1c236c0(0000) GS:ffff888125be3000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ff07b402150 CR3: 000000006968a000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ __bch2_trans_commit+0x1b13/0x8a70 fs/bcachefs/btree_trans_commit.c:1060
+ bch2_trans_commit fs/bcachefs/btree_update.h:270 [inline]
+ bch2_dev_usage_init+0x22c/0x3f0 fs/bcachefs/disk_accounting.c:934
+ bch2_fs_initialize+0x4b5/0xe60 fs/bcachefs/recovery.c:1179
+ bch2_fs_start+0xa00/0xcc0 fs/bcachefs/super.c:1217
+ bch2_fs_get_tree+0xb39/0x1540 fs/bcachefs/fs.c:2456
+ vfs_get_tree+0x92/0x2b0 fs/super.c:1815
+ do_new_mount+0x2a2/0x9e0 fs/namespace.c:3805
+ do_mount fs/namespace.c:4133 [inline]
+ __do_sys_mount fs/namespace.c:4344 [inline]
+ __se_sys_mount+0x317/0x410 fs/namespace.c:4321
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f01a0d9014a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f01a1c22e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f01a1c22ef0 RCX: 00007f01a0d9014a
+RDX: 0000200000000140 RSI: 0000200000000100 RDI: 00007f01a1c22eb0
+RBP: 0000200000000140 R08: 00007f01a1c22ef0 R09: 0000000002800000
+R10: 0000000002800000 R11: 0000000000000246 R12: 0000200000000100
+R13: 00007f01a1c22eb0 R14: 0000000000005a7a R15: 0000200000000340
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:do_bch2_trans_commit_to_journal_replay+0x10f3/0x1120 fs/bcachefs/btree_trans_commit.c:1027
+Code: 48 c7 c1 79 7b 99 8d 49 89 c0 e8 f8 7a 2b 00 4c 89 ff e8 10 c7 0d 00 48 8b 7c 24 68 e8 d6 1b 00 00 90 0f 0b e8 4e e3 92 fd 90 <0f> 0b e8 46 e3 92 fd eb ad e8 3f e3 92 fd eb a6 e8 38 e3 92 fd 90
+RSP: 0018:ffffc9000401edb8 EFLAGS: 00010293
+RAX: ffffffff842ccdc2 RBX: 00000000fffff7ab RCX: ffff888030303c00
+RDX: 0000000000000000 RSI: 00000000fffff7ab RDI: 0000000000000000
+RBP: ffff888076024000 R08: ffff888045c049e3 R09: 1ffff11008b8093c
+R10: dffffc0000000000 R11: ffffed1008b8093d R12: ffff888076024028
+R13: 0000000000000000 R14: ffff8880760240d2 R15: ffff888030a90080
+FS:  00007f01a1c236c0(0000) GS:ffff888125be3000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f0f4c3e5000 CR3: 000000006968a000 CR4: 00000000003526f0
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
