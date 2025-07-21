@@ -1,145 +1,148 @@
-Return-Path: <linux-kernel+bounces-738675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3308FB0BBC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:31:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 260E1B0BBDE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:38:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C8F3169E9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 04:31:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FE8616D391
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 04:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D51C18C91F;
-	Mon, 21 Jul 2025 04:31:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8BD21421A;
+	Mon, 21 Jul 2025 04:38:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hzR1ANrm"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=coasia.com header.i=@coasia.com header.b="JlqRXQCy"
+Received: from spam.coasia.com (mail2.coasia.com [112.168.119.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0129E6AA7;
-	Mon, 21 Jul 2025 04:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29B71EC006
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 04:38:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=112.168.119.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753072271; cv=none; b=jPshVKV7VvWTaGNte1q3hgJju/NKYNgO76+MTD/0p7IWU8aFTCRrLJX0VjgZk51VyJu9rVfxUw4YjCXNURyl7bTpwqBbHkP/AcdgSPc+WnQn6W8yA7K6CclptM9OxPl3offmMkeYzdTf9DiCzmA8vV03+Kf1jYIu5u0O6KoyYy0=
+	t=1753072709; cv=none; b=IUuZYHWuO0M7rpuRG5pkrkdJyt5YpdxklwPPHlJLUhiFsURx/1Gs8tKkHoxtuU9a2epnTV5liwwmBMQxwNIFWW4HgaizwlXq6Ugf+FdKJ8W2jGkMJtrYrhKmSvrglNDEsmikhdOXh4E8t8tdI3/mF9be0ClZwRX7K7r+wIYXW6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753072271; c=relaxed/simple;
-	bh=jVbUYd4TLV9D1JNWnHmMuN2Ni7fqjVZMzsZjfBsSTpQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=mK2UR4DxSAWhuIZHl7Oa5KD0+cBSAubDHojiwalOo1H17SKzPhc0+ydwBllaRBxU3iHgKClH9rwjgLhTpT2mib9IEm8bzZcW25OreUdLGj2S62H2Ib0rtMnQnQgkJXEgSUEPePydrnHT5GJNHBOflXJ0lU2H8Lbwf+3JEieN2G4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=hzR1ANrm; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1753072112;
-	bh=fio+O37FoQzbotomkY1HZEqcgNyOVzbHKa9mK2Q7VGs=;
-	h=Date:From:To:Cc:Subject:From;
-	b=hzR1ANrmFtQpL0ZVLu9prE4rWyMVkaxXHZ4D9IyAppKSjv9R+3atKt4ypxb/0Tj9B
-	 RUSulrsOo2uw6IEzzTYR8AP/vRIM50kC9Ur002mWjSjChk0xUCEqZOj7X3ZjOPUUd3
-	 srpF2fbO4itkJw/1J7l2V+28UoJ969jMur/02di0S2tSLH2VFm22cRPmEXUcnyQbXF
-	 CN/OLU0KZU+OKhR5Kff6JYGuTv8Ly0WKcVMPYirX+fOy0U8vLRZcXaiLXHs1BwtFum
-	 v09Yh/8p/fcNRgUqMHHg5vl749Cn8XJtQKzBmfETGgVOD292PUK8EnUI1ERFIhiw4m
-	 o5N3nSXfTc2fQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4blnTD3pPBz4wbb;
-	Mon, 21 Jul 2025 14:28:32 +1000 (AEST)
-Date: Mon, 21 Jul 2025 14:31:02 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Tamir Duberstein
- <tamird@gmail.com>
-Subject: linux-next: manual merge of the rust tree with Linus' tree
-Message-ID: <20250721143102.1ae3bef7@canb.auug.org.au>
+	s=arc-20240116; t=1753072709; c=relaxed/simple;
+	bh=bgnLbbDsz4HQmQCmQhtR9GGT2j7K0do7fmhsJaorGvo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=i3MvMpfpplVxD5R/Pek1X50b31yonjZToyCgCTp/s7tRbkBLPorCAxcUMJfFeZDrJOR8ZDCyp8Dqtcvtt/r4FrF3MoQZUCuXW7514E3vOpmEwPXQ9iT39RI/09hGwUgTIwj6fhaGZNGi9Qro9LA9A8178457aaQ1DonC2I+jF1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=coasia.com; spf=pass smtp.mailfrom=coasia.com; dkim=pass (1024-bit key) header.d=coasia.com header.i=@coasia.com header.b=JlqRXQCy; arc=none smtp.client-ip=112.168.119.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=coasia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coasia.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=coasia.com; s=coasia;
+	t=1753072304; bh=bgnLbbDsz4HQmQCmQhtR9GGT2j7K0do7fmhsJaorGvo=;
+	l=915; h=Message-ID:Subject:From:To:Date:Content-Type:MIME-Version;
+	b=JlqRXQCymNdkc80PVNqFxOjSe2TMmviAP4a+FPHsJf3covGIC1bEOTi70paDJe3si
+	 BvTkCAIQnuDm67kUIQ0r895XSWqjvDjRbik4kckPXye5s7NONfKetqGV2dEBsA0Zm2
+	 Xq/5TmrFPjvq/I+wTpeLv4U9Bj4pGT9LNo/ZR4ZY=
+Received: from unknown (HELO ?192.168.1.65?) (119.65.249.123)
+	by 192.168.10.159 with ESMTP; 21 Jul 2025 13:31:44 +0900
+X-Original-SENDERIP: 119.65.249.123
+X-Original-SENDERCOUNTRY: KR, South Korea 
+X-Original-MAILFROM: hgkim05@coasia.com
+X-Original-RCPTTO: krzk@kernel.org,
+	ksk4725@coasia.com,
+	jesper.nilsson@axis.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	s.nawrocki@samsung.com,
+	cw00.choi@samsung.com,
+	alim.akhtar@samsung.com,
+	linus.walleij@linaro.org,
+	tomasz.figa@gmail.com,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	arnd@arndb.de,
+	ravi.patel@samsung.com,
+	smn1196@coasia.com,
+	kenkim@coasia.com,
+	pjsin865@coasia.com,
+	gwk1013@coasia.com,
+	mingyoungbo@coasia.com,
+	pankaj.dubey@samsung.com,
+	shradha.t@samsung.com,
+	inbaraj.e@samsung.com,
+	swathi.ks@samsung.com,
+	hrishikesh.d@samsung.com,
+	dj76.yang@samsung.com,
+	hypmean.kim@samsung.com,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@axis.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	soc@lists.linux.dev
+Message-ID: <5bf8677f0779e06092f912a92a8e63225a4fe627.camel@coasia.com>
+Subject: Re: [PATCH 01/16] dt-bindings: clock: Add CMU bindings definitions
+ for ARTPEC-8 platform
+From: Hakyeong Kim <hgkim05@coasia.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, ksk4725@coasia.com, Jesper
+ Nilsson <jesper.nilsson@axis.com>, Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor Dooley
+ <conor+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo
+ Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Linus
+ Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>,  Ravi Patel <ravi.patel@samsung.com>,
+ SungMin Park <smn1196@coasia.com>
+Cc: kenkim <kenkim@coasia.com>, Jongshin Park <pjsin865@coasia.com>, GunWoo
+ Kim <gwk1013@coasia.com>, GyoungBo Min <mingyoungbo@coasia.com>, Pankaj
+ Dubey <pankaj.dubey@samsung.com>, Shradha Todi <shradha.t@samsung.com>,
+ Inbaraj E <inbaraj.e@samsung.com>, Swathi K S <swathi.ks@samsung.com>,
+ Hrishikesh <hrishikesh.d@samsung.com>, Dongjin Yang
+ <dj76.yang@samsung.com>, Sang Min Kim <hypmean.kim@samsung.com>,
+ linux-kernel@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org,  linux-arm-kernel@axis.com,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, soc@lists.linux.dev
+Date: Mon, 21 Jul 2025 13:31:44 +0900
+In-Reply-To: <cd5c268b-1340-4d66-9b08-75e2b7efd241@kernel.org>
+References: <20250710002047.1573841-1-ksk4725@coasia.com>
+	 <20250710002047.1573841-2-ksk4725@coasia.com>
+	 <cd5c268b-1340-4d66-9b08-75e2b7efd241@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/p=Ec.tUYkLPABdHtLE=1kF8";
- protocol="application/pgp-signature"; micalg=pgp-sha256
 
---Sig_/p=Ec.tUYkLPABdHtLE=1kF8
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, 2025-07-10 at 09:07 +0200, Krzysztof Kozlowski wrote:
+> On 10/07/2025 02:20, ksk4725@coasia.com=C2=A0wrote:
+> > From: Ravi Patel <ravi.patel@samsung.com>
+> >=20
+> > Add device tree clock definitions constants for ARTPEC-8 platform.
+> > ARTPEC-8 platform has separate instances for each particular CMU.
+> > So clock IDs in this bindings header also start from 1 for each CMU
+> > block.
+> >=20
+> > Signed-off-by: Hakyeong Kim <hgkim05@coasia.com>
+> > Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+> > ---
+> > =C2=A0include/dt-bindings/clock/axis,artpec8-clk.h | 122
+> > +++++++++++++++++++
+> > =C2=A01 file changed, 122 insertions(+)
+> > =C2=A0create mode 100644 include/dt-bindings/clock/axis,artpec8-clk.h
+>=20
+> This is not a separate commit, squash with bindings.
 
-Hi all,
+Ok, I will merge patch 01 and 02 into single patch.
 
-Today's linux-next merge of the rust tree got a conflict in:
+Thanks,
+Hakyeong Kim
 
-  scripts/Makefile.build
+>=20
+> Best regards,
+> Krzysztof
 
-between commit:
-
-  749815922677 ("rust: use `#[used(compiler)]` to fix build and `modpost` w=
-ith Rust >=3D 1.89.0")
-
-from Linus' tree and commit:
-
-  5d840b4c4935 ("rust: list: add `impl_list_item!` examples")
-
-from the rust tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc scripts/Makefile.build
-index ba71b27aa363,79c40af6f399..000000000000
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@@ -309,14 -309,14 +309,15 @@@ $(obj)/%.lst: $(obj)/%.c FORC
-  # The features in this list are the ones allowed for non-`rust/` code.
-  #
-  #   - Stable since Rust 1.81.0: `feature(lint_reasons)`.
-- #   - Stable since Rust 1.82.0: `feature(asm_const)`, `feature(raw_ref_op=
-)`.
-+ #   - Stable since Rust 1.82.0: `feature(asm_const)`,
-+ #     `feature(offset_of_nested)`, `feature(raw_ref_op)`.
-  #   - Stable since Rust 1.87.0: `feature(asm_goto)`.
-  #   - Expected to become stable: `feature(arbitrary_self_types)`.
- +#   - To be determined: `feature(used_with_arg)`.
-  #
-  # Please see https://github.com/Rust-for-Linux/linux/issues/2 for details=
- on
-  # the unstable features in use.
-- rust_allowed_features :=3D asm_const,asm_goto,arbitrary_self_types,lint_r=
-easons,raw_ref_op,used_with_arg
- -rust_allowed_features :=3D asm_const,asm_goto,arbitrary_self_types,lint_r=
-easons,offset_of_nested,raw_ref_op
-++rust_allowed_features :=3D asm_const,asm_goto,arbitrary_self_types,lint_r=
-easons,offset_of_nested,raw_ref_op,used_with_arg
- =20
-  # `--out-dir` is required to avoid temporaries being created by `rustc` i=
-n the
-  # current working directory, which may be not accessible in the out-of-tr=
-ee
-
---Sig_/p=Ec.tUYkLPABdHtLE=1kF8
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh9woYACgkQAVBC80lX
-0GwPYggAkmz60tUdNkOQotvMx9MJo4Hjyp3GT6Jsojs+RC8ivvZVMqAfiS28c0sQ
-baxC6A2EAc2ftD1xwDHtK4wdaLa4YnZBDXcsDfKqDAWMAzgEAxoazNToWnNIcS22
-TZOv+MULeHgFY+y1QgWWCARu+AEZlbwtwD22NTAUjjPWw9aklQh04uubquhrcaIn
-lOwL+no1bIMQtIwuSw1tnij30srvrmjfyQ5EM9vq3n1OoilPb/P3NBAwykbHot+E
-DiLkOppT6f1tifgppyC/0WoeyVu4A/M/MVYIGoYUO9Kmb3DAKNJ4IuMeFPBlCEs0
-O5WPW9o21QIvdKWzz40cbq0wTM6IAg==
-=nfmW
------END PGP SIGNATURE-----
-
---Sig_/p=Ec.tUYkLPABdHtLE=1kF8--
 
