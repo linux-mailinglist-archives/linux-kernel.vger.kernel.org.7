@@ -1,160 +1,146 @@
-Return-Path: <linux-kernel+bounces-739939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 397F3B0CD5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 00:39:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A97BB0CD5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 00:43:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5990E3B2C51
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:38:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1DE97B1D67
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD5A3242D89;
-	Mon, 21 Jul 2025 22:39:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3D4242D71;
+	Mon, 21 Jul 2025 22:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bZ25C3R9"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DlJ/xd1I"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B63BE8F40;
-	Mon, 21 Jul 2025 22:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3AF1A29A;
+	Mon, 21 Jul 2025 22:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753137545; cv=none; b=AQ8hbBop1F4mrwDEE95kkXfwXPsmGFb3D7vK9TxYXGSaf+kihUIQRQqVIHHk4j2xiyB62OH9/QdJICC8NSsUbR2t152gxKGjq41ts0jrjGdMeL4qqi34OG3Vrj+GLdd25KwqDQ58kiDSnv/rqlOetd8OpxMWx59bEoPZWh8BwrQ=
+	t=1753137777; cv=none; b=svdNEde2RrrNGhE6D2pST+Jbj1b3kyDYL6fm2KfTL9HWe3I9Edl+5Ba4yra6E1JC9RRjB7XfF8hzMKgesYzzMSfnQ02etq3fVoIHVSsk88b5G6u+msuZx6+Dw2AA1iLsYs3xLcrc+HtBPFFyE775PZXgy/sYFthFkt0VTh43sSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753137545; c=relaxed/simple;
-	bh=UbpXCOpSVnI6N9IQrEqmNGNfsdb/u83IjJbbivKICtg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VWgIKTDceA2pW53rtbqMH5o0GiqLjAIDILZAD1y2S88SrCIGhrybkm0xh3qjhmyA/2/q939hxs1rr5toKUbZzpH2W1O+i+hPQ9tQMGAMhPpeQ6kQUS2YH7DLT1Ymd6+Y017YU63metVZdKqRLc+U0/s6DVnxl7JqiONr8LE8TaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bZ25C3R9; arc=none smtp.client-ip=209.85.210.170
+	s=arc-20240116; t=1753137777; c=relaxed/simple;
+	bh=2wejYBimpTDlaBdxNiYjUZaXo5+6xL2dqLH8Nnb9TMQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GyWAUlfxYV0HmdVWzIMZv7eF/Ll+JoNbS3j5gOIZCIAOqszdxrUJbvTh6+fT5+zlRxjjvokVIYZV9F0WN16NDkNhHlGL9cET/MNoLZn9/b7CkGdJJua5AFAmPpKiRxGZiljELkhjmZhQbel+KkO5WzLHlMoGWv019lPQWXSfIHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DlJ/xd1I; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-74b54cead6cso3100835b3a.1;
-        Mon, 21 Jul 2025 15:39:03 -0700 (PDT)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a57ae5cb17so2367228f8f.0;
+        Mon, 21 Jul 2025 15:42:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753137543; x=1753742343; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=+flNOTHZGwl5tQTzAtuKBDIQ+jwApZ1+t8fvYYT5Rs0=;
-        b=bZ25C3R9ga/ThlxFm5Qo4lyiV/eTaHB9Mopl5IyI9CFcOnAye2jky9ETWkbdgjlXws
-         CT9uEmFWTA+WYaOqWD8izWu3nBxItkiau+Pv7fv+Dh6YFQ74By6+eZ4S360bNSiwXVPE
-         sJ3p3QpmHcCWHHbG33JvCYd0ohw8Zjek5MvVZcd4W6YLk9Dy97AebJxR5Yf2xOmGET6T
-         Pt7qXgC1Leybf9J4cHYwHoCPFfcQOzQiA1kX/CAHZFH98igJXGvFXyYcmeg5aJ0RwirP
-         QE+FELokSTUGRvLiu73bNck7wFO6ZFRYlcOybss8zHVZd3JweH9Myt/A6/KHX0hbYErI
-         G9Iw==
+        d=gmail.com; s=20230601; t=1753137774; x=1753742574; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oSRRlwY5JEnlUl63++2+dkJU6k1aCDj5YRyr36FiVAU=;
+        b=DlJ/xd1IY8M69ogeYlk/OMo0ygQ1nI0i5AZ0jeN9ZBCh72ULPl8CjUiWA8PkLm1zH8
+         eC8UBTEzpO8adEettlFLH1N67elghy2kdpnbW2VHq+F1hQOtwM7LGsB/bgx/gypjMPdG
+         PfegUlTJh7ZcnVkvvw/xMrJe+DtwvsXX/F4x52yCXRx1fJlqTX3s/xMTWIiFjopcHYz0
+         pFHcmQ05IMmRm+jq75RFSwKfYKOBD5Z+SsJz5lvNu9gMXN2M2PSzbb8IJMDfTVLPbyWI
+         A0coZomck4WyChhzuCdatajtEkUld5WRBDK77VTMxbP+TTQ9i89xG1oXXmAUz8zgWxuB
+         Q4Vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753137543; x=1753742343;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+flNOTHZGwl5tQTzAtuKBDIQ+jwApZ1+t8fvYYT5Rs0=;
-        b=I/PFCFLoeTy6i2bWT7ZGXm4Hs1wlqk8r8WVw7Viti0ux70D0ghFt1C56b7tL//Ba9Q
-         Ewm6a2XHrHppWtIMl4tHBzcBjYvo38crwukm/hnOrssci2j5PO32CpD74xvU0e8Fr/Hx
-         /quQtGhA5HuZjuOt4gBvdPT8F7PrHwCmdlPtc6vx+AfZp3ZK/ZZgGVfT7JcGbh7TwZXY
-         M1vWibYV/efOz12QRUneopChjKEf6POWeCWmPhM+MYxZjbB8lPsoVGorTvpEhz7v2Mp5
-         hU2UYqovI8XZj/CyUxvL5Vlion96V/OAOCUFRvash8NDUVx0tCKGoSisyVDAh+FCVc8c
-         ICAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV8O9lPwTmiBr/0bcDOJaCYbsBIj7zIvxEvMbM07ARpcHwsxqSIIFS1+YTqUCQ7F30OugeOnZOh2ajwW2q5IzNf7scY@vger.kernel.org, AJvYcCW6EcTO05DX5uXPp1lHNPfWHPGGEkhqTYwDpiAldNecMBIXqfYlIQ2eaj5nng9Fov5sT7EGqpxA03dnG2dK@vger.kernel.org, AJvYcCXWfLKOPu+AfiotMu+gOo97e8PK0t6ZEmfQLiVZapnYGGapRNtI0NbYEEL1PAIMZq2qhWU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQ67HJ0/cLJzTFnvU6urWZBCKq8owf1TkeQKi1lkxnNDyH28ZJ
-	uI0xisN8ldUhLb3fGT+eqST5A9KbYJfCruH8CEyG5V8de/P3m6586n2l
-X-Gm-Gg: ASbGnctNwRO21Mc8Gq8GxAp8XVaezTYS3WFOeZ0Tv7whBxsgwdFJW0EBQXv4g2U2cEG
-	nKf2scAKFKJ7tZaR/7QdEjh1jzp+IgLMbqGkzNbGUGW7L/FeBAxyvw/EaskaGRdUTcpDrOkTPWY
-	Jsav93b8HZ0K6tJxXIC6wgMgLQqC3jKFc9CnRNO/STd7k7GAlapEsrlDcHhwWBCSnPRcfjrBece
-	pwgNo6C9O8xdsMkWEX294URHLD3jf5h52bNXL1C/dBNBigN0NdJDbIGz1RwUzF9dt9q5x11GZX0
-	Ao+th7ntsD7B6vKbkEe0qqGdn4+8SlMEitmj71R49VUAzbB4bQFPdimAuIz38e9F+6Qbo0IYCwu
-	cM4qw9kgPYt3H84D1tXByoyNCBAeQ
-X-Google-Smtp-Source: AGHT+IGHuL6EcqmV2YbTKaTZXfPkI9SvE9yeb5FM/NP9QXasZt5olfZKPRuC/PrXh8bdWBDrRNYceQ==
-X-Received: by 2002:a05:6a00:2194:b0:742:a111:ee6f with SMTP id d2e1a72fcca58-7572286b05emr25926354b3a.10.1753137542824;
-        Mon, 21 Jul 2025 15:39:02 -0700 (PDT)
-Received: from ?IPv6:2620:10d:c096:14a::281? ([2620:10d:c090:600::1:7203])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759cb15761dsm6393291b3a.67.2025.07.21.15.39.00
+        d=1e100.net; s=20230601; t=1753137774; x=1753742574;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oSRRlwY5JEnlUl63++2+dkJU6k1aCDj5YRyr36FiVAU=;
+        b=jwPQGdB6LWz/L3pdSYJh6b3khYuG30k81rJ2DJJMd/1ziENcYpwlu6K1uf6k96n7EO
+         keMbyH+WsVcKItjRu/YJK5NCf09ikerqoJQX1j8rfp/vBxHvbD/yEhrz6L9lCDubfEqu
+         WtOkURCc0rwkpxiVfPtkautj0FHi1FDFEPGtn98ry5VxOtgUaRZQxzIRh7pWJM3IQcwi
+         FL7jaoGjCO/a7S1nyUngipVpwoORUBgknlH6ckG8brGIAP+4ceNtVXoiPpuKMCcXXVQs
+         FVhz7digoQ4k0WxptwtE+cvubstrnFhf97xeCSVWV5WH//y7Q1biRoS2bJqJgmnJyX6D
+         9yZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFWTB0EuKk+sP/GDGinGLjF+IeC5ekb8loRW33b1saQ1aHQvgXolcNQXJWLjIe0Gqewa682t73c9qhelM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwC1C4wuffUDHnZabW9e3DcSGxAd/8oXPGNsdTPHYP3eaccdskM
+	u+HXf6+kStnHDxeF2gteLlkkvfPReeFeyqgTVLoYc1oZj5qv30u+GVG+
+X-Gm-Gg: ASbGnct8dl9AjgJHo4+oqOIIha9qSoBGeQ+p/vcqQEm888OjF92VmXxFp6JO/PY0Nnh
+	v1Nax5txdX8qjI0qtv8K8Vv1INEoVdYnDQJjPcuNY7GSEhOBR8dGS1pp2caRMD55fmv8i4LAyRf
+	0cOr7W7WUJ97398cmS28blbn0+kJf3FaKBtiHgVabyUU3vydYUTEoXtLfaTs9BfvDLzfSiUVpGD
+	Psw/GcDurEHtXdQ7UNqob2OGHWkqyUAQUax40q7oAwK9YJ2StoErPchh66VWp2Jmx49CuupB2Cl
+	tXIfp1ZVxfP38C2a2pi4r/nGhA16sgtr4oUg/558b/bD89+6OOtqOrny6nsMhhxVva6PH2yiAnG
+	T27NzcdAE2W8L+NQMFgFddz1sR61XzICRNQWvkQehE7kwpiUiJWVQ6Wbble2P2gOZ
+X-Google-Smtp-Source: AGHT+IFZbPQ/XrSfO0fzKP+fHbJt9WSoYRViWFOQc8U4eBQryUHTs8SX+BSMG4KmRKRPLPMFbYUafQ==
+X-Received: by 2002:a05:6000:290d:b0:3a4:ef30:a4c8 with SMTP id ffacd0b85a97d-3b60e4c4ae8mr17860548f8f.10.1753137773867;
+        Mon, 21 Jul 2025 15:42:53 -0700 (PDT)
+Received: from antoni-VivoBook-ASUSLaptop-X512FAY-K512FA ([78.211.68.92])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca487c1sm11668875f8f.41.2025.07.21.15.42.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 15:39:02 -0700 (PDT)
-Message-ID: <ac8266f19ecde10a49911192014dddf35b3b496d.camel@gmail.com>
-Subject: Re: [PATCH PATCH v2 v2 2/6] bpf: Add bpf_perf_event_aux_pause kfunc
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Leo Yan <leo.yan@arm.com>, Peter Zijlstra <peterz@infradead.org>, Ingo
- Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim	 <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Ian
- Rogers	 <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, KP
- Singh	 <kpsingh@kernel.org>, Matt Bobrowski <mattbobrowski@google.com>,
- Song Liu	 <song@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel
- Borkmann	 <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau	 <martin.lau@linux.dev>, Yonghong Song
- <yonghong.song@linux.dev>, John Fastabend	 <john.fastabend@gmail.com>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo	 <haoluo@google.com>, Steven
- Rostedt <rostedt@goodmis.org>, Masami Hiramatsu	 <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,  James Clark
- <james.clark@linaro.org>, Suzuki K Poulose <suzuki.poulose@arm.com>, Mike
- Leach	 <mike.leach@linaro.org>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Date: Mon, 21 Jul 2025 15:38:59 -0700
-In-Reply-To: <20250718-perf_aux_pause_resume_bpf_rebase-v2-2-992557b8fb16@arm.com>
-References: 
-	<20250718-perf_aux_pause_resume_bpf_rebase-v2-0-992557b8fb16@arm.com>
-	 <20250718-perf_aux_pause_resume_bpf_rebase-v2-2-992557b8fb16@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+        Mon, 21 Jul 2025 15:42:52 -0700 (PDT)
+Date: Tue, 22 Jul 2025 00:42:28 +0200
+From: Antoni Pokusinski <apokusinski01@gmail.com>
+To: Mikulas Patocka <mpatocka@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzbot+fa88eb476e42878f2844@syzkaller.appspotmail.com
+Subject: Re: [PATCH] hpfs: add checks for ea addresses
+Message-ID: <20250721224228.nzt7l7knum5hupgl@antoni-VivoBook-ASUSLaptop-X512FAY-K512FA>
+References: <20250720142218.145320-1-apokusinski01@gmail.com>
+ <784a100e-c848-3a9c-74ef-439fa12df53c@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <784a100e-c848-3a9c-74ef-439fa12df53c@redhat.com>
 
-On Fri, 2025-07-18 at 16:25 +0100, Leo Yan wrote:
+Hello,
+Thanks for the feedback.
 
-[...]
+On Mon, Jul 21, 2025 at 09:51:22PM +0200, Mikulas Patocka wrote:
+> Hi
+> 
+> I've got an email that shows these syslog lines:
+> 
+> hpfs: filesystem error: warning: spare dnodes used, try chkdsk
+> hpfs: You really don't want any checks? You are crazy...
+> hpfs: hpfs_map_sector(): read error
+> hpfs: code page support is disabled
+> ==================================================================
+> BUG: KASAN: use-after-free in strcmp+0x6f/0xc0 lib/string.c:283
+> Read of size 1 at addr ffff8880116728a6 by task syz-executor411/6741
+> 
+> 
+> It seems that you deliberately turned off checking by using the parameter 
+> check=none.
+> 
+> The HPFS driver will not check metadata for corruption if "check=none" is 
+> used, you should use the default "check=normal" or enable extra 
+> time-consuming checks using "check=strict".
+> 
 
-> +__bpf_kfunc int bpf_perf_event_aux_pause(void *p__map, u64 flags, u32 pa=
-use)
-> +{
-> +	struct bpf_map *map =3D p__map;
-> +	struct bpf_array *array =3D container_of(map, struct bpf_array, map);
+Yes, that's right. If we had "check!=none", then the issue would not come
+up in syzkaller due to the checks performed on the extended attribues in the fnode.
 
-Verifier makes sure that p__map is a not null pointer to an object of
-type bpf_map, but it does not guarantee that the object is an instance
-of bpf_array.
-You need to check map->type, same way bpf_arena_alloc_pages() does.
+I've just tried to confim that by using the "check=normal" and I did not get
+the KASAN warning, as expected.
 
-> +	unsigned int cpu =3D smp_processor_id();
-> +	u64 index =3D flags & BPF_F_INDEX_MASK;
-> +	struct bpf_event_entry *ee;
-> +	int ret =3D 0;
-> +
-> +	/* Disabling IRQ avoids race condition with perf event flows. */
-> +	guard(irqsave)();
-> +
-> +	if (unlikely(flags & ~(BPF_F_INDEX_MASK))) {
-> +		ret =3D -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	if (index =3D=3D BPF_F_CURRENT_CPU)
-> +		index =3D cpu;
-> +
-> +	if (unlikely(index >=3D array->map.max_entries)) {
-> +		ret =3D -E2BIG;
-> +		goto out;
-> +	}
-> +
-> +	ee =3D READ_ONCE(array->ptrs[index]);
-> +	if (!ee) {
-> +		ret =3D -ENOENT;
-> +		goto out;
-> +	}
-> +
-> +	if (!has_aux(ee->event))
-> +		ret =3D -EINVAL;
-> +
-> +	perf_event_aux_pause(ee->event, pause);
-> +out:
-> +	return ret;
-> +}
+> The code that checks extended attributes in the fnode is in the function 
+> hpfs_map_fnode, the branch "if ((fnode = hpfs_map_sector(s, ino, bhp, 
+> FNODE_RD_AHEAD))) { if (hpfs_sb(s)->sb_chk) {" - fixes for checking 
+> extended attributes should go there.
+> 
+> If you get a KASAN warning when using "check=normal" or "check=strict", 
+> report it and I will fix it; with "check=none" it is not supposed to work.
+> 
+> Mikulas
+> 
 
-[...]
+I'm just wondering what should be the expected kernel behaviour in the situation where
+"check=none" and the "ea_offs", "acl_size_s", "ea_size_s" fields of fnode are corrupt?
+If we assume that in such case running into some undefined behavior (which is accessing
+an unknown memory area) is alright, then the code does not need any changes.
+But if we'd like to prevent it, then I think we should always check the extended
+attribute address regardless of the "check" parameter, as demonstrated
+in the patch.
+
+Kind regards,
+Antoni
+
 
