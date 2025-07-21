@@ -1,238 +1,136 @@
-Return-Path: <linux-kernel+bounces-739282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27349B0C44F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:44:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 891A5B0C43B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:41:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4988A1646A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:44:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB12B162DF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:41:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D85442D3EF3;
-	Mon, 21 Jul 2025 12:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TLxnjdxm"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0612D3EED;
+	Mon, 21 Jul 2025 12:41:17 +0000 (UTC)
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7772942A9B;
-	Mon, 21 Jul 2025 12:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF742D0C8C;
+	Mon, 21 Jul 2025 12:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753101849; cv=none; b=r7IDvEwXWOICr23qa4UgGOrZZAC+wUlSz8PZBITwlHeAMmMz6Wm3o+Ra93TsYJ9uLwb7DwwBxisdOMdeautdls8yB3zkmaP4GUw/WJY646lGAj7I0YjSEDONp3kmVhhGTeoyJisYzzGony/H0s28TKyUY82J1Y+yNCttTIx//Qo=
+	t=1753101676; cv=none; b=OOcvB9Ldd8ABDtaFRpfKGx8mECFr4URJP3qsZ6LbKRYzRqUB8fB90WDcTCVT7mrJqlGvT2idrYgCZjNNFhXnSRM4FkqQ0B6bAffgyAbxTweRBkZZBM9HBEtHnIayPKqZsjQv0jy8O4i2iEMe/RlVmWtM+08WjeHFB3nhTdLak68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753101849; c=relaxed/simple;
-	bh=2rqEcY3+vS6y9IkHDgy65e3CbWCUIfoGhGJDb3Byk9I=;
-	h=From:To:Cc:Date:Subject:Message-ID:MIME-Version:Content-Type; b=K0bCwVzcETl8Y+/nCvma+0/XlEFJFg9tWunEK2DlsV1XAcPoj4ozRFHvr1Sdp4duuSmd/mNuld4499CoClqXNKO6RbGkrBTxnjMm5X6CLL5P/3JPIO9QOQ3+APmmiougx1uz0+mYhHuvybZNa1Zbzx6va2mCfOk8B46zVr+BHlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TLxnjdxm; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753101848; x=1784637848;
-  h=from:to:cc:date:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=2rqEcY3+vS6y9IkHDgy65e3CbWCUIfoGhGJDb3Byk9I=;
-  b=TLxnjdxm4TIpIQuuds4RoIibW3/k/XzDQkEUMSYgcEs6Ap/zq6Vd6leE
-   vP3jukdx1SMR4y2AtbBytZX8VRAvnOz8zwmmFZKWtMMQVb6Y2frdkneRS
-   kCE0CEOoSy/gHxHfeRn9MhB+UmoKdq3uVAfntHMlaFPi30c2apRA8eheN
-   wnABfZ5a3ap6HvNtFr7FujOqaEE7RBXkukSfLWrOqa+ULG3VStyihOl80
-   jrPou8/pDChMhT5B3NpcqUqDtWw0HhB9KnWIJ7OC+7ADPL0aosIcRkpoJ
-   7p9fi1Ll/6382Hc88a6TDmYYjAtnbEHc7JZTiztzcYonJShtqVJn/e7Io
-   w==;
-X-CSE-ConnectionGUID: TdGSKpMCTLu1xi19boMspA==
-X-CSE-MsgGUID: L+BJVMjwQQ6MScKGD3i0Nw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11499"; a="54414859"
-X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
-   d="scan'208";a="54414859"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 05:44:07 -0700
-X-CSE-ConnectionGUID: +zHVWkR/Q6uJx4aFuUAQCA==
-X-CSE-MsgGUID: iH8XBT6mT+akVTuW5wqG7w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
-   d="scan'208";a="158612766"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.225])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 05:44:05 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, PDx86 <platform-driver-x86@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>
-Date: Mon, 21 Jul 2025 15:38:07 +0300
-Subject: [GIT PULL] platform-drivers-x86 for v6.16-4
-Message-ID: <pdx86-pr-20250721153807-334719879@linux.intel.com>
+	s=arc-20240116; t=1753101676; c=relaxed/simple;
+	bh=HKypV4u1z7AQtKEV8qXfKdvAJq3j2oYfgAV7NWh5XKw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=muKcMFs4kYRRWSmMeB6etviw0q3e+yDIIe5jvHIseUa+aHePUnGf9VgdPXwel6HhhLwoJ0MMEfDyo4t5Ot3OGgj6CiFfFL8iKQIG0qt4NPEixniJML7Zbnx6PNWwXlzWbYHjOVM5xKwL8FTsFXzdDiBIIJYOMkdXgkqtUN3KQGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foursemi.com; spf=pass smtp.mailfrom=foursemi.com; arc=none smtp.client-ip=54.207.19.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foursemi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foursemi.com
+X-QQ-mid: zesmtpsz2t1753101613t8c8f9366
+X-QQ-Originating-IP: MoVW0Qm5NMBWEz3uPCzh4xqGQRVxpVf/CTDZ4DOFxxU=
+Received: from localhost ( [113.89.235.49])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 21 Jul 2025 20:40:12 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 5610268674547387337
+EX-QQ-RecipientCnt: 14
+Date: Mon, 21 Jul 2025 20:40:02 +0800
+From: Nick Li <nick.li@foursemi.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: lgirdwood@gmail.com, broonie@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, perex@perex.cz,
+	tiwai@suse.com, xiaoming.yang@foursemi.com,
+	danyang.zheng@foursemi.com, like.xy@foxmail.com,
+	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/4] ASoC: dt-bindings: Add FS2104/5S audio amplifiers
+Message-ID: <0D06FAB8CF1A9D4C+aH41IrERxjlsEAPr@foursemi.com>
+References: <20250721103805.531758-1-nick.li@foursemi.com>
+ <20250721103805.531758-3-nick.li@foursemi.com>
+ <83f7c489-7001-49cd-97a5-4280eba95fe0@kernel.org>
+ <F04DD98A69286426+aH4sT_P0GvttoCOq@foursemi.com>
+ <ea2f30ff-b2cf-4b88-9fe8-78950a03d882@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ea2f30ff-b2cf-4b88-9fe8-78950a03d882@kernel.org>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:foursemi.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: N0fHFfxtkpsjEWs3A0xBuJ3MCCGLm1f5F5Y/t4u4jUD0ofASZGMC5o4P
+	oJmZo2RQQTTTZUMaEJub+Y/fDMxP9XQuQ5sxiL8MCSjjDoUd+ci60S2Rb58BmbYWmQw1ILz
+	EUUBXzkTLWHzd79MPqg7PJ9ykQ1j2QT+p/3WQCK6Q0YOmzkj9APbCwQekZ/Dyl2oCKfuOED
+	x0sq70ybB9JJtqI+NqwMdoo6yaMzPXDLuvawAYmcaW3XThfXx+DATJyY1s56gHfiS1yxXK1
+	X++kyhMERdDHSIY8wWN6+0QyjqJAqungWaRlIsArJJrX6UDEiCjnz3t+sYj1hf54MzrzTTp
+	tWTCpYuGuXQFSA0QWfLPtXuStoFZb5N7I/GmTxZFuwnzy+0flPsxfJ/1N9YCSXuzM0MZGDq
+	fH9Qb2DYJ/mBgZvQR3A9KAuuD48TcFSkFLUShKnL3ZcugPIh53soSkTs86EAcg2vFXPlH8i
+	j6du9YaJRv8Ip6gHXt+3ED2XsrULDRXYL7Escw/OmwkEbOOi4qvPRfSJSt9+juLjT5RtecA
+	jACJPeUL7tKszRHEZP26aGtRQN2o0BRlfWCQG8k8PVBx6+khxkZS/U67lOtU8C0A9NR8Ymq
+	JQbdaG+TvAByKeD2Jmt8m7gqoUgfvTNWhDm2hmExfM9/eWtG3potHx0Dg7OSumb0yuWHTS2
+	BvhUQCjxLrihq19+cpZQVRY6ishZRn0hWwfXXwxY5ZB+jveLg1UrG+jWcCUT7U30UlLQvOt
+	93k1Ef27buYU2J3mjaz0HMOBCNXzpQptgXMYWVDQHYTS1fEE0iv0IdGR3umXSzliyrgHy2T
+	RKM+AGFFA2PexWe+uQdjThf3ysW+ok3kGDxwKHgnpI96wVg6w9EtaZE2uh9QB7D90XnJBXl
+	+kydeWZovTPP1Hr2tVqGkx3N5lYQZiJ3bn54OodH+luUXqz3DELWarmNNRaJ4g1SO3ZOF1j
+	5kLxhobshWGyOXBlA3vSzrU5P6obBmrYDisKc0OZJjZoueQH2DURy7YNVOY//X8zka93unx
+	DPegShYFk0IO6QEeVwkPK4Gt35oiAmMqRTDd+f+d0waUK3a/Vs
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+X-QQ-RECHKSPAM: 0
 
-Hi Linus,
+On Mon, Jul 21, 2025 at 02:15:38PM +0200, Krzysztof Kozlowski wrote:
+> On 21/07/2025 14:02, Nick Li wrote:
+> > On Mon, Jul 21, 2025 at 12:48:24PM +0200, Krzysztof Kozlowski wrote:
+> >> On 21/07/2025 12:38, Nick wrote:
+> >>> +  firmware-name:
+> >>> +    maxItems: 1
+> >>> +    description: |
+> >>> +      The firmware(*.bin) contains:
+> >>> +      a. Register initialization settings
+> >>> +      b. DSP effect parameters
+> >>> +      c. Multi-scene sound effect configurations(optional)
+> >>> +      It's gernerated by FourSemi's tuning tool.
+> >>> +
+> >>> +required:
+> >>> +  - compatible
+> >>> +  - reg
+> >>> +  - '#sound-dai-cells'
+> >>> +  - reset-gpios
+> >>> +  - firmware-name
+> >>
+> >>
+> >> I do not see how you resolved my comment from v1 or v2. Nothing in the
+> >> changelog explains that either.
+> > 
+> > Change logs are in the cover letter:
+> 
+> 
+> And as I said I do not see resolution of my comment.
+> 
+> If you reject reviewers comment, usually it should be mentioned in the
+> changelog.
+> 
+> Otherwise you get now the same review as v1 or v2. Devices cannot work
+> without power.
 
-Here is a platform-drivers-x86 fixes PR for v6.16.
+I explained it in the previous email:
+The power may be connected to the baterry/adapter directly,
+it may not be under the control of the software,
+in this case, the supplies are use as dummy regulators?
 
-There's one power supply accessor change to support solving pdx86 lock
-double take issue (upcoming pdx86 for-next work depends on the same API
-so we chose to route it through pdx86 tree).
+And we tested the driver without the supplies in DTS,
+so I didn't mark the supplies as the required items.
 
-Fixes and New HW Support
+Best regards,
+Nick
 
-- alienware-wmi-wmax:
-
-  - Add AWCC support for Alienware Area-51m and m15 R5.
-
-  - Fix `dmi_system_id` array termination
-
-- arm64: huawei-gaokun-ec: fix OF node leak
-
-- dell-ddv: Fix taking psy->extensions_sem twice
-
-- dell-lis3lv02d: Add Precision 3551 accelerometer support
-
-- firmware_attributes_class: Fix initialization order
-
-- ideapad-laptop: Retain FnLock and kbd backlight across boots
-
-- lenovo-wmi-hotkey: Avoid triggering error -5 due to missing mute LED
-
-- mellanox: mlxbf-pmc: Validate event names and bool input
-
-- power: supply: Add get/set property direct to allow avoiding taking
-                 psy->extensions_sem twice from power supply extensions
-
-Regards, i.
-
-
-The following changes since commit 4f30f946f27b7f044cf8f3f1f353dee1dcd3517a:
-
-  platform/x86: think-lmi: Fix sysfs group cleanup (2025-07-02 12:01:25 +0300)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-v6.16-4
-
-for you to fetch changes up to e2967b50b709970547b5cdfa1b42526835327f36:
-
-  MAINTAINERS: Update entries for IFS and SBL drivers (2025-07-21 14:38:19 +0300)
-
-----------------------------------------------------------------
-platform-drivers-x86 for v6.16-4
-
-Fixes and New HW Support
-
-- alienware-wmi-wmax:
-
-  - Add AWCC support for Alienware Area-51m and m15 R5.
-
-  - Fix `dmi_system_id` array termination
-
-- arm64: huawei-gaokun-ec: fix OF node leak
-
-- dell-ddv: Fix taking psy->extensions_sem twice
-
-- dell-lis3lv02d: Add Precision 3551 accelerometer support
-
-- firmware_attributes_class: Fix initialization order
-
-- ideapad-laptop: Retain FnLock and kbd backlight across boots
-
-- lenovo-wmi-hotkey: Avoid triggering error -5 due to missing mute LED
-
-- mellanox: mlxbf-pmc: Validate event names and bool input
-
-- power: supply: Add get/set property direct to allow avoiding taking
-                 psy->extensions_sem twice from power supply extensions
-
-The following is an automated shortlog grouped by driver:
-
-alieneware-wmi-wmax:
- -  Add AWCC support to more laptops
-
-alienware-wmi-wmax:
- -  Fix `dmi_system_id` array
-
-arm64: huawei-gaokun-ec:
- -  fix OF node leak
-
-dell-ddv:
- -  Fix taking the psy->extensions_sem lock twice
-
-dell-lis3lv02d:
- -  Add Precision 3551
-
-Fix initialization order for firmware_attributes_class:
- - Fix initialization order for firmware_attributes_class
-
-ideapad-laptop:
- -  Fix FnLock not remembered among boots
- -  Fix kbd backlight not remembered among boots
-
-lenovo-wmi-hotkey:
- -  Avoid triggering error -5 due to missing mute LED
-
-MAINTAINERS:
- -  Update entries for IFS and SBL drivers
-
-mlxbf-pmc:
- -  Remove newline char from event name input
- -  Use kstrtobool() to check 0/1 input
- -  Validate event/enable input
-
-power: supply: core:
- -  Add power_supply_get/set_property_direct()
-
-power: supply: test-power:
- -  Test access to extended power supply
-
-----------------------------------------------------------------
-Armin Wolf (3):
-      power: supply: core: Add power_supply_get/set_property_direct()
-      power: supply: test-power: Test access to extended power supply
-      platform/x86: dell-ddv: Fix taking the psy->extensions_sem lock twice
-
-Jackie Dong (1):
-      lenovo-wmi-hotkey: Avoid triggering error -5 due to missing mute LED
-
-Jan-Niklas Burfeind (1):
-      platform/x86: dell-lis3lv02d: Add Precision 3551
-
-Jithu Joseph (1):
-      MAINTAINERS: Update entries for IFS and SBL drivers
-
-Johan Hovold (1):
-      platform: arm64: huawei-gaokun-ec: fix OF node leak
-
-Kurt Borja (2):
-      platform/x86: alienware-wmi-wmax: Fix `dmi_system_id` array
-      platform/x86: alieneware-wmi-wmax: Add AWCC support to more laptops
-
-Rong Zhang (2):
-      platform/x86: ideapad-laptop: Fix FnLock not remembered among boots
-      platform/x86: ideapad-laptop: Fix kbd backlight not remembered among boots
-
-Shravan Kumar Ramani (3):
-      platform/mellanox: mlxbf-pmc: Remove newline char from event name input
-      platform/mellanox: mlxbf-pmc: Validate event/enable input
-      platform/mellanox: mlxbf-pmc: Use kstrtobool() to check 0/1 input
-
-Torsten Hilbrich (1):
-      platform/x86: Fix initialization order for firmware_attributes_class
-
- MAINTAINERS                                        |  6 +-
- drivers/platform/arm64/huawei-gaokun-ec.c          |  2 +
- drivers/platform/mellanox/mlxbf-pmc.c              | 25 ++++---
- drivers/platform/x86/Makefile                      |  3 +-
- drivers/platform/x86/dell/alienware-wmi-wmax.c     | 17 +++++
- drivers/platform/x86/dell/dell-lis3lv02d.c         |  1 +
- drivers/platform/x86/dell/dell-wmi-ddv.c           | 10 ++-
- drivers/platform/x86/ideapad-laptop.c              |  4 +-
- drivers/platform/x86/lenovo-wmi-hotkey-utilities.c | 30 +++++---
- drivers/power/supply/power_supply_core.c           | 82 ++++++++++++++++++----
- drivers/power/supply/test_power.c                  |  4 ++
- include/linux/power_supply.h                       |  8 +++
- 12 files changed, 153 insertions(+), 39 deletions(-)
+> 
+> Best regards,
+> Krzysztof
+> 
 
