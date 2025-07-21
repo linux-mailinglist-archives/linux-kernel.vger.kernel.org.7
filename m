@@ -1,100 +1,131 @@
-Return-Path: <linux-kernel+bounces-739183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A99E7B0C2EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:29:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79387B0C2F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:31:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C2137A7F89
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:28:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D14053A3C1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C750A29C340;
-	Mon, 21 Jul 2025 11:28:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41CF729C352;
+	Mon, 21 Jul 2025 11:30:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="T4bd4cv2"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uNYSJelq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D1729B8C2
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 11:28:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C2228DB68;
+	Mon, 21 Jul 2025 11:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753097338; cv=none; b=CxycPTJLfvEOS3hq4PUa+h6aeNm6shleAKPKwdis9nyR9LQYI43xFWiKqWa9efjUzShnbtGDPUoXC437ec8P95aT9VPcHvch+v10Ar8tMKN7FuP6gCfvCPHMleC3pduXIuP42fS0tRHjABzMjqf/to/QO734zj1ilVZqJ2xhMqc=
+	t=1753097452; cv=none; b=g7IfVmuE8PNaxtzxauG87q32WDOCRa39wRBHmQdbjQ0Dy+jAr37eKTEGUcqw5367N40wpMC/0EObLutw41jfhyRAgId41xcbez6KZs2/SzdDl/JKMq6jp9REkF6dJSY1+IIdzsY/hNCCfSkWQjh+E1/EI/fci/ywNmWObckHBlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753097338; c=relaxed/simple;
-	bh=NWPyE/oXXwV7jbclRZg1Z5pKRCbwyvtDaAna5RhNTZ4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=k8zdRiEdsmzNKOv3RIcfI2RIo0jmvp0/5j8WJsBe3HQm80kshnHp7lpLGkKK6mIbONNjaXvcvMvKTBvgTTB4xY4x2zsnuqjVb6IQlU7a8FgRkB/2aCAVguSmVXLESRi5eyjiiAqgsa4K6fw8T5qLXjil3F5VAiiQhENW0Uvegnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=T4bd4cv2; arc=none smtp.client-ip=209.85.221.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3a4f858bc5eso3482127f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 04:28:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753097335; x=1753702135; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OLDWY+AZ8TsQpkCn6ZpTAvHwd+IywydqS2wN/CqvQc0=;
-        b=T4bd4cv2mNj30D1EkL0NobD+x+++oWN1mCOv7sUmYWvgzZlIl8gBcFZUNAd+9mFGLW
-         h9ZBqpDJuGPd9y9nya12DQZvc87rzy3wwgBhu68efuij8C6+4qVECR1f/QY/0jhdCQbg
-         Xfwhp6AhYVCb6AvyxSGHxxymnnQ3SQOuY5OH7tUD+IQ2llfDS9TxBipP3yz7LYbgBUpa
-         EotUdjenHkUK+trVnHrwn1+4OmJPV1KJysD91Eu/w1M42CRQq3Oy11NGByDdmQrqg1FR
-         +zK9yokq5RDEsdkfYF3+3YbRLIUEyeOXwJqlCx+TuhuEXmsE+APzyJ3nxtgAxYtDrLDc
-         9a4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753097335; x=1753702135;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OLDWY+AZ8TsQpkCn6ZpTAvHwd+IywydqS2wN/CqvQc0=;
-        b=YUaZfr+Psl2mfel41Vu4QxQSyykPF01nq9RO3i8GZ3+wDkU7bprYEkKeyNUSa6rBBP
-         QMQkpask61g6VUinLABtoxmXytRUJNCBFJJdkHtGxAtjOoSPCw8gy1On5FvID6bt5NdT
-         Bti8qYOhfeAkMlzVoYRrB9JIcyr6Y7sQSJvg3osQhcdr6dejf8lKkzO63wIfH0EXIl6d
-         4ngojr8vWY9YpRupq/gXpwrYjak879C76NFoyA7ibeaQ1+gR3N2iIMTzpXax0HgxUred
-         AxmYiPHiO90bo8wp2XqtGYvzcF7AkqnLBnCK/lcI235MU3SaCkbjrm8O7RDfQhS8F0HT
-         /uUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVSV3LtLJb2w9XpxnBVIyn3wCDnONEu1QRuT6uQPJM669NxBcVmLSNvcle2V42q3bSp2AK9700d74UI9Kw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzqw0aStd4pV2cDhn4o4gZZ2BVt8+mUBs1YKitTr2zBiAwVKlDG
-	E7oLwPQ1GbdM2opaTgh68hdxBxzg2rugm5Ty9PBt0vWcSYi1nhaeh6zFsT+F0Eq4hvfE1Xr2hiT
-	e50CFAzi4pA0dEmwC0Q==
-X-Google-Smtp-Source: AGHT+IFajS90MhfIY2BBT+gKlJwX+dM/eN8Fmozuq1by1tOiYPEzAnvjApRieaWzEaiqLeiQxI4Nz1plEKfqeso=
-X-Received: from wmbz14.prod.google.com ([2002:a05:600c:c08e:b0:456:1075:9202])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:adf:e19d:0:b0:3a6:f2d7:e22b with SMTP id ffacd0b85a97d-3b60e4d2a3bmr12301878f8f.18.1753097335224;
- Mon, 21 Jul 2025 04:28:55 -0700 (PDT)
-Date: Mon, 21 Jul 2025 11:28:54 +0000
-In-Reply-To: <20250629024310.97937-3-contact@antoniohickey.com>
+	s=arc-20240116; t=1753097452; c=relaxed/simple;
+	bh=19237Phl5a29kIuQoBtWKWdcClHzbHbn1GScbMbhpvc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Kyob9tYI/Q/MoJx/WpjBb12MZv2+xGPupSMiBoSZKs818bUjnvVbIDnOWqVYnJJ65cMEgeUWhJrEKvSbT/WEcuWb+dGttvwv6ICZqyDhPUSvi2eC6tiS8stnXvl+HRvHbjjJnYjdezS6W59BHSe3w/tpIob/t8Yn4vA7JmowpYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uNYSJelq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23914C4CEED;
+	Mon, 21 Jul 2025 11:30:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753097452;
+	bh=19237Phl5a29kIuQoBtWKWdcClHzbHbn1GScbMbhpvc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uNYSJelqAC+hxrFwcnPAuuSDfWXTFSu7GuAjjiQ3WoI3EYGEjn7nTuDtFtsbCRbgn
+	 YxOyFaVZ56HeIi3ZJ7Eq87K69wLG/1sKH47O/nZVDgdU05MqtqhKEEl73pzVocOuaC
+	 ljeCCP54vjQ/HLIMQnFhFEHiHUBhSzz2QhiVz0P8VOZvKRvz4IpXR1qWYqAq2dF0gS
+	 nIca35Qxj2pp3Ss2JlwJxQdFvr7oT6fzmod0Q9PKgbM2I/oG0nxav7wJMrzfeuOzZD
+	 asiy/Pwf+rjLnn8CIDAmSrnRBQwxNBMK2hc91TrAeJOFORk+Dir0c80uKac+NnVWhr
+	 w5J93GnGcjBYQ==
+Message-ID: <faea23d5-9d5d-4fbb-9c6a-a7bc38c04866@kernel.org>
+Date: Mon, 21 Jul 2025 13:30:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250629024310.97937-1-contact@antoniohickey.com> <20250629024310.97937-3-contact@antoniohickey.com>
-Message-ID: <aH4kdk5wzAw6PQdr@google.com>
-Subject: Re: [PATCH v4 2/2] rust: uaccess: refactor to use `overflow_assert!`
-From: Alice Ryhl <aliceryhl@google.com>
-To: Antonio Hickey <contact@antoniohickey.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Daniel Cote <danielstonecote@gmail.com>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 1/4] dt-bindings: net: document st,phy-wol
+ property
+To: Gatien Chevallier <gatien.chevallier@foss.st.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Christophe Roullier <christophe.roullier@foss.st.com>,
+ Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, Simon Horman <horms@kernel.org>,
+ Tristram Ha <Tristram.Ha@microchip.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250721-wol-smsc-phy-v1-0-89d262812dba@foss.st.com>
+ <20250721-wol-smsc-phy-v1-1-89d262812dba@foss.st.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250721-wol-smsc-phy-v1-1-89d262812dba@foss.st.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, Jun 29, 2025 at 02:43:47AM +0000, Antonio Hickey wrote:
-> Using the `overflow_assert!` macro here adds documentation to
-> the intent of the assertion, and avoids local `#ifdefs`s by
-> encapsulating the conditional behavior to the macro itself.
-> 
-> Co-developed-by: Daniel Cote <danielstonecote@gmail.com>
-> Signed-off-by: Daniel Cote <danielstonecote@gmail.com>
-> Signed-off-by: Antonio Hickey <contact@antoniohickey.com>
-> Link: https://github.com/Rust-for-Linux/linux/issues/1159
-> Suggested-by: Miguel Ojeda <ojeda@kernel.org>
+On 21/07/2025 13:14, Gatien Chevallier wrote:
+> The "st,phy-wol" property can be set to use the wakeup capability of
+> the PHY instead of the MAC.
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
+And why would that be property of a SoC or board? Word "can" suggests
+you are documenting something which exists, but this does not exist.
+
+Best regards,
+Krzysztof
 
