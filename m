@@ -1,84 +1,151 @@
-Return-Path: <linux-kernel+bounces-738765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 617BBB0BCBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:37:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F278B0BCBD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:38:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ADF0189B826
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:38:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D98D4189B785
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:38:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE4727C842;
-	Mon, 21 Jul 2025 06:34:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BBB427EFFB;
+	Mon, 21 Jul 2025 06:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NLtB7ZgP"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=coasia.com header.i=@coasia.com header.b="WZFHfjQl"
+Received: from spam.coasia.com (mail2.coasia.com [112.168.119.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F1827AC3E;
-	Mon, 21 Jul 2025 06:34:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3206927C150
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 06:36:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=112.168.119.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753079648; cv=none; b=blNXMifJjzdiRPBCojxl2MOlsCibkFGthwpah2r7qUjNG8x3k+PIBwZAe6+X+O487ie/Qho0Rso229GOa5SRcJnB2nWDj1+j2T2uWLVPJeb2+FJsmRmA4XDZKDo6KpHHAOqdCcNhvYn9FZy/I4Rr5YJg9lg8I6GFIpm9DhSIKdY=
+	t=1753079772; cv=none; b=QSp/Cw3jT7MISIsj9/mbqu1rMulTS/Xt85iR6OrM0+XpQ6DbBIcr/7osr2Zexjz27IJdMOFYQIjVOfyohQCRIybwXKOZPwXCxhQvuJdY5axZYS18kJ8tMwQNx1eam98bBYVNkaneSNVJpkpwlqncAVBi402b3XxweVF3k00d0A4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753079648; c=relaxed/simple;
-	bh=2hikPorBUTfG5oonj2T3OsRDG5d/oNQ9Pawi3KKFJrk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ESoRr5ngF+pUSmnRzWPffSq6kofzdHbrUtemUBaYbEA2EO6uTTaTGj/Wuwsj3dO/7hViKlVCgjCxImj+lN/HlgPusEtrpND7lPWfk2qDXr1YxU6todRLA1VgRkXMLSVQ1b/Gl5K0WvcKYk4QG4R0vEocFronz05R6WXwE0MaWq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NLtB7ZgP; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=X02kqUfwhV7HgXwTN+DIIxEHxV9Vemu2dNXZxJ/Ker4=; b=NLtB7ZgPoFqHmVwtjbVrUSfxAc
-	zQ+Te7/by80VISg3jTmzk7kew8hEm7y+P2BLulH0VF62ziHUoi3r4ZjENjzOlbaxmxtDkq/asz5mu
-	FoKmDtapw66OlAw+NukAGOvP0rD1F0zZOq/fx2JTpcJuR8yMxmWbDHre3i3TpgcGtcNt5DfSHE2v9
-	dYYCrBf4LF9MXGVc9GQFmoiQx11EPTKTfAuNFaDsJakyp0RaxGFyMZuqF1iYOYtz5xLjL+nG7agNp
-	v3GqoDtxoWTHRgygxK3JS4YxAVUvZNs1AFQaLq3OKfAi7MDx+SkF+28UEmy2NNlZU6YCezeiNn8Tp
-	tIJFBLyA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1udk6A-0000000GNgV-25AF;
-	Mon, 21 Jul 2025 06:34:06 +0000
-Date: Sun, 20 Jul 2025 23:34:06 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: cen zhang <zzzccc427@gmail.com>
-Cc: cem@kernel.org, linux-kernel@vger.kernel.org, baijiaju1990@gmail.com,
-	zhenghaoran154@gmail.com, r33s3n6@gmail.com, gality365@gmail.com,
-	linux-xfs@vger.kernel.org
-Subject: Re: [BUG] xfs: Assertion failed in xfs_iwalk_args triggered by
- XFS_IOC_INUMBERS
-Message-ID: <aH3fXv5tlfGtzVD1@infradead.org>
-References: <CAFRLqsU-k2GYx4D9HUmu+tSTvmMbY_ea9aYwE+2yvHwLP_+JDQ@mail.gmail.com>
+	s=arc-20240116; t=1753079772; c=relaxed/simple;
+	bh=jz+hH1V+WuQ3MIMg5eXD97Fl665gq8f1oJ9WsY5WqKY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=PazAvji6NXbzTuNY+0VjHS433LhKEZ5dNalbKKzq9/zWjWqVZqBweNzfY333UfWbbYFu/gjNcJpy8RxqU3GU2ONa8RcXwgBzlpcphkANm8hOPq/VR370WUk5FZCDGyD/tMy1QjbhKwK/oA3UfdAwnjEg3G8/mKdT/Q599koApss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=coasia.com; spf=pass smtp.mailfrom=coasia.com; dkim=pass (1024-bit key) header.d=coasia.com header.i=@coasia.com header.b=WZFHfjQl; arc=none smtp.client-ip=112.168.119.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=coasia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coasia.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=coasia.com; s=coasia;
+	t=1753079767; bh=jz+hH1V+WuQ3MIMg5eXD97Fl665gq8f1oJ9WsY5WqKY=;
+	l=924; h=Message-ID:Subject:From:To:Date:Content-Type:MIME-Version;
+	b=WZFHfjQlx4HKgd2BM0FIUM5RYC68XnMBy2OR0xR57vwiDOgZYekJ6tq/FB0UjBON0
+	 PLQ4++6zpKlB4sUL0QySMakvfyngkjfGkrfABMkSlrpSPel68UZgTMkjgS4q+bAJBM
+	 +uTB9MORn0ukH0hRFqWbKjhhErSI0sYwtgfdqtN8=
+Received: from unknown (HELO ?192.168.1.63?) (119.65.249.123)
+	by 192.168.10.159 with ESMTP; 21 Jul 2025 15:36:07 +0900
+X-Original-SENDERIP: 119.65.249.123
+X-Original-SENDERCOUNTRY: KR, South Korea 
+X-Original-MAILFROM: smn1196@coasia.com
+X-Original-RCPTTO: krzk@kernel.org,
+	ksk4725@coasia.com,
+	jesper.nilsson@axis.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	s.nawrocki@samsung.com,
+	cw00.choi@samsung.com,
+	alim.akhtar@samsung.com,
+	linus.walleij@linaro.org,
+	tomasz.figa@gmail.com,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	arnd@arndb.de,
+	ravi.patel@samsung.com,
+	linux-arm-kernel@axis.com,
+	kenkim@coasia.com,
+	pjsin865@coasia.com,
+	gwk1013@coasia.com,
+	hgkim05@coasia.com,
+	mingyoungbo@coasia.com,
+	pankaj.dubey@samsung.com,
+	shradha.t@samsung.com,
+	inbaraj.e@samsung.com,
+	swathi.ks@samsung.com,
+	hrishikesh.d@samsung.com,
+	dj76.yang@samsung.com,
+	hypmean.kim@samsung.com,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	soc@lists.linux.dev
+Message-ID: <28c32b2902ea03ad665f36301b6ab665fe7196d9.camel@coasia.com>
+Subject: Re: [PATCH 13/16] dt-bindings: arm: Add Axis ARTPEC SoC platform
+From: sungmin <smn1196@coasia.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, ksk4725@coasia.com, Jesper
+ Nilsson <jesper.nilsson@axis.com>, Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor Dooley
+ <conor+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo
+ Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Linus
+ Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>,  Ravi Patel <ravi.patel@samsung.com>,
+ linux-arm-kernel@axis.com
+Cc: kenkim <kenkim@coasia.com>, Jongshin Park <pjsin865@coasia.com>, GunWoo
+ Kim <gwk1013@coasia.com>, HaGyeong Kim <hgkim05@coasia.com>, GyoungBo Min
+ <mingyoungbo@coasia.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Shradha
+ Todi <shradha.t@samsung.com>, Inbaraj E <inbaraj.e@samsung.com>, Swathi K S
+ <swathi.ks@samsung.com>, Hrishikesh <hrishikesh.d@samsung.com>, Dongjin
+ Yang <dj76.yang@samsung.com>, Sang Min Kim <hypmean.kim@samsung.com>, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, soc@lists.linux.dev
+Date: Mon, 21 Jul 2025 15:36:07 +0900
+In-Reply-To: <e805be4b-4fe8-42e6-9269-84112a16392f@kernel.org>
+References: <20250710002047.1573841-1-ksk4725@coasia.com>
+	 <20250710002047.1573841-14-ksk4725@coasia.com>
+	 <e805be4b-4fe8-42e6-9269-84112a16392f@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFRLqsU-k2GYx4D9HUmu+tSTvmMbY_ea9aYwE+2yvHwLP_+JDQ@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-The patch below should fix the issue.  But I wonder if we should split
-the flags a bit better to make things more obvious.
+2025-07-10 (=EB=AA=A9), 09:15 +0200, Krzysztof Kozlowski:
+> On 10/07/2025 02:20, ksk4725@coasia.com=C2=A0wrote:
+> > From: Ravi Patel <ravi.patel@samsung.com>
+> >=20
+> > Add device tree bindings for the Axis ARTPEC-8 SoC platform
+> > and ARTPEC-8 Grizzly board.
+> >=20
+> > Also move the existing ARTPEC-6 related bindings from .txt
+> > to yaml format.
+>=20
+> Don't mix conversion with new boards.
+The original intention for conversion here is to satisfy the dt-
+bindings check warnings.
+I will break this patch into 2 patches where 1st will be conversion
+from txt to yaml and 2nd will be adding new board.
+>=20
+> >=20
+> > Signed-off-by: sungminpark <smn1196@coasia.com>
+> > Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+>=20
+> Same problems about SoB chain...
+Ok, I will update the SoB section in next patches.
 
-diff --git a/fs/xfs/xfs_itable.c b/fs/xfs/xfs_itable.c
-index c8c9b8d8309f..302efe54e2af 100644
---- a/fs/xfs/xfs_itable.c
-+++ b/fs/xfs/xfs_itable.c
-@@ -457,7 +457,8 @@ xfs_inumbers(
- 	 * locking abilities to detect cycles in the inobt without deadlocking.
- 	 */
- 	tp = xfs_trans_alloc_empty(breq->mp);
--	error = xfs_inobt_walk(breq->mp, tp, breq->startino, breq->flags,
-+	error = xfs_inobt_walk(breq->mp, tp, breq->startino,
-+			breq->flags & XFS_IBULK_SAME_AG,
- 			xfs_inumbers_walk, breq->icount, &ic);
- 	xfs_trans_cancel(tp);
- 
+Thanks,
+sungminpark
+>=20
+> > ---
+>=20
+>=20
+>=20
+> Best regards,
+> Krzysztof
+
 
