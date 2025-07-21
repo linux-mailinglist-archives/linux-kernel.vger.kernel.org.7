@@ -1,121 +1,125 @@
-Return-Path: <linux-kernel+bounces-739928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0634B0CD41
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 00:24:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 43248B0CD45
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 00:26:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2BD43A29E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:23:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 552466C597B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A862417C8;
-	Mon, 21 Jul 2025 22:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05A2D24290B;
+	Mon, 21 Jul 2025 22:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="bA+Yi8aN"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Cmt1uubr"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1673922173A;
-	Mon, 21 Jul 2025 22:24:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F37F22173A
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 22:26:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753136658; cv=none; b=Sg0IO5yuYxn/9TQPGdWjZEpNPe/03yHluzTnvckRxAkm/gp4muwdfVnUuXhgSeUsq/4Rhdr9T/P+9zm1mqtBEUsgcwgW/g0ck4UaCoMMY1wc+GDNG7W9QMaK76OsZ5X1tYhaz6Vthy/N8BhPzAbHtfNjCvB/kARL7Ee+LmCNHiE=
+	t=1753136770; cv=none; b=fbJfpIa4m8qjLGVyqCriTJVBqe7CmbbLgEMVJqWyNi6NkCm30f6p287BPC6hqfVggK8tUl4hE+TtCxEjnWbwuS0FRYXg/XGHyYN6p8ARv9CLEZ2wmfrL8Ckf4TbnS/LDwlGTIAUCeJgENFpLtdrkBqZMOtz2TQM746YVjz9EbgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753136658; c=relaxed/simple;
-	bh=Ar8NAKZeMLI4LKDdpOyw77ark2aK0tDnDdGAoiqgfsc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZCks/x62owoU+A1xtFUsuM9Bv+jImBV0tLTvZAvSqbGc5UnwoBpsIFyNwBniVo6ghTepYEaIQAsPWu3EFmxwaDz+YCZsbX7rEbbWag2KJcHWSYk2NZ5Pi+VdIHzMVJ526IwLmaPiQxFCPeAa5KiLmjN/UvMpvd9xLIgxyh89LDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=bA+Yi8aN; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1753136497;
-	bh=x1xD2TtdNgugM98hUGXV8Wf8b3JmtY5tjK46Ct4FpGk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bA+Yi8aNsAHg2sXLam588yhbpFFj5w4TShlvX1IdLZL1iWjPv0e0g37nwxyx3uLip
-	 uAkqAs0+cgxXdxBDLou/xDTb0jzn4QQ8elPyD3KZOKYFGwrUWJO6ePOaL8tslYANwl
-	 nr0YQv0PUaSM4LkZWlktd4NOBhTA0XVkobpioPHyBJbFW6ZqfUsG03QfaHcwDZ4Pn2
-	 foHnJ6WA3EqwjFgL3QwN+tAzHPVWef8KH56PCUcGoOARZD3M8C2J1+0xpUq+SSaSQy
-	 O8jtailuVIV3BVwngBh17RgvSmztMsNx2LLpnqWZp2FHRIomnsFaDJ2ydSOdUFuw4O
-	 iymkD1ek2aYfQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bmFHN5G6qz4x21;
-	Tue, 22 Jul 2025 08:21:36 +1000 (AEST)
-Date: Tue, 22 Jul 2025 08:24:11 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linux Next Mailing
- List <linux-next@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, George Abraham P
- <george.abraham.p@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: linux-next: build failure after merge of all the trees
-Message-ID: <20250722082411.130825e0@canb.auug.org.au>
-In-Reply-To: <20250721141336.1491a3b5b09529171d65db6f@linux-foundation.org>
-References: <20250721173754.42865913@canb.auug.org.au>
-	<aH4nnsecLEqrCrpK@smile.fi.intel.com>
-	<20250721141336.1491a3b5b09529171d65db6f@linux-foundation.org>
+	s=arc-20240116; t=1753136770; c=relaxed/simple;
+	bh=IyvP8QHlTa2QpWvqlFYR9SEvyFxbF/ATcjcrXYbVJ2I=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=qTsLXStQQ7FdFsoVFftXSLyEFFvIdkhBRF555xAvn8zQtdzGaJ238pTgQ38HRrYdNvCT4FMOds2JUbNYIUP5Fakdwp3RWdr2YuJKp478YBvtvlHKZcwYDDG6u7PbQz55LXvxuri3FlBzWuMrrXVrArNvsE48fGWWmgCOV/Avfw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Cmt1uubr; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31e3fdf1906so108190a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 15:26:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753136768; x=1753741568; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LL2cGKuHaaPjxufWOQkCjzE9tdmYpzd1lzvFg8IW6fY=;
+        b=Cmt1uubrOI27eeR6IElR2/K8H5Ao8oLkbwmkpeqXg0yb/32x9R8xWovsN7eo4mtTLE
+         4zSlf7BIESO3R3eOiyQrwraWES4zD2vS515QGrwV20KsZuxjB13ywDIxjnsRLGooapmj
+         mfGBHdRmtA7WcLk/YsvZuFfqKqbpdItENgw6YQuuznM2/rRYL+qR9TSfUSsjd/3E83TC
+         Ue3/Ui4A+rbt+2k8fS2EypynZhKNTOKfTSJBJCG1IcFDV8+zIzZcy4zL8c3+8fVrV4lj
+         dOOR35+2o4sq7jEC1Gh2eLRt3t9SlmMgB5oy+Or09UtKW1OUiY608+dUk7Yu7jO2TXP0
+         biDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753136768; x=1753741568;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LL2cGKuHaaPjxufWOQkCjzE9tdmYpzd1lzvFg8IW6fY=;
+        b=f6iQZexZtqb7XzkLgoX4e7v0bhvRlHOQhx0jHA0wq5kSUZvzLlRv5FqGIxwxGjUO1l
+         77I17Wi1KxElPVbkVMpoCvc3Zs7oaxQJThXJzjPm9qDesrLjdDXVPsNhszpX0+VZoAnY
+         eCkKirST+fEkOGU1rIY0sUwufERDKcAuipRNXp1hDk/IGky05pYO6o0tkS1LsaJhB8Qq
+         I/dRqd0aNCicjne8Of3FY5P4JtZV5QFKlmtw1/BP+2Gya0TdAICFTMIrDDtTuDj0pV9v
+         ZOZWYUsYxx7Km1L8VKWdJu7SBLTjbWEA3qobRP7x3ySRIhoUomT+qvx1vkYl70LCPLok
+         dbDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWNwCcUnqP1GMeRUa+KcpOp0VG5cXcILmfhgTseSE6x7NFr4DeaRnMIy/UhCJWfHkL342529u/jcUN7L+o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzgq4Mw1kwG0ZnACz/cOSmO/vJgGj/Z3hw83uicmFvb1dh3xEmC
+	kkveefDV+7bKiIX0d2GVSzF0+C2y82uudSdmv4PqHkXD3SBlXpwuBdW9VW0c847cfdgamWCqe0n
+	bpOSmPw==
+X-Google-Smtp-Source: AGHT+IFOEfi1TplIejvNZRr/1MbPEFH8m6+GDazbtftWiE+uc1xJ4NSswHFa4ynpaZqg1Tm3n/YWoEjzkPQ=
+X-Received: from pjwx13.prod.google.com ([2002:a17:90a:c2cd:b0:313:230:89ed])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:50ce:b0:313:5d2f:54fc
+ with SMTP id 98e67ed59e1d1-31cc25429b9mr22489997a91.10.1753136768428; Mon, 21
+ Jul 2025 15:26:08 -0700 (PDT)
+Date: Mon, 21 Jul 2025 15:26:07 -0700
+In-Reply-To: <7t5qpdpc7cvkyvgj7i2fes56pvpfvrqcpbbdqqrhu3vgqgtjw2@6mpuc4ljmiey>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/50t.AIzQNbnyofssB+0kNR9";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0
+References: <cover.1740036492.git.naveen@kernel.org> <330d10700c1172982bcb7947a37c0351f7b50958.1740036492.git.naveen@kernel.org>
+ <aFngeQ5x6QiP7SsK@google.com> <6dl4vsf3k7qhx2aunc5vdhvtxpnwqp45lilpdsp4jksxtgdu6t@kubfenz4bdey>
+ <aHpZD6sKamnPv9BG@google.com> <7t5qpdpc7cvkyvgj7i2fes56pvpfvrqcpbbdqqrhu3vgqgtjw2@6mpuc4ljmiey>
+Message-ID: <aH6-f1xOMU7dQLsX@google.com>
+Subject: Re: [PATCH v3 1/2] KVM: SVM: Increase X2AVIC limit to 4096 vcpus
+From: Sean Christopherson <seanjc@google.com>
+To: Naveen N Rao <naveen@kernel.org>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>, Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>, 
+	Vasant Hegde <vasant.hegde@amd.com>
+Content-Type: text/plain; charset="us-ascii"
 
---Sig_/50t.AIzQNbnyofssB+0kNR9
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Jul 21, 2025, Naveen N Rao wrote:
+> On Fri, Jul 18, 2025 at 07:24:15AM -0700, Sean Christopherson wrote:
+> > If there wasn't already an "x2AVIC enabled" print, I would probably lean toward
+> > doing nothing.  But since pr_info("x2AVIC enabled\n") already exists, and has
+> > plently of free space for adding extra information, there's basically zero downside
+> > to printing out the number of supported CPUs.  And it's not just a binary yes/no,
+> > e.g. I would wager most people couldn't state the number of vCPUs supported by
+> > the "old" x2AVIC.
+> 
+> Ok, this is what I have now. Let me know if you prefer different 
+> wording:
+> 
+> 	/* AVIC is a prerequisite for x2AVIC. */
+>         x2avic_enabled = boot_cpu_has(X86_FEATURE_X2AVIC);
+> -       if (x2avic_enabled)
+> -               pr_info("x2AVIC enabled\n");
+> +       if (x2avic_enabled) {
+> +               if (cpu_feature_enabled(X86_FEATURE_X2AVIC_EXT))
+> +                       x2avic_max_physical_id = X2AVIC_4K_MAX_PHYSICAL_ID;
 
-Hi Andrew,
+I actually like the approach you initially posted, where KVM explicitly sets
+x2avic_max_physical_id for both paths.  KVM could obviously rely on global
+initialization to set X2AVIC_MAX_PHYSICAL_ID, but it's not like this code is
+performance critical, and have all paths in one place makes it easy to understand
+what the "default" value is.
 
-On Mon, 21 Jul 2025 14:13:36 -0700 Andrew Morton <akpm@linux-foundation.org=
-> wrote:
->
-> On Mon, 21 Jul 2025 14:42:22 +0300 Andy Shevchenko <andriy.shevchenko@lin=
-ux.intel.com> wrote:
->=20
-> > > Is there any good reason not to do this?
-> > >=20
-> > > I guess this patch should have
-> > >=20
-> > > Fixes: 39ced19b9e60 ("lib/vsprintf: split out sprintf() and friends")=
- =20
-> >=20
-> > This sounds correct to me and your patch should be sent as a fix to the=
- stable
-> > kernels as well.
->=20
-> Yep, thanks, I added the cc:stable, queued it up and shall send to
-> Linus this week.
+		if (cpu_feature_enabled(X86_FEATURE_X2AVIC_EXT))
+			x2avic_max_physical_id = X2AVIC_MAX_PHYSICAL_ID_4K;
+		else
+			x2avic_max_physical_id = X2AVIC_MAX_PHYSICAL_ID;
 
-Thanks, I was going to get around to that this morning.  One less thing
-to do :-)
+> +               pr_info("x2AVIC enabled (upto %lld vCPUs)\n", x2avic_max_physical_id + 1);
 
---=20
-Cheers,
-Stephen Rothwell
+Maybe s/upto/max?
 
---Sig_/50t.AIzQNbnyofssB+0kNR9
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh+vgsACgkQAVBC80lX
-0GzmSQf6AoVnvCNq0WfaPORsvNGheFD4g/zjevDLAy9S1kNtdepYSQFvIaIAgrD2
-zdmvPZhTLTCmDYckqGX+WDZYEugJjSbri7hwqWbXKmdnAlTaV4szFet/RHVd+A9n
-SCGagfuv+bILVRJSg+mXuCD5tjl6DVP0VDw5yt1/OC8emwASjIWUZRmmLrw1QSpT
-PNsCKDfXNqZ4qQFggC7MuCsrcokLd+NUCWDfWH+xBQIAeNIBuVMRcXlG666O5Dgq
-yYez/5tr+ODTBx2Cc7FEsdNmv8R8WxhfDy7iwIAFTbLLyrIAX6saASNmzAHsj55A
-ai8neN+CTs0QFrWxGskOCZ+ASHxiYg==
-=lUCL
------END PGP SIGNATURE-----
-
---Sig_/50t.AIzQNbnyofssB+0kNR9--
+> +       }
+> 
+> 
+> - Naveen
 
