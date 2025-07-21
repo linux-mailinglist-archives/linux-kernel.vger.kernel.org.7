@@ -1,89 +1,90 @@
-Return-Path: <linux-kernel+bounces-739858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 890D0B0CC2D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:59:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E39BB0CC2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:59:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDA174E7238
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:58:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C80704E7289
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783D523D282;
-	Mon, 21 Jul 2025 20:58:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B4023D2A0;
+	Mon, 21 Jul 2025 20:59:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="fKXNko8N"
-Received: from YT5PR01CU002.outbound.protection.outlook.com (mail-canadacentralazon11021139.outbound.protection.outlook.com [40.107.192.139])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="uJHqTIV0"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2072.outbound.protection.outlook.com [40.107.92.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FF1D1EF1D;
-	Mon, 21 Jul 2025 20:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.192.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3161323B600;
+	Mon, 21 Jul 2025 20:59:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.72
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753131531; cv=fail; b=tT2KQR2+QqwuOQ9dQkkjPXljYTHN8v7ufNMxXNIm+LgcRZDcY0CHx9wnbkyIdbU654UKA2uV727/9eUpijxo9mE5mHV16rdiRdlObiHDFvjmB7csoGdoDm0MgI7G3b6y5XFqOWcCyX2ZVNtqYiaQxbqHi1dEfX5c/2pnKlF3a30=
+	t=1753131561; cv=fail; b=u+kqcwcXSufB7TFQ0jgEZ2d4S31r0am4Yt4bbRvPlkxb2XinzFuFif+Yow9jfQ7gUsFbaMxV3RbMABLtDV2Hav2y4oLS4rWihZKAvblJtgyN9tQfFL26LYmMenfuJVOVGw0hq0I4AGNV02EhNKtQNzq+wjqQoJZN3RileA+AaSY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753131531; c=relaxed/simple;
-	bh=xwr26G8lwZD++CSQ+JFoN+K80hFlqNoL6DDhBzU5AyE=;
+	s=arc-20240116; t=1753131561; c=relaxed/simple;
+	bh=38iKiQyhTdtTYYAZ58WwAtcuFZPhG2ivqvBCY67znDQ=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=QkeQo4/sat8oV/l5dYbTF8XrmdUcxDE10UtnMSCepQGkwWHJp+b+IdpMpwvrr0RJsI7+Por3+XitWvayfRZ4PqQeclSFgshIVJ635JDFxoejlRBLQmRRXi5gBlYSgydsckKt2oQjK368Hg3kCTn2BWgWD/ZHzUYN5VrP21mh1PI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=fKXNko8N; arc=fail smtp.client-ip=40.107.192.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+	 Content-Type:MIME-Version; b=NET+kncBuj9terGgTAlbku1mCbjr4FARSS/E4gHChFInwX9N6pUcNd87ZgfIo88y0ZByyKTG5zhTBTQRzwVCVjGLIh3gKgXSdOPkVQjvAk1dtdGtJTlNkay16noY6GxhMmt/0iYUqrizE4E7Wm6nMADs4VeewNHcupOJym4ekBo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=uJHqTIV0; arc=fail smtp.client-ip=40.107.92.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FMVHY1bbOM1XKv4e6hpwNK+LcJKv+oGEdUfgLLzD9TVoGl6QmxZqzsf6qxV5qe3cP0poz8L71XrKzwgjJfma70VGO13yi5DduAFW3JGWt2kq+yUhjWzprBzu5LnvbQt7w014zSR3xOl17juKoYPI6zfZJazbbr2yOqb9KKhU0/EF5xrIFh3TOhNZLYEmiWDDKT9i3UY18c1Jszm2oXfl0ff94aN0FSM12LTaQYJxUAMqoSfCAhpC+7HBOF0ezQ5mOvJowS6EfhqCJfMs5tEfoLmW/03rHfEGhofUXm0BJN98K3lRaPftD9qM6fhE/DWPQrKM5GW5AeSuYykCiTF1aA==
+ b=QFT09nUWv6XgjVjPzynV5ifwD7kul9Ck4/n/GyB0O3jCdu1+hUmfquQAhy245k0YtmrfFoVYe2lYFaoCO82k3kfe35D1hkvZZwTeWx0rlACRm4IxI5JeqcKaRfI11p6j1TkuCUcGocTknwMUZGz4BIwv2xvZyeLcadqRKau+eQDzUikug82MugRi4RvZ+gXLyAPIvZooEwegx3p1GRhZ0hvqSwMjyYnhYFhBzzUyGViD/ZdUWjoBy4VMqTd8W8asHXsrS/yVvkWmn0UeWR7iltCAp5s/dpXbeOHOst7bcjSZNPqduLRK+iavhyeNwV7DVrwO2s8tVJ2nKl/7qYlBrw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hW5DdMZr8Qig9S8agHr7YrPJJilMNjlTHCJz+OcIzDQ=;
- b=P9ZIVJj0wsD+Y77yHqEa28RYWQs+50n9+RxguCi181MPl0XBosVSunUcIlRPE5khUKkojxrm2J0uaphs13AyJMsVgkk1YjQCjbax/eDhhNW4lBnQ6ml7Url5LdrU4WJmb8xjkbCZsDvYH+QeW/3C2eXcy7CTcH+hlWP4xLd9Bwc43d1wrpZrraLrQYglQC4vldG/EPsfFVx7CzGkNWcXNRMkoH/HHCoAxFznc4dH0PO/iIOa0NRWVSNxUbFbz1OPC5COCg0+/jIuDCGjJ6Q+Sz3SkTM04fZKz/DDJ7VOz0Rj2olshc7GV9+JcIFD7qrfKAFlN5t6xYqD+niIiuX/Pw==
+ bh=WX5ZtYPEIc7CclQrYMP6NcHVeqwUIGc9f0N99trWsGI=;
+ b=AVFyXgsDJMAXyjbA+SSpYFRxbqTwzGxgF9lCHLe7w3L+RMiDZoKSYd9shMtiK6C9vHEkxfwHZhrgY2Z96ZE0fy3Xua8Hg+1ORAG10CPsrUPWZEEDm9IgiQJ9SQWgNMa72mCsSBE0rl55ybZIPLQb8dSsrsNekXbFzqgTyskf0qdalzPje627oJ+cBgCwajRmcJiAmx+YOBNBIbrPxPSDjXbPmlqSb3oCHnUB8fXpgge6P2HcYQsrm/vH3m7bQO1sYHa91R9b3Pkz2YpcjZ4XlboPutM2h2D1EE+uIBdQ09Um9bTI2tAqgFYYR4+Tzt55knX3huaSS9KgscAVP79rRA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
- dkim=pass header.d=efficios.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
- s=selector1;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hW5DdMZr8Qig9S8agHr7YrPJJilMNjlTHCJz+OcIzDQ=;
- b=fKXNko8NYyjCoiVJ/iH16CYyb/KTrvJnhb/RVVqgkRGM0j0Nmt74rVsvX/Pa7Pkr6+xsdrYFsMgpzRyx8w2q3Re6zZsFPLSMQEeWyRuQlYLWP1JE8PjC5vmg8X8YJ7uSci6z+L4HcyqNKcKEmzmGen9vSdwTjub8AKu0U9g/5n0Ht4ii3bDElZaAraMlwSFmtQiW58mJflajJkgrAHUmC7FKKE7ExThZrBWlO0vvfNbcfS+uSBNi+YsgoXLDiv6m906heQ9kwbogbORaiRZym4gKWrEC6bR7ZYjXzxWWdLRgc5n+1WCE5tgPbuQAxL84UV1pgkMBUj3t4z07d6KPhQ==
+ bh=WX5ZtYPEIc7CclQrYMP6NcHVeqwUIGc9f0N99trWsGI=;
+ b=uJHqTIV0ZTcddhTtO2ilj31SL3e9D6obNattjWcPhSq9xsVjlEdHgnLgSEcqqwc7vxXWrvm5z2beHodaAWXIxwYeAkURAik/Q13C1cRzhrIz/z1uayzr6F9l32mdnqskl+C6H40OtqI9sHf6sAGj7jYu75JbfA94xq0NE9QNkAQ=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=efficios.com;
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
- by YT2PR01MB9238.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::18) with
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
+ by SJ5PPFA5F0E981D.namprd12.prod.outlook.com (2603:10b6:a0f:fc02::99d) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Mon, 21 Jul
- 2025 20:58:45 +0000
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4%3]) with mapi id 15.20.8943.029; Mon, 21 Jul 2025
- 20:58:45 +0000
-Message-ID: <e7926bca-318b-40a0-a586-83516302e8c1@efficios.com>
-Date: Mon, 21 Jul 2025 16:58:43 -0400
+ 2025 20:59:16 +0000
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87%3]) with mapi id 15.20.8943.028; Mon, 21 Jul 2025
+ 20:59:15 +0000
+Message-ID: <6e925211-a988-4317-9879-f0c47800f80f@amd.com>
+Date: Mon, 21 Jul 2025 15:59:11 -0500
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] New codectl(2) system call for sframe registration
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
- Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>,
- "Jose E. Marchesi" <jemarch@gnu.org>,
- Beau Belgrave <beaub@linux.microsoft.com>, Jens Remus
- <jremus@linux.ibm.com>, Linus Torvalds <torvalds@linux-foundation.org>,
- Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>,
- Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>,
- Brian Robbins <brianrob@microsoft.com>,
- Elena Zannoni <elena.zannoni@oracle.com>
-References: <2fa31347-3021-4604-bec3-e5a2d57b77b5@efficios.com>
- <20250721145343.5d9b0f80@gandalf.local.home>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Reply-To: babu.moger@amd.com
+Subject: Re: [PATCH v15 19/34] fs/resctrl: Pass struct rdtgroup instead of
+ individual members
+To: Reinette Chatre <reinette.chatre@intel.com>, corbet@lwn.net,
+ tony.luck@intel.com, james.morse@arm.com, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com
+Cc: Dave.Martin@arm.com, x86@kernel.org, hpa@zytor.com,
+ akpm@linux-foundation.org, paulmck@kernel.org, rostedt@goodmis.org,
+ Neeraj.Upadhyay@amd.com, david@redhat.com, arnd@arndb.de, fvdl@google.com,
+ seanjc@google.com, jpoimboe@kernel.org, pawan.kumar.gupta@linux.intel.com,
+ xin@zytor.com, manali.shukla@amd.com, tao1.su@linux.intel.com,
+ sohil.mehta@intel.com, kai.huang@intel.com, xiaoyao.li@intel.com,
+ peterz@infradead.org, xin3.li@intel.com, kan.liang@linux.intel.com,
+ mario.limonciello@amd.com, thomas.lendacky@amd.com, perry.yuan@amd.com,
+ gautham.shenoy@amd.com, chang.seok.bae@intel.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, peternewman@google.com, eranian@google.com
+References: <cover.1752013061.git.babu.moger@amd.com>
+ <5b017f308d3bff1b746c8904d0dfde0c11706fc1.1752013061.git.babu.moger@amd.com>
+ <c52cf3c7-6dea-45ce-8cb8-28ad230d54e5@intel.com>
 Content-Language: en-US
-In-Reply-To: <20250721145343.5d9b0f80@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: "Moger, Babu" <babu.moger@amd.com>
+In-Reply-To: <c52cf3c7-6dea-45ce-8cb8-28ad230d54e5@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YQBPR01CA0146.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:7e::14) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:be::5)
+X-ClientProxiedBy: SA1P222CA0115.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:806:3c5::24) To MW3PR12MB4553.namprd12.prod.outlook.com
+ (2603:10b6:303:2c::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,330 +92,146 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT2PR01MB9238:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8db79be1-898c-4b36-1970-08ddc89961f8
+X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|SJ5PPFA5F0E981D:EE_
+X-MS-Office365-Filtering-Correlation-Id: b08f7d82-c2a4-4775-8655-08ddc89973c6
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YjhEM2k1cDNKVjFXRGtFR3JlZFZEZ1hmY05MQ3R1Rk00ZWFFcUVyM01SWGxu?=
- =?utf-8?B?R3dVbEY5NWVIN3lOTmRpajV1VW1sT1dyWWpMeVRSTTFJNmpBVDM4Sjhnb3NX?=
- =?utf-8?B?UEs0NjRKYVhSSzE2NG1YaWN0Wk90S2dnYmg2UjhVSFV4MHRKV3p5MzJQcVRH?=
- =?utf-8?B?MWNYRkwwVDI1Q0IvS2tmNDFPdXlUOWtuTVRraGY4OElEYVFHN1MvYXFUcWZH?=
- =?utf-8?B?V3V0bHJlUWRGQUJNMXNoZGlhMkMvZTJXN0NUTmoxSmxtS3RadlRJanhQaUtH?=
- =?utf-8?B?Sm5KS3lYb05MWW5UZGVkMHhpbFpPYUdSdU5VZTE5VGNnaEt0NS81eEFJaHQx?=
- =?utf-8?B?VE5Uc2RzeEM3TkU2TksvbkNpU0k1aU5GNHVEd1FTd0c0aEw2TVJ0eEhzdzFt?=
- =?utf-8?B?TkRtNUN2N2Y0S1g3ZWJNdnBManE5Snk5b09VVzFPbG90K1k1dFM1dEFmK2NB?=
- =?utf-8?B?TGowSVdJZ05RWnV0WW9zZjJkbmJxQ0pPQWVDR2l6Z25qTUl3d2pray9ZTlhX?=
- =?utf-8?B?aGIyTXBSdHVNdXFPeXdZK3kwRnZyWGJ3anVURDdCeE90WjdlcGdxOTVialRF?=
- =?utf-8?B?bUxXNS9zdFMycmtseUxlRXVWekNpbzhxTEpzMlY4TUUzTElMdEx3WGkxSUFX?=
- =?utf-8?B?bWdlamhROEJScnhabUNxbmxLRnVvODdZYmxwU1FPd0pLOXc1bGY3OE1OZlZV?=
- =?utf-8?B?N1VwaU4zektBelNHTzl1NlRyU0dHU2Y5MnRnWWRoNitmcmRVNGxqdDVsb1dL?=
- =?utf-8?B?TURQc0gvU2N4SEpjWEY4TVJKVU5VdFhKbXNNekt1RGRid1dETEsvWklRU2lM?=
- =?utf-8?B?UUdvMTdmVEl1QldoaG9melNpQlFvOE42MmlUNm1FNEtTWjIrbGJMRUthczYy?=
- =?utf-8?B?MndiVGZ1dlRKSlVUaDJZdWRVTlNmcEFVWVNjSzd0aUVkQTZNanNHQ1BVY2V3?=
- =?utf-8?B?NkJTRzNPUi9xRU5WKzcyWE5HUkpkNHcyTXM4QkFRUTJ5QW1qREluRmhxVmtF?=
- =?utf-8?B?UzZzeDZJeTEwZzE2dkdseEo0ZmtFZHRtMkQ2K2RDWUtwcjYvTlZQbkMxRVV1?=
- =?utf-8?B?Y3QvUXZmemU5VFVUNWtHOGdRN0hIUE9VZmYvV2ptTExQRGRBNmtRLzJPbjdW?=
- =?utf-8?B?dkdGcHRlaFEvWndQRWxtTmdhOUY4QVhQeDFIb3QvaGVZVjlMcTArWElSMTNk?=
- =?utf-8?B?YmRVUlRDL1JUSlhnYmhCZHpKQytieDd6WmgwOWFTQlZOWkxUTDJuRC9wTEVY?=
- =?utf-8?B?MjhKOGkzbjFkK2I3dUJPUlB0bzh5L283NTFsQnZnQkxwZGg5VHc4N2I3K2pi?=
- =?utf-8?B?R1FLNWlackNoaERzanJld1Q1NnAvSFMxQXFSNFlMUk1QT292QmJMdmxBczVR?=
- =?utf-8?B?R3Y5c2Z5QnhtaHpoU3llTnhHRzF6NFJkUWZ0Yk1nSSsxaThROFBlL09EUGZL?=
- =?utf-8?B?elFkSHUrQ2RwRkRGOFBVQ1JaOGhzV1o5QjV1ZkdtWk5sOXVqRm12R0ZkL0xR?=
- =?utf-8?B?dGtMM0Q5L1UzejJOQU5ZZGFBc1hmVVY0dy9zRHE3TEFZdXRNbUhhNS94NnYy?=
- =?utf-8?B?b1FaZTFRRG9lV2lFWW9wVThBR1FyNndBM2thVXBzcHRFWU9TVGZYYmZJeDR1?=
- =?utf-8?B?Q1hlM0Z1MkVPQWc2bjVLRy8zaC9adXNjL2RRT3I5NEZndSsrUWJVQzFTMzBU?=
- =?utf-8?B?dm1hOUFJbkpmTGpPQVJXaEFxM3JNaDR1UFNmaGgxakNuMUVmY3pwYU1QZUwv?=
- =?utf-8?B?dXBJUCtMSlkzMTdneEhaWVp6K2QzOUt3V3k3WGVvbEdPK0NoajJ6UlFFb3dX?=
- =?utf-8?Q?GuUZ1DK7huGKWU40ZvTsAVMq8bWe4aZEzgisI=3D?=
+	=?utf-8?B?dlVQUHJKQjFwamtZaUc4bm1pM2F4ZWxQOGdNeUZNOXdCMjZUTHUvemRTZ1Qx?=
+ =?utf-8?B?ZkdVblFBSy9ocS9hTktaTlZwNWhNUzc2TWlYK0QxaE9KQ2VFY0ErczVSRHhL?=
+ =?utf-8?B?dTVRNTg0Q1ZWVWlVaFdGcGozVW9JVUMyUlhTSmJDSHQ1NGZCOGVQN3NxdWVI?=
+ =?utf-8?B?Z25iOWJWUmF2M00rK1IwMDNsckwxME85RURLZzhJQ05CVkttWFRGNkJMbmZJ?=
+ =?utf-8?B?ZFhaSUlvSStpVnArdUlGZTA0YVNUKys5Z1FQQWdvdC9BVllXMW1lWUtqKzEw?=
+ =?utf-8?B?UU5RLzRQdmtVbzFMVTE2WXVpa3crT3k2M2RWL1REckNOaE90NUhCUzhTRGQ1?=
+ =?utf-8?B?aGRmZ0JmVDViT3U5L1U0M0N1emQvOGowWlpkbHNLeVUvODUvUURPY2FEWklR?=
+ =?utf-8?B?THRrcnYxRFl6V1NMSWtnSmFSZ1NudnZobStPckl1aTdkTXVLYy9NcVdvVk4w?=
+ =?utf-8?B?ZkRWa1JUaUNremRPaEdwU1JtcnhKeGMyMkJwZGI3eGxpNE5mM3RqbmtvRmxw?=
+ =?utf-8?B?UDYzYTJVcXJQYTB4UzFhUWx2RWR1Q3N4aVF5MVRJTlB2KytYVlhhNDRsY1di?=
+ =?utf-8?B?eW9CRm5lNzRabmxWRUExWElReWpNL1Rqd1podjM3L0tRUmQ0dndMK3VnTDdV?=
+ =?utf-8?B?emVMT3ErSW93Y0V1NmNMcXBiUm92UHNOS09tQ1o0dWFXc2dsMXAyaVgxbXVB?=
+ =?utf-8?B?dnp6K1lkaUlWc2xOVUk1M2pCU1JoTGJ4U3ZZUUhNbkRBWHcrMkRSRVphSk9T?=
+ =?utf-8?B?Z0VpUW5HbFk3djNWTXFoYWNVNS9EMXNpd25nQS9jWWszYTliTlFscVZkZGw4?=
+ =?utf-8?B?SWJ6R2tvR1ZpVnN2VWUyR0dTMkJtRFV5cE1qVHA2R3JQVkVtTlFWNVlsbDd2?=
+ =?utf-8?B?aUcrSnJWVW9SbUdSeGVWdXRJWVJYOHdhZXhiZUx0aVVad1dYczF2bXJlOCsr?=
+ =?utf-8?B?bnJMM2E3K0cyYXRuaVdhYm1WcVllWndmZWptWDNVdGJCZ3FsNjl3M3UrMHNX?=
+ =?utf-8?B?akpkNmFoWHJqZUhpL3l2YTBEc0d3b0dyNFZhNVV0eVMwTE03MUJJRDljZk5J?=
+ =?utf-8?B?bzczU1RpQ3RJMHUxNkxIR041Zk5CVGdpS0YvQVdodFNTUGxHQTBkV0tNdTVo?=
+ =?utf-8?B?N2ZST2JFWVJjUHBpZlYrd2QrTWVIem5EcC9zK2JQREtVcWdQNEk5QlB0VnE4?=
+ =?utf-8?B?SVBmeG9UVERIRjZZQnJxNGJCN2diQllHTnNhM3dtRXlRUFJ3TnE5aDBIN0R4?=
+ =?utf-8?B?Szg0YXVUWFBEM1h1L3VRTG9HVVZIdWZDV2xHOU1jTXVOTkVvNHVYVlpTbWxZ?=
+ =?utf-8?B?ODQxbmlXcitGMkQ3UmoydU91WWswbUY1VFc3MUVpU2Q3THdQNkxHWDBKLzhW?=
+ =?utf-8?B?cy9yMjRYbFRwU1h4djVpMDBQK3ArUWdiOXVKS09Jcy9ESVBncnhIMHB4Y2NT?=
+ =?utf-8?B?NFUxNFBrdjQ3UjNUWlVuTS9xYkFaZHNGNTg2R1hRN2VLVmE5UHRoNHpwaGUy?=
+ =?utf-8?B?VEo3Sk9zSUJMUUtDd1RKcHQ2MTUwNWMyR1JaWkU5VkRRMjdzaDZGWHBlTnZw?=
+ =?utf-8?B?ci9tUGpNZDEyT0JtVmhLclZQVW90Z0xVdW5pUXJVRER5N05lVlNYanlrT253?=
+ =?utf-8?B?Q00yTmJMdHZjclZ6N293UGVnbnVKRUNpVzlrelJWeGdBOURmZmtCd1FXdWly?=
+ =?utf-8?B?ZElJUC9jRDI0eElOUm1DWFZ3bmJDd3Z3SlVseVlpY1hCT25QYS83SVBOQS96?=
+ =?utf-8?B?Z2RIdjhZQ2kwWStLNm9kdFA1RWpKbWppYUU1RmpmRVhyaW5FOTlGZW1vOWw0?=
+ =?utf-8?B?R0ZKcjh1QXBFQlR2bXRsS0J3WWpreHhXRXNqZG56MVVDazE2WGxHYUJZWXFF?=
+ =?utf-8?B?T0lOdkUrMGpjU0VqRnRuOStTcFRwdFF5UFh2T2ZKRFk1NWNmL3J4Ykw5QUlt?=
+ =?utf-8?Q?HMVqPQ66hy0=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RE40Q2pnN0N0alRLWE1BNGV0Q3ZHRjhEQS90c3FEWHIrUzZKSzZiZC9aRURC?=
- =?utf-8?B?WVpad1JQMTVrZWpjekEvcjlBWERLZWxsTWZlNUFqOVdXa1lkRUVzSjBrbWdX?=
- =?utf-8?B?MHpsYk1yWGFWeS92MGFvVkJQSlB4VzJvZzFxQWZkNmtrNmJjT1FzUEFCMVZJ?=
- =?utf-8?B?TFpUZ3doOGF1cWlBVWlwRld6WktMVHVhRWF4UmQ3SXhPZXdJQXVIS0YzK2NQ?=
- =?utf-8?B?OGdOQU5nZkNGK0pCaWhjbFNYUzg5SEVHZmltWUtZaUxZdmtBd3hkYS9KM3dQ?=
- =?utf-8?B?ZlpWdGxTbFluajdvWTk1ZmlSWVZkNDI2TDFZVk9SaEp1Nk9TR0U4UkQvSC9i?=
- =?utf-8?B?NzVpVDdGaFJJTTI1TGNwcEx3VHFqdmI2SG5qMTVJNis5Y3YreWFWeWhmMUJN?=
- =?utf-8?B?OFliN0NtTURiSjhCL01lSDE5Z0szVkJWQjBYNE9YU0M2UFJETEMycm9GQUoz?=
- =?utf-8?B?dlRwVkQrRnZpQnM1YytwVmNnQmk4UWdKNjhhZlhRcWtmM0lGZVZpTGpWS3ZZ?=
- =?utf-8?B?NTl0T2ZNTEVlcFhFNXE3OEUwc01QbllUMTJHWks0MzB1YzVrazk4cUhPc0Zt?=
- =?utf-8?B?L0RxNXR1bE44UDdIVHRvTi9XVXR2Q0ZZc0t1c3JBNFRQM1A4YnBodjZTUit4?=
- =?utf-8?B?R0ZWbExDV3p5NlAyMmlxcE5CaERLbzN0aUJQcDZkSmw4QUJ4MTZYenRHRjdV?=
- =?utf-8?B?RlpxdHN4Vi9RR1VPU1JWeVZBMzZNbm9iMnFBc0VHcis2RkRid1hXejBPUFZZ?=
- =?utf-8?B?THgvUHBxcE93K0JUVW95TWIzOHk4WFBZc25mcHpqZ0ZwOWp5SC9PZmNxMFdp?=
- =?utf-8?B?bDVtUDg2Njg2UWdRUnNLMW4rSjFCOHB1RHNvRlczVGFlMVg5Rzhlc0NaSnl3?=
- =?utf-8?B?U2FQR0QyU05ETG9KcVV0L25iTVdya3ljNUNUbzNVaDVsMGFoL2ppSEJ2YjBm?=
- =?utf-8?B?N2FPSUJmREw4UjlXU1dvRU94VXg3Z1VTL3ltSFRlZlFmOHhOcVI3aU9QTld0?=
- =?utf-8?B?UFdEdUVzbFJtdVJmYWw5eElsV0JzZXFYYm9YTlZWd1ByOFpQeDI2T3NnWG5s?=
- =?utf-8?B?Rnpka0xhak0zb0F0TzBTRCswMlFVWHZBWXhUaXRja1REdnZlNXpTRjBZcVFn?=
- =?utf-8?B?TEhrU3gyeklENno5TE5zV1U3VGt3bnJraWF6djJ0R1hJK0NJY296RXQxMGV0?=
- =?utf-8?B?SWxFQVljdDF4eWF5UndoTFRFRXpSaFgwaVJOWUlNWFpHU1ViM0g4NUJPMVpV?=
- =?utf-8?B?OStkc0lVYjlhalF2VS9LTCtQY1B2VlcwWUN2d0QyM2FabEx1VmVCdUNoUWsy?=
- =?utf-8?B?R1BXcXM4d2Y1dVNWL21XNWo3YjNmWk0vQUdpV3BpWVpvcS9TSFY4S2JxQVlI?=
- =?utf-8?B?S2ZsMFpoZkYvS0pRbk5mWmdIaTA3bjU0T1V0Si96OWU5aVh6cDlNT0VqZlFV?=
- =?utf-8?B?OWoyMEJHRTlDblJLSzlMUTduVUhLcldlVmJMdHNlVDlrdlVKa3ppU3hnYnIv?=
- =?utf-8?B?TSszUmlNUkNLSHdVQjBLN0kvS0gyOU90eWtaZVduNnFvSFZzRTlLQnJnSzl3?=
- =?utf-8?B?ZWN4NnlFbUNHRTRneUZBcmJmYjRKZ2FYMlExMGRkNTJaUmV1TWVRUjVKc2VZ?=
- =?utf-8?B?NTl2ZU5rVGRJZlNrSDQ3Y3d6RUQrL1ZtUUdKb2EvaUFkTUZUNU91T2w5cmY1?=
- =?utf-8?B?N3V4bHhGRUdhQ1JxWHpFbXVJbnpTTGp5elJvb0xJT2wySkdOa2tJSjUwOERj?=
- =?utf-8?B?UE5MU05TekEzaUh4Vit5WWRiZ1NwbVNTOTRDTUt6QW1CQ0VnQVN5c0RUQjVu?=
- =?utf-8?B?Mnp3K1FYSHJtTFVqMkRZNHpxU3hJQ0VWVFZTaVFvaGVsNVNneFIvT1RJS1pm?=
- =?utf-8?B?L1NVK0czZWYwdmZBMytwQnRkUFhnR2FXWVcwM21IMy9HeXhZd1A2eUU2TktT?=
- =?utf-8?B?WlRhMkhjRFFmeks1ZUVGN2NSbXk0eTdSZEFQMGVSMlUxUmliZmp6bkJSMHZi?=
- =?utf-8?B?TzQzVm5oRnlZSzU1UW9mSWxIL3RyeExLZU96NURhUnMwRFpud3NVcGU0d0ll?=
- =?utf-8?B?WW8yVCtIRnBzMXJRK0lKL0RlMnEwU1RtajNQQlNHZWFlRnNwcnNzaGlTblA4?=
- =?utf-8?B?TFAvL0RnRDBjdGpzQy94QnUycWNtaHBZbDhFZWVuTFBlYXFndDM5NXdoUVhM?=
- =?utf-8?Q?z+iyeoBkeCKgZoY04gDgjE0=3D?=
-X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8db79be1-898c-4b36-1970-08ddc89961f8
-X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+	=?utf-8?B?dFpFamVObjIxZ2NoVndWUXB2bnhqSXpRVnpiNGFqK1BSVmlRSlNVTmZIRlhp?=
+ =?utf-8?B?TU9HRFRBaEgyRVF5czBYK2ZpSGdxOC9WMzBGZnUwSXVLeWpJRi9WeStjWGwx?=
+ =?utf-8?B?WE1WS25tYUdkSFZnOUl1a1psWDIvNWJtOEFDcDRka1ExTFRFamxaZCtCaXpG?=
+ =?utf-8?B?d1BGc04zeXZqcHM2KzJyVUJyanBuWDZoQ0NpTGFKNTY3ZER5MVk5dWNxY0VV?=
+ =?utf-8?B?NGtLazZqanA4bGZIZEVwMWRCSXEwTjdpNkFhVUZtMWFOMVN1WWpFZS9LMERL?=
+ =?utf-8?B?b2I5SGJFL3dtUHlPWlkvZkNMZXFlbU9icEFJSEg4VHpzdDNaa2tOb3EyVU9M?=
+ =?utf-8?B?cGdkNnV1VVdweXNzRE1JTHMvaGpBOVRhejVGQVlkMmZaZEpWYm5GZm1rSW9Y?=
+ =?utf-8?B?YXFISjJpaExKdkNFMlAybmNkRXQvSFQyS0tJY1U1dXovTnIzV3NxUU45Yys2?=
+ =?utf-8?B?OXpJTGN1YURBeVVuMWt0Y1MzSk52TTRaNTJRcHErRFBXaWpVc3U5TDYxeW11?=
+ =?utf-8?B?MDZsRlg0SHNxUVUxZ3FwTmVQUHN1M1RXdmxLemJ1clBSU3NFK2xHWHJXb2Ny?=
+ =?utf-8?B?aTJpOXpzWk5aQjVjcGw3aktWY0laWXhlMHFrKzNYWFFNOUhmUUQ2S0I3RU1u?=
+ =?utf-8?B?K3BOMFU5SXlaak1ZM2cvaXVqQW1xNEJ2aG9lQVUwSVduanl5YUtMVTBUVVZJ?=
+ =?utf-8?B?N2Vpb3kwMFBYRENKbWg0QTlaR2FaTDFETkEwSTZud3F6SDFGc2lWSnkxR2oy?=
+ =?utf-8?B?dFRCaGdCS3hoSzd1MllUWFV2bjF0RGN5djNldVVlQ2dNRGhoVy9XWXJ0Mjkv?=
+ =?utf-8?B?YzZzSXRlckNUNzhHVElPRlZMdERVNGJNM1BzMHBXQWM3NUJxZk1MTlRCU2dp?=
+ =?utf-8?B?MzJmRlFieWhqWVNtQys1MDhudWxNNm1lL0FvSlF4Z2lpSHJjOXo5SVJSSVhF?=
+ =?utf-8?B?SWJPMEVqMVNKSVRDYU9SUnJvdUoyaUxWQk1HemVBTkdQYXZWakhaZmtiMi9K?=
+ =?utf-8?B?UTkzWExQVWF3ejI5RnBxbEg5UGZKbjdGdHo1MjNnSi9YczdxaFMwY0kzYUJk?=
+ =?utf-8?B?cjE4SDFQUkp2MkIvSU56eW5pS09hSDQ5bmhRTlN0ZXNFLys1TmRPODdrblY5?=
+ =?utf-8?B?ZCs5WHNUSG5pUUhpdTh5ZExFT1RXSHg5ZDBLU1dnaEFEVjRWQmhQODdjSjNH?=
+ =?utf-8?B?eDllUkgwcktUR0pTN1BYSE95TEplR3VXb2tSc0VncTVFajMrek5VSzVkUVdM?=
+ =?utf-8?B?RlA1V3EwRXlVaXNtKy92UHNzMkVId0E2MFJoeFluZ0haMytVWmszRk15cTBp?=
+ =?utf-8?B?Yy92NVQvaEJJcUJ1UHRNNE0rR3piZC9rcXVBaDMvbXZYVkphNHRkVTZST1ZQ?=
+ =?utf-8?B?bytyZXp1Q056SDNVbUdYeXpqV3lueDJLWGNjY1MySFdEOVYzVFlyMXlnR2U2?=
+ =?utf-8?B?YXBkVWxsTG54WllnblVYbG0yWWV5RDZDQi9SMzROaEVBbUxXUkI1eWgwQTVo?=
+ =?utf-8?B?TVB3S1pyd2lqaFVWOXphbkFJeThjSWhIOXlIS0UxYnp6NmlwNFBUVzBQVWVj?=
+ =?utf-8?B?ZlZHaGc1aDIxVFFBdDFLbWl5MkZVT0VMS1l6VURaYzA0b2ExS3d1dkNqZTln?=
+ =?utf-8?B?TGdidXpkRlZXcWt4dTRCWWdlNDNERmo5Ryt5bnlVdllwY29UV3VTbi80R3lV?=
+ =?utf-8?B?VUYwRm5iVEtINzNXTjVSR3o0UWtOZkZpVCtLa3ZjZDdwbEtSNDZXbWdJcmZE?=
+ =?utf-8?B?L3d1WWVMbGNPY0pYRjhmSUQza043R1JCMXdEb2ViMXkzYVVlVEJta1U2dHhP?=
+ =?utf-8?B?ZDF0cWlJRGZSMnFrVDV4ZHNNdlJNRmx0cjh3V1p1aDRSeC81UEYwQjdkMlBH?=
+ =?utf-8?B?Y28rQmp6VldZU3JEUm55NWcxc29XdWl0bTArcmNlZVVjMHlqckc3YWsyVGpI?=
+ =?utf-8?B?bVp5RXRvZXZRRGxNeVhCamRIZlJ6RVljSlBXdlg5ZTVWZit6c2dZYzRSVlpz?=
+ =?utf-8?B?b3NGaUpqamkxdU5wVzcvdElTVGIzSmgxVmRiaWFRQk8zck1hdEx6cHVibHVm?=
+ =?utf-8?B?YWVydDZ0S1RJVkZTQjVnY1hFV2xQd0VlejNrZVgyVkFOUkRTZ2htQU5YazMz?=
+ =?utf-8?Q?WlbI=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b08f7d82-c2a4-4775-8655-08ddc89973c6
+X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2025 20:58:45.7271
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2025 20:59:15.6736
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: IZrr3Vad0s0tX/X0/HsPzZcrUAL/gm4CgGs9m3M+qvINVHpXF0mtEDPdAeyXGzEyvg5e+wIG4s8pPWjTe/YYXjJbxBKF7txCwuimAGjIWko=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT2PR01MB9238
+X-MS-Exchange-CrossTenant-UserPrincipalName: yZ4N8HzJKxcDFz2R3qKRXxTAVv54M8WJK1RWNA2Y0Mdm9UlNUfi/A7dPq6hIpyAH
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPFA5F0E981D
 
-On 2025-07-21 14:53, Steven Rostedt wrote:
-> On Mon, 21 Jul 2025 11:20:34 -0400
-> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+Hi Reinette,
+
+On 7/17/25 22:54, Reinette Chatre wrote:
+> Hi Babu,
 > 
->> Hi!
+> On 7/8/25 3:17 PM, Babu Moger wrote:
+>> Reading monitoring data for a monitoring group requires both the RMID and
+>> CLOSID. The RMID and CLOSID are members of struct rdtgroup but passed
+>> separately to several functions involved in retrieving event data.
 >>
->> I've written up an RFC for a new system call to handle sframe registration
->> for shared libraries. There has been interest to cover both sframe in
->> the short term, but also JIT use-cases in the long term, so I'm
->> covering both here in this RFC to provide the full context. Implementation
->> wise we could start by only covering the sframe use-case.
+>> When "mbm_event" counter assignment mode is enabled, a counter ID is
+>> required to read event data. The counter ID is obtained through
+>> mbm_cntr_get(), which expects a struct rdtgroup pointer.
 >>
->> I've called it "codectl(2)" for now, but I'm of course open to feedback.
-> 
-> Hmm, I guess I'm OK with that name. I can't really think of anything that
-> would be better. But kernel developers are notorious for sucking at coming
-> up with decent names ;-)
-
-I agree wholeheartedly. ;)
-
-> 
+>> Provide a pointer to the struct rdtgroup as parameter to functions involved
+>> in retrieving event data to simplify access to RMID, CLOSID, and counter
+>> ID.
 >>
->> For ELF, I'm including the optional pathname, build id, and debug link
->> information which are really useful to translate from instruction pointers
->> to executable/library name, symbol, offset, source file, line number.
->> This is what we are using in LTTng-UST and Babeltrace debug-info filter
->> plugin [1], and I think this would be relevant for kernel tracers as well
->> so they can make the resulting stack traces meaningful to users.
+>> Suggested-by: Reinette Chatre <reinette.chatre@intel.com>
+>> Signed-off-by: Babu Moger <babu.moger@amd.com>
+>> ---
 > 
-> Honestly, I'm not sure it needs to be an ELF file. Just a file that has an
-> sframe section in it.
+> ...
+> 
+>> @@ -429,9 +431,11 @@ static int __mon_event_count(u32 closid, u32 rmid, struct rmid_read *rr)
+>>   * __mon_event_count() is compared with the chunks value from the previous
+>>   * invocation. This must be called once per second to maintain values in MBps.
+>>   */
+>> -static void mbm_bw_count(u32 closid, u32 rmid, struct rmid_read *rr)
+>> +static void mbm_bw_count(struct rdtgroup *rdtgrp, struct rmid_read *rr)
+> 
+> Function comments need an update to match this change.
 
-Indu told me on IRC that for GNU/Linux, SFrame will be an
-allocated,loaded section in elf files.
-
-I'm planning to add optional fields (build id, debug link) that are
-ELF-specific. I therefore think it's best that we keep this specific as
-registration of an elf file.
-
-If there are other file types in the future that happen to contain an
-sframe section (but are not ELF), then we can simply add a new label to
-enum code_opt.
+Sure.
 
 > 
->>
->> sys_codectl(2)
->> =================
->>
->> * arg0: unsigned int @option:
->>
->> /* Additional labels can be added to enum code_opt, for extensibility. */
->>
->> enum code_opt {
->>       CODE_REGISTER_ELF,
+>>  {
+>>  	u64 cur_bw, bytes, cur_bytes;
+>> +	u32 closid = rdtgrp->closid;
+>> +	u32 rmid = rdtgrp->mon.rmid;
+>>  	struct mbm_state *m;
+>>  
+>>  	m = get_mbm_state(rr->d, closid, rmid, rr->evtid);
 > 
-> Perhaps the above should be: CODE_REGISTER_SFRAME,
+> Reinette
 > 
-> as currently SFrame is read only via files.
-
-As I pointed out above, on GNU/Linux, sframe is always an allocated,loaded
-ELF section. AFAIU, your comment implies that we'd want to support other scenarios
-where the sframe is in files outside of elf binary sframe sections. Can you
-expand on the use-case you have for this, or is it just for future-proofing ?
-
-> 
->>       CODE_REGISTER_JIT,
-> 
->  From our other conversations, JIT will likely be a completely different
-> format than SFRAME, so calling it just JIT should be fine.
-
-OK
-
-> 
-> 
->>       CODE_UNREGISTER,
-> 
-> I wonder if this should be the first enum. That is, "0" is to unregister.
-> 
-> That way, all non-zero options will be for what is being registered, and
-> "0" is for unregistering any of them.
-
-Good idea, I'll do that.
-
-> 
-> 
->> };
->>
->> * arg1: void * @info
->>
->> /* if (@option == CODE_REGISTER_ELF) */
->>
->> /*
->>    * text_start, text_end, sframe_start, sframe_end allow unwinding of the
->>    * call stack.
->>    *
->>    * elf_start, elf_end, pathname, and either build_id or debug_link allows
->>    * mapping instruction pointers to file, symbol, offset, and source file
->>    * location.
->>    */
->> struct code_elf_info {
->> :   __u64 elf_start;
->>       __u64 elf_end;
-> 
-> Perhaps:
-> 
-> 	__u64 file_start;
-> 	__u64 file_end;
-> 
-> ?
-> 
-> And call it "struct code_sframe_info"
-> 
->>       __u64 text_start;
->>       __u64 text_end;
-> 
->>       __u64 sframe_start;
->>       __u64 sframe_end;
-> 
-> What is the above "sframe" for?
-> 
->>       __u64 pathname;              /* char *, NULL if unavailable. */
->>
->>       __u64 build_id;              /* char *, NULL if unavailable. */
->>       __u64 debug_link_pathname;   /* char *, NULL if unavailable. */
-> 
-> Maybe just list the above three as "optional" ?
-
-This is what I had in mind with "NULL if unavailable", but I can clarify
-them as being "optional" in the comment.
-
-Do you envision that the sizeof(struct code_elf_info) could be smaller
-and not include the optional fields, or just specifying them as NULL if
-unavailable is enough ?
-
-> 
-> It may be available, but the implementer just doesn't want to implement it.
-> 
->>       __u32 build_id_len;
->>       __u32 debug_link_crc;
->> };
->>
->>
->> /* if (@option == CODE_REGISTER_JIT) */
->>
->> /*
->>    * Registration of sorted JIT unwind table: The reserved memory area is
->>    * of size reserved_len. Userspace increases used_len as new code is
->>    * populated between text_start and text_end. This area is populated in
->>    * increasing address order, and its ABI requires to have no overlapping
->>    * fre. This fits the common use-case where JITs populate code into
->>    * a given memory area by increasing address order. The sorted unwind
->>    * tables can be chained with a singly-linked list as they become full.
->>    * Consecutive chained tables are also in sorted text address order.
->>    *
->>    * Note: if there is an eventual use-case for unsorted jit unwind table,
->>    * this would be introduced as a new "code option".
->>    */
->>
->> struct code_jit_info {
->>       __u64 text_start;      /* text_start >= addr */
->>       __u64 text_end;        /* addr < text_end */
->>       __u64 unwind_head;     /* struct code_jit_unwind_table * */
->> };
->>
->> struct code_jit_unwind_fre {
->>       /*
->>        * Contains info similar to sframe, allowing unwind for a given
->>        * code address range.
->>        */
->>       __u32 size;
->>       __u32 ip_off;  /* offset from text_start */
->>       __s32 cfa_off;
->>       __s32 ra_off;
->>       __s32 fp_off;
->>       __u8 info;
->> };
->>
->> struct code_jit_unwind_table {
->>       __u64 reserved_len;
->>       __u64 used_len; /*
->>                        * Incremented by userspace (store-release), read by
->>                        * the kernel (load-acquire).
->>                        */
->>       __u64 next;     /* Chain with next struct code_jit_unwind_table. */
->>       struct code_jit_unwind_fre fre[];
->> };
-> 
-> I wonder if we should avoid the "jit" portion completely for now until we
-> know what exactly we need.
-
-I don't want to spend too much discussion time on the jit portion at this stage,
-but I think it's good to keep this in mind so we come up with an ABI that will
-naturally extend to cover that use case. I favor keeping the JIT portion in these
-discussions but not implement it initially.
-
-Thanks Steven!
-
-Mathieu
-
-> 
-> Thanks,
-> 
-> -- Steve
-> 
-> 
->>
->> /* if (@option == CODE_UNREGISTER) */
->>
->> void *info
->>
->> * arg2: size_t info_size
->>
->> /*
->>    * Size of @info structure, allowing extensibility. See
->>    * copy_struct_from_user().
->>    */
->>
->> * arg3: unsigned int flags (0)
->>
->> /* Flags for extensibility. */
->>
->> Your feedback is welcome,
->>
->> Thanks,
->>
->> Mathieu
->>
->> [1] https://babeltrace.org/docs/v2.0/man7/babeltrace2-filter.lttng-utils.debug-info.7/
->>
-> 
-
 
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+Thanks
+Babu Moger
 
