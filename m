@@ -1,151 +1,104 @@
-Return-Path: <linux-kernel+bounces-738788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9546AB0BD0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:56:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35AC8B0BD0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:56:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40C73189BD55
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:56:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D79F3A342A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EC327FD6E;
-	Mon, 21 Jul 2025 06:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0E427FD7F;
+	Mon, 21 Jul 2025 06:56:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZEv18rCz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Unkg/GrW"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256CC19924D
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 06:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D7227FD6B
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 06:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753080982; cv=none; b=Kb3oPjyThZhi5QUm2FDmzQVC72fiFlmbRCqkRpLg+DBarP6/kDlSldcHqGjKP3c/PiqCL98Ttlu/jV1nlSTeAwtTpTrxFK8snh9/8yRwb2gyHJN8jrZ5aG7t8cXUtRrE1uhVE4EUb/iDgKLw6jSUhd1gGRvFLnDplUmFW6JnRBM=
+	t=1753081002; cv=none; b=DMaZNFxBKaN5utxetBrgS17sqE5iWq2k21XY0gkvlwYSYXfyRf4cXbag29EVvjXxQBrGQkUDrlVk0G+Z6dCXnbnKVoOSaX9eeKY4gIq1gB/zTl1Ea9o/KRoCzfqXbYjf+DR4b0qZd3F6DY0R3N0J84PV4SVy4gK1FbkF35wOsvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753080982; c=relaxed/simple;
-	bh=ZPk7SvxpDgwQBEoK9XGTRGySry0jvFKexdWyV0qU45Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VqiaW7rc7mG6TFaUniMpcVRsFL38ur0sDTkDyeidkt0+OPFgROdFKredIl+YAff/xTaD8HJds+/Oa78kSTq1eG4TBBcmzH4WfCF7v+NS0DB3NaTBrLkiN9OZAY9yw5Ob4ZZ0om5obm6c4qiutKJtScePUE+ea+GKJE4UbAaNpyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZEv18rCz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A962C4CEED;
-	Mon, 21 Jul 2025 06:56:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753080982;
-	bh=ZPk7SvxpDgwQBEoK9XGTRGySry0jvFKexdWyV0qU45Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZEv18rCztoSTjMaOtzXmmZdUKOfWqzTmp3Wv9YqwDK9l+9GIluYU9l6zwWBDNv8tz
-	 lzZ5sh4AZUMC60KQPmE3mIEeb6uK0S3wzT/YJAP+oy7m0j1RallIwWwbU8gZ1Hwer3
-	 yOf6Aacd7iWhVMx0lN4G3ei0uJDfCWafSweN5Fv58/8/a1/KqH07ED2x5Jfj5qEL+J
-	 d6PaLugy/n4smxk81fcoI3iIbfgwAlW0+8NVd88MwXPT1rtfqzqHHzYSf1MlMT1awj
-	 /dNTKTgUdUesp4RmoIWLLvuXJOO4MOk5xjtJUwH6H+TJjawR4IhKjWF6So0fYsZz98
-	 WDRtHmUkmtt2Q==
-Message-ID: <a2440b5e-2c6c-42b2-9c85-9701e65b1305@kernel.org>
-Date: Mon, 21 Jul 2025 08:56:18 +0200
+	s=arc-20240116; t=1753081002; c=relaxed/simple;
+	bh=0DQBXq2HN/6qH+Y9jouZFed5XRHr7dG2MrXu9+Jzw9E=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=caLiQlU670J8YTj1m+Z84MK98pCzf3nMWcEIJiDXoFxeHrCvArcGXhfyl5YQ7FQA1p4PyOA/DCPds9/dML14ttgm8RPrftEHJu08nYIJYRPK6DoIx9fFq0CKsQkHRA8xEPIaI80HwjbV18c0ODZTGO6/TmH2IB1BmHjSFlosGfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Unkg/GrW; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4ab644b8dc1so45175171cf.1
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 23:56:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753080999; x=1753685799; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yQQIZUQ7UmKmkjv2gej5jBDOs0zZHuvpMuMVygz6yH8=;
+        b=Unkg/GrWgY5SJiK8qnZxdkm9dNxnk0InlrBbaJc562JCq2AjazzuBqI4ljnkpWxZb1
+         UTOnIDCt+r8ujqHw0muLF8cqBV0ZSprPtW9oXKUNdK9WF0gkRbddrUPJysvoMt5yEEyD
+         ZJ7c3TDCvhGq3QDyMRVUPEQ52jeGzLeliiJJLMNu7lU5JQjHCHZ8ueKUKHbEQB3Wj60v
+         1uQ6eD9gc5mxoY9CRYsTUFF8450t4nqCkRviRtbaR1q3Tg7+5cYJFdSBBVNfCkrp5AwZ
+         eZrhClHO+cYM8eAON//3Awvx+Wfmgg2JlHCx1vF5WTVzDFQZYEeHsq5lNIC2WJmi0JXn
+         NBcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753080999; x=1753685799;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yQQIZUQ7UmKmkjv2gej5jBDOs0zZHuvpMuMVygz6yH8=;
+        b=BKMqB7HN0GgMqX+lMoLfTUQ0mFbOKxwbxXiPOCJuGzv1ZGuMBbujydPI82orYqz+el
+         nLLMokoXmPxfDWSwz+i8gAeX5QnLXnYYixRHrH7dttW3kL+3ka+eF3aTPckDL+LIG1wG
+         Zp6l0vPIFMDJdgs6lt7Z/eoS1uUT6gjWFYWgpllc8C87oBlZRdXuptS2x4ks4584fWuE
+         lPbPQ2L9B8w0nivFX1lSRHjHNh+iMU2yKNyYL7w7/v2nLCH51O2Rhmqx28JPDLK5oFmf
+         PRudkCGeDdikkmszkhBSI/GUs+Kub5rJ/U7QKkFEKXNlJ//pMTpkn1bKUGV2jK5fIAg2
+         EWPA==
+X-Forwarded-Encrypted: i=1; AJvYcCXHn7SpC4PInMBo+HbEtmgFBtfKmc9l3QRaogU5gtjpedamRwq4bBlv43VJCi7tIy0Rab26stK7eSroVLY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGIGCLFsS1wX9MuZskpx9DFpz0sgzEeLN12YN9tsDM9FlrhHz2
+	CuP4NV0udxMhn09zVl+AH7fBF2VLFJL55+E3BpCOp3KZpFXrkjWKF8fX4RxmsinopWg=
+X-Gm-Gg: ASbGncvwVUrHKU1RhbJcZfw3PDSkUxj8eL5p7i+PNdVXGq0TpADSiHVwNyxymkClj6A
+	Ayh/TOfYVmvKKrhtNHQEdzCYjFDT81FMOTM1Rsp312VfCoDmFZ8hXO6NfhXrg2gAlnj6tD2MaNG
+	AzmFlN48Wz7DEw9AvR5UO1FJKYkHeMhbVrxiUGoC/mrwD+RiZspuD7pElcz+gtSml3DMT3UeP7m
+	KUn+5Zk8u/Tm6aiKK9QiSI8kKlxoCDCqyVkq+A6BIQeP+VikM4xYh+ioECzv+QYBR74FRB1+1vo
+	wr+BfvV7iTqqJAyHxrkGb/wZYNgfZovu8ec+QSr6zarTjNimowCjheId7KoJKQF4HpUkRC0dqzC
+	z/ROYsXwnl7fbSKUchTv8ajtpsmeZRDbrmQsqZzUPe/o/IKOjgOE=
+X-Google-Smtp-Source: AGHT+IGkllGgVq7+POAScPebihOJ+wo8Yd03YccxYtdX0vB/pY9isPBmAYjxxVgNa39x+HavQXdN0Q==
+X-Received: by 2002:a05:622a:309:b0:4ab:a8ed:5be6 with SMTP id d75a77b69052e-4aba8ed60f2mr318058371cf.39.1753080999367;
+        Sun, 20 Jul 2025 23:56:39 -0700 (PDT)
+Received: from linux-kernel-dev-start.. ([159.203.26.228])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4abb4af44d7sm39127791cf.38.2025.07.20.23.56.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Jul 2025 23:56:39 -0700 (PDT)
+From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+To: vivek.balachandhar@gmail.com
+Cc: gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [PATCH v2] staging: rtl8723bs: clean up redundant & parentheses
+Date: Mon, 21 Jul 2025 06:56:28 +0000
+Message-Id: <20250721065628.297870-1-vivek.balachandhar@gmail.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250721061412.297554-1-vivek.balachandhar@gmail.com>
+References: <20250721061412.297554-1-vivek.balachandhar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH linux next] MAINTAINERS: add maintainers for delaytop
-To: jiang.kun2@zte.com.cn, yang.yang29@zte.com.cn, akpm@linux-foundation.org,
- xu.xin16@zte.com.cn
-Cc: bbonev@devuan.org, linux-kernel@vger.kernel.org, bsingharora@gmail.com,
- wang.yaxin@zte.com.cn
-References: <20250721094049958ImB8XG_imntcPqpQn1KfG@zte.com.cn>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250721094049958ImB8XG_imntcPqpQn1KfG@zte.com.cn>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 21/07/2025 03:40, jiang.kun2@zte.com.cn wrote:
-> From: Wang Yaxin <wang.yaxin@zte.com.cn>
-> 
-> The delaytop tool supports showing system delays and task-level delays,
-> effectively identifying the top-n tasks with high latency in the system,
-> which is highly beneficial for improving system performance. Wang Yaxin
-> and her colleague Fan Yu focus on locating system delay issues. To promote
-> the thriving development of delaytop, we hope to serve as maintainers to
-> continuously improve it, aiming to provide a more effective solution for
-> system latency issues in the future.
-> 
-> Signed-off-by: Wang Yaxin <wang.yaxin@zte.com.cn>
-> Signed-off-by: Fan Yu <fan.yu9@zte.com.cn>
-> ---
->  MAINTAINERS | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index d635369a4f6c..e6fec6b0055d 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -19524,6 +19524,16 @@ S:	Maintained
->  F:	include/linux/delayacct.h
->  F:	kernel/delayacct.c
-> 
-> +TASK DELAY MONITORING TOOLS
-> +M:	Andrew Morton <akpm@linux-foundation.org>
-> +M:	Wang Yaxin <wang.yaxin@zte.com.cn>
+Thanks Greg — that makes sense.
 
+I'll break the changes into a properly versioned patch series based on type and resend the v2.
 
-There were no contributions from above address. Not a single
-contribution. Not a single review, not a single message or comment. If
-the person wants to review, why reviewing did not happen so far?
+Appreciate the clarity!
 
-> +M:	Fan Yu <fan.yu9@zte.com.cn>
+Best,  
+Vivek
 
-And from here just one patchset not even related to delaytop.
-
-So combining above it is really surprising that you want to maintain
-this part.
-
-
-Best regards,
-Krzysztof
 
