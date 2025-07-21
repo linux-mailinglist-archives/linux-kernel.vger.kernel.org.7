@@ -1,131 +1,187 @@
-Return-Path: <linux-kernel+bounces-739186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79387B0C2F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:31:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7A8DB0C300
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:31:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D14053A3C1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:30:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84B587ADDE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41CF729C352;
-	Mon, 21 Jul 2025 11:30:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC742BCF66;
+	Mon, 21 Jul 2025 11:31:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uNYSJelq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="djgJ2LvK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C2228DB68;
-	Mon, 21 Jul 2025 11:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D6F288C0C;
+	Mon, 21 Jul 2025 11:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753097452; cv=none; b=g7IfVmuE8PNaxtzxauG87q32WDOCRa39wRBHmQdbjQ0Dy+jAr37eKTEGUcqw5367N40wpMC/0EObLutw41jfhyRAgId41xcbez6KZs2/SzdDl/JKMq6jp9REkF6dJSY1+IIdzsY/hNCCfSkWQjh+E1/EI/fci/ywNmWObckHBlI=
+	t=1753097480; cv=none; b=q7ZqPPLlMaS6bC++YTkRSSopJrAtARDdfcQb2o+TOH9OMic0qj6PUIc7nXxT3Wgc7r6h+E/SC8Qg7tgKNOFeXyDBOw6+yfyc9x/As0WWsVIyYSPLOJzQSruBexyhBrO5SDp39F02brIZIgO87dHc8qVMGZzhHOgYDWCWqfJ8JLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753097452; c=relaxed/simple;
-	bh=19237Phl5a29kIuQoBtWKWdcClHzbHbn1GScbMbhpvc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Kyob9tYI/Q/MoJx/WpjBb12MZv2+xGPupSMiBoSZKs818bUjnvVbIDnOWqVYnJJ65cMEgeUWhJrEKvSbT/WEcuWb+dGttvwv6ICZqyDhPUSvi2eC6tiS8stnXvl+HRvHbjjJnYjdezS6W59BHSe3w/tpIob/t8Yn4vA7JmowpYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uNYSJelq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23914C4CEED;
-	Mon, 21 Jul 2025 11:30:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753097452;
-	bh=19237Phl5a29kIuQoBtWKWdcClHzbHbn1GScbMbhpvc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uNYSJelqAC+hxrFwcnPAuuSDfWXTFSu7GuAjjiQ3WoI3EYGEjn7nTuDtFtsbCRbgn
-	 YxOyFaVZ56HeIi3ZJ7Eq87K69wLG/1sKH47O/nZVDgdU05MqtqhKEEl73pzVocOuaC
-	 ljeCCP54vjQ/HLIMQnFhFEHiHUBhSzz2QhiVz0P8VOZvKRvz4IpXR1qWYqAq2dF0gS
-	 nIca35Qxj2pp3Ss2JlwJxQdFvr7oT6fzmod0Q9PKgbM2I/oG0nxav7wJMrzfeuOzZD
-	 asiy/Pwf+rjLnn8CIDAmSrnRBQwxNBMK2hc91TrAeJOFORk+Dir0c80uKac+NnVWhr
-	 w5J93GnGcjBYQ==
-Message-ID: <faea23d5-9d5d-4fbb-9c6a-a7bc38c04866@kernel.org>
-Date: Mon, 21 Jul 2025 13:30:45 +0200
+	s=arc-20240116; t=1753097480; c=relaxed/simple;
+	bh=ni6NB75dBKeFo+kbnJ/UKz3oYO037eTbMmo0vF9YVBU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O0FIz7RRNQohPO/WjPkpfDaoYtl+A9MDSzQQWZfdvYF4U8rdFilHVV3yw0fqhcJ+gU+OCjhEXo8c1ZUQxdiZA1J8qSS7pIL7MvzY/eYeHFoqNj/XK2I0kOwp1fiJ7aFWuR6xtz4NdG6yhrzfdPZ15/0zPlCPYLc91SdcQ8YucMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=djgJ2LvK; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753097479; x=1784633479;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ni6NB75dBKeFo+kbnJ/UKz3oYO037eTbMmo0vF9YVBU=;
+  b=djgJ2LvKrhEBOkBwBQifO/Q/QyUzV3BLX2WA0XiRML+AGGw6k+xeQ9hv
+   02L6kQjt3FcTLMRwkB4s9EOYiwa3oZqQ2FVv/IB1dtmhDQyIV4H98V+Nx
+   DGmuSARZrSLI0M/yb337DiEmaSi6kxTJZxgrQHjzCooIZuUTnMsof/aon
+   i8jETXzTQZHaPZsCU3mlye1arKbc1Gy1cYz0wQI82mYDBTwaodKiN95Nw
+   NNCZL8ncZw6SiU5hqyTs5dYFiVAwygqtPPswMly2+4LxHYvkQYRS7mWeT
+   y4wuyE34PkLBqR32XFu9i+tA9KpOP113zOH+Gsq598lRMEkeMI00ptUP7
+   Q==;
+X-CSE-ConnectionGUID: Ig2pPqOpSpyWsJ6vUXsiMA==
+X-CSE-MsgGUID: LUOa5WnMQi2rYhWHvUlSSw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11498"; a="72877893"
+X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
+   d="scan'208";a="72877893"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 04:31:18 -0700
+X-CSE-ConnectionGUID: k3nqpQsRRV21/dckljTYhg==
+X-CSE-MsgGUID: IuA4pZulSxy2Xw8ORfd5PQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
+   d="scan'208";a="162855115"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 21 Jul 2025 04:31:13 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1udojf-000Gkz-0h;
+	Mon, 21 Jul 2025 11:31:11 +0000
+Date: Mon, 21 Jul 2025 19:30:53 +0800
+From: kernel test robot <lkp@intel.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	sboyd@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, jic23@kernel.org, dlechner@baylibre.com,
+	nuno.sa@analog.com, andy@kernel.org, arnd@arndb.de,
+	gregkh@linuxfoundation.org, srini@kernel.org, vkoul@kernel.org,
+	kishon@kernel.org, sre@kernel.org, krzysztof.kozlowski@linaro.org,
+	u.kleine-koenig@baylibre.com,
+	angelogioacchino.delregno@collabora.com,
+	linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-pm@vger.kernel.org, kernel@collabora.com, wenst@chromium.org
+Subject: Re: [PATCH v1 5/7] misc: qcom-coincell: Migrate to
+ devm_spmi_subdevice_alloc_and_add()
+Message-ID: <202507211953.9ai6l420-lkp@intel.com>
+References: <20250721075525.29636-6-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 1/4] dt-bindings: net: document st,phy-wol
- property
-To: Gatien Chevallier <gatien.chevallier@foss.st.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Christophe Roullier <christophe.roullier@foss.st.com>,
- Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
- Russell King <linux@armlinux.org.uk>, Simon Horman <horms@kernel.org>,
- Tristram Ha <Tristram.Ha@microchip.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250721-wol-smsc-phy-v1-0-89d262812dba@foss.st.com>
- <20250721-wol-smsc-phy-v1-1-89d262812dba@foss.st.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250721-wol-smsc-phy-v1-1-89d262812dba@foss.st.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250721075525.29636-6-angelogioacchino.delregno@collabora.com>
 
-On 21/07/2025 13:14, Gatien Chevallier wrote:
-> The "st,phy-wol" property can be set to use the wakeup capability of
-> the PHY instead of the MAC.
+Hi AngeloGioacchino,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on next-20250718]
+[cannot apply to jic23-iio/togreg sre-power-supply/for-next char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus linus/master v6.16-rc7 v6.16-rc6 v6.16-rc5 v6.16-rc7]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/AngeloGioacchino-Del-Regno/spmi-Implement-spmi_subdevice_alloc_and_add-and-devm-variant/20250721-155809
+base:   next-20250718
+patch link:    https://lore.kernel.org/r/20250721075525.29636-6-angelogioacchino.delregno%40collabora.com
+patch subject: [PATCH v1 5/7] misc: qcom-coincell: Migrate to devm_spmi_subdevice_alloc_and_add()
+config: x86_64-buildonly-randconfig-003-20250721 (https://download.01.org/0day-ci/archive/20250721/202507211953.9ai6l420-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250721/202507211953.9ai6l420-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507211953.9ai6l420-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   ld: vmlinux.o: in function `qcom_coincell_probe':
+>> drivers/misc/qcom-coincell.c:111: undefined reference to `devm_spmi_subdevice_alloc_and_add'
+>> ld: drivers/misc/qcom-coincell.c:115: undefined reference to `__devm_regmap_init_spmi_ext'
 
 
-And why would that be property of a SoC or board? Word "can" suggests
-you are documenting something which exists, but this does not exist.
+vim +111 drivers/misc/qcom-coincell.c
 
-Best regards,
-Krzysztof
+    83	
+    84	static int qcom_coincell_probe(struct platform_device *pdev)
+    85	{
+    86		struct regmap_config qcom_coincell_regmap_config = {
+    87			.reg_bits = 16,
+    88			.val_bits = 16,
+    89			.max_register = 0x100,
+    90			.fast_io = true
+    91		};
+    92		struct device_node *node = pdev->dev.of_node;
+    93		struct spmi_subdevice *sub_sdev;
+    94		struct spmi_device *sparent;
+    95		struct qcom_coincell chgr;
+    96		u32 rset = 0;
+    97		u32 vset = 0;
+    98		bool enable;
+    99		int rc;
+   100	
+   101		chgr.dev = &pdev->dev;
+   102	
+   103		rc = of_property_read_u32(node, "reg", &qcom_coincell_regmap_config.reg_base);
+   104		if (rc)
+   105			return rc;
+   106	
+   107		sparent = to_spmi_device(pdev->dev.parent);
+   108		if (!sparent)
+   109			return -ENODEV;
+   110	
+ > 111		sub_sdev = devm_spmi_subdevice_alloc_and_add(&pdev->dev, sparent);
+   112		if (IS_ERR(sub_sdev))
+   113			return PTR_ERR(sub_sdev);
+   114	
+ > 115		chgr.regmap = devm_regmap_init_spmi_ext(&sub_sdev->sdev,
+   116							&qcom_coincell_regmap_config);
+   117		if (!chgr.regmap) {
+   118			dev_err(chgr.dev, "Unable to get regmap\n");
+   119			return -EINVAL;
+   120		}
+   121	
+   122		enable = !of_property_read_bool(node, "qcom,charger-disable");
+   123	
+   124		if (enable) {
+   125			rc = of_property_read_u32(node, "qcom,rset-ohms", &rset);
+   126			if (rc) {
+   127				dev_err(chgr.dev,
+   128					"can't find 'qcom,rset-ohms' in DT block");
+   129				return rc;
+   130			}
+   131	
+   132			rc = of_property_read_u32(node, "qcom,vset-millivolts", &vset);
+   133			if (rc) {
+   134				dev_err(chgr.dev,
+   135				    "can't find 'qcom,vset-millivolts' in DT block");
+   136				return rc;
+   137			}
+   138		}
+   139	
+   140		return qcom_coincell_chgr_config(&chgr, rset, vset, enable);
+   141	}
+   142	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
