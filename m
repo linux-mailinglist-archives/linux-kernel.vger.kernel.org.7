@@ -1,60 +1,58 @@
-Return-Path: <linux-kernel+bounces-738520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A6DFB0B992
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 02:30:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 554CFB0B994
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 02:36:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E9CB176311
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 00:30:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB1DA7AA244
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 00:34:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39115149DFF;
-	Mon, 21 Jul 2025 00:30:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D5374059;
+	Mon, 21 Jul 2025 00:36:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SYQZrXPJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SgvaLMV8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F31D35946;
-	Mon, 21 Jul 2025 00:30:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA123FC7;
+	Mon, 21 Jul 2025 00:36:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753057810; cv=none; b=asUO8BSBc/e2QdyVlz7EhSB9ydoC4AiUonymjHZBQ2TO0ulPbAB13igFHqF1b8eLpkqINj4kT97kZbUa+Z1ehCV0F45TEuTVMAudJFUl5sERtS1QzWYJAT3hV/BtvMTaVt6/ouljcLRhnJ9muG6dbsnqlTQLHNSG44cEwp2MdPM=
+	t=1753058166; cv=none; b=a00MfH335N9Kwh3Qd5HfY5gS6xgzcqGHuzAtE+fuFK9sXgqvroJZNXjvrk8sxSSpw2GtBpRcOBGLePPCNCeHhQ4Y9t8oUTeZKBKJBjVAzNwL/+ygGVguPmsum0H4CzD42IYi0M5suAotDujdY1hhmuCotnMTS2S/BRo22gcw2SI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753057810; c=relaxed/simple;
-	bh=Z3IQ//BUVuDYShz8oy9xXfu+5hwrpJS0iBCHzigaVV4=;
+	s=arc-20240116; t=1753058166; c=relaxed/simple;
+	bh=gKSahrtOCSt/VKfd9xs5pD7+wJwsmP69I2iSsDQw5Jc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k2IK99am31mDnhhwiCijJdplyNSHieqJ2DpunnA/4LP5vSjdP9LG2nDiUtH/jB1IbSx40sidccdG+Yy1nY1TXPjgPjPR+tfviAUvFWa9SdA6JDa8Gd5YRDTza2WFI0DuVbALTOJ8Qi+H8AM4YQWVdj6Qfucn+BhSyrhs0xVWuwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SYQZrXPJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D5AEC4CEE7;
-	Mon, 21 Jul 2025 00:30:09 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=FCxPkpcLR0T6mvVRDr7MDsFHgxVSR/PsWGiWTsxruVR095Jojol+9x94KzfROWjKRlttLWMGzKH9E+2M0qysS5T0fd1kdXFwb9rDGteq175Cbs3h0eonj8v/WrTt7JrIkQNQdNOJCSEdFJvFC+ECNgvIkio/ZLLq+OBRVajpG2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SgvaLMV8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9CB2C4CEE7;
+	Mon, 21 Jul 2025 00:36:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753057809;
-	bh=Z3IQ//BUVuDYShz8oy9xXfu+5hwrpJS0iBCHzigaVV4=;
+	s=k20201202; t=1753058165;
+	bh=gKSahrtOCSt/VKfd9xs5pD7+wJwsmP69I2iSsDQw5Jc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SYQZrXPJte+ORULINt/7fnPZMWv95A8AnQxTsfKiw5NxE3XNuoyZ09l2sj8Hjrb7L
-	 6Kfpp1493vPQjkjAp0n4oO06ESvRUse8EYwsD3a20IiRTx8fW0jIGtMtnb5p0BPaU6
-	 EaRy9+MqJHi6gyoqvwnctSHZpwSudWFxjra0m6YswF1CV02Toe3j9dHqG6ttdZiq5q
-	 xE2dkERHMAovAuxSel8/SFRi/VDV04Z96phqZwrXBqyTbovLYwXMyOFFAD2zc47dat
-	 ncwOzZixvLR2PQpG55yARAS/8SWlit3uZGLkyKgOZzAM1yblxg8gQ1avy+5hcSdPrV
-	 zDJjAsBMm7icA==
-Date: Sun, 20 Jul 2025 19:30:08 -0500
+	b=SgvaLMV8vSyyb4YaYe8T5Mk3QLjPB/mLj5woIrOlN9iVpS2eZWe1JGrdf5Z3XLDrg
+	 SYMf9wYyGN+zML83heWmCvSciJakgxGBj7aRYha/lpSlk+QkoCmpj5NsDFCXy17bMA
+	 AlFT1H35PpvdtG7HcSAk/CJ/Nqr3kYhUIZBb7W/DOJ1T7iqUFFEzeqDsvDTgRAyl+8
+	 IYPSQqi8NXAVpvqKpy7bcUa23VDSFZX8nn+Ss4EYBvzpjSVOdQRtjUNgtTNWF37HWq
+	 s+kfUOhXNumM0OYCQsN7P7M+w/ER4tHcn8m7t1aYuxXXTmhvtqkLEhrVe4o57A0Qcp
+	 ZH70Czzi/xQiw==
+Date: Sun, 20 Jul 2025 19:36:04 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Alireza Sanaee <alireza.sanaee@huawei.com>
-Cc: mark.rutland@arm.com, shameerali.kolothum.thodi@huawei.com,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	jonathan.cameron@huawei.com, linux-arm-kernel@lists.infradead.org,
-	james.clark@linaro.org, mike.leach@linaro.org,
-	coresight@lists.linaro.org, krzk@kernel.org, linuxarm@huawei.com,
-	suzuki.poulose@arm.com, dianders@chromium.org,
-	ruanjinjie@huawei.com, linux-perf-users@vger.kernel.org,
-	saravanak@google.com
-Subject: Re: [PATCH v3 1/6] of: add infra for finding CPU id from phandle
-Message-ID: <175305780744.3139904.12956973374132329407.robh@kernel.org>
-References: <20250718094848.587-1-alireza.sanaee@huawei.com>
- <20250718094848.587-2-alireza.sanaee@huawei.com>
+To: Michal Simek <michal.simek@amd.com>
+Cc: git@xilinx.com, Conor Dooley <conor+dt@kernel.org>, monstr@monstr.eu,
+	linux-kernel@vger.kernel.org,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"moderated list:ARM/ZYNQ ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, michal.simek@xilinx.com
+Subject: Re: [PATCH 1/3] dt-bindings: soc: xilinx: Add support for K24, KR260
+ and KD240 CCs
+Message-ID: <175305816440.3147094.10086581132986063188.robh@kernel.org>
+References: <cover.1752837842.git.michal.simek@amd.com>
+ <8ff66d0dc4e0de6f239c25d43a2a96b4224305e8.1752837842.git.michal.simek@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,26 +61,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250718094848.587-2-alireza.sanaee@huawei.com>
+In-Reply-To: <8ff66d0dc4e0de6f239c25d43a2a96b4224305e8.1752837842.git.michal.simek@amd.com>
 
 
-On Fri, 18 Jul 2025 10:48:43 +0100, Alireza Sanaee wrote:
-> Get CPU ID from phandle. Some drivers such as coresight, cti-coresight,
-> or arm-dsu use this API for finding CPU node in DT. In particular,
-> drivers do this by getting the CPU device_node through a phandle and
-> then find the CPU ID using of_cpu_node_to_id(). This commit encapsulates
-> CPU node finding and improves readability.
+On Fri, 18 Jul 2025 13:24:06 +0200, Michal Simek wrote:
+> The commit 7a4c31ee877a ("arm64: zynqmp: Add support for Xilinx Kria SOM
+> board") has added support for k26 and kv260 and the commit dbcd27526e6a
+> ("dt-bindings: soc: xilinx: Add support for KV260 CC") has added support
+> for KV260 and this is follow up patch for adding description for k24 SOM,
+> KR260 (robotics platform) and KD240 (driver platform).
+> The bootflow is the same that's why for more information please take a look
+> at above commits.
 > 
-> The API interface takes three parameters, 1) node, 2) pointer to
-> pointer of CPU node, 3) CPU node index. API sets the pointer to the CPU
-> node and allows the driver to work with the CPU node, for logging
-> purposes for instance.
+> The KD240 kit is based on smaller k24 SOM with only 2GB of memory.
 > 
-> Signed-off-by: Alireza Sanaee <alireza.sanaee@huawei.com>
+> Signed-off-by: Michal Simek <michal.simek@amd.com>
 > ---
->  drivers/of/cpu.c   | 49 ++++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/of.h |  9 +++++++++
->  2 files changed, 58 insertions(+)
+> 
+>  .../bindings/soc/xilinx/xilinx.yaml           | 81 +++++++++++++++++++
+>  1 file changed, 81 insertions(+)
 > 
 
 Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
