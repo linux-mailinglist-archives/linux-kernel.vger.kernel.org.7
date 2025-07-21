@@ -1,117 +1,108 @@
-Return-Path: <linux-kernel+bounces-738632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 581ECB0BB3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 05:13:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 766A0B0BB46
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 05:14:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AF0B175744
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 03:13:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B03AC1757D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 03:14:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E53331EEA54;
-	Mon, 21 Jul 2025 03:13:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3601EB5F8;
+	Mon, 21 Jul 2025 03:14:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="OvINISGf"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="piIanauV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD7A1A3160;
-	Mon, 21 Jul 2025 03:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F037B1E515
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 03:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753067635; cv=none; b=s8FFRPqixjsgIo+iV2SUc8NqrZj+OAsBD46fQp3gjzYXbS7Ru9+rHPSa6/1TW+u35gLugqySWx9O9ZAb3zmvyng7NoA5JwLCU8qxMv5NXbvcnoY2xKacWQvOCA04bbjzM7hMUbsiO9Yg9oAy7X9GSlFpHw/lIKMEbout6qNKxBk=
+	t=1753067669; cv=none; b=nfgcZTBrmTYXIAxhJ4GXRAMksW2A7/oWQIDh2IlVjpUdgih4WRm0bJSzZDtUoDpzB7v0T3CM07G0EkWdLzJ4vK608lBJNszsjsceJzJjZCa++5M0DD1KCjqPRlRAD6pVRDRY8wdD1t8V2ljkyIQsIK65vXPn6SevSQd/qSuciGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753067635; c=relaxed/simple;
-	bh=7PPVeVv3ncSmgWy5kT7Os6h3MKo+Zf//pmTUrjsEg/M=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=a0c8iUndnvfCSpXsQkzvW56WggU/QUTep5lMommixfqv1MiR/2CHLBi07hAoiiOTfZ09FbwOMblnL9ho3q3dfEBt+jY3uqODzvVZIrI9cA2bsUBG3OY5ruBAw3b0WP6+sLEKc8EhSchtx7A/92DAQDVBUXTcfFgIzoKeYH2XaCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=OvINISGf; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1753067479;
-	bh=eIUAoe9cs1XgnuZmFk+NEW+rcfnvTGVPXZ99OmoldTU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=OvINISGflgC3V/8b4x/SgffHfS7kpxrEjT81wsIOH078Fgqi4SgplKfMmR1BkOJvE
-	 ZLSmnPrOoPO7+/7rXwhDSSzvqGMEMqyizIQ9T37DkIiZNtiQ297asa92jd+u6Cr6hZ
-	 dNbLrt35HmYdw2NPyzF2m6Q4FILFyWeFfiyZbHqlZXRE/eOiP/uWA2k4Xdc6ejigxL
-	 iGvxZNQ7xbd0ffhqUllMRu+NA7VSOfBZmKmhrUn5ps+b+uii7bl+qp2Kx4RuAtvlGy
-	 CC00+1EGkLMySaVL/67CIXqlNBHNDsdCWmxsA3/VQFq8s6Mz3Jp6okJu4LG9yaFtBy
-	 wR5fe52LSlicw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bllm714Phz4wcd;
-	Mon, 21 Jul 2025 13:11:19 +1000 (AEST)
-Date: Mon, 21 Jul 2025 13:13:48 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the mailbox tree
-Message-ID: <20250721131348.38ba6ec8@canb.auug.org.au>
+	s=arc-20240116; t=1753067669; c=relaxed/simple;
+	bh=rPZ9ayMN8Cc4EBmBOnIiNRGT5SLNiYAA/yLJOuSayAc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aqCpOvH3Q72GtE1E2rE/DvEOKFc8BAdQJ+A/4CoOKIjvMJTukItFQMlrFxz7ub47VYWo+nEfaG3qFeq2qz7jl+9su+0lXmZqLFVhRxMEKsvRG/869zBmIO3oTllBkutTevSD6vNNtK96VUTRhWlb4a1r3xAL80hsq7JeyKBkKdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=piIanauV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 773C3C4CEE7
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 03:14:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753067668;
+	bh=rPZ9ayMN8Cc4EBmBOnIiNRGT5SLNiYAA/yLJOuSayAc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=piIanauVRrfkGk2H2fWBoj4mIs8kIgUgdz5S+96eTv4tUrJ+wSP5hCqkmRfUnlq1Q
+	 QPShTk4IRvrwOp0Z8hRERXx14pczi3y5C9t6dObfUNH6IfNuBOcgUkJJaMFJ7WXAuK
+	 e2tZ2ZyL/Cb/R/wOPOk517o59f1vywIQ5eHkjh3kMnm3vWJBPRUAzs58InGCsvBegy
+	 GSAqhkZLFRG5KPU6QMmf+RjkFKJsmzF8a7ye29fHdz/z6DVbtfZhP4z5NhWgQC6GYq
+	 kowmtVCakzr0IbCrB+slY0U61qenIM4bzN3KeoakIDPxF5PNP72jbJAoawL+Rtnq2z
+	 /NU/QGGUdSz/g==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5561ab55c4dso3940721e87.2
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 20:14:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUg2B9rx1LbTZH57GD4Paq6/cEWt20lnJCGno3fnraJqL40WRjNUtO7JyIilbUqVWvPCm9rWqTlljmBs1k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWRGrFlb86HOFQFEEAkjA7/AFAeh6J2DmNnLkg+whQ0YJQAYZX
+	p95KM9JUMz4SWYzZyuk0asX+XeUS+5wEGNRHLyinKqxY0IJwDWjZe2yffrup96q9ktEdo58UcA4
+	dfp/I5FhPvBxAFUvzbUBo8RY/SZ6qfNI=
+X-Google-Smtp-Source: AGHT+IFDMrWPf3hUy4HTrGT5nvv60uOnGnpOEYtMxmHGYhVcwoSqQDVVppFjYvOX0OniEcUgPL4ujGvztnHi6sUf+Ug=
+X-Received: by 2002:ac2:42cf:0:b0:553:d7f1:6297 with SMTP id
+ 2adb3069b0e04-55a3188e89bmr2186884e87.34.1753067666885; Sun, 20 Jul 2025
+ 20:14:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/0.hjtAA3+MuH1qKXXC=WgQy";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <175301303546.263023.1426155806374119244.tglx@xen13>
+ <175301303889.263023.7762556142250207604.tglx@xen13> <CAHk-=wha6sXik-f0RC91TMbt4snau0jK+dPvQEMezGiVFDpKUQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wha6sXik-f0RC91TMbt4snau0jK+dPvQEMezGiVFDpKUQ@mail.gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 21 Jul 2025 13:14:10 +1000
+X-Gmail-Original-Message-ID: <CAMj1kXF_-d4_VVO+RovbXxoK=Gh72yFvHqEdRJ6rQBpSzB+1Gw@mail.gmail.com>
+X-Gm-Features: Ac12FXzyHkD-5S3v8zdmq0ZiuXj63G0DQI2jW3YUv9pefgWFCDitHXetF885tz8
+Message-ID: <CAMj1kXF_-d4_VVO+RovbXxoK=Gh72yFvHqEdRJ6rQBpSzB+1Gw@mail.gmail.com>
+Subject: Re: [GIT pull] x86/urgent for v6.16-rc7
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
---Sig_/0.hjtAA3+MuH1qKXXC=WgQy
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, 21 Jul 2025 at 04:35, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Sun, 20 Jul 2025 at 05:05, Thomas Gleixner <tglx@linutronix.de> wrote:
+> >
+> > A single fix for a GCC wreckage, which emits a KCSAN instrumentation call
+> > in __sev_es_nmi_complete() despite the function being annotated with
+> > 'noinstr'. As all functions in that source file are noinstr, exclude the
+> > whole file from KCSAN in the Makefile to cure it.
+>
+> Hmm. I'm not entirely sure if this counts as a gcc bug.
+>
+> In particular, look at the *declaration* of __sev_es_nmi_complete() in
+> <asm/sev.h>, and note the complete lack of 'noinstr':
+>
+>     extern void __sev_es_nmi_complete(void);
+>
+> and I wonder if it might be the case that gcc might pick up the lack
+> of 'noinstr' from the declaration, even if it's there in the
+> definition..
+>
 
-Hi all,
+Just tried this: adding 'noinstr' to the declaration in asm/sev.h
+makes no difference at all.
 
-After merging the mailbox tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+> The fix for this obviously ends up working and is fine regardless, but
+> it's _possible_ that this is self-inflicted pain rather than an
+> outright compiler bug. Because having a declaration and a definition
+> that doesn't match sounds like a bad idea in the first place.
+>
 
-drivers/mailbox/mtk-tinysys-mailbox.c: In function 'mtk_tinysys_mhu_mbox_st=
-artup':
-drivers/mailbox/mtk-tinysys-mailbox.c:95:9: error: implicit declaration of =
-function 'irq_clear_status_flags' [-Wimplicit-function-declaration]
-   95 |         irq_clear_status_flags(priv->irq, IRQ_NOAUTOEN);
-      |         ^~~~~~~~~~~~~~~~~~~~~~
-drivers/mailbox/mtk-tinysys-mailbox.c:95:43: error: 'IRQ_NOAUTOEN' undeclar=
-ed (first use in this function); did you mean 'IRQF_NO_AUTOEN'?
-   95 |         irq_clear_status_flags(priv->irq, IRQ_NOAUTOEN);
-      |                                           ^~~~~~~~~~~~
-      |                                           IRQF_NO_AUTOEN
-drivers/mailbox/mtk-tinysys-mailbox.c:95:43: note: each undeclared identifi=
-er is reported only once for each function it appears in
-
-Caused by commit
-
-  43a9f5ab3d17 ("mailbox: Add MediaTek TinySYS MHU-like Mailbox")
-
-Forgot to include linux/irq.h ...
-
-I have used the mailbox tree from next-20250718 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/0.hjtAA3+MuH1qKXXC=WgQy
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh9sGwACgkQAVBC80lX
-0GwGWQf+P96K6Mg/kT5h7HAOJzsacxyiCdudtzwCnREUL+U/B3+X6xTpa4R9r/S5
-uBErNKdWsABBtgjX2DcnBoY+CMfJ7TUwHkMfXmbwFU2MrjC55Wu4qnlmeaneTBtO
-1kWTmL1TJtk15I7Yt+wSUpZpR+Ga9DGRzmnkeh7yn4hwNNQqQISknF/3NveAeGbn
-zYkspyeZloMQv3KUp8zXYjFuzqC+s+o3kaeQJAwduLNwcCEpkEDWTEidMi7kSa8I
-P4JNC/mt9SwNymLztLj6/RS9X16OuTP87wpB4d3WV6EhkzGOB+WXeX2usCZAx4xy
-eOVhQEdXN/OXWr5/rtbde1ehRSeFpw==
-=MmUu
------END PGP SIGNATURE-----
-
---Sig_/0.hjtAA3+MuH1qKXXC=WgQy--
+Agree with this in principle, and for 'noinstr' in particular, this
+may work fine but note that there are __attribute__(()) annotations
+that make no sense, or are not permitted on [forward] declarations,
+and so having the general rule that declarations and definitions must
+have the same annotations may not be feasible in practice.
 
