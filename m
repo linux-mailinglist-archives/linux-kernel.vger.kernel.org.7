@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-738840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F83EB0BE02
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:46:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DF82B0BE05
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:47:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 927D517A604
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:46:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4D877AC81C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:45:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353FA27F000;
-	Mon, 21 Jul 2025 07:46:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B4222820CE;
+	Mon, 21 Jul 2025 07:47:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XBHK/HgY"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gOXQWEUM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82FE3E555;
-	Mon, 21 Jul 2025 07:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616AFAD23;
+	Mon, 21 Jul 2025 07:47:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753083994; cv=none; b=ahYrztj+EPXRez+BgZEz8YalzbtNVdPW1Dxii83XtiO0y89gY1LN2wR4PJWw2PSbmHWybTI1k+Khvy5VxgDti0S32KxSiK9hz6DBO1I1YCQWtunNIP6FrlPKggfgoqQUscvIJPfcFOncBxdWClv5Smfpi+Zn0K2AYixA9K/qnbo=
+	t=1753084027; cv=none; b=WCiAkB6jNmrHhuWU6DBiAjjZhtP6svyp+jlPL9VZ0C90DFM5c82vqL6fjxKWBPZ1XYUFr2GMOD6JQbXT6/6nBY2vYq4mxIHF9ai5Flzl7ruWeeL7t7hOuW2q7gqagtKVas4W6YJNHLaFEgTcwpxFupJErFTtihbVtct50hkIjk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753083994; c=relaxed/simple;
-	bh=6PraR24UPK00rb1bzZXXtk9wnPTp2FVqYNTVjH72N4M=;
+	s=arc-20240116; t=1753084027; c=relaxed/simple;
+	bh=vipiOsheUEUfVcZfe/f8Unsa2t3MPDU99scYVxF7E3U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YnqkgEgveNk055rOsBYEPWhIER9bELQMRltmeCYRNYhJar7u96CkYK1doL4wVoeWSWXu5YZTf/xXrEqs0p280CYX3cUUY7RatoiRU764fbO1ECC+yOT1PPdiNaCTGGI7EgWHvoHMjeJVBTDv2AGquIornz2WL04/F6U6X3ga5XM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XBHK/HgY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB019C4CEF1;
-	Mon, 21 Jul 2025 07:46:33 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=nNu/hnNQLdN1K1oKOrIfum0zbgPgfr3x8wTjEpMWSai9oxxDyFmBZZ6RnrhQy14ZxSZ15i/C1jV1+LLQKhRDdjJm/GYFhmO7K7ZovDBg5CqY4b6j+OfcabZrMDfIqnHQCp+PrmROHzjMLW3Iebc/K50GIDykIUYlcEUe5O/Zcxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gOXQWEUM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80E27C4CEED;
+	Mon, 21 Jul 2025 07:47:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1753083994;
-	bh=6PraR24UPK00rb1bzZXXtk9wnPTp2FVqYNTVjH72N4M=;
+	s=korg; t=1753084026;
+	bh=vipiOsheUEUfVcZfe/f8Unsa2t3MPDU99scYVxF7E3U=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XBHK/HgYEebg6tPeeY+BVG1JHAslYcG+5Uhm0iPJha4ty+GkvOr3q/bjUQuyoICVJ
-	 QvR9asqBIttv31a/jEnN+9dycqaQbbiZKVwv7TKFr74TAPVSM4J9ZtmxjG1u9svkq/
-	 Pi3zvuxKZOOaD1w2QkAyVjXECOZ4CBWMPNKiORyE=
-Date: Mon, 21 Jul 2025 09:46:31 +0200
+	b=gOXQWEUMI/lZGmlxZmdGE3lR+17oVtpTamAwF2jY8d1crSF9FqmgIrUsc2T8CTfIR
+	 S0QD8oNvXD5Cu9zcBojsxjmFZ06e46O2Eh9xcyHuyO61o66+aZMQstzJeMPizqxKcO
+	 Qm2FLb566zpMHf1cL6hsShDGZUKSMXV0vJDi1OvI=
+Date: Mon, 21 Jul 2025 09:47:03 +0200
 From: Greg KH <gregkh@linuxfoundation.org>
 To: Tao Xue <xuetao09@huawei.com>
 Cc: Thinh.Nguyen@synopsys.com, prashanth.k@oss.qualcomm.com,
@@ -47,7 +47,7 @@ Cc: Thinh.Nguyen@synopsys.com, prashanth.k@oss.qualcomm.com,
 	weiwenwen3@huawei.com
 Subject: Re: [PATCH v3] usb: gadget : fix use-after-free in
  composite_dev_cleanup()
-Message-ID: <2025072118-linguini-carded-fcfb@gregkh>
+Message-ID: <2025072150-congenial-feisty-dde1@gregkh>
 References: <20250721072946.14638-1-xuetao09@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -101,15 +101,43 @@ On Mon, Jul 21, 2025 at 03:29:46PM +0800, Tao Xue wrote:
 > +		 * is NULL and will use it when it is not NULL, so we need to set
 > +		 * NULL here.
 > +		 */
+> +		cdev->os_desc_req = NULL;
+>  		goto end;
+>  	}
+>  	cdev->os_desc_req->context = cdev;
+> -- 
+> 2.17.1
+> 
+> 
 
-Didn't checkpatch complain that this is not the correct way to do a
-multi-line comment?
+Hi,
 
-And that's a bit verbose, how about
-		/* Set os_desc_req to NULL so that composite_dev_cleanup() will not try to free it again */
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-And you ignored my patch bot for some reason :(
+You are receiving this message because of the following common error(s)
+as indicated below:
 
-{sigh}
 
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
