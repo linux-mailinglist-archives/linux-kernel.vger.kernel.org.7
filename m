@@ -1,203 +1,269 @@
-Return-Path: <linux-kernel+bounces-739953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4B8BB0CD81
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 01:04:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9833BB0CD7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 01:04:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5962189E040
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 23:04:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76CA45464F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 23:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17582459D1;
-	Mon, 21 Jul 2025 23:04:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="k2G0cZNT"
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F6D1DED4C;
+	Mon, 21 Jul 2025 23:04:16 +0000 (UTC)
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E422322B595
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 23:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37DE5221F09;
+	Mon, 21 Jul 2025 23:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753139057; cv=none; b=KsKWKqGb1ivcKHwQXjgvdpCCYr3/vVNDPrIL+HpVwSr+esR5+KLY2z7Pi0rFM+Ubnsxcu3JdmsjjBuhxayCjKyypeETVZ+M6aZsoIOdSK8L03uHjmBUWX/IscyGeDquPEDQH6fpvScjkyIP2OFZ2IjcsWu5z5T3ATlltDlWNuP0=
+	t=1753139055; cv=none; b=V1KZw7rrIDE73xS3k9H7Bg1zfV7y3uGnAdgY0crxlUi69zlNpAv7ZXTSJAAyYNfnCpi9Y201DXGrP2UoVoj68aqPKWlTZMSEA4825rXu/5S2R/OBIl0V4CmNacjaZsmZFurz7a6l+Xc8IrKseBuVu2PJMkkNZERG2DYKDe8GOTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753139057; c=relaxed/simple;
-	bh=CVzZxAIo8VSXhMDtW4lVVfKTU93BFVb+GE+/jPo15wQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=U+5X61hZdy6uBCj7s/g//6bcXrPDDevo6m/9lclxTiM88AMG6rspz8z/lK6W0/LKv1Hvaiy9ZIByn4ncNK7010mfXFR+902YZVDXJx8p1YGu46IXVFq/c4Csyy5EZeEVSmFRdGBeol8+D9M8HI5SNuIi8KoPBQaGdLOyyIYZBqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=k2G0cZNT; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-30008553e7eso1830012fac.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 16:04:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1753139053; x=1753743853; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3XjuVctm6NjoqaMg/cxuuhCaXLbFmTYKbU+xYGy04dI=;
-        b=k2G0cZNTl1eNSsq4rngS2dglPAKVFmEYxQfjGplwo0XOVy+7Zb/Mh+64GiCh6gP80p
-         GZVjaGDuXlMqntDWxv6326OmfDpvLjt2LvSPUDQBbuqsMYtQv/1rJLPInd5REl+amXvp
-         OrvnAM/HzeAiJDlg8KKCkDtVjJ1ubJ2C6vODaSdLx1xc6joYDY43Lg1axhZy+a9qfk6s
-         qOqor0I84re3hNvepbfQ0ROZijP7Zox4nDB9GD+xXWdqjjUGvYblUwkAjtFfjBRGxsv4
-         IPdcVNCnVzaXH/Z3VF4xKihuTfPXZ8KsS02j38LNNPe4l72Z3V4wJy05GXWajK8Axdnl
-         fMfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753139053; x=1753743853;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3XjuVctm6NjoqaMg/cxuuhCaXLbFmTYKbU+xYGy04dI=;
-        b=Vg6wAGLg2sHmVGwWQw++2HPQOSr2EZiB4xdk09YXlBJCRclp2VXC7o5soUM2DWcvC8
-         UZR7+Q1RkLhT+bPqkxu1Me+yJsemgcM6m3kVJYvzqy0cO3Gw4OzlXkt0mUuWcMBfR2L+
-         iKTQHalHy3nN9LAzV07mQnerqYwzYI+Pafn4BfzgBZMnwzYYYjTiCJvFroUQXJcK9jBO
-         nXPvfcT4SbNWUWLlmmnXiDAyal/jO6SB9v9BkpTbmUWBf5uBe7gtqnUDAejTJmCHPpqR
-         UdWuVGN3mR+L/u2Qlh4fL8vHquvI7KRc7MoZtJG/N6gYXkKwA7DftAcsoagN830q/X2k
-         fLOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUMA1EPiGpG6/ltVNNUj1+4K/GFl46qnbE5toRw7zPNpKcg5NG6XScXxfNMG9OeLF5xvM0FG9OaWUL5Hqg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTDhYSRMlRvJPEc3AzwixFLE/E65dPtg1BTWw1pqmTjFehLRjM
-	0KgH8QRcpZvO+93VeRhL8StT9E5JGgWd5bimhjopDOyC3rZxhT7WLZL7i9sfDwgRs8I=
-X-Gm-Gg: ASbGnctf/WT863HIvHpUwfmsArQQjGZI93z0kXhEAtLDpgKc0QAmYrfFOrOI/hP0zeP
-	j7q3Pw14zYfnorttUBFb1OQeJRE5maCpqzSbgOyyGRt8fOPYlYabO5/5fbp8k71fLC2VJiRJKvr
-	vdXUpW6NbWGHQB5aK3h+08W9KYoqjznCIzqlnLZnZGynupeEfiaXr/gqCyNw5U8r4SEy41cSzII
-	vKPkXHbo1vpnnDbcsAUe8Ni+50GKoAPntWC7vCMaiWsaLbrjXe1/q6RszzFJlQ/bwaLp/KDKAxC
-	CANQS+M0Eb2hKT2o46YbMR7p5mA4BBXS50ZlpK9HF7LpZJVFA1PTc+3Eqs5Gdb93DWRy9MfJDva
-	bCRyLES5hUdOxMN1otzvT9G+DTVjS
-X-Google-Smtp-Source: AGHT+IE1ajgrpgjumZWgfAKx4BBDWDURo81gQezi9Ij7W/wmqR6qfdmg+PuK3KmqobuocjSp+7ArMg==
-X-Received: by 2002:a05:6870:cb95:b0:2ff:a802:6885 with SMTP id 586e51a60fabf-2ffaf2c74f8mr17344358fac.11.1753139052913;
-        Mon, 21 Jul 2025 16:04:12 -0700 (PDT)
-Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:2a79:4b55:6a01:85d7])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73e8fc51467sm2662952a34.31.2025.07.21.16.04.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 16:04:12 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-Date: Mon, 21 Jul 2025 18:04:04 -0500
-Subject: [PATCH v2] iio: temperature: maxim_thermocouple: use DMA-safe
- buffer for spi_read()
+	s=arc-20240116; t=1753139055; c=relaxed/simple;
+	bh=gXvOvys/ryU2q0Qk6oGr5PYxo77EpXEX5DbNLvnJUPg=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=iMY+K1H5ofcxQBMVyLqP5h9cuwcjoaeKz1ecRGE32ckcapd0Qq7u8v4XYul+d3QHVQceznUPXL5aC29HMsyyN8NgEiAu/Xzrg08DvHI9CrZEaVudUJ+5jwboUNFw/xqu5FwMvYgkqJlIxCmagqHuvDSdfhI1iRt/3X+FC9r6FwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1udzYE-002uUz-Gz;
+	Mon, 21 Jul 2025 23:04:08 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250721-iio-use-more-iio_declare_buffer_with_ts-3-v2-1-0c68d41ccf6c@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIAGPHfmgC/53NQQ6DIBCF4asY1qURiGi66j0aQxCGOomWZlBbY
- 7x70SN0+b3F+zeWgBASuxUbI1gwYXxlyEvBXG9fT+Dos5ksZVXWQnDEyOcEfIwEB4wHN1gC080
- hAJkPTr2ZEldcOqea2mrdecfy35sg4PdsPdrsHtMUaT3TizjWfyqL4IIH7b1SWgXfVPfOrgN2B
- FcXR9bu+/4Dh1QwLuUAAAA=
-X-Change-ID: 20250711-iio-use-more-iio_declare_buffer_with_ts-3-2cc387a66bdc
-To: Jonathan Cameron <jic23@kernel.org>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>, Matt Ranostay <mranostay@gmail.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- David Lechner <dlechner@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3485; i=dlechner@baylibre.com;
- h=from:subject:message-id; bh=CVzZxAIo8VSXhMDtW4lVVfKTU93BFVb+GE+/jPo15wQ=;
- b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBofsdlrfHL/YVQQFy+i6DSnuGVH+VfUWNeLa4sL
- QCd/KZqw5eJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaH7HZQAKCRDCzCAB/wGP
- wET3B/9bZyGjpyC2YDJxrGhYIbCEe+yvmrrtNCHLm/ny3M/yzAOFpHBOGyaF0z9SazFNYMugQN+
- pBXbXZt5jduSEHuFCjLRQpo5eGhwaKmbxZKHxzkBecMx3qfCvC6Ko2BWe90ixlXioLFNxX6KbEC
- 99nq5JEgZZgvRETBy9zSSKR16EemLDbKCOO3EWVsCowSgGS+/bMUfivTVAa7gg1QUI8vhfE4Ntd
- /CM4x0rj6O/bc9gVGxd8EHJp2rrwnFPGg9wsJYHYMhOtceQbt7B1/v0VXdM3paO27TcN5MvkH0Q
- 4YjzeUAlNznpwsfDdMZg1dBQGILixoDqQxS/qx0igWYDDbmF
-X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
- fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
+From: "NeilBrown" <neil@brown.name>
+To: "Jeff Layton" <jlayton@kernel.org>
+Cc: "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/7] VFS: introduce done_dentry_lookup()
+In-reply-to: <b518093d927c52e4a7affce3a91fba618fd3fc09.camel@kernel.org>
+References: <>, <b518093d927c52e4a7affce3a91fba618fd3fc09.camel@kernel.org>
+Date: Tue, 22 Jul 2025 09:04:07 +1000
+Message-id: <175313904724.2234665.16342190171473611948@noble.neil.brown.name>
 
-Replace using stack-allocated buffers with a DMA-safe buffer for use
-with spi_read(). This allows the driver to be safely used with
-DMA-enabled SPI controllers.
+On Mon, 21 Jul 2025, Jeff Layton wrote:
+> On Mon, 2025-07-21 at 17:59 +1000, NeilBrown wrote:
+> > done_dentry_lookup() is the first step in introducing a new API for
+> > locked operation on names in directories - those that create or remove
+> > names.  Rename operations will also be part of this API but will
+> > use separate interfaces.
+> >=20
+> > The plan is to lock just the dentry (or dentries), not the whole
+> > directory.  A "dentry_lookup()" operation will perform the locking and
+> > lookup with a corresponding "done_dentry_lookup()" releasing the
+> > resulting dentry and dropping any locks.
+> >=20
+> > This done_dentry_lookup() can immediately be used to complete updates
+> > started with kern_path_locked() (much as done_path_create() already
+> > completes operations started with kern_path_create()).
+> >=20
+> > So this patch adds done_dentry_lookup() and uses it where
+> > kern_path_locked() is used.  It also adds done_dentry_lookup_return()
+> > which returns a reference to the dentry rather than dropping it.  This
+> > is a less common need in existing code, but still worth its own interface.
+> >=20
+> > Signed-off-by: NeilBrown <neil@brown.name>
+> > ---
+> >  drivers/base/devtmpfs.c |  7 ++-----
+> >  fs/bcachefs/fs-ioctl.c  |  3 +--
+> >  fs/namei.c              | 38 ++++++++++++++++++++++++++++++++++++++
+> >  include/linux/namei.h   |  3 +++
+> >  kernel/audit_fsnotify.c |  9 ++++-----
+> >  kernel/audit_watch.c    |  3 +--
+> >  6 files changed, 49 insertions(+), 14 deletions(-)
+> >=20
+> > diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
+> > index 31bfb3194b4c..47bee8166c8d 100644
+> > --- a/drivers/base/devtmpfs.c
+> > +++ b/drivers/base/devtmpfs.c
+> > @@ -265,8 +265,7 @@ static int dev_rmdir(const char *name)
+> >  	else
+> >  		err =3D -EPERM;
+> > =20
+> > -	dput(dentry);
+> > -	inode_unlock(d_inode(parent.dentry));
+> > +	done_dentry_lookup(dentry);
+> >  	path_put(&parent);
+> >  	return err;
+> >  }
+> > @@ -349,9 +348,7 @@ static int handle_remove(const char *nodename, struct=
+ device *dev)
+> >  		if (!err || err =3D=3D -ENOENT)
+> >  			deleted =3D 1;
+> >  	}
+> > -	dput(dentry);
+> > -	inode_unlock(d_inode(parent.dentry));
+> > -
+> > +	done_dentry_lookup(dentry);
+> >  	path_put(&parent);
+> >  	if (deleted && strchr(nodename, '/'))
+> >  		delete_path(nodename);
+> > diff --git a/fs/bcachefs/fs-ioctl.c b/fs/bcachefs/fs-ioctl.c
+> > index 4e72e654da96..8077ddf4ddc4 100644
+> > --- a/fs/bcachefs/fs-ioctl.c
+> > +++ b/fs/bcachefs/fs-ioctl.c
+> > @@ -351,8 +351,7 @@ static long bch2_ioctl_subvolume_destroy(struct bch_f=
+s *c, struct file *filp,
+> >  		d_invalidate(victim);
+> >  	}
+> >  err:
+> > -	inode_unlock(dir);
+> > -	dput(victim);
+> > +	done_dentry_lookup(victim);
+> >  	path_put(&path);
+> >  	return ret;
+> >  }
+> > diff --git a/fs/namei.c b/fs/namei.c
+> > index 1c80445693d4..da160a01e23d 100644
+> > --- a/fs/namei.c
+> > +++ b/fs/namei.c
+> > @@ -1714,6 +1714,44 @@ struct dentry *lookup_one_qstr_excl(const struct q=
+str *name,
+> >  }
+> >  EXPORT_SYMBOL(lookup_one_qstr_excl);
+> > =20
+> > +/**
+> > + * done_dentry_lookup - finish a lookup used for create/delete
+> > + * @dentry:  the target dentry
+> > + *
+> > + * After locking the directory and lookup or validating a dentry
+> > + * an attempt can be made to create (including link) or remove (including
+> > + * rmdir) a dentry.  After this, done_dentry_lookup() can be used to both
+> > + * unlock the parent directory and dput() the dentry.
+> > + *
+> > + * This interface allows a smooth transition from parent-dir based
+> > + * locking to dentry based locking.
+> > + */
+> > +void done_dentry_lookup(struct dentry *dentry)
+> > +{
+> > +	inode_unlock(dentry->d_parent->d_inode);
+> > +	dput(dentry);
+> > +}
+> > +EXPORT_SYMBOL(done_dentry_lookup);
+> > +
+> > +/**
+> > + * done_dentry_lookup_return - finish a lookup sequence, returning the d=
+entry
+> > + * @dentry:  the target dentry
+> > + *
+> > + * After locking the directory and lookup or validating a dentry
+> > + * an attempt can be made to create (including link) or remove (including
+> > + * rmdir) a dentry.  After this, done_dentry_lookup_return() can be used=
+ to
+> > + * unlock the parent directory.  The dentry is returned for further use.
+> > + *
+> > + * This interface allows a smooth transition from parent-dir based
+> > + * locking to dentry based locking.
+> > + */
+> > +struct dentry *done_dentry_lookup_return(struct dentry *dentry)
+> > +{
+> > +	inode_unlock(dentry->d_parent->d_inode);
+> > +	return dentry;
+> > +}
+> > +EXPORT_SYMBOL(done_dentry_lookup_return);
+> > +
+> >  /**
+> >   * lookup_fast - do fast lockless (but racy) lookup of a dentry
+> >   * @nd: current nameidata
+> > diff --git a/include/linux/namei.h b/include/linux/namei.h
+> > index 5d085428e471..e097f11587c9 100644
+> > --- a/include/linux/namei.h
+> > +++ b/include/linux/namei.h
+> > @@ -81,6 +81,9 @@ struct dentry *lookup_one_positive_unlocked(struct mnt_=
+idmap *idmap,
+> >  					    struct qstr *name,
+> >  					    struct dentry *base);
+> > =20
+> > +void done_dentry_lookup(struct dentry *dentry);
+> > +struct dentry *done_dentry_lookup_return(struct dentry *dentry);
+> > +
+> >  extern int follow_down_one(struct path *);
+> >  extern int follow_down(struct path *path, unsigned int flags);
+> >  extern int follow_up(struct path *);
+> > diff --git a/kernel/audit_fsnotify.c b/kernel/audit_fsnotify.c
+> > index c565fbf66ac8..170836c3520f 100644
+> > --- a/kernel/audit_fsnotify.c
+> > +++ b/kernel/audit_fsnotify.c
+> > @@ -85,8 +85,8 @@ struct audit_fsnotify_mark *audit_alloc_mark(struct aud=
+it_krule *krule, char *pa
+> >  	dentry =3D kern_path_locked(pathname, &path);
+> >  	if (IS_ERR(dentry))
+> >  		return ERR_CAST(dentry); /* returning an error */
+> > -	inode =3D path.dentry->d_inode;
+> > -	inode_unlock(inode);
+> > +	inode =3D igrab(dentry->d_inode);
+>=20
+> This is a little confusing. This patch changes "inode" from pointing to
+> the parent inode to point to the child inode instead. That actually
+> makes a bit more sense given the naming, but might best be done in a
+> separate patch.
 
-The buffer array is also converted to a struct with a union to make the
-usage of the memory in the buffer more clear and ensure proper alignment.
+I could at least explain it properly the commit description.
+This is part of my struggle with done_dentry_lookup_return().  Maybe I
+should just use that and preserve the current use of dentry here....
 
-Fixes: 1f25ca11d84a ("iio: temperature: add support for Maxim thermocouple chips")
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
-Changes in v2:
-- This is a new patch since when looking at it again, I noticed a bug
-  with passing stack-allocated memory to spi_read(). So now the primary
-  purpose is a fix and converting the array to a struct comes free with
-  it.
-- Link to v1: https://lore.kernel.org/r/20250711-iio-use-more-iio_declare_buffer_with_ts-3-v1-1-f6dd3363fd85@baylibre.com
----
- drivers/iio/temperature/maxim_thermocouple.c | 26 ++++++++++++++++----------
- 1 file changed, 16 insertions(+), 10 deletions(-)
+Or maybe a separate patch as you say.  I'll ponder it.
 
-diff --git a/drivers/iio/temperature/maxim_thermocouple.c b/drivers/iio/temperature/maxim_thermocouple.c
-index cae8e84821d7fd521d59432580d51def939fa4d1..fa648a6542a4e2f08adb556c776b68331ae69631 100644
---- a/drivers/iio/temperature/maxim_thermocouple.c
-+++ b/drivers/iio/temperature/maxim_thermocouple.c
-@@ -11,6 +11,7 @@
- #include <linux/module.h>
- #include <linux/err.h>
- #include <linux/spi/spi.h>
-+#include <linux/types.h>
- #include <linux/iio/iio.h>
- #include <linux/iio/sysfs.h>
- #include <linux/iio/trigger.h>
-@@ -121,8 +122,15 @@ struct maxim_thermocouple_data {
- 	struct spi_device *spi;
- 	const struct maxim_thermocouple_chip *chip;
- 	char tc_type;
--
--	u8 buffer[16] __aligned(IIO_DMA_MINALIGN);
-+	/* Buffer for reading up to 2 hardware channels. */
-+	struct {
-+		union {
-+			__be16 raw16;
-+			__be32 raw32;
-+			__be16 raw[2];
-+		};
-+		aligned_s64 timestamp;
-+	} buffer __aligned(IIO_DMA_MINALIGN);
- };
- 
- static int maxim_thermocouple_read(struct maxim_thermocouple_data *data,
-@@ -130,18 +138,16 @@ static int maxim_thermocouple_read(struct maxim_thermocouple_data *data,
- {
- 	unsigned int storage_bytes = data->chip->read_size;
- 	unsigned int shift = chan->scan_type.shift + (chan->address * 8);
--	__be16 buf16;
--	__be32 buf32;
- 	int ret;
- 
- 	switch (storage_bytes) {
- 	case 2:
--		ret = spi_read(data->spi, (void *)&buf16, storage_bytes);
--		*val = be16_to_cpu(buf16);
-+		ret = spi_read(data->spi, &data->buffer.raw16, storage_bytes);
-+		*val = be16_to_cpu(data->buffer.raw16);
- 		break;
- 	case 4:
--		ret = spi_read(data->spi, (void *)&buf32, storage_bytes);
--		*val = be32_to_cpu(buf32);
-+		ret = spi_read(data->spi, &data->buffer.raw32, storage_bytes);
-+		*val = be32_to_cpu(data->buffer.raw32);
- 		break;
- 	default:
- 		ret = -EINVAL;
-@@ -166,9 +172,9 @@ static irqreturn_t maxim_thermocouple_trigger_handler(int irq, void *private)
- 	struct maxim_thermocouple_data *data = iio_priv(indio_dev);
- 	int ret;
- 
--	ret = spi_read(data->spi, data->buffer, data->chip->read_size);
-+	ret = spi_read(data->spi, &data->buffer.raw, data->chip->read_size);
- 	if (!ret) {
--		iio_push_to_buffers_with_ts(indio_dev, data->buffer,
-+		iio_push_to_buffers_with_ts(indio_dev, &data->buffer,
- 					    sizeof(data->buffer),
- 					    iio_get_time_ns(indio_dev));
- 	}
+>=20
+> > +	done_dentry_lookup(dentry);
+> > =20
+> >  	audit_mark =3D kzalloc(sizeof(*audit_mark), GFP_KERNEL);
+> >  	if (unlikely(!audit_mark)) {
+> > @@ -97,17 +97,16 @@ struct audit_fsnotify_mark *audit_alloc_mark(struct a=
+udit_krule *krule, char *pa
+> >  	fsnotify_init_mark(&audit_mark->mark, audit_fsnotify_group);
+> >  	audit_mark->mark.mask =3D AUDIT_FS_EVENTS;
+> >  	audit_mark->path =3D pathname;
+> > -	audit_update_mark(audit_mark, dentry->d_inode);
+> > +	audit_update_mark(audit_mark, inode);
+> >  	audit_mark->rule =3D krule;
+> > =20
+> > -	ret =3D fsnotify_add_inode_mark(&audit_mark->mark, inode, 0);
+> > +	ret =3D fsnotify_add_inode_mark(&audit_mark->mark, path.dentry->d_inode=
+, 0);
+> >  	if (ret < 0) {
+> >  		audit_mark->path =3D NULL;
+> >  		fsnotify_put_mark(&audit_mark->mark);
+> >  		audit_mark =3D ERR_PTR(ret);
+> >  	}
+> >  out:
+> > -	dput(dentry);
+> >  	path_put(&path);
+> >  	return audit_mark;
+> >  }
+> > diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
+> > index 0ebbbe37a60f..f6ecac2109d4 100644
+> > --- a/kernel/audit_watch.c
+> > +++ b/kernel/audit_watch.c
+> > @@ -359,8 +359,7 @@ static int audit_get_nd(struct audit_watch *watch, st=
+ruct path *parent)
+> >  		watch->ino =3D d_backing_inode(d)->i_ino;
+> >  	}
+> > =20
+> > -	inode_unlock(d_backing_inode(parent->dentry));
+> > -	dput(d);
+> > +	done_dentry_lookup(d);
+> >  	return 0;
+> >  }
+> > =20
+>=20
+> It looks right to me though.
+>=20
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+>=20
 
----
-base-commit: cd2731444ee4e35db76f4fb587f12d327eec5446
-change-id: 20250711-iio-use-more-iio_declare_buffer_with_ts-3-2cc387a66bdc
-
-Best regards,
--- 
-David Lechner <dlechner@baylibre.com>
-
+Thanks,
+NeilBrown
 
