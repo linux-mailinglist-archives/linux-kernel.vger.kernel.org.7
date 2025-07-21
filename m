@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-739504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06BDCB0C70F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:57:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96442B0C713
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:58:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B69E418865D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:56:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D14A1622AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED7BB2D8767;
-	Mon, 21 Jul 2025 14:56:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD6C2D9EE7;
+	Mon, 21 Jul 2025 14:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="eZKEoqhd"
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="B+dK7Yr5"
 Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC7F289E07;
-	Mon, 21 Jul 2025 14:56:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA4E2E406;
+	Mon, 21 Jul 2025 14:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753109764; cv=none; b=TOhBY2Nbz7Ns8vN1idbCDji/Xv+7rbKH7ULSn06LP2Fvzin+r+3SlClDVmwkvzl3qtFzRMe2qbumB6RlApTii+JSdFf0rS01HsV9z/beOj9/UjWptPgo0RQKvhd2YyA2RYv7PIHWQp86vY7wp2D4UCNRJStuQCZL5ZNV+MhDVtc=
+	t=1753109891; cv=none; b=cyh0tuzDgDAQe5FcnVe/C5FNYTU6RJypC1Eo0Gn3wVYIZhNSIeGlmwqjfAJ6y5oDP6sOckfIZ25EAbvG0NKqy3UysSGnsJUbnWQR9Ht/5IIk1fhgvUAblppWrf8hqh/9JnT5NprSoozmwADn9MWeOt80p15M2iVLzLIHXFrMunY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753109764; c=relaxed/simple;
-	bh=yJf51IhMxFdJYipRkCqCtlpvgj3N9aiKszPM1IzUrow=;
+	s=arc-20240116; t=1753109891; c=relaxed/simple;
+	bh=IXMpzorN0DpbTX6QQuw1FzgLXmltEX1pZmXF9lOrz0U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DjKGf4QeO6zQW6Ay9vYIVbK7SOIBRHtl8oCc5Bs5IpUbH0cfziM9gMhApgs+TGNlwNjh1NjpsRQC0V6jMe1ZGGTnBZURQt9ESn94dsWzryjeIYopBryKnOJ6wQDHC/w5VacDZFWUgKJY3pQuqR3tNj+x9Ru7WKt1y8capybPniw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=eZKEoqhd; arc=none smtp.client-ip=156.67.10.101
+	 Content-Type:Content-Disposition:In-Reply-To; b=ISOGMVLH+5iG26mMbebJ4gGQxVxf6e/Mliq14jJWA0BsWY+46pig6IAmhVJskn5iI5KXrZqyW0k8F40mENnxJZsdx9jTCpP4JEP2kKj73XZDgLKi2nwzrPptNwMabHO9YO1uReFl/SX/rPmt+udVXEtjd+JW9Db/q7wky1/ErgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=B+dK7Yr5; arc=none smtp.client-ip=156.67.10.101
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
@@ -35,28 +35,30 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
 	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
 	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=+DyZkIYO1XqsrsbpchPc3O0d4QABkPVrst0a/+a1IUQ=; b=eZKEoqhdtAv5irywEXHEpgprx1
-	2Qcs6sRhqltXnjBmz3sAPzMZxbNNwKJRUnS3KLHJccxPvONUFX/EHqhuq5Nw6KZPbK3SXODAsWjbL
-	CSTDTeSgV3PHZGvaiy4TLG7gkWN0ozOKsgwU+XqtIp5UqQ78AOSOXJgak/BBgPL8mmm8=;
+	bh=WS1Xbv45ET5YWY4e1pY2jzB+5AD0h/g8lcMpQh8JFX4=; b=B+dK7Yr52bNUa/8wL/Ge2xlEQ7
+	mu1Ea1J+W2r1ggv9PnXiXImSVabc+QIXL7FRQZNvF5H78JM9fqQw10lGmWJaAFY/LbMjf/6WrzMkz
+	44NNZeHPaS4bwq8+pg98eJryb6QCV1uG8TyGrZLussEmNjxL+B6Fza1IQqcbNwfmEpQE=;
 Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
 	(envelope-from <andrew@lunn.ch>)
-	id 1udruw-002Mso-L2; Mon, 21 Jul 2025 16:55:02 +0200
-Date: Mon, 21 Jul 2025 16:55:02 +0200
+	id 1udrxP-002MvA-JG; Mon, 21 Jul 2025 16:57:35 +0200
+Date: Mon, 21 Jul 2025 16:57:35 +0200
 From: Andrew Lunn <andrew@lunn.ch>
-To: Dong Yibo <dong100@mucse.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
-	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: Dong Yibo <dong100@mucse.com>, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
+	gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
+	danishanwar@ti.com, lee@trager.us, gongfan1@huawei.com,
+	lorenzo@kernel.org, geert+renesas@glider.be,
 	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
 	alexanderduyck@fb.com, richardcochran@gmail.com,
 	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v2 01/15] net: rnpgbe: Add build support for rnpgbe
-Message-ID: <552cb3f0-bf17-449b-b113-02202127e650@lunn.ch>
+Message-ID: <1a6ea9a1-6b79-41f7-a272-037e6a075f0e@lunn.ch>
 References: <20250721113238.18615-1-dong100@mucse.com>
  <20250721113238.18615-2-dong100@mucse.com>
+ <32fc367c-46a4-4c76-b8a8-494bf79a6409@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,65 +67,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250721113238.18615-2-dong100@mucse.com>
+In-Reply-To: <32fc367c-46a4-4c76-b8a8-494bf79a6409@linux.dev>
 
-> +++ b/Documentation/networking/device_drivers/ethernet/index.rst
-> @@ -61,6 +61,7 @@ Contents:
->     wangxun/txgbevf
->     wangxun/ngbe
->     wangxun/ngbevf
-> +   mucse/rnpgbe
+On Mon, Jul 21, 2025 at 02:30:40PM +0100, Vadim Fedorenko wrote:
 
-This list is sorted. Please keep with the order.
+> > +/* Device IDs */
+> > +#ifndef PCI_VENDOR_ID_MUCSE
+> > +#define PCI_VENDOR_ID_MUCSE 0x8848
+> > +#endif /* PCI_VENDOR_ID_MUCSE */
 
-Sorting happens all other the kernel. Please keep an eye out of it,
-and ensure you insert into the correct location.
+Hi Vadim
 
-> +++ b/drivers/net/ethernet/Kconfig
-> @@ -202,5 +202,6 @@ source "drivers/net/ethernet/wangxun/Kconfig"
->  source "drivers/net/ethernet/wiznet/Kconfig"
->  source "drivers/net/ethernet/xilinx/Kconfig"
->  source "drivers/net/ethernet/xircom/Kconfig"
-> +source "drivers/net/ethernet/mucse/Kconfig"
+Please trim the quoted text when doing reviews.
 
-Another sorted list.
+> 
+> this should go to include/linux/pci_ids.h without any ifdefs
 
-> +#include <linux/types.h>
-> +#include <linux/module.h>
-> +#include <linux/pci.h>
-> +#include <linux/netdevice.h>
-> +#include <linux/string.h>
-> +#include <linux/etherdevice.h>
+Actually, no. include/linux/pci_ids.h says:
 
-It is also reasonably normal to sort includes.
+/* SPDX-License-Identifier: GPL-2.0 */
+/*
+ *      PCI Class, Vendor and Device IDs
+ *
+ *      Please keep sorted by numeric Vendor ID and Device ID.
+ *
+ *      Do not add new entries to this file unless the definitions
+ *      are shared between multiple drivers.
+ */
 
-> +static int rnpgbe_add_adapter(struct pci_dev *pdev)
-> +{
-> +	struct mucse *mucse = NULL;
-> +	struct net_device *netdev;
-> +	static int bd_number;
-> +
-> +	netdev = alloc_etherdev_mq(sizeof(struct mucse), 1);
-
-If you only have one queue, you might as well use alloc_etherdev().
-
-> +	if (!netdev)
-> +		return -ENOMEM;
-> +
-> +	mucse = netdev_priv(netdev);
-> +	mucse->netdev = netdev;
-> +	mucse->pdev = pdev;
-> +	mucse->bd_number = bd_number++;
-> +	snprintf(mucse->name, sizeof(netdev->name), "%s%d",
-> +		 rnpgbe_driver_name, mucse->bd_number);
-
-That looks wrong. The point of the n in snprintf is to stop you
-overwriting the end of the destination buffer. Hence you should be
-passing the length of the destination buffer, not the source buffer.
-
-I've not looked at how mucse->name is used, but why do you need yet
-another name for the device? There is pdev->dev->name, and soon there
-will be netdev->name. Having yet another name just makes it confusing.
+But the #ifndef should be removed.
 
 	Andrew
 
