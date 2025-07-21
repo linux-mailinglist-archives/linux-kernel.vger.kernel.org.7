@@ -1,84 +1,145 @@
-Return-Path: <linux-kernel+bounces-738676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17420B0BBC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:31:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3308FB0BBC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:31:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AFC11699BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 04:31:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C8F3169E9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 04:31:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57FA9AD5A;
-	Mon, 21 Jul 2025 04:31:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D51C18C91F;
+	Mon, 21 Jul 2025 04:31:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ajXAUpWm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hzR1ANrm"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA436AA7;
-	Mon, 21 Jul 2025 04:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0129E6AA7;
+	Mon, 21 Jul 2025 04:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753072276; cv=none; b=nfmHLf8UdU0HHoZOaSYAmTP3Va2wjhYK93P3lcfGOoW1doMp7z4qhcmKOlWSGCszGriLuQmG/EZMMLBY9s2sSHEmRBs2O6MIdf0Dp+zOBsA5IWVZ6qFr3uWVL+l4ABH5SYL1ESCoOw/0R4ipQ/HS4Ayrvx6plp/jvus5nEn1lb8=
+	t=1753072271; cv=none; b=jPshVKV7VvWTaGNte1q3hgJju/NKYNgO76+MTD/0p7IWU8aFTCRrLJX0VjgZk51VyJu9rVfxUw4YjCXNURyl7bTpwqBbHkP/AcdgSPc+WnQn6W8yA7K6CclptM9OxPl3offmMkeYzdTf9DiCzmA8vV03+Kf1jYIu5u0O6KoyYy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753072276; c=relaxed/simple;
-	bh=tFYIKgmLi9PqdbwsUcrQoVZQbCB8C4dQeOpodg+Y494=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mD36HX/v+YCD3D/S+IlUeW2clNazrhqLgRBKJfOBpRdpaL0mBK+Ey0OErVJnO236ZMKJtprGgUaPJn9mARfQEKizv0wUJyaTN0tv3NnzdOLn1wWSuxefv/Q+DUb0+0EDbQnjvnAPrlt4IEvHBmjkAN492hL4nmBLO+iqYE0KaEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ajXAUpWm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42AA4C4CEF6;
-	Mon, 21 Jul 2025 04:31:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753072276;
-	bh=tFYIKgmLi9PqdbwsUcrQoVZQbCB8C4dQeOpodg+Y494=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ajXAUpWmVnPkyA6BD6SW9y9AkMWKNrcQoHYuXYmEcMF1gH5/xgdlT2kvow5EzmOQY
-	 ND7ssxwSg8T2euxmLIrnZTT5ZoTwZjdhRaVvZihn2w2JMN80be4kmv9DQpJvnKB3fB
-	 2Nrg+6ujdRMB/ENS+0mLPzLBdlP5+Uf/J8g8prLhUq5RX5NXJxH2MaChH2r1BacXMU
-	 W5SB3txysin6H+MBJAIeQFBjo4yIgrTVNUn8bnVDrH1Tjy9dqgL9xyGwpBYOJxeQIA
-	 OzLYE1sjmQEX36gJNRQMz4N+y1U7uwBlA2xi20rjnh0k5KHkGjIdO1g6hUei+iQ3Sh
-	 o0QXH28eJxHAw==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-55622414cf4so3386177e87.3;
-        Sun, 20 Jul 2025 21:31:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUVHWna/kpmqEpVTRwmG9Gu0OFYti5vjbeC3GaJd9y31e5NSWeIcihZbYeAUblyNzkFwrJjB/afiu3V2eU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKmuITEtMkxA6K+N2EGdv/fPGTiuHL69UBu80MTSLm14696vEY
-	DMQ3DqcqIn5DCjYyA/chE09G+xcrlREoeF+ZAITqMvNETmsdTO8ON+iRKWaufy710IS8z16H2Pi
-	BCOOlmQym7SKZjWJBirW4zMMn6sz4Y0U=
-X-Google-Smtp-Source: AGHT+IFxYrKPiFnquEFEjbXx7SinlBEd19ORgwxsoO+Qodlerja2zHOhZh9r9VefqvbLhskSgdCR3k4c2CB+uFe0kT4=
-X-Received: by 2002:ac2:5501:0:b0:553:2e37:6945 with SMTP id
- 2adb3069b0e04-55a3188ef64mr2809429e87.32.1753072274598; Sun, 20 Jul 2025
- 21:31:14 -0700 (PDT)
+	s=arc-20240116; t=1753072271; c=relaxed/simple;
+	bh=jVbUYd4TLV9D1JNWnHmMuN2Ni7fqjVZMzsZjfBsSTpQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=mK2UR4DxSAWhuIZHl7Oa5KD0+cBSAubDHojiwalOo1H17SKzPhc0+ydwBllaRBxU3iHgKClH9rwjgLhTpT2mib9IEm8bzZcW25OreUdLGj2S62H2Ib0rtMnQnQgkJXEgSUEPePydrnHT5GJNHBOflXJ0lU2H8Lbwf+3JEieN2G4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=hzR1ANrm; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753072112;
+	bh=fio+O37FoQzbotomkY1HZEqcgNyOVzbHKa9mK2Q7VGs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=hzR1ANrmFtQpL0ZVLu9prE4rWyMVkaxXHZ4D9IyAppKSjv9R+3atKt4ypxb/0Tj9B
+	 RUSulrsOo2uw6IEzzTYR8AP/vRIM50kC9Ur002mWjSjChk0xUCEqZOj7X3ZjOPUUd3
+	 srpF2fbO4itkJw/1J7l2V+28UoJ969jMur/02di0S2tSLH2VFm22cRPmEXUcnyQbXF
+	 CN/OLU0KZU+OKhR5Kff6JYGuTv8Ly0WKcVMPYirX+fOy0U8vLRZcXaiLXHs1BwtFum
+	 v09Yh/8p/fcNRgUqMHHg5vl749Cn8XJtQKzBmfETGgVOD292PUK8EnUI1ERFIhiw4m
+	 o5N3nSXfTc2fQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4blnTD3pPBz4wbb;
+	Mon, 21 Jul 2025 14:28:32 +1000 (AEST)
+Date: Mon, 21 Jul 2025 14:31:02 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Tamir Duberstein
+ <tamird@gmail.com>
+Subject: linux-next: manual merge of the rust tree with Linus' tree
+Message-ID: <20250721143102.1ae3bef7@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250718191900.42877-1-ebiggers@kernel.org>
-In-Reply-To: <20250718191900.42877-1-ebiggers@kernel.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Mon, 21 Jul 2025 14:30:57 +1000
-X-Gmail-Original-Message-ID: <CAMj1kXExtd=Kyz5yLUcAa1jt1aO6SnQLHTUy0G-vdPyG9+bwsw@mail.gmail.com>
-X-Gm-Features: Ac12FXyP6_FBA9Z1gYIv02BKDBFZ48NmSFlQa2GNf5zKCRg9wSpMfj4usDG1VNg
-Message-ID: <CAMj1kXExtd=Kyz5yLUcAa1jt1aO6SnQLHTUy0G-vdPyG9+bwsw@mail.gmail.com>
-Subject: Re: [PATCH 0/2] sha1-ni-asm.S cleanups
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	"Jason A . Donenfeld" <Jason@zx2c4.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/p=Ec.tUYkLPABdHtLE=1kF8";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Sat, 19 Jul 2025 at 05:20, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> This series cleans up the x86_64 SHA-NI optimized SHA-1 code.
->
-> This is targeting libcrypto-next.
->
-> Eric Biggers (2):
->   lib/crypto: x86/sha1-ni: Minor optimizations and cleanup
->   lib/crypto: x86/sha1-ni: Convert to use rounds macros
->
+--Sig_/p=Ec.tUYkLPABdHtLE=1kF8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+Hi all,
+
+Today's linux-next merge of the rust tree got a conflict in:
+
+  scripts/Makefile.build
+
+between commit:
+
+  749815922677 ("rust: use `#[used(compiler)]` to fix build and `modpost` w=
+ith Rust >=3D 1.89.0")
+
+from Linus' tree and commit:
+
+  5d840b4c4935 ("rust: list: add `impl_list_item!` examples")
+
+from the rust tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc scripts/Makefile.build
+index ba71b27aa363,79c40af6f399..000000000000
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@@ -309,14 -309,14 +309,15 @@@ $(obj)/%.lst: $(obj)/%.c FORC
+  # The features in this list are the ones allowed for non-`rust/` code.
+  #
+  #   - Stable since Rust 1.81.0: `feature(lint_reasons)`.
+- #   - Stable since Rust 1.82.0: `feature(asm_const)`, `feature(raw_ref_op=
+)`.
++ #   - Stable since Rust 1.82.0: `feature(asm_const)`,
++ #     `feature(offset_of_nested)`, `feature(raw_ref_op)`.
+  #   - Stable since Rust 1.87.0: `feature(asm_goto)`.
+  #   - Expected to become stable: `feature(arbitrary_self_types)`.
+ +#   - To be determined: `feature(used_with_arg)`.
+  #
+  # Please see https://github.com/Rust-for-Linux/linux/issues/2 for details=
+ on
+  # the unstable features in use.
+- rust_allowed_features :=3D asm_const,asm_goto,arbitrary_self_types,lint_r=
+easons,raw_ref_op,used_with_arg
+ -rust_allowed_features :=3D asm_const,asm_goto,arbitrary_self_types,lint_r=
+easons,offset_of_nested,raw_ref_op
+++rust_allowed_features :=3D asm_const,asm_goto,arbitrary_self_types,lint_r=
+easons,offset_of_nested,raw_ref_op,used_with_arg
+ =20
+  # `--out-dir` is required to avoid temporaries being created by `rustc` i=
+n the
+  # current working directory, which may be not accessible in the out-of-tr=
+ee
+
+--Sig_/p=Ec.tUYkLPABdHtLE=1kF8
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh9woYACgkQAVBC80lX
+0GwPYggAkmz60tUdNkOQotvMx9MJo4Hjyp3GT6Jsojs+RC8ivvZVMqAfiS28c0sQ
+baxC6A2EAc2ftD1xwDHtK4wdaLa4YnZBDXcsDfKqDAWMAzgEAxoazNToWnNIcS22
+TZOv+MULeHgFY+y1QgWWCARu+AEZlbwtwD22NTAUjjPWw9aklQh04uubquhrcaIn
+lOwL+no1bIMQtIwuSw1tnij30srvrmjfyQ5EM9vq3n1OoilPb/P3NBAwykbHot+E
+DiLkOppT6f1tifgppyC/0WoeyVu4A/M/MVYIGoYUO9Kmb3DAKNJ4IuMeFPBlCEs0
+O5WPW9o21QIvdKWzz40cbq0wTM6IAg==
+=nfmW
+-----END PGP SIGNATURE-----
+
+--Sig_/p=Ec.tUYkLPABdHtLE=1kF8--
 
