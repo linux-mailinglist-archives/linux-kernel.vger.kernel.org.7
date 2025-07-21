@@ -1,108 +1,108 @@
-Return-Path: <linux-kernel+bounces-738633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 766A0B0BB46
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 05:14:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15FB5B0BB49
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 05:16:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B03AC1757D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 03:14:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47C671759D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 03:16:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3601EB5F8;
-	Mon, 21 Jul 2025 03:14:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E2D1DB34C;
+	Mon, 21 Jul 2025 03:16:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="piIanauV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IL6shCeH"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F037B1E515
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 03:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E5C46BF
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 03:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753067669; cv=none; b=nfgcZTBrmTYXIAxhJ4GXRAMksW2A7/oWQIDh2IlVjpUdgih4WRm0bJSzZDtUoDpzB7v0T3CM07G0EkWdLzJ4vK608lBJNszsjsceJzJjZCa++5M0DD1KCjqPRlRAD6pVRDRY8wdD1t8V2ljkyIQsIK65vXPn6SevSQd/qSuciGs=
+	t=1753067770; cv=none; b=Wc8mBdUGYval+FqYp0E/m1AlujnEaq7oSzLICjx3UxzW6WhrW0UcLO4b5tAEU9MP99JNUoEGuYf8p3oJifs4GKt5U9MZNaPOQfq13+Y+2DmElTcI6u/JviRrHU7ueirYcpzJ7G/sANANX0cn8nZxHXELAGqIOSX2Zm6LzYnx9Lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753067669; c=relaxed/simple;
-	bh=rPZ9ayMN8Cc4EBmBOnIiNRGT5SLNiYAA/yLJOuSayAc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aqCpOvH3Q72GtE1E2rE/DvEOKFc8BAdQJ+A/4CoOKIjvMJTukItFQMlrFxz7ub47VYWo+nEfaG3qFeq2qz7jl+9su+0lXmZqLFVhRxMEKsvRG/869zBmIO3oTllBkutTevSD6vNNtK96VUTRhWlb4a1r3xAL80hsq7JeyKBkKdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=piIanauV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 773C3C4CEE7
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 03:14:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753067668;
-	bh=rPZ9ayMN8Cc4EBmBOnIiNRGT5SLNiYAA/yLJOuSayAc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=piIanauVRrfkGk2H2fWBoj4mIs8kIgUgdz5S+96eTv4tUrJ+wSP5hCqkmRfUnlq1Q
-	 QPShTk4IRvrwOp0Z8hRERXx14pczi3y5C9t6dObfUNH6IfNuBOcgUkJJaMFJ7WXAuK
-	 e2tZ2ZyL/Cb/R/wOPOk517o59f1vywIQ5eHkjh3kMnm3vWJBPRUAzs58InGCsvBegy
-	 GSAqhkZLFRG5KPU6QMmf+RjkFKJsmzF8a7ye29fHdz/z6DVbtfZhP4z5NhWgQC6GYq
-	 kowmtVCakzr0IbCrB+slY0U61qenIM4bzN3KeoakIDPxF5PNP72jbJAoawL+Rtnq2z
-	 /NU/QGGUdSz/g==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5561ab55c4dso3940721e87.2
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 20:14:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUg2B9rx1LbTZH57GD4Paq6/cEWt20lnJCGno3fnraJqL40WRjNUtO7JyIilbUqVWvPCm9rWqTlljmBs1k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWRGrFlb86HOFQFEEAkjA7/AFAeh6J2DmNnLkg+whQ0YJQAYZX
-	p95KM9JUMz4SWYzZyuk0asX+XeUS+5wEGNRHLyinKqxY0IJwDWjZe2yffrup96q9ktEdo58UcA4
-	dfp/I5FhPvBxAFUvzbUBo8RY/SZ6qfNI=
-X-Google-Smtp-Source: AGHT+IFDMrWPf3hUy4HTrGT5nvv60uOnGnpOEYtMxmHGYhVcwoSqQDVVppFjYvOX0OniEcUgPL4ujGvztnHi6sUf+Ug=
-X-Received: by 2002:ac2:42cf:0:b0:553:d7f1:6297 with SMTP id
- 2adb3069b0e04-55a3188e89bmr2186884e87.34.1753067666885; Sun, 20 Jul 2025
- 20:14:26 -0700 (PDT)
+	s=arc-20240116; t=1753067770; c=relaxed/simple;
+	bh=rSWv4zFTb3j8yRwlcqRSKbpvUIhdonFOb2X4SLSxZX8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aA7PypZQGvgByAx1eCjGtYUp0ddpATLQZwFXMR/pMuMrtvTPymgc6zSEkx0Jv0m3blvXoPaN7h9ycbj/Fcp+KiqmQB3Kp5E/wbMxv3q3nYRIqA4Rher+65k2ZrZTvK47iWROvXY/yPh6MaqYdpw2Uplnf7VKurSHoxlKOlFSUZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IL6shCeH; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-235ef62066eso45257715ad.3
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 20:16:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1753067767; x=1753672567; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tEHkdm832hTynzS/xLG26Wf+TEMODMOzVO5dM74VcWw=;
+        b=IL6shCeHXNOsBpeqbbluC5+N5doybmEtbV4/8YrqamyfGnA30RBwcT0QlsKzM/4n/4
+         5gc+8IC72JNJC+UXKMdmg+NY71d6hknL2yLRrZQmQist4G4RhQIkfswk3vygkIlgTbwL
+         4TlNj4ZOSHjausxv+Wm/hEgJ/X3wAQmifd6XU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753067767; x=1753672567;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tEHkdm832hTynzS/xLG26Wf+TEMODMOzVO5dM74VcWw=;
+        b=GPtQQpkRkJzfCy15YGfxG4bOTklFEn8WEfGe+vZsbXFzq9KzMXddeKKG7p7mTM8WyH
+         jNDm0WkyKpQSh1E82CiUlAP88XxlErNPMFFJMZw6z3f+fxvkymdGBwhYF95wXklsas43
+         8TcNO14LZHQcfzDaiSmVF78bIAuwWE2SyBXq2eJgcJmE2OJls4/fqE2H3W/dZEvGutvR
+         4k6ei6wD9hk/qsLqiDPaYGqxksqpno8zJsoHO6MCa4hi8we1FsoEIPwHOGF3OxsQNQ/r
+         hi/6LDY4iWTeYOwBivLtdNDp57mS+gaouAuLqnbhUkAKJgpKM9zoU4SCHCotciKHc89q
+         4W0g==
+X-Forwarded-Encrypted: i=1; AJvYcCWBCznwff8seSvnL9M1pCvJxGkFPMQiiX0n9FCgHX9jrZkcPQAUuUoCalx8il3AuO4fRMQ+ZEM8PDdek9E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywke3OpP+LhFuVjeAI50wEd+aqZG8oe0ACXc6a+aRxVwqzv8ewf
+	Nw8FhMFjunVDPNsgT+yCbSvxgymIBHUx1VW+Mx+IS6AoKZGztkjS6Z8vaXnsIu7ipA==
+X-Gm-Gg: ASbGncsaPFRW829R+k82GId1n7NFojdVIKGE4L6zBctxQUnrDFisasf7pJcjL31fk03
+	gttp5CTwnmLmz8D5lQeVA+TnuJKDcYuXPIzL8cRKB9/My20Pmr3CjmbQu2CzgoZdzKJrI9Zu+0l
+	1c49PlHy88N7taIiRxyieDv94pO5GMhJEIQmKhgZGR20xmuOzt5JB/TLizbHBZlxkNPV54Cg9F+
+	hsKOnLT5BE9Cgu7iiU+E4Itx/VAS4HpTHjO8os9W1G6KqAXgQaEx1677a/i2y1atbR++u6R18QM
+	OxrIDW6/cfFcADR5jsszQ3+hgkt+ueKXmNoLGesCq5Je2firW2bFGxfDJ2vWMvQ024M4ie6n0no
+	AZ0YtknwWgAFJqpwGEKqxmfShoA==
+X-Google-Smtp-Source: AGHT+IHBqV5AH7e/4eflt9c3XJvhjaEBjyadSkqKL/UtcHHt794JhemiQyNSy8Uct295fuP8sS1m9w==
+X-Received: by 2002:a17:902:d584:b0:234:f1ac:c036 with SMTP id d9443c01a7336-23e3038155bmr199322855ad.50.1753067766876;
+        Sun, 20 Jul 2025 20:16:06 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:ca29:2ade:bb46:a1fb])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b6b55ebsm48127505ad.103.2025.07.20.20.16.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Jul 2025 20:16:06 -0700 (PDT)
+Date: Mon, 21 Jul 2025 12:16:01 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Askar Safin <safinaskar@zohomail.com>
+Cc: senozhatsky@chromium.org, bsegall@google.com, dietmar.eggemann@arm.com, 
+	juri.lelli@redhat.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	miklos@szeredi.hu, mingo@redhat.com, peterz@infradead.org, rostedt@goodmis.org, 
+	tfiga@chromium.org, vincent.guittot@linaro.org
+Subject: Re: [PATCHv2 1/2] sched/wait: Add wait_event_state_exclusive()
+Message-ID: <ofvya3en67l6gxw7sxzl6qsga2x46mdsusrx5az57kw7eihwoz@m5jyjhdsssit>
+References: <20250610045321.4030262-1-senozhatsky@chromium.org>
+ <20250720205839.2919-1-safinaskar@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <175301303546.263023.1426155806374119244.tglx@xen13>
- <175301303889.263023.7762556142250207604.tglx@xen13> <CAHk-=wha6sXik-f0RC91TMbt4snau0jK+dPvQEMezGiVFDpKUQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wha6sXik-f0RC91TMbt4snau0jK+dPvQEMezGiVFDpKUQ@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Mon, 21 Jul 2025 13:14:10 +1000
-X-Gmail-Original-Message-ID: <CAMj1kXF_-d4_VVO+RovbXxoK=Gh72yFvHqEdRJ6rQBpSzB+1Gw@mail.gmail.com>
-X-Gm-Features: Ac12FXzyHkD-5S3v8zdmq0ZiuXj63G0DQI2jW3YUv9pefgWFCDitHXetF885tz8
-Message-ID: <CAMj1kXF_-d4_VVO+RovbXxoK=Gh72yFvHqEdRJ6rQBpSzB+1Gw@mail.gmail.com>
-Subject: Re: [GIT pull] x86/urgent for v6.16-rc7
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250720205839.2919-1-safinaskar@zohomail.com>
 
-On Mon, 21 Jul 2025 at 04:35, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Sun, 20 Jul 2025 at 05:05, Thomas Gleixner <tglx@linutronix.de> wrote:
-> >
-> > A single fix for a GCC wreckage, which emits a KCSAN instrumentation call
-> > in __sev_es_nmi_complete() despite the function being annotated with
-> > 'noinstr'. As all functions in that source file are noinstr, exclude the
-> > whole file from KCSAN in the Makefile to cure it.
->
-> Hmm. I'm not entirely sure if this counts as a gcc bug.
->
-> In particular, look at the *declaration* of __sev_es_nmi_complete() in
-> <asm/sev.h>, and note the complete lack of 'noinstr':
->
->     extern void __sev_es_nmi_complete(void);
->
-> and I wonder if it might be the case that gcc might pick up the lack
-> of 'noinstr' from the declaration, even if it's there in the
-> definition..
->
+On (25/07/20 23:58), Askar Safin wrote:
+> I booted into it.
+> 
+> I mounted sshfs filesystem (it is FUSE).
+> 
+> I disabled network.
+> 
+> I did "ls". "ls" hanged, because network is down.
+> 
+> Then I did suspend, and suspend didn't work.
 
-Just tried this: adding 'noinstr' to the declaration in asm/sev.h
-makes no difference at all.
+The patch is for background requests, e.g. for those that
+are issued on a not fully initialized fuse connection.
 
-> The fix for this obviously ends up working and is fine regardless, but
-> it's _possible_ that this is self-inflicted pain rather than an
-> outright compiler bug. Because having a declaration and a definition
-> that doesn't match sounds like a bad idea in the first place.
->
-
-Agree with this in principle, and for 'noinstr' in particular, this
-may work fine but note that there are __attribute__(()) annotations
-that make no sense, or are not permitted on [forward] declarations,
-and so having the general rule that declarations and definitions must
-have the same annotations may not be feasible in practice.
+You probably tested one the wait_event-s in request_wait_answer()
+instead (as a guess.)
 
