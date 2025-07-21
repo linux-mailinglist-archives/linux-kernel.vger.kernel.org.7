@@ -1,147 +1,301 @@
-Return-Path: <linux-kernel+bounces-739143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 924DCB0C252
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:11:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C2F2B0C273
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:15:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B6211894034
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:11:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C67F18C3048
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:15:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DBAE29615D;
-	Mon, 21 Jul 2025 11:11:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1652298CBE;
+	Mon, 21 Jul 2025 11:14:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LHb8qXEc"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="IUppSjcx";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="IUppSjcx"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010024.outbound.protection.outlook.com [52.101.84.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA615293C6A;
-	Mon, 21 Jul 2025 11:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753096275; cv=none; b=Z+50s1MP5EcoaePIoBMKhuhs7PXnDZDwf85YvNhzTvd0izV10fr3cu9SYKxk8qmn1671QVMaQ+jdoqTCsn6z2nJK1L7ezz7qpsrO0UoRLAM21H/WczcTCj6BIm92V7dlcDOrzI6PCnfBUdETeN0anyo2VYp8wMgj3Mwu6OdthgA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753096275; c=relaxed/simple;
-	bh=JcNSWwvJTwhT64Y0/KqSF1ww+wIie45ZsLTs8CIlKao=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J9ifJ9JxMrm/igRnsSK1TvUKxmdoEAow+dMuqJvw1vXLzQNLQ8jZSikX186/JhQ7Hvw5KZ9PmnFE4WhbRIUSVzgqDV6qJ/m4KMNrqsCzoLyRlalMq3AO2GrpZPy5gH79GLYF69WNx61XZILYesKejY4F1vCs2CwP4MOvDksAOU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LHb8qXEc; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-60bfcada295so6734298a12.1;
-        Mon, 21 Jul 2025 04:11:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753096272; x=1753701072; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DnIbqCqg7JUChrhPkDwkGlZxQxz27HWtx39eq2JQF6U=;
-        b=LHb8qXEc699j7ANv/nV2+jdueCE5Xs8hiuBrQysDQ4uI1EMDxa2KmA0zph08Rj+lht
-         9gsS5absPvgookIua7oq12cKkRrOKSmfNribKiPF7u5/iNEGO5wuD9Ssm5OXxlDTIBbV
-         EvypjEYGeCM81JN39IUo9+yrU3fv2jeSov66zkbX48IBqFrW+64rttfdTk5J068w4vp3
-         RBQz7ABNbqbCNW6s1umlwH7ZdX+VuOug/m7PwadtYgH5bVKXbTguzW7TORxTMnq/6D+3
-         0pN8NS7l2deMFrjTUqdLft8KuwCkk8CVSS8jC2Hu6vNempqvIruPfNdo4gMCuoUQrbIE
-         RgeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753096272; x=1753701072;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DnIbqCqg7JUChrhPkDwkGlZxQxz27HWtx39eq2JQF6U=;
-        b=llU87+Nwvc3zxWYeUBJFqSFKdvWBohw1iaYbZT0yXGgJSJBnPoCF0CvQN2dqalX0yB
-         2CW8maLT1Vj6JSnzWUZRh808vQK4bdA8j0dWJTXvIyOsZ2YEuBAckSNWjbAYkEWeu9fE
-         a946sGCshK9bJRxGK9dkKsF5QANdPeity04UrDQD32SUC0bUabtoZcmtqbMA94QmGAOn
-         cvzltbQ/kdavdggN7HmjSy+JtLWo3I6yWGBq5MkoGj4+vwqWJBuNkLeeOQm2qtzjD0uS
-         tqjUBz5DRnZIrHkpo11B2tICh0Q6mlJHv8I+qESowERe43nNcC17nU9DToujUOtpsi+n
-         rm0A==
-X-Forwarded-Encrypted: i=1; AJvYcCWFEQvWhbh5rJ2ti8arfPxMXgYQZw4Y28tB4asjW65g91gNyvQNAm5ku5oSEhhxSSZVU+T7SoQF@vger.kernel.org, AJvYcCWYri5qv0K8WVrZ4r8d9sKHau0b6fRj97zxYlE33Z2sw+FO9X64b4naHamAsYC3f3jf0ED2sexe7obxWg==@vger.kernel.org, AJvYcCX9aiUblRWsqginD0dplou9GBnwbvjF/PSTWFVnecUm+5RxH+OhD/qZ7N2aU2NXVlIekAU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJ/aeDHO6FjruMohZYDY20NRv0ZU50HxCSQycZAEVMznFqFbFO
-	bSQUCPWksZJ0hfxQNsvbLvwIm2yuJLPdh0GRNpPMNYJ5dwu1cwh6US1p
-X-Gm-Gg: ASbGnct7nf+nFytWMs8FB9A2obf2t2CkCe8cmPp2joSOwC4zSbVW04n+XpcPVH2Vz0M
-	spj5rQGONsq0z/IGNUiOyFtoXvGtsjkiRgIV5/MZpbfBpo6iwdYoMomrcmOYvja7qDUOtnJrINx
-	MJIwyjqgxu76fJer2AYqxWWiJ74YDhwQPhSXoKzfc7w+v0Xyfi4y8um3w3N+z8e69DECOKUO/ZO
-	fcfrktpxjOcUy27Uc7a2c6y88NAxmuST67DeA0KdsKDsEOkFmeyysNYlQyChiO4ONrXRjFRkAMe
-	Bw2hJc6eZ5CmbUrjt56PliNHbhVbkeh5HucctfMEtyv8qN3L9Dj6Ib0z2D+ETflTPCUIUhR84B/
-	UY6Fkmd0Rk/j/vb2KaGfW1WI4rgDpxe0WUW4=
-X-Google-Smtp-Source: AGHT+IHZCiqaXpmflAtItwVaPlH3VjQHk/jBIB6Bq5oI/tEB5I4tXMP1diqfcZBAAFQiHufovShJUw==
-X-Received: by 2002:a05:6402:524e:b0:607:425c:3c23 with SMTP id 4fb4d7f45d1cf-6128590ba42mr17312482a12.5.1753096271896;
-        Mon, 21 Jul 2025 04:11:11 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325::1ac? ([2620:10d:c092:600::1:23d3])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-612c907a5b1sm5274092a12.53.2025.07.21.04.11.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Jul 2025 04:11:11 -0700 (PDT)
-Message-ID: <77ee68c4-f265-4e55-9889-43ab08f26efd@gmail.com>
-Date: Mon, 21 Jul 2025 12:12:39 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A14293C56
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 11:14:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.24
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753096475; cv=fail; b=LjDt+OVKx50PWGex5kvNrGpRURg4TCT9rwQi5fC06JEhRuuIjujLWWP6Y58E1cryCmV+jIZC39ouTo0U11NY/oCr6fdmwmJg/VV/Ke5e0dNNO0xtmdl3rQxt9AfipBTb5wD0fdH4xhtvnqRH4wpl/afR3QpRHrz6BQFj6SiKIxE=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753096475; c=relaxed/simple;
+	bh=wjsVHvlNQ+ZcIsfxvciH5xHraYQFH6j8qLVXk2Rljqc=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Jn+NDdVn1eI+I8DdssssIwnuas1u+O02jYlxPwx8fHX9bcAHmDIDg7+/Q3+ry7+YfoGDGoKY5oe6a9BFfkJsxrsglPKIIVFf8aqhvapnBbU/wkWnnNQMmyvrs1rgis7HP2xTufBenGm3bTSBYqeAj5cJaBxS13ox84xXnytGcCM=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=IUppSjcx; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=IUppSjcx; arc=fail smtp.client-ip=52.101.84.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=Lt5SF68ZZ34N9v3+vw1kMjQWJBmH3vxWF43SnonmJYdqJaVvTF9QbNCETsI5qjNDnHNnDSfiNvhpzOAEFepn88xYqQUiVPBUIS4AenZI/8PzuP28SgGzf2mjyDQnVnoV+PAMTVEEQGa4DEQSM28kBdvzKkKlV5BLAodFi96j7jXnD+X1iK8yyFUj0sxjoJSGWETK25mX+DtCk+XdAdCR3ihitn4Ft5HtHuL9IW46eu5zbddq4rEX5ZgslfRFoxMG0uhaDLASasmJa56xOuHaiSybJ4A/VB1HxMVhNSLcLOWE0k0ICFDwYoGXU1zDHalpgyAMTM4mmmBlG2Ssv6cOSg==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NM5+fugmiQHI7E4QjvxGZm2+KpAK9BiUHTWRJ5WDZxU=;
+ b=YMvcHBE96wfa4BH2A/9gvq/DuJDkBYIq699TiDFXc2ZRRf2AjUoXV9AmflbL+eDekB2h2QbVYhfLh/7UaJRtkrb2YCKYcDzPsuz7P3ewNzT1OHt5HrDiEuy0nZJEEACPoQ2x/nAxga3gxKdDv7wmnEJuoOa2CUiIRmXZabEa/GU83Lr+Lwdm3EB6wR2Tc67UyfYaMUpTd7DGeBo4iO8GYGkclXAIBlObApMJrgoitPfDEqQzfWNPDixKuhWu/ofUllkU3CnjW4Fk6gokKcH9MWFNRgTRh/1qA2f3BwR6o59nMxoqj0hLrEnIvtPV1gO4jR7iGJF0Gys8e6FscLR4XA==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 4.158.2.129) smtp.rcpttodomain=lists.freedesktop.org smtp.mailfrom=arm.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
+ dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NM5+fugmiQHI7E4QjvxGZm2+KpAK9BiUHTWRJ5WDZxU=;
+ b=IUppSjcxKWnYdWKAaWLGHrM34Rdilc0qzcUGOeKd/gQggEmhS3FVZeB3Wob3sDq/ztZ3dBxKiEiXlYmyJrYzONM4Xz1qqV0Tr8GtQ79bFxEmomCs2vB3QlSFQ2xP+NGcxtatfbABcEjOSYcG8nTzkorUorlnXsbEW1vZgnh41Ds=
+Received: from AS9PR05CA0272.eurprd05.prod.outlook.com (2603:10a6:20b:492::25)
+ by DU2PR08MB10066.eurprd08.prod.outlook.com (2603:10a6:10:492::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Mon, 21 Jul
+ 2025 11:14:28 +0000
+Received: from AM3PEPF0000A799.eurprd04.prod.outlook.com
+ (2603:10a6:20b:492:cafe::51) by AS9PR05CA0272.outlook.office365.com
+ (2603:10a6:20b:492::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.29 via Frontend Transport; Mon,
+ 21 Jul 2025 11:14:28 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
+ client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
+Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
+ AM3PEPF0000A799.mail.protection.outlook.com (10.167.16.104) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8964.20
+ via Frontend Transport; Mon, 21 Jul 2025 11:14:27 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fYchCRBefqNJdYxHkDq1hqooU7LS327YvDuil8LDqXUKS4knTylfX6wXApCyAM/PQRiiLgjRoGzYycwUPK+gpzy+dY5YJnPgiqDcFK+Jc3lpgA48m1Ieg6loeeCJdxMV8XLJ+WXstJyJxqZE4M6vhHgitArMEfM9JkQ2FIw00Dib4sK8Kxq0dgBhDIcBbxFTMntkDI0zfZzGSPew624Fy5YZUfsk7QKrctmhwxfZTymtxsKcVDxWh75oFdxYvqyOERf8DWMiwuxvhCyG8bKl/uxGrSyqEH+7wcmFvc6FTf++aUV1au4P5bweHfuoh/yw4/QeheZNUmuT/0TE3UU6aw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NM5+fugmiQHI7E4QjvxGZm2+KpAK9BiUHTWRJ5WDZxU=;
+ b=yoG5JH37iVW+EP3nM5ELBXk93AH6YTT5JcrFt01bQ9xlSRwoSyEPUt3eu5aEwjUCe/V7gLwSVZvRG0exuFztodm9EYuaEavO3eDrUnszClsTb1d1aoEd+DWatd4E57nfhLtd9jJb3X8duFPX3heIqP2/eTk2s+grt7iFm3nis86MEfs2D4twpM8oa6JMRzQMurxBZ12Oaf7bAk+BrUFxrOX5hl+S4daosloHbysWaSoqXTs48uqRKYTKBc0pIb29HYX707TaE0TlkpUwwJlZCYmVNPGB3FkP6IhSZUK0xyFJCKbu+m/XrExx3QqmiDtcEVyjs6liQZn6NZOqrujRYQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NM5+fugmiQHI7E4QjvxGZm2+KpAK9BiUHTWRJ5WDZxU=;
+ b=IUppSjcxKWnYdWKAaWLGHrM34Rdilc0qzcUGOeKd/gQggEmhS3FVZeB3Wob3sDq/ztZ3dBxKiEiXlYmyJrYzONM4Xz1qqV0Tr8GtQ79bFxEmomCs2vB3QlSFQ2xP+NGcxtatfbABcEjOSYcG8nTzkorUorlnXsbEW1vZgnh41Ds=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from VI0PR08MB11200.eurprd08.prod.outlook.com
+ (2603:10a6:800:257::18) by GVXPR08MB11012.eurprd08.prod.outlook.com
+ (2603:10a6:150:1ff::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Mon, 21 Jul
+ 2025 11:13:51 +0000
+Received: from VI0PR08MB11200.eurprd08.prod.outlook.com
+ ([fe80::d594:64a:dfc:db74]) by VI0PR08MB11200.eurprd08.prod.outlook.com
+ ([fe80::d594:64a:dfc:db74%5]) with mapi id 15.20.8943.029; Mon, 21 Jul 2025
+ 11:13:51 +0000
+From: Karunika Choo <karunika.choo@arm.com>
+To: dri-devel@lists.freedesktop.org
+Cc: nd@arm.com,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/6] Add support for new Mali GPUs
+Date: Mon, 21 Jul 2025 12:13:38 +0100
+Message-ID: <20250721111344.1610250-1-karunika.choo@arm.com>
+X-Mailer: git-send-email 2.49.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: LO2P265CA0343.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:d::19) To VI0PR08MB11200.eurprd08.prod.outlook.com
+ (2603:10a6:800:257::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm, page_pool: introduce a new page type for page pool in
- page type
-To: Byungchul Park <byungchul@sk.com>, linux-mm@kvack.org,
- netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
- harry.yoo@oracle.com, ast@kernel.org, daniel@iogearbox.net,
- davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
- john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com,
- leon@kernel.org, tariqt@nvidia.com, mbloch@nvidia.com,
- andrew+netdev@lunn.ch, edumazet@google.com, pabeni@redhat.com,
- akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com,
- mhocko@suse.com, horms@kernel.org, jackmanb@google.com, hannes@cmpxchg.org,
- ziy@nvidia.com, ilias.apalodimas@linaro.org, willy@infradead.org,
- brauner@kernel.org, kas@kernel.org, yuzhao@google.com,
- usamaarif642@gmail.com, baolin.wang@linux.alibaba.com,
- almasrymina@google.com, toke@redhat.com, bpf@vger.kernel.org,
- linux-rdma@vger.kernel.org
-References: <20250721054903.39833-1-byungchul@sk.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250721054903.39833-1-byungchul@sk.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-TrafficTypeDiagnostic:
+	VI0PR08MB11200:EE_|GVXPR08MB11012:EE_|AM3PEPF0000A799:EE_|DU2PR08MB10066:EE_
+X-MS-Office365-Filtering-Correlation-Id: 57ee6026-0ad2-43af-7405-08ddc847c19d
+X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr,ExtAddr
+x-checkrecipientrouted: true
+NoDisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?us-ascii?Q?ZdDsc7nHjSAQZ9Et33Mskafoyz5dbBjZ3J1nvlq4Cg9UIHKFc0Bo2QjhORrr?=
+ =?us-ascii?Q?3VCsPyRmSIBJZufpwSJoG5T/+ui2kAf9GWM2Ua7WQys6vKVf3VUj40CG1DkW?=
+ =?us-ascii?Q?Ct4zSz2TPS8tSmo2SK2bH3hDl57oanFbNHGt7Z33JZUchIwztyWPaB2lOm50?=
+ =?us-ascii?Q?ZJLFBQBzGniIQWNgjJmPyGLlwtq4oRpVpCehuP8EnuXz5mkTPjr9uR5iDlJh?=
+ =?us-ascii?Q?f6vHg06BOaQG+yVSwyWQGqix8sFTHH/f2E0Egcxr7G2GdqBFK68wWiwZE42s?=
+ =?us-ascii?Q?64XFWClRXRx/Xk/FLO1/O5oy2f9bOCWYA95988AEv7aHVC7G0O9IC2jwshhd?=
+ =?us-ascii?Q?z+PdhRzISdFP8FIucpWI7SlgANomWHvBLrUnqAvw5TeOUYtJat8INtXRGR2E?=
+ =?us-ascii?Q?fUlXu5NB5iOmGaIOjI6nnBvFNUyvV1NAdaLny0jDnJ0dsw0u5DTA0LN4488q?=
+ =?us-ascii?Q?CpzPEL0hXrr///F20tMYD2BuPMNNAOXOkPyNwFhk4DG//v7YHgs8nEANMfA5?=
+ =?us-ascii?Q?QzCOxVAGuzyjqeJFtjpJVnlyak/BfZ7knBDsmhXN8j3az7/yBFdb/hfylwkj?=
+ =?us-ascii?Q?MRqTQfOS1rSKO2YGe8VyEZqU/qJWG8kQdhbC1nCu9IzadQSX0BH3jllR0yoS?=
+ =?us-ascii?Q?KfXKhcdbTu78BzNJ+SnoASRgbXI01F1BT5J44UvFJdAp/34ibmTfd2PvkXGm?=
+ =?us-ascii?Q?crXCQ+qXzgb0COqActm2bjNTaqw/PSjWNH+16tUtmrSRPGFrbkpfJMQPb0fV?=
+ =?us-ascii?Q?0u8AKxMgBp7g03zslQEL0PgYfhoaCxMEBbZ4QdlmNT6TMvnjwWCBcgWQXdgC?=
+ =?us-ascii?Q?vQeBsMsQwzEuKw4Tlolxcl7F5Sug7KCVQ/vopwMTRIa7v4We0gKAX16KPnPh?=
+ =?us-ascii?Q?LtoX4TfvNn4WHkxq/UMauMa1T0KsTwap9dQR+vUGZTxvelxDT8plhS9BArFQ?=
+ =?us-ascii?Q?MNgfU89EjO6AltSQ5UYIWHr7+iDyWOyNH1GTnPmHANTaBZBuaMcqhO3SAgbt?=
+ =?us-ascii?Q?DayVYoxktMevSeuTTrXRzWhT/OZWRJ77/d28DJkR0DoeOq0lGzpCGeowrACl?=
+ =?us-ascii?Q?FaAC51siy0af5lkXf5wDgyQpM+wBkmcuILgnmVGFyZydxyT5VxpSI7EhBPUQ?=
+ =?us-ascii?Q?vwmhkZEaq93bB4JBuGgq00cCWy4CojhcehMWPiGR0xEOFDKZMdNW9O2ZoBvz?=
+ =?us-ascii?Q?tdaEB0wqmgAvYtMeT4Q0WNih3o0SMm+DMYMWXYePbP/toP+oLhhH3phrs5TX?=
+ =?us-ascii?Q?lF49RZ9TDO5itO/HBTsIYCGWJgEwqxk+QtZM9zViSu0NoKyGTs0D8gN3+Bqh?=
+ =?us-ascii?Q?CVN3M2qpYF1epXJXTyVAsIUNhVsKJp2epiGA2GMxyO8jfWgvFyfnS8H36RN6?=
+ =?us-ascii?Q?HhMEKQCZnYId4ClKudOtv/3zW1XTNGOJ4TysYzUYdpSFOz4PvzRxLkojfYkV?=
+ =?us-ascii?Q?2QuQikdkzqc=3D?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI0PR08MB11200.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR08MB11012
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ AM3PEPF0000A799.eurprd04.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	436924a9-dd08-42e8-dba6-08ddc847ac20
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|14060799003|1800799024|82310400026|35042699022|36860700013|376014|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Ci1jeCKpUHF9gnnHmODxbhEuw8JhwtlsoT6EfTZ4dmy9yD769gYAAD8Plqf2?=
+ =?us-ascii?Q?zsy99dIwHqVJsyiXs10iCe8hTml9kBiVxxYY3GUHjfpCT5M/WCc8fOwdkRnq?=
+ =?us-ascii?Q?A5ekTSHjkz1TNrEZxuctZOVFipAxbFmgP3Ksgsjo/LfxIUVjUSCsuHMzC2rs?=
+ =?us-ascii?Q?o8ck1oTD5cVejRys8JNlpdpAYRWfH6eaA6RWZ4RXEjQyHycMb9ZUGY1ph7oN?=
+ =?us-ascii?Q?shY5cOHxC0aXeX4+feWkmbJSWJVpyexHtPwqnbZBmtldWenLaIrQNHX7wMSK?=
+ =?us-ascii?Q?8zxqXJSAU+C/oVkEGXYD7hiNHUjzw0ziYIOdxQnzD2d75jDsAn+VBUlDV7GL?=
+ =?us-ascii?Q?Q6IfZb//ONi+i+RbxWYYlesRxyfTinwMZ4F2b4eTUyBUjAu9hqZsPVCpxN1H?=
+ =?us-ascii?Q?rTC7qIHMMzJgv8pnDkeKcZTCH6S9mh9VGyzSADhJypWcUA/OSnbcYsf3nRbL?=
+ =?us-ascii?Q?2Q64ev35UwNIFDPJ6ABW4dVdZHyXPj19E6VUllBcS6ZlPZP8q2CMxypVVBdX?=
+ =?us-ascii?Q?wty3hKkGlpyxTHhVOQyAQZHQh+QC+vqsHXXjoDtY5uSR7ZvNVCqs3aHU9Kl/?=
+ =?us-ascii?Q?nIMYZQs693NwdgJSJEC4/yrW0fbWoQWRuLzuApKCD8nF4a8dnBMoVNKLKhAm?=
+ =?us-ascii?Q?dIa616r6acCdnJBzP5VFBdRsp4ZY+WdKXiFpqzxHaujehLUvi0ZmaTdVut+3?=
+ =?us-ascii?Q?nKzrySSAO7uD4DiP3Sz8mJK8Topg3xb2jQ5RdQ7f4LnOtigsq3WoHwKpN6l/?=
+ =?us-ascii?Q?B/aSnGeceXwV/L1wJasJvwQpUwJxqbxMbU3NmvHeHwwO8aV9gD9OMfeJj/Cx?=
+ =?us-ascii?Q?e65YFcsIqVR+Uie+zTDNjEuHMHoaRckTN4U89UWT06OOEz5Z03Q3ZfvcRKYl?=
+ =?us-ascii?Q?DSAedmVzw6tVXdWWaqY+2ufSLVohtZzxR8hffYvKmboPcl5TFbrddxhZYtY3?=
+ =?us-ascii?Q?t2rGdnYebX0WTJ1txuoWlG+lpq21AvwdxX82EbsO7teiZ8w/1o6phgP+UZc/?=
+ =?us-ascii?Q?cGHrAaLDjM9TmjPaQvrgeEOiv+Ior/pS/Fy+eaQUfC3Glj0c3N3oGfuf+X35?=
+ =?us-ascii?Q?qXs+JH4GV7IIiYkEB0Iibmk6e3l5513Tlweg+DJmgNwCBzhWNTB/pa7SDISU?=
+ =?us-ascii?Q?jHPpsJ5jeOvW6uqCzhtA+dh1JC4wee2OX8OxPItDjloWBm9utYewcWjkC9zS?=
+ =?us-ascii?Q?ad/yc8OnO4P7WBYQN5KL4ZKNh9OTtDYEsVNptfoXKoIPwiH5lxhnq0ElUV6K?=
+ =?us-ascii?Q?U5uaYJBxJrg0XYnopG2Q8xUX/fbgtiey3F+Nzijk0MPQgE3lQGrgtxchvgbn?=
+ =?us-ascii?Q?il+46ufDlQECFAP62tpv0wIKMM09ZRg6jxRy7VXYp/F8ZZNth+n5xthLkmdR?=
+ =?us-ascii?Q?AyDBEs5DiqyrrEDgXcTV2kYX4fhGO9+iY9BHAIG43vZ5OC64HNMN6ST+ytgl?=
+ =?us-ascii?Q?5cdWzUZaZ44+xhXJh+nxeW67tcHRyjYC4s06bVpGxjkRDSUORzXDbp46rklu?=
+ =?us-ascii?Q?3t/NYMLLK7+ODKmlbPC4S3zYye9rUVn9BDwnd7RjG0d0vARK2c//QfYfVQ?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(14060799003)(1800799024)(82310400026)(35042699022)(36860700013)(376014)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2025 11:14:27.2091
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 57ee6026-0ad2-43af-7405-08ddc847c19d
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM3PEPF0000A799.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR08MB10066
 
-On 7/21/25 06:49, Byungchul Park wrote:
-> Hi,
-> 
-> I focused on converting the existing APIs accessing ->pp_magic field to
-> page type APIs.  However, yes.  Additional works would better be
-> considered on top like:
-> 
->     1. Adjust how to store and retrieve dma index.  Maybe network guys
->        can work better on top.
-> 
->     2. Move the sanity check for page pool in mm/page_alloc.c to on free.
+This patch series introduces some minor refactoring to enable support
+for new Mali GPUs.
 
-Don't be in a hurry, I've got a branch, but as mentioned before,
-it'll be for-6.18. And there will also be more time for testing.
+Key changes:
+- Addition of cache maintenance via the FLUSH_CACHES GPU command for all
+  supported GPUs in place of FLUSH_MEM and FLUSH_PT MMU_AS commands.
+- Added SHAREABLE_CACHE support for GPUs from Mali-Gx20 onwards if
+  coherency is enabled.
+- Fixed minor issue with the setting of the coherency protocol.
 
-> This work was inspired by the following link by Pavel:
+Firmware for these GPUs can be found here:
+https://gitlab.com/dliviu/linux-firmware
 
-The idea came from David, let's add
+Patch Breakdown:
+[PATCH 1]:   Adds panthor_hw and refactors gpu_info initialization into
+             it, laying the foundation for subsequent changes.
+[PATCH 2]:   Simplifies the method of determining the GPU model name
+             while making it more extensible.
+[PATCH 3]:   Adds support for Mali-G710, Mali-G510 and Mali-G310.
+[PATCH 4]:   Adds support for Mali-Gx15 GPUs.
+[PATCH 5]:   Adds cache maintenance via FLUSH_CACHES GPU command due to
+             the deprecation of FLUSH_MEM and FLUSH_PT MMU_AS commands
+             from Mali-Gx20 onwards. This feature is extended to all
+             previous GPUs as this method of cache maintenance is
+             already supported.
+[PATCH 6]:   Adds support for Mali-Gx20 and Mali-Gx25 GPUs. This also
+             adds SHAREABLE_CACHE support, in addition to fixing a minor
+             issue with setting the coherency protocol.
 
-Suggested-by: David Hildenbrand <david@redhat.com>
+v5:
+- Removed all of the GPU-specific initialization boilerplate as it was
+  not being used.
+- Merged [PATCH 1/7] and [PATCH 2/7] into one.
+- Fixed issue with getting model name before the gpu_info struct is
+  populated.
+- Merged AMBA_FEATURES and AMBA_ENABLE into GPU_COHERENCY_FEATURES and
+  GPU_COHERENCY_PROTOCOL registers respectively. Reworked the fields of
+  GPU_COHERENCY_FEATURES and added SHAREABLE_CACHE support.
+- Link to v4: https://lore.kernel.org/all/20250602143216.2621881-1-karunika.choo@arm.com/
+v4:
+- Split 64-bit register accessor patches into another patch series.
+  - link: https://lore.kernel.org/dri-devel/20250417123725.2733201-1-karunika.choo@arm.com/
+- Switched to using arch_major for comparison instead of arch_id in
+  panthor_hw.c.
+- Removed the gpu_info_init function pointer in favour of a single
+  function to handle minor register changes. The function names have
+  also been adjusted accordingly.
+- Moved the patch to support Mali-G710, Mali-G510 and Mali-G310 forwards
+  to [PATCH 4/7].
+- Extended support to perform cache maintenance via GPU_CONTROL to
+  Mali-Gx10 and Mali-Gx15 GPUs.
+- Link to v2: https://lore.kernel.org/all/20250320111741.1937892-1-karunika.choo@arm.com/
+v3:
+- Kindly ignore this patch series as there were duplicate patches being
+  included.
+v2:
+- Removed handling for register base addresses as they are not yet
+  needed.
+- Merged gpu_info handling into panthor_hw.c as they depend on the same
+  arch_id matching mechanism.
+- Made gpu_info initialization a GPU-specific function.
+- Removed unnecessary changes for cache maintenance via GPU_CONTROL.
+- Removed unnecessary pre-parsing of register fields from v1. Retaining
+  current implementation as much as possible.
+- Added support for G710, G715, G720, and G725 series of Mali GPUs.
+- Link to v1: https://lore.kernel.org/all/20241219170521.64879-1-karunika.choo@arm.com/
 
-...> -
->   static inline bool netmem_is_pp(netmem_ref netmem)
->   {
-> -	return (netmem_get_pp_magic(netmem) & PP_MAGIC_MASK) == PP_SIGNATURE;
-> +	if (netmem_is_net_iov(netmem))
+Karunika Choo (6):
+  drm/panthor: Add panthor_hw and move gpu_info initialization into it
+  drm/panthor: Simplify getting the GPU model name
+  drm/panthor: Add support for Mali-G710, Mali-G510 and Mali-G310
+  drm/panthor: Add support for Mali-Gx15 family of GPUs
+  drm/panthor: Make MMU cache maintenance use FLUSH_CACHES command
+  drm/panthor: Add support for Mali-Gx20 and Mali-Gx25 GPUs
 
-This needs to return false for tx niovs. Seems like all callers are
-gated on ->pp_recycle, so maybe it's fine, but we can at least
-check pp. Mina, you've been checking tx doesn't mix with rx, any
-opinion on that?
-
-Question to net maintainers, can a ->pp_recycle marked skb contain
-not page pool originated pages or a mix?
+ drivers/gpu/drm/panthor/Makefile         |   1 +
+ drivers/gpu/drm/panthor/panthor_device.c |   7 +-
+ drivers/gpu/drm/panthor/panthor_fw.c     |   5 +
+ drivers/gpu/drm/panthor/panthor_gpu.c    | 103 ++-----------------
+ drivers/gpu/drm/panthor/panthor_hw.c     | 125 +++++++++++++++++++++++
+ drivers/gpu/drm/panthor/panthor_hw.h     |  11 ++
+ drivers/gpu/drm/panthor/panthor_mmu.c    |  33 ++++++
+ drivers/gpu/drm/panthor/panthor_regs.h   |  22 +++-
+ include/uapi/drm/panthor_drm.h           |   3 +
+ 9 files changed, 214 insertions(+), 96 deletions(-)
+ create mode 100644 drivers/gpu/drm/panthor/panthor_hw.c
+ create mode 100644 drivers/gpu/drm/panthor/panthor_hw.h
 
 -- 
-Pavel Begunkov
+2.49.0
 
 
