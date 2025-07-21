@@ -1,246 +1,111 @@
-Return-Path: <linux-kernel+bounces-740003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5F12B0CE71
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 01:55:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72DFEB0CE7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 01:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 170B56C1218
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 23:54:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F8267AF9E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 23:56:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F0824679F;
-	Mon, 21 Jul 2025 23:54:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5518124A067;
+	Mon, 21 Jul 2025 23:57:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GVAzUULk"
-Received: from mail-oo1-f73.google.com (mail-oo1-f73.google.com [209.85.161.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RtTTu9l4"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C68239E9D
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 23:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BAD4219A6B;
+	Mon, 21 Jul 2025 23:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753142097; cv=none; b=cQqRk2z83pKM/jsqwy2TV4j/YmbWSu3Dxk/Qayd7c6ye94N0Z5HcsCAKPW+4ag8kS/TUCfZzatxYSmyC9Dfky2jVJw20C+TsCXO0+IC0nX8RqSffxYJ3Sm50kWMpbIwv47UAiSF77mOL3Us2ryVAz4DHGqYJgBy3lEoMBxlhz+Y=
+	t=1753142246; cv=none; b=qtpNM55Y/sxeKNcTaFAtLHweVio2ndHV13s+ozrRvvHlcx8J6EDtIGh3/ducg5LlUCBMtblnf1nHFD1SCcBIM0qRVbsvQA7xsOZPWAR6sMShcpZgohH35d4jVlXRlSIXT8dCJAC9TxLOnq52vCrrTHI3NH77jP3a5qdvqgzx50k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753142097; c=relaxed/simple;
-	bh=UN4rM5hSM612Ntka5m+9qaQLIFIDkO8ZOE33vUGogn4=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=nkX1g+W589owgrLpMfYdECqLSiVRV+YAYzi4nNrlzCW/w/q1miZBrl7oUX/yvlwe/JB0Ou/e+BsfG22CnIaRc51M3LxVpdN69czSgG5LOL1DIPOVei4QehyFLerdZJ4+NcGVaZugz1AT38jMx4JJDKSXgxhYb8DJGdX1utEtwGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GVAzUULk; arc=none smtp.client-ip=209.85.161.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com
-Received: by mail-oo1-f73.google.com with SMTP id 006d021491bc7-613a798c02cso4388079eaf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 16:54:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753142094; x=1753746894; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xXBnVk6qsaIHtsi5KaWL0Tm37PrBVTirM3nxRY2cB/o=;
-        b=GVAzUULkBfU6+iCzm+RBb5g10p1UWrkqg2Hh8HwMZ8+t87lR8IdJI1oowOO8Ql4Cl0
-         tQSCcmpGigz19snEuifpf14nXlIV074hW8ZuRORu9uCu40C/wTd2LmxgXguzvtCRWSiS
-         QqQ+rGcoWx4KgdGFTiJUB++qG7sh9kJWLTpEeP6/2+1Z1uP10Y3YfcXzGFz311qIyuqS
-         6l6tt8m47vUlhFcllXxWxkYQ6l+2LrA7b2O23AjElPv9enEacz1fs/mZSrg1dZF3Igb9
-         EU9MDCCaUcKGiMZDPC/HlgRmKmMeCA1+aH28QbeH/3GW53cDCOk3JTfWpZqVFOSg976U
-         pcwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753142094; x=1753746894;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xXBnVk6qsaIHtsi5KaWL0Tm37PrBVTirM3nxRY2cB/o=;
-        b=lzHDjT3IoN8W1aHBKyrqgP3PLjjJugJiZr9jLRQzli5zxcBWMOAsCZdbT2E4VQN1mY
-         KGe6sAA2lWHxvRz08azgpL3ZP7HXkGtXFPE/2CuBK1yvsrM0Vf5SVB/8A7g1SP5UNeAP
-         sp94brSbyOXKa60bZmUYKffpNhKZRYfyPwpJoqM+b00C57MJGi9CQ2FO5ZpVy+YcaILs
-         Fsa59Wea4wA2zPRQtleDnPER9BAb57iI738vgFo/hOsYrHDHCZRxgEWn6jy4JjWSKztO
-         5saabGS8LxbI4/ab1d8PjEgcms0BLtLdHRO+XrDpSQvgjF00kMNWfTaHfSkqK3M5f+0s
-         KZBw==
-X-Gm-Message-State: AOJu0Yz3/uhatcL5Es27j2noJ8mJ2f2mZPXnEVaeLlzK6KfAsftLdjwA
-	r7KziBUx18PixElBg2WMIobG/tbVcgiQUCnqc8m0TYWgd/BCtMFNTlCD9NPi+5UA/yTvYK52D64
-	rSdyCMU4f57JRvDKseJhQhYpeFD+kNI09tME/Y5bO6MaopiPT2gZ3PruOzpF+7lmVil5vNElnOy
-	WqM3zajRKai1SjOItqMxWZxW1L3e+wLk5hscfNvkfUikwRVA8drg==
-X-Google-Smtp-Source: AGHT+IGMKLV1x5xZ7JDSHPDet7I+qw3GykVwjJAn/Mv4YnYEOpveYHm53GdN0Jyr59vodnBELRPhkugyP5Tl
-X-Received: from oacwf6.prod.google.com ([2002:a05:6871:d606:b0:2d5:5a26:d92])
- (user=ynaffit job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6870:658e:b0:2fe:f4f4:8506
- with SMTP id 586e51a60fabf-2ffb224849fmr16473692fac.10.1753142094527; Mon, 21
- Jul 2025 16:54:54 -0700 (PDT)
-Date: Mon, 21 Jul 2025 16:54:49 -0700
+	s=arc-20240116; t=1753142246; c=relaxed/simple;
+	bh=arbzkV2E0no0mFDIvbnkNLTIFGMu4xFEU0aY3gLFC60=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Qr69b1QnSD1R4ZMCzjpXTdsM2dH5fNmnoReHbqHU7VmSjSeX5v5SOS3uooDZpcc3cML2owmPUAQFRS0f+tlz6Pnt99j5fhoEto94iXXklnRgu0PbbscKtlSc2B+e3W+WFh9OCD1AAgw54NLqDMgELim5+qMySJZog5C0MphCsGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RtTTu9l4; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56LNv5T21379791;
+	Mon, 21 Jul 2025 18:57:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1753142226;
+	bh=Ha51BmO3BFnOaMX9XHX6JPjZdZK9xhxWuq3w4PS1ik4=;
+	h=From:To:CC:Subject:Date;
+	b=RtTTu9l4Q5V2aaMBc4Irz8hKLy3JJYC1fCj/NopcUn5sCM8yUN5vtV2nvnGGcWt+3
+	 aZ40uyFQZGP79ct4vLmcmRca003pRefLw0B+y2V2oO10ag5redLRmEHD1G4AxOj38h
+	 PhHWz7mwy42d2LJaMk4uvtOeyY3Y71Uhl/c51I4U=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56LNv57D623743
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 21 Jul 2025 18:57:05 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 21
+ Jul 2025 18:57:05 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Mon, 21 Jul 2025 18:57:05 -0500
+Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56LNv5e0422426;
+	Mon, 21 Jul 2025 18:57:05 -0500
+From: Judith Mendez <jm@ti.com>
+To: Judith Mendez <jm@ti.com>, Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+        <linux-watchdog@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Andrew Davis <afd@ti.com>
+Subject: [PATCH v4 0/2] Add reaction control in rti
+Date: Mon, 21 Jul 2025 18:57:03 -0500
+Message-ID: <20250721235705.1160972-1-jm@ti.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250721235449.1316533-1-ynaffit@google.com>
-Subject: [PATCH] binder: Fix-up binder_alloc kunit tests
-From: Tiffany Yang <ynaffit@google.com>
-To: linux-kernel@vger.kernel.org
-Cc: Carlos Llamas <cmllamas@google.com>, Kees Cook <kees@kernel.org>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, kernel-team@android.com, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Christian Brauner <brauner@kernel.org>, Suren Baghdasaryan <surenb@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Do clean up that was requested in reviews for the binder_alloc kunit
-test series [1] after it had been accepted. Add a copyright notice to
-each of the newly created test files, as suggested by Carlos [2].
-Replace instances of snprintf with seq_buf functions, as suggested by
-Kees [3].
+This allows for reaction control in rti driver. Since AM62L SoC [0]
+does not have WWD reset output routed to a ESM module like all other
+K3 SoC's and has the reset output signal routed to the reset HW block,
+add a new compatible for AM62L and configure reset reaction for AM62L
+SoC instead of NMI.
 
-[1] https://lore.kernel.org/all/20250714185321.2417234-1-ynaffit@google.com/
-[2] https://lore.kernel.org/all/CAFuZdDLD=3CBOLSWw3VxCf7Nkf884SSNmt1wresQgxgBwED=eQ@mail.gmail.com/
-[3] https://lore.kernel.org/all/202507160743.15E8044@keescook/
+This patch has been tested on AM62L EVM [1].
 
-Suggested-by: Carlos Llamas <cmllamas@google.com>
-Suggested-by: Kees Cook <kees@kernel.org>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>
-Signed-off-by: Tiffany Yang <ynaffit@google.com>
----
-This patch is based on top of char-misc-next.
----
----
- drivers/android/tests/.kunitconfig         |  4 ++
- drivers/android/tests/Makefile             |  3 ++
- drivers/android/tests/binder_alloc_kunit.c | 51 +++++++++++-----------
- 3 files changed, 32 insertions(+), 26 deletions(-)
+Changes since v3:
+- Expected default reaction for watchdog is HW reset line, so check for NMI
+  and set reaction to NMI if exists, else default to HW reset.
 
-diff --git a/drivers/android/tests/.kunitconfig b/drivers/android/tests/.kunitconfig
-index a73601231049..39b76bab9d9a 100644
---- a/drivers/android/tests/.kunitconfig
-+++ b/drivers/android/tests/.kunitconfig
-@@ -1,3 +1,7 @@
-+#
-+# Copyright 2025 Google LLC.
-+#
-+
- CONFIG_KUNIT=y
- CONFIG_ANDROID_BINDER_IPC=y
- CONFIG_ANDROID_BINDER_ALLOC_KUNIT_TEST=y
-diff --git a/drivers/android/tests/Makefile b/drivers/android/tests/Makefile
-index 6780967e573b..27268418eb03 100644
---- a/drivers/android/tests/Makefile
-+++ b/drivers/android/tests/Makefile
-@@ -1,3 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0-only
-+#
-+# Copyright 2025 Google LLC.
-+#
- 
- obj-$(CONFIG_ANDROID_BINDER_ALLOC_KUNIT_TEST)	+= binder_alloc_kunit.o
-diff --git a/drivers/android/tests/binder_alloc_kunit.c b/drivers/android/tests/binder_alloc_kunit.c
-index 02aa4a135eb5..9b884d977f76 100644
---- a/drivers/android/tests/binder_alloc_kunit.c
-+++ b/drivers/android/tests/binder_alloc_kunit.c
-@@ -1,6 +1,9 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Test cases for binder allocator code
-+ * Test cases for binder allocator code.
-+ *
-+ * Copyright 2025 Google LLC.
-+ * Author: Tiffany Yang <ynaffit@google.com>
-  */
- 
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-@@ -12,6 +15,7 @@
- #include <linux/fs.h>
- #include <linux/mm.h>
- #include <linux/mman.h>
-+#include <linux/seq_buf.h>
- #include <linux/sizes.h>
- 
- #include "../binder_alloc.h"
-@@ -104,40 +108,33 @@ static const char *const buf_end_align_type_strs[LOOP_END] = {
- };
- 
- struct binder_alloc_test_case_info {
-+	char alignments[ALIGNMENTS_BUFLEN];
-+	struct seq_buf alignments_sb;
- 	size_t *buffer_sizes;
- 	int *free_sequence;
--	char alignments[ALIGNMENTS_BUFLEN];
- 	bool front_pages;
- };
- 
--static void stringify_free_seq(struct kunit *test, int *seq, char *buf,
--			       size_t buf_len)
-+static void stringify_free_seq(struct kunit *test, int *seq, struct seq_buf *sb)
- {
--	size_t bytes = 0;
- 	int i;
- 
--	for (i = 0; i < BUFFER_NUM; i++) {
--		bytes += snprintf(buf + bytes, buf_len - bytes, "[%d]", seq[i]);
--		if (bytes >= buf_len)
--			break;
--	}
--	KUNIT_EXPECT_LT(test, bytes, buf_len);
-+	for (i = 0; i < BUFFER_NUM; i++)
-+		seq_buf_printf(sb, "[%d]", seq[i]);
-+
-+	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(sb));
- }
- 
- static void stringify_alignments(struct kunit *test, int *alignments,
--				 char *buf, size_t buf_len)
-+				 struct seq_buf *sb)
- {
--	size_t bytes = 0;
- 	int i;
- 
--	for (i = 0; i < BUFFER_NUM; i++) {
--		bytes += snprintf(buf + bytes, buf_len - bytes, "[ %d:%s ]", i,
--				  buf_end_align_type_strs[alignments[i]]);
--		if (bytes >= buf_len)
--			break;
--	}
-+	for (i = 0; i < BUFFER_NUM; i++)
-+		seq_buf_printf(sb, "[ %d:%s ]", i,
-+			       buf_end_align_type_strs[alignments[i]]);
- 
--	KUNIT_EXPECT_LT(test, bytes, buf_len);
-+	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(sb));
- }
- 
- static bool check_buffer_pages_allocated(struct kunit *test,
-@@ -308,19 +305,20 @@ static void permute_frees(struct kunit *test, struct binder_alloc *alloc,
- 	int i;
- 
- 	if (index == BUFFER_NUM) {
--		char freeseq_buf[FREESEQ_BUFLEN];
-+		DECLARE_SEQ_BUF(freeseq_sb, FREESEQ_BUFLEN);
- 
- 		case_failed = binder_alloc_test_alloc_free(test, alloc, tc, end);
- 		*runs += 1;
- 		*failures += case_failed;
- 
- 		if (case_failed || PRINT_ALL_CASES) {
--			stringify_free_seq(test, tc->free_sequence, freeseq_buf,
--					   FREESEQ_BUFLEN);
-+			stringify_free_seq(test, tc->free_sequence,
-+					   &freeseq_sb);
- 			kunit_err(test, "case %lu: [%s] | %s - %s - %s", *runs,
- 				  case_failed ? "FAILED" : "PASSED",
- 				  tc->front_pages ? "front" : "back ",
--				  tc->alignments, freeseq_buf);
-+				  seq_buf_str(&tc->alignments_sb),
-+				  seq_buf_str(&freeseq_sb));
- 		}
- 
- 		return;
-@@ -380,8 +378,9 @@ static void gen_buf_offsets(struct kunit *test, struct binder_alloc *alloc,
- 	if (index == BUFFER_NUM) {
- 		struct binder_alloc_test_case_info tc = {0};
- 
--		stringify_alignments(test, alignments, tc.alignments,
--				     ALIGNMENTS_BUFLEN);
-+		seq_buf_init(&tc.alignments_sb, tc.alignments,
-+			     ALIGNMENTS_BUFLEN);
-+		stringify_alignments(test, alignments, &tc.alignments_sb);
- 
- 		gen_buf_sizes(test, alloc, &tc, end_offset, runs, failures);
- 		return;
+v3: https://lore.kernel.org/linux-devicetree/20250707180002.3918865-1-jm@ti.com/
+v2: https://lore.kernel.org/linux-devicetree/20250625143338.2381726-1-jm@ti.com/
+v1-resend: https://lore.kernel.org/linux-devicetree/20250624202605.1333645-1-jm@ti.com/
+v1: https://lore.kernel.org/linux-devicetree/20250624194509.1314095-1-jm@ti.com/
+
+[0] https://www.ti.com/product/AM62L
+[1] https://www.ti.com/tool/TMDS62LEVM
+
+Judith Mendez (2):
+  dt-bindings: watchdog: ti,rti-wdt: Add ti,am62l-rti-wdt compatible
+  watchdog: rti_wdt: Add reaction control
+
+ .../bindings/watchdog/ti,rti-wdt.yaml         |  1 +
+ drivers/watchdog/rti_wdt.c                    | 32 ++++++++++++++++---
+ 2 files changed, 29 insertions(+), 4 deletions(-)
+
 -- 
-2.50.0.727.gbf7dc18ff4-goog
+2.49.0
 
 
