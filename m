@@ -1,163 +1,164 @@
-Return-Path: <linux-kernel+bounces-738642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7ABFB0BB5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 05:24:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96EB4B0BB61
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 05:26:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73558189775B
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 042E27A7924
 	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 03:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA6C1FE44B;
-	Mon, 21 Jul 2025 03:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g5SrH0Ri"
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A965201270;
+	Mon, 21 Jul 2025 03:26:24 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4289F4F1;
-	Mon, 21 Jul 2025 03:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA662B9A9;
+	Mon, 21 Jul 2025 03:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753068281; cv=none; b=NbgOSkgXSdvUqoAvFgcQFP6dWc14rV5b1BOgCWjxLGRe8PNiAw7sFDrZjwZqtCiBbvzVvQQ4ULO/1WMYABegxJo0hVpXlJq5nq32hJruNbLxTZbzgD2jxdA+HFBdOJI5W7aUCO6rQ4/j0SABlsYsdFEPh/eUj4KKf+e1MZGXLHY=
+	t=1753068384; cv=none; b=VG+QzZqO274+lLpz+QowWZvEtYlRQyUZUXyWCBT2yNY+t1ZcgWo6Fz1fGNw25Oai00e+5VfQwyH0djzLl9OqyuNV0fPeBPgoDUsQzGSJ+2zfLAaeuqRq9NeNBz1rOq6gH4Zwq0zLSvOXLRu9PfL/stqJjDec/IEJuIYuKzmkeHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753068281; c=relaxed/simple;
-	bh=gjPYILYDcX1biCFjP256A//l513CzG7FlCFqg8jOtCQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZuQjxsGc+kS0xv67E120SIcfc9z5QjJo0fjDnjfB3UjL8wIhWvU6r2a/Uhy/4P1Z5w6PIQqU6V2w/aerA0fBOliRHyCcsX42TdZMZ1vIGl2VNS/nQXLcxArOrgE9b5mAfh3WNYmb0iPfMJil2VYyid9wsMyXJTOu0YCJfXPx4XM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g5SrH0Ri; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-87c09672708so91741139f.3;
-        Sun, 20 Jul 2025 20:24:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753068279; x=1753673079; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OwI2hpcy3lcVV+QnTniw+hVEeGQWL5HMOKObyfZtgEM=;
-        b=g5SrH0RiaCj7xvWo2bhzDzM3LAfLyBJyIG+mRSP4Tx3DY+2V2zKTnMZxhd3r790BJ4
-         I8eNvQFEPZhpLbQJoMwwj0hdgpb3txz3JYSgvqeYuHPfvj7iAqqHARyuD9OsHozT/KkJ
-         mZ5sB75dLtDV4UDzzQ13Q/XgoHNDiejFs1fJ8FHiKAzJQeRUDODsmqvT02tk3VuHi7sr
-         yB7Y7BuaJKnq91soRo7q9JSqMWi2k4B0f/FuuArG3YTie84mgStuHYmDb91+3/0/L0hH
-         /wI55vB1Q5V6y8VDcsj0P4jPpxeg8POjW2LzT7yMqbB3eR61mEN5B7BvnBGoBem+D5HF
-         KQGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753068279; x=1753673079;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OwI2hpcy3lcVV+QnTniw+hVEeGQWL5HMOKObyfZtgEM=;
-        b=Z9k5EAZ/tfqp3JTshBU69Nd7h/wVjn1CElfWYRWrRgSNvOCryupKN/1xpkcBJ7WlZa
-         cG4yomgt/WuTCBTZ356KPtO/mdlaYeyjUc+2+q4Qs6H9WMrialVaDTIpLnl5tUQPJzak
-         drAS1y+wynWPa+k2L02GevSgC2DqVRlgFiqOg3B3yfC0Rug4hIfSpPl7y71595nYCmZ4
-         PCYR+fh2V4/HgJK0OaeN14D29GfEhoH+9nj2so32m+/ifow7d/t0dA30NGy67JdT8Gyc
-         7vtLO9+yY+Yy1jKj6/EJazpyeaE3Md/872M9EXVjHffPigbT1yo6PggLXRWyTae6NYeb
-         CwBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVW4meHuAyR2jgF2bxkzJ/Qw1ayvw5c4C38HvA1HyYmpayRNTXT4iqpn4DvLqVzMfUxbBZcHZWClWm3PWtg@vger.kernel.org, AJvYcCWZkon0435R7CTqqpm3dmPQGiWlNg7UOo6nePLEmVrhzWpadKOT1mBgilGk0mMWbrLOrlDWaJ72F9tb@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvKmXJgUJWZyEFiETiu7K2IEmXemCvdt3HX3nGIudAaDasJTvB
-	G0/6Z/TO4jYiQx1G28R/vR3e/HVb9p5etCN15Oz9EC1hNMk89dddw1FautDuGh+JywHmFz85Sfj
-	oty1tXsw9+U1QzuHsuAh9ick0FznViRs=
-X-Gm-Gg: ASbGnctS8jF4+2RSfAN0GhIDzH4UOxi9WBd6JtJmMq/cU8cmhlcVVWjMGff3UtlhWTm
-	qprRVTx6L7tNml7Ijw3XY3cJAgCtVc1UdaDsVf5fjkCT0KdzJflUdBLeJFf9h0gwkGuH6ILB8uA
-	PsovtF8YBs/g4RUqwtRtK8UxhzoxpRKfOb8bOFlhj8oeSDE+YgBXWLp5t0YsLpt+kKj+aKFLRSs
-	3vDFfQ=
-X-Google-Smtp-Source: AGHT+IEc4eCE70WDmGsnRlEEKfMnJZ+xtO+dDhCQVQfDpz+1aJdPRzDCoXXMD8/WnfPbQf13oi/XE9aCmcR1NPGUpLY=
-X-Received: by 2002:a05:6e02:2582:b0:3df:2f47:dc21 with SMTP id
- e9e14a558f8ab-3e282f5547amr213949295ab.22.1753068278812; Sun, 20 Jul 2025
- 20:24:38 -0700 (PDT)
+	s=arc-20240116; t=1753068384; c=relaxed/simple;
+	bh=W+YfrMOENzIpLr/Qkswe58O644OPQZbKS+3T3IF478k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=QtWG6wXjRZC7UMwH7CoU4iuFrcyF10gM6Uv9uzsV23M4YjQC6m2ph8QBSxtiq4oeoq4PXo+BFyGb3tV1xh4UBMSAEITvObdIOCDFn1X3pQWqvZxNfNwxNRdQDXPzhqwbEqNUdMx+E7kQa7wKq92MzqttV3rxR+S+9NjcOd9YZPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 754b54d865e211f0b29709d653e92f7d-20250721
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:5e8adfa0-374c-4564-9d9a-4e43569f2290,IP:0,U
+	RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-25
+X-CID-META: VersionHash:6493067,CLOUDID:13f64e50f4a71a7c6c8684f9ccdc46e2,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:-3,IP:
+	nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,L
+	ES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 754b54d865e211f0b29709d653e92f7d-20250721
+Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
+	(envelope-from <lijiayi@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1603985306; Mon, 21 Jul 2025 11:26:15 +0800
+Received: from node4.com.cn (localhost [127.0.0.1])
+	by node4.com.cn (NSMail) with SMTP id 1956716004280;
+	Mon, 21 Jul 2025 11:26:15 +0800 (CST)
+X-ns-mid: postfix-687DB355-6808681889
+Received: from kylin-pc.. (unknown [172.25.130.133])
+	by node4.com.cn (NSMail) with ESMTPA id 3FA8516001A01;
+	Mon, 21 Jul 2025 03:26:13 +0000 (UTC)
+From: Jiayi Li <lijiayi@kylinos.cn>
+To: rafael@kernel.org
+Cc: jiayi_dec@163.com,
+	lenb@kernel.org,
+	lijiayi@kylinos.cn,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] ACPI: Fix initial QoS constraint application order in PPC initialization
+Date: Mon, 21 Jul 2025 11:26:06 +0800
+Message-ID: <20250721032606.3459369-1-lijiayi@kylinos.cn>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20250718020312.856168-1-lijiayi@kylinos.cn>
+References: <20250718020312.856168-1-lijiayi@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250718101150.3681002-1-shengjiu.wang@nxp.com>
- <20250718101150.3681002-2-shengjiu.wang@nxp.com> <aHpzElP09pEOi4id@lizhi-Precision-Tower-5810>
-In-Reply-To: <aHpzElP09pEOi4id@lizhi-Precision-Tower-5810>
-From: Shengjiu Wang <shengjiu.wang@gmail.com>
-Date: Mon, 21 Jul 2025 11:24:23 +0800
-X-Gm-Features: Ac12FXy5bUMTlHGaq7PpDN0ZSeNbIlr9FhbAx0Aren2E8HjpPRhVBNLuNDI2CRQ
-Message-ID: <CAA+D8AOQ9v_qCHecfL1brXUJgpA3UjdDq-O3J9udQzp2xm3J9w@mail.gmail.com>
-Subject: Re: [PATCH 1/4] drm/bridge: dw-hdmi: Add function to get plat_data
-To: Frank Li <Frank.li@nxp.com>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, andrzej.hajda@intel.com, 
-	neil.armstrong@linaro.org, rfoss@kernel.org, 
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, lumag@kernel.org, dianders@chromium.org, 
-	cristian.ciocaltea@collabora.com, luca.ceresoli@bootlin.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	victor.liu@nxp.com, shawnguo@kernel.org, s.hauer@pengutronix.de, 
-	kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, p.zabel@pengutronix.de, devicetree@vger.kernel.org, 
-	l.stach@pengutronix.de
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jul 19, 2025 at 12:15=E2=80=AFAM Frank Li <Frank.li@nxp.com> wrote:
->
-> On Fri, Jul 18, 2025 at 06:11:47PM +0800, Shengjiu Wang wrote:
-> > The enable_audio() and disable_audio() callback pointers are in
-> > plat_data structure, and the audio device driver needs to get plat_data
-> > for assign these pointers. So add a function to export plat_data
-> > structure.
->
-> drm/bridge: dw-hdmi: Add API dw_hdmi_to_plat_data() to get plat_data
->
-> Add API dw_hdmi_to_plat_data() to fetch plat_data because audo device
-> driver needs it to enabe(disable)_audio().
+This patch fixes an issue where _PPC frequency limits set by the BIOS
+failed to take effect due to incorrect call ordering. Previously,
+freq_qos_update_request() was being called before freq_qos_add_request(),
+causing the constraint updates to be ignored. With this fix, the frequenc=
+y
+limits are now properly enforced as intended.
+The original initialization sequence was:
 
-Thanks for comments.  will update it to the next version.
+cpufreq_policy_online()
+    acpi_cpufreq_cpu_init()
+        acpi_processor_get_platform_limit()
+            freq_qos_update_request(&perflib_req)
+    blocking_notifier_call_chain(...)
+        acpi_processor_ppc_init()
+            freq_qos_add_request(&perflib_req)
 
-best regards
-Shengjiu Wang
->
-> Frank
->
-> >
-> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> > ---
-> >  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 6 ++++++
-> >  include/drm/bridge/dw_hdmi.h              | 1 +
-> >  2 files changed, 7 insertions(+)
-> >
-> > diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/dr=
-m/bridge/synopsys/dw-hdmi.c
-> > index 76c6570e2a85..3dfa42178f6c 100644
-> > --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> > +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> > @@ -198,6 +198,12 @@ struct dw_hdmi {
-> >       enum drm_connector_status last_connector_result;
-> >  };
-> >
-> > +const struct dw_hdmi_plat_data *dw_hdmi_to_plat_data(struct dw_hdmi *h=
-dmi)
-> > +{
-> > +     return hdmi->plat_data;
-> > +}
-> > +EXPORT_SYMBOL_GPL(dw_hdmi_to_plat_data);
-> > +
-> >  #define HDMI_IH_PHY_STAT0_RX_SENSE \
-> >       (HDMI_IH_PHY_STAT0_RX_SENSE0 | HDMI_IH_PHY_STAT0_RX_SENSE1 | \
-> >        HDMI_IH_PHY_STAT0_RX_SENSE2 | HDMI_IH_PHY_STAT0_RX_SENSE3)
-> > diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.=
-h
-> > index 6a46baa0737c..a56a3519a22a 100644
-> > --- a/include/drm/bridge/dw_hdmi.h
-> > +++ b/include/drm/bridge/dw_hdmi.h
-> > @@ -208,4 +208,5 @@ void dw_hdmi_phy_setup_hpd(struct dw_hdmi *hdmi, vo=
-id *data);
-> >
-> >  bool dw_hdmi_bus_fmt_is_420(struct dw_hdmi *hdmi);
-> >
-> > +const struct dw_hdmi_plat_data *dw_hdmi_to_plat_data(struct dw_hdmi *h=
-dmi);
-> >  #endif /* __IMX_HDMI_H__ */
-> > --
-> > 2.34.1
-> >
+The new sequence explicitly ensures:
+
+cpufreq_policy_online()
+    acpi_cpufreq_cpu_init()
+        acpi_processor_get_platform_limit()
+            freq_qos_update_request(&perflib_req)
+    blocking_notifier_call_chain(...)
+        acpi_processor_ppc_init()
+            freq_qos_add_request(&perflib_req)
++           acpi_processor_get_platform_limit()
++               freq_qos_update_request(&perflib_req)
+
+The critical change adds an immediate platform limit update after the
+QoS request is registered. This guarantees that the initial P-state
+constraint is applied before any subsequent updates, resolving the window
+where constraints could be applied out-of-order.
+
+Fixes: d15ce412737a ("ACPI: cpufreq: Switch to QoS requests instead of cp=
+ufreq notifier")
+Signed-off-by: Jiayi Li <lijiayi@kylinos.cn>
+---
+v1 -> v2:
+- Modify the commit.
+- Add pr->performance check in acpi_processor_ppc_init loop.
+---
+---
+ drivers/acpi/processor_perflib.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor_pe=
+rflib.c
+index 64b8d1e19594..56f2b8354d62 100644
+--- a/drivers/acpi/processor_perflib.c
++++ b/drivers/acpi/processor_perflib.c
+@@ -173,6 +173,9 @@ void acpi_processor_ppc_init(struct cpufreq_policy *p=
+olicy)
+ {
+ 	unsigned int cpu;
+=20
++	if (ignore_ppc =3D=3D 1)
++		return;
++
+ 	for_each_cpu(cpu, policy->related_cpus) {
+ 		struct acpi_processor *pr =3D per_cpu(processors, cpu);
+ 		int ret;
+@@ -180,6 +183,9 @@ void acpi_processor_ppc_init(struct cpufreq_policy *p=
+olicy)
+ 		if (!pr)
+ 			continue;
+=20
++		if (!pr->performance)
++			continue;
++
+ 		/*
+ 		 * Reset performance_platform_limit in case there is a stale
+ 		 * value in it, so as to make it match the "no limit" QoS value
+@@ -193,6 +199,11 @@ void acpi_processor_ppc_init(struct cpufreq_policy *=
+policy)
+ 		if (ret < 0)
+ 			pr_err("Failed to add freq constraint for CPU%d (%d)\n",
+ 			       cpu, ret);
++
++		ret =3D acpi_processor_get_platform_limit(pr);
++		if (ret)
++			pr_err("Failed to update freq constraint for CPU%d (%d)\n",
++			       cpu, ret);
+ 	}
+ }
+=20
+--=20
+2.47.1
+
 
