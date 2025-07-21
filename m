@@ -1,217 +1,173 @@
-Return-Path: <linux-kernel+bounces-739658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F678B0C945
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:13:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77E9CB0C943
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:13:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D79AA1AA7F46
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:13:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87BBA1AA8039
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08832E1723;
-	Mon, 21 Jul 2025 17:13:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4AB32E11BA;
+	Mon, 21 Jul 2025 17:13:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PIGkMBg+"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="H1GpzBcG"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8572E092A
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 17:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937171FE44B;
+	Mon, 21 Jul 2025 17:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753117996; cv=none; b=sHiUEanhR7M+sxPijcnqiM+dIBmhaCnVERPf2UaU5GfzD30KNm9pGj4hx25B5UDsE8ru9nKnwNX0eFwd8qz2Z7Doc8htdCzptE/UT80mk9c/I7YBd2j8w0voKyTlNd1LC4RAY8A/M+vOvIvyMHZ1rdJk79rCm/roHcvOQ9WGIwI=
+	t=1753117995; cv=none; b=jD3W04QtZnlkNXiYq6dpkVwtLzL5tqaqykx2atOx1EEMYBe4w9UorvmF4mtuogjc9RT7Z3576vICQU358dwjmPAzcWI/DI0cyUP238Zs5Y8Ozw7jSFD7CvsNK7GaTmwCycYtvI5Ue1Kc1f8o4au1YphIbuhKIoDKs9wejFyG+aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753117996; c=relaxed/simple;
-	bh=XfILMrJpqF/tuCduLTWyeK1Shsuk0EcxoJjjw57ON60=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rezlOZWL7z1FAuGhElz9jWytnppFGAPGhpHSVObCcNtin1tJiN/7WcvatiDa69/7yJdiR/rF5cmuHFUbWvmkLD77Cl3NfGPjiKj6TbYScKqRj+E9s0iFnvyNNb7Wz2DTsfLacdTWp3I7EWBK+ov62VIPw4LtIChF4wXKSjiE4kE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PIGkMBg+; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56LEf51S012733
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 17:13:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	DZ/4PF6N3vG+rQh7F+qrpcJmMG+VX0PeJtiX8Xsn9C4=; b=PIGkMBg+PDrOua3o
-	Bf9XtefUwHEa0dPJX+byF9cMvYGIEgfv1u4T0/BhuqIguPzjt1DNaSqDRYoMGitI
-	PZ36BouhUWFSYP/rG1uYmqRJLwJ3k7BtoDMQxDvD+emqNTwBluWh/emAZN+Dpv0Y
-	hzyYnZVN1aMn5zSZLGoB/PEK/QKV1DAIcO78kPY0C9iqTI+ni1JTgmmExWet9s5P
-	hTgmI/k0f7hKLzUjmJnk8RnhR9umCyK87B+Vka2iOOM1X3xDylUG6vMhuv7sutg1
-	iV0dkHPKDyyvLEPm1OCvsqaDDDLEk6R23aZJ5D56lpNj3Qbx7ojqFwMMW2fQL7k6
-	AwKAcQ==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 481qh6grsv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 17:13:13 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b2fcbd76b61so5189111a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 10:13:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753117992; x=1753722792;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DZ/4PF6N3vG+rQh7F+qrpcJmMG+VX0PeJtiX8Xsn9C4=;
-        b=GW3rwq/2OKTkXSnoa0ZROUcwOemqBvosv5TwzvEx9I1Nim0x0pISbJwuolD6K2EpSZ
-         onKbpm8ccIpXvAKZ+WTGwGx8YiOxSj66+cQLy+K8xH7WOL5BRzGtDU/JSMZstUgiMURa
-         /Omr4RWV7XOj8RueJAKktpgV4JFaemRSIbw1o5nIr2iF2HLBdsXdpiZqnDXnfeYnbOXD
-         bQ5XWIMpTxghesctoN2b7GoCHDncPU15HHkQgH9oUEDYHlxWxvh09N7trT6hbOfvHCzb
-         27Gw9442G9O6LqDMfc9Acy5fCa+wmafs3uBbHvxU7NoZ5fkD9Fvynv1TXEBC+fyQdOrM
-         Zj2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUoCqtDoVJqc4aL2wsa7WbChIUXguDyeOXCEeIj9+5E1c3IiKYWqr0Vjh5pXMLHDHGjOO0SxOG1UsxBYoc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPr2HcAol4oPN1mNZOKUQO7penpCMuTnzHP2mGydVyvuuihg6t
-	H2KrSjRHPa5ffSrhQEVHp1AreypPaSXlYVKXY1AIQID7ljSEUrD5z/jbwCwV2/f9Ujh7L5b2PNF
-	+vqkBy7GL7Rvylu0CdQtWJcuh48xWh3T5Slz8AFQaaymCK1w8zd2q9cCpcvGakAvLtbU=
-X-Gm-Gg: ASbGncs1kfc8DiOC4kSv0o/z5xdH1WPr44ti1o7AW+mPItn7ik6cU9LI4ADcVf6d7jO
-	QW7hm673u+VVUg4aX6A8+A5tMfZ3Q54eQn7++NR88/bvfMaZqiToCVM82RAm+lwFRbg757E0k5D
-	1UzVJVqFcgYoNcOw7wdffJvf+c5wIPxnBLBJQcevVkDqe4OV2zJ54gFETrAyQfxaDZHiPpwpwMm
-	W7Qt8bF4BP6lMChaAXfRj0ly4v8N6iGOswzPD354f2268F77YEtxyprL3G71zyOE2tlgvC0rmhE
-	4H7rgd/+3H/UJQmR1HuFFqw3l0M8MX3rH3RjwAUjkWUVfGCdM5AUu97Z4dnaSvF1R0me
-X-Received: by 2002:a05:6a20:9392:b0:1f5:8a1d:3905 with SMTP id adf61e73a8af0-23810d55d86mr34423456637.7.1753117991868;
-        Mon, 21 Jul 2025 10:13:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGe2/ShNvywiZ+DxmeZg+ZMZ/GKOcyhXqBS+iKk7LMIrbdvIY81RYqsoTDycOuer7bfi9e1ag==
-X-Received: by 2002:a05:6a20:9392:b0:1f5:8a1d:3905 with SMTP id adf61e73a8af0-23810d55d86mr34423411637.7.1753117991359;
-        Mon, 21 Jul 2025 10:13:11 -0700 (PDT)
-Received: from [192.168.0.195] ([49.204.29.160])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f2fe659a5sm5633550a12.4.2025.07.21.10.13.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Jul 2025 10:13:10 -0700 (PDT)
-Message-ID: <5b569e5f-066b-4e12-8a05-d77852ce11f6@oss.qualcomm.com>
-Date: Mon, 21 Jul 2025 22:43:05 +0530
+	s=arc-20240116; t=1753117995; c=relaxed/simple;
+	bh=Hr1YG7QSWGyZ0LF0cFcvVQrOXI3R+NIX5I+yLOKcQwY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=exhwIEMahl1gVJPWE0f0kZb5hJxMKPbQ9Dg9pFLwwydVJ+HgWgJOLoygT8xzuPnFFqv3I/QIt7opXcmklZsVxFZp8WTIkLHAIQOhNPR+V+G/QySf1GnBKM1b0AsMLWXUKHPVlnHdoE4GXZbSiMO3oeVa5ZGEyux76C8xa1s4oSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=H1GpzBcG; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=NC6C+PjqKI/NeJ+YCHvWQarwsxh01i6R66mhx16Pca0=; b=H1GpzBcGf4l7laCmPw3QpswvEt
+	yZo8vvWTeX8W8T67rreVeGZ4ZqI0Yl+6Vpe+q5OP9UfgHzlZKKrGTwh9QwbIlrgee5f+o8T8SH0dK
+	li3yvE0tAiQaivIOQOrzyIIQO1SEbyuJEyBy8o1oFtt6ZRH38lSuRCI5MADyg3e91cVAh+5vs9vl0
+	UjS8oiD0Gcj/rAyGP5BWU0FVSZIpMdCncI2AHJjfhrSlhoqP8EeREO7jSS3ICMus6KAV58vfBSr8j
+	Q+FdrRr7aM4KNYXA+FOlSzlUPnSdY0Yof2V6WGRRHeZHcpglPx6ESlpCnEnrV7HJGGAh3EnUUHYVg
+	9bGfQRkA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1udu4c-0000000G38k-1T6I;
+	Mon, 21 Jul 2025 17:13:10 +0000
+Date: Mon, 21 Jul 2025 18:13:10 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc: linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+	Andrew Morton <akpm@linux-foundation.org>, kernel@collabora.com,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: Excessive page cache occupies DMA32 memory
+Message-ID: <aH51JnZ8ZAqZ6N5w@casper.infradead.org>
+References: <766ef20e-7569-46f3-aa3c-b576e4bab4c6@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/7] clk: qcom: gcc: Add support for Global Clock
- Controller
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Abel Vesa <abel.vesa@linaro.org>,
-        Pankaj Patil <pankaj.patil@oss.qualcomm.com>, sboyd@kernel.org,
-        mturquette@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, quic_rjendra@quicinc.com,
-        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250716152017.4070029-1-pankaj.patil@oss.qualcomm.com>
- <20250716152017.4070029-8-pankaj.patil@oss.qualcomm.com>
- <aHjJG2nrJJZvqxSu@linaro.org>
- <40534488-24f6-4958-b032-d45a177dfd80@kernel.org>
- <2f5b5e6e-5041-453e-b3f7-b10b40bc6f57@oss.qualcomm.com>
- <52ytt5ag5l65hdjjmvjft2l7ofvt4rgdn6r3bytcpjvyqia7ry@uzajn7qjng4a>
-Content-Language: en-US
-From: Taniya Das <taniya.das@oss.qualcomm.com>
-In-Reply-To: <52ytt5ag5l65hdjjmvjft2l7ofvt4rgdn6r3bytcpjvyqia7ry@uzajn7qjng4a>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=CZ4I5Krl c=1 sm=1 tr=0 ts=687e7529 cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=7nFZtJUvBAfdOgjOLm7NAA==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=9SSxU1ZdH87hVqYcdAkA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22
-X-Proofpoint-ORIG-GUID: bhfwR2CncxMyXTsIbAmdF1OhgbO--Ie9
-X-Proofpoint-GUID: bhfwR2CncxMyXTsIbAmdF1OhgbO--Ie9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIxMDE1MSBTYWx0ZWRfX2UG0wJCy30wb
- jwMTMDTQ3gKe1dCVL06ZTBvJkhiaWiARv+VjYzW79H44pJDlwOyLjLc1wTx3kkFB1rz2xdsum9/
- /G9atrJEik++3oZ84RCNftgEULjiz2bLNGoxwEFnmn1slkJ0L7JbjFzQWLLmli7pM/IanRL7DUj
- UyZLeGhVu0Jl+o/Nny0t5pyK2+G9wJjUunDY2+2wME3ScTW6F3EoDcZsKcw8Rm+f5nrv+jocxij
- geYZI1BnlsOoqW+mr/MYvoUSJpNeLn9qm85qeIgzJs86QbI48jieAcHQL4RCd+tYsZNlNdlvWfy
- WnZwbIUSwzEGFEeYxq9JBol350Jb/zm0FET3MsK8tQwy1Zff5Uy62VoBOGCDcBndoL85R56Du5g
- 1hzEL0UIgD/a+Lh7jrOM+VfqiYPX4iw3/Hyv7IgxSUPLWgajV41yPkgYWFs0qZ5H4bSdGcSb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-21_04,2025-07-21_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 suspectscore=0 mlxlogscore=999 impostorscore=0
- clxscore=1015 mlxscore=0 lowpriorityscore=0 phishscore=0 adultscore=0
- bulkscore=0 spamscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507210151
+In-Reply-To: <766ef20e-7569-46f3-aa3c-b576e4bab4c6@collabora.com>
 
-
-
-On 7/20/2025 9:30 AM, Bjorn Andersson wrote:
-> On Fri, Jul 18, 2025 at 11:07:23PM +0530, Taniya Das wrote:
->>
->>
->> On 7/17/2025 3:38 PM, Krzysztof Kozlowski wrote:
->>> On 17/07/2025 11:57, Abel Vesa wrote:
->>>> On 25-07-16 20:50:17, Pankaj Patil wrote:
->>>>> From: Taniya Das <taniya.das@oss.qualcomm.com>
->>>>>
->>>>> Add support for Global clock controller for Glymur platform.
->>>>>
->>>>> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
->>>>> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
->>>>> ---
->>>>>  drivers/clk/qcom/Kconfig      |   10 +
->>>>>  drivers/clk/qcom/Makefile     |    1 +
->>>>>  drivers/clk/qcom/gcc-glymur.c | 8623 +++++++++++++++++++++++++++++++++
->>>>>  3 files changed, 8634 insertions(+)
->>>>>  create mode 100644 drivers/clk/qcom/gcc-glymur.c
->>>>>
->>>>> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
->>>>> index 051301007aa6..1d9e8c6aeaed 100644
->>>>> --- a/drivers/clk/qcom/Kconfig
->>>>> +++ b/drivers/clk/qcom/Kconfig
->>>>> @@ -645,6 +645,16 @@ config SAR_GPUCC_2130P
->>>>>  	  Say Y if you want to support graphics controller devices and
->>>>>  	  functionality such as 3D graphics.
->>>>>  
->>>>> +config SC_GCC_GLYMUR
->>>>
->>>> Wait, are we going back to this now?
->>>>
->>>> X Elite had CLK_X1E80100_GCC, so maybe this should be CLK_GLYMUR_GCC
->>>> then.
->>>
->>>
->>> Yeah, the SC is meaningless here, unless you call it CLK_SC8480XP_GCC,
->>> so the authors need to decide on one naming. Not mixtures..
->>>
->>>
->> Glymur follows the "SC" naming convention, and historically we've
->> adhered to the format: "SC/SM/SDX/SA_<Clock Controller>_<Target Name or
->> Chipset>". This structure has helped maintain consistency and clarity
->> across platforms.
->>
+On Mon, Jul 21, 2025 at 08:03:12PM +0500, Muhammad Usama Anjum wrote:
+> Hello,
 > 
-> The platform isn't named SCGLYMUR - which is where the SC prefix would
-> come from.
+> When 10-12GB our of total 16GB RAM is being used as page cache
+> (active_file + inactive_file) at suspend time, the drivers fail to allocate
+> dma memory at resume as dma memory is either occupied by the page cache or
+> fragmented. Example:
 > 
-> I'm not sure there's a benefit to quickly be able to know if a clock
-> controller is for a SC, SM, SA, MSM, etc platform. Please let me know if
-> I'm missing something.
-> 
+> kworker/u33:5: page allocation failure: order:7, mode:0xc04(GFP_NOIO|GFP_DMA32), nodemask=(null),cpuset=/,mems_allowed=0
 
-Bjorn it was more of an alignment for "Compute", "Mobile" and so on and
-such was the definition to be used for the clock controllers as well.
+Just to be clear, this is not a page cache problem.  The driver is asking
+us to do a 512kB allocation without doing I/O!  This is a ridiculous
+request that should be expected to fail.
 
->> The case of X1E80100 appears to be an exception—likely influenced by its
->> unique naming convention at the time.
->>
->> That said, I’d prefer to stay aligned with the established convention
->> used for earlier chipsets to preserve continuity. I’d appreciate hearing
->> your thoughts on this as well.
->>
-> 
-> We're changing the naming model completely, so there is no continuity.
-> In fact the Hamoa "exception" would suite us very well for Glymur.
-> 
-> And look how nicely the CLK_X1E80100_* entries are grouped together in
-> the Kconfig.
-> 
-> Change to CLK_GLYMUR_* please.
-> 
+The solution, whatever it may be, is not related to the page cache.
+I reject your diagnosis.  Almost all of the page cache is clean and
+could be dropped (as far as I can tell from the output below).
 
-Sure, will align, but hope we are all good with the clock driver name
-<cc>-<target>.c.
+Now, I'm not too familiar with how the page allocator chooses to fail
+this request.  Maybe it should be trying harder to drop bits of the page
+cache.  Maybe it should be doing some compaction.  I am not inclined to
+go digging on your behalf, because frankly I'm offended by the suggestion
+that the page cache is at fault.
 
--- 
-Thanks,
-Taniya Das
+Perhaps somebody else will help you, or you can dig into this yourself.
 
+> CPU: 1 UID: 0 PID: 7693 Comm: kworker/u33:5 Not tainted 6.11.11-valve17-1-neptune-611-g027868a0ac03 #1 3843143b92e9da0fa2d3d5f21f51beaed15c7d59
+> Hardware name: Valve Galileo/Galileo, BIOS F7G0112 08/01/2024
+> Workqueue: mhi_hiprio_wq mhi_pm_st_worker [mhi]
+> Call Trace:
+>  <TASK>
+>  dump_stack_lvl+0x4e/0x70
+>  warn_alloc+0x164/0x190
+>  ? srso_return_thunk+0x5/0x5f
+>  ? __alloc_pages_direct_compact+0xaf/0x360
+>  __alloc_pages_slowpath.constprop.0+0xc75/0xd70
+>  __alloc_pages_noprof+0x321/0x350
+>  __dma_direct_alloc_pages.isra.0+0x14a/0x290
+>  dma_direct_alloc+0x70/0x270
+>  mhi_fw_load_handler+0x126/0x340 [mhi a96cb91daba500cc77f86bad60c1f332dc3babdf]
+>  mhi_pm_st_worker+0x5e8/0xac0 [mhi a96cb91daba500cc77f86bad60c1f332dc3babdf]
+>  ? srso_return_thunk+0x5/0x5f
+>  process_one_work+0x17e/0x330
+>  worker_thread+0x2ce/0x3f0
+>  ? __pfx_worker_thread+0x10/0x10
+>  kthread+0xd2/0x100
+>  ? __pfx_kthread+0x10/0x10
+>  ret_from_fork+0x34/0x50
+>  ? __pfx_kthread+0x10/0x10
+>  ret_from_fork_asm+0x1a/0x30
+>  </TASK>
+> Mem-Info:
+> active_anon:513809 inactive_anon:152 isolated_anon:0
+> active_file:359315 inactive_file:2487001 isolated_file:0
+> unevictable:637 dirty:19 writeback:0
+> slab_reclaimable:160391 slab_unreclaimable:39729
+> mapped:175836 shmem:51039 pagetables:4415
+> sec_pagetables:0 bounce:0
+> kernel_misc_reclaimable:0
+> free:125666 free_pcp:0 free_cma:0
+> Node 0 active_anon:2055236kB inactive_anon:608kB active_file:1437260kB inactive_file:9948004kB unevictable:2548kB isolated(anon):0kB isolated(file):0kB mapped:703344kB dirty:76kB writeback:0kB shmem:204156kB shmem_thp:0kB shmem_pmdmapped:0kB anon_thp:495616kB writeback_tmp:0kB kernel_stack:9440kB pagetables:17660kB sec_pagetables:0kB all_unreclaimable? no
+> Node 0 DMA free:68kB boost:0kB min:68kB low:84kB high:100kB reserved_highatomic:0KB active_anon:8kB inactive_anon:0kB active_file:0kB inactive_file:13232kB unevictable:0kB writepending:0kB present:15992kB managed:15360kB mlocked:0kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:0kB
+> lowmem_reserve[]: 0 1808 14772 0 0
+> Node 0 DMA32 free:9796kB boost:0kB min:8264kB low:10328kB high:12392kB reserved_highatomic:0KB active_anon:14148kB inactive_anon:88kB active_file:128kB inactive_file:1757192kB unevictable:0kB writepending:0kB present:1935736kB managed:1867440kB mlocked:0kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:0kB
+> lowmem_reserve[]: 0 0 12964 0 0
+> Node 0 DMA: 5*4kB (U) 0*8kB 1*16kB (U) 1*32kB (U) 0*64kB 0*128kB 0*256kB 0*512kB 0*1024kB 0*2048kB 0*4096kB = 68kB
+> Node 0 DMA32: 103*4kB (UME) 52*8kB (UME) 43*16kB (UME) 58*32kB (UME) 35*64kB (UME) 23*128kB (UME) 5*256kB (ME) 0*512kB 0*1024kB 0*2048kB 0*4096kB = 9836kB
+> Node 0 hugepages_total=0 hugepages_free=0 hugepages_surp=0 hugepages_size=1048576kB
+> Node 0 hugepages_total=0 hugepages_free=0 hugepages_surp=0 hugepages_size=2048kB
+> 2897795 total pagecache pages
+> 0 pages in swap cache
+> Free swap  = 8630724kB
+> Total swap = 8630776kB
+> 3892604 pages RAM
+> 0 pages HighMem/MovableOnly
+> 101363 pages reserved
+> 0 pages cma reserved
+> 0 pages hwpoisoned
+> 
+> As you can see above, the ~11 GB of page cache has consumed DMA32 pages,
+> leaving only 9.8MB free but heavily fragmented with no contiguous blocks
+> ≥512KB. Its hard to reproduce by a test. We have received several reports
+> for v6.11 kernel. As we don't have reliable reproducer yet, we cannot test
+> if other kernels are also affected.
+> 
+> Current mitigations are:
+> 1 Pre-allocate buffer in drivers and don't free them even if they are only
+>   used during during initialization at boot and resume. But it wastes memory
+>   and unacceptable even if its just 2-4MB.
+> 2 Drop caches at suspend. But it causes latency during suspension and
+>   slowness on resume. There is no way to drop only couple of GB of page
+>   cache as that wouldn't take long at suspend time.
+> 
+> Greg dislikes 1 and rejects it which is understandable. [1]:
+> > It should be reclaiming this, as it's just cache, not really used
+> > memory.
+> 
+> Would it be reasonable to add a mechanism to limit page cache growth?
+> I think, there should be some watermark or similar by which we can
+> indicate to page cache to don't go above it. Or at suspend, drop only
+> a part of of the page cache and not the entire page cache. What other
+> options are available? 
+> 
+> [1] https://lore.kernel.org/all/2025071722-panther-legwarmer-d2be@gregkh 
+> 
+> Thanks,
+> Muhammad Usama Anjum
 
