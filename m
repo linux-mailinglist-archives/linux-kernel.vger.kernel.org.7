@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-739016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EC45B0C09B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:47:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C9AFB0C09E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:48:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23A2E189EFA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:48:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57DE54E0855
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:47:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 014C028DB5B;
-	Mon, 21 Jul 2025 09:47:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69BF328DF1D;
+	Mon, 21 Jul 2025 09:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="q5Ylf4WS";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="k6Vb3qO3"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OANk9jPd";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sASKuOjg"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9913288C80;
-	Mon, 21 Jul 2025 09:47:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED5F28D8EB;
+	Mon, 21 Jul 2025 09:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753091254; cv=none; b=AjIEIaHgyUSUB/EdsXdq3qaSdZo20dHCBT1UheqfK6OlIoB+eh2YQwRhaf/8mwT5x1WNvKkRaJxBgMBDDUgvlBKe+WOnef3NhSrMcNxGl4FdJVCmd/lk1QyELfrG9hwOCE5vVLJQe5U6V4pbVNMcKiEFhTuRtq1Uq+q4cP9XgFI=
+	t=1753091255; cv=none; b=DbZoNMcNk6e5gqPhf0VN475uhe1iwYnAu0ZXdGHDotlRD8W0BlORPPb5cb+2lfrERwHgY3NC7m4gPUcn9lMB7aSuWwij1Zsdg1klQ+Kb2SsV9gwUV3S34jRl9k1ryl9L4qBsorADiDxrMy8R89NbpYLa5HKWunuG8ONXYivDQ34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753091254; c=relaxed/simple;
-	bh=xiuJRKbsul3hYFglg8y3qqtaoPoUYmCLZ0VbgQ9ZuVY=;
+	s=arc-20240116; t=1753091255; c=relaxed/simple;
+	bh=KmaBjIMBz488nseXbo641XAkic/t7NfHwWGp0q0tZ3M=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=j2+sw18Snd4yTlIMGT4/PhTmhYQpyffrr4a1az2mkOBCOzau97tqDpaGQDBVJCRt6pTNaEwKC0QHsOTQexxYfZ06tNpAoNXAv2RRbLztS1g2lXKwB05blN1eLE5pC0I0D8w/npGOerIY8SV+9IxGF7Wyxe91QyqIZBKt4CM9hTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=q5Ylf4WS; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=k6Vb3qO3; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=MPN/90fjLaIP7uoP6s3kjEN+/ZwaJSMvjAWyB0abWev40WhbdzjLfSTtYTp01+NWpzoFkn0xbPFF17O6KVWUykBGy2xdZMi1UWhxvP0Tze/p2YhQSqDkwud1JVUMKP4i3qpND316isbjHLdM4qcxIGaqza3+DVc5/SSboONfEXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OANk9jPd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sASKuOjg; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Nam Cao <namcao@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753091250;
+	s=2020; t=1753091251;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=PQhHhKkS0mZxurIJ/v8ZKi6Pmiiz0GsrsNhfnsYfDHY=;
-	b=q5Ylf4WSxCC5Y9DEk/ffWsDkUuO20mvyVq4xMRHf1f8wAWyr2eHML8D+C/qyG/2pu3+f4P
-	BRcCwyovhN582y5V0UrrjD2eVUjQ24HifkzRKoC+Ag7hPc+fEbPbbelZNIcR4TMT28q+S6
-	wM9N8cX3VTXLJL7sBxx+DyHvmrcmjCSWaO+Hg4hhUC3lnhCZKkYM0tmHNO/okFf6/y22Bz
-	wkou1oBKFBL1vWXM1jl4wAlrbFPiXqIsCjabHQLVYg+xCfLS75u8hCYKnsBmWCGEYT02Jc
-	aBdcMAPaTLRP4fpH+83z5aGuIB85s0lVum1mev3dI6SavmZVvqheJQZ85QwyBA==
+	bh=Ob3X3Y1byqxwIhz+EUdnbey/6ypvamIibzX5fTu/udI=;
+	b=OANk9jPdPVavx631ovV8haa6+cQwClI3Pesj2zgpUyFFidTKuLz2xZ9cCFJKLCpqIT5gSj
+	V6hCuJoBVBMP4iIADPqhf5bf7IJTiodvXyZd4WZPrHXE11EcY/FyTU1AYsZfPYXNqYrozy
+	ga2GJiemLYgH+vjS0ELUEeyGAHVz3GIvapwq1YEOgfM6NE0fj9zGGLQejgROPMP5NWS34k
+	r/ZHASpCEsoO2ovQFhY9cA42SlnvqyFk7Mofl60+l5+QcukHbZ7zwR8l1O8aihmwzxdvrJ
+	VNd5ajKLYpkdRSZUZ4M0zYZ5iFTpy3f8JaO1RXWO5oiLCqKFJi4ZGpJcqXKqAQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753091250;
+	s=2020e; t=1753091251;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=PQhHhKkS0mZxurIJ/v8ZKi6Pmiiz0GsrsNhfnsYfDHY=;
-	b=k6Vb3qO3f1qIyYGVcy2IYW7Whhyjz6w2F5OGmhVkbP61CwbtsbmRN1jHr/F9NUtC76o2dV
-	O2tHqsbrOOeFp2Aw==
+	bh=Ob3X3Y1byqxwIhz+EUdnbey/6ypvamIibzX5fTu/udI=;
+	b=sASKuOjgn6rB483okr1a+TQw3BeYNgt79o/IRVfJRXs+BOBoQ/1eh1GZzRth/Gu0ekyuRI
+	UWrB1qNMWuUD+NCg==
 To: Steven Rostedt <rostedt@goodmis.org>,
 	Masami Hiramatsu <mhiramat@kernel.org>,
 	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
@@ -60,9 +60,9 @@ To: Steven Rostedt <rostedt@goodmis.org>,
 	linux-kernel@vger.kernel.org,
 	Gabriele Monaco <gmonaco@redhat.com>
 Cc: Nam Cao <namcao@linutronix.de>
-Subject: [PATCH 4/6] rv: Remove rv_reactor's reference counter
-Date: Mon, 21 Jul 2025 11:47:11 +0200
-Message-Id: <4ebe4d49e07890eadae41da233e111f8723fba12.1753091084.git.namcao@linutronix.de>
+Subject: [PATCH 5/6] rv: Remove the nop reactor
+Date: Mon, 21 Jul 2025 11:47:12 +0200
+Message-Id: <21a530ffb705887d7aed18255572521e5b880bc0.1753091084.git.namcao@linutronix.de>
 In-Reply-To: <cover.1753091084.git.namcao@linutronix.de>
 References: <cover.1753091084.git.namcao@linutronix.de>
 Precedence: bulk
@@ -73,145 +73,153 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 
-rv_reactor has a reference counter to ensure it is not removed while
-monitors are still using it.
+As suggested by the name, the nop reactor does not do anything. It is the
+default reactor when nothing else is selected.
 
-However, this is futile, as __exit functions are not expected to fail and
-will proceed normally despite rv_unregister_reactor() returning an error.
-
-At the moment, reactors do not support being built as modules, therefore
-they are never removed and the reference counters are not necessary.
-
-If we support building RV reactors as modules in the future, MODULE_SOFTDEP
-should be used instead of a custom implementation.
-
-Remove this reference counter.
+However, the monitors already null-check the reactor function pointers.
+Thus, instead of a nop reactor, just set the react function pointer to
+NULL. The nop reactor can then be removed.
 
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 ---
- include/linux/rv.h            |  2 --
- kernel/trace/rv/rv.c          |  1 -
- kernel/trace/rv/rv.h          |  6 ------
- kernel/trace/rv/rv_reactors.c | 33 ++-------------------------------
- 4 files changed, 2 insertions(+), 40 deletions(-)
+ kernel/trace/rv/rv_reactors.c | 63 ++++++-----------------------------
+ 1 file changed, 11 insertions(+), 52 deletions(-)
 
-diff --git a/include/linux/rv.h b/include/linux/rv.h
-index c22c9b8c1567..2f867d6f72ba 100644
---- a/include/linux/rv.h
-+++ b/include/linux/rv.h
-@@ -91,8 +91,6 @@ struct rv_reactor {
- 	const char		*description;
- 	__printf(1, 2) void	(*react)(const char *msg, ...);
- 	struct list_head	list;
--	/* protected by the monitor interface lock */
--	int			counter;
- };
- #endif
-=20
-diff --git a/kernel/trace/rv/rv.c b/kernel/trace/rv/rv.c
-index 6c0be2fdc52d..6c8498743b98 100644
---- a/kernel/trace/rv/rv.c
-+++ b/kernel/trace/rv/rv.c
-@@ -769,7 +769,6 @@ static const struct file_operations monitoring_on_fops =
-=3D {
-=20
- static void destroy_monitor_dir(struct rv_monitor *mon)
- {
--	reactor_cleanup_monitor(mon);
- 	rv_remove(mon->root_d);
- }
-=20
-diff --git a/kernel/trace/rv/rv.h b/kernel/trace/rv/rv.h
-index 8c38f9dd41bc..1485a70c1bf4 100644
---- a/kernel/trace/rv/rv.h
-+++ b/kernel/trace/rv/rv.h
-@@ -31,7 +31,6 @@ bool rv_is_nested_monitor(struct rv_monitor *mon);
-=20
- #ifdef CONFIG_RV_REACTORS
- int reactor_populate_monitor(struct rv_monitor *mon);
--void reactor_cleanup_monitor(struct rv_monitor *mon);
- int init_rv_reactors(struct dentry *root_dir);
- #else
- static inline int reactor_populate_monitor(struct rv_monitor *mon)
-@@ -39,11 +38,6 @@ static inline int reactor_populate_monitor(struct rv_mon=
-itor *mon)
- 	return 0;
- }
-=20
--static inline void reactor_cleanup_monitor(struct rv_monitor *mon)
--{
--	return;
--}
--
- static inline int init_rv_reactors(struct dentry *root_dir)
- {
- 	return 0;
 diff --git a/kernel/trace/rv/rv_reactors.c b/kernel/trace/rv/rv_reactors.c
-index 2c7909e6d0e7..a8e849e6cd85 100644
+index a8e849e6cd85..aee622e4b833 100644
 --- a/kernel/trace/rv/rv_reactors.c
 +++ b/kernel/trace/rv/rv_reactors.c
-@@ -172,10 +172,6 @@ static void monitor_swap_reactors_single(struct rv_mon=
-itor *mon,
- 	if (monitor_enabled)
- 		rv_disable_monitor(mon);
-=20
--	/* swap reactor's usage */
--	mon->reactor->counter--;
--	reactor->counter++;
--
- 	mon->reactor =3D reactor;
- 	mon->reacting =3D reacting;
- 	mon->react =3D reactor->react;
-@@ -343,23 +339,10 @@ int rv_register_reactor(struct rv_reactor *reactor)
+@@ -70,17 +70,6 @@
   */
- int rv_unregister_reactor(struct rv_reactor *reactor)
- {
--	int ret =3D 0;
--
- 	mutex_lock(&rv_interface_lock);
--
--	if (!reactor->counter) {
--		list_del(&reactor->list);
--	} else {
--		printk(KERN_WARNING
--		       "rv: the rv_reactor %s is in use by %d monitor(s)\n",
--		       reactor->name, reactor->counter);
--		printk(KERN_WARNING "rv: the rv_reactor %s cannot be removed\n",
--		       reactor->name);
--		ret =3D -EBUSY;
--	}
--
-+	list_del(&reactor->list);
- 	mutex_unlock(&rv_interface_lock);
--	return ret;
-+	return 0;
- }
+ static LIST_HEAD(rv_reactors_list);
 =20
- /*
-@@ -456,23 +439,11 @@ int reactor_populate_monitor(struct rv_monitor *mon)
- 	 * Configure as the rv_nop reactor.
- 	 */
- 	mon->reactor =3D get_reactor_rdef_by_name("nop");
--	mon->reactor->counter++;
- 	mon->reacting =3D false;
-=20
- 	return 0;
- }
-=20
--/**
-- * reactor_cleanup_monitor - cleanup a monitor reference
-- * @mon:       the monitor.
-- */
--void reactor_cleanup_monitor(struct rv_monitor *mon)
+-static struct rv_reactor *get_reactor_rdef_by_name(char *name)
 -{
--	lockdep_assert_held(&rv_interface_lock);
--	mon->reactor->counter--;
--	WARN_ON_ONCE(mon->reactor->counter < 0);
+-	struct rv_reactor *r;
+-
+-	list_for_each_entry(r, &rv_reactors_list, list) {
+-		if (strcmp(name, r->name) =3D=3D 0)
+-			return r;
+-	}
+-	return NULL;
 -}
 -
  /*
-  * Nop reactor register
+  * Available reactors seq functions.
   */
+@@ -174,7 +163,7 @@ static void monitor_swap_reactors_single(struct rv_moni=
+tor *mon,
+=20
+ 	mon->reactor =3D reactor;
+ 	mon->reacting =3D reacting;
+-	mon->react =3D reactor->react;
++	mon->react =3D reactor ? reactor->react : NULL;
+=20
+ 	/* enable only once if iterating through a container */
+ 	if (monitor_enabled && !nested)
+@@ -210,10 +199,15 @@ monitor_reactors_write(struct file *file, const char =
+__user *user_buf,
+ 	struct rv_reactor *reactor;
+ 	struct seq_file *seq_f;
+ 	int retval =3D -EINVAL;
+-	bool enable;
+ 	char *ptr;
+ 	int len;
+=20
++	/*
++	 * See monitor_reactors_open()
++	 */
++	seq_f =3D file->private_data;
++	mon =3D seq_f->private;
++
+ 	if (count < 1 || count > MAX_RV_REACTOR_NAME_SIZE + 1)
+ 		return -EINVAL;
+=20
+@@ -226,14 +220,10 @@ monitor_reactors_write(struct file *file, const char =
+__user *user_buf,
+ 	ptr =3D strim(buff);
+=20
+ 	len =3D strlen(ptr);
+-	if (!len)
++	if (!len) {
++		monitor_swap_reactors(mon, NULL, false);
+ 		return count;
+-
+-	/*
+-	 * See monitor_reactors_open()
+-	 */
+-	seq_f =3D file->private_data;
+-	mon =3D seq_f->private;
++	}
+=20
+ 	mutex_lock(&rv_interface_lock);
+=20
+@@ -243,12 +233,7 @@ monitor_reactors_write(struct file *file, const char _=
+_user *user_buf,
+ 		if (strcmp(ptr, reactor->name) !=3D 0)
+ 			continue;
+=20
+-		if (strcmp(reactor->name, "nop"))
+-			enable =3D false;
+-		else
+-			enable =3D true;
+-
+-		monitor_swap_reactors(mon, reactor, enable);
++		monitor_swap_reactors(mon, reactor, true);
+=20
+ 		retval =3D count;
+ 		break;
+@@ -435,32 +420,12 @@ int reactor_populate_monitor(struct rv_monitor *mon)
+ 	if (!tmp)
+ 		return -ENOMEM;
+=20
+-	/*
+-	 * Configure as the rv_nop reactor.
+-	 */
+-	mon->reactor =3D get_reactor_rdef_by_name("nop");
+-	mon->reacting =3D false;
+-
+ 	return 0;
+ }
+=20
+-/*
+- * Nop reactor register
+- */
+-__printf(1, 2) static void rv_nop_reaction(const char *msg, ...)
+-{
+-}
+-
+-static struct rv_reactor rv_nop =3D {
+-	.name =3D "nop",
+-	.description =3D "no-operation reactor: do nothing.",
+-	.react =3D rv_nop_reaction
+-};
+-
+ int init_rv_reactors(struct dentry *root_dir)
+ {
+ 	struct dentry *available, *reacting;
+-	int retval;
+=20
+ 	available =3D rv_create_file("available_reactors", RV_MODE_READ, root_dir=
+, NULL,
+ 				   &available_reactors_ops);
+@@ -471,16 +436,10 @@ int init_rv_reactors(struct dentry *root_dir)
+ 	if (!reacting)
+ 		goto rm_available;
+=20
+-	retval =3D __rv_register_reactor(&rv_nop);
+-	if (retval)
+-		goto rm_reacting;
+-
+ 	turn_reacting_on();
+=20
+ 	return 0;
+=20
+-rm_reacting:
+-	rv_remove(reacting);
+ rm_available:
+ 	rv_remove(available);
+ out_err:
 --=20
 2.39.5
 
