@@ -1,154 +1,287 @@
-Return-Path: <linux-kernel+bounces-739059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03FF1B0C140
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:27:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAEA6B0C144
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:29:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE1CA189E272
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:27:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47BAC17DA1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:29:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 998D028F527;
-	Mon, 21 Jul 2025 10:27:26 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F27B28F53F;
+	Mon, 21 Jul 2025 10:29:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HWKpRemz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8922919DF62
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 10:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3556B28DEE7
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 10:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753093646; cv=none; b=mOUW5QCCxdC+lQwf4DTW32BRpm7W1TFcTWRwx/PXgEr1hIHoDMOxBoYkoB0plRMGm1b+RZXHUnRG2TXEPyn/6VH43bthWCm4ZyCKL2pyCeZYLwLquZafMAg/0YyLibKS0eLvWMxBL6NGXgT17S/oCuieL19SrTV3dXwoOhZlX0c=
+	t=1753093773; cv=none; b=ZiaS4mvLduQsixPfV74uCd9ylJ+PtVFHhHlZcWoWuRjxwerCeTWI4oUbP10Ca8s7UhCUt+4nfzYCDmITKG/cOxumq//CFBM0gxSpgovsPLCCm/MhFeTa9oxd64f3obV0QaKn7QWZbbpFHUukosbXzuUIgvuIf1LNGdWXX4aGXsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753093646; c=relaxed/simple;
-	bh=cYcCoNiLvDem6aHfPJvncD+8qdaEZBgmebTrvOKBgMs=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d6SsbxUJziXpzvWuF3rvTnQBINPUezbb10PSt9ko4nasrLlGOfuAsHQPBVltDJ3kmlCU/GNwERkZdd17hkS9jNltjbsgO48LiFbgWl2HypyVFvO0kfPHfdbwwLyODPT5Jj+TlNKNpAzN9o169UwT6qpNXJzaUaF3LlTS8ljQCpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4blxPZ3zbdz6L5RM;
-	Mon, 21 Jul 2025 18:25:54 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id E4CE3140417;
-	Mon, 21 Jul 2025 18:27:20 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 21 Jul
- 2025 12:27:20 +0200
-Date: Mon, 21 Jul 2025 11:27:18 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Marc Zyngier <maz@kernel.org>
-CC: jackysliu <1972843537@qq.com>, <tglx@linutronix.de>,
-	<herve.codina@bootlin.com>, <antonio.borneo@foss.st.com>,
-	<anup@brainfault.org>, <jirislaby@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] irqchip/gic-v3: fix resource leak in
- partition_domain_translate()
-Message-ID: <20250721112718.00002e23@huawei.com>
-In-Reply-To: <86qzya7xwu.wl-maz@kernel.org>
-References: <tencent_72EDAD7F6E52D8FB5933030A569A08AEC406@qq.com>
-	<86qzya7xwu.wl-maz@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1753093773; c=relaxed/simple;
+	bh=/AGCUS+BMFerqZk0x/fgNTc73i37Sv9386KqcFKnA6s=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=YNrVeEat0UMTwMeFHs+6Ld4n+faPMxW8tzcrHHuMM2OiNCjmFdEOSfTY1QN4i8Uj6m9MGuwTcBx3njozh7rpADPAZBWOurzqlCH7MfMI34PqAEBfkkBCoEseMPgyqoDAjpGFlmXIgLarXncnNyxqoHVvBQcqjz67WgUGR5rIk/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HWKpRemz; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753093770;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=282c4e20Cm5//xykvNprwI9eqYR3vWB4V/uzt6kPX9A=;
+	b=HWKpRemzSvgVV2tvKiR6Ynm1990Js3PRDG59wI02cFP5L/WWdAmwEsWHOieNdyFXemD37f
+	JEHvRtKnQKbzI7ySnJg2He11mnEZjLLCWi/Ue8Feuli9UuaDYcGOUeJwcDfuJSY6waJutS
+	XyqSCBjazLp6Cb0e7hk4smC54rWyU2w=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-8-tjeDyrIHPGW0XHJpmMRpOQ-1; Mon, 21 Jul 2025 06:29:28 -0400
+X-MC-Unique: tjeDyrIHPGW0XHJpmMRpOQ-1
+X-Mimecast-MFC-AGG-ID: tjeDyrIHPGW0XHJpmMRpOQ_1753093768
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-455eda09c57so29317685e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 03:29:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753093767; x=1753698567;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=282c4e20Cm5//xykvNprwI9eqYR3vWB4V/uzt6kPX9A=;
+        b=d3qs0A1mAZUAHjiQpjZX18JeoU/eR768Qyu3OGNED1ldkHcBtEN9GQnVfkWgyKOKB5
+         wluMo3S83QFvrSIx9IkIXLbFp7FRvipEPP5FXNZSD8jxZ2XcSkVIZyoVjRipRAB7KKsr
+         oRV5K9gJzodCWoy5EPZTg4mCb6iJkqZNoyMtDXLzctQayQtRGcEThelPdy3CadL1WotC
+         LdCJrrmUJLNZYoPnvz6mXY6vfT+Aqye8MerMP1W1f3BPNSdNQojuf//qDK742poACeLk
+         Joeh5A/8o/4Ool1OUGwhqd8aAfDN9CgTt79NH9tY16S6HRsdOeg4l6l6xxb7O2NU2oYn
+         /nSA==
+X-Forwarded-Encrypted: i=1; AJvYcCVUqW8PWLb7UGUkEhU/rsnUsqhZmh8OxI6AkqOo7OIt77JBZO2kJi3T9Tf7xZiyEN7uVZtaYmNAiPviTBs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxng8gkZ6du9HLbUiVV4IL44TBu3zWJTDY0FLlFDvcCowPjoffc
+	arwqkbatkn4XteWQvhk+xk0/QHDkH1PbaNJzk5jBP6ZeuM9aMUWM0FlDfojNBjpgzL1PYF3RdEW
+	XtjTX2akbaSrf00XecYICt7k6SNkQIURlxKaH8lM+tzw4XY+k0bdvSphuaMsEX2buQg==
+X-Gm-Gg: ASbGncvqU+ba22PB+NqGoV8tSgekP29oCz/Mync9X1TshI5QlYZPzXxN8zW5Y1XyzsZ
+	OVEOuUVapT7IzDAAMu5ELuTc/DP+6Da7V0pmdrlV4GW8HETlkUaIJ/2zDUy3zZeYs/YT4G2uJFP
+	7JhxSSh2B4mPpCIIeMad4Pz5iYg8Ab9+tbvUk5+YHQ0WNNY8f/m5a/ko3UtTkpwL1ZUjfMgP0RV
+	au8f+rkU5dZstbWO3sy6fM3COIJJ/sLevtwtM2maQ8Ya30l+XUYmdMYoB9306sxGOzg1dfwb99p
+	VM/XXvZVemWhgfQGEjd4PxEb2cyfnAb3wrQAiLDSSlxo4XiRjjqHURlupJk6ya0vxw==
+X-Received: by 2002:a05:600c:35cd:b0:456:1a87:a6cb with SMTP id 5b1f17b1804b1-4562e38aa91mr189518285e9.19.1753093767485;
+        Mon, 21 Jul 2025 03:29:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFUZF1yPXucXa22pT/Lxe8aaOn7Ve/eK1Ei+g1OE/VFjIqSyWgPIM3By95bNU6CqdBa9EHz5A==
+X-Received: by 2002:a05:600c:35cd:b0:456:1a87:a6cb with SMTP id 5b1f17b1804b1-4562e38aa91mr189517935e9.19.1753093767008;
+        Mon, 21 Jul 2025 03:29:27 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.42])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4563b7521e9sm98187635e9.29.2025.07.21.03.29.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Jul 2025 03:29:26 -0700 (PDT)
+Message-ID: <feae7a189afa69091816074dcf66a496b11bdd38.camel@redhat.com>
+Subject: Re: [PATCH 5/6] rv: Remove the nop reactor
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>,  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 21 Jul 2025 12:29:24 +0200
+In-Reply-To: <21a530ffb705887d7aed18255572521e5b880bc0.1753091084.git.namcao@linutronix.de>
+References: <cover.1753091084.git.namcao@linutronix.de>
+	 <21a530ffb705887d7aed18255572521e5b880bc0.1753091084.git.namcao@linutronix.de>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
+ xyhmqeUWOzFx5P43S1E1dhsrLWgP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
- frapeml500008.china.huawei.com (7.182.85.71)
 
-On Mon, 21 Jul 2025 09:25:53 +0100
-Marc Zyngier <maz@kernel.org> wrote:
+On Mon, 2025-07-21 at 11:47 +0200, Nam Cao wrote:
+> As suggested by the name, the nop reactor does not do anything. It is
+> the
+> default reactor when nothing else is selected.
+>=20
+> However, the monitors already null-check the reactor function
+> pointers.
+> Thus, instead of a nop reactor, just set the react function pointer
+> to
+> NULL. The nop reactor can then be removed.
+>=20
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
 
-> On Mon, 21 Jul 2025 08:28:04 +0100,
-> jackysliu <1972843537@qq.com> wrote:
-> > 
-> > There is a device node reference leak in partition_domain_translate().
-> > After the function obtains the device node np via of_find_node_by_phandle,
-> > it does not call of_node_put(np) to release the node reference
-> > in both the error path and the normal return path.
-> > This causes the node reference count to increase each time
-> > the function is called, causing a resource leak.
-> >
-> > This issue was detected by rule based static tools
-> > developed by Tencent.
-> > 
-> > Fixes: 87228532e7e9 ("irqchip: Switch to of_fwnode_handle()")
-> > 
-> > Signed-off-by: jackysliu <1972843537@qq.com>  
-> 
-> Drop the spurious blank line.
-> 
-> > ---
-> >  drivers/irqchip/irq-gic-v3.c | 6 +++++-
-> >  1 file changed, 5 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-> > index efc791c43d44..61c1d404b726 100644
-> > --- a/drivers/irqchip/irq-gic-v3.c
-> > +++ b/drivers/irqchip/irq-gic-v3.c
-> > @@ -1821,12 +1821,16 @@ static int partition_domain_translate(struct irq_domain *d,
-> >  		return -EINVAL;
-> >  
-> >  	ret = gic_irq_domain_translate(d, fwspec, &ppi_intid, type);
-> > -	if (WARN_ON_ONCE(ret))
-> > +	if (WARN_ON_ONCE(ret)) {
-> > +		of_node_put(np);
-> >  		return 0;
-> > +	}
-> >  
-> >  	ppi_idx = __gic_get_ppi_index(ppi_intid);
-> >  	ret = partition_translate_id(gic_data.ppi_descs[ppi_idx],
-> >  				     of_fwnode_handle(np));
-> > +	of_node_put(np);
-> > +
-> >  	if (ret < 0)
-> >  		return ret;
-> >    
-> 
-> Frankly, this looks awful, and we have much better ways to solve this
-> whole class of problems. Why can't the (untested) patch below do the
-> right thing, without the ugliness?
-> 
-> 	M.
-> 
-> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-> index efc791c43d441..c4839032ce8d0 100644
-> --- a/drivers/irqchip/irq-gic-v3.c
-> +++ b/drivers/irqchip/irq-gic-v3.c
-> @@ -1808,8 +1808,8 @@ static int partition_domain_translate(struct irq_domain *d,
->  				      unsigned long *hwirq,
->  				      unsigned int *type)
->  {
-> +	struct device_node *np __free(device_node) = NULL;
+Thanks for the patch, I'd need to go through this a bit more in detail.
 
-Linus has expressed fairly strongly that he really doesn't like separation
-of the constructor and destructor.  See guidance in cleanup.h which was
-based on that and bunch of other early discussion around this stuff.
+As far as I remember, the only way to disable reaction is to set it to
+the nop reactor.
+With your patch the behaviour changes and, to disable the reactor, you
+now need to write an empty string, this should be documented somewhere,
+at the very least. Perhaps userspace tools (tools/verification/rv)
+might break and would need adaptation.
 
-Here it's easy to solve though. Just move that declaration down to
-give something like:
+We could still remove the kernel side implementation, but from
+userspace (tracefs) we might want to keep the nop reactor available,
+setting it would set the reactor to NULL under the hood.
 
+If you really want to change also the user space interface, we might
+want to imitate other tracefs features and use something like printk /
+!printk to enable/disable a reactor.
 
->  	unsigned long ppi_intid;
-> -	struct device_node *np;
->  	unsigned int ppi_idx;
->  	int ret;
->  
-	if (!gic_data.ppi_descs)
-		return -ENOMEM;
+What do you think? Did I miss anything here?
 
-	struct device_node *np __free(device_node) =
-		of_find_node_by_phandle(fwspec->param[3]);
+Thanks,
+Gabriele
 
-
-	if (WARN_ON(!np))
-		return -EINVAL;
+> ---
+> =C2=A0kernel/trace/rv/rv_reactors.c | 63 ++++++--------------------------=
+-
+> --
+> =C2=A01 file changed, 11 insertions(+), 52 deletions(-)
+>=20
+> diff --git a/kernel/trace/rv/rv_reactors.c
+> b/kernel/trace/rv/rv_reactors.c
+> index a8e849e6cd85..aee622e4b833 100644
+> --- a/kernel/trace/rv/rv_reactors.c
+> +++ b/kernel/trace/rv/rv_reactors.c
+> @@ -70,17 +70,6 @@
+> =C2=A0 */
+> =C2=A0static LIST_HEAD(rv_reactors_list);
+> =C2=A0
+> -static struct rv_reactor *get_reactor_rdef_by_name(char *name)
+> -{
+> -	struct rv_reactor *r;
+> -
+> -	list_for_each_entry(r, &rv_reactors_list, list) {
+> -		if (strcmp(name, r->name) =3D=3D 0)
+> -			return r;
+> -	}
+> -	return NULL;
+> -}
+> -
+> =C2=A0/*
+> =C2=A0 * Available reactors seq functions.
+> =C2=A0 */
+> @@ -174,7 +163,7 @@ static void monitor_swap_reactors_single(struct
+> rv_monitor *mon,
+> =C2=A0
+> =C2=A0	mon->reactor =3D reactor;
+> =C2=A0	mon->reacting =3D reacting;
+> -	mon->react =3D reactor->react;
+> +	mon->react =3D reactor ? reactor->react : NULL;
+> =C2=A0
+> =C2=A0	/* enable only once if iterating through a container */
+> =C2=A0	if (monitor_enabled && !nested)
+> @@ -210,10 +199,15 @@ monitor_reactors_write(struct file *file, const
+> char __user *user_buf,
+> =C2=A0	struct rv_reactor *reactor;
+> =C2=A0	struct seq_file *seq_f;
+> =C2=A0	int retval =3D -EINVAL;
+> -	bool enable;
+> =C2=A0	char *ptr;
+> =C2=A0	int len;
+> =C2=A0
+> +	/*
+> +	 * See monitor_reactors_open()
+> +	 */
+> +	seq_f =3D file->private_data;
+> +	mon =3D seq_f->private;
+> +
+> =C2=A0	if (count < 1 || count > MAX_RV_REACTOR_NAME_SIZE + 1)
+> =C2=A0		return -EINVAL;
+> =C2=A0
+> @@ -226,14 +220,10 @@ monitor_reactors_write(struct file *file, const
+> char __user *user_buf,
+> =C2=A0	ptr =3D strim(buff);
+> =C2=A0
+> =C2=A0	len =3D strlen(ptr);
+> -	if (!len)
+> +	if (!len) {
+> +		monitor_swap_reactors(mon, NULL, false);
+> =C2=A0		return count;
+> -
+> -	/*
+> -	 * See monitor_reactors_open()
+> -	 */
+> -	seq_f =3D file->private_data;
+> -	mon =3D seq_f->private;
+> +	}
+> =C2=A0
+> =C2=A0	mutex_lock(&rv_interface_lock);
+> =C2=A0
+> @@ -243,12 +233,7 @@ monitor_reactors_write(struct file *file, const
+> char __user *user_buf,
+> =C2=A0		if (strcmp(ptr, reactor->name) !=3D 0)
+> =C2=A0			continue;
+> =C2=A0
+> -		if (strcmp(reactor->name, "nop"))
+> -			enable =3D false;
+> -		else
+> -			enable =3D true;
+> -
+> -		monitor_swap_reactors(mon, reactor, enable);
+> +		monitor_swap_reactors(mon, reactor, true);
+> =C2=A0
+> =C2=A0		retval =3D count;
+> =C2=A0		break;
+> @@ -435,32 +420,12 @@ int reactor_populate_monitor(struct rv_monitor
+> *mon)
+> =C2=A0	if (!tmp)
+> =C2=A0		return -ENOMEM;
+> =C2=A0
+> -	/*
+> -	 * Configure as the rv_nop reactor.
+> -	 */
+> -	mon->reactor =3D get_reactor_rdef_by_name("nop");
+> -	mon->reacting =3D false;
+> -
+> =C2=A0	return 0;
+> =C2=A0}
+> =C2=A0
+> -/*
+> - * Nop reactor register
+> - */
+> -__printf(1, 2) static void rv_nop_reaction(const char *msg, ...)
+> -{
+> -}
+> -
+> -static struct rv_reactor rv_nop =3D {
+> -	.name =3D "nop",
+> -	.description =3D "no-operation reactor: do nothing.",
+> -	.react =3D rv_nop_reaction
+> -};
+> -
+> =C2=A0int init_rv_reactors(struct dentry *root_dir)
+> =C2=A0{
+> =C2=A0	struct dentry *available, *reacting;
+> -	int retval;
+> =C2=A0
+> =C2=A0	available =3D rv_create_file("available_reactors",
+> RV_MODE_READ, root_dir, NULL,
+> =C2=A0				=C2=A0=C2=A0 &available_reactors_ops);
+> @@ -471,16 +436,10 @@ int init_rv_reactors(struct dentry *root_dir)
+> =C2=A0	if (!reacting)
+> =C2=A0		goto rm_available;
+> =C2=A0
+> -	retval =3D __rv_register_reactor(&rv_nop);
+> -	if (retval)
+> -		goto rm_reacting;
+> -
+> =C2=A0	turn_reacting_on();
+> =C2=A0
+> =C2=A0	return 0;
+> =C2=A0
+> -rm_reacting:
+> -	rv_remove(reacting);
+> =C2=A0rm_available:
+> =C2=A0	rv_remove(available);
+> =C2=A0out_err:
 
 
