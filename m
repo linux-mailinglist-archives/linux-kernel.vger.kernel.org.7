@@ -1,93 +1,115 @@
-Return-Path: <linux-kernel+bounces-739822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2108B0CB84
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:16:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E44FB0CB87
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:16:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75DA61AA2791
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:16:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A466D5445F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A661E23816D;
-	Mon, 21 Jul 2025 20:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E485239E9A;
+	Mon, 21 Jul 2025 20:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WzunUEsq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=tahomasoft.com header.i=@tahomasoft.com header.b="Gty0/gO0"
+Received: from chumsalmon.baetis.net (chumsalmon.baetis.net [209.222.21.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C9E218E97;
-	Mon, 21 Jul 2025 20:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B4C519E7E2;
+	Mon, 21 Jul 2025 20:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.222.21.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753128973; cv=none; b=S99GQZf5UxZ7UBh6m8l2NOmlGKHwycCNTWfCqHCcfxu+PVpruLI2nCLnbmIxo/GwE1gMk3g3gUQDbI6clYIGOKCD/DaMcjT7OezO2lQptva4UJl1+E36eepwUG9fTVo/+n1VAvoJyP8/BCNrJJi6HnoYm4SFM57BTBsUfQ9kgUQ=
+	t=1753128992; cv=none; b=PYhS79lqKmm7Qg/5WCMKo+jgZFfZPLZNb+IGBy50XJxLY7tmwD2XrbU0Cm/u7CZR2pY1E9UCevzJmDvDzlIWcX65pevpknjE70h09/68kIKBpDVxBY6P1FWlXhZtWgtIhwe3EJTqeP83UPvNGRxkuSEqrT0sF6z9BaVrWE/BrIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753128973; c=relaxed/simple;
-	bh=fTSn/Sv4qArtz++sMbcoZ8ek+PmQQYja+lqgn+b/W4w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O/oM0uaZLjPrEHjxhQom7rR8lfYQvPsGwYn2t5/3mc8XYWn0s3FnyiClTIrktsvobDGuRGshpruvsUdlQhKvXJUu5jppBGjamckKtSKmd6rV40+E6/OPNk2WpWrzniEYmA1/FNBH5c2ATF1IzN2HtAL3LfpmQhUK1/q3zmq+I6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WzunUEsq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC8A7C4CEED;
-	Mon, 21 Jul 2025 20:16:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753128972;
-	bh=fTSn/Sv4qArtz++sMbcoZ8ek+PmQQYja+lqgn+b/W4w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WzunUEsqwxpuwQgEca4OI+FIlVz5ORZ2sBMXjovqNc0/b19F1pVZ2cgX3kE7XURrZ
-	 5AP+C4XZSST0Xim/UkxZ+3IaaYiCyvnapDw+BembHZF7uJEC0tXlPdIPR7DDuK4qeW
-	 eWSQk06E+OjEWEVrb2CI88Ibo4I5HXozwiiPU51rTEik+TKb34xgGHLcI1zVsxsI1y
-	 SEShEW1+BVMHxpu3crNvuSSDLIlKM2BnZNisff7UTRg3tKlh9XnHwJkXFKJOGZ86bA
-	 yec+bO3HQ0+S7sKAxdk8+m6P9X8mQwIQvmEtqV6ZmXLk2ME9vosumlNDzjFwNb77IK
-	 XcpKFw5DLUGOA==
-Date: Mon, 21 Jul 2025 15:16:12 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Marcus Folkesson <marcus.folkesson@gmail.com>
-Cc: Maxime Ripard <mripard@kernel.org>, linux-kernel@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
-	Simona Vetter <simona@ffwll.ch>, devicetree@vger.kernel.org,
-	David Airlie <airlied@gmail.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>
-Subject: Re: [PATCH v2 2/6] dt-bindings: display: sitronix,st7571: add
- optional inverted property
-Message-ID: <175312897159.1251067.10084528761404344067.robh@kernel.org>
-References: <20250721-st7571-format-v2-0-159f4134098c@gmail.com>
- <20250721-st7571-format-v2-2-159f4134098c@gmail.com>
+	s=arc-20240116; t=1753128992; c=relaxed/simple;
+	bh=igbX+jfJh90M1KH040iOHlCfFeYBaYR0WrJ2E+mayYE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z6FkSgQ6IksHSwLu+mFLPqJtuhzGb1w5kIf9EdBvjqdkpD2aM4wxqQzYgIXiUYY48hagY2tEzXSqYY6ZA+fIIEqTXzb5oHGOKU6ZLMoCl9TKrwoGB/5bwqCDZ5WNu6+dILZaRhKi3ukTd0Vi9OJipqrWqSF8mJFutRtZpVchh9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tahomasoft.com; spf=pass smtp.mailfrom=tahomasoft.com; dkim=fail (0-bit key) header.d=tahomasoft.com header.i=@tahomasoft.com header.b=Gty0/gO0 reason="key not found in DNS"; arc=none smtp.client-ip=209.222.21.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tahomasoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tahomasoft.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tahomasoft.com;
+	s=default; t=1753128990;
+	bh=igbX+jfJh90M1KH040iOHlCfFeYBaYR0WrJ2E+mayYE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Gty0/gO0efdIOfplME1yfrZW31GrUlB5KZSoZISKdNQ2M/50JhCoM9gYNSMXFvIVy
+	 /TZyxvlRcYA7mgyPvRBK8iXsJVg5/55PkDMBaVJ55KqXfKmDocIwZNcJ1zEohAaRXO
+	 9oDi1OucqjOqgK0S2H1stzeTWny5jofy7jp7GQ9CZSLLhadSWWVfEvn4VNvT9oeoRa
+	 mC3IK/PdDVPfVovc9k1xL/A2j8j+e6OkIttqh0N8DE73e/DIT4wOYIss4e5C4kGJU0
+	 EHlSFHoJXyoCl2gLHjIbUIJcrcYr1/OTVf1La2wl5E1Ef2B3H9WhEGhYLQFDb7XKrW
+	 zjNDwYa+oEO+Q==
+Received: from localhost (unknown [IPv6:2600:4040:50b7:b604:da10:58b0:4f02:7df4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by chumsalmon.baetis.net (Postfix) with ESMTPSA id 2FC7827E472;
+	Mon, 21 Jul 2025 20:16:30 +0000 (UTC)
+From: Erik Beck <xunil@tahomasoft.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Erik Beck <xunil@tahomasoft.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2 v2a]: New board support,LinkStar-H68k-1432v1 (RK3568)
+Date: Mon, 21 Jul 2025 16:16:21 -0400
+Message-ID: <20250721201625.233750-1-xunil@tahomasoft.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250721-st7571-format-v2-2-159f4134098c@gmail.com>
+Content-Transfer-Encoding: 8bit
+
+** Resending with proper patch sequence numbers **
+-- version 2a
+-- Apologies 
+
+Signed-off-by: Erik Beck <xunil@tahomasoft.com>
+
+This patch series, revision two, provides initial support for the
+Seeed LinkStar H68K 1432v1 board, featuring a Rockchip rk3568 SoC.
+
+Changes were made relative to patch set version one to address
+comments provided by Heiko Stuebner <heiko@sntech.de> (Fri, 18 Jul
+2025 15:13:22 +0200).
+
+Those changes are:
+
+* Splits the single commit into two, one for the yaml binding, and the
+  other for the board devicetree plus Makefile addition;
+
+* Adds other recipients needed from get_maintainer.pl --nol and --nom;
+* Uses git send-email to send the patches, to avoid adding line breaks
+  from the MUA;
+
+* Changes comment style to conform with style guide;
+* Removes several unneeded comments from the devicetree;
+* Changes LED naming scheme with more standard nomenclature;
+* Changes naming of regulators, prepending 'regulator', such as:
+    - from: vcc12v_dcin: vcc12v-dcin {}
+    - to:   vcc12v_dcin: regulator-vcc12v-dcin {}
+
+* Removes unneeded tx_delay/rx_delay from rgmii-id
 
 
-On Mon, 21 Jul 2025 12:43:32 +0200, Marcus Folkesson wrote:
-> Depending on which display that is connected to the controller, an "1"
-> means either a black or a white pixel.
-> 
-> The supported formats (R1/R2/XRGB8888) expects the pixels
-> to map against (4bit):
-> 00 => Black
-> 01 => Dark Gray
-> 10 => Light Gray
-> 11 => White
-> 
-> If this is not what the display map against, the controller has support
-> to invert these values.
-> 
-> Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
-> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-> ---
->  Documentation/devicetree/bindings/display/sitronix,st7571.yaml | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
+Thank you for your time and effort reviewing these proposed patches.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Regards,
+
+Erik
+
+Patch File Summary:
+
+ .../devicetree/bindings/arm/rockchip.yaml          |   5 +
+ arch/arm64/boot/dts/rockchip/Makefile              |   1 +
+ .../dts/rockchip/rk3568-linkstar-h68k-1432v1.dts   | 740 +++++++++++++++++++++
+ 3 files changed, 746 insertions(+)
+
 
 
