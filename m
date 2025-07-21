@@ -1,458 +1,116 @@
-Return-Path: <linux-kernel+bounces-739374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA294B0C57E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:50:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBA5AB0C582
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:51:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEDFD162B04
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:50:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16BBD3B266F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:50:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53E31F03C5;
-	Mon, 21 Jul 2025 13:50:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05102D97A6;
+	Mon, 21 Jul 2025 13:50:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ajk7lfZY";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="W2F72LhM"
-Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VgpG5A/W"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2565B1420DD
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 13:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B532A1420DD;
+	Mon, 21 Jul 2025 13:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753105843; cv=none; b=Zuf6+5Xvf/cY6a+5+b5SozVo5lZ7lgbhR+XItQfdCIY1U/07EL8TYm0lzkvsm3/5EIN6zuPTpj7FHPmWskeEeKzu+xjAxX3KxOiEi81rOe7ki8Or4VDQlGuhloJNogIwD79AwyKugI21PMnKARyfzuK1LI9zMpbOavmGkeGwB1o=
+	t=1753105852; cv=none; b=C/TEtk1Tpn6bGzojMguHqMfznaQMbYXBA0XbGHXWDSzjoaeZF43ehCrVvrQ5Ndlidhco/ZPgkpUGFQPpUvs3GYRkKsY9igFnl5ry28n0P1rg78W6DFaEG9XlnfGp8xT4SahnAV5mo9qW8A7CeCznyeBJBieTDajfiZkpVuv9Mgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753105843; c=relaxed/simple;
-	bh=ILxr/bFHsZQs7tbW2S85Udnnl7kY4GwyP9ljHLNR4Mg=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=LI4ZvDGaQNq518qKqV6UCVLxf+3UlWcc1lcV/gl4sw2xecun9Q3h/im4he+xQzjCT4w0grPunr0vzlFRdR9ZjR5k+Y/P13dGEVS5BXGJrSwD+BpnVvvbBiZXXzyfVh1fy7wGx/oSYs1+otFIeQi+mraKlWmDzcxSHtIabl65GIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ajk7lfZY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=W2F72LhM; arc=none smtp.client-ip=202.12.124.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id E2B771D00227;
-	Mon, 21 Jul 2025 09:50:38 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Mon, 21 Jul 2025 09:50:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1753105838;
-	 x=1753192238; bh=psLXjC0I/mMFjYdgP4H7159qK6/TIeCOrZEs0qZia+I=; b=
-	ajk7lfZY9UqUctfjhm5V0oAJvp6X1e9EWHFYbMbqMBRadQtGC9/9lLYZG84IPUXg
-	X11hwv5Hax1ANrThyB7SNhZ2KdPfxHv2lbm6CfCjuCCIZ0VBGfJNtQYmEPAL0HX4
-	srOByJJqmkfGdf9qKcO427YhsRFCQ4s7NCTbkxL81BOrhNTIK6PCKxzWKq6ZlqJC
-	VMzVGqhENdS71hAOAMBSx0IBx8YyqGobnSfO952lHfUyJHw3yUlliE1JnQSjgxYP
-	VZhT7OXq8r+ehwrMj5xVAyRV7Kp7H4hSHcqbbRIwN5xVEPy2psZxjLaoqlpzezB2
-	TTk3RXJhL2GdgiiV8eb0EQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1753105838; x=
-	1753192238; bh=psLXjC0I/mMFjYdgP4H7159qK6/TIeCOrZEs0qZia+I=; b=W
-	2F72LhMkykc9VpH9AdY885mquIq+cEBUJktlB9mvLvx+pDeQBfLNs9BmwG+rreBc
-	3Fz8jsa9IiAXfPv0se7UvtJumAqkI6Z5eMF8Uo91qxUHlwAc5fqpz5EjmpDampTi
-	HxWcMRcKEGNOIuhSt+fXSYGtUyYM1hsuuV95L1bVHP5E/zba6hBfKE7hBrjYCrRz
-	vDOImjnw2xvQ8mBiLxKZ/7CQl5KwutBqrC5OxL3PPC5XhyRruoAB1K8acyY2ajR2
-	bca277qr4tM3Y8jIFnROqpv5kS2n/qtBO0GG4CYf7G5RLm/q/Y76/6HL1TwUzE2K
-	o06S8vOyKAKjP1Y6gfjAg==
-X-ME-Sender: <xms:rkV-aMs7g6nQLSwCua3bibYmyhBskrKPPZAvv9yq7xyRF1ENYTmgXg>
-    <xme:rkV-aJfzsoXOB_xOxw-avMCYgntbG3CyIo7pQisw9CPRRH3FKF3Z-g_QQX1jM8mXH
-    wR0XQw8rq7u8tYR0ac>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejvddvgecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpedvhfdvkeeuudevfffftefgvdevfedvleehvddvgeejvdefhedtgeegveehfeeljeen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopegrihhrlh
-    hivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepshgrthgrughruhesghhmrghilhdr
-    tghomhdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskh
-    htohhprdhorhhgpdhrtghpthhtohepnhhouhhvvggruheslhhishhtshdrfhhrvggvuggv
-    shhkthhophdrohhrghdprhgtphhtthhopegsshhkvghgghhssehnvhhiughirgdrtghomh
-    dprhgtphhtthhopehtthgrsghisehnvhhiughirgdrtghomhdprhgtphhtthhopegrihhr
-    lhhivggusehrvgguhhgrthdrtghomhdprhgtphhtthhopegsshhkvghgghhssehrvgguhh
-    grthdrtghomh
-X-ME-Proxy: <xmx:rkV-aBIiYwVAYjwUL_8fwB7To4aTm22s89WWSFP3a-ER3RWOpcH5NA>
-    <xmx:rkV-aDpN18Xq2YxFB9bEKR6V30-guLaDIb9UpYy03pvTrX_OvYnkbA>
-    <xmx:rkV-aHsIcMI3XXubulrRu27NhTLTxE7cAnVVk8Ve6vBa7hdNmrivmA>
-    <xmx:rkV-aFJqYPpuS9kIkLhfKC4khel-Aq3SfdcySqOvwswJRlFIEIznLw>
-    <xmx:rkV-aBv6PUCABo5mWiHxk_msm8GB8e18o8VfFhKTRD3l4OWyd13mcbwu>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 32F5C700065; Mon, 21 Jul 2025 09:50:38 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1753105852; c=relaxed/simple;
+	bh=513tMf7iicIdDU1soghAQ1q8hTKcIhjVMG50axlhca0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZZDJSeQZszvmQq9CrSi/eqyR/jr+FvRcUQObIYm9YFcS6fNNBQ1yVm5XBQXjQPkLn4zzf1ha7McMz03L3fB1oJgfjie6wLnCfejlqoExTCh7d2E9rCSU1Tv4AU3iHzpcaxayfagEjUuZrb1Rb8iSP996uaXOnXOjcu9DbCEFjIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VgpG5A/W; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-454f428038eso36999125e9.2;
+        Mon, 21 Jul 2025 06:50:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753105849; x=1753710649; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EMe6pRC005fOwaPOugF9qce8y2RRWdU1gEZZYXHHtOo=;
+        b=VgpG5A/WJDcIi5rShXyQaW0BAXwpJ6AwFkWJX27FS0V5cljEOEHCTYYy+leXIxmI8S
+         q2Tg7MZ/6kUy5NLaXxH7D8evTsIhuRZLjxvFWRW16WCCPgppXQoXSXIgiEpiOiPW4izC
+         VgkQP1FKzS034VRIIi2MOfBaFa4CA2uiTZ6IKJx8AmEFOTtZb/htd7hfJuRVdI0KG1EE
+         5pSWM+rim/4CZXaMSEHRslV3KRUWbqLLgxkAHnyee4UeqLzK4tS/xR/rWdOyWWi5IqXA
+         1Jd5ymXwFBdP36DuYR3KA4iSJYUKS5EWBZqYI8fO+leQ/083nO4giCEqupEpj3g8JuX5
+         K9bA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753105849; x=1753710649;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EMe6pRC005fOwaPOugF9qce8y2RRWdU1gEZZYXHHtOo=;
+        b=E+NlzNPnbcnw/LqYijbEPJHjcXhsK6ruot5TfFaioZtsZqSqee7RkjzoCc2x6ywTbC
+         KcradQ11oaiPKmZOExct3inuHnbMH/dU35WFt0PWJfNtxBtzvVqGPBG5LQHHiGP/fvag
+         wQuboXqFo8it266rlycPHOsP8/JzCx+rRJwW60fpYnULK2B8I3c+ZWuzToYKCV8SqWKt
+         74ZxyBuYoSBh+fpBsgZx7TRBjQr8oZElWhEb0e8Onep/IIXpg9JmZFbHG5pyE6Pc01Ya
+         Mv7caZu92xwsHVMxT07c1tK1VWZeRVoK1cgMaZOTSAx0T0gVdTPDjg01HlfPZjUkMbmO
+         afMg==
+X-Forwarded-Encrypted: i=1; AJvYcCUyJsoKRUhCDlMaaMA0yS7p5PT674rl7aeihraTMRHkoEaGa9kmdUsTojXV/lzUiEazNEex9awNNddE++gR@vger.kernel.org, AJvYcCXw3xi/caENIelZhXtB2SnZ+D48lNZZ8/Ma+dm6NqmDmKkpsnQvonILLz6Mr5FioaWAIrYWk9cth6zF@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvFC6khcCBk0DjH/LZdfbb/hup5PpqkONdQhgtkMeQT0y4MMKb
+	iloS5uL0hQVHqyMWyn56Iyn8x9dFHM5BQCqKg9LITT0WQRwqWjNdz34Z
+X-Gm-Gg: ASbGncuUk0pjbQ13mZkc6I/haCxG9d+y48MnJ2F65otCS+ZdLnxZLlG74eN3r0o7vci
+	eygrSoIA7s/jrBNJTghWVicxVYEaKZxuipTMNOs/ADfkTs4tNjgvdICUBzOFm0uQupGsTVADjVr
+	X659ZdgEGA6HfPZjUyAUUk4D6ory95wFl2m30xRNPxSpLumhO8yQZfEZI1Z/u9I53vvgKfy68mH
+	Ql5kps2wSEaILR4Vovk4enD7WvPbN8JuKD4yKGtrblbP77rAj58urhEhLU6GyBIqUyUrONabywd
+	NfNAWtJ6EVH+LhDLaFW1HFoXeOeGSmRfsWqtTFU4QVxtioFgE6Mya7OmPp4nS3XkX551B1W50MX
+	vHj3SckzQP2Mu95Tuyrhk
+X-Google-Smtp-Source: AGHT+IEWxz2ukH8WNYyFaAsNQWUH6XpTNFQRIupr3Lnn0/uerqUny1xGkgFJRyZGq+ChjwK9aMkYNQ==
+X-Received: by 2002:a05:600c:5486:b0:453:2066:4a26 with SMTP id 5b1f17b1804b1-4562e39b9a1mr210179265e9.16.1753105848730;
+        Mon, 21 Jul 2025 06:50:48 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4562e80731bsm159818925e9.15.2025.07.21.06.50.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Jul 2025 06:50:48 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	linux-acpi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ACPI: processor_throttling: Remove space before \n newline
+Date: Mon, 21 Jul 2025 14:50:16 +0100
+Message-ID: <20250721135016.2500117-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T0fa10d1000c4a2fe
-Date: Mon, 21 Jul 2025 15:50:07 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Satadru Pramanik" <satadru@gmail.com>
-Cc: "Dave Airlie" <airlied@gmail.com>, "Dave Airlie" <airlied@redhat.com>,
- "Ben Skeggs" <bskeggs@nvidia.com>, bskeggs@redhat.com, bskeggs@redhat.com,
- "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
- "open list" <linux-kernel@vger.kernel.org>, "Lyude Paul" <lyude@redhat.com>,
- nouveau@lists.freedesktop.org, nouveau@lists.freedesktop.org,
- "Simona Vetter" <simona@ffwll.ch>, "Timur Tabi" <ttabi@nvidia.com>,
- "Thomas Zimmermann" <tzimmermann@suse.de>
-Message-Id: <0d8287db-4943-4cce-87d1-25a22d3228ea@app.fastmail.com>
-In-Reply-To: 
- <CAFrh3J-SpU03=Kgi8vj1XLsMfruQyF1Rew6L2+aYUgZnkTLJAw@mail.gmail.com>
-References: 
- <CAFrh3J85tsZRpOHQtKgNHUVnn=EG=QKBnZTRtWS8eWSc1K1xkA@mail.gmail.com>
- <c32114e7-a61a-4c2b-ab4b-b103d028d05f@app.fastmail.com>
- <CAFrh3J-SpU03=Kgi8vj1XLsMfruQyF1Rew6L2+aYUgZnkTLJAw@mail.gmail.com>
-Subject: Re: [PATCH] drm/nouveau: check ioctl command codes better
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 21, 2025, at 14:50, Satadru Pramanik wrote:
-> Sure!
->
-> Here you go.
->
-> The command I ran was 'glxinfo -B'
->
-> diff glxinfo_working.txt glxinfo_broken.txt
+There is a extraneous space before a newline in a pr_warn message.
+Remove it.
 
-Unfortunately, the 'diff' output makes this a little harder,
-try 'diff -u' next time. I suppose passing "-X raw" to strace
-would also help since the ioctl commands are heavily overloaded.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/acpi/processor_throttling.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> < 10221 ioctl(6, _IOC(_IOC_WRITE, 0x64, 0x47, 0x48), 0x7ffc5a254340) =3D=
- 0
-> < 10221 ioctl(6, _IOC(_IOC_READ|_IOC_WRITE, 0x64, 0x47, 0x88),
-> 0x7ffc5a254390) =3D 0
+diff --git a/drivers/acpi/processor_throttling.c b/drivers/acpi/processor_throttling.c
+index d1541a386fbc..f9c2bc1d4a3a 100644
+--- a/drivers/acpi/processor_throttling.c
++++ b/drivers/acpi/processor_throttling.c
+@@ -235,7 +235,7 @@ static int acpi_processor_throttling_notifier(unsigned long event, void *data)
+ 		if (pr->throttling_platform_limit > target_state)
+ 			target_state = pr->throttling_platform_limit;
+ 		if (target_state >= p_throttling->state_count) {
+-			pr_warn("Exceed the limit of T-state \n");
++			pr_warn("Exceed the limit of T-state\n");
+ 			target_state = p_throttling->state_count - 1;
+ 		}
+ 		p_tstate->target_state = target_state;
+-- 
+2.50.0
 
-I think this is where it goes wrong first: (0x64, 0x47)
-is the correct type and number for NVIF, but after my patch
-I only accept the _IOC_READ|_IOC_WRITE caller but not _IOC_WRITE.
-
-> < 10221 ioctl(6, _IOC(_IOC_WRITE, 0x64, 0x47, 0x38), 0x7ffc5a254240) =3D=
- 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_CPU_PREP, 0x7ffc5a254250) =3D 0
-> < 10221 ioctl(6, _IOC(_IOC_READ|_IOC_WRITE, 0x64, 0x47, 0xa0),
-> 0x7ffc5a254200) =3D 0
-> < 10221 ioctl(6, _IOC(_IOC_WRITE, 0x64, 0x47, 0x38), 0x7ffc5a254240) =3D=
- 0
-> < 10221 ioctl(6, _IOC(_IOC_READ|_IOC_WRITE, 0x64, 0x47, 0xa0),
-> 0x7ffc5a254200) =3D 0
-> < 10221 ioctl(6, _IOC(_IOC_WRITE, 0x64, 0x47, 0x38), 0x7ffc5a254240) =3D=
- 0
-> < 10221 ioctl(6, _IOC(_IOC_WRITE, 0x64, 0x47, 0x38), 0x7ffc5a254240) =3D=
- 0
-> < 10221 ioctl(6, _IOC(_IOC_READ|_IOC_WRITE, 0x64, 0x47, 0xa0),
-> 0x7ffc5a254200) =3D 0
-> < 10221 ioctl(6, _IOC(_IOC_WRITE, 0x64, 0x47, 0x38), 0x7ffc5a254240) =3D=
- 0
-
-> < 10221 ioctl(6, _IOC(_IOC_READ|_IOC_WRITE, 0x64, 0x47, 0xa0),
-> 0x7ffc5a254200) =3D 0
-> < 10221 ioctl(6, _IOC(_IOC_WRITE, 0x64, 0x47, 0x38), 0x7ffc5a254240) =3D=
- 0
-
-More of the same
-
-> < 10221 ioctl(7, DRM_IOCTL_XE_EXEC_QUEUE_DESTROY, 0x7ffc5a2550e0) =3D =
--1
-> EBADF (Bad file descriptor)
-
-This one manages to actually overload a command from another
-driver, but DRM_IOCTL_XE_EXEC_QUEUE_DESTROY happens to also work
-out to _IOC(_IOC_WRITE, 0x64, 0x47, 0x18).
-
-Obviously these commands still need to be supported, so we need
-to (at least) allow both _IOC_READ and _IOC_READ|_IOC_WRITE versions
-of it.
-
-Maintainers, do you prefer to just revert back to the original
-version, or should we do another round that allows exactly the
-necessary commands?
-
-It does get pretty ugly at that point, and is not that far off
-the origial version, with only really the _IOC_TYPE check remaining:
-
-diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nou=
-veau/nouveau_drm.c
-index 7bb64fcdd497..8bc61dfe7d9d 100644
---- a/drivers/gpu/drm/nouveau/nouveau_drm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-@@ -1284,7 +1284,7 @@ nouveau_ioctls[] =3D {
- 	DRM_IOCTL_DEF_DRV(NOUVEAU_EXEC, nouveau_exec_ioctl_exec, DRM_RENDER_AL=
-LOW),
- };
-=20
--#define DRM_IOCTL_NOUVEAU_NVIF _IOC(_IOC_READ | _IOC_WRITE, DRM_IOCTL_B=
-ASE, \
-+#define DRM_IOCTL_NOUVEAU_NVIF _IOC(_IOC_WRITE, DRM_IOCTL_BASE, \
- 				    DRM_COMMAND_BASE + DRM_NOUVEAU_NVIF, 0)
-=20
- long
-@@ -1300,7 +1300,7 @@ nouveau_drm_ioctl(struct file *file, unsigned int =
-cmd, unsigned long arg)
- 		return ret;
- 	}
-=20
--	if ((cmd & ~IOCSIZE_MASK) =3D=3D DRM_IOCTL_NOUVEAU_NVIF)
-+	if ((cmd & ~(IOCSIZE_MASK | IOC_OUT) =3D=3D DRM_IOCTL_NOUVEAU_NVIF)
- 		ret =3D nouveau_abi16_ioctl(filp, (void __user *)arg, _IOC_SIZE(cmd));
- 	else
- 		ret =3D drm_ioctl(file, cmd, arg);
-
-    Arnd
-
------
-(full quote below, as the reply was off-list)
-
-> 1,129c1,20
-> < 10221 ioctl(4, DRM_IOCTL_VERSION, 0x5564c66a4e50) =3D 0
-> < 10221 ioctl(4, DRM_IOCTL_VERSION, 0x5564c66a4e50) =3D 0
-> < 10221 ioctl(4, DRM_IOCTL_ETNAVIV_GET_PARAM or
-> DRM_IOCTL_EXYNOS_GEM_CREATE or DRM_IOCTL_IVPU_GET_PARAM or
-> DRM_IOCTL_LIMA_GET_PARAM or DRM_IOCTL_NOUVEAU_GETPARAM or
-> DRM_IOCTL_OMAP_GET_PARAM or DRM_IOCTL_PVR_DEV_QUERY or
-> DRM_IOCTL_QAIC_MANAGE or DRM_IOCTL_TEGRA_GEM_CREATE, 0x7ffc5a254e20) =3D
-> 0
-> < 10221 ioctl(4, DRM_IOCTL_ETNAVIV_GET_PARAM or
-> DRM_IOCTL_EXYNOS_GEM_CREATE or DRM_IOCTL_IVPU_GET_PARAM or
-> DRM_IOCTL_LIMA_GET_PARAM or DRM_IOCTL_NOUVEAU_GETPARAM or
-> DRM_IOCTL_OMAP_GET_PARAM or DRM_IOCTL_PVR_DEV_QUERY or
-> DRM_IOCTL_QAIC_MANAGE or DRM_IOCTL_TEGRA_GEM_CREATE, 0x7ffc5a254e20) =3D
-> 0
-> < 10221 ioctl(5, DRM_IOCTL_VERSION, 0x5564c66a4e50) =3D 0
-> < 10221 ioctl(5, DRM_IOCTL_VERSION, 0x5564c66a4e50) =3D 0
-> < 10221 ioctl(5, DRM_IOCTL_ETNAVIV_GET_PARAM or
-> DRM_IOCTL_EXYNOS_GEM_CREATE or DRM_IOCTL_IVPU_GET_PARAM or
-> DRM_IOCTL_LIMA_GET_PARAM or DRM_IOCTL_NOUVEAU_GETPARAM or
-> DRM_IOCTL_OMAP_GET_PARAM or DRM_IOCTL_PVR_DEV_QUERY or
-> DRM_IOCTL_QAIC_MANAGE or DRM_IOCTL_TEGRA_GEM_CREATE, 0x7ffc5a254340) =3D
-> 0
-> < 10221 ioctl(5, DRM_IOCTL_ETNAVIV_GET_PARAM or
-> DRM_IOCTL_EXYNOS_GEM_CREATE or DRM_IOCTL_IVPU_GET_PARAM or
-> DRM_IOCTL_LIMA_GET_PARAM or DRM_IOCTL_NOUVEAU_GETPARAM or
-> DRM_IOCTL_OMAP_GET_PARAM or DRM_IOCTL_PVR_DEV_QUERY or
-> DRM_IOCTL_QAIC_MANAGE or DRM_IOCTL_TEGRA_GEM_CREATE, 0x7ffc5a254340) =3D
-> 0
-> < 10221 ioctl(6, DRM_IOCTL_VERSION, 0x5564c66a4e50) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_VERSION, 0x5564c66a4e50) =3D 0
-> < 10221 ioctl(6, _IOC(_IOC_WRITE, 0x64, 0x47, 0x48), 0x7ffc5a254340) =3D=
- 0
-> < 10221 ioctl(6, _IOC(_IOC_READ|_IOC_WRITE, 0x64, 0x47, 0x88),
-> 0x7ffc5a254390) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_ETNAVIV_GET_PARAM or
-> DRM_IOCTL_EXYNOS_GEM_CREATE or DRM_IOCTL_IVPU_GET_PARAM or
-> DRM_IOCTL_LIMA_GET_PARAM or DRM_IOCTL_NOUVEAU_GETPARAM or
-> DRM_IOCTL_OMAP_GET_PARAM or DRM_IOCTL_PVR_DEV_QUERY or
-> DRM_IOCTL_QAIC_MANAGE or DRM_IOCTL_TEGRA_GEM_CREATE, 0x7ffc5a254330) =3D
-> 0
-> < 10221 ioctl(6, DRM_IOCTL_ETNAVIV_GET_PARAM or
-> DRM_IOCTL_EXYNOS_GEM_CREATE or DRM_IOCTL_IVPU_GET_PARAM or
-> DRM_IOCTL_LIMA_GET_PARAM or DRM_IOCTL_NOUVEAU_GETPARAM or
-> DRM_IOCTL_OMAP_GET_PARAM or DRM_IOCTL_PVR_DEV_QUERY or
-> DRM_IOCTL_QAIC_MANAGE or DRM_IOCTL_TEGRA_GEM_CREATE, 0x7ffc5a254330) =3D
-> 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_CHANNEL_ALLOC, 0x7ffc5a2541b0) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_PUSHBUF, 0x7ffc5a2541c0) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254110) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254110) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254110) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254110) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_ETNAVIV_GET_PARAM or
-> DRM_IOCTL_EXYNOS_GEM_CREATE or DRM_IOCTL_IVPU_GET_PARAM or
-> DRM_IOCTL_LIMA_GET_PARAM or DRM_IOCTL_NOUVEAU_GETPARAM or
-> DRM_IOCTL_OMAP_GET_PARAM or DRM_IOCTL_PVR_DEV_QUERY or
-> DRM_IOCTL_QAIC_MANAGE or DRM_IOCTL_TEGRA_GEM_CREATE, 0x7ffc5a254210) =3D
-> 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254260) =3D 0
-> < 10221 ioctl(6, _IOC(_IOC_WRITE, 0x64, 0x47, 0x38), 0x7ffc5a254240) =3D=
- 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_CPU_PREP, 0x7ffc5a254250) =3D 0
-> < 10221 ioctl(6, _IOC(_IOC_READ|_IOC_WRITE, 0x64, 0x47, 0xa0),
-> 0x7ffc5a254200) =3D 0
-> < 10221 ioctl(6, _IOC(_IOC_WRITE, 0x64, 0x47, 0x38), 0x7ffc5a254240) =3D=
- 0
-> < 10221 ioctl(6, _IOC(_IOC_READ|_IOC_WRITE, 0x64, 0x47, 0xa0),
-> 0x7ffc5a254200) =3D 0
-> < 10221 ioctl(6, _IOC(_IOC_WRITE, 0x64, 0x47, 0x38), 0x7ffc5a254240) =3D=
- 0
-> < 10221 ioctl(6, _IOC(_IOC_WRITE, 0x64, 0x47, 0x38), 0x7ffc5a254240) =3D=
- 0
-> < 10221 ioctl(6, _IOC(_IOC_READ|_IOC_WRITE, 0x64, 0x47, 0xa0),
-> 0x7ffc5a254200) =3D 0
-> < 10221 ioctl(6, _IOC(_IOC_WRITE, 0x64, 0x47, 0x38), 0x7ffc5a254240) =3D=
- 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a2541e0) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254260) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_ETNAVIV_GET_PARAM or
-> DRM_IOCTL_EXYNOS_GEM_CREATE or DRM_IOCTL_IVPU_GET_PARAM or
-> DRM_IOCTL_LIMA_GET_PARAM or DRM_IOCTL_NOUVEAU_GETPARAM or
-> DRM_IOCTL_OMAP_GET_PARAM or DRM_IOCTL_PVR_DEV_QUERY or
-> DRM_IOCTL_QAIC_MANAGE or DRM_IOCTL_TEGRA_GEM_CREATE, 0x7ffc5a2542a0) =3D
-> 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254260) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254260) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254260) =3D 0
-> < 10221 ioctl(6, _IOC(_IOC_READ|_IOC_WRITE, 0x64, 0x47, 0xa0),
-> 0x7ffc5a254200) =3D 0
-> < 10221 ioctl(6, _IOC(_IOC_WRITE, 0x64, 0x47, 0x38), 0x7ffc5a254240) =3D=
- 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_PUSHBUF, 0x7ffc5a254230) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_GET_CAP, 0x7ffc5a254270) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_PUSHBUF, 0x7ffc5a2549f0) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254940) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254940) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254940) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254940) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_CPU_PREP, 0x7ffc5a2548f0) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254a10) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a2546c0) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_PRIME_HANDLE_TO_FD, 0x7ffc5a2547a8) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_PRIME_HANDLE_TO_FD, 0x7ffc5a2547a8) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_PRIME_HANDLE_TO_FD, 0x7ffc5a2547a8) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_PRIME_HANDLE_TO_FD, 0x7ffc5a2547a8) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_PRIME_HANDLE_TO_FD, 0x7ffc5a2547a8) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_PUSHBUF, 0x7ffc5a254a10) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254960) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254960) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254960) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254960) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_CPU_PREP, 0x7ffc5a254a40) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254a30) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_PUSHBUF, 0x7ffc5a254d00) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254c70) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254ba0) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_PUSHBUF, 0x7ffc5a254c80) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254cc0) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254cc0) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254d00) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254d00) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254d00) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254d00) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254730) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_PRIME_HANDLE_TO_FD, 0x7ffc5a254818) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_PRIME_HANDLE_TO_FD, 0x7ffc5a254818) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_PRIME_HANDLE_TO_FD, 0x7ffc5a254818) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_PRIME_HANDLE_TO_FD, 0x7ffc5a254818) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_PRIME_HANDLE_TO_FD, 0x7ffc5a254818) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_PUSHBUF, 0x7ffc5a254a30) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254980) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254980) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254980) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254980) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_CPU_PREP, 0x7ffc5a254a60) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254a50) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_PUSHBUF, 0x7ffc5a254d00) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254c70) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254ba0) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_PUSHBUF, 0x7ffc5a254c80) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254cc0) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254cc0) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254d00) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254d00) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254d00) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254d00) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254730) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_PRIME_HANDLE_TO_FD, 0x7ffc5a254818) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_PRIME_HANDLE_TO_FD, 0x7ffc5a254818) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_PRIME_HANDLE_TO_FD, 0x7ffc5a254818) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_PRIME_HANDLE_TO_FD, 0x7ffc5a254818) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_PRIME_HANDLE_TO_FD, 0x7ffc5a254818) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_PUSHBUF, 0x7ffc5a254f70) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254ee0) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_NEW, 0x7ffc5a254e10) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_GEM_PUSHBUF, 0x7ffc5a254ef0) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254f30) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254f30) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254f70) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254f70) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254f70) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a254f70) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a2550b0) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a2550b0) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a2550b0) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a2550b0) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a2550b0) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a2550b0) =3D 0
-> < 10221 ioctl(7, DRM_IOCTL_XE_EXEC_QUEUE_DESTROY, 0x7ffc5a2550e0) =3D =
--1
-> EBADF (Bad file descriptor)
-> < 10221 ioctl(7, DRM_IOCTL_XE_EXEC_QUEUE_DESTROY, 0x7ffc5a2550e0) =3D =
--1
-> EBADF (Bad file descriptor)
-> < 10221 ioctl(7, DRM_IOCTL_XE_EXEC_QUEUE_DESTROY, 0x7ffc5a2550e0) =3D =
--1
-> EBADF (Bad file descriptor)
-> < 10221 ioctl(7, DRM_IOCTL_XE_EXEC_QUEUE_DESTROY, 0x7ffc5a2550e0) =3D =
--1
-> EBADF (Bad file descriptor)
-> < 10221 ioctl(7, DRM_IOCTL_XE_EXEC_QUEUE_DESTROY, 0x7ffc5a2550e0) =3D =
--1
-> EBADF (Bad file descriptor)
-> < 10221 ioctl(7, DRM_IOCTL_XE_EXEC_QUEUE_DESTROY, 0x7ffc5a2550e0) =3D =
--1
-> EBADF (Bad file descriptor)
-> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a255060) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a255060) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a255060) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_GEM_CLOSE, 0x7ffc5a255060) =3D 0
-> < 10221 ioctl(6, DRM_IOCTL_NOUVEAU_CHANNEL_FREE, 0x7ffc5a2550b8) =3D 0
-> < 10222 +++ exited with 0 +++
-> < 10221 +++ exited with 0 +++
-> ---
->> 5236  ioctl(4, UDMABUF_CREATE, 0x7fffd017e990) =3D 6
->> 5236  ioctl(6, DMA_BUF_IOCTL_EXPORT_SYNC_FILE, 0x7fffd017ea00) =3D 0
->> 5252  +++ exited with 0 +++
->> 5251  +++ exited with 0 +++
->> 5249  +++ exited with 0 +++
->> 5248  +++ exited with 0 +++
->> 5250  +++ exited with 0 +++
->> 5247  +++ exited with 0 +++
->> 5246  +++ exited with 0 +++
->> 5245  +++ exited with 0 +++
->> 5237  +++ exited with 0 +++
->> 5238  +++ exited with 0 +++
->> 5239  +++ exited with 0 +++
->> 5240  +++ exited with 0 +++
->> 5241  +++ exited with 0 +++
->> 5242  +++ exited with 0 +++
->> 5243  +++ exited with 0 +++
->> 5244  +++ exited with 0 +++
->> 5253  +++ exited with 0 +++
->> 5236  +++ exited with 0 +++
->
-> On Mon, Jul 21, 2025 at 8:38=E2=80=AFAM Arnd Bergmann <arnd@arndb.de> =
-wrote:
->>
->> On Mon, Jul 21, 2025, at 14:22, Satadru Pramanik wrote:
->> > Hello all,
->> >
->> > I suspect this commit in 6.16-rc7 has broken acceleration with Mesa=
-'s
->> > nouveau drivers on my machine.
->> >
->> > glxinfo -B reports that I'm using llvmpipe.
->>
->> Thanks for the report!  Can you run the failing command with
->> 'strace -f -o logfile.txt -e trace=3Dioctl ...' to see which command
->> it tries?
->>
->> Either I made a stupid mistake in my patch and don't catch the
->> intended command any more, or the command that gets sent is actually
->> different from the one that the kernel expects.
->>
->>       Arnd
->
-> Attachments:
-> * glxinfo_working.txt
-> * glxinfo_broken.txt
 
