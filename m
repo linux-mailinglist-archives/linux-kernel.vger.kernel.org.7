@@ -1,240 +1,167 @@
-Return-Path: <linux-kernel+bounces-739564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8436DB0C7F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:47:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2198AB0C7F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:47:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07FE67B042E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:45:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 890303B9F0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:47:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B4FF2989B4;
-	Mon, 21 Jul 2025 15:46:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D202BEFFF;
+	Mon, 21 Jul 2025 15:47:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ajoXNZX0"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="crOBva3i"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C3B1F1522
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 15:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 927C92DECB2
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 15:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753112817; cv=none; b=pxQF3TuryYqtfxOS49kOYIEE9+XqkV/ooIHclAGGuW15Im7PW/I+b/Vwzbo28p4hfg4eLupXiPcgLC4qykMKFO+EYm8h/oGCrMifVm4/POkgdq1oPGmIwWYS3NdCpoyWoDvwAXW+NyRxYMhGzFrwAJRRQEVMttiXFyQijzyXHtk=
+	t=1753112845; cv=none; b=sv4ha7swI1hASMhS+sBg7/OzaeuCMHo2MtoXkgf1vVUVt581ovjaHsQpQIuCFGdNdlkC5tn+xekCsxqLSaSWTpKg32QrRvS2ml9ctylz4uuSU/9M5v/AA5EjwBgKjGVSDxnyAopU4Uz4j3C9PKfliPiI0O6XnKK8aJBSz4Sg8uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753112817; c=relaxed/simple;
-	bh=pEmFK3YtX71Ss7IoSfHexKR6lboNbFxDMXbiAmk0Md8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ZCwgCHz4S4KAH6Hh4Y19bZwb6RxGkT0iLzbchbcHhqU32UPyCAMVDE1r8oiEV0nEyCBI3WaNEkgcRaGXz6NGs/XACPvLt45KHjm2NqzQef/V8C8MaePCLwgkVCSpUVGpLtva71JB7jN3T6y4tfnNtuumZmYHVNZEQ0UotsdZMMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ajoXNZX0; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3a588da60dfso2728050f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 08:46:55 -0700 (PDT)
+	s=arc-20240116; t=1753112845; c=relaxed/simple;
+	bh=JGN33wEJGPqudqX5w145Jh0yXvNgU9KTiqxmC8hFPY8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M34lD1eTqsxVh3ZMb8Cfl0tkFvfRPeIoC1/MXLySNwLLZU6klTz84JIH+3F6of9oypELH4XJPQFe6wVXAKxjJHy1hRAfM/3y6gMTB1NxkFuicicZiCpyfo4jL/Le6kHT9l/qw7UzazEvfIKUVtnhooG3X6SVSqykhJOX0uxpjNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=crOBva3i; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-74924255af4so3925014b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 08:47:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753112814; x=1753717614; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=71JdOjhcRzTfEZ2kGP13U0soxm4bQUZhtALxxJcwpGY=;
-        b=ajoXNZX0nijaUEfy6fHi3fC+TeAleT4F5zR/05w7v0YqoY3AhHQn2guCyCAhfeFheX
-         WX7lTiAolW5qSUZF/AFiQjtCoH4Pg95uSKJb7vMD6gcF+70gmOGEG8/bNGHlp8qFdJ/U
-         +yB2RMpJ7FmjQdsaQe2iO6R+kwfZv8tPhXEDyeYxCnTfJo7q3SS/6MVswKZiIWYeQkrh
-         papCUYMV4k/0geWEw1lxpJiqZBr4yvHPxSU325G+r5Khi0EFxqTBUEGzLQriJtfyucd0
-         bWvx97pCqWuQrmqbACEMKYdCc16haDnDnUgOaXlBx7tTL/7MbEIWnQKyj85D3CmhK0vj
-         jC5g==
+        d=chromium.org; s=google; t=1753112838; x=1753717638; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JGN33wEJGPqudqX5w145Jh0yXvNgU9KTiqxmC8hFPY8=;
+        b=crOBva3iFCqW3AX0gCf6qfJi4JQb6t8XI/0pkxwbySswmSBXmtep0d8Ai1IfmFQO6K
+         nBW6hy/S92cOOoI8sVKadi2O6t9B1cL7WDOmaqCfbbmf+oWJCRRszV3o157chc8pNq4u
+         hASopX78SBM0N6EhCE4PyBOTRDAITv3fzKlh8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753112814; x=1753717614;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=71JdOjhcRzTfEZ2kGP13U0soxm4bQUZhtALxxJcwpGY=;
-        b=ToTp+00YwUcpaY80xsJuxPlMrpizoyqGAfEjSBfbKB5FjoKIliqCBIf4HskQykKlTG
-         pojegebfbUGofuqo4hUyrQQA//yjp0RTa4CzZNIRnpro1O4201UGBI0eCxh2sCsCDAti
-         7a7qMYixXkCo8R4fZ7jHUjMDLSEzQ+dVUJFl5DDc6ZrabrhKt3hWO4e26NH64VGd3aVS
-         WDHamcnV9CbC8DGq6FS/yV9oGbnSPuqS3eeaW6ZiRixzSdNgrWmLyBmT0F21MIXpTFJc
-         q2IONFyKWaePFjkGdFqCcFSKMV7Cy1w0LG4PHJXQc0Wj5DwIirexYV62Tv0qcU/ll00U
-         hWOA==
-X-Forwarded-Encrypted: i=1; AJvYcCXOShk8uUsgJEnt8mqpffykm/Mo00qLR3aAADW67Pc7TF4EJOFkFN/v1oVg+7pio8/OiC89hPf4PVAlA5o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzT84y9hQV+WWREMX9w2X0SnGIgwvbazkv5ydP3yK+t6emzCeDn
-	nkSFu3UaWy4DeQEZCmmVh61SbDYmze8s0GCl52AaT6pOQtM1Q7eIvwxWs+cV7J4m0qA=
-X-Gm-Gg: ASbGncsdhacQE5RhKCrpcZdDD4/0SbOExaSDnkN9LOXYIEE3GyC0G/seX9dSS3IEvTK
-	CYjn/rev3ZJ4nMCLUS3BzA1PmCEidT3adtaBtQwNV6s4qFw6kISq+9AIub8x9ofYSF3Hf67/nPk
-	TnHERYIE6MAzDTGKrUqzQkrclSLB3iWkhxNXdF1c++yABleLcBoGuJDOaekc7Q9W96M7W+zF1q2
-	MAxf+f88BZjErYmRgPTOkBi6EWw1DBxiGZZa4b2ZnQgZaFjmr6Dgc1/doejNvkAhs9egYq/XPdT
-	cL36GW02u0SzhtmP/4HH1aK2P3X6FQ97ZXCTpSOjqNR/FK/DUbNFNFKR4I3CwAPKjbBXsyv4ho5
-	oc3O8kLdNZXn7HErwskOv/TE+rgpsSfz4FuJp/utQafF5T0Ao58p8hDspSQlI3WMryu1pATYg5W
-	4=
-X-Google-Smtp-Source: AGHT+IE18IBrQLiihCAuzNQ8PIrN0f+oNCcFrb048tnw4oH4ReNy5YSqf9fO8yU7sBsWjafeYv0hqA==
-X-Received: by 2002:a5d:64c1:0:b0:3a6:d967:380e with SMTP id ffacd0b85a97d-3b60e4c521dmr14461783f8f.3.1753112814028;
-        Mon, 21 Jul 2025 08:46:54 -0700 (PDT)
-Received: from ?IPV6:2001:861:c12:13d0:4146:67eb:7420:1c39? ([2001:861:c12:13d0:4146:67eb:7420:1c39])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e8ab7a1sm164661725e9.34.2025.07.21.08.46.53
+        d=1e100.net; s=20230601; t=1753112838; x=1753717638;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JGN33wEJGPqudqX5w145Jh0yXvNgU9KTiqxmC8hFPY8=;
+        b=lr2hF2GyN099h33TXb7Y1A//ZyhiufUXBxaSazxwnRkYsO7dWwbGBfyhLDbmXvnm7L
+         NvEnpLQ5PDAvvRo69jIJI2vTw81IMrk0hOm4gKouiIomEtV7ljub/Uwlmx/GlTrHviU3
+         zQvw250eJLo46ugWjcEC4N6vJK38cZ6S/jrUsBncwWW/yqAd+RUNEbdcpZSTkmRz4YnC
+         WVEjV9rrRBUuq6piKHqpfapBXsR40zkmrxPFrwx5mtJyYbAzxWB7D9/USjTeQtWnEIgf
+         SExbKCYZkzTgMfwTUZ4PwagqaAzP5QdVihTjGTFhFBf2IrftgXa8awM7UeXLAxhRi6vm
+         W0qA==
+X-Forwarded-Encrypted: i=1; AJvYcCVir/5fEzj+u6gdssFDVzuUvSNsyQek5LHX3j2vFLPwczHzimjyN6W10hAgUI7LXD0JPYugyKsFU+wiWdg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcuwYoN4Q1pbegt+LZi1YccLYnGpT3NdHv5j66B42oxQmzKMLV
+	adgrw+DPFdRfezzXjWmYpGEG9aWN781ZbPNfXrlV8avdC548DnW/1pRfFUuHoWM3osWt/gBOdmP
+	8w7I=
+X-Gm-Gg: ASbGncvzvpC/jQT6XyC6WF1/D9kknebbNfcMhgU1YtZmkB71EIHXzVbSa3lPJzbxkB9
+	ULpr39ThQC0aY4mOkWHrq2qhrLm6YRUb4NXgd2P9+vp7kLNeQ1H13J1mGeLkeHoWdvGWjMbmFQt
+	zdFyMiIXdSvATWmczKN8EvxbxWy1PsVAVMKxlxGygkIKQC7lQPDE4xbUhQxMKOk7vxsnLvYoaKf
+	0OgmkG1oDgWzYyCf2n3t+sN8o81pn38/TbcfXOXOm2C83qRm5blvFF/XVabEeR1UDrI5G64oAF3
+	3sXpkE0bESDwenlXvWPgAD7jlzoDrt/qPQdzRQGHDncqegU05uDOz6Xi109OtUvTqpEODy9Mr7P
+	YoxJZEOdrrZkalcp2/fGEU70pNxljXVA3EjjsXYDS+GzWKDtZQp+jDXQAsZF500lTHB+4BPkr
+X-Google-Smtp-Source: AGHT+IEKqu0CeZ6X+x3bAGKBdIdJm66A3YmiOFcaGN+s/doH/aiVa9pdIYnyQ1lD73KkOVKaDF/2Lw==
+X-Received: by 2002:a05:6a21:482:b0:238:e4d8:2bba with SMTP id adf61e73a8af0-238e4e77a12mr32664539637.35.1753112837869;
+        Mon, 21 Jul 2025 08:47:17 -0700 (PDT)
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com. [209.85.216.43])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759c89d3302sm6071241b3a.44.2025.07.21.08.47.13
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Jul 2025 08:46:53 -0700 (PDT)
-Message-ID: <8b908a20-0bf3-447d-82ea-a5ecee1bf54c@linaro.org>
-Date: Mon, 21 Jul 2025 17:46:52 +0200
+        Mon, 21 Jul 2025 08:47:16 -0700 (PDT)
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-311da0bef4aso4436958a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 08:47:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWZp65HtG3wCAXd1FdI+B/3IjwPZGlhbu+BdUWF5TFugLymO4ir6YhFFd0ixOSA26vKCNEJ9VgPjhCJ6NY=@vger.kernel.org
+X-Received: by 2002:a17:90b:224c:b0:313:1769:eb49 with SMTP id
+ 98e67ed59e1d1-31c9f3c570emr31120725a91.8.1753112832610; Mon, 21 Jul 2025
+ 08:47:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH 2/2] phy: qcom-mipi-csi2: Add a CSI2 MIPI D-PHY driver
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Vinod Koul
- <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Bryan O'Donoghue <bod@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250710-x1e-csi2-phy-v1-0-74acbb5b162b@linaro.org>
- <20250710-x1e-csi2-phy-v1-2-74acbb5b162b@linaro.org>
- <11b573d5-ce4d-476c-b94c-216d427cd838@linaro.org>
- <08261aa4-689b-4d6b-bfd2-221c1976d254@linaro.org>
- <a7f64b31-4767-4281-b452-a2bc5351d745@mleia.com>
- <c93624bb-ee7b-45ac-8b53-b5391f11c9c9@linaro.org>
- <eac3a877-a4aa-4789-9013-ab8b6c91e0f3@linaro.org>
- <0a12879f-dc4a-47fb-87a0-ac4b8bcd4d75@linaro.org>
- <53a19b1d-5665-4937-a07c-5dd1fcde06c5@linaro.org>
- <3b760685-97db-46e3-80a3-7fad69ad31cd@oss.qualcomm.com>
- <94b75177-9401-4e0c-966b-5847a29cb6f7@linaro.org>
- <427548c0-b0e3-4462-a15e-bd7843f00c7f@oss.qualcomm.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <427548c0-b0e3-4462-a15e-bd7843f00c7f@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250717164053.284969-1-me@brighamcampbell.com>
+ <20250717164053.284969-3-me@brighamcampbell.com> <CAD=FV=Vrp9MM_5de10sV-TC_mp-D7en9gjU8DBoD6mBrRvF2eg@mail.gmail.com>
+ <f0d300fc-0141-4eab-a888-d1d32778f5de@tecnico.ulisboa.pt> <DBGPVFN5DTGU.5UTP35ALYS2Q@brighamcampbell.com>
+ <73686985-27c4-4a4f-8b75-18df112367a7@tecnico.ulisboa.pt>
+In-Reply-To: <73686985-27c4-4a4f-8b75-18df112367a7@tecnico.ulisboa.pt>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 21 Jul 2025 08:46:59 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=Xbijn6j9Oxc88k3iq+wSF9bV76X6uw4ADWWxwR+q=o0w@mail.gmail.com>
+X-Gm-Features: Ac12FXwZOEsXzYGcRcET3f78cuk2K33ah-CaSaDSzBavG_qBk9uaa3AvVsHX2XQ
+Message-ID: <CAD=FV=Xbijn6j9Oxc88k3iq+wSF9bV76X6uw4ADWWxwR+q=o0w@mail.gmail.com>
+Subject: Re: [PATCH v4 2/4] drm/panel: jdi-lpm102a188a: Fix bug and clean up driver
+To: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+Cc: Brigham Campbell <me@brighamcampbell.com>, tejasvipin76@gmail.com, 
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev, 
+	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 15/07/2025 11:33, Konrad Dybcio wrote:
-> On 7/15/25 11:20 AM, Vladimir Zapolskiy wrote:
->> On 7/15/25 12:01, Konrad Dybcio wrote:
->>> On 7/15/25 8:35 AM, Vladimir Zapolskiy wrote:
->>>> On 7/15/25 03:13, Bryan O'Donoghue wrote:
->>>>> On 14/07/2025 16:30, Vladimir Zapolskiy wrote:
->>>>>>>
->>>>>>> I think that is genuinely something we should handle in camss-csid.c
->>>>>>> maybe with some meta-data inside of the ports/endpoints..
->>>>>>>
->>>>>>
->>>>>> This is a CSIPHY property, a CSIPHY hardware configuration and a wiring
->>>>>> of sensors to a CSIPHY. Where is the relation to CSID here? There is no.
->>>>>
->>>>> All the PHY really needs to know is the # of lanes in aggregate, which
->>>>> physical lanes to map to which logical lanes and the pixel clock.
->>>>>
->>>>> We should add additional support to the Kernel's D-PHY API parameters
->>>>> mechanism to support that physical-to-logical mapping but, that's not
->>>>> required for this series or for any currently know upstream user of CAMSS.
->>>>>
->>>>>> Please share at least a device tree node description, which supports
->>>>>> a connection of two sensors to a single CSIPHY, like it shall be done
->>>>>> expectedly.
->>>>> &camss {
->>>>>         port@0 {
->>>>>             csiphy0_lanes01_ep: endpoint0 {
->>>>>                 data-lanes = <0 1>;
->>>>>                 remote-endpoint = <&sensor0_ep>;
->>>>>             };
->>>>>
->>>>>             csiphy0_lanes23_ep: endpoint0 {
->>>>>                 data-lanes = <2 3>;
->>>>>                 remote-endpoint = <&sensor1_ep>;
->>>>>             };
->>>>>          };
->>>>> };
->>>>
->>>> Don't you understand that this is broken?.. That's no good.
->>>>
->>>> Please listen and reread the messages given to you above, your proposed
->>>> "solution" does not support by design a valid hardware setup of two
->>>> sensors connected to the same CSIPHY.
->>>>
->>>> I would propose to stop force pushing an uncorrectable dt scheme, it
->>>> makes no sense.
->>>
->>> If all you're asking for is an ability to grab an of_graph reference
->>> from the camss (v4l2) driver, you can simply do something along the
->>> lines of of_graph_get_remote_port(phy->dev->of_node)
->>>
->>
->> It's not about the driver specifics, my comment is about a proper
->> hardware description in dts notation, please see the device tree node
->> names.
-> 
-> I'm a little lost on what you're trying to argue for..
-> 
-> I could make out:
-> 
-> 1. "the phy should be a multimedia device"
-> 2. "There is no ports at all, which makes the device tree node unusable,
->    since you can not provide a way to connect any sensors to the phy."
-> 
-> I don't really understand #1.. maybe that could be the case if the PHY
-> has a multitude of tunables (which I don't know if it does, but wouldn't
-> be exactly surprised if it did) that may be usecase/pipeline-specific
-> 
-> As for #2, I do think it makes sense to connect the sensors to the PHY,
-> as that's a representation of electrical signals travelling from the
-> producer to the consumer (plus the data passed in e.g. data-lanes is
-> directly related to the PHY and necessarily consumed by its driver)
+Hi,
 
-The port/endpoint should represent the data flow, and if the signal is the following:
+On Sun, Jul 20, 2025 at 4:19=E2=80=AFAM Diogo Ivo <diogo.ivo@tecnico.ulisbo=
+a.pt> wrote:
+>
+> On 7/20/25 8:50 AM, Brigham Campbell wrote:
+> > On Sat Jul 19, 2025 at 11:10 AM MDT, Diogo Ivo wrote:
+> >>> nit: can just be this:
+> >>>
+> >>> struct mipi_dsi_multi_context dsi_ctx =3D {};
+> >>
+> >> I am not an expert here but I was under the impression that this is on=
+ly
+> >> valid with C23 while the kernel is written in C11. Is there something =
+I
+> >> am missing?
+> >>
+> >> Diogo
+> >
+> > You're right, C23 was the first standard to bless the usage of the empt=
+y
+> > initializer, ` =3D {};`, but if I'm right, it's been a GNU extension lo=
+ng
+> > before C11. At risk of being pedantic, I'll draw attention to line 580
+> > of the kernel's root Makefile:
+> >
+> > KBUILD_CFLAGS +=3D -std=3Dgnu11
+> >
+> > The kernel is technically written in the GNU variant of C11, extensions
+> > and all. In fact, the first patch of this series uses optional variadic
+> > macro arguments, which aren't a part of any official C standard as far
+> > as I'm aware.
+> >
+> > In any case, a simple grep for some forms of the empty initializer show=
+s
+> > usages all over the drm subsystem.
+> >
+> > That said, I don't know if GNU extensions are formally documented or
+> > where one would look for that information. Importantly, I am by far the
+> > junior as far as kernel coding is concerned. I yield to your experience
+> > and I'm happy to change this initialization in v6 if that's best.
+>
+> I found the documentation here [1], and it does state regarding designate=
+d
+> initializers that "Omitted fields are implicitly initialized the same as =
+for
+> objects that have static storage duration." so I take it that no v6 is
+> needed :)
+>
+> Diogo
+>
+> [1]:
+> https://gcc.gnu.org/onlinedocs/gcc/Designated-Inits.html#Designated-Inits
 
-sensor -> csiphy -> csid
+Right. I think the key here is (as Brigham said) `git grep '=3D {}'`
+shows countless hits in the kernel. :-) ...so we're not introducing
+any new compiler requirement here with your patch. ;-)
 
-and in addition the "csiphy" can handle up to two sensors by splitting the lanes,
-then the DT should take this in account and effectively the "csiphy" should be
-an element of the graph and should take it's configuration from the DT graph
-to properly configure the lanes configuration.
-
-While it can feel simpler to simply move the csiphy code into standalone
-PHY device and just replace camss code with phy_*() calls, it doesn't
-solve the proper representation on the data flow and doesn't fix how
-the combo mode could be handled.
-
-The solution shared by Vladimir (I think the "csiphy" node should be out
-of the camss node), solves all this and will be able to handle more
-complex situations with shared resources between "csiphys" and start
-moving elements out of the gigantic camss node.
-
-Neil
-
-
-> 
-> Konrad
-> 
-
+-Doug
 
