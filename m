@@ -1,117 +1,116 @@
-Return-Path: <linux-kernel+bounces-738846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD0F4B0BE19
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:52:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 115D4B0BE1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:52:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4844F18909E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:52:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 297B417C14A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6702B285050;
-	Mon, 21 Jul 2025 07:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0642853FA;
+	Mon, 21 Jul 2025 07:52:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VMss2JQT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b="V5FXtHiM"
+Received: from sg-1-23.ptr.blmpb.com (sg-1-23.ptr.blmpb.com [118.26.132.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5255F222590;
-	Mon, 21 Jul 2025 07:52:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AFB2285075
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 07:52:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753084334; cv=none; b=OaeVjoNrJgX+CP3D0usZ8ev8fHIJTB8Q0o4Nue20FNRZl9jzcyAp3Hz5QtF7rTlDWRicclsyiB7CDXc8hGyjcm54Z9Lr3yxLNse+BoyXZ0PCIKe+Q9ND7iZZDt75tMG0e6JH1mEBJ/QNOQ7pqqTyijB1LV5ezNY/D7GJH0rseGc=
+	t=1753084356; cv=none; b=YhH6Au5eV6PhcHTz668ypy0PT0Ly78aT82IeiQ3+Y4jJFUHLu5e0P23z1rstPoKOnjBdh3FkSKBz3py2gmeokf76wsICzXMm2aJZHbTCEcgLnjk2nHwPm2xA4sFFTKsvU1ipathTN47ed7qtHqESHa7jMGZvr5U2aUFV+BLTXOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753084334; c=relaxed/simple;
-	bh=S81qr9hFOduDkWryR/8Zook9qEaCBaFDKK8h/sGo2HY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sMBj8axarmBFXiBkzR5wPg1NZ+NE5JoyYtF2WWgH7ajcImhAohXEKfvn2A6e+/bMgr9ADoNcw0z2ldUruYHJBx8ntIhTzbvvuNiAK29tgpqXHSuDPh2EUzYt1Of0NnCNV8bCMEBmPoEjoW6iIqdM1VoCg1F2iYKQ8V+UHrA8TX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VMss2JQT; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753084333; x=1784620333;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=S81qr9hFOduDkWryR/8Zook9qEaCBaFDKK8h/sGo2HY=;
-  b=VMss2JQTMY5hbXmJlSbFyXVdGLQnBmvOjFzQgzlmnn5D72TrB92WQfc3
-   crZzT8b8HvqbpZs+X2P5pAKJ/2w0p21cXaala9BRdC/7/Qqu6K6ZS5vAo
-   REDevpLgS4KWtFe6kCMbgvFoM/p2dio3TNEK4PYlVRFuYlpWlGQa8fC6h
-   japYvjh9hT81M3zBX5/PQm4tKWz6maiS+Y0RHZGLYTbqQbGIU+9DN6jwq
-   9kQA3y5nVE13qPYHfpCgMtv8V701uUAfCfQ1aYq+PffuVEYoo90gvq1qD
-   cZv2oz2l+sK8Wgzp0h1t3eTZTWrDS9xwVG44l+6s1Gp37JxVr2Rchxhf5
-   w==;
-X-CSE-ConnectionGUID: 1p3K8cpmSvGxJB/HMUmDfw==
-X-CSE-MsgGUID: ImGINN3LSHOOkCrk8WqzUQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11498"; a="55249411"
-X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
-   d="scan'208";a="55249411"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 00:52:12 -0700
-X-CSE-ConnectionGUID: o0q7XRb0RPitcVimaam3ZA==
-X-CSE-MsgGUID: khK44DSEQ5igeY5q8Fawhw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
-   d="scan'208";a="182474746"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 00:52:07 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1udlJb-0000000HHid-2Qi4;
-	Mon, 21 Jul 2025 10:52:03 +0300
-Date: Mon, 21 Jul 2025 10:52:03 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: ">" <sanjaysuthar661996@gmail.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-iio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org, ribalda@kernel.org,
-	jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
-	andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	neil.armstrong@linaro.org, khilman@baylibre.com,
-	jbrunet@baylibre.com, martin.blumenstingl@googlemail.com
-Subject: Re:
-Message-ID: <aH3xo8PeReb0s-QD@smile.fi.intel.com>
-References: <CADU64hCr7mshqfBRE2Wp8zf4BHBdJoLLH=VJt2MrHeR+zHOV4w@mail.gmail.com>
- <20250720182627.39384-1-sanjaysuthar661996@gmail.com>
+	s=arc-20240116; t=1753084356; c=relaxed/simple;
+	bh=piE1KZipH6AhPultPptmn7fkpUU6EewB4qN0e6j/ZU8=;
+	h=To:Cc:From:Subject:References:In-Reply-To:Date:Content-Type:
+	 Message-Id:Mime-Version; b=iCzUN6IYjkZ1DfmTM/LL/BKhb7VyLGdJov/9OdXcdT+9elAOSusUYSVPnKFKj9ZCGVy8lMGdiIY86n3O1ylW33zs5suTOtrfU2xAO/4L7W+C9FR1BPJF14cJVj/lmHHmddLfIaH8GPiUSlb95qZJ6kKgxc7xXuEleK+ce3xmaVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com; spf=pass smtp.mailfrom=lanxincomputing.com; dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b=V5FXtHiM; arc=none smtp.client-ip=118.26.132.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lanxincomputing.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=s1; d=lanxincomputing-com.20200927.dkim.feishu.cn; t=1753084336;
+  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
+ reply-to:content-type:mime-version:in-reply-to:message-id;
+ bh=iPv+sitKDBk+AkqJ/K8rYIXbyZ6KkpKpVwlxt13ZGCw=;
+ b=V5FXtHiMAnfws8mMWpFs/k78FHEa3CiLXqsQDMWLAgyf++RVjq6p+03bXskDotQLhCQ6kQ
+ RE0dOxFq4HK6RkPMb7gSdATJsfGLzHvnVUonnSVMvWE/HIknMGFYmixcd+gcow4bDK5yYV
+ v6Pxc2VuelawTTLxITc0Xpz1Bx/UbAWge3k6HjJ7O4EmMROqzddFK03qF0epNxZaKR2obY
+ Ruw3weJM17rCqwSX6ugSa8bt7PBDQoRNpZXiSyVEI6KMwJzgsJawDmoDCOPJlDtniVHqj0
+ FK/SDPEe9grkOkIlvWyyzXRB2HjAi/PPRcIvAp7pB87UbGk7bhYO1SusZs1xNQ==
+To: "Chunyan Zhang" <zhangchunyan@iscas.ac.cn>, 
+	"Paul Walmsley" <paul.walmsley@sifive.com>, 
+	"Palmer Dabbelt" <palmer@dabbelt.com>, 
+	"Albert Ou" <aou@eecs.berkeley.edu>, "Alexandre Ghiti" <alex@ghiti.fr>, 
+	"Charlie Jenkins" <charlie@rivosinc.com>, "Song Liu" <song@kernel.org>, 
+	"Yu Kuai" <yukuai3@huawei.com>
+Cc: <linux-riscv@lists.infradead.org>, <linux-raid@vger.kernel.org>, 
+	<linux-kernel@vger.kernel.org>, "Chunyan Zhang" <zhang.lyra@gmail.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+X-Lms-Return-Path: <lba+2687df1ae+d57f97+vger.kernel.org+liujingqi@lanxincomputing.com>
+From: "Nutty Liu" <liujingqi@lanxincomputing.com>
+Subject: Re: [PATCH V2 1/5] raid6: riscv: Clean up unused header file inclusion
+References: <20250711100930.3398336-1-zhangchunyan@iscas.ac.cn> <20250711100930.3398336-2-zhangchunyan@iscas.ac.cn>
+In-Reply-To: <20250711100930.3398336-2-zhangchunyan@iscas.ac.cn>
+Date: Mon, 21 Jul 2025 15:52:11 +0800
+Received: from [127.0.0.1] ([116.237.111.137]) by smtp.feishu.cn with ESMTPS; Mon, 21 Jul 2025 15:52:13 +0800
+X-Original-From: Nutty Liu <liujingqi@lanxincomputing.com>
+Content-Type: text/plain; charset=UTF-8
+Message-Id: <5c879527-221e-45df-86ea-b564ee49c473@lanxincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250720182627.39384-1-sanjaysuthar661996@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 
-On Sun, Jul 20, 2025 at 11:56:27PM +0530, > wrote:
-> Changes in v2:
-> - Fixed commit message grammar
-> - Fixed subject line style as per DT convention
-> - Added missing reviewers/maintainers in CC
-> 
-> From 5c00524cbb47e30ee04223fe9502af2eb003ddf1 Mon Sep 17 00:00:00 2001
-> From: sanjay suthar <sanjaysuthar661996@gmail.com>
-> Date: Sun, 20 Jul 2025 01:11:00 +0530
-> Subject: [PATCH v2] dt-bindings: cleanup: fix duplicated 'is is' in YAML docs
-> 
-> Fix minor grammatical issues by removing duplicated "is" in two devicetree
-> binding documents:
-> 
-> - net/amlogic,meson-dwmac.yaml
-> - iio/dac/ti,dac7612.yaml
+On 7/11/2025 6:09 PM, Chunyan Zhang wrote:
+> These two C files don't reference things defined in simd.h or types.h
+> so remove these redundant #inclusions.
+>
+> Fixes: 6093faaf9593 ("raid6: Add RISC-V SIMD syndrome and recovery calculations")
+> Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+> ---
+>   lib/raid6/recov_rvv.c | 2 --
+>   lib/raid6/rvv.c       | 3 ---
+>   2 files changed, 5 deletions(-)
 
-This mail is b0rken.
+Reviewed-by: Nutty Liu <liujingqi@lanxincomputing.com>
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Thanks,
+Nutty
+> diff --git a/lib/raid6/recov_rvv.c b/lib/raid6/recov_rvv.c
+> index f29303795ccf..500da521a806 100644
+> --- a/lib/raid6/recov_rvv.c
+> +++ b/lib/raid6/recov_rvv.c
+> @@ -4,9 +4,7 @@
+>    * Author: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+>    */
+>   
+> -#include <asm/simd.h>
+>   #include <asm/vector.h>
+> -#include <crypto/internal/simd.h>
+>   #include <linux/raid/pq.h>
+>   
+>   static int rvv_has_vector(void)
+> diff --git a/lib/raid6/rvv.c b/lib/raid6/rvv.c
+> index 7d82efa5b14f..b193ea176d5d 100644
+> --- a/lib/raid6/rvv.c
+> +++ b/lib/raid6/rvv.c
+> @@ -9,11 +9,8 @@
+>    *	Copyright 2002-2004 H. Peter Anvin
+>    */
+>   
+> -#include <asm/simd.h>
+>   #include <asm/vector.h>
+> -#include <crypto/internal/simd.h>
+>   #include <linux/raid/pq.h>
+> -#include <linux/types.h>
+>   #include "rvv.h"
+>   
+>   #define NSIZE	(riscv_v_vsize / 32) /* NSIZE = vlenb */
 
