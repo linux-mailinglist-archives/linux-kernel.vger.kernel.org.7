@@ -1,113 +1,104 @@
-Return-Path: <linux-kernel+bounces-739114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 087FFB0C204
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:59:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8249B0C208
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:59:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C7443B2AD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:58:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C55D51894228
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2168C293C6A;
-	Mon, 21 Jul 2025 10:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5789D2900A4;
+	Mon, 21 Jul 2025 10:59:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CZ3EYNJn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LbMatMRi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6397B293C62
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 10:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC40A284685;
+	Mon, 21 Jul 2025 10:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753095423; cv=none; b=DrrtVdLrscG46pa/OQ1qQjlId8Xwo1/vw/sFcspd+RB4JE7MKf2heKXReIW9OnLUpl6khBnooq9BC4SoZIkCjPyga0zkyE1koVpz8ZyYSH/W5GHkODXPKTe+Maz1mg98YUXKKAUGC4qbIJ4rqAFg8uORETVaAF/Vrr5sOcaU15s=
+	t=1753095551; cv=none; b=sRrn0BjHLAcjPK2Nn9rb3jXZkNG1tVxrn1RAnUhb/qOGJEKHF1kJJY+ZWrdcB2zs/HjMgKSb3JgZPekTVW+JY5dn49YGWUhU4zz4Dora8kBj8dsF+WZiZ34lFCHvm5q9Wkr7EWdJ1dK+7/Tpq9nyHu6SUXACXCR0Oywqg2gIbRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753095423; c=relaxed/simple;
-	bh=G4P6/2JTGrggH0efUzuDB2Z/ZXbJ0SjII+o3EJPGz2U=;
+	s=arc-20240116; t=1753095551; c=relaxed/simple;
+	bh=FMePtQn6jTkbhBgFm4Etx1K7tp7K/SsiDFNc/g0Hwvk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E+eFEZ08B6fuNpMg7qrNu7/15SGeCPGR0hDypHOqjYkOx4fCyGdEKTF8alt34frptlEFYYxgfP5Cct8jnMFGKuoTpV/gSrwAwDBJmfhlaH7522NaUgMjVEUCgzwF07qk9Ds5nRdqkSFrKVjieqmCEjdHMIOTwexPLf3ZWFLtBNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CZ3EYNJn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F39CC4CEED;
-	Mon, 21 Jul 2025 10:57:00 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=F4svirkQWX9ffJU5UgrsZ0nNoiS0huaxP42XgRYkqN2FtHusw+9uRwKH4hSe+3vOzc+ggTf2Z66pwqUnTvPDfySfF+DCzsSEvc5sZqR/U5s+0C+34jxII/3+/CnAltPRJwIybWRl0P6IihJZBB2fdvZsm9qcPc7NBLcvyqZZUqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LbMatMRi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30B7EC4CEED;
+	Mon, 21 Jul 2025 10:59:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753095422;
-	bh=G4P6/2JTGrggH0efUzuDB2Z/ZXbJ0SjII+o3EJPGz2U=;
+	s=k20201202; t=1753095550;
+	bh=FMePtQn6jTkbhBgFm4Etx1K7tp7K/SsiDFNc/g0Hwvk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CZ3EYNJnCZsdoKuUkT8rs31DLTwT/e6QucWVHW/x4X+RyHAEW0wl++6/dbugAqXdJ
-	 QFD8+wE5KYraHyjzq3HmYqD7sPfzooBmkfY0ViB3a5H4wIiJEU3R2mxOFOuIO5jNBO
-	 zv/sYKkHSg9/lkngYDcsMdXXxH2iIsf9/o0P2xVPjOlEfvzcTthnjzX6ochIw8RLIO
-	 xim3moRP8OZiWMpfuMR/dILib1YoQWJS8nT1dVEg88mp2V76p4gpT+JO6iH0B3OXYB
-	 tVYoj9XUSZ19aIfr6q4ctqUWOhWdoGFm5sbfmZsic5AA35NTirp5uFfsTJhYY7aNR9
-	 /bUj5GkI9GOTQ==
-Date: Mon, 21 Jul 2025 16:26:57 +0530
-From: Sumit Garg <sumit.garg@kernel.org>
-To: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-Cc: jens.wiklander@linaro.org, op-tee@lists.trustedfirmware.org,
-	linux-kernel@vger.kernel.org, akhileshpatilvnit@gmail.com,
-	skhan@linuxfoundation.org
-Subject: Re: [PATCH] drivers: tee: improve sysfs interface by using
- sysfs_emit()
-Message-ID: <aH4c-bAN28Gmq86k@sumit-X1>
-References: <aHpohUxxSH42w16U@bhairav-test.ee.iitb.ac.in>
+	b=LbMatMRiG/wt7Y6K8SiNC9ZTtWAyjlqz46vXAimjVIEoQvE59pjnysLE1le1swqFE
+	 uOYzk1Ma/ZIikQgW3txCdbCp+3ediJmkuE4Buv7J6EtG/SWrRNopblO6w+ToTmEm1H
+	 z42J9eUeTBKoiYKCPlh9Jh5KHgRwLe7Rz4rOe1kY6FqaVpTMXiFjvvCrsACvVRqmDf
+	 ygW3GvIg03DhJnKLlx+Dh3sASNdTxp31F1s1Y41D8s2EwZ0q9PE1Ijv6lPiUbhq13K
+	 dldt8Qe720ZchdCoAMd3wI9H8T06hp4Kvucf7BcF6/8iEpSylLCI1NUmk9E/dVMoMA
+	 vTTjzBXyk0m+w==
+Date: Mon, 21 Jul 2025 16:29:01 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] PCI: qcom: Move qcom_pcie_icc_opp_update() to
+ notifier callback
+Message-ID: <ekg5lpnqeer5j3vka3rhfh5sf6sid4gnr5bzyxysjqfftxrjcy@bitmxfnhbe5f>
+References: <20250714-aspm_fix-v1-0-7d04b8c140c8@oss.qualcomm.com>
+ <20250714-aspm_fix-v1-2-7d04b8c140c8@oss.qualcomm.com>
+ <b2f4be6c-93d9-430b-974d-8df5f3c3b336@oss.qualcomm.com>
+ <jdnjyvw2kkos44unooy5ooix3yn2644r4yvtmekoyk2uozjvo5@atigu3wjikss>
+ <eccae2e8-f158-4501-be21-e4188e6cbd84@oss.qualcomm.com>
+ <qg4dof65dyggzgvkroeo2suhhnvosqs3dnkrmsqpbf4z67dcht@ltzirahk2mxd>
+ <aH4CCUY8RRtUywmE@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aHpohUxxSH42w16U@bhairav-test.ee.iitb.ac.in>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aH4CCUY8RRtUywmE@hovoldconsulting.com>
 
-On Fri, Jul 18, 2025 at 09:00:13PM +0530, Akhilesh Patil wrote:
-> Replace scnprintf() with sysfs_emit() while formatting buffer that is
-> passed to userspace as per the recommendation in
-> Documentation/filesystems/sysfs.rst. sysfs _show() callbacks should use
-> sysfs_emit() or sysfs_emit_at() while returning values to the userspace.
-> This change does not impact functionality, but aligns with sysfs
-> interface usage guidelines for the tee driver.
+On Mon, Jul 21, 2025 at 11:02:01AM GMT, Johan Hovold wrote:
+> On Wed, Jul 16, 2025 at 12:16:42PM +0530, Manivannan Sadhasivam wrote:
+> > On Wed, Jul 16, 2025 at 10:24:23AM GMT, Krishna Chaitanya Chundru wrote:
 > 
-> Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-> ---
->  drivers/tee/optee/core.c | 2 +-
->  drivers/tee/tee_core.c   | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-
-Nice catch.
-
-Reviewed-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
-
--Sumit
-
+> > > How about using enable_device in host bridge, without pci_enable_device
+> > > call the endpoints can't start the transfers. May be we can use that.
+> > 
+> > Q: Who is going to call pci_enable_device()?
+> > A: The PCI client driver
+> > 
+> > This is same as relying on BUS_NOTIFY_BIND_DRIVER notifier.
 > 
-> diff --git a/drivers/tee/optee/core.c b/drivers/tee/optee/core.c
-> index c75fddc83576..ce44e3498d37 100644
-> --- a/drivers/tee/optee/core.c
-> +++ b/drivers/tee/optee/core.c
-> @@ -72,7 +72,7 @@ static ssize_t rpmb_routing_model_show(struct device *dev,
->  	else
->  		s = "user";
->  
-> -	return scnprintf(buf, PAGE_SIZE, "%s\n", s);
-> +	return sysfs_emit(buf, "%s\n", s);
->  }
->  static DEVICE_ATTR_RO(rpmb_routing_model);
->  
-> diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
-> index acc7998758ad..944f913f8592 100644
-> --- a/drivers/tee/tee_core.c
-> +++ b/drivers/tee/tee_core.c
-> @@ -977,7 +977,7 @@ static ssize_t implementation_id_show(struct device *dev,
->  	struct tee_ioctl_version_data vers;
->  
->  	teedev->desc->ops->get_version(teedev, &vers);
-> -	return scnprintf(buf, PAGE_SIZE, "%d\n", vers.impl_id);
-> +	return sysfs_emit(buf, "%d\n", vers.impl_id);
->  }
->  static DEVICE_ATTR_RO(implementation_id);
->  
-> -- 
-> 2.34.1
+> It seems to me that enable_device() may be a better fit if we're only
+> going to enable ASPM for devices with a driver (or when enabled through
+> sysfs).
 > 
+> PCI core will already have placed the device in D0, and this avoids
+> dealing with notifiers.
+> 
+
+I'm planning to drop this series in favor of this patch (with one
+yet-to-be-submitted patch for pcie-qcom on top):
+
+https://lore.kernel.org/linux-pci/20250720190140.2639200-1-david.e.box@linux.intel.com/
+
+This patch is more elegant compared to this series and also avoids the issue
+we are discussing.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
