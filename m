@@ -1,247 +1,337 @@
-Return-Path: <linux-kernel+bounces-738704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44689B0BC1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:47:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 605E2B0BC22
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:49:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A36B7AB9FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 05:46:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C4103AB774
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 05:49:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BA311F2BBB;
-	Mon, 21 Jul 2025 05:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="R6sgbtT1"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F807F477;
-	Mon, 21 Jul 2025 05:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BF8E21C178;
+	Mon, 21 Jul 2025 05:49:25 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0825D2F41;
+	Mon, 21 Jul 2025 05:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753076853; cv=none; b=jwyuhrmZ0Sowq7hh/1S8PLpu++GWhSAfmqQZOLF1RrkxujJ97yMSjG2ZD+yCNhF7N3AmQRf6TJ3J9V/82XX1OOvgpgrel+8v4RFdPeXOv3F0UQFwHw/8971NndKN4QBe0EYV/Klqx6I4YYyCKfOFiWwdDrAFT+TC57z3bp3vJ18=
+	t=1753076964; cv=none; b=SJc7VCctUHPjyw20VdPx9+aeDb+70zwjwqtjB+DnWZi3iG0VB+UcDsiX2SuWtQDek9qAwYo4VxGWTsobPRJeoXmPISEuNNldB5mxVQz+dYjR9ttO3eEuP3Igmq1viTZdD8Otc52g2oe5hizIHNHIjY+GtYr+3NnGlhBw/+4Sur0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753076853; c=relaxed/simple;
-	bh=Y6O1LeXawfH6jqCiha75wKFY04tLvXmKtw8IkQsRZzE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RIooPudWaPGRUY7WB/yxPXnhGhRa1bCBZkS80lLiG3osxzuMmu+DPHeBreNV/wTFb86M53dMj9keYLSmQ5KrzxU8rGxwnwM22sAnaL04+oqav6DWyPX/Ux8+tON7ofS+zAZ9FfUJCgsrYRGGhkqpmxnAD/i4kWsF7ZNY4N8ihvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=R6sgbtT1; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1753076842;
-	bh=Y6O1LeXawfH6jqCiha75wKFY04tLvXmKtw8IkQsRZzE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=R6sgbtT1j4PydMnb9LKCtJbvY/h+dBwoJCRjJfAknzIQNRrlcOiG3Rk7yOIjryhEo
-	 oT7IdyLx4C46fpqYi16JO1SXk+maA3prPGcpfO41dZKiPy/jt/7nmEClDczTMthbjO
-	 f5rn1uQfLT9p/KaXVj+L7P7QFkUwyCRq8fB7KJnD12SvtbzJDgF6K2DqpC6eNNMXSc
-	 R4tdiCX2+c7lD3XeADrFBiihDgbCH+kYyNMl57OF7K1/z6GCmvW19PSFZ3/ayya0Kj
-	 Sl9U4R7JPUywoq3uTD9VyR8AzQ3zrX9cT/8qIK4KOr7oEry2iagdrQ+7cmqWFkzuq2
-	 qyC1Q3wjkaoUw==
-Received: from [192.168.50.250] (unknown [171.76.80.183])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: vignesh)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id B508E17E0F66;
-	Mon, 21 Jul 2025 07:47:19 +0200 (CEST)
-Message-ID: <bcff3bed-0695-45fa-8f62-453878b6075f@collabora.com>
-Date: Mon, 21 Jul 2025 11:17:02 +0530
+	s=arc-20240116; t=1753076964; c=relaxed/simple;
+	bh=TARJJoAbi4u0J3Yl4vtNCmMWIScg1FJNbwOZRSclaO8=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=fLt7oZngF/gP7LG2Jmrq1srYr3mPGz/qtDUTskppMNwJZimDlEfn3zoWWLxNsJMmfCnM3UeJIaITR2s2HTmPKx6rDXUrapQy1Xx3/HY8x9GtGiQ+tbnfGOmlL+d6YnrAuP5xBs45GRPyBGnINJkUQqshpzv41+356JDNVwOL1Vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-669ff7000002311f-e4-687dd4da70c6
+From: Byungchul Park <byungchul@sk.com>
+To: linux-mm@kvack.org,
+	netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel_team@skhynix.com,
+	harry.yoo@oracle.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	davem@davemloft.net,
+	kuba@kernel.org,
+	hawk@kernel.org,
+	john.fastabend@gmail.com,
+	sdf@fomichev.me,
+	saeedm@nvidia.com,
+	leon@kernel.org,
+	tariqt@nvidia.com,
+	mbloch@nvidia.com,
+	andrew+netdev@lunn.ch,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	akpm@linux-foundation.org,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	rppt@kernel.org,
+	surenb@google.com,
+	mhocko@suse.com,
+	horms@kernel.org,
+	jackmanb@google.com,
+	hannes@cmpxchg.org,
+	ziy@nvidia.com,
+	ilias.apalodimas@linaro.org,
+	willy@infradead.org,
+	brauner@kernel.org,
+	kas@kernel.org,
+	yuzhao@google.com,
+	usamaarif642@gmail.com,
+	baolin.wang@linux.alibaba.com,
+	almasrymina@google.com,
+	toke@redhat.com,
+	asml.silence@gmail.com,
+	bpf@vger.kernel.org,
+	linux-rdma@vger.kernel.org
+Subject: [PATCH] mm, page_pool: introduce a new page type for page pool in page type
+Date: Mon, 21 Jul 2025 14:49:03 +0900
+Message-Id: <20250721054903.39833-1-byungchul@sk.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAAzXRa0hTcRjHcf/n/HfOabU4LamTBdLKAqErSU8UZe/+b4JAI6oXNfLYRjpt
+	XtJqsdIsrZlpUrlFmrjmBY15m8tu21KzQNGs46W8hAZqWmrDW5havfvAl+f35uFopYT9OK0u
+	VtTr1BEqRo7l35flben4YNBsvzq9AixlJQwUTybAkx6HDCxFVQgmpjpZmHteh2DcU8/AkHsM
+	QX6elwZLUzKGX2XTNPTX9bFQbD8E3dYBDLXXq2nou93AgCl5hobnUyMsXHXYKLCUG1lorkqX
+	wd3pAhqqjT0stDotDHwpmZPBgMuE4W1OIYYf2R4autODoS53FXjfDSPwlFVT4L31kIG2B04K
+	slpyGfia3I2gxd2HIXv2BgPmK+kIZibn10YyJmRgfvOFDQ4k7uFRmlQUtlNEetFIkZqczyzJ
+	tceRclsgSZNaaGIvSmWIfSyTJV0faxnScH8Gk5rePaTGMU4RU9IIQ372d2Ay+qKNObzyuHxf
+	mBihjRf12/afkmvmOsXo7wcTBrMrkRFNBKWhJZzA7xLKnd9k/235UUovmOE3C5I0tWhffrtg
+	y56Yt5yj+QpWKCmTFsNKPlR4mOKmFoz5AOH1g2G0YAUfJKTeafw36i8UP321eCzwJk5oqnVS
+	f8Ma4bVNwhloaS7yKUJKrS4+Uq2N2LVVk6jTJmw9HRVpR/P/thpmTzjQWHOIC/EcUi1TRGOD
+	RilTx8ckRrqQwNEqXwWpv6BRKsLUiRdEfdRJfVyEGONCazmsWq3Y6T0fpuTPqGPFs6IYLer/
+	V4pb4mdEl8TVheblB6Sk3Y7e/E3h9RUUyXhJ1p3uuqd75OJ8FOea5I/9Pe8rrYf9jx1x9kYS
+	Q8rUp2EvVx93NDPg4u+T2Np0aCNuKSj1PM2r6rh90NwqxDKPDRu87tGcarN/0N4ELiokNLXk
+	2dD7nqz1F4+1X6YHjY/anTcnr20K351mUuEYjXpHIK2PUf8BcCp0b+sCAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAAzXRa0hTcRzGcf87Z+ccV4ODWR40UEYRWKlRo19aoRD0L1ILgigQXXpsQ6e2
+	qakgaGpe0OVtlTrBCM0bWdN0ilpt5rWLaMrUvGQoVKam07yRqdG7D3zhefMwhE0Tac8owiJ5
+	VZgsVEKJSJGPR9LRoU/xcrcRw0nQ1VRTULUSA08nDELQVdYjsKyO0LDZ0o5gsa2Dgh+mBQRP
+	Hi8ToPuYTMJSzRoBU+2TNFTpvWG8bJqE5tQGAibvd1KQlbxOQMvqLA13DeUC0NUm0GAq7hJC
+	b71GCPlrpQQ0JEzQ0N+ko2CselMI08YsEroKK0iY17YRMK7xhPaSfbDcM4OgraZBAMuZxRQM
+	FDQJIK+vhIKvyeMI+kyTJGg30igoStQgWF/ZWpvNtgih6O0Y7XkYm2bmCFxXMSTA5tZuAW4s
+	HKVxiT4K15Y74wxzH4H1lekU1i/k0vjzYDOFOx+tk7jxyyncaFgU4KykWQr/mhom8VzrAHXZ
+	9obodBAfqojmVa5nA0TyzRE+4qdXzHftS5SALNIMZM1w7AlON/+M2DbFHuLM5tUd27JuXLnW
+	smURQ7B1NFddY94Je9irXPE9k2DbJHuQe1Mwg7YtZqVcek638N+oI1f1/DWRjZgSZFWJbBVh
+	0UqZIlTqog6Rx4YpYlwCw5V6tPVoWfxGjgFZ+s8bEcsgyW5xBBkvtxHKotWxSiPiGEJiK8Yd
+	cXIbcZAsNo5XhfurokJ5tRE5MKTETnzxGh9gw96SRfIhPB/Bq/5XAWNtn4CsfCtEuwIf2rGj
+	G5lT7s3lifWXrtj7PghRHe9cchJ9SAk+MOj/+1yIKWXY6O46KfUT21s3N/r0vPpTkern1ZSX
+	kY89ilbeeTh2LSt72zRIeHPYwSmtMLiUQ52p700v9sdJz6SV5Xrf1hy5oJRprhdr/cHOM/Xb
+	3juVWWKvscIxCamWy445Eyq17C8y1HQ5zQIAAA==
+X-CFilter-Loop: Reflected
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 5/7] drm/ci: uprev IGT
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com,
- helen.fornazier@gmail.com, airlied@gmail.com, simona.vetter@ffwll.ch,
- robdclark@gmail.com, guilherme.gallo@collabora.com,
- sergi.blanch.torne@collabora.com, valentine.burley@collabora.com,
- lumag@kernel.org, linux-mediatek@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-rockchip@lists.infradead.org,
- amd-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
- intel-gfx@lists.freedesktop.org, virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250718105407.32878-1-vignesh.raman@collabora.com>
- <20250718105407.32878-6-vignesh.raman@collabora.com>
- <7c6suvc6quwwxni2nsos65btzim2lbv7f2u6mz5qbupzpmpzgb@g46wg63ubr6l>
-Content-Language: en-US
-From: Vignesh Raman <vignesh.raman@collabora.com>
-In-Reply-To: <7c6suvc6quwwxni2nsos65btzim2lbv7f2u6mz5qbupzpmpzgb@g46wg63ubr6l>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
 Hi,
 
-On 18/07/25 18:24, Dmitry Baryshkov wrote:
-> On Fri, Jul 18, 2025 at 04:23:57PM +0530, Vignesh Raman wrote:
->> Uprev IGT to the latest version and update expectation files.
->>
->> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
->> ---
->>   drivers/gpu/drm/ci/gitlab-ci.yml              |   2 +-
->>   .../gpu/drm/ci/xfails/amdgpu-stoney-fails.txt |   2 +
->>   .../drm/ci/xfails/amdgpu-stoney-flakes.txt    |   7 ++
->>   drivers/gpu/drm/ci/xfails/i915-amly-fails.txt |  11 +-
->>   drivers/gpu/drm/ci/xfails/i915-apl-fails.txt  |   2 +
->>   drivers/gpu/drm/ci/xfails/i915-cml-fails.txt  |  29 +----
->>   drivers/gpu/drm/ci/xfails/i915-cml-flakes.txt |   7 ++
->>   drivers/gpu/drm/ci/xfails/i915-glk-fails.txt  |   8 +-
->>   drivers/gpu/drm/ci/xfails/i915-glk-skips.txt  |  83 ++++++++++++
->>   drivers/gpu/drm/ci/xfails/i915-jsl-fails.txt  |  10 +-
->>   drivers/gpu/drm/ci/xfails/i915-kbl-fails.txt  |   3 +
->>   drivers/gpu/drm/ci/xfails/i915-tgl-fails.txt  |   5 +-
->>   drivers/gpu/drm/ci/xfails/i915-tgl-flakes.txt |   6 +
->>   drivers/gpu/drm/ci/xfails/i915-whl-fails.txt  |   7 +-
->>   .../drm/ci/xfails/mediatek-mt8173-fails.txt   |   5 +-
->>   .../drm/ci/xfails/mediatek-mt8173-flakes.txt  | 119 ++++++++++++++++++
->>   .../drm/ci/xfails/mediatek-mt8183-fails.txt   |   7 +-
->>   .../msm-sc7180-trogdor-kingoftown-fails.txt   |   1 +
->>   ...sm-sc7180-trogdor-lazor-limozeen-fails.txt |   1 +
->>   .../drm/ci/xfails/msm-sm8350-hdk-fails.txt    |   1 +
->>   .../drm/ci/xfails/msm-sm8350-hdk-skips.txt    |  73 +++++++++++
->>   .../drm/ci/xfails/panfrost-mt8183-fails.txt   |   1 +
->>   .../drm/ci/xfails/panfrost-rk3288-fails.txt   |   1 +
->>   .../drm/ci/xfails/panfrost-rk3399-fails.txt   |   1 +
->>   .../drm/ci/xfails/rockchip-rk3288-fails.txt   |  12 +-
->>   .../drm/ci/xfails/rockchip-rk3288-flakes.txt  |  21 ++++
->>   .../drm/ci/xfails/rockchip-rk3399-fails.txt   |   9 +-
->>   .../drm/ci/xfails/rockchip-rk3399-flakes.txt  |  35 ++++++
->>   .../drm/ci/xfails/virtio_gpu-none-fails.txt   |   4 +
->>   drivers/gpu/drm/ci/xfails/vkms-none-fails.txt |   3 +
->>   drivers/gpu/drm/ci/xfails/vkms-none-skips.txt |   3 +
->>   31 files changed, 416 insertions(+), 63 deletions(-)
->>   create mode 100644 drivers/gpu/drm/ci/xfails/i915-tgl-flakes.txt
->>
->> diff --git a/drivers/gpu/drm/ci/xfails/msm-sc7180-trogdor-kingoftown-fails.txt b/drivers/gpu/drm/ci/xfails/msm-sc7180-trogdor-kingoftown-fails.txt
->> index e4a8f8352cd6..9bf38c077f8e 100644
->> --- a/drivers/gpu/drm/ci/xfails/msm-sc7180-trogdor-kingoftown-fails.txt
->> +++ b/drivers/gpu/drm/ci/xfails/msm-sc7180-trogdor-kingoftown-fails.txt
->> @@ -15,3 +15,4 @@ kms_pipe_crc_basic@compare-crc-sanitycheck-nv12,Fail
->>   kms_plane_alpha_blend@alpha-7efc,Fail
->>   kms_plane_alpha_blend@coverage-7efc,Fail
->>   kms_plane_alpha_blend@coverage-vs-premult-vs-constant,Fail
->> +core_setmaster@master-drop-set-user,Fail
-> 
-> Could you please point out the issue / failure log?
+I focused on converting the existing APIs accessing ->pp_magic field to
+page type APIs.  However, yes.  Additional works would better be
+considered on top like:
 
-Please see the pipeline logs,
-https://gitlab.freedesktop.org/vigneshraman/msm/-/jobs/79793740
-https://gitlab.freedesktop.org/vigneshraman/msm/-/jobs/79793742
+   1. Adjust how to store and retrieve dma index.  Maybe network guys
+      can work better on top.
 
-Let me know if you want me to raise an issue.
+   2. Move the sanity check for page pool in mm/page_alloc.c to on free.
 
-Regards,
-Vignesh
+   Byungchul
 
-> 
->> diff --git a/drivers/gpu/drm/ci/xfails/msm-sc7180-trogdor-lazor-limozeen-fails.txt b/drivers/gpu/drm/ci/xfails/msm-sc7180-trogdor-lazor-limozeen-fails.txt
->> index e4a8f8352cd6..7441b363efae 100644
->> --- a/drivers/gpu/drm/ci/xfails/msm-sc7180-trogdor-lazor-limozeen-fails.txt
->> +++ b/drivers/gpu/drm/ci/xfails/msm-sc7180-trogdor-lazor-limozeen-fails.txt
->> @@ -1,3 +1,4 @@
->> +core_setmaster@master-drop-set-user,Fail
->>   kms_color@ctm-0-25,Fail
->>   kms_color@ctm-0-50,Fail
->>   kms_color@ctm-0-75,Fail
->> diff --git a/drivers/gpu/drm/ci/xfails/msm-sm8350-hdk-fails.txt b/drivers/gpu/drm/ci/xfails/msm-sm8350-hdk-fails.txt
->> index 8d26b23133aa..f387c73193c6 100644
->> --- a/drivers/gpu/drm/ci/xfails/msm-sm8350-hdk-fails.txt
->> +++ b/drivers/gpu/drm/ci/xfails/msm-sm8350-hdk-fails.txt
->> @@ -1,3 +1,4 @@
->> +core_setmaster@master-drop-set-user,Fail
->>   kms_3d,Fail
->>   kms_cursor_legacy@forked-bo,Fail
->>   kms_cursor_legacy@forked-move,Fail
->> diff --git a/drivers/gpu/drm/ci/xfails/msm-sm8350-hdk-skips.txt b/drivers/gpu/drm/ci/xfails/msm-sm8350-hdk-skips.txt
->> index 9450f2a002fd..84ffbe0981ea 100644
->> --- a/drivers/gpu/drm/ci/xfails/msm-sm8350-hdk-skips.txt
->> +++ b/drivers/gpu/drm/ci/xfails/msm-sm8350-hdk-skips.txt
->> @@ -210,3 +210,76 @@ msm/msm_mapping@ring
->>   # [  229.752499] CPU features: 0x18,00000017,00200928,4200720b
->>   # [  229.758095] Memory Limit: none
->>   # [  229.761291] ---[ end Kernel panic - not syncing: softlockup: hung tasks ]---
->> +
->> +msm/msm_recovery@gpu-fault
-> 
-> Hmm. I thought this should have been fixed...
-> 
->> +# DEBUG - Begin test msm/msm_recovery@gpu-fault
->> +# [  153.288652] [IGT] msm_recovery: executing
->> +# [  153.295317] [IGT] msm_recovery: starting subtest gpu-fault
->> +# [  153.317588] adreno 3d00000.gpu: CP | opcode error | possible opcode=0xDEADDEAD
->> +# [  153.367412] adreno 3d00000.gpu: [drm:a6xx_irq] *ERROR* gpu fault ring 0 fence 814 status 00800005 rb 016b/0215 ib1 000000010000B000/0000 ib2 0000000000000000/0000
->> +# [  153.383449] msm_dpu ae01000.display-controller: [drm:recover_worker] *ERROR* 6.6.0.1: hangcheck recover!
->> +# [  153.393296] msm_dpu ae01000.display-controller: [drm:recover_worker] *ERROR* 6.6.0.1: offending task: msm_recovery (/igt/libexec/igt-gpu-tools/msm/msm_recovery --run-subtest gpu-fault)
->> +# [  153.436085] revision: 660 (6.6.0.1)
->> +# [  153.439702] rb 0: fence:    2063/2068
->> +# [  153.443659] rptr:     360
->> +# [  153.446389] rb wptr:  533
->> +# [  153.449103] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG0: 0
->> +# [  153.455746] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG1: 0
->> +# [  153.462387] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG2: 2062
->> +# [  153.469293] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG3: 0
->> +# [  153.475680] adreno 3d00000.gpu: [drm:a6xx_irq] *ERROR* gpu fault ring 0 fence 814 status 00800005 rb 016b/0215 ib1 000000010000B000/0000 ib2 0000000000000000/0000
->> +# [  153.475919] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG4: 0
->> +# [  153.475925] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG5: 0
->> +# [  153.475928] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG6: 0
->> +# [  153.475930] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG7: 1
->> +# [  153.529587] platform 3d6a000.gmu: [drm:a6xx_gmu_set_oob] *ERROR* Timeout waiting for GMU OOB set GPU_SET: 0x0
->> +# [  153.539837] msm_dpu ae01000.display-controller: [drm:recover_worker] *ERROR* 6.6.0.1: hangcheck recover!
->> +# [  153.549597] msm_dpu ae01000.display-controller: [drm:recover_worker] *ERROR* 6.6.0.1: offending task: msm_recovery (/igt/libexec/igt-gpu-tools/msm/msm_recovery --run-subtest gpu-fault)
->> +# [  153.566489] revision: 660 (6.6.0.1)
->> +# [  153.570099] rb 0: fence:    2064/2068
->> +# [  153.573878] rptr:     0
->> +# [  153.576411] rb wptr:  688
->> +# [  153.579134] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG0: 0
->> +# [  153.585775] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG1: 0
->> +# [  153.592410] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG2: 0
->> +# [  153.597308] [IGT] msm_recovery: finished subtest gpu-fault, FAIL
->> +# [  153.599039] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG3: 0
->> +# [  153.611856] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG4: 0
->> +# [  153.618498] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG5: 0
->> +# [  153.625132] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG6: 0
->> +# [  153.631766] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG7: 0
->> +# [  153.639162] *** gpu fault: ttbr0=00000001042fc000 iova=0000000000000000 dir=READ type=TRANSLATION source=CP (0,0,0,0)
->> +# [  153.648502] platform 3d6a000.gmu: [drm:a6xx_gmu_set_oob] *ERROR* Timeout waiting for GMU OOB set GPU_SET: 0x0
->> +# [  153.650144] *** gpu fault: ttbr0=00000001042fc000 iova=0000000000000020 dir=READ type=TRANSLATION source=CP (0,0,0,0)
->> +# [  153.650241] adreno 3d00000.gpu: CP illegal instruction error
->> +# [  153.671006] platform 3d6a000.gmu: [drm:a6xx_rpmh_start] *ERROR* Unable to power on the GPU RSC
->> +# [  153.687278] platform 3d6a000.gmu: [drm:a6xx_gmu_set_oob] *ERROR* Timeout waiting for GMU OOB set GPU_SET: 0x0
->> +# [  363.495437] INFO: task msm_recovery:876 blocked for more than 120 seconds.
->> +# [  363.503070]       Not tainted 6.16.0-rc2-g0594d0b01a7c #1
->> +# [  363.508838] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->> +# [  363.517142] task:msm_recovery    state:D stack:0     pid:876   tgid:876   ppid:274    task_flags:0x400100 flags:0x00000009
->> +# [  363.528876] Call trace:
->> +# [  363.531554]  __switch_to+0xf8/0x1a8 (T)
->> +# [  363.535703]  __schedule+0x418/0xee0
->> +# [  363.539486]  schedule+0x4c/0x164
->> +# [  363.542986]  schedule_timeout+0x11c/0x128
->> +# [  363.547281]  dma_fence_default_wait+0x13c/0x234
->> +# [  363.552123]  dma_fence_wait_timeout+0x160/0x45c
->> +# [  363.556947]  dma_resv_wait_timeout+0x70/0x11c
->> +# [  363.561582]  msm_gem_close+0xac/0xe4
->> +# [  363.565405]  drm_gem_handle_delete+0x74/0xe8
->> +# [  363.569951]  drm_gem_close_ioctl+0x38/0x44
->> +# [  363.574297]  drm_ioctl_kernel+0xc4/0x134
->> +# [  363.578442]  drm_ioctl+0x224/0x4f0
->> +# [  363.582050]  __arm64_sys_ioctl+0xac/0x104
->> +# [  363.586292]  invoke_syscall+0x48/0x110
->> +# [  363.590254]  el0_svc_common.constprop.0+0x40/0xe0
->> +# [  363.595197]  do_el0_svc+0x1c/0x28
->> +# [  363.598705]  el0_svc+0x4c/0x158
->> +# [  363.602035]  el0t_64_sync_handler+0x10c/0x138
->> +# [  363.606601]  el0t_64_sync+0x198/0x19c
->> +# [  363.610465] Showing all locks held in the system:
->> +# [  363.620406]  #0: ffff0000840200a0 (&tty->ldisc_sem){++++}-{0:0}, at: ldsem_down_read+0x18/0x24
->> +# [  363.629412]  #1: ffff800080d7c2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x15c/0x57c
->> +# [  363.643169]  #0: ffffbd9c0475d920 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x18/0x1c0
->> +# [  363.654158] =============================================
-> 
+---8<---
+From 7d207a1b3e9f4ff2a72f5b54b09e3ed0c4aaaca3 Mon Sep 17 00:00:00 2001
+From: Byungchul Park <byungchul@sk.com>
+Date: Mon, 21 Jul 2025 14:05:20 +0900
+Subject: [PATCH] mm, page_pool: introduce a new page type for page pool in page type
+
+->pp_magic field in struct page is current used to identify if a page
+belongs to a page pool.  However, page type e.i. PGTY_netpp can be used
+for that purpose.
+
+Use the page type APIs e.g. PageNetpp(), __SetPageNetpp(), and
+__ClearPageNetpp() instead, and remove the existing APIs accessing
+->pp_magic e.g. page_pool_page_is_pp(), netmem_or_pp_magic(), and
+netmem_clear_pp_magic() since they are totally replaced.
+
+This work was inspired by the following link by Pavel:
+
+[1] https://lore.kernel.org/all/582f41c0-2742-4400-9c81-0d46bf4e8314@gmail.com/
+
+Suggested-by: Pavel Begunkov <asml.silence@gmail.com>
+Signed-off-by: Byungchul Park <byungchul@sk.com>
+---
+ .../net/ethernet/mellanox/mlx5/core/en/xdp.c  |  2 +-
+ include/linux/mm.h                            | 28 ++-----------------
+ include/linux/page-flags.h                    |  6 ++++
+ include/net/netmem.h                          |  2 +-
+ mm/page_alloc.c                               |  4 +--
+ net/core/netmem_priv.h                        | 16 ++---------
+ net/core/page_pool.c                          | 10 +++++--
+ 7 files changed, 24 insertions(+), 44 deletions(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c b/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c
+index 5d51600935a6..def274f5c1ca 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c
+@@ -707,7 +707,7 @@ static void mlx5e_free_xdpsq_desc(struct mlx5e_xdpsq *sq,
+ 				xdpi = mlx5e_xdpi_fifo_pop(xdpi_fifo);
+ 				page = xdpi.page.page;
+ 
+-				/* No need to check page_pool_page_is_pp() as we
++				/* No need to check PageNetpp() as we
+ 				 * know this is a page_pool page.
+ 				 */
+ 				page_pool_recycle_direct(pp_page_to_nmdesc(page)->pp,
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index ae50c1641bed..736061749535 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -4135,10 +4135,9 @@ int arch_lock_shadow_stack_status(struct task_struct *t, unsigned long status);
+  * DMA mapping IDs for page_pool
+  *
+  * When DMA-mapping a page, page_pool allocates an ID (from an xarray) and
+- * stashes it in the upper bits of page->pp_magic. We always want to be able to
+- * unambiguously identify page pool pages (using page_pool_page_is_pp()). Non-PP
+- * pages can have arbitrary kernel pointers stored in the same field as pp_magic
+- * (since it overlaps with page->lru.next), so we must ensure that we cannot
++ * stashes it in the upper bits of page->pp_magic. Non-PP pages can have
++ * arbitrary kernel pointers stored in the same field as pp_magic (since
++ * it overlaps with page->lru.next), so we must ensure that we cannot
+  * mistake a valid kernel pointer with any of the values we write into this
+  * field.
+  *
+@@ -4168,25 +4167,4 @@ int arch_lock_shadow_stack_status(struct task_struct *t, unsigned long status);
+ 
+ #define PP_DMA_INDEX_MASK GENMASK(PP_DMA_INDEX_BITS + PP_DMA_INDEX_SHIFT - 1, \
+ 				  PP_DMA_INDEX_SHIFT)
+-
+-/* Mask used for checking in page_pool_page_is_pp() below. page->pp_magic is
+- * OR'ed with PP_SIGNATURE after the allocation in order to preserve bit 0 for
+- * the head page of compound page and bit 1 for pfmemalloc page, as well as the
+- * bits used for the DMA index. page_is_pfmemalloc() is checked in
+- * __page_pool_put_page() to avoid recycling the pfmemalloc page.
+- */
+-#define PP_MAGIC_MASK ~(PP_DMA_INDEX_MASK | 0x3UL)
+-
+-#ifdef CONFIG_PAGE_POOL
+-static inline bool page_pool_page_is_pp(const struct page *page)
+-{
+-	return (page->pp_magic & PP_MAGIC_MASK) == PP_SIGNATURE;
+-}
+-#else
+-static inline bool page_pool_page_is_pp(const struct page *page)
+-{
+-	return false;
+-}
+-#endif
+-
+ #endif /* _LINUX_MM_H */
+diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+index 4fe5ee67535b..906ba7c9e372 100644
+--- a/include/linux/page-flags.h
++++ b/include/linux/page-flags.h
+@@ -957,6 +957,7 @@ enum pagetype {
+ 	PGTY_zsmalloc		= 0xf6,
+ 	PGTY_unaccepted		= 0xf7,
+ 	PGTY_large_kmalloc	= 0xf8,
++	PGTY_netpp		= 0xf9,
+ 
+ 	PGTY_mapcount_underflow = 0xff
+ };
+@@ -1101,6 +1102,11 @@ PAGE_TYPE_OPS(Zsmalloc, zsmalloc, zsmalloc)
+ PAGE_TYPE_OPS(Unaccepted, unaccepted, unaccepted)
+ FOLIO_TYPE_OPS(large_kmalloc, large_kmalloc)
+ 
++/*
++ * Marks page_pool allocated pages.
++ */
++PAGE_TYPE_OPS(Netpp, netpp, netpp)
++
+ /**
+  * PageHuge - Determine if the page belongs to hugetlbfs
+  * @page: The page to test.
+diff --git a/include/net/netmem.h b/include/net/netmem.h
+index f7dacc9e75fd..3667334e16e7 100644
+--- a/include/net/netmem.h
++++ b/include/net/netmem.h
+@@ -298,7 +298,7 @@ static inline struct net_iov *__netmem_clear_lsb(netmem_ref netmem)
+  */
+ #define pp_page_to_nmdesc(p)						\
+ ({									\
+-	DEBUG_NET_WARN_ON_ONCE(!page_pool_page_is_pp(p));		\
++	DEBUG_NET_WARN_ON_ONCE(!PageNetpp(p));				\
+ 	__pp_page_to_nmdesc(p);						\
+ })
+ 
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 2ef3c07266b3..71c7666e48a9 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -898,7 +898,7 @@ static inline bool page_expected_state(struct page *page,
+ #ifdef CONFIG_MEMCG
+ 			page->memcg_data |
+ #endif
+-			page_pool_page_is_pp(page) |
++			PageNetpp(page) |
+ 			(page->flags & check_flags)))
+ 		return false;
+ 
+@@ -925,7 +925,7 @@ static const char *page_bad_reason(struct page *page, unsigned long flags)
+ 	if (unlikely(page->memcg_data))
+ 		bad_reason = "page still charged to cgroup";
+ #endif
+-	if (unlikely(page_pool_page_is_pp(page)))
++	if (unlikely(PageNetpp(page)))
+ 		bad_reason = "page_pool leak";
+ 	return bad_reason;
+ }
+diff --git a/net/core/netmem_priv.h b/net/core/netmem_priv.h
+index cd95394399b4..39a97703d9ed 100644
+--- a/net/core/netmem_priv.h
++++ b/net/core/netmem_priv.h
+@@ -8,21 +8,11 @@ static inline unsigned long netmem_get_pp_magic(netmem_ref netmem)
+ 	return __netmem_clear_lsb(netmem)->pp_magic & ~PP_DMA_INDEX_MASK;
+ }
+ 
+-static inline void netmem_or_pp_magic(netmem_ref netmem, unsigned long pp_magic)
+-{
+-	__netmem_clear_lsb(netmem)->pp_magic |= pp_magic;
+-}
+-
+-static inline void netmem_clear_pp_magic(netmem_ref netmem)
+-{
+-	WARN_ON_ONCE(__netmem_clear_lsb(netmem)->pp_magic & PP_DMA_INDEX_MASK);
+-
+-	__netmem_clear_lsb(netmem)->pp_magic = 0;
+-}
+-
+ static inline bool netmem_is_pp(netmem_ref netmem)
+ {
+-	return (netmem_get_pp_magic(netmem) & PP_MAGIC_MASK) == PP_SIGNATURE;
++	if (netmem_is_net_iov(netmem))
++		return true;
++	return PageNetpp(__netmem_to_page(netmem));
+ }
+ 
+ static inline void netmem_set_pp(netmem_ref netmem, struct page_pool *pool)
+diff --git a/net/core/page_pool.c b/net/core/page_pool.c
+index 05e2e22a8f7c..0a10f3026faa 100644
+--- a/net/core/page_pool.c
++++ b/net/core/page_pool.c
+@@ -654,7 +654,6 @@ s32 page_pool_inflight(const struct page_pool *pool, bool strict)
+ void page_pool_set_pp_info(struct page_pool *pool, netmem_ref netmem)
+ {
+ 	netmem_set_pp(netmem, pool);
+-	netmem_or_pp_magic(netmem, PP_SIGNATURE);
+ 
+ 	/* Ensuring all pages have been split into one fragment initially:
+ 	 * page_pool_set_pp_info() is only called once for every page when it
+@@ -665,12 +664,19 @@ void page_pool_set_pp_info(struct page_pool *pool, netmem_ref netmem)
+ 	page_pool_fragment_netmem(netmem, 1);
+ 	if (pool->has_init_callback)
+ 		pool->slow.init_callback(netmem, pool->slow.init_arg);
++
++	if (netmem_is_net_iov(netmem))
++		return;
++	__SetPageNetpp(__netmem_to_page(netmem));
+ }
+ 
+ void page_pool_clear_pp_info(netmem_ref netmem)
+ {
+-	netmem_clear_pp_magic(netmem);
+ 	netmem_set_pp(netmem, NULL);
++
++	if (netmem_is_net_iov(netmem))
++		return;
++	__ClearPageNetpp(__netmem_to_page(netmem));
+ }
+ 
+ static __always_inline void __page_pool_release_netmem_dma(struct page_pool *pool,
+-- 
+2.17.1
 
 
