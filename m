@@ -1,137 +1,285 @@
-Return-Path: <linux-kernel+bounces-739628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDCC1B0C8C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:29:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9061B0C8CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:30:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3138F165C02
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:29:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73232189145C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:31:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4493A2E06F8;
-	Mon, 21 Jul 2025 16:29:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3FCC2E06EA;
+	Mon, 21 Jul 2025 16:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IBu3kRPr"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="b7Z0e0aO"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC2802874E5
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 16:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B7F19F121
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 16:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753115381; cv=none; b=CTVxlqJTLedv9b2Dr+ub0ASxoUmB3PogOT9HjHMDqkz6Y70fmDDlanyRC+VZqA/BOT0+FmohEtbsl+oLdFi8yzmUNsVx1DgXTTpykwVxdX1GA5ffF6zAaqMU5wtzllQjp5eeBGh+MwMQJHUDITteVaIghYSIZFi417KYGsIGddA=
+	t=1753115450; cv=none; b=GNpMbQBBW1Med2qxPmkODYAup6BqMjXlp/8cjxZPFz+XfE6XtxbeJfkwlJxhvB1hj0xXHHY2GYHOebAL65CnbFIJWQnH0zMNCaPjpx6nZK34ztm8chFLLaxPO/vU3I3LvtIQq8kmUtxI60fiGgt3Q55oJRWdkd31i1OMEs1V114=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753115381; c=relaxed/simple;
-	bh=nQg4mVGlavPAkrQIuNcIrVz2XSMjt/8NcDVu2xUbWhA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=lUKRXn5ZE6SHXCim7AhIn0MWPDU3lUmSRcD6Y3tZ8XiJNUafPq9vCq28h7y3UdBFRFwprRzVCpTMOKmtwNvRY+NFvboziDh0/1bgr3wv+gxlQpMkETnQqsLiLGXE/16kwjsp3KnwE+IGN9g8j62MXCVQNfV0guqZc4TRCw/ipTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IBu3kRPr; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a548a73ff2so4266426f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 09:29:39 -0700 (PDT)
+	s=arc-20240116; t=1753115450; c=relaxed/simple;
+	bh=LcK4LIDhkpmNmzFtUfX5BsXG1e79f98fn51x8mcpMnk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hoa0lK52ebq74Bz65N+qxkRfwO3XOPA3Gu+XBs4legL8nxECFFJZOQtYi39LNvdsBwju8JZQJDed/nIFTdEfwqsbC3GvnhLbYQhL9kpbTkZenLTdvXrUOjHyr7hTKKAbtlNiV1iLT+U20JdUuhCQF6XNDrU3EMA/ou/kIwR0zvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=b7Z0e0aO; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-235f9ea8d08so37257545ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 09:30:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753115378; x=1753720178; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=mDqcrroJ3qLkh5t4BQvEhf/oMY2x7lp1dD/3eXpKYqI=;
-        b=IBu3kRPrQ398nv2yhgdtrkH/3nWKZq1OHOnk6R5/Urband4ZwRQ34680+5SQj0rLAX
-         A+CXraSefg9nE6jEsz/4Q9ukpXxiHdaw6wwkytUYV9kRUN1yt0fojLBXFxJiuWVQkdtJ
-         BnhqzOgPj+FLY2oDJ7WVxMnma7xLpLHm6H5ySrr0ZtjwappbiOVII/AqUt86lAOAX6O+
-         NuCDMj8qUTv1Zz3HkJiwl3KtcRF+0/76h7Dk/CmiwBWd9iRF+x88f7KdHgjLA47+1kJn
-         nNCCRahN+SmNh6ZFJUO8d20lMuxZhjABbKTJtGjhw+ACfGQUCUxlAkzbcEZ6PFBOrN5Y
-         AzMg==
+        d=chromium.org; s=google; t=1753115446; x=1753720246; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e1OthpiQLo0yn+Ex+1T1Nl8yMpcQVCC1Su5Bulvu4QQ=;
+        b=b7Z0e0aOONvXPaHGb8wxS+7LuUABesDFBUtJZSQEvqOxAVcaki8X0ceb/Man28jyMH
+         1QPt/G2zNcRSDTYHBbiMsQ37qTK7sTgYuuCUvUvOXF6+bnLAc2JSeMz0XBhMEgAMz2C7
+         01QBrGjWMyPwOMFaexouqkXN+/K8q8Fu1Jfmw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753115378; x=1753720178;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mDqcrroJ3qLkh5t4BQvEhf/oMY2x7lp1dD/3eXpKYqI=;
-        b=ktovGAHXiqQJ4zkIXz6rChk51LO+XFgtHcMOcDl5O2bcaeVcr6aqKz3dLqN/T+E3mW
-         yon5GWJOdse1caZO1wbf/dnuFZtjzaVcEDFsnEwNJFeYR7Arscsi3F5pZ0WEEC+OlvdP
-         jSEG6sZIO2dECf4RcD5RH3StW95PbNZnKb8Js/W8X2wHVvn+9dCGJG2/5eX9ALGofWqU
-         bipIoWuZmxnrWb7MK6gvZts8LhAUC4afBtrvQJKI6fTj+BxLPrtaoTFMP6LWW5wf7J7N
-         MvpQDKBFzPkQzDrwg2rHmeCcS9m9UW09U+oqPlo76kmS9q24cqDH18T4Mgm5FYa9TC/f
-         67MA==
-X-Forwarded-Encrypted: i=1; AJvYcCXP3BvF1IvWscc2B2tR+ksLaWpTZJ2n1GtQV2PQgQ4cSND8V0MjQYqKWUopc8OleLBfB+mRx66UGwgridM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmGpSP+AJ2TwYsq4lG21vs0xRXplY4yLQYMxTFpRN8/v763u9q
-	RquwZwRNciRFjC44hgxHBbYI+NnZNw0nZTlflpdIreyKa2u4LEO9pe5PXKWdSGTV9CU=
-X-Gm-Gg: ASbGncv3fJG8pZ1uAmb/XP9ev8XdQeZwddUovE6RpIqfQ1SWX01KX38+YL4nsLf3maY
-	73PpELRqHfuhMHx5Nh7dlaYDfelsoDdRrMUd+a8849x5jBShtW4dzeHKAnCmt0NyHOXSYmNAEDO
-	HsTn2hlg2/3YIhpKUVFjEz7mkL1DmlhZ6b8joIuK957cgv1xaR2yfXWqrOYUCGjZ8zGL7RfuykE
-	HNcB+x+TJcRojEa2d+eUIf8U7J/jWu4EVVovnxanIU6L7MRRAyiuAM9kDjYBym8ecJp/wAqqehx
-	MLkpISi+4WciP2MazHjcIRYx2111zFnzi3pQoK/CdXevykYaza0e2g/wVUQVwhaYKQJ5H6wJupb
-	jVEq76tRT8jB9/Z1eBC62KuO9p3BhFFqKB4eNk+dApeDu+sevjq2jlnqxv5Iw9sc=
-X-Google-Smtp-Source: AGHT+IEyGrnEx/ClY8Jxxfj68ZCw16qbV6UiWvo0mvnQsuihoYuu1pQ1oczOVmJPNRJcxc4Dt5O++w==
-X-Received: by 2002:a05:6000:2482:b0:3a5:243c:6042 with SMTP id ffacd0b85a97d-3b60dd4a88emr17973192f8f.2.1753115378060;
-        Mon, 21 Jul 2025 09:29:38 -0700 (PDT)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca5c8besm10819066f8f.81.2025.07.21.09.29.37
+        d=1e100.net; s=20230601; t=1753115446; x=1753720246;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e1OthpiQLo0yn+Ex+1T1Nl8yMpcQVCC1Su5Bulvu4QQ=;
+        b=eKc3XiDLb+v3TnvHmIa4WKUqyRwrNZwdcpxS+9aelUhbUdcYKimJfQF00jXi5iWx54
+         RE2RGFUon4pPFQSvTmRYXY6t/eC3dxeaqDmVyRNSkO8oi/JT23r0zuSbhnS33ecme9mL
+         Z9I6uhCJ3yABCuVQuS7cB4aBmpJhhlPGaRILwoYHf4P3zmo7LmFB17bbKWfri1pcV+2S
+         diXhqpZqNKSdRfo98mP9GQh7riAQOALpq7XTN8UswpRsd/uk654X4KgDLMDCLoPs8Qgf
+         3TqlnOJLRUR8RCTNP4cTRCWSkPUJ/RDERqoNtenAkdtoBFI05S3JSSg9DexTmWXWCxN0
+         aYrw==
+X-Forwarded-Encrypted: i=1; AJvYcCXFv8xcW98Pb662U4tdil06l4PhKH9SpZ78hwJdsn+jMTh1/SS9yaemw0IcRVn8TfPxnVHFiIIp9PYn9yA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOBk2GraUXNaFZSDmeWJjKApQkVV48TSvudL/YJD2mQJ+nVaFw
+	atNjjd9tLaG2L+BioHGX/50fS0FP3vUNERY/wEuSXITW5WLIfc9ggLu7hvqSNIvLVH8e1ICn7Ha
+	oDag=
+X-Gm-Gg: ASbGncsdgT7bywnazhSFcuDcR+BxIaEz1LYTek3ale494rwoTG4X8JmuEKsEbDZ7+vO
+	9YFKAE3ybbV/TMTyuO/xDxWeqTrq9mpDu4hPDWlmVLlFeek4V3qqYRwO6w0pH8G2dawXyHdJM0N
+	+0O/w8a3S88dNKFWQ8MDlZwQvE6JHA/TLQ7CjUN1CUKHubjNtV3py2YI3/8d/5Z6sRylIW0KzBm
+	EyDyDxi44BEeZxxsdVWbRUoRnzVDS0KX6J7pnM48sm6yg5CyZFoTJWFruqTarCjtdNMV9qv86Zi
+	i5Qi1QRQCevuRVENOKKxjsgv+yja/fsv7DzmN/nrHRhAAjrl3J3w2DRNRP8gYcA8P0BTRiut2yw
+	xTMDAhCcfI4GEOdOCvbFnOkzwc0DqyvbIMClrZkpOn0I0CtLG74wsuGSPNA5pV5X14g==
+X-Google-Smtp-Source: AGHT+IFt2Z0pP/xDiQtApG++/khG71I7GVnL9qaPLpj6oXK6sypgitdTuq7VBH4bd+oryqkmJeNUGA==
+X-Received: by 2002:a17:902:db06:b0:234:9066:c857 with SMTP id d9443c01a7336-23e24ee8840mr275868305ad.21.1753115445755;
+        Mon, 21 Jul 2025 09:30:45 -0700 (PDT)
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com. [209.85.214.172])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b6cfb7dsm60202275ad.140.2025.07.21.09.30.44
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Jul 2025 09:29:37 -0700 (PDT)
-Message-ID: <94ca7625-4943-49a7-bc91-5e354d62cfaf@linaro.org>
-Date: Mon, 21 Jul 2025 17:29:36 +0100
+        Mon, 21 Jul 2025 09:30:44 -0700 (PDT)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-23694cec0feso42147815ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 09:30:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXXgcojTlZP/xdNbZfyYlKLfkhfZTNuYUfPqL37qoxOHb0S1DgWft1vUI929niup/e7VeZU+k63ogcd0nE=@vger.kernel.org
+X-Received: by 2002:a17:903:3bcc:b0:235:f298:cbbe with SMTP id
+ d9443c01a7336-23e24edc278mr357296245ad.12.1753115443448; Mon, 21 Jul 2025
+ 09:30:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] phy: qcom-mipi-csi2: Add a CSI2 MIPI D-PHY driver
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250710-x1e-csi2-phy-v1-0-74acbb5b162b@linaro.org>
- <20250710-x1e-csi2-phy-v1-2-74acbb5b162b@linaro.org>
- <11b573d5-ce4d-476c-b94c-216d427cd838@linaro.org>
- <08261aa4-689b-4d6b-bfd2-221c1976d254@linaro.org>
- <a7f64b31-4767-4281-b452-a2bc5351d745@mleia.com>
- <c93624bb-ee7b-45ac-8b53-b5391f11c9c9@linaro.org>
- <eac3a877-a4aa-4789-9013-ab8b6c91e0f3@linaro.org>
- <0a12879f-dc4a-47fb-87a0-ac4b8bcd4d75@linaro.org>
- <53a19b1d-5665-4937-a07c-5dd1fcde06c5@linaro.org>
- <3b760685-97db-46e3-80a3-7fad69ad31cd@oss.qualcomm.com>
- <94b75177-9401-4e0c-966b-5847a29cb6f7@linaro.org>
- <427548c0-b0e3-4462-a15e-bd7843f00c7f@oss.qualcomm.com>
- <3UXVZ6ANM9mDjVdMV4SXsiIx_pT3S1lp3RC_Q7mh_o7jF2dpYsni1Sl2TAWv6OCMCRTFmi9aE6BxDquGkOnwEg==@protonmail.internalid>
- <8b908a20-0bf3-447d-82ea-a5ecee1bf54c@linaro.org>
- <57501e81-7e9c-4cb1-9a37-18307d1e06ca@linaro.org>
- <90a896f0-7b67-494a-abe4-dceb52067e65@linaro.org>
-Content-Language: en-US
-In-Reply-To: <90a896f0-7b67-494a-abe4-dceb52067e65@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250719082639.307545-1-me@brighamcampbell.com> <20250719082639.307545-2-me@brighamcampbell.com>
+In-Reply-To: <20250719082639.307545-2-me@brighamcampbell.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 21 Jul 2025 09:30:31 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=Xzno3ReSyp9w+DC+nLoy1AXmcwd+j1=_XRxFi_k+bmng@mail.gmail.com>
+X-Gm-Features: Ac12FXy9MlSRxUz0cgfvqURcfFQN33HCDR1ifsxTc8_3lTfiq4MM633TTSdKa88
+Message-ID: <CAD=FV=Xzno3ReSyp9w+DC+nLoy1AXmcwd+j1=_XRxFi_k+bmng@mail.gmail.com>
+Subject: Re: [PATCH v5 1/4] drm: Create mipi_dsi_dual* macros
+To: Brigham Campbell <me@brighamcampbell.com>
+Cc: tejasvipin76@gmail.com, diogo.ivo@tecnico.ulisboa.pt, 
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev, 
+	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 21/07/2025 17:22, Bryan O'Donoghue wrote:
-> On 21/07/2025 17:16, Bryan O'Donoghue wrote:
->> drivers/phy/amlogic/phy-meson-axg-mipi-dphy.c Documentation/ 
->> devicetree/ bindings/parch/arm64/boot/dts/amlogic/meson-khadas-vim3- 
->> ts050.dtsoc/ meson-axg.dtsi
-> 
-> Documentation/devicetree/bindings/phDocumentation/devicetree/bindings/ 
-> phy/amlogic,axg-mipi-dphy.yaml
-> 
-> Rockchip, Broadcom, etc.
-> 
-> The allocation of lanes is known by CAMSS and easily communicated to a 
-> separate standalone node.
-> 
-> ---
-> bod
+Hi,
 
-In fact its part of the dphy params data structure...
+On Sat, Jul 19, 2025 at 1:27=E2=80=AFAM Brigham Campbell <me@brighamcampbel=
+l.com> wrote:
+>
+> @@ -827,6 +827,30 @@ void mipi_dsi_generic_write_multi(struct mipi_dsi_mu=
+lti_context *ctx,
+>  }
+>  EXPORT_SYMBOL(mipi_dsi_generic_write_multi);
+>
+> +/**
+> + * mipi_dsi_dual_generic_write_multi() - mipi_dsi_generic_write_multi() =
+for
+> + * two dsi channels, one after the other
+> + * @dsi1: First dsi channel to write buffer to
+> + * @dsi2: Second dsi channel to write buffer to
+> + * @ctx: Context for multiple DSI transactions
+> + * @payload: Buffer containing the payload
+> + * @size: Size of payload buffer
+> + *
+> + * A wrapper around mipi_dsi_generic_write_multi() that allows the user =
+to
+> + * conveniently write to two dsi channels, one after the other.
+> + */
+> +void mpi_dsi_dual_generic_write_multi(struct mipi_dsi_device *dsi1,
 
----
-bod
+BUG: above should be "mipi", not "mpi"
+
+
+> +                                     struct mipi_dsi_device *dsi2,
+> +                                     struct mipi_dsi_multi_context *ctx,
+> +                                     const void *payload, size_t size)
+> +{
+> +       ctx->dsi =3D dsi1;
+> +       mipi_dsi_generic_write_multi(ctx, data, len);
+
+BUG: "data" and "len" are not valid local variables...
+
+
+> @@ -431,6 +439,87 @@ void mipi_dsi_dcs_set_tear_off_multi(struct mipi_dsi=
+_multi_context *ctx);
+>                 mipi_dsi_dcs_write_buffer_multi(ctx, d, ARRAY_SIZE(d)); \
+>         } while (0)
+>
+> +/**
+> + * mipi_dsi_dual - send the same MIPI DSI command to two interfaces
+> + *
+> + * This macro will send the specified MIPI DSI command twice, once per e=
+ach of
+> + * the two interfaces supplied. This is useful for reducing duplication =
+of code
+> + * in panel drivers which use two parallel serial interfaces.
+> + *
+> + * WARNING: This macro reuses the _func argument and the optional traili=
+ng
+> + * arguments twice each, which may cause unintended side effects. For ex=
+ample,
+> + * adding the postfix increment ++ operator to one of the arguments to b=
+e
+> + * passed to _func will cause the variable to be incremented twice inste=
+ad of
+> + * once and the variable will be its original value + 1 when sent to _ds=
+i2.
+
+It could be worth also pointing people to
+mipi_dsi_dual_generic_write_seq_multi() and
+mipi_dsi_dual_dcs_write_seq_multi() below?
+
+
+> + *
+> + * @_func: MIPI DSI function or macro to pass context and arguments into
+
+nit: remove "or macro".
+
+
+> + * @_dsi1: First DSI interface to act as recipient of the MIPI DSI comma=
+nd
+> + * @_dsi2: Second DSI interface to act as recipient of the MIPI DSI comm=
+and
+> + * @_ctx: Context for multiple DSI transactions
+> + * @...: Arguments to pass to MIPI DSI function or macro
+> + */
+> +#define mipi_dsi_dual(_func, _dsi1, _dsi2, _ctx, ...)           \
+> +       do {                                                     \
+> +               struct mipi_dsi_multi_context *_ctxcpy =3D (_ctx); \
+> +               (_ctxcpy)->dsi =3D (_dsi1);                        \
+
+nit: now that "_ctxcpy" is a local variable you no longer need the
+extra parenthesis around it.
+
+
+> +               (_func)((_ctxcpy), ##__VA_ARGS__);               \
+> +               (_ctxcpy)->dsi =3D (_dsi2);                        \
+> +               (_func)((_ctxcpy), ##__VA_ARGS__);               \
+> +       } while (0)
+> +
+> +/**
+> + * mipi_dsi_dual_generic_write_seq_multi - transmit data using a generic=
+ write
+> + * packet to two dsi interfaces, one after the other
+> + *
+> + * This macro will send the specified generic packet twice, once per eac=
+h of
+> + * the two interfaces supplied. This is useful for reducing duplication =
+of code
+> + * in panel drivers which use two parallel serial interfaces.
+> + *
+> + * Note that if an error occurs while transmitting the packet to the fir=
+st DSI
+> + * interface, the packet will not be sent to the second DSI interface.
+> + *
+> + * This macro will print errors for you and error handling is optimized =
+for
+> + * callers that call this multiple times in a row.
+> + *
+> + * @_dsi1: First DSI interface to act as recipient of packet
+> + * @_dsi2: Second DSI interface to act as recipient of packet
+> + * @_ctx: Context for multiple DSI transactions
+> + * @_seq: buffer containing the payload
+> + */
+> +#define mipi_dsi_dual_generic_write_seq_multi(_dsi1, _dsi2, _ctx, _seq..=
+.)     \
+> +       do {                                                             =
+       \
+> +               static const u8 d[] =3D { _seq };                        =
+         \
+> +               mipi_dsi_dual_generic_write_multi(_dsi1, _dsi2, _ctx, d, =
+       \
+> +                                                        ARRAY_SIZE(d)); =
+       \
+
+nit: the indentation of ARRAY_SIZE() is slightly off.
+
+
+> +       } while (0)
+> +
+> +/**
+> + * mipi_dsi_dual_dcs_write_seq_multi - transmit a DCS command with paylo=
+ad to
+> + * two dsi interfaces, one after the other
+> + *
+> + * This macro will send the specified DCS command with payload twice, on=
+ce per
+> + * each of the two interfaces supplied. This is useful for reducing dupl=
+ication
+> + * of code in panel drivers which use two parallel serial interfaces.
+> + *
+> + * Note that if an error occurs while transmitting the payload to the fi=
+rst DSI
+> + * interface, the payload will not be sent to the second DSI interface.
+> + *
+> + * This macro will print errors for you and error handling is optimized =
+for
+> + * callers that call this multiple times in a row.
+> + *
+> + * @_dsi1: First DSI interface to act as recipient of packet
+> + * @_dsi2: Second DSI interface to act as recipient of packet
+> + * @_ctx: Context for multiple DSI transactions
+> + * @_cmd: Command
+> + * @_seq: buffer containing the payload
+> + */
+> +#define mipi_dsi_dual_dcs_write_seq_multi(_dsi1, _dsi2, _ctx, _cmd, _seq=
+)   \
+
+BUG: doesn't "_seq" need to be "_seq..." ?
+
+BUG: You need to remove the definition of this macro from
+`panel-novatek-nt36523.c` or else it won't compile anymore since the
+name of your macro is the exact same as theirs and they include this
+header file. It would be OK w/ me if you squashed that into the same
+patch since otherwise rejiggering things would just be churn...
+
+I guess we also chose different argument orders than they did (that's
+probably my fault, sorry!). They had the "ctx" still first and this
+patch consistently has "dsi1" and "dsi2" first. I don't think it
+really matters, but we should be consistent which means either
+adjusting your patch or theirs. It's probably worth confirming that
+the novatek driver at least compiles before you submit v6.
+
+
+-Doug
 
