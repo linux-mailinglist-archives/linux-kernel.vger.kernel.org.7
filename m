@@ -1,103 +1,106 @@
-Return-Path: <linux-kernel+bounces-739393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BE2FB0C5C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:04:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BEADB0C5C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:04:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 778E57A77C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:03:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACF7E189B0A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC172BFC9B;
-	Mon, 21 Jul 2025 14:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A314178F37;
+	Mon, 21 Jul 2025 14:04:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="v0VrMFtb";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wpGL+B61"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OfToHOwT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03BE25760;
-	Mon, 21 Jul 2025 14:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078D825760;
+	Mon, 21 Jul 2025 14:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753106670; cv=none; b=FV8pajR2A45ioZjfuBIWkmLTmggTEqorFjr5cIKPgLIjpBTKNY1Ou3EVTqqPndOjBGUIB1E7259DkOwlPGndC4DpQ6dd46oZ10nRypFgmf2+xQQNbB1eLM/71jHPC7b1BLoMrSPYJHDk6w9Twi7LE5eZ07IHjOVp4p6MVZdeo9E=
+	t=1753106679; cv=none; b=ozyRD6dVr69gvnspMo0LQyWAY9LJvtB7EaVnM3Kifr4LI0HADQUomG/SHPIe6hSQuA4/de/1ZI7wyGdRtl0ElFbbF0cxncCIN1aTy4bKC8dFTJhU0jMdPVdHQHXPBqIgvVfXpa4HDkpB/KLX0XzQ2Ni0uuF4ROcJzG7Jwzdj6pQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753106670; c=relaxed/simple;
-	bh=Bb9NdE0r8eglpW35emb984Wyuq/QD3HMTal5YQtSUMs=;
+	s=arc-20240116; t=1753106679; c=relaxed/simple;
+	bh=ZRFSItDRtsrkuR9rheQjoPP+y9yHZtan8WCMiLO9Ffc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uiHtdqZNFDDa8FBz2jFT33MsHHw39a23FxQnzDx1pycNWKz7JsyeqAdzbbSviNlm9QsrkbI1C4wwZK+FLIXE6jBJa7IUfPFXsYkazSW73kMmP2K/S61hu/72+1JXYhD0Op/HNpMGkyACFkPLKLofxUnsG82xXBMpcfqXZ3CnqE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=v0VrMFtb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wpGL+B61; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 21 Jul 2025 16:04:25 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753106666;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l9atouwKJiTcwQJic35rzDybT90GnqB7oVE//fxkKSc=;
-	b=v0VrMFtbYmxlVJhZuSWolwNNp6dYi3HJvfWo4kjSAGb6SPwVX1aIgcNhhKkcQiYB2hyRrw
-	fUeEhG06vCUgZs0oYkWtBv2xeZv9Ry95dVSXYMmTEPA4kYV/tk6w9lb47U7uN7WM4v1MC3
-	J5fI1SKJorj7zSLyAW1xTWNYF3K+1vamtEtT9cf6BIcpmIAIDkaY2bZq8getNLwvnCDgqb
-	VZkjUPYl0NCh//k/4nHTWRgs9lbV8dMh0KofEDNxHyZ2ccrefBv+DZ4PNU6EdE26jP7txt
-	UJ1enG/EmKgJNw6wYvJOMmwX6sO75mWLfhGhrdJ1T0etslK8evxJGTZs6uefxA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753106666;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l9atouwKJiTcwQJic35rzDybT90GnqB7oVE//fxkKSc=;
-	b=wpGL+B61eXH9DMdK2JrKRicUe6NNwwZUqXhqdLVNa8H54A7t60abeRXqYZiWlucuyxAuQx
-	l7TVRES8XcHjXVBQ==
-From: Nam Cao <namcao@linutronix.de>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/6] rv: Remove rv_reactor's reference counter
-Message-ID: <20250721140425.OeD16I4D@linutronix.de>
-References: <cover.1753091084.git.namcao@linutronix.de>
- <4ebe4d49e07890eadae41da233e111f8723fba12.1753091084.git.namcao@linutronix.de>
- <2de814842fbbeee888e076db2f80bf2028fdbb0d.camel@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NK5axumBmslBNuVapiE0DVkpybJHtNIrU7TTIMI+pdRGqQ8K5chpXMcpkLh0yIjC7yIUefnqxoQNZtT4tt0CtMTxqIPzVq9lnk+c8rw0wW1WZM+kgnTRze5Z+ZvKrQ4QyG9UuWjilzbNQ4Uke5ZQlK92KeoJSLrtVqOyLZ88W6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OfToHOwT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 349C0C4CEF6;
+	Mon, 21 Jul 2025 14:04:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753106678;
+	bh=ZRFSItDRtsrkuR9rheQjoPP+y9yHZtan8WCMiLO9Ffc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OfToHOwTr0a14oiBpRqljFKUgpT31x7VxRPnBJPHLJ3GKg+GjUMj5o1Idi0TQ4wd4
+	 PUiSTPnZxIrIrryEUSKWW/TuqiDPaeCLn5d/tl6D0pByTdR/22tKXaR3gjR7uYSEFF
+	 /z0ZUYtM4Od1LjU5rITjYMsTwlmi2WW6p4gYlUyXtgJv0VzJckaJmLQGslq+KMlXq6
+	 BHc9NFdX465Uhge5OsxMzI19rpdtAioXw2DYartFzDZmEwXb1t69e/H+ed9K3FNOec
+	 JvZrfdB7p4jh4InhhWXfvNyd/L90sdHOIQ5KTmGttkx1jvvq9RC6moG8aJyDZmph5t
+	 H0O2ucR7fNR2A==
+Date: Mon, 21 Jul 2025 15:04:33 +0100
+From: Mark Brown <broonie@kernel.org>
+To: James Clark <james.clark@linaro.org>
+Cc: Vladimir Oltean <olteanv@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Larisa Grigore <larisa.grigore@nxp.com>,
+	Frank Li <Frank.li@nxp.com>, Christoph Hellwig <hch@lst.de>,
+	linux-spi@vger.kernel.org, imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/6] spi: spi-fsl-dspi: Store status directly in
+ cur_msg->status
+Message-ID: <a1f01911-8cba-418a-8393-1d6ad3badb2f@sirena.org.uk>
+References: <20250627-james-nxp-spi-dma-v4-0-178dba20c120@linaro.org>
+ <20250627-james-nxp-spi-dma-v4-2-178dba20c120@linaro.org>
+ <20250627213041.vp6yfcgf4xysdklf@skbuf>
+ <eb704af4-5800-49b6-9915-c990c5b23fa1@linaro.org>
+ <20250721133958.dhityxa7vvtqov3d@skbuf>
+ <e23bac2c-c39c-4446-9305-e7e51eabcb4b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="aMtzLzsOA1vyg0LI"
+Content-Disposition: inline
+In-Reply-To: <e23bac2c-c39c-4446-9305-e7e51eabcb4b@linaro.org>
+X-Cookie: Microwaves frizz your heir.
+
+
+--aMtzLzsOA1vyg0LI
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2de814842fbbeee888e076db2f80bf2028fdbb0d.camel@redhat.com>
 
-On Mon, Jul 21, 2025 at 03:20:44PM +0200, Gabriele Monaco wrote:
-> Mmh, I'm not understanding how, let's assume I create a custom reactor
-> as a kernel module and I want to use it on existing models (built in or
-> modules themselves), I'd do.
-> 
->  insmod myreactor
->  echo myreactor > mymodel/reactors
->  rmmod myreactor
->  ## I want this one to fail because the reactor is in use
-> 
->  echo nop > mymodel/reactors
->  rmmod myreactor
->  # now it can succeed
-> 
-> How is MODULE_SOFTDEP helping in this scenario?
-> Am I missing something here?
+On Mon, Jul 21, 2025 at 03:02:09PM +0100, James Clark wrote:
 
-You are right, MODULE_SOFTDEP does not help this use case.
+> I'm also not sure if it would fit with can_dma as that starts mapping stuff
+> in the core layer. We want to avoid that because we need to write that
+> control word for each SPI word. We could still change mode conditionally in
+> the DSPI driver though, or make can_dma more flexible. But on top of this
+> for sure.
 
-I did a quick search, it seems try_module_get() and module_put() are what
-we need for this. Let me amend the commit message.
+Even if you need to open code the infrastructure the idea of a copybreak
+should still be useful.
 
-But my essential point in this patch is that, the current ref count
-implementation does not work. Furthermore, we should use the centralized
-kernel module's facilities, not implementing our own custom logic.
+--aMtzLzsOA1vyg0LI
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Best regards,
-Nam
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmh+SPAACgkQJNaLcl1U
+h9DpZgf+MdtFYAGs9n+vc1jIjGnB48vgl+5FmAp59DjbjL+tkhyv0h2qjTJ+gf+i
+SwE9pkbEScK/vElogElVJAVWt1xW9F/v3XJyrwJqZWBnGs1USBtafHUBxd3qovLt
+W/ook1uKpYTY9UwNPKev3eFVaRiT7H35lVf/nb75jJix8yGsMd/lLPWU9DHq//pp
+SQURHCCohq1tK55hQb6YpynEwQJcmv/ib6mxJGLfPy/0Ex5bnczkGE7O4gkwxlG8
+v0a1ALL5+or1dWySYO0IiRtPHn3U+tfZ5x9h9zjaGVt5x/XvGyyxFjlGedBMXm80
+HXCsQ35DUbMpNKIedcL2FKA/vCEXtQ==
+=Mo7R
+-----END PGP SIGNATURE-----
+
+--aMtzLzsOA1vyg0LI--
 
