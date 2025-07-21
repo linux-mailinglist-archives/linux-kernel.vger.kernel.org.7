@@ -1,96 +1,140 @@
-Return-Path: <linux-kernel+bounces-738992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C2EDB0C05A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:32:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F9AEB0C05F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:33:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E788C1893E27
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:32:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F5CA178218
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:33:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC99428B511;
-	Mon, 21 Jul 2025 09:32:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8258C28C02F;
+	Mon, 21 Jul 2025 09:32:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YAoj0vA4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZQbybIX6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417D428A1DE;
-	Mon, 21 Jul 2025 09:32:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4767289829;
+	Mon, 21 Jul 2025 09:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753090324; cv=none; b=GAN8QljHctOeVxWL/hk39i4Pt33mxCPqsjBlCwfob9lM4kUmjHCNNZfMeswt3vYdTuewd9enWUVB+NN9KNSbqHcg9IqVVpz2Gs2Pd2OltrwXmpPgRhuSRO02Ba0t4Gnkmc1N5gkoW3UlC6A1NTPONySZDMzhTESA1IxeLDnqrg0=
+	t=1753090377; cv=none; b=QXMFHYZRw7SXmS7kQ33NXVRMPyjwwhS91/ehPr1EO7CLTirYQNlDdYX1WJqiMn7B2VZvODTJ8iZxjEjh/5iVdW/n8fx7ayCfMfLTO96hAwINNdiW0d1++BB7MXyRfioRyfG3gr66WtYYP8loxcthQ1MZkpmJMAExQzoM+QRduPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753090324; c=relaxed/simple;
-	bh=tMQd51DR2PhlSANSMzu8tnUKCfa7HWDsrUeedOQDGV8=;
+	s=arc-20240116; t=1753090377; c=relaxed/simple;
+	bh=G/pV0nbnRZ4r5eBiZNsOigHUJIR41TgGEVYX+SY2ajc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aZm8dSXJs0kZ7UnB9T97thnzU3jS+de6IUSP+IceEgMK/9wcxirCjGGsitlFS4xUo4/hmnNOJvlDaiWMXc4fIO1hgVYzRqggaGfibxNogAtDzCT0WlE5s5gmp2D1NOtCdpfNH/FO3cwozdKxhYfWmpul2iLa1dU+/FCZtM1ICUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YAoj0vA4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67591C4CEED;
-	Mon, 21 Jul 2025 09:32:03 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=lQQG5ifwyFPZupGZ9rVd/JjKYM2xOZAcGqxvvX6uxOKxnZmfJe6jbcHGOq2a4H4qwDsI4go4AgazKRzP5fz7mAJoTeRrVdMRFS8EDQI/oggGd9l0sY6rh/OAuLQYSFPyAtSD+dgDxFHgqcIUScHO7GdsL+BwENUdk9/6gOy8RDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZQbybIX6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DF4EC4CEED;
+	Mon, 21 Jul 2025 09:32:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753090324;
-	bh=tMQd51DR2PhlSANSMzu8tnUKCfa7HWDsrUeedOQDGV8=;
+	s=k20201202; t=1753090376;
+	bh=G/pV0nbnRZ4r5eBiZNsOigHUJIR41TgGEVYX+SY2ajc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YAoj0vA4RH1GRqkxXn895QzFv0xG59k/y01og9h9chrcRef6I1zl+kY8HjU/CScJO
-	 fY6cqeDqwoJnAHxHg5TT0pPw09FzspU5f5hyj8JuGqtHfoWALjOkzT+D1yKkCVCLir
-	 LkmBbUIU1HkWq/06QbM/t0zB4AjvW2jMyvv0tuPNjzt/l9bsiKFDea2bnq8JBtnwn4
-	 lEN+sm57+hqBfZ91Bs8LemSMzLfr5/ulb8jaQXyTYeM5sbgAtv1iZnB/jRYbe2Olce
-	 X0eZUchellO9l6S2rSHcDoS8eZy12eh7DMSKJ4kpvXVOYnAbij6mH1lfnqStNVZ6KI
-	 bFeg8JqF8qZPA==
-Date: Mon, 21 Jul 2025 11:32:01 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Stefan Roese <sr@denx.de>, Andi Shyti <andi.shyti@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 3/5] dt-bindings: i2c: mt7621: Document an7581 compatible
-Message-ID: <20250721-amorphous-perch-from-jupiter-cecfaa@kuoka>
-References: <20250719125617.8886-1-ansuelsmth@gmail.com>
- <20250719125617.8886-4-ansuelsmth@gmail.com>
+	b=ZQbybIX6jwkDs2/m2WDbbfszRQTrw2c1JTgcJM3fvzRwK9CBZITl8hTSpZ2cYg03B
+	 sb1iOewloCiq7NJaywpAguERZAQluBx0Z2rgj587jjswrXtyCxPEsNbKCVRwfTHdT+
+	 4axTuNEzRCpXNBmse5L5T1e2wK3g3GDLC38RR9Jfvtq6J2GoSQ5jNss3wk4bfMJcJ6
+	 /j1nvpL4lXnCuMFDj0IEUKxxAR8fYuPV7BKvTZqGMinAL9oSJsPaHaoSluli887hrg
+	 RPcfXcZN3kytMQTltGxTcOXzyRF+a/Ju/96f56PhKQgHyiH7lSIdhpVERAT8phkVJu
+	 CRW4ruxFldhOQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1udmt2-000000006sA-3x9F;
+	Mon, 21 Jul 2025 11:32:45 +0200
+Date: Mon, 21 Jul 2025 11:32:44 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+Cc: Manivannan Sadhasivam <mani@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] PCI: qcom: Switch to bus notifier for enabling ASPM
+ of PCI devices
+Message-ID: <aH4JPBIk_GEoAezy@hovoldconsulting.com>
+References: <20250714-aspm_fix-v1-0-7d04b8c140c8@oss.qualcomm.com>
+ <20250714-aspm_fix-v1-1-7d04b8c140c8@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250719125617.8886-4-ansuelsmth@gmail.com>
+In-Reply-To: <20250714-aspm_fix-v1-1-7d04b8c140c8@oss.qualcomm.com>
 
-On Sat, Jul 19, 2025 at 02:56:13PM +0200, Christian Marangi wrote:
-> Airoha SoC implement the same Mediatek logic for I2C bus with the only
-> difference of not having a dedicated reset line to reset it.
+On Mon, Jul 14, 2025 at 11:31:04PM +0530, Manivannan Sadhasivam wrote:
+> Commit 9f4f3dfad8cf ("PCI: qcom: Enable ASPM for platforms supporting 1.9.0
+> ops") allowed the Qcom controller driver to enable ASPM for all PCI devices
+> enumerated at the time of the controller driver probe. It proved to be
+> useful for devices already powered on by the bootloader as it allowed
+> devices to enter ASPM without user intervention.
 > 
-> Add a dedicated compatible for the Airoha AN7581 SoC and reject the
-> unsupported property.
+> However, it could not enable ASPM for the hotplug capable devices i.e.,
+> devices enumerated *after* the controller driver probe. This limitation
+> mostly went unnoticed as the Qcom PCI controllers are not hotplug capable
+> and also the bootloader has been enabling the PCI devices before Linux
+> Kernel boots (mostly on the Qcom compute platforms which users use on a
+> daily basis).
 > 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
->  .../bindings/i2c/mediatek,mt7621-i2c.yaml          | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
+> But with the advent of the commit b458ff7e8176 ("PCI/pwrctl: Ensure that
+> pwrctl drivers are probed before PCI client drivers"), the pwrctrl driver
+> started to block the PCI device enumeration until it had been probed.
+> Though, the intention of the commit was to avoid race between the pwrctrl
+> driver and PCI client driver, it also meant that the pwrctrl controlled PCI
+> devices may get probed after the controller driver and will no longer have
+> ASPM enabled. So users started noticing high runtime power consumption with
+> WLAN chipsets on Qcom compute platforms like Thinkpad X13s, and Thinkpad
+> T14s, etc...
+
+Note the ASPM regression for ath11k/ath12k only happened in 6.15, so
+commit b458ff7e8176 ("PCI/pwrctl: Ensure that pwrctl drivers are probed
+before PCI client drivers") in 6.13 does not seem to be the immediate
+culprit here.
+
+Candidates from 6.15 include commits like
+
+	957f40d039a9 ("PCI/pwrctrl: Move creation of pwrctrl devices to pci_scan_device()")
+	2489eeb777af ("PCI/pwrctrl: Skip scanning for the device further if pwrctrl device is created")
+
+This is probably related to the reports of these drivers sometimes
+failing to probe with
+
+	ath12k_pci 0004:01:00.0: of_irq_parse_pci: failed with rc=134
+
+after pwrctrl was merged, and which since 6.15 should instead result in
+the drivers not probing at all (as we've discussed off list).
+
+> Obviously, it is the pwrctrl change that caused regression, but it
+> ultimately uncovered a flaw in the ASPM enablement logic of the controller
+> driver. So to address the actual issue, switch to the bus notifier for
+> enabling ASPM of the PCI devices. The notifier will notify the controller
+> driver when a PCI device is attached to the bus, thereby allowing it to
+> enable ASPM more reliably. It should be noted that the
+> 'pci_dev::link_state', which is required for enabling ASPM by the
+> pci_enable_link_state_locked() API, is only set by the time of
+> BUS_NOTIFY_BIND_DRIVER stage of the notification. So we cannot enable ASPM
+> during BUS_NOTIFY_ADD_DEVICE stage.
 > 
-> diff --git a/Documentation/devicetree/bindings/i2c/mediatek,mt7621-i2c.yaml b/Documentation/devicetree/bindings/i2c/mediatek,mt7621-i2c.yaml
-> index 118ec00fc190..38118007b601 100644
-> --- a/Documentation/devicetree/bindings/i2c/mediatek,mt7621-i2c.yaml
-> +++ b/Documentation/devicetree/bindings/i2c/mediatek,mt7621-i2c.yaml
-> @@ -14,7 +14,9 @@ allOf:
->  
->  properties:
->    compatible:
-> -    const: mediatek,mt7621-i2c
-> +    enum:
-> +      - mediatek,mt7621-i2c
-> +      - airoha,an7581-i2c
+> So with this, we can also get rid of the controller driver specific
+> 'qcom_pcie_ops::host_post_init' callback.
+> 
+> Cc: stable@vger.kernel.org # v6.7
+> Fixes: 9f4f3dfad8cf ("PCI: qcom: Enable ASPM for platforms supporting 1.9.0 ops")
 
-Keep list ordered.
+So whatever form this fix ends up taking it only needs to be backported
+to 6.15.
 
-Best regards,
-Krzysztof
+As you mention above these platforms do not support hotplug, but even if
+they were, enabling ASPM for hotplugged devices is arguably more of a
+new features than a bug fix.
 
+Johan
 
