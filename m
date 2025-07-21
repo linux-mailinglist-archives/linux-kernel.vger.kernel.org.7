@@ -1,87 +1,96 @@
-Return-Path: <linux-kernel+bounces-738637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0FF4B0BB54
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 05:17:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B188B0BB55
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 05:18:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A9983B58AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 03:17:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E8A118975F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 03:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6691F4165;
-	Mon, 21 Jul 2025 03:17:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EAFB1D9324;
+	Mon, 21 Jul 2025 03:18:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gPO30vjv"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VVB1WIB/"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4010C1EB3D;
-	Mon, 21 Jul 2025 03:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF4E2C181
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 03:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753067870; cv=none; b=FwYYLdFUKS2MfT99T/f6hMOPjDL2tWsBn3o/pXJiqbpgY+FImIJYZVr59hUHzhmFlPZbVapYJ0xm8/zleuErDAvLSdN7XzaUIrCQiZUE6oJEqRajeBIp8w0s69UXfrBJss3PZDUW0OFRg3wb4IZ8u67wquYuqYbr9IGIi14Ksgo=
+	t=1753067891; cv=none; b=VfiP/oTsrNBFxVrgW3XAGfbF32e4jHljfXzx8GoNAI7p+X6pIicBdwjn+61wi0D9lIlupyZX/HD4KGLvxR/Ot0AVV3cQN57tcpLZjWYk6kaDSASJY2WlSMAMIAra3rr+wplUuwinFijTjhPO7aFxu4eOgYrby6sw+AMbCbgzc9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753067870; c=relaxed/simple;
-	bh=wpAdoRWYOK8RLceMDgpibClmIJceDZvfzE56j2kutEk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fHo3emXrA7f9Z7GLBEs2FTnf5/kcV73ENz1kTC3MYEzvkB/gAw2evxHgrOhV3+GwIOzU2hMPaG0qoBeZaLqLksYMKFoWukQ/JLoux4bfVkTT0XZQEnccYZ5zyuR51vt9fRCrYXKV/Jz5qcA2yhOagrVYFNhnnQtO5BWD6gkB9Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gPO30vjv; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=YUQtc+jeUFA1Sjc8QeVJ2qxxTnEDp9lcdumo1CrlvHY=; b=gPO30vjvhAnDRdKnYIGKdso8Ag
-	LMDXwPee2moTibXtgQ5dIWMlV3ixOkcv+WNH6KmuuiFMsdr0SV5oL5hAIKfOOZ5uDmdkjZtubhp5T
-	TG1IZXKBFwHhcnOjIbHtnUC2hv5K3gYuNdTBYUSzAUDAmlIH6MKJPrfJ655B6tPr2Cu9aj0ALCoSz
-	W/0zMOGz18Q2gfV8uiOHF0/vdaiHpT5+JsOFq6GscupHiU6wWLK/B7IUWfAXm4wSlc6EfeXD4Ckmu
-	wopr0JtcpHoBQSwg7Qe0hDrZ0XVfOsiATbzm/HObFoJYClHtilXNQmeFCumcMntSUCACN6rMpDBvn
-	2VleO7Fg==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1udh2C-0000000G4rQ-319a;
-	Mon, 21 Jul 2025 03:17:48 +0000
-Message-ID: <4cb78517-6d24-4239-9a6c-2b58439e199e@infradead.org>
-Date: Sun, 20 Jul 2025 20:17:48 -0700
+	s=arc-20240116; t=1753067891; c=relaxed/simple;
+	bh=1Nwz/6JrXgkK+3JyABNkT+B6lJu9/HJVvsPknVATutE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EAQjX4saHEpGLQA+VUbFuy9MKEUK+ykHODHXWGdpjU62YbYt4KEACUNdcRm1eNIHn8egR+k8v4JUFVztlLbcB4cvtURfW+qOsK3SabAZ2Oy6WeqKoxMUL/SOnweK8UJCryZnPNHCNkso5RTBdlPIFrT2eRhioirwD22ZBtab8BY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VVB1WIB/; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753067883;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=LEVQWDNiwgMGDi1tqQCTSAM70YFvUepOfjgTtjrX/DY=;
+	b=VVB1WIB/6VDwWEGZd4RB1DTk37lSElBL4ind2OUc0Af8JpZE3h3ZEKb1lrf4uDZ4wlWFvs
+	F6HfSCKNeilmSfwQC7CKD6YAWbALeWtSSOIn26iJrD54851xXVwEO/RLSHLo5WOgNmwzuk
+	yx/MmqMMRlkU8gcAZCt2u/yipir9iE8=
+From: Ye Liu <ye.liu@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Ye Liu <liuye@kylinos.cn>,
+	Lance Yang <lance.yang@linux.dev>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] hung_task: add warning counter to blocked task report
+Date: Mon, 21 Jul 2025 11:17:54 +0800
+Message-ID: <20250721031755.1418556-1-ye.liu@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v3 2/4] kernel/api: enable kerneldoc-based API
- specifications
-To: Sasha Levin <sashal@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-api@vger.kernel.org, tools@kernel.org
-References: <20250711114248.2288591-1-sashal@kernel.org>
- <20250711114248.2288591-3-sashal@kernel.org>
- <4777f4d7-f1c6-4345-92b2-0ba5d6563ee2@infradead.org> <aH2r55bjqqtKxOEQ@lappy>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <aH2r55bjqqtKxOEQ@lappy>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+From: Ye Liu <liuye@kylinos.cn>
 
+Add a warning counter to each hung task message to make it easier
+to analyze and locate issues in the logs.
 
-On 7/20/25 7:54 PM, Sasha Levin wrote:
->> 2. It looks like it only checks .c files, omitting header files. (?)
->> Some APIs are only present in header files (e.g., all of <linux/list.h> is
->> either macros or inline functions).
-> 
-> I was trying to focus on the userspace side of things, so I didn't think
-> we'll have anything in header files, but I also don't have an objection
-> to extending it to scan headers too.
+Signed-off-by: Ye Liu <liuye@kylinos.cn>
+---
+ kernel/hung_task.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-That's probably sufficient, at least for now.
-
-Thanks.
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index 8708a1205f82..9e5f86148d47 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -58,6 +58,7 @@ EXPORT_SYMBOL_GPL(sysctl_hung_task_timeout_secs);
+ static unsigned long __read_mostly sysctl_hung_task_check_interval_secs;
+ 
+ static int __read_mostly sysctl_hung_task_warnings = 10;
++static int hung_task_warning_count;
+ 
+ static int __read_mostly did_panic;
+ static bool hung_task_show_lock;
+@@ -232,8 +233,9 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+ 	if (sysctl_hung_task_warnings || hung_task_call_panic) {
+ 		if (sysctl_hung_task_warnings > 0)
+ 			sysctl_hung_task_warnings--;
+-		pr_err("INFO: task %s:%d blocked for more than %ld seconds.\n",
+-		       t->comm, t->pid, (jiffies - t->last_switch_time) / HZ);
++		pr_err("INFO: task %s:%d blocked for more than %ld seconds. [Warning #%d]\n",
++		       t->comm, t->pid, (jiffies - t->last_switch_time) / HZ,
++		       ++hung_task_warning_count);
+ 		pr_err("      %s %s %.*s\n",
+ 			print_tainted(), init_utsname()->release,
+ 			(int)strcspn(init_utsname()->version, " "),
 -- 
-~Randy
+2.43.0
 
 
