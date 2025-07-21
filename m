@@ -1,174 +1,116 @@
-Return-Path: <linux-kernel+bounces-739355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AC35B0C528
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:27:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85112B0C559
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:38:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D20EE5402BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:27:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5996E170856
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E7D2D949A;
-	Mon, 21 Jul 2025 13:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE3A2D9785;
+	Mon, 21 Jul 2025 13:38:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YB/WpQxs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b="4Leuf28K"
+Received: from box.trvn.ru (box.trvn.ru [45.141.101.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BAB22C327C;
-	Mon, 21 Jul 2025 13:27:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425B51607A4;
+	Mon, 21 Jul 2025 13:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.141.101.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753104441; cv=none; b=X20nv9JSnXE9sd6eD1/D9RWNb8fXEUH3k9yV6RODMFvCh7OKqsVf7ILzFSJtnG8Z7xIOrqja0JnRN0N7KFOuW/kByHjx5mIGQ32SGIgKpsnP99jQoX24pN1sR+pBznFaj+OYbSDL9/FTljCtVfTt2q45CAsWCTSJFfD/M+Sgo3A=
+	t=1753105093; cv=none; b=KoyLUw0B/xc7GtGLRYisWE37hgxP5ah69q3mtDSF+L4crbD0GZ+bMhFROOJ610HiWtk1e4ie/0YwbIinYIuMzuvIG0yQ/ZVESMl6T/6bzpAGZO8FXc+oyWo8YwZH4W3Zx6v92NbVHohouiRBi3l0qE/7gsdIiwXsnXqPmY2zvcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753104441; c=relaxed/simple;
-	bh=cKOIaF/9e9LosSSyIlZcltURlxLbaR2oPOKVD+Xx1AY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LXD3BRQ27bQ27ZnxjbBGpQ0b8QG33txzizXAFinUOilpa1Jz0BD7fJEEhfNcBQjaIApmsWbnxZyLprASHoBiSHra26WbTP5TIHGA17Q/uZPHh0z1fYmjuU01ne6mRNv8cYVDLcSrx4Erd4PLXu+6y4jK+Z+rfPaFvXBS4bE4fx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YB/WpQxs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1D5AC4CEED;
-	Mon, 21 Jul 2025 13:27:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753104440;
-	bh=cKOIaF/9e9LosSSyIlZcltURlxLbaR2oPOKVD+Xx1AY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=YB/WpQxsu1YfRmlro/e24s/Vfd6LrcRL6asIIxZodVEBzfBm7FHBnYrsIhxA/Mpz8
-	 IxLhbOJ0WtZV8LFypaDcX8aq4OMvi9S3ynjvFFKe9RdMZP3DEQ55n/1QYt2vlpkU/X
-	 Ubm3LRRKLtAzO/l5SBio67sj+MulsHpAoiwR38EM6pzV6mCuzfdf0quKHN494bD5T6
-	 aJoqKv1/ok/a+0xCuT18TlhUlB4ShKYy4jKMx+v2xpND6sExMuMPXQ5NrRqrqkhv52
-	 zgyaVW9nzflEhD6BN9ItGS8c4kntjPjIzypW6GItltRXEPKQiSrOV8eBlGl0s2I4Sy
-	 ZikbQJCGEUJDA==
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-615bda72cc1so768541eaf.2;
-        Mon, 21 Jul 2025 06:27:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV+1PVNMdyAB/oPq0UOvJi0uMD2FqhRitjNexBcSyTFy7YasULQ+/ClhJBOzdBf9z41cpE9oS7bh8E5iBTR@vger.kernel.org, AJvYcCXPO6K5GU7/y92X5reRvkTNfXvD88IDxKjQ7bbeFJ7OkdtD57rIzR1wY/mOmmz2BeFlCaETApsqEl/B@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOo063tuuqLuTkqDHsQnRKC/gg8rUTRRl85liqzXvD6MFU6tmT
-	+oSW9YlMsUAcasCFpbxdgu1QT22V49apgAQSom0H2oPsrO+TNn1mJCfFuX1iotSmX8AxMdZhMN4
-	V5jMNM08wQqz9GBSGBZgwB4qAxT3hhaE=
-X-Google-Smtp-Source: AGHT+IEvddJwMY1Z1PmRABXKYKann2akoFsKkyfETHzAWJrAbllziuwBoMtm+BcZi6441BEYlIZLpD9/qyWKyrD0sns=
-X-Received: by 2002:a05:6820:220f:b0:615:c868:2541 with SMTP id
- 006d021491bc7-615c86825d2mr7397019eaf.3.1753104439939; Mon, 21 Jul 2025
- 06:27:19 -0700 (PDT)
+	s=arc-20240116; t=1753105093; c=relaxed/simple;
+	bh=PTfC7sJ8FlcEda+cLpOvHwVKJ5XjjiBBOVKAIJ9zp70=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=EjM5pA+wsgwP/1PA7AykEkzHv597wmT/NqIj1sXoP6fZ2U9FqOF+LhKUSeNMTiUv7uCwmiJIBR6RZlI2BltXZJq/cCDnjPCU3j1UOdp9/IOM0si19gJ0ia57e7+GPwAGkGcoD3uFpNbO4vSyDuf9eo5wGWvKqFTsde8EqoEJEso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru; spf=pass smtp.mailfrom=trvn.ru; dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b=4Leuf28K; arc=none smtp.client-ip=45.141.101.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trvn.ru
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
+	t=1753104492; bh=PTfC7sJ8FlcEda+cLpOvHwVKJ5XjjiBBOVKAIJ9zp70=;
+	h=From:Date:Subject:To:Cc:From;
+	b=4Leuf28KGwMoyyhUSJi6N+dBRuVdTBBZbLVM9yqJgibHeVr09FQXijd0k6fBkZj10
+	 v+KJ6Nqq/hTbseYYDSebiYstnuoxu+M/FjdhdlmkJZ2WP2meZMqxLDdTla5Ko45M+N
+	 PLA/eH/jWtbFHtjbvGm3qU4pU5VpuSnb05UI82gEYMVWOnGqG7tsVUMCvJZ54F/5GK
+	 x8+2ibpBICOdZ6RdDfG7jSGuTyoD7aNnE3fwbIeShzXz2HvBj9lhP09w3rNrzxMsrs
+	 mXjKGhlDMvtHK+LW+2gGA7JpLRDgI4RHTpfjo8hbW96DhZL9Ev43leStpo/zqGMwef
+	 n/hk5wB3iflUg==
+Received: from authenticated-user (box.trvn.ru [45.141.101.25])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by box.trvn.ru (Postfix) with ESMTPSA id E06C59034;
+	Mon, 21 Jul 2025 18:28:11 +0500 (+05)
+From: Nikita Travkin <nikita@trvn.ru>
+Date: Mon, 21 Jul 2025 18:28:03 +0500
+Subject: [PATCH] firmware: qcom: tzmem: disable sc7180 platform
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250718020312.856168-1-lijiayi@kylinos.cn> <20250721032606.3459369-1-lijiayi@kylinos.cn>
-In-Reply-To: <20250721032606.3459369-1-lijiayi@kylinos.cn>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 21 Jul 2025 15:27:09 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gf5wb1cNS0CJm9-vhMF63d2BzTEfBciiO9ZhdJHYpDnQ@mail.gmail.com>
-X-Gm-Features: Ac12FXwrzJD0hWFzMewpQ5ouXApA-U82Afkv9Z0asWZhUvTxXi_PsCnqFDycwP0
-Message-ID: <CAJZ5v0gf5wb1cNS0CJm9-vhMF63d2BzTEfBciiO9ZhdJHYpDnQ@mail.gmail.com>
-Subject: Re: [PATCH v2] ACPI: Fix initial QoS constraint application order in
- PPC initialization
-To: Jiayi Li <lijiayi@kylinos.cn>
-Cc: rafael@kernel.org, jiayi_dec@163.com, lenb@kernel.org, 
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250721-sc7180-shm-hang-v1-1-99ad9ffeb5b4@trvn.ru>
+X-B4-Tracking: v=1; b=H4sIAGJAfmgC/x2MSQqAMAwAvyI5G0iLreJXxEPRaHNwoQERpH+3e
+ hyGmQeUk7BCXz2Q+BKVYy9g6gqmGPaVUebCYMk6aq1BnVrTEWrc8PMYaPbeUWAXGijVmXiR+z8
+ OY84vamTaS2EAAAA=
+X-Change-ID: 20250721-sc7180-shm-hang-a0d6650ae5a4
+To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Nikita Travkin <nikita@trvn.ru>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1127; i=nikita@trvn.ru;
+ h=from:subject:message-id; bh=PTfC7sJ8FlcEda+cLpOvHwVKJ5XjjiBBOVKAIJ9zp70=;
+ b=owEBbQKS/ZANAwAKAUMc7O4oGb91AcsmYgBofkBoMWbYmhpNIkmtGdmtz8XfW7AJzHZ2amyEn
+ mjOgQV8USuJAjMEAAEKAB0WIQTAhK9UUj+qg34uxUdDHOzuKBm/dQUCaH5AaAAKCRBDHOzuKBm/
+ dXaCD/kBUeELBuPLZHG8o5xG+lkHMmmTMt8F3A+sMdZvXX0DlrAFhqPywsLZs6b7GVhBHWlDYSd
+ 32mHW+9vfhi8lllcdfa6IEiY9l/PbNQBdJQFZ8SpR/mmn9/oQ178N2ddcqzJFM6UGIH9YOv65YO
+ W556HEr8OLFYHtnEitkePAkcROjJZmfCxM1E49miz94AoYI4O4NgW4Gk7tlqaH690Rj1oMxar/f
+ vkq9ftkcVP3mrMb9II08B/zTceoUPIMknta8T1ZASuvUMIc691ZQgV7dffbtXXT/u6Ks3XDPXlK
+ 4Clj39reT90psjzT27wHbrTZJFZX0X1n2g3GvL6MJ6rKcXZ7+Y/tkwo2bhCanTGzk3XAOPHAWna
+ 1zE9IMjjJIEoqloJjQIk67CO49/JFcHbmIENvNHJNTO/bC/opYwgfusofPD6kWnQXiFQLhBDpqn
+ jfqDmwA1+Plx86AmDQkrkB+V7IcT/O+kMNrjvg2ShiTT6RRo1UWIQIldV7wQrRdT9+PE3VR+kdl
+ NyFXgTZ6nQOAiW4Ab8oRcWKvS6CY+pHlIjwSj3pR+QjCxXvcQlZL5t1LCi2cRKhWy28iS3phNMN
+ DFXAFQohr2EtdhdRlQRWob6Cbb+ZBuN+h+3+okexuGuZ4SznIfiavh6HTCQtw1vx2ikEVfH/QzL
+ LdoiLiONfvFMA5w==
+X-Developer-Key: i=nikita@trvn.ru; a=openpgp;
+ fpr=C084AF54523FAA837E2EC547431CECEE2819BF75
 
-On Mon, Jul 21, 2025 at 5:26=E2=80=AFAM Jiayi Li <lijiayi@kylinos.cn> wrote=
-:
->
-> This patch fixes an issue where _PPC frequency limits set by the BIOS
-> failed to take effect due to incorrect call ordering. Previously,
-> freq_qos_update_request() was being called before freq_qos_add_request(),
-> causing the constraint updates to be ignored. With this fix, the frequenc=
-y
-> limits are now properly enforced as intended.
-> The original initialization sequence was:
->
-> cpufreq_policy_online()
->     acpi_cpufreq_cpu_init()
->         acpi_processor_get_platform_limit()
->             freq_qos_update_request(&perflib_req)
->     blocking_notifier_call_chain(...)
->         acpi_processor_ppc_init()
->             freq_qos_add_request(&perflib_req)
->
-> The new sequence explicitly ensures:
->
-> cpufreq_policy_online()
->     acpi_cpufreq_cpu_init()
->         acpi_processor_get_platform_limit()
->             freq_qos_update_request(&perflib_req)
->     blocking_notifier_call_chain(...)
->         acpi_processor_ppc_init()
->             freq_qos_add_request(&perflib_req)
-> +           acpi_processor_get_platform_limit()
-> +               freq_qos_update_request(&perflib_req)
->
-> The critical change adds an immediate platform limit update after the
-> QoS request is registered. This guarantees that the initial P-state
-> constraint is applied before any subsequent updates, resolving the window
-> where constraints could be applied out-of-order.
->
-> Fixes: d15ce412737a ("ACPI: cpufreq: Switch to QoS requests instead of cp=
-ufreq notifier")
-> Signed-off-by: Jiayi Li <lijiayi@kylinos.cn>
-> ---
-> v1 -> v2:
-> - Modify the commit.
-> - Add pr->performance check in acpi_processor_ppc_init loop.
-> ---
-> ---
->  drivers/acpi/processor_perflib.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->
-> diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor_pe=
-rflib.c
-> index 64b8d1e19594..56f2b8354d62 100644
-> --- a/drivers/acpi/processor_perflib.c
-> +++ b/drivers/acpi/processor_perflib.c
-> @@ -173,6 +173,9 @@ void acpi_processor_ppc_init(struct cpufreq_policy *p=
-olicy)
->  {
->         unsigned int cpu;
->
-> +       if (ignore_ppc =3D=3D 1)
-> +               return;
-> +
->         for_each_cpu(cpu, policy->related_cpus) {
->                 struct acpi_processor *pr =3D per_cpu(processors, cpu);
->                 int ret;
-> @@ -180,6 +183,9 @@ void acpi_processor_ppc_init(struct cpufreq_policy *p=
-olicy)
->                 if (!pr)
->                         continue;
->
-> +               if (!pr->performance)
-> +                       continue;
-> +
->                 /*
->                  * Reset performance_platform_limit in case there is a st=
-ale
->                  * value in it, so as to make it match the "no limit" QoS=
- value
+When SHM bridge is enabled, assigning RMTFS memory causes the calling
+core to hang if the system is running in EL1.
 
-Applied, but I have consolidated the pr and pr->performance checks above.
+Disable SHM bridge on sc7180 devices to avoid that hang.
 
-I have also made some changes in the subject and changelog.
+Signed-off-by: Nikita Travkin <nikita@trvn.ru>
+---
+ drivers/firmware/qcom/qcom_tzmem.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks!
+diff --git a/drivers/firmware/qcom/qcom_tzmem.c b/drivers/firmware/qcom/qcom_tzmem.c
+index ea0a35355657064b1c08a6ebed7cfb483a60dd3f..12e448669b8bd24ed312d0aa7b6a2b0042f762de 100644
+--- a/drivers/firmware/qcom/qcom_tzmem.c
++++ b/drivers/firmware/qcom/qcom_tzmem.c
+@@ -77,6 +77,7 @@ static bool qcom_tzmem_using_shm_bridge;
+ 
+ /* List of machines that are known to not support SHM bridge correctly. */
+ static const char *const qcom_tzmem_blacklist[] = {
++	"qcom,sc7180", /* hang in rmtfs memory assignment */
+ 	"qcom,sc8180x",
+ 	"qcom,sdm670", /* failure in GPU firmware loading */
+ 	"qcom,sdm845", /* reset in rmtfs memory assignment */
 
-> @@ -193,6 +199,11 @@ void acpi_processor_ppc_init(struct cpufreq_policy *=
-policy)
->                 if (ret < 0)
->                         pr_err("Failed to add freq constraint for CPU%d (=
-%d)\n",
->                                cpu, ret);
-> +
-> +               ret =3D acpi_processor_get_platform_limit(pr);
-> +               if (ret)
-> +                       pr_err("Failed to update freq constraint for CPU%=
-d (%d)\n",
-> +                              cpu, ret);
->         }
->  }
->
-> --
+---
+base-commit: 97987520025658f30bb787a99ffbd9bbff9ffc9d
+change-id: 20250721-sc7180-shm-hang-a0d6650ae5a4
+
+Best regards,
+-- 
+Nikita Travkin <nikita@trvn.ru>
+
 
