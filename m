@@ -1,77 +1,78 @@
-Return-Path: <linux-kernel+bounces-739221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96D1AB0C381
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:44:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78A94B0C37C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:43:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64A574E5FA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:42:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABE3616758E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:43:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E443D2BD58E;
-	Mon, 21 Jul 2025 11:42:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FDAF2BF3F4;
+	Mon, 21 Jul 2025 11:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z4ofNjYw"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U6rxNg3e"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F8D2BFC7B;
-	Mon, 21 Jul 2025 11:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F2A2BE65C;
+	Mon, 21 Jul 2025 11:43:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753098149; cv=none; b=p55iT2zxHVJqyLOxT/P8F13nEvi5+E5ABNhESyz+HNstEVDIp8lInPAAWvJvoOEiS5gQA0/ehx1mKN3+Un01VazrRHV/PAnYMn5gys7Jc71rAZ8tA4DCkM6FbiIY1O3PSb5YHHUo8vBDzgoEscNrzosFicg6X+JXFs0QQEP+h18=
+	t=1753098226; cv=none; b=DfaosuMBSjYg46cpc04I3wVDeTdR9B/53owSyYMYRAgXWiI9sT8lXXd7G6xcMwZHPZChWu1gl5e3rXRFKRf5wt6YjdTIuirqw5su3+Y185C8+grcGg2FQWt1wiuN2Gk1dj4NASCLHpJjkeXCQBpHEmrggvtWOnioM9X2iCGLR7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753098149; c=relaxed/simple;
-	bh=WezkxZb+PXy8GmsDUb+kAjkO/qBnvKppURLnc8BKBdI=;
+	s=arc-20240116; t=1753098226; c=relaxed/simple;
+	bh=E7JZML/DSqmAeDiUgFD6FwOcerC7aKGgGd+21Y5vB1s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xz+ZZ1znO7Qq11kH+38k1+0+b6ePBaW6ndiVKWkxakQPdjGX9Tynr7Gh3ZwPT9jznEU6/n8ooc0aI8bwyX2tvWb+4xBFRxvqTGTsXdcLQVuplhCQXdc7Ot1UwjYGkvqtJp8MQiicTGEv+QfQJ31O8xTo7bMFFS6O942GYHTFmLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z4ofNjYw; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=M73c4VJ9PlnxO3w9MwyhNWla5fuIDoIW8QYaxQxjj+mBZ1PeY31nKKEJxSsdgzOX3lDqwS2wzlSqDDvPcD2V5l0tCtdwQrPNFmpJsxKHtuzGwrYe/o94M08+T92SAx044Vj6auNPxb1yPyUU2UPzw3kiosE1u+qu8rOwJGXROi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U6rxNg3e; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753098148; x=1784634148;
+  t=1753098226; x=1784634226;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=WezkxZb+PXy8GmsDUb+kAjkO/qBnvKppURLnc8BKBdI=;
-  b=Z4ofNjYw50bUPz2z07+UdrFMksOc4ywmwV/ulVFDwyLWNi+ww0QJeGew
-   f65yOU8r8qVQcY7ZvmroRDvWrtRiEDRDlR/pgHWk0h7DLuhMX8r2iPqwm
-   zSWPCYgwtvQR64BR4ZG0MtZ60w4qnjMwBuq4q+a+URBZJ+JYEtQFc9Z3u
-   A/RNQY2wtKVuK8mQ40zeoxJtoXvvPdIXog4ANhDixuXvykVIPBKoXlRKB
-   TqXB//NkExdgva7nBjWvFnAuGfOaOAfNTvyskp06eMEYTkluk1cBUhn0I
-   pRzKK0KRdUazq66Ujn3nVeUWphhr4Jgkrq+9tZVy0hymqLdF/ak6+msNN
-   w==;
-X-CSE-ConnectionGUID: QIbaI1gRSNqQqfyF9e251A==
-X-CSE-MsgGUID: 0SH5F338SdaTjmC0jRp/2g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11498"; a="66658244"
+  bh=E7JZML/DSqmAeDiUgFD6FwOcerC7aKGgGd+21Y5vB1s=;
+  b=U6rxNg3eFFS1voeOYn+0Jo+1HIOMA6dGXFkjiVEz79WzHbxKchq6+tke
+   95dJad54jqzwCEUeMzjIgXooZZa5dLd8YimMIGGPSOdL3s3NnbQJ0OfI2
+   7aSG3yBMKUc0cybScTjeaJqMJmH9Cw5Vcw3wfCfh7nvYJsa30vK2uscxs
+   G3MpIIFo0J1U5vD7LW7m7F26OW72HOTni5IHyAv+xEjnxeewhsQeq+ECL
+   +OdL1qVa+HlkQGtDzwmAimRFxwgTe2bb6y8h/VvlBDM0nY4nmm54mJ7Ko
+   hzigw9573NtFCETVBsvbsfQdMta4wU+S6UGWdXJmkIBTYrRo063AqxH6a
+   Q==;
+X-CSE-ConnectionGUID: bWi7SvFIR1WmKUdC9beN1A==
+X-CSE-MsgGUID: s3liG3FDQAiLSFAyTCYldw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11498"; a="55190282"
 X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
-   d="scan'208";a="66658244"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 04:42:27 -0700
-X-CSE-ConnectionGUID: h7xVXM/FSd+STnjxiO+gSw==
-X-CSE-MsgGUID: F+SIR6XET4GP2hgSKWd4GQ==
+   d="scan'208";a="55190282"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 04:43:46 -0700
+X-CSE-ConnectionGUID: l2EnZGPbRCuKAMgQuiGhtw==
+X-CSE-MsgGUID: +eSs64p/REmGNdBWbYIJgQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
-   d="scan'208";a="189771089"
+   d="scan'208";a="158878641"
 Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 04:42:25 -0700
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 04:43:42 -0700
 Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1udouU-0000000HKQ9-3aWd;
-	Mon, 21 Jul 2025 14:42:22 +0300
-Date: Mon, 21 Jul 2025 14:42:22 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	George Abraham P <george.abraham.p@intel.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: build failure after merge of all the trees
-Message-ID: <aH4nnsecLEqrCrpK@smile.fi.intel.com>
-References: <20250721173754.42865913@canb.auug.org.au>
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1udovj-0000000HKRU-0mAT;
+	Mon, 21 Jul 2025 14:43:39 +0300
+Date: Mon, 21 Jul 2025 14:43:38 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	jic23@kernel.org, dan.carpenter@linaro.org, lars@metafoo.de,
+	Michael.Hennerich@analog.com, dlechner@baylibre.com,
+	nuno.sa@analog.com, andy@kernel.org, Markus.Elfring@web.de,
+	marcelo.schmitt1@gmail.com
+Subject: Re: [PATCH v2 1/1] iio: adc: ad4170-4: Correctly update filter_fs
+ after filter type change
+Message-ID: <aH4n6kMQAN1zZP_V@smile.fi.intel.com>
+References: <1c354ff9f41ff964a66ece44b0d356e0bda3d210.1753024756.git.marcelo.schmitt@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,96 +81,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250721173754.42865913@canb.auug.org.au>
+In-Reply-To: <1c354ff9f41ff964a66ece44b0d356e0bda3d210.1753024756.git.marcelo.schmitt@analog.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
  krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mon, Jul 21, 2025 at 05:37:54PM +1000, Stephen Rothwell wrote:
-> Hi all,
+On Sun, Jul 20, 2025 at 12:37:24PM -0300, Marcelo Schmitt wrote:
+> Previously, the driver was directly using the filter type value to update
+> the filter frequency (filter_fs) configuration. That caused the driver to
+> switch to the lowest filter_fs configuration (highest sampling frequency)
+> on every update to the filter type. Correct the filter_fs collateral update
+> by clamping it to the range of supported values instead of mistakenly
+> using the filter type to update the filter_fs.
 > 
-> After merging all the trees, today's linux-next build (powerpc
-> allyesconfig) failed like this:
-> 
-> In file included from drivers/crypto/intel/qat/qat_common/adf_pm_dbgfs_utils.c:4:
-> include/linux/sprintf.h:11:54: error: unknown type name 'va_list'
->    11 | __printf(2, 0) int vsprintf(char *buf, const char *, va_list);
->       |                                                      ^~~~~~~
-> include/linux/sprintf.h:1:1: note: 'va_list' is defined in header '<stdarg.h>'; this is probably fixable by adding '#include <stdarg.h>'
->   +++ |+#include <stdarg.h>
->     1 | /* SPDX-License-Identifier: GPL-2.0 */
-> include/linux/sprintf.h:13:71: error: unknown type name 'va_list'
->    13 | __printf(3, 0) int vsnprintf(char *buf, size_t size, const char *fmt, va_list args);
->       |                                                                       ^~~~~~~
-> include/linux/sprintf.h:13:71: note: 'va_list' is defined in header '<stdarg.h>'; this is probably fixable by adding '#include <stdarg.h>'
-> include/linux/sprintf.h:15:72: error: unknown type name 'va_list'
->    15 | __printf(3, 0) int vscnprintf(char *buf, size_t size, const char *fmt, va_list args);
->       |                                                                        ^~~~~~~
-> include/linux/sprintf.h:15:72: note: 'va_list' is defined in header '<stdarg.h>'; this is probably fixable by adding '#include <stdarg.h>'
-> include/linux/sprintf.h:17:70: error: unknown type name 'va_list'
->    17 | __printf(2, 0) __malloc char *kvasprintf(gfp_t gfp, const char *fmt, va_list args);
->       |                                                                      ^~~~~~~
-> include/linux/sprintf.h:17:70: note: 'va_list' is defined in header '<stdarg.h>'; this is probably fixable by adding '#include <stdarg.h>'
-> include/linux/sprintf.h:18:73: error: unknown type name 'va_list'
->    18 | __printf(2, 0) const char *kvasprintf_const(gfp_t gfp, const char *fmt, va_list args);
->       |                                                                         ^~~~~~~
-> include/linux/sprintf.h:18:73: note: 'va_list' is defined in header '<stdarg.h>'; this is probably fixable by adding '#include <stdarg.h>'
-> include/linux/sprintf.h:21:55: error: unknown type name 'va_list'
->    21 | __scanf(2, 0) int vsscanf(const char *, const char *, va_list);
->       |                                                       ^~~~~~~
-> include/linux/sprintf.h:21:55: note: 'va_list' is defined in header '<stdarg.h>'; this is probably fixable by adding '#include <stdarg.h>'
-> 
-> I don't know what root caused this, but I have applied the following
-> patch for today.
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 21 Jul 2025 16:15:57 +1000
-> Subject: [PATCH] sprintf.h requires stdarg.h
-> 
-> In file included from drivers/crypto/intel/qat/qat_common/adf_pm_dbgfs_utils.c:4:
-> include/linux/sprintf.h:11:54: error: unknown type name 'va_list'
->    11 | __printf(2, 0) int vsprintf(char *buf, const char *, va_list);
->       |                                                      ^~~~~~~
-> include/linux/sprintf.h:1:1: note: 'va_list' is defined in header '<stdarg.h>'; this is probably fixable by adding '#include <stdarg.h>'
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  include/linux/sprintf.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/include/linux/sprintf.h b/include/linux/sprintf.h
-> index 521bb2cd2648..f06f7b785091 100644
-> --- a/include/linux/sprintf.h
-> +++ b/include/linux/sprintf.h
-> @@ -4,6 +4,7 @@
->  
->  #include <linux/compiler_attributes.h>
->  #include <linux/types.h>
-> +#include <linux/stdarg.h>
->  
->  int num_to_str(char *buf, int size, unsigned long long num, unsigned int width);
->  
-> -- 
-> 2.50.1
-> 
-> Is there any good reason not to do this?
-> 
-> I guess this patch should have
-> 
-> Fixes: 39ced19b9e60 ("lib/vsprintf: split out sprintf() and friends")
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Link: https://lore.kernel.org/linux-iio/c6e54942-5b42-484b-be53-9d4606fd25c4@sabinyo.mountain/
 
-This sounds correct to me and your patch should be sent as a fix to the stable
-kernels as well.
+You mean Closes: here?
 
-> but that is not the immediate cause.  This has been exposed by the
-> inclusion of a new file
-> (drivers/crypto/intel/qat/qat_common/adf_pm_dbgfs_utils.c in commit
-> 7c68005a4610 ("crypto: qat - relocate power management debugfs helper
-> APIs").  Maybe every other use of sprintf.h also has (explicitly or
-> implicitly) an include of stdarg.h - possibly via kernel.h.
-
-It just a first who started using the header in the correct way without
-proxying others.
-
+> Suggested-by: Jonathan Cameron <jic23@kernel.org>
+> Fixes: 8ab7434734cd ("iio: adc: ad4170-4: Add digital filter and sample frequency config support")
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
 
 -- 
 With Best Regards,
