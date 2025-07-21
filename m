@@ -1,162 +1,168 @@
-Return-Path: <linux-kernel+bounces-738987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A79EB0C019
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:22:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DFD7B0C017
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:22:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26CAA18C1011
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:22:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFC7C3A070F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F09C28B507;
-	Mon, 21 Jul 2025 09:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD3B72601;
+	Mon, 21 Jul 2025 09:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="f0+bl1hs"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HskNqwkz"
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4CB9288C97
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 09:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A145E288C8D;
+	Mon, 21 Jul 2025 09:21:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753089706; cv=none; b=iKbifULrfhtAkGtfXbsioC8De20Us4myx3Bd0MWe+aBOjkH1ua4GwPp9Gv581iJ/SbxkRGImT3hy44rkPK1HGofPvLtBeV/pDBZn2TelANg8q3nibvjAcD/biLEV+IUYXPelhAaZ1PmfSkPibu8usVwOjlMQZKr52TiU69HkS2I=
+	t=1753089705; cv=none; b=FaE4REic6If5PiMUN4y8lqsDkGcUwit4Z1nE8Ec6o2odIt89OT/nYnS0rZImzaSDTwxN6aYive2P9VnlSFp2/qmh96P7u3EDXRwL8gEmCw0M6ay6VciIQA3N+N+R4h6Q8FQe1Zg3Ho1V6Cbq3mTlwfdvQhZ7fwgb0Eup97KZRRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753089706; c=relaxed/simple;
-	bh=RhP7CgPJWuXWazu2ieMATKdgzpZnkmY0/qua2/d0FmQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tMTq5ktnQcrdfT55bPHu6gExnnPGGFBjc4km6HWAVyE+Lo+uK+UGJli5rnWAzu+MhBCIJhtDwggUbyVNEXPwo0C51z7XW1pP98WQMSyaRP10eB26LvLBm/CDs+b692P4o7h0HAYPliUP/RZkcFRQM1v2NYh8Xi71G5OFEQO2ovE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=f0+bl1hs; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ae0dd7ac1f5so734704366b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 02:21:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1753089702; x=1753694502; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=L1Th2tPSSojsnumFzHAfZ9R36o8NbqGCC5Gi+YtQXlo=;
-        b=f0+bl1hsJJWvqnPF1ytmuN7TtU3Z4K80XTr2D1JKCME6D26yJTVnv1dIhrtMm5ooGc
-         Gl8dyEXsVhQ+Fr7UvtE9iNZtCSTDyI9+N+OQT6wkU8C09KJ1tmToMsbki+4RxzCRBgKB
-         WuLf5V/3+RPaj5RcveJxbTI/CoJA6SE5vzwNzrOf71wdNdeZpxxv4eInH22cIv1Puqgr
-         By+ooVdVMqCDdmyOAudpoU66L7ED7tXJTJn15nENleo4fWULTSgRBFrCClOgAMR+9dwb
-         pbCDjkKBANjQVFM0WBEdI449pdcddcobZK0oKviiITK3cs/jz4S3doGdH/TZ/BIbZq/g
-         VpGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753089702; x=1753694502;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L1Th2tPSSojsnumFzHAfZ9R36o8NbqGCC5Gi+YtQXlo=;
-        b=wYRtQVBMpVN0kwyM0BPlU0adD1hHJz1u492uHQQfmppjWJ0nfMZT1PovsqG5+r7IgC
-         1xVUdRKDmOY2Ax0s/ZeykHCPUUN71VCMhc6oSwSJ4l6CanEGlGlIcfmkJhfKTWL0Jlln
-         6vxW4tWTk6H7BusGvqfx05F/zTRDRzMkqJb6pzMcMwllyfx4LwnErPf3A0vZM7HWc65H
-         tikPhJlPSaazTrs42pAEINNj1CXqlKaMI5TTi5pk86trKw/KlnjDrdl/2tfuWcVzJWGl
-         2Zsy+tS+HaCzTvdCeJt1OOvD+juzB7++RIIBFPQjeh/VC5YHbLH4Xfq/+ivJi3AtP0Ip
-         nFIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXX3UzeobxbLBJVn7WZnUscq5/OL4/vJqG7XT58mVWLtSI5/X+u95FgOVqNMTEZYaOx+lfzSEIR9QQkzNA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnwLmjFKOczJbmV5FcR1aaM4aNkuZN+6a/5zuc0/M3zpMd3RH0
-	C076O9WPdIO/QbijB2AOPFu5sDK+GIZgeC5D6on5mGJWep9AyPPchRamm+BiD9viXWc=
-X-Gm-Gg: ASbGncvrJFonZ7LLbzLORDNBelxr4ps364wkROT4XJUL+rXaBSnAalt7H2oA49UXkwJ
-	67KXH8B17I8MlJrqE+4O5rRKJ1zpcnRzgkqVwxX5lrcIHJPkNwkCtWjKuB5IYna5Vi0LQNVWLZw
-	U5XB3HLYHBmzH2ouB/ecAZRtboC8OdGh0QhG3Wn2Fd73Hsq/mHPZbkte3e75J6Oq6B8mSnkwH49
-	hGs0/T/HDDOrK5PxaT4zIBMeHwcZ1PzebwPLp7MTu3l6Ad5HeA0lzlKPukVF9QOl56WfSkgo8aA
-	+c3joSqzr/nGWjMMH6Lm4rg2ljlRYXN0bBxgHw2PGc+EO6W6HqnrAsmYNCpYtvmNV6TytimG/Yb
-	3Yubk6xNUhP/llX5dYFN3VDPFzknqnDNw8YoiAHuBHVQ=
-X-Google-Smtp-Source: AGHT+IGWlQPKjmMAkrs6jYpIEeaJ7EPZSlgjxs7E2ZjdUx6LDd8jWSkVV7Ei3B5/ualnx6LC3e/mUw==
-X-Received: by 2002:a17:906:c114:b0:ae3:e378:159e with SMTP id a640c23a62f3a-aec6a528140mr1159108566b.26.1753089702031;
+	s=arc-20240116; t=1753089705; c=relaxed/simple;
+	bh=+/TElpPdYao+9Rd4FXtjzf7rWIlQdx/KEToLN7xS7hE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ric+3FPXP8UEXFpZLiO8wubnbp1nmNuVhY+hnh1njb5eATnjE1Lhjgyl90DBPiHwJ+4zPZxaOxEjJmbimlsAm++C0cuavF5U+ROZPDd+GP3avwswl2wF1xl/zfLYfSbODIlaQbyt9jiQ69zb4HfDqOr5+XHzKEQZSSUl1mHgojU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HskNqwkz; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-30194d82366so1427187fac.3;
         Mon, 21 Jul 2025 02:21:42 -0700 (PDT)
-Received: from [10.100.51.209] (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6ca7e0b1sm641619466b.117.2025.07.21.02.21.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753089701; x=1753694501; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=NRLauZhbNLVf4xFZoSDTUJ1/uYBhYsUp8SR1mJmEK3U=;
+        b=HskNqwkzxg6T+l71RiB9KT4CLz3InNI1WSLczS2/Oe52p4TvCNuvDqPUb0O88GPvLG
+         aApPu5Qom7+K5CvUmqKmT4XyZQL9Z7DTUk2lrRXW0OeVh9OHxl39vrPuyRyDFn8u5dcV
+         KsOa0+krwRDzUzIUzGUkqrd+/erumMjUccfuwzgpHrxh/SnycnV1p3OJ+Lac07Rpksq1
+         Ri68fR2tdxuQlnsF+tLA1aGvTzPAWGYu8TQwrOCdVpQB5hlhX27WUkyEoB15iPJls8G3
+         gdjaPR+CvCNpYkoSHW1+472kovoW4ZHXg6Suo17AWLb0dJQz0S0pRmDGYVvPz0hPlmxZ
+         Tw6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753089701; x=1753694501;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NRLauZhbNLVf4xFZoSDTUJ1/uYBhYsUp8SR1mJmEK3U=;
+        b=KwKPLSyEL9F5DAys/4mPxWAK9Hs3jIVj0wAiy+QlN2C61lUn+Q8z7Gm5HeLSa90xV9
+         lVpPZhJL/gqVHmdJz1IWhYvaw2WMPGjdsAK5TPz6rvU/E2paD1vNKlJn2bqtgacZNHm0
+         KAMcjHerCrGwqA24xWnilLJ8bNhisoiQUok/3U2InYQ/sWu5YVnNGK0MvHCfy8P0Vf9s
+         e9TG57IUK7773UOoVRnZBvJIkag1cQk5688LugiMz46DGkKhEV76W5I1CjsNU2lOAJKI
+         rMmsbu3n3Pe8eMAUbJKZ4szOY9jH8Uoao0+IV0KLr+FCZGDCLlgK3/Bnl1B7hY7omosf
+         nibA==
+X-Forwarded-Encrypted: i=1; AJvYcCXE4Kn58NxcOoo6GzXEspKgsZRHbqBxcR3Va+C7g082KiymXrQ2g2mZXmx5IB0nJ5OuG5/ZHQnsFjqajJI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpZVMcF9WPt3IIE6qrbM9Rnw42Ryy5gWrGKvxlaRLf8HGPnGHP
+	KcSRxrQyiGb9wzSI24wktW7p9fZ8/T/WabsftB8BQ1wAojTmCYSd3XV8
+X-Gm-Gg: ASbGnctjF5ujRvjG4LeOvPA3Ny6nOpAZy1uSJ4zBHyS55/Di5UWQpM5CFw5FXxUHCL9
+	XqmBQMYXBkbwUTXgB1GQNi80P7gl5brcCZuVOd1dGyvUNjtFYLP2yJRadiDvb0WOzkl9yP7beap
+	x3fS8jBsN3ZXviLWJ70DCc5iv7EaR6p3zPIe2qvwz+OR+AgrFwJnUL0M3C8k4iLKuQjS13j4mDq
+	MuPoY8mFyrB6zb7tPr3qJKe1BcXC1IGKrbzz3Q+MjxZrKIX0vm/5JW3D9uMQXhuDByZcAawxGTf
+	OhxnmHuyWsyps0HOsZiM9v2FBfe5y/4nQU0Cdg8OmNSYSrGOUZ+FU9A2kdBSZN527ejulcGfg8n
+	J0LYrSP2PGPGU
+X-Google-Smtp-Source: AGHT+IEGapepDDnCdlBR92F/d8VFfGrS+O6XmCr8qCYQJdXD8+j545fTeV+grwPm6Q2lnpRgIwdoNA==
+X-Received: by 2002:a05:6870:8a1e:b0:2c1:ac88:4a8d with SMTP id 586e51a60fabf-2ffb246eec1mr14424447fac.30.1753089701580;
         Mon, 21 Jul 2025 02:21:41 -0700 (PDT)
-Message-ID: <264b23ee-7046-4be9-8e01-d79a517e6256@suse.com>
-Date: Mon, 21 Jul 2025 11:21:41 +0200
+Received: from nsa ([83.136.182.32])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-30103d23cdcsm3365279fac.21.2025.07.21.02.21.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Jul 2025 02:21:41 -0700 (PDT)
+Date: Mon, 21 Jul 2025 10:21:51 +0100
+From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jic23@kernel.org, dan.carpenter@linaro.org, lars@metafoo.de, 
+	Michael.Hennerich@analog.com, dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org, 
+	Markus.Elfring@web.de, marcelo.schmitt1@gmail.com
+Subject: Re: [PATCH v2 1/1] iio: adc: ad4170-4: Correctly update filter_fs
+ after filter type change
+Message-ID: <3rl5w6ydn4pzrflaakx5njft7ojx2anf2c4jpha7zkm2oltuec@4jbc7gis7awr>
+References: <1c354ff9f41ff964a66ece44b0d356e0bda3d210.1753024756.git.marcelo.schmitt@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] module: Restore the moduleparam prefix length check
-To: Daniel Gomez <da.gomez@kernel.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>,
- Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
- <da.gomez@samsung.com>, linux-modules@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250630143535.267745-1-petr.pavlu@suse.com>
- <20250630143535.267745-4-petr.pavlu@suse.com>
- <15f52f4c-7809-46ab-9e13-bd487f35a80c@kernel.org>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <15f52f4c-7809-46ab-9e13-bd487f35a80c@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1c354ff9f41ff964a66ece44b0d356e0bda3d210.1753024756.git.marcelo.schmitt@analog.com>
 
-On 7/17/25 9:23 PM, Daniel Gomez wrote:
-> On 30/06/2025 16.32, Petr Pavlu wrote:
->> The moduleparam code allows modules to provide their own definition of
->> MODULE_PARAM_PREFIX, instead of using the default KBUILD_MODNAME ".".
->>
->> Commit 730b69d22525 ("module: check kernel param length at compile time,
->> not runtime") added a check to ensure the prefix doesn't exceed
->> MODULE_NAME_LEN, as this is what param_sysfs_builtin() expects.
->>
->> Later, commit 58f86cc89c33 ("VERIFY_OCTAL_PERMISSIONS: stricter checking
->> for sysfs perms.") removed this check, but there is no indication this was
->> intentional.
->>
->> Since the check is still useful for param_sysfs_builtin() to function
->> properly, reintroduce it in __module_param_call(), but in a modernized form
->> using static_assert().
->>
->> While here, clean up the __module_param_call() comments. In particular,
->> remove the comment "Default value instead of permissions?", which comes
->> from commit 9774a1f54f17 ("[PATCH] Compile-time check re world-writeable
->> module params"). This comment was related to the test variable
->> __param_perm_check_##name, which was removed in the previously mentioned
->> commit 58f86cc89c33.
->>
->> Fixes: 58f86cc89c33 ("VERIFY_OCTAL_PERMISSIONS: stricter checking for sysfs perms.")
->> Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
->> ---
->>  include/linux/moduleparam.h | 5 ++---
->>  1 file changed, 2 insertions(+), 3 deletions(-)
->>
->> diff --git a/include/linux/moduleparam.h b/include/linux/moduleparam.h
->> index bfb85fd13e1f..110e9d09de24 100644
->> --- a/include/linux/moduleparam.h
->> +++ b/include/linux/moduleparam.h
->> @@ -282,10 +282,9 @@ struct kparam_array
->>  #define __moduleparam_const const
->>  #endif
->>  
->> -/* This is the fundamental function for registering boot/module
->> -   parameters. */
->> +/* This is the fundamental function for registering boot/module parameters. */
->>  #define __module_param_call(prefix, name, ops, arg, perm, level, flags)	\
->> -	/* Default value instead of permissions? */			\
->> +	static_assert(sizeof(""prefix) - 1 <= MAX_PARAM_PREFIX_LEN);	\
+On Sun, Jul 20, 2025 at 12:37:24PM -0300, Marcelo Schmitt wrote:
+> Previously, the driver was directly using the filter type value to update
+> the filter frequency (filter_fs) configuration. That caused the driver to
+> switch to the lowest filter_fs configuration (highest sampling frequency)
+> on every update to the filter type. Correct the filter_fs collateral update
+> by clamping it to the range of supported values instead of mistakenly
+> using the filter type to update the filter_fs.
 > 
-> Can you clarify if -1 to remove the dot from prefix?
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Link: https://lore.kernel.org/linux-iio/c6e54942-5b42-484b-be53-9d4606fd25c4@sabinyo.mountain/
+> Suggested-by: Jonathan Cameron <jic23@kernel.org>
+> Fixes: 8ab7434734cd ("iio: adc: ad4170-4: Add digital filter and sample frequency config support")
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> ---
+> Hi, this is the same fix as the fix provided in implied v1 patch but with the
+> difference of doing it the way Markus suggested in reply to v1.
+> I have a slight preference for v1 since that one keeps code contained within
+> 80 columns. Though, totally fine with whatever version of the fix gets picked up.
 > 
-> Final code 
-> 	static_assert(sizeof(""prefix) - 1 <= __MODULE_NAME_LEN);	\
+> Change log v1 (implied) -> v2
+> - Replaces if by use of ternary operator as suggested by Markus in reply to v1.
+> - Fixed commit log typo: colateral -> collateral
+> - Fixed commit log typo: clampling -> clamping
 > 
-> with __MODULE_NAME_LEN being:
+> Thanks,
+> Marcelo
 > 
-> #define __MODULE_NAME_LEN (64 - sizeof(unsigned long))
+>  drivers/iio/adc/ad4170-4.c | 11 +++++------
+>  1 file changed, 5 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ad4170-4.c b/drivers/iio/adc/ad4170-4.c
+> index 6cd84d6fb08b..2e61f9a9a1ef 100644
+> --- a/drivers/iio/adc/ad4170-4.c
+> +++ b/drivers/iio/adc/ad4170-4.c
+> @@ -879,12 +879,11 @@ static int ad4170_set_filter_type(struct iio_dev *indio_dev,
+>  		if (!iio_device_claim_direct(indio_dev))
+>  			return -EBUSY;
+>  
+> -		if (val == AD4170_SINC5_AVG || val == AD4170_SINC3)
+> -			setup->filter_fs = clamp(val, AD4170_SINC3_MIN_FS,
+> -						 AD4170_SINC3_MAX_FS);
+> -		else
+> -			setup->filter_fs = clamp(val, AD4170_SINC5_MIN_FS,
+> -						 AD4170_SINC5_MAX_FS);
+> +		setup->filter_fs = (val == AD4170_SINC5_AVG || val == AD4170_SINC3)
+> +				    ? clamp(setup->filter_fs,
+> +					    AD4170_SINC3_MIN_FS, AD4170_SINC3_MAX_FS)
+> +				    : clamp(setup->filter_fs,
+> +					    AD4170_SINC5_MIN_FS, AD4170_SINC5_MAX_FS);
 
-Correct, -1 is to account for the dot at the end of the prefix.
+I very much prefer the approach in v1. To me, this code is just harder
+to read...
 
-I actually also wanted to assert that the prefix ends with a dot, but
-unfortunately prefix[sizeof(prefix)-2] (with prefix being a string
-literal) is not a constant expression in C.
+Reminder to why is a good idea to wait a bit and don't rush into
+spinning new versions. Also, Markus has a very proven record of not
+being helpful at all in reviews (just look in lore :))
 
--- 
-Thanks,
-Petr
+With that:
+
+Reviewed-by: Nuno Sá <nuno.sa@analog.com>
+
+- Nuno Sá
+
+>  
+>  		setup->filter &= ~AD4170_FILTER_FILTER_TYPE_MSK;
+>  		setup->filter |= FIELD_PREP(AD4170_FILTER_FILTER_TYPE_MSK,
+> 
+> base-commit: cd2731444ee4e35db76f4fb587f12d327eec5446
+> -- 
+> 2.47.2
+> 
 
