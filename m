@@ -1,178 +1,336 @@
-Return-Path: <linux-kernel+bounces-739818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BF40B0CB76
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:15:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C0FEB0CB78
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:15:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7FF37A2E45
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:13:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69BED1C21645
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:15:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2DAC23B625;
-	Mon, 21 Jul 2025 20:14:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12EBF23AB9C;
+	Mon, 21 Jul 2025 20:15:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lFAdcpLW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h5tBenri"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8B02236FD;
-	Mon, 21 Jul 2025 20:14:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4BE22F164
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 20:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753128877; cv=none; b=Mh7JYSGj5moFlYfhbbQ7sOuRnHCjI7KPknehWuxAHgs7B/2S8z9AxtUB9onhaIXMNedlNEELb5+Vs3XRhRbwDUKKgEKOsMioBR8w+KZwfQbNIOJdfuwzct8SV5+ovIYtMD+MIEi5Wn86JDkdjwZmr1yGTwd5Q4GDLY5NYlRbeyI=
+	t=1753128903; cv=none; b=inbSFFcPGC/m5xHQLx6RAIksKY+5T945eF23Yd6ENTfr4bemVU0ldUoQzRXWvGXrnDlNWUTFImZrXO9GvUSf+nVWwYzjc7WoAfe5lsQfjeafmLybOTCkaG2/Qi1zfZgGYUQmfB4/YrDvIskt816FugGD+zJNMRfp/v+r78/MiZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753128877; c=relaxed/simple;
-	bh=4r/4nG1qgmsh/c5VG19N2iiUSmLvYYkyHl3DeygcpXA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MhzxgDWdlJ0HMexi0D6afif5SDahzMtkLQHqf/P+Xiru62VdSsf0D9ns7YVvreL/O41l1YtyfSyN2IVxh64o4bfHo2dSkc/z3NuaXfNxsf0raOCus6V0AzdSJ08dTpiuo3xwPDwvgoGlnLe2UcEEpOKrkzHOOWS6pm2vbHig4nM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lFAdcpLW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78896C4CEF4;
-	Mon, 21 Jul 2025 20:14:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753128876;
-	bh=4r/4nG1qgmsh/c5VG19N2iiUSmLvYYkyHl3DeygcpXA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lFAdcpLWaHxUml6OxVBwU6HF1hrXLHYFkb/H/aJEA6dwrS3fNYgpHHD9vBXhtoV4B
-	 DnlKcNVrSuy3OpcCNz5sLZixJ87BNNsHf8Wz/iXbKKuKn/4kGIyWtHqBOtZbDd1IXJ
-	 HugdwrRmbPiDKguHMjzYQAyiU+QjuAhDHP4sI+9soOwfvMemYiSYDeWbZvGVJV9Fex
-	 I+fr6vfi5W5pHpIw/Uwwc0t82cvI6vzhJdTGqyaczDCk68iZYr7Dm3hhNM2Cwu5lkJ
-	 0NpKGkTxKOKNy3D+Lz3rZTszczYJyLaRnmSD0gVfod3q27zUYqquJUIShZDNnZldk2
-	 WRNb0JXBCq60A==
-Date: Mon, 21 Jul 2025 13:14:36 -0700
-From: Kees Cook <kees@kernel.org>
-To: Will Deacon <will@kernel.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
-	Michal Wilczynski <michal.wilczynski@intel.com>,
-	Juergen Gross <jgross@suse.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Roger Pau Monne <roger.pau@citrix.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Usama Arif <usama.arif@bytedance.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Thomas Huth <thuth@redhat.com>, Brian Gerst <brgerst@gmail.com>,
-	kvm@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net,
-	platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
-	linux-mm@kvack.org, Ingo Molnar <mingo@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
-	kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v3 04/13] x86: Handle KCOV __init vs inline mismatches
-Message-ID: <202507211311.8DAC4C7@keescook>
-References: <20250717231756.make.423-kees@kernel.org>
- <20250717232519.2984886-4-kees@kernel.org>
- <aHoHkDvvp4AHIzU1@kernel.org>
- <202507181541.B8CFAC7E@keescook>
- <CAMj1kXGAwjChyFvjQcTbL8dFXkFWnn9n47bkN7FP=+EsLNsJdg@mail.gmail.com>
- <aH42--h-ARsvX5Wk@willie-the-truck>
+	s=arc-20240116; t=1753128903; c=relaxed/simple;
+	bh=4U+slSboXHsW6+5MWEOA5G518utqY099eMOyOV5YZ84=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=n7A9cLeu/xUeq8NtMsxRgwhEfsuCXRAuaWHIHz9io8+jNYkglG2Ba9mAE0mdoLH/+CoWFZPg/gl1dIZSBm8YrjOL/x2480Zck2KV9kGyJAAz0GkahcuK0Hpt8RYHpLxuhVv7TDTYyexiyXiaMOcZVutzmhfeAKpN3bQepU2ozgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h5tBenri; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753128899;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mYZKEdqgRvFGNOUG7NkuZ69kA4U0wg8LO6PmLUD9IFA=;
+	b=h5tBenriG0AHIhVHPvm9oXkXBUR0KwVqgwjsZxZjhLIe4i2enlCqnRcCNSRD3U4KOVOGCI
+	1Ylhg+TWmYqYlrDkuOqOO4sPOthmeGePgiw/4Lk4Xr1mrk5zQzWTSUZgQ8mwjbaj7/p48L
+	Q0eTu97+qpejwUxP+YNL/+y0b0v2t8c=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-249-6aGBFA_uMmKyyMEYrFXGqg-1; Mon,
+ 21 Jul 2025 16:14:56 -0400
+X-MC-Unique: 6aGBFA_uMmKyyMEYrFXGqg-1
+X-Mimecast-MFC-AGG-ID: 6aGBFA_uMmKyyMEYrFXGqg_1753128894
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 91D8D1800283;
+	Mon, 21 Jul 2025 20:14:53 +0000 (UTC)
+Received: from [10.22.80.24] (unknown [10.22.80.24])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 87BB730001A4;
+	Mon, 21 Jul 2025 20:14:49 +0000 (UTC)
+Date: Mon, 21 Jul 2025 22:14:44 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Li Lingfeng <lilingfeng3@huawei.com>
+cc: dm-devel@lists.linux.dev, agk@redhat.com, snitzer@kernel.org, 
+    colin.i.king@gmail.com, linux-kernel@vger.kernel.org, houtao1@huawei.com, 
+    yi.zhang@huawei.com, yangerkun@huawei.com, yukuai3@huawei.com, 
+    chengzhihao1@huawei.com, lilingfeng@huaweicloud.com
+Subject: Re: [PATCH] dm: introduce ima_lock to prevent concurrent calls to
+ dm_ima_measure_* functions
+In-Reply-To: <20250719164701.3147592-1-lilingfeng3@huawei.com>
+Message-ID: <b93b1ce8-5f1b-6a25-092a-fa8573f8be1b@redhat.com>
+References: <20250719164701.3147592-1-lilingfeng3@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aH42--h-ARsvX5Wk@willie-the-truck>
+Content-Type: text/plain; charset=US-ASCII
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Mon, Jul 21, 2025 at 01:47:55PM +0100, Will Deacon wrote:
-> On Sun, Jul 20, 2025 at 04:10:01PM +1000, Ard Biesheuvel wrote:
-> > On Sat, 19 Jul 2025 at 08:51, Kees Cook <kees@kernel.org> wrote:
-> > > On Fri, Jul 18, 2025 at 11:36:32AM +0300, Mike Rapoport wrote:
-> > > > On Thu, Jul 17, 2025 at 04:25:09PM -0700, Kees Cook wrote:
-> > > > > When KCOV is enabled all functions get instrumented, unless the
-> > > > > __no_sanitize_coverage attribute is used. To prepare for
-> > > > > __no_sanitize_coverage being applied to __init functions, we have to
-> > > > > handle differences in how GCC's inline optimizations get resolved. For
-> > > > > x86 this means forcing several functions to be inline with
-> > > > > __always_inline.
-> > > > >
-> > > > > Signed-off-by: Kees Cook <kees@kernel.org>
-> > > >
-> > > > ...
-> > > >
-> > > > > diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-> > > > > index bb19a2534224..b96746376e17 100644
-> > > > > --- a/include/linux/memblock.h
-> > > > > +++ b/include/linux/memblock.h
-> > > > > @@ -463,7 +463,7 @@ static inline void *memblock_alloc_raw(phys_addr_t size,
-> > > > >                                       NUMA_NO_NODE);
-> > > > >  }
-> > > > >
-> > > > > -static inline void *memblock_alloc_from(phys_addr_t size,
-> > > > > +static __always_inline void *memblock_alloc_from(phys_addr_t size,
-> > > > >                                             phys_addr_t align,
-> > > > >                                             phys_addr_t min_addr)
-> > > >
-> > > > I'm curious why from all memblock_alloc* wrappers this is the only one that
-> > > > needs to be __always_inline?
-> > >
-> > > Thread-merge[1], adding Will Deacon, who was kind of asking the same
-> > > question.
-> > >
-> > > Based on what I can tell, GCC has kind of fragile inlining logic, in the
-> > > sense that it can change whether or not it inlines something based on
-> > > optimizations. It looks like the kcov instrumentation being added (or in
-> > > this case, removed) from a function changes the optimization results,
-> > > and some functions marked "inline" are _not_ inlined. In that case, we end up
-> > > with __init code calling a function not marked __init, and we get the
-> > > build warnings I'm trying to eliminate.
-> 
-> Got it, thanks for the explanation!
-> 
-> > > So, to Will's comment, yes, the problem is somewhat fragile (though
-> > > using either __always_inline or __init will deterministically solve it).
-> > > We've tripped over this before with GCC and the solution has usually
-> > > been to just use __always_inline and move on.
-> > >
-> > 
-> > Given that 'inline' is already a macro in the kernel, could we just
-> > add __attribute__((__always_inline__)) to it when KCOV is enabled?
-> 
-> That sounds like a more robust approach and, by the sounds of it, we
-> could predicate it on GCC too. That would also provide a neat place for
-> a comment describing the problem.
-> 
-> Kees, would that work for you?
+Hi
 
-That seems like an extremely large hammer for this problem, IMO. It
-feels like it could cause new strange corner cases. I'd much prefer the
-small fixes I've currently got since it keeps it focused. KCOV is
-already enabled for "allmodconfig", so any new instances would be found
-very quickly, etc. (And GCC's fragility in this regard has already been
-exposed to these cases -- it's just that I changed one of the
-combinations of __init vs inline vs instrumentation.
+I think that the race condition between dm_ima_measure_on_device_resume 
+and dm_ima_measure_on_device_remove is still possible. The patch prevents 
+it from triggering the use-after-free bug, but the race may still result 
+in these two events being randomly swapped.
 
-I could give it a try, if you really prefer the big hammer approach...
+I think that a proper fix would be to move dm_ima_measure_on_device* calls 
+to a position where device mapper locks are held, so that the calls will 
+be serialized by the dm locks.
 
--- 
-Kees Cook
+Would it be possible to move them inside down_write(&_hash_lock)? Or, 
+would there be some problems with that?
+
+Mikulas
+
+
+On Sun, 20 Jul 2025, Li Lingfeng wrote:
+
+> There is a window between freeing md->ima.active_table.hash and setting
+> md->ima.active_table.hash to NULL in dm_ima_measure_on_device_resume().
+> If dm_ima_measure_on_device_remove() accesses md->ima.active_table.hash
+> concurrently during this window, it could lead to a double free or UAF,
+> as shown below:
+> 
+> BUG: KASAN: slab-use-after-free in dm_ima_measure_on_device_remove...
+> Read of size 71 at addr ffff88817bb9e220 by task dmsetup/2303
+> 
+> CPU: 2 UID: 0 PID: 2303 Comm: dmsetup Not tainted 6.16.0-rc6-dirty...
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3...
+> Call Trace:
+>  <TASK>
+>  dump_stack_lvl+0x5b/0x80
+>  print_address_description.constprop.0+0x88/0x310
+>  print_report+0x12f/0x21d
+>  kasan_report+0xcc/0x190
+>  kasan_check_range+0x104/0x1b0
+>  __asan_memcpy+0x23/0x60
+>  dm_ima_measure_on_device_remove+0x3fc/0x6c0
+>  dev_remove+0x123/0x1e0
+>  ctl_ioctl+0x2a2/0x480
+>  dm_ctl_ioctl+0xe/0x20
+>  __x64_sys_ioctl+0xc7/0x110
+>  do_syscall_64+0x72/0x390
+>  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> 
+> To reproduce this issue, add a delay between freeing
+> md->ima.active_table.hash and setting it to NULL, using the following
+> steps:
+> dmsetup create mydevice --table "0 2097152 linear /dev/sda 0"
+> dmsetup suspend mydevice
+> dmsetup reload mydevice --table "0 2097152 linear /dev/sdb 0"
+> dmsetup resume mydevice &
+> dmsetup remove mydevice
+> 
+> Introduce ima_lock to prevent concurrent calls to dm_ima_measure_*
+> functions to fix it.
+> 
+> Fixes: 91ccbbac1747 ("dm ima: measure data on table load")
+> Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+> ---
+>  drivers/md/dm-core.h |  1 +
+>  drivers/md/dm-ima.c  | 38 +++++++++++++++++++++++++++++++++-----
+>  drivers/md/dm-ima.h  |  4 ++++
+>  drivers/md/dm.c      |  3 ++-
+>  4 files changed, 40 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/md/dm-core.h b/drivers/md/dm-core.h
+> index c889332e533b..24f321b2c2c4 100644
+> --- a/drivers/md/dm-core.h
+> +++ b/drivers/md/dm-core.h
+> @@ -145,6 +145,7 @@ struct mapped_device {
+>  #endif
+>  
+>  #ifdef CONFIG_IMA
+> +	struct mutex ima_lock;
+>  	struct dm_ima_measurements ima;
+>  #endif
+>  };
+> diff --git a/drivers/md/dm-ima.c b/drivers/md/dm-ima.c
+> index b90f34259fbb..0fefad6fbb9f 100644
+> --- a/drivers/md/dm-ima.c
+> +++ b/drivers/md/dm-ima.c
+> @@ -164,7 +164,7 @@ static int dm_ima_alloc_and_copy_capacity_str(struct mapped_device *md, char **c
+>  }
+>  
+>  /*
+> - * Initialize/reset the dm ima related data structure variables.
+> + * Reset the dm ima related data structure variables.
+>   */
+>  void dm_ima_reset_data(struct mapped_device *md)
+>  {
+> @@ -172,6 +172,23 @@ void dm_ima_reset_data(struct mapped_device *md)
+>  	md->ima.dm_version_str_len = strlen(DM_IMA_VERSION_STR);
+>  }
+>  
+> +/*
+> + * Initialize the dm ima.
+> + */
+> +void dm_ima_init(struct mapped_device *md)
+> +{
+> +	dm_ima_reset_data(md);
+> +	mutex_init(&md->ima_lock);
+> +}
+> +
+> +/*
+> + * Destroy the dm ima related data structure.
+> + */
+> +void dm_ima_destroy(struct mapped_device *md)
+> +{
+> +	mutex_destroy(&md->ima_lock);
+> +}
+> +
+>  /*
+>   * Build up the IMA data for each target, and finally measure.
+>   */
+> @@ -195,9 +212,10 @@ void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_fl
+>  	const size_t hash_alg_prefix_len = strlen(DM_IMA_TABLE_HASH_ALG) + 1;
+>  	char table_load_event_name[] = "dm_table_load";
+>  
+> +	mutex_lock(&table->md->ima_lock);
+>  	ima_buf = dm_ima_alloc(DM_IMA_MEASUREMENT_BUF_LEN, GFP_KERNEL, noio);
+>  	if (!ima_buf)
+> -		return;
+> +		goto error;
+>  
+>  	target_metadata_buf = dm_ima_alloc(DM_IMA_TARGET_METADATA_BUF_LEN, GFP_KERNEL, noio);
+>  	if (!target_metadata_buf)
+> @@ -361,6 +379,7 @@ void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_fl
+>  	kfree(ima_buf);
+>  	kfree(target_metadata_buf);
+>  	kfree(target_data_buf);
+> +	mutex_unlock(&table->md->ima_lock);
+>  }
+>  
+>  /*
+> @@ -376,9 +395,10 @@ void dm_ima_measure_on_device_resume(struct mapped_device *md, bool swap)
+>  	bool nodata = true;
+>  	int r;
+>  
+> +	mutex_lock(&md->ima_lock);
+>  	device_table_data = dm_ima_alloc(DM_IMA_DEVICE_BUF_LEN, GFP_KERNEL, noio);
+>  	if (!device_table_data)
+> -		return;
+> +		goto error;
+>  
+>  	r = dm_ima_alloc_and_copy_capacity_str(md, &capacity_str, noio);
+>  	if (r)
+> @@ -466,6 +486,7 @@ void dm_ima_measure_on_device_resume(struct mapped_device *md, bool swap)
+>  error:
+>  	kfree(capacity_str);
+>  	kfree(device_table_data);
+> +	mutex_unlock(&md->ima_lock);
+>  }
+>  
+>  /*
+> @@ -490,6 +511,7 @@ void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all)
+>  	bool nodata = true;
+>  	int r;
+>  
+> +	mutex_lock(&md->ima_lock);
+>  	device_table_data = dm_ima_alloc(DM_IMA_DEVICE_BUF_LEN*2, GFP_KERNEL, noio);
+>  	if (!device_table_data)
+>  		goto exit;
+> @@ -597,6 +619,7 @@ void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all)
+>  
+>  	kfree(dev_name);
+>  	kfree(dev_uuid);
+> +	mutex_unlock(&md->ima_lock);
+>  }
+>  
+>  /*
+> @@ -612,9 +635,10 @@ void dm_ima_measure_on_table_clear(struct mapped_device *md, bool new_map)
+>  	bool nodata = true;
+>  	int r;
+>  
+> +	mutex_lock(&md->ima_lock);
+>  	device_table_data = dm_ima_alloc(DM_IMA_DEVICE_BUF_LEN, GFP_KERNEL, noio);
+>  	if (!device_table_data)
+> -		return;
+> +		goto error;
+>  
+>  	r = dm_ima_alloc_and_copy_capacity_str(md, &capacity_str, noio);
+>  	if (r)
+> @@ -696,6 +720,8 @@ void dm_ima_measure_on_table_clear(struct mapped_device *md, bool new_map)
+>  	kfree(capacity_str);
+>  error1:
+>  	kfree(device_table_data);
+> +error:
+> +	mutex_unlock(&md->ima_lock);
+>  }
+>  
+>  /*
+> @@ -708,9 +734,10 @@ void dm_ima_measure_on_device_rename(struct mapped_device *md)
+>  	bool noio = true;
+>  	int r;
+>  
+> +	mutex_lock(&md->ima_lock);
+>  	if (dm_ima_alloc_and_copy_device_data(md, &new_device_data,
+>  					      md->ima.active_table.num_targets, noio))
+> -		return;
+> +		goto error;
+>  
+>  	if (dm_ima_alloc_and_copy_name_uuid(md, &new_dev_name, &new_dev_uuid, noio))
+>  		goto error;
+> @@ -745,4 +772,5 @@ void dm_ima_measure_on_device_rename(struct mapped_device *md)
+>  	kfree(old_device_data);
+>  	kfree(new_dev_name);
+>  	kfree(new_dev_uuid);
+> +	mutex_unlock(&md->ima_lock);
+>  }
+> diff --git a/drivers/md/dm-ima.h b/drivers/md/dm-ima.h
+> index 568870a1a145..36bbcf1b25a0 100644
+> --- a/drivers/md/dm-ima.h
+> +++ b/drivers/md/dm-ima.h
+> @@ -57,6 +57,8 @@ struct dm_ima_measurements {
+>  };
+>  
+>  void dm_ima_reset_data(struct mapped_device *md);
+> +void dm_ima_init(struct mapped_device *md);
+> +void dm_ima_destroy(struct mapped_device *md);
+>  void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_flags);
+>  void dm_ima_measure_on_device_resume(struct mapped_device *md, bool swap);
+>  void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all);
+> @@ -66,6 +68,8 @@ void dm_ima_measure_on_device_rename(struct mapped_device *md);
+>  #else
+>  
+>  static inline void dm_ima_reset_data(struct mapped_device *md) {}
+> +static inline void dm_ima_init(struct mapped_device *md) {}
+> +static inline void dm_ima_destroy(struct mapped_device *md) {}
+>  static inline void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_flags) {}
+>  static inline void dm_ima_measure_on_device_resume(struct mapped_device *md, bool swap) {}
+>  static inline void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all) {}
+> diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+> index 1726f0f828cc..b7eab324804c 100644
+> --- a/drivers/md/dm.c
+> +++ b/drivers/md/dm.c
+> @@ -2371,6 +2371,7 @@ static void free_dev(struct mapped_device *md)
+>  	unlock_fs(md);
+>  
+>  	cleanup_mapped_device(md);
+> +	dm_ima_destroy(md);
+>  
+>  	WARN_ON_ONCE(!list_empty(&md->table_devices));
+>  	dm_stats_cleanup(&md->stats);
+> @@ -2506,7 +2507,7 @@ int dm_create(int minor, struct mapped_device **result)
+>  	if (!md)
+>  		return -ENXIO;
+>  
+> -	dm_ima_reset_data(md);
+> +	dm_ima_init(md);
+>  
+>  	*result = md;
+>  	return 0;
+> -- 
+> 2.46.1
+
 
