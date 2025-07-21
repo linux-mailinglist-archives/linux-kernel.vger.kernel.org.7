@@ -1,101 +1,102 @@
-Return-Path: <linux-kernel+bounces-738586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EA88B0BABF
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 04:28:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0728B0BAC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 04:28:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB540189EFB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 02:28:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17C6817E020
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 02:28:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE928225A38;
-	Mon, 21 Jul 2025 02:20:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 958BC1EFF93;
+	Mon, 21 Jul 2025 02:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eBavyu9Y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uP2Kb3kE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19CFE1E3772;
-	Mon, 21 Jul 2025 02:20:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB68E15E5D4;
+	Mon, 21 Jul 2025 02:24:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753064449; cv=none; b=p5xXJY0MyjBlcaHWaEDAlojhZtuz9Jd9pOGYYjQ1OGrsU3CBV5MP59w3Im2ISJwYtJfnTGU0xeYn6YdMK5sBONnlzSIicQtGZdW2uaPKPIDPWb0B6cA2zF2NCTZb34OSmj8LkE4ZIP8PHfw0DWrZV8JXBOTmpBdVQnsow2Uozuk=
+	t=1753064657; cv=none; b=fjiM2c9f7mbEuQjk9uB8mz+RAafHfzTVFBn0QeSgpEq7wV/LP9X9bBeEOSdGVM9ShbR7171Dp9f1/hBYYTimjGMA1RIBvkBv1aDwMfaLLo+eWsaJfhRF5kdiN77WGgSC/4qsgOIjOcmb3Az6197ryOQFKAIu/ZtwaAPNfIKFH0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753064449; c=relaxed/simple;
-	bh=5jb/stM65I+0aJAhwVu6+xUzsAk79UL5kdDuxBOv+RQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=drP79X8mPGI4wkIVDTnMO2yr4jkDGo3YC/hTyBal+lTf9rgcBxt0v6E2Z5wLRFfK+QU4IBI/kIQxqcg6dlLpp7ULzSDQKDx+WVTIiCpr4VdcDluybf02qW7m5uSboHYDrcji2Sx66xFh69riVzgvyR63YggiW9p7kYJ2XU+fBJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eBavyu9Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBB18C4CEE7;
-	Mon, 21 Jul 2025 02:20:47 +0000 (UTC)
+	s=arc-20240116; t=1753064657; c=relaxed/simple;
+	bh=Ey6VShtfZEI9G10TSvqYxJSr1SHPPAJkj0cWVnFBhY4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PznQw6ZN/C9Vd4qrdIWLDXJ/ubGvAxfid3V+BtE94k9fnXJ97mluAAKdf7jS8cunOn727fnJ+RmsNf6BAXyDznv3W87VqgLuAgGUsIEg2zaDTTqL0s+la5oYsLPLyUem5hshOJs8hDxXrMGdnArN1ar7fxLVW30GM9f6hewIaeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uP2Kb3kE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71DF1C4CEE7;
+	Mon, 21 Jul 2025 02:24:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753064448;
-	bh=5jb/stM65I+0aJAhwVu6+xUzsAk79UL5kdDuxBOv+RQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eBavyu9YloMUuBvSPrBaFBPIz8Ja0Y04OudwJ4HnqGLBVcn/jX4waGNzeN8A70QCC
-	 8AriE4rCaeFZNiznwfNSYbvnXW1dLv8n6iUtMR208TVHb2h+wwe+4o0CNknpNjwRtE
-	 GKOSkLio5a9PQ8QXcVcxuoTCJSQbnm/kpeBToR6PZbPmFrhtuaJ7IFXRZvBhawpydQ
-	 uEpyi1Wpxz23XQPeDTy3WtgjyzFjBlJLaSK/9vi9VH5naFQNdlJdgouER5+p5br//i
-	 Wk+1PHuFTOILbYdT9ptYcN+OwF4d7w+rp1G5fjUySGqald8WwMS9wjJg7l+7C1+th9
-	 Ke8VIO8hVd2FQ==
-Message-ID: <0f094c4b-d2a3-42cd-824c-dc2858a5618d@kernel.org>
-Date: Sun, 20 Jul 2025 21:20:46 -0500
+	s=k20201202; t=1753064655;
+	bh=Ey6VShtfZEI9G10TSvqYxJSr1SHPPAJkj0cWVnFBhY4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uP2Kb3kEMoxEK+Y94nnm1CQ6pjPH0emUGltasa7oGvg0BiC3LNNn+JD2A93+C95Ve
+	 nM3K7P29BMxKp2cHfpLe6DZGkW5STaxcW9V9/pLFkoac6EG1fhzNmd0HmMhI5Ru9Og
+	 JOrdXtBMk6HB+6KkbtBKVhM2GDOo6HzNDmHf8D7oxMeI93E+HQeg7JmqG9t5zMpn4u
+	 jCWsKnr/i8HNxHSdRUAmCXUaqx1Ao+iHC7AnWZH3BVkJ8/yvq/Kgjwpykw9voXKlPa
+	 ynk0WKITPYItow0lwdTq5SQaFa0lZVypLkhwKiKszink4Sle5JLdNLPQqd+xAnCewo
+	 mFyw5MvQNccvA==
+Date: Mon, 21 Jul 2025 10:24:10 +0800
+From: "Peter Chen (CIX)" <peter.chen@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Xu Yang <xu.yang_2@nxp.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-usb@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] usb: chipidea: imx: Add a missing blank line
+Message-ID: <20250721022410.GA299578@nchen-desktop>
+References: <cover.1752703107.git.dan.carpenter@linaro.org>
+ <36d1c961-319e-4457-bdc1-69f8b6bed33e@sabinyo.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION] [PATCH v2] drm/amd/display: fix initial backlight
- brightness calculation
-To: Lauri Tirkkonen <lauri@hacktheplanet.fi>, linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org, amd-gfx@lists.freedesktop.org,
- Wayne Lin <wayne.lin@amd.com>, Alex Deucher <alexander.deucher@amd.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <aH2Q_HJvxKbW74vU@hacktheplanet.fi>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <aH2Q_HJvxKbW74vU@hacktheplanet.fi>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <36d1c961-319e-4457-bdc1-69f8b6bed33e@sabinyo.mountain>
 
-
-
-On 7/20/25 7:59 PM, Lauri Tirkkonen wrote:
-> DIV_ROUND_CLOSEST(x, 100) returns either 0 or 1 if 0<x<=100, so the
-> division needs to be performed after the multiplication and not the
-> other way around, to properly scale the value.
+On 25-07-16 17:46:26, Dan Carpenter wrote:
+> Fix a checkpatch warning:
+> CHECK: Please use a blank line after function/struct/union/enum declarations
 > 
-> Fixes: 8b5f3a229a70 ("drm/amd/display: Fix default DC and AC levels")
-> Signed-off-by: Lauri Tirkkonen <lauri@hacktheplanet.fi>
-> Cc: stable@vger.kernel.org
+> Reported-by: Xu Yang <xu.yang_2@nxp.com>
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Thanks so much!
+Acked-by: Peter Chen <peter.chen@kernel.org>
 
-Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
-
+Peter
 > ---
->   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/usb/chipidea/usbmisc_imx.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> index f58fa5da7fe5..8a5b5dfad1ab 100644
-> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> @@ -4941,9 +4941,9 @@ amdgpu_dm_register_backlight_device(struct amdgpu_dm_connector *aconnector)
->   	caps = &dm->backlight_caps[aconnector->bl_idx];
->   	if (get_brightness_range(caps, &min, &max)) {
->   		if (power_supply_is_system_supplied() > 0)
-> -			props.brightness = (max - min) * DIV_ROUND_CLOSEST(caps->ac_level, 100);
-> +			props.brightness = DIV_ROUND_CLOSEST((max - min) * caps->ac_level, 100);
->   		else
-> -			props.brightness = (max - min) * DIV_ROUND_CLOSEST(caps->dc_level, 100);
-> +			props.brightness = DIV_ROUND_CLOSEST((max - min) * caps->dc_level, 100);
->   		/* min is zero, so max needs to be adjusted */
->   		props.max_brightness = max - min;
->   		drm_dbg(drm, "Backlight caps: min: %d, max: %d, ac %d, dc %d\n", min, max,
+> diff --git a/drivers/usb/chipidea/usbmisc_imx.c b/drivers/usb/chipidea/usbmisc_imx.c
+> index 0b8b980409bc..3d20c5e76c6a 100644
+> --- a/drivers/usb/chipidea/usbmisc_imx.c
+> +++ b/drivers/usb/chipidea/usbmisc_imx.c
+> @@ -1118,6 +1118,7 @@ static int usbmisc_imx6sx_power_lost_check(struct imx_usbmisc_data *data)
+>  	else
+>  		return 0;
+>  }
+> +
+>  static int usbmisc_s32g_power_lost_check(struct imx_usbmisc_data *data)
+>  {
+>  	return 1;
+> -- 
+> 2.47.2
+> 
 
+-- 
+
+Best regards,
+Peter
 
