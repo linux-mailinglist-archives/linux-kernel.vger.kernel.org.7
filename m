@@ -1,167 +1,87 @@
-Return-Path: <linux-kernel+bounces-739597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6D6FB0C85D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:00:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4D15B0C84B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:57:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10BEE16BC76
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:00:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6CA75455D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427422E0402;
-	Mon, 21 Jul 2025 16:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="UvbfVzpu"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48CA1A5BA4;
-	Mon, 21 Jul 2025 16:00:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA06B2E03E6;
+	Mon, 21 Jul 2025 15:57:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 125342DFA21
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 15:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753113617; cv=none; b=bD5DhypN4nhkIor0H7lgkuZnKRd3LiEsidOXLh+t5IzSpTOzOjaXg7QCWjwLrav1ZR+fb9bkXSBN3Ugsw87QbrKpPVesbN9wE1I/NB2NciWfg4UY3dk0N/U5HqmyJj9aRmVnXIRtlOWz/6sQKzcjZkQL9nmwA9qwfNYgbm/Ii1U=
+	t=1753113465; cv=none; b=nz1M9hG1+sqSlkXDM/o6wb+fNdHRovzWYmjYRI5vk2rPBYdAryhf47As719dfoj7fmvyZ06DlM6J1RZYuynUS/AIVTmh8Q6Kb/3wx2+UEqssFd/ILB+wdt3/K1u5DMDFs0VOCkKfhhNp8Q8qXYPbn9BDbzlrGt5MN0v5AUtDSRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753113617; c=relaxed/simple;
-	bh=0u/FkNt313+bbH04ZJjnyQgStvvud8cR+f/8Ru2O9/M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VjTyUuTZUY4uf3P3SKMSOSBE3+PxLv0Q4ba9uvpmNNIIDqLCQYLTaFnmaM72rTLfm9NbNLmbutB7kk+DrvrpIn89qQkUUeJByREKeMKRX79KdGqfPrP6fMo3r1sTSL29JBgiVy3eRfYdqIeq5++psX7S+Lbn30wmjEt8uk+tKLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=UvbfVzpu; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56LF5RUS011179;
-	Mon, 21 Jul 2025 17:59:52 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	rsxdTCztBKYXlx+C4LuG8AeZggJrpJdUJ0Xm76EVhB4=; b=UvbfVzpuufx4byKp
-	qcX7btJ++p/Dy6hnVJx1aUaEKMxpo1BBXfeXWmxfbJ1FmZnGrmlKIR21eP62pD3a
-	Xt7q5wtTkXo7k3/l9DPZMxYeZGnqnkFzbo+zlGTbs83v4JhpISvnaDaqs/c8+Fmz
-	WPGuk9MwHDXlF/xKTKnQ+9ieU5I/cjaGcsjLlgk8fwEvlLy3TV9NKigRQP94CTKq
-	XlIpIXEBxXv8/KMUp3Zyyf2HI8+58l6IR4Ykhgkbn31gV+Wytx78wXmnacjBM+sR
-	cM4tNVzKKl8At5JokIGjLbSPJH9dDz9ksPFtC+etuglhlBKhOXmswwzs8MzbtcT6
-	IbCvgw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48028g1d9g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 21 Jul 2025 17:59:51 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A0CE040046;
-	Mon, 21 Jul 2025 17:58:12 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 34BFE76EA8F;
-	Mon, 21 Jul 2025 17:56:19 +0200 (CEST)
-Received: from [10.48.87.141] (10.48.87.141) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 21 Jul
- 2025 17:56:18 +0200
-Message-ID: <38278e2a-5a1b-4908-907e-7d45a08ea3b7@foss.st.com>
-Date: Mon, 21 Jul 2025 17:56:17 +0200
+	s=arc-20240116; t=1753113465; c=relaxed/simple;
+	bh=XEKYZrig8jdMomffz3kLwR4AlHFSQv9cUMUqlNS8fa8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U4nmsc9gYj1+c6cQPp1a2qLW4T4zOBQziKdNfSeCih2ndy+7qcgZqAslgEd+Yd9MG3eHyXd/RQy4shRIrkWjGmt6j/k/y43soYlaEnuqi/rZ4pheYGSb+/a1qs5OTU0HiNUuq/C25d1Qjkv5pjeufaRVU56Gn1fKphZdXwuJR2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 34CDD153B;
+	Mon, 21 Jul 2025 08:57:36 -0700 (PDT)
+Received: from arm.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D597F3F66E;
+	Mon, 21 Jul 2025 08:57:35 -0700 (PDT)
+Date: Mon, 21 Jul 2025 16:57:32 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Dev Jain <dev.jain@arm.com>
+Cc: akpm@linux-foundation.org, ryan.roberts@arm.com, david@redhat.com,
+	willy@infradead.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, will@kernel.org,
+	Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz,
+	jannh@google.com, anshuman.khandual@arm.com, peterx@redhat.com,
+	joey.gouly@arm.com, ioworker0@gmail.com, baohua@kernel.org,
+	kevin.brodsky@arm.com, quic_zhenhuah@quicinc.com,
+	christophe.leroy@csgroup.eu, yangyicong@hisilicon.com,
+	linux-arm-kernel@lists.infradead.org, hughd@google.com,
+	yang@os.amperecomputing.com, ziy@nvidia.com
+Subject: Re: [PATCH v5 7/7] arm64: Add batched versions of
+ ptep_modify_prot_start/commit
+Message-ID: <aH5jbAYKoACvspj4@arm.com>
+References: <20250718090244.21092-1-dev.jain@arm.com>
+ <20250718090244.21092-8-dev.jain@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 1/4] dt-bindings: net: document st,phy-wol
- property
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Krzysztof Kozlowski <krzk@kernel.org>,
-        Andrew Lunn
-	<andrew+netdev@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni
-	<pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Christophe Roullier <christophe.roullier@foss.st.com>,
-        Heiner Kallweit
-	<hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>, Simon Horman
-	<horms@kernel.org>,
-        Tristram Ha <Tristram.Ha@microchip.com>,
-        Florian Fainelli
-	<florian.fainelli@broadcom.com>,
-        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20250721-wol-smsc-phy-v1-0-89d262812dba@foss.st.com>
- <20250721-wol-smsc-phy-v1-1-89d262812dba@foss.st.com>
- <faea23d5-9d5d-4fbb-9c6a-a7bc38c04866@kernel.org>
- <f5c4bb6d-4ff1-4dc1-9d27-3bb1e26437e3@foss.st.com>
- <e3c99bdb-649a-4652-9f34-19b902ba34c1@lunn.ch>
-Content-Language: en-US
-From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
-In-Reply-To: <e3c99bdb-649a-4652-9f34-19b902ba34c1@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-21_04,2025-07-21_02,2025-03-28_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250718090244.21092-8-dev.jain@arm.com>
 
-Hello Andrew,
-
-On 7/21/25 15:18, Andrew Lunn wrote:
-> On Mon, Jul 21, 2025 at 02:10:48PM +0200, Gatien CHEVALLIER wrote:
->> Hello Krzysztof,
->>
->> On 7/21/25 13:30, Krzysztof Kozlowski wrote:
->>> On 21/07/2025 13:14, Gatien Chevallier wrote:
->>>> The "st,phy-wol" property can be set to use the wakeup capability of
->>>> the PHY instead of the MAC.
->>>
->>>
->>> And why would that be property of a SoC or board? Word "can" suggests
->>> you are documenting something which exists, but this does not exist.
->> Can you elaborate a bit more on the "not existing" part please?
->>
->> For the WoL from PHY to be supported, the PHY line that is raised
->> (On nPME pin for this case) when receiving a wake up event has to be
->> wired to a wakeup event input of the Extended interrupt and event
->> controller(EXTI), and that's implementation dependent.
+On Fri, Jul 18, 2025 at 02:32:44PM +0530, Dev Jain wrote:
+> Override the generic definition of modify_prot_start_ptes() to use
+> get_and_clear_full_ptes(). This helper does a TLBI only for the starting
+> and ending contpte block of the range, whereas the current implementation
+> will call ptep_get_and_clear() for every contpte block, thus doing a
+> TLBI on every contpte block. Therefore, we have a performance win.
 > 
-> How does this differ from normal interrupts from the PHY? Isn't the
-> presence of an interrupt in DT sufficient to indicate the PHY can wake
-> the system?
+> The arm64 definition of pte_accessible() allows us to batch in the
+> errata specific case:
 > 
-> 	Andrew
+> #define pte_accessible(mm, pte)	\
+> 	(mm_tlb_flush_pending(mm) ? pte_present(pte) : pte_valid(pte))
+> 
+> All ptes are obviously present in the folio batch, and they are also valid.
+> 
+> Override the generic definition of modify_prot_commit_ptes() to simply
+> use set_ptes() to map the new ptes into the pagetable.
+> 
+> Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+> Signed-off-by: Dev Jain <dev.jain@arm.com>
 
-Here's an extract from the Microchip datasheet for the LAN8742A PHY:
+The arm64 changes look fine to me:
 
-"In addition to the main interrupts described in this section, an nPME
-pin is provided exclusively for WoL specific interrupts."
-
-I'm not an expert of the different PHYs, but I guess there may be a
-distinction needed between some "main" PHY interrupts and the WoL one
-at least for deep low-power use cases.
-
-Because this line is wired to a peripheral managed by our
-TEE, the ultimate goal here would be to declare the OP-TEE node as
-an interrupt provider and to forward the interrupt to the kernel using
-the asynchronous notification mechanism. Then, reference the OP-TEE
-node in the "interrupts-extended" property in the PHY node so that it
-can be acked by the PHY driver. As of now, this patch set at least allow
-to wakeup from a deep low power mode using the WoL capability of the
-PHY.
-
-Regarding this property, somewhat similar to "mediatek,mac-wol",
-I need to position a flag at the mac driver level. I thought I'd go
-using the same approach.
-
-Best regards,
-Gatien
-
-
-
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 
