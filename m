@@ -1,210 +1,150 @@
-Return-Path: <linux-kernel+bounces-739950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 617EAB0CD7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 01:01:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52CADB0CD77
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 01:00:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADF311C20B0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 23:01:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A69F7B28CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:59:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFBC0245008;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99060221F09;
 	Mon, 21 Jul 2025 23:00:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Gaa2u4S5"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ev+4/0T0"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F54B242D72
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 23:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439DE1DED4C;
+	Mon, 21 Jul 2025 23:00:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753138823; cv=none; b=T9Ew/9oIO7eRHG7T438vosOEyFuDeWSDBgAwMmr3GUpUA5ud/aLusRMHAD3IPUOFDCsySxdAyIaB6i3uky226shqG+KZ9fsToLOCUBqbYHwHQ3/rrSoxWzKkS9W9FNR/GnvttG5B4qB9tIunZHeWFRpYVYBNJxUGU+CJJEk/qrQ=
+	t=1753138822; cv=none; b=PXOH21QCZMTcrzKmL/mM6NgEqCttTrdBH7PH2yyp5jzl3sciMWrWObVesTCpCD7gwS38GWLIhLQwS/pdFxdhM/5QlqsZIDAGCQfccyh8Rd1bb+ZOxEfyM12IKNjMrkm1tqEZzsLJIQcX1aoTht8r6qKK2GsiRpP/qzHD3biwtZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753138823; c=relaxed/simple;
-	bh=IBXdSjkzXToyIsK2szk6CIoADOtMA/vN9liJcysacZs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=kg6WY3bt8e84jiz0FGMsT1Fw85k07wx52ZRuCLv/8Hwro8T3GySq7B356q95aSd/wyJhKhYvoD2mWkftnXErKyzTOoQnUtiXohYIcIDZodvLJiLhrmxUCBYa9FgTfcsLGmeMsFqaYBasqTOgYuelzFmHbLvPghED90vtAYxPtgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Gaa2u4S5; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-75ab147e0f7so2176052b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 16:00:20 -0700 (PDT)
+	s=arc-20240116; t=1753138822; c=relaxed/simple;
+	bh=B65sCoFaiHCK/8GSMjA44vvmKa4nvP6+C+DFiICR3ds=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BZ2tfL1wR4otZJPyM0A/KFFyRsEc/WUBNJYpnD15Yh+kaoI31y6/fU859X7Th/+wmI6z+yjvmsXJUCgARxReMd3mL25tGKZ28TlXxP/9GPnQ3F7Sg9LnHVTtyIKZxFmAiiaZ6mT2UzVga549Eq1s0WT1DKQF6Svn66ooFPVj420=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ev+4/0T0; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-adb2bd27d8bso51550566b.1;
+        Mon, 21 Jul 2025 16:00:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753138820; x=1753743620; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=A4zRviwi98gBCXXrkevJjeMR4Fn3Bc5d+Hcm8yb/s1w=;
-        b=Gaa2u4S5UodRyf7EgEfu4XAcU+x5Mbn0sHdCpnrKmIQEhhKw0qevEcKL0IH29gg6bN
-         hygKuMYlr/GIGVJUZRj3DHqf7sV9e7oUf2xBt9W4zWdn33W20u053YOXXHbgrsa6nYo/
-         qBc9W/C+ojn0Q0xt7j37l0WZslcavkkenXioEhGI2sZeFO/IaVeIg01b5yUvZuyWosQ9
-         lA5bRUtXONwcTL/SQZI/dnmLYAygh+7dZJwmUbUh21i1VOzlmwAOk/DMrCsWh5ePnXby
-         Qcpp5jkrKnvsI/GsvJ0boIDSAKuOvWTG6SqNNfeIKbCz/1maqBh2M9g0DnGfoStHg8IJ
-         eHmg==
+        d=gmail.com; s=20230601; t=1753138818; x=1753743618; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qL9A0aUIl8Uddr//bj642F7utZi72l2outni4topsME=;
+        b=Ev+4/0T0VLKjyccLxEQy4M/sX8pkt6SRwLJvRWBILClMrZrQ2+x3OcauWL0PZmZmit
+         tRq3mvayfPF9kNVrOGLSxWrr4iuTv85OtE2bkDaQyWcdDTpSYzgkKcdP3VlmQ2PbvDjF
+         pwvUKGWJEcDgZhhIV1NCFxzqbGyAfBpskw1p0nyrmMLUI19IOnvRwsrvHBj/ye+1aD8D
+         zS8692s7IIyKhFQmeEC4vxZyqAMBlVMNapRXixDxi5AZCT8y4ucyCO5P2ES/A4zb/7w7
+         gx445Hn15nqlzGR4+kEUR3pECLnt+jpXoF4OgYpYVziwX+a//RLfdZzOADq2e6EVwHeB
+         qYTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753138820; x=1753743620;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A4zRviwi98gBCXXrkevJjeMR4Fn3Bc5d+Hcm8yb/s1w=;
-        b=Bgqm0cnppImfavofvQH+OTqnhRcxNjCu4b2DaUWZWVc+wqCdZHQVbrAIS9AgP0eUNJ
-         Tk7pXN3nB9a73RhjlEZ+CTB9mDUwiaFjx0Odzma0FmDn6qesqyoepZutQ4lSmPyhEvk7
-         Ln6NL8eO+3Rbvj9tEsd0O2JipWa24IAhcHb5H8nH3wtO0m52pHL9QF8TJmQBUbILZQUr
-         XDuRwqjiFj71oU0Ql0TJ1G+ZOKQz4qIP/3NxBQ2ypgH2Cq5Fg2djJF5w1wu7joQ20nVv
-         jbq066kFzTvUpt3vUAbM71RFXuVerlGr0f6Lyb4HYpG3lYcvbI2jaTcGnKC07qpbdeAt
-         FNmw==
-X-Forwarded-Encrypted: i=1; AJvYcCW+I9hZjvjlpRZ7ZbHrTlbCoHhh3r1gmcEPjQTnh4z2DQ31iN5wuUssP1h81OrWVDsbUXgJ8KPl6jEkBv8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5n89FMWBSFBmxXEoBoo+F0sap4ZGf5eaPAf3N9s6mCLgasCBT
-	3tR3pje+DR7ChoXZpaycOqHccO2cndeovgNP4zZDJD6o9M8f5M6MYkMPVVgJgIQj8EcuOsSaohh
-	Bg6Ihow==
-X-Google-Smtp-Source: AGHT+IEbWalhqro2w+3GvtYOXzOjIhWoVd8vuAeTJn3HOEvfRkfsmvkO2lPbYXdrUt0NsrbO3vm8olNe/yg=
-X-Received: from pfbef6.prod.google.com ([2002:a05:6a00:2c86:b0:747:b682:5cc0])
- (user=kuniyu job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:1994:b0:749:122f:5fe5
- with SMTP id d2e1a72fcca58-756ea7bf7b0mr34179699b3a.18.1753138819761; Mon, 21
- Jul 2025 16:00:19 -0700 (PDT)
-Date: Mon, 21 Jul 2025 22:59:48 +0000
-In-Reply-To: <202507200931.7a89ecd8-lkp@intel.com>
+        d=1e100.net; s=20230601; t=1753138818; x=1753743618;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qL9A0aUIl8Uddr//bj642F7utZi72l2outni4topsME=;
+        b=ErkUYa1/tWq7nrwZlmnBYZwC4AoBk8IVKvAAp+H/hmHXnmjpi7BAz5J/RWBHGv8M6S
+         l4eh6ffA6/kGBU+728PUAxeZ/5woP1WZi4PmgZnoENDKgKkKlXwS/cknQOGxu+Sfcwg6
+         GKqs+o61WtReNT4BBcmgvoi3R35t/NXnBr6MkaqhUE4r5nHWABLfc+Eof3fPQ1fAbvS3
+         ge2G3I0RY7YuesXoMhLAfB0s0TdCttfu6BMDyIFQC/7DRuIYx2zoj41FLzZbU2zOoqJ/
+         QkVlFIJ0+9fGrXvtfU20mEzjQNnTiDcuXWn/WuM6SnB6HvJS2FP4BoZYlv+eG6UbrSYU
+         +Bjg==
+X-Forwarded-Encrypted: i=1; AJvYcCX784jYpsRMXy/WR7OxAluaosmzjJp5prJjxj5cEAFnFtv6UTx1q0w+TI1Mu9Tk4sRpANKVKWuwRTVsIw==@vger.kernel.org, AJvYcCXfzogieMfUdZdREX+jS9I8j8D4NlZIDiAqlwobUyWkAnPf+TEyv3SCxN/kOJ8vVGpN5z9/2kUy7l0QKFo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjYHCSo7GMuF89SCmErxLJWZm2N7fnqB5tEELu7HF6bgaBAV/j
+	7TjQ6M+ifqW5ernEKhFaBjpLpCyV1JawuIzII+UHwYrePz65E0DLik7K
+X-Gm-Gg: ASbGnctGDkKiWtjlolNV8zwvSSaC8u5JLS3Cpe99jHbZ6frdJZqH/TpGErfYHkqtfW5
+	owztpURusoo1J0BTprQpl3hpPCsUCg0MujhL5uDZqlb30zdE6+7CHOL0W2BWEu1MlDpA9sPO2DH
+	jdiX661Lj2Z5NcikoxxAsvziQ44sUl3lb/lpxqBrKQah6A/inq61WaaJrDn28i+Dw0h/mRaN9uI
+	Fn6WLMDeWhyd7D+reaojoX/xbSOXloQXioiPSPFZTIkBDDwu2a6VuvU1yzHgfOoUy6kgTKgbNfp
+	Mu16Z+VVjsBFtHxopOg3+jtD8hEDWij0B6T8PUy7vsEWAxAuYhRzNLGw16lSPCKdSo/cgHi+D69
+	uQ+eYirIuDCN9V/E6nzWsM29ZS72JS9be6bQu/XChsujw+QagHdkjcEaSaRMelenNFV4E
+X-Google-Smtp-Source: AGHT+IHckuXEWvfAMpSzjjL6pEsgi7MWI7yYCMOiqpAqEO5gMn0ATvaVtw0/vmnoItEaOlX4DlEKBQ==
+X-Received: by 2002:a17:907:7fa1:b0:ae6:c555:8dbb with SMTP id a640c23a62f3a-ae9c9af98e3mr887526166b.11.1753138817353;
+        Mon, 21 Jul 2025 16:00:17 -0700 (PDT)
+Received: from [192.168.0.18] (cable-94-189-142-142.dynamic.sbb.rs. [94.189.142.142])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6c7d8357sm753164466b.52.2025.07.21.16.00.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Jul 2025 16:00:16 -0700 (PDT)
+Message-ID: <c8b0be89-6c89-46ed-87c3-8905b6ccbbeb@gmail.com>
+Date: Tue, 22 Jul 2025 00:59:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <202507200931.7a89ecd8-lkp@intel.com>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250721230018.3844892-1-kuniyu@google.com>
-Subject: Re: [linus:master] [neighbour]  [confidence: ] f7f5273863: Oops:general_protection_fault,probably_for_non-canonical_address#:#[##]SMP_KASAN
-From: Kuniyuki Iwashima <kuniyu@google.com>
-To: oliver.sang@intel.com
-Cc: edumazet@google.com, gnaaman@drivenets.com, kuba@kernel.org, 
-	kuniyu@google.com, linux-kernel@vger.kernel.org, lkp@intel.com, 
-	netdev@vger.kernel.org, oe-lkp@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-
-From: kernel test robot <oliver.sang@intel.com>
-Date: Sun, 20 Jul 2025 16:12:07 +0800
-> Hello,
-> 
-> kernel test robot noticed "Oops:general_protection_fault,probably_for_non-canonical_address#:#[##]SMP_KASAN" on:
-> 
-> commit: f7f52738637f4361c108cad36e23ee98959a9006 ("neighbour: Create netdev->neighbour association")
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
-> 
-> [test failed on linus/master      f4a40a4282f467ec99745c6ba62cb84346e42139]
-> [test failed on linux-next/master d086c886ceb9f59dea6c3a9dae7eb89e780a20c9]
-> 
-> in testcase: boot
-> 
-> config: x86_64-randconfig-123-20250718
-> compiler: clang-20
-> test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
-> 
-> (please refer to attached dmesg/kmsg for entire log/backtrace)
-> 
-> 
-> +----------------------------------------------------------------------------------+------------+------------+
-> |                                                                                  | a01a67ab2f | f7f5273863 |
-> +----------------------------------------------------------------------------------+------------+------------+
-> | BUG_RAWv6                                                                        | 7          |            |
-> | WARNING:at_mm/slab_common.c:#kmem_cache_destroy                                  | 7          |            |
-> | RIP:kmem_cache_destroy                                                           | 7          |            |
-> | UBSAN:signed-integer-overflow_in_include/linux/atomic/atomic-arch-fallback.h     | 7          |            |
-> | Oops:general_protection_fault,probably_for_non-canonical_address#:#[##]SMP_KASAN | 0          | 7          |
-> | KASAN:null-ptr-deref_in_range[#-#]                                               | 0          | 7          |
-> | RIP:neigh_flush_dev.llvm                                                         | 0          | 7          |
-> | Kernel_panic-not_syncing:Fatal_exception_in_interrupt                            | 0          | 7          |
-> +----------------------------------------------------------------------------------+------------+------------+
-> 
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <oliver.sang@intel.com>
-> | Closes: https://lore.kernel.org/oe-lkp/202507200931.7a89ecd8-lkp@intel.com
-> 
-> 
-> [   21.205230][    T1] systemd[1]: RTC configured in localtime, applying delta of 0 minutes to system time.
-> [   21.328503][    T1] NET: Registered PF_INET6 protocol family
-> [   21.412618][    T1] IPv6: Attempt to unregister permanent protocol 6
-> [   21.433405][    T1] IPv6: Attempt to unregister permanent protocol 136
-> [   21.443410][    T1] IPv6: Attempt to unregister permanent protocol 17
-
-Probably this is IPv6 module unloading path (init failed).
-
-Then, neigh_table_clear() calls neigh_ifdown() with dev=NULL,
-which is not handled in neigh_flush_dev().
-
-I'll post a fix.
-
-
-btw, it would be nice to update CC lists with .mailmap as my address
-was stale one and I missed this report.
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 07/12] kasan/loongarch: select ARCH_DEFER_KASAN and
+ call kasan_init_generic
+To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>, hca@linux.ibm.com,
+ christophe.leroy@csgroup.eu, andreyknvl@gmail.com, agordeev@linux.ibm.com,
+ akpm@linux-foundation.org
+Cc: glider@google.com, dvyukov@google.com, kasan-dev@googlegroups.com,
+ linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, linux-um@lists.infradead.org, linux-mm@kvack.org
+References: <20250717142732.292822-1-snovitoll@gmail.com>
+ <20250717142732.292822-8-snovitoll@gmail.com>
+Content-Language: en-US
+From: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+In-Reply-To: <20250717142732.292822-8-snovitoll@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
 
-> [   22.737430][    T1] Oops: general protection fault, probably for non-canonical address 0xdffffc00000001a0: 0000 [#1] SMP KASAN
-> [   22.738764][    T1] KASAN: null-ptr-deref in range [0x0000000000000d00-0x0000000000000d07]
-> [   22.739736][    T1] CPU: 1 UID: 0 PID: 1 Comm: systemd Tainted: G                T  6.12.0-rc6-01246-gf7f52738637f #1
-> [   22.740972][    T1] Tainted: [T]=RANDSTRUCT
-> [   22.741513][    T1] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-> [ 22.742641][ T1] RIP: 0010:neigh_flush_dev.llvm.6395807810224103582 (kbuild/src/consumer/net/core/neighbour.c:380) 
-> [ 22.743530][ T1] Code: c1 e8 03 42 8a 04 38 84 c0 0f 85 15 05 00 00 31 c0 41 83 3e 0a 0f 94 c0 48 8d 1c c3 48 81 c3 f8 0c 00 00 48 89 d8 48 c1 e8 03 <42> 80 3c 38 00 74 08 48 89 df e8 f7 49 93 fe 4c 8b 3b 4d 85 ff 0f
-> All code
-> ========
->    0:	c1 e8 03             	shr    $0x3,%eax
->    3:	42 8a 04 38          	mov    (%rax,%r15,1),%al
->    7:	84 c0                	test   %al,%al
->    9:	0f 85 15 05 00 00    	jne    0x524
->    f:	31 c0                	xor    %eax,%eax
->   11:	41 83 3e 0a          	cmpl   $0xa,(%r14)
->   15:	0f 94 c0             	sete   %al
->   18:	48 8d 1c c3          	lea    (%rbx,%rax,8),%rbx
->   1c:	48 81 c3 f8 0c 00 00 	add    $0xcf8,%rbx
->   23:	48 89 d8             	mov    %rbx,%rax
->   26:	48 c1 e8 03          	shr    $0x3,%rax
->   2a:*	42 80 3c 38 00       	cmpb   $0x0,(%rax,%r15,1)		<-- trapping instruction
->   2f:	74 08                	je     0x39
->   31:	48 89 df             	mov    %rbx,%rdi
->   34:	e8 f7 49 93 fe       	call   0xfffffffffe934a30
->   39:	4c 8b 3b             	mov    (%rbx),%r15
->   3c:	4d 85 ff             	test   %r15,%r15
->   3f:	0f                   	.byte 0xf
-> 
-> Code starting with the faulting instruction
-> ===========================================
->    0:	42 80 3c 38 00       	cmpb   $0x0,(%rax,%r15,1)
->    5:	74 08                	je     0xf
->    7:	48 89 df             	mov    %rbx,%rdi
->    a:	e8 f7 49 93 fe       	call   0xfffffffffe934a06
->    f:	4c 8b 3b             	mov    (%rbx),%r15
->   12:	4d 85 ff             	test   %r15,%r15
->   15:	0f                   	.byte 0xf
-> [   22.745585][    T1] RSP: 0000:ffff88810026f408 EFLAGS: 00010206
-> [   22.746292][    T1] RAX: 00000000000001a0 RBX: 0000000000000d00 RCX: 0000000000000000
-> [   22.747239][    T1] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffffffc0631640
-> [   22.748176][    T1] RBP: ffff88810026f470 R08: 0000000000000000 R09: 0000000000000000
-> [   22.749092][    T1] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-> [   22.750004][    T1] R13: ffffffffc0625250 R14: ffffffffc0631640 R15: dffffc0000000000
-> [   22.750956][    T1] FS:  00007f575cb83940(0000) GS:ffff8883aee00000(0000) knlGS:0000000000000000
-> [   22.752016][    T1] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   22.752799][    T1] CR2: 00007f575db40008 CR3: 00000002bf936000 CR4: 00000000000406f0
-> [   22.753770][    T1] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> [   22.754687][    T1] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> [   22.755620][    T1] Call Trace:
-> [   22.756076][    T1]  <TASK>
-> [ 22.756491][ T1] ? show_regs (kbuild/src/consumer/arch/x86/kernel/dumpstack.c:?) 
-> [ 22.757025][ T1] ? __die_body.llvm.18112809324785033505 (kbuild/src/consumer/arch/x86/kernel/dumpstack.c:421) 
-> [ 22.757760][ T1] ? die_addr (kbuild/src/consumer/arch/x86/kernel/dumpstack.c:?) 
-> [ 22.758289][ T1] ? exc_general_protection (kbuild/src/consumer/arch/x86/kernel/traps.c:751) 
-> 
-> 
-> The kernel config and materials to reproduce are available at:
-> https://download.01.org/0day-ci/archive/20250720/202507200931.7a89ecd8-lkp@intel.com
-> 
-> 
-> 
-> -- 
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
-> 
+On 7/17/25 4:27 PM, Sabyrzhan Tasbolatov wrote:
+
+> diff --git a/arch/loongarch/include/asm/kasan.h b/arch/loongarch/include/asm/kasan.h
+> index 62f139a9c87..0e50e5b5e05 100644
+> --- a/arch/loongarch/include/asm/kasan.h
+> +++ b/arch/loongarch/include/asm/kasan.h
+> @@ -66,7 +66,6 @@
+>  #define XKPRANGE_WC_SHADOW_OFFSET	(KASAN_SHADOW_START + XKPRANGE_WC_KASAN_OFFSET)
+>  #define XKVRANGE_VC_SHADOW_OFFSET	(KASAN_SHADOW_START + XKVRANGE_VC_KASAN_OFFSET)
+>  
+> -extern bool kasan_early_stage;
+>  extern unsigned char kasan_early_shadow_page[PAGE_SIZE];
+>  
+>  #define kasan_mem_to_shadow kasan_mem_to_shadow
+> @@ -75,12 +74,6 @@ void *kasan_mem_to_shadow(const void *addr);
+>  #define kasan_shadow_to_mem kasan_shadow_to_mem
+>  const void *kasan_shadow_to_mem(const void *shadow_addr);
+>  
+> -#define kasan_arch_is_ready kasan_arch_is_ready
+> -static __always_inline bool kasan_arch_is_ready(void)
+> -{
+> -	return !kasan_early_stage;
+> -}
+> -
+>  #define addr_has_metadata addr_has_metadata
+>  static __always_inline bool addr_has_metadata(const void *addr)
+>  {
+> diff --git a/arch/loongarch/mm/kasan_init.c b/arch/loongarch/mm/kasan_init.c
+> index d2681272d8f..cf8315f9119 100644
+> --- a/arch/loongarch/mm/kasan_init.c
+> +++ b/arch/loongarch/mm/kasan_init.c
+> @@ -40,11 +40,9 @@ static pgd_t kasan_pg_dir[PTRS_PER_PGD] __initdata __aligned(PAGE_SIZE);
+>  #define __pte_none(early, pte) (early ? pte_none(pte) : \
+>  ((pte_val(pte) & _PFN_MASK) == (unsigned long)__pa(kasan_early_shadow_page)))
+>  
+> -bool kasan_early_stage = true;
+> -
+>  void *kasan_mem_to_shadow(const void *addr)
+>  {
+> -	if (!kasan_arch_is_ready()) {
+> +	if (!kasan_enabled()) {
+
+This doesn't make sense, !kasan_enabled() is compile-time check which is always false here.
+
+>  		return (void *)(kasan_early_shadow_page);
+>  	} else {
+>  		unsigned long maddr = (unsigned long)addr;
 
