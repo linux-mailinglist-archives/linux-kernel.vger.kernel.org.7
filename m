@@ -1,86 +1,95 @@
-Return-Path: <linux-kernel+bounces-738796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0077B0BD2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:03:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 126BBB0BD30
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:05:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68B28189C789
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:04:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 841FC189BD45
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD39728033C;
-	Mon, 21 Jul 2025 07:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VLQInbT8"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C873B280CFA;
+	Mon, 21 Jul 2025 07:05:35 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC6822DFA6;
-	Mon, 21 Jul 2025 07:03:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB12822DFA6;
+	Mon, 21 Jul 2025 07:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753081425; cv=none; b=KIQ+/1iwd8RB/wNVvEnPbaYUvycHcxwtcbD7QrPuhyZUg/92Ug8zs6a2HIPci1S+R+Bf+agDTCWV603A2W6/8SGr+im3X7ReLGfr+arMPGAbFkeZW9utZj9iu0w776K3DFU3gUq0Q3cD7lBZtrxH/v/VUo/Y5DdixfHCGIBEnYA=
+	t=1753081535; cv=none; b=ADhV7JLRM1kK7eZ/KoqnpHmO2ABodtQDRPlFcaRume+Lc7/gPscqloGHfSiaElDMmjPj792uYC0ppZBN5o4iJ54zIeciBHeeUfstTBUcuMKdnVnRK9yo5uVq3h0ddkILNawhiC1lipKv1nsAaVtn7eOtAlzHhosbRiwmQGyEOc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753081425; c=relaxed/simple;
-	bh=I6akz5pfbU/lPQwpnOci9Fnqx87HkGhMiK0UmMzmsjY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pfOde7fK4XOCl9pCLCK6NI+B63TwWNU6zwpuK0Auc02C5yKsrRm6tgGQCHXPSkWSeO7l1hbyzQVtyVonVfxVa2NukRdjnM/864FAzqRfd7orzxGxb6uTnECn9u18r2RHtcz7/YI/TknvYjb1tBgBfYOq8QKQZMQ5nzrYAznZuH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VLQInbT8; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Re4nL4seh/u3rx2kBv4ujkDzUbNHaaKK5HUMeMxVLyo=; b=VLQInbT8BzS3WF2wguK3ElN1iN
-	EBK9JoQe1L5sTZUvS4SJdj25s8ENLEbcU5jrkqdG2Wl3XU3aXqJ/Wvb6AlqD0QDxJkGkHS+U/FNRA
-	fmYAHcH3fU6qn0TBzOkQlPFkT8HHNSfQxny60x0WNb+XI9sLT/NlRtgX/9GH/S0aA2Kin3xz+Kb1j
-	kSkXmswblVe/5kGmWbVVZAEFDrOuSz/UkBOW4aZoBkccyOPc9Yp1ExwWh5MDG+Pl3IHZfxKMWRTlE
-	ZJzrUaXQVpi5C02AhTravzmhWMTzx6rojxQT0sEv6mDDzHWUbHLJZk4I/rwSdW3FFApRZhcSErdKo
-	DGKsP39g==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1udkYn-0000000GSC7-13Y2;
-	Mon, 21 Jul 2025 07:03:41 +0000
-Date: Mon, 21 Jul 2025 00:03:41 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Yonatan Maman <ymaman@nvidia.com>
-Cc: =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-	Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Alistair Popple <apopple@nvidia.com>,
-	Ben Skeggs <bskeggs@nvidia.com>,
-	Michael Guralnik <michaelgur@nvidia.com>,
-	Or Har-Toov <ohartoov@nvidia.com>,
-	Daisuke Matsuda <dskmtsd@gmail.com>, Shay Drory <shayd@nvidia.com>,
-	linux-mm@kvack.org, linux-rdma@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, Gal Shalom <GalShalom@nvidia.com>
-Subject: Re: [PATCH v2 4/5] RDMA/mlx5: Enable P2P DMA with fallback mechanism
-Message-ID: <aH3mTZP7w8KnMLx1@infradead.org>
-References: <20250718115112.3881129-1-ymaman@nvidia.com>
- <20250718115112.3881129-5-ymaman@nvidia.com>
+	s=arc-20240116; t=1753081535; c=relaxed/simple;
+	bh=gsXX+x0AhxqLNqqJn8QMIAlWBKl8aVEZcPd9LMjYaRI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kQkLMcQi8JffrGfMnuP0B2NKbQQy5Fb6i9lZZCE5uhq2ln2NJjlG1NXkW8f6xlcfR0yu6x69adWJuatMPwRhroXNER5X+HHZwxty3rYeMidAV6G1PyQtILt1aMJaU1SSTfKZcG/j9R5ZNOBXWTxXrI1JAHWaODWJI+wNQ6aMd6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4blrsX4q39zdbyW;
+	Mon, 21 Jul 2025 15:01:20 +0800 (CST)
+Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1BB92180478;
+	Mon, 21 Jul 2025 15:05:30 +0800 (CST)
+Received: from [10.174.176.88] (10.174.176.88) by
+ kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 21 Jul 2025 15:05:29 +0800
+Message-ID: <076aefb1-ec3a-471b-b299-5fa9a2a9495d@huawei.com>
+Date: Mon, 21 Jul 2025 15:05:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250718115112.3881129-5-ymaman@nvidia.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs: Add additional checks for block devices during mount
+To: Christoph Hellwig <hch@lst.de>, Zizhi Wo <wozizhi@huaweicloud.com>
+CC: kernel test robot <lkp@intel.com>, <viro@zeniv.linux.org.uk>,
+	<jack@suse.com>, <brauner@kernel.org>, <axboe@kernel.dk>,
+	<llvm@lists.linux.dev>, <oe-kbuild-all@lists.linux.dev>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yukuai3@huawei.com>, <yangerkun@huawei.com>
+References: <20250719024403.3452285-1-wozizhi@huawei.com>
+ <202507192025.N75TF4Gp-lkp@intel.com>
+ <b60e4ef2-0128-4e56-a15f-ea85194a3af0@huaweicloud.com>
+ <20250721064712.GA28899@lst.de>
+From: Zizhi Wo <wozizhi@huawei.com>
+In-Reply-To: <20250721064712.GA28899@lst.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ kwepemf100017.china.huawei.com (7.202.181.16)
 
-On Fri, Jul 18, 2025 at 02:51:11PM +0300, Yonatan Maman wrote:
-> From: Yonatan Maman <Ymaman@Nvidia.com>
+
+
+在 2025/7/21 14:47, Christoph Hellwig 写道:
+> On Mon, Jul 21, 2025 at 09:20:27AM +0800, Zizhi Wo wrote:
+>> Sorry, disk_live() is only declared but not defined when CONFIG_BLOCK is
+>> not set...
 > 
-> Add support for P2P for MLX5 NIC devices with automatic fallback to
-> standard DMA when P2P mapping fails.
+> You can just add a if (IS_ENABLED(CONFIG_BLOCK)) check around it.
 
-That's now how the P2P API works.  You need to check the P2P availability
-higher up.
+Yes, adding this judgment directly is also fine.
 
+> 
+> 
+> But the layering here feels wrong.  sget_dev and it's helper operate
+> purely on the dev_t.  Anything actually dealing with a block device /
+> gendisk should be in the helpers that otherwise use it.
+> 
+> 
+
+Do you mean performing the check outside of sget_dev()? That is, after
+we obtain an existing superblock, we then check whether the block device
+exists, and if it doesn't, we report the error in the outer layer (e.g.,
+in get_tree_bdev_flags(), this function seems to be targeted at bdev
+rather than just dev)?
+
+Thanks,
+Zizhi Wo
 
