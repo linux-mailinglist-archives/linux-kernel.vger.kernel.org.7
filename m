@@ -1,152 +1,157 @@
-Return-Path: <linux-kernel+bounces-739435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4427DB0C644
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:27:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 839CEB0C628
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:23:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5341188B60B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:27:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 544531AA63FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1162DAFBB;
-	Mon, 21 Jul 2025 14:27:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88DDB2DA763;
+	Mon, 21 Jul 2025 14:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BpUZhmBJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="5iIxQfL4"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105352D9EF2;
-	Mon, 21 Jul 2025 14:27:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2582D6617;
+	Mon, 21 Jul 2025 14:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753108052; cv=none; b=Jpc0JjNMK/ltrB9xxTTyaUnml2Jsc+XtXW1aYM1aMa4akiowNtSdXMPMCFx2gXad9n0xDhzgz93+skFfWObytcv5+xWTHbgWsEqmAUAGCDOTFRYoejOMAXBlUyhozCz5ma916e/xlHUCpf3sm5kIhOzeME4+sbvIvKLRmxG4Lfw=
+	t=1753107768; cv=none; b=sooTnhuoVDyNms92lBfQsxSkE5rGB4ubYGTqpCn+Hva7t80eeo+JRtJPfzj+BBkhJ9acg8hYelGgs10mvQD7bzFzUKPjQdKFAX0kL9J6KHpX+py5cYIGbFA7Xesl8jRW7wr+691atpNFJGhSTm7/bBfnSkBwvoz1gaBY8Pg4OUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753108052; c=relaxed/simple;
-	bh=PNJKS+TVTTfsECa7XS5I8d4xMGqWb4m/BU6pFdO60nA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tKca9n07agi3zxkWYcKtHnQUucoTw34Aii+3/7S0MBVKzWokMnfnxK8yKKZq5/1S8S+rbUY5je0CYhjNJAzQkXbyWNXV/86N+c/QIkES0GzJRKmVg/oLOkjcz0TWYAeWYLQWOLT243dt7QxVuoeNv9uNfsscuJdf34+9q/BcwHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BpUZhmBJ; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753108051; x=1784644051;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PNJKS+TVTTfsECa7XS5I8d4xMGqWb4m/BU6pFdO60nA=;
-  b=BpUZhmBJMvOZjl7A7VmpRjwAhH4R65FAe884t36bYwEXkEdCMtemr/h0
-   o4edBPSccAwiIJjdjJWwiLgT1oUrNBdcWBRDHBaxzzn7Jgwax//9gfyDO
-   VwZvmBr+D2+Su8Xg0/wRJ/W4MyzupRhHxubTEmZ4Q81a/eOfRl34aJXhQ
-   GKcTXZ3dCZplYtKsEYMQtKW9XW8rEIW1Z/TYlQnjOTpof6sKZ3HF+1YD3
-   x6bGISk3LbLs7HuxNbsmceTSWXBp5A95xq7Ey2FGeE5HiZh6KvOOuio1M
-   9SsSsncxcw7TrMbYEOKimDMwR3BUpKtDuy2qEAAEt6ZImR3Kzi9JdZN5y
-   g==;
-X-CSE-ConnectionGUID: 8FZFIA/VTOKBu7+Sy1N04g==
-X-CSE-MsgGUID: UnB9IzYOTWivtOvRrKtzlw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11499"; a="54424867"
-X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
-   d="scan'208";a="54424867"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 07:27:30 -0700
-X-CSE-ConnectionGUID: z23pwguhRCq0pG2C6uHt2g==
-X-CSE-MsgGUID: R04oqIF4Qc+jd/Sk1KqXag==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
-   d="scan'208";a="162898084"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by fmviesa003.fm.intel.com with ESMTP; 21 Jul 2025 07:27:11 -0700
-Date: Mon, 21 Jul 2025 22:18:18 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Ackerley Tng <ackerleytng@google.com>, Yan Zhao <yan.y.zhao@intel.com>,
-	Vishal Annapurve <vannapurve@google.com>,
-	Alexey Kardashevskiy <aik@amd.com>, Fuad Tabba <tabba@google.com>,
-	kvm@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	linux-fsdevel@vger.kernel.org, ajones@ventanamicro.com,
-	akpm@linux-foundation.org, amoorthy@google.com,
-	anthony.yznaga@oracle.com, anup@brainfault.org,
-	aou@eecs.berkeley.edu, bfoster@redhat.com,
-	binbin.wu@linux.intel.com, brauner@kernel.org,
-	catalin.marinas@arm.com, chao.p.peng@intel.com,
-	chenhuacai@kernel.org, dave.hansen@intel.com, david@redhat.com,
-	dmatlack@google.com, dwmw@amazon.co.uk, erdemaktas@google.com,
-	fan.du@intel.com, fvdl@google.com, graf@amazon.com,
-	haibo1.xu@intel.com, hch@infradead.org, hughd@google.com,
-	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz,
-	james.morse@arm.com, jarkko@kernel.org, jgowans@amazon.com,
-	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com,
-	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com,
-	kent.overstreet@linux.dev, kirill.shutemov@intel.com,
-	liam.merwick@oracle.com, maciej.wieczor-retman@intel.com,
-	mail@maciej.szmigiero.name, maz@kernel.org, mic@digikod.net,
-	michael.roth@amd.com, mpe@ellerman.id.au, muchun.song@linux.dev,
-	nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev,
-	palmer@dabbelt.com, pankaj.gupta@amd.com, paul.walmsley@sifive.com,
-	pbonzini@redhat.com, pdurrant@amazon.co.uk, peterx@redhat.com,
-	pgonda@google.com, pvorel@suse.cz, qperret@google.com,
-	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com,
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com,
-	quic_pheragu@quicinc.com, quic_svaddagi@quicinc.com,
-	quic_tsoni@quicinc.com, richard.weiyang@gmail.com,
-	rick.p.edgecombe@intel.com, rientjes@google.com,
-	roypat@amazon.co.uk, rppt@kernel.org, seanjc@google.com,
-	shuah@kernel.org, steven.price@arm.com, steven.sistare@oracle.com,
-	suzuki.poulose@arm.com, thomas.lendacky@amd.com,
-	usama.arif@bytedance.com, vbabka@suse.cz, viro@zeniv.linux.org.uk,
-	vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org,
-	willy@infradead.org, xiaoyao.li@intel.com, yilun.xu@intel.com,
-	yuzenghui@huawei.com, zhiquan1.li@intel.com
-Subject: Re: [RFC PATCH v2 04/51] KVM: guest_memfd: Introduce
- KVM_GMEM_CONVERT_SHARED/PRIVATE ioctls
-Message-ID: <aH5MKseUAGFFWc8T@yilunxu-OptiPlex-7050>
-References: <CAGtprH_Evyc7tLhDB0t0fN+BUx5qeqWq8A2yZ5-ijbJ5UJ5f-g@mail.gmail.com>
- <9502503f-e0c2-489e-99b0-94146f9b6f85@amd.com>
- <20250624130811.GB72557@ziepe.ca>
- <CAGtprH_qh8sEY3s-JucW3n1Wvoq7jdVZDDokvG5HzPf0HV2=pg@mail.gmail.com>
- <aGTvTbPHuXbvj59t@yzhao56-desk.sh.intel.com>
- <diqz8qknhj3l.fsf@ackerleytng-ctop.c.googlers.com>
- <aHjDIxxbv0DnqI6S@yilunxu-OptiPlex-7050>
- <diqzqzyeg3j2.fsf@ackerleytng-ctop.c.googlers.com>
- <aHm2F95XwzdD7nod@yilunxu-OptiPlex-7050>
- <20250718141559.GF2206214@ziepe.ca>
+	s=arc-20240116; t=1753107768; c=relaxed/simple;
+	bh=4mTsBe71F88u3XVMXKY9/rSzIS8TxslEt+Beazy+yD4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=o3yIw1GEV1c83HkaZO7pn45jX11wRRUUm0FyLN9xLGk8kh6lcmNYA1bSe/0yBhsSuwDt2CJCqj7VlQOMG7UV1QK7J84xrvc2LlzwhhNtOxoPJ51bxFJpI1R5XaJzHAqrmjDYhgcX7jQzFDCouEdBhXhexiAjAz4up/nTygZTyPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=5iIxQfL4; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56LCPm57020352;
+	Mon, 21 Jul 2025 16:22:16 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	MlPUcJGCX9eGUJmog410SGdHvgab8UL6u6jJvem96Jg=; b=5iIxQfL4YWN2yOno
+	Nav6nT0ot5lu7hhSPyXgIerU2aur1+pWl2zGqeVjwo5/MoRbNadUTCrznjLT6TA2
+	TaNHCcQbUg79u4zgfZ1O9g9Vzdl9kvccvLpIX9bvOJJaLruoh8epwg9EXkyX5bZI
+	HBffxDudJzyO/nBTZnXGGRTuIBlzLysZ8qs1DiKVOZiSbSdG/gSZSIL+QQcDwfNM
+	8lHkW+sNsPxrhPb3JUzOj/Fg5nvwoylJ3DKlGL8PWv6cyARyZE2P2qxSoGTxpeJ8
+	ClX+EVBlHiLtWapJDla7SIQTQ2zQW1eT6/lUrBSu7KW2M741cnudg2Mve0D671uW
+	QvzB2A==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4802q21em4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Jul 2025 16:22:16 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 2B30240054;
+	Mon, 21 Jul 2025 16:20:32 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2988376EA8E;
+	Mon, 21 Jul 2025 16:19:09 +0200 (CEST)
+Received: from [10.48.87.141] (10.48.87.141) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 21 Jul
+ 2025 16:19:08 +0200
+Message-ID: <b95e3439-717b-4159-acf9-7ce76d1c43d4@foss.st.com>
+Date: Mon, 21 Jul 2025 16:19:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250718141559.GF2206214@ziepe.ca>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 3/4] net: phy: smsc: fix and improve WoL support
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre
+ Torgue <alexandre.torgue@foss.st.com>,
+        Christophe Roullier
+	<christophe.roullier@foss.st.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>, Simon Horman <horms@kernel.org>,
+        Tristram Ha <Tristram.Ha@microchip.com>,
+        Florian Fainelli
+	<florian.fainelli@broadcom.com>,
+        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20250721-wol-smsc-phy-v1-0-89d262812dba@foss.st.com>
+ <20250721-wol-smsc-phy-v1-3-89d262812dba@foss.st.com>
+ <cca8e9e6-a063-4e00-87af-f59ea926cce3@lunn.ch>
+Content-Language: en-US
+From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
+In-Reply-To: <cca8e9e6-a063-4e00-87af-f59ea926cce3@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-21_04,2025-07-21_01,2025-03-28_01
 
-On Fri, Jul 18, 2025 at 11:15:59AM -0300, Jason Gunthorpe wrote:
-> On Fri, Jul 18, 2025 at 10:48:55AM +0800, Xu Yilun wrote:
-> > > If by the time KVM gets the conversion request, the page is unpinned,
-> > > then we're all good, right?
-> > 
-> > Yes, unless guest doesn't unpin the page first by mistake. Guest would
-> > invoke a fw call tdg.mem.page.release to unpin the page before
-> > KVM_HC_MAP_GPA_RANGE.
+Hello Andrew,
+
+On 7/21/25 15:26, Andrew Lunn wrote:
+>> +static int smsc_phy_suspend(struct phy_device *phydev)
+>> +{
+>> +	if (!phydev->wol_enabled)
+>> +		return genphy_suspend(phydev);
+>> +
+>> +	return 0;
+>> +}
 > 
-> What does guest pinning mean?
+> Suspend/resume is somewhat complex, and i don't know all the
+> details. But this looks odd. Why does the phylib core call suspend
+> when phydev->wol_enabled is true? That at least needs an explanation
+> in the commit message.
+> 
 
-TDX firmware provides a mode, that host can't block the S-EPT mapping
-after TD accepts the mapping. Guest 'pins' the private mapping (KVM &
-IOMMU).
+As stated by Russel, this callback is not needed because phy_suspend()
+will not call this suspend() callback if phydev->wol_enabled is set.
+Therefore, I'm removing it vor V2.
 
-TD should explicitly unaccept the page by tdg.mem.page.release, then
-host could successfully block/unmap the S-EPT. This is necessary when
-shared <-> private conversion.
+>> +static int smsc_phy_resume(struct phy_device *phydev)
+>> +{
+>> +	int rc;
+>> +
+>> +	if (!phydev->wol_enabled)
+>> +		return genphy_resume(phydev);
+>> +
+>> +	rc = phy_read_mmd(phydev, MDIO_MMD_PCS, MII_LAN874X_PHY_MMD_WOL_WUCSR);
+>> +	if (rc < 0)
+>> +		return rc;
+>> +
+>> +	if (!(rc & MII_LAN874X_PHY_WOL_STATUS_MASK))
+>> +		return 0;
+>> +
+>> +	dev_info(&phydev->mdio.dev, "Woke up from LAN event.\n");
+> 
+> Please don't spam the log. It is clear the system woke up, there are
+> messages in the log...
 
-When TDX Connect is enabled, this mode is enforced.
+I wanted to state clearly that the wake up happended because of a WoL
+event but sure, I understand that it's best if log isn't spammed. Do you
+prefer it completely removed or dev_info()->dev_dbg() ?
 
-Thanks,
-Yilun
+Best regards,
+Gatien
 
 > 
-> Jason
-> 
+> 	Andrew
 
