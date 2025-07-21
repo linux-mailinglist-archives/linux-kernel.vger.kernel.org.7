@@ -1,102 +1,240 @@
-Return-Path: <linux-kernel+bounces-738961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27E2CB0BFAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:07:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35F6DB0BFB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:08:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D1B27A5180
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:06:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8249316654F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F27288C97;
-	Mon, 21 Jul 2025 09:07:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A76921FF28;
+	Mon, 21 Jul 2025 09:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UN1h/7cl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E74DsPHT"
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5865221D5AA;
-	Mon, 21 Jul 2025 09:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C573A19924D;
+	Mon, 21 Jul 2025 09:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753088838; cv=none; b=Go3zX4IVPUqMY2Xhs3kW2c/SpuCQUQE07Px4Y/7gFbcG/eR7cH32xU9H0D5aCVAeBfxi4ppTX6/QdQOChwbaPD4c3c1qHS1hkGxOCzj5GIsXo7vhv/7yRbz5xP/lxHI4nDMVXnAMFFi7x4e9GuWQWpd4VOMzkOgAGDOeuigv/+M=
+	t=1753088902; cv=none; b=g2dUhH1PsknSfs/X3dnBwJ31wVAQzh/JP/pxrKyOQdBvccVHjNIYv2DD5TjJqTI3tty1Uo3E6hBje9NkFYyTFT87r5pg55n0NJ5hagpsxdtVg0FFb1iFpyedrV1f+vCivvQ/G5tWO54inaGkjvl8DuOSRb4l6DFqF4UvAV+3wlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753088838; c=relaxed/simple;
-	bh=mWbYUZ8RpLg7sOJxNI1MKrXpqhPZ6q61NO8r6g1VBL4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j0r/KkOl+OLmovvqvcciz5MhVRBWa7sCjW5EhXQ9Y5C6iEWsJoZhHQQD4Z6hIJyAVcyKvmN+gczzxtNf7DvTJpj+f0zHprzNpclaAhKKRbwAu9FHy0Wb5A/uQKH0Fi8K4VBuM6FNreRvwtxR5Z+/8voKwoSCxIr4Zz+tB8o91RU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UN1h/7cl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DBB4C4CEED;
-	Mon, 21 Jul 2025 09:07:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753088836;
-	bh=mWbYUZ8RpLg7sOJxNI1MKrXpqhPZ6q61NO8r6g1VBL4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UN1h/7clLpuilJSIuDW6BgG2LU/Flp/JeMU1x1rxzWje9mT+WqDL3tq35C9NCu1+3
-	 J1WWmV1kj+/HeOfsdY7LOxE+f4sX5mA/RowNQ71AM8wE0SF541udqLwfvQGFO+So1z
-	 ueMPbao8XuTqLtD1JXIITALW3ZCzf9VfxMsMZIFoG4dyTLURNE8lMGc4P4CRHBfgrD
-	 krx70SFQzeY7gVh2pkg44a1G14sa8NB+CoXCwE9R8HIpHxDE1NO9zbpO2w01+WvzGd
-	 8kPcK1mGUXCJ+JA2y8fnDIg/BsyZPtQJbFnKC48KdC1HVGpRJW1OUH72brBOGCxJi7
-	 Dhn4x7kOQLs3Q==
-Date: Mon, 21 Jul 2025 11:07:14 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Aaron Kling <webgeek1234@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nagarjuna Kristam <nkristam@nvidia.com>, 
-	JC Kuo <jckuo@nvidia.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Mathias Nyman <mathias.nyman@intel.com>, 
-	Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-usb@vger.kernel.org, Thierry Reding <treding@nvidia.com>, 
-	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 01/17] dt-bindings: soc: tegra: pmc: Document
- Tegra210B01
-Message-ID: <20250721-logical-lorikeet-of-upgrade-6dce4f@kuoka>
-References: <20250720-t210b01-v2-0-9cb209f1edfc@gmail.com>
- <20250720-t210b01-v2-1-9cb209f1edfc@gmail.com>
+	s=arc-20240116; t=1753088902; c=relaxed/simple;
+	bh=OgsguQcDxU4ROzAr8FLZ3Ayjk8vUdVmKWdH6eZ50VUI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qx/KLuwzKh3Oi9F/OjtPW7YTQo2VD/1LxAZYuoL3oujDTN0VA0p01RtbzfsmuWm8MLTizm6EtIeoMCHYO6j9xoiAx8SC882cMIeycG16uiTWdPEiBLSYf4pVdhkIy/WBoXh/C96EXSnp+8Ll9kZhUVvgsK6wdT9jvtn0OEASLck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E74DsPHT; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3e28be470f1so18856575ab.0;
+        Mon, 21 Jul 2025 02:08:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753088900; x=1753693700; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fP2qdhjigbAmBeoHDgFhVXmJAdHPCBK9T5wak81mhb8=;
+        b=E74DsPHTnQlM6PbA1/qHwPhmd/1OcibH6buT1s09Hd6mnkgpw+407GXHd8F7S4mHsu
+         AKf962Dl6MmPN7JFRWXicRmja15bA4myptZhlcVOhQ+FNW0VtS+f5GATZTFP6alvT6AU
+         xJFpDBDpA1N672ulAM8U6fHW2/evEVODyNTnTLIFXMf88tE8j+bVd3j0lXVPMPoBvRwL
+         kne9uoz3AOSTYEAClWFm4W9jolE5kuw+8jMIt2mFe5BYKCd/IWIYWkkptNaCSe07Ucjb
+         F/uvY4NJG04UnQujKwJAEYQdq37zHWTX2ar4c7eqHp8VVX0GfaRbFTGZjbXhqg6n37J+
+         D5Dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753088900; x=1753693700;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fP2qdhjigbAmBeoHDgFhVXmJAdHPCBK9T5wak81mhb8=;
+        b=K1ME8IfvRauvFj/HN9egLJlZeB2hPXZw43CYCQQsGA602/t/Ws4vfK3xUCRmrLeKth
+         i232/GhncT9jGw93r6FVKOzNiHjnSusxnAHDz+/N9N80ZvxVOQsXsR/RNafwzF1A0r8G
+         o4hbmoZOhTeYBeOWANEsKA+hJnhn+Iu7eOb9gUm7n3ZcpTGBXFQduXCwbw+ngKENQ3hb
+         kuFnUtNUo6ywhUMVmcHvHJ3ajfeoANvM1zASpT/Q7fG44QZd/nOB8KJDPzTWuH1FO0p8
+         7KAIJjX7cemtxJ9ke2NufnA3HzX5evLpl+fkuR6J7zo76KgSB6u26rJi2j5f8up5york
+         i6kg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGD/3YSQkvhNryUuLqmaUiY98jVXCGUK3n64Czc2sqR5eZwQ/EoiaQjHCd3VyDcbnrCTQJ01CtKGQEsLY=@vger.kernel.org, AJvYcCVX5fzFsJQVZW17ORFu9fOVYEIvrTcVaJWnW3+kNbn3vB2nAhvxEVqG4cT+PMgqhrfIqIwsXqSRFCwhG595JFY86A==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxfsp7ARXbqquuVgSZofXDaiKCW6AhWXgpsWBRU94YjGf8UWuGQ
+	T7lYWqkQ4I0P8sZpBi1BqzmBLvexOmJdYWdOqqEHMseZcGNFtWY2SbxNWN2I+bpd4+4oBSvYMue
+	3mZ1Y3wh2zixm9zwYotC31ZdjX9B9DXQ=
+X-Gm-Gg: ASbGncuAhCHEnI2CdOBfwDryHYnr0KoXEbtizncYZjt8EZyu1IL1uFm3kpPKohzP395
+	BextIE8pM0LwOusZAXDJE82Zn6x6xg3JEMbmOF5bK9esx8UBSYXSLBD8nojBVRmE0cC4hcsNJiT
+	eaOlfOVGV8ZEeur4Kl6jEoyoOYgMfJ7o2TPcy1fveTF1lg8cwCxxUGTOCLbd1UV0SIRRxDoC5Nt
+	t7qYqE=
+X-Google-Smtp-Source: AGHT+IF18j1rx0DNGpmrwGS5dReQiw1r4g3RlvoyFjCSL132gx55Rm/6nV7uh+iqAAGP1WIjgLw0qylp3KDR5ZpttP4=
+X-Received: by 2002:a05:6e02:164d:b0:3e2:84aa:f473 with SMTP id
+ e9e14a558f8ab-3e28bd601a8mr140906605ab.1.1753088899813; Mon, 21 Jul 2025
+ 02:08:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250720-t210b01-v2-1-9cb209f1edfc@gmail.com>
+References: <20250704052529.1040602-1-shengjiu.wang@nxp.com>
+ <20250704052529.1040602-2-shengjiu.wang@nxp.com> <CAEnQRZDeXrhHaU-tiAizXL3cNK-6rpbACx9QGNVpV8GBEKAPYQ@mail.gmail.com>
+In-Reply-To: <CAEnQRZDeXrhHaU-tiAizXL3cNK-6rpbACx9QGNVpV8GBEKAPYQ@mail.gmail.com>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Mon, 21 Jul 2025 17:08:03 +0800
+X-Gm-Features: Ac12FXzQmStbQ2f20k4GC_7DKq8-KQmdC6HQD5O_YE8Y5hNo-EjvRf34-Q_a6Ww
+Message-ID: <CAA+D8AOzxf2J5GwzH0MZps3r3_qRYBsp+s40L8uVL6v_cGhz5A@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] remoteproc: imx_dsp_rproc: Add support of recovery process
+To: Daniel Baluta <daniel.baluta@gmail.com>
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, andersson@kernel.org, mathieu.poirier@linaro.org, 
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
+	festevam@gmail.com, linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jul 20, 2025 at 09:14:55PM -0500, Aaron Kling wrote:
-> Add the PMC driver compatible strings for Tegra210B01
+On Fri, Jul 18, 2025 at 7:24=E2=80=AFPM Daniel Baluta <daniel.baluta@gmail.=
+com> wrote:
+>
+> On Fri, Jul 4, 2025 at 8:29=E2=80=AFAM Shengjiu Wang <shengjiu.wang@nxp.c=
+om> wrote:
+> >
+> > When recovery is triggered, rproc_stop() is called first then
+> > rproc_start(), but there is no rproc_unprepare_device() and
+> > rproc_prepare_device() in the flow. As the software reset is needed
+> > before DSP starts, so move software reset from imx_dsp_runtime_resume()
+> > to .load() to make the recovery work. And make sure memory is cleared
+> > before loading firmware.
+>
+> Hello Shengjiu,
+>
+> Commit mostly looking good but the key point when writing a commit
+> is to explain why the commit is needed and less about what the
+> commit does (this should be obvious from the source code).
+>
+>
+> So, I would start with the context and that is:
+>
+> Following commit: 6eed169c7fefd9cdbbccb5ba7a98470cc0c09c63
+>     remoteproc: imx_rproc: Enable attach recovery for i.MX8QM/QXP
+>
+> enabled FW recovery, but is broken because <and here explain the reason t=
+hat
+> you mostly described in the original commit>.
+>
+> Then at the end add the Fixes tag.
 
-And what is Tegra210B01? Do not say what you are doing - it is obvious
-from the diff. In this case here say what you are ADDING, what hardware
-is this.
+Thanks for comments, will update in next version.
 
-> 
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> ---
->  Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml b/Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml
-> index 7140c312d8986b0b733c519b1e89e360d9602add..eddcafc2f9398ad6fb4d2d46b3181ab91c89a229 100644
-> --- a/Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml
-> +++ b/Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml
-> @@ -18,6 +18,7 @@ properties:
->        - nvidia,tegra114-pmc
->        - nvidia,tegra124-pmc
->        - nvidia,tegra210-pmc
-> +      - nvidia,tegra210b01-pmc
-
-Why they are not compatible? Commit msg is also silent on that.
-
-Best regards,
-Krzysztof
-
+Best regards
+Shengjiu Wang
+>
+> Also, allow me on more day on Monday to test this patch.
+>
+> Thanks,
+> Daniel.
+>
+> >
+> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > ---
+> >  drivers/remoteproc/imx_dsp_rproc.c | 43 +++++++++++++++++++-----------
+> >  1 file changed, 27 insertions(+), 16 deletions(-)
+> >
+> > diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/im=
+x_dsp_rproc.c
+> > index 5ee622bf5352..ba764fc55686 100644
+> > --- a/drivers/remoteproc/imx_dsp_rproc.c
+> > +++ b/drivers/remoteproc/imx_dsp_rproc.c
+> > @@ -774,7 +774,6 @@ static int imx_dsp_rproc_prepare(struct rproc *rpro=
+c)
+> >  {
+> >         struct imx_dsp_rproc *priv =3D rproc->priv;
+> >         struct device *dev =3D rproc->dev.parent;
+> > -       struct rproc_mem_entry *carveout;
+> >         int ret;
+> >
+> >         ret =3D imx_dsp_rproc_add_carveout(priv);
+> > @@ -785,15 +784,6 @@ static int imx_dsp_rproc_prepare(struct rproc *rpr=
+oc)
+> >
+> >         pm_runtime_get_sync(dev);
+> >
+> > -       /*
+> > -        * Clear buffers after pm rumtime for internal ocram is not
+> > -        * accessible if power and clock are not enabled.
+> > -        */
+> > -       list_for_each_entry(carveout, &rproc->carveouts, node) {
+> > -               if (carveout->va)
+> > -                       memset(carveout->va, 0, carveout->len);
+> > -       }
+> > -
+> >         return  0;
+> >  }
+> >
+> > @@ -1022,13 +1012,39 @@ static int imx_dsp_rproc_parse_fw(struct rproc =
+*rproc, const struct firmware *fw
+> >         return 0;
+> >  }
+> >
+> > +static int imx_dsp_rproc_load(struct rproc *rproc, const struct firmwa=
+re *fw)
+> > +{
+> > +       struct imx_dsp_rproc *priv =3D rproc->priv;
+> > +       const struct imx_dsp_rproc_dcfg *dsp_dcfg =3D priv->dsp_dcfg;
+> > +       struct rproc_mem_entry *carveout;
+> > +       int ret;
+> > +
+> > +       /* Reset DSP if needed */
+> > +       if (dsp_dcfg->reset)
+> > +               dsp_dcfg->reset(priv);
+> > +       /*
+> > +        * Clear buffers after pm rumtime for internal ocram is not
+> > +        * accessible if power and clock are not enabled.
+> > +        */
+> > +       list_for_each_entry(carveout, &rproc->carveouts, node) {
+> > +               if (carveout->va)
+> > +                       memset(carveout->va, 0, carveout->len);
+> > +       }
+> > +
+> > +       ret =3D imx_dsp_rproc_elf_load_segments(rproc, fw);
+> > +       if (ret)
+> > +               return ret;
+> > +
+> > +       return 0;
+> > +}
+> > +
+> >  static const struct rproc_ops imx_dsp_rproc_ops =3D {
+> >         .prepare        =3D imx_dsp_rproc_prepare,
+> >         .unprepare      =3D imx_dsp_rproc_unprepare,
+> >         .start          =3D imx_dsp_rproc_start,
+> >         .stop           =3D imx_dsp_rproc_stop,
+> >         .kick           =3D imx_dsp_rproc_kick,
+> > -       .load           =3D imx_dsp_rproc_elf_load_segments,
+> > +       .load           =3D imx_dsp_rproc_load,
+> >         .parse_fw       =3D imx_dsp_rproc_parse_fw,
+> >         .handle_rsc     =3D imx_dsp_rproc_handle_rsc,
+> >         .find_loaded_rsc_table =3D rproc_elf_find_loaded_rsc_table,
+> > @@ -1214,7 +1230,6 @@ static int imx_dsp_runtime_resume(struct device *=
+dev)
+> >  {
+> >         struct rproc *rproc =3D dev_get_drvdata(dev);
+> >         struct imx_dsp_rproc *priv =3D rproc->priv;
+> > -       const struct imx_dsp_rproc_dcfg *dsp_dcfg =3D priv->dsp_dcfg;
+> >         int ret;
+> >
+> >         /*
+> > @@ -1235,10 +1250,6 @@ static int imx_dsp_runtime_resume(struct device =
+*dev)
+> >                 return ret;
+> >         }
+> >
+> > -       /* Reset DSP if needed */
+> > -       if (dsp_dcfg->reset)
+> > -               dsp_dcfg->reset(priv);
+> > -
+> >         return 0;
+> >  }
+> >
+> > --
+> > 2.34.1
+> >
+> >
+>
 
