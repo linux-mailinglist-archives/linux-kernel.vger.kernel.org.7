@@ -1,198 +1,126 @@
-Return-Path: <linux-kernel+bounces-738983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BFAAB0C008
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:21:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8843B0C015
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:22:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2F0E3BF34A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:20:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59AB618C0947
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2072B28BAAE;
-	Mon, 21 Jul 2025 09:18:31 +0000 (UTC)
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4022E28A731;
+	Mon, 21 Jul 2025 09:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="prIb9brq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA09128C02D;
-	Mon, 21 Jul 2025 09:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E9F628D8C8;
+	Mon, 21 Jul 2025 09:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753089510; cv=none; b=PZ24XKUrEA1Qwk2qDla4avvCJY9JUYpNpM4lArdJBB4+tW0Hi68ZOS+lrg3epHjnjU7dl/dpevSWqf2k8K8Jf2XU9eE8sb/xCMXW+gmT0R/NUgUkUd1HASfFSuf7ZG+MA+Pwec1VFwlQxfWO4on2CT51R3aY1GimaGWpQIb1vqA=
+	t=1753089579; cv=none; b=IH/+zcE0bZMp+R6T8cssItBk9rAHL6YONz7uD+pcIBvAU7hyXHaPuYPR+c4l0NJOE5dLBn8NI9TS9eVXm50MJyI6muH4skmQaeZ4HnHpL62v16NiWbdbTDlwFuThqLT7UlSsPQt8vPCHnavgl0VjsNlZGbpANfSd1vdOLXPcS3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753089510; c=relaxed/simple;
-	bh=GFLEVoDpcqZUGLcskIFxQzytGcE90/7W/RhdRbv84B8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=d+N4WghR+0X4jPggwk9vNhCKNVAu8EhtoCyYApWjIiOq5QHqtdEQiUtIDUpd43vMP2AhwPu6aUwglq8l9NXahxOcw0X9nYLfkdRaaGV4hhcO4VpXRrNmtM3CwVqdNxtOpTF2ISL6sKPwL4pnH6AxckX7FrKIi/6PLtH66t43Btk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-60702d77c60so8060423a12.3;
-        Mon, 21 Jul 2025 02:18:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753089507; x=1753694307;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gyYROlBQpaQA9CwEtQJyumLb2Se+Dm1/eLYmwuEMq1o=;
-        b=Jp20Vtw7zunYNtva0XFoQqSMSfThQ7hDfGZ4l8l8nPRFO2gRDrTX+XBhmy/xZGubyB
-         s+sd0BBpFLeqqY4u0C724uyfO+OXyZFB8yV1avbSI7y6M1T1hgs5Cvb+1D1Hbm38+5Ig
-         NCOAca8rNqU4sL1+RHv0DOENUzEDSlLrA+vdlS5F3FQ7xIpV7aYFVWhbcd5VF7m/y+y2
-         iAkvKjdBjV/Zd+sFRwrqX1+RRcx/Nhftrc/hDQyiVz4QooviqfRN3x8qg7n2JZmXE158
-         yN4EuvIJejmRCu2w1pdlFnXaXUE09cM2k7YL/J8KAl5hBj+qMe/Xn8kC0X1XU6URhq+u
-         HtsA==
-X-Forwarded-Encrypted: i=1; AJvYcCVYmp5uU8tl1O5vfLgPckjZep1e6Bkc/TzsXaZfQKUc6wgnOvvBfQ0pxzQfwI7I6y6GaUIjSH7n1gz3axGL@vger.kernel.org, AJvYcCW3Grieh6350wOhFPZPDZFeUPsDm7Uyf/LDVVXyT0D0Uk0oRb/jioV5PfrEr8jFg60uhxLOYQ1Pnaw=@vger.kernel.org, AJvYcCXzsjAZUQPOwr2JC54jwO8Y2hmcxU+q60Zmgz9iczcDavBh7N8tLBDlEN5Rmqh8l9yyMAykZ+4bE6fokG4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+PW7f1M49SXgDeyOxO/o6/LC7fYxYFJy6tgHmn+hOccfFTYm3
-	MdjN9nBJ6dQJhV8JACekGk0TcS3Gb3r34lcPmAp26D+WKfKV2RDQGw0R
-X-Gm-Gg: ASbGncv9yb3yLghgO9Q9VIDyxxbi4VCrRHtb7aqr5PgVrNoc82f7edfPOpUeYfpEz3x
-	lm5dry+TGYyjPxqRm4N4WPPplMLTiC27pea3D0XTZBpJohA4ePiolGvE6ThF/iR5aXsgJrwh8Zx
-	6bkLbiacbcCJT9IK2E/csASNtLuMG/g9S55brio4yUpN49D34zZCZ2mFqksWQvHOTO2MCal/Yoa
-	XRgLUvr7HBitKpho+Ydwkz8pq8wmhkkZ1BW0b4UVrId5iZqki2f4IN/ToOSod/Rc0gWTdi5UY/0
-	gXxDE97LgUXF2g1SMDDocfA0rYqYsJgEg4jqv/hgAzN0eyd/70Pb2FNkEXsLorw3AOelIVbycwf
-	cRbjQ8e91oqk8NB8WlfSSyaJ+LNk59MpkMqSgPWEgytgSMptfUoFerBxT
-X-Google-Smtp-Source: AGHT+IGLjyUKAxgg6t7I154f+BsmQXn5G2xI2hCpG0zZ9fD3Tr+3hSJlZ3Fv9sf5iHBEa2ta4Q/EoQ==
-X-Received: by 2002:a17:907:1b93:b0:ae3:6d27:5246 with SMTP id a640c23a62f3a-ae9c9b72f65mr1263912966b.48.1753089506882;
-        Mon, 21 Jul 2025 02:18:26 -0700 (PDT)
-Received: from [10.42.0.1] (cst-prg-46-162.cust.vodafone.cz. [46.135.46.162])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6ca2efc1sm643125266b.83.2025.07.21.02.18.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 02:18:26 -0700 (PDT)
-From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Date: Mon, 21 Jul 2025 11:17:37 +0200
-Subject: [PATCH v9 10/10] arm64: dts: rockchip: enable NPU on ROCK 5B
+	s=arc-20240116; t=1753089579; c=relaxed/simple;
+	bh=1O6qgZHNCTzxqtoMwL2LoFK2ceOAh2w0TjTzof8c+Hg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HHDbaH0A0EFjtawjnhG+9SViApqqhnoxZvJJcI9O8jdm7WhHNhwJnTWedUZODw/BQGQAyAE6xKcXPv3Sl0XUyYbm8D7Yi7WgznmRniZ5xxBnG6ubllsYh26fd/j29GNciHyXaeAHRED2j3yjshtiENm5GguUrjrKNKym5jl0pTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=prIb9brq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC75AC4CEED;
+	Mon, 21 Jul 2025 09:19:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753089578;
+	bh=1O6qgZHNCTzxqtoMwL2LoFK2ceOAh2w0TjTzof8c+Hg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=prIb9brqCDoJJMvY+L+ynnNCx6xgVEHxxu8CcuPcizoGs6SwxSjRzTjNt3viua4Q4
+	 lHOx/7IVJ3HL4SceNVesqW3oIBALN0p6sP/jwbxudcGNHNpU8whIvgU8O1Dw/8E84/
+	 Wi9wAEtv5gONeO741RX1pFpJGDnQYq1ngb7kLNNgtC8mg7f5ePkLdUXRkYtOp3+o2I
+	 4GPBh31u/DWcLS0ZSxsJgkqkj4/uijJKq7mXwZOG5hZKs8R3vD39D313CBr+ct5Cp5
+	 63//0lpqsxtM53VlRyBRzaATIqadPWCFRihpZlYf2QfS/lWorw+PNev2uDCAud1eZJ
+	 sJHrVxnmG0ifg==
+Date: Mon, 21 Jul 2025 11:19:35 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+Cc: sboyd@kernel.org, mturquette@baylibre.com, andersson@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	quic_rjendra@quicinc.com, taniya.das@oss.qualcomm.com, linux-clk@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/7] dt-bindings: clock: qcom: Add bindings documentation
+ for the Glymur TCSR
+Message-ID: <20250721-striped-defiant-hippo-6dee44@kuoka>
+References: <20250716152017.4070029-1-pankaj.patil@oss.qualcomm.com>
+ <20250716152017.4070029-3-pankaj.patil@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250721-6-10-rocket-v9-10-77ebd484941e@tomeuvizoso.net>
-References: <20250721-6-10-rocket-v9-0-77ebd484941e@tomeuvizoso.net>
-In-Reply-To: <20250721-6-10-rocket-v9-0-77ebd484941e@tomeuvizoso.net>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Oded Gabbay <ogabbay@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Sumit Semwal <sumit.semwal@linaro.org>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
- Kever Yang <kever.yang@rock-chips.com>, Robin Murphy <robin.murphy@arm.com>, 
- Daniel Stone <daniel@fooishbar.org>, Da Xue <da@libre.computer>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Jeff Hugo <jeff.hugo@oss.qualcomm.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, 
- linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org, 
- Tomeu Vizoso <tomeu@tomeuvizoso.net>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250716152017.4070029-3-pankaj.patil@oss.qualcomm.com>
 
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+On Wed, Jul 16, 2025 at 08:50:12PM +0530, Pankaj Patil wrote:
+> From: Taniya Das <taniya.das@oss.qualcomm.com>
+> 
+> The Glymur TCSR block provides CLKREF clocks for EDP, PCIe, and USB. Add
+> this to the TCSR clock controller binding together with identifiers for
+> the clocks
+> 
+> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
 
-The NPU on the ROCK5B uses the same regulator for both the sram-supply
-and the npu's supply. Add this regulator, and enable all the NPU bits.
-Also add the regulator as a domain-supply to the pd_npu power domain.
+A nit, subject: drop second/last, redundant "bindings". The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
 
-v8:
-- Remove notion of top core (Robin Murphy)
+And same for documentation...
 
-Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Tested-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
----
- arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtsi | 57 ++++++++++++++++++++++++
- 1 file changed, 57 insertions(+)
+> ---
+>  .../bindings/clock/qcom,sm8550-tcsr.yaml      |  3 +++
+>  .../dt-bindings/clock/qcom,glymur-tcsrcc.h    | 24 +++++++++++++++++++
+>  2 files changed, 27 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/qcom,glymur-tcsrcc.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
+> index f3afbb25e868..9fbf88836782 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
+> @@ -8,12 +8,14 @@ title: Qualcomm TCSR Clock Controller on SM8550
+>  
+>  maintainers:
+>    - Bjorn Andersson <andersson@kernel.org>
+> +  - Taniya Das <taniya.das@oss.qualcomm.com>
+>  
+>  description: |
+>    Qualcomm TCSR clock control module provides the clocks, resets and
+>    power domains on SM8550
+>  
+>    See also:
+> +  - include/dt-bindings/clock/qcom,glymur-tcsr.h
+>    - include/dt-bindings/clock/qcom,sm8550-tcsr.h
+>    - include/dt-bindings/clock/qcom,sm8650-tcsr.h
+>    - include/dt-bindings/clock/qcom,sm8750-tcsr.h
+> @@ -22,6 +24,7 @@ properties:
+>    compatible:
+>      items:
+>        - enum:
+> +          - qcom,glymur-tcsr
+>            - qcom,sar2130p-tcsr
+>            - qcom,sm8550-tcsr
+>            - qcom,sm8650-tcsr
+> diff --git a/include/dt-bindings/clock/qcom,glymur-tcsrcc.h b/include/dt-bindings/clock/qcom,glymur-tcsrcc.h
+> new file mode 100644
+> index 000000000000..72614226b113
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/qcom,glymur-tcsrcc.h
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtsi
-index 6052787d2560978d2bae6cfbeea5fc1d419d583a..a1f3571b177fe00b1c169f62b7dd1d27024a663f 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtsi
-@@ -309,6 +309,29 @@ regulator-state-mem {
- 	};
- };
- 
-+&i2c1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c1m2_xfer>;
-+	status = "okay";
-+
-+	vdd_npu_s0: regulator@42 {
-+		compatible = "rockchip,rk8602";
-+		reg = <0x42>;
-+		fcs,suspend-voltage-selector = <1>;
-+		regulator-name = "vdd_npu_s0";
-+		regulator-boot-on;
-+		regulator-enable-ramp-delay = <500>;
-+		regulator-min-microvolt = <550000>;
-+		regulator-max-microvolt = <950000>;
-+		regulator-ramp-delay = <2300>;
-+		vin-supply = <&vcc5v0_sys>;
-+
-+		regulator-state-mem {
-+			regulator-off-in-suspend;
-+		 };
-+	};
-+};
-+
- &i2c6 {
- 	status = "okay";
- 
-@@ -433,6 +456,10 @@ &pd_gpu {
- 	domain-supply = <&vdd_gpu_s0>;
- };
- 
-+&pd_npu {
-+	domain-supply = <&vdd_npu_s0>;
-+};
-+
- &pinctrl {
- 	hdmirx {
- 		hdmirx_hpd: hdmirx-5v-detection {
-@@ -487,6 +514,36 @@ &pwm1 {
- 	status = "okay";
- };
- 
-+&rknn_core_0 {
-+	npu-supply = <&vdd_npu_s0>;
-+	sram-supply = <&vdd_npu_s0>;
-+	status = "okay";
-+};
-+
-+&rknn_core_1 {
-+	npu-supply = <&vdd_npu_s0>;
-+	sram-supply = <&vdd_npu_s0>;
-+	status = "okay";
-+};
-+
-+&rknn_core_2 {
-+	npu-supply = <&vdd_npu_s0>;
-+	sram-supply = <&vdd_npu_s0>;
-+	status = "okay";
-+};
-+
-+&rknn_mmu_0 {
-+	status = "okay";
-+};
-+
-+&rknn_mmu_1 {
-+	status = "okay";
-+};
-+
-+&rknn_mmu_2 {
-+	status = "okay";
-+};
-+
- &saradc {
- 	vref-supply = <&avcc_1v8_s0>;
- 	status = "okay";
+Filename matching compatible.
 
--- 
-2.50.0
+Best regards,
+Krzysztof
 
 
