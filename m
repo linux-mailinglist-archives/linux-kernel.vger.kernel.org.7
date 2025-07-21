@@ -1,186 +1,247 @@
-Return-Path: <linux-kernel+bounces-738702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 499DAB0BC15
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:46:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44689B0BC1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:47:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 082083B9107
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 05:45:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A36B7AB9FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 05:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B0F71BD035;
-	Mon, 21 Jul 2025 05:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BA311F2BBB;
+	Mon, 21 Jul 2025 05:47:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="alce6hbV"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="R6sgbtT1"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACDE19F101
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 05:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F807F477;
+	Mon, 21 Jul 2025 05:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753076748; cv=none; b=pVmhyhzMo23V9rqpQDPy+kaduk0s07pUOtx+oq5KRx5oe4AI2n42s2Az+bhQrkqtXBnrJzSX5/sfO1JQ1aY+VJWPq+tmXBqk4rysHTC91erKotVQ91UTc4sqAjARB6D0b52b6ywpll+IF0VKxGvB/jBnSTJM89tdoeYNgp1gqt8=
+	t=1753076853; cv=none; b=jwyuhrmZ0Sowq7hh/1S8PLpu++GWhSAfmqQZOLF1RrkxujJ97yMSjG2ZD+yCNhF7N3AmQRf6TJ3J9V/82XX1OOvgpgrel+8v4RFdPeXOv3F0UQFwHw/8971NndKN4QBe0EYV/Klqx6I4YYyCKfOFiWwdDrAFT+TC57z3bp3vJ18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753076748; c=relaxed/simple;
-	bh=dhHkGM4HOFFI97fX7h+8fak0kAldA+FYKGT9ABTfj+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HDboNzPLCEHXuQhBGKAxkLDUy6PMtW7O7B9dLGVTd3Bs+qv9s/E7R3TRHlDTeJm+utS1GFqGAzw+B5O1XFGxQQdYbQnBZ+RooJJRcw/aBGIO5sOTEEYxfgFYtYnCMW4gbEZt+HaSD7IqN8SJuuO7tnTB/iBMiQs38Qt45R++Ggg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=alce6hbV; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-74b54af901bso2500452b3a.2
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 22:45:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=furiosa.ai; s=google; t=1753076747; x=1753681547; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Villbo2O3xbSxL7XAkPoEJ4g9IjLoflfkAnI89yF/Y8=;
-        b=alce6hbVxZIsnLlNaqV/jMqKXlRVnl2l13Nk3DSceKWPtwsuRTHfXi05RT91Pf/U8L
-         iedrYDOR4wKvhqZNz5Fm6wKLwOiY3f2Eo5iukll3O9xk8oTBJCv4r3DJv2tG86UXP3JU
-         lw8qhaSqchHYIXKw9OM+hl0LCg8d2c+P+FmXE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753076747; x=1753681547;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Villbo2O3xbSxL7XAkPoEJ4g9IjLoflfkAnI89yF/Y8=;
-        b=S1i4aRKG7eAmpmlFbdjCiOa4WHKcSTNcedaRGki8mk3aGkXWeLq3lRRIBbpJBuChkw
-         0loPFn/QMCsbc/iecv6+bXpbE2+sNBu8Qcim+BAGiIR1NSRXTK10rxrOwaX4C3ykP27o
-         OgCMzmTh0VhwSC/kcdiyhaP/zUBBd0H1alaPExJPXkcknxNMMjy3EF2Y6XWhbBdJ1+eW
-         ChvFQPvsmPNxUT9oUNMTTNd73FIRFYojTyYB2GMr4o1WS/ikOH1602Gd5wBqOiCFkD6b
-         db1Fp0BPlZJPDLHyBdirLQ2f37PScixibG1jlVVfIP2MDD43+LqEH6VdqV6xD04MlVzr
-         V/pA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOwImmBGpDcSUEQkiOh5k7Ktb1cX0IloouxYC3CL9S8rSxVhivOnALJ3SxhY/R29Lvb6UHWh1wNhLRQZY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrVo3A4ANC2mHvJm8VAqxHAiaJ/4zjY8fOvl7ddR4RqU6Sj5oj
-	ZKac0xpxy0fWuBihgoqG7+ijgELvtGtillU0yHVldBlE8ADfphI2w5RcCRIyqAAepjo=
-X-Gm-Gg: ASbGnctEymZyR71wm1etR55aneOIVtEuruR4KOSrsQ4HHosyjbzHiOGYX9R4tHlHyI5
-	uBv0usO7JR5lgATQPKbohFxUFD7OGVpLRGG9lf0hovDy8UAN6WlQ/3yigIlnzsyQvN24XqN8VUi
-	eitBMwLtYBQcJxcd+WUwmYr6tvfGUIH+MBhkaQq0rjonxZlv/fXAR6hS9JU4ZHGqAhA2GLBIdBy
-	/qXgnseJ9QDhnlUF1a9YaxARn+iIdJuxv25SjZSh5hTQ8qlx2egBwJ5u6H1LXpFegdFZRv6TDPF
-	0vqm+tee+AnglBUELNVpqcKdDyU03wJX3sMqKMNaLkSI+O03T1CdVd7WD597jbI1TZqfOl4La+E
-	uXAFoJ9pnX/Yww20HlCTlV93rSGO097JwtximXV3P36PC/+kGjpgAzQ==
-X-Google-Smtp-Source: AGHT+IFUVUK6qkClKAF7WZOshF2ErH+fD4E7lxm5DovPekHz1U5qqyaeOww9M5SA2fLd7fbp0Ylvqw==
-X-Received: by 2002:a05:6a00:2ea6:b0:74e:a9ba:55f with SMTP id d2e1a72fcca58-756ea8c31f7mr25241718b3a.20.1753076746713;
-        Sun, 20 Jul 2025 22:45:46 -0700 (PDT)
-Received: from sidongui-MacBookPro.local ([221.148.76.1])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759cb774da4sm5044116b3a.122.2025.07.20.22.45.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Jul 2025 22:45:46 -0700 (PDT)
-Date: Mon, 21 Jul 2025 14:45:41 +0900
-From: Sidong Yang <sidong.yang@furiosa.ai>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Jens Axboe <axboe@kernel.dk>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [PATCH 4/4] samples: rust: rust_misc_device: add uring_cmd
- example
-Message-ID: <aH3UBei_VL25P0PK@sidongui-MacBookPro.local>
-References: <20250719143358.22363-1-sidong.yang@furiosa.ai>
- <20250719143358.22363-5-sidong.yang@furiosa.ai>
- <CADUfDZqv_KEhUaS58CuZDPB8PvcigxBFDJSPY_Kq9WFViug4+w@mail.gmail.com>
+	s=arc-20240116; t=1753076853; c=relaxed/simple;
+	bh=Y6O1LeXawfH6jqCiha75wKFY04tLvXmKtw8IkQsRZzE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RIooPudWaPGRUY7WB/yxPXnhGhRa1bCBZkS80lLiG3osxzuMmu+DPHeBreNV/wTFb86M53dMj9keYLSmQ5KrzxU8rGxwnwM22sAnaL04+oqav6DWyPX/Ux8+tON7ofS+zAZ9FfUJCgsrYRGGhkqpmxnAD/i4kWsF7ZNY4N8ihvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=R6sgbtT1; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1753076842;
+	bh=Y6O1LeXawfH6jqCiha75wKFY04tLvXmKtw8IkQsRZzE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=R6sgbtT1j4PydMnb9LKCtJbvY/h+dBwoJCRjJfAknzIQNRrlcOiG3Rk7yOIjryhEo
+	 oT7IdyLx4C46fpqYi16JO1SXk+maA3prPGcpfO41dZKiPy/jt/7nmEClDczTMthbjO
+	 f5rn1uQfLT9p/KaXVj+L7P7QFkUwyCRq8fB7KJnD12SvtbzJDgF6K2DqpC6eNNMXSc
+	 R4tdiCX2+c7lD3XeADrFBiihDgbCH+kYyNMl57OF7K1/z6GCmvW19PSFZ3/ayya0Kj
+	 Sl9U4R7JPUywoq3uTD9VyR8AzQ3zrX9cT/8qIK4KOr7oEry2iagdrQ+7cmqWFkzuq2
+	 qyC1Q3wjkaoUw==
+Received: from [192.168.50.250] (unknown [171.76.80.183])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: vignesh)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id B508E17E0F66;
+	Mon, 21 Jul 2025 07:47:19 +0200 (CEST)
+Message-ID: <bcff3bed-0695-45fa-8f62-453878b6075f@collabora.com>
+Date: Mon, 21 Jul 2025 11:17:02 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADUfDZqv_KEhUaS58CuZDPB8PvcigxBFDJSPY_Kq9WFViug4+w@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 5/7] drm/ci: uprev IGT
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com,
+ helen.fornazier@gmail.com, airlied@gmail.com, simona.vetter@ffwll.ch,
+ robdclark@gmail.com, guilherme.gallo@collabora.com,
+ sergi.blanch.torne@collabora.com, valentine.burley@collabora.com,
+ lumag@kernel.org, linux-mediatek@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ amd-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ intel-gfx@lists.freedesktop.org, virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250718105407.32878-1-vignesh.raman@collabora.com>
+ <20250718105407.32878-6-vignesh.raman@collabora.com>
+ <7c6suvc6quwwxni2nsos65btzim2lbv7f2u6mz5qbupzpmpzgb@g46wg63ubr6l>
+Content-Language: en-US
+From: Vignesh Raman <vignesh.raman@collabora.com>
+In-Reply-To: <7c6suvc6quwwxni2nsos65btzim2lbv7f2u6mz5qbupzpmpzgb@g46wg63ubr6l>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Jul 20, 2025 at 04:21:00PM -0400, Caleb Sander Mateos wrote:
-> On Sat, Jul 19, 2025 at 10:35 AM Sidong Yang <sidong.yang@furiosa.ai> wrote:
-> >
-> > This patch makes rust_misc_device handle uring_cmd. Command ops are like
-> > ioctl that set or get values in simple way.
-> >
-> > Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
-> > ---
-> >  samples/rust/rust_misc_device.rs | 30 ++++++++++++++++++++++++++++++
-> >  1 file changed, 30 insertions(+)
-> >
-> > diff --git a/samples/rust/rust_misc_device.rs b/samples/rust/rust_misc_device.rs
-> > index c881fd6dbd08..cd0e578231d2 100644
-> > --- a/samples/rust/rust_misc_device.rs
-> > +++ b/samples/rust/rust_misc_device.rs
-> > @@ -101,6 +101,7 @@
-> >      c_str,
-> >      device::Device,
-> >      fs::File,
-> > +    io_uring::IoUringCmd,
-> >      ioctl::{_IO, _IOC_SIZE, _IOR, _IOW},
-> >      miscdevice::{MiscDevice, MiscDeviceOptions, MiscDeviceRegistration},
-> >      new_mutex,
-> > @@ -114,6 +115,9 @@
-> >  const RUST_MISC_DEV_GET_VALUE: u32 = _IOR::<i32>('|' as u32, 0x81);
-> >  const RUST_MISC_DEV_SET_VALUE: u32 = _IOW::<i32>('|' as u32, 0x82);
-> >
-> > +const RUST_MISC_DEV_URING_CMD_SET_VALUE: u32 = 0x83;
-> > +const RUST_MISC_DEV_URING_CMD_GET_VALUE: u32 = 0x84;
-> 
-> In real uring_cmd() implementations, the cmd_op values are assigned
-> using the _IO* macros, same as for ioctls. But I suppose that's not
-> strictly required for the sample driver.
+Hi,
 
-Okay, I'll use same _IO* pattern with ioctl.
+On 18/07/25 18:24, Dmitry Baryshkov wrote:
+> On Fri, Jul 18, 2025 at 04:23:57PM +0530, Vignesh Raman wrote:
+>> Uprev IGT to the latest version and update expectation files.
+>>
+>> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
+>> ---
+>>   drivers/gpu/drm/ci/gitlab-ci.yml              |   2 +-
+>>   .../gpu/drm/ci/xfails/amdgpu-stoney-fails.txt |   2 +
+>>   .../drm/ci/xfails/amdgpu-stoney-flakes.txt    |   7 ++
+>>   drivers/gpu/drm/ci/xfails/i915-amly-fails.txt |  11 +-
+>>   drivers/gpu/drm/ci/xfails/i915-apl-fails.txt  |   2 +
+>>   drivers/gpu/drm/ci/xfails/i915-cml-fails.txt  |  29 +----
+>>   drivers/gpu/drm/ci/xfails/i915-cml-flakes.txt |   7 ++
+>>   drivers/gpu/drm/ci/xfails/i915-glk-fails.txt  |   8 +-
+>>   drivers/gpu/drm/ci/xfails/i915-glk-skips.txt  |  83 ++++++++++++
+>>   drivers/gpu/drm/ci/xfails/i915-jsl-fails.txt  |  10 +-
+>>   drivers/gpu/drm/ci/xfails/i915-kbl-fails.txt  |   3 +
+>>   drivers/gpu/drm/ci/xfails/i915-tgl-fails.txt  |   5 +-
+>>   drivers/gpu/drm/ci/xfails/i915-tgl-flakes.txt |   6 +
+>>   drivers/gpu/drm/ci/xfails/i915-whl-fails.txt  |   7 +-
+>>   .../drm/ci/xfails/mediatek-mt8173-fails.txt   |   5 +-
+>>   .../drm/ci/xfails/mediatek-mt8173-flakes.txt  | 119 ++++++++++++++++++
+>>   .../drm/ci/xfails/mediatek-mt8183-fails.txt   |   7 +-
+>>   .../msm-sc7180-trogdor-kingoftown-fails.txt   |   1 +
+>>   ...sm-sc7180-trogdor-lazor-limozeen-fails.txt |   1 +
+>>   .../drm/ci/xfails/msm-sm8350-hdk-fails.txt    |   1 +
+>>   .../drm/ci/xfails/msm-sm8350-hdk-skips.txt    |  73 +++++++++++
+>>   .../drm/ci/xfails/panfrost-mt8183-fails.txt   |   1 +
+>>   .../drm/ci/xfails/panfrost-rk3288-fails.txt   |   1 +
+>>   .../drm/ci/xfails/panfrost-rk3399-fails.txt   |   1 +
+>>   .../drm/ci/xfails/rockchip-rk3288-fails.txt   |  12 +-
+>>   .../drm/ci/xfails/rockchip-rk3288-flakes.txt  |  21 ++++
+>>   .../drm/ci/xfails/rockchip-rk3399-fails.txt   |   9 +-
+>>   .../drm/ci/xfails/rockchip-rk3399-flakes.txt  |  35 ++++++
+>>   .../drm/ci/xfails/virtio_gpu-none-fails.txt   |   4 +
+>>   drivers/gpu/drm/ci/xfails/vkms-none-fails.txt |   3 +
+>>   drivers/gpu/drm/ci/xfails/vkms-none-skips.txt |   3 +
+>>   31 files changed, 416 insertions(+), 63 deletions(-)
+>>   create mode 100644 drivers/gpu/drm/ci/xfails/i915-tgl-flakes.txt
+>>
+>> diff --git a/drivers/gpu/drm/ci/xfails/msm-sc7180-trogdor-kingoftown-fails.txt b/drivers/gpu/drm/ci/xfails/msm-sc7180-trogdor-kingoftown-fails.txt
+>> index e4a8f8352cd6..9bf38c077f8e 100644
+>> --- a/drivers/gpu/drm/ci/xfails/msm-sc7180-trogdor-kingoftown-fails.txt
+>> +++ b/drivers/gpu/drm/ci/xfails/msm-sc7180-trogdor-kingoftown-fails.txt
+>> @@ -15,3 +15,4 @@ kms_pipe_crc_basic@compare-crc-sanitycheck-nv12,Fail
+>>   kms_plane_alpha_blend@alpha-7efc,Fail
+>>   kms_plane_alpha_blend@coverage-7efc,Fail
+>>   kms_plane_alpha_blend@coverage-vs-premult-vs-constant,Fail
+>> +core_setmaster@master-drop-set-user,Fail
 > 
-> > +
-> >  module! {
-> >      type: RustMiscDeviceModule,
-> >      name: "rust_misc_device",
-> > @@ -190,6 +194,32 @@ fn ioctl(me: Pin<&RustMiscDevice>, _file: &File, cmd: u32, arg: usize) -> Result
-> >
-> >          Ok(0)
-> >      }
-> > +
-> > +    fn uring_cmd(
-> > +        me: Pin<&RustMiscDevice>,
-> > +        _file: &File,
-> > +        io_uring_cmd: &IoUringCmd,
-> > +        _issue_flags: u32,
-> > +    ) -> Result<isize> {
-> > +        dev_info!(me.dev, "UringCmd Rust Misc Device Sample\n");
-> > +        let cmd = io_uring_cmd.cmd_op();
-> > +        let cmd_data = io_uring_cmd.sqe().cmd_data().as_ptr() as *const usize;
-> > +        let addr = unsafe { *cmd_data };
-> 
-> The io_uring_sqe is user-mapped memory, so this load needs to be
-> atomic. In C, the uring_cmd() implementation would use READ_ONCE().
-> Sounds like Rust code is currently using read_volatile() (with a FIXME
-> comment to switch to read_once() once that's available).
+> Could you please point out the issue / failure log?
 
-Yes, I've missed this. read_volatile with comment would be good.
+Please see the pipeline logs,
+https://gitlab.freedesktop.org/vigneshraman/msm/-/jobs/79793740
+https://gitlab.freedesktop.org/vigneshraman/msm/-/jobs/79793742
 
-Thanks,
-Sidong
+Let me know if you want me to raise an issue.
+
+Regards,
+Vignesh
+
 > 
-> Best,
-> Caleb
+>> diff --git a/drivers/gpu/drm/ci/xfails/msm-sc7180-trogdor-lazor-limozeen-fails.txt b/drivers/gpu/drm/ci/xfails/msm-sc7180-trogdor-lazor-limozeen-fails.txt
+>> index e4a8f8352cd6..7441b363efae 100644
+>> --- a/drivers/gpu/drm/ci/xfails/msm-sc7180-trogdor-lazor-limozeen-fails.txt
+>> +++ b/drivers/gpu/drm/ci/xfails/msm-sc7180-trogdor-lazor-limozeen-fails.txt
+>> @@ -1,3 +1,4 @@
+>> +core_setmaster@master-drop-set-user,Fail
+>>   kms_color@ctm-0-25,Fail
+>>   kms_color@ctm-0-50,Fail
+>>   kms_color@ctm-0-75,Fail
+>> diff --git a/drivers/gpu/drm/ci/xfails/msm-sm8350-hdk-fails.txt b/drivers/gpu/drm/ci/xfails/msm-sm8350-hdk-fails.txt
+>> index 8d26b23133aa..f387c73193c6 100644
+>> --- a/drivers/gpu/drm/ci/xfails/msm-sm8350-hdk-fails.txt
+>> +++ b/drivers/gpu/drm/ci/xfails/msm-sm8350-hdk-fails.txt
+>> @@ -1,3 +1,4 @@
+>> +core_setmaster@master-drop-set-user,Fail
+>>   kms_3d,Fail
+>>   kms_cursor_legacy@forked-bo,Fail
+>>   kms_cursor_legacy@forked-move,Fail
+>> diff --git a/drivers/gpu/drm/ci/xfails/msm-sm8350-hdk-skips.txt b/drivers/gpu/drm/ci/xfails/msm-sm8350-hdk-skips.txt
+>> index 9450f2a002fd..84ffbe0981ea 100644
+>> --- a/drivers/gpu/drm/ci/xfails/msm-sm8350-hdk-skips.txt
+>> +++ b/drivers/gpu/drm/ci/xfails/msm-sm8350-hdk-skips.txt
+>> @@ -210,3 +210,76 @@ msm/msm_mapping@ring
+>>   # [  229.752499] CPU features: 0x18,00000017,00200928,4200720b
+>>   # [  229.758095] Memory Limit: none
+>>   # [  229.761291] ---[ end Kernel panic - not syncing: softlockup: hung tasks ]---
+>> +
+>> +msm/msm_recovery@gpu-fault
 > 
-> > +
-> > +        match cmd {
-> > +            RUST_MISC_DEV_URING_CMD_SET_VALUE => {
-> > +                me.set_value(UserSlice::new(addr, 8).reader())?;
-> > +            }
-> > +            RUST_MISC_DEV_URING_CMD_GET_VALUE => {
-> > +                me.get_value(UserSlice::new(addr, 8).writer())?;
-> > +            }
-> > +            _ => {
-> > +                dev_err!(me.dev, "-> uring_cmd not recognised: {}\n", cmd);
-> > +                return Err(ENOTTY);
-> > +            }
-> > +        }
-> > +        Ok(0)
-> > +    }
-> >  }
-> >
-> >  #[pinned_drop]
-> > --
-> > 2.43.0
-> >
-> >
+> Hmm. I thought this should have been fixed...
+> 
+>> +# DEBUG - Begin test msm/msm_recovery@gpu-fault
+>> +# [  153.288652] [IGT] msm_recovery: executing
+>> +# [  153.295317] [IGT] msm_recovery: starting subtest gpu-fault
+>> +# [  153.317588] adreno 3d00000.gpu: CP | opcode error | possible opcode=0xDEADDEAD
+>> +# [  153.367412] adreno 3d00000.gpu: [drm:a6xx_irq] *ERROR* gpu fault ring 0 fence 814 status 00800005 rb 016b/0215 ib1 000000010000B000/0000 ib2 0000000000000000/0000
+>> +# [  153.383449] msm_dpu ae01000.display-controller: [drm:recover_worker] *ERROR* 6.6.0.1: hangcheck recover!
+>> +# [  153.393296] msm_dpu ae01000.display-controller: [drm:recover_worker] *ERROR* 6.6.0.1: offending task: msm_recovery (/igt/libexec/igt-gpu-tools/msm/msm_recovery --run-subtest gpu-fault)
+>> +# [  153.436085] revision: 660 (6.6.0.1)
+>> +# [  153.439702] rb 0: fence:    2063/2068
+>> +# [  153.443659] rptr:     360
+>> +# [  153.446389] rb wptr:  533
+>> +# [  153.449103] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG0: 0
+>> +# [  153.455746] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG1: 0
+>> +# [  153.462387] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG2: 2062
+>> +# [  153.469293] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG3: 0
+>> +# [  153.475680] adreno 3d00000.gpu: [drm:a6xx_irq] *ERROR* gpu fault ring 0 fence 814 status 00800005 rb 016b/0215 ib1 000000010000B000/0000 ib2 0000000000000000/0000
+>> +# [  153.475919] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG4: 0
+>> +# [  153.475925] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG5: 0
+>> +# [  153.475928] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG6: 0
+>> +# [  153.475930] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG7: 1
+>> +# [  153.529587] platform 3d6a000.gmu: [drm:a6xx_gmu_set_oob] *ERROR* Timeout waiting for GMU OOB set GPU_SET: 0x0
+>> +# [  153.539837] msm_dpu ae01000.display-controller: [drm:recover_worker] *ERROR* 6.6.0.1: hangcheck recover!
+>> +# [  153.549597] msm_dpu ae01000.display-controller: [drm:recover_worker] *ERROR* 6.6.0.1: offending task: msm_recovery (/igt/libexec/igt-gpu-tools/msm/msm_recovery --run-subtest gpu-fault)
+>> +# [  153.566489] revision: 660 (6.6.0.1)
+>> +# [  153.570099] rb 0: fence:    2064/2068
+>> +# [  153.573878] rptr:     0
+>> +# [  153.576411] rb wptr:  688
+>> +# [  153.579134] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG0: 0
+>> +# [  153.585775] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG1: 0
+>> +# [  153.592410] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG2: 0
+>> +# [  153.597308] [IGT] msm_recovery: finished subtest gpu-fault, FAIL
+>> +# [  153.599039] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG3: 0
+>> +# [  153.611856] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG4: 0
+>> +# [  153.618498] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG5: 0
+>> +# [  153.625132] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG6: 0
+>> +# [  153.631766] adreno 3d00000.gpu: [drm:a6xx_recover] CP_SCRATCH_REG7: 0
+>> +# [  153.639162] *** gpu fault: ttbr0=00000001042fc000 iova=0000000000000000 dir=READ type=TRANSLATION source=CP (0,0,0,0)
+>> +# [  153.648502] platform 3d6a000.gmu: [drm:a6xx_gmu_set_oob] *ERROR* Timeout waiting for GMU OOB set GPU_SET: 0x0
+>> +# [  153.650144] *** gpu fault: ttbr0=00000001042fc000 iova=0000000000000020 dir=READ type=TRANSLATION source=CP (0,0,0,0)
+>> +# [  153.650241] adreno 3d00000.gpu: CP illegal instruction error
+>> +# [  153.671006] platform 3d6a000.gmu: [drm:a6xx_rpmh_start] *ERROR* Unable to power on the GPU RSC
+>> +# [  153.687278] platform 3d6a000.gmu: [drm:a6xx_gmu_set_oob] *ERROR* Timeout waiting for GMU OOB set GPU_SET: 0x0
+>> +# [  363.495437] INFO: task msm_recovery:876 blocked for more than 120 seconds.
+>> +# [  363.503070]       Not tainted 6.16.0-rc2-g0594d0b01a7c #1
+>> +# [  363.508838] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>> +# [  363.517142] task:msm_recovery    state:D stack:0     pid:876   tgid:876   ppid:274    task_flags:0x400100 flags:0x00000009
+>> +# [  363.528876] Call trace:
+>> +# [  363.531554]  __switch_to+0xf8/0x1a8 (T)
+>> +# [  363.535703]  __schedule+0x418/0xee0
+>> +# [  363.539486]  schedule+0x4c/0x164
+>> +# [  363.542986]  schedule_timeout+0x11c/0x128
+>> +# [  363.547281]  dma_fence_default_wait+0x13c/0x234
+>> +# [  363.552123]  dma_fence_wait_timeout+0x160/0x45c
+>> +# [  363.556947]  dma_resv_wait_timeout+0x70/0x11c
+>> +# [  363.561582]  msm_gem_close+0xac/0xe4
+>> +# [  363.565405]  drm_gem_handle_delete+0x74/0xe8
+>> +# [  363.569951]  drm_gem_close_ioctl+0x38/0x44
+>> +# [  363.574297]  drm_ioctl_kernel+0xc4/0x134
+>> +# [  363.578442]  drm_ioctl+0x224/0x4f0
+>> +# [  363.582050]  __arm64_sys_ioctl+0xac/0x104
+>> +# [  363.586292]  invoke_syscall+0x48/0x110
+>> +# [  363.590254]  el0_svc_common.constprop.0+0x40/0xe0
+>> +# [  363.595197]  do_el0_svc+0x1c/0x28
+>> +# [  363.598705]  el0_svc+0x4c/0x158
+>> +# [  363.602035]  el0t_64_sync_handler+0x10c/0x138
+>> +# [  363.606601]  el0t_64_sync+0x198/0x19c
+>> +# [  363.610465] Showing all locks held in the system:
+>> +# [  363.620406]  #0: ffff0000840200a0 (&tty->ldisc_sem){++++}-{0:0}, at: ldsem_down_read+0x18/0x24
+>> +# [  363.629412]  #1: ffff800080d7c2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x15c/0x57c
+>> +# [  363.643169]  #0: ffffbd9c0475d920 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x18/0x1c0
+>> +# [  363.654158] =============================================
+> 
+
 
