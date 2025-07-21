@@ -1,312 +1,184 @@
-Return-Path: <linux-kernel+bounces-739727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75D41B0CA27
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:55:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C686B0CA30
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:00:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C3471AA4486
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:55:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A00624E1EA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4832D3757;
-	Mon, 21 Jul 2025 17:55:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77DDD2E265E;
+	Mon, 21 Jul 2025 18:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XE91d7zQ"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GbpHVcYM"
+Received: from mail-io1-f73.google.com (mail-io1-f73.google.com [209.85.166.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD5082B9A8
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 17:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C0F2E11CC
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 18:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753120529; cv=none; b=tCUfOtRkP6FdQhsdIfU/PJIDs8sRrtNIelickpUz4gKp4OxyiaqMbhLdeOOeAzXX+QDXhH7+p866BjIAMKs6FrrWluPq/nDX7JmkonsPfwsjQEo43+9c2rOuBAY3xqK3fJ1CocZTt9EQfRqQp1dMCl+Xoc2S74PI2mm9hQI0NNk=
+	t=1753120838; cv=none; b=mAdO3NQ4Uz2ef0C6VNwmQJywhQT6uGnk38lXzHcU34Lgs5Fo4eLBZGSmh4xFQJ68CzYZoBkcfG6TRwU+tqBEh+9OZq6RavvcobRmmHrAkGwNnD3/snzJV0tQWtY1bpavFvZE395rMhja9z0ExU5JmrG4VaPyeXuvTWGefsYfYj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753120529; c=relaxed/simple;
-	bh=J/GTbWq5CcAKSYtdDXxxTwOI5UWLGo5DfIaZSWUrdVc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dGc1FIkQS0eBymICTBNEP3ujZUZ3DHd+0KuwiIi7Cq98S+C/Q3bNEJ1rM8Jl5jIj2IAmLhv+VC3b9cI66AtUCKD9ct9uyx3qAL6bZLBCAKpObkr2OPyOLOkJ926tstLc4Sy2SZ9h+siFOw24YOt1MEephIQfddIUMTP4Tg7TGR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XE91d7zQ; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-32b43c5c04fso51038021fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 10:55:27 -0700 (PDT)
+	s=arc-20240116; t=1753120838; c=relaxed/simple;
+	bh=ogWkNfeO1YSnAXmvtt1kCOSLkwjDSK4GK17SpTnnPdE=;
+	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=jUXlsW/lqcAOaKr2vXsRzjLQ6SBDrETANLGVxLsSaP1uRhPAa2RXlLW9m5w1hSgSq3D2GHf8YDcZqtztRSjH9lENCFqtJCbz6NHWm8u1fPn2D+iNTFTQ8VWR6zYjva2mrVw5iSfxe5c3RjXNkpy5V85k+C9ynYdrxeFY7xgr9ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GbpHVcYM; arc=none smtp.client-ip=209.85.166.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com
+Received: by mail-io1-f73.google.com with SMTP id ca18e2360f4ac-87c306a1b38so169080339f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 11:00:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753120526; x=1753725326; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yrkuuoMFnjNnyN4EGKSAvsjDnC4VRrZnL1lKzFulqZo=;
-        b=XE91d7zQpZYvrqS3kb4dIUGyZzXZu5Ye2GvlGWljnJs9+rsfbdBSUq43TttvJK+Nbi
-         tqoZbmBMnkfPEL64SnVhVKiXq/FZyK6EFPRq+x2l5N9AdeLYAlUBAsUqWs09pm+FwuDB
-         2glmyRdgVF6HbkPO99d983sFn6U3k1K6Vu4cUkzuhz1PAz0PgGOIEAl0mkuFhCyopqrU
-         in2fUY8CeS6WIAZwCybf2HIcczgyzydp8AMweczPPNdO1CVPX3YjNx0LE1aMxV8g79Ij
-         91oQBDr5XvLWretSsrVb+tObrdNWLOAjGQGnOgoFSV/X87+S9FcK0KFSVuUKuf9A4uwX
-         8KKw==
+        d=google.com; s=20230601; t=1753120835; x=1753725635; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=2krLqXbrvL69zHTI+OSB0Sx07egWNgje2ekoJXV//wU=;
+        b=GbpHVcYMNjPulkBQVnu3PMABGIR5/NLHguhseFosMrL0HMJ947wZI75ksWO6PoOq6l
+         7g6xQZiTL5BpSPn+LSOYuGBU3iIrfJ9DZYLL0O2xjsgBPEaSDufXzYcJ/hZEF/Z69QrJ
+         Fge0AagZ23VVryCH4m/YmxILnzY37F4HXM4aSPSB8qSguL+HnVeTD1pi2zFzCBCWHI6o
+         xxEF9kBh/z5788HwBUBkVL8Q9sTZVuAbsJjO8gSxx5sTRON6rtkK3vGBPLPHkJ6PFsiv
+         9smVtMC/1szkXsV4QneShOlfSlilY2i4sQ/GDUlU5ReWy/Kn8WOqltxJVsj5Bb7hfXNI
+         yLgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753120526; x=1753725326;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yrkuuoMFnjNnyN4EGKSAvsjDnC4VRrZnL1lKzFulqZo=;
-        b=Cz3fA4oGcKGL55NTH6snHpcaXT8ytJuQA5xs7FAxNRtfZ0zIcXfEcPXAsotYXXJw0m
-         yTK/R5ywmd9zfWuPQxVJwVE9Djca1dc8oYpZbI91/KbLz08Fy4oGQjdKz0UqtsoSiyGZ
-         eou6vEERV1jJM0xN9lbGxJEDSkOA2+QB8fy45SMcdbTtZZBR2Q32LS8kLylwczGTX6u0
-         hKzdqQxQHlIghJTuxeOzFncW3TPWGdwud++LyPWJwhfKe/uuk5Y7cm/mdzCW7BtJWSg8
-         U5onWNhFOnkLKpZs43ET6yrxYJjHMJbPRX1y9nWMqgz5JWTZI8maIYsfHxGItC+NimgX
-         KfBA==
-X-Forwarded-Encrypted: i=1; AJvYcCWhBV/bRStiF1E0qB7e60Y+tu4n7y2Fda8u47zi0YBYk9JtEx5cGI6zgbB9EarynnhLJ+Fm8+/N/SF+aCo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4klw5QgbEAPSG+BTyIqigvhJOY/qLcl0crNW0TaSoXZTa/G53
-	InZVIGFzO3kngA3MqJ3cxQSI3X3IbmZkzbuZLa3vhxNzvVNvn/j9qSJ0u8dce3D6rdhNDE2d4LS
-	lbV2Eu9SqORwTNQfyPoZBKV9EiiiPolE=
-X-Gm-Gg: ASbGncu6NvmLjJMi2o4qeIO/Pk8mkvp0BpQ1zvJEkpwPV2t2fI+beSOch6wH/zavoxg
-	6afNh4LxOrpBtopM0YItMezzLBuYAUMYpiE4joojpgpVkt2aWQiB3z36kNV8ZRAzsC7oYQuwboQ
-	zYyWrXGmIKy3/1Ph4iu8WZ9BQptgtk7nYhZWdjPLBYYAnEgmsMe54xCA7ov8nzyBFT1Dp+04msT
-	69a4NwW
-X-Google-Smtp-Source: AGHT+IEBZNG4EAB29FW7u+2QKV577OMsk1kn2rLGCVkV0FCNpxuApY+lFJ80jIdavWr5znA+wJbXYBWPwP7A+gd51NI=
-X-Received: by 2002:a2e:8a82:0:b0:32b:968d:1fe4 with SMTP id
- 38308e7fff4ca-330d264bdb2mr703831fa.14.1753120525308; Mon, 21 Jul 2025
- 10:55:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753120835; x=1753725635;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2krLqXbrvL69zHTI+OSB0Sx07egWNgje2ekoJXV//wU=;
+        b=gQBl2vKNdXFOFtrBD7jb2ROrt+o0b8aYDrCm21iyE1jOmJskNfiyChV5hDT/CXX5IG
+         gIzapJz89htsH5EY/JZK3P1L1SHddi+L1w8Y6tqj91ESxge1sSCYuanjbgQHKs98X2Jp
+         300wJ/Lw0nmTpBp3fLZUwqLGAXVuv4IO3E3TxOLALVwMOslhu+3KiELOdf8qBOncDz+O
+         BTyWrz7j9BwN4Yd8qZ4s2pY7f15P00AT8jmNGdza6Tk8y2dP5uoLBP/ESevWwzOybbCq
+         joYN01BOR/MusPeOggtHr+tBZNE/IX0oeMOKuHm9rhbenqdXsGvjReIX03uJlMtrmvFf
+         lz1w==
+X-Forwarded-Encrypted: i=1; AJvYcCXElVQ0KtiTFl7pE+C2iCZqbf2vn5hxaIPBQZck1yckcoX0Da9xDWKfcTWjifGyX6Cn2iJxM6kRUmuIIpY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0ewYivRwixyT+6NwAeUSEhx8lZNoQHPdanm6GaKPxiOt/2c9m
+	nVsz1XFKZRGQjrXJvBip/9W9lXJln6c+QSTzEGtwPxtTc5aohJ1afTtquh7idukmsuyxQAQ0Yqc
+	3g7LBUlR2w0yhQhFecPW5aoeqKA==
+X-Google-Smtp-Source: AGHT+IEfZ2MrsGDQt2Apr+GHWZROOgLVqxxVZM8uTrkAEn6W6ybAfMfVvl1rXs9CqPRl3bXlJpF5OsombirkZgJ7Gg==
+X-Received: from iobjk13.prod.google.com ([2002:a05:6602:720d:b0:87c:1d70:43be])
+ (user=coltonlewis job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6602:2c0f:b0:86c:ee8b:c089 with SMTP id ca18e2360f4ac-879c291915bmr2390181339f.3.1753120835597;
+ Mon, 21 Jul 2025 11:00:35 -0700 (PDT)
+Date: Mon, 21 Jul 2025 18:00:34 +0000
+In-Reply-To: <153b5191-c585-433e-9cf5-1ed19b9a7f5c@arm.com> (message from
+ Suzuki K Poulose on Wed, 16 Jul 2025 00:22:16 +0100)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <87beaec6-a3b0-ce7a-c892-1e1e5bd57aa3@google.com>
-In-Reply-To: <87beaec6-a3b0-ce7a-c892-1e1e5bd57aa3@google.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Tue, 22 Jul 2025 01:54:47 +0800
-X-Gm-Features: Ac12FXzuKPqdRzilZJZ9PfrOhS-4V7Snv2ZZdRZ9zGzCBekbhLwa5jp9bupPS-M
-Message-ID: <CAMgjq7CtLM0psoHmSguv6SFH3BH+vMOn7CJnjVxnUhoc_chTuA@mail.gmail.com>
-Subject: Re: [PATCH mm-new 1/2] mm/shmem: hold shmem_swaplist spinlock (not
- mutex) much less
-To: Hugh Dickins <hughd@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Baoquan He <bhe@redhat.com>, Barry Song <21cnbao@gmail.com>, Chris Li <chrisl@kernel.org>, 
-	David Rientjes <rientjes@google.com>, Kemeng Shi <shikemeng@huaweicloud.com>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Message-ID: <gsntseipa0fx.fsf@coltonlewis-kvm.c.googlers.com>
+Subject: Re: [PATCH v4 01/23] arm64: cpufeature: Add cpucap for HPMN0
+From: Colton Lewis <coltonlewis@google.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: kvm@vger.kernel.org, pbonzini@redhat.com, corbet@lwn.net, 
+	linux@armlinux.org.uk, catalin.marinas@arm.com, will@kernel.org, 
+	maz@kernel.org, oliver.upton@linux.dev, mizhang@google.com, 
+	joey.gouly@arm.com, yuzenghui@huawei.com, mark.rutland@arm.com, 
+	shuah@kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-perf-users@vger.kernel.org, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 
-On Wed, Jul 16, 2025 at 4:06=E2=80=AFPM Hugh Dickins <hughd@google.com> wro=
-te:
->
-> A flamegraph (from an MGLRU load) showed shmem_writeout()'s use of the
-> global shmem_swaplist_mutex worryingly hot: improvement is long overdue.
->
-> 3.1 commit 6922c0c7abd3 ("tmpfs: convert shmem_writepage and enable swap"=
-)
-> apologized for extending shmem_swaplist_mutex across add_to_swap_cache(),
-> and hoped to find another way: yes, there may be lots of work to allocate
-> radix tree nodes in there.  Then 6.15 commit b487a2da3575 ("mm, swap:
-> simplify folio swap allocation") will have made it worse, by moving
-> shmem_writeout()'s swap allocation under that mutex too (but the worrying
-> flamegraph was observed even before that change).
->
-> There's a useful comment about pagelock no longer protecting from evictio=
-n
-> once moved to swap cache: but it's good till shmem_delete_from_page_cache=
-()
-> replaces page pointer by swap entry, so move the swaplist add between the=
-m.
->
-> We would much prefer to take the global lock once per inode than once per
-> page: given the possible races with shmem_unuse() pruning when !swapped
-> (and other tasks racing to swap other pages out or in), try the swaplist
-> add whenever swapped was incremented from 0 (but inode may already be on
-> the list - only unuse and evict bother to remove it).
->
-> This technique is more subtle than it looks (we're avoiding the very lock
-> which would make it easy), but works: whereas an unlocked list_empty()
-> check runs a risk of the inode being unqueued and left off the swaplist
-> forever, swapoff only completing when the page is faulted in or removed.
->
-> The need for a sleepable mutex went away in 5.1 commit b56a2d8af914
-> ("mm: rid swapoff of quadratic complexity"): a spinlock works better now.
->
-> This commit is certain to take shmem_swaplist_mutex out of contention,
-> and has been seen to make a practical improvement (but there is likely
-> to have been an underlying issue which made its contention so visible).
->
-> Signed-off-by: Hugh Dickins <hughd@google.com>
-> ---
->  mm/shmem.c | 59 ++++++++++++++++++++++++++++++------------------------
->  1 file changed, 33 insertions(+), 26 deletions(-)
+Hi Suzuki. Thanks for the review.
 
-Thanks a lot! I've also seen this issue, and we observed this
-contention on 5.4 kernels and I wasn't sure about how we can optimize
-it. This is very helpful.
+Suzuki K Poulose <suzuki.poulose@arm.com> writes:
 
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 60247dc48505..33675361031b 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -292,7 +292,7 @@ bool vma_is_shmem(struct vm_area_struct *vma)
->  }
->
->  static LIST_HEAD(shmem_swaplist);
-> -static DEFINE_MUTEX(shmem_swaplist_mutex);
-> +static DEFINE_SPINLOCK(shmem_swaplist_lock);
->
->  #ifdef CONFIG_TMPFS_QUOTA
->
-> @@ -432,10 +432,13 @@ static void shmem_free_inode(struct super_block *sb=
-, size_t freed_ispace)
->   *
->   * But normally   info->alloced =3D=3D inode->i_mapping->nrpages + info-=
->swapped
->   * So mm freed is info->alloced - (inode->i_mapping->nrpages + info->swa=
-pped)
-> + *
-> + * Return: true if swapped was incremented from 0, for shmem_writeout().
->   */
-> -static void shmem_recalc_inode(struct inode *inode, long alloced, long s=
-wapped)
-> +static bool shmem_recalc_inode(struct inode *inode, long alloced, long s=
-wapped)
->  {
->         struct shmem_inode_info *info =3D SHMEM_I(inode);
-> +       bool first_swapped =3D false;
->         long freed;
->
->         spin_lock(&info->lock);
-> @@ -450,8 +453,11 @@ static void shmem_recalc_inode(struct inode *inode, =
-long alloced, long swapped)
->          * to stop a racing shmem_recalc_inode() from thinking that a pag=
-e has
->          * been freed.  Compensate here, to avoid the need for a followup=
- call.
->          */
-> -       if (swapped > 0)
-> +       if (swapped > 0) {
-> +               if (info->swapped =3D=3D swapped)
-> +                       first_swapped =3D true;
->                 freed +=3D swapped;
-> +       }
->         if (freed > 0)
->                 info->alloced -=3D freed;
->         spin_unlock(&info->lock);
-> @@ -459,6 +465,7 @@ static void shmem_recalc_inode(struct inode *inode, l=
-ong alloced, long swapped)
->         /* The quota case may block */
->         if (freed > 0)
->                 shmem_inode_unacct_blocks(inode, freed);
-> +       return first_swapped;
->  }
->
->  bool shmem_charge(struct inode *inode, long pages)
-> @@ -1399,11 +1406,11 @@ static void shmem_evict_inode(struct inode *inode=
-)
->                         /* Wait while shmem_unuse() is scanning this inod=
-e... */
->                         wait_var_event(&info->stop_eviction,
->                                        !atomic_read(&info->stop_eviction)=
-);
-> -                       mutex_lock(&shmem_swaplist_mutex);
-> +                       spin_lock(&shmem_swaplist_lock);
->                         /* ...but beware of the race if we peeked too ear=
-ly */
->                         if (!atomic_read(&info->stop_eviction))
->                                 list_del_init(&info->swaplist);
-> -                       mutex_unlock(&shmem_swaplist_mutex);
-> +                       spin_unlock(&shmem_swaplist_lock);
->                 }
->         }
->
-> @@ -1526,7 +1533,7 @@ int shmem_unuse(unsigned int type)
->         if (list_empty(&shmem_swaplist))
->                 return 0;
->
-> -       mutex_lock(&shmem_swaplist_mutex);
-> +       spin_lock(&shmem_swaplist_lock);
->  start_over:
->         list_for_each_entry_safe(info, next, &shmem_swaplist, swaplist) {
->                 if (!info->swapped) {
-> @@ -1540,12 +1547,12 @@ int shmem_unuse(unsigned int type)
->                  * (igrab() would protect from unlink, but not from unmou=
-nt).
->                  */
->                 atomic_inc(&info->stop_eviction);
-> -               mutex_unlock(&shmem_swaplist_mutex);
-> +               spin_unlock(&shmem_swaplist_lock);
->
->                 error =3D shmem_unuse_inode(&info->vfs_inode, type);
->                 cond_resched();
->
-> -               mutex_lock(&shmem_swaplist_mutex);
-> +               spin_lock(&shmem_swaplist_lock);
->                 if (atomic_dec_and_test(&info->stop_eviction))
->                         wake_up_var(&info->stop_eviction);
->                 if (error)
-> @@ -1556,7 +1563,7 @@ int shmem_unuse(unsigned int type)
->                 if (!info->swapped)
->                         list_del_init(&info->swaplist);
->         }
-> -       mutex_unlock(&shmem_swaplist_mutex);
-> +       spin_unlock(&shmem_swaplist_lock);
->
->         return error;
->  }
-> @@ -1646,30 +1653,30 @@ int shmem_writeout(struct folio *folio, struct sw=
-ap_iocb **plug,
->                 folio_mark_uptodate(folio);
->         }
->
-> -       /*
-> -        * Add inode to shmem_unuse()'s list of swapped-out inodes,
-> -        * if it's not already there.  Do it now before the folio is
-> -        * moved to swap cache, when its pagelock no longer protects
-> -        * the inode from eviction.  But don't unlock the mutex until
-> -        * we've incremented swapped, because shmem_unuse_inode() will
-> -        * prune a !swapped inode from the swaplist under this mutex.
-> -        */
-> -       mutex_lock(&shmem_swaplist_mutex);
-> -       if (list_empty(&info->swaplist))
-> -               list_add(&info->swaplist, &shmem_swaplist);
-> -
->         if (!folio_alloc_swap(folio, __GFP_HIGH | __GFP_NOMEMALLOC | __GF=
-P_NOWARN)) {
-> -               shmem_recalc_inode(inode, 0, nr_pages);
-> +               bool first_swapped =3D shmem_recalc_inode(inode, 0, nr_pa=
-ges);
-> +
-> +               /*
-> +                * Add inode to shmem_unuse()'s list of swapped-out inode=
-s,
-> +                * if it's not already there.  Do it now before the folio=
- is
-> +                * removed from page cache, when its pagelock no longer
-> +                * protects the inode from eviction.  And do it now, afte=
-r
-> +                * we've incremented swapped, because shmem_unuse() will
-> +                * prune a !swapped inode from the swaplist.
-> +                */
-> +               if (first_swapped) {
-> +                       spin_lock(&shmem_swaplist_lock);
-> +                       if (list_empty(&info->swaplist))
-> +                               list_add(&info->swaplist, &shmem_swaplist=
-);
-> +                       spin_unlock(&shmem_swaplist_lock);
-> +               }
-> +
->                 swap_shmem_alloc(folio->swap, nr_pages);
->                 shmem_delete_from_page_cache(folio, swp_to_radix_entry(fo=
-lio->swap));
->
-> -               mutex_unlock(&shmem_swaplist_mutex);
->                 BUG_ON(folio_mapped(folio));
->                 return swap_writeout(folio, plug);
->         }
-> -       if (!info->swapped)
-> -               list_del_init(&info->swaplist);
-> -       mutex_unlock(&shmem_swaplist_mutex);
->         if (nr_pages > 1)
->                 goto try_split;
->  redirty:
-> --
-> 2.43.0
+> On 14/07/2025 23:58, Colton Lewis wrote:
+>> Add a capability for FEAT_HPMN0, whether MDCR_EL2.HPMN can specify 0
+>> counters reserved for the guest.
 
-Reviewed-by: Kairui Song <kasong@tencent.com>
+>> This required changing HPMN0 to an UnsignedEnum in tools/sysreg
+>> because otherwise not all the appropriate macros are generated to add
+>> it to arm64_cpu_capabilities_arm64_features.
+
+>> Acked-by: Mark Rutland <mark.rutland@arm.com>
+>> Signed-off-by: Colton Lewis <coltonlewis@google.com>
+>> ---
+>>    arch/arm64/kernel/cpufeature.c | 8 ++++++++
+>>    arch/arm64/tools/cpucaps       | 1 +
+>>    arch/arm64/tools/sysreg        | 6 +++---
+>>    3 files changed, 12 insertions(+), 3 deletions(-)
+
+>> diff --git a/arch/arm64/kernel/cpufeature.c  
+>> b/arch/arm64/kernel/cpufeature.c
+>> index b34044e20128..f38d7b5294ec 100644
+>> --- a/arch/arm64/kernel/cpufeature.c
+>> +++ b/arch/arm64/kernel/cpufeature.c
+>> @@ -548,6 +548,7 @@ static const struct arm64_ftr_bits ftr_id_mmfr0[] = {
+>>    };
+
+>>    static const struct arm64_ftr_bits ftr_id_aa64dfr0[] = {
+>> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE,  
+>> ID_AA64DFR0_EL1_HPMN0_SHIFT, 4, 0),
+
+> This doesn't have to be FTR_STRICT. The kernel can deal with
+> differences, by skipping to use HPMN0. We anyway rely on the
+> system wide cap for using the feature.
+
+Okay. I'll change it
+
+
+> Otherwise,
+
+> Acked-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+
+
+
+Thanks
+>>    	S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE,  
+>> ID_AA64DFR0_EL1_DoubleLock_SHIFT, 4, 0),
+>>    	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE,  
+>> ID_AA64DFR0_EL1_PMSVer_SHIFT, 4, 0),
+>>    	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE,  
+>> ID_AA64DFR0_EL1_CTX_CMPs_SHIFT, 4, 0),
+>> @@ -2896,6 +2897,13 @@ static const struct arm64_cpu_capabilities  
+>> arm64_features[] = {
+>>    		.matches = has_cpuid_feature,
+>>    		ARM64_CPUID_FIELDS(ID_AA64MMFR0_EL1, FGT, FGT2)
+>>    	},
+>> +	{
+>> +		.desc = "HPMN0",
+>> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+>> +		.capability = ARM64_HAS_HPMN0,
+>> +		.matches = has_cpuid_feature,
+>> +		ARM64_CPUID_FIELDS(ID_AA64DFR0_EL1, HPMN0, IMP)
+>> +	},
+>>    #ifdef CONFIG_ARM64_SME
+>>    	{
+>>    		.desc = "Scalable Matrix Extension",
+>> diff --git a/arch/arm64/tools/cpucaps b/arch/arm64/tools/cpucaps
+>> index 10effd4cff6b..5b196ba21629 100644
+>> --- a/arch/arm64/tools/cpucaps
+>> +++ b/arch/arm64/tools/cpucaps
+>> @@ -39,6 +39,7 @@ HAS_GIC_CPUIF_SYSREGS
+>>    HAS_GIC_PRIO_MASKING
+>>    HAS_GIC_PRIO_RELAXED_SYNC
+>>    HAS_HCR_NV1
+>> +HAS_HPMN0
+>>    HAS_HCX
+>>    HAS_LDAPR
+>>    HAS_LPA2
+>> diff --git a/arch/arm64/tools/sysreg b/arch/arm64/tools/sysreg
+>> index 8a8cf6874298..d29742481754 100644
+>> --- a/arch/arm64/tools/sysreg
+>> +++ b/arch/arm64/tools/sysreg
+>> @@ -1531,9 +1531,9 @@ EndEnum
+>>    EndSysreg
+
+>>    Sysreg	ID_AA64DFR0_EL1	3	0	0	5	0
+>> -Enum	63:60	HPMN0
+>> -	0b0000	UNPREDICTABLE
+>> -	0b0001	DEF
+>> +UnsignedEnum	63:60	HPMN0
+>> +	0b0000	NI
+>> +	0b0001	IMP
+>>    EndEnum
+>>    UnsignedEnum	59:56	ExtTrcBuff
+>>    	0b0000	NI
 
