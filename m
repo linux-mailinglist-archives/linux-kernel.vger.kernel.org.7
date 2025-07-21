@@ -1,113 +1,160 @@
-Return-Path: <linux-kernel+bounces-739237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D467CB0C3BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:56:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF205B0C3C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:58:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18726540BF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:56:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B0C616E2A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:58:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F632D0C69;
-	Mon, 21 Jul 2025 11:56:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 173852D23A3;
+	Mon, 21 Jul 2025 11:58:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n7iIJYOI"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="p36aVARw"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4043D2BE7BB
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 11:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803D6E55B
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 11:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753098984; cv=none; b=VEusP1dnXuhKPbFhnPjtbUqtBYyu7rI9CNOVRWxogAD97hPy5sPRu17uBtxZQ9PHjxBewGpKkwBz/k+Ig7HUvS7h47xmcamDMDnNEtwNc891TH4QbxeTuEA3bSKD4wgkYgqLBybj2IlFIqngzpMUACNS6X54NLvZKj7/NWMWkvI=
+	t=1753099098; cv=none; b=N2zrz+l0bLWMmC76qonpWBC3EYUcdBYeQKsefTB5xwMJ53Qab18DhyYGDuy+LgT7tzHQkpoA236kujBfpMlzdFIoNvC1vjeUThJLa6jvEwTPwx361eLy9b9jYkiSGkmo1qpfUo+xB5fGBhOWZIU+6+c6L2eTN4zxvY2xi8m0DRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753098984; c=relaxed/simple;
-	bh=MQgb7py7kA8qFAawQP8Xi376AvWUHjEvnrKVu5HiRW0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=CTIaYQpRVlOZcs2Ep7OhjgISNZzkZYImnsF/Gfw6I5fXG16pgQkTJl6K/cP+4QbYCY9h/w5LXvaaKMGgX6dTc0HICpINft+gOAncA/NG2cJC9f1VriQ8/KlRKT3J8jFAP85G7CPAt/MWont9MXFrUdt2IFZD4uR3rVwmpKRt6cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n7iIJYOI; arc=none smtp.client-ip=209.85.221.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3a50049f8eeso2360341f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 04:56:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753098982; x=1753703782; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PYI2UsizWZCb5wSLeFRus42pLlQIGazAov/EfOWZBzY=;
-        b=n7iIJYOIi99dqjdXw3F78PY7/Oq4SV836RA34ANPCGA5S05BnRLXPYvmoDDBFHKeXT
-         6nOqCQA8XycC9r1vYKI0D1BCP+y/GNrD7WC32WRs6SnlwUV8l2VIkGxiG2gi8k7QdcPC
-         +WsN9ANlRBswM1VDlo4EWb1y8ahbN6w9JNPmLWErkV8xDuXpY6JLvBWOzFRTR5YHHanK
-         57dWSmn9WpmlelpFQDKn3BiTGWIlUGeC+hl9z1c21ERqEzm3JXz2r3sbOgZidxSHAInz
-         XWZrrZORNo7Zu2xyX4VC0FCe7tdQjZ3rHwvCbZOW7DtObksjGIwKiXOWXYJj0/AqBVV1
-         iTUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753098982; x=1753703782;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PYI2UsizWZCb5wSLeFRus42pLlQIGazAov/EfOWZBzY=;
-        b=xPQkf1ITY49Vdm58EgCaGet0ARNLG8ITIxaP+fj3+DDCNmnHgBOgJCyX3YjQCZ4o+X
-         RPONd7y4W7I+Xt2vQ58aEwTHIIIIFWJlae+IdtR5dx3MB5+EJuwzy4CJE3J3b99kGRhP
-         Os112CPuHcJdmNCwyJteNgP5nF09ODnrsL2cdFtwSM4Z+R8B61b27+Zw7ZD51MHBuY7D
-         H5NhCqSk575cFE5its0wtsWbNw3GQ0vfJMn0TV/om3tzbmYpMQhwV/Rr6jI/fGR6gg15
-         w4XUTzT4MDlRffjlLkeom5Bi3aJdMbv/CHs0nbw/KSgMt75lMojxprA9r/Q8wtfkooWq
-         lVvg==
-X-Forwarded-Encrypted: i=1; AJvYcCVpIg/9RXjVhHyDfrsuzQmupWE9RSZTBnu+R/v4Itbj9h4Yduk9oyBLcmgWygEdN3mDp61FxQJQfJiJRQs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSrSQgs9ghE9HIHpxxgY4jIoPm3ySg3I1STRpYMJTeQTESfoXt
-	1ySspku/sBYpb2IrQi40KLDd5sB4vcPAl/cJIF0mbrIe6o84G0Zi2K07gjMFZeiViXpzUAUSioQ
-	0bGEJWGYyllm3Rc5e3w==
-X-Google-Smtp-Source: AGHT+IEcFbj4EFix3ciRpXJYDPsXwCXJhfsHqcvc311AYGTCfDwpV/wkDnDzlBmx+/8BP4664mzipt5VeEQf3xc=
-X-Received: from wmqd13.prod.google.com ([2002:a05:600c:34cd:b0:456:23aa:8bf])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:2282:b0:3b7:54b3:c512 with SMTP id ffacd0b85a97d-3b754b3c63dmr5273340f8f.58.1753098981719;
- Mon, 21 Jul 2025 04:56:21 -0700 (PDT)
-Date: Mon, 21 Jul 2025 11:56:20 +0000
-In-Reply-To: <20250720-rust-remove-compiler-builtins-deps-v3-1-0df3a493973f@gmail.com>
+	s=arc-20240116; t=1753099098; c=relaxed/simple;
+	bh=FWnSi8E8XYIWk4QCaR4TwKiOWABo39dyPNERnvREGtw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MhF0npJBz6E6HvajiSCXqvYvTKUvvLqo9NM7UKD8SeJfW9Kiaybse9JpEKeKhjYmHqcpKAQRWFYUdJ+ZR3JcgE3eIcwPWbuH57pCHqnPf7/puT2hTLuMwaTLaMB/thl+bLfoPFBlDVCUQ7rk8dL9HJRhVHVJ53dkLoQpqa3Zubg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=p36aVARw; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 21 Jul 2025 19:57:56 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753099082;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bfrHdHadKeOGrxubHlclT+KsEtO7bFXUMTU/oDEY5dQ=;
+	b=p36aVARw7D43XfPT4ZZedi3YcLfN/KR5oUPoLSSqFTzIk6/rRnSzX8rESovL+8J02HVpqK
+	U992BQVKcaz3RmNJ5lrzf3drMvWTqoYIvY1gWUbhXWMl26WB00iJSqa3Ka9D1Z70ZXJrx7
+	02rJ8Oad5yjpUM8tTyLq8oiqLFz/Pgw=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Ze Huang <huang.ze@linux.dev>
+To: Philipp Zabel <p.zabel@pengutronix.de>, Ze Huang <huang.ze@linux.dev>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v6 1/2] dt-bindings: usb: dwc3: add support for SpacemiT
+ K1
+Message-ID: <aH4rRKPHzB0kd7Ek@monica.localdomain>
+References: <20250712-dwc3_generic-v6-0-cc87737cc936@linux.dev>
+ <20250712-dwc3_generic-v6-1-cc87737cc936@linux.dev>
+ <468961ac17fb5dd4365943a24206040575b0e982.camel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250720-rust-remove-compiler-builtins-deps-v3-1-0df3a493973f@gmail.com>
-Message-ID: <aH4q5CA6SfFFtpwc@google.com>
-Subject: Re: [PATCH v3] rust: remove spurious compiler_builtins dependents
-From: Alice Ryhl <aliceryhl@google.com>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <468961ac17fb5dd4365943a24206040575b0e982.camel@pengutronix.de>
+X-Migadu-Flow: FLOW_OUT
 
-On Sun, Jul 20, 2025 at 01:20:40PM -0400, Tamir Duberstein wrote:
-> The dependency on `compiler_builtins.o` was first added in commit
-> 2f7ab1267dc9 ("Kbuild: add Rust support") to `alloc` which matches the
-> standard library[0] but was copied to other targets in:
-> - commit ecaa6ddff2fd ("rust: add `build_error` crate")
-> - commit d072acda4862 ("rust: use custom FFI integer types")
-> - commit 4e1746656839 ("rust: uapi: Add UAPI crate")
-> - commit d7659acca7a3 ("rust: add pin-init crate build infrastructure")
+On Mon, Jul 21, 2025 at 01:02:54PM +0200, Philipp Zabel wrote:
+> On Sa, 2025-07-12 at 15:49 +0800, Ze Huang wrote:
+> > Add support for the USB 3.0 Dual-Role Device (DRD) controller embedded
+> > in the SpacemiT K1 SoC. The controller is based on the Synopsys
+> > DesignWare Core USB 3 (DWC3) IP, supporting USB3.0 host mode and USB 2.0
+> > DRD mode.
+> > 
+> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > Signed-off-by: Ze Huang <huang.ze@linux.dev>
+> > ---
+> >  .../devicetree/bindings/usb/spacemit,k1-dwc3.yaml  | 107 +++++++++++++++++++++
+> >  1 file changed, 107 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/usb/spacemit,k1-dwc3.yaml b/Documentation/devicetree/bindings/usb/spacemit,k1-dwc3.yaml
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..c967ad6aae50199127a4f8a17d53fc34e8d9480b
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/usb/spacemit,k1-dwc3.yaml
+> > @@ -0,0 +1,107 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/usb/spacemit,k1-dwc3.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: SpacemiT K1 SuperSpeed DWC3 USB SoC Controller
+> > +
+> > +maintainers:
+> > +  - Ze Huang <huang.ze@linux.dev>
+> > +
+> > +description: |
+> > +  The SpacemiT K1 embeds a DWC3 USB IP Core which supports Host functions
+> > +  for USB 3.0 and DRD for USB 2.0.
+> > +
+> > +  Key features:
+> > +  - USB3.0 SuperSpeed and USB2.0 High/Full/Low-Speed support
+> > +  - Supports low-power modes (USB2.0 suspend, USB3.0 U1/U2/U3)
+> > +  - Internal DMA controller and flexible endpoint FIFO sizing
+> > +
+> > +  Communication Interface:
+> > +  - Use of PIPE3 (125MHz) interface for USB3.0 PHY
+> > +  - Use of UTMI+ (30/60MHz) interface for USB2.0 PHY
+> > +
+> > +allOf:
+> > +  - $ref: snps,dwc3-common.yaml#
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: spacemit,k1-dwc3
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  clocks:
+> > +    maxItems: 1
+> > +
+> > +  clock-names:
+> > +    const: usbdrd30
+> > +
+> > +  interrupts:
+> > +    maxItems: 1
+> > +
+> > +  phys:
+> > +    items:
+> > +      - description: phandle to USB2/HS PHY
+> > +      - description: phandle to USB3/SS PHY
+> > +
+> > +  phy-names:
+> > +    items:
+> > +      - const: usb2-phy
+> > +      - const: usb3-phy
+> > +
+> > +  resets:
+> > +    items:
+> > +      - description: USB3.0 AHB reset line
+> > +      - description: USB3.0 VCC reset line
+> > +      - description: USB3.0 PHY reset line
 > 
-> The alloc crate was removed in commit 392e34b6bc22 ("kbuild: rust:
-> remove the `alloc` crate and `GlobalAlloc`"). As far as I can tell none
-> of the other dependencies are required; it is only required that
-> compiler_builtins be linked into the rust-enabled kernel. In the
-> standard library, compiler_builtins is a dependency of std[1].
-> 
-> Remove these dependency edges. Add a dependency edge from
-> `compiler_builtins` to `core` to `scripts/generate_rust_analyzer.py` to
-> match `rust/Makefile`. This has been incorrect since commit 8c4555ccc55c
-> ("scripts: add `generate_rust_analyzer.py`")
-> 
-> Link: https://github.com/rust-lang/rust/blob/f820b75feef00654924c9351a2faca8d34818339/library/alloc/Cargo.toml#L19 [0]
-> Link: https://github.com/rust-lang/rust/blob/f820b75feef00654924c9351a2faca8d34818339/library/std/Cargo.toml#L21 [1]
-> Link: https://rust-for-linux.zulipchat.com/#narrow/channel/288089-General/topic/rust-analyzer.20improvements/near/510200959
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> Are we sure all resets will only ever need to be triggered together?
+>
+> Otherwise it might be safer to add a reset-names property.
+>
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Yeah, that's helpful. Will add reset-names property in next version.
+
+> 
+> regards
+> Philipp
 
