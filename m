@@ -1,161 +1,168 @@
-Return-Path: <linux-kernel+bounces-739529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99016B0C76E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:21:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 973FFB0C771
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:22:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42F121893231
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:21:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B94B47A79F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9FD2DFA3E;
-	Mon, 21 Jul 2025 15:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dSUpea09";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Q0GGv108"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FE52DE213;
-	Mon, 21 Jul 2025 15:20:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 626C02DECA8;
+	Mon, 21 Jul 2025 15:21:40 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA851DF754;
+	Mon, 21 Jul 2025 15:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753111244; cv=none; b=XPp49NC9tCOStJw0B/lcoRxRMEly0k5gbTNoemMsV/P5nwjEJBPojjS1flTBWw4oqAkRLIZgaSp+Y8eKa+zOhFDfgsQXTm8IbZP2Qc8gZ9hRxPws1/+VLxt2PEXkCDd1pz31hWKJriNunBsZFxD8Q1nXuYYjkW2OthssYtliOA8=
+	t=1753111300; cv=none; b=awuop+2FPywSVKJi4ME1EhrVt5Xj6LcyU3Gn1cPX11DqKV79sDkuqXNNAYCLl0aTzUdSW8tr0J4q/TctNBq1GCEAu/pGRu1OisKvItgXwBm08Ahbs0TJG0UzHT8myslA9BOLN08b6//UN0k9WJCfV5GOUwx9F/uOVqlEvVVZtmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753111244; c=relaxed/simple;
-	bh=EKv/CuvVWTqGB+3lPgiI/Kb5dtzwxeNfNXJbovQpa9I=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=u6ERqfSYS+M2Hr+gosEj3fsCnnnHf6SisTSvhGLuB8eaD+AJPSHeAW6A9CTnz8SzgQMFzxZAfUao/tyb3TR9cX2wdb1Y1vo80JPGw6ilLi7AdJqsi5EozFZKrjFVgVS00awF3tuFW0GN0gVpi10jMtvDm0+qchxye6fJEtUsJI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dSUpea09; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Q0GGv108; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753111241;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/9FzCqmcyJh+8Ydz6tHP0relc2+nn3FdzXGKT9u9tC0=;
-	b=dSUpea09yTKvaap84BHTchrX/mvRMJUc48+kcHHkQxoYAlMq1o9H91n0rEyouWUQZds+Ls
-	rJWeBKpdVh+r6TVg9PcQPcuj0sZz+kTaDMsLK4KCjaOjlWQYgv4f4R/F/uiKtEsxW6IPu8
-	BZs7DYrF+ZLrdRacfIavNLPjVeum/qGXpUL0kBgehfj92Ae5GBzPEau0pmYMGKZYiMUTmA
-	WBzzEbBwXCWSUfsni3ElVs+D8g26iSUsJ/++lpGRihfVxdZY1aFI35kcEgLVtGeA+2qJTV
-	JIM9YCZ9KB6Tup50FIIXZa38Dsi7uKFBiXUKjNhkEMalmJWrVmGFGCj4lmFI7A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753111241;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/9FzCqmcyJh+8Ydz6tHP0relc2+nn3FdzXGKT9u9tC0=;
-	b=Q0GGv108K0Wx0ZlG5G8V8V0Na3jr3eUG3hFHWm0zuYoWeHBjtZZPu1Oy3mIu6+M+ntdxcb
-	YsPYlYqxSgIstBDQ==
-To: panchuang <panchuang@vivo.com>, Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: =?utf-8?B?5p2O5oms6Z+s?= <frank.li@vivo.com>, Uwe =?utf-8?Q?Kleine-K?=
- =?utf-8?Q?=C3=B6nig?=
- <u.kleine-koenig@pengutronix.de>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui
- <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Markus Mayer
- <mmayer@broadcom.com>, Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Florian Fainelli
- <florian.fainelli@broadcom.com>, Shawn Guo <shawnguo@kernel.org>, Sascha
- Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
- <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, zhanghongchen
- <zhanghongchen@loongson.cn>, Yinbo Zhu <zhuyinbo@loongson.cn>, Amit
- Kucheria <amitk@kernel.org>, Thara Gopinath <thara.gopinath@gmail.com>,
- Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Magnus Damm
- <magnus.damm@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Bartlomiej
- Zolnierkiewicz <bzolnier@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Maxime Coquelin
- <mcoquelin.stm32@gmail.com>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, Vasily Khoruzhick <anarsoul@gmail.com>,
- Yangtao Li <tiny.windzz@gmail.com>, Chen-Yu Tsai <wens@csie.org>, Jernej
- Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
- Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter
- <jonathanh@nvidia.com>, Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>, Srinivas Pandruvada
- <srinivas.pandruvada@linux.intel.com>, Greg KH
- <gregkh@linuxfoundation.org>, Peter Zijlstra <peterz@infradead.org>,
- =?utf-8?Q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>,
- Conor Dooley
- <conor.dooley@microchip.com>, Julien Panis <jpanis@baylibre.com>, Arnd
- Bergmann <arnd@arndb.de>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=
- <u.kleine-koenig@baylibre.com>,
- Colin Ian King <colin.i.king@gmail.com>, Raphael Gallais-Pou
- <rgallaispou@gmail.com>, Patrice Chotard <patrice.chotard@foss.st.com>,
- Jonathan Cameron <jonathan.cameron@huawei.com>, "Jiri Slaby (SUSE)"
- <jirislaby@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Andrew Morton <akpm@linux-foundation.org>, Costa Shulyupin
- <costa.shul@redhat.com>, Yury
- Norov <yury.norov@gmail.com>, Cheng-Yang Chou <yphbchou0911@gmail.com>,
- Caleb Sander Mateos <csander@purestorage.com>, "linux-pm@vger.kernel.org"
- <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "imx@lists.linux.dev"
- <imx@lists.linux.dev>, "linux-arm-msm@vger.kernel.org"
- <linux-arm-msm@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
- <linux-renesas-soc@vger.kernel.org>, "linux-rockchip@lists.infradead.org"
- <linux-rockchip@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org"
- <linux-samsung-soc@vger.kernel.org>,
- "linux-stm32@st-md-mailman.stormreply.com"
- <linux-stm32@st-md-mailman.stormreply.com>, "linux-sunxi@lists.linux.dev"
- <linux-sunxi@lists.linux.dev>, "linux-tegra@vger.kernel.org"
- <linux-tegra@vger.kernel.org>, "linux-mediatek@lists.infradead.org"
- <linux-mediatek@lists.infradead.org>
-Subject: Re: =?utf-8?B?5Zue5aSNOg==?= [PATCH v6 01/24] genirq/devres: Add
- devm_request_threaded_irq_probe() and devm_request_irq_probe()
-In-Reply-To: <draft-87ikjnvqfx.ffs@tglx>
-References: <draft-87ikjnvqfx.ffs@tglx>
-Date: Mon, 21 Jul 2025 17:20:39 +0200
-Message-ID: <87qzy9tvso.ffs@tglx>
+	s=arc-20240116; t=1753111300; c=relaxed/simple;
+	bh=nBeLfk14javg9SOP+fdU5fQH+x2VW066F+emh6tP8+w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZhiDS6uiD1YnB8ApcSwejWm0s2VWIsM7XTj5qbqNQWpXLKLVCutddDAisuN5HGvNVwC3RkAuNi1VU38lj15OYA8mqbv+Q0Co53UvlgDSdHj6a2Br4xEDjxhA1G2/aMb3mvljEYe1YTIg/UYT1O3Z9PER8eYOo1k1hIyvKaqAln8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 82349153B;
+	Mon, 21 Jul 2025 08:21:31 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C80A33F6A8;
+	Mon, 21 Jul 2025 08:21:36 -0700 (PDT)
+Date: Mon, 21 Jul 2025 16:21:34 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: James Clark <james.clark@linaro.org>
+Cc: Alexandru Elisei <alexandru.elisei@arm.com>,
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Anshuman Khandual <Anshuman.Khandual@arm.com>,
+	Rob Herring <Rob.Herring@arm.com>,
+	Suzuki Poulose <Suzuki.Poulose@arm.com>,
+	Robin Murphy <Robin.Murphy@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] perf: arm_spe: Disable buffer before writing to
+ PMBPTR_EL1 or PMBSR_EL1
+Message-ID: <20250721152134.GF3137075@e132581.arm.com>
+References: <20250701-james-spe-vm-interface-v1-0-52a2cd223d00@linaro.org>
+ <20250701-james-spe-vm-interface-v1-2-52a2cd223d00@linaro.org>
+ <20250704155016.GI1039028@e132581.arm.com>
+ <b77f12e7-ea3f-4c57-9706-ff8e32721cc8@linaro.org>
+ <20250707153710.GB2182465@e132581.arm.com>
+ <aG4_uYJgpMXo3QHQ@raptor>
+ <20250714085849.GC1093654@e132581.arm.com>
+ <0c53164a-306a-4cb7-9085-bba8985c32e7@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0c53164a-306a-4cb7-9085-bba8985c32e7@linaro.org>
 
-On Sat, Jul 19 2025 at 23:08, Thomas Gleixner wrote:
-> On Wed, Jul 09 2025 at 17:13, panchuang@vivo.com wrote:
->> Hi tglx and Miqu=C3=A8l, Just a gentle ping on this patchset. I understa=
-nd=20
->> you're likely busy with many other tasks, but any feedback or guidance=20
->> on how to proceed would be greatly appreciated. As discussed in the=20
->> previous thread, there was some uncertainty about whether we should=20
->> directly integrate dev_err_probe() into devm_request_threaded_irq(), or=
-=20
->> if it's better to create a wrapper function. Thanks for your time!=20
->> Thanks, Panchuang
+On Mon, Jul 21, 2025 at 02:20:15PM +0100, James Clark wrote:
 
-For simplicity sake just rename the existing functions
-devm_request_threaded_irq() and devm_request_any_context_irq() to
-__devm_request_threaded_irq() and __devm_request_any_context_irq().
+[...]
 
-Then create new functions for the API, which
+> > > Thought about this some more.
+> > > 
+> > > Before:
+> > > 
+> > > arm_spe_pmu_buf_get_fault_act:
+> > >    <drain buffer>
+> > >    ISB
+> > > arm_spe_perf_aux_output_begin:
+> > >    PMBLIMITR_EL1.E = 1
+> > > ISB
+> > > PMBSR_EL1.S = 0
+> > > ERET
+> > > 
+> > > Now:
+> > > 
+> > > PMBLIMITR_EL1 = 0
+> > > ISB
+> > > 
+> > > PMBSR_EL1.S = 0
+> > > arm_spe_perf_aux_output_begin:
+> > >    ISB
+> > >    PMBLIMITR_EL1.E = 1
+> > > ERET
+> > > 
+> > > I don't see much of a difference between the two sequences - the point after
+> > > which we can be sure that profiling is enabled remains the ERET from the
+> > > exception return.  The only difference is that, before this change, the ERET
+> > > synchronized clearing the PMBSR_EL1.S bit, now it synchronizes setting the
+> > > PMBLIMITR_EL1.E bit.
+> > > 
+> > > Thoughts?
+> > 
+> > To make the discussion easier, I'll focus on the trace enabling flow
+> > in this reply.
+> > 
+> > My understanding of a sane flow would be:
+> > 
+> >    arm_spe_pmu_irq_handler() {
+> >      arm_spe_perf_aux_output_begin() {
+> >            SYS_PMBPTR_EL1 = base;
+> > 
+> >            ISB // Synchronization between SPE register setting and
+> >                // enabling profiling buffer.
+> >            PMBLIMITR_EL1.E = 1;
+> >      }
+> >      ISB // Context synchronization event to ensure visibility to SPE
+> >    }
+> > 
+> >    ... start trace ... (Bottom half, e.g., softirq, etc)
+> > 
+> >    ERET
+> > 
+> > In the current code, arm_spe_perf_aux_output_begin() is followed by an
+> > ISB, which serves as a context synchronization event to ensure
+> > visibility to the SPE. After that, it ensures that the trace unit will
+> > function correctly.
+> > 
+> 
+> But I think Alex's point is that in the existing code the thing that finally
+> enables trace (PMBSR_EL1.S = 0) isn't followed by an isb(), only an ERET. So
+> the new flow isn't any different in that regard.
 
-   - invoke the underscore variants
-   - and on error invoke dev_err_probe() similar to what I suggested in
-     my reply in this thread.
+Thanks for explanation.
 
-In the rare case of failure, this will print error messages for the
-affected drivers both in the core and at the callsite, but that's not
-the end of the world.
+> > I understand that the Software Usage PKLXF recommends using an ERET as
+> > the synchronization point. However, between enabling the profiling
+> > buffer and the ERET, the kernel might execute other operations (e.g.,
+> > softirqs, tasklets, etc.).
+> 
+> Isn't preemption disabled? Surely that's not possible. Even if something did
+> run it wouldn't be anything that touches the SPE registers, and we're sure
+> there's an isb() between setting up the buffer and the final PMBLIMITR_EL1.E
+> = 1
 
-Then go and remove the random printks from the drivers, once the core
-change has hit upstream.
+Yes, bottom half runs in preemtion disabled state. See:
+
+  el1_interrupt() -> __el1_irq() -> irq_exit_rcu() -> invoke_softirq()
+
+In some cases, sotfirq and tasklet might even cause long latency (I
+believe it can be milliseconds or even longer), this is why ftrace
+"irqsoff" tracer is used to profile latency caused by irq off state.
+
+Bottom half does not modify SPE registsers, but it can be a long road
+between enabling SPE trace and ERET.
+
+> > Therefore, it seems to me that using ERET as the synchronization point
+> > may be too late. This is why I think we should keep an ISB after
+> > arm_spe_perf_aux_output_begin().
+> 
+> Wouldn't that make the ERET too late even in the current code then? But I
+> think we're agreeing there's no issue there?
+
+I would say ERET is too late for current code as well.
 
 Thanks,
-
-        tglx
-
-
-
+Leo
 
