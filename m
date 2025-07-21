@@ -1,96 +1,136 @@
-Return-Path: <linux-kernel+bounces-739342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EB60B0C500
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:17:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4C8AB0C503
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:18:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 821063B8CC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:17:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6815189A95B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D95E52D663B;
-	Mon, 21 Jul 2025 13:17:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3B52D876A;
+	Mon, 21 Jul 2025 13:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Ek8K+2Fw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="rkcVs88b"
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206B519AD89;
-	Mon, 21 Jul 2025 13:17:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 601C029E109;
+	Mon, 21 Jul 2025 13:18:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753103855; cv=none; b=Wo+Q7GGEGrUhL69TnJnyqgobcup/ZXkKV9CKp2ShXGcXpjOQebzngfDxqmsNGmxcPUFwiHpQPP67VGmAkDXWQHHyW7QGRMuucZgsNqSUNJCnq2n2F4nBTvqjL/KLpikQ1o49eK5/5NW/SHsKDMV+Ysb2XpXI0iyg+Ch9+CI0Oq8=
+	t=1753103886; cv=none; b=MLzAocQB7z0iKMgwmwN0zPC1dKsrDnKlUhKyhvSfpkersoymfZynTRibIbUvYZPxdFrz0deeIL2jby4FhR6V8iX49v2w6y6kblZ9wIuMWXhO44xtD94qV5gDI2DB4iOowD0gWLT+6IRv97cq9Dr/vGtsx3xN0vUah26dCUKnV4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753103855; c=relaxed/simple;
-	bh=ZbNrEK5Ac7aDXRD4X0QwLxogwtUOq3b2VY3XlStGeE0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j4jWOZau4ZzSV0U9cXFgKUrdN1ukZyxVlF6rYDH/ArdXVLZyN820S5vwJaBCwJOM2GwUvCsZU6wYtJYy2Lp6rnvyB4cEjaBu9qdy0qWySlEbFys2TE5BeqEoIlTrs4Yg7kfH6z5/10zCLdIOn4ykwjHvzfw3+9SfNY/mpUcu5g0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Ek8K+2Fw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F449C4CEED;
-	Mon, 21 Jul 2025 13:17:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1753103854;
-	bh=ZbNrEK5Ac7aDXRD4X0QwLxogwtUOq3b2VY3XlStGeE0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ek8K+2FwkjAJs45uIF9DxGomK3sl+BUXmYH9t858YrjdStAKpQdoL5JTsDIpkV8iU
-	 tVN3L/h+Se9vo5be8ZUcdffoIShKNMO7E0SA4prmpA/1Khjf1MP3Ev5H9EHYIiA8z8
-	 MeZBiJMZrC6FEEwT9tLzIpCfnzSkUjY2ZeGhuejs=
-Date: Mon, 21 Jul 2025 15:17:31 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, rafael@kernel.org, ojeda@kernel.org,
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org,
-	tmgross@umich.edu, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] device: rust: expand documentation for Device
-Message-ID: <2025072110-buddhism-accompany-0682@gregkh>
-References: <20250717224806.54763-1-dakr@kernel.org>
- <20250717224806.54763-3-dakr@kernel.org>
- <aH4juIVmj8euE1CA@google.com>
- <2025072125-twine-curling-db0b@gregkh>
- <aH4telYyyexiMbjx@google.com>
- <DBHQ2ZDUHLSW.LHWUTFQO1E60@kernel.org>
+	s=arc-20240116; t=1753103886; c=relaxed/simple;
+	bh=dGm4NQ+3hGK/6za3afP2H7y1+PzpmhYcTH4ocGmLxsM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZBbUNXR8PEfoh0O5hVRhGzq4BVVPw6N1//V2AnIuWfs0rAiqkdG8LYJKk0S2KWYsOpKDaxG5ybuMPiIUOqBFs12qRapGRdlVSGdCadHA4h+BFjNy8mzT0u9n8Nv3lOOvLSfHd301GoWxyLdQqBOjfNmVPqX/gl9IuAUnznK+0YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=rkcVs88b; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1753103879; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=WnaoPqjkhqlDN6kTZRO3wpxLenliqy2lR/lm2VYfgC4=;
+	b=rkcVs88b+dc96OwGR3/nv1/xcBNjVE4AdaMd3WgC/jITbpvCs91H7w88KkzESvU8sV9NCCL03G0Fr+F+rOTEGHwL5XkWziy+DnIfer/04VLaxrXy+GE20FRqmmKgfByucn1x5JWCPNq1M81DWbKeigyNBoZXEiTYlZNMNw6BIaQ=
+Received: from 30.246.160.95(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WjPkmgl_1753103876 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 21 Jul 2025 21:17:57 +0800
+Message-ID: <25285fbd-ffab-49e5-a8be-e3a1c8e70d3c@linux.alibaba.com>
+Date: Mon, 21 Jul 2025 21:17:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DBHQ2ZDUHLSW.LHWUTFQO1E60@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8] PCI: hotplug: Add a generic RAS tracepoint for hotplug
+ event
+To: Lukas Wunner <lukas@wunner.de>, Bjorn Helgaas <helgaas@kernel.org>,
+ Matthew W Carlis <mattc@purestorage.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: anil.s.keshavamurthy@intel.com, bhelgaas@google.com, bp@alien8.de,
+ davem@davemloft.net, linux-edac@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, mark.rutland@arm.com,
+ mathieu.desnoyers@efficios.com, mhiramat@kernel.org, naveen@kernel.org,
+ oleg@redhat.com, peterz@infradead.org, rostedt@goodmis.org,
+ tianruidong@linux.alibaba.com, tony.luck@intel.com
+References: <20250718163532.GA2700834@bhelgaas>
+ <fc0ded97-8643-4faa-a606-732bcd4ce4a1@linux.alibaba.com>
+ <aHtFG3QsdohG466k@wunner.de>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <aHtFG3QsdohG466k@wunner.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 21, 2025 at 02:13:14PM +0200, Danilo Krummrich wrote:
-> On Mon Jul 21, 2025 at 2:07 PM CEST, Alice Ryhl wrote:
-> > The connection is that to request an irq you must have a &Device<Bound>,
-> > so if you can only obtain a &Device<Bound> to a bus device, then that
-> > means that you can never request an irq for a class device.
+
+
+在 2025/7/19 15:11, Lukas Wunner 写道:
+> On Sat, Jul 19, 2025 at 01:23:28PM +0800, Shuai Xue wrote:
+>>             <...>-120     [002] .....   104.864051: pci_hp_event: 0000:00:03.0 slot:30, event:PCI_HOTPLUG_CARD_PRESENT
+>>             <...>-120     [002] .....   104.864081: pci_hp_event: 0000:00:03.0 slot:30, event:PCI_HOTPLUG_LINK_UP
 > 
-> As mentioned in my other reply, a class device never owns resources of a "real"
-> device such as an IRQ.
+> Somehow I liked the simple "Link Up" and "Card present" strings more
+> than this. :)
 > 
-> A USB device, which represents a real device on a bus, is a bus device, in your
-> example the class device is the input device.
->
+> The PCI_HOTPLUG substring repeats what pci_hp_event already betrays,
+> that this is a hotplug event.
 
-Just to confuse things a bit more (sorry), there are also "USB class
-devices" that represent USB devices that use the "generic" USB interface
-to userspace api.  You can find these by searching for
-usb_register_dev().
+I think Bjorn's concern is mainly about parsing issues when strings
+contain spaces.
 
-Note, this is different from the drivers/usb/class/ drivers, which
-represent various "USB class protocol" that the USB.org group defines,
-and those talk to userspace through the various common class apis
-depending on the specific device type (input, network, etc.) and are USB
-bus drivers.
+So, how about using "Link_UP" and "Card_Present" instead?
 
-Naming is hard, wait until you learn about "usb gadget" a word we had to
-invent to describe the thing :)
+> 
+>>     irq/57-pciehp-120     [002] .....   104.990434: pci_link_event: 0000:00:03.0 cur_bus_speed:20, max_bus_speed:23, width:1, flit_mode:0, reason:5
+>>     irq/57-pciehp-120     [002] .....   104.992377: pci_link_event: 0000:00:03.0 cur_bus_speed:20, max_bus_speed:23, width:1, flit_mode:0, reason:0
+> 
+> This contains a lot of terminology specific to PCI *Express*
+> (versus Conventional PCI or PCI-X).  Either it needs to be
+> "pcie_link_event" or we need to come up with a structure that
+> works for non-PCIe as well.
+> 
 
-thanks,
+I see, I will rename it to pcie_link_event.
 
-greg k-h
+> PCI links can be tunneled over Thunderbolt, in this case the
+> link speed is fixed to 2.5 GT/s (USB4 v1.0 sec 11.2.1), but
+> in reality is governed by the speed of the Thunderbolt fabric
+> (which can even be asymmetric).  Do we want to report the
+> virtual 2.5 GT/s in this case or the actual Thunderbolt speed?
+> Or do we want a separate trace event for Thunderbolt?
+
+I'm not a user of Thunderbolt, which way do you prefer?
+
+> 
+> For Root and Downstream Ports, the physical "port" points "downstream",
+> whereas for Upstream Ports and Endpoints, the physical "port" points
+> "upstream".  Software interpreting the trace event may want to know
+> the direction (or whatever one wants to call it) because it cannot
+> tell from the address 0000:00:03.0 what the PCIe type is.  Having to
+> look this up in lspci seems cumbersome.  So it may be worthwhile to
+> include either the port's direction or the device's PCIe type in the
+> trace event.
+> 
+> Of course, hotplug only exists at Root or Downstream Ports, so any
+> trace event generated from the PCIe hotplug driver will pertain to
+> a downstream-facing port.  But the bandwidth controller also binds
+> to Upstream Ports and its trace events may thus pertain to link speed
+> changes at an upstream-facing port.
+
+Got it, i will device's PCIe type,
+
+> 
+> Thanks,
+> 
+> Lukas
+
+Thanks for valuable comments.
+
+Best Regards,
+Shuai
 
