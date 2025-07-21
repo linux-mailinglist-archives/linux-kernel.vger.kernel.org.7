@@ -1,78 +1,115 @@
-Return-Path: <linux-kernel+bounces-739917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB4E9B0CD03
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 23:59:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9143B0CD08
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 23:59:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2794A6C4CE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 21:58:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 268B117E69F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 21:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517442327A3;
-	Mon, 21 Jul 2025 21:59:02 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78C323B61E;
+	Mon, 21 Jul 2025 21:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CL+5bBN1"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8113245948
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 21:59:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8AF22D785;
+	Mon, 21 Jul 2025 21:59:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753135142; cv=none; b=jhyEAzzgwDznmXlMhjVd7FxYAk3VxJ0p5dZbkRofav/tzNPKP+4f6NqKEEK8Xw4BZ30LqRpKdZGg66EPo6XqO+3q9XUbyTGHU/ZcAT+9zSZ12Uz6up41MixuHuNJADuogMKkcyGaVdlbOX7Cos0mZr2rIOdx9uhC+yeHYjpe9/Q=
+	t=1753135184; cv=none; b=LRZubjnS4iJMjSUWvLnBhqGS3euVtdIKcnFYa5SvNTMRE2C05qH0AHwLmB4MOU3Y2/mS5G5FeygU81ypQqSQ5YH0msp6lMxbKaLNC+QnS5lwyEFsSwiYcIKtDrVlp+5KsbrX3NvQW2feh4DEZVp5juUoVOM8tTr3b1Ye4QsQi0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753135142; c=relaxed/simple;
-	bh=rGnoRmw/Fgx9tAcfXV69tJ4xCiAa70cTtXn6fbs43Kk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=VjUz9C2/UQPDbfnOcSB2WC6Yww+Mrnm7tDeMnY+EisbyUi3JUA9UCrbYhO4Nw78PaxUCV4be4thmXz3fOhEfUSUunp5+SmJ7XoDGGmTX4ttrm6emsFj0p+419v7HbPFc2GDhqQfv9Af/1V7W1szp4FfKHCRYI9UW3h6sXDGDmyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3ddba1b53e8so52360885ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 14:59:00 -0700 (PDT)
+	s=arc-20240116; t=1753135184; c=relaxed/simple;
+	bh=gCOOFpCoTt+/b7OiEKIdXM21IF0ykuPxhhT1C++qe/c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wr7etF11D/EggZ6f+W8iZBkHRDSKIc5A4FGXFqOjBE7FG0vEqqWf5wOsngNm1F9R7ASo8q0KIYDU1utLc46yapD3bf4h4lb/f9YfiXUG2OnNPk2sxY0S3aXHee+mQjcgr2OVaQw6yDX4EaiJoqj2Lrpig46tUXsYZRsFLw8tRMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CL+5bBN1; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-313fab41fd5so1214176a91.1;
+        Mon, 21 Jul 2025 14:59:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753135182; x=1753739982; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gCOOFpCoTt+/b7OiEKIdXM21IF0ykuPxhhT1C++qe/c=;
+        b=CL+5bBN12QAY0ixKUThGx6WELosGHcOBmpcBhj32rR5XmmZiprhz1lT8sBBZu/UILl
+         z4kMwkASrBcSBhTymUzLq4PBdtvznAhaVB1a5xX89nNbydMq8Pm3+mXpMmdac6DUGx2p
+         mmYXaYpjvzkxpC40K2GDnqJAGGqRo6SV0+goslVIGFPYx9UBy12LHBG4cQyb0EB+rAI+
+         tDk1SNSDaj2KmdCblBxI8o6v5j+AfDzkkGM2dHxm3r0zsiO7ntXbEXFE9Zndz6dq4VRi
+         QcEQ+a4RdKjz7XW0WQmCI6yCeIqQxNx0q+weBFiOJQhA0TcsUmmKzBqTpTH6foATQKMI
+         Tu4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753135139; x=1753739939;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=j9twqwIZKgcnKMKrMO0gyBWU9xS7PLKoJCfIDeBdMaE=;
-        b=UKJPX0bZQbIXo2ENxjJyXVmcwjdFD7/5ZUomJ2SlfZ7d5iFGcc8SPlWq0pAM6i3jS2
-         /spg1B3dHGoI1TbA6r/fo+EnbPr547jizKuSVFGRZ3/uYPm2nHKhI6reSaBr6WGa9mM0
-         vgGYO+1/NJUFfE9UrjPAe1deg6ey3LPbIdFGfLOUZ63BqKImfFfA1xaJuXQ54MDt00ZB
-         sZkgi5yDze16eqdTeMSB1aZn02/oUfnyVQZb5DhCDRsqO++JaDQfAvcvBA3aMDMwDwM8
-         XJ5WN2bHS4PNLCGQE1N3jXcKJL9Lkc9D1kcjfRfEhi65xZS+UfQxVvCcfRoYyC1afopc
-         EgYg==
-X-Gm-Message-State: AOJu0Yz91vSqBEYUAXFd79/eCcSyIVEVpQMLXqH9E8SS92gdvIFkDyi4
-	vaA8YLdArZfSJaieBTm+RdDyNpYX6rj9kzpJ4aGqqL3yIZryfTIIOu8Lqc2UD/gb2wM6KuCI61H
-	Y2zwW+3EVH74I6+fDbwXeTH+8s6mza270gIpKNOvak/jSA9B4wpol1s8zXMc=
-X-Google-Smtp-Source: AGHT+IG6GOv9yIkjTvXU2o8o8frYLsv/tgmUWV3vFCVGHm6iiIWgQyJZlqGTkKDWwUBVhQjDplnT7piV413UAzYHMQIbHRA5poMZ
+        d=1e100.net; s=20230601; t=1753135182; x=1753739982;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gCOOFpCoTt+/b7OiEKIdXM21IF0ykuPxhhT1C++qe/c=;
+        b=pPqpYOAYvOYgpkGdWLKIgbGgz4zDg4EnRG0FCnlcd0vf4RC+xJsK4VgsYWnfEl8b6K
+         0Vl+KVft1PSvut+s0a4LjtKRUtYd5Y0P2j03IktgQ1Bw4Ua0RSesRQF6dZWqXfQNiqax
+         lwM3m6uhwkmYQ1fPpxsYC/xEMQRqnBb4y3yzjXoZ+1Fyhwbw+IpTKY1i6NOLbX9uhzvn
+         dlSid2vrixp+0D3FmNtPvFKSfEFhz8iQY2oxhT4rHDC2quTzJERnrgMyXE7R1GuKTScm
+         o/QE9qrpx41/vV281f+Du1aCILiToRx3RJmGd+2itGs3SsL5WRCF119lM3APEHacRVFh
+         M35w==
+X-Forwarded-Encrypted: i=1; AJvYcCX5zF9Z9w7b9afnLLbDZrPolgoQu65A7/KvHBs2zpCO5VZ1zU2eskMuYWcSls0X2MReTQuk03oklRhlQVQ=@vger.kernel.org, AJvYcCXCLzR0FOq0VTZPHuKEZO160iAo94CEWhZJ1l8fnQSpPBVFm+PWdvPFzQN4aZlPMo7FCvH52m0OZb4UnP/51I4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx69YCSCRPKsu1JC901u0yPRa7eeST8XrJc1aTDSPJgRm5thvhL
+	lhcFe0d2yLdrrRmEUSgfM469DX7eCohdd9wykgJLB0VWdCtCTsf9oyEsxVqc6WghX1hMOVb1qS2
+	7B10OLbv7LIv778giikbxxh5x4AhJ4gI=
+X-Gm-Gg: ASbGncsSsPQJzrM8R7t3w3eB7JDsKxxaM/WKPm3Abu2KBpG2Ev9eLwTaKQ7Y1M1kLV6
+	Jdw6sqIYwFzdo7w5mRx64MHx/k745rRF4SMy8Qo7rpl5dN3CJsnEAlmXa1mrxgawaGv7iHgXeNs
+	rfUxopGGDxZ4Po8vFHk4sQhPpH25Oajzt4Ts20zgP1HN1CGX+Qd4LKZXCTfw5jV5zQoA9BIF0us
+	lQcQrXG
+X-Google-Smtp-Source: AGHT+IHoEPWMAkV6iMGsEDvCSjEjzV6lIppOH9ZDFEQgHs/G3RC7eyTMmTa1FXxESrNc287Xi4dDiGLnn3bWa/qZVvg=
+X-Received: by 2002:a17:90b:2ec7:b0:31c:3871:27ad with SMTP id
+ 98e67ed59e1d1-31c9e5febd9mr12931859a91.0.1753135182141; Mon, 21 Jul 2025
+ 14:59:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3003:b0:3e2:9fa5:d4a5 with SMTP id
- e9e14a558f8ab-3e29fa5d8e0mr152486745ab.15.1753135139752; Mon, 21 Jul 2025
- 14:58:59 -0700 (PDT)
-Date: Mon, 21 Jul 2025 14:58:59 -0700
-In-Reply-To: <67eaea0c.050a0220.1547ec.016b.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <687eb823.a70a0220.21b99c.0003.GAE@google.com>
-Subject: Forwarded: Re: [syzbot] [bluetooth?] possible deadlock in l2cap_conn_del
-From: syzbot <syzbot+b71bb48c13bf3fed3692@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
+References: <20250519124304.79237-1-lossin@kernel.org>
+In-Reply-To: <20250519124304.79237-1-lossin@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 21 Jul 2025 23:59:30 +0200
+X-Gm-Features: Ac12FXwQv9HVGJAp6Vy9cz0Ne-aQb6-ETcJ5yoM7YPSexUlrihf-hiPis9kBRO0
+Message-ID: <CANiq72=a9BV_VjGUBY+t0=_0SY+JgEMSceLf858hP4LT7SUf2Q@mail.gmail.com>
+Subject: Re: [PATCH] rust: types: remove `Either<L, R>`
+To: Benno Lossin <lossin@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Tamir Duberstein <tamird@gmail.com>, Dirk Behme <dirk.behme@de.bosch.com>, 
+	Kartik Prajapati <kartikprajapati987@gmail.com>, 
+	Aliet Exposito Garcia <aliet.exposito@gmail.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Mon, May 19, 2025 at 2:43=E2=80=AFPM Benno Lossin <lossin@kernel.org> wr=
+ote:
+>
+> This enum is not used. Additionally, using it would result in poor
+> ergonomics, because in order to do any operation on a value it has to be
+> matched first. Our version of `Either` also doesn't provide any helper
+> methods making it even more difficult to use.
+>
+> The alternative of creating a custom enum for the concrete use-case also
+> is much better for ergonomics. As one can provide functions on the type
+> directly and users don't need to match the value manually.
+>
+> Signed-off-by: Benno Lossin <lossin@kernel.org>
 
-***
+Applied to `rust-next` -- thanks everyone!
 
-Subject: Re: [syzbot] [bluetooth?] possible deadlock in l2cap_conn_del
-Author: ipravdin.official@gmail.com
-
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth-next.git master
-
-	Ivan Pravdin
+Cheers,
+Miguel
 
