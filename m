@@ -1,153 +1,180 @@
-Return-Path: <linux-kernel+bounces-739604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59B02B0C871
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:13:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EF6AB0C875
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:14:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02C651AA78AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:13:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCAF117A489
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:13:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EB1D2E03ED;
-	Mon, 21 Jul 2025 16:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0246283FC3;
+	Mon, 21 Jul 2025 16:13:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DIFywGgx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cjbLsZrt"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4149B2853E3
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 16:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8162E03ED
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 16:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753114404; cv=none; b=U41/YoWLWyx4xqlkk6L7scKuicIk4xhN//YaezizKGfQUCLd07Rl3KwvSjjiUPchqOhg1KusA0wXrTrMza4qbBoVcrJWnVHBcdBKu4qHRDv7IYAb9aVPxjQ5ThOkLDGhoXkl9lv81x6VF38w/trWlFDaqvPcR1kRxSjPjYM28S8=
+	t=1753114435; cv=none; b=HSGp5qbalHa8EHI4Z2LQy+rMefxR09I49fVy/RBKgeX1eUUFeGAkYDOe5ecNWoZE2sddw0LSf6ImcXYxLx7n8azrYM0+smAamS1oeEiJRiOFPWdoqu3im4zWVSt5khA9ee6X/OkBJFFW+FBZyO9mUZHwb1Yhn4XjR4c1ynUNG7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753114404; c=relaxed/simple;
-	bh=eP6HpFTt5M0VrV12uHRTWUJPZzddGV0wIeJ1SegML+E=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Gr2mb6aBKWaa0EPyYfC3qgUMQH+buMjruLYBe2/fcBA8IFrmiHftd6aSPVmpdWEpuoZrtiSXJMTjSai50zvXhqvU/bci6zIH5v5WVZW37Qz3qMGrCItcwuYm5HWQjQb9vz4UE6JruPO6HRSPCEPXWPZNTJPNtc90/H5hDIGNQUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DIFywGgx; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753114402;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=eP6HpFTt5M0VrV12uHRTWUJPZzddGV0wIeJ1SegML+E=;
-	b=DIFywGgxzWWN39nHrpBHe/79PXsWOAHzrQQWwTTiTg+xtV6npojDR9Lj+ugs7Jhw2m9l+a
-	KedUyVrbuqn1PUFysM2dLTMeyCcnn2ONhSGg8dNfiZQTG24/QW3lRj0by/2v2Of5ozyMO4
-	qvsRq+JRJyJ88zTd0XTegwLWOTfrcPU=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-201-CWmnFQc1NYy_jmtyjYm4rQ-1; Mon, 21 Jul 2025 12:13:20 -0400
-X-MC-Unique: CWmnFQc1NYy_jmtyjYm4rQ-1
-X-Mimecast-MFC-AGG-ID: CWmnFQc1NYy_jmtyjYm4rQ_1753114399
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3a4fabcafecso2048302f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 09:13:20 -0700 (PDT)
+	s=arc-20240116; t=1753114435; c=relaxed/simple;
+	bh=GGSxE1Hu/CmOz5hk4iCIXmBgYdKQBmbj6Z4PL8VgTak=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=Q8Bnc0usmIsE2J20zOeIWtRD1EsRzwDWmNFwrtZffexOWyOITvQa3qf+kwQiP9OkHsOYNg/+uxO4E1p7PHBF+wSwr8JsKk74l4JNhGr+9slJHKzjr/oJbUbEu3xXTp5H4qSNOeMplODj/FnSDliKnFcyiQp5NZVHwMnyvFJXST8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cjbLsZrt; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-455b00339c8so32286525e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 09:13:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753114431; x=1753719231; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=9BReN8kFhNkqoSb3wxSgjEPGo+Of3+hoptB67zyAW78=;
+        b=cjbLsZrt6/2Ve0zjFZmbBZsIfjFeqQw/cid/lH3mmtdqJFhMH0jLZT206f357Z69Rr
+         jO7DfJyH73EIiPzhrWInpI0ENkhXy+Gm6mE4ER3pspP5zAouql/Xbk3hwnT0traxZhu2
+         Mhgvs7d0HqSX4bwUbvaQOlAcerIeJvoHU5QN63Wq5GxznO3/TnpF4hMlb8zj+A6nU9Du
+         wMd4l0CAh5O2Lu0ocfPCP19GX0h2qXBpGZVBQeJFLNCeIcLhRL3JsyaBQB8xU8w0x1Vc
+         /YupH4fg+JGERAuWgx4+B8aHU6otjdePAirmuwWjVbHOYPhax0Fskoyhi2qRP3vlX302
+         j8Tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753114399; x=1753719199;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
+        d=1e100.net; s=20230601; t=1753114431; x=1753719231;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eP6HpFTt5M0VrV12uHRTWUJPZzddGV0wIeJ1SegML+E=;
-        b=XxTFY6q/XLkTvJuur8m6kHgQauljrUMlTycGe8EDE0BRDWiNQQisjdbmBNFu5ZMvNc
-         cEfkmfHSfpzipaIW6PwA4g4H49UB584Txee31IHB4xWtKKkEKiDkAobEE1eIQZTjxSCT
-         qQd2LyOzJOnLxEEXy7Gf59nqU7kiBHHbGaPAFyvum56GBXZPJy5T6pqwTa7SQsc0At5q
-         G/e+vrSFe0Le47kH5WYRUrgQU2+kaLXHQt1P/yCuBcebqmuQFFqN2f6Y0okMUgJYjuYM
-         c8GkpBlXncbbCugtaqXdGaWp2diFCpxV7XFu7f+kdqyfC4q8c0M4jfEwLJOgfZHIaGmk
-         tVSA==
-X-Gm-Message-State: AOJu0YxlT9hbXS3Bamj/8KrjqjxKiSCj7ezXMCWe3N57NfSOMdwBLlWd
-	pUdOxcizLjoBk6yV2C3mbC+RyT9XIg9nd94gNH3wlPBV5eNLoTlywMPHp9tAP+2dk75ifpeC3oZ
-	9f5eOyM+siWKbuCS6NrqC7KB58meAenPYzsscguyW1wfoKd1reCSbZAoTKO9FTnFBQA==
-X-Gm-Gg: ASbGncszbJGGAV30SwFs96NWJ/GPpgNBliLkQ7T67NpUs9zhU95/Aw1ZHdtkAKryNwD
-	CbHAiDXb617BmD+MGn5tCtRV2jhkcgWjjYh8IndfJMzn1l/CpnqCmUFGTwduuu835PC2e5cF+TT
-	NElijUna/8yn98w7M0hlZnvZrNEKZ+mH9sLa+YV6Js1hzXnscItalAhwQTDfvNr/uBoGeRsNL/8
-	GdchyZIROmpoKy2ykSAmjaLDpWV4F1DyPW2uj+U++nIPQmRciH5+TdFnveeUgI0SeMEwoi8L+zl
-	aiXJAfUzznsPuaOIlXgiR+gr8Pkqu7OKMG8zA5ivK+cm4MEFpTglXGFwyl2hSb/6OA==
-X-Received: by 2002:a05:6000:25c3:b0:3a5:8a68:b815 with SMTP id ffacd0b85a97d-3b60dd996d8mr17044504f8f.46.1753114399366;
-        Mon, 21 Jul 2025 09:13:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFgHb7IPoyQZVbYZX2Z6jGkPlm/aEeWZsfEVFg5fmU98gr7ENzxCxPQYa4SNPQs8aHL13kQpw==
-X-Received: by 2002:a05:6000:25c3:b0:3a5:8a68:b815 with SMTP id ffacd0b85a97d-3b60dd996d8mr17044470f8f.46.1753114398783;
-        Mon, 21 Jul 2025 09:13:18 -0700 (PDT)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.42])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca48986sm10853554f8f.46.2025.07.21.09.13.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 09:13:18 -0700 (PDT)
-Message-ID: <2e362bb6b1eb1146aba3e88cfa9bba5927d5cc70.camel@redhat.com>
-Subject: Re: [PATCH v4 12/14] rv: Replace tss and sncid monitors with more
- complete sts
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Nam Cao <namcao@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, 
- Jonathan Corbet
-	 <corbet@lwn.net>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Ingo Molnar
-	 <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Tomas Glozar
-	 <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>, Clark Williams
-	 <williams@redhat.com>, John Kacur <jkacur@redhat.com>
-Date: Mon, 21 Jul 2025 18:13:16 +0200
-In-Reply-To: <20250721151539.EXglDXpl@linutronix.de>
-References: <20250721082325.71554-1-gmonaco@redhat.com>
-	 <20250721082325.71554-13-gmonaco@redhat.com>
-	 <20250721151539.EXglDXpl@linutronix.de>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
- xyhmqeUWOzFx5P43S1E1dhsrLWgP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+        bh=9BReN8kFhNkqoSb3wxSgjEPGo+Of3+hoptB67zyAW78=;
+        b=L+mH1b+TLqF1OJQ0IdggwG/iJP5Tp+oP7kgJS4Viqhdtjy2LJC6ci9UMftd9X2x6/N
+         QUAcQUv8WekPUJiQzeBSJ1kN9iQC5+l+Gs9LmXICYTiQDNiqnrSof5CDHT5LnUlFLKJm
+         9YoZaRpmIW9MFoQPfxnTdLxQ41dWUPaoz+DtMcDGMZ30U8DpwwtOBtN3/hlBslHVKG8M
+         VrO8tHdDLWnav8tNOYmfx6pgzGXxpWVUGZmnJ7M44AL4imTkC/4tlmANzzBK7x+4Dow6
+         sxu4eLtqbhsJSzQ5rZP9V9DNAXc77UTKFfPCkkjqje6GGJn7kUdns0kIlYaFqSKBzqcC
+         gsmg==
+X-Forwarded-Encrypted: i=1; AJvYcCVtJarlYW5s1rjuW2IYWA0nw+3WUNXSyJaq5m5Uat57SifpAY+UEWNgzWtqb0x03+65rCjMSF9BeuyEZdg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwglReROfF7s/eiz7dPuuuS/9JHxazV62i6QdbLYdCfGs8Khgup
+	XZJj/TzdbF1OgXvrkEIERPxhpJMZRSJgORJwj8Qnd70xOAIkjPrGq0IUZ4vkc5PNsh0=
+X-Gm-Gg: ASbGncsFVVFXwtf0fajHaVe1q58Hly7zRSs2xIGrf8UJ/s3aqYA6lIBV9VfeJnqnFBp
+	oTu/6X8KLuC0DahOnzH76eRmM/2MLcMiCffcU8F5ZOVEljpJSQAUj7+wIi7lf3FEG8+vZBBKys4
+	rVp+8F56ucQhdv0Nk75j3nU3Gjimlzz2d0PT+EGDNGCgh5M7Z0LtZF3OEE+StVbjvwUC0BHpIOm
+	Mb35oMZvlL4IwDkMZULceeGbTYktqvXCiP+6a/zEbvTKVkOnqPECSjiSDVw3QqN8ZtpHHYiWnOZ
+	pDM22B09xU2o8l48mV+UXJ4phVvqpAltqmCYnt9IFlmRJisxOaWG8KuS7oPch+BnpEvojo2217g
+	oXiKLAZLae9Kt5GxvHa/kPo9M1gtANAUHPsIy9g==
+X-Google-Smtp-Source: AGHT+IGS05W2n0Cs3+lkmQ0hawv/FUnUeJ4fwkqkj5rDTWEAfnRp5XtI8zOuQ9QBwRb1AvWITpdyfA==
+X-Received: by 2002:adf:9dc3:0:b0:3a4:f918:9db9 with SMTP id ffacd0b85a97d-3b60e5127e4mr14240084f8f.32.1753114431398;
+        Mon, 21 Jul 2025 09:13:51 -0700 (PDT)
+Received: from [192.168.1.3] ([185.48.76.109])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e80731bsm163234685e9.15.2025.07.21.09.13.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Jul 2025 09:13:50 -0700 (PDT)
+Message-ID: <2b51b856-a1c6-4ff1-b336-ae612e5d1cf5@linaro.org>
+Date: Mon, 21 Jul 2025 17:13:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 00/12] CPU mask improvements/fixes particularly for
+ hybrid
+To: Ian Rogers <irogers@google.com>
+References: <20250627192417.1157736-1-irogers@google.com>
+Content-Language: en-US
+Cc: Thomas Falcon <thomas.falcon@intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Ben Gainey <ben.gainey@arm.com>,
+ Howard Chu <howardchu95@gmail.com>, Weilin Wang <weilin.wang@intel.com>,
+ Levi Yun <yeoreum.yun@arm.com>, "Dr. David Alan Gilbert"
+ <linux@treblig.org>, Zhongqiu Han <quic_zhonhan@quicinc.com>,
+ Blake Jones <blakejones@google.com>, Yicong Yang <yangyicong@hisilicon.com>,
+ Anubhav Shelat <ashelat@redhat.com>, Thomas Richter <tmricht@linux.ibm.com>,
+ Jean-Philippe Romain <jean-philippe.romain@foss.st.com>,
+ Song Liu <song@kernel.org>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20250627192417.1157736-1-irogers@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, 2025-07-21 at 17:15 +0200, Nam Cao wrote:
-> On Mon, Jul 21, 2025 at 10:23:22AM +0200, Gabriele Monaco wrote:
-> > The tss monitor currently guarantees task switches can happen only
-> > while
-> > scheduling, whereas the sncid monitor enforces scheduling occurs
-> > with
-> > interrupt disabled.
-> >=20
-> > Replace the monitors with a more comprehensive specification which
-> > implies both but also ensures that:
-> > * each scheduler call disable interrupts to switch
-> > * each task switch happens with interrupts disabled
-> >=20
-> > Cc: Ingo Molnar <mingo@redhat.com>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> >=20
-> > fixup sts remove sncid
->=20
-> Is this here by accident?
->=20
 
-Damn, again.. thanks for spotting.
 
-> I cannot comment on the model. The CONFIG_X86_LOCAL_APIC case looks
-> complex, but I cannot comment on that either.
+On 27/06/2025 8:24 pm, Ian Rogers wrote:
+> On hybrid systems some PMUs apply to all core types, particularly for
+> metrics the msr PMU and the tsc event. The metrics often only want the
+> values of the counter for their specific core type. These patches
+> allow the cpu term in an event to give a PMU name to take the cpumask
+> from. For example:
+> 
+>    $ perf stat -e msr/tsc,cpu=cpu_atom/ ...
+> 
+> will aggregate the msr/tsc/ value but only for atom cores. In doing
+> this problems were identified in how cpumasks are handled by parsing
+> and event setup when cpumasks are specified along with a task to
+> profile. The event parsing, cpumask evlist propagation code and perf
+> stat code are updated accordingly.
+> 
+> The final result of the patch series is to be able to run:
+> ```
+> $ perf stat --no-scale -e 'msr/tsc/,msr/tsc,cpu=cpu_core/,msr/tsc,cpu=cpu_atom/' perf test -F 10
+>   10.1: Basic parsing test                                            : Ok
+>   10.2: Parsing without PMU name                                      : Ok
+>   10.3: Parsing with PMU name                                         : Ok
+> 
+>   Performance counter stats for 'perf test -F 10':
+> 
+>          63,704,975      msr/tsc/
+>          47,060,704      msr/tsc,cpu=cpu_core/                        (4.62%)
+>          16,640,591      msr/tsc,cpu=cpu_atom/                        (2.18%)
+> ```
+> 
+> This has (further) identified a kernel bug for task events around the
+> enabled time being too large leading to invalid scaling (hence the
+>   --no-scale in the command line above).
+> 
+> Ian Rogers (12):
+>    perf parse-events: Warn if a cpu term is unsupported by a CPU
+>    perf stat: Avoid buffer overflow to the aggregation map
+>    perf stat: Don't size aggregation ids from user_requested_cpus
+>    perf parse-events: Allow the cpu term to be a PMU
+>    perf tool_pmu: Allow num_cpus(_online) to be specific to a cpumask
+>    libperf evsel: Rename own_cpus to pmu_cpus
+>    libperf evsel: Factor perf_evsel__exit out of perf_evsel__delete
+>    perf evsel: Use libperf perf_evsel__exit
+>    perf pmus: Factor perf_pmus__find_by_attr out of evsel__find_pmu
+>    perf parse-events: Minor __add_event refactoring
+>    perf evsel: Add evsel__open_per_cpu_and_thread
+>    perf parse-events: Support user CPUs mixed with threads/processes
+> 
+>   tools/lib/perf/evlist.c                 | 118 ++++++++++++++++--------
+>   tools/lib/perf/evsel.c                  |   9 +-
+>   tools/lib/perf/include/internal/evsel.h |   3 +-
+>   tools/perf/builtin-stat.c               |   9 +-
+>   tools/perf/tests/event_update.c         |   4 +-
+>   tools/perf/util/evlist.c                |  15 +--
+>   tools/perf/util/evsel.c                 |  55 +++++++++--
+>   tools/perf/util/evsel.h                 |   5 +
+>   tools/perf/util/expr.c                  |   2 +-
+>   tools/perf/util/header.c                |   4 +-
+>   tools/perf/util/parse-events.c          | 102 ++++++++++++++------
+>   tools/perf/util/pmus.c                  |  29 +++---
+>   tools/perf/util/pmus.h                  |   2 +
+>   tools/perf/util/stat.c                  |   6 +-
+>   tools/perf/util/synthetic-events.c      |   4 +-
+>   tools/perf/util/tool_pmu.c              |  56 +++++++++--
+>   tools/perf/util/tool_pmu.h              |   2 +-
+>   17 files changed, 297 insertions(+), 128 deletions(-)
+> 
 
-Do you mean the amount of tracepoints or the state in the monitor?
-
-As far as I'm aware some special IRQs on x86 use those tracepoints, and
-I needed to use all of them not to miss real interrupts, which I need
-to understand if interrupts where disabled programmatically or by a
-hardware IRQ.
-
->=20
-> But things look fine from RV perspective, so:
-> Acked-by: Nam Cao <namcao@linutronix.de>
-
-Thanks!
-Gabriele
+Tested-by: James Clark <james.clark@linaro.org>
 
 
