@@ -1,115 +1,111 @@
-Return-Path: <linux-kernel+bounces-738774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87714B0BCE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:43:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49B4BB0BCE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:44:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8A0F167A35
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:42:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80427174C2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF7627FB3A;
-	Mon, 21 Jul 2025 06:42:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F5027F019;
+	Mon, 21 Jul 2025 06:44:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bDfUUXio";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GqCH6LtS"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hi4QzkZl"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32DB927F187;
-	Mon, 21 Jul 2025 06:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8022F32;
+	Mon, 21 Jul 2025 06:44:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753080167; cv=none; b=QWioLANpvkpcEs4yuHpXIqD/UpkS64uqzHIl0uUZJyd+SAAFE2fXWt5adgpzYUoWV1Gli9VQk/GTKvEyeNj9RTCNMrvUmqgedJ5mSBUHLQ4M20jbYFhngJuLPRMu+oTvkwfaoAFCfj+Cybt9Ln0mOIH++92BdF8Mjle3G4AeZaQ=
+	t=1753080284; cv=none; b=Mt5z+P6QCOo+h4VUkvTwMKqsM/X89uWeHjn613zrQ3BbU+Yh9x87vNqnmwq6UqnxWZFzzOE/C8K8PFWZaHce94KAJHXvbPKdLmTUCwlOREGyNrkPSgYkMJfFvn3XD0kpWeTMiDmJZEMihZNv+eNFfMW0UlBqBViDmKeYg+V5R5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753080167; c=relaxed/simple;
-	bh=Y87bhy5daZH8/4KCjU0hN1yCQ/40lLvGcZ4NSSiWxvQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rzg+V14IR86TPkjy3arSv9iaMw7Aacdois8YoOQ5IAOanc22+mbry0MWpF3+3QPs71hfe52GdrIYdER1eDAAoSHHJ1gnQ8c7hNxwQ8UpCtMQtJbq9Nz4531ak6Glnq4HRhxs/rH4e/2HYvmx1l6lngH//GaS8Xb/6frT6oiSw2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bDfUUXio; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GqCH6LtS; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 21 Jul 2025 08:42:40 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753080163;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tyczl2pXIS5un450KeY12IY1AEuLzrL/JOTCmCTx0/Y=;
-	b=bDfUUXioek9CJPvHOobeJUFRkzBLUB4SxeE7NHC9ODhWlWmij0QEEU8AaC+a4Y8vHB+v/r
-	vjqq+jqE5ZJPQU9dvC9XKUfiDg9mOwznhjswrKSpysrWTHy5bRLE8uikKkLAD5Zj0iFTjz
-	YXKOIGPO6+m9pAIAi/Nk6QdDKFHyxPdQvI8ZCZgn0G+D8O2rGhRAhX4avhjPm65L3mMfhM
-	eLvE5drLzj0rJJtQaAS8tyxQnx5wSj6EFvrjmz8b2CZyh0b1b4xFdszwhisYWCEd4xlKfm
-	pCtRWmAXiLHgtnDgqW1LBlID3Jn6KiabOxhgfhscrpLFti4df0DlUCjKu7wZSQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753080163;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tyczl2pXIS5un450KeY12IY1AEuLzrL/JOTCmCTx0/Y=;
-	b=GqCH6LtSDPllEmiW8hSXADeWdGxHElcJ8pEB2JVXeLV0OpRpMGQktzjDkwXz4EWuGmvo5Z
-	z33lXSs4UrMWhWAA==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Willy Tarreau <w@1wt.eu>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
-	Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Nicolas Schier <nicolas.schier@linux.dev>, Kees Cook <kees@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, linux-doc@vger.kernel.org, workflows@vger.kernel.org, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v5 06/15] fs,fork,exit: export symbols necessary for
- KUnit UAPI support
-Message-ID: <20250721075849-b3cf33b6-2516-4707-bab6-53fe95afbffa@linutronix.de>
-References: <20250717-kunit-kselftests-v5-0-442b711cde2e@linutronix.de>
- <20250717-kunit-kselftests-v5-6-442b711cde2e@linutronix.de>
- <20250718164412.GD2580412@ZenIV>
+	s=arc-20240116; t=1753080284; c=relaxed/simple;
+	bh=ru2N3G9QlQpKucfm/MDwmjES7XxxA8npfC7WYOfwH8k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FbgJYPzHUDHsS3lUF1rGfpqDh8qC821KBvVksvR9RnE6wQr+bYgQi8ag6RR2imLmLQ9vr3DM6y8MZUaLZ9mKku2m9906kyNMayoNqR8SU+gsU4x4eaJXmJA2jWfKB76s6lL6cx/Z4yZ1e3aHF+5mTdsEMrr3JKOD422Cds7Iugw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hi4QzkZl; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-74b54af901bso2524391b3a.2;
+        Sun, 20 Jul 2025 23:44:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753080282; x=1753685082; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BFzStXrIzMQ50+YWw8CsyRcUVZdk9Q6pgB4zYanj+xs=;
+        b=hi4QzkZl3sw2t4EyTCdVJMSBOAWsTbAoPHxdrz9jtT7LwveUtrhzhvU51L+cQLWUiK
+         +blB0I1THITE76ZDqFWYRCcMrARW+HB2zXuLzk5XHgPNconNaAqwI0CryGcV6FgiPxET
+         mqYiyTgiHQ6cxWTjbXoR0nAYHw8mHfu7wljuLHX305SD//JwXXd2AP16Hx5a29yEdFW0
+         WTMieiCajtOgUWJ+RwL2j2y9e9nST6iptlIapHq9jKLjAp1MCOSp0jVrrtx9lzzZZaqs
+         w5T0wxRHmAi+p4e+z7Lf0ojF3Me5Y9BbcuVxuqYI74JRImDKGZGMSw24qXxH8pZ8cGJS
+         Yq2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753080282; x=1753685082;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BFzStXrIzMQ50+YWw8CsyRcUVZdk9Q6pgB4zYanj+xs=;
+        b=Zzxx4yqcDwITgSstxJjJUEsutrIpEUV+2qoqCcVpuWeJ7lFQwu8ZDd873p8wPK3unN
+         XoWoKG/JA65e6ohRfb+RlCp4DoPvW+Y+JbRHHiCszZRv1OSBpxgiB7vFo0i57fFTCBtl
+         bFiMtuiV1jW4wyVbjA5IJptIUMGmxj2igV4MBhR4aq660VH14f6zlE36g/7curzAh2Wl
+         cSpXCOtCfOhmI1geJZeIEePR870gAxEVxdFRsR+cZ1tEr94Wzpc7WvhesL9p/Jo45FPe
+         SHnaqJrjV9UmXlVJ1LzQnMizr60QL11MVMAagrMQSazsEqYUOX+udTGD2MhWkB6C6zKL
+         aUnw==
+X-Forwarded-Encrypted: i=1; AJvYcCX6CaAL2mhOO6yqN9WwNtTODOlLIKT0iIvMPBwjhrG98sSdAkF9T9LEb4hJFJRx07ZsHgsDvE0Q/V332Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyORixrcckqBGsDaOh7ai23HiI8KvsRuggLk3vcYAkFDTzpJXa7
+	s+cbmufFYC+KzDQTlPhCFH4cLvRp60NooFn2BrZZaBlMwBrzFxSQ8e4H
+X-Gm-Gg: ASbGncsEQO93f7LvL72RaytCR6UoG7eTXS9yiNPBDWve4iruebZKdDP6RFmdeJyQLWe
+	CZphxhjLUj0K3fZ06lc7vStzUBZcuIcohAV0wuXCh5Evja4Hb3UXjSRH0iEl2jPFGeqJeA4ET9C
+	Zka8xiHTPEkGAIbO8uTMRguuSJTDsxrp1Q29zDyZi68BlqO2tD/2/ZFBiXzeh0lIf2bKT8u0cSX
+	eEzhv+gbnKwT+5oZnbgFoOAWTaZEY672N/E41CufeT0mP7bisxMAXm3+kiX8haV96H1PUWmvM2W
+	vU3apVJdiIHw5qCDmB1FptS//xRzwssP9UvdeKAz1zTI3xx97X1mUVr0xes5lR+j+JdNKDMq9NL
+	6hlJKI8xU1g8qCQ5ThGKnIxdHQU5ynHBvrg==
+X-Google-Smtp-Source: AGHT+IHjfgFkHIbFBk5iJ+h1OPVfZ2wkUNERMf2UKiPsawlLsz2eMoKf86B1NSK+GYht5Adq8pSVVQ==
+X-Received: by 2002:a05:6a20:a103:b0:22d:fd6:95e0 with SMTP id adf61e73a8af0-237d66186dcmr33208437637.11.1753080282080;
+        Sun, 20 Jul 2025 23:44:42 -0700 (PDT)
+Received: from skc-Dell-Pro-16-Plus-PB16250.. ([132.237.156.254])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759cb156a0fsm5080765b3a.98.2025.07.20.23.44.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Jul 2025 23:44:41 -0700 (PDT)
+From: Suresh K C <suresh.k.chandrappa@gmail.com>
+X-Google-Original-From: Suresh K C
+To: vkoul@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	pierre-louis.bossart@linux.dev,
+	sanyog.r.kale@intel.com,
+	shuah@kernel.org,
+	suresh.k.chandrappa@gmail.com,
+	yung-chuan.liao@linux.intel.com
+Subject: 
+Date: Mon, 21 Jul 2025 12:14:31 +0530
+Message-ID: <20250721064432.4043-1-suresh.k.chandrappa@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <aH3LEmB3hafb3T8E@vaman>
+References: <aH3LEmB3hafb3T8E@vaman>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250718164412.GD2580412@ZenIV>
 
-On Fri, Jul 18, 2025 at 05:44:12PM +0100, Al Viro wrote:
-> On Thu, Jul 17, 2025 at 10:48:08AM +0200, Thomas Weißschuh wrote:
-> > The KUnit UAPI infrastructure starts userspace processes.
-> > As it should be able to be built as a module, export the necessary symbols.
-> > 
-> > Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-> 
-> No.  This is just plain wrong.  This is way too low-level; teach kernel/umh.c
-> to provide what you need, but do *not* add more kernel_execve() callers.
+Subject: Re: [PATCH v1] soundwire: replace scnprintf with sysfs_emit for sysfs entries
 
-Sounds good.
+>> There is trailing whitespace error, pls run checkpatch before sending patches
 
-> And the situation with ramfs needs cleaning up, but "export put_filesystem()"
-> is not a solution.
+Thanks for pointing that out. Iâ€™ll run checkpatch and update the patch accordingly.
 
-Cleaning up would mean to stop calling put_filesystem(), as it is a no-op
-here anyways, right?
+>> +	return sysfs_emit_at(buf, pos, "%4x\t%4x\n", reg, value);; 
 
+>>double colon?
 
-This would still leave the exports for replace_fd(), create_pipe_files()
-and set_fs_pwd(). Instead of using kernel/umh.c, I can also extend
-kernel/usermode_driver.c to provide these in a way that works for me.
-But kernel/usermode_driver.c is dead code, unused since commit
-98e20e5e13d2 ("bpfilter: remove bpfilter")
-Would it be fine to export those symbols? And delete usermode_driver.c,
-as carrying around an unused generic framework seems pointless.
-
-
-Thomas
+Thanks for catching that. The double semicolon was unintentional â€” Iâ€™ll remove the extra one and send an updated patch
 
