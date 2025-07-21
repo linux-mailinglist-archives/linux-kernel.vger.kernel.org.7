@@ -1,155 +1,186 @@
-Return-Path: <linux-kernel+bounces-738544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3F07B0B9D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 03:54:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A845B0B9D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 03:54:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCF8917676F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 01:54:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE50C3B8B53
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 01:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40279187554;
-	Mon, 21 Jul 2025 01:54:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="WPXvFXUf"
-Received: from r3-23.sinamail.sina.com.cn (r3-23.sinamail.sina.com.cn [202.108.3.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1710519309C;
+	Mon, 21 Jul 2025 01:54:31 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5913F1552E0
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 01:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039518F40;
+	Mon, 21 Jul 2025 01:54:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753062885; cv=none; b=BNGrpJJ7noeQGOcBmdMix80yzYSIPPq9kihU6HeF51zpJ3uZEa65fQAifLrJWJPY2SoXyeefet5abptmQ5x+FUVFMRVM/fXXlfGNCo8p6dcqQ9LOCIWCQreaLmIZGsNxNU/ZgDSfu7tLAej748cqzNO8k2+AuxMm9+c9qkpy2Ek=
+	t=1753062870; cv=none; b=NjPNERGLPPKCCF9ebaNUAzFsrb37N7Q/ZJO8CRdEVVL9pvNaYKwoxGCTOgY5hK8wu58+5I4y+qnkaDEjepq+ct/BQsyuy7J8HKQI7f5R5Iw4/9yhonTIkiNFnDYliOvaFjO4w1uJGF+ghHgs9X0seLcBxZGjw/R5E261Ir8Zqvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753062885; c=relaxed/simple;
-	bh=MTeILvIWndtm1ffzHzoYdvPwWE9UfV4Rx7MrMAfThPI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LhJOO5v1Caj5XnpjxtpAqItrxnhI4zGkVJw4+8nPwL5PS2uwmmH/zEMxT9bISYKbi68frj1W4eNPDREXKs7UxuosXaX4MFdN0WIl2ePxMIPQJAd1+rCAarMXrKMTKIYSCjf+MYt89XBgr6rrNAnazd30biZzMip+gw0ydLcB2ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=WPXvFXUf; arc=none smtp.client-ip=202.108.3.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1753062880;
-	bh=SRgqWfSYU2IOF/GWkWH19U+vCR6e26EDXiwGfe8nhEk=;
-	h=From:Subject:Date:Message-ID;
-	b=WPXvFXUfnDcfW5gkFFHzs3HtHOvBTk/Zi2NUH58h5DIOP8FE2DiZbgfDOqketfZq2
-	 UkpKKTY5ij5d6yvdI0iEehU7ATNpCCPkSffo8xvYmZ8dF1UgbUZbFm/hsjzY5J4vNa
-	 Z2xGJOaHQI6Kmk5N1bek1mN1pNap0CeE2kwK/1mA=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.31) with ESMTP
-	id 687D9DB300003481; Mon, 21 Jul 2025 09:53:56 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 5011026816558
-X-SMAIL-UIID: 992DC0AA2BF14D88B1685A709B085724-20250721-095356-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+4bb2305559463e8f6a2a@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [kernfs?] possible deadlock in kernfs_iop_getattr
-Date: Mon, 21 Jul 2025 09:53:43 +0800
-Message-ID: <20250721015344.2609-1-hdanton@sina.com>
-In-Reply-To: <67f82b19.050a0220.355867.000f.GAE@google.com>
-References: 
+	s=arc-20240116; t=1753062870; c=relaxed/simple;
+	bh=lKAzAIp3dgL4Rokm+Bq94JJNgfNlAz5gm+nJYk/NyW0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MHkA/EDXY0KCl+nRD7ABWWfNNC1xaYzJRwR7ngSIlZU8jc2ouAgQLaGdD9k0+r2lOziRiNOKFkpm6GMoPX5s/C8qJOSZjza+LFz6AjD8esw05YLx4gCIQVNcC60i1883ihrP0mpI8xGQ6KYC3s+Grihyy/X8yi0zntrkpCM0N5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4blk3N6xS3zYQv5V;
+	Mon, 21 Jul 2025 09:54:24 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id AC2271A0A5A;
+	Mon, 21 Jul 2025 09:54:23 +0800 (CST)
+Received: from [10.67.110.36] (unknown [10.67.110.36])
+	by APP4 (Coremail) with SMTP id gCh0CgAnoxPOnX1olwnVAw--.52220S2;
+	Mon, 21 Jul 2025 09:54:23 +0800 (CST)
+Message-ID: <88286bd2-a833-47e3-a0f0-896fbdd3fcbb@huaweicloud.com>
+Date: Mon, 21 Jul 2025 09:54:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next] selftests/ftrace: Prevent potential failure in
+ subsystem-enable test case
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Shuah Khan <shuah@kernel.org>, Yuanhe Shu <xiangzao@linux.alibaba.com>,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <20250710130134.591066-1-wutengda@huaweicloud.com>
+ <20250710153409.3135fb17@batman.local.home>
+Content-Language: en-US
+From: Tengda Wu <wutengda@huaweicloud.com>
+In-Reply-To: <20250710153409.3135fb17@batman.local.home>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgAnoxPOnX1olwnVAw--.52220S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJFWrGF15XFy3Xr45ur4xCrg_yoW5AF15p3
+	4xAasIkwn3GFWYk3sag3Z5XFyrXrWvyrZ0ya15Jr15Ar1DAryxXFn7Kr45WF47WrZYv3s3
+	A3WI93W3ZFyqy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
+X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
 
-> Date: Thu, 10 Apr 2025 13:33:29 -0700	[thread overview]
-> syzbot has found a reproducer for the following issue on:
+
+
+On 2025/7/11 3:34, Steven Rostedt wrote:
+> On Thu, 10 Jul 2025 13:01:34 +0000
+> Tengda Wu <wutengda@huaweicloud.com> wrote:
 > 
-> HEAD commit:    2eb959eeecc6 Merge tag 'for-linus-6.15a-rc2-tag' of git://..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16fdf23f980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=4c918722cb7e3d7
-> dashboard link: https://syzkaller.appspot.com/bug?extid=4bb2305559463e8f6a2a
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1352b7e4580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17499d78580000
+> 
+>>
+>> Fixes: 1a4ea83a6e67 ("selftests/ftrace: Limit length in subsystem-enable tests")
+>> Signed-off-by: Tengda Wu <wutengda@huaweicloud.com>
+>> ---
+>>  .../selftests/ftrace/test.d/event/subsystem-enable.tc     | 8 ++++----
+>>  1 file changed, 4 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/tools/testing/selftests/ftrace/test.d/event/subsystem-enable.tc b/tools/testing/selftests/ftrace/test.d/event/subsystem-enable.tc
+>> index b7c8f29c09a9..3a28adc7b727 100644
+>> --- a/tools/testing/selftests/ftrace/test.d/event/subsystem-enable.tc
+>> +++ b/tools/testing/selftests/ftrace/test.d/event/subsystem-enable.tc
+>> @@ -19,8 +19,8 @@ echo 'sched:*' > set_event
+>>  yield
+>>  
+>>  count=`head -n 100 trace | grep -v ^# | awk '{ print $5 }' | sort -u | wc -l`
+>> -if [ $count -lt 3 ]; then
+>> -    fail "at least fork, exec and exit events should be recorded"
+>> +if [ $count -eq 0 ]; then
+>> +    fail "none of scheduler events are recorded"
+>>  fi
+>>  
+>>  do_reset
+>> @@ -30,8 +30,8 @@ echo 1 > events/sched/enable
+>>  yield
+>>  
+>>  count=`head -n 100 trace | grep -v ^# | awk '{ print $5 }' | sort -u | wc -l`
+>> -if [ $count -lt 3 ]; then
+>> -    fail "at least fork, exec and exit events should be recorded"
+>> +if [ $count -eq 0 ]; then
+>> +    fail "none of scheduler events are recorded"
+> 
+> So if there's a bug that causes the system enable to only enable a
+> single event, this will no longer catch it?
+> 
+> I rather not let the slide.
+> 
+> Can you test this to see if this works for you?
+> 
+> -- Steve
+> 
+> diff --git a/tools/testing/selftests/ftrace/test.d/event/subsystem-enable.tc b/tools/testing/selftests/ftrace/test.d/event/subsystem-enable.tc
+> index b7c8f29c09a9..46a9e6d92730 100644
+> --- a/tools/testing/selftests/ftrace/test.d/event/subsystem-enable.tc
+> +++ b/tools/testing/selftests/ftrace/test.d/event/subsystem-enable.tc
+> @@ -14,11 +14,32 @@ fail() { #msg
+>      exit_fail
+>  }
+>  
+> +check_unique() {
+> +    cat trace_pipe | grep -v '^#' | awk '
+> +	BEGIN { cnt = 0; }
+> +	{
+> +	    for (i = 0; i < cnt; i++) {
+> +		if (event[i] == $5) {
+> +		    break;
+> +		}
+> +	    }
+> +	    if (i == cnt) {
+> +		event[cnt++] = $5;
+> +		if (cnt > 2) {
+> +		    exit;
+> +		}
+> +	    }
+> +	}
+> +	END {
+> +	    printf "%d", cnt;
+> +	}'
+> +}
+> +
+>  echo 'sched:*' > set_event
+>  
+>  yield
+>  
+> -count=`head -n 100 trace | grep -v ^# | awk '{ print $5 }' | sort -u | wc -l`
+> +count=`check_unique`
+>  if [ $count -lt 3 ]; then
+>      fail "at least fork, exec and exit events should be recorded"
+>  fi
+> @@ -29,7 +50,7 @@ echo 1 > events/sched/enable
+>  
+>  yield
+>  
+> -count=`head -n 100 trace | grep -v ^# | awk '{ print $5 }' | sort -u | wc -l`
+> +count=`check_unique`
+>  if [ $count -lt 3 ]; then
+>      fail "at least fork, exec and exit events should be recorded"
+>  fi
 
-#syz test  upstream  master
 
---- x/drivers/block/loop.c
-+++ y/drivers/block/loop.c
-@@ -443,9 +443,8 @@ static void loop_reread_partitions(struc
- 			__func__, lo->lo_number, lo->lo_file_name, rc);
- }
- 
--static unsigned int loop_query_min_dio_size(struct loop_device *lo)
-+static unsigned int loop_query_min_dio_size(struct file *file)
- {
--	struct file *file = lo->lo_backing_file;
- 	struct block_device *sb_bdev = file->f_mapping->host->i_sb->s_bdev;
- 	struct kstat st;
- 
-@@ -497,7 +496,8 @@ static int loop_validate_file(struct fil
- 	return 0;
- }
- 
--static void loop_assign_backing_file(struct loop_device *lo, struct file *file)
-+static void loop_assign_backing_file(struct loop_device *lo, struct file *file,
-+					unsigned int min_dio_size)
- {
- 	lo->lo_backing_file = file;
- 	lo->old_gfp_mask = mapping_gfp_mask(file->f_mapping);
-@@ -505,7 +505,7 @@ static void loop_assign_backing_file(str
- 			lo->old_gfp_mask & ~(__GFP_IO | __GFP_FS));
- 	if (lo->lo_backing_file->f_flags & O_DIRECT)
- 		lo->lo_flags |= LO_FLAGS_DIRECT_IO;
--	lo->lo_min_dio_size = loop_query_min_dio_size(lo);
-+	lo->lo_min_dio_size = min_dio_size;
- }
- 
- static int loop_check_backing_file(struct file *file)
-@@ -532,7 +532,7 @@ static int loop_change_fd(struct loop_de
- {
- 	struct file *file = fget(arg);
- 	struct file *old_file;
--	unsigned int memflags;
-+	unsigned int memflags, blksz;
- 	int error;
- 	bool partscan;
- 	bool is_loop;
-@@ -581,9 +581,10 @@ static int loop_change_fd(struct loop_de
- 
- 	/* and ... switch */
- 	disk_force_media_change(lo->lo_disk);
-+	blksz = loop_query_min_dio_size(file);
- 	memflags = blk_mq_freeze_queue(lo->lo_queue);
- 	mapping_set_gfp_mask(old_file->f_mapping, lo->old_gfp_mask);
--	loop_assign_backing_file(lo, file);
-+	loop_assign_backing_file(lo, file, blksz);
- 	loop_update_dio(lo);
- 	blk_mq_unfreeze_queue(lo->lo_queue, memflags);
- 	partscan = lo->lo_flags & LO_FLAGS_PARTSCAN;
-@@ -974,6 +975,7 @@ static int loop_configure(struct loop_de
- {
- 	struct file *file = fget(config->fd);
- 	struct queue_limits lim;
-+	unsigned int blksz;
- 	int error;
- 	loff_t size;
- 	bool partscan;
-@@ -1043,8 +1045,9 @@ static int loop_configure(struct loop_de
- 	disk_force_media_change(lo->lo_disk);
- 	set_disk_ro(lo->lo_disk, (lo->lo_flags & LO_FLAGS_READ_ONLY) != 0);
- 
-+	blksz = loop_query_min_dio_size(file);
- 	lo->lo_device = bdev;
--	loop_assign_backing_file(lo, file);
-+	loop_assign_backing_file(lo, file, blksz);
- 
- 	lim = queue_limits_start_update(lo->lo_queue);
- 	loop_update_limits(lo, &lim, config->block_size);
---
+Hi, Steve
+
+I noticed this patch hasn't been merged yet. Do you plan to merge it soon?
+If you're too busy, would you like me to help submit it instead?
+
+Regards,
+Tengda
+
 
