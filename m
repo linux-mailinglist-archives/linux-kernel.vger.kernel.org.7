@@ -1,108 +1,98 @@
-Return-Path: <linux-kernel+bounces-739676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02E60B0C996
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:22:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E309B0C998
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:23:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 068A51C23241
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:21:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 355FB1885C9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40282135AC;
-	Mon, 21 Jul 2025 17:20:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 242D22DC32B;
+	Mon, 21 Jul 2025 17:21:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="M6lAY38n"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080861FE44B
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 17:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OD1Tj6Zn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872162D373A
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 17:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753118456; cv=none; b=uwmhBhMzkIJE9SYBGGl7Ck15Igd5T7ZTSi4ctJOb6I9LwXIJ/Nl+iWFKR/bGY4j0jcQgaH6WhKiG6VffnfrPCL5xgkXmQZ4ziFoSZZ3G5CuLm4uxQ15I/KTyhv1BHaohoH6Xzr7vK2HLzPO4Gy0lDSWKkzI6I+cT+hZnM2mWrvc=
+	t=1753118497; cv=none; b=PPnrqj4LTjO/OdnTx9p0nyoDZCt+h5oCqk4izz01F11kLkf1Esn+uH20VcSe0sx7Zh9IhAfwsZ+wW8zkZlw4PKFETYMx180hIx/SKYHXPYVpHPKWeRzUvsTyejEoU29dkeaT41T9wMbgFX7sWujwlQmJ8iUHvNgcHlHtVQnsWcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753118456; c=relaxed/simple;
-	bh=0NlFb+qovKUIq/o0/4pCjyJKfbYaztgHRLswjYbe0qI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C28VKnkC7hAiiehor5cZLOqWMLK0VV5wEFPQMzW4YDhQpcojk5/6jfGNC1bz99HORtRIv1of3jYaT1o4o70TbChaaC9uHtbbkr3tFxNUqiG7qRJ+GAk12wGvGLbbr5suAOeTHjKuUgjOyYxoeQxJxYhnphN3FYvuiwFqheWPLyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=M6lAY38n; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.184.60] (unknown [131.107.160.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 82C482115836;
-	Mon, 21 Jul 2025 10:20:54 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 82C482115836
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1753118454;
-	bh=F0WeBj2bGuuRDUrwwzYEPFuv3oAaANMb0rzB3x/zEGs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=M6lAY38nEFF6SPpxTb0jBP9+abnYKMYir5Krk+urbD9Y4Z3t0/8JxNOMoSNX0fUsO
-	 FpNzv3YTYyKxz1aNCxTInjwirrXdr/tAAFV9m67PV5iaHZKfIqy5hqXiBd9RY4hSKN
-	 QIvH+QrTMRImtRgveFS0jbwSC3/UPzX3dY5iu3vc=
-Message-ID: <55e5f8d2-2b81-4883-a9ac-ad1a426c4222@linux.microsoft.com>
-Date: Mon, 21 Jul 2025 10:20:54 -0700
+	s=arc-20240116; t=1753118497; c=relaxed/simple;
+	bh=9s7rQgyjBAgX1bh2xvIo6FiM/DYGBd5vVi5RZuquT1c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KUi7w9YIskScN8OJfvmyfSix3H9Ojz38VZaODPKKQWn+9ASFSgIqxAQOyxYCI3Tg7VsHd7vus91JhL+DPWocqo3v4/bNaNgz1VNl6e6NGd5cSPUTTXNYsZUKo4q3iZHMT5o/H1bfM22nbgBZ1nWBLiMZyQf5zYAvMRftTSxYqpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OD1Tj6Zn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A41C1C4CEF4;
+	Mon, 21 Jul 2025 17:21:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753118496;
+	bh=9s7rQgyjBAgX1bh2xvIo6FiM/DYGBd5vVi5RZuquT1c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OD1Tj6ZnqcMm2LXliKEFnlj4Y8bEJ+0cIUZQeqWyuVCOKnhVZrQvJARUi9hz8jByM
+	 C1Lkklsmt3aXczcVrwPYyu6z/nN2p/9FKOg3mUEaitxIOJp4udbaGXaa0NlKU+DkpJ
+	 DCrVUks5C9Py7It6EMnIo0aAmdL7FN5R3GrzMtzw1FaQyEHB3fCi9TQEBgOHOpB6uo
+	 Gup5SW4qiFPCN8VUDF+IIhUv3tNAFRovFpGuQ7nJcA6cOnOWhbQd/Qw4DBqX6mHCTh
+	 jvWj93/GAEcRDS1j6F/EX15mvbl67fUOCxruirVRlyvLC71hDk082z6kiI9Q1gYq9B
+	 96NN06IrGRO0A==
+Date: Mon, 21 Jul 2025 17:21:35 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: wangzijie <wangzijie1@honor.com>
+Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org, bintian.wang@honor.com,
+	feng.han@honor.com
+Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: avoid redundant clean nat entry
+ move in lru list
+Message-ID: <aH53HwGQd2CWOCFM@google.com>
+References: <20250718100706.3948806-1-wangzijie1@honor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: kvm, smccc: Fix vendor uuid
-To: Sudeep Holla <sudeep.holla@arm.com>,
- Jack Thomson <jackabt.amazon@gmail.com>
-Cc: mark.rutland@arm.com, lpieralisi@kernel.org, arnd@arndb.de,
- wei.liu@kernel.org, mhklinux@outlook.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- maz@kernel.org, oliver.upton@linux.dev, kvmarm@lists.linux.dev,
- roypat@amazon.com, Jack Thomson <jackabt@amazon.com>
-References: <20250721130558.50823-1-jackabt.amazon@gmail.com>
- <20250721-proficient-carrot-cockatoo-393ae1@sudeepholla>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <20250721-proficient-carrot-cockatoo-393ae1@sudeepholla>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250718100706.3948806-1-wangzijie1@honor.com>
 
+I think it'd be better to add a parameter like __lookup_nat_cache(for_dirty).
 
-
-On 7/21/2025 9:15 AM, Sudeep Holla wrote:
-> (I can't see this original patch in my mailbox, got only Marc's response)
+On 07/18, wangzijie wrote:
+> __lookup_nat_cache follows LRU manner to move clean nat entry, when nat
+> entries are going to be dirty, no need to move them to tail of lru list.
 > 
-> On Mon, Jul 21, 2025 at 02:05:58PM +0100, Jack Thomson wrote:
->> From: Jack Thomson <jackabt@amazon.com>
->>
->> Commit 13423063c7cb ("arm64: kvm, smccc: Introduce and use API for
->> getting hypervisor UUID") replaced the explicit register constants
->> with the UUID_INIT macro. However, there is an endian issue, meaning
->> the UUID generated and used in the handshake didn't match UUID prior to
->> the commit.
->>
->> The change in UUID causes the SMCCC vendor handshake to fail with older
->> guest kernels, meaning devices such as PTP were not available in the
->> guest.
->>
->> This patch updates the parameters to the macro to generate a UUID which
->> matches the previous value, and re-establish backwards compatibility
->> with older guest kernels.
->>
+> Signed-off-by: wangzijie <wangzijie1@honor.com>
+> ---
+>  fs/f2fs/node.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> Nice catch. This is result of classic confusion with UUID and GUID especially
-> coming from Microsoft who tend to use GUID more.
-> 
-> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> 
-> This also makes me wonder if the initialisation in arch/arm64/hyperv/mshyperv.c
-> is also wrong or may be that's correct only MS guys can confirm as I couldn't
-> find the UUID string for that.
-
-MUCH appreciated!! Apologies for that miss in testing of the older
-kernels. I'll check on our side and will fix what needs fixing.
-
-> 
-
--- 
-Thank you,
-Roman
-
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index 4b3d9070e..b9fbc6bf7 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -460,7 +460,7 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
+>  	struct nat_entry *new = __alloc_nat_entry(sbi, ni->nid, true);
+>  
+>  	f2fs_down_write(&nm_i->nat_tree_lock);
+> -	e = __lookup_nat_cache(nm_i, ni->nid);
+> +	e = radix_tree_lookup(&nm_i->nat_root, ni->nid);
+>  	if (!e) {
+>  		e = __init_nat_entry(nm_i, new, NULL, true);
+>  		copy_node_info(&e->ni, ni);
+> @@ -2926,7 +2926,7 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
+>  
+>  		raw_ne = nat_in_journal(journal, i);
+>  
+> -		ne = __lookup_nat_cache(nm_i, nid);
+> +		ne = radix_tree_lookup(&nm_i->nat_root, nid);
+>  		if (!ne) {
+>  			ne = __alloc_nat_entry(sbi, nid, true);
+>  			__init_nat_entry(nm_i, ne, &raw_ne, true);
+> -- 
+> 2.25.1
 
