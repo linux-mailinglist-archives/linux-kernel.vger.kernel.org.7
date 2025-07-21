@@ -1,258 +1,120 @@
-Return-Path: <linux-kernel+bounces-739489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEF07B0C6DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:49:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C917B0C6DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:49:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5553B1AA7D44
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:49:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFB4E7A47F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888F02D9787;
-	Mon, 21 Jul 2025 14:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2042DCC1A;
+	Mon, 21 Jul 2025 14:48:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="huCnNfOV"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rs9hlKkK"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEDAB2CCC1;
-	Mon, 21 Jul 2025 14:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753109266; cv=fail; b=DO2uvWj+O5316bw758UnQA5UjNzFVhArr6c0KGFncQvb+WyIIw0LOQPe3wF5u3QYznk1cgY81AmVN/DrWRdWLzr/9nIpo/Z/3NsppsaZxlBh0R9NzjX/GejH+l5S5B2dLKyE/ybsLqYP05rrmk1mvcH2k4XycG9Ls6jNLoqHxnU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753109266; c=relaxed/simple;
-	bh=rXQNdtBZVKsvQenD6CwIBawbpqxWLgvWaxuBCPCFNxg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=bO16c/H9kIkfq7qLFmvT6l+5T3+ds6JIRad6aRl+b0CILFgblTgH74DPrcWfZOayn+Re78LQq6ZAbruFB/WHXYZ36244tl4GdPoaY+wdBJn+1SQd5zO9nljnUTRKLrrRygx1tppIp/4gOQz86ifGpmfXqB9PJEqeJzVrzTC9OJQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=huCnNfOV; arc=fail smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753109265; x=1784645265;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=rXQNdtBZVKsvQenD6CwIBawbpqxWLgvWaxuBCPCFNxg=;
-  b=huCnNfOVx9DNsGDbeVbo8LDGwArjMLoNNkmvCZeS7b+IYhPpDOGwr8jd
-   akPcuK//YFjy4EyFAjX+5WUCIPeblf1G3sldBRSeOTeaIs0+IRADD1RK5
-   yIQglrdlT5Vlh5DQ679T23wi0bFuo+sFu9h6KYAt7ZGKQLVzO8jZJ2Rg1
-   /X1c2sZTgnB+2Q1Kfc32fJDI3wTpphEzf0oXTR8pty3CF8tdDgZN4DgYK
-   xJcNHHAn3Bw8+KrTWw77YUj0i7UZq1L3jtz0kaV9naoDnxsx3qax5MIa/
-   A6gXWyTE2uDdrU1st7VR5mITEtn/gg1Fxkp2CsBZeqWu92bBIbTfnboa1
-   g==;
-X-CSE-ConnectionGUID: uvu17atKQEu+DhGic3sSdQ==
-X-CSE-MsgGUID: sk+W4OznT7K8MZLwclJX5Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11499"; a="59123732"
-X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
-   d="scan'208";a="59123732"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 07:47:33 -0700
-X-CSE-ConnectionGUID: RJBgL3FlQ5W1ROp+cN+2wA==
-X-CSE-MsgGUID: 43q92c0PT3eErro1hcI27A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
-   d="scan'208";a="158644794"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 07:47:33 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Mon, 21 Jul 2025 07:47:32 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Mon, 21 Jul 2025 07:47:32 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (40.107.223.55)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Mon, 21 Jul 2025 07:47:30 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qfkrIXWlRe8pSKL+Kb7t/0wReRxv60A3IVYokQ8adQASe2MeLrF4v+/s+rEqFY/nhR9LKDC459KP+NUGCb2RFYGsH7JP/NP6fgXIVoQc/JDXPfwT+M0D4DuNXlnPTpTZw2rfd/BJgo18E+jNROP/RjrE/YWacqjMhY92SxqaVXMIOIswPiFrti6rFr0BJ466h8sL3r+R+gXsa+8Fz71cIjhZ7qmY1q9W1YRsVpsBZULNiWyv9F9YPW1Tt2zHJa8IusyTziNbdey/5uDXv9Qp0YkEAE79PMnS2G6FZJgU5Ul9yLgixFDrmPW1YFG1xc9ExX6vnndZnTfEDr3t8ujosA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lnjqdD4XFVn+Tn9QLO81A9R8M2LVa2rYhOQ6oe2wsvw=;
- b=Ai5YBNz1wTviwGwqEwJ3gfaNAlQuVHJdTrbmUU4sEGmnAZx8IaVcmC04yF1QnNlnI9OHetrmX2XIUp+13Xq/ioip/MKadv/bRLKoOp2BwgHdh19WjXOqCu1cSnBgfkYhysNZWQcebyoeJzEx4sihATIDPHAhOdi8JwSmLfQixMZQmjQZBoC7oti/FV4e7nWL1Is2TUhqTpt+EzJjlm4L7pKswSgXH0z4uMLMsVsT7K22U47MHr7oXlsmr4BJBw2Ui7gHfLbSHvp1nZiPScmk+TIugPFbW2hz5qisarjVmf6v29u7U7ty6u2so8ooQ2/TVzmd8jAy5OweuK5PdyTIUQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CYYPR11MB8430.namprd11.prod.outlook.com (2603:10b6:930:c6::19)
- by PH0PR11MB5903.namprd11.prod.outlook.com (2603:10b6:510:144::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Mon, 21 Jul
- 2025 14:47:28 +0000
-Received: from CYYPR11MB8430.namprd11.prod.outlook.com
- ([fe80::76d2:8036:2c6b:7563]) by CYYPR11MB8430.namprd11.prod.outlook.com
- ([fe80::76d2:8036:2c6b:7563%5]) with mapi id 15.20.8943.029; Mon, 21 Jul 2025
- 14:47:28 +0000
-Date: Mon, 21 Jul 2025 10:47:24 -0400
-From: Rodrigo Vivi <rodrigo.vivi@intel.com>
-To: Ruben Wauters <rubenru09@aol.com>
-CC: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen
-	<joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	<intel-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH v2] drm/i915: replace DRM_DEBUG_SELFTEST with
- DRM_KUNIT_TEST
-Message-ID: <aH5S_IlGAp5Myezx@intel.com>
-References: <20250701115511.5445-1-rubenru09.ref@aol.com>
- <20250701115511.5445-1-rubenru09@aol.com>
- <ea5ac37cfae72d312c47ab1983dd1fcb59edec28.camel@aol.com>
- <aHp0HYR0pfZ-qArI@intel.com>
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aHp0HYR0pfZ-qArI@intel.com>
-X-ClientProxiedBy: SJ0PR03CA0196.namprd03.prod.outlook.com
- (2603:10b6:a03:2ef::21) To CYYPR11MB8430.namprd11.prod.outlook.com
- (2603:10b6:930:c6::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C752B2CCC1
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 14:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753109303; cv=none; b=bxpJ2vG/67T5qQm59Obc1Dw80f2EdFe507I3QF2g5shg6999NzPAnsEQLH69KC7q3fLEiRLNAIwNj3LI9+ygpp1/s/WXG612N4NUy2PegMdWTF7wfB1Rcf84WJZvIL2EmDt9iR6MjoP+6wUYe2zWcNMYJcPLLgM5YFAK9cDwmmM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753109303; c=relaxed/simple;
+	bh=I4jLIWmwGVUJJ/6bdkDboyVQrOENRDt9C4hsL58GpWQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=TtN7LVpOrTNmiMF2P4xx2knzhglYkt0bZP5XhX4vFdswbOMsgbxYJsetk648FRi6G4YLfkjgC6yN5138sWLXy1zA1YCrE+btGEli/6pyxGCwmmckmbBqiAqbfGTcgCqZ5krqW2UJfo1f3rWQbhwGdlT9E/OrIA4ooNAWPYBcXLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rs9hlKkK; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4538f375e86so40041545e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 07:48:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753109300; x=1753714100; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jBPEQ6OO0ExtlokldbPFHvDP61N8dRWQ/XgYp6jRamc=;
+        b=rs9hlKkKHg42FVbsZcAESXc79G6FmMkFlsIPvkIYXfD4yu0sJzdaN8Pa9D6EbviyN/
+         AfLvkrwo9DUCycX2maseLqok3SAs47Rszc9fpwOo6DjrgImyIlA4A2ECStRW5zeo5ycQ
+         rFGsTBWYuFRnaqMKfNrhF4NbneBc9Nwkv1HG4pTFkWPsT0jclOJXuunh7ZhL5X5M0ciK
+         16VS1CfULCHPope4t3c/bR05X3/wmxcfjbU3YcYH4//LRIHcoCS6FWGCRRiI2x1XhOfF
+         kVdqdUepU9yKEQSy7/7LfQatU/umE1PDmslUqiyQJbBt3Ep/GTC2NLgBta50ioLMl4Nw
+         W/Lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753109300; x=1753714100;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jBPEQ6OO0ExtlokldbPFHvDP61N8dRWQ/XgYp6jRamc=;
+        b=ZiU45+RAU7cjrXgigIt3rfpmY29x5H8swFTE4yIjCd5BV2k/7A4osoLVh2E7ysX+95
+         8/6YKO9QLx3jSjx9rP2RjjONthThiZRcP9X3/9mhfagV7ldwrm8QVWJEwiQfsrQjj6MT
+         Pxc4Cs2u+1hIRsuZViGftItGB1sVjMae9SONY2/x+FlNkrUV2faXfSb4nu3Q467kBjib
+         UgXYpVjGsxhP+Gl35QXmvlz4eRqysRiDqFEaCFSXzJz+RKJNuNa+bO+YjUWFomopJMwt
+         5VzPQhAd5lhz5o8fu2ksNFZ27ihBbrrR5alTPSVdMPAUYQb0geqpqzrc9FxW4hXtAp/z
+         Zc+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWN2mmpFN2tpQLmDMTUw8XU4X8WrW38yyElfci8AkS0ZaYOcBROP3JoCG21LLLcrQMg6wvVBRahItOXM20=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxt79f4heTfiKa2rqI9kRJqa0c2BSzcVGaOmoINtu59QQxTv4I3
+	0ekIyq/KNelIEkPIILQSJJeGaDIarDJBmvltFCJuiXzsNjd4PsbrTGodjZImm0CupRjD9Abx5Ej
+	yf/97mKtagf5lAY0znQ==
+X-Google-Smtp-Source: AGHT+IFvYQFbKyyXgMmMx9nK9PaDmq8YZ8gpFhGULfqq/Qkd8G+UVvspeqGM9WubACmqo9Zb7EKKoa6Ux0XDoYY=
+X-Received: from wmth21.prod.google.com ([2002:a05:600c:8b75:b0:456:f62:301d])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:310a:b0:456:58e:318e with SMTP id 5b1f17b1804b1-4562e29c660mr212367875e9.30.1753109300316;
+ Mon, 21 Jul 2025 07:48:20 -0700 (PDT)
+Date: Mon, 21 Jul 2025 14:48:19 +0000
+In-Reply-To: <20250715-topics-tyr-request_irq2-v7-4-d469c0f37c07@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CYYPR11MB8430:EE_|PH0PR11MB5903:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3fa9be38-117f-4dae-c47a-08ddc86583bf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?J5i1zq3S0Ob8RigFq5VqHbh+3MNjpQ0Tj5mpz5g6AaT5Wl+qMb7msx+qRa?=
- =?iso-8859-1?Q?UttSlgKLdNowBO7m3opCvWOtyU327Mppchv7MtGmaxLiV8Mc1wfGj6RDUy?=
- =?iso-8859-1?Q?vefyzaoNwugsfz3D8Lx4YRt0XfAKJ/5W1tMpHWZYOAsDx9mRCewyPsL8Jl?=
- =?iso-8859-1?Q?Znoyw9nPGTAG8RUz7WkD4oEUYp6kNeaMBZW6kmA3yAKNc0gfL3sFs4ma5x?=
- =?iso-8859-1?Q?AbZQdmQPik7azsbmI5kjSeowJy1qcJsOc8sapwLwq2h2ilVs1kAAErTsUb?=
- =?iso-8859-1?Q?kMhu104p+esEuRj86cE347KNcjoDUZJkwpPluE53mHlxvi6oQIp/Nzijl2?=
- =?iso-8859-1?Q?YqT8hndGPsp9nNCZPq8NHxL09laYFC76QpFhyIHogWWd21V1sbPOXQbRoQ?=
- =?iso-8859-1?Q?aFqIVZ8fqH70jk1VnqahfXbUjhcix5MWsak43X7DiaHUAFd8oujH9FurDe?=
- =?iso-8859-1?Q?rKU8fVsWfrVBSfg8s4HZ/xlgHfdiNvEL2hDHQQb+hiutPeFNeB4A34oJQw?=
- =?iso-8859-1?Q?f5S9F6tIpj1/3IUNILd80230NDKIuvgbi7M+Nf+XCuTwn9X2GxDWXngZ3t?=
- =?iso-8859-1?Q?mekqsLVFtvOFdbibNrdjV3zWpwrQ0ibUlKtckK01qLVG8WAO+rgXMHWqfS?=
- =?iso-8859-1?Q?+KmighAxOEcYVZOffr/lM9gIwWfAowYl6s49isc5M1F/h9KXFqWWi9eKkA?=
- =?iso-8859-1?Q?TsPZIgfdMyod+jtLg83vEOkzO8QkMhSEPP7c/wNsjGYCX3FhbEfkZJakbI?=
- =?iso-8859-1?Q?kIC7//yMx8rrDxGMhg+SBm7IGQ7NsVHkP9lw9FRXjn5Mu5al4syLquMDgt?=
- =?iso-8859-1?Q?8V+e5W/gs17kSCRQiG89NCfbx7SEOmKVkqVBBMol8t/VPeA01JI86AdbDn?=
- =?iso-8859-1?Q?JFIjuUJxxILh929MS5vwQo+xwx8WhObNbgE/+IRS+k0JmtVHpV2Mn1cLz1?=
- =?iso-8859-1?Q?KXvDK2wk5hnu/X13FzSxBYMbOcxJb5x/dwI015fm6IpbhYiyJ5YFYcBdao?=
- =?iso-8859-1?Q?LrgU1Sad7sEeFziX5m8nPPEpk2IsWfWl5GrRqMyeFBEQHd5PHFpJRLZ6sH?=
- =?iso-8859-1?Q?XPLA/Tdh+Vy2oML2Cw77NiYE6iZMEZwZ/bxohUoP+mS7T4+ZlNl+iLiDc6?=
- =?iso-8859-1?Q?TtIjt6aogmARiKESr18Olmi1gi9QDSe9jC4hptGWRleleIP/EK55czFLRx?=
- =?iso-8859-1?Q?A0jymRcbT/1mUTAKsalVbixNgj6JKtMo4sEO9h7bTa/TVpWRbsy5YCYsOr?=
- =?iso-8859-1?Q?8JF+FGRndJW2CMQ7CTPFNSNv7+/oTNQOh9jroadKJV0miKAA9bgbjChAzA?=
- =?iso-8859-1?Q?mz0FIQTyxsqOqZA/oaVMrXSPmbF4GRUOw/Q4b5+V5mr4Ozjtlafu0WabAm?=
- =?iso-8859-1?Q?s0+rizFY5S7+vwWOGol5d3NmqBfn0aUX5UGMKnsWNpuP3Zq7tOi8RzP+a8?=
- =?iso-8859-1?Q?PQP9Qfw51wjsuCOybzlApimlg6D300AHchirtScERYk60g6IjxWJv/ctBx?=
- =?iso-8859-1?Q?E=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR11MB8430.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?3a4MAVQG0xfv5d9K42DMiSNSh037pOa+mW30glXCE1u/sYUt0KW/eZqmvu?=
- =?iso-8859-1?Q?vDDTyu6/LnzfLcLq+ymTxfSRTse7LhwD0ag4y/+EObZR7pH7T8mLpLWVUL?=
- =?iso-8859-1?Q?17zA3JFTOUjpVxUe2pRZ2PC4wulOpV0/It42paMX8CZWY7g2rQunGj/S7X?=
- =?iso-8859-1?Q?fea0dtvwAivJQUkKwsbwn2q+nN2WPfB6brJXU8gwXsZ52xS6RIHNPUdEfL?=
- =?iso-8859-1?Q?pXtyhNkR08xOuvJBwSxAI4C+dmwxenE+dH7AA06UOnWNixv4qxD3Fw/ENI?=
- =?iso-8859-1?Q?2lq/HmNTAidQpCqyDMBVejL0MH598MPX5ALGfUY+pFNSIc0q7lLISWFXch?=
- =?iso-8859-1?Q?HiQCKjA+Mr0sU2Spm8rxbmngLgyajdtAXqX+jltD0LYPfCbewCHOwn3t3M?=
- =?iso-8859-1?Q?93FJnp+uDWpSYt+BVIp4k5SIxUnaMkUqmneZO8U3j/eld6NdxjYdgS2Qlh?=
- =?iso-8859-1?Q?LUubCkEtP9d1OC2cPAjfiRovE5xTEZdeXbckCEQJsQ4i6lR7gfcwBrfQf6?=
- =?iso-8859-1?Q?rgPiBM1q7ENKSmO1vyyOgQh8vS6gkspLiZHs86jt0IrZbSHgYPGl/fCVIW?=
- =?iso-8859-1?Q?0zpqxD5IDCTITsJ6EJvpXDypT98y0PsfkQZc08zKjTCR1bDEsHOAbXd7/D?=
- =?iso-8859-1?Q?6xBcKRN2TA6Y+Iihu0YxGw55Vu50rkDQBOFkEoDoV1Vu97DO1/RtXIaIur?=
- =?iso-8859-1?Q?iHx0p4w0fG3TWKcBRarF7WbbbkbfxgfCyfubr2J58p3BczDdGoDFVFr+Ft?=
- =?iso-8859-1?Q?lKc+ww9Wjy6eoMCIwdYz0nQm/re2atNQv9MqiyxbA4MplnThxc3s1nQ/A+?=
- =?iso-8859-1?Q?/Lk5Pr+IzSzuJ/7hT6oGeVvdEvww2OdCYAplPSiI1Dry+6kg6aoGhV3FXu?=
- =?iso-8859-1?Q?7NEW9vPpcv41U3HO+RkLAeWg3rzqGC2DlKAn9fLddPASxvme+9bGhlm207?=
- =?iso-8859-1?Q?doBO/YRUCxYU0Uc3B21Jy4qxb/Nv5glt0Pj7qX8Rc1joEV1X1x4iqFCzLM?=
- =?iso-8859-1?Q?EmsHO5a5iWSpFw1leDDQihOfY9EU04DkzmQlSv6Ro6Zd/qajGb8W5suqLh?=
- =?iso-8859-1?Q?ZwbqEQmWG6PR6/5+TUsN77s7dxCrvJa4tTDIcBCkRV9kW9MIjnYH5RFc5d?=
- =?iso-8859-1?Q?2835krTVbuYIg8YXg/vXoZ1NvGt1vpJPRVIiVN6YT0DQR1IR371qQLDCV2?=
- =?iso-8859-1?Q?W4t9GntvIU6EVNM5dGE9wzN8VNCDD/9f5ZgvpJUX3oyvooaXAGLse1n7H6?=
- =?iso-8859-1?Q?8QP6l8r7wQkA76sCYdVuzh+u9d5F/T1RglX88U1abovVxK752B7C27PiZ1?=
- =?iso-8859-1?Q?Qjw6gLmalRBKygLUewC5Vws1mUBwsVYyWEBCwsQdYq6zBzoXLsqZN1+uCS?=
- =?iso-8859-1?Q?m/Bp82jHC9j+g+taoX7v0FyYdVPMSpCBxTE24kxhjoGkPBG6OWlaNGRCcT?=
- =?iso-8859-1?Q?mEu93wcmQ6AjFjBAD/kdA0YYE8yIhYDYuggQdA1HIW+ugqqBNbFdDYyIRV?=
- =?iso-8859-1?Q?5lmOmczcZZ7Fde/QM/gaPHuLHMmEZlPwq0re2Nxj5+EekW+9Rj8s2oPyIX?=
- =?iso-8859-1?Q?Nj+sqqbCzR9E43myReGRqtPgEawMJeOsJDKFhH1e/UxB7pq9o5nGo9zO1G?=
- =?iso-8859-1?Q?OdZxYQf7eBlmdcV8fG61AJPTsCIk9FE4OF?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3fa9be38-117f-4dae-c47a-08ddc86583bf
-X-MS-Exchange-CrossTenant-AuthSource: CYYPR11MB8430.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2025 14:47:28.5900
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qUrWtZ24Ko+/PIr50X5e2oq7T0TRBvX2h7Wf7DZmJ0Fs89mmIKevkc1RZNji93cdJmVm/EVwax5c97bLJ1VH1A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5903
-X-OriginatorOrg: intel.com
+Mime-Version: 1.0
+References: <20250715-topics-tyr-request_irq2-v7-0-d469c0f37c07@collabora.com> <20250715-topics-tyr-request_irq2-v7-4-d469c0f37c07@collabora.com>
+Message-ID: <aH5TMzJGqzg3wNjK@google.com>
+Subject: Re: [PATCH v7 4/6] rust: irq: add support for threaded IRQs and handlers
+From: Alice Ryhl <aliceryhl@google.com>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, 
+	"Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=" <kwilczynski@kernel.org>, Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-pci@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On Fri, Jul 18, 2025 at 12:19:41PM -0400, Rodrigo Vivi wrote:
-> On Fri, Jul 18, 2025 at 02:59:10PM +0100, Ruben Wauters wrote:
-> > On Tue, 2025-07-01 at 12:54 +0100, Ruben Wauters wrote:
-> > > DRM_DEBUG_SELFTEST was removed in commit fc8d29e298cf (drm: selftest:
-> > > convert drm_mm selftest to KUnit) and all functions under it were
-> > > converted to KUnit, under the DRM_KUNIT_TEST option
-> > > 
-> > > This conversion however did not occur in the Kconfig.debug file in
-> > > the
-> > > i915 directory.
+On Tue, Jul 15, 2025 at 12:16:41PM -0300, Daniel Almeida wrote:
+> This patch adds support for threaded IRQs and handlers through
+> irq::ThreadedRegistration and the irq::ThreadedHandler trait.
 > 
-> I wonder if some deeper conversion is needed on the selftests.
-> But well, I couldn't spot anything and if CI is happy, let's go with ti.
+> Threaded interrupts are more permissive in the sense that further
+> processing is possible in a kthread. This means that said execution takes
+> place outside of interrupt context, which is rather restrictive in many
+> ways.
 > 
-> > > 
-> > > This patch replaces the select for DRM_DEBUG_SELFTEST, an option that
-> > > no
-> > > longer exists, with the correct select, DRM_KUNIT_TEST.
-> > > 
-> > > Signed-off-by: Ruben Wauters <rubenru09@aol.com>
-> > > ---
-> > > v2 changes:
-> > > - update commit message to contain more detail about the background
-> > > of
-> > >   the change and why it is necessary
-> > > ---
-> > >  drivers/gpu/drm/i915/Kconfig.debug | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/gpu/drm/i915/Kconfig.debug
-> > > b/drivers/gpu/drm/i915/Kconfig.debug
-> > > index 1852e0804942..b15b1cecb3aa 100644
-> > > --- a/drivers/gpu/drm/i915/Kconfig.debug
-> > > +++ b/drivers/gpu/drm/i915/Kconfig.debug
-> > > @@ -50,7 +50,7 @@ config DRM_I915_DEBUG
-> > >  	select DRM_VGEM # used by igt/prime_vgem (dmabuf interop
-> > > checks)
-> > >  	select DRM_DEBUG_MM if DRM=y
-> > >  	select DRM_EXPORT_FOR_TESTS if m
-> > > -	select DRM_DEBUG_SELFTEST
-> > > +	select DRM_KUNIT_TEST
-> > >  	select DMABUF_SELFTESTS
-> > >  	select SW_SYNC # signaling validation framework
-> > > (igt/syncobj*)
-> > >  	select DRM_I915_WERROR
-> > 
-> > Hello, I was wondering if it'd be possible to have this patch reviewed.
-> > Having an incorrect Kconfig entry isn't ideal and it'd be good if this
-> > could be fixed if possible
+> Registering a threaded irq is dependent upon having an IrqRequest that
+> was previously allocated by a given device. This will be introduced in
+> subsequent patches.
 > 
-> I just resent for CI before we can merge.
+> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
 
-pushed to drm-intel-next
+A few of the same nits as on the non-threaded patch apply here too.
 
-Thanks for the patch.
+> +/// impl kernel::irq::request::ThreadedHandler for Handler {
 
-> 
-> Thanks for the patch...
-> 
-> > 
-> > Thanks
-> > 
-> > Ruben Wauters
+If you import ThreadedHandler at the top of the example, then you don't
+need this. If you want it to say irq in the path here, then import
+kernel::irq::self and use `impl irq::ThreadedHandler for Handler` here.
+
+The same could make sense for the flags. You can write
+irq::Flags::SHARED if you import the irq module.
+
+(This requires a re-export in the irq module if you don't have one
+already. Also, I would make the irq module private so that end-users
+import everything via the irq:: path without a sub-module.)
+
+Alice
 
