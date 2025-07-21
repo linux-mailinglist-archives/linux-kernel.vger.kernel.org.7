@@ -1,128 +1,136 @@
-Return-Path: <linux-kernel+bounces-739686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E452EB0C9B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:31:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFB14B0C9B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:33:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5D0A3B49B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:31:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F02D1890D5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:33:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA632E03FA;
-	Mon, 21 Jul 2025 17:31:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832C72DFA29;
+	Mon, 21 Jul 2025 17:32:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="ImjF/7Ab"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dj2E5i80"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E85251A08A3;
-	Mon, 21 Jul 2025 17:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753119088; cv=pass; b=Pz2xe1JsRrBuVhCtvF3duUrx5WWm+h0v+JFKFrfWNfVUa47xqeASk/tdzdALtmYERfuCJOPOUTOsVnizTq2Tiia/zURVMDc9Y/5fqBpJeqoj1Lmt8nUx4qJv/QhIX5asxcqL9PsbIBVcQCIBFZjWj9TCRvcRthg0zoKreUPR4n4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753119088; c=relaxed/simple;
-	bh=1fTr1Y7U+b4KL1BYT43SQDhDS04ylGF96jrfv2LDSN0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U/8lbDa3pVs/i64ShnW/6ehLSlAya2Q1YzGpJ05OjrlNGDT+g/kJOs+3pg+skOPnIWwmMRwWwdUTjGSeKqAYNISndxTqKf6MjT9vrCvnOS0UuWRPlLiiBCMPj1L9G7ho5SaS5yMFv5RqMgDq9I08q7/7KDs7AjRBkITpV4v9ZzU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=ImjF/7Ab; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1753119072; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Z7bEa0Xa2mWFL+y2qcbx3Q7RGTnx6CN3/q2d/9D/IrJzDyBmdt7+TVCo20jlKhzmFM8zqrzsrnlwtWBuoLHsv2sJohr57X21TX5ukNAlRamRfn4sRVHl6s65R8x9znSCEiCNYtvOaTqwBVA2B/7NThxPdoK9TOMeU8++IYsvnAM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753119072; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=ImS4Azflmxc74vwR1MKlrS9ROU2xqa3Al5LEIyLX5PU=; 
-	b=A8lefDwaylSZQ/vmMrpUzJaI58pjieHdjh0gFNe2EN7/UbN7MHhsG84TVpeBlPEhADh5RXz5b72up+P9SDxS+ND+s95BQlTODLhxwKL9XcieU3B4o6ABdt6yuK6pk8FKQ595oRr2334WVrmPX1R+CmcyqDdbP1bNRyAJQSBS4Zs=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753119072;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=ImS4Azflmxc74vwR1MKlrS9ROU2xqa3Al5LEIyLX5PU=;
-	b=ImjF/7AbXUCQT5rXNE35r40gFZ71HTdson0NJfGB0TgWUYnppka+YPySyXHBZkQx
-	EDJUMtovWet7sIXiTH5hjFRkjgW3SR1zaIlNnR+Vjbu7rl8fGPJndXK6zgEzaXPdFd/
-	jksQg4NmmeQbaNmyvMSAXQmXABGFLgIZ7773Te8sQ37/cVZSq716YSSU+PD4EA7Wr1F
-	Rjz1c/h6aPlZCEmeR+z20He+uY3TLnTEU7u22ULN/rliohC6Oxjs35Tl0MywmzCtqfA
-	sHwuJ6iZxzXy4OEjzBCRBDxu+EAEFVslK4lP6wH0RgCGwSC8k+ThNL+u0so8LgrXQJe
-	yQQ911GIoQ==
-Received: by mx.zohomail.com with SMTPS id 1753119070005505.4824892322754;
-	Mon, 21 Jul 2025 10:31:10 -0700 (PDT)
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: linux-pci@vger.kernel.org,
-	intel-xe@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Han Gao <rabenda.cn@gmail.com>,
-	Vivian Wang <wangruikang@iscas.ac.cn>,
-	Icenowy Zheng <uwu@icenowy.me>
-Subject: [PATCH] PCI: hide mysterious 8MB 64-bit pref BAR on Intel Arc PCIe Switch
-Date: Tue, 22 Jul 2025 01:30:57 +0800
-Message-ID: <20250721173057.867829-1-uwu@icenowy.me>
-X-Mailer: git-send-email 2.50.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6846529E0F4
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 17:32:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753119178; cv=none; b=b9VCfdwjc3W21GgaI/wQ+Jqw/12O+fpbm+R/LH40ZTyStWA9Z+QKJbJubvdHXw18mtdIZD7/NV1jysxzI+1K7n/6Md2VdNSCU/Fk4eA/WzQR20wE5t6w4lYd7wCuq/sQiYKlWwttH74wlaReAuBACtZyAkr2YiP4XMUd5MN+FHY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753119178; c=relaxed/simple;
+	bh=VAEkdkJB2kc4QN8/u2OR6635bJqkTeeU2SUgivZAWR0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cvMqI7VhmjALJrugg3Abtz6s8eFucYPSoTGGy/cM8YCLIhy2BzAmJDcilszdqoYtP/0GsRPg2hl6duFYpYKKOAh1VN88yV1B0FRlP8nViznN63JrdH/SS9JR2uMrGMM+hfv1gsJJ9QkWAeUSKuYf9RHVptAei5Q+2whVoztmhLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dj2E5i80; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753119178; x=1784655178;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=VAEkdkJB2kc4QN8/u2OR6635bJqkTeeU2SUgivZAWR0=;
+  b=dj2E5i80kX6QmzKxPmDDMZHbbt9BiPWDUHrO9+KcZXftZZkY6WpAhxCI
+   R3cGHtjXafI9Sp0EBzLZwAknwvh4iC3BcwofKGwZx2icCH0L8Bmy1FZup
+   fGcNE0gr6mVCw7ThQsWcDY0B2YE6GM1aHQvjAo/E0Z5XqGQBctGFUrLtG
+   Dd7LNc/Gv1e1nDmJ/6ijlPyAZWhk5wV+FmBqECGYml7uVagmLo4MBXgZL
+   NF1J7UjK4UtWmSy/rGn3zUDeX53yfkSfPG2Ge/dBUOeGDu1dxeUvHV+9k
+   QX/LAH41QzXg+IxSAlXey5Zv8eZeY5/gKTZ/czTbB5YuyivOmsHk4lM62
+   w==;
+X-CSE-ConnectionGUID: pmVV5mOER46RHXjKuBi0WA==
+X-CSE-MsgGUID: zGPETSBUQy6WLnNZ49dLmA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11499"; a="55502895"
+X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
+   d="scan'208";a="55502895"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 10:32:58 -0700
+X-CSE-ConnectionGUID: fiyxWPgfSYK3JH7iX7kWxw==
+X-CSE-MsgGUID: J8+srWlSTu+i4yvxP3jNJQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
+   d="scan'208";a="164555420"
+Received: from jdoman-mobl3.amr.corp.intel.com (HELO [10.125.108.89]) ([10.125.108.89])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 10:32:57 -0700
+Message-ID: <73f0635b-b47c-40a7-b63c-b2a4fa0d881a@intel.com>
+Date: Mon, 21 Jul 2025 10:32:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: KASAN: vmalloc-out-of-bounds Read in copy_from_buffer
+To: =?UTF-8?B?55m954OB5YaJ?= <baishuoran@hrbeu.edu.cn>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Kun Hu <huk23@m.fudan.edu.cn>, Jiaji Qin <jjtan24@m.fudan.edu.cn>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ linux-kernel@vger.kernel.org
+References: <7da48a7f.1563c.1981ce80f5b.Coremail.baishuoran@hrbeu.edu.cn>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+In-Reply-To: <7da48a7f.1563c.1981ce80f5b.Coremail.baishuoran@hrbeu.edu.cn>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
 
-The upstream port device of Intel Arc series dGPUs' internal PCIe switch
-contains a mysterious 8MB 64-bit prefetchable BAR. All reads to memory
-mapped to that BAR returns 0xFFFFFFFF and writes have no effect.
+On 7/18/25 02:40, 白烁冉 wrote:
+> When using our customized Syzkaller to fuzz the latest Linux kernel,
+> the following crash was triggered.
 
-When the PCI bus isn't configured by any firmware (e.g. a PCIe
-controller solely initialized by Linux kernel), the PCI space allocation
-algorithm of Linux will allocate the main VRAM BAR of Arc dGPU device at
-base+0, and then the 8MB BAR at base+256M, which prevents the main VRAM
-BAR gets resized. As the functionality and performance of Arc dGPU will
-get severely restricted with small BAR, this makes a problem.
+This looks like it can only be triggered with privileges. I'd certainly
+take a patch to fix it, but it seems like something that is very
+unlikely to be an issue in practice, so not a super high priority.
 
-Hide the mysterious 8MB BAR to Linux PCI subsystem, to allow resizing
-the VRAM BAR to VRAM size with the Linux PCI space allocation algorithm.
-
-Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
----
- drivers/pci/quirks.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index d7f4ee634263..df304bfec6e9 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -3650,6 +3650,22 @@ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x37d0, quirk_broken_intx_masking);
- DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x37d1, quirk_broken_intx_masking);
- DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x37d2, quirk_broken_intx_masking);
- 
-+/*
-+ * Intel Arc dGPUs' internal switch upstream port contains a mysterious 8MB
-+ * 64-bit prefetchable BAR that blocks resize of main dGPU VRAM BAR with
-+ * Linux's PCI space allocation algorithm.
-+ */
-+static void quirk_intel_xe_upstream(struct pci_dev *pdev)
-+{
-+	memset(&pdev->resource[0], 0, sizeof(pdev->resource[0]));
-+}
-+/* Intel Arc A380 PCI Express Switch Upstream Port */
-+DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x4fa1, quirk_intel_xe_upstream);
-+/* Intel Arc A770 PCI Express Switch Upstream Port */
-+DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x4fa0, quirk_intel_xe_upstream);
-+/* Intel Arc B580 PCI Express Switch Upstream Port */
-+DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0xe2ff, quirk_intel_xe_upstream);
-+
- static u16 mellanox_broken_intx_devs[] = {
- 	PCI_DEVICE_ID_MELLANOX_HERMON_SDR,
- 	PCI_DEVICE_ID_MELLANOX_HERMON_DDR,
--- 
-2.50.1
-
+If you could actually narrow down precisely what overflowed or where the
+code went wrong, I might take a closer look.
 
