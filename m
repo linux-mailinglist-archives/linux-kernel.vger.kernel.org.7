@@ -1,103 +1,84 @@
-Return-Path: <linux-kernel+bounces-738772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00969B0BCDA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:42:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 617BBB0BCBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:37:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2EF07A3E18
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:40:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ADF0189B826
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030C227F000;
-	Mon, 21 Jul 2025 06:42:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE4727C842;
+	Mon, 21 Jul 2025 06:34:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qtmlabs.xyz header.i=@qtmlabs.xyz header.b="I83a04+j"
-Received: from s1.g1.infrastructure.qtmlabs.xyz (s1.g1.infrastructure.qtmlabs.xyz [107.172.1.117])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NLtB7ZgP"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7B52C181;
-	Mon, 21 Jul 2025 06:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=107.172.1.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F1827AC3E;
+	Mon, 21 Jul 2025 06:34:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753080132; cv=none; b=nq1ae23NqgBIrm2DL/SxHtbEDmrKB5hPszWi6l5ckiSFlPDerx198Okme1+13Wh+IIF/j0j6tB6CYCZaRFs0KWvEzAAi7xKsQ64OdqX05k/lfpO+XU3TxpCg8FcnjkCa4j2Druhwpng6FwaMG0ewourGLMb313Ldz1VFIy/8Ofs=
+	t=1753079648; cv=none; b=blNXMifJjzdiRPBCojxl2MOlsCibkFGthwpah2r7qUjNG8x3k+PIBwZAe6+X+O487ie/Qho0Rso229GOa5SRcJnB2nWDj1+j2T2uWLVPJeb2+FJsmRmA4XDZKDo6KpHHAOqdCcNhvYn9FZy/I4Rr5YJg9lg8I6GFIpm9DhSIKdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753080132; c=relaxed/simple;
-	bh=wxeCEH+SU8MPDQOxuqjRDnvHyxvCzawyLu1QgV8iPD0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=th7xMZNbwBHUhrq1VuFAG+XYzVNGled+rtnbHPsxOrQzPYgxyjzTZmF7viugeVwqd4ED9QHPXY68Nyc6Zu9M7bPX8CKuLyRMvkajCh5eB+mxddhgSoCcaF/LA3CExvksJDvoTVauDl4iH9A5uhg7XwsY1+cE5Tlx0pNTjTKRLUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qtmlabs.xyz; spf=pass smtp.mailfrom=qtmlabs.xyz; dkim=pass (2048-bit key) header.d=qtmlabs.xyz header.i=@qtmlabs.xyz header.b=I83a04+j; arc=none smtp.client-ip=107.172.1.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qtmlabs.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qtmlabs.xyz
-From: Myrrh Periwinkle <myrrhperiwinkle@qtmlabs.xyz>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qtmlabs.xyz; s=dkim;
-	t=1753079576;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=JqkdQzm/twkZ0VIwHtBVBtBC90/ZA2tGjffFIZE7FDY=;
-	b=I83a04+jqtQCXmrtMyJ6J9S/WKikuzmcSD6ioHXUJb+9GzTMmmWf5QQiZYhHPX7QZ1h9Bh
-	rRuVJtS9o9Y9RhgcNKIin2IjyFWrb8TS2ACFEdTlBYVV3UfNb1mpbpHL6Ex7BwluhCsVYf
-	bD39/XeNaHk6X4QccWIWJ6a05VifPPWyclB3Al6Vqrf3Nkg9GIPzwqyRhMBm8AreAD6bNI
-	XJ1KxhWyzpet0qI9bfjwIbwLIiBPMVweG6jCVfi3waFyzzLs0siRe1J7R2bI4933+4ZYOl
-	OFYoUxsyBzKLVYScTDtiToRHocVqyLuBipHILmfaS0ICTdrmF4O8vSipi6Qghg==
-Authentication-Results: s1.g1.infrastructure.qtmlabs.xyz;
-	auth=pass smtp.mailfrom=myrrhperiwinkle@qtmlabs.xyz
-Date: Mon, 21 Jul 2025 13:32:51 +0700
-Subject: [PATCH] usb: typec: ucsi: Update power_supply on power role change
+	s=arc-20240116; t=1753079648; c=relaxed/simple;
+	bh=2hikPorBUTfG5oonj2T3OsRDG5d/oNQ9Pawi3KKFJrk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ESoRr5ngF+pUSmnRzWPffSq6kofzdHbrUtemUBaYbEA2EO6uTTaTGj/Wuwsj3dO/7hViKlVCgjCxImj+lN/HlgPusEtrpND7lPWfk2qDXr1YxU6todRLA1VgRkXMLSVQ1b/Gl5K0WvcKYk4QG4R0vEocFronz05R6WXwE0MaWq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NLtB7ZgP; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=X02kqUfwhV7HgXwTN+DIIxEHxV9Vemu2dNXZxJ/Ker4=; b=NLtB7ZgPoFqHmVwtjbVrUSfxAc
+	zQ+Te7/by80VISg3jTmzk7kew8hEm7y+P2BLulH0VF62ziHUoi3r4ZjENjzOlbaxmxtDkq/asz5mu
+	FoKmDtapw66OlAw+NukAGOvP0rD1F0zZOq/fx2JTpcJuR8yMxmWbDHre3i3TpgcGtcNt5DfSHE2v9
+	dYYCrBf4LF9MXGVc9GQFmoiQx11EPTKTfAuNFaDsJakyp0RaxGFyMZuqF1iYOYtz5xLjL+nG7agNp
+	v3GqoDtxoWTHRgygxK3JS4YxAVUvZNs1AFQaLq3OKfAi7MDx+SkF+28UEmy2NNlZU6YCezeiNn8Tp
+	tIJFBLyA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1udk6A-0000000GNgV-25AF;
+	Mon, 21 Jul 2025 06:34:06 +0000
+Date: Sun, 20 Jul 2025 23:34:06 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: cen zhang <zzzccc427@gmail.com>
+Cc: cem@kernel.org, linux-kernel@vger.kernel.org, baijiaju1990@gmail.com,
+	zhenghaoran154@gmail.com, r33s3n6@gmail.com, gality365@gmail.com,
+	linux-xfs@vger.kernel.org
+Subject: Re: [BUG] xfs: Assertion failed in xfs_iwalk_args triggered by
+ XFS_IOC_INUMBERS
+Message-ID: <aH3fXv5tlfGtzVD1@infradead.org>
+References: <CAFRLqsU-k2GYx4D9HUmu+tSTvmMbY_ea9aYwE+2yvHwLP_+JDQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250721-fix-ucsi-pwr-dir-notify-v1-1-e53d5340cb38@qtmlabs.xyz>
-X-B4-Tracking: v=1; b=H4sIABLffWgC/x2MSQqAMAwAvyI5G9BqcfmKeKg2ai5VUlekf7d4H
- JiZFzwJk4c2eUHoZM+ri5CnCYyLcTMh28igMqWzSuU48Y3H6Bm3S9CyoFt3nh6sTaMLY4ZSkYZ
- Yb0JR/c9dH8IHLm38Z2kAAAA=
-X-Change-ID: 20250721-fix-ucsi-pwr-dir-notify-8a953aab42e5
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Myrrh Periwinkle <myrrhperiwinkle@qtmlabs.xyz>
-X-Spamd-Bar: ---
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFRLqsU-k2GYx4D9HUmu+tSTvmMbY_ea9aYwE+2yvHwLP_+JDQ@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-The current power direction of an USB-C port also influences the
-power_supply's online status, so a power role change should also update
-the power_supply.
+The patch below should fix the issue.  But I wonder if we should split
+the flags a bit better to make things more obvious.
 
-Fixes an issue on some systems where plugging in a normal USB device in
-for the first time after a reboot will cause upower to erroneously
-consider the system to be connected to AC power.
-
-Cc: stable@vger.kernel.org
-Fixes: 0e6371fbfba3 ("usb: typec: ucsi: Report power supply changes")
-Signed-off-by: Myrrh Periwinkle <myrrhperiwinkle@qtmlabs.xyz>
----
- drivers/usb/typec/ucsi/ucsi.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
-index 01ce858a1a2b3466155db340e213c767d1e79479..8ff31963970bb384e28b460e5307e32cf421396b 100644
---- a/drivers/usb/typec/ucsi/ucsi.c
-+++ b/drivers/usb/typec/ucsi/ucsi.c
-@@ -1246,6 +1246,7 @@ static void ucsi_handle_connector_change(struct work_struct *work)
+diff --git a/fs/xfs/xfs_itable.c b/fs/xfs/xfs_itable.c
+index c8c9b8d8309f..302efe54e2af 100644
+--- a/fs/xfs/xfs_itable.c
++++ b/fs/xfs/xfs_itable.c
+@@ -457,7 +457,8 @@ xfs_inumbers(
+ 	 * locking abilities to detect cycles in the inobt without deadlocking.
+ 	 */
+ 	tp = xfs_trans_alloc_empty(breq->mp);
+-	error = xfs_inobt_walk(breq->mp, tp, breq->startino, breq->flags,
++	error = xfs_inobt_walk(breq->mp, tp, breq->startino,
++			breq->flags & XFS_IBULK_SAME_AG,
+ 			xfs_inumbers_walk, breq->icount, &ic);
+ 	xfs_trans_cancel(tp);
  
- 	if (change & UCSI_CONSTAT_POWER_DIR_CHANGE) {
- 		typec_set_pwr_role(con->port, role);
-+		ucsi_port_psy_changed(con);
- 
- 		/* Complete pending power role swap */
- 		if (!completion_done(&con->complete))
-
----
-base-commit: 89be9a83ccf1f88522317ce02f854f30d6115c41
-change-id: 20250721-fix-ucsi-pwr-dir-notify-8a953aab42e5
-
-Best regards,
--- 
-Myrrh Periwinkle <myrrhperiwinkle@qtmlabs.xyz>
-
 
