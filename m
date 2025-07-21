@@ -1,160 +1,185 @@
-Return-Path: <linux-kernel+bounces-739179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C503B0C2DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:26:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E32FB0C2DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:27:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF7473B7633
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:26:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 971CE7AC53A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:25:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1ACA29B8DB;
-	Mon, 21 Jul 2025 11:25:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7078F29E10A;
+	Mon, 21 Jul 2025 11:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZwAKtZ3u"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cwrhtaVV"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69ABB29ACEA
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 11:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5609D293C56
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 11:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753097143; cv=none; b=QGXySV/fx8bb6oAu5rsYCJ2oWnm4PrKZZqhwsbXYp9O2aKjsHcphxqL/J+Zz6KSwrt0QqfsnEKJLU0ZZjUJW5yt/Xy4GOQ3V3VUKM6YLrNN7XL2tJExH9aDoeyWLmZsd+SdTv6vbWeyoCk/2Rcw7DC08BFT7+jCdygVw4t3YmxU=
+	t=1753097187; cv=none; b=kNSq9ixwyqALUic8JYhn4cMXhL8lD/KYmZTDxOtgrHcdJf3tI0/urJGgHM9uCuPuJC8bVFI4jurB41c227UnEDYqu5h7zQP1A7cjzeSiU0+Fh69e+ShQbnW1P6pDm8pCBAsUO5ctDX4OeHU/WBpEICQ2/cGgKYhz/8Lgj0Ty6QE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753097143; c=relaxed/simple;
-	bh=+h0qgyFAIZh9TvE6JANV+tpEHP7rFWwM6prPwetA4d4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=GzIOjjnB/kgTbD5uE3aWe4AE3RWsMzB5N/4SjEK1jncK0LJmcg2/eC3WvbJWI36IqYnMM8ICNy7pd6D6WEWsnmDR7APKzty9ADLieHb+0k02TG39G/N6fdo+oxh2CCJ7YkO3NV8b/onfvEqOq9u/3iEbWSnDy1Qg3x1G6C4wcbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZwAKtZ3u; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753097140;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I9xHIUZGDixZ4oA3O6QnP/ENCMTQ0evD0jQLzmoUP1s=;
-	b=ZwAKtZ3uXoeI8PUKGbY/Hl+IMkNaNznqN4mLlZQLeNvCrMfHoLpVKoAnrxY1R+qlFQbYRS
-	OE1gtXt+tfaol7u14XgRJPMGY90zbp3uxHl8etiqelatRRTkC7YpUrKtSoeGpGkVFVZS7v
-	N8zjZQj2TonAsogyCTRgjqLfCsj6nq0=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-681-WWWvZ43bP9aebbYimlf95w-1; Mon, 21 Jul 2025 07:25:39 -0400
-X-MC-Unique: WWWvZ43bP9aebbYimlf95w-1
-X-Mimecast-MFC-AGG-ID: WWWvZ43bP9aebbYimlf95w_1753097138
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3a579058758so1651829f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 04:25:38 -0700 (PDT)
+	s=arc-20240116; t=1753097187; c=relaxed/simple;
+	bh=woPGYWSw8z7t7ihug/zUhP4MFuonqYhSapo2vzn0nbc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=fADfJ/pwDVB6xu7QfQGSZMxZmisY4uja1Utxfo54Jd6sxSiZCeWxRiKC9Pazwb1wIWcJUclgyIq1xP7/iRfu+lTFugskioUX4XkqV/+Q+Fg9xWxHn1XcjrsiQEEmtKDFW4NT6dSz6Pj1m/6ngqd1tLSy39jfvu0ROtEGjRydung=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cwrhtaVV; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3a58939191eso1874277f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 04:26:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753097184; x=1753701984; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0FnwG0Wks8ncb9oG0ugMoL44qLAawuSLECH5pGfwcwg=;
+        b=cwrhtaVVIRCAbMQGpdjPUu4D072IOn/hSZCIEmgV1+xbh7kKr/dcMP79ELOFHYH2JO
+         FWzOkEK+H62aGiQ8qymRaJ/Pd03FanPXwKu4T+G9EmoDOZIo755pSqBR7azbdoBbKi6n
+         dRRqLkb8sXeCcGzrRkjbbZDPfVDKSjPV0BJENh4dJ35ASionSJo0fHYSCIfFZ4FAh5DO
+         jxjI/Me0lpWMyjt4q7HcvZFoUJnfCn1A7D8Nf782cWCvLi3s2Zw7ss6U2n54NeIm5Bs5
+         lYxygNDfEZfROyHxqmVJirPc8CKsaC88zs534742R4PrzQVMMwSQ1ZM66Jzn3E9f9TQU
+         1fVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753097137; x=1753701937;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I9xHIUZGDixZ4oA3O6QnP/ENCMTQ0evD0jQLzmoUP1s=;
-        b=VxYSKk24GHJsMNvs7oJAwr6QRckxNtadTTQHX4bSlRtnLGhxT1yliszYsne+z0Wuje
-         yN1q5eQwpdFKAda0AUFt82iKVlxYBcAeOk57OA9CiKmLwyZNBMxSQsgfttKwMc+8LtcS
-         GMOxKi74kXpLKPUnoqOkwGwxi04VLI3nZuxd7M/wFt48bfvBWUiRmp1qFmsfYIPuLSGS
-         TAbox2SEWHTYSzwxr/HJ6iJq3euO73CFUsYHJprIZq5ceCAC2fQNy7ntwQtk7lYBKZg3
-         GAmc15Y9TUwaAUv4hhuTtVYQaJpmdls+LjECtWmCX6/M6jDl5MayFXxwmH2zaDBwT7xT
-         zgmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXHStn0KFCHp9DixCqhgBLAdXmI8awiKEOGZy3bqiDUsqYIv/r1KR/p0dIqcnOx3remhfYOHzM3Al7qXO8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSsqfgbDJ9G4Coy+Hk0aB8wy2GNlCk/xS/0jPXtEQNjKMyOus3
-	2Rl4yvL+R2uhE8fgtsQTnZIDZ3CvduPfaKnM01fdw7X1VikP4uKZ5Ph7VaIX3H8j86PXIkhU/tu
-	rOLh5RCu0sRCsK0RWn+qNtdpIrs/a/yfxvRU/ej+otpKPsXqfcIYDLHyG6QfNoy3CebQi1lLXi7
-	ZrLLq75DEmrran42vlxhjmZbli3AMFNWLulV77MY51fXGBK2ORIw==
-X-Gm-Gg: ASbGncsjX/Dc4xEMygudlG8HsbyIPdPljW5aKH4f3+segVh/OFM0xTin6668VyHJtgh
-	J6RYwnesJJuzw9fFWhDg/0/NyXRGXvWKWDy1ja9tRki99DMNRsgnfRipYx5fevVnIidwyi447vs
-	IscwsFcju/0ZIhtEof/1NjvdmMZ9wJ5JzXe7NBMGwEdeetLSvNmGqj/qL5rcLeyyZkV47IgBXZ6
-	UUGulQgudPdW3Esxb8hNq31dTFlsWpFyWiM1/sMH9fhr52rjEFEK99IjXAVgFUVwxs9aZkgXUcd
-	QDXsl6zJDhn5dg/mGxl3iORMDfm2g1XYyWkROpiEoF/g37aYg4M6qSI99/+BxomGynjF+v/i2nj
-	AANfaium8wNOS/i1yh9DV0C2j
-X-Received: by 2002:a05:6000:2309:b0:3b5:dc05:79b with SMTP id ffacd0b85a97d-3b60e4d0099mr17510110f8f.14.1753097136991;
-        Mon, 21 Jul 2025 04:25:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE5qjUcgwoUH6h4Cn4yr43tPmB+jCm/2PCqBM5MSc3alqUkCaGQZXjrejWnZx0uQHpJY37V7A==
-X-Received: by 2002:a05:6000:2309:b0:3b5:dc05:79b with SMTP id ffacd0b85a97d-3b60e4d0099mr17510072f8f.14.1753097136525;
-        Mon, 21 Jul 2025 04:25:36 -0700 (PDT)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-135-146.abo.bbox.fr. [213.44.135.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e89c87esm155841815e9.33.2025.07.21.04.25.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 04:25:35 -0700 (PDT)
-From: Valentin Schneider <vschneid@redhat.com>
-To: Vincent Guittot <vincent.guittot@linaro.org>, Huang Shijie
- <shijie@os.amperecomputing.com>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
- patches@amperecomputing.com, cl@linux.com,
- Shubhang@os.amperecomputing.com, dietmar.eggemann@arm.com,
- rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] sched/fair: do not scan twice in detach_tasks()
-In-Reply-To: <CAKfTPtC7+V6ubaGDPy0MW2MFG7w_yrnYCPQ-b2=3uYgeM+-+EA@mail.gmail.com>
-References: <20250721023939.19703-1-shijie@os.amperecomputing.com>
- <CAKfTPtC7+V6ubaGDPy0MW2MFG7w_yrnYCPQ-b2=3uYgeM+-+EA@mail.gmail.com>
-Date: Mon, 21 Jul 2025 13:25:34 +0200
-Message-ID: <xhsmhv7nleqfl.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+        d=1e100.net; s=20230601; t=1753097184; x=1753701984;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0FnwG0Wks8ncb9oG0ugMoL44qLAawuSLECH5pGfwcwg=;
+        b=XfdzlMKtnFYL4y7oZQi96doHhhq4cc4JjVO6ufkNPlTSZnJT1pNFPam1Lz07dTNPyR
+         IpFaTRzmEdJafJMs9gQ62dhgfuwg+TZSlx2heoRzy8grMQHOyj1agkFijBWBHRj7+yOe
+         lZmu/wrV/mGWiwcAwni3STGZHpl/LL6SRQYofq4In4892VJYbqmHkhvXPv6Imk3HeoTA
+         R9rgnWjtyTmATZrFbMvXDV85n5KLPIAhKpV9sAlY1Hc86uLb969gxcqnU+TSrL0+vCR/
+         yhgr2J1HrNTqLfUJOp2M8d+FVGN/n4ew+w/NmAV6vthJI6zqzuMZValPI2AlsK0bHm53
+         ZNvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXr0mvtHv804zlhA+qhF7Luu9ulTbzZyM4pe/w0GOU/uVCUlFjnUORxmQP7RXQZG/Az42NoM92qsilnhRg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxnyuhxy818ozROC5vHp1taXZc5sQSUgBzPo49Xbqu6EX7uQ4ob
+	rssU82fvS+UhBsm+zkCkRri1CFv456y9wwo+XyAtaQi+t0L33YL0aL6HyHvhRjmi9BRnSavi7wV
+	k26aVInibLjz7Jwd/PQ==
+X-Google-Smtp-Source: AGHT+IEwnoxp32ZFdX/kvyH4WdQU+gDfZpM/uvNeHtCqEsC9IqeYlY9XiCD5errB0TB1vqdBY45JE1nKg7NjUJA=
+X-Received: from wrbbs4.prod.google.com ([2002:a05:6000:704:b0:3a4:f6e8:f3cc])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:40de:b0:3b6:1e6:c9fb with SMTP id ffacd0b85a97d-3b60e4c510dmr18501857f8f.11.1753097183776;
+ Mon, 21 Jul 2025 04:26:23 -0700 (PDT)
+Date: Mon, 21 Jul 2025 11:26:23 +0000
+In-Reply-To: <20250717224806.54763-3-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+References: <20250717224806.54763-1-dakr@kernel.org> <20250717224806.54763-3-dakr@kernel.org>
+Message-ID: <aH4juIVmj8euE1CA@google.com>
+Subject: Re: [PATCH 2/3] device: rust: expand documentation for Device
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
+	tmgross@umich.edu, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On 21/07/25 11:40, Vincent Guittot wrote:
-> On Mon, 21 Jul 2025 at 04:40, Huang Shijie
-> <shijie@os.amperecomputing.com> wrote:
->>
->> detach_tasks() uses struct lb_env.loop_max as an env.src_rq->cfs_tasks
->> iteration count limit. It is however set without the source RQ lock held,
->> and besides detach_tasks() can be re-invoked after releasing and
->> re-acquiring the RQ lock per LBF_NEED_BREAK.
->>
->> This means that env.loop_max and the actual length of env.src_rq->cfs_tasks
->> as observed within detach_tasks() can differ. This can cause some tasks to
->
-> why not setting env.loop_max only once rq lock is taken in this case ?
->
-> side note : by default loop_max <= loop_break
->
+On Fri, Jul 18, 2025 at 12:45:38AM +0200, Danilo Krummrich wrote:
+> The documentation for the generic Device type is outdated and deserves
+> much more detail.
+> 
+> Hence, expand the documentation and cover topics such as device types,
+> device contexts, as well as information on how to use the generic device
+> infrastructure to implement bus and class specific device types.
+> 
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-I thought so too and dismissed that due to LBF_NEED_BREAK, but I guess we
-could still do something like:
+Overall I think this series is pretty great. It also clarifies some
+things for me, particularly the difference between bus and class
+devices.
 
----
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index b9b4bbbf0af6f..eef3a0d341661 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -11643,6 +11643,7 @@ static int sched_balance_rq(int this_cpu, struct rq *this_rq,
- 		.dst_grpmask    = group_balance_mask(sd->groups),
- 		.idle		= idle,
- 		.loop_break	= SCHED_NR_MIGRATE_BREAK,
-+		.loop_max       = UINT_MAX,
- 		.cpus		= cpus,
- 		.fbq_type	= all,
- 		.tasks		= LIST_HEAD_INIT(env.tasks),
-@@ -11681,18 +11682,19 @@ static int sched_balance_rq(int this_cpu, struct rq *this_rq,
- 	/* Clear this flag as soon as we find a pullable task */
- 	env.flags |= LBF_ALL_PINNED;
- 	if (busiest->nr_running > 1) {
-+more_balance:
- 		/*
- 		 * Attempt to move tasks. If sched_balance_find_src_group has found
- 		 * an imbalance but busiest->nr_running <= 1, the group is
- 		 * still unbalanced. ld_moved simply stays zero, so it is
- 		 * correctly treated as an imbalance.
- 		 */
--		env.loop_max  = min(sysctl_sched_nr_migrate, busiest->nr_running);
--
--more_balance:
- 		rq_lock_irqsave(busiest, &rf);
- 		update_rq_clock(busiest);
- 
-+
-+		env.loop_max = min3(env.loop_max, sysctl_sched_nr_migrate, busiest->h_nr_running);
-+
- 		/*
- 		 * cur_ld_moved - load moved in current iteration
- 		 * ld_moved     - cumulative load moved across iterations
+> +/// # Device Types
+>  ///
+> +/// A [`Device`] can represent either a bus device or a class device.
+>  ///
+> +/// ## Bus Devices
+> +///
+> +/// A bus device is a [`Device`] that is associated with a physical or virtual bus. Examples of
+> +/// buses include PCI, USB, I2C, and SPI. Devices attached to a bus are registered with a specific
+> +/// bus type, which facilitates matching devices with appropriate drivers based on IDs or other
+> +/// identifying information. Bus devices are visible in sysfs under `/sys/bus/<bus-name>/devices/`.
+> +///
+> +/// ## Class Devices
+> +///
+> +/// A class device is a [`Device`] that is associated with a logical category of functionality
+> +/// rather than a physical bus. Examples of classes include block devices, network interfaces, sound
+> +/// cards, and input devices. Class devices are grouped under a common class and exposed to
+> +/// userspace via entries in `/sys/class/<class-name>/`.
+> +///
+> +/// # Device Context
+> +///
+> +/// [`Device`] references are generic over a [`DeviceContext`], which represents the type state of
+> +/// a [`Device`].
+> +///
+> +/// As the name indicates, this type state represents the context of the scope the [`Device`]
+> +/// reference is valid in. For instance, the [`Bound`] context guarantees that the [`Device`] is
+> +/// bound to a driver for the entire duration of the existence of a [`Device<Bound>`] reference.
+> +///
+> +/// Other [`DeviceContext`] types besides [`Bound`] are [`Normal`], [`Core`] and [`CoreInternal`].
+> +///
+> +/// Unless selected otherwise [`Device`] defaults to the [`Normal`] [`DeviceContext`], which by
+> +/// itself has no additional requirements.
+> +///
+> +/// It is always up to the caller of [`Device::from_raw`] to select the correct [`DeviceContext`]
+> +/// type for the corresponding scope the [`Device`] reference is created in.
+> +///
+> +/// All [`DeviceContext`] types other than [`Normal`] are intended to be used with
+> +/// [bus devices](#bus-devices) only.
 
+This raises a few questions for me.
+
+The first one is "why"? On other series I have been told that interrupts
+must be registered and deregistered before the device is unbound. Does
+the same not apply to interrupts for an input device such as a USB
+keyboard?
+
+The second one is why we use the same `Device` type for both cases?
+Would it not make more sense to have a BusDevice and ClassDevice type?
+
+> +/// # Implementing Bus Devices
+> +///
+> +/// This section provides a guideline to implement bus specific devices, such as
+> +/// [`pci::Device`](kernel::pci::Device) or [`platform::Device`](kernel::platform::Device).
+> +///
+> +/// A bus specific device should be defined as follows.
+> +///
+> +/// ```ignore
+> +/// #[repr(transparent)]
+> +/// pub struct Device<Ctx: device::DeviceContext = device::Normal>(
+> +///     Opaque<bindings::bus_device_type>,
+> +///     PhantomData<Ctx>,
+> +/// );
+> +/// ```
+> +///
+> +/// Since devices are reference counted, [`AlwaysRefCounted`](kernel::types::AlwaysRefCounted)
+> +/// should be implemented for `Device` (i.e. `Device<Normal>`). Note that
+> +/// [`AlwaysRefCounted`](kernel::types::AlwaysRefCounted) must not be implemented for any other
+> +/// [`DeviceContext`], since all other device context types are only valid in a certain scope.
+
+As a general comment to all three patches, I would suggest separating
+out the link locations.
+
+/// Since devices are reference counted, [`AlwaysRefCounted`] should be
+/// implemented for `Device` (i.e. `Device<Normal>`). Note that
+/// [`AlwaysRefCounted`] must not be implemented for any other
+/// [`DeviceContext`], since all other device context types are only
+/// valid in a certain scope.
+
+and then at the end:
+
+/// [`AlwaysRefCounted`]: kernel::types::AlwaysRefCounted
+
+I think it's a lot easier to read the markdown version when links are
+separated out like this.
+
+Alice
 
