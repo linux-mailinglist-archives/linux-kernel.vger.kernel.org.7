@@ -1,136 +1,208 @@
-Return-Path: <linux-kernel+bounces-739801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37577B0CB2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 21:51:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D676B0CB2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 21:51:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 775787AFA4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:49:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B15571782E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:51:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09AA4238159;
-	Mon, 21 Jul 2025 19:51:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F3023816D;
+	Mon, 21 Jul 2025 19:51:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dPMv7+OL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MvCFo00w"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66587BA2E;
-	Mon, 21 Jul 2025 19:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEBD82376EC
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 19:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753127473; cv=none; b=VbCRzcQxS+6vqxdKZApT9NUXoOd/8qPW6Aq7BfTDrvXdzBtCaP9GPsU/j3mnuesVJPFWbNgOXjiq+GBC8Rxir66kbUOztfrMDBKiX2NXnmraEQNsJl0ZBtGCRl0/jQK2IUgi/NGYT7xYWHlSiXW05+QXq2Ij0jpqqQoAqfCngCg=
+	t=1753127501; cv=none; b=I9d5LLxxKAUSb4Kys31yJ/shr+JMXzCGIwUnxmBj72rXPULGy/j5AyhrXjsdiuaeeX7YV3R+S2DXXJlmfpXnMHZLM2zYffM2vGQj8pSUZdnnNfmrpLAH2Dzfydp9DPcxlzoEtMHF2uWf5v6A5Fj54yzWaKyYQcTrAJNaWNlgrKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753127473; c=relaxed/simple;
-	bh=AfBAOulMHp7EDYXtLwDEGsMzWBGQfkizPfb1i5IFklU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eeRHKucenHrXuSxGt3ikB6UfWPNrOD4pDzV7QEjHxLxx1r6EOyn++cmG6SMdqCVkuIfKMs5upyloYje0ot4dbsmXmgo/mfIQY4eBx8hRUYrVd4J/DwALW1nJuN9TReKLr5WQaSKjhdCFl4Rt2XjxMnkQ7jSn3xMuraIOTnR0mdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dPMv7+OL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3CBBC4CEED;
-	Mon, 21 Jul 2025 19:51:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753127472;
-	bh=AfBAOulMHp7EDYXtLwDEGsMzWBGQfkizPfb1i5IFklU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=dPMv7+OLGzdY2UCXX1FzkbpFiK8a7emjMkEokFNh2rF52G/Rq4idAPGL8SAzM87M+
-	 GbwP/4wLRbE+81SBDcG7XOb+xPz80bAYWcyfXZwYGku8ovMz/dg1vjC4fji0uE7X2r
-	 Yix8fABTx1/CdhHxMwN2m5QN3fIgi8W70PAXBgpd1wC5sU6azDM/Nsf7eBrIvFw4Ci
-	 O09fNEFamaMy2VJoXKyH8U8V7pMB3+neT3z9ARW/egq2obhXJiHrEB/DDEtLoVFSqW
-	 4KTfuwLr2KjwPJ1q7RI0B0+8DaMHGVPqOu+hpWhAoOFMG/m2PNs63wIfUocpWRpX09
-	 IKnkbY5o466cA==
-Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-61591e51092so2219764eaf.0;
-        Mon, 21 Jul 2025 12:51:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVINuZPOnQf+iJ1M4IRZfOEd5YWZxuswGDjw6/KptR8mT9qms2CczSJ0qDasAnHZ7yzBxwwyMGdjb3va8E=@vger.kernel.org, AJvYcCWZNBStKsYrzFeTPktRU/Q+uwnIUvx3ZIHtMXqiGU2BxD9JhN8QNK/D/ZpFp33Wg+1jYDUh9R8qAYE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGfRv95iyuSM0MDxS0DNOg1NRosKS8c44k/iYOgVfZ3s0Bjkwt
-	vVb7AwkHkkZADqz9xvQzhfIg809gMzxSStvhJiQdVK5BJgXiaV8vk/9rN3MpdNx0uZCFVpJKvOa
-	PfzRgwLtNuahfuPkQzo9pvgI6Y+JuG7A=
-X-Google-Smtp-Source: AGHT+IGoM4BLNSSylFMNbSAw1L3y53fxwdNKamgvbVT7Dp4NfffRHl+vvuNMRI4uIkvyicesk2mZGwF22RKoemB9+HY=
-X-Received: by 2002:a05:6820:260b:b0:615:e807:8134 with SMTP id
- 006d021491bc7-615e8078370mr1969877eaf.5.1753127472191; Mon, 21 Jul 2025
- 12:51:12 -0700 (PDT)
+	s=arc-20240116; t=1753127501; c=relaxed/simple;
+	bh=FSkb//Un9XYOBLbpZuVIKlWqK+ESfLKx8dGomUzDgw8=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=ADzp/lAxr6VZ1z4irjkixiQS6qV7bJlyzkPM03vMkihEwfarpv6sWbsxxjgcFLLoxRrb4aLmnj9glJQRYuhFwxMIi1ztpesx9X2YwXB4E19MAY+5IZafuykhCUFiLm8EJ6hU5ktDRJU3pkBFrAh6GccY0a55W9y42Z+GuuQkP2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MvCFo00w; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753127498;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bUkM9bKpl7dkgWKCxuTwvfTXC4FOX6e2F+2YtIt3kYI=;
+	b=MvCFo00wIJHYBG6TIApreXY1K4dGsXfFsRV6S+yc+N9JOnQwWk858Uztp4yYun25WOg2CX
+	C+LLarnNSVcgHBG7fu/oICS8DgkCloKe8lretIgIrN9fF0uARUkCkwlRx+vg1kCKlWzDVw
+	N3kJ7ytukqedA2OG5RKWskGpKsM+Gh8=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-595-C2Uutw5IPIutBAyRTG451Q-1; Mon,
+ 21 Jul 2025 15:51:32 -0400
+X-MC-Unique: C2Uutw5IPIutBAyRTG451Q-1
+X-Mimecast-MFC-AGG-ID: C2Uutw5IPIutBAyRTG451Q_1753127491
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 83BC919560AA;
+	Mon, 21 Jul 2025 19:51:31 +0000 (UTC)
+Received: from [10.22.80.24] (unknown [10.22.80.24])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 34D3D19560A3;
+	Mon, 21 Jul 2025 19:51:30 +0000 (UTC)
+Date: Mon, 21 Jul 2025 21:51:22 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Antoni Pokusinski <apokusinski01@gmail.com>
+cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    syzbot+fa88eb476e42878f2844@syzkaller.appspotmail.com
+Subject: Re: [PATCH] hpfs: add checks for ea addresses
+In-Reply-To: <20250720142218.145320-1-apokusinski01@gmail.com>
+Message-ID: <784a100e-c848-3a9c-74ef-439fa12df53c@redhat.com>
+References: <20250720142218.145320-1-apokusinski01@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250718071842.2483378-1-saravanak@google.com>
-In-Reply-To: <20250718071842.2483378-1-saravanak@google.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 21 Jul 2025 21:51:01 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0ifsVycSWk24gMrEsGtDn0nVkUJGH8vwBvJdEA1XHbTRQ@mail.gmail.com>
-X-Gm-Features: Ac12FXz4dxl62coHj83jeFJGnEtG5DNBml2TR8wnyAfVVxahSc3gpjhv9ZxVhoU
-Message-ID: <CAJZ5v0ifsVycSWk24gMrEsGtDn0nVkUJGH8vwBvJdEA1XHbTRQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v1] PM: wakeup: Provide interface for userspace to
- abort suspend
-To: Saravana Kannan <saravanak@google.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>, 
-	Pavel Machek <pavel@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Danilo Krummrich <dakr@kernel.org>, kernel-team@android.com, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Fri, Jul 18, 2025 at 9:18=E2=80=AFAM Saravana Kannan <saravanak@google.c=
-om> wrote:
->
-> Once suspend starts, it can take a while before file system sync
-> finishes and all the userspace threads are frozen. During this time,
-> there can be events that originate in userspace that would require the
-> suspend to be aborted.
->
-> The only way to abort suspend from userspace as of today is to grab
-> and release a kernel wakelock using the /sys/power/wake_lock and
-> /sys/power/wake_unlock files. This has the disadvantage of:
->
-> * Doing the useless work of creating and destroying wakelocks.
-> * If the userspace entity crashes after the wake lock is created, we
->   get a wake lock/memory leak.
+Hi
 
-But wakelocks are for this purpose.
+I've got an email that shows these syslog lines:
 
-> To avoid all this and simplify the interface, this patch allows
-> canceling a suspend by writing UINT_MAX value to the
-> /sys/power/wakeup_count that is meant for tracking wakeup events.
->
-> Signed-off-by: Saravana Kannan <saravanak@google.com>
+hpfs: filesystem error: warning: spare dnodes used, try chkdsk
+hpfs: You really don't want any checks? You are crazy...
+hpfs: hpfs_map_sector(): read error
+hpfs: code page support is disabled
+==================================================================
+BUG: KASAN: use-after-free in strcmp+0x6f/0xc0 lib/string.c:283
+Read of size 1 at addr ffff8880116728a6 by task syz-executor411/6741
+
+
+It seems that you deliberately turned off checking by using the parameter 
+check=none.
+
+The HPFS driver will not check metadata for corruption if "check=none" is 
+used, you should use the default "check=normal" or enable extra 
+time-consuming checks using "check=strict".
+
+The code that checks extended attributes in the fnode is in the function 
+hpfs_map_fnode, the branch "if ((fnode = hpfs_map_sector(s, ino, bhp, 
+FNODE_RD_AHEAD))) { if (hpfs_sb(s)->sb_chk) {" - fixes for checking 
+extended attributes should go there.
+
+If you get a KASAN warning when using "check=normal" or "check=strict", 
+report it and I will fix it; with "check=none" it is not supposed to work.
+
+Mikulas
+
+
+
+On Sun, 20 Jul 2025, Antoni Pokusinski wrote:
+
+> The addresses of the extended attributes are computed using the
+> fnode_ea() and next_ea() functions which refer to the fields residing in
+> a given fnode. There are no sanity checks for the returned values, so in
+> the case of corrupted data in the fnode, the ea addresses are invalid.
+> 
+> Fix the bug by adding ea_valid_addr() function which checks if a given
+> extended attribute resides within the range of the ea array of a given
+> fnode.
+> 
+> Reported-by: syzbot+fa88eb476e42878f2844@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=fa88eb476e42878f2844
+> Tested-by: syzbot+fa88eb476e42878f2844@syzkaller.appspotmail.com
+> Signed-off-by: Antoni Pokusinski <apokusinski01@gmail.com>
+> 
 > ---
->
-> Rafael,
->
-> If the idea looks good to you, I can also update Documentation and sent
-> it as a non-RFC patch. I'm not too tied on what file we use to trigger
-> an abort from userspace as long as it's possible.
+>  fs/hpfs/anode.c   | 2 +-
+>  fs/hpfs/ea.c      | 6 +++---
+>  fs/hpfs/hpfs_fn.h | 5 +++++
+>  fs/hpfs/map.c     | 2 +-
+>  4 files changed, 10 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/hpfs/anode.c b/fs/hpfs/anode.c
+> index c14c9a035ee0..f347cdd94a5c 100644
+> --- a/fs/hpfs/anode.c
+> +++ b/fs/hpfs/anode.c
+> @@ -488,7 +488,7 @@ void hpfs_remove_fnode(struct super_block *s, fnode_secno fno)
+>  	if (!fnode_is_dir(fnode)) hpfs_remove_btree(s, &fnode->btree);
+>  	else hpfs_remove_dtree(s, le32_to_cpu(fnode->u.external[0].disk_secno));
+>  	ea_end = fnode_end_ea(fnode);
+> -	for (ea = fnode_ea(fnode); ea < ea_end; ea = next_ea(ea))
+> +	for (ea = fnode_ea(fnode); ea < ea_end && ea_valid_addr(fnode, ea); ea = next_ea(ea))
+>  		if (ea_indirect(ea))
+>  			hpfs_ea_remove(s, ea_sec(ea), ea_in_anode(ea), ea_len(ea));
+>  	hpfs_ea_ext_remove(s, le32_to_cpu(fnode->ea_secno), fnode_in_anode(fnode), le32_to_cpu(fnode->ea_size_l));
+> diff --git a/fs/hpfs/ea.c b/fs/hpfs/ea.c
+> index 102ba18e561f..d7ada7f5a7ae 100644
+> --- a/fs/hpfs/ea.c
+> +++ b/fs/hpfs/ea.c
+> @@ -80,7 +80,7 @@ int hpfs_read_ea(struct super_block *s, struct fnode *fnode, char *key,
+>  	char ex[4 + 255 + 1 + 8];
+>  	struct extended_attribute *ea;
+>  	struct extended_attribute *ea_end = fnode_end_ea(fnode);
+> -	for (ea = fnode_ea(fnode); ea < ea_end; ea = next_ea(ea))
+> +	for (ea = fnode_ea(fnode); ea < ea_end  && ea_valid_addr(fnode, ea); ea = next_ea(ea))
+>  		if (!strcmp(ea->name, key)) {
+>  			if (ea_indirect(ea))
+>  				goto indirect;
+> @@ -135,7 +135,7 @@ char *hpfs_get_ea(struct super_block *s, struct fnode *fnode, char *key, int *si
+>  	secno a;
+>  	struct extended_attribute *ea;
+>  	struct extended_attribute *ea_end = fnode_end_ea(fnode);
+> -	for (ea = fnode_ea(fnode); ea < ea_end; ea = next_ea(ea))
+> +	for (ea = fnode_ea(fnode); ea < ea_end && ea_valid_addr(fnode, ea); ea = next_ea(ea))
+>  		if (!strcmp(ea->name, key)) {
+>  			if (ea_indirect(ea))
+>  				return get_indirect_ea(s, ea_in_anode(ea), ea_sec(ea), *size = ea_len(ea));
+> @@ -198,7 +198,7 @@ void hpfs_set_ea(struct inode *inode, struct fnode *fnode, const char *key,
+>  	unsigned char h[4];
+>  	struct extended_attribute *ea;
+>  	struct extended_attribute *ea_end = fnode_end_ea(fnode);
+> -	for (ea = fnode_ea(fnode); ea < ea_end; ea = next_ea(ea))
+> +	for (ea = fnode_ea(fnode); ea < ea_end && ea_valid_addr(fnode, ea); ea = next_ea(ea))
+>  		if (!strcmp(ea->name, key)) {
+>  			if (ea_indirect(ea)) {
+>  				if (ea_len(ea) == size)
+> diff --git a/fs/hpfs/hpfs_fn.h b/fs/hpfs/hpfs_fn.h
+> index 237c1c23e855..c65ce60d7d9a 100644
+> --- a/fs/hpfs/hpfs_fn.h
+> +++ b/fs/hpfs/hpfs_fn.h
+> @@ -152,6 +152,11 @@ static inline struct extended_attribute *next_ea(struct extended_attribute *ea)
+>  	return (struct extended_attribute *)((char *)ea + 5 + ea->namelen + ea_valuelen(ea));
+>  }
+>  
+> +static inline bool ea_valid_addr(struct fnode *fnode, struct extended_attribute *ea)
+> +{
+> +	return ((char *)ea >= (char *)&fnode->ea) && ((char *)ea < (char *)&fnode->ea + sizeof(fnode->ea));
+> +}
+> +
+>  static inline secno ea_sec(struct extended_attribute *ea)
+>  {
+>  	return le32_to_cpu(get_unaligned((__le32 *)((char *)ea + 9 + ea->namelen)));
+> diff --git a/fs/hpfs/map.c b/fs/hpfs/map.c
+> index ecd9fccd1663..0016dcbf1b1f 100644
+> --- a/fs/hpfs/map.c
+> +++ b/fs/hpfs/map.c
+> @@ -202,7 +202,7 @@ struct fnode *hpfs_map_fnode(struct super_block *s, ino_t ino, struct buffer_hea
+>  			}
+>  			ea = fnode_ea(fnode);
+>  			ea_end = fnode_end_ea(fnode);
+> -			while (ea != ea_end) {
+> +			while (ea != ea_end && ea_valid_addr(fnode, ea)) {
+>  				if (ea > ea_end) {
+>  					hpfs_error(s, "bad EA in fnode %08lx",
+>  						(unsigned long)ino);
+> -- 
+> 2.25.1
+> 
 
-I would rather add an interface based on a special device file for
-wakelocks to address this.
-
-For example, open it to create a wakelock with the name of a calling
-process, write 1 to it to block suspending, write 0 to it to unblock,
-close to remove it.
-
-Then it will go away automatically when the process exits.
-
->  drivers/base/power/wakeup.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
-> index d1283ff1080b..9316de561bcc 100644
-> --- a/drivers/base/power/wakeup.c
-> +++ b/drivers/base/power/wakeup.c
-> @@ -1008,6 +1008,8 @@ bool pm_save_wakeup_count(unsigned int count)
->         if (cnt =3D=3D count && inpr =3D=3D 0) {
->                 saved_count =3D count;
->                 events_check_enabled =3D true;
-> +       } else if (cnt =3D=3D UINT_MAX) {
-> +               pm_system_wakeup();
->         }
->         raw_spin_unlock_irqrestore(&events_lock, flags);
->         return events_check_enabled;
-> --
-> 2.50.0.727.gbf7dc18ff4-goog
->
->
 
