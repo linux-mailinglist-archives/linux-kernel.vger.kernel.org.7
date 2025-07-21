@@ -1,104 +1,83 @@
-Return-Path: <linux-kernel+bounces-739496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5A61B0C6ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:53:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10EF6B0C6F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:54:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D5E13BA1E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:52:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FE3716897B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:54:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62BBE8F6C;
-	Mon, 21 Jul 2025 14:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GvxbXt0b";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HtRrpd/P"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02BC28FFDB;
+	Mon, 21 Jul 2025 14:54:01 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 640BC18DB2A;
-	Mon, 21 Jul 2025 14:52:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF9AC8F6C;
+	Mon, 21 Jul 2025 14:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753109579; cv=none; b=OYjbgnVCbmMDaopGo3jgHxahh6d3Ezf4aFszjVEjUme3/Bef2hxkl2etETcYo1PXzf6eS/zWEYKNz2Coc+O6S0uRN9d6/WqXHPRwLRy8Kv5N/KKwxv75VwpU93fs/u8oFLlz40QltULQCyhuxIeyYNFbzjg20LuSLLwyDX4r/l8=
+	t=1753109641; cv=none; b=EsSqJw0OXE2gytkme29jzhm0KJvXyYS4kgrxNu+UGCSUK9kGk+HD7W4mfPRKguDsbKKOIROT8t+qhX1pZyHEOcIkdTCiM40NFFKtOyFhtuN2r/BiM6jEkHOa3RVOP6PjRNjdHYB5vLAvEUu8NRNE/1Es5wTsz0h5TTf0CF20K+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753109579; c=relaxed/simple;
-	bh=J/w2lNGrR7KJ+ZkYIOBUxtTzeSMAlJKzGmtnxV36JrY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qg0Tih2x4hxWwbO+KXjpQxkDizUO1+TaiuY5sjX1VKzMv/s1FkOLyAlD/ZgpLbtvEsSJJZK49ymBz6GB/YMnyzbOroPptRJQa6ZmMsN9l5piCKt3b7JYSxIAm1tfx0hS46caIgiRsx1hV8OsD8pc7PglJHHlmXpkWtktwarFa7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GvxbXt0b; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HtRrpd/P; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 21 Jul 2025 16:52:54 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753109576;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Wlbtxu8KKjEbfCs6NyH/KO2wnJiqPKPEBJhcaqwg5cU=;
-	b=GvxbXt0bzI4jwIEpnmdXOgQM5Bdrh6zPBpLZQjAI8cOTABEaLhNqBOADL9wGbRABJBfWrW
-	KF4bgY/qe+n3fYmlMwWeg6EAhtTrGnsy03GXpvUQGniuFQO9tIY00Bl0DRdDvBZczQbs3V
-	MizylPj8HPluTFZ97vWPgBKQtsCOaBIle7KkkZZpeyyYcLHfZJoc5A65L9PhgiT3y4Bhd6
-	s+7s9KURInhaeu0F0Lemz3Ll3uU4H1Ae/Z6KLh518+CFIQ0jWUwdFSBTolTXX6tDGk4QJx
-	g4QcBuUMbtfyIftT9tYc+YbQchtQxyzj5nW0uutTr6rNkWEQkY/TEkzo3aS/vw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753109576;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Wlbtxu8KKjEbfCs6NyH/KO2wnJiqPKPEBJhcaqwg5cU=;
-	b=HtRrpd/PENmWA4L/NzqYxAJE4rudqR4BmCqvOKwpdJT/A6PsLePEIB+EyObLCS10Lq/yMO
-	wUkS+t753aeIdMDw==
-From: Nam Cao <namcao@linutronix.de>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-trace-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
-	Clark Williams <williams@redhat.com>,
-	John Kacur <jkacur@redhat.com>
-Subject: Re: [PATCH v4 09/14] tools/dot2c: Fix generated files going over 100
- column limit
-Message-ID: <20250721145254.WPp6FNzS@linutronix.de>
-References: <20250721082325.71554-1-gmonaco@redhat.com>
- <20250721082325.71554-10-gmonaco@redhat.com>
+	s=arc-20240116; t=1753109641; c=relaxed/simple;
+	bh=uGPXYh19g0pPDrhe/mLF3iCb+LkIqLsf4TZSWhmSpbU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oB5JWxbFsWklIu4BJ2CyxNAMvB48omedLCCjM3rQEHbHbklprUMHtMxzKHhVMbWnIocHtMGlVL1P6vomXpcUrpvs9oSfQc+IDL/auiH11mxz+ToKBoShDQsuphCNCR6EYVy1iuBe2cpkgwtMlDf0B/HoNwwpZ0dMgW+D0uRSVwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf07.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay05.hostedemail.com (Postfix) with ESMTP id 63F965AE9D;
+	Mon, 21 Jul 2025 14:53:51 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf07.hostedemail.com (Postfix) with ESMTPA id 80A792002E;
+	Mon, 21 Jul 2025 14:53:49 +0000 (UTC)
+Date: Mon, 21 Jul 2025 10:53:48 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Sebastian Andrzej
+ Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH v2 1/4] srcu: Move rcu_is_watching() checks to
+ srcu_read_{,un}lock_fast()
+Message-ID: <20250721105348.05312994@batman.local.home>
+In-Reply-To: <20250719002817.4121867-1-paulmck@kernel.org>
+References: <3cecf6c9-b2ee-4f34-9d1b-ca4cfb8e56a7@paulmck-laptop>
+	<20250719002817.4121867-1-paulmck@kernel.org>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250721082325.71554-10-gmonaco@redhat.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: 94xef5no8umymuibh4po4rx341aiwdau
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: 80A792002E
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/nDBllZm2cMNRAPa6Lpi/jy1X06l/eUlQ=
+X-HE-Tag: 1753109629-336549
+X-HE-Meta: U2FsdGVkX19kj9BvEdOe4+f3V3KIk69ZmWp0D48s8zXODiyf+c7BUMxrhun/67QhQ2XBUbTQ0QQ9gi0viFn99OW1peRU+3bY0U7w/V+SR5oWalaE7BYIDUQ6EwFbRVFFbrWt6kYZdi6GEZpUgB9kF672KjwD7btcx4RN9xhoRXWEIVm1LXA5xhYhT8abURyP8/yHn4GWHQ6kBkk2qYxjD9yq2B75R9EkfgPcGPtHp232tjQ7+27sJubJEecEXR7F2N2cRYRn8aINAI7ILKF6cARgN1yVnSE16vHmH5JRjWhBYddB9r4G/fAJ7+OlKjN6HZl5fqVBXluzhRbA/EnIEL1g67iBAZwA
 
-On Mon, Jul 21, 2025 at 10:23:19AM +0200, Gabriele Monaco wrote:
-> The dot2c.py script generates all states in a single line. This breaks the
-> 100 column limit when the state machines are non-trivial.
+On Fri, 18 Jul 2025 17:28:14 -0700
+"Paul E. McKenney" <paulmck@kernel.org> wrote:
+
+> The rcu_is_watching() warnings are currently in the SRCU-tree
+> implementations of __srcu_read_lock_fast() and __srcu_read_unlock_fast().
+> However, this makes it difficult to create _notrace variants of
+> srcu_read_lock_fast() and srcu_read_unlock_fast().  This commit therefore
+> moves these checks to srcu_read_lock_fast(), srcu_read_unlock_fast(),
+> srcu_down_read_fast(), and srcu_up_read_fast().
 > 
-> Change dot2c.py to generate the states in separate lines in case the
-> generated line is going to be too long.
-> 
-> Also adapt existing monitors with line length over the limit.
-> 
-> Suggested-by: Nam Cao <namcao@linutronix.de>
-> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
-> ---
-> -        strformat = self.__get_state_string_length()
-> -
-> +        maxlen = self.__get_max_strlen_of_states() + len(self.enum_suffix)
-> +        tab_braces = 2 * 8 + 2 + 1 # "\t\t{ " ... "}"
-> +        comma_space = 2 # ", " count last comma here
 
-PEP8 prefers two spaces before the comments.
+Paul,
 
-> +        linetoolong = tab_braces + (maxlen + comma_space) * nr_events >= self.line_length
+Can you please send new versions of a patch set as a separate thread?
+It is really difficult to sort out what patch goes with what when they
+are all in the same thread. Even in tree view.
 
-Shouldn't this be '>' instead of '>='? 100 columns are still within the
-limit.
-
-Nam
+-- Steve
 
