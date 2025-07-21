@@ -1,204 +1,211 @@
-Return-Path: <linux-kernel+bounces-739608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9A86B0C87C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:17:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 03643B0C881
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:22:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DBC23AA926
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:16:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53D593ABA27
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:21:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 698D11917F1;
-	Mon, 21 Jul 2025 16:16:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C552D2DFA37;
+	Mon, 21 Jul 2025 16:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ETIyWcs+"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="C3b8byCN"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2081.outbound.protection.outlook.com [40.107.244.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2D928A71D
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 16:16:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753114606; cv=none; b=ReS+VvL7yic2os/H07zU6reJP8qWPUf4DhqN0HK25PRKergF0GSvGYxgyQ0yIyabc8c1KhRQwL8VymyKSoNphMpP9srTR0qqmgsuM4cI1uAZoJkQSDH3jjeJAsAlSMvmmgOkhCNa0eu8cs97Fk9CnJX/fVK2nAQ7zefn0exBZnA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753114606; c=relaxed/simple;
-	bh=jQK7hBntJAzCfknBxU+rIfU3PYhCTohn9MDcOS0DpEw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E7AwVZ12PDrAHL7D5Juzgj9wEya+tgnR77aIVJ6y1TPtm9GBKxuqfqbOL5w2jFm76UDTcupFrLG+KlJwnrrkTRWZWeWqR5HMW0san0siNugo3AOAYrjdKI0u2jAs6PpcwjysPHcO7ZgN0ZlOiNYTOB7jGOzAdBo8JU97Nruy9os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ETIyWcs+; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45629703011so31474395e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 09:16:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753114603; x=1753719403; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=talQw3V8OesgOs/IENp8i6XaCvz9bMnhlCG20asaaGA=;
-        b=ETIyWcs+YPo8XDhJDpgLJRRmjk53btcpD+Jv4NgvUIonExIan2AUsbFDUtLwW75YHZ
-         gcXYc9LFldeZAQXjpv0HMR2/osV0pazOVFS+ONegPiBuui+qiaNFggUxhhMQqr1R6MAM
-         F0AKuFT2RJOPxO/3o1vgbtgPWb1iKhOE7GZHDZDiYEaldtbBosNvPf/4fbVVOijXrfne
-         i6ATrMR+U3yLfbQCk5u6yyfuq4XQR0ZM0/9Ilsc6P6v6PQl+Xicz7tx6HpGJ7Un/fYBt
-         CMfzm0gFXH6Ei/jt474QgTopB0tdtsqW0m+YSnzN77R4b9WMLG01tnHwch5czBxl98Sa
-         GRQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753114603; x=1753719403;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=talQw3V8OesgOs/IENp8i6XaCvz9bMnhlCG20asaaGA=;
-        b=Q8aqGitdJ7ZzQf4T69GQjByoHTp1uYikm8b1AdVh7Kp6hjkO4yFX75xB/nJT9QrwJd
-         hEIOHGHVDXAuXzduoCTQWTHL4Nz9kTFiX9u9kaoXgVojgswf5c9b1xdRMmrmd1H2NW3c
-         VVNyJznRGxZO1UJd0yq0mKrK/rhYs1i9djWpu1jhC8gj/4NJ0j7I/wqk0NgNQAY+0P1q
-         Tf0UVjhv6fOZK2n0Z5uvfqpdmOMPe+y0hY+UNaAuHancFn+hpgWU9WWjpSctvVDOZtP7
-         PvSgvELkbh083aoPNJ/Hb3p0H3860TL/EFNTtSQgssHTpqjyWNoQZu3VySHNJfEntZCJ
-         Bobg==
-X-Forwarded-Encrypted: i=1; AJvYcCVqbbIAOTq8WbyIZ60ybUb8krfYmdKh7iWavA+G+PndaXAIZM134UOyWh8OdBiCPVkVUh1FowkwLqgQQ9U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkmRk+/Qf4eurzyB7HjkWam07/BtZe4Mnkd4SadVlrPHnukshe
-	Zr7dqsCenOpHEUUXisFOBZYcVdKV3Ha9mjPZ9pMhwXEmFxwgBHocGr5e6eIcQn5X1Zw=
-X-Gm-Gg: ASbGncsK8h1Q7keXWE3zxo7a5+75/i1T2w7YZI8RmuvWlqtnivF7UEzgLeZOZi5ZKfW
-	OJLmw8uOznhhfemymmw5b+cQCnpmEUjKwrnj5ygOVGGtO2IrxDI/u+5Nv6sYZUh2BousT375s2B
-	TcsExLwcQqMW3dqGX2qzjEAFnpNK5GtpDDaFbEEDTzTVqDBKCW/vN91ScVNGmgjkT0Ov2Sayr6r
-	Utl5yiwoYBFRKsPHqeHKydgNljvdm17Kzo2FeLsDDO8h6TP9fPrvHjKpdAkpApXcTu9H4YDXBVr
-	ME+1Vm4yCuHsQkWLr8aXUnLzzRdcm7SJiKGzeZF8tokwDR1P5M2yE5xN2EoeNTytnp5oI/82Z7r
-	YZSS5pXLmx+eWHU2mPHZ9CvYUI0qBuzUIbrbft9vRpYXp0b+Ev5Ly8nFInIOHM+U=
-X-Google-Smtp-Source: AGHT+IERPoYUdYZmsWjMVuo3Vr62pGzsvinykMvY+4a+6Z+e8/5eRFFxtBVqU6BUs0+8JvGwVbgaTg==
-X-Received: by 2002:a05:600c:1f13:b0:43c:fbba:41ba with SMTP id 5b1f17b1804b1-456327bbf81mr138943345e9.28.1753114603099;
-        Mon, 21 Jul 2025 09:16:43 -0700 (PDT)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e57200csm165190545e9.0.2025.07.21.09.16.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Jul 2025 09:16:42 -0700 (PDT)
-Message-ID: <57501e81-7e9c-4cb1-9a37-18307d1e06ca@linaro.org>
-Date: Mon, 21 Jul 2025 17:16:41 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853091A3154;
+	Mon, 21 Jul 2025 16:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753114940; cv=fail; b=RvVJZmi/+2fy6JRzLToCclCDMvEfTWsP+SNHLRrCvK+Azorv9YO4nFM3myOQEgPOSiIAv8xcQ3njrd26P6vNHNpXINHnBQUFERhPUx08n2jyzC8yePuVas3kqitGiLK6l7MW36+RNYRHwYzs7PEPbYyslUAzoljL29ZSkK97QoM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753114940; c=relaxed/simple;
+	bh=cSvt/QcKzYBLxjiOAH3diJwS7tGISqc6QV/9wyctJiM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=etsIOIwobiZiSpytcbmKl9joniYyWyxk88Y1Dj7JqST6abcY34KgUe584Z4sLN7SNSXX34su4wmw3nL5mbvb7T1f8P8EXi4gGoq/tlC+7zcN5SUFk4lZQR4SRMIhOmrDIzvDIDK4GUzpjCiM6dRuvIRv/J8gUuzbLy7sbUFayBg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=C3b8byCN; arc=fail smtp.client-ip=40.107.244.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=zBYM6++npch7l3uIDF4E9uJ3WKUOM30ouYPKatkDd33Db51HB46HiO6j6kUQIOyThQeQhQttu+/bBp97PBnI7ukwmalKpfQ91Hnl5KakdzHzVsU68QJ9bkpexk6FxHTPK2qDcBZu0Zx3ojoYUYqmu9tEPlHC37ROXygCG7jCFM5TXzpm94VSC6RxG/apUll8hZAjWIla77lQA0sHTb9FPitvk0cDxmEY3m0i04ebVNlEvjYKc+KfG1xLHKeWPuhLBWErOtPPGVfca30Wh8rtTtVN9md92FzfkA0kEW+F7PSzaYm1/Or7j7+gqGzpx1Uharb1oPi85Oh/b1/BWrcI7g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=i+XpEKfvrhAJLdDvE3j8Mlo5EXtO0SqZNKbBvKwmqP0=;
+ b=XOYR9/2jN3AgOutK8f9VLSzW/IDJjwxPkxOh14WMpMfLUYlrwUGIh/w6uy3ozD+1+oyipHYJUBYMivsR5jWFBCw+njBddQQ3UL7YpKUkaH0afg3aCtTkvSXZ1yzMfY1vbt7Edj8urSLqMqa2ANpQjmS6knyLPG0ENoaZ/dcj/bybyYm8WBg4SBUkJAUaGHK8fo/vyFS5RH94by2dK/dJRPVL7wF1THNWjHS9iLWbeBrfIb4AXpuDbgUYQ3LpJzADH/8HkarCoYRa5SU62tyJAIukU41wuoqXjFYIH5j/tfmMI5QHFdQ9AO3Knm/yzMD33NFi9ar+bqx7cJaDpoSvgw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=i+XpEKfvrhAJLdDvE3j8Mlo5EXtO0SqZNKbBvKwmqP0=;
+ b=C3b8byCNpeCL/eg5rAumYjEYsUNEFHz0xjRaFxTChsGUBS9xmyl4OAGiQKG9jfXxet7z/uuwT6VMWZ9ZbfmEkWgI8Lo+Os+ikAaIvVcUOfqahooshDzEDE0mEzg/DQ62lqMANaSf22tXVXaPTAo3YQAEWq+pkeUKUTsCua62/X15iMsaYkJMTipTDyC+0unDAxROcpu6BmoubYkDx5emUITabpf3B81JmIQgT/zpIO8SzpgBo0tbkNsstfTUENLytYpmLs4HgtIhInA6Y4ynzYasBuoapPVfqQSrQCJEAhj46rhGdORrW0w2fkfNXQA+tvbJ1M3Oja5do/A+tKXMvQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by CH3PR12MB8284.namprd12.prod.outlook.com (2603:10b6:610:12e::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Mon, 21 Jul
+ 2025 16:22:13 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%7]) with mapi id 15.20.8943.028; Mon, 21 Jul 2025
+ 16:22:13 +0000
+Message-ID: <699122f8-e6c4-4c0d-ab2f-3e1de2c8921e@nvidia.com>
+Date: Mon, 21 Jul 2025 12:22:09 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/6] binder: Set up KUnit tests for alloc
+To: Tiffany Yang <ynaffit@google.com>, linux-kernel@vger.kernel.org
+Cc: keescook@google.com, kernel-team@android.com,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ =?UTF-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
+ Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+ Christian Brauner <brauner@kernel.org>, Carlos Llamas <cmllamas@google.com>,
+ Suren Baghdasaryan <surenb@google.com>,
+ Brendan Higgins <brendan.higgins@linux.dev>, David Gow
+ <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+ linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
+References: <20250717011011.3365074-1-ynaffit@google.com>
+Content-Language: en-US
+From: Joel Fernandes <joelagnelf@nvidia.com>
+In-Reply-To: <20250717011011.3365074-1-ynaffit@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BN9P220CA0026.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:408:13e::31) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] phy: qcom-mipi-csi2: Add a CSI2 MIPI D-PHY driver
-To: Neil Armstrong <neil.armstrong@linaro.org>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Vinod Koul
- <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250710-x1e-csi2-phy-v1-0-74acbb5b162b@linaro.org>
- <20250710-x1e-csi2-phy-v1-2-74acbb5b162b@linaro.org>
- <11b573d5-ce4d-476c-b94c-216d427cd838@linaro.org>
- <08261aa4-689b-4d6b-bfd2-221c1976d254@linaro.org>
- <a7f64b31-4767-4281-b452-a2bc5351d745@mleia.com>
- <c93624bb-ee7b-45ac-8b53-b5391f11c9c9@linaro.org>
- <eac3a877-a4aa-4789-9013-ab8b6c91e0f3@linaro.org>
- <0a12879f-dc4a-47fb-87a0-ac4b8bcd4d75@linaro.org>
- <53a19b1d-5665-4937-a07c-5dd1fcde06c5@linaro.org>
- <3b760685-97db-46e3-80a3-7fad69ad31cd@oss.qualcomm.com>
- <94b75177-9401-4e0c-966b-5847a29cb6f7@linaro.org>
- <427548c0-b0e3-4462-a15e-bd7843f00c7f@oss.qualcomm.com>
- <3UXVZ6ANM9mDjVdMV4SXsiIx_pT3S1lp3RC_Q7mh_o7jF2dpYsni1Sl2TAWv6OCMCRTFmi9aE6BxDquGkOnwEg==@protonmail.internalid>
- <8b908a20-0bf3-447d-82ea-a5ecee1bf54c@linaro.org>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <8b908a20-0bf3-447d-82ea-a5ecee1bf54c@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|CH3PR12MB8284:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5c38c339-8a53-4d2c-27ab-08ddc872bf7e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cW8zazdPQnJXMnR1azNLQVphU3BXdlhYQzNZTUdhVkd1RkFSMWgrcVh3Z1ZB?=
+ =?utf-8?B?OGREaitaczhUd0lZVEFkYVV3YWpEU1hzQm9wZUt0dmkyNVgyWUQ2Smtvbld3?=
+ =?utf-8?B?V1E1MHJzWjNIZkRFd0pkd205MVJVOSt0REZJMDVBbTNaUjlzWit1ZHViNzkz?=
+ =?utf-8?B?aXgrOWEyNnhlSXlValJxcmhTM0c1d3lMaXhPcE9nc0ltMmZUdkZEckRpbGNy?=
+ =?utf-8?B?UWRnS1BJMzgwSldUVERIUUd1T2FGSjNMVWhRUjVoVXdoZCtLOVNkMEQwck9N?=
+ =?utf-8?B?bFRWSGNyZ1JrcDY3bTdKdTd2N092MUVHSlR4R3FwTTFxRVFhcUp6cVpRRGJT?=
+ =?utf-8?B?OXgwODVqYUluWVBPdUN4NCtoeFNJQzBFdmhNWXdzeTU3aHp4dnhpUDZEN2M2?=
+ =?utf-8?B?MHQ5LzZrZE5wcUVGNEFheXM1VkMrbldnczR3MGg5ZHpjbk5hQVhvRU5UenRV?=
+ =?utf-8?B?YS9tejl2MSt4Mk14UUM5V1hCbTVYVWVOZ2I2SnhqUUg4bFpTczZQSTNFZitB?=
+ =?utf-8?B?czF6N1J5V2xTRmxCZkxvRksxdUNzMnRIallkMmpISktlZzJWbkdLRjFlb2tZ?=
+ =?utf-8?B?eUowNUJ5QnJVdnFWaEI5Vld6UHZib2lrOGtFWTdEcUxFbVkzd1UrbGpJTWF3?=
+ =?utf-8?B?MVlBM3IrWnBabzlhK3RCTlNTd25VcFRyWGRRWmk4aHZ2TVFUa1N0YmRRZ2Zm?=
+ =?utf-8?B?c3NTODVJUEErdU14M2h0NzRPZUxVdjd2a3Y2c25IVStxcGJ2ZlMyUWsyeVZL?=
+ =?utf-8?B?eGowWkxjZnFQcEZQNXpLQ040TW5Ra3pNRVRwRXkrY05ocFM1VEgxbzdOTTJC?=
+ =?utf-8?B?cXczODI4Y2JLRkhrbzZ6UGVWZjJxeWNXS3RmQytTOENocncyLzlzUmpXVlVl?=
+ =?utf-8?B?OEVqdU1NVU9GOVo4Y3VMek5pY1RSbnpXYWFtZkRwUFJ5UjFNcnFYV1dMNTBo?=
+ =?utf-8?B?Wk1BZHVmN0tSZUJOZGdYRWcxVW1tcHhIaDgrU293ejV4T2lYY09MVC84NUg4?=
+ =?utf-8?B?Mmx6U0Q1TTk0N29kcm5UTWlCcE1lQ2xudnJjN0k3aHErWTJIVnQrTmtabVNr?=
+ =?utf-8?B?VjBheThmVzV1SnJFOGIrUWpUTFU2WHJuL1pFQzErRzgxVDl3bHF4My9OM2l5?=
+ =?utf-8?B?SzVYK25hMXdYRTU5QjdvSTkvUXBxdXV6cHl4NVd3aFNmWm5GVW9JMUh4aFRC?=
+ =?utf-8?B?aUlrTDcwSFJsZ0JwS3VjMGZEZWUyQXdRZm9LUWxJRVUwVGw0b2RpSzRJQmlo?=
+ =?utf-8?B?TVJzZDRRYXhPSDcyWDdJamtFMWNMZlgvbmVOMnlQZnF3cStmOXo1eXR3Wm1v?=
+ =?utf-8?B?Z2w0UDV3WkVhVU0rQUNrOVVtOU5zd3RRR3BHSkhQWWhQRzk1K1VsUXlJa3FW?=
+ =?utf-8?B?anBpMXF4OVNsZnJaT2pDNWR6Q29UVTVYS0JxQmUzT1RTUnpZbE5pMXhjSmd2?=
+ =?utf-8?B?UjlrdkdiV1FDMEYwMmNhdzlFaTRHWTA4bklVV0VoMENhT1Q4MWI2dXlTUXVu?=
+ =?utf-8?B?WlJaR3c3Z250VEx2WGRIMU5rcUhyampQQzZRNG4veGZ2Y0ZYN2lxZWU1OW00?=
+ =?utf-8?B?SDcwUVhLNGZUazJUM0RJaG9TcFRYemlsTGt3UytzSkppZENGUVgxVWRaWnJM?=
+ =?utf-8?B?R0t2VGJkbDZLWU5TRk1TNDZpUXlhRzh5Q2QxeGJQREdYNGlaN1JERjArSFNH?=
+ =?utf-8?B?YnFyclBlQmdMNFNMTGQ0Rk1pdjFwa05DR0hQOUZUZUNqOStiY000QW5UU1dp?=
+ =?utf-8?B?a0xkSTF3YkNpclZTM1M2M0ZQTGZlT0xWaUliSWJ4cUozZVlWRVgxSkxtVWNL?=
+ =?utf-8?B?N3VFOFI5ODA2dDhUdHRaVGR3eUlpOGErOGErZS8zVVVjVW4xWU5qNzRPZUVB?=
+ =?utf-8?B?QTZPNkt6cGNIZzNhWjhUTCtxTzd6U29ueFJtSDAxbDJJUEE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?azIwcUN5c1c4WFViMGtVMENLZ2hmYjRaZW0rQUdRVCszZzBLcVVMN1Ard1Ir?=
+ =?utf-8?B?eWNpdjVETHZKNVZRVzFTd0ZFYmlkbEZ6QTlnZTlmME1wM0VDMFVsWFduZU9Y?=
+ =?utf-8?B?M1pmMHo0NWNFNEh0QzAvTE5EdlZ2RTY0R0g2WlNLdTYxazN6U0ZxSjlZUHpM?=
+ =?utf-8?B?NHpkTzJXeHppcDVZeDNGbndiMkFYSm8wZTh2c1pEU0hmNGFPcVRFUTBVVGkx?=
+ =?utf-8?B?cGV1dE85UUQxdmt3NjFvWFRQenZ2QnpuQ29VRXo4TUFPdUlsYjhKc0JiWVFO?=
+ =?utf-8?B?Qmk5QXZzSm9KS1BUWFJlZDlWNEQrRUV3bEtBNFV5Q1ZCZkNqbG9qYnovbmVI?=
+ =?utf-8?B?d2RUaUMxNkErMVlTUGd1L3YxUXFkSDZVNFBJbjVrSS9LMWdqWXg4VWdUb3Z5?=
+ =?utf-8?B?Mk5xbksyM3lpRkdua0dwTDBETWZtTDZpRitFYmk0ZTZOS2NvSm5KMHhrbVR1?=
+ =?utf-8?B?RnlTWDNlUVhwd3owZHZlby9MMnpEUlRmdkV4aW01UDRmdG50WURzVVl5NDJa?=
+ =?utf-8?B?RnV1OHBVUXZzQ011U1JHZ3pjYjZPbjlTeW1scTZsenVkaUxUQ0dhbVpvaGtN?=
+ =?utf-8?B?aHRlTjltZmVpS2tyMFpvdkY4RjZ6Yk5sV0EvNXRZOGJtbEJmN3YrRktDSFZ5?=
+ =?utf-8?B?TzdmL1plcWRVNktualNUK3ArSWVRcFNnekx5ZkR2NlZRNkRGOERRZDZyTmtu?=
+ =?utf-8?B?WWN6eEtvdXdjRXlyZE5WNVRibXBKNjJnZWxrOStURUVibzFCTDc1ZC9vTG0r?=
+ =?utf-8?B?ZEw3eDFlZkZYNUxhUnlwZTNDSkJ3WTd3SFhZZkJsaXZ2TGpoUUkxVTM1eWtJ?=
+ =?utf-8?B?UURqL2h2YkNHTm5ROWhFMzBJdGVFUElaejFWR0g1bWdtd2wrN1lkbTVpMHRP?=
+ =?utf-8?B?L1prbmxrWXNSdWMxaUFBUlIwNnh4OWxPdnlGRHRxRGtaa0RqcHliT2VHRnhj?=
+ =?utf-8?B?NVh3R2dqWjBvR2pDV3JBelc5ak51M3lIckZUNllYdkpNNThnb055alZRY0lL?=
+ =?utf-8?B?cGN4RG11YzQzTXJHVnZxbXNRY3ZFOW93NW5GSkFCS0M4MTVBWGMxeU54UUlK?=
+ =?utf-8?B?VG1vZ2ZMT1JRQTY0d2lKL2JiNnNBRHZWRWlDckRkZzVBMEMvOWZPb2V3WStE?=
+ =?utf-8?B?SDc4cE1kMXRaL3AwdUNOVGhNb3FQdW9tRncvZmZjanBWRVNXeDdpbVdJVity?=
+ =?utf-8?B?Uk10dzNENkkvaWdubTJ5bmxMVFR0TE9kNCtpa2FpRkhkRGxGNCt0WHAzU3U5?=
+ =?utf-8?B?RTBELzNvaHpYeFdaeHBlVHBpUFp2ckJXYzlReEp2bExncUxvMy81WEJUWTR0?=
+ =?utf-8?B?b3hESVVPTlBHYWxCR05RSU5YZDNIcjRBSGxvVUxlNTJ0Z25OMEdLbE94U20z?=
+ =?utf-8?B?WDdvSXFqWjE2bFhmSGREbE5QZFZLcEMyK2t2MUVQNy82c04rMHNUbXo2KzMv?=
+ =?utf-8?B?VHdrVnQ2QmhjKzR0d2ZyNjFKSGo2QWlLdWx3MzUvd3A4aG8zYVVvYkNkY044?=
+ =?utf-8?B?bG5vK09pVDhySndkUHRSNDdVVkZLVEVkK0V2dHQydW8rSnR2VGRiSkdoSVhx?=
+ =?utf-8?B?QXFTcThwNFkvZXh1TU53Mk9RYWpYREtoVnJidVJDVU9Jc0lISDl1dFU4Zko4?=
+ =?utf-8?B?ZFlrejliaUhxYm5mV3k5Tnl2ZjlLcURpWDRyZmU1cWIrTHRyeXVMd3VvWFc3?=
+ =?utf-8?B?TW1TOGQ0WTM0RXVXRCthenVUYytmS1JiYlhmZGw3a1plUjdHVmtIbkxIa0s4?=
+ =?utf-8?B?K0Fxd2QwREdyN3hDMlpoSElzRDRBZWI2ZFNyNDFRM0NVSkVRRGNZWEluOEFp?=
+ =?utf-8?B?QkQ1M2VVVXJyUXJWVEdqR2VlSitsb2FCMVdIOXhLMWIyRXhMVzVRN2ZQa0tM?=
+ =?utf-8?B?dVhXek56TUtXeVlwYllKZnMvT3RraXlSdWhaVjJWTVU2TlNDcXlpeGVTNkln?=
+ =?utf-8?B?S291UmFQSmk5NlovZzgwVCtLd094SC9oeDBGM2t2UlhORkxKRmtiQWF2OXdi?=
+ =?utf-8?B?czlqd3cxalYzQVlJU21hM0Q2RGVjNStxMVYyOS9tQWRwQmJxQVlURmxOa24x?=
+ =?utf-8?B?TDRoR0RPdDJhU3ZUcHZ0aVBLQmV6bGhad2RzNU5LbW54UHpvL1R1Z01TSDhZ?=
+ =?utf-8?Q?iIfRGPVaTjlWM2B2FiQDlCpx8?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5c38c339-8a53-4d2c-27ab-08ddc872bf7e
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2025 16:22:13.1662
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: FVZfL69I78nyA2VlM+SnaudOt2QCF9TJqoFnUfsSHV2grMMi4M6Qg3fUEAwnmo1KpgUlrAuNN6eo54mMFY4U9g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8284
 
-On 21/07/2025 16:46, neil.armstrong@linaro.org wrote:
-> On 15/07/2025 11:33, Konrad Dybcio wrote:
->> On 7/15/25 11:20 AM, Vladimir Zapolskiy wrote:
->>> On 7/15/25 12:01, Konrad Dybcio wrote:
->>>> On 7/15/25 8:35 AM, Vladimir Zapolskiy wrote:
->>>>> On 7/15/25 03:13, Bryan O'Donoghue wrote:
->>>>>> On 14/07/2025 16:30, Vladimir Zapolskiy wrote:
->>>>>>>>
->>>>>>>> I think that is genuinely something we should handle in camss-csid.c
->>>>>>>> maybe with some meta-data inside of the ports/endpoints..
->>>>>>>>
->>>>>>>
->>>>>>> This is a CSIPHY property, a CSIPHY hardware configuration and a wiring
->>>>>>> of sensors to a CSIPHY. Where is the relation to CSID here? There is no.
->>>>>>
->>>>>> All the PHY really needs to know is the # of lanes in aggregate, which
->>>>>> physical lanes to map to which logical lanes and the pixel clock.
->>>>>>
->>>>>> We should add additional support to the Kernel's D-PHY API parameters
->>>>>> mechanism to support that physical-to-logical mapping but, that's not
->>>>>> required for this series or for any currently know upstream user of CAMSS.
->>>>>>
->>>>>>> Please share at least a device tree node description, which supports
->>>>>>> a connection of two sensors to a single CSIPHY, like it shall be done
->>>>>>> expectedly.
->>>>>> &camss {
->>>>>>          port@0 {
->>>>>>              csiphy0_lanes01_ep: endpoint0 {
->>>>>>                  data-lanes = <0 1>;
->>>>>>                  remote-endpoint = <&sensor0_ep>;
->>>>>>              };
->>>>>>
->>>>>>              csiphy0_lanes23_ep: endpoint0 {
->>>>>>                  data-lanes = <2 3>;
->>>>>>                  remote-endpoint = <&sensor1_ep>;
->>>>>>              };
->>>>>>           };
->>>>>> };
->>>>>
->>>>> Don't you understand that this is broken?.. That's no good.
->>>>>
->>>>> Please listen and reread the messages given to you above, your proposed
->>>>> "solution" does not support by design a valid hardware setup of two
->>>>> sensors connected to the same CSIPHY.
->>>>>
->>>>> I would propose to stop force pushing an uncorrectable dt scheme, it
->>>>> makes no sense.
->>>>
->>>> If all you're asking for is an ability to grab an of_graph reference
->>>> from the camss (v4l2) driver, you can simply do something along the
->>>> lines of of_graph_get_remote_port(phy->dev->of_node)
->>>>
->>>
->>> It's not about the driver specifics, my comment is about a proper
->>> hardware description in dts notation, please see the device tree node
->>> names.
->>
->> I'm a little lost on what you're trying to argue for..
->>
->> I could make out:
->>
->> 1. "the phy should be a multimedia device"
->> 2. "There is no ports at all, which makes the device tree node unusable,
->>     since you can not provide a way to connect any sensors to the phy."
->>
->> I don't really understand #1.. maybe that could be the case if the PHY
->> has a multitude of tunables (which I don't know if it does, but wouldn't
->> be exactly surprised if it did) that may be usecase/pipeline-specific
->>
->> As for #2, I do think it makes sense to connect the sensors to the PHY,
->> as that's a representation of electrical signals travelling from the
->> producer to the consumer (plus the data passed in e.g. data-lanes is
->> directly related to the PHY and necessarily consumed by its driver)
+
+
+On 7/16/2025 9:10 PM, Tiffany Yang wrote:
+> Hello,
 > 
-> The port/endpoint should represent the data flow, and if the signal is the following:
+> binder_alloc_selftest provides a robust set of checks for the binder
+> allocator, but it rarely runs because it must hook into a running binder
+> process and block all other binder threads until it completes. The test
+> itself is a good candidate for conversion to KUnit, and it can be
+> further isolated from user processes by using a test-specific lru
+> freelist instead of the global one. This series converts the selftest
+> to KUnit to make it less burdensome to run and to set up a foundation
+> for unit testing future binder_alloc changes.
 > 
-> sensor -> csiphy -> csid
+> Thanks,
+> Tiffany
+> 
+> Tiffany Yang (6):
+>   binder: Fix selftest page indexing
+>   binder: Store lru freelist in binder_alloc
+>   kunit: test: Export kunit_attach_mm()
+>   binder: Scaffolding for binder_alloc KUnit tests
+>   binder: Convert binder_alloc selftests to KUnit
+>   binder: encapsulate individual alloc test cases
 
-I'll be honest.
 
-I looked at your upstreamed code
+Looks good to me!  And I learnt a bunch of kunit from reading this too. :)
 
-drivers/phy/amlogic/phy-meson-axg-mipi-dphy.c 
-Documentation/devicetree/bindings/parch/arm64/boot/dts/amlogic/meson-khadas-vim3-ts050.dtsoc/meson-axg.dtsi
+Reviewed-by: Joel Fernandes <joelagnelf@nvidia.com>
 
-And didn't really think CSIPHY needed to be included in the data-graph.
+ - Joel
 
----
-bod
 
