@@ -1,151 +1,179 @@
-Return-Path: <linux-kernel+bounces-738781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13A22B0BCF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:47:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6367AB0BCFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:49:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 652B33B5370
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:47:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A80961892E62
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:49:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F70427FD46;
-	Mon, 21 Jul 2025 06:47:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C315227FD46;
+	Mon, 21 Jul 2025 06:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DHD8hyGf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hXfMo9FY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E025D223302;
-	Mon, 21 Jul 2025 06:47:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C54618DB2A;
+	Mon, 21 Jul 2025 06:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753080461; cv=none; b=N5ENwM65Md6yP1RSJsBTy4yAyXUq0glfVd4SnPUobOdHCM6pOaErXeJw7uI6rw2ukakkYHRrkhVeIjw4g2QR3q/w2OJpuAfili5rfjBNsT4YoVCp39mIx5U8GxHFnhpct/QqBAL+x/urAIcwUmPHV2ZZn1HK8rjgOpbAbyc8Rgk=
+	t=1753080551; cv=none; b=HxlnGzcYHSWJ+LQbEQpyqp9Qj4jvLu0Psn+GD6AfCqOZt8l8zbiV+GVcZ2W2thugcu9/Cxbopr86sfTGLS2R19v/KuA68mr+0rU58lXjJGjja//bT6XX2jyVUc2V/D/5uzsJq/VDHlKl9sz1sgE2mimw6V8dr4FpLBs6Q7HtM6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753080461; c=relaxed/simple;
-	bh=ZjVTcKbsRevDk/Oaru45By4rM0QU89TkvkSHMwWvxxw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VVIALukgMjSkLLmGgdCoMueMjcA+T8j36AcO3c40KeGXvXhHVayf3yP8Tw6n9J58KkvqS5Yca7OMuWSb5hOEAhKDh0NKpTkLixmwQ/ITNyv/55804cV/6W/iU3dkV6yp+kW7iauqDCdw+2kldVWBRpP3fmD7FCQWC4drIFUB6lE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DHD8hyGf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E94BBC4CEED;
-	Mon, 21 Jul 2025 06:47:36 +0000 (UTC)
+	s=arc-20240116; t=1753080551; c=relaxed/simple;
+	bh=R4gstohCCiEcB83QHp4vePC6Vl/FRbG01v8oYCtIJb4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rmQlkSnm1U5gUoWe220aqv3c2f1UeLzV7Kdi3cmanTnZAbcR+qSbV2J2XQ+JDGtGyxPej5ORHk9lke0N70LtVykqIOU2BVvoj6C+x/LCWFR1MPvMYwW20H/GTnzYy9QGr8864cJ2xHTDbPCQqOs6ZHM6HPedhTjRaQcdPwXASWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hXfMo9FY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19A71C4CEF4;
+	Mon, 21 Jul 2025 06:49:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753080460;
-	bh=ZjVTcKbsRevDk/Oaru45By4rM0QU89TkvkSHMwWvxxw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DHD8hyGfljx5ywckYjCud4sf1NSOvkJJzeSwoh63ofX0BinD6/Is+W3UNNQyT0IH6
-	 J20S2JoL/VRTsKFF/kfrU9rn1B5NmVqiSm5FCush5ffiuUfr7kexOtIEG6Z1riU4n8
-	 4jLmkIQCy+YAjEGCdsmxN9EmGKiPqwXWZetMMZpzhxkIHoRd3+2iBWQOF2WzF8seRg
-	 Xf8reRoJOv4nMNmJhsh8CRi0RNzGKo4iBNdBNF+JNiWj356CCQsLw7fuzH60gTjktT
-	 Xa+m0o/ogOiteifEirY7u3iWm2OmsVgmF0+E9OtH+iafG68f0AU5A92IF6pkvLNEeT
-	 ot2NqjjqqMlsQ==
-Message-ID: <2b6481e8-9a70-4676-bca4-da3ee00e73ba@kernel.org>
-Date: Mon, 21 Jul 2025 08:47:35 +0200
+	s=k20201202; t=1753080550;
+	bh=R4gstohCCiEcB83QHp4vePC6Vl/FRbG01v8oYCtIJb4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hXfMo9FYah+I/klWyq3E4MM8uAEW+sVZ6ODTWsq5JUGj0H3aocK/YvbN4TFt88Hvo
+	 Rn06q7poo3PqWnBummfdHCv3BPx6GuFba9cIihgDNPzUzVyMGM+iS0hPLeAsvnHP3l
+	 U16vKWM2EvhSN9ENkKqsKLL6P+hah8+TgBzcVXJobxUE7ZVqOKbmm4hm0TXfKYNChx
+	 SSFWMkt4DOwbPfkKpjrcSjqtEzEmHFxNyFpppZlLc8Cu6Ru5oSdrYYLOQST7PAChe3
+	 CoqaxGFV0y1PwQZKEVuQqLnMxUFjEdPhV9/PxlWmOLfWgwSQKGbvScbg47BtI5mlQ2
+	 IcE2ZN/gKY35Q==
+Date: Mon, 21 Jul 2025 09:49:04 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Yonatan Maman <ymaman@nvidia.com>
+Cc: =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Alistair Popple <apopple@nvidia.com>,
+	Ben Skeggs <bskeggs@nvidia.com>,
+	Michael Guralnik <michaelgur@nvidia.com>,
+	Or Har-Toov <ohartoov@nvidia.com>,
+	Daisuke Matsuda <dskmtsd@gmail.com>, Shay Drory <shayd@nvidia.com>,
+	linux-mm@kvack.org, linux-rdma@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] *** GPU Direct RDMA (P2P DMA) for Device Private
+ Pages ***
+Message-ID: <20250721064904.GK402218@unreal>
+References: <20250718115112.3881129-1-ymaman@nvidia.com>
+ <20250720103003.GH402218@unreal>
+ <35ff6080-9cb8-43cf-b77a-9ef3afd2ae59@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 9/9] ASoC: dt-bindings: sound: exynosauto: add PCM
- frontend nodes for ABOX generic
-To: ew kim <ew.kim@samsung.com>, broonie@kernel.org, s.nawrocki@samsung.com,
- robh@kernel.org, krzk+dt@kernel.org
-Cc: lgirdwood@gmail.com, tiwai@suse.com, perex@perex.cz, conor+dt@kernel.org,
- alim.akhtar@samsung.com, linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250721023052.3586000-1-ew.kim@samsung.com>
- <CGME20250721024612epcas2p122d627cfb90eac508b6ed3667acd9b9b@epcas2p1.samsung.com>
- <20250721023052.3586000-10-ew.kim@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250721023052.3586000-10-ew.kim@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <35ff6080-9cb8-43cf-b77a-9ef3afd2ae59@nvidia.com>
 
-On 21/07/2025 04:30, ew kim wrote:
-> This patch extends the Exynos Automotive ABOX generic device tree bindings
-> to support PCM playback and capture frontend nodes.
+On Mon, Jul 21, 2025 at 12:03:51AM +0300, Yonatan Maman wrote:
 > 
-> Each PCM device node describes an audio stream interface handled by the
-> ABOX DSP. These nodes include properties for stream ID, IRQ, ADSP core
-> assignment, buffer limits, and stream category (deep_buffer or compress).
 > 
-> The bindings use patternProperties to match playback and capture nodes
-> as children of the abox_generic controller.
-
-This split of one device into three makes no sense. Adding new binding
-is one commit.
-
+> On 20/07/2025 13:30, Leon Romanovsky wrote:
+> > External email: Use caution opening links or attachments
+> > 
+> > 
+> > On Fri, Jul 18, 2025 at 02:51:07PM +0300, Yonatan Maman wrote:
+> > > From: Yonatan Maman <Ymaman@Nvidia.com>
+> > > 
+> > > This patch series aims to enable Peer-to-Peer (P2P) DMA access in
+> > > GPU-centric applications that utilize RDMA and private device pages. This
+> > > enhancement reduces data transfer overhead by allowing the GPU to directly
+> > > expose device private page data to devices such as NICs, eliminating the
+> > > need to traverse system RAM, which is the native method for exposing
+> > > device private page data.
+> > > 
+> > > To fully support Peer-to-Peer for device private pages, the following
+> > > changes are proposed:
+> > > 
+> > > `Memory Management (MM)`
+> > >   * Leverage struct pagemap_ops to support P2P page operations: This
+> > > modification ensures that the GPU can directly map device private pages
+> > > for P2P DMA.
+> > >   * Utilize hmm_range_fault to support P2P connections for device private
+> > > pages (instead of Page fault)
+> > > 
+> > > `IB Drivers`
+> > > Add TRY_P2P_REQ flag for the hmm_range_fault call: This flag indicates the
+> > > need for P2P mapping, enabling IB drivers to efficiently handle P2P DMA
+> > > requests.
+> > > 
+> > > `Nouveau driver`
+> > > Add support for the Nouveau p2p_page callback function: This update
+> > > integrates P2P DMA support into the Nouveau driver, allowing it to handle
+> > > P2P page operations seamlessly.
+> > > 
+> > > `MLX5 Driver`
+> > > Utilize NIC Address Translation Service (ATS) for ODP memory, to optimize
+> > > DMA P2P for private device pages. Also, when P2P DMA mapping fails due to
+> > > inaccessible bridges, the system falls back to standard DMA, which uses host
+> > > memory, for the affected PFNs
+> > 
+> > I'm probably missing something very important, but why can't you always
+> > perform p2p if two devices support it? It is strange that IB and not HMM
+> > has a fallback mode.
+> > 
+> > Thanks
+> > 
 > 
-> Signed-off-by: ew kim <ew.kim@samsung.com>
-> ---
->  .../bindings/sound/samsung,exynosauto.yaml    | 126 +++++++++++++++++-
->  1 file changed, 123 insertions(+), 3 deletions(-)
+> P2P mapping can fail even when both devices support it, due to PCIe bridge
+> limitations or IOMMU restrictions that block direct P2P access.
+
+Yes, it is how p2p works. The decision "if p2p is supported or not" is
+calculated by pci_p2pdma_map_type(). That function needs to get which two
+devices will be connected.
+
+In proposed HMM_PFN_ALLOW_P2P flag, you don't provide device information
+and for the system with more than 2 p2p devices, you will get completely
+random result.
+
+
+> The fallback is in IB rather than HMM because HMM only manages memory pages - it doesn't
+> do DMA mapping. The IB driver does the actual DMA operations, so it knows
+> when P2P mapping fails and can fall back to copying through system memory.
+
+The thing is that in proposed patch, IB doesn't check that p2p is
+established with right device.
+https://lore.kernel.org/all/20250718115112.3881129-5-ymaman@nvidia.com/
+
+> In fact, hmm_range_fault doesn't have information about the destination
+> device that will perform the DMA mapping.
+
+So probably you need to teach HMM to perform page_faults on specific device.
+
+Thansk
+
+> > > 
+> > > Previous version:
+> > > https://lore.kernel.org/linux-mm/20241201103659.420677-1-ymaman@nvidia.com/
+> > > https://lore.kernel.org/linux-mm/20241015152348.3055360-1-ymaman@nvidia.com/
+> > > 
+> > > Yonatan Maman (5):
+> > >    mm/hmm: HMM API to enable P2P DMA for device private pages
+> > >    nouveau/dmem: HMM P2P DMA for private dev pages
+> > >    IB/core: P2P DMA for device private pages
+> > >    RDMA/mlx5: Enable P2P DMA with fallback mechanism
+> > >    RDMA/mlx5: Enabling ATS for ODP memory
+> > > 
+> > >   drivers/gpu/drm/nouveau/nouveau_dmem.c | 110 +++++++++++++++++++++++++
+> > >   drivers/infiniband/core/umem_odp.c     |   4 +
+> > >   drivers/infiniband/hw/mlx5/mlx5_ib.h   |   6 +-
+> > >   drivers/infiniband/hw/mlx5/odp.c       |  24 +++++-
+> > >   include/linux/hmm.h                    |   3 +-
+> > >   include/linux/memremap.h               |   8 ++
+> > >   mm/hmm.c                               |  57 ++++++++++---
+> > >   7 files changed, 195 insertions(+), 17 deletions(-)
+> > > 
+> > > --
+> > > 2.34.1
+> > > 
 > 
-> diff --git a/Documentation/devicetree/bindings/sound/samsung,exynosauto.yaml b/Documentation/devicetree/bindings/sound/samsung,exynosauto.yaml
-> index 3a7b5be627ee..e477550afc7c 100644
-> --- a/Documentation/devicetree/bindings/sound/samsung,exynosauto.yaml
-> +++ b/Documentation/devicetree/bindings/sound/samsung,exynosauto.yaml
-> @@ -28,6 +28,14 @@ properties:
->    compatible:
->      const: samsung,abox_generic
->  
-> +  status:
-> +    enum: [ okay, disabled ]
-> +    description: DTS node enablement state
-
-
-Sorry, but why are you writing something entirely different than every
-other binding?
-
-
-Best regards,
-Krzysztof
+> 
+> 
 
