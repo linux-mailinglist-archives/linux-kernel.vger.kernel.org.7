@@ -1,186 +1,173 @@
-Return-Path: <linux-kernel+bounces-739138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD896B0C23A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:09:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88422B0C21F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:04:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D20AF168EC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:09:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF6B13AED7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42457298CC6;
-	Mon, 21 Jul 2025 11:09:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBE828FFF3;
+	Mon, 21 Jul 2025 11:04:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="CzmeFdsk"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u9dOftA3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234DB293C53;
-	Mon, 21 Jul 2025 11:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859A51D540;
+	Mon, 21 Jul 2025 11:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753096144; cv=none; b=HMQP/W55WJm6V04gQQ6CC5E09mD2QV/Obcayc9AQ2dlTFE18DwXZc3fqzhS3h9ToaCxFYku5z51qNGoj5nmgn5Fs0gjFvtuqsVZAAYxkHoSEIgcLSEW7XWKiAAm6PFW5kn2l6OiLGf6tPN2sL1vUfY8qJ/NsKw7OwjgddAbm+Z0=
+	t=1753095843; cv=none; b=ZTTN3vH3yQJ5RsgjSsY6F8bpm+7+AMwq5Famaw1xsnfsNOUgwmlwfq6qXXJWFx/UOmR70Bnx12RHTidLi3d/so0YK69JPk750ds29ZWUd0N8OMdX3u80jQ1h/E76x+LUMNEECh46R5DViDFAOYItUg0G+GPBBve6+28w/BwLtf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753096144; c=relaxed/simple;
-	bh=gfznuj8R/OgNmBc8q9ckubFy8KwAuCgY/+9OMWwyfIQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HHlfXqmh+EaFktlXv2/gzX0SpuakNHy2Lp5eC2YfDYRgEoKTLR6uJALtlOVL/TtlKlqWmWgIYAY7lgAj6GCmQOTy1PJNbzlS0hiY50Q40XU2wRJKXLg7WNbUdNofYwKmvusSD/yN8XiT7b0mRxL9mNuBVOcrXkGerI/4nzmrZ8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=CzmeFdsk; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56LAiMm0014072;
-	Mon, 21 Jul 2025 13:07:23 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	ZesZJAirQ8C1ohHkcmwk/SZqiKf5CT9QYrZbudr96z0=; b=CzmeFdsk3HJI57lf
-	VLKGmGmQh3HC0LKkNuWaKOM3l+4NgchhLNiXV1T8nRre05AknyQJpS7M5wJO9wOm
-	XuV1k2bu1IAf90lIDHIllg989ZrLgbM//VIbAEB3C8CVmGZ1d6PXtQjK8WQyEY5m
-	LsrRFkiefZARVmwg9N/2WMFwuMBkMOQvNN6UGxBgdturUrOqlLPFtM6UfXoFVwgj
-	D8f/bAv0oktn4xffXnsWJJg0khrsCm0nR7tb6Z23OBIbk8dOgTKidpDU07lpa67O
-	4a4ELDPBB/W8hNiDKbVLlz6q5YiYEroFt4A8MU30eFbNqlv4XdWBb0licHEpeeyU
-	4p57+A==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4802q20j57-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 21 Jul 2025 13:07:23 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 3D3E1400A9;
-	Mon, 21 Jul 2025 13:04:18 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 26B8B7A321F;
-	Mon, 21 Jul 2025 13:03:59 +0200 (CEST)
-Received: from [10.130.78.67] (10.130.78.67) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 21 Jul
- 2025 13:03:57 +0200
-Message-ID: <fa07f01b-1e06-48c1-b380-c41a52f741bc@foss.st.com>
-Date: Mon, 21 Jul 2025 13:03:57 +0200
+	s=arc-20240116; t=1753095843; c=relaxed/simple;
+	bh=EcW+PuwhhXhVoa+pRSceK3tuWnx91zSNXUwkaiOBF8c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZTlDnozOK60vQl81gwY0zuu6tO0AwY6Gwohvks4aodJ82CeMwC7XIqaoWaSA3MLIrucZPMLqjhcMW8wyRh1R4kYHXP+dFAJVw1U5kj/x1VEsBfNJDlL5iedleRmv5mb/aZGALqosub7cC4PYRM0B1xekvBpiVwPPhduiVUbdalk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u9dOftA3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1423EC4CEED;
+	Mon, 21 Jul 2025 11:04:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753095842;
+	bh=EcW+PuwhhXhVoa+pRSceK3tuWnx91zSNXUwkaiOBF8c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u9dOftA3ryJYz+Ay2nJJO8r8Hjj/RBFk0OgmQdtlf1ef3l6DokAE5VHSbTQQBdGeX
+	 Qs420DHiuJsJdHGxj2+MO60aUY+0fPelpG7Zs6f4LQHL/+GScWKMwlUZNa6ARyTbTn
+	 0l7Lac6JhTYbLZDtPLQ05t/ebureu9JR/BoCoG39DPhfOiFsmDFIGNAswmIRQ1H22R
+	 nw397Iu/AyML2rPT6zYqAA1lc6HIqW3xlP7RXKuAMNms2X7fGJWJ6zdBx0opk0qbRr
+	 WObsBeaqSg0ThVBTem2M+P4/ZK7jaRP/oG6qtjYG2wq6q4Rrgz6ook2haBB4v3DwKY
+	 AvAGuqkAACxoA==
+Date: Mon, 21 Jul 2025 13:03:59 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	linux-pwm@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] pwm: imx-tpm: reset counter if CMOD is 0
+Message-ID: <7wsbi7pcwa2otxqkon3zfat7faprhr3l7wc35fkzctmm3cv67m@ph6w7hzwt322>
+References: <20250714123634.6442-1-laurentiumihalcea111@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] media: Remove redundant
- pm_runtime_mark_last_busy() calls
-To: Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Tommaso Merciai
-	<tomm.merciai@gmail.com>,
-        Martin Hecht <mhecht73@gmail.com>,
-        Mauro Carvalho
- Chehab <mchehab@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Alain Volmat
-	<alain.volmat@foss.st.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Umang Jain
-	<umang.jain@ideasonboard.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Michael Riesch
-	<michael.riesch@collabora.com>,
-        Mikhail Rudenko <mike.rudenko@gmail.com>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Jacopo Mondi
-	<jacopo.mondi@ideasonboard.com>,
-        Nicholas Roth <nicholas@rothemail.net>,
-        Sylvain Petinot <sylvain.petinot@foss.st.com>,
-        Paul Elder
-	<paul.elder@ideasonboard.com>,
-        Matt Ranostay <matt@ranostay.sg>,
-        Nas Chung
-	<nas.chung@chipsnmedia.com>,
-        Jackson Lee <jackson.lee@chipsnmedia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding
-	<thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Vikash
- Garodia <quic_vgarodia@quicinc.com>,
-        Dikshita Agarwal
-	<quic_dikshita@quicinc.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan
- O'Donoghue <bryan.odonoghue@linaro.org>,
-        Raspberry Pi Kernel Maintenance
-	<kernel-list@raspberrypi.com>,
-        Florian Fainelli
-	<florian.fainelli@broadcom.com>,
-        Broadcom internal kernel review list
-	<bcm-kernel-feedback-list@broadcom.com>,
-        Nicolas Dufresne
-	<nicolas.dufresne@collabora.com>,
-        Benjamin Gaignard
-	<benjamin.gaignard@collabora.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>, Sean Young <sean@mess.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Matthias Fend
-	<matthias.fend@emfend.at>,
-        Marco Felsch <m.felsch@pengutronix.de>,
-        Tomi
- Valkeinen <tomi.valkeinen@ideasonboard.com>,
-        Ricardo Ribalda
-	<ribalda@chromium.org>
-CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-rpi-kernel@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-rockchip@lists.infradead.org>
-References: <20250709195348.973873-1-sakari.ailus@linux.intel.com>
-Content-Language: en-US
-From: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
-In-Reply-To: <20250709195348.973873-1-sakari.ailus@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-21_03,2025-07-21_01,2025-03-28_01
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="umamwlivydbce7bu"
+Content-Disposition: inline
+In-Reply-To: <20250714123634.6442-1-laurentiumihalcea111@gmail.com>
 
-Hi Sakari,
 
-On 7/9/25 21:53, Sakari Ailus wrote:
-> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
-> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
-> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
-> pm_runtime_mark_last_busy().
-> 
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Acked-by: Thierry Reding <treding@nvidia.com> (tegra-vde/h264.c)
-> Acked-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com> (alvium-csi2.c)
-> Reviewed-by: Dikshita Agarwal <quic_dikshita@quicinc.com> (iris_hfi_queue.c)
-> Reviewed-by: Sean Young <sean@mess.org>
-> Acked-by: Dave Stevenson <dave.stevenson@raspberrypi.com> (imx219.c)
+--umamwlivydbce7bu
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2] pwm: imx-tpm: reset counter if CMOD is 0
+MIME-Version: 1.0
+
+Hello Laurentiu,
+
+On Mon, Jul 14, 2025 at 08:36:34AM -0400, Laurentiu Mihalcea wrote:
+> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>=20
+> As per the i.MX93 TRM, section 67.3.2.1 "MOD register update", the value
+> of the TPM counter does NOT get updated when writing MOD.MOD unless
+> SC.CMOD !=3D 0. Therefore, with the current code, assuming the following
+> sequence:
+>=20
+> 	1) pwm_disable()
+> 	2) pwm_apply_might_sleep() /* period is changed here */
+> 	3) pwm_enable()
+>=20
+> and assuming only one channel is active, if CNT.COUNT is higher than the
+> MOD.MOD value written during the pwm_apply_might_sleep() call then, when
+> re-enabling the PWM during pwm_enable(), the counter will end up resetting
+> after UINT32_MAX - CNT.COUNT + MOD.MOD cycles instead of MOD.MOD cycles as
+> normally expected.
+>=20
+> Fix this problem by forcing a reset of the TPM counter before MOD.MOD is
+> written.
+>=20
+> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+
+This needs backporting to stable, right? So we need a reference to the
+commit that introduced the problem. I guess that's 738a1cfec2ed ("pwm:
+Add i.MX TPM PWM driver support")? (Please add a matching Fixes: line in
+your v3.)
+
 > ---
-> since v1:
-> 
-> - Remove now-redundant braces from ccs-core.c, ov64a40.c and gpio-ir-recv.c.
-> 
-> v1 is <20250704075431.3220262-1-sakari.ailus@linux.intel.com> on LMML.
-> 
+> Changes in v2:
+>   - dropped the "VERY IMPORTANT" bit as per Uwe's suggestion.
+>   - Link to v1: https://lore.kernel.org/lkml/20250701220147.1007786-1-lau=
+rentiumihalcea111@gmail.com/
+>=20
+>  drivers/pwm/pwm-imx-tpm.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+>=20
+> diff --git a/drivers/pwm/pwm-imx-tpm.c b/drivers/pwm/pwm-imx-tpm.c
+> index 7ee7b65b9b90..b15c22796ba9 100644
+> --- a/drivers/pwm/pwm-imx-tpm.c
+> +++ b/drivers/pwm/pwm-imx-tpm.c
+> @@ -204,6 +204,19 @@ static int pwm_imx_tpm_apply_hw(struct pwm_chip *chi=
+p,
+>  		val |=3D FIELD_PREP(PWM_IMX_TPM_SC_PS, p->prescale);
+>  		writel(val, tpm->base + PWM_IMX_TPM_SC);
+> =20
+> +		/*
+> +		 * if CMOD is set to 0 then writing MOD will NOT reset the
+> +		 * value of the TPM counter.
+> +		 *
+> +		 * Therefore, if CNT.COUNT > MOD.MOD, the counter will reset
+> +		 * after UINT32_MAX - CNT.COUNT + MOD.MOD cycles, which is
+> +		 * incorrect.
+> +		 *
+> +		 * To avoid this, we need to force a reset of the
+> +		 * counter before writing the new MOD value.
+> +		 */
 
-[...]
+I asked in reply to v1 about these register semantics. The idea was not
+that you explain them by mail, but improve the comment accordingly that
+someone reading the driver doesn't need to consult the reference manual
+to understand it.
 
->  drivers/media/i2c/st-mipid02.c                           | 2 --
+So maybe something like:
 
-[...]
+	/*
+	 * If the counter is disabled (CMOD =3D=3D 0), programming the new
+	 * period length (MOD) doesn't reset the counter (CNT). If
+	 * CNT.COUNT happens to be bigger than the new MOD value it will
+	 * reset way to late. So reset it manually to zero.
+	 */
 
->  drivers/media/i2c/vd55g1.c                               | 4 ----
->  drivers/media/i2c/vd56g3.c                               | 4 ----
+?
 
-[...]
+> +		if (!cmod)
+> +			writel(0x0, tpm->base + PWM_IMX_TPM_CNT);
+>  		/*
+>  		 * set period count:
+>  		 * if the PWM is disabled (CMOD[1:0] =3D 2b00), then MOD register
 
-Acked-by: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+Best regards
+Uwe
 
--- 
-Regards,
-Benjamin
+--umamwlivydbce7bu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmh+HpwACgkQj4D7WH0S
+/k4BGwf+P6kPo7r1ntY/Esoxxhlamfit/RB+dpcIWq3XtsaG5FJjB9BtFHeBQUs3
+MgzKcSUT04Ka4PRhM0pFJnJtOTZ2YA5l8tsjM1CHLQXHuYW9x335vbkzjnn3PcBj
+thDW2pGSiSioUrY9HHo+JwHeqPSRQaZMNvBroQvxsJyVZd8Cd1lmA1S6+hTDsM6l
+ZRqetIHUwQFlFZtAu4DF+J5ApamyNkwmrKFskNX32yKkhcJjYbhgx0H4Ei4ZdbQy
+VRdBztPhA+4N+7v3rmUVmnj9NRzjd5yuoMPDdNjVEmuuI2n4q3iPYPK2Xkx1xqQa
+U9Lw9/bDBBnrfC4N79YWPy4WQ+3HCw==
+=yx+y
+-----END PGP SIGNATURE-----
+
+--umamwlivydbce7bu--
 
