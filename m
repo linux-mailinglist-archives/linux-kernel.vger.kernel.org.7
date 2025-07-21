@@ -1,142 +1,104 @@
-Return-Path: <linux-kernel+bounces-738663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8589B0BB95
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:02:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A8C6B0BB8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 05:59:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03C85174F01
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 04:02:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4CD63B83AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 03:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674C71EBFE0;
-	Mon, 21 Jul 2025 04:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="fSCsDeW6"
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C42E213224;
+	Mon, 21 Jul 2025 03:59:04 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A057D15A848;
-	Mon, 21 Jul 2025 04:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB921EF36C;
+	Mon, 21 Jul 2025 03:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753070545; cv=none; b=cqFoqdmjSJZiMrIs0f8Gu8/9eNOcFhxfqjq0illWE2MXdTuSDrRPB3uijV+ayKPOlTiPmcRelLTFyAJSZ2N/edlq2S4GjdzniYC2W2vBEvN7v0J89mXstxN5Agbt0hm55CZK9Ev8GzoBYdYeZeBiz7U2dEPZhBWiH3OUMOL3/bA=
+	t=1753070344; cv=none; b=WeJPVdNeN/LMlONZCDSwp1kL/ED6r4Hqg76A2hBj/eXjZHyJafy5DzuZuQXMyHgUlH1Cp/10+oUc4OXttfs+9BK1P+urYir2TzNuB4r2cnYcXxTPcCSQ7SZBmYf2xeb/IHeWENFyslMy7t86Ec5BoawHWDS9vSm5gkQ9nUh2D2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753070545; c=relaxed/simple;
-	bh=btpYYUIbFBEp+ktnsXZqqxkPFTnpTlE8q8VnCvyDrII=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=tULzA9XKWJaZurZP3rdDK9Ots6k4F3s1RSfJXkLMmpM2i/Gh7TFaLilvatjj6kC6VaP9rwZMUfiLtf5S6cf/9oehnb1s2hn+YExB7NE24hWZZwZQuJ6rXSJgrQks380sL//aR+nI7hBkWaGVdTn6COwUyZHTRT/RggE0Lb6AR6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=fSCsDeW6; arc=none smtp.client-ip=43.163.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1753070227; bh=sVN/AzOJY5mxP5MAX87gxt0LYQMkeR9l094mDeUFjL0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=fSCsDeW6IFaPxwpIgNQWIyFMY1gxIlE06HTDKgaCWabgAFkPdmUm2K0/NvG9dHU1N
-	 w+GxeKt5WuwH0TCjyVCtgq1WzCtUWdhgM4esErGCV3Z87RxKnvMIJV+l0JxJ/SY7HO
-	 e9fWCORfT8SKmiC03OaDp6gaRdue9ALnjdQN/2Vw=
-Received: from VM-222-126-tencentos.localdomain ([14.116.239.37])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id E45ADA05; Mon, 21 Jul 2025 11:57:05 +0800
-X-QQ-mid: xmsmtpt1753070225trb1aq2d2
-Message-ID: <tencent_60B856B729FE434916EF57CDF5286D69A008@qq.com>
-X-QQ-XMAILINFO: NbgegmlEc3JuabrtwEbzxQ/HVLD3ZsVD5dKnQlX7r66XxAWjbrGcYcT/FuZ7mn
-	 FSm8+cK0sJlrzJuWSoAfMzMiLRZH7IVN0I29tuDktfJy/x3ZWP/ncuO7iLcIHy0ejcLzpVN2/K2x
-	 fnV+OBcf/ndJFS4vyg33LPLTfnWmf5WDnXjBtsIES/5Ey02GyLFL0N3d8L1GfrprFy5e0lRZPbv+
-	 pPUHIu2C09U2r5JI7dY3z2Da4eyQpzl7bVXJNw/YxKa0mEqpIe5KiUqAj34SsXBH1TAUSFSyLcyh
-	 eFI20xXx+w2u6UH37wnhvqTHFJokkiugcnjJxmyaCjhFRJx7oFNDZ/MCKk5nC7BXiZS3NZiKQhJQ
-	 BHK/nxE3bLsp5vF3iLw0/NpZyMp+bAPAjQ40cij2W/GWeHUUos+A0Quwu6zzEijUIq7C/SMXlozH
-	 9gFY12I+IUKI/31jPc6oEfTxFXECHpx9uNxQsOaW9cgvQxcOT9SOIcOgTpenNcGASnDcQ2jbOTC4
-	 zrCycx8phXC9uXI6MbZGq7/k5IbP4htFAZqbtkcRvDFvJFJZHcL3GLu52NII5gw0Lfd3UO+7EAhx
-	 lqJ2n2VwePqdoLKE6Ygz+PFY4Xx3SiqrPyrvm1NdSTo/MsSmnCa5pGwDH6QNjts9DpK3Dvhfo8yg
-	 UkvflGpkcpNb1rGDlS/nV9Bi8xW9cczmQ+faLNtl0d+8Viz+UfDESNi/m7m52AuGm4AwYZByVyXO
-	 6T4DNprX/bLgUOoGFS0/0DOghOBz6TBn7XOijpB/wHxii/VTBlhtJrQKmp4HT/uxRNTBCQ552sm8
-	 LuRHHh1h2dYdXuqkOWivKUBwIkPBsECBgzkqG4moi/wA6IFhfWRivxTr+0MVIjgCcsqGBMU6MPWP
-	 OtX2uIsK+CS8DYC605gCD7KZ1MsajU88PWfvMVXWhcZdXur3bH05yO8k4EiS9SexYL9tdZc3MLV1
-	 hz0+XgnYfecfKtuzfdSgcKftbZh8wjI/XFmm9nabpcQ86bm3W+10w5Uo7UsMgLP10HDjeO3v2FHH
-	 cnOW0tOgRygTqVi0zEwKDeOw/PHpCy78MKC74Mjs9ycFE5CnJ/pcLVpqtBnkWgRHUioMeE8w==
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-From: jackysliu <1972843537@qq.com>
-To: markus.elfring@web.de
-Cc: 1972843537@qq.com,
-	andreas@gaisler.com,
-	davem@davemloft.net,
-	linux-kernel@vger.kernel.org,
-	sparclinux@vger.kernel.org
-Subject: [PATCH v2] arch: fix resource leak in jbusmc_probe()
-Date: Mon, 21 Jul 2025 11:57:03 +0800
-X-OQ-MSGID: <20250721035703.129102-1-1972843537@qq.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <cc7db82b-0337-4342-aeaf-ec6376cbcc74@web.de>
-References: <cc7db82b-0337-4342-aeaf-ec6376cbcc74@web.de>
+	s=arc-20240116; t=1753070344; c=relaxed/simple;
+	bh=cwTphhtoh6MFh9bdedIBc/YShP7J8BBw4CeQipoay6k=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jrTRlfzZlIwetSc6Ku9jMMeFeXUl5PhOMxwVfeBpfNLSJpA4DzMW2jPhadb7Dg5G6BTQ1lncTvmp+X2brXkbt9Kc/wqDtDWI4xQlT1dEfvThibC7L/rhdqpILue1UNL1E30jvhJNEsAcZL0XbxMnQaoWPt63wZt8MBkspzADnnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4blmk94V3Rzdbvn;
+	Mon, 21 Jul 2025 11:54:41 +0800 (CST)
+Received: from kwepemk100018.china.huawei.com (unknown [7.202.194.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id 01E5E180483;
+	Mon, 21 Jul 2025 11:58:51 +0800 (CST)
+Received: from vm7-217-32-6.huawei.com (7.217.32.6) by
+ kwepemk100018.china.huawei.com (7.202.194.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 21 Jul 2025 11:58:50 +0800
+From: Tao Xue <xuetao09@huawei.com>
+To: <gregkh@linuxfoundation.org>, <Thinh.Nguyen@synopsys.com>,
+	<prashanth.k@oss.qualcomm.com>, <m.grzeschik@pengutronix.de>,
+	<Chris.Wulff@biamp.com>, <linux-usb@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <caiyadong@huawei.com>, <suzhuangluan@hisilicon.com>,
+	<weiwenwen3@huawei.com>, <xuetao09@huawei.com>
+Subject: [PATCH v2] usb: gadget : fix use-after-free in composite_dev_cleanup()
+Date: Mon, 21 Jul 2025 11:58:49 +0800
+Message-ID: <20250721035849.11330-1-xuetao09@huawei.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ kwepemk100018.china.huawei.com (7.202.194.66)
 
-From: Siyang Liu <1972843537@qq.com>
+1. In func configfs_composite_bind() -> composite_os_desc_req_prepare():
+if kmalloc fails, the pointer cdev->os_desc_req will be freed but not
+ set to NULL. Then it will return a failure to the upper-level function.
+2. in func configfs_composite_bind() -> composite_dev_cleanup():
+it will checks whether cdev->os_desc_req is NULL. If it is not NULL, it
+ will attempt to use it.This will lead to a use-after-free issue.
 
-In the jbusmc_probe function, the device node mem_node fetched
-via of_find_node_by_path("/memory") is not properly freed
-on all code paths.
-This can lead to leakage of device node reference counts,
-which may result in kernel resources not being released.
+BUG: KASAN: use-after-free in composite_dev_cleanup+0xf4/0x2c0
+Read of size 8 at addr 0000004827837a00 by task init/1
 
-This issue was detected by rule based static tools
-developed by Tencent.
+CPU: 10 PID: 1 Comm: init Tainted: G           O      5.10.97-oh #1
+ kasan_report+0x188/0x1cc
+ __asan_load8+0xb4/0xbc
+ composite_dev_cleanup+0xf4/0x2c0
+ configfs_composite_bind+0x210/0x7ac
+ udc_bind_to_driver+0xb4/0x1ec
+ usb_gadget_probe_driver+0xec/0x21c
+ gadget_dev_desc_UDC_store+0x264/0x27c
 
-Signed-off-by: Siyang Liu <1972843537@qq.com>
+Fixes: 37a3a533429e ("usb: gadget: OS Feature Descriptors support")
+Signed-off-by: Tao Xue <xuetao09@huawei.com>
 ---
- arch/sparc/kernel/chmc.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+v2: update Signed-off and commit message
+v1: initial submission
 
-diff --git a/arch/sparc/kernel/chmc.c b/arch/sparc/kernel/chmc.c
-index d4c74d6b2e1b..fd20e4ee0971 100644
---- a/arch/sparc/kernel/chmc.c
-+++ b/arch/sparc/kernel/chmc.c
-@@ -412,7 +412,7 @@ static int jbusmc_probe(struct platform_device *op)
- 	mem_regs = of_get_property(mem_node, "reg", &len);
- 	if (!mem_regs) {
- 		printk(KERN_ERR PFX "Cannot get reg property of /memory node.\n");
--		goto out;
-+		goto out_put;
+ drivers/usb/gadget/composite.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/usb/gadget/composite.c b/drivers/usb/gadget/composite.c
+index 8dbc132a505e..385398a039ea 100644
+--- a/drivers/usb/gadget/composite.c
++++ b/drivers/usb/gadget/composite.c
+@@ -2489,6 +2489,7 @@ int composite_os_desc_req_prepare(struct usb_composite_dev *cdev,
+ 	if (!cdev->os_desc_req->buf) {
+ 		ret = -ENOMEM;
+ 		usb_ep_free_request(ep0, cdev->os_desc_req);
++		cdev->os_desc_req = NULL;
+ 		goto end;
  	}
- 	num_mem_regs = len / sizeof(*mem_regs);
- 
-@@ -420,7 +420,7 @@ static int jbusmc_probe(struct platform_device *op)
- 	p = kzalloc(sizeof(*p), GFP_KERNEL);
- 	if (!p) {
- 		printk(KERN_ERR PFX "Cannot allocate struct jbusmc.\n");
--		goto out;
-+		goto out_put;
- 	}
- 
- 	INIT_LIST_HEAD(&p->list);
-@@ -473,6 +473,10 @@ static int jbusmc_probe(struct platform_device *op)
- 
- 	err = 0;
- 
-+out_put:
-+	of_node_put(mem_node);
-+	goto out;
-+
- out:
- 	return err;
- 
-@@ -481,7 +485,7 @@ static int jbusmc_probe(struct platform_device *op)
- 
- out_free:
- 	kfree(p);
--	goto out;
-+	goto out_put;
- }
- 
- /* Does BANK decode PHYS_ADDR? */
+ 	cdev->os_desc_req->context = cdev;
 -- 
-2.43.5
+2.17.1
 
 
