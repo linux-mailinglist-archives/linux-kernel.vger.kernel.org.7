@@ -1,148 +1,118 @@
-Return-Path: <linux-kernel+bounces-739404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4881B0C5E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:11:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEF6BB0C5E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:11:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA2621790BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:11:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 226173B2FB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:10:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2260B2DA763;
-	Mon, 21 Jul 2025 14:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA6562D8DCA;
+	Mon, 21 Jul 2025 14:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FTRU1S7c"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4b1QHR3O";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VTDPibE5"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C332D8DCA;
-	Mon, 21 Jul 2025 14:10:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74182DA775;
+	Mon, 21 Jul 2025 14:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753107052; cv=none; b=hZRZxZGXrd6FNxyzA6XzY8GuQN3F3g7swbb+ZqrfkNU4eUzI7zTzB3D+dqLupgNjug0uMeKBwmZcwv976Nv8+vBwCVRQ5td5Xc664Ons9Wx+dLUgGi1vnKres1HauFleII756NzgX8xQ2kbgngY/nt/Hhqrv7Ve5Ecd/Y2yMMH4=
+	t=1753107055; cv=none; b=ri6UuUHZAcpzS31azn2+8rDD24TbRs+69VJxw/wde57BFjUq23fBRXYe4IUXaGOw4rG0xbTUSH1QnobOwKsKqoZenLQWvSUsZg8mYaLgE/bcO3PbA8yzg7R+v785liM698yiRPNuTrwZrTrSwC0lJC0qY1wwQVC6Sw9NJppBwhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753107052; c=relaxed/simple;
-	bh=gfBZrQM1TIPK5QmWH+MeLKo35k/zfTpYv/KPq8pP6XA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jTS/gWD2iKiymP8mvqLNdRUESP1h1SKtFRSuHhNEjJTgcgW6d1bPtQ3DD2AvQ3mzXRYTY42COdTlo+RkGMTVUkejYghV6I2l1e4q7suAmPWzJS5t1vw6FAJ/aCcswwgOCbsz5OLSHTv5NqbFaz3jMfGQcfgO1A0Nu4H0yn4lAyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FTRU1S7c; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56LEAaWw1287724;
-	Mon, 21 Jul 2025 09:10:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1753107036;
-	bh=Oywn0X9thZxpwHoq6E9zsRAlXFyL01BrvALB43n7K4o=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=FTRU1S7cFPcSOmGvp+kwZi/8aKS66qkks2Ksxniim52Ctpderbs5lhk1Ca0ixxBa0
-	 1mp962mxEfuENK2G2qCfkvcN+QVIxcCItvMZEPrJKPTioPdGTuXFzuQqUhqWstH6qO
-	 E2dKkijr6cdQ2UY5CjwACzT2tGFEgmdCFKT2P71c=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56LEAaWY922931
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 21 Jul 2025 09:10:36 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 21
- Jul 2025 09:10:35 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Mon, 21 Jul 2025 09:10:35 -0500
-Received: from [10.249.141.75] ([10.249.141.75])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56LEAVjD3952843;
-	Mon, 21 Jul 2025 09:10:32 -0500
-Message-ID: <05a07a03-3f59-489b-ae55-5f454266bafb@ti.com>
-Date: Mon, 21 Jul 2025 19:40:30 +0530
+	s=arc-20240116; t=1753107055; c=relaxed/simple;
+	bh=70yFJi1mfoZnJc6voh4zfMggd8lCh8C9yeiLMJqM22s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UthKPVtKW6VV+zahUZsEMZYII0oA1o3KKWC3plLt7HaRkCycPqHacYrISg7g+N6n/5IE5WkgL6Rnjcm0fKdFXQag403gITJuIZLB/uJZ+F1QPxraTWRNgfSlWBfNv9Oo4N0rsmjIpEeWxVbI0GQ5rZSiq+x3QK+DNlVCgBJ/b5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4b1QHR3O; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VTDPibE5; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 21 Jul 2025 16:10:50 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1753107051;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VFLTPOt8EYhXgl11BLktas1qh/5JZA8mOSDVcQCX6TQ=;
+	b=4b1QHR3OusogzrkZD61N7d+Jkd4FI4wY6BKjuMjfNwXTTjiNwdOQyVbsTTBq8jU356+VwW
+	MD9Wd9C3nNlek+Dfm6XcQHjjpXsT7hln1iz4zNrJqrLOYgUndJqLXjEIOD4O6+H0Q7NedU
+	8IzHB0EdksKixlpg6pn+ScikwVGQuRJCZ7Jy6uEX28DmFYyMyThjbpJwKMx31Ue0gBLZA3
+	S4wL7Mb2gey7fAgLr+PKX1//viwDiuG4ERCszPuZjCEqahnOnFMH8mKvhGtg20LU4mqwUv
+	RWmqdJ6T9gunw5Pu5rjlM5QcZ0vV2/AX6zF9KvcW+Bp3urRBEixXiu7MGEmBvQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1753107051;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VFLTPOt8EYhXgl11BLktas1qh/5JZA8mOSDVcQCX6TQ=;
+	b=VTDPibE5ruppfMtnbaMtjS/cpDfXdm96A+xs2IyqiFov3eHTDE+mD53xz3aFo2OCxKcrQX
+	6/9PRvFCNpD4sFBg==
+From: Nam Cao <namcao@linutronix.de>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/6] rv: Remove the nop reactor
+Message-ID: <20250721141050.E-MjrEbf@linutronix.de>
+References: <cover.1753091084.git.namcao@linutronix.de>
+ <21a530ffb705887d7aed18255572521e5b880bc0.1753091084.git.namcao@linutronix.de>
+ <feae7a189afa69091816074dcf66a496b11bdd38.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/7] arm64: dts: ti: k3-j721s2-main: Add interrupts
- property
-To: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>, <nm@ti.com>,
-        <vigneshr@ti.com>
-CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <vaishnav.a@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <imx@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-        <u-kumar1@ti.com>
-References: <20250714092708.3944641-1-y-abhilashchandra@ti.com>
- <20250714092708.3944641-2-y-abhilashchandra@ti.com>
- <72545187-4605-40bb-9c68-54670c2e5332@ti.com>
-Content-Language: en-US
-From: "Kumar, Udit" <u-kumar1@ti.com>
-In-Reply-To: <72545187-4605-40bb-9c68-54670c2e5332@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <feae7a189afa69091816074dcf66a496b11bdd38.camel@redhat.com>
 
+On Mon, Jul 21, 2025 at 12:29:24PM +0200, Gabriele Monaco wrote:
+> On Mon, 2025-07-21 at 11:47 +0200, Nam Cao wrote:
+> > As suggested by the name, the nop reactor does not do anything. It is
+> > the
+> > default reactor when nothing else is selected.
+> > 
+> > However, the monitors already null-check the reactor function
+> > pointers.
+> > Thus, instead of a nop reactor, just set the react function pointer
+> > to
+> > NULL. The nop reactor can then be removed.
+> > 
+> > Signed-off-by: Nam Cao <namcao@linutronix.de>
+> 
+> Thanks for the patch, I'd need to go through this a bit more in detail.
+> 
+> As far as I remember, the only way to disable reaction is to set it to
+> the nop reactor.
+> With your patch the behaviour changes and, to disable the reactor, you
+> now need to write an empty string, this should be documented somewhere,
+> at the very least. Perhaps userspace tools (tools/verification/rv)
+> might break and would need adaptation.
+> 
+> We could still remove the kernel side implementation, but from
+> userspace (tracefs) we might want to keep the nop reactor available,
+> setting it would set the reactor to NULL under the hood.
+> 
+> If you really want to change also the user space interface, we might
+> want to imitate other tracefs features and use something like printk /
+> !printk to enable/disable a reactor.
+> 
+> What do you think? Did I miss anything here?
 
-On 7/21/2025 7:37 PM, Kumar, Udit wrote:
->
-> On 7/14/2025 2:57 PM, Yemike Abhilash Chandra wrote:
->> Add interrupts property for CDNS CSI2RX. Interrupt IDs are taken from 
->> the
->> J721S2 TRM [0].
->>
->> Interrupt Line      | Source Interrupt
->> --------------------|----------------------------
->> GIC500SS_SPI_IN_153 | CSI_RX_IF1_CSI_ERR_IRQ_0
->> GIC500SS_SPI_IN_152 | CSI_RX_IF1_CSI_IRQ_0
->> GIC500SS_SPI_IN_157 | CSI_RX_IF2_CSI_ERR_IRQ_0
->> GIC500SS_SPI_IN_156 | CSI_RX_IF2_CSI_IRQ_0
->>
->> [0]: https://www.ti.com/lit/zip/spruj28
->>
->> Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
->> ---
->>   arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi | 6 ++++++
->>   1 file changed, 6 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi 
->> b/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
->> index 62f45377a2c9..6f32a2b0c40c 100644
->> --- a/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
->> +++ b/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
->> @@ -1248,6 +1248,9 @@ ti_csi2rx0: ticsi2rx@4500000 {
->>           cdns_csi2rx0: csi-bridge@4504000 {
->>               compatible = "ti,j721e-csi2rx", "cdns,csi2rx";
->>               reg = <0x00 0x04504000 0x00 0x1000>;
->> +            interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>,
->> +                     <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
->
-> Just cosmetic thing, if you are doing v2 then consider 152 first , 
-> followed by 153.
->
-> Otherwise
->
-> Reviewed-by: Udit Kumar <u-kumar1@ti.com>
+You didn't miss anything, I miss that this "nop" interface is inspired by
+tracefs.
 
+Although I prefer writing empty string, compared to writing "nop"; it is
+better to be consistent with tracefs.
 
-Sorry, sent too fast, offset of 32 missing .
+Let me drop this patch.
 
-
->
->> +            interrupt-names = "error_irq", "irq";
->>               clocks = <&k3_clks 38 3>, <&k3_clks 38 1>, <&k3_clks 38 
->> 3>,
->>                   <&k3_clks 38 3>, <&k3_clks 38 4>, <&k3_clks 38 4>;
->>               clock-names = "sys_clk", "p_clk", "pixel_if0_clk",
->> @@ -1301,6 +1304,9 @@ ti_csi2rx1: ticsi2rx@4510000 {
->>           cdns_csi2rx1: csi-bridge@4514000 {
->>               compatible = "ti,j721e-csi2rx", "cdns,csi2rx";
->>               reg = <0x00 0x04514000 0x00 0x1000>;
->> +            interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>,
->> +                     <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
->> +            interrupt-names = "error_irq", "irq";
->>               clocks = <&k3_clks 39 3>, <&k3_clks 39 1>, <&k3_clks 39 
->> 3>,
->>                   <&k3_clks 39 3>, <&k3_clks 39 4>, <&k3_clks 39 4>;
->>               clock-names = "sys_clk", "p_clk", "pixel_if0_clk",
+Best regards,
+Nam
 
