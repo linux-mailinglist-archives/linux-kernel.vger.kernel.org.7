@@ -1,134 +1,238 @@
-Return-Path: <linux-kernel+bounces-739274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02903B0C436
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:38:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27349B0C44F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:44:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCE7E3B82C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:37:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4988A1646A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:44:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF3F2D3EF3;
-	Mon, 21 Jul 2025 12:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D85442D3EF3;
+	Mon, 21 Jul 2025 12:44:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="BfCZgb+7";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NabAMEtn"
-Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TLxnjdxm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B603029C352
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 12:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7772942A9B;
+	Mon, 21 Jul 2025 12:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753101492; cv=none; b=LvmFoa9eKBSztmG8jTmkLVkQc1iPDToGiEgRKJIfyethxsAXyfyAalItL//1T84WvO3jHht6z2rxJTVW77M3VuVu7Uql1P+WEPaM5TwLv9J1Wo9izLwlzyroHO5g6Vv5Vm5rRHYKV7UYfABHNTLkCvvAVtFwrGhMvcFk4W9LGdw=
+	t=1753101849; cv=none; b=r7IDvEwXWOICr23qa4UgGOrZZAC+wUlSz8PZBITwlHeAMmMz6Wm3o+Ra93TsYJ9uLwb7DwwBxisdOMdeautdls8yB3zkmaP4GUw/WJY646lGAj7I0YjSEDONp3kmVhhGTeoyJisYzzGony/H0s28TKyUY82J1Y+yNCttTIx//Qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753101492; c=relaxed/simple;
-	bh=nvIcINjsNuAZOLKf1He1SJCeIF4PFADWsBUQyIR324c=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=l2vGPvTgR7zYCdFiUdB5NvRjRWqNkdtuohWMti5zC6cnjmbBtd/WcpFbIEQtCCbfc0FwmOQDWMmYMzv1HhuPhpiLlaTR3lcaCPxS8IO9hnFnWoVx/RyD95n9BmSx8/bzeZZGtbsnPmFjbi96et+4b7nAgxUKfRAnkNlYtkmen4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=BfCZgb+7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NabAMEtn; arc=none smtp.client-ip=202.12.124.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 7396D7A026D;
-	Mon, 21 Jul 2025 08:38:08 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Mon, 21 Jul 2025 08:38:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1753101488;
-	 x=1753187888; bh=uhrRzy+iePLdd1xy19cjDPimBozdlhjYyOfYRcsgTf4=; b=
-	BfCZgb+7YEIueLEPbSU9ymc7AcLw18hz1kBQP0dQ/mjVDMD6B+P/TcuBX8hdauuD
-	ToKg0jZ03S09Qkx0TVLSf5j39ThS7pwjl2IPJTF5++EneQWxGA05QMU+KsoE9vx7
-	Jgw/99OO1GDCzy9yryf2no8K/HT43jcGQ6Cx/z7dUQdYFZoMxw7HzaJ+yGnCBP4y
-	POpDpmpYxJDbZHN2rNhTUWS0znbbYGsMil7HSbhcSHz1nFwNDfd9qCE+1BwUx34s
-	tZ27rk/6Wr0Naq0IMBAxWnY3pE6hCuuLwba8adICbndum60ReCZzrAsz17rpMFmv
-	TWNC2UowVFTAv8OGlc2FKw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1753101488; x=
-	1753187888; bh=uhrRzy+iePLdd1xy19cjDPimBozdlhjYyOfYRcsgTf4=; b=N
-	abAMEtnjkUlEqDe6uKqSgr71BZGPvwjSjInYXKxP65GTajjPsZx2UuV1rfolKOuw
-	EWY8EvJyERmdSyexixNjt9YNlnMbVcu4OjpDCVWbnMmeFJ2yGzg2fU0AoaPMF8+m
-	SDMYG7yYk5NEM6mEfZoTc7fFJ36nmOPDghxlJ7swkrFm2vNLDF/kLjJbjEvViCI5
-	X002hjbKuff6Z7+oL0VFSSWF60PT9HpDqfM3TywttwTck93SJaXvBxZZV2cOx8ne
-	9PEoRtwdflTbI1pQAJPMeM+pYpKGLh9SJIeWJNZrI22xhkCy6VNnL8k95QDtVisM
-	rCHrLx0mSW0hu5rhW1QrQ==
-X-ME-Sender: <xms:rzR-aBaF_rvfgdjdDwGmePX0o0bsVzGSOnEjt4_RwaaK8Y3cQz89Qg>
-    <xme:rzR-aIaKLsNSFGls_tOQ8gj-Wx7WObhviitQcNPsc2VZTmBLELsj_KRVgwK7abwR9
-    2A-e7blhjzOiluvEh4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejvddutdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopedufedpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopegrihhrlh
-    hivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepshgrthgrughruhesghhmrghilhdr
-    tghomhdprhgtphhtthhopegrrhhnugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepug
-    hrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphht
-    thhopehnohhuvhgvrghusehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtg
-    hpthhtohepsghskhgvghhgshesnhhvihguihgrrdgtohhmpdhrtghpthhtohepthhtrggs
-    ihesnhhvihguihgrrdgtohhmpdhrtghpthhtoheprghirhhlihgvugesrhgvughhrghtrd
-    gtohhm
-X-ME-Proxy: <xmx:rzR-aLiuzSvMsKj7O5_2letYTW8aoEvpiSuH133H7ShzkDLGEOe7OQ>
-    <xmx:rzR-aPQBpNr6Idk_c7g4wY8A9umXp6VI2vagx0uV6gPF-0FXVvXrYQ>
-    <xmx:rzR-aF9UBgdXUhkeb0tGozRlO5I4k1d0nj93aahF63Q8tIlU8nI0OA>
-    <xmx:rzR-aIPOffZGm9Brvzz_CUTXBMxIwbQOj8wiWpOYDTvz9LEVc3GxEg>
-    <xmx:sDR-aJ_IPMld6rXO9HGowjncV4p4ztf_COLjlG4DLrGlaVgyhLy-KS5Z>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id C1DE970006A; Mon, 21 Jul 2025 08:38:07 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1753101849; c=relaxed/simple;
+	bh=2rqEcY3+vS6y9IkHDgy65e3CbWCUIfoGhGJDb3Byk9I=;
+	h=From:To:Cc:Date:Subject:Message-ID:MIME-Version:Content-Type; b=K0bCwVzcETl8Y+/nCvma+0/XlEFJFg9tWunEK2DlsV1XAcPoj4ozRFHvr1Sdp4duuSmd/mNuld4499CoClqXNKO6RbGkrBTxnjMm5X6CLL5P/3JPIO9QOQ3+APmmiougx1uz0+mYhHuvybZNa1Zbzx6va2mCfOk8B46zVr+BHlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TLxnjdxm; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753101848; x=1784637848;
+  h=from:to:cc:date:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=2rqEcY3+vS6y9IkHDgy65e3CbWCUIfoGhGJDb3Byk9I=;
+  b=TLxnjdxm4TIpIQuuds4RoIibW3/k/XzDQkEUMSYgcEs6Ap/zq6Vd6leE
+   vP3jukdx1SMR4y2AtbBytZX8VRAvnOz8zwmmFZKWtMMQVb6Y2frdkneRS
+   kCE0CEOoSy/gHxHfeRn9MhB+UmoKdq3uVAfntHMlaFPi30c2apRA8eheN
+   wnABfZ5a3ap6HvNtFr7FujOqaEE7RBXkukSfLWrOqa+ULG3VStyihOl80
+   jrPou8/pDChMhT5B3NpcqUqDtWw0HhB9KnWIJ7OC+7ADPL0aosIcRkpoJ
+   7p9fi1Ll/6382Hc88a6TDmYYjAtnbEHc7JZTiztzcYonJShtqVJn/e7Io
+   w==;
+X-CSE-ConnectionGUID: TdGSKpMCTLu1xi19boMspA==
+X-CSE-MsgGUID: L+BJVMjwQQ6MScKGD3i0Nw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11499"; a="54414859"
+X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
+   d="scan'208";a="54414859"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 05:44:07 -0700
+X-CSE-ConnectionGUID: +zHVWkR/Q6uJx4aFuUAQCA==
+X-CSE-MsgGUID: iH8XBT6mT+akVTuW5wqG7w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
+   d="scan'208";a="158612766"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.225])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 05:44:05 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, PDx86 <platform-driver-x86@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>
+Date: Mon, 21 Jul 2025 15:38:07 +0300
+Subject: [GIT PULL] platform-drivers-x86 for v6.16-4
+Message-ID: <pdx86-pr-20250721153807-334719879@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T0fa10d1000c4a2fe
-Date: Mon, 21 Jul 2025 14:37:36 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Satadru Pramanik" <satadru@gmail.com>, "Arnd Bergmann" <arnd@kernel.org>
-Cc: "Dave Airlie" <airlied@gmail.com>, "Dave Airlie" <airlied@redhat.com>,
- "Ben Skeggs" <bskeggs@nvidia.com>, "bskeggs@redhat.com" <bskeggs@redhat.com>,
- "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
- "open list" <linux-kernel@vger.kernel.org>, "Lyude Paul" <lyude@redhat.com>,
- "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
- "Simona Vetter" <simona@ffwll.ch>, "Timur Tabi" <ttabi@nvidia.com>,
- "Thomas Zimmermann" <tzimmermann@suse.de>
-Message-Id: <c32114e7-a61a-4c2b-ab4b-b103d028d05f@app.fastmail.com>
-In-Reply-To: 
- <CAFrh3J85tsZRpOHQtKgNHUVnn=EG=QKBnZTRtWS8eWSc1K1xkA@mail.gmail.com>
-References: 
- <CAFrh3J85tsZRpOHQtKgNHUVnn=EG=QKBnZTRtWS8eWSc1K1xkA@mail.gmail.com>
-Subject: Re: [PATCH] drm/nouveau: check ioctl command codes better
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 21, 2025, at 14:22, Satadru Pramanik wrote:
-> Hello all,
->
-> I suspect this commit in 6.16-rc7 has broken acceleration with Mesa's
-> nouveau drivers on my machine.
->
-> glxinfo -B reports that I'm using llvmpipe.
+Hi Linus,
 
-Thanks for the report!  Can you run the failing command with
-'strace -f -o logfile.txt -e trace=ioctl ...' to see which command
-it tries?
+Here is a platform-drivers-x86 fixes PR for v6.16.
 
-Either I made a stupid mistake in my patch and don't catch the
-intended command any more, or the command that gets sent is actually
-different from the one that the kernel expects.
+There's one power supply accessor change to support solving pdx86 lock
+double take issue (upcoming pdx86 for-next work depends on the same API
+so we chose to route it through pdx86 tree).
 
-      Arnd
+Fixes and New HW Support
+
+- alienware-wmi-wmax:
+
+  - Add AWCC support for Alienware Area-51m and m15 R5.
+
+  - Fix `dmi_system_id` array termination
+
+- arm64: huawei-gaokun-ec: fix OF node leak
+
+- dell-ddv: Fix taking psy->extensions_sem twice
+
+- dell-lis3lv02d: Add Precision 3551 accelerometer support
+
+- firmware_attributes_class: Fix initialization order
+
+- ideapad-laptop: Retain FnLock and kbd backlight across boots
+
+- lenovo-wmi-hotkey: Avoid triggering error -5 due to missing mute LED
+
+- mellanox: mlxbf-pmc: Validate event names and bool input
+
+- power: supply: Add get/set property direct to allow avoiding taking
+                 psy->extensions_sem twice from power supply extensions
+
+Regards, i.
+
+
+The following changes since commit 4f30f946f27b7f044cf8f3f1f353dee1dcd3517a:
+
+  platform/x86: think-lmi: Fix sysfs group cleanup (2025-07-02 12:01:25 +0300)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-v6.16-4
+
+for you to fetch changes up to e2967b50b709970547b5cdfa1b42526835327f36:
+
+  MAINTAINERS: Update entries for IFS and SBL drivers (2025-07-21 14:38:19 +0300)
+
+----------------------------------------------------------------
+platform-drivers-x86 for v6.16-4
+
+Fixes and New HW Support
+
+- alienware-wmi-wmax:
+
+  - Add AWCC support for Alienware Area-51m and m15 R5.
+
+  - Fix `dmi_system_id` array termination
+
+- arm64: huawei-gaokun-ec: fix OF node leak
+
+- dell-ddv: Fix taking psy->extensions_sem twice
+
+- dell-lis3lv02d: Add Precision 3551 accelerometer support
+
+- firmware_attributes_class: Fix initialization order
+
+- ideapad-laptop: Retain FnLock and kbd backlight across boots
+
+- lenovo-wmi-hotkey: Avoid triggering error -5 due to missing mute LED
+
+- mellanox: mlxbf-pmc: Validate event names and bool input
+
+- power: supply: Add get/set property direct to allow avoiding taking
+                 psy->extensions_sem twice from power supply extensions
+
+The following is an automated shortlog grouped by driver:
+
+alieneware-wmi-wmax:
+ -  Add AWCC support to more laptops
+
+alienware-wmi-wmax:
+ -  Fix `dmi_system_id` array
+
+arm64: huawei-gaokun-ec:
+ -  fix OF node leak
+
+dell-ddv:
+ -  Fix taking the psy->extensions_sem lock twice
+
+dell-lis3lv02d:
+ -  Add Precision 3551
+
+Fix initialization order for firmware_attributes_class:
+ - Fix initialization order for firmware_attributes_class
+
+ideapad-laptop:
+ -  Fix FnLock not remembered among boots
+ -  Fix kbd backlight not remembered among boots
+
+lenovo-wmi-hotkey:
+ -  Avoid triggering error -5 due to missing mute LED
+
+MAINTAINERS:
+ -  Update entries for IFS and SBL drivers
+
+mlxbf-pmc:
+ -  Remove newline char from event name input
+ -  Use kstrtobool() to check 0/1 input
+ -  Validate event/enable input
+
+power: supply: core:
+ -  Add power_supply_get/set_property_direct()
+
+power: supply: test-power:
+ -  Test access to extended power supply
+
+----------------------------------------------------------------
+Armin Wolf (3):
+      power: supply: core: Add power_supply_get/set_property_direct()
+      power: supply: test-power: Test access to extended power supply
+      platform/x86: dell-ddv: Fix taking the psy->extensions_sem lock twice
+
+Jackie Dong (1):
+      lenovo-wmi-hotkey: Avoid triggering error -5 due to missing mute LED
+
+Jan-Niklas Burfeind (1):
+      platform/x86: dell-lis3lv02d: Add Precision 3551
+
+Jithu Joseph (1):
+      MAINTAINERS: Update entries for IFS and SBL drivers
+
+Johan Hovold (1):
+      platform: arm64: huawei-gaokun-ec: fix OF node leak
+
+Kurt Borja (2):
+      platform/x86: alienware-wmi-wmax: Fix `dmi_system_id` array
+      platform/x86: alieneware-wmi-wmax: Add AWCC support to more laptops
+
+Rong Zhang (2):
+      platform/x86: ideapad-laptop: Fix FnLock not remembered among boots
+      platform/x86: ideapad-laptop: Fix kbd backlight not remembered among boots
+
+Shravan Kumar Ramani (3):
+      platform/mellanox: mlxbf-pmc: Remove newline char from event name input
+      platform/mellanox: mlxbf-pmc: Validate event/enable input
+      platform/mellanox: mlxbf-pmc: Use kstrtobool() to check 0/1 input
+
+Torsten Hilbrich (1):
+      platform/x86: Fix initialization order for firmware_attributes_class
+
+ MAINTAINERS                                        |  6 +-
+ drivers/platform/arm64/huawei-gaokun-ec.c          |  2 +
+ drivers/platform/mellanox/mlxbf-pmc.c              | 25 ++++---
+ drivers/platform/x86/Makefile                      |  3 +-
+ drivers/platform/x86/dell/alienware-wmi-wmax.c     | 17 +++++
+ drivers/platform/x86/dell/dell-lis3lv02d.c         |  1 +
+ drivers/platform/x86/dell/dell-wmi-ddv.c           | 10 ++-
+ drivers/platform/x86/ideapad-laptop.c              |  4 +-
+ drivers/platform/x86/lenovo-wmi-hotkey-utilities.c | 30 +++++---
+ drivers/power/supply/power_supply_core.c           | 82 ++++++++++++++++++----
+ drivers/power/supply/test_power.c                  |  4 ++
+ include/linux/power_supply.h                       |  8 +++
+ 12 files changed, 153 insertions(+), 39 deletions(-)
 
