@@ -1,185 +1,141 @@
-Return-Path: <linux-kernel+bounces-739180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E32FB0C2DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:27:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DE90B0C2EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:29:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 971CE7AC53A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:25:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 083571883734
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7078F29E10A;
-	Mon, 21 Jul 2025 11:26:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0040129B782;
+	Mon, 21 Jul 2025 11:28:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cwrhtaVV"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="0Dw7LcU4"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5609D293C56
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 11:26:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20EF829C33C;
+	Mon, 21 Jul 2025 11:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753097187; cv=none; b=kNSq9ixwyqALUic8JYhn4cMXhL8lD/KYmZTDxOtgrHcdJf3tI0/urJGgHM9uCuPuJC8bVFI4jurB41c227UnEDYqu5h7zQP1A7cjzeSiU0+Fh69e+ShQbnW1P6pDm8pCBAsUO5ctDX4OeHU/WBpEICQ2/cGgKYhz/8Lgj0Ty6QE=
+	t=1753097328; cv=none; b=FN8nlD6Q3uawVAGo3jdR6w3VPFfbNpsTFWV3otnnM5TxqJZEtzk5z8It08yB9o9cuWWZHAA7LAE329nX4nVEs7cJO+O8SqFf8j7gbLZ4VymmPWUHH2H6shaG3oHOO2CyLoaaM3yFth9nWGO8BClwMQr2NDQ0LdXLi05nFFJio44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753097187; c=relaxed/simple;
-	bh=woPGYWSw8z7t7ihug/zUhP4MFuonqYhSapo2vzn0nbc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=fADfJ/pwDVB6xu7QfQGSZMxZmisY4uja1Utxfo54Jd6sxSiZCeWxRiKC9Pazwb1wIWcJUclgyIq1xP7/iRfu+lTFugskioUX4XkqV/+Q+Fg9xWxHn1XcjrsiQEEmtKDFW4NT6dSz6Pj1m/6ngqd1tLSy39jfvu0ROtEGjRydung=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cwrhtaVV; arc=none smtp.client-ip=209.85.221.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3a58939191eso1874277f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 04:26:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753097184; x=1753701984; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0FnwG0Wks8ncb9oG0ugMoL44qLAawuSLECH5pGfwcwg=;
-        b=cwrhtaVVIRCAbMQGpdjPUu4D072IOn/hSZCIEmgV1+xbh7kKr/dcMP79ELOFHYH2JO
-         FWzOkEK+H62aGiQ8qymRaJ/Pd03FanPXwKu4T+G9EmoDOZIo755pSqBR7azbdoBbKi6n
-         dRRqLkb8sXeCcGzrRkjbbZDPfVDKSjPV0BJENh4dJ35ASionSJo0fHYSCIfFZ4FAh5DO
-         jxjI/Me0lpWMyjt4q7HcvZFoUJnfCn1A7D8Nf782cWCvLi3s2Zw7ss6U2n54NeIm5Bs5
-         lYxygNDfEZfROyHxqmVJirPc8CKsaC88zs534742R4PrzQVMMwSQ1ZM66Jzn3E9f9TQU
-         1fVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753097184; x=1753701984;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0FnwG0Wks8ncb9oG0ugMoL44qLAawuSLECH5pGfwcwg=;
-        b=XfdzlMKtnFYL4y7oZQi96doHhhq4cc4JjVO6ufkNPlTSZnJT1pNFPam1Lz07dTNPyR
-         IpFaTRzmEdJafJMs9gQ62dhgfuwg+TZSlx2heoRzy8grMQHOyj1agkFijBWBHRj7+yOe
-         lZmu/wrV/mGWiwcAwni3STGZHpl/LL6SRQYofq4In4892VJYbqmHkhvXPv6Imk3HeoTA
-         R9rgnWjtyTmATZrFbMvXDV85n5KLPIAhKpV9sAlY1Hc86uLb969gxcqnU+TSrL0+vCR/
-         yhgr2J1HrNTqLfUJOp2M8d+FVGN/n4ew+w/NmAV6vthJI6zqzuMZValPI2AlsK0bHm53
-         ZNvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXr0mvtHv804zlhA+qhF7Luu9ulTbzZyM4pe/w0GOU/uVCUlFjnUORxmQP7RXQZG/Az42NoM92qsilnhRg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxnyuhxy818ozROC5vHp1taXZc5sQSUgBzPo49Xbqu6EX7uQ4ob
-	rssU82fvS+UhBsm+zkCkRri1CFv456y9wwo+XyAtaQi+t0L33YL0aL6HyHvhRjmi9BRnSavi7wV
-	k26aVInibLjz7Jwd/PQ==
-X-Google-Smtp-Source: AGHT+IEwnoxp32ZFdX/kvyH4WdQU+gDfZpM/uvNeHtCqEsC9IqeYlY9XiCD5errB0TB1vqdBY45JE1nKg7NjUJA=
-X-Received: from wrbbs4.prod.google.com ([2002:a05:6000:704:b0:3a4:f6e8:f3cc])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:40de:b0:3b6:1e6:c9fb with SMTP id ffacd0b85a97d-3b60e4c510dmr18501857f8f.11.1753097183776;
- Mon, 21 Jul 2025 04:26:23 -0700 (PDT)
-Date: Mon, 21 Jul 2025 11:26:23 +0000
-In-Reply-To: <20250717224806.54763-3-dakr@kernel.org>
+	s=arc-20240116; t=1753097328; c=relaxed/simple;
+	bh=nKdbUHhSgD5kKZl45LHZlOiMAaqDIMPyH0N+o9UxqQY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AQ/7vHX+5zPirnbvHiivxV/7f1UPlzWRdpYZ3yO8o0ec0t90f2pSqLpVlg4CRd5MvCWkp56G2m2F+Z3IMlogn2MGXsV51JCp5PCNFAiAH5LXT/jtMtKOYFT/GuaUiBKDpuROnWLyPIZJhcz73We3tFu89eGbEuKHLY+jTb8JL2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=0Dw7LcU4; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=0ZUgBqx92qBG7YxcgchOSk9zrFJ4dI1nB3VhodBS568=; b=0Dw7LcU4IbmDlG8F3HK/dH3mNC
+	kmeTh2bcWVTzXjyJVMqXg3wQ76dFrx/HO3L7pLaA2sJKblmKg0f4P7Bxnp3HSv3Usb8hLtY4eXo9R
+	04yA3YHQoqwdYfT4R8gseeR8PYNpoGtiRwDVB0fo5QDED4IGKQz6lgqGAdrzVTGq7VWBgP2hFrvK+
+	3leX5BI1MRCdfce+CLH6smel8QBOLGKhFRa9Vz2800x6OP7S0lGSN0qDyRptpSi+v22YP2dO2w3ga
+	uix/Z+iEhNHoA7BzmNAiRbuLDeUrmWV7Po1TtNtdNqMAFOjsEJg8Hu5TD6892xi9HOn2CTtaNqBeQ
+	c6L+ElgA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:51126)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1udoh1-0006cW-0F;
+	Mon, 21 Jul 2025 12:28:27 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1udogu-00067a-2M;
+	Mon, 21 Jul 2025 12:28:20 +0100
+Date: Mon, 21 Jul 2025 12:28:20 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Gatien Chevallier <gatien.chevallier@foss.st.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Christophe Roullier <christophe.roullier@foss.st.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Simon Horman <horms@kernel.org>,
+	Tristram Ha <Tristram.Ha@microchip.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 3/4] net: phy: smsc: fix and improve WoL support
+Message-ID: <aH4kVBTxd4zRYv2l@shell.armlinux.org.uk>
+References: <20250721-wol-smsc-phy-v1-0-89d262812dba@foss.st.com>
+ <20250721-wol-smsc-phy-v1-3-89d262812dba@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250717224806.54763-1-dakr@kernel.org> <20250717224806.54763-3-dakr@kernel.org>
-Message-ID: <aH4juIVmj8euE1CA@google.com>
-Subject: Re: [PATCH 2/3] device: rust: expand documentation for Device
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
-	tmgross@umich.edu, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250721-wol-smsc-phy-v1-3-89d262812dba@foss.st.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Fri, Jul 18, 2025 at 12:45:38AM +0200, Danilo Krummrich wrote:
-> The documentation for the generic Device type is outdated and deserves
-> much more detail.
-> 
-> Hence, expand the documentation and cover topics such as device types,
-> device contexts, as well as information on how to use the generic device
-> infrastructure to implement bus and class specific device types.
-> 
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+On Mon, Jul 21, 2025 at 01:14:45PM +0200, Gatien Chevallier wrote:
+> +static int smsc_phy_suspend(struct phy_device *phydev)
+> +{
+> +	if (!phydev->wol_enabled)
+> +		return genphy_suspend(phydev);
 
-Overall I think this series is pretty great. It also clarifies some
-things for me, particularly the difference between bus and class
-devices.
+This should not be necessary. Take a look at phy_suspend(). Notice:
 
-> +/// # Device Types
->  ///
-> +/// A [`Device`] can represent either a bus device or a class device.
->  ///
-> +/// ## Bus Devices
-> +///
-> +/// A bus device is a [`Device`] that is associated with a physical or virtual bus. Examples of
-> +/// buses include PCI, USB, I2C, and SPI. Devices attached to a bus are registered with a specific
-> +/// bus type, which facilitates matching devices with appropriate drivers based on IDs or other
-> +/// identifying information. Bus devices are visible in sysfs under `/sys/bus/<bus-name>/devices/`.
-> +///
-> +/// ## Class Devices
-> +///
-> +/// A class device is a [`Device`] that is associated with a logical category of functionality
-> +/// rather than a physical bus. Examples of classes include block devices, network interfaces, sound
-> +/// cards, and input devices. Class devices are grouped under a common class and exposed to
-> +/// userspace via entries in `/sys/class/<class-name>/`.
-> +///
-> +/// # Device Context
-> +///
-> +/// [`Device`] references are generic over a [`DeviceContext`], which represents the type state of
-> +/// a [`Device`].
-> +///
-> +/// As the name indicates, this type state represents the context of the scope the [`Device`]
-> +/// reference is valid in. For instance, the [`Bound`] context guarantees that the [`Device`] is
-> +/// bound to a driver for the entire duration of the existence of a [`Device<Bound>`] reference.
-> +///
-> +/// Other [`DeviceContext`] types besides [`Bound`] are [`Normal`], [`Core`] and [`CoreInternal`].
-> +///
-> +/// Unless selected otherwise [`Device`] defaults to the [`Normal`] [`DeviceContext`], which by
-> +/// itself has no additional requirements.
-> +///
-> +/// It is always up to the caller of [`Device::from_raw`] to select the correct [`DeviceContext`]
-> +/// type for the corresponding scope the [`Device`] reference is created in.
-> +///
-> +/// All [`DeviceContext`] types other than [`Normal`] are intended to be used with
-> +/// [bus devices](#bus-devices) only.
+        phydev->wol_enabled = phy_drv_wol_enabled(phydev) ||
+                              (netdev && netdev->ethtool->wol_enabled);
+        /* If the device has WOL enabled, we cannot suspend the PHY */
+        if (phydev->wol_enabled && !(phydrv->flags & PHY_ALWAYS_CALL_SUSPEND))
+                return -EBUSY;
 
-This raises a few questions for me.
+PHY_ALWAYS_CALL_SUSPEND is not set for this PHY, therefore if
+phydev->wol_enabled is set by the above code, phydrv->suspend will
+not be called.
 
-The first one is "why"? On other series I have been told that interrupts
-must be registered and deregistered before the device is unbound. Does
-the same not apply to interrupts for an input device such as a USB
-keyboard?
+> +
+> +	return 0;
+> +}
+> +
+> +static int smsc_phy_resume(struct phy_device *phydev)
+> +{
+> +	int rc;
+> +
+> +	if (!phydev->wol_enabled)
+> +		return genphy_resume(phydev);
+> +
+> +	rc = phy_read_mmd(phydev, MDIO_MMD_PCS, MII_LAN874X_PHY_MMD_WOL_WUCSR);
+> +	if (rc < 0)
+> +		return rc;
+> +
+> +	if (!(rc & MII_LAN874X_PHY_WOL_STATUS_MASK))
+> +		return 0;
+> +
+> +	dev_info(&phydev->mdio.dev, "Woke up from LAN event.\n");
+> +	rc = phy_write_mmd(phydev, MDIO_MMD_PCS, MII_LAN874X_PHY_MMD_WOL_WUCSR,
+> +			   rc | MII_LAN874X_PHY_WOL_STATUS_MASK);
+> +
+> +	return rc;
 
-The second one is why we use the same `Device` type for both cases?
-Would it not make more sense to have a BusDevice and ClassDevice type?
+Note that this will be called multiple times, e.g. during attachment of
+the PHY to the network device, when the device is opened, etc even
+without ->suspend having been called, and before ->wol_enabled has
+been set. Make sure your code is safe for this.
 
-> +/// # Implementing Bus Devices
-> +///
-> +/// This section provides a guideline to implement bus specific devices, such as
-> +/// [`pci::Device`](kernel::pci::Device) or [`platform::Device`](kernel::platform::Device).
-> +///
-> +/// A bus specific device should be defined as follows.
-> +///
-> +/// ```ignore
-> +/// #[repr(transparent)]
-> +/// pub struct Device<Ctx: device::DeviceContext = device::Normal>(
-> +///     Opaque<bindings::bus_device_type>,
-> +///     PhantomData<Ctx>,
-> +/// );
-> +/// ```
-> +///
-> +/// Since devices are reference counted, [`AlwaysRefCounted`](kernel::types::AlwaysRefCounted)
-> +/// should be implemented for `Device` (i.e. `Device<Normal>`). Note that
-> +/// [`AlwaysRefCounted`](kernel::types::AlwaysRefCounted) must not be implemented for any other
-> +/// [`DeviceContext`], since all other device context types are only valid in a certain scope.
-
-As a general comment to all three patches, I would suggest separating
-out the link locations.
-
-/// Since devices are reference counted, [`AlwaysRefCounted`] should be
-/// implemented for `Device` (i.e. `Device<Normal>`). Note that
-/// [`AlwaysRefCounted`] must not be implemented for any other
-/// [`DeviceContext`], since all other device context types are only
-/// valid in a certain scope.
-
-and then at the end:
-
-/// [`AlwaysRefCounted`]: kernel::types::AlwaysRefCounted
-
-I think it's a lot easier to read the markdown version when links are
-separated out like this.
-
-Alice
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
