@@ -1,73 +1,62 @@
-Return-Path: <linux-kernel+bounces-739430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F1A7B0C638
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:24:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3274FB0C63B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:25:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6261A4E74F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:23:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E4CA4E7982
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:24:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970F32DAFAF;
-	Mon, 21 Jul 2025 14:24:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038B92DA763;
+	Mon, 21 Jul 2025 14:24:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="yuZy083T"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c6PxopCP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891AE2DA767;
-	Mon, 21 Jul 2025 14:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6120B2DA767;
+	Mon, 21 Jul 2025 14:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753107849; cv=none; b=EoPqx73CX7U8MmMANpPcNrthqZIWhsKEXYug8nSt40xET1igtKOleJlSX9qgGsEx3iyZ9ypRXkS0/xrznUG7VdAfgZviHA2NGiQfoJ1z8H7yKyzdveaS026ewxLPV5vv4p7g4ynLXNT2v7WyqLL2zCo7S4QZHhL+KeVlbb90U4E=
+	t=1753107855; cv=none; b=SyDBwcDXQ9ey08ojI/Yzd7Uj3HRkiMVA3QiYuY07BP5/tmvdK7xzZPxfSyjBrm/n1Zr+0tWw4kdadEjWDy2OX8xGkMKYIwUXeD9jL5ErDg9p0DvxvMXn2ysmiruUdJZapJDKrx+4+GvU4TpTu5L2SEFFKgtYqoNThEJINSeDQso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753107849; c=relaxed/simple;
-	bh=1XwZqdGrESrEbYeqeKIYsPwLevTf/uNHNa8KyPX6EV8=;
+	s=arc-20240116; t=1753107855; c=relaxed/simple;
+	bh=kSKd+qqk9Adhb4/W/xZARkQKTnvG601WUoRq0QEIvwk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nscRUoxKno1xnFWmjmRIcl427xewNdq/Jt6WKoggvKNqVhN5nG2xo+wyQDHffpwim4XpjoWKI00ud9/1PSI+4N2H2KRFMdjugEAzwSX4yRkjxbNlu+OIPDWo/707KtQaJo4b63Mm/KNpbYELqRIAQSqfd5oyA6aaM/hSuSepIJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=yuZy083T; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=hHzpUiLN7Jg4Lz4KXx4NfLv+H9x1eSd9BwpY3gu+U20=; b=yuZy083TIKWJigFiyJMEIO7mEL
-	CW77wF+9YJR9suubJ3/IY4OYuLkd52G6nptaS9fV7lW7Fj7Lkt1mA/V95X650ZAgj2wdFYvoe6Jh0
-	UeN4rX/9MDUAAXnFyZW8Rr+OYnT+phRL+5FFl1AfFJOmVXjgQuyBgzO7I2Mkn/dgetuM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1udrQo-002Mif-LR; Mon, 21 Jul 2025 16:23:54 +0200
-Date: Mon, 21 Jul 2025 16:23:54 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Christophe Roullier <christophe.roullier@foss.st.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Simon Horman <horms@kernel.org>,
-	Tristram Ha <Tristram.Ha@microchip.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 3/4] net: phy: smsc: fix and improve WoL support
-Message-ID: <a3b97fbd-8c4f-4657-aeca-732aee3782c3@lunn.ch>
-References: <20250721-wol-smsc-phy-v1-0-89d262812dba@foss.st.com>
- <20250721-wol-smsc-phy-v1-3-89d262812dba@foss.st.com>
- <cca8e9e6-a063-4e00-87af-f59ea926cce3@lunn.ch>
- <b95e3439-717b-4159-acf9-7ce76d1c43d4@foss.st.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=q+s4BDcucwxrepJIbdDS0d2UZbQHwZSyUhSGQO7BNcL2EpWNmD03E2UOkOkdR31I6ACBCBOuqx370bGwx41kyaoqPciCnuYpNae+aZUtSqw+ado1oC8CtApL1/BLNuuKrCSwuJEvgznXOXocgm1ceXrl801YGGIhLxpx9damN8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c6PxopCP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1DA9C4CEF4;
+	Mon, 21 Jul 2025 14:24:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753107853;
+	bh=kSKd+qqk9Adhb4/W/xZARkQKTnvG601WUoRq0QEIvwk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c6PxopCPicDshkRsaB/+InyfPI6vrUx2PA1la90miF75xxqAGtsGmzz6yvGBb7BgS
+	 4pzH1Ii/CCRjbbzNJ2lSmlAjyWpYVrS5VNBES/wRp81IoHMKfJd+CJJlMlzqe0HXgo
+	 2cbTQuRSkss33Y1KFD5BPVMJJLodAGPJ/y2TNl+cfGL/oxpCdelQV1UqO9cGDDGfIU
+	 +2ZqfvG1v4V5xc7oVlQDL+rQdNOeU7kAA8+g5LXDGah0gsM2AGdRwFtUGIiVuC9Awm
+	 2Qz1kGK+Js91zXxBGuosxru9ogj5pyJVMcMCxnq/HLlLHPxNbg1gslazPs0anmy+Sc
+	 3TpFm6g7ox/9Q==
+Date: Mon, 21 Jul 2025 15:24:08 +0100
+From: Will Deacon <will@kernel.org>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Shuai Xue <xueshuai@linux.alibaba.com>, brauner@kernel.org,
+	shuah@kernel.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, baolin.wang@linux.alibaba.com,
+	tianruidong@linux.alibaba.com, catalin.marinas@arm.com,
+	mark.rutland@arm.com
+Subject: Re: [RESEND PATCH] selftests/pidfd: align stack to fix SP alignment
+ exception
+Message-ID: <aH5NiFDmnLwh7J_w@willie-the-truck>
+References: <20250616050648.58716-1-xueshuai@linux.alibaba.com>
+ <ee095fdd-b3c1-4c41-9b06-a8e3695c1863@linuxfoundation.org>
+ <0a8d5fdb-28b9-41f5-a601-cf36641bddbf@linux.alibaba.com>
+ <821acc51-1429-4625-bae5-daa67bddc7bc@linux.alibaba.com>
+ <c6dca956-d0ea-4c63-a48f-d02f21d38b9d@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,13 +65,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b95e3439-717b-4159-acf9-7ce76d1c43d4@foss.st.com>
+In-Reply-To: <c6dca956-d0ea-4c63-a48f-d02f21d38b9d@linuxfoundation.org>
 
-> I wanted to state clearly that the wake up happended because of a WoL
-> event but sure, I understand that it's best if log isn't spammed. Do you
-> prefer it completely removed or dev_info()->dev_dbg() ?
+On Fri, Jul 18, 2025 at 03:10:32PM -0600, Shuah Khan wrote:
+> Can you take a look at this and let me know if this change looks
+> good to you both.
+> 
+> I can take this through my tree after your reviews.
 
-phydev_dbg() is fine.
+I never got to the point of fully understanding how the test was
+supposed to work, but it is true that arm64 requires a 16-byte aligned
+stack pointer and this patch appears to achieve that.
 
-	Andrew
+Will
 
