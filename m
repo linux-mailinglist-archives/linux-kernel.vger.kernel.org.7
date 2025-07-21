@@ -1,126 +1,236 @@
-Return-Path: <linux-kernel+bounces-738952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B3E7B0BF7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:56:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DF07B0BF82
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:58:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3735C188C4A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:56:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B88A3B551A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71625286D62;
-	Mon, 21 Jul 2025 08:56:10 +0000 (UTC)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FEDC2877CF;
+	Mon, 21 Jul 2025 08:58:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="HofZH/Ct"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73CA01F4C8D;
-	Mon, 21 Jul 2025 08:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3EE284687;
+	Mon, 21 Jul 2025 08:58:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753088170; cv=none; b=KJnUQuS6sMEu6yOyjTEfQmhTD+BqxKJqbj9F++hLLGJJTEqTMl0heDzL8gMKVh6nin9xb93wmlav0NeD6Z8/gIbMJbRvOBmLGluTtSHg3P+lpN0Rtj1Q4PUXX4Ox1nXDhbxoKK3YQSJ9eVBzbanM3v+5S+u+VSBvWHEeXp/4cOk=
+	t=1753088328; cv=none; b=FACGaMVWiAtZrMDBKLMkqwvzK/WLiu6AsgsafYbbfX2NqM6IFT73ZYU/n4XtNysKPXfM4xRQp98t4Nw2RgrTMqvJJ7kCaYM8GuFbsrwjYsWC2Y8LJXtNWyMBXLBYdbX7ItVLRjGi+2vBHLmv2grC3Max1FaNiz4O0b/PssCEUXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753088170; c=relaxed/simple;
-	bh=0Bp5A4Zfdt7s/FUBElE0pEEWRbgwFWQteCgTYa+GP/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A1g7bFGZlxDwjHnAWNUAN+kfeAT1V5e0c9jaHi6SCv0WnLwsDj+4HCPpFJuixV4JeVegxlxOsRe5H0Ddtc0Xrqyq+LRUE6NWp2g1E9FdMhcceHfmgN90WiiHU23zoIDX7ztDQU5LyHUixTl4uiXjxYSaGwr3YqWwJPI/ywzicU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-607ec30df2bso7875807a12.1;
-        Mon, 21 Jul 2025 01:56:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753088167; x=1753692967;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7a+mMHsMlXSHJfvHPELmbgN6W6iJdxKKlOu5d6bzUb0=;
-        b=Bp3/Pnr8pxnRBklDcUwJnli/pyVzrY94Thfr4WehSUYwRPTngglVM/RcoeDj4lMEY4
-         BAvyFoL0KGSmbej4Tfn3RECwAiUhQLxdfp9QL2pErheuy1SYnywTNzgtxDADRcAHqHIo
-         dL9///R3Np2sfkaIdFsrTF0cLQbiJYFFLDSZK+WmqJIjgUJTeAJ/TGjfs0dRDXCKNfIx
-         NuVMuA6IBWlXKXpRWO6f//sst3fT9PK5HwcLlIKeWf0jGUc0aEdduOvZW1SAD6cSrDRw
-         2l57gVj3prZm2kEfr/ugey6NZ8WnzbE6/mVxpOMQ66miQKM37beXazNNYK3+BQ4xIfp7
-         lbuw==
-X-Forwarded-Encrypted: i=1; AJvYcCU60ljKIXi5pDK4Il8PdK+D9IXlUN7XvY0TN9cqqMCip7k786lxVoSJIGs4JGJNnCk/eZCyPf3DqCJU@vger.kernel.org, AJvYcCVj2m6pDDWfPG0QiCjQirL9sfFRpKuHktTay83dDYOOYGOvhgjdTUjwg23lgAoFQEwRn1XAX5jcNIqtqAyA@vger.kernel.org
-X-Gm-Message-State: AOJu0YykUdn+3+h/Ky3QOClfdy2cCXXvfREpqqkGIKQgmNNIP0ApPvE/
-	/XAPa6OjxgB/nhkjEyq3dXxPzdbqOuiEK98HvU4uw0+FiDAyLHqkc2Sh+LCq1g==
-X-Gm-Gg: ASbGncsnGH2J0j+TYv5WxHzVdaUARSKeviXFHEUgMD/vc68+z3L+8Ue02mzxXq84Rq1
-	0MzjZT6Ejk9DFtHRrmTQ3xLSeUlomxTjcb02+OumQYxvf8w/EzLzzJvRB3NZP0dZ156LowwV2/z
-	Rm5k+9dop80wkCzJJlyCvNW5aiHf8DWrs+knl6VgtxRX0wntQt6PaELrvqIixcSmny6TgzK/vl8
-	R34NsyKhs0yTDCqH0TOTSDJPvyZd+kQtJrRCQgWjNLWbgB/IqNJTRN/bpWXy4vgYCyGi36dAPt9
-	dpvYoRflEjJxCP1p3mFoNHsWoyoSgU8/2sdPRY2S5vm96HDbIR42TsiYlZaFbfiMMpzB7E6E1vn
-	c63hKvMKhRVVbSw==
-X-Google-Smtp-Source: AGHT+IEO4SybCFLnv0FdYsHmbgrbP3TZ+2cOjGcDGUgtwCXqHHCS19zQvONNtXYlZVgWK8Y/lPeVZg==
-X-Received: by 2002:a17:906:8c2:b0:ae3:f3c1:a5dd with SMTP id a640c23a62f3a-aec4fca259amr1202375766b.61.1753088166300;
-        Mon, 21 Jul 2025 01:56:06 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:74::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6c79e16esm636036866b.15.2025.07.21.01.56.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 01:56:05 -0700 (PDT)
-Date: Mon, 21 Jul 2025 01:56:03 -0700
-From: Breno Leitao <leitao@debian.org>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: "xueshuai@linux.alibaba.com" <xueshuai@linux.alibaba.com>, 
-	"mahesh@linux.ibm.com" <mahesh@linux.ibm.com>, "oohall@gmail.com" <oohall@gmail.com>, 
-	Borislav Petkov <bp@alien8.de>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Len Brown <lenb@kernel.org>, James Morse <james.morse@arm.com>, 
-	"Moore, Robert" <robert.moore@intel.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "acpica-devel@lists.linux.dev" <acpica-devel@lists.linux.dev>, 
-	"kernel-team@meta.com" <kernel-team@meta.com>, "osandov@osandov.com" <osandov@osandov.com>, 
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH] ghes: Track number of recovered hardware errors
-Message-ID: <yk7ocbvfb7hswfdi2bft6lkatonn2ulu34kz44hypjwdagzeos@g6lmdncwrqhl>
-References: <20250714-vmcore_hw_error-v1-1-8cf45edb6334@debian.org>
- <20250714171040.GOaHU6EKH2xxSZFnZd@fat_crate.local>
- <SJ1PR11MB6083C38E6DA922E05E1748D6FC54A@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <20250714173556.GQaHU__LL6IUIPCDIW@fat_crate.local>
- <aHWC-J851eaHa_Au@agluck-desk3>
- <kw7mwmca3ir4nfyofumqiack5sht3aisdchevykdtmlio6xo7z@5xbdibpqvqix>
- <SJ1PR11MB6083CEAB23FCE85937DC5403FC51A@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <mazejvrglvtqdfsevduahqxvlvjv6hlo3apivossn2jnxpsuds@os6kxmmsq3xt>
- <SJ1PR11MB6083D08A2F94FAEE5261AA6CFC50A@SJ1PR11MB6083.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1753088328; c=relaxed/simple;
+	bh=t6UeY4u7JL5ZMvuvo5Ief6AALkrgXuEuINx+l0QwRhA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=M/iM+Pykao62UIW5Rk8BJIx3xvBvOuguXCRyK1nhXaOHFsIlJQ6bZN8QwUSbhDiPqywk4X/GyORx55ZeTh3IyA4N/Zp7Nl2ujZVqCNgNGCrN8VDS5TK5gK94dqOmPXNfpiJVPF72KLToI2dzt/44v0jMf1dRnThQAw2wJz3I8D0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=HofZH/Ct; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56L3Ox3I013501;
+	Mon, 21 Jul 2025 01:58:31 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=Ij3m+FfWKb3GvCthETYkRFT
+	z05vr4rtLfLipjuOODcA=; b=HofZH/CtxbT8GPyXAde6ROsmO4sIrDCz6U7hP63
+	LRYvsUqOBgxNMio/7Vx6TgUvqrFvD2Tj8mhiC/uiXVGDTnmJF4N/2pEyDIk72Rfb
+	LInQg+X288Td8QONsMPd8n0blsiFvhMRjkFEBNmzgCFVQlWAm+7TqeAI/vtqn1E1
+	4/WnC0Fygt01wK9wXwLIGI4r8pEIp72ed0R8Vxbcp49Wsit79/GrBYw/8N05fDtd
+	GHanjOTomZ+oFVYB1pxNu1/IR9sKL+ZW2Hi39k0+7yj9qbLn5Hkd9tE1eQGd+YA8
+	O0NAgW5bPyqjWlTBgPUF4LzWlid/NPktFlg9nsssfief7Rw==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4808qq32k4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Jul 2025 01:58:31 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Mon, 21 Jul 2025 01:58:31 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Mon, 21 Jul 2025 01:58:31 -0700
+Received: from test-OptiPlex-Tower-Plus-7010.marvell.com (unknown [10.29.37.157])
+	by maili.marvell.com (Postfix) with ESMTP id 6837D3F703F;
+	Mon, 21 Jul 2025 01:58:24 -0700 (PDT)
+From: Hariprasad Kelam <hkelam@marvell.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Hariprasad Kelam <hkelam@marvell.com>,
+        Sunil Goutham
+	<sgoutham@marvell.com>,
+        Geetha sowjanya <gakula@marvell.com>,
+        "Subbaraya
+ Sundeep" <sbhatta@marvell.com>,
+        Bharat Bhushan <bbhushan2@marvell.com>,
+        "Andrew Lunn" <andrew+netdev@lunn.ch>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        "Eric Dumazet" <edumazet@google.com>,
+        Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+        Tomasz Duszynski
+	<tduszynski@marvell.com>,
+        Simon Horman <horms@kernel.org>
+Subject: [net PatchV3] Octeontx2-vf: Fix max packet length errors
+Date: Mon, 21 Jul 2025 14:28:15 +0530
+Message-ID: <20250721085815.1720485-1-hkelam@marvell.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SJ1PR11MB6083D08A2F94FAEE5261AA6CFC50A@SJ1PR11MB6083.namprd11.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIxMDA3OCBTYWx0ZWRfX4MnWBFJznIsv W+V74Def4qnHJoRxmJ9tUppVxfqOFt0WrHMq3bT6XUCCprQRoTytARJ6F/WJJN1nhfh6LdIhqa6 j45nOno02B7/HRwYPa/1K84r4o+PG/7l2HCu0wUAepeO15h9UB8QokWNsey93tkyh4+mig8FKdp
+ XoDB3at4jcSxVcTHxNOHT2xhQ06mmGZiRWnTcqIQkVTuAAKYW5/cAokzQN+u2vhJPbqEt1NVY3R j+G8xYQ8jpVnBjAVL9IDK2laHu1y0rudN7S8WF9Lcvehii/09EmJ3FYPFRO3zMy5lEdwOK9ZdRm 4/JY15dsboIGBlpsQZLMKtA1OEgs7I7vj1/tFLL5yelShuCiQvKQNc2jft+pwWN85UzYT6fl6d3
+ O4tDfAW4hq7/X96G7eEMGEju/Xf3TSZu13O5xaCH3vwgUF2ba2fk1oOxXZ60nABJ38d1hkOw
+X-Proofpoint-GUID: kI5JLaXWSGrEfvZRHRXNokWHcxNO737V
+X-Proofpoint-ORIG-GUID: kI5JLaXWSGrEfvZRHRXNokWHcxNO737V
+X-Authority-Analysis: v=2.4 cv=TuLmhCXh c=1 sm=1 tr=0 ts=687e0137 cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=Wb1JkmetP80A:10 a=M5GUcnROAAAA:8 a=PXy8wwuK2GTSNTtyd78A:9 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-21_02,2025-07-21_01,2025-03-28_01
 
-Hello Tony,
+Implement packet length validation before submitting packets to
+the hardware to prevent MAXLEN_ERR. Increment tx_dropped counter
+on failure.
 
-On Fri, Jul 18, 2025 at 05:36:50PM +0000, Luck, Tony wrote:
-> > I found that I don't need to expose the metrics in vmcore info at all to
-> > be able to read them from vmcore, given crash/drgn can read those
-> > symbols.
-> >
-> > Global variable hwerror_tracking will be write-only during kernel
-> > run-time, and only read during post morten analyzes. I am still not sure
-> > if the compiler might not get rid of them completely, given no on reads.
-> > I am wondering if I should EXPORT_SYMBOL_GPL(hwerror_tracking) to avoid
-> > any optimization there.
-> 
-> Thanks for fleshing this out into a patch. It looks very much like I
-> imagined.
-> 
-> I'd be amazed if a compiler did elide all this code and data because it
-> noticed it was written but never read.
-> 
-> Is the spinlock when logging really helping anything? You weren't
-> worried about locking/atomics in your original patch because users
-> mostly care about zero vs. non-zero (or maybe vs. "many"). If the
-> count is slightly off when many logs happen, it may not matter.
-> 
-> The spinlock doesn't help with the timestamp part at all.
+Fixes: 3184fb5ba96e ("octeontx2-vf: Virtual function driver support")
+Fixes: 22f858796758 ("octeontx2-pf: Add basic net_device_ops")
+Fixes: 3ca6c4c882a7 ("octeontx2-pf: Add packet transmission support")
+Signed-off-by: Hariprasad Kelam <hkelam@marvell.com>
+---
+v3 * Define driver specific counter for storing dropped packets
 
-Agree, precise number is not important there, and if there are
-conflicts, it will not hurt the message.
+v2 * Add the packet length check for rep dev
+     Increment tx_dropped counter on failure
 
-Let me remove the spinlock completely them and send a new version.
+ .../net/ethernet/marvell/octeontx2/nic/otx2_common.c |  3 ++-
+ .../net/ethernet/marvell/octeontx2/nic/otx2_common.h |  1 +
+ drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c |  3 +++
+ drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c | 10 ++++++++++
+ drivers/net/ethernet/marvell/octeontx2/nic/rep.c     | 12 +++++++++++-
+ drivers/net/ethernet/marvell/octeontx2/nic/rep.h     |  1 +
+ 6 files changed, 28 insertions(+), 2 deletions(-)
 
-Thanks for your support,
---breno
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
+index 6b5c9536d26d..e480c8692baa 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
+@@ -124,7 +124,8 @@ void otx2_get_dev_stats(struct otx2_nic *pfvf)
+ 			       dev_stats->rx_ucast_frames;
+ 
+ 	dev_stats->tx_bytes = OTX2_GET_TX_STATS(TX_OCTS);
+-	dev_stats->tx_drops = OTX2_GET_TX_STATS(TX_DROP);
++	dev_stats->tx_drops = OTX2_GET_TX_STATS(TX_DROP) +
++			      dev_stats->tx_discards;
+ 	dev_stats->tx_bcast_frames = OTX2_GET_TX_STATS(TX_BCAST);
+ 	dev_stats->tx_mcast_frames = OTX2_GET_TX_STATS(TX_MCAST);
+ 	dev_stats->tx_ucast_frames = OTX2_GET_TX_STATS(TX_UCAST);
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
+index ca0e6ab12ceb..a58c902eb75d 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
+@@ -149,6 +149,7 @@ struct otx2_dev_stats {
+ 	u64 tx_bcast_frames;
+ 	u64 tx_mcast_frames;
+ 	u64 tx_drops;
++	u64 tx_discards;
+ };
+ 
+ /* Driver counted stats */
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
+index db7c466fdc39..f9cf6a8f2f9b 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
+@@ -2153,6 +2153,7 @@ static netdev_tx_t otx2_xmit(struct sk_buff *skb, struct net_device *netdev)
+ {
+ 	struct otx2_nic *pf = netdev_priv(netdev);
+ 	int qidx = skb_get_queue_mapping(skb);
++	struct otx2_dev_stats *dev_stats;
+ 	struct otx2_snd_queue *sq;
+ 	struct netdev_queue *txq;
+ 	int sq_idx;
+@@ -2165,6 +2166,8 @@ static netdev_tx_t otx2_xmit(struct sk_buff *skb, struct net_device *netdev)
+ 	/* Check for minimum and maximum packet length */
+ 	if (skb->len <= ETH_HLEN ||
+ 	    (!skb_shinfo(skb)->gso_size && skb->len > pf->tx_max_pktlen)) {
++		dev_stats = &pf->hw.dev_stats;
++		dev_stats->tx_discards++;
+ 		dev_kfree_skb(skb);
+ 		return NETDEV_TX_OK;
+ 	}
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
+index 8a8b598bd389..3bb55e4a11d3 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
+@@ -391,9 +391,19 @@ static netdev_tx_t otx2vf_xmit(struct sk_buff *skb, struct net_device *netdev)
+ {
+ 	struct otx2_nic *vf = netdev_priv(netdev);
+ 	int qidx = skb_get_queue_mapping(skb);
++	struct otx2_dev_stats *dev_stats;
+ 	struct otx2_snd_queue *sq;
+ 	struct netdev_queue *txq;
+ 
++	/* Check for minimum and maximum packet length */
++	if (skb->len <= ETH_HLEN ||
++	    (!skb_shinfo(skb)->gso_size && skb->len > vf->tx_max_pktlen)) {
++		dev_stats = &vf->hw.dev_stats;
++		dev_stats->tx_discards++;
++		dev_kfree_skb(skb);
++		return NETDEV_TX_OK;
++	}
++
+ 	sq = &vf->qset.sq[qidx];
+ 	txq = netdev_get_tx_queue(netdev, qidx);
+ 
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/rep.c b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
+index 2cd3da3b6843..d2412d027f6f 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
+@@ -371,7 +371,7 @@ static void rvu_rep_get_stats(struct work_struct *work)
+ 	stats->rx_mcast_frames = rsp->rx.mcast;
+ 	stats->tx_bytes = rsp->tx.octs;
+ 	stats->tx_frames = rsp->tx.ucast + rsp->tx.bcast + rsp->tx.mcast;
+-	stats->tx_drops = rsp->tx.drop;
++	stats->tx_drops = rsp->tx.drop + stats->tx_discards;
+ exit:
+ 	mutex_unlock(&priv->mbox.lock);
+ }
+@@ -418,6 +418,16 @@ static netdev_tx_t rvu_rep_xmit(struct sk_buff *skb, struct net_device *dev)
+ 	struct otx2_nic *pf = rep->mdev;
+ 	struct otx2_snd_queue *sq;
+ 	struct netdev_queue *txq;
++	struct rep_stats *stats;
++
++	/* Check for minimum and maximum packet length */
++	if (skb->len <= ETH_HLEN ||
++	    (!skb_shinfo(skb)->gso_size && skb->len > pf->tx_max_pktlen)) {
++		stats = &rep->stats;
++		stats->tx_discards++;
++		dev_kfree_skb(skb);
++		return NETDEV_TX_OK;
++	}
+ 
+ 	sq = &pf->qset.sq[rep->rep_id];
+ 	txq = netdev_get_tx_queue(dev, 0);
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/rep.h b/drivers/net/ethernet/marvell/octeontx2/nic/rep.h
+index 38446b3e4f13..277615ed7174 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/rep.h
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/rep.h
+@@ -27,6 +27,7 @@ struct rep_stats {
+ 	u64 tx_bytes;
+ 	u64 tx_frames;
+ 	u64 tx_drops;
++	u64 tx_discards;
+ };
+ 
+ struct rep_dev {
+-- 
+2.34.1
+
 
