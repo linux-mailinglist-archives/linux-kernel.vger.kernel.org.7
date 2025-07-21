@@ -1,397 +1,185 @@
-Return-Path: <linux-kernel+bounces-738947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E15AEB0BF6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:49:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9017B0BF6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:50:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 197A27A273F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:47:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE43716784D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:50:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6181628934C;
-	Mon, 21 Jul 2025 08:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 267DA2877E1;
+	Mon, 21 Jul 2025 08:49:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZBmo1L60"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RYE+twWZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB2A288CA7;
-	Mon, 21 Jul 2025 08:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F5D1ABED9
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 08:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753087664; cv=none; b=IkBUTUW8bGyhc3oEUS9iQHL+lD1o9tNqIt9EsdYYoeS/QhYWe703vlBFM0lDBS0g5b55b69AaGL31F495EJ1LVd1WQWg5ATLlyD6zndJ8zipUOvP1HmeC4b3ntijKJiCkiEQZSXGQjz7knyZEElrMEPnbUYHNGOxt6rGWN0Amw0=
+	t=1753087786; cv=none; b=Bz6NtUdckUJ3ffYQRV+UdQdpAsXEmP9fDGWG3epdCmgK3VtigWm8x1JwCndJDnb5k6MJAPGebqoG5nEeGfPl+WUSULYMhnMdfO50xnFpBDTEsIgmKO7mmAF+J3+wVRbMHU9RpGRUPpPYg2t5kae873vHumljQ8bcKj2fxEfIHWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753087664; c=relaxed/simple;
-	bh=i7VVuYv+P4xRsoyjq1c/yRjV/hufkbOIz6TCTO4rLzY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y/AOqloq+68tr8JDNhG+PKSJ96CxqLnc1Wa2yZUFs48OK2Im1C+rJ5EfM2kXx2n/uDrb6jprVkYs0bmR2MczcWG25K1blBZtRR/o/X8sx3M6/CzRO447LeSZ1Czz3/RhFiiEP0nXCEq+CxssqqeHXtoueVOpJQlJYS58PvcY0H4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZBmo1L60; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-236192f8770so25887455ad.0;
-        Mon, 21 Jul 2025 01:47:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753087661; x=1753692461; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4cbM67qGx5QSC1ipsVqXIeegdixDNC3ESXsKYI9auyc=;
-        b=ZBmo1L60p3JF99QkMxk4SRlTHz/F46IrOjvSVgzB5ORjlL4BLgjm00LQVPWIljMMXF
-         fyciWB9Dal5Z1NFwaCHFyK9J4VUtLNm2XZwa1HoZknj/HGHAp9R/z+HZj8a2SK8gSXgB
-         Y9IgKGJL66dHv6uJpSbswpIYKw4qc3d7X6BVDmrtjy7x2FZp6mjlxMSXmOGhFLj7pj6y
-         hlnO60bkcJNty3nm0pSUf0BlLoeXFrdAxR94VTBeoLf0QA0Qu+u6PGhn3Ff+piDihVBy
-         g19gbwxZG7uChUgothTtTYkDNhJQ2ZzLZuUYWk27af46CYf19TYd9RMqoJ6nsBopMf3f
-         UrEg==
+	s=arc-20240116; t=1753087786; c=relaxed/simple;
+	bh=O86pCKYYqFW3brRImFAd909wt+XrZ1IcPtW+VeAnRLs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZLLRo2QfU+TaqM5pX9WWpzy0uDDx9yND+p/sWmq5yQzbgCO9wqyUlTnYhv40dNHamicXt5BaruppQpl/t3SzlCXwLAtfIAjzyN22u8Yb+tZox83iLx0RuvSrJ7mrnws1t4WnlzEONoP9xrj6/JErv8NDe6Sec+aVnN6PZLdTE/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RYE+twWZ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753087783;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=eEyJkY9ZcW+iRGk8l+mt+fm3yxn1zcNir5mSzl4jwkA=;
+	b=RYE+twWZLmHIHlUDJqv7kPR1kKmLh6G7bvsCFgAlBX6k6hk5kPdfdb8zxWSVb5Pjm5CcJX
+	t4GKikXPu5dvf7NwgwIreI/USh0pvORrHp3InngGgIR2EQKTfkC+Z6bzF53E+cG2MFO94r
+	bqc97A2eDteH93YGuMiaOF8pDpe88HA=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-6-QjI7Z8MWODG9-eaRqOhTZw-1; Mon, 21 Jul 2025 04:49:41 -0400
+X-MC-Unique: QjI7Z8MWODG9-eaRqOhTZw-1
+X-Mimecast-MFC-AGG-ID: QjI7Z8MWODG9-eaRqOhTZw_1753087781
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43e9b0fd00cso23797115e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 01:49:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753087661; x=1753692461;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4cbM67qGx5QSC1ipsVqXIeegdixDNC3ESXsKYI9auyc=;
-        b=wquQ0IP8LXweStcaeg4zW/5wmkTvfHd3l29zyvyhZjWmIjNpdAcHOu+pkBL5FPh4uM
-         26ACQ60U/ZMPouwZpZ+rhpGAoTY99P2FZkjFcHTIl/7QKbSsmj4gCIXbkKdfRxsvJd/X
-         Pmm0Ej7f3taov6Zsx2dp8COpq2FsG5Ahy36f+BHTcKQoYVG92IyAd3dbynpeFfl7dTUW
-         L+v5LwstMnp3NEehw6XZXbIVdFKG1fH2xr5+TXTOuxcAhdpdxNnerVtN9pRZumxShEqD
-         bMB+QhTTk8/kbiRSPwjc7EhzJ9rGV1DYrv3XcTc2N0Fy+cNyRKRlEtsWVd0PHzOFdAwI
-         s0KA==
-X-Forwarded-Encrypted: i=1; AJvYcCX3xP/s8m6DReMODZ5YjZot5TgXpPAPz9TRrMKXhZlwQVXEeht938UmWzVudOzGpwJuYyNjL1fyIGzmeg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhPssb6WDsgPAcdZAhjY955Q6mX1iosN58d2w6BieHfjaPNd/f
-	u4oqiKXTN9td12fYXGwoeulcUt1y+i8+jPCb783gHUuOj39xT0+WhsXk
-X-Gm-Gg: ASbGncsAPBI1gEVgnaXaOWRwRU38XhdwcEkMmHFcPXIcmlNMsUWXDo1al/CvlerFAqg
-	MQ/lTKHRv1W7OVqUeXOqmI7YbFgnPG9WE3Hp8bODXyz3Y/zvRw3fFYNMTZqYTZ3IHV5zNgtJMW2
-	r5FTdR9QG0x8sK7gPjmJRD3Qfe9ThrCqDlk1xZv0+WbbDSRT+qGdvp4yTMoHucqe+Hlq7ddF2ZD
-	yRZSOEy/1ArkEhwmNvbHyxgGz/E1vA52R1bqjrjyYdIL/N9SEHhQNZvJFTWCAa+F/wLjBXgP9FJ
-	arf33X5q6yRNDtF7YR31SJIs39z74MX3x4U1En2u/2GdDSQFdZO7oh6ZBPXpR6zCBs67+tAYCOv
-	WxTIqR4qsT/WcfqkAklt5bUM=
-X-Google-Smtp-Source: AGHT+IFiv9/4lKofAIAgSdYH4Vxrhb7X7wP/8eNQWmCuztPTRFiJAgugR5hrcWXoR1AeNz8xKN4WAw==
-X-Received: by 2002:a17:902:f785:b0:23e:3911:433e with SMTP id d9443c01a7336-23e3911476bmr193791535ad.5.1753087661138;
-        Mon, 21 Jul 2025 01:47:41 -0700 (PDT)
-Received: from skc-Dell-Pro-16-Plus-PB16250.. ([132.237.156.254])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b6d9504sm53240505ad.179.2025.07.21.01.47.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 01:47:40 -0700 (PDT)
-From: Suresh K C <suresh.k.chandrappa@gmail.com>
-X-Google-Original-From: Suresh K C
-To: vkoul@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	pierre-louis.bossart@linux.dev,
-	sanyog.r.kale@intel.com,
-	shuah@kernel.org,
-	suresh.k.chandrappa@gmail.com,
-	yung-chuan.liao@linux.intel.com
-Subject: [PATCH v2] soundwire: replace scnprintf() with sysfs_emit() for sysfs consistency
-Date: Mon, 21 Jul 2025 14:17:29 +0530
-Message-ID: <20250721084729.102130-1-suresh.k.chandrappa@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <aH3LEmB3hafb3T8E@vaman>
-References: <aH3LEmB3hafb3T8E@vaman>
+        d=1e100.net; s=20230601; t=1753087780; x=1753692580;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=eEyJkY9ZcW+iRGk8l+mt+fm3yxn1zcNir5mSzl4jwkA=;
+        b=qjWPr1oM42QQ/0UeO9qpqU4gHIzs2Ax3jYXlOVT9VlaHo+Lxd3h5rQ3+XdptNocMSn
+         SqrlXLQpPdb/KfGXpSCY0/TSL45VfJiGNjmBbb2JtgmfZk/F8M//x9xAw81tNm5BEI7A
+         D+Ph4JaqRHbKyqcCfTPhJ4hxjdxfzC6f4cqxWcC8lz5cTpFdP/XS8JbCUKlKtmGTb7/8
+         lQv6oVbZfl1a2qbGTgmyuxjUGOJVV+emIQxy9BB/wqGX3dMnrjW5THtbPgpNwCqa70ph
+         hBIE7MYwBNMhWPHa3X/mwoSvKkjB2VcBFaG87jH7OufwnfxKhGmQplbwK78ubXGAlzIr
+         7XLg==
+X-Forwarded-Encrypted: i=1; AJvYcCWyitN5dNC4QDEPv3SKsMO54NBa2oYI9F1uZc57wBx43Cct0og65Pa1DOmS8lSXgCW4blW/q5hL5tOX7Yk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgUa8ouK6rB1I/Ogk0uX+vSvUevxiXZEyD0Jf8u7NbgewxyQ64
+	tBftI7QP6viNICXeFpvKZyCfF3w9yn2N8P7qy+NfUHAMCx9Z12Bfp5VCu01zqD40Yy2BDHJ18tR
+	fakXOwkLuJLMukzqDoxLG8HyudBvRt/c3oi0u84uiz+mb4stkYSo+JmPsqgcQQs8jBA==
+X-Gm-Gg: ASbGncsTFpYLA/Z5M7nMlJ8wETRM9F+vSkd7vUYqJ/APplnZ+/wEHlJqMtM1UtqdEBr
+	xjBJgek+M0LD2DC9Se5mvquZfSUt1Pwv7VW7BraHsUXSzqpos8J03qPK61X4xnomB4fcymOSOc0
+	qRaDc++e0e4cGZ/FzeDHWTZz2MazH5ght4NdQi+yp7fpTI/03AJkWlDPNTrDzPxROJ9mFS4VOLy
+	eOnd4MMVumlroHeV3ZxTO7Umtxie++4fL3qbX2+AXsWDtBVv/zlfVbr/0or0YxC9D+hYcJ6uhoS
+	BZlxat2qHpI1LJLkjAoQLYMcjrSWxzzrusa1ujNuhJ8Se52ObwHnHFGl2XE+ZO/LtAQWUd9C0Hn
+	zIjUS+Pve87YyNB0pr+fBpiRKCD565uStwUwutEAU6WDHjGi9Wtt7CL6PtN5Md/3v
+X-Received: by 2002:a05:600c:c0d0:b0:456:12ad:ec3d with SMTP id 5b1f17b1804b1-4563a54de9amr96245015e9.14.1753087780603;
+        Mon, 21 Jul 2025 01:49:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFGDXuvG/9c+M1TgLOa2nxRpw+VaS0oi8mIDcJ1ihrrncI17JDx29cO0dxPdF5voli4IFz5OQ==
+X-Received: by 2002:a05:600c:c0d0:b0:456:12ad:ec3d with SMTP id 5b1f17b1804b1-4563a54de9amr96244645e9.14.1753087780049;
+        Mon, 21 Jul 2025 01:49:40 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f4c:df00:a9f5:b75b:33c:a17f? (p200300d82f4cdf00a9f5b75b033ca17f.dip0.t-ipconnect.de. [2003:d8:2f4c:df00:a9f5:b75b:33c:a17f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca4d732sm9673327f8f.61.2025.07.21.01.49.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Jul 2025 01:49:39 -0700 (PDT)
+Message-ID: <8b6e6547-cb39-4e64-8dff-6e16e27e7055@redhat.com>
+Date: Mon, 21 Jul 2025 10:49:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm, page_pool: introduce a new page type for page pool in
+ page type
+To: Byungchul Park <byungchul@sk.com>
+Cc: linux-mm@kvack.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel_team@skhynix.com, harry.yoo@oracle.com, ast@kernel.org,
+ daniel@iogearbox.net, davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
+ john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com,
+ leon@kernel.org, tariqt@nvidia.com, mbloch@nvidia.com,
+ andrew+netdev@lunn.ch, edumazet@google.com, pabeni@redhat.com,
+ akpm@linux-foundation.org, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com,
+ mhocko@suse.com, horms@kernel.org, jackmanb@google.com, hannes@cmpxchg.org,
+ ziy@nvidia.com, ilias.apalodimas@linaro.org, willy@infradead.org,
+ brauner@kernel.org, kas@kernel.org, yuzhao@google.com,
+ usamaarif642@gmail.com, baolin.wang@linux.alibaba.com,
+ almasrymina@google.com, toke@redhat.com, asml.silence@gmail.com,
+ bpf@vger.kernel.org, linux-rdma@vger.kernel.org
+References: <20250721054903.39833-1-byungchul@sk.com>
+ <e897e784-4403-467c-b3e4-4ac4dc7b2e25@redhat.com>
+ <20250721081910.GA21207@system.software.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <20250721081910.GA21207@system.software.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Suresh K C <suresh.k.chandrappa@gmail.com>
+>>
+>> This will not work they way you want it once you rebase on top of
+>> linux-next, where we have (from mm/mm-stable)
+>>
+>> commit 2dfcd1608f3a96364f10de7fcfe28727c0292e5d
+> 
+> I just checked this.
+> 
+> So is it sufficient that I rebase on mm/mm-stable?  Or should I wait for
+> something else?  Or should I achieve this in other ways?
 
-Replace scnprintf() with sysfs_emit() or sysfs_emit_at()
-in SoundWire driver files to align with the guidelines
-outlined in Documentation/filesystems/sysfs.rst.
+Probably best to rebase (+test) to linux-next, where that commit should 
+be in.
 
-This change improves the safety and correctness
-of sysfs attribute handling,ensures consistency across
-the kernel codebase, and simplifies future maintenance.
+Whatever is in mm-stable is expected to go upstream in the next merge 
+window (iow, soon), with stable commit ids.
 
-Changes since v1:
-- Removed unintended double semicolon (;;)
-- Fixed trailing whitespace
-- Ran checkpatch and resolved reported issues
-
-Tested by enabling CONFIG_DEBUG_FS and confirming that
-/sys/kernel/debug/soundwire is correctly populated
-
-Signed-off-by: Suresh K C <suresh.k.chandrappa@gmail.com>
----
- drivers/soundwire/cadence_master.c      | 23 +++++++++++------------
- drivers/soundwire/debugfs.c             | 22 +++++++++++-----------
- drivers/soundwire/intel.c               | 17 ++++++++---------
- drivers/soundwire/intel_ace2x_debugfs.c | 12 ++++++------
- 4 files changed, 36 insertions(+), 38 deletions(-)
-
-diff --git a/drivers/soundwire/cadence_master.c b/drivers/soundwire/cadence_master.c
-index f367670ea991..555c1cc24ee9 100644
---- a/drivers/soundwire/cadence_master.c
-+++ b/drivers/soundwire/cadence_master.c
-@@ -317,8 +317,7 @@ EXPORT_SYMBOL(sdw_cdns_config_update_set_wait);
- static ssize_t cdns_sprintf(struct sdw_cdns *cdns,
- 			    char *buf, size_t pos, unsigned int reg)
- {
--	return scnprintf(buf + pos, RD_BUF - pos,
--			 "%4x\t%8x\n", reg, cdns_readl(cdns, reg));
-+	return sysfs_emit_at(buf, pos, "%4x\t%8x\n", reg, cdns_readl(cdns, reg));
- }
- 
- static int cdns_reg_show(struct seq_file *s, void *data)
-@@ -332,42 +331,42 @@ static int cdns_reg_show(struct seq_file *s, void *data)
- 	if (!buf)
- 		return -ENOMEM;
- 
--	ret = scnprintf(buf, RD_BUF, "Register  Value\n");
--	ret += scnprintf(buf + ret, RD_BUF - ret, "\nMCP Registers\n");
-+	ret = sysfs_emit(buf, "Register  Value\n");
-+	ret += sysfs_emit_at(buf, ret, "\nMCP Registers\n");
- 	/* 8 MCP registers */
- 	for (i = CDNS_MCP_CONFIG; i <= CDNS_MCP_PHYCTRL; i += sizeof(u32))
- 		ret += cdns_sprintf(cdns, buf, ret, i);
- 
--	ret += scnprintf(buf + ret, RD_BUF - ret,
-+	ret += sysfs_emit_at(buf, ret,
- 			 "\nStatus & Intr Registers\n");
- 	/* 13 Status & Intr registers (offsets 0x70 and 0x74 not defined) */
- 	for (i = CDNS_MCP_STAT; i <=  CDNS_MCP_FIFOSTAT; i += sizeof(u32))
- 		ret += cdns_sprintf(cdns, buf, ret, i);
- 
--	ret += scnprintf(buf + ret, RD_BUF - ret,
-+	ret += sysfs_emit_at(buf, ret,
- 			 "\nSSP & Clk ctrl Registers\n");
- 	ret += cdns_sprintf(cdns, buf, ret, CDNS_MCP_SSP_CTRL0);
- 	ret += cdns_sprintf(cdns, buf, ret, CDNS_MCP_SSP_CTRL1);
- 	ret += cdns_sprintf(cdns, buf, ret, CDNS_MCP_CLK_CTRL0);
- 	ret += cdns_sprintf(cdns, buf, ret, CDNS_MCP_CLK_CTRL1);
- 
--	ret += scnprintf(buf + ret, RD_BUF - ret,
-+	ret += sysfs_emit_at(buf, ret,
- 			 "\nDPn B0 Registers\n");
- 
- 	num_ports = cdns->num_ports;
- 
- 	for (i = 0; i < num_ports; i++) {
--		ret += scnprintf(buf + ret, RD_BUF - ret,
-+		ret += sysfs_emit_at(buf, ret,
- 				 "\nDP-%d\n", i);
- 		for (j = CDNS_DPN_B0_CONFIG(i);
- 		     j < CDNS_DPN_B0_ASYNC_CTRL(i); j += sizeof(u32))
- 			ret += cdns_sprintf(cdns, buf, ret, j);
- 	}
- 
--	ret += scnprintf(buf + ret, RD_BUF - ret,
-+	ret += sysfs_emit_at(buf, ret,
- 			 "\nDPn B1 Registers\n");
- 	for (i = 0; i < num_ports; i++) {
--		ret += scnprintf(buf + ret, RD_BUF - ret,
-+		ret += sysfs_emit_at(buf, ret,
- 				 "\nDP-%d\n", i);
- 
- 		for (j = CDNS_DPN_B1_CONFIG(i);
-@@ -375,13 +374,13 @@ static int cdns_reg_show(struct seq_file *s, void *data)
- 			ret += cdns_sprintf(cdns, buf, ret, j);
- 	}
- 
--	ret += scnprintf(buf + ret, RD_BUF - ret,
-+	ret += sysfs_emit_at(buf, ret,
- 			 "\nDPn Control Registers\n");
- 	for (i = 0; i < num_ports; i++)
- 		ret += cdns_sprintf(cdns, buf, ret,
- 				CDNS_PORTCTRL + i * CDNS_PORT_OFFSET);
- 
--	ret += scnprintf(buf + ret, RD_BUF - ret,
-+	ret += sysfs_emit_at(buf, ret,
- 			 "\nPDIn Config Registers\n");
- 
- 	/* number of PDI and ports is interchangeable */
-diff --git a/drivers/soundwire/debugfs.c b/drivers/soundwire/debugfs.c
-index c30f571934ee..e7de2cc9681a 100644
---- a/drivers/soundwire/debugfs.c
-+++ b/drivers/soundwire/debugfs.c
-@@ -41,9 +41,9 @@ static ssize_t sdw_sprintf(struct sdw_slave *slave,
- 	value = sdw_read_no_pm(slave, reg);
- 
- 	if (value < 0)
--		return scnprintf(buf + pos, RD_BUF - pos, "%3x\tXX\n", reg);
-+		return sysfs_emit_at(buf, pos, "%3x\tXX\n", reg);
- 	else
--		return scnprintf(buf + pos, RD_BUF - pos,
-+		return sysfs_emit_at(buf, pos,
- 				"%3x\t%2x\n", reg, value);
- }
- 
-@@ -63,21 +63,21 @@ static int sdw_slave_reg_show(struct seq_file *s_file, void *data)
- 		return ret;
- 	}
- 
--	ret = scnprintf(buf, RD_BUF, "Register  Value\n");
-+	ret = sysfs_emit(buf, "Register  Value\n");
- 
- 	/* DP0 non-banked registers */
--	ret += scnprintf(buf + ret, RD_BUF - ret, "\nDP0\n");
-+	ret += sysfs_emit_at(buf, ret, "\nDP0\n");
- 	for (i = SDW_DP0_INT; i <= SDW_DP0_PREPARECTRL; i++)
- 		ret += sdw_sprintf(slave, buf, ret, i);
- 
- 	/* DP0 Bank 0 registers */
--	ret += scnprintf(buf + ret, RD_BUF - ret, "Bank0\n");
-+	ret += sysfs_emit_at(buf, ret, "Bank0\n");
- 	ret += sdw_sprintf(slave, buf, ret, SDW_DP0_CHANNELEN);
- 	for (i = SDW_DP0_SAMPLECTRL1; i <= SDW_DP0_LANECTRL; i++)
- 		ret += sdw_sprintf(slave, buf, ret, i);
- 
- 	/* DP0 Bank 1 registers */
--	ret += scnprintf(buf + ret, RD_BUF - ret, "Bank1\n");
-+	ret += sysfs_emit_at(buf, ret, "Bank1\n");
- 	ret += sdw_sprintf(slave, buf, ret,
- 			SDW_DP0_CHANNELEN + SDW_BANK1_OFFSET);
- 	for (i = SDW_DP0_SAMPLECTRL1 + SDW_BANK1_OFFSET;
-@@ -85,7 +85,7 @@ static int sdw_slave_reg_show(struct seq_file *s_file, void *data)
- 		ret += sdw_sprintf(slave, buf, ret, i);
- 
- 	/* SCP registers */
--	ret += scnprintf(buf + ret, RD_BUF - ret, "\nSCP\n");
-+	ret += sysfs_emit_at(buf, ret, "\nSCP\n");
- 	for (i = SDW_SCP_INT1; i <= SDW_SCP_BUS_CLOCK_BASE; i++)
- 		ret += sdw_sprintf(slave, buf, ret, i);
- 	for (i = SDW_SCP_DEVID_0; i <= SDW_SCP_DEVID_5; i++)
-@@ -109,18 +109,18 @@ static int sdw_slave_reg_show(struct seq_file *s_file, void *data)
- 	for (i = 1; SDW_VALID_PORT_RANGE(i); i++) {
- 
- 		/* DPi registers */
--		ret += scnprintf(buf + ret, RD_BUF - ret, "\nDP%d\n", i);
-+		ret += sysfs_emit_at(buf, ret, "\nDP%d\n", i);
- 		for (j = SDW_DPN_INT(i); j <= SDW_DPN_PREPARECTRL(i); j++)
- 			ret += sdw_sprintf(slave, buf, ret, j);
- 
- 		/* DPi Bank0 registers */
--		ret += scnprintf(buf + ret, RD_BUF - ret, "Bank0\n");
-+		ret += sysfs_emit_at(buf, ret, "Bank0\n");
- 		for (j = SDW_DPN_CHANNELEN_B0(i);
- 		     j <= SDW_DPN_LANECTRL_B0(i); j++)
- 			ret += sdw_sprintf(slave, buf, ret, j);
- 
- 		/* DPi Bank1 registers */
--		ret += scnprintf(buf + ret, RD_BUF - ret, "Bank1\n");
-+		ret += sysfs_emit_at(buf, ret, "Bank1\n");
- 		for (j = SDW_DPN_CHANNELEN_B1(i);
- 		     j <= SDW_DPN_LANECTRL_B1(i); j++)
- 			ret += sdw_sprintf(slave, buf, ret, j);
-@@ -265,7 +265,7 @@ static int read_buffer_show(struct seq_file *s_file, void *data)
- 		return -EINVAL;
- 
- 	for (i = 0; i < num_bytes; i++) {
--		scnprintf(buf, MAX_LINE_LEN, "address %#x val 0x%02x\n",
-+		sysfs_emit(buf, "address %#x val 0x%02x\n",
- 			  start_addr + i, read_buffer[i]);
- 		seq_printf(s_file, "%s", buf);
- 	}
-diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
-index 9db78f3d7615..945dafac8d17 100644
---- a/drivers/soundwire/intel.c
-+++ b/drivers/soundwire/intel.c
-@@ -65,8 +65,7 @@ static ssize_t intel_sprintf(void __iomem *mem, bool l,
- 		value = intel_readl(mem, reg);
- 	else
- 		value = intel_readw(mem, reg);
--
--	return scnprintf(buf + pos, RD_BUF - pos, "%4x\t%4x\n", reg, value);
-+	return sysfs_emit_at(buf, pos, "%4x\t%4x\n", reg, value);
- }
- 
- static int intel_reg_show(struct seq_file *s_file, void *data)
-@@ -84,8 +83,8 @@ static int intel_reg_show(struct seq_file *s_file, void *data)
- 
- 	links = intel_readl(s, SDW_SHIM_LCAP) & SDW_SHIM_LCAP_LCOUNT_MASK;
- 
--	ret = scnprintf(buf, RD_BUF, "Register  Value\n");
--	ret += scnprintf(buf + ret, RD_BUF - ret, "\nShim\n");
-+	ret = sysfs_emit(buf, "Register  Value\n");
-+	ret += sysfs_emit_at(buf, ret, "\nShim\n");
- 
- 	for (i = 0; i < links; i++) {
- 		reg = SDW_SHIM_LCAP + i * 4;
-@@ -93,7 +92,7 @@ static int intel_reg_show(struct seq_file *s_file, void *data)
- 	}
- 
- 	for (i = 0; i < links; i++) {
--		ret += scnprintf(buf + ret, RD_BUF - ret, "\nLink%d\n", i);
-+		ret += sysfs_emit_at(buf, ret, "\nLink%d\n", i);
- 		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_CTLSCAP(i));
- 		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_CTLS0CM(i));
- 		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_CTLS1CM(i));
-@@ -101,7 +100,7 @@ static int intel_reg_show(struct seq_file *s_file, void *data)
- 		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_CTLS3CM(i));
- 		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_PCMSCAP(i));
- 
--		ret += scnprintf(buf + ret, RD_BUF - ret, "\n PCMSyCH registers\n");
-+		ret += sysfs_emit_at(buf, ret, "\n PCMSyCH registers\n");
- 
- 		/*
- 		 * the value 10 is the number of PDIs. We will need a
-@@ -114,17 +113,17 @@ static int intel_reg_show(struct seq_file *s_file, void *data)
- 			ret += intel_sprintf(s, false, buf, ret,
- 					SDW_SHIM_PCMSYCHC(i, j));
- 		}
--		ret += scnprintf(buf + ret, RD_BUF - ret, "\n IOCTL, CTMCTL\n");
-+		ret += sysfs_emit_at(buf, ret, "\n IOCTL, CTMCTL\n");
- 
- 		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_IOCTL(i));
- 		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_CTMCTL(i));
- 	}
- 
--	ret += scnprintf(buf + ret, RD_BUF - ret, "\nWake registers\n");
-+	ret += sysfs_emit_at(buf, ret, "\nWake registers\n");
- 	ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_WAKEEN);
- 	ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_WAKESTS);
- 
--	ret += scnprintf(buf + ret, RD_BUF - ret, "\nALH STRMzCFG\n");
-+	ret += sysfs_emit_at(buf, ret, "\nALH STRMzCFG\n");
- 	for (i = 0; i < SDW_ALH_NUM_STREAMS; i++)
- 		ret += intel_sprintf(a, true, buf, ret, SDW_ALH_STRMZCFG(i));
- 
-diff --git a/drivers/soundwire/intel_ace2x_debugfs.c b/drivers/soundwire/intel_ace2x_debugfs.c
-index 206a8d511ebd..c59686ac2cc6 100644
---- a/drivers/soundwire/intel_ace2x_debugfs.c
-+++ b/drivers/soundwire/intel_ace2x_debugfs.c
-@@ -31,7 +31,7 @@ static ssize_t intel_sprintf(void __iomem *mem, bool l,
- 	else
- 		value = intel_readw(mem, reg);
- 
--	return scnprintf(buf + pos, RD_BUF - pos, "%4x\t%4x\n", reg, value);
-+	return sysfs_emit_at(buf, pos, "%4x\t%4x\n", reg, value);
- }
- 
- static int intel_reg_show(struct seq_file *s_file, void *data)
-@@ -49,8 +49,8 @@ static int intel_reg_show(struct seq_file *s_file, void *data)
- 	if (!buf)
- 		return -ENOMEM;
- 
--	ret = scnprintf(buf, RD_BUF, "Register  Value\n");
--	ret += scnprintf(buf + ret, RD_BUF - ret, "\nShim\n");
-+	ret = sysfs_emit(buf, "Register  Value\n");
-+	ret += sysfs_emit_at(buf, ret, "\nShim\n");
- 
- 	ret += intel_sprintf(s, true, buf, ret, SDW_SHIM2_LECAP);
- 	ret += intel_sprintf(s, false, buf, ret, SDW_SHIM2_PCMSCAP);
-@@ -65,14 +65,14 @@ static int intel_reg_show(struct seq_file *s_file, void *data)
- 				SDW_SHIM2_PCMSYCHC(j));
- 	}
- 
--	ret += scnprintf(buf + ret, RD_BUF - ret, "\nVS CLK controls\n");
-+	ret += sysfs_emit_at(buf, ret, "\nVS CLK controls\n");
- 	ret += intel_sprintf(vs_s, true, buf, ret, SDW_SHIM2_INTEL_VS_LVSCTL);
- 
--	ret += scnprintf(buf + ret, RD_BUF - ret, "\nVS Wake registers\n");
-+	ret += sysfs_emit_at(buf, ret, "\nVS Wake registers\n");
- 	ret += intel_sprintf(vs_s, false, buf, ret, SDW_SHIM2_INTEL_VS_WAKEEN);
- 	ret += intel_sprintf(vs_s, false, buf, ret, SDW_SHIM2_INTEL_VS_WAKESTS);
- 
--	ret += scnprintf(buf + ret, RD_BUF - ret, "\nVS IOCTL, ACTMCTL\n");
-+	ret += sysfs_emit_at(buf, ret, "\nVS IOCTL, ACTMCTL\n");
- 	ret += intel_sprintf(vs_s, false, buf, ret, SDW_SHIM2_INTEL_VS_IOCTL);
- 	ret += intel_sprintf(vs_s, false, buf, ret, SDW_SHIM2_INTEL_VS_ACTMCTL);
- 
 -- 
-2.43.0
+Cheers,
+
+David / dhildenb
 
 
