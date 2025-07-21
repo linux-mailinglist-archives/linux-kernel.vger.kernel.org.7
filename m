@@ -1,59 +1,58 @@
-Return-Path: <linux-kernel+bounces-739571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D697B0C80F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:51:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 875B2B0C80E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:51:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6F5E3B03FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:50:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9C9E18958E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:51:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA8B2E040A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7076B2E0404;
 	Mon, 21 Jul 2025 15:51:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="iZgxFBEd"
+	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="iGMAK2z/"
 Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33932DEA67;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A54F42DA755;
 	Mon, 21 Jul 2025 15:50:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753113061; cv=pass; b=N7URU2cLMGmJwZUr2ieosBhw0Y39HXDxDMOOngzA/p7lArGgGfF15fFRQfjnpuFvTLV2Ch0F9DjKZFUM2neo+xk4Zo5BVI+BCem3TRvH3hr8WBBSCgd9hYs6BSpTVQgF4T5xvuadv57UQIT/RfsDkKS9LrNnNQYACECb90Cd6eA=
+	t=1753113061; cv=pass; b=g+Ips96C3ru0PEO8NcbqM0D17ee5pWKgB5lhKtlTICfvvBWlYklWiWA1O+nHhpER4XPp/hSc6qd6wCNKwI43J1GolLhA6YusDVluZ1uIJ3ChPkRvHcG86Ky5zozi83luo6NC81ystcF9xT273pxLKznQ6TyzZ4ZPWZcGSUD+8sM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1753113061; c=relaxed/simple;
-	bh=j91B84Oz0Xq6HVsDM7tdgBQWUDMFq10BFaaKSucD9QM=;
+	bh=cdC+gHkr28j2ptGfilNq1eA/ICUbwZpjzhH/BVYbOhg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=A0ABT5BaFJ894RBKCqPxnl7Sc7tXgPN4PGz88MWAlqBdcINRLxYYHRoqleFbF6Xe9n4mfyL50LaT8DFz6brhqh4KQE65Hu4sYWrCKLGqQWDQekiCVs09H+LcIenZo/pr7L+/8kLihEwilDVn+ExOkgJco23h3mbMv3Hw94I7Xd8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=iZgxFBEd; arc=pass smtp.client-ip=136.143.188.15
+	 In-Reply-To:To:Cc; b=UJYENJioqzzuDbQWq5ulRUCxF7PiOHATTihTlsT1jHD73ugmnc7k60IF2TDxXMFB9AMYQnLQW0mTZee/J47/Gfsx2RPlC8MaLVkzYPV9MKZahDrtwi8ngUIHpzUfUHhvfR+1kaLwHf/FXyF2vJR0iniGQu4u++qwjvc86J2bgkM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=iGMAK2z/; arc=pass smtp.client-ip=136.143.188.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
-ARC-Seal: i=1; a=rsa-sha256; t=1753113026; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1753113037; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=ASzWRge2E4DxTAZ7O2+zToB7hejQWb4MeqrCxw9/5juhhvCfCjMY5AMxZrgOabgLdtv2zWSg2YeK2N8rd3K09BwWwzs68fe8lidCQ9qMf7ICpN8vHnUI8zyFwnjZZh6imdKwtKw/Mx+2BurYlWxgN5dRrJ6GHjCY9uSjZiiQEk8=
+	b=JrgAnJPdtMlyCLy/ncZ2EGwJol7L02Y2NhPfSQqqtSbZdJIn35ZyVSwgxSMU8Y5w8AHVLlOLaDgGBDEnMSWkF0GPOhms7nEdvOFqykaxWYcplTGisTg1kYJC64mMGAPLKTw5ZV4ybNGFCookqlDtNlCSasoCBgwQvfnyg3qBhqg=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753113026; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=AEDeiqXtDmQkcpk56jyCMSDFww7SqpNp1DMsA4Q7wh0=; 
-	b=GLjBSd3EJ6RwIYSBaNA2dfXdeh/okA8YHfnL9MIwGhZ1pWjX0ZWs6AWNnPXGbdnSrSV60v/2soHECf2V6Xm1j3P4vGMlDlE+vQDa09DoXKPhOJQ7CSI+MrFf4nVFHS4B0UsKpBrosRpSkX9S9baoDfBuKlhoGv6SmXgqFOyG31s=
+	t=1753113037; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=dr0pBN5+6Qa6Jv/l48HU1CzV1Gi4jM0bXP6wQ8s9ah0=; 
+	b=RBJODeqZYx7zJDtvdYcl7O0JaEakRP/0bz3v4iDml9IDtXCFB73IuyT4uGU9ebfrWsdnIAOGCsAmxYtqjjBRfP5L/cz4tXrgiKQ8dRriHfN613LHz2UIAuWfQ1c2jVHA6yxaXJJgfpEU57fJuleqS66cfq8hyefLYygUe36BoLU=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=pigmoral.tech;
 	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
 	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753113026;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753113037;
 	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
 	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=AEDeiqXtDmQkcpk56jyCMSDFww7SqpNp1DMsA4Q7wh0=;
-	b=iZgxFBEd1or6UTAgUlfp6AO7ZZSPZZc2FjZ63mVBC9/UDfUF9T9O9p3ALv/U/s8l
-	VV2gKAC7Q99OW+D0MZ1sK65GOch9tEVcE9/3LKMTd9AO3y3OyDoXOKQjVF1VTSJnJDu
-	Vl1/9Hxbf9bR0oxRlXMPUqZaLvYZqwQjhjZAMmuk=
-Received: by mx.zohomail.com with SMTPS id 1753113023425908.9710507115287;
-	Mon, 21 Jul 2025 08:50:23 -0700 (PDT)
+	bh=dr0pBN5+6Qa6Jv/l48HU1CzV1Gi4jM0bXP6wQ8s9ah0=;
+	b=iGMAK2z/ddfvn4wqS9X+Wubw8bhjIKUlT6d7325jCx6VV1qSsLe5f2zs13g8tOQ2
+	fxHXx+zdw20YKv3bR/LIZJItzawxIqk58zt/pg10dV6NHw2EbsyCOgL457cnzZ8l/1O
+	m9iPPSvVHO+1c2kwr/3zKWigEaCrfWDfRBYD6Ais=
+Received: by mx.zohomail.com with SMTPS id 1753113034418920.8574925901848;
+	Mon, 21 Jul 2025 08:50:34 -0700 (PDT)
 From: Junhui Liu <junhui.liu@pigmoral.tech>
-Date: Mon, 21 Jul 2025 23:46:07 +0800
-Subject: [PATCH RFC 01/10] dt-bindings: vendor-prefixes: Add Anlogic,
- Milianke and Nuclei
+Date: Mon, 21 Jul 2025 23:46:08 +0800
+Subject: [PATCH RFC 02/10] dt-bindings: riscv: Add Nuclei UX900 compatibles
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,7 +61,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250721-dr1v90-basic-dt-v1-1-5740c5199c47@pigmoral.tech>
+Message-Id: <20250721-dr1v90-basic-dt-v1-2-5740c5199c47@pigmoral.tech>
 References: <20250721-dr1v90-basic-dt-v1-0-5740c5199c47@pigmoral.tech>
 In-Reply-To: <20250721-dr1v90-basic-dt-v1-0-5740c5199c47@pigmoral.tech>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -80,55 +79,36 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-riscv@lists.infradead.org, linux-serial@vger.kernel.org, 
  Junhui Liu <junhui.liu@pigmoral.tech>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753112991; l=1599;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753112991; l=946;
  i=junhui.liu@pigmoral.tech; s=20250507; h=from:subject:message-id;
- bh=j91B84Oz0Xq6HVsDM7tdgBQWUDMFq10BFaaKSucD9QM=;
- b=fbHnySqFeJ3f498DO5n0mhRqhnJm9JzwKI6jlV7mm0ae9fitrUBkVcNw+0Fln+cnrA8uZbUSb
- 98mpQedycdVA0sYj8UZCrcWtRzGzwmWDuy+d6vcyJgD6N+vmAeUIrE3
+ bh=cdC+gHkr28j2ptGfilNq1eA/ICUbwZpjzhH/BVYbOhg=;
+ b=fAPwZIz/SLTjhDnmuDiXkGxPW6eDmJ/wZ25iYTmNlzRpbbjVsh8a0tgl+ExiijV4KRJtZS4zd
+ MMHGM/CTd8sB4rxyUu3shUbCPjalI8VBGnNuZCKLd0e/apS6EOOInL2
 X-Developer-Key: i=junhui.liu@pigmoral.tech; a=ed25519;
  pk=d3i4H2mg9LUn4SQemoLAjLRQy0nTcyknIv6zgKMwiBA=
 X-ZohoMailClient: External
 
-Add vendor prefixes for "anlogic", "milianke" and "nuclei". These are
-required for describing the Milianke MLKPAI-FS01 board with DR1V90 SoC
-from Anlogic, which uses a processor core designed by Nuclei.
+The UX900 is a RISC-V core from Nuclei, used in the Anlogic DR1V90 SoC.
+It features a 64-bit architecture and dual-issue, 9-stage pipeline, with
+lots of optional extensions including V, K, Zc, and more.
 
 Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
 ---
- Documentation/devicetree/bindings/vendor-prefixes.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
+ Documentation/devicetree/bindings/riscv/cpus.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index 5d2a7a8d3ac6c666c8b557c2ef385918e5e97bf9..6ace3c66ce58fc15ef7cc70e88fd1904cb8395b9 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -127,6 +127,8 @@ patternProperties:
-     description: Anbernic
-   "^andestech,.*":
-     description: Andes Technology Corporation
-+  "^anlogic,.*":
-+    description: Shanghai Anlogic Infotech Co., Ltd.
-   "^anvo,.*":
-     description: Anvo-Systems Dresden GmbH
-   "^aoly,.*":
-@@ -968,6 +970,8 @@ patternProperties:
-     description: MikroElektronika d.o.o.
-   "^mikrotik,.*":
-     description: MikroTik
-+  "^milianke,.*":
-+    description: Changzhou Milianke Electronic Technology Co., Ltd
-   "^milkv,.*":
-     description: MilkV Technology Co., Ltd
-   "^miniand,.*":
-@@ -1081,6 +1085,8 @@ patternProperties:
-     description: Novatek
-   "^novtech,.*":
-     description: NovTech, Inc.
-+  "^nuclei,.*":
-+    description: Nuclei System Technology
-   "^numonyx,.*":
-     description: Numonyx (deprecated, use micron)
-     deprecated: true
+diff --git a/Documentation/devicetree/bindings/riscv/cpus.yaml b/Documentation/devicetree/bindings/riscv/cpus.yaml
+index 2c72f148a74b019e46ad5917a0b75d45777c385e..f198d8b1fa328f538b4a2983ca795340337fbd2b 100644
+--- a/Documentation/devicetree/bindings/riscv/cpus.yaml
++++ b/Documentation/devicetree/bindings/riscv/cpus.yaml
+@@ -47,6 +47,7 @@ properties:
+               - amd,mbv32
+               - andestech,ax45mp
+               - canaan,k210
++              - nuclei,ux900
+               - sifive,bullet0
+               - sifive,e5
+               - sifive,e7
 
 -- 
 2.50.1
