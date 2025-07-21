@@ -1,101 +1,136 @@
-Return-Path: <linux-kernel+bounces-739426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EB82B0C62B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:23:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC1E6B0C620
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:22:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A5071AA6661
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:23:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE8CA54353D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033C82DCC03;
-	Mon, 21 Jul 2025 14:22:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C92FD2D9EE5;
+	Mon, 21 Jul 2025 14:22:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="mExpQ9Hi"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="WAORxm88"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27A02DA77B;
-	Mon, 21 Jul 2025 14:22:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4955227;
+	Mon, 21 Jul 2025 14:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753107772; cv=none; b=YuYdpyaz8eRC3RgobWDEcB6g2n6Y3xq/SC8c/e/7qQKAl8eMV6dQDMxgRs8GvED4xOOY/clh7wUkIa69HskVNbXMCqS/iTf7HV+bO3sVv/rjIJ2RkLesWKvl7Mu9jEKteD0EFmxXTZzE3822P7Mh/YfRIxVaJF8nTu9bBVJPOPA=
+	t=1753107745; cv=none; b=V+RRdnwg8WBXdxmIiu6bAvclVou9d0y7eyViOxfF48inC15/rD5cPOmixTOAsiFLHGoeh2UkM0HhyrGqVf7SgJIC0ilDoBTxCkxU4m/cZdDy0yQ29bPCrJmSLyWeHPvbBnOx5E9MoGi2AwWWLFK6PcTG+BX5nl69XK/jh9Zz4ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753107772; c=relaxed/simple;
-	bh=xzItkeRrbcsA7vr8YA6l+8FKhQJ22uASZV+GlNgFXQY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CADja0bf0/VTQnBY1ryn0OgP4zFRJ23HfWaMt1cIKT3aFiVzEPfFpe6SMKIQ8PtiMq5R70eTgCYYWfYBImuwkEjywsKQYI3p/SYK312g1whfMJcPOF+++kHsBTlEI/fb34QiE2sKwqKi6OWlSTqgNaM/Z/MAZBPfQJe+6FiCp2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=mExpQ9Hi; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=ZM0jXh/69aSK5O/qFPL6WwO8DTU6rGWPNC15GTR25mw=; b=mExpQ9HiAC++gjjmqVf4jktAXv
-	5a2enOybfuUeppqdllVT4opgV+Eh3IOWD6jbk/LltMA67PjGA0F+H2tES970SJXfiILQsc8tXDGRf
-	WygSYtW7mrMRk5xUT6TgequMFn/RAN2qWltQZxA7R30/w6yN7YTNZt/jv5Zm63fhunI0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1udrPZ-002MhS-4Y; Mon, 21 Jul 2025 16:22:37 +0200
-Date: Mon, 21 Jul 2025 16:22:37 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Horatiu Vultur <horatiu.vultur@microchip.com>
-Cc: hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	o.rempel@pengutronix.de, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: phy: micrel: Add support for lan8842
-Message-ID: <4dd62a56-517a-4011-8a13-95f6c9ad2198@lunn.ch>
-References: <20250721071405.1859491-1-horatiu.vultur@microchip.com>
+	s=arc-20240116; t=1753107745; c=relaxed/simple;
+	bh=oDy7UzkFzgzPxI3UJSjSR0GcOLA3VSfw2hi54qQq820=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NqIso2h4z1FGnTgR4zrxECZz5NW7aCgi2LnPo/NV+YkngbDps5gKIxQ1IQOBKhuds4uQWzK8ob5LyevysnIwOjixsgQAXVM1cJu0C7JfZ5joNO99HP6o11CFWqsJs3Ns3NMGmgRfUYdC6n3LJi0SJIckwcnKZvo6lefvjRGOfpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=WAORxm88; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 68C461027235A;
+	Mon, 21 Jul 2025 16:22:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1753107734;
+	h=from:reply-to:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=dIsc6hFBt27O44doVUiL9FU5pBOtVG/J+2i8b4k8GLo=;
+	b=WAORxm88+wekMznNLYR0mDtKVCRI/sMIPRor3IscLGNV/hpMwY3zQobd6SJNQ/+bd4UOku
+	rISEEt0E/QBkCT5J7Yfq2erw12kTpPEIrvV+VvFQ42QOKQsvVgqCpQw4oEiIh+2WkoeNmt
+	bmP+e46yfnGyjqEys+Q3UYNQYj//+5Hvdri5hMDy9oGfWgbY65dNrf2m0sub/HpJDEE9AJ
+	BGtWyGXYcLZs/QBbIfWZJUbcXywD0r8A+NcIW1VptztPVr+q2/ARvpFnFj2zLs16LFczKW
+	Jh1rCGINIuUnaLWJSd9jFSBR8B9hwzkt65W0eSEqGrwtLYfBwxytPfbVp3m6lQ==
+Message-ID: <2477dc64-92a0-9dc9-d168-56646d0d796e@denx.de>
+Date: Mon, 21 Jul 2025 16:22:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250721071405.1859491-1-horatiu.vultur@microchip.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH v1 1/3] dt-bindings: trivial-devices: Document ABB sensors
+Content-Language: en-US
+To: Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Andrei Lalaev <andrey.lalaev@gmail.com>,
+ Chanh Nguyen <chanh@os.amperecomputing.com>,
+ Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>,
+ Grant Peltier <grantpeltier93@gmail.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Michal Simek <michal.simek@amd.com>,
+ Naresh Solanki <naresh.solanki@9elements.com>,
+ Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>, devicetree@vger.kernel.org
+References: <20250719063355.73111-1-hs@denx.de>
+ <20250719063355.73111-2-hs@denx.de> <20250720021151.GA931647-robh@kernel.org>
+ <c972dcba-ec99-47e4-ad19-18ebe97dfdd0@roeck-us.net>
+From: Heiko Schocher <hs@denx.de>
+Reply-To: hs@denx.de
+In-Reply-To: <c972dcba-ec99-47e4-ad19-18ebe97dfdd0@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-> +static struct lan8842_hw_stat lan8842_hw_stats[] = {
-> +	{ "phy_rx_correct_count", 2, 3, {88, 61, 60}},
-> +	{ "phy_rx_crc_count", 2, 2, {63, 62}},
-> +	{ "phy_tx_correct_count", 2, 3, {89, 85, 84}},
-> +	{ "phy_tx_crc_count", 2, 2, {87, 86}},
-> +};
+Hi Guenther, Rob,
 
-Hi Horatiu
+On 20.07.25 05:25, Guenter Roeck wrote:
+> On 7/19/25 19:11, Rob Herring wrote:
+>> On Sat, Jul 19, 2025 at 08:33:52AM +0200, Heiko Schocher wrote:
+>>> Add documentation for spi based ABB sensors, which are
+>>> currently operated from userspace.
+>>
+>> What is userspace? That has nothing to do with bindings.
+>>
+> 
+> Taking one step further back ... what are "spi based ABB sensors" ?
+> 
+> Guenter
+> 
+>> Please provide some details about this h/w and convince me it is
+>> trivial.
 
-Please could you look at using ethtool_phy_stats via the
-.get_phy_stats() phy driver op.
+This sensors are fully controlled through spidev driver, with a simple
+register based interface and they have no other connections as the SPI
+lines, so they only need a compatible entry.
 
-> +static int lan8842_config_init(struct phy_device *phydev)
-> +{
-> +	int val;
-> +	int ret;
-> +
-> +	/* Reset the PHY */
-> +	val = lanphy_read_page_reg(phydev, 4, LAN8814_QSGMII_SOFT_RESET);
-> +	if (val < 0)
-> +		return val;
-> +	val |= LAN8814_QSGMII_SOFT_RESET_BIT;
-> +	lanphy_write_page_reg(phydev, 4, LAN8814_QSGMII_SOFT_RESET, val);
+bye,
+Heiko
 
-It looks like there are sufficient pairs of
-lanphy_read_page_reg()/lanphy_write_page_reg() you would be justified
-adding a lanphy_modify_page_reg().
 
-> +}, {
-> +	.phy_id		= PHY_ID_LAN8842,
-> +	.phy_id_mask	= MICREL_PHY_ID_MASK,
+>>
+>>>
+>>> Signed-off-by: Heiko Schocher <hs@denx.de>
+>>> ---
+>>>
+>>>   Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
+>>>   1 file changed, 2 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml 
+>>> b/Documentation/devicetree/bindings/trivial-devices.yaml
+>>> index 27930708ccd5..25260c2b81df 100644
+>>> --- a/Documentation/devicetree/bindings/trivial-devices.yaml
+>>> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+>>> @@ -30,6 +30,8 @@ properties:
+>>>       items:
+>>>         # Entries are sorted alphanumerically by the compatible
+>>>         - enum:
+>>> +            # ABB register based spi sensors
+>>> +          - abb,spi-sensor
+>>>               # Acbel fsg032 power supply
+>>>             - acbel,fsg032
+>>>               # SMBus/I2C Digital Temperature Sensor in 6-Pin SOT with SMBus Alert and Over 
+>>> Temperature Pin
+>>> -- 
+>>> 2.20.1
+>>>
 
-I think you could use PHY_ID_MATCH_MODEL() here.  It would make it
-different to every other PHY, but maybe you could start with some
-cleanup patches, adding the _modify_ call etc?
-
-	Andrew
+-- 
+DENX Software Engineering GmbH, Managing Director: Johanna Denk, Tabea Lutz
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: +49-8142-66989-52   Fax: +49-8142-66989-80   Email: hs@denx.de
 
