@@ -1,121 +1,112 @@
-Return-Path: <linux-kernel+bounces-739978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56C9BB0CE25
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 01:28:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C9E7B0CE12
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 01:25:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C85441896F73
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 23:29:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87CE117D309
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 23:25:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF74F248F51;
-	Mon, 21 Jul 2025 23:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 205E9248F51;
+	Mon, 21 Jul 2025 23:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="DLh7c1ng"
-Received: from sonic317-21.consmr.mail.gq1.yahoo.com (sonic317-21.consmr.mail.gq1.yahoo.com [98.137.66.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ssuIz/38"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D5A1B87F2
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 23:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.66.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0452624A057;
+	Mon, 21 Jul 2025 23:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753140520; cv=none; b=APxd0G7u0/l9V5QCtSJr70harHuFUe8kD7n5J1uKDYAYnFVnOLa0U9eXsEY32A+P6+cXokczOtVp1vc57MItSdlG9EM3MXx8eBpCi8GNyTAO3jderyvdGLdSdLnPxxbeD1RwaHQk/FgKC8zrD57kw2/+A06N94JX3MQbWqPTpjA=
+	t=1753140288; cv=none; b=PujrtMRSJCdHLf1+vxVXwobg+fV56eSCXqaDybmN6/mm3qly9Er27pGxLo9AmzyYoDIDLB94zizrvlNTMGObozLKBgDTgS/NcjtM5SG1Vh4yd1WaNc8Eqxl+6IYBJZlbzOoRiDeIWRks9etpYzujYmN+Ra//vnF6pfd1ydnQTiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753140520; c=relaxed/simple;
-	bh=1MCtw47HVDSeZZDiTRWgwo3YT4Qe/m/1GEs8WpLI46Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=XNkXR8j4W3eN23H1MlDnvopEY83YnajyOS7LXb5I1LQotTEOZqyfYouTnntGrP/RvEvY0+Lpk+QL84iDcN0kiGKEuwURJq7s2WXsZjB5JwHk8nGPoGZ0mK8Ui6lRyv/rAeXrQjHnOyu7tJlKIrtADzZ2gB6Xj2QueI7IG+AvEXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com; spf=pass smtp.mailfrom=aol.com; dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b=DLh7c1ng; arc=none smtp.client-ip=98.137.66.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aol.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1753140511; bh=A91AAcTAlI16PhcW5HAKMoeQaMv74rtX9ewBgIvhwh0=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=DLh7c1ng495twwlng+IPhOt+G9Dd/as1REECXOGytOf/sqJo28dMXgHcrdCVJY+NuQnVEOf8WGxYqsEnrSyzsNSyz0By9AcgWWK/EGxK3CRwI48rbDd0GL+EVORx341YFAcKqpgiIHgzT4wkIbe+vuqYo30ZD0x2oCKpt23nJhemVVcGZjuafHwUOB5pvg2lGvfwfmV89RjLC/lnMW2lRp9Z9yAroojgFtbyInRT76onQ6VqQhUK/A3L4K1xj9K57eDnTq6GjTpbGEYUpnz2X2JtT71yjrMcXoV5c5pDT1a8FlVCfVhkiO6107iwZuqmJfFobAocCVU7EmgJs8Eb6A==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1753140511; bh=7EpFAs3n3RVEYi+eXEo2Y3vbTY6mQaHy/oD680UUkJB=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=RV9tu8qR87zE/FUSUXOVvlzbs6WksdlUnViO4E1QgDnJXFVmkNx4Tc3eEqYO1unwc8180FJnp+4pTqusCkpCbBgvnYVOkH57mORE3jHLjSHyqZGKMp3gCLPc8wa/kMExb117C5azIbkvau67RBlkBwQ3oQjffUy2xFuNAnfbu+/hgK7Kh8xS8GlH4ApJ4TItAq7El5TztPoqksCJ8KUL0oJnvWX+fgBZIGpdS0KmzxRurhDwXFRYW0F1JA2VDf2i5lV0ntgLBmvupeM0CfWLxGq+gXFmccNgLN5xeYBCWMIBLgfBgYXoHUaYC8Rv4WRPCPlE5wo07etNWeqq+gMIwA==
-X-YMail-OSG: q3RZDQAVM1lg91ADX9SgAUWbcB4F.nrrjqIt.W2Azv6UDY2p4qFHKlSJRcOeFry
- KSjo.FhCmucfr6BdcU1eA3C_tz53vWA0wXk2R7lE9FV_SZM5IbKVuBqvR0VKzNXerHU3HWQTs5ya
- 8hcU0pkyIJwyZOMrwCjJnohthFLtH9ktaHWqPERJutUVqtbW9IH_TplOaEc.sD7wKN_pyLAAa6Nv
- uNE5rjbrgsfwsUYQ.cE2BdHYohGYe5KzNs5_tfwS3Hale6maqreo4CelXvyLdjHzuL0tY0Yb2K6i
- 9VDNV9kA.M4bK3SRkSA9W2jEZBumiRbZFzGJB8y39G2VtGOrWz1clCnhDbIvW0aRefF4FfPdhtuC
- VC1SRRx4Brc311cyMx4NJMQGBbTVJTG6graJvkTqJ0qAeeb427w5mZrZpv5v5qti49n7pNOiBiWY
- L0AcUeumG7rpp1jPkXNFGBtUDf2fPAaFpvTHzCcZAubCBJlUVcn.WFae.._u21RN1uD0gu3ewQBI
- eq2maUUGGItXpTQ8B09A4VoNikF.BJrGmxCvy0J1jPEL9_74G_cs6RPxjqzFc67aVNzVVomKQ8AK
- txHt2wsSDQVf7uo56dWskhUhF41H.FJ9A1hQt5KxTmP0nHKxLC6Dn3aHfrUOMfjiXdaCVqnEm_6B
- fehHYVwFi_XxNYRHoXx5ZrP4PNHwZIGE345imzy0olyFLIZBhUAguApRwo7eQ96pGYlCEr8fJ48.
- FIjz7cQvYkSJML7lBVroNjtZRqXwv4GW3PBS352AZAu_Uf.aBG5q70_PoieS1MGK0zXcSmhZH56c
- bYHxWTRLCKsMw5N2nxvSHaJKqKFMJ9PYV0b0Man..uvVkMlw0hzIfe6VJlDWKU7zDdZdy_r0B6ru
- dqaBnPoCNRvOGc1Bj7jyF4oULiik5S20SLGOr5LJW37OMez6WAoSDmjVI3Qs9IJ_HjgwmMxz3MIW
- .gCHeSjdI6YUsfZQmKnt_z_1cG7hKvlw1mE2EsWIumTuNTQNJLamPA1ytEz0lo7RgSciIunVwD5A
- U5QU3uiIyHr3EKTV_jKOpTitJ9_xg6qrQSjoN1UNGIkz_G5Oy3.qB4jwZPlE6H5BEaq4FhMPbQvz
- X_rCjNkKJB9nOGmnJpoylp3fy8s2ARyVZ1FfgFQyLyCvZqUTHbZ0q62x92EYKX2Ar.yXjpJt4yB6
- yDimqIFhWWaiDbUrlXi8KJ3acWnPUHjbmktc1q1j6YO5ouY8vDpZGHQjGT0nF1MZ_d4IGDQSnMuQ
- yzZJxfl1YBxy48eI4NeaWSSqQ0bT9_uuY_g.Xt2OsPIyTP4k4q8C_Ppwlm2Hhu46M2sYVdC1zWVa
- JjSbXAXO2Bs4CAEJgMhgVbrbd0v5M0atIe1ei6qSYOiqD_ki_TyOxqvt96sCkIUUgevMBiEh5rZK
- 89Tcp6GKEch.nSPBrPwYgKix8eCftVI.kFoits4J.JaJD07I3Kp0SIqwErkw.HJciPiiEkWC1TS9
- UdOAQvXPhOIj1irusvTBcZDBr801R9pcgFdBSeMhf6SY2_K1SOoi1iqpl3Gx1pjz2MqNnj4BVMZJ
- 2Kb084Q76UInmZ_v7JVQPBV4sJ2InPfU_58ANELoLelq5Sr6JIiqeOuRx1khcS8xhRb4HEI2LeBL
- yQiCH4iXkZPGZT12p4KE2PHBTEu2jH9EFpdrL6uKdaXPCWM7m6p.k1S5_mWVZew1jBKbkOBwIins
- tdWVKp3jitb_7O5Pr5F96I_fCvutjgqbpRpYboS8kczfp.HCkO8wTUdUJUADP9ynC077p2KwKfbF
- oR05xa2j4DTAgbEjwqdvQV1Pl9AJR3zenHFjZzVFZA1tWZHs__X3uHsBwQksjGIQEvpP0HnjpV1V
- H1jlPKPUDjNrWsX8.1CZKcmv_bf0fKwsZ4wdzyb_LRkSP9kD8zooATwE6gW2THptOhsZZx0aSJSo
- nZtHdSUpOPVSoV1WSGUwPotA8leXTZs.xnaiOWjHQ.PCpvoadAufoIyWjRJs4OGiXqiQSKtksuAP
- 6zZefbLIzEBGciY3tHJ4R2XiSMkE6zv7AwMeB_qAL.65apN4Q_kc9g9WmYkZ4QMpOmsCl8QZBl_I
- bEd40_JQMBXeUrWDfZFYxzPr8BqVuXFBgdhh_Z5.YYA8jw5Y1S_Fj1HQ6YpbWeLo3V.MQpo4HSVt
- Akri0PyqZmN6T_Z0.Rm_pmrIJxanTdqYVnHqu7Vkp2Jq2lslYna1CJEStZGdsp60LUmv78EW.tkX
- RWQsZNhU7RuFjQXax3VrmBeksvlPB8baruT3BkqYeJmnm6gyPOZrP7N.bi4Wuqw4b62um15I6
-X-Sonic-MF: <rubenru09@aol.com>
-X-Sonic-ID: a627b7ad-e902-4a36-ae28-0ee32e157ef6
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.gq1.yahoo.com with HTTP; Mon, 21 Jul 2025 23:28:31 +0000
-Received: by hermes--production-ir2-858bd4ff7b-c77nt (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID de26d5190053588a6a416cd8bd16b8d6;
-          Mon, 21 Jul 2025 23:28:28 +0000 (UTC)
-From: Ruben Wauters <rubenru09@aol.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: Ruben Wauters <rubenru09@aol.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/gud: Remove unnecessary logging
-Date: Tue, 22 Jul 2025 00:22:03 +0100
-Message-ID: <20250721232210.12578-1-rubenru09@aol.com>
-X-Mailer: git-send-email 2.49.1
+	s=arc-20240116; t=1753140288; c=relaxed/simple;
+	bh=Z6lcGUopQKT7I++LYvfVt2MPjUmwLaQiAmLB6rngS5s=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=LMHS5lelocYw08VSSPp5azoIwvz7U9bi7h+KQkUNibnV/gDeLvjk2f257dK66QFvHbBhXcw1m5H4II0+A0d/rPjHg1HPKqB83+DZ9KyWE2y5PcWXm0L1GJUNx469Q1v8RU6WVUpN+Ql0sFYWQa35A2NrDB/nhKETYRyjPqzZTGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ssuIz/38; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753140118;
+	bh=zJEldqh5W9q/aWhy/uZaJHR7UyYBx0AuGwt+s2J6G5E=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ssuIz/38cYDDiN3t2MeIy9UbBPOdQVy8YzS3fbe44vBjP1klkKGZ9/7DcW1zLihlp
+	 e1V94FDj5Z4je0osGluLsvjlLmsUkgH8/viOkKbti7NVM5zDS9kuwq06JRIRjrnW/p
+	 I7MdjXEm6Juw6wVzzoc//iv0FPt3MUhUpeb1CbnNoVH9hH6UrwOhzWvdbe8tOsVFoh
+	 ywgKTeaJpYGFAOvcKm/fhB/owXB2fZpqF4XtNApSg7HydflBPNuIigj9zsckGUqxH7
+	 bD4DxL6p/QeNMadLCyTqxCFLYL2J3UvOJxnXLd4uwMpjiQQZM/m58kJUucIF5xp4Ax
+	 eKULjmJcAitcQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bmGd16x1tz4wd0;
+	Tue, 22 Jul 2025 09:21:57 +1000 (AEST)
+Date: Tue, 22 Jul 2025 09:24:33 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Sterba <dsterba@suse.cz>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patches in the btrfs tree
+Message-ID: <20250722092433.04ccc220@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-References: <20250721232210.12578-1-rubenru09.ref@aol.com>
+Content-Type: multipart/signed; boundary="Sig_/3JlPq8cdAY4kvcpw9ICStNi";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-The debug logging in gud_disconnect() adds zero detail and is
-unnecessary, as it only prints the function name.
+--Sig_/3JlPq8cdAY4kvcpw9ICStNi
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The same functionality can be achieved by using ftrace, and is
-highlighted by checkpatch, stating the same.
+Hi all,
 
-This patch removes the debug log in the gud_disconnect() function.
+The following commits are also in the btrfs-fixes tree as different
+commits (but the same patches):
 
-Signed-off-by: Ruben Wauters <rubenru09@aol.com>
----
- drivers/gpu/drm/gud/gud_drv.c | 2 --
- 1 file changed, 2 deletions(-)
+  498efee8509a ("btrfs: qgroup: fix qgroup create ioctl returning success a=
+fter quotas disabled")
+  7a8b5d697aae ("btrfs: qgroup: set quota enabled bit if quota disable fail=
+s flushing reservations")
+  8a3f911e34b8 ("btrfs: qgroup: fix race between quota disable and quota re=
+scan ioctl")
 
-diff --git a/drivers/gpu/drm/gud/gud_drv.c b/drivers/gpu/drm/gud/gud_drv.c
-index 5385a2126e45..b52a12cbba3e 100644
---- a/drivers/gpu/drm/gud/gud_drv.c
-+++ b/drivers/gpu/drm/gud/gud_drv.c
-@@ -620,8 +620,6 @@ static void gud_disconnect(struct usb_interface *interface)
- 	struct gud_device *gdrm = usb_get_intfdata(interface);
- 	struct drm_device *drm = &gdrm->drm;
- 
--	drm_dbg(drm, "%s:\n", __func__);
--
- 	drm_kms_helper_poll_fini(drm);
- 	drm_dev_unplug(drm);
- 	drm_atomic_helper_shutdown(drm);
--- 
-2.49.1
+These are commits
 
+  92e6fa77b2e0 ("btrfs: qgroup: fix qgroup create ioctl returning success a=
+fter quotas disabled")
+  da08927994d8 ("btrfs: qgroup: set quota enabled bit if quota disable fail=
+s flushing reservations")
+  9eb1cf99dc45 ("btrfs: qgroup: fix race between quota disable and quota re=
+scan ioctl")
+
+in the btrfs-fixes tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/3JlPq8cdAY4kvcpw9ICStNi
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh+zDEACgkQAVBC80lX
+0GyqnQf/Xx/IleUTdwTNpJ3srpG52IeW/QVPQKcBn4Cf+lLFaBm1y16cdDACgCAw
+CylH4djyne+yxAksJ7Xg4KyRDtassBU1jeXVTr+0ayCSvpNekOvjpPI/6KvMZJFr
+WIsxswKHDvuU05E0ZhzEY9xnH0oKp3tS/pEG9XH50bnGjdKcLuCowQgRxL30QVnz
+x5oMWrgL9Hh5tyyk2qmB1yYK2U4cywQ+9iE9sJ0wDLKmkjIQ2xwZcDaEjBLAvzkv
+nhtP0nisba2Mg9WgY2zoGlLRU48grgDd/YBDm1avAJAVX/OSASnrSl2c8Jdr7Eav
+8cpJJCXaKqyUhsQbFLFOBZFS83wOFg==
+=JuI0
+-----END PGP SIGNATURE-----
+
+--Sig_/3JlPq8cdAY4kvcpw9ICStNi--
 
