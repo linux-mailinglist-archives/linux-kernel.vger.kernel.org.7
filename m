@@ -1,228 +1,308 @@
-Return-Path: <linux-kernel+bounces-739130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41CE3B0C229
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:08:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77720B0C23C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:09:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C2423B2936
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:07:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1B0916A4CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E8A292B5B;
-	Mon, 21 Jul 2025 11:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 933D6299930;
+	Mon, 21 Jul 2025 11:09:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="g0zzrGj9"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2077.outbound.protection.outlook.com [40.107.223.77])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R2Iwqp4D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583B9292B29;
-	Mon, 21 Jul 2025 11:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753096077; cv=fail; b=NagFfIMRgm/jhYh/dCOWo2QG18OJYFtgxNupOrOXmewV2alYv0FUS/2PeqMApIRwHCdoD2LjZvhuOOMjEeD8kmOt9yLFAtKtSO9RkkQsimksejMZSqz6ih2C9GDqXBitpwSqYFbj248d037x5+B5Oked059g3QNUJG/jvTiEAWI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753096077; c=relaxed/simple;
-	bh=TJN8frEXo6XVv5nG5lsiYg8LYjDktR7fCzupjpxpxVE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mtoOgdJIDdgNpKz3VtcXlew6AV2+o6kc2Ca1urw20OWeSPJ8lpqOo1xsYJazdwcb8WTFnFMmUy6KVu6tImwSWzXnzI5zXdbdFsu0hl2/v+Gl0+LuyyK0eyXy3IuCck1tf/B8BfUCssP0MJUb0rJULid89QJ/KLI2RL5UCC7Iaic=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=g0zzrGj9; arc=fail smtp.client-ip=40.107.223.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hI303BT3i9/rAHUBh0pxWOfdzXgTfegzyFuPLfWmTHLfx0LAJraVZniJb2NIyI+lOuj4x8wcpDAShK7ZnKi+MoX+0NNLFbPjwOxxT1lGsZEwYUG5JiK2beWHdYijvwrZ7bk0FE4g7JgD+uZ+1d6Icp4Z23d1+YAJ21jEuI4HnvvDyJMfY8R7yxlyQiExZte1GSvILPMMY61LbZuJjSiAm+fMO95j6nrpv06aHFgBrCan7VTgjVErJL1ndsRD50a/2MGk+qsuu5yD39QL8Yl9cTNgRDis2GCcGKcVdQ8CkxYOW6Jvh82KS4wGK8hKEzpFG85Ffc1rMR/OMbnSWUv1qw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xn7mUwCcqtIMeVFqJ/xCOT+L0StFwuTWdYRRotMQoG0=;
- b=C+tYk7RjAMSzfYNhzUauY9Lg21ITd5ThFA2IuFm1ny38GPvoRj0uE1Nprlk2A1edBuDj00qk5Nnd0UD1VWQnrpB22ZL2mux7RUVvCyNKutNftBNF66FA9TwW8HNkDdZoNlO0b/niyzrldQB6FwT+tr5UDVP96uNX8LbsnI0ejaw6dIiUUfV5GY2CGUVYtzz2f+FPotI1OoMThRBVoBlPfDzCHodLGrWw+H7dBj8F/GN28vocoCU/IY68ofJ9zlllGOynfOBgN/Ondq8oFTz0tGNtm+53OEiyAZY3xpT7ufNw+Szt+sn4QREb30YPMhisBe1xT4JKNi5/9VM57UVffw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xn7mUwCcqtIMeVFqJ/xCOT+L0StFwuTWdYRRotMQoG0=;
- b=g0zzrGj9EPABfNEMMzeLJVYZBQp/Qszz6ZYLnVnsWmTw6sVMSf97gLJaO54dvzGI+OhLBpADn3jQmGotGLIVnaenVXWNrgRtVDCIEszI4qEoGLls6fT//DYZHpES4CvmzgcABSHcAnJtZaqgZcwMTkNANOiIOrXa35nK9R6JJ+U=
-Received: from BLAPR03CA0161.namprd03.prod.outlook.com (2603:10b6:208:32f::8)
- by BY5PR12MB4051.namprd12.prod.outlook.com (2603:10b6:a03:20c::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Mon, 21 Jul
- 2025 11:07:53 +0000
-Received: from BN1PEPF00006001.namprd05.prod.outlook.com
- (2603:10b6:208:32f:cafe::5a) by BLAPR03CA0161.outlook.office365.com
- (2603:10b6:208:32f::8) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.29 via Frontend Transport; Mon,
- 21 Jul 2025 11:07:52 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN1PEPF00006001.mail.protection.outlook.com (10.167.243.233) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8964.20 via Frontend Transport; Mon, 21 Jul 2025 11:07:52 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 21 Jul
- 2025 06:07:49 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 21 Jul
- 2025 06:07:47 -0500
-Received: from xhdradheys41.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Mon, 21 Jul 2025 06:07:44 -0500
-From: Manikanta Guntupalli <manikanta.guntupalli@amd.com>
-To: <git@amd.com>, <michal.simek@amd.com>, <lorenzo@kernel.org>,
-	<jic23@kernel.org>, <dlechner@baylibre.com>, <nuno.sa@analog.com>,
-	<andy@kernel.org>, <linux-iio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <radhey.shyam.pandey@amd.com>, <srinivas.goud@amd.com>,
-	<manion05gk@gmail.com>, Manikanta Guntupalli <manikanta.guntupalli@amd.com>
-Subject: [PATCH] iio: imu: lsm6dsx: Add shutdown callback support for I3C interface
-Date: Mon, 21 Jul 2025 16:37:41 +0530
-Message-ID: <20250721110741.2380963-1-manikanta.guntupalli@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0BB21CA0A;
+	Mon, 21 Jul 2025 11:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753096144; cv=none; b=V+oeRw51jYXXlginp0xb3ZBDQ2rwIjGx7mYhC8dE51u6PztI5/k/fjAWHMp9NDroV8GOsFxYpoc9lcNew5/eE0p94dlIvWKBHifuj4sxBiddYiBzopJLgs+H8OuYDfpNOyIqyQmF5xcVNVQZC3YcX+f24a8HPdc7PJgKNFWG6CA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753096144; c=relaxed/simple;
+	bh=FY4CSPRbHnGtUTrzGgop5iipKH10dKMnMwEEENK6YLM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s9OQ9eApUDisjsyZfaa5P1N7vfQs609LSxToKZsAL420KonEqpe5NexMeJK/bS4NL1i2ANk6blxVbSxhlgEiSxaadQFrlk9FbAp2kXlsIPtBPuHRfJBEiOEiN/ZfFI63ICnATMkZckrwuFOmEvGqJ6sPd3iRPurdS7HgjkHc1pI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R2Iwqp4D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 672E7C4CEED;
+	Mon, 21 Jul 2025 11:08:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753096143;
+	bh=FY4CSPRbHnGtUTrzGgop5iipKH10dKMnMwEEENK6YLM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R2Iwqp4D6Xy2w607ZcBfyGxUQ+ADCXiljXuOVgY7TRQ1Vtoe4yZMtV2AQI/8OfPJo
+	 hjp2e9X9Fgdp7+2qgAU6EnrFv4a7JPofRoSLC9w97/sU7nKtcRsFozt9hAiWW0uoq8
+	 PjRPmclKGh75welK99aYH7ArSh2rUncPqG8m5HDdyrO1+pGL73lOHR1VX7rtjnmDI/
+	 473hR+d7GxtA6mZR4NpRea0GldPHPu/jU/VLfqd2RiA1XyjsySOhjky93KQeFSxIaB
+	 ZwVM+dtWGuy6t74W75lOnMAnkMNKtw0+C2it4xxBL2yv/VaFMvOjl3RZtb6uvTHR0m
+	 VoO21ROhy9bBw==
+Date: Mon, 21 Jul 2025 16:38:52 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
+	Jeff Johnson <jjohnson@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Nirmal Patel <nirmal.patel@linux.intel.com>, 
+	Jonathan Derrick <jonathan.derrick@linux.dev>, linux-wireless@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>, ath12k@lists.infradead.org, ath11k@lists.infradead.org, 
+	ath10k@lists.infradead.org, Bjorn Helgaas <helgaas@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, 
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, Qiang Yu <qiang.yu@oss.qualcomm.com>
+Subject: Re: [PATCH 4/6] wifi: ath12k: Use pci_{enable/disable}_link_state()
+ APIs to enable/disable ASPM states
+Message-ID: <je7sz6lgig3picksxv4ncfjcnnw2sdsp5ja6bwofqjuydhc4v6@b3kavwicxggu>
+References: <20250716-ath-aspm-fix-v1-0-dd3e62c1b692@oss.qualcomm.com>
+ <20250716-ath-aspm-fix-v1-4-dd3e62c1b692@oss.qualcomm.com>
+ <7a97d075-2e37-5f40-5247-867146938613@linux.intel.com>
+ <3q2gqo6ipzyqr7i64yhndtpg4etwep4lgffk7emxluxuhjfya5@vt7czmsgpbuw>
+ <52baf40b-41ed-2588-7817-4d8cd859e0d1@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF00006001:EE_|BY5PR12MB4051:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1e86c955-31ff-4c3e-ce19-08ddc846d67e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?cqS7Li5Drmby2jSuoeFD0WgLQBgMJQrC3RV0DU+4kLhMSGhVeWNPLvyvelM6?=
- =?us-ascii?Q?1aS2kuq+57i1g9lipQI7EQotWAvtO7LJI2ZaKe9evLyvd7rC0eRcOzEsVdji?=
- =?us-ascii?Q?yJSJlo9f5uEbwxRvKnfdhkyDQHxB/dfhZJAJ9WTTO2p+SEgrlpL/lXmpBy5l?=
- =?us-ascii?Q?H5ycy2NTo6SXl4VSR0q7U8q7peWGbRYXoVEvUv21TlZJ976Vw1/USHq1jKXG?=
- =?us-ascii?Q?xb5lAHlaGuBnQaaflMVx1Bb0CWptOmewbzCcmJur2oYpp0OjfH8pMtjjqbBA?=
- =?us-ascii?Q?z4mw4UQqJjOqT7oTpQM1De9OjfWPzyeqXLQbEEgOIeOJWM0nr9dtINpGIcU2?=
- =?us-ascii?Q?Jfvg/vzFRTwmAekJO6nks7Hu3OW1Jo0DRFqNMvw8rwdGVPfUU8mAwwSo5XQ7?=
- =?us-ascii?Q?BBVPtI3Lx7aIVHzvh2tNf6mftlDv9F4oeTTRVD8xW73ic87FrQidgbEyhErW?=
- =?us-ascii?Q?54l3OvAcWfUYDoOw4DoJD114IkGN5QLVvso1IuGmkL6oRjqPyzn+lF/A6iY2?=
- =?us-ascii?Q?AQJm7Lixs9bsO3EDf8pP5zaJvLvY4Rczr9bjp6ZjpmSoOahhwq7LSZVW4mUr?=
- =?us-ascii?Q?qxTAmAditYtLr7Kjb4dzH6dFHLzPGYgTVb0IeYytIy434pveJccykOV5TnlJ?=
- =?us-ascii?Q?JxoOhlGI4r9BgVo2oEku0I1m7lYPdcD+mlqs+5zxGxjQ1rWYcCVhXb+Dwf02?=
- =?us-ascii?Q?Imx5QnZZO+MCDFMzoWyh7FmiSkQ0DVcz5K0CrnZ6+7x2SsUp14WE3hhmNSLX?=
- =?us-ascii?Q?pD6TDlfD+MhRfAU1zvswWuGEqqa533My+0BxM5pC2ZEn1RfVNsSUTGpHlk1N?=
- =?us-ascii?Q?ffComzZpN7ThfmIlpJWoCnl1D1iAi+OugBMDArXqS2RMkNeIjib5FAFJ6cQ7?=
- =?us-ascii?Q?nv8QTgl/dVST37qKcklvZzDaRz9z2fXnWGay0Tc1tKaPCSg8nVgR8UoJoFYj?=
- =?us-ascii?Q?Joholb9Oi9BzqEUk5lTKscESTNIADYP6C3omp/O7NmHXhsJBFZvR/4EZcbDZ?=
- =?us-ascii?Q?FSPa95upb28lb/kp6I4aHtdDqi+suwbUhfM4NwdDdXKc/HKGC457I5eI+UiR?=
- =?us-ascii?Q?tygn83ZpHc1b3uP3RWxAVtzvCM9sGRerjWLTvFhCu7D37UQQ5/fr0pYoN6AV?=
- =?us-ascii?Q?0iEdcrx+vqnZEFmtF2I7w9nIiIzyn0OmYHU0OFAL/kIrNkhodRACMNReyjH4?=
- =?us-ascii?Q?jOx4shM6NvvrQXBAQAefmgr5Xv+HjoEgztr150R4Nm6I80iPivgGMr3Kc3zM?=
- =?us-ascii?Q?d4dRLWLmtU20vfRu8OkHDtiULIY/6nJljl6c9DjAC/s/IqeRyenF4+A5hjMa?=
- =?us-ascii?Q?QxcyRzc/IX9uO0mK9qp09ZBLQdA+/VGeOy4Bo/cseys9pNLBq3aj0Tzdz3t4?=
- =?us-ascii?Q?bcOI7jjiuAT/XMagK6bRzL6LiS+VsYdHWEtXhu9d11S2xKXelYimV7NQNcvb?=
- =?us-ascii?Q?S1ncIgCKibRr/ivTH+pT/7Xouv6CZuBA9qyOHllmbTciaat/qhlhehdPxDAp?=
- =?us-ascii?Q?Znd8GKyR7J/mE+FFyxJ4jLtThSn59fCsIWr5?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2025 11:07:52.7955
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1e86c955-31ff-4c3e-ce19-08ddc846d67e
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF00006001.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4051
+In-Reply-To: <52baf40b-41ed-2588-7817-4d8cd859e0d1@linux.intel.com>
 
-Add a shutdown handler for the ST LSM6DSx I3C driver to perform a hardware
-reset during system shutdown. This ensures the sensor is placed in a
-well-defined reset state, preventing issues during subsequent reboots,
-such as kexec, where the device may fail to respond correctly during
-enumeration.
+On Mon, Jul 21, 2025 at 01:09:05PM GMT, Ilpo Järvinen wrote:
+> On Mon, 21 Jul 2025, Manivannan Sadhasivam wrote:
+> > On Mon, Jul 21, 2025 at 11:04:10AM GMT, Ilpo Järvinen wrote:
+> > > On Wed, 16 Jul 2025, Manivannan Sadhasivam via B4 Relay wrote:
+> > > > From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> > > > 
+> > > > It is not recommended to enable/disable the ASPM states on the back of the
+> > > > PCI core directly using the LNKCTL register. It will break the PCI core's
+> > > > knowledge about the device ASPM states. So use the APIs exposed by the PCI
+> > > > core to enable/disable ASPM states.
+> > > > 
+> > > > Tested-on: WCN7850 hw2.0 PCI WLAN.HMT.1.0.c5-00481-QCAHMTSWPL_V1.0_V2.0_SILICONZ-3
+> > > > 
+> > > > Reported-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
+> > > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> > > > ---
+> > > >  drivers/net/wireless/ath/ath.h        | 14 ++++++++++++++
+> > > >  drivers/net/wireless/ath/ath12k/pci.c | 10 ++++------
+> > > >  2 files changed, 18 insertions(+), 6 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/net/wireless/ath/ath.h b/drivers/net/wireless/ath/ath.h
+> > > > index 34654f710d8a1e63f65a47d4602e2035262a4d9e..ef685123b66bf4f41428fec67c1967f242a9ef27 100644
+> > > > --- a/drivers/net/wireless/ath/ath.h
+> > > > +++ b/drivers/net/wireless/ath/ath.h
+> > > > @@ -21,6 +21,8 @@
+> > > >  #include <linux/skbuff.h>
+> > > >  #include <linux/if_ether.h>
+> > > >  #include <linux/spinlock.h>
+> > > > +#include <linux/pci.h>
+> > > > +#include <linux/pci_regs.h>
+> > > >  #include <net/mac80211.h>
+> > > >  
+> > > >  /*
+> > > > @@ -336,4 +338,16 @@ static inline const char *ath_bus_type_to_string(enum ath_bus_type bustype)
+> > > >  	return ath_bus_type_strings[bustype];
+> > > >  }
+> > > >  
+> > > > +static inline int ath_pci_aspm_state(u16 lnkctl)
+> > > > +{
+> > > > +	int state = 0;
+> > > > +
+> > > > +	if (lnkctl & PCI_EXP_LNKCTL_ASPM_L0S)
+> > > > +		state |= PCIE_LINK_STATE_L0S;
+> > > > +	if (lnkctl & PCI_EXP_LNKCTL_ASPM_L1)
+> > > > +		state |= PCIE_LINK_STATE_L1;
+> > > > +
+> > > > +	return state;
+> > > > +}
+> > > > +
+> > > >  #endif /* ATH_H */
+> > > > diff --git a/drivers/net/wireless/ath/ath12k/pci.c b/drivers/net/wireless/ath/ath12k/pci.c
+> > > > index 489d546390fcdab8f615cc9184006a958d9f140a..a5e11509e3ab8faad6638ff78ce6a8a5e9c3cbbd 100644
+> > > > --- a/drivers/net/wireless/ath/ath12k/pci.c
+> > > > +++ b/drivers/net/wireless/ath/ath12k/pci.c
+> > > > @@ -16,6 +16,8 @@
+> > > >  #include "mhi.h"
+> > > >  #include "debug.h"
+> > > >  
+> > > > +#include "../ath.h"
+> > > > +
+> > > >  #define ATH12K_PCI_BAR_NUM		0
+> > > >  #define ATH12K_PCI_DMA_MASK		36
+> > > >  
+> > > > @@ -928,8 +930,7 @@ static void ath12k_pci_aspm_disable(struct ath12k_pci *ab_pci)
+> > > >  		   u16_get_bits(ab_pci->link_ctl, PCI_EXP_LNKCTL_ASPM_L1));
+> > > >  
+> > > >  	/* disable L0s and L1 */
+> > > > -	pcie_capability_clear_word(ab_pci->pdev, PCI_EXP_LNKCTL,
+> > > > -				   PCI_EXP_LNKCTL_ASPMC);
+> > > > +	pci_disable_link_state(ab_pci->pdev, PCIE_LINK_STATE_L0S | PCIE_LINK_STATE_L1);
+> > > 
+> > > I'd remove to comment too as the code is self-explanatory after this 
+> > > change.
+> > > 
+> > 
+> > Ack
+> > 
+> > > >  
+> > > >  	set_bit(ATH12K_PCI_ASPM_RESTORE, &ab_pci->flags);
+> > > >  }
+> > > > @@ -958,10 +959,7 @@ static void ath12k_pci_aspm_restore(struct ath12k_pci *ab_pci)
+> > > >  {
+> > > >  	if (ab_pci->ab->hw_params->supports_aspm &&
+> > > >  	    test_and_clear_bit(ATH12K_PCI_ASPM_RESTORE, &ab_pci->flags))
+> > > > -		pcie_capability_clear_and_set_word(ab_pci->pdev, PCI_EXP_LNKCTL,
+> > > > -						   PCI_EXP_LNKCTL_ASPMC,
+> > > > -						   ab_pci->link_ctl &
+> > > > -						   PCI_EXP_LNKCTL_ASPMC);
+> > > > +		pci_enable_link_state(ab_pci->pdev, ath_pci_aspm_state(ab_pci->link_ctl));
+> > > >  }
+> > > >  
+> > > >  static void ath12k_pci_cancel_workqueue(struct ath12k_base *ab)
+> > > 
+> > > As you now depend on ASPM driver being there, these should also add to 
+> > > Kconfig:
+> > > 
+> > > depends on PCIEASPM
+> > > 
+> > 
+> > I thought about it, but since this driver doesn't necessarily enable ASPM for
+> > all the devices it supports, I didn't add the dependency. But looking at it
+> > again, I think makes sense to add the dependency since the driver cannot work
+> > reliably without disabling ASPM (for the supported devices).
+> 
+> PCIEASPM is already default y and if EXPERT so it is not something 
+> that is expected to be disabled.
+> 
+> You also no longer need to move the ASPM link state defines LKP found out 
+> about after adding the depends on.
+> 
 
-To support this, the previously static st_lsm6dsx_reset_device() function
-is now exported via EXPORT_SYMBOL_NS() under the IIO_LSM6DSX namespace,
-allowing it to be invoked from the I3C-specific driver.
+Yes, it will fix the reported issue, but guarding the definitions feels wrong to
+me still. Maybe that's something we can worry later.
 
-Signed-off-by: Manikanta Guntupalli <manikanta.guntupalli@amd.com>
----
- drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h      |  1 +
- drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c |  3 ++-
- drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_i3c.c  | 14 ++++++++++++++
- 3 files changed, 17 insertions(+), 1 deletion(-)
+> I'm a bit worried this series will regress in the cases where OS doesn't 
+> control ASPM so it might be necessary to include something along the 
+> lines of the patch below too (the earlier discussion on this is in Link 
+> tags):
+> 
 
-diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h
-index c225b246c8a5..42c0dcfbad49 100644
---- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h
-+++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h
-@@ -466,6 +466,7 @@ extern const struct dev_pm_ops st_lsm6dsx_pm_ops;
- 
- int st_lsm6dsx_probe(struct device *dev, int irq, int hw_id,
- 		     struct regmap *regmap);
-+int st_lsm6dsx_reset_device(struct st_lsm6dsx_hw *hw);
- int st_lsm6dsx_sensor_set_enable(struct st_lsm6dsx_sensor *sensor,
- 				 bool enable);
- int st_lsm6dsx_fifo_setup(struct st_lsm6dsx_hw *hw);
-diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
-index c65ad49829e7..929b30985d41 100644
---- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
-+++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
-@@ -2267,7 +2267,7 @@ static int st_lsm6dsx_init_hw_timer(struct st_lsm6dsx_hw *hw)
- 	return 0;
- }
- 
--static int st_lsm6dsx_reset_device(struct st_lsm6dsx_hw *hw)
-+int st_lsm6dsx_reset_device(struct st_lsm6dsx_hw *hw)
- {
- 	const struct st_lsm6dsx_reg *reg;
- 	int err;
-@@ -2302,6 +2302,7 @@ static int st_lsm6dsx_reset_device(struct st_lsm6dsx_hw *hw)
- 
- 	return 0;
- }
-+EXPORT_SYMBOL_NS(st_lsm6dsx_reset_device, "IIO_LSM6DSX");
- 
- static int st_lsm6dsx_init_device(struct st_lsm6dsx_hw *hw)
- {
-diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_i3c.c b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_i3c.c
-index cb5c5d7e1f3d..f3d9cdd5a743 100644
---- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_i3c.c
-+++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_i3c.c
-@@ -41,10 +41,24 @@ static int st_lsm6dsx_i3c_probe(struct i3c_device *i3cdev)
- 	return st_lsm6dsx_probe(dev, 0, (uintptr_t)id->data, regmap);
- }
- 
-+static void st_lsm6dsx_i3c_shutdown(struct device *dev)
-+{
-+	struct st_lsm6dsx_hw *hw = dev_get_drvdata(dev);
-+
-+	/*
-+	 * Perform device reset to ensure the sensor is in a known
-+	 * good state for subsequent re-initialization or power cycles.
-+	 * This addresses issues where the sensor might not enumerate
-+	 * correctly after a warm reboot (e.g., kexec).
-+	 */
-+	st_lsm6dsx_reset_device(hw);
-+}
-+
- static struct i3c_driver st_lsm6dsx_driver = {
- 	.driver = {
- 		.name = "st_lsm6dsx_i3c",
- 		.pm = pm_sleep_ptr(&st_lsm6dsx_pm_ops),
-+		.shutdown = st_lsm6dsx_i3c_shutdown,
- 	},
- 	.probe = st_lsm6dsx_i3c_probe,
- 	.id_table = st_lsm6dsx_i3c_ids,
+atheros drivers didn't have such comment (why they were manually changing the
+LNKCTL register), but I agree that there is a chance that they could cause issue
+on platforms where BIOS didn't give ASPM control to the OS.
+
+But as a non-ACPI developer, I don't know what does 'ACPI doesn't give
+permission to manage ASPM' mean exactly. Does ACPI allow to disable ASPM but not
+enable it?
+
+- Mani
+
+> -----
+> From: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> Subject: [PATCH] PCI/ASPM: Always disable ASPM when driver requests it
+> 
+> PCI core/ASPM service driver allows controlling ASPM state through
+> pci_disable_link_state() API. It was decided earlier (see the Link
+> below), to not allow ASPM changes when OS does not have control over it
+> but only log a warning about the problem (commit 2add0ec14c25
+> ("PCI/ASPM: Warn when driver asks to disable ASPM, but we can't do
+> it")).
+> 
+> A number of drivers have added workarounds to force ASPM off with own
+> writes into the Link Control Register (some even with comments
+> explaining why PCI core does not disable it under some circumstances).
+> According to the comments, some drivers require ASPM to be off for
+> reliable operation.
+> 
+> Having custom ASPM handling in drivers is problematic because the state
+> kept in the ASPM service driver is not updated by the changes made
+> outside the link state management API.
+> 
+> As the first step to address this issue, make pci_disable_link_state()
+> to unconditionally disable ASPM so the motivation for drivers to come
+> up with custom ASPM handling code is eliminated.
+> 
+> To fully take advantage of the ASPM handling core provides, the drivers
+> that need to quirk ASPM have to be altered depend on PCIEASPM and the
+> custom ASPM code is removed. This is to be done separately. As PCIEASPM
+> is already behind EXPERT, it should be no problem to limit disabling it
+> for configurations that do not require touching ASPM.
+> 
+> Make pci_disable_link_state() function comment to comply kerneldoc
+> formatting while changing the description.
+> 
+> Link: https://lore.kernel.org/all/CANUX_P3F5YhbZX3WGU-j1AGpbXb_T9Bis2ErhvKkFMtDvzatVQ@mail.gmail.com/
+> Link: https://lore.kernel.org/all/20230511131441.45704-1-ilpo.jarvinen@linux.intel.com/
+> Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> 
+> ---
+>  drivers/pci/pcie/aspm.c | 33 ++++++++++++++++++++-------------
+>  1 file changed, 20 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> index 5721ebfdea71..11732031e342 100644
+> --- a/drivers/pci/pcie/aspm.c
+> +++ b/drivers/pci/pcie/aspm.c
+> @@ -1382,16 +1382,23 @@ static int __pci_disable_link_state(struct pci_dev *pdev, int state, bool locked
+>  		return -EINVAL;
+>  	/*
+>  	 * A driver requested that ASPM be disabled on this device, but
+> -	 * if we don't have permission to manage ASPM (e.g., on ACPI
+> +	 * if we might not have permission to manage ASPM (e.g., on ACPI
+>  	 * systems we have to observe the FADT ACPI_FADT_NO_ASPM bit and
+> -	 * the _OSC method), we can't honor that request.  Windows has
+> -	 * a similar mechanism using "PciASPMOptOut", which is also
+> -	 * ignored in this situation.
+> +	 * the _OSC method), previously we chose to not honor disable
+> +	 * request in that case. Windows has a similar mechanism using
+> +	 * "PciASPMOptOut", which is also ignored in this situation.
+> +	 *
+> +	 * Not honoring the requests to disable ASPM, however, led to
+> +	 * drivers forcing ASPM off on their own. As such changes of ASPM
+> +	 * state are not tracked by this service driver, the state kept here
+> +	 * became out of sync.
+> +	 *
+> +	 * Therefore, honor ASPM disable requests even when OS does not have
+> +	 * ASPM control. Plain disable for ASPM is assumed to be slightly
+> +	 * safer than fully managing it.
+>  	 */
+> -	if (aspm_disabled) {
+> -		pci_warn(pdev, "can't disable ASPM; OS doesn't have ASPM control\n");
+> -		return -EPERM;
+> -	}
+> +	if (aspm_disabled)
+> +		pci_warn(pdev, "OS doesn't have ASPM control, disabling ASPM anyway\n");
+>  
+>  	if (!locked)
+>  		down_read(&pci_bus_sem);
+> @@ -1418,13 +1425,13 @@ int pci_disable_link_state_locked(struct pci_dev *pdev, int state)
+>  EXPORT_SYMBOL(pci_disable_link_state_locked);
+>  
+>  /**
+> - * pci_disable_link_state - Disable device's link state, so the link will
+> - * never enter specific states.  Note that if the BIOS didn't grant ASPM
+> - * control to the OS, this does nothing because we can't touch the LNKCTL
+> - * register. Returns 0 or a negative errno.
+> - *
+> + * pci_disable_link_state - Disable device's link state
+>   * @pdev: PCI device
+>   * @state: ASPM link state to disable
+> + *
+> + * Disable device's link state so the link will never enter specific states.
+> + *
+> + * Return: 0 or a negative errno
+>   */
+>  int pci_disable_link_state(struct pci_dev *pdev, int state)
+>  {
+> 
+> -- 
+> tg: (9f4972a5d481..) aspm/disable-always (depends on: pci/set-default-comment2)
+
+
 -- 
-2.34.1
-
+மணிவண்ணன் சதாசிவம்
 
