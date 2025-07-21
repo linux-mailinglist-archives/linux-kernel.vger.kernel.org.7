@@ -1,169 +1,178 @@
-Return-Path: <linux-kernel+bounces-739057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ABBBB0C122
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:18:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 35737B0C12D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:20:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56FA33B84BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:18:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CE364E3B3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F95A28DB71;
-	Mon, 21 Jul 2025 10:18:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB9728DF3F;
+	Mon, 21 Jul 2025 10:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UsEiCfeS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QHY3M5Ku"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1904228C2D7;
-	Mon, 21 Jul 2025 10:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A9328DEF9;
+	Mon, 21 Jul 2025 10:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753093123; cv=none; b=O3sk1SOJ7t6QwpiKJvXlxOoVyKq3Yo8Ol1rvdIFhMOKoZyJsmAlc6eTYBCj/UNH2u6QP3bXO5i97cnT1lrHOXoKQcizFsmkVKwSemIl9AFy+8Toof97AXJzwTL2o7HW+VP5em/jQVKXZnoxmzmxyrOWoAO+f75mI3Y70gSwyCOQ=
+	t=1753093229; cv=none; b=WJ6h3VC2MUgJOUWehAC/iYFxkVW0nK5RDN6PfMV2LCsDhQMa/qNfI+kzB5aH+KAMK0FLv54/ALDstQf42eQG9SqyYsBevP/ZkgR0jiB7UsEwuQPO4bcMoiEU4AVtD8dpsOvtqSOW96bscfGZg6Wa7FslbqWnOFKEc6U94fGJZds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753093123; c=relaxed/simple;
-	bh=ciYWhHQQLN6I4PF+Dk1IcyISwuZNzYfEcdeXkbEPPuY=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=aWQmwSPDXtID5F523XYbb6E+nunmGIYMCRIBHn/djx9ZDyrBDjt1frndmQfGnJ+lzv2lk02dWuQ6z/+9aDRufBVHuf3GrHbAWEpftQYZLBP+GvtbLrfX6+Vr59ClqXjY9EivvGTQoiRRvjZnXDtQr1lY/JQ/GPql7oI6ooFvt6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UsEiCfeS; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753093123; x=1784629123;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=ciYWhHQQLN6I4PF+Dk1IcyISwuZNzYfEcdeXkbEPPuY=;
-  b=UsEiCfeSchAriD8yqHxaVVoLlp/JDuSOEJYMMbnRj8EdryylMrkOgFoX
-   t15F3Og3fVVj7hXRF5zm8mqC18T28y8HA3TXNIao1invLYhwyzuh+qA5I
-   0CfnuzOiICHjq6ddBSek66jKbG+vTYIGIsSDmIojGIKh3d9PwCqJ9UmHh
-   KmQbkSLSopO9sk8TBaHCwzpCg3Kk+veUlVo1d/8OJrFoM2IfuRtiFv3KX
-   1l+34fespywboidw0SjPeZmNAkBnu9GXE+0hAxhCxlWrcsblCBv7lMjI3
-   1b9JeUcXrl+fnD1cXjGvlT/d0h3MoGuWmRG7VTm/+STkGGVWXll83PVrJ
-   g==;
-X-CSE-ConnectionGUID: sMkZWdDPSKyQ4Es1JgNkKw==
-X-CSE-MsgGUID: xc1bF4zrRdeKpMFsvFJkZw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11498"; a="66743638"
-X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
-   d="scan'208";a="66743638"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 03:18:42 -0700
-X-CSE-ConnectionGUID: t54MNEhvQoWpJxIe/wpvCw==
-X-CSE-MsgGUID: XVmkOGjnQIegha1m1KPu9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
-   d="scan'208";a="158459692"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.225])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 03:18:35 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 21 Jul 2025 13:18:32 +0300 (EEST)
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-cc: Matthew W Carlis <mattc@purestorage.com>, helgaas@kernel.org, 
-    Lukas Wunner <lukas@wunner.de>, anil.s.keshavamurthy@intel.com, 
-    bhelgaas@google.com, bp@alien8.de, davem@davemloft.net, 
-    linux-edac@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    linux-pci@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-    mark.rutland@arm.com, mathieu.desnoyers@efficios.com, mhiramat@kernel.org, 
-    naveen@kernel.org, oleg@redhat.com, peterz@infradead.org, 
-    rostedt@goodmis.org, tianruidong@linux.alibaba.com, tony.luck@intel.com
-Subject: Re: [PATCH v8] PCI: hotplug: Add a generic RAS tracepoint for hotplug
- event
-In-Reply-To: <e92f8d1f-457c-4248-8397-81b0e20ff4af@linux.alibaba.com>
-Message-ID: <11119800-3b6a-a683-3500-115a057c2826@linux.intel.com>
-References: <20250717235055.GA2664149@bhelgaas> <20250718034616.26250-1-mattc@purestorage.com> <e92f8d1f-457c-4248-8397-81b0e20ff4af@linux.alibaba.com>
+	s=arc-20240116; t=1753093229; c=relaxed/simple;
+	bh=3YgMPI03O6Q9TFHH0OJ35uPeIyJWvyS3MOD+GMcK5P0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GzsWUfX/tOCisSmzUyPItEzvROIbvt3ctJOg8IMe53DesSUp7VTkjdB0kUXE7YbFHKGJ3bDtXF/ekewKsXk3F95IGFTGo7+GHdIyZMjlG8+Mdr4lSTm6r9OA8Ey9DWxMHvitx0/OhISOtyVGUwNQZFV1LISWlNruESzt1BcznYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QHY3M5Ku; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ae3a604b43bso697217266b.0;
+        Mon, 21 Jul 2025 03:20:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753093226; x=1753698026; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mEkvSgl/X/bWkRHK67wzwvPOEwMXPHWGX/kAxaYeLOk=;
+        b=QHY3M5Ku2y3pdL4F7AodygniLpje3Hiw77xLdF2dFFFfPT1MdztNPSzO8Mz9JLOvOp
+         uIucgi7xPfAFq54aONXgk01HWRuPM7GrjV/hvdTP+3K22jjyY3p7eFdoy8U43eNvWA4w
+         RzGaQe1XrFwgmInKJeQgwswkelr6yayDGJfbwS05hIiWftaCZxrVZ4dniGbUQoeG8YBj
+         rstR70bsEdHErcARkzVcuCywcq/Evl6tKCISY9ZRRvT4EO9NvN8BC555ckEHeRJ0BEY4
+         U/0YciaefXBrnCFuLyRdygQvOPAAg+Vnh6TaXz+ZTPAHkEeBzJemxRFN2mKFATTPRYFe
+         pK/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753093226; x=1753698026;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mEkvSgl/X/bWkRHK67wzwvPOEwMXPHWGX/kAxaYeLOk=;
+        b=nweXSeYPQPa23zp+NaFHaitAk4kpdXAJKjaIw+3ziFguytR3XtdXirXKZPcfKcSC+E
+         +P88f4jZTGn8mMZ1GLcD5z9aRKAKAq+/xl/7aNXpVRBV0JrjS+4tJJWEfmyjHrdjKHmV
+         EywTjsvyB0+wB0090j63UU1pzeWqGleGlZ0HyQmrV2IJlXYgWhd2gMSEtaCZTvf16PVI
+         ww8Yeb86qIfi2QjuzERIO7rSqJE9cJqGavWw2ff1ESVSrK5NWcCIaLTXDQP6pcZ4VL7O
+         6dytQ5okKUT/5Iy5r0XZ1IsMPPrO+6rDtcO3Uc5MSPwc2DPoVlGPMKLmXOAKFI8ey/CM
+         ecmw==
+X-Forwarded-Encrypted: i=1; AJvYcCVkvNoAAC252kR4WPX6Ne3P+1hGpWLQc9nEZWpNVSH6ibq/QkXSO1nO8rOzMp9Y+1vAsyCphj4Q+u3koxuF@vger.kernel.org, AJvYcCXQdKo2oZ7ButWBGh3Kh+HKm7F910WC4y3APskq3It+DYsw7vE5/auLb0kkvkUl9V7N6gzqGVXlakibhVsK@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzhvsmqu8ZJ639lGXgQEFpW9Uc/tPHdpNWIwbDmbqjAMZycUbJV
+	jhS86Lh1ywLKhXaK6ZzXXCGG5yvsiqthjkrA5D1mfGkIQJaFu658j7upyHUiJQUqq8xwBdqoJuE
+	45vRmXrEhH3AZ2eNC7auaCQNi8s8N3Aw=
+X-Gm-Gg: ASbGnctYhEEUo/SqgpcYX46TOdxwRrvmhdl/yCWaxlvhSruQblpxhRZ1D2FaupeW/Tj
+	4vT6+kZnr817f88N0O2sUXsvBGrEsbvJdrVFXMUoRppwnC81SAyq8abnNyPUryZXtoyL8X//8DQ
+	5oGaeekzFbrIxr5kN/l6Hon+w6wAR+Vu2oiZBXF1FXv70SOF32Qq5KIEChcnGH+xpQ4OPVtu8gB
+	Kiar24=
+X-Google-Smtp-Source: AGHT+IECwG9KpInpUUTUfL1ZufRwhXd7XnVOImrGIaqCKUWnoqFI8PBJPZ5FRE8r5TJ5oxnN80iuA4xF8KGlJ5g8A+k=
+X-Received: by 2002:a17:907:d508:b0:add:ed3a:e792 with SMTP id
+ a640c23a62f3a-ae9ce11c674mr1857320166b.47.1753093225389; Mon, 21 Jul 2025
+ 03:20:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-483332610-1753093112=:945"
+References: <20250721084412.370258-1-neil@brown.name> <20250721084412.370258-5-neil@brown.name>
+In-Reply-To: <20250721084412.370258-5-neil@brown.name>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 21 Jul 2025 12:20:14 +0200
+X-Gm-Features: Ac12FXyX3UswuCZXfkC-RxeL1SPw0biPJRSYlaLZQm4ll8hui8Mb-5dCGEAPxMo
+Message-ID: <CAOQ4uxhiDNWjZXGhE31ZBPC_gUStETh4gyE8WxCRgiefiTCjCg@mail.gmail.com>
+Subject: Re: [PATCH 4/7] VFS: introduce dentry_lookup() and friends
+To: NeilBrown <neil@brown.name>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Mon, Jul 21, 2025 at 10:55=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
+>
+> dentry_lookup() combines locking the directory and performing a lookup
+> prior to a change to the directory.
+> Abstracting this prepares for changing the locking requirements.
+>
+> dentry_lookup_noperm() does the same without needing a mnt_idmap and
+> without checking permissions.  This is useful for internal filesystem
+> management (e.g.  creating virtual files in response to events) and in
+> other cases similar to lookup_noperm().
+>
+> dentry_lookup_hashed() also does no permissions checking and assumes
+> that the hash of the name has already been stored in the qstr.
 
---8323328-483332610-1753093112=:945
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+That's a very confusing choice of name because _hashed() (to me) sounds
+like the opposite of d_unhashed() which is not at all the case.
 
-On Fri, 18 Jul 2025, Shuai Xue wrote:
-> =E5=9C=A8 2025/7/18 11:46, Matthew W Carlis =E5=86=99=E9=81=93:
-> > On Thu, Jul 17, 2025 Bjorn Helgaas wrote
-> > > So I think your idea of adding current link speed/width to the "Link
-> > > Up" event is still on the table, and that does sound useful to me.
-> >=20
-> > We're already reading the link status register here to check DLLA so
-> > it would be nice. I guess if everything is healthy we're probably alrea=
-dy
-> > at the maximum speed by this point.
-> >=20
-> > > In the future we might add another tracepoint when we enumerate the
-> > > device and know the Vendor/Device ID.
-> >=20
-> > I think we might have someone who would be interested in doing it.
->=20
->=20
-> Hi, all,
->=20
-> IIUC, the current hotplug event (or presence event) is enough for Matthew=
-=2E
-> and we would like a new tracepoing for link speed change which reports
-> speeds.
->=20
-> For hotplug event, I plan to send a new version to
->=20
-> 1. address Bjorn' concerns about event strings by removing its spaces.
->=20
-> #define PCI_HOTPLUG_EVENT
-> \
-> =09EM(PCI_HOTPLUG_LINK_UP,=09=09=09"PCI_HOTPLUG_LINK_UP")
-> \
-> =09EM(PCI_HOTPLUG_LINK_DOWN,=09=09"PCI_HOTPLUG_LINK_DOWN")
-> \
-> =09EM(PCI_HOTPLUG_CARD_PRESENT,=09=09"PCI_HOTPLUG_CARD_PRESENT")
-> \
-> =09EMe(PCI_HOTPLUG_CARD_NOT_PRESENT,
-> "PCI_HOTPLUG_CARD_NOT_PRESENT")
->=20
-> 2. address Ilpo comments by moving pci_hp_event to a common place
-> (include/trace/events/pci.h) so that the new comming can also use it.
+> This is useful following filename_parentat().
+>
+> These are intended to be paired with done_dentry_lookup() which provides
+> the inverse of putting the dentry and unlocking.
+>
+> Like lookup_one_qstr_excl(), dentry_lookup() returns -ENOENT if
+> LOOKUP_CREATE was NOT given and the name cannot be found,, and returns
+> -EEXIST if LOOKUP_EXCL WAS given and the name CAN be found.
+>
+> These functions replace all uses of lookup_one_qstr_excl() in namei.c
+> except for those used for rename.
+>
+> Some of the variants should possibly be inlines in a header.
+>
+> Signed-off-by: NeilBrown <neil@brown.name>
+> ---
+>  fs/namei.c            | 158 ++++++++++++++++++++++++++++++------------
+>  include/linux/namei.h |   8 ++-
+>  2 files changed, 119 insertions(+), 47 deletions(-)
+>
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 950a0d0d54da..f292df61565a 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -1714,17 +1714,98 @@ struct dentry *lookup_one_qstr_excl(const struct =
+qstr *name,
+>  }
+>  EXPORT_SYMBOL(lookup_one_qstr_excl);
+>
+> +/**
+> + * dentry_lookup_hashed - lookup and lock a name prior to dir ops
+> + * @last: the name in the given directory
+> + * @base: the directory in which the name is to be found
+> + * @lookup_flags: %LOOKUP_xxx flags
+> + *
+> + * The name is looked up and necessary locks are taken so that
+> + * the name can be created or removed.
+> + * The "necessary locks" are currently the inode node lock on @base.
+> + * The name @last is expected to already have the hash calculated.
+> + * No permission checks are performed.
+> + * Returns: the dentry, suitably locked, or an ERR_PTR().
+> + */
+> +struct dentry *dentry_lookup_hashed(struct qstr *last,
+> +                                   struct dentry *base,
+> +                                   unsigned int lookup_flags)
+> +{
+> +       struct dentry *dentry;
+> +
+> +       inode_lock_nested(base->d_inode, I_MUTEX_PARENT);
+> +
+> +       dentry =3D lookup_one_qstr_excl(last, base, lookup_flags);
+> +       if (IS_ERR(dentry))
+> +               inode_unlock(base->d_inode);
+> +       return dentry;
+> +}
+> +EXPORT_SYMBOL(dentry_lookup_hashed);
 
-Ah, I only now noticed you've decided to re-place them. Please disregard=20
-my other comment about this being still open/undecided item.
+Observation:
 
-> For link speed change event (perhaps named as pci_link_event),
-> I plan to send a seperate patch, which provides:
->=20
-> =09TP_STRUCT__entry(
-> =09=09__string(=09port_name,=09port_name=09)
-> =09=09__field(=09unsigned char,=09cur_bus_speed=09)
-> =09=09__field(=09unsigned char,=09max_bus_speed=09)
->  =09=09__field(=09unsigned char,=09width=09=09)
->  =09=09__field(=09unsigned int,=09flit_mode=09)
-> =09=09__field(=09unsigned char,=09reason=09=09)
-> =09=09),
->=20
-> The reason field is from Lukas ideas which indicates why the link speed
-> changed, e.g. "hotplug", "autonomous", "thermal", "retrain", etc.
->=20
-> Are you happy with above changes?
+This part could be factored out of
+__kern_path_locked()/kern_path_locked_negative()
 
-Since you're probably quite far with the pcie link event patch too given=20
-above, could you take a look at the LNKSTA flags representation in my=20
-patch and incorporate those as well as there seems to always lot of=20
-uncertainty about those flags when investigating the LBMS/bwctrl related=20
-issues so it seems prudent to explicitly include them into the traceevent=
-=20
-output:
+If you do that in patch 2 while introducing done_dentry_lookup() then
+it also makes
+a lot of sense to balance the introduced done_dentry_lookup() with the
+factored out
+helper __dentry_lookup_locked() or whatever its name is.
 
-https://lore.kernel.org/linux-pci/7c289bba-3133-0989-6333-41fc41fe3504@linu=
-x.intel.com/
-
-
---=20
- i.
-
---8323328-483332610-1753093112=:945--
+Thanks,
+Amir.
 
