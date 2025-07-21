@@ -1,178 +1,197 @@
-Return-Path: <linux-kernel+bounces-739381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 895B0B0C598
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:56:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BBE2B0C5A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:57:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2D827A4DAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:54:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F1A71AA3C50
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:58:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D382D9ED7;
-	Mon, 21 Jul 2025 13:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF6B2D9EDC;
+	Mon, 21 Jul 2025 13:57:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="S/hMs1J1"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fVs+uRwE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF13A85C5E;
-	Mon, 21 Jul 2025 13:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB5A72D948B;
+	Mon, 21 Jul 2025 13:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753106160; cv=none; b=luwvIkMwOWEj2O4xp+AQewfqwMFa9QHpIQdmF/ego4u1XYbMvKBZQywkN54CUntHkGte3BT2q7B/9aRVYrRgIkZIKzu9XQd26NvSnTJ5+OAPhtS9qqj5xWHm65cHhXknHQ76VFGVfsnK59vSQCYzkrJaK4R4Oq4qSY4VOF0N4Ds=
+	t=1753106267; cv=none; b=jCa6L+nZ9OFrlnGcFuU8JI++7JJxZmIRHMkSjf0rOoyaqQvvjUgeyW9PEHZLtj8+8CHkD7f/PjM4Hdxi9xZ8LSnyTnMoA/6B/B8ddUdbx14iMhI1SA8RZuBg1131fgFwpO9FXfbp2hrBZ6kRxoyzvRMMDaCSCe+xFlwpYGvF7kE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753106160; c=relaxed/simple;
-	bh=luNd2hdiHpXbkn51CVS1PrnHahAzaRIMafg/kGX72tU=;
+	s=arc-20240116; t=1753106267; c=relaxed/simple;
+	bh=eiGB8w5AFCDLk22fqBiodKgxR3eZnsrhzTPgGdHxaLo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vDw8IokZ3y4j9L3tiCUPjyGa8EwdOmRxv6mqpH7Jxg7upcYi/ZtFMCJdA+77F7IekCeFnN0YmSvHRSmvph4eA5OCueyEQwXc+5CeDDHpJ2lGUOahvbbw7vuCYjG9pAodJNbgU1qDhviFyFQYbgK8cWPzY0UcDa7d6m1NNXFtzYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=S/hMs1J1; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 476F640E00CE;
-	Mon, 21 Jul 2025 13:55:48 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id tNtVBVq-EtrH; Mon, 21 Jul 2025 13:55:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1753106144; bh=nlscqHmlqxD6hBwb5iB6jeV5V3isx4CM7hl7kXHzeP8=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=kG3ytyp36wggFgtpXU3v/1UBCYW6e9wnGBt/6VHf7odiMjIX6cg/gXBEhcmo1lxNzEo/yxE2VNsNg05puBtIquPcB88Hf1R7nasoX5+zZmA5nIaevWvGDP/ZCSMI8CVhaxCkRG04alNi5YjTeAAobWYc/2Q1OdXWHnzsQ8/8iCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fVs+uRwE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1ED8C4CEED;
+	Mon, 21 Jul 2025 13:57:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1753106267;
+	bh=eiGB8w5AFCDLk22fqBiodKgxR3eZnsrhzTPgGdHxaLo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=S/hMs1J1tWF4XHylcao5H5R4Z4XLI9EyXKPqtAYOghbP7FblaU/9tnLnjUThM5b9p
-	 HMi7nTm+ZKfPwpMoK6nQCr0pFjdtKr8zkPfmIvgCTPZDtuhzz5KSjq74tssBg9LRbs
-	 Rz74d2M3sc00RXK4mvhSIOZwC6TxAZxslXvu8C4huXxMuKzsGbS9asDdvHqrquiZC0
-	 4T5pa0zP5Vqo8yw8iHQCGQ0qUxfowJfMMEprHZRsoLdo6aqlJAk5cb8PTPeZ7+dkJf
-	 JJsGUCuxgRv79TkeZmVUU/xyEMjXVcmSBhKvyvjPghpf9f7Q1WHkSfBwAiMUiE8KnJ
-	 A1uoeaARQ2HvyC1Fbirh1RbXi0aIA2fP5rauaT1E/s/bduEIz81n/ANMRSQliAIKHJ
-	 FThek94c7sT30G6u7YKLW+EjCvjcndFjg+fGTT/V67Ln9DcEYEsDCIS/EjGmLe5qle
-	 b9Gr2PDtqA/sxmuAeMJ2iljDz/FX+momdWOx7VfBqAmtqZ6M58UeTfgvvwbu+RbrrI
-	 YNxE1q8Ke8cSZLZQehucpd7Se5vUQMdNZ7Gfjvy6QbjeiRoXyjdC/7uYGhwOjANozr
-	 7s6nkYTPUJ/W+Vwgaf3Xq7y92pA+9PRJzb0feA9Mo7jm6NpKllBW5D43GG8VQ1vwGr
-	 SMc9qLT6n9IdU6NqsPK5zgJg=
-Received: from rn.tnic (unknown [78.130.214.207])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id DF69640E01F6;
-	Mon, 21 Jul 2025 13:55:17 +0000 (UTC)
-Date: Mon, 21 Jul 2025 15:57:18 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Breno Leitao <leitao@debian.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-	James Morse <james.morse@arm.com>, Tony Luck <tony.luck@intel.com>,
-	Robert Moore <robert.moore@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Hanjun Guo <guohanjun@huawei.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-	Oliver O'Halloran <oohall@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev,
-	osandov@osandov.com, xueshuai@linux.alibaba.com,
-	konrad.wilk@oracle.com, linux-edac@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH v2] vmcoreinfo: Track and log recoverable hardware errors
-Message-ID: <20250721135718.GAaH5HPinaKvXjM-1g@renoirsky.local>
-References: <20250721-vmcore_hw_error-v2-1-ab65a6b43c5a@debian.org>
+	b=fVs+uRwEG85nQaTWnPvvtQwr0f6nDwIy5DdSQTb1L/KqSprBUnMxD/+pv1uQyxJBS
+	 r4TmUFRnTIO7iDGmUeNNOIVuAv4AFaXTDmO3c94qqEO0JOLI9zVl3YOwoX8vu3uN33
+	 NrDjenCC8msYKDA+a0hN2XunZbbLCCKtgPIrMCgk=
+Date: Mon, 21 Jul 2025 15:57:44 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Michael Pratt <mcpratt@pm.me>
+Cc: srini@kernel.org, linux-kernel@vger.kernel.org,
+	INAGAKI Hiroshi <musashino.open@gmail.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] nvmem: layouts: u-boot-env: remove crc32 endianness
+ conversion
+Message-ID: <2025072109-ebony-squash-47a4@gregkh>
+References: <20250712181729.6495-1-srini@kernel.org>
+ <20250712181729.6495-2-srini@kernel.org>
+ <2025071308-upfront-romp-fa1e@gregkh>
+ <2025071313-zippy-boneless-da1c@gregkh>
+ <6yT3MnzOOpHoCZDnlUg_fYGtTfoS8K5xz_WdIf0FH25ftxw1xyu-4OsYUWq5bS4gNQUI78Bde_lNW_fzyfBinGh0Y94Ts62LdORyj7R93yE=@pm.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250721-vmcore_hw_error-v2-1-ab65a6b43c5a@debian.org>
+In-Reply-To: <6yT3MnzOOpHoCZDnlUg_fYGtTfoS8K5xz_WdIf0FH25ftxw1xyu-4OsYUWq5bS4gNQUI78Bde_lNW_fzyfBinGh0Y94Ts62LdORyj7R93yE=@pm.me>
 
-On Mon, Jul 21, 2025 at 03:13:40AM -0700, Breno Leitao wrote:
-> Introduce a generic infrastructure for tracking recoverable hardware
-> errors (HW errors that did not cause a panic) and record them for vmcore
-> consumption. This aids post-mortem crash analysis tools by preserving
-> a count and timestamp for the last occurrence of such errors.
+On Wed, Jul 16, 2025 at 09:24:10PM +0000, Michael Pratt wrote:
+> Hi Greg and Srinivas,
 > 
-> This patch adds centralized logging for three common sources of
-
-"Add centralized... "
-
-> recoverable hardware errors:
+> Sorry for the delayed response.
 > 
->   - PCIe AER Correctable errors
->   - x86 Machine Check Exceptions (MCE)
->   - APEI/CPER GHES corrected or recoverable errors
+> On Sunday, July 13th, 2025 at 11:42, Greg KH <gregkh@linuxfoundation.org> wrote:
 > 
-> hwerror_tracking is write-only at kernel runtime, and it is meant to be
-> read from vmcore using tools like crash/drgn. For example, this is how
-> it looks like when opening the crashdump from drgn.
+> > 
+> > 
+> > On Sun, Jul 13, 2025 at 05:41:45PM +0200, Greg KH wrote:
+> > 
+> > > On Sat, Jul 12, 2025 at 07:17:26PM +0100, srini@kernel.org wrote:
+> > > 
+> > > > From: "Michael C. Pratt" mcpratt@pm.me
+> > > > 
+> > > > On 11 Oct 2022, it was reported that the crc32 verification
+> > > > of the u-boot environment failed only on big-endian systems
+> > > > for the u-boot-env nvmem layout driver with the following error.
+> > > > 
+> > > > Invalid calculated CRC32: 0x88cd6f09 (expected: 0x096fcd88)
+> > > > 
+> > > > This problem has been present since the driver was introduced,
+> > > > and before it was made into a layout driver.
+> > > > 
+> > > > The suggested fix at the time was to use further endianness
+> > > > conversion macros in order to have both the stored and calculated
+> > > > crc32 values to compare always represented in the system's endianness.
+> > > > This was not accepted due to sparse warnings
+> > > > and some disagreement on how to handle the situation.
+> > > > Later on in a newer revision of the patch, it was proposed to use
+> > > > cpu_to_le32() for both values to compare instead of le32_to_cpu()
+> > > > and store the values as __le32 type to remove compilation errors.
+> > > > 
+> > > > The necessity of this is based on the assumption that the use of crc32()
+> > > > requires endianness conversion because the algorithm uses little-endian,
+> > > > however, this does not prove to be the case and the issue is unrelated.
+> > > > 
+> > > > Upon inspecting the current kernel code,
+> > > > there already is an existing use of le32_to_cpu() in this driver,
+> > > > which suggests there already is special handling for big-endian systems,
+> > > > however, it is big-endian systems that have the problem.
+> > > > 
+> > > > This, being the only functional difference between architectures
+> > > > in the driver combined with the fact that the suggested fix
+> > > > was to use the exact same endianness conversion for the values
+> > > > brings up the possibility that it was not necessary to begin with,
+> > > > as the same endianness conversion for two values expected to be the same
+> > > > is expected to be equivalent to no conversion at all.
+> > > > 
+> > > > After inspecting the u-boot environment of devices of both endianness
+> > > > and trying to remove the existing endianness conversion,
+> > > > the problem is resolved in an equivalent way as the other suggested fixes.
+> > > > 
+> > > > Ultimately, it seems that u-boot is agnostic to endianness
+> > > > at least for the purpose of environment variables.
+> > > > In other words, u-boot reads and writes the stored crc32 value
+> > > > with the same endianness that the crc32 value is calculated with
+> > > > in whichever endianness a certain architecture runs on.
+> > > > 
+> > > > Therefore, the u-boot-env driver does not need to convert endianness.
+> > > > Remove the usage of endianness macros in the u-boot-env driver,
+> > > > and change the type of local variables to maintain the same return type.
+> > > > 
+> > > > If there is a special situation in the case of endianness,
+> > > > it would be a corner case and should be handled by a unique "compatible".
+> > > > 
+> > > > Even though it is not necessary to use endianness conversion macros here,
+> > > > it may be useful to use them in the future for consistent error printing.
+> > > > 
+> > > > Fixes: d5542923f200 ("nvmem: add driver handling U-Boot environment variables")
+> > > 
+> > > Note, this is a 6.1 commit id, but:
+> > > 
+> > > > Reported-by: INAGAKI Hiroshi musashino.open@gmail.com
+> > > > Link: https://lore.kernel.org/all/20221011024928.1807-1-musashino.open@gmail.com
+> > > > Cc: stable@vger.kernel.org # 6.12.x
+> > > > Cc: stable@vger.kernel.org # 6.6.x: f4cf4e5: Revert "nvmem: add new config option"
+> > > > Cc: stable@vger.kernel.org # 6.6.x: 7f38b70: of: device: Export of_device_make_bus_id()
+> > > > Cc: stable@vger.kernel.org # 6.6.x: 4a1a402: nvmem: Move of_nvmem_layout_get_container() in another header
+> > > > Cc: stable@vger.kernel.org # 6.6.x: fc29fd8: nvmem: core: Rework layouts to become regular devices
+> > > > Cc: stable@vger.kernel.org # 6.6.x: 0331c61: nvmem: core: Expose cells through sysfs
+> > > > Cc: stable@vger.kernel.org # 6.6.x: 401df0d: nvmem: layouts: refactor .add_cells() callback arguments
+> > > > Cc: stable@vger.kernel.org # 6.6.x: 6d0ca4a: nvmem: layouts: store owner from modules with nvmem_layout_driver_register()
+> > > > Cc: stable@vger.kernel.org # 6.6.x: 5f15811: nvmem: layouts: add U-Boot env layout
+> > > > Cc: stable@vger.kernel.org # 6.6.x
+> > > 
+> > > That's a load of (short) git ids for just 6.6.y? What about 6.1.y?
+> > 
 > 
-> 	>>> prog['hwerror_tracking']
-> 	(struct hwerror_tracking_info [3]){
-> 		{
-> 			.count = (int)844,
-> 			.timestamp = (time64_t)1752852018,
-> 		},
-> 		...
+> Sorry for the short tags, I wrongly assumed that what Github provides
+> would not clobber with other commits.
 > 
+> > 
+> > And really, ALL of those commits are needed for this very tiny patch?
+> 
+> Yes... if we would like to backport to 6.6, (almost) all of them are necessary.
+> There was a lot of development between 6.6 and 6.12 in this area...
+> 
+> This is a long-standing problem since 6.1, but the code is now
+> completely rewritten into a different file, as a "layout driver"
+> instead of a "cell module" if that makes sense...
+> 
+> In order to backport to 6.6, we would have to backport
+> the rewriting of the code to the new layout driver form,
+> which is commit 5f1581128 ("nvmem: layouts: add U-Boot env layout").
+> 
+> Commit 5f1581128 depends on commit 401df0d4f, which strictly depends on
+> commit fc29fd821, and lightly depends (merge conflict) on commit 0331c6119.
+> 
+> Commit fc29fd821 strictly depends on both commit 4a1a40233 and 7f38b7004 for functionality.
+> 
+> I additionally included commit 6d0ca4a2a as it seems to improve function for all layout drivers,
+> and I additionally included commit f4cf4e5db simply because we also backport it,
+> not thinking that an extra one would be a problem.
+> 
+> In summary, the exact set of commits I presented for backporting is well tested,
+> but one or two are indeed not strictly necessary as you pointed out.
+> 
+> > Reverting a config option? sysfs apis being added? Huh?
+> 
+> If you prefer, you can skip backporting commits f4cf4e5db and 0331c6119,
+> although, skipping the latter would make you have to resolve the merge conflict.
+> 
+> If backporting to 6.6 is no longer appropriate in your opinion,
+> please at least backport to 6.12 which is very easy.
 
-I'm still missing the justification why rasdaemon can't be used here.
-You did explain it already in past emails.
+I think that's already done, right?
 
-> +enum hwerror_tracking_source {
-> +	HWE_RECOV_AER,
-> +	HWE_RECOV_MCE,
-> +	HWE_RECOV_GHES,
-> +	HWE_RECOV_MAX,
-> +};
+If not, I'm still confused, can you send patch series for the different
+stable branches showing what you want applied where?
 
-Are we confident this separation will serve all cloud dudes?
+thanks,
 
-> +
-> +#ifdef CONFIG_VMCORE_INFO
-> +void hwerror_tracking_log(enum hwerror_tracking_source src);
-> +#else
-> +void hwerror_tracking_log(enum hwerror_tracking_source src) {};
-> +#endif
-> +
->  #endif /* LINUX_VMCORE_INFO_H */
-> diff --git a/kernel/vmcore_info.c b/kernel/vmcore_info.c
-> index e066d31d08f89..23d7ddcd55cdd 100644
-> --- a/kernel/vmcore_info.c
-> +++ b/kernel/vmcore_info.c
-> @@ -31,6 +31,13 @@ u32 *vmcoreinfo_note;
->  /* trusted vmcoreinfo, e.g. we can make a copy in the crash memory */
->  static unsigned char *vmcoreinfo_data_safecopy;
->  
-> +struct hwerror_tracking_info {
-> +	int __data_racy count;
-> +	time64_t __data_racy timestamp;
-> +};
-> +
-> +static struct hwerror_tracking_info hwerror_tracking[HWE_RECOV_MAX];
-> +
->  Elf_Word *append_elf_note(Elf_Word *buf, char *name, unsigned int type,
->  			  void *data, size_t data_len)
->  {
-> @@ -118,6 +125,17 @@ phys_addr_t __weak paddr_vmcoreinfo_note(void)
->  }
->  EXPORT_SYMBOL(paddr_vmcoreinfo_note);
->  
-> +void hwerror_tracking_log(enum hwerror_tracking_source src)
-
-A function should have a verb in its name explaining what it does:
-
-hwerr_log_error_type()
-
-or so.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+greg k-h
 
