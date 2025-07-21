@@ -1,105 +1,180 @@
-Return-Path: <linux-kernel+bounces-739214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04AE4B0C36C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:42:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8F08B0C36F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:42:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 609BA1AA4755
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:41:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B21C71AA3C64
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77472BE65A;
-	Mon, 21 Jul 2025 11:39:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA222D5A0B;
+	Mon, 21 Jul 2025 11:39:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H9M03xdo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nr6+SyD4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072452D3EE9;
-	Mon, 21 Jul 2025 11:38:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0642D3744;
+	Mon, 21 Jul 2025 11:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753097939; cv=none; b=OL56hmaA2tV+e0XOel367CqlKQPg57IP9oZylAA1iRWh0Y2EBvlQz3s4GED1/ywtCAx2v4WDbfe/9MZU90c6GEBRHlTNpXsfibGFa94PZHbMikDZ29ehZ/WAm7KFS3U/73hrVwsAhY21eEj735E+fKHmFd1IGocuMk5EtE7yOes=
+	t=1753097945; cv=none; b=MmOP0dy5h3UFN/QqX7gZbD5bOcopZdA4rEn8lMd99O8dJ2NTWCz8Dn4PROqrWimjq/X01IBQBUJ6jzr3AEQe6lf6qdOWKngXA4ghh29IlHa7x9t1n8EMEmIeY0Z2eCAtwHp+UE0I4SYKxqFQOTlY37vxcEvvFi1RDNb0FaE0zqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753097939; c=relaxed/simple;
-	bh=6oqyzHQOz14veMQPpOVxppF3D2ycCdWRgDuOWdWesLc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=BipghdStU3hkn9dLhseLdkrg/v2Mqc/udsbvh8CsL3veo4d3DbkBjHekl+/Ukh8fRIIFM4JTwpWAAaKslYPgE0BXwVng36aWh8Q6RVQK5i1H5JDiKQfl6dW4elZN3E7uD6o7/K9jGCQSpSiOZDZCpxhOk4rtK3x4is0qQ2gaSF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H9M03xdo; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753097935; x=1784633935;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=6oqyzHQOz14veMQPpOVxppF3D2ycCdWRgDuOWdWesLc=;
-  b=H9M03xdo4csEi/kxTRN5kjMnckWawQWSyCdi1S4UrHVJ+1OIGAgwHEFK
-   ou2gDWzdfCgRyHJbtcUUCg36Nw67l+bl/4iyrMNK2vz0fNF7BJSjTQqm2
-   RRMWWXYEkrCLjMK0Ua94Nda3akA8of9hhEgsAwhhT+0LGmx1Z5reUw0+O
-   9rJHpiD5Ndcj/PraZYbNKVIGyAAeXrd+Hd/odDSmxfy+2VF9um1BnjtBB
-   t+8prGvoaaBdCfaCZgXDKwjo9r2xdfTXgogS8seE89Hr/nlvE8nqfYBi+
-   vTyEKIwOmWB2SYu8tZ7MLoyggnUL8Vme994GLL9WoC0xbFAu83fTi1Rq1
-   A==;
-X-CSE-ConnectionGUID: +DoZT4ysT+a75m1upPR2SQ==
-X-CSE-MsgGUID: OHbK1LU2S861OIP03BaXrQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11498"; a="55466989"
-X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
-   d="scan'208";a="55466989"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 04:38:54 -0700
-X-CSE-ConnectionGUID: eq85WwsUTA2U4bwgfWIvoA==
-X-CSE-MsgGUID: 12zZQiiRQ6KRZhGwnAzwQA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
-   d="scan'208";a="163364505"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.225])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 04:38:53 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Hans de Goede <hansg@kernel.org>, Jithu Joseph <jithu.joseph@intel.com>
-Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
- tony.luck@intel.com, ashok.raj.linux@gmail.com
-In-Reply-To: <20250714164643.3879784-1-jithu.joseph@intel.com>
-References: <20250714164643.3879784-1-jithu.joseph@intel.com>
-Subject: Re: [PATCH] MAINTAINERS: Update entries for IFS and SBL drivers
-Message-Id: <175309792645.1945.3272434829907133031.b4-ty@linux.intel.com>
-Date: Mon, 21 Jul 2025 14:38:46 +0300
+	s=arc-20240116; t=1753097945; c=relaxed/simple;
+	bh=Jj2hjt/p/kDW9rpYHB1UHsSQqtiClT24invxFV5SBzM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MFGEkMkgFkeGH++SK+jr1u4aVFY00uMdkhpiCTbhaHcQBVAIEV6yOqmyGOtoO6C9XQ7GYfJcpfxoel2mx+RQiJfsCdMKf3z0wGnIMlol4ivHJsT+xuVaiW+/pF44qlhp3efDjzr2fKripfQOmNQH7veJ+kBb4sydeIF2gbL8U9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nr6+SyD4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2608CC4CEED;
+	Mon, 21 Jul 2025 11:39:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753097944;
+	bh=Jj2hjt/p/kDW9rpYHB1UHsSQqtiClT24invxFV5SBzM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nr6+SyD4lomAnh2RT38WToMmEjmMRbDzmi37dpqeJ7iEPfLPLaFsI9i6VOZ0s/Ugz
+	 xOnlH1kTaNejHt3JZ/RqAquuBEVBwujgnYK7Vy4BleOGZypUbj5WFOpy0C1BcZRskW
+	 UOhS67Rp9hlaUQHQeh60XH+YB4YPZfjJKvW06mQkzjxGTYTK3IJe/YX8icsJCLJdWF
+	 aa3WjzmrZ6CZD/Yw/8wdMm0K7hT8sS7cKa/xwUl9BXntObfAVL6OgEbSEEUsYSpWvv
+	 BAv3oQWppCvX8Xkw0jy4RrR+dy1bXMr/al2107xbYEn/hFsMD1yrX+wj4/catLuXv6
+	 0S9K25w2OjnMA==
+Message-ID: <2d7707cc-0a49-47a6-b222-9032f08bac0c@kernel.org>
+Date: Mon, 21 Jul 2025 13:38:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] dt-bindings: remoteproc: qcom,milos-pas: Document
+ remoteprocs
+To: Peng Fan <peng.fan@oss.nxp.com>, Luca Weiss <luca.weiss@fairphone.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>,
+ ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250709-sm7635-remoteprocs-v3-0-c943be976180@fairphone.com>
+ <20250709-sm7635-remoteprocs-v3-1-c943be976180@fairphone.com>
+ <20250721064256.GB4844@nxa18884-linux.ap.freescale.net>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250721064256.GB4844@nxa18884-linux.ap.freescale.net>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
 
-On Mon, 14 Jul 2025 09:46:43 -0700, Jithu Joseph wrote:
-
-> Update the MAINTAINERS file to reflect the following changes for two Intel
-> platform drivers:
+On 21/07/2025 08:42, Peng Fan wrote:
+>> +
+>> +  interrupt-names:
+>> +    minItems: 6
+>> +    maxItems: 6
 > 
-> - Tony has agreed to take over maintainership of the Intel In-Field Scan
->   (IFS) driver, and is now listed as the new maintainer.
-> - Remove myself as the maintainer for the Slim BootLoader (SBL) firmware
->   update driver and mark it as Orphan. To the best of my knowledge, there
->   is no one familiar with SBL who can take over this role.
+> Ditto.
 > 
-> [...]
+> Do you need to define the list?
 
 
-Thank you for your contribution, it has been applied to my local
-fixes branch. Note it will show up in the public
-platform-drivers-x86/fixes branch only once I've pushed my
-local branch there, which might take a while.
+Did you read the entire binding? It reminds me Frank's comment as well -
+instead of actually checking you just ask question which you would find
+answer by yourselves if you really opened the code.
 
-The list of commits applied:
-[1/1] MAINTAINERS: Update entries for IFS and SBL drivers
-      commit: e2967b50b709970547b5cdfa1b42526835327f36
+> 
+>> +
+>> +  qcom,qmp:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>> +    description: Reference to the AOSS side-channel message RAM.
+>> +
+>> +  smd-edge: false
+>> +
+>> +  firmware-name:
+>> +    $ref: /schemas/types.yaml#/definitions/string-array
+>> +    minItems: 1
+>> +    items:
+>> +      - description: Firmware name of the Hexagon core
+>> +      - description: Firmware name of the Hexagon Devicetree
+>> +
+>> +  memory-region:
+>> +    minItems: 1
+>> +    items:
+>> +      - description: Memory region for core Firmware authentication
+>> +      - description: Memory region for Devicetree Firmware authentication
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - memory-region
+>> +
+>> +allOf:
+>> +  - $ref: /schemas/remoteproc/qcom,pas-common.yaml#
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          enum:
+>> +            - qcom,milos-adsp-pas
+>> +            - qcom,milos-cdsp-pas
+>> +    then:
+>> +      properties:
+>> +        memory-region:
+>> +          minItems: 2
+>> +          maxItems: 2
+>> +        firmware-name:
+>> +          minItems: 2
+>> +          maxItems: 2
+> 
+> Just keep minItems if maxItems is same value.
 
---
- i.
 
+This is not a correct advice.
+
+
+Best regards,
+Krzysztof
 
