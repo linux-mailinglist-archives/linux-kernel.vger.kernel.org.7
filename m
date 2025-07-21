@@ -1,278 +1,257 @@
-Return-Path: <linux-kernel+bounces-739769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94230B0CAAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:47:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F40F9B0CAB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:53:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F78E540647
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:47:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAD14173419
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE7D2206BE;
-	Mon, 21 Jul 2025 18:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QQhgacvi"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4DB22069E;
+	Mon, 21 Jul 2025 18:53:23 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C892719CC28;
-	Mon, 21 Jul 2025 18:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B887DDDC3;
+	Mon, 21 Jul 2025 18:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753123621; cv=none; b=q4ICTCWVdF5BwRiq0uhrgSbXXdKc4WVEl9Sxbzp5J10YG0mPpBWrdi/MWntkRemKP8xhJM2FOmpfG8/PQk1VBApcqYIXfXUdJHAKgcTQo6QxnESwgkaSXbN9zCX1wwDwOlgwFnH7936rDg8MJVxBJEmBOpMSxsusq/x2oIGa0Cc=
+	t=1753124003; cv=none; b=b3vV7THlT0MHFaE7T90kyfsb7CecBc0TL+N/s1+sv7hd0D5jc7NeSGoZmoXYMTCjyhLktu4G0XRJ6xDilRDO2d/ObJZu1igXUGDbwli/tgFcUIT2SZTEQogokDejNb/y8S7p/b+eA5V/+Ykg8O87XUmWB+zd/Al6AmmQ1XL5NP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753123621; c=relaxed/simple;
-	bh=A+zWb0Ocm77XdDuxt1gG4xR03s5X2hsyYXBCIVvtFOg=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=a1Zue2v8+MY1ctWAYU3Jy8FNh7/dYIZCLVohKRtqFO49xuj9xP7q1q0dvRw73tneHctolbxh6nE6sl+MvktGZbfImOQvUnn78nFbVldilvBlSGwdwTXKB24zwpYxvgvVR5FISIm8LnafocWvuzGtetu7znVXsWfFDbEEv7SmCBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QQhgacvi; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3a503d9ef59so3341677f8f.3;
-        Mon, 21 Jul 2025 11:46:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753123618; x=1753728418; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CAKgV0IGhkXD4O93lIPJrR4Rs3xqvFKTOn7JcTVpDOk=;
-        b=QQhgacvilBuDvr0ZfutWVazq6jRmEtScnwP7wd6q2MzyumFj/IHDny1GHzzVrNaIqC
-         MPC9rwjf6Nm3smuWGjp79VyimukfWD/oecvvSLp130ai+OptO9Dd6R8NDIa6apnmJYK1
-         uZ/8fkzxk0Z9puaVqX+Db7VHsZQX3au6hIpM43PHWov2nm4FBm19y9ZfJw2QddvrVWlk
-         KYQlJ4asvEPPAL/syw8vygBjx4Y0T/ve3zrQwBUmkM+yhA3BMm5tdM2cgvy4qo+G87RH
-         n18lv3laTXuqhmpTpJOKRlIR8nnmyzwAfzh0k+dqqL0TpSbprFNT5qVpICf4Y2N93CND
-         hffg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753123618; x=1753728418;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CAKgV0IGhkXD4O93lIPJrR4Rs3xqvFKTOn7JcTVpDOk=;
-        b=UNDtKrZ8m3f3e3FzLN7NlCzqyq6qENkfqIIl3ezen1VaHQ4kBKZRS4b4LbJ9cUqNLf
-         b5tbPoHdaL7HX4iPwiYw1VYx50TvL0chDQMSImTHfAeiWWxjZ+Dcro0QAWUdmc+TCpTv
-         3MgEgNeDx/WTd1t7db45d4Ba+97s4M9UT/FT7GFCp5AP7UoSRZRXNDETzoROFlEvko50
-         qbsR79xXwy4yV/sX/Yyeo68yq0v6H4RJ1XmscSclZoa11yGzqRpHwPjlcV2PzBgNNQsH
-         YYQu4x/qJ2dUb40OvuYSOgdJtsFpTuxj/ymMaQjC71pLAVMknmIMZxm4VF1DhZMmqgno
-         mUaw==
-X-Forwarded-Encrypted: i=1; AJvYcCVIJrgIjzEq3MvCnZzricE48uepQwkCQfcZ7zxoUfuT8nqvBz/UGYTypxQfqqhVUZaGNkr8njseMpNz0Yrg@vger.kernel.org, AJvYcCWHvrVXfiqJZUYn3Y0K4daNzxb+pEAyvTmQXVR78xrqAskTmwLI3hYkeYwYGnlRqhkbMaDZ4yz1jEnC@vger.kernel.org
-X-Gm-Message-State: AOJu0YxodAwP0EvxVzR67UCk7W2Eiyi2+d5hi+FFADqxR97F32dqVnZ4
-	N5k06oHuwXosjpTcpW18O75B1o/aitjLVfX4rHeQ+IutZ84SiLlpHwDq
-X-Gm-Gg: ASbGncvTTVNxGKVNagwFvcMzNTYPgY0YQQIJBgiOveyAWkha40v+01lugH9qm3/hseM
-	EKuG3jfV6b8X0NeaqRdz9wC9AGmqTrF0wmGAGQcdSxjQvTZrqa7izRRhrI2W3sSjq8/+P36BrXh
-	i8h6KuqKhOTdqYz2KKSeAlsZuEMCTGhrvrbWj7PZRaAF9oVupEU1QMUIQvjGSie8jXNChsuUZSD
-	ssGsDKUO+hcbSjdsDEUci35aYWrdp2x5+HD1UUIf1CsMcqZ9bByUnFu9f6JUM5dQS96RjwHrKCa
-	YYJ63eFlIsUJvFJJp+kWEFwdlZHdACnIpgcfrKyGPcXAXxz9jB9dbolpsz7q6mpy602Zz24Mu5n
-	NqVz2CGVZfgxFmfoyOfWM7ag=
-X-Google-Smtp-Source: AGHT+IG+oQ0J/zb94CemBBTBhYc6Vc1MH6BwHqesIs3JNU2EjzcKpsIip/B3tDfSgcggI5tV2LlC1w==
-X-Received: by 2002:a05:6000:2a0f:b0:3b6:a799:4809 with SMTP id ffacd0b85a97d-3b6a799481fmr5216151f8f.31.1753123617836;
-        Mon, 21 Jul 2025 11:46:57 -0700 (PDT)
-Received: from Ansuel-XPS24 ([109.52.136.49])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b61ca48970sm11437043f8f.57.2025.07.21.11.46.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 11:46:57 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] nvmem: airoha: Add support for SMC eFUSE
-Date: Mon, 21 Jul 2025 20:46:34 +0200
-Message-ID: <20250721184640.2885-2-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250721184640.2885-1-ansuelsmth@gmail.com>
-References: <20250721184640.2885-1-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1753124003; c=relaxed/simple;
+	bh=X7ohL0l9JcoXzthoLsppaS0fdOu+yELUNFlMzVZzJZ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BESiQb3Tn88JbPRI3qBgW2LzrPqAH1zyh9VbijFqeAnDHge81MgyKZRHbNJXHbmnoAoJrAwvHhfyL2rVp+Kg7e/3JcTrMR31zwQFglVYE/tPb+/x51xvbt3fdDe1NNcp0FJ5kHCO6BzN13mnwcfruGgin7P4tKx62jz+5v8fGRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf19.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay04.hostedemail.com (Postfix) with ESMTP id AB4F61A0198;
+	Mon, 21 Jul 2025 18:53:17 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf19.hostedemail.com (Postfix) with ESMTPA id E380A20028;
+	Mon, 21 Jul 2025 18:53:12 +0000 (UTC)
+Date: Mon, 21 Jul 2025 14:53:43 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu
+ <mhiramat@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri Olsa
+ <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat
+ <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, Beau
+ Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, Florian Weimer
+ <fweimer@redhat.com>, Sam James <sam@gentoo.org>, Brian Robbins
+ <brianrob@microsoft.com>, Elena Zannoni <elena.zannoni@oracle.com>
+Subject: Re: [RFC] New codectl(2) system call for sframe registration
+Message-ID: <20250721145343.5d9b0f80@gandalf.local.home>
+In-Reply-To: <2fa31347-3021-4604-bec3-e5a2d57b77b5@efficios.com>
+References: <2fa31347-3021-4604-bec3-e5a2d57b77b5@efficios.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+X-Stat-Signature: 3wfbsfszaepa8icypym6eij1phb5h9hu
+X-Rspamd-Server: rspamout05
+X-Rspamd-Queue-Id: E380A20028
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/uxOdSyTbUbm9DRBoc2ZPS52vmSLxAVSI=
+X-HE-Tag: 1753123992-811885
+X-HE-Meta: U2FsdGVkX18hrS6Pkp3rZXlCB33Q6moaQMnuDps3pNGqs/WF0WjwKGQZvXnZUbPTOfG6czkHAzfpZ5tn27Srto+2k4D1Uuda9KXzsf+1Vod7zna3HAFza9rKDX+w9fDOj58cOvMfotfhwhH1zdp+XDgTnfKlcEfk5LTTNyV2S064E2KypM3hQSqyXmGExuWaT/N535Jm2psMjZlez/DOQR9vGActZmte81pOu5/cBw6pHDj2O4A3Lu5WfEo6/JrC0sHF65KOR4wEr9HkJL44LWLUKAzySZSVF83YX9up/F8eYUtv1hMCIjJ1l4YcoyY9e4GvMVSH6F22iGzTejA1sPXCUvmfWfpHegJk72grMNd0YF07Kj8uJCQwH8n5vXMA8CcuiV9N5pxu/tiCHpTvfiwoy94QIes7zeCYcDgNVZLN1P9WVpzmyD91fkLUXs/E
 
-Add support for SMC eFUSE on AN7581 SoC. The SoC have 2 set of 2048 bits of
-eFUSE that are used to read calibration value for PCIe, Thermal, USB and
-other specific info of the SoC like revision and HW device present.
+On Mon, 21 Jul 2025 11:20:34 -0400
+Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
 
-eFuse value are taken by sending SMC command. ATF is responsible of
-validaing the data and rejecting reading protected data (like Private
-Key). In such case the SMC command will return non-zero value on a0
-register.
+> Hi!
+>=20
+> I've written up an RFC for a new system call to handle sframe registration
+> for shared libraries. There has been interest to cover both sframe in
+> the short term, but also JIT use-cases in the long term, so I'm
+> covering both here in this RFC to provide the full context. Implementation
+> wise we could start by only covering the sframe use-case.
+>=20
+> I've called it "codectl(2)" for now, but I'm of course open to feedback.
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- drivers/nvmem/Kconfig             |  13 ++++
- drivers/nvmem/Makefile            |   2 +
- drivers/nvmem/airoha-smc-efuses.c | 118 ++++++++++++++++++++++++++++++
- 3 files changed, 133 insertions(+)
- create mode 100644 drivers/nvmem/airoha-smc-efuses.c
+Hmm, I guess I'm OK with that name. I can't really think of anything that
+would be better. But kernel developers are notorious for sucking at coming
+up with decent names ;-)
 
-diff --git a/drivers/nvmem/Kconfig b/drivers/nvmem/Kconfig
-index 8671b7c974b9..5c44576d7457 100644
---- a/drivers/nvmem/Kconfig
-+++ b/drivers/nvmem/Kconfig
-@@ -28,6 +28,19 @@ source "drivers/nvmem/layouts/Kconfig"
- 
- # Devices
- 
-+config NVMEM_AIROHA_SMC_EFUSES
-+	tristate "Airoha SMC eFuse support"
-+	depends on ARCH_AIROHA || COMPILE_TEST
-+	depends on HAVE_ARM_SMCCC
-+	default ARCH_AIROHA
-+	help
-+	  Say y here to enable support for reading eFuses on Airoha AN7581
-+	  SoCs. These are e.g. used to store factory programmed
-+	  calibration data required for the PCIe or the USB-C PHY or Thermal.
-+
-+	  This driver can also be built as a module. If so, the module will
-+	  be called nvmem-airoha-smc-efuses.
-+
- config NVMEM_APPLE_EFUSES
- 	tristate "Apple eFuse support"
- 	depends on ARCH_APPLE || COMPILE_TEST
-diff --git a/drivers/nvmem/Makefile b/drivers/nvmem/Makefile
-index 5b77bbb6488b..77c0264f7d39 100644
---- a/drivers/nvmem/Makefile
-+++ b/drivers/nvmem/Makefile
-@@ -10,6 +10,8 @@ nvmem_layouts-y			:= layouts.o
- obj-y				+= layouts/
- 
- # Devices
-+obj-$(CONFIG_NVMEM_AIROHA_SMC_EFUSES)	+= nvmem-airoha-smc-efuses.o
-+nvmem-airoha-smc-efuses-y 		:= airoha-smc-efuses.o
- obj-$(CONFIG_NVMEM_APPLE_EFUSES)	+= nvmem-apple-efuses.o
- nvmem-apple-efuses-y 			:= apple-efuses.o
- obj-$(CONFIG_NVMEM_BCM_OCOTP)		+= nvmem-bcm-ocotp.o
-diff --git a/drivers/nvmem/airoha-smc-efuses.c b/drivers/nvmem/airoha-smc-efuses.c
-new file mode 100644
-index 000000000000..bb279d149519
---- /dev/null
-+++ b/drivers/nvmem/airoha-smc-efuses.c
-@@ -0,0 +1,118 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ *  Author: Christian Marangi <ansuelsmth@gmail.com>
-+ */
-+
-+#include <linux/arm-smccc.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/nvmem-provider.h>
-+#include <linux/platform_device.h>
-+#include <linux/of.h>
-+#include <linux/regmap.h>
-+
-+#define AIROHA_SMC_EFUSE_FID		0x82000001
-+#define AIROHA_SMC_EFUSE_SUB_ID_READ	0x44414552
-+
-+#define AIROHA_EFUSE_CELLS		64
-+
-+struct airoha_efuse_bank_priv {
-+	u8 bank_index;
-+};
-+
-+static int airoha_efuse_read(void *context, unsigned int offset,
-+			     void *val, size_t bytes)
-+{
-+	struct regmap *regmap = context;
-+
-+	return regmap_bulk_read(regmap, offset,
-+				val, bytes / sizeof(u32));
-+}
-+
-+static int airoha_efuse_reg_read(void *context, unsigned int offset,
-+				 unsigned int *val)
-+{
-+	struct airoha_efuse_bank_priv *priv = context;
-+	struct arm_smccc_res res;
-+
-+	arm_smccc_1_1_invoke(AIROHA_SMC_EFUSE_FID,
-+			     AIROHA_SMC_EFUSE_SUB_ID_READ,
-+			     priv->bank_index, offset, 0, 0, 0, 0, &res);
-+
-+	/* check if SMC reported an error */
-+	if (res.a0)
-+		return -EIO;
-+
-+	*val = res.a1;
-+	return 0;
-+}
-+
-+static const struct regmap_config airoha_efuse_regmap_config = {
-+	.reg_read = airoha_efuse_reg_read,
-+	.reg_bits = 32,
-+	.val_bits = 32,
-+	.reg_stride = 4,
-+};
-+
-+static int airoha_efuse_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	for_each_child_of_node_scoped(dev->of_node, child) {
-+		struct nvmem_config airoha_nvmem_config = {
-+			.name = "airoha-efuse",
-+			.size = AIROHA_EFUSE_CELLS * sizeof(u32),
-+			.stride = sizeof(u32),
-+			.word_size = sizeof(u32),
-+			.reg_read = airoha_efuse_read,
-+		};
-+		struct airoha_efuse_bank_priv *priv;
-+		struct nvmem_device *nvmem;
-+		struct regmap *regmap;
-+		u32 bank;
-+
-+		ret = of_property_read_u32(child, "reg", &bank);
-+		if (ret)
-+			return ret;
-+
-+		priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+		if (!priv)
-+			return -ENOMEM;
-+
-+		priv->bank_index = bank;
-+
-+		regmap = devm_regmap_init(dev, NULL, priv,
-+					  &airoha_efuse_regmap_config);
-+		if (IS_ERR(regmap))
-+			return PTR_ERR(regmap);
-+
-+		airoha_nvmem_config.priv = regmap;
-+		airoha_nvmem_config.dev = dev;
-+		airoha_nvmem_config.id = bank;
-+		nvmem = devm_nvmem_register(dev, &airoha_nvmem_config);
-+		if (IS_ERR(nvmem))
-+			return PTR_ERR(nvmem);
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id airoha_efuse_of_match[] = {
-+	{ .compatible = "airoha,an7581-efuses", },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, airoha_efuse_of_match);
-+
-+static struct platform_driver airoha_efuse_driver = {
-+	.probe = airoha_efuse_probe,
-+	.driver = {
-+		.name = "airoha-efuse",
-+		.of_match_table = airoha_efuse_of_match,
-+	},
-+};
-+module_platform_driver(airoha_efuse_driver);
-+
-+MODULE_AUTHOR("Christian Marangi <ansuelsmth@gmail.com>");
-+MODULE_DESCRIPTION("Driver for Airoha SMC eFUSEs");
-+MODULE_LICENSE("GPL");
--- 
-2.50.0
+>=20
+> For ELF, I'm including the optional pathname, build id, and debug link
+> information which are really useful to translate from instruction pointers
+> to executable/library name, symbol, offset, source file, line number.
+> This is what we are using in LTTng-UST and Babeltrace debug-info filter
+> plugin [1], and I think this would be relevant for kernel tracers as well
+> so they can make the resulting stack traces meaningful to users.
+
+Honestly, I'm not sure it needs to be an ELF file. Just a file that has an
+sframe section in it.
+
+>=20
+> sys_codectl(2)
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+> * arg0: unsigned int @option:
+>=20
+> /* Additional labels can be added to enum code_opt, for extensibility. */
+>=20
+> enum code_opt {
+>      CODE_REGISTER_ELF,
+
+Perhaps the above should be: CODE_REGISTER_SFRAME,
+
+as currently SFrame is read only via files.
+
+>      CODE_REGISTER_JIT,
+
+=46rom our other conversations, JIT will likely be a completely different
+format than SFRAME, so calling it just JIT should be fine.
+
+
+>      CODE_UNREGISTER,
+
+I wonder if this should be the first enum. That is, "0" is to unregister.
+
+That way, all non-zero options will be for what is being registered, and
+"0" is for unregistering any of them.
+
+
+> };
+>=20
+> * arg1: void * @info
+>=20
+> /* if (@option =3D=3D CODE_REGISTER_ELF) */
+>=20
+> /*
+>   * text_start, text_end, sframe_start, sframe_end allow unwinding of the
+>   * call stack.
+>   *
+>   * elf_start, elf_end, pathname, and either build_id or debug_link allows
+>   * mapping instruction pointers to file, symbol, offset, and source file
+>   * location.
+>   */
+> struct code_elf_info {
+> :   __u64 elf_start;
+>      __u64 elf_end;
+
+Perhaps:
+
+	__u64 file_start;
+	__u64 file_end;
+
+?
+
+And call it "struct code_sframe_info"
+
+>      __u64 text_start;
+>      __u64 text_end;
+
+>      __u64 sframe_start;
+>      __u64 sframe_end;
+
+What is the above "sframe" for?
+
+>      __u64 pathname;              /* char *, NULL if unavailable. */
+>=20
+>      __u64 build_id;              /* char *, NULL if unavailable. */
+>      __u64 debug_link_pathname;   /* char *, NULL if unavailable. */
+
+Maybe just list the above three as "optional" ?
+
+It may be available, but the implementer just doesn't want to implement it.
+
+>      __u32 build_id_len;
+>      __u32 debug_link_crc;
+> };
+>=20
+>=20
+> /* if (@option =3D=3D CODE_REGISTER_JIT) */
+>=20
+> /*
+>   * Registration of sorted JIT unwind table: The reserved memory area is
+>   * of size reserved_len. Userspace increases used_len as new code is
+>   * populated between text_start and text_end. This area is populated in
+>   * increasing address order, and its ABI requires to have no overlapping
+>   * fre. This fits the common use-case where JITs populate code into
+>   * a given memory area by increasing address order. The sorted unwind
+>   * tables can be chained with a singly-linked list as they become full.
+>   * Consecutive chained tables are also in sorted text address order.
+>   *
+>   * Note: if there is an eventual use-case for unsorted jit unwind table,
+>   * this would be introduced as a new "code option".
+>   */
+>=20
+> struct code_jit_info {
+>      __u64 text_start;      /* text_start >=3D addr */
+>      __u64 text_end;        /* addr < text_end */
+>      __u64 unwind_head;     /* struct code_jit_unwind_table * */
+> };
+>=20
+> struct code_jit_unwind_fre {
+>      /*
+>       * Contains info similar to sframe, allowing unwind for a given
+>       * code address range.
+>       */
+>      __u32 size;
+>      __u32 ip_off;  /* offset from text_start */
+>      __s32 cfa_off;
+>      __s32 ra_off;
+>      __s32 fp_off;
+>      __u8 info;
+> };
+>=20
+> struct code_jit_unwind_table {
+>      __u64 reserved_len;
+>      __u64 used_len; /*
+>                       * Incremented by userspace (store-release), read by
+>                       * the kernel (load-acquire).
+>                       */
+>      __u64 next;     /* Chain with next struct code_jit_unwind_table. */
+>      struct code_jit_unwind_fre fre[];
+> };
+
+I wonder if we should avoid the "jit" portion completely for now until we
+know what exactly we need.
+
+Thanks,
+
+-- Steve
+
+
+>=20
+> /* if (@option =3D=3D CODE_UNREGISTER) */
+>=20
+> void *info
+>=20
+> * arg2: size_t info_size
+>=20
+> /*
+>   * Size of @info structure, allowing extensibility. See
+>   * copy_struct_from_user().
+>   */
+>=20
+> * arg3: unsigned int flags (0)
+>=20
+> /* Flags for extensibility. */
+>=20
+> Your feedback is welcome,
+>=20
+> Thanks,
+>=20
+> Mathieu
+>=20
+> [1] https://babeltrace.org/docs/v2.0/man7/babeltrace2-filter.lttng-utils.=
+debug-info.7/
+>=20
 
 
