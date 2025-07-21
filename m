@@ -1,85 +1,62 @@
-Return-Path: <linux-kernel+bounces-739537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6662DB0C784
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:25:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E06F0B0C787
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:26:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AF5F1AA542C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:25:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D884170CC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60272DA743;
-	Mon, 21 Jul 2025 15:25:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F0B2DEA93;
+	Mon, 21 Jul 2025 15:25:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="taG1IzCd"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="LcWD2kUF"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99FD027CB02
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 15:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B26D27CB02;
+	Mon, 21 Jul 2025 15:25:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753111503; cv=none; b=PqbnmwGizhWYZrtiWwrUpI2ZiW3jE/LniVJexfU6Cqt1q4QSewIf8O7R3TlHKY9WigK2dWJt/RRnijTsNDDdk7I6SvxTxR9MY4sGYbxCPjhXpDu0RYcu14+J3p0Tj1489tUQ9DO7/bQGcNAkvi8cw9fK9KDEx+/WTnoH3QcEYHY=
+	t=1753111556; cv=none; b=H6FlEPwpW1mzZr+5hJ7AtDVbgcwt6Q7voMRzNkNuxGb7AudXNcdixMw1xzfRgn7dxlATnn1FIq3eZckJ6uzmdl+yK0TGVTTGWaTRFdbTiibXwH/knRZX/vjYkQQf1mgivFB88lBKiWXKmHn9EX+qgnMu4ruAEqbKd55C9tyg+p0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753111503; c=relaxed/simple;
-	bh=0favzC7sjFak+NOmfIdl6eBf4vGYZIG748Kdib+w96s=;
+	s=arc-20240116; t=1753111556; c=relaxed/simple;
+	bh=WGiK6CgbNg6MkBAFiYfTThbtuFTJq4NwamN1AqSNwNU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BVRnmzjn/vlFbzmjUFwuMUSz/0qT088fHM15ULbsTCFai8ZCHXu1YIBego1uvv5uRMeeWaDWVLOIHuKuztQsGU8/GOqhVHMNEW/oXEWj/rBzUgipgNK9fi07xiMxc4Bt5FNyFyAyAb3Nf2O2kxAJ5oG9D3o7VGj7t0UWvuBLgA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=taG1IzCd; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2353a2bc210so40106775ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 08:25:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753111501; x=1753716301; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7JY0xubH/7CmP764RnN6ToDZYqOUUQxz6pVo9aMZtxs=;
-        b=taG1IzCdkUe+TFWhUQF9USFuo1JDps6/NQs2QeI0GDZWtdjuevGjCZxfrF5u/cz0Wq
-         yuEepkFM1zJXU/kaNmz8dp9ERfCot4CZYL2UrAvODP9PoUBLX1TWxZcEFME3xVgut9eK
-         EHeiF5qwH/xdR2dOsbWkaLIkaqTIgIfKdUD5vkU3l0ORtc6L40AYCPQkN6u/wzR4yWTz
-         75cPrnwxn6Up9vG8Dz5RevmMuslRN3pkWKuFuC9UR39ZNzO/hajIBg5oXS6G9c+Ltkr5
-         j8vsNVyIqFI4jwjcsJPgKkJTz02wEgBpSY/fq/l1EGcdL6cmimvUGIjpOGz3KaE/ijFk
-         mLUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753111501; x=1753716301;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7JY0xubH/7CmP764RnN6ToDZYqOUUQxz6pVo9aMZtxs=;
-        b=BShjT8YAafgl9RZxZTesSvCGqttTxwkCYW+1TC0i7k6PS5g7/nMCiSuQZ2SGM28Ulj
-         RsUTleB78gtY8xMQT8D0kJQzVDYQvXUnzOH+ZaKtizyJLj9mn2vkD6eVyE342wehGLuh
-         vAaZEYJTBxIsr5PkjtEr0Jsn8n/MtGWE8Y1dCQVyBNtoC8n38fYLZxeC4vzy9KtxJ0qo
-         qNR0tuyFtrUWpWv8YC+B5P+GS+ZTGRCJTkQOxBzv9gwubME4ML7gi93wh7oHsFOAVWLy
-         A67mQ70iM3MddYjvWDpPQQzlw50PmSgd0VOquMl/vRE+zzOodyUt+/QTg0oENsJ92qug
-         mSRw==
-X-Forwarded-Encrypted: i=1; AJvYcCU7GWKGIbn9eqeERKsH+gcs5ntyfx04XaN6i1yaYxRszue51A3Sia5A+l9wB1TIu/ib2GGAWDMjMOttdrI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywl2D5X4Ur8rm77Q/wAk6ui2/4w9uoM6GEM3eq1wWW3iJ+AuVA7
-	eLHGgtwKEse+hmYdh9KjfB2eSshEnJsNW7O98CDYPE1lo6HvLjIhLlWlwfDGN5Us7vc=
-X-Gm-Gg: ASbGnct+Va8BiWAOLj75a7tmfYedfZzG09cKPFTBBTOssXRHjtS9taJj7Seu/NoKbVu
-	cHVHohRbpdRKcMRYMnQqbVFmOUGrBcdM0b1qCL+URZDcMn0FpJHT3ZR+bcz3zYQeTF0hYw9bqvZ
-	mFBT6cH1W0X3S1ArZl51QYwm+r70aCY8TXTASisHm0l0neRp/ng9c/SHoDCVd3bkvwzZndjFQUE
-	UC3P+qKbc18sOitQPyXid4k1N1Ol7RA7U0VR+qNsl3+yO+gLC/QgheP08MadHQRCcEDldn54Gyy
-	HvjLZlxUH1WO21plzke8RLheuNcX6V6/DsMSdugiR1USUm+BmDewTgkO79E3O1OMSEMXuxAv9TZ
-	wA/5yUA+tmNotRc7tP0oXSBiU6A==
-X-Google-Smtp-Source: AGHT+IGZMNP1a6kskS6Pcfkl6H+Xt0CgudgU1mmF7mun002WwHrv7ePLTvnhYw/MIEXzvgrCpiiOtg==
-X-Received: by 2002:a17:903:166e:b0:235:c9a7:d5f5 with SMTP id d9443c01a7336-23e256adfcfmr234891115ad.13.1753111500845;
-        Mon, 21 Jul 2025 08:25:00 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:8fb5:9396:b7cf:1f69])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b5e3d4esm59730425ad.23.2025.07.21.08.24.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 08:25:00 -0700 (PDT)
-Date: Mon, 21 Jul 2025 09:24:58 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Tanmay Shah <tanmay.shah@amd.com>
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=LGoCO2+Rvp/v8QCn+RMRxfKvezpmD0MV/qxLU5urj+0H2h3dRI7TG5MimwlhIK4Aiyk96Jn2gaw1du/hnQSe4yxkJLKe+q1QTxA9rlWqEuW0rWfJC0+U68cvDRzPWYHiJKsrwHoXM92vyXMUXVf8BJ2E8EW1K5mkzLviRCPx4rQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=LcWD2kUF; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Dy3PggWmA6e6dQc4DmqpbzZpai7iCi9bZI8JxAEFj3Y=; b=LcWD2kUFQBY+Y+SkfKjehSw2bg
+	ANvFNsGn2nDh8gJ2nRgwXQHozvj6kgy1Z6qsS4WiSTZdi4y2suvAxECtUDBMFQjnWEmSLO6DnkZuk
+	MrBfOWYsIJr+jg129NN0fY9/GL8qlK1ZQiAhNjkvu/7VU02HPMC8meJYWE82+E/wbLck=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1udsO8-002N63-Hx; Mon, 21 Jul 2025 17:25:12 +0200
+Date: Mon, 21 Jul 2025 17:25:12 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Dong Yibo <dong100@mucse.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] remoteproc: xlnx: disable unsupported features
-Message-ID: <aH5bynQwaHbCJR3f@p14s>
-References: <20250716213048.2316424-1-tanmay.shah@amd.com>
- <20250716213048.2316424-2-tanmay.shah@amd.com>
+Subject: Re: [PATCH v2 02/15] net: rnpgbe: Add n500/n210 chip support
+Message-ID: <4dea5acc-dd7d-463c-b099-53713dd3d7ee@lunn.ch>
+References: <20250721113238.18615-1-dong100@mucse.com>
+ <20250721113238.18615-3-dong100@mucse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,38 +65,125 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250716213048.2316424-2-tanmay.shah@amd.com>
+In-Reply-To: <20250721113238.18615-3-dong100@mucse.com>
 
-Good morning,
+> +struct mii_regs {
+> +	unsigned int addr; /* MII Address */
+> +	unsigned int data; /* MII Data */
+> +	unsigned int addr_shift; /* MII address shift */
+> +	unsigned int reg_shift; /* MII reg shift */
+> +	unsigned int addr_mask; /* MII address mask */
+> +	unsigned int reg_mask; /* MII reg mask */
+> +	unsigned int clk_csr_shift;
+> +	unsigned int clk_csr_mask;
+> +};
 
-On Wed, Jul 16, 2025 at 02:30:47PM -0700, Tanmay Shah wrote:
-> AMD-Xilinx platform driver does not support iommu or recovery mechanism
-> yet. Disable both features in platform driver.
-> 
-> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
-> ---
->  drivers/remoteproc/xlnx_r5_remoteproc.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> index a51523456c6e..0ffd26a47685 100644
-> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> @@ -938,6 +938,8 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
+So MII interests me, being the MDIO/PHY maintainer....
+
+You have introduced this without any user, which is not good, so i
+cannot see how it is actually used. It is better to introduce
+structures in the patch which makes use of them.
+
+Please add this only when you add the mdiobus driver, so i can see how
+it is used. Please look at the other structures you have here. Please
+add them as they are actually used.
+
+> +struct mucse_hw {
+> +	void *back;
+> +	u8 pfvfnum;
+> +	u8 pfvfnum_system;
+> +	u8 __iomem *hw_addr;
+> +	u8 __iomem *ring_msix_base;
+
+I spotted this somewhere else. A u8 __iomem * is odd. Why is this not
+a void *? ioremap() returns a void __iomem *, and all the readb(),
+readw(), readX() functions expect a void * __iomem. So this looks odd.
+
+> +#define m_rd_reg(reg) readl(reg)
+> +#define m_wr_reg(reg, val) writel((val), reg)
+
+Please don't wrap standard functions like this. Everybody knows what
+readl() does. Nobody has any idea what m_rd_reg() does! You are just
+making your driver harder to understand and maintain.
+
+> +	mac->mii.addr = RNPGBE_MII_ADDR;
+> +	mac->mii.data = RNPGBE_MII_DATA;
+> +	mac->mii.addr_shift = 11;
+> +	mac->mii.addr_mask = 0x0000F800;
+
+GENMASK()? If you are using these helpers correctly, you probably
+don't need the _shift members.
+
+> +	mac->mii.reg_shift = 6;
+> +	mac->mii.reg_mask = 0x000007C0;
+> +	mac->mii.clk_csr_shift = 2;
+> +	mac->mii.clk_csr_mask = GENMASK(5, 2);
+> +	mac->clk_csr = 0x02; /* csr 25M */
+> +	/* hw fixed phy_addr */
+> +	mac->phy_addr = 0x11;
+
+That is suspicious. But until i see the PHY handling code, it is hard
+to say.
+
+> +static void rnpgbe_get_invariants_n210(struct mucse_hw *hw)
+> +{
+> +	struct mucse_mbx_info *mbx = &hw->mbx;
+> +	/* get invariants based from n500 */
+> +	rnpgbe_get_invariants_n500(hw);
+> +
+> +	/* update msix base */
+> +	hw->ring_msix_base = hw->hw_addr + 0x29000;
+> +	/* update mbx offset */
+> +	mbx->vf2pf_mbox_vec_base = 0x29200;
+> +	mbx->fw2pf_mbox_vec = 0x29400;
+> +	mbx->pf_vf_shm_base = 0x29900;
+> +	mbx->mbx_mem_size = 64;
+> +	mbx->pf2vf_mbox_ctrl_base = 0x2aa00;
+> +	mbx->pf_vf_mbox_mask_lo = 0x2ab00;
+> +	mbx->pf_vf_mbox_mask_hi = 0;
+> +	mbx->fw_pf_shm_base = 0x2d900;
+> +	mbx->pf2fw_mbox_ctrl = 0x2e900;
+> +	mbx->fw_pf_mbox_mask = 0x2eb00;
+> +	mbx->fw_vf_share_ram = 0x2b900;
+> +	mbx->share_size = 512;
+> +	/* update hw feature */
+> +	hw->feature_flags |= M_HW_FEATURE_EEE;
+> +	hw->usecstocount = 62;
+
+This variant does not have an MDIO bus?
+
+> +#define RNPGBE_RING_BASE (0x1000)
+> +#define RNPGBE_MAC_BASE (0x20000)
+> +#define RNPGBE_ETH_BASE (0x10000)
+
+Please drop all the () on plain constants. You only need () when it is
+an expression.
+
+> +			      const struct rnpgbe_info *ii)
+
+I don't really see how the variable name ii has anything to do with
+rnpgbe_info. I know naming is hard, but why not call it info?
+
+
+>  {
+>  	struct mucse *mucse = NULL;
+> +	struct mucse_hw *hw = NULL;
+> +	u8 __iomem *hw_addr = NULL;
+>  	struct net_device *netdev;
+>  	static int bd_number;
+> +	u32 dma_version = 0;
+> +	int err = 0;
+> +	u32 queues;
 >  
->  	rproc_coredump_set_elf_info(r5_rproc, ELFCLASS32, EM_ARM);
->  
-> +	r5_rproc->recovery_disabled = true;
+> -	netdev = alloc_etherdev_mq(sizeof(struct mucse), 1);
+> +	queues = ii->total_queue_pair_cnts;
+> +	netdev = alloc_etherdev_mq(sizeof(struct mucse), queues);
 
-If recovery is not supported, and it is set explicitly here, does it mean the
-present upstream code is broken?  And if it is broken, how was this tested in
-the first place?
+I pointed out this before. Try to avoid changing code added in
+previous patches. I just wasted time looking up what the function is
+called which allocates a single queue, and writing a review comment.
 
-> +	r5_rproc->has_iommu = false;
->  	r5_rproc->auto_boot = false;
->  	r5_core = r5_rproc->priv;
->  	r5_core->dev = cdev;
-> -- 
-> 2.34.1
-> 
+Waiting reviewers time is a good way to get less/slower reviews.
+
+	Andrew
 
