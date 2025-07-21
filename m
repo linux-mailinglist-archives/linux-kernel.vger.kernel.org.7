@@ -1,102 +1,115 @@
-Return-Path: <linux-kernel+bounces-738728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD69BB0BC5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:14:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3870FB0BC60
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:14:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2332F3B2ED6
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:13:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C177179B46
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:14:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8A921D5BC;
-	Mon, 21 Jul 2025 06:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85A3821FF23;
+	Mon, 21 Jul 2025 06:14:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="VcyO+xtY"
-Received: from forward502d.mail.yandex.net (forward502d.mail.yandex.net [178.154.239.210])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GjGODKQt"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4D81DACA7;
-	Mon, 21 Jul 2025 06:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7890E21D3CD
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 06:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753078455; cv=none; b=nsMMkfU64difZmAPaGAWV510c4Lk7tz/2epcoohj4uKew3RlXIH1IDv2fSTSFh5HQECjnZfzj2tAz5Rc4egGxOohBo+R9jRdG0utwgMEI9pD/nT/+ZKV03ZLdcbfDZbz32GbMfvufAXOzDYmfx+Uo4Aq3EH06t7OdSk6p9JemYs=
+	t=1753078468; cv=none; b=HiBkFX/AwkFmaWl7V51rdV4cZgW3Nsl2uiQRsWHn2roxZXQg1wapmKeCx1SP7WJ+rQ8TO433qch2SUm4Pb4g8rR8aP3t4i8wQBWy6vKTOD5NLRa4rVFjHVTiDN3bjs/I/3SNtZ/WQwYj+Hg6lCvVVRMJVmkkZ27qKMImPPU9304=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753078455; c=relaxed/simple;
-	bh=qYVT63ZejfnIcWF4QfXl/VRZ7N+0m0/slVo378MbiTM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N6JCCdWBQQ2oRNq5N2hmUfXhtyM8CPJoyVLehIKjUkxx44OfQX41pomFyQWwx4eNO5r9Kcpk7DAKwhhimFoD2w/sqDVdMrTFzUsdd7WigNHZGpPOlHJ3lU1aY7OhIVCMJZzdjoEmbc/rCLgyoxuuSh1nK/QMo+bmWIWPwN9VrAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=VcyO+xtY; arc=none smtp.client-ip=178.154.239.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
-Received: from mail-nwsmtp-smtp-production-main-94.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-94.klg.yp-c.yandex.net [IPv6:2a02:6b8:c43:16c5:0:640:b9af:0])
-	by forward502d.mail.yandex.net (Yandex) with ESMTPS id 1CABDC3F07;
-	Mon, 21 Jul 2025 09:14:04 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-94.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 0EKxuH9Lp4Y0-gnLfREKb;
-	Mon, 21 Jul 2025 09:14:03 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=mail; t=1753078443;
-	bh=qYVT63ZejfnIcWF4QfXl/VRZ7N+0m0/slVo378MbiTM=;
-	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
-	b=VcyO+xtYKgaOiAnpUAY5VoNXM0W+rjktyyBQ5YENX439wF4epUSjlQgTpd4kwQ2wz
-	 C2J4KTNg3cfKTdocoRU2stm6jQSf7gEH4kzfoag6n/8tUdmOuxSwhlRPebzzhq7bEV
-	 n/dA2OzmH6sbarWgtereqCq2AKd5XLaU/PBvEbVg=
-Authentication-Results: mail-nwsmtp-smtp-production-main-94.klg.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
-Date: Mon, 21 Jul 2025 09:13:58 +0300
-From: Onur =?UTF-8?B?w5Z6a2Fu?= <work@onurozkan.dev>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Benno Lossin <lossin@kernel.org>, rust-for-linux@vger.kernel.org,
- dakr@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
- boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
- a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/3] rust: make various `alloc` functions `const fn`
-Message-ID: <20250721091358.7dda6b31@nimda.home>
-In-Reply-To: <CANiq72mv2yiJW_AD-_F1JUP2QdJKGGg8SqZ5SgDWT2xc_tpbZg@mail.gmail.com>
-References: <20250720094838.29530-1-work@onurozkan.dev>
-	<DBGYNQJJ0JI6.P280ZLVZUSO6@kernel.org>
-	<20250720181721.54ab9faf@nimda.home>
-	<CANiq72mv2yiJW_AD-_F1JUP2QdJKGGg8SqZ5SgDWT2xc_tpbZg@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-unknown-linux-gnu)
+	s=arc-20240116; t=1753078468; c=relaxed/simple;
+	bh=SjzPu7li/w++7SuHXLHXUxL28Hj/1zgWJ2+9pgGwAOE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=sZH2a0mTMFFiugp1Bwp2d0i6iDuWRA/OgsmvmtkR0jw1td31lqr7Z4YAqGS//1dSVYspmC9die1iWTP/GN0jnFZKt5RqIlDtdrWrpMec7neC89comtsKD9JpeZNNyCWP7lyNvTplJ/qSpXReVSEixfOaiDGlvIPNn1l0p4aP658=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GjGODKQt; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7e278d8345aso395428885a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 23:14:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753078465; x=1753683265; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LUrJjxdlJkuWAxks6dZw4thmAFt0XlgLRPKiCZOnDHs=;
+        b=GjGODKQtudCy47AOHCcRMNNVDpyMhA9GujOf+hWrGVJ8pa6RHrUfhGQ9YOdmI7mYlQ
+         CLKdtNkkyOV6uWt455UVstYfchIAKstygw0hhUKgEltohy8KV5pXZsM+co3EULwn6vCz
+         nZ4sAf92/W03X6OLUrEp2KTyshTSH21/qE1iOkCw3ocF9OfmVArK7jGqZU4nCXjitvmF
+         YJDpTmq30ug3JyJ7Mqa1beWPUuji3DyOrv9XjEpgML/oCNVdkyNVXyr/dOZla7KIYq5q
+         c8N/31x+fuN9n1V6uwjBFD7NA6arcxJd8VcK7d17zY3n1UhCEm63Ko6nvSH05QbTfSEb
+         9Yog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753078465; x=1753683265;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LUrJjxdlJkuWAxks6dZw4thmAFt0XlgLRPKiCZOnDHs=;
+        b=UwH17E5Fi2Q3qb+TJYU3+05QMGQ4hnQN+eE2iQDSi4MYKBuHJcXgOJPJ5Vfpnh/ImU
+         K1ZrlNKRoL/fV6uuN/cMA7DmxEcXjyDAKVUuj9GpzbibjtUZPQS9uf5eHT/HYlUnFLQh
+         zCUC3QC1b2G555OHm/d0d2xeGeAqtINIE0XhOw3rXK65EYST7oafUgVGMDdondeHcJT5
+         MYD3tFEqo+vBUCTlfsVTDVcxaNlfj59GZDJ1Dz/KyQ9IUmBo4cFqqbO6JfNTrg2Lb6yg
+         NRwWfbs/R4fyPRwC0Fo14ckcHJHQAknOfQQgRGPJm2AXXQmnaHB4eFIun5tU7mwQEVGI
+         u0Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCWKOIBxs0HZkwUXF1VoPbOCDIwi4a7H9Ro8zuefwRudCyvI2kVqGCyY2AAUvgJ9O6hoBnotKG8hZ9+Eo9Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZXwfnNZBoM3kcZdmlZA1C9P3IlX9Ax4TYMKAN3bfCEka4A1l5
+	tflrwRAnkr6gGABpjYFtN0xPTUPm2BtBWI1FJvZdhQsS+RhbWF7JrISK
+X-Gm-Gg: ASbGncsIfG3jdA6qlCm81O6mUuUJf750SbeoclTpDXxLfvoGfU/OPKLwuEw+uU2qOII
+	ThqXuJ5DQHMscib7p6nvBd34sYthuG1At7OPN16qrhUT8aOcbNvwOGyCSwijTYdt2WLL39EEBL5
+	OTIg2vaio9LF+xXJW8nDfR1X2SArVlk+fHTepS8DTJUvprLf8L7PN1YoG51wkkPl+jnotXiswlj
+	zdhM5j58p700OCmqmKvruVo3SXnfI/mG2TvCM4VkA8Bqkl8DEjy4NlEf71R1Z31wXruqgflsTJU
+	fTCkyHtfHxcKqbLGuQKv8YALg6Mqcx+MVRkzDLfxXJ2+dsCj5P3Mr/nLbclSPnfx0BXK1T4vgfZ
+	g/TZt3jutt+PXR/eTzf5Wt2OJDNphBd0r5E0b3auZeqbehNU5XYSY1VLB1qvXoQ==
+X-Google-Smtp-Source: AGHT+IFV7evOdBXehEGbcmPmJL5cgVgd/HztZtKye5eZOfaD+ktrMiMzzud3BxNWK8s3itPM1PBBJw==
+X-Received: by 2002:a05:620a:191f:b0:7e3:3604:5047 with SMTP id af79cd13be357-7e3436156a6mr1965809785a.38.1753078465256;
+        Sun, 20 Jul 2025 23:14:25 -0700 (PDT)
+Received: from linux-kernel-dev-start.. ([159.203.26.228])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e356c3e36fsm379185485a.66.2025.07.20.23.14.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Jul 2025 23:14:24 -0700 (PDT)
+From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+To: vivek.balachandhar@gmail.com
+Cc: gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [PATCH v2] staging: rtl8723bs: clean up redundant & parentheses
+Date: Mon, 21 Jul 2025 06:14:12 +0000
+Message-Id: <20250721061412.297554-1-vivek.balachandhar@gmail.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250720092125.246844-1-vivek.balachandhar@gmail.com>
+References: <20250720092125.246844-1-vivek.balachandhar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, 20 Jul 2025 17:42:43 +0200
-Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> wrote:
+Hi Greg,
 
-> On Sun, Jul 20, 2025 at 5:17=E2=80=AFPM Onur =C3=96zkan <work@onurozkan.d=
-ev> wrote:
-> >
-> > Personally, I don't have a specific reason. I thought the change is
-> > harmless and might extend functionality for other people in the
-> > future. It could also (although less likely) help the compiler
-> > optimize things further.
->=20
-> I think it is OK -- even if we promise they are `const` and we have to
-> remove it in the future, it is fine, since there is no stable kernel
-> API. So that flexibility is another advantage of no promises there.
->=20
-> However, I am curious, in which cases it would help the compiler
-> optimize? The compiler already has the information on whether it could
-> actually be `const` and whether it can be evaluated at compile-time
-> and so on -- do you mean it has an effect on heuristics like inlining
-> or similar?
+Thanks again for your earlier feedback on the patch cleanup for rtw_mlme.c.
 
-I thought it had effects similar to inlining, but after digging into the
-assembly output of a simple program (with and without `const`
-expressions) and reading some related discussions [1], it seems I was
-wrong about it, sorry.
+Since the original version included multiple checkpatch.pl fixes 
+(like spacing and formatting) and you suggested breaking them up by type, 
 
-[1]: https://users.rust-lang.org/t/the-effects-of-const-fn/48303
+I wanted to ask:
 
-Regards,
-Onur
+For the remaining cleanups (e.g., spacing issues), should I submit them as:
+
+separate standalone patches, or
+
+as new versions (v2, v3, etc.) building on the current patch?
+
+Just wanted to be sure I follow the preferred approach.
+
+Thanks for your guidance!
+
+Best 
+Vivek
 
