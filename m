@@ -1,181 +1,100 @@
-Return-Path: <linux-kernel+bounces-739678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CCB0B0C993
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:22:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27D6EB0C99B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:23:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 668957AF2A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:20:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB7D51891455
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8982E0922;
-	Mon, 21 Jul 2025 17:22:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C342E041C;
+	Mon, 21 Jul 2025 17:22:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LRc9+Xpx"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SigRHZHW";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XCn0tmx0"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641F52DEA81;
-	Mon, 21 Jul 2025 17:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9062E03F7
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 17:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753118524; cv=none; b=QDGW7yTdDp0ymCTa9ZUZfG2DiqhxPCDVcDQnhiEYNyxRY6B8Nd+eEk1yBGaaSapeOWHxZy6ae3lpEjCOFQ3qnOzZIbRSV7R5l4Hc16W+MWvXKyMVM9yU7tgrv6YpyMtwsGUOb8q3Roj+BuveS+JSn/ooL6eDqQn06ntAG9RMhBk=
+	t=1753118574; cv=none; b=Gdyb6YnhUDd3H/lOUPaIvBN0j/vkSVAd7KazvvCBrYNygRG8DcnczYuOe3DTZzHRJ913Cpi7mJTbyY6BiTf9/c1RoHcOaXrw0FJg3tfVUyy7U/Wi31RLvtLQroG9Q6grXxOmEmfHfOEHN4PtZu8YeJcc26Gw+/DRu8FT1Uwvxjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753118524; c=relaxed/simple;
-	bh=19QnsmtMaBJp/ZLnLTtT9839sTSAbE07uxa6iOYsNMQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=seJNKbxmmW3Gg+X45H5kLiegsEGc4EKP53SaReyB7eAoMUqWLsfBVmINXG40nAucYfVrwIjuGQuaJbCFIZ+emkuIWmgEw0wIjRqa5jrB/4JHYcIxe3ZgqQ/paK7pS873JCA5HOc+7MxfCnmG7BuSfWHsLmwllLgWfb+w1GKLKBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LRc9+Xpx; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753118523; x=1784654523;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=19QnsmtMaBJp/ZLnLTtT9839sTSAbE07uxa6iOYsNMQ=;
-  b=LRc9+XpxI2hP+C1C8fgJAU4a/79h2AmugPTeAMT8okxyZtoiZN+mzemX
-   xORNfdutjA/Nr97pZZ+ceDzXfFHbNNSm6nKbPWo1seLYHE5T2RUwl/yh6
-   lYKIysGwf/j+y+Oat0v6ID9E/XkJioRZsczv0EAIF60C1VK3NtP07vSBy
-   c8HvVeA7L+8wZy7j+BN4Yj3ayY5pFfwABBwG0HabircZN66No7zcU/Q8n
-   EobLVm/kTnFT1o87bcQEacVpgGiF4GWMC/DCbeVksDOB6wsR7CaFxT+5x
-   6tgn2WqQhlXHhVJf4w6B2mYm0VsX4h21+8WRqc4XWDrXBOv6I7x8SV/ib
-   A==;
-X-CSE-ConnectionGUID: rCid1t7ORtukg5YQfZ3JhA==
-X-CSE-MsgGUID: 8TYuxRsETnSuTf+D6l4mNA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11499"; a="55435195"
-X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
-   d="scan'208";a="55435195"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 10:22:02 -0700
-X-CSE-ConnectionGUID: pU2NcPsoToq9C/4WY93oBg==
-X-CSE-MsgGUID: 5J6kS8FAT4uXfvx9Nyvhiw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
-   d="scan'208";a="163451965"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 10:21:56 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uduD1-0000000HOPq-47vg;
-	Mon, 21 Jul 2025 20:21:51 +0300
-Date: Mon, 21 Jul 2025 20:21:51 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
-Cc: "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
-	"laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Ricardo Ribalda <ribalda@chromium.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Hans de Goede <hansg@kernel.org>,
-	=?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>,
-	Sylvain Petinot <sylvain.petinot@foss.st.com>,
-	Matthias Fend <matthias.fend@emfend.at>,
-	Dongcheng Yan <dongcheng.yan@intel.com>,
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
-	Jingjing Xiong <jingjing.xiong@intel.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 2/2] media: i2c: add ov2735 image sensor driver
-Message-ID: <aH53L948F7m16eHZ@smile.fi.intel.com>
-References: <20250716134426.8348-1-hardevsinh.palaniya@siliconsignals.io>
- <20250716134426.8348-3-hardevsinh.palaniya@siliconsignals.io>
- <aHe7NFJz6aCUqZXL@smile.fi.intel.com>
- <PN3P287MB351951A3DBA4FA85404DA410FF51A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
- <aHjubei5Aex9n-HI@smile.fi.intel.com>
- <PN3P287MB35199EB9309448F3EDD43402FF51A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1753118574; c=relaxed/simple;
+	bh=B7Ps+LKAb3AbMjuekHyLup5iS/pxSTyCAOTXYje2UIE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=kiLkCear+8MUPi+sP90vRAYgFtDGVHxxOF/bmGLQoSNWMGhpim4sG5bVGGVMz91jR5Xfa2EgyCvojYqgvL8ljDbBVNFedZawvvh8HK+MjcU82rXvN9gafguLx09YtEmQt2hh8pnZpPBGFQmu97bT4p2yXzNzz5EbyoGtNaEufAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SigRHZHW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XCn0tmx0; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1753118571;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=85b9+Zrsl4Cn8pUf/pnbXRelbaHnJeq0GSW3DRdJjUY=;
+	b=SigRHZHWI/6pMh2uwVqZNEQ4MRTCs2V0nAm2zqOE5U8Mq+PFWWa3GEuZumyOFOBD5TZLZP
+	UJTxE5YdBkrrDNhO5cxNsm93kbm8yKg2EWeZ9ywVZ/XyrjTtW/4+OgydWaGZ3ltgJeRDYe
+	ysQqFhuqyytO0h2kljUC6pWdmYbXfnFkpc3L/Mb+of5Urqc7/g4DQRDxLYw29NtskU2Xvf
+	JsCxLCCyCaUnrelG1Z/pfRihTllOTDaIbjWEtX2awVqP8MLjP2HeNRTTLph3/hJsbS9Hap
+	9q3Ly5pZhB0V8/srfnrHsJ8XTZA83PMf/Vo2i2UyhDLVXoGwlcgz+YXuqo4npw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1753118571;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=85b9+Zrsl4Cn8pUf/pnbXRelbaHnJeq0GSW3DRdJjUY=;
+	b=XCn0tmx0eSTpzxldFYKypgyBUfhc2h8rarTYXHShe3ukqlYh2Sv5q9C+W8xxy9E8wn2gn/
+	I/W6HrI13pdiTJAw==
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, kernel test robot
+ <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
+ Peter Zijlstra <peterz@infradead.org>, Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH] selftests/futex: Compile also on libnuma < 2.0.16
+In-Reply-To: <20250715095203.vVbUIvob@linutronix.de>
+References: <202507150858.bedaf012-lkp@intel.com>
+ <20250715075735.tdXLHcEA@linutronix.de>
+ <20250715095203.vVbUIvob@linutronix.de>
+Date: Mon, 21 Jul 2025 19:22:50 +0200
+Message-ID: <87h5z5tq51.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <PN3P287MB35199EB9309448F3EDD43402FF51A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain
 
-On Thu, Jul 17, 2025 at 01:11:53PM +0000, Hardevsinh Palaniya wrote:
-> > On Thu, Jul 17, 2025 at 07:26:49AM +0000, Hardevsinh Palaniya wrote:
-> > > > On Wed, Jul 16, 2025 at 07:14:17PM +0530, Hardevsinh Palaniya wrote:
+On Tue, Jul 15 2025 at 11:52, Sebastian Andrzej Siewior wrote:
+>  INCLUDES := -I../include -I../../ $(KHDR_INCLUDES)
+> -CFLAGS := $(CFLAGS) -g -O2 -Wall -pthread $(INCLUDES) $(KHDR_INCLUDES)
+> +CFLAGS := $(CFLAGS) -g -O2 -Wall -pthread $(INCLUDES) $(KHDR_INCLUDES) -DLIBUNMA_VER_$(LIBNUMA_TEST)=1
 
-...
+LIBUNMA?
 
-> > > > > +static int ov2735_page_access(struct ov2735 *ov2735,
-> > > > > +                           u32 reg, void *val, int *err, bool is_read)
-> > > > > +{
-> > > > > +     u8 page = (reg >> CCI_REG_PRIVATE_SHIFT) & 0xff;
-> > > > > +     u32 addr = reg & ~CCI_REG_PRIVATE_MASK;
-> > > > > +     int ret = 0;
+>  int main(int argc, char *argv[])
+>  {
+>  	struct futex32_numa *futex_numa;
+> -	int mem_size, i;
+> +	int mem_size, i __maybe_unused;
 
-> > > > > +     if (err && *err)
-> > > > > +             return *err;
+Why this unused muck?
 
-^^^ (1)
+> +#ifdef LIBUNMA_VER_SUFFICIENT
+>  	for (i = 0; i < 4; i++) {
 
-> > > > > +     mutex_lock(&ov2735->page_lock);
-> > > > > +
-> > > > > +     /* Perform page access before read/write */
-> > > > > +     if (ov2735->current_page != page) {
-> > > > > +             ret = cci_write(ov2735->cci, OV2735_REG_PAGE_SELECT, page, &ret);
-> > > > > +             if (ret)
-> > > > > +                     goto err_mutex_unlock;
-> > > > > +             ov2735->current_page = page;
-> > > > > +     }
-> > > > > +
-> > > > > +     if (is_read)
-> > > > > +             ret = cci_read(ov2735->cci, addr, (u64 *)val, err);
-> > > > > +     else
-> > > > > +             ret = cci_write(ov2735->cci, addr, *(u64 *)val, err);
-> > > > > +
-> > > > > +err_mutex_unlock:
-> > > >
-> > > > > +     if (ret && err)
-> > > >
-> > > > Why do you need to check for ret != 0?
-> > >
-> > > To prevents overwriting *err with 0 on successful operations, which could
-> > > obscure previous errors.
-> > 
-> > Can you elaborate a bit how the *err is not 0 at this point
-> > (assuming err != NULL)?
-> 
-> A previous operation have already failed and stored a non-
-> zero error code in *err.
+if you can just do
 
-Right and this function is no-op already for this case.
+       for (int i = 0; ...
 
-> Assuming this function is used in a sequence of write (or read) 
-> operations. If the current operation succeeds (i.e., ret == 0) and we 
-> unconditionally write *err = ret, we would overwrite the 
-> existing error with 0, falsely indicating that all operations 
-> were successful.
+?
 
-I don't see this scenario. I see that we apply *err = 0 when *err == 0 already.
+Thanks,
 
-> Therefore, the condition if (ret && err) ensures that we only 
-> update *err when there's a new error, preserving any previously 
-> recorded failures.
-> 
-> Let me know if you have a different suggestion for how this should 
-> be handled.
-
-Have you taken into account 1) above?
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+        tglx
 
