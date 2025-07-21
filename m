@@ -1,457 +1,154 @@
-Return-Path: <linux-kernel+bounces-738589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47F3EB0BAC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 04:29:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D005B0BACD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 04:30:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32AD9189E9FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 02:28:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EFEC3C03EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 02:28:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0906121A433;
-	Mon, 21 Jul 2025 02:26:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OPmFrSoH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5282236FD;
+	Mon, 21 Jul 2025 02:27:47 +0000 (UTC)
+Received: from baidu.com (mx22.baidu.com [220.181.50.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03CA1FE44B;
-	Mon, 21 Jul 2025 02:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A8F1F4289;
+	Mon, 21 Jul 2025 02:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753064760; cv=none; b=AWJhxVHR/m4xdjhj0ApOmsYzKhQdqsIMpWXzTWEjqUGp7DsARCKYdBA5ICn9QHf0qikRPLEFRwDPFWJwuALvvYpNUkdYmVSO9PANehQtM7dqaqu3ftDS3ZdKUlAQSi9rR7NN2Mnoqpmjo7tpsOJzhvOIYMnZNjY4+OAk7SHkhgY=
+	t=1753064867; cv=none; b=LgSQjazyPnlnNB8qzsfe1VCx7e+fDKR5RbMHK6Zmv3+TpoxadFniAv36yTWfP6shUkULpZyghz+7ZeUW6o9fcTVM/TiViqIP9wC7PkwF8EpdNfjRNOOiDTF3cRsf7hIdmfCEqPUCRwAjJ5A+c8IkqOkzMYN83fEN/irLGjlB8og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753064760; c=relaxed/simple;
-	bh=UdaRAhokbN4SPSUkNrG/50YNHIzHEKKeFyrZJ7S/C08=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ImGjP4K0bdTYKshc69Qf+PHx3iFPopbP/XXHv0+8PvB329hAxu98KnASAuJP9QXfD8wTkqYIAhA5T3jmlwzLLlFhq58DeG+iLAnzwzENEbiDfdP7V8WMlwYIg8hch/cD2wPesIcXIvTw93yAa9P5+NF7Ykdu+R3FyVcZ3wW56X8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OPmFrSoH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F9BCC4CEE7;
-	Mon, 21 Jul 2025 02:25:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753064759;
-	bh=UdaRAhokbN4SPSUkNrG/50YNHIzHEKKeFyrZJ7S/C08=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OPmFrSoHyf9rL/rcC6VNtWWyGuoSvlAzKSz3yG25hB8G/+zj3/rWEG6TOZY3l+9d8
-	 bh+0Y/iBPuiTGVTqPGth6QP4qBcDEDxwsHSYkQOX2J1kNvwGghqNMqM/qS9lTQSCPX
-	 45fyCF4VAUpzfe3tzqtVWazweJDP8my5uDg7vS8vaKV1izjoyjlq73qtBktrSJrFVU
-	 MsOMQ2Pm/iRmBZQp8KIjl4aboyp2bzns+Hwvg18tXbfqTNSChEjVnUgspDObof3TiS
-	 stQszLv0nGUDs6wHluP7XlB5UYwipzAv4OfzktUmtK96ZUmCJRjsrseWSV9ZUF+R2r
-	 T+J9wZkmLlCGw==
-Date: Mon, 21 Jul 2025 10:25:53 +0800
-From: "Peter Chen (CIX)" <peter.chen@kernel.org>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Pawel Laszczak <pawell@cadence.com>, Roger Quadros <rogerq@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Chunfeng Yun <chunfeng.yun@mediatek.com>,
-	Mathias Nyman <mathias.nyman@intel.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Bastien Nocera <hadess@hadess.net>, Bin Liu <b-liu@ti.com>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
-	linux-omap@vger.kernel.org
-Subject: Re: [PATCH 67/80] usb: Remove redundant pm_runtime_mark_last_busy()
- calls
-Message-ID: <20250721022553.GB299578@nchen-desktop>
-References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
- <20250704075453.3222311-1-sakari.ailus@linux.intel.com>
+	s=arc-20240116; t=1753064867; c=relaxed/simple;
+	bh=x+zj8fFpS5eWHmQYb3/NsvA8xbXRIWkSvclvHT/Xf3g=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=rFZNTJvHWI8oXt/daeBjS/2/OBZ7vow4/585JFwn2Auqy5EQTl/Uu6c77qNxvNiPUsfT5LWgBGyFe/a/cIy+3uSuPaDj9IlUNmkWsmkaEUat3H/Qn1izuEFU3JHQkhv5WT73eTiwDrnA6hMLnP1EaTuolL6DwNgFKDl4gMK1HC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: "Li,Rongqing" <lirongqing@baidu.com>
+To: Sean Christopherson <seanjc@google.com>
+CC: "pbonzini@redhat.com" <pbonzini@redhat.com>, "vkuznets@redhat.com"
+	<vkuznets@redhat.com>, "tglx@linutronix.de" <tglx@linutronix.de>,
+	"mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org"
+	<x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>, "kvm@vger.kernel.org"
+	<kvm@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: =?gb2312?B?tPC4tDogWz8/Pz9dIFJlOiBbUEFUQ0hdIHg4Ni9rdm06IFJlb3JkZXIgUFYg?=
+ =?gb2312?Q?spinlock_checks_for_dedicated_CPU_case?=
+Thread-Topic: [????] Re: [PATCH] x86/kvm: Reorder PV spinlock checks for
+ dedicated CPU case
+Thread-Index: AQHb+ebbkcsK2yip8kqdhSixfTeD3A==
+Date: Mon, 21 Jul 2025 02:26:25 +0000
+Message-ID: <c985fbdb96aa44cdb9788d92046b958e@baidu.com>
+References: <20250718094936.5283-1-lirongqing@baidu.com>
+ <aHpWW0ZPuI5thDqZ@google.com>
+In-Reply-To: <aHpWW0ZPuI5thDqZ@google.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250704075453.3222311-1-sakari.ailus@linux.intel.com>
+X-FEAS-Client-IP: 172.31.50.46
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-On 25-07-04 10:54:53, Sakari Ailus wrote:
-> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
-> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
-> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
-> pm_runtime_mark_last_busy().
-> 
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-
-For chipidea and cdns3 parts:
-
-Acked-by: Peter Chen <peter.chen@kernel.org>
-
-Peter
-> ---
-> The cover letter of the set can be found here
-> <URL:https://lore.kernel.org/linux-pm/20250704075225.3212486-1-sakari.ailus@linux.intel.com>.
-> 
-> In brief, this patch depends on PM runtime patches adding marking the last
-> busy timestamp in autosuspend related functions. The patches are here, on
-> rc2:
-> 
->         git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
->                 pm-runtime-6.17-rc1
-> 
->  drivers/usb/cdns3/cdns3-gadget.c            | 1 -
->  drivers/usb/cdns3/cdnsp-gadget.c            | 1 -
->  drivers/usb/chipidea/core.c                 | 1 -
->  drivers/usb/chipidea/otg_fsm.c              | 1 -
->  drivers/usb/dwc3/core.c                     | 2 --
->  drivers/usb/dwc3/dwc3-am62.c                | 1 -
->  drivers/usb/dwc3/dwc3-imx8mp.c              | 1 -
->  drivers/usb/dwc3/dwc3-pci.c                 | 1 -
->  drivers/usb/dwc3/dwc3-xilinx.c              | 1 -
->  drivers/usb/gadget/udc/cdns2/cdns2-gadget.c | 1 -
->  drivers/usb/host/xhci-mtk.c                 | 1 -
->  drivers/usb/host/xhci-tegra.c               | 1 -
->  drivers/usb/misc/apple-mfi-fastcharge.c     | 1 -
->  drivers/usb/mtu3/mtu3_plat.c                | 1 -
->  drivers/usb/musb/musb_core.c                | 5 -----
->  drivers/usb/musb/musb_debugfs.c             | 5 -----
->  drivers/usb/musb/musb_dsps.c                | 1 -
->  drivers/usb/musb/musb_gadget.c              | 4 ----
->  drivers/usb/musb/omap2430.c                 | 1 -
->  19 files changed, 31 deletions(-)
-> 
-> diff --git a/drivers/usb/cdns3/cdns3-gadget.c b/drivers/usb/cdns3/cdns3-gadget.c
-> index d9d8dc05b235..168707213ed9 100644
-> --- a/drivers/usb/cdns3/cdns3-gadget.c
-> +++ b/drivers/usb/cdns3/cdns3-gadget.c
-> @@ -3251,7 +3251,6 @@ static void cdns3_gadget_exit(struct cdns *cdns)
->  	priv_dev = cdns->gadget_dev;
->  
->  
-> -	pm_runtime_mark_last_busy(cdns->dev);
->  	pm_runtime_put_autosuspend(cdns->dev);
->  
->  	usb_del_gadget(&priv_dev->gadget);
-> diff --git a/drivers/usb/cdns3/cdnsp-gadget.c b/drivers/usb/cdns3/cdnsp-gadget.c
-> index 55f95f41b3b4..2ffe24a6e477 100644
-> --- a/drivers/usb/cdns3/cdnsp-gadget.c
-> +++ b/drivers/usb/cdns3/cdnsp-gadget.c
-> @@ -1996,7 +1996,6 @@ static void cdnsp_gadget_exit(struct cdns *cdns)
->  	struct cdnsp_device *pdev = cdns->gadget_dev;
->  
->  	devm_free_irq(pdev->dev, cdns->dev_irq, pdev);
-> -	pm_runtime_mark_last_busy(cdns->dev);
->  	pm_runtime_put_autosuspend(cdns->dev);
->  	usb_del_gadget_udc(&pdev->gadget);
->  	cdnsp_gadget_free_endpoints(pdev);
-> diff --git a/drivers/usb/chipidea/core.c b/drivers/usb/chipidea/core.c
-> index 694b4a8e4e1d..a6ce73dcc871 100644
-> --- a/drivers/usb/chipidea/core.c
-> +++ b/drivers/usb/chipidea/core.c
-> @@ -1372,7 +1372,6 @@ static int ci_controller_resume(struct device *dev)
->  	ci->in_lpm = false;
->  	if (ci->wakeup_int) {
->  		ci->wakeup_int = false;
-> -		pm_runtime_mark_last_busy(ci->dev);
->  		pm_runtime_put_autosuspend(ci->dev);
->  		enable_irq(ci->irq);
->  		if (ci_otg_is_fsm_mode(ci))
-> diff --git a/drivers/usb/chipidea/otg_fsm.c b/drivers/usb/chipidea/otg_fsm.c
-> index a093544482d5..929536dc96ec 100644
-> --- a/drivers/usb/chipidea/otg_fsm.c
-> +++ b/drivers/usb/chipidea/otg_fsm.c
-> @@ -629,7 +629,6 @@ int ci_otg_fsm_work(struct ci_hdrc *ci)
->  				ci_otg_queue_work(ci);
->  			}
->  		} else if (ci->fsm.otg->state == OTG_STATE_A_HOST) {
-> -			pm_runtime_mark_last_busy(ci->dev);
->  			pm_runtime_put_autosuspend(ci->dev);
->  			return 0;
->  		}
-> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-> index 8002c23a5a02..77b309ebd704 100644
-> --- a/drivers/usb/dwc3/core.c
-> +++ b/drivers/usb/dwc3/core.c
-> @@ -279,7 +279,6 @@ static void __dwc3_set_mode(struct work_struct *work)
->  	}
->  
->  out:
-> -	pm_runtime_mark_last_busy(dwc->dev);
->  	pm_runtime_put_autosuspend(dwc->dev);
->  	mutex_unlock(&dwc->mutex);
->  }
-> @@ -2642,7 +2641,6 @@ int dwc3_runtime_idle(struct dwc3 *dwc)
->  		break;
->  	}
->  
-> -	pm_runtime_mark_last_busy(dev);
->  	pm_runtime_autosuspend(dev);
->  
->  	return 0;
-> diff --git a/drivers/usb/dwc3/dwc3-am62.c b/drivers/usb/dwc3/dwc3-am62.c
-> index 9db8f3ca493d..e11d7643f966 100644
-> --- a/drivers/usb/dwc3/dwc3-am62.c
-> +++ b/drivers/usb/dwc3/dwc3-am62.c
-> @@ -292,7 +292,6 @@ static int dwc3_ti_probe(struct platform_device *pdev)
->  	/* Setting up autosuspend */
->  	pm_runtime_set_autosuspend_delay(dev, DWC3_AM62_AUTOSUSPEND_DELAY);
->  	pm_runtime_use_autosuspend(dev);
-> -	pm_runtime_mark_last_busy(dev);
->  	pm_runtime_put_autosuspend(dev);
->  	return 0;
->  
-> diff --git a/drivers/usb/dwc3/dwc3-imx8mp.c b/drivers/usb/dwc3/dwc3-imx8mp.c
-> index 3edc5aca76f9..37700d95bc09 100644
-> --- a/drivers/usb/dwc3/dwc3-imx8mp.c
-> +++ b/drivers/usb/dwc3/dwc3-imx8mp.c
-> @@ -307,7 +307,6 @@ static int dwc3_imx8mp_resume(struct dwc3_imx8mp *dwc3_imx, pm_message_t msg)
->  	if (dwc3_imx->wakeup_pending) {
->  		dwc3_imx->wakeup_pending = false;
->  		if (dwc->current_dr_role == DWC3_GCTL_PRTCAP_DEVICE) {
-> -			pm_runtime_mark_last_busy(dwc->dev);
->  			pm_runtime_put_autosuspend(dwc->dev);
->  		} else {
->  			/*
-> diff --git a/drivers/usb/dwc3/dwc3-pci.c b/drivers/usb/dwc3/dwc3-pci.c
-> index 54a4ee2b90b7..07dfa0b5d184 100644
-> --- a/drivers/usb/dwc3/dwc3-pci.c
-> +++ b/drivers/usb/dwc3/dwc3-pci.c
-> @@ -321,7 +321,6 @@ static void dwc3_pci_resume_work(struct work_struct *work)
->  		return;
->  	}
->  
-> -	pm_runtime_mark_last_busy(&dwc3->dev);
->  	pm_runtime_put_sync_autosuspend(&dwc3->dev);
->  }
->  #endif
-> diff --git a/drivers/usb/dwc3/dwc3-xilinx.c b/drivers/usb/dwc3/dwc3-xilinx.c
-> index 1e28d6f50ed0..0a8c47876ff9 100644
-> --- a/drivers/usb/dwc3/dwc3-xilinx.c
-> +++ b/drivers/usb/dwc3/dwc3-xilinx.c
-> @@ -383,7 +383,6 @@ static int __maybe_unused dwc3_xlnx_runtime_resume(struct device *dev)
->  
->  static int __maybe_unused dwc3_xlnx_runtime_idle(struct device *dev)
->  {
-> -	pm_runtime_mark_last_busy(dev);
->  	pm_runtime_autosuspend(dev);
->  
->  	return 0;
-> diff --git a/drivers/usb/gadget/udc/cdns2/cdns2-gadget.c b/drivers/usb/gadget/udc/cdns2/cdns2-gadget.c
-> index 7e69944ef18a..9b53daf76583 100644
-> --- a/drivers/usb/gadget/udc/cdns2/cdns2-gadget.c
-> +++ b/drivers/usb/gadget/udc/cdns2/cdns2-gadget.c
-> @@ -2415,7 +2415,6 @@ int cdns2_gadget_resume(struct cdns2_device *pdev, bool hibernated)
->  
->  void cdns2_gadget_remove(struct cdns2_device *pdev)
->  {
-> -	pm_runtime_mark_last_busy(pdev->dev);
->  	pm_runtime_put_autosuspend(pdev->dev);
->  
->  	usb_del_gadget(&pdev->gadget);
-> diff --git a/drivers/usb/host/xhci-mtk.c b/drivers/usb/host/xhci-mtk.c
-> index 208558cf822d..06043c7c3100 100644
-> --- a/drivers/usb/host/xhci-mtk.c
-> +++ b/drivers/usb/host/xhci-mtk.c
-> @@ -670,7 +670,6 @@ static int xhci_mtk_probe(struct platform_device *pdev)
->  	}
->  
->  	device_enable_async_suspend(dev);
-> -	pm_runtime_mark_last_busy(dev);
->  	pm_runtime_put_autosuspend(dev);
->  	pm_runtime_forbid(dev);
->  
-> diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-> index 0c7af44d4dae..554b03e3ae92 100644
-> --- a/drivers/usb/host/xhci-tegra.c
-> +++ b/drivers/usb/host/xhci-tegra.c
-> @@ -1394,7 +1394,6 @@ static void tegra_xhci_id_work(struct work_struct *work)
->  		}
->  
->  		tegra_xhci_set_port_power(tegra, true, true);
-> -		pm_runtime_mark_last_busy(tegra->dev);
->  
->  	} else {
->  		if (tegra->otg_usb3_port >= 0)
-> diff --git a/drivers/usb/misc/apple-mfi-fastcharge.c b/drivers/usb/misc/apple-mfi-fastcharge.c
-> index 8e852f4b8262..47b38dcc2992 100644
-> --- a/drivers/usb/misc/apple-mfi-fastcharge.c
-> +++ b/drivers/usb/misc/apple-mfi-fastcharge.c
-> @@ -134,7 +134,6 @@ static int apple_mfi_fc_set_property(struct power_supply *psy,
->  		ret = -EINVAL;
->  	}
->  
-> -	pm_runtime_mark_last_busy(&mfi->udev->dev);
->  	pm_runtime_put_autosuspend(&mfi->udev->dev);
->  
->  	return ret;
-> diff --git a/drivers/usb/mtu3/mtu3_plat.c b/drivers/usb/mtu3/mtu3_plat.c
-> index 7b5a431acb56..cc8a864dbd63 100644
-> --- a/drivers/usb/mtu3/mtu3_plat.c
-> +++ b/drivers/usb/mtu3/mtu3_plat.c
-> @@ -431,7 +431,6 @@ static int mtu3_probe(struct platform_device *pdev)
->  	}
->  
->  	device_enable_async_suspend(dev);
-> -	pm_runtime_mark_last_busy(dev);
->  	pm_runtime_put_autosuspend(dev);
->  	pm_runtime_forbid(dev);
->  
-> diff --git a/drivers/usb/musb/musb_core.c b/drivers/usb/musb/musb_core.c
-> index c7234b236971..0acc62569ae5 100644
-> --- a/drivers/usb/musb/musb_core.c
-> +++ b/drivers/usb/musb/musb_core.c
-> @@ -2031,7 +2031,6 @@ static void musb_pm_runtime_check_session(struct musb *musb)
->  		if (!musb->session)
->  			break;
->  		trace_musb_state(musb, devctl, "Allow PM on possible host mode disconnect");
-> -		pm_runtime_mark_last_busy(musb->controller);
->  		pm_runtime_put_autosuspend(musb->controller);
->  		musb->session = false;
->  		return;
-> @@ -2063,7 +2062,6 @@ static void musb_pm_runtime_check_session(struct musb *musb)
->  					      msecs_to_jiffies(3000));
->  	} else {
->  		trace_musb_state(musb, devctl, "Allow PM with no session");
-> -		pm_runtime_mark_last_busy(musb->controller);
->  		pm_runtime_put_autosuspend(musb->controller);
->  	}
->  
-> @@ -2090,7 +2088,6 @@ static void musb_irq_work(struct work_struct *data)
->  		sysfs_notify(&musb->controller->kobj, NULL, "mode");
->  	}
->  
-> -	pm_runtime_mark_last_busy(musb->controller);
->  	pm_runtime_put_autosuspend(musb->controller);
->  }
->  
-> @@ -2564,7 +2561,6 @@ musb_init_controller(struct device *dev, int nIrq, void __iomem *ctrl)
->  	musb_init_debugfs(musb);
->  
->  	musb->is_initialized = 1;
-> -	pm_runtime_mark_last_busy(musb->controller);
->  	pm_runtime_put_autosuspend(musb->controller);
->  
->  	return 0;
-> @@ -2887,7 +2883,6 @@ static int musb_resume(struct device *dev)
->  			error);
->  	spin_unlock_irqrestore(&musb->lock, flags);
->  
-> -	pm_runtime_mark_last_busy(dev);
->  	pm_runtime_put_autosuspend(dev);
->  
->  	return 0;
-> diff --git a/drivers/usb/musb/musb_debugfs.c b/drivers/usb/musb/musb_debugfs.c
-> index 2d623284edf6..5092d62c2062 100644
-> --- a/drivers/usb/musb/musb_debugfs.c
-> +++ b/drivers/usb/musb/musb_debugfs.c
-> @@ -106,7 +106,6 @@ static int musb_regdump_show(struct seq_file *s, void *unused)
->  		}
->  	}
->  
-> -	pm_runtime_mark_last_busy(musb->controller);
->  	pm_runtime_put_autosuspend(musb->controller);
->  	return 0;
->  }
-> @@ -119,7 +118,6 @@ static int musb_test_mode_show(struct seq_file *s, void *unused)
->  
->  	pm_runtime_get_sync(musb->controller);
->  	test = musb_readb(musb->mregs, MUSB_TESTMODE);
-> -	pm_runtime_mark_last_busy(musb->controller);
->  	pm_runtime_put_autosuspend(musb->controller);
->  
->  	if (test == (MUSB_TEST_FORCE_HOST | MUSB_TEST_FORCE_FS))
-> @@ -216,7 +214,6 @@ static ssize_t musb_test_mode_write(struct file *file,
->  	musb_writeb(musb->mregs, MUSB_TESTMODE, test);
->  
->  ret:
-> -	pm_runtime_mark_last_busy(musb->controller);
->  	pm_runtime_put_autosuspend(musb->controller);
->  	return count;
->  }
-> @@ -243,7 +240,6 @@ static int musb_softconnect_show(struct seq_file *s, void *unused)
->  		reg = musb_readb(musb->mregs, MUSB_DEVCTL);
->  		connect = reg & MUSB_DEVCTL_SESSION ? 1 : 0;
->  
-> -		pm_runtime_mark_last_busy(musb->controller);
->  		pm_runtime_put_autosuspend(musb->controller);
->  		break;
->  	default:
-> @@ -304,7 +300,6 @@ static ssize_t musb_softconnect_write(struct file *file,
->  		}
->  	}
->  
-> -	pm_runtime_mark_last_busy(musb->controller);
->  	pm_runtime_put_autosuspend(musb->controller);
->  	return count;
->  }
-> diff --git a/drivers/usb/musb/musb_dsps.c b/drivers/usb/musb/musb_dsps.c
-> index 12f587ab8511..9f93ed59a7e6 100644
-> --- a/drivers/usb/musb/musb_dsps.c
-> +++ b/drivers/usb/musb/musb_dsps.c
-> @@ -296,7 +296,6 @@ static void otg_timer(struct timer_list *t)
->  	if (err < 0)
->  		dev_err(dev, "%s resume work: %i\n", __func__, err);
->  	spin_unlock_irqrestore(&musb->lock, flags);
-> -	pm_runtime_mark_last_busy(dev);
->  	pm_runtime_put_autosuspend(dev);
->  }
->  
-> diff --git a/drivers/usb/musb/musb_gadget.c b/drivers/usb/musb/musb_gadget.c
-> index 6869c58367f2..f6ea91df80e4 100644
-> --- a/drivers/usb/musb/musb_gadget.c
-> +++ b/drivers/usb/musb/musb_gadget.c
-> @@ -1258,7 +1258,6 @@ static int musb_gadget_queue(struct usb_ep *ep, struct usb_request *req,
->  
->  unlock:
->  	spin_unlock_irqrestore(&musb->lock, lockflags);
-> -	pm_runtime_mark_last_busy(musb->controller);
->  	pm_runtime_put_autosuspend(musb->controller);
->  
->  	return status;
-> @@ -1642,7 +1641,6 @@ static void musb_gadget_work(struct work_struct *work)
->  	spin_lock_irqsave(&musb->lock, flags);
->  	musb_pullup(musb, musb->softconnect);
->  	spin_unlock_irqrestore(&musb->lock, flags);
-> -	pm_runtime_mark_last_busy(musb->controller);
->  	pm_runtime_put_autosuspend(musb->controller);
->  }
->  
-> @@ -1862,7 +1860,6 @@ static int musb_gadget_start(struct usb_gadget *g,
->  	if (musb->xceiv && musb->xceiv->last_event == USB_EVENT_ID)
->  		musb_platform_set_vbus(musb, 1);
->  
-> -	pm_runtime_mark_last_busy(musb->controller);
->  	pm_runtime_put_autosuspend(musb->controller);
->  
->  	return 0;
-> @@ -1915,7 +1912,6 @@ static int musb_gadget_stop(struct usb_gadget *g)
->  	 */
->  
->  	/* Force check of devctl register for PM runtime */
-> -	pm_runtime_mark_last_busy(musb->controller);
->  	pm_runtime_put_autosuspend(musb->controller);
->  
->  	return 0;
-> diff --git a/drivers/usb/musb/omap2430.c b/drivers/usb/musb/omap2430.c
-> index 2970967a4fd2..191901317d7f 100644
-> --- a/drivers/usb/musb/omap2430.c
-> +++ b/drivers/usb/musb/omap2430.c
-> @@ -151,7 +151,6 @@ static void omap_musb_set_mailbox(struct omap2430_glue *glue)
->  	default:
->  		dev_dbg(musb->controller, "ID float\n");
->  	}
-> -	pm_runtime_mark_last_busy(musb->controller);
->  	pm_runtime_put_autosuspend(musb->controller);
->  	atomic_notifier_call_chain(&musb->xceiv->notifier,
->  			musb->xceiv->last_event, NULL);
-> -- 
-> 2.39.5
-> 
-
--- 
-
-Best regards,
-Peter
+DQo+IA0KPiBPbiBGcmksIEp1bCAxOCwgMjAyNSwgbGlyb25ncWluZyB3cm90ZToNCj4gPiBGcm9t
+OiBMaSBSb25nUWluZyA8bGlyb25ncWluZ0BiYWlkdS5jb20+DQo+ID4NCj4gPiBXaGVuIGEgdkNQ
+VSBoYXMgYSBkZWRpY2F0ZWQgcGh5c2ljYWwgQ1BVLCB0eXBpY2FsbHksIHRoZSBoeXBlcnZpc29y
+DQo+ID4gZGlzYWJsZXMgdGhlIEhMVCBleGl0IHRvbywNCj4gDQo+IEJ1dCBjZXJ0YWlubHkgbm90
+IGFsd2F5cy4gIEUuZy4gdGhlIGh5cGVydmlzb3IgbWF5IGRpc2FibGUgTVdBSVQgZXhpdGluZyBi
+dXQNCj4gbm90IEhMVCBleGl0aW5nLCBzbyB0aGF0IHRoZSBoeXBlcnZpc29yIGNhbiB0YWtlIGFj
+dGlvbiBpZiBhIGd1ZXN0IGtlcm5lbCByZWZ1c2VzDQo+IHRvIHVzZSBNV0FJVCBmb3Igd2hhdGV2
+ZXIgcmVhc29uLg0KPiANCj4gSSBhc3N1bWUgbmF0aXZlIHFzcGlubG9ja3Mgb3V0cGVyZm9ybSB2
+aXJ0X3NwaW5fbG9jaygpIGlycmVzcGVjdGl2ZSBvZiBITFQNCj4gZXhpdGluZyB3aGVuIHRoZSB2
+Q1BVIGhhcyBhIGRlZGljYXRlZCBwQ1BVPyANCg0KIkkgdGhpbmsgdGhpcyBpcyB0cnVlLiBBcyB0
+aGUgY29tbWVudCAoS1ZNOiBYODY6IENob29zZSBxc3BpbmxvY2sgd2hlbiBkZWRpY2F0ZWQgcGh5
+c2ljYWwgQ1BVcyBhcmUgYXZhaWxhYmxlKSBzYXlzOg0KJ1BWX0RFRElDQVRFRCA9IDEsIFBWX1VO
+SEFMVCA9IGFueXRoaW5nOiBkZWZhdWx0IGlzIHFzcGlubG9jaycuIA0KSG93ZXZlciwgdGhlIGN1
+cnJlbnQgY29kZSBkb2Vzbid0IHJlZmxlY3QgdGhpcy4gV2hlbiBQVl9VTkhBTFQ9MCwgaXQgc3Rp
+bGwgdXNlcyB2aXJ0X3NwaW5fbG9jaygpLiBNeSBwYXRjaCBpcyBmaXhpbmcgdGhpcyBpbmNvbnNp
+c3RlbmN5Lg0KDQpjb21taXQgYjI3OThiYTBiODc2OWI0MmYwMDg5OWI0NGE1MzhiNWZjZWNiNDgw
+ZA0KQXV0aG9yOiBXYW5wZW5nIExpIDx3YW5wZW5nbGlAdGVuY2VudC5jb20+DQpEYXRlOiAgIFR1
+ZSBGZWIgMTMgMDk6MDU6NDEgMjAxOCArMDgwMA0KDQogICAgS1ZNOiBYODY6IENob29zZSBxc3Bp
+bmxvY2sgd2hlbiBkZWRpY2F0ZWQgcGh5c2ljYWwgQ1BVcyBhcmUgYXZhaWxhYmxlDQoNCiAgICBX
+YWltYW4gTG9uZyBtZW50aW9uZWQgdGhhdDoNCiAgICA+IEdlbmVyYWxseSBzcGVha2luZywgdW5m
+YWlyIGxvY2sgcGVyZm9ybXMgd2VsbCBmb3IgVk1zIHdpdGggYSBzbWFsbA0KICAgID4gbnVtYmVy
+IG9mIHZDUFVzLiBOYXRpdmUgcXNwaW5sb2NrIG1heSBwZXJmb3JtIGJldHRlciB0aGFuIHB2cXNw
+aW5sb2NrDQogICAgPiBpZiB0aGVyZSBpcyB2Q1BVIHBpbm5pbmcgYW5kIHRoZXJlIGlzIG5vIHZD
+UFUgb3Zlci1jb21taXRtZW50Lg0KDQogICAgVGhpcyBwYXRjaCB1c2VzIHRoZSBLVk1fSElOVFNf
+REVESUNBVEVEIHBlcmZvcm1hbmNlIGhpbnQsIHdoaWNoIGlzDQogICAgcHJvdmlkZWQgYnkgdGhl
+IGh5cGVydmlzb3IgYWRtaW4sIHRvIGNob29zZSB0aGUgcXNwaW5sb2NrIGFsZ29yaXRobQ0KICAg
+IHdoZW4gYSBkZWRpY2F0ZWQgcGh5c2ljYWwgQ1BVIGlzIGF2YWlsYWJsZS4NCg0KICAgIFBWX0RF
+RElDQVRFRCA9IDEsIFBWX1VOSEFMVCA9IGFueXRoaW5nOiBkZWZhdWx0IGlzIHFzcGlubG9jaw0K
+ICAgIFBWX0RFRElDQVRFRCA9IDAsIFBWX1VOSEFMVCA9IDE6IGRlZmF1bHQgaXMgSHlicmlkIFBW
+IHF1ZXVlZC91bmZhaXIgbG9jaw0KICAgIFBWX0RFRElDQVRFRCA9IDAsIFBWX1VOSEFMVCA9IDA6
+IGRlZmF1bHQgaXMgdGFzDQoNCg0KDQo+IElmIHNvLCBpdCdzIHByb2JhYmx5IHdvcnRoIGNhbGxp
+bmcNCj4gdGhhdCBvdXQgaW4gdGhlIGNoYW5nZWxvZywgZS5nLiB0byBhc3N1YWdlIGFueSBmZWFy
+cy9jb25jZXJucyBhYm91dCB0aGlzIGJlaW5nDQo+IHVuZGVzaXJhYmxlIGZvciBzZXR1cHMgd2l0
+aCBLVk1fSElOVFNfUkVBTFRJTUUgKmFuZCoNCj4gS1ZNX0ZFQVRVUkVfUFZfVU5IQUxULg0KPiAN
+Ck9rLCBJIHdpbGwgcmV3cml0ZSB0aGUgY2hhbmdlbG9nDQoNCklmIHlvdSBzdGlsbCBoYXZlIGNv
+bmNlcm5zLCBJIHRoaW5rIHdlIGNhbiBjaGFuZ2UgdGhlIGNvZGUgYXMgYmVsb3cNCg0KZGlmZiAt
+LWdpdCBhL2FyY2gveDg2L2tlcm5lbC9rdm0uYyBiL2FyY2gveDg2L2tlcm5lbC9rdm0uYw0KaW5k
+ZXggOTIxYzFjNy4uNjI3NWQ3OCAxMDA2NDQNCi0tLSBhL2FyY2gveDg2L2tlcm5lbC9rdm0uYw0K
+KysrIGIvYXJjaC94ODYva2VybmVsL2t2bS5jDQpAQCAtMTA3OCw4ICsxMDc4LDE0IEBAIHZvaWQg
+X19pbml0IGt2bV9zcGlubG9ja19pbml0KHZvaWQpDQogICAgICAgICAqIHByZWZlcnJlZCBvdmVy
+IG5hdGl2ZSBxc3BpbmxvY2sgd2hlbiB2Q1BVIGlzIHByZWVtcHRlZC4NCiAgICAgICAgICovDQog
+ICAgICAgIGlmICgha3ZtX3BhcmFfaGFzX2ZlYXR1cmUoS1ZNX0ZFQVRVUkVfUFZfVU5IQUxUKSkg
+ew0KLSAgICAgICAgICAgICAgIHByX2luZm8oIlBWIHNwaW5sb2NrcyBkaXNhYmxlZCwgbm8gaG9z
+dCBzdXBwb3J0XG4iKTsNCi0gICAgICAgICAgICAgICByZXR1cm47DQorICAgICAgICAgICAgICAg
+aWYgKGt2bV9wYXJhX2hhc19oaW50KEtWTV9ISU5UU19SRUFMVElNRSkpIHsNCisgICAgICAgICAg
+ICAgICAgICAgICAgIHByX2luZm8oIlBWIHNwaW5sb2NrcyBkaXNhYmxlZCB3aXRoIEtWTV9ISU5U
+U19SRUFMVElNRSBoaW50c1xuIik7DQorICAgICAgICAgICAgICAgICAgICAgICBnb3RvIG91dDsN
+CisgICAgICAgICAgICAgICB9DQorICAgICAgICAgICAgICAgZWxzZSB7DQorICAgICAgICAgICAg
+ICAgICAgICAgICBwcl9pbmZvKCJQViBzcGlubG9ja3MgZGlzYWJsZWQsIG5vIGhvc3Qgc3VwcG9y
+dFxuIik7DQorICAgICAgICAgICAgICAgICAgICAgICByZXR1cm47DQorICAgICAgICAgICAgICAg
+fQ0KICAgICAgICB9DQoNCiAgICAgICAgLyoNCg0KVGhhbmtzDQoNCi1MaQ0KDQoNCj4gPiByZW5k
+ZXJpbmcgdGhlIEtWTV9GRUFUVVJFX1BWX1VOSEFMVCBmZWF0dXJlIHVuYXZhaWxhYmxlLCBhbmQN
+Cj4gPiB2aXJ0X3NwaW5fbG9ja19rZXkgaXMgZXhwZWN0ZWQgdG8gYmUgZGlzYWJsZWQgaW4gdGhp
+cyBjb25maWd1cmF0aW9uLCBidXQ6DQo+ID4NCj4gPiBUaGUgcHJvYmxlbWF0aWMgZXhlY3V0aW9u
+IGZsb3cgY2F1c2VkIHRoZSBlbmFibGVkIHZpcnRfc3Bpbl9sb2NrX2tleToNCj4gPiAtIEZpcnN0
+IGNoZWNrIFBWX1VOSEFMVA0KPiA+IC0gVGhlbiBjaGVjayBkZWRpY2F0ZWQgQ1BVcw0KPiA+DQo+
+ID4gU28gY2hhbmdlIHRoZSBvcmRlcjoNCj4gPiAtIEZpcnN0IGNoZWNrIGRlZGljYXRlZCBDUFVz
+DQo+ID4gLSBUaGVuIGNoZWNrIFBWX1VOSEFMVA0KPiA+DQo+ID4gVGhpcyBlbnN1cmVzIHZpcnRf
+c3Bpbl9sb2NrX2tleSBpcyBkaXNhYmxlIHdoZW4gZGVkaWNhdGVkIHBoeXNpY2FsDQo+ID4gQ1BV
+cyBhcmUgYXZhaWxhYmxlIGFuZCBITFQgZXhpdCBpcyBkaXNhYmxlZCwgYW5kIHRoaXMgd2lsbCBn
+aXZlcyBhDQo+ID4gcHJldHR5IHBlcmZvcm1hbmNlIGJvb3N0IGF0IGhpZ2ggY29udGVudGlvbiBs
+ZXZlbA0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogTGkgUm9uZ1FpbmcgPGxpcm9uZ3FpbmdAYmFp
+ZHUuY29tPg0KPiA+IC0tLQ0KPiA+ICBhcmNoL3g4Ni9rZXJuZWwva3ZtLmMgfCAyMCArKysrKysr
+KysrLS0tLS0tLS0tLQ0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMTAgaW5zZXJ0aW9ucygrKSwgMTAg
+ZGVsZXRpb25zKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvYXJjaC94ODYva2VybmVsL2t2bS5j
+IGIvYXJjaC94ODYva2VybmVsL2t2bS5jIGluZGV4DQo+ID4gOTIxYzFjNy4uOWNkYTc5ZiAxMDA2
+NDQNCj4gPiAtLS0gYS9hcmNoL3g4Ni9rZXJuZWwva3ZtLmMNCj4gPiArKysgYi9hcmNoL3g4Ni9r
+ZXJuZWwva3ZtLmMNCj4gPiBAQCAtMTA3MywxNiArMTA3Myw2IEBAIHN0YXRpYyB2b2lkIGt2bV93
+YWl0KHU4ICpwdHIsIHU4IHZhbCkgIHZvaWQNCj4gPiBfX2luaXQga3ZtX3NwaW5sb2NrX2luaXQo
+dm9pZCkgIHsNCj4gPiAgCS8qDQo+ID4gLQkgKiBJbiBjYXNlIGhvc3QgZG9lc24ndCBzdXBwb3J0
+IEtWTV9GRUFUVVJFX1BWX1VOSEFMVCB0aGVyZSBpcyBzdGlsbCBhbg0KPiA+IC0JICogYWR2YW50
+YWdlIG9mIGtlZXBpbmcgdmlydF9zcGluX2xvY2tfa2V5IGVuYWJsZWQ6IHZpcnRfc3Bpbl9sb2Nr
+KCkgaXMNCj4gPiAtCSAqIHByZWZlcnJlZCBvdmVyIG5hdGl2ZSBxc3BpbmxvY2sgd2hlbiB2Q1BV
+IGlzIHByZWVtcHRlZC4NCj4gPiAtCSAqLw0KPiA+IC0JaWYgKCFrdm1fcGFyYV9oYXNfZmVhdHVy
+ZShLVk1fRkVBVFVSRV9QVl9VTkhBTFQpKSB7DQo+ID4gLQkJcHJfaW5mbygiUFYgc3BpbmxvY2tz
+IGRpc2FibGVkLCBubyBob3N0IHN1cHBvcnRcbiIpOw0KPiA+IC0JCXJldHVybjsNCj4gPiAtCX0N
+Cj4gPiAtDQo+ID4gLQkvKg0KPiA+ICAJICogRGlzYWJsZSBQViBzcGlubG9ja3MgYW5kIHVzZSBu
+YXRpdmUgcXNwaW5sb2NrIHdoZW4gZGVkaWNhdGVkIHBDUFVzDQo+ID4gIAkgKiBhcmUgYXZhaWxh
+YmxlLg0KPiA+ICAJICovDQo+ID4gQEAgLTExMDEsNiArMTA5MSwxNiBAQCB2b2lkIF9faW5pdCBr
+dm1fc3BpbmxvY2tfaW5pdCh2b2lkKQ0KPiA+ICAJCWdvdG8gb3V0Ow0KPiA+ICAJfQ0KPiA+DQo+
+ID4gKwkvKg0KPiA+ICsJICogSW4gY2FzZSBob3N0IGRvZXNuJ3Qgc3VwcG9ydCBLVk1fRkVBVFVS
+RV9QVl9VTkhBTFQgdGhlcmUgaXMgc3RpbGwgYW4NCj4gPiArCSAqIGFkdmFudGFnZSBvZiBrZWVw
+aW5nIHZpcnRfc3Bpbl9sb2NrX2tleSBlbmFibGVkOiB2aXJ0X3NwaW5fbG9jaygpIGlzDQo+ID4g
+KwkgKiBwcmVmZXJyZWQgb3ZlciBuYXRpdmUgcXNwaW5sb2NrIHdoZW4gdkNQVSBpcyBwcmVlbXB0
+ZWQuDQo+ID4gKwkgKi8NCj4gPiArCWlmICgha3ZtX3BhcmFfaGFzX2ZlYXR1cmUoS1ZNX0ZFQVRV
+UkVfUFZfVU5IQUxUKSkgew0KPiA+ICsJCXByX2luZm8oIlBWIHNwaW5sb2NrcyBkaXNhYmxlZCwg
+bm8gaG9zdCBzdXBwb3J0XG4iKTsNCj4gPiArCQlyZXR1cm47DQo+ID4gKwl9DQo+ID4gKw0KPiA+
+ICAJcHJfaW5mbygiUFYgc3BpbmxvY2tzIGVuYWJsZWRcbiIpOw0KPiA+DQo+ID4gIAlfX3B2X2lu
+aXRfbG9ja19oYXNoKCk7DQo+ID4gLS0NCj4gPiAyLjkuNA0KPiA+DQo=
 
