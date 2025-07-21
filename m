@@ -1,139 +1,135 @@
-Return-Path: <linux-kernel+bounces-739233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26EF1B0C3A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:51:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE3D1B0C3AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:52:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 599F817C021
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:51:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C98E188CCF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D015F2BE7BB;
-	Mon, 21 Jul 2025 11:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC312BE7BB;
+	Mon, 21 Jul 2025 11:52:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WDaazon4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="brwquzbQ"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0A02576;
-	Mon, 21 Jul 2025 11:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55FF185C5E
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 11:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753098664; cv=none; b=KrxEHqwwVOz45gDPCL9gHs5OshG3FMG2YJeWq4iT/uUV2stL7JOUAZH71Hce+TFi9aauaL2Gyco1DCr7akwM5R7kPz8jQhDlpDSaMXLV45Mam6A1owe5p6+gCw1GQVkSl07VODTAWdu8CaumI6vkybFKtkZGaECpgmmiMB5bgqA=
+	t=1753098724; cv=none; b=sh4tmg85VM8i1m7MlLkFKKa5sfTvzkk1VyODUVXuq1biAeLIXWB3z8vLbSL4nAmDDHcGDHmSEP/5i6ldto9CwVAnF+rDxscs3P8yWOtbKHdJGKVuYq4WscZZ1m6dIDhRyo6S22WGPdSeRbOBRqA4LMwK9Fp/k2iV7ed0uLw2CYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753098664; c=relaxed/simple;
-	bh=IIOg+n003vrX7OOqFRa61XOd+zP+EXdAny96ulao+2s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mCM/W7+wEpE/7tNboljg/6znV+aqIkQhuXw/GcUvTwquMJS/9PFSzPdB+1a3i0iJZBJrCczt0G2TS3TLbI5dzI72T/5PtcB6RdK1AHKPIFxupgV1wJ18Ur7LiFsg6mFuyKOF106Sb3BrElpYcG2lYld2EuWIHNjjxgCS31GWcDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WDaazon4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4CFDC4CEED;
-	Mon, 21 Jul 2025 11:51:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753098663;
-	bh=IIOg+n003vrX7OOqFRa61XOd+zP+EXdAny96ulao+2s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WDaazon4OqT1y0z5AtlH4mVeLrw2dkbCcvefey11ZTbUagBemFYY2QgLRZ9+S1kJ/
-	 sABHCEj5Xn5mjkMXTKpeJastww1PzoyJ4w6iZSm1xmss7FRBtcKR9l0C1OopR+RvPF
-	 88LxIvJ6R5+IDZIdcgupzkNVT/oS+n2q4DxVBfph4jiMIGcM1eyDRbNvI3cgF+xc4c
-	 VCNa6Cw6ZWSc66NkRqbdQaIjhO9MkkeKAPRxmQcnw4GIkwVPOuS8UCOcmA20k6CJVv
-	 xLXM3gClwTSSTYTvk0tmFNFqskxHGuEmwB58D6qKQlvEdvXC9shte5iBQ2j4L7AwTP
-	 y0t9wUEDuUf9w==
-Message-ID: <7ebb8be3-ce67-4989-bae6-8459aef74528@kernel.org>
-Date: Mon, 21 Jul 2025 13:51:00 +0200
+	s=arc-20240116; t=1753098724; c=relaxed/simple;
+	bh=l7F7xw4WgGtLgItJ1SqdwtQ/XTF29jE8c0Ug1BN7hMw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=m1YZg6VgeFFGUXqt/msPa9zL8m/5eBpGCi4ajhsj8VVB+d8qfq30eUMUQ1vvj62lZKeKIlArgFbwVhzAW5qMZvX+jcQFt8rQIfzBAz/ZyxzvYcchyZas9SlppYN2j6OlNqpwsqwxQLeaZjVUEk4AU2WEfqSycWz85JnifhCwIC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=brwquzbQ; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-748feca4a61so2273253b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 04:52:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753098723; x=1753703523; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qTqRImf20eq2Y0+BellCjyg4wSRmoBAzUEvr22U7bK4=;
+        b=brwquzbQ5NvOjiSx9/uk0XnrYOJwJ1wOQWathQMpnffP22scKyueJ5Q2w8zinz3PAE
+         QdF94zM1oq4ojwySPrFT/FQabwVPPPUR10/9GrlEl+ecfAQB+A2c8NMQaOK2vNZThTvE
+         MVum9XP/ooS/otNCdh4P9Bf2/I+9VU1PjBBbINkmpbNKz/4mDa62uKUZ39bC9t1bJUD6
+         eP4qLJT1lqockpbGMxCskxyfkdxF2JGufku6xleHBOrWVhwlTZ9G7mv+AJzCJFd5AVUp
+         O6k+lRRlsEKXGEWtUOWUwYjHUxO0r9Gp7BDCzkUtDhfVxzrjJhqr4dp12/c5U4uVm86r
+         aOzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753098723; x=1753703523;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qTqRImf20eq2Y0+BellCjyg4wSRmoBAzUEvr22U7bK4=;
+        b=bxSMZ+IYtVEG0w7UqjuWVaTXVRyRBa8ItLZqG6mYrk5s0sgPY0CfhdDrlwLPI9ejCW
+         rgS/oh289fT2OPQONZjZo7v3MLFSzI4coHimyUZ+tI5Opvo1XLM+nuIaIBElBSTQXEk5
+         HIcE0BW/IBDupswXrASyxR60wQPSwJSOte0hQE/mBV1/Xxu0rHTnkveknQWyPgtolMKE
+         Q9hmey7x3Ygw9SJtCUgN/yeEQm6fHZds5OjQkxrVJK0We37hH9pZSBgE/wJdkOSRW3Fu
+         DtoV1lkkebBukkSWP9/p2gLz+UkWeB/FRloWNByRjcQwUiLZkPRWoBESlHdTgV0W0gGm
+         0fsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUc4Ni849ohfqBVd/JO8G6czqnAZZVFuGdXZRwQr/YZ+iDT6XQVTqPvYsLEDYiQvB16MjgXEMCQvByg58s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzpm8nZ0sngn2+o6BwCBxM3a8+SvQdZ6kqw1ydmLm9DpeA3JIaq
+	Z/M8c6dzn3MoJ8CrqOyI7Aleom9YYOeYeLzqrcpzm8RqEwsOiO5V41PR
+X-Gm-Gg: ASbGncsYrfMnx5wK7U7grOjQyTYMckeZlmBi53HLx5HTmwFxa1Q82fPbwFqPr6I6tgv
+	N9pkGvkmJ0lplDJUpNlcRS3/sAziQFbHKfvvxAxHeO6wOPDqBVgHEh+KWOjZ1axoknbP9q6lwm9
+	G5bnF8A73dLCy+3VB9f2dTJvGwILrMRRKZLFRAGEPkZ+PBrxOs9AskC27Y6j4lkK0jitONvK147
+	j39eYJhPnemDlTuPoRkR0YAVygyy1XtxZEakubZ+hSXdhPGhfYKo/UuDRDV7fREOTmNeO3nVF68
+	bXafxnz2YLt2cLj7kJwEpqGzZO5T+DCsNokPlYIqSJaSI0xKH0BrqcnEgxoIqoIGDRiHn4WnW9a
+	U35PzqQxMciUyOntp+BiCI96oSpv3+xzZhT42j8FehEXoOUlB
+X-Google-Smtp-Source: AGHT+IFf3GKJxgu1xGIi32lH3bEVRBQac1EzPtiIwRT+P8U0Db9LLVd6udzMTiiG3M3HwCjsbbP6xw==
+X-Received: by 2002:a05:6a21:7a46:b0:235:4a12:6adb with SMTP id adf61e73a8af0-2381426c08dmr31515037637.33.1753098722512;
+        Mon, 21 Jul 2025 04:52:02 -0700 (PDT)
+Received: from DESKTOP-GIED850.localdomain ([114.247.113.178])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f2fe8c06esm5105966a12.19.2025.07.21.04.51.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Jul 2025 04:52:02 -0700 (PDT)
+From: wang lian <lianux.mm@gmail.com>
+To: richard.weiyang@gmail.com
+Cc: Liam.Howlett@oracle.com,
+	akpm@linux-foundation.org,
+	brauner@kernel.org,
+	broonie@kernel.org,
+	david@redhat.com,
+	gkwang@linx-info.com,
+	jannh@google.com,
+	lianux.mm@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	lorenzo.stoakes@oracle.com,
+	ludovico.zy.wu@gmail.com,
+	p1ucky0923@gmail.com,
+	ryncsn@gmail.com,
+	shuah@kernel.org,
+	sj@kernel.org,
+	vbabka@suse.cz,
+	zijing.zhang@proton.me,
+	ziy@nvidia.com
+Subject: Re: [PATCH 1/2] selftests/mm: reuse FORCE_READ to replace "asm volatile("" : "+r" (XXX));"
+Date: Mon, 21 Jul 2025 19:51:49 +0800
+Message-ID: <20250721115149.42755-1-lianux.mm@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250718000835.65qaxtwfgwborgls@master>
+References: <20250718000835.65qaxtwfgwborgls@master>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: ov8865: Preserve hflip in
- ov8865_mode_binning_configure
-To: Allen Ballway <ballway@chromium.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250717-su-v1-1-0f740fd8bfb6@chromium.org>
-Content-Language: en-US, nl
-From: Hans de Goede <hansg@kernel.org>
-In-Reply-To: <20250717-su-v1-1-0f740fd8bfb6@chromium.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
+> On Thu, Jul 17, 2025 at 09:18:56PM +0800, wang lian wrote:
+> >Several mm selftests use the `asm volatile("" : "+r" (variable));`
+> >construct to force a read of a variable, preventing the compiler from
+> >optimizing away the memory access. This idiom is cryptic and duplicated
+> >across multiple test files.
+> >
+> >Following a suggestion from David[1], this patch refactors this
+> >common pattern into a FORCE_READ() macro
+> >
+> >[1] https://lore.kernel.org/lkml/4a3e0759-caa1-4cfa-bc3f-402593f1eee3@redhat.com/
+> >
+> >Signed-off-by: wang lian <lianux.mm@gmail.com>
+> >Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-On 17-Jul-25 11:07 PM, Allen Ballway wrote:
-> Prevents ov8865_mode_binning_configure from overwriting the hflip
-> register values. Allows programs to configure the hflip.
-> 
-> Signed-off-by: Allen Ballway <ballway@chromium.org>
+> Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
 
-Thank you for your patch.
+Thanks!
 
-> ---
->  drivers/media/i2c/ov8865.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/i2c/ov8865.c b/drivers/media/i2c/ov8865.c
-> index 95ffe7536aa6aba814f4e5c3d12e7279470b2f07..40a852d31f13aff960acfd09b378d71525e19332 100644
-> --- a/drivers/media/i2c/ov8865.c
-> +++ b/drivers/media/i2c/ov8865.c
-> @@ -1746,7 +1746,13 @@ static int ov8865_mode_binning_configure(struct ov8865_sensor *sensor,
->  	if (ret)
->  		return ret;
->  
-> -	value = OV8865_FORMAT2_HSYNC_EN;
-> +	ret = ov8865_read(sensor, OV8865_FORMAT2_REG, &value);
-> +	if (ret)
-> +		return ret;
-> +
-> +	value &= OV8865_FORMAT2_FLIP_HORZ_ISP_EN |
-> +		  OV8865_FORMAT2_FLIP_HORZ_SENSOR_EN;
-> +	value |= OV8865_FORMAT2_HSYNC_EN;
->  
->  	if (mode->binning_x)
->  		value |= OV8865_FORMAT2_FST_HBIN_EN;
-
-this change should not be necessary. Lets assume we start
-with the sensor runtime-suspended, then ov8865_resume()
-will call:
-
-ov8865_sensor_power(true)
-ov8865_sensor_init()
-  ov8865_state_configure()
-    ov8865_mode_configure()
-      ov8865_mode_binning_configure()
-__v4l2_ctrl_handler_setup()
-
-Where the __v4l2_ctrl_handler_setup() call will apply
-all control settings including hflip.
-
-So unless you manage to hit a code-path where somehow
-ov8865_state_configure() gets called without calling
-__v4l2_ctrl_handler_setup() afterwards then this should
-not be necessary.
-
-Note the whole runtime-pm / calling of ov8865_sensor_init() /
-ov8865_state_configure() code in this driver is somewhat
-unusual. So it could be there is a bug there.
-
-But I don't believe that this patch is the correct fix.
-
-Regards,
-
-Hans
+> -- 
+> Wei Yang
+> Help you, Help me
 
 
-
-
-
-> 
-> ---
-> base-commit: 6832a9317eee280117cd695fa885b2b7a7a38daf
-> change-id: 20250717-su-94b187fa3d1e
-> 
-> Best regards,
-
+Best regards,
+Wang Lian
 
