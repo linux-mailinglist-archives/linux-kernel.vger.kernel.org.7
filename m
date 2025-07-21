@@ -1,114 +1,188 @@
-Return-Path: <linux-kernel+bounces-738830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 834C9B0BDD5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:38:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B4054B0BDD7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:38:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A86983AC7D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:37:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1F8A3BEA0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:37:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2748D284693;
-	Mon, 21 Jul 2025 07:37:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B53284693;
+	Mon, 21 Jul 2025 07:38:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GzhaY/YI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="TH1A6/Ui"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836F7283FE8;
-	Mon, 21 Jul 2025 07:37:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07842283FF8;
+	Mon, 21 Jul 2025 07:37:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753083462; cv=none; b=LLXiOjKfLinXZ6wLPcEu0ETrIZB3FUgem++9fj9sirR5oOBtQFQRMrXunI5CcgBX/ovYFy9XrPhnppJePEmQp5lOO3d7MfeQCJHOSYo60J3Z8HNzDxZv0fN7vStWa5sv+z03jVMSEZ4MWWIecTDNPA/Grh4uYTImdoTcgl2Y2Fo=
+	t=1753083484; cv=none; b=qUrcdrjPLlVzRRcZSYhHkod0XyYpuOwUjZqHdjieOlUHxhsXECq0BGmTDbGXTYDLndyCBThRHoAxvO3SQjA4bylhz/MZ7PMTYKiWYdH+H4UU9IX0xD2M7hVqoBvRYID93jL6aFgNQIo88+iPQjm+JMMstYjUgOChf5smo8cSkNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753083462; c=relaxed/simple;
-	bh=gX1shcXkNq8kGP80WbZWZhNw8XOGe5hjaiGjaxBIe8Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=USrLOw7QpWy1YTqNk95Rr93kQ8oGEaFT3r4XYpuHcgWxwhaGV+eosuDOQ5Uu923OksgXfMWsXuLRKQTqopi1Zr/5e5DyyAPIg4fM/5M/AuXwxs+77u4MCJ+7mJ8WuGmwuQIUGahB/f3h+P7DB/PzYdsrm19hEzvs8Kmo0dnqDcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GzhaY/YI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C61DDC4CEED;
-	Mon, 21 Jul 2025 07:37:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753083462;
-	bh=gX1shcXkNq8kGP80WbZWZhNw8XOGe5hjaiGjaxBIe8Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GzhaY/YI+eCsiSfFYzJm8buehbzWYHGIXYnYXgb4lf1dQrFqS+h45vTifmAUkYPGw
-	 aYxn8U9Y/NBXFxevEhnjarI0hetPPfpgp5aQ7qiN3/sOFtoJLLtudv49hxJojd2Z43
-	 fK0NQxk9/oJnfuA11stiV6dez/R3ngVp3MZOQ176Dr5gz/uJE7qfFASffvAlfDVkJU
-	 F12lNJ5pEW8sVytZBNEwIMk8IPJaBna02sRuvF41IN0Xl9V8iiGY0BhIpQ6PSofg/s
-	 EIHw5kXmqkeSq39gBFqj2KtYoO2s6drkLTC9tO4a4AqgMkZTFO3DRJdYbFOyul1ItO
-	 k+ikcX/R0SoSA==
-Date: Mon, 21 Jul 2025 09:37:39 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Jorge Marques <jorge.marques@analog.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Frank Li <Frank.Li@nxp.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-i3c@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	gastmaier@gmail.com
-Subject: Re: [PATCH v6 1/2] dt-bindings: i3c: Add adi-i3c-master
-Message-ID: <20250721-large-daffy-vole-d2d25d@kuoka>
-References: <20250717-adi-i3c-master-v6-0-6c687ed71bed@analog.com>
- <20250717-adi-i3c-master-v6-1-6c687ed71bed@analog.com>
- <20250720232726.GA3055763-robh@kernel.org>
+	s=arc-20240116; t=1753083484; c=relaxed/simple;
+	bh=bt0+EbWZOK5Wn072ur1LpkJHELDecRXvRC1W0F8qXco=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Jh0Be+egKLXaf71VNS2Fl1H7e6BuI0KTPsJNHdDUtmVDwIC/9JFN90v1vm48kFXPPxHAQdKJ+bbZao/GRgWveWFV0xHw6g6KSUXi8/cLWIJmS6q+zr26xnZrwJt+Ecsx3GTrM5efXF/GUBmBQogPYQg8ltiswfmTJwi/ahWaE7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=TH1A6/Ui; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753083324;
+	bh=0MkOJWk9HiseEndt7uOPyDYIQ7A8Ow6qXqBDTuziVmk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=TH1A6/UiP+yPdVlyseyX2Z/cO42eiX1Js2wMX0yl3A21yOBH0f8vMzAJhaSnC/gYf
+	 EJHWfKpjIsZEXg7iVyPYZDEzFLWd2z4d+kLoXUpn+vc1MHjZunrs2gNMFt/Tfk3bZs
+	 pokzw4tdDlR74zm5Tfne/27E5vrwAcrWv6ZYJ6SOTVxXfDpzT9t9kKTtDJx+pHxIog
+	 hlgojv7hdTVJlo/4VEWfDN8HQ9xADnlYJpcOdRar6tKBBp8or87VutXJZNR02XYpLR
+	 PVJDm5+wTYK6Acq703DiHpOLjqB18IYhxQN0qXaFGXH5iPT5XQQ4vSs2kqlUgBHL0l
+	 9+/xvrAr2mbiQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4blscq5z7vz4wyh;
+	Mon, 21 Jul 2025 17:35:23 +1000 (AEST)
+Date: Mon, 21 Jul 2025 17:37:54 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andy
+ Shevchenko <andriy.shevchenko@linux.intel.com>, George Abraham P
+ <george.abraham.p@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: linux-next: build failure after merge of all the trees
+Message-ID: <20250721173754.42865913@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250720232726.GA3055763-robh@kernel.org>
+Content-Type: multipart/signed; boundary="Sig_/zBoZgKnJFuP4hhRhpX1HCff";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Sun, Jul 20, 2025 at 06:27:26PM -0500, Rob Herring wrote:
-> > +description: |
-> > +  FPGA-based I3C controller designed to interface with I3C and I2C peripherals,
-> > +  implementing a subset of the I3C-basic specification. The IP core is tested
-> > +  on arm, microblaze, and arm64 architectures.
-> > +
-> > +  https://analogdevicesinc.github.io/hdl/library/i3c_controller
-> > +
-> > +maintainers:
-> > +  - Jorge Marques <jorge.marques@analog.com>
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: adi,i3c-master-v1
-> 
-> If you want to use version numbers, they need to correlate to something 
-> and you need to document what that is. I don't see anything in the above 
-> link about a version 1. Kind of feels like you just made it up.
+--Sig_/zBoZgKnJFuP4hhRhpX1HCff
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I asked already at v4 to document the naming/versioning, which was a
-result of one of previous discussions, in the binding description. :/
+Hi all,
 
-> 
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    minItems: 1
-> > +    items:
-> > +      - description: The AXI interconnect clock, drives the register map.
-> > +      - description: The I3C controller clock. AXI clock drives all logic if not provided.
-> 
-> Is that a description of how the h/w works? The controller clock input 
-> can literally be left disconnected? If 1 clock source drives both 
-> inputs, then the binding should reflect that.
+After merging all the trees, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-This was explained in reply, but never made as proper explanation to the binding.
+In file included from drivers/crypto/intel/qat/qat_common/adf_pm_dbgfs_util=
+s.c:4:
+include/linux/sprintf.h:11:54: error: unknown type name 'va_list'
+   11 | __printf(2, 0) int vsprintf(char *buf, const char *, va_list);
+      |                                                      ^~~~~~~
+include/linux/sprintf.h:1:1: note: 'va_list' is defined in header '<stdarg.=
+h>'; this is probably fixable by adding '#include <stdarg.h>'
+  +++ |+#include <stdarg.h>
+    1 | /* SPDX-License-Identifier: GPL-2.0 */
+include/linux/sprintf.h:13:71: error: unknown type name 'va_list'
+   13 | __printf(3, 0) int vsnprintf(char *buf, size_t size, const char *fm=
+t, va_list args);
+      |                                                                    =
+   ^~~~~~~
+include/linux/sprintf.h:13:71: note: 'va_list' is defined in header '<stdar=
+g.h>'; this is probably fixable by adding '#include <stdarg.h>'
+include/linux/sprintf.h:15:72: error: unknown type name 'va_list'
+   15 | __printf(3, 0) int vscnprintf(char *buf, size_t size, const char *f=
+mt, va_list args);
+      |                                                                    =
+    ^~~~~~~
+include/linux/sprintf.h:15:72: note: 'va_list' is defined in header '<stdar=
+g.h>'; this is probably fixable by adding '#include <stdarg.h>'
+include/linux/sprintf.h:17:70: error: unknown type name 'va_list'
+   17 | __printf(2, 0) __malloc char *kvasprintf(gfp_t gfp, const char *fmt=
+, va_list args);
+      |                                                                    =
+  ^~~~~~~
+include/linux/sprintf.h:17:70: note: 'va_list' is defined in header '<stdar=
+g.h>'; this is probably fixable by adding '#include <stdarg.h>'
+include/linux/sprintf.h:18:73: error: unknown type name 'va_list'
+   18 | __printf(2, 0) const char *kvasprintf_const(gfp_t gfp, const char *=
+fmt, va_list args);
+      |                                                                    =
+     ^~~~~~~
+include/linux/sprintf.h:18:73: note: 'va_list' is defined in header '<stdar=
+g.h>'; this is probably fixable by adding '#include <stdarg.h>'
+include/linux/sprintf.h:21:55: error: unknown type name 'va_list'
+   21 | __scanf(2, 0) int vsscanf(const char *, const char *, va_list);
+      |                                                       ^~~~~~~
+include/linux/sprintf.h:21:55: note: 'va_list' is defined in header '<stdar=
+g.h>'; this is probably fixable by adding '#include <stdarg.h>'
 
-Jorge,
-When you answer to a review about uncertain pieces like that, usually
-outcome of the discussion must end up also in new patch - either in
-commit msg or better in the binding itself. I also asked about this -
-documenting the outcode - in v4.
+I don't know what root caused this, but I have applied the following
+patch for today.
 
-Best regards,
-Krzysztof
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 21 Jul 2025 16:15:57 +1000
+Subject: [PATCH] sprintf.h requires stdarg.h
 
+In file included from drivers/crypto/intel/qat/qat_common/adf_pm_dbgfs_util=
+s.c:4:
+include/linux/sprintf.h:11:54: error: unknown type name 'va_list'
+   11 | __printf(2, 0) int vsprintf(char *buf, const char *, va_list);
+      |                                                      ^~~~~~~
+include/linux/sprintf.h:1:1: note: 'va_list' is defined in header '<stdarg.=
+h>'; this is probably fixable by adding '#include <stdarg.h>'
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/sprintf.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/linux/sprintf.h b/include/linux/sprintf.h
+index 521bb2cd2648..f06f7b785091 100644
+--- a/include/linux/sprintf.h
++++ b/include/linux/sprintf.h
+@@ -4,6 +4,7 @@
+=20
+ #include <linux/compiler_attributes.h>
+ #include <linux/types.h>
++#include <linux/stdarg.h>
+=20
+ int num_to_str(char *buf, int size, unsigned long long num, unsigned int w=
+idth);
+=20
+--=20
+2.50.1
+
+Is there any good reason not to do this?
+
+I guess this patch should have
+
+Fixes: 39ced19b9e60 ("lib/vsprintf: split out sprintf() and friends")
+
+but that is not the immediate cause.  This has been exposed by the
+inclusion of a new file
+(drivers/crypto/intel/qat/qat_common/adf_pm_dbgfs_utils.c in commit
+7c68005a4610 ("crypto: qat - relocate power management debugfs helper
+APIs").  Maybe every other use of sprintf.h also has (explicitly or
+implicitly) an include of stdarg.h - possibly via kernel.h.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/zBoZgKnJFuP4hhRhpX1HCff
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh97lIACgkQAVBC80lX
+0GyJkQf+LbwlkszRqp0qm2CRXodvogkaPzASGUlvkTZSVQ3GKyJHtz/vki2CSef0
+1HMtOqLtcdqWc5rdpVTavVCLV4+Mxq3tb9zAljREpGbr0tLNzeIgJH9yBBxVlEvA
+RS6HqrjE6fai3ud9BzQtpoa1OX04Mp7EMqZRAbAYHacMqxJT8Im2I1iTEXUicbpe
+5ngkBJMhebQ5Crae4Zi9blm3YJ8xLwmk2O7wSr8VcFml1aHcgeteIU4xDVWtnk9/
+fdD7TvyiHpqiWpyi/b40frPym1OCZ0L2oPOIv8Hlr75wy+rKn/ku0BFa/lD7cSRt
+ys8hGpL7jBTAt3xU7QFjVHTg/cQnpQ==
+=mYqE
+-----END PGP SIGNATURE-----
+
+--Sig_/zBoZgKnJFuP4hhRhpX1HCff--
 
