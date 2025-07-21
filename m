@@ -1,139 +1,114 @@
-Return-Path: <linux-kernel+bounces-738829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9EE2B0BDD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:37:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 834C9B0BDD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:38:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9D4C189DA33
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:38:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A86983AC7D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:37:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2964B2853EB;
-	Mon, 21 Jul 2025 07:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2748D284693;
+	Mon, 21 Jul 2025 07:37:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w9BZ1EbZ"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GzhaY/YI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B69E285049
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 07:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836F7283FE8;
+	Mon, 21 Jul 2025 07:37:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753083443; cv=none; b=O4SrozKIIqCb8a1sLbW9w1w6Nq/8kppoGw/QQblfzGuEghIziKYJ0VUge8A8Z+JDUdfb4j7XuuXPJKUeGGYQFyvbNb6C8P6b/o2zOgG/o8aDg1QdTkgTUJGpHWg5aWaYbctP/QrVIbTiWmK0GKzERiluMwDeydr+AWtb0XLIg0Y=
+	t=1753083462; cv=none; b=LLXiOjKfLinXZ6wLPcEu0ETrIZB3FUgem++9fj9sirR5oOBtQFQRMrXunI5CcgBX/ovYFy9XrPhnppJePEmQp5lOO3d7MfeQCJHOSYo60J3Z8HNzDxZv0fN7vStWa5sv+z03jVMSEZ4MWWIecTDNPA/Grh4uYTImdoTcgl2Y2Fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753083443; c=relaxed/simple;
-	bh=Kgi56yPbZYI58ok8oxCLNd5/43u9mGkk0C1PxCt4lLs=;
+	s=arc-20240116; t=1753083462; c=relaxed/simple;
+	bh=gX1shcXkNq8kGP80WbZWZhNw8XOGe5hjaiGjaxBIe8Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m+OeRk2IqyjbH64dCwgApi9xfQ5LyveMcJ28bhrBK2fVADZDeqLyCsin8SNzarA/QWh/yWoHafZRG6M99pe4ZCE0ZS0syKefs6woOR0p0wEUDm+ZVmzZXdpPvIYUv4LwIpNrQsu8bB0TQq6nxcqsxDir+y2SY9yOrgJNxW+F1eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w9BZ1EbZ; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-23636167afeso37787505ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 00:37:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753083440; x=1753688240; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AW7C0Fw+OUlttGGnAPG+jvEboZ7WFaopv/dP3AY9iLI=;
-        b=w9BZ1EbZHIYy6Uo0SI9IpYdwLxYfrq7y+jNUnSFDO8FyzRcFEnJS1uHbTX18QK63Ge
-         Qwd7Stz5tU+TwvxMVg3hlee7R2dmp8BQ0m0SBqfqjKqP3usdwC30r9xVjH+7lZTy+UCJ
-         BJdRfSMkz0vXXDZbfuy359xH5Mn9whuJOu+BpmZaWgLzlD1tJt2Ke1A47p8YWdu++tJj
-         eS2E7B1kMJn5hy5ZRHiomRfvI9oxNUvcOi2+kwuSUwFkyXru6gvE+DHtQamKJS4zHnH5
-         M2DUY0CqnLM/Gt9X529iaK4areMtHrUjINlmJHXCOrfjis0D3bpLjwYSARh6Iwux7qhx
-         mmGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753083440; x=1753688240;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AW7C0Fw+OUlttGGnAPG+jvEboZ7WFaopv/dP3AY9iLI=;
-        b=O4j7vSrrq+DjaOHj6g1PjMLTSzfngiy1uZf2kAVOHD4u0DwJ6KxCBLjxiNZgESUEL3
-         zs44NWMoElZ+bne8ac0hbm8BEa8cZDIMAeUUE4vBhT1jC9J6AmC+VpB3WobsfmaiT/ft
-         S5p4o5KMSvTv9X55XEBOZRy2vGBiQjbDR11Yj8x2KqwESNnHPl4hdC5B6OUR98NK2hAI
-         QM+CAV4AQkdvfEZPMW/VgPbRCDcFI3eLq7lK2GLVcsXXmGzCzTSxtm/H5pmzR9Qeae9p
-         qyiE8TfGwqOj23FJz2luEqMaZ4BZJBqE4C+xh/J1AG2EWc4EIn2Rus3Y3u05Arc1+cI0
-         /lOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDyf+LXcParI9wbzzc+Olj5o7tH8USRkBWhDzlaSCv69XMiFGulo7Jbta2+24kEVMGqM7fxCHYlGYbDmw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywlfnc91FtPRjTgJSX/fq0QJ/x0yXC3IhorUL8nXCu13TThDJpT
-	YYcNeOFvHs2HivrYZedVWpf/Li8clurgAqH753cKQnAHScbtn+o5x1WmruJ0mQ5497A=
-X-Gm-Gg: ASbGnctAqhf/dQzBoK2s/XNMz/n1y6ESOt2bi+H3u3DBYYBMKugzQJOvgXW24klDeNQ
-	86OPggC7R9bd4JBZ/Hn3stKTA9x1FqpljB7lkCdZNisO0kjkYOVGnlgHf/sLExMUxs8eTLo4SxE
-	XzXp0W44b9fx2WF5uVZz0RDVlT9jaIzWyf3LaDqLLsvsKGdU4dyBQ/S8F0TMPPHrNBm4Ih4hf3h
-	4yvUGynRJPC4wgITc/ZB+HyNZ1L6A/wc8MrCDHB+BVFvCwCauOw4gXNmt+CfrXuEOZ24haPseU/
-	pyYeqlHFFp6oP5xT035ZPuzZ7z3j8vPKAWD8Mx6QkuwkIHW2XRLhQDuGc/l07XIHj1/dnBs45Mo
-	gTTW6/Ro8NfI4RkM34hItTos=
-X-Google-Smtp-Source: AGHT+IFk3DmrxLSOuu1QML7M9aZcW/M1lwjmHi2A/P/8p7kUrsmSSAAA7m474B7f7eHzVA50L8YW7Q==
-X-Received: by 2002:a17:903:1a45:b0:234:c2e7:a102 with SMTP id d9443c01a7336-23e2576c1bfmr262018575ad.43.1753083440496;
-        Mon, 21 Jul 2025 00:37:20 -0700 (PDT)
-Received: from localhost ([122.172.81.72])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b60ec88sm52502155ad.65.2025.07.21.00.37.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 00:37:19 -0700 (PDT)
-Date: Mon, 21 Jul 2025 13:07:17 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 1/6] rust: kernel: remove `fmt!`, fix
- clippy::uninlined-format-args
-Message-ID: <20250721073717.i6hr4iesfupzvtwf@vireshk-i7>
-References: <20250704-core-cstr-prepare-v1-0-a91524037783@gmail.com>
- <20250704-core-cstr-prepare-v1-1-a91524037783@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=USrLOw7QpWy1YTqNk95Rr93kQ8oGEaFT3r4XYpuHcgWxwhaGV+eosuDOQ5Uu923OksgXfMWsXuLRKQTqopi1Zr/5e5DyyAPIg4fM/5M/AuXwxs+77u4MCJ+7mJ8WuGmwuQIUGahB/f3h+P7DB/PzYdsrm19hEzvs8Kmo0dnqDcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GzhaY/YI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C61DDC4CEED;
+	Mon, 21 Jul 2025 07:37:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753083462;
+	bh=gX1shcXkNq8kGP80WbZWZhNw8XOGe5hjaiGjaxBIe8Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GzhaY/YI+eCsiSfFYzJm8buehbzWYHGIXYnYXgb4lf1dQrFqS+h45vTifmAUkYPGw
+	 aYxn8U9Y/NBXFxevEhnjarI0hetPPfpgp5aQ7qiN3/sOFtoJLLtudv49hxJojd2Z43
+	 fK0NQxk9/oJnfuA11stiV6dez/R3ngVp3MZOQ176Dr5gz/uJE7qfFASffvAlfDVkJU
+	 F12lNJ5pEW8sVytZBNEwIMk8IPJaBna02sRuvF41IN0Xl9V8iiGY0BhIpQ6PSofg/s
+	 EIHw5kXmqkeSq39gBFqj2KtYoO2s6drkLTC9tO4a4AqgMkZTFO3DRJdYbFOyul1ItO
+	 k+ikcX/R0SoSA==
+Date: Mon, 21 Jul 2025 09:37:39 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Jorge Marques <jorge.marques@analog.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Frank Li <Frank.Li@nxp.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-i3c@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	gastmaier@gmail.com
+Subject: Re: [PATCH v6 1/2] dt-bindings: i3c: Add adi-i3c-master
+Message-ID: <20250721-large-daffy-vole-d2d25d@kuoka>
+References: <20250717-adi-i3c-master-v6-0-6c687ed71bed@analog.com>
+ <20250717-adi-i3c-master-v6-1-6c687ed71bed@analog.com>
+ <20250720232726.GA3055763-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250704-core-cstr-prepare-v1-1-a91524037783@gmail.com>
+In-Reply-To: <20250720232726.GA3055763-robh@kernel.org>
 
-On 04-07-25, 16:14, Tamir Duberstein wrote:
-> Rather than export a macro that delegates to `core::format_args`, simply
-> re-export `core::format_args` as `fmt` from the prelude. This exposes
-> clippy warnings which were previously obscured by this macro, such as:
+On Sun, Jul 20, 2025 at 06:27:26PM -0500, Rob Herring wrote:
+> > +description: |
+> > +  FPGA-based I3C controller designed to interface with I3C and I2C peripherals,
+> > +  implementing a subset of the I3C-basic specification. The IP core is tested
+> > +  on arm, microblaze, and arm64 architectures.
+> > +
+> > +  https://analogdevicesinc.github.io/hdl/library/i3c_controller
+> > +
+> > +maintainers:
+> > +  - Jorge Marques <jorge.marques@analog.com>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: adi,i3c-master-v1
 > 
->     warning: variables can be used directly in the `format!` string
->       --> ../drivers/cpufreq/rcpufreq_dt.rs:21:43
->        |
->     21 |     let prop_name = CString::try_from_fmt(fmt!("{}-supply", name)).ok()?;
->        |                                           ^^^^^^^^^^^^^^^^^^^^^^^
->        |
->        = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#uninlined_format_args
->        = note: `-W clippy::uninlined-format-args` implied by `-W clippy::all`
->        = help: to override `-W clippy::all` add `#[allow(clippy::uninlined_format_args)]`
->     help: change this to
->        |
->     21 -     let prop_name = CString::try_from_fmt(fmt!("{}-supply", name)).ok()?;
->     21 +     let prop_name = CString::try_from_fmt(fmt!("{name}-supply")).ok()?;
->        |
-> 
-> Thus fix them in the same commit. This could possibly be fixed in two
-> stages, but the diff is small enough (outside of kernel/str.rs) that I
-> hope it can taken in a single commit.
-> 
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> ---
->  drivers/cpufreq/rcpufreq_dt.rs    |  3 +--
->  rust/kernel/opp.rs                |  2 +-
+> If you want to use version numbers, they need to correlate to something 
+> and you need to document what that is. I don't see anything in the above 
+> link about a version 1. Kind of feels like you just made it up.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+I asked already at v4 to document the naming/versioning, which was a
+result of one of previous discussions, in the binding description. :/
 
--- 
-viresh
+> 
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  clocks:
+> > +    minItems: 1
+> > +    items:
+> > +      - description: The AXI interconnect clock, drives the register map.
+> > +      - description: The I3C controller clock. AXI clock drives all logic if not provided.
+> 
+> Is that a description of how the h/w works? The controller clock input 
+> can literally be left disconnected? If 1 clock source drives both 
+> inputs, then the binding should reflect that.
+
+This was explained in reply, but never made as proper explanation to the binding.
+
+Jorge,
+When you answer to a review about uncertain pieces like that, usually
+outcome of the discussion must end up also in new patch - either in
+commit msg or better in the binding itself. I also asked about this -
+documenting the outcode - in v4.
+
+Best regards,
+Krzysztof
+
 
