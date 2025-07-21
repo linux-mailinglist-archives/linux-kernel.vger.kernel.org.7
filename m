@@ -1,113 +1,124 @@
-Return-Path: <linux-kernel+bounces-739866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79850B0CC40
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 23:08:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58DB4B0CC41
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 23:13:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88E0E170CA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 21:08:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F3023BDC7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 21:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABFF23C514;
-	Mon, 21 Jul 2025 21:08:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3A623C514;
+	Mon, 21 Jul 2025 21:12:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YRAByUK5"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bsH+h4le";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xHbVLuJ5"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF681A29A;
-	Mon, 21 Jul 2025 21:08:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DAA1DFE1;
+	Mon, 21 Jul 2025 21:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753132104; cv=none; b=qnFhncO/3eRljbL0uTpv0CMLnN85IgP/dzgWcIcY1LHZXVE5KVodXXkikOD4+Id4sBbSmWlVpNyZg665UiF1CnZGQQR5ShZNqor2xSxvGYf/PWuoHB+DZen2ldpqPhVjyZxkiQr/us3/L1IZV1+glodyBbyyFEny0RgYM3TSxQ4=
+	t=1753132374; cv=none; b=Qv4IcpgEvttw9qtRHpelCHFCMAuDnO1i/GeGxQIWnPsDiMHsVni7A3EPICU4Ll2fGooSBxJkz6Bchs36zSulnRCYjt3gTXOY31+0UvwMMVMJKjo/zOMgcHwEMjke60LFbW56TDo5PREc1BJFMiiwpvs+Kvvqw4PLfRns3mRbTr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753132104; c=relaxed/simple;
-	bh=cx0ZLR2WkCjyCv4XZmCX+AVxImfTljAFnzEbN5w79K4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VDYJQ3FJkns424xjbK+cDXZ0o9hNuEtj2mv3dS8WWsSZ+1fDo9CrE6vFmtC2NsvLGVylZVfKf7g4UFWdNcyxdefXxuzy1AbciPTadMQ3/xojI4kohO701I2i7K84srAgbVykkTaeqjez6zxN8ErD1vm3eZdbQW6Ug/nDSrdTfL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YRAByUK5; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=3skz3oQGct9D8hSBWjyD5vwW1y3JSAJVDDiw5JuCn9E=; b=YRAByUK553qpivF8yxfspyWjYE
-	px2OTkjrE2esDFOJTZcBInVAVHSvnuAgDngc1HFTs0G3Akjg1I3LPAa4rfAbOW/QOiqZcFUMHikfI
-	LxfT7IoyClSg9VszTFAOpXn+SdsYMnmSCpVb2MFiI7jib5uW6cAr7ngaHfcfTUhxoy7uR0xT7vleM
-	IP05mQqQGnnlAbOBsOo7ChL4LXotMD/TIl+LuZC1DBxGwTStjjIVMG59EOMqcfazH6A3pyhlcQ1+y
-	JBLQ6ejZDS4Ho7Hzu1+QEfHOYR4owmAUOFCNpomQvmSMupQIU/OquPNNfXeelxTggV/S4UgvRFwk2
-	1elXZ4/g==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1udxkE-00000000hS0-30p0;
-	Mon, 21 Jul 2025 21:08:22 +0000
-Message-ID: <8cecb2ac-9268-4294-b10d-35107479e675@infradead.org>
-Date: Mon, 21 Jul 2025 14:08:22 -0700
+	s=arc-20240116; t=1753132374; c=relaxed/simple;
+	bh=mB3A8zxmfQ6nbYNX8RUpetQUhDPO/McLXCRtiQvkdWM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=b/poGKRKFhXawabNGAYdpSCJYlnXbHwZbUVq13LBU01pnS9XXeLPqwDl9xH2myOOQY5xQUFascvqdP4+kBg9cZvHMqeLfgLCgAeo19gXdWUvdpzJGYByr1HeHfVhvaZ+maVMEPZspNUzSO8ADFq82iBABFVWQ8iHTzy/qvD1CvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bsH+h4le; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xHbVLuJ5; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1753132364;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wxDTRjjVG+zW1HjAB9iJ8nK4LzuVootVYZCMMUt7C1k=;
+	b=bsH+h4le8dbrz55+h9zbrstebDj3oBOswfF6gQ0c4ZaaDRsdOPpGAEIwh3H0wQZI8dTFyx
+	9VVoGfIFFRrpt3QJDSD73nIeojQ+2bcZ4h4SR4UkpZe+nT7GWzjmGRjXA7guJAaTzZkXh8
+	ldeJ5wUS2NVwl8CYGJt5QdtBXvdnu1BPCbtb1DAZ5xe01pZjpEB7vC1iR/azZUIZp+Ac7H
+	71GtaF5PVY83CgjHsI+Wfbac/xqcFTGWaXow9CjuFbZrjTNSVFvG/VoSXGxmDdnak1so8i
+	9Vz1j6tdeYyN5KVS/bn45mzTJIYTBpjAIO+UJF4cO4ABaY2KWoep+TC+FMfZ+Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1753132364;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wxDTRjjVG+zW1HjAB9iJ8nK4LzuVootVYZCMMUt7C1k=;
+	b=xHbVLuJ5iknaQIkujfGqAzBoMwGktwmDz1/Ur64dzaxH692Iaf7h3sEqo41Ly/BpRs1FIT
+	WfHeygiEeejH2BDg==
+To: Arnd Bergmann <arnd@arndb.de>, Andreas Larsson <andreas@gaisler.com>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Arnd Bergmann
+ <arnd@kernel.org>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?=
+ <thomas.weissschuh@linutronix.de>,
+ "David S . Miller" <davem@davemloft.net>
+Cc: Andy Lutomirski <luto@kernel.org>, Vincenzo Frascino
+ <vincenzo.frascino@arm.com>, shuah <shuah@kernel.org>, Anna-Maria Gleixner
+ <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>,
+ John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, Catalin
+ Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Eric
+ Biggers <ebiggers@google.com>, sparclinux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] vdso: sparc: stub out custom vdso implementation
+In-Reply-To: <ba62bc7b-fa3e-4f34-a966-cc734468b8ef@app.fastmail.com>
+References: <20250707144726.4008707-1-arnd@kernel.org>
+ <a2cfee1a725f24f90937f070eacdedd2716ef307.camel@physik.fu-berlin.de>
+ <5c479b4d-65f1-466e-a79e-43f6dfc9345c@app.fastmail.com>
+ <6b77e7da8c0bd6f211685bda9f624f8db971bbe1.camel@physik.fu-berlin.de>
+ <7e29bcc1-3dc7-40f8-84f0-fbe497fb01bf@gaisler.com>
+ <ba62bc7b-fa3e-4f34-a966-cc734468b8ef@app.fastmail.com>
+Date: Mon, 21 Jul 2025 23:12:43 +0200
+Message-ID: <87ecu9tfhw.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI/sysfs: hide boot_display definition when VIDEO=n
-To: "Limonciello, Mario" <Mario.Limonciello@amd.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
- Stephen Rothwell <sfr@canb.auug.org.au>
-References: <20250721210248.267962-1-rdunlap@infradead.org>
- <639fffd3-a251-4454-94a4-602fdaf481ae@amd.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <639fffd3-a251-4454-94a4-602fdaf481ae@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Hi Mario,
+On Fri, Jul 11 2025 at 12:31, Arnd Bergmann wrote:
+> It is probably not all that hard to convert the VDSO to use the
+> generic implementation if you remove the runtime patching between
+> TICK and STICK mode. From the code and the documentation, it
+> seems that any JPS1 compatible CPU (or newer) uses STICK,
+> this would be UltraSPARC III (Cheetah), SPARC64 V (Zeus)
+> and all UltraSPARC T. If you want to give it a try to do the
+> conversion to the generic VDSO, I could respin my patch to only
+> remove the older TICK version and the runtime patching but leave
+> the STICK one. I don't think it's worth my time trying to convert
+> STICK myself since I have no way of testing it.
 
-On 7/21/25 2:05 PM, Limonciello, Mario wrote:
-> On 7/21/25 4:02 PM, Randy Dunlap wrote:
->> When CONFIG_VIDEO is not set, defining the 'boot_display' attribute
->> causes build errors/warnings, so hide the declaration as is done with
->> other code that uses this variable. Bracket unused code inside
->> #ifdef CONFIG_VIDEO/#endif to prevent other build warnings/errors.
->>
->> include/linux/device.h:199:33: warning: 'dev_attr_boot_display' defined but not used [-Wunused-variable]
->>    199 |         struct device_attribute dev_attr_##_name = __ATTR_RO(_name)
->> drivers/pci/pci-sysfs.c:688:8: note: in expansion of macro 'DEVICE_ATTR_RO'
->>    688 | static DEVICE_ATTR_RO(boot_display);
->>
->> drivers/pci/pci-sysfs.c:683:16: warning: ‘boot_display_show’ defined but not used [-Wunused-function]
->>    683 | static ssize_t boot_display_show(struct device *dev,
->>        |                ^~~~~~~~~~~~~~~~~
->>
->> Fixes: c4f2dc1e5293c ("PCI: Add a new 'boot_display' attribute")
->> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> 
-> Hi Randy,
-> 
-> Thanks for the patch.  Stephen raised this last week too and it's 
-> brought up some other interesting topics as part of fixing it.
-> 
-> I have two other approaches on the mailing list right now waiting for 
-> review.
-> 
-> 1) Make a static sysfs file.
-> https://lore.kernel.org/linux-pci/20250721023818.2410062-1-superm1@kernel.org/T/#u
-> 
-> 2) Move out of PCI into DRM.
-> https://lore.kernel.org/linux-pci/20250721185726.1264909-1-superm1@kernel.org/T/#me4356b3a172cbdafe83393bedce10f17a86e0da7
+Getting rid of the run-time patching is really trivial. The clocksource
+setup initializes clocksource::archdata::vdso_clockmode already
+correctly with VCLOCK_NONE, VCLOCK_TICK and VCLOCK_STICK.
 
-Yes, I found the second one just after I sent the patch.
-Anyway, my patch is not relevant now.
+So all you need is:
 
-Thanks.
+static inline u64 __arch_get_hw_counter(s32 clock_mode,	const struct vdso_time_data *vd)
+{
+	if (likely(clock_mode == VDSO_CLOCKMODE_STICK))
+		return vread_stick();
 
--- 
-~Randy
+        if (clock_mode == VDSO_CLOCKMODE_TICK))
+		return vread_tick();
+
+	return U64_MAX;
+}
+
+Plus a 32-bit specific version of vdso_shift_ns(), which means just
+renaming the 32-bit variant of __shr64() and removing the then pointless
+notrace annotation.
+
+This should just work out of the box and the performance regression will
+be minimal if even measurable.
+
+Thanks,
+
+        tglx
 
 
