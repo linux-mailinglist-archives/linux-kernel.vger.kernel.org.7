@@ -1,159 +1,132 @@
-Return-Path: <linux-kernel+bounces-738819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6857FB0BDA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:30:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53DA7B0BDA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:30:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B05611891475
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:30:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32EBF189D677
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DDEE2836B0;
-	Mon, 21 Jul 2025 07:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ECA540BF5;
+	Mon, 21 Jul 2025 07:30:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pi4F+Q+K"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h2B+x5At"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE8E126BF7;
-	Mon, 21 Jul 2025 07:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70A91D54E9;
+	Mon, 21 Jul 2025 07:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753083029; cv=none; b=HjbcVV0d8qPQjYxK6nZ5MS+gRIiQ50H1bdaNkys72s5jmvAqClxtF3eUy1qWeIaXEjpSMw7BLMTb612MA3ysmIBcRqfaLsbQzi1CBexcBa9dgkxFSXrhfDVma7ku5aDQONCWaL28cAB1N/DSMxZC4R7HLNSyxo+83lkkeK2GXoU=
+	t=1753083046; cv=none; b=WxqyqHED7CjUPXe+uYEnvukroOB10ypD0kVdePq/dfU+uCB5EzZLLxvSq4aE7RU1N3DqmzlbBMoSeBoIwKdbVPyNomG0SWWgSKFvkVPd4e8KSthBxXqhoRL5JzT4Jd8Z79P9pfwpy08gf9P8/YihiPD/KXKXMbSeDao/RiLKcbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753083029; c=relaxed/simple;
-	bh=k77l9xXP68qxhTzw/OxMss+wmcpGLj2vPrIcvEW4Ozo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=piA22bOpk44+twwrXeSLeoF32Ty4XOpLtBp3C9kFW1RW2rOAbfGiJg6kfVu4CybSafRYQU16/c34IvksGaICWOQc2qZ0Mn3nsF3Z2MFmG19hODAgt+D18Ghpxwnvlb8FCVCrPbRQoidp80EY2FRpeHY6ooRC2Y4a1wa1EOlhBEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pi4F+Q+K; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56L1rZwj030943;
-	Mon, 21 Jul 2025 07:30:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=sXwypK2wofLaLIWqEGEwkCwUqotA0G
-	XBM0MSXIpmbS8=; b=pi4F+Q+KWPhCOygJL/5lmPVTeT/ssFf1v41q8xQnx1iBiD
-	wfhjlLlk7F7NDYxUw90e+LDLHTNdcWwd2Tg0uRyaN77RRHSogXdSJEOGnxEKBfvn
-	EqMFD6DV3N6ZxqGfufk6nIL7r1bVkLzLfDgC+b1TmW/VfvIgmcWCC/IwBjgTRAAW
-	uhwRsgMrJIPaz7ucqZf8VfuJbo948LdanXEyPdkSrvyMGiCTMRDqWj5FvI2HPvD2
-	2pt77ZQ7mPxz+Z91P1pcv1HEiq35EbWYbBvaM4SUE7AVd+4USZJeR8DeatpKRPZc
-	NMXIZ+5dKODk9L8EwhDyWJQDRd8366lhERfsRxYw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48069v7ac3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 21 Jul 2025 07:30:20 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 56L7SmNY020127;
-	Mon, 21 Jul 2025 07:30:19 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48069v7abx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 21 Jul 2025 07:30:19 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56L5T2hQ024975;
-	Mon, 21 Jul 2025 07:30:18 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 480rd24rsv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 21 Jul 2025 07:30:18 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56L7UBH537618016
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 21 Jul 2025 07:30:11 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 354022004E;
-	Mon, 21 Jul 2025 07:30:11 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1A88E2004B;
-	Mon, 21 Jul 2025 07:30:10 +0000 (GMT)
-Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.87.132.117])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 21 Jul 2025 07:30:10 +0000 (GMT)
-Date: Mon, 21 Jul 2025 09:30:08 +0200
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: Halil Pasic <pasic@linux.ibm.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Alexandra Winter <wintera@linux.ibm.com>,
-        Thorsten Winkler <twinkler@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Sebastian Ott <sebott@linux.ibm.com>,
-        Ursula Braun <ubraun@linux.ibm.com>, netdev@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Aliaksei Makarau <Aliaksei.Makarau@ibm.com>,
-        Mahanta Jambigi <mjambigi@linux.ibm.com>
-Subject: Re: [PATCH 1/1] s390/ism: fix concurrency management in ism_cmd()
-Message-ID: <6b09d374-528a-4a6d-a6c6-2be840e8a52b-agordeev@linux.ibm.com>
-References: <20250720211110.1962169-1-pasic@linux.ibm.com>
+	s=arc-20240116; t=1753083046; c=relaxed/simple;
+	bh=TOBtZP7QgVwBg3aIlCLDvPd6hxOo+8YeD7e/NEGgLtU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NpCmFXHClxDb8rfaaaHTzYG/HxG9P/e20ioF3XVMFVFVuTK9kPIB9w/mMum4NmWGRQui12qnE3H+VM5yHjCj7IWgF9yhyGmWIxLRoMFERd5iyTggKygWAzB6hiRYBw1A8RiJOyjyVinqWsmAkMpG0+83Jwgqqcz4LrlM6zLUXFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h2B+x5At; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 375BBC4CEED;
+	Mon, 21 Jul 2025 07:30:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753083045;
+	bh=TOBtZP7QgVwBg3aIlCLDvPd6hxOo+8YeD7e/NEGgLtU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=h2B+x5AtfxLWDnFSl2WzlO/TIEPvjgDhPyHBf7xTJ8OAh4m9BuoG0fO9V+76PF0xi
+	 zTUA7XaFtp+F5esefs7nHZK5gGujMcaSOCEmLTF3mas6FfQ3UfeDIqaaY2j+CCiWIX
+	 +3oCH9S2HumShPQBHRQlDwYme+qzbOf8bCOsuWTXGZatDV7/5+uF/f+PntskvwuLor
+	 wOgj4k1HsYnRHFV6eOUT2emUxuaR2GBxFie8V7o5oX8It8DD4TUd12YLs8KsptIbID
+	 iLupNyOt4L+oNGz+fRROJ3aK/QR+7i02HL4QL7wsdVqKFsJBIgV9amXd/lTQtUqgyT
+	 alA9nDWPDmCpw==
+Message-ID: <27e3c18e-bcfd-4dfc-8c60-3f619152de99@kernel.org>
+Date: Mon, 21 Jul 2025 09:30:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250720211110.1962169-1-pasic@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 3GmzfO-BSTdSXuFDegVhwVwXfqB8OFMu
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIxMDA2MSBTYWx0ZWRfXyCeMuDv8ZDrU
- uM8OeEmyTQ2bQx6eO8DI9PQQZ4l5f40FazlwojWdlwS8Ow7AA9pQk+mp5quELutL2Qh48pOO0xQ
- vAlBw/rEKIsqAdiSyjwgyN0Npur2OFfgWQFKh0ZzmMVTImJZ7nJnvfoZ1v3Dsf21pPJ9+IT/C0+
- uKyn16eWY19BIOOLIG7NnyiHuEvo/zkNrtd4fEzPspu4xUACa5XO0cWVthuQHnAWY600whUn0Yb
- tXXOkZBlviF0zFKHaji1r+/dLo0j4LgZ37mqgej2A8dk6QY4NVMI6lrTF6ObIbX3jtj9cLSGJXy
- iegUpJI9Cq7Z+i9OMuwwusipk9HBm7+ZNoz4jpOyf67Grm6BLnVhRIcfe4qbI94ww8RLcmRrrVd
- dzVPlKsfVHDrsVdOpfhjaIfkKtaqfTR1rLaTyfJ8t8rvYbrYr7l1pqZ57eFPKggwSs2wWDoR
-X-Proofpoint-ORIG-GUID: df7rZEZntQfbLMuEvI2lAZhstJctZs0y
-X-Authority-Analysis: v=2.4 cv=JJQ7s9Kb c=1 sm=1 tr=0 ts=687dec8c cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=GnHWBbGKwIfp_8QMzc4A:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-21_02,2025-07-21_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxlogscore=720 impostorscore=0 clxscore=1011 mlxscore=0 spamscore=0
- malwarescore=0 lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0
- priorityscore=1501 suspectscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507210061
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] regulator: pf0900: Add PMIC PF0900 support
+To: Joy Zou <joy.zou@nxp.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, Frank Li <Frank.Li@nxp.com>, Ye Li <ye.li@nxp.com>,
+ Jacky Bai <ping.bai@nxp.com>, Dong Aisheng <aisheng.dong@nxp.com>,
+ kernel test robot <lkp@intel.com>
+References: <20250721-b4-pf09-v2-v2-0-e2c568548032@nxp.com>
+ <20250721-b4-pf09-v2-v2-2-e2c568548032@nxp.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250721-b4-pf09-v2-v2-2-e2c568548032@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, Jul 20, 2025 at 11:11:09PM +0200, Halil Pasic wrote:
+On 21/07/2025 09:11, Joy Zou wrote:
+> The PF0900 is a power management integrated circuit (PMIC) optimized
+> for high performance i.MX9x based applications. It features five high
+> efficiency buck converters, three linear and one vaon regulators.
+> It provides low quiescent current in Standby and low power off Modes.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202506181134.0Hkvy7CK-lkp@intel.com/
+> Signed-off-by: Joy Zou <joy.zou@nxp.com>
 
-Hi Halil,
+Missing separator. See submitting patches.
 
-...
-> @@ -129,7 +129,9 @@ static int ism_cmd(struct ism_dev *ism, void *cmd)
->  {
->  	struct ism_req_hdr *req = cmd;
->  	struct ism_resp_hdr *resp = cmd;
-> +	unsigned long flags;
->  
-> +	spin_lock_irqsave(&ism->cmd_lock, flags);
+> 
+> Changes for v2:
+> 1. modify the copyright comment block to C++ style.
 
-I only found smcd_handle_irq() scheduling a tasklet, but no commands issued.
-Do we really need disable interrupts?
 
->  	__ism_write_cmd(ism, req + 1, sizeof(*req), req->len - sizeof(*req));
->  	__ism_write_cmd(ism, req, 0, sizeof(*req));
->  
-> @@ -143,6 +145,7 @@ static int ism_cmd(struct ism_dev *ism, void *cmd)
->  	}
->  	__ism_read_cmd(ism, resp + 1, sizeof(*resp), resp->len - sizeof(*resp));
->  out:
-> +	spin_unlock_irqrestore(&ism->cmd_lock, flags);
->  	return resp->ret;
->  }
->  
-...
 
-Thanks!
+
+Best regards,
+Krzysztof
 
