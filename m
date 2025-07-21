@@ -1,166 +1,136 @@
-Return-Path: <linux-kernel+bounces-739800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9EC5B0CB24
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 21:46:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37577B0CB2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 21:51:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01E3717D1D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:46:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 775787AFA4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:49:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E232376F7;
-	Mon, 21 Jul 2025 19:46:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09AA4238159;
+	Mon, 21 Jul 2025 19:51:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O+OvJE49"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dPMv7+OL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4C41BD035;
-	Mon, 21 Jul 2025 19:46:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66587BA2E;
+	Mon, 21 Jul 2025 19:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753127163; cv=none; b=SKt14S4IIBwprJZB+tnKg3rV9TRFy1//GhQawGvkiH9zZCG0icuJS94iGK9K3OQ2OH3Hq53KtO5f9PpIasYGBnVDFFCJ0UCyLiH2IM56d5CUtp2WN+DNX46XX2DCdQ47Nvn92vZI/XYfwOdeE0TtiVwZ7s+P7rde/ZYn5NEo1E4=
+	t=1753127473; cv=none; b=VbCRzcQxS+6vqxdKZApT9NUXoOd/8qPW6Aq7BfTDrvXdzBtCaP9GPsU/j3mnuesVJPFWbNgOXjiq+GBC8Rxir66kbUOztfrMDBKiX2NXnmraEQNsJl0ZBtGCRl0/jQK2IUgi/NGYT7xYWHlSiXW05+QXq2Ij0jpqqQoAqfCngCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753127163; c=relaxed/simple;
-	bh=F7yMPeJHWavbLIzzBKdHmEFybFadY1nYAD4poeuN01M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D8WZhV+1zXEdn4guBCd/77aPAaV6IySSHGAxCBDTduYjfszXETvAPafP+QX94JBJqFQ0dC1bKW8Nx9ypoJKeSm0oKwd9sMZ56XJFa2GAzlmCFI9rn5X2e3Aeg0cfWGDFx2ngsYTJSz06m88f4wLlgeEJmJWT0fc/qUoZl3tmM24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O+OvJE49; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF49BC4CEED;
-	Mon, 21 Jul 2025 19:46:02 +0000 (UTC)
+	s=arc-20240116; t=1753127473; c=relaxed/simple;
+	bh=AfBAOulMHp7EDYXtLwDEGsMzWBGQfkizPfb1i5IFklU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eeRHKucenHrXuSxGt3ikB6UfWPNrOD4pDzV7QEjHxLxx1r6EOyn++cmG6SMdqCVkuIfKMs5upyloYje0ot4dbsmXmgo/mfIQY4eBx8hRUYrVd4J/DwALW1nJuN9TReKLr5WQaSKjhdCFl4Rt2XjxMnkQ7jSn3xMuraIOTnR0mdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dPMv7+OL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3CBBC4CEED;
+	Mon, 21 Jul 2025 19:51:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753127162;
-	bh=F7yMPeJHWavbLIzzBKdHmEFybFadY1nYAD4poeuN01M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O+OvJE49SfumM4G9FAuZbs/szaYHfRu0pGAjF8aHSQZiDpdxIJge3OCZjEyflGjk6
-	 F2ZOnCFbch2cvBUO83nNzfTeXPGBH6u1H+fKKp3YtcePBVIAXJR924AWpe5LoUr4ML
-	 wEZOT0oqx5K95Xsq2dJbcew+rxGY3r1TcqCty5B5hnAmaYBo9o5BBycPJwv1Hm0smo
-	 2P/HVWL/RmPJQtR31gRNS133i+gAGw1nlmHm08ItUD+1+F/RYqiKBFfJ/Z/T5L+oug
-	 IYn0/8/7wLeamisPHoSL0RCQaSv3XSh679juSSPVyYTlaj5hwsrYtUytn++Iv7NG9P
-	 GAh5SHC3nrY0Q==
-Date: Mon, 21 Jul 2025 14:46:01 -0500
-From: Rob Herring <robh@kernel.org>
-To: jeff_chang@richtek.com
-Cc: lgirdwood@gmail.com, broonie@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] dt-bindings: regulator: Add Richtek RTR5133 DT
- Binding Documentation
-Message-ID: <20250721194601.GA1142912-robh@kernel.org>
-References: <20250721060215.2718217-1-jeff_chang@richtek.com>
- <20250721060215.2718217-2-jeff_chang@richtek.com>
+	s=k20201202; t=1753127472;
+	bh=AfBAOulMHp7EDYXtLwDEGsMzWBGQfkizPfb1i5IFklU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=dPMv7+OLGzdY2UCXX1FzkbpFiK8a7emjMkEokFNh2rF52G/Rq4idAPGL8SAzM87M+
+	 GbwP/4wLRbE+81SBDcG7XOb+xPz80bAYWcyfXZwYGku8ovMz/dg1vjC4fji0uE7X2r
+	 Yix8fABTx1/CdhHxMwN2m5QN3fIgi8W70PAXBgpd1wC5sU6azDM/Nsf7eBrIvFw4Ci
+	 O09fNEFamaMy2VJoXKyH8U8V7pMB3+neT3z9ARW/egq2obhXJiHrEB/DDEtLoVFSqW
+	 4KTfuwLr2KjwPJ1q7RI0B0+8DaMHGVPqOu+hpWhAoOFMG/m2PNs63wIfUocpWRpX09
+	 IKnkbY5o466cA==
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-61591e51092so2219764eaf.0;
+        Mon, 21 Jul 2025 12:51:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVINuZPOnQf+iJ1M4IRZfOEd5YWZxuswGDjw6/KptR8mT9qms2CczSJ0qDasAnHZ7yzBxwwyMGdjb3va8E=@vger.kernel.org, AJvYcCWZNBStKsYrzFeTPktRU/Q+uwnIUvx3ZIHtMXqiGU2BxD9JhN8QNK/D/ZpFp33Wg+1jYDUh9R8qAYE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGfRv95iyuSM0MDxS0DNOg1NRosKS8c44k/iYOgVfZ3s0Bjkwt
+	vVb7AwkHkkZADqz9xvQzhfIg809gMzxSStvhJiQdVK5BJgXiaV8vk/9rN3MpdNx0uZCFVpJKvOa
+	PfzRgwLtNuahfuPkQzo9pvgI6Y+JuG7A=
+X-Google-Smtp-Source: AGHT+IGoM4BLNSSylFMNbSAw1L3y53fxwdNKamgvbVT7Dp4NfffRHl+vvuNMRI4uIkvyicesk2mZGwF22RKoemB9+HY=
+X-Received: by 2002:a05:6820:260b:b0:615:e807:8134 with SMTP id
+ 006d021491bc7-615e8078370mr1969877eaf.5.1753127472191; Mon, 21 Jul 2025
+ 12:51:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250721060215.2718217-2-jeff_chang@richtek.com>
+References: <20250718071842.2483378-1-saravanak@google.com>
+In-Reply-To: <20250718071842.2483378-1-saravanak@google.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 21 Jul 2025 21:51:01 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0ifsVycSWk24gMrEsGtDn0nVkUJGH8vwBvJdEA1XHbTRQ@mail.gmail.com>
+X-Gm-Features: Ac12FXz4dxl62coHj83jeFJGnEtG5DNBml2TR8wnyAfVVxahSc3gpjhv9ZxVhoU
+Message-ID: <CAJZ5v0ifsVycSWk24gMrEsGtDn0nVkUJGH8vwBvJdEA1XHbTRQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v1] PM: wakeup: Provide interface for userspace to
+ abort suspend
+To: Saravana Kannan <saravanak@google.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>, 
+	Pavel Machek <pavel@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Danilo Krummrich <dakr@kernel.org>, kernel-team@android.com, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 21, 2025 at 02:01:35PM +0800, jeff_chang@richtek.com wrote:
-> From: Jeff Chang <jeff_chang@richtek.com>
-> 
-> Signed-off-by: Jeff Chang <jeff_chang@richtek.com>
+On Fri, Jul 18, 2025 at 9:18=E2=80=AFAM Saravana Kannan <saravanak@google.c=
+om> wrote:
+>
+> Once suspend starts, it can take a while before file system sync
+> finishes and all the userspace threads are frozen. During this time,
+> there can be events that originate in userspace that would require the
+> suspend to be aborted.
+>
+> The only way to abort suspend from userspace as of today is to grab
+> and release a kernel wakelock using the /sys/power/wake_lock and
+> /sys/power/wake_unlock files. This has the disadvantage of:
+>
+> * Doing the useless work of creating and destroying wakelocks.
+> * If the userspace entity crashes after the wake lock is created, we
+>   get a wake lock/memory leak.
+
+But wakelocks are for this purpose.
+
+> To avoid all this and simplify the interface, this patch allows
+> canceling a suspend by writing UINT_MAX value to the
+> /sys/power/wakeup_count that is meant for tracking wakeup events.
+>
+> Signed-off-by: Saravana Kannan <saravanak@google.com>
 > ---
-> 
-> PATCH v3
-> 1. fix Subject format
-> 2. using correct patches version
-> 3. remove '|'
-> 4. remove allOf: &ref regulator.yaml#
-> 5. remove redundant description
-> 6. move BASE to base property with correct indentation
-> 7. only using lowercase node name
-> 8. make DT_CHECKER_FLAG=-m DT_SCHEMA_FILES=richtek,rt5133.yaml dt_binding_check pass
-> 
-> 
->  .../bindings/regulator/richtek,rt5133.yaml    | 197 ++++++++++++++++++
->  1 file changed, 197 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/regulator/richtek,rt5133.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/regulator/richtek,rt5133.yaml b/Documentation/devicetree/bindings/regulator/richtek,rt5133.yaml
-> new file mode 100644
-> index 000000000000..a92e7f775832
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/regulator/richtek,rt5133.yaml
-> @@ -0,0 +1,197 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/regulator/richtek,rt5133.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Richtek RT5133 PMIC Regulator
-> +
-> +maintainers:
-> +  - ShihChia Chang <jeff_chang@richtek.com>
-> +
-> +description:
-> +  RT5133 is an integrated chip. It includes 8 LDOs and 3 GPOs that can be
-> +  used to drive output high/low purpose. The dependency of the GPO block
-> +  is internally LDO1 Voltage. If LDO1 voltage output disabled, GPO cannot
-> +  be used to drive output high. It need to pay more attention on the usage.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - richtek,rt5133
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  enable-gpios:
-> +    maxItems: 1
-> +
-> +  wakeup-source: true
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  gpio-controller: true
-> +
-> +  "#gpio-cells":
-> +    const: 2
-> +
-> +  regulators:
-> +    type: object
-> +    additionalProperties: false
-> +
-> +    properties:
-> +      base:
-> +        type: object
-> +        $ref: regulator.yaml#
-> +        unevaluatedProperties: false
-> +        description:
-> +          Properties for base regulator which for force-off base circuit
-> +
-> +        properties:
-> +          regulator-compatible:
+>
+> Rafael,
+>
+> If the idea looks good to you, I can also update Documentation and sent
+> it as a non-RFC patch. I'm not too tied on what file we use to trigger
+> an abort from userspace as long as it's possible.
 
-regulator-compatible was deprecated so long ago we don't even document 
-it now. Why are you bringing it back?
+I would rather add an interface based on a special device file for
+wakelocks to address this.
 
-> +            description: Compatible string for regulator
-> +            $ref: /schemas/types.yaml#/definitions/string
-> +
-> +          oc-shutdown-all:
-> +            type: boolean
-> +            description:
-> +              Anyone of LDO OC state, shut down all channels.
-> +
-> +          pgb-shutdown-all:
-> +            type: boolean
-> +            description:
-> +              Anyone of PGB OC state, shut down all channels.
+For example, open it to create a wakelock with the name of a calling
+process, write 1 to it to block suspending, write 0 to it to unblock,
+close to remove it.
 
-Is 'base' an actual regulator or are these just common properties for 
-all regulators? If the latter, then just move them up a level and add a 
-vendor prefix.
+Then it will go away automatically when the process exits.
 
-Rob
-
+>  drivers/base/power/wakeup.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
+> index d1283ff1080b..9316de561bcc 100644
+> --- a/drivers/base/power/wakeup.c
+> +++ b/drivers/base/power/wakeup.c
+> @@ -1008,6 +1008,8 @@ bool pm_save_wakeup_count(unsigned int count)
+>         if (cnt =3D=3D count && inpr =3D=3D 0) {
+>                 saved_count =3D count;
+>                 events_check_enabled =3D true;
+> +       } else if (cnt =3D=3D UINT_MAX) {
+> +               pm_system_wakeup();
+>         }
+>         raw_spin_unlock_irqrestore(&events_lock, flags);
+>         return events_check_enabled;
+> --
+> 2.50.0.727.gbf7dc18ff4-goog
+>
+>
 
