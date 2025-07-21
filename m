@@ -1,76 +1,97 @@
-Return-Path: <linux-kernel+bounces-738548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C65C6B0B9E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 04:06:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 910F1B0B9E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 04:10:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CA5B3A5F2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 02:06:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E08A018989FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 02:10:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB3A194A6C;
-	Mon, 21 Jul 2025 02:06:47 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2486019309C;
+	Mon, 21 Jul 2025 02:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="RQ4ZljNB"
+Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1C63152DE7;
-	Mon, 21 Jul 2025 02:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9DC38F40;
+	Mon, 21 Jul 2025 02:10:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753063607; cv=none; b=ZaNPkh+FQBWB29aRgBHEKZCKx/eHgHNpUdFL/pKnukTN9lhMROeNkqimyvi9WwmBaA/f+JuwZPOhN6rqwZTA3swEln/AUzKag0cwjC7Rpnn2mF3xSdYlQj/yO/MTI59R92YqXYN5/OFYaRzTMD4DteGyuOZB4cKXbShzVuEa0iA=
+	t=1753063816; cv=none; b=DcvLTwyz7opPv0jMZ1g5Hu8FU71Hl+QI4J5Z/sEWc81avi+PdTZvN61AJ9m31xAQ5jPut1V/HtkzHzHkC6LgiKjkx5inwXRSgO4Wv4/xs7NjOVHHulg4GZHfhvg7qOSMFjKroiHJO7pup0aYEtAwuxuGiMl1QJOGjQZF5MeNvx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753063607; c=relaxed/simple;
-	bh=9eZkC0PdV9yKIm2Zi5vo1UTwAxcTufu2rNkpEGpnkpE=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=EMNdWHndQ1H3femhDaKxb/N4F/uxkPp6ASPtEd3MUjCoRFpL6OerteSPsCUTRsKkAA6Th5bNaMuCteb54Fo7pIUo5j4ChXWxFHCFgOXfLlE7DIdD70SS1Hx2S9XdWz+rq5E7Pk9c0WnWua9SO1he+Sd9EBGGGKDORCznLw5lHBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4blkKQ0Zb7z5B15L;
-	Mon, 21 Jul 2025 10:06:34 +0800 (CST)
-Received: from xaxapp05.zte.com.cn ([10.99.98.109])
-	by mse-fl2.zte.com.cn with SMTP id 56L26H4l035451;
-	Mon, 21 Jul 2025 10:06:17 +0800 (+08)
-	(envelope-from zhang.enpei@zte.com.cn)
-Received: from mapi (xaxapp01[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Mon, 21 Jul 2025 10:06:18 +0800 (CST)
-Date: Mon, 21 Jul 2025 10:06:18 +0800 (CST)
-X-Zmail-TransId: 2af9687da09a406-b51bc
-X-Mailer: Zmail v1.0
-Message-ID: <20250721100618249bnR0yTtsh0IeGzAdt8Fuu@zte.com.cn>
-In-Reply-To: <e4c297a7-1ef1-4c39-8daa-8acdade47508@wanadoo.fr>
-References: 20250719163416760SUAwKHXRQRBFKhvAOpNbT@zte.com.cn,e4c297a7-1ef1-4c39-8daa-8acdade47508@wanadoo.fr
+	s=arc-20240116; t=1753063816; c=relaxed/simple;
+	bh=AIb/AVrKulOrR3Hcm14izhh45gIO4bUVAdYyicy9l8M=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=SfWg1HJBNJKRtiSMmVn7CegFtXn0WFxnVAZJ0bWahLk7APPPTOMyFqWilz9KImv60zG26Dltn9cczXzUsSWRvk9c0NpBX5mqnpHgntppxX1JM4WVq6tjE4jbWT1ZUfGtnFbj1RmkebauI8a+Ll+MPCvNre4P80CQ+O/Fk7pPPXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=RQ4ZljNB; arc=none smtp.client-ip=162.62.58.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1753063500; bh=+c6ItShGI1LFANcggem5ipOiNd4vPbvspZd0aUwOKms=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=RQ4ZljNBgGPwzfK7NxW5NjyJ0XI20OG6bUjFIuKFVEKcxdlod3e7cMMrhdNJ4jAPE
+	 d2BuaWFsvhiKFIqQ1iilZRmwb/L5IujLNUpTL9Y7NVLq4iVEN1zHNr8rXnBIVcBrIE
+	 KdMM0dESHgAHk0y9LVu5EEboCtII/XGT25JavEII=
+Received: from VM-222-126-tencentos.localdomain ([14.116.239.37])
+	by newxmesmtplogicsvrszc13-1.qq.com (NewEsmtp) with SMTP
+	id 13B84045; Mon, 21 Jul 2025 10:04:59 +0800
+X-QQ-mid: xmsmtpt1753063499tqzmuewmp
+Message-ID: <tencent_20E2BADCCAFB7724FDBFCB3443A070A51D0A@qq.com>
+X-QQ-XMAILINFO: M1JY6XCfJolWuOcfHFENl+TVww0c4Tui5YpJDb8ubg5lCRgV1BonXeh4AhqRF8
+	 dqT9wdP0OeiRcQ34Q+hmh9rcN74JWp0zg6T1XHSiIdwkjG8iL+hQTSyuKvzZf6MHSUb2LSnlF9yV
+	 Y7yzvgw3ilc6uI/4dQ8kpG8vCRuN+he0L+eIdoSfEliL5ZeUjEnUVTZHJ04VNFy1aDrcux9K7N1t
+	 c7pqKbJjPrw2AqrUAKLFEwLBpHvX8L6STdBKOLeic0VeHwOlvkwX012KZfgzfnY+enWg5rLS2mFg
+	 /jOz0OZpAcKoTSz8lAHqtgegYaJUIkhQoufDjbdB6kJIDT8MSvpgdghjj5KJZO95cDPXMb2LLUEx
+	 qpaxvORX1ptHPHzYja2ptd2fWdUr481EkW8mvjSwVeZYbqawg1wVMlf1BBb1HLZoEpNUDXM3XayB
+	 QVajeDL3IR7cqceG835VTZbgweOQnPNAOil+Pt/LEXu4AXoGA4K5tkmkuSuL0MnR0IGqvLXAwSpU
+	 AzATU3r4SFniqd64TG791/Ex+LEcnqNT6F6/skqbGZIJ6UPM58QlDskhqtd7kNjgPZAs+VtRqC7o
+	 MJDgUOUt1gosk+KGAsy47O5TtsCBPEV27ytxAH3NpwIYUw6Ivl1MKkEsHSJg0uH6g01Edr4189lJ
+	 rhMf10kT+8QyuHAor7/t/Q8tUjRJjKP+sqMnHi4DdMqEL56dsGPnH9fc8UZ5xtCvSf3lIi2uxeGw
+	 OeAUYmzHogarO2IFlyhCGdNzxbHaxif1q0r0kUborwECgk4PSJjPnTYuXVYfB/2ciiMgxignawUi
+	 w0IlToHRE4hvqrzVrISz4HBUr7fBOr4jOLadl4P+eYfUNl89/KNXOKaoTgbyYOJL30nM+5hEei4m
+	 UJLtcAOJh8s/OBbvw5YPktIzK1SSANmslDvWmYZSDab8lvn3OigP6bnzFrNkBkTb9SkUXwK37dSB
+	 d5E2A3NqDVv/BDA2it9ArnDlBfPc+eug5lSHggjzoiLpt5/a1ZmlrbqcW7wE7+BSZudKyF0f5BPh
+	 xOxTufyjWHn3UW2EmTKnKteSoTb9ewVoYtmav9ykofFx1svPf6oMSWrQzlbp0=
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: jackysliu <1972843537@qq.com>
+To: krzk@kernel.org
+Cc: 1972843537@qq.com,
+	andreas@gaisler.com,
+	davem@davemloft.net,
+	linux-kernel@vger.kernel.org,
+	sparclinux@vger.kernel.org
+Subject: Re:[PATCH] arch: fix resource leak in chmc.c
+Date: Mon, 21 Jul 2025 10:04:54 +0800
+X-OQ-MSGID: <20250721020454.4174560-1-1972843537@qq.com>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <25e7455e-816c-448a-b78b-94fe9437e3c8@kernel.org>
+References: <25e7455e-816c-448a-b78b-94fe9437e3c8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <zhang.enpei@zte.com.cn>
-To: <christophe.jaillet@wanadoo.fr>
-Cc: <horia.geanta@nxp.com>, <pankaj.gupta@nxp.com>, <gaurav.jain@nxp.com>,
-        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-        <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSF0gY3J5cHRvOiBjYWFtIC0gc3dpdGNoIHRvIHVzZSBkZXZtX2ttZW1kdXBfYXJyYXkoKQ==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 56L26H4l035451
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: zhang.enpei@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.133 unknown Mon, 21 Jul 2025 10:06:34 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 687DA0AA.000/4blkKQ0Zb7z5B15L
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Thanks for the review!
-devm_kmemdup_array() will call size_mul() to combine its third and fourth parameters into
-length for devm_kmemdup(). So keep the same value sizeof(data->clks[0]) here as before.
+On Fri, Jul 18 2025 15:25:47 +0200  Krzysztof Kozlowski wrote:
+>Last time you were using AI, so I have doubts this is "static tools".
+>Please describe it properly, so we can make informed decision whether to
+>allocate time on this.
+
+The tool determines which api is responsible for resource request 
+and release, and determines if there are resource leak or double free 
+issues in the code by determining the use of release specifications.
+So no AI involved, don't worry.
+
+>Nah, just free it immediately after user. Don't over complicate this.
+OK, I'll resubmit a new patch later
+
+
+Siyang Liu
+
 
