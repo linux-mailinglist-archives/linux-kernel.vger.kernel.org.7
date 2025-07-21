@@ -1,104 +1,138 @@
-Return-Path: <linux-kernel+bounces-739240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F62BB0C3C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:01:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC01DB0C3C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:03:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8126616AB45
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:01:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F35DD7A2EF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:01:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 840B52D29D6;
-	Mon, 21 Jul 2025 12:01:46 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6EAC2D29DF;
+	Mon, 21 Jul 2025 12:03:19 +0000 (UTC)
+Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1755F22EF5;
-	Mon, 21 Jul 2025 12:01:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1FB291C0A;
+	Mon, 21 Jul 2025 12:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753099306; cv=none; b=sdZ871iJBvUNQ1QOBnspYYHfJGYE2Ef256/cZ5h0R2dYqZWU8dI8EEUJY6QcJTd7+70j+siBi9nAevY24Fefsp8ImbAnGvvAo7O/P0SisqtzuK/E0hOgQtXbPeCcl/9VVkkO96QZ5y3880Y7jaWm9QSuFmGmvtIZ5dK19az5Sdw=
+	t=1753099399; cv=none; b=Jd7X0nRPdlvDHt9ukW9qN3K9iifHFlb9R7tg1QNWasDehRfvihvtqrAgTZYp3qv000YQTzV/q8KGZpXHXYdMEPhft6Edln4s+fkX5wLXVY6Bz/1v/OWS3wUpLfW4ckYDqPmkt9p08WJZmwCTeLAdcDiV47LH7UwaSjOUP3WFeHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753099306; c=relaxed/simple;
-	bh=Wb+HX4VKOUFl91tCoHBuhfncV72kvghandqQDQ/1Yxk=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=O+cAYsRfqlrgPuUxnIBb68ZDTxtKjYlbL8iySvoeSo10OukzH5acdKzp0z+T/826V1dWjgFSKY7rSzvHqKS2uCc+u/WFnGiZv3Y23b1tIP7gE3CkiQ/K90jI6ECFgRHuJuD8DF2v2J3lM5vtGTHdkeC33l3SYWnyKkeKicPhAv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4blzX05sh2z8Xs70;
-	Mon, 21 Jul 2025 20:01:36 +0800 (CST)
-Received: from xaxapp05.zte.com.cn ([10.99.98.109])
-	by mse-fl2.zte.com.cn with SMTP id 56LC1Z4p001219;
-	Mon, 21 Jul 2025 20:01:35 +0800 (+08)
-	(envelope-from liu.xuemei1@zte.com.cn)
-Received: from mapi (xaxapp04[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Mon, 21 Jul 2025 20:01:38 +0800 (CST)
-Date: Mon, 21 Jul 2025 20:01:38 +0800 (CST)
-X-Zmail-TransId: 2afb687e2c22ffffffffd82-2e7c3
-X-Mailer: Zmail v1.0
-Message-ID: <20250721200138431dOU9KyajGyGi5339ma26p@zte.com.cn>
+	s=arc-20240116; t=1753099399; c=relaxed/simple;
+	bh=L5qsIxuvHyfcqD23PAauHEBvAc9IlcRhaka9YEdv+lU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P0ElnFSHLDYPmBF6ZOEwdOdYgFlOk1WKgyHkcfElKRb4YYs74jGEzEMY/qX0RHf4TnJxM6Dp5NwXFUcPpQ7GUkZCA5uMjjI946lPAFZFw09Sra7YcQ/Ty/4EYcIz7zUheTMUe+vywjioWXVrWML95dDKA70xL/HT1GBiKOt1tb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foursemi.com; spf=pass smtp.mailfrom=foursemi.com; arc=none smtp.client-ip=15.184.224.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foursemi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foursemi.com
+X-QQ-mid: esmtpsz21t1753099345t7e73bfbf
+X-QQ-Originating-IP: AXZvxwazFJGly/vNa7p+LCy4S+Cfg47Zclcv/a3cTWM=
+Received: from localhost ( [113.89.235.49])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 21 Jul 2025 20:02:24 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 12701394614821551690
+EX-QQ-RecipientCnt: 14
+Date: Mon, 21 Jul 2025 20:02:23 +0800
+From: Nick Li <nick.li@foursemi.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: lgirdwood@gmail.com, broonie@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, perex@perex.cz,
+	tiwai@suse.com, xiaoming.yang@foursemi.com,
+	danyang.zheng@foursemi.com, like.xy@foxmail.com,
+	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/4] ASoC: dt-bindings: Add FS2104/5S audio amplifiers
+Message-ID: <F04DD98A69286426+aH4sT_P0GvttoCOq@foursemi.com>
+References: <20250721103805.531758-1-nick.li@foursemi.com>
+ <20250721103805.531758-3-nick.li@foursemi.com>
+ <83f7c489-7001-49cd-97a5-4280eba95fe0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <liu.xuemei1@zte.com.cn>
-To: <james.bottomley@hansenpartnership.com>, <martin.petersen@oracle.com>
-Cc: <alim.akhtar@samsung.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
-        <huobean@gmail.com>, <peter.wang@mediatek.com>, <tanghuan@vivo.com>,
-        <liu.song13@zte.com.cn>, <viro@zeniv.linux.org.uk>,
-        <quic_nguyenb@quicinc.com>, <linux-scsi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?W1BBVENIXSBzY3NpOiB1ZnM6IGNvcmU6IFVzZSBzdHJfdHJ1ZV9mYWxzZSgpIGhlbHBlciBpbiBVRlNfRkxBRygp?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 56LC1Z4p001219
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: liu.xuemei1@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.133 unknown Mon, 21 Jul 2025 20:01:36 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 687E2C20.004/4blzX05sh2z8Xs70
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <83f7c489-7001-49cd-97a5-4280eba95fe0@kernel.org>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:foursemi.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: MQqtfF4R/f2xKtcKgY4SDDHMLtkrTNkiroXOvfJw3YOcpLyRSXlFcbA4
+	d2NF0IJaJm3W8sQ+322H67UDvLUIe+9vW9Teq84LLuU0Bj85qX2dy/U9i7IbRHR6uXO0ZTK
+	5C4TVDyXPPOhad+13hX53nblnwThHP2XkQk4XT2tVMB/Sv0cceo9tjdxm9JTAMdqVqQu6vu
+	jFgbgdikqUkG0MGDR3A4GgNsk7+d9WC+8m4n+Rr2Oe4c2fdHR2JcdtXt4/k+GnrT6B6EUP+
+	JDDURWlwEJjx/eG3KTQJy7ZXshen8Mbat6epxDGKjO0JoqNFn36UMKjMLjHoykXftjHnvJX
+	ApFn0RcKxr7Vai3abT01eMsLjHldpW6FPpQnYgqqMphZTNGloszk//CLOcW6nrrd19yh+16
+	icvxJC4HijN4lKp2dG0MkS59zmSD8m8Z+csxOdU0pTUxRy/eDDMUUZqZgwKu/p327TYOuAd
+	4a3MhJv9KOJnv2cLdPnGcmdJlDUnTgm8ewggSmaLO4YFZX/YO6jMQLKyvYzALHR/ecwXvxI
+	WKQrRS4XAuVKplT7CIVmtO9YJGgt9H21du2vdAJDyLVOH8pHJA3D/Jta6HB6xwh42h1wvIH
+	vZskYsazIcYKNMn6CzwitBGWqcSB6AXDzvED08gd1jSXOyQf7FRCOVgS70p84kPDo6rkP2s
+	DrRXjMgMkHXNSDfOLAbIqVUCj5wpHBnlgcH1rdT0P5lXk5noF8rQ26enCxrILqCM7K0T/z4
+	WCDNzTdqhb2Nm0w2AOoTchiXZQ0rVDSmz5NulzqQTC4/5aTIw95Gwaz78kr6Jaw/9wvCDC9
+	vlzqZkaZHM8TT4mVAx5BtT2th6zDMOuPrVh7E4ELOMrkbiVNqJUvfpk0DfoqNqhafNYy88L
+	Tu+koPzf7efhQhf6m1XTiObiGP2MKpwYlNn7j4JuEuEvtTYcCIzce4flldBQYIa4bqWKZTB
+	ToYgCCpXYBc8FSyjxUPDiuKN0TH0DV7ixfIEGz6l2HeU5ZK22BziJNDwFDko3IOnOnsFFub
+	AaK9Ft+TSjxxaBE3j16hG4k4paGxy65uUcI79d+ZJzrm+CT4YH3XFYr2bFN1ll6NqQcWMGq
+	g==
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
-From: Liu Song <liu.song13@zte.com.cn>
+On Mon, Jul 21, 2025 at 12:48:24PM +0200, Krzysztof Kozlowski wrote:
+> On 21/07/2025 12:38, Nick wrote:
+> > +  firmware-name:
+> > +    maxItems: 1
+> > +    description: |
+> > +      The firmware(*.bin) contains:
+> > +      a. Register initialization settings
+> > +      b. DSP effect parameters
+> > +      c. Multi-scene sound effect configurations(optional)
+> > +      It's gernerated by FourSemi's tuning tool.
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - '#sound-dai-cells'
+> > +  - reset-gpios
+> > +  - firmware-name
+> 
+> 
+> I do not see how you resolved my comment from v1 or v2. Nothing in the
+> changelog explains that either.
 
-Remove hard-coded strings by using the str_true_false() helper function.
+Change logs are in the cover letter:
+...
+v2 -> v3:
+.../foursemi,fs2105s.yaml(patch 0002)
+- Drop "schema for " in the patch subject
+- Delete the description of the property reg
+- Restore the property clocks to v1
+- Keep the same order as in list of properties
+...
+v1 -> v2:
+- Adjust the order of patches according to the dependency relationship
+- Rename yaml file to foursemi,fs2105s.yaml
+- Fix some properties and error definitions in foursemi,fs2105s.yaml:
+  sdz-gpios -> reset->gpios
+  fs,fwm-name -> firmware-name
+  Delete fs,dai-name
+- Drop "dt-bindings for" from subject
+- Update the driver code according to the update of DT schema
+- Fix warnings/errors reported by running checkpatch.pl --strict
+- Fix warnings/errors reported by running make dt_bindings_check
 
-Signed-off-by: Liu Song <liu.song13@zte.com.cn>
----
- drivers/ufs/core/ufs-sysfs.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Thanks.
 
-diff --git a/drivers/ufs/core/ufs-sysfs.c b/drivers/ufs/core/ufs-sysfs.c
-index 00948378a719..4bd7d491e3c5 100644
---- a/drivers/ufs/core/ufs-sysfs.c
-+++ b/drivers/ufs/core/ufs-sysfs.c
-@@ -5,6 +5,7 @@
- #include <linux/string.h>
- #include <linux/bitfield.h>
- #include <linux/unaligned.h>
-+#include <linux/string_choices.h>
+Best regards,
+Nick
 
- #include <ufs/ufs.h>
- #include <ufs/unipro.h>
-@@ -1516,7 +1517,7 @@ static ssize_t _name##_show(struct device *dev,				\
- 		ret = -EINVAL;						\
- 		goto out;						\
- 	}								\
--	ret = sysfs_emit(buf, "%s\n", flag ? "true" : "false");		\
-+	ret = sysfs_emit(buf, "%s\n", str_true_false(flag));		\
- out:									\
- 	up(&hba->host_sem);						\
- 	return ret;							\
--- 
-2.27.0
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
 
