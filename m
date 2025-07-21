@@ -1,269 +1,194 @@
-Return-Path: <linux-kernel+bounces-738688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8CA7B0BBF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:59:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 730A4B0BBFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:08:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D71B189639B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 04:59:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14F87189A2A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 05:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC21420C494;
-	Mon, 21 Jul 2025 04:59:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5C621931C;
+	Mon, 21 Jul 2025 05:08:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KJa5D1BY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="oSzTwfmu"
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011030.outbound.protection.outlook.com [40.107.130.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49CBD1A5B92
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 04:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753073954; cv=none; b=OGYOOj6NvrWaS1XPflPilR9+aTTtz1k13OlSmnDSlNCyBX4YakRK7g1elcwUGK8UG2Z9SBEYpIVL6Bq0+ghRPNQYRAym9Rf4ZirejHAYMzK4BogjyrFFJqwQapq/lPEAzY6abtMj2mrlPCGCqUor0a+Xuaz8UMiQuccYpM/Jvhg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753073954; c=relaxed/simple;
-	bh=mvWB4P/E9pE03LkxYqjveBOwnQyOOzLvup+2IjSffD0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qk+MvRIXKrGEhYymnydMHXZaEwEKjm6mf/gCuGI4TKTdLpPLI0v/55kohIfGlkUIakVM2i66iGW0XiW8BrdfSserH6I0ZkXYVYYZ0fEy8hFBRsbEeLitXxZLrDUeqpKqi6UsrFFu24yCZ1XIeR5wGl3lMCs1KaaHsoFoWA/uxkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KJa5D1BY; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753073951;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bH6FIOA1hXmC9sisAgKtf3lBW/YyUX04yADCCnU0o1E=;
-	b=KJa5D1BYm1H8g02FHG4ulCOcsuD/UgfCSiSrYFujKbIhaQ8kNwQC2LDsfnektcAygveEEX
-	EyCf7UZxutI+0I1FyqN/ft9r7PDfNvtIjllObq8ur7NAE3ofFmh4xaASTrdvyeKufUbMuy
-	R3KxUM8JKAyzUMJNkll7fWtQB5ll9kE=
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
- [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-114-wowqEN8OM-q8cNEMT1RXmA-1; Mon, 21 Jul 2025 00:59:09 -0400
-X-MC-Unique: wowqEN8OM-q8cNEMT1RXmA-1
-X-Mimecast-MFC-AGG-ID: wowqEN8OM-q8cNEMT1RXmA_1753073948
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b31ff607527so2822165a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 21:59:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753073947; x=1753678747;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bH6FIOA1hXmC9sisAgKtf3lBW/YyUX04yADCCnU0o1E=;
-        b=ss5UFo3s94zEAYFepznO9mvyXQz6s6ko5Isk6GwYtp9xx4rvJ1w7Gby53MWRuV2uP7
-         cm2ItXT+8sMaZtu8M4YpFD7TbNRI6ikoQj47DkwsZFnqmnxsKXQEIpA2YSbumSjD8nP5
-         tYzVWpnjqTC4ApMC2DsuxhlbuSe/OgkoGKNZOAA//ArMHZfcEHsS9Tvb4rMOWSC0R5Sy
-         32rIBEtTXT23I9cm/eLP/Tk5VUuDt8tmyxo4AasFhhmEgC0HqigGKaGETatyil17k2Rm
-         aJHHlPQPedKY+oQah1UD96sqV1aJBI1WztsnC0F/Tyf9FgjPK6xXKISscWKS5SiM+euC
-         nf4g==
-X-Forwarded-Encrypted: i=1; AJvYcCWJsfP0NN7LKE0erfdI8SZ6lgh9AsUPADmDgkpEBbuqbOlC3PirlINAGNZfgoNA1cp+y3g/85a3/CSxvWA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqPGdQypzv0m52/lCvFGxZZ5fv4jNr+J1GCrSO9Q1WfjGfAdxY
-	XrjZWnHhLHipG6e2+NzwJjKTVqZ1LM4U5gBmh0WoNVtdrq9RGcV44/XeC96eK0U/4BmJFqZob0f
-	SpPldajea7iNGGADPFGBRpjfxJNUdfDDcvLH7xhKTgy9WOxFrePE8+vMIHA5RDypPeM+G4VjRSw
-	==
-X-Gm-Gg: ASbGncuee7Z3yWLcjiRUIchGCZ0hfRzLKEmo9+Sh956DE4irQcqDci3GluolBGa0C3T
-	v1F+zlnnruxTXgcHrVH6xlei/Uc7/xc31Zmtwrd5E7xVc/2BjefXHlEgnOJS9i9eMLjY40OEcFz
-	jJ5Z2VSvIPy7ssv0aTVjr8yHEBluKtNWkcQAKfaiH7im4ADO8LNRfv++lYEJdoyACikr7t8Zox3
-	J0Pd57O4Z6oJWr3i1PbhpBKHOZA5w+0r2uji+oYHczfWTDu8I4B47A9AdkwU+yjnLC8XN8A5BFl
-	QJ0dx2iP4VD7WRjiDX/T7Mo2o0gk6hbEOvGiQ/HwtOfpLcBBo7tR5yHezSSaGM5LwF+Gk2CokoT
-	20ws=
-X-Received: by 2002:a05:6a20:12cb:b0:234:ea1f:9744 with SMTP id adf61e73a8af0-23812a5a391mr30346263637.21.1753073947179;
-        Sun, 20 Jul 2025 21:59:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHRzznGewJQ6PhBVGeM6KRtxlsQQNUqEypvmnEpjI5fcazUC+gWUZB6zWNU/duqeGf9BIERdw==
-X-Received: by 2002:a05:6a20:12cb:b0:234:ea1f:9744 with SMTP id adf61e73a8af0-23812a5a391mr30346245637.21.1753073946755;
-        Sun, 20 Jul 2025 21:59:06 -0700 (PDT)
-Received: from [192.168.68.51] (n175-34-62-5.mrk21.qld.optusnet.com.au. [175.34.62.5])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f2ff89341sm4429837a12.52.2025.07.20.21.59.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 20 Jul 2025 21:59:06 -0700 (PDT)
-Message-ID: <b6c5ea13-1d7e-48f2-a1c4-e24d0ba30a63@redhat.com>
-Date: Mon, 21 Jul 2025 14:59:01 +1000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7EF1F03C5;
+	Mon, 21 Jul 2025 05:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.30
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753074498; cv=fail; b=l3oE3FalZi7YwIGooebu3xTWZRCLDE1PkLIHQBKvIH9E3Z1MXt22HC9LAYjcG7CChZYlqJnRy3kNAy51oRsIKeNcYcCI1jfKl6PBK+zDucCIMxx6cllysdNhoev+jfcQGQ7icgT+1D/G+o5kE1hhh45o4twj/CNei+UDr+2iKqk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753074498; c=relaxed/simple;
+	bh=7RN4265aImB3U4h+D/Rc+iQIFjg7nE3jG3OphpVysBM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=q5f/smaLS4b5G3jpXxzISCxWA+bvVh1qWQ4AkR23QT9kLubNXwnx0NR+mLmh9wsQdgNJR2zWhF33mbeCtKfSQGP0OB67zuA1GSYWshWzDNzTp/8KCJPhSPnnLuZcdpRCgh86gfcg+fwBJyukhqN8+QS25Im23OcLcjbDqeMqK70=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=oSzTwfmu; arc=fail smtp.client-ip=40.107.130.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RH3cFvZf5V2ovsdOHEYpLS/TbSg/7al+pDoWal3NqHII8ljQZ5SdEkh5Q6D1q+dpAJhAovpgtNdmai4rAMX9rDpHRdSC2+FkYG+qz0PYC41srZQ7RUcKxXZSLmjL+d6ZKhIiQzSUnMbZtqkoT8BoxLbl1+AahHclQseV6wTfEPMABWzPl3eR6DrZmgrF2eug+NTwBGuR1pIZi5ucOGe1j604vL9/BCBSgQ8xQtZrY7Rh+weyI8W8olBWCGHS0XfEw0W1V+6C6j1CkZoaxykdl5LiAAQARdVhSRI4hePrTwnYomC1qaQTQstRT8vyvw9sG9eak/jhjHdGx+XUaA/MvQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0sSLCENJhs4WawRLjs8puSvIIanB/KfjsAFzyupBUvc=;
+ b=mNC4rpVXKZFNQEEc8cXe8uAxzEuwCznLUm7PGKYseAvzJ62k8NKjPUq6uWv2lbmWfY6WgjDgWN4a19YR0sk5BfP1Xp7ND1Bn4TDSmMqVaiiI5UlFyGsN420cQqWUqzJbWDeMrbpL5m4M7OZt5S3vFSbUWlxDTKetytdM0F0sOruKHWB5igrXCNzZj+JR5B24C7LvPxF3cwEQDZ65rI4bnj7LGZlfN5u8Cv0XHRgdm93vZX+kVHVSkwy3ao4CTfxk7mji1e1NNwsdsMC1SitHL1fcdEvlTTjJMU5bekkap8qCuLyzWoIWoHIKma5N/v8FnhzoqNkXncFHON19G0uNYw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0sSLCENJhs4WawRLjs8puSvIIanB/KfjsAFzyupBUvc=;
+ b=oSzTwfmuG15A+lLNOm6t+yZT7dpVRUrCLavEx64BszURNceOozudPJuT0XVnooWJpMZiGBxf+/WBhjO342PXNZQaqsv3stPkVWmfbRcPpQBduV6BXUAJpkq4BFfWpE8Auez6qrK0dsYUp+ukSDiR+FN4Dk2WZg8Ho2rYvfqMWRa9GxSuFuUJ+A4vxZCFFHw33MftHOopzMrfepDqru0/UfongMjp1XBv4oJu7mLO7S7QEnKnWyJiDrtFtqBWYMls8Bj1NHY8mIHrah2fLhPPwJMIQlHxDmSh4k8oYtZY5dzzMyq7avNvsYnYw17ncLril41N3JEgKuhBhxMNzhDYJg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DU2PR04MB8822.eurprd04.prod.outlook.com (2603:10a6:10:2e1::11)
+ by OSKPR04MB11365.eurprd04.prod.outlook.com (2603:10a6:e10:95::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Mon, 21 Jul
+ 2025 05:08:12 +0000
+Received: from DU2PR04MB8822.eurprd04.prod.outlook.com
+ ([fe80::4e24:c2c7:bd58:c5c7]) by DU2PR04MB8822.eurprd04.prod.outlook.com
+ ([fe80::4e24:c2c7:bd58:c5c7%4]) with mapi id 15.20.8943.029; Mon, 21 Jul 2025
+ 05:08:12 +0000
+Date: Mon, 21 Jul 2025 13:02:57 +0800
+From: Xu Yang <xu.yang_2@nxp.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] media: stk1160: Restore deleted comment in
+ stk1160_fill_urb()
+Message-ID: <xvj4llvckgxorozvk4bexcsdawohe5n3bbfsk4pmwg75rp2spk@2jy3qugcfiaa>
+References: <fdab5e2d-47b6-4551-8aa8-3e90b2207a75@sabinyo.mountain>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fdab5e2d-47b6-4551-8aa8-3e90b2207a75@sabinyo.mountain>
+X-ClientProxiedBy: MA1P287CA0005.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a00:35::19) To DU2PR04MB8822.eurprd04.prod.outlook.com
+ (2603:10a6:10:2e1::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH MPAM 6.16.rc1] arm_mpam: Enforce to recalculate mbw_min on
- configuration
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org
-Cc: sdonthineni@nvidia.com, rohit.mathew@arm.com,
- carl@os.amperecomputing.com, shan.gavin@gmail.com, Koba Ko <kobak@nvidia.com>
-References: <20250626095208.1008871-1-gshan@redhat.com>
- <0f2993ff-75a1-4d63-9384-5c949bf2e8e0@arm.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <0f2993ff-75a1-4d63-9384-5c949bf2e8e0@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU2PR04MB8822:EE_|OSKPR04MB11365:EE_
+X-MS-Office365-Filtering-Correlation-Id: 472e3aa8-eca4-4857-e2ae-08ddc814975a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|366016|1800799024|19092799006|38350700014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?AQG0rOP52feXfwkEeoi1uSpC/GenPT2HmIEX5k4p1u5ZEEyBLTAtgQOeGNuT?=
+ =?us-ascii?Q?8tvRqgvQMrkGOMoQ/C5pDFWXYy/yAdFoX1PIncXfnl6r9OFXFW1qyqJmGUQa?=
+ =?us-ascii?Q?1shBfAkv+38JXeru3KgscD9H1U4lkgsdekWwghZLw7vDS0I1D9i/kRSBJmyW?=
+ =?us-ascii?Q?myOOo20n33IHzkFZaD55HchyhiyxEv0yfv8JZc3UEVGernI7sXdZUnYngeG8?=
+ =?us-ascii?Q?KtiH5lEGAwN/XK6+lesJQJifByMBhA1euywdbrJV11fzlxkaJyafiRP8hWbO?=
+ =?us-ascii?Q?htt2HQ5pCiZChXdfwucVDM3xcf+YwZHM4CaSGs9mhw/CYe69DK0dViOD8ZAf?=
+ =?us-ascii?Q?JHC8qxZFKq86zsukZ09mIEp5TLsUXtd9iOwIHCEqPmndqpY+R23yA1rpr+vP?=
+ =?us-ascii?Q?+sUgw6rIR+LRa0U0TibVxHS1zzBQ6XJyzSHvoSicR80HYrnqB/SWQRzY7BYd?=
+ =?us-ascii?Q?t/wuRQscmEBi6DY31FxYpzDFlZHI4wlBqzfLbPTI8Y0M0Fl8S67AucyPMx8H?=
+ =?us-ascii?Q?UMPdWjQ8wrpOwSrh61g1zCtQHxQI+8CcEJ7FQ69icgFay7mbgDnacaCDT5Br?=
+ =?us-ascii?Q?yA8ycD59WOofBgtOJ7vy28+N3TNuNVRjTPO9QYbVvWTRPMAqFS2Mv5JlgBDi?=
+ =?us-ascii?Q?skh2AC/gC05kCyQc2EHaM9Ai61OFKoDF8LgTBC15iF0A1WZefMHOMBKOIDry?=
+ =?us-ascii?Q?X7ofVbxwCjsBOFYxwmIs8o+2kUcTd/LpL7dh632K/CsuMXw6oHsp+41F/IEO?=
+ =?us-ascii?Q?6Pm4OHeJL7ibBsk4py9SW9+QTMeWWcGDEnJQwz6D2R0o07pg7fawUnpc7vNO?=
+ =?us-ascii?Q?FzoZZwlevgzysnE506N0sJa2fPqpitQ2N9jDNvnBOt8Y+SBxDIg2ZRXsWWiP?=
+ =?us-ascii?Q?WhpdcpKS1MRQnTdXD8klJdn2+HUArME3/TZsdzgbkugMeTSjqYItxsc9Eq95?=
+ =?us-ascii?Q?dDmGARFumBGsinAeeXn5PoDGltGgXfkLHIGBfMX4IB7va2OvisRD8R71GJ6j?=
+ =?us-ascii?Q?VobZVxri3TstuVz8EINhRl1Hu76Rk/pQ9OsAnW3+tBBJbnnmG/67HKwRgVSa?=
+ =?us-ascii?Q?hxWFFnWMyi2yKhA92ClqA/7+/g5gCUIYZoDXVqJhtdFLMwJsIUh8LCCX8Tdp?=
+ =?us-ascii?Q?sXSblX6IWdx4xqEEGMk2VKfbpC0LcJkABW7qpF/KYWd2rkbJsHNj+kXZB9pf?=
+ =?us-ascii?Q?+z1bfTlGUWVKeCod5KVOA7XnYtvzZBrLNHZMwfKsqt++gsyvh/gq94T4Sms0?=
+ =?us-ascii?Q?YIy2+XJ9FsBjjqrbxQh8/ivAOR+SEL4LLoYfcvQoihq3R4TgDi+Gs2tWbuSn?=
+ =?us-ascii?Q?hln73n0cO5MXH46ZzARzUjhsJq5ptSOjmYmF+DlSyIEJD+P0z+wIuTO2PoPt?=
+ =?us-ascii?Q?FrCkXqyaosAMDiaxEewPTlmFubMVTkOyj+yxpeYwDhDJpZg9Pvl8Z92HJ5bX?=
+ =?us-ascii?Q?RwkRVIKR6up7+4AWBZwNFw8kPDaN4J2rQzKViob7VCSfpkf0+TAmLQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8822.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(19092799006)(38350700014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?WZQMTPJKrMLpBhRWZTSLufckg+ZR3A3kyB7WXTpKvh69BXx7N7jUbmeX/Pi6?=
+ =?us-ascii?Q?dwCzxD3zbNURTl7JCg0x/dbrvmEV/6eR15EASEc4V5mqJVzyFLdKYvoP2Bc2?=
+ =?us-ascii?Q?zG22C5V+gSK9GBEMRJVW/GiPoVdotSc8oYA5ffLTDlMCIOsc/HeI7ePWWkx9?=
+ =?us-ascii?Q?r1eMaCOg+o1Zh58w8wtyS+hKcJrQS0u5QORPp/+VllNeS6Ex4+mYPfgsVtyo?=
+ =?us-ascii?Q?MQXGDPtLY026DMxsCVvUt3ajwdSuHy+2Ob8FDT8T+hJLNnk2SbCebhHQV32K?=
+ =?us-ascii?Q?A/oSqdUotkqRtpDgha4+I+rx6oB/fY7iIqo+0d/p94S6r++czdMCKHrnzNjo?=
+ =?us-ascii?Q?+HF6c33B7rCUuTY7fjNuyLezQMEwoL0Ib7ilGa1i++r81pFYF6hKFtM1H5fN?=
+ =?us-ascii?Q?/wpiS9iasvChpMbL9tUs6HaBCq1ACzpROlOjOQqMve+PvdJmtNIJ5DFUdjui?=
+ =?us-ascii?Q?2lwdyX0/5uqKtRv47PZgLreqmYy6YsSobKX1A0oD/Q9XRE5RBagJi8H/4zv2?=
+ =?us-ascii?Q?EqS3Rk4AAOR01c2SMXHqCdtPd+AHym8jAyv8VI5VJLJ/20ycvpMaPBJcRYzF?=
+ =?us-ascii?Q?C5cH85r4XqNWo0+g5dxly/0hnnOiwISrpKpFB7T04PMfokb0MiljanGia/uS?=
+ =?us-ascii?Q?PcMLXgjoyeHeQepn8Aj25S9qLx+o9ewzcGJ7OJTfHS4WqDxewmgacLNM/3wF?=
+ =?us-ascii?Q?D3hH9eDCdWC5egua0eki2jqkJFnG/ud8mVs1JjzH8iJsqRSAPJb6V2c8LuYw?=
+ =?us-ascii?Q?1dDB56/Ig6OqQQjHq4nraB7Sdm6zRssOZYbSauJEQwNUIJXys6IF3fsVgbxX?=
+ =?us-ascii?Q?CEO6VD/8peJBLQRQgHY6UntqxcEUOa4YKu0PodA7WEYjmijMMvaJCct1QibU?=
+ =?us-ascii?Q?e+OTI4uaCPt033V4Rh/q/hfnZ9VS8U4D6ACtAH04avZ+NAQGfjceggoY5T2h?=
+ =?us-ascii?Q?Y/1XjVSNtioyKdVEWdWmHw1BtP8PcQqIriEKX8Jh6F98E6225MH8A5a/3gIU?=
+ =?us-ascii?Q?olROLEBjr15VmFgkli0f8+qoDjNJp4vvEEx/KMJcMRAe6qbnCjPXjK6gEM4Q?=
+ =?us-ascii?Q?dyO/0Fy7HNpKjrf2+qToLXeSrI0OHqEeizHPg/m4N76d30kUGmvsewWspu6Q?=
+ =?us-ascii?Q?ZCBVAy6ueJ05nj54YdlnfhZp6V+mrXcSidsp8knH78V9pC26/5V12xKFJnov?=
+ =?us-ascii?Q?ZHI9ctXVXUi1XIX4d8RGTgcPshqJgcP5nLmofzMx94B9lNMKee/N/YxFBa+U?=
+ =?us-ascii?Q?P+6P9C8pbHr89GcSlnqOZGkiXL3ZUGRLRVQA/XOxiOmnqDW9eeE3PfiHhWoD?=
+ =?us-ascii?Q?y4teOqegh1YWAihSOVZBNPm2MZwFCB9riN4P5hOSjqipVIFzAjaTNgEJFOMo?=
+ =?us-ascii?Q?LvA30xSz3yWODng98LXS8Nw+bjUuoQg2swdVd1Vi54/vJ9WJxxhaB0dI88wD?=
+ =?us-ascii?Q?Bc2xpn6DlRNRo3//pGrW39mUlPRx6DCzDhXKKafhEmqK71L8yzqLJAskOwCp?=
+ =?us-ascii?Q?NZARa6UreeLbvaYwo6E9LmRl+TaWTc8KHmlAL1boWuywjDBSiG6WADuYFZc7?=
+ =?us-ascii?Q?v09JOGfGDN0K5epnRaD1l1EyB7IgGkiMOyrrZ+Ne?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 472e3aa8-eca4-4857-e2ae-08ddc814975a
+X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8822.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2025 05:08:12.3675
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MWMo4aihdS8jes0/Hqpfx1w6EWzGycBs6POHUfPbBXrLPa0MBUbegvAC8kKvSHvXWe+fSSYMr9x+OT0oWGfhuw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSKPR04MB11365
 
-Hi James,
-
-On 7/14/25 8:15 PM, James Morse wrote:
-> On 26/06/2025 10:52, Gavin Shan wrote:
->> mpam_feat_mbw_max is exposed to user by resctrlfs, but mpam_feat_mbw_min
->> should be recalculated based on the maximal memory bandwidth in every
->> configuration, which has been missed unfortunately. When a new group is
->> created, the default and maximal memory bandwidth percentage (100%) is
->> configured, the configuration instance (struct mpam_config) on the stack
->> is updated, including the minimal and maximal memory bandwidth. It's
->> copied to the domain's configuration instance. On next time when user
->> tries to configure by writing 'schemata', the minimal memory bandwidth
->> isn't never recalculated because mpam_feat_mbw_min has been seen in the
->> configuration, which inherits from the domain's instance.
->>
->> For example, the value of register MPAMCFG_MBW_MIN is never changed no
->> matter what configuration is set.
+On Tue, Jul 15, 2025 at 06:00:32PM -0500, Dan Carpenter wrote:
+> This comment explains why we return success when usb_alloc_noncoherent()
+> fails and I think it's helpful.  It was deleted during a recent refactor,
+> but let's add it back.
 > 
-> Thanks for catching this. I think this was introduced by the patch that picked
-> the component copy of the configuration, modified it - and passed it back into
-> the driver. That had the additional side effect of changes going missing as the
-> mpam_update_config() had the same config twice...
-> 
-> I fixed that shortly after rc1, with that fixed I don't think this can happen -
-> resctrl never sets the 'min', meaning mpam_extent_config() will always regenerate
-> the value.
-> 
-> This shouldn't happen with the latest version of the tree.
-> https://git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git/log/?h=mpam/snapshot/v6.16-rc4
-> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-The issue still exists in v6.16-rc4 and v6.16-rc5. Here are the dumped registers
-on the varied MBW configurations, and MPAMCFG_MBW_MIN doesn't alter.
-
-   # uname -r
-   6.16.0-rc5-gavin
-   # mount -tresctrl none /sys/fs/resctrl
-   # mkdir -p /sys/fs/resctrl/all
-   # mkdir -p /sys/fs/resctrl/test
-   # cd /sys/fs/resctrl/test
-
-   # echo "MB:1=100" > schemata
-   # cat /proc/dump
-   MPAMCFG_PART_SEL            00000002
-   MAPMF_MBW_IDR               00000c07
-   MPAMCFG_MBW_MAX             0000ffff
-   MPAMCFG_MBW_MIN             0000f000
-
-   # echo "MB:1=2" > schemata
-   # cat /proc/dump
-   MPAMCFG_PART_SEL            00000002
-   MAPMF_MBW_IDR               00000c07
-   MPAMCFG_MBW_MAX             000005ff
-   MPAMCFG_MBW_MIN             0000f000
-
-The problem is mpam_feat_mbw_min is always set in 'struct mpam_config'. With this,
-cfg->mbw_min won't be recalculated. I guess we probably just need to simply drop
-the check to that cfg->mbw_min can be recalculated every time? Could you please
-fix it up in place if the resolution looks good to you, I also can post (v2) to
-include the changes if you prefer. I don't know how it can be handled since the
-code isn't merged to upstream yet.
-
-static void mpam_extend_config(struct mpam_class *class, struct mpam_config *cfg)
-{
-	:
-         /* The mpam_feat_mbw_min needs to be dropped */
-	if (mpam_has_feature(mpam_feat_mbw_max, cfg) &&
-             !mpam_has_feature(mpam_feat_mbw_min, cfg)) {
-                 delta = ((5 * MPAMCFG_MBW_MAX_MAX) / 100) - 1;
-                 if (cfg->mbw_max > delta)
-                         min = cfg->mbw_max - delta;
-                 else
-                         min = 0;
-
-                 cfg->mbw_min = max(min, min_hw_granule);
-                 mpam_set_feature(mpam_feat_mbw_min, cfg);
-         }
-
-         if (mpam_has_quirk(T241_FORCE_MBW_MIN_TO_ONE, class) &&
-             cfg->mbw_min <= min_hw_granule) {
-                 cfg->mbw_min = min_hw_granule + 1;
-                 mpam_set_feature(mpam_feat_mbw_min, cfg);
-         }
-}
-
-> 
->> diff --git a/drivers/platform/arm64/mpam/mpam_devices.c
-> b/drivers/platform/arm64/mpam/mpam_devices.c
->> index df8730491de2..4845dcb8e601 100644
->> --- a/drivers/platform/arm64/mpam/mpam_devices.c
->> +++ b/drivers/platform/arm64/mpam/mpam_devices.c
->> @@ -3192,6 +3192,9 @@ static void mpam_extend_config(struct mpam_class *class, struct
-> mpam_config *cfg
->>   	u16 min, min_hw_granule, delta;
->>   	u16 max_hw_value, res0_bits;
->>
->> +	if (!mpam_has_feature(mpam_feat_mbw_max, cfg))
->> +		return;
-> 
-> N.B. - The T421 quirk needs to ensure the minimum value is never set to 0 - which is what
-> mpam_reprogram_ris_partid() will do if there is no minimum config set.
-> 
-> The aim of the quirk is that on affected platforms the mbm_min will always be set, and
-> never be zero in any configuration. Whether it then gets applied to the hardware depends
-> on whether the hardware has the feature.
-> This makes it simpler to think about - and easier to test on platforms that aren't
-> affected by the errata.
-> 
-> I'd prefer not to to try and spot configurations where its going to matter as it will be
-> hard to debug the workaround going wrong!
-> 
-
-Ok, thanks for the explanation. In that case, we shouldn't bail early. The mpam_feat_mbw_min
-check in mpam_extend_config() needs to be dropped, as explained above.
-
-> 
->> @@ -3211,23 +3214,17 @@ static void mpam_extend_config(struct mpam_class *class, struct
-> mpam_config *cfg
->>   	 *
->>   	 * Resctrl can only configure the MAX.
->>   	 */
->> -	if (mpam_has_feature(mpam_feat_mbw_max, cfg) &&
->> -	    !mpam_has_feature(mpam_feat_mbw_min, cfg)) {
->> -		delta = ((5 * MPAMCFG_MBW_MAX_MAX) / 100) - 1;
->> -		if (cfg->mbw_max > delta)
->> -			min = cfg->mbw_max - delta;
->> -		else
->> -			min = 0;
->> +	delta = ((5 * MPAMCFG_MBW_MAX_MAX) / 100) - 1;
->> +	if (cfg->mbw_max > delta)
->> +		min = cfg->mbw_max - delta;
->> +	else
->> +		min = 0;
->>
->> -		cfg->mbw_min = max(min, min_hw_granule);
->> -		mpam_set_feature(mpam_feat_mbw_min, cfg);
->> -	}
->> +	cfg->mbw_min = max(min, min_hw_granule);
-> 
-> While resctrl doesn't use it - the idea is the mpam_devices interface should support any
-> mpam control being set. This overwrites what the user asked for.
-> 
-> The devices/resctrl split might look strange - but its so the resctrl ABI implications are
-> contained to one file, and another user of the mpam_devices interface can be added later.
-> (KVM in-kernel MSC emulation was one proposal, another came from people who believe they
->   need to change the hardware policy more frequently than they can with a syscall ... I
->   don't like either of these!)
-> 
-
-hmm, it's intresting to know we can't tolerate the time consumed to finish a syscall.
-The MPAM would have static configurations, meaning it's static after the configuration
-is given. Could you share who is looking into MPAM virtualization? Actually, David
-and I also looked into MPAM virtualization support, but we had everything emulated in
-QEMU in the draft design.
+Reviewed-by: Xu Yang <xu.yang_2@nxp.com>
 
 Thanks,
-Gavin
+Xu Yang
 
+> ---
+>  drivers/media/usb/stk1160/stk1160-video.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 > 
-> Thanks,
+> diff --git a/drivers/media/usb/stk1160/stk1160-video.c b/drivers/media/usb/stk1160/stk1160-video.c
+> index 416cb74377eb..3e6bffd49346 100644
+> --- a/drivers/media/usb/stk1160/stk1160-video.c
+> +++ b/drivers/media/usb/stk1160/stk1160-video.c
+> @@ -408,8 +408,13 @@ static int stk1160_fill_urb(struct stk1160 *dev, struct stk1160_urb *stk_urb,
+>  	stk_urb->transfer_buffer = usb_alloc_noncoherent(dev->udev, sb_size,
+>  							 GFP_KERNEL, &stk_urb->dma,
+>  							 DMA_FROM_DEVICE, &stk_urb->sgt);
+> -	if (!stk_urb->transfer_buffer)
+> +	if (!stk_urb->transfer_buffer) {
+> +		/*
+> +		 * If the buffer allocation failed, we exit but return 0 since
+> +		 * we allow the driver working with less buffers.
+> +		 */
+>  		goto free_urb;
+> +	}
+>  
+>  	stk_urb->dev = dev;
+>  	return 0;
+> -- 
+> 2.47.2
 > 
-> James
-> 
-
 
