@@ -1,132 +1,91 @@
-Return-Path: <linux-kernel+bounces-739020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90D21B0C0A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:49:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61871B0C0AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:50:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CC66160915
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:49:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D6D5189CC35
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6659288CBC;
-	Mon, 21 Jul 2025 09:48:28 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C49328D8D5;
+	Mon, 21 Jul 2025 09:49:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WXIs09SE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668F7224254;
-	Mon, 21 Jul 2025 09:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD3C5579E;
+	Mon, 21 Jul 2025 09:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753091308; cv=none; b=ccO40Vv3w7I4fxPJT8RG2iHyhp1Hymq4L3gOvyNXy2Ox/McQR18FlQWi70ED0ILTuKwQbGvq878G6O3s7sMnKeJdfnBogPTSeNFtoTMUDQQ30OeIfWemU64bJp3ZnvTjxgMJ00Ui+rIGL4ixPRWwPE9QA+rO786qJQ9XsHNk2vs=
+	t=1753091387; cv=none; b=ui2vUOs/JmcJX1mz6y7X23YIqBdMC6pLgBo/mc5g9Tqm7mb0msh2Mk1zvgG8/oUF4ctnary34DxNjF5cdykjYwpPOqvoMcp0DN6r+NFVndRBzN2ILM3gmd+aHTjVSDB9FoGzOJMj2ou7IP68e/horhtiwc+vHHe67qT9Zd60m5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753091308; c=relaxed/simple;
-	bh=VD8dX6xKkJvFwhWE/+3tcU+thqZCccdxaLH0Hg2g770=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DCLLYkiOQf8d57Iv74KCgrdjAySUrTY/Kv8kQE/zhEzYv8IN/PUPFdfJE6G59ZZRqtnZgfA1RpBpcePe+uTrF2MEDv9Yg7Mna0aHoUmAHHclA0zseXM6YysObxE/Y7y1ymeLI6p4vSE2y4i52fMqj6YTtdhdnYq/EPGeeIgM8r0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4blwXW2mncz6L5QP;
-	Mon, 21 Jul 2025 17:46:51 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id B6E9214038F;
-	Mon, 21 Jul 2025 17:48:17 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 21 Jul
- 2025 11:48:17 +0200
-Date: Mon, 21 Jul 2025 10:48:16 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Thomas =?ISO-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-CC: Matthew Wood <thepacketgeek@gmail.com>, Bjorn Helgaas
-	<bhelgaas@google.com>, Mario Limonciello <superm1@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH v5 1/1] PCI/sysfs: Expose PCIe device serial number
-Message-ID: <20250721104816.00003feb@huawei.com>
-In-Reply-To: <20250718125935-75fa0343-af78-42be-bc3f-e8f806a4aee5@linutronix.de>
-References: <20250717165056.562728-1-thepacketgeek@gmail.com>
-	<20250717165056.562728-2-thepacketgeek@gmail.com>
-	<20250718113611.00003c78@huawei.com>
-	<20250718125935-75fa0343-af78-42be-bc3f-e8f806a4aee5@linutronix.de>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1753091387; c=relaxed/simple;
+	bh=Q38v6aY+FokTWJGa+hakCqfR9CY7WHzyzp3v3NxqYfk=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=aUi/EKO9MzxIM75TzUCbiT31ib5dIcqi/jcKpphvf+PcI3in0dmGNfjaiFlLGo4yKvTs7b4uFlQeEa1fxtW/4kG8pkREIM9vW1gfOYcxQ1L+MJIvDvrlxUJ6StoLZZ8d47VKLJxzonnYs2UouiuUHvi7wQw4B5t1svPuK2aPTYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WXIs09SE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57D09C4CEF5;
+	Mon, 21 Jul 2025 09:49:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753091387;
+	bh=Q38v6aY+FokTWJGa+hakCqfR9CY7WHzyzp3v3NxqYfk=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=WXIs09SEydGeWXiTs+Wg1pMe0tgkm3NbZgNz6N2IIUOyS6N0REN/h3TL+lRo9U8Ws
+	 mON3Oayu2BPRynVukzngyJcadnBNUdvzWvSUcF/We0xN8ZDJLSNPFl8E8Rens+IdmG
+	 oKBo+aA7hC67+TPzUKTlVwXTjSlOAlsm80V+d4Ak2YvQIMvOMPb1wA57hCzfxjdqsu
+	 vDLhscRQIBIKAIl5J9SelSKlZoMG72Xjt9UXbaGOazjb7dbv+aDmJpSXZK1sijIIwd
+	 oVMg9E5qi53UYfMFZnAYvHe9+4yOsQU0uoigK+EJat3A+eocu9snq6fPU33xm0uCu5
+	 aI0Yn83IRr1Ww==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70EB5383BF4E;
+	Mon, 21 Jul 2025 09:50:07 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml100011.china.huawei.com (7.191.174.247) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] net: usb: Remove duplicate assignments for
+ net->pcpu_stat_type
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175309140626.4174808.4938048621331802399.git-patchwork-notify@kernel.org>
+Date: Mon, 21 Jul 2025 09:50:06 +0000
+References: <20250716001524.168110-2-qiang.zhang@linux.dev>
+In-Reply-To: <20250716001524.168110-2-qiang.zhang@linux.dev>
+To: Zqiang <qiang.zhang@linux.dev>
+Cc: oneukum@suse.com, kuba@kernel.org, andrew+netdev@lunn.ch,
+ davem@davemloft.net, pabeni@redhat.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-On Fri, 18 Jul 2025 13:02:00 +0200
-Thomas Wei=DFschuh <thomas.weissschuh@linutronix.de> wrote:
+Hello:
 
-> On Fri, Jul 18, 2025 at 11:36:11AM +0100, Jonathan Cameron wrote:
-> > On Thu, 17 Jul 2025 09:50:54 -0700
-> > Matthew Wood <thepacketgeek@gmail.com> wrote: =20
->=20
-> (...)
->=20
-> > > diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-> > > index 268c69daa4d5..bc0e0add15d1 100644
-> > > --- a/drivers/pci/pci-sysfs.c
-> > > +++ b/drivers/pci/pci-sysfs.c
-> > > @@ -239,6 +239,22 @@ static ssize_t current_link_width_show(struct de=
-vice *dev,
-> > >  }
-> > >  static DEVICE_ATTR_RO(current_link_width);
-> > > =20
-> > > +static ssize_t serial_number_show(struct device *dev,
-> > > +				       struct device_attribute *attr, char *buf)
-> > > +{
-> > > +	struct pci_dev *pci_dev =3D to_pci_dev(dev);
-> > > +	u64 dsn;
-> > > +
-> > > +	dsn =3D pci_get_dsn(pci_dev);
-> > > +	if (!dsn)
-> > > +		return -EIO;
-> > > +
-> > > +	return sysfs_emit(buf, "%02llx-%02llx-%02llx-%02llx-%02llx-%02llx-%=
-02llx-%02llx\n",
-> > > +		dsn >> 56, (dsn >> 48) & 0xff, (dsn >> 40) & 0xff, (dsn >> 32) & 0=
-xff,
-> > > +		(dsn >> 24) & 0xff, (dsn >> 16) & 0xff, (dsn >> 8) & 0xff, dsn & 0=
-xff); =20
-> >=20
-> > I wonder if doing the following i too esoteric. Eyeballing those shifts=
- is painful.
-> >=20
-> > 	u8 bytewise[8]; /* naming hard... */
-> >=20
-> > 	put_unaligned_u64(dsn, bytewise);
-> >=20
-> > 	return sysfs_emit(buf, "%02x-%02x-%02x-%02x-%02x-%02x-%02x-%02x\n",
-> > 		bytewise[0], bytewise[1], bytewise[2], bytewise[3],
-> > 		bytewise[4], bytewise[5], bytewise[6], bytewise[7]); =20
->=20
-> This looks endianess-unsafe.
->=20
-> Maybe just do what some drivers are doing:
->=20
-> 	u8 bytes[8];
->=20
-> 	put_unaligned_be64(dsn, bytes);
-Absolutely. Typo :(  I don't think there is a put_unaligned_u64()
+This patch was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
 
->=20
-> 	return sysfs_emit(buf, "%8phD");
->=20
-> >=20
-> >  =20
-> > > +}
-> > > +static DEVICE_ATTR_ADMIN_RO(serial_number); =20
-> >=20
-> >  =20
->=20
+On Wed, 16 Jul 2025 08:15:24 +0800 you wrote:
+> This commit remove duplicate assignments for net->pcpu_stat_type
+> in usbnet_probe().
+> 
+> Signed-off-by: Zqiang <qiang.zhang@linux.dev>
+> ---
+>  drivers/net/usb/usbnet.c | 1 -
+>  1 file changed, 1 deletion(-)
+
+Here is the summary with links:
+  - net: usb: Remove duplicate assignments for net->pcpu_stat_type
+    https://git.kernel.org/netdev/net-next/c/dd500e4aecf2
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
