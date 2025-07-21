@@ -1,111 +1,214 @@
-Return-Path: <linux-kernel+bounces-738726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A170B0BC5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:10:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D299B0BC4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:06:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3000170F96
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:10:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C190C3B3360
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C55EF21FF27;
-	Mon, 21 Jul 2025 06:10:15 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F5D21D3C6;
+	Mon, 21 Jul 2025 06:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NAGdKrMr"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FAE1DACA7;
-	Mon, 21 Jul 2025 06:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B2E1F0995
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 06:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753078215; cv=none; b=gsS2MRJdvaAroV2mpC+jk9cQXngWCGwQVEsffO8efnL1rTx+rDI1YuEXz8O9VKn0Yof+zNSVzkxQYhemX6MoIKfdPBZtf9ZVL6aVPf5wG04G1j1IhMMRpQeQzmetvZItvXsGhpAqu2y6BJBUuPKEWkNel3Pb0gTiC1TmNZtYyvI=
+	t=1753077968; cv=none; b=VrgxZ2bxfwBX6gTkXaoinJTVgkxtwmobzz6U4JoT+xMS+jsCDRJmiKxsk49E0Cjsvryxn8sxcLr2blpGX2jt7aAvMhKjg/uZsQfs04pqx+jZArd0Hu00UZx/jmweaiCOq78YyhnN0GsXO1pZxxWMQ4RZKjGBcANxJpTmjMmbSgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753078215; c=relaxed/simple;
-	bh=YdNi4rqzaJ2/K/d0sYakKz852DuCCfPoMOsKnVDEw7U=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=crSAgy0lkVnWsEjFNOG8WnFoOq2ZuGqvYFFGTcc3H+gsAyzGxzsXdKpO5OLXnbhXCJ0PtjXcIRXFYvygmZ7nCEBq8D+HMKiUoIPoqdkDiG3NdZMe8v9kRMKdt2xHPFZO7SF494oDXKgrmb9Vq+32Cah7XBuBUNND/M/2yv2erOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4blqkX55WnzKHMdM;
-	Mon, 21 Jul 2025 14:10:12 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 62AB41A1135;
-	Mon, 21 Jul 2025 14:10:11 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgBXIBHC2X1oUpToAw--.45771S3;
-	Mon, 21 Jul 2025 14:10:11 +0800 (CST)
-Subject: Re: [PATCH v3 06/11] md/md-bitmap: delay registration of bitmap_ops
- until creating bitmap
-To: Hannes Reinecke <hare@suse.de>, Yu Kuai <yukuai1@huaweicloud.com>,
- corbet@lwn.net, agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com,
- song@kernel.org
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- dm-devel@lists.linux.dev, linux-raid@vger.kernel.org, yi.zhang@huawei.com,
- yangerkun@huawei.com, johnny.chenyi@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250718092336.3346644-1-yukuai1@huaweicloud.com>
- <20250718092336.3346644-7-yukuai1@huaweicloud.com>
- <ef4a53e0-760e-4ec8-9fdf-f4e8f36360c0@suse.de>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <59f357c2-c69a-69cb-9b79-9841f91ab533@huaweicloud.com>
-Date: Mon, 21 Jul 2025 14:10:10 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1753077968; c=relaxed/simple;
+	bh=8+6LOKq7hVq9ezykO9+tgu9iTYFTVPyF6s2HFLqW+Zk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hDHt7DU/cr8NQclBqqJ1tuJG+TjS5cCacrakFD25yC95pd/i+2KaqW3TliKYLlbMUQ4AO/Tx85oi91BQDsGPldRRAdKSYNfuHQuHo4Ya3ttb6FQFNDGwi9YynsAIwHsQyOuik4L6vS4AoUwhOmwPhs6tSwCrJtSUsuCCEhxCk04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NAGdKrMr; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753077966; x=1784613966;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=8+6LOKq7hVq9ezykO9+tgu9iTYFTVPyF6s2HFLqW+Zk=;
+  b=NAGdKrMrZZzP3zu3iAWt003/T2b0EyVhJig6NqCDlguHm+dwMqRnMtz7
+   sHfwHlYSbXiu6cfka18TykaxJU7C4YLE80lP/EYw06HMXdnDMx0FO4xP0
+   DyvbQs7Rc6vmddYcq4cqINAdRwou61lFtmVLswzcxYch+XKpqioHmlKC4
+   8c2mVpsnPz87yt/Tr/Kkb9I4B8RUhxZ9pd0gkt/6tt7epn5Pnvqt55qw0
+   ZkTJybt+jHFbum7JDExo3H9DmRF1MZv9+SJlrySltOTEsFMbSyJmxYSLM
+   Nm0zkb3YAt+1+KRaPlS/OggPzgfzFA6gMkDRxeCqOVo6ISup1Utf/dGmE
+   Q==;
+X-CSE-ConnectionGUID: 46C3VEIhQk6dY7MOUr/Y9w==
+X-CSE-MsgGUID: eyONE1/XRSONmssilN1Wjg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11498"; a="54994912"
+X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
+   d="scan'208";a="54994912"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jul 2025 23:05:56 -0700
+X-CSE-ConnectionGUID: FR/9Eg0CR6a6FCuo6C7u5w==
+X-CSE-MsgGUID: 6jA7WmgvRyiwF4nXSIC8SA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
+   d="scan'208";a="189696079"
+Received: from linux-pnp-server-17.sh.intel.com ([10.239.166.49])
+  by fmviesa001.fm.intel.com with ESMTP; 20 Jul 2025 23:05:54 -0700
+From: Pan Deng <pan.deng@intel.com>
+To: peterz@infradead.org,
+	mingo@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	tianyou.li@intel.com,
+	tim.c.chen@linux.intel.com,
+	yu.c.chen@intel.com,
+	pan.deng@intel.com
+Subject: [PATCH v2 0/4] sched/rt: mitigate root_domain cache line contention
+Date: Mon, 21 Jul 2025 14:10:22 +0800
+Message-ID: <cover.1753076363.git.pan.deng@intel.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ef4a53e0-760e-4ec8-9fdf-f4e8f36360c0@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBXIBHC2X1oUpToAw--.45771S3
-X-Coremail-Antispam: 1UD129KBjvdXoWruF4xZF4DGFy3Xw4rKr4rZrb_yoWfGFbE9w
-	4UWFZ7Za4xJFWrtr15JFn8ZF40kw4Iyayxtws5AF48Jw13Aa9YyFZYkr9Yk34fCw4UCr43
-	GryDAr4ftrnIgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbfAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VU13ku3UUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hi,
+When running multi-instance FFmpeg workload in cloud environment,
+cache line contention is severe during the access to root_domain data
+structures, which significantly degrades performance.
 
-在 2025/07/21 14:01, Hannes Reinecke 写道:
->> diff --git a/Documentation/admin-guide/md.rst 
->> b/Documentation/admin-guide/md.rst
->> index 356d2a344f08..03a9f5025f99 100644
->> --- a/Documentation/admin-guide/md.rst
->> +++ b/Documentation/admin-guide/md.rst
->> @@ -388,6 +388,9 @@ All md devices contain:
->>        bitmap
->>            The default internal bitmap
->> +If bitmap_type is not none, then additional bitmap attributes will be
->> +created after md device KOBJ_CHANGE event.
->> +
->>   If bitmap_type is bitmap, then the md device will also contain:
->>     bitmap/location
-> 
-> Please state _which_ attributes are created with the KOBJ_CHANGE
-> event.
+The SUT is a 2-socket machine with 240 physical cores and 480 logical
+CPUs. 60 FFmpeg instances are launched, each pinned to 4 physical cores
+(8 logical CPUs) for transcoding tasks. Sub-threads use RT priority 99
+with FIFO scheduling. FPS(frame per second) is used as score.
 
-Just a notice in case you missed that following statements are exactly
-the attributes for bitmap, or do I misunderstood somehow?
+Profiling shows the kernel consumes ~20% of CPU cycles, which is
+excessive in this scenario. The overhead primarily comes from RT task
+scheduling functions like `cpupri_set`, `cpupri_find_fitness`,
+`dequeue_pushable_task`, `enqueue_pushable_task`, `pull_rt_task`,
+`__find_first_and_bit`, and `__bitmap_and`. This is due to read/write
+contention on root_domain cache lines.
 
-Thanks,
-Kuai
+The `perf c2c` report, sorted by contention severity, reveals:
+
+root_domain cache line 3:
+- `cpupri->pri_to_cpu[0].count` is heavily loaded/stored,
+   since counts[0] is more frequently updated than others along with a
+   rt task enqueues an empty runq or dequeues from a non-overloaded runq.
+- `rto_mask` is heavily loaded
+- `rto_loop_next` and `rto_loop_start` are frequently stored
+- `rto_push_work` and `rto_lock` are lightly accessed
+- cycles per load: ~10K to 59K.
+
+root_domain cache line 1:
+- `rto_count` is frequently loaded/stored
+- `overloaded` is heavily loaded
+- cycles per load: ~2.8K to 44K
+
+cpumask (bitmap) cache line of cpupri_vec->mask:
+- bits are loaded during cpupri_find
+- bits are stored during cpupri_set
+- cycles per load: ~2.2K to 8.7K
+
+The end cache line of cpupri:
+- `cpupri_vec->count` and `mask` contends. The transcoding threads use
+  rt pri 99, so that the contention occurs in the end.
+- cycles per load: ~1.5K to 10.5K
+
+According to above, we propose 4 patches to mitigate the contention,
+each patch resolves part of above issues:
+Patch 1: Reorganize `cpupri_vec`, separate `count`, `mask` fields,
+         reducing contention on root_domain cache line 3 and cpupri's
+         last cache line. This patch has an alternative implementation,
+         which is described in the patch commit message, welcome any
+         comments.
+Patch 2: Restructure `root_domain` structure to minimize contention of
+         root_domain cache line 1 and 3 by reordering fields.
+Patch 3: Split `root_domain->rto_count` to per-NUMA-node counters,
+         reducing the contention on root_domain cache line 1.
+Patch 4: Split `cpupri_vec->cpumask` to per-NUMA-node bitmaps, reducing
+         load/store contention on the cpumask bitmap cache line.
+
+Evaluation:
+The patches are tested non-cumulatively, I'm happly to provide additional
+data as needed.
+
+FFmpeg benchmark:
+Performance changes (FPS):
+- Baseline:             100.0%
+- Baseline + Patch 1:   111.0%
+- Baseline + Patch 2:   105.0%
+- Baseline + Patch 3:   104.0%
+- Baseline + Patch 4:   103.8%
+
+Kernel CPU cycle usage(lower is better):
+- Baseline:              20.0%
+- Baseline + Patch 1:    11.0%
+- Baseline + Patch 2:    17.7%
+- Baseline + Patch 3:    18.6%
+- Baseline + Patch 4:    18.7%
+
+Cycles per load reduction (by perf c2c report):
+- Patch 1:
+  - `root_domain` cache line 3:    10K–59K    ->  0.5K–8K
+  - `cpupri` last cache line:      1.5K–10.5K ->  eliminated
+- Patch 2:
+  - `root_domain` cache line 1:    2.8K–44K   ->  2.1K–2.7K
+  - `root_domain` cache line 3:    10K–59K    ->  eliminated
+- Patch 3:
+  - `root_domain` cache line 1:    2.8K–44K   ->  eliminated
+- Patch 4:
+  - `cpupri_vec->mask` cache line: 2.2K–8.7K  ->  0.5K–2.2K
+
+stress-ng rt cyclic benchmark:
+Command:
+stress-ng/stress-ng --cyclic $(nproc) --cyclic-policy fifo   \
+                    --timeout 30 --minimize --metrics
+
+Performance changes (bogo ops/s, real time):
+- Baseline:             100.0%
+- Baseline + Patch 1:   131.4%
+- Baseline + Patch 2:   118.6%
+- Baseline + Patch 3:   150.4%
+- Baseline + Patch 4:   105.9%
+
+rt-tests pi_stress benchmark:
+Command:
+rt-tests/pi_stress -D 30 -g $(($(nproc) / 2))
+
+Performance changes (Total inversions performed):
+- Baseline:             100.0%
+- Baseline + Patch 1:   176.5%
+- Baseline + Patch 2:   104.7%
+- Baseline + Patch 3:   105.1%
+- Baseline + Patch 4:   109.3%
+
+Changes since v1:
+ - Patch 3: Fixed non CONFIG_SMP build issue.
+ - Patch 1-4: Added stress-ng/cyclic and rt-tests/pi_stress test result.
+
+Comments are appreciated, I'm looking forward to hearing feedback
+making revisions, thanks a lot!
+
+Pan Deng (4):
+  sched/rt: Optimize cpupri_vec layout to mitigate cache line contention
+  sched/rt: Restructure root_domain to reduce cacheline contention
+  sched/rt: Split root_domain->rto_count to per-NUMA-node counters
+  sched/rt: Split cpupri_vec->cpumask to per NUMA node to reduce
+    contention
+
+ kernel/sched/cpupri.c   | 200 ++++++++++++++++++++++++++++++++++++----
+ kernel/sched/cpupri.h   |   6 +-
+ kernel/sched/rt.c       |  56 ++++++++++-
+ kernel/sched/sched.h    |  61 ++++++------
+ kernel/sched/topology.c |   7 ++
+ 5 files changed, 282 insertions(+), 48 deletions(-)
+
+--
+2.43.5
 
 
