@@ -1,179 +1,144 @@
-Return-Path: <linux-kernel+bounces-738782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6367AB0BCFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:49:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C8B2B0BD01
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:52:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A80961892E62
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:49:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 481F317651F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:52:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C315227FD46;
-	Mon, 21 Jul 2025 06:49:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8AB27FD71;
+	Mon, 21 Jul 2025 06:52:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hXfMo9FY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t9G7JeCG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C54618DB2A;
-	Mon, 21 Jul 2025 06:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC0219DF62;
+	Mon, 21 Jul 2025 06:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753080551; cv=none; b=HxlnGzcYHSWJ+LQbEQpyqp9Qj4jvLu0Psn+GD6AfCqOZt8l8zbiV+GVcZ2W2thugcu9/Cxbopr86sfTGLS2R19v/KuA68mr+0rU58lXjJGjja//bT6XX2jyVUc2V/D/5uzsJq/VDHlKl9sz1sgE2mimw6V8dr4FpLBs6Q7HtM6Y=
+	t=1753080762; cv=none; b=QZW5EeBnw1l9bLsWFQhgk7ZhtSf4ooJSODtfK6f5/yPWQK5pT3mtY126U5B0gspAdU5iqjj1nhB3jyAPcwQQsY1BWykR22VFM/pSk25dBxTr+4Y7dz/M3Ue+hyLVGrmUit+5sLsTgPko+LI/DtpDyausF0iMJbHrSHqfFl2bqcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753080551; c=relaxed/simple;
-	bh=R4gstohCCiEcB83QHp4vePC6Vl/FRbG01v8oYCtIJb4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rmQlkSnm1U5gUoWe220aqv3c2f1UeLzV7Kdi3cmanTnZAbcR+qSbV2J2XQ+JDGtGyxPej5ORHk9lke0N70LtVykqIOU2BVvoj6C+x/LCWFR1MPvMYwW20H/GTnzYy9QGr8864cJ2xHTDbPCQqOs6ZHM6HPedhTjRaQcdPwXASWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hXfMo9FY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19A71C4CEF4;
-	Mon, 21 Jul 2025 06:49:09 +0000 (UTC)
+	s=arc-20240116; t=1753080762; c=relaxed/simple;
+	bh=Fj2B+JNw6UkLmg+kDNy6fM5RkSwPiSm8KCZnRQSQWss=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XT4YwvO63PCzHXhNnsqHljsc8HrrjkXMeJERAI3wIfAO4bBgtMLHf/FnX5Jy5P1ZQooGaHgVkjBiXbV5xsC9nk3Ii2+d8rUyGo0rqdD5dwChbbDRcqt8APO4kHJHNbPogpAtYz/kctfdh6aXee2plpg5eQrl4RYmDdj4ICnN6KY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t9G7JeCG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8065DC4CEED;
+	Mon, 21 Jul 2025 06:52:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753080550;
-	bh=R4gstohCCiEcB83QHp4vePC6Vl/FRbG01v8oYCtIJb4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hXfMo9FYah+I/klWyq3E4MM8uAEW+sVZ6ODTWsq5JUGj0H3aocK/YvbN4TFt88Hvo
-	 Rn06q7poo3PqWnBummfdHCv3BPx6GuFba9cIihgDNPzUzVyMGM+iS0hPLeAsvnHP3l
-	 U16vKWM2EvhSN9ENkKqsKLL6P+hah8+TgBzcVXJobxUE7ZVqOKbmm4hm0TXfKYNChx
-	 SSFWMkt4DOwbPfkKpjrcSjqtEzEmHFxNyFpppZlLc8Cu6Ru5oSdrYYLOQST7PAChe3
-	 CoqaxGFV0y1PwQZKEVuQqLnMxUFjEdPhV9/PxlWmOLfWgwSQKGbvScbg47BtI5mlQ2
-	 IcE2ZN/gKY35Q==
-Date: Mon, 21 Jul 2025 09:49:04 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Yonatan Maman <ymaman@nvidia.com>
-Cc: =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Lyude Paul <lyude@redhat.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Alistair Popple <apopple@nvidia.com>,
-	Ben Skeggs <bskeggs@nvidia.com>,
-	Michael Guralnik <michaelgur@nvidia.com>,
-	Or Har-Toov <ohartoov@nvidia.com>,
-	Daisuke Matsuda <dskmtsd@gmail.com>, Shay Drory <shayd@nvidia.com>,
-	linux-mm@kvack.org, linux-rdma@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] *** GPU Direct RDMA (P2P DMA) for Device Private
- Pages ***
-Message-ID: <20250721064904.GK402218@unreal>
-References: <20250718115112.3881129-1-ymaman@nvidia.com>
- <20250720103003.GH402218@unreal>
- <35ff6080-9cb8-43cf-b77a-9ef3afd2ae59@nvidia.com>
+	s=k20201202; t=1753080761;
+	bh=Fj2B+JNw6UkLmg+kDNy6fM5RkSwPiSm8KCZnRQSQWss=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=t9G7JeCGjETBbBP5rsHRIZo0lCY01I/emLq5/di0udM/ulJsYhAuzB09xkp1atpLt
+	 tZlTpNevJ7rDxKm6EbgqR8Xg66c5aeaQmfKJUuNCY3Hcm0qbLiajaMOGoyUAdv2111
+	 JboHLReaD4JA09x/9Mtfo8/O1W/ZOsduvoOr+4OtTXUUjE7L4YkPjkXqweRaL8hWZK
+	 OivoX+yF0GZTTgxWIJmnpJAe35LDYaFroyXB1e/UvgsCoKnw94F5lxrt06fXHcJaw3
+	 7kiLPSfvKbkWzqpGR1324EyDQ85mBwLyEG7LzbvZtVIhvkZoFPkMNimWFfheBuWbPi
+	 kf6GWNzVquXzg==
+Message-ID: <9574826f-3023-4fe1-9346-eacd70990d73@kernel.org>
+Date: Mon, 21 Jul 2025 08:52:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <35ff6080-9cb8-43cf-b77a-9ef3afd2ae59@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re:
+To: David Lechner <dlechner@baylibre.com>, ">"
+ <sanjaysuthar661996@gmail.com>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+ netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org
+Cc: ribalda@kernel.org, jic23@kernel.org, nuno.sa@analog.com,
+ andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, neil.armstrong@linaro.org,
+ khilman@baylibre.com, jbrunet@baylibre.com,
+ martin.blumenstingl@googlemail.com
+References: <CADU64hCr7mshqfBRE2Wp8zf4BHBdJoLLH=VJt2MrHeR+zHOV4w@mail.gmail.com>
+ <20250720182627.39384-1-sanjaysuthar661996@gmail.com>
+ <84ad0f66-311e-4560-870d-851852c6f902@baylibre.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <84ad0f66-311e-4560-870d-851852c6f902@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 21, 2025 at 12:03:51AM +0300, Yonatan Maman wrote:
+On 20/07/2025 21:30, David Lechner wrote:
+>>    - Ricardo Ribalda Delgado <ricardo@ribalda.com>
+>> diff --git a/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml b/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml
+>> index 0cd78d71768c..5c91716d1f21 100644
+>> --- a/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml
+>> +++ b/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml
+>> @@ -149,7 +149,7 @@ properties:
+>>        - description:
+>>            The first register range should be the one of the DWMAC controller
+>>        - description:
+>> -          The second range is is for the Amlogic specific configuration
+>> +          The second range is for the Amlogic specific configuration
+>>            (for example the PRG_ETHERNET register range on Meson8b and newer)
+>>  
+>>    interrupts:
 > 
-> 
-> On 20/07/2025 13:30, Leon Romanovsky wrote:
-> > External email: Use caution opening links or attachments
-> > 
-> > 
-> > On Fri, Jul 18, 2025 at 02:51:07PM +0300, Yonatan Maman wrote:
-> > > From: Yonatan Maman <Ymaman@Nvidia.com>
-> > > 
-> > > This patch series aims to enable Peer-to-Peer (P2P) DMA access in
-> > > GPU-centric applications that utilize RDMA and private device pages. This
-> > > enhancement reduces data transfer overhead by allowing the GPU to directly
-> > > expose device private page data to devices such as NICs, eliminating the
-> > > need to traverse system RAM, which is the native method for exposing
-> > > device private page data.
-> > > 
-> > > To fully support Peer-to-Peer for device private pages, the following
-> > > changes are proposed:
-> > > 
-> > > `Memory Management (MM)`
-> > >   * Leverage struct pagemap_ops to support P2P page operations: This
-> > > modification ensures that the GPU can directly map device private pages
-> > > for P2P DMA.
-> > >   * Utilize hmm_range_fault to support P2P connections for device private
-> > > pages (instead of Page fault)
-> > > 
-> > > `IB Drivers`
-> > > Add TRY_P2P_REQ flag for the hmm_range_fault call: This flag indicates the
-> > > need for P2P mapping, enabling IB drivers to efficiently handle P2P DMA
-> > > requests.
-> > > 
-> > > `Nouveau driver`
-> > > Add support for the Nouveau p2p_page callback function: This update
-> > > integrates P2P DMA support into the Nouveau driver, allowing it to handle
-> > > P2P page operations seamlessly.
-> > > 
-> > > `MLX5 Driver`
-> > > Utilize NIC Address Translation Service (ATS) for ODP memory, to optimize
-> > > DMA P2P for private device pages. Also, when P2P DMA mapping fails due to
-> > > inaccessible bridges, the system falls back to standard DMA, which uses host
-> > > memory, for the affected PFNs
-> > 
-> > I'm probably missing something very important, but why can't you always
-> > perform p2p if two devices support it? It is strange that IB and not HMM
-> > has a fallback mode.
-> > 
-> > Thanks
-> > 
-> 
-> P2P mapping can fail even when both devices support it, due to PCIe bridge
-> limitations or IOMMU restrictions that block direct P2P access.
-
-Yes, it is how p2p works. The decision "if p2p is supported or not" is
-calculated by pci_p2pdma_map_type(). That function needs to get which two
-devices will be connected.
-
-In proposed HMM_PFN_ALLOW_P2P flag, you don't provide device information
-and for the system with more than 2 p2p devices, you will get completely
-random result.
+> I would be tempted to split this into two patches. It's a bit odd to have
 
 
-> The fallback is in IB rather than HMM because HMM only manages memory pages - it doesn't
-> do DMA mapping. The IB driver does the actual DMA operations, so it knows
-> when P2P mapping fails and can fall back to copying through system memory.
+No, it's a churn to split this into more than one patch.
 
-The thing is that in proposed patch, IB doesn't check that p2p is
-established with right device.
-https://lore.kernel.org/all/20250718115112.3881129-5-ymaman@nvidia.com/
+> a single patch touching two unrelated bindings.
 
-> In fact, hmm_range_fault doesn't have information about the destination
-> device that will perform the DMA mapping.
 
-So probably you need to teach HMM to perform page_faults on specific device.
 
-Thansk
 
-> > > 
-> > > Previous version:
-> > > https://lore.kernel.org/linux-mm/20241201103659.420677-1-ymaman@nvidia.com/
-> > > https://lore.kernel.org/linux-mm/20241015152348.3055360-1-ymaman@nvidia.com/
-> > > 
-> > > Yonatan Maman (5):
-> > >    mm/hmm: HMM API to enable P2P DMA for device private pages
-> > >    nouveau/dmem: HMM P2P DMA for private dev pages
-> > >    IB/core: P2P DMA for device private pages
-> > >    RDMA/mlx5: Enable P2P DMA with fallback mechanism
-> > >    RDMA/mlx5: Enabling ATS for ODP memory
-> > > 
-> > >   drivers/gpu/drm/nouveau/nouveau_dmem.c | 110 +++++++++++++++++++++++++
-> > >   drivers/infiniband/core/umem_odp.c     |   4 +
-> > >   drivers/infiniband/hw/mlx5/mlx5_ib.h   |   6 +-
-> > >   drivers/infiniband/hw/mlx5/odp.c       |  24 +++++-
-> > >   include/linux/hmm.h                    |   3 +-
-> > >   include/linux/memremap.h               |   8 ++
-> > >   mm/hmm.c                               |  57 ++++++++++---
-> > >   7 files changed, 195 insertions(+), 17 deletions(-)
-> > > 
-> > > --
-> > > 2.34.1
-> > > 
-> 
-> 
-> 
+Best regards,
+Krzysztof
 
