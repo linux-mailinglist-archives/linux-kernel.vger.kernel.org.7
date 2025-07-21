@@ -1,121 +1,130 @@
-Return-Path: <linux-kernel+bounces-738533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ED54B0B9BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 03:20:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B31D1B0B9C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 03:21:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9682B172FF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 01:20:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE49C3A1F16
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 01:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711C017AE11;
-	Mon, 21 Jul 2025 01:20:46 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602DD17AE11;
+	Mon, 21 Jul 2025 01:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="CfdTtXsE"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD9272604;
-	Mon, 21 Jul 2025 01:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F09916F841
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 01:21:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753060846; cv=none; b=p0xM6HrtJtw3jZsVDfbp81wAIx2zcPxU853kVDYprJLJ1CuW2GFinLelFBwNahJnKcIrRDvPMwMtu/H8ef72wQo6WUeXvHtUGaWZgO2cnv7rbOfgP6/tKXkkdZRMvQhiUGYait38CHMtNwyyBSHwDTHvv7Dg/dDebJvaLKMQH8w=
+	t=1753060891; cv=none; b=eHCnVZV0swi9K5eAbKZ4aj4DQIpKxLjeamTMtnjkW0nNExvZF66ScXCOpo5pRyDdVgGWM8nDpgKxLOhrkoqNwZtNgX+Pod/UBDIuylKisXyPvPJIJixIBDXZ5mQW/D7/r0M7vSszg77MPGE4eT4LZQiZKj3B2CHWE/3KYR1UrLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753060846; c=relaxed/simple;
-	bh=BNkQIjOZSKu9ZGwc4tHzEhkbq/LUxVSJG18QsLj5xUE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TBwjpIZxb6qwtnlwMLnAovYAol9PmKdqBAl3poJmyB5pqnygzH8TsQJ3VaaLJNsHD7oB3YiXSGRS73KF0+T9pHtxls1gCWl6VWwpxPG+GGcJu4DYkcJQNDlBvf3fQ+5WhUfPILDiBRf/ry55b4xX/3YOdZDm8Towuz17OUouNms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bljJL4g3szYQv78;
-	Mon, 21 Jul 2025 09:20:34 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 5FF3B1A0ADC;
-	Mon, 21 Jul 2025 09:20:33 +0800 (CST)
-Received: from [10.174.176.88] (unknown [10.174.176.88])
-	by APP4 (Coremail) with SMTP id gCh0CgDnYhPblX1o4WHSAw--.16917S3;
-	Mon, 21 Jul 2025 09:20:29 +0800 (CST)
-Message-ID: <b60e4ef2-0128-4e56-a15f-ea85194a3af0@huaweicloud.com>
-Date: Mon, 21 Jul 2025 09:20:27 +0800
+	s=arc-20240116; t=1753060891; c=relaxed/simple;
+	bh=+MJ1Ymv+daQPTYNiE58qhqypmAUkFSHCG3m1YGa7Ftw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W8iTvUN0O/fEhO6JIrbaHh6lMcdVCN+NaluW42UvXpkGw2uIH0KTbUJMzc/4aqFW+wz7iD3bRxvAqo9y7+8cekRqkQuDoh32LC49/UJfhBRBwb/dLpOEqOmm+38ERZBDlz8vCjoPg+SVhqIRb8/l05e0uz7RDbSC0DCpFJ5RqpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=CfdTtXsE; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7e278d8345aso383615885a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 18:21:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1753060889; x=1753665689; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KutpOD99zfcETHTtzhC3inW+4TFUP9RGVT5ONQg1qvM=;
+        b=CfdTtXsEJ3Z/tFyirLVR0dMfOklW20d83cMgA7ugjNrvgQoAetyFYX8wYueES72LrU
+         qaIfklElvz+HlfIEma3T8Xq6haQD2Lv9rt/ZDLj22xZOChclQZz2GuVldNt7FrOtotju
+         mBmDdlsjBjwj5JWJNEJ/g2EdPhg34FKKyh5dXJi1iiSLRBmSLmuk19+f+Yz8zFLqywTW
+         IwmwyGaJgfgTMgEDb9aD6jQKhcUhIl1ppYXdNr2/qitygAcyqdpol2XkSQ1vZpKgLER/
+         72ODi2/8E2X14ptwRMN0WqosNnqppoGLJczwRkqu563DJGCI+uMUlXVnsBWv+mvOsFJ/
+         /zcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753060889; x=1753665689;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KutpOD99zfcETHTtzhC3inW+4TFUP9RGVT5ONQg1qvM=;
+        b=hor3potXOFznR+c5r+UJ1PSzJKxoBlDZYL6hi7HgIWn124vyLnyLoCylt8g5B9HgZE
+         VCV0vxl4JQFOaNkY67OI2meB2KhvvxpCiuIYwNAh9OsjrKxmD04chwNwjPq+XVph6alj
+         BfUbixUS29vYe7vrotnvS4Qw/DcYBmguOxc+++f9LMC2UVXfOSjUP2dCUDdaC+MTz6VV
+         eRV/fHk4F0+aXQezlN0Vv9bUMjZVFL8+Nsa/imGEvK/Eoi6zCZclvvuqBF7DpfdaYBbx
+         +J4kCk7QbMlZzfXyzMFlWBZH460sCkPT4TK/wwFrSbtQS3zaUxoNsoqKz2CCnK8qCV2X
+         K9oA==
+X-Forwarded-Encrypted: i=1; AJvYcCWAxbhN7kF+LH/5nu7tL7cjmO527VDwtqUtJqdx7ds4/YN01DyYg6HLQ7YyPuNwM2dGA7F9nyPVgIVqaFE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCt2nYCYgldkPJqXfUXwPH4917kTwpkD34j3U7CnmUhFVBRaHn
+	PSF8dFZzEKMllPA7Jbc6NKBzU8tg1B/0vPaGsbRy3FdtDA994Iyi6wx5pW41pnxZCg==
+X-Gm-Gg: ASbGncvc37cduOkRmxTu8cV4s4F/6uS25l7zHtm/q7eGOfHrvCfwmSh2t2XHiujjQ6z
+	HML1Vd8sAaAIhdxSPCKY1Ybntofe3vlFIQyUwykUZiQdbXWVJ2llBaRM+BkmT5CaUmSSVl5kM/j
+	LCtJ8UZSuLO+mYuBni7z7jG12XVxmeZvsqUi3+BLNxVYcUveQ3D6Hm88vgotdCwMysEqZNli0/3
+	wQYeMKG2N0eVR76bAb12r/f46WCiZu3jXz9llLfsW25kvTueFT0f9C26+5fUr57iNyTFngsXoeg
+	WNBOy9RtDIKJfUKNAbEkdDTbOcXO/U1gVfUh5+y5qovIrbhU6HAi1kPqNL5HMCAyE+hubcgqUQv
+	mt6jyqYXOrFc9+N1+HLdXZns=
+X-Google-Smtp-Source: AGHT+IEWJdJ6j/5sk4yCskCysiI2a7M1IGPMx1kIxCHmUxxkULnnKpZ3yKjp41mgb1lTlIPkbNowxA==
+X-Received: by 2002:a05:6214:ac1:b0:702:d60c:94ac with SMTP id 6a1803df08f44-704f6ac55c4mr315024336d6.26.1753060888997;
+        Sun, 20 Jul 2025 18:21:28 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::401d])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7051ba6b777sm33924716d6.71.2025.07.20.18.21.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Jul 2025 18:21:28 -0700 (PDT)
+Date: Sun, 20 Jul 2025 21:21:25 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Marco Tormento <mtormento80@gmail.com>
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] USB: hub: Move typec deattach before children
+ disconnections in usb_disconnect()
+Message-ID: <36a75fd9-71a4-4f53-9a35-560cd9cd5687@rowland.harvard.edu>
+References: <20250720210847.30998-1-mtormento80@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs: Add additional checks for block devices during mount
-To: kernel test robot <lkp@intel.com>, viro@zeniv.linux.org.uk,
- jack@suse.com, brauner@kernel.org, axboe@kernel.dk, hch@lst.de
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- yukuai3@huawei.com, yangerkun@huawei.com
-References: <20250719024403.3452285-1-wozizhi@huawei.com>
- <202507192025.N75TF4Gp-lkp@intel.com>
-From: Zizhi Wo <wozizhi@huaweicloud.com>
-In-Reply-To: <202507192025.N75TF4Gp-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDnYhPblX1o4WHSAw--.16917S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7uFyxuFW8XF15AFy8Ww18Grg_yoW8ZFyDpa
-	yrC39xtryrWr1rWa97KrWq9w1Yqws5JwnxGF18Cw47ZFWqvF17WrWI9r43Jryqqr1vgrWU
-	Jr9rurykKw1UAaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
-	7KsUUUUUU==
-X-CM-SenderInfo: pzr2x6tkl6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250720210847.30998-1-mtormento80@gmail.com>
 
+On Sun, Jul 20, 2025 at 11:08:47PM +0200, Marco Tormento wrote:
+> I tracked down the issue to the following logic:
+> - power brick is plugged in
+> - monitor is plugged in
+> - when I unplug the monitor in usb_disconnect() hub_disconnect_children()
+>   calls usb_disconnect() recursively, and this results in
+>   connector_unbind() invoked on all connectors, which resets
+>   port_dev->connector to NULL on the ports
 
+I'm not a typec expert; in fact I know practically nothing about it.  
+Nevertheless, this sounds strange.  The recursive usb_disconnect() calls 
+should affect the connectors to the monitor's children and the monitor's 
+own ports, not the connector or port on the monitor's parent hub.
 
-在 2025/7/19 20:32, kernel test robot 写道:
-> Hi Zizhi,
-> 
-> kernel test robot noticed the following build errors:
-> 
-> [auto build test ERROR on brauner-vfs/vfs.all]
-> [also build test ERROR on jack-fs/for_next linus/master v6.16-rc6 next-20250718]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Zizhi-Wo/fs-Add-additional-checks-for-block-devices-during-mount/20250719-105053
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-> patch link:    https://lore.kernel.org/r/20250719024403.3452285-1-wozizhi%40huawei.com
-> patch subject: [PATCH] fs: Add additional checks for block devices during mount
-> config: i386-buildonly-randconfig-001-20250719 (https://download.01.org/0day-ci/archive/20250719/202507192025.N75TF4Gp-lkp@intel.com/config)
-> compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250719/202507192025.N75TF4Gp-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202507192025.N75TF4Gp-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>):
-> 
->>> ld.lld: error: undefined symbol: disk_live
->     >>> referenced by super.c:1385 (fs/super.c:1385)
->     >>>               fs/super.o:(super_s_dev_test) in archive vmlinux.a
-> 
+> - typec_deattach() is called for each device that has a parent, which in
+>   turn should fire typec_partner_deattach()
+> - port_dev->connector is NULL though, so typec_partner_deattach() is not
+>   called and port->usb2_dev is not set to NULL even though the hub device
+>   is actually gone
 
-Sorry, disk_live() is only declared but not defined when CONFIG_BLOCK is
-not set...
+But that's port_dev->connector for the port on the monitor's parent hub, 
+which shouldn't have been affected.
 
-Perhaps, as hch suggests, it can be verified through GD_DEAD?
+> In order to fix the above I tried moving the code that handles typec
+> deattachment from the parent before all the disconnections, this way
+> typec_partner_deattach() is invoked for the partner, port->usb2_dev is
+> cleared and typec_unregister_partner() is happy.
 
-Thanks,
-Zizhi Wo
+In essence, you're moving the typec_deattach() call up before the 
+hub_disconnect_children() and usb_disable_device() calls.  (The 
+sysfs_remove_link() calls get moved up too, but they probably don't 
+matter much.)  I'm not saying this is the wrong thing to do or that it 
+will cause problems, but it does seem odd.  In particular, it's not the 
+reverse order of the way these things were set up when the devices were 
+originally detected.
 
+Alan Stern
 
