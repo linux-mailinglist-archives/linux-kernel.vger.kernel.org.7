@@ -1,189 +1,480 @@
-Return-Path: <linux-kernel+bounces-739481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B760B0C6CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:46:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 30A1CB0C6D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:48:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF39B1891D68
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:46:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 879781AA7A1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DCFD2E090A;
-	Mon, 21 Jul 2025 14:45:19 +0000 (UTC)
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022126.outbound.protection.outlook.com [40.107.75.126])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE832DCC13;
+	Mon, 21 Jul 2025 14:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EMdJSGsi"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC612DE6FE;
-	Mon, 21 Jul 2025 14:45:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.126
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753109116; cv=fail; b=n0YnQPjvrAb2vxhYsRempA6/hePSEIF7kBFPyJFzQGuaXT6ZfGHMeVBHhpj8VhLFs4uS6xX2fl13u7gnhUQ1SFRVpu1YCmAtEDgAfAqs/RQsd2bSZ7rK7WRScdhpyq3lNf/kIcqUbEkMQ6RGaaOVcDUz2wdyufGk8oGwQ7BDmbk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753109116; c=relaxed/simple;
-	bh=lYmtrY71bNUOVZAeX77yteAMJ0zYDgDuQU4+65nGtC8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kiKHk+t3Ee9vP6w4ApmQdUfkKTKVu4Sy75pRdQtpBkNaGRpOyXS4DyfkdBXkmmzxdjhm80ic3K6hXhyiJLXbOHNM96tbRhAILYTB4kEn7LbfYFLY96e7r6GhCs7odkC13rnmkicDQrWyGYSvDTHGKe5GPxs+9EtkLho7UfwZX74=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.75.126
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wV36+I4LqKfgRn3gK+8SlJqqV3181v5t9fY4odZB10pRg6UW733IiCf+TqZWunKJjHQ6ufegMciuyTGysOy8GPxi62OYKQlWbRmhgF8uawR2s+Ntcv2ZWIrelGZ9EMnL+vjtIQjWE9jfKLh59UINf/DUlu6GEERn8k4JNJULh97K7rShXvKECngcUqfIfT1Lvf+KuEZ0IssWbbCApSng+2rk1zXKhEjwqUJJAO9gcjwKsIyBbH9ZeDSgOnDefefp9/iiFcRDjLKx/wRvafNvpqa1UCO5vYKUKvWKMTvGbcvQJSSKoI61dUZtn9B6vQl+Imz9HqihPd3Onr/xJrpAkg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WzMNlEiyk0F7HIb8StuSJlg9QAJ/eZ0Vd17J6gUc4To=;
- b=QzbIdRdhMqVu4b0BtaZQ+CTO/NyYZFg6GfWQqn6vhsGoa7M5NgmLAM6OcZp3WZfyUZFahwIXyjqbl7ZDSRzy+5zV+VTQrr8ElZOtHjsCvHv2YXVcu6pn7XSzLs26dFsTnfm5zp4kTRpzT7vmVpb0gT7N0QvbOJUwpD0spdVBPxLKUMcV320Asr/dSUQ8xXyg8aNZTpWb9nrkw/wV5bJk63tFYOJJAqiKc0GkwH/o9XHCzEcfvjpcR4bTGyC1E7IHyTSzX6+WkYoQvj9riyw9DMkUlnOi7OTIsspvXIUb85I7VMZIc04xiKEI8zQrAbUmMm06g7c+Upc3fMtNCtyTkA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=arm.com smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-Received: from SG2PR03CA0085.apcprd03.prod.outlook.com (2603:1096:4:7c::13) by
- PUZPR06MB5953.apcprd06.prod.outlook.com (2603:1096:301:110::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8943.30; Mon, 21 Jul 2025 14:45:08 +0000
-Received: from SG1PEPF000082E4.apcprd02.prod.outlook.com
- (2603:1096:4:7c:cafe::85) by SG2PR03CA0085.outlook.office365.com
- (2603:1096:4:7c::13) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8964.21 via Frontend Transport; Mon,
- 21 Jul 2025 14:45:08 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- SG1PEPF000082E4.mail.protection.outlook.com (10.167.240.7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8964.20 via Frontend Transport; Mon, 21 Jul 2025 14:45:07 +0000
-Received: from localhost.localdomain (unknown [172.16.64.25])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id E602E4160514;
-	Mon, 21 Jul 2025 22:45:00 +0800 (CST)
-From: Peter Chen <peter.chen@cixtech.com>
-To: soc@lists.linux.dev,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	arnd@arndb.de,
-	jassisinghbrar@gmail.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	cix-kernel-upstream@cixtech.com,
-	maz@kernel.org,
-	sudeep.holla@arm.com,
-	kajetan.puchalski@arm.com,
-	eballetb@redhat.com,
-	Peter Chen <peter.chen@cixtech.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Fugang Duan <fugang.duan@cixtech.com>
-Subject: [PATCH v11 9/9] MAINTAINERS: Add CIX SoC maintainer entry
-Date: Mon, 21 Jul 2025 22:45:00 +0800
-Message-Id: <20250721144500.302202-10-peter.chen@cixtech.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250721144500.302202-1-peter.chen@cixtech.com>
-References: <20250721144500.302202-1-peter.chen@cixtech.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB70B2DC340
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 14:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753109133; cv=none; b=YRUxcWX3YO0CqOAD2NushrAoqXgYBqDtzCChBBYoRbuepuTtzlX8+KbyuVkWLLtcvNqoCuEXP1VAqsMB95wBff65kXWBKImnMuhrlur5e2+pHF7jJVG6ub2um4G9aFDaDBfrwm8I12WN0PHICJHpdbpd6Fl4X/sgywhhpg1z+Uk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753109133; c=relaxed/simple;
+	bh=Sj0fSmXwhNPVbGOUYqvSNZOfw4E5wTjpQZzkolMZ1EM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=VnhzyFKNPV4DUdbSR245S21iXJRC+UKWNGwOCL1A1hakqc2jKR7I2EEY+d2xHF7zr2Mma7B20awsKsj0rL4RxK4x6bgjK0UlP/Iunyhq33kANzsE05Fxmc8PkXkNXOHCqmjQp9J5KfKGW5PnY95boD7S2bThtXNhMIO7mcy3JYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EMdJSGsi; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4561bc2f477so26927275e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 07:45:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753109129; x=1753713929; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LtC4Z05mzhS7g6Ch1nM9DNQN8TmyFFO0SYlNTAxzNVw=;
+        b=EMdJSGsi6rL8Di0gA0+6j2ht73EVqsqQkzrktc0IcvFDNdeUXS9ktzKTdluC2nO6C1
+         mgqzWkK2Wbncw0Ml6ouSArTEZHIuyZvFrl+LFZjpZcmoMh8JmLqaTLw4+bZgKMdEiq6n
+         I9oE0GebJhvk2A9I8ZZqQbccLC2//8n4O+kNVUkE1ZFV2sENRJGkrKAL3feBu4kDQgT+
+         W6RsdFv9qQn6rfK7otCWJH9ufLZ6CVN0N6EGFJqljG8oGQ/vkdefJIlOKMSRAVT1AO2C
+         A/qP2Y2OqfsrfaxanBzHZrActV28sAhALd0J7NDbL54Ol0/YXHPkC0bI9RW5nwDuFuOM
+         kKig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753109129; x=1753713929;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=LtC4Z05mzhS7g6Ch1nM9DNQN8TmyFFO0SYlNTAxzNVw=;
+        b=XYYkl2Lro+Rr4PLCF6SeZyoWWdVdYK/6n+mo7h1Wn3tQvEcuLNRfiJMgwIzEiGwzwr
+         SM1lIcCBgOhR7QOhlUiS0MdLxGjROuvJbMbxp58VLcAF9a3sJwY84mHK6BUKokP5YGxS
+         8YJnT8YKSxezx4sTtRSa8IWX+jfelV4Yc4/MvRP88HRAKOq0ccUStWJh7nki2MM1p5dx
+         ldQ57KD2EQq6CBfd1HNo1I0dEjZkfGSoMtpraNcz2H99GK+FH4sLIacV9WnfA+zm91tr
+         pCLM26S6QeDjF02JcuNQZ+jwHZXNQee3oPJJDPIbxlfYvdmj5RCOr95e1vMVrD9GHTIi
+         YL/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUrT9F7IbAXNXrmzgqF9weq6S72l3Z4LSVA4qf638dXiXoLQP0cdx/Sv1lEEyr4hOlf2bv0pd1dyLTUdt8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkUGBC7LCy7/x8fxtsV2qSqgS4OKX/QY06g8FBGhs3nOtXIpYM
+	/nO5SlkjBdTiTM0eDVLQn4DKBuSMyRTQDVFDWNjdKVB2R6taUs9PXIzlOtARuQj4sjYnmlwTobF
+	igEEL7DFoQ3FOvH7/Hw==
+X-Google-Smtp-Source: AGHT+IHQcwTPd0muOeBCvdzly+/2PzxIp+TDasbSUibU61zmY2sdtIG0/XLeK/nAWWJK9P13/od4BgixR90u0OQ=
+X-Received: from wmbdz10.prod.google.com ([2002:a05:600c:670a:b0:450:cf3f:2a89])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:280a:b0:3b6:18e5:6ec4 with SMTP id ffacd0b85a97d-3b618e57009mr6227745f8f.30.1753109129142;
+ Mon, 21 Jul 2025 07:45:29 -0700 (PDT)
+Date: Mon, 21 Jul 2025 14:45:28 +0000
+In-Reply-To: <20250715-topics-tyr-request_irq2-v7-3-d469c0f37c07@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG1PEPF000082E4:EE_|PUZPR06MB5953:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 43b0fa3f-38ce-4c6a-9ff4-08ddc8653008
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?UL+JlH0fdj7AJtZdXjHHO2bmj9KrL5VIW7BByIpkpKLoXRka0Wa3yZcEM2sx?=
- =?us-ascii?Q?EfhXFiY0yMH7/T2Uv+Xdnw9cRQ/zywkGSHiL0HvhsiwXRwOTuOvjZTUcJ/E+?=
- =?us-ascii?Q?J9oOC+iitq1PU09/hV+cbXFb+3aa/XZLBsW89g5qB8eWjw8CFyNDBdANDP7Y?=
- =?us-ascii?Q?1XL6wU49lujrQ22y4og6LCWCUcn3sAfPvqrvNtZdZqAVX4OnD8X8RXwGFK+y?=
- =?us-ascii?Q?hRNfGmjUCxRPsQ4HgWYYjsiDraVCM3/Nso7MEDt0C/eKIdynfHlYoLIgFLce?=
- =?us-ascii?Q?df4BmnTlfhlvc8Sqdv0yrdL2EgXVWN0FgL+ZfRZtWHoaT5g1+h/phvhi6/1Q?=
- =?us-ascii?Q?jUgkJr6pMsp/xHCH7OJuVjQMx7A25rD3qBP1ZWNL8gqN5n0PqWyxFgf2iCb8?=
- =?us-ascii?Q?5nZpgpyOj3L91BDOXtkFsqqm0fD2CWT1Ykv5oBOePZwbq5BLWV6l6ReER1Vu?=
- =?us-ascii?Q?WhY02N4t6KRiQra5ZGCChCc0tYifAY1pxh2G6cQi3Q8FzReKxEynxjczc94b?=
- =?us-ascii?Q?xbgbqxTsUQdBLo1r+wyQdNTTgRGy6oEAHd6lLYMUnASwHfJ43SDtnKZODOSP?=
- =?us-ascii?Q?B5KOJ6hYq7KoWbNQitKPzGOfnCYEvbgMtLsVmNAT3i3ijjubGBO5ZmoJepRi?=
- =?us-ascii?Q?AoeSo9EsZ78KIJdR04DINRtAXCPWpHWjLXyKHUBE1h9dTkLFp0KEvAnF1f+Q?=
- =?us-ascii?Q?zIbiPZ9u74p2tmEaCKTWmnFxlYedTWElPplDp6yZBFIMlxMUZGRBX1g+cO7K?=
- =?us-ascii?Q?OlPdgbz0mzdHFxEA4yDR6dZXdM7iSSXNppRhSt0ZsVF/42zh+Nkv+O4hBO3C?=
- =?us-ascii?Q?wh9EwdBs8RERQRxs/AwAif+drEEicyV3kLqIH/+nx72bDvbQw7f/fytRllPV?=
- =?us-ascii?Q?iBWsiPtzmNT7/HRz4x37s3iSwPL5VkxC8QfqWNUIVyf7HJRPIhKRCARyHSJ0?=
- =?us-ascii?Q?jjPYbMT7mWGOF08skwo5ucTrwjaDubFjW00t2e5wSrkcVHnP4ljHl5ilgr0d?=
- =?us-ascii?Q?Q7ySqXZbEbVI4kmsAKcoA/WuVe1RThYFBCi4C5D5U9aeoX/b3dCgIDqf+VCV?=
- =?us-ascii?Q?tlbp3O3DGCnq7A0Rr1haZT4+iWxCsFOEqG4q70092/HWPtOlFFL4ESXI3KmL?=
- =?us-ascii?Q?rjbxpX9hV4kLUv4hfHqEIr57lWCVCQ9WSesmAEnjwYVQwhow8y40fVwNPggZ?=
- =?us-ascii?Q?3u4+SHvKRY1aWD7capKwq3a+4l+FxdYy4P00GuRTinsABGgvuBQSA8KsiV0c?=
- =?us-ascii?Q?NLSHhAaw+K36MXHJHP30bgVVrPhcILNtaAPHbescjCUEa5Z0KqHFiK7ie4jd?=
- =?us-ascii?Q?DDrO9k6jTiHyLpK3n39tU4fBa1DGJXj6Wmeysmn57U5JfenmWnAfTj4Pm+PX?=
- =?us-ascii?Q?xv7xIfA3dFTsxy86q7yW9uqODCg+g5AI8u6rlB6oTogf8Un8NItl39Jx3Cfk?=
- =?us-ascii?Q?TYobizStrpRs7nY3XjCqIRPkE8jkcWznpkdlqvk0GgTuhEmRYyeIY6xJ4EP8?=
- =?us-ascii?Q?j3EDhCPvIdggPICjoeReClkdSGkUUORLxmBp?=
-X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014)(7416014);DIR:OUT;SFP:1102;
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2025 14:45:07.7806
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 43b0fa3f-38ce-4c6a-9ff4-08ddc8653008
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SG1PEPF000082E4.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB5953
+Mime-Version: 1.0
+References: <20250715-topics-tyr-request_irq2-v7-0-d469c0f37c07@collabora.com> <20250715-topics-tyr-request_irq2-v7-3-d469c0f37c07@collabora.com>
+Message-ID: <aH5SiKFESpnD4jvZ@google.com>
+Subject: Re: [PATCH v7 3/6] rust: irq: add support for non-threaded IRQs and handlers
+From: Alice Ryhl <aliceryhl@google.com>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, 
+	"Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=" <kwilczynski@kernel.org>, Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-pci@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Using this entry as the maintainers information for CIX SoCs.
+On Tue, Jul 15, 2025 at 12:16:40PM -0300, Daniel Almeida wrote:
+> This patch adds support for non-threaded IRQs and handlers through
+> irq::Registration and the irq::Handler trait.
+>=20
+> Registering an irq is dependent upon having a IrqRequest that was
+> previously allocated by a given device. This will be introduced in
+> subsequent patches.
+>=20
+> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Acked-by: Fugang Duan <fugang.duan@cixtech.com>
-Signed-off-by: Peter Chen <peter.chen@cixtech.com>
----
-Changes for v11:
-- Add Krzysztof Kozlowski's Reviewed-by tag.
+Overall LGTM. Some very minor nits below.
 
-Changes for v9:
-- Add mailbox driver information
+> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_hel=
+per.h
+> index 7e8f2285064797d5bbac5583990ff823b76c6bdc..fc73b89ff9d539e536a5da938=
+8e4926a91a6130e 100644
+> --- a/rust/bindings/bindings_helper.h
+> +++ b/rust/bindings/bindings_helper.h
+> @@ -52,6 +52,7 @@
+>  #include <linux/ethtool.h>
+>  #include <linux/file.h>
+>  #include <linux/firmware.h>
+> +#include <linux/interrupt.h>
+>  #include <linux/fs.h>
+>  #include <linux/jiffies.h>
+>  #include <linux/jump_label.h>
+> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+> index 0b09bd0e3561c7bf80bf79faf1aebd7eeb851984..653c3f7b85c5f7192b1584c74=
+8a9d7e4af3796e9 100644
+> --- a/rust/helpers/helpers.c
+> +++ b/rust/helpers/helpers.c
+> @@ -22,6 +22,7 @@
+>  #include "dma.c"
+>  #include "drm.c"
+>  #include "err.c"
+> +#include "irq.c"
+>  #include "fs.c"
+>  #include "io.c"
+>  #include "jump_label.c"
+> diff --git a/rust/helpers/irq.c b/rust/helpers/irq.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..1faca428e2c047a656dec3171=
+855c1508d67e60b
+> --- /dev/null
+> +++ b/rust/helpers/irq.c
+> @@ -0,0 +1,9 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/interrupt.h>
+> +
+> +int rust_helper_request_irq(unsigned int irq, irq_handler_t handler,
+> +			    unsigned long flags, const char *name, void *dev)
+> +{
+> +	return request_irq(irq, handler, flags, name, dev);
+> +}
+> diff --git a/rust/kernel/irq.rs b/rust/kernel/irq.rs
+> index 9abd9a6dc36f3e3ecc1f92ad7b0040176b56a079..01bd08884b72c2a3a9460897b=
+ce751c732a19794 100644
+> --- a/rust/kernel/irq.rs
+> +++ b/rust/kernel/irq.rs
+> @@ -12,3 +12,8 @@
+> =20
+>  /// Flags to be used when registering IRQ handlers.
+>  pub mod flags;
+> +
+> +/// IRQ allocation and handling.
+> +pub mod request;
+> +
+> +pub use request::{Handler, IrqRequest, IrqReturn, Registration};
+> diff --git a/rust/kernel/irq/request.rs b/rust/kernel/irq/request.rs
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..2f4637d8bc4c9fda23cbc8307=
+687035957b0042a
+> --- /dev/null
+> +++ b/rust/kernel/irq/request.rs
+> @@ -0,0 +1,267 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// SPDX-FileCopyrightText: Copyright 2025 Collabora ltd.
+> +
+> +//! This module provides types like [`Registration`] which allow users t=
+o
+> +//! register handlers for a given IRQ line.
+> +
+> +use core::marker::PhantomPinned;
+> +
+> +use crate::alloc::Allocator;
+> +use crate::device::Bound;
+> +use crate::device::Device;
 
- MAINTAINERS | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+The usual style is to write this as:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a92290fffa16..7f8bee29bb8f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2473,6 +2473,19 @@ F:	arch/arm/boot/compressed/misc-ep93xx.h
- F:	arch/arm/mach-ep93xx/
- F:	drivers/iio/adc/ep93xx_adc.c
- 
-+ARM/CIX SOC SUPPORT
-+M:	Peter Chen <peter.chen@cixtech.com>
-+M:	Fugang Duan <fugang.duan@cixtech.com>
-+R:	CIX Linux Kernel Upstream Group <cix-kernel-upstream@cixtech.com>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+S:	Maintained
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/peter.chen/cix.git
-+F:	Documentation/devicetree/bindings/arm/cix.yaml
-+F:	Documentation/devicetree/bindings/mailbox/cix,sky1-mbox.yaml
-+F:	arch/arm64/boot/dts/cix/
-+F:	drivers/mailbox/cix-mailbox.c
-+K:	\bcix\b
-+
- ARM/CLKDEV SUPPORT
- M:	Russell King <linux@armlinux.org.uk>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
--- 
-2.25.1
+use crate::device::{Bound, Device};
 
+> +use crate::devres::Devres;
+> +use crate::error::to_result;
+> +use crate::irq::flags::Flags;
+> +use crate::prelude::*;
+> +use crate::str::CStr;
+> +use crate::sync::Arc;
+> +
+> +/// The value that can be returned from an IrqHandler or a ThreadedIrqHa=
+ndler.
+
+Missing links:
+
+/// The value that can be returned from an [`IrqHandler`] or a [`ThreadedIr=
+qHandler`].
+
+> +#[repr(u32)]
+> +pub enum IrqReturn {
+> +    /// The interrupt was not from this device or was not handled.
+> +    None =3D bindings::irqreturn_IRQ_NONE,
+> +
+> +    /// The interrupt was handled by this device.
+> +    Handled =3D bindings::irqreturn_IRQ_HANDLED,
+> +}
+> +
+> +/// Callbacks for an IRQ handler.
+> +pub trait Handler: Sync {
+> +    /// The hard IRQ handler.
+> +    ///
+> +    /// This is executed in interrupt context, hence all corresponding
+> +    /// limitations do apply.
+> +    ///
+> +    /// All work that does not necessarily need to be executed from
+> +    /// interrupt context, should be deferred to a threaded handler.
+> +    /// See also [`ThreadedRegistration`].
+> +    fn handle(&self) -> IrqReturn;
+> +}
+> +
+> +impl<T: ?Sized + Handler + Send> Handler for Arc<T> {
+> +    fn handle(&self) -> IrqReturn {
+> +        T::handle(self)
+> +    }
+> +}
+> +
+> +impl<T: ?Sized + Handler, A: Allocator> Handler for Box<T, A> {
+> +    fn handle(&self) -> IrqReturn {
+> +        T::handle(self)
+> +    }
+> +}
+> +
+> +/// # Invariants
+> +///
+> +/// - `self.irq` is the same as the one passed to `request_{threaded}_ir=
+q`.
+> +/// - `cookie` was passed to `request_{threaded}_irq` as the cookie. It
+> +///    is guaranteed to be unique by the type system, since each call to
+> +///    `new` will return a different instance of `Registration`.
+> +#[pin_data(PinnedDrop)]
+> +struct RegistrationInner {
+> +    irq: u32,
+> +    cookie: *mut c_void,
+> +}
+> +
+> +impl RegistrationInner {
+> +    fn synchronize(&self) {
+> +        // SAFETY: safe as per the invariants of `RegistrationInner`
+> +        unsafe { bindings::synchronize_irq(self.irq) };
+> +    }
+> +}
+> +
+> +#[pinned_drop]
+> +impl PinnedDrop for RegistrationInner {
+> +    fn drop(self: Pin<&mut Self>) {
+> +        // SAFETY:
+> +        //
+> +        // Safe as per the invariants of `RegistrationInner` and:
+> +        //
+> +        // - The containing struct is `!Unpin` and was initialized using
+> +        // pin-init, so it occupied the same memory location for the ent=
+irety of
+> +        // its lifetime.
+> +        //
+> +        // Notice that this will block until all handlers finish executi=
+ng,
+> +        // i.e.: at no point will &self be invalid while the handler is =
+running.
+> +        unsafe { bindings::free_irq(self.irq, self.cookie) };
+> +    }
+> +}
+> +
+> +// SAFETY: We only use `inner` on drop, which called at most once with n=
+o
+> +// concurrent access.
+> +unsafe impl Sync for RegistrationInner {}
+> +
+> +// SAFETY: It is safe to send `RegistrationInner` across threads.
+> +unsafe impl Send for RegistrationInner {}
+> +
+> +/// A request for an IRQ line for a given device.
+> +///
+> +/// # Invariants
+> +///
+> +/// - `=C3=ACrq` is the number of an interrupt source of `dev`.
+> +/// - `irq` has not been registered yet.
+> +pub struct IrqRequest<'a> {
+> +    dev: &'a Device<Bound>,
+> +    irq: u32,
+> +}
+> +
+> +impl<'a> IrqRequest<'a> {
+> +    /// Creates a new IRQ request for the given device and IRQ number.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// - `irq` should be a valid IRQ number for `dev`.
+> +    pub(crate) unsafe fn new(dev: &'a Device<Bound>, irq: u32) -> Self {
+> +        IrqRequest { dev, irq }
+> +    }
+> +
+> +    /// Returns the IRQ number of an [`IrqRequest`].
+> +    pub fn irq(&self) -> u32 {
+> +        self.irq
+> +    }
+> +}
+> +
+> +/// A registration of an IRQ handler for a given IRQ line.
+> +///
+> +/// # Examples
+> +///
+> +/// The following is an example of using `Registration`. It uses a
+> +/// [`AtomicU32`](core::sync::AtomicU32) to provide the interior mutabil=
+ity.
+> +///
+> +/// ```
+> +/// use core::sync::atomic::AtomicU32;
+> +/// use core::sync::atomic::Ordering;
+> +///
+> +/// use kernel::prelude::*;
+> +/// use kernel::device::Bound;
+> +/// use kernel::irq::flags;
+> +/// use kernel::irq::Registration;
+> +/// use kernel::irq::IrqRequest;
+> +/// use kernel::irq::IrqReturn;
+
+/// use kernel::irq::{Flags, IrqRequest, IrqReturn, Registration};
+
+> +/// use kernel::sync::Arc;
+> +/// use kernel::c_str;
+> +/// use kernel::alloc::flags::GFP_KERNEL;
+
+GFP_KERNEL is in the prelude.
+
+> +/// // Declare a struct that will be passed in when the interrupt fires.=
+ The u32
+> +/// // merely serves as an example of some internal data.
+> +/// struct Data(AtomicU32);
+> +///
+> +/// // [`kernel::irq::request::Handler::handle`] takes `&self`. This exa=
+mple
+> +/// // illustrates how interior mutability can be used when sharing the =
+data
+> +/// // between process context and IRQ context.
+> +///
+> +/// type Handler =3D Data;
+> +///
+> +/// impl kernel::irq::request::Handler for Handler {
+> +///     // This is executing in IRQ context in some CPU. Other CPUs can =
+still
+> +///     // try to access to data.
+> +///     fn handle(&self) -> IrqReturn {
+> +///         self.0.fetch_add(1, Ordering::Relaxed);
+> +///
+> +///         IrqReturn::Handled
+> +///     }
+> +/// }
+> +///
+> +/// // Registers an IRQ handler for the given IrqRequest.
+> +/// //
+> +/// // This is executing in process context and assumes that `request` w=
+as
+> +/// // previously acquired from a device.
+> +/// fn register_irq(handler: Handler, request: IrqRequest<'_>) -> Result=
+<Arc<Registration<Handler>>> {
+> +///     let registration =3D Registration::new(request, flags::SHARED, c=
+_str!("my_device"), handler);
+> +///
+> +///     let registration =3D Arc::pin_init(registration, GFP_KERNEL)?;
+> +///
+> +///     // The data can be accessed from process context too.
+> +///     registration.handler().0.fetch_add(1, Ordering::Relaxed);
+> +///
+> +///     Ok(registration)
+> +/// }
+> +/// # Ok::<(), Error>(())
+> +/// ```
+> +///
+> +/// # Invariants
+> +///
+> +/// * We own an irq handler using `&self.handler` as its private data.
+> +///
+> +#[pin_data]
+> +pub struct Registration<T: Handler + 'static> {
+> +    #[pin]
+> +    inner: Devres<RegistrationInner>,
+> +
+> +    #[pin]
+> +    handler: T,
+> +
+> +    /// Pinned because we need address stability so that we can pass a p=
+ointer
+> +    /// to the callback.
+> +    #[pin]
+> +    _pin: PhantomPinned,
+> +}
+> +
+> +impl<T: Handler + 'static> Registration<T> {
+> +    /// Registers the IRQ handler with the system for the given IRQ numb=
+er.
+> +    pub fn new<'a>(
+> +        request: IrqRequest<'a>,
+> +        flags: Flags,
+> +        name: &'static CStr,
+> +        handler: T,
+> +    ) -> impl PinInit<Self, Error> + 'a {
+> +        try_pin_init!(&this in Self {
+> +            handler,
+> +            inner <- Devres::new(
+> +                request.dev,
+> +                try_pin_init!(RegistrationInner {
+> +                    // SAFETY: `this` is a valid pointer to the `Registr=
+ation` instance
+> +                    cookie: unsafe { &raw mut (*this.as_ptr()).handler }=
+.cast(),
+> +                    irq: {
+> +                        // SAFETY:
+> +                        // - The callbacks are valid for use with reques=
+t_irq.
+> +                        // - If this succeeds, the slot is guaranteed to=
+ be valid until the
+> +                        //   destructor of Self runs, which will deregis=
+ter the callbacks
+> +                        //   before the memory location becomes invalid.
+> +                        to_result(unsafe {
+> +                            bindings::request_irq(
+> +                                request.irq,
+> +                                Some(handle_irq_callback::<T>),
+> +                                flags.into_inner(),
+> +                                name.as_char_ptr(),
+> +                                (&raw mut (*this.as_ptr()).handler).cast=
+(),
+> +                            )
+> +                        })?;
+> +                        request.irq
+> +                    }
+> +                })
+> +            ),
+> +            _pin: PhantomPinned,
+> +        })
+> +    }
+> +
+> +    /// Returns a reference to the handler that was registered with the =
+system.
+> +    pub fn handler(&self) -> &T {
+> +        &self.handler
+> +    }
+> +
+> +    /// Wait for pending IRQ handlers on other CPUs.
+> +    ///
+> +    /// This will attempt to access the inner [`Devres`] container.
+> +    pub fn try_synchronize(&self) -> Result {
+> +        let inner =3D self.inner.try_access().ok_or(ENODEV)?;
+> +        inner.synchronize();
+> +        Ok(())
+> +    }
+> +
+> +    /// Wait for pending IRQ handlers on other CPUs.
+> +    pub fn synchronize(&self, dev: &Device<Bound>) -> Result {
+> +        let inner =3D self.inner.access(dev)?;
+> +        inner.synchronize();
+> +        Ok(())
+> +    }
+> +}
+> +
+> +/// # Safety
+> +///
+> +/// This function should be only used as the callback in `request_irq`.
+> +unsafe extern "C" fn handle_irq_callback<T: Handler>(_irq: i32, ptr: *mu=
+t c_void) -> c_uint {
+> +    // SAFETY: `ptr` is a pointer to T set in `Registration::new`
+> +    let handler =3D unsafe { &*(ptr as *const T) };
+> +    T::handle(handler) as c_uint
+> +}
+>=20
+> --=20
+> 2.50.0
+>=20
 
