@@ -1,207 +1,155 @@
-Return-Path: <linux-kernel+bounces-739141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A868B0C248
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:11:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7ACBB0C24E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:11:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 787624E111D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:10:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 272B618C37F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:11:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DADFF293C78;
-	Mon, 21 Jul 2025 11:10:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A593F293C6A;
+	Mon, 21 Jul 2025 11:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Kkm38Y2L"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EvppDEKe"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4042D295519
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 11:09:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406AA293B70
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 11:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753096201; cv=none; b=LQc6L7I3JmjxkPEJzKAehowLDGraWETrHzNI1uesVy6RtD25bWBOMamBmaSl6To7X0eJreETqgAXUTv7Z+13wXE7zw2QbZlmsHWqYWd/j/6dqWsJPvms7jFw7TRwLgyQ68GQOHnbfRDGX8MGbBXeApyJr4Az9GJ7qqhwwSVkwZc=
+	t=1753096242; cv=none; b=O19iwDvp1+gNvsGosovN7Y17GSJN+4mCkwFoGDD8GJN2bBgbPkm2cJYJYjs+OcHNe9GqJ8NKIzB3TW4eEuWH6NbnxVusp67Hx8lLVK7LMt+JIfU+6H7RAd2gcSX2EXw8C42kpT5UN3kCkQDVs6nGnB9jZN+A2kNrKaLrY96twi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753096201; c=relaxed/simple;
-	bh=sB5Y3BU3Xtwi3wF9nhNOXV9hrQqBf3LqIEohBOIRQTA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KwqgPvU2zxoku/P0HYX7ShBo9bmfda38oOFeFv9L06qBzgxOf1p42x4drLzbiq0qSl94xOpOmmGFNWOqnY4TorW/DR1wYpbT8f0YqfA4cDCXQKRstNYcmXWamcrledVmnlg2Z5zwbFTWTMXDdgWzqo0YcUvgif65AZxcw0wbas0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Kkm38Y2L; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-32b43846e8cso30597251fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 04:09:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1753096197; x=1753700997; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4WW2uf9Dse9OAFXSGg4nVLrSNNR6IaqC06E35FrZCQw=;
-        b=Kkm38Y2L5XxZCQ3d+HKL5hzrLow83EiPjgb3sOqPMKf0XbrTLL7vZZ5SkDF8UEpcRv
-         NfVEu7R3Bp6E63AvTagKs5gFzKYQCy+7p7kMPvQ4ld4mqjma87XiF29eLHidhKNu0rWa
-         OjQPX/Gy/SuNsIDcEoZD5ey4P8IUHBqck7ZNY=
+	s=arc-20240116; t=1753096242; c=relaxed/simple;
+	bh=ayVnVg9eme40xDElnjkpZrNBmaTxXUTukfPtFjBG+MY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VsiyTcJydYyQYJ0F8dP3uTQtGX2B1mPqtD7xxo/ESUWm7TGqBrxFyjgAKVdO5kLd2BxxyQ59fuDsUJbJnV1v4fjXhENpgPGfnQ+yt4fliYL0FPsewLCjOLtQmr1F4tC/I6xGayF1uf6YaTCB9+9H2/u4fgp6Nt4iGdEU2Iecgmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EvppDEKe; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56L9mFQe017547
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 11:10:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	GMwMN9DSD/nnB6vD5iQlaXP8fE0DlL0JKkeqnocUKcI=; b=EvppDEKeILxJaBai
+	yXsQH6Toq6ipyVJkIf3hxQPSA0+mUa7KmwBWf/JSRQguTNAklSiRFypwbRGzZxv3
+	CVe3ahscsFPJDSfrhCs0vxCDvT4DF6TRklYKcfEYUOAP+xKujAk7fPp2zQLD9YEQ
+	AvJXHh58ibrKz2x/9x0GcwkGXDVRmHx2wekLHjeteXlWamm+AyRE85xa+2LPwQfh
+	XhgEto2Q0sCDC5q5jELTGIgYSdKBu2eH7Ofuqn6Kj0tByE0m/hHeSBAaND2kCAzs
+	efB1ucCGNuYJWkXVNKT7MfBXHOq6ANWGt6uuF3CNooQK+Y4dBmYx1Dex1VMvszOU
+	C3Desg==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48048rvt46-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 11:10:38 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4ab65611676so15843501cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 04:10:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753096197; x=1753700997;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4WW2uf9Dse9OAFXSGg4nVLrSNNR6IaqC06E35FrZCQw=;
-        b=YL0leE5S676eSfTiAcVYbOcJ8jZnCaDjr8jZUMpAI0P2hEjyqggR0n5CAmo+wGqtoy
-         Z3iZQB26AhaiEUhOpGlKdFckLhPe4DQF6gLZhJFU6xONe0/agdXIpM7pwzrSo8hYtHNn
-         mfI7jt2oxGRSN/hcsuSOmOcqFaOeu4R7rdtIpZyHGRVG/RK0k4NNSqcx+hbogf4OgipG
-         31ZiH37bQ/DrIyMuFTgtKQsQhcWXCyf9F11OZcz/uQAE54lGFbA1KjVymYvDrWXzw9ZM
-         PMcwpU7uGFa7WopLbNqWidqY2go6CWWDvekC7CGGJZ8MxmGeNwyYUHfqnSteF25k80Mn
-         KwAg==
-X-Forwarded-Encrypted: i=1; AJvYcCU2CluXE4n93a6zDDVHeE8Spu00kh8AnkfcB65ASieIoxIUCHOEXjat936QC0/jR5r5z+3b/MJR8OOA7GQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywEst4guOuOIAHfk2jSo5sXqnR8wVcKWvoWTrfC//B61Motfe8
-	+XT3/cRRyRHR+7u5pSyKdxH/wWefdSgs3D6XHMwtl4WrvmPw+VXHAWVFW7D5jt2tvpiRd63hnpp
-	kjCzqyfQX1O+AXZDU88UxAAGE0KSXZuPMCRR4y6w4
-X-Gm-Gg: ASbGncuX4DzzmvWX05TsWvAPKI42rMNf06Z5wp9bGkQWKYzm//Cx16juoavKKqYZS6D
-	BTCgR7O16OlOdbLipUqn5GF20U2IwJkfIZcgpe5V0RTu3aZgyfhjVlNUAFttw08LECGu0kPK86F
-	L/xsiuKf05wLirKrwdIIjnN4c4ti/ChRM5pIaehPScwBoC0iQ9ydnLTGomT3mi7W8SRWGQUlNm1
-	SN+u1wr9VsvV4OQL7ywuu3/Yd5uSgCgkWejYuNdGAqzng==
-X-Google-Smtp-Source: AGHT+IF4nBN7l8BVpT48NL044EtxxNCfvAewP1ZUdA31VvrzYipiWFMocffu+xLGFjFA/wIBhY4ZsuRqkeecG+8Cpu0=
-X-Received: by 2002:a05:651c:3241:b0:32f:522e:f040 with SMTP id
- 38308e7fff4ca-330a7b352d4mr27431031fa.12.1753096197351; Mon, 21 Jul 2025
- 04:09:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753096238; x=1753701038;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GMwMN9DSD/nnB6vD5iQlaXP8fE0DlL0JKkeqnocUKcI=;
+        b=GpKEWgWW3Deqw2zUud5zgf+MS51BwKB8AOvgB68TjLYpzwRJoKYuv/y+1h5O2IbyMY
+         x0tRytPEuEjoF9iSvUlCILguUKekBjVdEgnJQ6LzjEEPS8CpNtc2tP8bNPRf/GYnR4Fy
+         deSqiT+uQFp33st/pInwnEkXKS65Y1z8rvkUaI44+p82XTX1I7vjEHvv0oFAS1fH1BQq
+         1jdUX8QxdJMvWrlYkqPD4J5nV+ruG968KJzfPSfM7npl/uHpkq5jaLlNG6ICKwULVsUj
+         u1LmfCjLlLiTOayx3NNbU0DWJQKp3YynMyIuRqsOaBzUgqGmaREjSCtiGIKNOh9BoWvA
+         PhNg==
+X-Forwarded-Encrypted: i=1; AJvYcCUsuAjHRtAfX9wCxoS5dWJgyYiJosU0CvVlIZfmK+/syBjjskUi9R2CQD8hXyy45EKmRYbEsIWXbM+bKPk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMyQ6h3P3vAjV58NJJpzYEyWbeAxQgYAj8OBCap3STvsVXcWXO
+	+9qZkfI9D5WaojmCZ3SHUpFsqLySUNxi1qBaUKw396b6z/vg16h6UDX3Ngmd68iLLurg+fCuFzW
+	7wMk3Fo9ZpJeA1KYUtAJPoX7aAAGhryUrV4DhrRXNv6lTaJ4oQ/sfP3a1HCWb6xSkpEw=
+X-Gm-Gg: ASbGncvj325C9aIGB9AQftMIOCMwXrEXFK+Lo+696d8RG2ptR9M1B2NepGm9RtzAiGd
+	d3joMhpmXyvg0zVd2FO37nB+PnThF+VkZCkMKAa508nMqSclcFR7p3ec5qfBcYCCtq9d8PjCJ2+
+	Sye9Ncc5IOG3EMoKgsipihWcyx3X4q6JYbrEkHOTfemkdzsOwJyrF9n9U5msFU/gOBkFLGQ+bdS
+	Kr2tpB/Xf4P97cmIZP7gOKSeyMiJYbam/KN+EegKWIdWZ0OmgFDEmRpgzr9UtdKsWyDLmspssPP
+	aUQw7o6VtGsAuZ7c6cpZAsleblo9ZasdsyZm8+wvJ1Rkcm0zeZNicQF7UoOr74DE+0Gbfa/c9f2
+	QcVEfjyd2TE1KPGh/ClQx
+X-Received: by 2002:a05:620a:2850:b0:7e3:3c61:564a with SMTP id af79cd13be357-7e342b69642mr1175958585a.13.1753096237841;
+        Mon, 21 Jul 2025 04:10:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE+usxYJ0rcx0aY5PomFcpe95e/guIMzZOIesQD8S5mJPCtrTQdxUcKX9zEaBa9XZtr7TlJTA==
+X-Received: by 2002:a05:620a:2850:b0:7e3:3c61:564a with SMTP id af79cd13be357-7e342b69642mr1175955585a.13.1753096237196;
+        Mon, 21 Jul 2025 04:10:37 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-612c8f09d99sm5298795a12.3.2025.07.21.04.10.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Jul 2025 04:10:36 -0700 (PDT)
+Message-ID: <4d7aa1c4-9dd9-424c-bce1-fd000ba2a56c@oss.qualcomm.com>
+Date: Mon, 21 Jul 2025 13:10:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250721081459.16278-1-laura.nao@collabora.com> <20250721081459.16278-7-laura.nao@collabora.com>
-In-Reply-To: <20250721081459.16278-7-laura.nao@collabora.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Mon, 21 Jul 2025 19:09:45 +0800
-X-Gm-Features: Ac12FXzx8td7SOjqLltSsFYEC21ZPF3VEQHs0mR_h7cbh7ksB6i9GixQOdHUn5w
-Message-ID: <CAGXv+5Fgha-3xAa8gOEsub0u=Qr5RjQVzkyPoZ=iDkJL_KCXEg@mail.gmail.com>
-Subject: Re: [PATCH 6/9] thermal/drivers/mediatek/lvts: Add support for ATP mode
-To: Laura Nao <laura.nao@collabora.com>
-Cc: srini@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com, 
-	lukasz.luba@arm.com, matthias.bgg@gmail.com, 
-	angelogioacchino.delregno@collabora.com, andrew-ct.chen@mediatek.com, 
-	lala.lin@mediatek.com, arnd@arndb.de, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, nfraprado@collabora.com, 
-	devicetree@vger.kernel.org, u.kleine-koenig@baylibre.com, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	kernel@collabora.com, colin.i.king@gmail.com, bchihi@baylibre.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] arm64: dts: qcom: sc7280: Flatten primary usb
+ controller node
+To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250720072125.1514823-1-krishna.kurapati@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250720072125.1514823-1-krishna.kurapati@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIxMDA5OSBTYWx0ZWRfXzF+rhcI97upv
+ yaMZr8/EOj+FMsYjEwVVm5vEHDBSKSLCp1WsefcrrtWqZNES83hJ4gBWRez3h9TFfY110+Dz4Tn
+ OH16b6v44fsY6Oyq+OZm1Umz85QrC4pxcblZDGYWngEMgJ4pMgwfWW+pPsgrbwBilQTFhZSgo4l
+ nZxHNnqmsTje9vm/Q+z0H/jPVGYCacUvJEUtcGqLFsdc5ffBJ5G13IKFyd/PZRj+VNjXWTv4LX7
+ 8ZYk6SotgeJeGG8UToEBsHkRmnIq+XQDVxH8mmTYLHVZEBgCk8tyvtJJsxKnncf1Je35UTk49aW
+ XZQdWGgFj/lMbbH0rYaFLKbnB1ybhOv5wHXoxRLHV0UDBIUepT6pGavXnVJVqQ3bAsV9gpIecVK
+ 9ic6fQ++7yPWy8Dv0dw1jVZpZQz/JN6YzYTMo79Xc+L4cUC7NjVK2P7h2Vxdg3GAxwnQZp+e
+X-Proofpoint-ORIG-GUID: bVxWsf2V1BeCJcnprQ5E0m7oReEviXE6
+X-Proofpoint-GUID: bVxWsf2V1BeCJcnprQ5E0m7oReEviXE6
+X-Authority-Analysis: v=2.4 cv=OPUn3TaB c=1 sm=1 tr=0 ts=687e202e cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=3thKaPtOxDKtY4w2F4IA:9
+ a=QEXdDO2ut3YA:10 a=a_PwQJl-kcHnX1M80qC6:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-21_03,2025-07-21_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 clxscore=1015 mlxlogscore=876 lowpriorityscore=0 suspectscore=0
+ spamscore=0 mlxscore=0 bulkscore=0 priorityscore=1501 phishscore=0
+ malwarescore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507210099
 
-On Mon, Jul 21, 2025 at 4:33=E2=80=AFPM Laura Nao <laura.nao@collabora.com>=
- wrote:
->
-> MT8196/MT6991 uses ATP (Abnormal Temperature Prevention) mode to detect
-> abnormal temperature conditions, which involves reading temperature data
-> from a dedicated set of registers separate from the ones used for
-> immediate and filtered modes.
->
-> Add support for ATP mode and its relative registers to ensure accurate
-> temperature readings and proper thermal management on MT8196/MT6991
-> devices.
->
-> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+On 7/20/25 9:21 AM, Krishna Kurapati wrote:
+> Flatten primary usb controller node and update to using latest
+> bindings and flattened driver approach.
+> 
+> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
 > ---
->  drivers/thermal/mediatek/lvts_thermal.c | 34 ++++++++++++++++++++++---
->  1 file changed, 31 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/me=
-diatek/lvts_thermal.c
-> index 3c34956e37c1..8f9da0d5b886 100644
-> --- a/drivers/thermal/mediatek/lvts_thermal.c
-> +++ b/drivers/thermal/mediatek/lvts_thermal.c
-> @@ -44,6 +44,10 @@
->  #define LVTS_EDATA01(__base)   (__base + 0x0058)
->  #define LVTS_EDATA02(__base)   (__base + 0x005C)
->  #define LVTS_EDATA03(__base)   (__base + 0x0060)
-> +#define LVTS_ATP0(__base)              (__base + 0x0070)
-> +#define LVTS_ATP1(__base)              (__base + 0x0074)
-> +#define LVTS_ATP2(__base)              (__base + 0x0078)
-> +#define LVTS_ATP3(__base)              (__base + 0x007C)
->  #define LVTS_MSR0(__base)              (__base + 0x0090)
->  #define LVTS_MSR1(__base)              (__base + 0x0094)
->  #define LVTS_MSR2(__base)              (__base + 0x0098)
-> @@ -90,6 +94,7 @@
->
->  #define LVTS_MSR_IMMEDIATE_MODE                0
->  #define LVTS_MSR_FILTERED_MODE         1
-> +#define LVTS_MSR_ATP_MODE              2
 
-Nit: I suggest changing this to an enum since they are related, and
-also because these are artificial (unrelated to hardware values).
+[...]
 
-Otherwise,
+> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> index b1cc3bc1aec8..e94e21301bdd 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> @@ -4245,13 +4245,9 @@ compute-cb@14 {
+>  		};
+>  
+>  		usb_1: usb@a6f8800 {
+> -			compatible = "qcom,sc7280-dwc3", "qcom,dwc3";
+> -			reg = <0 0x0a6f8800 0 0x400>;
+> +			compatible = "qcom,sc7280-dwc3", "qcom,snps-dwc3";
+> +			reg = <0 0x0a6f8800 0 0xfc100>;
 
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+You forgot to change the base address
 
->  #define LVTS_MSR_READ_TIMEOUT_US       400
->  #define LVTS_MSR_READ_WAIT_US          (LVTS_MSR_READ_TIMEOUT_US / 2)
-> @@ -207,6 +212,10 @@ static const struct debugfs_reg32 lvts_regs[] =3D {
->         LVTS_DEBUG_FS_REGS(LVTS_EDATA01),
->         LVTS_DEBUG_FS_REGS(LVTS_EDATA02),
->         LVTS_DEBUG_FS_REGS(LVTS_EDATA03),
-> +       LVTS_DEBUG_FS_REGS(LVTS_ATP0),
-> +       LVTS_DEBUG_FS_REGS(LVTS_ATP1),
-> +       LVTS_DEBUG_FS_REGS(LVTS_ATP2),
-> +       LVTS_DEBUG_FS_REGS(LVTS_ATP3),
->         LVTS_DEBUG_FS_REGS(LVTS_MSR0),
->         LVTS_DEBUG_FS_REGS(LVTS_MSR1),
->         LVTS_DEBUG_FS_REGS(LVTS_MSR2),
-> @@ -621,6 +630,13 @@ static int lvts_sensor_init(struct device *dev, stru=
-ct lvts_ctrl *lvts_ctrl,
->                 LVTS_IMMD3(lvts_ctrl->base)
->         };
->
-> +       void __iomem *atp_regs[] =3D {
-> +               LVTS_ATP0(lvts_ctrl->base),
-> +               LVTS_ATP1(lvts_ctrl->base),
-> +               LVTS_ATP2(lvts_ctrl->base),
-> +               LVTS_ATP3(lvts_ctrl->base)
-> +       };
-> +
->         int i;
->
->         lvts_for_each_valid_sensor(i, lvts_ctrl_data) {
-> @@ -656,8 +672,20 @@ static int lvts_sensor_init(struct device *dev, stru=
-ct lvts_ctrl *lvts_ctrl,
->                 /*
->                  * Each sensor has its own register address to read from.
->                  */
-> -               lvts_sensor[i].msr =3D lvts_ctrl_data->mode =3D=3D LVTS_M=
-SR_IMMEDIATE_MODE ?
-> -                       imm_regs[i] : msr_regs[i];
-> +               switch (lvts_ctrl_data->mode) {
-> +               case LVTS_MSR_IMMEDIATE_MODE:
-> +                       lvts_sensor[i].msr =3D imm_regs[i];
-> +                       break;
-> +               case LVTS_MSR_FILTERED_MODE:
-> +                       lvts_sensor[i].msr =3D msr_regs[i];
-> +                       break;
-> +               case LVTS_MSR_ATP_MODE:
-> +                       lvts_sensor[i].msr =3D atp_regs[i];
-> +                       break;
-> +               default:
-> +                       lvts_sensor[i].msr =3D imm_regs[i];
-> +                       break;
-> +               }
->
->                 lvts_sensor[i].low_thresh =3D INT_MIN;
->                 lvts_sensor[i].high_thresh =3D INT_MIN;
-> @@ -907,7 +935,7 @@ static void lvts_ctrl_monitor_enable(struct device *d=
-ev, struct lvts_ctrl *lvts_
->         u32 sensor_map =3D 0;
->         int i;
->
-> -       if (lvts_ctrl->mode !=3D LVTS_MSR_FILTERED_MODE)
-> +       if (lvts_ctrl->mode =3D=3D LVTS_MSR_IMMEDIATE_MODE)
->                 return;
->
->         if (enable) {
-> --
-> 2.39.5
->
->
+Konrad
 
