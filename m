@@ -1,184 +1,132 @@
-Return-Path: <linux-kernel+bounces-739724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37365B0CA1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:49:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F369B0CA20
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:49:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46BC37A49D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:47:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 671AA6C1B30
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9263B2E5434;
-	Mon, 21 Jul 2025 17:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFA6A2E11BA;
+	Mon, 21 Jul 2025 17:47:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GVCqqHTt"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q5ZlYaGr"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E857C2E336F
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 17:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 056BB21B9F4
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 17:47:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753120020; cv=none; b=EyXylhIKqpDierInHcP4AF5uqCLrit8AjwbtyBKZ9FpyCK+paH0L8A1a4u7u6152LHJ8vp5b69IuMf2rvM/mPue7iryL6iNO5HKunp5HpVTMxF/5OlI4YN/bWncxDLRsGAbYIDwqUEn+DLjVz6VrvOpnEr2yzL/ulPc2Jad/5gA=
+	t=1753120075; cv=none; b=b9AfvoifyXFagb2MPYcpgVyu26gU6Swl1Gm6Hy3TWSUzVX8no+0PPhz0WXMGxWSJJoBny3jFqPxl+P1h9nhzR+ZYMh4tDayDGbW8yOgPSxqKXfPFM2/U2rgIOuKN7WP4GKVcEOtkHoRBdfyK19XvYyaF9Kj97ueTNcEKDtr7J/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753120020; c=relaxed/simple;
-	bh=calo2kPchLTx/0RqT5EzXB5IG6us//9yTqxvYPq5t1E=;
+	s=arc-20240116; t=1753120075; c=relaxed/simple;
+	bh=0YFqN0a4A6xpAiRDkR8q3z6mZvuOtA6mTOducRFFgOs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I7jG9krK+bUx55Cd6Qj5p3mjd9nRU2K3GIOYuLmxeSr3GHBu5cmZf8I3taCYbSMbKhBRDppa9QNmxP+y2NQKUhgKb6m4kDSmhmqt7Lb6lHJX6hZejbPPh4yx9itREmOU4aihubYnZOSaHre4zuhKDpR3r6SRKK4OtpXQV3Stup0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GVCqqHTt; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-60c01b983b6so9468993a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 10:46:58 -0700 (PDT)
+	 To:Cc:Content-Type; b=Zj8q3ze+OuVohLW1+3d5tHTp4OLQW46EzfF8bp446558Ar6550nc+VQOFYA6CMDAP7x2HI/MHccmBscgfMF3lY07rLcmGeQ8AyQwN695t6QRB/OJVpHuIhGAxfE0zY8JxddQlEGY1Ec5moQMO5Y0g7UtPSfdAtahy4PceL2QQnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q5ZlYaGr; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-32cdc9544ceso41224751fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 10:47:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1753120017; x=1753724817; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753120071; x=1753724871; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GgdrHVKYOQ9ppPex2pOtGiCrSp3UKPgYB5yU3nqetfQ=;
-        b=GVCqqHTtr733EkehvkMoI9U61Ge61vzPlhFpBNvvknPZJVVCpsLYMd1HQTVrF7/6DW
-         4PNsCGZSm+6MQfOBsD4qmvqIXDAG9pDDf9xw/apHAe94ejpKvlka05wCB/qEsEuZZGJA
-         EzAWlp7LJIC4rYM5+KyzUJURUrS18zcJsu2Is=
+        bh=WoE3XADz+fZxJevoESosVUJSwk5B/k7LFoq6KDG5zto=;
+        b=Q5ZlYaGroaZkjDeyVfmaX4r7LjkxWSzBEcGCXWSJ+Gn/z5Ws54KcVFWe3d8gFBkqhJ
+         Z1QX8nirKyDQ2Ij3fQeXvbQ9JXppDnePLWSQRDhf27FqIq7QsD1GiOhy6upi+Z8ec1ta
+         glq8HtPpJxAQYWSt/xWHtDpeRsrI2PGHlI5NRXuqifwijJRe6yrZ/Z9mHZ0FGd0JoyMt
+         IGq0RZEdthleD8lzrx6EpxmzzdWLJm1wgWiOXHJMHPu5SmHAj79VJkgTSR7GYSnePJtB
+         oHUqokK505Z4SfklhXuCqadknFzg17gcVEskkh0dPg3jww9RzpFc6BNGaJi0AE9x3BJz
+         AR6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753120017; x=1753724817;
+        d=1e100.net; s=20230601; t=1753120071; x=1753724871;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=GgdrHVKYOQ9ppPex2pOtGiCrSp3UKPgYB5yU3nqetfQ=;
-        b=X3HUtdbPZQdenl6DXcS9uUrPJVKtUALN5K1TZ8YV6vF2DLT/Jh0RE1NAJisdt/eCPk
-         O1gEh7cUj1Cp/ud/iHM0pzuWwm/VzhOqtybb9pOUZHfBqS7Zo1o015GXapgtMzUhL3Zb
-         5IQS0C67clkvfUtujzOvb7li+A6UMF1JjH9af+/nTPMBEUMJWy2+NuJP0kmFFW4PsmeT
-         DPc3W5oAS9ZqFOOmKNUoVi/IBIZRgBWHWinIa0Ut3GzwSKsp542QPqUQhTxoeXrSlYTW
-         8JDHreRNS02BgQFb30I2OSsMaBHkPvUTLC6nKhEvoFn3/cRNu1XQxvBoNsZS15lpaCp4
-         Ko0w==
-X-Forwarded-Encrypted: i=1; AJvYcCVV4a6DWWTaFLQJfZlpodrzrLLEyc2klGR3f1Glv3/XPuWe531I56Y7M6dz1wLD5lziP+9gwvYWv/WM/J4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUpLSq6y/LYofTBH3dVFn/RyJn6GMT24k9KEAscyRmU4moqbqb
-	QX7X0iG8N4MJFARNkR0CPknn/qLrUtRmybMFYPIv8vjhvVnsYIL7dMqpVzpHu3Q/AI2Blc6eyOv
-	rAW2z2dGxaZMRASiguflWe8mamLwgEZeIt+h9AA9wl3L5R4MfbSxPdA==
-X-Gm-Gg: ASbGncutKtQLkqwoDw0fA/KkxV3Xc6GqH9qPsvi0OLQWQqXreTMLzgeIO8vAIAFYxuF
-	38aEHIxflTPzBv01BgjpnRZwYur1l4FjIJFoeM7f6CASPNb9lwdyqSjNNYGWIilCLmsWPaGfnRJ
-	5QX6nN3KH0TqnADpFtu8V0B9e8c4bLpqhQvrebR54pFUuhOF4ODFJ3NLy3W0ZKJTXkx1tISKs3i
-	vqixVY=
-X-Google-Smtp-Source: AGHT+IG4Cb5/Upf1NGKGvBZwFob4DGiucz5xEVtSKX10XiT/wE6bKqZSI17ZGyvJg3qfJi2tuPumtNfMrEU7WAFbjUA=
-X-Received: by 2002:a17:907:9703:b0:ae2:3544:8121 with SMTP id
- a640c23a62f3a-af1529e3c52mr46079466b.9.1753120016973; Mon, 21 Jul 2025
- 10:46:56 -0700 (PDT)
+        bh=WoE3XADz+fZxJevoESosVUJSwk5B/k7LFoq6KDG5zto=;
+        b=FAEg35P6FtsCtluk9wA4O5C05L+lv89kw6DDJpRKVPRbciIE4jVD+O6fDW6Jb3XXi3
+         0NSRz3dVJe5Sbmnq5oC9ecq4KqeDteXE6j/qWWQYnAezhB2Mrf1I2+tbH7GpzG/lMOaM
+         tSzH3G4Swsy2dg9XTLkGfChzNua57uBcHGAjN/+tdGFL0sU9l3HxjHwSudwtv3q6wIwF
+         uLgXqwiiJTzWYLVjJG9dQ63r22tepFF/KlsP7NHuUUn+wxthgt5Zh2mwQIbpqd0BRUyo
+         hoV6HMPhFMiUWmAvW7XK40YTPlGmA+yOEtycWEFk9CJaDQ2LhAs+RkFAKx3swoMuzgGa
+         miGg==
+X-Gm-Message-State: AOJu0YzJtz70iJUbnPEpOJabQ8yd9/smFvq+OHF1MNXBBmNcRxIwSaqf
+	mW/0+nH4p8MUGIhne/opk/XjBffhFMLpKgcDB7TX6uaXrVAi5K8FAp65cA4AX5U0g48YZYsi0AI
+	NTgU5iuW6XeOHTZguZSxFZu+jzCM7jD/nBQ==
+X-Gm-Gg: ASbGnctaB4nNX9MO15kU24T0JLTWVf53sfUzCupbNj6Bfpl5975lonFxsQtjuR1tMax
+	7Y7wb/YYXgMfCtDh1gOcQrdNmV0IkEAYQdAs2n3SQDeiB69R2y/EZEPrER7CS2vqfBIGru5pymR
+	CnkJ9BksaYbWLEQBeg/SpZ9C2myEuzosC1Oadk3aB1AABhgT8sjgxa+wtJsDDogJCpNjEATrZf0
+	Hzb2F0dPiPXCXj5/VvqGGs/II7e
+X-Google-Smtp-Source: AGHT+IGccbbkLDNRZf5uGtuhQ4vvp8vhQfi4kdXMQXqsARiXZ4jWDxuVkdo6kRtbk3hjjxJFPNsHaMhDi/++eU5oIkY=
+X-Received: by 2002:a2e:a99a:0:b0:32d:fd9b:34d2 with SMTP id
+ 38308e7fff4ca-3308f60d7e9mr50236951fa.31.1753120070277; Mon, 21 Jul 2025
+ 10:47:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250717-su-v1-1-0f740fd8bfb6@chromium.org> <7ebb8be3-ce67-4989-bae6-8459aef74528@kernel.org>
-In-Reply-To: <7ebb8be3-ce67-4989-bae6-8459aef74528@kernel.org>
-From: Allen Ballway <ballway@chromium.org>
-Date: Mon, 21 Jul 2025 10:46:46 -0700
-X-Gm-Features: Ac12FXyOtiUUTetIfpqOJ6vnbLB_uoBVrW7m1UCGcyztucen20Jk7eiRahyse1o
-Message-ID: <CAEs41JAt5Hjp7G6LPr36e+BT0dp6RU5p25kzCwnwBpBfF-3dJw@mail.gmail.com>
-Subject: Re: [PATCH] media: ov8865: Preserve hflip in ov8865_mode_binning_configure
-To: Hans de Goede <hansg@kernel.org>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20250721174227.28002-1-ubizjak@gmail.com>
+In-Reply-To: <20250721174227.28002-1-ubizjak@gmail.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Mon, 21 Jul 2025 19:47:37 +0200
+X-Gm-Features: Ac12FXyzGELRWpYTywe1PCaK9FFHZEf2ogE6DV9X8_k2FaKDgf7fYzEOG1gbp_Y
+Message-ID: <CAFULd4Ya1Me0+-cnmVKBAxcJJfiEbzk+_AavM7vyJksUaOtnGQ@mail.gmail.com>
+Subject: Re: [PATCH RESEND 1/2] ucount: Fix atomic_long_inc_below argument typei()
+To: linux-kernel@vger.kernel.org
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Alexey Gladkov <legion@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	MengEn Sun <mengensun@tencent.com>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Sorry, patches in this series have some problems in their description,
+please expect v2.
 
-On Mon, Jul 21, 2025 at 4:51=E2=80=AFAM Hans de Goede <hansg@kernel.org> wr=
-ote:
->
-> Hi,
->
-> On 17-Jul-25 11:07 PM, Allen Ballway wrote:
-> > Prevents ov8865_mode_binning_configure from overwriting the hflip
-> > register values. Allows programs to configure the hflip.
-> >
-> > Signed-off-by: Allen Ballway <ballway@chromium.org>
->
-> Thank you for your patch.
->
-> > ---
-> >  drivers/media/i2c/ov8865.c | 8 +++++++-
-> >  1 file changed, 7 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/media/i2c/ov8865.c b/drivers/media/i2c/ov8865.c
-> > index 95ffe7536aa6aba814f4e5c3d12e7279470b2f07..40a852d31f13aff960acfd0=
-9b378d71525e19332 100644
-> > --- a/drivers/media/i2c/ov8865.c
-> > +++ b/drivers/media/i2c/ov8865.c
-> > @@ -1746,7 +1746,13 @@ static int ov8865_mode_binning_configure(struct =
-ov8865_sensor *sensor,
-> >       if (ret)
-> >               return ret;
-> >
-> > -     value =3D OV8865_FORMAT2_HSYNC_EN;
-> > +     ret =3D ov8865_read(sensor, OV8865_FORMAT2_REG, &value);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     value &=3D OV8865_FORMAT2_FLIP_HORZ_ISP_EN |
-> > +               OV8865_FORMAT2_FLIP_HORZ_SENSOR_EN;
-> > +     value |=3D OV8865_FORMAT2_HSYNC_EN;
-> >
-> >       if (mode->binning_x)
-> >               value |=3D OV8865_FORMAT2_FST_HBIN_EN;
->
-> this change should not be necessary. Lets assume we start
-> with the sensor runtime-suspended, then ov8865_resume()
-> will call:
->
-> ov8865_sensor_power(true)
-> ov8865_sensor_init()
->   ov8865_state_configure()
->     ov8865_mode_configure()
->       ov8865_mode_binning_configure()
-> __v4l2_ctrl_handler_setup()
->
-> Where the __v4l2_ctrl_handler_setup() call will apply
-> all control settings including hflip.
->
-> So unless you manage to hit a code-path where somehow
-> ov8865_state_configure() gets called without calling
-> __v4l2_ctrl_handler_setup() afterwards then this should
-> not be necessary.
+Uros.
 
-ov8865_state_configure() is also being called from ov8865_set_fmt(),
-and makes no calls to __v4l2_ctrl_handler_setup(). I'm not sure if
-calling __v4l2_ctrl_handler_setup() here as well is the right fix, but
-the driver ov8865 seems to be based upon, ov5648, seems to avoid
-this issue by preserving the flip values when setting the binning
-register values in ov5648_mode_configure by using
-ov5648_update_bits() rather than ov5648_write(). I believe that we
-just need to preserve the register values unrelated to binning inside
-ov8865_mode_binning_configure, possibly by just using
-ov8865_update_bits() instead of ov8865_write().
-
+On Mon, Jul 21, 2025 at 7:42=E2=80=AFPM Uros Bizjak <ubizjak@gmail.com> wro=
+te:
 >
-> Note the whole runtime-pm / calling of ov8865_sensor_init() /
-> ov8865_state_configure() code in this driver is somewhat
-> unusual. So it could be there is a bug there.
+> The type of u argument of atomic_long_inc_below() should be long
+> to avoid unwanted truncation to int.
 >
-> But I don't believe that this patch is the correct fix.
+> Fixes: f9c82a4ea89c ("Increase size of ucounts to atomic_long_t")
+> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> Reviewed-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> Cc: "Paul E. McKenney" <paulmck@kernel.org>
+> Cc: Alexey Gladkov <legion@kernel.org>
+> Cc: Roman Gushchin <roman.gushchin@linux.dev>
+> Cc: MengEn Sun <mengensun@tencent.com>
+> Cc: "Thomas Wei=C3=9Fschuh" <linux@weissschuh.net>
+> ---
+>  kernel/ucount.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> Regards,
+> diff --git a/kernel/ucount.c b/kernel/ucount.c
+> index 8686e329b8f2..f629db485a07 100644
+> --- a/kernel/ucount.c
+> +++ b/kernel/ucount.c
+> @@ -199,7 +199,7 @@ void put_ucounts(struct ucounts *ucounts)
+>         }
+>  }
 >
-> Hans
-
-Thanks,
-Allen
->
->
->
->
->
-> >
-> > ---
-> > base-commit: 6832a9317eee280117cd695fa885b2b7a7a38daf
-> > change-id: 20250717-su-94b187fa3d1e
-> >
-> > Best regards,
+> -static inline bool atomic_long_inc_below(atomic_long_t *v, int u)
+> +static inline bool atomic_long_inc_below(atomic_long_t *v, long u)
+>  {
+>         long c, old;
+>         c =3D atomic_long_read(v);
+> --
+> 2.50.1
 >
 
