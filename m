@@ -1,388 +1,107 @@
-Return-Path: <linux-kernel+bounces-739217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04850B0C373
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:43:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9583AB0C378
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:43:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FE12188FDD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:42:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54F0A7B34E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2A62C3276;
-	Mon, 21 Jul 2025 11:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB3A2D4B79;
+	Mon, 21 Jul 2025 11:40:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="XaF6VIFl";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="XaF6VIFl"
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011043.outbound.protection.outlook.com [40.107.130.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45FBA2D3EDD
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 11:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.43
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753097983; cv=fail; b=MWkhPWOGTZgH0A+4LMq0HZjeEtoMUCY9IXV9ePlewXXbnCFQbvXhSqfBu2yFeiyQcaUiO8VgBsaL9JV+hfkGJDwQpRDL4iBusIL05NdL/3asK351ZzdQRCmur9DkE9+1KC6+6XVlVW4YEs4pwTcbpuOMusHUB4p8e5rTu2GwhBI=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753097983; c=relaxed/simple;
-	bh=NRsOC4IjdfMCFHdMyktY47VveQIlGf91tjNQr8h4HIs=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Kizx5Tkb05wTLj4iTlQbgz3wm8DZmxDI6w2HokFZUYvIJY5Y0XUFqBCIyrfqV9NlH2g4e3VYa+XhBu1L7MB60TWZC2pRA+YipliofP/F2pnFLq+n8tgXNDg/yC4LQ08pE4qBo1h37kqfitVOsye/C6QXAtTPVdx/Ijbo4LI6HYQ=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=XaF6VIFl; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=XaF6VIFl; arc=fail smtp.client-ip=40.107.130.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=RT1cRkNA9BClc2Sr+ifsIQnHtMm/WBda8IYQp+X+oJn5xPXWnRDGvbuAllEB/ihBylDTb5YRbc33Sily1AEiIh26otbDzEQu8ebYCF4zaR5qKg69QC35//ra7v+QmIo0dBtlJin3cD/bkcAbTzDXstbtU6Byw/udCIlQmLUmJYnFaSR7CemYm+/F+RKBd9ZmuMmhhB89z8ehuqRKAT5bMeGPof2fqD/9plY8achspC7fWjX7+XiGWyCqH6sEmqUTq3l3sqFn5Wqxh09TAygYZecDcWv6QC7SI4hHJOnux8RdAN/RbusGwb3992Gilte3hEZ1tNVgWgEXqfiWGh9Lkw==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Uv+XFqYdmfpRhf9qZaVsY5uh5lBkTlALrr8pc7FcfUs=;
- b=fXMkxgJVhgq6sZULcxRoiGtQkbmY6UOLVaP2Fuzx29MPV4KWDrrV8mJm/ZKm4FMTIPdcDU7ede0whelEbhT5RVCrYRIoUKrl9zWkMMbvAHd+hB/fOLVnESUfahOfGrCb+BP8+PFY1xbjmAyMOqVa3+9S0WwUTNO2S134A9sqfb3lomlnTPJ4PQB8I4QUpK3BiTHnuogUnAZmog1mlbbJFh7rURVyTyG8RvgMs29itqvz0UOuIrIAqnpbNW2iX/e95cwlYChBlu7EQ5QdY8zsnTc/XmCrOFjpiVg5Lxg2SLBL/3Liu2VZnVsFvMYI8wo1odUzGluos4827mpls10hnA==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=lists.freedesktop.org smtp.mailfrom=arm.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
- dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Uv+XFqYdmfpRhf9qZaVsY5uh5lBkTlALrr8pc7FcfUs=;
- b=XaF6VIFlRdYr5QroTvP/sO72UM+2pG26PCTyl8/Kat//zd17iMFVIhDglm17rsyDA7QBpg2zsJqueeMSyVzSSTYa7zJAJaNdH3s5SnSCY5j68RsdXdE+T99oDuVuurLesbLPXsdqX3STjLBQ2Jrs1a4UqR7Ter6cW0zWg7v4TCw=
-Received: from DUZPR01CA0023.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:46b::17) by FRZPR08MB11162.eurprd08.prod.outlook.com
- (2603:10a6:d10:13b::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Mon, 21 Jul
- 2025 11:39:38 +0000
-Received: from DU6PEPF00009529.eurprd02.prod.outlook.com
- (2603:10a6:10:46b:cafe::8f) by DUZPR01CA0023.outlook.office365.com
- (2603:10a6:10:46b::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.29 via Frontend Transport; Mon,
- 21 Jul 2025 11:40:01 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- DU6PEPF00009529.mail.protection.outlook.com (10.167.8.10) with Microsoft SMTP
- Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8964.20 via
- Frontend Transport; Mon, 21 Jul 2025 11:39:36 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KHd8jfPyDlemr6HCLQfPCpUVqV1il05YXLMf30/LqQD9DAZXD7RCeiJUi6x9bAi0J5W5a1iEhSdB098QGZ9kv+AQBRgiDq1T2YhM5p5StX2GdQAoGoSTGbQH5wD4iAt4DJrOiGLxB6ogRnwwU5Dz4Wsp6jgMiKECXeFrz4uU4LUgLW4pKSFLE9/LsWRxk5w7SyLWwSYW1aS9qE33/Bb1EBLI9UwtacmMK9JmYBYY1Gqhq2TYK3XjdSgiaIHPbNKAcGhb8A83gch5HqnBF4F56hwa0uU6DQ0htuF8w8pwiPLCVI+1Bj5qgj5PrgvXqimpTVvlM88/BqzB29nE4FyeLg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Uv+XFqYdmfpRhf9qZaVsY5uh5lBkTlALrr8pc7FcfUs=;
- b=sN3/qjPUrLU3BFjhX1hJuiDgA5lVZRt/nPVUFruakDVTmqSCupEDTDhGXLqJGQPB5/XrYtt6KRCBX2lJ/tZl3VbblRYL501S/60a1BZrWrhEozOTR+HEhZfKISAKT7iHa7JXG4ko4wax+cHjBL4HOuXaLgvKwzV0yjq1iduEIFa2n37mUg2Gwc4QFYhQ80uNZMkOK+kxPIV7kbkB7bIzTPmJUq/DHtyRHvSNEmbTV8oiZmP2eHnJGSnrfoeIPJT09GsmJbtLNpZi2xE0pRdL5xeF+4oyjCr7PjxObR8+sk5ql8ZreZpmzDCQBykC83CDC4l0rrR+JaxMlDtIc2vSww==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Uv+XFqYdmfpRhf9qZaVsY5uh5lBkTlALrr8pc7FcfUs=;
- b=XaF6VIFlRdYr5QroTvP/sO72UM+2pG26PCTyl8/Kat//zd17iMFVIhDglm17rsyDA7QBpg2zsJqueeMSyVzSSTYa7zJAJaNdH3s5SnSCY5j68RsdXdE+T99oDuVuurLesbLPXsdqX3STjLBQ2Jrs1a4UqR7Ter6cW0zWg7v4TCw=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from VI0PR08MB11200.eurprd08.prod.outlook.com
- (2603:10a6:800:257::18) by AS8PR08MB6135.eurprd08.prod.outlook.com
- (2603:10a6:20b:29f::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8922.39; Mon, 21 Jul
- 2025 11:39:03 +0000
-Received: from VI0PR08MB11200.eurprd08.prod.outlook.com
- ([fe80::d594:64a:dfc:db74]) by VI0PR08MB11200.eurprd08.prod.outlook.com
- ([fe80::d594:64a:dfc:db74%5]) with mapi id 15.20.8943.029; Mon, 21 Jul 2025
- 11:39:03 +0000
-Message-ID: <8cfa87a9-7b82-4d24-a0ae-7a9cc1dad15f@arm.com>
-Date: Mon, 21 Jul 2025 12:39:01 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/7] drm/panthor: Support GPU_CONTROL cache flush based
- on feature bit
-Content-Language: en-GB
-To: Steven Price <steven.price@arm.com>, dri-devel@lists.freedesktop.org
-Cc: nd@arm.com, Boris Brezillon <boris.brezillon@collabora.com>,
- Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- linux-kernel@vger.kernel.org
-References: <20250602143216.2621881-1-karunika.choo@arm.com>
- <20250602143216.2621881-7-karunika.choo@arm.com>
- <a0481aed-825f-4ba9-b112-df7891299015@arm.com>
-From: Karunika Choo <karunika.choo@arm.com>
-In-Reply-To: <a0481aed-825f-4ba9-b112-df7891299015@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0238.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:1a7::9) To VI0PR08MB11200.eurprd08.prod.outlook.com
- (2603:10a6:800:257::18)
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ICIN54ku"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74CD2BDC3F;
+	Mon, 21 Jul 2025 11:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753098011; cv=none; b=B0aJe+aEqs7P8G1bmXoIiEOrsAqlREmcz4vHM9R05dPbhpU3Zs9z2duyJbmxJpH2m7jXOo2sY9kNE561GaE1DeRIt6P7IQC3NEgakPBKyi2bv+LY06bAYGuW/opVzwsBzFiVW6CH/jd1lIHDcfzEaQh7/a6U9tZAenyISlKeI6Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753098011; c=relaxed/simple;
+	bh=6XGCN6S+1ArKPaLcQX+53Yuwp0acP87Qo4TRmYe6BLM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gOjg9LY/1UgQgSut8yOAE+Nxhc5X8DkVMo7Gy1LbrY8u4FaJ/Ux/L6iVBZsjyK1f24ND0s2ud5F5pSwFPK4NoF+f4wtgdfI8OnNQ0PSRbvCQJaQuGz3gYnBE78b86QoAAZDBOdwZdo1/nxHeaFWTNZeahz4VLfOur4squOe/KPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ICIN54ku; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Au
+	vjFB3nFeeLKyzHtgEk9AR+erzZgqabDf1jFFq3NcM=; b=ICIN54kuJl4BHa88VQ
+	nVNU94P0YvHD9KOw93eobcM6R7b+tQjkG4I01HZlIyLbEezXe4QPJKiZSuBWrTnU
+	mjoBgP+Ek5G8cu+F6YI5OPYUPQcaJf3m+R78ZD4s4dtL2+73/6NFR2G6ZQnn+lww
+	1iqpfYnBhf0GyQG2LjoKxp+0Q=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wC37AHvJn5obfSwGg--.15604S2;
+	Mon, 21 Jul 2025 19:39:28 +0800 (CST)
+From: Slark Xiao <slark_xiao@163.com>
+To: johan@kernel.org,
+	gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Slark Xiao <slark_xiao@163.com>
+Subject: [PATCH] USB: serial: option: add Foxconn T99W709
+Date: Mon, 21 Jul 2025 19:39:19 +0800
+Message-Id: <20250721113919.28577-1-slark_xiao@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	VI0PR08MB11200:EE_|AS8PR08MB6135:EE_|DU6PEPF00009529:EE_|FRZPR08MB11162:EE_
-X-MS-Office365-Filtering-Correlation-Id: 68c9c3c3-aeba-4e23-7189-08ddc84b44f6
-X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr,ExtAddr
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info-Original:
- =?utf-8?B?b2poNWtZVVlKdjdseG1aREh6WUFhSVJwcDN4STYwWUpiWVRGa2s2dkg5RzZV?=
- =?utf-8?B?RTJ0bHoyY25TMVJ3eWNwMm91emZMRHIzcURmdFhnVGxaS3BzU0ZFQlJOU25M?=
- =?utf-8?B?dE5rNElhSTdRRVR3K0toZG1GbTRhdzBobGpUK3RkVHZmcHdqcytEWTJwQjUv?=
- =?utf-8?B?NE80ck9rZkpVUndqS2E3Uzh1Q0RFSkZkU0hDM1JwQW9mSWNsVWYvSXFGMDJ3?=
- =?utf-8?B?WGt3cW92ci9vQzV2cDhvU2cvbUhRbVZpTkF0Yy90ZDN2ZHk1eUorRnpWRzFC?=
- =?utf-8?B?RWhXbFNqWE83OHI4ZmdXV1NaYk1qYlNpSzNicG92MWhJTVBpMFh1dHVxRlo0?=
- =?utf-8?B?V294NU1WbGFhTDczaDNVZ0QrWVJBZUk1Z2VQY2FjRjg2L3JaS21ZYm1pVFc2?=
- =?utf-8?B?WGVxdXdyYlhHaWNaMUVTS0Q3VUEwOXdiTEFlUmIxb0UzdmFQMkpablZNNEY0?=
- =?utf-8?B?MDROdUZ0R0ZNRFRabFl1czlJTVV3WUFsaUl6eXFsRVduWHRxUThSVm5XQitK?=
- =?utf-8?B?NG96K1A1VUlOOTZSVURTTkFyVjlnNzdPaE42MGpKM0Q0RlFkekxtWTBxeG5H?=
- =?utf-8?B?ZDdkTXc3RXJENEJ6QTU0T1NXNnZZcFh1WUlhbmVCRm8zZ0tKWTgxWEQwLzRG?=
- =?utf-8?B?ekNabTBCUHFxalF6OTZ4YnBzNjJRR00zMUVFSlJxajZDTytxb1dReWlJZ2sv?=
- =?utf-8?B?UzlpWSt3ZHpzVGljbmdIcHVpOFdPYzBBWlhjdlhwMUYrT2dHN1UycW9aZkEy?=
- =?utf-8?B?ci8zSWV6R2xUSjNvZFFMc1EraEw5SnhaTWsxdzZyMlQ3UTNYNGRlQWljUWF3?=
- =?utf-8?B?WThmQlJLQ1NLRlhhRVFxeXRUOE9qcGFZV2d6SEFFZFZTeXFSem5xLzJqRFVB?=
- =?utf-8?B?MUQwZkduQ0N3ZE1WVjlLMUhpTVJ4N2taa0tlczc4NUhjR2dabVRmZlVLN1RV?=
- =?utf-8?B?L0dFSExnMmJFSGlBOW92Ni82UjYzK3hvbWt0eEhqMjRxelVxcCthTVp5c2x1?=
- =?utf-8?B?dElLYWtudnkzWVhzTkg5QzUrRkNDNGt4NmZ0U0hLdlFnKzRSZUtMNG9iaDhR?=
- =?utf-8?B?YU1VRUJiOVBTRHBzT0UwSVF4cUo0ME1oSjJsbmRudjF1MXRHZjNQazVhYzc1?=
- =?utf-8?B?bDQ0SG00VHdleDdwMDlzazIrdVZQM0R3b3ZsRndXcGZaVENPOHoyM3BCZk1K?=
- =?utf-8?B?bFI3V29lTW9ZMjQ3WlhFYWNQQUNIVHJZWXdFRUdaSGlQVFpPdjBTN3k0YllP?=
- =?utf-8?B?UkR1ZzJWdmhydmhFV29YejU0cC9BQ216ZGVaeTZmaTdHMldJeVpINUQrRXUz?=
- =?utf-8?B?c2Y4NDhPQVZKb3NnaWYzNllmWDRHWGxRK0lYRFdiU095VDd4UXR6aHVUSS81?=
- =?utf-8?B?bTd4aFRyVnQvcGhXUHpMdVQySEp1V3ZEOGV3cVZYZzNObndIQUlMQ1dEaVl5?=
- =?utf-8?B?dkFxMFQzd3VhS0FNVTlrYkNOd29VRnRsVzVxZEZzenNiU1VHUVNISDN4bStG?=
- =?utf-8?B?OGM3Y3ZjN1J2eFViaGJiak16ekRvakhmT0xBOE5oWGR2eXNxdzZuNDB4OUR5?=
- =?utf-8?B?R1NHZ21sRlpyV1pUczY0QjNaSHRHSjZ2OHRydmVBTkVMemVwbGdSSFFRVzJZ?=
- =?utf-8?B?bzZtY28rN1JndGtRYys3NG1jYVZybi9QSGc2VG9uQ1FoZDFlWHl5QnBCZjZj?=
- =?utf-8?B?eGNwL3Rad1JUOVd0NW14UWlMU0dMY0JVYThDQTQxRjR0bG5rdld6dW1QUG5G?=
- =?utf-8?B?TjlKRDlRUGdMcEh2NFRwTTN0WjBQRjFxdU10S2p3d3pKZzBMUExkRW01bEMx?=
- =?utf-8?B?WUFHVnV0VjJwdThwVzFEMmdpUWM3VTUxK3NFQ1VDMDVUU1ZLeTlOMTZqck5Q?=
- =?utf-8?B?c0FybWJ1aWZPY3BIY2E4VkZ0M2Jzb3p4VWZqcTBsYmE1Wk1OYitYSFRvYVM5?=
- =?utf-8?Q?URTuYjGt4/M=3D?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI0PR08MB11200.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB6135
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- DU6PEPF00009529.eurprd02.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	e3e2b6d5-2593-4cee-ce12-08ddc84b3169
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|35042699022|36860700013|14060799003|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WU5nWUdMaUNONW1lMzB1dlZKVlBEcnNPRnVxbmxXdG5DOStkeGI0YXhaeEov?=
- =?utf-8?B?WlRBVlpVYXBrc0Fwc1kxODFvdHYvTWorWXV2a3FyM3I4TU05dTRqVlBQajAr?=
- =?utf-8?B?OGZQTTJhOE5tbmVmMUxIeCtSUWNBeTFtNHVIWnROTDJ6bGpaWnc5bk9TRVI5?=
- =?utf-8?B?QzFpYkZRUWJ2c3hnWHZKWHNXNXhMM2hLQU4xZzZUZFA0SmZaZXY2aDhmYSt6?=
- =?utf-8?B?NzM5UnlDL3VBQkdDaWVJeXRvYXlWRnIrWmJBZ1A2eDNJWXdwN0NudVBpTTF6?=
- =?utf-8?B?Z1hvT0VuQUpLMmgwdlUvZ085Yys5MjR2TTYvQ2p0YmdnNThXcVlobkdmL3lI?=
- =?utf-8?B?OUlDUlYrZEtnYitOdDcra2hGSVdCTFJGWXlqelpsQnRqbGgzOEN4RTQ0VWNR?=
- =?utf-8?B?ckRubFBUdzQrbjlWNEwzNHBHR0FOeEUzbVQzMHlLUnlGcDJ6Mmxrbit6c2hv?=
- =?utf-8?B?OExKaHZBWGIyeEtQMGZKTk9YdVhOSzcwMTA0Q2JFMmRKbEFhR1pNQWY1ZW1y?=
- =?utf-8?B?VkJqZWwwUS91S0ZGMGhzMFk1TGVVaW9TeEh3aU9UV3hZQjBxb1hIamdFU1Vs?=
- =?utf-8?B?L3FGamFiRzhTSW1WWExXTmx3ZW5UckZtcmgvcXN5MGxsaHIwUHU1MjEvK3JW?=
- =?utf-8?B?Zm1UaXRkSm9mbGxPMFR1c0E5cWRyV21kYnpBTU1UaERQNkZJZ3lLcHlDSzRO?=
- =?utf-8?B?T1VqV0I3bWZYYkRFQmdJZ3JRYUY3VG9VV1BlY3grbmRBd0plaTBaQzJzS29Q?=
- =?utf-8?B?Zzlra3NMQWhrYnNTcHFueVNzNytrak5TalRLaVE3L0ZCaTBMU3F1MkVveVdB?=
- =?utf-8?B?ZmxlNUJxbzl6L21Ra2ZFdEVBa25vRzYrTUd2cTV6M1dWV0tnMmI3cUduN1RH?=
- =?utf-8?B?a0JkQnU5NHRvUTEyUERpMWljZTJneUNOaHdkaWNDNTR6akExQVZ5eG55K3cx?=
- =?utf-8?B?bWhXZnNFTlNwNFhRcU5NY2NBVnhFck1RUzcwQ1JoSXdmdU9kcCtaMWVRTVdZ?=
- =?utf-8?B?azNSUmE1L3VjQkpKcHNFKyt1MW1MUTlEekJDTFU4TFZ2MGdCQU9HaTl0TU56?=
- =?utf-8?B?dWJnRzc0c2tJd3FKYmx4SGtpbFdvSEZVU0ZWQmZCeFh1L2xaRnBQSVdEN2t4?=
- =?utf-8?B?WUdBYWx1bXhYcU1pY1RvS1I1aTVLRTRTdTZiRTZqQUdGVnNDdFNEcDJldmUr?=
- =?utf-8?B?N1hIR0VwUGp1SXUycnMydDBxWmFSaTVBZ1ZHSmlOb0daSWFjelZuUmFLeThS?=
- =?utf-8?B?elJpWkNGTnl3UFpYVkRaU1ZsdkxsMFBUSksxVXdqcFNrYXZFRnlUTWVIOWZZ?=
- =?utf-8?B?OWZld0d3TVJWbngrRmdmTlZOZVZiTEtYTVFhT1RNZzQxVVhEdjlQUlA2ZWZz?=
- =?utf-8?B?Y3hiTVk5WkFOSE9zckV3cFJ3a0lpOUdHYWxMTHo3aEFVUEhRTFpNY3M5Tjg4?=
- =?utf-8?B?ZUR5U3N1aDU1VzBYWnZBRHNISXZQUkQ2UHVwbzh2SkVYRDUrbTBzcnEvek9v?=
- =?utf-8?B?eXF4VzlRd3R5N2FLREtIbkhoSDhkbkpZVHBabEV1Sk5BWkNxczhuUFE2alVS?=
- =?utf-8?B?NzBGNjdtTTFiK1psaGczRmRzOWE3NGhOd3RDQytacDYrVm1PbXhPRkNGY1Ji?=
- =?utf-8?B?U0JwcnoxVUZ3b2xVRFdHaldoNjNUSVRiSUtCa0ZHbkdjRDU1SGFKdlJiNStq?=
- =?utf-8?B?QkcvRElzaGhPeUhRY2M1REJtaGQ5c0s1NzNaRFhJRDFQd1VJN0lGaldLMTBP?=
- =?utf-8?B?K2FJODk3N2IwVC9GcFZ2TEJZL3poQmJEYWRFdFJ0THNuR2syM0tQdmw5KzVE?=
- =?utf-8?B?VEFlMGdUa3lYYXRYU2tFMVN6dU9sOXAreTVGZFh2WGtEWStvSmEvVUZRenB0?=
- =?utf-8?B?ZVM0b3l3LzErM1UraU5tQUlLbWVkUmlDMi9kSTRrMUJCbWh2R0xhWkVhUUpO?=
- =?utf-8?B?QnRhdCtjTk9sTGFlUnphRTlZUG9ReEtrRDZ3b25GZXBKTFhydTV2YzZuTy9T?=
- =?utf-8?B?a3l0MmEzTGltczYzUUQ4Y0U1NXFpekVDcUJsVHloRG40NjFmM2lzSU0yYUJW?=
- =?utf-8?B?VzA3YzA3SlRwVVNiV1N2Qm9WRjFZYllncFRGQT09?=
-X-Forefront-Antispam-Report:
-	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(35042699022)(36860700013)(14060799003)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2025 11:39:36.0394
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 68c9c3c3-aeba-4e23-7189-08ddc84b44f6
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DU6PEPF00009529.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: FRZPR08MB11162
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wC37AHvJn5obfSwGg--.15604S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7WF1xtw47ZFyrtw4rJrWUArb_yoW8Zw4rpr
+	n0yr12vFWDXFWfXF97trn5ZrWrWws3Kry2g3ZrAw43WF1Iyrs7t34Iy34fXFn2krs5WrsF
+	vrs0krWUK3Z5JrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRhNVhUUUUU=
+X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiow2RZGh+Huan9AAAsm
 
-On 23/06/2025 11:23, Steven Price wrote:
-> On 02/06/2025 15:32, Karunika Choo wrote:
->> As the FLUSH_MEM and FLUSH_PT commands are deprecated in GPUs from
->> Mali-Gx20 onwards, this patch adds support for performing cache
->> maintenance via the FLUSH_CACHES command in GPU_CONTROL, in place of
-> 
-> NIT: s/GPU_CONTROL/GPU_COMMAND/ (also in the subject and below).
-> GPU_CONTROL is the register page.
-> 
->> FLUSH_MEM and FLUSH_PT based on PANTHOR_HW_FEATURE_GPU_CTRL_CACHE_FLUSH
->> feature bit.
->>
->> This patch also enables cache maintenance via GPU_CONTROL for Mali-Gx10
->> and Mali-Gx15 GPUs for consistency.
->>
->> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
-> 
-> I'm puzzled by this patch. You're introducing a new feature bit which is
-> always enabled on all GPUs at the end of the series. I think this should
-> be reworked to either:
-> 
-> a) Remove the feature bit and change all GPUs to the new GPU_COMMAND
-> cache flush mechanism. This should allow a minor code cleanup too.
-> 
-> b) Only opt-in new GPUs where FLUSH_MEM/FLUSH_PT are unavailable.
-> 
-> In particular this patch as it stands does two very different things -
-> it enables a new feature to be used on the new Gx20-onwards *and*
-> changes the existing behaviour on older GPUs (which has the possibility
-> of causing regressions).
-> 
-> A third option is of course to split the patch - add the new feature bit
-> but don't enable it in the first, and then the second patch is just
-> enabling the feature bit for existing GPUs. That makes reverting in case
-> of problems nice and easy. But there's also no point having the feature
-> bit if we don't expect any users of the old behaviour - so only do that
-> if you have good reason to think we're going to add a GPU using the old
-> behaviour.
-> 
-> Thanks,
-> Steve
-> 
-Hi Steve, 
+T99W709 is designed based on MTK T300(5G redcap) chip. There are
+7 serial ports to be enumerated: AP_LOG, GNSS, AP_META, AT,
+MD_META, NPT, DBG. RSVD(5) for ADB port.
 
-On further inspection, this seems to be a change purely to align with the
-FLUSH_PA_RANGE workflow and should not have any negative effects if the 
-Mali-Gx10 and Mali-Gx15 series use the same mechanism.
+test evidence as below:
+T:  Bus=01 Lev=02 Prnt=02 Port=00 Cnt=01 Dev#=  7 Spd=480 MxCh= 0
+D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=0489 ProdID=e15f Rev=00.01
+S:  Manufacturer=MediaTek Inc.
+S:  Product=USB DATA CARD
+S:  SerialNumber=355511220000399
+C:  #Ifs=10 Cfg#= 1 Atr=a0 MxPwr=500mA
+I:  If#=0x0 Alt= 0 #EPs= 1 Cls=02(commc) Sub=0e Prot=00 Driver=cdc_mbim
+I:  If#=0x1 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
+I:  If#=0x2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#=0x3 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#=0x4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#=0x5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=usbfs
+I:  If#=0x6 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#=0x7 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#=0x8 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#=0x9 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
 
-I have updated this in v5 and enabled it for all supported GPUs for now.
-- https://lore.kernel.org/all/20250721111344.1610250-6-karunika.choo@arm.com/
+Signed-off-by: Slark Xiao <slark_xiao@163.com>
+---
+ drivers/usb/serial/option.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Kind regards,
-Karunika
->> ---
->>  drivers/gpu/drm/panthor/panthor_hw.c  |  6 +++++
->>  drivers/gpu/drm/panthor/panthor_hw.h  |  6 +++++
->>  drivers/gpu/drm/panthor/panthor_mmu.c | 35 +++++++++++++++++++++++++++
->>  3 files changed, 47 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/panthor/panthor_hw.c b/drivers/gpu/drm/panthor/panthor_hw.c
->> index f5127a4b02dc..5ec9d7f28368 100644
->> --- a/drivers/gpu/drm/panthor/panthor_hw.c
->> +++ b/drivers/gpu/drm/panthor/panthor_hw.c
->> @@ -99,9 +99,15 @@ static void panthor_hw_info_init(struct panthor_device *ptdev)
->>  static struct panthor_hw panthor_hw_devices[] = {
->>  	{
->>  		.arch_major = 10,
->> +		.features = {
->> +			BIT(PANTHOR_HW_FEATURE_GPU_CTRL_CACHE_FLUSH)
->> +		},
->>  	},
->>  	{
->>  		.arch_major = 11,
->> +		.features = {
->> +			BIT(PANTHOR_HW_FEATURE_GPU_CTRL_CACHE_FLUSH)
->> +		},
->>  	},
->>  };
->>  
->> diff --git a/drivers/gpu/drm/panthor/panthor_hw.h b/drivers/gpu/drm/panthor/panthor_hw.h
->> index 1a3cbc5589fd..2bb372fe9d4d 100644
->> --- a/drivers/gpu/drm/panthor/panthor_hw.h
->> +++ b/drivers/gpu/drm/panthor/panthor_hw.h
->> @@ -16,6 +16,12 @@ struct panthor_device;
->>   * New feature flags will be added with support for newer GPU architectures.
->>   */
->>  enum panthor_hw_feature {
->> +	/**
->> +	 * @PANTHOR_HW_FEATURE_GPU_CTRL_CACHE_FLUSH: Perform cache maintenance
->> +	 * via GPU_CONTROL.
->> +	 */
->> +	PANTHOR_HW_FEATURE_GPU_CTRL_CACHE_FLUSH,
->> +
->>  	/** @PANTHOR_HW_FEATURES_END: Must be last. */
->>  	PANTHOR_HW_FEATURES_END
->>  };
->> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
->> index b39ea6acc6a9..f9ccc8627032 100644
->> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
->> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
->> @@ -29,7 +29,9 @@
->>  
->>  #include "panthor_device.h"
->>  #include "panthor_gem.h"
->> +#include "panthor_gpu.h"
->>  #include "panthor_heap.h"
->> +#include "panthor_hw.h"
->>  #include "panthor_mmu.h"
->>  #include "panthor_regs.h"
->>  #include "panthor_sched.h"
->> @@ -568,6 +570,35 @@ static void lock_region(struct panthor_device *ptdev, u32 as_nr,
->>  	write_cmd(ptdev, as_nr, AS_COMMAND_LOCK);
->>  }
->>  
->> +static int mmu_hw_do_flush_on_gpu_ctrl(struct panthor_device *ptdev, int as_nr,
->> +				       u32 op)
->> +{
->> +	const u32 l2_flush_op = CACHE_CLEAN | CACHE_INV;
->> +	u32 lsc_flush_op = 0;
->> +	int ret;
->> +
->> +	if (op == AS_COMMAND_FLUSH_MEM)
->> +		lsc_flush_op = CACHE_CLEAN | CACHE_INV;
->> +
->> +	ret = wait_ready(ptdev, as_nr);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = panthor_gpu_flush_caches(ptdev, l2_flush_op, lsc_flush_op, 0);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/*
->> +	 * Explicitly unlock the region as the AS is not unlocked automatically
->> +	 * at the end of the GPU_CONTROL cache flush command, unlike
->> +	 * AS_COMMAND_FLUSH_MEM or AS_COMMAND_FLUSH_PT.
->> +	 */
->> +	write_cmd(ptdev, as_nr, AS_COMMAND_UNLOCK);
->> +
->> +	/* Wait for the unlock command to complete */
->> +	return wait_ready(ptdev, as_nr);
->> +}
->> +
->>  static int mmu_hw_do_operation_locked(struct panthor_device *ptdev, int as_nr,
->>  				      u64 iova, u64 size, u32 op)
->>  {
->> @@ -585,6 +616,10 @@ static int mmu_hw_do_operation_locked(struct panthor_device *ptdev, int as_nr,
->>  	if (op != AS_COMMAND_UNLOCK)
->>  		lock_region(ptdev, as_nr, iova, size);
->>  
->> +	if (panthor_hw_supports(ptdev,PANTHOR_HW_FEATURE_GPU_CTRL_CACHE_FLUSH))
->> +		if (op == AS_COMMAND_FLUSH_MEM || op == AS_COMMAND_FLUSH_PT)
->> +			return mmu_hw_do_flush_on_gpu_ctrl(ptdev, as_nr, op);
->> +
->>  	/* Run the MMU operation */
->>  	write_cmd(ptdev, as_nr, op);
->>  
-> 
+diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
+index 147ca50c94be..1fc7ee5fa91d 100644
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -2348,6 +2348,8 @@ static const struct usb_device_id option_ids[] = {
+ 	  .driver_info = RSVD(5) | RSVD(6) },
+ 	{ USB_DEVICE_INTERFACE_CLASS(0x0489, 0xe167, 0xff),                     /* Foxconn T99W640 MBIM */
+ 	  .driver_info = RSVD(3) },
++	{ USB_DEVICE_INTERFACE_CLASS(0x0489, 0xe15f, 0xff),                     /* Foxconn T99W709 */
++	  .driver_info = RSVD(5) },
+ 	{ USB_DEVICE(0x1508, 0x1001),						/* Fibocom NL668 (IOT version) */
+ 	  .driver_info = RSVD(4) | RSVD(5) | RSVD(6) },
+ 	{ USB_DEVICE(0x1782, 0x4d10) },						/* Fibocom L610 (AT mode) */
+-- 
+2.25.1
 
 
