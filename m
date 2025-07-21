@@ -1,79 +1,114 @@
-Return-Path: <linux-kernel+bounces-739536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 942C7B0C77D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:24:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 438B5B0C846
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:56:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A5037A93A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:23:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A6026C472A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:55:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77BC92DFA27;
-	Mon, 21 Jul 2025 15:24:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191E52E03F8;
+	Mon, 21 Jul 2025 15:55:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mPpXm3ZM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="N7F21LPI"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D345A2629D
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 15:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397221F463A;
+	Mon, 21 Jul 2025 15:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753111463; cv=none; b=XEAwXSu0owvFalsoJuxTTTjJ6AD6nW+aSXDSOXkrMlUQT2G9Nx0pSQtTwEvSHhM31bcxXNQzpnM6ZlaUJuTsA8pO3SVPUTa3yQmdAQxZP/awVZmzREQUvbBSvl16Gi/2PvAPuDx2LZHVMp9cewQdzuZsarDcTOprIMxHnc4mLn0=
+	t=1753113311; cv=none; b=KgkPPTdxv/QPjJrcB/t6fbIYFo6kcNbiROfC8963D9m+Gq6Cu2xRrRwKiDr1Rdh712/FAs86sfYY5062mGijb/2+rHR6sXk395BAveYtNX7DBkqBlxf3eSKdsC6EdY/ht0DevQJ6gEZwFdF6FkCQxD2mx4DxIxhqxOJ4e2zIMxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753111463; c=relaxed/simple;
-	bh=u7kadqgEuZg2AIfHSsFUPNGoFSwQ+kvDr9zi4Pzt0jU=;
+	s=arc-20240116; t=1753113311; c=relaxed/simple;
+	bh=N1dy7xoxRKl1sQ1tb4Ipkebpw3UhPsQ6Fu34IdYEgOA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bhORohnKgJJQBPMVXD/GoHRIm88Gg1QUxfJ1EAJ6gWIxDpHh1GfItrwm6FzOBk0rdi6dwv9+2ml9/fJHaGmUOpJnskwlc8MXr67dpqK1jBLO7j2iQ//BVjzJZA/G0H2YTDw8Y9u2m6llDu/yrS3IJ3HCaDotU5Akjgrol9XGIHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mPpXm3ZM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF2A3C4CEF4;
-	Mon, 21 Jul 2025 15:24:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753111463;
-	bh=u7kadqgEuZg2AIfHSsFUPNGoFSwQ+kvDr9zi4Pzt0jU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mPpXm3ZMxx5I5hLFD3D4uhlL5wluYO2VkUikYsnM2qrE+pE9he1Ptl/L5PUIPPHwr
-	 ZxbGds58QlLrXXlXqXIeNJIYSi5YitNsrlNdLdUHBJKBmqLh6Rp6bZdSYRrl5sIOC9
-	 9PUVxDK67XTMS5Mv9DyoW+oRbID5559061lwjaHZJUqU/7CwUpZP1fZilcJ/v+qYz9
-	 WM+22iXDj2o3W8X1/aSQ1yUfBnbjNhrKa7DMzYjJidbN3D0ZU6OeIL39AJuDCIo3rK
-	 0E7Luqvqj/RJr1QeGJOT1XI+40tAKwszjijs2lciUoxwmX7si4p5sQx7GWcQR4WuSL
-	 jXbmN2nP9X9Fg==
-From: William Breathitt Gray <wbg@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: William Breathitt Gray <wbg@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] pc104: move PC104 option to drivers/Kconfig
-Date: Tue, 22 Jul 2025 00:24:00 +0900
-Message-ID: <20250721152402.716262-1-wbg@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250721062630.3905668-1-rdunlap@infradead.org>
-References: 
+	 MIME-Version:Content-Type; b=MR4RwdQ1g7KPdqbNqQSmE1CdwyJY3XMe6qeUXOYQz3Qf54u+O3uG6JjDTn9CLGNphLb1akLJa+AEKSosW9x8ToXa2qs/CEwqY0XtObbNJvhK1BY19PhtSwkBwhB1we3bQWyzVEDFqbJVytslxAzXlyZ1TuQ37SmEGZmxasLJSyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=N7F21LPI; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=N1dy7xoxRKl1sQ1tb4Ipkebpw3UhPsQ6Fu34IdYEgOA=; b=N7F21LPIdchD8+2O9CRvE6O6lI
+	gX1sGnojJnysvzXKgRZSVl3qksY/yK/9djn9/YWNxOIWo7kFQbymnEjUusxPGd1xxRZxoe4sKglj0
+	h5Dh1ridpadW6MvtjkAbPCgYeYBiRCxw1Sg96MnfuX+/9+opxxxztm6oYj0PzZmb1sgUJ4KI2NSYg
+	3BVv4bX1JAQbphTSLHK+Me/8AOwc2onF5MjEXKI8VCbzpWtbhsMOvO5HiV0lI01ilo91r6z1ubpOv
+	+Zu5Ulx51fV7sPn3ctWr48CQG/p3JV46sJ2rUHDQ9QNCIY9gs1FwB6HfVy+QTbCfCw1igvlrNNkf5
+	K4zSFjWA==;
+Received: from i53875b2e.versanet.de ([83.135.91.46] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1udsND-00047Z-91; Mon, 21 Jul 2025 17:24:15 +0200
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Tomeu Vizoso <tomeu@tomeuvizoso.net>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Oded Gabbay <ogabbay@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+ Kever Yang <kever.yang@rock-chips.com>, Robin Murphy <robin.murphy@arm.com>,
+ Daniel Stone <daniel@fooishbar.org>, Da Xue <da@libre.computer>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Jeff Hugo <jeff.hugo@oss.qualcomm.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
+ linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+ Robert Foss <rfoss@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v9 00/10] New DRM accel driver for Rockchip's RKNN NPU
+Date: Mon, 21 Jul 2025 17:24:13 +0200
+Message-ID: <4109088.mvXUDI8C0e@diego>
+In-Reply-To: <b48c6694-2bd1-44d0-9dd1-1b7a67e22d87@oss.qualcomm.com>
+References:
+ <20250721-6-10-rocket-v9-0-77ebd484941e@tomeuvizoso.net>
+ <b48c6694-2bd1-44d0-9dd1-1b7a67e22d87@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=617; i=wbg@kernel.org; h=from:subject; bh=u7kadqgEuZg2AIfHSsFUPNGoFSwQ+kvDr9zi4Pzt0jU=; b=owGbwMvMwCW21SPs1D4hZW3G02pJDBl10XlnP57Yv+TPIn/nGY9XHP518Bvn2pV/DrQeMstyS /qUVNk+uaOUhUGMi0FWTJGl1/zs3QeXVDV+vJi/DWYOKxPIEAYuTgGYyIE0RoZbSa3n9lZuOvhK VP1jVuLbZ33Lcp2COXttln75ahm2qlaP4X+cyY2rqtFmj4Ru/WcP3jtf+OM2pqn6sW3rJ27S3zO d7R8LAA==
-X-Developer-Key: i=wbg@kernel.org; a=openpgp; fpr=8D37CDDDE0D22528F8E89FB6B54856CABE12232B
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Sun, Jul 20, 2025 at 11:26:30PM -0700, Randy Dunlap wrote:
-> Put the PC104 kconfig option in drivers/Kconfig along with
-> other buses (AMBA, EISA, PCI, CXL, PCCard, & RapidIO).
-> This localizes PC104 with option bus kconfig options to make
-> it easier to find.
-> 
-> Fixes: ad90a3de9dd1 ("pc104: Introduce the PC104 Kconfig option")
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Hi Jeff,
 
-This isn't really a bugfix, so it doesn't need a Fixes tag, does it?
+Am Montag, 21. Juli 2025, 16:55:01 Mitteleurop=C3=A4ische Sommerzeit schrie=
+b Jeff Hugo:
+> On 7/21/2025 3:17 AM, Tomeu Vizoso wrote:
+> > This series adds a new driver for the NPU that Rockchip includes in its
+> > newer SoCs, developed by them on the NVDLA base.
+> >=20
+> > In its current form, it supports the specific NPU in the RK3588 SoC.
+> >=20
+> > The userspace driver is part of Mesa and an initial draft can be found =
+at:
+> >=20
+> > https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/29698
+> >=20
+> > Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+>=20
+> This (and the userspace component) appear ready for merge from what I=20
+> can tell. Tomeu is still working on his drm-misc access so I've offered=20
+> to merge on his behalf. Planning on waiting until Friday for any final=20
+> feedback to come in before doing so.
 
-Regardless, I think drivers/Kconfig makes sense for this kconfig option,
-so here's my Ack.
+sounds great.
 
-Acked-by: William Breathitt Gray <wbg@kernel.org>
+Just to make sure, you're planning to merge patches 1-6 (driver + binding)
+into drm-misc and I'll pick up the "arm64: dts: " patches 7-10 afterwards?
+
+Heiko
+
+
 
