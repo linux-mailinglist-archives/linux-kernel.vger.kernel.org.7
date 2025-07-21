@@ -1,152 +1,137 @@
-Return-Path: <linux-kernel+bounces-739707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0992B0C9E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:42:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22E0AB0C9E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:42:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B04851895DFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:43:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53FFF54187F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C19AB2E2661;
-	Mon, 21 Jul 2025 17:42:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OO7DHEEU"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F4D2E1722;
+	Mon, 21 Jul 2025 17:42:26 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761622E1741
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 17:42:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B661F8690;
+	Mon, 21 Jul 2025 17:42:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753119756; cv=none; b=HHmK3kcxk05saCZdc6J2RWRXagQy7umb6E+bUpG8t0Ks2lAEgQfVwc2FwX0IXJKoqCVafe2j+7zzDM0Ll4eJiSrSoy5DXSUc2EvSTG4Ig3ob13u75+s0PB3jfOllpeMIhnHlc+imLsFBcdUmZgoSpsu9mscOeCgKjoANCkIBqRE=
+	t=1753119746; cv=none; b=b3k/anDW13Q+xvPNIRZVE1Bfs9LhJUjI0ZB2Fl/I/Fy1RSfLRoUx2ePUYakO4+LdzqtMNxfra2Nn1kpDd6wW8IOJXeJjSuGgWh7ehFoqG2uRqhJgRCHVjDSNd3/tnD7OApgQYHa81/9SmCWd5fv4LESfCg2E+/BZxm/pgfvkyXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753119756; c=relaxed/simple;
-	bh=ml4TnR4sP/EVC1oe7s+toDvQMMcdqYX1P0e8iVPbGfg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IcO47CLPzB+Lvy8GToS1CdxUQ439PoH8WAabQGYnxby3mVXxh/FfSHBTmkYRwb9NLmSNmpSYfwD02fS/BTB7DI6x8zHdrlhrZk/G5Ui/2A45pRV2vKOw1d0sVRo35AWbKnGItMado7zSrTt1bSGmWEVrOuGf+B6FK1yWMLRv/mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OO7DHEEU; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a522224582so2298225f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 10:42:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753119752; x=1753724552; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mQThOSBsBRUCLy3pjNEC09Q7CAIuH9ypnMR0nLbKiM0=;
-        b=OO7DHEEUNGfEzcMtzOq29frs+WmScBgl+f9mqnGBmGjFsdGXCzsEjtjlBuXohuNmgK
-         GOFBHjIYLhE4ikHIpTR7LglYJq+1/0umCrqyDPRcqFBwhiAzJulse/acQeyZurgnmGaY
-         jH9Pjjsu+GMp66RbRX6S/LFfplnixFF9mlFJvwlXKZ86jpCIt/+6oVLIdUyhX+uqd7LN
-         9tEAIqwc9+nl9IFufstCc+8Lwi9oQWAQCWSDE/IttayXfjAi9enfnBnX3fGcmLlDEVr9
-         nrZ2GpCYkDdDb15pOMtqUhWdPvpWP7tsN7CBZjQzpCcBWVQejqW/Wc/jP+kqZxEpXAzu
-         3AVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753119752; x=1753724552;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mQThOSBsBRUCLy3pjNEC09Q7CAIuH9ypnMR0nLbKiM0=;
-        b=Qgpq6JjX9ekrnGNAYWYKIvPws+MGASzTUDaM0roIjXi1dLSUjpVuA/TEkDHqb/6zvy
-         yh1ui2wqNfqOiFFd1067DrE1h/bESfopsU+2W5iDVKg5n6qNgZwzHF54Hkar7ocW/Dj1
-         wG8XWGNHSdWIrHxQLqOukQgQADVNQ8srT8YO8f8KRTakrsQNX+3NT7H2T+21HNtdJGPX
-         VP89t+knMLqBYtI4c/BMRAog1FBwq7qvhtnphiYN28SaJIZvLcdHUvqT2f98GaXQHvCc
-         5kj0VZKL+uBDIkvKPd2tBK9NmO/kptaxiZPYRoCOunMUJAN00F11Vmw06io1ZykS07cj
-         ykXg==
-X-Gm-Message-State: AOJu0YyFbi5HpsuZnmceCWzxwOlg8WcYRPERw32VkkiqGKieRvwlPmND
-	3YfkStmwFKlpvolOHujsrYBtnmjaemum9yUpT1CkaSJQ4x0kHKGPWd8qCuaOEg==
-X-Gm-Gg: ASbGncujsy7V0SGJWPfcBnLzmq1+G+B3fpMF4MZaMM08rYE2jMNsXod20H2rOB4+csy
-	mCeMYmHu/KOKpKfcgiXuh0eP0/OKze3XDe0vcAHxzgmQfPx9RmKErQ5uxiJNJ0yLCTZUjO0raLw
-	6ZEYQz+XBymQmuR8GE+2razcFXEtJdleyn/XzeDL2u5JfIDXsHxUVhy7tEbPKewSCXCeei1lJ6p
-	1HcBsNoEjIzZNKd/59pphKhXeHXmil/3mOE26zNkQWzffuXmee3f/OKoaBKJzvRLd82nkD4yU/Q
-	bQ4Wj8W7fTrOFq9gUZ3bRiIoauyN8t6sqSZ0dD/L1X/FgI4qbWKfNmyybmsy08NR7hW5S9UF0YI
-	GoSSZ1VnhblSMxrz7p+JqVg==
-X-Google-Smtp-Source: AGHT+IG2rGrbvmpNi8K1y9wCaXTQI0iB85ZJrAs9cb+LbZ6PXwE3wRjw4xYrH0KHJ0hDGCTvBVgJRg==
-X-Received: by 2002:a5d:5d0c:0:b0:3a8:30b8:cb93 with SMTP id ffacd0b85a97d-3b60dd95a75mr17979631f8f.32.1753119752210;
-        Mon, 21 Jul 2025 10:42:32 -0700 (PDT)
-Received: from fedora ([46.248.82.114])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e7f4294sm165928435e9.3.2025.07.21.10.42.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 10:42:31 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Alexey Gladkov <legion@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	MengEn Sun <mengensun@tencent.com>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Subject: [PATCH RESEND 2/2] ucount: Use atomic_long_try_cmpxchg() in atomic_long_inc_below()
-Date: Mon, 21 Jul 2025 19:41:44 +0200
-Message-ID: <20250721174227.28002-2-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250721174227.28002-1-ubizjak@gmail.com>
-References: <20250721174227.28002-1-ubizjak@gmail.com>
+	s=arc-20240116; t=1753119746; c=relaxed/simple;
+	bh=w/2j9ClBxq0pV31rPFeVzo+iLovp//XDRhOvxyXxZRY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=WMojLRW6nmVBBCQmLxxcWNh4YzMvMEiVIsHGdL3C+eJxFTFCqw+NNZocMZjjAcNpLcdSPLSg9dhhJXfn2XrQ+ZSwwaboi7aaoZqIgg3evq1Hj74uenGTu2CW8eHyoWlW8xcYoW7ouE8yoR95FIIic54mexGsVwr3eqeX459paIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay02.hostedemail.com (Postfix) with ESMTP id 98F7512C62A;
+	Mon, 21 Jul 2025 17:42:16 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf08.hostedemail.com (Postfix) with ESMTPA id B3EE720026;
+	Mon, 21 Jul 2025 17:42:13 +0000 (UTC)
+Date: Mon, 21 Jul 2025 13:42:12 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>, linux-kselftest@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Shuah Khan <shuahkhan@gmail.com>, Shuah
+ Khan <skhan@linuxfoundation.org>, Tengda Wu <wutengda@huaweicloud.com>
+Subject: [PATCH] selftests/tracing: Fix false failure of subsystem event
+ test
+Message-ID: <20250721134212.53c3e140@batman.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: 3izyokdfko365m1434hke7w4gc1khgow
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: B3EE720026
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+8Ghli5wRqbA0bgMbeMKMIikC8MX5Gc0A=
+X-HE-Tag: 1753119733-523282
+X-HE-Meta: U2FsdGVkX1/AvunrBznBj7dzqK3kyYT1D73eWM3WQ09tue0xVMFXytS+JsyVXTKfk+php50gA3v3XMUfF5MMhykePKQlRvqB1ZB7ajCQpM20XjM3BjYqn+42zV+F54DSc+1K8bR4Hr1NaSBpHFqrLxQyDW+NMKuBvKc3GkN0z9MKP/vahcq9zecZ8nnj+h9tBYjp0KdGX/7x4LdEY3DNkcA4rJBYdHYBWmsX7YD98Eg3xLOB7SdBhjbKShPfLrzrJX3amHsl1n4z2hb8H9oP2Ro9QYX/nhpi04NcPV1+OeWKHHD4kE5btHS57K9oRvElX9vt+TSJvLtGPDkyTNTFRJOTdQGfFfK1+/TpI3kzAOlWsN4/IPbgFUOnZ8y0wMHlgIbppJgptvYEnDo3kQORuqucKK8c25YsQP6s/bGx5Vw=
 
-Use atomic_long_try_cmpxchgi() instead of
-atomic_long_cmpxchg (*ptr, old, new) == old in atomic_long_inc_belowi().
-x86 CMPXCHG instruction returns success in ZF flag, so this change saves
-a compare after cmpxchg (and related move instruction in front of cmpxchg).
+From: Steven Rostedt <rostedt@goodmis.org>
 
-Also, atomic_long_try_cmpxchg implicitly assigns old *ptr value to "old"
-when cmpxchg fails, enabling further code simplifications.
+The subsystem event test enables all "sched" events and makes sure there's
+at least 3 different events in the output. It used to cat the entire trace
+file to | wc -l, but on slow machines, that could last a very long time.
+To solve that, it was changed to just read the first 100 lines of the
+trace file. This can cause false failures as some events repeat so often,
+that the 100 lines that are examined could possibly be of only one event.
 
-No functional change intended.
+Instead, create an awk script that looks for 3 different events and will
+exit out after it finds them. This will find the 3 events the test looks
+for (eventually if it works), and still exit out after the test is
+satisfied and not cause slower machines to run forever.
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Reviewed-by: Alexey Gladkov <legion@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Alexey Gladkov <legion@kernel.org>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: MengEn Sun <mengensun@tencent.com>
-Cc: "Thomas Weißschuh" <linux@weissschuh.net>
+Reported-by: Tengda Wu <wutengda@huaweicloud.com>
+Closes: https://lore.kernel.org/all/20250710130134.591066-1-wutengda@huaweicloud.com/
+Fixes: 1a4ea83a6e67 ("selftests/ftrace: Limit length in subsystem-enable tests")
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/ucount.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+ .../ftrace/test.d/event/subsystem-enable.tc   | 28 +++++++++++++++++--
+ 1 file changed, 26 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/ucount.c b/kernel/ucount.c
-index f629db485a07..586af49fc03e 100644
---- a/kernel/ucount.c
-+++ b/kernel/ucount.c
-@@ -201,16 +201,14 @@ void put_ucounts(struct ucounts *ucounts)
- 
- static inline bool atomic_long_inc_below(atomic_long_t *v, long u)
- {
--	long c, old;
--	c = atomic_long_read(v);
--	for (;;) {
-+	long c = atomic_long_read(v);
-+
-+	do {
- 		if (unlikely(c >= u))
- 			return false;
--		old = atomic_long_cmpxchg(v, c, c+1);
--		if (likely(old == c))
--			return true;
--		c = old;
--	}
-+	} while (!atomic_long_try_cmpxchg(v, &c, c+1));
-+
-+	return true;
+diff --git a/tools/testing/selftests/ftrace/test.d/event/subsystem-enable.tc b/tools/testing/selftests/ftrace/test.d/event/subsystem-enable.tc
+index b7c8f29c09a9..65916bb55dfb 100644
+--- a/tools/testing/selftests/ftrace/test.d/event/subsystem-enable.tc
++++ b/tools/testing/selftests/ftrace/test.d/event/subsystem-enable.tc
+@@ -14,11 +14,35 @@ fail() { #msg
+     exit_fail
  }
  
- struct ucounts *inc_ucount(struct user_namespace *ns, kuid_t uid,
++# As reading trace can last forever, simply look for 3 different
++# events then exit out of reading the file. If there's not 3 different
++# events, then the test has failed.
++check_unique() {
++    cat trace | grep -v '^#' | awk '
++	BEGIN { cnt = 0; }
++	{
++	    for (i = 0; i < cnt; i++) {
++		if (event[i] == $5) {
++		    break;
++		}
++	    }
++	    if (i == cnt) {
++		event[cnt++] = $5;
++		if (cnt > 2) {
++		    exit;
++		}
++	    }
++	}
++	END {
++	    printf "%d", cnt;
++	}'
++}
++
+ echo 'sched:*' > set_event
+ 
+ yield
+ 
+-count=`head -n 100 trace | grep -v ^# | awk '{ print $5 }' | sort -u | wc -l`
++count=`check_unique`
+ if [ $count -lt 3 ]; then
+     fail "at least fork, exec and exit events should be recorded"
+ fi
+@@ -29,7 +53,7 @@ echo 1 > events/sched/enable
+ 
+ yield
+ 
+-count=`head -n 100 trace | grep -v ^# | awk '{ print $5 }' | sort -u | wc -l`
++count=`check_unique`
+ if [ $count -lt 3 ]; then
+     fail "at least fork, exec and exit events should be recorded"
+ fi
 -- 
-2.50.1
+2.47.2
 
 
