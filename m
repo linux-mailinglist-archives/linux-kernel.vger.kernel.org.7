@@ -1,304 +1,158 @@
-Return-Path: <linux-kernel+bounces-739519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F915B0C742
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:07:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7BDFB0C746
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:11:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FAC37A3F60
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:05:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31DD21AA26F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:11:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCCD2D23BA;
-	Mon, 21 Jul 2025 15:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCE22DCF71;
+	Mon, 21 Jul 2025 15:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="fgHum9fp"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="Hy1Tvr2U"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039182BE02C
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 15:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753110413; cv=none; b=DvcB918EFSIBen3147S25Ch6nbkvI9ptFw0LaV/syxQBkSmntilsn4aDJoFDdjiCDLPM8vbhOIpsTQe/7ohgQqS+dbfZcMl+yGUZzbsHkthku4eojJk0gYsHkXfW3iNfmBA3PQ17uVQYVxEEvgdXBiXTfqg3ZXOev/YGP7tILpA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753110413; c=relaxed/simple;
-	bh=2rh+sZ12Ns3VdkDa8VX0PoyBqXGwRCLE0nBVpO9bPQI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=V43fhking81TDdFsPT9JGWydAL3CUjYlBzee/DJ6QaRWteE277uIIkngobl/PA7eehMyy4rtQSB/msJmEl5zi9sZY0ilt6XWPBEkqdL+twgiiudghZAM/jQ9B7B4Ok0BgNDq0/xusgL+nPGHX9n+I5/IktL43OTKYa5jyNWPBGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=fgHum9fp; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B550040E01F6;
-	Mon, 21 Jul 2025 15:06:46 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id G11CKHNiU46i; Mon, 21 Jul 2025 15:06:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1753110403; bh=/9BIwm4tmwmUlQhEoiG7gsCrL73VaY1puitrNcsikes=;
-	h=Date:From:To:Cc:Subject:From;
-	b=fgHum9fpzSa/lk8pyL9hhd20lezDySkhUZ4GPUZJJqORIzz/xzP5vK2uQZVISRsTF
-	 LW6oT26JKTUk/LH9vxoiXFwF45uEiw/biOii4wxLrlSmIhP9K7ZvfqtH8eahb6i8Dc
-	 9wOgcDafY8nbW+MHrNnrGC8cR4MHChYjB6uLAFUkG6ikK/IKG61ILiJl8gMEYLoLl+
-	 G+r/e3gmBiJNRKlrkvbtrtUje7sgg+AAzjhGUZpZuovp1iAAm9igeLAZkEfe3ZQwuv
-	 QTKVCn7XxcgwqWb4VhBTSY4wyhtF5AqhibtKF0ZJP8p/mTJwHFnFv73Sk9O0CnPUr2
-	 zpf8sQuoaIvwICzh91F8iPsEjGX7RJ29jwROIl7YthQnQz68rbYJweM05aqMm7tkhC
-	 4YsssbwqG9EbkTZuOD2cv0sI9pS1uDfNK4fgbzXC3fCN2HrDmdaZKvRCMYbrhc4XLJ
-	 UeslSafDVNLB2jtE1MZB4f6PMd+wRM7asVK5VonpadyrDNdN7bzA1lUKspA9+ZHbx2
-	 PTvy2eofJX8G8/jeuS56HrsRRd0EcRKwA0jD9SMqTFSPVihiPi/uZjBkTJvJp0odQY
-	 AmJHz+uuOV1GLfCepj0o8o9hYtTNjTgHBpJOuwn8OC5OZG8Bu42j80Pb+1sHPmJnGy
-	 59EWg17bQKJbYCAQYdAS1ekg=
-Received: from rn.tnic (unknown [78.130.214.207])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 76AE240E0212;
-	Mon, 21 Jul 2025 15:06:34 +0000 (UTC)
-Date: Mon, 21 Jul 2025 17:08:32 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: amd-gfx@lists.freedesktop.org
-Cc: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: amdgpu, 16.6-rc7+, WARNING: ./include/linux/sched.h:2175 at
- __ww_mutex_lock.constprop.0+0xec3/0x1ab0, CPU#5: kworker/5:1/122
-Message-ID: <20250721150832.GAaH5X8BkPfhXKpjRq@renoirsky.local>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66AC2E406;
+	Mon, 21 Jul 2025 15:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753110674; cv=pass; b=IQwdBScEMTolk/fJr6O2HUubvpfPpE42ZT0u4tQR4Flx+/utv39UWLEOSmTTfkLK/rSMNXGWlWcHVDYWV/8bywYz01e8DteNiKUZABf5bMSnunXCf2BrK7L76tHH187Ahh1KzQHn3aMoehmW53L9uwKabRjUEbRSDLoveCytRC0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753110674; c=relaxed/simple;
+	bh=tq6KhC1MGKI2JW90l7+Z3SyOwlMcu07eQT+YGKWbZ9Q=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=NCacGPzbHZKqojgO2WQBxiA9ayrpthfnvo66xG414e9njX5oQiq8l34/vDGA6nWXIgLkkZATax7L5vudaTptuH7j0Y6TKMH+1PiPIgcXQnl0u9cP68DrirLInodhkMCYjuMOE4h/uWonAoYeqbbrIkS/VNFMKI/qi5EicdaZo+w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=Hy1Tvr2U; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753110628; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=ZkMaSkhXdCS2Lkkb2yofjU9xGKUQQRxsNq2SW8N2ioJkfkQDcsqzWg30uFd7kMuv6xeatMPS5lQCVJ9UD3eEXjVen1vHjsG/pJaxLeZCgiG0yQT17CfyLtVDpR1W9FATHfkQqo4z9yxh9OwEhtKP0I7zAdthkbPKhFDko8TAyYo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753110628; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=tq6KhC1MGKI2JW90l7+Z3SyOwlMcu07eQT+YGKWbZ9Q=; 
+	b=dhXd1c0iS8pm369g4Z5M7VrYVjQc2VeWq7MPf5PLx7agunp43EBQoNjEyxRY2BaTzHQZXCLG0Bu3nDHZFx2fEZ4QATOZrH7etFH+9vO8rO62s7leDf0YwxFxS+g7HTc8CKgVNclsVnZsTfX2VwwwTzt23oMC/jNp1/FnWE628Lc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753110628;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=tq6KhC1MGKI2JW90l7+Z3SyOwlMcu07eQT+YGKWbZ9Q=;
+	b=Hy1Tvr2UaprJN6+ixH9h4fRCM8ESONLG0JSAkEn+EPmGhxR0kn0kljufNqJ2HOnv
+	QgGghz5xkEqTxyspuIO/N6jCA/7BtxZ3wcrDEDCf/XNQ/7MVtkTqegHxA+m4U1eMN8u
+	DNwZ+YaoukzRB93loYC8+gfM+k7wLvSXyCLxwI8g=
+Received: by mx.zohomail.com with SMTPS id 1753110626585914.0594313125245;
+	Mon, 21 Jul 2025 08:10:26 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v7 3/6] rust: irq: add support for non-threaded IRQs and
+ handlers
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <aH5SiKFESpnD4jvZ@google.com>
+Date: Mon, 21 Jul 2025 12:10:10 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ =?utf-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Benno Lossin <lossin@kernel.org>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-pci@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <1CC4638E-C682-4F68-A616-553169BB677C@collabora.com>
+References: <20250715-topics-tyr-request_irq2-v7-0-d469c0f37c07@collabora.com>
+ <20250715-topics-tyr-request_irq2-v7-3-d469c0f37c07@collabora.com>
+ <aH5SiKFESpnD4jvZ@google.com>
+To: Alice Ryhl <aliceryhl@google.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-Hi,
+Hi Alice, thanks for looking into this again :)
 
-I see this on latest Linus + tip/master from today. Something about
-clearing blocked tasks' relationships with the same mutex held...
 
-[    5.222437] [drm] amdgpu kernel modesetting enabled.
-[    5.227168] input: HDA Digital PCBeep as /devices/pci0000:00/0000:00:08.=
-1/0000:03:00.6/sound/card1/input14
-[    5.228163] amdgpu: Virtual CRAT table created for CPU
-[    5.229327] amdgpu: Topology: Add CPU node
-[    5.229454] input: HD-Audio Generic Mic as /devices/pci0000:00/0000:00:0=
-8.1/0000:03:00.6/sound/card1/input15
-[    5.231815] input: HD-Audio Generic Headphone as /devices/pci0000:00/000=
-0:00:08.1/0000:03:00.6/sound/card1/input16
-[    5.232136] [drm] initializing kernel modesetting (RENOIR 0x1002:0x1636 =
-0x103C:0x8830 0xC3).
-[    5.234072] [drm] register mmio base: 0xFC300000
-[    5.234923] [drm] register mmio size: 524288
-[    5.239532] FAT-fs (nvme0n1p1): Volume was not properly unmounted. Some =
-data may be corrupt. Please run fsck.
-[    5.243553] amdgpu 0000:03:00.0: amdgpu: detected ip block number 0 <soc=
-15_common>
-[    5.243561] amdgpu 0000:03:00.0: amdgpu: detected ip block number 1 <gmc=
-_v9_0>
-[    5.243563] amdgpu 0000:03:00.0: amdgpu: detected ip block number 2 <veg=
-a10_ih>
-[    5.243565] amdgpu 0000:03:00.0: amdgpu: detected ip block number 3 <psp>
-[    5.243566] amdgpu 0000:03:00.0: amdgpu: detected ip block number 4 <smu>
-[    5.243568] amdgpu 0000:03:00.0: amdgpu: detected ip block number 5 <dm>
-[    5.243570] amdgpu 0000:03:00.0: amdgpu: detected ip block number 6 <gfx=
-_v9_0>
-[    5.243572] amdgpu 0000:03:00.0: amdgpu: detected ip block number 7 <sdm=
-a_v4_0>
-[    5.243574] amdgpu 0000:03:00.0: amdgpu: detected ip block number 8 <vcn=
-_v2_0>
-[    5.243575] amdgpu 0000:03:00.0: amdgpu: detected ip block number 9 <jpe=
-g_v2_0>
-[    5.243621] amdgpu 0000:03:00.0: amdgpu: Fetched VBIOS from VFCT
-[    5.243625] amdgpu: ATOM BIOS: SWBRT58350.001
-[    5.255919] Console: switching to colour dummy device 80x25
-[    5.256327] amdgpu 0000:03:00.0: vgaarb: deactivate vga console
-[    5.256341] amdgpu 0000:03:00.0: amdgpu: Trusted Memory Zone (TMZ) featu=
-re enabled
-[    5.256355] amdgpu 0000:03:00.0: amdgpu: MODE2 reset
-[    5.256721] [drm] vm size is 262144 GB, 4 levels, block size is 9-bit, f=
-ragment size is 9-bit
-[    5.256743] amdgpu 0000:03:00.0: amdgpu: VRAM: 512M 0x000000F400000000 -=
- 0x000000F41FFFFFFF (512M used)
-[    5.256756] amdgpu 0000:03:00.0: amdgpu: GART: 1024M 0x0000000000000000 =
-- 0x000000003FFFFFFF
-[    5.256773] [drm] Detected VRAM RAM=3D512M, BAR=3D512M
-[    5.256781] [drm] RAM width 64bits DDR4
-[    5.258073] [drm] amdgpu: 512M of VRAM memory ready
-[    5.258086] [drm] amdgpu: 1583M of GTT memory ready.
-[    5.258239] [drm] GART: num cpu pages 262144, num gpu pages 262144
-[    5.258563] [drm] PCIE GART of 1024M enabled.
-[    5.258571] [drm] PTB located at 0x000000F41FC00000
-[    5.260486] amdgpu 0000:03:00.0: amdgpu: [drm] Loading DMUB firmware via=
- PSP: version=3D0x0101002B
-[    5.261801] amdgpu 0000:03:00.0: amdgpu: Found VCN firmware Version ENC:=
- 1.24 DEC: 8 VEP: 0 Revision: 3
-[    5.265251] amdgpu 0000:03:00.0: amdgpu: reserve 0x400000 from 0xf41f800=
-000 for PSP TMR
-[    5.358191] amd_atl: AMD Address Translation Library initialized
-[    5.371805] amdgpu 0000:03:00.0: amdgpu: RAS: optional ras ta ucode is n=
-ot available
-[    5.383661] amdgpu 0000:03:00.0: amdgpu: RAP: optional rap ta ucode is n=
-ot available
-[    5.389664] amdgpu 0000:03:00.0: amdgpu: psp gfx command LOAD_TA(0x1) fa=
-iled and response status is (0x7)
-[    5.390159] amdgpu 0000:03:00.0: amdgpu: psp gfx command INVOKE_CMD(0x3)=
- failed and response status is (0x4)
-[    5.390201] amdgpu 0000:03:00.0: amdgpu: Secure display: Generic Failure.
-[    5.390212] amdgpu 0000:03:00.0: amdgpu: SECUREDISPLAY: query securedisp=
-lay TA failed. ret 0x0
-[    5.391829] amdgpu 0000:03:00.0: amdgpu: SMU is initialized successfully!
-[    5.394160] amdgpu 0000:03:00.0: amdgpu: [drm] Display Core v3.2.334 ini=
-tialized on DCN 2.1
-[    5.394191] amdgpu 0000:03:00.0: amdgpu: [drm] DP-HDMI FRL PCON supported
-[    5.395176] amdgpu 0000:03:00.0: amdgpu: [drm] DMUB hardware initialized=
-: version=3D0x0101002B
-[    5.424427] snd_hda_intel 0000:03:00.1: bound 0000:03:00.0 (ops amdgpu_d=
-m_audio_component_bind_ops [amdgpu])
-[    5.600578] amdgpu 0000:03:00.0: amdgpu: [drm] Using ACPI provided EDID =
-for eDP-1
-[    5.607002] [drm] kiq ring mec 2 pipe 1 q 0
-[    5.615137] kfd kfd: amdgpu: Allocated 3969056 bytes on gart
-[    5.615187] kfd kfd: amdgpu: Total number of KFD nodes to be created: 1
-[    5.615860] amdgpu: Virtual CRAT table created for GPU
-[    5.616433] amdgpu: Topology: Add dGPU node [0x1636:0x1002]
-[    5.616452] kfd kfd: amdgpu: added device 1002:1636
-[    5.616629] amdgpu 0000:03:00.0: amdgpu: SE 1, SH per SE 1, CU per SH 8,=
- active_cu_number 6
-[    5.616662] amdgpu 0000:03:00.0: amdgpu: ring gfx uses VM inv eng 0 on h=
-ub 0
-[    5.616672] amdgpu 0000:03:00.0: amdgpu: ring comp_1.0.0 uses VM inv eng=
- 1 on hub 0
-[    5.616682] amdgpu 0000:03:00.0: amdgpu: ring comp_1.1.0 uses VM inv eng=
- 4 on hub 0
-[    5.616693] amdgpu 0000:03:00.0: amdgpu: ring comp_1.2.0 uses VM inv eng=
- 5 on hub 0
-[    5.616703] amdgpu 0000:03:00.0: amdgpu: ring comp_1.3.0 uses VM inv eng=
- 6 on hub 0
-[    5.616713] amdgpu 0000:03:00.0: amdgpu: ring comp_1.0.1 uses VM inv eng=
- 7 on hub 0
-[    5.616723] amdgpu 0000:03:00.0: amdgpu: ring comp_1.1.1 uses VM inv eng=
- 8 on hub 0
-[    5.616733] amdgpu 0000:03:00.0: amdgpu: ring comp_1.2.1 uses VM inv eng=
- 9 on hub 0
-[    5.616744] amdgpu 0000:03:00.0: amdgpu: ring comp_1.3.1 uses VM inv eng=
- 10 on hub 0
-[    5.616754] amdgpu 0000:03:00.0: amdgpu: ring kiq_0.2.1.0 uses VM inv en=
-g 11 on hub 0
-[    5.616764] amdgpu 0000:03:00.0: amdgpu: ring sdma0 uses VM inv eng 0 on=
- hub 8
-[    5.616774] amdgpu 0000:03:00.0: amdgpu: ring vcn_dec uses VM inv eng 1 =
-on hub 8
-[    5.616784] amdgpu 0000:03:00.0: amdgpu: ring vcn_enc0 uses VM inv eng 4=
- on hub 8
-[    5.616794] amdgpu 0000:03:00.0: amdgpu: ring vcn_enc1 uses VM inv eng 5=
- on hub 8
-[    5.616804] amdgpu 0000:03:00.0: amdgpu: ring jpeg_dec uses VM inv eng 6=
- on hub 8
-[    5.619392] amdgpu 0000:03:00.0: amdgpu: Runtime PM not available
-[    5.620939] amdgpu 0000:03:00.0: amdgpu: [drm] Using custom brightness c=
-urve
-[    5.622425] [drm] Initialized amdgpu 3.64.0 for 0000:03:00.0 on minor 0
-[    5.632366] fbcon: amdgpudrmfb (fb0) is primary device
-[    5.633550] [drm] pre_validate_dsc:1627 MST_DSC dsc precompute is not ne=
-eded
-[    5.654085] Console: switching to colour frame buffer device 240x67
-[    5.654589] ------------[ cut here ]------------
-[    5.654607] WARNING: ./include/linux/sched.h:2175 at __ww_mutex_lock.con=
-stprop.0+0xec3/0x1ab0, CPU#5: kworker/5:1/122
-[    5.654613] Modules linked in: amd_atl(E) nls_ascii(E) nls_cp437(E) vfat=
-(E) joydev(E) fat(E) edac_mce_amd(E) snd_hda_codec_realtek(E) snd_hda_codec=
-_generic(E) hid_multitouch(E) amdgpu(E+) snd_hda_scodec_component(E) kvm_am=
-d(E) hid_generic(E) rtw88_8822ce(E) snd_hda_codec_hdmi(E) rtw88_8822c(E) sh=
-a3_generic(E) amdxcp(E) kvm(E) jitterentropy_rng(E) rtw88_pci(E) i2c_algo_b=
-it(E) drm_client_lib(E) drm_ttm_helper(E) irqbypass(E) rtw88_core(E) ttm(E)=
- tpm_crb(E) drm_exec(E) wmi_bmof(E) drbg(E) snd_hda_intel(E) ghash_clmulni_=
-intel(E) mac80211(E) snd_intel_dspcfg(E) gpu_sched(E) aesni_intel(E) snd_hd=
-a_codec(E) libarc4(E) snd_hwdep(E) drm_suballoc_helper(E) drm_panel_backlig=
-ht_quirks(E) snd_hda_core(E) sp5100_tco(E) cec(E) rapl(E) watchdog(E) snd_p=
-cm(E) drm_buddy(E) snd_rn_pci_acp3x(E) cfg80211(E) ucsi_acpi(E) i2c_piix4(E=
-) drm_display_helper(E) snd_acp_config(E) typec_ucsi(E) video(E) snd_timer(=
-E) snd_soc_acpi(E) xhci_pci(E) pcspkr(E) acpi_cpufreq(E) drm_kms_helper(E) =
-roles(E) snd(E) xhci_hcd(E) ccp(E) snd_pci_acp3x(E)
-[    5.654660]  soundcore(E) k10temp(E) i2c_smbus(E) rfkill(E) typec(E) bat=
-tery(E) wmi(E) i2c_hid_acpi(E) i2c_hid(E) tpm_tis(E) hid(E) tpm_tis_core(E)=
- ac(E) button(E) fuse(E) efi_pstore(E) drm(E) tpm(E) libaescfb(E) ecdh_gene=
-ric(E) ecc(E) rng_core(E) autofs4(E) evdev(E) serio_raw(E)
-[    5.654676] CPU: 5 UID: 0 PID: 122 Comm: kworker/5:1 Tainted: G         =
-   E       6.16.0-rc7+ #3 PREEMPT(voluntary)=20
-[    5.654679] Tainted: [E]=3DUNSIGNED_MODULE
-[    5.654680] Hardware name: HP HP ProBook 635 Aero G7 Notebook PC/8830, B=
-IOS S84 Ver. 01.05.00 05/14/2021
-[    5.654682] Workqueue: events drm_fb_helper_damage_work [drm_kms_helper]
-[    5.654700] RIP: 0010:__ww_mutex_lock.constprop.0+0xec3/0x1ab0
-[    5.654702] Code: 00 00 85 c0 0f 85 c6 0a 00 00 49 8b 81 d8 0d 00 00 48 =
-85 c0 0f 84 57 0b 00 00 48 89 8d 68 ff ff ff 49 39 c7 0f 84 53 0b 00 00 <0f=
-> 0b 49 c7 81 d8 0d 00 00 00 00 00 00 4c 89 ce 48 8d 7d 90 e8 24
-[    5.654703] RSP: 0018:ffffc06e005cb970 EFLAGS: 00010087
-[    5.654705] RAX: ffff9db45056e820 RBX: ffff9db544e4c700 RCX: ffff9db4505=
-6c870
-[    5.654706] RDX: 0000000000000001 RSI: ffff9db45056c840 RDI: ffff9db544e=
-4d5f8
-[    5.654707] RBP: ffffc06e005cba20 R08: ffffc06e00ec7608 R09: ffff9db5443=
-68000
-[    5.654708] R10: 0000000000000000 R11: 000000000000055e R12: ffffc06e005=
-cbc90
-[    5.654709] R13: 0000000000000246 R14: ffff9db45056c828 R15: ffff9db4505=
-6c820
-[    5.654710] FS:  0000000000000000(0000) GS:ffff9db5bf075000(0000) knlGS:=
-0000000000000000
-[    5.654711] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    5.654712] CR2: 00007fb98977b2d0 CR3: 0000000102ab2000 CR4: 00000000003=
-50ef0
-[    5.654713] Call Trace:
-[    5.654714]  <TASK>
-[    5.654716]  ? modeset_lock+0x189/0x1e0 [drm]
-[    5.654761]  ? ww_mutex_lock+0x3c/0xb0
-[    5.654763]  ww_mutex_lock+0x3c/0xb0
-[    5.654764]  modeset_lock+0x189/0x1e0 [drm]
-[    5.654786]  drm_modeset_lock_all_ctx+0xc1/0x180 [drm]
-[    5.654808]  amdgpu_dm_atomic_check+0x141c/0x1920 [amdgpu]
-[    5.655313]  ? modeset_lock+0x189/0x1e0 [drm]
-[    5.655347]  drm_atomic_check_only+0x619/0xaa0 [drm]
-[    5.655371]  drm_atomic_commit+0x71/0xe0 [drm]
-[    5.655391]  ? __pfx___drm_printfn_info+0x10/0x10 [drm]
-[    5.655415]  drm_atomic_helper_dirtyfb+0x1c0/0x2a0 [drm_kms_helper]
-[    5.655434]  drm_fbdev_ttm_helper_fb_dirty+0x220/0xa10 [drm_ttm_helper]
-[    5.655439]  drm_fb_helper_damage_work+0x8b/0x170 [drm_kms_helper]
-[    5.655449]  process_one_work+0x230/0x5c0
-[    5.655455]  worker_thread+0x1da/0x3d0
-[    5.655457]  ? __pfx_worker_thread+0x10/0x10
-[    5.655459]  kthread+0x10d/0x240
-[    5.655462]  ? __pfx_kthread+0x10/0x10
-[    5.655465]  ret_from_fork+0x16b/0x1c0
-[    5.655466]  ? __pfx_kthread+0x10/0x10
-[    5.655468]  ret_from_fork_asm+0x1a/0x30
-[    5.655475]  </TASK>
-[    5.655476] irq event stamp: 7586
-[    5.655477] hardirqs last  enabled at (7585): [<ffffffff8678ac4d>] ___km=
-alloc_large_node+0xfd/0x140
-[    5.655479] hardirqs last disabled at (7586): [<ffffffff87096764>] _raw_=
-spin_lock_irqsave+0x54/0x60
-[    5.655481] softirqs last  enabled at (7580): [<ffffffff864f17c6>] __irq=
-_exit_rcu+0x96/0xc0
-[    5.655484] softirqs last disabled at (7575): [<ffffffff864f17c6>] __irq=
-_exit_rcu+0x96/0xc0
-[    5.655486] ---[ end trace 0000000000000000 ]---
-[    5.699841] amdgpu 0000:03:00.0: [drm] fb0: amdgpudrmfb frame buffer dev=
-ice
-[   56.286905] sched: DL replenish lagged too much
+[=E2=80=A6]
 
---=20
-Regards/Gruss,
-    Boris.
+>> diff --git a/rust/kernel/irq/request.rs b/rust/kernel/irq/request.rs
+>> new file mode 100644
+>> index =
+0000000000000000000000000000000000000000..2f4637d8bc4c9fda23cbc83076870359=
+57b0042a
+>> --- /dev/null
+>> +++ b/rust/kernel/irq/request.rs
+>> @@ -0,0 +1,267 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +// SPDX-FileCopyrightText: Copyright 2025 Collabora ltd.
+>> +
+>> +//! This module provides types like [`Registration`] which allow =
+users to
+>> +//! register handlers for a given IRQ line.
+>> +
+>> +use core::marker::PhantomPinned;
+>> +
+>> +use crate::alloc::Allocator;
+>> +use crate::device::Bound;
+>> +use crate::device::Device;
+>=20
+> The usual style is to write this as:
+>=20
+> use crate::device::{Bound, Device};
 
-https://people.kernel.org/tglx/notes-about-netiquette
+I dislike this syntax because I think it is a conflict magnet. Moreover, =
+when
+you get conflicts, they are harder to solve than they are when each =
+import
+is in its own line, at least IMHO. =20
+
+In any case, I don't think we have a guideline for imports at the =
+moment?
+
+[=E2=80=A6]
+
+>> +/// A registration of an IRQ handler for a given IRQ line.
+>> +///
+>> +/// # Examples
+>> +///
+>> +/// The following is an example of using `Registration`. It uses a
+>> +/// [`AtomicU32`](core::sync::AtomicU32) to provide the interior =
+mutability.
+>> +///
+>> +/// ```
+>> +/// use core::sync::atomic::AtomicU32;
+>> +/// use core::sync::atomic::Ordering;
+>> +///
+>> +/// use kernel::prelude::*;
+>> +/// use kernel::device::Bound;
+>> +/// use kernel::irq::flags;
+>> +/// use kernel::irq::Registration;
+>> +/// use kernel::irq::IrqRequest;
+>> +/// use kernel::irq::IrqReturn;
+>=20
+> /// use kernel::irq::{Flags, IrqRequest, IrqReturn, Registration};
+
+Same here. I=E2=80=99d rather not do this, if it=E2=80=99s ok with =
+others.
+
+=E2=80=94 Daniel=
 
