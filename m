@@ -1,80 +1,62 @@
-Return-Path: <linux-kernel+bounces-739559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E0D5B0C7DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:43:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4F0EB0C7E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:44:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32AA43BF285
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:43:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CFC56C0247
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1294D28FFE3;
-	Mon, 21 Jul 2025 15:43:32 +0000 (UTC)
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9100C2DFA3A;
+	Mon, 21 Jul 2025 15:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="y5pWmjO9"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09195170A2B;
-	Mon, 21 Jul 2025 15:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E31D149DFF;
+	Mon, 21 Jul 2025 15:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753112611; cv=none; b=b3D/13gVM0i8Fd8dPN3eX9EVF3DyCDS7sTzn6dSRa24d8sMR4w+A1oD0K1EA+5ahOWJuYmJtztFdp9MVa0WN7SdBRTFeQ5gRtwXDk13VxIglo9KMVZbi8buW2irgMRrmmblRl+JvXcYjAanigQpqjLySIj15ImHH0obQpWRGfAE=
+	t=1753112661; cv=none; b=P3yVUJit3lDxpo60QLWxSWjoMXAE4HfbZa8VS/51cDr1c2Muzwb0pskjqicTOaW6MPMXA+RaGeDAsH7CPKNA0W32t7Ee7/yta7SrGn82p3Ql4UvYToIOK/+MOtxHuKBXJTfmHjoQfqKlZQqR5PUDvopTWx9zkjfeSYkUQud1nu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753112611; c=relaxed/simple;
-	bh=FmHzynu9CSyBjY7snrkDKw/+CacF/IzAQo3vvCbvS+8=;
+	s=arc-20240116; t=1753112661; c=relaxed/simple;
+	bh=JWtyl6NjEoCsBn+cHwU9hfZTPWDVqi/ScvfaoZVO39A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ByCd8QCoNqYkMEjhXbrUcpDxZFAKqh1S0fs6quqbVTDD4k+WYcPAKFuxRQ62GzcUFOI7KRAQ4HgsQYp8vZf82eEt7qmKKE3HN/Ow1OBGwkCOZF2CUzbojJv1cxjzSjlxGbHrjQMxt0T1NbAVvO/Y2BL2b/UX/H2iKht4WFEPlxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6077dea37easo6978369a12.3;
-        Mon, 21 Jul 2025 08:43:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753112608; x=1753717408;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q8EMch7mkTjcU9bPeMD8J/i/5F0EvPo6dc4/iWe3Dl8=;
-        b=cvlXpL555Dil8P857eWH+XR0hmotVtqiwaClLhIbwQM8fFgRMCg71pc5WimBpg3n3R
-         HgnoUVeoEPskXSBEQJXGPg0sYfF3/8Womdc4A3/mpSn2P6HwQwE3f2hNWNyjViQxLfBB
-         kLbEW19BLVfyawk93hWq71WxPxiCB64MM6s8TsQ35Z9cR5W/sm59TIiR26Cm+r7k9Bgh
-         ObjAR+VQ1PiYNOFlB0vZAtjAsDPKuAoc3ruHb5VZ1G9ofb5ByNSOCKdE0BGjXaPFNxCw
-         h917UFBmAnMKnNqQilXZOibIcgYOMitWHinTiqt51K22exqn25spTOEH6Z7la4dz6HWt
-         PvkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUGXAmtW2G+HXtWvXhIOhCgPKMp+YT8G5GbftnOjlfPEvsl/hRF8Xnf/k9bc2wfH2wjMMkjSfaWbclGxa4r@vger.kernel.org, AJvYcCVlKN65A7hfV/Xq8iWUMWMfy2RNIBcpKTULF5lzJvjioWteE+ALpDeD7rf+sG5m7UMCgQSDFS72hTZo@vger.kernel.org, AJvYcCX+pbJClUaJz6cJAaQ0+XcB9a66mTImlkKTci4fcCAFOhPta6Tqt7AuH1ikD4DKBtXaEpXVG1eKfsMG@vger.kernel.org, AJvYcCX0/7jIwcIW/+uZhXY+GE0MiqueWKrKymmN3F8E22CgC+dRAEr7pKtF8bk2gwdEeA6f4ER4IvVl2w1e5Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXqRVK8GFOfzKtOeItjxOkO1b7C0z31vfSZbesXOQtubg23Yaz
-	1eZB7W4F4uQoQwWOiKGaJzJ7ngSUujAUFDWiYjf8CDbp4Gh7eV194j49B/lt1g==
-X-Gm-Gg: ASbGnctRkWi6JFs/Q/ch7+GmjJoHeBktZISeWuU7UYqBIcAPP5u6dw3GeBkAj8bYuhi
-	UK4xW6S1pLTviFoHqYu4goyLGS5C9jUiPhpEciVCs1EN7Xp9HvW3WbofK8MvBqJWkKkL4AS2KL1
-	luSeG3xcHwNe8SiKr3yYZaNTG+dKg89ms1l1NO6xJxmIdrRrP5hRYge50VVVLjER1g0mN8SezGY
-	WH4mT8KL18HXsPfaLdGjQQDu/DWdFUO7Py2vXz7wh8Z2cWFgf9ZqkclasA7hviuX0kbvtB81hvV
-	r3RPx/A4+oy81ar+JQJgU9EE/5wjtn7NlwAsYMnJhDJVh/gY/umZf0cJ0XEvndDhncHzuiclcYa
-	vEAl2tnLRiPhbeVD9P4TRASM=
-X-Google-Smtp-Source: AGHT+IHiVZajLNzCqasc/a84TFi9Eq0YagQ04C+1iS6aqNPgOjIXzg/tFI2BWhK3viZOkIp11MJmpg==
-X-Received: by 2002:a05:6402:13c8:b0:612:b573:f4bb with SMTP id 4fb4d7f45d1cf-612b57401cfmr14728022a12.0.1753112608001;
-        Mon, 21 Jul 2025 08:43:28 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:4::])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-612c8f0a0e2sm5675860a12.4.2025.07.21.08.43.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 08:43:27 -0700 (PDT)
-Date: Mon, 21 Jul 2025 08:43:24 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	James Morse <james.morse@arm.com>, Tony Luck <tony.luck@intel.com>, 
-	Robert Moore <robert.moore@intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Hanjun Guo <guohanjun@huawei.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
-	Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev, osandov@osandov.com, 
-	xueshuai@linux.alibaba.com, konrad.wilk@oracle.com, linux-edac@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH v2] vmcoreinfo: Track and log recoverable hardware errors
-Message-ID: <crxrexye2nmqebct6eisgkvpc7btrg6ckh5qr7tmhpkdnqys2h@6dpf2j6yhlxq>
-References: <20250721-vmcore_hw_error-v2-1-ab65a6b43c5a@debian.org>
- <20250721135718.GAaH5HPinaKvXjM-1g@renoirsky.local>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hsH6QwQExm2r/Lvm4BkRnazt9D82Y8hCmjOKCJ46YF4TkDuQr9uSe1oS32TlCeeDEgg283femoLyvIIvhXFtZ3Pkwn3rVGw233rqOqqtqQZ0rFTd5jBBrGXXb/j7dl7g/fzN4imhOLLg3Ezdjmm5AA6NTwG7BWo1RnXc18spqs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=y5pWmjO9; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=vsxqkfNTc3Im8bZ4TMV6iFTxe9a53JxZhT5n91A2kGo=; b=y5pWmjO9fAJWV6NTwGi6RWk/l/
+	+uIzkJOdXWua/bwZ3YHA8ZvMVfgXNu6MuFzXjvdonSPauXHqPQUKe2/l/o59M2PXBdW+qW0WvbZCG
+	b/kwPH0pLAAoa122fbd3J9HSOJHD8yis2TdKrbLgGl3KeiTeIoWW27EdXp7sF0zOFG3g=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1udsg1-002NDF-FJ; Mon, 21 Jul 2025 17:43:41 +0200
+Date: Mon, 21 Jul 2025 17:43:41 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Dong Yibo <dong100@mucse.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 03/15] net: rnpgbe: Add basic mbx ops support
+Message-ID: <e66591a1-0ffa-4135-9347-52dc7745728f@lunn.ch>
+References: <20250721113238.18615-1-dong100@mucse.com>
+ <20250721113238.18615-4-dong100@mucse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,71 +65,112 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250721135718.GAaH5HPinaKvXjM-1g@renoirsky.local>
+In-Reply-To: <20250721113238.18615-4-dong100@mucse.com>
 
-Hello Borislav,
+>  #define MAX_VF_NUM (8)
 
-On Mon, Jul 21, 2025 at 03:57:18PM +0200, Borislav Petkov wrote:
-> On Mon, Jul 21, 2025 at 03:13:40AM -0700, Breno Leitao wrote:
-> > Introduce a generic infrastructure for tracking recoverable hardware
-> > errors (HW errors that did not cause a panic) and record them for vmcore
-> > consumption. This aids post-mortem crash analysis tools by preserving
-> > a count and timestamp for the last occurrence of such errors.
-> > 
-> > This patch adds centralized logging for three common sources of
-> 
-> "Add centralized... "
+> +	hw->max_vfs = 7;
 
-Ack!
+???
 
-> > recoverable hardware errors:
-> > 
-> >   - PCIe AER Correctable errors
-> >   - x86 Machine Check Exceptions (MCE)
-> >   - APEI/CPER GHES corrected or recoverable errors
-> > 
-> > hwerror_tracking is write-only at kernel runtime, and it is meant to be
-> > read from vmcore using tools like crash/drgn. For example, this is how
-> > it looks like when opening the crashdump from drgn.
-> > 
-> > 	>>> prog['hwerror_tracking']
-> > 	(struct hwerror_tracking_info [3]){
-> > 		{
-> > 			.count = (int)844,
-> > 			.timestamp = (time64_t)1752852018,
-> > 		},
-> > 		...
-> > 
-> 
-> I'm still missing the justification why rasdaemon can't be used here.
-> You did explain it already in past emails.
 
-Sorry, I will update it.
+>  }
+>  
+>  /**
+> @@ -117,6 +119,7 @@ static void rnpgbe_get_invariants_n210(struct mucse_hw *hw)
+>  	/* update hw feature */
+>  	hw->feature_flags |= M_HW_FEATURE_EEE;
+>  	hw->usecstocount = 62;
+> +	hw->max_vfs_noari = 7;
 
-> > +enum hwerror_tracking_source {
-> > +	HWE_RECOV_AER,
-> > +	HWE_RECOV_MCE,
-> > +	HWE_RECOV_GHES,
-> > +	HWE_RECOV_MAX,
-> > +};
-> 
-> Are we confident this separation will serve all cloud dudes?
+???
 
-I am not, but, I've added them to CC list of this patch, so, they are
-more than free to chime in.
+> +int mucse_read_mbx(struct mucse_hw *hw, u32 *msg, u16 size,
+> +		   enum MBX_ID mbx_id)
+> +{
+> +	struct mucse_mbx_info *mbx = &hw->mbx;
+> +
+> +	/* limit read to size of mailbox */
+> +	if (size > mbx->size)
+> +		size = mbx->size;
+> +
+> +	if (!mbx->ops.read)
+> +		return -EIO;
 
-> > +void hwerror_tracking_log(enum hwerror_tracking_source src)
-> 
-> A function should have a verb in its name explaining what it does:
-> 
-> hwerr_log_error_type()
-> 
-> or so.
+How would that happen?
 
-Ack!
+> +
+> +	return mbx->ops.read(hw, msg, size, mbx_id);
 
-I will wait a bit more and send an updated version.
+> +int mucse_write_mbx(struct mucse_hw *hw, u32 *msg, u16 size,
+> +		    enum MBX_ID mbx_id)
+> +{
+> +	struct mucse_mbx_info *mbx = &hw->mbx;
+> +
+> +	if (size > mbx->size)
+> +		return -EINVAL;
+> +
+> +	if (!mbx->ops.write)
+> +		return -EIO;
 
-Thanks for the review
---breno
+How would either of these two conditions happen.
+
+> +static u16 mucse_mbx_get_req(struct mucse_hw *hw, int reg)
+> +{
+> +	/* force memory barrier */
+> +	mb();
+> +	return ioread32(hw->hw_addr + reg) & GENMASK(15, 0);
+
+I'm no expert on memory barriers, but what are you trying to achieve
+here? Probably the most used pattern of an mb() is to flush out writes
+to hardware before doing a special write which triggers the hardware
+to do something. That is not what is happening here.
+
+> +static void mucse_mbx_inc_pf_req(struct mucse_hw *hw,
+> +				 enum MBX_ID mbx_id)
+> +{
+> +	struct mucse_mbx_info *mbx = &hw->mbx;
+> +	u32 reg, v;
+> +	u16 req;
+> +
+> +	reg = (mbx_id == MBX_FW) ? PF2FW_COUNTER(mbx) :
+> +				   PF2VF_COUNTER(mbx, mbx_id);
+> +	v = mbx_rd32(hw, reg);
+> +	req = (v & GENMASK(15, 0));
+> +	req++;
+> +	v &= GENMASK(31, 16);
+> +	v |= req;
+> +	/* force before write to hw */
+> +	mb();
+> +	mbx_wr32(hw, reg, v);
+> +	/* update stats */
+> +	hw->mbx.stats.msgs_tx++;
+
+What are you forcing? As i said, i'm no expert on memory barriers, but
+to me, it looks like whoever wrote this code also does not understand
+memory barriers.
+
+> +static int mucse_obtain_mbx_lock_pf(struct mucse_hw *hw, enum MBX_ID mbx_id)
+> +{
+> +	struct mucse_mbx_info *mbx = &hw->mbx;
+> +	int try_cnt = 5000, ret;
+> +	u32 reg;
+> +
+> +	reg = (mbx_id == MBX_FW) ? PF2FW_MBOX_CTRL(mbx) :
+> +				   PF2VF_MBOX_CTRL(mbx, mbx_id);
+> +	while (try_cnt-- > 0) {
+> +		/* Take ownership of the buffer */
+> +		mbx_wr32(hw, reg, MBOX_PF_HOLD);
+> +		/* force write back before check */
+> +		wmb();
+> +		if (mbx_rd32(hw, reg) & MBOX_PF_HOLD)
+> +			return 0;
+> +		udelay(100);
+> +	}
+> +	return ret;
+
+I've not compiled this, but isn't ret uninitialized here? I would also
+expect it to return -ETIMEDOUT?
+
+	Andrew
 
