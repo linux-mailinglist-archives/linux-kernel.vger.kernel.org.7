@@ -1,93 +1,100 @@
-Return-Path: <linux-kernel+bounces-739625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C588B0C8B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:26:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64639B0C8B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:27:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B64E166D62
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:26:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 358A81C213C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D264E21D5B3;
-	Mon, 21 Jul 2025 16:25:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5912874E5;
+	Mon, 21 Jul 2025 16:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FSVpOXFU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i9bt/BhT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26FBD2E041C;
-	Mon, 21 Jul 2025 16:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F8D1FAC54;
+	Mon, 21 Jul 2025 16:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753115148; cv=none; b=hE/UXncunIMpmXB3QhIcZhysGG2rkAOpcwaeeZTYK9ewaSGWalfe+SSBByNuab14BOHdsOpiHkJ+afh7DivKHqTL1RtBvE7JnShn5ZB66lqkB4i9v1+ITfPBPQmVAnhb1JdavVskA4mWCFLkgi8LOlqMENDfIN+IjXMaLkBJI5Q=
+	t=1753115254; cv=none; b=ia8DVwyonJwbdzHM8zaxlK1WONeHU4Id5l38RbtUCDw2R2Y4k1+5bub/2wVDaF+vdoqVxnjs6766W2xwoCmuX910KaI4zo0z3VuQ1PD8wao/zVl1YCvbgR+OuP9bd+IxIRkUx8D88KS3nqdoiuXYCO5HsB2YhsNlF7G+PIiNMpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753115148; c=relaxed/simple;
-	bh=sW77Chj1VfobyOSs7BgxGfiTeTWirWt7Uyul/PuwFdA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A5v89aq1pekpn3o7XYaQI37lNAyWsFua8VXtcrGESv7mjJocn3+v0wef/leBpIA7adVDGMClz9WpcgOs1o+GZD1CO/HDcJCUWXMdAebV7ubwzewtxGvsK8f5xOJGjmPs2irLA8CcXcRWUVg0wud6QFrz1i49DLn4eN6QwldTi7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FSVpOXFU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD05BC4CEED;
-	Mon, 21 Jul 2025 16:25:47 +0000 (UTC)
+	s=arc-20240116; t=1753115254; c=relaxed/simple;
+	bh=b0d+bnRoA9TIC8iQXqP3VrctHSad9OvpokIx7T7GPTs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=RbQZULa/wJd9tWCjqi0ntDoSm7cTTK6kkP9zqEqKoYAl4VoQOwuupLXKT/XrRpgqV+WdA/xooPLdjqWK7CkeZnhjEs8nAyrhaIbfj7LqqmAblCbDiSwRTG4T6CplStd2bq2OToPZgpajdPWiZoUCjFO/ybhVHBCjN6e834eNUX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i9bt/BhT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C450BC4CEF6;
+	Mon, 21 Jul 2025 16:27:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753115147;
-	bh=sW77Chj1VfobyOSs7BgxGfiTeTWirWt7Uyul/PuwFdA=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=FSVpOXFUh1dTQJigwvZ0vUa47h3BXE9CUxruApkUpb7bg2H/YTmqWnC/gwhKDpO64
-	 a5vWOxXXWy1GpgnNdsJI/mYn0HAIQp4+Zwd/a1GjI+7l0bHCP0rCcVGATepwlztmtV
-	 U96lVnLCrypBT+wb8jU/MDZDar6oajHAWHLn8Fz3UGmyr9Jg6b/LUEaTY8WcO3ibpw
-	 PtDG0TArFkA+cZ6mZuMCa3N/tefqojExWDbkRtv0Ch7ZMaME3wXb40XhB6xpwTGmr4
-	 w8GU+0TXkVMlTOjx9G2YC9FE2CR4fadcyJemvMEinDih75izAaypeGgFlPv15VGmRV
-	 SlYW1YLbNwLVw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 6A0F8CE0C41; Mon, 21 Jul 2025 09:25:47 -0700 (PDT)
-Date: Mon, 21 Jul 2025 09:25:47 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH v2 1/4] srcu: Move rcu_is_watching() checks to
- srcu_read_{,un}lock_fast()
-Message-ID: <5c0894b9-9297-4729-b7d5-dea8997e1724@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <3cecf6c9-b2ee-4f34-9d1b-ca4cfb8e56a7@paulmck-laptop>
- <20250719002817.4121867-1-paulmck@kernel.org>
- <20250721105348.05312994@batman.local.home>
+	s=k20201202; t=1753115253;
+	bh=b0d+bnRoA9TIC8iQXqP3VrctHSad9OvpokIx7T7GPTs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=i9bt/BhTZN+41Lq9LCvFOIR5ZZSCs2DbpJXIwv61jUMIpd1GCfnlp5eHR/j97RDh9
+	 bCrVRxkBRWseQIScsZjcqUL3MOwb/lo9b7Jvr6yZjiH6Q2VVb2466OKbq8svQUTX1Z
+	 APRZcHtr6dzLWj1vsrDp3pBj6KuhMNqXzBPJ7NZC3w99nAGAaLOp/tt0RZ4DW2YhsW
+	 PH/ptO/FOSDiAv6ZwKBXG9oi9OioH5xPBNXoMtcW2IU8YF2eZ2ap5mBB8IC3YIufMt
+	 JcMKVRaJkrHIClEaKrICLFu9xqWcrBYBv5WwdjNPsyKP+PbveTo254P6EnIm79cgOD
+	 p6iN2zwmVH3yA==
+From: SeongJae Park <sj@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>,
+	Barry Song <baohua@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-mm@kvack.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs: update THP documentation to clarify sysfs "never" setting
+Date: Mon, 21 Jul 2025 09:27:31 -0700
+Message-Id: <20250721162731.9822-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250721155530.75944-1-lorenzo.stoakes@oracle.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250721105348.05312994@batman.local.home>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 21, 2025 at 10:53:48AM -0400, Steven Rostedt wrote:
-> On Fri, 18 Jul 2025 17:28:14 -0700
-> "Paul E. McKenney" <paulmck@kernel.org> wrote:
+On Mon, 21 Jul 2025 16:55:30 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+
+> Rather confusingly, setting all Transparent Huge Page sysfs settings to
+> "never" does not in fact result in THP being globally disabled.
 > 
-> > The rcu_is_watching() warnings are currently in the SRCU-tree
-> > implementations of __srcu_read_lock_fast() and __srcu_read_unlock_fast().
-> > However, this makes it difficult to create _notrace variants of
-> > srcu_read_lock_fast() and srcu_read_unlock_fast().  This commit therefore
-> > moves these checks to srcu_read_lock_fast(), srcu_read_unlock_fast(),
-> > srcu_down_read_fast(), and srcu_up_read_fast().
-> > 
+> Rather, it results in khugepaged being disabled, but one can still obtain
+> THP pages using madvise(..., MADV_COLLAPSE).
 > 
-> Paul,
+> This is something that has remained poorly documented for some time, and it
+> is likely the received wisdom of most users of THP that never does, in
+> fact, mean never.
 > 
-> Can you please send new versions of a patch set as a separate thread?
-> It is really difficult to sort out what patch goes with what when they
-> are all in the same thread. Even in tree view.
+> It is therefore important to highlight, very clearly, that this is not the
+> ase.
 
-Here you go!
+case?
 
-https://lore.kernel.org/all/7387f0c2-75bc-420d-aa7e-3a9ac72d369c@paulmck-laptop/
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-(Once lore picks it up, anyway.)
+Acked-by: SeongJae Park <sj@kernel.org>
 
-							Thanx, Paul
+
+Thanks,
+SJ
+
+[...]
 
