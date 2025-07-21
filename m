@@ -1,145 +1,102 @@
-Return-Path: <linux-kernel+bounces-739542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7922B0C795
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:28:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF8F7B0C79A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:29:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81D031AA56D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:29:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 552C47AC1EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:27:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938EA2DFA40;
-	Mon, 21 Jul 2025 15:28:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F3E2DEA93;
+	Mon, 21 Jul 2025 15:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V6JP1+dN"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="fANFAole"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3BA2DECA1;
-	Mon, 21 Jul 2025 15:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7218B2DECB2;
+	Mon, 21 Jul 2025 15:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753111713; cv=none; b=FbjP7BUSo1eiBbPojxjuMl1H/0wfBgmjpvscli7EYaHubogxzhNC7tSv1lGETE0NwFJQ2ZFaxDXIZV/vQ3rt6/14qAk4N+2z68++NtE597vKscYDeg1Syglg3FcOW9BpHpEQmzdDVM2SyFNH8B0i4AHrB+5TyGXlTYcd5BDI9qs=
+	t=1753111731; cv=none; b=M9l6lZypEA0C1ml2AJrOyknpqXNp07aRJA5YOq2mn0uPWYP9MyniiF/O5R5CB0i7XpSkaKL0MT+/tWxZUL53t6TRKNTyD6jVCNq7CMYeVbD2+GOh0WLfuqAX/bfJ75VZ52caJnALVMK9BjxXOUdan5qixgILpRO4klDC7oRNb54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753111713; c=relaxed/simple;
-	bh=0x7AlFf/zSQtyGfrxywbD+ZCXfFBkFZceiIJvgJFwgI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MPdA/Y0NfHLWvimyQ0mUSshBSONAZoHy/Q35/9JJSG/2PL9pYshSu9KyWKOtvV65NzUadC1cRmtOYa+ru5QPmFkb3YuyeEl2fGS79CYGEXpp67+6Voqq4F0JpyJV1m59J19vo6IpPvav3wKIUDUMwjx58hMKrBDsVLZGr4Ehx70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V6JP1+dN; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-7183dae670dso41259467b3.2;
-        Mon, 21 Jul 2025 08:28:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753111710; x=1753716510; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SxyUby716vtNBhVOSKlP2j4uEXJ9sXitnuotbZdiw0Q=;
-        b=V6JP1+dN01ftuUqUcn7jCE6jHYRIk6cYHOTdEcX3iVh82GR4GnaKqcEC/1JCeFy0ox
-         o8R1ZSe8Lbk+P4WXRnUv1gVp5WftxEdAJTa3QYf0ITFtQwiORvzfmojubMHbVcK/n2wg
-         sGdEI+vDfD9AXB8gDGDaS3jnu6mNYnGmJ3dQgl2qfRYzdv44ep5L8q9ySQC/A3lIKaG9
-         VAs3CA5neVTkJGfuiPOWd7b7a/XxZU6BVV5Kx0L87Gmk7uk26VQAR71PEKO8jffCGO9F
-         B0LLZ2XT2WxFg7QDdvJ70H3tATbtjQw/haWxYmDHWWU1Z7YBmZct4iCLJX48i9W2nyus
-         fd5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753111710; x=1753716510;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SxyUby716vtNBhVOSKlP2j4uEXJ9sXitnuotbZdiw0Q=;
-        b=mevXWKi2LlyEMin62+suwQLGVBpSHRqJLxQC8Bx3Yfn7WcbNGjyMeggUIsChPtt5Yb
-         Hc6+QK2Oi1R701HEB36DGaqqX4rJ0jzfa1wfs7TzpDBu2Qrw00GSs3QwpOJcAF6M7+te
-         zhC6hAPBfEzE9bd9fTYFJJrT8XnKaZJqGFgj7s7FcV6Yn9Ppb+5luMFAcVpLGotR4C+H
-         1MLqRds2EbtdSa5Llh0buZSQ/XNybklB+NBqLms62wLl+iSjAesWLzNo01MBzTRwkpOB
-         TgNthcacXpn/pflh/P3jJ+DYdYuMHr/dhgWnN7Wvpjd3T9nB8XKt2W0Pn9Ihd3eWJs84
-         oQgA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1HnPb6EZE3ee18sDVdjQRUNs3Xm/tSFmZszCUuZAkx2gZH10Jaje7H1H67zpSIo7Tx0j5MsuL@vger.kernel.org, AJvYcCXCOUNqfDczaGFlZ6g4BTYXM1RlQ+7ia+TwkD3kKbBvBiqr7MI1E2Ux2auOLXX+BpoiCK3jKUMPIN50gWs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz0PA8xDxC0CBsK4UuIGXBEekrH+3OwPdxtExfgfdvCTkpT61L
-	CW1HASKkqqRZOi7js3QfMlDGkY1IoeQnPdYDTSeZL3s14wNmWSoJGOE8V06wKg==
-X-Gm-Gg: ASbGncu2EpYE+ISgYTXMMfMfoqs1dCS8MDJuGdQRZNAEYF+fvZMU4md5u9y3Ly1xAUz
-	2MFTB9QdP+/TO2eTyheGGcXIDSvpaAq12NenLRnwDhSMecAvKFt03euzhTnaktgzcJCsJ5J9CQm
-	eU5HY2gytTykXECGIynEGinG0I0fN5pVBXyrzzqoYtykm4ubgOiZ0tc78qgTvLq8YUSLr9CZjHZ
-	KBOS0aKWQ8Q5G+CI679E6srpuNSVsi+RhFs7bP5w4bXMiI1yR84ofSFwkRuh0Noc5eqANinclsl
-	RnI9nV9OFXSNgoVrRjqqI75FtRqjc5mk2LGwROE6hsnJodozGznO6mwwj36qLGqIOkbNb2YHzlZ
-	gMLRHWgteVk8NM4Rnqeeg
-X-Google-Smtp-Source: AGHT+IF1Fnu/+9zJWEVuDvvjuUAk+1v5Dd7E8Vm/Bkak4K3NtI4w/E/dbUzbbpXxhKawIOb0SvkmeA==
-X-Received: by 2002:a05:690c:a08e:20b0:719:6b98:c2eb with SMTP id 00721157ae682-7196b98c619mr71944077b3.8.1753111709979;
-        Mon, 21 Jul 2025 08:28:29 -0700 (PDT)
-Received: from localhost ([2a03:2880:25ff:7::])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e8d7cc39897sm2554397276.14.2025.07.21.08.28.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 08:28:29 -0700 (PDT)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: SeongJae Park <sj@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Honggyu Kim <honggyu.kim@sk.com>,
-	Hyeongtak Ji <hyeongtak.ji@sk.com>,
-	damon@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] mm/damon/ops-common: ignore migration request to invalid nodes
-Date: Mon, 21 Jul 2025 08:28:26 -0700
-Message-ID: <20250721152828.423605-1-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250720185822.1451-1-sj@kernel.org>
-References: 
+	s=arc-20240116; t=1753111731; c=relaxed/simple;
+	bh=qqmbmcrOjka51xLhIcPsLGIfhKlqhd0jwPSb+EkrSNo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iyJFMAGCDwvQm/7oZn2bJ9gErnc3N3mOV1iBGveY7yGK+y8NeqExpMMe6DFGzg3Ukn/SoV0xE2g4Ib1dCQTwn9pDR635A/NHYD6uqZB3ORmW9sQxcLuwHQu0QqpWAcGT1thoHMmRVVps8PTb8BgCHhUY4pp/bUnoK8y2xbQHp9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=fANFAole; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4bm4741d1XzlrxVk;
+	Mon, 21 Jul 2025 15:28:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1753111725; x=1755703726; bh=qqmbmcrOjka51xLhIcPsLGIf
+	hKlqhd0jwPSb+EkrSNo=; b=fANFAoleWArKz24oHo5Yz2I7qWGBwKRzVJn1gSwg
+	Q3VxtoJD40S9hhoHSnmDVNeOHoDHlR6yPfHT2p7Dz4TPgLuGNGpIHA2d3emWpHr5
+	LtOYaCYVL8WOi9bgeaFH8p5AnBCqH+Unk8leWerhLcJOGgmVgRwVYs17KKmKO8yw
+	Fn2k3+bgT//RYy3juuWRbFpo+2GA+kqNihBHXO4ptdpjGHs9P74lMCUKOjxEoScU
+	cnTpJ0gfa5ygr2c6OgfDrmZEVUEhfG0JSWWK6AOHWsz17x/q0UY74saa0gjXW7Q4
+	2noqbq+JVESQD9cx6aXiYiytWjDC8teaNHXiFjBbBtHsEw==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id b7AQks_1BQdy; Mon, 21 Jul 2025 15:28:45 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4bm46l01VVzlrwfh;
+	Mon, 21 Jul 2025 15:28:29 +0000 (UTC)
+Message-ID: <68631d36-6bb2-4389-99c1-288a63c82779@acm.org>
+Date: Mon, 21 Jul 2025 08:28:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFT v3 3/3] ufs: core: delegate the interrupt service
+ routine to a threaded irq handler
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Peter Griffin <peter.griffin@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ Tudor Ambarus <tudor.ambarus@linaro.org>
+References: <20250407-topic-ufs-use-threaded-irq-v3-0-08bee980f71e@linaro.org>
+ <20250407-topic-ufs-use-threaded-irq-v3-3-08bee980f71e@linaro.org>
+ <1e06161bf49a3a88c4ea2e7a406815be56114c4f.camel@linaro.org>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <1e06161bf49a3a88c4ea2e7a406815be56114c4f.camel@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 20 Jul 2025 11:58:22 -0700 SeongJae Park <sj@kernel.org> wrote:
+On 7/21/25 5:04 AM, Andr=C3=A9 Draszik wrote:
+> I don't know much about UFS at this stage, but could the code simply
+> check for the controller version and revert to original behaviour
+> if < v4? Any thoughts on such a change?
 
-> damon_migrate_pages() try migration even if the target node is invalid.
-> If users mistakenly make such invalid requests via
-> DAMOS_MIGRATE_{HOT,COLD} action, below kernel BUG can happen.
-> 
->     [ 7831.883495] BUG: unable to handle page fault for address: 0000000000001f48
->     [ 7831.884160] #PF: supervisor read access in kernel mode
->     [ 7831.884681] #PF: error_code(0x0000) - not-present page
->     [ 7831.885203] PGD 0 P4D 0
->     [ 7831.885468] Oops: Oops: 0000 [#1] SMP PTI
->     [ 7831.885852] CPU: 31 UID: 0 PID: 94202 Comm: kdamond.0 Not tainted 6.16.0-rc5-mm-new-damon+ #93 PREEMPT(voluntary)
->     [ 7831.886913] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-4.el9 04/01/2014
->     [ 7831.887777] RIP: 0010:__alloc_frozen_pages_noprof (include/linux/mmzone.h:1724 include/linux/mmzone.h:1750 mm/page_alloc.c:4936 mm/page_alloc.c:5137)
->     [...]
->     [ 7831.895953] Call Trace:
->     [ 7831.896195]  <TASK>
->     [ 7831.896397] __folio_alloc_noprof (mm/page_alloc.c:5183 mm/page_alloc.c:5192)
->     [ 7831.896787] migrate_pages_batch (mm/migrate.c:1189 mm/migrate.c:1851)
->     [ 7831.897228] ? __pfx_alloc_migration_target (mm/migrate.c:2137)
->     [ 7831.897735] migrate_pages (mm/migrate.c:2078)
->     [ 7831.898141] ? __pfx_alloc_migration_target (mm/migrate.c:2137)
->     [ 7831.898664] damon_migrate_folio_list (mm/damon/ops-common.c:321 mm/damon/ops-common.c:354)
->     [ 7831.899140] damon_migrate_pages (mm/damon/ops-common.c:405)
->     [...]
-> 
-> Add a target node validity check in damon_migrate_pages().  The validity
-> check is stolen from that of do_pages_move(), which is being used for
-> move_pages() system call.
-> 
-> Fixes: b51820ebea65 ("mm/damon/paddr: introduce DAMOS_MIGRATE_COLD action for demotion") # 6.11.x
-> Cc: stable@vger.kernel.org
-> Cc: Honggyu Kim <honggyu.kim@sk.com>
-> Signed-off-by: SeongJae Park <sj@kernel.org>
-> ---
+I'm not sure that's the best possible solution. A more elegant solution
+could be to remove the "if (!hba->mcq_enabled || !hba->mcq_esi_enabled)"
+check, to restrict the number of commands completed by=20
+ufshcd_transfer_req_compl() and only to return IRQ_WAKE_THREAD if more
+commands are pending than a certain threshold.
 
-LGTM, thank you SJ!
+Thanks,
 
-On a side note... This seems like it would be a common check. However, doing a
-(quick) search seems to return no function that checks whether a node is valid.
-Perhaps it would make sense to look deeper and see how many other functions
-make this check, and export this as a function? I can try spinning something
-if it makes sense to you : -)
-
-Reviewed-by: Joshua Hahn <joshua.hahnjy@gmail.com>
-
-Sent using hkml (https://github.com/sjp38/hackermail)
+Bart.
 
