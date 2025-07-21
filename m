@@ -1,142 +1,124 @@
-Return-Path: <linux-kernel+bounces-739332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDA33B0C4DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:09:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E45C0B0C4E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:10:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4676B4E6F3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:08:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26B051AA6AF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BEF12D9793;
-	Mon, 21 Jul 2025 13:05:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290CD2D9EE2;
+	Mon, 21 Jul 2025 13:06:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="W8OHWg4f"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gdYs+X4d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E115A2D8796;
-	Mon, 21 Jul 2025 13:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BEE2D879B;
+	Mon, 21 Jul 2025 13:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753103152; cv=none; b=odfHVWegDN4nVz4R2NeGSb6qutuRUVdEgtQUBKfqUuE0odKLlo6m3DDpcYdIY5bXgL+LJwmul3KoE5p2bU61U9mFgAgHzpStrTtNNU/gA30FZ0coYW89HBvLnWmXKFvZ/Qu3muvT3InpwcunbpOsiv2K4g5WG8r7gBYQYhPgxgs=
+	t=1753103163; cv=none; b=j1IvgbFyUi/eovfw6+1x+p894fdynalnBab+Nmd9tJ5i80XuMxzhztBkLsd4WtZnCozQiiSt+5inh8eV8MXuZntm2xwvQi1GeiV/i1hS3GH9Q3WN8poHhqTN8Gc0l3osMleENq/DCdPYMdlkHc55mhaeGxTAGn+Coo15hScowuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753103152; c=relaxed/simple;
-	bh=OIlx9pKjKSDXW0QMzNXy7DSCUmg3OANoDgc+VuAixnk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U8Kuec0aN2NmxPLC3JoN9yuzwQlUt+/gL90WKOv4dXCKTpg9Kv039aIwnQAXeuP9C8m1toD93uJ5gXxXiZtFxUWhiRBao/m5k0McJfSQroI6fNxSoHenryx+ZtlXxh4FTntZjo15/wv5VAIdGQZlZuF5M1OcksHhd4HQ6furBzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=W8OHWg4f; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1753103148;
-	bh=OIlx9pKjKSDXW0QMzNXy7DSCUmg3OANoDgc+VuAixnk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=W8OHWg4falXTWpT++f8ykVlCntZC6vbmYqgYY/tiGhDXWIFu05ZFdblOvZXrJJdru
-	 4/zESCMEgCOINCgKuSwEykOIwYwox/q5nuGJX3Yxu8+h45DeY3nnMKteyVksSV0cFE
-	 5FOF/u+abbESbi1+tGCXP/MOxdMA6RPvs+6prk9XLLq0bAhfpp0aqXz+xh85s7lxdI
-	 XPvnkINMSVf5XAwqqpJprwP16xVrIrrjXw3m2KVx55NOd+iYv+ffyYsIb5NXL2y/1o
-	 I3o14c/lHrwGjkV7xiiF+s24rQm8s7s1LguP6vVjsGHOs1zaE7MRmTIz1OvC/WzbJ4
-	 OqF5IJBTbQDiw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0E25E17E0CA1;
-	Mon, 21 Jul 2025 15:05:47 +0200 (CEST)
-Message-ID: <f5d529c3-b898-48ac-8e5a-f587db72dc82@collabora.com>
-Date: Mon, 21 Jul 2025 15:05:46 +0200
+	s=arc-20240116; t=1753103163; c=relaxed/simple;
+	bh=5y/SPIhcQ32xOxHCc8KPUo//JIEXorkBL/QAsLR++bs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pqM3BzyCHVnurs4ramFAm2cyvX88K5Z0U2PS5zJuivuFQ1wsuv9p3i3sNhLLjHY4Nn0JwVOmUs3TlGy0lNjqL+xW3QhlsWmRUM9bxANAOxHO81rdw+YCaKwznZqKSDCQEF1Pq9bdKehUZ9njlzfqyf6tsZuSFaNhYi54B2eUKyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gdYs+X4d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83D27C4CEED;
+	Mon, 21 Jul 2025 13:06:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753103163;
+	bh=5y/SPIhcQ32xOxHCc8KPUo//JIEXorkBL/QAsLR++bs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gdYs+X4dXN5P+VMm/RfQumMFIVWPFTHEgGmWVxAe/AvzcxcXNj/Qy+a2GFvaA2ARL
+	 WBgJx/tgdTdW78xOXrWEeSicW3/kjMNngNCq0x+fOBAs5SuSmJIJbg1NaI61hBi7LK
+	 GUebBd1XfWXY9d0P99mbK4Ph7pN9F5ek/FLTgf19Ww5PEHS6v72IZFdMhJONS+pbxr
+	 qOy33+MgpmwdZG2gN5jzYLmz1xZhxI8mr7j9IY8o8S83DIEkVIDQXSlAcGXDeMRLNT
+	 GB2Y0UHbxV3PBmaqfDsuP63FehSLZmXBLWt7qKnIp34M3o4+xuKddxP8C9THifOK3U
+	 aYRxeyCAwpYwQ==
+Date: Mon, 21 Jul 2025 15:05:58 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: syzbot <syzbot+b63d677d63bcac06cf90@syzkaller.appspotmail.com>, 
+	jikos@kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] HID: core: Reject report fields with a size or count of 0
+Message-ID: <voiysrjm3okjtaz7axqupr2jk5yyvxsqgagbwrsey4z24g6rf4@xb75ss3bwol5>
+References: <68791b6f.a70a0220.693ce.004b.GAE@google.com>
+ <8a4eb6b0-f640-4207-9f05-83e06080410b@rowland.harvard.edu>
+ <lrhydvc7huuqck2kvqzobqt7hhwt36zwsa2i3fpegbpykt5q43@2md6gfitjlb3>
+ <a2c3537a-8ddc-467f-a9f4-b4d413914914@rowland.harvard.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/7] power: reset: qcom-pon: Migrate to
- devm_spmi_subdevice_alloc_and_add()
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: sboyd@kernel.org, jic23@kernel.org, dlechner@baylibre.com,
- nuno.sa@analog.com, andy@kernel.org, arnd@arndb.de,
- gregkh@linuxfoundation.org, srini@kernel.org, vkoul@kernel.org,
- kishon@kernel.org, sre@kernel.org, krzysztof.kozlowski@linaro.org,
- u.kleine-koenig@baylibre.com, linux-arm-msm@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-pm@vger.kernel.org,
- kernel@collabora.com, wenst@chromium.org
-References: <20250721075525.29636-1-angelogioacchino.delregno@collabora.com>
- <20250721075525.29636-4-angelogioacchino.delregno@collabora.com>
- <aH4mWfgQt_Q0O-7S@smile.fi.intel.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <aH4mWfgQt_Q0O-7S@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a2c3537a-8ddc-467f-a9f4-b4d413914914@rowland.harvard.edu>
 
-Il 21/07/25 13:36, Andy Shevchenko ha scritto:
-> On Mon, Jul 21, 2025 at 09:55:21AM +0200, AngeloGioacchino Del Regno wrote:
->> Some Qualcomm PMICs integrates a Power On device supporting pwrkey
->> and resin along with the Android reboot reason action identifier.
->>
->> Instead of using the parent SPMI device (the main PMIC) as a kind
->> of syscon in this driver, register a new SPMI sub-device for PON
->> and initialize its own regmap with this sub-device's specific base
->> address, retrieved from the devicetree.
->>
->> This allows to stop manually adding the register base address to
->> every R/W call in this driver, as this can be, and is now, handled
->> by the regmap API instead.
+On Jul 19 2025, Alan Stern wrote:
+> On Sat, Jul 19, 2025 at 10:36:01AM +0200, Benjamin Tissoires wrote:
+> > On Jul 17 2025, Alan Stern wrote:
+> > > Testing by the syzbot fuzzer showed that the HID core gets a
+> > > shift-out-of-bounds exception when it tries to convert a 32-bit
+> > > quantity to a 0-bit quantity.  This is hardly an unexpected result,
+> > > but it means that we should not accept report fields that have a size
+> > > of zero bits.  Similarly, there's no reason to accept report fields
+> > > with a count of zero; either type of item is completely meaningless
+> > > since no information can be conveyed in zero bits.
+> > > 
+> > > Reject fields with a size or count of zero, and reject reports
+> > > containing such fields.
+> > > 
+> > > Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+> > > Reported-by: syzbot+b63d677d63bcac06cf90@syzkaller.appspotmail.com
+> > > Closes: https://lore.kernel.org/linux-usb/68753a08.050a0220.33d347.0008.GAE@google.com/
+> > > Tested-by: syzbot+b63d677d63bcac06cf90@syzkaller.appspotmail.com
+> > > Fixes: dde5845a529f ("[PATCH] Generic HID layer - code split")
+> > > Cc: stable@vger.kernel.org
 > 
-> ...
+> > Sigh... I applied this one too quickly before going on holidays.
+> > 
+> > This breaks the hid testsuite:
+> > https://gitlab.freedesktop.org/bentiss/hid/-/jobs/80805946
+> > 
+> > (yes, I should have run it before applying).
+> > 
+> > So basically, there are devices out there with a "broken" report size of
+> > 0, and this patch now entirely disables them.
+> > 
+> > That Saitek gamepad has the following (see tools/testing/selftests/hid/tests/test_gamepad.py):
+> >         0x95, 0x01,                    # ..Report Count (1)                  60
+> >         0x75, 0x00,                    # ..Report Size (0)                   62
+> >         0x81, 0x03,                    # ..Input (Cnst,Var,Abs)              64
+> > 
+> > So we'd need to disable the field, but not invalidate the entire report.
+> > 
+> > I'm glad I scheduled this one for the next cycle.
+> > 
+> > I'll try to get something next week.
 > 
->> +	struct regmap_config qcom_pon_regmap_config = {
->> +		.reg_bits = 16,
->> +		.val_bits = 16,
->> +		.max_register = 0x100,
->> +		.fast_io = true
-> 
-> Please, leave trailing comma in this and other similar cases.
-> 
-
-Oki, will do!
-
->> +	};
-> 
-> 
->>   	struct qcom_pon *pon;
->>   	long reason_shift;
->>   	int error;
-> 
->> +	if (!pdev->dev.parent)
->> +		return -ENODEV;
-> 
-> You can start using
-> 
-> 	struct device *dev = &pdev->dev;
-> 
-> here and perhaps one may convert the rest to it...
-> 
-> ...
-> 
->>   	error = of_property_read_u32(pdev->dev.of_node, "reg",
-> 
-> ...including, but not limited to, use of device_property_read_u32(dev, ...) here.
+> So then would it be better to accept these report fields (perhaps with a 
+> warning) and instead, harden the core HID code so that it doesn't choke 
+> when it runs across one of them?
 > 
 
-I didn't do that for one single reason: I did not want to add noise to the commits
-and wanted those to exclusively migrate the drivers to the new API, literally
-without doing *anything* else unnecessary, even if I have located some almost
-effortless improvements that I could've done to those drivers.
+Yeah, that seems like the best plan forward.
 
-Please - I prefer to keep it this way: these are the first commits that add the
-usage of the new functions and of the concept of SPMI subdevices, and I really
-want those to contain just that and nothing else - because I suspect that these
-will be taken as example and will be read by the next person that is implementing
-a new SPMI (sub)driver or converting any remaining ones to subdevice.
+[sorry on reduced setup for the next 3 weeks, so I can't really debug
+the entire thing now.]
+
+Though, we should probably not annoy users unless we are trying to do
+something that won't be needed. I doubt that Saitek gamepad will ever
+call the faulty functions, so why putting an error in the logs when it's
+working fine?
 
 Cheers,
-Angelo
+Benjamin
 
