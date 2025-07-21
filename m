@@ -1,164 +1,134 @@
-Return-Path: <linux-kernel+bounces-739094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B095BB0C1AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:47:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74BA6B0C1B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:48:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B12A189B72E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:47:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30ED818C24CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:48:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2025F28D8CF;
-	Mon, 21 Jul 2025 10:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79A028C5BE;
+	Mon, 21 Jul 2025 10:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="axRlvRVL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QkR6bOFw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 587EA20F098;
-	Mon, 21 Jul 2025 10:47:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E6C8F5A;
+	Mon, 21 Jul 2025 10:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753094841; cv=none; b=Zr5oaQq5/ccC3tA+OLeduwnDkai/NMS8SM2MfNiueei0gWdYqH78UeN1r7UXoQ6AV51EHXPtKOvo0a2cKi/UE8hSoGNXThzQLviLXUUPKfKsURdktUVIymyqqhMZpmLSKiehqPwL2Wa5GhBTbE2CGq9Jb4EhOAye7S1i6gdQadU=
+	t=1753094910; cv=none; b=oGoLUFGTbIp2jVHx0XL2eCeOlheu4zr7V5qTVryF5SssfVTK78IwR5VCXJpmxzbnXU/QLYUqFFRDY2AH7zh6xoFgoomfy0iSkhT8jP1otdfWIO6z7rGRcsLaIaeRg4uiefuMqXzJo3fmMCke+UPdaSUX2cumV1hjy+VodWFDxQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753094841; c=relaxed/simple;
-	bh=3FMPJPp3df9gByQS0Cpx715xJINI9Xitl6FDlUEf6zQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JLtY48SneWIDouBEDVic0UF/uxbDEqmj8b6tgYCWVdxKAYZh1fkV0iuqrVEBeZhaqxlIgrWJGSD9IXoxZEl6MoKU4yulPLdlqgdmDGBrTWzQJs5AZ0hojWBTpAa7OJKRS6zqbwHiP4XFm05fHa6FlGgRV1N7BVIFMcD6lA1eUVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=axRlvRVL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA1A4C4CEED;
-	Mon, 21 Jul 2025 10:47:20 +0000 (UTC)
+	s=arc-20240116; t=1753094910; c=relaxed/simple;
+	bh=1D6Q+vB8GdDib25O5GIwmz/D4EaEnE+u79Ut0a/wXbA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KV0VzE8r2ZwU8iK7Rr4q1vJUyJ9Y02eopq14IGUFZaZhdnhI/RTBHM04KvOjfL473pqKLU/DnAuWYFRgmznXc1F5g9CS3qgmuuMrSq3yU+XqS51prgvMTnUE/s7uPezrnE0D/j9wH5mKFm7sgA5b4KHMtAleTjmqjYntsBf7ifU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QkR6bOFw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D7C4C4CEED;
+	Mon, 21 Jul 2025 10:48:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753094840;
-	bh=3FMPJPp3df9gByQS0Cpx715xJINI9Xitl6FDlUEf6zQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=axRlvRVLDqeXIGc2Xg4/di/1cpxxWGScS1qcyGJ5SEpSPOB241zUXmHvWpmWcAaoq
-	 ieKOXjVS+Qn9pWjUgrrSBPLpjYpvT6SWQD4LiWNHvLx238r8Emo0BjzOhkMHI7/yV9
-	 xI+YfSaj3DweQVDJGY7Dcl/S/RV9MPZ2rpv9vr5jVSfGNU+CPF8r7buRvqW2GyBIHh
-	 bPkVbcgJTKdXHGzb37jycf2EoRxLczaibZDhYeE36viOsYZ46+rAMCthQjQlzhaKnq
-	 PwpOvfYAn0lOnCpi1x4Uqa4HUlHnPPC6HhIOcYpKR9anXJvmEXLgvqMtA2/3jgrfrh
-	 loR0O8wvkzrdQ==
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-303058a8649so411460fac.3;
-        Mon, 21 Jul 2025 03:47:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUF0JHMugLL8rBhGhMPaRyBz4hp+6Xxm9Z2s7bOTGqL+7ba7Kwznb7TOjHOJkyRDskw5kOL+Xo3Bb2gbj0=@vger.kernel.org, AJvYcCWHji7ToFVrYIt0/HHgvU7IAJ9epkYImetXE8h7uyCeNodbAek5eiW3TTNG5ZnKxhqdD+vI73NJiW4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwG+HzVtzCHOcTA2KggGA6433UL+7ACKJKIv2PsnwtjCnLh5es0
-	x2/5kZGgw+cKnYY2ojccvcFNEXhVQVtzyjaUkYEufqAUsQJ/0WzXYqjIp6Nxv1izgENABlXL/VR
-	mFtXdCMHBI9blKKyyG2X76y1EKQu7e84=
-X-Google-Smtp-Source: AGHT+IHoA3NB6bGtDLs5HIlXOYswhNHuEDsY4pLw82JzTmx51HqfQuMxqfj5zre25qH3RzQ5oIZKQv2bzMs8n3539ac=
-X-Received: by 2002:a05:6871:bb05:b0:2d8:957a:5176 with SMTP id
- 586e51a60fabf-2ffb223d877mr15763192fac.5.1753094840034; Mon, 21 Jul 2025
- 03:47:20 -0700 (PDT)
+	s=k20201202; t=1753094909;
+	bh=1D6Q+vB8GdDib25O5GIwmz/D4EaEnE+u79Ut0a/wXbA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QkR6bOFwjxfQZA9mL83Zdg/cSi2VHUD4kCn6CdoPYz/RGQDYSFs+QdkyNoRanXhVq
+	 tndPK8mTYBzJk9NdpoSShJNNtY9a54pa65Vt1kYLYomnVzjk22bWqbqvcS9qb+zm5o
+	 u9AhG3zAV9BtwCoUrZ2o+HKpnXMYmlZtPzZ7E8ZIsw/yukIo9YnytiCOU3IzvMMstq
+	 0dZAmrfI2kxtVnTT1R2bDxp2o0BST0Ysr2v+fSimdHYLy930VSvWBPM8RZHbs/r33P
+	 J4SEC/dI9fP/OiGxn/KIPdbvSVQAjfZB9OM3HLGiz1PgDT+k2JyC/h9nY8e7rvWGCT
+	 0hxBtrvtOTeZA==
+Message-ID: <83f7c489-7001-49cd-97a5-4280eba95fe0@kernel.org>
+Date: Mon, 21 Jul 2025 12:48:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2fd09dd9-59f5-4852-b796-e458c89aa193@kernel.org>
-In-Reply-To: <2fd09dd9-59f5-4852-b796-e458c89aa193@kernel.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 21 Jul 2025 12:47:02 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gr5MVorUtqJr_wiKL0Q_LYHGMABugSPmnHcxVJ2rc_dQ@mail.gmail.com>
-X-Gm-Features: Ac12FXwrBG7MSeCDJdE5b9saITtmL8RLidXvLvyOlCXJrlp55qATP9FQnJPiZlI
-Message-ID: <CAJZ5v0gr5MVorUtqJr_wiKL0Q_LYHGMABugSPmnHcxVJ2rc_dQ@mail.gmail.com>
-Subject: Re: [GIT PULL] devfreq next for 6.17
-To: Chanwoo Choi <chanwoo@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
-	"open list:DEVICE FREQUENCY (DEVFREQ)" <linux-pm@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/4] ASoC: dt-bindings: Add FS2104/5S audio amplifiers
+To: Nick <nick.li@foursemi.com>, lgirdwood@gmail.com, broonie@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, perex@perex.cz,
+ tiwai@suse.com
+Cc: xiaoming.yang@foursemi.com, danyang.zheng@foursemi.com,
+ like.xy@foxmail.com, linux-sound@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250721103805.531758-1-nick.li@foursemi.com>
+ <20250721103805.531758-3-nick.li@foursemi.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250721103805.531758-3-nick.li@foursemi.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Chanwoo,
+On 21/07/2025 12:38, Nick wrote:
+> +  firmware-name:
+> +    maxItems: 1
+> +    description: |
+> +      The firmware(*.bin) contains:
+> +      a. Register initialization settings
+> +      b. DSP effect parameters
+> +      c. Multi-scene sound effect configurations(optional)
+> +      It's gernerated by FourSemi's tuning tool.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - '#sound-dai-cells'
+> +  - reset-gpios
+> +  - firmware-name
 
-On Sat, Jul 19, 2025 at 5:26=E2=80=AFAM Chanwoo Choi <chanwoo@kernel.org> w=
-rote:
->
-> Dear Rafael,
->
-> This is devfreq-next pull request for v6.17. I add detailed description o=
-f
-> this pull request on the following tag. Please pull devfreq with
-> following updates.
->
-> Best Regards,
-> Chanwoo Choi
->
->
-> The following changes since commit 347e9f5043c89695b01e66b3ed111755afcf19=
-11:
->
->   Linux 6.16-rc6 (2025-07-13 14:25:58 -0700)
->
-> are available in the Git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git tags/de=
-vfreq-next-for-6.17
->
-> for you to fetch changes up to 7da2fdaaa1e6062686ac96a9f096c2d7847533e4:
->
->   PM / devfreq: Add HiSilicon uncore frequency scaling driver (2025-07-14=
- 20:23:57 +0900)
->
-> ----------------------------------------------------------------
-> Update devfreq next for v6.17
->
-> Detailed description for this pull request:
-> - Clean devfreq core and fix bugs
->  : Replace sscanf with kstrtoul
->  : Remove redundant devfreq_get_freq_range() on adding devfreq driver
->  : Check missing NULL pointer check on removing devfreq driver
->  : Limit max_freq and min_freq to avoid unreachable value
->  : Fix wrong index on trans_stat sysfs node
->
-> - Use devm_* managed function for clock control on sun81-a33-mbus driver
->
-> - Add HiSilicon uncore frequencye scaling driver for for HiSilicon Kunpen=
-g SoCs
->  : The uncore domain includes shared system resources such as interconnec=
-ts
->  and L3 cache, and its frequency has a significant impact on system perfo=
-rmance
->  and power consumption. The driver provides the following functions:
->    - Support to scale frequency scaling with governor and user setting
->    - Support to query CPUs whose performance is closely related to the un=
-core domain
->    - Communication with the platform controller via an ACPI PCC mailbox
->      to perform actual frequency changes
->
-> ----------------------------------------------------------------
-> Chanwoo Choi (1):
->       PM / devfreq: Fix a index typo in trans_stat
->
-> Jie Zhan (2):
->       PM / devfreq: Allow devfreq driver to add custom sysfs ABIs
->       PM / devfreq: Add HiSilicon uncore frequency scaling driver
->
-> Lifeng Zheng (4):
->       PM / devfreq: governor: Replace sscanf() with kstrtoul() in set_fre=
-q_store()
->       PM / devfreq: Limit max_freq with scaling_mina_freq
->       PM / devfreq: Remove redundant devfreq_get_freq_range() calling in =
-devfreq_add_device()
->       PM / devfreq: Check governor before using governor->name
->
-> Uwe Kleine-K=C3=B6nig (1):
->       PM / devfreq: sun8i-a33-mbus: Simplify by using more devm functions
->
->  Documentation/ABI/testing/sysfs-class-devfreq |   9 +
->  drivers/devfreq/Kconfig                       |  11 +
->  drivers/devfreq/Makefile                      |   1 +
->  drivers/devfreq/devfreq.c                     |  23 +-
->  drivers/devfreq/governor_userspace.c          |   6 +-
->  drivers/devfreq/hisi_uncore_freq.c            | 658 ++++++++++++++++++++=
-++++++
->  drivers/devfreq/sun8i-a33-mbus.c              |  38 +-
->  include/linux/devfreq.h                       |   4 +
->  8 files changed, 704 insertions(+), 46 deletions(-)
->  create mode 100644 drivers/devfreq/hisi_uncore_freq.c
 
-Pulled, thank you!
+I do not see how you resolved my comment from v1 or v2. Nothing in the
+changelog explains that either.
+
+
+Best regards,
+Krzysztof
 
