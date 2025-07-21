@@ -1,166 +1,81 @@
-Return-Path: <linux-kernel+bounces-738680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B7EAB0BBDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:32:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0F05B0BBE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:43:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 645DB189B09A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 04:33:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69BB818985DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 04:43:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3813B218EB7;
-	Mon, 21 Jul 2025 04:32:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69513217666;
+	Mon, 21 Jul 2025 04:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=coasia.com header.i=@coasia.com header.b="tgvv69//"
-Received: from spam.coasia.com (mail2.coasia.com [112.168.119.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="ZjEIv7Cr"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C60B2206F27
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 04:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=112.168.119.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C607A94A;
+	Mon, 21 Jul 2025 04:43:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753072341; cv=none; b=qMBKLibUBuYusX1gdMQ1zYbWXGlED0hjVMCmBmj+IqJgyaSkhJFEezKZ9T95E432j0uFGdVvWu2giXpY2G0Fqb+BZG2YOFjs2NO8FuzUoKx6/P3XpHFnW3xPXzn9iDUweWrd653Bq+OZ4y+ZHL4QwVJP3f1Su61TbYMuXomCik4=
+	t=1753072997; cv=none; b=M6tODy5+nn9uGxxRpFw664SD6Rdx2TlfCaCrpsUWjhMQ16sVhamskV11h2S3wfpcf5WeMGfSzDGQ1lhlcRZV6tlA0eREcBzT/V1e8RauvBDKEJfu029ZFUD2PKmuVIRCBIRfiQ6XvouCR+MFyXrvFidVvcOQ9c41WXLpdEhZ42s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753072341; c=relaxed/simple;
-	bh=fkkRCoPbO262N6nh5T1e3WS51jJoTMENI1DUO2zY2Qs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=eDpgI2cPcxkuuWCWsy6cY5FDMdT7uJOPiVKbNyUzUYAyDZ32aG6ErxqdmxV3aQRQx+hVA6Xozb15zAMP6QGneOutxkZnFVM8uXbLeBK80SZ87NnIvG3cV8gjPtd5F9ejnDRfgWcwz719D9Eju4UordX3kZgEQtQ/jzkeIKgJErA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=coasia.com; spf=pass smtp.mailfrom=coasia.com; dkim=pass (1024-bit key) header.d=coasia.com header.i=@coasia.com header.b=tgvv69//; arc=none smtp.client-ip=112.168.119.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=coasia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coasia.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=coasia.com; s=coasia;
-	t=1753072336; bh=fkkRCoPbO262N6nh5T1e3WS51jJoTMENI1DUO2zY2Qs=;
-	l=1861; h=Message-ID:Subject:From:To:Date:Content-Type:MIME-Version;
-	b=tgvv69//Fs2/46nT31h2p0wGINamYYhDrCg79CyxUey8MTdRF1HJGc/TKxIYA5Rc0
-	 XlNgTsN+sZhzN3g1aJ5a+q8qXiGKCc3wsewQxj5nCw5eyP5Y+xniRugyr7dvH5dIjW
-	 tZ4Mxu35CtyS0zkANrBXcO1f39m/BIYPhB2j5YR4=
-Received: from unknown (HELO ?192.168.1.65?) (119.65.249.123)
-	by 192.168.10.159 with ESMTP; 21 Jul 2025 13:32:16 +0900
-X-Original-SENDERIP: 119.65.249.123
-X-Original-SENDERCOUNTRY: KR, South Korea 
-X-Original-MAILFROM: hgkim05@coasia.com
-X-Original-RCPTTO: linus.walleij@linaro.org,
-	ksk4725@coasia.com,
-	jesper.nilsson@axis.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	krzk@kernel.org,
-	s.nawrocki@samsung.com,
-	cw00.choi@samsung.com,
-	alim.akhtar@samsung.com,
-	tomasz.figa@gmail.com,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	arnd@arndb.de,
-	kenkim@coasia.com,
-	pjsin865@coasia.com,
-	gwk1013@coasia.com,
-	mingyoungbo@coasia.com,
-	smn1196@coasia.com,
-	pankaj.dubey@samsung.com,
-	shradha.t@samsung.com,
-	ravi.patel@samsung.com,
-	inbaraj.e@samsung.com,
-	swathi.ks@samsung.com,
-	hrishikesh.d@samsung.com,
-	dj76.yang@samsung.com,
-	hypmean.kim@samsung.com,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@axis.com,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	soc@lists.linux.dev
-Message-ID: <d8ab3efec0eac72e74cd7864c81c91cd796e3074.camel@coasia.com>
-Subject: Re: [PATCH 00/16] Add support for the Axis ARTPEC-8 SoC
-From: Hakyeong Kim <hgkim05@coasia.com>
-To: Linus Walleij <linus.walleij@linaro.org>, ksk4725@coasia.com
-Cc: Jesper Nilsson <jesper.nilsson@axis.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester
- Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>,
- Alim Akhtar <alim.akhtar@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>, kenkim <kenkim@coasia.com>, Jongshin Park
- <pjsin865@coasia.com>,  GunWoo Kim <gwk1013@coasia.com>, GyoungBo Min
- <mingyoungbo@coasia.com>, SungMin Park <smn1196@coasia.com>,  Pankaj Dubey
- <pankaj.dubey@samsung.com>, Shradha Todi <shradha.t@samsung.com>, Ravi
- Patel <ravi.patel@samsung.com>, Inbaraj E <inbaraj.e@samsung.com>, Swathi K
- S <swathi.ks@samsung.com>, Hrishikesh <hrishikesh.d@samsung.com>, Dongjin
- Yang <dj76.yang@samsung.com>, Sang Min Kim <hypmean.kim@samsung.com>, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@axis.com, 
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-gpio@vger.kernel.org, soc@lists.linux.dev
-Date: Mon, 21 Jul 2025 13:32:17 +0900
-In-Reply-To: <CACRpkdaxAr8i-AByUsxnBmoSNtEDvik3VFvxAzk525GD=pH97Q@mail.gmail.com>
-References: <20250710002047.1573841-1-ksk4725@coasia.com>
-	 <CACRpkdaxAr8i-AByUsxnBmoSNtEDvik3VFvxAzk525GD=pH97Q@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1753072997; c=relaxed/simple;
+	bh=0i6A+1XrUf7QuLm0dwWvx3CrPiEU9TCYzB6OwtDo6No=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=qkYqCIDC84mTCb+ZxBCIOAGEQ3tFUTpM5K+2ZQZm7E5XPcu3cEAc02QmEfe5bszjMzZTrvGOK7mMqvcmtPe8+658Qmr6Gh/eZ9L10cTzKOqc4AdJ8wf6EzGRaStTixVdRPEIcJOorOtFlr/OkpjV5hWBkRcK0Iq7A69aaBiE9FE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=ZjEIv7Cr; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1753072993;
+	bh=fRdZNGifouDmJ2uwnu+wXzxgWMn3TwrYZoV6l/awc38=;
+	h=From:To:In-Reply-To:References:Subject:Date;
+	b=ZjEIv7CrUvICkPHfVi3mYNahmjzC4Wru3WGkmnpvIhw1qDmCJIPFJbktFZ+KF1Bnm
+	 ApWf11mPuAUJl0QIBFz9RZP1mtuSBMZWSbGAnGOAy+PywCLMVWH3wmWRLuYGG0ZVMc
+	 c4X2nTwIdcop3wpwYCGkIm2vygDZAtqbEQFoUpaEM+xsQ+NHlJ2Oalg+l9slv/2USr
+	 o21MRklJZZWNt7FU1B6rQ+nFgN4CNj/SHpmniWJ1krEYWR6finfZLQMm7/0FS2RNNe
+	 8vhlotz25soUYPGIrhnhskCb1jtF5stVPeCtA719RqihCmL1dodwKzJCWyAzBiaHCV
+	 TZlu5k6Ia3imQ==
+Received: from [127.0.1.1] (unknown [180.150.112.70])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 4D0F7640A2;
+	Mon, 21 Jul 2025 12:43:12 +0800 (AWST)
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Avi Fishman <avifishman70@gmail.com>, 
+ Tomer Maimon <tmaimon77@gmail.com>, Tali Perry <tali.perry1@gmail.com>, 
+ Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>, 
+ Benjamin Fair <benjaminfair@google.com>, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250717142301.92548-2-krzysztof.kozlowski@linaro.org>
+References: <20250717142301.92548-2-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] ARM: dts: nuvoton: Use generic "ethernet" as node name
+Message-Id: <175307299219.1632952.11825980822005039610.b4-ty@codeconstruct.com.au>
+Date: Mon, 21 Jul 2025 14:13:12 +0930
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Sat, 2025-07-12 at 21:26 +0200, Linus Walleij wrote:
-> Hi Hakyeong,
->=20
-> thanks for your patch!
->=20
-> On Thu, Jul 10, 2025 at 2:20=E2=80=AFAM <ksk4725@coasia.com> wrote:
->=20
-> > Add basic support for the Axis ARTPEC-8 SoC.
-> > This SoC contains four Cortex-A53 CPUs and other several IPs.
-> >=20
-> > Patches 1 to 10 provide the support for the clock controller,
-> > which is similar to other Samsung SoCs.
-> >=20
-> > The remaining patches provide pinctrl support and
-> > initial device tree support.
-> >=20
-> > Hakyeong Kim (9):
-> > =C2=A0 dt-bindings: clock: Add ARTPEC-8 CMU bindings
-> > =C2=A0 clk: samsung: Add clock PLL support for ARTPEC-8 SoC
-> > =C2=A0 clk: samsung: artpec-8: Add initial clock support
-> > =C2=A0 clk: samsung: artpec-8: Add clock support for CMU_CMU block
-> > =C2=A0 clk: samsung: artpec-8: Add clock support for CMU_BUS block
-> > =C2=A0 clk: samsung: artpec-8: Add clock support for CMU_CORE block
-> > =C2=A0 clk: samsung: artpec-8: Add clock support for CMU_CPUCL block
-> > =C2=A0 clk: samsung: artpec-8: Add clock support for CMU_FSYS block
-> > =C2=A0 clk: samsung: artpec-8: Add clock support for CMU_PERI block
->=20
-> Out of the 9 patches there are 7 patches related to "CMU" without
-> any explanation or even expansion of this acronym.
->=20
-> Camera Management Unit? I think I'm not supposed to
-> guess. Is is an Axis-custom piece of hardware? (Would make
-> sense.)
->=20
-> Please expand this acronym and state clearly that (if this
-> is a correct assumption) that you are not supplying any
-> bindings and even less a driver for the "CMU" thing, just the
-> clocks. (That's fine the actual CMU can come later, but
-> it should be clear *what* it is.)
+On Thu, 17 Jul 2025 16:23:02 +0200, Krzysztof Kozlowski wrote:
+> Common name for Ethernet controllers is "ethernet", not "eth", also
+> recommended by Devicetree specification in "Generic Names
+> Recommendation".  Verified lack of impact using dtx_diff.
+> 
+> 
 
-Ok, I will add CMU abbreviation on cover-letter and respective patches.
+Thanks, I've applied this to be picked up through the BMC tree.
 
-Thanks,
-Hakyeong Kim
-
->=20
-> Yours,
-> Linus Walleij
+-- 
+Andrew Jeffery <andrew@codeconstruct.com.au>
 
 
