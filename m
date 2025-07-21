@@ -1,129 +1,122 @@
-Return-Path: <linux-kernel+bounces-738530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D171B0B9B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 03:03:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D93FB0B9B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 03:12:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EABED17007A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 01:03:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09B567AA2A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 01:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A61185E7F;
-	Mon, 21 Jul 2025 01:03:32 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8507981732;
-	Mon, 21 Jul 2025 01:03:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60B97172BB9;
+	Mon, 21 Jul 2025 01:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="Pqbl3gkg"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C8A0FC0A;
+	Mon, 21 Jul 2025 01:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753059811; cv=none; b=TZsKYms1x9XRvgubWcljEBOL01lyFDsmse+7QJRN+p5sdWI88ivvzUBh3CSXyN48KlwJxQQ6fJfpgjpgVUroqAloDoUf+Aj/zvTzFwzfoIRo8BdluyLkDSLE9j+BolXcCoP8a05JlCLOjNzzWLMe7Xr6Rl6oUtQTTwQUJEMxxiM=
+	t=1753060332; cv=none; b=MKhizYXyEaleidN15H4arv0sjfor1dj3DbOAjP2rZf+MBz3E0FvJGtn9yKtJPSRWIMlQMk+RTWVvuidaIsWYyPZvj7AWTgspXcfljLQWWmLEjwiqPOWYfvE3W+1lRMxLwG5tn7swX1OrDwrLfr2NAzhVeSPpGi3FjdfBe7O5q+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753059811; c=relaxed/simple;
-	bh=jw6XT5xuWPbHmIhPLnPQGra7fWdXYfi6VOY1fGU7dGI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KKFisDV60/wK7k4yk2znntVfOAK9uClw9gwxvJgAUE8gSLN2FBcra/UtGenpTO9mQAQVG1DtRxKYIOnnZKzFTkwOODJmCCsB+OGarspFoRL43EuitRSmHMDNHZwjJ91TYu6v9/bRMEzfjl/w492jjESRO0W9iz0Rns8iYnglWDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-669ff7000002311f-0d-687d91d6d773
-Date: Mon, 21 Jul 2025 10:03:13 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: kernel test robot <lkp@intel.com>, willy@infradead.org,
-	netdev@vger.kernel.org, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	kernel_team@skhynix.com, almasrymina@google.com,
-	ilias.apalodimas@linaro.org, harry.yoo@oracle.com,
-	akpm@linux-foundation.org, andrew+netdev@lunn.ch, toke@redhat.com,
-	david@redhat.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
-	rppt@kernel.org, surenb@google.com, mhocko@suse.com,
-	linux-rdma@vger.kernel.org, bpf@vger.kernel.org,
-	vishal.moola@gmail.com, hannes@cmpxchg.org, ziy@nvidia.com,
-	jackmanb@google.com, wei.fang@nxp.com, shenwei.wang@nxp.com,
-	xiaoning.wang@nxp.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org
-Subject: Re: [Intel-wired-lan] [PATCH net-next v11 12/12] libeth: xdp: access
- ->pp through netmem_desc instead of page
-Message-ID: <20250721010313.GA21807@system.software.com>
-References: <20250717070052.6358-13-byungchul@sk.com>
- <202507180111.jygqJHzk-lkp@intel.com>
- <20250718004346.GA38833@system.software.com>
- <20250718011407.GB38833@system.software.com>
- <35592824-6749-4fa4-89d9-2de9caccc695@gmail.com>
- <1fe747ea-56ce-4418-92cb-057d989e3732@gmail.com>
+	s=arc-20240116; t=1753060332; c=relaxed/simple;
+	bh=oOcvYWfw0l3RKHi2FRHUu9eHl1KmJbPDtCcJR/Sh3lA=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Rg7YyME4zYmDE+1mEdcOoBMaJfx5FPYeXwkGwp8/trqnM8dFjvQgd6sDoSWAJNkGVGSCusWY6rVVSXDC9VXDR9LO7FIhpnqtVkx3lGw9XE1d15GtHEQ2ANo8Ezu+UrvRx1NRmfs1gkoLouDkGRagqRFo3pdz2jSLrm5Lk55KnsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=Pqbl3gkg; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1753060326;
+	bh=s//7MjuX07y4aMFmJCpTEwCT9TCj/TYkQ55O0eQjT4I=;
+	h=Subject:From:To:Date:In-Reply-To:References;
+	b=Pqbl3gkgwV28WX8LMF7FFKluhrO2t0iskwad6rrW6ZNv0dkVaSarK2ey92y9gEMOX
+	 LGvjl/Zy4czwCdITA9MMQ+6srHX+KsESqY1ZXNfQwzQSvcojwuUhGk8pU7Bw2LI5iI
+	 Q6YGhuceFsEqgcshG/gHVKukz3OGhTPgNE1AULMrQwsHSFB1B9JBGN8zjtm+C+DH+O
+	 OSnOr0fyXffZpA9nrC8Nyg07E5EzysIyFJp0LkHWr216oO2+72EUjDABLyiIXo4IvM
+	 wQZznT4B56QHjxwOIp+OeAOI04nLwIE62l3BKzZYkOg5wWJYHUqLsPKNmViXqy0C9f
+	 IXHrXVKuscvpA==
+Received: from [192.168.68.112] (unknown [180.150.112.70])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 3FD3D6443C;
+	Mon, 21 Jul 2025 09:12:04 +0800 (AWST)
+Message-ID: <0b9b6c712bff18a25da218c507d18b9a8f18c7e8.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v2 5/9] ARM: dts: aspeed: wedge400: Extend data0
+ partition to 64MB
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: rentao.bupt@gmail.com, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel
+ Stanley <joel@jms.id.au>, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+ linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, Tao Ren
+ <taoren@meta.com>
+Date: Mon, 21 Jul 2025 10:42:03 +0930
+In-Reply-To: <20250706042404.138128-6-rentao.bupt@gmail.com>
+References: <20250706042404.138128-1-rentao.bupt@gmail.com>
+	 <20250706042404.138128-6-rentao.bupt@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1fe747ea-56ce-4418-92cb-057d989e3732@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHfc85O+e4HByn6ZtCwSICTSsRepUUiT68BUEQfinBRh7caF6Y
-	d9HSFDJB81akLpjmXWM6ZU5RqXmZUZSYlyWmstS8pKZmeUvbUaK+/Xj+z/N7ng8PS0r3KTdW
-	GRnLqyPlKhktpsRLDmVeI/mpinNdVj+k0TXQqH4zEVVPGUVIU2cAaL3HTCPNh0wKbei2STTT
-	Z2VQvf4amqyapVBO5g6JOreWGTRgyBWh1rQpBn1s19BoomFfhGZNORRayLDSaDI3CPVpXZCp
-	dohAPbpWAo3s7xKocFBLo8FuK4VK03MB0nVZRGi1w7ZqZ9PmMA/N2ILeCSboBO7+tkLiltpP
-	BG4r+cxgrT4ON9d44Bcd8wTW1z2isX6tgMHjIx007n+2Q+G55mKA24zrBM7JWKZx07KRwKsz
-	YxRe6RqmrzvdFF8M41XKeF59NvC2WDFnORL9VpyYttBIpoHHbDZgWcj5QoPZMRvYH6BW/5QS
-	mOJOwZrqcUZgmjsNLZYtUmBnzhMujppsdTFLcu9FcGxhgRA8Tlwi3NXECz0SDsH9qSUg9Ei5
-	MgJOr24zh4EjfFM8fbCA5DygZW/+YJbk3GH1HiuU7bkA2DLWIhL4KHcSvjKYCcEDuScs1OV8
-	ER0eegy+rrFQeYAr+U9b8p+25J9WC8g6IFVGxkfIlSpfb0VSpDLR+05UhB7Y3qIqdfeWEawN
-	3DABjgUyB0k0laqQiuTxMUkRJgBZUuYsweZkhVQSJk9K5tVRoeo4FR9jAu4sJXOV+PxMCJNy
-	4fJY/i7PR/PqvynB2rulgYd7ejtVpWkuuqy/bjYAeRb+7myO8rliN9Yk9b8q818tbw9xyqov
-	vb/V1Uscv3cptNa9AYz8qAguckTv/Ppfli+6pbv0qMYvV1gT8kOMKUzwbCUzM+pFBhZEtOUv
-	B38dzst6vuHgLK9NUaVfyPju+stBdSZcvF3UuPegdCXXXSqjYhTy8x6kOkb+BwduVGISAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Ra0hTcRjG+Z/bjtPBaZmeFK0WMTDSgqI/eckv4Z+o6FNBILry0IZzyqY2
-	DWuhXzSmaRdyzZok3kmd5iVMcppLtKVObYm3REWXF+YFvCxtMyK//Xif53mfF14aF04RfrRM
-	kcwpFRK5iOIT/GuhmaeG8zOkp9sei6G+ppqCVRtqWDbZTEJ9ZSOAq51mCuq/ZRFwvWYLhzNd
-	UzxYZbwKJ0pnCajN2sbhx80lHuwo6iZhX2MuCZs0kzxo/aCn4Hj1LglnTVoC2jOnKDiRGwm7
-	DD7QVDGIwc6aJgwO7zox+HTAQMGBjikCvnqUC2BNm42EjlZX3/aGa4d5cMYlfB7nRR5FHQvL
-	OGqo+IGhFt0YDxmMKai+PAi9bZ3HkLEym0LGlQIeGh1updCXl9sEmqsvBKileRVD2swlCtUt
-	NWPIMTNCoOW2Ieq69y1+WBwnl6VyypCIWL50zuaZ1MNXa+y1uAbk0TnAg2aZs6zB+IJwM8Gc
-	YMvLRnluphgxa7Nt4m72Zk6yv76bXHM+jTMWkh2x27EcQNMHGTXr1Ke6PQIGsruTi8DtETLF
-	GDvt2OL9FQ6w3YXTewU4E8Tadub3sjjjz5bt7N3gwYSzDSMNpJsPMcfZT41m7AkQ6PaldfvS
-	uv9pA8ArgbdMkZogkcnPBavipWkKmTr4TmKCEbg+X5rhzG8Ga9YoE2BoIPISJBEZUiEpSVWl
-	JZgAS+MibwEyp0uFgjhJWjqnTIxRpsg5lQn404TIV3D5JhcrZO5Kkrl4jkvilP9UjPbw04De
-	5+evDFrHHhaRMnDjniMt0LM1JiTAXlf7bHVebFm/1MIxmlKzVlAc6Fhp75X+VAca4Gt/y+0H
-	bT3vFpdnQzcXRxPz+vs9+D6/ndH3q7LZ2qGFkguxFwNKet6EN60de69SI/MRbZ81SuFbMKL0
-	MhyOtnzNbgmLWNxJELcXAxGhkkrOBOFKleQP7wjHK/UCAAA=
-X-CFilter-Loop: Reflected
 
-On Fri, Jul 18, 2025 at 10:32:38AM +0100, Pavel Begunkov wrote:
-> On 7/18/25 10:18, Pavel Begunkov wrote:
-> > On 7/18/25 02:14, Byungchul Park wrote:
-> ...>>>>     include/linux/mm.h:4176:54: note: expected 'struct page *' but argument is of type 'const struct page *'
-> > > > >      static inline bool page_pool_page_is_pp(struct page *page)
-> > > > >                                              ~~~~~~~~~~~~~^~~~
-> > > > 
-> > > > Oh.  page_pool_page_is_pp() in the mainline code already has this issue
-> > > > that the helper cannot take const struct page * as argument.
-> > 
-> > Probably not, and probably for wrong reasons. netmem_ref is define
-> > as an integer, compilers cast away such const unlike const pointers.
-> 
-> Taking a look libeth, at least at the reported spot it does
-> page->pp->p.offset, that should be fine. And your problem
-> is caused by the is_pp check in pp_page_to_nmdesc().
+On Sat, 2025-07-05 at 21:23 -0700, rentao.bupt@gmail.com wrote:
+> From: Tao Ren <rentao.bupt@gmail.com>
+>=20
+> Extend wedge400 BMC flash's data0 partition to 64MB for larger
+> persistent storage.
+>=20
+> Signed-off-by: Tao Ren <rentao.bupt@gmail.com>
+> ---
+> Changes in v2:
+> =C2=A0 - None (the patch is introduced in v2).
+>=20
+> =C2=A0arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge400.dts | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge400.dts b/=
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge400.dts
+> index 3e4d30f0884d..cf6c768cbad5 100644
+> --- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge400.dts
+> +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge400.dts
+> @@ -92,7 +92,7 @@ tpm@0 {
+> =C2=A0 * Both firmware flashes are 128MB on Wedge400 BMC.
+> =C2=A0 */
+> =C2=A0&fmc_flash0 {
+> -#include "facebook-bmc-flash-layout-128.dtsi"
+> +#include "facebook-bmc-flash-layout-128-data64.dtsi"
 
-Exactly, but you asked me to add the check,
-DEBUG_NET_WARN_ON_ONCE(!page_pool_page_is_pp(p)) in pp_page_to_nmdesc().
+My preference here is that we maintain two separate DTS for Wedge400:
 
-What I meant was, in order to apply that, page_pool_page_is_pp() should
-take 'const struct page *' as argument.
+- aspeed-bmc-facebook-wedge400.dts
+- aspeed-bmc-facebook-wedge400-data64.dts
 
-I think it's good idea to change the proto type like, as you said:
+We do so such that we implement aspeed-bmc-facebook-wedge400.dts like:
 
-   static inline bool page_pool_page_is_pp(const struct page *page);
+   > cat aspeed-bmc-facebook-wedge400.dts
+   #include "aspeed-bmc-facebook-wedge400-data64.dts"
+  =20
+   &fmc_flash0 {
+   /delete-node/partitions;
+   #include "facebook-bmc-flash-layout-128.dtsi"
+   };
 
-Thanks.
+aspeed-bmc-facebook-wedge400-data64.dts includes facebook-bmc-flash-
+layout-128-data64.dtsi as usual.
 
-	Byungchul
-> 
-> --
-> Pavel Begunkov
-> 
+From there we can consider aspeed-bmc-facebook-wedge400.dts to be
+deprecated and can remove it in a future release. At least with this
+arrangement any revert of the (future) patch removing aspeed-bmc-
+facebook-wedge400.dts has no other impact. Further, both layouts will
+be supported in at least one release, making it possible to update the
+kernel without requiring a simultaneous update to the flash layout.
+
+Andrew
 
