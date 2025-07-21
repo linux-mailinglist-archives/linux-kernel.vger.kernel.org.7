@@ -1,186 +1,77 @@
-Return-Path: <linux-kernel+bounces-739683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69285B0C9AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:29:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4B5FB0C9B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:30:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F68F1890294
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:29:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 042C97B014C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC25F2E092A;
-	Mon, 21 Jul 2025 17:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B6EONrxQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0122E11D5;
+	Mon, 21 Jul 2025 17:30:08 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E880A21421A;
-	Mon, 21 Jul 2025 17:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3582E0B6D;
+	Mon, 21 Jul 2025 17:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753118951; cv=none; b=R7E2bkBKvUTgD3XCLAifnItmlQhX8si0v8PJj3oDaEx6yeczHpDmIgoSsj5OP7ZoamI9h8oHMziXdlWukXqVeEgQepT+Ha7U8ijQffsJiV99kFZ9EPqhHTlOKNpNjoqkxeNxsYF7ItraiQhRqBIMUT2+7tp2k5M0PHn0vJ7xr6E=
+	t=1753119008; cv=none; b=T9qR7A3hAn3YtwjrbZlMKqTUgnfNG/6TjjMRpD7Ah8ktrpuDCjW4/bBQCAAAZ8gTsLnGfMQPpcvr095yz7Sg5S3AmhkFi4bohQTY86QlrubjX2725riiontzoNVsB0/F1Z7/R0mTf3On6+tuOhoOsgrqFthAsyeQFZJX00xbQxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753118951; c=relaxed/simple;
-	bh=B8N6WxM+v8XOq0Vq34N67AdT6Tg5qewYqoq0XjzmhMY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F4sTON5O7FqlXK3Gw6vqLyBfxld8MweKfbEBjcyfpmWKCbOXoqn3Bcp+LCjj9sV/2udCcTOb28IVh040U2bmPNOM+hhHXPwQpB1+rsEtkANpqdwqaRP54IEfTRr8ViJDUy5QcfdgsuurZuQHPVTnk/LIgJ51T6/jcyMIvWuQSW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B6EONrxQ; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753118949; x=1784654949;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=B8N6WxM+v8XOq0Vq34N67AdT6Tg5qewYqoq0XjzmhMY=;
-  b=B6EONrxQnhfsTChYD+4AWzl2HrFhag/By+PYGncL64XrHe0JecZDe620
-   xYZJY4cR0ZjTkCBXInXetM68Q806YBgX8bYtlj5p8Rzq97Fur4ZFeZcyD
-   T2+0oi8im2aH8PENMq5JXvp6Oonnorfhs2b1estBKYyK0zjqnP9gqnXbN
-   duR9G0m6MsuyYdzJleh6Xihg1gr8DBLFTccuVmSfDdUDCAez56NBvCzl4
-   2mCsA3q72caIadA3o1GPXFTXPNz4v1mn7lxFZwKREggc75IHwN+HHSbsO
-   Fh3oDoyzBiB0bFcFaY9fWWINjvJHVkl+dghfJ/zEDIbsn7a6iEe7MN+u4
-   A==;
-X-CSE-ConnectionGUID: Y6IjqbRKTaGKQ9rPUP3rNQ==
-X-CSE-MsgGUID: SVzJg0oAQsKTnmR4O+w6Ag==
-X-IronPort-AV: E=McAfee;i="6800,10657,11499"; a="55286814"
-X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
-   d="scan'208";a="55286814"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 10:29:08 -0700
-X-CSE-ConnectionGUID: QlR1Fjn/Rf+FBkC9266sQA==
-X-CSE-MsgGUID: jyUa+hUEQEivMclXV/4H8w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
-   d="scan'208";a="158202195"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 10:29:04 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uduJx-0000000HOV6-11Cc;
-	Mon, 21 Jul 2025 20:29:01 +0300
-Date: Mon, 21 Jul 2025 20:29:00 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: LiangCheng Wang <zaq14760@gmail.com>, Andy Shevchenko <andy@kernel.org>,
-	Hans de Goede <hansg@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v10] staging: media: atomisp: fix indentation in aa, anr,
- and bh modules
-Message-ID: <aH543MEsDbnhRzM8@smile.fi.intel.com>
-References: <20250718-new_atomisp-v10-1-54bdff660058@gmail.com>
- <8f7db034-6b38-44c3-b841-ef4bc1db3973@suswa.mountain>
+	s=arc-20240116; t=1753119008; c=relaxed/simple;
+	bh=F7maQntHBPrJOJLjnzlyFAGLjbw/d7g5uW++1kP44vA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OoeLv/agf91GX9O3ZrfHuA//g8cvQ5vdCJ5AfG73x77Fbe5IgWr6a8XgSarqtZ64FzKSpJS0GT2mbs/vNx8zCkMCfZJvMNZ5Du4YOmwS5uyyIcbzk+FIFafwrh8hxnkwefI9VIwP/R7tThHdEdHOKlxL6Ljs0LfcwjpPx64JUl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf10.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay03.hostedemail.com (Postfix) with ESMTP id 149DCB5E03;
+	Mon, 21 Jul 2025 17:30:00 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf10.hostedemail.com (Postfix) with ESMTPA id 0FAA230;
+	Mon, 21 Jul 2025 17:29:57 +0000 (UTC)
+Date: Mon, 21 Jul 2025 13:29:57 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Tengda Wu <wutengda@huaweicloud.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Shuah Khan <shuah@kernel.org>, Yuanhe Shu
+ <xiangzao@linux.alibaba.com>, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH -next] selftests/ftrace: Prevent potential failure in
+ subsystem-enable test case
+Message-ID: <20250721132957.5184cd68@batman.local.home>
+In-Reply-To: <88286bd2-a833-47e3-a0f0-896fbdd3fcbb@huaweicloud.com>
+References: <20250710130134.591066-1-wutengda@huaweicloud.com>
+	<20250710153409.3135fb17@batman.local.home>
+	<88286bd2-a833-47e3-a0f0-896fbdd3fcbb@huaweicloud.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8f7db034-6b38-44c3-b841-ef4bc1db3973@suswa.mountain>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 0FAA230
+X-Stat-Signature: yssnn1bek5w4f8twbwp6a84n5tkr9cr3
+X-Rspamd-Server: rspamout02
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX189Bj2Mf4RhqEdtHJSWyYsHXpwTyP6gX5o=
+X-HE-Tag: 1753118997-575904
+X-HE-Meta: U2FsdGVkX18DopyuBuxu403tiBJ+SMPubd2Jnikyp/tWroxX1tAefMOJnAEEpFPre4BDuZwRyx4IFcgjzWGg8SnA5uAyucnl0wXAG203pE8Fp4NDhxV3zjWakjA3+x2vlZmzB1hezH4p4nGiC6P8npYlkHZPzXw8NMsnnjqVFLUh4DrSJ+kzV3LvVh3xkiBUb3VgAECTCIUlfbzWDLNtVOUydoFtZ30pnVaHob9hnLi+a59jY8KKI2czyX7L9ncEj+UsXKXQdIxqV6gW9hk86eHOwMGeDrqb69A3b5ZU1QQv2K7XKtd94mRpLe0IkyiZFWXTlo5SaPeCI0oo9tsZjgIoBaXpAT/d
 
-On Fri, Jul 18, 2025 at 07:06:10PM +0300, Dan Carpenter wrote:
-> On Fri, Jul 18, 2025 at 11:02:14PM +0800, LiangCheng Wang wrote:
-> > Fix tab/space indentation and move a standalone kernel-doc
-> > comment of the 'strength' field of the struct ia_css_aa_config
-> > to the whole-structure one.
-> > Align with kernel coding style guidelines.
+On Mon, 21 Jul 2025 09:54:22 +0800
+Tengda Wu <wutengda@huaweicloud.com> wrote:
 
-...
+> I noticed this patch hasn't been merged yet. Do you plan to merge it soon?
+> If you're too busy, would you like me to help submit it instead?
 
-> >  		0, 3, 1, 2, 3, 6, 4, 5, 1, 4, 2, 3, 2, 5, 3, 4,
-> >  		0, 3, 1, 2, 3, 6, 4, 5, 1, 4, 2, 3, 2, 5, 3, 4,
-> >  		0, 3, 1, 2, 3, 6, 4, 5, 1, 4, 2, 3, 2, 5, 3, 4,
-> > -		0, 3, 1, 2, 3, 6, 4, 5, 1, 4, 2, 3, 2, 5, 3, 4
-> > +		0, 3, 1, 2, 3, 6, 4, 5, 1, 4, 2, 3, 2, 5, 3, 4,
-> 
-> No need to add a comma to this line.  The comma at the end of the line
-> is useful when we might add another element to an array.  But here the
-> length is fixed.
+Nah, I simply forgot about it. Let me go write up a patch and send it
+out.
 
-Still, it's good to have it to avoid any additional churn in case it
-might be extended. We can argue if this needs to be a separate commit
-from the main topic of this patch.
-
-> If someone were to add a comma here and it was new code, then that's
-> fine.  But I don't want to have to review a separate patch which only
-> adds a unnecessary comma.
-> 
-> >  	},
-> > -	{10, 20, 30}
-> > +	{ 10, 20, 30 },
-> 
-> Same here.  This comma serves no purpose.  We can't actually add
-> anything to this struct.  What would be actually helpful would be to
-> use designated initializers.
-
-Here we touched the line, and adding trailing comma just reduces a potential
-churn in the future. I can show you plenty of changes when patch touches
-unrelated line just for the sake of adding a new one after the affected.
-
-...
-
-> diff --git a/drivers/staging/media/atomisp/pci/isp/kernels/anr/anr_1.0/ia_css_anr.host.c b/drivers/staging/media/atomisp/pci/isp/kernels/anr/anr_1.0/ia_css_anr.host.c
-> index 899d566234b9..3de7ebea3d6e 100644
-> --- a/drivers/staging/media/atomisp/pci/isp/kernels/anr/anr_1.0/ia_css_anr.host.c
-> +++ b/drivers/staging/media/atomisp/pci/isp/kernels/anr/anr_1.0/ia_css_anr.host.c
-> @@ -11,14 +11,14 @@
->  #include "ia_css_anr.host.h"
->  
->  const struct ia_css_anr_config default_anr_config = {
-> -	10,
-> -	{
-> +	.threshold = 10,
-> +	.thresholds = {
->  		0, 3, 1, 2, 3, 6, 4, 5, 1, 4, 2, 3, 2, 5, 3, 4,
->  		0, 3, 1, 2, 3, 6, 4, 5, 1, 4, 2, 3, 2, 5, 3, 4,
->  		0, 3, 1, 2, 3, 6, 4, 5, 1, 4, 2, 3, 2, 5, 3, 4,
->  		0, 3, 1, 2, 3, 6, 4, 5, 1, 4, 2, 3, 2, 5, 3, 4
-
-With the trailing comma it will be better for the consistency in this case.
-Otherwise I like your approach.
-
->  	},
-> -	{10, 20, 30}
-> +	.factors = {10, 20, 30},
->  };
->  
->  void
-> 
-> I added a comma to the end of .factors because there is a 1% change we
-> will add a new member to the struct and it's the right thing to do.  I
-> was already changing that line, so I'm allowed to make tiny white space
-> changes like this.
-> 
-> But notice how I left off the comma after the numbers.  That array is a
-> fixed size and nothing can be added.  Leaving off the comma communicates
-> that.  Also there was no need to change that line.  It's unrelated to
-> using desgnated initializers.  If you added a comma, you would need to
-> send a separate patch for that with a commit message to describe and
-> justify it.  As a reviewer, I would need to go through the line
-> carefully and verify that none of the other numbers had been changed.
-> 
-> The commit message for the above patch would say, "Use a designated
-> initializer for default_anr_config.  It helps readability."  There would
-> be no need to mention that "I added a comma" to the end of the .factors
-> line because it's a minor thing that we're not really stressed about.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+-- Steve
 
