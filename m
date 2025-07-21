@@ -1,99 +1,143 @@
-Return-Path: <linux-kernel+bounces-739944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C09DB0CD61
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 00:57:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4153EB0CD65
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 00:59:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E049543A02
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:57:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74CD8545FEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:59:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C060D24169A;
-	Mon, 21 Jul 2025 22:57:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBBC9242D7F;
+	Mon, 21 Jul 2025 22:59:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="hXRUiXoE"
-Received: from r3-22.sinamail.sina.com.cn (r3-22.sinamail.sina.com.cn [202.108.3.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dkibj3Gt"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C96F17996
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 22:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848A917996;
+	Mon, 21 Jul 2025 22:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753138665; cv=none; b=kK0x/DE+qDMjyHt4xyGz6MnpTlOH8CgXSMKhhRxgXXHrnMQTcu7g+7ApzomP0bBr5FzNyefLePXN6Izj0aTEAv5heoaHjb1G7sU5CEvP2nQ4f3ndaQIghI70Zlpy4XZ7utzxO8rb+sKg3VNy/quB4SbPLGzxff+1pFJdSMHpECo=
+	t=1753138789; cv=none; b=jT7OFexhU8Iqx5N4L+eWxMmoXHXwC1kg1Q54lhzxhsus4tku7yLfnjdE2xV8AOmBLUM4gT8n2TbH2IpX1yZfBZ8JnGDfNrTSjgR0A+MxCpDVK4NyHymnbxPIzX13hRAjNoDulZiC52ja2jePkVCuRAemFfMjWesFP8NJ8+s6MGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753138665; c=relaxed/simple;
-	bh=TyN0LoG7F4PN66yuNaLyVXzWksV0lgHTehNO6bq3yoU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Xq4+19vP/+NvuBtn89pVJn/HHrQTBfpPg9iXgteQtsnuABU143rQbG7WASaG4AH1l61LKgTekTGNNmsVCLc6pxhCuNFr/JbPneCmgLpmxqSm/IrQTz4jV8P0gfoY+Ip4HO3k0EiTJiXMz85RfBcXdDFiT9Jx+sT3HYjByy4ycB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=hXRUiXoE; arc=none smtp.client-ip=202.108.3.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1753138660;
-	bh=m8qjn0N73gpTufx83OtUdh4X+qwhGHuYEx0MW7MuwS8=;
-	h=From:Subject:Date:Message-ID;
-	b=hXRUiXoE0zjoFJMpOi62CUZXQ3Bg27UUigBtdaxF+UMETKdyQegH/faJYwd+5VoML
-	 c0caGxxEe89lUZK0jPbFAFlOiPi4jqg51X22k7Dp6TcLAB+IYb0eNu0ULur5k5mvSu
-	 VN4tx3KEzOOj9EZi4E4HbTx8R8gIjyPly0qHAJ9A=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.33) with ESMTP
-	id 687EC5B4000061EB; Mon, 22 Jul 2025 06:56:53 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 9752656685171
-X-SMAIL-UIID: F1BB4D8D73B94522B5528DCDB2B864AE-20250722-065653-1
-From: Hillf Danton <hdanton@sina.com>
-To: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: David Laight <david.laight.linux@gmail.com>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH v2] kernel/fork: Increase minimum number of allowed threads
-Date: Tue, 22 Jul 2025 06:56:40 +0800
-Message-ID: <20250721225641.2691-1-hdanton@sina.com>
-In-Reply-To: <20250721192830.6f8f57d9@pumpkin>
-References: <20250711230829.214773-1-hauke@hauke-m.de> <48e6e92d-6b6a-4850-9396-f3afa327ca3a@kernel.org> <20250717223432.2a74e870@pumpkin> <576d1040-4238-4bf0-aa61-e1261a38d780@hauke-m.de> <1f81e064-1b19-475d-b48c-39f56381058c@hauke-m.de>
+	s=arc-20240116; t=1753138789; c=relaxed/simple;
+	bh=+7tVxomXlBN2ep8coxou7cFT9C4R2OKsqiwHvfpGarw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aFYf7cIcB5l3wEoBwU8H2TyTXE51Y7+dDm1sp7vwcE0H4LS1JaFbjlpnnTE/uHZaZWbA4v74W6fczNCmro8aS2aGQyAf/IWerJVTeeqYD7WsQczaJkRuTPKt6aPvImoRN3VsmJJEDJ396AuggeLNUwS8xTbhjGQlkPOkawpDwfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dkibj3Gt; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6089c0d376eso876150a12.2;
+        Mon, 21 Jul 2025 15:59:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753138785; x=1753743585; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qziS/qpONFFAWWmGEcjsGqxLtdqROLsiMhv3HQa+DVo=;
+        b=dkibj3GtJ3A72iRfMmZiueDCm448Cts9EW9n8/0z6a9I1KGF45kv+tkxhmqPJiEQAS
+         W3fJ9DfMmRIhSLNIpLcN2NdhaJ5Zmu1vuMiFM1u6B0+okMroXwi7PYaHOwGX03Jc8rel
+         b31UOVHesoo3uoXxlSl40QQXOxsF4WsLJSXjpL7ifg0WzN5I8Vy1YNdMb8c3Q6T/V/oR
+         3WZWDztQy8sto2sY3s8Olf4YEMafKwoF7oR7LdC/O1HVQnDu3ZgXYvG7XCTTzMQu9lr4
+         pvoW7uMWLK55OYz+fPbioEkEQxtb9qPL4IdV8AmNRQhfZ4DquMoVdBZqla11G9zPju8i
+         07dA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753138785; x=1753743585;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qziS/qpONFFAWWmGEcjsGqxLtdqROLsiMhv3HQa+DVo=;
+        b=rDoN2iZ6uAQGVWjUmAy2XrEE6OdQiC/9ha8d9tpE3QT53WYTPkGAu+UANXbwxQE5Vr
+         suwChQ5JmxI0gUZyyvYcNcZR/nZGyfRgVhfscSI8UoSH6LFtcALha8w0izB70lr0eBqU
+         vZLThutU0/Mn9VOC/SoiHNSC0a5hIQIGA11iKYQS4JJ/vPWtJkRwWdfx0GB2oXXsPuDZ
+         ZruI5MR6xNjBTLq6GodZdK3lmFyGrzDvZ6H7S+dUYRtYWyxGKvWOifpCwYV2W5PsUrs4
+         7cYY6eaMwTEjqFq+A/rKfTXwDBG/9/Klv6R0PU5rbqKlHA3X3CInVjU3t5FqyWF/T0KX
+         WXRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUE64Yu/zqi4aQhkHNjEPLqmPmXGNpiBdOjEj6+h3+H4qsJwO6wxEksCL9o/CoVnteKWCHVemDqhRMLjQ==@vger.kernel.org, AJvYcCUmV2+ytcbQirMXJTvznRb3T/sdX0yduaS1oqaKXPCOdldZI6WezaZ4H/2sYXi0vj0FZuK8u5jm9Wur4dc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHIqQ/Kdw68RMCVtJ2a5s91UzrtVx7rDuAsn9VxTSCsgWtxU1v
+	CAOuMcVeywKF0FsD6nwDZGDrcMzAHaSNEZGcIOAMhdb3t/8eBcFo2f0dZzsVuGyALDc=
+X-Gm-Gg: ASbGnctu6ynzt5O8682V39paxkhvbBd2QtGit2PsQQCItWX9mBVApBUISSBqQU9h2BX
+	P72Aphtp3RTnkb8KcgvC4WFSinp6iP8flOsYCGii0KNMGlsCJS+sJ9WvMJ/ly5NC2zrkejsSFvZ
+	7bTqzQbKeoac1ZnS5WxTtkuRdCIILmQBYWrDy7TRHRGJ3wgkimQpumgfmmwN6mdCrO7+MHUAz1z
+	HX3x0lbaPakwF7Ube4edGfp1D1DSfPWJUO1VgXjNac+tNyLAu44ARweHON70bTn2ltg3E1WgGGP
+	IgrFrgnrzKA5euqzhA2Efwtfqbdft5xzr8ERzPoP2ZaQpiGBHnUys+h1Q+QBXFhuCYlNnzwxTSJ
+	AZZhHGZ4FFqK0IKqOS4DPx2BbWUlqQy/9Hrr1yFI+mB7D69kcx4foe0547o7MCvWMFEIA
+X-Google-Smtp-Source: AGHT+IFBO2iP/n38Feyyqa7ON62IpV2R/kvBKzJAAeBv02jcMXCr2o0KVEmn950sS2xc+ad0bPTgUA==
+X-Received: by 2002:a17:907:1b05:b0:ae3:bd92:e6aa with SMTP id a640c23a62f3a-ae9c99adb7amr852181266b.6.1753138784434;
+        Mon, 21 Jul 2025 15:59:44 -0700 (PDT)
+Received: from [192.168.0.18] (cable-94-189-142-142.dynamic.sbb.rs. [94.189.142.142])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6ca7d330sm755829066b.126.2025.07.21.15.59.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Jul 2025 15:59:43 -0700 (PDT)
+Message-ID: <f10f3599-509d-4455-94a3-fcbeeffd8219@gmail.com>
+Date: Tue, 22 Jul 2025 00:59:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 00/12] kasan: unify kasan_arch_is_ready() and remove
+ arch-specific implementations
+To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>, hca@linux.ibm.com,
+ christophe.leroy@csgroup.eu, andreyknvl@gmail.com, agordeev@linux.ibm.com,
+ akpm@linux-foundation.org
+Cc: glider@google.com, dvyukov@google.com, kasan-dev@googlegroups.com,
+ linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, linux-um@lists.infradead.org, linux-mm@kvack.org
+References: <20250717142732.292822-1-snovitoll@gmail.com>
+Content-Language: en-US
+From: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+In-Reply-To: <20250717142732.292822-1-snovitoll@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, 20 Jul 2025 17:28:20 +0200 Hauke Mehrtens wrote:
-> Hi,
-> 
-> I am not exactly sure how I should limit the number of parallel user 
-> mode helper calls.
-> The user mode helper is calling wait_for_initramfs() so it could be that 
-> some calls are getting queued at the early bootup. This is probably the 
-> problem I am hitting.
-> 
-> I do not want to block the device creation till the user mode helper 
-> finished. This could also result in a deadlock and would probably slow 
-> down bootup.
-> 
-> When I limit the number of user mode helper calls to 1 and let the 
-> others wait in a system queue, I might block other unrelated tasks in 
-> the system queue.
-> 
-Can you specify how system queue is blocked, after a look at the false
-deadlock [1]?
 
-[1] https://lore.kernel.org/lkml/20240927112516.1136-1-hdanton@sina.com/
 
-> I would create an own queue and let the async user mode helper wait in 
-> this queue to only execute one at a time. When one of them needs a long 
-> time in user space it would block the others. This workqueue would also 
-> be active all the time. After the bootup it would probably not do much 
-> work any more.
+On 7/17/25 4:27 PM, Sabyrzhan Tasbolatov wrote:
+
+> === Testing with patches
 > 
-> I do not like any of these solutions. Do you have better ideas?
+> Testing in v3:
+> 
+> - Compiled every affected arch with no errors:
+> 
+> $ make CC=clang LD=ld.lld AR=llvm-ar NM=llvm-nm STRIP=llvm-strip \
+> 	OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump READELF=llvm-readelf \
+> 	HOSTCC=clang HOSTCXX=clang++ HOSTAR=llvm-ar HOSTLD=ld.lld \
+> 	ARCH=$ARCH
+> 
+> $ clang --version
+> ClangBuiltLinux clang version 19.1.4
+> Target: x86_64-unknown-linux-gnu
+> Thread model: posix
+> 
+> - make ARCH=um produces the warning during compiling:
+> 	MODPOST Module.symvers
+> 	WARNING: modpost: vmlinux: section mismatch in reference: \
+> 		kasan_init+0x43 (section: .ltext) -> \
+> 		kasan_init_generic (section: .init.text)
+> 
+> AFAIU, it's due to the code in arch/um/kernel/mem.c, where kasan_init()
+> is placed in own section ".kasan_init", which calls kasan_init_generic()
+> which is marked with "__init".
+> 
+> - Booting via qemu-system- and running KUnit tests:
+> 
+> * arm64  (GENERIC, HW_TAGS, SW_TAGS): no regression, same above results.
+> * x86_64 (GENERIC): no regression, no errors
+> 
+
+It would be interesting to see whether ARCH_DEFER_KASAN=y arches work.
+These series add static key into __asan_load*()/_store*() which are called
+from everywhere, including the code patching static branches during the switch.
+
+I have suspicion that the code patching static branches during static key switch
+might not be prepared to the fact the current CPU might try to execute this static
+branch in the middle of switch.
 
