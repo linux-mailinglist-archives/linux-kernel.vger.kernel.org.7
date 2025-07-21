@@ -1,183 +1,84 @@
-Return-Path: <linux-kernel+bounces-739549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA3CAB0C7AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:35:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35623B0C7BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:37:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E7261AA5AB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:36:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBF621AA5C0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:37:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 220A42D3ED1;
-	Mon, 21 Jul 2025 15:35:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838E92DFA26;
+	Mon, 21 Jul 2025 15:36:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=grsecurity.net header.i=@grsecurity.net header.b="Qk5npGY6"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uK6M5eBr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87ADA2918F0
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 15:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E100317BD3;
+	Mon, 21 Jul 2025 15:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753112143; cv=none; b=Nid806OP7J+GdZfvrTRxeQ3LhvyQuCwnQyD6r0myn0NwGW6b+ZQNCoGiQrVqjPb1P6TrFX/E16iVKYNvFwCMeSRwy/Ef3jeAER1mWFe8oGhcipmkMF1QveOTNg6RrPNhbGuN4JYpAXqMN0vVt0vrOIGfX3V4fVYd6UBZxZwS9K8=
+	t=1753112217; cv=none; b=YWt5lw1YCom/dSKeo/cPkass1rIeeYf7a5wl8RnwuiFDOkZYR2bm2c/j21VeR90N6AEu28zoF17tjLRNbVnf5donxQbM1Mp7tSTpYXHHhodaVp8jwTS/AJkU34BbBLMUxxKCGI5ldNF6v48EHeSqYYcPLuS6qfdgwWEiCzQFZ2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753112143; c=relaxed/simple;
-	bh=9Iz7gkMAHFXR6uNekq+ZozZJoRu2xaFgWGWBCJlun8g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TDoZ2L2vrt2s6f/fOGcZ1O+Y2OiqszzpthgArNtG8KRoeiARiTgTZu2ujZlq0VNzixad00J4EGhwOogUmYXLNdi6q6lQ/hLuSeLXL81e5nE0GNNcOgtEw9hW+pTpAJSF2py7mVaoJrl1bxmNHa6tK1xyfwX58czHMfiq3uzd+Mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grsecurity.net; spf=pass smtp.mailfrom=opensrcsec.com; dkim=pass (2048-bit key) header.d=grsecurity.net header.i=@grsecurity.net header.b=Qk5npGY6; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grsecurity.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensrcsec.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4561ca74829so49524495e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 08:35:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=grsecurity.net; s=grsec; t=1753112140; x=1753716940; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=0H9/WAmc1ldaaydaa5FydGQck3U4b6Spe4cq3sfvtO0=;
-        b=Qk5npGY69p6bcLi4QglRn0mmtf/wh4ru0FxRDakHK7nZErsZTBbF2HL0sL/PjKt2Lc
-         /T6pdj6dbHMOUQOuTz7GXG5KYj05cxNxGWwq9bhqDfQhYHVxPjDJhdF4dpkvufOStJiU
-         FtnS8qu+Xw5Q6wjrJqp0fN4IVFkje6VeujJna5QeWtEKBWY44G3AvtiXOkjphvzOZGZc
-         XVaAHn8Xp6rykD4q9nzBlyidDjr0JmFzoSbaP6WOK/36hPyLq26ZFC9IV+PKqKsWGSVS
-         HEmlantW8ns4Ec3YQ+dGCtiUM5ikvtBWo7EMVDQHNPTOSba/k8fp+R3ddu9jhjaKnULm
-         2fCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753112140; x=1753716940;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0H9/WAmc1ldaaydaa5FydGQck3U4b6Spe4cq3sfvtO0=;
-        b=F5RdePpJW9nnWZG9QhfyqVcL1R9HFx30AEVQ26nkn6k2z8CT07LaoSE6OVDi+A931a
-         noAuIB/6raqYOkfzoZ8PLbSeduRWguvxUSIY5k35w+r98Qnt1v5Mcyr4sp2T60D8MdVs
-         DDlKXTXNXqN7GOq/sp3rvUuJSGd+HDkLSXQNeZYxs5jrqk1sQPuZ4R/epGDYFY+ZJpDI
-         mEA695q3Tm/+zn09th4o4V55PMM1/XZP7ufIYLE2p+9xqF2ZJS6KIPGUpjxUXitcSLSk
-         DWWtZMd1pr1P+4Yzv8EklfU8CDXf+fP0XD6AXJg2HK4pGQPWGmlUNu8JdA9cy+RyVwRo
-         mCjA==
-X-Forwarded-Encrypted: i=1; AJvYcCWKp3T4ReIIlK5d2vXxOkCF+Tl724cNemW/PlH8Y3Cd60FnG/QG4oz3kQq1joebxVd/JSU3tT+N8cRfELs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxI9nNWiY3UtAQa6GMyFsYYbV9Kkh9kf4QEdAyf+BreOCju6/Zt
-	4/S8UEWui1zdooty6O9x6Oy8doVAlTCz+Lo420ySCAIdkyaSj5ldI5ABOuEVM8julj0=
-X-Gm-Gg: ASbGncuXpzv78yT8hViv76Ke7ih9PEWqI9EUqNutBREOAD6DayrizhLp5oEOMFS02ch
-	HIj1tiID9FuZg/yuwn4ScP75a93EFD0OkZYGAJOPG7CMsmCTfiJ5Z73TWv2jfB0BDtsIBrnn6Cj
-	xlseCjxbQ5fJ4Ra5LGA24Yu8VB6NrSirUIjdMEe6jz31Fd4i6UgAWWhawvNAr47Ku1z/rhejztj
-	28s3oYvHJlVLdTjMv476c0JpbPJhRPk/X6KU/vwudU0hyFmCWlDZNpjzBkTmRbeNZCkqCxoTY8H
-	6RcdCViCOhHfTMQh8Eqn3s+tCejnXnp2sLAD+xPTBd+u7XTF+cDxBwtH/6wmMmUXCRLOpCmPRRI
-	4rDDDJDuBx/VnLYEAcYJpxcdNZ48Pyh0U37u5cN+66u17G3MGf+Cdajy6aEhdt+NQzTFzG5jhDE
-	rx+4TI2FQ2E4sBIjXrguf5tXMeZupiK/aDjMCaagbsBhh26M0bYr0l51ODnEb2KrYQtg==
-X-Google-Smtp-Source: AGHT+IG/1MWVAemebTitOKmZq/g9dMUwTU7pG/CAEZvm3VcvBKvsMMZ7l7bsH2e1kdbTGrcpAq+yvw==
-X-Received: by 2002:a05:600c:5298:b0:456:15c7:ce90 with SMTP id 5b1f17b1804b1-4562e38a72fmr206995605e9.12.1753112139617;
-        Mon, 21 Jul 2025 08:35:39 -0700 (PDT)
-Received: from ?IPV6:2003:fa:af22:cf00:2208:a86d:dff:5ae9? (p200300faaf22cf002208a86d0dff5ae9.dip0.t-ipconnect.de. [2003:fa:af22:cf00:2208:a86d:dff:5ae9])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e7f2e8csm163861165e9.5.2025.07.21.08.35.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Jul 2025 08:35:39 -0700 (PDT)
-Message-ID: <9c49bd5f-bf40-4a02-9e91-e499134116c6@grsecurity.net>
-Date: Mon, 21 Jul 2025 17:35:37 +0200
+	s=arc-20240116; t=1753112217; c=relaxed/simple;
+	bh=qX9OX5uKEymNFW/yiEYO36KT36RPvL+hS8FQnSGm65A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CgBnDz+cslkgI7LcSSLgqJV8/HfUVQ70plhpw/f2nNzuxIgGAStCAVsFCgf6znCjUk2h1R7VP9/nXD4MYAOUzAZWCT7Blt1pl7Yg9o8ailrPQWPav8oqSOdtLVhVjxYzjJ/TgPkMsovwxXyRSzvOcHtt/f+A+Yl+Drh13RfMpDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uK6M5eBr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCCCBC4CEF4;
+	Mon, 21 Jul 2025 15:36:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753112216;
+	bh=qX9OX5uKEymNFW/yiEYO36KT36RPvL+hS8FQnSGm65A=;
+	h=From:To:Cc:Subject:Date:From;
+	b=uK6M5eBrKfLpy/xJ0pz4aEfCb5VMAO7en8gk/AOfHN7aVptLtnu52K+FVnawQ7/Bw
+	 ibZo0OLQxlFKFrgFttU8MglZftnPEramIOvJga7o1IAJv6lYA1tk6GQ9vUqGbU41my
+	 Ot4oUSs3dHA2oImQefQMUs9YNzszzm2Vmrc84fqmZb8Kk42+KF1hIaOKMMH3X+uchm
+	 41Argg21e6JWQSOwZAGjjFz/jrW09AG1dDorfY/CuBJapYXqGr+VmPICiXgGokVco0
+	 8ZytN2/RMug9LXQ///4b1Ra3e75Zr7w5JRFv0IjHlQpEAlNqf13wJPu3UBpomm8sHo
+	 xyhgjXCugEFkQ==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan+linaro@kernel.org>)
+	id 1udsZJ-000000002Fd-1be2;
+	Mon, 21 Jul 2025 17:36:46 +0200
+From: Johan Hovold <johan+linaro@kernel.org>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Manivannan Sadhasivam <mani@kernel.org>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: [PATCH 0/3] PCI/pwrctrl: Fix device and OF node leaks
+Date: Mon, 21 Jul 2025 17:36:06 +0200
+Message-ID: <20250721153609.8611-1-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.49.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 00/23] Enable CET Virtualization
-To: Chao Gao <chao.gao@intel.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, x86@kernel.org, seanjc@google.com,
- pbonzini@redhat.com, dave.hansen@intel.com
-Cc: rick.p.edgecombe@intel.com, mlevitsk@redhat.com, john.allen@amd.com,
- weijiang.yang@intel.com, xin@zytor.com, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>
-References: <20250704085027.182163-1-chao.gao@intel.com>
-Content-Language: en-US, de-DE
-From: Mathias Krause <minipli@grsecurity.net>
-Autocrypt: addr=minipli@grsecurity.net; keydata=
- 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
- RzDVkdgPJkL/NFTKZHo5foFXNi89kA==
-In-Reply-To: <20250704085027.182163-1-chao.gao@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 04.07.25 10:49, Chao Gao wrote:
-> The FPU support for CET virtualization has already been merged into the tip
-> tree. This v11 adds Intel CET virtualization in KVM and is based on
-> tip/master plus Sean's MSR cleanups. For your convenience, it is also
-> available at
-> 
->   https://github.com/gaochaointel/linux-dev cet-v11
-> 
-> Changes in v11 (Most changes are suggested by Sean. Thanks!):
-> 1. Rebased onto the latest tip tree + Sean's MSR cleanups
-> 2. Made patch 1's shortlog informative and accurate
-> 3. Slotted in two cleanup patches from Sean (patch 3/4)
-> 4. Used KVM_GET/SET_ONE_REG ioctl for userspace to read/write SSP.
->    still assigned a KVM-defined MSR index for SSP but the index isn't
->    part of uAPI now.
-> 5. Used KVM_MSR_RET_UNSUPPORTED to reject accesses to unsupported CET MSRs
-> 6. Synthesized triple-fault when reading/writing SSP failed during
->    entering into SMM or exiting from SMM
-> 7. Removed an inappropriate "quirk" in v10 that advertised IBT to userspace
->    when the hardware supports it but the host does not enable it.
-> 8. Disabled IBT/SHSTK explicitly for SVM to avoid them being enabled on
->    AMD CPU accidentally before AMD CET series lands. Because IBT/SHSTK are
->    advertised in KVM x86 common code but only Intel support is added by
->    this series.
-> 9. Re-ordered "Don't emulate branch instructions" (patch 18) before
->    advertising CET support to userspace.
-> 10.Added consistency checks for CR4.CET and other CET MSRs during VM-entry
->    (patches 22-23)
-> 
-> [...]
+This series fixes some pwrctrl device and OF node leaks spotted while
+discussing the recent pwrctrl-related (ASPM and probe) regressions on
+Qualcomm platforms.
 
-I tested this with your work-in-progress QEMU support branch from [1]
-and it worked well on my Alder Lake NUC (i7-1260P).
+Johan
 
-The host kernel has IBT and user shadow stacks enabled, so does the
-guest kernel. KUT CET tests[2] ran fine on the host as well as in the
-guest, i.e. nested works too.
 
-Therefore,
+Johan Hovold (3):
+  PCI/pwrctrl: Fix device leak at registration
+  PCI/pwrctrl: Fix device and OF node leak at bus scan
+  PCI/pwrctrl: Fix device leak at device stop
 
-Tested-by: Mathias Krause <minipli@grsecurity.net>
+ drivers/pci/bus.c    | 14 +++++++++-----
+ drivers/pci/probe.c  | 19 ++++++++++++++++---
+ drivers/pci/remove.c |  2 ++
+ 3 files changed, 27 insertions(+), 8 deletions(-)
 
-[1] https://github.com/gaochaointel/qemu-dev#qemu-cet
-[2]
-https://lore.kernel.org/kvm/20250626073459.12990-1-minipli@grsecurity.net/
+-- 
+2.49.1
 
-Thanks,
-Mathias
 
