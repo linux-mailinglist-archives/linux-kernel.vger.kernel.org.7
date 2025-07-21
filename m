@@ -1,214 +1,143 @@
-Return-Path: <linux-kernel+bounces-739647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 673EBB0C920
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:55:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 412CFB0C923
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:55:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 190EB1AA74DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:54:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5196A1C21E07
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6672E091D;
-	Mon, 21 Jul 2025 16:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="hfbxxqgJ"
-Received: from sender4-op-o16.zoho.com (sender4-op-o16.zoho.com [136.143.188.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E4DE2E11B6;
+	Mon, 21 Jul 2025 16:54:27 +0000 (UTC)
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901402E1726
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 16:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753116845; cv=pass; b=CEJY4RnAlJJP21wUTorUNmTVX3KRY9ILS/TTY7/esEFSrUnS5IujPEaOIgNtmzZw/XyA0wNmRKMr9U2gw8Gt45m9epmeaOYtmJ7dMG0tZrlNLw4BFU9Hcy1MNmuy0ditR9LCdnfLMTZlTGoIwvZUGWYMtx71EEigaB2AkHmfiwA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753116845; c=relaxed/simple;
-	bh=QJ1AN3pgrnkRRFsHQd3dral3Q97mnmgEr/XJyZFBQpY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EHjryGoxTSLHFtLewkw1kYhhi5AWOMscUIuBpd62p62P1ADqWELCSWnSJlXQLANq545QDAXVw7cDynRC1or9xEAFbiZ4dxlikmp4waGb9FsgKL/PB6vojGBob2vS+WbAG9ZMxx1+nEfBvtodDpbbwez+MqejLDcBpFB8weCRzQU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=hfbxxqgJ; arc=pass smtp.client-ip=136.143.188.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
-ARC-Seal: i=1; a=rsa-sha256; t=1753116835; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=MKAPnVyAcTHGD+zLp1oAroZ0g42bjNGxG74ebGA4Wub8AMmJFQKCsSXwMJS6d8r+SI6x0GGrd6KhAPLiPO5k78JvguWlApugNfk6kQuxzzZ059VVxOCURTFmvmnPSRDVlx2sd/uzbTZydb+CdOlC/mwSAD69DvOysl+HGKCztPI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753116835; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=kOSUOhO+RbomU5EIsPS0wq8BSGTy/PI3+gve27nrjhE=; 
-	b=Ly4QgOo6mpps86mRMGc/frhg7yA1aTVPwTipr5P8+dHYaGmlDWrx8Fo9N4AkHdIB6oFRYvVX+dlnWQxkJ3QFNYCi0i8mU0XDw5G6WU+hnLNUEMAj6GwOG8SCY808kaf4137ZytIL6Ji6ru89K3S7P7YuqSCcYN0M0E5aKfUuzP4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=pigmoral.tech;
-	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
-	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753116835;
-	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=kOSUOhO+RbomU5EIsPS0wq8BSGTy/PI3+gve27nrjhE=;
-	b=hfbxxqgJgMPBclMxpiTg4iHu03N6Y+wPv5w4XUtHcY5FXv2gbibnn7Dk/n+iwqqd
-	DusVKiiEQOga5I1oGgwrstyjA1oGbpcNqhz9IxRLscSKrnliol7A1kws33sK7ysiMAv
-	sdbqxuSOL+gbPAzfFuraksZrKze4wzSB4nyWI91U=
-Received: by mx.zohomail.com with SMTPS id 1753116832957800.6724570677823;
-	Mon, 21 Jul 2025 09:53:52 -0700 (PDT)
-From: Junhui Liu <junhui.liu@pigmoral.tech>
-Date: Tue, 22 Jul 2025 00:53:11 +0800
-Subject: [PATCH 2/2] riscv: mm: Use mmu-type from FDT to limit SATP mode
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E5AB2E092A;
+	Mon, 21 Jul 2025 16:54:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753116867; cv=none; b=KKlLKlMQeCieubDPamFEsac0szpaToYNyO2GxruM9yyFO5U3zMHn80m6pE/f/VL59cP0Q1RCAz94zSIpqyhiMfJXAgs/vwOidm0OmM6LB67xsWvsdb42sYu4VCBg0WUGj83eE9kwRkYVlBfJDa2+RQLgZB3kWTk36UcKJDVjVdw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753116867; c=relaxed/simple;
+	bh=9zScX5PNe0+7/FgZals5GcxzDyjHrEVpWnihwf3NZ3Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jJziPqhc9LHsYecBE9CRf/hMheT6dVOhUVPKm3QyNEKsJnp1wWiSxVudaupPBAS5gGUpOi2nuO7+pPy2gCyRg32Svl8WeGxKH9Q45xZPDinpSs2qq/12fcggixoPwDA6P0+vSwYnaLmreqvkHlx+K5alyPkNLt6JPiTrJ5kxQ8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-234d3261631so36192645ad.1;
+        Mon, 21 Jul 2025 09:54:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753116864; x=1753721664;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=L0iZETPpNVIspnegsemsZ7mwLpZ1Y/g9GMuYWlB+K90=;
+        b=dylWwJGoCSEXUSaBf2+iV1wH0M9j6OYK/8c+MdgirwTT/5xWU+0SPze6RYtzw3SDC7
+         tgVeEO0/lyCDg4Ohy1xwsUE8oguS0G8TfAAmmVVDQc6Ozr4gosNJ5XZJrt3dpdjcQFoQ
+         IxmAQmnI9PQiUU2gZGqGrFIRiKIK+mPk4F0V7VssHqFNWa/ZtuqPVi7OZWuFEEOwsjtP
+         zCRejMtz3XedWmBZJjV5o0TStIkkBOn+MbUJbeWodjAbyyAXyLvZEHMNtmZPO3uJliqr
+         uAf0n8PPBwGdiGpQxep/n0Bzci9GXVcwVc+e/6YaGB1BXnVt9eM2hY1MsE0OnQ2HVP2i
+         eGbw==
+X-Forwarded-Encrypted: i=1; AJvYcCUhND4mFEFu11YK8SQwt/Wzi3Im9RGIL/Kdau3c0mL/yiqUCi3BuFd365haUPTthHThvDS9p8n+VsAe4usZ1KmJ@vger.kernel.org, AJvYcCXkQ9k7HtglUEJysqRp/bkynvWpXGIvpz38Url7LM/nA1WxQ4THZRbP/0i3xgoorQ0JWO5aFxNxtenjoHk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxvegPJVjawXPxU3R1S6upDHVWHavUhggwufjTxG0I5Txz0/5s
+	i+cLGmjN37q1ol/VKzGwVdPzlwqKNCXnhP5yOAZIaLqhm8LgCJn3bWKhHjss
+X-Gm-Gg: ASbGncv6Ro2GED4BaQzOR9Aj7pCsvjlhwrKs7z2DUFh9evQ5YgZou2cYIsK34Rpm9RN
+	3L6gBdMWO4A9qniI5iKpCvjDPeAc3cRvh3KcrNLb3CQ+y+g2BXtETBvn3V9tfy1NRNkARIKEboy
+	k+2f2cY80oizLb1+aj63y7bjUQiV6liKamCU1x0cFBwa7WnvIb1dbAurWWvDlsDwTU9hruaBHRJ
+	MBDLnmw9A1xtpqN0zlMhaNCm9j07OYJSK7YshlYcgMR1wz7NSHQt/iX8C+e3MVI3Hjcm0fL2nUz
+	g2gBdrlT6lx4JJtWfiR1q8yxlYbXMUkOWw9jEVN7WEG/ea4G+WxCKenI2sBCnuWGLxpkS6HsXG8
+	qzeMSxoXWqIUVQ4gnTLKj8vohnZkfJEnW5jhBW+JXhekRmGyxFtIeGPtZI0g=
+X-Google-Smtp-Source: AGHT+IG4I834Pck48TSvkbY8IpDj4iVjmIr8H73mP5ZcsJhvdJqECZS2+m8rFtqDwo0CMscLP0VA8w==
+X-Received: by 2002:a17:902:f906:b0:234:d1f2:da31 with SMTP id d9443c01a7336-23e3b766079mr140974035ad.2.1753116864398;
+        Mon, 21 Jul 2025 09:54:24 -0700 (PDT)
+Received: from localhost (c-73-158-218-242.hsd1.ca.comcast.net. [73.158.218.242])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-23e3b6b6032sm60833035ad.86.2025.07.21.09.54.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Jul 2025 09:54:24 -0700 (PDT)
+From: Stanislav Fomichev <sdf@fomichev.me>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	sd@queasysnail.net,
+	andrew+netdev@lunn.ch,
+	horms@kernel.org,
+	shuah@kernel.org,
+	sdf@fomichev.me,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Cosmin Ratiu <cratiu@nvidia.com>
+Subject: [PATCH net 1/2] macsec: set IFF_UNICAST_FLT priv flag
+Date: Mon, 21 Jul 2025 09:54:22 -0700
+Message-ID: <20250721165423.990313-1-sdf@fomichev.me>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250722-satp-from-fdt-v1-2-5ba22218fa5f@pigmoral.tech>
-References: <20250722-satp-from-fdt-v1-0-5ba22218fa5f@pigmoral.tech>
-In-Reply-To: <20250722-satp-from-fdt-v1-0-5ba22218fa5f@pigmoral.tech>
-To: Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Junhui Liu <junhui.liu@pigmoral.tech>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753116810; l=4789;
- i=junhui.liu@pigmoral.tech; s=20250507; h=from:subject:message-id;
- bh=QJ1AN3pgrnkRRFsHQd3dral3Q97mnmgEr/XJyZFBQpY=;
- b=JLx3Nl7w18vU5d64OvMojdv/RWuMH0wtWLmMVHao9FJBV9OAYA1hNAWy0VzTm6MOyGD4g6jGF
- vVItPnxfRdqBwy7/Eo6kWc7Bxf7ioZmrPhH385zbEp8fx4eoRbUFZpx
-X-Developer-Key: i=junhui.liu@pigmoral.tech; a=ed25519;
- pk=d3i4H2mg9LUn4SQemoLAjLRQy0nTcyknIv6zgKMwiBA=
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
 
-Some RISC-V implementations may hang when attempting to write an
-unsupported SATP mode, even though the latest RISC-V specification
-states such writes should have no effect. To avoid this issue, the
-logic for selecting SATP mode has been refined:
+Cosmin reports the following locking issue:
 
-The kernel now determines the SATP mode limit by taking the minimum of
-the value specified by the kernel command line (noXlvl) and the
-"mmu-type" property in the device tree (FDT). If only one is specified,
-use that.
-- If the resulting limit is sv48 or higher, the kernel will probe SATP
-  modes from this limit downward until a supported mode is found.
-- If the limit is sv39, the kernel will directly use sv39 without
-  probing.
+  # BUG: sleeping function called from invalid context at
+  kernel/locking/mutex.c:275
+  #   dump_stack_lvl+0x4f/0x60
+  #   __might_resched+0xeb/0x140
+  #   mutex_lock+0x1a/0x40
+  #   dev_set_promiscuity+0x26/0x90
+  #   __dev_set_promiscuity+0x85/0x170
+  #   __dev_set_rx_mode+0x69/0xa0
+  #   dev_uc_add+0x6d/0x80
+  #   vlan_dev_open+0x5f/0x120 [8021q]
+  #  __dev_open+0x10c/0x2a0
+  #  __dev_change_flags+0x1a4/0x210
+  #  netif_change_flags+0x22/0x60
+  #  do_setlink.isra.0+0xdb0/0x10f0
+  #  rtnl_newlink+0x797/0xb00
+  #  rtnetlink_rcv_msg+0x1cb/0x3f0
+  #  netlink_rcv_skb+0x53/0x100
+  #  netlink_unicast+0x273/0x3b0
+  #  netlink_sendmsg+0x1f2/0x430
 
-This ensures SATP mode selection is safe and compatible with both
-hardware and user configuration, minimizing the risk of hangs.
+Which is similar to recent syzkaller reports in [0] and [1] and triggers
+because macsec does not advertise IFF_UNICAST_FLT although it has proper
+ndo_set_rx_mode callback that takes care of pushing uc/mc addresses
+down to the real device.
 
-Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
+In general, dev_uc_add call path is problematic for stacking
+non-IFF_UNICAST_FLT because we might grab netdev instance lock under
+addr_list_lock spinlock, so this is not a systemic fix.
+
+0: https://lore.kernel.org/netdev/686d55b4.050a0220.1ffab7.0014.GAE@google.com
+1: https://lore.kernel.org/netdev/68712acf.a00a0220.26a83e.0051.GAE@google.com/
+Link: 2aff4342b0f5b1539c02ffd8df4c7e58dd9746e7.camel@nvidia.com
+Fixes: 7e4d784f5810 ("net: hold netdev instance lock during rtnetlink operations")
+Reported-by: Cosmin Ratiu <cratiu@nvidia.com>
+Tested-by: Cosmin Ratiu <cratiu@nvidia.com>
+Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
 ---
- arch/riscv/kernel/pi/fdt_early.c | 40 ++++++++++++++++++++++++++++++++++++++++
- arch/riscv/kernel/pi/pi.h        |  1 +
- arch/riscv/mm/init.c             | 11 ++++++++---
- 3 files changed, 49 insertions(+), 3 deletions(-)
+ drivers/net/macsec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/riscv/kernel/pi/fdt_early.c b/arch/riscv/kernel/pi/fdt_early.c
-index 9bdee2fafe47e4a889132ebe2d0d360717c464e9..a12ff8090f190331f555d9e22ce4d1b3e940bceb 100644
---- a/arch/riscv/kernel/pi/fdt_early.c
-+++ b/arch/riscv/kernel/pi/fdt_early.c
-@@ -3,6 +3,7 @@
- #include <linux/init.h>
- #include <linux/libfdt.h>
- #include <linux/ctype.h>
-+#include <asm/csr.h>
- 
- #include "pi.h"
- 
-@@ -183,3 +184,42 @@ bool fdt_early_match_extension_isa(const void *fdt, const char *ext_name)
- 
- 	return ret;
- }
-+
-+/**
-+ *  set_satp_mode_from_fdt - determine SATP mode based on the MMU type in fdt
-+ *
-+ * @dtb_pa: physical address of the device tree blob
-+ *
-+ *  Returns the SATP mode corresponding to the MMU type of the first enabled CPU,
-+ *  0 otherwise
-+ */
-+u64 set_satp_mode_from_fdt(uintptr_t dtb_pa)
-+{
-+	const void *fdt = (const void *)dtb_pa;
-+	const char *mmu_type;
-+	int node, parent;
-+
-+	parent = fdt_path_offset(fdt, "/cpus");
-+	if (parent < 0)
-+		return 0;
-+
-+	fdt_for_each_subnode(node, fdt, parent) {
-+		if (!fdt_node_name_eq(fdt, node, "cpu"))
-+			continue;
-+
-+		if (!fdt_device_is_available(fdt, node))
-+			continue;
-+
-+		mmu_type = fdt_getprop(fdt, node, "mmu-type", NULL);
-+		if (!mmu_type)
-+			break;
-+
-+		if (!strcmp(mmu_type, "riscv,sv39"))
-+			return SATP_MODE_39;
-+		else if (!strcmp(mmu_type, "riscv,sv48"))
-+			return SATP_MODE_48;
-+		break;
-+	}
-+
-+	return 0;
-+}
-diff --git a/arch/riscv/kernel/pi/pi.h b/arch/riscv/kernel/pi/pi.h
-index 21141d84fea603fdfc439e12a8c3216f1527c65f..3fee2cfddf7cfb8179af6f2d9b69a0d5e412fad7 100644
---- a/arch/riscv/kernel/pi/pi.h
-+++ b/arch/riscv/kernel/pi/pi.h
-@@ -14,6 +14,7 @@ u64 get_kaslr_seed(uintptr_t dtb_pa);
- u64 get_kaslr_seed_zkr(const uintptr_t dtb_pa);
- bool set_nokaslr_from_cmdline(uintptr_t dtb_pa);
- u64 set_satp_mode_from_cmdline(uintptr_t dtb_pa);
-+u64 set_satp_mode_from_fdt(uintptr_t dtb_pa);
- 
- bool fdt_early_match_extension_isa(const void *fdt, const char *ext_name);
- 
-diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index d03e02a92379f2338a4f4df0ab797a7859b83dfc..0f30fa875abf92a201579ac6469958b0d95b5a58 100644
---- a/arch/riscv/mm/init.c
-+++ b/arch/riscv/mm/init.c
-@@ -816,6 +816,7 @@ static __meminit pgprot_t pgprot_from_va(uintptr_t va)
- 
- #if defined(CONFIG_64BIT) && !defined(CONFIG_XIP_KERNEL)
- u64 __pi_set_satp_mode_from_cmdline(uintptr_t dtb_pa);
-+u64 __pi_set_satp_mode_from_fdt(uintptr_t dtb_pa);
- 
- static void __init disable_pgtable_l5(void)
- {
-@@ -855,18 +856,22 @@ static void __init set_mmap_rnd_bits_max(void)
-  * underlying hardware: establish 1:1 mapping in 4-level page table mode
-  * then read SATP to see if the configuration was taken into account
-  * meaning sv48 is supported.
-+ * The maximum SATP mode is limited by both the command line and the "mmu-type"
-+ * property in the device tree, since some platforms may hang if an unsupported
-+ * SATP mode is attempted.
-  */
- static __init void set_satp_mode(uintptr_t dtb_pa)
- {
- 	u64 identity_satp, hw_satp;
- 	uintptr_t set_satp_mode_pmd = ((unsigned long)set_satp_mode) & PMD_MASK;
--	u64 satp_mode_cmdline = __pi_set_satp_mode_from_cmdline(dtb_pa);
-+	u64 satp_mode_limit = min_not_zero(__pi_set_satp_mode_from_cmdline(dtb_pa),
-+					   __pi_set_satp_mode_from_fdt(dtb_pa));
- 
- 	kernel_map.page_offset = PAGE_OFFSET_L5;
- 
--	if (satp_mode_cmdline == SATP_MODE_48) {
-+	if (satp_mode_limit == SATP_MODE_48) {
- 		disable_pgtable_l5();
--	} else if (satp_mode_cmdline == SATP_MODE_39) {
-+	} else if (satp_mode_limit == SATP_MODE_39) {
- 		disable_pgtable_l5();
- 		disable_pgtable_l4();
- 		return;
-
+diff --git a/drivers/net/macsec.c b/drivers/net/macsec.c
+index 7edbe76b5455..4c75d1fea552 100644
+--- a/drivers/net/macsec.c
++++ b/drivers/net/macsec.c
+@@ -3868,7 +3868,7 @@ static void macsec_setup(struct net_device *dev)
+ 	ether_setup(dev);
+ 	dev->min_mtu = 0;
+ 	dev->max_mtu = ETH_MAX_MTU;
+-	dev->priv_flags |= IFF_NO_QUEUE;
++	dev->priv_flags |= IFF_NO_QUEUE | IFF_UNICAST_FLT;
+ 	dev->netdev_ops = &macsec_netdev_ops;
+ 	dev->needs_free_netdev = true;
+ 	dev->priv_destructor = macsec_free_netdev;
 -- 
 2.50.1
 
