@@ -1,113 +1,117 @@
-Return-Path: <linux-kernel+bounces-739365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08D1BB0C564
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:41:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 197D9B0C569
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:42:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2D3E1AA0595
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:41:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A07913ADB0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:41:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E606F43AB7;
-	Mon, 21 Jul 2025 13:41:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CAD2D97BD;
+	Mon, 21 Jul 2025 13:41:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wrRB0sKc"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fqtu77+a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB312576
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 13:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FF2043AB7;
+	Mon, 21 Jul 2025 13:41:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753105275; cv=none; b=h96SrjGSi88Eh91qio+CJsreA6WeaV0hYtCkO5c1kt/T8e/sIdfiPpkNLKRAunTpq+s5KCb40jJJjNO6zT70PVg/CWTA6i8D3+6a8rhd3DcaFas1QnU8i63Ddvg2COJ1Z/xOAmj5ZxOxRM8Yzpnfylih4fpesNxQ/14pca634/c=
+	t=1753105299; cv=none; b=RJ1Vyi4ntYRqTFzfyRPCfoFO3uP+JD8wbzqDKoWfV23Wi5Bm4JSNLP7cVQxnSTE83lDWSkMhMP7YhD6PX3niy9XYmaMWjqDmSmw+2aYbMHbE4HahXdF8UfliZPLkRkrlKVLykT8QQUZQ9ykW5j82hCHGexpiMksSZWoN71Tm6N0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753105275; c=relaxed/simple;
-	bh=X/CMxu+Wcc1BLZ6yTXXEuwdplxLvqklxHi3I0HvZ1sc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ifM5YhghJ0ESVQ9T7nOORsUmH3F76dWjD8YKCtkEzlbOVLPscVamJH6U8iRsoAxVrusoD/b2MfAsecJ9Q8qhxfJVQjFJXc/fKiVWcGTPvrt9iB2EJ74eSRSVJeUon6Z1ud6qreQ24kW+t1Y+dyJk39741uAHk/Kvg9+H0hl2C/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wrRB0sKc; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3e2429bd4b3so290985ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 06:41:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753105273; x=1753710073; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X/CMxu+Wcc1BLZ6yTXXEuwdplxLvqklxHi3I0HvZ1sc=;
-        b=wrRB0sKcLt8ItuXNGEuBC4QUphJS4jnezVcosHeEGddWYOgiFYpJ6KawlZ8YT70xWU
-         CPViz5NSK3ZBtupsi8FvTw9+TqsxEOkls0KKzxrFYBVvvj03gl+DJRO6rKinT+qlJ8+n
-         3V3IAkqRrlZbQJal1I/+4tNxGoDL0MCS3EMHScMABix0MawjkzBaTwz5NqvruGC04ZEc
-         QFA/Uf6GmYWuiZQIEd+6Kr6Cci7R50DKiZmtgV85zXjFoAqMVKcunXIj/R9UIbMziFQ9
-         9KK3Rw3aOz0oVen8pwOb6A4IWp/3MtZD1rJldRhnrAS5RRW/EZxVH1+EhZiX8W8mkpps
-         56TQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753105273; x=1753710073;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X/CMxu+Wcc1BLZ6yTXXEuwdplxLvqklxHi3I0HvZ1sc=;
-        b=RfDGwZAUyUjOHQ0wjE9VrvGo2Y4cXuNTwB47ZgUSx4WYGZHxziwX5mHxZvsYjI5IG7
-         0XmmzMjLLC5U5vSe4HBuyet14fM1bW+mKLXNBi9b53yuCRraeV0rUmlsejLPZX8Cg9bP
-         O717E8V/t1h2rVMP6ja0GJkiOfTvbCgmJ8052k+BXgF4Hlp+7+fm4yjhS3LkYmiOVCRt
-         a6x/uCIg97MQ9B8SQARR1HE8lZUeDZdT8iNruP+YTEz4sy9w7Als0GS0S8DkEcUia5n1
-         ydW4VUBp4aLyyz8sqn3uTyjvUBgWcw108Bflq5zPBdYpRNaTDzGLZSP3sApQh+mzY9zb
-         Khug==
-X-Forwarded-Encrypted: i=1; AJvYcCW0N/33Wr/9a5hmByfsld+EkKC/giG8JZWfugzbXltObhgzocpPsoQCyeJ7rws15YCzbhpTGN1ynNqjG+0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTZnrbJWvrN78qlqR0DQ1uM97XPy+tJy3sCSQ2T8w36rVL6/ED
-	fRJggajBrnMqSF1N57tV0soxEn2xMxIUfcNOWltngRuDKplb3MqFz1jlJYtAp1q2V0V/p9ERwq3
-	8zhc5FSarNAT3Imw+07xdR96aPBQjhe7osRUTFPHg
-X-Gm-Gg: ASbGncsQwLGFpd74uGVCTCwKjC/Jo/MOdijojrzR/j0afPzZyX7bDA3dEvk+QxKbhDX
-	3intLsYysuFqWBleYeM5fLUy+GPTXI7WbZ312F9ImxTmYefLKJVLK7ahjFhiXk5H60vLUQjFhf3
-	qBDqrsLa/9oHPpWLXfltVmbMVxqMTx6ixmm0l+xdL8A2+7lUeVuZYbMuWbDdEjQC84ncd0MjhoT
-	tUIXovy
-X-Google-Smtp-Source: AGHT+IHV83LP0tfjFwhzfm+LStb9AHAjPM8BS0BOqo7MAWn3Qp4XExy+AH9x4hJvY+P5EHS3w8P7pBTIRquISuawbZ4=
-X-Received: by 2002:a05:6e02:3c8a:b0:3e0:58e6:d8a3 with SMTP id
- e9e14a558f8ab-3e2a18446a6mr5536615ab.27.1753105272688; Mon, 21 Jul 2025
- 06:41:12 -0700 (PDT)
+	s=arc-20240116; t=1753105299; c=relaxed/simple;
+	bh=fCaUNy1bbmR7aJ36J+3WanaPnZLmOnroe61ros3lflQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=kGiI2A1OizdYgtMDNk/7SbSPOakcB6PqVAdvo6mTJQcUO6QF6IxRgOMk8ahKJRepzYFmxCgVikYjHRcDVSN2WqMPVEBlMbdl0e5kFJ5LHNIzz45ue1ujvuxQ1ozjFE+acQCAHQPOacxWbYQZ69f89aUSrDvAM0AqejTe7g/KNX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fqtu77+a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51077C4CEED;
+	Mon, 21 Jul 2025 13:41:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753105298;
+	bh=fCaUNy1bbmR7aJ36J+3WanaPnZLmOnroe61ros3lflQ=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=Fqtu77+aaI2r2JSzT1Be6IbOUxE8+3ZW0S3gR9XI/WurgG7dBuF0WBwtaC75hHju7
+	 OjJSYip1YAq0+9ArXZ2L0MzmUJoGxoO59EvIsYpd3IozQbxUGOGbuaUWb/38IEoqVn
+	 tNIfQjw4QLKXlCLcypZVL5Qng7iZDnv6Kc8nod+BTGiaV+B13NPk5uXcbhNn5yUkT8
+	 OVLeLx8WXVdkMVl8dkMaOU80tZYUT+SOUxWpjSeu+96c1VywsSAANqee8JnSpkqmbn
+	 XTNIbW0RKOI8Zsj+ZMfovHmTdUWRg7503/RIMNYnWdiqGV5d+fg1KhFiZR19e6o1++
+	 Wo5dolFAOmppA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250714164405.111477-1-irogers@google.com> <20250714164405.111477-12-irogers@google.com>
- <inu4jmw3jpnbhpaqjou27sn7m5zlzu3ksiuhir42wz4yxj2nvz@xpekkgpqldo7>
-In-Reply-To: <inu4jmw3jpnbhpaqjou27sn7m5zlzu3ksiuhir42wz4yxj2nvz@xpekkgpqldo7>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 21 Jul 2025 06:41:00 -0700
-X-Gm-Features: Ac12FXwC2QRBmn2fy99vXH91ei2LVIiaugmsdPaTLby6WW6k-lmNtGPaGk-2Xf0
-Message-ID: <CAP-5=fWKKtETkDX48KomxZZa4YiRwhOr5oAOHxkb=a3i5rTmyg@mail.gmail.com>
-Subject: Re: [PATCH v7 11/16] perf ilist: Add new python ilist command
-To: Gautam Menghani <gautam@linux.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>, 
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Collin Funk <collin.funk1@gmail.com>, 
-	Howard Chu <howardchu95@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
-	Andi Kleen <ak@linux.intel.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, 
-	Thomas Richter <tmricht@linux.ibm.com>, Tiezhu Yang <yangtiezhu@loongson.cn>, 
-	Thomas Falcon <thomas.falcon@intel.com>, Chun-Tse Shao <ctshao@google.com>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 21 Jul 2025 15:41:34 +0200
+Message-Id: <DBHRYM3JB4NK.1QLZ4RA7NVI25@kernel.org>
+Subject: Re: [PATCH 2/3] device: rust: expand documentation for Device
+Cc: "Alice Ryhl" <aliceryhl@google.com>, <rafael@kernel.org>,
+ <ojeda@kernel.org>, <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>,
+ <gary@garyguo.net>, <bjorn3_gh@protonmail.com>, <lossin@kernel.org>,
+ <a.hindborg@kernel.org>, <tmgross@umich.edu>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+To: "Greg KH" <gregkh@linuxfoundation.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250717224806.54763-1-dakr@kernel.org>
+ <20250717224806.54763-3-dakr@kernel.org> <aH4juIVmj8euE1CA@google.com>
+ <2025072125-twine-curling-db0b@gregkh> <aH4telYyyexiMbjx@google.com>
+ <DBHQ2ZDUHLSW.LHWUTFQO1E60@kernel.org>
+ <2025072110-buddhism-accompany-0682@gregkh>
+In-Reply-To: <2025072110-buddhism-accompany-0682@gregkh>
 
-On Mon, Jul 21, 2025 at 12:32=E2=80=AFAM Gautam Menghani <gautam@linux.ibm.=
-com> wrote:
+On Mon Jul 21, 2025 at 3:17 PM CEST, Greg KH wrote:
+> On Mon, Jul 21, 2025 at 02:13:14PM +0200, Danilo Krummrich wrote:
+>> On Mon Jul 21, 2025 at 2:07 PM CEST, Alice Ryhl wrote:
+>> > The connection is that to request an irq you must have a &Device<Bound=
+>,
+>> > so if you can only obtain a &Device<Bound> to a bus device, then that
+>> > means that you can never request an irq for a class device.
+>>=20
+>> As mentioned in my other reply, a class device never owns resources of a=
+ "real"
+>> device such as an IRQ.
+>>=20
+>> A USB device, which represents a real device on a bus, is a bus device, =
+in your
+>> example the class device is the input device.
+>>
 >
-> Hi Ian,
->
-> Thanks for this. I tested this on both x86 and IBM pseries machine, the
-> entire series LGTM
->
-> Tested-by: Gautam Menghani <gautam@linux.ibm.com>
+> Just to confuse things a bit more (sorry), there are also "USB class
+> devices" that represent USB devices that use the "generic" USB interface
+> to userspace api.  You can find these by searching for
+> usb_register_dev().
 
-Many thanks,
-Ian
+In this case the struct usb_interface represents a bus device, that can bec=
+ome
+associated with e.g. a class device of the usbmisc class. :)
+
+So, yeah, there are multiple USB devices, some of them are bus devices, som=
+e of
+them are class devices.
+
+I'm not sure about the exact topology, but AFAIK USB has different bus devi=
+ce
+types representing the hierarchy, i.e. a device structure for the entire "r=
+eal"
+USB device and another one for its interfaces.
+
+> Note, this is different from the drivers/usb/class/ drivers, which
+> represent various "USB class protocol" that the USB.org group defines,
+> and those talk to userspace through the various common class apis
+> depending on the specific device type (input, network, etc.) and are USB
+> bus drivers.
+>
+> Naming is hard, wait until you learn about "usb gadget" a word we had to
+> invent to describe the thing :)
+>
+> thanks,
+>
+> greg k-h
+
 
