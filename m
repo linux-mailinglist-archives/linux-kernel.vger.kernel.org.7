@@ -1,146 +1,76 @@
-Return-Path: <linux-kernel+bounces-739940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A97BB0CD5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 00:43:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84881B0CD5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 00:43:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1DE97B1D67
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:41:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6FC96C1A0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:43:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3D4242D71;
-	Mon, 21 Jul 2025 22:42:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC0D242D63;
+	Mon, 21 Jul 2025 22:43:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DlJ/xd1I"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="c+YxvjEw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3AF1A29A;
-	Mon, 21 Jul 2025 22:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34FDE8F40
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 22:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753137777; cv=none; b=svdNEde2RrrNGhE6D2pST+Jbj1b3kyDYL6fm2KfTL9HWe3I9Edl+5Ba4yra6E1JC9RRjB7XfF8hzMKgesYzzMSfnQ02etq3fVoIHVSsk88b5G6u+msuZx6+Dw2AA1iLsYs3xLcrc+HtBPFFyE775PZXgy/sYFthFkt0VTh43sSk=
+	t=1753137807; cv=none; b=G2LaF/JEhB0pWKVxYYNwZ8gZTNiVs7nXh0J6bjQD4eKPfh+/mck8D5/X+VeAamrp+dSUVDnV1UCj70u+g1fKY6C0GYmH57I2eplYGr4SvDsYvgBq91KXkfG4Zt0aOzobpgKCZN2shoy0gg2deFErgx8U3V0uogzAn2MNvDkFYV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753137777; c=relaxed/simple;
-	bh=2wejYBimpTDlaBdxNiYjUZaXo5+6xL2dqLH8Nnb9TMQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GyWAUlfxYV0HmdVWzIMZv7eF/Ll+JoNbS3j5gOIZCIAOqszdxrUJbvTh6+fT5+zlRxjjvokVIYZV9F0WN16NDkNhHlGL9cET/MNoLZn9/b7CkGdJJua5AFAmPpKiRxGZiljELkhjmZhQbel+KkO5WzLHlMoGWv019lPQWXSfIHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DlJ/xd1I; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a57ae5cb17so2367228f8f.0;
-        Mon, 21 Jul 2025 15:42:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753137774; x=1753742574; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oSRRlwY5JEnlUl63++2+dkJU6k1aCDj5YRyr36FiVAU=;
-        b=DlJ/xd1IY8M69ogeYlk/OMo0ygQ1nI0i5AZ0jeN9ZBCh72ULPl8CjUiWA8PkLm1zH8
-         eC8UBTEzpO8adEettlFLH1N67elghy2kdpnbW2VHq+F1hQOtwM7LGsB/bgx/gypjMPdG
-         PfegUlTJh7ZcnVkvvw/xMrJe+DtwvsXX/F4x52yCXRx1fJlqTX3s/xMTWIiFjopcHYz0
-         pFHcmQ05IMmRm+jq75RFSwKfYKOBD5Z+SsJz5lvNu9gMXN2M2PSzbb8IJMDfTVLPbyWI
-         A0coZomck4WyChhzuCdatajtEkUld5WRBDK77VTMxbP+TTQ9i89xG1oXXmAUz8zgWxuB
-         Q4Vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753137774; x=1753742574;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oSRRlwY5JEnlUl63++2+dkJU6k1aCDj5YRyr36FiVAU=;
-        b=jwPQGdB6LWz/L3pdSYJh6b3khYuG30k81rJ2DJJMd/1ziENcYpwlu6K1uf6k96n7EO
-         keMbyH+WsVcKItjRu/YJK5NCf09ikerqoJQX1j8rfp/vBxHvbD/yEhrz6L9lCDubfEqu
-         WtOkURCc0rwkpxiVfPtkautj0FHi1FDFEPGtn98ry5VxOtgUaRZQxzIRh7pWJM3IQcwi
-         FL7jaoGjCO/a7S1nyUngipVpwoORUBgknlH6ckG8brGIAP+4ceNtVXoiPpuKMCcXXVQs
-         FVhz7digoQ4k0WxptwtE+cvubstrnFhf97xeCSVWV5WH//y7Q1biRoS2bJqJgmnJyX6D
-         9yZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFWTB0EuKk+sP/GDGinGLjF+IeC5ekb8loRW33b1saQ1aHQvgXolcNQXJWLjIe0Gqewa682t73c9qhelM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwC1C4wuffUDHnZabW9e3DcSGxAd/8oXPGNsdTPHYP3eaccdskM
-	u+HXf6+kStnHDxeF2gteLlkkvfPReeFeyqgTVLoYc1oZj5qv30u+GVG+
-X-Gm-Gg: ASbGnct8dl9AjgJHo4+oqOIIha9qSoBGeQ+p/vcqQEm888OjF92VmXxFp6JO/PY0Nnh
-	v1Nax5txdX8qjI0qtv8K8Vv1INEoVdYnDQJjPcuNY7GSEhOBR8dGS1pp2caRMD55fmv8i4LAyRf
-	0cOr7W7WUJ97398cmS28blbn0+kJf3FaKBtiHgVabyUU3vydYUTEoXtLfaTs9BfvDLzfSiUVpGD
-	Psw/GcDurEHtXdQ7UNqob2OGHWkqyUAQUax40q7oAwK9YJ2StoErPchh66VWp2Jmx49CuupB2Cl
-	tXIfp1ZVxfP38C2a2pi4r/nGhA16sgtr4oUg/558b/bD89+6OOtqOrny6nsMhhxVva6PH2yiAnG
-	T27NzcdAE2W8L+NQMFgFddz1sR61XzICRNQWvkQehE7kwpiUiJWVQ6Wbble2P2gOZ
-X-Google-Smtp-Source: AGHT+IFZbPQ/XrSfO0fzKP+fHbJt9WSoYRViWFOQc8U4eBQryUHTs8SX+BSMG4KmRKRPLPMFbYUafQ==
-X-Received: by 2002:a05:6000:290d:b0:3a4:ef30:a4c8 with SMTP id ffacd0b85a97d-3b60e4c4ae8mr17860548f8f.10.1753137773867;
-        Mon, 21 Jul 2025 15:42:53 -0700 (PDT)
-Received: from antoni-VivoBook-ASUSLaptop-X512FAY-K512FA ([78.211.68.92])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca487c1sm11668875f8f.41.2025.07.21.15.42.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 15:42:52 -0700 (PDT)
-Date: Tue, 22 Jul 2025 00:42:28 +0200
-From: Antoni Pokusinski <apokusinski01@gmail.com>
-To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzbot+fa88eb476e42878f2844@syzkaller.appspotmail.com
-Subject: Re: [PATCH] hpfs: add checks for ea addresses
-Message-ID: <20250721224228.nzt7l7knum5hupgl@antoni-VivoBook-ASUSLaptop-X512FAY-K512FA>
-References: <20250720142218.145320-1-apokusinski01@gmail.com>
- <784a100e-c848-3a9c-74ef-439fa12df53c@redhat.com>
+	s=arc-20240116; t=1753137807; c=relaxed/simple;
+	bh=N7MEnGPgiNjbf9/JxewUUYr9KxuBLTGr0DWG7tEXrhI=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=mfK7YzYXIr8mqYAw13cw7NslfPt/cEPZyBCemeCDpBkYxevTeuLqQK2lznvaamg1xveKA6t4Gs0/CF4A3gAVCUMbFFsr/01dl8rOqhEiiP9nQvxZltFnwpTJrlxalVpZJP9jYeKTPhT4Et6F96LUt/h47uHiFia2XfuN7LSYzvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=c+YxvjEw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6830FC4CEED;
+	Mon, 21 Jul 2025 22:43:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1753137806;
+	bh=N7MEnGPgiNjbf9/JxewUUYr9KxuBLTGr0DWG7tEXrhI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=c+YxvjEwL4sJ6gBiebFHp8LJSrbzxUM4Gr3Q105ypgeRo2A4vGcxBEvZ6zhSMd0Nr
+	 P9RCDcsCcplwzVITVpXHnAJ9iJmKzvPdY+ygNpQuyzvSEeQfYS8sappXrpEE9bPG1I
+	 G7PtE08RDkyJpS7S2xV2PoROwJIJ8KScLL50h7Es=
+Date: Mon, 21 Jul 2025 15:43:25 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: linux-kernel@vger.kernel.org, "Eric W. Biederman"
+ <ebiederm@xmission.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Alexey Gladkov
+ <legion@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, MengEn Sun
+ <mengensun@tencent.com>, Thomas =?ISO-8859-1?Q?Wei=DFschuh?=
+ <linux@weissschuh.net>
+Subject: Re: [PATCH RESEND v2 1/2] ucount: Fix atomic_long_inc_below()
+ argument type
+Message-Id: <20250721154325.476b87e09aa5d778bcead478@linux-foundation.org>
+In-Reply-To: <20250721174610.28361-1-ubizjak@gmail.com>
+References: <20250721174610.28361-1-ubizjak@gmail.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <784a100e-c848-3a9c-74ef-439fa12df53c@redhat.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
-Thanks for the feedback.
+On Mon, 21 Jul 2025 19:45:57 +0200 Uros Bizjak <ubizjak@gmail.com> wrote:
 
-On Mon, Jul 21, 2025 at 09:51:22PM +0200, Mikulas Patocka wrote:
-> Hi
+> The type of u argument of atomic_long_inc_below() should be long
+> to avoid unwanted truncation to int.
 > 
-> I've got an email that shows these syslog lines:
-> 
-> hpfs: filesystem error: warning: spare dnodes used, try chkdsk
-> hpfs: You really don't want any checks? You are crazy...
-> hpfs: hpfs_map_sector(): read error
-> hpfs: code page support is disabled
-> ==================================================================
-> BUG: KASAN: use-after-free in strcmp+0x6f/0xc0 lib/string.c:283
-> Read of size 1 at addr ffff8880116728a6 by task syz-executor411/6741
-> 
-> 
-> It seems that you deliberately turned off checking by using the parameter 
-> check=none.
-> 
-> The HPFS driver will not check metadata for corruption if "check=none" is 
-> used, you should use the default "check=normal" or enable extra 
-> time-consuming checks using "check=strict".
-> 
+> Fixes: f9c82a4ea89c ("Increase size of ucounts to atomic_long_t")
 
-Yes, that's right. If we had "check!=none", then the issue would not come
-up in syzkaller due to the checks performed on the extended attribues in the fnode.
-
-I've just tried to confim that by using the "check=normal" and I did not get
-the KASAN warning, as expected.
-
-> The code that checks extended attributes in the fnode is in the function 
-> hpfs_map_fnode, the branch "if ((fnode = hpfs_map_sector(s, ino, bhp, 
-> FNODE_RD_AHEAD))) { if (hpfs_sb(s)->sb_chk) {" - fixes for checking 
-> extended attributes should go there.
-> 
-> If you get a KASAN warning when using "check=normal" or "check=strict", 
-> report it and I will fix it; with "check=none" it is not supposed to work.
-> 
-> Mikulas
-> 
-
-I'm just wondering what should be the expected kernel behaviour in the situation where
-"check=none" and the "ea_offs", "acl_size_s", "ea_size_s" fields of fnode are corrupt?
-If we assume that in such case running into some undefined behavior (which is accessing
-an unknown memory area) is alright, then the code does not need any changes.
-But if we'd like to prevent it, then I think we should always check the extended
-attribute address regardless of the "check" parameter, as demonstrated
-in the patch.
-
-Kind regards,
-Antoni
+Please (always!) provide a description of the userspace-visible effects
+of the bug.  That way I (and others) can decide whether the fix should
+be backported.  And people will be able to determine whether this patch
+may fix problems which they are observing.  Thanks.
 
 
