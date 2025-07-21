@@ -1,137 +1,124 @@
-Return-Path: <linux-kernel+bounces-739847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6864B0CBE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:36:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA935B0CC04
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:38:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0959A16FF43
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:36:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77200546936
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:38:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5546C23B62D;
-	Mon, 21 Jul 2025 20:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC6123C8C9;
+	Mon, 21 Jul 2025 20:37:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="C2tdTMEN"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M/cdWwoY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CAE919CD0B;
-	Mon, 21 Jul 2025 20:36:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFFF4155CB3
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 20:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753130186; cv=none; b=oehsBu4TSZJuarrL0MYrkHV5z9tPP8bQfDRD6rypZ2W81e2rQD+AKsNuDcmwoc1Wx/jMsQZ7EWjZKD6KzBdZ/BL88kSgVNZZ+WWt727Ed4XOPr1/PNZ+oar36+4CXahE0n76kPlzUx7RQTZjhSTBzpdd8F8oc1+jlVGxbsUXAhk=
+	t=1753130252; cv=none; b=tlgcFipzTRmEZIQtZlJAgMLqEwZGmrTNn2dGCqPNlUDKl142ydcFVkcgxFkLJgMmF29jwjd0JssEsg4b+nOV8BWBHKrjiMD/B0l1MLXwkgOedIoXbpnZI8DZhhH1rbaSQF6lwFeYk/0jvWMEiFnEzeyQEVFhpx2lbbohKJcQlBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753130186; c=relaxed/simple;
-	bh=tmDWNYv379XPDRx1AF/2GrIpBbq1+fw9v+8yd2tlQ+c=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Q4BgnnW8liBOe+I7hIXFXatX6+uYSrNcrN1uMz/Plnccjdm8DtBvxVXoCE96QFTAXqz6DdbbfKQmMFKAyP/jzMRnkhK28DiL2gTHrPXnk+1nmJnw2kbeXo6H+Bcs58YltH5yoJVjlS2DswqRFekaOtQg3Pg1AlwfIqhSX09G7Rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=C2tdTMEN; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.116] (p5de459a9.dip0.t-ipconnect.de [93.228.89.169])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 9E7C22FC0059;
-	Mon, 21 Jul 2025 22:36:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1753130173;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oh0pzkq1hPD/uq7iN0Vvk7JbHlZJNNxlAW2PJIP8o9Y=;
-	b=C2tdTMENCWxH/5FZuvZz7bt00tASP6U8VNzfY0O7xqS3a5ZB3aSIK5uG3IF5fyynCYEUE6
-	n3m3KsXEUodEd6OodEfY/WpNKcG6OeWtnDyqpAAIXt+9iOLGykEvMmdSuOHEWSbZu5Ce+B
-	0jlc0AYrpLaj3YQkGqyryM2s7qXbrtQ=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <e8b1c0b3-83d0-4e0a-9dad-7d59329fe3ce@tuxedocomputers.com>
-Date: Mon, 21 Jul 2025 22:36:13 +0200
+	s=arc-20240116; t=1753130252; c=relaxed/simple;
+	bh=Z1gP8TWJmUoOc+E4J5MIPck8JZYfl0EE0ttwuQyHXoA=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=SS+z69UFwPwXFwgfQrX18+HQRqmjv+WyG4N4kmMoEUUo1BQBJ2aZFyhmKJCw4vxyUSF8eg1ej/mDSDSlxMJoKTlwCbVCK3LNaXmw4tiZabkWrAqpLYLXj/xbv9gBY7ury0bp5kFzsRFCW8i//qeCPclpVskhmCdhOaDdwQ0YlK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M/cdWwoY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60DB9C4CEED;
+	Mon, 21 Jul 2025 20:37:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753130252;
+	bh=Z1gP8TWJmUoOc+E4J5MIPck8JZYfl0EE0ttwuQyHXoA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=M/cdWwoYamy2xXJZPYZlNl47wK6iNcuofFkiA0/X3m166/j6v4x2P461qzpTH0EsK
+	 HmYL/m17MVbvlOnynjjXk5pXDytInoYZxn6Eop7Y6pC6q/p3U2O5mA8HqGIeu02BOG
+	 oIrOzIVeEyxvM2Ef/w5SwEBppEVYk5kez7FCIuNX4kL8PxEBMtcj/8gU+w4XbvDqHK
+	 m2s2yl/VS4NtYaIYRRZK2IVRtn/wsWKy9q9UG4xCfBV/Iac/czL8Mfk72ACd6eR9ud
+	 vRqsY4NvA9iGC9lPuS0pogVwOoiC9rGwI3q8Z1f/jL1IcoMyg+J+lxx7oTOzwq/pMY
+	 tbm26/3K7VeUQ==
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@kernel.org>)
+	id 1udxGt-00000009p33-0wZC;
+	Mon, 21 Jul 2025 16:38:03 -0400
+Message-ID: <20250721203739.462938756@kernel.org>
+User-Agent: quilt/0.68
+Date: Mon, 21 Jul 2025 16:37:39 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: "John Warthog9 Hawley" <warthog9@kernel.org>
+Subject: [for-next][PATCH 0/5] ktest.pl: Updatse for v6.17
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] Input: atkbd - Correctly map F13 - F24
-From: Werner Sembach <wse@tuxedocomputers.com>
-To: Hans de Goede <hdegoede@redhat.com>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250311180643.1107430-1-wse@tuxedocomputers.com>
- <20250311180643.1107430-2-wse@tuxedocomputers.com>
- <76c57b22-04d3-4331-a10c-b210db5f9055@redhat.com>
- <9da24c58-25ab-4b21-b0ed-f777970affe7@tuxedocomputers.com>
- <de3969b9-7134-4bfd-bc65-9d5b7e53a31c@redhat.com>
- <1331ddc4-fb74-4985-a309-87fd97d0583b@tuxedocomputers.com>
-Content-Language: en-US
-In-Reply-To: <1331ddc4-fb74-4985-a309-87fd97d0583b@tuxedocomputers.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-Hi,
 
-Am 15.05.25 um 14:26 schrieb Werner Sembach:
-> Hi,
->
-> Am 17.03.25 um 23:23 schrieb Hans de Goede:
->> Hi Werner,
->>
->> On 17-Mar-25 6:00 PM, Werner Sembach wrote:
->>> [...]
->> I think this one will apply cleanly without applying patch 1/2
->> first, so no reason for a resend / v3 AFAICT.
->>
->> Let's wait and see what feedback Dmitry have once he can make
->> some time to take a look at this.
->
-> Hope a gentle bump is ok by now?
->
-> Best regards,
->
-> Werner
+ktest.pl updates for v6.17:
 
-Small bump again, just so that this does not get forgotten.
+- Add new -D option that allows to override variables and options
 
-Best regards,
+  For example:
 
-Werner
+    ./ktest.pl -DPATCH_START:=HEAD~1 -DOUTPUT_DIR=/work/build/urgent config
 
->
->>
->> Regards,
->>
->> Hans
->>
->>
->>
->>
->>>>> ---
->>>>>    drivers/input/keyboard/atkbd.c | 12 ++++++------
->>>>>    1 file changed, 6 insertions(+), 6 deletions(-)
->>>>>
->>>>> diff --git a/drivers/input/keyboard/atkbd.c b/drivers/input/keyboard/atkbd.c
->>>>> index 3598a21d9d014..4bd6e6ef0715e 100644
->>>>> --- a/drivers/input/keyboard/atkbd.c
->>>>> +++ b/drivers/input/keyboard/atkbd.c
->>>>> @@ -84,12 +84,12 @@ static const unsigned short 
->>>>> atkbd_set2_keycode[ATKBD_KEYMAP_SIZE] = {
->>>>>    #include "hpps2atkbd.h"    /* include the keyboard scancodes */
->>>>>      #else
->>>>> -      0, 67, 65, 63, 61, 59, 60, 88,  0, 68, 66, 64, 62, 15, 41,117,
->>>>> -      0, 56, 42, 93, 29, 16,  2,  0,  0,  0, 44, 31, 30, 17,  3,  0,
->>>>> -      0, 46, 45, 32, 18,  5,  4, 95,  0, 57, 47, 33, 20, 19,  6,183,
->>>>> -      0, 49, 48, 35, 34, 21,  7,184,  0,  0, 50, 36, 22, 8,  9,185,
->>>>> -      0, 51, 37, 23, 24, 11, 10,  0,  0, 52, 53, 38, 39, 25, 12,  0,
->>>>> -      0, 89, 40,  0, 26, 13,  0,193, 58, 54, 28, 27,  0, 43,  0, 85,
->>>>> +      0, 67, 65, 63, 61, 59, 60, 88,183, 68, 66, 64, 62, 15, 41,117,
->>>>> +    184, 56, 42, 93, 29, 16,  2,  0,185,  0, 44, 31, 30, 17,  3,  0,
->>>>> +    186, 46, 45, 32, 18,  5,  4, 95,187, 57, 47, 33, 20, 19,  6,183,
->>>>> +    188, 49, 48, 35, 34, 21,  7,184,189,  0, 50, 36, 22, 8,  9,185,
->>>>> +    190, 51, 37, 23, 24, 11, 10,  0,191, 52, 53, 38, 39, 25, 12,  0,
->>>>> +    192, 89, 40,  0, 26, 13,  0,193, 58, 54, 28, 27,  0, 43,  0,194,
->>>>>          0, 86, 91, 90, 92,  0, 14, 94,  0, 79,124, 75, 71,121,  0,  0,
->>>>>         82, 83, 80, 76, 77, 72,  1, 69, 87, 78, 81, 74, 55, 73, 70, 99,
+  The above sets the variable "PATCH_START" to HEAD~1 and the OUTPUT_DIR
+  option to "/work/build/urgent".
+
+  This is useful because currently the only way to make a slight change to a
+  config file is by modifying that config file. For one time changes, this
+  can be annoying. Having a way to do a one time override from the command
+  line simplifies the workflow.
+
+  Temp variables (PATCH_START) will override every temp variable in the
+  config file,  whereas options will act like a normal OVERRIDE option and
+  will only affect the session they define.
+
+     -DBUILD_OUTPUT=/work/git/linux.git
+
+  Replaces the default BUILD_OUTPUT option.
+
+     '-DBUILD_OUTPUT[2]=/work/git/linux.git'
+
+  Only replaces the BUILD_OUTPUT variable for test #2.
+
+- If an option contains itself, just drop it instead of going into an
+  infinite loop and failing to parse (it doesn't crash, it detects the
+  recursion after 100 iterations anyway).
+
+  Some configs may define a variable with the same name as the option:
+
+     ADD_CONFIG := $(ADD_CONFIG)
+
+  But if the option doesn't exist, it the above will fail to parse. In these
+  cases, just ignore evaluating the option inside the definition of another
+  option if it has the same name.
+
+- Display the BUILD_DIR and OUTPUT_DIR options at the start of every test
+
+  It is useful to know which kernel source and what destination a test is
+  using when it starts, in case a mistake is made. This makes it easier to
+  abort the test if the wrong source or destination is being used instead of
+  waiting until the test completes.
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-ktest.git
+for-next
+
+Head SHA1: 23a2d4c64e713b5645e3af8fc9da0931600ba85c
+
+
+Steven Rostedt (5):
+      ktest.pl: Add -D option to override options
+      ktest.pl: Allow command option -D to override temp variables
+      ktest.pl: Have -D option work without a space
+      ktest.pl: Prevent recursion of default variable options
+      ktest.pl: Always display BUILD_DIR and OUTPUT_DIR at the start of tests
+
+----
+ tools/testing/ktest/ktest.pl | 83 ++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 80 insertions(+), 3 deletions(-)
 
