@@ -1,100 +1,77 @@
-Return-Path: <linux-kernel+bounces-739679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27D6EB0C99B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:23:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E6B7B0C99A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:23:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB7D51891455
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:23:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E74E16F242
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C342E041C;
-	Mon, 21 Jul 2025 17:22:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SigRHZHW";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XCn0tmx0"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C9D32E0414;
+	Mon, 21 Jul 2025 17:23:41 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9062E03F7
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 17:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48DB1F30A9;
+	Mon, 21 Jul 2025 17:23:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753118574; cv=none; b=Gdyb6YnhUDd3H/lOUPaIvBN0j/vkSVAd7KazvvCBrYNygRG8DcnczYuOe3DTZzHRJ913Cpi7mJTbyY6BiTf9/c1RoHcOaXrw0FJg3tfVUyy7U/Wi31RLvtLQroG9Q6grXxOmEmfHfOEHN4PtZu8YeJcc26Gw+/DRu8FT1Uwvxjs=
+	t=1753118620; cv=none; b=clSTC+9Jzz2fma9XGRyWzj6mPLDQBicDSng19nt5CBgnRNUZzwQmA/GqsMh3bROHWLwSL6D6sgmX8EhSGOj/ibdPBynPhGydTFHFXJHrnuO0jtZjv5pv5xQVm3Pzv0DiDgnqlpkANiqngeoEh1PtpZFSvJoUSiF4qOjQpAwTxI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753118574; c=relaxed/simple;
-	bh=B7Ps+LKAb3AbMjuekHyLup5iS/pxSTyCAOTXYje2UIE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kiLkCear+8MUPi+sP90vRAYgFtDGVHxxOF/bmGLQoSNWMGhpim4sG5bVGGVMz91jR5Xfa2EgyCvojYqgvL8ljDbBVNFedZawvvh8HK+MjcU82rXvN9gafguLx09YtEmQt2hh8pnZpPBGFQmu97bT4p2yXzNzz5EbyoGtNaEufAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SigRHZHW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XCn0tmx0; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753118571;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=85b9+Zrsl4Cn8pUf/pnbXRelbaHnJeq0GSW3DRdJjUY=;
-	b=SigRHZHWI/6pMh2uwVqZNEQ4MRTCs2V0nAm2zqOE5U8Mq+PFWWa3GEuZumyOFOBD5TZLZP
-	UJTxE5YdBkrrDNhO5cxNsm93kbm8yKg2EWeZ9ywVZ/XyrjTtW/4+OgydWaGZ3ltgJeRDYe
-	ysQqFhuqyytO0h2kljUC6pWdmYbXfnFkpc3L/Mb+of5Urqc7/g4DQRDxLYw29NtskU2Xvf
-	JsCxLCCyCaUnrelG1Z/pfRihTllOTDaIbjWEtX2awVqP8MLjP2HeNRTTLph3/hJsbS9Hap
-	9q3Ly5pZhB0V8/srfnrHsJ8XTZA83PMf/Vo2i2UyhDLVXoGwlcgz+YXuqo4npw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753118571;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=85b9+Zrsl4Cn8pUf/pnbXRelbaHnJeq0GSW3DRdJjUY=;
-	b=XCn0tmx0eSTpzxldFYKypgyBUfhc2h8rarTYXHShe3ukqlYh2Sv5q9C+W8xxy9E8wn2gn/
-	I/W6HrI13pdiTJAw==
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, kernel test robot
- <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
- Peter Zijlstra <peterz@infradead.org>, Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH] selftests/futex: Compile also on libnuma < 2.0.16
-In-Reply-To: <20250715095203.vVbUIvob@linutronix.de>
-References: <202507150858.bedaf012-lkp@intel.com>
- <20250715075735.tdXLHcEA@linutronix.de>
- <20250715095203.vVbUIvob@linutronix.de>
-Date: Mon, 21 Jul 2025 19:22:50 +0200
-Message-ID: <87h5z5tq51.ffs@tglx>
+	s=arc-20240116; t=1753118620; c=relaxed/simple;
+	bh=sSaJlmJxbdpP26NXJsmWtpT993GiOo/FBnZqzxzvRXY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sXOaOZXAjRpy3zYL3HyZT8c7B1liil8nHkMe4mhYTG8waBK1tykmDBEpUiqPdLGVRI3bgQP6rZKqRBorIx0HQlwHX+GxR80sjaVqnOXSnIL2952dBp3jEHKyYykb4gheUyGN8tXRfUtUu7FNe1C9haXfbvDajMKyrCJrHAZRIIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf15.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay05.hostedemail.com (Postfix) with ESMTP id C3E5856063;
+	Mon, 21 Jul 2025 17:23:33 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf15.hostedemail.com (Postfix) with ESMTPA id 32A201B;
+	Mon, 21 Jul 2025 17:23:32 +0000 (UTC)
+Date: Mon, 21 Jul 2025 13:23:31 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/6] tracing: eprobe-event: Allocate string buffers
+ from heap
+Message-ID: <20250721132331.771f6f17@batman.local.home>
+In-Reply-To: <175299253643.418723.5944624119162360742.stgit@devnote2>
+References: <175299249728.418723.17799706394466693180.stgit@devnote2>
+	<175299253643.418723.5944624119162360742.stgit@devnote2>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: en7cxc4a9r6fnn5aamyswxtez6ix74wh
+X-Rspamd-Server: rspamout05
+X-Rspamd-Queue-Id: 32A201B
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/P8ik6rEvYj0BNRPdJEEcWJKgEPGjzCkY=
+X-HE-Tag: 1753118612-128728
+X-HE-Meta: U2FsdGVkX18eO5PQTiVqdLHRymwX2AjMLURqIXWC8U7Y8IK8bdJaNfe8Mma8aMNGOH4zB5lNJ86hJTdRYYYaahdt4IPua67T/yLm8O2qF7NbttCD8GbLH9KC9G+zWrBFSmam3JiKFLZ1gq74l8lf0D5E3qE3qsN38xxvzyK6TXzZEn3bOdghgp/jLEKYf5Cy8ftyoBAA7ZiJ8z683gQHDL8Z70zmIjDFKObdK4nsP/Jx2erfFqT/1Kj5Eq6HNCv+RH4hKciJGqSHbwulnBVRXiOxRmvAG2mwQinLHA9SJNq5hxFNF9N/DT7OWCOL3pPt1XWACLboFoQEmCwuN+pp6qbMmBxX6ufrNOZhG7JBAtFknM89KgmbqYyQk0fZzP17sAfE3NP2WanJyPItHEL1Iw==
 
-On Tue, Jul 15 2025 at 11:52, Sebastian Andrzej Siewior wrote:
->  INCLUDES := -I../include -I../../ $(KHDR_INCLUDES)
-> -CFLAGS := $(CFLAGS) -g -O2 -Wall -pthread $(INCLUDES) $(KHDR_INCLUDES)
-> +CFLAGS := $(CFLAGS) -g -O2 -Wall -pthread $(INCLUDES) $(KHDR_INCLUDES) -DLIBUNMA_VER_$(LIBNUMA_TEST)=1
+On Sun, 20 Jul 2025 15:22:16 +0900
+"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
 
-LIBUNMA?
+> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> 
+> Allocate temporary string buffers for parsing eprobe-events
+> from heap instead of stack.
+> 
+> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
->  int main(int argc, char *argv[])
->  {
->  	struct futex32_numa *futex_numa;
-> -	int mem_size, i;
-> +	int mem_size, i __maybe_unused;
+Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
-Why this unused muck?
-
-> +#ifdef LIBUNMA_VER_SUFFICIENT
->  	for (i = 0; i < 4; i++) {
-
-if you can just do
-
-       for (int i = 0; ...
-
-?
-
-Thanks,
-
-        tglx
+-- Steve
 
