@@ -1,94 +1,137 @@
-Return-Path: <linux-kernel+bounces-739826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4088EB0CB8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:17:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00BF2B0CB97
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:17:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7512C7B20DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:15:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B3111C21E18
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BC1723B63F;
-	Mon, 21 Jul 2025 20:16:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3534123B62C;
+	Mon, 21 Jul 2025 20:16:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=tahomasoft.com header.i=@tahomasoft.com header.b="lir3akk+"
-Received: from chumsalmon.baetis.net (chumsalmon.baetis.net [209.222.21.150])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OZTE06mj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C26F23AB9C;
-	Mon, 21 Jul 2025 20:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.222.21.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE5B155CB3;
+	Mon, 21 Jul 2025 20:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753129011; cv=none; b=Os6v7P1AEEUnL7ecI74pzosiyM5+KrWuiY94yEHMjj2EqM63JASFLmPyPCxDVoMEk4zw6kjBreA28pdkj5hwpOZrnldOjMxsR0ESXKw/7RoRIpl9TLM/KGHHHiOB7wGzrobhad0ZGX8SEZiZVvrfzmeuGyVY7ezmUuvccPnsnZc=
+	t=1753129017; cv=none; b=p3GqEjVGAMJh9cWySdtMWJq3XRp4wmrZuFhJD1GLujShljEWs0UNoTC466bD6vxyGyMOp9JwwSn/8eMesHRTA5l+w8AG9cUoPlpyaj6XfZUEd0pVXgQWY0NT7JmldOSx8SdeHfx7rErkbX0o0vBxptcZM7a3hh0gVv0lWcBImz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753129011; c=relaxed/simple;
-	bh=lbNJOuD5DxygxivCxcXM0GtHg4S7UZs0gYbcGcYNsx8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TMi40+cuiKtDT1rOWsxHlaZ12U+uRETMUdM9ETa0vUeLC+IPzj68FvujJaj6LwhLmUrycWwolSPOr3sZ4TXzaS9NFHKiBBNCJc8TuJ0ffpLtZDQErsI8lxtA03xg0bAUQq5SpqxNPgkRAkaek9pvny0sf5eSIux6jnrfJmM2NYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tahomasoft.com; spf=pass smtp.mailfrom=tahomasoft.com; dkim=fail (0-bit key) header.d=tahomasoft.com header.i=@tahomasoft.com header.b=lir3akk+ reason="key not found in DNS"; arc=none smtp.client-ip=209.222.21.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tahomasoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tahomasoft.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tahomasoft.com;
-	s=default; t=1753129008;
-	bh=lbNJOuD5DxygxivCxcXM0GtHg4S7UZs0gYbcGcYNsx8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=lir3akk+MEcTMngiasVNYd3AiCRjP2vTJd9qMKlDuZVQvDswujN2eMfVZR6eWKBgi
-	 RBjOntfG6lFahnqjFcpdDnV1kqtps6H/AW5QhA/whI2I0mxf3BzKAbxSlzsqNA51HA
-	 lnrpSvB1MBPAFQvzRYKHidzz2r2hHPZ8cMq5VjDzEF10v21irwtAJwaIfiSBRJxDvM
-	 85IC19yebpVHqP8lYzssEHX4T765jKGFJoyDVMCdprHvICdAp6RXS5vds6qAD4Xw91
-	 VSCJyXduMOdgmswy7TXhUG/uz5j9AwICgrh1so9k24Xx/FBSEDK3XTelQS0LIj4daW
-	 CGjJ+ZUPNx81Q==
-Received: from localhost (unknown [IPv6:2600:4040:50b7:b604:da10:58b0:4f02:7df4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by chumsalmon.baetis.net (Postfix) with ESMTPSA id BD79127E5BC;
-	Mon, 21 Jul 2025 20:16:48 +0000 (UTC)
-From: Erik Beck <xunil@tahomasoft.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: Erik Beck <xunil@tahomasoft.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2 v2a]: New board support,LinkStar-H68k-1432v1 (RK3568)
-Date: Mon, 21 Jul 2025 16:16:37 -0400
-Message-ID: <20250721201640.233818-1-xunil@tahomasoft.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1753129017; c=relaxed/simple;
+	bh=fPCjBlrmUPA5mvNxfbJDvZCN5253HcHDupts84ahHrU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BrhjNNFXcHRqG3MQzhmHlvKtKEvhFvo0F4qKVd1TpEnyc86cbQgqgoW/E6dT1Z6cATP32YwPaADwwPX5nO8gFsbRp6cIBvexyAi9OZLF4035We+ghRNfqFHd1VQHP7ju2Ba1C+5EEV/F3oLZqCsOa2yqOSSwPpwmd8SfXqhN+E4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OZTE06mj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4CE8C4CEED;
+	Mon, 21 Jul 2025 20:16:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753129016;
+	bh=fPCjBlrmUPA5mvNxfbJDvZCN5253HcHDupts84ahHrU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OZTE06mjfY3FbIlctpmaahVfBx8Ck81gl137LyK4mbMGhbJDdxgZK/YFqcRxcFs7I
+	 GSierzely0mYMlZOPybWzDeEuexgHHZCVMrKRQVScg0f6wZVQdH2kKnBn8v5iEkUBG
+	 jInQsZ0hyXk5meA5zT3I3fawRxEQdh2lWF2cvNxAQJ6enBocyTvzyTdbcth8dqtAQ4
+	 RSLNhSDI3SFe5TsIggOzjkufSSyP0wrf5sYgxy2kZQU3dHKQdvUYaYQmdoc+hS4nj+
+	 Rtw5TFIHe5eVMNmLMGYA80ueWZYHFnY0QHmC6Q6vRsAqK6arssfT0eivyT08pwrLsE
+	 K9Qv9Noqniu9g==
+Date: Mon, 21 Jul 2025 13:16:56 -0700
+From: Kees Cook <kees@kernel.org>
+To: Nicolas Schier <nicolas.schier@linux.dev>
+Cc: Arnd Bergmann <arnd@arndb.de>, Ingo Molnar <mingo@kernel.org>,
+	x86@kernel.org, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev, linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-efi@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
+	kasan-dev@googlegroups.com, sparclinux@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH v3 01/13] stackleak: Rename STACKLEAK to KSTACK_ERASE
+Message-ID: <202507211315.5164A33E@keescook>
+References: <20250717231756.make.423-kees@kernel.org>
+ <20250717232519.2984886-1-kees@kernel.org>
+ <20250721-spiked-adamant-hyrax-eea284@lindesnes>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250721-spiked-adamant-hyrax-eea284@lindesnes>
 
-Signed-off-by: Erik Beck <xunil@tahomasoft.com>
----
- Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
+On Mon, Jul 21, 2025 at 10:02:36PM +0200, Nicolas Schier wrote:
+> On Thu, Jul 17, 2025 at 04:25:06PM -0700, Kees Cook wrote:
+> > In preparation for adding Clang sanitizer coverage stack depth tracking
+> > that can support stack depth callbacks:
+> > 
+> > - Add the new top-level CONFIG_KSTACK_ERASE option which will be
+> >   implemented either with the stackleak GCC plugin, or with the Clang
+> >   stack depth callback support.
+> > - Rename CONFIG_GCC_PLUGIN_STACKLEAK as needed to CONFIG_KSTACK_ERASE,
+> >   but keep it for anything specific to the GCC plugin itself.
+> > - Rename all exposed "STACKLEAK" names and files to "KSTACK_ERASE" (named
+> >   for what it does rather than what it protects against), but leave as
+> >   many of the internals alone as possible to avoid even more churn.
+> > 
+> > While here, also split "prev_lowest_stack" into CONFIG_KSTACK_ERASE_METRICS,
+> > since that's the only place it is referenced from.
+> > 
+> > Suggested-by: Ingo Molnar <mingo@kernel.org>
+> > Signed-off-by: Kees Cook <kees@kernel.org>
+> > ---
+> > Cc: Arnd Bergmann <arnd@arndb.de>
+> > Cc: <x86@kernel.org>
+> > Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+> > Cc: <linux-doc@vger.kernel.org>
+> > Cc: <linux-arm-kernel@lists.infradead.org>
+> > Cc: <kvmarm@lists.linux.dev>
+> > Cc: <linux-riscv@lists.infradead.org>
+> > Cc: <linux-s390@vger.kernel.org>
+> > Cc: <linux-efi@vger.kernel.org>
+> > Cc: <linux-hardening@vger.kernel.org>
+> > Cc: <linux-kbuild@vger.kernel.org>
+> > Cc: <linux-security-module@vger.kernel.org>
+> > Cc: <linux-kselftest@vger.kernel.org>
+> > ---
+> >  arch/Kconfig                                  |  4 +--
+> >  arch/arm/Kconfig                              |  2 +-
+> >  arch/arm64/Kconfig                            |  2 +-
+> >  arch/riscv/Kconfig                            |  2 +-
+> >  arch/s390/Kconfig                             |  2 +-
+> >  arch/x86/Kconfig                              |  2 +-
+> >  security/Kconfig.hardening                    | 36 ++++++++++---------
+> >  arch/arm/boot/compressed/Makefile             |  2 +-
+> >  arch/arm64/kernel/pi/Makefile                 |  2 +-
+> >  arch/arm64/kvm/hyp/nvhe/Makefile              |  2 +-
+> >  arch/riscv/kernel/pi/Makefile                 |  2 +-
+> >  arch/riscv/purgatory/Makefile                 |  2 +-
+> >  arch/x86/purgatory/Makefile                   |  2 +-
+> 
+> Did you miss arch/loongarch/Kconfig by accident?
+> 
+> $ git grep -Hrne ARCH_STACKLEAK
+> arch/loongarch/Kconfig:127:     select HAVE_ARCH_STACKLEAK
 
-diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
-index 5772d905f390..7f3904b69293 100644
---- a/Documentation/devicetree/bindings/arm/rockchip.yaml
-+++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
-@@ -1109,6 +1109,11 @@ properties:
-           - const: rockchip,rk3588-toybrick-x0
-           - const: rockchip,rk3588
- 
-+      - description: Seeed LinkStar H68K-1432v1 RK3568
-+        items:
-+          - const: seeed,rk3568-linkstar-h68k-1432v1
-+          - const: rockchip,rk3568
-+
-       - description: Sinovoip RK3308 Banana Pi P2 Pro
-         items:
-           - const: sinovoip,rk3308-bpi-p2pro
+Oh! Yes, I missed that when I rebased to v6.16 (which added loongarch
+support for stackleak). Thanks for catching that!
+
 -- 
-2.43.0
-
+Kees Cook
 
