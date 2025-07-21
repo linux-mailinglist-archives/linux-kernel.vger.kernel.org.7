@@ -1,50 +1,50 @@
-Return-Path: <linux-kernel+bounces-738741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D79D9B0BC86
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:31:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00969B0BCDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:42:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8E0C189B0C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:31:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2EF07A3E18
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:40:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0608277C9F;
-	Mon, 21 Jul 2025 06:30:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030C227F000;
+	Mon, 21 Jul 2025 06:42:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZQTVzw7W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qtmlabs.xyz header.i=@qtmlabs.xyz header.b="I83a04+j"
+Received: from s1.g1.infrastructure.qtmlabs.xyz (s1.g1.infrastructure.qtmlabs.xyz [107.172.1.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1CF2777E0;
-	Mon, 21 Jul 2025 06:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7B52C181;
+	Mon, 21 Jul 2025 06:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=107.172.1.117
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753079458; cv=none; b=vGp998XgjcexEHgW9JN/cokcweX2nQ7i+N4vFZDJEIFQx1CyQyD6LIC2XLHwwxh7s8O9BejoxqAOvWqrouH9YXjM3r88niLHBOYR1kVPP21z0noFj8t3My4pmE5G8VxjHTNZt3tIH2tm+Qn2FdW3bS8yU+vM4vYy5UVoAl0r9dA=
+	t=1753080132; cv=none; b=nq1ae23NqgBIrm2DL/SxHtbEDmrKB5hPszWi6l5ckiSFlPDerx198Okme1+13Wh+IIF/j0j6tB6CYCZaRFs0KWvEzAAi7xKsQ64OdqX05k/lfpO+XU3TxpCg8FcnjkCa4j2Druhwpng6FwaMG0ewourGLMb313Ldz1VFIy/8Ofs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753079458; c=relaxed/simple;
-	bh=kO7/+brEXzYw1d+SOh8B88y9q2OEmgyNDx7tjiAzico=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Ep9rnIzFya5eup313+q8BvRD0yqiNi6UXSPJuX1i1PS5tTfXtePy3nHeISkcLt6dLGGRv1bbtnYqEcrBUbMVw2aOQ4FugGTfInbNcS+AEL4vSmU7vd5G+S8d2tqkOJWGI9GwKASkcnTUovV7vOcsjwosfVohiobVjJx8hjMuTZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZQTVzw7W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A4E8AC4CEED;
-	Mon, 21 Jul 2025 06:30:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753079457;
-	bh=kO7/+brEXzYw1d+SOh8B88y9q2OEmgyNDx7tjiAzico=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=ZQTVzw7W9/m3sON0v1vUs0SBSGZQBZRdfgflcSPd9pbAaTjkbrI4gtElZ8vNpSOYK
-	 77onwI99WodzI+1vwtPu5oOn/jLtDFRtY5+RgvnQTSQ54OptcCLUHcRSEX0popzBdh
-	 LtzPwZAQAjWz8uZ6wEVQzzZfx++zpG4XS7gp3zGJNyp3BixGDghSl+l+fIHH3mSrmC
-	 t+zTCKzuHlT2SUG+d5rh2TurSHgZixcSA6w83GOnqYdgRjAmX8K4YSLnhk7KhbbSb0
-	 sw8TWQLpJ6bJ0cdyh06BNLBn7Q88GGklKw+U57qjcl9qczIFLqtuMjXWYdwXC0U82i
-	 fOC5icNfb5ZiA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9309CC87FC5;
-	Mon, 21 Jul 2025 06:30:57 +0000 (UTC)
-From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
-Date: Mon, 21 Jul 2025 10:30:46 +0400
-Subject: [PATCH] arm64: dts: qcom: ipq5018: add PRNG node
+	s=arc-20240116; t=1753080132; c=relaxed/simple;
+	bh=wxeCEH+SU8MPDQOxuqjRDnvHyxvCzawyLu1QgV8iPD0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=th7xMZNbwBHUhrq1VuFAG+XYzVNGled+rtnbHPsxOrQzPYgxyjzTZmF7viugeVwqd4ED9QHPXY68Nyc6Zu9M7bPX8CKuLyRMvkajCh5eB+mxddhgSoCcaF/LA3CExvksJDvoTVauDl4iH9A5uhg7XwsY1+cE5Tlx0pNTjTKRLUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qtmlabs.xyz; spf=pass smtp.mailfrom=qtmlabs.xyz; dkim=pass (2048-bit key) header.d=qtmlabs.xyz header.i=@qtmlabs.xyz header.b=I83a04+j; arc=none smtp.client-ip=107.172.1.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qtmlabs.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qtmlabs.xyz
+From: Myrrh Periwinkle <myrrhperiwinkle@qtmlabs.xyz>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qtmlabs.xyz; s=dkim;
+	t=1753079576;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=JqkdQzm/twkZ0VIwHtBVBtBC90/ZA2tGjffFIZE7FDY=;
+	b=I83a04+jqtQCXmrtMyJ6J9S/WKikuzmcSD6ioHXUJb+9GzTMmmWf5QQiZYhHPX7QZ1h9Bh
+	rRuVJtS9o9Y9RhgcNKIin2IjyFWrb8TS2ACFEdTlBYVV3UfNb1mpbpHL6Ex7BwluhCsVYf
+	bD39/XeNaHk6X4QccWIWJ6a05VifPPWyclB3Al6Vqrf3Nkg9GIPzwqyRhMBm8AreAD6bNI
+	XJ1KxhWyzpet0qI9bfjwIbwLIiBPMVweG6jCVfi3waFyzzLs0siRe1J7R2bI4933+4ZYOl
+	OFYoUxsyBzKLVYScTDtiToRHocVqyLuBipHILmfaS0ICTdrmF4O8vSipi6Qghg==
+Authentication-Results: s1.g1.infrastructure.qtmlabs.xyz;
+	auth=pass smtp.mailfrom=myrrhperiwinkle@qtmlabs.xyz
+Date: Mon, 21 Jul 2025 13:32:51 +0700
+Subject: [PATCH] usb: typec: ucsi: Update power_supply on power role change
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,67 +53,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250721-ipq5018-prng-v1-1-474310e0575d@outlook.com>
-X-B4-Tracking: v=1; b=H4sIAJbefWgC/x3MTQqAIBBA4avIrBP8wbCuEi0sJ5uNmUIE4t2Tl
- t/ivQoFM2GBmVXI+FChK3bIgcF+uhiQk+8GJZQRRmlO6TZCWp5yDFwa3DSOzk/CQk9SxoPef7e
- srX1lllBpXgAAAA==
-X-Change-ID: 20250523-ipq5018-prng-15eb3e6ad908
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- George Moussalem <george.moussalem@outlook.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753079455; l=1074;
- i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
- bh=uB/HCEZYInOL5Lcj4Z1RVwpnu7EOA4IaF8qdmjn0/5w=;
- b=yuX4ZHzn+VlOybcdKhAIbS9y3D/tRAQcQ1GI5MBSUTUQOkScNyTSTFviXhtugb9ZZN6pEhiKd
- CXw1aB+h3Y7AYtJg9dLlHmGRkVpnHGYwSPrtMmsImIFeTpArRGb9g6f
-X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
- pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
-X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
- with auth_id=364
-X-Original-From: George Moussalem <george.moussalem@outlook.com>
-Reply-To: george.moussalem@outlook.com
+Message-Id: <20250721-fix-ucsi-pwr-dir-notify-v1-1-e53d5340cb38@qtmlabs.xyz>
+X-B4-Tracking: v=1; b=H4sIABLffWgC/x2MSQqAMAwAvyI5G9BqcfmKeKg2ai5VUlekf7d4H
+ JiZFzwJk4c2eUHoZM+ri5CnCYyLcTMh28igMqWzSuU48Y3H6Bm3S9CyoFt3nh6sTaMLY4ZSkYZ
+ Yb0JR/c9dH8IHLm38Z2kAAAA=
+X-Change-ID: 20250721-fix-ucsi-pwr-dir-notify-8a953aab42e5
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, Myrrh Periwinkle <myrrhperiwinkle@qtmlabs.xyz>
+X-Spamd-Bar: ---
 
-From: George Moussalem <george.moussalem@outlook.com>
+The current power direction of an USB-C port also influences the
+power_supply's online status, so a power role change should also update
+the power_supply.
 
-PRNG inside of IPQ5018 is already supported, so let's add the node for it.
+Fixes an issue on some systems where plugging in a normal USB device in
+for the first time after a reboot will cause upower to erroneously
+consider the system to be connected to AC power.
 
-Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+Cc: stable@vger.kernel.org
+Fixes: 0e6371fbfba3 ("usb: typec: ucsi: Report power supply changes")
+Signed-off-by: Myrrh Periwinkle <myrrhperiwinkle@qtmlabs.xyz>
 ---
- arch/arm64/boot/dts/qcom/ipq5018.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/usb/typec/ucsi/ucsi.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq5018.dtsi b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
-index 9ce73682e4ae7cde90f151dfcd41a5201ced2aa6..9efa831e7d4e64326dc9bbdbab3541c486ad3b9c 100644
---- a/arch/arm64/boot/dts/qcom/ipq5018.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
-@@ -301,6 +301,14 @@ tsens_s4_p2: s4-p2@254 {
- 			};
- 		};
+diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
+index 01ce858a1a2b3466155db340e213c767d1e79479..8ff31963970bb384e28b460e5307e32cf421396b 100644
+--- a/drivers/usb/typec/ucsi/ucsi.c
++++ b/drivers/usb/typec/ucsi/ucsi.c
+@@ -1246,6 +1246,7 @@ static void ucsi_handle_connector_change(struct work_struct *work)
  
-+		prng: rng@e3000 {
-+			compatible = "qcom,prng-ee";
-+			reg = <0x000e3000 0x1000>;
-+			clocks = <&gcc GCC_PRNG_AHB_CLK>;
-+			clock-names = "core";
-+			status = "disabled";
-+		};
-+
- 		tsens: thermal-sensor@4a9000 {
- 			compatible = "qcom,ipq5018-tsens", "qcom,tsens-v1";
- 			reg = <0x004a9000 0x1000>,
+ 	if (change & UCSI_CONSTAT_POWER_DIR_CHANGE) {
+ 		typec_set_pwr_role(con->port, role);
++		ucsi_port_psy_changed(con);
+ 
+ 		/* Complete pending power role swap */
+ 		if (!completion_done(&con->complete))
 
 ---
-base-commit: 1b0324d3b8375fcfaf80789092347a52529059eb
-change-id: 20250523-ipq5018-prng-15eb3e6ad908
+base-commit: 89be9a83ccf1f88522317ce02f854f30d6115c41
+change-id: 20250721-fix-ucsi-pwr-dir-notify-8a953aab42e5
 
 Best regards,
 -- 
-George Moussalem <george.moussalem@outlook.com>
-
+Myrrh Periwinkle <myrrhperiwinkle@qtmlabs.xyz>
 
 
