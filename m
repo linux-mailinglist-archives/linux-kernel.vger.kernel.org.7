@@ -1,350 +1,180 @@
-Return-Path: <linux-kernel+bounces-738800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B33DB0BD43
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:13:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1837AB0BD49
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:14:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 337027AC086
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:11:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BDF83BD66B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BB362820CE;
-	Mon, 21 Jul 2025 07:12:58 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18EA28313A;
+	Mon, 21 Jul 2025 07:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Fb2IJfAl"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2063.outbound.protection.outlook.com [40.107.92.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168141EDA0F;
-	Mon, 21 Jul 2025 07:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753081977; cv=none; b=a/RBw1I9A/NBO9ACNpSKIADUazsb8+s7C8IVVWCt9U+TFxM939rvEYgqlQla3f1pJZ9L6G8aKU5UOmK8eeu98pS75yo4poswan0fgR/NJd73WAdKLoo3hWZg/n1kX0uX7GIB5CPBY79JB1obH2CWsGUUGZyD3gAjo15MhFcU7ag=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753081977; c=relaxed/simple;
-	bh=HHrQXBQ8/2N/DSFHNO9uanVncwDRi38IvAN8uzcrkMw=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=D/FSqQaYHBq9aIKQcKSyqdEdwFdv0mj1y6GkvLRz9dew85DPHq3kQL76jwC3Vw9P6Hc/4us6jpVvLHNKjU3nRbGJlW9GZqLa/Ry5xk876Kjb+PfNlKNCD25n/THnn/YsLh3BAGWuCe7cLZIqqZ1jDLFER/lOvOpoSjwcakxa+y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bls6s0YD0zYQtq4;
-	Mon, 21 Jul 2025 15:12:53 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id C7B361A1776;
-	Mon, 21 Jul 2025 15:12:51 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgCnIxRx6H1o1WHtAw--.25659S3;
-	Mon, 21 Jul 2025 15:12:51 +0800 (CST)
-Subject: Re: [PATCH v3 11/11] md/md-llbitmap: introduce new lockless bitmap
-To: Hannes Reinecke <hare@suse.de>, Yu Kuai <yukuai1@huaweicloud.com>,
- corbet@lwn.net, agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com,
- song@kernel.org
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- dm-devel@lists.linux.dev, linux-raid@vger.kernel.org, yi.zhang@huawei.com,
- yangerkun@huawei.com, johnny.chenyi@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250718092336.3346644-1-yukuai1@huaweicloud.com>
- <20250718092336.3346644-12-yukuai1@huaweicloud.com>
- <04ba77bb-464d-4b98-91e6-4225204ae679@suse.de>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <bc215f88-a652-090f-ae99-8aaba6c591c4@huaweicloud.com>
-Date: Mon, 21 Jul 2025 15:12:49 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A334A27F006;
+	Mon, 21 Jul 2025 07:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753082043; cv=fail; b=To0zKXIL/x4Mz2MCCv7lPzenE/9EFV5RD79mdb2YY79daXQ/svuUHCm/KiVSt+AUPUfXc75PyPVm11gWxaMM3U8JRGn33ERugdCj5VZqsyo48qOtWbJH0sc9z6a4BNSFcpGloU6YNsOuizFKvKDdSeXD5I60jFhMZDdXcAzC5Zc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753082043; c=relaxed/simple;
+	bh=CQ/30LJaWrnxdpF8pmEK7u50sQuw+IStXLVa/nmWs4g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=L20FmawQXUGGlRDH4Tb/1REZkEaK0XpPGBujOoWA/6lrkDRcbTEEJFDUQ4HDeLNPeQXXQYJsEzDzV9s/5eSwvE6/d9lj3uBYsmeiAEIqFVGdBHOpUyJN/Xn8tD+qKXxHi+MFomrg6EBiX6dHuvYVHYWG+EB5bv6PV+dtl/FzZw8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Fb2IJfAl; arc=fail smtp.client-ip=40.107.92.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WEpabf6lMQSNjUMHl2AIZSIt8AiZlM8RilFAnJV9aNU/YlYzhBClX9cyD6NGPjVTiq+QIWRonplrK2Q9JZgvBKH+6Vb0FkBOQRolM77xI0+NLTfazmffAjUZ4fzhljoAsLf30Jl+Z89MYaFig7fJiHW5JMuq9q2Qwhp7oMn+1UZZCwgWZrjNHP/4UN8t+1kFH+54gUnjYZgq0kOFEFEMhQGa76/GIXhmOwENFEQWG+yjrKbUQ3VintFW6GZQVSkhmCJzEs7ZJK/qo9CqexO4QLV3+CyvT5lQF/BnGp7l7HCnJ+WRMfWCL/nlMMFCyXIefUmGmNnlBtfgLoNwof21YA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vEvD5LVOldMYyD81CiqIPkGw2rmfwpnv9IcpmzIGyu0=;
+ b=dqn99SAPac/9nAD4/g+sqDSnLKBcM0qZMqz0kiwYKtc9BxgNl8v5QvH1Wok6pnoXZMg/6MMkEdugkTnv8J8uzAwmldbXrgbFExfkyUCo9OjKuwovFcZPAbldeM4PF4n1V299u8sfC9Zw1jnrHRbUpv6Qv884eVayYehx4NFhqvnhQlc3UidvJmPoWraoB7oj2W2sMebQ5qu0XVqwkM9L5MNeeOsOZz+aEPpop2xJqMU5JUDBKI4MdWQmOsraYBa/TVUSBIBPDp//hQpYpTjvAq44HT2Z5EH1LJ9j8/PAGrT+ukF1bBatA75UPhABm9GneY1hsDDToxZjcEeJzr77ng==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vEvD5LVOldMYyD81CiqIPkGw2rmfwpnv9IcpmzIGyu0=;
+ b=Fb2IJfAls4qHQ+RVrCubMxubXN2A/U64b1i1gjpmeJHNCpsZ8QvcTE5Mgs4y2zYzUMNQnMkZaPUEt5ztimWVLcaGclv4AJ/Rxn7C2c9NjQJ5HGo2BLmt2mCeWRvERgqaBbwGiNrqZdn+ku7+eJsC2bWKbSgbOIoHYRyJUdhQqUj6DKUrzGNtMvsioR5qlK6+2pKVw2LT+Df6rKF60r2JslX8yr0JR/2EaiBTXxrv27By0hOjHjNKS3JGV5+EEyQPaqf1r5aSXE+DpzWlflACbDAuSL28LPh7gG/APdar2yVjd0OGEMea91hnvIfl+ipuPN7A3uh4Lw8RqMQP/KhrOw==
+Received: from SJ0PR03CA0332.namprd03.prod.outlook.com (2603:10b6:a03:39c::7)
+ by BY5PR12MB4068.namprd12.prod.outlook.com (2603:10b6:a03:203::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Mon, 21 Jul
+ 2025 07:13:57 +0000
+Received: from SJ5PEPF000001E8.namprd05.prod.outlook.com
+ (2603:10b6:a03:39c:cafe::bc) by SJ0PR03CA0332.outlook.office365.com
+ (2603:10b6:a03:39c::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.29 via Frontend Transport; Mon,
+ 21 Jul 2025 07:13:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ SJ5PEPF000001E8.mail.protection.outlook.com (10.167.242.196) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8964.20 via Frontend Transport; Mon, 21 Jul 2025 07:13:57 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 21 Jul
+ 2025 00:13:38 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Mon, 21 Jul 2025 00:13:36 -0700
+Received: from vdi.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Mon, 21 Jul 2025 00:13:33 -0700
+From: Tariq Toukan <tariqt@nvidia.com>
+To: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>
+CC: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
+	<netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Lama Kayal <lkayal@nvidia.com>
+Subject: [PATCH net-next V3 0/3] net/mlx5: misc changes 2025-07-21
+Date: Mon, 21 Jul 2025 10:13:16 +0300
+Message-ID: <1753081999-326247-1-git-send-email-tariqt@nvidia.com>
+X-Mailer: git-send-email 2.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <04ba77bb-464d-4b98-91e6-4225204ae679@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCnIxRx6H1o1WHtAw--.25659S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3WFyUurWUtFy8uFy3Zry5urg_yoWfZF47pF
-	1kJrWUGrW3Jrn5Xr1UXryDAFyFyrn7J3ZFqF18XFy5JrnFyrnYgFy8WFyqgw1UZr48GF1j
-	yw15WrsruwnrXrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001E8:EE_|BY5PR12MB4068:EE_
+X-MS-Office365-Filtering-Correlation-Id: 14dbb789-ddc4-4dc1-f457-08ddc82628a9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?AYR7ec/XD6mpIFwycMXPXdjAgfisRQCCcpC/UzpnGIUG5XMedgaVbuFt7PVn?=
+ =?us-ascii?Q?gF7jL8U1u2fsFS9Yf2T1jXKFrX9EnyMa6Nj1x6bIB3ZYiRkQJUC2MrrVCVdB?=
+ =?us-ascii?Q?QBq0M7dMbMajWyjKVbKE/cbrrYfZHA8wxYCNEXbaAIpxqOtAMjC29hx3Gk0m?=
+ =?us-ascii?Q?mZy23QVHIJNkdIKXDNEzqMP6kdl/TEELjShSBevjduK7mGhDgg9bkvzX3IYV?=
+ =?us-ascii?Q?TCsBoqFWHAHXFX1XSpaSCNb2jf8roeicfbGtDM0MPujaj5MKi7Z+LzicnGmx?=
+ =?us-ascii?Q?suo9EortAYmpkX4NWhG0YKY0wnJyNGHnnFAEVdX1m7GuqRqPRlDUrPmyCrRd?=
+ =?us-ascii?Q?mgAcX7YzRWahLUjIhhBXwivyyWqIAsSF2A25Q7FzkT/5RhVewWLOgNWMqrnl?=
+ =?us-ascii?Q?FUyPfBUBFpdXbqNWj0wnhH8CFQMziAP7dqoDhNRtPNGZBS7lwWe2rkqmKsa9?=
+ =?us-ascii?Q?UmyCFjag4CJEkbSCWsXcyV2zb/+acQqIw0kpd6SzIVk4iubxDBb0hcBScQzC?=
+ =?us-ascii?Q?Ia7FUuMY0e2IYvENpQj+tflM+7FyBLcMWChpeyNpgFT52cJVN/zq7M4d421z?=
+ =?us-ascii?Q?paGPCUueF2wOlh+Qx2KsUlZqXW8xk6M6SZO6pBw5iL+Cie6BWURs1jyuSuO6?=
+ =?us-ascii?Q?4yf8bMp14qB138xZ01dC9ELLk9DRissuyMi4CaWL4qbpzrYf0NwNIRPLh0uP?=
+ =?us-ascii?Q?3xB/oQdS5L73s8ijkKx1kpUto0h6zWmkvTa+o/WEBJAjJqGzs7mEx2wreKtb?=
+ =?us-ascii?Q?KPjUOQCvivS61/+iIF0J+1Ejv854oXgTDqxrAaLv4EI7534SCLUFeQaiYBJ5?=
+ =?us-ascii?Q?bfXn6iz03puatRBAy8QLAcuEc9gx3qeC671oYFcdOSRG6gJ4wrIN7mZkwZ5F?=
+ =?us-ascii?Q?hmYSCtLHLwquEaUvzuiwhvh1M7hex2K6QV+WA7OjkOg8FahMd0ZKnFpykINe?=
+ =?us-ascii?Q?S5tfJJFYN3qwkqoOFqE0VTJ7/7N8A7ga6+hF3POBtTl1+Y0H3P780tKEoBxv?=
+ =?us-ascii?Q?5WsmuSi7NUiAqEpZoFrX3NJS8ZWr0IeHoqZ2D16FMkJEZALXLRu7VEi4tWrb?=
+ =?us-ascii?Q?voLTVcH8lv0spPCFQPOVL2kZkNuumaOLK1Tlq7sAeZC8LkiAu3SDAW+l/Y98?=
+ =?us-ascii?Q?g4mzeXnICyVxvhNzJC+rQPldKzvCznFLtj0uNLpBSUPXNQHDLVwIxAu9HWEU?=
+ =?us-ascii?Q?TTR4+v5AUVXNFHfc87bSlUQX7tuHbRtkem18ioKMmXRvtcDplxev1I8Rwl4J?=
+ =?us-ascii?Q?VrCXZEh95urAX9DpFq4lS3k1nQmFXMumspWYwdk+Zrcho0OA3az90r69LdmD?=
+ =?us-ascii?Q?OcdJ8K5a0rdmn5kLsAotKAGCXJwIEjRfsrXhufS7qCYKIkWmCjIfKZrSNhPa?=
+ =?us-ascii?Q?oSv9/UGpXIlpOOlhJXtJa7C/21txR79H+7fTlNajL810SHQlHgz/GJLZsxlf?=
+ =?us-ascii?Q?V/ZYwF8L/AI+Y1sZlkNv1xT+mAiKg17+DIiBIXrCTC2Kk8lOQ1MVIdxo6MK5?=
+ =?us-ascii?Q?/P1RWJckh83XnLLs13g6x3WowUbtBHlP0BmC4iloOZsPU6B3KlQFKhr2zw?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2025 07:13:57.2750
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 14dbb789-ddc4-4dc1-f457-08ddc82628a9
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001E8.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4068
 
 Hi,
 
-在 2025/07/21 14:20, Hannes Reinecke 写道:
-> On 7/18/25 11:23, Yu Kuai wrote:
->> From: Yu Kuai <yukuai3@huawei.com>
->>
+This series by Lama contains misc enhancements to the SHAMPO parameters.
 
->> +
->> +#define BITMAP_DATA_OFFSET 1024
->> +
->> +/* 64k is the max IO size of sync IO for raid1/raid10 */
->> +#define MIN_CHUNK_SIZE (64 * 2)
->> +
-> 
-> Hmm? Which one is it?
-> Comment says 'max IO size', but it's called 'MIN_CHUNK_SIZE'...
+Find V2 here:
+https://lore.kernel.org/all/1752675472-201445-1-git-send-email-tariqt@nvidia.com/
 
-max IO size here means the internal recovery IO size for raid1/10,
-and we're handling at most one llbimtap bit(chunksie) at a time, so
-chunksize should be at least 64k, otherwise recovery IO size will be
-less.
+Regards,
+Tariq
 
->> +/*
->> + * Dirtied bits that have not been accessed for more than 5s will be 
->> cleared
->> + * by daemon.
->> + */
->> +#define BARRIER_IDLE 5
->> +
-> 
-> Should this be changeable, too?
+V3:
+- V2 partially accepted, re-spin the 3 top patches.
+- Fix RCT style issues.
 
-Yes, idealy this should. Perhaps a new sysfs api?
+Lama Kayal (3):
+  net/mlx5e: SHAMPO, Cleanup reservation size formula
+  net/mlx5e: SHAMPO, Remove mlx5e_shampo_get_log_hd_entry_size()
+  net/mlx5e: Remove duplicate mkey from SHAMPO header
 
-> 
-
->> +    if (!test_bit(LLPageDirty, &pctl->flags))
->> +        set_bit(LLPageDirty, &pctl->flags);
->> +
->> +    /*
->> +     * The subpage usually contains a total of 512 bits. If any 
->> single bit
->> +     * within the subpage is marked as dirty, the entire sector will be
->> +     * written. To avoid impacting write performance, when multiple bits
->> +     * within the same sector are modified within a short time frame, 
->> all
->> +     * bits in the sector will be collectively marked as dirty at once.
->> +     */
-> 
-> How short is the 'short timeframe'?
-> Is this the BARRIER_IDLE setting?
-> Please clarify.
-
-Yes, if the page is not accessed for BARRIER_IDLE seconds.
-
->> +static struct page *llbitmap_read_page(struct llbitmap *llbitmap, int 
->> idx)
->> +{
->> +    struct mddev *mddev = llbitmap->mddev;
->> +    struct page *page = NULL;
->> +    struct md_rdev *rdev;
->> +
->> +    if (llbitmap->pctl && llbitmap->pctl[idx])
->> +        page = llbitmap->pctl[idx]->page;
->> +    if (page)
->> +        return page;
->> +
->> +    page = alloc_page(GFP_KERNEL | __GFP_ZERO);
->> +    if (!page)
->> +        return ERR_PTR(-ENOMEM);
->> +
->> +    rdev_for_each(rdev, mddev) {
->> +        sector_t sector;
->> +
->> +        if (rdev->raid_disk < 0 || test_bit(Faulty, &rdev->flags))
->> +            continue;
->> +
->> +        sector = mddev->bitmap_info.offset +
->> +             (idx << PAGE_SECTORS_SHIFT);
->> +
->> +        if (sync_page_io(rdev, sector, PAGE_SIZE, page, REQ_OP_READ,
->> +                 true))
->> +            return page;
->> +
->> +        md_error(mddev, rdev);
->> +    }
->> +
->> +    __free_page(page);
->> +    return ERR_PTR(-EIO);
->> +}
->> +
-> 
-> Have you considered moving to folios here?
-> 
-
-Of course, however, because the md high level helpers is still using
-page, I'm thinking about using page for now, which is simpler, and
-moving to folios for all md code later.
+ drivers/net/ethernet/mellanox/mlx5/core/en.h  | 10 ++---
+ .../ethernet/mellanox/mlx5/core/en/params.c   | 45 +++++++------------
+ .../ethernet/mellanox/mlx5/core/en/params.h   |  6 ---
+ .../net/ethernet/mellanox/mlx5/core/en_main.c | 27 +++++++----
+ .../net/ethernet/mellanox/mlx5/core/en_rx.c   |  2 +-
+ 5 files changed, 39 insertions(+), 51 deletions(-)
 
 
->> +static int llbitmap_resize(struct mddev *mddev, sector_t blocks, int 
->> chunksize)
->> +{
->> +    struct llbitmap *llbitmap = mddev->bitmap;
->> +    unsigned long chunks;
->> +
->> +    if (chunksize == 0)
->> +        chunksize = llbitmap->chunksize;
->> +
->> +    /* If there is enough space, leave the chunksize unchanged. */
->> +    chunks = DIV_ROUND_UP(blocks, chunksize);
->> +    while (chunks > mddev->bitmap_info.space << SECTOR_SHIFT) {
->> +        chunksize = chunksize << 1;
->> +        chunks = DIV_ROUND_UP(blocks, chunksize);
->> +    }
->> +
->> +    llbitmap->chunkshift = ffz(~chunksize);
->> +    llbitmap->chunksize = chunksize;
->> +    llbitmap->chunks = chunks;
->> +
->> +    return 0;
->> +}
->> +
-> 
-> Hmm. I do get confused with the chunksize here.
-> Is this the granularity of the bits in the bitmap
-> (ie how many data bytes are covered by one bit)?
-> Or is it the chunksize of the bitmap itself?
-
-Yes, the llbitmap->chunksize means the data bytes by one llbitmap bit.
-> 
-> In either case, if it's a 'chunksize' in the sense
-> of the block layer (namely a boundary which I/O
-> must not cross), shouldn't you set the request
-> queue limits accordingly?
-
-I think we don't, it's fine if IO cross the boundary of
-llbitmap->chunksize, multiple bits will be recorded. In fact, we support
-plug and recored lots of bits at a time, the only restriction is that
-dirty bits have to be written beffore issuing IO.
-
-> 
->> +static int llbitmap_load(struct mddev *mddev)
->> +{
->> +    enum llbitmap_action action = BitmapActionReload;
->> +    struct llbitmap *llbitmap = mddev->bitmap;
->> +
->> +    if (test_and_clear_bit(BITMAP_STALE, &llbitmap->flags))
->> +        action = BitmapActionStale;
->> +
->> +    llbitmap_state_machine(llbitmap, 0, llbitmap->chunks - 1, action);
->> +    return 0;
->> +}
->> +
->> +static void llbitmap_destroy(struct mddev *mddev)
->> +{
->> +    struct llbitmap *llbitmap = mddev->bitmap;
->> +
->> +    if (!llbitmap)
->> +        return;
->> +
->> +    mutex_lock(&mddev->bitmap_info.mutex);
->> +
->> +    timer_delete_sync(&llbitmap->pending_timer);
->> +    flush_workqueue(md_llbitmap_io_wq);
->> +    flush_workqueue(md_llbitmap_unplug_wq);
->> +
->> +    mddev->bitmap = NULL;
->> +    llbitmap_free_pages(llbitmap);
->> +    kfree(llbitmap);
->> +    mutex_unlock(&mddev->bitmap_info.mutex);
->> +}
->> +
->> +static void llbitmap_start_write(struct mddev *mddev, sector_t offset,
->> +                 unsigned long sectors)
->> +{
->> +    struct llbitmap *llbitmap = mddev->bitmap;
->> +    unsigned long start = offset >> llbitmap->chunkshift;
->> +    unsigned long end = (offset + sectors - 1) >> llbitmap->chunkshift;
->> +    int page_start = (start + BITMAP_DATA_OFFSET) >> PAGE_SHIFT;
->> +    int page_end = (end + BITMAP_DATA_OFFSET) >> PAGE_SHIFT;
->> +
->> +    llbitmap_state_machine(llbitmap, start, end, 
->> BitmapActionStartwrite);
->> +
->> +
->> +    while (page_start <= page_end) {
->> +        llbitmap_raise_barrier(llbitmap, page_start);
->> +        page_start++;
->> +    }
->> +}
->> +
->> +static void llbitmap_end_write(struct mddev *mddev, sector_t offset,
->> +                   unsigned long sectors)
->> +{
->> +    struct llbitmap *llbitmap = mddev->bitmap;
->> +    unsigned long start = offset >> llbitmap->chunkshift;
->> +    unsigned long end = (offset + sectors - 1) >> llbitmap->chunkshift;
->> +    int page_start = (start + BITMAP_DATA_OFFSET) >> PAGE_SHIFT;
->> +    int page_end = (end + BITMAP_DATA_OFFSET) >> PAGE_SHIFT;
->> +
->> +    while (page_start <= page_end) {
->> +        llbitmap_release_barrier(llbitmap, page_start);
->> +        page_start++;
->> +    }
->> +}
->> +
->> +static void llbitmap_start_discard(struct mddev *mddev, sector_t offset,
->> +                   unsigned long sectors)
->> +{
->> +    struct llbitmap *llbitmap = mddev->bitmap;
->> +    unsigned long start = DIV_ROUND_UP(offset, llbitmap->chunksize);
->> +    unsigned long end = (offset + sectors - 1) >> llbitmap->chunkshift;
->> +    int page_start = (start + BITMAP_DATA_OFFSET) >> PAGE_SHIFT;
->> +    int page_end = (end + BITMAP_DATA_OFFSET) >> PAGE_SHIFT;
->> +
->> +    llbitmap_state_machine(llbitmap, start, end, BitmapActionDiscard);
->> +
->> +    while (page_start <= page_end) {
->> +        llbitmap_raise_barrier(llbitmap, page_start);
->> +        page_start++;
->> +    }
->> +}
->> +
->> +static void llbitmap_end_discard(struct mddev *mddev, sector_t offset,
->> +                 unsigned long sectors)
->> +{
->> +    struct llbitmap *llbitmap = mddev->bitmap;
->> +    unsigned long start = DIV_ROUND_UP(offset, llbitmap->chunksize);
->> +    unsigned long end = (offset + sectors - 1) >> llbitmap->chunkshift;
->> +    int page_start = (start + BITMAP_DATA_OFFSET) >> PAGE_SHIFT;
->> +    int page_end = (end + BITMAP_DATA_OFFSET) >> PAGE_SHIFT;
->> +
->> +    while (page_start <= page_end) {
->> +        llbitmap_release_barrier(llbitmap, page_start);
->> +        page_start++;
->> +    }
->> +}
->> +
->> +static void llbitmap_unplug_fn(struct work_struct *work)
->> +{
->> +    struct llbitmap_unplug_work *unplug_work =
->> +        container_of(work, struct llbitmap_unplug_work, work);
->> +    struct llbitmap *llbitmap = unplug_work->llbitmap;
->> +    struct blk_plug plug;
->> +    int i;
->> +
->> +    blk_start_plug(&plug);
->> +
->> +    for (i = 0; i < llbitmap->nr_pages; i++) {
->> +        if (!test_bit(LLPageDirty, &llbitmap->pctl[i]->flags) ||
->> +            !test_and_clear_bit(LLPageDirty, &llbitmap->pctl[i]->flags))
-> 
-> Confused. Is this some kind of micro-optimisation?
-> Why not simply 'test_and_clear_bit()'?
-
-Yes, because this is called from IO hot path, and in the most cases,
-only a few pages will be dirtied by plugged IO.
-
-Thanks for the review!
-Kuai
-
-> Cheers,
-> 
-> Hannes
+base-commit: 4701ee5044fb3992f1c910630a9673c2dc600ce5
+-- 
+2.31.1
 
 
