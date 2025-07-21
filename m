@@ -1,84 +1,119 @@
-Return-Path: <linux-kernel+bounces-738740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39E78B0BC7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:28:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D79D9B0BC86
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:31:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76E0917A312
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:28:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8E0C189B0C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F33A426E70C;
-	Mon, 21 Jul 2025 06:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0608277C9F;
+	Mon, 21 Jul 2025 06:30:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ISWDxkbd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZQTVzw7W"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5384F2AD04;
-	Mon, 21 Jul 2025 06:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1CF2777E0;
+	Mon, 21 Jul 2025 06:30:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753079287; cv=none; b=uR1DEf3lEDhSQe338kVEPr/ru0lx0Wbe083uHQRWpGE6XvWSOE8KVxbe3TClHAD0RpuwBTbQU5v+CndgNU958QDQPDwkFaSD5Kc79rOiR98MqS2ArERpmLpUTdP3yaTgBYmJZ0EaF++ZZtPV/Jj0MSqjY/a0MStklh8+g8OfJtA=
+	t=1753079458; cv=none; b=vGp998XgjcexEHgW9JN/cokcweX2nQ7i+N4vFZDJEIFQx1CyQyD6LIC2XLHwwxh7s8O9BejoxqAOvWqrouH9YXjM3r88niLHBOYR1kVPP21z0noFj8t3My4pmE5G8VxjHTNZt3tIH2tm+Qn2FdW3bS8yU+vM4vYy5UVoAl0r9dA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753079287; c=relaxed/simple;
-	bh=Awf2JlFpZAAsC9E7QRotPEe1MqXcnLj+CinVQpBt/Q0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CsRnh4CdgPefO+bFhqPV9weQ3WnQ4XBmzDASt9Hsd9uZ5UbO5UifpfF6sMLeog/jsDCSv78WB4pw98PyI6CcNGlLVFEHbTllhajJMkyMnLkxTtU5339SF1J9oUZKxUdAXs/xb+x9iuvy+PbqZlI45ua5//Q0PyJxJg9xWTRNDdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ISWDxkbd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70292C4CEED;
-	Mon, 21 Jul 2025 06:28:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1753079285;
-	bh=Awf2JlFpZAAsC9E7QRotPEe1MqXcnLj+CinVQpBt/Q0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ISWDxkbdxuxmnslOZpq3ydul88vO17hwI+QjmQ2JQl6ADKw2+HJ61JKHvJWIZaMAY
-	 CZYuBSpmXgQ61l8bsPYhb8Kp9hrUvDRg0tGskqF6wgT6VkMzItx6L7fzwhAyZvRaeP
-	 wV5VVQaTaZCdLmyOTCzFgl5gsd14uYeqjHG7yPM0=
-Date: Mon, 21 Jul 2025 08:28:03 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
-Subject: Re: [PATCH v2] staging: rtl8723bs: clean up redundant & parentheses
-Message-ID: <2025072108-yarn-sloping-5831@gregkh>
-References: <20250720092125.246844-1-vivek.balachandhar@gmail.com>
- <20250721061412.297554-1-vivek.balachandhar@gmail.com>
+	s=arc-20240116; t=1753079458; c=relaxed/simple;
+	bh=kO7/+brEXzYw1d+SOh8B88y9q2OEmgyNDx7tjiAzico=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Ep9rnIzFya5eup313+q8BvRD0yqiNi6UXSPJuX1i1PS5tTfXtePy3nHeISkcLt6dLGGRv1bbtnYqEcrBUbMVw2aOQ4FugGTfInbNcS+AEL4vSmU7vd5G+S8d2tqkOJWGI9GwKASkcnTUovV7vOcsjwosfVohiobVjJx8hjMuTZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZQTVzw7W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A4E8AC4CEED;
+	Mon, 21 Jul 2025 06:30:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753079457;
+	bh=kO7/+brEXzYw1d+SOh8B88y9q2OEmgyNDx7tjiAzico=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=ZQTVzw7W9/m3sON0v1vUs0SBSGZQBZRdfgflcSPd9pbAaTjkbrI4gtElZ8vNpSOYK
+	 77onwI99WodzI+1vwtPu5oOn/jLtDFRtY5+RgvnQTSQ54OptcCLUHcRSEX0popzBdh
+	 LtzPwZAQAjWz8uZ6wEVQzzZfx++zpG4XS7gp3zGJNyp3BixGDghSl+l+fIHH3mSrmC
+	 t+zTCKzuHlT2SUG+d5rh2TurSHgZixcSA6w83GOnqYdgRjAmX8K4YSLnhk7KhbbSb0
+	 sw8TWQLpJ6bJ0cdyh06BNLBn7Q88GGklKw+U57qjcl9qczIFLqtuMjXWYdwXC0U82i
+	 fOC5icNfb5ZiA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9309CC87FC5;
+	Mon, 21 Jul 2025 06:30:57 +0000 (UTC)
+From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
+Date: Mon, 21 Jul 2025 10:30:46 +0400
+Subject: [PATCH] arm64: dts: qcom: ipq5018: add PRNG node
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250721061412.297554-1-vivek.balachandhar@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250721-ipq5018-prng-v1-1-474310e0575d@outlook.com>
+X-B4-Tracking: v=1; b=H4sIAJbefWgC/x3MTQqAIBBA4avIrBP8wbCuEi0sJ5uNmUIE4t2Tl
+ t/ivQoFM2GBmVXI+FChK3bIgcF+uhiQk+8GJZQRRmlO6TZCWp5yDFwa3DSOzk/CQk9SxoPef7e
+ srX1lllBpXgAAAA==
+X-Change-ID: 20250523-ipq5018-prng-15eb3e6ad908
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ George Moussalem <george.moussalem@outlook.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753079455; l=1074;
+ i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
+ bh=uB/HCEZYInOL5Lcj4Z1RVwpnu7EOA4IaF8qdmjn0/5w=;
+ b=yuX4ZHzn+VlOybcdKhAIbS9y3D/tRAQcQ1GI5MBSUTUQOkScNyTSTFviXhtugb9ZZN6pEhiKd
+ CXw1aB+h3Y7AYtJg9dLlHmGRkVpnHGYwSPrtMmsImIFeTpArRGb9g6f
+X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
+ pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
+X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
+ with auth_id=364
+X-Original-From: George Moussalem <george.moussalem@outlook.com>
+Reply-To: george.moussalem@outlook.com
 
-On Mon, Jul 21, 2025 at 06:14:12AM +0000, Vivek BalachandharTN wrote:
-> Hi Greg,
-> 
-> Thanks again for your earlier feedback on the patch cleanup for rtw_mlme.c.
-> 
-> Since the original version included multiple checkpatch.pl fixes 
-> (like spacing and formatting) and you suggested breaking them up by type, 
-> 
-> I wanted to ask:
-> 
-> For the remaining cleanups (e.g., spacing issues), should I submit them as:
-> 
-> separate standalone patches, or
-> 
-> as new versions (v2, v3, etc.) building on the current patch?
-> 
-> Just wanted to be sure I follow the preferred approach.
+From: George Moussalem <george.moussalem@outlook.com>
 
-If you were on my side, recieving hundreds of patches a day to review,
-what would you want to see?  :)
+PRNG inside of IPQ5018 is already supported, so let's add the node for it.
 
-(hint, a patch series, properly versioned is the easiest.)
+Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+---
+ arch/arm64/boot/dts/qcom/ipq5018.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-thanks,
+diff --git a/arch/arm64/boot/dts/qcom/ipq5018.dtsi b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
+index 9ce73682e4ae7cde90f151dfcd41a5201ced2aa6..9efa831e7d4e64326dc9bbdbab3541c486ad3b9c 100644
+--- a/arch/arm64/boot/dts/qcom/ipq5018.dtsi
++++ b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
+@@ -301,6 +301,14 @@ tsens_s4_p2: s4-p2@254 {
+ 			};
+ 		};
+ 
++		prng: rng@e3000 {
++			compatible = "qcom,prng-ee";
++			reg = <0x000e3000 0x1000>;
++			clocks = <&gcc GCC_PRNG_AHB_CLK>;
++			clock-names = "core";
++			status = "disabled";
++		};
++
+ 		tsens: thermal-sensor@4a9000 {
+ 			compatible = "qcom,ipq5018-tsens", "qcom,tsens-v1";
+ 			reg = <0x004a9000 0x1000>,
 
-greg k-h
+---
+base-commit: 1b0324d3b8375fcfaf80789092347a52529059eb
+change-id: 20250523-ipq5018-prng-15eb3e6ad908
+
+Best regards,
+-- 
+George Moussalem <george.moussalem@outlook.com>
+
+
 
