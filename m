@@ -1,112 +1,174 @@
-Return-Path: <linux-kernel+bounces-739354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28E7FB0C526
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:26:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AC35B0C528
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:27:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44D6C189E2E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:27:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D20EE5402BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:27:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7082D9489;
-	Mon, 21 Jul 2025 13:26:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E7D2D949A;
+	Mon, 21 Jul 2025 13:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="rDowa1V+"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YB/WpQxs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE401E521E;
-	Mon, 21 Jul 2025 13:26:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BAB22C327C;
+	Mon, 21 Jul 2025 13:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753104402; cv=none; b=LBZYPxZRG+vRb+FmHHaf4mdmDhrwSGmipfLMaGqHbh6a8QPYdyTNP0BnN7thvycjRV/fLXvbWTrXM+CVkzD78AX51JyfhVz2N5W+lTpOpviiIl8dF2dS4p4F+IgQHNO/i/EIOtLGYNWk8PeQ3JiYPDtfk6bKRMGqFPnPWMffQII=
+	t=1753104441; cv=none; b=X20nv9JSnXE9sd6eD1/D9RWNb8fXEUH3k9yV6RODMFvCh7OKqsVf7ILzFSJtnG8Z7xIOrqja0JnRN0N7KFOuW/kByHjx5mIGQ32SGIgKpsnP99jQoX24pN1sR+pBznFaj+OYbSDL9/FTljCtVfTt2q45CAsWCTSJFfD/M+Sgo3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753104402; c=relaxed/simple;
-	bh=sRSbq2dWBq5biO2NCQAchFm6eHRQIvC4ME8xN9f6d+s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hKPGZBFePEv9gZ558nHAb8gWGljF+S/HAUsIYNSwe0nK+WWuV6/WPyKMI42uXgLfMcOOwyh/CSIzrOPD2PSgjiufRyI+h3lWqMg1qGx4jhNa8oFZPniean15JHosXIQEwz5bmOh156ohQmXcy26Xw2njgIm2gTy2FSUrBTqstlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=rDowa1V+; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=f0zjOMTbsL9IYskcxTnBbpsTUpI1b+AoqR8XdDVpdrI=; b=rDowa1V+pr1UhzVlanIV+mlqe+
-	yi+x6a81Qp2xjGtBieTAdZdnaK3PLVHeziPlVeTDFY+AU7vBY2Li5ixGzFtTemQcIS20U/QvC5Ihr
-	xxAkLgUGpSzVY0r0gOueIKO7mDIUSP3kdU1h3GzEwPfuofWTL4jRmOskhSRsAo9WqMVk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1udqXE-002MJh-72; Mon, 21 Jul 2025 15:26:28 +0200
-Date: Mon, 21 Jul 2025 15:26:28 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Gatien Chevallier <gatien.chevallier@foss.st.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Christophe Roullier <christophe.roullier@foss.st.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Simon Horman <horms@kernel.org>,
-	Tristram Ha <Tristram.Ha@microchip.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 3/4] net: phy: smsc: fix and improve WoL support
-Message-ID: <cca8e9e6-a063-4e00-87af-f59ea926cce3@lunn.ch>
-References: <20250721-wol-smsc-phy-v1-0-89d262812dba@foss.st.com>
- <20250721-wol-smsc-phy-v1-3-89d262812dba@foss.st.com>
+	s=arc-20240116; t=1753104441; c=relaxed/simple;
+	bh=cKOIaF/9e9LosSSyIlZcltURlxLbaR2oPOKVD+Xx1AY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LXD3BRQ27bQ27ZnxjbBGpQ0b8QG33txzizXAFinUOilpa1Jz0BD7fJEEhfNcBQjaIApmsWbnxZyLprASHoBiSHra26WbTP5TIHGA17Q/uZPHh0z1fYmjuU01ne6mRNv8cYVDLcSrx4Erd4PLXu+6y4jK+Z+rfPaFvXBS4bE4fx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YB/WpQxs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1D5AC4CEED;
+	Mon, 21 Jul 2025 13:27:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753104440;
+	bh=cKOIaF/9e9LosSSyIlZcltURlxLbaR2oPOKVD+Xx1AY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=YB/WpQxsu1YfRmlro/e24s/Vfd6LrcRL6asIIxZodVEBzfBm7FHBnYrsIhxA/Mpz8
+	 IxLhbOJ0WtZV8LFypaDcX8aq4OMvi9S3ynjvFFKe9RdMZP3DEQ55n/1QYt2vlpkU/X
+	 Ubm3LRRKLtAzO/l5SBio67sj+MulsHpAoiwR38EM6pzV6mCuzfdf0quKHN494bD5T6
+	 aJoqKv1/ok/a+0xCuT18TlhUlB4ShKYy4jKMx+v2xpND6sExMuMPXQ5NrRqrqkhv52
+	 zgyaVW9nzflEhD6BN9ItGS8c4kntjPjIzypW6GItltRXEPKQiSrOV8eBlGl0s2I4Sy
+	 ZikbQJCGEUJDA==
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-615bda72cc1so768541eaf.2;
+        Mon, 21 Jul 2025 06:27:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV+1PVNMdyAB/oPq0UOvJi0uMD2FqhRitjNexBcSyTFy7YasULQ+/ClhJBOzdBf9z41cpE9oS7bh8E5iBTR@vger.kernel.org, AJvYcCXPO6K5GU7/y92X5reRvkTNfXvD88IDxKjQ7bbeFJ7OkdtD57rIzR1wY/mOmmz2BeFlCaETApsqEl/B@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOo063tuuqLuTkqDHsQnRKC/gg8rUTRRl85liqzXvD6MFU6tmT
+	+oSW9YlMsUAcasCFpbxdgu1QT22V49apgAQSom0H2oPsrO+TNn1mJCfFuX1iotSmX8AxMdZhMN4
+	V5jMNM08wQqz9GBSGBZgwB4qAxT3hhaE=
+X-Google-Smtp-Source: AGHT+IEvddJwMY1Z1PmRABXKYKann2akoFsKkyfETHzAWJrAbllziuwBoMtm+BcZi6441BEYlIZLpD9/qyWKyrD0sns=
+X-Received: by 2002:a05:6820:220f:b0:615:c868:2541 with SMTP id
+ 006d021491bc7-615c86825d2mr7397019eaf.3.1753104439939; Mon, 21 Jul 2025
+ 06:27:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250721-wol-smsc-phy-v1-3-89d262812dba@foss.st.com>
+References: <20250718020312.856168-1-lijiayi@kylinos.cn> <20250721032606.3459369-1-lijiayi@kylinos.cn>
+In-Reply-To: <20250721032606.3459369-1-lijiayi@kylinos.cn>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 21 Jul 2025 15:27:09 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gf5wb1cNS0CJm9-vhMF63d2BzTEfBciiO9ZhdJHYpDnQ@mail.gmail.com>
+X-Gm-Features: Ac12FXwrzJD0hWFzMewpQ5ouXApA-U82Afkv9Z0asWZhUvTxXi_PsCnqFDycwP0
+Message-ID: <CAJZ5v0gf5wb1cNS0CJm9-vhMF63d2BzTEfBciiO9ZhdJHYpDnQ@mail.gmail.com>
+Subject: Re: [PATCH v2] ACPI: Fix initial QoS constraint application order in
+ PPC initialization
+To: Jiayi Li <lijiayi@kylinos.cn>
+Cc: rafael@kernel.org, jiayi_dec@163.com, lenb@kernel.org, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> +static int smsc_phy_suspend(struct phy_device *phydev)
-> +{
-> +	if (!phydev->wol_enabled)
-> +		return genphy_suspend(phydev);
+On Mon, Jul 21, 2025 at 5:26=E2=80=AFAM Jiayi Li <lijiayi@kylinos.cn> wrote=
+:
+>
+> This patch fixes an issue where _PPC frequency limits set by the BIOS
+> failed to take effect due to incorrect call ordering. Previously,
+> freq_qos_update_request() was being called before freq_qos_add_request(),
+> causing the constraint updates to be ignored. With this fix, the frequenc=
+y
+> limits are now properly enforced as intended.
+> The original initialization sequence was:
+>
+> cpufreq_policy_online()
+>     acpi_cpufreq_cpu_init()
+>         acpi_processor_get_platform_limit()
+>             freq_qos_update_request(&perflib_req)
+>     blocking_notifier_call_chain(...)
+>         acpi_processor_ppc_init()
+>             freq_qos_add_request(&perflib_req)
+>
+> The new sequence explicitly ensures:
+>
+> cpufreq_policy_online()
+>     acpi_cpufreq_cpu_init()
+>         acpi_processor_get_platform_limit()
+>             freq_qos_update_request(&perflib_req)
+>     blocking_notifier_call_chain(...)
+>         acpi_processor_ppc_init()
+>             freq_qos_add_request(&perflib_req)
+> +           acpi_processor_get_platform_limit()
+> +               freq_qos_update_request(&perflib_req)
+>
+> The critical change adds an immediate platform limit update after the
+> QoS request is registered. This guarantees that the initial P-state
+> constraint is applied before any subsequent updates, resolving the window
+> where constraints could be applied out-of-order.
+>
+> Fixes: d15ce412737a ("ACPI: cpufreq: Switch to QoS requests instead of cp=
+ufreq notifier")
+> Signed-off-by: Jiayi Li <lijiayi@kylinos.cn>
+> ---
+> v1 -> v2:
+> - Modify the commit.
+> - Add pr->performance check in acpi_processor_ppc_init loop.
+> ---
+> ---
+>  drivers/acpi/processor_perflib.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+>
+> diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor_pe=
+rflib.c
+> index 64b8d1e19594..56f2b8354d62 100644
+> --- a/drivers/acpi/processor_perflib.c
+> +++ b/drivers/acpi/processor_perflib.c
+> @@ -173,6 +173,9 @@ void acpi_processor_ppc_init(struct cpufreq_policy *p=
+olicy)
+>  {
+>         unsigned int cpu;
+>
+> +       if (ignore_ppc =3D=3D 1)
+> +               return;
 > +
-> +	return 0;
-> +}
+>         for_each_cpu(cpu, policy->related_cpus) {
+>                 struct acpi_processor *pr =3D per_cpu(processors, cpu);
+>                 int ret;
+> @@ -180,6 +183,9 @@ void acpi_processor_ppc_init(struct cpufreq_policy *p=
+olicy)
+>                 if (!pr)
+>                         continue;
+>
+> +               if (!pr->performance)
+> +                       continue;
+> +
+>                 /*
+>                  * Reset performance_platform_limit in case there is a st=
+ale
+>                  * value in it, so as to make it match the "no limit" QoS=
+ value
 
-Suspend/resume is somewhat complex, and i don't know all the
-details. But this looks odd. Why does the phylib core call suspend
-when phydev->wol_enabled is true? That at least needs an explanation
-in the commit message.
+Applied, but I have consolidated the pr and pr->performance checks above.
 
-> +static int smsc_phy_resume(struct phy_device *phydev)
-> +{
-> +	int rc;
-> +
-> +	if (!phydev->wol_enabled)
-> +		return genphy_resume(phydev);
-> +
-> +	rc = phy_read_mmd(phydev, MDIO_MMD_PCS, MII_LAN874X_PHY_MMD_WOL_WUCSR);
-> +	if (rc < 0)
-> +		return rc;
-> +
-> +	if (!(rc & MII_LAN874X_PHY_WOL_STATUS_MASK))
-> +		return 0;
-> +
-> +	dev_info(&phydev->mdio.dev, "Woke up from LAN event.\n");
+I have also made some changes in the subject and changelog.
 
-Please don't spam the log. It is clear the system woke up, there are
-messages in the log...
+Thanks!
 
-	Andrew
+> @@ -193,6 +199,11 @@ void acpi_processor_ppc_init(struct cpufreq_policy *=
+policy)
+>                 if (ret < 0)
+>                         pr_err("Failed to add freq constraint for CPU%d (=
+%d)\n",
+>                                cpu, ret);
+> +
+> +               ret =3D acpi_processor_get_platform_limit(pr);
+> +               if (ret)
+> +                       pr_err("Failed to update freq constraint for CPU%=
+d (%d)\n",
+> +                              cpu, ret);
+>         }
+>  }
+>
+> --
 
