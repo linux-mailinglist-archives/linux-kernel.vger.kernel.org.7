@@ -1,302 +1,344 @@
-Return-Path: <linux-kernel+bounces-738864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A29EFB0BE64
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:04:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28BEDB0BE6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:05:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E15917C774
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:04:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B594189E3E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E41F285C8D;
-	Mon, 21 Jul 2025 08:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D43286893;
+	Mon, 21 Jul 2025 08:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K7N5W7ta"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R5YW/cJ3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66BEE283FF9;
-	Mon, 21 Jul 2025 08:04:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD7E285074
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 08:05:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753085085; cv=none; b=I5g9JP/u41w8V4HSPgsT2ymkTtNYKABcAqAl3tdRisE/m0v2JCvAoG//MAfJwBTHOjIcIyXNvrmGKaIlmCF62wc/YW3ZLlszhlXwhuWviqMCE2JbH2JKRCCeKLDoQmyO0M3Z+BXHQQ958U6fA07l8L7EYuycOsJHWeWlk2khzTQ=
+	t=1753085135; cv=none; b=tP4BMbinBzZR/+hxijB7fKldMjN5+Ptqb8Iz6Fumc2PrFPglYo2xxF3nQqmLD/4XdWcT9/HBISRtgLfOCBO9N1BDYDGl5kPsKEcBC017L1VIqQnvc4rHQehUhvx+CQuZA9x+ccYimiIn0+ynpROsuW22FGDSiD8Fx9wocJm5nt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753085085; c=relaxed/simple;
-	bh=QgDLhVT5/Im3WYhce4U20WhSBJqy+kOhesA7mNbWrHc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ik4fR6jAatlX0X9eYroa0cbkYjNVV14GFm2W56A61GCtaAG3PRPNFn0GQTxI62yvC4zDkoh6UEAeLMpQBSKjdukr6VNK0FX4JISTe1pDl+pd/zCfp0RvLaHS5F/tUrEeB2qclzElp/72DXWPPFwvyjAY/VJZHPLVsfevFRcMUPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K7N5W7ta; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C987C4CEED;
-	Mon, 21 Jul 2025 08:04:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753085084;
-	bh=QgDLhVT5/Im3WYhce4U20WhSBJqy+kOhesA7mNbWrHc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=K7N5W7tai1vfrQpA1hq53JrFSkqITF78cHo0BN+Tetz3lQFvqOr24uWsEOqX9WcYd
-	 Orkuv6Wk0OIZZ9NnN71Kw0AZJ5VJjde3EQtsnQeVMWc0NknnM7vK+tY8Vj0Ng3IcKC
-	 2QadC4DZMmHJSKzWz4SAlXDsc4ZsdMPmiAUTk0791CNQxKEgOQ6gd+EiNiR1VQcqgC
-	 MeLDyPHumO/ToS+tDk2FfeHWP3KqyBF6j1kpN5EgjiRthLO+NEnBgcu9Buhc8nrFEN
-	 8kXMFH50s9RjwtTdZ0W8ULdm3yGBxXDIvPe4qtmt3hvkwehclT1bd3aBW9IHePZAWS
-	 MXt9K0szD2zkA==
-Date: Mon, 21 Jul 2025 10:04:42 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: jeff_chang@richtek.com
-Cc: lgirdwood@gmail.com, broonie@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] dt-bindings: regulator: Add Richtek RTR5133 DT
- Binding Documentation
-Message-ID: <20250721-wonderful-auk-of-whirlwind-8beda4@kuoka>
-References: <20250721060215.2718217-1-jeff_chang@richtek.com>
- <20250721060215.2718217-2-jeff_chang@richtek.com>
+	s=arc-20240116; t=1753085135; c=relaxed/simple;
+	bh=OmacDHOgisi4/R/uJWi3N1yuxQnUS7GhOJDuFiXyVLA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b5P8HPbKnF8JtLndMaMwPqIumZSuqcQSHiVjLlAuzM5AAO+/pj2qfdZ/dd/35lnAq5oT4DFxF0rFTsf1Y6PuDANaGTaHwBPIkkPhbu2v8TRg149va9d9Ss1rqzQSVPlLNx4uNlnIxYMWxV6rLdYkpd6PAGwa7npBaCi8rLlQGGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R5YW/cJ3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753085132;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=YZwimYc/XbFaUcGJkln+p9HtaqBU8QoZiA7E2Ky46WU=;
+	b=R5YW/cJ3a/PSn8GXIFL8YY9QyV74ji0ruqvf+zxSW2YwlNvuC6kD34j2n/aVk8bZjjKckA
+	oW4PQpA11YvZLNMvGLWePsMtRLkqVDgtTrTPx33DGlUnGQsMFYcY9SBwPCoinwIu1e3lyJ
+	4ojZDc82YLbgOE/TiwDnAL8dJT+9IDk=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-388-knfHYOCRNSWTyF00Fur6Bw-1; Mon, 21 Jul 2025 04:05:30 -0400
+X-MC-Unique: knfHYOCRNSWTyF00Fur6Bw-1
+X-Mimecast-MFC-AGG-ID: knfHYOCRNSWTyF00Fur6Bw_1753085129
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43e9b0fd00cso23500315e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 01:05:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753085129; x=1753689929;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=YZwimYc/XbFaUcGJkln+p9HtaqBU8QoZiA7E2Ky46WU=;
+        b=m1z3X6EMWgNAd4C03TNvVYVFQID7Gv68chA8rufFcTyKjR6RQAY/y9td4e63ikkkO7
+         AZtsaMr0bfnFSiD60CGJ1Aii8fX9uTkiWsaPy8XLWacE8w3xF3XP1zGj436ZXxJ7+K+S
+         gM5y8MWQgQ1EW7tNEQ29IWZCf2kO0Q7PaS/k2Ac9+Sj3JygfcyOnEj38N7RzND+/sR/B
+         viR13ht80krFMOyUakDjEAr/HIkL4i0MiBQSkMWTq0PEuZO816BCYSQj1euPuPJAqFmD
+         de6sYsTIue1yx7Fcu+KMMp5ngnHCz3GgB5pLFOg6jOGRfxP65MkTtgRuz8fN6OqQj+tq
+         Lmcg==
+X-Gm-Message-State: AOJu0YzhqcHlSKG6okyPAa9MbD/qx4Fd8iTGj6VdOHmt/JPkqmiyDYBt
+	ByNntrQ9oWnh1yKdBgWebBVUaMJsj/D0HrltQxqlshUmuGb5OFQeq8l/SQ2FpZGrfrcaHrYPlT+
+	id33VsKRFkPgVFBGfcFVNGDVxD1g7LHixeKsEBvqhfWRb6Hj2jAnAEn25z0M/zisuUQ==
+X-Gm-Gg: ASbGncsJyeZbnBdiUi6gO8QJy0ivnSfiV5XTeM9VO/30+8Q1MKb/CuICeU0xJlCWfH8
+	Mb9ky4KGye/lb1KB8jXuzUUX9GVxq6ZRHcEnvSk7Blq/TKnGJsX/k1xMrNyB5XhF8i5oGuOvp+q
+	Tmpf7XOFGyQQ9UPx+t2M8nTOsnN3s9Corc14wTey2KvOn4m3ApUV5oRcrFov+IGeibZSYuxyksX
+	bjk4h3awfW6uhXVBru3Glr0r5CIi89AG76V0egjrdGrUP1j4oxkSrhxBHnw/pBGpF3LKvupzCXw
+	CTUKHh72POcxMX8YFSTU25ti02bje4XqQUzeu5OZ7IqjfH4tSmBw9iVokOxIv2QWwKrlqeECCxW
+	WdFjJKa/CdBlfpiagG055OevpnKQz5rvHKhqXe/ARGbcvNsZCGwsBxPhftG5uoK1O
+X-Received: by 2002:a05:600c:6610:b0:456:942:b162 with SMTP id 5b1f17b1804b1-45637bc1e8fmr147848445e9.11.1753085128904;
+        Mon, 21 Jul 2025 01:05:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEaqPaRa97Ws7y+SPufWF2ofN23cpKrkKJ1mE+QB0PaxxEWaWruM697N59u6maQfQXxXtGBSA==
+X-Received: by 2002:a05:600c:6610:b0:456:942:b162 with SMTP id 5b1f17b1804b1-45637bc1e8fmr147847785e9.11.1753085128261;
+        Mon, 21 Jul 2025 01:05:28 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f4c:df00:a9f5:b75b:33c:a17f? (p200300d82f4cdf00a9f5b75b033ca17f.dip0.t-ipconnect.de. [2003:d8:2f4c:df00:a9f5:b75b:33c:a17f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45635fe6a92sm84696565e9.2.2025.07.21.01.05.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Jul 2025 01:05:27 -0700 (PDT)
+Message-ID: <e897e784-4403-467c-b3e4-4ac4dc7b2e25@redhat.com>
+Date: Mon, 21 Jul 2025 10:05:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250721060215.2718217-2-jeff_chang@richtek.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm, page_pool: introduce a new page type for page pool in
+ page type
+To: Byungchul Park <byungchul@sk.com>, linux-mm@kvack.org,
+ netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+ harry.yoo@oracle.com, ast@kernel.org, daniel@iogearbox.net,
+ davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
+ john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com,
+ leon@kernel.org, tariqt@nvidia.com, mbloch@nvidia.com,
+ andrew+netdev@lunn.ch, edumazet@google.com, pabeni@redhat.com,
+ akpm@linux-foundation.org, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com,
+ mhocko@suse.com, horms@kernel.org, jackmanb@google.com, hannes@cmpxchg.org,
+ ziy@nvidia.com, ilias.apalodimas@linaro.org, willy@infradead.org,
+ brauner@kernel.org, kas@kernel.org, yuzhao@google.com,
+ usamaarif642@gmail.com, baolin.wang@linux.alibaba.com,
+ almasrymina@google.com, toke@redhat.com, asml.silence@gmail.com,
+ bpf@vger.kernel.org, linux-rdma@vger.kernel.org
+References: <20250721054903.39833-1-byungchul@sk.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <20250721054903.39833-1-byungchul@sk.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 21, 2025 at 02:01:35PM +0800, jeff_chang@richtek.com wrote:
-> From: Jeff Chang <jeff_chang@richtek.com>
+On 21.07.25 07:49, Byungchul Park wrote:
+> Hi,
 > 
+> I focused on converting the existing APIs accessing ->pp_magic field to
+> page type APIs.  However, yes.  Additional works would better be
+> considered on top like:
+> 
+>     1. Adjust how to store and retrieve dma index.  Maybe network guys
+>        can work better on top.
+> 
+>     2. Move the sanity check for page pool in mm/page_alloc.c to on free.
+> 
+>     Byungchul
+> 
+> ---8<---
+>  From 7d207a1b3e9f4ff2a72f5b54b09e3ed0c4aaaca3 Mon Sep 17 00:00:00 2001
+> From: Byungchul Park <byungchul@sk.com>
+> Date: Mon, 21 Jul 2025 14:05:20 +0900
+> Subject: [PATCH] mm, page_pool: introduce a new page type for page pool in page type
+> 
+> ->pp_magic field in struct page is current used to identify if a page
+> belongs to a page pool.  However, page type e.i. PGTY_netpp can be used
+> for that purpose.
+> 
+> Use the page type APIs e.g. PageNetpp(), __SetPageNetpp(), and
+> __ClearPageNetpp() instead, and remove the existing APIs accessing
+> ->pp_magic e.g. page_pool_page_is_pp(), netmem_or_pp_magic(), and
+> netmem_clear_pp_magic() since they are totally replaced.
+> 
+> This work was inspired by the following link by Pavel:
+> 
+> [1] https://lore.kernel.org/all/582f41c0-2742-4400-9c81-0d46bf4e8314@gmail.com/
 
-Missing commit msg.
+I'm, sure you saw my comment (including my earlier suggestion for using 
+a page type), in particular around ...
 
-Please run scripts/checkpatch.pl on the patches and fix reported
-warnings. After that, run also 'scripts/checkpatch.pl --strict' on the
-patches and (probably) fix more warnings. Some warnings can be ignored,
-especially from --strict run, but the code here looks like it needs a
-fix. Feel free to get in touch if the warning is not clear.
-
-
-Please use subject prefixes matching the subsystem. You can get them for
-example with 'git log --oneline -- DIRECTORY_OR_FILE' on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
-
-I already asked for it. Did you really read what I linked last time?
-
-A nit, subject: drop second/last, redundant "bindings". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
-
-I already asked for it, so you ignored another comment. Why are you not
-responding or implementing the comments?
-
-Bindings go before users, so please re-order patches (see submitting
-patches in DT dir).
-
-> Signed-off-by: Jeff Chang <jeff_chang@richtek.com>
 > ---
+>   .../net/ethernet/mellanox/mlx5/core/en/xdp.c  |  2 +-
+>   include/linux/mm.h                            | 28 ++-----------------
+>   include/linux/page-flags.h                    |  6 ++++
+>   include/net/netmem.h                          |  2 +-
+>   mm/page_alloc.c                               |  4 +--
+>   net/core/netmem_priv.h                        | 16 ++---------
+>   net/core/page_pool.c                          | 10 +++++--
+>   7 files changed, 24 insertions(+), 44 deletions(-)
 > 
-> PATCH v3
-> 1. fix Subject format
-> 2. using correct patches version
-> 3. remove '|'
-> 4. remove allOf: &ref regulator.yaml#
-> 5. remove redundant description
-> 6. move BASE to base property with correct indentation
-> 7. only using lowercase node name
-> 8. make DT_CHECKER_FLAG=-m DT_SCHEMA_FILES=richtek,rt5133.yaml dt_binding_check pass
-> 
-> 
->  .../bindings/regulator/richtek,rt5133.yaml    | 197 ++++++++++++++++++
->  1 file changed, 197 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/regulator/richtek,rt5133.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/regulator/richtek,rt5133.yaml b/Documentation/devicetree/bindings/regulator/richtek,rt5133.yaml
-> new file mode 100644
-> index 000000000000..a92e7f775832
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/regulator/richtek,rt5133.yaml
-> @@ -0,0 +1,197 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/regulator/richtek,rt5133.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c b/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c
+> index 5d51600935a6..def274f5c1ca 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c
+> @@ -707,7 +707,7 @@ static void mlx5e_free_xdpsq_desc(struct mlx5e_xdpsq *sq,
+>   				xdpi = mlx5e_xdpi_fifo_pop(xdpi_fifo);
+>   				page = xdpi.page.page;
+>   
+> -				/* No need to check page_pool_page_is_pp() as we
+> +				/* No need to check PageNetpp() as we
+>   				 * know this is a page_pool page.
+>   				 */
+>   				page_pool_recycle_direct(pp_page_to_nmdesc(page)->pp,
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index ae50c1641bed..736061749535 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -4135,10 +4135,9 @@ int arch_lock_shadow_stack_status(struct task_struct *t, unsigned long status);
+>    * DMA mapping IDs for page_pool
+>    *
+>    * When DMA-mapping a page, page_pool allocates an ID (from an xarray) and
+> - * stashes it in the upper bits of page->pp_magic. We always want to be able to
+> - * unambiguously identify page pool pages (using page_pool_page_is_pp()). Non-PP
+> - * pages can have arbitrary kernel pointers stored in the same field as pp_magic
+> - * (since it overlaps with page->lru.next), so we must ensure that we cannot
+> + * stashes it in the upper bits of page->pp_magic. Non-PP pages can have
+> + * arbitrary kernel pointers stored in the same field as pp_magic (since
+> + * it overlaps with page->lru.next), so we must ensure that we cannot
+>    * mistake a valid kernel pointer with any of the values we write into this
+>    * field.
+>    *
+> @@ -4168,25 +4167,4 @@ int arch_lock_shadow_stack_status(struct task_struct *t, unsigned long status);
+>   
+>   #define PP_DMA_INDEX_MASK GENMASK(PP_DMA_INDEX_BITS + PP_DMA_INDEX_SHIFT - 1, \
+>   				  PP_DMA_INDEX_SHIFT)
+> -
+> -/* Mask used for checking in page_pool_page_is_pp() below. page->pp_magic is
+> - * OR'ed with PP_SIGNATURE after the allocation in order to preserve bit 0 for
+> - * the head page of compound page and bit 1 for pfmemalloc page, as well as the
+> - * bits used for the DMA index. page_is_pfmemalloc() is checked in
+> - * __page_pool_put_page() to avoid recycling the pfmemalloc page.
+> - */
+> -#define PP_MAGIC_MASK ~(PP_DMA_INDEX_MASK | 0x3UL)
+> -
+> -#ifdef CONFIG_PAGE_POOL
+> -static inline bool page_pool_page_is_pp(const struct page *page)
+> -{
+> -	return (page->pp_magic & PP_MAGIC_MASK) == PP_SIGNATURE;
+> -}
+> -#else
+> -static inline bool page_pool_page_is_pp(const struct page *page)
+> -{
+> -	return false;
+> -}
+> -#endif
+> -
+>   #endif /* _LINUX_MM_H */
+> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+> index 4fe5ee67535b..906ba7c9e372 100644
+> --- a/include/linux/page-flags.h
+> +++ b/include/linux/page-flags.h
+> @@ -957,6 +957,7 @@ enum pagetype {
+>   	PGTY_zsmalloc		= 0xf6,
+>   	PGTY_unaccepted		= 0xf7,
+>   	PGTY_large_kmalloc	= 0xf8,
+> +	PGTY_netpp		= 0xf9,
+>   
+>   	PGTY_mapcount_underflow = 0xff
+>   };
+> @@ -1101,6 +1102,11 @@ PAGE_TYPE_OPS(Zsmalloc, zsmalloc, zsmalloc)
+>   PAGE_TYPE_OPS(Unaccepted, unaccepted, unaccepted)
+>   FOLIO_TYPE_OPS(large_kmalloc, large_kmalloc)
+>   
+> +/*
+> + * Marks page_pool allocated pages.
+> + */
+> +PAGE_TYPE_OPS(Netpp, netpp, netpp)
 > +
-> +title: Richtek RT5133 PMIC Regulator
-> +
-> +maintainers:
-> +  - ShihChia Chang <jeff_chang@richtek.com>
-> +
-> +description:
-> +  RT5133 is an integrated chip. It includes 8 LDOs and 3 GPOs that can be
-> +  used to drive output high/low purpose. The dependency of the GPO block
-> +  is internally LDO1 Voltage. If LDO1 voltage output disabled, GPO cannot
-> +  be used to drive output high. It need to pay more attention on the usage.
+>   /**
+>    * PageHuge - Determine if the page belongs to hugetlbfs
+>    * @page: The page to test.
+> diff --git a/include/net/netmem.h b/include/net/netmem.h
+> index f7dacc9e75fd..3667334e16e7 100644
+> --- a/include/net/netmem.h
+> +++ b/include/net/netmem.h
+> @@ -298,7 +298,7 @@ static inline struct net_iov *__netmem_clear_lsb(netmem_ref netmem)
+>    */
+>   #define pp_page_to_nmdesc(p)						\
+>   ({									\
+> -	DEBUG_NET_WARN_ON_ONCE(!page_pool_page_is_pp(p));		\
+> +	DEBUG_NET_WARN_ON_ONCE(!PageNetpp(p));				\
+>   	__pp_page_to_nmdesc(p);						\
+>   })
+>   
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 2ef3c07266b3..71c7666e48a9 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -898,7 +898,7 @@ static inline bool page_expected_state(struct page *page,
+>   #ifdef CONFIG_MEMCG
+>   			page->memcg_data |
+>   #endif
+> -			page_pool_page_is_pp(page) |
+> +			PageNetpp(page) |
+>   			(page->flags & check_flags)))
+>   		return false;
+>   
+> @@ -925,7 +925,7 @@ static const char *page_bad_reason(struct page *page, unsigned long flags)
+>   	if (unlikely(page->memcg_data))
+>   		bad_reason = "page still charged to cgroup";
+>   #endif
+> -	if (unlikely(page_pool_page_is_pp(page)))
+> +	if (unlikely(PageNetpp(page)))
+>   		bad_reason = "page_pool leak";
+>   	return bad_reason;
+>   }
 
-Last statement does not feel relevant.
+^ this
 
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - richtek,rt5133
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  enable-gpios:
-> +    maxItems: 1
-> +
-> +  wakeup-source: true
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  gpio-controller: true
-> +
-> +  "#gpio-cells":
-> +    const: 2
-> +
-> +  regulators:
-> +    type: object
-> +    additionalProperties: false
-> +
-> +    properties:
-> +      base:
-> +        type: object
-> +        $ref: regulator.yaml#
-> +        unevaluatedProperties: false
-> +        description:
-> +          Properties for base regulator which for force-off base circuit
-
-That's not a regulator supply or you need to provide proper description
-of hardware.
-
-> +
-> +        properties:
-> +          regulator-compatible:
-> +            description: Compatible string for regulator
-> +            $ref: /schemas/types.yaml#/definitions/string
-
-Drop property.
-
-> +
-> +          oc-shutdown-all:
-
-Missing vendor prefix.
-
-> +            type: boolean
-> +            description:
-> +              Anyone of LDO OC state, shut down all channels.
-
-I don't understand the description at all.
-
-> +
-> +          pgb-shutdown-all:
-> +            type: boolean
-> +            description:
-> +              Anyone of PGB OC state, shut down all channels.
-
-Same problems here
-
-> +
-> +        required:
-> +          - regulator-name
-> +          - regulator-compatible
-
-No, drop compatible. Please read the bindings.
-
-> +
-> +    patternProperties:
-> +      "^ldo([1-6])$":
-> +        type: object
-> +        $ref: regulator.yaml#
-> +        unevaluatedProperties: false
-> +        description:
-> +          Properties for single LDO regulator
-> +
-> +        properties:
-> +          regulator-compatible:
-> +            description: Compatible string for regulator
-> +            $ref: /schemas/types.yaml#/definitions/string
-> +
-> +        required:
-> +          - regulator-name
-> +          - regulator-compatible
-> +
-> +      "^ldo([7-8])$":
-> +        type: object
-> +        $ref: regulator.yaml#
-> +        unevaluatedProperties: false
-> +        description:
-> +          Properties for single LDO regulator
-> +
-> +        properties:
-> +          regulator-compatible:
-> +            description: Compatible string for regulator
-> +            $ref: /schemas/types.yaml#/definitions/string
-> +
-> +          rt5133-ldo1-supply:
-> +            description: |
-> +              Only for ldo7 ldo8, pvin7 and pvin8 reference design are RT5133 ldo1.
-> +              If not connect to ldo1 vout, this property for pvin7 and pvin8 is necessary.
-> +
-> +        required:
-> +          - regulator-name
-> +          - regulator-compatible
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts-extended
-
-interrupts instead
-
-> +  - wakeup-source
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    i2c {
-> +      #address-cells = <1>;
-> +      #size-cells = <0>;
-> +
-> +      rt5133: rt5133@18 {
-
-Drop unused labels.
+This will not work they way you want it once you rebase on top of 
+linux-next, where we have (from mm/mm-stable)
 
 
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+commit 2dfcd1608f3a96364f10de7fcfe28727c0292e5d
+Author: David Hildenbrand <david@redhat.com>
+Date:   Fri Jul 4 12:24:58 2025 +0200
 
-> +        compatible = "richtek,rt5133";
-> +        reg = <0x18>;
-> +        wakeup-source;
-> +        interrupts-extended = <&pio 187 0x0>;
+     mm/page_alloc: let page freeing clear any set page type
 
-Use proper defines
 
-> +        enable-gpios = <&pio 186 0x0>;
+I commented what to do already.
 
-Use proper defines.
+-- 
+Cheers,
 
-> +        gpio-controller;
-> +        #gpio-cells = <2>;
-> +        regulators {
-> +          base {
-> +            regulator-compatible = "BASE";
-> +            regulator-name = "rt5133,base";
-> +            oc-shutdown-all;
-> +            pgb-shutdown-all;
-> +          };
-> +          rt5133_ldo1: ldo1 {
-
-Drop unused labels.
-
-Best regards,
-Krzysztof
+David / dhildenb
 
 
