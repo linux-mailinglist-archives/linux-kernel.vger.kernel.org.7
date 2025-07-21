@@ -1,81 +1,55 @@
-Return-Path: <linux-kernel+bounces-738879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4242B0BEA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:19:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE147B0BEA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:19:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 827A33BD2DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:18:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 115F63BFA97
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:18:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A49285068;
-	Mon, 21 Jul 2025 08:17:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE142877E4;
+	Mon, 21 Jul 2025 08:17:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YksZrAQE"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="idGy9dVd"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C557BA27;
-	Mon, 21 Jul 2025 08:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90924280A20;
+	Mon, 21 Jul 2025 08:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753085870; cv=none; b=DijMuWHjCvhWEZni0n5BvEnRLVt1nAmbq0w1hHFlXxjNkPzzi/Lc+f/2I2cJmiZE6i+2Lr3nb4kvSoESHM+Wl02bAIpSMes0uYPcy9AdLTRR2biU/OqBugZDxGbAsyaOBp6wdZ/j+8a0suZC1uuNdZfHFtVGHf7DMPWHpgDVNj8=
+	t=1753085872; cv=none; b=m7w6SZVdtkqDkPcoV9qhIkutIfaFlQUrSgeToFFeD7aIW0FX+OHW8XbqtdE7xqJqwvylDt8f9co+gDOW2L4VMTJhRM9/dlPTq83t6CF7ykjFVbJcbEx0lglr4OnKohi2tLzkemYQ1sYGmQ8q5qn4LIJNg9ILDeoDkFqnrIRlQKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753085870; c=relaxed/simple;
-	bh=a804sze2eSEvabyJeJGTtXcPhavwSfNkfdmAlQPR0Jg=;
+	s=arc-20240116; t=1753085872; c=relaxed/simple;
+	bh=nBY3egso3wyBHb7G0mZCOwzZktaLtKxIiVx7NMVbz5c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L4eq7fx93PXZJAb3REWdPOqHB1d5ekR2kRbQ3gh8lT90JL6MF9oQUOTnktgrWE91K/EUVm0bWnGb7Y3BNOA4934S6FhK+ivylQs1gPk4xVMONspN4MiB/HAe3DEqj0JnIkOSjcDmK46+KPyhm45jqJz7BShaPqeqWuUfrdIUKAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YksZrAQE; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56L65xmV008027;
-	Mon, 21 Jul 2025 08:17:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Q48Npr
-	QEGhXIinQIM8N4K8V2AgpIZDRX3PPG5pO3Pvo=; b=YksZrAQEih0AHdlyxeLnyd
-	9R90OVLAABpbKDYrAf5WHtplHDz2Hytq9j+MgYGJjgKFyhMM6OHck3jxzihl4d6I
-	l0KLdfiZ7aPDZBr5b4kFlilux7pqWu80tA2/lDmIIfxgacwBO8zLofYPYBcFd+6x
-	wyZIFP/JzdVgFrjSweGasEsoZi3H2+TnbT5ACWNS6MUI/YB3VrpH5ODG4ezkGoWS
-	0xj7wfMS72pCTyMbBcY2RgQRFHTnEHui7nIvfjR+XpHcck5TKKaFht5zh0UsGsLy
-	n8ttbdLRUqA+IICVFT/Ecb/BMlcIYqKw+KRjzQ/YYI3SXvVJiLkYtlCtwyrWJVVQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4805hfqduf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 21 Jul 2025 08:17:39 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 56L8GXpA012126;
-	Mon, 21 Jul 2025 08:17:39 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4805hfqdub-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 21 Jul 2025 08:17:39 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56L8HRlu004046;
-	Mon, 21 Jul 2025 08:17:38 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 480tvqmcs3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 21 Jul 2025 08:17:38 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56L8HVEc51970406
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 21 Jul 2025 08:17:31 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5F6AD20049;
-	Mon, 21 Jul 2025 08:17:31 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1D57F20040;
-	Mon, 21 Jul 2025 08:17:31 +0000 (GMT)
-Received: from [9.152.224.240] (unknown [9.152.224.240])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 21 Jul 2025 08:17:31 +0000 (GMT)
-Message-ID: <af7298f5-08a0-4492-834d-a348144c909e@linux.ibm.com>
-Date: Mon, 21 Jul 2025 10:17:30 +0200
+	 In-Reply-To:Content-Type; b=dkVGHK47LH36tXQxze+WDPojmoc9e50/LgIm6nnMDYsmDpxAbrQMI90l4qgWl3TnmBdY2CYKQldOLnToIQHE5+YObj+Ff7cA50/EDVD4cXxZdW72Dqgqpnc/vnTsJcG3FwRHrZ4ZLY7gxdAmla5bhYEFPEVoqVsC5JNwzIqLeuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=idGy9dVd; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1753085861; x=1753690661; i=markus.elfring@web.de;
+	bh=tYRgRzV3RcH0tkCVqG+N8NqmPThlBnU78OJZ8xWqWUk=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=idGy9dVdsm22DxXMgXGX/Ek5K0gxsg/5dj2BU3KTvj6zhOzdS4u63117O2e7YT00
+	 MgqxuB7p7qxBne07r1+BrA6UWatu7WdsjjOKaswiem7AN5B9gye2EIT7NL740NW2M
+	 9UB2kzNJiuRvnFEvOcOQgWdY+DTipR88c4kaPwmhhxlB0nh5qyxhSlIhya+UuLeWW
+	 X9FU0dnKnsbQ3QpLc4WxRt/pmuXxkKUbiTce9E/mx1f80NeSJZNX+J6S4r2rmGvQ2
+	 xO7CddKp2h3nIZ5as5DHEeZf+NojWlM+iI8HrD3Y3+SNi2HkDMkyCZfT3e5hxI0sz
+	 pxPw78bEXQwY6U0smg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.235]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MVaYw-1uCAAj2EPk-00IvsH; Mon, 21
+ Jul 2025 10:17:41 +0200
+Message-ID: <57b3f1cb-ce37-4026-8689-7bef61583b10@web.de>
+Date: Mon, 21 Jul 2025 10:17:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,100 +57,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] s390/ism: fix concurrency management in ism_cmd()
-To: Alexander Gordeev <agordeev@linux.ibm.com>,
-        Halil Pasic <pasic@linux.ibm.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller"
- <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Thorsten Winkler <twinkler@linux.ibm.com>,
-        Heiko Carstens
- <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Sebastian Ott <sebott@linux.ibm.com>,
-        Ursula Braun <ubraun@linux.ibm.com>, netdev@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Aliaksei Makarau <Aliaksei.Makarau@ibm.com>,
-        Mahanta Jambigi <mjambigi@linux.ibm.com>
-References: <20250720211110.1962169-1-pasic@linux.ibm.com>
- <6b09d374-528a-4a6d-a6c6-2be840e8a52b-agordeev@linux.ibm.com>
-Content-Language: en-US
-From: Alexandra Winter <wintera@linux.ibm.com>
-In-Reply-To: <6b09d374-528a-4a6d-a6c6-2be840e8a52b-agordeev@linux.ibm.com>
+Subject: Re: [PATCH v3] sparc: fix resource leak in jbusmc_probe()
+To: Siyang Liu <1972843537@qq.com>, sparclinux@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Andreas Larsson
+ <andreas@gaisler.com>, "David S. Miller" <davem@davemloft.net>
+References: <45b8941a-b6bf-4b48-ad1b-cc6ba46b8642@web.de>
+ <tencent_46DA24BE77C8E62514B3346C5CDBDB327F07@qq.com>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <tencent_46DA24BE77C8E62514B3346C5CDBDB327F07@qq.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIxMDA3MCBTYWx0ZWRfX+kuysjCkc8TG
- hlNBHlxFXDAuDK+SfkI5wlIJMTfa5jIaC0BW6P/yZY0ZzF+eAcnZXlMC8yEXbL379Vk2/sl8IQW
- ZNp+ezIPSg/XMpBY1gRUmrFegA45M/93rXjuxfzRDkltNX2zYqt1mkp6XGq0UoXjBk+GZ0EhV1d
- Jcsm01Xl7azHh1JK2xwS08TeKCt6W9AVE844NV5ama8Ds+/7bQ+FQ74iedpQinHJn66d2xTAQeU
- AGcR7tMCK/i2BcAvG0vNUYNt4JDWaCFnzS58EkTGETeAG3k6tg5Cpat9Rajo59mH8B2H5VrTWET
- x2mNlX5fd+CL93f8H6NHDSXqIumvFKw8LWW12ZapIo8/it+1tFQGOhJxjQrFXMo4to4hyflptJK
- gnnHVegopkEB6wNNS2Sj3lgzXrAto6v3RyOdLHCw1m94Q+Uo8a+XE6BlmM8mDh1kQJgVbZWE
-X-Proofpoint-GUID: Fr7qEZE_Y6tNPL_DsKWroJAaamlfoA4n
-X-Proofpoint-ORIG-GUID: IbThzE3dxjrHS0PyoWR5wMWtAnF-ownJ
-X-Authority-Analysis: v=2.4 cv=X9RSKHTe c=1 sm=1 tr=0 ts=687df7a4 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=n0eagUHsWyY7jrG6XxkA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-21_02,2025-07-21_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 priorityscore=1501 adultscore=0 lowpriorityscore=0
- phishscore=0 malwarescore=0 clxscore=1011 mlxscore=0 spamscore=0
- suspectscore=0 mlxlogscore=658 bulkscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507210070
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:cd6849LtWxFBqAHJwAIJVDKNubR0oduILMPj5f9CeOWb54q1Oki
+ nklMVyjr1dD/W+fl9aMWzqCDj5DDiI5kdjBR3jpVMcC10DlSZdGTY4ERX6p7NaU3sWyXIcB
+ d7GFpDCwMQnjQggxEonG74/aMXccISka/zjoNsS2jSj+2puuMnERQuQJafhKI7BrcmomdB8
+ 86kMF1C/XvJpwMcZ8yDKg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:tmpagtcfOis=;n2UFRFqOcdifgyk+JqnG7pI5i6K
+ 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
+ Ow7LY=
+
+=E2=80=A6> ---
+>  arch/sparc/kernel/chmc.c | 10 +++++++---
+=E2=80=A6
 
 
+Why did you overlook mentioned patch requirements once more?
 
-On 21.07.25 09:30, Alexander Gordeev wrote:
-> On Sun, Jul 20, 2025 at 11:11:09PM +0200, Halil Pasic wrote:
-> 
-> Hi Halil,
-> 
-> ...
->> @@ -129,7 +129,9 @@ static int ism_cmd(struct ism_dev *ism, void *cmd)
->>  {
->>  	struct ism_req_hdr *req = cmd;
->>  	struct ism_resp_hdr *resp = cmd;
->> +	unsigned long flags;
->>  
->> +	spin_lock_irqsave(&ism->cmd_lock, flags);
-> 
-> I only found smcd_handle_irq() scheduling a tasklet, but no commands issued.
-> Do we really need disable interrupts?
+https://lore.kernel.org/all/?q=3D%22This+looks+like+a+new+version+of+a+pre=
+viously+submitted+patch%22
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.16-rc6#n784
 
-You are right in current code, the interrupt and event handlers of ism and smcd
-never issue a control command that calls ism_cmd().
-OTOH, future ism clients could do that.
-The control commands are not part of the data path, but of connection establish.
-So I don't really expect a performance impact.
-I have it on my ToDo list, to change this to threaded interrupts in the future.
-So no strong opinion on my side.
-Simple spin_lock is fine with me.
-
-
-
-> 
->>  	__ism_write_cmd(ism, req + 1, sizeof(*req), req->len - sizeof(*req));
->>  	__ism_write_cmd(ism, req, 0, sizeof(*req));
->>  
->> @@ -143,6 +145,7 @@ static int ism_cmd(struct ism_dev *ism, void *cmd)
->>  	}
->>  	__ism_read_cmd(ism, resp + 1, sizeof(*resp), resp->len - sizeof(*resp));
->>  out:
->> +	spin_unlock_irqrestore(&ism->cmd_lock, flags);
->>  	return resp->ret;
->>  }
->>  
-> ...
-> 
-> Thanks!
-> 
-
+Regards,
+Markus
 
