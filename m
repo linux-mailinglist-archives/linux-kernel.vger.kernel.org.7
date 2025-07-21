@@ -1,174 +1,123 @@
-Return-Path: <linux-kernel+bounces-739017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24D3BB0C09D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:48:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 926CBB0C0A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:49:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 486A917E48F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:48:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A98CB3BA3F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:48:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452CF28DF0F;
-	Mon, 21 Jul 2025 09:47:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 400F728D8E8;
+	Mon, 21 Jul 2025 09:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="R0IrI4je";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yTGWNgmv"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FhpEd42j"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ECF228D8EA;
-	Mon, 21 Jul 2025 09:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B2028D8C3;
+	Mon, 21 Jul 2025 09:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753091255; cv=none; b=LiN147ONfB//QowxL640rE/U6jUQQfyOqjg3h4H5Ksf0PdE8OHbZpowYZalLvx357LaCsf1Tw9oasL2B4y6/lkgpB6qt46Bfxutx3v3Cw6eF/YQ74dbD8YPGvV+qq6mTRCvw9kp/7pzwzgmekYKcJgydkYFb2z281HsxNiSNf3Y=
+	t=1753091288; cv=none; b=FUKt7BRBsydFVCJRoOM4OsbSUCkoA+zA8b5n9Skbc5q2S93QSutIr1BZupvans8PbzGWsip6FlEP+gPl0NREXo6pSY+WBPA+1tnKA3YVQuUsXRv/sDIcVT4AQUjUgFwNk9Qbs3+biCgmbgG/OR7dox1PzFotU4zzK0/T/jEE4EA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753091255; c=relaxed/simple;
-	bh=tgjRXRS00GhllkORmEzhs2imp7/o6Ruzp26wJv3rIwU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Zel0G1o2oHJIn2xxC5N9vwLJ8zEotxSQuMTs2GWKvLLAJ+i5Sfa5AQlUMY7L7sAfIn5GUbbUQ+EtZhuNA3u8CDJMEsvBTEcLrSXtrNW6Qr5QLuCpGbnq/OLEbCDWvqGhEo+AE8HzLBY5JCVjZ3HH1rH59cQVCE0jUs1f0sx+0TQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=R0IrI4je; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yTGWNgmv; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753091251;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fIF/45N5CWIDqATsNcmEWzUNyG6OTy6CUlvZXnc+0Y4=;
-	b=R0IrI4jefDm14Us1SRk9dv51hoP4kjH4Sug+1PKGJn3mFdD0zuFaQXhBdbigi1Q6DCKT5D
-	mjj9HE2wFc9eHJRk6CW7VogBRtSio43ojiMWubqrX7fmwXhW6SnGyJdsza5IqWfuwmCSlN
-	9DOmv7PCSDlJn8ZdEcemq6SnH3sVEkyNfrJV2ywG7mqK823BRoVben5mI76sae2aEAo38u
-	1CInhAIIicxkpT1kOnFD0Gxb2AJiUUs6T0M3p3ZjAcI9ayIWLepefgT26D/5nVllJrJ9MN
-	7v5+U4pkHYkWYPl1SEIVN1/ZPAyrDQTIPuGoVWvm4DKswhn0RMHAV47ypVRU4g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753091251;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fIF/45N5CWIDqATsNcmEWzUNyG6OTy6CUlvZXnc+0Y4=;
-	b=yTGWNgmvJ3zajVhXfvYJk4uFPeetLaMYLSLs7KO/E6e0cVdnqKny3KebGV7qO3QjKvCt/B
-	SpHbYlRWX/ig4QBQ==
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Gabriele Monaco <gmonaco@redhat.com>
-Cc: Nam Cao <namcao@linutronix.de>
-Subject: [PATCH 6/6] rv: Remove struct rv_monitor::reacting
-Date: Mon, 21 Jul 2025 11:47:13 +0200
-Message-Id: <5c18ef23f817fb653bb27f027cc1ffdf53f6e1fd.1753091084.git.namcao@linutronix.de>
-In-Reply-To: <cover.1753091084.git.namcao@linutronix.de>
-References: <cover.1753091084.git.namcao@linutronix.de>
+	s=arc-20240116; t=1753091288; c=relaxed/simple;
+	bh=IByGw2ZxVkuZD7DNtFgIg2yVP6vR9IXMunELCO9fnfg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OrP5jUjM7JVxG7kURnK/oacCaAtGnWNCTfNtCwQ3JcW5aRUGuDJ4baChhFideFZ25dQRKF2oEwDs9Ta6QybYXRnQLyP1/Mk1yV4l2+1zUyeF93aYvsfFtC05wSJEPvUnm755hX3ZO41VhlNy2FC4Mq2X4zLwzx5/2R2XpYj++RM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FhpEd42j; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753091287; x=1784627287;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=IByGw2ZxVkuZD7DNtFgIg2yVP6vR9IXMunELCO9fnfg=;
+  b=FhpEd42jihIIS0VmQ5FtcIUoSJwSjQb5jTfe0EvE0grZAOMc8Qbi7Ngb
+   1HbFWSUhqG6EA7v7In64mIZ4xS+DC0DunVqSuvrUNBVspRhqa5vNSSeJp
+   nXA2jP4fK/WJbGmxsiPQT+7fSb1ZBOSdI9+NM/Msak85hfmHO8Z59iYCI
+   XbtXTibG7Cao33OYGsp5dhRfdIIsfvS2elIYjSiEOVo4TKXZ+ldEooowY
+   5u6vsF5yqAHrLqasxZuvm7bgIbVcZE9RTU5HSxY9m6SdnsI7mqx8/nks9
+   BR/Sl3SuArikctsYPJpyy0sDKqK6OVA44+ybGHcv3zsPyex6T5rKEut4r
+   Q==;
+X-CSE-ConnectionGUID: ZxxV34q/TN2msjUCzp3X3Q==
+X-CSE-MsgGUID: JEFu3tDBSnu4I2xC3dNcWg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11498"; a="55243822"
+X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
+   d="scan'208";a="55243822"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 02:48:06 -0700
+X-CSE-ConnectionGUID: xou+KRvxSzSOFCV2PENd2w==
+X-CSE-MsgGUID: y0U9bH/gRbS7yDDDabfaMg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
+   d="scan'208";a="158847575"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by fmviesa006.fm.intel.com with SMTP; 21 Jul 2025 02:48:04 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 21 Jul 2025 12:48:03 +0300
+Date: Mon, 21 Jul 2025 12:48:03 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Myrrh Periwinkle <myrrhperiwinkle@qtmlabs.xyz>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] usb: typec: ucsi: Update power_supply on power role
+ change
+Message-ID: <aH4M074PasIlWzTQ@kuha.fi.intel.com>
+References: <20250721-fix-ucsi-pwr-dir-notify-v1-1-e53d5340cb38@qtmlabs.xyz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250721-fix-ucsi-pwr-dir-notify-v1-1-e53d5340cb38@qtmlabs.xyz>
 
-The field 'reacting' in struct rv_monitor is set but never used. Delete it.
+On Mon, Jul 21, 2025 at 01:32:51PM +0700, Myrrh Periwinkle wrote:
+> The current power direction of an USB-C port also influences the
+> power_supply's online status, so a power role change should also update
+> the power_supply.
+> 
+> Fixes an issue on some systems where plugging in a normal USB device in
+> for the first time after a reboot will cause upower to erroneously
+> consider the system to be connected to AC power.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 0e6371fbfba3 ("usb: typec: ucsi: Report power supply changes")
+> Signed-off-by: Myrrh Periwinkle <myrrhperiwinkle@qtmlabs.xyz>
 
-Signed-off-by: Nam Cao <namcao@linutronix.de>
----
- include/linux/rv.h            |  1 -
- kernel/trace/rv/rv_reactors.c | 14 ++++++--------
- 2 files changed, 6 insertions(+), 9 deletions(-)
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-diff --git a/include/linux/rv.h b/include/linux/rv.h
-index 2f867d6f72ba..80731242fe60 100644
---- a/include/linux/rv.h
-+++ b/include/linux/rv.h
-@@ -104,7 +104,6 @@ struct rv_monitor {
- #ifdef CONFIG_RV_REACTORS
- 	struct rv_reactor	*reactor;
- 	__printf(1, 2) void	(*react)(const char *msg, ...);
--	bool			reacting;
- #endif
- 	struct list_head	list;
- 	struct rv_monitor	*parent;
-diff --git a/kernel/trace/rv/rv_reactors.c b/kernel/trace/rv/rv_reactors.c
-index aee622e4b833..6b03f3f6ecc1 100644
---- a/kernel/trace/rv/rv_reactors.c
-+++ b/kernel/trace/rv/rv_reactors.c
-@@ -149,7 +149,7 @@ static const struct seq_operations monitor_reactors_seq=
-_ops =3D {
-=20
- static void monitor_swap_reactors_single(struct rv_monitor *mon,
- 					 struct rv_reactor *reactor,
--					 bool reacting, bool nested)
-+					 bool nested)
- {
- 	bool monitor_enabled;
-=20
-@@ -162,7 +162,6 @@ static void monitor_swap_reactors_single(struct rv_moni=
-tor *mon,
- 		rv_disable_monitor(mon);
-=20
- 	mon->reactor =3D reactor;
--	mon->reacting =3D reacting;
- 	mon->react =3D reactor ? reactor->react : NULL;
-=20
- 	/* enable only once if iterating through a container */
-@@ -170,8 +169,7 @@ static void monitor_swap_reactors_single(struct rv_moni=
-tor *mon,
- 		rv_enable_monitor(mon);
- }
-=20
--static void monitor_swap_reactors(struct rv_monitor *mon,
--				  struct rv_reactor *reactor, bool reacting)
-+static void monitor_swap_reactors(struct rv_monitor *mon, struct rv_reacto=
-r *reactor)
- {
- 	struct rv_monitor *p =3D mon;
-=20
-@@ -179,7 +177,7 @@ static void monitor_swap_reactors(struct rv_monitor *mo=
-n,
- 		list_for_each_entry_continue(p, &rv_monitors_list, list) {
- 			if (p->parent !=3D mon)
- 				break;
--			monitor_swap_reactors_single(p, reactor, reacting, true);
-+			monitor_swap_reactors_single(p, reactor, true);
- 		}
- 	/*
- 	 * This call enables and disables the monitor if they were active.
-@@ -187,7 +185,7 @@ static void monitor_swap_reactors(struct rv_monitor *mo=
-n,
- 	 * All nested monitors are enabled also if they were off, we may refine
- 	 * this logic in the future.
- 	 */
--	monitor_swap_reactors_single(mon, reactor, reacting, false);
-+	monitor_swap_reactors_single(mon, reactor, false);
- }
-=20
- static ssize_t
-@@ -221,7 +219,7 @@ monitor_reactors_write(struct file *file, const char __=
-user *user_buf,
-=20
- 	len =3D strlen(ptr);
- 	if (!len) {
--		monitor_swap_reactors(mon, NULL, false);
-+		monitor_swap_reactors(mon, NULL);
- 		return count;
- 	}
-=20
-@@ -233,7 +231,7 @@ monitor_reactors_write(struct file *file, const char __=
-user *user_buf,
- 		if (strcmp(ptr, reactor->name) !=3D 0)
- 			continue;
-=20
--		monitor_swap_reactors(mon, reactor, true);
-+		monitor_swap_reactors(mon, reactor);
-=20
- 		retval =3D count;
- 		break;
---=20
-2.39.5
+> ---
+>  drivers/usb/typec/ucsi/ucsi.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
+> index 01ce858a1a2b3466155db340e213c767d1e79479..8ff31963970bb384e28b460e5307e32cf421396b 100644
+> --- a/drivers/usb/typec/ucsi/ucsi.c
+> +++ b/drivers/usb/typec/ucsi/ucsi.c
+> @@ -1246,6 +1246,7 @@ static void ucsi_handle_connector_change(struct work_struct *work)
+>  
+>  	if (change & UCSI_CONSTAT_POWER_DIR_CHANGE) {
+>  		typec_set_pwr_role(con->port, role);
+> +		ucsi_port_psy_changed(con);
+>  
+>  		/* Complete pending power role swap */
+>  		if (!completion_done(&con->complete))
+> 
+> ---
+> base-commit: 89be9a83ccf1f88522317ce02f854f30d6115c41
+> change-id: 20250721-fix-ucsi-pwr-dir-notify-8a953aab42e5
+> 
+> Best regards,
+> -- 
+> Myrrh Periwinkle <myrrhperiwinkle@qtmlabs.xyz>
 
+-- 
+heikki
 
