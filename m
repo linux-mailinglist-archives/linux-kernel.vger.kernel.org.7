@@ -1,83 +1,92 @@
-Return-Path: <linux-kernel+bounces-738615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C71C9B0BB0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 04:56:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B76BBB0BB3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 05:10:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30B7A3B05D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 02:55:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3ACB1694AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 03:10:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D052E1F2B90;
-	Mon, 21 Jul 2025 02:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="YbNCu/Po"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE5F1E261F;
-	Mon, 21 Jul 2025 02:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20811E9B19;
+	Mon, 21 Jul 2025 03:10:09 +0000 (UTC)
+Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893A35383;
+	Mon, 21 Jul 2025 03:10:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753066571; cv=none; b=mV0f42clyFn0btQUbJ5A9Nu/QeT1ZEdSaMcoBuBEIlGUOZhLO+xt94c7DKelZo5s2qHM/iksR6lc4MKTZepZ0D7O5in7t/Qtv4g188a1QgazLYh9hsMBgkImAcloEfeNaAgKJrBpiQ4EBfEVTDsvpZn44RwNOG8rpnb1JvUwQHc=
+	t=1753067409; cv=none; b=XHhwuexkezscccVzUYNwfXoYaRkJRM8+0Zk0TVokfZxpDtOJBHXdtVkhlI+UUvjm+DSXNsvpdNdw4/LnrELeokJdrL5M56M0WkqyTL0Zthjmvkikg7hH+vu/Zohwtiuz6uuAdwoGWtzf92JbFypSgsOb1FE7SVqIYZAjbCNXx3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753066571; c=relaxed/simple;
-	bh=7BPqW1cEZsOLDmMMhilrOtMWGShmritRXRpezUwnt68=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=h6cJNvsPy92mnInFi0VKMbysNnt4boXM1eEqkGfASEK68jFdDuPsjujOgJCouP+qWkrimDfkAbeMJHYtYobkPPNtpjnz9IJd5921ZSh7KzqNfQJzkyJVy8ZuuKCD6Hk7mVn8A1Ci1YJh+fB0iYJX0tvKNV6meIpkOvWw0lJUyMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=YbNCu/Po; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1753066567;
-	bh=W87XvFsGffB8xGXVZpZqbL392kTL9i9u0J60EHG2ppg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=YbNCu/PoNpFniR4YxOHYt4NjifP22P+A9DT730H05t4UKv1cctexlK91Q4ujsAeZ1
-	 +PxxKnlv2m3QXa+RJXE3KLHbJr2vqKaRuaElcDQXvGFjENL4NGDoNSuKEz5fsqYF9U
-	 AyNaXwUEXGv1UIkM1cZlMylaYwgYlk96Qsv5g+irUkv8hB/hWZ0CgcvX3pWDcUzCe+
-	 sjwz5jlo4q3+k6JpjvKIQdyDCU6vkSoSUrytfGnx1doExXqW4rEKmv96/ZS0aGig5p
-	 JaG14Uyn6L9IO6kzT4K654SFKQml9BENfSIcsusobPph0dkf6Hx7M2i3UTwNlV5Nra
-	 nH5V9H6Xv1f2w==
-Received: from [127.0.1.1] (unknown [180.150.112.70])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id AA297640A2;
-	Mon, 21 Jul 2025 10:56:06 +0800 (AWST)
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
- conor+dt@kernel.org, avifishman70@gmail.com, tali.perry1@gmail.com, 
- joel@jms.id.au, venture@google.com, yuenn@google.com, 
- benjaminfair@google.com, Tomer Maimon <tmaimon77@gmail.com>
-Cc: openbmc@lists.ozlabs.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250706134207.2168184-1-tmaimon77@gmail.com>
-References: <20250706134207.2168184-1-tmaimon77@gmail.com>
-Subject: Re: [PATCH v1 0/2] NPCM845 reset and clock device tree updates
-Message-Id: <175306656659.1278425.12587512480138536293.b4-ty@codeconstruct.com.au>
-Date: Mon, 21 Jul 2025 12:26:06 +0930
+	s=arc-20240116; t=1753067409; c=relaxed/simple;
+	bh=Y5iIhCMrdBbYkERV51HLzsVIZEpCxV1d0E49bh0P7PA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QPFC6bipEK48vPMBQMmyRS+ndLbUwXLHOdiohDFiVYdUHUn1XBWbBSd3dPv0cfyVs6YPeVy44X+cwqlpCPkQwIzUwxnSVsEAKiAKMJz1O0hmRQndTSP1Tr1bOC5ISrwA0YW7vV+npsISZpXwjkg2ai1g/u/4MUvTuD5Laat8a8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
+Received: (from willy@localhost)
+	by pcw.home.local (8.15.2/8.15.2/Submit) id 56L2uRVW001989;
+	Mon, 21 Jul 2025 04:56:27 +0200
+Date: Mon, 21 Jul 2025 04:56:27 +0200
+From: Willy Tarreau <w@1wt.eu>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Shuah Khan <shuah@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+        Bill Wendling <morbo@google.com>,
+        Justin Stitt <justinstitt@google.com>, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH 2/3] selftests/nolibc: don't pass CC to toplevel Makefile
+Message-ID: <20250721025627.GB1886@1wt.eu>
+References: <20250719-nolibc-llvm-system-v1-0-1730216ce171@weissschuh.net>
+ <20250719-nolibc-llvm-system-v1-2-1730216ce171@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250719-nolibc-llvm-system-v1-2-1730216ce171@weissschuh.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Sun, 06 Jul 2025 16:42:05 +0300, Tomer Maimon wrote:
-> This series updates the NPCM845 device tree for the integrated reset and
-> clock controller using the auxiliary device framework.
-> Patch 1 combines the reset and clock nodes into nuvoton,npcm845-reset.
-> Patch 2 adds a 25 MHz refclk and updates peripherals to use it.
+Hi Thomas,
+
+On Sat, Jul 19, 2025 at 05:38:28PM +0200, Thomas Weißschuh wrote:
+> The toplevel Makefile is capable of calculating CC from CROSS_COMPILE
+> and/or ARCH.
 > 
-> Tested on NPCM845 evaluation board.
-> 
-> [...]
+> Stop passing the unnecessary variable.
+(...) 
+>  # Execute the toplevel kernel Makefile
+> -KBUILD_MAKE = $(MAKE) -C $(srctree) ARCH=$(ARCH) CC=$(CC) CROSS_COMPILE=$(CROSS_COMPILE)
+> +KBUILD_MAKE = $(MAKE) -C $(srctree) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE)
 
-Thanks, I've applied this to be picked up through the BMC tree.
+Here the goal was not to help the toplevel Makefile figure CC, but rather
+to permit the user to override it, and it's also listed in "make help",
+and even used in cc-option.
 
--- 
-Andrew Jeffery <andrew@codeconstruct.com.au>
+I understnad that you're trying to avoid forcing CC to clang when
+building, but in this case, what will CROSS_COMPILE contain ?  My
+guess is that you intend to make CROSS_COMPILE point to the gcc-based
+toolchain, and have CC point to clang for userland only. Is this the
+case ? I think I'd be fine with this, but then we need to make it
+explicit in the help message and fix the current one, possibly just
+with this:
 
+-	@echo "  nolibc-test       build the executable (uses \$$CC and \$$CROSS_COMPILE)"
++	@echo "  nolibc-test       build the executable (uses \$$CC)"
+	@echo "  libc-test         build an executable using the compiler's default libc instead"
+	@echo "  run-user          runs the executable under QEMU (uses \$$XARCH, \$$TEST)"
+	@echo "  initramfs.cpio    prepare the initramfs archive with nolibc-test"
+	@echo "  initramfs         prepare the initramfs tree with nolibc-test"
+ 	@echo "  defconfig         create a fresh new default config (uses \$$XARCH)"
+-	@echo "  kernel            (re)build the kernel (uses \$$XARCH)"
++	@echo "  kernel            (re)build the kernel (uses \$$XARCH, \$$CROSS_COMPILE)"
+
+Thanks,
+Willy
 
