@@ -1,154 +1,133 @@
-Return-Path: <linux-kernel+bounces-739257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1751DB0C3F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:17:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B2437B0C3F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:19:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E855618C0055
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:17:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 755AD1886A5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:19:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80B302D29B5;
-	Mon, 21 Jul 2025 12:17:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E6C2D29D0;
+	Mon, 21 Jul 2025 12:19:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kqXwlcND"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iO1sCtUd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49A542A9D;
-	Mon, 21 Jul 2025 12:17:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08C72BE026;
+	Mon, 21 Jul 2025 12:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753100224; cv=none; b=d613ptq3I/3TqR6hMw95D4iCLphrozmESiDTJVmnkuD/V+rPiNartADKvnVsUF7dq4gKqrxn3HTiSFKFdIneeIDmr/R2e6M4rmfCTLXefhB8IBtxXo4BBHCyyWSO2CdYLgDmdKQLb3jIMG7gFHIvubMjWm5yj3Rnoe1jYq1uKnY=
+	t=1753100343; cv=none; b=oU/u86ks7GPlc3lIKeaycBEomGvsoBoYFG7j/5gmm/DGu2WnxBBh2KnPk50IcfxvodmNyXEqWKQJryKY+/kZW7ujCdT3CENBzWhdo0S2z5zqb5W8nsvGHH3E0i0p6pHB+nsGQ+05x1Y7NbCPepm6TmrUNNvWdZni5AaFV30eHk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753100224; c=relaxed/simple;
-	bh=kgCjEGYS3HgjeN51ZAILuplVfvuuUImf1jdln2dlVxE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CxU6cW7WPMoTRObfckcALN4P7bKZBOa2+731+7YgQdk9FWVOhYmHeooyk2LNzLAQVeDYGaHCFcMMcdyRA9zc3bcmkjNi3nKvjenjZ+mUUhXR5VqcjA3j6hIbfXaWRFqoIVzEPBR6RhZAet0Yzm9CIef3LAAo4HzNgL7ewyxZF1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kqXwlcND; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A62DC4CEED;
-	Mon, 21 Jul 2025 12:16:59 +0000 (UTC)
+	s=arc-20240116; t=1753100343; c=relaxed/simple;
+	bh=PzefWzhOAxLG5yYzeQdnai2xhw/+TsMVHa1W+t2mvPM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g3QdnMAoQ0mk+fsu+LD7QiEPJywLJ29CVWwR2nVq5tGfxc6Ixev+uySwyxMlaiGF83+bVwO1LYu8DRvPE5JNJU6xa0Q62dRNV+xJBW2tjgilxJDoPy9tvQG15TpHe6Vir56uSFvGi1Hr42Okm9tmQN/HdCGGpNnMxySylZMozEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iO1sCtUd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9EF6C4CEED;
+	Mon, 21 Jul 2025 12:19:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753100224;
-	bh=kgCjEGYS3HgjeN51ZAILuplVfvuuUImf1jdln2dlVxE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kqXwlcNDa8JGGSlsevmKYZhWbE23aU+f9svTwzwiIcqLsWDdct4bHek5aFzxEEKan
-	 gBZLI5H3UWS8SB/VvBjk8/aQdEqqKSYpcmkfaqkd1gm7XsE6R9JlE5fK00v/DFevj2
-	 2odB5ohz9nVO0BpSfuUvlmWo1IDQlak1aC+W6gFoZ4bsdW10ASRQEYPzyuyzrwcnek
-	 eUizkd+gLTByOdmFrUUnyZjS20LP4YOgZIY9ehXryJb2oTg9LJmJVP+VOJDFk8pVi5
-	 QctZvUxO7Ye4FpaGphEvNs/P8hO+spS2PF5P9tyCiJ/Pd2qXUsbJi1KJekmYU9UnwQ
-	 43j47QS/uP03A==
-Message-ID: <b220ae01-81b5-47f1-bf99-9aa0903995e1@kernel.org>
-Date: Mon, 21 Jul 2025 14:16:57 +0200
+	s=k20201202; t=1753100343;
+	bh=PzefWzhOAxLG5yYzeQdnai2xhw/+TsMVHa1W+t2mvPM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iO1sCtUdeeP/wf1j42cg/xs9mhggTyLEF1zTLyq+5LE+niUKKR+BuWUA5FuYbmKe0
+	 ki7aYsez3zkH4yyTCYBNLdi8M299z2Pyupab7+2Cib2uhHu7abjH4enJ1vMG9DltzQ
+	 zDCVFf5AbVDfa6EsCsF1Y0rsp/6576sYVxjQMm6cVV7wRPX/0oKJpRxyWjFEd/GHzO
+	 /Dn2XnCGAGxrXX5lNGhkJGTSJQrV53Unt5RCUhrUa3d6F2YsEbqfqBhk3Bec6uG18k
+	 sgz48TnPg4SwshG6SjUwl/yTg0PVvePhppLJ+rYUrSlD2df8f0FyznqkDxK7PfqPh7
+	 jsMg1vKt9hgNQ==
+Date: Mon, 21 Jul 2025 13:18:58 +0100
+From: Mark Brown <broonie@kernel.org>
+To: jeff_chang@richtek.com
+Cc: lgirdwood@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] regulator: rt5133: Add RT5133 PMIC regulator
+ Support
+Message-ID: <b4b3dde0-18a5-40d3-8cd2-53e4cdbd3e69@sirena.org.uk>
+References: <20250721060215.2718217-1-jeff_chang@richtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 1/4] dt-bindings: net: document st,phy-wol
- property
-To: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Christophe Roullier <christophe.roullier@foss.st.com>,
- Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
- Russell King <linux@armlinux.org.uk>, Simon Horman <horms@kernel.org>,
- Tristram Ha <Tristram.Ha@microchip.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250721-wol-smsc-phy-v1-0-89d262812dba@foss.st.com>
- <20250721-wol-smsc-phy-v1-1-89d262812dba@foss.st.com>
- <faea23d5-9d5d-4fbb-9c6a-a7bc38c04866@kernel.org>
- <f5c4bb6d-4ff1-4dc1-9d27-3bb1e26437e3@foss.st.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <f5c4bb6d-4ff1-4dc1-9d27-3bb1e26437e3@foss.st.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 21/07/2025 14:10, Gatien CHEVALLIER wrote:
-> Hello Krzysztof,
-> 
-> On 7/21/25 13:30, Krzysztof Kozlowski wrote:
->> On 21/07/2025 13:14, Gatien Chevallier wrote:
->>> The "st,phy-wol" property can be set to use the wakeup capability of
->>> the PHY instead of the MAC.
->>
->>
->> And why would that be property of a SoC or board? Word "can" suggests
->> you are documenting something which exists, but this does not exist.
-> Can you elaborate a bit more on the "not existing" part please?
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="sB0uYLQbbaM0qI7j"
+Content-Disposition: inline
+In-Reply-To: <20250721060215.2718217-1-jeff_chang@richtek.com>
+X-Cookie: Microwaves frizz your heir.
 
 
-Where does this property exist that you suggest that a new binding "can"
-use it?
+--sB0uYLQbbaM0qI7j
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> 
-> For the WoL from PHY to be supported, the PHY line that is raised
-> (On nPME pin for this case) when receiving a wake up event has to be
-> wired to a wakeup event input of the Extended interrupt and event
-> controller(EXTI), and that's implementation dependent.
+On Mon, Jul 21, 2025 at 02:01:34PM +0800, jeff_chang@richtek.com wrote:
 
+> RT5133 is an intefrated chip. It includes 8 LDOs and 3 GPOs that
+> can be used to drive output high/low purpose. The dependency of the
+> GPO block is internally LDO1 Voltage. If LDO1 voltage output disabled,
+> GPO cannot be used to drive output high. It need to pay more attention
+> on the usage.
 
-So it is not "can" but some implementations do not have proper wiring.
-You need to justify your commits and changes.
+This looks mostly fine, a couple of very small nits below:
 
+> +static irqreturn_t rt5133_intr_handler(int irq_number, void *data)
+> +{
+> +	struct rt5133_priv *priv = data;
+> +	u32 intr_evts = 0, handle_evts;
+> +	int i, ret;
+> +
+> +	ret = regmap_bulk_read(priv->regmap, RT5133_REG_BASE_EVT, &intr_evts,
+> +			       RT5133_INTR_BYTE_NR);
+> +	if (ret) {
+> +		dev_err(priv->dev, "%s, read event failed\n", __func__);
+> +		return IRQ_HANDLED;
+> +	}
+> +
+> +	handle_evts = intr_evts & RT5133_BASE_EVT_MASK;
 
+> +
+> +	ret = regmap_bulk_write(priv->regmap, RT5133_REG_BASE_EVT, &intr_evts,
+> +				RT5133_INTR_BYTE_NR);
+> +	if (ret)
+> +		dev_err(priv->dev, "%s, clear event failed\n", __func__);
+> +
+> +	return IRQ_HANDLED;
 
-Best regards,
-Krzysztof
+If there weren't any events flagged that we handled we should return
+IRQ_NONE here, this supports shared interrupts and lets the error
+handling in the interrupt core handle errors where the interrupt line
+gets stuck.
+
+> +// Due to crc, cache is not necessary
+> +static const struct regmap_config rt5133_regmap_config = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +	.max_register = RT5133_REG_LDO8_CTRL4,
+> +};
+
+Might be worth enabling a cache?
+
+--sB0uYLQbbaM0qI7j
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmh+MDIACgkQJNaLcl1U
+h9BtvAf/St3LVHr0CT8nuTDo6Asmm/X/dT520+9VEhQ3PVKTaSvmvkSyPtaZgPKJ
+8KbdW9XN/8J2q9qwG0GdAw/jTktpDUQTuBFB5fCUFR2yITpzdJCi0IR8i5e7jJeX
+TqBsc1PitLkNcnJd2GeDu2ih8i/Fs7pNH3WgOZ0WnF0Y4UoBncRBrz3Cvr3UYHOu
+cSsSb/joaW1F2domqsZZwYw5SRbMaYTAi44/zffEX7ygZSBDxeGu/Dzl5qWiLfOO
+9wR0uReqxQYFZW2L5siOjfB17D8IO0g6JcTHFbkcvBI9ne6JyPZhNzaRrwRFYUu2
+w89fC3RRAC+aVnutfqT+L5UhR3u9tA==
+=Y+E1
+-----END PGP SIGNATURE-----
+
+--sB0uYLQbbaM0qI7j--
 
