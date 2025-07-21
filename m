@@ -1,97 +1,108 @@
-Return-Path: <linux-kernel+bounces-739675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2FE3B0C992
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:22:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02E60B0C996
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:22:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D91996C16DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:20:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 068A51C23241
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:21:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94942E11AD;
-	Mon, 21 Jul 2025 17:19:19 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0ACA2BEFFA;
-	Mon, 21 Jul 2025 17:19:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40282135AC;
+	Mon, 21 Jul 2025 17:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="M6lAY38n"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080861FE44B
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 17:20:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753118359; cv=none; b=H5rEPun9EBvQ/QkofVr8LJwdwyDvoUWvZdYVn3adTr8A+2lYOkcbHAwm046ZZS8BMO+p9YAVfNUZo4MfAuyDfOyN6yiUDheDLdGkmNJ8w0od1VbNNUY/0CMPVjQjwmXF7YWk6exY4kCGvIykSHuh1hbNErSqia0wIKzRQ9pGjgQ=
+	t=1753118456; cv=none; b=uwmhBhMzkIJE9SYBGGl7Ck15Igd5T7ZTSi4ctJOb6I9LwXIJ/Nl+iWFKR/bGY4j0jcQgaH6WhKiG6VffnfrPCL5xgkXmQZ4ziFoSZZ3G5CuLm4uxQ15I/KTyhv1BHaohoH6Xzr7vK2HLzPO4Gy0lDSWKkzI6I+cT+hZnM2mWrvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753118359; c=relaxed/simple;
-	bh=BDHEDgvNTuUAwisfO0Izl/rtPuwl6wDFXP2gf5sz93Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Gxjm1n0YIeYYbXh5adnrPbOi1wN2SvWngAl8grkOUAtZvnKaiZL0Dh79bXwlrC0lVxz94+HbaCkQavCz/191GQltRyKqToc7jOu9a+qixGGhsUHXifSQyQ3ClSF1lOQDA5NeoZJXLuWaMzo5rg7p4iBc45Cl912HRA4QdEKuZF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf05.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay01.hostedemail.com (Postfix) with ESMTP id F23D41D46BA;
-	Mon, 21 Jul 2025 17:19:09 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf05.hostedemail.com (Postfix) with ESMTPA id 3770320010;
-	Mon, 21 Jul 2025 17:19:08 +0000 (UTC)
-Date: Mon, 21 Jul 2025 13:19:07 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] tracing: probe: Allocate
- traceprobe_parse_context from heap
-Message-ID: <20250721131907.436c0671@batman.local.home>
-In-Reply-To: <175299250735.418723.6298873768702875564.stgit@devnote2>
-References: <175299249728.418723.17799706394466693180.stgit@devnote2>
-	<175299250735.418723.6298873768702875564.stgit@devnote2>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753118456; c=relaxed/simple;
+	bh=0NlFb+qovKUIq/o0/4pCjyJKfbYaztgHRLswjYbe0qI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C28VKnkC7hAiiehor5cZLOqWMLK0VV5wEFPQMzW4YDhQpcojk5/6jfGNC1bz99HORtRIv1of3jYaT1o4o70TbChaaC9uHtbbkr3tFxNUqiG7qRJ+GAk12wGvGLbbr5suAOeTHjKuUgjOyYxoeQxJxYhnphN3FYvuiwFqheWPLyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=M6lAY38n; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.184.60] (unknown [131.107.160.188])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 82C482115836;
+	Mon, 21 Jul 2025 10:20:54 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 82C482115836
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1753118454;
+	bh=F0WeBj2bGuuRDUrwwzYEPFuv3oAaANMb0rzB3x/zEGs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=M6lAY38nEFF6SPpxTb0jBP9+abnYKMYir5Krk+urbD9Y4Z3t0/8JxNOMoSNX0fUsO
+	 FpNzv3YTYyKxz1aNCxTInjwirrXdr/tAAFV9m67PV5iaHZKfIqy5hqXiBd9RY4hSKN
+	 QIvH+QrTMRImtRgveFS0jbwSC3/UPzX3dY5iu3vc=
+Message-ID: <55e5f8d2-2b81-4883-a9ac-ad1a426c4222@linux.microsoft.com>
+Date: Mon, 21 Jul 2025 10:20:54 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: kvm, smccc: Fix vendor uuid
+To: Sudeep Holla <sudeep.holla@arm.com>,
+ Jack Thomson <jackabt.amazon@gmail.com>
+Cc: mark.rutland@arm.com, lpieralisi@kernel.org, arnd@arndb.de,
+ wei.liu@kernel.org, mhklinux@outlook.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ maz@kernel.org, oliver.upton@linux.dev, kvmarm@lists.linux.dev,
+ roypat@amazon.com, Jack Thomson <jackabt@amazon.com>
+References: <20250721130558.50823-1-jackabt.amazon@gmail.com>
+ <20250721-proficient-carrot-cockatoo-393ae1@sudeepholla>
+Content-Language: en-US
+From: Roman Kisel <romank@linux.microsoft.com>
+In-Reply-To: <20250721-proficient-carrot-cockatoo-393ae1@sudeepholla>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 3770320010
-X-Stat-Signature: icjik38k7d491969s1msng6jjkhurcha
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19YpGSgtdbI4iAIM55khibc4g8sgY5aXlY=
-X-HE-Tag: 1753118348-87711
-X-HE-Meta: U2FsdGVkX18ctSOfRDgNRlL4eZtAlSgDBBwfdegIdKMKqzjUupEVP4XtU9rqHe+M4FXq9xtBF3Twkk8wrT99ZYwnkfjId2yzfmJjs9Y2oX6eSUk/DGzH49p/oWH694JP6GvO4GRJBIZZjHOdUJ9E0idqhqRcAKQbQj9ehW3xUHmFR/DY5o8rD7GZKI1VI+7bAzjRQTgaxSpq+BX3IEtJ58XLONF+FCcOtxXahsSb4Bf/ed/0UOJ4hopBIyRd3sR2AhJdWfXjDPNK6r5IsKeTqjmDxRDgJ6uR+3Rgx4pozt4hGMNvn7qM3uCzt2k4m0IP0IJd7jVYNsTViRSBvfAz5j0AggJ9iUbF
 
-On Sun, 20 Jul 2025 15:21:47 +0900
-"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
 
->  
-> +#include <linux/bitops.h>
-> +#include <linux/btf.h>
-> +#include <linux/cleanup.h>
-> +#include <linux/kprobes.h>
-> +#include <linux/limits.h>
-> +#include <linux/perf_event.h>
-> +#include <linux/ptrace.h>
->  #include <linux/seq_file.h>
->  #include <linux/slab.h>
->  #include <linux/smp.h>
-> -#include <linux/tracefs.h>
-> -#include <linux/types.h>
->  #include <linux/string.h>
-> -#include <linux/ptrace.h>
-> -#include <linux/perf_event.h>
-> -#include <linux/kprobes.h>
->  #include <linux/stringify.h>
-> -#include <linux/limits.h>
-> +#include <linux/tracefs.h>
-> +#include <linux/types.h>
->  #include <linux/uaccess.h>
-> -#include <linux/bitops.h>
-> -#include <linux/btf.h>
-> +
 
-A re-sort should be a separate patch, as I can't tell what changed in
-the header for this patch.
+On 7/21/2025 9:15 AM, Sudeep Holla wrote:
+> (I can't see this original patch in my mailbox, got only Marc's response)
+> 
+> On Mon, Jul 21, 2025 at 02:05:58PM +0100, Jack Thomson wrote:
+>> From: Jack Thomson <jackabt@amazon.com>
+>>
+>> Commit 13423063c7cb ("arm64: kvm, smccc: Introduce and use API for
+>> getting hypervisor UUID") replaced the explicit register constants
+>> with the UUID_INIT macro. However, there is an endian issue, meaning
+>> the UUID generated and used in the handshake didn't match UUID prior to
+>> the commit.
+>>
+>> The change in UUID causes the SMCCC vendor handshake to fail with older
+>> guest kernels, meaning devices such as PTP were not available in the
+>> guest.
+>>
+>> This patch updates the parameters to the macro to generate a UUID which
+>> matches the previous value, and re-establish backwards compatibility
+>> with older guest kernels.
+>>
+> 
+> Nice catch. This is result of classic confusion with UUID and GUID especially
+> coming from Microsoft who tend to use GUID more.
+> 
+> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> 
+> This also makes me wonder if the initialisation in arch/arm64/hyperv/mshyperv.c
+> is also wrong or may be that's correct only MS guys can confirm as I couldn't
+> find the UUID string for that.
 
--- Steve
+MUCH appreciated!! Apologies for that miss in testing of the older
+kernels. I'll check on our side and will fix what needs fixing.
+
+> 
+
+-- 
+Thank you,
+Roman
+
 
