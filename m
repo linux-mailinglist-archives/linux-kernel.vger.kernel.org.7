@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-738722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA139B0BC52
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:06:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DA19B0BC53
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:07:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A28F7179F64
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:06:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3C1D189AD3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 865C821E0AD;
-	Mon, 21 Jul 2025 06:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A0C21D3C6;
+	Mon, 21 Jul 2025 06:06:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fHqoNV65"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JEhoEY2u"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 389C921D3C6
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 06:06:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309E521B9E0
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 06:06:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753078002; cv=none; b=t+QtK3uG8Ser01yAXvP/6ijVAN/zYfyK/Y+SbdeROfR6Y58Dqojlwb8Rh7i5MGk683poMDeh3WSYc5ZqKWGuvwmziAP1Rwc6zsMyAfZoh/oFgMejBx4Fb/B3V16AhJF/Dg11lvOyyl85//pI0QJ3akhdX9wCK66M2KPVcsvtBVo=
+	t=1753078011; cv=none; b=bMhA65CU+31nO7xnr7PPBAAuM7ee4dV1DYprRG3v2X7str9sRGfaX4Qz0HGH5g1KeAt+Dvl/WJ3w6zWemYk5T6OwtmqLuIolYeSS+VFefeHIVLQmnBWw0Yrjt9v5MnWKN5VizscFdu/5j4AcY4yFbETZH4SHnMnR0fzLO+5jxIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753078002; c=relaxed/simple;
-	bh=AYOj5ojQE2MSw2izIVt9uZK1DO01G76Lg6keWmq3XSE=;
+	s=arc-20240116; t=1753078011; c=relaxed/simple;
+	bh=ap4XLQAIoworGtNPcCnPBhKrBrOdDNQkuLuqycJaVKw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=a0BHYgYzeUMj1bGiwPsaHMRzZF6Z9KfYyKFGmnwP10nmX6O4Qb6WK4I5K5QxexQcLP3he79HlRo1AgMjKfeZ7b1binbO0z40JfV+MNsH4qU0CdqG9N/rGhoDePki9gPHACEeeqfVVPCzyU9iBo5/0IUtViTulZJEem0CDu9yEPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fHqoNV65; arc=none smtp.client-ip=198.175.65.20
+	 MIME-Version; b=VwOSvkh2S8+bslM1le2hU2PnE4iV2onN1/hSGSTn6z0qDWBzwjU/gDMQDkwUrTJ9Rks40n2kHRBj+tom0HbK/9FayrOeQ6nun944Q8n67FGu110yoaZoYLXG4lt2yuj3H1KnmspiVNZ3kJUsKAVxU0nQedUA9U2housIGf2JSOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JEhoEY2u; arc=none smtp.client-ip=198.175.65.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753078001; x=1784614001;
+  t=1753078010; x=1784614010;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=AYOj5ojQE2MSw2izIVt9uZK1DO01G76Lg6keWmq3XSE=;
-  b=fHqoNV65YkSEO9ar6ZGKoW6jbLa29IAc1wzxJQBCjhMSeuV70fKRiSbd
-   GKapgXS4gEaxc7zTb5aYtttEXHwyBTTOjiG85mp0tDjaj3vFsuN3Iydm6
-   ZQpPngt/brEnTdJ79Cv8V55xbJ68hFZlBa3FeOz7sNofTHLO1AoclMH2H
-   3W/riaHAniLYd2dStRJg8jf1MVrrb0CKFqBfZ0lk/tHVnvFDPzMKSaW+2
-   45c+SLMtYnPl7RyJ7PME4+zQHmHp1dP4bv0zuAk1vG5BaQY4hCoQfpx19
-   2DLq+mZvoEJ5HkOc0oEKbzSR0VUV+/OeAqudu4RX6ElsxlrOZK9V2B4R6
-   Q==;
-X-CSE-ConnectionGUID: njyZ20Y5RVqgqYUU0U6Mew==
-X-CSE-MsgGUID: RifTUvRwQJGwnToTDw+mHQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11498"; a="54994967"
+  bh=ap4XLQAIoworGtNPcCnPBhKrBrOdDNQkuLuqycJaVKw=;
+  b=JEhoEY2udr6JuIbrmNnzDwLjqJGSVIYntAhfXeKFJ12N/jDxbAjdJJat
+   bHZNuQOYgT98ncQwHf+SbhW4IJbLiMXn0nCZBYWNKMEwKRXxfKwq5uZWy
+   I7RR2838l/BG6Wx+juGMnPU4U6fJJvn+lbJfzpLv0Alx02ZnkGJprtUPa
+   yVqUlaqL23yhDnHScbH9nUtngEyUUJejneMCZMAxkfA5ce7ugOlOIPdcU
+   r2dtHxZT3nFhLir7FXysaQy6sRUl8XME2hhtPxdLrvZ93c4sx44mglh/c
+   zeVsg+a7Tu/p6LMdBcza7xnVNFQoP0vGB+Y5L0irMxuFCbt18/L97ecr9
+   A==;
+X-CSE-ConnectionGUID: QXEObxF3Qo60BUfPmTfr2Q==
+X-CSE-MsgGUID: AYntC2vCR0uJMv97qErAsw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11498"; a="54994983"
 X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
-   d="scan'208";a="54994967"
+   d="scan'208";a="54994983"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jul 2025 23:06:41 -0700
-X-CSE-ConnectionGUID: uhLgVkdvSlSeOzo+5inhsA==
-X-CSE-MsgGUID: uDPRVH0gR4ija2ww8f+SbA==
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jul 2025 23:06:50 -0700
+X-CSE-ConnectionGUID: aFJEc/e7SsOJSGAR+rIBJw==
+X-CSE-MsgGUID: 7fh+AIb7TyC9LsSM+/nlUw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
-   d="scan'208";a="189696143"
+   d="scan'208";a="189696170"
 Received: from linux-pnp-server-17.sh.intel.com ([10.239.166.49])
-  by fmviesa001.fm.intel.com with ESMTP; 20 Jul 2025 23:06:38 -0700
+  by fmviesa001.fm.intel.com with ESMTP; 20 Jul 2025 23:06:47 -0700
 From: Pan Deng <pan.deng@intel.com>
 To: peterz@infradead.org,
 	mingo@kernel.org
@@ -65,9 +65,9 @@ Cc: linux-kernel@vger.kernel.org,
 	tim.c.chen@linux.intel.com,
 	yu.c.chen@intel.com,
 	pan.deng@intel.com
-Subject: [PATCH v2 3/4] sched/rt: Split root_domain->rto_count to per-NUMA-node counters
-Date: Mon, 21 Jul 2025 14:10:25 +0800
-Message-ID: <ab045bd69263d5e4e71a9aa36703071a267d2a36.1753076363.git.pan.deng@intel.com>
+Subject: [PATCH v2 4/4] sched/rt: Split cpupri_vec->cpumask to per NUMA node to reduce contention
+Date: Mon, 21 Jul 2025 14:10:26 +0800
+Message-ID: <a3207ebf537bbe5605ff5454f63b5604d83a04a0.1753076363.git.pan.deng@intel.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <cover.1753076363.git.pan.deng@intel.com>
 References: <cover.1753076363.git.pan.deng@intel.com>
@@ -80,7 +80,7 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 When running a multi-instance FFmpeg workload on HCC system, significant
-contention is observed on root_domain `rto_count` and `overloaded` fields.
+contention is observed on bitmap of `cpupri_vec->cpumask`.
 
 The SUT is a 2-socket machine with 240 physical cores and 480 logical
 CPUs. 60 FFmpeg instances are launched, each pinned to 4 physical cores
@@ -88,212 +88,352 @@ CPUs. 60 FFmpeg instances are launched, each pinned to 4 physical cores
 with FIFO scheduling. FPS is used as score.
 
 perf c2c tool reveals:
-root_domain cache line 1:
-- `rto_count` (0x4) is frequently loaded/stored
-- `overloaded` (0x28) is heavily loaded
-- cycles per load: ~2.8K to 44K:
+cpumask (bitmap) cache line of `cpupri_vec->mask`:
+- bits are loaded during cpupri_find
+- bits are stored during cpupri_set
+- cycles per load: ~2.2K to 8.7K
 
-A separate patch rearranges root_domain to place `overloaded` on a
-different cache line, but this alone is insufficient to resolve the
-contention on `rto_count`. As a complementary, this patch splits
-`rto_count` into per-numa-node counters to reduce the contention.
+This change splits `cpupri_vec->cpumask` into per-NUMA-node data to
+mitigate false sharing.
 
-With this change:
-- FPS improves by ~4%
-- Kernel cycles% drops from ~20% to ~18.6%
-- The cache line no longer appears in perf-c2c report
-- stress-ng cyclic benchmark is improved ~50.4%, command:
+As a result:
+- FPS improves by ~3.8%
+- Kernel cycles% drops from ~20% to ~18.7%
+- Cache line contention is mitigated, perf-c2c shows cycles per load
+  drops from ~2.2K-8.7K to ~0.5K-2.2K
+- stress-ng cyclic benchmark is improved ~5.9%, command:
   stress-ng/stress-ng --cyclic $(nproc) --cyclic-policy fifo   \
                       --timeout 30 --minimize --metrics
-- rt-tests/pi_stress is improved ~5.1%, command:
+- rt-tests/pi_stress is improved ~9.3%, command:
   rt-tests/pi_stress -D 30 -g $(($(nproc) / 2))
 
+Note: CONFIG_CPUMASK_OFFSTACK=n remains unchanged.
+
 Appendix:
-1. Perf c2c report of root_domain cache line 1:
+1. Perf c2c report of `cpupri_vec->mask` bitmap cache line:
 -------  -------  ------  ------  ------  ------  ------------------------
  Rmt      Lcl     Store   Data    Load    Total    Symbol
 Hitm%    Hitm%   L1 Hit%  offset  cycles  records
 -------  -------  ------  ------  ------  ------  ------------------------
- 231       43       48    0xff14d42c400e3800
+ 155       39       39    0xff14d52c4682d800
 -------  -------  ------  ------  ------  ------  ------------------------
-22.51%   18.60%    0.00%  0x4     5041    247   pull_rt_task
- 5.63%    2.33%   45.83%  0x4     6995    315   dequeue_pushable_task
- 3.90%    4.65%   54.17%  0x4     6587    370   enqueue_pushable_task
- 0.43%    0.00%    0.00%  0x4     17111   4     enqueue_pushable_task
- 0.43%    0.00%    0.00%  0x4     44062   4     dequeue_pushable_task
-32.03%   27.91%    0.00%  0x28    6393    285   enqueue_task_rt
-16.45%   27.91%    0.00%  0x28    5534    139   sched_balance_newidle
-14.72%   18.60%    0.00%  0x28    5287    110   dequeue_task_rt
- 3.46%    0.00%    0.00%  0x28    2820    25    enqueue_task_fair
- 0.43%    0.00%    0.00%  0x28    220     3     enqueue_task_stop
+43.23%   43.59%    0.00%  0x0     3489    415   _find_first_and_bit
+ 3.23%    5.13%    0.00%  0x0     3478    107   __bitmap_and
+ 3.23%    0.00%    0.00%  0x0     2712    33    _find_first_and_bit
+ 1.94%    0.00%    7.69%  0x0     5992    33    cpupri_set
+ 0.00%    0.00%    5.13%  0x0     3733    19    cpupri_set
+12.90%   12.82%    0.00%  0x8     3452    297   _find_first_and_bit
+ 1.29%    2.56%    0.00%  0x8     3007    117   __bitmap_and
+ 0.00%    5.13%    0.00%  0x8     3041    20    _find_first_and_bit
+ 0.00%    2.56%    2.56%  0x8     2374    22    cpupri_set
+ 0.00%    0.00%    7.69%  0x8     4194    38    cpupri_set
+ 8.39%    2.56%    0.00%  0x10    3336    264   _find_first_and_bit
+ 3.23%    0.00%    0.00%  0x10    3023    46    _find_first_and_bit
+ 2.58%    0.00%    0.00%  0x10    3040    130   __bitmap_and
+ 1.29%    0.00%   12.82%  0x10    4075    34    cpupri_set
+ 0.00%    0.00%    2.56%  0x10    2197    19    cpupri_set
+ 0.00%    2.56%    7.69%  0x18    4085    27    cpupri_set
+ 0.00%    2.56%    0.00%  0x18    3128    220   _find_first_and_bit
+ 0.00%    0.00%    5.13%  0x18    3028    20    cpupri_set
+ 2.58%    2.56%    0.00%  0x20    3089    198   _find_first_and_bit
+ 1.29%    0.00%    5.13%  0x20    5114    29    cpupri_set
+ 0.65%    2.56%    0.00%  0x20    3224    96    __bitmap_and
+ 0.65%    0.00%    7.69%  0x20    4392    31    cpupri_set
+ 2.58%    0.00%    0.00%  0x28    3327    214   _find_first_and_bit
+ 0.65%    2.56%    5.13%  0x28    5252    31    cpupri_set
+ 0.65%    0.00%    7.69%  0x28    8755    25    cpupri_set
+ 0.65%    0.00%    0.00%  0x28    4414    14    _find_first_and_bit
+ 1.29%    2.56%    0.00%  0x30    3139    171   _find_first_and_bit
+ 0.65%    0.00%    7.69%  0x30    2185    18    cpupri_set
+ 0.65%    0.00%    0.00%  0x30    3404    108   __bitmap_and
+ 0.00%    0.00%    2.56%  0x30    5542    21    cpupri_set
+ 3.23%    5.13%    0.00%  0x38    3493    190   _find_first_and_bit
+ 3.23%    2.56%    0.00%  0x38    3171    108   __bitmap_and
+ 0.00%    2.56%    7.69%  0x38    3285    14    cpupri_set
+ 0.00%    0.00%    5.13%  0x38    4035    27    cpupri_set
 
 Signed-off-by: Pan Deng <pan.deng@intel.com>
 Reviewed-by: Tianyou Li <tianyou.li@intel.com>
 Reviewed-by: Chen Yu <yu.c.chen@intel.com>
 ---
-V1 -> V2: Fixed non CONFIG_SMP build issue
----
- kernel/sched/rt.c       | 56 ++++++++++++++++++++++++++++++++++++++---
- kernel/sched/sched.h    |  9 ++++++-
- kernel/sched/topology.c |  7 ++++++
- 3 files changed, 68 insertions(+), 4 deletions(-)
+ kernel/sched/cpupri.c | 200 ++++++++++++++++++++++++++++++++++++++----
+ kernel/sched/cpupri.h |   4 +
+ 2 files changed, 186 insertions(+), 18 deletions(-)
 
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index e40422c37033..cbcfd3aa3439 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -337,9 +337,58 @@ static inline bool need_pull_rt_task(struct rq *rq, struct task_struct *prev)
- 	return rq->online && rq->rt.highest_prio.curr > prev->prio;
+diff --git a/kernel/sched/cpupri.c b/kernel/sched/cpupri.c
+index 42c40cfdf836..306b6baff4cd 100644
+--- a/kernel/sched/cpupri.c
++++ b/kernel/sched/cpupri.c
+@@ -64,6 +64,143 @@ static int convert_prio(int prio)
+ 	return cpupri;
  }
  
-+int rto_counts_init(atomic_tp **rto_counts)
++#ifdef	CONFIG_CPUMASK_OFFSTACK
++static inline int alloc_vec_masks(struct cpupri_vec *vec)
 +{
 +	int i;
-+	atomic_tp *counts = kzalloc(nr_node_ids * sizeof(atomic_tp), GFP_KERNEL);
-+
-+	if (!counts)
-+		return -ENOMEM;
 +
 +	for (i = 0; i < nr_node_ids; i++) {
-+		counts[i] = kzalloc_node(sizeof(atomic_t), GFP_KERNEL, i);
-+
-+		if (!counts[i])
++		if (!zalloc_cpumask_var_node(&vec->masks[i], GFP_KERNEL, i))
 +			goto cleanup;
-+	}
 +
-+	*rto_counts = counts;
++		// Clear masks of cur node, set others
++		bitmap_complement(cpumask_bits(vec->masks[i]),
++			cpumask_bits(cpumask_of_node(i)), small_cpumask_bits);
++	}
 +	return 0;
 +
 +cleanup:
 +	while (i--)
-+		kfree(counts[i]);
-+
-+	kfree(counts);
++		free_cpumask_var(vec->masks[i]);
 +	return -ENOMEM;
 +}
 +
-+void rto_counts_cleanup(atomic_tp *rto_counts)
++static inline void free_vec_masks(struct cpupri_vec *vec)
 +{
 +	for (int i = 0; i < nr_node_ids; i++)
-+		kfree(rto_counts[i]);
-+
-+	kfree(rto_counts);
++		free_cpumask_var(vec->masks[i]);
 +}
 +
- static inline int rt_overloaded(struct rq *rq)
- {
--	return atomic_read(&rq->rd->rto_count);
-+	int count = 0;
-+	int cur_node, nid;
++static inline int setup_vec_mask_var_ts(struct cpupri *cp)
++{
++	int i;
 +
-+	cur_node = numa_node_id();
++	for (i = 0; i < CPUPRI_NR_PRIORITIES; i++) {
++		struct cpupri_vec *vec = &cp->pri_to_cpu[i];
 +
-+	for (int i = 0; i < nr_node_ids; i++) {
-+		nid = (cur_node + i) % nr_node_ids;
-+		count += atomic_read(rq->rd->rto_counts[nid]);
++		vec->masks = kcalloc(nr_node_ids, sizeof(cpumask_var_t), GFP_KERNEL);
++		if (!vec->masks)
++			goto cleanup;
++	}
++	return 0;
 +
-+		// The caller only checks if it is 0
-+		// or 1, so that return once > 1
-+		if (count > 1)
-+			return count;
++cleanup:
++	/* Free any already allocated masks */
++	while (i--) {
++		kfree(cp->pri_to_cpu[i].masks);
++		cp->pri_to_cpu[i].masks = NULL;
 +	}
 +
-+	return count;
- }
- 
- static inline void rt_set_overload(struct rq *rq)
-@@ -358,7 +407,7 @@ static inline void rt_set_overload(struct rq *rq)
- 	 * Matched by the barrier in pull_rt_task().
- 	 */
- 	smp_wmb();
--	atomic_inc(&rq->rd->rto_count);
-+	atomic_inc(rq->rd->rto_counts[cpu_to_node(rq->cpu)]);
- }
- 
- static inline void rt_clear_overload(struct rq *rq)
-@@ -367,7 +416,7 @@ static inline void rt_clear_overload(struct rq *rq)
- 		return;
- 
- 	/* the order here really doesn't matter */
--	atomic_dec(&rq->rd->rto_count);
-+	atomic_dec(rq->rd->rto_counts[cpu_to_node(rq->cpu)]);
- 	cpumask_clear_cpu(rq->cpu, rq->rd->rto_mask);
- }
- 
-@@ -443,6 +492,7 @@ static inline void dequeue_pushable_task(struct rq *rq, struct task_struct *p)
- static inline void rt_queue_push_tasks(struct rq *rq)
++	return -ENOMEM;
++}
++
++static inline void free_vec_mask_var_ts(struct cpupri *cp)
++{
++	for (int i = 0; i < CPUPRI_NR_PRIORITIES; i++) {
++		kfree(cp->pri_to_cpu[i].masks);
++		cp->pri_to_cpu[i].masks = NULL;
++	}
++}
++
++static inline int
++available_cpu_in_nodes(struct task_struct *p, struct cpupri_vec *vec)
++{
++	int cur_node = numa_node_id();
++
++	for (int i = 0; i < nr_node_ids; i++) {
++		int nid = (cur_node + i) % nr_node_ids;
++
++		if (cpumask_first_and_and(&p->cpus_mask, vec->masks[nid],
++					cpumask_of_node(nid)) < nr_cpu_ids)
++			return 1;
++	}
++
++	return 0;
++}
++
++#define available_cpu_in_vec available_cpu_in_nodes
++
++#else /* !CONFIG_CPUMASK_OFFSTACK */
++
++static inline int alloc_vec_masks(struct cpupri_vec *vec)
++{
++	if (!zalloc_cpumask_var(&vec->mask, GFP_KERNEL))
++		return -ENOMEM;
++
++	return 0;
++}
++
++static inline void free_vec_masks(struct cpupri_vec *vec)
++{
++	free_cpumask_var(vec->mask);
++}
++
++static inline int setup_vec_mask_var_ts(struct cpupri *cp)
++{
++	return 0;
++}
++
++static inline void free_vec_mask_var_ts(struct cpupri *cp)
++{
++}
++
++static inline int
++available_cpu_in_vec(struct task_struct *p, struct cpupri_vec *vec)
++{
++	if (cpumask_any_and(&p->cpus_mask, vec->mask) >= nr_cpu_ids)
++		return 0;
++
++	return 1;
++}
++#endif
++
++static inline int alloc_all_masks(struct cpupri *cp)
++{
++	int i;
++
++	for (i = 0; i < CPUPRI_NR_PRIORITIES; i++) {
++		if (alloc_vec_masks(&cp->pri_to_cpu[i]))
++			goto cleanup;
++	}
++
++	return 0;
++
++cleanup:
++	while (i--)
++		free_vec_masks(&cp->pri_to_cpu[i]);
++
++	return -ENOMEM;
++}
++
++static inline void setup_vec_counts(struct cpupri *cp)
++{
++	for (int i = 0; i < CPUPRI_NR_PRIORITIES; i++) {
++		struct cpupri_vec *vec = &cp->pri_to_cpu[i];
++
++		atomic_set(&vec->count, 0);
++	}
++}
++
+ static inline int __cpupri_find(struct cpupri *cp, struct task_struct *p,
+ 				struct cpumask *lowest_mask, int idx)
  {
- }
+@@ -96,11 +233,24 @@ static inline int __cpupri_find(struct cpupri *cp, struct task_struct *p,
+ 	if (skip)
+ 		return 0;
+ 
+-	if (cpumask_any_and(&p->cpus_mask, vec->mask) >= nr_cpu_ids)
++	if (!available_cpu_in_vec(p, vec))
+ 		return 0;
+ 
++#ifdef	CONFIG_CPUMASK_OFFSTACK
++	struct cpumask *cpupri_mask = lowest_mask;
 +
- #endif /* CONFIG_SMP */
- 
- static void enqueue_top_rt_rq(struct rt_rq *rt_rq);
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index bc67806911f2..13fc3ac3381b 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -953,6 +953,8 @@ struct perf_domain {
- 	struct rcu_head rcu;
- };
- 
-+typedef atomic_t *atomic_tp;
++	// available && lowest_mask
++	if (lowest_mask) {
++		cpumask_copy(cpupri_mask, vec->masks[0]);
++		for (int nid = 1; nid < nr_node_ids; nid++)
++			cpumask_and(cpupri_mask, cpupri_mask, vec->masks[nid]);
++	}
++#else
++	struct cpumask *cpupri_mask = vec->mask;
++#endif
 +
- /*
-  * We add the notion of a root-domain which will be used to define per-domain
-  * variables. Each exclusive cpuset essentially defines an island domain by
-@@ -963,12 +965,15 @@ struct perf_domain {
-  */
- struct root_domain {
- 	atomic_t		refcount;
--	atomic_t		rto_count;
- 	struct rcu_head		rcu;
- 	cpumask_var_t		span;
- 	cpumask_var_t		online;
+ 	if (lowest_mask) {
+-		cpumask_and(lowest_mask, &p->cpus_mask, vec->mask);
++		cpumask_and(lowest_mask, &p->cpus_mask, cpupri_mask);
+ 		cpumask_and(lowest_mask, lowest_mask, cpu_active_mask);
  
- 	atomic_t		dlo_count;
-+
-+	/* rto_count per node */
-+	atomic_tp		*rto_counts;
-+
- 	struct dl_bw		dl_bw;
- 	struct cpudl		cpudl;
+ 		/*
+@@ -229,7 +379,11 @@ void cpupri_set(struct cpupri *cp, int cpu, int newpri)
+ 	if (likely(newpri != CPUPRI_INVALID)) {
+ 		struct cpupri_vec *vec = &cp->pri_to_cpu[newpri];
  
-@@ -1030,6 +1035,8 @@ extern int sched_init_domains(const struct cpumask *cpu_map);
- extern void rq_attach_root(struct rq *rq, struct root_domain *rd);
- extern void sched_get_rd(struct root_domain *rd);
- extern void sched_put_rd(struct root_domain *rd);
-+extern int rto_counts_init(atomic_tp **rto_counts);
-+extern void rto_counts_cleanup(atomic_tp *rto_counts);
++#ifdef	CONFIG_CPUMASK_OFFSTACK
++		cpumask_set_cpu(cpu, vec->masks[cpu_to_node(cpu)]);
++#else
+ 		cpumask_set_cpu(cpu, vec->mask);
++#endif
+ 		/*
+ 		 * When adding a new vector, we update the mask first,
+ 		 * do a write memory barrier, and then update the count, to
+@@ -263,7 +417,11 @@ void cpupri_set(struct cpupri *cp, int cpu, int newpri)
+ 		 */
+ 		atomic_dec(&(vec)->count);
+ 		smp_mb__after_atomic();
++#ifdef	CONFIG_CPUMASK_OFFSTACK
++		cpumask_clear_cpu(cpu, vec->masks[cpu_to_node(cpu)]);
++#else
+ 		cpumask_clear_cpu(cpu, vec->mask);
++#endif
+ 	}
  
- static inline int get_rd_overloaded(struct root_domain *rd)
+ 	*currpri = newpri;
+@@ -279,26 +437,31 @@ int cpupri_init(struct cpupri *cp)
  {
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index b958fe48e020..166dc8177a44 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -457,6 +457,7 @@ static void free_rootdomain(struct rcu_head *rcu)
- {
- 	struct root_domain *rd = container_of(rcu, struct root_domain, rcu);
+ 	int i;
  
-+	rto_counts_cleanup(rd->rto_counts);
- 	cpupri_cleanup(&rd->cpupri);
- 	cpudl_cleanup(&rd->cpudl);
- 	free_cpumask_var(rd->dlo_mask);
-@@ -549,8 +550,14 @@ static int init_rootdomain(struct root_domain *rd)
+-	for (i = 0; i < CPUPRI_NR_PRIORITIES; i++) {
+-		struct cpupri_vec *vec = &cp->pri_to_cpu[i];
+-
+-		atomic_set(&vec->count, 0);
+-		if (!zalloc_cpumask_var(&vec->mask, GFP_KERNEL))
+-			goto cleanup;
+-	}
+-
++	/* Allocate the cpu_to_pri array */
+ 	cp->cpu_to_pri = kcalloc(nr_cpu_ids, sizeof(int), GFP_KERNEL);
+ 	if (!cp->cpu_to_pri)
+-		goto cleanup;
++		return -ENOMEM;
  
- 	if (cpupri_init(&rd->cpupri) != 0)
- 		goto free_cpudl;
++	/* Initialize all CPUs to invalid priority */
+ 	for_each_possible_cpu(i)
+ 		cp->cpu_to_pri[i] = CPUPRI_INVALID;
+ 
++	/* Setup priority vectors */
++	setup_vec_counts(cp);
++	if (setup_vec_mask_var_ts(cp))
++		goto fail_setup_vectors;
 +
-+	if (rto_counts_init(&rd->rto_counts) != 0)
-+		goto free_cpupri;
++	/* Allocate masks for each priority vector */
++	if (alloc_all_masks(cp))
++		goto fail_alloc_masks;
 +
  	return 0;
  
-+free_cpupri:
-+	cpupri_cleanup(&rd->cpupri);
- free_cpudl:
- 	cpudl_cleanup(&rd->cpudl);
- free_rto_mask:
+-cleanup:
+-	for (i--; i >= 0; i--)
+-		free_cpumask_var(cp->pri_to_cpu[i].mask);
++fail_alloc_masks:
++	free_vec_mask_var_ts(cp);
++
++fail_setup_vectors:
++	kfree(cp->cpu_to_pri);
+ 	return -ENOMEM;
+ }
+ 
+@@ -308,9 +471,10 @@ int cpupri_init(struct cpupri *cp)
+  */
+ void cpupri_cleanup(struct cpupri *cp)
+ {
+-	int i;
+-
+ 	kfree(cp->cpu_to_pri);
+-	for (i = 0; i < CPUPRI_NR_PRIORITIES; i++)
+-		free_cpumask_var(cp->pri_to_cpu[i].mask);
++
++	for (int i = 0; i < CPUPRI_NR_PRIORITIES; i++)
++		free_vec_masks(&cp->pri_to_cpu[i]);
++
++	free_vec_mask_var_ts(cp);
+ }
+diff --git a/kernel/sched/cpupri.h b/kernel/sched/cpupri.h
+index 245b0fa626be..c53f1f4dad86 100644
+--- a/kernel/sched/cpupri.h
++++ b/kernel/sched/cpupri.h
+@@ -9,7 +9,11 @@
+ 
+ struct cpupri_vec {
+ 	atomic_t		count;
++#ifdef CONFIG_CPUMASK_OFFSTACK
++	cpumask_var_t		*masks	____cacheline_aligned;
++#else
+ 	cpumask_var_t		mask	____cacheline_aligned;
++#endif
+ };
+ 
+ struct cpupri {
 -- 
 2.43.5
 
