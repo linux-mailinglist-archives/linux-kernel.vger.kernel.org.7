@@ -1,199 +1,216 @@
-Return-Path: <linux-kernel+bounces-738967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6993B0BFBD
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:12:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9912DB0BFBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:13:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA67D16A5A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:12:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C3D4189DAD0
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E01288C0A;
-	Mon, 21 Jul 2025 09:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QerzCdBH"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8391798F
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 09:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFCC22877CF;
+	Mon, 21 Jul 2025 09:12:57 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE8EC1798F
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 09:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753089120; cv=none; b=hjpkWoJuKpfWAh1uw71lFt+KnkDxyX/8K/HPVt90eELzAiXTp5cOVwzwYGqhXGum21SlOgRCxiBQzXBpRyc78P+1YjKQnpvTWyhjxzJPpRqSq7ga3nt5pzsjG6zNYRQT1t8fL/bxfHRZhDUnEwg0F5bdhqu/qkFKVGvsuvoKj7k=
+	t=1753089177; cv=none; b=CABo+P6sIN4Dd0I0bIyJam8Ss2kAopzQcy6SMcRz7YPN833JIFnxIBACaAMZ3tLdeWsANYXQz//cDMHDnx7z3lPMvPeTH2f/hNhegHaN3dPq/uDdnveTlj3G1MFYHtSS32AnIDhYpMNfheqQcHPfIRYGD2myQd1mdJzlqyxovrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753089120; c=relaxed/simple;
-	bh=hhA7ypzgVJrNCUExLyxE2vtXk35QIwwG/Xy7pYSXsbs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BpcUrx7fukX0OV0IDOLYULoBXbrShz22Bd4DV+76aOBfR2uGLZI9MqYSgdG/k03MpMdY5yPS0x8fgo8+Hy8J1F0/oC2jRUOKsduSx2vAexIBEUh+ikQweiBIvxHor1qBSt3+h2zEqEpOiaE9M5GOrpp13q3cfImoH0sLm2nd6Gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QerzCdBH; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ae0c571f137so756364366b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 02:11:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753089116; x=1753693916; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hhA7ypzgVJrNCUExLyxE2vtXk35QIwwG/Xy7pYSXsbs=;
-        b=QerzCdBHoX1MEMGCuu8Q8aws1DVWr02MYJSOWTjoX43eXscKQYlXWbu3PkH1YRQaLb
-         t3Lm1ZRkeJqF2VLwMcOtQXx09mLEhSxxs0UE/ED05bGc5ucUt3RFGnfXZAZXXAhnki10
-         fksd8Lq+E2sjC2vIs3ocBies8LG+lA8uPt5Di+WmRfWL7rS+laG00CEeSrJdOHMdTx9m
-         4Tr8E6Os0HJ8HRpacLgxJ/cyX6m07RSZUp09KnRDxem7nWsJOdHj4bux8ciCEXSVtX0K
-         K9mxj1kuvGGfiVseIyCp5sbjpFJh1UoIv/7UBUcg4aEnt/UHo5Bf5QXwq1zv+MGWcunG
-         36lQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753089116; x=1753693916;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hhA7ypzgVJrNCUExLyxE2vtXk35QIwwG/Xy7pYSXsbs=;
-        b=i5zF+309WI/lLA+d7uFaVcYszy+F5djAd4feJe5XEeT5FUJxB4kHG7v0Obme0nlkfu
-         NILo/v2XpGfk+SAwNY5MYtNWRfSI45sJSKIvIl9ssFncn1ZvUvVaaZlCw5dNjgNFiFC2
-         LyHT+WRnVwMC4Id6DdEDmkTh9M6zPhhSFL2lBLZ2FFnnK7pdmBceL/9j2Zrq7v4Q/oW4
-         FNh0B4Ite+QI2Q2NpaJo48ixtNn2hwgTl7jalKwq9Qq/r2Wy5hBfARNdTHB1q5yF4uVs
-         2TVBOl8WBB42H1AkOu+4hdeDfaP6Llcc339FHoc40JmQWWjucQjytRmoIb8t1Pw7Rt1w
-         JTxw==
-X-Forwarded-Encrypted: i=1; AJvYcCWXy5GLPb9fLvlUwEE2OEqjsWlpwwZPrp9892VhyJu1KVaWTbkHnBttUXHPtGWbBRPZRqU9bvYUnDmbdQs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuYvNeTbs6QQp1Alg4T4lZjqaNCuEG8l3T0WijFnsufH6nOYRJ
-	tgli3yJJ3MkkdNseLNJyJ6/aVLYUe/l4Ec6lPPmSIZOmSb1g1FQlcWFVTiXfplASiDb0vB6+ymP
-	NTXD+/hac5GfOtGNjCaKmCHWNd0eBXkvxINe21x4VZw==
-X-Gm-Gg: ASbGnctiKKAbRjI2Uxx7C+KFuEV8OegW7WE6ubzl81s/H4owsL2sMvRcgwoGY4uLGRA
-	jfV4eUb68LT9ENQHh8n75MzPmnn6nYNHMighAvLkhZ6m99ql6qx9tsf/QJW3oP73pcV21OufI0h
-	9pGwLeaPvWd+n0ujXyC1PRen9CtOfcvkA3oZYwULtdMtIDx0rGQavW9Tf1E1CRaFJfVcMa6cKDz
-	vKx720y8FC/s94UXEZBQNsiXJ7q1IqdzvbUStBMD27o7d8WQzc=
-X-Google-Smtp-Source: AGHT+IGC/e4x0EMjihguyBAqhi5FMc3ech9KyBzf6phbktI0S+TUxfY6zhy8jBmyt+ey74AA3gKZ8o62yyNeS12ML/4=
-X-Received: by 2002:a17:907:7e81:b0:aec:4aa6:7800 with SMTP id
- a640c23a62f3a-aec4aa6a010mr1655445466b.20.1753089115834; Mon, 21 Jul 2025
- 02:11:55 -0700 (PDT)
+	s=arc-20240116; t=1753089177; c=relaxed/simple;
+	bh=X5IuqxopbgrZ/xk/4Rm96XqTv5uL59yd4KWknf5JCvY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qx9x7lgmblHbzPSevy7DasBkHFQ5kqrMa8bqDpWsdxWuCUDgjeLxwb7tyJd8tVf1L03/+DQTYAusHsZwDJ7ITzXKw6WTr560NXQitGJWkqbeot7ogLcJ2Zj2iYCv+MLgd4IYWpXlzFDq5KgP4SEpa7Ur8SjJYoFMmhgCzYWsLvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.5.213])
+	by gateway (Coremail) with SMTP id _____8CxaWqSBH5oWrQuAQ--.33438S3;
+	Mon, 21 Jul 2025 17:12:50 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.5.213])
+	by front1 (Coremail) with SMTP id qMiowJBxzsGRBH5oOfofAA--.9767S2;
+	Mon, 21 Jul 2025 17:12:49 +0800 (CST)
+From: Bibo Mao <maobibo@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: WANG Xuerui <kernel@xen0n.name>,
+	Xi Ruoyao <xry111@xry111.site>,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] LoongArch: Implement physical address with ELF program header
+Date: Mon, 21 Jul 2025 17:12:48 +0800
+Message-Id: <20250721091248.3896152-1-maobibo@loongson.cn>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250708165630.1948751-1-vincent.guittot@linaro.org>
- <20250708165630.1948751-5-vincent.guittot@linaro.org> <5bbe61ee-d384-47b9-b6f2-c9f607f00156@linux.ibm.com>
- <CAKfTPtAYS3OV+udSncqVWHh7+PCQxL-_pnSGCJqJMr_nyTOXUA@mail.gmail.com>
- <20250710123435.GM1613376@noisy.programming.kicks-ass.net>
- <71bf9ee3-859c-4c3e-9db4-38c1ab35440a@linux.ibm.com> <cee2b280-a036-43b5-8ff8-6ec2a0b9356b@linux.ibm.com>
-In-Reply-To: <cee2b280-a036-43b5-8ff8-6ec2a0b9356b@linux.ibm.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Mon, 21 Jul 2025 11:11:44 +0200
-X-Gm-Features: Ac12FXyZExlsOOdP_D0BIVf9BEFJYulmB6-joNCfkKbFhOtLTl6hBVwgneMGSVc
-Message-ID: <CAKfTPtCNkqp87j8mAKbfBS+Pk=YWv9qQf9VE4=AkqPu9YCR=Kw@mail.gmail.com>
-Subject: Re: [PATCH v3 4/6] sched/fair: Limit run to parity to the min slice
- of enqueued entities
-To: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com, juri.lelli@redhat.com, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	mgorman@suse.de, vschneid@redhat.com, dhaval@gianis.ca, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJBxzsGRBH5oOfofAA--.9767S2
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
+	nUUI43ZEXa7xR_UUUUUUUUU==
 
-On Sun, 20 Jul 2025 at 12:57, Madadi Vineeth Reddy
-<vineethr@linux.ibm.com> wrote:
->
-> On 13/07/25 23:47, Madadi Vineeth Reddy wrote:
-> > Hi Vincent, Peter
-> >
-> > On 10/07/25 18:04, Peter Zijlstra wrote:
-> >>
-> >>>> If I set my task=E2=80=99s custom slice to a larger value but anothe=
-r task has a smaller slice,
-> >>>> this change will cap my protected window to the smaller slice. Does =
-that mean my custom
-> >>>> slice is no longer honored?
-> >>>
-> >>> What do you mean by honored ? EEVDF never mandates that a request of
-> >>> size slice will be done in one go. Slice mainly defines the deadline
-> >>> and orders the entities but not that it will always run your slice in
-> >>> one go. Run to parity tries to minimize the number of context switche=
-s
-> >>> between runnable tasks but must not break fairness and lag theorem.So
-> >>> If your task A has a slice of 10ms and task B wakes up with a slice o=
-f
-> >>> 1ms. B will preempt A because its deadline is earlier. If task B stil=
-l
-> >>> wants to run after its slice is exhausted, it will not be eligible an=
-d
-> >>> task A will run until task B becomes eligible, which is as long as
-> >>> task B's slice.
-> >>
-> >> Right. Added if you don't want wakeup preemption, we've got SCHED_BATC=
-H
-> >> for you.
-> >
-> > Thanks for the explanation. Understood now that slice is only for deadl=
-ine
-> > calculation and ordering for eligible tasks.
-> >
-> > Before your patch, I observed that each task ran for its full custom sl=
-ice
-> > before preemption, which led me to assume that slice directly controlle=
-d
-> > uninterrupted runtime.
-> >
-> > With the patch series applied and RUN_TO_PARITY=3Dtrue, I now see the e=
-xpected behavior:
-> > - Default slice (~2.8=E2=80=AFms): tasks run ~3=E2=80=AFms each.
-> > - Increasing one task=E2=80=99s slice doesn=E2=80=99t extend its single=
-=E2=80=90run duration=E2=80=94it remains ~3=E2=80=AFms.
-> > - Decreasing one tasks=E2=80=99 slice shortens everyone=E2=80=99s run t=
-o that new minimum.
-> >
-> > With this patch series, With NO_RUN_TO_PARITY, I see runtimes near 1=E2=
-=80=AFms (CONFIG_HZ=3D1000).
-> >
-> > However, without your patches, I was still seeing ~3=E2=80=AFms runs ev=
-en with NO_RUN_TO_PARITY,
-> > which confused me because I expected runtime to drop to ~1=E2=80=AFms (=
-preempt at every tick)
-> > rather than run up to the default slice.
-> >
-> > Without your patches and having RUN_TO_PARITY is as expected. Task runn=
-ing till it's
-> > slice when eligible.
-> >
-> > I ran these with 16 stress=E2=80=91ng threads pinned to one CPU.
-> >
-> > Please let me know if my understanding is incorrect, and why I was stil=
-l seeing ~3=E2=80=AFms
-> > runtimes with NO_RUN_TO_PARITY before this patch series.
-> >
->
-> Hi Vincent,
->
-> Just following up on my earlier question: with the patch applied (and=E2=
-=80=AFRUN_TO_PARITY=3Dtrue),
-> reducing one task=E2=80=99s slice now clamps the runtime of all tasks on =
-that runqueue to the new
-> minimum.(By =E2=80=9Cruntime=E2=80=9D I mean the continuous time a task r=
-uns before preemption.). Could this
-> negatively impact throughput oriented workloads where remaining threads n=
-eed longer run time
-> before preemption?
+With structure elf64_phdr, field p_paddr is physical address of the
+segment. And it is convenient for qemu to calculate the physical
+address when directly boot ELF kernel image.
 
-Probably, it is also expected that tasks which have shorter slices,
-don't want to run forever. The shorter runtime will only apply while
-the task is runnable and this task should run 1st or almost and go
-back to sleep so its impact should be small. I agree that if you have
-an always running task which sets its slice to 1ms it will increase
-number of context switch for other tasks which don't have a longer
-slice but we can't do much against that
+Otherwise QEMU needs convert virtual address p_vaddr into physical
+address, the conversion logic assumes that DMW method is used where
+48 bit physical address is supported. However with direct MMU mapping
+method with start address from 0xFFFF800000000000, only 47 bit physical
+address is supported. QEMU cannot assume the kernel behavior at kernel
+loading stage.
 
->
-> I understand that slice is only for ordering of deadlines but just curiou=
-s about it's
-> effect in scenarios like this.
->
-> Thanks,
-> Madadi Vineeth Reddy
->
-> > Thanks,
-> > Madadi Vineeth Reddy
->
+Here add physical address indication in ELF program header, it is
+convenient to get physical kernel loading address.
+
+Here is output with command readelf -l vmlinux with patch:
+  Elf file type is EXEC (Executable file)
+  Entry point 0x90000000015f5000
+  There are 2 program headers, starting at offset 64
+  Program Headers:
+    Type           Offset             VirtAddr           PhysAddr
+                   FileSiz            MemSiz              Flags  Align
+    LOAD           0x0000000000010000 0x9000000000200000 0x0000000000200000
+                   0x000000000293b000 0x0000000002a79b98  RWE    0x10000
+
+And output with command readelf -l vmlinux without the patch:
+  Elf file type is EXEC (Executable file)
+  Entry point 0x90000000015f5000
+  There are 2 program headers, starting at offset 64
+  Program Headers:
+    Type           Offset             VirtAddr           PhysAddr
+                   FileSiz            MemSiz              Flags  Align
+    LOAD           0x0000000000010000 0x9000000000200000 0x9000000000200000
+                   0x000000000293b000 0x0000000002a79b98  RWE    0x10000
+
+Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+---
+v1 ... v2:
+  1. Set LOAD_OFFSET with PAGE_OFFSET rather than CACHE_BASE, since it
+     is generic with PAGE_OFFSET.
+  2. Add AT information with missing edata_padding section. 
+---
+ arch/loongarch/kernel/vmlinux.lds.S | 36 +++++++++++++++++++----------
+ 1 file changed, 24 insertions(+), 12 deletions(-)
+
+diff --git a/arch/loongarch/kernel/vmlinux.lds.S b/arch/loongarch/kernel/vmlinux.lds.S
+index 08ea921cdec1..8ce6b0d948f4 100644
+--- a/arch/loongarch/kernel/vmlinux.lds.S
++++ b/arch/loongarch/kernel/vmlinux.lds.S
+@@ -3,10 +3,12 @@
+ #include <asm/asm-offsets.h>
+ #include <asm/thread_info.h>
+ #include <asm/orc_lookup.h>
++#include <asm/addrspace.h>
+ 
+ #define PAGE_SIZE _PAGE_SIZE
+ #define RO_EXCEPTION_TABLE_ALIGN	4
+ #define PHYSADDR_MASK			0xffffffffffff /* 48-bit */
++#define LOAD_OFFSET			PAGE_OFFSET
+ 
+ /*
+  * Put .bss..swapper_pg_dir as the first thing in .bss. This will
+@@ -42,7 +44,7 @@ SECTIONS
+ 
+ 	. = ALIGN(PECOFF_SEGMENT_ALIGN);
+ 	_stext = .;
+-	.text : {
++	.text : AT(ADDR(.text) - LOAD_OFFSET) {
+ 		TEXT_TEXT
+ 		SCHED_TEXT
+ 		LOCK_TEXT
+@@ -60,7 +62,7 @@ SECTIONS
+ 	__inittext_begin = .;
+ 
+ 	INIT_TEXT_SECTION(PAGE_SIZE)
+-	.exit.text : {
++	.exit.text : AT(ADDR(.exit.text) - LOAD_OFFSET) {
+ 		EXIT_TEXT
+ 	}
+ 
+@@ -82,7 +84,7 @@ SECTIONS
+ 	}
+ 
+ 	INIT_DATA_SECTION(16)
+-	.exit.data : {
++	.exit.data : AT(ADDR(.exit.data) - LOAD_OFFSET) {
+ 		EXIT_DATA
+ 	}
+ 
+@@ -90,7 +92,7 @@ SECTIONS
+ 	PERCPU_SECTION(1 << CONFIG_L1_CACHE_SHIFT)
+ #endif
+ 
+-	.init.bss : {
++	.init.bss : AT(ADDR(.init.bss) - LOAD_OFFSET) {
+ 		*(.init.bss)
+ 	}
+ 	. = ALIGN(PECOFF_SEGMENT_ALIGN);
+@@ -101,27 +103,34 @@ SECTIONS
+ 	_sdata = .;
+ 	RO_DATA(4096)
+ 
+-	.got : ALIGN(16) { *(.got) }
+-	.plt : ALIGN(16) { *(.plt) }
+-	.got.plt : ALIGN(16) { *(.got.plt) }
++	. =  ALIGN(16);
++	.got : AT(ADDR(.got) - LOAD_OFFSET) { *(.got) }
++	. =  ALIGN(16);
++	.plt : AT(ADDR(.plt) - LOAD_OFFSET) { *(.plt) }
++	. =  ALIGN(16);
++	.got.plt : AT(ADDR(.got.plt) - LOAD_OFFSET) { *(.got.plt) }
+ 
+ 	RW_DATA(1 << CONFIG_L1_CACHE_SHIFT, PAGE_SIZE, THREAD_SIZE)
+ 
+-	.rela.dyn : ALIGN(8) {
++	. = ALIGN(8);
++	.rela.dyn : AT(ADDR(.rela.dyn) - LOAD_OFFSET) {
+ 		__rela_dyn_begin = .;
+ 		 *(.rela.dyn) *(.rela*)
+ 		__rela_dyn_end = .;
+ 	}
+ 
+ #ifdef CONFIG_RELR
+-	.relr.dyn : ALIGN(8) {
++	. = ALIGN(8);
++	.relr.dyn : AT(ADDR(.relr.dyn) - LOAD_OFFSET) {
+ 		__relr_dyn_begin = .;
+ 		 *(.relr.dyn)
+ 		__relr_dyn_end = .;
+ 	}
+ #endif
+ 
+-	.data.rel : { *(.data.rel*) }
++	.data.rel : AT(ADDR(.data.rel) - LOAD_OFFSET) {
++		*(.data.rel*)
++	}
+ 
+ #ifdef CONFIG_RELOCATABLE
+ 	. = ALIGN(8);
+@@ -134,10 +143,13 @@ SECTIONS
+ 
+ 	ORC_UNWIND_TABLE
+ 
+-	.sdata : {
++	.sdata : AT(ADDR(.sdata) - LOAD_OFFSET) {
+ 		*(.sdata)
+ 	}
+-	.edata_padding : { BYTE(0); . = ALIGN(PECOFF_FILE_ALIGN); }
++	.edata_padding : AT(ADDR(.edata_padding) - LOAD_OFFSET) {
++		BYTE(0);
++		. = ALIGN(PECOFF_FILE_ALIGN);
++	}
+ 	_edata =  .;
+ 
+ 	BSS_SECTION(0, SZ_64K, 8)
+
+base-commit: 89be9a83ccf1f88522317ce02f854f30d6115c41
+-- 
+2.39.3
+
 
