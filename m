@@ -1,80 +1,75 @@
-Return-Path: <linux-kernel+bounces-738662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D5BBB0BB93
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:01:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8589B0BB95
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:02:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69BB0188D8C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 04:02:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03C85174F01
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 04:02:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442151E521E;
-	Mon, 21 Jul 2025 04:01:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674C71EBFE0;
+	Mon, 21 Jul 2025 04:02:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Vcfu4O2S"
-Received: from out203-205-221-190.mail.qq.com (out203-205-221-190.mail.qq.com [203.205.221.190])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="fSCsDeW6"
+Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485701DE89A
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 04:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A057D15A848;
+	Mon, 21 Jul 2025 04:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753070510; cv=none; b=UkIpGTyMf3l2Bjnr61vriuYRt4ZpxrcLiJdtPP5poOEywj166CW+sUCkau/VrUk9CmrxHLBV0D+l7tcP2QDsL2AAvaIjdzoeLDg4j4TuO5HRVRjiIsiyfuB4dBQfwQLSP6cYT8vGiQckT5rCK4p9oFNoIS1A38oV3Gu3+onNbds=
+	t=1753070545; cv=none; b=cqFoqdmjSJZiMrIs0f8Gu8/9eNOcFhxfqjq0illWE2MXdTuSDrRPB3uijV+ayKPOlTiPmcRelLTFyAJSZ2N/edlq2S4GjdzniYC2W2vBEvN7v0J89mXstxN5Agbt0hm55CZK9Ev8GzoBYdYeZeBiz7U2dEPZhBWiH3OUMOL3/bA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753070510; c=relaxed/simple;
+	s=arc-20240116; t=1753070545; c=relaxed/simple;
 	bh=btpYYUIbFBEp+ktnsXZqqxkPFTnpTlE8q8VnCvyDrII=;
 	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=CZVfwfQLBk/wRXvsKBR9nddSUiXu77HFX3/vhrtD5W0dVmaURLhstWwQtWcVmmf6wsQcwz7e8oCGtto7BLxA1eC7K2Lom6n8EX80Ef7GaOQeBWMFPg1DmhG2HpO78Pz9Hp1rSli+Ch6CSUrjd3vYUtc0goaf8BvfULd1tH4VG/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Vcfu4O2S; arc=none smtp.client-ip=203.205.221.190
+	 MIME-Version; b=tULzA9XKWJaZurZP3rdDK9Ots6k4F3s1RSfJXkLMmpM2i/Gh7TFaLilvatjj6kC6VaP9rwZMUfiLtf5S6cf/9oehnb1s2hn+YExB7NE24hWZZwZQuJ6rXSJgrQks380sL//aR+nI7hBkWaGVdTn6COwUyZHTRT/RggE0Lb6AR6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=fSCsDeW6; arc=none smtp.client-ip=43.163.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1753070193; bh=sVN/AzOJY5mxP5MAX87gxt0LYQMkeR9l094mDeUFjL0=;
+	t=1753070227; bh=sVN/AzOJY5mxP5MAX87gxt0LYQMkeR9l094mDeUFjL0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=Vcfu4O2SuNo1kLiO6dV65TItJxnex4F4UF22OGLSnlv3wey4EUjHLhZgxvADxnlpa
-	 jCG0AA7OBEvhJUmP74+TilDcdwe+9dsfdn1FwkO8rP3krxG2dXCZrnoUVV0IBIvJJu
-	 ySx4DsrC6IFRLJqHzuFu/jEJk6h4xNc3tpQewatY=
-Received: from VM-222-126-tencentos.localdomain ([14.116.239.33])
-	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
-	id E1F824F9; Mon, 21 Jul 2025 11:56:31 +0800
-X-QQ-mid: xmsmtpt1753070191t4v69hpdn
-Message-ID: <tencent_2633924ADEC79A0D51ECD39670F36EC5FD09@qq.com>
-X-QQ-XMAILINFO: Mkw1Oys1xyjC1/Lv+r5o6Q7xO1jo6/WJU9QWFmQnv71aUpxWCPWjFaBaSSfsd1
-	 gFqjTbE/j38SjMwFyerFmnoQvnlf09MYhHV/Trr/HFGdl1IUwm2R+Z5kZajA1XICjETckiW/WaDT
-	 Mc1uoNfLleH9XMq0Vjl1Foyuia/vPSTIkOxY5M3PvP3N8vmA9UIQi89px8XPj1vuA+cTgEHFOVbu
-	 bc7Gi3fiSrnyfpbsPbEJvZiPuhpSIljksLknY6Tigq/pRs5IBxEhW89dOUPqnTaCED4XtdSvuW3c
-	 12l9GOStp7CvO14Cyd9NdkFiSttH5xUYM66uMrEpsbn/z0HRy8e7zB6cjJK87+jPBl6En4IseS66
-	 061BY0V7QWkPiEH5Y44lIgPlO2wYgT/jZKEk2O8Y+a0WOZ1WcumLcapuAF5xErR+bx/Ol+c2AP6e
-	 KhRxSYUVeu5dC/6KHi4qHQa2xIe6OYBqWHtFfGk3Q5vBF8CtY+gPtDiHsV2Wy1Kih6MvTqppio7f
-	 9vrku6qQ+JSGmqqlX77qNN9Cppz6voA7syHk9yZ2Ef4I5CYPRl83kbwWoKyDI92VsJgHEDwlEnul
-	 nfiJ/+cPTlsMd9aaavYlB9lTAowahFKOiaGpi6sL0xg7cvPF4ubl2vA5YhUV/ktzZOnxFqdayKn7
-	 s//HRLoOVzt/4U1rwKhv22x3a8qkyJGuDMwbrinZyeskkw7EDKPfP2SSD0t9vyt1Bfahvvwy6dQj
-	 EMLO0PnxGYji2plpA4cOXDSqaG21NlQAk2W3um0pbuApNJ1Ps7VELDxO/agNLGQpEsMTBdqZiZpy
-	 ui5M18u7+g6lr04WoGhFa/M8kW0M3SkCNMdCdnvfAsUSVSx4qgCo0mbDUtZDcLEP6GRgBMYntipa
-	 yyPzVvuvKdGD0aqxzrMpHQP5TBff+gPLg6iCbDurWn5mzwW0PnTYjEynG2JoqAplq91GtttBWB5Y
-	 0bRdeHB/HajuvLjbEy81mBs7cbrnoISu8C3ocEIQ37QZXrBQEN1T3J454MNsAdjzD+F0NcwHZkbi
-	 I5FF0ghLHCr0X/Mslkn9LjC2Si6DXO7JMceVRehfNX4u/YF8gbYDWgxCigHZB2QEfHF3luGw==
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+	b=fSCsDeW6IFaPxwpIgNQWIyFMY1gxIlE06HTDKgaCWabgAFkPdmUm2K0/NvG9dHU1N
+	 w+GxeKt5WuwH0TCjyVCtgq1WzCtUWdhgM4esErGCV3Z87RxKnvMIJV+l0JxJ/SY7HO
+	 e9fWCORfT8SKmiC03OaDp6gaRdue9ALnjdQN/2Vw=
+Received: from VM-222-126-tencentos.localdomain ([14.116.239.37])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id E45ADA05; Mon, 21 Jul 2025 11:57:05 +0800
+X-QQ-mid: xmsmtpt1753070225trb1aq2d2
+Message-ID: <tencent_60B856B729FE434916EF57CDF5286D69A008@qq.com>
+X-QQ-XMAILINFO: NbgegmlEc3JuabrtwEbzxQ/HVLD3ZsVD5dKnQlX7r66XxAWjbrGcYcT/FuZ7mn
+	 FSm8+cK0sJlrzJuWSoAfMzMiLRZH7IVN0I29tuDktfJy/x3ZWP/ncuO7iLcIHy0ejcLzpVN2/K2x
+	 fnV+OBcf/ndJFS4vyg33LPLTfnWmf5WDnXjBtsIES/5Ey02GyLFL0N3d8L1GfrprFy5e0lRZPbv+
+	 pPUHIu2C09U2r5JI7dY3z2Da4eyQpzl7bVXJNw/YxKa0mEqpIe5KiUqAj34SsXBH1TAUSFSyLcyh
+	 eFI20xXx+w2u6UH37wnhvqTHFJokkiugcnjJxmyaCjhFRJx7oFNDZ/MCKk5nC7BXiZS3NZiKQhJQ
+	 BHK/nxE3bLsp5vF3iLw0/NpZyMp+bAPAjQ40cij2W/GWeHUUos+A0Quwu6zzEijUIq7C/SMXlozH
+	 9gFY12I+IUKI/31jPc6oEfTxFXECHpx9uNxQsOaW9cgvQxcOT9SOIcOgTpenNcGASnDcQ2jbOTC4
+	 zrCycx8phXC9uXI6MbZGq7/k5IbP4htFAZqbtkcRvDFvJFJZHcL3GLu52NII5gw0Lfd3UO+7EAhx
+	 lqJ2n2VwePqdoLKE6Ygz+PFY4Xx3SiqrPyrvm1NdSTo/MsSmnCa5pGwDH6QNjts9DpK3Dvhfo8yg
+	 UkvflGpkcpNb1rGDlS/nV9Bi8xW9cczmQ+faLNtl0d+8Viz+UfDESNi/m7m52AuGm4AwYZByVyXO
+	 6T4DNprX/bLgUOoGFS0/0DOghOBz6TBn7XOijpB/wHxii/VTBlhtJrQKmp4HT/uxRNTBCQ552sm8
+	 LuRHHh1h2dYdXuqkOWivKUBwIkPBsECBgzkqG4moi/wA6IFhfWRivxTr+0MVIjgCcsqGBMU6MPWP
+	 OtX2uIsK+CS8DYC605gCD7KZ1MsajU88PWfvMVXWhcZdXur3bH05yO8k4EiS9SexYL9tdZc3MLV1
+	 hz0+XgnYfecfKtuzfdSgcKftbZh8wjI/XFmm9nabpcQ86bm3W+10w5Uo7UsMgLP10HDjeO3v2FHH
+	 cnOW0tOgRygTqVi0zEwKDeOw/PHpCy78MKC74Mjs9ycFE5CnJ/pcLVpqtBnkWgRHUioMeE8w==
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
 From: jackysliu <1972843537@qq.com>
-To: ptikhomirov@virtuozzo.com
-Cc: agk@redhat.com,
-	den@virtuozzo.com,
-	dm-devel@lists.linux.dev,
-	khorenko@virtuozzo.com,
+To: markus.elfring@web.de
+Cc: 1972843537@qq.com,
+	andreas@gaisler.com,
+	davem@davemloft.net,
 	linux-kernel@vger.kernel.org,
-	mpatocka@redhat.com,
-	snitzer@kernel.org,
-	xni@redhat.com,
-	yukuai3@huawei.com,
-	Siyang Liu <1972843537@qq.com>
+	sparclinux@vger.kernel.org
 Subject: [PATCH v2] arch: fix resource leak in jbusmc_probe()
-Date: Mon, 21 Jul 2025 11:56:24 +0800
-X-OQ-MSGID: <20250721035624.128629-1-1972843537@qq.com>
+Date: Mon, 21 Jul 2025 11:57:03 +0800
+X-OQ-MSGID: <20250721035703.129102-1-1972843537@qq.com>
 X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250721034929.374552-1-ptikhomirov@virtuozzo.com>
-References: <20250721034929.374552-1-ptikhomirov@virtuozzo.com>
+In-Reply-To: <cc7db82b-0337-4342-aeaf-ec6376cbcc74@web.de>
+References: <cc7db82b-0337-4342-aeaf-ec6376cbcc74@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
