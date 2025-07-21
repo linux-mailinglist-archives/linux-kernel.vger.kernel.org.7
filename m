@@ -1,281 +1,141 @@
-Return-Path: <linux-kernel+bounces-739774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD038B0CAC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:57:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83E0BB0CAC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:59:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7035B54071D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:57:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EF763BA8F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:59:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41027221FC9;
-	Mon, 21 Jul 2025 18:57:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54245221277;
+	Mon, 21 Jul 2025 18:59:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mqXQJH0t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="fgrNnZVu"
+Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88143221721;
-	Mon, 21 Jul 2025 18:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4B7221F12
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 18:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753124251; cv=none; b=CNHgWbt5XJnixlRJVONbjJUuAGMr3sb1QW+8pPvjNa7Y9mf9//HbJzQilCuX+QrG2SGa/G7uMh4qvtxdipFaOCOrydqeLTXKpqGpDI97kinDYLa2zIa2NNc11iUGUPAVNApWAo8YvSKdndxBhFnWjC7+Fk/9GW7asQaDscdjDAs=
+	t=1753124389; cv=none; b=KRQ7uG6M27W3Kzb42PbvOTZYjHh8MRTSFDsj+XoSgrx3o6AxNMw7oZnFISI1/SbxP5KMKOa/B8v2LXjssCkCw33OZ863oPEc22HRT1sjfrjeriJRR8zBPupUXqJw2yea4LGTA3RkGmBtkHpymvHHvDLS4gF6//6qpC4db6zU+eQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753124251; c=relaxed/simple;
-	bh=3u19+HJbqZLGOkvO9EOVcJxRBd+pyMHDYhsiKgTxEtk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KiCb84AiY/uCwoiDYiCW5ZsgBOn2nUSCh5WbC2kFs9A5KMX7vFkpM4GMhczKC+s/BTwz2kQYw2tYXmFeEZfxY1PPQLdDhpa7FA4u4lZmVIOFdph/qVlmvCnXgZxEROCAYcjCOAtXKHIVIPDE6IDda+r+eiHZp2/GOygDuDWkh0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mqXQJH0t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2B6EC4CEF4;
-	Mon, 21 Jul 2025 18:57:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753124251;
-	bh=3u19+HJbqZLGOkvO9EOVcJxRBd+pyMHDYhsiKgTxEtk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mqXQJH0tXgQZIPE5fhuL/ULHSjaem2QXkQJoDZmcqrVweiw3bR2jcKnEHqTWQxWxx
-	 0eRATsmQX8XMqP8YY1+YzL+tAx7zYq68IqbQRVzqmhxXa6PCFwVP1SLIJgRAxHvKwB
-	 zysbiLIZU2NLn841wk7vl7FFa9BUgpK9NBRfVla/tqqHarTZJ3YkpTYg0qWpqkpgjV
-	 pqcqvm0g83ituE+LgGUIrRvdg1gDhDkP0OXXVYj6WCfYlQwQ57fAS34j4Xa5um/Hzl
-	 to1nyf9loSMGGjhPSLh7mmMCq8LyZ2WJaazcpInzRvTpAJD00G7KqGZgbngwvYWUUN
-	 f8Q5Nc+HTY4Mg==
-From: Mario Limonciello <superm1@kernel.org>
-To: David Airlie <airlied@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
-	linux-kernel@vger.kernel.org (open list),
-	linux-pci@vger.kernel.org (open list:PCI SUBSYSTEM),
-	Daniel Dadap <ddadap@nvidia.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH v4 1/1] PCI: Move boot display attribute to DRM
-Date: Mon, 21 Jul 2025 13:57:26 -0500
-Message-ID: <20250721185726.1264909-2-superm1@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250721185726.1264909-1-superm1@kernel.org>
-References: <20250721185726.1264909-1-superm1@kernel.org>
+	s=arc-20240116; t=1753124389; c=relaxed/simple;
+	bh=HGLwuU4D+TUfqsZVVo04GFZdHAqGvPqWRxCyM/vPrtk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Vm30ibE+ECHXMWiZBw+14X85M01uKNB5XB0D8Bf6lL53OMJogsHyGkqBofTg/36UD9TBxXs0sC/YHaPNgmtBiZ3agE2CRLHlOrV2Gmif3lQCQBztU3iWNjkz3RTW9mmiI9s41+q9XJv+EvagoS7evPe6Tf/rsOkN79SLpDJC2n4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=fgrNnZVu; arc=none smtp.client-ip=103.21.126.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
+Received: from ldns1.iitb.ac.in (ldns1.iitb.ac.in [10.200.12.1])
+	by smtp1.iitb.ac.in (Postfix) with SMTP id 8073B104CBB8
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 00:29:34 +0530 (IST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 8073B104CBB8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
+	t=1753124374; bh=HGLwuU4D+TUfqsZVVo04GFZdHAqGvPqWRxCyM/vPrtk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=fgrNnZVuxHtNXvQhEzFgZbSMESSpacQkPL5pPuuKDddyUMZ3qThYSKgeHDbwQLgXC
+	 f450tK2nYV4C0VXVNK+LGdmMVFctzHDdoIzdZruGdFwODVi8Z6rVODSAJ4yPwWoxcU
+	 Qp4k5G3hCkj9vNvRm3vx6DO7UKMDYnf+BmB5HnRY=
+Received: (qmail 12007 invoked by uid 510); 22 Jul 2025 00:29:34 +0530
+X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns1 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
+ spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.101.4/26439} 
+ Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 4.105765 secs; 22 Jul 2025 00:29:34 +0530
+X-Spam-Level: 
+X-Spam-Pyzor: Reported 0 times.
+X-Envelope-From: akhilesh@ee.iitb.ac.in
+X-Qmail-Scanner-Mime-Attachments: |
+X-Qmail-Scanner-Zip-Files: |
+Received: from unknown (HELO ldns1.iitb.ac.in) (10.200.1.25)
+  by ldns1.iitb.ac.in with SMTP; 22 Jul 2025 00:29:30 +0530
+Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	by ldns1.iitb.ac.in (Postfix) with ESMTP id 390F036003B;
+	Tue, 22 Jul 2025 00:29:29 +0530 (IST)
+Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	(Authenticated sender: akhilesh)
+	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id CA8801E812C1;
+	Tue, 22 Jul 2025 00:29:28 +0530 (IST)
+Date: Tue, 22 Jul 2025 00:29:23 +0530
+From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+To: mturquette@baylibre.com, sboyd@kernel.org, dlan@gentoo.org,
+	heylenay@4d2.org, elder@riscstar.com, inochiama@outlook.com,
+	akhilesh@ee.iitb.ac.in, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, heylenay@outlook.com, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr
+Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
+	unicornxdotw@foxmail.com, jszhang@kernel.org,
+	zhangmeng.kevin@linux.spacemit.com, akhileshpatilvnit@gmail.com,
+	skhan@linuxfoundation.org
+Subject: [PATCH] clk: spacemit: fix error handling in
+ ccu_pll_set_rate/_round_rate
+Message-ID: <aH6OC1aV6IcQnoSC@bhairav-test.ee.iitb.ac.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: Mario Limonciello <mario.limonciello@amd.com>
+Initialize best_entry pointer with NULL in ccu_pll_lookup_best_rate()
+to avoid returning garbage value when function fails to assign it
+a valid rate entry. Avoid passing invalid rate entry reference to
+ccu_pll_update_param by adding appropriate error handling in
+ccu_pll_set_rate and ccu_pll_round_rate.
+Address the effects of uninitialized pointer as reported
+by smatch and coverity static code analysis tools.
 
-The boot_display attribute is currently created by PCI core, but the
-main reason it exists is for userspace software that interacts with
-drm to make decisions. Move the attribute to DRM.
-
-This also fixes a compilation failure when compiled without
-CONFIG_VIDEO on sparc.
-
-Suggested-by: Manivannan Sadhasivam <mani@kernel.org>
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Closes: https://lore.kernel.org/linux-next/20250718224118.5b3f22b0@canb.auug.org.au/
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+Addresses-Coverity-ID: 1649164
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/r/202505111057.ejK2J56K-lkp@intel.com/
+Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
 ---
- Documentation/ABI/testing/sysfs-bus-pci   |  9 -----
- Documentation/ABI/testing/sysfs-class-drm |  8 ++++
- drivers/gpu/drm/drm_sysfs.c               | 41 +++++++++++++++++++++
- drivers/pci/pci-sysfs.c                   | 45 -----------------------
- 4 files changed, 49 insertions(+), 54 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-class-drm
+ drivers/clk/spacemit/ccu_pll.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-pci b/Documentation/ABI/testing/sysfs-bus-pci
-index a2c74d4ebeadd..69f952fffec72 100644
---- a/Documentation/ABI/testing/sysfs-bus-pci
-+++ b/Documentation/ABI/testing/sysfs-bus-pci
-@@ -612,12 +612,3 @@ Description:
- 
- 		  # ls doe_features
- 		  0001:01        0001:02        doe_discovery
--
--What:		/sys/bus/pci/devices/.../boot_display
--Date:		October 2025
--Contact:	Linux PCI developers <linux-pci@vger.kernel.org>
--Description:
--		This file indicates that displays connected to the device were
--		used to display the boot sequence.  If a display connected to
--		the device was used to display the boot sequence the file will
--		be present and contain "1".
-diff --git a/Documentation/ABI/testing/sysfs-class-drm b/Documentation/ABI/testing/sysfs-class-drm
-new file mode 100644
-index 0000000000000..536820afca05b
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-class-drm
-@@ -0,0 +1,8 @@
-+What:		/sys/class/drm/.../boot_display
-+Date:		October 2025
-+Contact:	Linux DRI developers <dri-devel@vger.kernel.org>
-+Description:
-+		This file indicates that displays connected to the device were
-+		used to display the boot sequence.  If a display connected to
-+		the device was used to display the boot sequence the file will
-+		be present and contain "1".
-diff --git a/drivers/gpu/drm/drm_sysfs.c b/drivers/gpu/drm/drm_sysfs.c
-index 60c1f26edb6fa..1bc2e6abaa1a9 100644
---- a/drivers/gpu/drm/drm_sysfs.c
-+++ b/drivers/gpu/drm/drm_sysfs.c
-@@ -18,6 +18,7 @@
- #include <linux/gfp.h>
- #include <linux/i2c.h>
- #include <linux/kdev_t.h>
-+#include <linux/pci.h>
- #include <linux/property.h>
- #include <linux/slab.h>
- 
-@@ -30,6 +31,8 @@
- #include <drm/drm_property.h>
- #include <drm/drm_sysfs.h>
- 
-+#include <asm/video.h>
-+
- #include "drm_internal.h"
- #include "drm_crtc_internal.h"
- 
-@@ -508,6 +511,43 @@ void drm_sysfs_connector_property_event(struct drm_connector *connector,
- }
- EXPORT_SYMBOL(drm_sysfs_connector_property_event);
- 
-+static ssize_t boot_display_show(struct device *dev, struct device_attribute *attr,
-+				 char *buf)
-+{
-+	return sysfs_emit(buf, "1\n");
-+}
-+static DEVICE_ATTR_RO(boot_display);
-+
-+static struct attribute *display_attrs[] = {
-+	&dev_attr_boot_display.attr,
-+	NULL
-+};
-+
-+static umode_t boot_display_visible(struct kobject *kobj,
-+				    struct attribute *a, int n)
-+{
-+	struct device *dev = kobj_to_dev(kobj)->parent;
-+
-+	if (dev_is_pci(dev)) {
-+		struct pci_dev *pdev = to_pci_dev(dev);
-+
-+		if (video_is_primary_device(&pdev->dev))
-+			return a->mode;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct attribute_group display_attr_group = {
-+	.attrs = display_attrs,
-+	.is_visible = boot_display_visible,
-+};
-+
-+static const struct attribute_group *card_dev_groups[] = {
-+	&display_attr_group,
-+	NULL
-+};
-+
- struct device *drm_sysfs_minor_alloc(struct drm_minor *minor)
+diff --git a/drivers/clk/spacemit/ccu_pll.c b/drivers/clk/spacemit/ccu_pll.c
+index 4427dcfbbb97..3fc6a30f98b7 100644
+--- a/drivers/clk/spacemit/ccu_pll.c
++++ b/drivers/clk/spacemit/ccu_pll.c
+@@ -21,7 +21,7 @@ static const struct ccu_pll_rate_tbl *ccu_pll_lookup_best_rate(struct ccu_pll *p
+ 							       unsigned long rate)
  {
- 	const char *minor_str;
-@@ -531,6 +571,7 @@ struct device *drm_sysfs_minor_alloc(struct drm_minor *minor)
+ 	struct ccu_pll_config *config = &pll->config;
+-	const struct ccu_pll_rate_tbl *best_entry;
++	const struct ccu_pll_rate_tbl *best_entry = NULL;
+ 	unsigned long best_delta = ULONG_MAX;
+ 	int i;
  
- 		kdev->devt = MKDEV(DRM_MAJOR, minor->index);
- 		kdev->class = drm_class;
-+		kdev->groups = card_dev_groups;
- 		kdev->type = &drm_sysfs_device_minor;
- 	}
+@@ -107,6 +107,10 @@ static int ccu_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	const struct ccu_pll_rate_tbl *entry;
  
-diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-index 6ccd65f5b1051..b3fb6024e0ba7 100644
---- a/drivers/pci/pci-sysfs.c
-+++ b/drivers/pci/pci-sysfs.c
-@@ -680,13 +680,6 @@ const struct attribute_group *pcibus_groups[] = {
- 	NULL,
- };
+ 	entry = ccu_pll_lookup_best_rate(pll, rate);
++
++	if (!entry)
++		return -EINVAL;
++
+ 	ccu_pll_update_param(pll, entry);
  
--static ssize_t boot_display_show(struct device *dev,
--				 struct device_attribute *attr, char *buf)
--{
--	return sysfs_emit(buf, "1\n");
--}
--static DEVICE_ATTR_RO(boot_display);
--
- static ssize_t boot_vga_show(struct device *dev, struct device_attribute *attr,
- 			     char *buf)
+ 	return 0;
+@@ -129,8 +133,11 @@ static long ccu_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 			       unsigned long *prate)
  {
-@@ -1059,37 +1052,6 @@ void pci_remove_legacy_files(struct pci_bus *b)
- }
- #endif /* HAVE_PCI_LEGACY */
+ 	struct ccu_pll *pll = hw_to_ccu_pll(hw);
++	const struct ccu_pll_rate_tbl *entry;
++
++	entry = ccu_pll_lookup_best_rate(pll, rate);
  
--/**
-- * pci_create_boot_display_file - create "boot_display"
-- * @pdev: dev in question
-- *
-- * Create "boot_display" in sysfs for the PCI device @pdev if it is the
-- * boot display device.
-- */
--static int pci_create_boot_display_file(struct pci_dev *pdev)
--{
--#ifdef CONFIG_VIDEO
--	if (video_is_primary_device(&pdev->dev))
--		return sysfs_create_file(&pdev->dev.kobj, &dev_attr_boot_display.attr);
--#endif
--	return 0;
--}
--
--/**
-- * pci_remove_boot_display_file - remove "boot_display"
-- * @pdev: dev in question
-- *
-- * Remove "boot_display" in sysfs for the PCI device @pdev if it is the
-- * boot display device.
-- */
--static void pci_remove_boot_display_file(struct pci_dev *pdev)
--{
--#ifdef CONFIG_VIDEO
--	if (video_is_primary_device(&pdev->dev))
--		sysfs_remove_file(&pdev->dev.kobj, &dev_attr_boot_display.attr);
--#endif
--}
--
- #if defined(HAVE_PCI_MMAP) || defined(ARCH_GENERIC_PCI_MMAP_RESOURCE)
- /**
-  * pci_mmap_resource - map a PCI resource into user memory space
-@@ -1693,15 +1655,9 @@ static const struct attribute_group pci_dev_resource_resize_group = {
- 
- int __must_check pci_create_sysfs_dev_files(struct pci_dev *pdev)
- {
--	int retval;
--
- 	if (!sysfs_initialized)
- 		return -EACCES;
- 
--	retval = pci_create_boot_display_file(pdev);
--	if (retval)
--		return retval;
--
- 	return pci_create_resource_files(pdev);
+-	return ccu_pll_lookup_best_rate(pll, rate)->rate;
++	return entry ? entry->rate : 0;
  }
  
-@@ -1716,7 +1672,6 @@ void pci_remove_sysfs_dev_files(struct pci_dev *pdev)
- 	if (!sysfs_initialized)
- 		return;
- 
--	pci_remove_boot_display_file(pdev);
- 	pci_remove_resource_files(pdev);
- }
- 
+ static int ccu_pll_init(struct clk_hw *hw)
 -- 
-2.43.0
+2.34.1
 
 
