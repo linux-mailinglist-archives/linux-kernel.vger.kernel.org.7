@@ -1,82 +1,84 @@
-Return-Path: <linux-kernel+bounces-739649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AC0AB0C924
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:55:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD7A0B0C927
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:57:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 303677A45B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:53:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94ABF1C218D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 850912E1C7C;
-	Mon, 21 Jul 2025 16:54:28 +0000 (UTC)
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB692E091F;
+	Mon, 21 Jul 2025 16:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jrEjFByh"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795D92C15B2;
-	Mon, 21 Jul 2025 16:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF3E2DEA75
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 16:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753116868; cv=none; b=ElPpeQLQE5vQCzZE58905RD1VEEPIXdoZV0jmwAs1fBpKQm6mcHhn+bD+8Up6F56MQMIkBrcbQmGeF79CkJ5xikeLzX0bX5O2Zp/VxF1N3OQy+6O+Jkg1h/f2aCsfRH8p9F7fZWZnzykBPI93E3DnXWCVZ4N7gjcY2VtG09tGcA=
+	t=1753117021; cv=none; b=Swbwv82xhhYDN24o9kPXBM4WbD/A+NlN/Y7yWf6o4AsOWuBkRC/PGH6O9Iteq5aS0dU9Wyl/LG+I2Totd7RBwzcpPvv7ZYJd9eZeK3Yj+pVxEmLCwPA6Z7qgSLHL7ex6bgXvK5saV7wBK94QTY36hi+Azfs7QJBULvNwfg1h+Zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753116868; c=relaxed/simple;
-	bh=GBqbUp6sE8f/rXc4E4JiViq7VpsWdjKXsX+n56O6qVA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WTqcq9TfxcckEt5Cbfkct6b9xZMPnxIIOZsb72raF8ou0UTavneYY1TCMPBSMJRkzbN8I7yQw60wx8qEvQu5q5GG9wD86TFStfLy53xFlKFUMrvxqI9yhhYjjxxFVPQbSBEAiwrcEiWvOfMpUmjWklJ+fGecYf/wEjzncc0Xn4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
+	s=arc-20240116; t=1753117021; c=relaxed/simple;
+	bh=5ikrG52niIvSMqEoDc/5U2cdAJ0QxIU0RIVnhtX/YzU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WyPqlqDfrTNnUJPld5ttkwco35GpdDGU4hQX24J4O95QyoAzxXkOCTnAo92NEC2rZbvq7L3P0KWPTo3i9oP1lnEZFQ2rXMZ7dieB6ldC0AjjLxyRyU7oeRs62BwE8fFj2j2KRAu+dODPP9+1i+FTRyGTzt1y0LXdhcEeFnIBYlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jrEjFByh; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-748d982e97cso4078348b3a.1;
-        Mon, 21 Jul 2025 09:54:26 -0700 (PDT)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-60702d77c60so8966758a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 09:56:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753117018; x=1753721818; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KycE6mEc0YN9C10a1qOjE8F0swLnK7OKIA1QKEpWqxQ=;
+        b=jrEjFByh+EHPdTlTftmOH/UQ+Q4KfQG+8rl3DrTB1uXJGrdCUj6SrRK5Uo3C/4aOBK
+         Vj8OuOOEFxby4Ez40ECSmoVsRTGqlCBiFxwR4Zh7BZbbfUnkJP617W5PExmQ9mLdnlPv
+         hyUorPEKtJnhOTlpmBlOWD8x6eEo5SmQGb8PeaLtTRIZvYWcvqARyuh2tGD9fWTg5NF/
+         psR1Gz5GyPeh/kLj3iIjYVysQz5F19mMIdwnpLgWraqrDW6Sc5YoOy8p9UXnW+tqnI0A
+         IPyHWDBtLyVFJHzqsVsTY0U7Jz5TTNqncKpU/pFVzq0Xnc7bXZIm3oUdoKXglSPB2j7S
+         1wOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753116865; x=1753721665;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bpdVYv0nYpd9DC0WlvTylBOxeD8UZphYAJMRGZuk9pY=;
-        b=fMYNKa+7Jjwx8M4VsKNsc2HhjaUdr6YfCe/vYJmH+1bSzKMGCrK37zVs/LXP5MQyJ2
-         GoGh6C8X1Q1bqm2s5qpk/XktWF8PGxX7kkDPsr0Rd//J8YOO0+VBI7AdOSWwLx7HLshx
-         zfoytJoxgP9X/hUXRLPVmrl2yMnnvawY61IgM/S/K+R7dDCovKi4YIlIs5UfsZaM1A8O
-         75vuX6+lJtUxVSlm913bOxfjDpLgG6lDfMXm3ESjHDkVxl4cdxn57wJ1TRiA3GZir9gS
-         aD/ycmMJ6+ty8kTsFKVZdlC5Hr3S+eKzen00lulyCUsqEf9Woz9AygxcXPMffW0GTaEw
-         zKSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUlsut1ccC5YZP9bl6sarD45wpulKMIBF/zgMiPdqMV24AeA2fzH/KL05IATEsjlb6u5+gL6fmGNCFrLcwUmiMz@vger.kernel.org, AJvYcCV3Pjw6WuviqpReVW0v33ndGt2SrGxHcq4Z1NZ2XPDycIPt3vDjNDcy31hNEmMv3zPsAnQYGJfYFPL1ZgM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywj8q+HFJkAEn/rcv30dgLHlcxGgoZ5P/VPDAr7Lc+nIcd3adyw
-	5hu3CkqztY5bAVNublT/lqTm/luNn6oeo9qNNP96SMbAGjLMnIjQ8odC9mww
-X-Gm-Gg: ASbGncsRNfm4ycdPNPnJpI5iZmVwn4kP/I4Ox8wVoNs2ZX+XdISxLHm1zri0GG8fP9v
-	9YoCi6vYoAv1UKmhMfAYqwx1Gp/NW1ByVC7B477biLbS7LKrFgJrcCBv4K1BL3uDxua7s7gzGUv
-	4hkX+ROdoNlhSh1FkjKxBaPrqGlUMRRjRk1y+o70ZWyoD/9NXKCK4DyPnRRAGImTl/BmSuUYlWT
-	KeqOBVIN2J3B/840Vmvwysx/H3AIF2wsXWTGL9fRGvKJMzGljt9gdwgagNo3b6gRWiOFPXQKV/I
-	6oK/T9MPqWslOXEbUGo7vj83JGR++SVpsFbsjk6gf9I+jNBWjjB/Pn4OjudKs9aZ3wXl3n2TLox
-	GycofKozsgBIxpsD1VpG0brB84Qd12krsbaSm0lfOLFb73I2a4DMCoe1NVCs=
-X-Google-Smtp-Source: AGHT+IG5Uy/FsGnbWhF/hvFAxsmFmvd3oxdR/RA86cte6CdxbKUKzDhwmPOq40RbZ4D6xmOaINcawA==
-X-Received: by 2002:a05:6a00:2e92:b0:748:ef3d:3247 with SMTP id d2e1a72fcca58-75724876e61mr28357344b3a.20.1753116865452;
-        Mon, 21 Jul 2025 09:54:25 -0700 (PDT)
-Received: from localhost (c-73-158-218-242.hsd1.ca.comcast.net. [73.158.218.242])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-759cb155de8sm6126517b3a.84.2025.07.21.09.54.25
+        d=1e100.net; s=20230601; t=1753117018; x=1753721818;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KycE6mEc0YN9C10a1qOjE8F0swLnK7OKIA1QKEpWqxQ=;
+        b=ow/g46gcm/UH90n+iRRsivozwDkgE+Kt+O7YCJIJjd6RJvwaL0VcM6h84Mi3zoe/EV
+         q9dha17DPZL6U1b6qkveE+Kj06+rDdFs8gvZBpBBa6gQkI3tvJSAKZT4WpEr8wDspzhE
+         EW7nzkg67jdH2D5WBvaKKdmqxK8Rz2apNSRV0G4mixz/WkW0GOern6jQq/iuSeT0/8XK
+         3aJLpG0oK6YktrJDXF4XigYRWq3OmwGimOmw2vKHxx8Vf+JtlwoRbyH6e1qSVkCL5CPR
+         B+2sUSn5KacJkm+raIGEbW5lIxzfzfPK01sqagO52g9K9IQmT9WGDT+xgtCBipiQt1Rg
+         0JAQ==
+X-Gm-Message-State: AOJu0Yz7e66zWwq2AN73Ehp6v3mn8bRTBT0bkVl/Q9EYXHkVseiNwksJ
+	vQJBEtD9JeoD3tajQhOes/mOOG5q8h9dMJoQuEd9uo0ExtYPPckKkJqZ
+X-Gm-Gg: ASbGncsuzFeJdcygol5p2+lLgqlnNnrH2Uks+V14eqpaWT+odJQOH9thps2ruihNbya
+	v7on6O13shRg6rnGWdZ+QZrXrVsIZLoxgLkbgUs3LGNBUKipARbH5lriWTqd+9x93ROyuV0YOrb
+	FGbUUbhp+oChrGE1lHUyOETJElNKzHFpo8c/QPv54N2BZUlv2Z74w5gRPFN6EM0bGXsepkMviJn
+	N9FzJCnebLq2uUrWHdFJfGhfOHrkLSXikWY3kE9hvg5+uCi5LEr3wSP5e/JtN085Yn6Bgahoq74
+	jkDpJYiYOYCpj54QLt4grgSqWv9n/FdRs4jIESBRrrEWxlZpzszfOmwV6aYyg94/7yI+EmmcTg5
+	AmwPWdu06Ey6kfcMDvTCNrONntBySQw==
+X-Google-Smtp-Source: AGHT+IFkLM6d9KiheRng+f/N6qM1dRFv6Q1xvfQ+tsyi/c8iYXWk5mjkRBH/6jkO2tpQ1lBBcrJCZQ==
+X-Received: by 2002:a05:6402:321e:b0:607:f082:5fbf with SMTP id 4fb4d7f45d1cf-612821361b0mr17683589a12.12.1753117018310;
+        Mon, 21 Jul 2025 09:56:58 -0700 (PDT)
+Received: from zephyr ([77.237.184.54])
+        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-612f15f596dsm3923507a12.51.2025.07.21.09.56.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 09:54:25 -0700 (PDT)
-From: Stanislav Fomichev <sdf@fomichev.me>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	sd@queasysnail.net,
-	andrew+netdev@lunn.ch,
-	horms@kernel.org,
-	shuah@kernel.org,
-	sdf@fomichev.me,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH net 2/2] selftests: rtnetlink: add macsec and vlan nesting test
-Date: Mon, 21 Jul 2025 09:54:23 -0700
-Message-ID: <20250721165423.990313-2-sdf@fomichev.me>
+        Mon, 21 Jul 2025 09:56:57 -0700 (PDT)
+From: Ali Nasrolahi <a.nasrolahi01@gmail.com>
+X-Google-Original-From: Ali Nasrolahi <A.Nasrolahi01@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	Ali Nasrolahi <A.Nasrolahi01@gmail.com>
+Subject: [PATCH] staging: rtl8723bs: remove redundant semicolon in basic_types.h
+Date: Mon, 21 Jul 2025 20:26:39 +0330
+Message-ID: <20250721165639.10078-1-A.Nasrolahi01@gmail.com>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250721165423.990313-1-sdf@fomichev.me>
-References: <20250721165423.990313-1-sdf@fomichev.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,68 +87,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add reproducer for [0] with a dummy device.
+This patch removes a redundant semicolon for
+the macro SET_BITS_TO_LE_2BYTE from basic_types.h
 
-0: https://lore.kernel.org/netdev/2aff4342b0f5b1539c02ffd8df4c7e58dd9746e7.camel@nvidia.com/
-Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
+Signed-off-by: Ali Nasrolahi <A.Nasrolahi01@gmail.com>
 ---
- tools/testing/selftests/net/rtnetlink.sh | 36 ++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ drivers/staging/rtl8723bs/include/basic_types.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/net/rtnetlink.sh b/tools/testing/selftests/net/rtnetlink.sh
-index 2e8243a65b50..d786aa07829b 100755
---- a/tools/testing/selftests/net/rtnetlink.sh
-+++ b/tools/testing/selftests/net/rtnetlink.sh
-@@ -21,6 +21,7 @@ ALL_TESTS="
- 	kci_test_vrf
- 	kci_test_encap
- 	kci_test_macsec
-+	kci_test_macsec_vlan
- 	kci_test_ipsec
- 	kci_test_ipsec_offload
- 	kci_test_fdb_get
-@@ -561,6 +562,41 @@ kci_test_macsec()
- 	end_test "PASS: macsec"
- }
+diff --git a/drivers/staging/rtl8723bs/include/basic_types.h b/drivers/staging/rtl8723bs/include/basic_types.h
+index e2f203910be..640db1e79e7 100644
+--- a/drivers/staging/rtl8723bs/include/basic_types.h
++++ b/drivers/staging/rtl8723bs/include/basic_types.h
+@@ -162,7 +162,7 @@
+ 		(					\
+ 		LE_BITS_CLEARED_TO_2BYTE(__pstart, __bitoffset, __bitlen) | \
+ 		((((u16)__val) & BIT_LEN_MASK_16(__bitlen)) << (__bitoffset)) \
+-		);
++		)
  
-+# Test __dev_set_rx_mode call from dev_uc_add under addr_list_lock spinlock.
-+# Make sure __dev_set_promiscuity is not grabbing (sleeping) netdev instance
-+# lock.
-+# https://lore.kernel.org/netdev/2aff4342b0f5b1539c02ffd8df4c7e58dd9746e7.camel@nvidia.com/
-+kci_test_macsec_vlan()
-+{
-+	msname="test_macsec1"
-+	vlanname="test_vlan1"
-+	local ret=0
-+	run_cmd_grep "^Usage: ip macsec" ip macsec help
-+	if [ $? -ne 0 ]; then
-+		end_test "SKIP: macsec: iproute2 too old"
-+		return $ksft_skip
-+	fi
-+	run_cmd ip link add link "$devdummy" "$msname" type macsec port 42 encrypt on
-+	if [ $ret -ne 0 ];then
-+		end_test "FAIL: can't add macsec interface, skipping test"
-+		return 1
-+	fi
-+
-+	run_cmd ip link set dev "$msname" up
-+	ip link add link "$msname" name "$vlanname" type vlan id 1
-+	ip link set dev "$vlanname" address 00:11:22:33:44:88
-+	ip link set dev "$vlanname" up
-+	run_cmd ip link del dev "$vlanname"
-+	run_cmd ip link del dev "$msname"
-+
-+	if [ $ret -ne 0 ];then
-+		end_test "FAIL: macsec_vlan"
-+		return 1
-+	fi
-+
-+	end_test "PASS: macsec_vlan"
-+}
-+
- #-------------------------------------------------------------------
- # Example commands
- #   ip x s add proto esp src 14.0.0.52 dst 14.0.0.70 \
+ #define SET_BITS_TO_LE_1BYTE(__pstart, __bitoffset, __bitlen, __val) \
+ 		*((u8 *)(__pstart)) = EF1BYTE			\
 -- 
 2.50.1
 
