@@ -1,183 +1,165 @@
-Return-Path: <linux-kernel+bounces-739951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46254B0CD7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 01:01:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CC70B0CD74
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 01:00:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3511F1C23098
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 23:01:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EE0E546191
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 23:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94227245000;
-	Mon, 21 Jul 2025 23:00:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CED217996;
+	Mon, 21 Jul 2025 23:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j2p1mzXa"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y3/h5a43"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63D991F4C8D;
-	Mon, 21 Jul 2025 23:00:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF1E242D7F;
+	Mon, 21 Jul 2025 23:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753138828; cv=none; b=VkX0tOksyF3PGtRsADqJtUTzJPgje1VeyGWkM2DW3gkzsVodrNuAXDRL1LWBor3hpermYuNsWtK450CvPoga5Km2Y1U5Wjco0mmN5tjOhlo21mnm9KoYf01qBQfjUA89xwuEz8LzrRloeG3fFLSSyWglAlVmvYK+c/FnDvB3C/M=
+	t=1753138815; cv=none; b=TmKYnL5z7R8yiY6dSJUHGBnqf/lx1euQjlltCKE8kHaawDhwVjQtXt0HMF7is7MW6D6cjNJzyZqZ5C3x5XHXaEC4u4u36oMpZ9C2gWagNQZApCqW1L6DWc6wwpT0dBcm3dKxlrcfGx2cyOw/xAVR0BTOJgbXkMVlWQU2MrkIocI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753138828; c=relaxed/simple;
-	bh=xTMsJ9+du2bTbDmw13ndPneOXOsiwavi94TF2rx5D0o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bzeKcDvvuerBbyaQGDpyubmFjCmWkFQHiIvEkvjF9nu/6VuU/akLvA/md8TG8u7hfFVTaCJF/R6CEnK8nAervW+2h/DMiRR/tWcIHV7SSkIoOK4N1oFyxk8d4fCs3eE+2Nlr19fJZHQFdOX0hWIie5NRzlks+9DG+NFdO+ouQI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j2p1mzXa; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ae3521a129aso85903766b.3;
-        Mon, 21 Jul 2025 16:00:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753138823; x=1753743623; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=I50g8CBYTAJgx5jeL63ocp0XmC4ojzYZYl9cwyXAxL0=;
-        b=j2p1mzXa1gG9EgaazrGM8iyNeaqkrlMlNr31Qxjt1QGSrA3yjZLKTRgvLqyorl+ihi
-         6BpZ26AuH+uJ3J5a94XIpPFTHZbQQ2mzgoC8HNO/HPLTd5nPL1v/qtcnUVT+4p2PSzDy
-         c3F172ykRzNm8qz94LCgtXDGuukO469ytZUBblQxh6U4EztkP+2FpGBBmlVjRDvPnRYi
-         rDdegF4X5p06MVPax9ODORsTBrsFrCCM5EmNZ3tpWjRSL41TULsNqaL/O5ZO4TOEfo0J
-         /R3b+pXPuQYUe6GM5G39qxC9GEVky0CqX681Va76LGoDO+FjlZd4VDvafj15J2/aUnVH
-         N0UA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753138823; x=1753743623;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I50g8CBYTAJgx5jeL63ocp0XmC4ojzYZYl9cwyXAxL0=;
-        b=lfM4Ed3jIJW6NmVLH1OfFIfOYcaczuDXT+vauvR/SL10NL8QQm9pgDy6bGkq+q/dNz
-         +Y/QfB5GukDQ7b4wpgxA7vVFEu3Zf5p6lBR3U2+UytNLirKdrn17djE/6cfmVkyHtwve
-         O8yAcYZ8cHvtG5ys+iAZWkOc8ykOO0jOD4sn/5R7GASf5B6Gh5wy+kmF3P/MBZvbHWRy
-         yYaxN80thZwdzMRqnvLAaSNHXrCiJivgDNt7PFBGnmElgAyW0PAZS5pDLhsT9vfz9LO+
-         zyAihnb+lN0CAaOV68do0aI27tecpoMWCSZm2lkcNcf2TOXRhcE29d9upmW++VzlsNRg
-         QhRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVw9kQtsdMUmj/7RZgDt4+V0sVLNaSXNrS3bD0LBxAQDtqMYQeLdQETKccAzYd5pjQErXzRAE/dXuLM+A==@vger.kernel.org, AJvYcCWYd31zQqF9Jic9wJR2MQa1dUkHAyC8kGW0nCK4fBrlM2gM2cjIq8XFEqsxp1PLYkSSaDnFQk46o6zXy28=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHQFN9h2jUFBzskE1xX1/wpcKV47K17pESp05UGngb99iEaX1J
-	T+9wyr7meyZrivY7GI2XT5AK+dWpE7HJCKBDRuXvQWL83jHYnug4IyEL
-X-Gm-Gg: ASbGnctuYwwerypuzQmOxWMULr01JmE4+p74C5h/5u73AdREuO0Bba1V4IGzldeaSZm
-	pVmfNBfmBzYOeiKrL/Rs2LBK7BWRMgPo30iIotFLV28D8dq3FxYtDNH+C13tXwACJE2vQTXtTxu
-	XAmJE//Cbj41bvpoBkjVC6ryTd/QpIiJmp0omWARuwOy7uKZcyhhU60hTwFS4doZNyKPFwRKTbN
-	q0MAzrjj3t+RRM9oVBP6V4cHBXRUD8Ma0kGB8onQt1+iKsH+6OJcHJz2sx8LtQeoV0KwjoDmDkd
-	0+KCwtnOrF3Vtrg+g7kCtSpCsp60EOeyYWmQCqqHBbktEgXleLRXQhRVw2s6WzTzxn8CgLk5AE1
-	rZM1M+7Qzjtt3yIYSeqqi/sdgo9HlUxkYjmLRqijYE4zTuyQPFJAMQTgDQaTFg2+TP+Z1
-X-Google-Smtp-Source: AGHT+IGYzqj0kH8wn480kr3FBbj99pmKP5/Eu4pwQHjyBRT16VOhkTt/2Q3FevKH1201wdR/kcGe2g==
-X-Received: by 2002:a17:907:db15:b0:ad8:882e:38a with SMTP id a640c23a62f3a-ae9c9b8e572mr853708966b.14.1753138823178;
-        Mon, 21 Jul 2025 16:00:23 -0700 (PDT)
-Received: from [192.168.0.18] (cable-94-189-142-142.dynamic.sbb.rs. [94.189.142.142])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6c7d8357sm753164466b.52.2025.07.21.16.00.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Jul 2025 16:00:22 -0700 (PDT)
-Message-ID: <85de2e1f-a787-4862-87e4-2681e749cef0@gmail.com>
-Date: Tue, 22 Jul 2025 01:00:03 +0200
+	s=arc-20240116; t=1753138815; c=relaxed/simple;
+	bh=SnHb5Ff2Sxs8l3uYD7IYErUPUDBONk0p5oJ0NjX4EOs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=s1I4U+G/9pd+cJpt/sHrYjNGSkQE+imAMzBHIJDwQCb5747to2+ZggiIf5MUHETPHVtu0oqf6PkJEzQ1ZlLSqHa6tJsxnJpaX3UYBwcN2xisY/C/iTSdO037XjGbIP0/zsePwgV+EI50p1gHjW+fdDy4obI3QYuzNb2ohZviS7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y3/h5a43; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B47ADC4CEED;
+	Mon, 21 Jul 2025 23:00:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753138814;
+	bh=SnHb5Ff2Sxs8l3uYD7IYErUPUDBONk0p5oJ0NjX4EOs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=Y3/h5a43DOytbrvY/BlcgPbSMxWUB93+MZtw+hgxr0Imk3Lm4UBoCF5wPCnSH+91C
+	 Xasgl3FtnWEB0ajbTTPnoxXchSdPm+ZiC5yhv2oFrr3MWTfbU3peH+EbNRQkC6rawc
+	 +/p3ygrqSZ86w0UJS3eZ0NkdoPPmdpiCenB+WbQWxh5n/SgMtXx8y0e9Za0PIKcc4x
+	 gOnUwYkBZappo9o59gUPFNzB9zoUK22nmMZAxkvE3ygWgfT8hirYcVGihGaX4sJThI
+	 HdMhfeLwpibSU83+rDUDmWk0M4Lh6h67rag2NDwbE/1tylJAk9Zl2WEsp5cSKqRUk7
+	 vf1DiAByuE14w==
+Date: Mon, 21 Jul 2025 18:00:13 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Mario Limonciello <superm1@kernel.org>
+Cc: David Airlie <airlied@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	Simona Vetter <simona@ffwll.ch>, Lukas Wunner <lukas@wunner.de>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:INTEL IOMMU (VT-d)" <iommu@lists.linux.dev>,
+	"open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+	"open list:VFIO DRIVER" <kvm@vger.kernel.org>,
+	"open list:SOUND" <linux-sound@vger.kernel.org>,
+	Daniel Dadap <ddadap@nvidia.com>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH v9 9/9] PCI: Add a new 'boot_display' attribute
+Message-ID: <20250721230013.GA2759370@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 08/12] kasan/um: select ARCH_DEFER_KASAN and call
- kasan_init_generic
-To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>, hca@linux.ibm.com,
- christophe.leroy@csgroup.eu, andreyknvl@gmail.com, agordeev@linux.ibm.com,
- akpm@linux-foundation.org
-Cc: glider@google.com, dvyukov@google.com, kasan-dev@googlegroups.com,
- linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
- linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
- linux-s390@vger.kernel.org, linux-um@lists.infradead.org, linux-mm@kvack.org
-References: <20250717142732.292822-1-snovitoll@gmail.com>
- <20250717142732.292822-9-snovitoll@gmail.com>
-Content-Language: en-US
-From: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-In-Reply-To: <20250717142732.292822-9-snovitoll@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c7c8b0bf-8602-4030-acbe-ac56678b633c@kernel.org>
 
+On Fri, Jul 18, 2025 at 12:44:11PM -0500, Mario Limonciello wrote:
+> On 7/18/2025 12:36 PM, Bjorn Helgaas wrote:
+> > On Fri, Jul 18, 2025 at 12:29:05PM -0500, Mario Limonciello wrote:
+> > > On 7/18/2025 12:25 PM, Bjorn Helgaas wrote:
+> > > > On Thu, Jul 17, 2025 at 12:38:12PM -0500, Mario Limonciello wrote:
+> > > > > From: Mario Limonciello <mario.limonciello@amd.com>
+> > > > > 
+> > > > > On systems with multiple GPUs there can be uncertainty which GPU is the
+> > > > > primary one used to drive the display at bootup. In some desktop
+> > > > > environments this can lead to increased power consumption because
+> > > > > secondary GPUs may be used for rendering and never go to a low power
+> > > > > state. In order to disambiguate this add a new sysfs attribute
+> > > > > 'boot_display' that uses the output of video_is_primary_device() to
+> > > > > populate whether a PCI device was used for driving the display.
+> > > > 
+> > > > > +What:		/sys/bus/pci/devices/.../boot_display
+> > > > > +Date:		October 2025
+> > > > > +Contact:	Linux PCI developers <linux-pci@vger.kernel.org>
+> > > > > +Description:
+> > > > > +		This file indicates that displays connected to the device were
+> > > > > +		used to display the boot sequence.  If a display connected to
+> > > > > +		the device was used to display the boot sequence the file will
+> > > > > +		be present and contain "1".
+> > > > 
+> > > > >    int __must_check pci_create_sysfs_dev_files(struct pci_dev *pdev)
+> > > > >    {
+> > > > > +	int retval;
+> > > > > +
+> > > > >    	if (!sysfs_initialized)
+> > > > >    		return -EACCES;
+> > > > > +	retval = pci_create_boot_display_file(pdev);
+> > > > 
+> > > > In addition to Mani's question about whether /sys/bus/pci/ is
+> > > > the right place for this (which is a very good question), it's
+> > > > also been pointed out to me that we've been trying to get rid
+> > > > of pci_create_sysfs_dev_files() for years.
+> > > > 
+> > > > If it's possible to make this a static attribute that would be
+> > > > much, much cleaner.
+> > > 
+> > > Right - I tried to do this, but the problem is at the time the
+> > > PCI device is created the information needed to make the
+> > > judgement isn't ready.  The options end up being:
+> > > * a sysfs file for every display device with 0/1
+> > > * a sysfs file that is not accurate until later in the boot
+> > 
+> > What's missing?  The specifics might be helpful if someone has
+> > another crack at getting rid of pci_create_sysfs_dev_files() in
+> > the future.
+> 
+> The underlying SCREEN_INFO code tries to walk through all the PCI
+> devices in a loop, but at the time all the devices are walked the
+> memory regions associated with the device weren't populated.
 
+Which loop are you referring to that walks through all the PCI
+devices?  I see this:
 
-On 7/17/25 4:27 PM, Sabyrzhan Tasbolatov wrote:
-> UserMode Linux needs deferred KASAN initialization as it has a custom
-> kasan_arch_is_ready() implementation that tracks shadow memory readiness
-> via the kasan_um_is_ready flag.
-> 
-> Select ARCH_DEFER_KASAN to enable the unified static key mechanism
-> for runtime KASAN control. Call kasan_init_generic() which handles
-> Generic KASAN initialization and enables the static key.
-> 
-> Delete the key kasan_um_is_ready in favor of the unified kasan_enabled()
-> interface.
-> 
-> Note that kasan_init_generic has __init macro, which is called by
-> kasan_init() which is not marked with __init in arch/um code.
-> 
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=217049
-> Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-> ---
-> Changes in v3:
-> - Added CONFIG_ARCH_DEFER_KASAN selection for proper runtime control
-> ---
->  arch/um/Kconfig             | 1 +
->  arch/um/include/asm/kasan.h | 5 -----
->  arch/um/kernel/mem.c        | 4 ++--
->  3 files changed, 3 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/um/Kconfig b/arch/um/Kconfig
-> index f08e8a7fac9..fd6d78bba52 100644
-> --- a/arch/um/Kconfig
-> +++ b/arch/um/Kconfig
-> @@ -8,6 +8,7 @@ config UML
->  	select ARCH_WANTS_DYNAMIC_TASK_STRUCT
->  	select ARCH_HAS_CPU_FINALIZE_INIT
->  	select ARCH_HAS_FORTIFY_SOURCE
-> +	select ARCH_DEFER_KASAN
->  	select ARCH_HAS_GCOV_PROFILE_ALL
->  	select ARCH_HAS_KCOV
->  	select ARCH_HAS_STRNCPY_FROM_USER
-> diff --git a/arch/um/include/asm/kasan.h b/arch/um/include/asm/kasan.h
-> index f97bb1f7b85..81bcdc0f962 100644
-> --- a/arch/um/include/asm/kasan.h
-> +++ b/arch/um/include/asm/kasan.h
-> @@ -24,11 +24,6 @@
->  
->  #ifdef CONFIG_KASAN
->  void kasan_init(void);
-> -extern int kasan_um_is_ready;
-> -
-> -#ifdef CONFIG_STATIC_LINK
-> -#define kasan_arch_is_ready() (kasan_um_is_ready)
-> -#endif
->  #else
->  static inline void kasan_init(void) { }
->  #endif /* CONFIG_KASAN */
-> diff --git a/arch/um/kernel/mem.c b/arch/um/kernel/mem.c
-> index 76bec7de81b..058cb70e330 100644
-> --- a/arch/um/kernel/mem.c
-> +++ b/arch/um/kernel/mem.c
-> @@ -21,9 +21,9 @@
->  #include <os.h>
->  #include <um_malloc.h>
->  #include <linux/sched/task.h>
-> +#include <linux/kasan.h>
->  
->  #ifdef CONFIG_KASAN
-> -int kasan_um_is_ready;
->  void kasan_init(void)
->  {
->  	/*
-> @@ -32,7 +32,7 @@ void kasan_init(void)
->  	 */
->  	kasan_map_memory((void *)KASAN_SHADOW_START, KASAN_SHADOW_SIZE);
->  	init_task.kasan_depth = 0;
-> -	kasan_um_is_ready = true;
-> +	kasan_init_generic();
+  efifb_set_system
+    for_each_pci_dev(dev)
 
-I think this runs before jump_label_init(), and static keys shouldn't be switched before that.>  }
->  
->  static void (*kasan_init_ptr)(void)
+but that only looks at VGA devices and IIUC you also want to look at
+non-VGA GPUs.
 
+I don't see a loop in *this* series, where the screen_info path looks
+like this:
+
+  pci_create_boot_display_file
+    video_is_primary_device
+      screen_info_pci_dev      # added by "fbcon: Use screen info to find primary device"
+        screen_info_resources
+        __screen_info_pci_dev
+
+and we're basically matching the screen_info base/address with BAR
+values.
+
+The usual problem is that BARs may not have been assigned by the time
+pci_device_add() -> device_add() creates the static attributes.
+
+So we call pci_assign_unassigned_root_bus_resources() to assign all
+the BARs.  Then we call pci_create_sysfs_dev_files(), where
+pci_create_resource_files() creates a "resource%d" file for each BAR.
+
+But since we're trying to find the GPU that was used by BIOS, I assume
+its BARs were programmed by BIOS and we shouldn't have to wait until
+after pci_assign_unassigned_root_bus_resources().
+
+Bjorn
 
