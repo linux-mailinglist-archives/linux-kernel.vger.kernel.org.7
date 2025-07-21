@@ -1,143 +1,198 @@
-Return-Path: <linux-kernel+bounces-739427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0004B0C632
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:24:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05AB4B0C635
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:24:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 350DC167572
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:23:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E912318867BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C694E2DA767;
-	Mon, 21 Jul 2025 14:22:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B7CC2DAFD9;
+	Mon, 21 Jul 2025 14:24:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vR89BSVK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cwUqWgJh"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244162DCF66;
-	Mon, 21 Jul 2025 14:22:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D1072DAFCA
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 14:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753107775; cv=none; b=Nph6A2yg3xXXQCROwOcILHjenrGHy/kgX0hFx9wH2XvmQfrXMPM33STuTCG07lQOlqx3ylWZzGDpR9LsJs1R/N/lCG8c+yBK6Z5mX107UDv12DkTmjAoCqfFFR8vI73lmhmDk0oT0g9h2xtZou7bqh7KvG9ZZ9QJvpfb0PezzKk=
+	t=1753107839; cv=none; b=OPISBT/ibnVV3Yw0sUK4GAWbbrim7q6oeFtZHMNeLmBqaJ1YdRmhiktDcwRB5kBw8bCEp3OPC54FMP5Aq0zkof2FRqqOvoILrl5/aD/11fp7l68kIE2lOO6GhLQ/1DnJZMVCB26F+CNCqzYE4XM1kuH/kjhdiza79EXAnwb2f+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753107775; c=relaxed/simple;
-	bh=Sqxe+s7gjFhFf5UfLOgJDkCBZ9d78gxS5Ymoggzik3U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f2xoTX01IArt5iDzPijHlQx55UZ/z6MUA2GN4nWXeVFp33fpSmqgYsuTnHCDMfZip/lLxJVzBwmhcVcr3QzCjMAp1pfIWhF/SQi9+ZM8EJrwJDa/ULnjtlM55dwZS+l2l2mqL6Gr/ktPfVZEEIF022CVJOG1IaHuaTJ9/pNY8w0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vR89BSVK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC0FEC4CEF6;
-	Mon, 21 Jul 2025 14:22:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753107774;
-	bh=Sqxe+s7gjFhFf5UfLOgJDkCBZ9d78gxS5Ymoggzik3U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=vR89BSVKmRW8emOMZy+jwP0Jl+WfhxV4LTiHwrExwQAo1klo34XLrcIDVo7aJVo01
-	 +eodBoiZ3SR2fI8MDX3xwCb5KqHsEF71AopY5W/gKNfVVR2vPkhHEOBp5g8UYQIsZw
-	 6WLT+bY+7olVeqx+mXl9AZ5l1m5eqAlFv5ONl8Q8rKHiqCxVNBDbJgkG11Cvx5x+Z8
-	 2c18vdmXtp3PZcZBVm6wHCpXlrF642beCwIumADusrANsaa4yGVw2bOLVDjyEUtMZe
-	 M5ur0zm9suzLArVhZWGPTlEj4g2gtwj9adDdKCuR9GxP7mk88zqGJnWDWiE48ckHdn
-	 1/bBJl7wwQ8oQ==
-Message-ID: <0a13d0be-6cce-497f-b4f7-bbff7b3020bb@kernel.org>
-Date: Mon, 21 Jul 2025 16:22:50 +0200
+	s=arc-20240116; t=1753107839; c=relaxed/simple;
+	bh=9UWeOXuEiJg9VoDu4+qGBOxg4g4hjfQ2KqGwyAhrNtg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NLUNP011pQABN82tNGQlJ5JlLlecW+dtm6IUQo+uq+gzqMJ8fJURynUp6evfO0LnWSO5iiL0ruEatN9eRnTOfpXDRK0+nTkRIaOzGZnFENFTM+ahbrO1dk4xmdcsNvV6kFSwVCrMmfx4ZVwcDWtnRhdCtjKT2iO12a12ptKozrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cwUqWgJh; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-606b58241c9so7112251a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 07:23:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753107835; x=1753712635; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=SEyx7mXp0CBN5U4A0GlAKryjyrraw4ilP0q5c6hZVxA=;
+        b=cwUqWgJhQ7B2kIOfwkb+btBbx4JJaJCGrZATUSC1WR+DClfnZaEMXToo+lrlKBNIQT
+         m/N5Zi90S91dhub2KSY1aw4y/ZHZDg6nZDEvuBIvk+5A3rF9Q8vJZqq6F3LFBhyXRheT
+         avH+xB5HJv6w1md0JPWUSKCavVZyNSdkF0UCi5+NByRE0SUTklVaHZ+bPtvqF/OFfdOg
+         8cEKE0NkEU6vT/hkl8Z98cyR/kQqofjUy8WnVf++jIEVFEvzp5CqSQQ8ltzY6HhKNv9O
+         kQwGZ1PuSjbbsAt2hx8Sd+OLPBPS37ImVP9YK/lDLz9UpoCSb/L5EeynvPGorjRxoEun
+         jq0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753107835; x=1753712635;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SEyx7mXp0CBN5U4A0GlAKryjyrraw4ilP0q5c6hZVxA=;
+        b=gRoCzPg3muj3x3WqzTH2IKyZ47LpEmoKIT+r9J/G0H+hqd0prCXskZ3Eh/B31FbbDU
+         rLuToX3VcvGHCmzar21B+WPmZFKacbaHP5eJ4XSgUZFRjsNxgLxvRPJr4uZEYn0TUYSX
+         JoHBpK9Z69lf/Qc0E/vpwDS8beedhDLyaQWRq58PQQbrQzVzbRF4HVSM4Qco1dKpL1ss
+         KGCTTVaZzMqJ68PKMe9jBz0ABDSNQTiJ3V7gAgzVeE1AYGFq6kzu4gnGUGJTmQndvuhK
+         0hBKcYQmAvZmd9Qw08EHFkJrAvf7cp1nvwGZnc3IvVwG0HUHooSJnz8Ot/mmA7SpLoLR
+         u1YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVRfMigcl9Rd3KtJqjEow1eWxE4gL1/l5lMvq9gv0qHw16GiSFCT+E0Es+YpSL/hl4Up7ZJ6hcDoU2rjH0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRnKrW+5fv/zCAPAa3lMo71qNrE1xrnAVIIxGhCkysKJ8NOaJG
+	aFjjcSQPxXa+V2mHVOuW3mkuefYxGzsFTRa26bOc7ES+lztsWmuiUH7YnYqjQ4ndU1rAUxuCFd7
+	S3eOTmSsS6DeM/l8uGevMQJpIw8TOar2yxZLwGhDrhQ==
+X-Gm-Gg: ASbGncsUlJIQwGgTWZjZ2xo7ZrVOY8bjmtG1oejE8TT/mUNKEILnma6ygIE/9KUheWb
+	Yy4rOJ5LL+UC0r7oV8ytXvomudU2SLQcQKIC7nYEAjnQaSMF9DkHf24HBfSnoDAdTKJejbliQB6
+	mv5Yhhqul084Ew3gAYrh14ISS1fjqbHrMw84X+Xc35pAwxzG7azseRop7MP9Q1K3IN79HQi8JZl
+	oBb3o+0l24dtQNFLkx9oy0TZc1hzqzsU2wsmv9soQ==
+X-Google-Smtp-Source: AGHT+IHor38rIn1pKQ8nwqf0yJIzbBDIXbeXdkm2JdEKFu+t76hq+Bk4KT28Qumkw/JEGQLQ2XhgOcoW88Ao9YcH/5g=
+X-Received: by 2002:a05:6402:1d55:b0:612:b057:90ab with SMTP id
+ 4fb4d7f45d1cf-612b05793femr13050702a12.17.1753107834605; Mon, 21 Jul 2025
+ 07:23:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/7] arm64: dts: ti: k3-j721s2-main: Add interrupts
- property
-To: "Kumar, Udit" <u-kumar1@ti.com>,
- Yemike Abhilash Chandra <y-abhilashchandra@ti.com>, nm@ti.com,
- vigneshr@ti.com
-Cc: kristo@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, vaishnav.a@ti.com,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250714092708.3944641-1-y-abhilashchandra@ti.com>
- <20250714092708.3944641-2-y-abhilashchandra@ti.com>
- <72545187-4605-40bb-9c68-54670c2e5332@ti.com>
- <92627ace-1fc8-45a7-a25e-76f410427f0c@kernel.org>
- <86bbb4c1-18a9-4917-8554-97d540b72b5a@ti.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <86bbb4c1-18a9-4917-8554-97d540b72b5a@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250710-imx95-rproc-1-v4-0-a7123e857dfb@nxp.com>
+ <175224423523.783161.17907302929832941912.robh@kernel.org>
+ <PAXPR04MB845959EF2767C96794EAE6DD8854A@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <aHkNS51jgV5ulsNB@p14s> <20250718082033.GA25126@nxa18884-linux>
+ <aHp-_BRk7Iz81OFp@p14s> <20250721041823.GA4844@nxa18884-linux.ap.freescale.net>
+In-Reply-To: <20250721041823.GA4844@nxa18884-linux.ap.freescale.net>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Mon, 21 Jul 2025 08:23:42 -0600
+X-Gm-Features: Ac12FXyw4hdh1l-EicP3Q_nexU8h_sXbH3xvX_eih-XxJ9DgAS3dub9_bfFRYgM
+Message-ID: <CANLsYkwZz4xLOG25D6S-AEGFeUBWwyp1=ytmu2q90NyEpkoX9g@mail.gmail.com>
+Subject: Re: [PATCH v4 0/5] remoteproc: imx_rproc: Support i.MX95
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Peng Fan <peng.fan@nxp.com>, "Rob Herring (Arm)" <robh@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Frank Li <frank.li@nxp.com>, 
+	Bjorn Andersson <andersson@kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Iuliana Prodan <iuliana.prodan@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Daniel Baluta <daniel.baluta@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 21/07/2025 16:12, Kumar, Udit wrote:
-> 
-> On 7/21/2025 7:39 PM, Krzysztof Kozlowski wrote:
->> On 21/07/2025 16:07, Kumar, Udit wrote:
->>>> diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi b/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
->>>> index 62f45377a2c9..6f32a2b0c40c 100644
->>>> --- a/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
->>>> +++ b/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
->>>> @@ -1248,6 +1248,9 @@ ti_csi2rx0: ticsi2rx@4500000 {
->>>>    		cdns_csi2rx0: csi-bridge@4504000 {
->>>>    			compatible = "ti,j721e-csi2rx", "cdns,csi2rx";
->>>>    			reg = <0x00 0x04504000 0x00 0x1000>;
->>>> +			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>,
->>>> +				     <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
->>> Just cosmetic thing, if you are doing v2 then consider 152 first ,
->>> followed by 153.
->>
->> No, you cannot just randomly change numbers or the order.
->>
-> To be precise both , interrupt-names and interrupts,
-> 
-> if this make sense to change.
+On Sun, 20 Jul 2025 at 21:08, Peng Fan <peng.fan@oss.nxp.com> wrote:
+>
+> On Fri, Jul 18, 2025 at 11:06:04AM -0600, Mathieu Poirier wrote:
+> >On Fri, Jul 18, 2025 at 04:20:34PM +0800, Peng Fan wrote:
+> >> On Thu, Jul 17, 2025 at 08:48:43AM -0600, Mathieu Poirier wrote:
+> >> >On Mon, Jul 14, 2025 at 11:52:05AM +0000, Peng Fan wrote:
+> >> >> > Subject: Re: [PATCH v4 0/5] remoteproc: imx_rproc: Support i.MX95
+> >> >> >
+> >> >> [...]
+> >> >> > New warnings running 'make CHECK_DTBS=y for
+> >> >> > arch/arm64/boot/dts/freescale/' for 20250710-imx95-rproc-1-v4-0-
+> >> >> > a7123e857dfb@nxp.com:
+> >> >> >
+> >> >> > arch/arm64/boot/dts/freescale/imx95-tqma9596sa-mb-smarc-2.dtb:
+> >> >> > scmi (arm,scmi): Unevaluated properties are not allowed
+> >> >> > ('protocol@80', 'protocol@81', 'protocol@82', 'protocol@84' were
+> >> >> > unexpected)
+> >> >>
+> >> >> Same as replied in v3.
+> >> >> This is because [1] is still not picked, not because of my patchset.
+> >> >
+> >> >I won't move on this patchset until this is resolved.
+> >> >
+> >>
+> >> Not understand why hold on this patchset. I suppose you may not
+> >> understand what the error means. The warning is totally irrelevant
+> >> to this patchset, there is no dependency.
+> >>
+> >> Others added a property to arch/arm64/boot/dts/freescale/imx95-tqma9596sa.dtsi
+> >> &scmi_bbm {
+> >>         linux,code = <KEY_POWER>;
+> >> };
+> >> But this "linux,code" property not landed(missed to be picked up) to DT binding.
+> >>
+> >> This patchset does not touch scmi_bbm. I could help address the warning
+> >> in the other patch, but I do not see why "linux,code" under scmi_bbm node
+> >> could block this patchset.
+> >>
+> >> Please help clarify if you still think to hold on this patchset.
+> >>
+> >> BTW: with [1] "remoteproc: imx_rproc: skip clock enable when M-core is managed by the SCU"
+> >> merged in Ulf's tree, there is a minor conflict with patch 2. Please suggest
+> >> what I should do with this patchset.
+> >>
+> >
+> >I was afraid of that.  The best way forward with this work is to wait for the
+> >"linux,code" property to be picked up by Sudeep.  I suggest you make sure that
+> >he, or anyone else, picks it up for the next merge window.  If that happens
+>
+>
+> I respect you as maintainer, but there is no reason to block this patch
+> because of "linux,code" property. It is totally irrelevant.
+>
+> Even if I help to resubmit that "linux,code" patch, there is no chance to
+> land into 6.17-rc1, both Sudeep and Shawn sent their PR to arm-soc earlier
+> before your comments. You could raise in V3.. which there was time left.
+>
 
-No, it does not makes any sense. You cannot change the order and if you
-tested this, you would see errors.
+I don't know what you mean by V3.
 
-Best regards,
-Krzysztof
+> >everything should be set for you to resend this patchset when 6.17-rc1 comes
+> >out.
+>
+> Because of the code conflict in Ulf's tree, I will hold on until 6.17-rc1.
+
+Exactly
+
+> Patch 4 and 5 will be removed from this patchset in V5. The two patches
+> should go through Shawn's tree, I will resend them in a separate thread
+> with "linux,code" patch included. There will be no more CHECK_DTBS
+> warning in V5 for i.MX95 remoteproc support.
+>
+
+That is a better way to proceed.
+
+> If you have concern on patch 1-3 or else, please raise earlier. As of now,
+
+If I remember correctly, those patches looked fine to me.
+
+> patch 1-3 in V5 will be almost same as V4 with only a minor code
+> conflict resolved, with below change
+> @@ -1030,7 +1030,8 @@ static int imx_rproc_clk_enable(struct imx_rproc *priv)
+>         int ret;
+>
+>         /* Remote core is not under control of Linux or it is managed by SCU API */
+> -       if (dcfg->method == IMX_RPROC_NONE || dcfg->method == IMX_RPROC_SCU_API)
+> +       if (dcfg->method == IMX_RPROC_NONE || dcfg->method == IMX_RPROC_SCU_API ||
+> +           dcfg->method == IMX_RPROC_SCU_SM)
+>                 return 0;
+>
+> Regards,
+> Peng
+> >
+> >> [1]https://lore.kernel.org/linux-remoteproc/20250629172512.14857-3-hiagofranco@gmail.com/T/#u
+> >>
+> >> Thanks,
+> >> Peng
 
