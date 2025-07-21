@@ -1,162 +1,99 @@
-Return-Path: <linux-kernel+bounces-739510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95DCDB0C726
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:02:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EB68B0C72A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:02:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D994A3A677A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:01:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C400544017
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:02:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4147A28F95E;
-	Mon, 21 Jul 2025 15:01:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919222D8793;
+	Mon, 21 Jul 2025 15:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OXoDpa8N";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pGQW52UR"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TMhfQRhy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34FBA19DF5F;
-	Mon, 21 Jul 2025 15:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F08742E406;
+	Mon, 21 Jul 2025 15:02:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753110108; cv=none; b=VRS5BhpIRYDKWUFZ1+VYy6JAiS8i7Ufc8vagD49NxbxXOrjOdqq2rruDVs+DzpphHzUN20hsrW+uT8Xb3+pvYfqFwbyei+9DM8h4LJVTF0J3s73vvukDj4fqSf5tp6HTzPp2Y7z892B3bznquxp8VZJ0tYiHh7kLkF5BxOmybHo=
+	t=1753110160; cv=none; b=Qci6TLunFFwU7Fe58mM8QtkzNbdbVT+fJtNwXGXzwEhkaceO8qhhJDqWJ/N8mAgUm/JAyH9PBcxqRQNoaNc0cW3QolcZCkrhac88XWiUU6DUipJuSAZEGpCu/wafz+Sj2JTjC+FlTUs1DBuYBXJpIu8pUrsMc2nEKQZCubRwPtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753110108; c=relaxed/simple;
-	bh=3DS3uzjG6N3WCOFHWoA5fZXa7WeXVp78DTzHs+kqFLA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y2q4u1JvZHVvu0evWFDeXx5JwfiiJEPIxohboWelYdnrO91ntIa1OcKFoc7gvN3CE6OZukr1bX+nTuS9Cs8Aks3i74DJEMMGiFEqTl/54YH2HFAvcBld0BK5G688NqNWqtC4qgkjvuz6xKb3FVcC8JQps5e3Y6tQwwgaoq5dnBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OXoDpa8N; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pGQW52UR; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 21 Jul 2025 17:01:43 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753110105;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LQ9eChO3kN1XuAeYWrh3QXFMKp+D4y3Q8Wq3aIbkrn8=;
-	b=OXoDpa8NdUIP5XVjf+qdYOMFt2Q9xs7VpTiLyyWWYwNb5RQsrYtTNtDabOyqgD2qaybUma
-	ggr7wq+ufZN9VCELdTRhe953uJl9TbTdKOyQvL1+2YIiiKZOjEfBBvO/hnR668ZGFgCZrs
-	HBlCmKJBSm5KqaeKA0UtQB8Zbk07LIT4SPVtXIfOXQscy1vwli/7MC29CDln0me9KpkO9B
-	Fa397OXeNUpNIPMeR9dOaR+p7gvuiUez3n4g6r0lkN2kH52+HKybCuYcxPU0RsIdCfkKCk
-	cHI6f8KZNcOjRMuYVpAMz2gco+j1n5ikgoA6govRezrO2XKj082oi3jBVCuEFA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753110105;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LQ9eChO3kN1XuAeYWrh3QXFMKp+D4y3Q8Wq3aIbkrn8=;
-	b=pGQW52UR+/1WO1G1PFYzV8MajAzd9qV1TfdjLiWRKQLUUj0DT6Wvrp/JG20YGtzPLVHAlk
-	5HMDzQzprTgcgiCA==
-From: Nam Cao <namcao@linutronix.de>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-trace-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
-	Clark Williams <williams@redhat.com>,
-	John Kacur <jkacur@redhat.com>
-Subject: Re: [PATCH v4 10/14] rv: Retry when da monitor detects race
- conditions
-Message-ID: <20250721150143.sl2MIKSi@linutronix.de>
-References: <20250721082325.71554-1-gmonaco@redhat.com>
- <20250721082325.71554-11-gmonaco@redhat.com>
+	s=arc-20240116; t=1753110160; c=relaxed/simple;
+	bh=usfW4WlCSN/PQlE5JYdafnj9dRAWtuA2L0ggcp5vT34=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tA5rGv+dYiEbiO08KcOoJPOUKiIicCR1yMJfXP1xuuapBEVeknQZG8bsS9bgge+4Y36koLGYFpRMQuNnV0zBO5CocPWyEt3HVzmruh05/I/FIdnlKWhDzbTj6jZTQV7agrPCPV8oaBrbACF5NSD1TlI4GFIAa6S5tLpzJtl18sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TMhfQRhy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A02A7C4CEED;
+	Mon, 21 Jul 2025 15:02:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753110159;
+	bh=usfW4WlCSN/PQlE5JYdafnj9dRAWtuA2L0ggcp5vT34=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=TMhfQRhymwOLLalk/nyPtAhxlOMUu5ffFQpggAVh+b4Y8/J9/9jFdcbDHJwVeclWI
+	 4IXAN1v0xD3h7uEooNUTllYcO0yazc59baQWNDJ8N8TS8Pe/4NNaAUfpVyNhZM2nVn
+	 cRHZY5tBomefMEVjsjX7/uKKdMVIPqencwf+YnxCWFM+CrUcS+Ov4MSQyaR1PkNeXJ
+	 TPTd+vIoLbAVG1J9RDG61TJ0YJW3Q72q+uWpYgqkZCPlXFyWEUF2LnU41c7EM2a/4m
+	 Ve63pt2LsLkblv+mMSQJgIMaaCkE8+OXVqKNsiRXz6Dh8KsThabnhrOp8GtHvSgl+0
+	 4cqZy9rAgFRzw==
+From: Chuck Lever <cel@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>,
+	NeilBrown <neil@brown.name>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>,
+	Sergey Bashirov <sergeybashirov@gmail.com>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+	linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] NFSD: Rework encoding and decoding of nfsd4_deviceid
+Date: Mon, 21 Jul 2025 11:02:35 -0400
+Message-ID: <175310998907.2268053.13719232117488948870.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.50.0
+In-Reply-To: <20250721145215.132666-1-sergeybashirov@gmail.com>
+References: <20250721145215.132666-1-sergeybashirov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250721082325.71554-11-gmonaco@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 21, 2025 at 10:23:20AM +0200, Gabriele Monaco wrote:
-> DA monitor can be accessed from multiple cores simultaneously, this is
-> likely, for instance when dealing with per-task monitors reacting on
-> events that do not always occur on the CPU where the task is running.
-> This can cause race conditions where two events change the next state
-> and we see inconsistent values. E.g.:
-> 
->   [62] event_srs: 27: sleepable x sched_wakeup -> running (final)
->   [63] event_srs: 27: sleepable x sched_set_state_sleepable -> sleepable
->   [63] error_srs: 27: event sched_switch_suspend not expected in the state running
-> 
-> In this case the monitor fails because the event on CPU 62 wins against
-> the one on CPU 63, although the correct state should have been
-> sleepable, since the task get suspended.
-> 
-> Detect if the current state was modified by using try_cmpxchg while
-> storing the next value. If it was, try again reading the current state.
-> After a maximum number of failed retries, react by calling a special
-> tracepoint, print on the console and reset the monitor.
-> 
-> Remove the functions da_monitor_curr_state() and da_monitor_set_state()
-> as they only hide the underlying implementation in this case.
-> 
-> Monitors where this type of condition can occur must be able to account
-> for racing events in any possible order, as we cannot know the winner.
-> 
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
-> ---
->
->  static inline bool										\
->  da_event_##name(struct da_monitor *da_mon, enum events_##name event)				\
->  {												\
-> -	type curr_state = da_monitor_curr_state_##name(da_mon);					\
-> -	type next_state = model_get_next_state_##name(curr_state, event);			\
-> -												\
-> -	if (next_state != INVALID_STATE) {							\
-> -		da_monitor_set_state_##name(da_mon, next_state);				\
-> -												\
-> -		trace_event_##name(model_get_state_name_##name(curr_state),			\
-> -				   model_get_event_name_##name(event),				\
-> -				   model_get_state_name_##name(next_state),			\
-> -				   model_is_final_state_##name(next_state));			\
-> -												\
-> -		return true;									\
-> +	enum states_##name curr_state, next_state;						\
-> +												\
-> +	curr_state = READ_ONCE(da_mon->curr_state);						\
-> +	for (int i = 0; i < MAX_DA_RETRY_RACING_EVENTS; i++) {					\
-> +		next_state = model_get_next_state_##name(curr_state, event);			\
-> +		if (next_state == INVALID_STATE) {						\
-> +			cond_react_##name(curr_state, event);					\
-> +			trace_error_##name(model_get_state_name_##name(curr_state),		\
-> +					   model_get_event_name_##name(event));			\
-> +			return false;								\
-> +		}										\
-> +		if (likely(try_cmpxchg(&da_mon->curr_state, &curr_state, next_state))) {	\
-> +			trace_event_##name(model_get_state_name_##name(curr_state),		\
-> +					   model_get_event_name_##name(event),			\
-> +					   model_get_state_name_##name(next_state),		\
-> +					   model_is_final_state_##name(next_state));		\
-> +			return true;								\
-> +		}										\
->  	}											\
->  												\
-> -	cond_react_##name(curr_state, event);							\
-> -												\
-> -	trace_error_##name(model_get_state_name_##name(curr_state),				\
-> -			   model_get_event_name_##name(event));					\
-> -												\
-> +	trace_rv_retries_error(#name, smp_processor_id());					\
-> +	pr_warn("rv: " __stringify(MAX_DA_RETRY_RACING_EVENTS)					\
-> +		" retries reached, resetting monitor %s", #name);				\
+From: Chuck Lever <chuck.lever@oracle.com>
 
-smp_processor_id() requires preemption to be disabled.
+On Mon, 21 Jul 2025 17:48:55 +0300, Sergey Bashirov wrote:
+> Compilers may optimize the layout of C structures, so we should not rely
+> on sizeof struct and memcpy to encode and decode XDR structures. The byte
+> order of the fields should also be taken into account.
+> 
+> This patch adds the correct functions to handle the deviceid4 structure
+> and removes the pad field, which is currently not used by NFSD, from the
+> runtime state. The server's byte order is preserved because the deviceid4
+> blob on the wire is only used as a cookie by the client.
+> 
+> [...]
 
-At the moment, trace point handler is called with preemption disabled, so
-we are fine. But there is plan to change that:
-https://lore.kernel.org/lkml/20241206120709.736f943e@gandalf.local.home/T/#u
+Applied to nfsd-testing, thanks!
 
-Perhaps use get_cpu() and put_cpu() instead?
+Note that:
 
-Nam
+- nfsd-implement-large-extent-array-support-in-pnfs
+- nfsd-fix-last-write-offset-handling-in-layoutcommit
+
+have been dropped from nfsd-testing because of conflicts with
+this patch. Please rebase these two on the current nfsd-testing
+branch and resend.
+
+[1/1] NFSD: Rework encoding and decoding of nfsd4_deviceid
+      commit: 52d6381bf1caa63f6cd8b3df54162f36b03b3a68
+
+--
+Chuck Lever
+
 
