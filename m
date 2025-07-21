@@ -1,147 +1,180 @@
-Return-Path: <linux-kernel+bounces-738907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18127B0BED9
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:27:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40E99B0BEDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:28:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF38F189D0DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:28:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 404DB17D064
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:28:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722B128A1C0;
-	Mon, 21 Jul 2025 08:25:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA68287258;
+	Mon, 21 Jul 2025 08:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JrmO9zqk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="xsyUQ/tH"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC65288C06
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 08:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F2B21C190
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 08:27:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753086356; cv=none; b=HARJLNjrOpkuAKjL5jAhdAJEXsQEL3WQq9SYC/ASrke/dSS7QxYM9LP3dMnloUQYIFXhDGO1av31IA+QEfOZBR0v/vNaQhL3SKXL3KdAv3OrkduT2cOD7g7ry4YRPSgnsEnnQgLZdFt/CGDHRTxvErffo2C4g0T0lwr7TA42MKc=
+	t=1753086440; cv=none; b=eGEXvp/14bSBkXWAGaRVo9clv80dp2YoQwpNF+Dj5oAv4O4Kjk56zJc2i+/c77wLz31OG5dGnc1fM0XIoqUYnmCmvevnOmuqnt7mMsHLgKOljs9KOEIwAxhmwR0xHWNV8axu3N1f+sD5e3IR/9qi9Ino2S/PXGprXACKOclNeyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753086356; c=relaxed/simple;
-	bh=1xwau8tZQNCQ6zAdZiqQOjzdqF7mb5vqd77ulzdkHoE=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IPXK3p7N3hDA7vp41G19mCyITRpvFqxjVQwHUsPJK7OePBezcYyCbYNhQHlW1cMCaJpc2Nj5rhEkjsuBuIJ1IDGZWdc7+Zuo82rcyHiCoEVEHUHJEqKlj9DwW6PEC2CeLe4f0tiKzrE/uCUDhF3KOCVotCPyZbcg1d+Exthej2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JrmO9zqk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58622C4CEED;
-	Mon, 21 Jul 2025 08:25:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753086356;
-	bh=1xwau8tZQNCQ6zAdZiqQOjzdqF7mb5vqd77ulzdkHoE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=JrmO9zqkBaTc4aRnCXRvZSInVD5DIWDpADJWNVSmAhZErhp1CfOa5yy5VyKdQ7PcE
-	 3/57fV2WXUqvPoQ4s4d8SJZNOZ5YyimwH5G6J6y/8aCr+OB9bWn+Q3viRfAyyzBWLo
-	 XqQifRC+oy3RnGWKf4MsAZ7yC5Q74bOYXAZfmmbCYSCIlHsrYyMBkPSJMpHpVVN7VV
-	 QXgHY7z6oqLEGL8ygMjQhYPup8qY29ku9jbHW41mh0dxWGSPk3KwipFlLoO1sMxsp7
-	 DCBDi9YVdDdUJClsTVXnypR20wKxgAXdkVch2BSBgxzvRL4wiR9HgOK7hAcjsJ/XHE
-	 ujwflBDUInqyg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1udlqM-00HXQo-27;
-	Mon, 21 Jul 2025 09:25:54 +0100
-Date: Mon, 21 Jul 2025 09:25:53 +0100
-Message-ID: <86qzya7xwu.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: jackysliu <1972843537@qq.com>
-Cc: tglx@linutronix.de,
-	herve.codina@bootlin.com,
-	antonio.borneo@foss.st.com,
-	anup@brainfault.org,
-	jirislaby@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] irqchip/gic-v3: fix resource leak in partition_domain_translate()
-In-Reply-To: <tencent_72EDAD7F6E52D8FB5933030A569A08AEC406@qq.com>
-References: <tencent_72EDAD7F6E52D8FB5933030A569A08AEC406@qq.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1753086440; c=relaxed/simple;
+	bh=RBv9fk0/5szEH5fYfYL9K4i2DawNtHAPuulxFPKeGbM=;
+	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
+	 Cc:In-Reply-To:To; b=AxQkADjLrpJyJT/AbOXr5lmTpjN79v6EipndM2hswnBzuTuAxvjqpcGawetjby2A9ERqFT+s8l03b48W+pupY56Tcu/wFrZGNTgRuryCTchblC5eE79jASsW6CE97p9U5/ul7fICgh3aqox3yMqPwNNIHsMnyxyenaUFdXFOB70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org; spf=pass smtp.mailfrom=joelfernandes.org; dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b=xsyUQ/tH; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joelfernandes.org
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7e278d8345aso401834885a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 01:27:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google; t=1753086436; x=1753691236; darn=vger.kernel.org;
+        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
+         :from:content-transfer-encoding:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/odcKAEmFXyMNrSMxdYfCowLIbfS48TF5S5CI5CnjPI=;
+        b=xsyUQ/tHpmQ+w8j4LsYZc9tWL8UFrY0SkT/OE496+4vP4BnkT7Tx1lcaXyz8n8yjwc
+         pZzngMGr1HUkLf96essJ5IdBVEAf+N1bsnux0CWNWYKKgDLYBweqNQldBCWHlh0Btda3
+         6g+dCKgyFT7xY3T3AlR4cp7q8j3hYlfNH9Y7k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753086436; x=1753691236;
+        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
+         :from:content-transfer-encoding:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/odcKAEmFXyMNrSMxdYfCowLIbfS48TF5S5CI5CnjPI=;
+        b=HL8GbUlLajLEkdVytmGYwj6oqgqOQOm4BWzZqj9+U3YaQJPmao6ruFAuuKKYZ4YZJG
+         q2EpzwGKWcpr6GYjs8vOB8fFCmUtlC7VcoVLB8GCZXX9t85b+lFvvoo16oQZTxM5cwjm
+         Xd5LtznGuakYYXgzXdh/Jx5dLKkcMkrrWayaLZ7hvntGEPFv0lnJKGS8b9HH8nmj8nvM
+         qzGwUijo2LyjakO8SJHLxOvpiJwqKrvDrDERG3ZsjG9FdJC2Ic8AHwqhReSFc6HpKMvD
+         QQGCbysUcAnZJ/rlewXoGA+L2fjbcOpfk7hxPGbHbBENC6OJZ6lSzYju0wYSfMZzlHe5
+         Y/jQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUlK39tH31JijE4JqZttvzXycgHLdQ4oRP/sucscPg2uS7CemGTAyabeEy/4QwbEJPl56CRIWYr1AiKwI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyz3kDsC48WsyjYryXzSlbPYQ7YLBxx5wXIDTr/CSkPdcyMVIyw
+	Rdv0e6RbN6//yiM0K26IbUMRzoDaEZoCgYAhNVqmL+UfI7EPnvPIiPAYHIHvJ9b4j8sdUoVIm3h
+	NeAIQ
+X-Gm-Gg: ASbGncsrvr52W5cEG5Dhqzib/ea4WseK45htoHb2bFec9v700DlKwcH2HIOqfXND5+f
+	8RYJdJjM9BvrB3T8XznlCSTf4b7+ukBCZRWRUm78DQt1eoj68/VkzPfdM5fDijL7p444CxDzbn4
+	uZjB7mLN7F0TOdecAHwbwvEb+PYnmRCCAjr+b/W7Vbh/m+jsfBI2DDSFyX1iYeLqbO/SnXsyoQt
+	bNHxiVlNx5bQ/c/N3SNLLbw3tZ7zJoqWnGff7ms1DTAuSWiLp7/Sx41GGu2ytwq6Ej/ZOByIY7x
+	nhhPpR/ljas/78m6vRDcoELfRQt99lyxEm3yIpgMjVJnu0gePEfNP+I0nY9dCvqiD9QPE8xORFE
+	ljymaP/qtgq3tDKLQN1AUhNvQ2hNHzworggLD2iVA653ptdGYghqS
+X-Google-Smtp-Source: AGHT+IHbpPzBeQV8pR+BUFeuByOVOFSZa2i1bRfXbW08DvV0AlP+I06Rjyv/ga6t1AC/b/OjAPmsuw==
+X-Received: by 2002:a05:620a:46a6:b0:7e1:5efc:6f6 with SMTP id af79cd13be357-7e343633b0bmr2801006985a.47.1753086436100;
+        Mon, 21 Jul 2025 01:27:16 -0700 (PDT)
+Received: from smtpclient.apple ([71.51.186.117])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e356c3eb74sm390618985a.62.2025.07.21.01.27.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Jul 2025 01:27:15 -0700 (PDT)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From: Joel Fernandes <joel@joelfernandes.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: 1972843537@qq.com, tglx@linutronix.de, herve.codina@bootlin.com, antonio.borneo@foss.st.com, anup@brainfault.org, jirislaby@kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH -next 0/6] Patches for v6.17
+Date: Mon, 21 Jul 2025 04:27:04 -0400
+Message-Id: <A85925F6-3F1D-4D7A-9345-7E20512ADB21@joelfernandes.org>
+References: <CAFwiDX9K8T4uDRCmp3R+TqBaKO_jtXwcaeFYdpg-9C5MVJAo4Q@mail.gmail.com>
+Cc: Akira Yokosawa <akiyks@gmail.com>,
+ Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org,
+ paulmck@kernel.org, rcu@vger.kernel.org,
+ Frederic Weisbecker <frederic@kernel.org>
+In-Reply-To: <CAFwiDX9K8T4uDRCmp3R+TqBaKO_jtXwcaeFYdpg-9C5MVJAo4Q@mail.gmail.com>
+To: Neeraj upadhyay <neeraj.iitr10@gmail.com>
+X-Mailer: iPhone Mail (22F76)
 
-On Mon, 21 Jul 2025 08:28:04 +0100,
-jackysliu <1972843537@qq.com> wrote:
-> 
-> There is a device node reference leak in partition_domain_translate().
-> After the function obtains the device node np via of_find_node_by_phandle,
-> it does not call of_node_put(np) to release the node reference
-> in both the error path and the normal return path.
-> This causes the node reference count to increase each time
-> the function is called, causing a resource leak.
->
-> This issue was detected by rule based static tools
-> developed by Tencent.
-> 
-> Fixes: 87228532e7e9 ("irqchip: Switch to of_fwnode_handle()")
-> 
-> Signed-off-by: jackysliu <1972843537@qq.com>
 
-Drop the spurious blank line.
 
-> ---
->  drivers/irqchip/irq-gic-v3.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-> index efc791c43d44..61c1d404b726 100644
-> --- a/drivers/irqchip/irq-gic-v3.c
-> +++ b/drivers/irqchip/irq-gic-v3.c
-> @@ -1821,12 +1821,16 @@ static int partition_domain_translate(struct irq_domain *d,
->  		return -EINVAL;
->  
->  	ret = gic_irq_domain_translate(d, fwspec, &ppi_intid, type);
-> -	if (WARN_ON_ONCE(ret))
-> +	if (WARN_ON_ONCE(ret)) {
-> +		of_node_put(np);
->  		return 0;
-> +	}
->  
->  	ppi_idx = __gic_get_ppi_index(ppi_intid);
->  	ret = partition_translate_id(gic_data.ppi_descs[ppi_idx],
->  				     of_fwnode_handle(np));
-> +	of_node_put(np);
-> +
->  	if (ret < 0)
->  		return ret;
->  
+> On Jul 21, 2025, at 12:29=E2=80=AFAM, Neeraj upadhyay <neeraj.iitr10@gmail=
+.com> wrote:
+>=20
+> =EF=BB=BFHi,
+>=20
+> On Sun, Jul 20, 2025 at 10:01=E2=80=AFAM Akira Yokosawa <akiyks@gmail.com>=
+ wrote:
+>=20
+> ...
+>=20
+>> There seems to be a couple of issues in the S-O-B chains of commits liste=
+d
+>> below (in rcu/next):
+>>=20
+>> * dcf1668449c9 ("rcu: Document GP init vs hotplug-scan ordering requireme=
+nts")
+>> * bb1c373934db ("rcu: Document concurrent quiescent state reporting for o=
+ffline CPUs")
+>>=20
+>> They have a "Co-developed-by:" tag without a corresponding "Signed-off-by=
+:"
+>> tag [1].
+>>=20
+>> Or, if the contribution is too minor to have a "Signed-off-by:",
+>> then a "Suggested-by:" tag with a "Link:" to the relevant message should
+>> suffice.
+>>=20
+>> I have no idea which approach suits better in each commit above.
+>>=20
+>> [1]: Documentation/process/submitting-patches.rst
+>>     section "When to use Acked-by:, Cc:, and Co-developed-by:"
+>>=20
+>=20
+> Thanks for reviewing this! I will fix the tags.
+>=20
+>=20
+>> Quoting relevant paragraph:
+>>=20
+>>  Co-developed-by: states that the patch was co-created by multiple develo=
+pers;
+>>  it is used to give attribution to co-authors (in addition to the author
+>>  attributed by the From: tag) when several people work on a single patch.=
+  Since
+>>  Co-developed-by: denotes authorship, every Co-developed-by: must be imme=
+diately
+>>  followed by a Signed-off-by: of the associated co-author.  Standard sign=
+-off
+>>  procedure applies, i.e. the ordering of Signed-off-by: tags should refle=
+ct the
+>>  chronological history of the patch insofar as possible, regardless of wh=
+ether
+>>  the author is attributed via From: or Co-developed-by:.  Notably, the la=
+st
+>>  Signed-off-by: must always be that of the developer submitting the patch=
+.
+>>=20
+>> Side note:
+>>  scripts/checkpatch.pl would have complained about those missing
+>>  Signed-off-by: tags.
+>>=20
+>>>=20
+>>> .../Data-Structures/Data-Structures.rst       |  32 +++++
+>>> .../RCU/Design/Requirements/Requirements.rst  | 128 ++++++++++++++++++
+>>=20
+>> I'm seeing sub-optimal uses of reST markups in Requirements.rst from kern=
+el
+>> documentation stand point.
+>>=20
+>> I'm going to submit a patch or two to improve them, but I can't promise w=
+hen.
+>> They will likely be only cosmetic cleanups and I'm OK with it upstreamed a=
+s
+>> it is.
+>>=20
+>=20
+> Thanks!
 
-Frankly, this looks awful, and we have much better ways to solve this
-whole class of problems. Why can't the (untested) patch below do the
-right thing, without the ugliness?
+Thanks, I appreciate that!
 
-	M.
+- Joel
 
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index efc791c43d441..c4839032ce8d0 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -1808,8 +1808,8 @@ static int partition_domain_translate(struct irq_domain *d,
- 				      unsigned long *hwirq,
- 				      unsigned int *type)
- {
-+	struct device_node *np __free(device_node) = NULL;
- 	unsigned long ppi_intid;
--	struct device_node *np;
- 	unsigned int ppi_idx;
- 	int ret;
- 
-
--- 
-Without deviation from the norm, progress is not possible.
+>=20
+>=20
+> - Neeraj
 
