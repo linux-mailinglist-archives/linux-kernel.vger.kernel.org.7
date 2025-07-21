@@ -1,125 +1,237 @@
-Return-Path: <linux-kernel+bounces-739287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED3B9B0C472
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:50:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 475DBB0C46F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:50:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A44954125C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:50:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C71527A53B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29922D5431;
-	Mon, 21 Jul 2025 12:50:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB1E2D4B77;
+	Mon, 21 Jul 2025 12:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TVF/fyyL"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="z1LZth9q";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="q5l66tSs";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="z1LZth9q";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="q5l66tSs"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3243D27FB22;
-	Mon, 21 Jul 2025 12:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00BFD2D46B9
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 12:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753102217; cv=none; b=moLGo/05ObRIrDMjdh0p2R0bA8qr1Oq8QofDfsGwU6TmVdG610EBZwVYTzsaE+oG6drYNn1ShRiIEYxClGZvlskNFhKFH9E2zA5s5Wk5NetXUnqTxIWXgveh0FtaeYi4pnap21T7+l0t3qnteGROpSE/nN1oAHTRzm288occxQE=
+	t=1753102201; cv=none; b=AJAPfwdQLFtv2mtBkUi0QFD7zSJyltYMHrpLWLrhWwWHA55/A5EdFt1TzkBKOaZejcgNv8sGo6g3MQUiWHaRvZaXw7aTyvpfhZU9mX8IbnTdudj5flAS4n0ohaBq81BooibpS17Zlu8mmTJ0tRgDNR8yenlcc/UZsSZqpRx3L2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753102217; c=relaxed/simple;
-	bh=nfONOnBrUIPIfQklNyqnZWtI5QFfM2AOm84lkmUoLZU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AIb/7NrIIix3MpcsDdPdid/WogZdgZfOO4cS3hq3/6+c+rdyLVrvmMgEPrfDD8TkTP2gzlXtuvEdOQidY6qm3c/s2u7RPaPv/+OuOfyObgJXDpfPlhuEPwaZ1B/H0gLmA3Hr0rp0LBaT4tp7egGHaPcku8GixP7lj7wXvyx1LP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TVF/fyyL; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56LCnOtE805016;
-	Mon, 21 Jul 2025 07:49:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1753102164;
-	bh=gl6XjWOd36sg6clLSodrsTq+/Bqq5Lfk1BOVUUxIzyg=;
-	h=From:To:CC:Subject:Date;
-	b=TVF/fyyL9+rKglDbVEtN+yMvMLu3FtzN3zG41NqtbKozP8K31Wu5FoHgKNPWhh2sK
-	 ebKcnGtYdut1NDUw7p/qnAmulScsbl9KcI9X5VavdI12aRMm/RwTwqu+wKaRp336qq
-	 t+gfuwrk1BBO+DfaaEkRLN3yCKBG9p01CkVz55vQ=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56LCnOtZ280684
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 21 Jul 2025 07:49:24 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 21
- Jul 2025 07:49:23 -0500
-Received: from fllvem-mr07.itg.ti.com (10.64.41.89) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Mon, 21 Jul 2025 07:49:23 -0500
-Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
-	by fllvem-mr07.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56LCnNFK2685222;
-	Mon, 21 Jul 2025 07:49:23 -0500
-Received: from localhost (meghana-pc.dhcp.ti.com [10.24.69.13] (may be forged))
-	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 56LCnMVg012710;
-	Mon, 21 Jul 2025 07:49:22 -0500
-From: Meghana Malladi <m-malladi@ti.com>
-To: <namcao@linutronix.de>, <jacob.e.keller@intel.com>, <m-malladi@ti.com>,
-        <sdf@fomichev.me>, <john.fastabend@gmail.com>, <hawk@kernel.org>,
-        <daniel@iogearbox.net>, <ast@kernel.org>, <pabeni@redhat.com>,
-        <kuba@kernel.org>, <edumazet@google.com>, <davem@davemloft.net>,
-        <andrew+netdev@lunn.ch>
-CC: <bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Roger Quadros
-	<rogerq@kernel.org>, <danishanwar@ti.com>
-Subject: [PATCH net] net: ti: icssg-prueth: Fix skb handling for XDP_PASS
-Date: Mon, 21 Jul 2025 18:19:18 +0530
-Message-ID: <20250721124918.3347679-1-m-malladi@ti.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1753102201; c=relaxed/simple;
+	bh=IylyLkwQeebIQ0KYAOzyGHaHz2oJRHGJAahqMnxVvwY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eAcliV4Q+z+crGlAsSyIxrdPicT8g+fWUVNf1DurjiYFeOc/bys3nUOnSefySCyt89+sqKGoKiJrWUIuYXEQCxjlZSzSdXofrJ+uvckoA1i4vJBZfjNs+kyAdl6GMwnp411csnF3G5iBx7jIH5Z0mQ8o630YFb0/x2j5j8jAQug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=z1LZth9q; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=q5l66tSs; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=z1LZth9q; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=q5l66tSs; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 0F67D1FD49;
+	Mon, 21 Jul 2025 12:49:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753102198; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W1kFRDXpcU60KHBCoXhpcUeApUFRWzWuvaE9tAoENZM=;
+	b=z1LZth9qgpUG3UjsoQinD2xEf2nmKMerZtkyE94RMnO9SUU9WMrZFd+vXROMILSWdcvYzo
+	vuEUHy+R9X6wLSZUm7g7J2BroZ41Gyz6KnYsUHpYJlfXKJ0Qdd14dYSkc9nAaSKzqBrftP
+	Yr6vHTXBuBiweLo5h+FN1n60+8HIMkc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753102198;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W1kFRDXpcU60KHBCoXhpcUeApUFRWzWuvaE9tAoENZM=;
+	b=q5l66tSskmyuvBlFqnOt2jexmXQ+QANO49n96WaEUjs8pY3/AiKEk9GStCqJvUcdVpMGbn
+	VvtNK+p1c1hp4TBw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=z1LZth9q;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=q5l66tSs
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753102198; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W1kFRDXpcU60KHBCoXhpcUeApUFRWzWuvaE9tAoENZM=;
+	b=z1LZth9qgpUG3UjsoQinD2xEf2nmKMerZtkyE94RMnO9SUU9WMrZFd+vXROMILSWdcvYzo
+	vuEUHy+R9X6wLSZUm7g7J2BroZ41Gyz6KnYsUHpYJlfXKJ0Qdd14dYSkc9nAaSKzqBrftP
+	Yr6vHTXBuBiweLo5h+FN1n60+8HIMkc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753102198;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W1kFRDXpcU60KHBCoXhpcUeApUFRWzWuvaE9tAoENZM=;
+	b=q5l66tSskmyuvBlFqnOt2jexmXQ+QANO49n96WaEUjs8pY3/AiKEk9GStCqJvUcdVpMGbn
+	VvtNK+p1c1hp4TBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 02FAB136A8;
+	Mon, 21 Jul 2025 12:49:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id b0i0AHY3fmgPRwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 21 Jul 2025 12:49:58 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B0FCAA0884; Mon, 21 Jul 2025 14:49:57 +0200 (CEST)
+Date: Mon, 21 Jul 2025 14:49:57 +0200
+From: Jan Kara <jack@suse.cz>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Moon Hee Lee <moonhee.lee.ca@gmail.com>, 
+	syzbot+544248a761451c0df72f@syzkaller.appspotmail.com, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, Jan Kara <jack@suse.cz>, 
+	Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
+Subject: Re: [PATCH] ext4: do not BUG when INLINE_DATA_FL lacks system.data
+ xattr
+Message-ID: <t6yl3jtspvfby4c6nlqbwjucfkx2evpuebaqvwolgjzcdst3sx@y4yuq7xegul6>
+References: <CAF3JpA7a0ExYEJ8_c7v7evKsV83s+_p7qUoH9uiYZLPxT_Md6g@mail.gmail.com>
+ <20250717145911.GB112967@mit.edu>
+ <CAF3JpA6RwyzQMdG4y3P_8jkaS8qUFPerE5MJ8Xecs+VkbPEmpg@mail.gmail.com>
+ <20250718010521.GC112967@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250718010521.GC112967@mit.edu>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 0F67D1FD49
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[gmail.com,syzkaller.appspotmail.com,dilger.ca,vger.kernel.org,googlegroups.com,suse.cz,kernel.dk];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	TAGGED_RCPT(0.00)[544248a761451c0df72f];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Score: -2.51
 
-emac_rx_packet() is a common function for handling traffic
-for both xdp and non-xdp use cases. Use common logic for
-handling skb with or without xdp to prevent any incorrect
-packet processing. This patch fixes ping working with
-XDP_PASS for icssg driver.
+On Thu 17-07-25 21:05:21, Theodore Ts'o wrote:
+> On Thu, Jul 17, 2025 at 09:59:13AM -0700, Moon Hee Lee wrote:
+> > The current patch addresses ext4_update_inline_data() directly, but the
+> > same condition also leads to a BUG_ON in ext4_create_inline_data() [2],
+> > which the earlier approach intended to prevent as well.
+> 
+> Actually, the two conditions are opposite to each other.  The one in
+> ext4_update_inline_data() was:
+> 
+>          BUG_ON(is.s.not_found);
+> 
+> while te one in ext4_create_inline_data() was:
+> 
+> 	BUG_ON(!is.s.not_found);
+> 
+> So your patch would not only cause an extra xattr lookup in
+> ext4_prepare_inline_data(), but it would actually cause problems by
+> causing spurious failures when first writing to an inline data file.
+> (Which makes me suspect that you hadn't run other test on your patich
+> other than just vaidating that the syzkaller reproduce was no longer
+> reproducing.)   
+> 
+> Also, having taking a closer look at te code paths, I became
+> suspicious that there is something about the syzkaller reproducer is
+> doing which might be a bit sus.  That's because whether we call
+> ext4_update_inline_data() or ext4_create_inline_data() is based on
+> whether i_inline off is set or not:
+> 
+> 	if (ei->i_inline_off)
+> 		ret = ext4_update_inline_data(handle, inode, len);
+> 	else
+> 		ret = ext4_create_inline_data(handle, inode, len);
+> 
+> 
+> But how is ei->i_inline_off set?  It's set from a former call to
+> ext4_xattr_ibody_find():
+> 
+> 	error = ext4_xattr_ibody_find(inode, &i, &is);
+> 	if (error)
+> 		goto out;
+> 
+> 	if (!is.s.not_found) {
+> 		if (is.s.here->e_value_inum) {
+> 			EXT4_ERROR_INODE(inode, "inline data xattr refers "
+> 					 "to an external xattr inode");
+> 			error = -EFSCORRUPTED;
+> 			goto out;
+> 		}
+> 		EXT4_I(inode)->i_inline_off = (u16)((void *)is.s.here -
+> 					(void *)ext4_raw_inode(&is.iloc));
+> 		EXT4_I(inode)->i_inline_size = EXT4_MIN_INLINE_DATA_SIZE +
+> 				le32_to_cpu(is.s.here->e_value_size);
+> 	}
+> 
+> So the whole *reason* why i_inline_off exists is because we're caching
+> the result of calling ext4_xattr_ibody_find().  So if i_inline_off is
+> non-zero, and then when we call ext4_ibody_find() later on, and we
+> find that xattr has suddenly disappeared, there is something weird
+> going on.   That's why the BUG_ON was added orginally.
+> 
+> When I took a look at the reproduer, I found that indeed, it is
+> calling LOOP_CLR_FD and LOOP_SET_STATUS64 to reconfigure the loop
+> device out from under the mounted file system.  This is smashing the
+> file system, and is therefore corrupting the block device.  As it
+> turns out, Jan Kara recently sent out a patch, and it has been
+> accepted in the block tree, to prevent a similar Syzkaller issue using
+> LOOP_SET_BLOCK_SIZE[1].
+> 
+> [1] https://lore.kernel.org/r/20250711163202.19623-2-jack@suse.cz
+> 
+> We need to do something similar for LOOP_CLR_FD, LOOP_SET_STATUS,
+> LOOP_SET_STATUS64, LOOP_CHANGE_FD, and LOOP_SET_CAPACITY ioctls.
 
-Fixes: 62aa3246f4623 ("net: ti: icssg-prueth: Add XDP support")
-Signed-off-by: Meghana Malladi <m-malladi@ti.com>
----
- drivers/net/ethernet/ti/icssg/icssg_common.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+Well, careful here. Changing loop device underneath mounted filesystem is a
+valid usecase in active use (similarly as changing DM device underneath a
+filesystem). So don't think we can play similar tricks as with
+LOOP_SET_BLOCK_SIZE where changing block device block size just doesn't
+make sense while the device is in use. Similarly LOOP_CLR_FD is an
+equivalent of device going away. LOOP_CHANGE_FD is a legacy of the past but
+it was *designed* to be used to swap backing file under a life filesystem
+(old days of Wild West :)) during boot. We may get away with dropping that
+these days but so far I'm not convinced it's worth the risk. So in this case
+I don't see anything here that couldn't happen with say DM device and thus
+I wouldn't really restrict the loop device functionality...
 
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_common.c b/drivers/net/ethernet/ti/icssg/icssg_common.c
-index 12f25cec6255..a0e7def33e8e 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_common.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_common.c
-@@ -757,15 +757,12 @@ static int emac_rx_packet(struct prueth_emac *emac, u32 flow_id, u32 *xdp_state)
- 		xdp_prepare_buff(&xdp, pa, PRUETH_HEADROOM, pkt_len, false);
- 
- 		*xdp_state = emac_run_xdp(emac, &xdp, page, &pkt_len);
--		if (*xdp_state == ICSSG_XDP_PASS)
--			skb = xdp_build_skb_from_buff(&xdp);
--		else
-+		if (*xdp_state != ICSSG_XDP_PASS)
- 			goto requeue;
--	} else {
--		/* prepare skb and send to n/w stack */
--		skb = napi_build_skb(pa, PAGE_SIZE);
- 	}
- 
-+	/* prepare skb and send to n/w stack */
-+	skb = napi_build_skb(pa, PAGE_SIZE);
- 	if (!skb) {
- 		ndev->stats.rx_dropped++;
- 		page_pool_recycle_direct(pool, page);
-
-base-commit: 81e0db8e839822b8380ce4716cd564a593ccbfc5
+								Honza
 -- 
-2.43.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
