@@ -1,258 +1,496 @@
-Return-Path: <linux-kernel+bounces-739485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94549B0C6D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:48:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D365B0C6D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:48:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 899FC4E038D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:47:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30F5C1AA7AEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:48:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F290F2DECDD;
-	Mon, 21 Jul 2025 14:45:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22192E03E3;
+	Mon, 21 Jul 2025 14:46:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2vWZ28ax";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9WO+WbrX";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2vWZ28ax";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9WO+WbrX"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kyo83ChQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 841062DCBEC
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 14:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11762DCBEC;
+	Mon, 21 Jul 2025 14:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753109147; cv=none; b=XjqG7Rff3FG7OwHq6HJnt5mrkgZxVoo5uUGCdssGwfnL2F3TiTL45cVmdz5sZ5lvBEo8ELQHtWbORWANg7lj7PnwvCbuhOCTqVSyd9P8OWnhuo7KVbX7PHBSW2kwLSvGs7FGBpyxJdQN0IVtzwqXMEKocJrAl71EU28AVccaSa8=
+	t=1753109166; cv=none; b=HEMMXkhjI46DzWg8Drlh+7vopHrV7p/BWf7k08eeH9z65BnMSgE3WxwszAFYIlY6yxGx+/u3gKQ3VA4Ozmm9GB0dNhKbjpJuBd8MAQMuZI7VbaPK3RW2azt23JwDrg62VcIjlEX4ptFh34MrVqoxj2qq0lGusLgsx+9fR5vz2KM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753109147; c=relaxed/simple;
-	bh=42xK17JgjuuWFYA6/LJbkmYX83RYBSGOU6LfFyFQKpY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ru/vxOhHEXh2Ys5UuHPuy1HIQPaPgb1spduwiscxML8+X5Hz99Y8mIvKNWB1c6GB/Q3gRVyqfomx9wmzaycYJwCPbPc0uLYsuF1DuZSHz5pvgXOupQvbnf4mycmd2Crrau+h2vugBZQyn21L5bojs0CwBdHX1TeJRvjCXrFakTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2vWZ28ax; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9WO+WbrX; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2vWZ28ax; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9WO+WbrX; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8530621752;
-	Mon, 21 Jul 2025 14:45:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753109143; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=d7SGCVYtEjDNaXFaQZ2ssh+nlngfPMA8MpKwS0BkF5A=;
-	b=2vWZ28axOHJI25NNgRDTmLDZsm4uOIcQNruz5VoGfCYvHYuJ9GwZdIQXolpLPVi4EswjJ+
-	28zIXqVf/vzwZGHHReB4opkY2mAii8+3O6aQWswI6487Sc2nuQT4TybHD6JzUhDfHw+8fb
-	Hg+pQBylHwlSt1sv8YbhiH4uux8Ff2w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753109143;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=d7SGCVYtEjDNaXFaQZ2ssh+nlngfPMA8MpKwS0BkF5A=;
-	b=9WO+WbrXKxPXjr6s/BHLKV3kycNnITAUL/i8AROkWh4HaCOZu+mv5TidakOODY7EHavh5b
-	7EhPiVPx3yvhpEDA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753109143; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=d7SGCVYtEjDNaXFaQZ2ssh+nlngfPMA8MpKwS0BkF5A=;
-	b=2vWZ28axOHJI25NNgRDTmLDZsm4uOIcQNruz5VoGfCYvHYuJ9GwZdIQXolpLPVi4EswjJ+
-	28zIXqVf/vzwZGHHReB4opkY2mAii8+3O6aQWswI6487Sc2nuQT4TybHD6JzUhDfHw+8fb
-	Hg+pQBylHwlSt1sv8YbhiH4uux8Ff2w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753109143;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=d7SGCVYtEjDNaXFaQZ2ssh+nlngfPMA8MpKwS0BkF5A=;
-	b=9WO+WbrXKxPXjr6s/BHLKV3kycNnITAUL/i8AROkWh4HaCOZu+mv5TidakOODY7EHavh5b
-	7EhPiVPx3yvhpEDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6EC88136A8;
-	Mon, 21 Jul 2025 14:45:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id tlq/GpdSfmjAawAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 21 Jul 2025 14:45:43 +0000
-Message-ID: <8d6ab730-985e-4ac1-bd3b-0eb240f9eaff@suse.cz>
-Date: Mon, 21 Jul 2025 16:45:43 +0200
+	s=arc-20240116; t=1753109166; c=relaxed/simple;
+	bh=ay/dYox8e980gAgMaXCl20FznyRWYXV/WCWTf+Z3Zn0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=W0ZOYUnfSpOrW33096dTwubY9VvdMftkQjbTBReMXh6Qbm0AgGek1lamcoeLwW+Xa5UPECsrnrZE5agT+LrZONzDuPf8IV6hZFS4ghc8ALEHs8S/4CHGfoFTjKkO55Xl1u7BJbmKzBBVi43qC0gIlRQTfLa2w8j7T4UAppT4mrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kyo83ChQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9D9AC4CEED;
+	Mon, 21 Jul 2025 14:46:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753109166;
+	bh=ay/dYox8e980gAgMaXCl20FznyRWYXV/WCWTf+Z3Zn0=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=kyo83ChQa5jPeEXxbcVQmOS69a39jktO0Wuc9v/TVbHncBNPHRVfb+Ws/IcrlbqhC
+	 xE84yn9+LtjuGT0HnAKFAnGGRm9JVY8G9+1dA8AkK5Vd53w7Caxn4aE2GnmLo4i+GV
+	 Zyw3/yqTI3rjuAoPliP9mmdBWykXlTLgG55hX4IYBIG36Bn7yj7OEvXHSV/sfHL75o
+	 l9lBVAIPXqpAMvd4yknYc9oJEcQONz+uwdPbI8itY+3wkv8W+GfYyd6aHZud+qTPyJ
+	 S28ijNAr/zmuVvkXTvLXEuskHkWrux5iAzaNAYmulTVrvI0kQcj3l0HiYumUUl9hEo
+	 OMai6Adg4JDrg==
+Message-ID: <15970691ac14728701c4e94e91cb3614caf5b503.camel@kernel.org>
+Subject: Re: [PATCH 3/7] VFS: Change vfs_mkdir() to unlock on failure.
+From: Jeff Layton <jlayton@kernel.org>
+To: NeilBrown <neil@brown.name>, Linus Torvalds
+ <torvalds@linux-foundation.org>,  Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 21 Jul 2025 10:46:04 -0400
+In-Reply-To: <20250721084412.370258-4-neil@brown.name>
+References: <20250721084412.370258-1-neil@brown.name>
+	 <20250721084412.370258-4-neil@brown.name>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] stackdepot: Make max number of pools boot-time
- configurable
-Content-Language: en-US
-To: Matt Fleming <matt@readmodwrite.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, kernel-team@cloudflare.com,
- Marco Elver <elver@google.com>, Alexander Potapenko <glider@google.com>,
- Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>,
- Oscar Salvador <osalvador@suse.de>, Matt Fleming <mfleming@cloudflare.com>
-References: <20250718153928.94229-1-matt@readmodwrite.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <20250718153928.94229-1-matt@readmodwrite.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,cloudflare.com,google.com,gmail.com,suse.de];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[cloudflare.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
 
-On 7/18/25 17:39, Matt Fleming wrote:
-> From: Matt Fleming <mfleming@cloudflare.com>
-> 
-> We're hitting the WARN in depot_init_pool() about reaching the stack
-> depot limit because we have long stacks that don't dedup very well.
-> 
-> Introduce a new start-up parameter to allow users to set the number of
-> maximum stack depot pools.
-> 
-> Signed-off-by: Matt Fleming <mfleming@cloudflare.com>
+On Mon, 2025-07-21 at 17:59 +1000, NeilBrown wrote:
+> Proposed changes to directory-op locking will lock the dentry rather
+> than the whole directory.  So the dentry will need to be unlocked.
+>=20
+> vfs_mkdir() consumes the dentry on error, so there will be no dentry to
+> be unlocked.
+>=20
+> So this patch changes vfs_mkdir() to unlock on error as well as
+> releasing the dentry.  This requires various other functions in various
+> callers to also unlock on error.
+>=20
+> At present this results in some clumsy code.  Once the transition to
+> dentry locking is complete the clumsiness will be gone.
+>
+> Signed-off-by: NeilBrown <neil@brown.name>
+> ---
+>  fs/cachefiles/namei.c    |  9 +++++----
+>  fs/ecryptfs/inode.c      |  3 ++-
+>  fs/namei.c               | 24 ++++++++++++++++--------
+>  fs/nfsd/nfs4recover.c    | 12 +++++-------
+>  fs/nfsd/vfs.c            | 12 ++++++++++--
+>  fs/overlayfs/dir.c       | 13 +++++++------
+>  fs/overlayfs/overlayfs.h |  1 +
+>  fs/overlayfs/super.c     |  5 +++--
+>  fs/xfs/scrub/orphanage.c |  2 +-
+>  9 files changed, 50 insertions(+), 31 deletions(-)
+>=20
+> diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
+> index d1edb2ac3837..732d78911bed 100644
+> --- a/fs/cachefiles/namei.c
+> +++ b/fs/cachefiles/namei.c
+> @@ -131,8 +131,11 @@ struct dentry *cachefiles_get_directory(struct cache=
+files_cache *cache,
+>  		ret =3D cachefiles_inject_write_error();
+>  		if (ret =3D=3D 0)
+>  			subdir =3D vfs_mkdir(&nop_mnt_idmap, d_inode(dir), subdir, 0700);
+> -		else
+> +		else {
+> +			/* vfs_mkdir() unlocks on failure so we must too */
+> +			inode_unlock(d_inode(dir));
+>  			subdir =3D ERR_PTR(ret);
+> +		}
+>  		if (IS_ERR(subdir)) {
+>  			trace_cachefiles_vfs_error(NULL, d_inode(dir), ret,
+>  						   cachefiles_trace_mkdir_error);
+> @@ -196,9 +199,7 @@ struct dentry *cachefiles_get_directory(struct cachef=
+iles_cache *cache,
+>  	return ERR_PTR(-EBUSY);
+> =20
+>  mkdir_error:
+> -	inode_unlock(d_inode(dir));
+> -	if (!IS_ERR(subdir))
+> -		dput(subdir);
+> +	done_dentry_lookup(subdir);
+>  	pr_err("mkdir %s failed with error %d\n", dirname, ret);
+>  	return ERR_PTR(ret);
+> =20
+> diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
+> index abd954c6a14e..5d8cb042aa57 100644
+> --- a/fs/ecryptfs/inode.c
+> +++ b/fs/ecryptfs/inode.c
+> @@ -520,7 +520,7 @@ static struct dentry *ecryptfs_mkdir(struct mnt_idmap=
+ *idmap, struct inode *dir,
+>  				 lower_dentry, mode);
+>  	rc =3D PTR_ERR(lower_dentry);
+>  	if (IS_ERR(lower_dentry))
+> -		goto out;
+> +		goto out_unlocked;
+>  	rc =3D 0;
+>  	if (d_unhashed(lower_dentry))
+>  		goto out;
+> @@ -532,6 +532,7 @@ static struct dentry *ecryptfs_mkdir(struct mnt_idmap=
+ *idmap, struct inode *dir,
+>  	set_nlink(dir, lower_dir->i_nlink);
+>  out:
+>  	inode_unlock(lower_dir);
+> +out_unlocked:
+>  	if (d_really_is_negative(dentry))
+>  		d_drop(dentry);
+>  	return ERR_PTR(rc);
+> diff --git a/fs/namei.c b/fs/namei.c
+> index da160a01e23d..950a0d0d54da 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -1723,13 +1723,18 @@ EXPORT_SYMBOL(lookup_one_qstr_excl);
+>   * rmdir) a dentry.  After this, done_dentry_lookup() can be used to bot=
+h
+>   * unlock the parent directory and dput() the dentry.
+>   *
+> + * If the dentry is an error - as can happen after vfs_mkdir() -
+> + * the unlock is skipped as unneeded.
+> + *
+>   * This interface allows a smooth transition from parent-dir based
+>   * locking to dentry based locking.
+>   */
+>  void done_dentry_lookup(struct dentry *dentry)
+>  {
+> -	inode_unlock(dentry->d_parent->d_inode);
+> -	dput(dentry);
+> +	if (!IS_ERR(dentry)) {
+> +		inode_unlock(dentry->d_parent->d_inode);
+> +		dput(dentry);
+> +	}
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+nit: could you introduce these versions of done_dentry_lookup() and
+done_dentry_lookup_return() in patch #2, even if not strictly needed
+yet? Better to introduce it as ERR_PTR-safe from the start.=20
 
-> --- a/lib/stackdepot.c
-> +++ b/lib/stackdepot.c
-> @@ -36,11 +36,11 @@
->  #include <linux/memblock.h>
->  #include <linux/kasan-enabled.h>
->  
-> -#define DEPOT_POOLS_CAP 8192
-> -/* The pool_index is offset by 1 so the first record does not have a 0 handle. */
-> -#define DEPOT_MAX_POOLS \
-> -	(((1LL << (DEPOT_POOL_INDEX_BITS)) - 1 < DEPOT_POOLS_CAP) ? \
-> -	 (1LL << (DEPOT_POOL_INDEX_BITS)) - 1 : DEPOT_POOLS_CAP)
-> +/*
-> + * The pool_index is offset by 1 so the first record does not have a 0 handle.
-> + */
-> +static unsigned int stack_max_pools __read_mostly =
-> +	MIN((1LL << DEPOT_POOL_INDEX_BITS) - 1, 8192);
->  
->  static bool stack_depot_disabled;
->  static bool __stack_depot_early_init_requested __initdata = IS_ENABLED(CONFIG_STACKDEPOT_ALWAYS_INIT);
-> @@ -62,7 +62,7 @@ static unsigned int stack_bucket_number_order;
->  static unsigned int stack_hash_mask;
->  
->  /* Array of memory regions that store stack records. */
-> -static void *stack_pools[DEPOT_MAX_POOLS];
-> +static void **stack_pools;
-
-Also nice that (AFAIU) we now save this previously statically allocated
-array's memory if stackdepot is built-in but not used by anything.
-
->  /* Newly allocated pool that is not yet added to stack_pools. */
->  static void *new_pool;
->  /* Number of pools in stack_pools. */
-> @@ -101,6 +101,34 @@ static int __init disable_stack_depot(char *str)
 >  }
->  early_param("stack_depot_disable", disable_stack_depot);
->  
-> +static int __init parse_max_pools(char *str)
-> +{
-> +	const long long limit = (1LL << (DEPOT_POOL_INDEX_BITS)) - 1;
-> +	unsigned int max_pools;
-> +	int rv;
-> +
-> +	rv = kstrtouint(str, 0, &max_pools);
-> +	if (rv)
-> +		return rv;
-> +
-> +	if (max_pools < 1024) {
-> +		pr_err("stack_depot_max_pools below 1024, using default of %u\n",
-> +		       stack_max_pools);
+>  EXPORT_SYMBOL(done_dentry_lookup);
+> =20
+> @@ -1742,12 +1747,16 @@ EXPORT_SYMBOL(done_dentry_lookup);
+>   * rmdir) a dentry.  After this, done_dentry_lookup_return() can be used=
+ to
+>   * unlock the parent directory.  The dentry is returned for further use.
+>   *
+> + * If the dentry is an error - as can happen after vfs_mkdir() -
+> + * the unlock is skipped as unneeded.
+> + *
+>   * This interface allows a smooth transition from parent-dir based
+>   * locking to dentry based locking.
+>   */
+>  struct dentry *done_dentry_lookup_return(struct dentry *dentry)
+>  {
+> -	inode_unlock(dentry->d_parent->d_inode);
+> +	if (!IS_ERR(dentry))
+> +		inode_unlock(dentry->d_parent->d_inode);
+>  	return dentry;
+>  }
+>  EXPORT_SYMBOL(done_dentry_lookup_return);
+> @@ -4210,9 +4219,7 @@ EXPORT_SYMBOL(kern_path_create);
+> =20
+>  void done_path_create(struct path *path, struct dentry *dentry)
+>  {
+> -	if (!IS_ERR(dentry))
+> -		dput(dentry);
+> -	inode_unlock(path->dentry->d_inode);
+> +	done_dentry_lookup(dentry);
+>  	mnt_drop_write(path->mnt);
+>  	path_put(path);
+>  }
+> @@ -4375,7 +4382,8 @@ SYSCALL_DEFINE3(mknod, const char __user *, filenam=
+e, umode_t, mode, unsigned, d
+>   * negative or unhashes it and possibly splices a different one returnin=
+g it,
+>   * the original dentry is dput() and the alternate is returned.
+>   *
+> - * In case of an error the dentry is dput() and an ERR_PTR() is returned=
+.
+> + * In case of an error the dentry is dput(), the parent is unlocked, and
+> + * an ERR_PTR() is returned.
+>   */
+>  struct dentry *vfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+>  			 struct dentry *dentry, umode_t mode)
+> @@ -4413,7 +4421,7 @@ struct dentry *vfs_mkdir(struct mnt_idmap *idmap, s=
+truct inode *dir,
+>  	return dentry;
+> =20
+>  err:
+> -	dput(dentry);
+> +	done_dentry_lookup(dentry);
+>  	return ERR_PTR(error);
+>  }
+>  EXPORT_SYMBOL(vfs_mkdir);
+> diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
+> index 82785db730d9..693fa95fa678 100644
+> --- a/fs/nfsd/nfs4recover.c
+> +++ b/fs/nfsd/nfs4recover.c
+> @@ -222,7 +222,8 @@ nfsd4_create_clid_dir(struct nfs4_client *clp)
+>  	dentry =3D lookup_one(&nop_mnt_idmap, &QSTR(dname), dir);
+>  	if (IS_ERR(dentry)) {
+>  		status =3D PTR_ERR(dentry);
+> -		goto out_unlock;
+> +		inode_unlock(d_inode(dir));
 > +		goto out;
-> +	}
-> +
-> +	if (max_pools > limit) {
-> +		pr_err("stack_depot_max_pools exceeds %lld, using default of %u\n",
-> +		       limit, stack_max_pools);
+>  	}
+>  	if (d_really_is_positive(dentry))
+>  		/*
+> @@ -233,15 +234,12 @@ nfsd4_create_clid_dir(struct nfs4_client *clp)
+>  		 * In the 4.0 case, we should never get here; but we may
+>  		 * as well be forgiving and just succeed silently.
+>  		 */
+> -		goto out_put;
 > +		goto out;
-> +	}
-
-Maybe we could bound the requested value to between 1024 and limit instead
-of falling back to the default and completely ignoring it when it's out of
-the range?
-
-> +	stack_max_pools = max_pools;
+>  	dentry =3D vfs_mkdir(&nop_mnt_idmap, d_inode(dir), dentry, S_IRWXU);
+>  	if (IS_ERR(dentry))
+>  		status =3D PTR_ERR(dentry);
+> -out_put:
+> -	if (!status)
+> -		dput(dentry);
+> -out_unlock:
+> -	inode_unlock(d_inode(dir));
 > +out:
-> +	return 0;
-> +}
-> +early_param("stack_depot_max_pools", parse_max_pools);
-> +
+> +	done_dentry_lookup(dentry);
+>  	if (status =3D=3D 0) {
+>  		if (nn->in_grace)
+>  			__nfsd4_create_reclaim_record_grace(clp, dname,
+> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+> index a21940cadede..e85195e858a2 100644
+> --- a/fs/nfsd/vfs.c
+> +++ b/fs/nfsd/vfs.c
+> @@ -1489,7 +1489,9 @@ nfsd_check_ignore_resizing(struct iattr *iap)
+>  		iap->ia_valid &=3D ~ATTR_SIZE;
+>  }
+> =20
+> -/* The parent directory should already be locked: */
+> +/* The parent directory should already be locked.  The lock
+> + * will be dropped on error.
+> + */
+>  __be32
+>  nfsd_create_locked(struct svc_rqst *rqstp, struct svc_fh *fhp,
+>  		   struct nfsd_attrs *attrs,
+> @@ -1555,8 +1557,11 @@ nfsd_create_locked(struct svc_rqst *rqstp, struct =
+svc_fh *fhp,
+>  	err =3D nfsd_create_setattr(rqstp, fhp, resfhp, attrs);
+> =20
+>  out:
+> -	if (!IS_ERR(dchild))
+> +	if (!IS_ERR(dchild)) {
+> +		if (err)
+> +			inode_unlock(dirp);
+>  		dput(dchild);
+> +	}
+>  	return err;
+> =20
+>  out_nfserr:
+> @@ -1613,6 +1618,9 @@ nfsd_create(struct svc_rqst *rqstp, struct svc_fh *=
+fhp,
+>  	if (err !=3D nfs_ok)
+>  		goto out_unlock;
+>  	err =3D nfsd_create_locked(rqstp, fhp, attrs, type, rdev, resfhp);
+> +	if (err)
+> +		/* lock will have been dropped */
+> +		return err;
+>  	fh_fill_post_attrs(fhp);
+>  out_unlock:
+>  	inode_unlock(dentry->d_inode);
+> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+> index 30619777f0f6..74b52595ea0e 100644
+> --- a/fs/overlayfs/dir.c
+> +++ b/fs/overlayfs/dir.c
+> @@ -161,14 +161,17 @@ int ovl_cleanup_and_whiteout(struct ovl_fs *ofs, st=
+ruct dentry *dir,
+>  	goto out;
+>  }
+> =20
+> +/* dir will be unlocked on return */
+>  struct dentry *ovl_create_real(struct ovl_fs *ofs, struct dentry *parent=
+,
+>  			       struct dentry *newdentry, struct ovl_cattr *attr)
+>  {
+>  	struct inode *dir =3D parent->d_inode;
+>  	int err;
+> =20
+> -	if (IS_ERR(newdentry))
+> +	if (IS_ERR(newdentry)) {
+> +		inode_unlock(dir);
+>  		return newdentry;
+> +	}
+> =20
+>  	err =3D -ESTALE;
+>  	if (newdentry->d_inode)
+> @@ -213,11 +216,11 @@ struct dentry *ovl_create_real(struct ovl_fs *ofs, =
+struct dentry *parent,
+>  	}
+>  out:
+>  	if (err) {
+> -		if (!IS_ERR(newdentry))
+> -			dput(newdentry);
+> +		done_dentry_lookup(newdentry);
+>  		return ERR_PTR(err);
+> +	} else {
+> +		return done_dentry_lookup_return(newdentry);
+>  	}
+> -	return newdentry;
+>  }
+> =20
+>  struct dentry *ovl_create_temp(struct ovl_fs *ofs, struct dentry *workdi=
+r,
+> @@ -227,7 +230,6 @@ struct dentry *ovl_create_temp(struct ovl_fs *ofs, st=
+ruct dentry *workdir,
+>  	inode_lock(workdir->d_inode);
+>  	ret =3D ovl_create_real(ofs, workdir,
+>  			      ovl_lookup_temp(ofs, workdir), attr);
+> -	inode_unlock(workdir->d_inode);
+>  	return ret;
+>  }
+> =20
+> @@ -335,7 +337,6 @@ static int ovl_create_upper(struct dentry *dentry, st=
+ruct inode *inode,
+>  				    ovl_lookup_upper(ofs, dentry->d_name.name,
+>  						     upperdir, dentry->d_name.len),
+>  				    attr);
+> -	inode_unlock(udir);
+>  	if (IS_ERR(newdentry))
+>  		return PTR_ERR(newdentry);
+> =20
+> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+> index 4f84abaa0d68..238c26142318 100644
+> --- a/fs/overlayfs/overlayfs.h
+> +++ b/fs/overlayfs/overlayfs.h
+> @@ -250,6 +250,7 @@ static inline struct dentry *ovl_do_mkdir(struct ovl_=
+fs *ofs,
+> =20
+>  	ret =3D vfs_mkdir(ovl_upper_mnt_idmap(ofs), dir, dentry, mode);
+>  	pr_debug("mkdir(%pd2, 0%o) =3D %i\n", dentry, mode, PTR_ERR_OR_ZERO(ret=
+));
+> +	/* Note: dir will have been unlocked on failure */
+>  	return ret;
+>  }
+> =20
+> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+> index 4afa91882075..df99a6fa17ef 100644
+> --- a/fs/overlayfs/super.c
+> +++ b/fs/overlayfs/super.c
+> @@ -328,11 +328,11 @@ static struct dentry *ovl_workdir_create(struct ovl=
+_fs *ofs,
+>  		}
+> =20
+>  		work =3D ovl_do_mkdir(ofs, dir, work, attr.ia_mode);
+> -		inode_unlock(dir);
+>  		err =3D PTR_ERR(work);
+>  		if (IS_ERR(work))
+>  			goto out_err;
+> =20
+> +		done_dentry_lookup_return(work);
+>  		/* Weird filesystem returning with hashed negative (kernfs)? */
+>  		err =3D -EINVAL;
+>  		if (d_really_is_negative(work))
+> @@ -623,7 +623,8 @@ static struct dentry *ovl_lookup_or_create(struct ovl=
+_fs *ofs,
+>  	child =3D ovl_lookup_upper(ofs, name, parent, len);
+>  	if (!IS_ERR(child) && !child->d_inode)
+>  		child =3D ovl_create_real(ofs, parent, child, OVL_CATTR(mode));
+> -	inode_unlock(parent->d_inode);
+> +	else
+> +		inode_unlock(parent->d_inode);
+>  	dput(parent);
+> =20
+>  	return child;
+> diff --git a/fs/xfs/scrub/orphanage.c b/fs/xfs/scrub/orphanage.c
+> index 9c12cb844231..c95bded4e8a7 100644
+> --- a/fs/xfs/scrub/orphanage.c
+> +++ b/fs/xfs/scrub/orphanage.c
+> @@ -170,7 +170,7 @@ xrep_orphanage_create(
+>  					     orphanage_dentry, 0750);
+>  		error =3D PTR_ERR(orphanage_dentry);
+>  		if (IS_ERR(orphanage_dentry))
+> -			goto out_unlock_root;
+> +			goto out_dput_root;
+>  	}
+> =20
+>  	/* Not a directory? Bail out. */
+
+This does make for some awkward code. Fortunately there aren't that
+many vfs_mkdir() callers.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
