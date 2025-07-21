@@ -1,144 +1,69 @@
-Return-Path: <linux-kernel+bounces-738783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C8B2B0BD01
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:52:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AB2AB0BD04
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:54:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 481F317651F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:52:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 883E73AD22C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8AB27FD71;
-	Mon, 21 Jul 2025 06:52:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408FB27FD76;
+	Mon, 21 Jul 2025 06:53:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t9G7JeCG"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hZ4+id1d"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC0219DF62;
-	Mon, 21 Jul 2025 06:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73BEC1F2B88;
+	Mon, 21 Jul 2025 06:53:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753080762; cv=none; b=QZW5EeBnw1l9bLsWFQhgk7ZhtSf4ooJSODtfK6f5/yPWQK5pT3mtY126U5B0gspAdU5iqjj1nhB3jyAPcwQQsY1BWykR22VFM/pSk25dBxTr+4Y7dz/M3Ue+hyLVGrmUit+5sLsTgPko+LI/DtpDyausF0iMJbHrSHqfFl2bqcc=
+	t=1753080833; cv=none; b=OJ50Kn0frAvy3HEyzvkprZOneqCluEr6qJ24yBKBRWKetuITitZ5aGIi+bjJs1qCqM+LVQz/6b2/uWlbrLc4YTndLTEzfTj3VcocX4nclcmJxKV23qvFyjiqzb1eOtPEkoEekzgVU6nwnpla7cR2BOatN6dy+oH4XWU8FdRnrH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753080762; c=relaxed/simple;
-	bh=Fj2B+JNw6UkLmg+kDNy6fM5RkSwPiSm8KCZnRQSQWss=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XT4YwvO63PCzHXhNnsqHljsc8HrrjkXMeJERAI3wIfAO4bBgtMLHf/FnX5Jy5P1ZQooGaHgVkjBiXbV5xsC9nk3Ii2+d8rUyGo0rqdD5dwChbbDRcqt8APO4kHJHNbPogpAtYz/kctfdh6aXee2plpg5eQrl4RYmDdj4ICnN6KY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t9G7JeCG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8065DC4CEED;
-	Mon, 21 Jul 2025 06:52:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753080761;
-	bh=Fj2B+JNw6UkLmg+kDNy6fM5RkSwPiSm8KCZnRQSQWss=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=t9G7JeCGjETBbBP5rsHRIZo0lCY01I/emLq5/di0udM/ulJsYhAuzB09xkp1atpLt
-	 tZlTpNevJ7rDxKm6EbgqR8Xg66c5aeaQmfKJUuNCY3Hcm0qbLiajaMOGoyUAdv2111
-	 JboHLReaD4JA09x/9Mtfo8/O1W/ZOsduvoOr+4OtTXUUjE7L4YkPjkXqweRaL8hWZK
-	 OivoX+yF0GZTTgxWIJmnpJAe35LDYaFroyXB1e/UvgsCoKnw94F5lxrt06fXHcJaw3
-	 7kiLPSfvKbkWzqpGR1324EyDQ85mBwLyEG7LzbvZtVIhvkZoFPkMNimWFfheBuWbPi
-	 kf6GWNzVquXzg==
-Message-ID: <9574826f-3023-4fe1-9346-eacd70990d73@kernel.org>
-Date: Mon, 21 Jul 2025 08:52:34 +0200
+	s=arc-20240116; t=1753080833; c=relaxed/simple;
+	bh=BLrfXbwanftgU995wrz+bAONG7D2POOPCtK5ReR07js=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sMo/1hSTIik1PvY4PMRkDr0py0qIkDHFl1zwrjSrVgUYdWlCHjDmZ4Sb7gP1WgNYG3Sm74PA0Ulv3+D4SdSXOzNurLLncZzkxlh46iCiF7pg3MsGRki9Z5iOKjpvwnCSPYdb8oK0+rBuzU/TDCZGjIbFlwUGhamkIzvJo9r+uVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hZ4+id1d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C6B3C4CEED;
+	Mon, 21 Jul 2025 06:53:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1753080832;
+	bh=BLrfXbwanftgU995wrz+bAONG7D2POOPCtK5ReR07js=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hZ4+id1dpM8pxx5lNZaMLaC9gA9G53fpU03n32croZ7A4yrOe7fZqLLGAhBtqiCMd
+	 DdSq9kB9ZIgs93N8xX+8qjLAgmewSw4o97b9rC+mqPWlnbd8K1iGMKMqz91TN4dvLJ
+	 8vCsrFiiFUDvKLBSAW+qu6klbs+dkqrqySaki7BY=
+Date: Mon, 21 Jul 2025 08:53:48 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
+Cc: Souradeep Chowdhury <quic_schowdhu@quicinc.com>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	Melody Olvera <quic_molvera@quicinc.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v6] usb: misc: qcom_eud: Access EUD_MODE_MANAGER2 through
+ secure calls
+Message-ID: <2025072141-anointer-venus-d99f@gregkh>
+References: <20250721-eud_mode_manager_secure_access-v6-1-fe603325ac04@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re:
-To: David Lechner <dlechner@baylibre.com>, ">"
- <sanjaysuthar661996@gmail.com>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
- netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org
-Cc: ribalda@kernel.org, jic23@kernel.org, nuno.sa@analog.com,
- andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, neil.armstrong@linaro.org,
- khilman@baylibre.com, jbrunet@baylibre.com,
- martin.blumenstingl@googlemail.com
-References: <CADU64hCr7mshqfBRE2Wp8zf4BHBdJoLLH=VJt2MrHeR+zHOV4w@mail.gmail.com>
- <20250720182627.39384-1-sanjaysuthar661996@gmail.com>
- <84ad0f66-311e-4560-870d-851852c6f902@baylibre.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <84ad0f66-311e-4560-870d-851852c6f902@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250721-eud_mode_manager_secure_access-v6-1-fe603325ac04@oss.qualcomm.com>
 
-On 20/07/2025 21:30, David Lechner wrote:
->>    - Ricardo Ribalda Delgado <ricardo@ribalda.com>
->> diff --git a/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml b/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml
->> index 0cd78d71768c..5c91716d1f21 100644
->> --- a/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml
->> +++ b/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml
->> @@ -149,7 +149,7 @@ properties:
->>        - description:
->>            The first register range should be the one of the DWMAC controller
->>        - description:
->> -          The second range is is for the Amlogic specific configuration
->> +          The second range is for the Amlogic specific configuration
->>            (for example the PRG_ETHERNET register range on Meson8b and newer)
->>  
->>    interrupts:
-> 
-> I would be tempted to split this into two patches. It's a bit odd to have
+On Mon, Jul 21, 2025 at 12:08:41PM +0530, Komal Bajaj wrote:
+> EUD_MODE_MANAGER2 register is mapped to a memory region that is marked
+> as read-only for HLOS, enforcing access restrictions that prohibit
+> direct memory-mapped writes via writel().
 
+What is "HLOS"?
 
-No, it's a churn to split this into more than one patch.
-
-> a single patch touching two unrelated bindings.
-
-
-
-
-Best regards,
-Krzysztof
 
