@@ -1,138 +1,184 @@
-Return-Path: <linux-kernel+bounces-739546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA810B0C7A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:30:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDC31B0C7A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:30:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA83C1891388
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:30:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 422883A9AFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9262C08BC;
-	Mon, 21 Jul 2025 15:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C4572DE6EF;
+	Mon, 21 Jul 2025 15:30:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QXpVFZd7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chrisdown.name header.i=@chrisdown.name header.b="I2Azn4NC"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B4920E002
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 15:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E5962C08BC
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 15:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753111816; cv=none; b=XwedoxLGCkc/EnOesmlLh2BmoENx4e5CXEW1Dqe2YFALfj28G5NRw19U7zTDNlSFvkqX1bJ/f4n5b906yCo+H7DZs5gY7AIxGSQKJnOxd5qVt/I71gYyu4p/DJF4hmBoXSqe/DPDBieHaUGVKwhCp/vqL4pemhDdFTC2geiCEq4=
+	t=1753111830; cv=none; b=QYoAOF+UG/tEq1/WSLFwTbUQEuEFDan7wuKoutppeyaLx1LFFf4V5tYB1omPB3s97hbovf95T/H+vqkCBWwcuFmpLmjaGYbzslPJMOps6x1GFs6zfM7P42DLM5oFmwbiQE2+PMcMj9X+8MfgGl4R42GdOoVnLH/WeyeLCSEBcnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753111816; c=relaxed/simple;
-	bh=/mGHFWJ2c31fMnjOxcIOtie5iG0sKhiktBz1mreVmL8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=WQjlFWVXdMjyjd12b+KTcNUqt3JOVeMtkUG8LDBPC/Ny2Cpd2Y+NJWPA1YGn4CwwocuyXgEZt120jTUaTmaXDhZMce5CJQs/w3pVtRfRAelo9CDgKTBAh7N4fRZODrO3omdcVGfkv2vCyiJhEKWWyC9lTQ1rR6Ct2/0B792MV38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QXpVFZd7; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753111815; x=1784647815;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=/mGHFWJ2c31fMnjOxcIOtie5iG0sKhiktBz1mreVmL8=;
-  b=QXpVFZd7DiJwYeEis/dVuQEtzavMkeCPw2kghpX6r4w/GKBQVlz+DyOx
-   ERQYh6h0CL6/aU8cLBOeLcUOJjq+TyyyI5BMXGBVV5dW7mumC5gHL7mYe
-   e4nlyZsuZc5lufhsKFg5Q6ScE3T6kHu5BbV7A9kTeYxKhvwtp8YKe4eA9
-   aw7hJf8OdEpIm0MGZuAX//KsUCBj/SwNk6MH7rvdMS3AyRpQYb2pIznho
-   8TKzvrQ5sQaD6tCQdHuOUrfcQFS4t6FciR1vpVU6fnD3FclvEwwgItiLU
-   uT2DfwPqRBZssJQ3DuhtABWIUZNV8YyMbmDk7V1HjM7ZW88QSmItI7wfk
-   g==;
-X-CSE-ConnectionGUID: mY3IDy5UTy6NLnvCH1mUrg==
-X-CSE-MsgGUID: 0u46UBqdRf2MdwEkkN0Ksg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11499"; a="66676864"
-X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
-   d="scan'208";a="66676864"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 08:30:14 -0700
-X-CSE-ConnectionGUID: TE8DAH36QayZi5OpqPeyMA==
-X-CSE-MsgGUID: rGs/ddw4S0qqcN0LuNe1KA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
-   d="scan'208";a="158174749"
-Received: from jdoman-mobl3.amr.corp.intel.com (HELO [10.125.108.89]) ([10.125.108.89])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 08:30:14 -0700
-Message-ID: <b941aa3e-c3e0-4d0c-b4b7-8cc1fcf513a5@intel.com>
-Date: Mon, 21 Jul 2025 08:30:13 -0700
+	s=arc-20240116; t=1753111830; c=relaxed/simple;
+	bh=smyymOu3NPSCK3HxZ/GV5gdWGIxZJTwZ4aHqw3r7Ge8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=QcFhbcZL4RVNEiO+ichRjSFI/cwd1szP6OxBG8B6pVwouJzgz9VGLAdZffhc1qpbDCnbuHut8aKZXE8HQYPhBiQ1vWktEZK12T1qCQMnrele6wvGvZjhgE5YyYtGwdIgaBZya4k3aj/TwXS5YYQObcew68crxOA0vdQOI7mUGlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chrisdown.name; spf=pass smtp.mailfrom=chrisdown.name; dkim=pass (1024-bit key) header.d=chrisdown.name header.i=@chrisdown.name header.b=I2Azn4NC; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chrisdown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chrisdown.name
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2353a2bc210so40197875ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 08:30:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chrisdown.name; s=google; t=1753111828; x=1753716628; darn=vger.kernel.org;
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3aue8C3XX6eJryL66fW8gz8PtNPMdxeDVuXm7OJoSaM=;
+        b=I2Azn4NCn+FHeJGgm/qNezLrtyHh0jkRKtmwkCdQHyhhAfUBY8wfDWEm6ttWU7SSQC
+         5fA9fO02NZuaodQyuVcM8wZj4hFT96YDatrLA8IZm3S/lVArGfCtqIBE6umK80JYF0ea
+         kMaz3m8Rcqm7FxJzJljwCB8ujjUAlTb/SSNqE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753111828; x=1753716628;
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3aue8C3XX6eJryL66fW8gz8PtNPMdxeDVuXm7OJoSaM=;
+        b=SGLvOckbeK8lUEY7P2TBsQEmqL8q5Bm77GPDCXTm3ZyO4NcFLuflLWF1vX+CiP4roe
+         b7rtwl3SYykBpJlFk6ysYHQxVoSgLs8KlbiYwS6vfTN0c9lStNTINC7iZTj5xeZbJ6om
+         y2ldQEuOd5acqeZ0PUEvM/Jp2t7dVO8PqtSS0umcDYH7tei8i9bYTTB/SkEw+SSjom9O
+         1PJYe/xI0yxSyMQergnD/9JQ+LZHx5CTMd204O6X0xyjLStV+fF22xLDkOMof/gyi5RD
+         7SlHpjoR3PyORJ4ZeE2t4i/bhwCF+LfXKCRN4Ctef1Cl3qVtMLpK8XN/G2Zc10eQRD1P
+         DYdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXWmGRAucVTo4lqjnIMwUjA29i7fCtSPtKy/VysAQPJCFEgbolEG5lTHnrfpoX7EsuBXO+xmefsCtQszbc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+72FRcfF4joi83HFFOcULwA2NeAamlFQP3JJDDTYsqeMPlIea
+	hBCuX0njvvR7ERftkNWhtk9u5wxcNxVfNxGRSEZmFOlUmr1VUVDT23+QZspuJNLbLB4=
+X-Gm-Gg: ASbGncsmoAnyGaKpAFrSZlwQp17f3ReLnbObFZn/0ussWTov0x3C3xGpNsI5bEwKQWi
+	MuTL732P5Ypqu7qfUp5I87PqOOSb84V8083CEkXNAnov1AadLHe8JC/x/viR/49LYYoNFOwHwVP
+	vTdLACdDZDRPJsiNXmvY1N3EF+SPDgBI7SYIFmk+2quGM7+jS51fjH5j41N+SU3UY7zCOFpG151
+	gWMNPSBIaQdwZsmhHLL02yniByCqKBA7UhQKNb+POoOBAn45SvzotgmgSQcXADBAnU6mORwHHLZ
+	hajDkyKyAo6/bHKP5A+ciqTygG1tt3aAwojZ2OAmEMb61Z6/uZZSoqhASpFwLT2NefdbO44SLi8
+	2IeD2quE7IqbQjUHYPHVG+9yZIWyUxYs=
+X-Google-Smtp-Source: AGHT+IEQS8xIFf1oVxKSq5TOQxIVnNqSEuQ4f9cplE6fC8A/ISTl8ROuS504mxt838QhO3BzExl0Yw==
+X-Received: by 2002:a17:903:3508:b0:235:91a:2c with SMTP id d9443c01a7336-23e25771862mr275923825ad.42.1753111828180;
+        Mon, 21 Jul 2025 08:30:28 -0700 (PDT)
+Received: from localhost ([148.252.132.38])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-23e3b6ef8e6sm59689925ad.212.2025.07.21.08.30.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Jul 2025 08:30:27 -0700 (PDT)
+Date: Mon, 21 Jul 2025 16:30:23 +0100
+From: Chris Down <chris@chrisdown.name>
+To: linux-bluetooth@vger.kernel.org
+Cc: Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	linux-kernel@vger.kernel.org, kernel-team@fb.com,
+	Jaganath Kanakkassery <jaganath.k.os@gmail.com>
+Subject: [PATCH v2] Bluetooth: hci_event: Mask data status from LE ext adv
+ reports
+Message-ID: <aH5dD1V0K7qZIOSJ@chrisdown.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] bitmap: introduce bitmap_weight_from()
-To: Yury Norov <yury.norov@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Andrew Morton <akpm@linux-foundation.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Fernando Fernandez Mancera <ffmancera@riseup.net>,
- "Xin Li (Intel)" <xin@zytor.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250720014146.432316-1-yury.norov@gmail.com>
-Content-Language: en-US
-From: Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250720014146.432316-1-yury.norov@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/2.2.14 (516568dc) (2025-02-20)
 
-On 7/19/25 18:41, Yury Norov wrote:
->  arch/x86/kernel/cpu/topology.c |  9 ++-------
->  include/linux/bitmap.h         | 11 +++++++++++
->  lib/bitmap.c                   | 28 ++++++++++++++++++++++++++++
->  3 files changed, 41 insertions(+), 7 deletions(-)
+The Event_Type field in an LE Extended Advertising Report uses bits 5
+and 6 for data status (e.g. truncation or fragmentation), not the PDU
+type itself.
 
-I think we need to hear more about the motivation for doing this,
-including if there are other sites that might benefit from this helper.
+The ext_evt_type_to_legacy() function fails to mask these status bits
+before evaluation. This causes valid advertisements with status bits set
+(e.g. a truncated non-connectable advertisement, which ends up showing
+as PDU type 0x40) to be misclassified as unknown and subsequently
+dropped. This is okay for most checks which use bitwise AND on the
+relevant event type bits, but it doesn't work for non-connectable types,
+which are checked with '== LE_EXT_ADV_NON_CONN_IND' (that is, zero).
+
+In terms of behaviour, first the device sends a truncated report:
+
+> HCI Event: LE Meta Event (0x3e) plen 26
+      LE Extended Advertising Report (0x0d)
+        Entry 0
+          Event type: 0x0040
+            Data status: Incomplete, data truncated, no more to come
+          Address type: Random (0x01)
+          Address: 1D:12:46:FA:F8:6E (Non-Resolvable)
+          SID: 0x03
+          RSSI: -98 dBm (0x9e)
+          Data length: 0x00
+
+Then, a few seconds later, it sends the subsequent complete report:
+
+> HCI Event: LE Meta Event (0x3e) plen 122
+      LE Extended Advertising Report (0x0d)
+        Entry 0
+          Event type: 0x0000
+            Data status: Complete
+          Address type: Random (0x01)
+          Address: 1D:12:46:FA:F8:6E (Non-Resolvable)
+          SID: 0x03
+          RSSI: -97 dBm (0x9f)
+          Data length: 0x60
+          Service Data: Google (0xfef3)
+            Data[92]: ...
+
+These devices often send multiple truncated reports per second.
+
+This patch introduces a PDU type mask to ensure only the relevant bits
+are evaluated, allowing for the correct translation of all valid
+extended advertising packets.
+
+Signed-off-by: Chris Down <chris@chrisdown.name>
+Cc: linux-bluetooth@vger.kernel.org
+Cc: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+---
+ include/net/bluetooth/hci.h | 1 +
+ net/bluetooth/hci_event.c   | 7 +++++--
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/include/net/bluetooth/hci.h b/include/net/bluetooth/hci.h
+index 797992019f9e..c210d699f4da 100644
+--- a/include/net/bluetooth/hci.h
++++ b/include/net/bluetooth/hci.h
+@@ -2630,6 +2630,7 @@ struct hci_ev_le_conn_complete {
+ #define LE_EXT_ADV_DIRECT_IND		0x0004
+ #define LE_EXT_ADV_SCAN_RSP		0x0008
+ #define LE_EXT_ADV_LEGACY_PDU		0x0010
++#define LE_EXT_ADV_DATA_STATUS_MASK	0x0060
+ #define LE_EXT_ADV_EVT_TYPE_MASK	0x007f
+ 
+ #define ADDR_LE_DEV_PUBLIC		0x00
+diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
+index 6d6061111ac5..065ad3a39a1a 100644
+--- a/net/bluetooth/hci_event.c
++++ b/net/bluetooth/hci_event.c
+@@ -6264,6 +6264,10 @@ static void hci_le_adv_report_evt(struct hci_dev *hdev, void *data,
+ 
+ static u8 ext_evt_type_to_legacy(struct hci_dev *hdev, u16 evt_type)
+ {
++	u16 pdu_type = evt_type & ~LE_EXT_ADV_DATA_STATUS_MASK;
++	if (!pdu_type)
++		return LE_ADV_NONCONN_IND;
++
+ 	if (evt_type & LE_EXT_ADV_LEGACY_PDU) {
+ 		switch (evt_type) {
+ 		case LE_LEGACY_ADV_IND:
+@@ -6295,8 +6299,7 @@ static u8 ext_evt_type_to_legacy(struct hci_dev *hdev, u16 evt_type)
+ 	if (evt_type & LE_EXT_ADV_SCAN_IND)
+ 		return LE_ADV_SCAN_IND;
+ 
+-	if (evt_type == LE_EXT_ADV_NON_CONN_IND ||
+-	    evt_type & LE_EXT_ADV_DIRECT_IND)
++	if (evt_type & LE_EXT_ADV_DIRECT_IND)
+ 		return LE_ADV_NONCONN_IND;
+ 
+ invalid:
+-- 
+2.50.0
+
 
