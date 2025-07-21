@@ -1,214 +1,203 @@
-Return-Path: <linux-kernel+bounces-739190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FA83B0C307
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:32:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 716BBB0C311
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:34:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25945188CA60
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:33:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 000A27A45A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:32:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D9515A858;
-	Mon, 21 Jul 2025 11:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eKVg60L/"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4899E2BD595;
+	Mon, 21 Jul 2025 11:34:07 +0000 (UTC)
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57881F3FF4;
-	Mon, 21 Jul 2025 11:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816C8288C39;
+	Mon, 21 Jul 2025 11:33:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753097553; cv=none; b=fauozgtAo4CP/PpU9J7KJJMMHrMjtqfAShcswiuXftBZHCVwjShg2vWrN2p54mwjM8hf+vixWAmIigrs88GaMXwLmtNuTHu52tCTxmMkHWYom4ZwwG7JZl7i87xD3pXr/k8/eHpTUOzWjmA7diCEULNst7DsNLPOCVc1CeoHUco=
+	t=1753097646; cv=none; b=O0N3Rv5IidPHzJTOnn4G5rnf+Sdh5Up06w0CERRIOT3sDftJolrzsa+iLou3jybtsHrC7HuH5Si5qw6MLqTrF24IDVeSTOYBrv3ANx6gz/F86BETjRjxntNgVkNrCQ1m4L+dwOrptklviSiZhzARbd8MAwlErxHedEd7rmP6GLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753097553; c=relaxed/simple;
-	bh=aA/YqRt7CmmCWQ6vRvHCvWdziyzMFBmteaDcud523hY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N8SpoKHjhtc5pEJ6ljKCB/55iXmlzLKUj1YtlRBXC6WFCkN6H0B1at73QGC+NQEU4MDXHh4qw5UeYWeXRT1Cp5yeDENfuDAxMmyy+4S/MZgE2oYbry9/nz7iMbxAQIFQyXsG2VvDaA9GVqJ72vLw7WiZX809AAGUSOXKu1wZP1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eKVg60L/; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-605b9488c28so7136670a12.2;
-        Mon, 21 Jul 2025 04:32:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753097550; x=1753702350; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rwUDU4lmCOpK0+9XYbO31vbMhb7j4XJSWdchYqlYZmI=;
-        b=eKVg60L/cjwCm5Kge08yW2MK5n/SMNvO2cRddlyJdngnmqhRBFsRkI+sRo1+uHXvAH
-         G0gxI9sAjZSFmQS0BynZC3GrTseLGtx7GFl1SjFMoxnhQTnHS3SLk4YTIEV0GhVFLhPg
-         bFh4Lul5hSjkwNbwkxkFWltfudJOMogrv6x5u69qafWU4zpTDf3IxK8RT6nrVG5ha/Kx
-         vseDDoyeAl8vQKc3C8AQLNKWW/ToUlcDxSAb2d51sfshOR+dd974e9gaMVXQdWXnSz1t
-         mPfmtCf2869DdVP/Mok05QCCsgC+AEa21fs3Zl/1H3nLsEJgBB2uOAfwtd81HLzYTGQG
-         vTFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753097550; x=1753702350;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rwUDU4lmCOpK0+9XYbO31vbMhb7j4XJSWdchYqlYZmI=;
-        b=hp8+HjOn+hMj+QIwSvwHtSpF6QxNxG5l/z2/H6Uy4ombZHYpPkjITEvcYuXxq1ZLED
-         wUQGQs/QGDqqecsXr0JaB3zxjaY+4BXDDJT5qCA7Rw/yTDzSWh63yqh6iTV7SjAgGD2M
-         oJlZyExV42vSmP6OS2a9eJlSGexzK7IAOvZXdlV4mRjaHyF9EXui7mQKV9V1TB5UgNAJ
-         utjRYZZZRPnB40h0WiLBe9uHQoglTyoaWHZVE0pYgXC2pUPCfYZQyu7OwyrDDxCi5llV
-         z7Oj94LmgLrk4+fRU+McPq22qczB0h65etd8PxPk5ENpFQ4eFr+MquUK7k2xD5PRvgux
-         1Zmg==
-X-Forwarded-Encrypted: i=1; AJvYcCV/EgaYujm8qHEHsWeCAbRhnldzFWccKTatZVOC6o8FCxI4pxVMaekeaxm0QvT4eM/2JaAeWtF85rxfSHaI@vger.kernel.org, AJvYcCXgEPAmKNbfjS1aw/h5yC5DYOzp77POirCd+5KkFBqJGVTelL9sgQwEaW2HSy4LLO/Oe3rysBsAGMDXU56Y@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3kQ3jUXsHWizDiwI11vzEsgzEE2iTcrjF6rAWoUbprG985ier
-	HQQDYtTVPHZthoVrjeuB/IpBjQZPRkTioLprm+i4sFtNe/mSHhd7HpKBE2b6f5qA6RUpjCSt36m
-	6MjWtejtSzy+79hXopPR94euEwcdIXyc=
-X-Gm-Gg: ASbGncs0FF/wG570IeG9YEjqcXJ/Ria7mzWvXzTdmeIcVtJZEsfyQaZWmzqvHZn2vh8
-	FeDZrI7IAgXDMlW4+AMpnxMWoAzVPiFVFgorZI78LUybs7VEVSwC3lhlUXkfcugK5glihePVzcl
-	Dg5Fe0EjPvlMIGS/S5I0eofF3dNL6h+58g5ne9zIVWOYGuT+BGdiGa4r4v2goTtFb90SdIzcDbn
-	d2OHSA=
-X-Google-Smtp-Source: AGHT+IE33274m6nFzexUcM2b37p1gkHuJonl9XTDjkeKSVwNqGGYOxWFdSaJCM6W2WvLdgTehLz3ma0DOg4fhg954Bg=
-X-Received: by 2002:a17:907:720d:b0:ae3:c767:da11 with SMTP id
- a640c23a62f3a-ae9ce17e845mr1956850566b.50.1753097549429; Mon, 21 Jul 2025
- 04:32:29 -0700 (PDT)
+	s=arc-20240116; t=1753097646; c=relaxed/simple;
+	bh=j8aY/HBVyMKEbAghmMkHagyrNS3Jy8oKX+FgGydDVp4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Awxg3LGX6PNP0Q6NCQ3mbBTJz2V31yjsg4jg/lojVC8f+LAQQwDslVq/7tfMcpHf4qOjIp8UlNeTqdBRpS6MQseGmbZ6iviyngM6833ut5cJNaX1KBxx5sK5qswpdx4TdHvlcmz51iYZKeg5An+rKsrAd70Caragpr/dEssJtuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.207.19.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: esmtpsz18t1753097566tdcc2b135
+X-QQ-Originating-IP: EHBGWkQh/64FOUdl32kETefme0DkHinNY03bd1hqlU4=
+Received: from localhost.localdomain ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 21 Jul 2025 19:32:41 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 13591894588143972826
+EX-QQ-RecipientCnt: 23
+From: Dong Yibo <dong100@mucse.com>
+To: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	corbet@lwn.net,
+	gur.stavi@huawei.com,
+	maddy@linux.ibm.com,
+	mpe@ellerman.id.au,
+	danishanwar@ti.com,
+	lee@trager.us,
+	gongfan1@huawei.com,
+	lorenzo@kernel.org,
+	geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com,
+	lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com,
+	richardcochran@gmail.com
+Cc: netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dong100@mucse.com
+Subject: [PATCH v2 00/15] Add driver for 1Gbe network chips from MUCSE
+Date: Mon, 21 Jul 2025 19:32:23 +0800
+Message-Id: <20250721113238.18615-1-dong100@mucse.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250721084412.370258-1-neil@brown.name>
-In-Reply-To: <20250721084412.370258-1-neil@brown.name>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 21 Jul 2025 13:32:18 +0200
-X-Gm-Features: Ac12FXz3otnB5gz_Kv72kjBR8yLh9f6disHvREkVRonsRjabvkdlSDxFuIziJCw
-Message-ID: <CAOQ4uxgd=POQATEhPdwqyX-hCQAHCTcxJsvyOS6=2yojMh399Q@mail.gmail.com>
-Subject: Re: [PATCH 0/7 RFC] New APIs for name lookup and lock for directory operations
-To: NeilBrown <neil@brown.name>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: M/pyXQiX8GHdj2F4Iuks4wDMVbrgsifgprzT/uPKyJJVIVcpaJ87O/Lh
+	wWfBnHY6D/kKWqoyvDjUGgkqFQa0BQ5Pyc1OVoeGuTpgd27rqyQJKQQH9OIspFtPJe495y8
+	mnvd6HWMR0TfCuibUYlnqXE9GulfuoH8cvruMBxPF31r8QkCk90An1huzjkGN68p7iRvZbW
+	w23IX9dEU8cHoOUQQueqdHCBFXktzVmDC+wUk5ZefLH8ZI7k6qkqos+ZY6umVCBGI8PTgzK
+	rM5trOElWEeuy/24RW2RpxaJIeAVn9h3jK+O2i0bWWB4TgRD9xZnXvVHjXcFlCGZMxLKGIf
+	sAYhAwc3zMUwdHfOSnbRHLV7FTgsM9DtgxHf19fmGClcCbwUidJzO8yifKKcnAGicsUdmsW
+	SciYvyf//Jb4faqKbdGmCwSLvhfqWONeFoVLl7XA90t/AXykxFMXsFbLaED6mM4GfPeL6BK
+	9KRutoh8i+O7dq3WOxeLx9cK0UWtPYb/X91+QN58oYVQKEipvje4ajNfwoR6U15WAcbK0Kn
+	L6XHXuvVDAheBvtfyRNzenLokxsFrHPAHxnORybIxOhwp/dgznsay6duIY8u4qC9gAik+UX
+	18HpDBb77dRU8VPeXXk3+OBnsiVEpNJxAWMBhDErF+6q+EKKwsO4jVldu0r+9EPLwfsBVs3
+	isrEXtdlJUcPHSS9dAKP8fIBNRiKKvpH0YcwR3masRZ6qcd/nLyLDr+oToOMiUKtoBRHW4g
+	fMoAEpKlJXGXkrwjbHFzw5+xbl2uc5lWfLDXdebPjoAFx3kthDb9anA2PsF7Ch5l/qtjSPm
+	XRIG4gaTd+28eYxY7OAepvc0YNRVQA+6EV8X6FLn5AQfTC4xBVRsso0bEA5B4yIY9UVnx3e
+	aashTl3uJKwMgyk9kYWXG+fQyOGC1Qn23JQFL7pbgBDZErS8eC6k79IJx2SKbXBE/XE+2Fy
+	GrlH2LfVldc+UoGRiouYpyxdhU/T7EpQKN6OEQZT7m3H9Khamdc8a+BhuNyUwSfgFh6Skwl
+	elHtKf6iQAfDBdMUYYl0EuXrQdl1v6ALpJc50IGxMEZOFnBl5Vkoi5kEaVO7c=
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 
-On Mon, Jul 21, 2025 at 10:46=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
->
-> Hi,
->
->  these patches (against vfs.all) primarily introduce new APIs for
->  preparing dentries for create, remove, rename.  The goal is to
->  centralise knowledge of how we do locking (currently by locking the
->  directory) so that we can eventually change the mechanism (e.g.  to
->  locking just the dentry).
->
->  Naming is difficult and I've changed my mind several times. :-)
+Hi maintainers,
 
-Indeed it is.
-I generally like the done_ approach that you took.
-Few minor naming comments follow.
+This patch series introduces support for MUCSE N500/N210 1Gbps Ethernet
+controllers. Only basic tx/rx is included, more features can be added in
+the future.
 
->
->  The basic approach is to return a dentry which can be passed to
->  vfs_create(), vfs_unlink() etc, and subsequently to release that
->  dentry.  The closest analogue to this in the VFS is kern_path_create()
->  which is paired with done_path_create(), though there is also
->  kern_path_locked() which is paired with explicit inode_unlock() and
->  dput().  So my current approach uses "done_" for finishing up.
->
->  I have:
->    dentry_lookup() dentry_lookup_noperm() dentry_lookup_hashed()
+The driver has been tested on the following platform:
+   - Kernel version: 6.16.0-rc3
+   - Intel Xeon Processor
 
-As I wrote on the patch that introduces them I find dentry_lookup_hashed()
-confusing because the dentry is not hashed (only the hash is calculated).
+Changelog:
+v1 -> v2: 
+  [patch 01/15]:
+  1. Fix changed section in MAINTAINERs file by mistake.
+  2. Fix odd indentaition in 'drivers/net/ethernet/mucse/Kconfig'.
+  3. Drop pointless driver version.
+  4. Remove pr_info prints.
+  5. Remove no need 'memset' for priv after alloc_etherdev_mq.
+  6. Fix __ function names.
+  7. Fix description errors from 'kdoc summry'.
+  [patch 02/15]:
+  1. Fix define by using the BIT() macro.
+  2. Remove wrong 'void *' cast.
+  3. Fix 'reverse Christmas tree' format for local variables.
+  4. Fix description errors from 'kdoc summry'.
+  [patch 03/15]:
+  1. Remove inline functions in C files.
+  2. Remove use s32, use int.
+  3. Use iopoll to instead rolling own.
+  4. Fix description errors from 'kdoc summry'.
+  [patch 04/15]:
+  1. Using __le32/__le16 in little endian define.
+  2. Remove all defensive code.
+  3. Remove pcie hotplug relative code.
+  4. Fix 'replace one error code with another' error.
+  5. Turn 'fw error code' to 'linux/POSIX error code'.
+  6. Fix description errors from 'kdoc summry'.
+  [patch 05/15]:
+  1. Use iopoll to instead rolling own.
+  2. Use 'linux/POSIX error code'.
+  3. Use devlink to download flash.
+  4. Fix description errors from 'kdoc summry'.
+  [patch 06/15] - [patch 15/15]:
+  1. Check errors similar to the patches [1-5].
+  2. Fix description errors from 'kdoc summry'.
 
-Looking at another precedent of _noperm() vfs API we have:
+v1: Initial submission
+  https://lore.kernel.org/netdev/20250703014859.210110-1-dong100@mucse.com/T/#t
 
-vfs_setxattr()
-  __vfs_setxattr_locked()
-    __vfs_setxattr_noperm()
-      __vfs_setxattr()
 
-Do I'd say for lack of better naming __dentry_lookup() could makes sense
-for the bare lock&dget and it could also be introduced earlier along with
-introducing done_dentry_lookup()
+Dong Yibo (15):
+  net: rnpgbe: Add build support for rnpgbe
+  net: rnpgbe: Add n500/n210 chip support
+  net: rnpgbe: Add basic mbx ops support
+  net: rnpgbe: Add get_capability mbx_fw ops support
+  net: rnpgbe: Add download firmware for n210 chip
+  net: rnpgbe: Add some functions for hw->ops
+  net: rnpgbe: Add get mac from hw
+  net: rnpgbe: Add irq support
+  net: rnpgbe: Add netdev register and init tx/rx memory
+  net: rnpgbe: Add netdev irq in open
+  net: rnpgbe: Add setup hw ring-vector, true up/down hw
+  net: rnpgbe: Add link up handler
+  net: rnpgbe: Add base tx functions
+  net: rnpgbe: Add base rx function
+  net: rnpgbe: Add ITR for rx
 
->    dentry_lookup_killable()
->  paired with
->    done_dentry_lookup()
->
->  and also
->    rename_lookup() rename_lookup_noperm() rename_lookup_hashed()
->  paired with
->    done_rename_lookup()
->  (these take a "struct renamedata *" to which some qstrs are added.
->
->  There is also "dentry_lock_in()" which is used instead of
->  dentry_lookup() when you already have the dentry and want to lock it.
->  So you "lock" it "in" a given parent.  I'm not very proud of this name,
->  but I don't want to use "dentry_lock" as I want to save that for
->  low-level locking primitives.
+ .../device_drivers/ethernet/index.rst         |    1 +
+ .../device_drivers/ethernet/mucse/rnpgbe.rst  |   21 +
+ MAINTAINERS                                   |    8 +
+ drivers/net/ethernet/Kconfig                  |    1 +
+ drivers/net/ethernet/Makefile                 |    1 +
+ drivers/net/ethernet/mucse/Kconfig            |   35 +
+ drivers/net/ethernet/mucse/Makefile           |    7 +
+ drivers/net/ethernet/mucse/rnpgbe/Makefile    |   13 +
+ drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    |  733 ++++++
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_chip.c   |  593 +++++
+ drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h |   66 +
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_lib.c    | 2320 +++++++++++++++++
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_lib.h    |  175 ++
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_main.c   |  901 +++++++
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c    |  623 +++++
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx.h    |   49 +
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.c |  753 ++++++
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.h |  695 +++++
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_sfc.c    |  476 ++++
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_sfc.h    |   30 +
+ 20 files changed, 7501 insertions(+)
+ create mode 100644 Documentation/networking/device_drivers/ethernet/mucse/rnpgbe.rst
+ create mode 100644 drivers/net/ethernet/mucse/Kconfig
+ create mode 100644 drivers/net/ethernet/mucse/Makefile
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/Makefile
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_lib.c
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_lib.h
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.h
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.c
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.h
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_sfc.c
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_sfc.h
 
-Very strange name :)
+-- 
+2.25.1
 
-What's wrong with dentry_lock_parent()?
-
-Although I think that using the verb _lock_ for locking and dget is
-actively confusing, so something along the lines of
-resume_dentry_lookup()/dentry_lookup_reacquire() might serve the
-readers of the code better.
-
->
->  There is also done_dentry_lookup_return() which doesn't dput() the
->  dentry but returns it instread.  In about 1/6 of places where I need
->  done_dentry_lookup() the code makes use of the dentry afterwards.  Only
->  in half the places where done_dentry_lookup_return() is used is the
->  returned value immediately returned by the calling function.  I could
->  do a dget() before done_dentry_lookup(), but that looks awkward and I
->  think having the _return version is justified.  I'm happy to hear other
->  opinions.
-
-The name is not very descriptive IMO, but I do not have a better suggestion=
-.
-Unless you can describe it for the purpose that it is used for, e.g.
-yeild_dentry_lookup() that can be followed with resume_dentry_lookup(),
-but I do not know if those are your intentions for the return API.
-
-Thanks,
-Amir.
-
->
->  In order for this dentry-focussed API to work we need to have the
->  dentry to unlock.  vfs_rmdir() currently consumes the dentry on
->  failure, so we don't have it unless we clumsily keep a copy.  So an
->  early patch changes vfs_rmdir() to both consume the dentry and drop the
->  lock on failure.
->
->  After these new APIs are refined, agreed, and applied I will have a
->  collection of patches to roll them out throughout the kernel.  Then we
->  can start/continue discussing a new approach to locking which allows
->  directory operations to proceed in parallel.
->
->  If you want a sneak peek at some of this future work - for context
->  mostly - my current devel code is at https://github.com/neilbrown/linux.=
-git
->  in a branch "pdirops".  Be warned that a lot of the later code is under
->  development, is known to be wrong, and doesn't even compile.  Not today
->  anyway.  The rolling out of the new APIs is fairly mature though.
->
->  Please review and suggest better names, or tell me that my choices are a=
-dequate.
->  And find the bugs in the code too :-)
->
->  I haven't cc:ed the maintains of the non-VFS code that the patches
->  touch.  I can do that once the approach and names have been approved.
->
-> Thanks,
-> NeilBrown
->
->
->  [PATCH 1/7] VFS: unify old_mnt_idmap and new_mnt_idmap in renamedata
->  [PATCH 2/7] VFS: introduce done_dentry_lookup()
->  [PATCH 3/7] VFS: Change vfs_mkdir() to unlock on failure.
->  [PATCH 4/7] VFS: introduce dentry_lookup() and friends
->  [PATCH 5/7] VFS: add dentry_lookup_killable()
->  [PATCH 6/7] VFS: add rename_lookup()
->  [PATCH 7/7] VFS: introduce dentry_lock_in()
->
 
