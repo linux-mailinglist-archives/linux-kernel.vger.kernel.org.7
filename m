@@ -1,314 +1,157 @@
-Return-Path: <linux-kernel+bounces-739563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34564B0C7ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:46:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDA41B0C810
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:51:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B656E543A26
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:46:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C11247A124B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:49:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DDEA2989B4;
-	Mon, 21 Jul 2025 15:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96BCF2E040C;
+	Mon, 21 Jul 2025 15:51:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="I4vImvZt"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="HXoLZVTA"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F551F1522
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 15:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753112759; cv=none; b=ODxDxCmkH46SKEo7Q2QPcm4q1pdKrBe5j4CWjANovAgu0eUUhismk5uMY6BHFT5Rl3S4V39LRYevy/tm++QLc+wBDINTJrCYaD/mEBGDhDq1cJTzovt1470bv6f7+26xiiuuR27TkNweN4+4z69eyl8RPQLJCeG0G5xBqATvh88=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753112759; c=relaxed/simple;
-	bh=F+hDB3CZd3Cqu8uLS4XkAiJaedusYD9tKspEIZXjXcE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eJxV6Op3aHmgwzd+0lRleM59aQNVuOgqWVwKf95ZJ32QOPoB7Ugp+rxekWxA5YXUQ6dtolKla0sFutofpijp639rFKS6OAv1BqEcY3na3VkoZFnvFPkBlCGumYSVaARt7Q899gH005JE4+pWqtWQjFliA6sjulvpkcN+0iyaEQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=I4vImvZt; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-32b595891d2so35041141fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 08:45:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1753112756; x=1753717556; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=olhSj3aCODREUslaNcPPUu8iGAOhwVMYT/IJCTqYMn8=;
-        b=I4vImvZtaS7CeHHQ2EBZWjzvcmWXkZf4630Pk+fJkH5qc9Sqy9dl+F6PmAy79ml4ma
-         uZf/TWhWvR3nw6hziHR3FXRJtEhG7IUvCcn2SM/cpCuF0coBnb3CB/oYAwxrpwkW7U+G
-         XtPeNmonXcZ6qs2k2/cCdp5MaDWmqQTj65eUQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753112756; x=1753717556;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=olhSj3aCODREUslaNcPPUu8iGAOhwVMYT/IJCTqYMn8=;
-        b=S4nVnbDKip4IhDWoCkNl0TvwMTdFxss1qYdol4aPRKx5ile5ykvxXYW7sJDp8bPICc
-         1fGlNDMxa6JkKFnnsUOiN+vaFR4uwZJcxRnQD4+k1gfI0M432M96WVvJkb8FYef9A5uS
-         H7lsY3pCULXgFrMU8Zrfqs49s4qLIn7590vP0fu1Iy6I/zrO2tUJsX1Z6xhYh4+IWOl8
-         gITFLnEn0okj2AwDHpIiGKh62T1DFMvL5dKVk+5yQyBUEjIGl9ENObXMDzO6QWLpP8Vt
-         3peMwFxZQR8NeSgbR5gHTrHbl33H2aLyYxFpn/AbbJo6K26Ulje6+fNjCfWQzaQwv9pT
-         0nzg==
-X-Forwarded-Encrypted: i=1; AJvYcCUwE3I6ygvAHzR/mnuYo4TuWHsrqpXOCQiM8xWoT23GaMvgBblqK9XKTXlWGqUSIZtt2Acchvbkk8rCFZI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4E/v/q4aQyE9T9Xr26dhDMY84zTza36akadRHpld0QYb5tfP3
-	QywRFIhX463Zodc7knMOAJ3K4pwIpagolNQj/mUDV3j95HRlfQRvWFoFDFZzWVKpmECJA00yFQH
-	u+ia+AVTpnu4PTx8xCpIEjbnmPq8TUDmJ9WzS3yU=
-X-Gm-Gg: ASbGnctDYKgPZBrIaHPXUtytSO54Zxq/m402N1ZFzDHFR618sD1A9w0SfQ5JJaCAm/5
-	UOLdaCzTJVk9dtCVQhyVgT8nnmQvgKfEEri/O47kjxEDhBKiI9bdeATmMh7wPXuErIDPtTvU8NK
-	Elf1EplWpHOmqLVcbAja0ZGgu5+YxF+AIeD4RJymy0HpRT0IRpojGg8Fd9PlBeicqMVs5+2z397
-	jpw554=
-X-Google-Smtp-Source: AGHT+IHe+XfTIMCRAPUlFlbIkU/tflsFbW21MdMyfHp/6XCnDfQb6bDuEaT4rRTsszgpW5/nSEEe9gnMe/G5FaXzkrE=
-X-Received: by 2002:a2e:b890:0:b0:32a:8c12:babf with SMTP id
- 38308e7fff4ca-330a7ae414amr30893801fa.2.1753112755706; Mon, 21 Jul 2025
- 08:45:55 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847E62D5C9B;
+	Mon, 21 Jul 2025 15:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753113061; cv=pass; b=u4Ki5nb+OghTpEa9xkSsAH6b+5f2RquAreaRZ9uxQZotWjm9zV2xJ3XVt2WG70i5yAGu8mwHQ27pAvlDqnlpiZKibc96jNn/CUtG9TysI8Ya08un2dftywbKOtu1g8SZOfnYZlESft+qcTgJ9iiMcrWQw0IeAq++IMCCNvQXopw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753113061; c=relaxed/simple;
+	bh=r3dWtS0DfR1Rn/ACuj4nW8IHgBNJ1oWA5UeVc8umEeA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=odumRqzm+M23TovrM4Pg4i5WMvmv9R/hLyB1O2/KMcVspbCU6wlQM4tdElHnLRdovTdvRvarZz6+e7IKLv4q/+cK/yMAY30sgCYXHsHhCWKW66IfGEPzSKE2a7q4nLGvFhtvxPzSwPnvMN8CmYUcg0LJodcUq+lanTwYfXDsIWg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=HXoLZVTA; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
+ARC-Seal: i=1; a=rsa-sha256; t=1753113014; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=KqKKAmYf2zvkxQUXdERjNM5NdmxSKj95ZivuIYjAQSr9NcnUbjeqH05Ig811ifwullI+anb8sSV9MzaD4ZzYbtUlY7h0A+5LSBs1y3UH+iUTGZJGCKcwlCFM7nrNq/P0tX+2z+69DCiPklNMMiNBST/CIVayapHKDCiGs8Fiffs=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753113014; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=87b0yZUM9BV8txVqBiMLUvYqikzqvjOolhiCh3LlqBM=; 
+	b=Q2H3/9gfOTJOJcdaxLmqepir5VYQnWH47L0hqzKP3O1TJkIBbSeneNHAlRpDxCcSQRLXrGRuEdoe8VnbsMEzFszq9d+cfhzRhp1vWIMKAf6YEgiIfri5ugTRsqdI4St0Jf1QdlVNl49WMPPxK5daPg5Bk10NRdX5NNnLAccKFE4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=pigmoral.tech;
+	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
+	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753113014;
+	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Reply-To;
+	bh=87b0yZUM9BV8txVqBiMLUvYqikzqvjOolhiCh3LlqBM=;
+	b=HXoLZVTA9EydJ2ytaU4mDZd8N9ii1xhoRs5KNTQjSmjytAxdI1ETtiEXGLy34/Te
+	/FXA2xSkH/LxMDbqrMp3hKyGhRvpmeyHeGqEvh0Je//HFuesGoYN5xo5TC+JXrUszIt
+	QXOEY78Nwl/Jw8yN5rFK1HiEbPD8Rzxw9BeJnLNY=
+Received: by mx.zohomail.com with SMTPS id 1753113011689418.4639332270798;
+	Mon, 21 Jul 2025 08:50:11 -0700 (PDT)
+From: Junhui Liu <junhui.liu@pigmoral.tech>
+Subject: [PATCH RFC 00/10] riscv: Add initial support for Anlogic DR1V90
+Date: Mon, 21 Jul 2025 23:46:06 +0800
+Message-Id: <20250721-dr1v90-basic-dt-v1-0-5740c5199c47@pigmoral.tech>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <30f8ea8d-79c4-4e5c-b354-51ad8146a61c@acm.org> <20250717194025.3218107-1-salomondush@google.com>
- <CAFdVvOx-xegmdGO8xgwpE3i0BvgXD0C1jKjNWKNjTFuifWmuxg@mail.gmail.com> <CAPE3x15Qxy5+C3_1v6a6YBoz03=NVoJMz-yfc6qih_=_js8=ug@mail.gmail.com>
-In-Reply-To: <CAPE3x15Qxy5+C3_1v6a6YBoz03=NVoJMz-yfc6qih_=_js8=ug@mail.gmail.com>
-From: Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>
-Date: Mon, 21 Jul 2025 09:45:37 -0600
-X-Gm-Features: Ac12FXw5DZe5BWwrJJeGdf__5xPK_A-GGmxWMXE3oIwKFHGDrodRAJm3PDz7znM
-Message-ID: <CAFdVvOw3pGhd2Y+C90jSOWNhq-+JiS1CRaWmHBm=SHBP_cjBSA@mail.gmail.com>
-Subject: Re: [PATCH v2] scsi: mpi3mr: Emit uevent on controller diagnostic fault
-To: Salomon Dushimirimana <salomondush@google.com>
-Cc: bvanassche@acm.org, James.Bottomley@hansenpartnership.com, 
-	kashyap.desai@broadcom.com, linux-kernel@vger.kernel.org, 
-	linux-scsi@vger.kernel.org, martin.petersen@oracle.com, 
-	mpi3mr-linuxdrv.pdl@broadcom.com, sreekanth.reddy@broadcom.com, 
-	sumit.saxena@broadcom.com
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000166636063a725f35"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAL5gfmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDc0MD3ZQiwzJLA92kxOLMZN2UEl1jU6NUy8RU08TkJAsloK6CotS0zAq
+ widFKQW7OSrG1tQD4JAXsZgAAAA==
+X-Change-ID: 20250710-dr1v90-basic-dt-352e9ae5acb8
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, 
+ Samuel Holland <samuel.holland@sifive.com>, 
+ Anup Patel <anup@brainfault.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Palmer Dabbelt <palmer@sifive.com>, Conor Dooley <conor@kernel.org>, 
+ linux-riscv@lists.infradead.org, linux-serial@vger.kernel.org, 
+ Junhui Liu <junhui.liu@pigmoral.tech>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753112991; l=3155;
+ i=junhui.liu@pigmoral.tech; s=20250507; h=from:subject:message-id;
+ bh=r3dWtS0DfR1Rn/ACuj4nW8IHgBNJ1oWA5UeVc8umEeA=;
+ b=ZdozYEXri0BuBkNJKSKCxzXLS6f3dOB74CXec9evRvaicTz9MbnHLk/ezbFEqrk406Ll2ISPJ
+ oAAp5VoBPn8DYB4v1eAYsr83a2u9Y0GmkwWFbCUeg4y4+BfiRA10/T0
+X-Developer-Key: i=junhui.liu@pigmoral.tech; a=ed25519;
+ pk=d3i4H2mg9LUn4SQemoLAjLRQy0nTcyknIv6zgKMwiBA=
+X-ZohoMailClient: External
 
---000000000000166636063a725f35
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+This patch series introduces initial support for the Anlogic DR1V90 SoC
+[1] and the Milianke MLKPAI-FS01 [2] board.
 
-On Fri, Jul 18, 2025 at 5:31=E2=80=AFPM Salomon Dushimirimana
-<salomondush@google.com> wrote:
->
-> When the controller encounters a fatal error event, we want to notify
-> our userspace tools to react to these events and pull the
-> corresponding logs/snapdump from the ioc. There's a list of other
-> drivers doing something similar, such as drivers/scsi/qla2xxx,
-> drivers/scsi/qedf/qedf_dbg.c, etc.
->
-> So the mpi3mr_issue_reset function only supports two types of resets,
-> i.e MPI3_SYSIF_HOST_DIAG_RESET_ACTION_SOFT_RESET and
-> MPI3_SYSIF_HOST_DIAG_RESET_ACTION_DIAG_FAULT for now. From the code,
-> it seems like only diag fault reset generages a snapdump, soft resets
-> do not, hence why we only emit the fatal uevent on diag fault.
-The driver issues diag fault reset when it observes some anomaly at
-the driver level, however, the firmware can fault asynchronously when
-there is a problem detected at the firmware level and snapdumps will
-be created for those too. So just emitting the event only for diag
-fault reset will not help to capture diag data captured for firmware
-faults and we may need to filter only based on reset reason and not
-based on reset type.
-> Thanks,
-> Salomon Dushimirimana
->
-> Salomon Dushimirimana
->
->
-> On Fri, Jul 18, 2025 at 8:43=E2=80=AFAM Sathya Prakash Veerichetty
-> <sathya.prakash@broadcom.com> wrote:
-> >
-> > On Thu, Jul 17, 2025 at 1:40=E2=80=AFPM Salomon Dushimirimana
-> > <salomondush@google.com> wrote:
-> > >
-> > > Introduces a uevent mechanism to notify userspace when the controller
-> > > undergoes a reset due to a diagnostic fault. A new function,
-> > > mpi3mr_fault_event_emit(), is added and called from the reset path. T=
-his
-> > > function filters for a diagnostic fault type
-> > > (MPI3_SYSIF_HOST_DIAG_RESET_ACTION_DIAG_FAULT) and generates a uevent
-> > > containing details about the event:
-> > >
-> > > - DRIVER: mpi3mr in this case
-> > > - HBA_NUM: scsi host id
-> > > - EVENT_TYPE: indicates fatal error
-> > > - RESET_TYPE: type of reset that has occurred
-> > > - RESET_REASON: specific reason for the reset
-> > >
-> > > This will allow userspace tools to subscribe to these events and take
-> > > appropriate action.
-> > What is the reason for userpace tools to know these events and what
-> > user space tools we are talking about here?  Also, on what basis it is
-> > decided only diag fault reset is considered as FATAL.  I would prefer
-> > to understand the actual requirement before ACKing this patch.  If we
-> > need this kind of user space notification then it would be better to
-> > make it generic and let the notification sent for all firmware fault
-> > codes.
-> >
-> > >
-> > > Signed-off-by: Salomon Dushimirimana <salomondush@google.com>
-> > > ---
-> > > Changes in v2:
-> > > - Addressed feedback from Bart regarding use of __free(kfree) and mor=
-e
-> > >
-> > >  drivers/scsi/mpi3mr/mpi3mr_fw.c | 37 +++++++++++++++++++++++++++++++=
-++
-> > >  1 file changed, 37 insertions(+)
-> > >
-> > > diff --git a/drivers/scsi/mpi3mr/mpi3mr_fw.c b/drivers/scsi/mpi3mr/mp=
-i3mr_fw.c
-> > > index 1d7901a8f0e40..a050c4535ad82 100644
-> > > --- a/drivers/scsi/mpi3mr/mpi3mr_fw.c
-> > > +++ b/drivers/scsi/mpi3mr/mpi3mr_fw.c
-> > > @@ -1623,6 +1623,42 @@ static inline void mpi3mr_set_diagsave(struct =
-mpi3mr_ioc *mrioc)
-> > >         writel(ioc_config, &mrioc->sysif_regs->ioc_configuration);
-> > >  }
-> > >
-> > > +/**
-> > > + * mpi3mr_fault_uevent_emit - Emit uevent for a controller diagnosti=
-c fault
-> > > + * @mrioc: Pointer to the mpi3mr_ioc structure for the controller in=
-stance
-> > > + * @reset_type: The type of reset that has occurred
-> > > + * @reset_reason: The specific reason code for the reset
-> > > + *
-> > > + * This function is invoked when the controller undergoes a reset. I=
-t specifically
-> > > + * filters for MPI3_SYSIF_HOST_DIAG_RESET_ACTION_DIAG_FAULT and igno=
-res other
-> > > + * reset types, such as soft resets.
-> > > + */
-> > > +static void mpi3mr_fault_uevent_emit(struct mpi3mr_ioc *mrioc, u16 r=
-eset_type,
-> > > +       u16 reset_reason)
-> > > +{
-> > > +       struct kobj_uevent_env *env __free(kfree);
-> > > +
-> > > +       if (reset_type !=3D MPI3_SYSIF_HOST_DIAG_RESET_ACTION_DIAG_FA=
-ULT)
-> > > +               return;
-> > > +
-> > > +       env =3D kzalloc(sizeof(*env), GFP_KERNEL);
-> > > +       if (!env)
-> > > +               return;
-> > > +
-> > > +       if (add_uevent_var(env, "DRIVER=3D%s", mrioc->driver_name))
-> > > +               return;
-> > > +       if (add_uevent_var(env, "HBA_NUM=3D%u", mrioc->id))
-> > > +               return;
-> > > +       if (add_uevent_var(env, "EVENT_TYPE=3DFATAL_ERROR"))
-> > > +               return;
-> > > +       if (add_uevent_var(env, "RESET_TYPE=3D%s", mpi3mr_reset_type_=
-name(reset_type)))
-> > > +               return;
-> > > +       if (add_uevent_var(env, "RESET_REASON=3D%s", mpi3mr_reset_rc_=
-name(reset_reason)))
-> > > +               return;
-> > > +
-> > > +       kobject_uevent_env(&mrioc->shost->shost_gendev.kobj, KOBJ_CHA=
-NGE, env->envp);
-> > > +}
-> > > +
-> > >  /**
-> > >   * mpi3mr_issue_reset - Issue reset to the controller
-> > >   * @mrioc: Adapter reference
-> > > @@ -1741,6 +1777,7 @@ static int mpi3mr_issue_reset(struct mpi3mr_ioc=
- *mrioc, u16 reset_type,
-> > >             ioc_config);
-> > >         if (retval)
-> > >                 mrioc->unrecoverable =3D 1;
-> > > +       mpi3mr_fault_uevent_emit(mrioc, reset_type, reset_reason);
-> > >         return retval;
-> > >  }
-> > >
-> > > --
-> > > 2.50.0.727.gbf7dc18ff4-goog
-> > >
+The DR1V90 is a RISC-V based FPSoC from Anlogic, featuring a Nuclei
+UX900 [3] core as its processing system (PS) and 94,464 LUTs in the
+programmable logic (PL) part. The Milianke MLKPAI-FS01 board is one of
+the first platforms based on this SoC, with UART1 routed to a Type-C
+interface for console access.
 
---000000000000166636063a725f35
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+Tested upon Milianke MLKPAI-FS01 board based on vendor's OpenSBI and
+U-Boot with log [4]. The log indicates that OpenSBI is running at
+0x3fe00000. Since the region 0x20000000-0x3fffffff is a mirror of
+0x00000000-0x1fffffff, the actual physical base address for OpenSBI is
+0x1fe00000.
 
-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
-v82E+npLwqC8bSHh1m6BJewfpawx72uKM9aFs6SVpLPtN6a5369OCwVeEwkk2FeFU9tZXWBnI4Wu
-d1Q4a3vhOColD6PdTWv74Ez2I3ahCkmpeEQ1YMt61TUH3W8NUJJeYN2xkR6OGsA1AgMBAAGjggHc
-MIIB2DAOBgNVHQ8BAf8EBAMCBaAwgaMGCCsGAQUFBwEBBIGWMIGTME4GCCsGAQUFBzAChkJodHRw
-Oi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAy
-MC5jcnQwQQYIKwYBBQUHMAGGNWh0dHA6Ly9vY3NwLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJz
-b25hbHNpZ24yY2EyMDIwME0GA1UdIARGMEQwQgYKKwYBBAGgMgEoCjA0MDIGCCsGAQUFBwIBFiZo
-dHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAJBgNVHRMEAjAAMEkGA1UdHwRC
-MEAwPqA8oDqGOGh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJj
-YTIwMjAuY3JsMCYGA1UdEQQfMB2BG3NhdGh5YS5wcmFrYXNoQGJyb2FkY29tLmNvbTATBgNVHSUE
-DDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQU
-VyBc/F5XGkYNCP9Rb96mru8lU4AwDQYJKoZIhvcNAQELBQADggEBACiysbqj0ggjcc9uzOpBkt1Q
-nGtvHhd9pbNmshJRUoNL11pQEzupSsUkDoAa6hPrOaJVobIO+yC84D4GXQc13Jk0QZQhRJJRYLwk
-vdq704JPh4ULIwofTWqwsiZ1OvINzX9h9KEw/+h+Mc3YUCO7tvKBGLJTUaUhrjxyjLQdEK1Xp/8B
-kYd5quZssxYPJ3nl37Moy/U9ZM2F0Ivv4U3wyP5y5cdmBUBAGOd94rH60fVDVogEo5F9gXrZhT/4
-jKzCG3LclOOzLinCkK2J5GYngIUHSmnqk909QPG6jkx5RJWwkpTzm+AAVbJ9a+1F/8iR3FiDddEK
-8wQJuWG84jqd/9wxggJgMIICXAIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxT
-aWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAy
-MDIwAgx2rp2oPFt1hdtt8l8wDQYJYIZIAWUDBAIBBQCggccwLwYJKoZIhvcNAQkEMSIEIBtoxiIA
-h63hxKyHmJQssK4VVoiaHhr78X/2DnTV642oMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJ
-KoZIhvcNAQkFMQ8XDTI1MDcyMTE1NDU1NlowXAYJKoZIhvcNAQkPMU8wTTALBglghkgBZQMEASow
-CwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQcwCwYJYIZI
-AWUDBAIBMA0GCSqGSIb3DQEBAQUABIIBAFc4srus64S7zRcEhjno3ItTIr10O+NyLM9G+LfXtCMr
-RGzu7ILkjPiR2kkowwEb1cMreMKYu43J7lYFVKiaxrRoeo+hdAY1hBpa3+T64oArVywbXxfQ6ysZ
-egOKwUze81T52Mo0ZNaqORrtrDz4ig6mT4588eJx9t2hJyt6JeFhjvWQUouS2yM8KceewBRWhQ7H
-DF5tcLwxssUVXABSScE84AqzJYlJjTbRmgW22wttq9Jg9fcy0pUnxIsTxpfPCvUYJls5tVDRCecx
-hEUSSLAh6/Em9GHaKy8zOsabGRJOFMquRAyK8BnFgO8/6w2MFTEQDSzVrxWHlmzCPULo2Io=
---000000000000166636063a725f35--
+Notice: A "no4lvl" bootarg is currently required for successful boot on
+the DR1V90 platform, since the SoC hangs if the kernel attempts to use
+unsupported 4-level or 5-level paging modes. I plan to submit a
+follow-up patch to allow the kernel to query the supported MMU mode
+directly from the "mmu-type" property in the device tree, to avoid
+probing unsupported SATP modes.
+
+This patch series is marked as RFC because basic drivers such as clock,
+reset and pinctrl are not yet supported. These essential drivers will be
+submitted in later patch series.
+
+Link: https://www.anlogic.com/product/fpga/saldragon/dr1 [1]
+Link: https://www.milianke.com/product-item-104.html [2]
+Link: https://nucleisys.com/product/900.php [3]
+Link: https://gist.github.com/pigmoral/7a61297593386dadbf357837d93adc95 [4]
+Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
+---
+Junhui Liu (10):
+      dt-bindings: vendor-prefixes: Add Anlogic, Milianke and Nuclei
+      dt-bindings: riscv: Add Nuclei UX900 compatibles
+      dt-bindings: riscv: Add Anlogic DR1V90
+      dt-bindings: timer: Add Anlogic DR1V90 CLINT
+      dt-bindings: interrupt-controller: Add Anlogic DR1V90 PLIC
+      dt-bindings: serial: snps-dw-apb-uart: Add Anlogic DR1V90 uart
+      riscv: Add Anlogic SoC famly Kconfig support
+      riscv: dts: Add initial Anlogic DR1V90 SoC device tree
+      riscv: dts: anlogic: Add Milianke MLKPAI FS01 board
+      riscv: defconfig: Enable Anlogic SoC
+
+ .../interrupt-controller/sifive,plic-1.0.0.yaml    |  1 +
+ .../devicetree/bindings/riscv/anlogic.yaml         | 27 +++++++
+ Documentation/devicetree/bindings/riscv/cpus.yaml  |  1 +
+ .../bindings/serial/snps-dw-apb-uart.yaml          |  1 +
+ .../devicetree/bindings/timer/sifive,clint.yaml    |  1 +
+ .../devicetree/bindings/vendor-prefixes.yaml       |  6 ++
+ arch/riscv/Kconfig.socs                            |  5 ++
+ arch/riscv/boot/dts/Makefile                       |  1 +
+ arch/riscv/boot/dts/anlogic/Makefile               |  2 +
+ arch/riscv/boot/dts/anlogic/dr1v90-mlkpai-fs01.dts | 28 +++++++
+ arch/riscv/boot/dts/anlogic/dr1v90.dtsi            | 86 ++++++++++++++++++++++
+ arch/riscv/configs/defconfig                       |  1 +
+ 12 files changed, 160 insertions(+)
+---
+base-commit: 89be9a83ccf1f88522317ce02f854f30d6115c41
+change-id: 20250710-dr1v90-basic-dt-352e9ae5acb8
+
+Best regards,
+-- 
+Junhui Liu <junhui.liu@pigmoral.tech>
+
 
