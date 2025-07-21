@@ -1,108 +1,93 @@
-Return-Path: <linux-kernel+bounces-738698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2479AB0BC0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:40:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 249C0B0BC29
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:57:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 152E47A6C17
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 05:39:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DCCB7AB49F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 05:55:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8F1217F26;
-	Mon, 21 Jul 2025 05:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GQPXm2On"
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BBF419CC28;
-	Mon, 21 Jul 2025 05:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD581F3BB5;
+	Mon, 21 Jul 2025 05:56:56 +0000 (UTC)
+Received: from invmail3.skhynix.com (exvmail3.hynix.com [166.125.252.90])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78503D6D
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 05:56:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753076432; cv=none; b=cwUCCXUArmh+6Lma0+2LtUP6L2ALIShbWYssYkw50RLDZvpU7jTi7l/nifEU19xaoj3fomU7N7I2yb3ytc5fvU5cpcR6tiUqJ1wLiL24chhfbAV0SchyDmax8zbu3v+ofnqoHBDtssXMYXlIe1BdtSBuoKmZizTbYz4zs68djrM=
+	t=1753077415; cv=none; b=WUxt7z3KCGN9XOM8pHraCZsCSkRKVEixeaev18K+i1WtXKRMQ/99NoGaPKQbRx5+AIR78Br9D+ZSOiJzJxrEZwLK1X8XCRUJ7yV0q9Kd19RNTZJLhCdVz2Ztpu1yliHpsi2BXakWCtGxLTrxLbzOIxDOjyF/CCetPT++qvpismM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753076432; c=relaxed/simple;
-	bh=iX+q2jNSRCnOrj9thY+MottftiVMIhrYnrO3+IHfSHA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gNaT4JSO42jx+w3O+WNLGaWPqTpFafINT2+a1P8t3DwsTKPZaBCAba350lATQantxot84MYEoLLn9SbXikfGz3v9YrTz0fUnCUiJs124vUKpuS49lfU2X6l0Xw4IS5AfTE/2ycWpUHxKvJBGOU75FsXxZt/9IvIjXpSC5i+8W98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GQPXm2On; arc=none smtp.client-ip=209.85.161.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-615e56591aeso114362eaf.2;
-        Sun, 20 Jul 2025 22:40:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753076430; x=1753681230; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=iX+q2jNSRCnOrj9thY+MottftiVMIhrYnrO3+IHfSHA=;
-        b=GQPXm2OnzAcpotN/UVhP6f7u6blt4fZv5GROQPF/knKIw+dunYpzyLoM5DXJnTEOqZ
-         osD0o1nXhSB/zbKjCwBkshN4dYn+i9VSD9hr3ziW7nKAf649ITGITGk0HX/Fj2vil9A3
-         U117pVCT6Ma5JSQ9/+/mFFjVDPr9uIluVeFU+0wpCHYwrkoJnaAtXCjBsPj62D6psQ2K
-         /gxUFw9JKQZTZTSJPuFqmnKJcZlgUev3IptSHUuEn7RKFeU+9DEuhrGShl7m6qo8Fyrv
-         lRIKa+X2bdxnLYTBcIPg4lp39vQ8amWiwr3DzrNQGPWOVUoesex9O1Ddsa7Exsg7Y3vU
-         ZNxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753076430; x=1753681230;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iX+q2jNSRCnOrj9thY+MottftiVMIhrYnrO3+IHfSHA=;
-        b=ZNf5DWG7wP8Q9fCIAWjjqSpTISZLWpWSncAABRGmlKwhBUHhv3dPBxAY4bNlHDhLZs
-         AdB8kqoMNdcHYoyBMNh3QpUe/yiMmQHRuipLcDIY9C0wVeDdy8Fs5oeRy80GjQxUFqSV
-         BCD83HUqqACRSMvBCqIbZE8HrorBiSuqK7odZDQai6k7QA/0nKhc0gPe6INnDmuAnFJO
-         26L4f3QEFgXLFiflSQchFqMU2kFO7ifTZPwMLT0jLO05HljgSDYfEVqR8VH6zyOvq/jT
-         IC+sIKQDi28noQcq9zpdnO0lUQaBcuuTjY//NuBUn92xjTGBZbFcUxOyQ6EYeD0QjuAO
-         blYA==
-X-Forwarded-Encrypted: i=1; AJvYcCVampGQJURYrMB1tp3FuD6g2qcbmIPOXFoIq9MZHYq9oxRgyH9BLs+xCYGCPJHUJro1xyE+m15fPfCAGP+T1daUdw==@vger.kernel.org, AJvYcCWMd8zPQiQYuVwEVZqaPJmmHgj4cKX7g93h4UqGjqtryR7ORAc1pC+R3dr7rJqBFenqJCfiRW/BZPLJ3+c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwP9Q0WcbjS1bDHdclktCHz6duLTDcffhZRCK+ujswgYmVlNnxZ
-	mPNkUodIr5cWeJRZ04AsmXui5kXoh/SPm/mUuyeXSKulJ8/R0ROAoWe10T49OYscWLG3FckIrWG
-	0v/xxkw9v8vTVwHb44wEFbLG/x/04TsE=
-X-Gm-Gg: ASbGncthNkszUfuNvYLrLz9MUCgDVKfZFdVhjNPpDjDgkNmwMef1RJbFpdF3AwEl6xA
-	TNNvJzpr39HDwUiWqlNuMS37ezOTgL+Vq8Oh8/NNxle3E3ifsjxvpfjnflba3j0Dvhh2SxgSlI3
-	5VBn9yjToh3d50/ZYxLoAfv1R9h+GArx7hlgua9x2kLLRXGa1ltKxXLtKCxn08ivstg1Eb/Pm9Q
-	wJ1voNiAW1O1GvpN2AJbQxCU2ojH8l7vdbuHndO
-X-Google-Smtp-Source: AGHT+IGVDW5DwgDPsxtNTio877e0JtvRpQ41q5Aw4TFpzMaMt/rN9gSbqjnLe52enOAAAhcl6uV1/ExSkCOJ9+m5z0k=
-X-Received: by 2002:a05:6870:f60f:b0:2ff:96c6:f712 with SMTP id
- 586e51a60fabf-2ffaf53f5d7mr15591342fac.26.1753076429897; Sun, 20 Jul 2025
- 22:40:29 -0700 (PDT)
+	s=arc-20240116; t=1753077415; c=relaxed/simple;
+	bh=jJYLsxdyvXzA4IcG7R70vGi2itW4jRnXIxJkt9r9GHE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Mi6a63+g/zTv0X4mukGnsK/vhJNMJLR7o3KnavrA1a+aj7dy6PcRWmfoXfLBSk6FeptdbM0JhbObVEtKvtpVonK1qzkVO6SMllAEUfrm2I2Oi2jc33JDP5NgKUIQ5tKtiBtsr4kirbIB9L9NdE9JwOCWGzajvysfOmedRmlGhfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc59-057ff7000000aab6-de-687dd3149380
+From: "yohan.joung" <yohan.joung@sk.com>
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	pilhyun.kim@sk.com,
+	"yohan.joung" <yohan.joung@sk.com>
+Subject: [PATCH] f2fs: zone: wait for inflight dio completion, excluding pinned files
+Date: Mon, 21 Jul 2025 14:41:34 +0900
+Message-ID: <20250721054135.1919-1-yohan.joung@sk.com>
+X-Mailer: git-send-email 2.49.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250720085905.192652-1-suchitkarunakaran@gmail.com> <aH20-KEurjw5qJq0@google.com>
-In-Reply-To: <aH20-KEurjw5qJq0@google.com>
-From: Suchit K <suchitkarunakaran@gmail.com>
-Date: Mon, 21 Jul 2025 11:10:18 +0530
-X-Gm-Features: Ac12FXwqf-5IcxmRRFhweSopLncsfbo1HAHsMQAomXOzJCIeeRuDKPaBaCleM8I
-Message-ID: <CAO9wTFhdgHEFQDVt2715qP6-6bsE9+AeAAPYe4C8N1mqpy7g=Q@mail.gmail.com>
-Subject: Re: [PATCH] perf tests: Fix lib path detection for non-x86 architectures
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org, 
-	irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
-	linux-perf-users@vger.kernel.org, sesse@google.com, charlie@rivosinc.com, 
-	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev, 
-	skhan@linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprALMWRmVeSWpSXmKPExsXC9ZZnoa7o5doMg18bOS1OTz3LZPFk/Sxm
+	i0uL3C0u75rD5sDisWlVJ5vH7gWfmTw+b5ILYI7isklJzcksSy3St0vgyvh67idrwS/Wimtf
+	u1kaGL+ydDFyckgImEgs+XOBEcY+sX0XmM0moCHxp7eXGcQWEdCUONI5k72LkYuDWaCNUaL9
+	aBMrSEJYIFRiw8eVYA0sAqoSjzp62UBsXgEziWlbm5ghhmpK7PhyngkiLihxcuYTsMXMAvIS
+	zVtnQ9U8ZJVoWMgHYUtKHFxxg2UCI+8sJC2zkLQsYGRaxSiSmVeWm5iZY6xXnJ1RmZdZoZec
+	n7uJERhOy2r/RO5g/HYh+BCjAAejEg9vAUtthhBrYllxZe4hRgkOZiURXo/jVRlCvCmJlVWp
+	RfnxRaU5qcWHGKU5WJTEeY2+lacICaQnlqRmp6YWpBbBZJk4OKUaGF0EpXZ+u6p7/HZwT9bB
+	JO+Dh3eLua5iOX1i8/KLlZo63rfzC8qVnGZc5PI1Xv31zI4f3gmFdacUZ+/4+7CSif3H4o0L
+	DB8tCGg/Mn/vbTlXJ+msTx6aIr3JhYV+bNo6en8ly9cp8h17Ee88M+Kgw4M/UvIPrSO7HlnJ
+	2P24IZ/Plpdi2fM8XomlOCPRUIu5qDgRAKg9BHUjAgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrFJMWRmVeSWpSXmKPExsXCNUNljq7I5doMg++zLSxOTz3LZPFk/Sxm
+	i0uL3C0u75rDZjFh7lUmi/db7zE6sHlsWtXJ5rF7wWcmj2+3PTw+b5ILYInisklJzcksSy3S
+	t0vgyvh67idrwS/Wimtfu1kaGL+ydDFyckgImEic2L6LEcRmE9CQ+NPbywxiiwhoShzpnMne
+	xcjFwSzQxijRfrSJFSQhLBAqseHjSrAGFgFViUcdvWwgNq+AmcS0rU3MEEM1JXZ8Oc8EEReU
+	ODnzCdgyZgF5ieats5knMHLNQpKahSS1gJFpFaNIZl5ZbmJmjplecXZGZV5mhV5yfu4mRmCI
+	LKv9M2kH47fL7ocYBTgYlXh4C1hqM4RYE8uKK3MPMUpwMCuJ8Hocr8oQ4k1JrKxKLcqPLyrN
+	SS0+xCjNwaIkzusVnpogJJCeWJKanZpakFoEk2Xi4JRqYFwg+ECLSXziDv13H6unGb1waZtl
+	mZiX+GTlkbbziovWm2Un9h1s1FrptMCo+lXRgU87N866EvrpYZTFp1n5zG912daceLxc/8Ok
+	W68OFQfsuDnvjFJLrJ7UA1kWQ8nOK1O0tp85YrBz9X6WHdVbeFiE35soqPCkCH9dX/Tlctn+
+	BX5sbso3WVYrsRRnJBpqMRcVJwIAtLdvag0CAAA=
+X-CFilter-Loop: Reflected
 
->
-> A dummy question: Does all other architectures have lib64 vs lib
-> separation?
->
+pinfile is excluded as it operates with direct I/O
 
-I had assumed there would always be symlinks, but thanks for pointing
-that out. After your question, I checked various architectures like
-x86, ARM, SPARC, s390x, etc and only x86 had both lib and lib64 (with
-symlinks). On the others, even for 64-bit systems, only a lib
-directory existed. I also realized this behavior seems to depend on
-the distro. For example, multiarch distros like Debian use separate
-directories for lib32 and lib64, and a lib symlink pointing to
-/usr/lib. On the other hand, Arch Linux has both lib and lib64 as
-symlinks to /usr/lib. Would it be reasonable if we create a symlink
-named lib64 for non-x86 architectures? I'd appreciate your thoughts on
-this. Thanks!
+Signed-off-by: yohan.joung <yohan.joung@sk.com>
+---
+ fs/f2fs/file.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 4039ccb5022c..cac8c9650a7a 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -4844,7 +4844,8 @@ static ssize_t f2fs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 
+ 	/* In LFS mode, if there is inflight dio, wait for its completion */
+ 	if (f2fs_lfs_mode(F2FS_I_SB(inode)) &&
+-	    get_pages(F2FS_I_SB(inode), F2FS_DIO_WRITE))
++	    get_pages(F2FS_I_SB(inode), F2FS_DIO_WRITE) &&
++		!f2fs_is_pinned_file(inode))
+ 		inode_dio_wait(inode);
+ 
+ 	if (f2fs_should_use_dio(inode, iocb, to)) {
+-- 
+2.33.0
+
 
