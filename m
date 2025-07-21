@@ -1,199 +1,231 @@
-Return-Path: <linux-kernel+bounces-738516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51019B0B97D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 02:11:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D49A0B0B981
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 02:20:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E98C7A8AD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 00:10:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 634641896CE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 00:20:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C05B946F;
-	Mon, 21 Jul 2025 00:11:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 182F435953;
+	Mon, 21 Jul 2025 00:20:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mi4uuqKM"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2089.outbound.protection.outlook.com [40.107.237.89])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GiH0JmsA"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B75163;
-	Mon, 21 Jul 2025 00:11:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.89
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753056692; cv=fail; b=s6qy/Y0vASr4v/74L9K24fsSik7sU3IGeeHaNLV+CXtIfX60twvgp5Nhp7plL5flun001NOc3nRCZczzBYew8GA9UcrrQ1BE7EnvD4YB4nR6CMvpgm+wFcuh8uAHwatvfj6vZc3BoTFsznhHRzIyzylb9PTLGPxNJYEAuVBE21k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753056692; c=relaxed/simple;
-	bh=QH8v0SEzqSDK6asJVfjZYod2PUpgz70K7z/wsHvZP9Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=i5ExiTzFdn8WIPQ5nMga/tnza4WjxNeaGCGyHOCb8K+LEIrLx/UH88kloaNdjU7sHQQmvBoH5ujvlSxd+Xbqm5I5ED4NF2sUgLRuzsrZrEUqcAnctWRHbbeSV7BUKqcHSCdxHj/TIYPczd5YGzlbiQO/lrzJeyXsW7762GAYgnc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mi4uuqKM; arc=fail smtp.client-ip=40.107.237.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=e8JuE8Se7BsJmEinTr6ZfxqlU6oo/c0+/uI5POYfJbAMzSCzuCHmFRrW+PnSK54k+N7ztnR2zAjaYXVsSBV8W2dlWvOkq+rHH/9dFLs+LXLAFFElZoCtgUp7Z3Cx83jgqN2FGVjkh+RWGSO5FQ40+vO/qcbA7OHQWVC6xRnj8Kc0YWxNRVrgqIgITLs1PSQ9YyNBzgQz0Gi3uZ9FtRPoF0ss1I5eg6R0ht9in7MsnnZAL6SDJg8nJzYg0i9lmm1LVDicb//9LKGj04KVl3zXLuV4pRtdu1OUVMMAFAZdf7YKWa0Jh4KGuy3879dZ8fV8kF/sL95o82Mkz38/xTZItw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=plwQglDZFwQGXvph8gEHsQrTPjvEBq42Afbc7x39MBY=;
- b=vaKcJW+PE9XaHKf3+qMcvnHCsI11gSfbou0cHKbvER/kNMLP+Zx992JcUp5E8M7f/GbeFPejwa2gW5+N1PslcoY1SBgC3JApGp93rdGxrC6IIssZHSWjl/n8uCkfvq+w+BhzdIA/R/ToOJDiCeCt+WgNNLNw1cFgFfGkWmpSVcyRRlhRtrPB3vzw2WrMhTiAmxKl5E5bk4YkGgPjxvGbn+PbxLrTmle9GwTu7CgfA45zNWDJTtLov01pEJTPINxLe1nXT6bu3EhJkmP0woCKUK7UyjNPV2By7Q47vAr9aoycAGPq4IGEMSkpmt39ERvFLsmM+kr89KXM4Lm+PQqRtQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=plwQglDZFwQGXvph8gEHsQrTPjvEBq42Afbc7x39MBY=;
- b=mi4uuqKMAPQ8p3nXP0ftETdKKLX6PQ6ADN7LF8aL0xFnniG93L1w/w9AQcMjr0z1s1H9tB11uSa6w6aeTbp54YSfUkcxKmN5r1KHKaNh+CkInCG+ODP8flzzvwc/RtyKkCCOgAOLILeUFcK+72ZvhBdCvIcj2H9uNOYaFTQv82WL+urpKlDVGepSezM78JvrPeN/ztH68OmnnXVl8r8NmDrJfWMhm+voOASfnIaVqxabuD8RUlkkvGioaaiAEdkjCdNV9CPyHew85E5wnRaGKn2nZJZIbZuVHws3LFY3xNI1mOLowQTbT7kvxXHdmjcxNzownKu9sL2rq7LJwvTMHg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
- CH3PR12MB8403.namprd12.prod.outlook.com (2603:10b6:610:133::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Mon, 21 Jul
- 2025 00:11:27 +0000
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe%3]) with mapi id 15.20.8943.029; Mon, 21 Jul 2025
- 00:11:26 +0000
-Date: Mon, 21 Jul 2025 10:11:20 +1000
-From: Alistair Popple <apopple@nvidia.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Matthew Wilcox <willy@infradead.org>, 
-	Yonatan Maman <ymaman@nvidia.com>, =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Leon Romanovsky <leon@kernel.org>, Lyude Paul <lyude@redhat.com>, 
-	Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Ben Skeggs <bskeggs@nvidia.com>, 
-	Michael Guralnik <michaelgur@nvidia.com>, Or Har-Toov <ohartoov@nvidia.com>, 
-	Daisuke Matsuda <dskmtsd@gmail.com>, Shay Drory <shayd@nvidia.com>, linux-mm@kvack.org, 
-	linux-rdma@vger.kernel.org, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Gal Shalom <GalShalom@nvidia.com>
-Subject: Re: [PATCH v2 1/5] mm/hmm: HMM API to enable P2P DMA for device
- private pages
-Message-ID: <zuhyma5kafacf7zwszgww3ghc5dscyvuwj7csvmiqogbppavtd@z4q6ux5w7fao>
-References: <20250718115112.3881129-1-ymaman@nvidia.com>
- <20250718115112.3881129-2-ymaman@nvidia.com>
- <aHpXXKTaqp8FUhmq@casper.infradead.org>
- <20250718144442.GG2206214@ziepe.ca>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250718144442.GG2206214@ziepe.ca>
-X-ClientProxiedBy: ME2PR01CA0083.ausprd01.prod.outlook.com
- (2603:10c6:201:2d::23) To DS0PR12MB7726.namprd12.prod.outlook.com
- (2603:10b6:8:130::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B983C30;
+	Mon, 21 Jul 2025 00:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753057207; cv=none; b=TyYuo/UiNTfrgY4UP5ZD2j28MDYdC7efOFWzuDqb7gS9i2sGe8yxrfYxYcSKZMERE0lHqIjYNL0ZoR10dL5z0ZQSk1fV5w7LZ0ZFIVrzOq1yC12UtRNn1LyTAk6v6RfuvImRaaEBxYUNvsSHoXaXSMVVczN8aMF5vLtYFO/U/LI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753057207; c=relaxed/simple;
+	bh=Sy4W2D1joFdCNKL9SjsHN96JgZ2zUzGxjidSLUlrEas=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WSHEgNhE4rCb69TE23AU7iKAKr0/0dMwPlQdzNSTOnnWoIeIenQXOP8LRVKwnWdhrNUu/UBvNZzLswRD3wMDiWs4ruplsdun3zUtyluZT4bEJINKw3zwBNqpPo8CPlnj+bR6bikKdA3jJdK3+2zyref5EUVLQM7NMrPpLMhQGmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GiH0JmsA; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6facacf521eso35192246d6.3;
+        Sun, 20 Jul 2025 17:20:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753057204; x=1753662004; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h4uxtFN/g02OUd8QS+EKIJNHOPRScDGOSxVQctcJt7M=;
+        b=GiH0JmsA3Ftm2vreS+UuZJpnr8hYM4aWQCbM6TJPLnd/J8xOJhtycMsxW3d7jR5E6W
+         JIi1Merfw+szdzaEcVfb7xRPcL79s5Hml/4l4rHI3O0+xV4sDFAI3UAtlFjUl2xNBs3x
+         l3p2REThcSat/4VfdFnY6DXqbin+HStUIOOvYgSBQENa+Xj1JKnJVmMUPLjb+tXN57Sp
+         XFTpZvZDe0HIUvDcqH/l085sanpUDhD0N2qanZQEH+LowrB789albmMW+YLsYRRvoVxx
+         JkgQRJt9EnQRW700LepfjD/8HXGXa6akb69Zvc2kDuGiqRfet9ZbV1rVYrOSVQ4pOcSv
+         43qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753057204; x=1753662004;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h4uxtFN/g02OUd8QS+EKIJNHOPRScDGOSxVQctcJt7M=;
+        b=P2vv5fVJq5Cj+/rj+JogkmjDtndBHWUk4BJIX26UgrNRXKSsO7/ArcAwpwKfjtna6m
+         aOUkA7UtHNDxIFk0FxOlkVvCvMD0+pGG2bwNx3gtrCEpKw3LobhUmqJE3Dr23dHjTGVc
+         H2+xtJyOhNdoILIQNaRn0h78PQoMKVfz8Mip35+pwdZTi4PsM8qDHqoPbib2LoalOPb9
+         j6jrIr1eKabFg0dRgokXu+iVOVssHipRBgv3LiImZZ7hXe12C6ZCApe6uzTkTq+fED4X
+         Jidf0gKeIwYj+kOcKqEvlmLgjskZDsV5xnw6XgidQup3P67K3S0ryeqhs8USN2rkmE6G
+         u9Jg==
+X-Forwarded-Encrypted: i=1; AJvYcCUZFMc17EaVjT9oop5HtpwkCLG5LuGT46LgoAa6USggHaXhpsn6G0U5EyM/bG+IzXbeZFCUs60q9chnxNqy@vger.kernel.org, AJvYcCUnIKc3hUTTlp7gPB003Hx9FvyFbo8iR6/h2j97Dfbo/CvFgv9jcmDsnrCf2Pz25M7KHF5lmuGgDALy@vger.kernel.org
+X-Gm-Message-State: AOJu0YxD/8Bdl3B6UATwT2Cn7YkzJpWYrNt+fDy+MGmFG1tme9YkoU5K
+	d2tuZuRBVcJZIENgEHY/zA2ihfM4xq+cxJKghQRGcDxbW4dkRQheBVQjSQ92qryakFNEtVcu3ei
+	9q3XtDuR2AxvPsSwoK/XXThVwu4lOeyEmsV1o
+X-Gm-Gg: ASbGncspbrPW/8MYGvkkl52BzFKKA9iHdimTJ/AQZY8trNUIOV3b4k5Yu643ddETBuu
+	5dEVdowHCRL8bS9DdVk+W9mXRez3P6tWG3ljc80RRqu95UJzYW/o19Vx+HpSVgR1/7u5wNEhvwZ
+	0ktELzbGS+cVHgBBHbqNThAJIvW2IY62UNRfb0lPPYX2a+AbP4LUToXxCRXmOMl9Ouk9cPv2Gt5
+	uyf7g==
+X-Google-Smtp-Source: AGHT+IFn9uzqm/marhuf9II1iNT1qdWq1pOhL/1LHYsteK69aMBRNzBkMlDRf31MHjqdlS2Tem+7Zm4f63g8nJ9XP/c=
+X-Received: by 2002:a05:6214:ca2:b0:6fa:c31a:af20 with SMTP id
+ 6a1803df08f44-705071c1e69mr250739726d6.5.1753057204481; Sun, 20 Jul 2025
+ 17:20:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|CH3PR12MB8403:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7ff38381-0032-4700-4b45-08ddc7eb225d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?/WM2Sjy5Iaugzv9Xhln1e7kBrTPRt548lzsq3+OwEOse4tuLvNb8MUW47duV?=
- =?us-ascii?Q?QNb/i9obcy/+jFEWp8lGB0BNsXdcafAPCuchUbXg7jHnQ12T7lgP/i6tAh5F?=
- =?us-ascii?Q?BsgA6JgI4YChjZe+pHCbCH+9KZLH6Si9uSMhBON8ppC/lTIia/VM9T2Fj3cd?=
- =?us-ascii?Q?73aNwCGnRQjKwnS5lK+GMBwhfqkdYLe0zW2eS6XGiRWtnQz15oD6OugnYpe0?=
- =?us-ascii?Q?hk3okqh8eS5FlOT1snPAOnguG8AXoXv6dB9MnafiRvjHgE3M/ZknFDnlqR1N?=
- =?us-ascii?Q?YAcjTqgrijhly52npS+Q8lL8GGFnricV8gZZDyJ6Tfz5dtOLWovPGctq3Rue?=
- =?us-ascii?Q?lp0GwQgNj2sGmBvu5tAk3uEIQBLwnwYjpVMuLM19l4udBDQPn7G6rj4tPieb?=
- =?us-ascii?Q?MA9KgBbgeEKH71KVMuHa9WKBHL0k1M7F4+AqjVnF+GVa6ybtLpzHbPm10e4q?=
- =?us-ascii?Q?9G7obV0wDkIbGTm5pByfIzEHpp6IWKCg4uuZaGeLR11+JA4Y3vzL6hl/84wJ?=
- =?us-ascii?Q?1ckASMNt3A+VRA4OTNpb1Q1kD1sd6VLLtPPbZZGuhYMfEauzciSKDwwuOg72?=
- =?us-ascii?Q?4WgElLLLdXYSBzH+bCk41CJJanT3AnBTqdyBZ+7O+DSWy0Nx4oaTd3RpYqB4?=
- =?us-ascii?Q?H3I5QsyrZyuPEmL/OaPzq4RlU44xawxdy0z0cQufqtXLnB3OAZPQFN506uZ+?=
- =?us-ascii?Q?jheN7HzN/GZ1pLdLLlRUDiaKUM2DDYi4+n73yUGVfZgYQNF/XZ1NYTb6vcto?=
- =?us-ascii?Q?zy/k5y2Csau10ngGeEWuQxFQZGEQqP/VmeSj9O8UXc5TK2NgSY03wGI3rwci?=
- =?us-ascii?Q?+GzlI1SJD0R+2oGmynQaiVXOJNVq/o5zHJjN6rF7MeMAcREEoKxUeKLYefZp?=
- =?us-ascii?Q?Jj9Q4mkiQ/comFdkh51CeEJEJoZZq9C7rQTDG04il3STTDuhhHuyHbpDP3qg?=
- =?us-ascii?Q?WBZaaUrEypor7OZReqq/aK3qgF0bgpQ3UJHfhhPDSsZ7TRUO0ROiU4L41byJ?=
- =?us-ascii?Q?6nhqIUNA8h71RL+kf/IKUe03ikoDBQHXRqJ1U/GKUavUOGVndVkeuYJseuZR?=
- =?us-ascii?Q?BFHWrA69lghn4gxAkC68nkSe3CEKmA2qcQ33PP1kDTbZfID6H9RUMrknn+Rc?=
- =?us-ascii?Q?fMzFBSivOTuupkbwjk+vWzTxqO8n6TdjM2mep8SwMfkEhEGXJHHvd71aV5qd?=
- =?us-ascii?Q?fzq7t56zczBlApMSZS7EPnolaYrrOoOQRNjmz2DZk7z6CeEMEnDjYfYKsyYJ?=
- =?us-ascii?Q?R7lNX2DRvTX/AADF4Hgole3RHbfNw+J6NUhnACG9rWIf9flwHjK1d6txvSxS?=
- =?us-ascii?Q?DACf2wimNjYlBBc+APnQ8pTSQgKngTxrke/SZDl4VL39JFafuHhJu7JL09GH?=
- =?us-ascii?Q?/uMpCFIsGGw/lK/+B+4lHgEPjql5PXxuFoCQHM6C+UP1eVXROnHOwY6E/IfA?=
- =?us-ascii?Q?5ob8vbcT+r8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?hHJXgkEltv5OVxBUeLa1+4qmX2LXOerWfsvrtML1Gj/CIyE8KvDwB3h7SB17?=
- =?us-ascii?Q?bh5X5iB6nbcM+EhB6c1fB8YRo3VanwIGFUM060p1e7BqJBlzHxwmv9y/8bLv?=
- =?us-ascii?Q?xPetYHn9VgdQsTAaleK6KIaHrA2sx+tDXorkoNYFOUSidocMHTquxG+PFnKf?=
- =?us-ascii?Q?WUKC9wL727v4LtxE54sCPrZ/sjR97JjyVo0pAEWgSRGrvvqFi1ULQwUqJo6x?=
- =?us-ascii?Q?ooNtxekojdAnkvtnyGZ0bE2XWxRmpqDjL4RIf8+pksgpxhvv0DCunl2JTxsL?=
- =?us-ascii?Q?sSaIIxCNJT38BbQzsVZRYN7AKdByIA5fpUSNInEronXNO/epmYdA8rJlqKkS?=
- =?us-ascii?Q?1tihDk1QOY2+orDOwFPtYB4cl+NEMefc+dsTGm6pn6/NZ/80DQmZKB3hmb0u?=
- =?us-ascii?Q?0Sf+Vl2nctrEoV6Gv0PGKuUIQpNVYVlOdQa+XweOqUorZr83kZz0rlpeqO/G?=
- =?us-ascii?Q?XQT4YwiWwLaeyw6T8Fan97mCQlYVZl+OzaIpfDgN4pRlEJufyQQZrqbQT5GU?=
- =?us-ascii?Q?oayQbRopuNRKHd0BoCnlrgbGNPzOvw8p7M0sXw5xAWxHTkPnBGjVn983LdWA?=
- =?us-ascii?Q?6sxFYKvxvMiG52V+h2mFstDZvaZm39BgxbTdqDSD8KJJEnkBE+rAItb7tCMx?=
- =?us-ascii?Q?Fnc3zskdejwnR6AVKxJ2OpnmyQyLKhTyvi3BQkmEDt+Sfybike/XLonxCqeJ?=
- =?us-ascii?Q?H6kPaL19RK+a2pbWF/qkRTVA/w/VrzriNJf8bnLwULbTeRfxOpChDFcInGNg?=
- =?us-ascii?Q?qAlAQ6l+GP1vZLZD90efp+kquFl/D72KNy6rP5vQSOncEzz5iK2Xpko6YCMQ?=
- =?us-ascii?Q?DgaF9pUdheIYWXdX1T8F7OsOBdNmxD+gy6zfL1teuJ3Gcc5iYQs2fqPRlQJG?=
- =?us-ascii?Q?Ma8XWOzOdo+o810KKTkC844Qh0tROEvydBEDKf5ywdfzJ0N1IE3I7A9y/VkL?=
- =?us-ascii?Q?uMo2+cC0Ktg3prVyTt8wokXL5fvyvgaT2pR5feMjwjdSUSFTchN9oteYiOH2?=
- =?us-ascii?Q?znw4CWgxKEWteBQL2aCmlbU/KjsCRQWESZYTdgpQAmucbJus9UD0VGRFoJH+?=
- =?us-ascii?Q?gpHiK5r8UOoAW/lkLunLOl23n5HH5Go3VWbKW9XCqOf9yHmCL4NKrPR61OGr?=
- =?us-ascii?Q?2b2o0JEl9TDZ4xckrKFUEvkLWPaYXfLztKTDngQ17/HJjw83Lr5sqOXVp+UC?=
- =?us-ascii?Q?JlNn7qnsFME2NVU99grhVVwejFqLqdAHVregf0phMILUCLk7CILZtGOkKXFq?=
- =?us-ascii?Q?dtr4pJ/hiv+a7BHwNh/uheG84pKErK29nwH+ASAi19eHiZo2EAf/BmlJyd+X?=
- =?us-ascii?Q?XPn1tYqz/OkRckHV6EhzAIPRvVcSY2ipDNHJwQ8T/C/2LRBYPHKrcZDyBvjL?=
- =?us-ascii?Q?tNM3AzpIhBSV5P9z95TJZbzX1f+r+yoyVYsUMPZJqzhRivCNOQ5z8XEzcHJD?=
- =?us-ascii?Q?5BbzV/4TMgeLhcquOfM0pzWzjICLbxk5lcEE4EsnBo1mUJyeI0du5SA7aizi?=
- =?us-ascii?Q?JSsuRzF9pQ5JFcjUwvAWLoubi5J0N+C8gdlH3S40+dmOTNlidFFc3ZF7aRRE?=
- =?us-ascii?Q?8Ik5AiPJw7Z1x0XsmTgB+bb4D+uK5vXC4qlNEFvN?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7ff38381-0032-4700-4b45-08ddc7eb225d
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2025 00:11:26.7278
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2YY3Jl7ntp64GZnRAGC/HcHjs13igjK7lfAyft9wrB0W01+QCA6nJ6sDn1rfIfKBiIMlG7Qa/fmg36ajeJpC/Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8403
+References: <20250717132926.901902-1-wangzhaolong@huaweicloud.com>
+In-Reply-To: <20250717132926.901902-1-wangzhaolong@huaweicloud.com>
+From: Steve French <smfrench@gmail.com>
+Date: Sun, 20 Jul 2025 19:19:52 -0500
+X-Gm-Features: Ac12FXwse2Ja5ZRLqiunqBUQbV3uP5osiXrdrdg89bhJZUqCkYPAqjEruuoVs_0
+Message-ID: <CAH2r5mv02iZ3OWk9ZhQdFFH89rbEAuLF_yek6+v_yvyMPHugxw@mail.gmail.com>
+Subject: Re: [PATCH V2] smb: client: fix netns refcount leak after net_passive changes
+To: Wang Zhaolong <wangzhaolong@huaweicloud.com>
+Cc: sfrench@samba.org, kuniyu@google.com, linux-cifs@vger.kernel.org, 
+	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org, 
+	chengzhihao1@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 18, 2025 at 11:44:42AM -0300, Jason Gunthorpe wrote:
-> On Fri, Jul 18, 2025 at 03:17:00PM +0100, Matthew Wilcox wrote:
-> > On Fri, Jul 18, 2025 at 02:51:08PM +0300, Yonatan Maman wrote:
-> > > +++ b/include/linux/memremap.h
-> > > @@ -89,6 +89,14 @@ struct dev_pagemap_ops {
-> > >  	 */
-> > >  	vm_fault_t (*migrate_to_ram)(struct vm_fault *vmf);
-> > >  
-> > > +	/*
-> > > +	 * Used for private (un-addressable) device memory only. Return a
-> > > +	 * corresponding PFN for a page that can be mapped to device
-> > > +	 * (e.g using dma_map_page)
-> > > +	 */
-> > > +	int (*get_dma_pfn_for_device)(struct page *private_page,
-> > > +				      unsigned long *dma_pfn);
-> > 
-> > This makes no sense.  If a page is addressable then it has a PFN.
-> > If a page is not addressable then it doesn't have a PFN.
-> 
-> The DEVICE_PRIVATE pages have a PFN, but it is not usable for
-> anything.
-> 
-> This is effectively converting from a DEVICE_PRIVATE page to an actual
-> DMA'able address of some kind. The DEVICE_PRIVATE is just a non-usable
-> proxy, like a swap entry, for where the real data is sitting.
+merged into cifs-2.6.git for-next pending more review and testing
 
-Yes, it's on my backlog to start looking at using something other than a real
-PFN for this proxy. Because having it as an actual PFN has caused us all sorts
-of random issues as it still needs to reserve a real physical address range
-which may or may not be available on a given machine.
+On Thu, Jul 17, 2025 at 8:35=E2=80=AFAM Wang Zhaolong
+<wangzhaolong@huaweicloud.com> wrote:
+>
+> After commit 5c70eb5c593d ("net: better track kernel sockets lifetime"),
+> kernel sockets now use net_passive reference counting. However, commit
+> 95d2b9f693ff ("Revert "smb: client: fix TCP timers deadlock after rmmod""=
+)
+> restored the manual socket refcount manipulation without adapting to this
+> new mechanism, causing a memory leak.
+>
+> The issue can be reproduced by[1]:
+> 1. Creating a network namespace
+> 2. Mounting and Unmounting CIFS within the namespace
+> 3. Deleting the namespace
+>
+> Some memory leaks may appear after a period of time following step 3.
+>
+> unreferenced object 0xffff9951419f6b00 (size 256):
+>   comm "ip", pid 447, jiffies 4294692389 (age 14.730s)
+>   hex dump (first 32 bytes):
+>     1b 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 80 77 c2 44 51 99 ff ff  .........w.DQ...
+>   backtrace:
+>     __kmem_cache_alloc_node+0x30e/0x3d0
+>     __kmalloc+0x52/0x120
+>     net_alloc_generic+0x1d/0x30
+>     copy_net_ns+0x86/0x200
+>     create_new_namespaces+0x117/0x300
+>     unshare_nsproxy_namespaces+0x60/0xa0
+>     ksys_unshare+0x148/0x360
+>     __x64_sys_unshare+0x12/0x20
+>     do_syscall_64+0x59/0x110
+>     entry_SYSCALL_64_after_hwframe+0x78/0xe2
+> ...
+> unreferenced object 0xffff9951442e7500 (size 32):
+>   comm "mount.cifs", pid 475, jiffies 4294693782 (age 13.343s)
+>   hex dump (first 32 bytes):
+>     40 c5 38 46 51 99 ff ff 18 01 96 42 51 99 ff ff  @.8FQ......BQ...
+>     01 00 00 00 6f 00 c5 07 6f 00 d8 07 00 00 00 00  ....o...o.......
+>   backtrace:
+>     __kmem_cache_alloc_node+0x30e/0x3d0
+>     kmalloc_trace+0x2a/0x90
+>     ref_tracker_alloc+0x8e/0x1d0
+>     sk_alloc+0x18c/0x1c0
+>     inet_create+0xf1/0x370
+>     __sock_create+0xd7/0x1e0
+>     generic_ip_connect+0x1d4/0x5a0 [cifs]
+>     cifs_get_tcp_session+0x5d0/0x8a0 [cifs]
+>     cifs_mount_get_session+0x47/0x1b0 [cifs]
+>     dfs_mount_share+0xfa/0xa10 [cifs]
+>     cifs_mount+0x68/0x2b0 [cifs]
+>     cifs_smb3_do_mount+0x10b/0x760 [cifs]
+>     smb3_get_tree+0x112/0x2e0 [cifs]
+>     vfs_get_tree+0x29/0xf0
+>     path_mount+0x2d4/0xa00
+>     __se_sys_mount+0x165/0x1d0
+>
+> Root cause:
+> When creating kernel sockets, sk_alloc() calls net_passive_inc() for
+> sockets with sk_net_refcnt=3D0. The CIFS code manually converts kernel
+> sockets to user sockets by setting sk_net_refcnt=3D1, but doesn't call
+> the corresponding net_passive_dec(). This creates an imbalance in the
+> net_passive counter, which prevents the network namespace from being
+> destroyed when its last user reference is dropped. As a result, the
+> entire namespace and all its associated resources remain allocated.
+>
+> Timeline of patches leading to this issue:
+> - commit ef7134c7fc48 ("smb: client: Fix use-after-free of network
+>   namespace.") in v6.12 fixed the original netns UAF by manually
+>   managing socket refcounts
+> - commit e9f2517a3e18 ("smb: client: fix TCP timers deadlock after
+>   rmmod") in v6.13 attempted to use kernel sockets but introduced
+>   TCP timer issues
+> - commit 5c70eb5c593d ("net: better track kernel sockets lifetime")
+>   in v6.14-rc5 introduced the net_passive mechanism with
+>   sk_net_refcnt_upgrade() for proper socket conversion
+> - commit 95d2b9f693ff ("Revert "smb: client: fix TCP timers deadlock
+>   after rmmod"") in v6.15-rc3 reverted to manual refcount management
+>   without adapting to the new net_passive changes
+>
+> Fix this by using sk_net_refcnt_upgrade() which properly handles the
+> net_passive counter when converting kernel sockets to user sockets.
+>
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D220343 [1]
+> Fixes: 95d2b9f693ff ("Revert "smb: client: fix TCP timers deadlock after =
+rmmod"")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Wang Zhaolong <wangzhaolong@huaweicloud.com>
+> ---
+>  fs/smb/client/connect.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
+>
+> V1 -> V2:
+> - Add a simplified description of the reproduction steps in the
+>   commit message.
+>
+> diff --git a/fs/smb/client/connect.c b/fs/smb/client/connect.c
+> index 205f547ca49e..5eec8957f2a9 100644
+> --- a/fs/smb/client/connect.c
+> +++ b/fs/smb/client/connect.c
+> @@ -3360,22 +3360,19 @@ generic_ip_connect(struct TCP_Server_Info *server=
+)
+>                 socket =3D server->ssocket;
+>         } else {
+>                 struct net *net =3D cifs_net_ns(server);
+>                 struct sock *sk;
+>
+> -               rc =3D __sock_create(net, sfamily, SOCK_STREAM,
+> -                                  IPPROTO_TCP, &server->ssocket, 1);
+> +               rc =3D sock_create_kern(net, sfamily, SOCK_STREAM,
+> +                                     IPPROTO_TCP, &server->ssocket);
+>                 if (rc < 0) {
+>                         cifs_server_dbg(VFS, "Error %d creating socket\n"=
+, rc);
+>                         return rc;
+>                 }
+>
+>                 sk =3D server->ssocket->sk;
+> -               __netns_tracker_free(net, &sk->ns_tracker, false);
+> -               sk->sk_net_refcnt =3D 1;
+> -               get_net_track(net, &sk->ns_tracker, GFP_KERNEL);
+> -               sock_inuse_add(net, 1);
+> +               sk_net_refcnt_upgrade(sk);
+>
+>                 /* BB other socket options to set KEEPALIVE, NODELAY? */
+>                 cifs_dbg(FYI, "Socket created\n");
+>                 socket =3D server->ssocket;
+>                 socket->sk->sk_allocation =3D GFP_NOFS;
+> --
+> 2.39.2
+>
+>
 
-> 
-> Jason
-> 
+
+--=20
+Thanks,
+
+Steve
 
