@@ -1,135 +1,148 @@
-Return-Path: <linux-kernel+bounces-739309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21057B0C4AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:02:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E36FB0C4AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:02:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EE113B03A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:01:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14DD9542847
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:02:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 949A52D8399;
-	Mon, 21 Jul 2025 13:02:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WDTecz/W"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0A02D6607;
+	Mon, 21 Jul 2025 13:02:14 +0000 (UTC)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6816C2D12F5
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 13:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F5C2D12F5;
+	Mon, 21 Jul 2025 13:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753102926; cv=none; b=Idb0zrOlubIb4P6wRRTfENRyUI3302Jtf6xON8CTmC6hn1gOhwWg+5xCgCSh39ynxT+sDCgv0FjkFzuqHUezHoSxc3LANKKAhNHlE3SVS9VUmzLr9lRsYnxbto/0R7X/EqVTzCUa+bSSjJndFk8nacjckm3uRGYAurL9C2TkohQ=
+	t=1753102933; cv=none; b=p2UcXsxF3JV7VpT2DCOwUSeb7j+XN5CU6KUdczAPmSteOEAuQWcIcwXISEEpYF0TVgSwtGWkPZxMivrvgdVhJ/WtdlQHCNr3XjMK9AFGu/ASb5Tm4TiVDphXcJKLHeq9julqmB2+fd7KrcP/ek9fFuweEp3PPWbhlado3EmLv6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753102926; c=relaxed/simple;
-	bh=Kzos49b0GCpostbFROvtYjPTZ0s6iSc5xRDaELxBu94=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fHROxs2NCofJdnvSLNmae/qFcLmWP6WYqwswj01ux1giCc1HY3hwCmSipwx9h0nkc8gUTrFhjSAoSogbMR0gR0ZT1VJJQVRzvemJ9y898KxMo7eCA7MxWnSZwSnivEMUs/L0ODu9gz6AFwyprSupHKxd3emhwOax5BX/fj7Aul0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WDTecz/W; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753102923;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jD+wnTaKP0Y8e6Enf/no2sGgqHNYlggzCKTqQZCB61Y=;
-	b=WDTecz/WJMXB58R8vIlkwRQrX5tgPU0hLQNHq8XgWpCfVltfPULm+q/QM0R2te8nXeYERf
-	iEaAMDdX/byA0IOjC7tf8ZkEsj8bLeY1uA4NAvMs3L9BCsq5fuBQZ0BFxFw3RptyluFrhV
-	PFcOMRQWrXd+U9xp5pAG4DvYc7hAm1g=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-392-hGhP_uytN3KY0dlVW2fV7w-1; Mon, 21 Jul 2025 09:02:00 -0400
-X-MC-Unique: hGhP_uytN3KY0dlVW2fV7w-1
-X-Mimecast-MFC-AGG-ID: hGhP_uytN3KY0dlVW2fV7w_1753102919
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45624f0be48so24279935e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 06:01:59 -0700 (PDT)
+	s=arc-20240116; t=1753102933; c=relaxed/simple;
+	bh=Y9enP814Qb31znV+lCZCd5IIWy4hLlu6UJiWQkgrdl4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=lZ/Mb5jKZIdc9Qqbx9TLnOzQddPDcMcBAkOOqkeYLFy3F5H1IT0bjbZK95GnAPydmqrxAK2HSV5YDEPwHFHrNoR0qVjtvhBXKJbPZ4FQCznY2Sejw0jpP01iR3gUxyU8i/OXsdTGIqDi354G8NUbzMZbtNLz0KHJ5IiVVHMuGis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6129ff08877so6731391a12.1;
+        Mon, 21 Jul 2025 06:02:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753102919; x=1753707719;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jD+wnTaKP0Y8e6Enf/no2sGgqHNYlggzCKTqQZCB61Y=;
-        b=GWrqSTw3iib/tPfSQbpdQ/PW9R/0ZkfplD+4FWe6j+xRXOOIgy9/Q9u+3U1AEpk1Dw
-         hjBkvuxSyBctLj7UZkyGtX6g6DG5me1Rwqg0VZV8Bi6zsaeKHri/J//2WTQW4zjOwdR4
-         M+/UVgVceoVHFpZKBLlYLwH16V1uv1q1JlhWkvUwe9QrVuu+ZQm48Ynd3u2GneXp+V24
-         qqC5v+DhiLcUOdKF8B4syVWnYvlQrMIz9BJzAhNg9EDG/VaeIjFbA64I2btKW6ed7NT9
-         p6W5HHWbhhEg3oE0BH+8JOlh9zmTrvMYVo4ZqL3hT337x2WSTPes2LBhh76vDyQxHHSi
-         kkdw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQxLyJXZxbuRJypxx4A4hSptpeznenDuQvuFXwhqR/z65/uPN+9PVMSHHhoSMx6uxvq2J1lBfyloWX+sg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUEBkkypNzZS9oN24QwVCJ723pVqAvca0yeyFTukSeV/ZSIQZR
-	7vAb6cPMaccHPAwWsVxVRxUO61in7o7xkK7ZA9IIG9RbaYUq3Jcrrx0Tv0nUhMeBsJEv9f9H0Rx
-	3E2kSYyBWzFS0Rg/zowmsCzaczVUdM6sM9LGnhJTVkd7n/3VBbBVLJLbI5CWBlykMeQ==
-X-Gm-Gg: ASbGnctmXM0tVGK5RqfTxmNNQ+RsT/DNqH2z07KieiFWQXiiUuSZpXzoyFddi0tw5H4
-	jiJ0hlChY2OFTJsg7wytdkfGhnAtocJOvYI/yfWYKZJxqk2DM5oFSQqlaML70FHOL2rCKEcOral
-	ufxHDX0iT+jdVSDV8m8X26fSy9/tTrswZiI0lTYcO7cM1Uqc+0ADZjbL2YGoPRJheStGWGJ/SQr
-	xGS3neP32/ESqjrGBd5aoFTvQ/GUHejiT5vDdcZlovbkLmRvzNGl0zwqIiA9jmjPsJSJZXkFAMR
-	VUVuDEQa8o3VAQqpW8niN4GvRdQUVpfCBhUpKULDacCWI9nqzgI/LFhlAvFSGl1wQw==
-X-Received: by 2002:a05:600c:310d:b0:456:13b6:4b18 with SMTP id 5b1f17b1804b1-4562e2a59a6mr217518625e9.31.1753102918077;
-        Mon, 21 Jul 2025 06:01:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHz92oHW6cf5bePbFRUQ/bTAGdOdmnzzYqC+rPHlpMjNIHtv87b65EeqIpUOgFuaRe0qdZRrg==
-X-Received: by 2002:a05:600c:310d:b0:456:13b6:4b18 with SMTP id 5b1f17b1804b1-4562e2a59a6mr217517285e9.31.1753102917018;
-        Mon, 21 Jul 2025 06:01:57 -0700 (PDT)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.42])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e886286sm163348015e9.26.2025.07.21.06.01.55
+        d=1e100.net; s=20230601; t=1753102930; x=1753707730;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x4yGg2NehvRvYmpEbgOTA7EYH0BhrprzDpGT6+ko3Fg=;
+        b=oQ8Oq7wxsxeQqUzqSIyo2uGpKp7Bs8+n5omeqHHS0izO3k8weV65q4t5hkOo9WFbHK
+         CW1Z/yUB1aT1hFQrECN98SXrPaqZZV4iEI3kNHyoPQ+RtF+P7RjhFEfqfxUGXdfzJ+9U
+         Z+BIio0lb5vUsDYwq1XrU5VWGGXojDrR5+cIMu9wswq2wXwOShvYy//Q52pD4WIBborn
+         980b6dvQM8R52Uw0mvph/u+4N82CV4QR8M58L4Qj3MdJHVHL1oDCd3P2KrrtD7iqFTBt
+         cEKiOe0XMvy+8d+d9UNuC5MH7O79mbMXRI4LZRbbMIpAN36qcv3TuP7hKQFBDwT5getn
+         Wk2g==
+X-Forwarded-Encrypted: i=1; AJvYcCUvwO6sLwpXq/GK+gYUiCbktVt3iNuw/2WPD0pdxHb9+CD9FSawqKgd9Lu1+7AUeHlCKUKO5CXFjtf2swk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqN2JA64AmBI2PsbTedNiPH8IsSXhYhlX/qRNTIb0dwczRWsIl
+	WkwVXiJeamt68bCQpSJUFuqyoWwFZ80uLWzgVHRoxuONUrlkH5KVLYAeNTtZnA==
+X-Gm-Gg: ASbGncudCeLoj4y3HW3zj49ZxjhnbICI0WQ3d6sK5ehAA9xwvARtsRwK8B95q8z2e1d
+	1FscbMaTx10ma+PKNscPaXe+/GeJqIHmJiZEXZ4pdxbETrZeZwdAq7IrkayJG6/6xqolqaepu8V
+	mEBFtF7JwXKIo+frLg2ThnelSz+FVuAJ82ktq3M6JeekaxmzuOPqoXYXt9fuQ8tpgDTF/UE57X0
+	UTgoeDTU3emAi62DR7s4dKSYkfsmdH6w2p2rxt3JWsjMuNr0iLFAVJWRqMfWMPCNv4X+gZcmDpq
+	WMuoJEIZVIBKG/GQAzvPeXhSlyTDxZ5QoPRNrzRe73TJXeu0KRHJg/q8DI+LVYuk0v0OTO32Y50
+	Ynzm5u31NHN/IFA==
+X-Google-Smtp-Source: AGHT+IGo/FNnSIE/RK8lrpc+1Z3W/Fx7ENsJ5lqEoaPEmjedozYXbM0g9QXI2opbky2cp4D2JkK3Vg==
+X-Received: by 2002:a17:907:3cd6:b0:ae3:f3c4:c0b1 with SMTP id a640c23a62f3a-aec4ddff89bmr1639542166b.7.1753102928286;
+        Mon, 21 Jul 2025 06:02:08 -0700 (PDT)
+Received: from localhost ([2a03:2880:30ff:73::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6caf733fsm677598866b.159.2025.07.21.06.02.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 06:01:56 -0700 (PDT)
-Message-ID: <ea84a5ea39092432804bc7c63596892fb9fdf511.camel@redhat.com>
-Subject: Re: [PATCH 1/6] rv: Remove unused field in struct rv_monitor_def
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>,  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Mon, 21 Jul 2025 15:01:54 +0200
-In-Reply-To: <68e223323b11aad9934344ec1764337b2f18c080.1753091084.git.namcao@linutronix.de>
-References: <cover.1753091084.git.namcao@linutronix.de>
-	 <68e223323b11aad9934344ec1764337b2f18c080.1753091084.git.namcao@linutronix.de>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
- xyhmqeUWOzFx5P43S1E1dhsrLWgP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+        Mon, 21 Jul 2025 06:02:07 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+Subject: [PATCH net-next v2 0/5] netconsole: reuse netpoll_parse_ip_addr in
+ configfs helpers
+Date: Mon, 21 Jul 2025 06:02:00 -0700
+Message-Id: <20250721-netconsole_ref-v2-0-b42f1833565a@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEk6fmgC/3XNQQrDIBBA0avIrGOJttaQVe9RQlEzJgNlLCohJ
+ eTuBfddf3j/gIKZsMAoDsi4UaHEMArdCQir4wUlzTAK0L02vVWDZKwhcUlvfGWMMqhotbmF6I2
+ CTsAnY6S9gU9grJJxrzB1AlYqNeVvO22q9X/opmQvhztGba7eOuseM3pyfEl5gek8zx9jTH+wt
+ wAAAA==
+X-Change-ID: 20250718-netconsole_ref-c1f7254cfb51
+To: "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+ Breno Leitao <leitao@debian.org>, Andrew Lunn <andrew+netdev@lunn.ch>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-team@meta.com
+X-Mailer: b4 0.15-dev-dd21f
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1806; i=leitao@debian.org;
+ h=from:subject:message-id; bh=Y9enP814Qb31znV+lCZCd5IIWy4hLlu6UJiWQkgrdl4=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBofjpOLuv9TK73ynYpqDuvPVFVF2PTdnFUB38xK
+ Jh84mkNxNuJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaH46TgAKCRA1o5Of/Hh3
+ bR1ZD/4vJ251BXV7Q1K+pXWr4J8t19TmprIbKsw4ly5XYi833IGnC/FsG8raWxmKZKgR8dosXY2
+ AETzkTVDu4dgiGuMYvEMRrXCbX9uCU1/sc/oM9TKYUWg6of87qW0V52JLqZx3EadqeFWJNKbvxi
+ YKZgmPKUNbTqYpooYZHhnZ2srv6O8kbJV2R3ta9ZJJuD/zOhYQhUJHIIaxeLaxS0681Dv4/EJPf
+ /CJ6WQjchwd5rm4VI7uL5p+mQ0T7Wnmx37ZF4NtIbHUimeRAi6u5whCjdyoV4UDah1inRiNA+2d
+ nRhJT0VGjYQbr3Kunky+BItnwJOSnsy+kjjRGwZINNsm6ugO57K9uG8fK6Fwu5e4pUxAlpzPQPn
+ o/sy2cOQuXgmbcJ74PupM6TWwDnudd6Fz3r4L8eqPbpPbKk/50ejJxE2am+ZXz7Why/uU/H8zyP
+ gw+C9XSbEiwkfZnENRqm4PdpvGA7AyFnLxs6L7RU8mYsLY9cq0pDxrDOKjsNaQNXwAQnCQ7C1yC
+ QnOgomoWXt5gRDm8j1SdWB4iuMzIlJ8ae4Wm3eXwK0CkGbyVNY183fXeOVeqN+EefJKLmR3hxeT
+ +UZha8v9DzSAl8U5jEFWdKr5RUOJguBIqrQnApKZXP7eUTYSdjC9tiS0vdbZkf2J6IkDHaaE3N9
+ MX4DC1A3m4t5ZYw==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-On Mon, 2025-07-21 at 11:47 +0200, Nam Cao wrote:
-> rv_monitor_def::task_monitor is not used. Delete it.
->=20
-> Signed-off-by: Nam Cao <namcao@linutronix.de>
+This patchset refactors the IP address parsing logic in the netconsole
+driver to eliminate code duplication and improve maintainability. The
+changes centralize IPv4 and IPv6 address parsing into a single function
+(netpoll_parse_ip_addr). For that, it needs to teach
+netpoll_parse_ip_addr() to handle strings with newlines, which is the
+type of string coming from configfs.
 
-Reviewed-by: Gabriele Monaco <gmonaco@redhat.com>
+Background
 
-Thanks,
-Gabriele
+The netconsole driver currently has duplicate IP address parsing logic
+in both local_ip_store() and remote_ip_store() functions. This
+duplication increases the risk of inconsistencies and makes the code
+harder to maintain.
 
-> ---
-> =C2=A0kernel/trace/rv/rv.h | 1 -
-> =C2=A01 file changed, 1 deletion(-)
->=20
-> diff --git a/kernel/trace/rv/rv.h b/kernel/trace/rv/rv.h
-> index 98fca0a1adbc..873364094402 100644
-> --- a/kernel/trace/rv/rv.h
-> +++ b/kernel/trace/rv/rv.h
-> @@ -41,7 +41,6 @@ struct rv_monitor_def {
-> =C2=A0	struct rv_reactor_def	*rdef;
-> =C2=A0	bool			reacting;
-> =C2=A0#endif
-> -	bool			task_monitor;
-> =C2=A0};
-> =C2=A0
-> =C2=A0struct dentry *get_monitors_root(void);
+Benefits
+
+* Reduced code duplication: ~40 lines of duplicate parsing logic eliminated
+ * Improved robustness: Centralized parsing reduces the chance of inconsistencies
+ * Easier to maintain: Code follow more the netdev way
+
+PS: The patches are very well contained in other to help review.
+
+---
+Changes in v2:
+- Moved the netpoll_parse_ip_addr() to outside the dynamic block (Jakub)
+- Link to v1: https://lore.kernel.org/r/20250718-netconsole_ref-v1-0-86ef253b7a7a@debian.org
+
+---
+Breno Leitao (5):
+      netpoll: Remove unused fields from inet_addr union
+      netconsole: move netpoll_parse_ip_addr() earlier for reuse
+      netconsole: add support for strings with new line in netpoll_parse_ip_addr
+      netconsole: use netpoll_parse_ip_addr in local_ip_store
+      netconsole: use netpoll_parse_ip_addr in local_ip_store
+
+ drivers/net/netconsole.c | 85 ++++++++++++++++++------------------------------
+ include/linux/netpoll.h  |  3 --
+ 2 files changed, 31 insertions(+), 57 deletions(-)
+---
+base-commit: d61f6cb6f6ef3c70d2ccc0d9c85c508cb8017da9
+change-id: 20250718-netconsole_ref-c1f7254cfb51
+
+Best regards,
+--  
+Breno Leitao <leitao@debian.org>
 
 
