@@ -1,160 +1,105 @@
-Return-Path: <linux-kernel+bounces-738527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 251CBB0B9A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 02:55:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E58BB0B9AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 02:59:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ADBD3BAEC2
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 00:54:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D04F178032
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 00:59:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20031537DA;
-	Mon, 21 Jul 2025 00:55:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4265148827;
+	Mon, 21 Jul 2025 00:59:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WmAYMWJ2"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=hacktheplanet.fi header.i=@hacktheplanet.fi header.b="uRC9ACyA";
+	dkim=pass (2048-bit key) header.d=hacktheplanet.fi header.i=@hacktheplanet.fi header.b="fJKBMeER"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12C62F32;
-	Mon, 21 Jul 2025 00:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F2F43AB7
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 00:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753059307; cv=none; b=fjy2b2X9bG/uvD/cewQNwf9kug07KTsEIV476Vkuu9Zc4u3PmdQA9pTP7L/QUTVCCzclFB4CHj79d1qssQTHfX2n8EMDQ1ltvT8HgBFrlBJnk2qKRoHQ/B6ww+vN+2PBtff2TLmLM+pf27BKCj788HeBNOhsnfnc/+m3JOAGqDU=
+	t=1753059588; cv=none; b=PT1jf3pMoC+oCgMFHUUR2p1vAZqOhUjp0mU8kcB/82nmMv1F9a/YEs/peVvXwVLY73J3Y3mRU0PHBP6K64d6vIycYjGyDMzUs21DQH9SkCDX4uBCIrgq4QpMUxfAAb1bCJl+YYqOAPEXOTCBQWSlj3T8x9ZXROtxVSzGPLTRJMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753059307; c=relaxed/simple;
-	bh=sM9yBsMCLLRYDK7HcYMiFENLAMw/Qrsw0/qfDYalqnM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BX6p8Gf0fp3i0832lGiGCedKwE0Mmh7sYkP/R2LTUjfgI7apIEXt3Mx83ZQvOWJgHsCt6Ty8ZAjj8Ab3pFWKseeYFCdAweYP2aHhstnUsfrl18FMWwJDGw5TqAAVvHnYF2eymjA1rIXOJTJZybv3aRNaLnIMUF3nQvDr7Jw4CF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WmAYMWJ2; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=yL7XvIZ8aSR18txK0A+NfWoqxJXFpqXiT6eL6G1IbIY=; b=WmAYMWJ2Z4gaMirSioF2MktZHK
-	wlRnKKud+MiqOBUX3tB10mQ/WR0olJQDS5DeHiN4LM/YDB/kgWiME0fFO6Vaiga97ccX1DDX/MJhK
-	egbNGJ7d/qbGqlroD78VjGKtLR7LUWl0OB01Ef1Au4lAplNX6j1LG7oqTIoOrSv5GHC9saePK2Keh
-	idEy6BlyoN+tWY9Tze56QTdyRx7M0h3GLCP3l/muMkl5fY9CMZQ2Ioq1jHKYo4CtpT5twsECXxrAJ
-	ji33s/O7uw3qAhYZl3F+s2jcvGCaiSSKStuO/G8mPEDeBKCe6EjsOJECJd8nvqoRpO/sdFFFm8V6t
-	6PNQttxw==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1udeo5-0000000FtkO-1rpu;
-	Mon, 21 Jul 2025 00:55:05 +0000
-Message-ID: <4777f4d7-f1c6-4345-92b2-0ba5d6563ee2@infradead.org>
-Date: Sun, 20 Jul 2025 17:55:05 -0700
+	s=arc-20240116; t=1753059588; c=relaxed/simple;
+	bh=lufO/SfGrebt1Uvbo8PEo5A3P1gKInv82B1zFvN3hUo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=pWNeI4lxUlNBoOMB1LWWhfXOeRAd4qXCLdz3mzhl47/f7xp+CKeKf2m8q/fsd5Mv3dZGGTYL9dB8uxbKu6LLZMcCYWNPIeaeFd+1D7od20h5RdGV+4DQzCaucmjCAFWLcKlKIB/n6jNQfgmcS6mDZozmWPvP2aPjPZEkABwNXtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hacktheplanet.fi; spf=pass smtp.mailfrom=hacktheplanet.fi; dkim=pass (2048-bit key) header.d=hacktheplanet.fi header.i=@hacktheplanet.fi header.b=uRC9ACyA; dkim=pass (2048-bit key) header.d=hacktheplanet.fi header.i=@hacktheplanet.fi header.b=fJKBMeER; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hacktheplanet.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hacktheplanet.fi
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; s=gibson; bh=lufO/SfGrebt1
+	Uvbo8PEo5A3P1gKInv82B1zFvN3hUo=; h=subject:cc:to:from:date;
+	d=hacktheplanet.fi; b=uRC9ACyAEhafmE4EN5ocUEoH4WADgLMkktPTudXKK3zuAatS
+	m3m++bZ718wNzXXJ3kZQVx4wyCprjiHquLB1NJJCB42gIRIKCw/SD/LCWDrMCK7+/B8cLQ
+	n02qwSMeoBOtPjDUMHKlZX98JIlwP+4aHKMquOO6HZ1tlDjj4KbHhtaJmeDzwIq7qBdJC9
+	vgNojPA+4u3XxYpKo9usAJPS2fsvVaHDtpD1FHlAG6PE03T1DkH+TzrBSjvlWl/xdNAh14
+	L6uZsV/gWzjSQ4DRQkkCjr7RCcqyIlUnTuQwAhPJEt5qLGMASPdGiKx/gvuwHz1APgJBcY
+	MpMDuyHmXqd6Fw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hacktheplanet.fi;
+	s=key1; t=1753059583;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=//RALJ2DG6eoPJ8kGoGEizkYKrZ/iIm2f0PKjGpS5XM=;
+	b=fJKBMeERTYdiWXnm6lLcp0iNaf+qL7mgXRqsi0b5iQdyRDzjnLX3x5ONU6ymnyShoYEe7q
+	/sb5x676LLe08M0Za0yROcqC/4VJGRwTdceUGfOdHA0cibJB1LqARvLukQ+zpZILjKmoKY
+	JhH83xpSq5sMu6RsvnaUvzWkBFgqTQDxTHOH0IneHSy6rxMeqj6+M/thUDn26D8+1w+YRh
+	whKGq00PBRcenrF2dUyETfhSN0RuYxAR3pcsBJUJ8NKLmTJJYo4McuwCj1X0T3GI5at0zK
+	wdxZzN/WkIcphMFE0sdi+dOhlWToFmSJh/5Gxx/4u11pbBoAZ2Uoyhw7EB1sHg==
+Date: Mon, 21 Jul 2025 09:59:40 +0900
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lauri Tirkkonen <lauri@hacktheplanet.fi>
+To: linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org, Mario Limonciello <superm1@kernel.org>,
+	amd-gfx@lists.freedesktop.org, Wayne Lin <wayne.lin@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [REGRESSION] [PATCH v2] drm/amd/display: fix initial backlight
+ brightness calculation
+Message-ID: <aH2Q_HJvxKbW74vU@hacktheplanet.fi>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v3 2/4] kernel/api: enable kerneldoc-based API
- specifications
-To: Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org
-Cc: linux-doc@vger.kernel.org, linux-api@vger.kernel.org, tools@kernel.org
-References: <20250711114248.2288591-1-sashal@kernel.org>
- <20250711114248.2288591-3-sashal@kernel.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250711114248.2288591-3-sashal@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Migadu-Flow: FLOW_OUT
 
-Hi Sasha,
+DIV_ROUND_CLOSEST(x, 100) returns either 0 or 1 if 0<x<=100, so the
+division needs to be performed after the multiplication and not the
+other way around, to properly scale the value.
 
-I would like to ask a few questions to try to clarify/understand, please.
+Fixes: 8b5f3a229a70 ("drm/amd/display: Fix default DC and AC levels")
+Signed-off-by: Lauri Tirkkonen <lauri@hacktheplanet.fi>
+Cc: stable@vger.kernel.org
+---
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On 7/11/25 4:42 AM, Sasha Levin wrote:
-> Allow kernel developers to write API specifications directly in
-> kerneldoc comments, which are automatically converted to machine-readable
-> C macros during build.
-> 
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  kernel/api/Makefile              |  21 +-
->  scripts/Makefile.build           |  28 ++
->  scripts/generate_api_specs.sh    |  59 +++
->  scripts/kernel-doc.py            |   5 +
->  scripts/lib/kdoc/kdoc_apispec.py | 623 +++++++++++++++++++++++++++++++
->  scripts/lib/kdoc/kdoc_output.py  |   5 +-
->  scripts/lib/kdoc/kdoc_parser.py  |  54 ++-
->  7 files changed, 791 insertions(+), 4 deletions(-)
->  create mode 100755 scripts/generate_api_specs.sh
->  create mode 100644 scripts/lib/kdoc/kdoc_apispec.py
-> 
-
-[snip]
-
-> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-> index a6461ea411f7a..5c0e44d1b6dbc 100644
-> --- a/scripts/Makefile.build
-> +++ b/scripts/Makefile.build
-> @@ -172,6 +172,34 @@ ifneq ($(KBUILD_EXTRA_WARN),)
->          $<
->  endif
->  
-> +# Generate API spec headers from kernel-doc comments
-> +ifeq ($(CONFIG_KAPI_SPEC),y)
-> +# Function to check if a file has API specifications
-> +has-apispec = $(shell grep -qE '^\s*\*\s*(api-type|long-desc|context-flags|param-type|error-code|capability|signal|lock|side-effect|state-trans):' $(src)/$(1) 2>/dev/null && echo $(1))
-> +
-> +# Get base names without directory prefix
-> +c-objs-base := $(notdir $(real-obj-y) $(real-obj-m))
-> +# Filter to only .o files with corresponding .c source files
-> +c-files := $(foreach o,$(c-objs-base),$(if $(wildcard $(src)/$(o:.o=.c)),$(o:.o=.c)))
-
-1. One must build a kernel (with some desired .config file) to use/test this,
-correct?
-
-2. It looks like it only checks .c files, omitting header files. (?)
-Some APIs are only present in header files (e.g., all of <linux/list.h> is
-either macros or inline functions).
-
-
-> +# Also check for any additional .c files that contain API specs but are included
-> +extra-c-files := $(shell find $(src) -maxdepth 1 -name "*.c" -exec grep -l '^\s*\*\s*\(api-type\|long-desc\|context-flags\|param-type\|error-code\|capability\|signal\|lock\|side-effect\|state-trans\):' {} \; 2>/dev/null | xargs -r basename -a)
-
-3a. included files: does this catch the (rare) use of a C file doing
-#include <path to some other C file> ?
-
-3b. Quite a few makefiles generate final .o files with a different name
-from the source files. It looks like that is handled above by looking
-for the first (or intermediate) .o file for each .c file, so the final
-.o file with a different name is ignored (or at least doesn't come into
-play here). Yes?
-
-
-> +# Combine both lists and remove duplicates
-> +all-c-files := $(sort $(c-files) $(extra-c-files))
-> +# Only include files that actually have API specifications
-> +apispec-files := $(foreach f,$(all-c-files),$(call has-apispec,$(f)))
-> +# Generate apispec targets with proper directory prefix
-> +apispec-y := $(addprefix $(obj)/,$(apispec-files:.c=.apispec.h))
-> +always-y += $(apispec-y)
-> +targets += $(apispec-y)
-> +
-> +quiet_cmd_apispec = APISPEC $@
-> +      cmd_apispec = PYTHONDONTWRITEBYTECODE=1 $(KERNELDOC) -apispec \
-> +                    $(KDOCFLAGS) $< > $@ 2>/dev/null || rm -f $@
-> +
-> +$(obj)/%.apispec.h: $(src)/%.c FORCE
-> +	$(call if_changed,apispec)
-> +endif
-> +
->  # Compile C sources (.c)
->  # ---------------------------------------------------------------------------
->  
-
-[snip]
-
-Thanks.
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index f58fa5da7fe5..8a5b5dfad1ab 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -4941,9 +4941,9 @@ amdgpu_dm_register_backlight_device(struct amdgpu_dm_connector *aconnector)
+ 	caps = &dm->backlight_caps[aconnector->bl_idx];
+ 	if (get_brightness_range(caps, &min, &max)) {
+ 		if (power_supply_is_system_supplied() > 0)
+-			props.brightness = (max - min) * DIV_ROUND_CLOSEST(caps->ac_level, 100);
++			props.brightness = DIV_ROUND_CLOSEST((max - min) * caps->ac_level, 100);
+ 		else
+-			props.brightness = (max - min) * DIV_ROUND_CLOSEST(caps->dc_level, 100);
++			props.brightness = DIV_ROUND_CLOSEST((max - min) * caps->dc_level, 100);
+ 		/* min is zero, so max needs to be adjusted */
+ 		props.max_brightness = max - min;
+ 		drm_dbg(drm, "Backlight caps: min: %d, max: %d, ac %d, dc %d\n", min, max,
+-- 
+2.50.1
 
 -- 
-~Randy
-
+Lauri Tirkkonen | lotheac @ IRCnet
 
