@@ -1,223 +1,143 @@
-Return-Path: <linux-kernel+bounces-738767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8195B0BCC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:39:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBCBDB0BCCB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:39:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 647CA7ADEF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:36:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 150DC3A0F83
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E81227F198;
-	Mon, 21 Jul 2025 06:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD9727E05F;
+	Mon, 21 Jul 2025 06:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ym9uHm76";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cTJ5n08O"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BDRFiugy"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB34927E05A;
-	Mon, 21 Jul 2025 06:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2BA1F3B96
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 06:38:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753079799; cv=none; b=lRL3bJJV8QkBxAtMNTdMmF81b7ecZIv8DbE4AUO3rQdh1XcNLFATadN7Z4AReg9XXImES/x/E41GNaWv4Ir/rMf4Jlau8dCOxjHzysosD/KZgxANonuFCkHBUtKPoa2wMsWpDNZsNMFKO/CIXIFN7fymUgTXZ8Cq1Jo19bps/6o=
+	t=1753079902; cv=none; b=ciYYnpEZYYEliFTkijXK2gUStcsfbdku8l4Qr0pweqWbj7OnhhFNOQg/Pcbq8WkyAPkA2a8/fiTxOt3l1HSFyR/KkdH1StfuTiJvaiVdFzBJ8ao7P0g8k8jkE4hbHEO7nj2sIBfX4O34PETH0YE/cHTQ0KTFGuCcPHDhWIzcVLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753079799; c=relaxed/simple;
-	bh=sO8N87llMhBAL46D0UNi35hXqRL1hKXNp2gY1ICdGG0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hl15tiUQO3HuzprlrrXSOXX6lgrs94zZno6Y1zkSR8QA1E7dJON7Bz641W4medmnnGzlwZvPlUkFo3UKhK9PWRVsnl/JJV1mAzUcMP9x/J+F5DcWubMKTMqvhVdWq6ytHhyEvrY3/85dalL3dNk2M6PV3eIDfvHyWaD6VS0cxvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ym9uHm76; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cTJ5n08O; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753079795;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=kSko5Mokq1Ol99CoaRoUYWqbWi4K0PtMwj7NAm8d1cs=;
-	b=Ym9uHm76Uv59xz/SUdCTMNX6vws0v60/R8itMuF8thUScaGLv996OPAMaQ+QLdoS6JkyFM
-	Bh2Z84u9fEcFBYQVRCPJ7z8kdyWqsq5UYkIdYvkPsC2GedhBQ0sWDoW9LBvWzlBTS0m3uu
-	N6DeJW/UKOb6Dyk//l8hTNdDjw2YiH+ShHDD4qvMeOBmiH6aHRSnKadJdLqUmV4r37Od+8
-	VdqJzf7om66gmNf0M8Z7PBtvmDG45Eq0me9c5YmyPC9N2YEYAJhkV5oRi9GIwactnKVMlU
-	yTOsoP3AVPL9qGx3nr3Rnzey5WsF4IQtbBj4uiTkGbSQCgqLLbA2H02/w4x9Vg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753079795;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=kSko5Mokq1Ol99CoaRoUYWqbWi4K0PtMwj7NAm8d1cs=;
-	b=cTJ5n08O+zyJneTiHARPrVeRnzSIETpnKGswjjNfnTxddrXzyUsHy9mCfrzgBXpm9mm2ew
-	GTM6OPQD5HMNRsDg==
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Marc Zyngier <maz@kernel.org>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Nam Cao <namcao@linutronix.de>
-Subject: [PATCH] PCI/MSI: Delete pci_msi_create_irq_domain()
-Date: Mon, 21 Jul 2025 08:36:26 +0200
-Message-Id: <20250721063626.3026756-1-namcao@linutronix.de>
+	s=arc-20240116; t=1753079902; c=relaxed/simple;
+	bh=ZcoU0TGwdamvkaiI2FBd7ECUaQOwGpBw3EYD+sAv8S0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PzpQQkn0SiFt4c4xkrXQApi3MJwDzzbcWNRtUw3hB9AmwLXd7GPxlE2iTJOkkOcBmb2b4oD2SvyoZFmRe8U7lKqOH0fLL8Vm6NdGkYVMY+qWEjpOzKmAazFfglTDhp5RF/Z8je70Rx/J57RGts8fml3kLT4roGlj9ypT2dw5cvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BDRFiugy; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56L40e9f029344
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 06:38:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ZcoU0TGwdamvkaiI2FBd7ECUaQOwGpBw3EYD+sAv8S0=; b=BDRFiugyrqxv3i3i
+	FgVP9TWHbvtVHHPXQ+WMfOkJp6KGmLgOn2C+oThHXkr/ldbeYRzjvW9IVUCvEmZa
+	lnWWvYBLovX8LFWkxEeQ6BErK6kSQ51grGvDtRX7bVxeZHm//AqE8gIR2OAt7qEl
+	FB1hfvJri+SSVfKjCFWUUbN9/duOdQSzrL3AlCVwAfuMqsZ2aW4qYedStdmbOnYS
+	iZPzROKQK9ZjkxbI25hTq4ZjEkH4qksPcgfayRBtEEnWksdDL1Sd1Y4rXubOZYca
+	1qmDol+rRgOOt0ZedsfJcCo+9ProMn6lLbsR+0lqEfjI8iirlovbgHEsO/q4XgG1
+	rfRt+Q==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48048tbkpf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 06:38:13 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2369dd58602so31308745ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 23:38:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753079892; x=1753684692;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZcoU0TGwdamvkaiI2FBd7ECUaQOwGpBw3EYD+sAv8S0=;
+        b=LbtdjZgBUj05bNGLFQ4Wv6culKy8U8krVzA8SOWoWqqsLMwy1OTqFmnvkh7n4hyPdh
+         6/58ijoDz6Ztcjh1xdz3IJ8ozpcFJKmd0uUmW5a4uqVQkGrvXJeZYoD2PSq15W6blON0
+         MSjYQFdE0WsVyzSWRx/UKCXaAj3Whrwy+5DB1ioHEvS0O+yt8/xBZbZp/6SwoyNcoqsy
+         aRIg2DiQ1D81rVJrseLWnTsuigatvhN7b78btBETaXi2e2JAR1TyqwMCFz9vFCguhMZp
+         7ROs2EVxKbDqyFp8grWEidIGiyXMHU8X4FmgAW8I5mjIDa7vBN2CQb5EagUAqTjBCGP9
+         0ZQg==
+X-Forwarded-Encrypted: i=1; AJvYcCUt5hUT3cUSiEku89amIbXRu7Ii6vIHMyuqPNUZloV7DkOB6mkKTyDVes3VScuBFJONH//LBrHpCMZgYus=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQqZxDE/M6o+RNBhxffLpihBc8B2N2c8k2jIWOv0Aa9TAooHm9
+	tAELcfdUjolJELcBMYGWt/IG2NvKvYukyTsh5eEL5Xq7/wm9Xgih9XdZCXgqEWPeOtOVi/C/WBJ
+	F5aM/r6T7HURBMoqxP08jEhdXkprckPnkP4cbM9eJTYdVyXcxdakEqWqrIdaEVh+DbaE=
+X-Gm-Gg: ASbGncv5RQxVc7oJBzbhbERnlpvLcWzofmVALWg7Vnq6xyhYZ1701FJ3zgFeKSL1QmJ
+	h0Cm7hdUqrVwu8uFh2BJ7H/2b4Cd+VMrLGBSeWx1MRhKFndnYLBTP5nOw33AvtIdBoLeaR40E4f
+	b8pLq7Fe12ryGmmvxl2a9THWPKFfnpgoQwL//j2TNR8hpEkr+r2WldJY60uN1gJ2Vr+ZD14ulGs
+	VihB3Rv7p7o34Gu2JAziOsK9SfxwC84jXGMm4nN+GV0qrCalumY7w1EWZ4H+EG+QUjqwrLm9MKJ
+	9+XxY0Lx3Jw4xWqh1ovzEc4xXjYUpguhkJjfgNGtXSwpBEBq4yRAnRrJGOf46Fj3rWqaNsAjbyR
+	EJNqx4L1lD2mgakEHMY/gnDmF3lZrPHS5Pp4UAaXvH5lEtLG+11/4
+X-Received: by 2002:a17:903:1a85:b0:234:b41e:378f with SMTP id d9443c01a7336-23e256b5f80mr272335775ad.15.1753079892328;
+        Sun, 20 Jul 2025 23:38:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEJPo/UaVeW+EGlYevcpLuFgKAeIRLV0gRofHorAuBZ0G3Vhe9/bgkD/9w7yL17PZR7jZP6Aw==
+X-Received: by 2002:a17:903:1a85:b0:234:b41e:378f with SMTP id d9443c01a7336-23e256b5f80mr272335385ad.15.1753079891894;
+        Sun, 20 Jul 2025 23:38:11 -0700 (PDT)
+Received: from [10.50.52.170] (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b6b4de3sm50912045ad.111.2025.07.20.23.38.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 20 Jul 2025 23:38:11 -0700 (PDT)
+Message-ID: <ee2f2d91-c18a-44e9-b048-10cab911e65b@oss.qualcomm.com>
+Date: Mon, 21 Jul 2025 12:08:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/7] Add support for Clock controllers for Glymur
+To: Krzysztof Kozlowski <krzk@kernel.org>, sboyd@kernel.org,
+        mturquette@baylibre.com, andersson@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, quic_rjendra@quicinc.com,
+        taniya.das@oss.qualcomm.com
+Cc: linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250716152017.4070029-1-pankaj.patil@oss.qualcomm.com>
+ <bfe8b558-444d-4fa7-9e01-e55aaf48f2d2@kernel.org>
+Content-Language: en-US
+From: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+In-Reply-To: <bfe8b558-444d-4fa7-9e01-e55aaf48f2d2@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIxMDA1NiBTYWx0ZWRfXzc1g1m/rWkCQ
+ uMtxbzRBnGQKDSv83biii6wrNKHBXHQqRpoJKjpf65ceindYqNlpB167RVCdFdLnxHdotPCjTqH
+ N57n+cXXom1n519IspghejsGGz0Z4UyPBvnzTHexx8GF7y3PKWf1kU1reaGoedrAIVyuuk+5dnF
+ CP0vBYgeIzrMJvQjepC354A4eVVEbX4TtUM5HCQknGnITHwAHixKi7p6eiL5uZdQwM+ydjgILQD
+ 3RzKbGWk23E+URTPTIuKSPhFRTdWoQd6PANHFQWH2Pfv34Szxgx62/S2xwxX+SLP+jq1AdQilPJ
+ 3XEMT4mMrWOh4zzjliMsSZs8ZYxd0lkQ0ef/MRI5CmFjsFfx/Brl3BtdhvWDGKds6O5VUJ1IQiE
+ 6ecG+N+CN0EPc/MkiIVG4aMnByyFqoH0rxq407WHftf/9w+rOSgjvEKdGRnvEtG2/L0vdqa1
+X-Authority-Analysis: v=2.4 cv=Jb68rVKV c=1 sm=1 tr=0 ts=687de055 cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=8bVFQ3Vb14ZConFL0MkA:9
+ a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
+X-Proofpoint-GUID: uAOlea3rf1lPvxBhgU7gx2PHrKd5-C9o
+X-Proofpoint-ORIG-GUID: uAOlea3rf1lPvxBhgU7gx2PHrKd5-C9o
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-21_02,2025-07-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxlogscore=999 adultscore=0 priorityscore=1501 clxscore=1015 phishscore=0
+ lowpriorityscore=0 suspectscore=0 bulkscore=0 malwarescore=0 mlxscore=0
+ spamscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507210056
 
-pci_msi_create_irq_domain() is unused. Delete it.
-
-Signed-off-by: Nam Cao <namcao@linutronix.de>
----
-This is the final step in converting to the new MSI interrupt domain setup:
-deleting the old setup.
-
-This patch depends on the driver conversion patches listed below. Most
-patches have been applied somewhere, except for the first one.
-
-https://lore.kernel.org/lkml/cover.1752868165.git.namcao@linutronix.de/
-   -> has not been applied anywhere
-
-https://lore.kernel.org/lkml/cover.1750861319.git.namcao@linutronix.de/
-   -> applied to powerpc/next-test
-
-https://lore.kernel.org/linux-um/cover.1751266049.git.namcao@linutronix.de/
-   -> applied to uml/next
-
-https://lore.kernel.org/lkml/cover.1750858083.git.namcao@linutronix.de/
-   -> applied to pci/next
-
-https://lore.kernel.org/lkml/cover.1751875853.git.namcao@linutronix.de/
-   -> applied to netdev/net-next
-
-https://lore.kernel.org/lkml/cover.1750860131.git.namcao@linutronix.de/
-   -> applied to tip/irq/drivers
----
- drivers/pci/msi/irqdomain.c | 90 -------------------------------------
- include/linux/msi.h         |  3 --
- 2 files changed, 93 deletions(-)
-
-diff --git a/drivers/pci/msi/irqdomain.c b/drivers/pci/msi/irqdomain.c
-index c05152733993..926a16e80192 100644
---- a/drivers/pci/msi/irqdomain.c
-+++ b/drivers/pci/msi/irqdomain.c
-@@ -49,96 +49,6 @@ static void pci_msi_domain_write_msg(struct irq_data *ir=
-q_data, struct msi_msg *
- 		__pci_write_msi_msg(desc, msg);
- }
-=20
--/**
-- * pci_msi_domain_calc_hwirq - Generate a unique ID for an MSI source
-- * @desc:	Pointer to the MSI descriptor
-- *
-- * The ID number is only used within the irqdomain.
-- */
--static irq_hw_number_t pci_msi_domain_calc_hwirq(struct msi_desc *desc)
--{
--	struct pci_dev *dev =3D msi_desc_to_pci_dev(desc);
--
--	return (irq_hw_number_t)desc->msi_index |
--		pci_dev_id(dev) << 11 |
--		((irq_hw_number_t)(pci_domain_nr(dev->bus) & 0xFFFFFFFF)) << 27;
--}
--
--static void pci_msi_domain_set_desc(msi_alloc_info_t *arg,
--				    struct msi_desc *desc)
--{
--	arg->desc =3D desc;
--	arg->hwirq =3D pci_msi_domain_calc_hwirq(desc);
--}
--
--static struct msi_domain_ops pci_msi_domain_ops_default =3D {
--	.set_desc	=3D pci_msi_domain_set_desc,
--};
--
--static void pci_msi_domain_update_dom_ops(struct msi_domain_info *info)
--{
--	struct msi_domain_ops *ops =3D info->ops;
--
--	if (ops =3D=3D NULL) {
--		info->ops =3D &pci_msi_domain_ops_default;
--	} else {
--		if (ops->set_desc =3D=3D NULL)
--			ops->set_desc =3D pci_msi_domain_set_desc;
--	}
--}
--
--static void pci_msi_domain_update_chip_ops(struct msi_domain_info *info)
--{
--	struct irq_chip *chip =3D info->chip;
--
--	BUG_ON(!chip);
--	if (!chip->irq_write_msi_msg)
--		chip->irq_write_msi_msg =3D pci_msi_domain_write_msg;
--	if (!chip->irq_mask)
--		chip->irq_mask =3D pci_msi_mask_irq;
--	if (!chip->irq_unmask)
--		chip->irq_unmask =3D pci_msi_unmask_irq;
--}
--
--/**
-- * pci_msi_create_irq_domain - Create a MSI interrupt domain
-- * @fwnode:	Optional fwnode of the interrupt controller
-- * @info:	MSI domain info
-- * @parent:	Parent irq domain
-- *
-- * Updates the domain and chip ops and creates a MSI interrupt domain.
-- *
-- * Returns:
-- * A domain pointer or NULL in case of failure.
-- */
--struct irq_domain *pci_msi_create_irq_domain(struct fwnode_handle *fwnode,
--					     struct msi_domain_info *info,
--					     struct irq_domain *parent)
--{
--	if (WARN_ON(info->flags & MSI_FLAG_LEVEL_CAPABLE))
--		info->flags &=3D ~MSI_FLAG_LEVEL_CAPABLE;
--
--	if (info->flags & MSI_FLAG_USE_DEF_DOM_OPS)
--		pci_msi_domain_update_dom_ops(info);
--	if (info->flags & MSI_FLAG_USE_DEF_CHIP_OPS)
--		pci_msi_domain_update_chip_ops(info);
--
--	/* Let the core code free MSI descriptors when freeing interrupts */
--	info->flags |=3D MSI_FLAG_FREE_MSI_DESCS;
--
--	info->flags |=3D MSI_FLAG_ACTIVATE_EARLY | MSI_FLAG_DEV_SYSFS;
--	if (IS_ENABLED(CONFIG_GENERIC_IRQ_RESERVATION_MODE))
--		info->flags |=3D MSI_FLAG_MUST_REACTIVATE;
--
--	/* PCI-MSI is oneshot-safe */
--	info->chip->flags |=3D IRQCHIP_ONESHOT_SAFE;
--	/* Let the core update the bus token */
--	info->bus_token =3D DOMAIN_BUS_PCI_MSI;
--
--	return msi_create_irq_domain(fwnode, info, parent);
--}
--EXPORT_SYMBOL_GPL(pci_msi_create_irq_domain);
--
- /*
-  * Per device MSI[-X] domain functionality
-  */
-diff --git a/include/linux/msi.h b/include/linux/msi.h
-index 77227d23ea84..0c0e59af043c 100644
---- a/include/linux/msi.h
-+++ b/include/linux/msi.h
-@@ -703,9 +703,6 @@ void __pci_read_msi_msg(struct msi_desc *entry, struct =
-msi_msg *msg);
- void __pci_write_msi_msg(struct msi_desc *entry, struct msi_msg *msg);
- void pci_msi_mask_irq(struct irq_data *data);
- void pci_msi_unmask_irq(struct irq_data *data);
--struct irq_domain *pci_msi_create_irq_domain(struct fwnode_handle *fwnode,
--					     struct msi_domain_info *info,
--					     struct irq_domain *parent);
- u32 pci_msi_domain_get_msi_rid(struct irq_domain *domain, struct pci_dev *=
-pdev);
- struct irq_domain *pci_msi_get_device_domain(struct pci_dev *pdev);
- #else /* CONFIG_PCI_MSI */
---=20
-2.39.5
-
+On 7/16/2025 9:42 PM, Krzysztof Kozlowski wrote:
+> On 16/07/2025 17:20, Pankaj Patil wrote:
+>> Add support for Global clock controller(GCC), TCSR and the RPMH clock
+>> controller for the Qualcomm Glymur SoC.
+> This is the first time this name appears, so if you do not have
+> in-flight board bindings patch with full description please say some
+> words here. This will allow the community to understand how this maps to
+> other known products, of which 99.9% use model names, not internal
+> codenames.
+>
+> Best regards,
+> Krzysztof
+Glymur is the next gen compute SoC.
+Will update the cover letter in v2
 
