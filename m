@@ -1,141 +1,101 @@
-Return-Path: <linux-kernel+bounces-738850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2D97B0BE2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:55:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62E4EB0BE51
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:58:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 368293AC313
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:55:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29C8316D9A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:58:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650A92853E7;
-	Mon, 21 Jul 2025 07:55:34 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27AF2857DD;
+	Mon, 21 Jul 2025 07:58:36 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773FE1DE4E0
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 07:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432C31D07BA
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 07:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753084534; cv=none; b=TzszHcVYDmNQf47VWOColfvBfYqWYk3UTbypr1IlpHqDS5Dx+vGLG1GiaqazTPIog33xDhTmZQbxAijMHEC578mesAU7OL9/iBw2ase8bLhElRgpF0WY/ReOZ84DfanE6u/tnqOfMjFty45WuR6hrCbmA4g3fH8MbBo2LxykD/0=
+	t=1753084716; cv=none; b=WVStxHvRlryoyTyhoe46YPllyl+cTpJqGcU5N55PQIaASGy2KpuZeNMQ8GFUUUi5bdHD0V/odqG8MWWcf00scxVuMsXdNTgV9K9iFgHxDDwcfVz1anlxT0wnYG7wPVgNvq59lg2qsbTZTsMIfNlzramHPtJyvUoQJAUTdWbejVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753084534; c=relaxed/simple;
-	bh=0lse8KOroGbQPPspT2o3Gt8TESQEfPdvvUFUEyZmqtI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XBIXO6Z8hJT6HrZd18379q5cLoR3oANFutxfS3bqmAFx6y7nCZMvyZcXmatbfMXnfuXMJqZgtt/GW/xSC+ltgvJbYFEo4IDPvx+wUefTTVVTdvHOWckc2kdKlZi1e5kSQOqPxkOyZJeFx2q1PVr6owvpdMcV9Jf+52mQWYE0h4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+	s=arc-20240116; t=1753084716; c=relaxed/simple;
+	bh=vWoc6vkEMUZ8tSt7qmyI5v7WgtN0mWOUlxC4Ce5T7ps=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=rUb5OaS7NONOliaN+7FXaBcjOQr8h98ar/sCvH8lv+e8BO1ltLkLUjPtY80wZp2QjCkcirYt6M54EKtwBx7TEIzRYGDzvibgC1FMbv3bAKj/8Fs/MSfczYfeyR+amQbaqLeB0OFPRWyrWeCESRenlcS3agha2nU04xRRvsfI724=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-87b2a58a4c0so373564239f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 00:55:32 -0700 (PDT)
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-86463467dddso419179439f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 00:58:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753084531; x=1753689331;
+        d=1e100.net; s=20230601; t=1753084714; x=1753689514;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=mpGtJjSTE4Hb4CxYNFdEl6s+ZrPvAdZM8nTLITHu/AU=;
-        b=Wda868rM00Ra2ajLb4kb/qf8CD/HUZ4pSse2znxESftmsmXhuML1D+oKHcZgmG0HKW
-         Tws0D/nZmQoHUrVU3iJZ4yrI8pkWHmdQ6WtVogScrAPOqjeeZOEmHQ3s26dFiEOn8Y6h
-         iDW62pJ0DRZQXQCwegjpAtfcohd+CO6DsAxbFTwLjJSeNiSy7CLPampyOPqLzq3k/XbV
-         yqVfQPBl8j3Xne625lByeNC8ZvKu8x5Zw7D/NuLSy0VJwWRP+jK5o9/E7E1Kdurh9eu7
-         GPnGVvHX7Ftq/NzUkuMBBAqSxnsWKKsXkA32DRuaPADqhZrbD3k/7AUVhmf42dfSnC6z
-         4lDA==
-X-Forwarded-Encrypted: i=1; AJvYcCUDT3/c8SVKDYJqQu1g94wY5zjJ7o2cYJpexHTcuqKzSvSh6vEMs+n+3XHEAkT7nCtoChKhBU2S/LAQi5M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxkow9S+BzngMkNmeHfy4PjkQdExFsqlB7RaudeO34BbWLQtNe/
-	GrTlYehvBEdy9ew6ZzkWnaULr595Gx32sUXyBtMuf/csEhZGBTEUscb2U1BFGsQr+MjXphVcU0j
-	LMYKJHZ46oOpfXUEblidKwFe5uWmuFc4ssbCAjnBiLif/D8Oxu0TiqJ5CFo0=
-X-Google-Smtp-Source: AGHT+IFIii7JfNpq4baM+HOiCqn2j+ywL/ztT7mpBre9UykTQTr4wVD4CtdvbbnhWSyoT5DxFd/EvfOjyL0s3IfX+e1ASXPbA95t
+        bh=0qWsH7gI2IrsNAjvn+IJGgtDqsL30WdsMqCwe8OFr7E=;
+        b=LDaGFSJobeeXfU5GV4QHaE+P2tz14PehRXJZraykkW/dY980Kc936q7ojePUII/eZh
+         d0vR1Dvj1YO1cLpTW0XtjkhYxt+zoK0u6PPElBu7Yn7faJWTqJDca/ThKnszjVYipn5r
+         AMhrHmLpjvIdxK1QaHUEwqsJKGUeJf/PkdJTcyDWjsJ2ky9bBI8yx89UURHZPWbidIBi
+         pa10LHtn0voIxgGhqUpJ78N5ZLpb1Nj6GwZlXtpxdxPu9p+GlbFtZ/HyYC+nZX+Ldiaz
+         w7z9xL+vUxQSVxiiMP3nCmYwF7MET3ALs2yk4pArV+Nsr/579Q4LY/9MlaDsbz0/sKR6
+         bTUw==
+X-Gm-Message-State: AOJu0Yyw8K6Pq4886W9qTl0sC1GXakUps/AFnn4GeGBbuzPkQAQLOfkH
+	VBwhB2RKt6gy0hQuzQ7Wt0315pjvzG8cTD1qjQea2Da7akr4Tbqzw2c1tp0iNlhAPQ8YoFn2jP/
+	5nsrKE504MG0K90MafrE9eru46khCy2Nn6/ogpBukL4qRfkgJN/AmUEZSQu8=
+X-Google-Smtp-Source: AGHT+IFs4koPgAH1a6/fQqINc1P2RFkey8F9mJltws+a0M1nOFV9A0+p6DC2S6cAkOEUom3pFAg1TXFnwLTvvuOgFLHrq6rh094z
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3d1:b0:875:d675:55f2 with SMTP id
- ca18e2360f4ac-879c28caec0mr2189233839f.7.1753084531607; Mon, 21 Jul 2025
- 00:55:31 -0700 (PDT)
-Date: Mon, 21 Jul 2025 00:55:31 -0700
+X-Received: by 2002:a05:6602:4144:b0:879:49e9:5156 with SMTP id
+ ca18e2360f4ac-879c293fbf9mr2405562239f.9.1753084714382; Mon, 21 Jul 2025
+ 00:58:34 -0700 (PDT)
+Date: Mon, 21 Jul 2025 00:58:34 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <687df273.a70a0220.693ce.00e5.GAE@google.com>
-Subject: [syzbot] [wireless?] WARNING in cfg80211_switch_netns
-From: syzbot <syzbot+3515319a302224e081b4@syzkaller.appspotmail.com>
-To: johannes@sipsolutions.net, linux-kernel@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
+Message-ID: <687df32a.a70a0220.693ce.00e6.GAE@google.com>
+Subject: [syzbot] Monthly rdma report (Jul 2025)
+From: syzbot <syzbot+liste30f0bbb947a4c7635ee@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, 
 	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+Hello rdma maintainers/developers,
 
-syzbot found the following issue on:
+This is a 31-day syzbot report for the rdma subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/rdma
 
-HEAD commit:    4701ee5044fb be2net: Use correct byte order and format str..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=142f77d4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1a940d1173246e73
-dashboard link: https://syzkaller.appspot.com/bug?extid=3515319a302224e081b4
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 8 issues are still open and 65 have already been fixed.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Some of the still happening issues:
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/5771927b98f6/disk-4701ee50.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e9e498c37560/vmlinux-4701ee50.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/377ae84313ff/bzImage-4701ee50.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3515319a302224e081b4@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 6759 at net/wireless/core.c:204 cfg80211_switch_netns+0x560/0x590 net/wireless/core.c:204
-Modules linked in:
-CPU: 1 UID: 0 PID: 6759 Comm: kworker/u8:18 Not tainted 6.16.0-rc6-syzkaller-01576-g4701ee5044fb #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Workqueue: netns cleanup_net
-RIP: 0010:cfg80211_switch_netns+0x560/0x590 net/wireless/core.c:204
-Code: e1 07 38 c1 7c 8c 4c 89 e7 e8 dc be 63 f7 eb 82 e8 45 b0 01 f7 e9 63 fe ff ff e8 3b b0 01 f7 e9 59 fe ff ff e8 31 b0 01 f7 90 <0f> 0b 90 e9 a9 fd ff ff 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c cb fa
-RSP: 0018:ffffc9001ba67860 EFLAGS: 00010293
-RAX: ffffffff8abe7a1f RBX: ffff888031530d78 RCX: ffff88802a70da00
-RDX: 0000000000000000 RSI: 00000000ffffffef RDI: 0000000000000000
-RBP: 00000000ffffffef R08: ffffffff8fa22af7 R09: 1ffffffff1f4455e
-R10: dffffc0000000000 R11: fffffbfff1f4455f R12: ffff888031530700
-R13: ffff888027fc9580 R14: dffffc0000000000 R15: ffff8880315308f0
-FS:  0000000000000000(0000) GS:ffff888125d16000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007faceb4e56c0 CR3: 0000000080016000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- cfg80211_pernet_exit+0xa2/0x140 net/wireless/core.c:1671
- ops_exit_list net/core/net_namespace.c:198 [inline]
- ops_undo_list+0x497/0x990 net/core/net_namespace.c:251
- cleanup_net+0x4c5/0x800 net/core/net_namespace.c:682
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3321
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
+Ref Crashes Repro Title
+<1> 536     No    INFO: task hung in rdma_dev_change_netns
+                  https://syzkaller.appspot.com/bug?extid=73c5eab674c7e1e7012e
+<2> 369     Yes   WARNING in rxe_pool_cleanup
+                  https://syzkaller.appspot.com/bug?extid=221e213bf17f17e0d6cd
+<3> 75      No    INFO: task hung in add_one_compat_dev (3)
+                  https://syzkaller.appspot.com/bug?extid=6dee15fdb0606ef7b6ba
+<4> 43      Yes   WARNING in gid_table_release_one (3)
+                  https://syzkaller.appspot.com/bug?extid=b0da83a6c0e2e2bddbd4
+<5> 10      Yes   WARNING in rxe_skb_tx_dtor
+                  https://syzkaller.appspot.com/bug?extid=8425ccfb599521edb153
 
 ---
 This report is generated by a bot. It may contain errors.
 See https://goo.gl/tpsmEJ for more information about syzbot.
 syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+You may send multiple commands in a single email message.
 
