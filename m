@@ -1,195 +1,106 @@
-Return-Path: <linux-kernel+bounces-739614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BF0DB0C898
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:24:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41339B0C89C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:24:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 357BC7A340B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:22:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 257DF7A4490
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A23422E0926;
-	Mon, 21 Jul 2025 16:24:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43472DECC5;
+	Mon, 21 Jul 2025 16:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tkfzfnBs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ciuw9+2Y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7C32874E5;
-	Mon, 21 Jul 2025 16:24:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C712DFA25;
+	Mon, 21 Jul 2025 16:24:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753115044; cv=none; b=H2Hixna1hpGbuI++9zKXV7S+PTkEgyioHXjXt3PJBWi2QKIb5FRvsHX0d2rFkoWBDwe1z2cxoSJb986dpE4M+PDNATyXtCYocCArzu1BHZSW36lwGv3eNxuHkk4EbHtfrARsO/BnxHYZKEqM3gVI/hdh7Pvaflk5ipeU5JxTe30=
+	t=1753115068; cv=none; b=Jm/NKpxhdDSOOz+4lfbJ4zzTreSu439Jj2dadmQjCBky9FbdqnwyETvyZgu2vQA4WTLKd34fGzjH3dQ+Psra2ZT29+1A6sLbBq5lhGVD02UJBpfgYQFpEKtkA7ora2h8smdAgLFfANlMy/ZuX4+LkTJzHyrF8LLQzeA+U683WII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753115044; c=relaxed/simple;
-	bh=2ABCx+WSd+v3rHwLcSyVqwjm8XpTu9GXQQWjrFxrnRA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IH45VMjZzT6h6rHVE9E38381NOZBmWse/F9IIp/8J4ZloDVRP/lT1rZHmeMv+AuR/hhu/55sWxW4dlyHYrncWBBj0zYW24/apbwyrw2ZA6lyfN0Sfp7cW7yWGuO/L2erHCtWkl+Pihl1xDOoV70dWFfWexEBq0/7Ahura2FjKyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tkfzfnBs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 945F8C4CEED;
-	Mon, 21 Jul 2025 16:23:59 +0000 (UTC)
+	s=arc-20240116; t=1753115068; c=relaxed/simple;
+	bh=IWjiSW3/DTK6Yt8PRmUSRaihI8KjJDrKXIUweHjoyIU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=awCkjIDNFkPhC0wzpIaB5jTv3ZMaIj+mXpbuhaY4gt6c2V7eL5s2xUQhof8mF6DT6y2m8znEMM6qjBCstohFiHoa/hQCQm6Ujmj0FG8CVyxzIImvV4dvaJhxGReQVlTcOBpCefLb/qneajJnYCBigO0o2Ewx9fBgsSGeVwajKEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ciuw9+2Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4895C4CEED;
+	Mon, 21 Jul 2025 16:24:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753115042;
-	bh=2ABCx+WSd+v3rHwLcSyVqwjm8XpTu9GXQQWjrFxrnRA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tkfzfnBsfOEbSXl1DVM+NkKg/YOkYcT95UJ99/aMXKkkGgXabsHvP6iElKHOX96b5
-	 H6vKJBTwu0NgeagJ2zb+T7s7vY2ZxO7EIDVSzqsB0umrRZfRqCuJDb9obJh3rigw7u
-	 1cndwxJBuMEFudL7s7wUYpDZTWpeSV/DUgjRSbIrhQnBtShUK6Tudepi/34xhYQE5t
-	 b/7w3HrLIQA4HNTWmuo2ZeFDwDZY2CmuWwqFzsV5+qQDlEju3mDHhjbHjaSY6SATQ7
-	 kDEYKQ4PAwfszMnYlco+KGVG8zBa4c2j4CvL9YBzTYMq9PDLIerX2luKUbsxI/Oj+v
-	 A/WlfIGUMatNg==
-Message-ID: <ab308d9e-a0dc-4b57-b498-93a0f56771c4@kernel.org>
-Date: Mon, 21 Jul 2025 17:23:59 +0100
+	s=k20201202; t=1753115067;
+	bh=IWjiSW3/DTK6Yt8PRmUSRaihI8KjJDrKXIUweHjoyIU=;
+	h=Date:From:To:Cc:Subject:Reply-To:From;
+	b=ciuw9+2YkTIoMVP9/uDd2X2+a4U4bTYeynfvD6sHdNi+Kav/ssKZjLeNPMlp9m1hY
+	 JhylsGdzwphDJfiaJXNAYmDRwjx+e+WPdPjju+CsASvXw3e3E6alF/xGtsY+RYTyK+
+	 A9awQvp2PKmwdbrQGbbaOlH0ZcIar5PV/DmNY/1khctO/Pe76C2thSy2lJjI9b8/zz
+	 vezusGW0/jBOE+8ZfK+TYsAlgcfGgfg8hXHds81K4QSlccAwjLrU45ypKd8sWtuiT3
+	 O9Tgt3YiQZcvztJDCEyUS42yEl5/tzMnABW5i6hwLt1KLOsglNAWuBdQutNMW6RjnO
+	 PEjsfGb0ilqXg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 634CBCE0C41; Mon, 21 Jul 2025 09:24:27 -0700 (PDT)
+Date: Mon, 21 Jul 2025 09:24:27 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: rcu@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org
+Subject: [PATCH v3 0/4] Switch __DECLARE_TRACE() to notrace variant of
+ SRCU-fast
+Message-ID: <7387f0c2-75bc-420d-aa7e-3a9ac72d369c@paulmck-laptop>
+Reply-To: paulmck@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next 2/2] bpftool: Add bpftool-token manpage
-To: Tao Chen <chen.dylane@linux.dev>, ast@kernel.org, daniel@iogearbox.net,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, davem@davemloft.net,
- kuba@kernel.org, hawk@kernel.org
-Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org
-References: <20250720173310.1334483-1-chen.dylane@linux.dev>
- <20250720173310.1334483-2-chen.dylane@linux.dev>
-From: Quentin Monnet <qmo@kernel.org>
-Content-Language: en-GB
-In-Reply-To: <20250720173310.1334483-2-chen.dylane@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-2025-07-21 01:33 UTC+0800 ~ Tao Chen <chen.dylane@linux.dev>
-> Add bpftool-token manpage with information and examples of token-related
-> commands.
-> 
-> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
-> ---
->  .../bpftool/Documentation/bpftool-token.rst   | 68 +++++++++++++++++++
->  1 file changed, 68 insertions(+)
->  create mode 100644 tools/bpf/bpftool/Documentation/bpftool-token.rst
-> 
-> diff --git a/tools/bpf/bpftool/Documentation/bpftool-token.rst b/tools/bpf/bpftool/Documentation/bpftool-token.rst
-> new file mode 100644
-> index 00000000000..177f93c0bc7
-> --- /dev/null
-> +++ b/tools/bpf/bpftool/Documentation/bpftool-token.rst
-> @@ -0,0 +1,68 @@
-> +.. SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +
-> +================
-> +bpftool-token
-> +================
-> +-------------------------------------------------------------------------------
-> +tool for inspection and simple manipulation of eBPF progs
+Hello!
 
+This is version 3 of a patch series creating a new notrace variant of
+SRCU-fast and introducing it to the __DECLARE_TRACE() in place of the
+current preemption disabling.  This change enable preemption of BPF
+programs attached to tracepoints, as is required for runtime use of BPF
+in real-time systems.
 
-Copy-pasted from bpftool-prog.rst, please update.
+1.	Move rcu_is_watching() checks to srcu_read_{,un}lock_fast().
 
+2.	Add srcu_read_lock_fast_notrace() and
+	srcu_read_unlock_fast_notrace().
 
-> +-------------------------------------------------------------------------------
-> +
-> +:Manual section: 8
-> +
-> +.. include:: substitutions.rst
-> +
-> +SYNOPSIS
-> +========
-> +
-> +**bpftool** [*OPTIONS*] **token** *COMMAND*
-> +
-> +*OPTIONS* := { |COMMON_OPTIONS| }
-> +
-> +*COMMANDS* := { **show** | **list** | **help** }
-> +
-> +TOKEN COMMANDS
-> +===============
-> +
-> +| **bpftool** **token** { **show** | **list** }
-> +| **bpftool** **token help**
-> +|
-> +
-> +DESCRIPTION
-> +===========
-> +bpftool token { show | list }
-> +    List all the concrete allowed_types for cmds maps progs attachs
-> +    and the bpffs mount_point used to set the token info.
+3.	Add guards for notrace variants of SRCU-fast readers.
 
+4.	Guard __DECLARE_TRACE() use of __DO_TRACE_CALL() with SRCU-fast.
 
-This is not a summary, please let's use a more verbose description and
-avoid abbreviations:
+Changes since v2:
 
-	List all the concrete allowed types for **bpf**\ () system call
-	commands, maps, programs, and attach types, as well as the
-	*bpffs* mount point used to set the token information.
+o	Posting standalone as opposed to a reply.
 
-What is a "concrete" allowed_type?
+	https://lore.kernel.org/all/3cecf6c9-b2ee-4f34-9d1b-ca4cfb8e56a7@paulmck-laptop/
 
+Changes since RFC version:
 
-> +
-> +bpftool prog help
-> +    Print short help message.
-> +
-> +OPTIONS
-> +========
-> +.. include:: common_options.rst
-> +
-> +EXAMPLES
-> +========
-> +|
-> +| **# mkdir -p /sys/fs/bpf/token**
-> +| **# mount -t bpf bpffs /sys/fs/bpf/token** \
-> +|         **-o delegate_cmds=prog_load:map_create** \
-> +|         **-o delegate_progs=kprobe** \
-> +|         **-o delegate_attachs=xdp**
-> +| **# bpftool token list**
-> +
-> +::
-> +
-> +    token_info:
-> +            /sys/fs/bpf/token
-> +
-> +    allowed_cmds:
-> +            map_create          prog_load
-> +
-> +    allowed_maps:
-> +
-> +    allowed_progs:
-> +            kprobe
-> +
-> +    allowed_attachs:
-> +            xdp
-> +
+o	RFC patch 6/4 has been pulled into the shared RCU tree:
+	e88c632a8698 ("srcu: Add guards for SRCU-fast readers")
 
+o	RFC patch 5/4 (which removed the now-unnecessary special boot-time
+	avoidance of SRCU) has been folded into patch 4/4 shown above,
+	as suggested by Steven Rostedt.
 
-Please also update bpftool's bash completion file. I think it should be:
+	https://lore.kernel.org/all/bb20a575-235b-499e-aa1d-70fe9e2c7617@paulmck-laptop/
 
-    diff --git i/tools/bpf/bpftool/bash-completion/bpftool w/tools/bpf/bpftool/bash-completion/bpftool
-    index a759ba24471d..3f119d7eae96 100644
-    --- i/tools/bpf/bpftool/bash-completion/bpftool
-    +++ w/tools/bpf/bpftool/bash-completion/bpftool
-    @@ -1215,6 +1215,17 @@ _bpftool()
-                         ;;
-                 esac
-                 ;;
-    +        token)
-    +            case $command in
-    +                show|list)
-    +                    return 0
-    +                    ;;
-    +                *)
-    +                    [[ $prev == $object ]] && \
-    +                        COMPREPLY=( $( compgen -W 'help show list' -- "$cur" ) )
-    +                    ;;
-    +            esac
-    +            ;;
-         esac
-     } &&
-     complete -F _bpftool bpftool
+						Thanx, Paul
 
+------------------------------------------------------------------------
+
+ b/include/linux/srcu.h       |    4 ++++
+ b/include/linux/srcutree.h   |    2 --
+ b/include/linux/tracepoint.h |    6 ++++--
+ b/kernel/tracepoint.c        |   21 ++++++++++++++++++++-
+ include/linux/srcu.h         |   30 ++++++++++++++++++++++++++++++
+ 5 files changed, 58 insertions(+), 5 deletions(-)
 
