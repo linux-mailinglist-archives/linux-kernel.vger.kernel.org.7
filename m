@@ -1,235 +1,128 @@
-Return-Path: <linux-kernel+bounces-739164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3037B0C2A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:19:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AB46B0C2AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:19:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CFAA3B026D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:18:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 119883A90DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:19:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636382BDC2E;
-	Mon, 21 Jul 2025 11:17:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8997294A0A;
+	Mon, 21 Jul 2025 11:19:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j8uRdNR6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fdHzzUM8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97AA4298248;
-	Mon, 21 Jul 2025 11:17:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9876D28D8CD
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 11:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753096674; cv=none; b=muk/1D3dd30V1n72UhzZuZqiOhZ39QaLcDaqtRsa590/vDr6TqlwC7jNzHv+9Imjc4tCiySuezdj+/k2TAqlJkstphVFxv5iDZEB9vn2ZpMH8swKAFVA0vMJsjQHd7V5deI2xkaXBo8NCSQGTxh9sKGWzRgHFc1ijFv9xzqZRBk=
+	t=1753096767; cv=none; b=XW9UH6+ylx8HCZxQiIUGl8j5WywEjvJDZ+8vsG+fH53ESAIoF8wTGWMUTdEJQo/YFXTVv7jFK7ay3oKGviP60gOf6rPcZeNqgVUZ+Ztc0fsjhAYfj0pBug9U9DvPtAJSqSHaw5ZFM9RpJHIcGhv0L2VgtkSwU0sMrJmkmzUftPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753096674; c=relaxed/simple;
-	bh=4T4b5ZbeftLTM3SsRon2K5QG8xDtblIGsfG23CADlSM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=etswd9kBO0MkLeA064JIHrhROobNNKwW+gV1rSjdzFWxGZ6GeZKy5l8LW59qq4pllFA9CNFxM2AC7A3VzPxC1vr70AHyByyTQvc5IYicp9viF98fpm2HtEgWTJ9XiuEy8MNlil6IYEpYIB3q62Hg432cOuhj+wX3BY6lZBP/nDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j8uRdNR6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87B00C4CEED;
-	Mon, 21 Jul 2025 11:17:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753096673;
-	bh=4T4b5ZbeftLTM3SsRon2K5QG8xDtblIGsfG23CADlSM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=j8uRdNR6aR8U6g8Ri5MWh9mk4cwJfet6aiu2HdwP4/QKIwasSYan9QORGc2/gZQ50
-	 BumIi9ewUP6yZoZnfxGhtRXIQQcyEJbPwn+A0IrwNA5Laal3c/hk1Y43gBHGNVSLCM
-	 9sFb9lTcVKjfyhkN2uI2qBjWFC2MQIcci+rMbwCUqrC2IAC3/dHSPbMMO5P3Uo3mwo
-	 FyQN2sLdAx+4YpbZig9rlrBn9Mi4pKKVLsZykcClGLrARxfG/RdVNSFLdFtGxdA9uO
-	 9/yiv7nGJJIMtYtkKYOSQBSLenI3aiBAF9CnPz+XKB9H6JF6V/w0GfR3D3UtUHvuuh
-	 r1ffJsA2ZcsQA==
-From: Maxime Ripard <mripard@kernel.org>
-Date: Mon, 21 Jul 2025 13:17:34 +0200
-Subject: [PATCH v7 5/5] dma-buf: heaps: cma: Create CMA heap for each CMA
- reserved region
+	s=arc-20240116; t=1753096767; c=relaxed/simple;
+	bh=/V0Z20poRIML5E1psiie1w9FO1viJObhv0FElnARQiI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GnaZNFiB7ByFiFdC7ZY/qVUeqbacM4Zz4LcUsIeLlJgqO4b7MuqKBQX/eTZ3DTjrLzD6Hol2VPu7KR2HcIMisSa/U1ByoHGD5yhSI0dmbicdntj9LwFvri7pKRYf59w1rppAIAbXsAXZG6CMb39K2SfsI9SraW+n6n+9lnjzoIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fdHzzUM8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753096764;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TFoz2WZRMZK4qulVAmwYVCtTJ8qaORO4AKebBTnJutI=;
+	b=fdHzzUM8Ew3QfvZfnR7qpjMTKwWvC3V01YIbZIOsBFuAILBsFrSymAjhIIpzpivzy3O1V7
+	ZGo0ESIommhMq0u6pfMgMFKUyVl4WldsnSnx0YQJjyQcVFsDe1KVW9CkKB8ENQBlnoOXXP
+	X7EX+XxPfKCtnlJ7kJaK8N6lyQWm/UA=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-203-4q_e72U4NlavZOF6dR-VMQ-1; Mon, 21 Jul 2025 07:19:23 -0400
+X-MC-Unique: 4q_e72U4NlavZOF6dR-VMQ-1
+X-Mimecast-MFC-AGG-ID: 4q_e72U4NlavZOF6dR-VMQ_1753096762
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a4f7f1b932so2880721f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 04:19:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753096762; x=1753701562;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TFoz2WZRMZK4qulVAmwYVCtTJ8qaORO4AKebBTnJutI=;
+        b=WZWvSO+iZJR0kM7Qw6JudyKxStDFMz4lrFwz5y0KQsosGEQHD6ewXfivCdRJv6wMN9
+         Pwm8k4gbOAJLLLWE1E8c3ibsy6Pgi7uMc+BNCia8Ep8d6PlUgitzMhdqkNdB8fPt3YWz
+         2PK3eHVhwLepSkvW7Vvdab9cLjVzlGBRZgKv5hH0xI3mxWQPPCu0bf0/KzREse/j5TQV
+         JNlkJlbG7Djf7e7N3MHnqjj+EokU3KE1P/Ch2ZTzyu6yMgzw5X4kiq4XAjnNYwuTN7Br
+         14idhMqaxUtbTlpPso9zIMRVTN5XXFBFLA3FfHSBAgB/0CHgZ9M50fmxTVaX1Kb2DDxO
+         hPZg==
+X-Forwarded-Encrypted: i=1; AJvYcCXYNs1Ripo+AMnrssCD0dX7MYT2Lz+TwgW1gm6OwxgkaRMRTQXhdqj22u/0jggspGi16wvY6023KVpo+90=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKIxbiNPH9YqahYtvpUAMe5l7ITdyfUPglhVHx6nf0g1n+YxP9
+	guHJEsZtHEnRRg2+5ILW1HgfadboGqLbbYJWZIIj8QY9hkSCQjXjv3H5ydzQWNIWHJ/Ezm4FSmp
+	Zt5X8Op7eb4UMBWNjhrcoFxL9lqmzjL14R0osXpBi4R9TcMDWvkapRRNlChQusdMt3A==
+X-Gm-Gg: ASbGncus4d3v6QFeKK2x1NRlRYkzrykor1uq0uXJjPmRWtra+ff3KVpasZ67tWdHAZ4
+	JAP0IMSglzkeoF5El5uW6uXmN88naoFy9wH222SY+ykcd4MsFbalwHAS8B32zlH3t1uTVm6mcve
+	uljk6XNr4uQKQ9rJHuBgLi2Tcty2dDOvnVUnbKgsVZPtlJFEbDM7VTzITBPnuQ3hoX8WiF4XswB
+	gQfl6emiu+7F3r+vm41T1+Y/8zKgYgASnJ2gVbLSAgbEpt82Ei2tuFarbjLYbUv2FvnEDLNMQ1k
+	GTF7rNYvymGVrZWfKgrTGqNNy11wW54HzoLgQFkoi/H+O8ZvViTfbNe4+F6P7wf3wQ==
+X-Received: by 2002:a05:6000:2902:b0:3a4:f038:af74 with SMTP id ffacd0b85a97d-3b60e518418mr15912921f8f.51.1753096761753;
+        Mon, 21 Jul 2025 04:19:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEBgZ8j7cvCchuIks11flM8QmUtWUgbRezl2Kmbq73XrYO5/Elgn5PE0sAseXfZtCEO2HQMwQ==
+X-Received: by 2002:a05:6000:2902:b0:3a4:f038:af74 with SMTP id ffacd0b85a97d-3b60e518418mr15912898f8f.51.1753096761314;
+        Mon, 21 Jul 2025 04:19:21 -0700 (PDT)
+Received: from localhost ([89.128.88.54])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca2bf4bsm10047278f8f.31.2025.07.21.04.19.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Jul 2025 04:19:20 -0700 (PDT)
+From: Javier Martinez Canillas <javierm@redhat.com>
+To: Marcus Folkesson <marcus.folkesson@gmail.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Marcus Folkesson <marcus.folkesson@gmail.com>
+Subject: Re: [PATCH v2 3/6] dt-bindings: display: sitronix,st7567: add
+ optional inverted property
+In-Reply-To: <20250721-st7571-format-v2-3-159f4134098c@gmail.com>
+References: <20250721-st7571-format-v2-0-159f4134098c@gmail.com>
+ <20250721-st7571-format-v2-3-159f4134098c@gmail.com>
+Date: Mon, 21 Jul 2025 13:19:19 +0200
+Message-ID: <871pq9aj0o.fsf@minerva.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250721-dma-buf-ecc-heap-v7-5-031836e1a942@kernel.org>
-References: <20250721-dma-buf-ecc-heap-v7-0-031836e1a942@kernel.org>
-In-Reply-To: <20250721-dma-buf-ecc-heap-v7-0-031836e1a942@kernel.org>
-To: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
- Sumit Semwal <sumit.semwal@linaro.org>, 
- Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
- Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
- "T.J. Mercier" <tjmercier@google.com>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Robin Murphy <robin.murphy@arm.com>, Jonathan Corbet <corbet@lwn.net>
-Cc: Andrew Davis <afd@ti.com>, Jared Kangas <jkangas@redhat.com>, 
- Mattijs Korpershoek <mkorpershoek@kernel.org>, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
- iommu@lists.linux.dev, linux-doc@vger.kernel.org, 
- Maxime Ripard <mripard@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5786; i=mripard@kernel.org;
- h=from:subject:message-id; bh=4T4b5ZbeftLTM3SsRon2K5QG8xDtblIGsfG23CADlSM=;
- b=owGbwMvMwCmsHn9OcpHtvjLG02pJDBl1ihcmWzFvfXJ31g6hiiVfFN/G/ZcPuvjx6RqG1L2Z6
- 6TY/Hbv75jKwiDMySArpsjyRCbs9PL2xVUO9it/wMxhZQIZwsDFKQAT+VDFWJ9gc8I3VT/vxme5
- mKJNOUqzO6eVKL2OuH619yVbhWzFI+/wnLSbYVve2rZHHCxZcOjBGcaGyaufS3xeoZeq5W9XLal
- ecatbdeMLndCXTI7zap1yw5qd5gQVqE9q6etuYVY8Jd0cmw4A
-X-Developer-Key: i=mripard@kernel.org; a=openpgp;
- fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
+Content-Type: text/plain
 
-Aside from the main CMA region, it can be useful to allow userspace to
-allocate from the other CMA reserved regions.
+Marcus Folkesson <marcus.folkesson@gmail.com> writes:
 
-Indeed, those regions can have specific properties that can be useful to
-a specific us-case.
+Hello Marcus,
 
-For example, one of them platform I've been with has ECC enabled on the
-entire memory but for a specific region. Using that region to allocate
-framebuffers can be particular beneficial because enabling the ECC has a
-performance and memory footprint cost.
+> Depending on which display that is connected to the controller, an "1"
+> means either a black or a white pixel.
+>
+> The supported format (R1) expects the pixels to map against:
+>     0 => Black
+>     1 => White
+>
+> If this is not what the display map against, the controller has support
+> to invert these values.
+>
+> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+> ---
 
-Thus, exposing these regions as heaps user-space can allocate from and
-import wherever needed allows to cover that use-case.
-
-For now, only shared-dma-pools regions with the reusable property (ie,
-backed by CMA) are supported, but eventually we'll want to support other
-DMA pools types.
-
-Since we collected all the CMA regions created during boot, we can
-simply iterate over all of them to create the heaps.
-
-This has a weird interaction with the recent work on the CMA name, in
-particular the backward compatibility code created by commit
-854acbe75ff4 ("dma-buf: heaps: Give default CMA heap a fixed name").
-
-Indeed, the old name was either 'reserved', or the name of the
-reserved-memory region device tree node if the linux,cma-default
-property was set.
-
-In both these cases, we have now collected this region during boot, and
-we're using the same name. So we're now largely redundant with the
-code to handle backward compatibility code, and we can thus remove it
-and the associated Kconfig option.
-
-Signed-off-by: Maxime Ripard <mripard@kernel.org>
----
- Documentation/userspace-api/dma-buf-heaps.rst |  9 +++++---
- drivers/dma-buf/heaps/Kconfig                 | 10 --------
- drivers/dma-buf/heaps/cma_heap.c              | 33 +++++++++++++--------------
- 3 files changed, 22 insertions(+), 30 deletions(-)
-
-diff --git a/Documentation/userspace-api/dma-buf-heaps.rst b/Documentation/userspace-api/dma-buf-heaps.rst
-index 17bf6829efd7963bc849765db54d327644e8c395..b78d2faeba62cda721a1f49d49e02bcb520ad429 100644
---- a/Documentation/userspace-api/dma-buf-heaps.rst
-+++ b/Documentation/userspace-api/dma-buf-heaps.rst
-@@ -22,8 +22,11 @@ following heaps:
-    through the ``cma`` parameter, a memory region Device-Tree node with
-    the ``linux,cma-default`` property set, or through the
-    ``CMA_SIZE_MBYTES`` or ``CMA_SIZE_PERCENTAGE`` Kconfig options. Prior
-    to Linux 6.17, its name wasn't stable and could be called
-    ``reserved``, ``linux,cma``, or ``default-pool``, depending on the
--   platform. From Linux 6.17 onwards, the creation of these heaps is
--   controlled through the ``DMABUF_HEAPS_CMA_LEGACY`` Kconfig option for
--   backwards compatibility.
-+   platform.
-+
-+ - A heap will be created for each reusable region in the device tree
-+   with the ``shared-dma-pool`` compatible, using the full device tree
-+   node name as its name. The buffer semantics are identical to
-+   ``default-cma-region``.
-diff --git a/drivers/dma-buf/heaps/Kconfig b/drivers/dma-buf/heaps/Kconfig
-index bb369b38b001af51721b56e065df92825022f1f1..a5eef06c422644e8aadaf5aff2bd9a33c49c1ba3 100644
---- a/drivers/dma-buf/heaps/Kconfig
-+++ b/drivers/dma-buf/heaps/Kconfig
-@@ -10,15 +10,5 @@ config DMABUF_HEAPS_CMA
- 	depends on DMABUF_HEAPS && DMA_CMA
- 	help
- 	  Choose this option to enable dma-buf CMA heap. This heap is backed
- 	  by the Contiguous Memory Allocator (CMA). If your system has these
- 	  regions, you should say Y here.
--
--config DMABUF_HEAPS_CMA_LEGACY
--	bool "Legacy DMA-BUF CMA Heap"
--	default y
--	depends on DMABUF_HEAPS_CMA
--	help
--	  Add a duplicate CMA-backed dma-buf heap with legacy naming derived
--	  from the CMA area's devicetree node, or "reserved" if the area is not
--	  defined in the devicetree. This uses the same underlying allocator as
--	  CONFIG_DMABUF_HEAPS_CMA.
-diff --git a/drivers/dma-buf/heaps/cma_heap.c b/drivers/dma-buf/heaps/cma_heap.c
-index 2a901af635ed76cdb085915c03258c235e302792..42f88193eab9f8f4571064c7b3b8a73bca20fdf4 100644
---- a/drivers/dma-buf/heaps/cma_heap.c
-+++ b/drivers/dma-buf/heaps/cma_heap.c
-@@ -20,10 +20,12 @@
- #include <linux/err.h>
- #include <linux/highmem.h>
- #include <linux/io.h>
- #include <linux/mm.h>
- #include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_reserved_mem.h>
- #include <linux/scatterlist.h>
- #include <linux/slab.h>
- #include <linux/vmalloc.h>
- 
- #define DEFAULT_CMA_NAME "default_cma_region"
-@@ -407,35 +409,32 @@ static int __init __add_cma_heap(struct cma *cma, const char *name)
- 	}
- 
- 	return 0;
- }
- 
--static int __init add_default_cma_heap(void)
-+static int __init add_cma_heaps(void)
- {
- 	struct cma *default_cma = dev_get_cma_area(NULL);
--	const char *legacy_cma_name;
-+	unsigned int i;
- 	int ret;
- 
--	if (!default_cma)
--		return 0;
-+	if (default_cma) {
-+		ret = __add_cma_heap(default_cma, DEFAULT_CMA_NAME);
-+		if (ret)
-+			return ret;
-+	}
- 
--	ret = __add_cma_heap(default_cma, DEFAULT_CMA_NAME);
--	if (ret)
--		return ret;
-+	for (i = 0; i < dma_areas_num; i++) {
-+		struct cma *cma = dma_areas[i];
- 
--	if (IS_ENABLED(CONFIG_DMABUF_HEAPS_CMA_LEGACY)) {
--		legacy_cma_name = cma_get_name(default_cma);
--		if (!strcmp(legacy_cma_name, DEFAULT_CMA_NAME)) {
--			pr_warn("legacy name and default name are the same, skipping legacy heap\n");
--			return 0;
-+		ret = __add_cma_heap(cma, cma_get_name(cma));
-+		if (ret) {
-+			pr_warn("Failed to add CMA heap %s", cma_get_name(cma));
-+			continue;
- 		}
- 
--		ret = __add_cma_heap(default_cma, legacy_cma_name);
--		if (ret)
--			pr_warn("failed to add legacy heap: %pe\n",
--				ERR_PTR(ret));
- 	}
- 
- 	return 0;
- }
--module_init(add_default_cma_heap);
-+module_init(add_cma_heaps);
- MODULE_DESCRIPTION("DMA-BUF CMA Heap");
+Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
 
 -- 
-2.50.1
+Best regards,
+
+Javier Martinez Canillas
+Core Platforms
+Red Hat
 
 
