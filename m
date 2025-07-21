@@ -1,466 +1,927 @@
-Return-Path: <linux-kernel+bounces-739340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42342B0C4FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:16:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A8AB3B0C4FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:17:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93E271899635
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:17:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2236A1899D5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E592D836C;
-	Mon, 21 Jul 2025 13:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LRDaqCur";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="xc/fbJgM"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EDF62D949E;
+	Mon, 21 Jul 2025 13:16:44 +0000 (UTC)
+Received: from ni.piap.pl (ni.piap.pl [195.187.100.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D32146A66;
-	Mon, 21 Jul 2025 13:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753103796; cv=fail; b=W/fjY0ug+rIc3m8KCOGxoaLQHG1fWpx6fJ7VcXnDQGu+cg78DLodTeS7haY+/U8TH+EA2/8MnxyS05C10haWLZNoHf/uwZPsqTymT2ryS7y1HmUhlYWS1lfcsIzwrMYFiBn3b57tm7um3uqwcFIhgwxR9Gwubq5Wyh/bgDheTTY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753103796; c=relaxed/simple;
-	bh=PUaETVANWyPHHHLi2JuXHFy1rftiHs6xhBtRzJDs+Us=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=UWPA0n8fJvLSuxQhAXTqDMH/Yq7wwmL9yFuMJjcmWT7GyOWVpYzpjYDAk+q0BQEHb5gOkwhu4F/TohgoCCOic91ZirfjH3r2MW8N1jjbC47ddaI26Nsm8pkkbCfSyzXmlz7dPW1jLb/X+JXP8zCmkYhxIPnMjSWCo0OYJzirb8M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=LRDaqCur; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=xc/fbJgM; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56LCNCaY028651;
-	Mon, 21 Jul 2025 13:16:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=vcSjdx+9L0nxNpOCGN
-	Y184HxgVlzp0meBngnd/9yMF4=; b=LRDaqCurPKApvaqvAwac61FD911ZOxJJH/
-	Ebd7wO4tCHK9aOOA+E4g+xdAqVd08ZXJwId1fg/mN+HOa+ESgaqDblrBsy9EZAhD
-	jhDvqC1PmG7GCbh5tykmmYvqz6BqewZlsVzvnsoMEW36681nYbg40IHO0QQqs4r0
-	Yhb380MRFwjIMaHQwsWpZU54fW5D6wgTz4PiVaJl3qwsk+G33qjRy2dvuvfTmksd
-	c7qybDnt/lszGlkUKAT3r7UAa8Y+AOBhajShu9+eeIDpXx5hQxxEkS/h3yp5MoUQ
-	bNmRn4PrOQGar88dZlwz18nUzLgALpZuCy1bYesKGaLbir/rFPlg==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48057qtnak-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 21 Jul 2025 13:16:00 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56LCUOah014657;
-	Mon, 21 Jul 2025 13:16:00 GMT
-Received: from ch4pr04cu002.outbound.protection.outlook.com (mail-northcentralusazon11013053.outbound.protection.outlook.com [40.107.201.53])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4801tea9wu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 21 Jul 2025 13:16:00 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=r6ZJQS2AG+sY4s/3lgeRwJcok1WbiCwnguPISk4jbrDRIHsNjMxWuo8NUiZWKOY2jSwVAdM/2zZgSh2PFLkKIZuyW/AmmWx4kPvA7S6fhGfGQVp1/nmW2FkVslDVY9CI8FF9379cjcffA6kF4mXEhmSOX1aAuWGhDXfE7mDatCIanIvvLQy2YB51yCt2/PX+nLwbJ8Y13zzrv6TNiVFgg1DtKLVWCmQXX/iVBzzXsayWKNYbFA6wIycoTBeIXweRNFgnJLldF13WIvhfR2WQVhda81oc7LNjFXcEC3qJhcjOOVadAx0m7BOZBcbBgj2GW9wY/zvB6OnLf0WMfwhyBA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vcSjdx+9L0nxNpOCGNY184HxgVlzp0meBngnd/9yMF4=;
- b=Q5zkT/zTmljldiricIrKSI9jSYKTSn4RUoq0qFLi15rp55RvoyckFmA6fy7gNxBItGjDvgdsmctoamGUeK1tYayl81YpxYZlP28vjGXK/ySgHF3zSNgHxYV6RVftcaC3p3ilA0QXHnX9dEZBmc9O3zN1XK7LIaP/anxNXwi9na/r+z2VPkwdwg4f2WKeRtZHedAb6t0FfILKkvwd7uxlhTHCe73TTz42EZd+9QQXJu/DOG4YieUEKhC74dZblkj7/+Tlrcf70v74PMeO7D5Ull5WBJUfyCc4qQh2+rpLMlFi8vo1ae6YWZvHMWR7C0lmXkxMriDZkDGrxO8p9yEUCw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vcSjdx+9L0nxNpOCGNY184HxgVlzp0meBngnd/9yMF4=;
- b=xc/fbJgMOhfXM6hbgfJpT+9kEB5yQTSqAvaOm/Svs2U8uEkzVkb6kcHMIN90aLAQWWJi7E8jyJNTLnvWqWwCVsNskm73pQA2Mv96ddGmx48wmTyV48NJVtecUBW6jNf9xt3M8BsYdGGgwmbCAoAuZqVPIXr9GfTDdgTHc922Nw8=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by PH7PR10MB7694.namprd10.prod.outlook.com (2603:10b6:510:2e5::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Mon, 21 Jul
- 2025 13:15:57 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%4]) with mapi id 15.20.8943.029; Mon, 21 Jul 2025
- 13:15:57 +0000
-Date: Mon, 21 Jul 2025 14:15:54 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>, Zi Yan <ziy@nvidia.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Usama Arif <usamaarif642@gmail.com>, SeongJae Park <sj@kernel.org>,
-        Jann Horn <jannh@google.com>, Yafang Shao <laoar.shao@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH POC] prctl: extend PR_SET_THP_DISABLE to optionally
- exclude VM_HUGEPAGE
-Message-ID: <803a927e-1c36-4934-9cda-a700acdaad0d@lucifer.local>
-References: <20250721090942.274650-1-david@redhat.com>
- <686d2658-a06e-46cb-af22-440b75ac34ed@lucifer.local>
- <ff53959b-a402-4030-b11a-dc19fe36ee4e@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ff53959b-a402-4030-b11a-dc19fe36ee4e@redhat.com>
-X-ClientProxiedBy: LO4P123CA0667.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:316::20) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87AF22D879E;
+	Mon, 21 Jul 2025 13:16:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.187.100.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753103803; cv=none; b=uMICZ6u8q1zC0p9GzzcOKudPaLqaKUsdKwGsnc1JOneGbg18fSTbBVCxebnKvpMj3dNXjVHdr3V6csC7s5+P3HD4aAfQ7VOzJB2j4302l0GDswtTNWIw/sbv+MqoAXnu6l0OSWDQSW8m4P0MFmSnycRAjC8fi2oMt46xJ9lPzeI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753103803; c=relaxed/simple;
+	bh=CuO4/wP2doWcG2Xry6LZXfRYw061PoW12/IBTKpypgA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NAYgyhL5HnLKvJrjPJyzQRps755qDU7YRW/cdRH6LTlZ8lF0D4fD2+8pYZFXEWQtp8FfVM8Iw/1g96bBrowFlxmR/wzTHtf1ifDHabkvs3BTX14Sq8HYq7GxcOpH/YlKKAxfaHcy9gHw8GvgBrHLC17u3H6Hx1ZtN4B7iVJROgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=piap.pl; spf=pass smtp.mailfrom=piap.pl; arc=none smtp.client-ip=195.187.100.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=piap.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=piap.pl
+Received: from t19.piap.pl (OSB1819.piap.pl [10.0.9.19])
+	by ni.piap.pl (Postfix) with ESMTPS id 8320AC3EEAD7;
+	Mon, 21 Jul 2025 15:16:28 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ni.piap.pl 8320AC3EEAD7
+From: =?utf-8?Q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>
+To: Stefan Klug <stefan.klug@ideasonboard.com>
+Cc: Dafna Hirschfeld <dafna@fastmail.com>,  Laurent Pinchart
+ <laurent.pinchart@ideasonboard.com>,  Heiko Stuebner <heiko@sntech.de>,
+  Paul Elder <paul.elder@ideasonboard.com>,  Jacopo Mondi
+ <jacopo.mondi@ideasonboard.com>,  Ondrej Jirman <megi@xff.cz>,
+  linux-media@vger.kernel.org,  linux-rockchip@lists.infradead.org,
+  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
+Subject: Re: FYI: i.MX8MP ISP (RKISP1) MI registers corruption
+In-Reply-To: <175308758352.3134829.9472501038683860006@localhost> (Stefan
+	Klug's message of "Mon, 21 Jul 2025 10:46:23 +0200")
+References: <m3h5zbxkc6.fsf@t19.piap.pl> <m38qknx939.fsf@t19.piap.pl>
+	<175308758352.3134829.9472501038683860006@localhost>
+Sender: khalasa@piap.pl
+Date: Mon, 21 Jul 2025 15:16:28 +0200
+Message-ID: <m31pq9y98z.fsf@t19.piap.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|PH7PR10MB7694:EE_
-X-MS-Office365-Filtering-Correlation-Id: cc868047-340d-4b08-6981-08ddc858babf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?nQCK9kUg/Dh0mEaTm4e8EUko0dWc2j64jC0hiUcGVIuH1xc2wSGbLFIO5/xP?=
- =?us-ascii?Q?zkt2QweHXb73rjg6iEHxp5Lmv46vcrpJpjyzvhEWNehpviwVjQhZZK/1LHyi?=
- =?us-ascii?Q?DScWi36MEK8wTs7bs374oi0XcH/em2UcJbe/Amgk2gCzGRPOfIrKRM6f7H9P?=
- =?us-ascii?Q?ANfon658LS02UKkYAM7Q7EemTJeZBVSvbIWq6+6eHI3qS6+Z4P4zFC9dWQ22?=
- =?us-ascii?Q?oiKQaii51DIdW3GFBtWVaD2RE8Chuul4EAIpa0dr3STznTjNpG3nv29XKXdM?=
- =?us-ascii?Q?JpSUNu3YAAJhQQQORE+bM52HeLULp0fINldlf8PeJjwO36SLGePDAhGuCzQw?=
- =?us-ascii?Q?iC7QiVD9TrWsyw4+DisdoQJIzUXjJ4WjzKGZALbG/W04BE2tD0DB2IdcZtgO?=
- =?us-ascii?Q?7mSf0gc0WhCCzjgrsyuI4KQ4GotMxTLe5xqjDQnx3d1iyb2/kCc8/jBX8NLv?=
- =?us-ascii?Q?sfzZ37O+eLygd9PYermh8sfbOZg/Pyv4F8PUWnrtYIbyv7fMcY80RfvIvOm7?=
- =?us-ascii?Q?rAUlFHuHX2wEyXKMRgmaao76HMdtnLdbxvqP6zRd9P+RVkoOklcGdKPIXWYO?=
- =?us-ascii?Q?Vwj3xEnxag7pSzYfVeeDsZw+1/uoRqS+5K/+h7nUq/19jqu5dAD9dl+Wqzdc?=
- =?us-ascii?Q?wgJTaR5oclL87/sgyOIdcLykpq8VpAMDgN8XQOCUczi0gbSRiFrTqwKrfXfo?=
- =?us-ascii?Q?N1uQpS7Qu61qwvPrvDyyt21rRdLYvGo7eTR5StnoXgNucXLAc2iI7T8yUyip?=
- =?us-ascii?Q?ujIaixlaoHAWISRtFdaN91azAfPiq63LS9BXXtMTflZ0bi7WLF30HhJd8IqI?=
- =?us-ascii?Q?PZohfg5mTfuwITflh3rimKru/InioV40ww7cHKgfVZJKgDADWkL/fD5q+bu2?=
- =?us-ascii?Q?BL/mhpyC7vmiqi8pg1GvHAQACBB4NDKRqkgUjQeswGUxbFplHxhjQX4KACGi?=
- =?us-ascii?Q?To2RLf9+XccbJ4JN7SVgV4f21sIc9nB96PRF+hw7bkpkq+Z2CO/KFFGC7MJZ?=
- =?us-ascii?Q?hGxB3DMCPOp9ctevfSC3dFQgMduNvRTKBdbxjER7Gn+Nj4cALspnPtM7mU46?=
- =?us-ascii?Q?0dUPwZ3lkQKL2K9BrnN6niFv45O7qijhoNl3qiZX2j3LGcDRi8FWjFSgp7hJ?=
- =?us-ascii?Q?Qy9v12qx7ZZifHP0YInSgG03eh8H7C0lnNcoP3hJRpLjqmeHpwXFnVtEpuHP?=
- =?us-ascii?Q?1L31kGobK3O4k45u4AenBhbfMMPmUVq3rm/YH3Ciir/Y3kybRdS7UGi57OyI?=
- =?us-ascii?Q?fXZvm/8gB4Q6jKfUXhT620yCw+2zjCiSvGV7zAdxafopkbRNBYQ1F6IgyEMU?=
- =?us-ascii?Q?6tZv38aHangeLnRZ8X4F03WgSuKIeaX2agOi0aie1CkyWPffvs/m04ZaZeK5?=
- =?us-ascii?Q?0Q2ns5ACA6y3ayZOt4GIsvhRIcsL73sxpGIIf8BQGBfEh2e486+isbVS//EG?=
- =?us-ascii?Q?eduSJTm4Q5I=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?rtmCu+G0+rt09sQgkPxu8A2a2m/LBkRsotzNq4dZUxt1P11fcsHzb0ZnNk/f?=
- =?us-ascii?Q?OuuUoXl6YzBz3/PoOEWTaH6H0G/hfSKOaQO4rO0Gfoz3XjAH6kTxeux1U/WA?=
- =?us-ascii?Q?U59SrtoT7MawT2njetFkvjeq6caP8KvK9d5zTf6qh9SvkO/cyzdvGtK8ZlQu?=
- =?us-ascii?Q?DqadAuwPRHN6bFvYIK64ALabpdBcCXZpixT37fV9UVACQcNZFu2t3YhlsD1h?=
- =?us-ascii?Q?2UiFZHApq6aHB9zTNxE8loOrAYwqTqLQvCIL15A1fxi/QrEUYoWgFg45ieCi?=
- =?us-ascii?Q?Wrbo5t/NvNf+/qIVtaKNzKGzdUI+/ErP+xHgFEHCGRsrg2ZyYLyiTOhkEYkK?=
- =?us-ascii?Q?zILdgEHoNKneY4LbVUzgkKSstNN+IPOQ1w+29+ecHsXGCY1vcHsWVDzEz/8j?=
- =?us-ascii?Q?nmqDhcrp2HYaG1t5SsnHQITXmpN0E3w2BqL09aW3i+kNBqIYUA1qHSykgTXc?=
- =?us-ascii?Q?SzxhLftDR750Yt0PpvBFZlLtOmM4N3uiI5E3RySjqliBILfto2IpEubaihZ/?=
- =?us-ascii?Q?anpGvGfTzZAxZ6ZcwHHcRNQ0IgrdC2J7nfOomv74fdm7BCFuA8TER95vlxAH?=
- =?us-ascii?Q?lUqt5RLpzMepFBdWE3QPt6QkvvQdxu/PGmVn8/z5A6ZGoUZjATovbf8oJHP9?=
- =?us-ascii?Q?pYf8kHYcwBeKR5euGMDazBkyD+Hhprxhd8Q75r0nm91vZ51udZ17b+y1sTta?=
- =?us-ascii?Q?xlSfeZ1MnLr5fZwVuLXgG0vZ75jjSNjrU/Si6s+a+Rq5O6ZG7mi5xBYqtwNm?=
- =?us-ascii?Q?F0/O/mOQrUMXRzuMpyGDX4zoc9KOj3ktcSBcAq6VFSxXkdHDv6iDbYIbWQ0p?=
- =?us-ascii?Q?27DTffME3+5jM+p8zQA8rng2O5OWICjoKm70qcZwAUpEgcBNPN00YAU5Njt+?=
- =?us-ascii?Q?rhSPlsDOEIOhFCBavPgBRYAbrkQ90dM/t/xBLXwbLvfmWDR++5b27PUTIYK2?=
- =?us-ascii?Q?/oB1mFf68fEK5qnO9XNJ/iURTyhX8OJ0CozB/BQFsCJ/llzKt3oF5+YqYrcW?=
- =?us-ascii?Q?kbZ0t7RoAb6tkd63na3dcX8kihkwxyoam2Pnd7cGa0JiWM0VU74RKU8WuLJ0?=
- =?us-ascii?Q?RF3OQSvsx1pyR891oaCH8uCf5ZNSr5C2DVi2luEEgDrHXQyAfN8nmHN+m+oj?=
- =?us-ascii?Q?plV8Y0tWb4o1QkqCXgO1t4wqJjdxrhtqfB09GcESPJYXE0iwcH1ZoYI+b1eL?=
- =?us-ascii?Q?3/fxi4u1WPdklHUUZNqxpC1d2oa1kLkVXTbUhLjxOuD65HhR0pEgKHDvo4Bd?=
- =?us-ascii?Q?LL7/4JjmRFN+v/FR1j+dcJdDDNm5fh51f34Wj8ks3TcPX2QVQYAVqp1Rgm2I?=
- =?us-ascii?Q?dweCcRmxxZgTLqVHyqg5B2oGFLUYC1F3SgynljuG65Rpc/ofR8UJRUzDZSsd?=
- =?us-ascii?Q?TCZ7n/js1le9wRQDQkmLCSP9WS0utQxJH96nbOG9AOaZ7+JzChjuMsXXuHZR?=
- =?us-ascii?Q?21BcbrwymzkVOnCalc5ZHZEUgT5341BCAxg69M0ozDR4anknumpkCtM7Uha6?=
- =?us-ascii?Q?yV/3K1EvMOVs8j9zZAnNeuq/9W/jNIq1OX/NjhMa0xS3bkY7Fs84kjbo9DOx?=
- =?us-ascii?Q?pxnLFzEz6GYKYx0ZlkM44XZj9C2k+VGtfY0P701qDmEh2lR9d2XivO3hi/8C?=
- =?us-ascii?Q?iQ=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	be3CHJ9V5rPb8fsfXUMWEXy5CYeEc3NZlkJs1jHfFhZkjcdb5sdFs0ml7Rj/kCEAg58Bhxfi28I7nwcOqJzak3hD8bUujfMB6xK+UJA2LYenhJ8pE+CFAHyOY1xS/u77rqFqapiXCSmNz76w/TXAVt/kfQ68Qn7p5d3uvl5qTo3lSwPB/CXu0ImqbgMngL+Vgtt4pqIRuPzpdlnl/xZWvzIFRWtZ8olSZZ4hDCiGNi3QvC1AIveppirObgFNHV1JtbCMZeQpUcXDyCv4Keee1MxNGFjr19b4HcGIdiS1Gnq6MJh2SGTFTd62qAZFhBYJxoi1yO9IXan4mKbmHSw3xnpndjcgfRaAMa1paz4xjowjNtRJv/7AMNY8s4tyaUohNzgklWxUUDQCQgg1y9xE9L/2yZXDenUsWd7o9t9DaUts/nhZVTc7r2/5TPevW877cs+shJ6IYvfoNT+5+4d2IsXGJqUyTsEm7LqiVflJVsynFR1rE7yYqxsUJ++L4bZu0o8HDVWC7xiwkbxFBclDzphH5REVDLvtjduv4KVAxRR4CDkAuwMWquYBOVRUMIx9g/v7pf9c3f8ogiMnOUufhMLSgF1r+++B4/n7lOzoHaE=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cc868047-340d-4b08-6981-08ddc858babf
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2025 13:15:57.4139
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aU9Tum+quZvpzvm3wfVmgaHRVOmg/T4pHHdK3G3dF/kGlv2znQ1CiAl0fC2xDPT7FzAoFjayox+BuMagnHKOsOsVspp3u8HJfOSS5UvIrNs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB7694
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-21_03,2025-07-21_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 bulkscore=0
- suspectscore=0 mlxscore=0 phishscore=0 mlxlogscore=999 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2507210114
-X-Authority-Analysis: v=2.4 cv=MNRgmNZl c=1 sm=1 tr=0 ts=687e3d91 b=1 cx=c_pps
- a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
- a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10
- a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=yPCof4ZbAAAA:8 a=4qlYrgqfQ3gvM0pljQkA:9
- a=CjuIK1q_8ugA:10 cc=ntf awl=host:12061
-X-Proofpoint-ORIG-GUID: gdH79BSLNc6SJ928eye_aGF_qkd5TxM8
-X-Proofpoint-GUID: gdH79BSLNc6SJ928eye_aGF_qkd5TxM8
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIxMDExOCBTYWx0ZWRfX8eHu/h4QjHty
- koWiYX4kctTvJoeUAoDvTUDh6maKhrABezd8y2s+TcIpyxaelJJPu34NAu7D9hQQ60oO8GMoNZL
- GieFeMMg5Nr1Qf9mX50rX1aCH2LLtw8+bTBYuOw4yH+k9JC72AL09g9rVvg/xILUxdXOlxgZo81
- WziheIUhIzmNWzKzqzlIqSuh60xh65oh/UVazwsoxjHNqg1MZGXUV+vqbIWkHZ90nqwUncZNA6A
- 7J+izETMtCuVxs9tz3qgY3AO3dLeDhBR7AvccGKdd2Jlm3GNn7+iT7UL2MmdbAYJ35cUFskI0AN
- +PlLRIxByBMqSIoGW0S04NbyCyQrd1SYLeDiZR3xBliNPMZVBlg1JZLK5BaIPCXthvNeUsvQqCn
- ETxMK4B7bS4khKAXVDhDMngXuTJg3m21sFpVqeMUjctgH92k/nJ19c+jRF7G8W1UyAFWzayn
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 21, 2025 at 01:45:18PM +0200, David Hildenbrand wrote:
-> > >
-> > > (2) Stay at THP=none, but have "madvise" or "always" behavior for
-> > >      selected workloads.
-> > >
-> > > (3) Switch from THP=madvise to THP=always, but keep the old behavior
-> > >      (THP only when advised) for selected workloads.
-> > >
-> > > (4) Stay at THP=madvise, but have "always" behavior for selected
-> > >      workloads.
-> > >
-> > > In essence, (2) can be emulated through (1), by setting THP!=none while
-> > > disabling THPs for all processes that don't want THPs. It requires
-> > > configuring all workloads, but that is a user-space problem to sort out.
-> >
-> > NIT: Delete 'In essence' here.
+Hi Stefan,
+
+Stefan Klug <stefan.klug@ideasonboard.com> writes:
+
+>> > The problems show themselves maybe in 5% or 10% of boots.
 >
-> I wanted "something" there to not make it look like the list keeps going on
-> in a weird way ;)
+> How do you detect if the current boot was a "faulty" one?
 
-I mean it's not a big deal :P just have memories of English teachers telling me
-off for repetition of such phrases...
+I just try to run the tester.
 
-> > > While we could emulate (3)+(4) through (1)+(2) by simply disabling THPs
-> > > completely for these processes, this scares many THPs in our system
-> > > because they could no longer get allocated where they used to be allocated
-> > > for: regions flagged as VM_HUGEPAGE. Apparently, that imposes a
-> > > problem for relevant workloads, because "not THPs" is certainly worse
-> > > than "THPs only when advised".
-> >
-> > I don't know what you mean by 'scares' many THPs? :P
->
-> They are very afraid of not getting allocated :)
+NOTE: make sure you don't run it against a sleeping ISP (clock disabled,
+reset etc). I just run the camera application in one session and my
+tester in another. Also, make sure the -m argument and the address are
+both valid for the ISP in use (0x32E1xxxx for the first MIPI/ISP and
+0x32E2xxxx for the second).
 
-Haha they sound cute!
+If it shows something like:
 
-> >
-> > > of having a system-wide config to change PR_SET_THP_DISABLE behavior, but
-> > > I just don't like the semantics.
-> >
-> > What do you mean?
->
-> Kconfig option to change the behavior etc. In summary, I don't want to go
-> down that path, it all gets weird.
+# ./analyze_mi -m1 -s10000000 -a0x32E21400 -8
+Using LDP Q*, Q*, [X*] instructions (2 * 128 bits)
+addr:  32E21400 32E21404 32E21408 32E2140C 32E21410 32E21414 32E21418 32E21=
+41C
+---------------------------------------------------------------------------=
+---
+values   7A2001       20 3C240000   1FA400        0        0        0 3C2C0=
+000 count 2242922
+values   7A2001       20 3C300000   1FA400        0        0        0 3C2C0=
+000 count 126
+values   7A2001       20 3C300000   1FA400        0        0        0 3C380=
+000 count 2106801
+values   7A2001       20 3C3C0000   1FA400        0        0        0 3C380=
+000 count 110
+values   7A2001       20 3C3C0000   1FA400        0        0        0 3C440=
+000 count 1982059
+values   7A2001       20 3C0C0000   1FA400        0        0        0 3C440=
+000 count 94
+values   7A2001       20 3C0C0000   1FA400        0        0        0 3C140=
+000 count 1871623
+values   7A2001       20 3C180000   1FA400        0        0        0 3C140=
+000 count 64
+values   7A2001       20 3C180000   1FA400        0        0        0 3C200=
+000 count 1796142
+values   7A2001       20 3C240000   1FA400        0        0        0 3C200=
+000 count 59
 
-Yeah please don't! :>)
+then all is good.
+
+OTOH if it's:
+# ./analyze_mi -m1 -s10000000 -a0x32E21400 -8
+Using LDP Q*, Q*, [X*] instructions (2 * 128 bits)
+addr:  32E21400 32E21404 32E21408 32E2140C 32E21410 32E21414 32E21418 32E21=
+41C
+---------------------------------------------------------------------------=
+---
+values        0       20 3C300000   1FA400        0        0        0 3C380=
+000 count 139
+values   7A2001       20 3C300000   1FA400        0        0        0 3C380=
+000 count 2202205
+values   7A2001       20 3C3C0000   1FA400        0        0        0 3C380=
+000 count 108
+values   7A2001       20 3C3C0000   1FA400        0        0        0 3C440=
+000 count 2121036
+values        0       20 3C3C0000   1FA400        0        0        0 3C440=
+000 count 117
+values   7A2001       20 3C0C0000   1FA400        0        0        0 3C440=
+000 count 112
+values   7A2001       20 3C0C0000   1FA400        0        0        0 3C140=
+000 count 1997298
+values        0       20 3C0C0000   1FA400        0        0        0 3C140=
+000 count 88
+values   7A2001       20 3C180000   1FA400        0        0        0 3C140=
+000 count 106
+values   7A2001       20 3C180000   1FA400        0        0        0 3C200=
+000 count 1893775
+values        0       20 3C180000   1FA400        0        0        0 3C200=
+000 count 80
+values   7A2001       20 3C240000   1FA400        0        0        0 3C200=
+000 count 72
+values   7A2001       20 3C240000   1FA400        0        0        0 3C2C0=
+000 count 1784697
+values        0       20 3C240000   1FA400        0        0        0 3C2C0=
+000 count 65
+values   7A2001       20 3C300000   1FA400        0        0        0 3C2C0=
+000 count 67
+values    FD200       20 3C0C0000   1FA400        0        0        0 3C140=
+000 count 4
+values    FD200       20 3C3C0000   1FA400        0        0        0 3C440=
+000 count 5
+values    10001       20 3C0C0000   1FA400        0        0        0 3C140=
+000 count 3
+values    FD200       20 3C180000   1FA400        0        0        0 3C200=
+000 count 6
+values    10001       20 3C180000   1FA400        0        0        0 3C200=
+000 count 2
+values 3C200000       20 3C180000   1FA400        0        0        0 3C200=
+000 count 1
+values 3C380000       20 3C300000   1FA400        0        0        0 3C380=
+000 count 3
+values    10001       20 3C300000   1FA400        0        0        0 3C380=
+000 count 5
+values    FD200       20 3C240000   1FA400        0        0        0 3C2C0=
+000 count 1
+values    FD200       20 3C300000   1FA400        0        0        0 3C380=
+000 count 3
+values 3C2C0000       20 3C240000   1FA400        0        0        0 3C2C0=
+000 count 1
+values    10001       20 3C3C0000   1FA400        0        0        0 3C440=
+000 count 1
+
+then, well, something's not right with the register at 0x32E21400.
+
+The NXP-supplied docs on the ISP are not very helpful here, but maybe
+the Rockchip RK3288 ISP docs are (there is a PDF on rockchip.fr).
+It seems that the problem probably sits in the PVCI/AHB Slave -> CTRL ->
+"To all (ISP) modules" (I don't know how ISP registers are connected to
+the AHB/AXI on .MX8MP and it probably doesn't matter, the problem is
+somewhere between the "AHB Slave and the "all modules").
+It appears "only" MI registers are affected, though.
+
+> Can you also share the kernel you are using?
+
+I'm currently using v6.15 with several unrelated patches. Apparently
+only this test patch could be relevant. BTW it won't have much effect
+on the userspace utility (and it's not needed for the utility, it's just
+for the driver and the camera application).
+
+However, those problems were present with NXP-supplied kernels, too.
+
+index 60c97bb7b18b..9530e653191a 100644
+--- a/drivers/media/platform/rockchip/rkisp1/rkisp1-common.c
++++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-common.c
+@@ -192,3 +192,80 @@ void rkisp1_bls_swap_regs(enum rkisp1_fmt_raw_pat_type=
+ pattern,
+ 	for (unsigned int i =3D 0; i < 4; ++i)
+ 		output[i] =3D input[swap[pattern][i]];
+ }
++
++#define MIN_MATCHES 5
++#define READS 9
++u32 rkisp1_read(struct rkisp1_device *rkisp1, unsigned int addr)
++{
++	if (addr >=3D RKISP1_CIF_MI_BASE && addr <=3D RKISP1_CIF_MI_MP_Y_PIC_SIZE=
+) {
++		unsigned long flags;
++		spin_lock_irqsave(&rkisp1->reg_lock, flags);
++
++		uint32_t v[READS];
++		unsigned a, b, cnt;
++		// i.MX8MP ISP MI interface corrupts transfers from time to time
++		if (addr % 8) { // 0x...4 and 0x...C
++			uint32_t value;
++			addr -=3D 4;
++			// first value may be corrupted, we discard it in wzr register
++			asm volatile ("ldp wzr, %w0, [%x1]" "\n"
++				      : "=3Dr" (value) // output
++				      : "r" (rkisp1->base_addr + addr)); // input
++			spin_unlock_irqrestore(&rkisp1->reg_lock, flags);
++			return value;
++		}
++		if (addr % 16) { // 0x...8
++			uint64_t value;
++			addr -=3D 8; // 64-bit: will read 0x...0 and 0x...8
++			// first value may be corrupted, we discard it in xzr register
++			asm volatile ("ldp xzr, %x0, [%x1]" "\n"
++				      : "=3Dr" (value) // output
++				      : "r" (rkisp1->base_addr + addr)); // input
++			spin_unlock_irqrestore(&rkisp1->reg_lock, flags);
++			return value; // little endian: only least significant 32 bits
++		}
++
++		// 0x...0 adreses are problematic: read multiple times
++		for (a =3D 0; a < ARRAY_SIZE(v); a++)
++			v[a] =3D readl(rkisp1->base_addr + addr);
++		for (a =3D 0; a < ARRAY_SIZE(v) - MIN_MATCHES + 1; a++) {
++			cnt =3D 0;
++			for (b =3D a; b < ARRAY_SIZE(v); b++)
++				if (v[b] =3D=3D v[a]) {
++					cnt++;
++					if (cnt =3D=3D MIN_MATCHES) {
++						spin_unlock_irqrestore(&rkisp1->reg_lock, flags);
++						return v[a];
++					}
++				}
++		}
++		spin_unlock_irqrestore(&rkisp1->reg_lock, flags);
++		pr_warn("Error reading ISP MI register 0x%X, returning the last value 0x=
+%X\n", addr, v[ARRAY_SIZE(v) - 1]);
++		return v[ARRAY_SIZE(v) - 1];
++	}
++
++	return readl(rkisp1->base_addr + addr);
++}
++
++#define MAX_WRITES 5
++void rkisp1_write(struct rkisp1_device *rkisp1, unsigned int addr, u32 val)
++{
++	if (addr >=3D RKISP1_CIF_MI_BASE &&
++	    addr <=3D RKISP1_CIF_MI_MP_Y_PIC_SIZE &&
++	    addr !=3D RKISP1_CIF_MI_ICR /* write only */ &&
++	    addr !=3D RKISP1_CIF_MI_INIT) {
++		for (unsigned cnt =3D 0; cnt < MAX_WRITES; cnt++) {
++			unsigned long flags;
++			spin_lock_irqsave(&rkisp1->reg_lock, flags);
++			writel(val, rkisp1->base_addr + addr);
++			spin_unlock_irqrestore(&rkisp1->reg_lock, flags);
++
++			if (rkisp1_read(rkisp1, addr) =3D=3D val)
++				return; // succeeded
++		}
++		pr_warn("Error writing 0x%X to ISP MI register 0x%X\n", val, addr);
++		return;
++	}
++
++	writel(val, rkisp1->base_addr + addr);
++}
+
+index ca952fd0829b..21bab4a3e647 100644
+--- a/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h
++++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h
+@@ -520,6 +520,7 @@ struct rkisp1_device {
+ 	struct media_pipeline pipe;
+ 	struct mutex stream_lock; /* serialize {start/stop}_streaming cb between =
+capture devices */
+ 	struct rkisp1_debug debug;
++	spinlock_t reg_lock; // used to serialize access to MI registers
+ 	const struct rkisp1_info *info;
+ 	int irqs[RKISP1_NUM_IRQS];
+ 	bool irqs_enabled;
+@@ -547,16 +548,8 @@ struct rkisp1_mbus_info {
+ 	unsigned int direction;
+ };
+=20
+-static inline void
+-rkisp1_write(struct rkisp1_device *rkisp1, unsigned int addr, u32 val)
+-{
+-	writel(val, rkisp1->base_addr + addr);
+-}
+-
+-static inline u32 rkisp1_read(struct rkisp1_device *rkisp1, unsigned int a=
+ddr)
+-{
+-	return readl(rkisp1->base_addr + addr);
+-}
++u32 rkisp1_read(struct rkisp1_device *rkisp1, unsigned int addr);
++void rkisp1_write(struct rkisp1_device *rkisp1, unsigned int addr, u32 val=
+);
+=20
+ /*
+  * rkisp1_cap_enum_mbus_codes - A helper function that return the i'th sup=
+ported mbus code
+diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c b/drivers/=
+media/platform/rockchip/rkisp1/rkisp1-dev.c
+index dc65a7924f8a..07f87b70151b 100644
+--- a/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c
++++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c
+@@ -611,6 +611,7 @@ static int rkisp1_probe(struct platform_device *pdev)
+ 		return ret;
+=20
+ 	mutex_init(&rkisp1->stream_lock);
++	spin_lock_init(&rkisp1->reg_lock);
+=20
+ 	rkisp1->base_addr =3D devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(rkisp1->base_addr))
 
 
-> > > Happy to hear naming suggestions for "PR_THP_DISABLE_EXCEPT_ADVISED" where
-> > > we essentially want to say "leave advised regions alone" -- "keep THP
-> > > enabled for advised regions",
-> >
-> > Seems OK to me. I guess the one point of confusion could be people being
-> > confused between the THP toggle 'madvise' vs. actually having MADV_HUGEPAGE
-> > set, but that's moot, because 'madvise' mode only enables THP if the region
-> > has had MADV_HUGEPAGE set.
->
-> Right, whatever ends up setting VM_HUGEPAGE.
+The (current working version of) analyze_mi.c, compile with -O2 -lpopt
+and perhaps with -W -Wall -Wno-sign-compare
+-Wno-missing-field-initializers -Wno-pointer-sign.
+There is also a regular read_test (a single register and the whole ISP
+MI, may use "alt read" workaround), and a write_test for a single
+register as well.
 
-Yeah this naming is fine iMO.
+// -*- mode: c; c-basic-offset: 4; tab-width: 4; -*-
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * Copyright (C) 2025 Sie=C4=87 Badawcza =C5=81ukasiewicz
+ * - Przemys=C5=82owy Instytut Automatyki i Pomiar=C3=B3w PIAP
+ * Written by Krzysztof Ha=C5=82asa
+ *
+ * An i.MX8MP ISP MI register test utility v0.1
+ * Make sure the ISP is active at all times while running this program.
+ */
 
->
-> >
-> > >
-> > > The only thing I really dislike about this is using another MMF_* flag,
-> > > but well, no way around it -- and seems like we could easily support
-> > > more than 32 if we want to, or storing this thp information elsewhere.
-> >
-> > Yes my exact thoughts. But I will be adding a series to change this for VMA
-> > flags soon enough, and can potentially do mm flags at the same time...
-> >
-> > So this shouldn't in the end be as much of a problem.
-> >
-> > Maybe it's worth holding off on this until I've done that? But at any rate
-> > I intend to do those changes next cycle, and this will be a next cycle
-> > thing at the earliest anyway.
->
-> I don't think this series must be blocked by that. Using a bitmap instead of
-> a single "unsigned long" should be fairly easy later -- I did not identify
-> any big blockers.
+#include <err.h>
+#include <fcntl.h>
+#include <popt.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/mman.h>
 
-Yeah that's fine. And I don't know when I will get the bitmap changes done, so
-let's not block this with that!
+#define ISP1_ADDR				0x32e10000	// must be page-aligned
+#define ISP2_ADDR				0x32e20000
+#define ISP_SIZE				0x4000	// with holes
+#define MI_OFFSET				0x1400
+#define MI_SIZE					0x200
+#define MI_REGS					(MI_SIZE / 4 /* 32-bit */)
+#define MAX_VALUES				128 // max different values for a register
 
-> > > This is *completely* untested and might be utterly broken. It merely
-> > > serves as a PoC of what I think could be done. If this ever goes upstream,
-> > > we need some kselftests for it, and extensive tests.
-> >
-> > Well :) I mean we should definitely try this out in anger and it _MUST_
-> > have self tests and put under some pressure.
-> >
-> > Usama, can you attack this and see?
->
-> Yes, that's what I am hoping for.
+#define error(...)				err(EXIT_FAILURE, __VA_ARGS__)
+#define errorx(...)				errx(EXIT_FAILURE, __VA_ARGS__)
+#define ARRAY_SIZE(arr)			(sizeof(arr) / sizeof((arr)[0]))
+#define REG(offset, name, dec)	[((offset) - MI_OFFSET) / 4] {(name), (dec)}
 
-Cool. And of course Usama is best placed to experiment with this approach,
-as he can experiment with workloads relevant to this requirement.
+static const struct reg {
+	const char *name;
+	int dec;
+} reg_tab[MI_REGS] =3D {
+	REG(0x1400, "mi_ctrl", 0), // Global control register
+	REG(0x1404, "mi_init", 0), // Control register for address init and skip f=
+unction (w)
 
->
-> >
-> > >
-> > > [1] https://lore.kernel.org/r/20250507141132.2773275-1-usamaarif642@gmail.com
-> > > [2] https://lkml.kernel.org/r/20250515133519.2779639-2-usamaarif642@gmail.com
-> > > [3] https://lore.kernel.org/r/cover.1747686021.git.lorenzo.stoakes@oracle.com
-> > > [4] https://lkml.kernel.org/r/85778a76-7dc8-4ea8-8827-acb45f74ee05@lucifer.local
-> > > [5] https://lkml.kernel.org/r/20250608073516.22415-1-laoar.shao@gmail.com
-> > > [6] https://lore.kernel.org/r/CAG48ez3-7EnBVEjpdoW7z5K0hX41nLQN5Wb65Vg-1p8DdXRnjg@mail.gmail.com
-> > >
-> > > ---
-> > >   Documentation/filesystems/proc.rst |  5 +--
-> > >   fs/proc/array.c                    |  2 +-
-> > >   include/linux/huge_mm.h            | 20 ++++++++---
-> > >   include/linux/mm_types.h           | 13 +++----
-> > >   include/uapi/linux/prctl.h         |  7 ++++
-> > >   kernel/sys.c                       | 58 +++++++++++++++++++++++-------
-> > >   mm/khugepaged.c                    |  2 +-
-> > >   7 files changed, 78 insertions(+), 29 deletions(-)
-> > >
-> > > diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-> > > index 2971551b72353..915a3e44bc120 100644
-> > > --- a/Documentation/filesystems/proc.rst
-> > > +++ b/Documentation/filesystems/proc.rst
-> > > @@ -291,8 +291,9 @@ It's slow but very precise.
-> > >    HugetlbPages                size of hugetlb memory portions
-> > >    CoreDumping                 process's memory is currently being dumped
-> > >                                (killing the process may lead to a corrupted core)
-> > > - THP_enabled		     process is allowed to use THP (returns 0 when
-> > > -			     PR_SET_THP_DISABLE is set on the process
-> > > + THP_enabled                 process is allowed to use THP (returns 0 when
-> > > +                             PR_SET_THP_DISABLE is set on the process to disable
-> > > +                             THP completely, not just partially)
-> >
-> > Hmm but this means we have no way of knowing if it's set for partial
->
-> Yes. I briefly thought about indicating another member, but then I thought
-> (a) it's ugly and (b) "who cares".
->
-> I also thought about just printing "partial" instead of "1", but not sure if
-> that would break any parser.
+	// Main picture
+	REG(0x1408, "mi_mp_y_base_ad_init", 0), // Base address for Y component, J=
+PEG or raw data
+	REG(0x140C, "mi_mp_y_size_init", 1), // Size of Y component, JPEG or raw d=
+ata
+	REG(0x1410, "mi_mp_y_offs_cnt_init", 0), // Offset counter init value for =
+Y, JPEG or raw data
+	REG(0x1414, "mi_mp_y_offs_cnt_start", 0), // Offset counter start value fo=
+r Y, JPEG or raw data
+	REG(0x1418, "mi_mp_y_irq_offs_init", 0), // Fill level interrupt offset va=
+lue for Y, JPEG or raw data
+	REG(0x141C, "mi_mp_cb_base_ad_init", 0), // Base address for Cb component =
+ring buffer
+	REG(0x1420, "mi_mp_cb_size_init", 1), // Size of Cb component ring buffer
+	REG(0x1424, "mi_mp_cb_offs_cnt_init", 0), // Offset counter init value for=
+ Cb component ring buffer
+	REG(0x1428, "mi_mp_cb_offs_cnt_start", 0), // Offset counter start value f=
+or Cb component ring buffer
+	REG(0x142C, "mi_mp_cr_base_ad_init", 0), // Base address for Cr component =
+ring buffer
+	REG(0x1430, "mi_mp_cr_size_init", 0), // Size of Cr component ring buffer
+	REG(0x1434, "mi_mp_cr_offs_cnt_init", 0), // Offset counter init value for=
+ Cr component ring buffer
+	REG(0x1438, "mi_mp_cr_offs_cnt_start", 0), // Offset counter start value f=
+or Cr component ring buffer
 
-Hm and >1 could break a user who expects this to be 0, 1. We can always add
-a new entry if needed.
+#if 0
+	// Self picture
+	REG(0x143C, "mi_sp_y_base_ad_init", 0), // Base address for Y component ri=
+ng buffer
+	REG(0x1440, "mi_sp_y_size_init", 1), // Size of Y component ring buffer
+	REG(0x1444, "mi_sp_y_offs_cnt_init", 0), // Offset counter init value for =
+Y component ring buffer
+	REG(0x1448, "mi_sp_y_offs_cnt_start", 0), // Offset counter start value fo=
+r Y component ring buffer
+	REG(0x144C, "mi_sp_y_llength", 1), // Line length of Y component
+	REG(0x1450, "mi_sp_cb_base_ad_init", 0), // Base address for Cb component =
+ring buffer
+	REG(0x1454, "mi_sp_cb_size_init", 1), // Size of Cb component ring buffer
+	REG(0x1458, "mi_sp_cb_offs_cnt_init", 0), // Offset counter init value for=
+ Cb component ring buffer
+	REG(0x145C, "mi_sp_cb_offs_cnt_start", 0), // Offset counter start value f=
+or Cb component ring buffer
+	REG(0x1460, "mi_sp_cr_base_ad_init", 0), // Base address for Cr component =
+ring buffer
+	REG(0x1464, "mi_sp_cr_size_init", 1), // Size of Cr component ring buffer
+	REG(0x1468, "mi_sp_cr_offs_cnt_init", 0), // Offset counter init value for=
+ Cr component ring buffer
+	REG(0x146C, "mi_sp_cr_offs_cnt_start", 0), // Offset counter start value f=
+or Cr component ring buffer
+#endif
 
-> > >   {
-> > > +	/* Are THPs disabled for this VMA? */
-> > > +	if (vm_flags & VM_NOHUGEPAGE)
-> > > +		return true;
-> > > +	/* Are THPs disabled for all VMAs in the whole process? */
-> > > +	if (test_bit(MMF_DISABLE_THP_COMPLETELY, &vma->vm_mm->flags))
-> > > +		return true;
-> > >   	/*
-> > > -	 * Explicitly disabled through madvise or prctl, or some
-> > > -	 * architectures may disable THP for some mappings, for
-> > > -	 * example, s390 kvm.
-> > > +	 * Are THPs disabled only for VMAs where we didn't get an explicit
-> > > +	 * advise to use them?
-> >
-> > Probably fine to drop the rather pernickety reference to s390 kvm here, I
-> > mean we don't need to spell out massively specific details in a general
-> > handler.
->
-> No strong opinion.
+	REG(0x1470, "mi_byte_cnt", 0), // Counter value of JPEG or RAW data bytes
+	REG(0x1474, "mi_ctrl_shd", 0), // global control internal shadow register
 
-I mean what I'm saying is this is fine :P Got no problem wtih removing this
-bit of the comment.
+	// Main picture
+	REG(0x1478, "mi_mp_y_base_ad_shd", 0), // Base address shadow register for=
+ Y component, JPEG or raw data ring buffer
+	REG(0x147C, "mi_mp_y_size_shd", 1), // Size shadow register of Y component=
+, JPEG or raw data
+	REG(0x1480, "mi_mp_y_offs_cnt_shd", 0), // Current offset counter of Y com=
+ponent, JPEG or raw data ring buffer
+	REG(0x1484, "mi_mp_y_irq_offs_shd", 0), // Shadow register of fill level i=
+nterrupt offset value for Y component, JPEG or raw data
+	REG(0x1488, "mi_mp_cb_base_ad_shd", 0), // Base address shadow register fo=
+r Cb component ring buffer
+	REG(0x148C, "mi_mp_cb_size_shd", 1), // Size shadow register of Cb compone=
+nt ring buffer
+	REG(0x1490, "mi_mp_cb_offs_cnt_shd", 0), // Current offset counter of Cb c=
+omponent ring buffer
+	REG(0x1494, "mi_mp_cr_base_ad_shd", 0), // Base address shadow register fo=
+r Cr component ring buffer
+	REG(0x1498, "mi_mp_cr_size_shd", 0), // Size shadow register of Cr compone=
+nt ring buffer
+	REG(0x149C, "mi_mp_cr_offs_cnt_shd", 0), // Current offset counter of Cr c=
+omponent ring buffer
 
->
-> >
-> > >   	 */
-> > > -	return (vm_flags & VM_NOHUGEPAGE) ||
-> > > -	       test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags);
-> > > +	if (vm_flags & VM_HUGEPAGE)
-> > > +		return false;
-> > > +	return test_bit(MMF_DISABLE_THP_EXCEPT_ADVISED, &vma->vm_mm->flags);
-> > >   }
-> > >
-> > >   static inline bool thp_disabled_by_hw(void)
-> > > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> > > index 1ec273b066915..a999f2d352648 100644
-> > > --- a/include/linux/mm_types.h
-> > > +++ b/include/linux/mm_types.h
-> > > @@ -1743,19 +1743,16 @@ enum {
-> > >   #define MMF_VM_MERGEABLE	16	/* KSM may merge identical pages */
-> > >   #define MMF_VM_HUGEPAGE		17	/* set when mm is available for khugepaged */
-> > >
-> > > -/*
-> > > - * This one-shot flag is dropped due to necessity of changing exe once again
-> > > - * on NFS restore
-> > > - */
-> > > -//#define MMF_EXE_FILE_CHANGED	18	/* see prctl_set_mm_exe_file() */
-> > > +#define MMF_HUGE_ZERO_PAGE	18      /* mm has ever used the global huge zero page */
-> > >
-> > >   #define MMF_HAS_UPROBES		19	/* has uprobes */
-> > >   #define MMF_RECALC_UPROBES	20	/* MMF_HAS_UPROBES can be wrong */
-> > >   #define MMF_OOM_SKIP		21	/* mm is of no interest for the OOM killer */
-> > >   #define MMF_UNSTABLE		22	/* mm is unstable for copy_from_user */
-> > > -#define MMF_HUGE_ZERO_PAGE	23      /* mm has ever used the global huge zero page */
-> > > -#define MMF_DISABLE_THP		24	/* disable THP for all VMAs */
-> > > -#define MMF_DISABLE_THP_MASK	(1 << MMF_DISABLE_THP)
-> > > +#define MMF_DISABLE_THP_EXCEPT_ADVISED	23	/* no THP except for VMAs with VM_HUGEPAGE */
-> > > +#define MMF_DISABLE_THP_COMPLETELY	24	/* no THP for all VMAs */
-> > > +#define MMF_DISABLE_THP_MASK	((1 << MMF_DISABLE_THP_COMPLETELY) |\
-> > > +				 (1 << MMF_DISABLE_THP_EXCEPT_ADVISED))
-> >
-> > It feels a bit sigh to have to use up low-supply mm flags for this. But
-> > again, I should be attacking this shortage soon enough.
-> >
-> > Are we not going ahead with Barry's series that was going to use one of
-> > these in the end?
->
-> Whoever gets acked first ;)
+#if 0
+	// Self picture
+	REG(0x14A0, "mi_sp_y_base_ad_shd", 0), // Base address shadow register for=
+ Y component ring buffer
+	REG(0x14A4, "mi_sp_y_size_shd", 1), // Size shadow register of Y component=
+ ring buffer
+	REG(0x14A8, "mi_sp_y_offs_cnt_shd", 0), // Current offset counter of Y com=
+ponent ring buffer
 
-;)
+	REG(0x14B0, "mi_sp_cb_base_ad_shd", 0), // Base address shadow register fo=
+r Cb component ring buffer
+	REG(0x14B4, "mi_sp_cb_size_shd", 1), // Size shadow register of Cb compone=
+nt ring buffer
+	REG(0x14B8, "mi_sp_cb_offs_cnt_shd", 0), // Current offset counter of Cb c=
+omponent ring buffer
+	REG(0x14BC, "mi_sp_cr_base_ad_shd", 0), // Base address shadow register fo=
+r Cr component ring buffer
+	REG(0x14C0, "mi_sp_cr_size_shd", 1), // Size shadow register of Cr compone=
+nt ring buffer
+	REG(0x14C4, "mi_sp_cr_offs_cnt_shd", 0), // Current offset counter of Cr c=
+omponent ring buffer
+#endif
 
->
-> >
-> > >   #define MMF_OOM_REAP_QUEUED	25	/* mm was queued for oom_reaper */
-> > >   #define MMF_MULTIPROCESS	26	/* mm is shared between processes */
-> > >   /*
-> > > diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-> > > index 43dec6eed559a..1949bb9270d48 100644
-> > > --- a/include/uapi/linux/prctl.h
-> > > +++ b/include/uapi/linux/prctl.h
-> > > @@ -177,7 +177,14 @@ struct prctl_mm_map {
-> > >
-> > >   #define PR_GET_TID_ADDRESS	40
-> > >
-> > > +/*
-> > > + * Flags for PR_SET_THP_DISABLE are only applicable when disabling. Bit 0
-> > > + * is reserved, so PR_GET_THP_DISABLE can return 1 when no other flags were
-> > > + * specified for PR_SET_THP_DISABLE.
-> > > + */
-> >
-> > Probably worth specifying that you're just returning the flags here.
->
-> Yes.
->
-> Thanks!
+	REG(0x14C8, "mi_dma_y_pic_start_ad", 1), // Y component image start address
+	REG(0x14CC, "mi_dma_y_pic_width", 1), // Y component image width
+	REG(0x14D0, "mi_dma_y_llength", 1), // Y component original line length
+	REG(0x14D4, "mi_dma_y_pic_size", 1), // Y component image size
+	REG(0x14D8, "mi_dma_cb_pic_start_ad", 0), // Cb component image start addr=
+ess
+	REG(0x14E8, "mi_dma_cr_pic_start_ad", 0), // Cr component image start addr=
+ess
 
-Cheers!
+	REG(0x14F8, "mi_imsc", 0), // Interrupt Mask (1: interrupt active, 0: inte=
+rrupt masked)
+	REG(0x14FC, "mi_ris", 0), // Raw Interrupt Status
+	REG(0x1500, "mi_mis", 0), // Masked Interrupt Status
+	REG(0x1504, "mi_icr", 0),  // Interrupt Clear Register (w)
+	REG(0x1508, "mi_isr", 0), // Interrupt Set Register (w)
 
->
-> --
-> Cheers,
->
-> David / dhildenb
->
+	REG(0x150C, "mi_status", 0), // MI Status Register
+	REG(0x1510, "mi_status_clr", 0), // MI Status Clear Register (w)
+	REG(0x1514, "mi_sp_y_pic_width", 1), // Y component image width
+	REG(0x1518, "mi_sp_y_pic_height", 1), // Y component image height
+	REG(0x151C, "mi_sp_y_pic_size", 1), // Y component image size
+	REG(0x1520, "mi_dma_ctrl", 0), // DMA control register
+	REG(0x1524, "mi_dma_start", 0), // DMA start register (w)
+	REG(0x1528, "mi_dma_status", 0), // DMA status register
+	REG(0x152C, "mi_pixel_cnt", 0), // Counter value for defect pixel list
 
-Cheers, Lorenzo
+	// Main picture
+	REG(0x1530, "mi_mp_y_base_ad_init2", 0), // Base address 2 (ping pong) for=
+ Y component, JPEG or raw data
+	REG(0x1534, "mi_mp_cb_base_ad_init2", 0), // Base address 2 (pingpong) for=
+ Cb component
+	REG(0x1538, "mi_mp_cr_base_ad_init2", 0), // Base address 2 (pingpong) for=
+ Cr component ring buffer
+
+#if 0
+	// Self picture
+	REG(0x153C, "mi_sp_y_base_ad_init2", 0), // Base address 2 (ping pong) for=
+ Y component, JPEG or raw data
+	REG(0x1540, "mi_sp_cb_base_ad_init2", 0), // Base address 2 (pingpong) for=
+ Cb component
+	REG(0x1544, "mi_sp_cr_base_ad_init2", 0), // Base address 2 (pingpong) for=
+ Cr component ring buffer
+#endif
+
+	REG(0x1548, "mi_reserved_1", 0),
+#ifdef ISP_MI_HANDSHAKE_NANO // never defined
+	REG(0x154C, "mi_mp_handshake", 0), // MI mp handshake control for Nano han=
+dshake
+#else
+	REG(0x154C, "mi_reserved_1_1", 0),
+#endif
+	REG(0x1550, "mi_mp_y_llength", 1), // MI mp y llength for Nano handshake,
+	REG(0x1554, "mi_mp_y_slice_offset", 0), // MI mp y slice offset for Nano h=
+andshake,
+	REG(0x1558, "mi_mp_c_slice_offset", 0), // MI mp c slice offset for Nano h=
+andshare,
+	REG(0x155C, "mi_output_align_format", 0), // MI output byte swap and LSB a=
+lignment control for Nano
+	REG(0x1560, "mi_mp_output_fifo_size", 0), // MI mp output fifo control for=
+ Nano,
+	REG(0x1564, "mi_mp_y_pic_width", 1), // MI mp y width pix for Nano handsha=
+ke,
+	REG(0x1568, "mi_mp_y_pic_height", 1), // MI mp y height pix for Nano hands=
+hake,
+	REG(0x156C, "mi_mp_y_pic_size", 1), // MI mp y pix size for Nano handshare
+
+#ifdef ISP_MI_BP // not defined
+	REG(0x1580, "mi_bp_ctrl", 0),
+	REG(0x1584, "mi_bp_r_base_ad_shd", 0),
+	REG(0x1588, "mi_bp_gr_base_ad_shd", 0),
+	REG(0x158C, "mi_bp_gb_base_ad_shd", 0),
+	REG(0x1590, "mi_bp_b_base_ad_shd", 0),
+	REG(0x1594, "mi_bp_r_offs_cnt_shd", 0),
+	REG(0x1598, "mi_bp_gr_offs_cnt_shd", 0),
+	REG(0x159C, "mi_bp_gb_offs_cnt_shd", 0),
+	REG(0x15A0, "mi_bp_b_offs_cnt_shd", 0),
+	REG(0x15A4, "mi_bp_wr_offs_cnt_init", 0),
+	REG(0x15A8, "mi_bp_wr_irq_offs_shd", 0),
+	REG(0x15AC, "mi_bp_wr_irq_offs_init", 0),
+	REG(0x15B0, "mi_bp_wr_size_shd", 0),
+	REG(0x15B4, "mi_bp_wr_size_init", 0),
+	REG(0x15B8, "mi_bp_wr_llength", 0),
+	REG(0x15BC, "mi_bp_pic_width", 1),
+	REG(0x15C0, "mi_bp_pic_height", 1),
+	REG(0x15C4, "mi_bp_pic_size", 1),
+	REG(0x15C8, "mi_bp_r_offs_cnt_start", 0),
+	REG(0x15CC, "mi_bp_gr_offs_cnt_start", 0),
+	REG(0x15D0, "mi_bp_gb_offs_cnt_start", 0),
+	REG(0x15D4, "mi_bp_b_offs_cnt_start", 0),
+	REG(0x15D8, "mi_bp_r_base_ad_init", 0),
+	REG(0x15DC, "mi_bp_gr_base_ad_init", 0),
+	REG(0x15E0, "mi_bp_gb_base_ad_init", 0),
+	REG(0x15E4, "mi_bp_b_base_ad_init", 0),
+#endif
+	REG(0x15E8, "mi_dma_y_raw_fmt", 0),
+	REG(0x15EC, "mi_dma_y_raw_lval", 0)
+};
+
+struct values {
+	struct {
+		uint32_t value;
+		unsigned count;
+	} data[MAX_VALUES];
+	unsigned data_count;
+};
+
+static int alt_read, verbose, debug;
+
+static const struct reg *get_reg(uint32_t phys)
+{
+	phys &=3D ISP_SIZE - 1;
+	if (phys >=3D MI_OFFSET && phys < MI_OFFSET + MI_SIZE * 2 /* 2 copies */)
+		return &reg_tab[(phys - MI_OFFSET) / 4 /* 32-bit*/ % MI_REGS /* 2 copies =
+*/];
+	return NULL;
+}
+
+static void add_value(uint32_t phys, uint32_t value, struct values *values)
+{
+	unsigned cnt;
+	for (cnt =3D 0; cnt < values->data_count; cnt++) {
+		if (values->data[cnt].value =3D=3D value) {
+			values->data[cnt].count++;
+			break;
+		}
+	}
+
+	if (cnt =3D=3D values->data_count) { // not found yet
+		if (values->data_count =3D=3D MAX_VALUES)
+			errorx("Too many register 0x%08X values", phys);
+		values->data[cnt].value =3D value;
+		values->data[cnt].count =3D 1;
+		values->data_count++;
+	}
+}
+
+static void show_values(uint32_t phys, const struct values *values)
+{
+	const struct reg *reg =3D get_reg(phys);
+
+	for (unsigned cnt =3D 0; cnt < values->data_count; cnt++) {
+		printf("Register 0x%08X %-23s", phys, reg && reg->name ? reg->name : "");
+		if ((reg && reg->dec) || values->data[cnt].value < 10)
+			printf(" value %10u count %u\n", values->data[cnt].value, values->data[c=
+nt].count);
+		else
+			printf(" value 0x%08X count %u\n", values->data[cnt].value, values->data=
+[cnt].count);
+	}
+	printf("\n");
+}
+
+static uint32_t read_reg(const volatile uint32_t *virt)
+{
+	if (alt_read) {
+		if ((long)virt % 8) {
+			// 32-bit LDP works with registers at xxx4 and xxxC, but corrupts xxx0 a=
+nd xxx8 transfers.
+			virt--;
+			uint32_t value;
+			asm volatile ("ldp wzr, %w0, [%x1]" "\n"
+						  : "=3Dr" (value) // output
+						  : "r" (virt)); // input
+			return value;
+		} else {
+			virt -=3D 2;
+			uint64_t value;
+			asm volatile ("ldp xzr, %x0, [%x1]" "\n"
+						  : "=3Dr" (value) // output
+						  : "r" (virt)); // input
+			return value; // little endian: only least significant 32 bits
+		}
+	} else
+		return *(volatile uint32_t *)(virt);
+}
+
+static void __attribute__((noinline)) read_reg2(const volatile uint32_t *vi=
+rt, void *v)
+{
+	uint32_t r, s;
+	asm volatile ("ldp %w0, %w1, [%x2]" "\n"
+				  : "=3Dr" (r), "=3Dr" (s) // output
+				  : "r" (virt)); // input
+	memcpy(v, &r, sizeof(r)); // possibly corrupted
+	memcpy(v + sizeof(r), &s, sizeof(s)); // possibly corrupted if virt starts=
+ on 8-byte boundary (valid for xxx4 and xxxC)
+}
+
+static void __attribute__((noinline)) read_reg4(const volatile uint32_t *vi=
+rt, void *v)
+{
+	uint64_t r, s;
+	asm volatile ("ldp %x0, %x1, [%x2]" "\n"
+				  : "=3Dr" (r), "=3Dr" (s) // output
+				  : "r" (virt)); // input
+	memcpy(v, &r, sizeof(r)); // first half possibly corrupted, corruption in =
+second half at xxxC also possible
+	memcpy(v + sizeof(r), &s, sizeof(s)); // first half possibly corrupted if =
+virt starts on 16-byte boundary (valid for xxx8)
+}
+
+static void __attribute__((noinline)) read_reg8(const volatile uint32_t *vi=
+rt, void *v)
+{
+	_Float128 r, s;
+	asm volatile ("ldp %q0, %q1, [%x2]" "\n"
+				  : "=3Dw" (r), "=3Dw" (s) // output
+				  : "r" (virt)); // input
+	memcpy(v, &r, sizeof(r)); // possibly corrupted
+	memcpy(v + sizeof(r), &s, sizeof(s)); // possibly corrupted if virt starts=
+ on 8-byte boundary (valid for xxx4 and xxxC)
+}
+
+static void test_all(int samples, uint32_t mi_phys, uint32_t *mi)
+{
+	struct values values[MI_REGS] =3D {};
+	for (unsigned cnt =3D 0; cnt < samples; cnt++) {
+		if (cnt % (samples / 10) =3D=3D 0)
+			printf("Sample %u\n", cnt);
+		for (unsigned reg =3D 0; reg < MI_REGS; reg++)
+			add_value(MI_OFFSET + reg * 4, read_reg(mi + reg), &values[reg]);
+	}
+	printf("\n");
+
+	for (unsigned reg =3D 0; reg < MI_REGS; reg++) {
+		uint32_t reg_addr =3D mi_phys + reg * 4;
+
+		if (values[reg].data_count && (verbose || values[reg].data[0].value || va=
+lues[reg].data[0].count !=3D samples))
+			show_values(reg_addr, &values[reg]);
+	}
+}
+
+static void test_reg(int samples, uint32_t phys, uint32_t *virt, uint32_t w=
+rite_mask)
+{
+	if (!write_mask) {
+		struct values values =3D {};
+		for (unsigned cnt =3D 0; cnt < samples; cnt++) {
+			if (cnt % (samples / 10) =3D=3D 0)
+				printf("Sample %u\n", cnt);
+			add_value(phys, read_reg(virt), &values);
+		}
+		printf("\n");
+
+		show_values(phys, &values);
+	} else {
+		const struct reg *reg =3D get_reg(phys);
+		if (reg && reg->name)
+			printf("Register 0x%08X %s: (all values in hex)\n", phys, reg->name);
+		else
+			printf("Register 0x%08X: (all values in hex)\n", phys);
+
+		uint32_t value =3D 0, prev_value =3D 0;
+		unsigned mismatch_count =3D 0;
+		for (unsigned cnt =3D 0; cnt < samples; cnt++) {
+			*virt =3D value;
+			uint32_t new_values[9];
+			unsigned iter;
+
+			for (iter =3D 0; iter < ARRAY_SIZE(new_values); iter++)
+				new_values[iter] =3D read_reg(virt);
+
+			for (iter =3D 0; iter < ARRAY_SIZE(new_values); iter++)
+				if (new_values[iter] !=3D value)
+					break;
+
+			if (iter !=3D ARRAY_SIZE(new_values)) {
+				printf("%8u:", cnt);
+				printf(prev_value < 10 ? " %8u" :  " %08X", prev_value);
+				printf(value < 10 ? " WR %8u RD" : " WR %08X RD", value);
+				for (unsigned iter =3D 0; iter < ARRAY_SIZE(new_values); iter++)
+					if (new_values[iter] =3D=3D value)
+						printf("    valid");
+					else if (new_values[iter] =3D=3D prev_value)
+						printf(" previous");
+					else if (iter && new_values[iter] =3D=3D new_values[iter - 1])
+						printf("     same");
+					else
+						printf(new_values[iter] < 10 ? " %8u" : " %08X", new_values[iter]);
+				putchar('\n');
+				mismatch_count++;
+			}
+			prev_value =3D value;
+			value =3D random();
+			value ^=3D ((uint32_t)random()) << 16;
+			value &=3D write_mask;
+		}
+		if (mismatch_count)
+			printf("%u mismatches found\n", mismatch_count);
+		else
+			printf("No mismatches found\n");
+	}
+}
+
+static void test_reg_ldp(int samples, uint32_t phys, uint32_t *virt, unsign=
+ed words /* 32-bit*/)
+{
+	if (phys & (words * 2 - 1))
+		errorx("Register address 0x%08X for 2 * %u-bit test is invalid", phys, wo=
+rds * 16);
+
+	struct {
+		uint32_t v[8]; // max
+		unsigned count;
+	} data[MAX_VALUES] =3D {};
+	unsigned data_count =3D 0;
+
+	switch (words) {
+	case 2:  printf("Using LDP W*, W*, [X*] instructions (2 * 32 bits)\n"); br=
+eak;
+	case 4:  printf("Using LDP X*, X*, [X*] instructions (2 * 64 bits)\n"); br=
+eak;
+	default: printf("Using LDP Q*, Q*, [X*] instructions (2 * 128 bits)\n");
+	}
+
+	for (unsigned sample =3D 0; sample < samples; sample++) {
+		uint32_t v[8];
+
+		switch (words) {
+		case 2:  read_reg2(virt, v); break;
+		case 4:  read_reg4(virt, v); break;
+		default: read_reg8(virt, v);
+		}
+
+		unsigned cnt;
+		for (cnt =3D 0; cnt < data_count; cnt++) {
+			if (!memcmp(data[cnt].v, v, words * 4)) {
+				data[cnt].count++;
+				break;
+			}
+		}
+
+		if (cnt =3D=3D data_count) { // not found yet
+			if (data_count =3D=3D MAX_VALUES)
+				errorx("Too many register 0x%08X values", phys);
+			memcpy(data[cnt].v, v, words * 4);
+			data[cnt].count =3D 1;
+			data_count++;
+		}
+	}
+
+	printf("addr: ");
+	for (unsigned idx =3D 0; idx < words; idx++)
+		printf(" %08X", phys + 4 * idx);
+	printf("\n------");
+	for (unsigned idx =3D 0; idx < words; idx++)
+		printf("---------");
+	putchar('\n');
+
+	for (unsigned cnt =3D 0; cnt < data_count; cnt++) {
+		printf("values");
+		for (unsigned idx =3D 0; idx < words; idx++)
+			printf(" %8X", data[cnt].v[idx]);
+		printf(" count %u\n", data[cnt].count);
+	}
+	putchar('\n');
+}
+
+int main(int argc, char **argv)
+{
+	int samples =3D 100000, mipi =3D 0, reg_addr =3D 0, test_read =3D 0, test_=
+read2 =3D 0, test_read4 =3D 0, test_read8 =3D 0, test_write =3D 0;
+	long write_mask =3D 0xFFFFFFFF;
+	struct poptOption options[] =3D {
+		{"samples",       's', POPT_ARG_INT,  &samples,       0, "sample count"},
+		{"mipi",          'm', POPT_ARG_INT,  &mipi,          0, "MIPI channel"},
+		{"address",       'a', POPT_ARG_INT,  &reg_addr,      0, "ISP register ad=
+dress"},
+		{"read-test",     'r', POPT_ARG_NONE, &test_read,     0, "Perform a regis=
+ter read test"},
+		{"read-test2",    '2', POPT_ARG_NONE, &test_read2,    0, "Perform a 2 * 3=
+2-bit register read test"},
+		{"read-test4",    '4', POPT_ARG_NONE, &test_read4,    0, "Perform a 2 * 6=
+4-bit register read test"},
+		{"read-test8",    '8', POPT_ARG_NONE, &test_read8,    0, "Perform a 2 * 1=
+28-bit register read test"},
+		{"write-test",    'w', POPT_ARG_NONE, &test_write,    0, "Perform a regis=
+ter write test"},
+		{"write-mask",    'M', POPT_ARG_LONG, &write_mask,    0, "Value mask for =
+write test", "MASK"},
+		{"alt-read-mode", 'A', POPT_ARG_NONE, &alt_read,      0, "Alternate regis=
+ter read mode"},
+		{"verbose",       'v', POPT_ARG_NONE, &verbose,       0, "Verbose output"=
+},
+		{"debug",         'd', POPT_ARG_NONE, &debug,         0, "Debug output"},
+		POPT_AUTOHELP
+		POPT_TABLEEND
+	};
+
+	poptContext context =3D poptGetContext(NULL, argc, (const char **)argv, op=
+tions, 0);
+	int i =3D poptGetNextOpt(context);
+	if (i < -1)
+		errorx("%s: %s\n", poptBadOption(context, POPT_BADOPTION_NOALIAS), poptSt=
+rerror(i));
+
+	if (poptPeekArg(context)) {
+		poptPrintUsage(context, stderr, 0);
+		exit(1);
+	}
+	poptFreeContext(context);
+
+	if (samples <=3D 0)
+		errorx("Invalid number of samples");
+	if (mipi !=3D 0 && mipi !=3D 1)
+		errorx("Invalid MIPI interface index");
+	if (test_read + test_read2 + test_read4 + test_read8 + test_write > 1)
+		errorx("Multiple tests requested");
+	if (write_mask < 1 || write_mask > 0xFFFFFFFF)
+		errorx("Invalid write mask");
+
+	int mem_fd =3D open("/dev/mem", O_RDWR | O_SYNC);
+	if (mem_fd < 0)
+		error("Error opening /dev/mem");
+
+	uint32_t phys =3D mipi ? ISP2_ADDR : ISP1_ADDR;
+	if (debug)
+		printf("MIPI_ISP%u registers at 0x%X (size 0x%X)\n", mipi, phys, ISP_SIZE=
+);
+	void *virt =3D mmap(0, ISP_SIZE, test_write ? PROT_READ | PROT_WRITE : PRO=
+T_READ, MAP_SHARED, mem_fd, phys);
+	if (virt =3D=3D MAP_FAILED)
+		error("Mmap failed");
+
+	if (debug)
+		printf("Mapped ISP registers at %p\n", virt);
+	if (test_read || test_read2 || test_read4 || test_read8 || test_write) {
+		if (reg_addr & 3 || reg_addr < phys || reg_addr >=3D phys + ISP_SIZE)
+			errorx("Invalid ISP register address 0x%08X", reg_addr);
+		virt +=3D reg_addr - phys;
+		if (debug)
+			printf("Register 0x%X mapped at %p\n", reg_addr, virt);
+		if (test_read)
+			test_reg(samples, reg_addr, virt, 0);
+		else if (test_read2)
+			test_reg_ldp(samples, reg_addr, virt, 2);
+		else if (test_read4)
+			test_reg_ldp(samples, reg_addr, virt, 4);
+		else if (test_read8)
+			test_reg_ldp(samples, reg_addr, virt, 8);
+		else
+			test_reg(samples, reg_addr, virt, write_mask);
+	} else
+		test_all(samples, phys + MI_OFFSET, virt + MI_OFFSET);
+
+	return 0;
+}
+
+--=20
+Krzysztof "Chris" Ha=C5=82asa
+
+Sie=C4=87 Badawcza =C5=81ukasiewicz
+Przemys=C5=82owy Instytut Automatyki i Pomiar=C3=B3w PIAP
+Al. Jerozolimskie 202, 02-486 Warszawa
 
