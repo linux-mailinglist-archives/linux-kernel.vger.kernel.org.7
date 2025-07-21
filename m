@@ -1,79 +1,82 @@
-Return-Path: <linux-kernel+bounces-739083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 889A9B0C196
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:45:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4E1FB0C193
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:45:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 028CA540144
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:44:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58D3B1887F91
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:45:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0877286D77;
-	Mon, 21 Jul 2025 10:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F5228F937;
+	Mon, 21 Jul 2025 10:44:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NE1ly3ak"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ioGnzcqZ"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA2F28FA87;
-	Mon, 21 Jul 2025 10:44:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DDF28FAA8;
+	Mon, 21 Jul 2025 10:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753094654; cv=none; b=r0ccoEYpILQQ7cPmaZ2Raa9Dp1m7EAdo3NFcjLBMMqphS4TRg9OUMLMJIYxNTFZ4+dIxpLPuD1fZX54AQQG7WrlnVmUFw9ySzcSRmpt2mQT4T4KvucXnqk/zuFkxz3kUPZp0Xcx1VwHEy6DgDv98KB3X9COgB+GyiILobL79YTw=
+	t=1753094655; cv=none; b=mvwUnrTY4IIx7iYTESyWQMAzPJ5sfXP8hibwEOXPhpeMNGU8zQPpBuEIzxuOwzVTgrHYq644XU1E0+owm9tI4cttknlbTOx5NGfNg/TiroizjwVtR+Hp+m0nysUgkCWAcmS3QjCmuVhisQIN+/jdoB1++SGVkfkGhCjRw2VEZgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753094654; c=relaxed/simple;
-	bh=CqXvKoIpv47+9Jo8IQqETyCXrvf0/tNJtdJBkk4iTms=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=SsF+klk1XnNBuVGmTqLAi+0NvdbsxJtR45YrrpuLeylw3UBufCw7ZX3iHQtOu4K0odxslZmt0S5lCe2SVkaunid373RKhFRf7TLkl8Rg94/Qk90u55Xf/wN52Zh8elU6DVHXbgu+fWktc5b5Qi36F+Bal8ocsRt6neHULrNL3Sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NE1ly3ak; arc=none smtp.client-ip=209.85.167.45
+	s=arc-20240116; t=1753094655; c=relaxed/simple;
+	bh=IBvWsfd1qdqQU3Rg1nmav2yYeSIn047JyVePtD2ctPQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=rUVx5ssD8ozF54nlZ7/EaeRXENNonOiNcRnZCuKk2N3BFiXvfxPs8EaVl7Cor7wvZ9VlZE7Nendbu7zVIvxRx8eLJH6B3+yYvVczC1qRyCNdIx4s6fwxdChl/erIBMLFodzMo0nmiCTCqcBwdx1lo5pHE1g9j8CP+tHDOzo/kkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ioGnzcqZ; arc=none smtp.client-ip=209.85.167.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-556373661aaso3507409e87.2;
-        Mon, 21 Jul 2025 03:44:12 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-555024588a8so3887064e87.0;
+        Mon, 21 Jul 2025 03:44:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753094650; x=1753699450; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MloNkOxsM+6t7pP0mYVWFSXRLps1DlPfl53Fxu1h82E=;
-        b=NE1ly3akTmCzH5GDAHgPgECk1HrMg7haO1lrnY5FW6Sy/p/fHVTF61xU/iRLhJZ956
-         Y6gYt7a7wAsneLSQtBILmtHOiATldLgFFjR2Xz6w7HYGIvqzbLKvatY1onGlw68/Uh2v
-         K3VmD+7vZVf8ockqzDCYAN4BeXOIgxZa45iTsbKN20WCHm4FSolq6SrjfFP/bR3FsKx/
-         aP659unu7N+Mafj5FlEWexFsUGUXhS3tSzEyd0PH25F0jckjPSuAfd2kb+Z4siD0DTte
-         xv+X34wUJQabjPUg3hNDd1fmorUszbf/Ib0Upg1vnlp0ix5HI90bnvfqh96T0+eEsPAB
-         +iJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753094650; x=1753699450;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1753094651; x=1753699451; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=MloNkOxsM+6t7pP0mYVWFSXRLps1DlPfl53Fxu1h82E=;
-        b=u6C/DVcsntPrhX6BxBdwuETQ8l5CK+gfzVzXgBvMCZwi15J70ra+ozM0eddmXLonSH
-         O9f4Y45R4aEoPmIxljw3aP4YgCwnM/dZC+zxK+JMPEHs1C4lY1C+LlI1ymIuWkZ6M2W4
-         /d5hZ9kluUp5dCx7GTvqO0pAYr4+XKTAnBN3ppfAIJQTnrJyxfQUlTyAzTg7VE55YqsN
-         Ek+WFtco/ge7bRrNtAD9wiz3h9p/tG1roBPv/haUc3A2UZ25QWH+01et+TnAWZznBmWs
-         ahRThyqem4lbdydJNn3hmcmkuS+DxTRQ0G5OQ5dk3N11hn9RqRgXssZz4wIz9/eogCxg
-         OAuA==
-X-Forwarded-Encrypted: i=1; AJvYcCWdEdltOWaWAhooh9A30Z2V19yjSg7b9vZZm4TiAH0vS22KbcHOB5RD1FOcuveI0IhPW6BaT1/jBPNl@vger.kernel.org, AJvYcCXxfI81o3SQsiohGv1s4q3JspAoeRCxA8sSSgTCU79NsWVykk9xcBl/VqXmgy9gm3/LEZAxUqTN2MutFI7S@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEmZB27ZHcYoY2TUPwVklzxlGDsHaOkY8iZ8mmxqIey65slaKw
-	OWJOr9niEWckJLXId1WfAQrbtDS++8RSEf2kIGZ2EvqmGGNJz5NBjprp8gK+NR2HKQk=
-X-Gm-Gg: ASbGncsFz9babugFS1wYD0A/ORmNexU+d8w/SR59L9rgu9i9Qk/XGC9RJI3bMYn87I1
-	IrYGZmp2l3DqF973lifoHjW8UfAuX58CF0V4DR1n4e/eAOh76LUXgGF14KELePV9NxKzYRVyp9V
-	vJHYnG0UXCJ+PLNUR81AM5WYprqruMH0uBQWy9h4F18irCday7G4ZEGFbrCFP0h9KvYKhIU1Mxd
-	ANoLjHSwROyuhYsTAHLzgg15hGJKJ9kNBKVcgcX5BndFziqpV/fNdLZ1iaUDbdUuCpUxxYRjFEB
-	/roujlQNZoSN3qEX0D1EvwA+SqXnRFxY00XyWjSs/VTKKj8WHspDv8W0BjkyDQFhC535hgKMz5z
-	hFWUYivYzDNPv60dlXXOgMlnWhQYk2Vjd1OQyv7wS57wemPJRhMQG93E7LtVplt7y4vQ=
-X-Google-Smtp-Source: AGHT+IEaTLVSFdGKI+Xh6r3i/xROhu8qw2nQSim/N5dEd1SjI4SK+6UEvIHqBEAnpSME0bPwhkjASA==
-X-Received: by 2002:a05:6512:3054:b0:555:61e:ca7e with SMTP id 2adb3069b0e04-55a23300424mr6273856e87.10.1753094649919;
-        Mon, 21 Jul 2025 03:44:09 -0700 (PDT)
+        bh=uZgi0IGCTQu+xFbtpDGEBKVDI7Gw2v7i+CZyebbbBrc=;
+        b=ioGnzcqZtmZsbAUppHqFG43SBRcDaBUycuR+cw4IPMRsYLV0zA56sYMHBycActFJj+
+         xXMkKK1ZarnybnR3p4OzVodzC9ykmOUu69MPAca+btFuOAS4ytAc/Rar2P1K1tpEBIRT
+         k7s10gA/hPGZDrIRLSro6rbshXtWyEs4AQXbY+vBIrje/UaTPduROtNjQ3/5Baprmbz2
+         p6aaEoox8lvuuN55WKH/YKwB6W366qNetyG9hhEHvY5AO7DprXcSQC/ieeCHDpfp2hFW
+         jcfHiHFzLUuJmt910mht41oKjv4fOGQTMZXblVfuTzPlKYDbcsQMKkwWvGmxfNkAJ8I/
+         HKEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753094651; x=1753699451;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uZgi0IGCTQu+xFbtpDGEBKVDI7Gw2v7i+CZyebbbBrc=;
+        b=AfsezZv0bsYk+DHDUp4c0UWOTiGWAhYPDT93j4mT6eIjm6TzVfzLKH2/qOScEWszNz
+         PM3CuxH0/nltR4QTzMM7g8RT+h5f1m10sXrm+al5fBPJ7NjFaOGOlg6VgC5/PIx+crr2
+         GUomoYzM6VQgkRtr86KIFmbsTqxqSvN4SGDRPlK5S1Psj2qD8EQgZPSVfIc9/9sF7IbT
+         q3HAr8KUOOb6M2Pkn1cisBR6lW7g1M3fbKcJF7vwe2YLvctiUXfZ4TQMlOgJA1nU/+kN
+         /dwJ74Zbf7vvtRvS+DL926ptxo27qHgXDLouaJWx8svEf+r73/kXqYZlXJ69ibWSh69M
+         L/Nw==
+X-Forwarded-Encrypted: i=1; AJvYcCWGt96AzNu4XWGgQZYwRHsV+DgGZ/kSNmk4N72YkM5FF1Wu8PQfD3hzKSb8o4qQ1i/HaiI5tK7tcT5Qp3fy@vger.kernel.org, AJvYcCWaivzqPaMQ7AdF383e+LhCSrWi7Dn8vxSK1Elbm6kpidHB6x2dzuQGHcHUX7LZMueJckHY4Iq6JPl3@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpxXtGAmxJhTU1z0n5ClWF0w3wl62dQ2OB22DnbDRWnjSV6ho7
+	nYbgDWQTqcFwGNM5ie1kJwxcM/wJlT1qk6ANHBGBdw4cjCfHtYRAqpzJ06d3wwsCCPY=
+X-Gm-Gg: ASbGncvq0VH0tpn8Dc3f0bhnWeE+Rvkk3Y7EuMyWja2RFMYIruvrVW3WiYWSeNKYN5F
+	Xt0MpBmWITeLmu5PRRdd84DWJfs4sCD9lGQVj7dz69Jnr2DkhNOcqXno4mrhoxDW0MhmhTzZckf
+	OAqk5jMFzD7wd+UpsvesKG113kEA0Faykmd/MBro+Ca5+jUGgkNhM7kcTZ4bKwDwE6puT7FRX3S
+	nONxnWMdXEgvfe/lew93WHLom/5fptsOUmX2Qg8X9ZUd86D6xL5CXMQhycXX3ve0N9eizJe2mY0
+	akdFD0Kp7DA0fwuHb6KnomycZkG03x+WNtGswu/9qfCIFhGmnKfL+GL5O6tH7V+ikPaIf5W6rti
+	CQrGY+YLH4eQ4sk5Vu97XLWyOCtgdA0BfxKEJqcUyfwkevSB2RgYvX7eqTj8D8giDD10N5wAyif
+	NW6w==
+X-Google-Smtp-Source: AGHT+IGuVsyJ1VoNtlX4uZdFa9de1M9socYdCeEuJ0l7LOrUdQ47lJmy6BhpBpxRED+In30jMQumsg==
+X-Received: by 2002:ac2:54a5:0:b0:554:f9cc:bea5 with SMTP id 2adb3069b0e04-55a23f56157mr4445936e87.34.1753094651264;
+        Mon, 21 Jul 2025 03:44:11 -0700 (PDT)
 Received: from [192.168.1.198] (83-233-6-197.cust.bredband2.com. [83.233.6.197])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55a31db89bbsm1505164e87.237.2025.07.21.03.44.07
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55a31db89bbsm1505164e87.237.2025.07.21.03.44.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 03:44:08 -0700 (PDT)
+        Mon, 21 Jul 2025 03:44:10 -0700 (PDT)
 From: Marcus Folkesson <marcus.folkesson@gmail.com>
-Subject: [PATCH v2 0/6] drm/st7571-i2c: add support for grayscale xrgb8888
-Date: Mon, 21 Jul 2025 12:43:30 +0200
-Message-Id: <20250721-st7571-format-v2-0-159f4134098c@gmail.com>
+Date: Mon, 21 Jul 2025 12:43:31 +0200
+Subject: [PATCH v2 1/6] drm/st7571-i2c: correct pixel data format
+ description
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,11 +85,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIANIZfmgC/13MQQ7CIBCF4as0sxYDk1KMK+9huqB0aCeRYqBpN
- A13F+vO5f+S9+2QKTFluDY7JNo4c1xq4KkBN9tlIsFjbUCJWmqUIq9GGyV8TMGuAh11gx1de3E
- d1M8zkefX4d372jPnNab3wW/qu/4ko9o/aVNCCouGtFI4WO9vU7D8OLsYoC+lfACAokjqqgAAA
- A==
-X-Change-ID: 20250520-st7571-format-2ce6badc48c6
+Message-Id: <20250721-st7571-format-v2-1-159f4134098c@gmail.com>
+References: <20250721-st7571-format-v2-0-159f4134098c@gmail.com>
+In-Reply-To: <20250721-st7571-format-v2-0-159f4134098c@gmail.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
  Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
  David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
@@ -96,72 +97,58 @@ To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
  devicetree@vger.kernel.org, Marcus Folkesson <marcus.folkesson@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2088;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1260;
  i=marcus.folkesson@gmail.com; h=from:subject:message-id;
- bh=CqXvKoIpv47+9Jo8IQqETyCXrvf0/tNJtdJBkk4iTms=;
- b=owEBbQKS/ZANAwAIAYiATm9ZXVIyAcsmYgBofhnUYdvsOrhAWxNuyYe1ew+jZfPzZ5HsvXCsm
- cT6jJBh67OJAjMEAAEIAB0WIQQFUaLotmy1TWTBLGWIgE5vWV1SMgUCaH4Z1AAKCRCIgE5vWV1S
- MnQ+D/4xXxBUtCdOxdnnv1BsrNkNDNDdSuYB6TUb8xOO6EIB2oKUhrg59fICxw+6QMxZt7e2/cD
- fUg2KAODJc2MHYAansVBcSN0mXR3SgevWE4YYaP9GHg5ATwbOCBQGGypw6Ly8wuJCfG744saoNr
- FiACbUffA2ZAdxnmoM7rcZvg3rQyhA2MyuS4RhdJ4GatSN9HNkSXO/me3CSrwf8J0qBA8/fZ71D
- nHjHGxp2qJxDhANpBhGglvmo9+Y2bAMlsgLqkMQ4Z2xpMkBMjHdZZEjIySl++029bDJ8/hvjy3L
- 6xyK8iih7pm81MbZ7YD4UGXPb8LEvqXEu8slSx3q6GL5vSoElRzHA3WhM0p1eI0qXg7zahbBWBn
- 7Q6JGzh4CUmB+JhgDO0dWYEoseZZ+/bBuLQ95A7GSNhCvQTngWBMsT/8MPBut395flDUsC2KISf
- n+p/gnIfjRrDWpfFem6AFEWqrvDTPzTsh+XM+iPleluHs/HXLyU0rMtDL4aHkW0wSnokHR+2AHd
- GmzKVnjLY+v9nkiSjj4Lymt8njqv5M4AALOnjq8xjiQxe0Pbta7lQXVDdo0Ew2nM1U+ykV5gkmU
- PSMI3/ZPsN5az/Iv8KSoeYjq6gIaHKkMS83UnjqLSKMOoPZTQ7DLRuuWkqZKgWmb6yCK1OKfuN/
- 4ArybFy4w6MnLdA==
+ bh=IBvWsfd1qdqQU3Rg1nmav2yYeSIn047JyVePtD2ctPQ=;
+ b=owEBbQKS/ZANAwAIAYiATm9ZXVIyAcsmYgBofhnZ77JL3v/9CnCts1MBF/beUtSWOM1Zx4r1l
+ WDEMf69H3WJAjMEAAEIAB0WIQQFUaLotmy1TWTBLGWIgE5vWV1SMgUCaH4Z2QAKCRCIgE5vWV1S
+ MrlOD/9190vl9+6uV8EbrJXDTugXGNXbo9Brq3oO8as6X3Q4KC7xtF+xgG2OZH6mpLq3BSlHo31
+ jUWRusoZ9g8IERx42w8TWzIwxa+ukcZh8s+6bmw8pTG7yka0FhiH0e5TrSx0qADksGtEENVYFff
+ 9GSBsOAnzQPmMZCkk0UpIUFZ3OL8B8pr59zznppEr6eSMEjm+fdXCvPHDm7AGARnDm5dzIOn7UE
+ EL6ZOfndlLePFOzp+jGv1nqXC1MI9f0sI/s46wM2EEbQUQ4N2AG41Oxg1l8u0N9FwfASN1nqOlT
+ uMu8fq2YRa8ukI/AAeZKHNwbiau7tXIJqZE2d8uVA9Lm6OwqLL2RafZRyOZTOs2zCSCB3JPKP+B
+ idXkuval3ZKCoRvUJxqRYLFm0VVvRA2gB8scZW7JrIKsVlZU44V5S28vL3JHshVrexBlaaYhdoT
+ vuGMAeoTu6Pyi2U8AfGviPG46PlvD0puZ5KTL44i4BYKNpyyDRjPuAojSTARcYx4r6FxcsMMRku
+ G1I2B5tEuDkhRPon9G017rsMB0UQ83Upgix82n4TM0Esr4G7DNNx8dAzknIrOfeREBRZT39ijf9
+ /dNjrhOxeX9qU+j1pdnYIPpiUJ/pWqxhmPH9IVcwadzlBX4MAGeKp8yAebrxQH+tXoIpIMjzujv
+ ka3cu8FDVHlWz/A==
 X-Developer-Key: i=marcus.folkesson@gmail.com; a=openpgp;
  fpr=AB91D46C7E0F6E6FB2AB640EC0FE25D598F6C127
 
-The goal with this series is to add support for 2bit grayscale with
-the xrgb8888 pixel format for the st7571 display controller.
+The comment describes the pixel data format as stated in
+the st7571 datasheet, which is not necessary the same
+as for the connected display.
 
-The first patch only corrects a comment of the pixel format.
+Instead, describe the expected pixel data format which is used for
+R1/R2/XRGB8888.
 
-The next four patches adds support for inverting pixels. This is
-necessary as the connected display may or may not use the "right" (0 =>
-black, 1 => white) pixel format expected by the supported formats
-(R1/R2/XRGB8888).
-
-The fifth patch adds a helper function (drm_fb_xrgb8888_to_gray2) to
-convert xrgb8888 to gray2.
-
-The last path adds support for gray2 in the st7571 driver.
-Compare the mono [1] and the gray2 [2] variants of our penguin.
-
-[1] https://www.marcusfolkesson.se/gray2.png
-[2] https://www.marcusfolkesson.se/xrgb8888.png
-
+Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
 Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
 ---
-Changes in v2:
-- Do not share code between _to_mono() and _to_gray2()
-- Correct formatting (remove  "|") in the dt bindings
-- Implement support for inverting pixels for st7567
-- Link to v1: https://lore.kernel.org/r/20250714-st7571-format-v1-0-a27e5112baff@gmail.com
+ drivers/gpu/drm/sitronix/st7571-i2c.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
----
-Marcus Folkesson (6):
-      drm/st7571-i2c: correct pixel data format description
-      dt-bindings: display: sitronix,st7571: add optional inverted property
-      dt-bindings: display: sitronix,st7567: add optional inverted property
-      drm/st7571-i2c: add support for inverted pixel format
-      drm/format-helper: introduce drm_fb_xrgb8888_to_gray2()
-      drm/st7571-i2c: add support for 2bit grayscale for XRGB8888
+diff --git a/drivers/gpu/drm/sitronix/st7571-i2c.c b/drivers/gpu/drm/sitronix/st7571-i2c.c
+index 453eb7e045e5fb5942720d6020b6279a4b7315d7..dfdd0fa4ff24090c3cbe7ab162285be45464d6a6 100644
+--- a/drivers/gpu/drm/sitronix/st7571-i2c.c
++++ b/drivers/gpu/drm/sitronix/st7571-i2c.c
+@@ -386,10 +386,10 @@ static int st7571_fb_update_rect_grayscale(struct drm_framebuffer *fb, struct dr
+ 			 * even if the format is monochrome.
+ 			 *
+ 			 * The bit values maps to the following grayscale:
+-			 * 0 0 = White
+-			 * 0 1 = Light gray
+-			 * 1 0 = Dark gray
+-			 * 1 1 = Black
++			 * 0 0 = Black
++			 * 0 1 = Dark gray
++			 * 1 0 = Light gray
++			 * 1 1 = White
+ 			 *
+ 			 * For monochrome formats, write the same value twice to get
+ 			 * either a black or white pixel.
 
- .../bindings/display/sitronix,st7567.yaml          |   5 +
- .../bindings/display/sitronix,st7571.yaml          |   5 +
- drivers/gpu/drm/drm_format_helper.c                | 108 +++++++++++++++++++++
- drivers/gpu/drm/sitronix/st7571-i2c.c              |  41 ++++----
- include/drm/drm_format_helper.h                    |   4 +
- 5 files changed, 144 insertions(+), 19 deletions(-)
----
-base-commit: ca2a6abdaee43808034cdb218428d2ed85fd3db8
-change-id: 20250520-st7571-format-2ce6badc48c6
-
-Best regards,
 -- 
-Marcus Folkesson <marcus.folkesson@gmail.com>
+2.49.0
 
 
