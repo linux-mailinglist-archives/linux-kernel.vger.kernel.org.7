@@ -1,39 +1,47 @@
-Return-Path: <linux-kernel+bounces-739156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AF96B0C27D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:16:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9B77B0C27F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:16:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBB4E188524B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:17:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1DA1541401
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:16:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB9228C014;
-	Mon, 21 Jul 2025 11:16:39 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 404981AA7BF;
-	Mon, 21 Jul 2025 11:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C33DC290083;
+	Mon, 21 Jul 2025 11:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vKdIE93M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B9461AA7BF;
+	Mon, 21 Jul 2025 11:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753096599; cv=none; b=o1r5v5CVxaNYzjwZUYa/WriMwGx9XdYhsD4ggZ7qDDsYYnDL3AOQ0rTPfkDk9eLYyu0pLBIajnuhCj1f0aOZKUDYkWml65X3n5pDKi5Nt/357ZdmwyQzw8/feT+vvjX4jePfysgDs0B9T3xklEX3IkPwlOhE32htz4M44tfYODE=
+	t=1753096611; cv=none; b=HexAF9TpHRhEfo/h0OHcW4eQePisKCo15yXvUWCJitGrMzUas24DlbHcxNL7rb2YNyLXBUXyG22vuelF4rMTpF86eDA7nkykT8n/cXMCnTNb6zft/joIYlL/vrSbwLseTwvjL0leGVtYDWtLA+6q9X330IDrPRE6w0NNmWQBOh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753096599; c=relaxed/simple;
-	bh=jwBWJXy3jOUAeTbsSjCB5jDT5lQ67rpEeSgG8J7sCrI=;
+	s=arc-20240116; t=1753096611; c=relaxed/simple;
+	bh=55EhzGIl81BP/e7L8TVkPpybBa7KDMQqGBs45xJUNqY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pH8VAdcjeRxfYJxMfIunOAmrSPHdOfIgcM9LDfvaxzk3KJwGLbuKPQ4ug9C1497eBdgWHa1lFx+Wa5JreR3KvyHQDbmQWoCW+Liah/wJS2E70m2bakuxV9fnprhRZjj/meb+kezQXoquV6jrfuIF7ilTm33ty0ETW2NHcYLwTSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D0D41153B;
-	Mon, 21 Jul 2025 04:16:31 -0700 (PDT)
-Received: from [10.163.95.2] (unknown [10.163.95.2])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EE1F43F6A8;
-	Mon, 21 Jul 2025 04:16:33 -0700 (PDT)
-Message-ID: <6fecd7d0-a5a5-4973-94ce-c63a3dff6bc7@arm.com>
-Date: Mon, 21 Jul 2025 16:46:30 +0530
+	 In-Reply-To:Content-Type; b=IgUlGIT+SYXW/4dD58iBdT6zzfwgFk2PEE+vEoHah0c5YQSQvOnr0UezRiLsdGcNm3IdM1438RUTszXg0HnphRPa3YIbugzBrZdrVkgU15glEN6t8KWGxkHmxRelSKJ9umLmwTAfohzLmfqMS6jdh/1Of2ap7HhfuMCxI1ly200=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vKdIE93M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A4ADC4CEED;
+	Mon, 21 Jul 2025 11:16:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753096610;
+	bh=55EhzGIl81BP/e7L8TVkPpybBa7KDMQqGBs45xJUNqY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=vKdIE93MdcqylLptkpAws2ZqEORF6AbVFRK/+0xvYuplEmUQr9+H0weorESD4VwoV
+	 POt+1a/4oUa7TqHNx9918kuj6/Qp09kKiBD5Fu8fKglNJ/TScMahk60npcV6j46VXm
+	 Aeie44glcpuKjf5gIa/wX7J9JSA8waSs8XoojHHrNHchymgL04CYmxRvmsgxuOHd6Q
+	 FAt8CKEdRPOG9ehNRGIG1lYCu8ijs9NGpPkl/i8D/D/bXXCYtcxzHfPaKg8xrdxFzw
+	 RhdbXKSlNmu948edHaUPNUVugvYc4EXni0qdPM6cadZXxzdpbhfhiYGBrP7C5LhB7t
+	 HggqBJ63go/+A==
+Message-ID: <4f57cca8-49a8-4431-b41c-78097eb11da9@kernel.org>
+Date: Mon, 21 Jul 2025 13:16:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,50 +49,114 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] coresight: Fix a NULL vs IS_ERR() bug in probe
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Yuanfang Zhang <quic_yuanfang@quicinc.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
- Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Leo Yan <leo.yan@arm.com>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <7bd9fae8-a15f-412a-8800-ce47acf0b5ce@sabinyo.mountain>
+Subject: Re: [PATCH v5 1/3] dt-bindings: leds: is31fl32xx: convert the binding
+ to yaml
+To: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>,
+ Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Pavel Machek <pavel@ucw.cz>, devicetree@vger.kernel.org,
+ Lucca Fachinetti <luccafachinetti@gmail.com>
+References: <20250721-leds-is31fl3236a-v5-0-264e841f4da9@thegoodpenguin.co.uk>
+ <20250721-leds-is31fl3236a-v5-1-264e841f4da9@thegoodpenguin.co.uk>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <7bd9fae8-a15f-412a-8800-ce47acf0b5ce@sabinyo.mountain>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250721-leds-is31fl3236a-v5-1-264e841f4da9@thegoodpenguin.co.uk>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+On 21/07/2025 12:55, Pawel Zalewski wrote:
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - issi,is31fl3236
+> +      - issi,is31fl3235
+> +      - issi,is31fl3218
+> +      - issi,is31fl3216
+
+Keep alphabetical order.
+
+> +      - si-en,sn3218
+> +      - si-en,sn3216
+
+Here as well.
 
 
-On 17/07/25 1:08 AM, Dan Carpenter wrote:
-> The devm_ioremap_resource() function returns error pointers on error.
-> It never returns NULL.  Update the error checking to match.
-> 
-> Fixes: 26e20622a8ae ("coresight: add coresight Trace Network On Chip driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/hwtracing/coresight/coresight-tnoc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-tnoc.c b/drivers/hwtracing/coresight/coresight-tnoc.c
-> index 0e4164707eea..d542df46ea39 100644
-> --- a/drivers/hwtracing/coresight/coresight-tnoc.c
-> +++ b/drivers/hwtracing/coresight/coresight-tnoc.c
-> @@ -183,8 +183,8 @@ static int trace_noc_probe(struct amba_device *adev, const struct amba_id *id)
->  	dev_set_drvdata(dev, drvdata);
->  
->  	drvdata->base = devm_ioremap_resource(dev, &adev->res);
-> -	if (!drvdata->base)
-> -		return -ENOMEM;
-> +	if (IS_ERR(drvdata->base))
-> +		return PTR_ERR(drvdata->base);
->  
->  	spin_lock_init(&drvdata->spinlock);
->  
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 0
+> +
+> +patternProperties:
+> +  "^led@[1-9a-f][0-9a-f]*$":
 
-Do we still have more similar instances in coresight ?
+This still does not match min/max constraints. You already got the
+comment on this and nothing improved.
 
+> +    type: object
+> +    $ref: common.yaml#
+> +    unevaluatedProperties: false
+> +
+> +    properties:
+> +      reg:
+> +        description:
+> +          LED channel number (1..N)
+> +        minimum: 0x1
+> +        maximum: 0x24
+
+And these are supposed to be decimal.
+
+
+Best regards,
+Krzysztof
 
