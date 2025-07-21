@@ -1,160 +1,252 @@
-Return-Path: <linux-kernel+bounces-738836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4162BB0BDEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:42:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3735B0BDF3
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:43:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A034176F10
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:42:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9330918957AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:43:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80855285057;
-	Mon, 21 Jul 2025 07:42:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86295285054;
+	Mon, 21 Jul 2025 07:42:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="ZHmo0Ofm"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GIVJ3VQ8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08945284685
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 07:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F98284685;
+	Mon, 21 Jul 2025 07:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753083762; cv=none; b=lSRpP6+izArrltX+ZbpbSYKMB6sCTkzfO8MmqEXRfzhQ9XAnIuRpUHi01Wt1Jw3xVGCsTAM5Z8J6RwB3P04OleCBdjCY7PCKjRXouN/bdDIpcZXzLcMUOS4xEnypC8c6UdUpKh5RJoM2WjLMA12Rxf8cNCzDgTQJ6LhWSPeoj1M=
+	t=1753083771; cv=none; b=eiTwGrF2uwrwdgdRk3tJSg0XKgpBjNQUd14CoJhQjGBhhRa/RfQHmchoqyNUMhyrwzP2aegzOwGcAqKFjeLl/n8CUATYvcD9aGhk24HjBreo2s6b/N8/F0U2Q855Ey75WaIfx+ygSx6AhkYzUNc8I2isO1TIAvyboPlA7gMZDeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753083762; c=relaxed/simple;
-	bh=chzQDhpRR0KkFFSvGWLDbsXZDi/1ZGpp4j7nqK/5mxo=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=gkrEYZxh2lIYZJLsiTy1OUCsPUnGceeRTdYF1JpgJiPafrDSpDeCZCSxXRvp5upriwG+rciDsgaxYzFrU7BovihP/PuVHuokLt3WZ8caJkeUCHXP8d0932vufkHa0Kww3vBYRYedhkmqMEnNHKK2CpBhqYCwsab7cdSOS/t0YWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=ZHmo0Ofm; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6129ff08877so6318183a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 00:42:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1753083759; x=1753688559; darn=vger.kernel.org;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/Jn2uM1C1hodxQz3Up00DI8ehhdUTfz2Vy9NLN+SJQA=;
-        b=ZHmo0Ofmh0GkYtbtnBrkBXAph6ck5S93mdvYHgMT1Cne2rvnNOQkE27CEbOH1xWS/7
-         NhgvCVGwAxxwAxh22dRuKuoulqNM/d/FsUKcb1VemcCWyMYH6QgERk6Q5tOpz62rJ3QC
-         zIhQHa5gKeToe3Un+4ndbomLZDjnQMxtXkTO5MWnxxlbEnNeq+td2/Ll52U7KBTMz+Sc
-         +aVIqO0NTLIbMfJVE6AyOWI25bcEen6y3VcNIEKh58NRUzqIG5si1ez5wHVgcp2YseYr
-         vXxugd/AKgiPEnver6TieHzQH8MHdowWSrW/lf842esl8Y/aPjTuhRbtFzirf+5gDuRd
-         nZYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753083759; x=1753688559;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/Jn2uM1C1hodxQz3Up00DI8ehhdUTfz2Vy9NLN+SJQA=;
-        b=PH4ShqSD4oqQqCc9tz6jNZfP9LcJxVCIQA9XpCNFPdoSOS9Fx5nDDN+hgCFRCqdajl
-         rGlh4nQWh3KoI/PvL/dJCRqKYexI3M++L3ijF1JXAk7ZuvC1tweDxlXwMrmQuOeZ+4f1
-         5KTbV3N5jGQI8W1rkwywr63whjqy44bVhG2IpKyCZayd+oPjzSZwqOw7mvvIIO2YpGqP
-         YpNkCJM26BPSXZUBCo9xgdKz/5XeP8vIxgk0MJuVvqa3wPuBiESfcW9EU4pnV59dk7dS
-         QS2fM0wmY8RAM8BPGapRR8qE7ECTxd31ct+1WWa8MVGJRs94tsuMuUSXn/e6zouUrRzb
-         /6tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXYN1A3+KWklT7lAK65fmrfaoGPGBRAnJx6xOJJWqp0fRvFvPcVxPE4dOdjMPutKJpED69aVLufp+WXh9Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7oFdrMIeGvE+msyu1WCqkZjdrFT9O+qL/ScY6Z1VZ7PP6Hxfq
-	U4MJI6ISRZXFRnplImVRACKb3S4Xqo+Bp4eHlkBx8GFICLdys78rOl/CGeumOAXwE/gGxRBNGH2
-	c+mB1nsdLSQ==
-X-Gm-Gg: ASbGncvRLbnIMO/ZgsnjxnYJONuObGICFA4fE+bywF5FLrK7dqt48OMvbH3c6/DpNA3
-	6XUVwi7ZaYc3KHULn4YDnUUhOYqZJgX5JU8hnhUWsJDNsvULuNGCyiMg/I4zKjJPEkkx0A7ydIi
-	p0e7mnCTHwnlU0hJN+z6+TGNgF4LmYwsdi9Pk4BhL6Pnr81C3cXmggrjQTR914LBaMbCypgyOVt
-	Opmj1AZatd/FZkLnJ6YdwsaNwJfxCh/nN0QzeJ8AOXrKVN7HHYSOrbKGGom207AFygDNa3zk6Ov
-	P2r/KHJ36bq2PeVXeZMGycaEkT3BZTQ/IAzP/mGl0BuXWagwDijNXL1INJTUuWflwfCmgKX7KST
-	y2nT6nYrpfxBEUDXa4gyG9TxhO0LdAVcucV+b78QWhAxFqsJqkmC1/N9cLHvg7WqRMnpnRaIEJs
-	3SzpdVrfVPx+0QAUrJWgXH0GgidBi6890=
-X-Google-Smtp-Source: AGHT+IHojokpIKOVzO2mTGfd8U+xB3sxarTMHuXH9C3us/pGvkjTIHvaL7YhUPwGxvFGX/BiGyYmDg==
-X-Received: by 2002:a17:907:a901:b0:ae0:a465:1c20 with SMTP id a640c23a62f3a-aec4de61a29mr1564976266b.14.1753083759251;
-        Mon, 21 Jul 2025 00:42:39 -0700 (PDT)
-Received: from localhost (2001-1c00-3b8a-ea00-c4de-d39d-05f4-c77a.cable.dynamic.v6.ziggo.nl. [2001:1c00:3b8a:ea00:c4de:d39d:5f4:c77a])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6daf4579sm615655866b.77.2025.07.21.00.42.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Jul 2025 00:42:38 -0700 (PDT)
+	s=arc-20240116; t=1753083771; c=relaxed/simple;
+	bh=Q4RBacuprSEIc9pez5OZQhXVT32g2ZtOfNSxEYIpOio=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xno+K6+SCHLwvkcq6vC62BmNHz2WkCuF0mO5dQJmagghNLYuwaDKyz0tV308XixzeXHxzTvX/4J9WZObWxHAxBXP5GT+KXMY/3iuX9v/FFu6J32gvdx308aqcjgKZ2/w9xc+a1yowTv8iKMhnGS7HnWSGCpsG09mybvJJ3lqy7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GIVJ3VQ8; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753083770; x=1784619770;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Q4RBacuprSEIc9pez5OZQhXVT32g2ZtOfNSxEYIpOio=;
+  b=GIVJ3VQ8RDUfJzvYVZs6KkV47FlFyjRztWZfSFkwfIczBrPOdYIT50tg
+   QuP+7WcVPwJlQyLRAP8nJnxEsjCPqTT1LMn0/9+sDSlV6yOtrSDa1zDyF
+   rNRFtMW0xCLnWsAlnMvlx/xQb9UxYwDoHRbhUhWQ9s2W7C4uyKn9XET2z
+   H75IFBnskQypK1rHpVRQihme4Mp6ejqFp6jnHby5pPESXt/XG1Cd72fBH
+   vWvUwOmFtwI15/rLE/wntsVLDWh6FvHqJM3iQpxdg9K61vJpjWGuQpfau
+   v3DoCkzlMYYP1o+mAnqRVyKJVHHX43amsURkz4v0lO8f3WJdlrWkhIQyY
+   w==;
+X-CSE-ConnectionGUID: geES7QqTR9ij1zXr7lk8pg==
+X-CSE-MsgGUID: pr3SWbTpQ/yDNKEFeEF4ug==
+X-IronPort-AV: E=McAfee;i="6800,10657,11498"; a="55444609"
+X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
+   d="scan'208";a="55444609"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 00:42:49 -0700
+X-CSE-ConnectionGUID: rc6vbhyTSyqvAelJSe+wOw==
+X-CSE-MsgGUID: Kp+L3q7rRMOBCfw6bfXsqg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
+   d="scan'208";a="158885160"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 00:42:47 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1udlAZ-0000000HHbP-37cp;
+	Mon, 21 Jul 2025 10:42:43 +0300
+Date: Mon, 21 Jul 2025 10:42:43 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Jonathan Cameron <jic23@kernel.org>, Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>, linux-iio@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
+Subject: Re: [PATCH 7/7] hwmon: iio: Add alarm support
+Message-ID: <aH3vcye29TrG8s2Z@smile.fi.intel.com>
+References: <20250715012023.2050178-1-sean.anderson@linux.dev>
+ <20250715012023.2050178-8-sean.anderson@linux.dev>
+ <aHYWQOjJEWdLjy7H@smile.fi.intel.com>
+ <3b35b3a7-3f1a-4401-9b60-ba4afda5636e@linux.dev>
+ <aHd6NEHcCa6aqJB5@smile.fi.intel.com>
+ <e4894ab6-dd75-45d5-a49f-832c64b89eaf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 21 Jul 2025 09:42:38 +0200
-Message-Id: <DBHKBSK14XHM.E3ZUQMEJKEOJ@fairphone.com>
-Subject: Re: [PATCH v3 2/2] interconnect: qcom: Add Milos interconnect
- provider driver
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Georgi Djakov" <djakov@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>
-Cc: <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
- <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250709-sm7635-icc-v3-0-c446203c3b3a@fairphone.com>
- <20250709-sm7635-icc-v3-2-c446203c3b3a@fairphone.com>
- <d8955532-9a3b-451f-b5c7-549cee7d749e@kernel.org>
-In-Reply-To: <d8955532-9a3b-451f-b5c7-549cee7d749e@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e4894ab6-dd75-45d5-a49f-832c64b89eaf@linux.dev>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi Georgi,
+On Thu, Jul 17, 2025 at 12:23:58PM -0400, Sean Anderson wrote:
+> On 7/16/25 06:08, Andy Shevchenko wrote:
+> > On Tue, Jul 15, 2025 at 12:20:24PM -0400, Sean Anderson wrote:
+> >> On 7/15/25 04:50, Andy Shevchenko wrote:
+> >> > On Mon, Jul 14, 2025 at 09:20:23PM -0400, Sean Anderson wrote:
 
-On Mon Jul 21, 2025 at 9:36 AM CEST, Georgi Djakov wrote:
-> Hi Luca,
->
-> On 7/9/25 4:14 PM, Luca Weiss wrote:
->> Add driver for the Qualcomm interconnect buses found in Milos based
->> platforms. The topology consists of several NoCs that are controlled by
->> a remote processor that collects the aggregated bandwidth for each
->> master-slave pairs.
->>=20
->> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
->> ---
->>   drivers/interconnect/qcom/Kconfig  |    9 +
->>   drivers/interconnect/qcom/Makefile |    2 +
->>   drivers/interconnect/qcom/milos.c  | 1837 ++++++++++++++++++++++++++++=
-++++++++
->>   3 files changed, 1848 insertions(+)
->>=20
-> [..]
->> +
->> +static struct qcom_icc_qosbox qhm_qup1_qos =3D {
->> +	.num_ports =3D 1,
->> +	.port_offsets =3D { 0xc000 },
->> +	.prio =3D 2,
->> +	.urg_fwd =3D 0,
->> +	.prio_fwd_disable =3D 1,
->> +};
->
-> Thanks for adding QoS!
->
->> +
->> +static struct qcom_icc_node qhm_qup1 =3D {
->> +	.name =3D "qhm_qup1",
->> +	.channels =3D 1,
->> +	.buswidth =3D 4,
->> +	.qosbox =3D &qhm_qup1_qos,
->> +	.link_nodes =3D { &qns_a1noc_snoc, NULL },
->> +};
->
-> It's very nice that you switched to the dynamic IDs, but please use the
-> current style of links (like in v1), as the the NULL terminated lists
-> are not merged yet. All the rest looks good!
+...
 
-Is what's in todays linux-next a good base? Or what branch should I base
-this on? But correct, I currently have v2 of dynamic ID patches in the
-base for this.
+> >> >>  #include <linux/hwmon-sysfs.h>
+> >> > 
+> >> > + blank line here..
+> >> 
+> >> why?
+> > 
+> > To group the subsystem related headers (which are more custom and less generic).
+> > This allows to follow what the subsystems are in use and what APIs / types are
+> > taken.
+> 
+> Then you should send a patch for coding-style.rst.
 
-Also If I send the next revision by e.g. Wednesday can it still go into
-6.17? Just wondering how quick I need to work on this.
+Does any of the common sense approach need to be written in the documentation?
 
-Regards
-Luca
+> >> >>  #include <linux/iio/consumer.h>
+> >> >> +#include <linux/iio/events.h>
+> >> >> +#include <linux/iio/iio.h>
+> >> >>  #include <linux/iio/types.h>
+> >> > 
+> >> > ...and here?
+> >> 
+> >> OK
+> >> 
+> >> >> +#include <uapi/linux/iio/events.h>
+> > 
+> > As similar here, to visually split uAPI and the rest. This increases
+> > readability and maintenance.
 
->
-> Thanks,
-> Georgi
+...
+
+> >> >> +static ssize_t iio_hwmon_lookup_alarm(struct iio_hwmon_listener *listener,
+> >> >> +				      u64 id)
+> >> >> +{
+> >> >> +	ssize_t i;
+> >> >> +
+> >> >> +	for (i = 0; i < listener->num_alarms; i++)
+> >> >> +		if (listener->ids[i] == id)
+> >> >> +			return i;
+> >> > 
+> >> >> +	return -1;
+> >> > 
+> >> > -ENOENT ?
+> >> > This will allow to propagate an error code to the upper layer(s).
+> >> 
+> >> I suppose. But I think
+> >> 
+> >> alarm = iio_hwmon_lookup_alarm(...);
+> >> if (alarm < 0)
+> >> 	return -ENOENT;
+> >> 
+> >> is clearer than
+> > 
+> > I disagree. This makes it worth as it shadows other possible code(s), if any,
+> > and makes harder to follow as reader has to check the callee implementation.
+> > 
+> > The shadow error codes need a justification.
+> 
+> OK, I will return a bool next time to avoid any misconceptions that the return
+> code means anything other than "found" or "not found"
+
+This makes sense. And IIRC it's even documented.
+
+> >> alarm = iio_hwmon_lookup_alarm(...);
+> >> if (alarm < 0)
+> >> 	return alarm;
+> >> 
+> >> because you don't have to read the definition of iio_hwmon_lookup_alarm
+> >> to determine what the return value is.
+> > 
+> > Exactly my point!
+> 
+> your point is that you want readers to have to read the definition of
+> iio_hwmon_lookup_alarm in order to determine that ENOENT is a possible
+> error from add_alarm_attr? I don't follow.
+
+No, my point is that readers should not care about error code. If it's
+propagated to the upper layer, the upper layer will decide on how to proceed.
+And -ENOENT is de facto standard for "entity not found".
+
+> >> >> +}
+
+...
+
+> >> >> +err_alarms:
+> >> >> +	kfree(listener->alarms);
+> >> >> +	kfree(listener->ids);
+> >> >> +err_listener:
+> >> >> +	kfree(listener);
+> >> >> +err_unlock:
+> >> >> +	mutex_unlock(&iio_hwmon_listener_lock);
+> >> >> +	return ERR_PTR(err);
+> >> > 
+> >> > What about using __free()?
+> >> 
+> >> That works for listener, but not for alarms or ids.
+> > 
+> > Why not?
+
+No answer? Have you checked how cleanup.h suggests to avoid cleaning the memory
+when it's supposed to be used later on?
+
+...
+
+> >> >> +static void iio_hwmon_listener_put(void *data)
+> >> >> +{
+> >> >> +	struct iio_hwmon_listener *listener = data;
+> >> >> +
+> >> >> +	scoped_guard(mutex, &iio_hwmon_listener_lock) {
+> >> >> +		if (unlikely(listener->refcnt == UINT_MAX))
+> >> >> +			return;
+> >> >> +
+> >> >> +		if (--listener->refcnt)
+> >> >> +			return;
+> >> > 
+> >> > Can the refcount_t be used with the respective APIs? Or even kref?
+> >> 
+> >> Why? We do all the manipulation under a mutex, so there is no point in
+> >> atomic access. Instead of the games refcnt_t has to play to try and
+> >> prevent overflow we can just check for it directly.
+> > 
+> > refcount_t provides a facility of overflow/underflow.
+> 
+> refcount_t can't prevent underflow because it's atomic. All it can do is
+> warn after the fact. And of course overflow is handled properly here.
+> But it can't occur in practice unless you specifically load multiple
+> devicetrees at runtime. So we don't need it anyway.
+
+It will warn the user in such cases. Your code won't do it, even if it's not a
+big deal or never happens situation, it's still better to use in-kernel
+standard ways of handling these things.
+
+> > Also it gives better
+> > understanding from the data type to see which value and how does that.
+> 
+> That's why I named the variable "refcnt".
+
+Yes, and that's why I asked about existing interface / API / type to use.
+
+> >> >> +		list_del(&listener->list);
+> >> >> +		iio_event_unregister(listener->indio_dev, &listener->block);
+> >> >> +	}
+> >> >> +
+> >> >> +	kfree(listener->alarms);
+> >> >> +	kfree(listener->ids);
+> >> >> +	kfree(listener);
+> >> >> +}
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
