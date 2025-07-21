@@ -1,410 +1,163 @@
-Return-Path: <linux-kernel+bounces-738936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3887AB0BF51
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:46:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F572B0BF65
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:48:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCB83189CBE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:46:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A6C0189F418
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C5B1289829;
-	Mon, 21 Jul 2025 08:45:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9368A920;
+	Mon, 21 Jul 2025 08:46:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="Uv1zY+Mw"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="G7rf+ZOi"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6021ABED9;
-	Mon, 21 Jul 2025 08:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18433197A8E;
+	Mon, 21 Jul 2025 08:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753087513; cv=none; b=MeIBihIk3wFEve5dbuP3u4+VkQBrhuDxBQYRA/S24/EsYoX3KoC0+OTwB7coTMsfrfUwRUNIlbDLqG0Rc4hH3auGQ9KwRsYjorWZkCHQyiWGjCcJCASajNhlZ6OdGovbh6P/wOJ7XIkuXVWL1GE4FZDbEfrGZYO9jiPZNW3iWUw=
+	t=1753087599; cv=none; b=u5AAzrnZ+K03/Ab7w9FYZw4DQ01jvSzfXGzDWxzzOiIINk9cqTlQ5t6II6TbSPabPKb20zewshFGOrQHj84ICs1diK1E9jmVS2o30LDmY14PK/ykemYF2uy0CFK1n+iIokNAFEqbU4Z6NRpO8xBZs1pFboldu6u1uIs/xrQ1EWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753087513; c=relaxed/simple;
-	bh=iERN6Xzk9sHzsB4pLCPzg+cd0rkOPiJ6NJagUizg4D0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=u/ROAqnRgOUL3e0fGP/PB8epJ+FetmpBSnYHN2+y2NyNL1nbazIk3UBUXrvUg4AWgiNvVAX86+mOKMggHI/T1jjjJSGkkHfSEtAWeFAVQpwu3rsz7srpg4PKw2Tu47tHLM+/DdBh3l2D/2IrqnLgyH4sVaEQK+/nEcV3Mu3Kcto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=Uv1zY+Mw; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4blv9H6kGwz9tJm;
-	Mon, 21 Jul 2025 10:45:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1753087508;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ga146VfUnbYMyYkmA+aailWJBUlJlGizk/gmO5Hyyfg=;
-	b=Uv1zY+MwXnDcLR14+LPmtIhODIUR+30RApR7k08bh1MtOoRhHr9SDbGVboFMLkQ6cDQN5m
-	32aSS/m74x+blPhDqFrd45G63FIqUwul6jnrW1eOe2jDXDzeXp6TS+Aay2/8xiB1f4Cogh
-	bOf/P3PO5dSTUDyqDlN6hPH7YmzQq+hYfvyfvH285ZqfQxj0idhPi+N46BHpyfpjfljRQ3
-	x2ZYZ1j/RZi9iDKOlqYUdxfEDGZcw6fqYjl3HernEsYNyQSDVnErsKb77sRrnZ+xjSqKox
-	lSc85pTV4YzLLyozYLApWG3t5nOXzrvbVTh8fTGVk/CH/hjfRoLThV+AZjS1/Q==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
-From: Aleksa Sarai <cyphar@cyphar.com>
-Date: Mon, 21 Jul 2025 18:44:14 +1000
-Subject: [PATCH RFC 4/4] selftests/proc: add tests for new pidns APIs
+	s=arc-20240116; t=1753087599; c=relaxed/simple;
+	bh=31IBqqE1Ag+vgKp9PT7MGd+rJ3pmoTBb2Ubw46Y8TBI=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=UTy3MkCx6yQ845dgq5lYqUZLo/AofUhLD3+CbwmYgIUh3Y9nC/YplwNBiyfP9KbM+ugoiLrAVQODTS4i1p+rO3uEXgHnKf5dC9pO1nyZCbdd80mOhdeRswYGiwKJXa8gNp/ADD3U9hO/OUdLukhjmHQdHJRLKKkQY0dLcgiuWHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=G7rf+ZOi; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (unknown [IPv6:2a00:6020:448c:6c00:c17b:e5e2:6e10:a471])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 148A67928;
+	Mon, 21 Jul 2025 10:45:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1753087550;
+	bh=31IBqqE1Ag+vgKp9PT7MGd+rJ3pmoTBb2Ubw46Y8TBI=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=G7rf+ZOicJ8LO6QLyDLra9qXAyetCExNk5XfhboXnO6Wux8h5cwM71UCClYkZhJ9A
+	 J1cnNr2zLf+4okgSrH6E7joOjieoZ0QXrlVRXamL+M/ZBSov0qTazvBamyszxGbFSc
+	 q3Kj7E6DT48Abz2Nq6M21t4o6ymC7+zbmgYTtKi4=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250721-procfs-pidns-api-v1-4-5cd9007e512d@cyphar.com>
-References: <20250721-procfs-pidns-api-v1-0-5cd9007e512d@cyphar.com>
-In-Reply-To: <20250721-procfs-pidns-api-v1-0-5cd9007e512d@cyphar.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-api@vger.kernel.org, linux-doc@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9962; i=cyphar@cyphar.com;
- h=from:subject:message-id; bh=iERN6Xzk9sHzsB4pLCPzg+cd0rkOPiJ6NJagUizg4D0=;
- b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMWTU/v3AyfntrMi9mMzomFoPHcHe5KXLfzZs14s9+/aOd
- +uryrRLHaUsDGJcDLJiiizb/DxDN81ffCX500o2mDmsTCBDGLg4BWAiIpsZGb66x8puMvv3XVhS
- Ys153pjrq2ab3H08YW9uWo1TleS+3XWMDGeWPav+U9qoy+zgcTXU4UGdxp2fvmsulBr+dzaeOo1
- DhQMA
-X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
- fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
-X-Rspamd-Queue-Id: 4blv9H6kGwz9tJm
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <m38qknx939.fsf@t19.piap.pl>
+References: <m3h5zbxkc6.fsf@t19.piap.pl> <m38qknx939.fsf@t19.piap.pl>
+Subject: Re: FYI: i.MX8MP ISP (RKISP1) MI registers corruption
+From: Stefan Klug <stefan.klug@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Heiko Stuebner <heiko@sntech.de>, Paul Elder <paul.elder@ideasonboard.com>, Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Ondrej Jirman <megi@xff.cz>, linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Dafna Hirschfeld <dafna@fastmail.com>, Krzysztof =?utf-8?q?Ha=C5=82asa?= <khalasa@piap.pl>
+Date: Mon, 21 Jul 2025 10:46:23 +0200
+Message-ID: <175308758352.3134829.9472501038683860006@localhost>
+User-Agent: alot/0.12.dev8+g2c003385c862.d20250602
 
-Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
----
- tools/testing/selftests/proc/.gitignore   |   1 +
- tools/testing/selftests/proc/Makefile     |   1 +
- tools/testing/selftests/proc/proc-pidns.c | 286 ++++++++++++++++++++++++++++++
- 3 files changed, 288 insertions(+)
+Hi Krzysztof,
 
-diff --git a/tools/testing/selftests/proc/.gitignore b/tools/testing/selftests/proc/.gitignore
-index 973968f45bba..2dced03e9e0e 100644
---- a/tools/testing/selftests/proc/.gitignore
-+++ b/tools/testing/selftests/proc/.gitignore
-@@ -17,6 +17,7 @@
- /proc-tid0
- /proc-uptime-001
- /proc-uptime-002
-+/proc-pidns
- /read
- /self
- /setns-dcache
-diff --git a/tools/testing/selftests/proc/Makefile b/tools/testing/selftests/proc/Makefile
-index b12921b9794b..c6f7046b9860 100644
---- a/tools/testing/selftests/proc/Makefile
-+++ b/tools/testing/selftests/proc/Makefile
-@@ -27,5 +27,6 @@ TEST_GEN_PROGS += setns-sysvipc
- TEST_GEN_PROGS += thread-self
- TEST_GEN_PROGS += proc-multiple-procfs
- TEST_GEN_PROGS += proc-fsconfig-hidepid
-+TEST_GEN_PROGS += proc-pidns
- 
- include ../lib.mk
-diff --git a/tools/testing/selftests/proc/proc-pidns.c b/tools/testing/selftests/proc/proc-pidns.c
-new file mode 100644
-index 000000000000..e7e34c78d383
---- /dev/null
-+++ b/tools/testing/selftests/proc/proc-pidns.c
-@@ -0,0 +1,286 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Author: Aleksa Sarai <cyphar@cyphar.com>
-+ * Copyright (C) 2025 SUSE LLC.
-+ */
-+
-+#include <assert.h>
-+#include <errno.h>
-+#include <sched.h>
-+#include <stdbool.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <stdio.h>
-+#include <sys/mount.h>
-+#include <sys/stat.h>
-+#include <sys/ioctl.h>
-+#include <sys/prctl.h>
-+
-+#include "../kselftest_harness.h"
-+
-+#define bail(fmt, ...)							\
-+	do {								\
-+		fprintf(stderr, fmt ": %m", __VA_ARGS__);		\
-+		exit(1);						\
-+	} while (0)
-+
-+#define ASSERT_SUCCESS	ASSERT_FALSE
-+#define ASSERT_FAIL	ASSERT_TRUE
-+
-+int touch(char *path)
-+{
-+	int fd = open(path, O_WRONLY|O_CREAT|O_CLOEXEC, 0644);
-+	if (fd < 0 || close(fd) < 0)
-+		return -errno;
-+	return 0;
-+}
-+
-+FIXTURE(ns)
-+{
-+	int host_mntns, host_pidns;
-+	int dummy_pidns;
-+};
-+
-+FIXTURE_SETUP(ns)
-+{
-+	/* Stash the old mntns. */
-+	self->host_mntns = open("/proc/self/ns/mnt", O_RDONLY|O_CLOEXEC);
-+	ASSERT_GE(self->host_mntns, 0);
-+
-+	/* Create a new mount namespace and make it private. */
-+	ASSERT_SUCCESS(unshare(CLONE_NEWNS));
-+	ASSERT_SUCCESS(mount(NULL, "/", NULL, MS_PRIVATE|MS_REC, NULL));
-+
-+	/*
-+	 * Create a proper tmpfs that we can use and will disappear once we
-+	 * leave this mntns.
-+	 */
-+	ASSERT_SUCCESS(mount("tmpfs", "/tmp", "tmpfs", 0, NULL));
-+
-+	/*
-+	 * Create a pidns we can use for later tests. We need to fork off a
-+	 * child so that we get a usable nsfd that we can bind-mount and open.
-+	 */
-+	ASSERT_SUCCESS(touch("/tmp/dummy-pidns"));
-+
-+	self->host_pidns = open("/proc/self/ns/pid", O_RDONLY|O_CLOEXEC);
-+	ASSERT_GE(self->host_pidns, 0);
-+	ASSERT_SUCCESS(unshare(CLONE_NEWPID));
-+
-+	pid_t pid = fork();
-+	ASSERT_GE(pid, 0);
-+	if (!pid) {
-+		prctl(PR_SET_PDEATHSIG, SIGKILL);
-+		ASSERT_SUCCESS(mount("/proc/self/ns/pid", "/tmp/dummy-pidns", NULL, MS_BIND, 0));
-+		exit(0);
-+	}
-+
-+	int wstatus;
-+	ASSERT_EQ(waitpid(pid, &wstatus, 0), pid);
-+	ASSERT_TRUE(WIFEXITED(wstatus));
-+	ASSERT_EQ(WEXITSTATUS(wstatus), 0);
-+
-+	ASSERT_SUCCESS(setns(self->host_pidns, CLONE_NEWPID));
-+
-+	self->dummy_pidns = open("/tmp/dummy-pidns", O_RDONLY|O_CLOEXEC);
-+	ASSERT_GE(self->dummy_pidns, 0);
-+}
-+
-+FIXTURE_TEARDOWN(ns)
-+{
-+	ASSERT_SUCCESS(setns(self->host_mntns, CLONE_NEWNS));
-+	ASSERT_SUCCESS(close(self->host_mntns));
-+
-+	ASSERT_SUCCESS(close(self->host_pidns));
-+	ASSERT_SUCCESS(close(self->dummy_pidns));
-+}
-+
-+TEST_F(ns, pidns_mount_string_path)
-+{
-+	ASSERT_SUCCESS(mkdir("/tmp/proc-host", 0755));
-+	ASSERT_SUCCESS(mount("proc", "/tmp/proc-host", "proc", 0, "pidns=/proc/self/ns/pid"));
-+	ASSERT_SUCCESS(access("/tmp/proc-host/self/", X_OK));
-+
-+	ASSERT_SUCCESS(mkdir("/tmp/proc-dummy", 0755));
-+	ASSERT_SUCCESS(mount("proc", "/tmp/proc-dummy", "proc", 0, "pidns=/tmp/dummy-pidns"));
-+	ASSERT_FAIL(access("/tmp/proc-dummy/1/", X_OK));
-+	ASSERT_FAIL(access("/tmp/proc-dummy/self/", X_OK));
-+}
-+
-+TEST_F(ns, pidns_fsconfig_string_path)
-+{
-+	int fsfd = fsopen("proc", FSOPEN_CLOEXEC);
-+	ASSERT_GE(fsfd, 0);
-+
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_SET_STRING, "pidns", "/tmp/dummy-pidns", 0));
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0));
-+
-+	int mountfd = fsmount(fsfd, FSMOUNT_CLOEXEC, 0);
-+	ASSERT_GE(mountfd, 0);
-+
-+	ASSERT_FAIL(faccessat(mountfd, "1/", X_OK, 0));
-+	ASSERT_FAIL(faccessat(mountfd, "self/", X_OK, 0));
-+
-+	ASSERT_SUCCESS(close(fsfd));
-+	ASSERT_SUCCESS(close(mountfd));
-+}
-+
-+TEST_F(ns, pidns_fsconfig_fd)
-+{
-+	int fsfd = fsopen("proc", FSOPEN_CLOEXEC);
-+	ASSERT_GE(fsfd, 0);
-+
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_SET_FD, "pidns", NULL, self->dummy_pidns));
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0));
-+
-+	int mountfd = fsmount(fsfd, FSMOUNT_CLOEXEC, 0);
-+	ASSERT_GE(mountfd, 0);
-+
-+	ASSERT_FAIL(faccessat(mountfd, "1/", X_OK, 0));
-+	ASSERT_FAIL(faccessat(mountfd, "self/", X_OK, 0));
-+
-+	ASSERT_SUCCESS(close(fsfd));
-+	ASSERT_SUCCESS(close(mountfd));
-+}
-+
-+TEST_F(ns, pidns_reconfigure_remount)
-+{
-+	ASSERT_SUCCESS(mkdir("/tmp/proc", 0755));
-+	ASSERT_SUCCESS(mount("proc", "/tmp/proc", "proc", 0, ""));
-+	ASSERT_SUCCESS(access("/tmp/proc/self/", X_OK));
-+
-+	ASSERT_SUCCESS(mount(NULL, "/tmp/proc", NULL, MS_REMOUNT, "pidns=/tmp/dummy-pidns"));
-+	ASSERT_FAIL(access("/tmp/proc/self/", X_OK));
-+}
-+
-+TEST_F(ns, pidns_reconfigure_fsconfig_string_path)
-+{
-+	int fsfd = fsopen("proc", FSOPEN_CLOEXEC);
-+	ASSERT_GE(fsfd, 0);
-+
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0));
-+
-+	int mountfd = fsmount(fsfd, FSMOUNT_CLOEXEC, 0);
-+	ASSERT_GE(mountfd, 0);
-+
-+	ASSERT_SUCCESS(faccessat(mountfd, "1/", X_OK, 0));
-+	ASSERT_SUCCESS(faccessat(mountfd, "self/", X_OK, 0));
-+
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_SET_STRING, "pidns", "/tmp/dummy-pidns", 0));
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0));
-+
-+	ASSERT_FAIL(faccessat(mountfd, "1/", X_OK, 0));
-+	ASSERT_FAIL(faccessat(mountfd, "self/", X_OK, 0));
-+
-+	ASSERT_SUCCESS(close(fsfd));
-+	ASSERT_SUCCESS(close(mountfd));
-+}
-+
-+TEST_F(ns, pidns_reconfigure_fsconfig_fd)
-+{
-+	int fsfd = fsopen("proc", FSOPEN_CLOEXEC);
-+	ASSERT_GE(fsfd, 0);
-+
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0));
-+
-+	int mountfd = fsmount(fsfd, FSMOUNT_CLOEXEC, 0);
-+	ASSERT_GE(mountfd, 0);
-+
-+	ASSERT_SUCCESS(faccessat(mountfd, "1/", X_OK, 0));
-+	ASSERT_SUCCESS(faccessat(mountfd, "self/", X_OK, 0));
-+
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_SET_FD, "pidns", NULL, self->dummy_pidns));
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0));
-+
-+	ASSERT_FAIL(faccessat(mountfd, "1/", X_OK, 0));
-+	ASSERT_FAIL(faccessat(mountfd, "self/", X_OK, 0));
-+
-+	ASSERT_SUCCESS(close(fsfd));
-+	ASSERT_SUCCESS(close(mountfd));
-+}
-+
-+int is_same_inode(int fd1, int fd2)
-+{
-+	struct stat stat1, stat2;
-+
-+	assert(fstat(fd1, &stat1) == 0);
-+	assert(fstat(fd2, &stat2) == 0);
-+
-+	return stat1.st_ino == stat2.st_ino && stat1.st_dev == stat2.st_dev;
-+}
-+
-+#define PROCFS_IOCTL_MAGIC 'f'
-+#define PROCFS_GET_PID_NAMESPACE	_IO(PROCFS_IOCTL_MAGIC, 1)
-+
-+TEST_F(ns, get_pidns_ioctl)
-+{
-+	int fsfd = fsopen("proc", FSOPEN_CLOEXEC);
-+	ASSERT_GE(fsfd, 0);
-+
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_SET_FD, "pidns", NULL, self->dummy_pidns));
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0));
-+
-+	int mountfd = fsmount(fsfd, FSMOUNT_CLOEXEC, 0);
-+	ASSERT_GE(mountfd, 0);
-+
-+	/* fsmount returns an O_PATH, which ioctl(2) doesn't accept. */
-+	int new_mountfd = openat(mountfd, ".", O_RDONLY|O_DIRECTORY|O_CLOEXEC);
-+	ASSERT_GE(new_mountfd, 0);
-+
-+	ASSERT_SUCCESS(close(mountfd));
-+	mountfd = -EBADF;
-+
-+	int procfs_pidns = ioctl(new_mountfd, PROCFS_GET_PID_NAMESPACE);
-+	ASSERT_GE(procfs_pidns, 0);
-+
-+	ASSERT_NE(self->dummy_pidns, procfs_pidns);
-+	ASSERT_FALSE(is_same_inode(self->host_pidns, procfs_pidns));
-+	ASSERT_TRUE(is_same_inode(self->dummy_pidns, procfs_pidns));
-+
-+	ASSERT_SUCCESS(close(fsfd));
-+	ASSERT_SUCCESS(close(new_mountfd));
-+	ASSERT_SUCCESS(close(procfs_pidns));
-+}
-+
-+TEST_F(ns, reconfigure_get_pidns_ioctl)
-+{
-+	int fsfd = fsopen("proc", FSOPEN_CLOEXEC);
-+	ASSERT_GE(fsfd, 0);
-+
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0));
-+
-+	int mountfd = fsmount(fsfd, FSMOUNT_CLOEXEC, 0);
-+	ASSERT_GE(mountfd, 0);
-+
-+	/* fsmount returns an O_PATH, which ioctl(2) doesn't accept. */
-+	int new_mountfd = openat(mountfd, ".", O_RDONLY|O_DIRECTORY|O_CLOEXEC);
-+	ASSERT_GE(new_mountfd, 0);
-+
-+	ASSERT_SUCCESS(close(mountfd));
-+	mountfd = -EBADF;
-+
-+	int procfs_pidns1 = ioctl(new_mountfd, PROCFS_GET_PID_NAMESPACE);
-+	ASSERT_GE(procfs_pidns1, 0);
-+
-+	ASSERT_NE(self->dummy_pidns, procfs_pidns1);
-+	ASSERT_TRUE(is_same_inode(self->host_pidns, procfs_pidns1));
-+	ASSERT_FALSE(is_same_inode(self->dummy_pidns, procfs_pidns1));
-+
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_SET_STRING, "pidns", "/tmp/dummy-pidns", 0));
-+	ASSERT_SUCCESS(fsconfig(fsfd, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0));
-+
-+	int procfs_pidns2 = ioctl(new_mountfd, PROCFS_GET_PID_NAMESPACE);
-+	ASSERT_GE(procfs_pidns2, 0);
-+
-+	ASSERT_NE(self->dummy_pidns, procfs_pidns2);
-+	ASSERT_FALSE(is_same_inode(self->host_pidns, procfs_pidns2));
-+	ASSERT_TRUE(is_same_inode(self->dummy_pidns, procfs_pidns2));
-+
-+	ASSERT_SUCCESS(close(fsfd));
-+	ASSERT_SUCCESS(close(new_mountfd));
-+	ASSERT_SUCCESS(close(procfs_pidns1));
-+	ASSERT_SUCCESS(close(procfs_pidns2));
-+}
-+
-+TEST_HARNESS_MAIN
+Thanks for your investigations. This is all quite worrisome to say the
+least.
 
--- 
-2.50.0
+Quoting Krzysztof Ha=C5=82asa (2025-07-17 15:03:54)
+> > The "reference" (NXP) VVCam driver simply does the operations twice
+> > (i.e., reads twice with the first result discarded, and writes twice).
+> > This fixes the problem on most accesses, but the problems still persist.
+>=20
+> It appears the corruptions are quite frequent, though.
+> Using "ldp qXX, qYY, [x0]" (2 * 128-bit load pair) I get results like
+> this (each data row is a result of a single ldp):
+>=20
+> addr:  32E21400 32E21404 32E21408 32E2140C 32E21410 32E21414 32E21418 32E=
+2141C
+> -------------------------------------------------------------------------=
+-------
+> values 3D000007       20 3C300000   1FA400        0        0        0 3C3=
+80000 count 99993097
+> values        0       20 3C300000   1FA400        0        0        0 3C3=
+80000 count 5930
+> values    7E900       20 3C300000   1FA400        0        0        0 3C3=
+80000 count 338
+> values    FD200       20 3C300000   1FA400        0        0        0 3C3=
+80000 count 223
+> values 3C380000       20 3C300000   1FA400        0        0        0 3C3=
+80000 count 220
+> values       40       20 3C300000   1FA400        0        0        0 3C3=
+80000 count 192
+>=20
+> The valid value (in 0x32E21400 register) is 3D000007 only, the rest are
+> corruptions: ca. 6 errors per 100k reads. With other registers, 15 errors
+> per 100k reads etc.
+>=20
+> I also got this:
+> addr:  32E213F0 32E213F4 32E213F8 32E213FC 32E21400 32E21404 32E21408 32E=
+2140C
+> -------------------------------------------------------------------------=
+-------
+> values        0        0        0        0 3D000007       20 3C300000   1=
+FA400 count 98638773
+> values        0        0        0        0        0       20 3C300000   1=
+FA400 count 1330227
+> values        0        0        0        0       40       20 3C300000   1=
+FA400 count 3721
+> values        0        0        0        0 3C380000       20 3C300000   1=
+FA400 count 314
+> values        0        0        0        0    7E900       20 3C300000   1=
+FA400 count 572
+> values        0        0        0        0    FD200       20 3C300000   1=
+FA400 count 428
+> values        0        0        0        0    4C010       20 3C300000   1=
+FA400 count 25965
+>=20
+> which is ca. 14 errors per 1k reads, though maybe it's special -
+> non-MI/MI boundary (at 0x32E21400), reserved addresses (0x32E213Fx) etc.
+>=20
+> > The problems show themselves maybe in 5% or 10% of boots.
 
+How do you detect if the current boot was a "faulty" one?
+
+>=20
+> Well, now it appears more like 20%: e.g. in 41 system runs (soft reboots
+> only, no power-downs), I got problems 8 times.
+>=20
+> Obviously I can post the tester source if anyone is interested.
+
+I'd like to have a look there. I'm doing a lot of work on the imx8mp at
+the moment. I didn't have too many issues other than the ones caused by
+myself. There were however a few start/stop issues that are still on my
+list for further investigations. But I didn't observe bigger memory
+corruptions. So I think this ties into my earlier question of how you
+observe that the device is in a bad state.
+
+I'm mostly using the debix boards right now, so I could test if I can
+replicate the behavior there.
+
+Can you also share the kernel you are using?
+
+Best regards,
+Stefan
+
+>=20
+>=20
+> Generally ISP MI register read accesses which can be corrupted are:
+> - first 32 bits read in a given transfer, and additionally
+> - every 32 bits on a 32-byte boundary (addresses 0x....00, ...20 etc.).
+>=20
+> This means, in practice, on i.MX8MP only, RKISP1_CIF_MI_CTRL and
+> RKISP1_CIF_MI_MP_CB_SIZE_INIT (with the workaround).
+>=20
+> What is this 32-byte boundary?
+>=20
+> Writing is a bigger problem, though.
+> --=20
+> Krzysztof "Chris" Ha=C5=82asa
+>=20
+> Sie=C4=87 Badawcza =C5=81ukasiewicz
+> Przemys=C5=82owy Instytut Automatyki i Pomiar=C3=B3w PIAP
+> Al. Jerozolimskie 202, 02-486 Warszawa
+>
 
