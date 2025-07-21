@@ -1,198 +1,267 @@
-Return-Path: <linux-kernel+bounces-738950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DBBFB0BF74
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:54:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26D14B0BF77
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:55:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9830D179573
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:54:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FCC91888325
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:55:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9656B2853EE;
-	Mon, 21 Jul 2025 08:54:05 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E212868A6;
+	Mon, 21 Jul 2025 08:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y6Xw41Ih"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0411798F
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 08:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F1FA94A;
+	Mon, 21 Jul 2025 08:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753088045; cv=none; b=eASxQJwCCJdL1zqtnFu9OOQjjkXnXDyOrAH4Ce9m7wei/te571jUTFG6yeqz3p+CLaplGJCTH0LjEC3gIJ85kBen5GDrA/ut2Znsd/gWZZuBRTJvkrwj9FZHmxvNN492uJ7hPe9akcMmdtaUI/uHGOlTUChzQQ/FL1ufQlxyh4I=
+	t=1753088124; cv=none; b=uzoUHA0Qhn/C+FalEKjpfBydbj+xTb4yc6R1WFw3PWEUqmkced5TBIWMXrYnDFokAOXV6efLz1NlcmiQHMzrLlmTcFl/mE9ROIN/9pYWYZ/78TnqYAmk2a9nM0ZR7PLTBqiFquzGL7rwKJ17BshcZb1GCMwmOCOAOwEINTDlwhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753088045; c=relaxed/simple;
-	bh=Y1CFewEQ2pp4ssm+KGh+VlHd+V5xUXFR/2NzQKv5+R4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=nnydVGX8vZUan921r6s8UzJmA4I03OvtrTroPrfk8euj6jndM4fQVNIgWflnttdgZIBvx/fxPwdd+0h7vyaZyWRuTgAmMb8Kct3PeHigAv3ubrom1jmKj3hWzKqidA5x5uiRf+60r4/15lp9J5x1jyl1XBJp81sLcObkGIxPlqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-8760733a107so459604539f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 01:54:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753088042; x=1753692842;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BFk0vnsOjVJJwB6fgeHJsp9xTOMyXJhFILgTfAKT/fE=;
-        b=B2gERhB321P5jgHO3ueJM1+LEwC9D7iY3KKrPI88H54z2pIc/BRVpsMV+M1Xz+1/xj
-         6Qzmbk4AhcZz/6l2g+lOcuc5KmqL3y801oBBmlcHw7K8F2VHFeYDDoqgqhZMp8qAxYVl
-         ikhX1VsfhF7chNrtYMSM3SG0T8h78kyAWNFLYfgJH9QMtMVKpXd81O4VsCSawt4HY29S
-         oYUkIuM/qdUgV2FP4w8pIippGeN+qibNSDJxLyO3AH7IYpzklgASOTxNpzXrrjpkbkp7
-         +PJxvjD3eNUj2ZDxbm9gVvZaV3Emy+TnQvlIoyk1x/O4o40ArDXNcnMKjkYHIr+IWYdW
-         Q0VA==
-X-Forwarded-Encrypted: i=1; AJvYcCX70rlS77vKR3L5398ut4MPcaIOsS9FjRLNgVSVRKZXTMfFoV3eQ/iCOUim8MADCpcjbPOk5A2KGWcXr7I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6EA70YKnG0erfoGgbPdQeh4XFafjSkbQb+pRz/kIShygjhcmR
-	brk+MqPU9jvuombPW/8u/3udfbf7FV61QxC6gAtDnF7QCvEqH9YjUHnec4tIDzwOhD2Xh8aZFtv
-	WzVRG5o/LYIYh0RgFZo+EIv2+d5SFdbwUw0WWYlrn2vhE1upAFL96KpPnHWU=
-X-Google-Smtp-Source: AGHT+IG6sZyPocFqjIMhPTCerDVbWmx3DykSB8XogAPhzQ6O6cPF21A7egBZJAb/OcK6TUE+MweKNdNC7IRb7HELtWVNEPRswzgA
+	s=arc-20240116; t=1753088124; c=relaxed/simple;
+	bh=ZCj8HMh45XjsLbv8p4FzdSDZ689KnYroF28qfUNPefw=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=cBOEO126VOL+j4AbHGeQOSZQeXwlybP8D/cx1YruhKW749ZhFHgCNQU0BiI5e9XVyTp+FZ7W2bg+pXK00ViNJUTp/vmyMQSTztYTTkLMnKw2XqvjfkoVh0V1CQpaqnykrt3QQcAjZuwbPO8uz3kRGbHwrFpfwSIhAtjH+EG9fLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y6Xw41Ih; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753088124; x=1784624124;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=ZCj8HMh45XjsLbv8p4FzdSDZ689KnYroF28qfUNPefw=;
+  b=Y6Xw41IhrIIo3AYrd3kgflhTJcIiz8Z6abjfFljtcOrOwR3r/P4rzwGl
+   39gMH2VbU4GMNNtnr0PSKakxf5OKf9aP44k58Af6JhDRX2wvQ0RaWuj8F
+   SIp9Xj7NbEBmN7/JIT6xlWAwnO1z91JKgh1ikI5H4u3KjITeDksqEEXYP
+   f8Itm6PvEOfnA7Tzph/d0gXrhtVtGGKX0bu4kCdQra4WZBnH+H2KQrbt7
+   1flPzsZrBgKDWOCAbV7zuoprERMNA4b4S3qjaLqkkTYg1G9Z6tEwkratp
+   orKu1MpoXfIItwdnQsNERI3hpJp+Qc8HeXE4+DbMBF+35RYnisrS9sdUJ
+   w==;
+X-CSE-ConnectionGUID: O8eOHtLkT0Cg6//7O5l5vg==
+X-CSE-MsgGUID: Dlm8PZaqTPqVoPR6cg85eg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11498"; a="72753179"
+X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
+   d="scan'208";a="72753179"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 01:55:23 -0700
+X-CSE-ConnectionGUID: wmzktg8hTwum2UHfB71QFA==
+X-CSE-MsgGUID: ddWZrynlTCCg0R++sfN1Tg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
+   d="scan'208";a="159218388"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.225])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 01:55:15 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 21 Jul 2025 11:55:11 +0300 (EEST)
+To: Shuai Xue <xueshuai@linux.alibaba.com>, Bjorn Helgaas <helgaas@kernel.org>, 
+    rostedt@goodmis.org, mhiramat@kernel.org
+cc: Lukas Wunner <lukas@wunner.de>, linux-pci@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, linux-edac@vger.kernel.org, 
+    linux-trace-kernel@vger.kernel.org, bhelgaas@google.com, 
+    tony.luck@intel.com, bp@alien8.de, mathieu.desnoyers@efficios.com, 
+    oleg@redhat.com, naveen@kernel.org, davem@davemloft.net, 
+    anil.s.keshavamurthy@intel.com, mark.rutland@arm.com, peterz@infradead.org, 
+    tianruidong@linux.alibaba.com, 
+    Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v8] PCI: hotplug: Add a generic RAS tracepoint for hotplug
+ event
+In-Reply-To: <2687d27d-09ed-429d-9ec7-463c69a3fff7@linux.alibaba.com>
+Message-ID: <14b7660b-e74f-1361-aa01-c255434a9cfd@linux.intel.com>
+References: <20250716222533.GA2559636@bhelgaas> <2687d27d-09ed-429d-9ec7-463c69a3fff7@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:4c8a:b0:861:6f49:626 with SMTP id
- ca18e2360f4ac-87c0f046bf2mr1342401639f.6.1753088042497; Mon, 21 Jul 2025
- 01:54:02 -0700 (PDT)
-Date: Mon, 21 Jul 2025 01:54:02 -0700
-In-Reply-To: <20250721073815.2673-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <687e002a.a70a0220.693ce.00e8.GAE@google.com>
-Subject: Re: [syzbot] [mm?] [input?] [usb?] INFO: rcu detected stall in
- devtmpfsd (3)
-From: syzbot <syzbot+5583f599fe40b819b3e7@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed; BOUNDARY="8323328-551479686-1753088028=:945"
+Content-ID: <6f119ac0-cdae-7733-ba5f-82cdc02ccf82@linux.intel.com>
 
-Hello,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-INFO: rcu detected stall in worker_thread
+--8323328-551479686-1753088028=:945
+Content-Type: text/plain; CHARSET=ISO-2022-JP
+Content-ID: <8212cd1e-1050-4996-81a9-bf40a5f48f14@linux.intel.com>
 
-rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-1):
- P5957/2:b.el
+Steven or other tracing people, can you check below the 
+discussion/question on preferred placement of the tracing 
+related code.
 
-rcu: 	(detected by 0, t=10502 jiffies, g=18161, q=3025 ncpus=2)
-task:kworker/1:5     state:R
-  running task     stack:25704 pid:5957  tgid:5957  ppid:2      task_flags:0x4208060 flags:0x00004000
-Workqueue: mld mld_dad_work
+On Thu, 17 Jul 2025, Shuai Xue wrote:
+> 在 2025/7/17 06:25, Bjorn Helgaas 写道:
+> > [+cc Ilpo, Jonathan (should have been included since the patch has his
+> > Reviewed-by)]
+> > 
+> 
+> Thanks.
+> 
+> > Thanks for the ping; I noticed quite a bit of discussion but didn't
+> > follow it myself, so didn't know it was basically all resolved.
 
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5397 [inline]
- __schedule+0x16fd/0x4cf0 kernel/sched/core.c:6786
- preempt_schedule_irq+0xb5/0x150 kernel/sched/core.c:7109
- irqentry_exit+0x6f/0x90 kernel/entry/common.c:307
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:get_current arch/x86/include/asm/current.h:25 [inline]
-RIP: 0010:__sanitizer_cov_trace_pc+0x8/0x70 kernel/kcov.c:216
-Code: 8b 3d 14 d3 fb 0b 48 89 de 5b e9 93 b9 58 00 cc cc cc 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 48 8b 04 24 <65> 48 8b 0c 25 08 80 a0 92 65 8b 15 f8 4e e0 10 81 e2 00 01 ff 00
-RSP: 0018:ffffc90003f0f478 EFLAGS: 00000202
+The biggest remaining uncertainty related to the placement of some of the 
+tracepoint code (tracepoint creation and the trace header). None of us 
+knew the answer so we tried to ask a more informed opinion from others but 
+that never resulted us getting any answer.
 
-RAX: ffffffff8a3aff12 RBX: 1ffff920007e1e9c RCX: 0000000000000000
-RDX: ffff88807d4cbc00 RSI: 0000000000000004 RDI: 0000000000000003
-RBP: ffffc90003f0f5a0 R08: ffff88807d4cbc00 R09: 0000000000000004
-R10: 0000000000000003 R11: ffffffff8a3afc80 R12: ffffc90003f0f660
-R13: ffff888026b59dc0 R14: dffffc0000000000 R15: 0000000000000004
- ip6table_mangle_hook+0x292/0x6c0 net/ipv6/netfilter/ip6table_mangle.c:73
- nf_hook_entry_hookfn include/linux/netfilter.h:157 [inline]
- nf_hook_slow+0xc5/0x220 net/netfilter/core.c:623
- nf_hook+0x217/0x380 include/linux/netfilter.h:272
- NF_HOOK_COND include/linux/netfilter.h:305 [inline]
- ip6_output+0x27d/0x3e0 net/ipv6/ip6_output.c:247
- NF_HOOK+0x9e/0x380 include/linux/netfilter.h:317
- mld_sendpack+0x800/0xd80 net/ipv6/mcast.c:1868
- mld_dad_work+0x45/0x520 net/ipv6/mcast.c:2308
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3321
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-rcu: rcu_preempt kthread starved for 3335 jiffies! g18161 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=0
-rcu: 	Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
-rcu: RCU grace-period kthread stack dump:
-task:rcu_preempt     state:R
-  running task     stack:27128 pid:16    tgid:16    ppid:2      task_flags:0x208040 flags:0x00004000
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5397 [inline]
- __schedule+0x16fd/0x4cf0 kernel/sched/core.c:6786
- __schedule_loop kernel/sched/core.c:6864 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:6879
- schedule_timeout+0x12b/0x270 kernel/time/sleep_timeout.c:99
- rcu_gp_fqs_loop+0x301/0x1540 kernel/rcu/tree.c:2054
- rcu_gp_kthread+0x99/0x390 kernel/rcu/tree.c:2256
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-rcu: Stack dump where RCU GP kthread last ran:
-CPU: 0 UID: 0 PID: 6854 Comm: syz.0.16 Not tainted 6.16.0-rc7-syzkaller-g89be9a83ccf1-dirty #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-RIP: 0010:csd_lock_wait kernel/smp.c:340 [inline]
-RIP: 0010:smp_call_function_many_cond+0xf69/0x12d0 kernel/smp.c:885
-Code: 00 45 8b 2f 44 89 ee 83 e6 01 31 ff e8 c0 78 0b 00 41 83 e5 01 49 bd 00 00 00 00 00 fc ff df 75 07 e8 6b 74 0b 00 eb 37 f3 90 <43> 0f b6 04 2c 84 c0 75 10 41 f7 07 01 00 00 00 74 1e e8 50 74 0b
-RSP: 0018:ffffc90003c47360 EFLAGS: 00000293
+I've a patch which adds tracing to bwctrl [1] (I'll send it officially 
+once the placement discussion concludes), and in it, I ended up adding 
+drivers/pci/pci-trace.c as the place where to define the tracepoints and 
+include/trace/events/pci.h as the trace header placement, whereas this 
+patch added them both into the hp driver code.
 
-RAX: ffffffff81b4bcd0 RBX: ffff8880b863b1c0 RCX: ffff888029e95a00
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffffc90003c474c0 R08: ffffffff8fa1faf7 R09: 1ffffffff1f43f5e
-R10: dffffc0000000000 R11: fffffbfff1f43f5f R12: 1ffff110170e7f5d
-R13: dffffc0000000000 R14: 0000000000000001 R15: ffff8880b873fae8
-FS:  0000000000000000(0000) GS:ffff888125c18000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fce0d3ddd58 CR3: 000000000df38000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- on_each_cpu_cond_mask+0x3f/0x80 kernel/smp.c:1052
- __flush_tlb_multi arch/x86/include/asm/paravirt.h:91 [inline]
- flush_tlb_multi arch/x86/mm/tlb.c:1361 [inline]
- flush_tlb_mm_range+0x6b1/0x12c0 arch/x86/mm/tlb.c:1451
- tlb_flush arch/x86/include/asm/tlb.h:23 [inline]
- tlb_flush_mmu_tlbonly include/asm-generic/tlb.h:490 [inline]
- tlb_flush_mmu+0x1a7/0x680 mm/mmu_gather.c:403
- tlb_finish_mmu+0xc3/0x1d0 mm/mmu_gather.c:497
- free_ldt_pgtables+0x17b/0x320 arch/x86/kernel/ldt.c:411
- arch_exit_mmap arch/x86/include/asm/mmu_context.h:234 [inline]
- exit_mmap+0x17c/0xb50 mm/mmap.c:1270
- __mmput+0x118/0x420 kernel/fork.c:1121
- exit_mm+0x1da/0x2c0 kernel/exit.c:581
- do_exit+0x648/0x22e0 kernel/exit.c:952
- do_group_exit+0x21c/0x2d0 kernel/exit.c:1105
- get_signal+0x1286/0x1340 kernel/signal.c:3034
- arch_do_signal_or_restart+0x9a/0x750 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop+0x75/0x110 kernel/entry/common.c:111
- exit_to_user_mode_prepare include/linux/entry-common.h:330 [inline]
- syscall_exit_to_user_mode_work include/linux/entry-common.h:414 [inline]
- syscall_exit_to_user_mode include/linux/entry-common.h:449 [inline]
- do_syscall_64+0x2bd/0x3b0 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f982ed8e929
-Code: Unable to access opcode bytes at 0x7f982ed8e8ff.
-RSP: 002b:00007f982fbef0e8 EFLAGS: 00000246
- ORIG_RAX: 00000000000000ca
-RAX: fffffffffffffe00 RBX: 00007f982efb6088 RCX: 00007f982ed8e929
-RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007f982efb6088
-RBP: 00007f982efb6080 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f982efb608c
-R13: 0000000000000000 R14: 00007ffc8d99a7a0 R15: 00007ffc8d99a888
- </TASK>
+So if you (Bjorn) are fine placing them into each individual driver as 
+done in this patch and tracing folks don't provide us guidance, we can 
+go with that approach.
+
+The placement discussion is in this subleaf of the thread:
+
+https://lore.kernel.org/linux-pci/c0cbdd85-9702-40ab-bc97-b51b02b9fc89@linux.alibaba.com/
 
 
-Tested on:
+[1] https://lore.kernel.org/linux-pci/7c289bba-3133-0989-6333-41fc41fe3504@linux.intel.com/1-a.txt
 
-commit:         89be9a83 Linux 6.16-rc7
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=150f7f98580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8adfe52da0de2761
-dashboard link: https://syzkaller.appspot.com/bug?extid=5583f599fe40b819b3e7
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=155c338c580000
+-- 
+ i.
 
+> > On Mon, May 12, 2025 at 09:38:39AM +0800, Shuai Xue wrote:
+> > > Hotplug events are critical indicators for analyzing hardware health,
+> > > particularly in AI supercomputers where surprise link downs can
+> > > significantly impact system performance and reliability.
+> > 
+> > I dropped the "particularly in AI supercomputers" part because I think
+> > this is relevant in general.
+> > 
+> > > To this end, define a new TRACING_SYSTEM named pci, add a generic RAS
+> > > tracepoint for hotplug event to help healthy check, and generate
+> > > tracepoints for pcie hotplug event.
+> > 
+> > I'm not quite clear on the difference between "add generic RAS
+> > tracepoint for hotplug event" and "generate tracepoints for pcie
+> > hotplug event."  Are these two different things?
+> 
+> The purpose of this patch is to address the lack of tracepoints for PCIe
+> hotplug events in our production environment. In the initial RFC
+> version, I defined tracepoints such as "Link Up" and "Link Down"
+> specifically for PCIe hotplug. Later, Lukas suggested that these
+> tracepoints could be made more generic so that other PCI hotplug drivers
+> could also use them.
+> 
+> That’s why, when defining the event, I used a "generic" pci_hotplug_event
+> instead of a pcie_hotplug_event. If you're interested in more details
+> about this discussion, please refer to this link[1].
+> 
+> [1]https://erol.kernel.org/linux-pci/git/0/commit/?id=0ffd56f572f25bcd6c2265a1863848a18dce0e29
+> 
+> However, currently only PCIe hotplug is using these tracepoints, which
+> is why the CREATE_TRACE_POINTS macro is placed in
+> drivers/pci/hotplug/pciehp_ctrl.c.
+> 
+> > 
+> > I see the new TRACE_EVENT(pci_hp_event, ...) definition.  Is that what
+> > you mean by the "generic RAS tracepoint"?
+> 
+> Yes.
+> 
+> 
+> > 
+> > And the five new trace_pci_hp_event() calls that use the TRACE_EVENT
+> > are the "tracepoints for PCIe hotplug event"?
+> 
+> Actually, the tracepoints are generic, although right now they are only
+> used for PCIe hotplug.
+> 
+> > 
+> > > Add enum pci_hotplug_event in
+> > > include/uapi/linux/pci.h so applications like rasdaemon can register
+> > > tracepoint event handlers for it.
+> > > 
+> > > The output like below:
+> > > 
+> > > $ echo 1 > /sys/kernel/debug/tracing/events/pci/pci_hp_event/enable
+> > > $ cat /sys/kernel/debug/tracing/trace_pipe
+> > >      <...>-206     [001] .....    40.373870: pci_hp_event: 0000:00:02.0
+> > > slot:10, event:Link Down
+> > > 
+> > >      <...>-206     [001] .....    40.374871: pci_hp_event: 0000:00:02.0
+> > > slot:10, event:Card not present
+> > 
+> > > +#define PCI_HOTPLUG_EVENT					\
+> > > +	EM(PCI_HOTPLUG_LINK_UP,			"Link Up")	\
+> > > +	EM(PCI_HOTPLUG_LINK_DOWN,		"Link Down")	\
+> > > +	EM(PCI_HOTPLUG_CARD_PRESENT,		"Card present")	\
+> > > +	EMe(PCI_HOTPLUG_CARD_NOT_PRESENT,	"Card not present")
+> > 
+> > Running this:
+> > 
+> >    $ git grep -E "\<(EM|EMe)\("
+> > 
+> > I notice that these new events don't look like the others, which
+> > mostly look like "word" or "event-type" or "VERB object".
+> > 
+> > I'm OK with this, but just giving you a chance to consider what will
+> > be the least surprise to users and easiest for grep and shell
+> > scripting.
+> 
+> I think this is also common. For example, MF_PAGE_TYPE for
+> memory_failure_event uses a similar format:
+> 
+> #define MF_PAGE_TYPE \
+> 	EM ( MF_MSG_KERNEL, "reserved kernel page" ) \
+> 	EM ( MF_MSG_KERNEL_HIGH_ORDER, "high-order kernel page" )
+> 
+> 
+> and aer_uncorrectable_errors for aer_event:
+> 
+> #define aer_uncorrectable_errors				\
+> 	{PCI_ERR_UNC_UND,	"Undefined"},			\
+> 	{PCI_ERR_UNC_DLP,	"Data Link Protocol Error"},	\
+> 	{PCI_ERR_UNC_SURPDN,	"Surprise Down Error"},		\
+> 	{PCI_ERR_UNC_POISON_TLP,"Poisoned TLP"},
+> 
+> > 
+> > I also noticed capitalization of "Up" and "Down", but not "present"
+> > and "not present".
+> 
+> Aha, this is a bit tricky:)
+> 
+> The original kernel log messages are not consistent either:
+> 
+> ctrl_info(ctrl, "Slot(%s): Link Down\n",
+> ctrl_info(ctrl, "Slot(%s): Card not present\n",
+> 
+> I tried to keep the output as close as possible to the existing log
+> messages. If you prefer a more consistent capitalization style, I can
+> send another patch to fix that.
+> 
+> 
+> > 
+> > "Card" is only used occasionally and informally in the PCIe spec, and
+> > not at all in the context of hotplug of Slot Status (Presence Detect
+> > State refers to "adapter in the slot"), but it does match the pciehp
+> > dmesg text, so it probably makes sense to use that.
+> > 
+> > Anyway, I applied this on pci/trace for v6.17.  If there's anything
+> > you want to tweak in the commit log or event text, we can still do
+> > that.
+> > 
+> >    https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?h=trace
+> > 
+> > Bjorn
+> 
+> Thank you again for applying this to pci/trace for v6.17. If there’s
+> anything more to tweak in the commit log or event text, please let me
+> know.
+> 
+> Best regards,
+> 
+> Shuai
+> 
+--8323328-551479686-1753088028=:945--
 
