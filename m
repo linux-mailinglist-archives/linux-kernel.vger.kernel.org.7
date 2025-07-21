@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-738678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26AAAB0BBD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:32:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AA5FB0BBD8
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8018C189AF04
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 04:32:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B50113B54B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 04:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80D3219A6B;
-	Mon, 21 Jul 2025 04:32:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9839921766A;
+	Mon, 21 Jul 2025 04:32:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=coasia.com header.i=@coasia.com header.b="KB9DnqkG"
+	dkim=pass (1024-bit key) header.d=coasia.com header.i=@coasia.com header.b="p9U22kuo"
 Received: from spam.coasia.com (mail2.coasia.com [112.168.119.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B57E219A95
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 04:32:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68CB213E6D
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 04:32:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=112.168.119.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753072325; cv=none; b=CHvEq4Oy+ndQbs3Wk8Kl6RGng++dlMP+AeoSKHo+C8pdkegXxNEv8ZMy1ZlaAQ1AMHLYWQemDGDoDzbu/ZcOUzcwy8db94sagzgEh9OCf5hqyXAH/eTtJDhtxPiPfbuVKiu2GG8RUwuslN9jEFHOEKZVQidnCRs7mbXhOq/z15Y=
+	t=1753072333; cv=none; b=BQJdnBI1/RrxQX8Rv6C3cQ5/15iQTawaTp1M/rl61GfOUrt3bX35CAArC23MFkEmvy++1Kyt8RwjKObibvYrQqrup2iP1q+oTDNZwKy56r/B+7WSwj4ZPtj4qfG/p6lFB2nubfHZPyZFxFBLhdlOgUo8141Jw8PCjs9gJTEpiBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753072325; c=relaxed/simple;
-	bh=CjG6Ce63IjihByWSeMTR6U9wT5iUKWsBHd8GH0IIsJs=;
+	s=arc-20240116; t=1753072333; c=relaxed/simple;
+	bh=BUvt4uOf/Ru4kgfEPi2+qpIEYi6/+xiRiZIqZJyY9XA=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=h7rjxI4tt2I6seQ2x5zCQcnsYLtn97iSsAkgrLxhrDG9uduxReGGKjAg4BB4RNzDAIvJreeW8I1H3NlQ3vqiYOTn4BUp/Zfx7uibsBuxLvG5MvSs5q0T/qWQTfpPCarTRLbtP12uwWIbAYVS4/qSZGqJRwykVvm2MMF1ykqxH6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=coasia.com; spf=pass smtp.mailfrom=coasia.com; dkim=pass (1024-bit key) header.d=coasia.com header.i=@coasia.com header.b=KB9DnqkG; arc=none smtp.client-ip=112.168.119.159
+	 Content-Type:MIME-Version; b=i7qKedvkwDDczF4+5ogCOkm1UzIgzAM40la5Xdb8qVLjrhLz9V/gLuhjLZdAvhya8eu/kCB323I+lB5A++uH3XF1c6Fq3rTbfHR5oNwkUhzfwFBGjDFQWAlJxGlHTuYGP2W9mbca27pAoTmllGVtXWpOk2M3jq96MRm02ciG3co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=coasia.com; spf=pass smtp.mailfrom=coasia.com; dkim=pass (1024-bit key) header.d=coasia.com header.i=@coasia.com header.b=p9U22kuo; arc=none smtp.client-ip=112.168.119.159
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=coasia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coasia.com
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=coasia.com; s=coasia;
-	t=1753072320; bh=CjG6Ce63IjihByWSeMTR6U9wT5iUKWsBHd8GH0IIsJs=;
-	l=2596; h=Message-ID:Subject:From:To:Date:Content-Type:MIME-Version;
-	b=KB9DnqkGqp2HGNk3OqupUAApsgTTYe0fQHEFt6fHIE5vWGeEwQplds0CRbC8W85yI
-	 swAXk/OIzLA0q8At9KXEDrLIpuT4nkeJ6gLiu91z7U8RMpaTKPgu2NcpZscjKa981m
-	 KpPTz0BbzekoJD/xCpQDNlKTunxwrUtriT+0vgtE=
+	t=1753072328; bh=BUvt4uOf/Ru4kgfEPi2+qpIEYi6/+xiRiZIqZJyY9XA=;
+	l=779; h=Message-ID:Subject:From:To:Date:Content-Type:MIME-Version;
+	b=p9U22kuo9b8aaIP7HaMyDGVP6kJEFxbzwswB6a2qKxQh+98hzMzwCHV/LEWBlaWR8
+	 wSakoJWIaB6Hd+1vD+hKXSe/1g7g6F+0rYP0/4je9j00bEvgJzlsmJYYERytjUNdDE
+	 p6kUgpSZW5RggOt6nNUXj9PFT3EsPZHfE7U/6WI0=
 Received: from unknown (HELO ?192.168.1.65?) (119.65.249.123)
-	by 192.168.10.159 with ESMTP; 21 Jul 2025 13:32:00 +0900
+	by 192.168.10.159 with ESMTP; 21 Jul 2025 13:32:08 +0900
 X-Original-SENDERIP: 119.65.249.123
 X-Original-SENDERCOUNTRY: KR, South Korea 
 X-Original-MAILFROM: hgkim05@coasia.com
@@ -77,9 +77,11 @@ X-Original-RCPTTO: krzk@kernel.org,
 	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
-	soc@lists.linux.dev
-Message-ID: <35756293677efc07ce4de4d110d9e9b24ec83fcc.camel@coasia.com>
-Subject: Re: [PATCH 04/16] clk: samsung: artpec-8: Add initial clock support
+	soc@lists.linux.dev,
+	v.pavani@samsung.com
+Message-ID: <e8b6dd576b006fe443451c1dbcd5db35f6f1d98b.camel@coasia.com>
+Subject: Re: [PATCH 10/16] clk: samsung: artpec-8: Add clock support for
+ CMU_PERI block
 From: Hakyeong Kim <hgkim05@coasia.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>, ksk4725@coasia.com, Jesper
  Nilsson <jesper.nilsson@axis.com>, Michael Turquette
@@ -100,12 +102,13 @@ Cc: kenkim <kenkim@coasia.com>, Jongshin Park <pjsin865@coasia.com>, GunWoo
  linux-kernel@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
  linux-samsung-soc@vger.kernel.org,  linux-arm-kernel@axis.com,
  linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-gpio@vger.kernel.org, soc@lists.linux.dev
-Date: Mon, 21 Jul 2025 13:32:01 +0900
-In-Reply-To: <48677b18-3936-464a-a581-26a44ef76c80@kernel.org>
+ linux-gpio@vger.kernel.org, soc@lists.linux.dev, Varada Pavani
+ <v.pavani@samsung.com>
+Date: Mon, 21 Jul 2025 13:32:08 +0900
+In-Reply-To: <6d5b4e08-ddf0-438b-a188-fd8b48f3e2d2@kernel.org>
 References: <20250710002047.1573841-1-ksk4725@coasia.com>
-	 <20250710002047.1573841-5-ksk4725@coasia.com>
-	 <48677b18-3936-464a-a581-26a44ef76c80@kernel.org>
+	 <20250710002047.1573841-11-ksk4725@coasia.com>
+	 <6d5b4e08-ddf0-438b-a188-fd8b48f3e2d2@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.44.4-0ubuntu2 
@@ -116,76 +119,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Thu, 2025-07-10 at 09:12 +0200, Krzysztof Kozlowski wrote:
+On Thu, 2025-07-10 at 09:13 +0200, Krzysztof Kozlowski wrote:
 > On 10/07/2025 02:20, ksk4725@coasia.com=C2=A0wrote:
 > > From: Hakyeong Kim <hgkim05@coasia.com>
 > >=20
-> > Add initial clock support for ARTPEC-8 SoC which is required
-> > for enabling basic clock management.
+> > Add clock support for below CMU block in ARTPEC-8 SoC.
+> > =C2=A0- CMU_PERI
 > >=20
-> > Add clock support for below CMU block in ARTPEC-8 SoC:
-> > =C2=A0- CMU_IMEM
-> >=20
-> > Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+> > Signed-off-by: Varada Pavani <v.pavani@samsung.com>
 > > Signed-off-by: Hakyeong Kim <hgkim05@coasia.com>
 > > ---
-> > =C2=A0drivers/clk/samsung/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
-=C2=A0 8 ++++
-> > =C2=A0drivers/clk/samsung/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=
-=A0 1 +
-> > =C2=A0drivers/clk/samsung/clk-artpec8.c | 62
+> > =C2=A0drivers/clk/samsung/clk-artpec8.c | 90
 > > +++++++++++++++++++++++++++++++
-> > =C2=A03 files changed, 71 insertions(+)
-> > =C2=A0create mode 100644 drivers/clk/samsung/clk-artpec8.c
-> >=20
-> > diff --git a/drivers/clk/samsung/Kconfig
-> > b/drivers/clk/samsung/Kconfig
-> > index 76a494e95027..289591b403ad 100644
-> > --- a/drivers/clk/samsung/Kconfig
-> > +++ b/drivers/clk/samsung/Kconfig
-> > @@ -13,6 +13,7 @@ config COMMON_CLK_SAMSUNG
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0select EXYNOS_5420_COMM=
-ON_CLK if ARM && SOC_EXYNOS5420
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0select EXYNOS_ARM64_COM=
-MON_CLK if ARM64 && ARCH_EXYNOS
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0select TESLA_FSD_COMMON=
-_CLK if ARM64 && ARCH_TESLA_FSD
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0select ARTPEC8_COMMON_CLK if=
- ARM64 && ARCH_ARTPEC8
+> > =C2=A01 file changed, 90 insertions(+)
 >=20
-> Here and:
->=20
-> > =C2=A0
-> > =C2=A0config S3C64XX_COMMON_CLK
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0bool "Samsung S3C64xx c=
-lock controller support" if
-> > COMPILE_TEST
-> > @@ -102,3 +103,10 @@ config TESLA_FSD_COMMON_CLK
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0help
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Support for the =
-clock controller present on the Tesla FSD
-> > SoC.
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Choose Y here on=
-ly if you build for this SoC.
-> > +
-> > +config ARTPEC8_COMMON_CLK
->=20
-> here, place it before EXYNOS_3250_COMMON_CLK.
+> Please squash all the clock driver patches.
 
-Ok, I will reorder macros in alphabatical order.
+My intention here is to split the clock changes so as to make smaller
+patches.
+I will squash patch 04 to 10 and make a single clock driver patch.
 
 Thanks,
 Hakyeong Kim
 
->=20
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0bool "Axis ARTPEC-8 clock co=
-ntroller support" if
-> > COMPILE_TEST
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0depends on COMMON_CLK_SAMSUN=
-G
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0help
->=20
->=20
 >=20
 > Best regards,
 > Krzysztof
