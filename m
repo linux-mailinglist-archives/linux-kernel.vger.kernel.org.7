@@ -1,114 +1,173 @@
-Return-Path: <linux-kernel+bounces-739260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 500CFB0C402
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:23:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF4F2B0C417
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:27:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81D225409B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:23:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73B7B7A6A8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB82D2D3754;
-	Mon, 21 Jul 2025 12:23:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCFF2D3ED0;
+	Mon, 21 Jul 2025 12:26:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l/IBTKKf"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="DAyLPBEA"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BE32C374B
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 12:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 299573C0C;
+	Mon, 21 Jul 2025 12:26:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753100582; cv=none; b=P6jkXILGiSgrhXWCN+XayV6S5Sxvpv3ZSBu8kH+gaBR9Pfv2G79I7Dn7Id0Wl6xCk4qYxW4lwsjl13BgjOEt1O5co80u1Jcr30ToBbP2LuzhgOXfxgX91t8iN0XQCLX+yXahkeq+NcDotN3ovNu4q78h2gOshfh8v/8OuCjyzsg=
+	t=1753100809; cv=none; b=Oy26WRXPsNVKLdteESUZwViDSRifKwpJ+WcAiHqSB++Kh8hcrfptNmFzPe8n42BBGMT2CPtUxmN6yiwr9yROIBJjmJISt6RgsCgeEgmrRFfji/AJExwesfswqXyLmOUBPKgy6NKvIx4ef72/ID9kPBAWN1m9eqIIEbaG5K/ZToE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753100582; c=relaxed/simple;
-	bh=NaC5mme5G/2fgAfAK7Eys5Nx7GQs7eUuEvqiHOpTBZk=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=WWaUvBwgj7MuXtQIgi+AERlpt4Mm+TPO8BXNNpucEqt0+4eD2PWHT2mgVCvd0Gi3h5IQLghffe1LEhm1XnVMmXarB5+GMiyXiN6Tsu5gXzFXn/QBuCL2YjtjQQBQw0c+krPWnMKEZz7ikc6MsvWru6f98cqx0bjKjzshPInY1aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l/IBTKKf; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-70f862dbeaeso38917337b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 05:23:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753100580; x=1753705380; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=eCEGSN3M10MrjOFjG0lLCegL5PcRSqy0h0h9sELILDA=;
-        b=l/IBTKKfKvyA0aXN/iD5e3orDYqp7mKDAMAJtz7eTNMRs7R9ewQLY/6IfQRFu/ao7H
-         nduvxyKabZmN8ORrwxU/Tlz910h49acLGz+SPHG/pTDU/KgAKfFhcRd3604bkhKJJTKm
-         bTbOo1ZcmV6pa6FSVQRTgAKDNODDEfV/9q7bgNLdmq8A+7n+BTU1dRSudx9yOkveG74D
-         CTH8BcOb5sTN9xBK/bQonoMKb6Xs7hp1AIbfuBazh67q000zLF0QzpnMZzT5v2Mp0w4Q
-         LE0tqG6DuCzVoEJfC2EXWIfnY7uwBEv+4HDSzLp79rRZpEDroCYYRQ0XP6uN284ylnVK
-         yPTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753100580; x=1753705380;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eCEGSN3M10MrjOFjG0lLCegL5PcRSqy0h0h9sELILDA=;
-        b=TfMfi2NhUKRw2vfe26xI2MhWXjP7r70hiPt8oL9oocyIOIsAlSi1H1YF708QtY+4Qv
-         81EPjeYo/Gfp/gnLgndwgS4r52iPs+xOBqRMWHkSXY1hac6KkIi1UOARyaPXKu2QEbG9
-         IEI0tvv3mvLdAKgavQKVz0OKolr9TdkzTJMXbh8HLUEb3egzKl5rbCnVYcKVfh9Mrp70
-         g7kr1gto/FyyBx2zm0fbZFzpAlfntaeHXACdNITTE2UKoOXAXvNqbKE25T1KkQC/Kcet
-         fdikL0koK09GbO8nDDoUx2mw8qG/oSfCb3mVMBvIU9X1FrCDXaLxPxBNYfr8pzKpZg20
-         KqUA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbOd69g/Lll9mBse5BRUU4q/UACDjfweViLyrY73KbUAlG0jsHDJMKTkqlAJleYYwsN4cDKyrDTGHujvU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxis9I8y+Z8/M3DO3xN0XvwuLMdWJtxhzcy/8UBbjvtiK0hyGbJ
-	cL2MD8kq3BpOv/2ca3jMzDwYfA6fzhmtrpRp+ZsEcEMAVI6Es3kCubFcMCdigb1GHnDAeBIu7i+
-	Z+Cni8EUfEJ9OyN18PQiC9ODDVSxxm4S2SiHD4ME=
-X-Gm-Gg: ASbGncvyACPH1i6lUU7ITz7juwxPHN7q3KU0oscdNPvA/5Z/vIfgebNTpCcul2iGYkO
-	9MkZQaX4FgAwBI+YFdCyvF6xXRqPb3du6ldYdDa6d28RMsO+HlJFcdD9NPOK+D4ZcAnNsEUHpC/
-	ITBVb6ephBCnPqGHIuHlxXQmZWWyEmjRKtW92s8RdtbMrIxWT3wj+4K9iVKDDA/HruT4u9cnrVR
-	FgWXw==
-X-Google-Smtp-Source: AGHT+IEWB7JrFoMbHrRALXWP1vhD6NN5YpFLPFz8a0z6KxSPI5Oh15vQ4Zsncp+bvRHP3+gphdxUKvzFK9fNg5W9TvY=
-X-Received: by 2002:a05:690c:868a:20b0:718:38bd:bb42 with SMTP id
- 00721157ae682-71838bdd021mr184209147b3.41.1753100579541; Mon, 21 Jul 2025
- 05:22:59 -0700 (PDT)
+	s=arc-20240116; t=1753100809; c=relaxed/simple;
+	bh=7SYBp9Zb4m3gELQ7tCurU5ja2w/hoGsVa4I9FvSKshg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YlUHBGA2M36ZcQtmZCD7I1cbQj4lGskUikaOtnb/Dw5EvmWjJXbKOxvK059kel8OOPV9beO8zTLksaf53tClYvijPHWaHEHCcevlOZU2fZp5rDmXqviW8DsDi5KRLEgsZcSAK1v3bjOpo63CY3xqr/ZumMttgGIcLgK5Eh7on9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=DAyLPBEA; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56LCB6IN007054;
+	Mon, 21 Jul 2025 14:26:25 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	fqiwAVutR1r5EQfU0bWFAUEcQiPbqDN4nQ+mORgbmZw=; b=DAyLPBEAplfXgm0X
+	o93LZeJwbDtNejaod2Dtz+F0rJSKVcNuTfA8NE1KghKatYoZ3/0IcygcXYkoASoe
+	zEN/P+q4CSd4zAqlViY2B+SC3gd82JhjD6eY0nDP+zDwI+9VHZQtpMx64ghQ8G1z
+	7GlfFqfrDZ1b8QpSZanCAOI/VykHbgASaUp2DbRXvaaVFCu+6kO0LMlodu08HsSH
+	MTJY9ox9uug/nPb/MrOkP1kxXx7+zdjn7c2KQLqh3C0ZK7yHRzo5UC5DiV4cm/28
+	HVMXPWAZCEfXT+PvLJd7Ls6uk3fzkEjiiF8EXa+at4Mfdd7r/Esojzkev0DL+s7l
+	shNFCQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48028g0fh8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Jul 2025 14:26:24 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 56DDC40047;
+	Mon, 21 Jul 2025 14:24:42 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6CF5B7A4C92;
+	Mon, 21 Jul 2025 14:23:30 +0200 (CEST)
+Received: from [10.48.87.141] (10.48.87.141) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 21 Jul
+ 2025 14:23:29 +0200
+Message-ID: <1fc9d75e-459d-454f-b8dc-1fb7f59d09b4@foss.st.com>
+Date: Mon, 21 Jul 2025 14:23:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Satadru Pramanik <satadru@gmail.com>
-Date: Mon, 21 Jul 2025 08:22:48 -0400
-X-Gm-Features: Ac12FXy7wN3KNUOiIVLumsXVvu9VY7MUOOaJsu-IjLq8qTEhzCqLvUhvpKWfvAw
-Message-ID: <CAFrh3J85tsZRpOHQtKgNHUVnn=EG=QKBnZTRtWS8eWSc1K1xkA@mail.gmail.com>
-Subject: Re: [PATCH] drm/nouveau: check ioctl command codes better
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: airlied@gmail.com, airlied@redhat.com, arnd@arndb.de, bskeggs@nvidia.com, 
-	bskeggs@redhat.com, "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, 
-	open list <linux-kernel@vger.kernel.org>, Lyude Paul <lyude@redhat.com>, 
-	nouveau@lists.freedesktop.org, simona@ffwll.ch, ttabi@nvidia.com, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Satadru Pramanik <satadru@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 3/4] net: phy: smsc: fix and improve WoL support
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+CC: Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre
+ Torgue <alexandre.torgue@foss.st.com>,
+        Christophe Roullier
+	<christophe.roullier@foss.st.com>,
+        Andrew Lunn <andrew@lunn.ch>, Heiner
+ Kallweit <hkallweit1@gmail.com>,
+        Simon Horman <horms@kernel.org>,
+        Tristram Ha
+	<Tristram.Ha@microchip.com>,
+        Florian Fainelli
+	<florian.fainelli@broadcom.com>,
+        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20250721-wol-smsc-phy-v1-0-89d262812dba@foss.st.com>
+ <20250721-wol-smsc-phy-v1-3-89d262812dba@foss.st.com>
+ <aH4kVBTxd4zRYv2l@shell.armlinux.org.uk>
+Content-Language: en-US
+From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
+In-Reply-To: <aH4kVBTxd4zRYv2l@shell.armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-21_03,2025-07-21_01,2025-03-28_01
 
-Hello all,
+Hello Russel,
 
-I suspect this commit in 6.16-rc7 has broken acceleration with Mesa's
-nouveau drivers on my machine.
+On 7/21/25 13:28, Russell King (Oracle) wrote:
+> On Mon, Jul 21, 2025 at 01:14:45PM +0200, Gatien Chevallier wrote:
+>> +static int smsc_phy_suspend(struct phy_device *phydev)
+>> +{
+>> +	if (!phydev->wol_enabled)
+>> +		return genphy_suspend(phydev);
+> 
+> This should not be necessary. Take a look at phy_suspend(). Notice:
+> 
+>          phydev->wol_enabled = phy_drv_wol_enabled(phydev) ||
+>                                (netdev && netdev->ethtool->wol_enabled);
+>          /* If the device has WOL enabled, we cannot suspend the PHY */
+>          if (phydev->wol_enabled && !(phydrv->flags & PHY_ALWAYS_CALL_SUSPEND))
+>                  return -EBUSY;
+> 
+> PHY_ALWAYS_CALL_SUSPEND is not set for this PHY, therefore if
+> phydev->wol_enabled is set by the above code, phydrv->suspend will
+> not be called.
+> 
 
-glxinfo -B reports that I'm using llvmpipe.
+Indeed, thank you for pointing this out. I will remove this callback for
+v2.
 
-Reverting this in 6.16-rc7 restores nouveau acceleration, and glxinfo
-then reports: "OpenGL renderer string: NVE7"
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int smsc_phy_resume(struct phy_device *phydev)
+>> +{
+>> +	int rc;
+>> +
+>> +	if (!phydev->wol_enabled)
+>> +		return genphy_resume(phydev);
+>> +
+>> +	rc = phy_read_mmd(phydev, MDIO_MMD_PCS, MII_LAN874X_PHY_MMD_WOL_WUCSR);
+>> +	if (rc < 0)
+>> +		return rc;
+>> +
+>> +	if (!(rc & MII_LAN874X_PHY_WOL_STATUS_MASK))
+>> +		return 0;
+>> +
+>> +	dev_info(&phydev->mdio.dev, "Woke up from LAN event.\n");
+>> +	rc = phy_write_mmd(phydev, MDIO_MMD_PCS, MII_LAN874X_PHY_MMD_WOL_WUCSR,
+>> +			   rc | MII_LAN874X_PHY_WOL_STATUS_MASK);
+>> +
+>> +	return rc;
+> 
+> Note that this will be called multiple times, e.g. during attachment of
+> the PHY to the network device, when the device is opened, etc even
+> without ->suspend having been called, and before ->wol_enabled has
+> been set. Make sure your code is safe for this.
+> 
 
-inxi -G
-Graphics:
-  Device-1: NVIDIA GK107M [GeForce GT 750M Mac Edition] driver: nouveau
-    v: kernel
-  Display: wayland server: X.Org v: 24.1.8 with: Xwayland v: 24.1.8
-    compositor: gnome-shell v: 48.0 driver: X: loaded: modesetting
-    unloaded: fbdev,vesa dri: nouveau gpu: nouveau resolution: 2880x1800~60Hz
-  API: EGL v: 1.5 drivers: nouveau,swrast
-    platforms: gbm,wayland,x11,surfaceless,device
-  API: OpenGL v: 4.5 compat-v: 4.3 vendor: mesa
-    v: 25.2.0~rc1+git2507191056.03f67b52319~p~mesarc0 renderer: NVE7
-  API: Vulkan v: 1.4.304 drivers: N/A surfaces: xcb,xlib,wayland
-  Info: Tools: api: eglinfo, glxinfo, vulkaninfo x11: xdriinfo, xdpyinfo,
-    xprop, xrandr
+If ->wol_enabled isn't set, then we should fallback to the previous
+implementation so I expect it to be fine for that matter.
+Then, I expect flags to be set only in case of WoL event received.
+Nevertheless, I will double check the phy_* API used in this sequence
+for V2, thank you.
 
-Best,
-Satadru Pramanik
+Best regards,
+Gatien
 
