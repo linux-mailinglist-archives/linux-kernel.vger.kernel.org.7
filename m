@@ -1,112 +1,143 @@
-Return-Path: <linux-kernel+bounces-740009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5F01B0CE86
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 02:05:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7577B0CF21
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:34:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B97DE3A4789
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 00:05:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AECE9546305
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 01:34:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDDD21853;
-	Tue, 22 Jul 2025 00:05:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E88E3B640;
+	Tue, 22 Jul 2025 01:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uuni8npE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b="bb0xv6ox"
+Received: from mx0a-00190b01.pphosted.com (mx0a-00190b01.pphosted.com [67.231.149.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38FB4372;
-	Tue, 22 Jul 2025 00:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F57119F115;
+	Tue, 22 Jul 2025 01:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753142735; cv=none; b=TYWMhdxpHKYpc62eceV0n8zZF3g003whpxhJrJ5IlbsfnGnMo1mB8m3pUXlylA9N/CScKxCJJ0+nzNhmkMFNjjxqwGlVJHyIaxPAojz6gT1YwgFwu+/YEoPg1ziJFPinC6YdnPnDbbXHGFBpGQDSVvhyyifhOKEakWSYdK6WcS0=
+	t=1753148053; cv=none; b=AXoecsVybVuXamSMoiGwmEWWBBgRcQLDll19g8IJUPJbYf31wEznHuUn5R3LOXY10lzVsfFtiq3gR/Ipjifvg+OfLS5FZdlIRQiyAHtUN5EqlwHQtU5cIsGVkUr9c4K6hIkt87MQS7iPrY6eURLLpMntmD0X+vIDVvScasflF6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753142735; c=relaxed/simple;
-	bh=hqgqt25X+/WxZm+XOfMjvIfCy/+yrPeiHQqgFXW0vkw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LqsIQdHgaL1Xhd9MqZ43CB9VV15vULm1iSC5gHnwpBTO1VsB9Lg8WjhtaSNd14MaYXYf8LDgfetv3JyC3krXJpjZ8z72H8jIcgyu3iT7lgUbDj0GIPe8ePiNFL1pISdjblHREEzDyrrrco6lIJqa/MD/9OJ7r2u536zJITBHOTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uuni8npE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04F68C4CEF5;
-	Tue, 22 Jul 2025 00:05:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753142735;
-	bh=hqgqt25X+/WxZm+XOfMjvIfCy/+yrPeiHQqgFXW0vkw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Uuni8npESzyZccRb4DxUe5dVbjGT8BqC73sh1e8L9P5dbPq7/K17O3ysp4SEDu/dC
-	 qFqLHlSu8i/1axNF2pyvk4mCPGPUm+gO6LTY4nFp9Kp7IU0qiEvvmy3vwhpv0paozB
-	 9s4AHSm7lYvBbLW9FouZPbRBOu7l5SU119E/VaK1SXyj/cIq8aoKWS3GQopdZMwddQ
-	 /eASINnSHCEF7Zz+CFS+5S7vJj2txRqw4kU43BeI/3ouYd/nOzVeXPezhl4H0Uin7K
-	 3ZOMc/2WuHrLS7V+tWI9CqPxWISA9dxNVybUe5DfjL6LOoekH4gVDOPZJw77adk32B
-	 YzFfuaJHZlS/w==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-55a27e6da1cso4152214e87.3;
-        Mon, 21 Jul 2025 17:05:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU6HzF6fUr5YAT+SpwN6fR66AuARqPd4lYCYCvRZQ/r65Y00CCwejVtklrv7bj6skJLp5AoCmd/edmZf1E=@vger.kernel.org, AJvYcCUQAv88lE3eZCFFep4jDrSewthh/ucQnLz63tiAjAz8zk+SZGl16fHEm1dKrgpt9/6SU4F4lNa4ADb4RXGO@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsXbCCB5KZgnTEVlSsQ/in/h89tA/5751pv1NqpGvCk+BzV9nc
-	cQnpDp6w6rSJwcs87pU24EJLd0OUYIZKyQT+M9Sv6XMXBiuanDR4g0+lmB5qWzz46L5V0XalCq9
-	HgLVNoO/YvndWIhLV4zJZwqdVATCcBxM=
-X-Google-Smtp-Source: AGHT+IHscF03ly8mnZnW/UiXgnQLyDCMh1kQWvQ3aIj/Lr06cOLNH0g5HAuMZ9vUjyT+Asb0ztXeg6Uvmy1Emfm5GwY=
-X-Received: by 2002:a05:6512:b19:b0:553:241d:4e77 with SMTP id
- 2adb3069b0e04-55a23efbfd8mr5815800e87.22.1753142733397; Mon, 21 Jul 2025
- 17:05:33 -0700 (PDT)
+	s=arc-20240116; t=1753148053; c=relaxed/simple;
+	bh=cJw1H4FYY7/LFWZ4+/6MWLJUz4HQYSSXFAxGUaQwUtQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SXbTzl0MUIwHhDU/NOc0YFLk5t8EkHLpK1FPJtN3muiND7U9JH4Zn00oi9H79H86Ct0AiR+wwVNZsFOv4vSmuEznyB0KU1fNsowOrstty1JImEq84AxjlTT2a2e9X6qxXPF95qNhhbK0FlhhLN8HH1Z1ghL0rBDonHmCSnw2ZnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com; spf=pass smtp.mailfrom=akamai.com; dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b=bb0xv6ox; arc=none smtp.client-ip=67.231.149.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=akamai.com
+Received: from pps.filterd (m0050095.ppops.net [127.0.0.1])
+	by m0050095.ppops.net-00190b01. (8.18.1.2/8.18.1.2) with ESMTP id 56LJXqXQ021696;
+	Tue, 22 Jul 2025 00:07:46 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=jan2016.eng; bh=E8dmWZVMW0TSe4saxubP
+	Ve3bDfVlb9XG51viFGrrZqs=; b=bb0xv6oxII0BtN7f85N4kBdimvybqHHclORU
+	uOfYtXtxqxpz+NRhycp54jUSIcqzarMEw/Cztq/9T882x6Cc17cgcan1CiTx8Xaa
+	Ge+JjDuhsuA9O1KlfMm3/m3jc120AaAiEOtVmoLe5s3S3pqL7yfxj3hTglklqxxV
+	yR1ZCNrEZHy25Tg7distSunlaUGMesAQ4tSBGVVfjqXl0YAq2tpCmvzAeCJRHGYK
+	13Bd+wJDIl000DOyiRVXRFUasELkkKs0LMDsm+iIBXRYQvmus0SEyHn7N3ZHTZkX
+	YRTW21cnHhA1O/dfDHaZxs22KSEn3gNc6r9+A3H3ATkPL4GK7g==
+Received: from prod-mail-ppoint5 (prod-mail-ppoint5.akamai.com [184.51.33.60] (may be forged))
+	by m0050095.ppops.net-00190b01. (PPS) with ESMTPS id 481h01v9q0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Jul 2025 00:07:46 +0100 (BST)
+Received: from pps.filterd (prod-mail-ppoint5.akamai.com [127.0.0.1])
+	by prod-mail-ppoint5.akamai.com (8.18.1.2/8.18.1.2) with ESMTP id 56LKUI8G002574;
+	Mon, 21 Jul 2025 16:07:44 -0700
+Received: from email.msg.corp.akamai.com ([172.27.91.22])
+	by prod-mail-ppoint5.akamai.com (PPS) with ESMTPS id 4809b9rs8s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Jul 2025 16:07:44 -0700
+Received: from usma1ex-exedge1.msg.corp.akamai.com (172.27.91.34) by
+ usma1ex-dag4mb3.msg.corp.akamai.com (172.27.91.22) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Mon, 21 Jul 2025 19:07:44 -0400
+Received: from usma1ex-dag4mb6.msg.corp.akamai.com (172.27.91.25) by
+ usma1ex-exedge1.msg.corp.akamai.com (172.27.91.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Mon, 21 Jul 2025 19:07:44 -0400
+Received: from bos-lhvzmp.bos01.corp.akamai.com (172.28.221.177) by
+ usma1ex-dag4mb6.msg.corp.akamai.com (172.27.91.25) with Microsoft SMTP Server
+ id 15.2.1748.26 via Frontend Transport; Mon, 21 Jul 2025 19:07:44 -0400
+Received: by bos-lhvzmp.bos01.corp.akamai.com (Postfix, from userid 42339)
+	id F22F415F582; Mon, 21 Jul 2025 19:07:43 -0400 (EDT)
+From: Michael Zhivich <mzhivich@akamai.com>
+To: <stable@vger.kernel.org>, <bp@alien8.de>
+CC: <tglx@linutronix.de>, <mingo@redhat.com>, <dave.hansen@linux.intel.com>,
+        <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mzhivich@akamai.com>
+Subject: [PATCH] x86/bugs: Fix use of possibly uninit value in amd_check_tsa_microcode()
+Date: Mon, 21 Jul 2025 19:07:12 -0400
+Message-ID: <20250721230712.2093341-1-mzhivich@akamai.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250721231917.3182029-1-linux@roeck-us.net>
-In-Reply-To: <20250721231917.3182029-1-linux@roeck-us.net>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 22 Jul 2025 10:05:22 +1000
-X-Gmail-Original-Message-ID: <CAMj1kXEY1xtHpwQwsCqDqvgNyYwf=NocXysKOXyYMeWfaeLuZg@mail.gmail.com>
-X-Gm-Features: Ac12FXxrwa2MgDMC5KiJVj9gTa0hsZoyGxpKOAfytDhF3HVO_7IBWhRaCHmfPdg
-Message-ID: <CAMj1kXEY1xtHpwQwsCqDqvgNyYwf=NocXysKOXyYMeWfaeLuZg@mail.gmail.com>
-Subject: Re: [PATCH] lib/crypto: tests: Annotate worker to be on stack
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Eric Biggers <ebiggers@kernel.org>, "Jason A . Donenfeld" <Jason@zx2c4.com>, linux-crypto@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-21_05,2025-07-21_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0
+ mlxlogscore=999 bulkscore=0 mlxscore=0 phishscore=0 suspectscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2505160000 definitions=main-2507210206
+X-Proofpoint-ORIG-GUID: B9yRAJi6xzflLXEGNVxNTYiEzBLFLcBt
+X-Authority-Analysis: v=2.4 cv=Ca8I5Krl c=1 sm=1 tr=0 ts=687ec842 cx=c_pps
+ a=NpDlK6FjLPvvy7XAFEyJFw==:117 a=NpDlK6FjLPvvy7XAFEyJFw==:17
+ a=Wb1JkmetP80A:10 a=X7Ea-ya5AAAA:8 a=oT9pP-C_ruO3kQmKR0IA:9
+X-Proofpoint-GUID: B9yRAJi6xzflLXEGNVxNTYiEzBLFLcBt
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIxMDIwNiBTYWx0ZWRfX7XNdW0d7ONtO
+ 7PBb940S71yfkLk1mSKuMgfxSYD1kRFUkgapisGx+gUfGU+MGujm5NNeTTa9tkYi+qi1tfT2hOv
+ oDMLt4OZ4ziNQyulJNCa/Fo+10VR4CD2htcVgdYltO1yJBRsv0a1a6jCfip3g/nkeNfGNAq2h5i
+ iT4IMhbIhjjB15cBt9NLfVmC0zr2w+v4vX7sU2EH9LOuLxu+eU+Vz/kosAuq06LNgMiZjR/cNc9
+ 4RYGicC1JGmfXVJ3MFQsY8DguHYJpOUKKkl929yuks43klKDQIfoFANOBP+5OBaF7a6J6aQTeHV
+ VkNTrOlC5o7Vm4Um3oRNU46AAmoFjBptIMycaJV/pf08ks6so/x2DydrAh6vhs3l78PeP29bDjT
+ 4dYXxRVXdgY/nK0jDj/tx1TJVxQYMEuyVvw8E5TRsJhjizTBrCKsdjvXrnGUh4w1XGe2PRjI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-21_05,2025-07-21_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0
+ phishscore=0 lowpriorityscore=0 malwarescore=0 adultscore=0 mlxscore=0
+ clxscore=1011 mlxlogscore=842 spamscore=0 bulkscore=0 suspectscore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507210206
 
-On Tue, 22 Jul 2025 at 09:19, Guenter Roeck <linux@roeck-us.net> wrote:
->
-> The following warning traceback is seen if object debugging is enabled
-> with the new crypto test code.
->
-> ODEBUG: object 9000000106237c50 is on stack 9000000106234000, but NOT annotated.
-> ------------[ cut here ]------------
-> WARNING: lib/debugobjects.c:655 at lookup_object_or_alloc.part.0+0x19c/0x1f4, CPU#0: kunit_try_catch/468
-> ...
->
-> This also results in a boot stall when running the code in qemu:loongarch.
->
-> Initializing the worker with INIT_WORK_ONSTACK() fixes the problem.
->
-> Cc: Eric Biggers <ebiggers@kernel.org>
-> Fixes: 950a81224e8b ("lib/crypto: tests: Add hash-test-template.h and gen-hash-testvecs.py")
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> ---
->  lib/crypto/tests/hash-test-template.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
+Note: I believe this change only applies to stable backports.
 
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
+For kernels compiled with CONFIG_INIT_STACK_NONE=y, the value of __reserved
+bitfield in zen_patch_rev union on the stack may be garbage.  If so, it will
+prevent correct microcode check when consulting p.ucode_rev, resulting in
+incorrect mitigation selection.
 
-> diff --git a/lib/crypto/tests/hash-test-template.h b/lib/crypto/tests/hash-test-template.h
-> index ffee1741a1b3..f437a0a9ac6c 100644
-> --- a/lib/crypto/tests/hash-test-template.h
-> +++ b/lib/crypto/tests/hash-test-template.h
-> @@ -398,7 +398,7 @@ static void run_irq_test(struct kunit *test, bool (*func)(void *),
->          */
->         hrtimer_setup_on_stack(&state.timer, hash_irq_test_timer_func,
->                                CLOCK_MONOTONIC, HRTIMER_MODE_REL_HARD);
-> -       INIT_WORK(&state.bh_work, hash_irq_test_bh_work_func);
-> +       INIT_WORK_ONSTACK(&state.bh_work, hash_irq_test_bh_work_func);
->
->         /* Run for up to max_iterations or 1 second, whichever comes first. */
->         end_jiffies = jiffies + HZ;
-> --
-> 2.45.2
->
+Signed-off-by: Michael Zhivich <mzhivich@akamai.com>
+Fixes: 7a0395f6607a ("x86/bugs: Add a Transient Scheduler Attacks mitigation")
+---
+ arch/x86/kernel/cpu/amd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index efd42ee9d1cc..91b21814ce8c 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -371,7 +371,7 @@ static void bsp_determine_snp(struct cpuinfo_x86 *c)
+ static bool amd_check_tsa_microcode(void)
+ {
+ 	struct cpuinfo_x86 *c = &boot_cpu_data;
+-	union zen_patch_rev p;
++	union zen_patch_rev p = {0};
+ 	u32 min_rev = 0;
+ 
+ 	p.ext_fam	= c->x86 - 0xf;
+-- 
+2.34.1
+
 
