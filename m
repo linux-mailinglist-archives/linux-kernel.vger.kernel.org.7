@@ -1,155 +1,110 @@
-Return-Path: <linux-kernel+bounces-739293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24EC8B0C47E
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:55:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68B2DB0C496
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:57:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1DB91AA2881
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:55:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 094243B913D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:57:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5A32D77F4;
-	Mon, 21 Jul 2025 12:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210012DBF47;
+	Mon, 21 Jul 2025 12:54:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VtaarHBc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RjTTJYCm"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180322D5C9A
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 12:54:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304332D63F3;
+	Mon, 21 Jul 2025 12:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753102457; cv=none; b=gKV8DCUAjW/GJDFlOqndEAPcEftUvZUn2Dnu4GVJ9WEmztLkmwjMuW7gWigNiJhkC5KVxNPoKsGKo/ir3WwVxf4qjUydS8lxIYP2s9V0+2QtRh++TmoxlBOHiok6REzdSEvA1AO+Ay7JtRhsx57BtGsCgUc5dEiamE8DkUFWAIM=
+	t=1753102483; cv=none; b=NMRcY8G3y985wG36Ox8228emlqQv15riW0p3cQdXsYC3l6aM2gQcOtPXHNVWUPQj0u3ie/RmTas82V0zvqwBEUyEIQYqloagl6ZZU8GffHqvb2ACNHH1kgLgTT4CWmVE7Bs2VioFBe0IGNFqvjfDpT9c/4HOXYpGfmQc9/yYCh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753102457; c=relaxed/simple;
-	bh=Wxgy61aHWs80GLSEAoDrVpWj0lXnEnhZvB9jx/Dm55Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KyUuR8GPriwXKrY63ANvOiAG+lO7QxF1D1JRgrYj7M+QY1y5rIRda32qnrUt5aHvleEyCTGbYy93G0ozCjZaW/XurA8ndWNFSjdV68CRzbHyActZNGyY16YPYnbAcbax1K0sjCpE9+TUqSQ0qjkxjmsy2LaTWFNv5T1Dhpqr3hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VtaarHBc; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753102455;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LGouRhTIcOCzuKVibZby8lQPcGeoVn/9FPgTrCUEtjg=;
-	b=VtaarHBcHCZ/LQSR1GmJs17mY6pvP95MG5qYs0FE0Fm+BHNUCq2pvzbAr/0wL7Ccr+iM2c
-	Kft2c7f1euC3Y0svTZa6w5BgSN1VlkbXeRZKy+C+LeWBtDDjpDLoIGmA9QTZzmg+aZEghn
-	HqTGx06ADbkqAqGGrkODPR3IB1tBoyM=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-466-gieTfNIxPD2_m1auPkgj5w-1; Mon,
- 21 Jul 2025 08:54:11 -0400
-X-MC-Unique: gieTfNIxPD2_m1auPkgj5w-1
-X-Mimecast-MFC-AGG-ID: gieTfNIxPD2_m1auPkgj5w_1753102450
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AE7AF1800878;
-	Mon, 21 Jul 2025 12:54:09 +0000 (UTC)
-Received: from [10.45.226.7] (unknown [10.45.226.7])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 174641956094;
-	Mon, 21 Jul 2025 12:54:05 +0000 (UTC)
-Message-ID: <804b4a5f-06bc-4943-8801-2582463c28ef@redhat.com>
-Date: Mon, 21 Jul 2025 14:54:04 +0200
+	s=arc-20240116; t=1753102483; c=relaxed/simple;
+	bh=Bq5VgfjTkqyHZmMsa4CuFn3fXsUBDjAcxmYxO2xVUQQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u6SKVCc1VJuQ8QStNszNLawe51ZC2jZhlkFwPiKdpW0DDlMNETS1xRzD2yKG9EugOGh8wKsQaLb17CwLAdo13B0COhWxmD90KRv5z7WK6ADBKrmXxLbvmyoQWTaL1z2COFCsGaSp1GFGIF9rACDiJDBr7T2CRZHKSo384GGjcUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RjTTJYCm; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b34dde96cbfso242553a12.2;
+        Mon, 21 Jul 2025 05:54:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753102481; x=1753707281; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Bq5VgfjTkqyHZmMsa4CuFn3fXsUBDjAcxmYxO2xVUQQ=;
+        b=RjTTJYCmZ/NPbd2kt1bt168pUdPJ9FFWUggiAluPZaUwSno8aldNeim5NoYXnw7JLs
+         +weY5AEIKikwhMpsYcCUUum8ZEyez1OFF3bykCAw8ZTcC87VDCXqZaTiWugoejrdIFx/
+         tqjTcqdo6nRIQuqjIhDjBM8AsDaCzFbb4Iwz8zJXbN2ZsqOGe45AILWxmSUofKJPOeWZ
+         u7e8IYfbrjrcoVB8ysxFpgS+fdqnwM5rRzNixGXX7FJMvv8NOz9wW190aGOxZfVA+MIC
+         lofYLT9dJzGhxddq+bLGJpqGekjSt+oT3tFbSxEUVTPbv+0UcmIA5qQpipxEce49A8Fh
+         eYRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753102481; x=1753707281;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Bq5VgfjTkqyHZmMsa4CuFn3fXsUBDjAcxmYxO2xVUQQ=;
+        b=JT2K6kQYGwrGD4NwutlrXribZ7Lgk9YzQvT0KdiupulbG4tJODtu4VdIA5/dR91gAC
+         b4qFi3Q6Th60cUjBf6SCHGtDwcQAN+yWUjK6e7hz6rRzjYrNxdCYWLZ13A8rPEHMSU7H
+         LTEo+NfjJhTemZ8gbvA1vjvZnbBXESnznyGz5WIPaGJqbZPzDu6M3dySl2elNfzPwtNe
+         jDqO4CUaD0XjHGVpcZrFLedmU5nH5vppz8vkp+XZQQyUyRg4pjaRBA264dY5HMF1gPX3
+         aU39r0FowLkNzWa7zPITxmTO47anZCVnRwdI4LAxfuXwnYkcF91V2sPY7RgpcKg0RrVi
+         u6TA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMYpmBZ6tS19HodDEZnGseI3Hj++IBLnhOL0SCNaGeokAc+qeGGHxmC8fsztE8q4y+VfKw1m5QdU0TBvXn7pI=@vger.kernel.org, AJvYcCVzzjCI1jFSLdlIZUrIHYbAzWRY9CrxQFeGLgYPL6+gK2+dXqQ+Tb0z+yM1Ml/2yIL0YbZReIqwYahHPAo=@vger.kernel.org, AJvYcCX4z1i9mDeKgT/ECgKji/RH85W9DPHtXWic4Up3SGFqmzJ6tADOybwLMZNBsbl5zB0gw/a+b9wbe1o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwA3KnFRfq2qLB2GhP1qyuuHRt06DaSu1QW3gQMltXeb3MAys3F
+	Pz4/vI2t1Xl0W48AOnErbCNfw/F9NfsHUTjyzVaFo/W846rDEA/ZP7p2rDeL5FMy7CqlJafVOUS
+	nK3lnie4kmtHQyTFBlIPK48IxF1ko/fw=
+X-Gm-Gg: ASbGncsUxJ+bS99blCsMhmOHfs0l1FTZfpixRybTeRXUsn1kh1jUHAue0qvkTKxVYzb
+	Yxd2sT04emAye5I/saK959xinuaw37qghbwVQ/HDf9Qw3QbPA7iRprafNimTIw2v6xOmNatZlpx
+	XZn9aVe5qONRY88dsa5tjOED3nGYomVC9D3FDFCS2q3uNqTLRiuJ55wF+Rqih+Yn0LUfkQQbUMO
+	N9Nvb9MzRIC2B/BkZk=
+X-Google-Smtp-Source: AGHT+IFI0uNUbtO1EL18MgqcISBuZun5VUryvqrsQhtAKtldt6P/mlWmjlPr/GgmBjbnB7SvG/K7ChJXEi849ooHmqA=
+X-Received: by 2002:a17:90b:562c:b0:312:25dd:1c8a with SMTP id
+ 98e67ed59e1d1-31c9e6e8348mr11443694a91.2.1753102481364; Mon, 21 Jul 2025
+ 05:54:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 1/2] dt-bindings: dpll: Add clock ID property
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: netdev@vger.kernel.org, Vadim Fedorenko <vadim.fedorenko@linux.dev>,
- Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
- Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Prathosh Satish <Prathosh.Satish@microchip.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Michal Schmidt <mschmidt@redhat.com>, Petr Oros <poros@redhat.com>
-References: <20250717171100.2245998-1-ivecera@redhat.com>
- <20250717171100.2245998-2-ivecera@redhat.com>
- <5ff2bb3e-789e-4543-a951-e7f2c0cde80d@kernel.org>
- <6937b833-4f3b-46cc-84a6-d259c5dc842a@redhat.com>
- <20250721-lean-strong-sponge-7ab0be@kuoka>
-Content-Language: en-US
-From: Ivan Vecera <ivecera@redhat.com>
-In-Reply-To: <20250721-lean-strong-sponge-7ab0be@kuoka>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+References: <20250704-core-cstr-prepare-v1-0-a91524037783@gmail.com>
+ <20250704-core-cstr-prepare-v1-1-a91524037783@gmail.com> <20250721073717.i6hr4iesfupzvtwf@vireshk-i7>
+In-Reply-To: <20250721073717.i6hr4iesfupzvtwf@vireshk-i7>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 21 Jul 2025 14:54:29 +0200
+X-Gm-Features: Ac12FXy9X7WoYLkMFLbQ__okKUv8h09D5Y5ZLeDybojK9NFQlmOXBw1vbHf4mSI
+Message-ID: <CANiq72mZxcwDX2X3RfRpHzqkmU6GBVadKPLJYF03Hj14O2x4PA@mail.gmail.com>
+Subject: Re: [PATCH 1/6] rust: kernel: remove `fmt!`, fix clippy::uninlined-format-args
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Tamir Duberstein <tamird@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 21. 07. 25 11:23 dop., Krzysztof Kozlowski wrote:
-> On Fri, Jul 18, 2025 at 02:16:41PM +0200, Ivan Vecera wrote:
->> Hi Krzysztof,
->>
->> ...
->>
->> The clock-id property name may have been poorly chosen. This ID is used by
->> the DPLL subsystem during the registration of a DPLL channel, along with its
->> channel ID. A driver that provides DPLL functionality can compute this
->> clock-id from any unique chip information, such as a serial number.
->>
->> Currently, other drivers that implement DPLL functionality are network
->> drivers, and they generate the clock-id from one of their MAC addresses by
->> extending it to an EUI-64.
->>
->> A standalone DPLL device, like the zl3073x, could use a unique property such
->> as its serial number, but the zl3073x does not have one. This patch-set is
->> motivated by the need to support such devices by allowing the DPLL device ID
->> to be passed via the Device Tree (DT), which is similar to how NICs without
->> an assigned MAC address are handled.
-> 
-> You use words like "unique" and MAC, thus I fail to see how one fixed
-> string for all boards matches this. MACs are unique. Property value set
-> in DTS for all devices is not.
->> You also need to explain who assigns this value (MACs are assigned) or
-> if no one, then why you cannot use random? I also do not see how this
-> property solves this...  One person would set it to value "1", other to
-> "2" but third decide to reuse "1"? How do you solve it for all projects
-> in the upstream?
+On Mon, Jul 21, 2025 at 9:37=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.o=
+rg> wrote:
+>
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Some background: Any DPLL driver has to use a unique number during the
-DPLL device/channel registration. The number must be unique for the
-device across a clock domain (e.g., a single PTP network).
+Thanks Viresh -- I will add this one if I rebase, since Stephen
+already solved a conflict with it (I should have pinged earlier I
+guess, sorry; I thought you guys didn't Ack so far since it was
+trivial, but thanks to you both for them).
 
-NIC drivers that expose DPLL functionality usually use their MAC address
-to generate such a unique ID. A standalone DPLL driver does not have
-this option, as there are no NIC ports and therefore no MAC addresses.
-Such a driver can use any other source for the ID (e.g., the chip's
-serial number). Unfortunately, this is not the case for zl3073x-based
-hardware, as its current firmware revisions do not expose information
-that could be used to generate the clock ID (this may change in the
-future).
-
-There is no authority that assigns clock ID value ranges similarly to
-MAC addresses (OUIs, etc.), but as mentioned above, uniqueness is
-required across a single PTP network so duplicates outside this
-single network are not a problem.
-
-A randomly generated clock ID works, but the problem is that the value
-is different after each reboot. Yes, there is an option to override the
-clock ID using the devlink interface, but this also has to be done after
-every reboot or power-up.
-
-> All this must be clearly explained when you add new, generic property.
-
-Would it be acceptable to define a hardware-specific property, since
-only this hardware has this particular problem (the absence of a chip
-unique attribute)? I'm referring to a property like 'microchip,id' or
-'microchip,dpll-id' defined in microchip,zl30731.yaml.
-
-> Best regards,
-> Krzysztof
-
-Thanks,
-Ivan
-
+Cheers,
+Miguel
 
