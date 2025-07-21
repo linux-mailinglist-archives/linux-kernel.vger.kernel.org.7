@@ -1,124 +1,155 @@
-Return-Path: <linux-kernel+bounces-739662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE85BB0C952
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:15:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2AE4B0C94F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:15:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C940E4E75D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:14:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3A0A1AA6282
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD9CD2E1C5C;
-	Mon, 21 Jul 2025 17:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZWFF9F6I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DA92E172E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 837112E11B6;
 	Mon, 21 Jul 2025 17:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="TEfADhWT"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A092DC32B;
+	Mon, 21 Jul 2025 17:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753118100; cv=none; b=WOHpFIa+DJrpNweLnfllSvyvZUC4TlQ/tf3RKVvnL0n4WW7y0y6uLJzL2Pvbg1C75vBVXkPb6NlKF21qO67P0hxD9J+WAXi8/olNhic78JhpR7IFmUH0SfAfyj4XjYIrJXmAhEkgEc86Je2EYV92g3E8f3gCwO//07GWOX5M8/c=
+	t=1753118098; cv=none; b=eWfrnjrfpoqPe3FPqL5/2hPntTz+UJuDHRYvILGLyIfO1RAHbbjg3RYCJbIOPhjMYI6P9dPFO+Bhz6+GCQu5ZFJEeSGcoFdWl2qKUG/Y84afTsjGiIfJpBumtZrR+RLSrrlZZJYLfcMe0q1AVHjzhTnZb41kpg0tz/MuQWMdNbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753118100; c=relaxed/simple;
-	bh=c0l5eADL3DJiA5CLjuYvNt1KKuvoQU9z9pZBTTWVbtA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jS89go8m61UZk+3Rl3TT4R0PjhFyuDHB/1oxIt6beWyWoRTRDSh+7QVbWDy04sJNGrT/BVjPyyOU6qtJXyJGaWlJVu5r6Kw/ReVHtPps+jy2mHWb6nt61W0qh3MKe0yAlyJZVgCpTlb3CvtIp74KldwHTWZjjD2ytBxD6Bwmr7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZWFF9F6I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01D09C4CEED;
-	Mon, 21 Jul 2025 17:14:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753118099;
-	bh=c0l5eADL3DJiA5CLjuYvNt1KKuvoQU9z9pZBTTWVbtA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZWFF9F6IBAY5fFf2QnyIqqBC9pEYTodsSPjIt6odICY1lu7aiHBApakvbkoMmbuBJ
-	 Ctqo22Mxyi4b7Mb7bw4/F/Qd22n0Otz45sDtH1lCFRECJCr4PTjw21Q7Zgi+Nei1L1
-	 eJW0SXy4vZouNmcijmGUnRJEtkOC8sEGpXjrRZB3S9U34QIGbz0Bfwx/S7O792LNKv
-	 7urlFTyOczxy/uqyTik9fch0fb1xtgVeK2lwEV/xcLjms7ALF5az6YwWecPJNWm0GW
-	 zK63l93FlwLkjDCSSJuQG0MKMoNxxodrJsZlLVuF11nnSieQoQWaQeh4JM/kM5Lpuh
-	 wFJ0YPyEtz+nQ==
-Date: Mon, 21 Jul 2025 18:14:53 +0100
-From: Will Deacon <will@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Jack Thomson <jackabt.amazon@gmail.com>, mark.rutland@arm.com,
-	lpieralisi@kernel.org, sudeep.holla@arm.com, arnd@arndb.de,
-	wei.liu@kernel.org, romank@linux.microsoft.com,
-	mhklinux@outlook.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, oliver.upton@linux.dev,
-	kvmarm@lists.linux.dev, roypat@amazon.com,
-	Jack Thomson <jackabt@amazon.com>
-Subject: Re: [PATCH] arm64: kvm, smccc: Fix vendor uuid
-Message-ID: <aH51jfOmPfF3XEke@willie-the-truck>
-References: <20250721130558.50823-1-jackabt.amazon@gmail.com>
- <86jz418rh3.wl-maz@kernel.org>
+	s=arc-20240116; t=1753118098; c=relaxed/simple;
+	bh=VzaP6plla0IzIB8La71/m58RDyiFEZH/its7k6NFmow=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jgU62wlRBecFAgIAEC1aWFtUsrASX+xW35AY+uYwEgPcF8paLLzkTi1V8WvKvbKONX/Au3gTVxynox5ra31wpbXBNltD4sjgH7Z/3awl915nOl4Q22mvrUVNB0/fJNEs7UTn/6hOpC1ORaEHHmsYOIC0iu6k/u2RMkGcQ65Ozs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=TEfADhWT; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.184.60] (unknown [131.107.160.188])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 9BDB621175B2;
+	Mon, 21 Jul 2025 10:14:56 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9BDB621175B2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1753118096;
+	bh=nywGOgRNOK1+NZYE9n1C5lkTaY7eYmFhzUr5fR8qd0o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TEfADhWTSj5VW8U4ZOVvbnid0L0gJlkyg34sANdF9OUlqrTb0tfxyMPrtubbg+09a
+	 O3YwsvjalIDCgoY0S7vHT39in9CPm4mYN+IF0dmqNDvOQvSFyoB8MoDz/KEr2+Ekqd
+	 DGUx6nXlHzqyDDlA20d+TqjLOpcAW6etgGS8ItO4=
+Message-ID: <5264d73d-ae1b-4173-b304-b92e18a3befb@linux.microsoft.com>
+Date: Mon, 21 Jul 2025 10:14:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86jz418rh3.wl-maz@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/7] hyperv: Introduce new way to manage hypercall args
+To: Michael Kelley <mhklinux@outlook.com>,
+ Easwar Hariharan <eahariha@linux.microsoft.com>,
+ Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+ Naman Jain <namjain@linux.microsoft.com>
+Cc: "kys@microsoft.com" <kys@microsoft.com>,
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>,
+ "decui@microsoft.com" <decui@microsoft.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "hpa@zytor.com" <hpa@zytor.com>,
+ "lpieralisi@kernel.org" <lpieralisi@kernel.org>, "kw@linux.com"
+ <kw@linux.com>, "mani@kernel.org" <mani@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>,
+ "bhelgaas@google.com" <bhelgaas@google.com>, "arnd@arndb.de"
+ <arnd@arndb.de>, "x86@kernel.org" <x86@kernel.org>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+References: <20250718045545.517620-1-mhklinux@outlook.com>
+ <c5d4d351-a7ff-4762-8bb3-61554d4f9731@linux.microsoft.com>
+ <SN6PR02MB41570625E2F061C5E494C7F4D450A@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <43f8be57-a330-455f-8f9e-f5718ff1aa1a@linux.microsoft.com>
+ <ed1e8508-7085-4620-af25-3a8795c1afe8@linux.microsoft.com>
+ <SN6PR02MB4157A2A90910918AE9B6327BD45DA@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Language: en-US
+From: Roman Kisel <romank@linux.microsoft.com>
+In-Reply-To: <SN6PR02MB4157A2A90910918AE9B6327BD45DA@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 21, 2025 at 04:59:36PM +0100, Marc Zyngier wrote:
-> [+Will]
-> 
-> On Mon, 21 Jul 2025 14:05:58 +0100,
-> Jack Thomson <jackabt.amazon@gmail.com> wrote:
-> > 
-> > From: Jack Thomson <jackabt@amazon.com>
-> > 
-> > Commit 13423063c7cb ("arm64: kvm, smccc: Introduce and use API for
-> > getting hypervisor UUID") replaced the explicit register constants
-> > with the UUID_INIT macro. However, there is an endian issue, meaning
-> > the UUID generated and used in the handshake didn't match UUID prior to
-> > the commit.
-> > 
-> > The change in UUID causes the SMCCC vendor handshake to fail with older
-> > guest kernels, meaning devices such as PTP were not available in the
-> > guest.
-> > 
-> > This patch updates the parameters to the macro to generate a UUID which
-> > matches the previous value, and re-establish backwards compatibility
-> > with older guest kernels.
-> > 
-> > Fixes: 13423063c7cb ("arm64: kvm, smccc: Introduce and use API for getting hypervisor UUID")
-> > getting hypervisor UUID")
-> > Signed-off-by: Jack Thomson <jackabt@amazon.com>
-> > ---
-> >  include/linux/arm-smccc.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/include/linux/arm-smccc.h b/include/linux/arm-smccc.h
-> > index 784ebe4607a4..50b47eba7d01 100644
-> > --- a/include/linux/arm-smccc.h
-> > +++ b/include/linux/arm-smccc.h
-> > @@ -113,7 +113,7 @@
-> >  
-> >  /* KVM UID value: 28b46fb6-2ec5-11e9-a9ca-4b564d003a74 */
-> >  #define ARM_SMCCC_VENDOR_HYP_UID_KVM UUID_INIT(\
-> > -	0xb66fb428, 0xc52e, 0xe911, \
-> > +	0x28b46fb6, 0x2ec5, 0x11e9, \
-> >  	0xa9, 0xca, 0x4b, 0x56, \
-> >  	0x4d, 0x00, 0x3a, 0x74)
-> >  
-> > 
-> 
-> Irk. This is remarkably embarrassing, and needs to be addressed ASAP,
-> before 6.16 ships. FWIW, I've just posted a quickly whipped selftest
-> that shows the problem[1].
-> 
-> Will, is there a chance you can pick this up and ferry it to Linus?
-> If you do, please add:
-> 
-> Reviewed-by: Marc Zyngier <maz@kernel.org>
-> Tested-by: Marc Zyngier <maz@kernel.org>
 
-Sure, I'll grab it. Thanks!
 
-Will
+On 7/20/2025 7:19 PM, Michael Kelley wrote:
+> From: Roman Kisel <romank@linux.microsoft.com> Sent: Friday, July 18, 2025 6:16 PM
+
+[...]
+
+> 
+> Thanks for any testing you can do on standalone test machines without
+> needing test clusters in Azure. It will be hard to get test coverage on
+> *every* hypercall call site that is modified by the patch set, but doing
+> basic smoke testing of running in the root partition and in VTL2 will
+> cover more than I can cover running in a VTL0 guest on my laptop or
+> in Azure. Fortunately, the changes overall in this patch set are pretty
+> straightforward, and my testing of VTL0 guests didn’t turn up any bugs.
+> I'm hoping that additional smoke testing is more about gaining
+> confidence than finding actual bugs.  (Famous last words ....)
+> 
+
+Thank you a million times for pushing the bar higher and supporting the
+code :)
+
+>> VTL2 currently uses a limited number hypercalls that are set as enabled
+>> in the OpenVMM code (`set_allowed_hypercalls`). You could take a look
+>> and conclude if these hypercalls require any adjustments in the patches.
+> 
+> My patch set already covers all the hypercall call sites that originate in
+> VTL2 code. Again, a basic smoke test should help gain confidence, or
+> show that any confidence is misplaced :-)
+> 
+
+Very nice, should be smooth sailing then :)
+
+>> My opinion has been to have two pages (input and output ones). As the
+>> new code introduces just one page I do feel a bit apprehensive, got no
+>> hard evidence that this is a bad approach though. If we tweak the code
+>> to have 2 pages, perhaps there would be no need to run a full-blown
+>> validation, and even smoke tests will suffice?
+> 
+> My view is that the 1 page vs. 2 pages is much less of a risk than just
+> some coding error in introducing the new interfaces. The 1 page vs.
+> 2 pages should only affect the batch size for rep hypercalls, and the
+> existing code already handles different batch sizes. So I'm not as
+> concerned about that risk. Wei Liu in the maintainer here, so I'll
+> certainly follow his judgment and guidance on what is needed to
+> be confident in this patch set.
+> 
+
+I agree with your risk assessment. Perhaps I am playing too much of
+a spec lawyer yet it states
+
+1) Input and output area may not intersect,
+2) Either can be up to 4KiB of size.
+
+Hence, one (be that for feature development or one-off debugging) would
+be within their right to implement a hypercall that accepts 4KiB of
+data and returns 4KiB of data. My understanding that after this patch,
+that won't work out-of-the-box, and would need some fixing in the
+kernel.
+
+Perhaps, we could have a KConfig option to let the user choose if they
+need 2 pages instead of making the user figure out what needs to be
+fixed in the kernel?
+
+> Michael
+
+-- 
+Thank you,
+Roman
+
 
