@@ -1,524 +1,408 @@
-Return-Path: <linux-kernel+bounces-738965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47CC4B0BFB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:09:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1740FB0BFBB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:11:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CDB33B1F9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:09:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CED4167C41
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:11:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A4B288C0F;
-	Mon, 21 Jul 2025 09:09:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B401288C0B;
+	Mon, 21 Jul 2025 09:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eWPcq+ZY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Kb4NAwzo";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Kb4NAwzo"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013033.outbound.protection.outlook.com [40.107.159.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A32286D64
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 09:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753088991; cv=none; b=Pf1CcPPbyuzbskyAmWsPfwzCA8fp+GVQb21iEFpyBrNmN5uGUWbTUD0AC1B6KQQj5qTZbFSX+his8lp1iZHBoI5T2KMyGqgYnR2sHu0xv2FgMORRDOQkRcYhZsnMohIMtuILLTPe7QhtgKYxloLM5Inw0NlVyVGcDNjJmeWsgEE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753088991; c=relaxed/simple;
-	bh=Wa3FNnx2OnNWPflO9+BmCciJrxToLZxmHGGLzyuMWzg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KkAtWBvFfDgzJKLTPdrMCoBwPONKtsiKhIhiEdrjIy5a5SYsVwiapiQSAx3moMdmUTAHhZwWMphRry4IbttPz9E8zklaMI4aIB0H5cGD7hHgmt3rqu9I9B4LQA7ak9JBQkIofZSvyyi0DTFFHlFFqgT2oV6J/gAqWLRGQ5do7pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eWPcq+ZY; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753088988;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=7u6caywsLvYLuVxkpsdUT2qNKGKBBqyOD5l/+WUF5hI=;
-	b=eWPcq+ZY7qmSVJAcQvy65uhjFr/3BgiF3pqCpFrYiEZ72u6TjsQOiIGB8wgh1KnIYlOw4C
-	KXbSonPyyNKhtSypglJnuTLs0pUbXVV56hGrTJvNxDdf7Vw2nx95r32N3/NMNsT1VEMMhc
-	RMS2GALR2FWPD+qt6srSO463eU35z04=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-442-kAk5KmmAN9KwNFNx4MnHvA-1; Mon, 21 Jul 2025 05:09:46 -0400
-X-MC-Unique: kAk5KmmAN9KwNFNx4MnHvA-1
-X-Mimecast-MFC-AGG-ID: kAk5KmmAN9KwNFNx4MnHvA_1753088985
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-455f79a2a16so34281985e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 02:09:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753088985; x=1753693785;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7u6caywsLvYLuVxkpsdUT2qNKGKBBqyOD5l/+WUF5hI=;
-        b=aMbfnI8jOGZMlS9a0kBAOYHEc4DEBat8ZstyfoSN5pHroRM3LjBBNfAul+qgguycyY
-         /fCfuksUK4cTJWK1hpFP8+Gu7fvjESDE0nCwDiOWVuU7/QdDyzm6u6uMBdEnIYOEb3Vb
-         +hbWc6pemGBs/zPOm4KWyRPyb9Vq9T8HXX8/xzL1Nbkv7B7Po3QF8aKm3kjqJJP3srba
-         RZS8NHE5Rt1cUM4p/i40IpqnSw7OpV9ysz9ToSPB+32+Pocvc9VtE9Ex4M/AZDJtv1k3
-         RWrlF1UeZIz+hlxewSi/Cl7n/DAY+xbw24N8l489tCH3R0dvL4O/HKFe53y0W2fl1QkE
-         4qLw==
-X-Gm-Message-State: AOJu0YxdOQSR7fX42nUbj7+3BU8l0K8NZ9n4fDq288bcgHXHRk5cQMlO
-	Q3RqPMrhJbScyc9IDiatE/0hJ/Zm52It57NqjnvuBbMv56ors1ae6obPmBaOi+d20f0DdnLK4aa
-	R7Ae28Od3jzENtX4dUjheVS8JCtGvogm3zX0zXiUNwGd2UjK+Vq+QsPF48sFiAHMUa1f9obCO1W
-	ELQ/mGIZbjrI8H+QqLQmGb6imm25R604hFNoT0I8q5dkKeShwb
-X-Gm-Gg: ASbGncvIaaoqKmjmcjIELkuAgcqPlr6AnUSpt+xe/iZVmNGobEjIlW5L9KYbeS8w9Sh
-	YCtZ3t5P3JuyHnPyFTb4t5xnavngqPHembWPzU+1DkYq49YLAzEAUP2PmQgCyvsEXQ50WGcB3uF
-	hXvUvJAUujwdRfSWwevvCRvIW3jjeD/XMco0zc42At97lDPFIqokOcMZCYDuyyDljHHPAJ0YufY
-	hYMOxdbxwixJ3A+Hdnxa6AgN7vB4dtQ0oEqT7sfu0bhMggfx7NH4aPiLKxtdt7jE4yamzajP9tr
-	b+l0amyUZYfTRm6RqvwTPtke7uy2zZWM8njJt399gK+HY5/gH7xMEbwHXXgHJi6B/GmEwEvuO6C
-	vusJb927naDf+Okho7q76Tuc=
-X-Received: by 2002:a05:600c:310a:b0:456:58e:318e with SMTP id 5b1f17b1804b1-4562e29c660mr198562175e9.30.1753088985091;
-        Mon, 21 Jul 2025 02:09:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGe98w4qflWkYM9Zg6Fz1StAofoZoYSsF8y704An1WPPyMZMujFAEA1iHOUaqnCNO3tWo5ofg==
-X-Received: by 2002:a05:600c:310a:b0:456:58e:318e with SMTP id 5b1f17b1804b1-4562e29c660mr198561375e9.30.1753088984354;
-        Mon, 21 Jul 2025 02:09:44 -0700 (PDT)
-Received: from localhost (p200300d82f4cdf00a9f5b75b033ca17f.dip0.t-ipconnect.de. [2003:d8:2f4c:df00:a9f5:b75b:33c:a17f])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b61ca4d807sm9898705f8f.73.2025.07.21.02.09.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Jul 2025 02:09:43 -0700 (PDT)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	David Hildenbrand <david@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>,
-	Barry Song <baohua@kernel.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Usama Arif <usamaarif642@gmail.com>,
-	SeongJae Park <sj@kernel.org>,
-	Jann Horn <jannh@google.com>,
-	Yafang Shao <laoar.shao@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH POC] prctl: extend PR_SET_THP_DISABLE to optionally exclude VM_HUGEPAGE
-Date: Mon, 21 Jul 2025 11:09:42 +0200
-Message-ID: <20250721090942.274650-1-david@redhat.com>
-X-Mailer: git-send-email 2.50.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1CB01798F
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 09:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.33
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753089070; cv=fail; b=hMRq0VBO9ED1vTzZ+0O3OviAE5tcZzZ6tFAvkrE9yCN5GDi2y9vKP4AMyncfWYgYnKJCn3hPYXBIaO0reFevW50MEwjlFV7gyjHkdmqu8QQiOk0hIA6/MyLbmpdT42hyfqHBTbMcqeVQGMI3XKcOlvohgmgWpz13PYNDNNgEAy0=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753089070; c=relaxed/simple;
+	bh=s7GNO33XaegRWuU/cAuSGLoC2kAjJZQ/cRS2ZBps7m4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=JJs+Qdg1+/Sp0Ynz2Anls8p9O/D5wSo/jTIxbRRP11tLNaAfi5vNoCV8iA/8P+v3/iVuET9jCJqsIQjt3JDRKRD0iP0BbmwqdFzWnBeDAdEIHwzmguZyg/hmacdb0oPrVs7hO13xJDTKGfNnv7BsQB1q0yQLfz/5+jgcDgdI5dA=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Kb4NAwzo; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Kb4NAwzo; arc=fail smtp.client-ip=40.107.159.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=UDt5giv5fOSdllVeaUU0hh1GJaNJma7NGDOnHPNXxQTCxZNwPBC6ZhgxrWhcpvu62K2uID+xUpGjh/quQ6/n7XkWEnqwp5iZqjs4kaf9yX6MQ/J5347knp8aIg+YUIulIlmfKYsFs+H46K7K19qjKED3VPTGxzZB1UMWQkIL7fHIhwJjdYQLzp9YbfyX7uFv/kJ56YeCUeCIlR0NTTHLbpjAZI/5OLolAJAVXg0kGoGQ3motDqWShomyWGFGv++i+0XdMhfZaYSG8qNxBgUE/xx8tWIKsyFEMGA1kDbDfJpkw9HcRoOZgSef839BBalJdSJO3jIfUAAszuU65fnQiA==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RpaTGxFwDEmI31LxOtYb9zZNMfBOU+kPgZQzdgj09F0=;
+ b=wIsk6qrOIia8kBVawOfiov+cGNNX0Um+9lUnNwJ9WzV7d1VhwtTY+2VwCyISrWfwphG3fjrMCqEOu1Ox5hEgnZg06mHkBLsYAVBiqbrdXovC9zBlS9Qj5l0UQmHfVdZlo/iYdtRy3i54xNQJJiRnQGEXS8KZI65H2ErO7pGMDhJjW3Mel+qWeD6i+DKcXnr8MxIZJUUXaEM7L4gBGFjv3qJqueIxAXgNTt1Um4uKA1CN2j3FKb8GcHaVpkqaEN3ZZ0scWpe3WYiBLV2aXSaZHDrxsmTmJXdUGdS3HhmtkJ3htgDBfPg3ICvv2q319v9DVPut/2FXdY6URYEu7PULYA==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 4.158.2.129) smtp.rcpttodomain=collabora.com smtp.mailfrom=arm.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
+ dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RpaTGxFwDEmI31LxOtYb9zZNMfBOU+kPgZQzdgj09F0=;
+ b=Kb4NAwzoGwjwrbkCBo/HolNUlqEBnQsce/N04VMl7G+DFOOB9EdMFQrbKsbHtNDp3GZMcEqs8f0iCeuZE0lHbdxP8CJzsHNEXjmdSL5xL/p+3PLDVlidvOHqhwTwjp7pkjPHB9oha3n30GM7Juq8gVzMu9G80fu01MWg6f/11tA=
+Received: from DUZPR01CA0066.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:3c2::14) by AS4PR08MB8144.eurprd08.prod.outlook.com
+ (2603:10a6:20b:58f::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Mon, 21 Jul
+ 2025 09:11:01 +0000
+Received: from DB5PEPF00014B93.eurprd02.prod.outlook.com
+ (2603:10a6:10:3c2:cafe::58) by DUZPR01CA0066.outlook.office365.com
+ (2603:10a6:10:3c2::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.29 via Frontend Transport; Mon,
+ 21 Jul 2025 09:11:27 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
+ client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
+Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
+ DB5PEPF00014B93.mail.protection.outlook.com (10.167.8.231) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8964.20
+ via Frontend Transport; Mon, 21 Jul 2025 09:11:01 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rncNlvGWAoIEbWZE8AxH0VQ7YUPxL8CYuLTuIpTXR8gCz2TYQaLulpN3ta2QianCjZ1/QlCpA0aHAJyFUulRb4TRCsqs/rTcGYEkYMKlDErhjVI0QtANCI6ifOH4EAC/5B72NWlQUqMGZ3NPNZerb9DKO1muK0KAfI/6q/WkOOzXeMd1HAoQZB/4UAkRscsSe6/6FA/8zk2YM/LuYTJnyAKUAH5DYIscyz5UoqmsDCl7XXi64VkGLMq8vrG+j7sC7rEoAebmFvj/ihiyB5GMFYU53Nn/Db/XkcSgMPANwhNa/0Oj8Nd9HkCza0v7Cm1AY2HaumKqIdqbY3VWkga8tQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RpaTGxFwDEmI31LxOtYb9zZNMfBOU+kPgZQzdgj09F0=;
+ b=ezcaP0y+1M6syNuRj4J2tkNmQ6vb+B9KlddMqHGiRnBAdfMK8Z/Oo3krWjjcU3XaX51SAX4x/ZfV4jgkqld/rSK/c1pJ7ig/MJIJlxG7p1tbR0GUD4aE1DUXKIqTpIfcIdRYpfYmo7i+VYej+Ow3aRK3yGlFqUUvz1IFe3X9/4V+BTsULIIlZPDru6jKCoGQmQ0Lx8IaT73De2Ya6dP8f6UIOtNmLvrK2xPPv09Lu+b99O2/Dbp8hJFoaFWy6R8H2XLPXY7BE7Po0DEpFax+MefJ2d3uHGUSt8qBPKpqgBupBO+8kCWTG8jjc2tV3h5EWVoHp/jz/P3qc8f2SE6+Jg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RpaTGxFwDEmI31LxOtYb9zZNMfBOU+kPgZQzdgj09F0=;
+ b=Kb4NAwzoGwjwrbkCBo/HolNUlqEBnQsce/N04VMl7G+DFOOB9EdMFQrbKsbHtNDp3GZMcEqs8f0iCeuZE0lHbdxP8CJzsHNEXjmdSL5xL/p+3PLDVlidvOHqhwTwjp7pkjPHB9oha3n30GM7Juq8gVzMu9G80fu01MWg6f/11tA=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from AM9PR08MB6820.eurprd08.prod.outlook.com (2603:10a6:20b:30f::8)
+ by AS8PR08MB9646.eurprd08.prod.outlook.com (2603:10a6:20b:619::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.25; Mon, 21 Jul
+ 2025 09:10:28 +0000
+Received: from AM9PR08MB6820.eurprd08.prod.outlook.com
+ ([fe80::65e1:f4ac:8b74:fea0]) by AM9PR08MB6820.eurprd08.prod.outlook.com
+ ([fe80::65e1:f4ac:8b74:fea0%4]) with mapi id 15.20.8943.024; Mon, 21 Jul 2025
+ 09:10:27 +0000
+Message-ID: <569a368a-b8ae-4c30-a9b8-038b7b97e0e6@arm.com>
+Date: Mon, 21 Jul 2025 10:10:26 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/7] drm/panthor: Add panthor perf initialization and
+ termination
+Content-Language: en-GB
+To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>,
+ Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <cover.1747148172.git.lukas.zapolskas@arm.com>
+ <c53f9e012e148329a437013a812fc688e797a26b.1747148172.git.lukas.zapolskas@arm.com>
+ <i2hdrxnd4whzpfzjsmx4mmcvghqu5t6rzki2tnsrarxewnr76j@clmkf6zyiy4p>
+From: Lukas Zapolskas <lukas.zapolskas@arm.com>
+In-Reply-To: <i2hdrxnd4whzpfzjsmx4mmcvghqu5t6rzki2tnsrarxewnr76j@clmkf6zyiy4p>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO4P123CA0336.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:18c::17) To AM9PR08MB6820.eurprd08.prod.outlook.com
+ (2603:10a6:20b:30f::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-TrafficTypeDiagnostic:
+	AM9PR08MB6820:EE_|AS8PR08MB9646:EE_|DB5PEPF00014B93:EE_|AS4PR08MB8144:EE_
+X-MS-Office365-Filtering-Correlation-Id: 30281c84-4061-4ac2-adf1-08ddc8368353
+X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr,ExtAddr
+x-checkrecipientrouted: true
+NoDisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?utf-8?B?MUIxNWYvZkM0L1RMdTBFaS9WSEt2L3VhUmorbEdZNUw4bUtSb3lZaEE5SHdF?=
+ =?utf-8?B?QU54bmtKa1JHOHM1VXA5U0lENXFOcFYrVlBwU0hoamlGT3JqMFN1NW9ZRmxF?=
+ =?utf-8?B?N0pESG11a0MrSERjTkE2Qmgzcm5ERWlaa2FzaElnRGdEcWR0YXRsTkV3Q1p3?=
+ =?utf-8?B?anhGU3M2THRxNzhNQmxvTlFoQ0xINjNUYy9PdDhPdlExUXFhc1BCWEtldWgz?=
+ =?utf-8?B?YUdjZm1UNjl6N0NXYjRRNk1wckl4ejlSWk9xOHEwY05VTHBzYnJWbE9obC8x?=
+ =?utf-8?B?Rms2N3BYVVUwdEZMV01vTFBFT0pzdEdIckU4ekdPZTc5YjdRbDVPbUJ0RlhY?=
+ =?utf-8?B?bUhIcG12Tk5sRzB0ZWJhZjA2Q1FPVXBHMTBZdmhEaGdBcGtsa1NqMUl3eEdZ?=
+ =?utf-8?B?VytSVXhrR083RFo0dlVuK3FYL2hVUUc5K3UwamRPQnBwWEhJRWtpV3NCYTl5?=
+ =?utf-8?B?dWVZR1gwY0hmZzBDUS8xekVKSUNzZW8yT2hwTkFKTjYrU3ExaGU1bGJHL1g3?=
+ =?utf-8?B?ck40Z0p4dy9ueDhKeWxhdC9NOXhlSFZ2WUJJMG00Q0kzRHhwdkFQaFVRYTlw?=
+ =?utf-8?B?dVhtMUh3RG9ERHlVSXIwTm16MEZ5STR1MUhRNzk1L3A2dHRGSDk4RGZFRjQ4?=
+ =?utf-8?B?dG9OcGxNZTV3Q25EKzUvWm8xUkNEM2hlamVKVnhET1d6WkVIZklpYlEvMDJ1?=
+ =?utf-8?B?UEdYSmJ1Q09ZMUxwc1d3aG14NjJ1Z0lNUDdJTk5tTFhBNkJJam0zSW85dGsw?=
+ =?utf-8?B?QUdLdWs1MlZTbmtuY0V2eDVnb21RZ0lRMFRHdkY1UFIvRHA2cHNLbVRTWUhC?=
+ =?utf-8?B?SnRMbWp2ZkhzMm5ZdzZHckhNNmhmUXh5cjA4UGVkV0xVRkV6WjBucDZXTG1P?=
+ =?utf-8?B?OEtlMGd0b29PWWN2Uys1bnUwQUVwZWdOK01yNzRaQXdTaDJFcWp2WVducGt3?=
+ =?utf-8?B?cmlQMkhjWjl5N1h0S0VZVTZFZTBtWVVhWTE2dDF3ejM0eDVoWE5pN3dlVVVL?=
+ =?utf-8?B?ZnM4dDNjNFBXR3lyaGVaSncwOWY5T2pQR2NqOUNxUFRmMEtMVHFvV2VYV3F1?=
+ =?utf-8?B?UlFQUnREVTgzMkFtQlovcW1zN2tLNldrSlBwNFZSV2plNEgzYllvNmFvQjFU?=
+ =?utf-8?B?elloYS9hR21FWmxQdzNnMmV5K2s2bDJBQXlhbitId1NqNTFiVElXbmlYVmFk?=
+ =?utf-8?B?RkJIMmhYbnNObXE3UkEzM3dFc0V3UzdyeXVDTkZJNDNxQUhYVGFFZUltak9u?=
+ =?utf-8?B?VEtwM0lHaHhDckwwVlRrQkhqZnZ2NzlMVFpGL3VMWGg5Sjk0YXNoaVFOeHNj?=
+ =?utf-8?B?TXdYbzFQM3BnbDd5YVBJWTZWQ29BMkZLcWdaMzg5VUdZTk9hV0o3RnN6dnFP?=
+ =?utf-8?B?RjhISXhLZzNtSy9oazFUWkkxTXRPbCt3blYrZWs1VVl2RUxOTWpadVZUV3VZ?=
+ =?utf-8?B?RFVXanVWQ21GRThwOU9PWjZsNExENFphTjB2akdva1l0N2wzZ25wekM4cTEv?=
+ =?utf-8?B?TlJJVVhiTjR5WUIyaHJlTkpZQWk0YWUyN3crYVFpS0xnVys1R2FaNk1qUjlC?=
+ =?utf-8?B?NVJkQmhCMytDOUtqdTFmQm82RG93VXU3d1daNGpkQitOaUJjMUZBMGdpVVk1?=
+ =?utf-8?B?bVlZckwxWWE0azRWQlB0UHQ5cmc0dUV0UmVTWlB3NU92Y2w3VTdVOXVjanMr?=
+ =?utf-8?B?eitXV3JackQwb3VndkVvM3A1UVdvS3hQNjRMNjBvUWluNEhiTWIrQ25DZTl4?=
+ =?utf-8?B?N1RLaEJseHU5WldkcEt6SlIxZzlSb2hZZGduTXozbjhCR1VleTFjRDZiVVV3?=
+ =?utf-8?B?aFNNZUh6eVdpellzNU9CUndmc3ZYZmhZNktybUVrTGVmbWZNL2ZvcXJOc3Qr?=
+ =?utf-8?B?WEU2a2puRHlhd1NMMmhicEdlc2tiZTdPeDlWRDhxZElKaHFyblhHa1N1V2pi?=
+ =?utf-8?Q?Q3spXH02PEk=3D?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR08MB6820.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB9646
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ DB5PEPF00014B93.eurprd02.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	691bf2bb-649f-47d6-6dbe-08ddc8366ec6
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|35042699022|1800799024|36860700013|14060799003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NDRqalZTNzF3Ti9LeEpzZ3ZxZElWcUZCQzVlSnptQUtHdXdUNGkrbVAxOHZp?=
+ =?utf-8?B?OFNyRENEQ1JzZUVTQW8rcEdVNm43Nm41MGV5cmx2ekNUYm1BQWQwMkNSUlpt?=
+ =?utf-8?B?VlVIKzh0dWI1dzUybzh4K0lYbjFxZkVpMzAxVXIydXFtL3BLZXFocjBIcUYz?=
+ =?utf-8?B?NFdiZ0VxcmFyUm5iL3ZLREptanhxY2RwYlBZOWRVeGYzN3lMN05BMGRIUFA4?=
+ =?utf-8?B?eE9qUmlRZFZuRTA2ZHdzYm55bnc0R1NNVFB5dkswN0VwUGhyVUpRTUp1eEVN?=
+ =?utf-8?B?cHJ5bXpYK0dBOUhDeUpUUmRQNHVtWFNoaXVBVHptK2J3YnZnM1NNZ0FMZG9R?=
+ =?utf-8?B?QVE2SjdkQ3cwam10YS9HS0dOdTFQVEQ3WEtaeVdjZ1FtVXhFTnl5Vm9IVkhs?=
+ =?utf-8?B?MHU3MmNYNE5mK0VNUFJvTU1PMEozTm1uWGpEcUJKSGRjNDQrZS9GMVJOQ21s?=
+ =?utf-8?B?YitNa1FhMU1TYS9mQ2tmN3NlQ01GbnJIcms4bmk2SmlkVjQwdk9TaWRwR2Rn?=
+ =?utf-8?B?YS9RTVNEVWZXRUg4aUFSc0p5V0puMkdqUUtraDRHREQ0MlVMOWdDWVBvblFI?=
+ =?utf-8?B?NHd1WFBxSHNyT2tWQkRzZzhCWm5tY1F6RU9KUlc2cnNZK2xsSFE3eWw2dTZx?=
+ =?utf-8?B?WkNKYzhHUDUrb1hKc2ljNkxyb2NMTlJOdTExbnBUdG1LSGR1a2U2M05Qalhu?=
+ =?utf-8?B?cTB3cnJnY243SDQ3K3VMVWF3dEJNVDU0UmMrSHQzdzBiN0dzS3JrOFlrZzBT?=
+ =?utf-8?B?WDNvYlpvd3VxWjk2UHg2Qzk3OVNnQ2hOdWVObjVmWFFFNWRLZnhpUFlnMHhJ?=
+ =?utf-8?B?YkgyUE4vZXNhOVVIZXRHLzR5elBKSjR0amFVdjNVMXhBVlJaNjBEeFVCczcw?=
+ =?utf-8?B?TjFHQlcxY3c3QWFiVjdRYXN4ZVNKeGxzTzgrS2F5b2hIRll1WHphNThjbmRs?=
+ =?utf-8?B?TkEwVEZlREdMTS84MVp0cDlicHpuY0s4LzVScUM5SFhKZkJuckRtTzJ3TFhG?=
+ =?utf-8?B?cnBKTEdTOUEveDFXNGZtaUlGR28vbmNFdGVuK1pRY2JOWkc4L3FjSklkM2to?=
+ =?utf-8?B?Z0JJNUZNbzRqS1YrWEgra0pZbDJoTU4wdEQwU3BGY2hlNmNYL3RKTXlUa25E?=
+ =?utf-8?B?UW9FaWFKM2daZWlNUC9IOE5uY0xzUFo2aElwd25LTnBycmJCUyt6YldjZEJk?=
+ =?utf-8?B?ZGNQUDNZNmg4c1RsVkhpdFczZzNnbVZ0WklXUTZMYlpqT2NkdW4rVlBERWxp?=
+ =?utf-8?B?cVZWWWpaVDdiYndSdXZ5d1NzY2lRSE1XcCtpYmNUWjY1VE9XWm5NVDFBWkpB?=
+ =?utf-8?B?UFlWaTZCN0JDd0o2S1VNNzlrMUJ5anI3UkdHaG5vZ2YyLzF1NVFCSnNPVVY4?=
+ =?utf-8?B?MVlBQUNCYm90RmoxM1VrNWFCK21uRjd2eStOZ2pkdjRyN1d2MTl4djR4dzF5?=
+ =?utf-8?B?akdMbENFTG5nb3AwRExyT1RaYVZSa1pyUzZ0aGlNS3lZdVNHTUVxVnkwajBF?=
+ =?utf-8?B?QktHYlR5VG5mU21UZFhab1FFeHY4em5PT3ZOeGw5ZTkwV056VmFnYVpnQjFk?=
+ =?utf-8?B?dWZPZWEvdDIrYktWamQ3N3laUGtjNWwxOGtrK2JPc2xoaFByRk1qcjFiYmRk?=
+ =?utf-8?B?bDF3eERwcTdpV0FqK3IxK2VmWEl5dmgvdzdVUUt4YlBzbTUrY2JWVDRtMTc4?=
+ =?utf-8?B?ZGQyZXVGdjVVMVRDV1RleEY5SG51cTFsRU4vb1pmMDZQWHl2TlUweFBjeDNl?=
+ =?utf-8?B?SktITGRqQnA4alBLNmt6WTJGQ3ZpMGtUNzZHT3AvczdYSUVhWEpBcVFGS2pV?=
+ =?utf-8?B?ZE5vR2dyQVI4NnpjQ3dKcytSQzNxT204NnMrWGM4NzAyQTRSTGdBTlgrM0Zy?=
+ =?utf-8?B?UWNCMk02SklybUhhVXB5c2JwS0xacHdvTVdROUN6bTFOeEhGbVh0ZUZCbDhw?=
+ =?utf-8?B?QVBja0sxVHYzMzdYQVZQWnZRQnU1Z3JiVmpDeGJRWXVDUThHTmMzVjZBNWNP?=
+ =?utf-8?B?cDZUVVhIdzR3V3diaXF5WDFMYXppcHFjYmQ1Yll5YmFwSzhWeTE4WkROM0VX?=
+ =?utf-8?Q?qSjnx3?=
+X-Forefront-Antispam-Report:
+	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(35042699022)(1800799024)(36860700013)(14060799003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2025 09:11:01.2426
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 30281c84-4061-4ac2-adf1-08ddc8368353
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB5PEPF00014B93.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR08MB8144
 
-People want to make use of more THPs, for example, moving from
-THP=never to THP=madvise, or from THP=madvise to THP=never.
 
-While this is great news for every THP desperately waiting to get
-allocated out there, apparently there are some workloads that require a
-bit of care during that transition: once problems are detected, these
-workloads should be started with the old behavior, without making all
-other workloads on the system go back to the old behavior as well.
 
-In essence, the following scenarios are imaginable:
+On 18/07/2025 04:10, Adrián Larumbe wrote:
+> On 16.05.2025 16:49, Lukas Zapolskas wrote:
+>> Added the panthor_perf system initialization and unplug code to allow
+>> for the handling of userspace sessions to be added in follow-up
+>> patches.
+>>
+>> Signed-off-by: Lukas Zapolskas <lukas.zapolskas@arm.com>
+>> ---
+>>  drivers/gpu/drm/panthor/panthor_device.c |  2 +
+>>  drivers/gpu/drm/panthor/panthor_device.h |  5 +-
+>>  drivers/gpu/drm/panthor/panthor_perf.c   | 62 +++++++++++++++++++++++-
+>>  drivers/gpu/drm/panthor/panthor_perf.h   |  1 +
+>>  4 files changed, 68 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/panthor/panthor_device.c b/drivers/gpu/drm/panthor/panthor_device.c
+>> index 76b4cf3dc391..7ac985d44655 100644
+>> --- a/drivers/gpu/drm/panthor/panthor_device.c
+>> +++ b/drivers/gpu/drm/panthor/panthor_device.c
+>> @@ -98,6 +98,7 @@ void panthor_device_unplug(struct panthor_device *ptdev)
+>>  	/* Now, try to cleanly shutdown the GPU before the device resources
+>>  	 * get reclaimed.
+>>  	 */
+>> +	panthor_perf_unplug(ptdev);
+>>  	panthor_sched_unplug(ptdev);
+>>  	panthor_fw_unplug(ptdev);
+>>  	panthor_mmu_unplug(ptdev);
+>> @@ -277,6 +278,7 @@ int panthor_device_init(struct panthor_device *ptdev)
+>>
+>>  err_disable_autosuspend:
+>>  	pm_runtime_dont_use_autosuspend(ptdev->base.dev);
+>> +	panthor_perf_unplug(ptdev);
+>>  	panthor_sched_unplug(ptdev);
+>>
+>>  err_unplug_fw:
+>> diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/panthor/panthor_device.h
+>> index 657ccc39568c..818c4d96d448 100644
+>> --- a/drivers/gpu/drm/panthor/panthor_device.h
+>> +++ b/drivers/gpu/drm/panthor/panthor_device.h
+>> @@ -27,7 +27,7 @@ struct panthor_heap_pool;
+>>  struct panthor_job;
+>>  struct panthor_mmu;
+>>  struct panthor_fw;
+>> -struct panthor_perfcnt;
+>> +struct panthor_perf;
+>>  struct panthor_vm;
+>>  struct panthor_vm_pool;
+>>
+>> @@ -138,6 +138,9 @@ struct panthor_device {
+>>  	/** @devfreq: Device frequency scaling management data. */
+>>  	struct panthor_devfreq *devfreq;
+>>
+>> +	/** @perf: Performance counter management data. */
+>> +	struct panthor_perf *perf;
+>> +
+>>  	/** @unplug: Device unplug related fields. */
+>>  	struct {
+>>  		/** @lock: Lock used to serialize unplug operations. */
+>> diff --git a/drivers/gpu/drm/panthor/panthor_perf.c b/drivers/gpu/drm/panthor/panthor_perf.c
+>> index 66e9a197ac1f..9365ce9fed04 100644
+>> --- a/drivers/gpu/drm/panthor/panthor_perf.c
+>> +++ b/drivers/gpu/drm/panthor/panthor_perf.c
+>> @@ -9,6 +9,19 @@
+>>  #include "panthor_fw.h"
+>>  #include "panthor_perf.h"
+> 
+> You must include "panthor_regs.h" here or else GPU_MEM_FEATURES_L2_SLICES() won't be available.
+> However, it seems this is something that should be done in the previous patch.
+> 
 
-(1) Switch from THP=none to THP=madvise or THP=always, but keep the old
-    behavior (no THP) for selected workloads.
+Will add that to the perf_info patch.
 
-(2) Stay at THP=none, but have "madvise" or "always" behavior for
-    selected workloads.
+>>
+>> +struct panthor_perf {
+>> +	/** @next_session: The ID of the next session. */
+>> +	u32 next_session;
+>> +
+>> +	/** @session_range: The number of sessions supported at a time. */
+>> +	struct xa_limit session_range;
+>> +
+>> +	/**
+>> +	 * @sessions: Global map of sessions, accessed by their ID.
+>> +	 */
+>> +	struct xarray sessions;
+>> +};
+>> +
+>>  struct panthor_perf_counter_block {
+>>  	struct drm_panthor_perf_block_header header;
+>>  	u64 counters[];
+>> @@ -63,14 +76,61 @@ static void panthor_perf_info_init(struct panthor_device *ptdev)
+>>   * panthor_perf_init - Initialize the performance counter subsystem.
+>>   * @ptdev: Panthor device
+>>   *
+>> + * The performance counters require the FW interface to be available to setup the
+>> + * sampling ringbuffers, so this must be called only after FW is initialized.
+>> + *
+>>   * Return: 0 on success, negative error code on failure.
+>>   */
+>>  int panthor_perf_init(struct panthor_device *ptdev)
+>>  {
+>> +	struct panthor_perf *perf __free(kfree) = NULL;
+>> +	int ret = 0;
+>> +
+>>  	if (!ptdev)
+>>  		return -EINVAL;
+>>
+>>  	panthor_perf_info_init(ptdev);
+>>
+>> -	return 0;
+>> +	perf = kzalloc(sizeof(*perf), GFP_KERNEL);
+>> +	if (ZERO_OR_NULL_PTR(perf))
+>> +		return -ENOMEM;
+>> +
+>> +	xa_init_flags(&perf->sessions, XA_FLAGS_ALLOC);
+>> +
+>> +	perf->session_range = (struct xa_limit) {
+>> +		.min = 0,
+>> +		.max = 1,
+>> +	};
+>> +
+>> +	drm_info(&ptdev->base, "Performance counter subsystem initialized");
+>> +
+>> +	ptdev->perf = no_free_ptr(perf);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +/**
+>> + * panthor_perf_unplug - Terminate the performance counter subsystem.
+>> + * @ptdev: Panthor device.
+>> + *
+>> + * This function will terminate the performance counter control structures and any remaining
+>> + * sessions, after waiting for any pending interrupts.
+>> + */
+>> +void panthor_perf_unplug(struct panthor_device *ptdev)
+>> +{
+>> +	struct panthor_perf *perf = ptdev->perf;
+>> +
+>> +	if (!perf)
+>> +		return;
+>> +
+>> +	if (!xa_empty(&perf->sessions)) {
+>> +		drm_err(&ptdev->base,
+>> +			"Performance counter sessions active when unplugging the driver!");
+>> +	}
+> 
+> I think this could only happen if someone forces module unload, even
+> though there might still be processes which haven't yet closed the DRM
+> file?
+> 
 
-(3) Switch from THP=madvise to THP=always, but keep the old behavior
-    (THP only when advised) for selected workloads.
+That sounds about right. The only time I have seen that warning was in development when 
+the session cleanup was not being done properly on process termination.
 
-(4) Stay at THP=madvise, but have "always" behavior for selected
-    workloads.
-
-In essence, (2) can be emulated through (1), by setting THP!=none while
-disabling THPs for all processes that don't want THPs. It requires
-configuring all workloads, but that is a user-space problem to sort out.
-
-(4) can be emulated through (3) in a similar way.
-
-Back when (1) was relevant in the past, as people started enabling THPs,
-we added PR_SET_THP_DISABLE, so relevant workloads that were not ready
-yet (i.e., used by Redis) were able to just disable THPs completely. Redis
-still implements the option to use this interface to disable THPs
-completely.
-
-With PR_SET_THP_DISABLE, we added a way to force-disable THPs for a
-workload -- a process, including fork+exec'ed process hierarchy.
-That essentially made us support (1): simply disable THPs for all workloads
-that are not ready for THPs yet, while still enabling THPs system-wide.
-
-The quest for handling (3) and (4) started, but current approaches
-(completely new prctl, options to set other policies per processm,
- alternatives to prctl -- mctrl, cgroup handling) don't look particularly
-promising. Likely, the future will use bpf or something similar to
-implement better policies, in particular to also make better decisions
-about THP sizes to use, but this will certainly take a while as that work
-just started.
-
-Long story short: a simple enable/disable is not really suitable for the
-future, so we're not willing to add completely new toggles.
-
-While we could emulate (3)+(4) through (1)+(2) by simply disabling THPs
-completely for these processes, this scares many THPs in our system
-because they could no longer get allocated where they used to be allocated
-for: regions flagged as VM_HUGEPAGE. Apparently, that imposes a
-problem for relevant workloads, because "not THPs" is certainly worse
-than "THPs only when advised".
-
-Could we simply relax PR_SET_THP_DISABLE, to "disable THPs unless not
-explicitly advised by the app through MAD_HUGEPAGE"? *maybe*, but this
-would change the documented semantics quite a bit, and the versatility
-to use it for debugging purposes, so I am not 100% sure that is what we
-want -- although it would certainly be much easier.
-
-So instead, as an easy way forward for (3) and (4), an option to
-make PR_SET_THP_DISABLE disable *less* THPs for a process.
-
-In essence, this patch:
-
-(A) Adds PR_THP_DISABLE_EXCEPT_ADVISED, to be used as a flag in arg3
-    of prctl(PR_SET_THP_DISABLE) when disabling THPs (arg2 != 0).
-
-    For now, arg3 was not allowed to be set (-EINVAL). Now it holds
-    flags.
-
-(B) Makes prctl(PR_GET_THP_DISABLE) return 3 if
-    PR_THP_DISABLE_EXCEPT_ADVISED was set while disabling.
-
-    For now, it would return 1 if THPs were disabled completely. Now
-    it essentially returns the set flags as well.
-
-(C) Renames MMF_DISABLE_THP to MMF_DISABLE_THP_COMPLETELY, to express
-    the semantics clearly.
-
-    Fortunately, there are only two instances outside of prctl() code.
-
-(D) Adds MMF_DISABLE_THP_EXCEPT_ADVISED to express "no THP except for VMAs
-    with VM_HUGEPAGE" -- essentially "thp=madvise" behavior
-
-    Fortunately, we only have to extend vma_thp_disabled().
-
-(E) Indicates "THP_enabled: 0" in /proc/pid/status only if THPs are not
-    disabled completely
-
-    Only indicating that THPs are disabled when they are really disabled
-    completely, not only partially.
-
-The documented semantics in the man page for PR_SET_THP_DISABLE
-"is inherited by a child created via fork(2) and is preserved across
-execve(2)" is maintained. This behavior, for example, allows for
-disabling THPs for a workload through the launching process (e.g.,
-systemd where we fork() a helper process to then exec()).
-
-There is currently not way to prevent that a process will not issue
-PR_SET_THP_DISABLE itself to re-enable THP. We could add a "seal" option
-to PR_SET_THP_DISABLE through another flag if ever required. The known
-users (such as redis) really use PR_SET_THP_DISABLE to disable THPs, so
-that is not added for now.
-
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Zi Yan <ziy@nvidia.com>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: Nico Pache <npache@redhat.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Dev Jain <dev.jain@arm.com>
-Cc: Barry Song <baohua@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Mike Rapoport <rppt@kernel.org>
-Cc: Suren Baghdasaryan <surenb@google.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Usama Arif <usamaarif642@gmail.com>
-Cc: SeongJae Park <sj@kernel.org>
-Cc: Jann Horn <jannh@google.com>
-Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
-Cc: Yafang Shao <laoar.shao@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: David Hildenbrand <david@redhat.com>
-
----
-
-At first, I thought of "why not simply relax PR_SET_THP_DISABLE", but I
-think there might be real use cases where we want to disable any THPs --
-in particular also around debugging THP-related problems, and
-"THP=never" not meaning ... "never" anymore. PR_SET_THP_DISABLE will
-also block MADV_COLLAPSE, which can be very helpful. Of course, I thought
-of having a system-wide config to change PR_SET_THP_DISABLE behavior, but
-I just don't like the semantics.
-
-"prctl: allow overriding system THP policy to always"[1] proposed
-"overriding policies to always", which is just the wrong way around: we
-should not add mechanisms to "enable more" when we already have an
-interface/mechanism to "disable" them (PR_SET_THP_DISABLE). It all gets
-weird otherwise.
-
-"[PATCH 0/6] prctl: introduce PR_SET/GET_THP_POLICY"[2] proposed
-setting the default of the VM_HUGEPAGE, which is similarly the wrong way
-around I think now.
-
-The proposals by Lorenzo to extend process_madvise()[3] and mctrl()[4]
-similarly were around the "default for VM_HUGEPAGE" idea, but after the
-discussion, I think we should better leave VM_HUGEPAGE untouched.
-
-Happy to hear naming suggestions for "PR_THP_DISABLE_EXCEPT_ADVISED" where
-we essentially want to say "leave advised regions alone" -- "keep THP
-enabled for advised regions",
-
-The only thing I really dislike about this is using another MMF_* flag,
-but well, no way around it -- and seems like we could easily support
-more than 32 if we want to, or storing this thp information elsewhere.
-
-I think this here (modifying an existing toggle) is the only prctl()
-extension that we might be willing to accept. In general, I agree like
-most others, that prctl() is a very bad interface for that -- but
-PR_SET_THP_DISABLE is already there and is getting used.
-
-Long-term, I think the answer will be something based on bpf[5]. Maybe
-in that context, I there could still be value in easily disabling THPs for
-selected workloads (esp. debugging purposes).
-
-Jann raised valid concerns[6] about new flags that are persistent across
-exec[6]. As this here is a relaxation to existing PR_SET_THP_DISABLE I
-consider it having a similar security risk as our existing
-PR_SET_THP_DISABLE, but devil is in the detail.
-
-This is *completely* untested and might be utterly broken. It merely
-serves as a PoC of what I think could be done. If this ever goes upstream,
-we need some kselftests for it, and extensive tests.
-
-[1] https://lore.kernel.org/r/20250507141132.2773275-1-usamaarif642@gmail.com
-[2] https://lkml.kernel.org/r/20250515133519.2779639-2-usamaarif642@gmail.com
-[3] https://lore.kernel.org/r/cover.1747686021.git.lorenzo.stoakes@oracle.com
-[4] https://lkml.kernel.org/r/85778a76-7dc8-4ea8-8827-acb45f74ee05@lucifer.local
-[5] https://lkml.kernel.org/r/20250608073516.22415-1-laoar.shao@gmail.com
-[6] https://lore.kernel.org/r/CAG48ez3-7EnBVEjpdoW7z5K0hX41nLQN5Wb65Vg-1p8DdXRnjg@mail.gmail.com
-
----
- Documentation/filesystems/proc.rst |  5 +--
- fs/proc/array.c                    |  2 +-
- include/linux/huge_mm.h            | 20 ++++++++---
- include/linux/mm_types.h           | 13 +++----
- include/uapi/linux/prctl.h         |  7 ++++
- kernel/sys.c                       | 58 +++++++++++++++++++++++-------
- mm/khugepaged.c                    |  2 +-
- 7 files changed, 78 insertions(+), 29 deletions(-)
-
-diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-index 2971551b72353..915a3e44bc120 100644
---- a/Documentation/filesystems/proc.rst
-+++ b/Documentation/filesystems/proc.rst
-@@ -291,8 +291,9 @@ It's slow but very precise.
-  HugetlbPages                size of hugetlb memory portions
-  CoreDumping                 process's memory is currently being dumped
-                              (killing the process may lead to a corrupted core)
-- THP_enabled		     process is allowed to use THP (returns 0 when
--			     PR_SET_THP_DISABLE is set on the process
-+ THP_enabled                 process is allowed to use THP (returns 0 when
-+                             PR_SET_THP_DISABLE is set on the process to disable
-+                             THP completely, not just partially)
-  Threads                     number of threads
-  SigQ                        number of signals queued/max. number for queue
-  SigPnd                      bitmap of pending signals for the thread
-diff --git a/fs/proc/array.c b/fs/proc/array.c
-index d6a0369caa931..c4f91a784104f 100644
---- a/fs/proc/array.c
-+++ b/fs/proc/array.c
-@@ -422,7 +422,7 @@ static inline void task_thp_status(struct seq_file *m, struct mm_struct *mm)
- 	bool thp_enabled = IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE);
- 
- 	if (thp_enabled)
--		thp_enabled = !test_bit(MMF_DISABLE_THP, &mm->flags);
-+		thp_enabled = !test_bit(MMF_DISABLE_THP_COMPLETELY, &mm->flags);
- 	seq_printf(m, "THP_enabled:\t%d\n", thp_enabled);
- }
- 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index e0a27f80f390d..c4127104d9bc3 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -323,16 +323,26 @@ struct thpsize {
- 	(transparent_hugepage_flags &					\
- 	 (1<<TRANSPARENT_HUGEPAGE_USE_ZERO_PAGE_FLAG))
- 
-+/*
-+ * Check whether THPs are explicitly disabled through madvise or prctl, or some
-+ * architectures may disable THP for some mappings, for example, s390 kvm.
-+ */
- static inline bool vma_thp_disabled(struct vm_area_struct *vma,
- 		vm_flags_t vm_flags)
- {
-+	/* Are THPs disabled for this VMA? */
-+	if (vm_flags & VM_NOHUGEPAGE)
-+		return true;
-+	/* Are THPs disabled for all VMAs in the whole process? */
-+	if (test_bit(MMF_DISABLE_THP_COMPLETELY, &vma->vm_mm->flags))
-+		return true;
- 	/*
--	 * Explicitly disabled through madvise or prctl, or some
--	 * architectures may disable THP for some mappings, for
--	 * example, s390 kvm.
-+	 * Are THPs disabled only for VMAs where we didn't get an explicit
-+	 * advise to use them?
- 	 */
--	return (vm_flags & VM_NOHUGEPAGE) ||
--	       test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags);
-+	if (vm_flags & VM_HUGEPAGE)
-+		return false;
-+	return test_bit(MMF_DISABLE_THP_EXCEPT_ADVISED, &vma->vm_mm->flags);
- }
- 
- static inline bool thp_disabled_by_hw(void)
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 1ec273b066915..a999f2d352648 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -1743,19 +1743,16 @@ enum {
- #define MMF_VM_MERGEABLE	16	/* KSM may merge identical pages */
- #define MMF_VM_HUGEPAGE		17	/* set when mm is available for khugepaged */
- 
--/*
-- * This one-shot flag is dropped due to necessity of changing exe once again
-- * on NFS restore
-- */
--//#define MMF_EXE_FILE_CHANGED	18	/* see prctl_set_mm_exe_file() */
-+#define MMF_HUGE_ZERO_PAGE	18      /* mm has ever used the global huge zero page */
- 
- #define MMF_HAS_UPROBES		19	/* has uprobes */
- #define MMF_RECALC_UPROBES	20	/* MMF_HAS_UPROBES can be wrong */
- #define MMF_OOM_SKIP		21	/* mm is of no interest for the OOM killer */
- #define MMF_UNSTABLE		22	/* mm is unstable for copy_from_user */
--#define MMF_HUGE_ZERO_PAGE	23      /* mm has ever used the global huge zero page */
--#define MMF_DISABLE_THP		24	/* disable THP for all VMAs */
--#define MMF_DISABLE_THP_MASK	(1 << MMF_DISABLE_THP)
-+#define MMF_DISABLE_THP_EXCEPT_ADVISED	23	/* no THP except for VMAs with VM_HUGEPAGE */
-+#define MMF_DISABLE_THP_COMPLETELY	24	/* no THP for all VMAs */
-+#define MMF_DISABLE_THP_MASK	((1 << MMF_DISABLE_THP_COMPLETELY) |\
-+				 (1 << MMF_DISABLE_THP_EXCEPT_ADVISED))
- #define MMF_OOM_REAP_QUEUED	25	/* mm was queued for oom_reaper */
- #define MMF_MULTIPROCESS	26	/* mm is shared between processes */
- /*
-diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-index 43dec6eed559a..1949bb9270d48 100644
---- a/include/uapi/linux/prctl.h
-+++ b/include/uapi/linux/prctl.h
-@@ -177,7 +177,14 @@ struct prctl_mm_map {
- 
- #define PR_GET_TID_ADDRESS	40
- 
-+/*
-+ * Flags for PR_SET_THP_DISABLE are only applicable when disabling. Bit 0
-+ * is reserved, so PR_GET_THP_DISABLE can return 1 when no other flags were
-+ * specified for PR_SET_THP_DISABLE.
-+ */
- #define PR_SET_THP_DISABLE	41
-+/* Don't disable THPs when explicitly advised (MADV_HUGEPAGE / VM_HUGEPAGE). */
-+# define PR_THP_DISABLE_EXCEPT_ADVISED	(1 << 1)
- #define PR_GET_THP_DISABLE	42
- 
- /*
-diff --git a/kernel/sys.c b/kernel/sys.c
-index b153fb345ada2..2a34b2f708900 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -2423,6 +2423,50 @@ static int prctl_get_auxv(void __user *addr, unsigned long len)
- 	return sizeof(mm->saved_auxv);
- }
- 
-+static int prctl_get_thp_disable(unsigned long arg2, unsigned long arg3,
-+				 unsigned long arg4, unsigned long arg5)
-+{
-+	unsigned long *mm_flags = &current->mm->flags;
-+
-+	if (arg2 || arg3 || arg4 || arg5)
-+		return -EINVAL;
-+
-+	if (test_bit(MMF_DISABLE_THP_COMPLETELY, mm_flags))
-+		return 1;
-+	else if (test_bit(MMF_DISABLE_THP_EXCEPT_ADVISED, mm_flags))
-+		return 1 | PR_THP_DISABLE_EXCEPT_ADVISED;
-+	return 0;
-+}
-+
-+static int prctl_set_thp_disable(unsigned long thp_disable, unsigned long flags,
-+				 unsigned long arg4, unsigned long arg5)
-+{
-+	unsigned long *mm_flags = &current->mm->flags;
-+
-+	if (arg4 || arg5)
-+		return -EINVAL;
-+
-+	/* Flags are only allowed when disabling. */
-+	if (!thp_disable || (flags & ~PR_THP_DISABLE_EXCEPT_ADVISED))
-+		return -EINVAL;
-+	if (mmap_write_lock_killable(current->mm))
-+		return -EINTR;
-+	if (thp_disable) {
-+		if (flags & PR_THP_DISABLE_EXCEPT_ADVISED) {
-+			clear_bit(MMF_DISABLE_THP_COMPLETELY, mm_flags);
-+			set_bit(MMF_DISABLE_THP_EXCEPT_ADVISED, mm_flags);
-+		} else {
-+			set_bit(MMF_DISABLE_THP_COMPLETELY, mm_flags);
-+			clear_bit(MMF_DISABLE_THP_EXCEPT_ADVISED, mm_flags);
-+		}
-+	} else {
-+		clear_bit(MMF_DISABLE_THP_COMPLETELY, mm_flags);
-+		clear_bit(MMF_DISABLE_THP_EXCEPT_ADVISED, mm_flags);
-+	}
-+	mmap_write_unlock(current->mm);
-+	return 0;
-+}
-+
- SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
- 		unsigned long, arg4, unsigned long, arg5)
- {
-@@ -2596,20 +2640,10 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
- 			return -EINVAL;
- 		return task_no_new_privs(current) ? 1 : 0;
- 	case PR_GET_THP_DISABLE:
--		if (arg2 || arg3 || arg4 || arg5)
--			return -EINVAL;
--		error = !!test_bit(MMF_DISABLE_THP, &me->mm->flags);
-+		error = prctl_get_thp_disable(arg2, arg3, arg4, arg5);
- 		break;
- 	case PR_SET_THP_DISABLE:
--		if (arg3 || arg4 || arg5)
--			return -EINVAL;
--		if (mmap_write_lock_killable(me->mm))
--			return -EINTR;
--		if (arg2)
--			set_bit(MMF_DISABLE_THP, &me->mm->flags);
--		else
--			clear_bit(MMF_DISABLE_THP, &me->mm->flags);
--		mmap_write_unlock(me->mm);
-+		error = prctl_set_thp_disable(arg2, arg3, arg4, arg5);
- 		break;
- 	case PR_MPX_ENABLE_MANAGEMENT:
- 	case PR_MPX_DISABLE_MANAGEMENT:
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index 8a5873d0a23a7..a685077644b4e 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -427,7 +427,7 @@ static inline int collapse_test_exit(struct mm_struct *mm)
- static inline int collapse_test_exit_or_disable(struct mm_struct *mm)
- {
- 	return collapse_test_exit(mm) ||
--	       test_bit(MMF_DISABLE_THP, &mm->flags);
-+	       test_bit(MMF_DISABLE_THP_COMPLETELY, &mm->flags);
- }
- 
- static bool hugepage_enabled(void)
-
-base-commit: 760b462b3921c5dc8bfa151d2d27a944e4e96081
--- 
-2.50.1
+>> +
+>> +	xa_destroy(&perf->sessions);
+>> +
+>> +	kfree(ptdev->perf);
+>> +
+>> +	ptdev->perf = NULL;
+>>  }
+>> diff --git a/drivers/gpu/drm/panthor/panthor_perf.h b/drivers/gpu/drm/panthor/panthor_perf.h
+>> index 3c32c24c164c..e4805727b9e7 100644
+>> --- a/drivers/gpu/drm/panthor/panthor_perf.h
+>> +++ b/drivers/gpu/drm/panthor/panthor_perf.h
+>> @@ -10,6 +10,7 @@
+>>  struct panthor_device;
+>>
+>>  int panthor_perf_init(struct panthor_device *ptdev);
+>> +void panthor_perf_unplug(struct panthor_device *ptdev);
+>>
+>>  #endif /* __PANTHOR_PERF_H__ */
+>>
+>> --
+>> 2.33.0.dirty
+> 
+> Adrian Larumbe
 
 
