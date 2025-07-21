@@ -1,175 +1,147 @@
-Return-Path: <linux-kernel+bounces-739145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36153B0C257
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:12:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 924DCB0C252
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:11:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2890B3AB8FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:12:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B6211894034
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:11:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92317295502;
-	Mon, 21 Jul 2025 11:12:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DBAE29615D;
+	Mon, 21 Jul 2025 11:11:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BZtWWBlE"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LHb8qXEc"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399E8295530
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 11:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA615293C6A;
+	Mon, 21 Jul 2025 11:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753096344; cv=none; b=sAVBWBNSgyZxAat6MSpRqr+wGZ3JWAnTEeVcZBAE/oiwTi/J0gkUDmrMpIe7BpN8BGnCRhz2aUOyWwv3e4E+zZm/YgYDs4qZwrITEwZry+xCASAVc4VTMZ/PvG71o4OJBQOeQgD2PyKhLXuB1ybj0yZ44eXmQkRi0zXCYuptwA0=
+	t=1753096275; cv=none; b=Z+50s1MP5EcoaePIoBMKhuhs7PXnDZDwf85YvNhzTvd0izV10fr3cu9SYKxk8qmn1671QVMaQ+jdoqTCsn6z2nJK1L7ezz7qpsrO0UoRLAM21H/WczcTCj6BIm92V7dlcDOrzI6PCnfBUdETeN0anyo2VYp8wMgj3Mwu6OdthgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753096344; c=relaxed/simple;
-	bh=ksZkhhiBwulOE/IukbPeIEXyJFBXFotH7naTuSJS5cM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f+xYoH/as0u670y8wTtGUXkZZZc0KfpZ+OPV/161alCR6aTDBfRHSxPxEB/UXfHR9sxUuOtOOM7vES4ORAWiPRwybjqRycfbxT0oQ0Yjrlf7kxnvUtQMFGIqs+T6ZKYHQG0Bw1g1n0G0z1kNSKIg1h0O+NsGKMmVdD6SebrCtN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=BZtWWBlE; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-32b50f357ecso4148561fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 04:12:21 -0700 (PDT)
+	s=arc-20240116; t=1753096275; c=relaxed/simple;
+	bh=JcNSWwvJTwhT64Y0/KqSF1ww+wIie45ZsLTs8CIlKao=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J9ifJ9JxMrm/igRnsSK1TvUKxmdoEAow+dMuqJvw1vXLzQNLQ8jZSikX186/JhQ7Hvw5KZ9PmnFE4WhbRIUSVzgqDV6qJ/m4KMNrqsCzoLyRlalMq3AO2GrpZPy5gH79GLYF69WNx61XZILYesKejY4F1vCs2CwP4MOvDksAOU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LHb8qXEc; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-60bfcada295so6734298a12.1;
+        Mon, 21 Jul 2025 04:11:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1753096340; x=1753701140; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZvD8IUqr+Bzg9GKWiYPMFuwvqaPjoCioCLoAukeES3o=;
-        b=BZtWWBlE6Sh0kiPqNgEAjIpk/NmTjn3bfieRPCAs39tzUBnYHZsLcMpqyj0UoWPPn5
-         xeVdmiOnhzh7ksGLjacQeGaKRUXVLiV0OTbQ2yep4QvzAAXbIHhD5mUStkURaa8s37sW
-         AzrRuWpr+LC1ZZ8PZF61dH0OLPQD7JTwlOESs=
+        d=gmail.com; s=20230601; t=1753096272; x=1753701072; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DnIbqCqg7JUChrhPkDwkGlZxQxz27HWtx39eq2JQF6U=;
+        b=LHb8qXEc699j7ANv/nV2+jdueCE5Xs8hiuBrQysDQ4uI1EMDxa2KmA0zph08Rj+lht
+         9gsS5absPvgookIua7oq12cKkRrOKSmfNribKiPF7u5/iNEGO5wuD9Ssm5OXxlDTIBbV
+         EvypjEYGeCM81JN39IUo9+yrU3fv2jeSov66zkbX48IBqFrW+64rttfdTk5J068w4vp3
+         RBQz7ABNbqbCNW6s1umlwH7ZdX+VuOug/m7PwadtYgH5bVKXbTguzW7TORxTMnq/6D+3
+         0pN8NS7l2deMFrjTUqdLft8KuwCkk8CVSS8jC2Hu6vNempqvIruPfNdo4gMCuoUQrbIE
+         RgeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753096340; x=1753701140;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZvD8IUqr+Bzg9GKWiYPMFuwvqaPjoCioCLoAukeES3o=;
-        b=vaNf+7eyx5XSVnq6h7sKQC3cJ7HlXNR214ksP+XqEZ9E62WtwvITUNnN8U2fHiwvOk
-         b9Cb3Y88vaXoM1L078AFgUtVnJDpsmL+z/hop5CS1wb37KtqjJNlRM8Kfl5gnIHnK4vI
-         Tk6BrVxw9+9nYOzIAV7FyRyJXcrqxzy7/ehdfM6eSZPC1y9Zg/r33Ue2zSuHOIPkOz+A
-         hgDawpfBmaSNXibCd856pUXYMzRnJz01gHFkIGQmYOOylh7lv4m6XLnd2jxj9JHsErHb
-         I4tf6XOKdaXZFidNpUoN9KEnEh4byE+Gkr5q65glfqRF9L5L1REuIcrDPuOuMO61JdqI
-         RMmw==
-X-Forwarded-Encrypted: i=1; AJvYcCVwNugFV+bsTdTwBB5jq4U/w00x6jDMLKgV2S5Mt2T4Mk5hm3J/QjLMWqAnUdkcGlzDSo58WzjLpLu9snk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywhhsjcw5TUb61jz3u/cRdYqUjOH6fZmTSteLVkjvosGtRyLPsr
-	7H8iYRmYv10TTeuZBfL33Sh8tX23suOexrCQ9xB2K15ObnsZnsCTMzh29a6fptH+fXSCBA16y83
-	4o27xTHB4n6DuROPIH0d4VMx95QBCA22iNVFbbH7S
-X-Gm-Gg: ASbGnct8FJQVYYXChD8TJxPjIHJl5FVgEbDI9KNlpRVDDg3LEz2n9c2HLOeFsop67kQ
-	VjpktLiS4oP4nHk3N6HlrATwrORJy/ZKAB8Onyp9/TcMH76Fh2fPQsEOk/2sfT9/YAop3HGZ/7E
-	U63GZgruYkOLB1NvsQA0QcPYsRrVc/1jDPLpjE+bz2Glg60SNzugm8I+mcHzHqInxp9WxviYZZ+
-	AXxjNngVObymGbLyCC1dqDYoUhp9lnSHf0=
-X-Google-Smtp-Source: AGHT+IFBcIrODyu5ElS2DkB5XwLAm0Yi8m6vfMTv3g3vNlbCwrZrTFNYjxARMwbJuH0gzP751/Mkg4oUm0Irdkz6hQA=
-X-Received: by 2002:a05:651c:154a:b0:32a:7270:5c29 with SMTP id
- 38308e7fff4ca-3308f4c5293mr49883741fa.2.1753096340224; Mon, 21 Jul 2025
- 04:12:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753096272; x=1753701072;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DnIbqCqg7JUChrhPkDwkGlZxQxz27HWtx39eq2JQF6U=;
+        b=llU87+Nwvc3zxWYeUBJFqSFKdvWBohw1iaYbZT0yXGgJSJBnPoCF0CvQN2dqalX0yB
+         2CW8maLT1Vj6JSnzWUZRh808vQK4bdA8j0dWJTXvIyOsZ2YEuBAckSNWjbAYkEWeu9fE
+         a946sGCshK9bJRxGK9dkKsF5QANdPeity04UrDQD32SUC0bUabtoZcmtqbMA94QmGAOn
+         cvzltbQ/kdavdggN7HmjSy+JtLWo3I6yWGBq5MkoGj4+vwqWJBuNkLeeOQm2qtzjD0uS
+         tqjUBz5DRnZIrHkpo11B2tICh0Q6mlJHv8I+qESowERe43nNcC17nU9DToujUOtpsi+n
+         rm0A==
+X-Forwarded-Encrypted: i=1; AJvYcCWFEQvWhbh5rJ2ti8arfPxMXgYQZw4Y28tB4asjW65g91gNyvQNAm5ku5oSEhhxSSZVU+T7SoQF@vger.kernel.org, AJvYcCWYri5qv0K8WVrZ4r8d9sKHau0b6fRj97zxYlE33Z2sw+FO9X64b4naHamAsYC3f3jf0ED2sexe7obxWg==@vger.kernel.org, AJvYcCX9aiUblRWsqginD0dplou9GBnwbvjF/PSTWFVnecUm+5RxH+OhD/qZ7N2aU2NXVlIekAU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJ/aeDHO6FjruMohZYDY20NRv0ZU50HxCSQycZAEVMznFqFbFO
+	bSQUCPWksZJ0hfxQNsvbLvwIm2yuJLPdh0GRNpPMNYJ5dwu1cwh6US1p
+X-Gm-Gg: ASbGnct7nf+nFytWMs8FB9A2obf2t2CkCe8cmPp2joSOwC4zSbVW04n+XpcPVH2Vz0M
+	spj5rQGONsq0z/IGNUiOyFtoXvGtsjkiRgIV5/MZpbfBpo6iwdYoMomrcmOYvja7qDUOtnJrINx
+	MJIwyjqgxu76fJer2AYqxWWiJ74YDhwQPhSXoKzfc7w+v0Xyfi4y8um3w3N+z8e69DECOKUO/ZO
+	fcfrktpxjOcUy27Uc7a2c6y88NAxmuST67DeA0KdsKDsEOkFmeyysNYlQyChiO4ONrXRjFRkAMe
+	Bw2hJc6eZ5CmbUrjt56PliNHbhVbkeh5HucctfMEtyv8qN3L9Dj6Ib0z2D+ETflTPCUIUhR84B/
+	UY6Fkmd0Rk/j/vb2KaGfW1WI4rgDpxe0WUW4=
+X-Google-Smtp-Source: AGHT+IHZCiqaXpmflAtItwVaPlH3VjQHk/jBIB6Bq5oI/tEB5I4tXMP1diqfcZBAAFQiHufovShJUw==
+X-Received: by 2002:a05:6402:524e:b0:607:425c:3c23 with SMTP id 4fb4d7f45d1cf-6128590ba42mr17312482a12.5.1753096271896;
+        Mon, 21 Jul 2025 04:11:11 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325::1ac? ([2620:10d:c092:600::1:23d3])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-612c907a5b1sm5274092a12.53.2025.07.21.04.11.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Jul 2025 04:11:11 -0700 (PDT)
+Message-ID: <77ee68c4-f265-4e55-9889-43ab08f26efd@gmail.com>
+Date: Mon, 21 Jul 2025 12:12:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250721081459.16278-1-laura.nao@collabora.com> <20250721081459.16278-6-laura.nao@collabora.com>
-In-Reply-To: <20250721081459.16278-6-laura.nao@collabora.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Mon, 21 Jul 2025 19:12:08 +0800
-X-Gm-Features: Ac12FXwjyLsGb66oW3wQunTIZj2TIT6qrKAAeEzwRJZc_WREeNFVgKGeEo3jG4M
-Message-ID: <CAGXv+5F9NwJ7uGFPWZM-Dywbbk4f6aiYS5M4m6_VFETVGEwr9A@mail.gmail.com>
-Subject: Re: [PATCH 5/9] thermal/drivers/mediatek/lvts: Add lvts_temp_to_raw
- variant for positive temp_factor
-To: Laura Nao <laura.nao@collabora.com>
-Cc: srini@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com, 
-	lukasz.luba@arm.com, matthias.bgg@gmail.com, 
-	angelogioacchino.delregno@collabora.com, andrew-ct.chen@mediatek.com, 
-	lala.lin@mediatek.com, arnd@arndb.de, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, nfraprado@collabora.com, 
-	devicetree@vger.kernel.org, u.kleine-koenig@baylibre.com, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	kernel@collabora.com, colin.i.king@gmail.com, bchihi@baylibre.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm, page_pool: introduce a new page type for page pool in
+ page type
+To: Byungchul Park <byungchul@sk.com>, linux-mm@kvack.org,
+ netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+ harry.yoo@oracle.com, ast@kernel.org, daniel@iogearbox.net,
+ davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
+ john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com,
+ leon@kernel.org, tariqt@nvidia.com, mbloch@nvidia.com,
+ andrew+netdev@lunn.ch, edumazet@google.com, pabeni@redhat.com,
+ akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com,
+ mhocko@suse.com, horms@kernel.org, jackmanb@google.com, hannes@cmpxchg.org,
+ ziy@nvidia.com, ilias.apalodimas@linaro.org, willy@infradead.org,
+ brauner@kernel.org, kas@kernel.org, yuzhao@google.com,
+ usamaarif642@gmail.com, baolin.wang@linux.alibaba.com,
+ almasrymina@google.com, toke@redhat.com, bpf@vger.kernel.org,
+ linux-rdma@vger.kernel.org
+References: <20250721054903.39833-1-byungchul@sk.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20250721054903.39833-1-byungchul@sk.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 21, 2025 at 4:31=E2=80=AFPM Laura Nao <laura.nao@collabora.com>=
- wrote:
->
-> The current lvts_temp_to_raw() implementation assumes a negative
-> temperature-to-raw slope (temp_factor), which holds for the SoCs
-> currently supported by the driver. However, this assumption breaks on
-> MT8196/MT6991, where the slope is positive.
+On 7/21/25 06:49, Byungchul Park wrote:
+> Hi,
+> 
+> I focused on converting the existing APIs accessing ->pp_magic field to
+> page type APIs.  However, yes.  Additional works would better be
+> considered on top like:
+> 
+>     1. Adjust how to store and retrieve dma index.  Maybe network guys
+>        can work better on top.
+> 
+>     2. Move the sanity check for page pool in mm/page_alloc.c to on free.
 
-I don't think that's really a problem. The formula is:
+Don't be in a hurry, I've got a branch, but as mentioned before,
+it'll be for-6.18. And there will also be more time for testing.
 
-    temp =3D (raw * factor) >> 14 + golden
+> This work was inspired by the following link by Pavel:
 
-If we move the terms around we get
+The idea came from David, let's add
 
-    ((temp - golden) << 14) / factor =3D raw
+Suggested-by: David Hildenbrand <david@redhat.com>
 
-Or
+...> -
+>   static inline bool netmem_is_pp(netmem_ref netmem)
+>   {
+> -	return (netmem_get_pp_magic(netmem) & PP_MAGIC_MASK) == PP_SIGNATURE;
+> +	if (netmem_is_net_iov(netmem))
 
-    raw =3D ((golden - temp) << 14) / -factor
+This needs to return false for tx niovs. Seems like all callers are
+gated on ->pp_recycle, so maybe it's fine, but we can at least
+check pp. Mina, you've been checking tx doesn't mix with rx, any
+opinion on that?
 
+Question to net maintainers, can a ->pp_recycle marked skb contain
+not page pool originated pages or a mix?
 
-The calculations should work regardless of whether the factor is positive
-or negative, as long as the intermediate and final values are within
-the range of s64.
+-- 
+Pavel Begunkov
 
-> Add a variant of the function that inverts the calculation logic
-> accordingly. This ensures accurate raw value generation for temperature
-> thresholds,avoiding spurious thermal interrupts or unintended hardware
-> resets on MT8196/MT6991.
->
-> Signed-off-by: Laura Nao <laura.nao@collabora.com>
-> ---
->  drivers/thermal/mediatek/lvts_thermal.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
->
-> diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/me=
-diatek/lvts_thermal.c
-> index db83137c7537..3c34956e37c1 100644
-> --- a/drivers/thermal/mediatek/lvts_thermal.c
-> +++ b/drivers/thermal/mediatek/lvts_thermal.c
-> @@ -296,6 +296,18 @@ static u32 lvts_temp_to_raw(int temperature, int tem=
-p_factor)
->         return div_s64(raw_temp, -temp_factor);
->  }
->
-> +static u32 lvts_temp_to_raw_v2(int temperature, int temp_factor)
-> +{
-> +       u32 raw_temp;
-> +
-> +       if (temp_factor =3D=3D 0)
-> +               return temperature;
-> +
-> +       raw_temp =3D temperature - golden_temp_offset;
-> +
-> +       return div_s64((s64)temp_factor << 14, raw_temp);
-> +}
-
-Here you have
-
-    raw =3D (factor << 14) / (temp - golden)
-
-which, barring integer arithmetic limitations, is actually the
-multiplicative inverse of the original version.
-
-So I think the commit message is misleading. It's not negative or
-positive that matters, but that the hardware expects the
-multiplicative inverse in this version.
-
-(or the downstream code is just botched.)
-
-ChenYu
-
-> +
->  static int lvts_get_temp(struct thermal_zone_device *tz, int *temp)
->  {
->         struct lvts_sensor *lvts_sensor =3D thermal_zone_device_priv(tz);
-> --
-> 2.39.5
->
->
 
