@@ -1,47 +1,55 @@
-Return-Path: <linux-kernel+bounces-738810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 078AFB0BD88
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:18:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B41CB0BD8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:18:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CD681888BD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:18:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46AB71704AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6BF328312F;
-	Mon, 21 Jul 2025 07:18:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A6428134D;
+	Mon, 21 Jul 2025 07:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HT2WtPZp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="O+qg6ChK"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D126BA36;
-	Mon, 21 Jul 2025 07:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1349021CA1E;
+	Mon, 21 Jul 2025 07:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753082284; cv=none; b=iFa7xMfc2XpXmttFMTKKqwENDxeKEx6g3Jo0ALQ/oNPS2wfLLlsV8Ts7GZUecVQ6879AWSDD2yj4c/mG9fIQZC7jRCD754ukR0xdsaAH2Zy2ha3IHXqAt5Hu71vPIaJcX29H05arCaPM5G4w72KElEXAdpsfSTzaeb0WUnpeqRI=
+	t=1753082307; cv=none; b=HSOl9AOs1oXOhKG5/NAIEai9XbU/X6WlCt+FW2iX9VqcJXT8We3q5bClzDh97kpXhbwhhJW9TYNU9VZGZSIv5MltaFP4cZy89y12janR0/WxJF+VW6NqJ+xJu4K6aCZsYnCKK1tg7VB0UCdFzr4xc/YrArz0AAo5WzkuYyZMRjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753082284; c=relaxed/simple;
-	bh=1s2KWA7tcb/MOyIOVFgvc6VCEGCoanOpC0pWVed+jWM=;
+	s=arc-20240116; t=1753082307; c=relaxed/simple;
+	bh=3qrevPcicxgETY1294+5rHRFXsitnT5UsxJa4w+t/jo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lKjpRYRR0PBPzO58bB4jo//xnkHkWTQzOqfguIGJ2RwIIShk7Kbh4Eepycu/pWmO8+jLwMXKH9o3otqi3imegWxBf40HWwcBYdvvk/CnyN5CKg65kqKrUGTlf/M6vJebFBr3pnRP0uDSV4g63AAAiHAlshQET0bn3o6Lwv429MQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HT2WtPZp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07355C4CEED;
-	Mon, 21 Jul 2025 07:17:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753082283;
-	bh=1s2KWA7tcb/MOyIOVFgvc6VCEGCoanOpC0pWVed+jWM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HT2WtPZpN58l+taN0yRBydcUEukBxJNSQtelllZMQs6BB2IaOMCXK16LojQHy2Kpw
-	 bJxJ3eN9z3TPTYq064MEcEZneXeSq2mh7Y1ejCTVk1Uh0XwTlUPhQYkAdVPC/Ieix3
-	 gUjnvYWMD/PDEz7UGfjmdE6cDJWoekgKEC51yAL4dhsLmWedWbcau5zxiY2KnTSV/a
-	 AbpeD0MWRzGjrg8QGI+FPtObFMJzFq35ZLYJ7DM0Pa0PsMPwLkRGkkOdEqpNBXVAir
-	 mLJKMM1CvCuTLtxAr8bCFPw6nCq/FBTIrL3F/a4V0EOrU6mCEWD+7etGruH4dNKbmc
-	 +lhuZ2h2rUGNQ==
-Message-ID: <d0d55fe7-27d5-47e2-9c64-aa0f01eaa772@kernel.org>
-Date: Mon, 21 Jul 2025 09:17:53 +0200
+	 In-Reply-To:Content-Type; b=i08PM/XMfjul2v+gzrPAYXFGQ4mq427nQ9Rf37t+s8NodvTwST7Cx1hHPWK5UoUmt81asNXW+62eOrqRb2QJbxp1Y/6ffvfxKFAIB2HW5U22dzs4mUMooeKoKGrLY0aCrFP4ce3ew/wXHK3tA2Jwq92zqE7NmappeNIXUGb37jM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=O+qg6ChK; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1753082296; x=1753687096; i=markus.elfring@web.de;
+	bh=3b63yCSRxFfdpBP67zrx3rmro5uAXRHNaFmThsOJBMg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=O+qg6ChKrpJcIpGtGSH5T9hwR0ami5ZmSTF8GO0F9n5/NRv7Lgx8Fmv0J1xBx3Zz
+	 GfgYRf4mW1reLZKNjbsc1vICFq8BB2uP3bq00q2NIyHFM98aPq+c2LzHni9AVlxaW
+	 1IqHNbONs0lgB8r/+Fk6MO9kFO8kzK1DwAxI74qGWEaAHNasFHDBfWdrjCcZpIvP3
+	 9KhBexXwNwahTaJQg1tmAXTlbCPQ4e2aJjb5Q+R4mJgcx9nzB4rRzDS2C9uffo64g
+	 kdPHgjK5yMQOUuzAjsXN62Ghx2iFAkt3bbUNE52zcvKGOUKlddPzMSJz/RSV/pdWe
+	 PBNddPc4SW46pelGFg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.235]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MtPvg-1usOUY18mM-012FdT; Mon, 21
+ Jul 2025 09:18:16 +0200
+Message-ID: <45b8941a-b6bf-4b48-ad1b-cc6ba46b8642@web.de>
+Date: Mon, 21 Jul 2025 09:18:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,178 +57,102 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 14/16] arm64: dts: axis: Add initial device tree support
-To: sungmin park <smn1196@coasia.com>, ksk4725@coasia.com,
- Jesper Nilsson <jesper.nilsson@axis.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa
- <tomasz.figa@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Ravi Patel <ravi.patel@samsung.com>
-Cc: kenkim <kenkim@coasia.com>, Jongshin Park <pjsin865@coasia.com>,
- GunWoo Kim <gwk1013@coasia.com>, HaGyeong Kim <hgkim05@coasia.com>,
- GyoungBo Min <mingyoungbo@coasia.com>,
- Pankaj Dubey <pankaj.dubey@samsung.com>, Shradha Todi
- <shradha.t@samsung.com>, Inbaraj E <inbaraj.e@samsung.com>,
- Swathi K S <swathi.ks@samsung.com>, Hrishikesh <hrishikesh.d@samsung.com>,
- Dongjin Yang <dj76.yang@samsung.com>, Sang Min Kim
- <hypmean.kim@samsung.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@axis.com, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, soc@lists.linux.dev
-References: <20250710002047.1573841-1-ksk4725@coasia.com>
- <20250710002047.1573841-15-ksk4725@coasia.com>
- <5998de2a-f3ae-46bf-a975-081da20bab03@kernel.org>
- <79482a4ec841743af1ef13ea9eea58bada47c42f.camel@coasia.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <79482a4ec841743af1ef13ea9eea58bada47c42f.camel@coasia.com>
+Subject: Re: [PATCH v2] arch: fix resource leak in jbusmc_probe()
+To: Siyang Liu <1972843537@qq.com>, sparclinux@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Andreas Larsson
+ <andreas@gaisler.com>, "David S. Miller" <davem@davemloft.net>
+References: <cc7db82b-0337-4342-aeaf-ec6376cbcc74@web.de>
+ <tencent_60B856B729FE434916EF57CDF5286D69A008@qq.com>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <tencent_60B856B729FE434916EF57CDF5286D69A008@qq.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Sx62xdx/hkM/LHNDHWh+0OOkVE2MklN8TDbtqT7mVFO/btoc0wr
+ gI3P1cUI+j/arcOvtXDRMSBrjCya8aZbXpjbT958S4KqVhW3wonGTkTsBAEH7XidL/vkFP2
+ RyEZEd3khQI5Z2pZASa8KVCr8O5vcBpDTUPTHj9p1DqBaagxXP3NgII8kdWyJcFt5btQlSG
+ Ddf2dmcIoxS4pauSm/gQA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ZJ9QKpSfQGU=;xc0DNeNXcxa+osVlhMHOMEW8j6q
+ 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
 
-On 21/07/2025 09:08, sungmin park wrote:
->>> index fa1e04e87d1d..371005f3f41a 100644
->>> --- a/MAINTAINERS
->>> +++ b/MAINTAINERS
->>> @@ -2320,6 +2320,20 @@ F:       drivers/crypto/axis
->>>  F:     drivers/mmc/host/usdhi6rol0.c
->>>  F:     drivers/pinctrl/pinctrl-artpec*
->>>  
->>> +ARM/ARTPEC ARM64 MACHINE SUPPORT
->>
->> This is samsung soc, so I need a pattern for that as well as I will
->> be
->> handling patches.
-> 
-> Can you please explain what you mean to say?
+=E2=80=A6> This can lead to leakage of device node reference counts,
+> which may result in kernel resources not being released.
+=E2=80=A6
 
-
-Something like I sent for Tesla the same day or shortly after I
-commented on this.
-
->  
->>
->>> +M:     Jesper Nilsson <jesper.nilsson@axis.com>
->>> +M:     Ravi Patel <ravi.patel@samsung.com>
->>> +M:     SeonGu Kang <ksk4725@coasia.com>
->>> +M:     SungMin Park <smn1196@coasia.com>
->>
->> Please keep only maintainers who will actually perform reviews of the
->> code. I am not even sure if this is worth separate entry outside of
->> Samsung. Please list the IP blocks which are not Samsung here.
-
-Are you going to implement this in the next patch?
-
-> 
-> Is it fine if I merge the list with existing ARTPEC entry?
-
-No. Did you read my message? I am not maintainer of existing ARTPEC SoC.
-
-
-> Samsung and Coasia entry can be removed from list as Axis will be only
-> maintaining the ARTPEC-8 SoC in future.
-> Please suggest your opinion here.
-> 
->>
->>> +L:     linux-arm-kernel@lists.infradead.org (moderated for non-
->>> subscribers)
->>> +L:     linux-samsung-soc@vger.kernel.org
->>> +L:     linux-arm-kernel@axis.com
->>> +S:     Maintained
->>> +F:     Documentation/devicetree/bindings/clock/axis,artpec*-
->>> clock.yaml
->>> +F:     arch/arm64/boot/dts/axis/
->>> +F:     drivers/clk/samsung/clk-artpec*.c
->>> +F:     include/dt-bindings/clock/axis,artpec*-clk.h
->>> +
->>>  ARM/ASPEED I2C DRIVER
->>>  M:     Ryan Chen <ryan_chen@aspeedtech.com>
->>>  R:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
->>> diff --git a/arch/arm64/Kconfig.platforms
->>> b/arch/arm64/Kconfig.platforms
->>> index 8b76821f190f..418ee47227c1 100644
->>> --- a/arch/arm64/Kconfig.platforms
->>> +++ b/arch/arm64/Kconfig.platforms
->>> @@ -40,6 +40,19 @@ config ARCH_APPLE
->>>           This enables support for Apple's in-house ARM SoC family,
->>> such
->>>           as the Apple M1.
->>>  
->>> +config ARCH_ARTPEC
->>> +       bool "Axis Communications ARTPEC SoC Family"
->>> +       help
->>> +          This enables support for the ARMv8 based ARTPEC SoC
->>> Family.
->>> +
->>> +config ARCH_ARTPEC8
->>
->> No, drop. One ARCH symbol.
->>
->>> +       bool "Axis ARTPEC-8 SoC Platform"
->>> +       depends on ARCH_ARTPEC
->>> +       depends on ARCH_EXYNOS
->>
->> And that's the proof that this is Samsung SoC.
-> 
-> Should I move the axis folder inside exynos just like google did? In
-> that case we don't need separate ARCH entry anymore.
-> Or should I follow the tesla FSD style to add axis folder outside
-> exynos? In that case I will keep ARCH_ARTPEC entry only.
-> Please suggest your opinion here.
+See also one more:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.16-rc6#n94
 
 
-You did not describe the hardware really. Neither in commit msg, nor in
-cover letter nor here where I asked to list the non-Samsung IP blocks. I
-will not provide you guidelines based on magic crystal ball guesses.
+* Will you become more interested in additional tags (like =E2=80=9CFixes=
+=E2=80=9D and =E2=80=9CCc=E2=80=9D)?
+
+* Would the subsystem specification =E2=80=9Csparc=E2=80=9D be more approp=
+riate
+  in the summary phrase?
 
 
-Best regards,
-Krzysztof
+=E2=80=A6> ---
+>  arch/sparc/kernel/chmc.c | 10 +++++++---
+=E2=80=A6
+
+How do you think about to improve your version management?
+https://lore.kernel.org/all/?q=3D%22This+looks+like+a+new+version+of+a+pre=
+viously+submitted+patch%22
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.16-rc6#n784
+
+Regards,
+Markus
 
