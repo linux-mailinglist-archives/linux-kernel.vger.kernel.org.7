@@ -1,105 +1,205 @@
-Return-Path: <linux-kernel+bounces-738546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 998BBB0B9DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 04:00:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F1B2B0B9DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 04:02:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1D601890F62
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 02:00:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A8D6176AA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 02:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FEBC1990D8;
-	Mon, 21 Jul 2025 01:59:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45A518BC0C;
+	Mon, 21 Jul 2025 02:02:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BJjRW/2G"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D9tmU4+M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7198A18EB0
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 01:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F8B3FE4
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 02:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753063198; cv=none; b=eR4BBvlmywg7zTkKuOzZvs2LeKAvSpwar0p+ZSEUVRf00P8EyUhE9f/Aj5SvxkOTUHWD9Ckf7Lh4tBOEJzSpJPwyM9IlQnKVR7YgGLjXQSjuGi+pxfm/W8ylRQr3KAXkBY9z6bEWYBRUyQygwLeKoLUNE45XeK0FacQw0nENBms=
+	t=1753063357; cv=none; b=p7zGlK1VHQw59qHQJW42JV/oTbHrBg5YSuz9wcDjwtl1BZc16ZgseoxG20KUgXSnURobS71VFKB/AUjXVDl39MTDCgtGVglYgwvVf7fd5Rh/1qC9gAVPZilz3sKPx6UQWimwNLvh7yCDFachvpC+KRwg/UZN/Sl/TePZTPoy9K4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753063198; c=relaxed/simple;
-	bh=Tx8iuGI0EGhXnQPTDG2IckNxNu+e77dp+qofKYwYb/w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BJLoXirSdnafgrPnpmREOblaD9H3vQhdJ+9zD57YWvBkYisgR+5galy9aJ1aRzkdjcqsTJSLX3UJJ2K9z/DBvPHj200ObazHbfygCOjqxZhaMpOUHth/5vDC+xqs2ln+WvgLYi9/3MIw9kj1LblNUE964J5xte1VYJ3rAA+K5NY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BJjRW/2G; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753063197; x=1784599197;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Tx8iuGI0EGhXnQPTDG2IckNxNu+e77dp+qofKYwYb/w=;
-  b=BJjRW/2Ggs4246apuMiKutKf0YKeQrGaNf6/6W7VsqYmU8DL/wJz2G0q
-   c35+NzQUkUPOgUou1TD8L0PMl8anTC6hhuwbckxIz+aIarV+GGo1htAtj
-   CDvWMGjYgUvoSKU/f5dxG0T+PHzCpgYfnABZ84f2COgXJx+o8sS2QrHWO
-   qUgP0/jQgPexCF0t7vppXGf8wZKGNqNvtnvk0qvHr4AVMpOg/VMjiw2Xu
-   DX2ZxBYnNx/aPl9EQggTkRrqDH07uMErcNInYlNwNI7Qq2p8F7G9EbF1P
-   ufFYwSrfCWddTL12z0BGbiehFhP6IWh3lLk0EBjAiZfMZsxyIB0BIxIfp
-   Q==;
-X-CSE-ConnectionGUID: CEqxesJ0SmOkP2LcpXOLgQ==
-X-CSE-MsgGUID: b+WiCVwERXO6kLtkwB/PAw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11498"; a="54480014"
-X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
-   d="scan'208";a="54480014"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jul 2025 18:59:56 -0700
-X-CSE-ConnectionGUID: ZXFFNqvNQs+P229+0CECqw==
-X-CSE-MsgGUID: 7qj5tw7JRX+rp0ocs9hkyA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
-   d="scan'208";a="189657239"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jul 2025 18:59:55 -0700
-Message-ID: <2867cd08-132b-40f9-bd19-707f9a78b2c7@linux.intel.com>
-Date: Mon, 21 Jul 2025 09:57:55 +0800
+	s=arc-20240116; t=1753063357; c=relaxed/simple;
+	bh=orgIy60XqVsfiS5IU3qqmpU4wxTQIGlZQlY3DE3J6MU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jOfsoMgWfjYYtNBheIgjbO5+coEzjGw8wP/HiYBrubIz+ij2Bh221fXmCWCAtnGViLQIEhxDkqHPDQcgBWfY5n9rqmcJZbRBRsckTwoRSLunKKJXNTWXOyYks461loPb6DUKd/GkKKU43P8dh30TwuVNdcqzt56WhhMXgiiGPqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D9tmU4+M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BCF8C4CEE7;
+	Mon, 21 Jul 2025 02:02:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753063356;
+	bh=orgIy60XqVsfiS5IU3qqmpU4wxTQIGlZQlY3DE3J6MU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=D9tmU4+M/NAp/JVFUz4UwFAy/9inC5hULK0lxrJQFC/86mpu1nZtwxtZW7J7UIpPZ
+	 TbpDl3Sf3TZvLgwhgHoFZoB+VvWOn84Q8EEUOzNjQZdOKokyX6ZjZXp6VMKEBH5GqB
+	 hMIA2y+KtyLLjPJfg7iAnM0zn5odatiI0iPBtqQiOE2HezZEPKks1v4XoSzqCnGmLX
+	 wtckpb9vgPbxEeAzpbMpyWzekVt2RSfNim8L823le1+NdZFE8o2amRAXgKn8xy2FXs
+	 t+NWrRAhPkw/14D3+oYnmS92Fa1P7+LrFvbjg2t5dZd3cyDPt0UrDcw6SngmIIGpxm
+	 gAXwKWA5geEeQ==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>,
+	Daejun Park <daejun7.park@samsung.com>
+Subject: [PATCH] f2fs: don't break allocation when crossing contiguous sections
+Date: Mon, 21 Jul 2025 10:02:31 +0800
+Message-ID: <20250721020231.2482090-1-chao@kernel.org>
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/11] iommu/vt-d: Optimize iotlb_sync_map for
- non-caching/non-RWBF modes
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Joerg Roedel <joro@8bytes.org>, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250714045028.958850-1-baolu.lu@linux.intel.com>
- <20250714045028.958850-3-baolu.lu@linux.intel.com>
- <20250716141218.GA2166806@nvidia.com>
- <8aedbbcc-9f4c-4700-acb7-43ec4f540135@linux.intel.com>
- <20250717115559.GD2177622@nvidia.com>
- <3ea54d65-7ccc-479a-8912-bccd79d678d4@linux.intel.com>
- <20250718132912.GC2250220@nvidia.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20250718132912.GC2250220@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 7/18/25 21:29, Jason Gunthorpe wrote:
-> On Fri, Jul 18, 2025 at 10:56:24AM +0800, Baolu Lu wrote:
-> 
->> How about the following changes (compiled but not tested)?
-> Yes, exactly what I was thinking!
+Commit 0638a3197c19 ("f2fs: avoid unused block when dio write in LFS
+mode") has fixed unused block issue for dio write in lfs mode.
 
-I will submit a formal patch.
+However, f2fs_map_blocks() may break and return smaller extent when
+last allocated block locates in the end of section, even allocator
+can allocate contiguous blocks across sections.
 
-> 
-> That leaves the cache tag linked list race..
-> 
-> Nicolin is working on a neat solution for SMMU I wonder if we can
-> reuse it here too..
+Actually, for the case that allocator returns a block address which is
+not contiguous w/ current extent, we can record the block address in
+iomap->private, in the next round, skip reallocating for the last
+allocated block, then we can fix unused block issue, meanwhile, also,
+we can allocates contiguous physical blocks as much as possible for dio
+write in lfs mode.
 
-Okay, let's wait and see.
+Testcase:
+- mkfs.f2fs -f /dev/vdb
+- mount -o mode=lfs /dev/vdb /mnt/f2fs
+- dd if=/dev/zero of=/mnt/f2fs/file bs=1M count=3; sync;
+- dd if=/dev/zero of=/mnt/f2fs/dio bs=2M count=1 oflag=direct;
+- umount /mnt/f2fs
 
-Thanks,
-baolu
+Before:
+f2fs_map_blocks: dev = (253,16), ino = 4, file offset = 0, start blkaddr = 0x0, len = 0x100, flags = 1, seg_type = 8, may_create = 1, multidevice = 0, flag = 5, err = 0
+f2fs_map_blocks: dev = (253,16), ino = 4, file offset = 256, start blkaddr = 0x0, len = 0x100, flags = 1, seg_type = 8, may_create = 1, multidevice = 0, flag = 5, err = 0
+f2fs_map_blocks: dev = (253,16), ino = 4, file offset = 512, start blkaddr = 0x0, len = 0x100, flags = 1, seg_type = 8, may_create = 1, multidevice = 0, flag = 5, err = 0
+f2fs_map_blocks: dev = (253,16), ino = 5, file offset = 0, start blkaddr = 0x4700, len = 0x100, flags = 3, seg_type = 1, may_create = 1, multidevice = 0, flag = 3, err = 0
+f2fs_map_blocks: dev = (253,16), ino = 5, file offset = 256, start blkaddr = 0x4800, len = 0x100, flags = 3, seg_type = 1, may_create = 1, multidevice = 0, flag = 3, err = 0
+
+After:
+f2fs_map_blocks: dev = (253,16), ino = 4, file offset = 0, start blkaddr = 0x0, len = 0x100, flags = 1, seg_type = 8, may_create = 1, multidevice = 0, flag = 5, err = 0
+f2fs_map_blocks: dev = (253,16), ino = 4, file offset = 256, start blkaddr = 0x0, len = 0x100, flags = 1, seg_type = 8, may_create = 1, multidevice = 0, flag = 5, err = 0
+f2fs_map_blocks: dev = (253,16), ino = 4, file offset = 512, start blkaddr = 0x0, len = 0x100, flags = 1, seg_type = 8, may_create = 1, multidevice = 0, flag = 5, err = 0
+f2fs_map_blocks: dev = (253,16), ino = 5, file offset = 0, start blkaddr = 0x4700, len = 0x200, flags = 3, seg_type = 1, may_create = 1, multidevice = 0, flag = 3, err = 0
+
+Cc: Daejun Park <daejun7.park@samsung.com>
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/data.c | 28 ++++++++++++++++++----------
+ fs/f2fs/f2fs.h |  1 +
+ 2 files changed, 19 insertions(+), 10 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index d1a2616d41be..4e62f7f00b70 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1550,10 +1550,14 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
+ 	unsigned int start_pgofs;
+ 	int bidx = 0;
+ 	bool is_hole;
++	bool lfs_dio_write;
+ 
+ 	if (!maxblocks)
+ 		return 0;
+ 
++	lfs_dio_write = (flag == F2FS_GET_BLOCK_DIO && f2fs_lfs_mode(sbi) &&
++				map->m_may_create);
++
+ 	if (!map->m_may_create && f2fs_map_blocks_cached(inode, map, flag))
+ 		goto out;
+ 
+@@ -1600,7 +1604,7 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
+ 	/* use out-place-update for direct IO under LFS mode */
+ 	if (map->m_may_create && (is_hole ||
+ 		(flag == F2FS_GET_BLOCK_DIO && f2fs_lfs_mode(sbi) &&
+-		!f2fs_is_pinned_file(inode)))) {
++		!f2fs_is_pinned_file(inode) && map->m_last_pblk != blkaddr))) {
+ 		if (unlikely(f2fs_cp_error(sbi))) {
+ 			err = -EIO;
+ 			goto sync_out;
+@@ -1684,10 +1688,15 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
+ 
+ 		if (map->m_multidev_dio)
+ 			map->m_bdev = FDEV(bidx).bdev;
++
++		if (lfs_dio_write)
++			map->m_last_pblk = NULL_ADDR;
+ 	} else if (map_is_mergeable(sbi, map, blkaddr, flag, bidx, ofs)) {
+ 		ofs++;
+ 		map->m_len++;
+ 	} else {
++		if (lfs_dio_write && !f2fs_is_pinned_file(inode))
++			map->m_last_pblk = blkaddr;
+ 		goto sync_out;
+ 	}
+ 
+@@ -1712,14 +1721,6 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
+ 		dn.ofs_in_node = end_offset;
+ 	}
+ 
+-	if (flag == F2FS_GET_BLOCK_DIO && f2fs_lfs_mode(sbi) &&
+-	    map->m_may_create) {
+-		/* the next block to be allocated may not be contiguous. */
+-		if (GET_SEGOFF_FROM_SEG0(sbi, blkaddr) % BLKS_PER_SEC(sbi) ==
+-		    CAP_BLKS_PER_SEC(sbi) - 1)
+-			goto sync_out;
+-	}
+-
+ 	if (pgofs >= end)
+ 		goto sync_out;
+ 	else if (dn.ofs_in_node < end_offset)
+@@ -4162,7 +4163,7 @@ static int f2fs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+ 			    unsigned int flags, struct iomap *iomap,
+ 			    struct iomap *srcmap)
+ {
+-	struct f2fs_map_blocks map = {};
++	struct f2fs_map_blocks map = { NULL, };
+ 	pgoff_t next_pgofs = 0;
+ 	int err;
+ 
+@@ -4171,6 +4172,10 @@ static int f2fs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+ 	map.m_next_pgofs = &next_pgofs;
+ 	map.m_seg_type = f2fs_rw_hint_to_seg_type(F2FS_I_SB(inode),
+ 						inode->i_write_hint);
++	if (flags & IOMAP_WRITE && iomap->private) {
++		map.m_last_pblk = (unsigned long)iomap->private;
++		iomap->private = NULL;
++	}
+ 
+ 	/*
+ 	 * If the blocks being overwritten are already allocated,
+@@ -4209,6 +4214,9 @@ static int f2fs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+ 		iomap->flags |= IOMAP_F_MERGED;
+ 		iomap->bdev = map.m_bdev;
+ 		iomap->addr = F2FS_BLK_TO_BYTES(map.m_pblk);
++
++		if (flags & IOMAP_WRITE && map.m_last_pblk)
++			iomap->private = (void *)map.m_last_pblk;
+ 	} else {
+ 		if (flags & IOMAP_WRITE)
+ 			return -ENOTBLK;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index dfddb66910b3..97c1a2a3fbd7 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -732,6 +732,7 @@ struct f2fs_map_blocks {
+ 	block_t m_lblk;
+ 	unsigned int m_len;
+ 	unsigned int m_flags;
++	unsigned long m_last_pblk;	/* last allocated block, only used for DIO in LFS mode */
+ 	pgoff_t *m_next_pgofs;		/* point next possible non-hole pgofs */
+ 	pgoff_t *m_next_extent;		/* point to next possible extent */
+ 	int m_seg_type;
+-- 
+2.49.0
+
 
