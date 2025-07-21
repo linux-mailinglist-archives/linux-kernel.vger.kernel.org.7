@@ -1,123 +1,132 @@
-Return-Path: <linux-kernel+bounces-739019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 926CBB0C0A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:49:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90D21B0C0A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:49:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A98CB3BA3F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:48:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CC66160915
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:49:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 400F728D8E8;
-	Mon, 21 Jul 2025 09:48:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FhpEd42j"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6659288CBC;
+	Mon, 21 Jul 2025 09:48:28 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B2028D8C3;
-	Mon, 21 Jul 2025 09:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668F7224254;
+	Mon, 21 Jul 2025 09:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753091288; cv=none; b=FUKt7BRBsydFVCJRoOM4OsbSUCkoA+zA8b5n9Skbc5q2S93QSutIr1BZupvans8PbzGWsip6FlEP+gPl0NREXo6pSY+WBPA+1tnKA3YVQuUsXRv/sDIcVT4AQUjUgFwNk9Qbs3+biCgmbgG/OR7dox1PzFotU4zzK0/T/jEE4EA=
+	t=1753091308; cv=none; b=ccO40Vv3w7I4fxPJT8RG2iHyhp1Hymq4L3gOvyNXy2Ox/McQR18FlQWi70ED0ILTuKwQbGvq878G6O3s7sMnKeJdfnBogPTSeNFtoTMUDQQ30OeIfWemU64bJp3ZnvTjxgMJ00Ui+rIGL4ixPRWwPE9QA+rO786qJQ9XsHNk2vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753091288; c=relaxed/simple;
-	bh=IByGw2ZxVkuZD7DNtFgIg2yVP6vR9IXMunELCO9fnfg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OrP5jUjM7JVxG7kURnK/oacCaAtGnWNCTfNtCwQ3JcW5aRUGuDJ4baChhFideFZ25dQRKF2oEwDs9Ta6QybYXRnQLyP1/Mk1yV4l2+1zUyeF93aYvsfFtC05wSJEPvUnm755hX3ZO41VhlNy2FC4Mq2X4zLwzx5/2R2XpYj++RM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FhpEd42j; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753091287; x=1784627287;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=IByGw2ZxVkuZD7DNtFgIg2yVP6vR9IXMunELCO9fnfg=;
-  b=FhpEd42jihIIS0VmQ5FtcIUoSJwSjQb5jTfe0EvE0grZAOMc8Qbi7Ngb
-   1HbFWSUhqG6EA7v7In64mIZ4xS+DC0DunVqSuvrUNBVspRhqa5vNSSeJp
-   nXA2jP4fK/WJbGmxsiPQT+7fSb1ZBOSdI9+NM/Msak85hfmHO8Z59iYCI
-   XbtXTibG7Cao33OYGsp5dhRfdIIsfvS2elIYjSiEOVo4TKXZ+ldEooowY
-   5u6vsF5yqAHrLqasxZuvm7bgIbVcZE9RTU5HSxY9m6SdnsI7mqx8/nks9
-   BR/Sl3SuArikctsYPJpyy0sDKqK6OVA44+ybGHcv3zsPyex6T5rKEut4r
-   Q==;
-X-CSE-ConnectionGUID: ZxxV34q/TN2msjUCzp3X3Q==
-X-CSE-MsgGUID: JEFu3tDBSnu4I2xC3dNcWg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11498"; a="55243822"
-X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
-   d="scan'208";a="55243822"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 02:48:06 -0700
-X-CSE-ConnectionGUID: xou+KRvxSzSOFCV2PENd2w==
-X-CSE-MsgGUID: y0U9bH/gRbS7yDDDabfaMg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,328,1744095600"; 
-   d="scan'208";a="158847575"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by fmviesa006.fm.intel.com with SMTP; 21 Jul 2025 02:48:04 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 21 Jul 2025 12:48:03 +0300
-Date: Mon, 21 Jul 2025 12:48:03 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Myrrh Periwinkle <myrrhperiwinkle@qtmlabs.xyz>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] usb: typec: ucsi: Update power_supply on power role
- change
-Message-ID: <aH4M074PasIlWzTQ@kuha.fi.intel.com>
-References: <20250721-fix-ucsi-pwr-dir-notify-v1-1-e53d5340cb38@qtmlabs.xyz>
+	s=arc-20240116; t=1753091308; c=relaxed/simple;
+	bh=VD8dX6xKkJvFwhWE/+3tcU+thqZCccdxaLH0Hg2g770=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DCLLYkiOQf8d57Iv74KCgrdjAySUrTY/Kv8kQE/zhEzYv8IN/PUPFdfJE6G59ZZRqtnZgfA1RpBpcePe+uTrF2MEDv9Yg7Mna0aHoUmAHHclA0zseXM6YysObxE/Y7y1ymeLI6p4vSE2y4i52fMqj6YTtdhdnYq/EPGeeIgM8r0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4blwXW2mncz6L5QP;
+	Mon, 21 Jul 2025 17:46:51 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id B6E9214038F;
+	Mon, 21 Jul 2025 17:48:17 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 21 Jul
+ 2025 11:48:17 +0200
+Date: Mon, 21 Jul 2025 10:48:16 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Thomas =?ISO-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
+CC: Matthew Wood <thepacketgeek@gmail.com>, Bjorn Helgaas
+	<bhelgaas@google.com>, Mario Limonciello <superm1@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH v5 1/1] PCI/sysfs: Expose PCIe device serial number
+Message-ID: <20250721104816.00003feb@huawei.com>
+In-Reply-To: <20250718125935-75fa0343-af78-42be-bc3f-e8f806a4aee5@linutronix.de>
+References: <20250717165056.562728-1-thepacketgeek@gmail.com>
+	<20250717165056.562728-2-thepacketgeek@gmail.com>
+	<20250718113611.00003c78@huawei.com>
+	<20250718125935-75fa0343-af78-42be-bc3f-e8f806a4aee5@linutronix.de>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250721-fix-ucsi-pwr-dir-notify-v1-1-e53d5340cb38@qtmlabs.xyz>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml100011.china.huawei.com (7.191.174.247) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Mon, Jul 21, 2025 at 01:32:51PM +0700, Myrrh Periwinkle wrote:
-> The current power direction of an USB-C port also influences the
-> power_supply's online status, so a power role change should also update
-> the power_supply.
-> 
-> Fixes an issue on some systems where plugging in a normal USB device in
-> for the first time after a reboot will cause upower to erroneously
-> consider the system to be connected to AC power.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 0e6371fbfba3 ("usb: typec: ucsi: Report power supply changes")
-> Signed-off-by: Myrrh Periwinkle <myrrhperiwinkle@qtmlabs.xyz>
+On Fri, 18 Jul 2025 13:02:00 +0200
+Thomas Wei=DFschuh <thomas.weissschuh@linutronix.de> wrote:
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> On Fri, Jul 18, 2025 at 11:36:11AM +0100, Jonathan Cameron wrote:
+> > On Thu, 17 Jul 2025 09:50:54 -0700
+> > Matthew Wood <thepacketgeek@gmail.com> wrote: =20
+>=20
+> (...)
+>=20
+> > > diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+> > > index 268c69daa4d5..bc0e0add15d1 100644
+> > > --- a/drivers/pci/pci-sysfs.c
+> > > +++ b/drivers/pci/pci-sysfs.c
+> > > @@ -239,6 +239,22 @@ static ssize_t current_link_width_show(struct de=
+vice *dev,
+> > >  }
+> > >  static DEVICE_ATTR_RO(current_link_width);
+> > > =20
+> > > +static ssize_t serial_number_show(struct device *dev,
+> > > +				       struct device_attribute *attr, char *buf)
+> > > +{
+> > > +	struct pci_dev *pci_dev =3D to_pci_dev(dev);
+> > > +	u64 dsn;
+> > > +
+> > > +	dsn =3D pci_get_dsn(pci_dev);
+> > > +	if (!dsn)
+> > > +		return -EIO;
+> > > +
+> > > +	return sysfs_emit(buf, "%02llx-%02llx-%02llx-%02llx-%02llx-%02llx-%=
+02llx-%02llx\n",
+> > > +		dsn >> 56, (dsn >> 48) & 0xff, (dsn >> 40) & 0xff, (dsn >> 32) & 0=
+xff,
+> > > +		(dsn >> 24) & 0xff, (dsn >> 16) & 0xff, (dsn >> 8) & 0xff, dsn & 0=
+xff); =20
+> >=20
+> > I wonder if doing the following i too esoteric. Eyeballing those shifts=
+ is painful.
+> >=20
+> > 	u8 bytewise[8]; /* naming hard... */
+> >=20
+> > 	put_unaligned_u64(dsn, bytewise);
+> >=20
+> > 	return sysfs_emit(buf, "%02x-%02x-%02x-%02x-%02x-%02x-%02x-%02x\n",
+> > 		bytewise[0], bytewise[1], bytewise[2], bytewise[3],
+> > 		bytewise[4], bytewise[5], bytewise[6], bytewise[7]); =20
+>=20
+> This looks endianess-unsafe.
+>=20
+> Maybe just do what some drivers are doing:
+>=20
+> 	u8 bytes[8];
+>=20
+> 	put_unaligned_be64(dsn, bytes);
+Absolutely. Typo :(  I don't think there is a put_unaligned_u64()
 
-> ---
->  drivers/usb/typec/ucsi/ucsi.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
-> index 01ce858a1a2b3466155db340e213c767d1e79479..8ff31963970bb384e28b460e5307e32cf421396b 100644
-> --- a/drivers/usb/typec/ucsi/ucsi.c
-> +++ b/drivers/usb/typec/ucsi/ucsi.c
-> @@ -1246,6 +1246,7 @@ static void ucsi_handle_connector_change(struct work_struct *work)
->  
->  	if (change & UCSI_CONSTAT_POWER_DIR_CHANGE) {
->  		typec_set_pwr_role(con->port, role);
-> +		ucsi_port_psy_changed(con);
->  
->  		/* Complete pending power role swap */
->  		if (!completion_done(&con->complete))
-> 
-> ---
-> base-commit: 89be9a83ccf1f88522317ce02f854f30d6115c41
-> change-id: 20250721-fix-ucsi-pwr-dir-notify-8a953aab42e5
-> 
-> Best regards,
-> -- 
-> Myrrh Periwinkle <myrrhperiwinkle@qtmlabs.xyz>
+>=20
+> 	return sysfs_emit(buf, "%8phD");
+>=20
+> >=20
+> >  =20
+> > > +}
+> > > +static DEVICE_ATTR_ADMIN_RO(serial_number); =20
+> >=20
+> >  =20
+>=20
 
--- 
-heikki
 
