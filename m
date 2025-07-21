@@ -1,184 +1,113 @@
-Return-Path: <linux-kernel+bounces-739728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C686B0CA30
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:00:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68816B0CA31
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:01:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A00624E1EA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:00:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FD177A2EE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:59:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77DDD2E265E;
-	Mon, 21 Jul 2025 18:00:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D782E0B45;
+	Mon, 21 Jul 2025 18:01:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GbpHVcYM"
-Received: from mail-io1-f73.google.com (mail-io1-f73.google.com [209.85.166.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GBKxpzo4"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C0F2E11CC
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 18:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E31E2D3748
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 18:01:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753120838; cv=none; b=mAdO3NQ4Uz2ef0C6VNwmQJywhQT6uGnk38lXzHcU34Lgs5Fo4eLBZGSmh4xFQJ68CzYZoBkcfG6TRwU+tqBEh+9OZq6RavvcobRmmHrAkGwNnD3/snzJV0tQWtY1bpavFvZE395rMhja9z0ExU5JmrG4VaPyeXuvTWGefsYfYj8=
+	t=1753120871; cv=none; b=A5pkTQookQtzzNczkr2wPQ+6a1zc0E+DuWKwbI3vYUhWBxO6Xg6brljU36pUj3D56U9Dx8atQekGRReUZZ9ahnmQEMPI+LneyhMAuFSq+QuigIN4y2AqKXU2MUjSX6CIi3KAcu7LG6YaCXgT6acDyt0ig+mPe69mYEI0dtQKTII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753120838; c=relaxed/simple;
-	bh=ogWkNfeO1YSnAXmvtt1kCOSLkwjDSK4GK17SpTnnPdE=;
-	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=jUXlsW/lqcAOaKr2vXsRzjLQ6SBDrETANLGVxLsSaP1uRhPAa2RXlLW9m5w1hSgSq3D2GHf8YDcZqtztRSjH9lENCFqtJCbz6NHWm8u1fPn2D+iNTFTQ8VWR6zYjva2mrVw5iSfxe5c3RjXNkpy5V85k+C9ynYdrxeFY7xgr9ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GbpHVcYM; arc=none smtp.client-ip=209.85.166.73
+	s=arc-20240116; t=1753120871; c=relaxed/simple;
+	bh=pFi0iNg20dO512kniaVlxq0eQv3JXBjCcE9+ainODKU=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=LEWPqN3IYJ5DVFF4nk97x9ajR/qeNX9PtmwXXyefWjKFkw6/8helw0Er6r0yhkpY8Yd+qa2UuVh12SfRPr29x2rtfFIVhVfSRbgdhoW0AFjGp2OVPA21aUT+2hLgQITATrRNQcnmlrF+JAK5QpI5P3TnYSCLjBCQzFhgqx4LGXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--brho.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GBKxpzo4; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com
-Received: by mail-io1-f73.google.com with SMTP id ca18e2360f4ac-87c306a1b38so169080339f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 11:00:36 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--brho.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3132c1942a1so6216226a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 11:01:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753120835; x=1753725635; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2krLqXbrvL69zHTI+OSB0Sx07egWNgje2ekoJXV//wU=;
-        b=GbpHVcYMNjPulkBQVnu3PMABGIR5/NLHguhseFosMrL0HMJ947wZI75ksWO6PoOq6l
-         7g6xQZiTL5BpSPn+LSOYuGBU3iIrfJ9DZYLL0O2xjsgBPEaSDufXzYcJ/hZEF/Z69QrJ
-         Fge0AagZ23VVryCH4m/YmxILnzY37F4HXM4aSPSB8qSguL+HnVeTD1pi2zFzCBCWHI6o
-         xxEF9kBh/z5788HwBUBkVL8Q9sTZVuAbsJjO8gSxx5sTRON6rtkK3vGBPLPHkJ6PFsiv
-         9smVtMC/1szkXsV4QneShOlfSlilY2i4sQ/GDUlU5ReWy/Kn8WOqltxJVsj5Bb7hfXNI
-         yLgQ==
+        d=google.com; s=20230601; t=1753120870; x=1753725670; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=nkwILaoRvCGTt3850C+OpAJVMyb+bC6KByMj+ffuFyY=;
+        b=GBKxpzo4jIZzmsmtFRmy4Ai2ztTkE98/cfShd+T5qQuDogeuTHR/0v/T8cuuvx7tXN
+         pzXluF6ypAH2eIGEzMVPA8zw5LArsc6TwjRtMkb6FYgVHQ6YCGkexRtezOC2JgY4jzds
+         GNrGI5OABDpr3XletwY2aHwiP7LISWu8uVkQBmyVmMmzfz+Us+GOSwVn7zkSTRnPmV6B
+         sgWNpB+4r00Q0RXlSWBh2r9n80707UoYI9TDHlKf9p0Tzyf4EQwP/WQPrm1rj4+7WkVy
+         J82EvENiGsMkKSXhRegPHV55Ceg0iMxSFrm0SPAZLN66X7ssLH2P7uaMiYb9PXbU6Bhm
+         QfDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753120835; x=1753725635;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2krLqXbrvL69zHTI+OSB0Sx07egWNgje2ekoJXV//wU=;
-        b=gQBl2vKNdXFOFtrBD7jb2ROrt+o0b8aYDrCm21iyE1jOmJskNfiyChV5hDT/CXX5IG
-         gIzapJz89htsH5EY/JZK3P1L1SHddi+L1w8Y6tqj91ESxge1sSCYuanjbgQHKs98X2Jp
-         300wJ/Lw0nmTpBp3fLZUwqLGAXVuv4IO3E3TxOLALVwMOslhu+3KiELOdf8qBOncDz+O
-         BTyWrz7j9BwN4Yd8qZ4s2pY7f15P00AT8jmNGdza6Tk8y2dP5uoLBP/ESevWwzOybbCq
-         joYN01BOR/MusPeOggtHr+tBZNE/IX0oeMOKuHm9rhbenqdXsGvjReIX03uJlMtrmvFf
-         lz1w==
-X-Forwarded-Encrypted: i=1; AJvYcCXElVQ0KtiTFl7pE+C2iCZqbf2vn5hxaIPBQZck1yckcoX0Da9xDWKfcTWjifGyX6Cn2iJxM6kRUmuIIpY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0ewYivRwixyT+6NwAeUSEhx8lZNoQHPdanm6GaKPxiOt/2c9m
-	nVsz1XFKZRGQjrXJvBip/9W9lXJln6c+QSTzEGtwPxtTc5aohJ1afTtquh7idukmsuyxQAQ0Yqc
-	3g7LBUlR2w0yhQhFecPW5aoeqKA==
-X-Google-Smtp-Source: AGHT+IEfZ2MrsGDQt2Apr+GHWZROOgLVqxxVZM8uTrkAEn6W6ybAfMfVvl1rXs9CqPRl3bXlJpF5OsombirkZgJ7Gg==
-X-Received: from iobjk13.prod.google.com ([2002:a05:6602:720d:b0:87c:1d70:43be])
- (user=coltonlewis job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6602:2c0f:b0:86c:ee8b:c089 with SMTP id ca18e2360f4ac-879c291915bmr2390181339f.3.1753120835597;
- Mon, 21 Jul 2025 11:00:35 -0700 (PDT)
-Date: Mon, 21 Jul 2025 18:00:34 +0000
-In-Reply-To: <153b5191-c585-433e-9cf5-1ed19b9a7f5c@arm.com> (message from
- Suzuki K Poulose on Wed, 16 Jul 2025 00:22:16 +0100)
+        d=1e100.net; s=20230601; t=1753120870; x=1753725670;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nkwILaoRvCGTt3850C+OpAJVMyb+bC6KByMj+ffuFyY=;
+        b=fdC8xsr9X7X0WafjSPX+4vWUOn7m64zFCHQK3sk18Xm7u0yCVkyil5IuB6/Rg6DOuS
+         ++9ikhQRXf3tEdq+CxOxX0vjibBC7+NuQCmRT2NzSDWz3fN9rRNtvv8kzE/k7fwbJIKc
+         RZVbKX7G2MEnvKxlQFSu+RztL+Vf3F8lv+5c6qp/MTC4DrRyq2OFlA9D/dU9BbcJLNTA
+         xMI9fq4nVoPHi1BeiJS4l8xdbeSEKmLLEwjWDPpBQG2o8JD7m5pfg75ozZGp+Tv6t2I6
+         DtWYy8EY38LJOfktae7wuzhGj4E50JLPU7CHAKxoJfE/Xb2z3BwAWc57GUrOljgIFn5w
+         L55g==
+X-Forwarded-Encrypted: i=1; AJvYcCUfuHYO8DJWOUgcNKIdQNBFAlGxlc1RIIQCg7gFuEINULrocp2iuA6UbFqn5xiDsyXwQ2suIW4AUcayh8c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqUkxoq6b627332RT5XiUrGE1prb/rDShXGee8I0TvOGsXaqte
+	i2qg1DpHuSPAxGu/endYLPp9o2yJ87mrHhIh0AoGLzieg2ygxO4kaEt34/uDyEQ90UAiRLEPKw=
+	=
+X-Google-Smtp-Source: AGHT+IEMVgugN4IL+CFFSpkR2FwGQ9XHs+U2c8+mJb7PyriwEGtvZrHfeHjlWf5Bk3t3+bv1LkyTurDn
+X-Received: from qkab26.prod.google.com ([2002:a05:620a:89a:b0:7e0:f93f:98db])
+ (user=brho job=prod-delivery.src-stubby-dispatcher) by 2002:a05:620a:4892:b0:7e3:54d8:3fdd
+ with SMTP id af79cd13be357-7e354d84002mr1925664085a.16.1753120857996; Mon, 21
+ Jul 2025 11:00:57 -0700 (PDT)
+Date: Mon, 21 Jul 2025 18:00:47 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Message-ID: <gsntseipa0fx.fsf@coltonlewis-kvm.c.googlers.com>
-Subject: Re: [PATCH v4 01/23] arm64: cpufeature: Add cpucap for HPMN0
-From: Colton Lewis <coltonlewis@google.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: kvm@vger.kernel.org, pbonzini@redhat.com, corbet@lwn.net, 
-	linux@armlinux.org.uk, catalin.marinas@arm.com, will@kernel.org, 
-	maz@kernel.org, oliver.upton@linux.dev, mizhang@google.com, 
-	joey.gouly@arm.com, yuzenghui@huawei.com, mark.rutland@arm.com, 
-	shuah@kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	linux-perf-users@vger.kernel.org, linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <20250721180051.3645697-1-brho@google.com>
+Subject: [PATCH] x86/resctrl: avoid divide by 0 num_rmid
+From: Barret Rhoden <brho@google.com>
+To: Tony Luck <tony.luck@intel.com>, Reinette Chatre <reinette.chatre@intel.com>
+Cc: Dave Martin <Dave.Martin@arm.com>, James Morse <james.morse@arm.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Suzuki. Thanks for the review.
+x86_cache_max_rmid's default is -1.  If the hardware or VM doesn't set
+the right cpuid bits, num_rmid can be 0.
 
-Suzuki K Poulose <suzuki.poulose@arm.com> writes:
+Signed-off-by: Barret Rhoden <brho@google.com>
 
-> On 14/07/2025 23:58, Colton Lewis wrote:
->> Add a capability for FEAT_HPMN0, whether MDCR_EL2.HPMN can specify 0
->> counters reserved for the guest.
+---
+I ran into this on a VM on granite rapids.  I guess the VMM told the
+kernel it was a GNR, but didn't set all the cache/rsctl bits.
 
->> This required changing HPMN0 to an UnsignedEnum in tools/sysreg
->> because otherwise not all the appropriate macros are generated to add
->> it to arm64_cpu_capabilities_arm64_features.
+ arch/x86/kernel/cpu/resctrl/monitor.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
->> Acked-by: Mark Rutland <mark.rutland@arm.com>
->> Signed-off-by: Colton Lewis <coltonlewis@google.com>
->> ---
->>    arch/arm64/kernel/cpufeature.c | 8 ++++++++
->>    arch/arm64/tools/cpucaps       | 1 +
->>    arch/arm64/tools/sysreg        | 6 +++---
->>    3 files changed, 12 insertions(+), 3 deletions(-)
+diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
+index c261558276cd..226dee05f96e 100644
+--- a/arch/x86/kernel/cpu/resctrl/monitor.c
++++ b/arch/x86/kernel/cpu/resctrl/monitor.c
+@@ -359,6 +359,12 @@ int __init rdt_get_mon_l3_config(struct rdt_resource *r)
+ 	else if (mbm_offset > MBM_CNTR_WIDTH_OFFSET_MAX)
+ 		pr_warn("Ignoring impossible MBM counter offset\n");
+ 
++	if (r->num_rmid < 1) {
++		pr_warn("Invalid num_rmid %d, cach_max_rmid was %d\n",
++			r->num_rmid, boot_cpu_data.x86_cache_max_rmid);
++		r->num_rmid = 1;
++	}
++
+ 	/*
+ 	 * A reasonable upper limit on the max threshold is the number
+ 	 * of lines tagged per RMID if all RMIDs have the same number of
+-- 
+2.50.0.727.gbf7dc18ff4-goog
 
->> diff --git a/arch/arm64/kernel/cpufeature.c  
->> b/arch/arm64/kernel/cpufeature.c
->> index b34044e20128..f38d7b5294ec 100644
->> --- a/arch/arm64/kernel/cpufeature.c
->> +++ b/arch/arm64/kernel/cpufeature.c
->> @@ -548,6 +548,7 @@ static const struct arm64_ftr_bits ftr_id_mmfr0[] = {
->>    };
-
->>    static const struct arm64_ftr_bits ftr_id_aa64dfr0[] = {
->> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE,  
->> ID_AA64DFR0_EL1_HPMN0_SHIFT, 4, 0),
-
-> This doesn't have to be FTR_STRICT. The kernel can deal with
-> differences, by skipping to use HPMN0. We anyway rely on the
-> system wide cap for using the feature.
-
-Okay. I'll change it
-
-
-> Otherwise,
-
-> Acked-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-
-
-
-Thanks
->>    	S_ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE,  
->> ID_AA64DFR0_EL1_DoubleLock_SHIFT, 4, 0),
->>    	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE,  
->> ID_AA64DFR0_EL1_PMSVer_SHIFT, 4, 0),
->>    	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE,  
->> ID_AA64DFR0_EL1_CTX_CMPs_SHIFT, 4, 0),
->> @@ -2896,6 +2897,13 @@ static const struct arm64_cpu_capabilities  
->> arm64_features[] = {
->>    		.matches = has_cpuid_feature,
->>    		ARM64_CPUID_FIELDS(ID_AA64MMFR0_EL1, FGT, FGT2)
->>    	},
->> +	{
->> +		.desc = "HPMN0",
->> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
->> +		.capability = ARM64_HAS_HPMN0,
->> +		.matches = has_cpuid_feature,
->> +		ARM64_CPUID_FIELDS(ID_AA64DFR0_EL1, HPMN0, IMP)
->> +	},
->>    #ifdef CONFIG_ARM64_SME
->>    	{
->>    		.desc = "Scalable Matrix Extension",
->> diff --git a/arch/arm64/tools/cpucaps b/arch/arm64/tools/cpucaps
->> index 10effd4cff6b..5b196ba21629 100644
->> --- a/arch/arm64/tools/cpucaps
->> +++ b/arch/arm64/tools/cpucaps
->> @@ -39,6 +39,7 @@ HAS_GIC_CPUIF_SYSREGS
->>    HAS_GIC_PRIO_MASKING
->>    HAS_GIC_PRIO_RELAXED_SYNC
->>    HAS_HCR_NV1
->> +HAS_HPMN0
->>    HAS_HCX
->>    HAS_LDAPR
->>    HAS_LPA2
->> diff --git a/arch/arm64/tools/sysreg b/arch/arm64/tools/sysreg
->> index 8a8cf6874298..d29742481754 100644
->> --- a/arch/arm64/tools/sysreg
->> +++ b/arch/arm64/tools/sysreg
->> @@ -1531,9 +1531,9 @@ EndEnum
->>    EndSysreg
-
->>    Sysreg	ID_AA64DFR0_EL1	3	0	0	5	0
->> -Enum	63:60	HPMN0
->> -	0b0000	UNPREDICTABLE
->> -	0b0001	DEF
->> +UnsignedEnum	63:60	HPMN0
->> +	0b0000	NI
->> +	0b0001	IMP
->>    EndEnum
->>    UnsignedEnum	59:56	ExtTrcBuff
->>    	0b0000	NI
 
