@@ -1,94 +1,113 @@
-Return-Path: <linux-kernel+bounces-739236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 097EAB0C3BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:56:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D467CB0C3BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:56:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AFCC3ACA50
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:55:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18726540BF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5AF72C324C;
-	Mon, 21 Jul 2025 11:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F632D0C69;
+	Mon, 21 Jul 2025 11:56:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WW4XaBqc";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2c5Y8E2H"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n7iIJYOI"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB20527FB22;
-	Mon, 21 Jul 2025 11:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4043D2BE7BB
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 11:56:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753098959; cv=none; b=VJVM+NN5hewqy7AygDrXQygsJ8rn7vMj8ymoI7lOrdwA2wZeLtw9i2x3ds5/nogq36CfIRZS4hYc+qirLNIHt2nW506IFvpahJSRCQsLySPlPmvnkEAYTWNslJGXy+9BxI3daasLbS90Ttd4vC7YT4/v8P1minS1Z/CjHOuAi9o=
+	t=1753098984; cv=none; b=VEusP1dnXuhKPbFhnPjtbUqtBYyu7rI9CNOVRWxogAD97hPy5sPRu17uBtxZQ9PHjxBewGpKkwBz/k+Ig7HUvS7h47xmcamDMDnNEtwNc891TH4QbxeTuEA3bSKD4wgkYgqLBybj2IlFIqngzpMUACNS6X54NLvZKj7/NWMWkvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753098959; c=relaxed/simple;
-	bh=p5TbwrytaIHOjZ2/i48Y09L2DtvqwntaSaz6jsr//jM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LeO/G7K/jZzJpzP+J0GYfzkF26U3bMrUIBDhXrynn9RJZP/BPINxcN2PD28fIzuYe+W+gjTsnjedLBFmCrAzYLYv7Lc4QsbERmPkXGBunvYcpVNfUEg3SWuDafo7MpPD10cCPK2BUTiqVkVMW9hSX7jVwKGHdJPsvw+baQPbwU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WW4XaBqc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2c5Y8E2H; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 21 Jul 2025 13:55:54 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753098955;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dBB7Vt0KsL1Zl/na85sfbzXNBtElxrLVoZ6pNK0+vYo=;
-	b=WW4XaBqcbtaFWW4iweN1JB9noFuamMtHoX8yFEmTyp7sssWYlaxasMRmy2mJB/rndgLjXa
-	oEr3pNQ2nnGUVbQixY3nsS9LoisVNFoqGKUYTYMX28wxq4+nrpoeUM4dUi7e3MugFkpkbZ
-	DW/WZkxfpcYktY59KBh3N6eDlSQYSyL7ziIlfVgy+USXjxhlKn70N3/lLe/A4CSZJSNtpx
-	P3nJXoBNWlqKs/fluGXFV4Y9A51wMSrEj1JiYirSc8jSFQAaXHYxiyY6mWA2mNO2DkF+7V
-	ACCPKscLhmAQEbi9p6igTvUz/JxC3NAuRq2OayBo+lV5AmLhAAaLw08Rh3Uubw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753098955;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dBB7Vt0KsL1Zl/na85sfbzXNBtElxrLVoZ6pNK0+vYo=;
-	b=2c5Y8E2HhmVftBE78dkL9Lp5GsEXjOUHgP7Z/LwQA3PVPCSbainG1vNbodP8JbyzPQMVj0
-	tpPNStjsqcYXzqCA==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Matthew Wood <thepacketgeek@gmail.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, 
-	Mario Limonciello <superm1@kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v6 1/1] PCI/sysfs: Expose PCIe device serial number
-Message-ID: <20250721135540-2e295c9b-2032-4139-83cc-ad904d73dc41@linutronix.de>
-References: <20250718193230.300055-1-thepacketgeek@gmail.com>
- <20250718193230.300055-2-thepacketgeek@gmail.com>
+	s=arc-20240116; t=1753098984; c=relaxed/simple;
+	bh=MQgb7py7kA8qFAawQP8Xi376AvWUHjEvnrKVu5HiRW0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=CTIaYQpRVlOZcs2Ep7OhjgISNZzkZYImnsF/Gfw6I5fXG16pgQkTJl6K/cP+4QbYCY9h/w5LXvaaKMGgX6dTc0HICpINft+gOAncA/NG2cJC9f1VriQ8/KlRKT3J8jFAP85G7CPAt/MWont9MXFrUdt2IFZD4uR3rVwmpKRt6cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n7iIJYOI; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3a50049f8eeso2360341f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 04:56:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753098982; x=1753703782; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PYI2UsizWZCb5wSLeFRus42pLlQIGazAov/EfOWZBzY=;
+        b=n7iIJYOIi99dqjdXw3F78PY7/Oq4SV836RA34ANPCGA5S05BnRLXPYvmoDDBFHKeXT
+         6nOqCQA8XycC9r1vYKI0D1BCP+y/GNrD7WC32WRs6SnlwUV8l2VIkGxiG2gi8k7QdcPC
+         +WsN9ANlRBswM1VDlo4EWb1y8ahbN6w9JNPmLWErkV8xDuXpY6JLvBWOzFRTR5YHHanK
+         57dWSmn9WpmlelpFQDKn3BiTGWIlUGeC+hl9z1c21ERqEzm3JXz2r3sbOgZidxSHAInz
+         XWZrrZORNo7Zu2xyX4VC0FCe7tdQjZ3rHwvCbZOW7DtObksjGIwKiXOWXYJj0/AqBVV1
+         iTUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753098982; x=1753703782;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PYI2UsizWZCb5wSLeFRus42pLlQIGazAov/EfOWZBzY=;
+        b=xPQkf1ITY49Vdm58EgCaGet0ARNLG8ITIxaP+fj3+DDCNmnHgBOgJCyX3YjQCZ4o+X
+         RPONd7y4W7I+Xt2vQ58aEwTHIIIIFWJlae+IdtR5dx3MB5+EJuwzy4CJE3J3b99kGRhP
+         Os112CPuHcJdmNCwyJteNgP5nF09ODnrsL2cdFtwSM4Z+R8B61b27+Zw7ZD51MHBuY7D
+         H5NhCqSk575cFE5its0wtsWbNw3GQ0vfJMn0TV/om3tzbmYpMQhwV/Rr6jI/fGR6gg15
+         w4XUTzT4MDlRffjlLkeom5Bi3aJdMbv/CHs0nbw/KSgMt75lMojxprA9r/Q8wtfkooWq
+         lVvg==
+X-Forwarded-Encrypted: i=1; AJvYcCVpIg/9RXjVhHyDfrsuzQmupWE9RSZTBnu+R/v4Itbj9h4Yduk9oyBLcmgWygEdN3mDp61FxQJQfJiJRQs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSrSQgs9ghE9HIHpxxgY4jIoPm3ySg3I1STRpYMJTeQTESfoXt
+	1ySspku/sBYpb2IrQi40KLDd5sB4vcPAl/cJIF0mbrIe6o84G0Zi2K07gjMFZeiViXpzUAUSioQ
+	0bGEJWGYyllm3Rc5e3w==
+X-Google-Smtp-Source: AGHT+IEcFbj4EFix3ciRpXJYDPsXwCXJhfsHqcvc311AYGTCfDwpV/wkDnDzlBmx+/8BP4664mzipt5VeEQf3xc=
+X-Received: from wmqd13.prod.google.com ([2002:a05:600c:34cd:b0:456:23aa:8bf])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:2282:b0:3b7:54b3:c512 with SMTP id ffacd0b85a97d-3b754b3c63dmr5273340f8f.58.1753098981719;
+ Mon, 21 Jul 2025 04:56:21 -0700 (PDT)
+Date: Mon, 21 Jul 2025 11:56:20 +0000
+In-Reply-To: <20250720-rust-remove-compiler-builtins-deps-v3-1-0df3a493973f@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250718193230.300055-2-thepacketgeek@gmail.com>
+Mime-Version: 1.0
+References: <20250720-rust-remove-compiler-builtins-deps-v3-1-0df3a493973f@gmail.com>
+Message-ID: <aH4q5CA6SfFFtpwc@google.com>
+Subject: Re: [PATCH v3] rust: remove spurious compiler_builtins dependents
+From: Alice Ryhl <aliceryhl@google.com>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On Fri, Jul 18, 2025 at 12:32:29PM -0700, Matthew Wood wrote:
-> Add a single sysfs read-only interface for reading PCIe device serial
-> numbers from userspace in a programmatic way. This device attribute
-> uses the same hexadecimal 1-byte dashed formatting as lspci serial number
-> capability output. If a device doesn't support the serial number
-> capability, the serial_number sysfs attribute will not be visible.
+On Sun, Jul 20, 2025 at 01:20:40PM -0400, Tamir Duberstein wrote:
+> The dependency on `compiler_builtins.o` was first added in commit
+> 2f7ab1267dc9 ("Kbuild: add Rust support") to `alloc` which matches the
+> standard library[0] but was copied to other targets in:
+> - commit ecaa6ddff2fd ("rust: add `build_error` crate")
+> - commit d072acda4862 ("rust: use custom FFI integer types")
+> - commit 4e1746656839 ("rust: uapi: Add UAPI crate")
+> - commit d7659acca7a3 ("rust: add pin-init crate build infrastructure")
 > 
-> Signed-off-by: Matthew Wood <thepacketgeek@gmail.com>
-> Reviewed-by: Mario Limonciello <superm1@kernel.org>
+> The alloc crate was removed in commit 392e34b6bc22 ("kbuild: rust:
+> remove the `alloc` crate and `GlobalAlloc`"). As far as I can tell none
+> of the other dependencies are required; it is only required that
+> compiler_builtins be linked into the rust-enabled kernel. In the
+> standard library, compiler_builtins is a dependency of std[1].
+> 
+> Remove these dependency edges. Add a dependency edge from
+> `compiler_builtins` to `core` to `scripts/generate_rust_analyzer.py` to
+> match `rust/Makefile`. This has been incorrect since commit 8c4555ccc55c
+> ("scripts: add `generate_rust_analyzer.py`")
+> 
+> Link: https://github.com/rust-lang/rust/blob/f820b75feef00654924c9351a2faca8d34818339/library/alloc/Cargo.toml#L19 [0]
+> Link: https://github.com/rust-lang/rust/blob/f820b75feef00654924c9351a2faca8d34818339/library/std/Cargo.toml#L21 [1]
+> Link: https://rust-for-linux.zulipchat.com/#narrow/channel/288089-General/topic/rust-analyzer.20improvements/near/510200959
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 
-Reviewed-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
-
-> ---
->  Documentation/ABI/testing/sysfs-bus-pci |  9 +++++++++
->  drivers/pci/pci-sysfs.c                 | 27 ++++++++++++++++++++++---
->  2 files changed, 33 insertions(+), 3 deletions(-)
-
-(...)
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
