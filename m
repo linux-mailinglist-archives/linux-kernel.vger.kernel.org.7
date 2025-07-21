@@ -1,183 +1,147 @@
-Return-Path: <linux-kernel+bounces-739856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 456B9B0CC24
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:50:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC6F7B0CC2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:55:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EB97545BBE
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:50:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CB447A8A18
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8F423E342;
-	Mon, 21 Jul 2025 20:49:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1495223D287;
+	Mon, 21 Jul 2025 20:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="USwBlGGy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="izbECgjG";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="AT1QkYdF"
+Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6BD423B600;
-	Mon, 21 Jul 2025 20:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831291F91D6;
+	Mon, 21 Jul 2025 20:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753130994; cv=none; b=XcF5tWe03lfzSPFwvh9DS8+1MX74O3iRvJOvF9EbsgSwioqcLgmaPwHtiunOnwHPf16v10FsTUXRoTD+1pCFNZu1G5gAOm4VPlddyagvA2gxIWOWN4II1j2v1s+JpKiHsiE3FnOPOHhSLJE/K4aV6DxWgLYdQkN3FSS6UMnB7Es=
+	t=1753131307; cv=none; b=JAjdF5vC1cgQ9fVmOokQhBXy7+vu9rcZnUC+UU1zEXNReCNQeygZbM78k0YGTmPVzAIyUphz+hVoLxV2+iBj7b6tcMgrXxx5+T0yKgSyHrUM0wcDl0VMUyMpwUsjQ6fihIqTRcc+86jdjwkb1Pfy1tOmhBNdcS/a6dpOUL+59uI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753130994; c=relaxed/simple;
-	bh=RGpMFousrm9JXr2aga1XoiQZq81gXpkDZQCrU7p8kG4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J+n0C7+8nLAWgOnQW0vsAOF+FaLhTTplzKC54xFgeQ6Gu6Yfxn82pTzBXT7OIcicQDss77m0fR5TKg4i6AgdpM5k8LR3a1Qvi/HMsV6fjtQoClC2B2Nh+HMcxqviyz4ogdjjtSdxhmiUaMIn2yEw5re21gJzMp9WCXi7VWIa34g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=USwBlGGy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EA0DC4CEF7;
-	Mon, 21 Jul 2025 20:49:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753130994;
-	bh=RGpMFousrm9JXr2aga1XoiQZq81gXpkDZQCrU7p8kG4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=USwBlGGycUbYKwRlz8H1PUciShFkTuZXfVpLM5MtEpyQ2A97ZmBOIYa0cGOwBplAM
-	 P/UloDehuLPGSIqgqNRVeLye3ZQJwvjrIvND/8XbCEE/heb6TuWjlHXRTmnHic7i+/
-	 ufyzJfA+Tj1dnxW4WNlS2ijwfnLETqFwratBaRXG4lRw2vboY071pv4Rgj4gG0uneL
-	 vJADYIT6M2Sug0BnFp+wdbmKStgy/2g++iMRLOa45PAedgg8EJByYxkT5u6rz9xzId
-	 7//OhF3fMircm2SYJfkHca/mWkXbMTQEr5KB9GUZB1xfjt2aV3YLzdWsmNabD0jVLY
-	 gzg6qfQMQz07w==
-Date: Mon, 21 Jul 2025 13:49:53 -0700
-From: Kees Cook <kees@kernel.org>
-To: Will Deacon <will@kernel.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
-	Michal Wilczynski <michal.wilczynski@intel.com>,
-	Juergen Gross <jgross@suse.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Roger Pau Monne <roger.pau@citrix.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Usama Arif <usama.arif@bytedance.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Thomas Huth <thuth@redhat.com>, Brian Gerst <brgerst@gmail.com>,
-	kvm@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net,
-	platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
-	linux-mm@kvack.org, Ingo Molnar <mingo@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
-	kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v3 04/13] x86: Handle KCOV __init vs inline mismatches
-Message-ID: <202507211349.D93679FB25@keescook>
-References: <20250717231756.make.423-kees@kernel.org>
- <20250717232519.2984886-4-kees@kernel.org>
- <aHoHkDvvp4AHIzU1@kernel.org>
- <202507181541.B8CFAC7E@keescook>
- <CAMj1kXGAwjChyFvjQcTbL8dFXkFWnn9n47bkN7FP=+EsLNsJdg@mail.gmail.com>
- <aH42--h-ARsvX5Wk@willie-the-truck>
- <202507211311.8DAC4C7@keescook>
+	s=arc-20240116; t=1753131307; c=relaxed/simple;
+	bh=cHgQJLF+LtDlcq/DHLOFxIkpctjA+iF9QpdQDVfQlYs=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=Ojg5A2KouGyDg8/Lch6wyaIFQ9ALoP8x53X29ZVQnmg/2TB+69mFM2mJo0wQkJRpfYXvwGZoHbqVA/579dasbYfjOI9tu8WMzvUUAldDPgYGvkMh+nyGC24iwCb0HJjQdv7LN951a1V4vzfBeZCbHVGlNSb2+nXdDtj/KT7+Y4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=izbECgjG; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=AT1QkYdF; arc=none smtp.client-ip=202.12.124.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 2AD397A00E7;
+	Mon, 21 Jul 2025 16:55:04 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Mon, 21 Jul 2025 16:55:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1753131304;
+	 x=1753217704; bh=kaRzPQ9lieFHHIwLmqX8kR4F+qmEQbM085Lcp8h5IR4=; b=
+	izbECgjGjOYONT+DfawXELRem5RC+p3g4m+yzxdMx7JF9hXiB84/nI4OhvDSZdtO
+	K67SCetqIwc+CxI5tqEJJ/QAul1/NEEs528IHHlR9Am4KpHqD+vpV2ROhMJ1HYUs
+	7Fb24cQPTKgXM6uBWOJ7cGrGLOAYjWiKZjJb8TBJeNGdkRTB7s3xL2WrstkyxEkP
+	tbPyBFfRnmEDsv6N6/Gt5C6l3QSVxzTVLLhylCo8uoFIB/3I1Cy4KdDvOYoXDgO7
+	IZtX4pZm4Ly+TB5vWjpilVsIpheYBYV1K23SHBKahc7/vxvOq8Uv9zLK514rKrCL
+	/Oj5UmHHY4f565mRrCaGYw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1753131304; x=
+	1753217704; bh=kaRzPQ9lieFHHIwLmqX8kR4F+qmEQbM085Lcp8h5IR4=; b=A
+	T1QkYdF9LiaqvJ7LUIOCxS9W7GEZPohbXx5M/fW4jhr5ix8fgMOkvzDIetJZtUtF
+	LNcBI08Q76u8MFjOmWAo4xxqNjlPsaHox+jXcPfPSH7hrBBGtcNlymLwTswlNmyi
+	pviJ3n3wLmdZVFCBXOhzW4uF0Fq1i2Md1+GXEe0RLdIsRbhh7Ag30CKumjYGPsB1
+	w7aZkJe1LraPfD/ORDWShXRqhcdYGFQGGoIRnYdzzlT3gOGDiimRiDWCFvV4DYZ+
+	c2x45eZz10CYQVHe982mdsCYNG95v/6RqatRxLFyRh/0SByOI2+LwvGIO+HzoF9G
+	6n2gU6BqVK8CI/o0ffL0Q==
+X-ME-Sender: <xms:Jql-aHKIyCfYIeW_M0SLqZiHsNRmNHKBTmY-xKM0_t5aubMKMojcUg>
+    <xme:Jql-aLKgBggWEAo4mo2J7mdipGiuxgRlqWiMir_hyfYUpwwPZtwF5aP_RZ9wpOac3
+    6zmC1e4BV4aMFCoy4E>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejfedtlecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopedvgedpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtohepmhhitghhrghlrdhsihhmvghksegrmhgurdgtohhmpdhrtghpthhtoh
+    eptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdprhgtphhtthhopehhshhh
+    rghhsegrgihirgguohdrtghomhdprhgtphhtthhopegsrhhglhessghguggvvhdrphhlpd
+    hrtghpthhtoheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtgho
+    mhdprhgtphhtthhopehjrghnkhestggruggvnhgtvgdrtghomhdprhgtphhtthhopehpgh
+    grjhestggruggvnhgtvgdrtghomhdprhgtphhtthhopegssghrvgiiihhllhhonheskhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:Jql-aBwrL-0xdaQrQZL0o8Nc0gKjsBhI6oTcjY0nqIkfe_N_rFWf8w>
+    <xmx:Jql-aNUzn2DsRN_ZlTBxhGA23zxpzi0cZpDqKbAyyTJ4ngxO7yDhMA>
+    <xmx:Jql-aGplJQRgvoCqx6iRXYicup451d8DFiIRFe5eOcMrv0rhvdW7Bw>
+    <xmx:Jql-aCfHLct0SZGIj7Z2ssqzGVDeGh8eWwmRUUodRAbNXsjiKFFL0A>
+    <xmx:KKl-aObLttYHXdq2zf0U_OcYRqZ3LuK3U9MK8z0RCYqteycLTz1CoJg_>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 7A042700065; Mon, 21 Jul 2025 16:55:02 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202507211311.8DAC4C7@keescook>
+X-ThreadId: T10195641ff6473d7
+Date: Mon, 21 Jul 2025 22:54:41 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Harshit Shah" <hshah@axiado.com>,
+ "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
+ "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ "Bartosz Golaszewski" <brgl@bgdev.pl>,
+ "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>,
+ "Jan Kotas" <jank@cadence.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Jiri Slaby" <jirislaby@kernel.org>, "Michal Simek" <michal.simek@amd.com>,
+ =?UTF-8?Q?Przemys=C5=82aw_Gaj?= <pgaj@cadence.com>,
+ "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+ "Frank Li" <Frank.Li@nxp.com>,
+ "'bbrezillon@kernel.org'" <bbrezillon@kernel.org>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+ "soc@lists.linux.dev" <soc@lists.linux.dev>,
+ "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+ "linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>
+Message-Id: <8783e997-8dd3-4321-8f7a-f160b0f8ad17@app.fastmail.com>
+In-Reply-To: <912dd9f9-34d9-4631-82d3-02eed03a52c9@axiado.com>
+References: 
+ <20250703-axiado-ax3000-soc-and-evaluation-board-support-v6-0-cebd810e7e26@axiado.com>
+ <b7322d03-2ff9-48a3-bdc6-0e95382ed83f@axiado.com>
+ <e461e5ed-f512-4d3b-9903-8092dab7f81d@linaro.org>
+ <06f00d05-b8ca-41fa-9e5e-9cee3cfcfae1@axiado.com>
+ <7ddb77bf-173a-4117-80ac-d0f32bf067ee@linaro.org>
+ <4f836d88-80a7-402b-9af0-f0d002e2145d@app.fastmail.com>
+ <912dd9f9-34d9-4631-82d3-02eed03a52c9@axiado.com>
+Subject: Re: [PATCH v6 00/10] Axiado AX3000 SoC and Evaluation Board Support
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 21, 2025 at 01:14:36PM -0700, Kees Cook wrote:
-> On Mon, Jul 21, 2025 at 01:47:55PM +0100, Will Deacon wrote:
-> > On Sun, Jul 20, 2025 at 04:10:01PM +1000, Ard Biesheuvel wrote:
-> > > On Sat, 19 Jul 2025 at 08:51, Kees Cook <kees@kernel.org> wrote:
-> > > > On Fri, Jul 18, 2025 at 11:36:32AM +0300, Mike Rapoport wrote:
-> > > > > On Thu, Jul 17, 2025 at 04:25:09PM -0700, Kees Cook wrote:
-> > > > > > When KCOV is enabled all functions get instrumented, unless the
-> > > > > > __no_sanitize_coverage attribute is used. To prepare for
-> > > > > > __no_sanitize_coverage being applied to __init functions, we have to
-> > > > > > handle differences in how GCC's inline optimizations get resolved. For
-> > > > > > x86 this means forcing several functions to be inline with
-> > > > > > __always_inline.
-> > > > > >
-> > > > > > Signed-off-by: Kees Cook <kees@kernel.org>
-> > > > >
-> > > > > ...
-> > > > >
-> > > > > > diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-> > > > > > index bb19a2534224..b96746376e17 100644
-> > > > > > --- a/include/linux/memblock.h
-> > > > > > +++ b/include/linux/memblock.h
-> > > > > > @@ -463,7 +463,7 @@ static inline void *memblock_alloc_raw(phys_addr_t size,
-> > > > > >                                       NUMA_NO_NODE);
-> > > > > >  }
-> > > > > >
-> > > > > > -static inline void *memblock_alloc_from(phys_addr_t size,
-> > > > > > +static __always_inline void *memblock_alloc_from(phys_addr_t size,
-> > > > > >                                             phys_addr_t align,
-> > > > > >                                             phys_addr_t min_addr)
-> > > > >
-> > > > > I'm curious why from all memblock_alloc* wrappers this is the only one that
-> > > > > needs to be __always_inline?
-> > > >
-> > > > Thread-merge[1], adding Will Deacon, who was kind of asking the same
-> > > > question.
-> > > >
-> > > > Based on what I can tell, GCC has kind of fragile inlining logic, in the
-> > > > sense that it can change whether or not it inlines something based on
-> > > > optimizations. It looks like the kcov instrumentation being added (or in
-> > > > this case, removed) from a function changes the optimization results,
-> > > > and some functions marked "inline" are _not_ inlined. In that case, we end up
-> > > > with __init code calling a function not marked __init, and we get the
-> > > > build warnings I'm trying to eliminate.
-> > 
-> > Got it, thanks for the explanation!
-> > 
-> > > > So, to Will's comment, yes, the problem is somewhat fragile (though
-> > > > using either __always_inline or __init will deterministically solve it).
-> > > > We've tripped over this before with GCC and the solution has usually
-> > > > been to just use __always_inline and move on.
-> > > >
-> > > 
-> > > Given that 'inline' is already a macro in the kernel, could we just
-> > > add __attribute__((__always_inline__)) to it when KCOV is enabled?
-> > 
-> > That sounds like a more robust approach and, by the sounds of it, we
-> > could predicate it on GCC too. That would also provide a neat place for
-> > a comment describing the problem.
-> > 
-> > Kees, would that work for you?
-> 
-> That seems like an extremely large hammer for this problem, IMO. It
-> feels like it could cause new strange corner cases. I'd much prefer the
-> small fixes I've currently got since it keeps it focused. KCOV is
-> already enabled for "allmodconfig", so any new instances would be found
-> very quickly, etc. (And GCC's fragility in this regard has already been
-> exposed to these cases -- it's just that I changed one of the
-> combinations of __init vs inline vs instrumentation.
-> 
-> I could give it a try, if you really prefer the big hammer approach...
+On Mon, Jul 21, 2025, at 22:43, Harshit Shah wrote:
+> On 7/21/2025 7:31 AM, Arnd Bergmann wrote:
+>>> Separate patches (1) tend to work better for the first contribution
+>>> from a new maintainer, since there is less to know in advance.
+>>>
+> Thank you very much Krzysztof and Arnd.
+>
+> I will submit the patches to soc@kernel.org.
 
-I gave it a try -- it fails spectacularly. ;) Let's stick to my small
-fixes instead?
+Please use soc@lists.linux.dev, we are trying to phase
+out the old alias (both work the same right now).
 
--- 
-Kees Cook
+    Arnd
 
