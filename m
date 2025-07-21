@@ -1,107 +1,108 @@
-Return-Path: <linux-kernel+bounces-738697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08ABAB0BC0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:39:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2479AB0BC0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 07:40:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3677D1771FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 05:39:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 152E47A6C17
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 05:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E94D190072;
-	Mon, 21 Jul 2025 05:39:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8F1217F26;
+	Mon, 21 Jul 2025 05:40:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TvT+ZUze"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GQPXm2On"
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C09C1E489;
-	Mon, 21 Jul 2025 05:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BBF419CC28;
+	Mon, 21 Jul 2025 05:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753076356; cv=none; b=YsDDC9QL5C4TMpqTjWvjnFOGvEDA5udpyk2aPyjRVqRWgV5L6hiocXUcuLgsxjOPMopbkrTFQvER6l/R6TeRwFOEOkqsyBcxLj6YhHWKdNePYO2y1ZJLLQuEeXxjzNHBUF5DfofhQc1F+2WP0Y2T+tiG6U8/44+P2hCLe1djLGo=
+	t=1753076432; cv=none; b=cwUCCXUArmh+6Lma0+2LtUP6L2ALIShbWYssYkw50RLDZvpU7jTi7l/nifEU19xaoj3fomU7N7I2yb3ytc5fvU5cpcR6tiUqJ1wLiL24chhfbAV0SchyDmax8zbu3v+ofnqoHBDtssXMYXlIe1BdtSBuoKmZizTbYz4zs68djrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753076356; c=relaxed/simple;
-	bh=IzjSet9jg6pPQtROJFXhSSwZmbVirJFjosi+fTcj+VY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YdUDaZov1oM+IivJrBNcM1MTnHkoFAGcbpchrE0/sgsMB0Za63yOmwZdCbfvqyrZPOp5XvKJM0ymuiNsH3lcovtTVXG8n+SGmPNx3ncN23M6OM0Ot52JI1njTUeV3wqpAfS4YhbjIfBdy0loJbLt8RLRc4HeoaO6AtdHXDaFGCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TvT+ZUze; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BD03C4CEF1;
-	Mon, 21 Jul 2025 05:39:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1753076355;
-	bh=IzjSet9jg6pPQtROJFXhSSwZmbVirJFjosi+fTcj+VY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TvT+ZUzeKAiWxGbFyrZ//e+ucHLsFvGU0K50RrJGmnYamDc1SMMjyw3LxoAqgMCxK
-	 +31Fs8shuABGeq4UFrulyFTliakeY8X/rCV4zytFCD5h67W2LweNu/UNMwNDuD79WH
-	 e1BX1Ob14B7Be5x09jdy7o0Y0lrWXik4707FuqVA=
-Date: Mon, 21 Jul 2025 07:39:11 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Tao Xue <xuetao09@huawei.com>
-Cc: Thinh.Nguyen@synopsys.com, prashanth.k@oss.qualcomm.com,
-	m.grzeschik@pengutronix.de, Chris.Wulff@biamp.com,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	caiyadong@huawei.com, suzhuangluan@hisilicon.com,
-	weiwenwen3@huawei.com
-Subject: Re: [PATCH v2] usb: gadget : fix use-after-free in
- composite_dev_cleanup()
-Message-ID: <2025072150-unfunded-washable-b524@gregkh>
-References: <20250721035849.11330-1-xuetao09@huawei.com>
+	s=arc-20240116; t=1753076432; c=relaxed/simple;
+	bh=iX+q2jNSRCnOrj9thY+MottftiVMIhrYnrO3+IHfSHA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gNaT4JSO42jx+w3O+WNLGaWPqTpFafINT2+a1P8t3DwsTKPZaBCAba350lATQantxot84MYEoLLn9SbXikfGz3v9YrTz0fUnCUiJs124vUKpuS49lfU2X6l0Xw4IS5AfTE/2ycWpUHxKvJBGOU75FsXxZt/9IvIjXpSC5i+8W98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GQPXm2On; arc=none smtp.client-ip=209.85.161.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-615e56591aeso114362eaf.2;
+        Sun, 20 Jul 2025 22:40:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753076430; x=1753681230; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=iX+q2jNSRCnOrj9thY+MottftiVMIhrYnrO3+IHfSHA=;
+        b=GQPXm2OnzAcpotN/UVhP6f7u6blt4fZv5GROQPF/knKIw+dunYpzyLoM5DXJnTEOqZ
+         osD0o1nXhSB/zbKjCwBkshN4dYn+i9VSD9hr3ziW7nKAf649ITGITGk0HX/Fj2vil9A3
+         U117pVCT6Ma5JSQ9/+/mFFjVDPr9uIluVeFU+0wpCHYwrkoJnaAtXCjBsPj62D6psQ2K
+         /gxUFw9JKQZTZTSJPuFqmnKJcZlgUev3IptSHUuEn7RKFeU+9DEuhrGShl7m6qo8Fyrv
+         lRIKa+X2bdxnLYTBcIPg4lp39vQ8amWiwr3DzrNQGPWOVUoesex9O1Ddsa7Exsg7Y3vU
+         ZNxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753076430; x=1753681230;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iX+q2jNSRCnOrj9thY+MottftiVMIhrYnrO3+IHfSHA=;
+        b=ZNf5DWG7wP8Q9fCIAWjjqSpTISZLWpWSncAABRGmlKwhBUHhv3dPBxAY4bNlHDhLZs
+         AdB8kqoMNdcHYoyBMNh3QpUe/yiMmQHRuipLcDIY9C0wVeDdy8Fs5oeRy80GjQxUFqSV
+         BCD83HUqqACRSMvBCqIbZE8HrorBiSuqK7odZDQai6k7QA/0nKhc0gPe6INnDmuAnFJO
+         26L4f3QEFgXLFiflSQchFqMU2kFO7ifTZPwMLT0jLO05HljgSDYfEVqR8VH6zyOvq/jT
+         IC+sIKQDi28noQcq9zpdnO0lUQaBcuuTjY//NuBUn92xjTGBZbFcUxOyQ6EYeD0QjuAO
+         blYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVampGQJURYrMB1tp3FuD6g2qcbmIPOXFoIq9MZHYq9oxRgyH9BLs+xCYGCPJHUJro1xyE+m15fPfCAGP+T1daUdw==@vger.kernel.org, AJvYcCWMd8zPQiQYuVwEVZqaPJmmHgj4cKX7g93h4UqGjqtryR7ORAc1pC+R3dr7rJqBFenqJCfiRW/BZPLJ3+c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwP9Q0WcbjS1bDHdclktCHz6duLTDcffhZRCK+ujswgYmVlNnxZ
+	mPNkUodIr5cWeJRZ04AsmXui5kXoh/SPm/mUuyeXSKulJ8/R0ROAoWe10T49OYscWLG3FckIrWG
+	0v/xxkw9v8vTVwHb44wEFbLG/x/04TsE=
+X-Gm-Gg: ASbGncthNkszUfuNvYLrLz9MUCgDVKfZFdVhjNPpDjDgkNmwMef1RJbFpdF3AwEl6xA
+	TNNvJzpr39HDwUiWqlNuMS37ezOTgL+Vq8Oh8/NNxle3E3ifsjxvpfjnflba3j0Dvhh2SxgSlI3
+	5VBn9yjToh3d50/ZYxLoAfv1R9h+GArx7hlgua9x2kLLRXGa1ltKxXLtKCxn08ivstg1Eb/Pm9Q
+	wJ1voNiAW1O1GvpN2AJbQxCU2ojH8l7vdbuHndO
+X-Google-Smtp-Source: AGHT+IGVDW5DwgDPsxtNTio877e0JtvRpQ41q5Aw4TFpzMaMt/rN9gSbqjnLe52enOAAAhcl6uV1/ExSkCOJ9+m5z0k=
+X-Received: by 2002:a05:6870:f60f:b0:2ff:96c6:f712 with SMTP id
+ 586e51a60fabf-2ffaf53f5d7mr15591342fac.26.1753076429897; Sun, 20 Jul 2025
+ 22:40:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250721035849.11330-1-xuetao09@huawei.com>
+References: <20250720085905.192652-1-suchitkarunakaran@gmail.com> <aH20-KEurjw5qJq0@google.com>
+In-Reply-To: <aH20-KEurjw5qJq0@google.com>
+From: Suchit K <suchitkarunakaran@gmail.com>
+Date: Mon, 21 Jul 2025 11:10:18 +0530
+X-Gm-Features: Ac12FXwqf-5IcxmRRFhweSopLncsfbo1HAHsMQAomXOzJCIeeRuDKPaBaCleM8I
+Message-ID: <CAO9wTFhdgHEFQDVt2715qP6-6bsE9+AeAAPYe4C8N1mqpy7g=Q@mail.gmail.com>
+Subject: Re: [PATCH] perf tests: Fix lib path detection for non-x86 architectures
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org, 
+	irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
+	linux-perf-users@vger.kernel.org, sesse@google.com, charlie@rivosinc.com, 
+	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev, 
+	skhan@linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jul 21, 2025 at 11:58:49AM +0800, Tao Xue wrote:
-> 1. In func configfs_composite_bind() -> composite_os_desc_req_prepare():
-> if kmalloc fails, the pointer cdev->os_desc_req will be freed but not
->  set to NULL. Then it will return a failure to the upper-level function.
-> 2. in func configfs_composite_bind() -> composite_dev_cleanup():
-> it will checks whether cdev->os_desc_req is NULL. If it is not NULL, it
->  will attempt to use it.This will lead to a use-after-free issue.
-> 
-> BUG: KASAN: use-after-free in composite_dev_cleanup+0xf4/0x2c0
-> Read of size 8 at addr 0000004827837a00 by task init/1
-> 
-> CPU: 10 PID: 1 Comm: init Tainted: G           O      5.10.97-oh #1
->  kasan_report+0x188/0x1cc
->  __asan_load8+0xb4/0xbc
->  composite_dev_cleanup+0xf4/0x2c0
->  configfs_composite_bind+0x210/0x7ac
->  udc_bind_to_driver+0xb4/0x1ec
->  usb_gadget_probe_driver+0xec/0x21c
->  gadget_dev_desc_UDC_store+0x264/0x27c
-> 
-> Fixes: 37a3a533429e ("usb: gadget: OS Feature Descriptors support")
-> Signed-off-by: Tao Xue <xuetao09@huawei.com>
-> ---
-> v2: update Signed-off and commit message
-> v1: initial submission
-> 
->  drivers/usb/gadget/composite.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/usb/gadget/composite.c b/drivers/usb/gadget/composite.c
-> index 8dbc132a505e..385398a039ea 100644
-> --- a/drivers/usb/gadget/composite.c
-> +++ b/drivers/usb/gadget/composite.c
-> @@ -2489,6 +2489,7 @@ int composite_os_desc_req_prepare(struct usb_composite_dev *cdev,
->  	if (!cdev->os_desc_req->buf) {
->  		ret = -ENOMEM;
->  		usb_ep_free_request(ep0, cdev->os_desc_req);
-> +		cdev->os_desc_req = NULL;
+>
+> A dummy question: Does all other architectures have lib64 vs lib
+> separation?
+>
 
-Please add a comment here as to why this must be set to NULL at this
-point in time, as it is not obvious at all.
-
-thanks,
-
-greg k-h
+I had assumed there would always be symlinks, but thanks for pointing
+that out. After your question, I checked various architectures like
+x86, ARM, SPARC, s390x, etc and only x86 had both lib and lib64 (with
+symlinks). On the others, even for 64-bit systems, only a lib
+directory existed. I also realized this behavior seems to depend on
+the distro. For example, multiarch distros like Debian use separate
+directories for lib32 and lib64, and a lib symlink pointing to
+/usr/lib. On the other hand, Arch Linux has both lib and lib64 as
+symlinks to /usr/lib. Would it be reasonable if we create a symlink
+named lib64 for non-x86 architectures? I'd appreciate your thoughts on
+this. Thanks!
 
