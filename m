@@ -1,131 +1,118 @@
-Return-Path: <linux-kernel+bounces-739396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07C27B0C5CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:07:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AFDFB0C5D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:08:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 648237A706F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:06:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89B844E5ED2
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:08:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE4A2D8383;
-	Mon, 21 Jul 2025 14:07:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA3D32D9EF0;
+	Mon, 21 Jul 2025 14:08:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qsU+Fkjg";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="6bttIhnp"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="O1/OT2JS"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 097412D1914
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 14:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753106846; cv=none; b=tVSim8YGLy459kgdUKzTfXaPX66Fbi7GLjeg+gQoSpVgXuGk5NGrdC+26TS4INTP2avQ42V+eQfrvuslFIEim4hRKvtoqoWL4q8OqyMpUatSpu8JezVJ5uZSxrUp80TH+KW1NTopaGYl3gZlJK4weDN+erqNNgpPtmkjfKGDX0k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753106846; c=relaxed/simple;
-	bh=bfr4loJDw0vEo72RnHDIcOGh10KvzAEg46K0z/sjH6M=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=naS8sloNz5Cm7go8kpwG5k5NKWt9KORVBMAI60rWupYDOssONj1BR3nBq7HjMAV12tt1Apif7iZ05PZfE1nRISf2u18xg/hPTSGxyA+FHJD0oawMcSlY9b73dAnv2Q5XN799eKFeVig25lkYax5q4gW1Yz2ZI4uQDDzgQl/z9p8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qsU+Fkjg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=6bttIhnp; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753106843;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=14B8g6eSb4EjlTHnllsNke5J77D0W2iTwRcpAh4Jgq0=;
-	b=qsU+FkjguIS8yLlPeYmFRDV4jM+Gsq8UIiTu9BaDCmqSgjDznVKa6vUEZu+YWgujrmd2Wi
-	34CBsW5MRFtq8/ry37U2EhKSEopRAFmre0efMCcI8H5WadLz8qwYWvxJOOXXvSAiNOS6Cw
-	BLgnfjcyEQp5FECthxNyrce5pKRQIcsmfmaCjr+Jh2SP/RPgIeqmcxp+m3EuVVc6PI7MEq
-	dtO7a8ILHX5cPBZ9LRQxz0YS0Wrj6Bw8AQAJ4WZAqAp+2uq56nhrqAfzsKbPBOj6uz8+qt
-	cJwAuLPm6EJi6ZucNHQeLO3M8iNIix4pMpluIJF+8ySZWb7M9zZx8Tirrgdg9g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753106843;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=14B8g6eSb4EjlTHnllsNke5J77D0W2iTwRcpAh4Jgq0=;
-	b=6bttIhnplcR8/gtCx8dBtyghI2VmR9IwkXhujPhVDibj2zksAPM9GtL8YT5Jrh0FcvM2iN
-	ZYK7hILxaFqX4KCA==
-To: Yury Norov <yury.norov@gmail.com>, linux-kernel@vger.kernel.org
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH] irq: simplify irq_im_handle_irq()
-In-Reply-To: <20250719211818.402115-1-yury.norov@gmail.com>
-References: <20250719211818.402115-1-yury.norov@gmail.com>
-Date: Mon, 21 Jul 2025 16:07:22 +0200
-Message-ID: <87zfcxtz6t.ffs@tglx>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD8A25760;
+	Mon, 21 Jul 2025 14:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753106917; cv=pass; b=I4wB6ks/FPFqbD7o7PSLuy55Kuyr2yTjS99edqj0L+QGSNNpqpPPAZ4BmM0ltE6z+MS9VGhuiemXorVyMiTJnSaGlz7iYysGz5JtYyYclnmATSJeXfrGDJyTMY9fGcXaVR/Eh3XiVHo6ypB6cwaUo4dvepjE86lJZgsjsqLpUxw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753106917; c=relaxed/simple;
+	bh=aPE9OP5n/nxXpSPei6MkovrRMZGc+nmT492+wys9qe4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bD0e/lO4c1OWuYqU9/leEOd+XygSR9AacyILnNYBaiwVVvDQlqg+SDMD/sF6zPQPW06YOxxVsAZPYKhVBCa7f9VZdZjOF52EY+OMEXZug+06X3kmhBIefaDdiGCuZRhySmUs3ezv0aSgB05I6cCALo82ti4ycSVjBBntfD/MxeA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=O1/OT2JS; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753106889; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Z59vGM/4C6HeCkGkpTGlXB/INooxTGTCbMXlVKrKnXCzYTgMLU1rufxW22HSGRc9v8c8iuDKMUfprp3da72GnPAku7gGTij3Bm5s6lPNLDmuwzw1DROb8sLE+WkP7v+awCypwBrSCPCNNxcqxm5tMK1eEYRxjI96zDnGf20o7is=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753106889; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=iUwGYLVqI6Xet0Y6yYXId8OhAeexUPWui/BWydgtxjc=; 
+	b=XFMi09ggTPwIeka28tO2P/9v65WtMvNUHgWd6CrO28mYZ10fSUVAoceyZKJzy0RZ05Hl5DcJuf2tgv/lnb52ozIejBKm/DS0Fy6VgFHJT1Q6oMy/1/CH9BuxqumRG42c2Y/IY9eXEBz36denos92wRamjZZ/RTZQwJ+CTJ1eXok=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
+	dmarc=pass header.from=<detlev.casanova@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753106889;
+	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=iUwGYLVqI6Xet0Y6yYXId8OhAeexUPWui/BWydgtxjc=;
+	b=O1/OT2JS33uLJgy6z/cS/tvpgWhtZPC+kVwWlYfZ3Q2P/tDCOTkJrKTdjeFcwFJX
+	Q0Az0saTpCz2ZbJ6YqiL4gfo42cNWX6fS6wE+FBuv58OqMpewlGvmPf3IGx95wZ3t4p
+	iwpd8EUhPHMOeOO9ZOkSVNKHzLo8DhR4ufMeL1nc=
+Received: by mx.zohomail.com with SMTPS id 1753106885694476.02518889834164;
+	Mon, 21 Jul 2025 07:08:05 -0700 (PDT)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] media: rkvdec: Fix a NULL vs IS_ERR() bug in probe()
+Date: Mon, 21 Jul 2025 10:08:03 -0400
+Message-ID: <6175873.lOV4Wx5bFT@trenzalore>
+In-Reply-To: <696219e9-a1c7-4c87-b15c-1ffd42c95d58@sabinyo.mountain>
+References: <696219e9-a1c7-4c87-b15c-1ffd42c95d58@sabinyo.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+X-ZohoMailClient: External
 
-Yury!
+Hi Dan,
 
-On Sat, Jul 19 2025 at 17:18, Yury Norov wrote:
+On Wednesday, 25 June 2025 11:23:10 EDT Dan Carpenter wrote:
+> The iommu_paging_domain_alloc() function doesn't return NULL on error it
+> returns error pointers.  Update the check and then set ->empty_domain to
+> NULL because the rest of the driver assumes it can be NULL.
+> 
+> Fixes: ff8c5622f9f7 ("media: rkvdec: Restore iommu addresses on errors")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/staging/media/rkvdec/rkvdec.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/media/rkvdec/rkvdec.c
+> b/drivers/staging/media/rkvdec/rkvdec.c index d707088ec0dc..1b7f27e4d961
+> 100644
+> --- a/drivers/staging/media/rkvdec/rkvdec.c
+> +++ b/drivers/staging/media/rkvdec/rkvdec.c
+> @@ -1162,8 +1162,10 @@ static int rkvdec_probe(struct platform_device *pdev)
+> if (iommu_get_domain_for_dev(&pdev->dev)) {
+>  		rkvdec->empty_domain = 
+iommu_paging_domain_alloc(rkvdec->dev);
+> 
+> -		if (!rkvdec->empty_domain)
+> +		if (IS_ERR(rkvdec->empty_domain)) {
+> +			rkvdec->empty_domain = NULL;
+>  			dev_warn(rkvdec->dev, "cannot alloc new 
+empty domain\n");
+> +		}
+>  	}
+> 
+>  	vb2_dma_contig_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
 
-'irq:' is not the correct prefix here. See:
+Thank you for finding this one. I tested it on rock 5b and all is good. 
 
-https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#patch-submission-notes
+Tested-by: Detlev Casanova <detlev.casanova@collabora.com>
 
-Also irq_im_handle_irq() is not a known function name.
+Regards,
+Detlev.
 
-> From: Yury Norov (NVIDIA) <yury.norov@gmail.com>
->
-> Hi Thomas,
 
-Since when is a greeting part of the changelog?
-
-> The function calls bitmap_empty() for potentially every bit in
-> work_ctx->pending, which makes a simple bitmap traverse O(N^2).
-> Fix it by switching to the dedicated for_each_set_bit().
->
-> While there, fix using atomic clear_bit() in a context where atomicity
-> cannot be guaranteed.
-
-Seriously? See below.
-
->  static void irq_sim_handle_irq(struct irq_work *work)
->  {
->  	struct irq_sim_work_ctx *work_ctx;
-> -	unsigned int offset = 0;
-> +	unsigned int offset;
->  	int irqnum;
->  
->  	work_ctx = container_of(work, struct irq_sim_work_ctx, work);
->  
-> -	while (!bitmap_empty(work_ctx->pending, work_ctx->irq_count)) {
-> -		offset = find_next_bit(work_ctx->pending,
-> -				       work_ctx->irq_count, offset);
-> -		clear_bit(offset, work_ctx->pending);
-> +	for_each_set_bit(offset, work_ctx->pending, work_ctx->irq_count) {
-> +		__clear_bit(offset, work_ctx->pending);
-
-This is just wrong.
-
-__clear_bit() can only be used when there is _NO_ concurrency
-possible. But this has concurrency:
-
-irq_sim_set_irqchip_state()
-...
-        assign_bit(hwirq, irq_ctx->work_ctx->pending, state);
-
-That function can be executed on a different CPU concurrently while the
-other CPU walks the bitmap and tries to clear a bit. The function
-documentation of __clear_bit() has this documented very clearly:
-
- * Unlike clear_bit(), this function is non-atomic. If it is called on the same
- * region of memory concurrently, the effect may be that only one operation                                                                                    * succeeds.
-
-No?
-
-Thanks,
-
-        tglx
 
