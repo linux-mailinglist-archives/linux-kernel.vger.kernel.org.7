@@ -1,312 +1,524 @@
-Return-Path: <linux-kernel+bounces-738964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AA0BB0BFB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:09:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47CC4B0BFB7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:09:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B4323A2980
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:08:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CDB33B1F9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 09:09:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A7F0288C80;
-	Mon, 21 Jul 2025 09:09:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A4B288C0F;
+	Mon, 21 Jul 2025 09:09:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="XOAXZ5YW"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011008.outbound.protection.outlook.com [52.101.70.8])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eWPcq+ZY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2952D172BB9;
-	Mon, 21 Jul 2025 09:09:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753088954; cv=fail; b=loidoXH2ViCyhoiIh1wicPAF3HW1sa81SMucljP3wD4/yWlhUNr4xeIL48oIeY+Pb8InS977KoM8l/p27qL/kMHsSREJ8iQq6CceTBIvo5r+Oh22hHNDnZVwpb6ND86VPD1x1LR2kFGFzFNZwa73MVNS61Rwx69jW2Qxap+KL/U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753088954; c=relaxed/simple;
-	bh=fTnF3xoE1Gj9YXbGBvi8uC+kAkByDNTxkfejT4MXRGY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Fba/guE7K11t8V0he7F/Zrtcr8/DOMkCYCdelHw+Rxp/Z3qpGRCE45+pDKwvcxJg/Qq4xsDMH+lT747ZDnuo+Jl6e7UPOl/AKJxV+tnPH64eCnUwuwrHBeCwMoFUXH6jc9xLMAksyDCwf07gGrKTuyBJwXyNxr4A/MKehwpIdHQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=XOAXZ5YW; arc=fail smtp.client-ip=52.101.70.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OqyrHI7msr9l8jJplYm8t55X+q60yUbicp/n6O5xDEcXAQZeWdHrGZ2utvcmbVBXbjJZc9u33hwBprZEV2yU4NAT+PmtNslaIdxlhnnPAqpv+0oR/IeBj0ZYqmYDPEbEYn5dBVdeKzIZVyTswwj1WO6LLOaOXxUYiN/mOKi7Fy509A46zkSTrlhU9wYFeEgDvqnYKPBXA4H1hse/qgqgyoacJkUDQYQruBuJ5FZCzKqFzm/QhR/yzHM5u6zQQdFUF0TIdSbi15ULdt31UykifhRGk3Kq0/Fk2mcYFpP/nnYOZcWAIqNHBnjlHNZXyOn+3fxAGjME54Z9NrX8w8G8QA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fTnF3xoE1Gj9YXbGBvi8uC+kAkByDNTxkfejT4MXRGY=;
- b=NoPWCZke1VBj4t74rg4+Tq29R76XMkW+C5XHaBLPMA5l9PKlYaPaqlvWAcuHFs0q9BpmQE+cydO4Knhsk6vHnP458pjSPkG/bHB9Jot1HexKPh3yKQsfXgmudo04Fexa8g2iF+hMFgLKUtIw6zo6+m8kvwHJxIXzH/qcf6fBDiFeHFvY9gylK7dBpVQHfs6E0pkSORhGjd9yoVC8u8J+l2PzPrfZSLe4QiTsTgTKN3Bmj3cJgMrY3f7Tnpz5sjYnx6fqeAxIXspTq7lvOeoaaXaV/UwAUMSn0345b5x1mOks9NWbN0QzlseK4Mp0XOkg1O4HqqqyL1EpfwR2wl5lxg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fTnF3xoE1Gj9YXbGBvi8uC+kAkByDNTxkfejT4MXRGY=;
- b=XOAXZ5YWogIvGNIXVRqpAslh2q7OnkAUlpS3MmVPZ6SytFUc9Wwwjzl7GaYF0ZpjfM2KYsyS8Sc7eMIO5vNL8Sqd0GUZZlAzLXRvs3hLNQmYye8B1S6tbMvXpHexFZDhrelTFEtpTkvfLRXvsdY34QJCEyT3hH6FCPAJXUKDENoFb1xjOCH+WPg33QUVuvbg0GuauyWGha3Opv0qlhrKXvc7Nklxaqdp34rBCxZrZ5SqgchL/vwg2SY9xzZh2zq2uAELoERzajQjOVr20HlY9AvQ7iwpdDYkN4A/dGKu1sspKLUtUpaNivXDEi+rExaAIc74bB1uR0Tt22Foy1uZ1g==
-Received: from DU0PR04MB9496.eurprd04.prod.outlook.com (2603:10a6:10:32d::19)
- by AS8PR04MB8770.eurprd04.prod.outlook.com (2603:10a6:20b:42d::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Mon, 21 Jul
- 2025 09:09:06 +0000
-Received: from DU0PR04MB9496.eurprd04.prod.outlook.com
- ([fe80::4fa3:7420:14ed:5334]) by DU0PR04MB9496.eurprd04.prod.outlook.com
- ([fe80::4fa3:7420:14ed:5334%4]) with mapi id 15.20.8943.029; Mon, 21 Jul 2025
- 09:09:06 +0000
-From: Bough Chen <haibo.chen@nxp.com>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Nuno S? <noname.nuno@gmail.com>,
-	Primoz Fiser <primoz.fiser@norik.com>
-CC: Jonathan Cameron <jic23@kernel.org>, David Lechner
-	<dlechner@baylibre.com>, Nuno Sa <nuno.sa@analog.com>, Andy Shevchenko
-	<andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo
-	<shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "upstream@lists.phytec.de"
-	<upstream@lists.phytec.de>, "andrej.picej@norik.com" <andrej.picej@norik.com>
-Subject: RE: [PATCH 1/2] dt-bindings: iio: adc: imx93: Add calibration
- properties
-Thread-Topic: [PATCH 1/2] dt-bindings: iio: adc: imx93: Add calibration
- properties
-Thread-Index:
- AQHb8W26y5fO8SJjh0GULyxs8/1/5bQrgNAAgASqt4CAAPmcAIAAq+2AgAqSl4D///Sf0A==
-Date: Mon, 21 Jul 2025 09:09:06 +0000
-Message-ID:
- <DU0PR04MB9496FCE8DF07CD0E270B72AF905DA@DU0PR04MB9496.eurprd04.prod.outlook.com>
-References: <20250710073905.1105417-1-primoz.fiser@norik.com>
- <20250710073905.1105417-2-primoz.fiser@norik.com>
- <2bcd758b-c2d0-488a-8ead-ec7fb39f93e2@baylibre.com>
- <20250713160247.0f22bbfe@jic23-huawei>
- <de2c8e15-14e9-4c61-9a13-97ef1ec567a4@norik.com>
- <6b32118a13e9e28b7cf12152af33642c76367c34.camel@gmail.com>
- <20250721093847.GD4844@nxa18884-linux.ap.freescale.net>
-In-Reply-To: <20250721093847.GD4844@nxa18884-linux.ap.freescale.net>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DU0PR04MB9496:EE_|AS8PR04MB8770:EE_
-x-ms-office365-filtering-correlation-id: b95e984c-59c5-4fec-3fba-08ddc8363eaf
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|376014|1800799024|366016|19092799006|38070700018;
-x-microsoft-antispam-message-info:
- =?gb2312?B?eEtFbCs3WFM4QzFORDVSelNxektTQytLT1hrUGFmUE5DY1dMMlZuSFdzRkhn?=
- =?gb2312?B?Y09Jb1pMVlJveE51UUpZV040ajVlb1JSbFZ3UGJVaGdoS09hYjJxeE9FTjdw?=
- =?gb2312?B?NWNPSXlXNjdIZkF2N0hZc0R6LzRmcEpaTVFvZlpKdFJjcDRNblJjWThEV044?=
- =?gb2312?B?L0dHUTh5SE9HTWcrUjg1Q2svVEVTVmM3bVNOTXROOWRtQlpLdjNFcitzOG1L?=
- =?gb2312?B?MGVvd1dhV2JaNE5HQ0RGbjhlb3J4a2E4b2pPZTVINmlhNUgrSVZrMkpRaGpD?=
- =?gb2312?B?MmxuU2RWTzlsR3RFWVovVlhDNTRlcVpMNWdLM2M1U3BrVStrV3VhaTc5Qlg1?=
- =?gb2312?B?TjRDZHZ6bk5QMTh5cmFMNE5xbnVINlpybUw0SE5VemU5MGp4cUNGVnJ4czdz?=
- =?gb2312?B?M0hyazZwOUQyVnI0dGVrRi93TXFYajJRNGwyM25HT2EwaGZ5MEtPOWNBZ1Bm?=
- =?gb2312?B?dUNwOUloL1ZjdFM5clhUQTZjeXJJZnV5MnUxNzVQQzZVdlFuck5aNVZjZVdp?=
- =?gb2312?B?Mlk2TTU5cG5DakJ6ZUdHdUdGYnlXQVY0ZUFFeXJxdEtEL1Fid2FsR0lycUJH?=
- =?gb2312?B?cjI1M2gyakQ0eDAzWWc4OWhxRGtHVk84eGx2RFhCRjgrN3I5bnluU2MzL2NJ?=
- =?gb2312?B?cVZzOGFGejRBSE03c3ZJUFJBVCtTM1I0eGF0WUJOaWJaUm1OVkV5RmZ3NW1a?=
- =?gb2312?B?aTVXVWlnRkVxZGtjRkVBbHY4K1VTY1kyNm12K0R1U1Bzd0FLR3BWWjhLLzRS?=
- =?gb2312?B?bzFZUkZvRGg4OUFWYlZwWU1OWXF6WDA5T1B2NXd5TkFGVHZzRTdnMFE1VUV6?=
- =?gb2312?B?MXN2TWdRa2xFcXBoamFNQmdLNEdlQXI1ekUydk1PTS94Vmp4Vzc4Z05xQXJv?=
- =?gb2312?B?eW84eTBpTmJZTGZpVllBeFd2NldRSERlY0lQdGRwRjNZL2Mra3JZY0txRnhJ?=
- =?gb2312?B?MXRMMkVlVlVmejkydVc0R3EvV2hqck9EK2FBK1dHTTlENHlUWkF1RExRVHJL?=
- =?gb2312?B?RmE5T1lpUi8wQ2hqUnpXM3pBOVlSNVBxSG1scTlNS3YwVDV5emNEYi9YWmho?=
- =?gb2312?B?Z29ZRUJmQVErQkdnV0Y3RUV2cjM2V2pVSitETE9va1pjY0RNMEVRa3k5cW9Q?=
- =?gb2312?B?bHEvNmdlbERPdU9xZXl6OTg4Q1NIM1Q5VnRYdGxvMy9NMUU1aERZRzhHNTF5?=
- =?gb2312?B?UEJHQ1NUZ3FKZnpReW1UVmVTeXk0NVN5TEE4d1FCMWxQRm1DYlpGL2ZpRXI0?=
- =?gb2312?B?UUlwNUNyK05wOEVUR2ZxZi92bUdnVHZSUnRpcUU0WjJiZ0dSZWlXSGhNdVVj?=
- =?gb2312?B?WDdXYU1wdnVlb0ZtbzFuK01rNDdCMnBLN1ZCN3ZvMUFPMFBYZXpWVTRKM2Nv?=
- =?gb2312?B?ci9UZkE2Q2RJUTJ6WTA2TDZpRkgrRDFia3I3T2tuQTBMd05YYmpJNWczL3Rr?=
- =?gb2312?B?anJtalZ3M3RFYTFIZU5PbVFvQ1ZiZXRTNWZxNFI2MmJTZTdPSklpVDd1ZDc4?=
- =?gb2312?B?bFVtM3FzSUM2QmUvZDBBTkJJVzFENTJjVG8yTUNWS1dxbHpsRjZQWHR4aFZo?=
- =?gb2312?B?alJsRG1SSHBET1Q0MndiS05XNXlEM1ZINUhJdTU5QlRvc3VTUENYZU42WDlR?=
- =?gb2312?B?cytyY1FVNnVpR1hzVlhQbG5VMUVtVDBPWDRvRk5TK052WHJIMEhOOGI2b2Yx?=
- =?gb2312?B?NzRhZktkcit3UUVFWVJvTkFoeEwrNFBrSGl3K25VLzJaMzdQV0sxMTZqQnQw?=
- =?gb2312?B?ZDRYWmd3YURFUW1oR0FDck1UU1Azc3RZbFBUeWpJNGRTZ2h4Vm5IN1o2Qzg2?=
- =?gb2312?B?aU5nNGw4TWg0S2ZxemljL3A2eXJWdFZBcSttRlI5bjh2RDZydGx6YjEyVEZY?=
- =?gb2312?B?bXBPek5FZmNmeHlDN1pMelgwRVE2d0ptTStKOVhxWDJxZ0RCdEZVaExoUEto?=
- =?gb2312?B?TDhlZmpqVzJYMVdtMlZnNkVxWEJ6REdKbjV2TEZsOS9Gakt5aU1vb2oyN0Jq?=
- =?gb2312?Q?AmaPOTYIKchtrKA0DBpZAxn5KL4TgY=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9496.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(19092799006)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?gb2312?B?UHczdXNHRU4rakdCOG9JMy95djMwMVFFRzI3QldQQ1Rjb1JWUk1BUUR0aXI1?=
- =?gb2312?B?dVVVbDlBNkE2Y2doNnQ1MC9Kc2kxK0w2L2hIVzV1RForV3pzK09DSzN3aDlK?=
- =?gb2312?B?YURaVkxaSm1FcFJsN25CMjlaMUJka1VwYkFJSlN1OWxHMUpRNTgwM2FwSzh4?=
- =?gb2312?B?dnU3cXVVa1JBSEszTmJBVWtPSkRoS2RkTU9OdXhBQnE3NnRwLzBiL01ScCtF?=
- =?gb2312?B?RTdDVUJpT3pNVXF0a3ZjK2pDZFlnZ2lMaE9sb055bjBCUm4rbXJVamQzM0Zq?=
- =?gb2312?B?dXRFUGlVcTR5N3hrY0ZDcFh6YS9HZ0Fja29GbHRSTWgycGVSQUU5NFB0VkVR?=
- =?gb2312?B?elNUVGJ1T2tlSitpM01oc201M2V6QUVZTFZxOUt3UjR3MVgyRzlmK2JuWXcy?=
- =?gb2312?B?OUNadTY2K205ZzJWeG9jM0hNc2hPMUx5OTZlTEt3RTlOUEN3Z25ITW5JeFBV?=
- =?gb2312?B?cExkRkdEaWNlZnpHdHpTYmtvbVczdm9UV1M1SHc5WlNpdlRhRXRYZDJlbFVE?=
- =?gb2312?B?b2FVMWFVaUxtTCtielVlektaS3BmcnZYbmt6TzJBOGtMaTljSzVqeTdEMmp5?=
- =?gb2312?B?ZFZ5OFd1NC9VRHV1UU1aVW8zMXVjUjNiUUhVUnFhcVV4bWVnSUFIelFmY2Yy?=
- =?gb2312?B?SUFpOXk3MklVRmk3a1JjczRZekpWcDNheis0SktjUWtaTFlJNndXSlgxdG04?=
- =?gb2312?B?djhKZU1QeHhWVGZuSFlsMlA2dDFTaVBKTCtlUElWWHZid0s1UzhCZGVoWXJj?=
- =?gb2312?B?WVliSEhtRkllSGl6SDcyS1RwRE9sSE5NZ0wzbmdWWDhVOWFtYXBoSjR0dWtn?=
- =?gb2312?B?bTVSWjBoa0FrbWRWQnlpd0Rqc0VZcVdtaUo3dmtOMkZ5K1phajdFWHoxY3ZT?=
- =?gb2312?B?SlJVV2puTlAvNTJtQWxqaFk3c1JiUVRvOVdnZVZlbjJiSHc2RjhEekMzY291?=
- =?gb2312?B?VzFnQ2o0cFVDM3hXTEpJa1FWQ2sra3lZcnFyWmpWeitnMmtmekVZRXlDdDVn?=
- =?gb2312?B?LzJRZEJzcHNvT2NlMCtxZDdHdEE4YlU4UXFzMXBQY1l5UjU2NW91eTNrUlpw?=
- =?gb2312?B?WS9zRFYvUThxZHlTTGVuMmlSb2ZZaGZScXpKWUJDZm9NUHRhSWtOSG1KK0Vj?=
- =?gb2312?B?aUlORU9mV3g3WnFuNFd1b3pVZnRmYmtmemwzWTZ5K3E3V0FFVHVsREhkY0Ns?=
- =?gb2312?B?U3RwZlZHRCthUmtUd2tyaitOOVkxVXJ6dkF0OGNJWEpnMkx4akVhSUl3OW1K?=
- =?gb2312?B?dHlqNTZic1BvL0pNVXlEc2l6L3ltQ0czandXbFhsMHFOcGxYZnBwenFYdjc5?=
- =?gb2312?B?WmVqdjhwVG9jbTBKbngxeVRSeGd5NFJ3b0pTK2ptTFQ2NGdWZ1haQzFITnJo?=
- =?gb2312?B?UlFmMDNuMFg4amdXMWhNMTczZUsrWkswc1VzampBNWlNWG5jQ2s0VXlNdWVh?=
- =?gb2312?B?TGdTdXlGZVlycGlTOXBMa21mOGJoajFSOW0rbEF5Uk1yUVczYVZPWHVKcDRj?=
- =?gb2312?B?YnZRWTJoeUZMbnN0VWNQbTkyNVFKbGgxTURVNXppSXdnZXJkT0JVWk5rUmZo?=
- =?gb2312?B?Q0M2S0l6Y3RZS3RJY3JYbzdBV0t4cjFWdGJPTEFSVFZ2Rm1weUhyc2l0RzMv?=
- =?gb2312?B?dHhvQU1lS0Q4cktseUFOV3BnYzdLRUlPL1hpOWxBRzFUcFVldHEwRFpLVFFL?=
- =?gb2312?B?cml6NU82Y0wxRmU3ZjlGZ2tic09JOW9makpkUThtbW5Rc2lmbitZNEJWa0VH?=
- =?gb2312?B?czloVTVWUGRGYUVCazdjWFkzbHhCeEVxY1NRTnNUUGRVUUVoVU9YM3RwMXIy?=
- =?gb2312?B?Rjl2RWFGbVFOTzE2VlZwQmVzZjREWU41aE5ZUUtYWnhMeTFIZFkvM0RZcEFx?=
- =?gb2312?B?aFlRQ0pPTTlKNGFaTXRmNWF0dDNib3ExZWp2WnR0SGNFR1ZDaUpBMnJZb2tL?=
- =?gb2312?B?N2VoUmsxYmIvYkdUUXJPdHlKVzV6WVl1amI4WG1XNEZIRmhmeHF4aWtkQXZr?=
- =?gb2312?B?MUwvMDFHVytUMm5ybGpsR2J2UVJPQUd5eEhZSVppc1hFOUMrMFcwc21NWStk?=
- =?gb2312?B?VDZ6NElCeXRJTC9UK1JSTVFuSXBxTVZ1WkdETmJFbVN5VXdaSWxadzBNOVVh?=
- =?gb2312?Q?+kfo=3D?=
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A32286D64
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 09:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753088991; cv=none; b=Pf1CcPPbyuzbskyAmWsPfwzCA8fp+GVQb21iEFpyBrNmN5uGUWbTUD0AC1B6KQQj5qTZbFSX+his8lp1iZHBoI5T2KMyGqgYnR2sHu0xv2FgMORRDOQkRcYhZsnMohIMtuILLTPe7QhtgKYxloLM5Inw0NlVyVGcDNjJmeWsgEE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753088991; c=relaxed/simple;
+	bh=Wa3FNnx2OnNWPflO9+BmCciJrxToLZxmHGGLzyuMWzg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KkAtWBvFfDgzJKLTPdrMCoBwPONKtsiKhIhiEdrjIy5a5SYsVwiapiQSAx3moMdmUTAHhZwWMphRry4IbttPz9E8zklaMI4aIB0H5cGD7hHgmt3rqu9I9B4LQA7ak9JBQkIofZSvyyi0DTFFHlFFqgT2oV6J/gAqWLRGQ5do7pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eWPcq+ZY; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753088988;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=7u6caywsLvYLuVxkpsdUT2qNKGKBBqyOD5l/+WUF5hI=;
+	b=eWPcq+ZY7qmSVJAcQvy65uhjFr/3BgiF3pqCpFrYiEZ72u6TjsQOiIGB8wgh1KnIYlOw4C
+	KXbSonPyyNKhtSypglJnuTLs0pUbXVV56hGrTJvNxDdf7Vw2nx95r32N3/NMNsT1VEMMhc
+	RMS2GALR2FWPD+qt6srSO463eU35z04=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-442-kAk5KmmAN9KwNFNx4MnHvA-1; Mon, 21 Jul 2025 05:09:46 -0400
+X-MC-Unique: kAk5KmmAN9KwNFNx4MnHvA-1
+X-Mimecast-MFC-AGG-ID: kAk5KmmAN9KwNFNx4MnHvA_1753088985
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-455f79a2a16so34281985e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 02:09:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753088985; x=1753693785;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7u6caywsLvYLuVxkpsdUT2qNKGKBBqyOD5l/+WUF5hI=;
+        b=aMbfnI8jOGZMlS9a0kBAOYHEc4DEBat8ZstyfoSN5pHroRM3LjBBNfAul+qgguycyY
+         /fCfuksUK4cTJWK1hpFP8+Gu7fvjESDE0nCwDiOWVuU7/QdDyzm6u6uMBdEnIYOEb3Vb
+         +hbWc6pemGBs/zPOm4KWyRPyb9Vq9T8HXX8/xzL1Nbkv7B7Po3QF8aKm3kjqJJP3srba
+         RZS8NHE5Rt1cUM4p/i40IpqnSw7OpV9ysz9ToSPB+32+Pocvc9VtE9Ex4M/AZDJtv1k3
+         RWrlF1UeZIz+hlxewSi/Cl7n/DAY+xbw24N8l489tCH3R0dvL4O/HKFe53y0W2fl1QkE
+         4qLw==
+X-Gm-Message-State: AOJu0YxdOQSR7fX42nUbj7+3BU8l0K8NZ9n4fDq288bcgHXHRk5cQMlO
+	Q3RqPMrhJbScyc9IDiatE/0hJ/Zm52It57NqjnvuBbMv56ors1ae6obPmBaOi+d20f0DdnLK4aa
+	R7Ae28Od3jzENtX4dUjheVS8JCtGvogm3zX0zXiUNwGd2UjK+Vq+QsPF48sFiAHMUa1f9obCO1W
+	ELQ/mGIZbjrI8H+QqLQmGb6imm25R604hFNoT0I8q5dkKeShwb
+X-Gm-Gg: ASbGncvIaaoqKmjmcjIELkuAgcqPlr6AnUSpt+xe/iZVmNGobEjIlW5L9KYbeS8w9Sh
+	YCtZ3t5P3JuyHnPyFTb4t5xnavngqPHembWPzU+1DkYq49YLAzEAUP2PmQgCyvsEXQ50WGcB3uF
+	hXvUvJAUujwdRfSWwevvCRvIW3jjeD/XMco0zc42At97lDPFIqokOcMZCYDuyyDljHHPAJ0YufY
+	hYMOxdbxwixJ3A+Hdnxa6AgN7vB4dtQ0oEqT7sfu0bhMggfx7NH4aPiLKxtdt7jE4yamzajP9tr
+	b+l0amyUZYfTRm6RqvwTPtke7uy2zZWM8njJt399gK+HY5/gH7xMEbwHXXgHJi6B/GmEwEvuO6C
+	vusJb927naDf+Okho7q76Tuc=
+X-Received: by 2002:a05:600c:310a:b0:456:58e:318e with SMTP id 5b1f17b1804b1-4562e29c660mr198562175e9.30.1753088985091;
+        Mon, 21 Jul 2025 02:09:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGe98w4qflWkYM9Zg6Fz1StAofoZoYSsF8y704An1WPPyMZMujFAEA1iHOUaqnCNO3tWo5ofg==
+X-Received: by 2002:a05:600c:310a:b0:456:58e:318e with SMTP id 5b1f17b1804b1-4562e29c660mr198561375e9.30.1753088984354;
+        Mon, 21 Jul 2025 02:09:44 -0700 (PDT)
+Received: from localhost (p200300d82f4cdf00a9f5b75b033ca17f.dip0.t-ipconnect.de. [2003:d8:2f4c:df00:a9f5:b75b:33c:a17f])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b61ca4d807sm9898705f8f.73.2025.07.21.02.09.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Jul 2025 02:09:43 -0700 (PDT)
+From: David Hildenbrand <david@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	David Hildenbrand <david@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>,
+	Barry Song <baohua@kernel.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Usama Arif <usamaarif642@gmail.com>,
+	SeongJae Park <sj@kernel.org>,
+	Jann Horn <jannh@google.com>,
+	Yafang Shao <laoar.shao@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH POC] prctl: extend PR_SET_THP_DISABLE to optionally exclude VM_HUGEPAGE
+Date: Mon, 21 Jul 2025 11:09:42 +0200
+Message-ID: <20250721090942.274650-1-david@redhat.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9496.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b95e984c-59c5-4fec-3fba-08ddc8363eaf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jul 2025 09:09:06.1664
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: GlqfSYrRqMpWVg2frAko0q56Txbs8sFRS1hSzqLek7BTxKSNjQCl6f2Cx/56zdhgg+j6YLJPUkk5rjt5KrQtfw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8770
+Content-Transfer-Encoding: 8bit
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBQZW5nIEZhbiAoT1NTKSA8cGVu
-Zy5mYW5Ab3NzLm54cC5jb20+DQo+IFNlbnQ6IDIwMjXE6jfUwjIxyNUgMTc6MzkNCj4gVG86IE51
-bm8gUz8gPG5vbmFtZS5udW5vQGdtYWlsLmNvbT4NCj4gQ2M6IFByaW1veiBGaXNlciA8cHJpbW96
-LmZpc2VyQG5vcmlrLmNvbT47IEpvbmF0aGFuIENhbWVyb24NCj4gPGppYzIzQGtlcm5lbC5vcmc+
-OyBEYXZpZCBMZWNobmVyIDxkbGVjaG5lckBiYXlsaWJyZS5jb20+OyBCb3VnaCBDaGVuDQo+IDxo
-YWliby5jaGVuQG54cC5jb20+OyBOdW5vIFNhIDxudW5vLnNhQGFuYWxvZy5jb20+OyBBbmR5IFNo
-ZXZjaGVua28NCj4gPGFuZHlAa2VybmVsLm9yZz47IFJvYiBIZXJyaW5nIDxyb2JoQGtlcm5lbC5v
-cmc+OyBLcnp5c3p0b2YgS296bG93c2tpDQo+IDxrcnprK2R0QGtlcm5lbC5vcmc+OyBDb25vciBE
-b29sZXkgPGNvbm9yK2R0QGtlcm5lbC5vcmc+OyBTaGF3biBHdW8NCj4gPHNoYXduZ3VvQGtlcm5l
-bC5vcmc+OyBTYXNjaGEgSGF1ZXIgPHMuaGF1ZXJAcGVuZ3V0cm9uaXguZGU+Ow0KPiBQZW5ndXRy
-b25peCBLZXJuZWwgVGVhbSA8a2VybmVsQHBlbmd1dHJvbml4LmRlPjsgRmFiaW8gRXN0ZXZhbQ0K
-PiA8ZmVzdGV2YW1AZ21haWwuY29tPjsgbGludXgtaWlvQHZnZXIua2VybmVsLm9yZzsgaW14QGxp
-c3RzLmxpbnV4LmRldjsNCj4gZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWFybS1r
-ZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsNCj4gbGludXgta2VybmVsQHZnZXIua2VybmVsLm9y
-ZzsgdXBzdHJlYW1AbGlzdHMucGh5dGVjLmRlOw0KPiBhbmRyZWoucGljZWpAbm9yaWsuY29tDQo+
-IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMS8yXSBkdC1iaW5kaW5nczogaWlvOiBhZGM6IGlteDkzOiBB
-ZGQgY2FsaWJyYXRpb24gcHJvcGVydGllcw0KPiANCj4gT24gTW9uLCBKdWwgMTQsIDIwMjUgYXQg
-MDU6MTE6MzFQTSArMDEwMCwgTnVubyBTPyB3cm90ZToNCj4gPk9uIE1vbiwgMjAyNS0wNy0xNCBh
-dCAwNzo1NiArMDIwMCwgUHJpbW96IEZpc2VyIHdyb3RlOg0KPiA+PiBIaSBhbGwsDQo+ID4+DQo+
-ID4+IE9uIDEzLiAwNy4gMjUgMTc6MDIsIEpvbmF0aGFuIENhbWVyb24gd3JvdGU6DQo+ID4+ID4g
-T24gVGh1LCAxMCBKdWwgMjAyNSAxMDo0Njo0NCAtMDUwMA0KPiA+PiA+IERhdmlkIExlY2huZXIg
-PGRsZWNobmVyQGJheWxpYnJlLmNvbT4gd3JvdGU6DQo+ID4+ID4NCj4gPj4gPiA+IE9uIDcvMTAv
-MjUgMjozOSBBTSwgUHJpbW96IEZpc2VyIHdyb3RlOg0KPiA+PiA+ID4gPiBGcm9tOiBBbmRyZWog
-UGljZWogPGFuZHJlai5waWNlakBub3Jpay5jb20+DQo+ID4+ID4gPiA+DQo+ID4+ID4gPiA+IERv
-Y3VtZW50IGkuTVg5MyBBREMgY2FsaWJyYXRpb24gcHJvcGVydGllcyBhbmQgaG93IHRvIHNldCB0
-aGVtLg0KPiA+PiA+ID4gPg0KPiA+PiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBBbmRyZWogUGljZWog
-PGFuZHJlai5waWNlakBub3Jpay5jb20+DQo+ID4+ID4gPiA+IFNpZ25lZC1vZmYtYnk6IFByaW1v
-eiBGaXNlciA8cHJpbW96LmZpc2VyQG5vcmlrLmNvbT4NCj4gPj4gPiA+ID4gLS0tDQo+ID4+ID4g
-PiA+ID8/Li4uL2JpbmRpbmdzL2lpby9hZGMvbnhwLGlteDkzLWFkYy55YW1sPz8/Pz8/Pz8/Pz8/
-IHwgMjENCj4gPj4gPiA+ID4gKysrKysrKysrKysrKysrKysrKw0KPiA+PiA+ID4gPiA/PzEgZmls
-ZSBjaGFuZ2VkLCAyMSBpbnNlcnRpb25zKCspDQo+ID4+ID4gPiA+DQo+ID4+ID4gPiA+IGRpZmYg
-LS1naXQNCj4gPj4gPiA+ID4gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvaWlv
-L2FkYy9ueHAsaW14OTMtDQo+ID4+ID4gPiA+IGFkYy55YW1sDQo+ID4+ID4gPiA+IGIvRG9jdW1l
-bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2lpby9hZGMvbnhwLGlteDkzLWFkYy55YW1sDQo+
-ID4+ID4gPiA+IGluZGV4IGMyZTVmZjQxODkyMC4uZDFjMDRjZjg1ZmU2IDEwMDY0NA0KPiA+PiA+
-ID4gPiAtLS0NCj4gPj4gPiA+ID4gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
-aWlvL2FkYy9ueHAsaW14OTMtYWRjLnlhbWwNCj4gPj4gPiA+ID4gKysrIGIvRG9jdW1lbnRhdGlv
-bi9kZXZpY2V0cmVlL2JpbmRpbmdzL2lpby9hZGMvbnhwLGlteDkzLWFkYy55DQo+ID4+ID4gPiA+
-ICsrKyBhbWwNCj4gPj4gPiA+ID4gQEAgLTUyLDYgKzUyLDI3IEBAIHByb3BlcnRpZXM6DQo+ID4+
-ID4gPiA+ID8/Pz8gIiNpby1jaGFubmVsLWNlbGxzIjoNCj4gPj4gPiA+ID4gPz8/Pz8/Pz8gY29u
-c3Q6IDENCj4gPj4gPiA+ID4gPz8NCj4gPj4gPiA+ID4gKz8/IG54cCxjYWxpYi1hdmctZW46DQo+
-ID4+ID4gPiA+ICs/Pz8/Pz8gZGVmYXVsdDogMQ0KPiA+PiA+ID4gPiArPz8/Pz8/IGRlc2NyaXB0
-aW9uOg0KPiA+PiA+ID4gPiArPz8/Pz8/Pz8/PyBFbmFibGUgb3IgZGlzYWJsZSBjYWxpYnJhdGlv
-biBhdmVyYWdpbmcgZnVuY3Rpb24gKEFWR0VOKS4NCj4gPj4gPiA+ID4gKz8/Pz8/PyAkcmVmOiAv
-c2NoZW1hcy90eXBlcy55YW1sIy9kZWZpbml0aW9ucy91aW50MzINCj4gPj4gPiA+ID4gKz8/Pz8/
-PyBlbnVtOiBbIDAsIDEgXQ0KPiA+PiA+ID4gPiArDQo+ID4+ID4gPiA+ICs/PyBueHAsY2FsaWIt
-bnItc2FtcGxlczoNCj4gPj4gPiA+ID4gKz8/Pz8/PyBkZWZhdWx0OiA1MTINCj4gPj4gPiA+ID4g
-Kz8/Pz8/PyBkZXNjcmlwdGlvbjoNCj4gPj4gPiA+ID4gKz8/Pz8/Pz8/Pz8gU2VsZWN0cyBudW1i
-ZXIgb2Ygc2FtcGxlcyAoTlJTTVBMKSB0byBiZSB1c2VkIGR1cmluZw0KPiBjYWxpYnJhdGlvbi4N
-Cj4gPj4gPiA+ID4gKz8/Pz8/PyAkcmVmOiAvc2NoZW1hcy90eXBlcy55YW1sIy9kZWZpbml0aW9u
-cy91aW50MzINCj4gPj4gPiA+ID4gKz8/Pz8/PyBlbnVtOiBbIDE2LCAzMiwgMTI4LCA1MTIgXQ0K
-PiA+PiA+DQo+ID4+ID4gQWxsb3cgMSBhcyBhIHZhbHVlIGFuZCBkcm9wIHRoZSBlbmFibGVkIGFi
-b3ZlLj8/Pz8gQXZlcmFnaW5nIG92ZXIgMQ0KPiA+PiA+IHNhbXBsZSBpcyBzYW1lIGFzIG5vIGF2
-ZXJhZ2luZyBhbmQgZ2l2ZXMgc2ltcGxlciBiaW5kaW5nLg0KPiA+PiA+DQo+ID4+ID4gPiA+ICsN
-Cj4gPj4gPiA+ID4gKz8/IG54cCxjYWxpYi10LXNhbXBsZToNCj4gPj4gPiA+ID4gKz8/Pz8/PyBk
-ZWZhdWx0OiAyMg0KPiA+PiA+ID4gPiArPz8/Pz8/IGRlc2NyaXB0aW9uOg0KPiA+PiA+ID4gPiAr
-Pz8/Pz8/Pz8/PyBTZWxlY3RzIHNhbXBsZSB0aW1lIChUU0FNUCkgb2YgY2FsaWJyYXRpb24NCj4g
-Pj4gPiA+ID4gK2NvbnZlcnNpb25zIGluIEFEQw0KPiA+PiA+ID4gPiBjbG9jayBjeWNsZXMNCj4g
-Pj4gPiA+ID4gKz8/Pz8/PyAkcmVmOiAvc2NoZW1hcy90eXBlcy55YW1sIy9kZWZpbml0aW9ucy91
-aW50MzINCj4gPj4gPiA+ID4gKz8/Pz8/PyBlbnVtOiBbIDgsIDE2LCAyMiwgMzIgXQ0KPiA+PiA+
-ID4gPiArDQo+ID4+ID4gPiA+ID8/cmVxdWlyZWQ6DQo+ID4+ID4gPiA+ID8/Pz8gLSBjb21wYXRp
-YmxlDQo+ID4+ID4gPiA+ID8/Pz8gLSByZWc/Pw0KPiA+PiA+ID4NCj4gPj4gPiA+IFRoaXMgc2Vl
-bSBsaWtlIHRoaW5ncyB0aGF0IHNob3VsZCBiZSBzZXQgYXQgcnVudGltZSByYXRoZXIgdGhhbg0K
-PiA+PiA+ID4gaW4gdGhlIGRldmljZXRyZWUuIFVubGVzcyB0aGVyZSBpcyBzb21lIGp1c3RpZmlj
-YXRpb24gb24gd2h5DQo+ID4+ID4gPiB0aGVzZSB2YWx1ZXMgZGVwZW5kIG9uIGhvdyB0aGUgY2hp
-cCBpcyB3aXJlZCB1cD8NCj4gPj4NCj4gPj4gSXQgZGVwZW5kcyBob3cgQURDIDEuOFYgVnJlZiBp
-cyB3aXJlZCB1cCwgZXNwZWNpYWxseSBob3cgbm9pc3kgaXQgaXMuDQo+ID4+DQo+ID4+ID4NCj4g
-Pj4gPiBGdXJ0aGVyIHRvIHRoYXQsIEknZCBsaWtlIHRvIHNlZSBzb21lIGV4cGxhbmF0aW9uIG9m
-IHdoeSB3ZSBjYXJlIHRvDQo+ID4+ID4gY2hhbmdlIGl0IGF0IGFsbC4gSXMgaXQgZXZlciBhIGJh
-ZCBpZGVhIHRvIGVuYWJsZSBhdmVyYWdpbmcgYW5kDQo+ID4+ID4gcGljayBhIGxhcmdlIG51bWJl
-ciBvZiBzYW1wbGVzIGZvciBjYWxpYnJhdGlvbj8NCj4gPj4NCj4gPj4gVGhpcyBpcyBhIHNuaXBw
-ZXQgZnJvbSB0aGUgaS5NWDkzIFRSTSwgY2hhcHRlciBBbmFsb2ctdG8tRGlnaXRhbA0KPiA+PiBD
-b252ZXJ0ZXIgKFNBUl9BREMpIGRlc2NyaWJpbmcgY2FsaWJyYXRpb24gc3RlcHM6DQo+ID4+DQo+
-ID4+IDEuIFdhaXQgZm9yIGRlYXNzZXJ0aW9uIG9mIGZ1bmN0aW9uYWwgcmVzZXQuDQo+ID4+IDIu
-IENvbmZpZ3VyZSBTQVIgY29udHJvbGxlciBvcGVyYXRpbmcgY2xvY2sgKE1DUltBRENMS1NFXSA9
-IDApLg0KPiA+PiAzLiBCcmluZyBBREMgb3V0IG9mIFBvd2VyLWRvd24gc3RhdGUgKE1DUltQV0RO
-XSA9IDApLg0KPiA+PiA0LiBDb25maWd1cmUgZGVzaXJlZCBjYWxpYnJhdGlvbiBzZXR0aW5ncyAo
-ZGVmYXVsdCB2YWx1ZXMga2VwdCBmb3INCj4gPj4gaGlnaGVzdCBhY2N1cmFjeSBtYXhpbXVtIHRp
-bWUpLg0KPiA+PiA/Pz8gTUNSW1RTQU1QXTogU2FtcGxlIHRpbWUgZm9yIGNhbGlicmF0aW9uIGNv
-bnZlcnNpb24gPz8/DQo+ID4+IE1DUltOUlNNUExdOiBOdW1iZXIgb2Ygc2FtcGxlcyBpbiBhdmVy
-YWdpbmcgPz8/IE1DUltBVkdFTl06IEF2ZXJhZ2luZw0KPiA+PiBmdW5jdGlvbiBlbmFibGUgaW4g
-Y2FsaWJyYXRpb24gNS4gUnVuIGNhbGlicmF0aW9uIGJ5IHdyaXRpbmcgYSBvbmUgdG8NCj4gPj4g
-TUNSW0NBTFNUQVJUXS4NCj4gPj4gNi4gQ2hlY2sgY2FsaWJyYXRpb24gcnVuIHN0YXR1cyBpbiBN
-U1JbQ0FMQlVTWV0/Pz93YWl0IHVudGlsDQo+ID4+IE1TUltDQUxCVVNZXSA9IDA7IGFsdGVybmF0
-aXZlbHksIE1TUltBRENTVEFUXSBjYW4gYmUgdXNlZCB0byBjaGVjaw0KPiA+PiBzdGF0dXMuDQo+
-ID4+IDcuIENoZWNrIGNhbGlicmF0aW9uIHBhc3MvZmFpbCBzdGF0dXMgaW4gTVNSW0NBTEZBSUxd
-IGZpZWxkLiBJZg0KPiA+PiBNU1JbQ0FMRkFJTF0gPSAxIHRoZW4gY2FsaWJyYXRpb24gZmFpbGVk
-LiBEZXRhaWxlZCBzdGF0dXMgY2FuIGJlDQo+ID4+IGNoZWNrZWQgaW4gQ0FMU1RBVC4NCj4gPj4N
-Cj4gPj4NCj4gPj4gU2VlIHBvaW50IDQpLg0KPiA+Pg0KPiA+PiBOb3Qgc3VyZSB3aHkgd291bGQg
-dGhlcmUgYmUgYW4gb3B0aW9uIHRvIGNvbmZpZ3VyZSBpLk1YOTMgQURDDQo+ID4+IGNhbGlicmF0
-aW9uIHBhcmFtZXRlcnMgaWYgb25lIHVzZS1jYXNlIChtYXggYWNjdXJhY3kgbWF4IHRpbWUpIHRv
-DQo+ID4+IHJ1bGUgdGhlbSBhbGw/DQo+ID4+DQo+ID4NCj4gPlNvbWV0aW1lcyBIVyBndXlzIGp1
-c3Qgd2FudCB0byBnaXZlIHlvdSBzb21lIG9wdGlvbnMuIERvZXMgbm90IG1lYW4gd2UNCj4gPmhh
-dmUgdG8gdXNlIHRoZW0gYWxsIDopLg0KPiA+DQo+ID5JIGd1ZXNzIHdoYXQgSm9uYXRoYW4gaXMg
-aW50ZXJlc3RlZCBpbiwgaXMgdG8gdW5kZXJzdGFuZCBpbiB3aGF0DQo+ID5jb25kaXRpb25zIHRo
-ZSBkZWZhdWx0cyBhcmUgbm8gZ29vZCBmb3IgdGhlIGNhbGlicmF0aW9uPyBJZiB3ZSBjYW4gaGF2
-ZQ0KPiA+YSBzZXQgb2YgdmFsdWVzIHRoYXQgc2hvdWxkIHByZXR0eSBtdWNoIGFsd2F5cyB3b3Jr
-LCBubyBuZWVkIHRvIGZ1cnRoZXINCj4gPmNvbXBsaWNhdGUgdGhlIGJpbmRpbmdzIG9yIHRoZSBk
-cml2ZXIuDQo+IA0KPiBKdXN0IG15IHVuZGVyc3RhbmRpbmcsIGl0IGlzIGhhcmQgdG8gdXNlIG9u
-ZSBmaXhlZCBzZXR0aW5ncyB0byBmaXQgYWxsIGtpbmRzIG9mDQo+IGNvbmRpdGlvbnMuDQo+IA0K
-PiAgICAgICAgICAgICAgICAgIE5vaXNlIGluZHVjZWQgZnJvbSBQQ0IgdHJhY2tzICBFbGVjdHJv
-LSBtYWduZXRpYyBub2lzZQ0KPiAJCSAgICAgfCAgICAgICAgICAgICAgICAgICAgICAgICAgIHwN
-Cj4gCQkgICAgIFYgICAgICAgICAgICAgICAgICAgICAgICAgICBWDQo+ICAtLS0tLS0tLS0NCj4g
-fFNPQyhBREMpfCAgIDwtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS08LSAofikgZXh0
-ZXJuYWwgU2lnbmFsDQo+ICAtLS0tLS0tLS0NCj4gICAgICAgICAgICAgICAgICBeICAgICAgICAg
-ICAgICAgICBeDQo+ICAgICAgICAgICAgICAgICAgfCAgICAgICAgICAgICAgICAgfA0KPiAgICAg
-ICAgICAgICAgSS9PIGNvdXBsZWQgbm9pc2UgICAgSW50ZXJuYWwgbm9pc2UNCj4gDQo+IA0KPiBT
-byBPRU0gQSdzIGJvYXJkIG1heSBuZWVkcyBkaWZmZXJlbnQgc2V0dGluZ3MgY29tcGFyZWQgd2l0
-aCBPRU0gQidzIGJvYXJkLg0KDQpUaGUgbm9pc2Ugb24gVnJlZiBkaWQgaW1wYWN0IHRoZSBjYWxp
-YnJhdGlvbiwgd2UgZGlkIGdldCByZXBvcnQgZnJvbSBjdXN0b21lciwgYW5kIElDIGd1eXMgc3Vn
-Z2VzdGVkIHRvIGRvIGxpa2UgdGhlIGZvbGxvd2luZyBwYXRjaCwgd2hhdCdzIHlvdXIgY29tbWVu
-dHM/DQoNCmh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcHJvamVjdC9saW51eC1paW8vcGF0
-Y2gvMjAyNTA0MjMtYWRjcGF0Y2gtdjEtMS1iMGU4NGMyN2FlOThAbnhwLmNvbS8NCg0KUmVnYXJk
-cw0KSGFpYm8gQ2hlbiANCj4gDQo+IFJlZ2FyZHMsDQo+IFBlbmcNCj4gDQo+ID4NCj4gPi0gTnVu
-byBTPz8NCj4gPj4gT24gdGhlIG90aGVyIGhhbmQsIHB1YmxpYyBUUk0gZG9lc24ndCBnaXZlIG11
-Y2ggbW9yZSBpbmZvcm1hdGlvbiBhbmQNCj4gPj4gPg0K
+People want to make use of more THPs, for example, moving from
+THP=never to THP=madvise, or from THP=madvise to THP=never.
+
+While this is great news for every THP desperately waiting to get
+allocated out there, apparently there are some workloads that require a
+bit of care during that transition: once problems are detected, these
+workloads should be started with the old behavior, without making all
+other workloads on the system go back to the old behavior as well.
+
+In essence, the following scenarios are imaginable:
+
+(1) Switch from THP=none to THP=madvise or THP=always, but keep the old
+    behavior (no THP) for selected workloads.
+
+(2) Stay at THP=none, but have "madvise" or "always" behavior for
+    selected workloads.
+
+(3) Switch from THP=madvise to THP=always, but keep the old behavior
+    (THP only when advised) for selected workloads.
+
+(4) Stay at THP=madvise, but have "always" behavior for selected
+    workloads.
+
+In essence, (2) can be emulated through (1), by setting THP!=none while
+disabling THPs for all processes that don't want THPs. It requires
+configuring all workloads, but that is a user-space problem to sort out.
+
+(4) can be emulated through (3) in a similar way.
+
+Back when (1) was relevant in the past, as people started enabling THPs,
+we added PR_SET_THP_DISABLE, so relevant workloads that were not ready
+yet (i.e., used by Redis) were able to just disable THPs completely. Redis
+still implements the option to use this interface to disable THPs
+completely.
+
+With PR_SET_THP_DISABLE, we added a way to force-disable THPs for a
+workload -- a process, including fork+exec'ed process hierarchy.
+That essentially made us support (1): simply disable THPs for all workloads
+that are not ready for THPs yet, while still enabling THPs system-wide.
+
+The quest for handling (3) and (4) started, but current approaches
+(completely new prctl, options to set other policies per processm,
+ alternatives to prctl -- mctrl, cgroup handling) don't look particularly
+promising. Likely, the future will use bpf or something similar to
+implement better policies, in particular to also make better decisions
+about THP sizes to use, but this will certainly take a while as that work
+just started.
+
+Long story short: a simple enable/disable is not really suitable for the
+future, so we're not willing to add completely new toggles.
+
+While we could emulate (3)+(4) through (1)+(2) by simply disabling THPs
+completely for these processes, this scares many THPs in our system
+because they could no longer get allocated where they used to be allocated
+for: regions flagged as VM_HUGEPAGE. Apparently, that imposes a
+problem for relevant workloads, because "not THPs" is certainly worse
+than "THPs only when advised".
+
+Could we simply relax PR_SET_THP_DISABLE, to "disable THPs unless not
+explicitly advised by the app through MAD_HUGEPAGE"? *maybe*, but this
+would change the documented semantics quite a bit, and the versatility
+to use it for debugging purposes, so I am not 100% sure that is what we
+want -- although it would certainly be much easier.
+
+So instead, as an easy way forward for (3) and (4), an option to
+make PR_SET_THP_DISABLE disable *less* THPs for a process.
+
+In essence, this patch:
+
+(A) Adds PR_THP_DISABLE_EXCEPT_ADVISED, to be used as a flag in arg3
+    of prctl(PR_SET_THP_DISABLE) when disabling THPs (arg2 != 0).
+
+    For now, arg3 was not allowed to be set (-EINVAL). Now it holds
+    flags.
+
+(B) Makes prctl(PR_GET_THP_DISABLE) return 3 if
+    PR_THP_DISABLE_EXCEPT_ADVISED was set while disabling.
+
+    For now, it would return 1 if THPs were disabled completely. Now
+    it essentially returns the set flags as well.
+
+(C) Renames MMF_DISABLE_THP to MMF_DISABLE_THP_COMPLETELY, to express
+    the semantics clearly.
+
+    Fortunately, there are only two instances outside of prctl() code.
+
+(D) Adds MMF_DISABLE_THP_EXCEPT_ADVISED to express "no THP except for VMAs
+    with VM_HUGEPAGE" -- essentially "thp=madvise" behavior
+
+    Fortunately, we only have to extend vma_thp_disabled().
+
+(E) Indicates "THP_enabled: 0" in /proc/pid/status only if THPs are not
+    disabled completely
+
+    Only indicating that THPs are disabled when they are really disabled
+    completely, not only partially.
+
+The documented semantics in the man page for PR_SET_THP_DISABLE
+"is inherited by a child created via fork(2) and is preserved across
+execve(2)" is maintained. This behavior, for example, allows for
+disabling THPs for a workload through the launching process (e.g.,
+systemd where we fork() a helper process to then exec()).
+
+There is currently not way to prevent that a process will not issue
+PR_SET_THP_DISABLE itself to re-enable THP. We could add a "seal" option
+to PR_SET_THP_DISABLE through another flag if ever required. The known
+users (such as redis) really use PR_SET_THP_DISABLE to disable THPs, so
+that is not added for now.
+
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Zi Yan <ziy@nvidia.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: Nico Pache <npache@redhat.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Dev Jain <dev.jain@arm.com>
+Cc: Barry Song <baohua@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Mike Rapoport <rppt@kernel.org>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Usama Arif <usamaarif642@gmail.com>
+Cc: SeongJae Park <sj@kernel.org>
+Cc: Jann Horn <jannh@google.com>
+Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
+Cc: Yafang Shao <laoar.shao@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+
+---
+
+At first, I thought of "why not simply relax PR_SET_THP_DISABLE", but I
+think there might be real use cases where we want to disable any THPs --
+in particular also around debugging THP-related problems, and
+"THP=never" not meaning ... "never" anymore. PR_SET_THP_DISABLE will
+also block MADV_COLLAPSE, which can be very helpful. Of course, I thought
+of having a system-wide config to change PR_SET_THP_DISABLE behavior, but
+I just don't like the semantics.
+
+"prctl: allow overriding system THP policy to always"[1] proposed
+"overriding policies to always", which is just the wrong way around: we
+should not add mechanisms to "enable more" when we already have an
+interface/mechanism to "disable" them (PR_SET_THP_DISABLE). It all gets
+weird otherwise.
+
+"[PATCH 0/6] prctl: introduce PR_SET/GET_THP_POLICY"[2] proposed
+setting the default of the VM_HUGEPAGE, which is similarly the wrong way
+around I think now.
+
+The proposals by Lorenzo to extend process_madvise()[3] and mctrl()[4]
+similarly were around the "default for VM_HUGEPAGE" idea, but after the
+discussion, I think we should better leave VM_HUGEPAGE untouched.
+
+Happy to hear naming suggestions for "PR_THP_DISABLE_EXCEPT_ADVISED" where
+we essentially want to say "leave advised regions alone" -- "keep THP
+enabled for advised regions",
+
+The only thing I really dislike about this is using another MMF_* flag,
+but well, no way around it -- and seems like we could easily support
+more than 32 if we want to, or storing this thp information elsewhere.
+
+I think this here (modifying an existing toggle) is the only prctl()
+extension that we might be willing to accept. In general, I agree like
+most others, that prctl() is a very bad interface for that -- but
+PR_SET_THP_DISABLE is already there and is getting used.
+
+Long-term, I think the answer will be something based on bpf[5]. Maybe
+in that context, I there could still be value in easily disabling THPs for
+selected workloads (esp. debugging purposes).
+
+Jann raised valid concerns[6] about new flags that are persistent across
+exec[6]. As this here is a relaxation to existing PR_SET_THP_DISABLE I
+consider it having a similar security risk as our existing
+PR_SET_THP_DISABLE, but devil is in the detail.
+
+This is *completely* untested and might be utterly broken. It merely
+serves as a PoC of what I think could be done. If this ever goes upstream,
+we need some kselftests for it, and extensive tests.
+
+[1] https://lore.kernel.org/r/20250507141132.2773275-1-usamaarif642@gmail.com
+[2] https://lkml.kernel.org/r/20250515133519.2779639-2-usamaarif642@gmail.com
+[3] https://lore.kernel.org/r/cover.1747686021.git.lorenzo.stoakes@oracle.com
+[4] https://lkml.kernel.org/r/85778a76-7dc8-4ea8-8827-acb45f74ee05@lucifer.local
+[5] https://lkml.kernel.org/r/20250608073516.22415-1-laoar.shao@gmail.com
+[6] https://lore.kernel.org/r/CAG48ez3-7EnBVEjpdoW7z5K0hX41nLQN5Wb65Vg-1p8DdXRnjg@mail.gmail.com
+
+---
+ Documentation/filesystems/proc.rst |  5 +--
+ fs/proc/array.c                    |  2 +-
+ include/linux/huge_mm.h            | 20 ++++++++---
+ include/linux/mm_types.h           | 13 +++----
+ include/uapi/linux/prctl.h         |  7 ++++
+ kernel/sys.c                       | 58 +++++++++++++++++++++++-------
+ mm/khugepaged.c                    |  2 +-
+ 7 files changed, 78 insertions(+), 29 deletions(-)
+
+diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+index 2971551b72353..915a3e44bc120 100644
+--- a/Documentation/filesystems/proc.rst
++++ b/Documentation/filesystems/proc.rst
+@@ -291,8 +291,9 @@ It's slow but very precise.
+  HugetlbPages                size of hugetlb memory portions
+  CoreDumping                 process's memory is currently being dumped
+                              (killing the process may lead to a corrupted core)
+- THP_enabled		     process is allowed to use THP (returns 0 when
+-			     PR_SET_THP_DISABLE is set on the process
++ THP_enabled                 process is allowed to use THP (returns 0 when
++                             PR_SET_THP_DISABLE is set on the process to disable
++                             THP completely, not just partially)
+  Threads                     number of threads
+  SigQ                        number of signals queued/max. number for queue
+  SigPnd                      bitmap of pending signals for the thread
+diff --git a/fs/proc/array.c b/fs/proc/array.c
+index d6a0369caa931..c4f91a784104f 100644
+--- a/fs/proc/array.c
++++ b/fs/proc/array.c
+@@ -422,7 +422,7 @@ static inline void task_thp_status(struct seq_file *m, struct mm_struct *mm)
+ 	bool thp_enabled = IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE);
+ 
+ 	if (thp_enabled)
+-		thp_enabled = !test_bit(MMF_DISABLE_THP, &mm->flags);
++		thp_enabled = !test_bit(MMF_DISABLE_THP_COMPLETELY, &mm->flags);
+ 	seq_printf(m, "THP_enabled:\t%d\n", thp_enabled);
+ }
+ 
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index e0a27f80f390d..c4127104d9bc3 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -323,16 +323,26 @@ struct thpsize {
+ 	(transparent_hugepage_flags &					\
+ 	 (1<<TRANSPARENT_HUGEPAGE_USE_ZERO_PAGE_FLAG))
+ 
++/*
++ * Check whether THPs are explicitly disabled through madvise or prctl, or some
++ * architectures may disable THP for some mappings, for example, s390 kvm.
++ */
+ static inline bool vma_thp_disabled(struct vm_area_struct *vma,
+ 		vm_flags_t vm_flags)
+ {
++	/* Are THPs disabled for this VMA? */
++	if (vm_flags & VM_NOHUGEPAGE)
++		return true;
++	/* Are THPs disabled for all VMAs in the whole process? */
++	if (test_bit(MMF_DISABLE_THP_COMPLETELY, &vma->vm_mm->flags))
++		return true;
+ 	/*
+-	 * Explicitly disabled through madvise or prctl, or some
+-	 * architectures may disable THP for some mappings, for
+-	 * example, s390 kvm.
++	 * Are THPs disabled only for VMAs where we didn't get an explicit
++	 * advise to use them?
+ 	 */
+-	return (vm_flags & VM_NOHUGEPAGE) ||
+-	       test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags);
++	if (vm_flags & VM_HUGEPAGE)
++		return false;
++	return test_bit(MMF_DISABLE_THP_EXCEPT_ADVISED, &vma->vm_mm->flags);
+ }
+ 
+ static inline bool thp_disabled_by_hw(void)
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 1ec273b066915..a999f2d352648 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -1743,19 +1743,16 @@ enum {
+ #define MMF_VM_MERGEABLE	16	/* KSM may merge identical pages */
+ #define MMF_VM_HUGEPAGE		17	/* set when mm is available for khugepaged */
+ 
+-/*
+- * This one-shot flag is dropped due to necessity of changing exe once again
+- * on NFS restore
+- */
+-//#define MMF_EXE_FILE_CHANGED	18	/* see prctl_set_mm_exe_file() */
++#define MMF_HUGE_ZERO_PAGE	18      /* mm has ever used the global huge zero page */
+ 
+ #define MMF_HAS_UPROBES		19	/* has uprobes */
+ #define MMF_RECALC_UPROBES	20	/* MMF_HAS_UPROBES can be wrong */
+ #define MMF_OOM_SKIP		21	/* mm is of no interest for the OOM killer */
+ #define MMF_UNSTABLE		22	/* mm is unstable for copy_from_user */
+-#define MMF_HUGE_ZERO_PAGE	23      /* mm has ever used the global huge zero page */
+-#define MMF_DISABLE_THP		24	/* disable THP for all VMAs */
+-#define MMF_DISABLE_THP_MASK	(1 << MMF_DISABLE_THP)
++#define MMF_DISABLE_THP_EXCEPT_ADVISED	23	/* no THP except for VMAs with VM_HUGEPAGE */
++#define MMF_DISABLE_THP_COMPLETELY	24	/* no THP for all VMAs */
++#define MMF_DISABLE_THP_MASK	((1 << MMF_DISABLE_THP_COMPLETELY) |\
++				 (1 << MMF_DISABLE_THP_EXCEPT_ADVISED))
+ #define MMF_OOM_REAP_QUEUED	25	/* mm was queued for oom_reaper */
+ #define MMF_MULTIPROCESS	26	/* mm is shared between processes */
+ /*
+diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+index 43dec6eed559a..1949bb9270d48 100644
+--- a/include/uapi/linux/prctl.h
++++ b/include/uapi/linux/prctl.h
+@@ -177,7 +177,14 @@ struct prctl_mm_map {
+ 
+ #define PR_GET_TID_ADDRESS	40
+ 
++/*
++ * Flags for PR_SET_THP_DISABLE are only applicable when disabling. Bit 0
++ * is reserved, so PR_GET_THP_DISABLE can return 1 when no other flags were
++ * specified for PR_SET_THP_DISABLE.
++ */
+ #define PR_SET_THP_DISABLE	41
++/* Don't disable THPs when explicitly advised (MADV_HUGEPAGE / VM_HUGEPAGE). */
++# define PR_THP_DISABLE_EXCEPT_ADVISED	(1 << 1)
+ #define PR_GET_THP_DISABLE	42
+ 
+ /*
+diff --git a/kernel/sys.c b/kernel/sys.c
+index b153fb345ada2..2a34b2f708900 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -2423,6 +2423,50 @@ static int prctl_get_auxv(void __user *addr, unsigned long len)
+ 	return sizeof(mm->saved_auxv);
+ }
+ 
++static int prctl_get_thp_disable(unsigned long arg2, unsigned long arg3,
++				 unsigned long arg4, unsigned long arg5)
++{
++	unsigned long *mm_flags = &current->mm->flags;
++
++	if (arg2 || arg3 || arg4 || arg5)
++		return -EINVAL;
++
++	if (test_bit(MMF_DISABLE_THP_COMPLETELY, mm_flags))
++		return 1;
++	else if (test_bit(MMF_DISABLE_THP_EXCEPT_ADVISED, mm_flags))
++		return 1 | PR_THP_DISABLE_EXCEPT_ADVISED;
++	return 0;
++}
++
++static int prctl_set_thp_disable(unsigned long thp_disable, unsigned long flags,
++				 unsigned long arg4, unsigned long arg5)
++{
++	unsigned long *mm_flags = &current->mm->flags;
++
++	if (arg4 || arg5)
++		return -EINVAL;
++
++	/* Flags are only allowed when disabling. */
++	if (!thp_disable || (flags & ~PR_THP_DISABLE_EXCEPT_ADVISED))
++		return -EINVAL;
++	if (mmap_write_lock_killable(current->mm))
++		return -EINTR;
++	if (thp_disable) {
++		if (flags & PR_THP_DISABLE_EXCEPT_ADVISED) {
++			clear_bit(MMF_DISABLE_THP_COMPLETELY, mm_flags);
++			set_bit(MMF_DISABLE_THP_EXCEPT_ADVISED, mm_flags);
++		} else {
++			set_bit(MMF_DISABLE_THP_COMPLETELY, mm_flags);
++			clear_bit(MMF_DISABLE_THP_EXCEPT_ADVISED, mm_flags);
++		}
++	} else {
++		clear_bit(MMF_DISABLE_THP_COMPLETELY, mm_flags);
++		clear_bit(MMF_DISABLE_THP_EXCEPT_ADVISED, mm_flags);
++	}
++	mmap_write_unlock(current->mm);
++	return 0;
++}
++
+ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+ 		unsigned long, arg4, unsigned long, arg5)
+ {
+@@ -2596,20 +2640,10 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+ 			return -EINVAL;
+ 		return task_no_new_privs(current) ? 1 : 0;
+ 	case PR_GET_THP_DISABLE:
+-		if (arg2 || arg3 || arg4 || arg5)
+-			return -EINVAL;
+-		error = !!test_bit(MMF_DISABLE_THP, &me->mm->flags);
++		error = prctl_get_thp_disable(arg2, arg3, arg4, arg5);
+ 		break;
+ 	case PR_SET_THP_DISABLE:
+-		if (arg3 || arg4 || arg5)
+-			return -EINVAL;
+-		if (mmap_write_lock_killable(me->mm))
+-			return -EINTR;
+-		if (arg2)
+-			set_bit(MMF_DISABLE_THP, &me->mm->flags);
+-		else
+-			clear_bit(MMF_DISABLE_THP, &me->mm->flags);
+-		mmap_write_unlock(me->mm);
++		error = prctl_set_thp_disable(arg2, arg3, arg4, arg5);
+ 		break;
+ 	case PR_MPX_ENABLE_MANAGEMENT:
+ 	case PR_MPX_DISABLE_MANAGEMENT:
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index 8a5873d0a23a7..a685077644b4e 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -427,7 +427,7 @@ static inline int collapse_test_exit(struct mm_struct *mm)
+ static inline int collapse_test_exit_or_disable(struct mm_struct *mm)
+ {
+ 	return collapse_test_exit(mm) ||
+-	       test_bit(MMF_DISABLE_THP, &mm->flags);
++	       test_bit(MMF_DISABLE_THP_COMPLETELY, &mm->flags);
+ }
+ 
+ static bool hugepage_enabled(void)
+
+base-commit: 760b462b3921c5dc8bfa151d2d27a944e4e96081
+-- 
+2.50.1
+
 
