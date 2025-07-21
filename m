@@ -1,402 +1,233 @@
-Return-Path: <linux-kernel+bounces-739304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4019B0C498
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:58:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72F47B0C4A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:59:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8E7C5426EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:57:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9602E3A6759
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:58:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C38F2D7808;
-	Mon, 21 Jul 2025 12:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF052D5C8D;
+	Mon, 21 Jul 2025 12:58:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dxrsgPIF"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="N/J9uFUA"
+Received: from MA0PR01CU009.outbound.protection.outlook.com (mail-southindiaazolkn19010007.outbound.protection.outlook.com [52.103.67.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE08F2D6609;
-	Mon, 21 Jul 2025 12:56:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753102593; cv=none; b=Jqq9AIpzzFoxKUf3uLrq9t4AvYWQqgOhUwbrE7jEa+PL0nly8aJLmZxisTY01KaQ2GV9lS9Tuw/yI6zSWQKPRBgYXL+sIeBibXebLi+ndujePHXs8ezKik5HW6peCKKJOBuPafIA8MnK2j+UPFqzomN8MkwmmI4p54QfcTSSNHw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753102593; c=relaxed/simple;
-	bh=PfOYPiVGChUA1lb4czCViq+/vtUEEXAawmIkKLCLZ6Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZwYFW9pYMfNwjdFl+t73/mMe+lkn0Andd6+VgkWQUeXrtBSrf3X2mD5TT7JTMp4UMpYFOzCgYR+UppO/SUZlUvSARMoBeNdtqBwUSW+XXjYH4HVhv/cyy7uF43bQ9U+6EJwyxBuNAg2aKXhxxBA822nI/3XpZj3xtoBHDb5M7ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dxrsgPIF; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-23649faf69fso33701475ad.0;
-        Mon, 21 Jul 2025 05:56:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753102591; x=1753707391; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NTRKGfzOHatiL46xHxv71/tQ2NCbJIdvz6s8nypCsrM=;
-        b=dxrsgPIFy7KKHSV9lArAII4ZBIXpRyJVgSnLFJ1frVgxHmkKQHHFGuj6HQZR/bRC0I
-         7z9KOSew0YwjMjT218bKD7/o8O/SldubRXIHUeBtq0fiTKYThQGJzj9SGt9eqe08gQwh
-         y0UEu6+nw8aJJ0bod7PBkuzFUU0cXkETGqoFvQkB+6lPaXB+rynB8JRyW0QC8BczMZvp
-         yZTd3ycN8XH3y6sIEL0L9TJdRE/7VJUc3dTPOZBWKF330CDybR7tbMOuOiwEVlfrCulv
-         SmEmWjRA9PEM6qNsw6eo4ZNKPam04Jq+WpyXVKEYhNHmISzbVVtOrz5Av3YxM59M7Cux
-         jqbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753102591; x=1753707391;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NTRKGfzOHatiL46xHxv71/tQ2NCbJIdvz6s8nypCsrM=;
-        b=RwG0/UYeXfPne8u9tqiS97F8h/uSnbmVfJN926fu/aY4/w4OLqPzx4akSskvDy7OIF
-         Fqy1JDX+IxOez+KAnjl9Qyvyy6+dHwqRjoXdULexPFDUW2R8/Opg0kgLaXsRqxQSlpbp
-         f9gBwK7judjpvuGDwtkgSlxfN6mNz85CGFFdOUXnWwB2ziAwswGs5x2bJ31PCrQTcn4D
-         JOY7AsfWZg5pnZR8hWENKS7b2EZkq8kt0U8aC2fZoGTkCndtv7wLTP/F8AfDidGssqSe
-         toLutr5jXwMeyGIBPs8FGuPH+Px/Jt+It35Zzl0K9BLavzinSaT7zEP4MalB9YgdAH+B
-         2UZw==
-X-Forwarded-Encrypted: i=1; AJvYcCVqy9lbZG4oa8NFJ1vqniRwCmV1GfJ6Wr7QfP3evQQ1Df4IO1vPL/Tl8z/bsSAdnbUYiAeLVNKFGbzVBJE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy32MjODzzCCObj18QejtEgA9RIlT0+s8mUOP67ptKNDNEZYvwo
-	G/yyFN4miFlXQBblixvI2nK8oWrh/C2b9JhBn2h/C5lpZyDGEy2elU6W
-X-Gm-Gg: ASbGncsVsz315C9lnSBn8XLcKPjZ+SqWVeyqPkEmieeusn31AiCDxr+G05XZCXx+gfY
-	8GEPVgLnvOadUDcdAqE4kkjkQxLeGgYbOh9RnL04tntaa4xcxRIv/IPi8sNqbYj1Z+u2YGhtnMz
-	PpsSmox6XrzzJocxuPkW8nC332I8cM/6PCbrBk4J+weQnJ4klxTxS78AmFYrqBwuzgY5j3Ej/9G
-	DqZ2G8pY+RtBETJCekgKorJjOS6fVHVd0sAqTpZejXdrNVnbctciiquxL2ys/c7sUFf6wFQEdH8
-	l6tRF4e5Gu7d87lO+qeM7hfp089Fwqcv+AWYvDQyI9cZi6982xifEl/XrSJzQXwRKy131gSwwb2
-	MoSW+2jEdrt1OuXJ8AOHFJZiBU6oVkLZrVE8VSvePQPskPkFGiI/p4k2L0sYCV/0cbzOmpVGyAw
-	==
-X-Google-Smtp-Source: AGHT+IFamResX5lkIhYoIEIC7CTZPRcvOjSrboT2zvaKifB5ME1+0rD4aXdJdbbtOt1zPLxLSXzN2A==
-X-Received: by 2002:a17:902:ceca:b0:235:2375:7eaa with SMTP id d9443c01a7336-23e256c99bemr303453015ad.22.1753102590906;
-        Mon, 21 Jul 2025 05:56:30 -0700 (PDT)
-Received: from SIQOL-WIN-0002-DARSHAN.localdomain ([49.36.70.207])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b6d1d61sm58083435ad.159.2025.07.21.05.56.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 05:56:29 -0700 (PDT)
-From: "Darshan R." <rathod.darshan.0896@gmail.com>
-To: simona@ffwll.ch,
-	deller@gmx.de
-Cc: linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	dishank@siqol.com,
-	"Darshan R." <rathod.darshan.0896@gmail.com>
-Subject: [PATCH] fbdev: svgalib: Clean up coding style
-Date: Mon, 21 Jul 2025 12:56:47 +0000
-Message-ID: <20250721125648.27179-1-rathod.darshan.0896@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AD6829E118;
+	Mon, 21 Jul 2025 12:58:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.67.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753102737; cv=fail; b=D7zTlIQB+UR8EHuofjvchDcc8ctrB5/pJtw/JKJEY/TzPjhLx/UOzDS1gTzDrFLsns8yZHBzHQBwlX/d/1DSzBA1c5m7IBLGbft6VXSS5Ve/IR1hsjSJQ5z5Siz+GPlfDelzJPGI34JMYWslBUF0m4bF9K8klRDb3Y7xb6xXdJw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753102737; c=relaxed/simple;
+	bh=5V/rWn2REQKYBy1ZQwgqRK4KNNflArJKJHkTLzWgWhM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ULNo0CYyBCwL7TT8aFGybjVNhNBlTYS1Vzr2Tfgx91jqAMXVBoSwwbrB2sYb4MKt3PmdCC7SPYJoiakxURH2kzBPkH8jsya/8dyiuo/ivyRoW+FjE5HWHpu/3IZcfjR9DvzqRq5XrbUbGXa+9HMAGle6aiSCTWPxfudHyWIy1ho=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=N/J9uFUA; arc=fail smtp.client-ip=52.103.67.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CFQQOINbz95hPVqFarU7CqFxpuqNUHzH6WkVBJT89yIY/n9IPpmrEQgKuv7fA1Wh0ASG8XIhDly5F9nDOb9YTVU9JVzW8X1IWjX+cwJuIJIPNMTGcWftFlYZu9Y4uK2qL/gnZFwP3MNVcb5bMTNDEsw/S6g1b7DUDyRJ2QfYirqdJIoLkGsit3a2+WEWuj9+8ue4YoPmy9vClw9q8SKBlKsoe+kVjPGD+49FzvU0oBJtwMJGeqLWv/EyWjTZgPGbyVwuTdsHDwnSwVe6NhMh7+Q04yCgzslXG00IG5cU/+vBmZ9I5lkuQ1LkrI8rW8WFU0OjB0aFE2nS8CwATPePvA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VnxkC29iNHYiczy9NKA4MpJDwG3KH4qpNmXh4o9t6e4=;
+ b=sjYrtmp+2TywAK93jBJo1sTDA+XTF8k3RR80O9zzacs2PIq8o0YhM09U2EQLf2XcVk/MzEHzqvNWxa8d8afcDiEH9Ut7dcIqO/SMNHOyf17Xkd5n2dIwM9SRK1E91SDA+xmAzO2cJx6UAkpGBfvnHb550nLnrHr9ZYXYvUEAp7Ul40wEhJezONuJwgXy5qxQqED8WoJAFMVzEju1ahQSZkLNQwxr0aiGVbRe8cBzKQFlUDfnnPvk/3ZFyM9CXhe0x90R+8RPVbICtuPASD/no4QbzNdlrGf+k6llYHLenj1MJfa+vPfsafh90yE/Xu9RNHbJxgtvfKZNO1a8bUNm1w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VnxkC29iNHYiczy9NKA4MpJDwG3KH4qpNmXh4o9t6e4=;
+ b=N/J9uFUA0tiPZqf7zPYMij3d4flIuiGGwtUvPmlYS2LPG50Rn9f72mFjizS6LAw8x8N8Ka+RKcLUKdGASl9JCkvo2t3yGerSQ8UYGcqqFZb1ni9Tg5f4uav/ZXNHJhP6WcshN9kx5zJbbX8za2sNsaXOP1K0qyNH4H0LpPNFkItfU9yQoWOHBsbHSN0uoEy/aeJv3xCeER30mUwxyICOmeNMrEusqrJU7gH1HhX/Vr5woDqQ2+SBgtdpSEw+87Nqmf+3FtY0lEPmhrVvwZmPL9tCCwKjAVhWl3Zk31bY3ZsXfyu1MR6r2yTpfUuPPKDoETRRUHsb+eSbXIr9H0i+gw==
+Received: from MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:16f::16) by PN3PR01MB5517.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:78::6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Mon, 21 Jul
+ 2025 12:58:46 +0000
+Received: from MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::5dff:3ee7:86ee:6e4b]) by MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::5dff:3ee7:86ee:6e4b%4]) with mapi id 15.20.8943.029; Mon, 21 Jul 2025
+ 12:58:46 +0000
+Message-ID:
+ <MAUPR01MB110723FAC07AF511BF42E0102FE5DA@MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM>
+Date: Mon, 21 Jul 2025 20:58:37 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/4] spi: sophgo: Add SPI NOR controller for SG2042
+To: Zixian Zeng <sycamoremoon376@gmail.com>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Inochi Amaoto <inochiama@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+ Longbin Li <looong.bin@gmail.com>
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+ sophgo@lists.linux.dev, linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ Conor Dooley <conor.dooley@microchip.com>
+References: <20250720-sfg-spifmc-v4-0-033188ad801e@gmail.com>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <20250720-sfg-spifmc-v4-0-033188ad801e@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG2PR03CA0114.apcprd03.prod.outlook.com
+ (2603:1096:4:91::18) To MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:16f::16)
+X-Microsoft-Original-Message-ID:
+ <29df5685-e16c-44d5-a15a-714c6622a51f@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MAUPR01MB11072:EE_|PN3PR01MB5517:EE_
+X-MS-Office365-Filtering-Correlation-Id: 75ebd784-87f2-4f66-5bee-08ddc856540c
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199028|5072599009|15080799012|6090799003|1602099012|40105399003|440099028|3412199025|4302099013|10035399007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?L0JKWTdrVG80ZFg3WkdsZnhWTjlOSkZIcmFMS2RueVhjSFA4YmV1Ri9kdFlr?=
+ =?utf-8?B?RkpQeEIwRWhQV1lIWFdGMUo4VHRCV1AvcnRWTURTWDhKSjRRbnBMUWIvVDdw?=
+ =?utf-8?B?YXZBQmVwTlViSGxJT0FIVVgzOXFHaTdMQ1ZjY3FnWWVvZEg0WmhxMWJVRW1Z?=
+ =?utf-8?B?UE9xTHFYMU1xVGl1Y3c5dWhtcWdaOHROSmRvZlBiUStWTHl4dy9LWWpaMUQy?=
+ =?utf-8?B?UTgySjFRM0VPL1J1b3RkdkdWY3BGdDRjRWdCVGlRWUJaZU5iSFVpZkNmKzJ1?=
+ =?utf-8?B?R1dqcUNaNjBTM05RM1FiWm1xeU43MVd2S3JGY09OQldQQW82ejlVc0R4Vk5j?=
+ =?utf-8?B?RWZiMVNhaDdLZkJ3T3N1U3Z2OEQvTm81VUk5WnJMZUlBOXQ0SThxb296Mnox?=
+ =?utf-8?B?UTZBRnpjZU1lQlVoejl3Z2g3SU9yUXFiOURLNXpoblhvVTgwZTY1enBjajVI?=
+ =?utf-8?B?OEZZT1pnOU50NmJVUkNTN3NIajJCN2RMeUZUTEJUTW9Kd3J2K1JzNFo3QUs2?=
+ =?utf-8?B?bGFzSnZJQU15b3ZSNVU1TTZvZkNuK29XWm9JMnJENjFKZDdOOVIxQUxZL1p2?=
+ =?utf-8?B?SHBXWHFENjkwTDB1cjhicGY2VitNbFN6dlplVnNERmIvMEpYQVJ3a0orVmVo?=
+ =?utf-8?B?ZU5lTHlNSEYzQVNGV29Nb2ZUTkdMNWtGNVlPR0lJbkcwVHhiZlZRMTI3RmFI?=
+ =?utf-8?B?Wlpzd3VTcCtoR2NtYVlQUnprRXVSM24zR2dwcUFEVkdYclRON3NEcHB3WjlY?=
+ =?utf-8?B?ZkFxVklIU0t0TXFBaldLVGEzWVhHT2UrUi9Jc3BQMzFxQy96b0VSbklSL09J?=
+ =?utf-8?B?K0phekcvYUtTZTlnbS93eWdDdnFFWWZCQWhRMnBwTTlrdU02K1U0b0Z6cDBr?=
+ =?utf-8?B?U3U2N0FVMU1pK1BWa0VlVXcvYnVBOUhuUnRyUElKK1I2YWxTVlI3SnNqa29j?=
+ =?utf-8?B?akRxSHpneVRGeFVqUlgyenpXNHUxZ1FlcVBSV0hWWHJFQmh2Z1c0ZUhrTHVT?=
+ =?utf-8?B?aHI5SEdNSzJJWm1TUWhhUXoyemhEZjkzbTRzTjZQVUhHL1pTdXVhWTdZUUZ0?=
+ =?utf-8?B?REJIWkxZZUNKeEtvSVo0aUlWRkZ0UjJFNDJNNUpxMExNWWRQbmpSeVUvU1pK?=
+ =?utf-8?B?Y0VWZ2thUFJDM3NRRnV2UDUwWDZrNGtrWDVXTHRsYVdLdGpqZVh5WFk0dEJZ?=
+ =?utf-8?B?N2tJc3ZXZVlaak82REdkdTZmaDNieXhpUm5RNWhUQVNLd0RVdFdFdXF5MWtB?=
+ =?utf-8?B?WDJSRUw4dktFYXNzT1dCTjZFS0MrUHFjaE4rWG02TDdEMlpCNkRmQ3JUcTZQ?=
+ =?utf-8?B?ekNtbTBZQ2FpNTdDMkhpd1NPVHp0S1RkN0ZIeThraE9ka25YTlJkRitRYTdS?=
+ =?utf-8?B?SnNQTEUwQWs0OFYrZ0pZRWorOWpLZ0sxdHc0VkJiazViNmdrM20xVmc4dFIv?=
+ =?utf-8?B?dkh1MDA3eDBZano5SDdkc0NJZ1pJOVdUVjJ5cGFXbU5Ra1FQMVVTbnNFcytv?=
+ =?utf-8?B?aVpRQnF5RDRZbDcvS1dKZ1RRZkdzSWFpd0Q5cGtRejgzakhUS24rN2xJUWtP?=
+ =?utf-8?B?aTRvTkFxK3ByZUQ4eVdLL0RaVkwvdERmM29jSE83WmhYTFRpNGRvSVZkblE4?=
+ =?utf-8?B?TTNFNk9FZmd5ZWlXbnpKeER6cyt4K0E9PQ==?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dGI5QmxiMXVLZDYza214Wklwb21aUUxwY0pmb2tCMjJtS1ZLOWpEN2RMNEls?=
+ =?utf-8?B?bWRDWFQ3REFFNEt4OVlnajV5MW5pNVovQjBaWmEyMVJ1UkErUWxqSE5MTlU0?=
+ =?utf-8?B?TkwyT0M4MFozbkhicjZSZktqZWdrb1ViZU5kR0g0ZWt4c2hJMW02OWxVSFRF?=
+ =?utf-8?B?N2k2b3puZ2hFN0xjK1VIWWlENWRjdTMwU29STVZsbnM5VTFFYVk1N0QrZVpO?=
+ =?utf-8?B?Q01lRGZsQXlsTFFJL1dHWW5sZ2lWd1BpQnFoa1UrNTg3bTdMN2p0L1ZrRnJm?=
+ =?utf-8?B?eGg2ZUo1MDBZOGhmS0gwbWtzczdGL21oU2RpUmNFWFJDR3Y3cmZDVkRJaU8r?=
+ =?utf-8?B?TmhHKzhsUGdsM1Ftcys1WTlRZmd3V3dMK0Rld2psM0ljVURTdGVId1lra3ZT?=
+ =?utf-8?B?U0V4UUtUNFhxLzRlQ3I0TzlObnZSY3gxa0N0cU9jVXdyYytuQkNJT0RhS01x?=
+ =?utf-8?B?RWhOdlBCd1c5ZmRIUGpiNHlJTUt5NzhBemhkcU5LazM3MG41bzlFa2ZVRU1j?=
+ =?utf-8?B?SkpoS2x4dytmUVZQUGRXNEVGN3N3UTd0N0VLblU3MGIvL3Vla0lGc1JoTHhJ?=
+ =?utf-8?B?VU52eXhzclJvaEw3NzBYSS9jVjAvRzloeWJPZVdSU05INmR5TFZ2ak9acEVT?=
+ =?utf-8?B?VTI1VG9rblRTVUQ0WVY5M2pVc2JiVm1zUXQxbEw2LzBlS2M5QjVCNlBPOXdC?=
+ =?utf-8?B?M0xsS29mVFkzMXNXWmtybitSeUkrbE03WTlLYUpLcnZyNDNpZE1jTWhaMWRx?=
+ =?utf-8?B?UnBuVnFab3Zod3JIZ3pVY3Q2OFYrQmNXZHhsMlJwSm9NNzR1S0I0S0RUdnZE?=
+ =?utf-8?B?MzVOTFZWUDI3Q21jYWg5dkhPY0tBM2NPL2NPYXI3SUZhaTBIY1AzazRreXpL?=
+ =?utf-8?B?U3E5MXYrQUFoeEhBUDkxcXRRbWRxNjNPTFZkOHN5NUVFLzdzQ3d4L1RBbjdo?=
+ =?utf-8?B?SzAwT1JyaWEvMS9jUk1ldERpazJEc2JvaVAwUVpvcjdvS2FZWG53MnVWUDdR?=
+ =?utf-8?B?dTZld1F2SzZXWnNPU1lrZTVDa1VHeWFoSkZVbWpRa2FpSnJUVTB6aFNYMkY3?=
+ =?utf-8?B?SGdJbEh2QTVMQWhsaWxrNlNVYitkcUJ4ekJtUlQ1UmZUTXFVWHNrTFVrS2hv?=
+ =?utf-8?B?Q3FidnlldFZtOWNJL2gvVWxBN2ErVVRnNDJsdm9PWlpmQlo2Mk9TY0JEd0th?=
+ =?utf-8?B?clFVL2xONWo4OTZ3aitTbmFFUUpkZFloM0djZVppVVBIcnBNSGFDRWhZZVls?=
+ =?utf-8?B?WVJWOEQ2d1U1Z29PWGJTTWZWOSt6MG9FNWFoK2pQNnhDTUhsSUFxMzRPcDNQ?=
+ =?utf-8?B?bjV4L29vLzBTK1NjTlh6YUtRbHV2ZUQ0amhrbWUvbms4VE5ML0hqY3JzUjEz?=
+ =?utf-8?B?c2hwY1FoMGNDN1lXcnIrcm1aMEwyYnJrRWJHbXFMTEFYLzZoS2FDcG0vUklh?=
+ =?utf-8?B?bnBRZWQ5UURBaVcwUklrMmtITDlTSWZTcjhPRUk2TG5mWWJlUmc3M05TTE9s?=
+ =?utf-8?B?TjZTZ28zZkh0bTFVNFBBNXpTc011ZnFCeUExUU02ZS9ZN05pR3NRamJNZ2Rx?=
+ =?utf-8?B?YnNIbXdLdVFLVkg3czlQR3F6Y0R0UWVuMmd1VlpRWExENnNtNzNqdkNXU2RH?=
+ =?utf-8?B?UUlaR1dLRHBtNFZFY0ZMK1dFRHloR1JPWmFIUFVtQkNCZjBDb2RpeXdzb1gy?=
+ =?utf-8?B?ZEJDZDZpS0lIejBmZm9YRW02Rzl2NFI5L0lIY2o2WXlibEJwVHhHM1dxNGdU?=
+ =?utf-8?Q?b1wsPPxgeToS1rSowLevy8D7HyAKvlqCoLpVDRf?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 75ebd784-87f2-4f66-5bee-08ddc856540c
+X-MS-Exchange-CrossTenant-AuthSource: MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2025 12:58:46.3297
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3PR01MB5517
 
-This patch addresses various coding style issues in `svgalib.c` to improve readability and better align the code with the Linux kernel's formatting standards.
 
-The changes primarily consist of:
-- Adjusting whitespace around operators and after keywords.
-- Standardizing brace placement for control flow statements.
-- Removing unnecessary braces on single-statement if/else blocks.
-- Deleting extraneous blank lines throughout the file.
+On 2025/7/20 16:31, Zixian Zeng wrote:
+> Add support SPI NOR flash memory controller for SG2042, using upstreamed
+> SG2044 SPI NOR driver.
+>
+> Tested on SG2042 Pioneer Box, read, write operations.
+> Thanks Chen Wang who provided machine and guidance.
+>
+> Signed-off-by: Zixian Zeng <sycamoremoon376@gmail.com>
 
-These changes are purely stylistic and introduce no functional modifications.
+Reviewed-by: Chen Wang <unicorn_wang@outlook.com> & Tested-by: Chen Wang 
+<unicorn_wang@outlook.com>
 
-Signed-off-by: Darshan R. <rathod.darshan.0896@gmail.com>
----
- drivers/video/fbdev/core/svgalib.c | 95 +++++++++++++-----------------
- 1 file changed, 42 insertions(+), 53 deletions(-)
+Note I just have pioneerbox/sg2042 so I can only run with my board in hand.
 
-diff --git a/drivers/video/fbdev/core/svgalib.c b/drivers/video/fbdev/core/svgalib.c
-index 821b89a0a645..5234ad109dfd 100644
---- a/drivers/video/fbdev/core/svgalib.c
-+++ b/drivers/video/fbdev/core/svgalib.c
-@@ -19,7 +19,6 @@
- #include <asm/types.h>
- #include <asm/io.h>
- 
--
- /* Write a CRT register value spread across multiple registers */
- void svga_wcrt_multi(void __iomem *regbase, const struct vga_regset *regset, u32 value)
- {
-@@ -31,12 +30,13 @@ void svga_wcrt_multi(void __iomem *regbase, const struct vga_regset *regset, u32
- 		while (bitnum <= regset->highbit) {
- 			bitval = 1 << bitnum;
- 			regval = regval & ~bitval;
--			if (value & 1) regval = regval | bitval;
--			bitnum ++;
-+			if (value & 1)
-+				regval = regval | bitval;
-+			bitnum++;
- 			value = value >> 1;
- 		}
- 		vga_wcrt(regbase, regset->regnum, regval);
--		regset ++;
-+		regset++;
- 	}
- }
- 
-@@ -51,12 +51,13 @@ void svga_wseq_multi(void __iomem *regbase, const struct vga_regset *regset, u32
- 		while (bitnum <= regset->highbit) {
- 			bitval = 1 << bitnum;
- 			regval = regval & ~bitval;
--			if (value & 1) regval = regval | bitval;
--			bitnum ++;
-+			if (value & 1)
-+				regval = regval | bitval;
-+			bitnum++;
- 			value = value >> 1;
- 		}
- 		vga_wseq(regbase, regset->regnum, regval);
--		regset ++;
-+		regset++;
- 	}
- }
- 
-@@ -66,15 +67,13 @@ static unsigned int svga_regset_size(const struct vga_regset *regset)
- 
- 	while (regset->regnum != VGA_REGSET_END_VAL) {
- 		count += regset->highbit - regset->lowbit + 1;
--		regset ++;
-+		regset++;
- 	}
- 	return 1 << count;
- }
- 
--
- /* ------------------------------------------------------------------------- */
- 
--
- /* Set graphics controller registers to sane values */
- void svga_set_default_gfx_regs(void __iomem *regbase)
- {
-@@ -102,7 +101,7 @@ void svga_set_default_atc_regs(void __iomem *regbase)
- 	vga_w(regbase, VGA_ATT_W, 0x00);
- 
- 	/* All standard ATC registers (AR00 - AR14) */
--	for (count = 0; count <= 0xF; count ++)
-+	for (count = 0; count <= 0xF; count++)
- 		svga_wattr(regbase, count, count);
- 
- 	svga_wattr(regbase, VGA_ATC_MODE, 0x01);
-@@ -187,10 +186,8 @@ void svga_dump_var(struct fb_var_screeninfo *var, int node)
- }
- #endif  /*  0  */
- 
--
- /* ------------------------------------------------------------------------- */
- 
--
- void svga_settile(struct fb_info *info, struct fb_tilemap *map)
- {
- 	const u8 *font = map->data;
-@@ -229,7 +226,7 @@ void svga_tilecopy(struct fb_info *info, struct fb_tilearea *area)
- 	    ((area->sy == area->dy) && (area->sx > area->dx))) {
- 		src = fb + area->sx * colstride + area->sy * rowstride;
- 		dst = fb + area->dx * colstride + area->dy * rowstride;
--	    } else {
-+	} else {
- 		src = fb + (area->sx + area->width - 1) * colstride
- 			 + (area->sy + area->height - 1) * rowstride;
- 		dst = fb + (area->dx + area->width - 1) * colstride
-@@ -237,7 +234,7 @@ void svga_tilecopy(struct fb_info *info, struct fb_tilearea *area)
- 
- 		colstride = -colstride;
- 		rowstride = -rowstride;
--	    }
-+	}
- 
- 	for (dy = 0; dy < area->height; dy++) {
- 		u16 __iomem *src2 = src;
-@@ -284,19 +281,19 @@ void svga_tileblit(struct fb_info *info, struct fb_tileblit *blit)
- 	u8 __iomem *fb = (u8 __iomem *)info->screen_base;
- 	fb += blit->sx * colstride + blit->sy * rowstride;
- 
--	i=0;
--	for (dy=0; dy < blit->height; dy ++) {
-+	i = 0;
-+	for (dy = 0; dy < blit->height; dy++) {
- 		u8 __iomem *fb2 = fb;
--		for (dx = 0; dx < blit->width; dx ++) {
-+		for (dx = 0; dx < blit->width; dx++) {
- 			fb_writeb(blit->indices[i], fb2);
- 			fb_writeb(attr, fb2 + 1);
- 			fb2 += colstride;
--			i ++;
--			if (i == blit->length) return;
-+			i++;
-+			if (i == blit->length)
-+				return;
- 		}
- 		fb += rowstride;
- 	}
--
- }
- 
- /* Set cursor in text (tileblit) mode */
-@@ -308,15 +305,15 @@ void svga_tilecursor(void __iomem *regbase, struct fb_info *info, struct fb_tile
- 		+ (cursor->sy + (info->var.yoffset / 16))
- 		   * (info->var.xres_virtual / 8);
- 
--	if (! cursor -> mode)
-+	if (!cursor->mode)
- 		return;
- 
- 	svga_wcrt_mask(regbase, 0x0A, 0x20, 0x20); /* disable cursor */
- 
--	if (cursor -> shape == FB_TILE_CURSOR_NONE)
-+	if (cursor->shape == FB_TILE_CURSOR_NONE)
- 		return;
- 
--	switch (cursor -> shape) {
-+	switch (cursor->shape) {
- 	case FB_TILE_CURSOR_UNDERLINE:
- 		cs = 0x0d;
- 		break;
-@@ -374,7 +371,6 @@ EXPORT_SYMBOL(svga_get_caps);
- 
- /* ------------------------------------------------------------------------- */
- 
--
- /*
-  *  Compute PLL settings (M, N, R)
-  *  F_VCO = (F_BASE * M) / N
-@@ -385,7 +381,7 @@ int svga_compute_pll(const struct svga_pll *pll, u32 f_wanted, u16 *m, u16 *n, u
- 	u16 am, an, ar;
- 	u32 f_vco, f_current, delta_current, delta_best;
- 
--	pr_debug("fb%d: ideal frequency: %d kHz\n", node, (unsigned int) f_wanted);
-+	pr_debug("fb%d: ideal frequency: %d kHz\n", node, (unsigned int)f_wanted);
- 
- 	ar = pll->r_max;
- 	f_vco = f_wanted << ar;
-@@ -416,7 +412,7 @@ int svga_compute_pll(const struct svga_pll *pll, u32 f_wanted, u16 *m, u16 *n, u
- 
- 	while ((am <= pll->m_max) && (an <= pll->n_max)) {
- 		f_current = (pll->f_base * am) / an;
--		delta_current = abs_diff (f_current, f_vco);
-+		delta_current = abs_diff(f_current, f_vco);
- 
- 		if (delta_current < delta_best) {
- 			delta_best = delta_current;
-@@ -424,58 +420,55 @@ int svga_compute_pll(const struct svga_pll *pll, u32 f_wanted, u16 *m, u16 *n, u
- 			*n = an;
- 		}
- 
--		if (f_current <= f_vco) {
--			am ++;
--		} else {
--			an ++;
--		}
-+		if (f_current <= f_vco)
-+			am++;
-+		else
-+			an++;
- 	}
- 
- 	f_current = (pll->f_base * *m) / *n;
--	pr_debug("fb%d: found frequency: %d kHz (VCO %d kHz)\n", node, (int) (f_current >> ar), (int) f_current);
--	pr_debug("fb%d: m = %d n = %d r = %d\n", node, (unsigned int) *m, (unsigned int) *n, (unsigned int) *r);
-+	pr_debug("fb%d: found frequency: %d kHz (VCO %d kHz)\n", node, (int)(f_current >> ar), (int)f_current);
-+	pr_debug("fb%d: m = %d n = %d r = %d\n", node, (unsigned int)*m, (unsigned int)*n, (unsigned int)*r);
- 	return 0;
- }
- 
--
- /* ------------------------------------------------------------------------- */
- 
--
- /* Check CRT timing values */
- int svga_check_timings(const struct svga_timing_regs *tm, struct fb_var_screeninfo *var, int node)
- {
- 	u32 value;
- 
--	var->xres         = (var->xres+7)&~7;
--	var->left_margin  = (var->left_margin+7)&~7;
--	var->right_margin = (var->right_margin+7)&~7;
--	var->hsync_len    = (var->hsync_len+7)&~7;
-+	var->xres         = (var->xres + 7) & ~7;
-+	var->left_margin  = (var->left_margin + 7) & ~7;
-+	var->right_margin = (var->right_margin + 7) & ~7;
-+	var->hsync_len    = (var->hsync_len + 7) & ~7;
- 
- 	/* Check horizontal total */
- 	value = var->xres + var->left_margin + var->right_margin + var->hsync_len;
--	if (((value / 8) - 5) >= svga_regset_size (tm->h_total_regs))
-+	if (((value / 8) - 5) >= svga_regset_size(tm->h_total_regs))
- 		return -EINVAL;
- 
- 	/* Check horizontal display and blank start */
- 	value = var->xres;
--	if (((value / 8) - 1) >= svga_regset_size (tm->h_display_regs))
-+	if (((value / 8) - 1) >= svga_regset_size(tm->h_display_regs))
- 		return -EINVAL;
--	if (((value / 8) - 1) >= svga_regset_size (tm->h_blank_start_regs))
-+	if (((value / 8) - 1) >= svga_regset_size(tm->h_blank_start_regs))
- 		return -EINVAL;
- 
- 	/* Check horizontal sync start */
- 	value = var->xres + var->right_margin;
--	if (((value / 8) - 1) >= svga_regset_size (tm->h_sync_start_regs))
-+	if (((value / 8) - 1) >= svga_regset_size(tm->h_sync_start_regs))
- 		return -EINVAL;
- 
- 	/* Check horizontal blank end (or length) */
- 	value = var->left_margin + var->right_margin + var->hsync_len;
--	if ((value == 0) || ((value / 8) >= svga_regset_size (tm->h_blank_end_regs)))
-+	if ((value == 0) || ((value / 8) >= svga_regset_size(tm->h_blank_end_regs)))
- 		return -EINVAL;
- 
- 	/* Check horizontal sync end (or length) */
- 	value = var->hsync_len;
--	if ((value == 0) || ((value / 8) >= svga_regset_size (tm->h_sync_end_regs)))
-+	if ((value == 0) || ((value / 8) >= svga_regset_size(tm->h_sync_end_regs)))
- 		return -EINVAL;
- 
- 	/* Check vertical total */
-@@ -497,12 +490,12 @@ int svga_check_timings(const struct svga_timing_regs *tm, struct fb_var_screenin
- 
- 	/* Check vertical blank end (or length) */
- 	value = var->upper_margin + var->lower_margin + var->vsync_len;
--	if ((value == 0) || (value >= svga_regset_size (tm->v_blank_end_regs)))
-+	if ((value == 0) || (value >= svga_regset_size(tm->v_blank_end_regs)))
- 		return -EINVAL;
- 
- 	/* Check vertical sync end  (or length) */
- 	value = var->vsync_len;
--	if ((value == 0) || (value >= svga_regset_size (tm->v_sync_end_regs)))
-+	if ((value == 0) || (value >= svga_regset_size(tm->v_sync_end_regs)))
- 		return -EINVAL;
- 
- 	return 0;
-@@ -596,18 +589,15 @@ void svga_set_timings(void __iomem *regbase, const struct svga_timing_regs *tm,
- 	vga_w(regbase, VGA_MIS_W, regval);
- }
- 
--
- /* ------------------------------------------------------------------------- */
- 
--
- static inline int match_format(const struct svga_fb_format *frm,
- 			       struct fb_var_screeninfo *var)
- {
- 	int i = 0;
- 	int stored = -EINVAL;
- 
--	while (frm->bits_per_pixel != SVGA_FORMAT_END_VAL)
--	{
-+	while (frm->bits_per_pixel != SVGA_FORMAT_END_VAL) {
- 		if ((var->bits_per_pixel == frm->bits_per_pixel) &&
- 		    (var->red.length     <= frm->red.length)     &&
- 		    (var->green.length   <= frm->green.length)   &&
-@@ -647,7 +637,6 @@ int svga_match_format(const struct svga_fb_format *frm,
- 	return i;
- }
- 
--
- EXPORT_SYMBOL(svga_wcrt_multi);
- EXPORT_SYMBOL(svga_wseq_multi);
- 
--- 
-2.43.0
+Hi, Longbin,
 
+As you are auther of this SPI driver, can you please help review and 
+test it on sg2044?
+
+Thanks,
+
+Chen.
+
+> ---
+> Changes in v4:
+> - patch1: Explain why SG2042 is not compatible with SG2044 and add Fixes tag.
+> - patch2: Explain the hardware differences between SG2042 and SG2044.
+> - patch4: Remove the extra "sophgo,sg2044-spifmc-nor" compatible property.
+> - Link to v3: https://lore.kernel.org/r/20250629-sfg-spifmc-v3-0-28db1f27e999@gmail.com
+>
+> Changes in v3:
+> - Drop the patch which adds additional flash_info into gigadevice.c
+> - patch1: Because of the incompatibility, separate the SG2042 from the previous fallback mechanism to independent one.
+> - patch2: Newly add configurable options to spi-sg2044-nor driver.
+> - patch3: Fix reading bytes issue that causes the spi_nor_check_sfdp_signature() failure on SG2042.
+> - Link to v2: https://lore.kernel.org/r/20250525-sfg-spifmc-v2-0-a3732b6f5ab4@gmail.com
+>
+> Changes in v2:
+> - patch1: Accept devicetree nodes whose compatible contains only
+>    "sophgo,sg2044-spifmc-nor" to avoid breaking existing devicetrees.
+> - patch1: Improve the commit subject message.
+> - patch2: Dump the SFDP information to commit message.
+> - Link to v1: https://lore.kernel.org/r/20250523-sfg-spifmc-v1-0-4cf16cf3fd2a@gmail.com
+>
+> ---
+> Zixian Zeng (4):
+>        spi: dt-bindings: spi-sg2044-nor: Change SOPHGO SG2042
+>        spi: spi-sg2044-nor: Add configurable chip_info
+>        spi: spi-sg2044-nor: Add SPI-NOR controller for SG2042
+>        riscv: dts: sophgo: Add SPI NOR node for SG2042
+>
+>   .../devicetree/bindings/spi/spi-sg2044-nor.yaml    |  9 +++----
+>   .../riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts | 24 ++++++++++++++++++
+>   arch/riscv/boot/dts/sophgo/sg2042.dtsi             | 24 ++++++++++++++++++
+>   drivers/spi/spi-sg2044-nor.c                       | 29 +++++++++++++++++++---
+>   4 files changed, 77 insertions(+), 9 deletions(-)
+> ---
+> base-commit: 8727665368cd4af112146b650ec0ebac038b5cf5
+> change-id: 20250523-sfg-spifmc-7a910290e964
+>
+> Best regards,
 
