@@ -1,114 +1,108 @@
-Return-Path: <linux-kernel+bounces-739988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F73FB0CE43
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 01:35:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 060EBB0CE48
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 01:36:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65BDB1AA0119
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 23:36:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20016541B3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 23:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B9F246764;
-	Mon, 21 Jul 2025 23:35:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2C024677C;
+	Mon, 21 Jul 2025 23:36:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="r2zSzyHh"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oAMjTC+q"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B522E3716;
-	Mon, 21 Jul 2025 23:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6841F243953
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 23:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753140937; cv=none; b=elPlcf7f0ub07huWSUQRYHKr5w2cpg9P5kpW5G1oaFEfJDSgj6CfphdLIjV7hEQwcNDYC1ocsoDLZWP4s3eXFgDFoCROQ5U4qKHaU0mo/ygOISRoKbQJV+XshRmsWeXBv7IrEeBCV5n0oxgu+q2ZqW6UupEzkgkd7SC0bAdoXJ8=
+	t=1753140995; cv=none; b=o5/4n5rTQj1jZGn1OnhWIBM5OCqz16vMdE+xGDspdw4ncf8eCWd6smUifI/HPwUlEDxu0rijbLGnzGy/asNZ7LEm+6+XM5+kE4iLw4f0X005Wfx45mlwZNV7+3fqBD+Q8j79ECSwUUKg78i711SxzadFahE4LR5j6iA2hPBaFB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753140937; c=relaxed/simple;
-	bh=lVQMxv1VxmMgBhdUyZLq7S3b/3eQArDg2bF6jiioln0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KGCSlhHebXcW4PHG8yfcK712R3abe0RrFdicUq45KOl6wVvoYetBiTAIdXXHMZ4kIDJ2cWWfAwlpczXHbmR58YG5f9SMTbQeif169gjsyj+QvmBgZ9BBs/kJD2QltzO/0M7RRjZfO38BChDg3NIIR6apwlOD5V53J0OmtqIozew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=r2zSzyHh; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
-Message-ID: <ece307c3-7d65-440f-babd-88cf9705b908@packett.cool>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
-	s=key1; t=1753140932;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8/geEkB40JNZ1dVvddexIz+4X4JnuBeRGFU7+a1RO9k=;
-	b=r2zSzyHhGbPZmuNyqYl8gwbAIg2poImKw/459M7Lc4M7pwqg99VketHOk4h2tK28s2C/mZ
-	Joz+sBuPMaF8NrAGr7NlWNzpo52R0mgLyJ6xLA/kK5f1MQ0DEjMJ38Armm7n7peK0xkrG1
-	KSjXww3HOlMfpNS8hjRc6piH6HmbWs++CI/73xVkTaYWBtXlhzHrWcJAJ+d01vxBsf7+oi
-	L6TVrUJv1zbk6Ssb4Oh9BMeUAWXQLQ6liXO5sWJZnYRzUPJMH6NhjDo2T42WEKR4ZoSHc+
-	ga/5q1tNWdj3fbvKoCE0d1/Cj1ztf5SDlvKX5hyLE1MCShy6B0ltjlk11Tj+/A==
-Date: Mon, 21 Jul 2025 20:35:22 -0300
+	s=arc-20240116; t=1753140995; c=relaxed/simple;
+	bh=75dMwOD9AhRAfD3iv6MD69VKM7Uns0ZEiqNvuewGj/w=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=MCYpVZq4XfW6BTpWbwjyJjV+jEAR64EXl5Z+fywcPmw+8/A0LE8cYsKVIgxNibqV6gg7ZoWztisnN2Eal5PNwwd98XQ/2AJu88hHGSLHulEjL0zY/EZSWW1IZvYugta5doOCL4UFFvlPS/zglAIOBIYgoCHfmZ3jjYQFFY9EYg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oAMjTC+q; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3138e64b3f1so7093403a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 16:36:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753140993; x=1753745793; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5YthwGXG3vj6QbGejtobQA1vVh1doihtlZSxEX69D84=;
+        b=oAMjTC+qNJlZAgcNToEI6LxX3pWG2b4W3irkJY8lxXAGcmxrT+nuUojFcLYOyFeCne
+         bCOj2nEtlwFH27OJOcix5mQ8KWVzufqkFx2WilQ2Y94Ui0qzYWDlt5CJf6L3mVNZoXcr
+         6n+VDZK9E6xqudI3wr3yu2UnBDjgQfzM4cvL0jVa+1V35baDwe8onCU0i9buBOj7SBM3
+         /nXypEy1a9RdgkPS0EJ/GKJgjCGmn4YuVvn5DC1aOmWC4F6gkUwLuZbNFEZgnmB6mowm
+         cvqQgweJ3/WAacO2B2W8jaDSVXOu4Uc69ZB5MdNXL6mxVNpTe+kd+0xKpVgFrYgDmus/
+         gTHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753140993; x=1753745793;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5YthwGXG3vj6QbGejtobQA1vVh1doihtlZSxEX69D84=;
+        b=Z8PZ8c7OUWzwfkWPbto9tZqd3+dz5IAQUM8qf8//81c0r/H/5OWkTHhtfq2Ro/ds8c
+         dPMzsi6/jUiNrK1X3AcnqUbfSBsHzDoh6H1XyhDCMxHu3qv5gT3C7mNIaLxkiySriQ5+
+         sEU/xnSl283njACcdIAEjFpILaqtqZYSrWzeFyW5RQgTol1gW/KwHg3qfeTdbTr+ikKC
+         0VSeurnnaEc4nqCDn4U4ovJ8N5yMgS3E/AB7aI/u2qS0l8qSggn7TFlNItKjg78DIuij
+         vaR1MRcMX6/I0FoWRuVZn13tM8mLby1A+/kCZbICM2GOgDNUU2MwSKNIx/95V1yL/qNK
+         iGow==
+X-Forwarded-Encrypted: i=1; AJvYcCW8O6J6wwgpRae14677xJUl/5S7UD3KIXK4dVVUHZqm7Zq8GYj9BkUPiS2rd8VspfQ7lTzPpBw8l+O0Oms=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgclWIOI0bXE5Gu3bQ8hRgSh7zhNthrdTbEgDz3NQa9He2mbd/
+	yxf0T83KOqSbtEhOj3lUMuHZsxAW2NTlO3KIvKXAjGMtYsC++0znu/SDZMKIE8G0cO2TQ7lGHXT
+	Hl4WHDA==
+X-Google-Smtp-Source: AGHT+IE9g3Dc400fJRZPtwB8je6BnCrNs3sMZht75tqkWzv4R0BO7MR7AIhpIUbUXri1mozX0W2ey+JTujw=
+X-Received: from pjtu4.prod.google.com ([2002:a17:90a:c884:b0:31c:32f8:3f88])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3a4f:b0:31e:3848:c9ee
+ with SMTP id 98e67ed59e1d1-31e3848d027mr4301574a91.9.1753140993732; Mon, 21
+ Jul 2025 16:36:33 -0700 (PDT)
+Date: Mon, 21 Jul 2025 16:36:29 -0700
+In-Reply-To: <20250718181541.98146-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH] soc: qcom: mdt_loader: Fix error return values in
- mdt_header_valid()
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>
-Cc: Konrad Dybcio <konradybcio@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <db57c01c-bdcc-4a0f-95db-b0f2784ea91f@sabinyo.mountain>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Val Packett <val@packett.cool>
-In-Reply-To: <db57c01c-bdcc-4a0f-95db-b0f2784ea91f@sabinyo.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+References: <20250718181541.98146-1-seanjc@google.com>
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <175314043500.309494.16326805597766494871.b4-ty@google.com>
+Subject: Re: [PATCH v5] KVM: TDX: Add sub-ioctl KVM_TDX_TERMINATE_VM
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Adrian Hunter <adrian.hunter@intel.com>, Vishal Annapurve <vannapurve@google.com>, 
+	Xiaoyao Li <xiaoyao.li@intel.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Nikolay Borisov <nik.borisov@suse.com>
+Content-Type: text/plain; charset="utf-8"
 
-Hi,
+On Fri, 18 Jul 2025 11:15:41 -0700, Sean Christopherson wrote:
+> Add sub-ioctl KVM_TDX_TERMINATE_VM to release the HKID prior to shutdown,
+> which enables more efficient reclaim of private memory.
+> 
+> Private memory is removed from MMU/TDP when guest_memfds are closed.  If
+> the HKID has not been released, the TDX VM is still in the RUNNABLE state,
+> and so pages must be removed using "Dynamic Page Removal" procedure (refer
+> to the TDX Module Base spec) which involves a number of steps:
+> 	Block further address translation
+> 	Exit each VCPU
+> 	Clear Secure EPT entry
+> 	Flush/write-back/invalidate relevant caches
+> 
+> [...]
 
-On 6/25/25 12:22 PM, Dan Carpenter wrote:
-> This function is supposed to return true for valid headers and false for
-> invalid.  In a couple places it returns -EINVAL instead which means the
-> invalid headers are counted as true.  Change it to return false.
-[..]
->   	if (ehdr->e_shentsize != sizeof(struct elf32_shdr))
-> -		return -EINVAL;
-> +		return false;
->   
->   	shend = size_add(size_mul(sizeof(struct elf32_shdr), ehdr->e_shnum), ehdr->e_shoff);
->   	if (shend > fw->size)
+Applied to kvm-x86 vmx (again).
 
-this has broken all firmware loading on my x1e laptop (Dell Latitude 7455).
+[1/1] KVM: TDX: Add sub-ioctl KVM_TDX_TERMINATE_VM
+      https://github.com/kvm-x86/linux/commit/dcab95e53364
 
-Apparently e_shentsize is always 0 in Qualcomm firmware files.
-
-Confirmed externally with readelf:
-
-% readelf --all 
-/lib/firmware/qcom/x1e80100/dell/latitude-7455/qcadsp8380.mbn
-[..]
-   Start of program headers:          52 (bytes into file)
-   Start of section headers:          0 (bytes into file)
-   Flags:                             0x73
-   Size of this header:               52 (bytes)
-   Size of program headers:           32 (bytes)
-   Number of program headers:         58
-   Size of section headers:           0 (bytes)
-   Number of section headers:         0
-   Section header string table index: 0
-
-There are no sections in this file.
-
-There are no section groups in this file.
-
-
-(Not just with my files, also readelf'd the Lenovo ones committed to 
-linux-firmware, same deal.)
-
-Thanks,
-~val
-
+--
+https://github.com/kvm-x86/linux/tree/next
 
