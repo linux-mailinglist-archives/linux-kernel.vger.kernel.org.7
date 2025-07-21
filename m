@@ -1,367 +1,148 @@
-Return-Path: <linux-kernel+bounces-739732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EB89B0CA38
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:06:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D00D5B0CA4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:08:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 515963B8649
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:05:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CBFB1AA8347
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 472262E1746;
-	Mon, 21 Jul 2025 18:06:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D4B2E2668;
+	Mon, 21 Jul 2025 18:07:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z+PZGdPF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LaJQTg4P"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AEF41FE44B
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 18:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753121161; cv=fail; b=kCBNOsx56Cuo3OMgXVp8+jHWrF0/4GJmC2p/rCjXE3GhUirlSmQZE6lrc+VLK7uQ7OJAlO+b+zj5Gbbzn/IxKPen2StXRwjhaTBcyyXW/++FteLjUBHsVqoWRj2AcDsMHfyz8lGJ73H2COuCgosaMZJfrrCX1VLjl/4mQ3iYtK0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753121161; c=relaxed/simple;
-	bh=6e1m/28FZMihuKxA6P6zWZmJoQVc4rdRjXOT/5T6yLE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Zt51/m5GADsNJaDzAMF12IXEGQ7qmy1dtYVwTzu5tCI3McyB2Oknu+WI6FSgnmNlcTa/vt+H4L8w5aJ7H8RvPNDT6reifH8C0oBgD2m/DLTvMFlJyxytx/Nx7h4prp2cdv2ExwhEKHNN1eDbfuQqCGNXoZB75K5gU0DNIcrj9JQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z+PZGdPF; arc=fail smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753121160; x=1784657160;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=6e1m/28FZMihuKxA6P6zWZmJoQVc4rdRjXOT/5T6yLE=;
-  b=Z+PZGdPFU7N3LQHX/yolrwh0qwy4sXTqEKN7gvpcFA16Unh3L2fftVkf
-   fKW8drSg7FLBoMCogL+pcS60ZsZG5jtHj0seAduMd0MJVMUS86s7E50cO
-   O28g4KyEuoMqdi+gvV050rrFNb+VndggyhpiJ9oAQ89NWdoEyV1dVF9jk
-   xwmW8XxWGkoOIHCwooy9VrNtGQp3OxeRwFBtzdDAIPtQ1qyEbFrqAcmEh
-   aXMu65jaQsJy81eTrR783DrXaaFsLUobl8Wdd8EVrlfRMXqBHGAHvkEwt
-   eFQfOLAE/IrIT7QxCEobSjCNrhuR/0vEt4kWyhW63caSdMt9A1LwT43W4
-   w==;
-X-CSE-ConnectionGUID: ah5ejXNeSsKS1dTCgdltNg==
-X-CSE-MsgGUID: 4CoLIcVNTBeYVDHn6+8sVQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11499"; a="66690806"
-X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
-   d="scan'208";a="66690806"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 11:05:59 -0700
-X-CSE-ConnectionGUID: xbmQyYA/SL+k1wVGqaTrAQ==
-X-CSE-MsgGUID: sznyUS23Tlay0B82G/XopQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
-   d="scan'208";a="159239086"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 11:05:58 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Mon, 21 Jul 2025 11:05:57 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Mon, 21 Jul 2025 11:05:57 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (40.107.223.69)
- by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 21 Jul 2025 11:05:57 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Zz41gceHBAyF6f4j1m9YS05BgUr53jUU96/exs3fNJpxKoDdAKbp1djtB8MF/DiunYDQMvAg6v1Odad34GCqe7O3IhY1B6yMX3/N3E9Q8bt75DITydX7giNk0ZT7bMBP8KSTvIhVHxWL6rJPCbhENFfkcHeBAXzMQaO0im5ddIXk7FeAoIXeJd1Rdn08WsjTc37pQ6atz+3FboGp+/xEKsYBbLx2GWrhquLsMEbCwOB0qZdzucunqxlk55iIBSRFdI5OF/cvpKXoe2HZg7Zd+XeTTpF+7qD5KKXKZCYtEZ6QbvfdP4vYSkh/jVHqASSydsiltRkWH/1lQXlZdBnk8g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yGjMTskxySNdYUtvoU4lcF1699HQAYsz/jGp/IX2Jhw=;
- b=m9GD9infI/A1o/xB+n8+hMOMbJgyY0VZmFxOWPbYRcttpjZuJevR3NoNESCt7SKkRJNDkei12+MDfDMA9EoYdWp91u1Ebb/k3Aj8kNqN+nAXxj4fGl/yXbNTakJlKWo76ZETX2RjlRsFue9TTYOD9LNLkoYbZWcwluA+3M/0Sgiknwm8G5YwEY29ggGdYVBcdyyGu2IcqQa+YqmzUyUdXBVMK1tpSxRjeywPHHY/8xg5yetwvHYc49OqeZNiw1TyN+YNC6qiMt6HFj9rA4uFxdii2kKLu3oSo3QKQ/pNv8aCV3mxno/zQ0k26I7xd44Q4o6SJXw27c20mKqKTf7+yQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB6527.namprd11.prod.outlook.com (2603:10b6:8:8e::19) by
- IA1PR11MB6195.namprd11.prod.outlook.com (2603:10b6:208:3e9::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8943.30; Mon, 21 Jul 2025 18:05:55 +0000
-Received: from DM4PR11MB6527.namprd11.prod.outlook.com
- ([fe80::5a48:57be:974b:8ee0]) by DM4PR11MB6527.namprd11.prod.outlook.com
- ([fe80::5a48:57be:974b:8ee0%7]) with mapi id 15.20.8922.037; Mon, 21 Jul 2025
- 18:05:54 +0000
-Date: Mon, 21 Jul 2025 11:07:40 -0700
-From: Matthew Brost <matthew.brost@intel.com>
-To: Danilo Krummrich <dakr@kernel.org>
-CC: Philipp Stanner <phasta@mailbox.org>, <phasta@kernel.org>, James Flowers
-	<bold.zone2373@fastmail.com>, <ckoenig.leichtzumerken@gmail.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
-	<skhan@linuxfoundation.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <linux-kernel-mentees@lists.linux.dev>,
-	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-Subject: Re: [PATCH] drm/sched: Prevent stopped entities from being added to
- the run queue.
-Message-ID: <aH6B7JruWCkReaLw@lstrano-desk.jf.intel.com>
-References: <20250720235748.2798-1-bold.zone2373@fastmail.com>
- <66a14b005fa3dc874f4f3261b93901af1292bde9.camel@mailbox.org>
- <e7c0f63678a93261182b69aa526217821552a150.camel@mailbox.org>
- <DBHNK2XQHUIW.TQHV41LR5D8I@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <DBHNK2XQHUIW.TQHV41LR5D8I@kernel.org>
-X-ClientProxiedBy: SJ0PR03CA0147.namprd03.prod.outlook.com
- (2603:10b6:a03:33c::32) To DM4PR11MB6527.namprd11.prod.outlook.com
- (2603:10b6:8:8e::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28BC82882B9;
+	Mon, 21 Jul 2025 18:07:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753121270; cv=none; b=Y7a1+1o66T41/CvsKXM7/k0eQZpoGykrQyeqHaNHmSMhft05C/jUXBaCuiILzbrZX5P4o9/IutlZ5IPLp4XuP/noCkXGd+eYMCLwWUeMHgr8qoTiJpzeJ2ZsSWPuE15FBY63l3caF1KECmb6A7P17xWNDW0CRcXB2r8DPB/QKBc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753121270; c=relaxed/simple;
+	bh=AxR3SLpD7uj8M+SVLIg4R+XGie4XxMhuFzefg7QRlow=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kO3wlGa4Wl7IAmGxfCBmwFYNExLlYjyPQJSSvSQVKkPhqb//J9uv8nvtU/9Q1rae0vAOl8XlfBrvxR5cBM9SslRLddYVk5Dw88a7VY2LyXW5EoKed54JmEnk5lM+d01gfaBZPO2YKlTH/PGyHckTj8gMo7G/QVo2m+LCGbgZaKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LaJQTg4P; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3b49ffbb31bso2959917f8f.3;
+        Mon, 21 Jul 2025 11:07:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753121266; x=1753726066; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ArCMIs8cHMmaU6eRMIXZBua41omBX5hUlQZNBFR+A9w=;
+        b=LaJQTg4P6m3qN+IWl3fO1kuny2HanJLCjdabjFptQRMXFbN+ezcAIYSqNUZw7+G3b0
+         IRUl6KUVEi9s1EBQWuKqY6QV5eosrnv5G8RL/ceg6rT2lik4GGavx/xVhwdfCbo8cWWG
+         NOOUsq0NFzjVlevtU0HiLuFMppYj8oRcqpWQGJEtkVstzeaugXx9kHjbrDv3bK/UalbY
+         4sAvQBtoAOh7qUzlQcf++Fw2UThdxk4EclYRzsCCZFDXrvsFqLH5np/ez7kt2yYV9o/4
+         KVrZySAr9JwmWsareFQyXta0/ELD/lcnechGhvT+zwz+v/I0Aot9zWyvJWFnm2BOmcXd
+         19xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753121266; x=1753726066;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ArCMIs8cHMmaU6eRMIXZBua41omBX5hUlQZNBFR+A9w=;
+        b=PqPZpaF1jW/tjOsY4V6QluRmSoaDfvX3zxSrembqb71bZE26X+BqBG+DrGAgcCITt4
+         CefLTkcUwYKdoN3we96dJQFebAc4/R54YbCW+GV/WYqKNLgb4A2nqaWqBl+QsNvFHLdH
+         HCRUcmwmNVutRR5Xuk6h89uEkF6AGqZzRZYv9tv/cjW7VIaYt2CXwlo36FYA50WAY2gc
+         73NpUxBAeoeApVa4U4iyr8WTu89tXD+RtP5EgW21q0MLUvKgWByYg4WrvygUmWbLPtK2
+         UGw48xkGH7j78tFKAVsArBfpQYoHdRrxjwCVOJh1TaWfTnL6X4BtA54RUu1HJIpDMWcM
+         r39g==
+X-Forwarded-Encrypted: i=1; AJvYcCWHJce8ZzPsYBzEaPL+PXZ4XddH8UrkVlpU2ZDG3AF+FhW2n6VB2rS7928plkp2ngBHqYBhzuWJZ78T0fA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQSMpr8z0nKjp3Urd4wuw2QtmR8IFCkCoxoCTpvklQxOsUKjav
+	ejxHdRDaYzFqUHz020yoM0td0V+m2rNOZDIVBm3jdDcs5A4yneVYo5A=
+X-Gm-Gg: ASbGnctFYRqjBgBVYYk2m9QIaS0ogD62ASV33iw9OoQWK1mmNmfpPZ/0v4EPs/1Ijwt
+	KqMvtjiiibuSz41JjHY1BFnBBURto+hjmQpE0mJKRawkt/WBlBodyc37zjGSCkQWh3HYheDzMIb
+	qR9zLnbPKFnflzn/bi45GG8z1RjT+Bbt6nMpPsk4xZsPJYbkfXZCmLx37hMmhPXioF4VNO5AB86
+	XAXho0mDZndasAwRRuwVywxCPIbxObLeEyqZLMiAragWuhheJq9op7prQBtOue2kwJqq/T0Sc0l
+	6qHNEsUdZFkcSDnF4j8esQ0U/ERTLRjXTbKQFHN1w203zfdf+UTm0BndJS1TT21t+1ejs9exx6x
+	m68eXTN4zZ+6jGbJ1g4C8SsppO6SXPBARE2QKNdJ0txaExD112gnI/rUBTYjs7Y4=
+X-Google-Smtp-Source: AGHT+IGcDPzV6KQjobcMBQcBoKbIIcGU6ckQH+xCZ1tWbwJRYmX8A1xwQRCZIhBoNEVRk2XrDOitug==
+X-Received: by 2002:a05:6000:481a:b0:3a4:e2d8:75e2 with SMTP id ffacd0b85a97d-3b613eaae20mr11933859f8f.50.1753121266097;
+        Mon, 21 Jul 2025 11:07:46 -0700 (PDT)
+Received: from ?IPV6:2a02:810b:f13:8500:e3:9af7:6c0e:f2a1? ([2a02:810b:f13:8500:e3:9af7:6c0e:f2a1])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e886286sm171024705e9.26.2025.07.21.11.07.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Jul 2025 11:07:45 -0700 (PDT)
+Message-ID: <6d93c92d-2bba-4247-960d-5f2e5e12b594@gmail.com>
+Date: Mon, 21 Jul 2025 20:07:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB6527:EE_|IA1PR11MB6195:EE_
-X-MS-Office365-Filtering-Correlation-Id: 70133f8c-7f1c-4e03-2829-08ddc8813c4b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?QTJPQ1dEKzFDTElPK1NIN0hCRkNnWU1xY21qS09OdjFKbi9Hb0JEelJ4QlFh?=
- =?utf-8?B?a3BFSjVhYmdqakZrQ0VMK0dQM21OcXMrY2p4c0xRenkzZU12U0xGWTZCYmZ3?=
- =?utf-8?B?WDl1Lzh1czNNZ08zVUlhY1cxUXVJRXlxOSswOXZFMEdqRWU0bldGdkJwUGtW?=
- =?utf-8?B?OHgyYjBveVhhZnMvdEdDb2VWRGRSRGRTR29pNEVmSGdtTTR4T0tmQm5GWEdk?=
- =?utf-8?B?R3BVMjFManpqNmRRc2M1aWpDQVQrVDBBOS9qMzQ2dlJEdjlKQ2sxVFF2cDFz?=
- =?utf-8?B?YTJyL0pBUXVtbm9YUS8rNzNBWlVzWWZUMEJ5ajlhOWFDL1B1Rk9HbDVqSXFI?=
- =?utf-8?B?enZoWmN5cnIxSDF5MTl4MDFISEt3bzRSS3FVYm5ZTDljcVpnNCtheXl1TnhF?=
- =?utf-8?B?RE5UN0ZYcmZ2Z29oUUQ5VEtKeGNRTDg0UVpjaFNpelo5RFVndndPdDJsaW5m?=
- =?utf-8?B?NkgrSytTWmU2cFNlSjJoUGxUQ1JrMjdkRWkvNFY1R1prRG5kd1daU1QxeUF6?=
- =?utf-8?B?dGFlQjBzaS83ZG9CUURBMXZnSlBjM2oyNnRjMmZjUGVXbzRtcDlHSjBTSDBh?=
- =?utf-8?B?VlJiNU1IcUUvMmE3aEJFS0FVcTN6WHNlbUczVmNEeE9DMzlIbXkxZ0xxQ25t?=
- =?utf-8?B?UFBtVTZQOXZtOUJDUlRUaWl6bDYxbkFSODVTcHdKZXcwWjJkeW1vY1BYSFJC?=
- =?utf-8?B?TCtsLzVIUkZ1WjlWT2ErYmhtRy9UdGxsSHBMM3dUdDdGTXZCR2hoaTd1NGY5?=
- =?utf-8?B?Nm8zdlZsV296RlZiLys5U2Yrc1VsSjcvemZCZGlncFlsbjNjQ2Y3U2VKMWVI?=
- =?utf-8?B?UTdoZ0oxS3ZINy9mRzRRQlQvTE91MzRSY2w4RG9WSC94cFB2OGlPckQxcnla?=
- =?utf-8?B?aUZ4dndoY3gyaU5qVGpNc3gwcU40SjcwMk1RS045UDlJNW9FZnk4WGlKZ2h1?=
- =?utf-8?B?Mlp6dWh0RjhXaDNOQkpVcnlNaGRsZ0dKYlRSeVI4cWFaQWpBMnY3eVR4S2VE?=
- =?utf-8?B?dzYxdjc2YmJ3TmFzZlhuVStKT1dQMUg5QldFRlN2ZVkwZWJBdDdDMlpjWDRC?=
- =?utf-8?B?V0dhUzZBdkN0bEVpamZPazc3RHlsekxpa3RKZGthcmRBazhFb2lUY0ZLazNE?=
- =?utf-8?B?aUc2Sk05K0pEd1Q4aHlDcWtmSzlTdlFOa0lsZHNRUWY5bG4yTkQvaUYwWUlZ?=
- =?utf-8?B?MXZHVGxRVDBoT1JwWHRLSHY3T040endjdis0dXlFUmZYUDBxT2pIWlBxOUt1?=
- =?utf-8?B?Q2FtUE1GVUY2WHhVem13R0o2T1FRa2Nha01aeks1TFdaakk4cnc5MkVhc3pm?=
- =?utf-8?B?aDVoa3AycDFwb1EzS3NnMHlvRlhaeWxPRE9WL0NLQlNGYTV2MUZrVHdjK0oz?=
- =?utf-8?B?ZDZUdXJCV3NYUGIwWXF5d3kvVXd3MG5JaWcvMmpUVXp4MysvVCtmdExRNzJE?=
- =?utf-8?B?bHVZMFBmQzlsNVVUR3J5ZXRvM0N5dTJoR0k3Vk9VcG9lVDVwbCtHWnlvVnI5?=
- =?utf-8?B?NENha3BYaklOYjhVNW96dHhOakpPenZSUmVQVkZ2UittanNrSDdEM05CS21F?=
- =?utf-8?B?UWg1SjVjeE9mRkFUc3BydzVhaUMxallnRzVSN3dTUDVtVmFEN0RaVUdhNUQ5?=
- =?utf-8?B?S3A3YmhQTGFYKzQydnlRQVRrVTdacnY3aUVSMUllY296VG9meGllN3FDai9k?=
- =?utf-8?B?cjdiTUtyYlVubnBOUXRxb0hWSGNTSTVWMWNxb1d4YmwwQjloNHdYemJCcWpK?=
- =?utf-8?B?RktGeVR0eHFqK2pHT3VsdWkyMVlJMEJJNFNQTTFuVHY1U01PM0hyaFc0amdI?=
- =?utf-8?B?ZWNSR2FqeGJCQXhicVhCSlgyYmVMMVcwM0NGT3hRRkl6MnpocFcrYXBBWDBI?=
- =?utf-8?B?YkVrc0dwcE1zSEFDVnovNnVCVkJkWnkzcHRIZGQ0RDg1Y2Y5MjgzS2Noc2Zt?=
- =?utf-8?Q?zDQlPw3Uiqk=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6527.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TEk1b3FyODQyaFBoU1NXZTN3ZjVMZENhaVAwV0tsek5aQXh6UXJ6YVBzTzR3?=
- =?utf-8?B?T3F6dzhKNVJqbE5HdWdGRU5YWno3VGFVemk5cHhDTHV2MjhXN1RaWnNZVDVG?=
- =?utf-8?B?dmtPVTI3b0pHWDM5YU5mcGthZlRSejhSaHVwTTVudFIvb2dYTmV4NFRDdlZK?=
- =?utf-8?B?TXJkODdVeHhVNllGZjdRTjBiU0UzRXdXelRoanFTSHZFcmluOFBsVis5THZr?=
- =?utf-8?B?K1NGUHFSR0s1TElIQktXNkE2S2U0TmE1Wkc0QWY2a0t2czNtYVgwNk84QVd5?=
- =?utf-8?B?WHBpQTRwT2VzeW9vTXkvaFI1bzErcHltUXBVUDFiSWhHeU1FZ3Z4djFKYk1G?=
- =?utf-8?B?OUxQb3A0ZzBkRWJMbjFLR1hPTXA3a0tKbS9NbjBycW5PRCtYcUdHTmROdjI3?=
- =?utf-8?B?eTIwQ2l1ZFk0TTAvbko5d1Y3alNGU1RwVEFaVjlwU3VnZjZ6aG1ZUHZWT2FX?=
- =?utf-8?B?b2cyZlVRTU9KbHVDV2JBR1RUays1NTBuSzN0Q09kQ2hRY1RRMjVuQ1UrOWRI?=
- =?utf-8?B?ZHkxZDJPbGV1TmpJMWRwYnl2QkpSU3BqWnJ5U3RuWjNUWnpEdkVtTUNEcWZR?=
- =?utf-8?B?RlNJSVZEZy90NDBNOVhuSWRqR3FySlpWMzdGVS9VaEJSdW85bE1YYy9XNVNL?=
- =?utf-8?B?Ly9iRFBmUDgya2F5Z0xrV0FtVHQ4Y3Urbk1qNEU4ZzRQV0tsNFZiUXZWNS82?=
- =?utf-8?B?Qi9QUEw0QWVYdlBDYXlvSDlQV2c1c29wdXFONmV6NVRpa1dRRllIN2lVOVgx?=
- =?utf-8?B?T0kxMERvZmppK0tQMmFRMVFXakNkVi9vTVprcHg0Z2dxL0VET2RpM2tGSDZB?=
- =?utf-8?B?UmZaN3NCTTBwcEI0M2ZiZzEva1I3WElMbDVkZE1IdFZubW91NC9YZmhjR3lT?=
- =?utf-8?B?L2EzUVRvODFUZ2dKQjQxOG5MRFhXalcxVWIxWmxsRkM2TGRTanJIWGVjb0Jo?=
- =?utf-8?B?VFB6YjlHRE10WjQ3UHBzVFBpZ3RGb1ZGMXkvc1cwZWNTUFhKZU1Oc2NSc0py?=
- =?utf-8?B?ajhBUnVCZnVkT1FqU0ZWckRRMm4wclFpSWhDcnE0U3Ird3M1UnFyVkMxUUNn?=
- =?utf-8?B?YjJqM2NSemZGd0RkdWtZM1lYZVl3OGx4Y3VhaHVoWHcrbDR0YnZnRXNVWlFI?=
- =?utf-8?B?SUhiVDF3Ukh5SmxuUUFRV213bGhTb1FObVJmalVleDF3Wkd3OWF6Wk1iVklM?=
- =?utf-8?B?TjU3TWVvcTFmMFdOSzRqQ1hiTzRkSHgzblpRK3M1WlRBUXpsaG5QQ3BtaEtz?=
- =?utf-8?B?emJmM1NONmVxalVpMVRMZ2hKOHAzYUVONng0c09NUU1tckFnZTBmYW5WRlFq?=
- =?utf-8?B?ekpta05lbWJsS25PRmh6WHZXZThpa3E4c3FhOXlhUkpBL1pqdVc5T3d1NFIy?=
- =?utf-8?B?Y1ZQRkVBTTl4MExyY0N2Ukl5bE1BeTgzeCt3V0E4WG9OenVKcXpLZmowSHZD?=
- =?utf-8?B?bThFdGlmblVtdEJ1ZTBKc3lUbytVdzVzKzVWVllaUUgzSkdzS2FTaU03ZSsr?=
- =?utf-8?B?Z1c1M0hueDJDK1NRLzUxdHZQblc4emFQalVob1l5V3VUUFRGZ1NZT3RFSTlM?=
- =?utf-8?B?TzVMVkZzQVNybnZTVGQ5dmRjSmw2elZ6WlFscGRtQjNjbTlKMzBBNkNZSnhu?=
- =?utf-8?B?U20zWXFGMXlCNVVIOTdiMElVNTlUYW1FSkZDZzZBcFQwcXpQNnU2aDUrQ1NZ?=
- =?utf-8?B?RnBwM3ArYjNKL3FqWDh1R3ppQTdzOVdycXErVUd6TEgxVGVKbVIrR216ajZm?=
- =?utf-8?B?Q3Fmd1hPVXdiL0kxOTdwM1pjZmduOVdxVXArQmZwM0JvNndHSXFtb1VBM0c2?=
- =?utf-8?B?VXB5RjZQTGgvbzRZM1FyY0c5VHpsOHJ1cXI2ZDNhbkk4Y21UQmprNTZEazVx?=
- =?utf-8?B?RjlodmpSMDJhOEx6OGxGN0k2WGNHdHRSSVAzd2JnZHBjK3lmeEFIcE9Yc0xY?=
- =?utf-8?B?Yy9GTmFzcWF0cENWNXd5NnJoSFd0ZjdNUXRnMEg0SkhSeTBzS1JETTlGNFRT?=
- =?utf-8?B?NXFSeFV4eUZMZ1VCdFpXbHcvVGZBTUlXZHAvUTd4UldGWUpJYVBFdXJTMFVy?=
- =?utf-8?B?QnFiZVRvalFncGRXTkZlajFhMGtpem9tcm9obE9adjJEcDUvN0UvRU1wYTV6?=
- =?utf-8?B?TEhURXNoNUNRL2wvdFNBU0V4aUhDeEd2eTBtQXBLUXN3L3dFaUlIaGlKUXV0?=
- =?utf-8?B?S0E9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 70133f8c-7f1c-4e03-2829-08ddc8813c4b
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6527.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2025 18:05:54.8575
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xrhlwMisH/nLynGGv9TYmhXdvf2RyA0sJclmc5binQ1WPHCAxXABORxFZm//uorVgN6ckOkBpfecfZ0QNl1/iw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB6195
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/6] arm64: dts: rockchip: Add ROCK 2A/2F, Sige1 and
+ NanoPi Zero2
+To: Chukun Pan <amadeus@jmu.edu.cn>
+Cc: devicetree@vger.kernel.org, heiko@sntech.de, jonas@kwiboo.se,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, ziyao@disroot.org
+References: <3c83e8cc-9ef0-4560-b6d7-127abab50541@gmail.com>
+ <20250721140016.308800-1-amadeus@jmu.edu.cn>
+Content-Language: en-US
+From: Alex Bee <knaerzche@gmail.com>
+In-Reply-To: <20250721140016.308800-1-amadeus@jmu.edu.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 21, 2025 at 12:14:31PM +0200, Danilo Krummrich wrote:
-> On Mon Jul 21, 2025 at 10:16 AM CEST, Philipp Stanner wrote:
-> > On Mon, 2025-07-21 at 09:52 +0200, Philipp Stanner wrote:
-> >> On Sun, 2025-07-20 at 16:56 -0700, James Flowers wrote:
-> >> > diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-> >> > index bfea608a7106..997a2cc1a635 100644
-> >> > --- a/drivers/gpu/drm/scheduler/sched_main.c
-> >> > +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> >> > @@ -172,8 +172,10 @@ void drm_sched_rq_update_fifo_locked(struct drm_sched_entity *entity,
-> >> >  
-> >> >  	entity->oldest_job_waiting = ts;
-> >> >  
-> >> > -	rb_add_cached(&entity->rb_tree_node, &rq->rb_tree_root,
-> >> > -		      drm_sched_entity_compare_before);
-> >> > +	if (!entity->stopped) {
-> >> > +		rb_add_cached(&entity->rb_tree_node, &rq->rb_tree_root,
-> >> > +			      drm_sched_entity_compare_before);
-> >> > +	}
-> >> 
-> >> If this is a race, then this patch here is broken, too, because you're
-> >> checking the 'stopped' boolean as the callers of that function do, too
-> >> – just later. :O
-> >> 
-> >> Could still race, just less likely.
-> >> 
-> >> The proper way to fix it would then be to address the issue where the
-> >> locking is supposed to happen. Let's look at, for example,
-> >> drm_sched_entity_push_job():
-> >> 
-> >> 
-> >> void drm_sched_entity_push_job(struct drm_sched_job *sched_job)
-> >> {
-> >> 	(Bla bla bla)
-> >> 
-> >>  	…………
-> >> 
-> >> 	/* first job wakes up scheduler */
-> >> 	if (first) {
-> >> 		struct drm_gpu_scheduler *sched;
-> >> 		struct drm_sched_rq *rq;
-> >> 
-> >> 		/* Add the entity to the run queue */
-> >> 		spin_lock(&entity->lock);
-> >> 		if (entity->stopped) {                  <---- Aha!
-> >> 			spin_unlock(&entity->lock);
-> >> 
-> >> 			DRM_ERROR("Trying to push to a killed entity\n");
-> >> 			return;
-> >> 		}
-> >> 
-> >> 		rq = entity->rq;
-> >> 		sched = rq->sched;
-> >> 
-> >> 		spin_lock(&rq->lock);
-> >> 		drm_sched_rq_add_entity(rq, entity);
-> >> 
-> >> 		if (drm_sched_policy == DRM_SCHED_POLICY_FIFO)
-> >> 			drm_sched_rq_update_fifo_locked(entity, rq, submit_ts); <---- bumm!
-> >> 
-> >> 		spin_unlock(&rq->lock);
-> >> 		spin_unlock(&entity->lock);
-> >> 
-> >> But the locks are still being hold. So that "shouldn't be happening"(tm).
-> >> 
-> >> Interesting. AFAICS only drm_sched_entity_kill() and drm_sched_fini()
-> >> stop entities. The former holds appropriate locks, but drm_sched_fini()
-> >> doesn't. So that looks like a hot candidate to me. Opinions?
-> >> 
-> >> On the other hand, aren't drivers prohibited from calling
-> >> drm_sched_entity_push_job() after calling drm_sched_fini()? If the
-> >> fuzzer does that, then it's not the scheduler's fault.
-> 
-> Exactly, this is the first question to ask.
-> 
-> And I think it's even more restrictive:
-> 
-> In drm_sched_fini()
-> 
-> 	for (i = DRM_SCHED_PRIORITY_KERNEL; i < sched->num_rqs; i++) {
-> 		struct drm_sched_rq *rq = sched->sched_rq[i];
-> 
-> 		spin_lock(&rq->lock);
-> 		list_for_each_entry(s_entity, &rq->entities, list)
-> 			/*
-> 			 * Prevents reinsertion and marks job_queue as idle,
-> 			 * it will be removed from the rq in drm_sched_entity_fini()
-> 			 * eventually
-> 			 */
-> 			s_entity->stopped = true;
-> 		spin_unlock(&rq->lock);
-> 		kfree(sched->sched_rq[i]);
-> 	}
-> 
-> In drm_sched_entity_kill()
-> 
-> 	static void drm_sched_entity_kill(struct drm_sched_entity *entity)
-> 	{
-> 		struct drm_sched_job *job;
-> 		struct dma_fence *prev;
-> 
-> 		if (!entity->rq)
-> 			return;
-> 
-> 		spin_lock(&entity->lock);
-> 		entity->stopped = true;
-> 		drm_sched_rq_remove_entity(entity->rq, entity);
-> 		spin_unlock(&entity->lock);
-> 
-> 		[...]
-> 	}
-> 
-> If this runs concurrently, this is a UAF as well.
-> 
-> Personally, I have always been working with the assupmtion that entites have to
-> be torn down *before* the scheduler, but those lifetimes are not documented
-> properly.
 
-Yes, this is my assumption too. I would even take it further: an entity
-shouldn't be torn down until all jobs associated with it are freed as
-well. I think this would solve a lot of issues I've seen on the list
-related to UAF, teardown, etc.
+Am 21.07.25 um 16:00 schrieb Chukun Pan:
+> Hi,
+>
+>> I'm not sure where you are getting your information from, but as I told
+>> before I actually *own* this board in the non-development version and it
+>> has an RK3528 SoC/silkscreen - I just was too lazy to photograph it my own
+>> but I did now [0]
+> I have the MangoPi M28S, M28K and M28C boards.
+> The M28K board does have a silkscreen of RK3528A. [2]
+Nope.
 
-> 
-> There are two solutions:
-> 
->   (1) Strictly require all entities to be torn down before drm_sched_fini(),
->       i.e. stick to the natural ownership and lifetime rules here (see below).
-> 
->   (2) Actually protect *any* changes of the relevent fields of the entity
->       structure with the entity lock.
-> 
-> While (2) seems rather obvious, we run into lock inversion with this approach,
-> as you note below as well. And I think drm_sched_fini() should not mess with
-> entities anyways.
-> 
-> The ownership here seems obvious:
-> 
-> The scheduler *owns* a resource that is used by entities. Consequently, entities
-> are not allowed to out-live the scheduler.
-> 
-> Surely, the current implementation to just take the resource away from the
-> entity under the hood can work as well with appropriate locking, but that's a
-> mess.
-> 
-> If the resource *really* needs to be shared for some reason (which I don't see),
-> shared ownership, i.e. reference counting, is much less error prone.
+Are you really questioning my picture? Ridiculous ... see [0]
+> Regardless of whether the silkscreen is RK3528 or RK3528A,
+> U-Boot reports that the SoC on these boards is RK3528A. (via OTP [1])
+> So one possibility is that Rockchip forgot to update the silkscreen.
+>
+> Comparison chip block diagram:
+> 1. Earlier version: https://docs.armsom.org/img/sige/rk3528.png
+> 2. Final   version: https://docs.radxa.com/img/e/e20c/radxa-e20c-chip-diagram.webp
+>
+> The difference seems to be that RK3528 uses I2S while RK3528A uses SAI.
+> But from the updated diagram here [3], RK3528 also uses the SAI interface.
+>
+> Rockchip BSP does not make any distinction between RK3528 and RK3528A,
+> so it is meaningless to continue to worry about non-A versions.
+I'm sort of impressed on with which conviction you continue to claim plain
+wrong things: [1], [2], [3].
+I'm fine if upstream decides not to care. But it is and remains wrong to
+claim that the other version does not exist - otherwise I doubt Rockchip
+would have gone to the trouble of building the distinction into their SDK
+AND publishing different datasheets.
 
-Yes, Xe solves all of this via reference counting (jobs refcount the
-entity). It's a bit easier in Xe since the scheduler and entities are
-the same object due to their 1:1 relationship. But even in non-1:1
-relationships, an entity could refcount the scheduler. The teardown
-sequence would then be: all jobs complete on the entity → teardown the
-entity → all entities torn down → teardown the scheduler.
+[0] https://wikidevi.wi-cat.ru/MangoPi_M28K
 
-Matt
+[1] https://github.com/HermanChen/mpp/blob/develop/osal/mpp_soc.c#L957-L982
+
+[2] 
+https://github.com/rockchip-linux/kernel/blob/develop-6.1/drivers/soc/rockchip/rockchip-cpuinfo.c#L212-L218
+
+[3] 
+https://github.com/rockchip-linux/u-boot/commit/89e1f532de7747d2e962644330666fb1b465926b
+
+> [1] https://github.com/u-boot/u-boot/blob/master/arch/arm/mach-rockchip/rk3528/rk3528.c#L131
+> [2] https://x.com/mangopi_sbc/status/1847851624804602316?t=5hwScxgwCAAid0eCJgrP5w&s=19
+> [3] https://x.com/mangopi_sbc/status/1785115827437760769?t=H5PXRDwbjOfBYa7QotjIZw&s=19
+>
+> --
+> 2.25.1
+>
 
