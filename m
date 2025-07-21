@@ -1,102 +1,258 @@
-Return-Path: <linux-kernel+bounces-739488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B72EBB0C6DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:49:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEF07B0C6DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:49:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A0F76C130D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:48:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5553B1AA7D44
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA1462DE6E8;
-	Mon, 21 Jul 2025 14:47:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888F02D9787;
+	Mon, 21 Jul 2025 14:47:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m/OS7QD4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="huCnNfOV"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09052DE6E7;
-	Mon, 21 Jul 2025 14:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753109246; cv=none; b=mOT9tUSRAkFU1IK9Gw+o5VasNRNY7OcBUpESmPCDHTIup32y03kjKIRtZDBNuAV1Z1OWZNcKqD6L8JBVXRbAc0ilNphmlLjp3BchEILAt/dZD0Rb4qJ1Xgs57XiJ0KoXWeVl7k6C6oRDP5CphL9nCYWWJegMRo+7uC3sv4WgCEg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753109246; c=relaxed/simple;
-	bh=POu/6RcXAXPlWdUQ1qT/BoxmsEBrEVB56P9NerCYWXA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=og+kvtFU2G1sfeBCIDQW6CyfPduxq1b0iiRjmomk4CYkOhioUFP344ReWgGuOJkWH6G4u5iyib5K5qEUvUVCQX5ORH84HyrB2ASqF3jm6EisF8X/HpvdqKN52Xf0H2y8MjicfObjttTHNSaqHh68iIB8Szixll4aLA9SwSCfdGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m/OS7QD4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82E61C4CEF6;
-	Mon, 21 Jul 2025 14:47:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753109245;
-	bh=POu/6RcXAXPlWdUQ1qT/BoxmsEBrEVB56P9NerCYWXA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=m/OS7QD4PjEOHiqPVua/M/GbjGqpBGpwAzYznGumevTm5tzkrOHn5Cpc7DI3CLw2L
-	 QUZcs58AVvMPFzkrK6SUPoiB1bTr6/00d/1D7hZUGyRuQPcYBzYbj/6Kvchopsqcco
-	 g1y4vNzkAI/5FxhOhTCHCWQ/cjqsQPTFuowrYtvth96bMlKUp7NWSh/79XLQOSFO5E
-	 D5+RBk9NAzjalB2x3NLX24fXs3/8hYGeqzE9dcw8R2f3A+cVN23rc9r+A9A7V7Yhwp
-	 rlz385JAONbkQag6eMu3KpmWtYr1SsLIezsxHqvjnqWKgEyo4sFdOKYr4WmH8xwz09
-	 CpbOx/IA3++5g==
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-61593d5f92bso2517019eaf.1;
-        Mon, 21 Jul 2025 07:47:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVga2zwH5uH3TpUMFbzGLT2b/OgHs/ufcAhgbdxlvDFG84VcEYaXCu+ENKhRMvL3gHN7w4wZXuS3fyikw==@vger.kernel.org, AJvYcCWTuKlohwT+CxqGK87Q1zUmqvCCsUXMwqqC+ECg2EZAUsmD0q+PxnHQuBZX0LkqMI9bppR8u8p4ZvujAL6g@vger.kernel.org, AJvYcCX0b6L86YIRrkpYqb01aCdEpc/7b/yvp1eyF+R/52srgyFbksAkH68zfawfOelXwznQP4YeHDgmmwHD3OzOfGA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/eN0UVfcxb4h7SU9fN4ZFCC0XnxSKCFvs3+d0iXap2gnhtfZU
-	4TqMrDR7PuELyGo0CROIJE12Rk63K2+jIHpBdbenr5eZlsz2AuKGQVj/oNOGGsFB9PYelKMf/ty
-	pESj9FGFW/QtG6Ef3/DKfZzDRHVDm7Is=
-X-Google-Smtp-Source: AGHT+IEWdKVsxpzzKcxBaQkADZ6sERyQIlgfA82t1NIlBXHjio6fztFwfCBQrBDTOY4HMy0B7xBmmLv4qujQWpdVL8U=
-X-Received: by 2002:a05:6820:6ac7:b0:615:9a1e:8d30 with SMTP id
- 006d021491bc7-615acc73b58mr12078604eaf.2.1753109244758; Mon, 21 Jul 2025
- 07:47:24 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEDAB2CCC1;
+	Mon, 21 Jul 2025 14:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753109266; cv=fail; b=DO2uvWj+O5316bw758UnQA5UjNzFVhArr6c0KGFncQvb+WyIIw0LOQPe3wF5u3QYznk1cgY81AmVN/DrWRdWLzr/9nIpo/Z/3NsppsaZxlBh0R9NzjX/GejH+l5S5B2dLKyE/ybsLqYP05rrmk1mvcH2k4XycG9Ls6jNLoqHxnU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753109266; c=relaxed/simple;
+	bh=rXQNdtBZVKsvQenD6CwIBawbpqxWLgvWaxuBCPCFNxg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=bO16c/H9kIkfq7qLFmvT6l+5T3+ds6JIRad6aRl+b0CILFgblTgH74DPrcWfZOayn+Re78LQq6ZAbruFB/WHXYZ36244tl4GdPoaY+wdBJn+1SQd5zO9nljnUTRKLrrRygx1tppIp/4gOQz86ifGpmfXqB9PJEqeJzVrzTC9OJQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=huCnNfOV; arc=fail smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753109265; x=1784645265;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=rXQNdtBZVKsvQenD6CwIBawbpqxWLgvWaxuBCPCFNxg=;
+  b=huCnNfOVx9DNsGDbeVbo8LDGwArjMLoNNkmvCZeS7b+IYhPpDOGwr8jd
+   akPcuK//YFjy4EyFAjX+5WUCIPeblf1G3sldBRSeOTeaIs0+IRADD1RK5
+   yIQglrdlT5Vlh5DQ679T23wi0bFuo+sFu9h6KYAt7ZGKQLVzO8jZJ2Rg1
+   /X1c2sZTgnB+2Q1Kfc32fJDI3wTpphEzf0oXTR8pty3CF8tdDgZN4DgYK
+   xJcNHHAn3Bw8+KrTWw77YUj0i7UZq1L3jtz0kaV9naoDnxsx3qax5MIa/
+   A6gXWyTE2uDdrU1st7VR5mITEtn/gg1Fxkp2CsBZeqWu92bBIbTfnboa1
+   g==;
+X-CSE-ConnectionGUID: uvu17atKQEu+DhGic3sSdQ==
+X-CSE-MsgGUID: sk+W4OznT7K8MZLwclJX5Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11499"; a="59123732"
+X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
+   d="scan'208";a="59123732"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 07:47:33 -0700
+X-CSE-ConnectionGUID: RJBgL3FlQ5W1ROp+cN+2wA==
+X-CSE-MsgGUID: 43q92c0PT3eErro1hcI27A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
+   d="scan'208";a="158644794"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 07:47:33 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Mon, 21 Jul 2025 07:47:32 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Mon, 21 Jul 2025 07:47:32 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (40.107.223.55)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Mon, 21 Jul 2025 07:47:30 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qfkrIXWlRe8pSKL+Kb7t/0wReRxv60A3IVYokQ8adQASe2MeLrF4v+/s+rEqFY/nhR9LKDC459KP+NUGCb2RFYGsH7JP/NP6fgXIVoQc/JDXPfwT+M0D4DuNXlnPTpTZw2rfd/BJgo18E+jNROP/RjrE/YWacqjMhY92SxqaVXMIOIswPiFrti6rFr0BJ466h8sL3r+R+gXsa+8Fz71cIjhZ7qmY1q9W1YRsVpsBZULNiWyv9F9YPW1Tt2zHJa8IusyTziNbdey/5uDXv9Qp0YkEAE79PMnS2G6FZJgU5Ul9yLgixFDrmPW1YFG1xc9ExX6vnndZnTfEDr3t8ujosA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lnjqdD4XFVn+Tn9QLO81A9R8M2LVa2rYhOQ6oe2wsvw=;
+ b=Ai5YBNz1wTviwGwqEwJ3gfaNAlQuVHJdTrbmUU4sEGmnAZx8IaVcmC04yF1QnNlnI9OHetrmX2XIUp+13Xq/ioip/MKadv/bRLKoOp2BwgHdh19WjXOqCu1cSnBgfkYhysNZWQcebyoeJzEx4sihATIDPHAhOdi8JwSmLfQixMZQmjQZBoC7oti/FV4e7nWL1Is2TUhqTpt+EzJjlm4L7pKswSgXH0z4uMLMsVsT7K22U47MHr7oXlsmr4BJBw2Ui7gHfLbSHvp1nZiPScmk+TIugPFbW2hz5qisarjVmf6v29u7U7ty6u2so8ooQ2/TVzmd8jAy5OweuK5PdyTIUQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CYYPR11MB8430.namprd11.prod.outlook.com (2603:10b6:930:c6::19)
+ by PH0PR11MB5903.namprd11.prod.outlook.com (2603:10b6:510:144::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Mon, 21 Jul
+ 2025 14:47:28 +0000
+Received: from CYYPR11MB8430.namprd11.prod.outlook.com
+ ([fe80::76d2:8036:2c6b:7563]) by CYYPR11MB8430.namprd11.prod.outlook.com
+ ([fe80::76d2:8036:2c6b:7563%5]) with mapi id 15.20.8943.029; Mon, 21 Jul 2025
+ 14:47:28 +0000
+Date: Mon, 21 Jul 2025 10:47:24 -0400
+From: Rodrigo Vivi <rodrigo.vivi@intel.com>
+To: Ruben Wauters <rubenru09@aol.com>
+CC: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen
+	<joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	<intel-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH v2] drm/i915: replace DRM_DEBUG_SELFTEST with
+ DRM_KUNIT_TEST
+Message-ID: <aH5S_IlGAp5Myezx@intel.com>
+References: <20250701115511.5445-1-rubenru09.ref@aol.com>
+ <20250701115511.5445-1-rubenru09@aol.com>
+ <ea5ac37cfae72d312c47ab1983dd1fcb59edec28.camel@aol.com>
+ <aHp0HYR0pfZ-qArI@intel.com>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aHp0HYR0pfZ-qArI@intel.com>
+X-ClientProxiedBy: SJ0PR03CA0196.namprd03.prod.outlook.com
+ (2603:10b6:a03:2ef::21) To CYYPR11MB8430.namprd11.prod.outlook.com
+ (2603:10b6:930:c6::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250721135016.2500117-1-colin.i.king@gmail.com>
-In-Reply-To: <20250721135016.2500117-1-colin.i.king@gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 21 Jul 2025 16:47:13 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0i7tGiYOWX138ODmX6QTxuF09gCADHX-aVXD_h3y5iFjQ@mail.gmail.com>
-X-Gm-Features: Ac12FXxcjsguRVd_BYILBY4h1G6hudEeRQHcR3qRKDMhPSoFCr2obJ8c4H6N87k
-Message-ID: <CAJZ5v0i7tGiYOWX138ODmX6QTxuF09gCADHX-aVXD_h3y5iFjQ@mail.gmail.com>
-Subject: Re: [PATCH][next] ACPI: processor_throttling: Remove space before \n newline
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CYYPR11MB8430:EE_|PH0PR11MB5903:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3fa9be38-117f-4dae-c47a-08ddc86583bf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?J5i1zq3S0Ob8RigFq5VqHbh+3MNjpQ0Tj5mpz5g6AaT5Wl+qMb7msx+qRa?=
+ =?iso-8859-1?Q?UttSlgKLdNowBO7m3opCvWOtyU327Mppchv7MtGmaxLiV8Mc1wfGj6RDUy?=
+ =?iso-8859-1?Q?vefyzaoNwugsfz3D8Lx4YRt0XfAKJ/5W1tMpHWZYOAsDx9mRCewyPsL8Jl?=
+ =?iso-8859-1?Q?Znoyw9nPGTAG8RUz7WkD4oEUYp6kNeaMBZW6kmA3yAKNc0gfL3sFs4ma5x?=
+ =?iso-8859-1?Q?AbZQdmQPik7azsbmI5kjSeowJy1qcJsOc8sapwLwq2h2ilVs1kAAErTsUb?=
+ =?iso-8859-1?Q?kMhu104p+esEuRj86cE347KNcjoDUZJkwpPluE53mHlxvi6oQIp/Nzijl2?=
+ =?iso-8859-1?Q?YqT8hndGPsp9nNCZPq8NHxL09laYFC76QpFhyIHogWWd21V1sbPOXQbRoQ?=
+ =?iso-8859-1?Q?aFqIVZ8fqH70jk1VnqahfXbUjhcix5MWsak43X7DiaHUAFd8oujH9FurDe?=
+ =?iso-8859-1?Q?rKU8fVsWfrVBSfg8s4HZ/xlgHfdiNvEL2hDHQQb+hiutPeFNeB4A34oJQw?=
+ =?iso-8859-1?Q?f5S9F6tIpj1/3IUNILd80230NDKIuvgbi7M+Nf+XCuTwn9X2GxDWXngZ3t?=
+ =?iso-8859-1?Q?mekqsLVFtvOFdbibNrdjV3zWpwrQ0ibUlKtckK01qLVG8WAO+rgXMHWqfS?=
+ =?iso-8859-1?Q?+KmighAxOEcYVZOffr/lM9gIwWfAowYl6s49isc5M1F/h9KXFqWWi9eKkA?=
+ =?iso-8859-1?Q?TsPZIgfdMyod+jtLg83vEOkzO8QkMhSEPP7c/wNsjGYCX3FhbEfkZJakbI?=
+ =?iso-8859-1?Q?kIC7//yMx8rrDxGMhg+SBm7IGQ7NsVHkP9lw9FRXjn5Mu5al4syLquMDgt?=
+ =?iso-8859-1?Q?8V+e5W/gs17kSCRQiG89NCfbx7SEOmKVkqVBBMol8t/VPeA01JI86AdbDn?=
+ =?iso-8859-1?Q?JFIjuUJxxILh929MS5vwQo+xwx8WhObNbgE/+IRS+k0JmtVHpV2Mn1cLz1?=
+ =?iso-8859-1?Q?KXvDK2wk5hnu/X13FzSxBYMbOcxJb5x/dwI015fm6IpbhYiyJ5YFYcBdao?=
+ =?iso-8859-1?Q?LrgU1Sad7sEeFziX5m8nPPEpk2IsWfWl5GrRqMyeFBEQHd5PHFpJRLZ6sH?=
+ =?iso-8859-1?Q?XPLA/Tdh+Vy2oML2Cw77NiYE6iZMEZwZ/bxohUoP+mS7T4+ZlNl+iLiDc6?=
+ =?iso-8859-1?Q?TtIjt6aogmARiKESr18Olmi1gi9QDSe9jC4hptGWRleleIP/EK55czFLRx?=
+ =?iso-8859-1?Q?A0jymRcbT/1mUTAKsalVbixNgj6JKtMo4sEO9h7bTa/TVpWRbsy5YCYsOr?=
+ =?iso-8859-1?Q?8JF+FGRndJW2CMQ7CTPFNSNv7+/oTNQOh9jroadKJV0miKAA9bgbjChAzA?=
+ =?iso-8859-1?Q?mz0FIQTyxsqOqZA/oaVMrXSPmbF4GRUOw/Q4b5+V5mr4Ozjtlafu0WabAm?=
+ =?iso-8859-1?Q?s0+rizFY5S7+vwWOGol5d3NmqBfn0aUX5UGMKnsWNpuP3Zq7tOi8RzP+a8?=
+ =?iso-8859-1?Q?PQP9Qfw51wjsuCOybzlApimlg6D300AHchirtScERYk60g6IjxWJv/ctBx?=
+ =?iso-8859-1?Q?E=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR11MB8430.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?3a4MAVQG0xfv5d9K42DMiSNSh037pOa+mW30glXCE1u/sYUt0KW/eZqmvu?=
+ =?iso-8859-1?Q?vDDTyu6/LnzfLcLq+ymTxfSRTse7LhwD0ag4y/+EObZR7pH7T8mLpLWVUL?=
+ =?iso-8859-1?Q?17zA3JFTOUjpVxUe2pRZ2PC4wulOpV0/It42paMX8CZWY7g2rQunGj/S7X?=
+ =?iso-8859-1?Q?fea0dtvwAivJQUkKwsbwn2q+nN2WPfB6brJXU8gwXsZ52xS6RIHNPUdEfL?=
+ =?iso-8859-1?Q?pXtyhNkR08xOuvJBwSxAI4C+dmwxenE+dH7AA06UOnWNixv4qxD3Fw/ENI?=
+ =?iso-8859-1?Q?2lq/HmNTAidQpCqyDMBVejL0MH598MPX5ALGfUY+pFNSIc0q7lLISWFXch?=
+ =?iso-8859-1?Q?HiQCKjA+Mr0sU2Spm8rxbmngLgyajdtAXqX+jltD0LYPfCbewCHOwn3t3M?=
+ =?iso-8859-1?Q?93FJnp+uDWpSYt+BVIp4k5SIxUnaMkUqmneZO8U3j/eld6NdxjYdgS2Qlh?=
+ =?iso-8859-1?Q?LUubCkEtP9d1OC2cPAjfiRovE5xTEZdeXbckCEQJsQ4i6lR7gfcwBrfQf6?=
+ =?iso-8859-1?Q?rgPiBM1q7ENKSmO1vyyOgQh8vS6gkspLiZHs86jt0IrZbSHgYPGl/fCVIW?=
+ =?iso-8859-1?Q?0zpqxD5IDCTITsJ6EJvpXDypT98y0PsfkQZc08zKjTCR1bDEsHOAbXd7/D?=
+ =?iso-8859-1?Q?6xBcKRN2TA6Y+Iihu0YxGw55Vu50rkDQBOFkEoDoV1Vu97DO1/RtXIaIur?=
+ =?iso-8859-1?Q?iHx0p4w0fG3TWKcBRarF7WbbbkbfxgfCyfubr2J58p3BczDdGoDFVFr+Ft?=
+ =?iso-8859-1?Q?lKc+ww9Wjy6eoMCIwdYz0nQm/re2atNQv9MqiyxbA4MplnThxc3s1nQ/A+?=
+ =?iso-8859-1?Q?/Lk5Pr+IzSzuJ/7hT6oGeVvdEvww2OdCYAplPSiI1Dry+6kg6aoGhV3FXu?=
+ =?iso-8859-1?Q?7NEW9vPpcv41U3HO+RkLAeWg3rzqGC2DlKAn9fLddPASxvme+9bGhlm207?=
+ =?iso-8859-1?Q?doBO/YRUCxYU0Uc3B21Jy4qxb/Nv5glt0Pj7qX8Rc1joEV1X1x4iqFCzLM?=
+ =?iso-8859-1?Q?EmsHO5a5iWSpFw1leDDQihOfY9EU04DkzmQlSv6Ro6Zd/qajGb8W5suqLh?=
+ =?iso-8859-1?Q?ZwbqEQmWG6PR6/5+TUsN77s7dxCrvJa4tTDIcBCkRV9kW9MIjnYH5RFc5d?=
+ =?iso-8859-1?Q?2835krTVbuYIg8YXg/vXoZ1NvGt1vpJPRVIiVN6YT0DQR1IR371qQLDCV2?=
+ =?iso-8859-1?Q?W4t9GntvIU6EVNM5dGE9wzN8VNCDD/9f5ZgvpJUX3oyvooaXAGLse1n7H6?=
+ =?iso-8859-1?Q?8QP6l8r7wQkA76sCYdVuzh+u9d5F/T1RglX88U1abovVxK752B7C27PiZ1?=
+ =?iso-8859-1?Q?Qjw6gLmalRBKygLUewC5Vws1mUBwsVYyWEBCwsQdYq6zBzoXLsqZN1+uCS?=
+ =?iso-8859-1?Q?m/Bp82jHC9j+g+taoX7v0FyYdVPMSpCBxTE24kxhjoGkPBG6OWlaNGRCcT?=
+ =?iso-8859-1?Q?mEu93wcmQ6AjFjBAD/kdA0YYE8yIhYDYuggQdA1HIW+ugqqBNbFdDYyIRV?=
+ =?iso-8859-1?Q?5lmOmczcZZ7Fde/QM/gaPHuLHMmEZlPwq0re2Nxj5+EekW+9Rj8s2oPyIX?=
+ =?iso-8859-1?Q?Nj+sqqbCzR9E43myReGRqtPgEawMJeOsJDKFhH1e/UxB7pq9o5nGo9zO1G?=
+ =?iso-8859-1?Q?OdZxYQf7eBlmdcV8fG61AJPTsCIk9FE4OF?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3fa9be38-117f-4dae-c47a-08ddc86583bf
+X-MS-Exchange-CrossTenant-AuthSource: CYYPR11MB8430.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2025 14:47:28.5900
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qUrWtZ24Ko+/PIr50X5e2oq7T0TRBvX2h7Wf7DZmJ0Fs89mmIKevkc1RZNji93cdJmVm/EVwax5c97bLJ1VH1A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5903
+X-OriginatorOrg: intel.com
 
-On Mon, Jul 21, 2025 at 3:50=E2=80=AFPM Colin Ian King <colin.i.king@gmail.=
-com> wrote:
->
-> There is a extraneous space before a newline in a pr_warn message.
-> Remove it.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/acpi/processor_throttling.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/acpi/processor_throttling.c b/drivers/acpi/processor=
-_throttling.c
-> index d1541a386fbc..f9c2bc1d4a3a 100644
-> --- a/drivers/acpi/processor_throttling.c
-> +++ b/drivers/acpi/processor_throttling.c
-> @@ -235,7 +235,7 @@ static int acpi_processor_throttling_notifier(unsigne=
-d long event, void *data)
->                 if (pr->throttling_platform_limit > target_state)
->                         target_state =3D pr->throttling_platform_limit;
->                 if (target_state >=3D p_throttling->state_count) {
-> -                       pr_warn("Exceed the limit of T-state \n");
-> +                       pr_warn("Exceed the limit of T-state\n");
->                         target_state =3D p_throttling->state_count - 1;
->                 }
->                 p_tstate->target_state =3D target_state;
-> --
+On Fri, Jul 18, 2025 at 12:19:41PM -0400, Rodrigo Vivi wrote:
+> On Fri, Jul 18, 2025 at 02:59:10PM +0100, Ruben Wauters wrote:
+> > On Tue, 2025-07-01 at 12:54 +0100, Ruben Wauters wrote:
+> > > DRM_DEBUG_SELFTEST was removed in commit fc8d29e298cf (drm: selftest:
+> > > convert drm_mm selftest to KUnit) and all functions under it were
+> > > converted to KUnit, under the DRM_KUNIT_TEST option
+> > > 
+> > > This conversion however did not occur in the Kconfig.debug file in
+> > > the
+> > > i915 directory.
+> 
+> I wonder if some deeper conversion is needed on the selftests.
+> But well, I couldn't spot anything and if CI is happy, let's go with ti.
+> 
+> > > 
+> > > This patch replaces the select for DRM_DEBUG_SELFTEST, an option that
+> > > no
+> > > longer exists, with the correct select, DRM_KUNIT_TEST.
+> > > 
+> > > Signed-off-by: Ruben Wauters <rubenru09@aol.com>
+> > > ---
+> > > v2 changes:
+> > > - update commit message to contain more detail about the background
+> > > of
+> > >   the change and why it is necessary
+> > > ---
+> > >  drivers/gpu/drm/i915/Kconfig.debug | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/gpu/drm/i915/Kconfig.debug
+> > > b/drivers/gpu/drm/i915/Kconfig.debug
+> > > index 1852e0804942..b15b1cecb3aa 100644
+> > > --- a/drivers/gpu/drm/i915/Kconfig.debug
+> > > +++ b/drivers/gpu/drm/i915/Kconfig.debug
+> > > @@ -50,7 +50,7 @@ config DRM_I915_DEBUG
+> > >  	select DRM_VGEM # used by igt/prime_vgem (dmabuf interop
+> > > checks)
+> > >  	select DRM_DEBUG_MM if DRM=y
+> > >  	select DRM_EXPORT_FOR_TESTS if m
+> > > -	select DRM_DEBUG_SELFTEST
+> > > +	select DRM_KUNIT_TEST
+> > >  	select DMABUF_SELFTESTS
+> > >  	select SW_SYNC # signaling validation framework
+> > > (igt/syncobj*)
+> > >  	select DRM_I915_WERROR
+> > 
+> > Hello, I was wondering if it'd be possible to have this patch reviewed.
+> > Having an incorrect Kconfig entry isn't ideal and it'd be good if this
+> > could be fixed if possible
+> 
+> I just resent for CI before we can merge.
 
-Applied (as 6.17 material), thanks!
+pushed to drm-intel-next
+
+Thanks for the patch.
+
+> 
+> Thanks for the patch...
+> 
+> > 
+> > Thanks
+> > 
+> > Ruben Wauters
 
