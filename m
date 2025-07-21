@@ -1,136 +1,196 @@
-Return-Path: <linux-kernel+bounces-739275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 891A5B0C43B
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:41:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1DEAB0C43F
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:41:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB12B162DF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:41:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B785D3A732B
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0612D3EED;
-	Mon, 21 Jul 2025 12:41:17 +0000 (UTC)
-Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CBCB2D3EF8;
+	Mon, 21 Jul 2025 12:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WbVDa2fG"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF742D0C8C;
-	Mon, 21 Jul 2025 12:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD952D3EC4;
+	Mon, 21 Jul 2025 12:41:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753101676; cv=none; b=OOcvB9Ldd8ABDtaFRpfKGx8mECFr4URJP3qsZ6LbKRYzRqUB8fB90WDcTCVT7mrJqlGvT2idrYgCZjNNFhXnSRM4FkqQ0B6bAffgyAbxTweRBkZZBM9HBEtHnIayPKqZsjQv0jy8O4i2iEMe/RlVmWtM+08WjeHFB3nhTdLak68=
+	t=1753101707; cv=none; b=F4N1WGRl4lPnRVZmRU6tMchm6weSToTexVbFBybQtijHhEwZSCMg52SAsK423Q+aZCRf7p9io/nZjfWsoiwZ5hP/1JqpZJOKGTbkB/eahcU8drdnwa6h4nghMzC9XrAYaDMJYd1dHI+U7r6SeC9OywIIfb5GAmJGnzelspv2eT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753101676; c=relaxed/simple;
-	bh=HKypV4u1z7AQtKEV8qXfKdvAJq3j2oYfgAV7NWh5XKw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=muKcMFs4kYRRWSmMeB6etviw0q3e+yDIIe5jvHIseUa+aHePUnGf9VgdPXwel6HhhLwoJ0MMEfDyo4t5Ot3OGgj6CiFfFL8iKQIG0qt4NPEixniJML7Zbnx6PNWwXlzWbYHjOVM5xKwL8FTsFXzdDiBIIJYOMkdXgkqtUN3KQGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foursemi.com; spf=pass smtp.mailfrom=foursemi.com; arc=none smtp.client-ip=54.207.19.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foursemi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foursemi.com
-X-QQ-mid: zesmtpsz2t1753101613t8c8f9366
-X-QQ-Originating-IP: MoVW0Qm5NMBWEz3uPCzh4xqGQRVxpVf/CTDZ4DOFxxU=
-Received: from localhost ( [113.89.235.49])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 21 Jul 2025 20:40:12 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 5610268674547387337
-EX-QQ-RecipientCnt: 14
-Date: Mon, 21 Jul 2025 20:40:02 +0800
-From: Nick Li <nick.li@foursemi.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, perex@perex.cz,
-	tiwai@suse.com, xiaoming.yang@foursemi.com,
-	danyang.zheng@foursemi.com, like.xy@foxmail.com,
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/4] ASoC: dt-bindings: Add FS2104/5S audio amplifiers
-Message-ID: <0D06FAB8CF1A9D4C+aH41IrERxjlsEAPr@foursemi.com>
-References: <20250721103805.531758-1-nick.li@foursemi.com>
- <20250721103805.531758-3-nick.li@foursemi.com>
- <83f7c489-7001-49cd-97a5-4280eba95fe0@kernel.org>
- <F04DD98A69286426+aH4sT_P0GvttoCOq@foursemi.com>
- <ea2f30ff-b2cf-4b88-9fe8-78950a03d882@kernel.org>
+	s=arc-20240116; t=1753101707; c=relaxed/simple;
+	bh=yI/mzFx2WGKaNJf2JxXpZ1YojEPx8LvSZB2nNfi8ZcI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=S7BxxHYLJ6oa7KIZSQO6pptbpXi1CbJxzixBsdiFKDhBOZnNamElHHb2gvBnpuG5qCcua/FbyjrRV510OaWN0S9s9dBk2lLzqyD9RoRzlIAIeFCigEqLUjAjJpzkh93zZ3Qpzjgr2BnHh+NmaXyH4CINGFDaJGV8uCne+n7Nha0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WbVDa2fG; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56LABHCb005502;
+	Mon, 21 Jul 2025 12:41:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=kfWWTca2fzeLKVm+Cn6N8r
+	ec5popA7lBheSLmQOvEDY=; b=WbVDa2fGPhdEaigxO7vfQS3+8CBwHS2ZxPFc9e
+	BU8PoUTc+bAkZppUOf385fJ2sgbx7YdXcLfuIjQZTE+QJCOfxZoux+F6qOEBfrs0
+	IfXj5nbnzK4osh0g25+OAqQ7V6GUAwMsq0demlrfXXcOPHEVy2+7145JZtr1FyOU
+	LL7NLGCuafsOHBo8m22jXZQ+XJpBlIIQjmFI2ziFS7J9sR9Hsa7NfmKxqJfW4udI
+	h0/jTNacqQP4tKKZ71xoVfludTvQ5fm1Mr9/vrqrHjNFQ/PuLTlCo6Mo1dM5YSEd
+	FRehu8ZW2ZBXjAMDkJjMrIjQWmBRSUSOVGBqTtCxIYKKfnPg==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48047q53rp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Jul 2025 12:41:36 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56LCfZ0p013897
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 21 Jul 2025 12:41:35 GMT
+Received: from zhonhan-gv.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Mon, 21 Jul 2025 05:41:32 -0700
+From: Zhongqiu Han <quic_zhonhan@quicinc.com>
+To: <rafael@kernel.org>, <lenb@kernel.org>, <pavel@kernel.org>,
+        <tony.luck@intel.com>, <reinette.chatre@intel.com>,
+        <Dave.Martin@arm.com>, <james.morse@arm.com>, <ulf.hansson@linaro.org>,
+        <amit.kucheria@linaro.org>, <christian.loehle@arm.com>
+CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_zhonhan@quicinc.com>
+Subject: [PATCH v2 0/5] PM QoS: Add CPU affinity latency QoS support and resctrl integration
+Date: Mon, 21 Jul 2025 20:40:59 +0800
+Message-ID: <20250721124104.806120-1-quic_zhonhan@quicinc.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ea2f30ff-b2cf-4b88-9fe8-78950a03d882@kernel.org>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:foursemi.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: N0fHFfxtkpsjEWs3A0xBuJ3MCCGLm1f5F5Y/t4u4jUD0ofASZGMC5o4P
-	oJmZo2RQQTTTZUMaEJub+Y/fDMxP9XQuQ5sxiL8MCSjjDoUd+ci60S2Rb58BmbYWmQw1ILz
-	EUUBXzkTLWHzd79MPqg7PJ9ykQ1j2QT+p/3WQCK6Q0YOmzkj9APbCwQekZ/Dyl2oCKfuOED
-	x0sq70ybB9JJtqI+NqwMdoo6yaMzPXDLuvawAYmcaW3XThfXx+DATJyY1s56gHfiS1yxXK1
-	X++kyhMERdDHSIY8wWN6+0QyjqJAqungWaRlIsArJJrX6UDEiCjnz3t+sYj1hf54MzrzTTp
-	tWTCpYuGuXQFSA0QWfLPtXuStoFZb5N7I/GmTxZFuwnzy+0flPsxfJ/1N9YCSXuzM0MZGDq
-	fH9Qb2DYJ/mBgZvQR3A9KAuuD48TcFSkFLUShKnL3ZcugPIh53soSkTs86EAcg2vFXPlH8i
-	j6du9YaJRv8Ip6gHXt+3ED2XsrULDRXYL7Escw/OmwkEbOOi4qvPRfSJSt9+juLjT5RtecA
-	jACJPeUL7tKszRHEZP26aGtRQN2o0BRlfWCQG8k8PVBx6+khxkZS/U67lOtU8C0A9NR8Ymq
-	JQbdaG+TvAByKeD2Jmt8m7gqoUgfvTNWhDm2hmExfM9/eWtG3potHx0Dg7OSumb0yuWHTS2
-	BvhUQCjxLrihq19+cpZQVRY6ishZRn0hWwfXXwxY5ZB+jveLg1UrG+jWcCUT7U30UlLQvOt
-	93k1Ef27buYU2J3mjaz0HMOBCNXzpQptgXMYWVDQHYTS1fEE0iv0IdGR3umXSzliyrgHy2T
-	RKM+AGFFA2PexWe+uQdjThf3ysW+ok3kGDxwKHgnpI96wVg6w9EtaZE2uh9QB7D90XnJBXl
-	+kydeWZovTPP1Hr2tVqGkx3N5lYQZiJ3bn54OodH+luUXqz3DELWarmNNRaJ4g1SO3ZOF1j
-	5kLxhobshWGyOXBlA3vSzrU5P6obBmrYDisKc0OZJjZoueQH2DURy7YNVOY//X8zka93unx
-	DPegShYFk0IO6QEeVwkPK4Gt35oiAmMqRTDd+f+d0waUK3a/Vs
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIxMDExMiBTYWx0ZWRfX/scfzge+e47J
+ IlkLJrd/4AEuEq1KttmmXjSGUAOCHWt4g/HUFo0tDoLrbuFQwdqOO88EpF/rEYecnifgQNEksAO
+ ErcWivDJ28ewAJ6moN49R4nBXp5skMAhK6CRuwtp4ZPj6TLk9rNpk6dbY515iXBlMxmi22/HdMY
+ GZDO2hD2IDL1malTXUdAJrdRXZiIALT69CVdKPsebLpK9K6NdaiGd1NhC8VUsNjkg6HuqK2i3im
+ nlv43tDQ3NVuY4xtKdxoYDIl9VNBvmHJSDDYy3Z9mEVvgcflexeItJNJErk2FWUb7gaQ0GuxEIi
+ +20HhQJY1uqpQ6QkJaywOG59hwgXAPogPEItElMX3pJ+HCU3boNNp4TIfGyBVP+blYQaCHfp/87
+ sfwihHP1/x5H/dI2pL0ioxILcLT7ywi8XAAnqveBF63iGJlCddcL5qKa//YiTBvoNc89mDEJ
+X-Proofpoint-ORIG-GUID: npN9tD5ObsEl9tBMjeecRPXBVNA5RG5w
+X-Proofpoint-GUID: npN9tD5ObsEl9tBMjeecRPXBVNA5RG5w
+X-Authority-Analysis: v=2.4 cv=IrMecK/g c=1 sm=1 tr=0 ts=687e3580 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=eauDvVCzbnmlXtCe9pQA:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-21_03,2025-07-21_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 lowpriorityscore=0 malwarescore=0 adultscore=0 clxscore=1011
+ priorityscore=1501 spamscore=0 mlxscore=0 mlxlogscore=999 phishscore=0
+ impostorscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507210112
 
-On Mon, Jul 21, 2025 at 02:15:38PM +0200, Krzysztof Kozlowski wrote:
-> On 21/07/2025 14:02, Nick Li wrote:
-> > On Mon, Jul 21, 2025 at 12:48:24PM +0200, Krzysztof Kozlowski wrote:
-> >> On 21/07/2025 12:38, Nick wrote:
-> >>> +  firmware-name:
-> >>> +    maxItems: 1
-> >>> +    description: |
-> >>> +      The firmware(*.bin) contains:
-> >>> +      a. Register initialization settings
-> >>> +      b. DSP effect parameters
-> >>> +      c. Multi-scene sound effect configurations(optional)
-> >>> +      It's gernerated by FourSemi's tuning tool.
-> >>> +
-> >>> +required:
-> >>> +  - compatible
-> >>> +  - reg
-> >>> +  - '#sound-dai-cells'
-> >>> +  - reset-gpios
-> >>> +  - firmware-name
-> >>
-> >>
-> >> I do not see how you resolved my comment from v1 or v2. Nothing in the
-> >> changelog explains that either.
-> > 
-> > Change logs are in the cover letter:
-> 
-> 
-> And as I said I do not see resolution of my comment.
-> 
-> If you reject reviewers comment, usually it should be mentioned in the
-> changelog.
-> 
-> Otherwise you get now the same review as v1 or v2. Devices cannot work
-> without power.
+Hi all,
 
-I explained it in the previous email:
-The power may be connected to the baterry/adapter directly,
-it may not be under the control of the software,
-in this case, the supplies are use as dummy regulators?
+This patch series introduces support for CPU affinity-based latency
+constraints in the PM QoS framework. The motivation is to allow
+finer-grained power management by enabling latency QoS requests to target
+specific CPUs, rather than applying system-wide constraints.
 
-And we tested the driver without the supplies in DTS,
-so I didn't mark the supplies as the required items.
+The current PM QoS framework supports global and per-device CPU latency
+constraints. However, in many real-world scenarios, such as IRQ affinity
+or CPU-bound kernel threads, only a subset of CPUs are
+performance-critical. Applying global constraints in such cases
+unnecessarily prevents other CPUs from entering deeper C-states, leading
+to increased power consumption.
 
-Best regards,
-Nick
+This series addresses that limitation by introducing a new interface that
+allows latency constraints to be applied to a CPU mask. This is
+particularly useful on heterogeneous platforms (e.g., big.LITTLE) and
+embedded systems where power efficiency is critical for example:
 
-> 
-> Best regards,
-> Krzysztof
-> 
+                        driver A       rt kthread B      module C
+  CPU IDs (mask):         0-3              2-5              6-7
+  target latency(us):     20               30               100
+                          |                |                |
+                          v                v                v
+                          +---------------------------------+
+                          |        PM  QoS  Framework       |
+                          +---------------------------------+
+                          |                |                |
+                          v                v                v
+  CPU IDs (mask):        0-3            2-3,4-5            6-7
+  runtime latency(us):   20             20, 30             100
+
+The current implementation includes only cpu_affinity_latency_qos_add()
+and cpu_affinity_latency_qos_remove() interfaces. An update interface is
+planned for future submission, along with PM QoS optimizations in the UFS
+subsystem.
+
+Patch1 introduces the core support for CPU affinity latency QoS in the PM
+QoS framework.
+
+Patch2 removes redundant KERN_ERR prefixes in WARN() calls in the global
+CPU PM QoS interface. This change addresses issues in existing code and is
+not related to the new interface introduced in this patch series.
+
+Patch3 adds documentation for the new interface.
+
+Patch4 fixes a minor documentation issue related to the return type of
+cpu_latency_qos_request_active(). This change addresses issues in existing
+doc and is not related to the new interface introduced in this patch
+series.
+
+Patch5 updates the resctrl pseudo-locking logic to use the new CPU
+affinity latency QoS helpers, improving clarity and consistency. The only
+functional and beneficial change is that the new interface actively wakes
+up CPUs whose latency QoS values have changed, ensuring the latency limit
+takes effect immediately.
+
+Changes since v1:
+- Rebased on top of current next.
+- Resolve the compilation warning due to a missing static function
+  declaration.
+- Remove the conditional compilation based on CONFIG_CPU_IDLE and make it
+  depend solely on CONFIG_PM.
+- Add support for cpu_affinity_latency_qos_active.
+- Remove cpu_affinity_latency_qos_update; will reintroduce it when needed
+  in the future.
+- Optimize the code, for example by using cpu_affinity_latency_qos_active
+  inside the add/remove functions to enhance robustness.
+- Refine the commit message and fix a few minor issues unrelated to this
+  series.
+- Refactor the CPU latency PM QoS logic of resctrl pseudo_lock using the
+  interfaces provided by this series.
+- Link to v1: https://lore.kernel.org/all/20250424095228.1112558-1-quic_zhonhan@quicinc.com/
+
+Zhongqiu Han (5):
+  PM: QoS: Add support for CPU affinity latency PM QoS
+  PM: QOS: Remove unnecessary KERN_ERR on WARN() calls
+  Documentation: PM: QoS: Add CPU affinity latency PM QoS Interface
+    documentation
+  Documentation: PM: QoS: Fix return type and return value description
+  resctrl: Replace PM QoS logic with cpu_affinity_latency_qos_* helpers
+
+ Documentation/power/pm_qos_interface.rst |  63 ++++++++-
+ fs/resctrl/pseudo_lock.c                 |  51 +------
+ include/linux/pm_qos.h                   |  40 ++++++
+ include/linux/resctrl.h                  |   3 +-
+ kernel/power/qos.c                       | 166 ++++++++++++++++++++++-
+ 5 files changed, 268 insertions(+), 55 deletions(-)
+
+
+base-commit: 024e09e444bd2b06aee9d1f3fe7b313c7a2df1bb
+-- 
+2.43.0
+
 
