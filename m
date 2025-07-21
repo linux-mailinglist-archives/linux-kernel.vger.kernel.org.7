@@ -1,166 +1,84 @@
-Return-Path: <linux-kernel+bounces-738674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADFA5B0BBC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:29:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17420B0BBC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:31:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1C6016854A
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 04:29:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AFC11699BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 04:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344911EC006;
-	Mon, 21 Jul 2025 04:29:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57FA9AD5A;
+	Mon, 21 Jul 2025 04:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RdT9MA4B"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ajXAUpWm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C5E469D;
-	Mon, 21 Jul 2025 04:29:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA436AA7;
+	Mon, 21 Jul 2025 04:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753072159; cv=none; b=nejppqIphbXE7enYJVPfQcofeSJeEdfCwWXIDaJyrctKk1tSlGwuH3ar28S4bc8oZgobxZA2KTre1NEMXOGGjJaBJYthOMY02iHTqQdrhFjRpdYn6wCPKPyA9yEQUAPHuZAj2yQ7WcfYkYISEjrQp7KFMMFlTV6KHFJ28Gey+ng=
+	t=1753072276; cv=none; b=nfmHLf8UdU0HHoZOaSYAmTP3Va2wjhYK93P3lcfGOoW1doMp7z4qhcmKOlWSGCszGriLuQmG/EZMMLBY9s2sSHEmRBs2O6MIdf0Dp+zOBsA5IWVZ6qFr3uWVL+l4ABH5SYL1ESCoOw/0R4ipQ/HS4Ayrvx6plp/jvus5nEn1lb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753072159; c=relaxed/simple;
-	bh=qhYDC/KKBL7zOyNnQYmLVKRkgEx32x37YXcJEbACin8=;
+	s=arc-20240116; t=1753072276; c=relaxed/simple;
+	bh=tFYIKgmLi9PqdbwsUcrQoVZQbCB8C4dQeOpodg+Y494=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f/yk5Z64SQ3khf3Oyn3leuSmy2txjN/uVGvQUNxQ46e5r12SshuzuWomgX8RakVR36ceJI4H1md8MPHrEz7N2OuWmPsq6lqZ6zc1HfsgaZLvw0+byv+U87qJ8iKLT+SwmCL5VtV1npvB7N58rqt2mYDCOqpgxUBpSRG8k+f4CcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RdT9MA4B; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ae3a604b43bso652574366b.0;
-        Sun, 20 Jul 2025 21:29:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753072156; x=1753676956; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ubmicVf2goW+FVKc+LU7OitL1iuFvw5JJnjIYdiaveA=;
-        b=RdT9MA4B6jATgejIx6CTWGqKoFDDhZcyY82DHvFohB/IgViG3IvfLp0p67gBtVCkOD
-         TapyA4LQKQPDJzOoBAk90+BQdOLdn24it4EAkiwHM5CyFi17Sl/e68LSXlhJ3aa9S+XD
-         Tmcb7Vm6s9gftZId+kjphvmLfTp86RuNuP8DVlksQXSx3Vrjvm9yOVVysvrW/MPeIn9U
-         sRc4w7MQwKiq8AHIgW0VeMY5CXp6YKPEgW+xS2qxxJtuz2VD4ognoU6mw4NdpkeYURwR
-         b8FJM216B+EGx1kFBNuJ6aVy1dWiyyhhMnJMTmFqA4sDH9T+N26IxAK8PIwqfGHNXBQW
-         kDbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753072156; x=1753676956;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ubmicVf2goW+FVKc+LU7OitL1iuFvw5JJnjIYdiaveA=;
-        b=L6X4g4I5WTGfzJLHcfIoVsIoq1jDp7x9hsBZzye1eJ2kGr9IwxIaON5LpgYSEtUj1q
-         gVO0jcOHsvYaOSKE308cKYefJP8CHxleeOr0Hg0CnX2Jp7bn2k/+AbCD/dH+pwwXQw59
-         FcOqzOIX0jzcr4DSz+XJQ9HwGQOUKoCsvhWlw8a4XQ8lxZyfJ8OZNgnJ9GOA0xSu6cDI
-         1/fvJA50dSwRYvvNHhLF0yw73LDDtPoAxXqebqd03CPPF+CKemq/EXo/2+V/HwF5SYpy
-         INYcOEpoUOreCTva9mS/b04gWDXeQonclfFLRED0/CibTMroiwIXIOjM3Wa2TVFeSout
-         xttA==
-X-Forwarded-Encrypted: i=1; AJvYcCWBH6tU1GgR3Kfw349l2w4TOKaDW5EzPrLyul+c3RXrYYTrEf2nssVMUgOCo2xzmBgSFh3Oic7bwPtaEMg=@vger.kernel.org, AJvYcCXB1V1CTNHCzh9qbcGxneYFoMnP+cL/cUuabzn8qzwN+4HN7/UAicUs59W/uZBfnTi7ODXG@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7BlO3InyZX271kLZdMZEQ9sLT5F+NITxOJpB57r3w2sHheduT
-	l+txuYkhyAryQ9aP6UZJ56hG/Kk3eo/eLuykd4NowBaZVmDSigbyrUh/wG8PsGocmmz3g/a21Bo
-	4XVz23fcfvdiESjqvWWFmbPUBtxi/6R8gaT1i
-X-Gm-Gg: ASbGnctH1GpaVwNzVi+rMOJp2KdhwpNxbljgDSg+K9Cvzamlk3lRCWvLWXfbfDEc1qV
-	eRFKyX9gFjMYMkCsJCx9EiS39JKFMH9AdUhAQ+2s0AEiwjxN+wbWgDXPayjXr6LnwHX2m73xZYl
-	UI2sIQwUTJ8AoHPAHLJgMb8p7JRsMuuQIDK9HLGVrbcuerVt6F4Rdgz7k602oK+xOIAV4wPdiCd
-	o1V+A==
-X-Google-Smtp-Source: AGHT+IGow/pNgwagC3KDIUFhh+2rlHq1wGfCAQieSfDBOYgm7ETzpEMkq9dmNHeWUW1UH3Ny2LPnXa7fZ727tcNgdLw=
-X-Received: by 2002:a17:907:fd15:b0:ae3:cf41:b93b with SMTP id
- a640c23a62f3a-ae9ce10b28bmr1686896966b.41.1753072155798; Sun, 20 Jul 2025
- 21:29:15 -0700 (PDT)
+	 To:Cc:Content-Type; b=mD36HX/v+YCD3D/S+IlUeW2clNazrhqLgRBKJfOBpRdpaL0mBK+Ey0OErVJnO236ZMKJtprGgUaPJn9mARfQEKizv0wUJyaTN0tv3NnzdOLn1wWSuxefv/Q+DUb0+0EDbQnjvnAPrlt4IEvHBmjkAN492hL4nmBLO+iqYE0KaEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ajXAUpWm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42AA4C4CEF6;
+	Mon, 21 Jul 2025 04:31:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753072276;
+	bh=tFYIKgmLi9PqdbwsUcrQoVZQbCB8C4dQeOpodg+Y494=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ajXAUpWmVnPkyA6BD6SW9y9AkMWKNrcQoHYuXYmEcMF1gH5/xgdlT2kvow5EzmOQY
+	 ND7ssxwSg8T2euxmLIrnZTT5ZoTwZjdhRaVvZihn2w2JMN80be4kmv9DQpJvnKB3fB
+	 2Nrg+6ujdRMB/ENS+0mLPzLBdlP5+Uf/J8g8prLhUq5RX5NXJxH2MaChH2r1BacXMU
+	 W5SB3txysin6H+MBJAIeQFBjo4yIgrTVNUn8bnVDrH1Tjy9dqgL9xyGwpBYOJxeQIA
+	 OzLYE1sjmQEX36gJNRQMz4N+y1U7uwBlA2xi20rjnh0k5KHkGjIdO1g6hUei+iQ3Sh
+	 o0QXH28eJxHAw==
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-55622414cf4so3386177e87.3;
+        Sun, 20 Jul 2025 21:31:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUVHWna/kpmqEpVTRwmG9Gu0OFYti5vjbeC3GaJd9y31e5NSWeIcihZbYeAUblyNzkFwrJjB/afiu3V2eU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKmuITEtMkxA6K+N2EGdv/fPGTiuHL69UBu80MTSLm14696vEY
+	DMQ3DqcqIn5DCjYyA/chE09G+xcrlREoeF+ZAITqMvNETmsdTO8ON+iRKWaufy710IS8z16H2Pi
+	BCOOlmQym7SKZjWJBirW4zMMn6sz4Y0U=
+X-Google-Smtp-Source: AGHT+IFxYrKPiFnquEFEjbXx7SinlBEd19ORgwxsoO+Qodlerja2zHOhZh9r9VefqvbLhskSgdCR3k4c2CB+uFe0kT4=
+X-Received: by 2002:ac2:5501:0:b0:553:2e37:6945 with SMTP id
+ 2adb3069b0e04-55a3188ef64mr2809429e87.32.1753072274598; Sun, 20 Jul 2025
+ 21:31:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250715200156.2852484-1-joelagnelf@nvidia.com> <a5aeaec7-d4fc-47e1-b618-e7c768dada54@gmail.com>
-In-Reply-To: <a5aeaec7-d4fc-47e1-b618-e7c768dada54@gmail.com>
-From: Neeraj upadhyay <neeraj.iitr10@gmail.com>
-Date: Mon, 21 Jul 2025 09:59:04 +0530
-X-Gm-Features: Ac12FXybQ9UNRuURZrL6_CEl2LE2ND9hWugy3zzuXgS6UBycLXdUHg1rF3vBP7c
-Message-ID: <CAFwiDX9K8T4uDRCmp3R+TqBaKO_jtXwcaeFYdpg-9C5MVJAo4Q@mail.gmail.com>
-Subject: Re: [PATCH -next 0/6] Patches for v6.17
-To: Akira Yokosawa <akiyks@gmail.com>
-Cc: joelagnelf@nvidia.com, linux-kernel@vger.kernel.org, paulmck@kernel.org, 
-	rcu@vger.kernel.org, Frederic Weisbecker <frederic@kernel.org>
+References: <20250718191900.42877-1-ebiggers@kernel.org>
+In-Reply-To: <20250718191900.42877-1-ebiggers@kernel.org>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 21 Jul 2025 14:30:57 +1000
+X-Gmail-Original-Message-ID: <CAMj1kXExtd=Kyz5yLUcAa1jt1aO6SnQLHTUy0G-vdPyG9+bwsw@mail.gmail.com>
+X-Gm-Features: Ac12FXyP6_FBA9Z1gYIv02BKDBFZ48NmSFlQa2GNf5zKCRg9wSpMfj4usDG1VNg
+Message-ID: <CAMj1kXExtd=Kyz5yLUcAa1jt1aO6SnQLHTUy0G-vdPyG9+bwsw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] sha1-ni-asm.S cleanups
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	"Jason A . Donenfeld" <Jason@zx2c4.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Sun, Jul 20, 2025 at 10:01=E2=80=AFAM Akira Yokosawa <akiyks@gmail.com> =
-wrote:
-
-...
-
-> There seems to be a couple of issues in the S-O-B chains of commits liste=
-d
-> below (in rcu/next):
+On Sat, 19 Jul 2025 at 05:20, Eric Biggers <ebiggers@kernel.org> wrote:
 >
->  * dcf1668449c9 ("rcu: Document GP init vs hotplug-scan ordering requirem=
-ents")
->  * bb1c373934db ("rcu: Document concurrent quiescent state reporting for =
-offline CPUs")
+> This series cleans up the x86_64 SHA-NI optimized SHA-1 code.
 >
-> They have a "Co-developed-by:" tag without a corresponding "Signed-off-by=
-:"
-> tag [1].
+> This is targeting libcrypto-next.
 >
-> Or, if the contribution is too minor to have a "Signed-off-by:",
-> then a "Suggested-by:" tag with a "Link:" to the relevant message should
-> suffice.
->
-> I have no idea which approach suits better in each commit above.
->
-> [1]: Documentation/process/submitting-patches.rst
->      section "When to use Acked-by:, Cc:, and Co-developed-by:"
+> Eric Biggers (2):
+>   lib/crypto: x86/sha1-ni: Minor optimizations and cleanup
+>   lib/crypto: x86/sha1-ni: Convert to use rounds macros
 >
 
-Thanks for reviewing this! I will fix the tags.
-
-
-> Quoting relevant paragraph:
->
->   Co-developed-by: states that the patch was co-created by multiple devel=
-opers;
->   it is used to give attribution to co-authors (in addition to the author
->   attributed by the From: tag) when several people work on a single patch=
-.  Since
->   Co-developed-by: denotes authorship, every Co-developed-by: must be imm=
-ediately
->   followed by a Signed-off-by: of the associated co-author.  Standard sig=
-n-off
->   procedure applies, i.e. the ordering of Signed-off-by: tags should refl=
-ect the
->   chronological history of the patch insofar as possible, regardless of w=
-hether
->   the author is attributed via From: or Co-developed-by:.  Notably, the l=
-ast
->   Signed-off-by: must always be that of the developer submitting the patc=
-h.
->
-> Side note:
->   scripts/checkpatch.pl would have complained about those missing
->   Signed-off-by: tags.
->
-> >
-> >  .../Data-Structures/Data-Structures.rst       |  32 +++++
-> >  .../RCU/Design/Requirements/Requirements.rst  | 128 ++++++++++++++++++
->
-> I'm seeing sub-optimal uses of reST markups in Requirements.rst from kern=
-el
-> documentation stand point.
->
-> I'm going to submit a patch or two to improve them, but I can't promise w=
-hen.
-> They will likely be only cosmetic cleanups and I'm OK with it upstreamed =
-as
-> it is.
->
-
-Thanks!
-
-
-- Neeraj
+Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
 
