@@ -1,157 +1,165 @@
-Return-Path: <linux-kernel+bounces-739360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61491B0C552
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 15:36:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55488B0C463
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 14:48:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8651A54069D
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:36:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A56384E3972
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656E92D8DDC;
-	Mon, 21 Jul 2025 13:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D110B2D4B58;
+	Mon, 21 Jul 2025 12:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="QO/ILNeI";
-	dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="lmstuex2"
-Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [81.169.146.219])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R8evXuR+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21DE28F53F;
-	Mon, 21 Jul 2025 13:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.219
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753104987; cv=pass; b=VMJ+4IjtgvBf/7azjdkjh8VTNDV2c12F7AsSD+vIcIKrXFTU/agupHyTrco9v086Kfy3tco9AeVydwZbxelDnC6eNos4no0hcOfjXk6XZ7eJ3gJ8zaoiDT2DbhtSGB2xKzCJarXGVd6piEprUhj5be0Qz1rrthWxEeOCzLRFXa8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753104987; c=relaxed/simple;
-	bh=35cYQVm4zLLoIB57342iho+QScl4DbuVrkRFPA2X2eg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gS4Tf2N9DGxbKNa8Yp7cuRCW3OiE6g2z031aLKT5Qqk0/kTL+KYSHfT/UMB0Gs6iQ3mLYPSNIKCIjiCycZutkWZAnqQkH7eVe6Xzg0xNMp7ojzTmM7Dqfw58taa/uxdB8eo0eu2XLcxMJQe795PFJU919zwx9tkMg65DEvtfLPc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com; spf=pass smtp.mailfrom=goldelico.com; dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=QO/ILNeI; dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=lmstuex2; arc=pass smtp.client-ip=81.169.146.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
-ARC-Seal: i=1; a=rsa-sha256; t=1753101976; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=mJh1WY17HpmgjV7HDUlAP1Bh/BhPBIW+FHPa7axDyS16/jnrHUh+M5meG6w6lPuYK6
-    sqZKVqXkrF94GWIj2tHOx2axEl2NmeJ+7lF0YhHxh407iTKVoaTFRLxVfkwd7vwcqXM9
-    xHBbFZI6gazUWmYo9ImCEcsmlRHy4ky72EVnwi6kc+IZU2gwhXRn5XnDhJkxqQM8OgG1
-    lRp9IXEC3c/mZ9UmUQZl9l56lnDvBQyj8Hr0+YKs8SjiEr5nLY6kdQIiGCfi1OIGM44E
-    qW4kJB4IPxzAL33GigOG2QOxMc0mQHoWQBw8+9mvQjxedrycpQg339ByWiauK5dfgQLx
-    PWvw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1753101976;
-    s=strato-dkim-0002; d=strato.com;
-    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
-    bh=T0De6Am+nfTD1/T8qRHYoVSqpbNHuCwxHjsiXItzmwA=;
-    b=fu9jHWa5LH3jxD+pm56rfm8wZzBtHYnBvIVMUzAsCTwyQ6udgWK2AUoLybSzwly7vB
-    Ceq1ZDDae/zJIKY4jzPC0K6i9KI39e3cChuppC2u6ys3wf8JjcMpQGSDK/vDogMuRcAd
-    cvU5mXkZRQIVugLd1WtqMkGwjYbzuoXLDit357VL+JwT1MHm4IB2RGJHaLQvoRFPmkTS
-    hKze1ilnAiqDlG2Y6szx003mlLxvqh7stB1Aflc8x3Cx87NiqG+QHEk83jvHuMlfqRfz
-    RmPHlJMnUePikJRm+Ihacd3k60Z1vBLZP2DlcLALNvGW46fqtaoQz+ax8pII8b3SXiKx
-    WCgA==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo00
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1753101976;
-    s=strato-dkim-0002; d=goldelico.com;
-    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
-    bh=T0De6Am+nfTD1/T8qRHYoVSqpbNHuCwxHjsiXItzmwA=;
-    b=QO/ILNeIWdVFZisaq+VoQcWIoYG7Bq7fnMJEPqqAa0GIn+5mfy2HoZ9K7q+ZaX4/aN
-    JuhCf/76n2RhkoNc6qevV1BSpToxZnKtPj7ti8az/8U8UoidqKQrZ3WbRS4+IbqPUORm
-    rE13eQd7uH7yTJrOjkMbh2VFdG9hGehMdMK2IVgw96lnbRkmsXmgYwch4cvaGGY3a+KA
-    j9cz+cXEuc9wejUUoAaZBnjaqliwiq7oecQh6ohQ68lZoTt5mSOfPx1u9zwEHeMnUL5+
-    p98J5XKSIMezodOWf0IZ+SGgw14wKyJK4TI7Ap4f+IoW9jqu71CSHzw+fRIb57bS4DxG
-    NCXQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1753101976;
-    s=strato-dkim-0003; d=goldelico.com;
-    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
-    bh=T0De6Am+nfTD1/T8qRHYoVSqpbNHuCwxHjsiXItzmwA=;
-    b=lmstuex2SU9y8xFDtxbkpKSm/E/OCCSjWALYFN/SgXMr84M7OUd5XWnD2zIapNrpxE
-    0NIs9kGKMacDTwAH0lDQ==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9qVpwcQVkPW4I1HrVi5pbyciNjWBMoAEyQro/p8z/o50zTNRbUr3m"
-Received: from iMac.fritz.box
-    by smtp.strato.de (RZmta 52.1.2 AUTH)
-    with ESMTPSA id Q307a416LCkFEp5
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Mon, 21 Jul 2025 14:46:15 +0200 (CEST)
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-To: Sebastian Reichel <sre@kernel.org>,
-	Jerry Lv <Jerry.Lv@axis.com>
-Cc: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	letux-kernel@openphoenux.org,
-	stable@vger.kernel.org,
-	kernel@pyra-handheld.com,
-	andreas@kemnade.info,
-	"H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH] power: supply: bq27xxx: fix error return in case of no bq27000 hdq battery
-Date: Mon, 21 Jul 2025 14:46:09 +0200
-Message-ID: <bc405a6f782792dc41e01f9ddf9eadca3589fcdc.1753101969.git.hns@goldelico.com>
-X-Mailer: git-send-email 2.50.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E424502F;
+	Mon, 21 Jul 2025 12:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753102089; cv=none; b=E8jZoPuVMg3Fp8eB1JExRdlxpUXTxuyaHxIVIDqfiW1CnTqRG7QkKUnTN7AwmtWQTfvIh3DHlGy0G/ojCya/Yc2/lTCjfQgahjwWT41RMTZNNiR5xC9xuOpyFcKRS4dnHEf72GjmTsfDQcK6QtLQCxnW1/FEfqH3Ns72O2GwfWc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753102089; c=relaxed/simple;
+	bh=fhUrUAac/iSii6E8bCY5/2OzAP/25KtTiniEKeJQXGA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PdSKdNjtBboMgd832HDbP+uXPaRLqk5gH43+jq8vlM1Hc4dWSbJ50xkdj0WNZbdnrejhlZFh0alyVYXwTE1HxqaXdlipy/qcX255Zo/Sd8XhRxZIm5OMID6J0an5xZ63VZTx10Wb++nILTSxyC0qtE01UAmwtUiiRLoJ/+c1UNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R8evXuR+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2550C4CEED;
+	Mon, 21 Jul 2025 12:47:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753102088;
+	bh=fhUrUAac/iSii6E8bCY5/2OzAP/25KtTiniEKeJQXGA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R8evXuR+wAan3GKqOPc31OKb0HXwT1fcr9RAvjn3iXq9AafrC9dr+uhqKKHXhydc/
+	 ommMgMhlPSa10h8tXea70KugAvoZCogNM+Xt21kS9UmsttjWDnOELNHjux+Ju59MNY
+	 /URVoorMncYyCzvX9VeofQFk7WldoN/Ri5qk6rB1XFXfi+hA14lKHW1R2sRPlxfo/E
+	 LGLDW2D8KsMU/Gla3tq/bXrtgsgK9NPEPhMAYMtEgjB4rEKVqgNW9ZLANwHmFPzbv2
+	 KyzNMpjT5XzFw+NFZx3vex8f/0R9leYdi3PuQeMO27/gBBOFaJYqsNHIsKj7h+b3pJ
+	 6c41KggZR4CKg==
+Date: Mon, 21 Jul 2025 13:47:55 +0100
+From: Will Deacon <will@kernel.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Kees Cook <kees@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+	Michal Wilczynski <michal.wilczynski@intel.com>,
+	Juergen Gross <jgross@suse.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Roger Pau Monne <roger.pau@citrix.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Usama Arif <usama.arif@bytedance.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Thomas Huth <thuth@redhat.com>, Brian Gerst <brgerst@gmail.com>,
+	kvm@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net,
+	platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
+	linux-mm@kvack.org, Ingo Molnar <mingo@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
+	kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH v3 04/13] x86: Handle KCOV __init vs inline mismatches
+Message-ID: <aH42--h-ARsvX5Wk@willie-the-truck>
+References: <20250717231756.make.423-kees@kernel.org>
+ <20250717232519.2984886-4-kees@kernel.org>
+ <aHoHkDvvp4AHIzU1@kernel.org>
+ <202507181541.B8CFAC7E@keescook>
+ <CAMj1kXGAwjChyFvjQcTbL8dFXkFWnn9n47bkN7FP=+EsLNsJdg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXGAwjChyFvjQcTbL8dFXkFWnn9n47bkN7FP=+EsLNsJdg@mail.gmail.com>
 
-Since commit
+On Sun, Jul 20, 2025 at 04:10:01PM +1000, Ard Biesheuvel wrote:
+> On Sat, 19 Jul 2025 at 08:51, Kees Cook <kees@kernel.org> wrote:
+> > On Fri, Jul 18, 2025 at 11:36:32AM +0300, Mike Rapoport wrote:
+> > > On Thu, Jul 17, 2025 at 04:25:09PM -0700, Kees Cook wrote:
+> > > > When KCOV is enabled all functions get instrumented, unless the
+> > > > __no_sanitize_coverage attribute is used. To prepare for
+> > > > __no_sanitize_coverage being applied to __init functions, we have to
+> > > > handle differences in how GCC's inline optimizations get resolved. For
+> > > > x86 this means forcing several functions to be inline with
+> > > > __always_inline.
+> > > >
+> > > > Signed-off-by: Kees Cook <kees@kernel.org>
+> > >
+> > > ...
+> > >
+> > > > diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+> > > > index bb19a2534224..b96746376e17 100644
+> > > > --- a/include/linux/memblock.h
+> > > > +++ b/include/linux/memblock.h
+> > > > @@ -463,7 +463,7 @@ static inline void *memblock_alloc_raw(phys_addr_t size,
+> > > >                                       NUMA_NO_NODE);
+> > > >  }
+> > > >
+> > > > -static inline void *memblock_alloc_from(phys_addr_t size,
+> > > > +static __always_inline void *memblock_alloc_from(phys_addr_t size,
+> > > >                                             phys_addr_t align,
+> > > >                                             phys_addr_t min_addr)
+> > >
+> > > I'm curious why from all memblock_alloc* wrappers this is the only one that
+> > > needs to be __always_inline?
+> >
+> > Thread-merge[1], adding Will Deacon, who was kind of asking the same
+> > question.
+> >
+> > Based on what I can tell, GCC has kind of fragile inlining logic, in the
+> > sense that it can change whether or not it inlines something based on
+> > optimizations. It looks like the kcov instrumentation being added (or in
+> > this case, removed) from a function changes the optimization results,
+> > and some functions marked "inline" are _not_ inlined. In that case, we end up
+> > with __init code calling a function not marked __init, and we get the
+> > build warnings I'm trying to eliminate.
 
-commit f16d9fb6cf03 ("power: supply: bq27xxx: Retrieve again when busy")
+Got it, thanks for the explanation!
 
-the console log of some devices with hdq but no bq27000 battery
-(like the Pandaboard) is flooded with messages like:
+> > So, to Will's comment, yes, the problem is somewhat fragile (though
+> > using either __always_inline or __init will deterministically solve it).
+> > We've tripped over this before with GCC and the solution has usually
+> > been to just use __always_inline and move on.
+> >
+> 
+> Given that 'inline' is already a macro in the kernel, could we just
+> add __attribute__((__always_inline__)) to it when KCOV is enabled?
 
-[   34.247833] power_supply bq27000-battery: driver failed to report 'status' property: -1
+That sounds like a more robust approach and, by the sounds of it, we
+could predicate it on GCC too. That would also provide a neat place for
+a comment describing the problem.
 
-as soon as user-space is finding a /sys entry and trying to read the
-"status" property.
+Kees, would that work for you?
 
-It turns out that the offending commit changes the logic to now return the
-value of cache.flags if it is <0. This is likely under the assumption that
-it is an error number. In normal errors from bq27xxx_read() this is indeed
-the case.
-
-But there is special code to detect if no bq27000 is installed or accessible
-through hdq/1wire and wants to report this. In that case, the cache.flags
-are set (historically) to constant -1 which did make reading properties
-return -ENODEV. So everything appeared to be fine before the return value was
-fixed. Now the -1 is returned as -ENOPERM instead of -ENODEV, triggering the
-error condition in power_supply_format_property() which then floods the
-console log.
-
-So we change the detection of missing bq27000 battery to simply set
-
-	cache.flags = -ENODEV
-
-instead of -1.
-
-Fixes: f16d9fb6cf03 ("power: supply: bq27xxx: Retrieve again when busy")
-Cc: Jerry Lv <Jerry.Lv@axis.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
----
- drivers/power/supply/bq27xxx_battery.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/power/supply/bq27xxx_battery.c b/drivers/power/supply/bq27xxx_battery.c
-index 93dcebbe11417..efe02ad695a62 100644
---- a/drivers/power/supply/bq27xxx_battery.c
-+++ b/drivers/power/supply/bq27xxx_battery.c
-@@ -1920,7 +1920,7 @@ static void bq27xxx_battery_update_unlocked(struct bq27xxx_device_info *di)
- 
- 	cache.flags = bq27xxx_read(di, BQ27XXX_REG_FLAGS, has_singe_flag);
- 	if ((cache.flags & 0xff) == 0xff)
--		cache.flags = -1; /* read error */
-+		cache.flags = -ENODEV; /* read error */
- 	if (cache.flags >= 0) {
- 		cache.capacity = bq27xxx_battery_read_soc(di);
- 
--- 
-2.50.0
-
+Will
 
