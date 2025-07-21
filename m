@@ -1,285 +1,233 @@
-Return-Path: <linux-kernel+bounces-739637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFEE6B0C8F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:39:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 61DB2B0C8F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:40:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 154A617D0BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:39:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9833D17DBFF
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF8792E093A;
-	Mon, 21 Jul 2025 16:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 132952E0923;
+	Mon, 21 Jul 2025 16:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QjO6c26V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="gdYFXC6v"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2087.outbound.protection.outlook.com [40.107.93.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A6F1FF7D7;
-	Mon, 21 Jul 2025 16:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753115990; cv=none; b=j9XR9e5iMXl6J438pi3BdCt8Vw1G8x6oMnigU3greY7on0q33Wm0e2zxp3XXirxpUQI1XhLfHleIfMh2BCbmBNGsBE3AoEG2m2NPIZOdYVjq9NFBJteIhbDlblvdkjnLgeITOwvZtD0x11xKa8Mv7dyuokCTNbbSQSsRsz/d4jQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753115990; c=relaxed/simple;
-	bh=0M2kegxVrOG9bbNIWsfmtfYN+NJqZkcIDUBbMnlp/fk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n9q4M18G1M6K6Ey6op76so3PwksLdWUfw1bYtpKRRorY6fGfpEzbymU+RAussgOqGnuDMjlRMaKFjBY4KKNX4webYM/fAlqXKG4ciTyTYw1y8Bv6rmdNbd4OClBIr7eHkoUtPOdmgV2KF75IUs9lDty9LPrPheIR0jXDyDNk0vU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QjO6c26V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BF7DC4CEF7;
-	Mon, 21 Jul 2025 16:39:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753115989;
-	bh=0M2kegxVrOG9bbNIWsfmtfYN+NJqZkcIDUBbMnlp/fk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=QjO6c26VaT5pOK+EqFwDQZgVVFf1bWRB70rU4TqCWQNnN8yz58o11cW2GPvmQZCX4
-	 ZEnlCBB+CUY4RzRqFIf7FxtkL1NhZCToTl1eyn/7zsNHX8NXTFodD7B9RJKwTSz8ZY
-	 2y3Gzh+QPLbBMPlHlJRPrKJQVKUWtTIco+nmn9kwD6m9+PyQkcSVo35xni35IkSJOZ
-	 GZeleVNUy6mCyxJht26f48pRbzZRr/LQYrX1kzX2cieL3nd+pf3lZE0dH7pCZ4rGV4
-	 q5WnN7LUfvoGPBpph1JkgHZX26eX1ujOEU+iGPXEGEzRdUEQ5txrONZ+wJ8ZHebLad
-	 kLKnF0GB0/pNg==
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-613a6e39f52so1791210eaf.3;
-        Mon, 21 Jul 2025 09:39:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVrtKhk/64CJ7Sko+q5KkR6xDHZDRqZ+7ntqBnvnesV6cdiYSiXxlQFUIEwYTo1v8pQRafzsgilyEc=@vger.kernel.org, AJvYcCXlfQlG6f1HTUIyyW2Fzxx3AMlkRORL96DQ/fqCN1DW1Ed4Y78GLiuAq0cKiGG5uLVvpUkEzFl0e6oLvys=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGoHO1A0Bu47D7H2wD2AQB37GW/zV+DuU/j882AyssquGKxIAn
-	9XDXrZ+iBswYiaymD/My/J6Cp588alzVbd5V8WIarAt+bMvR7T/FoB41Y8U8SwXMkVe4wdSbaxd
-	9pflt/9G8JKo3mm2UMICNa3t1qdowYM4=
-X-Google-Smtp-Source: AGHT+IG6ruTxet2aCkfZ15+Zb6qqzelc3GS7/NSmDucWVUx9SEYBfsHFnr0MjU/etVc+hR0GVrJPLYbXmXvFz5XSSpk=
-X-Received: by 2002:a05:6820:905:b0:611:b142:20ed with SMTP id
- 006d021491bc7-615a1fa2b2amr14848833eaf.7.1753115988825; Mon, 21 Jul 2025
- 09:39:48 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E55BF1FF7D7;
+	Mon, 21 Jul 2025 16:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.87
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753116048; cv=fail; b=O0k/ronu2Sulr0+phYiZ4cZUO0paR2++BJExYdsgbwNU8fVXPXkCoa0m5yhTUCJLPFCmNswUohk4e2BQmCGAHzpKfli9Mf1maLlK+dXwC7AunSUEuyiahQ/BC5xKp1BFJLzLQcbdxtM8Qvj+BNCdI4/Y9rE10T/T34RghZNHVP8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753116048; c=relaxed/simple;
+	bh=ju+7r/0jAtWRR+KQbtCeQLCE8Mkfmo2ilWbL/vnQRcc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=UCe+HTiw8zYooCPDGTdPzWoAiZjPVu+cc+fjdq82sCWZMAb1uAi8Ebq8ITDAmg/Pw6zt/69oVuB4WNpzoZATYH++InNEVsnsGAEea+onCCtCbJyd9HQ5I/cyQRI0sC4NCULT2J7TUil4dfOo8wjzB/grJKlofuVhQXXRpf2563k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=gdYFXC6v; arc=fail smtp.client-ip=40.107.93.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=G3/lp4NNwL5EeHXn+Ux0rvogeeqhaykQqQLqS+Hm6/hjRwYu3SeQZjZbhtkZu6Pcw35llX1llxBjtVesaLZqVknnCv+Feb1HbY3BSvCAFPpfOHwFff5k9UluenuqdhW2fzcC0qGpaeKSPBbVh1gvh2nK6pm0fPu1IXIaX902Y4BCNV+8Bxz3cPNa01hRY/lgjPNbh7rvv0OzoqSYKKmF2Pgn1ZZEjOxB+dMcM6p/8W7BkgfCB4uigRhiE35PwSvs8YuqSCuVvaUfBRdUaguLObhO+x5hIxUWx6dFnn7DAB8azY1Mmlxiyn/u/6HwLYzk7eroTnNKDNWjHLqUaecwLw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=b56A+DISO/WpH4kNClEAPxiWyEVgLJnlZRtIKUuRIEs=;
+ b=nIxFzLFZ+aGdWZbXa3bpoSrOLBFDp90XxJdbfwyO6Ns4dGEybLeZf1fHd5yRnNPRX78rlclzy3Od4tfxVOBxG2r0sF4NbzUv/Qn9DHEKemFZoSTUZvFCMdHptlS52RUbHVtQSG4gwcGTTWGuC0xr5rLj/EnTnVCLH2tuEd7sNmos7Gac1RMxNakI2IdQXO7i0//GcJeK6aLxpGAJs+D2zgs4z6ZtdnkvL1H0UpNC+T34ofiHiSW4qeBa+/8v2jIktRidsWBYAZFd99SJPBz8mJfnAGp5eNReSa3MZqomgDgaPE6Blj8QIPBuXVY4c1RUfPHVoiUJW0SMATwu3Ghu4g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=b56A+DISO/WpH4kNClEAPxiWyEVgLJnlZRtIKUuRIEs=;
+ b=gdYFXC6vZOFT+giKPR4f3f2wnEuDyFK5irhjfhgC6fJ9AABcWugZNONjMdL1Rz/JQc8wzFFHhLougdc6cARWUyNsV+hAsHx1q9/DC4IFVJAf/FwEbB8l64oH8SAa/LdwBHq4XlCPo6lf+AtBs+3DEhJzXmT27FP1S4HEMZCkwq4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CH2PR12MB4956.namprd12.prod.outlook.com (2603:10b6:610:69::11)
+ by LV8PR12MB9690.namprd12.prod.outlook.com (2603:10b6:408:296::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Mon, 21 Jul
+ 2025 16:40:43 +0000
+Received: from CH2PR12MB4956.namprd12.prod.outlook.com
+ ([fe80::fa2c:c4d3:e069:248d]) by CH2PR12MB4956.namprd12.prod.outlook.com
+ ([fe80::fa2c:c4d3:e069:248d%4]) with mapi id 15.20.8943.029; Mon, 21 Jul 2025
+ 16:40:42 +0000
+Message-ID: <b1ada416-dd27-4458-8929-bf7d144387cb@amd.com>
+Date: Mon, 21 Jul 2025 11:40:40 -0500
+User-Agent: Mozilla Thunderbird
+Reply-To: tanmay.shah@amd.com
+Subject: Re: [PATCH 1/2] remoteproc: xlnx: disable unsupported features
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Peng Fan <peng.fan@oss.nxp.com>
+Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250716213048.2316424-1-tanmay.shah@amd.com>
+ <20250716213048.2316424-2-tanmay.shah@amd.com>
+ <20250721065724.GC4844@nxa18884-linux.ap.freescale.net>
+ <aH5cNYY8_ai2xvY7@p14s>
+Content-Language: en-US
+From: Tanmay Shah <tanmay.shah@amd.com>
+In-Reply-To: <aH5cNYY8_ai2xvY7@p14s>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA9PR03CA0024.namprd03.prod.outlook.com
+ (2603:10b6:806:20::29) To CH2PR12MB4956.namprd12.prod.outlook.com
+ (2603:10b6:610:69::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250716123323.65441-1-ulf.hansson@linaro.org> <20250716123323.65441-2-ulf.hansson@linaro.org>
-In-Reply-To: <20250716123323.65441-2-ulf.hansson@linaro.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 21 Jul 2025 18:39:37 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iq7UODJ83fkwnzfFR3HpG2_R-YRnip_cLwyUHZZ+rXyg@mail.gmail.com>
-X-Gm-Features: Ac12FXy_3rMe-tmgsVrMlt1HCZQ2tNv69WiTVXn1w_eRtCIN6SbSDP4tdmRw4ns
-Message-ID: <CAJZ5v0iq7UODJ83fkwnzfFR3HpG2_R-YRnip_cLwyUHZZ+rXyg@mail.gmail.com>
-Subject: Re: [RFC/PATCH 1/3] PM: QoS: Introduce a system-wakeup QoS limit
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
-	Kevin Hilman <khilman@baylibre.com>, Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Saravana Kannan <saravanak@google.com>, 
-	Maulik Shah <quic_mkshah@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB4956:EE_|LV8PR12MB9690:EE_
+X-MS-Office365-Filtering-Correlation-Id: e8420ab7-f3c0-46fb-1b7e-08ddc875557a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RncxUVNYbUVpeENmV0xFZndSaVJDSTlHektBT2M3azVuc2I1enJGY010Qzd2?=
+ =?utf-8?B?WnZiN0lLODlhTExSTDJrNDQ5MmIxa1pXaWkrblpnS1ZGSGFuVEZQWUcwSGha?=
+ =?utf-8?B?ZU4zNVZsV3FPVUlCc1ZxYVh1SC9SMVh2UmFlQWhUTjA5czk1WENFSWdwNzFZ?=
+ =?utf-8?B?amI3bkVsN2JBdFZrQTlXUnEzYkMwVnNXYlpTSi9TdGRmODQ1QjB6VkJGc1NJ?=
+ =?utf-8?B?ckJBQU9jL29CVUFFRXRtbjdRSHFLY0R0aU8vQjZxSHRoa0JlNVV2SnZxUnJl?=
+ =?utf-8?B?V2FVVW5uK2JXZTlLQUlmWk9YbzFmUFdjT0Z0YjhNL0JHZDNKeG9tTUVHbGFu?=
+ =?utf-8?B?Zk9hclprbkNEeDA3M3kya1pIaWVOdFpTaGtNbC94RjJGejBnTnlEY1NXak81?=
+ =?utf-8?B?SG53UUhaYlhjd3UraURsNi9YOTN2YzhIVWdaZGpJL3ltbW8vbDZGUW5peTk0?=
+ =?utf-8?B?ZS9BK3lDemdCTUVvcWp2VXRaYW45dHJVaWRmUkhtOFE2L1hnOG85Uk5FbmVh?=
+ =?utf-8?B?OXBQekxJdkVCSkcxMVJsY3AzVUQ1R21obXJJMFE1cEZtNVgrSEFWd1VDL3Nt?=
+ =?utf-8?B?aEI1SzlvOFBRYVF2NC9uMm12ajBjcURjQUNPT3VaOWpDNEtuVjBhWjJGeXZU?=
+ =?utf-8?B?a1FiYnNMU1VNOWdJQWFNWnZNVFQrME9KSkRwQUg1NGV3T3VQNUNIL0ZJdUJz?=
+ =?utf-8?B?QThtQWtQRE5RTDVJS21yTjVFbkl5TlJsM2lvZ2YwQnpDL1RTbnlpV241ZUc5?=
+ =?utf-8?B?aFZiWkJ0eXJCWWdJcDN1L0JnVHh3SjlkSFd4YmVNTnRjdTBjWVZORHVEbG9u?=
+ =?utf-8?B?WENsTjBTZmR4OFNQZDY3TTd0K3ZyMlhHU3ZTT1h2ZElMdm5uRUVXdVJlZEps?=
+ =?utf-8?B?ME1VcVV3d3lRUThTeG5IQ2p4QlNQNlk3MkVmSGZaam52cm9NRlRTdjN2dUhw?=
+ =?utf-8?B?RUhCSUExUVRMTHpkUzdSMUVOV2RzSkNFZkh1aC9zUTFTR2VLa0N1eGhlK1c2?=
+ =?utf-8?B?bXdPZ1EzRUxwY2FLZkUzdlpIejV1Z0xKaUZVRTd4ZDhLSFVraWs2dnBNWStH?=
+ =?utf-8?B?bVBKcWJhRmFYYTBqeFhxV3U3V1RHNU5GR2lPaG1SalFBK0hkRXQ1TkNLVVlW?=
+ =?utf-8?B?dVNzeU8ydFBBbjQ5TW9Sdzg2RmlqNlFqTXVqNEVwY1hmL0R3S3dTa21nV2FG?=
+ =?utf-8?B?SjB6WHFwcUh2NkpEcXdudXk4cS9jZHNtOVNhUGdjWnFWMVY1QXk1eGRpKzVv?=
+ =?utf-8?B?VWxvdmh2d3d6ZXdnQ1JTL2pYeGl5ZURhMnVySjFuV3gvQkVKRWtJMUdXSEJZ?=
+ =?utf-8?B?aHNVRUJLbWU5TUM2ZHBiVUZCcHdidnc3cnlBYnlCeWNsR1M0T2o5bHFZRkJD?=
+ =?utf-8?B?VWlSbGd1aXhMMXRIZCtCWnNqbzRLMWFuQTZhUDZ3L2JwcjJXcXVqbWJHYWxl?=
+ =?utf-8?B?MmdyOHBrSGFybjRWZFFwM2F6VGE4SFBjMEh4T0Z6VXdRWXBaUkY2T0NVYTQ5?=
+ =?utf-8?B?MVlNaXJXdStaNDBTWXdBUXpVZ3hKajhsNnlaUEhXZ0w3bTV0NWtpbzRtWlJ5?=
+ =?utf-8?B?TTBUYzc2YjBweTFhVC8xVTF4ZkplMHg1RDZRUTNlVXUwdmhrUit2Ym9ZN0pI?=
+ =?utf-8?B?TjN3dGhKZEIzc2wzaG5PZDIzZ0k3VkpZajVLaWczSFdrZjd6WlJ1aVRiRkc1?=
+ =?utf-8?B?NjY4SHlhL292UEtGOWMyNmNEcGl4S1YzYWIrUlk3MFQvNjNab1pScWo3bE45?=
+ =?utf-8?B?dnZGS2NCVEFmSllndkhpQkQxV3JwT01QMW5uVlVEaUhFbzRpeGQ4d1ptVThr?=
+ =?utf-8?B?SWZ5L1ArTm5pRm9UeEVqZ0p1Wi82dS8vZjVDY2JIdDRxQlpVV2xxYUJGRzN3?=
+ =?utf-8?B?V2V0WFoxYlBwLzVhcUJZVXdKTFhMdmlydG51alM4QmlibUxlVFh4amh0M2NS?=
+ =?utf-8?Q?0lHnZUbqBFw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB4956.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UXFUeEp3bGVnbnFlbVNhV2F2andxT0pHR2hzai8rMjR0dCtLZms5MERhM3VH?=
+ =?utf-8?B?VzhWcXNBM2dSTU9ocmpjeWwvWjczVmlOQzhMc2I5Q1ZQK0s5N0ZUT1ZZT2Z1?=
+ =?utf-8?B?d2NrWXp4NyszcEdrQk9LZytyd0tnditicUxUTForRTh1RE81cTRrQ2lVaXpy?=
+ =?utf-8?B?NUp5ZDJDbXViVkJaTmxOUGV0UW1oRkp3aFdPcmFzR3NGUVBuUEpETTRkb3Jh?=
+ =?utf-8?B?dnk3ZkY2TkJZMlpOeWZ3c0tyTllZaWxrcjV1UWlRLzhSODMrSHdqbEhhUXN5?=
+ =?utf-8?B?S2s3Y2N4b0tkK1pEL0J2a2hzS3F6cU9kR2VTeXBEUTZkOGZWRzZLeExBc2pG?=
+ =?utf-8?B?L2hRRWU0NytvYjIySHovMlBtYXZJYTVCQkRpY05jR0ZKMG1PRnpRL1ZMYXVm?=
+ =?utf-8?B?SXBlbXpwK3Bud3BrNFkybVdvQXgyVldhWU5sOFdZNnVGMmV0ZmV5RnpUUVhG?=
+ =?utf-8?B?RTh4dzFXTUdVZFl3LytaK1ZvWjJRODRGYlNiaGk5QUFkclg5akRUeEVJb2pE?=
+ =?utf-8?B?Y1pMSUdGL3ZralFCb09MQ1B2Z2dqdWVZdWZQLzBxaVoxL21rZFI3cFdSbHhm?=
+ =?utf-8?B?TVVDSTh6Q3NYSStGYnlTYnZpbFQ4MkNCOFJzKzRYZ3pHbm1iZWpWVFNXSmFw?=
+ =?utf-8?B?YWd5SzBEbnBRMmV2cnloMjllMk84dmZuaVJSdHlWakYwV3BkWERVSU1BN3BY?=
+ =?utf-8?B?MlNwT2NOb3YrM2l3RDdSRmtOcEVkcTZHdXgvcmJXVGFmZ1ltdDkzY1hMY0dH?=
+ =?utf-8?B?azhGQWNpREQ4N3FudkRhRXZTTWdLUXUweTMvNXJOalZnclROOGE1alBTSUdO?=
+ =?utf-8?B?RHJrNmFEUHcvSzVWSXBMbjE3Rml6UDQzMkdiaWZmcW9VVEdWYlpCVjNidFdE?=
+ =?utf-8?B?T3RZcWZWNTkyOHJtNmVvNlZiRFFVekNVeVVRaCt2bDdFbHRqbXNUZWNQVENE?=
+ =?utf-8?B?cXA5WEk0L2hOWEV6OWROdTJhRmNaU29PdzBCZi9VczlXR3BJMkcxYzdyMXdq?=
+ =?utf-8?B?MTdrUkx4TzVmY1dIeXc3Y3QvSTFiYXkxeFhmUlk1OFU5L3J5S2RKQXJSbjhR?=
+ =?utf-8?B?UXJielMwVlVQSkVsTm80OXZid0o0eW9TR2k1cnRQTXNPOEpVL2I4T0NydENp?=
+ =?utf-8?B?WDg1U1BTRlEycytCSkdBV0dNWjJxQUF4OWpCQXN6dFlaMVp3empVVENPSGlI?=
+ =?utf-8?B?Wk5jMDRQeGdhd0tpbS9INnc1KzV0RFZuK3c5bHg5R25qZXcrM3Nkc1R0RU13?=
+ =?utf-8?B?ZFYyOHNZZ2Z2dFdIRHlRRWdieUdtdVJIUzhCdDJGVDlZNFpKbXJlS3UwL2Jh?=
+ =?utf-8?B?NlNTZndNSWp3a3ExenRnVktSTnhYTG84dG5uWHB0MVBQTCtIMUUvNGs1Y1F1?=
+ =?utf-8?B?NTFLV0F0UlVaZ2x2RTdkU0N0ZnBqa0dKc21iVlFPRExyVjZtZjRyeGlkeE5a?=
+ =?utf-8?B?KzhpdDlabDE1OVQ0cXU3dUEyaDNNbWprY2hvZkFaWXpUOE9jWmxDazdrZU1z?=
+ =?utf-8?B?cDhtUW8xT0FvVlFtNnpsT0c0ekN1akh2ckNnNGFTWW05MmFZQWQ2NjV5Rkho?=
+ =?utf-8?B?UHlQbmJBblA3NTlNaVZUZDJva1hFSjc1VEZCUGs1cDB6VkFzWmhrZzI4L3dT?=
+ =?utf-8?B?ejBrc3JFczdMTDJaVURhOGpZbzBBazNXc3B3ZlpuaFVQdmNXUG5rQ3ZsbXVo?=
+ =?utf-8?B?dkxqWi90MW0xTHR6b3NGUnEySnphTnpqZDVBTlMrUDBWeFF1bTI3SWhpVEx3?=
+ =?utf-8?B?c2g1VVNsUEhmcGpzOEFxd2FnT2RaSFRkZFplYVBwQjhkL2w1ZFB0cHlmRnhX?=
+ =?utf-8?B?cFJDc1VJMFBGMWJ2Uk9zWG1IMGxVRzg5YkdKRGhpSFd1TVhNd0dndWdITllz?=
+ =?utf-8?B?ZkdIMmJxT2M4ME0wcmVlUVU3clgvSGp6Z0l1SnJHWkxHcEQ4QVFlNUxoeVNw?=
+ =?utf-8?B?dHpyM3FHd20yL3U4QnRwQy91TzQwZG5jTTVTUlg3Zkh6RzdFYklBcHdPV0Y5?=
+ =?utf-8?B?Yi9VYkJ4cTNlZFpXR3lMUFhXSDRXQWxhbmFsNkl3azEzMHVlUk1uekJPYU1p?=
+ =?utf-8?B?OEczMVNOdGV1d2lGTC9aTitDalllMm9zR0V2ZEpCejBOaS9EVEZVeWw5NDYy?=
+ =?utf-8?Q?y4IA6E43OPRwTGA6JRtE1A2MJ?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e8420ab7-f3c0-46fb-1b7e-08ddc875557a
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB4956.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2025 16:40:42.8987
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MYMBJqSPmgQAFVEQUzN+BiZ2s4DYALIRTtZJCSfCQNODfhQDIfSTx5wtLyH5ANVg
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9690
 
-On Wed, Jul 16, 2025 at 2:33=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.org=
-> wrote:
->
-> Some platforms and devices supports multiple low-power-states than can be
-> used for system-wide suspend. Today these states are selected on per
-> subsystem basis and in most cases it's the deepest possible state that
-> becomes selected.
->
-> For some use-cases this is a problem as it isn't suitable or even breaks
-> the system-wakeup latency constraint, when we decide to enter these deepe=
-r
-> states during system-wide suspend.
->
-> Therefore, let's introduce an interface for user-space, allowing us to
-> specify the system-wakeup QoS limit. Subsequent changes will start taking
-> into account the QoS limit.
 
-Well, this is not really a system-wakeup limit, but a CPU idle state
-latency limit for states entered in the last step of suspend-to-idle.
 
-It looks like the problem is that the existing CPU latency QoS is not
-taken into account by suspend-to-idle, so instead of adding an
-entirely new interface to overcome this, would it make sense to add an
-ioctl() to the existing one that would allow the user of it to
-indicate that the given request should also be respected by
-suspend-to-idle?
+On 7/21/25 10:26 AM, Mathieu Poirier wrote:
+> On Mon, Jul 21, 2025 at 02:57:24PM +0800, Peng Fan wrote:
+>> On Wed, Jul 16, 2025 at 02:30:47PM -0700, Tanmay Shah wrote:
+>>> AMD-Xilinx platform driver does not support iommu or recovery mechanism
+>>> yet. Disable both features in platform driver.
+>>>
+>>> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+>>> ---
+>>> drivers/remoteproc/xlnx_r5_remoteproc.c | 2 ++
+>>> 1 file changed, 2 insertions(+)
+>>>
+>>> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+>>> index a51523456c6e..0ffd26a47685 100644
+>>> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
+>>> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+>>> @@ -938,6 +938,8 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
+>>>
+>>> 	rproc_coredump_set_elf_info(r5_rproc, ELFCLASS32, EM_ARM);
+>>>
+>>> +	r5_rproc->recovery_disabled = true;
+>>
+>> This does not block sysfs write if my understanding is correct.
+>> recovery_store does not do any check. So even you set it to true,
+>> user could still write sysfs to set to false.
+> 
+> That is the case for all drivers and not specific to this one.
 
-There are two basic reasons why I think so:
-(1) The requests that you want to be respected by suspend-to-idle
-should also be respected by the regular "runtime" idle, or at least I
-don't see a reason why it wouldn't be the case.
-(2) The new interface introduced by this patch basically duplicates
-the existing one.
+Yup, may be we can make recovery node read-only. Or introduce new flag 
+in remoteproc structure and set by platform driver that decides if 
+recovery can be controlled via sys-fs or not.
 
-The flow related to this I kind of envision would be as follows:
-(1) User space opens /dev/cpu_dma_latency and a single CPU latency QoS
-request is created via cpu_latency_qos_add_request().
-(2) User space calls a new ioctl() on the open file descriptor to
-indicate that the request should also apply to suspend-to-idle.  A new
-request is created with the same value and added to a new list of
-constraints.  That new list of constraints will be used by
-suspend-to-idle.
-(3) Writing to the open file descriptor causes both requests to be updated.
-(4) If user space does not want the request to apply to
-suspend-to-idle any more, it can use another new ioctl() to achieve
-that.  It would cause the second (suspend-to-idle) copy of the request
-to be dropped.
-(5) Closing the file descriptor causes both copies of the request to be dro=
-pped.
+But that's a separate discussion and patch.
 
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
->  include/linux/pm_qos.h |   9 ++++
->  kernel/power/qos.c     | 114 +++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 123 insertions(+)
->
-> diff --git a/include/linux/pm_qos.h b/include/linux/pm_qos.h
-> index 4a69d4af3ff8..5f84084f19c8 100644
-> --- a/include/linux/pm_qos.h
-> +++ b/include/linux/pm_qos.h
-> @@ -143,6 +143,15 @@ bool pm_qos_update_flags(struct pm_qos_flags *pqf,
->                          struct pm_qos_flags_request *req,
->                          enum pm_qos_req_action action, s32 val);
->
-> +#ifdef CONFIG_PM_SLEEP
-> +s32 system_wakeup_latency_qos_limit(void);
-> +#else
-> +static inline s32 system_wakeup_latency_qos_limit(void)
-> +{
-> +       return PM_QOS_RESUME_LATENCY_NO_CONSTRAINT;
-> +}
-> +#endif
-> +
->  #ifdef CONFIG_CPU_IDLE
->  s32 cpu_latency_qos_limit(void);
->  bool cpu_latency_qos_request_active(struct pm_qos_request *req);
-> diff --git a/kernel/power/qos.c b/kernel/power/qos.c
-> index 4244b069442e..fb496c220ffe 100644
-> --- a/kernel/power/qos.c
-> +++ b/kernel/power/qos.c
-> @@ -209,6 +209,120 @@ bool pm_qos_update_flags(struct pm_qos_flags *pqf,
->         return prev_value !=3D curr_value;
->  }
->
-> +#ifdef CONFIG_PM_SLEEP
-> +static struct pm_qos_constraints system_wakeup_latency_constraints =3D {
-> +       .list =3D PLIST_HEAD_INIT(system_wakeup_latency_constraints.list)=
-,
-> +       .target_value =3D PM_QOS_RESUME_LATENCY_NO_CONSTRAINT,
-> +       .default_value =3D PM_QOS_RESUME_LATENCY_NO_CONSTRAINT,
-> +       .no_constraint_value =3D PM_QOS_RESUME_LATENCY_NO_CONSTRAINT,
-> +       .type =3D PM_QOS_MIN,
-> +};
-> +
-> +/**
-> + * system_wakeup_latency_qos_limit - Current system wakeup latency QoS l=
-imit.
-> + *
-> + * Returns the current system wakeup latency QoS limit that may have bee=
-n
-> + * requested by user-space.
-> + */
-> +s32 system_wakeup_latency_qos_limit(void)
-> +{
-> +       return pm_qos_read_value(&system_wakeup_latency_constraints);
-> +}
-> +
-> +static int system_wakeup_latency_qos_open(struct inode *inode,
-> +                                         struct file *filp)
-> +{
-> +       struct pm_qos_request *req;
-> +
-> +       req =3D kzalloc(sizeof(*req), GFP_KERNEL);
-> +       if (!req)
-> +               return -ENOMEM;
-> +
-> +       req->qos =3D &system_wakeup_latency_constraints;
-> +       pm_qos_update_target(req->qos, &req->node, PM_QOS_ADD_REQ,
-> +                            PM_QOS_RESUME_LATENCY_NO_CONSTRAINT);
-> +       filp->private_data =3D req;
-> +
-> +       return 0;
-> +}
-> +
-> +static int system_wakeup_latency_qos_release(struct inode *inode,
-> +                                            struct file *filp)
-> +{
-> +       struct pm_qos_request *req =3D filp->private_data;
-> +
-> +       filp->private_data =3D NULL;
-> +       pm_qos_update_target(req->qos, &req->node, PM_QOS_REMOVE_REQ,
-> +                            PM_QOS_RESUME_LATENCY_NO_CONSTRAINT);
-> +       kfree(req);
-> +
-> +       return 0;
-> +}
-> +
-> +static ssize_t system_wakeup_latency_qos_read(struct file *filp,
-> +                                             char __user *buf,
-> +                                             size_t count,
-> +                                             loff_t *f_pos)
-> +{
-> +       s32 value =3D pm_qos_read_value(&system_wakeup_latency_constraint=
-s);
-> +
-> +       return simple_read_from_buffer(buf, count, f_pos, &value, sizeof(=
-s32));
-> +}
-> +
-> +static ssize_t system_wakeup_latency_qos_write(struct file *filp,
-> +                                              const char __user *buf,
-> +                                              size_t count, loff_t *f_po=
-s)
-> +{
-> +       struct pm_qos_request *req =3D filp->private_data;
-> +       s32 value;
-> +
-> +       if (count =3D=3D sizeof(s32)) {
-> +               if (copy_from_user(&value, buf, sizeof(s32)))
-> +                       return -EFAULT;
-> +       } else {
-> +               int ret;
-> +
-> +               ret =3D kstrtos32_from_user(buf, count, 16, &value);
-> +               if (ret)
-> +                       return ret;
-> +       }
-> +
-> +       if (value < 0)
-> +               return -EINVAL;
-> +
-> +       pm_qos_update_target(req->qos, &req->node, PM_QOS_UPDATE_REQ, val=
-ue);
-> +
-> +       return count;
-> +}
-> +
-> +static const struct file_operations system_wakeup_latency_qos_fops =3D {
-> +       .open =3D system_wakeup_latency_qos_open,
-> +       .release =3D system_wakeup_latency_qos_release,
-> +       .read =3D system_wakeup_latency_qos_read,
-> +       .write =3D system_wakeup_latency_qos_write,
-> +       .llseek =3D noop_llseek,
-> +};
-> +
-> +static struct miscdevice system_wakeup_latency_qos_miscdev =3D {
-> +       .minor =3D MISC_DYNAMIC_MINOR,
-> +       .name =3D "system_wakeup_latency",
-> +       .fops =3D &system_wakeup_latency_qos_fops,
-> +};
-> +
-> +static int __init system_wakeup_latency_qos_init(void)
-> +{
-> +       int ret;
-> +
-> +       ret =3D misc_register(&system_wakeup_latency_qos_miscdev);
-> +       if (ret < 0)
-> +               pr_err("%s: %s setup failed\n", __func__,
-> +                      system_wakeup_latency_qos_miscdev.name);
-> +
-> +       return ret;
-> +}
-> +late_initcall(system_wakeup_latency_qos_init);
-> +#endif /* CONFIG_PM_SLEEP */
-> +
->  #ifdef CONFIG_CPU_IDLE
->  /* Definitions related to the CPU latency QoS. */
->
-> --
+> 
+>>
+>>> +	r5_rproc->has_iommu = false;
+>>
+>> The default value should already be false. Is there a need to
+>> set it to false?
+> 
+> I never mind to see things set explicitly.
+> 
+>>
+>> Regards,
+>> Peng
+>>
+>>> 	r5_rproc->auto_boot = false;
+>>> 	r5_core = r5_rproc->priv;
+>>> 	r5_core->dev = cdev;
+>>> -- 
+>>> 2.34.1
+>>>
+> 
+
 
