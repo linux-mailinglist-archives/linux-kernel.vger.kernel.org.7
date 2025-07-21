@@ -1,110 +1,154 @@
-Return-Path: <linux-kernel+bounces-738669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10E78B0BBBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:23:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2907FB0BBB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:18:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40E6B177CEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 04:23:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3A2D1896499
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 04:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC341DE89A;
-	Mon, 21 Jul 2025 04:22:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0CBD1DE89A;
+	Mon, 21 Jul 2025 04:18:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="v98dh1mn"
-Received: from out203-205-221-242.mail.qq.com (out203-205-221-242.mail.qq.com [203.205.221.242])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YTtMxOTP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC78A469D
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 04:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.242
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B588139B;
+	Mon, 21 Jul 2025 04:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753071776; cv=none; b=kovTuMPHGYmNd/zt2VdSpNfz0tj9B443CSyODkbrg0Xjs168+trP0jM/QlN7cD/jeKZ5XjrscsW5JRRC+owYsovPEo3KKm2RvbigD4/Ijc00FDjzudaNzn5ZWP9hj/+Afm5Dd7K/UpOnip81ShPWQEuunlA/XxVj2m8WP0l44qE=
+	t=1753071504; cv=none; b=ZqnGDXRsdD/djQI1Ar3eWK42Y+mqirG9kPS2NB6sctFti2PFoC33fB3OlrnKhTN5pN3yKsqVDFFv/MV6oiyrw94+3Dc4SeIeAl4EoPhZGMQ67jLJwyg0Uzb0nbfOaSY9sSJbSCsWrpb1ca7LOsI8/nVxopS8+xF36B3VgLG+9rE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753071776; c=relaxed/simple;
-	bh=r37ITysm2FDy/uFAKWHZNDHxe+gT+FCR2v5TwtZztVk=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=Bde7kqaJCeDrf5rc6QdgG/RcbZ94/uFdh8Ayns0Ph7gy8DyyMIsh/zApGVMR8h9dCACuySTAfGHUvPrrkWUL1BzDPIIQRu52rox2QPIsyyX51tDPqMixNuadOJX129uXJ+NdXzFrXvrH7Q4G/b/VFLfk1YaaljSWmJ538r+bDaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=v98dh1mn; arc=none smtp.client-ip=203.205.221.242
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1753071464; bh=huuCQOiCI/l/o5VOAp01tohbM7fD8xmvpEMzGbxvGwI=;
-	h=From:To:Cc:Subject:Date;
-	b=v98dh1mnRAiBdV4zVkIV6l+soJQ/xB21G2om6OxRSvVat1X2HGxJ2UZyAiB/UWgEQ
-	 L2dLs/YexcQ8JMYKTT0zW4fVSU+JmRGccAFnzRYgt64NSAFNLOdoWyBDMh9B/f62qG
-	 kxIo0x2sfc1nhGi9jcEp3ufiPkwieXevo4joWoBM=
-Received: from VM-222-126-tencentos.localdomain ([14.116.239.34])
-	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
-	id 469040FD; Mon, 21 Jul 2025 12:17:41 +0800
-X-QQ-mid: xmsmtpt1753071461tsh4xanrk
-Message-ID: <tencent_E9EF29CDB2286A690EB871B78BFE62491908@qq.com>
-X-QQ-XMAILINFO: MsOOLhKAF3pPEXAa6VcqPqM6yfUgLB3ZpPoC5IRU4CTBRBcx6fLzuitNnRl1OL
-	 i5PghUVGrZYkOOMpRRsv6E2wNsBrGkSFzWB25dD8Ys8bh0Y2ccPa6OQv8lo5SChErfXnKtCJ83+O
-	 v+TXt2v9dNh9i3Y+EwJS/XMlxNCniGYbWoggoRdRzWZ60VcKEy5CgddW2LI5YfA0L8EQzO92aqDx
-	 lo1QqaM3oIJdKQxP7hW+U8ktlrJOQdO7pers5xgrITKgG8IvvabrFYX4LLwmDvqHsaG3CvbDWTdV
-	 tkV5KGifRjazgnZv+3JAECNJyf9c+pSIeied5gwLZWyVYmOIh0ikAwsoekgiJm1Cni91HUtMurwb
-	 h3TkK2tGIEFNzO+O1Ddzh3WxxWDFgXa/+gX3ehHtxJv66LYbjWqsRWDSoG7OHenyGjblnzDsPFsW
-	 xcm9jncFOMS5rzx+3HPWZt4ufpg3Ki+n5Yk2KN2+N90cAkevp1rDJZUOzdHbVhPkB7n0gjmSidhh
-	 nd7+sukXUfiN78MUvcWeMcC5GZaNE/A7AYgxsJUafQtepCiwc88EOnvP8O1f3d7e+SCfqD/V2J1R
-	 vu5lmnvwHOwzemHtL5dTme33Y7Iv+Tlef5H7Ubi7vRCvzs7rQTHoRvDk8WXlTvjyFQCW8fRBq9UR
-	 Kc9mNvKMSOG1hqSRRPFyzT3XQmQPXiMYUNFIn9anfvevF0U+uTcner60S/mwi8OUzFYs//A++2Sp
-	 lgxv8/9U5nFgxNEBhz8I3mHRqDytXup/N+trrU0eK2+ZWM0YrmV2VqFNM2/7Z4ah4x1EU+D5DB0R
-	 BzmU1BRtlQ1fIg/GXHEpfSE8k5coFr5IYV35hALOeRzmGz2OjU+XISVEWyELKOF8KR2BEBKx6BOB
-	 I6BZD1+KIeQX76Kywk/pn/TJR/nUvMaWR+Hvh9RP6ifDHXT5HUPL5/gxcCXiUJxMyNl6B3M8NYGJ
-	 u8dK92bv3U0NQJxDorBLe/RrX3Uu04/sJfGp91PYbzF3cB+divCU4rE+kqzTbzUrMYhtltzojBnJ
-	 nxax7QKaMAP84zo9+K+JQI/pjpBbsPdZtDjUsjZ8l49DjwJmZ2LSPm0298v1e0PwpReJjf0KtOQO
-	 dIGl6wJbnpgNcIsa4=
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: jackysliu <1972843537@qq.com>
-To: maddy@linux.ibm.com
-Cc: mpe@ellerman.id.au,
-	npiggin@gmail.com,
-	christophe.leroy@csgroup.eu,
-	1972843537@qq.com,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] powerpc : fix resource leak in holly_init_IRQ()
-Date: Mon, 21 Jul 2025 12:17:32 +0800
-X-OQ-MSGID: <20250721041732.145920-1-1972843537@qq.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1753071504; c=relaxed/simple;
+	bh=seQWfNuMVmyihCKpCTMeU9CJJYqh/Fo379bjZ/VmuxQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TC6XAmeLklyh2a6IQdapzutIhUeMwVFdEt7TtWvOKbBZCNZlDDgbxjNW8frFwP+Zj8tTa3fp7exAGe/wSbuqQL1t4Z42jNUOCk/TwRETwn94/XujtnKyDYaSq+T/rpKjGYL0jefJX5tZCEQKvXrJYHpJHjY4t92L30PezlJPhX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YTtMxOTP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81797C4CEF1;
+	Mon, 21 Jul 2025 04:18:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753071503;
+	bh=seQWfNuMVmyihCKpCTMeU9CJJYqh/Fo379bjZ/VmuxQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YTtMxOTPjd7MKWNvvkeeVPk9smErtwp04Rb17iw342NCepv5QlT7ben5f0G/Qhbq3
+	 3NdeICgNq2VYTmcpqbNT248HVbm4AhezD5xfOuV89RTqlqh77miE0CTsDBh7oq243f
+	 Vu8682zZlzi4KhrlAjb44waI9kRdaiNjHk5WMcPEXcHmSFZkbN1ZEuzFTVcFL3/oJw
+	 nWlmEchS5ZLohmMTQnPcYiwNBKarV3qioKaOpMt7gG+DvJs4pAz4Arxk8inWWIXZPJ
+	 nGrOIWB1l5JSYhHqVNg+HiQUH1EecI9+ml8roM288Se7xh60NtlfLONex0/f8ocLtM
+	 SWaNymQ6dtgmw==
+Date: Sun, 20 Jul 2025 21:17:35 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>
+Subject: Re: [PATCH] lib/crypto: arm64/sha512-ce: Drop compatibility macros
+ for older binutils
+Message-ID: <20250721041735.GA3372@sol>
+References: <20250718220706.475240-1-ebiggers@kernel.org>
+ <CAMj1kXG8rEGH9suNf+s26174-SDrVWaV3RcuY53ysiBbrJtKUQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXG8rEGH9suNf+s26174-SDrVWaV3RcuY53ysiBbrJtKUQ@mail.gmail.com>
 
-From: Siyang Liu <1972843537@qq.com>
+On Mon, Jul 21, 2025 at 01:31:47PM +1000, Ard Biesheuvel wrote:
+> On Sat, 19 Jul 2025 at 08:07, Eric Biggers <ebiggers@kernel.org> wrote:
+> >
+> > Now that the oldest supported binutils version is 2.30, the macros that
+> > emit the SHA-512 instructions as '.inst' words are no longer needed.  So
+> > drop them.  No change in the generated machine code.
+> >
+> > Changed from the original patch by Ard Biesheuvel:
+> > (https://lore.kernel.org/r/20250515142702.2592942-2-ardb+git@google.com):
+> >  - Reduced scope to just SHA-512
+> >  - Added comment that explains why "sha3" is used instead of "sha2"
+> >
+> > Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+> 
+> Acked-by: Ard Biesheuvel <ardb@kernel.org>
+> 
+> Nit below
+> 
+> > ---
+> >
+> > This patch is targeting libcrypto-next
+> >
+> >  lib/crypto/arm64/sha512-ce-core.S | 27 +++++++--------------------
+> >  1 file changed, 7 insertions(+), 20 deletions(-)
+> >
+> > diff --git a/lib/crypto/arm64/sha512-ce-core.S b/lib/crypto/arm64/sha512-ce-core.S
+> > index 7d870a435ea38..eaa485244af52 100644
+> > --- a/lib/crypto/arm64/sha512-ce-core.S
+> > +++ b/lib/crypto/arm64/sha512-ce-core.S
+> > @@ -10,30 +10,17 @@
+> >   */
+> >
+> >  #include <linux/linkage.h>
+> >  #include <asm/assembler.h>
+> >
+> > -       .irp            b,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19
+> > -       .set            .Lq\b, \b
+> > -       .set            .Lv\b\().2d, \b
+> > -       .endr
+> > -
+> > -       .macro          sha512h, rd, rn, rm
+> > -       .inst           0xce608000 | .L\rd | (.L\rn << 5) | (.L\rm << 16)
+> > -       .endm
+> > -
+> > -       .macro          sha512h2, rd, rn, rm
+> > -       .inst           0xce608400 | .L\rd | (.L\rn << 5) | (.L\rm << 16)
+> > -       .endm
+> > -
+> > -       .macro          sha512su0, rd, rn
+> > -       .inst           0xcec08000 | .L\rd | (.L\rn << 5)
+> > -       .endm
+> > -
+> > -       .macro          sha512su1, rd, rn, rm
+> > -       .inst           0xce608800 | .L\rd | (.L\rn << 5) | (.L\rm << 16)
+> > -       .endm
+> > +       /*
+> > +        * While SHA-512 is part of the SHA-2 family of algorithms, the
+> > +        * corresponding arm64 instructions are actually part of the "sha3" CPU
+> > +        * feature.  (Except in binutils 2.30 through 2.42, which used "sha2".
+> 
+> Nit: the ARM ARM describes these features as FEAT_SHA256, FEAT_SHA512
+> and FEAT_SHA3, and the latter two happen to have appeared in the same
+> architecture revision. So this is likely just the GCC/binutils devs
+> getting confused, and assuming a) that SHA-3 implies SHA-2 (which is
+> silly if you know the difference) and b) SHA512 has anything to do
+> with SHA-3.
 
-When the 'pic-router' device node lookup fails in holly_init_IRQ(),
-the function returns without releasing the previously acquired
-'tsi_pci' node. This violates the device tree reference counting
-rules and causes a resource leak.
+How does the following look?
 
-This issue was detected by rule based static tools
-developed by Tencent.
+	/*
+	 * We have to specify the "sha3" feature here, since the GNU and clang
+	 * assemblers both consider the SHA-512 instructions to be part of the
+	 * "sha3" feature.  (Except binutils 2.30 through 2.42, which used
+	 * "sha2".  But "sha3" implies "sha2", so "sha3" still works in those
+	 * versions.)  "sha3" doesn't make a lot of sense, since SHA-512 is part
+	 * of the SHA-2 family of algorithms, and also the Arm Architecture
+	 * Reference Manual defines FEAT_SHA512 and FEAT_SHA3 separately.
+	 * Regardless, we must use "sha3" to be compatible with the assemblers.
+	 */
 
-Signed-off-by: Siyang Liu <1972843537@qq.com>
----
- arch/powerpc/platforms/embedded6xx/holly.c | 1 +
- 1 file changed, 1 insertion(+)
+By the way, the ARM ARM does actually have the following:
 
-diff --git a/arch/powerpc/platforms/embedded6xx/holly.c b/arch/powerpc/platforms/embedded6xx/holly.c
-index ce9e58ee9754..fefb7fd2365f 100644
---- a/arch/powerpc/platforms/embedded6xx/holly.c
-+++ b/arch/powerpc/platforms/embedded6xx/holly.c
-@@ -178,6 +178,7 @@ static void __init holly_init_IRQ(void)
- 	cascade_node = of_find_node_by_type(NULL, "pic-router");
- 	if (cascade_node == NULL) {
- 		printk(KERN_ERR "%s: No tsi108 pci cascade node found !\n", __func__);
-+		of_node_put(tsi_pci);
- 		return;
- 	}
- 
--- 
-2.43.5
+    If FEAT_SHA256 is implemented, then FEAT_SHA1 is implemented.
+    If FEAT_SHA512 is implemented, then FEAT_SHA256 and FEAT_SHA1 are implemented.
+    If FEAT_SHA3 is implemented, then FEAT_SHA256 and FEAT_SHA1 are implemented.
 
+So some of the SHAs do imply other ones.  But notably absent is
+FEAT_SHA3 implying FEAT_SHA512...
+
+- Eric
 
