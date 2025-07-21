@@ -1,77 +1,53 @@
-Return-Path: <linux-kernel+bounces-739654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C536EB0C937
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:08:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DEF3B0C939
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 19:08:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C68314E6844
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:07:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E481C168B53
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 17:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447472E0B5F;
-	Mon, 21 Jul 2025 17:07:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839032E092A;
+	Mon, 21 Jul 2025 17:08:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="X/7TOYbi"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W4C67cU/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC341E32D3;
-	Mon, 21 Jul 2025 17:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1D1828469C;
+	Mon, 21 Jul 2025 17:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753117652; cv=none; b=aXv7H4YLIR9jiKRM9aS/WVClLiWK97ZNovX9HFYTApt7awMjFjcvG8YhLPY3y7nDnNzPiz8L2S221HBxzRQURh72EbtU6z5k/hwhc/ZgcmVhhZgwODVxn9UQgwvfG7FxDEq6mcQgo2EqWj2dcmbhbSiNnALOtHJEsmNsoVrMBEc=
+	t=1753117695; cv=none; b=cPvSVBuNwDtuZTUUKEXF346KALavcJew2cLSENMpoSLNgf3ZLndCi1AOTCn7TAHu2JFvP+/qAONCy1NX3dIBLQEsdX10AnKE4s1iKo9EfamBpTwxefCi8s1AiT1uY+F3+yFboLpVQR7j/UY8CErlQ7JVigLtN9IUBH70QPYPnYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753117652; c=relaxed/simple;
-	bh=he3TT+P6tlhNCxwJTUuZrgo1/Mm06oMGX2ulhjwdQ40=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qWO3skC7HTNC8o/9ZpXwlY9xSPb841Lvl74Z+Ne5HMmjHcI/3Q8A3n1FiUUOj+kFkNZig7U/Gp44gA1Gjko//hJPWdELIV+HuHGm/r59AKnQdoNZWZ1H+pYIbK6us83SIwrXyeDr2PBugJV8dHWmLcVi5maF9XBMkeAnmOSjuaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=X/7TOYbi; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=ATPRMv6WRS4ltcYjhWI+utSCYQ2pU0+YQZ54Mw2Wv9c=; b=X/7TOYbiNymO23APCZZzJWZm11
-	8JWuJ8rAH5b6g52xjDQVrrwKBJyvzOj0yDTbRxXe46pU/cyK/RGilf8hLDFIfFnKS6RJGXlv8VNjW
-	wt7HMYS/Vq8zsFgSpNfc+r1HGX0ov6+lSZwPlpzdgiKTlwnu+eMlz53omjI0l+fuHh2Y=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1udtyp-002Nch-Dr; Mon, 21 Jul 2025 19:07:11 +0200
-Date: Mon, 21 Jul 2025 19:07:11 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Christophe Roullier <christophe.roullier@foss.st.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Simon Horman <horms@kernel.org>,
-	Tristram Ha <Tristram.Ha@microchip.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 1/4] dt-bindings: net: document st,phy-wol
- property
-Message-ID: <5b8608cb-1369-4638-9cda-1cf90412fc0f@lunn.ch>
-References: <20250721-wol-smsc-phy-v1-0-89d262812dba@foss.st.com>
- <20250721-wol-smsc-phy-v1-1-89d262812dba@foss.st.com>
- <faea23d5-9d5d-4fbb-9c6a-a7bc38c04866@kernel.org>
- <f5c4bb6d-4ff1-4dc1-9d27-3bb1e26437e3@foss.st.com>
- <e3c99bdb-649a-4652-9f34-19b902ba34c1@lunn.ch>
- <38278e2a-5a1b-4908-907e-7d45a08ea3b7@foss.st.com>
+	s=arc-20240116; t=1753117695; c=relaxed/simple;
+	bh=7aLCRswqV++mghCreEKzuV/N6zLWOtAnFtIQI9EPrE8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=OCFRTnF966+TvXTdtzKSCDCCiBWh3RKDcaIN6EpGoD4l6bMiMfMUVsU8b2/nSFj+loaDoeuUan2pbFfAq9jibzixZJTod5zofdenQZQwckMRnr7yglXYfrBriZHfzqvvs43BH0zh5/tswH0NjG46+y3LbGKw9tqT3lJX8/cIyBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W4C67cU/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 444ACC4CEED;
+	Mon, 21 Jul 2025 17:08:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753117693;
+	bh=7aLCRswqV++mghCreEKzuV/N6zLWOtAnFtIQI9EPrE8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=W4C67cU/gCDs0z7LrU5Fh4oxSCeUTkFyHuA0JBo9PLUdwsxZ1gN87Pud/4oDnUaBL
+	 Vg1qQZ8/TePCenuvOJZsWfVU2t9+upq71HEKcLaGZ3U0y1oNxPZmdM8ClR3rI67MsK
+	 5fzWUjC6WdqkT2+0jGb0LY7VdegN+TN0Ce1YO3ikB26v9TQ/D6Pb914SKz7zMy3+zS
+	 V2NGe1Xf0MpmbubCf3RPgJ8VhKUrgofNERjX3BwXkrNdI/KOuxqORA+xIslBD8V+Ln
+	 fJu7TzmufDgR3gH5B5S9N31XnFydH9yJHoWO0TFj+Tq+AxcetXG0+285+w4S71QAOs
+	 dWeZJ5FuJfv5g==
+Date: Mon, 21 Jul 2025 12:08:11 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Jiri Slaby <jirislaby@kernel.org>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>, Nam Cao <namcao@linutronix.de>
+Subject: Re: [PATCH] pci/controller: Use dev_fwnode()
+Message-ID: <20250721170811.GA2742811@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,35 +56,81 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <38278e2a-5a1b-4908-907e-7d45a08ea3b7@foss.st.com>
+In-Reply-To: <20250716144937.GA2531969@bhelgaas>
 
-> Regarding this property, somewhat similar to "mediatek,mac-wol",
-> I need to position a flag at the mac driver level. I thought I'd go
-> using the same approach.
+Jiri, question for you below about more possible drivers/pci/
+conversions to use dev_fwnode() for struct device * cases.
 
-Ideally, you don't need such a flag. WoL should be done as low as
-possible. If the PHY can do the WoL, the PHY should be used. If not,
-fall back to MAC.
+Would like to get this in for v6.17 if these should be changed.
 
-Many MAC drivers don't support this, or they get the implementation
-wrong. So it could be you need to fix the MAC driver.
+Bjorn
 
-MAC get_wol() should ask the PHY what it supports, and then OR in what
-the MAC supports.
-
-When set_wol() is called, the MAC driver should ask the PHY driver to
-do it. If it return 0, all is good, and the MAC driver can be
-suspended when times comes. If the PHY driver returns EOPNOTSUPP, it
-means it cannot support all the enabled WoL operations, so the MAC
-driver needs to do some of them. The MAC driver then needs to ensure
-it is not suspended.
-
-If the PHY driver is missing the interrupt used to wake the system,
-the get_wol() call should not return any supported WoL modes. The MAC
-will then do WoL. Your "vendor,mac-wol" property is then pointless.
-
-Correctly describe the PHY in DT, list the interrupt it uses for
-waking the system.
-
-	Andrew
+On Wed, Jul 16, 2025 at 09:49:38AM -0500, Bjorn Helgaas wrote:
+> On Wed, Jul 16, 2025 at 09:59:42AM +0200, Nam Cao wrote:
+> > On Tue, Jul 15, 2025 at 01:49:17PM -0500, Bjorn Helgaas wrote:
+> > > On Wed, Jun 11, 2025 at 12:43:44PM +0200, Jiri Slaby (SUSE) wrote:
+> > > > irq_domain_create_simple() takes fwnode as the first argument. It can be
+> > > > extracted from the struct device using dev_fwnode() helper instead of
+> > > > using of_node with of_fwnode_handle().
+> > > > 
+> > > > So use the dev_fwnode() helper.
+> > > > 
+> > > > Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+> > > > Cc: Bjorn Helgaas <bhelgaas@google.com>
+> > > > Cc: linux-pci@vger.kernel.org
+> > > > ---
+> > > >  drivers/pci/controller/mobiveil/pcie-mobiveil-host.c | 5 ++---
+> > > >  drivers/pci/controller/pcie-mediatek-gen3.c          | 3 +--
+> > > 
+> > > I think the pcie-mediatek-gen3.c part of this is no longer relevant
+> > > after Nam's series [1].
+> > 
+> > fwnode is still needed after my patch. As part of
+> > struct irq_domain_info info = { ... }
+> > 
+> > You could squash this one into my patch. I personally would leave it be.
+> > But fine to me either way.
+> 
+> Oh, I think I see what happened:
+> 
+>   - Jiri replaced of_fwnode_handle() with dev_fwnode() in the
+>     irq_domain_create_linear() call [1]
+> 
+>   - On top of that, Nam replaced irq_domain_create_linear() with
+>     msi_create_parent_irq_domain(), and moved the dev_fwnode() to the
+>     struct irq_domain_info [2]
+> 
+>   - I rebuilt pci/next with Nam's series merged *before* Jiri's,
+>     resulting in a conflict (of_fwnode_handle() was still used in the
+>     irq_domain_create_linear() call) which I resolved by using
+>     dev_fwnode() when building struct irq_domain_info [3]
+> 
+> I think the result [4] is OK, but it's not ideal because a
+> dev_fwnode() conversion got inserted into Nam's patch without
+> explanation.
+> 
+> So I think I'll put Jiri's patches (along with Arnd's similar altera
+> patch [5]) on a branch and merge them before Nam's.
+> 
+> Jiri, question for you: even after all this, there are still several
+> uses in drivers/pci/ of of_fwnode_handle() to extract the
+> fwnode_handle for a struct device * [6,7,8,9,10,11,12].
+> 
+> Should these also be changed?
+> 
+> Bjorn
+> 
+> [1] https://lore.kernel.org/r/20250611104348.192092-16-jirislaby@kernel.org
+> [2] https://patch.msgid.link/bfbd2e375269071b69e1aa85e629ee4b7c99518f.1750858083.git.namcao@linutronix.de
+> [3] https://git.kernel.org/cgit/linux/kernel/git/pci/pci.git/commit/?id=dd6fad415071
+> [4] https://git.kernel.org/cgit/linux/kernel/git/pci/pci.git/tree/drivers/pci/controller/pcie-mediatek-gen3.c?id=beedc9eb3114#n750
+> [5] https://lore.kernel.org/r/20250611104348.192092-2-jirislaby@kernel.org
+> 
+> [6] https://git.kernel.org/cgit/linux/kernel/git/pci/pci.git/tree/drivers/pci/controller/dwc/pcie-designware-host.c?id=beedc9eb3114#n217
+> [7] https://git.kernel.org/cgit/linux/kernel/git/pci/pci.git/tree/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c?id=beedc9eb3114#n442
+> [8] https://git.kernel.org/cgit/linux/kernel/git/pci/pci.git/tree/drivers/pci/controller/pcie-altera-msi.c?id=beedc9eb3114#n169
+> [9] https://git.kernel.org/cgit/linux/kernel/git/pci/pci.git/tree/drivers/pci/controller/pcie-mediatek.c?id=beedc9eb3114#n490
+> [10] https://git.kernel.org/cgit/linux/kernel/git/pci/pci.git/tree/drivers/pci/controller/pcie-xilinx-dma-pl.c?id=beedc9eb3114#n468
+> [11] https://git.kernel.org/cgit/linux/kernel/git/pci/pci.git/tree/drivers/pci/controller/pcie-xilinx-nwl.c?id=beedc9eb3114#n501
+> [12] https://git.kernel.org/cgit/linux/kernel/git/pci/pci.git/tree/drivers/pci/controller/plda/pcie-plda-host.c?id=beedc9eb3114#n156
 
