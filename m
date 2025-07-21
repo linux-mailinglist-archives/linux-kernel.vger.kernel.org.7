@@ -1,231 +1,249 @@
-Return-Path: <linux-kernel+bounces-738517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D49A0B0B981
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 02:20:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1054B0B98A
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 02:21:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 634641896CE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 00:20:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 593183BA151
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 00:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 182F435953;
-	Mon, 21 Jul 2025 00:20:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GiH0JmsA"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3232CCC1;
+	Mon, 21 Jul 2025 00:21:06 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B983C30;
-	Mon, 21 Jul 2025 00:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81ED23C30
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 00:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753057207; cv=none; b=TyYuo/UiNTfrgY4UP5ZD2j28MDYdC7efOFWzuDqb7gS9i2sGe8yxrfYxYcSKZMERE0lHqIjYNL0ZoR10dL5z0ZQSk1fV5w7LZ0ZFIVrzOq1yC12UtRNn1LyTAk6v6RfuvImRaaEBxYUNvsSHoXaXSMVVczN8aMF5vLtYFO/U/LI=
+	t=1753057265; cv=none; b=ktNV6zfU5mUcP+l6QUgrlGkGocJcQC/cgizaFbu6JrhxhNVO9qKGaqQmdNmI3BvS8ND24OfOu+lCZXCvvCj/9CLIRzqDV0AzG0FDMG+WwsfTLy1JyezR4OVxYyTvwEiIdhmDOAF5dDEFkzrGESO3C+luLxIDapKeI0Mp/1cVCDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753057207; c=relaxed/simple;
-	bh=Sy4W2D1joFdCNKL9SjsHN96JgZ2zUzGxjidSLUlrEas=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WSHEgNhE4rCb69TE23AU7iKAKr0/0dMwPlQdzNSTOnnWoIeIenQXOP8LRVKwnWdhrNUu/UBvNZzLswRD3wMDiWs4ruplsdun3zUtyluZT4bEJINKw3zwBNqpPo8CPlnj+bR6bikKdA3jJdK3+2zyref5EUVLQM7NMrPpLMhQGmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GiH0JmsA; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6facacf521eso35192246d6.3;
-        Sun, 20 Jul 2025 17:20:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753057204; x=1753662004; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h4uxtFN/g02OUd8QS+EKIJNHOPRScDGOSxVQctcJt7M=;
-        b=GiH0JmsA3Ftm2vreS+UuZJpnr8hYM4aWQCbM6TJPLnd/J8xOJhtycMsxW3d7jR5E6W
-         JIi1Merfw+szdzaEcVfb7xRPcL79s5Hml/4l4rHI3O0+xV4sDFAI3UAtlFjUl2xNBs3x
-         l3p2REThcSat/4VfdFnY6DXqbin+HStUIOOvYgSBQENa+Xj1JKnJVmMUPLjb+tXN57Sp
-         XFTpZvZDe0HIUvDcqH/l085sanpUDhD0N2qanZQEH+LowrB789albmMW+YLsYRRvoVxx
-         JkgQRJt9EnQRW700LepfjD/8HXGXa6akb69Zvc2kDuGiqRfet9ZbV1rVYrOSVQ4pOcSv
-         43qg==
+	s=arc-20240116; t=1753057265; c=relaxed/simple;
+	bh=AFlnBFMUXxsdlELzSUQJdk8bdzyRQTWDe27WZ8SUVbM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=IvlUdny/uezniGUGJaZVT1zogCwNcYLizkrMftK3kq85B/FBy+190UbTlZoHMz+6fRd7Dpufb4D88jtYYCNVJfYlFoUNMuhAoq09llswuSmntB/zNp2NQ4qLWw9f1Ce8GBd7ZOuvYuRR+qfVEOID7P1+YmlHP1KgLJbH/PCehLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-87c1cc3c42aso366286139f.1
+        for <linux-kernel@vger.kernel.org>; Sun, 20 Jul 2025 17:21:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753057204; x=1753662004;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h4uxtFN/g02OUd8QS+EKIJNHOPRScDGOSxVQctcJt7M=;
-        b=P2vv5fVJq5Cj+/rj+JogkmjDtndBHWUk4BJIX26UgrNRXKSsO7/ArcAwpwKfjtna6m
-         aOUkA7UtHNDxIFk0FxOlkVvCvMD0+pGG2bwNx3gtrCEpKw3LobhUmqJE3Dr23dHjTGVc
-         H2+xtJyOhNdoILIQNaRn0h78PQoMKVfz8Mip35+pwdZTi4PsM8qDHqoPbib2LoalOPb9
-         j6jrIr1eKabFg0dRgokXu+iVOVssHipRBgv3LiImZZ7hXe12C6ZCApe6uzTkTq+fED4X
-         Jidf0gKeIwYj+kOcKqEvlmLgjskZDsV5xnw6XgidQup3P67K3S0ryeqhs8USN2rkmE6G
-         u9Jg==
-X-Forwarded-Encrypted: i=1; AJvYcCUZFMc17EaVjT9oop5HtpwkCLG5LuGT46LgoAa6USggHaXhpsn6G0U5EyM/bG+IzXbeZFCUs60q9chnxNqy@vger.kernel.org, AJvYcCUnIKc3hUTTlp7gPB003Hx9FvyFbo8iR6/h2j97Dfbo/CvFgv9jcmDsnrCf2Pz25M7KHF5lmuGgDALy@vger.kernel.org
-X-Gm-Message-State: AOJu0YxD/8Bdl3B6UATwT2Cn7YkzJpWYrNt+fDy+MGmFG1tme9YkoU5K
-	d2tuZuRBVcJZIENgEHY/zA2ihfM4xq+cxJKghQRGcDxbW4dkRQheBVQjSQ92qryakFNEtVcu3ei
-	9q3XtDuR2AxvPsSwoK/XXThVwu4lOeyEmsV1o
-X-Gm-Gg: ASbGncspbrPW/8MYGvkkl52BzFKKA9iHdimTJ/AQZY8trNUIOV3b4k5Yu643ddETBuu
-	5dEVdowHCRL8bS9DdVk+W9mXRez3P6tWG3ljc80RRqu95UJzYW/o19Vx+HpSVgR1/7u5wNEhvwZ
-	0ktELzbGS+cVHgBBHbqNThAJIvW2IY62UNRfb0lPPYX2a+AbP4LUToXxCRXmOMl9Ouk9cPv2Gt5
-	uyf7g==
-X-Google-Smtp-Source: AGHT+IFn9uzqm/marhuf9II1iNT1qdWq1pOhL/1LHYsteK69aMBRNzBkMlDRf31MHjqdlS2Tem+7Zm4f63g8nJ9XP/c=
-X-Received: by 2002:a05:6214:ca2:b0:6fa:c31a:af20 with SMTP id
- 6a1803df08f44-705071c1e69mr250739726d6.5.1753057204481; Sun, 20 Jul 2025
- 17:20:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753057262; x=1753662062;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ylmwKQtIl0UjXX5QmwT+RkWCbcYoaOpF6Ul1ye5iKf8=;
+        b=cmumEtJuHYzgmuZAHFiwnbRxoWrTAWxnEySyeHNVHg+yZUooouAMEDT2jWGqciPwBb
+         4Oc9ISOkyg1wBns6Y/ElrOBdjq8cpInPFSpMjD6vZ5nEgp8DbiCpGaiPYkwbiWCukFYh
+         BA10Mhz6guHbgTpJ192nssMkNFdCbPqU7Q9mravoqSrHnoHf4lmMDNIkmPT753MtR5Hj
+         0cXNTamL19JrUrRSSCpI6GvZTRN+7kXUHSpU32pmKA+I4CzUMgeirKxw0+fjFs3LDERF
+         hLlIB88cgCScuFh6TWHv8GLxcHMKr6Dp0Sksf8OHALK7brFWLQSYhELPnmVt7GClUQqH
+         gTmA==
+X-Forwarded-Encrypted: i=1; AJvYcCWKJPjsoFta6ymlW5hU33rkC0Hq3XZZAdTS8tfhXEI2eMWS5yh91UhYR2OYHiXWKxeI4gGoH+NvXUmMNfI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysmAd0FiwziRsnhhikyCjhqbb+LrNuwKV19tkoahpluxkqXVMS
+	7Cq7JP8kXbfhJmZJ3+lESDa84ZN8bA+FZUT/GAdfvQoFiF5eHbcyTUwjDznMFV+kcRFpoZI69En
+	wt7lDfXIE8H04CS2Y5ye72Sat9fYQhPswUPh1RNhQbRNPxn1yqc0L+OaIsUw=
+X-Google-Smtp-Source: AGHT+IHBFhBXmNWS2eykjVi54I9UX4os3u2ZuYZYHHWfaA+Y7QKGawGa+kchrxpSopX728/ZX3L0Y1wqA9tmCbQAzUD1Cw9qNdXY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250717132926.901902-1-wangzhaolong@huaweicloud.com>
-In-Reply-To: <20250717132926.901902-1-wangzhaolong@huaweicloud.com>
-From: Steve French <smfrench@gmail.com>
-Date: Sun, 20 Jul 2025 19:19:52 -0500
-X-Gm-Features: Ac12FXwse2Ja5ZRLqiunqBUQbV3uP5osiXrdrdg89bhJZUqCkYPAqjEruuoVs_0
-Message-ID: <CAH2r5mv02iZ3OWk9ZhQdFFH89rbEAuLF_yek6+v_yvyMPHugxw@mail.gmail.com>
-Subject: Re: [PATCH V2] smb: client: fix netns refcount leak after net_passive changes
-To: Wang Zhaolong <wangzhaolong@huaweicloud.com>
-Cc: sfrench@samba.org, kuniyu@google.com, linux-cifs@vger.kernel.org, 
-	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org, 
-	chengzhihao1@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
+X-Received: by 2002:a05:6e02:2486:b0:3e2:8b05:c4ee with SMTP id
+ e9e14a558f8ab-3e28b05c714mr175050285ab.8.1753057262539; Sun, 20 Jul 2025
+ 17:21:02 -0700 (PDT)
+Date: Sun, 20 Jul 2025 17:21:02 -0700
+In-Reply-To: <20250720233037.2567-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <687d87ee.a70a0220.693ce.00d9.GAE@google.com>
+Subject: Re: [syzbot] [kernfs?] possible deadlock in kernfs_iop_getattr
+From: syzbot <syzbot+4bb2305559463e8f6a2a@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, thomas.hellstrom@linux.intel.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-merged into cifs-2.6.git for-next pending more review and testing
+Hello,
 
-On Thu, Jul 17, 2025 at 8:35=E2=80=AFAM Wang Zhaolong
-<wangzhaolong@huaweicloud.com> wrote:
->
-> After commit 5c70eb5c593d ("net: better track kernel sockets lifetime"),
-> kernel sockets now use net_passive reference counting. However, commit
-> 95d2b9f693ff ("Revert "smb: client: fix TCP timers deadlock after rmmod""=
-)
-> restored the manual socket refcount manipulation without adapting to this
-> new mechanism, causing a memory leak.
->
-> The issue can be reproduced by[1]:
-> 1. Creating a network namespace
-> 2. Mounting and Unmounting CIFS within the namespace
-> 3. Deleting the namespace
->
-> Some memory leaks may appear after a period of time following step 3.
->
-> unreferenced object 0xffff9951419f6b00 (size 256):
->   comm "ip", pid 447, jiffies 4294692389 (age 14.730s)
->   hex dump (first 32 bytes):
->     1b 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->     00 00 00 00 00 00 00 00 80 77 c2 44 51 99 ff ff  .........w.DQ...
->   backtrace:
->     __kmem_cache_alloc_node+0x30e/0x3d0
->     __kmalloc+0x52/0x120
->     net_alloc_generic+0x1d/0x30
->     copy_net_ns+0x86/0x200
->     create_new_namespaces+0x117/0x300
->     unshare_nsproxy_namespaces+0x60/0xa0
->     ksys_unshare+0x148/0x360
->     __x64_sys_unshare+0x12/0x20
->     do_syscall_64+0x59/0x110
->     entry_SYSCALL_64_after_hwframe+0x78/0xe2
-> ...
-> unreferenced object 0xffff9951442e7500 (size 32):
->   comm "mount.cifs", pid 475, jiffies 4294693782 (age 13.343s)
->   hex dump (first 32 bytes):
->     40 c5 38 46 51 99 ff ff 18 01 96 42 51 99 ff ff  @.8FQ......BQ...
->     01 00 00 00 6f 00 c5 07 6f 00 d8 07 00 00 00 00  ....o...o.......
->   backtrace:
->     __kmem_cache_alloc_node+0x30e/0x3d0
->     kmalloc_trace+0x2a/0x90
->     ref_tracker_alloc+0x8e/0x1d0
->     sk_alloc+0x18c/0x1c0
->     inet_create+0xf1/0x370
->     __sock_create+0xd7/0x1e0
->     generic_ip_connect+0x1d4/0x5a0 [cifs]
->     cifs_get_tcp_session+0x5d0/0x8a0 [cifs]
->     cifs_mount_get_session+0x47/0x1b0 [cifs]
->     dfs_mount_share+0xfa/0xa10 [cifs]
->     cifs_mount+0x68/0x2b0 [cifs]
->     cifs_smb3_do_mount+0x10b/0x760 [cifs]
->     smb3_get_tree+0x112/0x2e0 [cifs]
->     vfs_get_tree+0x29/0xf0
->     path_mount+0x2d4/0xa00
->     __se_sys_mount+0x165/0x1d0
->
-> Root cause:
-> When creating kernel sockets, sk_alloc() calls net_passive_inc() for
-> sockets with sk_net_refcnt=3D0. The CIFS code manually converts kernel
-> sockets to user sockets by setting sk_net_refcnt=3D1, but doesn't call
-> the corresponding net_passive_dec(). This creates an imbalance in the
-> net_passive counter, which prevents the network namespace from being
-> destroyed when its last user reference is dropped. As a result, the
-> entire namespace and all its associated resources remain allocated.
->
-> Timeline of patches leading to this issue:
-> - commit ef7134c7fc48 ("smb: client: Fix use-after-free of network
->   namespace.") in v6.12 fixed the original netns UAF by manually
->   managing socket refcounts
-> - commit e9f2517a3e18 ("smb: client: fix TCP timers deadlock after
->   rmmod") in v6.13 attempted to use kernel sockets but introduced
->   TCP timer issues
-> - commit 5c70eb5c593d ("net: better track kernel sockets lifetime")
->   in v6.14-rc5 introduced the net_passive mechanism with
->   sk_net_refcnt_upgrade() for proper socket conversion
-> - commit 95d2b9f693ff ("Revert "smb: client: fix TCP timers deadlock
->   after rmmod"") in v6.15-rc3 reverted to manual refcount management
->   without adapting to the new net_passive changes
->
-> Fix this by using sk_net_refcnt_upgrade() which properly handles the
-> net_passive counter when converting kernel sockets to user sockets.
->
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D220343 [1]
-> Fixes: 95d2b9f693ff ("Revert "smb: client: fix TCP timers deadlock after =
-rmmod"")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Wang Zhaolong <wangzhaolong@huaweicloud.com>
-> ---
->  fs/smb/client/connect.c | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
->
-> V1 -> V2:
-> - Add a simplified description of the reproduction steps in the
->   commit message.
->
-> diff --git a/fs/smb/client/connect.c b/fs/smb/client/connect.c
-> index 205f547ca49e..5eec8957f2a9 100644
-> --- a/fs/smb/client/connect.c
-> +++ b/fs/smb/client/connect.c
-> @@ -3360,22 +3360,19 @@ generic_ip_connect(struct TCP_Server_Info *server=
-)
->                 socket =3D server->ssocket;
->         } else {
->                 struct net *net =3D cifs_net_ns(server);
->                 struct sock *sk;
->
-> -               rc =3D __sock_create(net, sfamily, SOCK_STREAM,
-> -                                  IPPROTO_TCP, &server->ssocket, 1);
-> +               rc =3D sock_create_kern(net, sfamily, SOCK_STREAM,
-> +                                     IPPROTO_TCP, &server->ssocket);
->                 if (rc < 0) {
->                         cifs_server_dbg(VFS, "Error %d creating socket\n"=
-, rc);
->                         return rc;
->                 }
->
->                 sk =3D server->ssocket->sk;
-> -               __netns_tracker_free(net, &sk->ns_tracker, false);
-> -               sk->sk_net_refcnt =3D 1;
-> -               get_net_track(net, &sk->ns_tracker, GFP_KERNEL);
-> -               sock_inuse_add(net, 1);
-> +               sk_net_refcnt_upgrade(sk);
->
->                 /* BB other socket options to set KEEPALIVE, NODELAY? */
->                 cifs_dbg(FYI, "Socket created\n");
->                 socket =3D server->ssocket;
->                 socket->sk->sk_allocation =3D GFP_NOFS;
-> --
-> 2.39.2
->
->
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+possible deadlock in kernfs_iop_getattr
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.16.0-rc7-syzkaller-g89be9a83ccf1 #0 Not tainted
+------------------------------------------------------
+syz.0.16/6627 is trying to acquire lock:
+ffff88801c6f4a20 (&root->kernfs_iattr_rwsem){++++}-{4:4}, at: kernfs_iop_getattr+0x9c/0xf0 fs/kernfs/inode.c:191
+
+but task is already holding lock:
+ffff888026446278 (&q->q_usage_counter(io)#24){++++}-{0:0}, at: blk_mq_freeze_queue_nomemsave+0x15/0x20 block/blk-mq.c:205
+
+which lock already depends on the new lock.
 
 
---=20
-Thanks,
+the existing dependency chain (in reverse order) is:
 
-Steve
+-> #3 (&q->q_usage_counter(io)#24){++++}-{0:0}:
+       blk_alloc_queue+0x619/0x760 block/blk-core.c:461
+       blk_mq_alloc_queue+0x175/0x290 block/blk-mq.c:4396
+       __blk_mq_alloc_disk+0x29/0x120 block/blk-mq.c:4443
+       loop_add+0x49e/0xb70 drivers/block/loop.c:2012
+       loop_init+0x164/0x270 drivers/block/loop.c:2247
+       do_one_initcall+0x120/0x6e0 init/main.c:1274
+       do_initcall_level init/main.c:1336 [inline]
+       do_initcalls init/main.c:1352 [inline]
+       do_basic_setup init/main.c:1371 [inline]
+       kernel_init_freeable+0x5c2/0x900 init/main.c:1584
+       kernel_init+0x1c/0x2b0 init/main.c:1474
+       ret_from_fork+0x5d4/0x6f0 arch/x86/kernel/process.c:148
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+-> #2 (fs_reclaim){+.+.}-{0:0}:
+       __fs_reclaim_acquire mm/page_alloc.c:4045 [inline]
+       fs_reclaim_acquire+0x102/0x150 mm/page_alloc.c:4059
+       might_alloc include/linux/sched/mm.h:318 [inline]
+       slab_pre_alloc_hook mm/slub.c:4099 [inline]
+       slab_alloc_node mm/slub.c:4177 [inline]
+       kmem_cache_alloc_noprof+0x53/0x3b0 mm/slub.c:4204
+       __kernfs_iattrs+0xbc/0x3f0 fs/kernfs/inode.c:37
+       kernfs_iattrs fs/kernfs/inode.c:60 [inline]
+       __kernfs_setattr+0x4d/0x3c0 fs/kernfs/inode.c:73
+       kernfs_iop_setattr+0xda/0x120 fs/kernfs/inode.c:127
+       notify_change+0x6a9/0x1230 fs/attr.c:552
+       do_truncate+0x1d7/0x230 fs/open.c:68
+       handle_truncate fs/namei.c:3517 [inline]
+       do_open fs/namei.c:3900 [inline]
+       path_openat+0x2678/0x2cb0 fs/namei.c:4055
+       do_filp_open+0x20b/0x470 fs/namei.c:4082
+       do_sys_openat2+0x11b/0x1d0 fs/open.c:1437
+       do_sys_open fs/open.c:1452 [inline]
+       __do_sys_openat fs/open.c:1468 [inline]
+       __se_sys_openat fs/open.c:1463 [inline]
+       __x64_sys_openat+0x174/0x210 fs/open.c:1463
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (iattr_mutex){+.+.}-{4:4}:
+       __mutex_lock_common kernel/locking/mutex.c:602 [inline]
+       __mutex_lock+0x199/0xb90 kernel/locking/mutex.c:747
+       __kernfs_iattrs+0x2b/0x3f0 fs/kernfs/inode.c:32
+       kernfs_iattrs fs/kernfs/inode.c:60 [inline]
+       __kernfs_setattr+0x4d/0x3c0 fs/kernfs/inode.c:73
+       kernfs_iop_setattr+0xda/0x120 fs/kernfs/inode.c:127
+       notify_change+0x6a9/0x1230 fs/attr.c:552
+       do_truncate+0x1d7/0x230 fs/open.c:68
+       handle_truncate fs/namei.c:3517 [inline]
+       do_open fs/namei.c:3900 [inline]
+       path_openat+0x2678/0x2cb0 fs/namei.c:4055
+       do_filp_open+0x20b/0x470 fs/namei.c:4082
+       do_sys_openat2+0x11b/0x1d0 fs/open.c:1437
+       do_sys_open fs/open.c:1452 [inline]
+       __do_sys_openat fs/open.c:1468 [inline]
+       __se_sys_openat fs/open.c:1463 [inline]
+       __x64_sys_openat+0x174/0x210 fs/open.c:1463
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&root->kernfs_iattr_rwsem){++++}-{4:4}:
+       check_prev_add kernel/locking/lockdep.c:3168 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3287 [inline]
+       validate_chain kernel/locking/lockdep.c:3911 [inline]
+       __lock_acquire+0x126f/0x1c90 kernel/locking/lockdep.c:5240
+       lock_acquire kernel/locking/lockdep.c:5871 [inline]
+       lock_acquire+0x179/0x350 kernel/locking/lockdep.c:5828
+       down_read+0x9b/0x480 kernel/locking/rwsem.c:1524
+       kernfs_iop_getattr+0x9c/0xf0 fs/kernfs/inode.c:191
+       vfs_getattr_nosec+0x2ac/0x430 fs/stat.c:213
+       vfs_getattr+0x4a/0x60 fs/stat.c:262
+       loop_query_min_dio_size.isra.0+0x117/0x250 drivers/block/loop.c:455
+       loop_assign_backing_file drivers/block/loop.c:508 [inline]
+       loop_change_fd drivers/block/loop.c:586 [inline]
+       lo_ioctl+0x1d2e/0x2760 drivers/block/loop.c:1515
+       blkdev_ioctl+0x277/0x6d0 block/ioctl.c:704
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:907 [inline]
+       __se_sys_ioctl fs/ioctl.c:893 [inline]
+       __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:893
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  &root->kernfs_iattr_rwsem --> fs_reclaim --> &q->q_usage_counter(io)#24
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&q->q_usage_counter(io)#24);
+                               lock(fs_reclaim);
+                               lock(&q->q_usage_counter(io)#24);
+  rlock(&root->kernfs_iattr_rwsem);
+
+ *** DEADLOCK ***
+
+3 locks held by syz.0.16/6627:
+ #0: ffff88814277b400 (&lo->lo_mutex){+.+.}-{4:4}, at: loop_global_lock_killable+0x30/0xb0 drivers/block/loop.c:118
+ #1: ffff888026446278 (&q->q_usage_counter(io)#24){++++}-{0:0}, at: blk_mq_freeze_queue_nomemsave+0x15/0x20 block/blk-mq.c:205
+ #2: ffff8880264462b0 (&q->q_usage_counter(queue)#20){+.+.}-{0:0}, at: blk_mq_freeze_queue_nomemsave+0x15/0x20 block/blk-mq.c:205
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 6627 Comm: syz.0.16 Not tainted 6.16.0-rc7-syzkaller-g89be9a83ccf1 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_circular_bug+0x275/0x350 kernel/locking/lockdep.c:2046
+ check_noncircular+0x14c/0x170 kernel/locking/lockdep.c:2178
+ check_prev_add kernel/locking/lockdep.c:3168 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3287 [inline]
+ validate_chain kernel/locking/lockdep.c:3911 [inline]
+ __lock_acquire+0x126f/0x1c90 kernel/locking/lockdep.c:5240
+ lock_acquire kernel/locking/lockdep.c:5871 [inline]
+ lock_acquire+0x179/0x350 kernel/locking/lockdep.c:5828
+ down_read+0x9b/0x480 kernel/locking/rwsem.c:1524
+ kernfs_iop_getattr+0x9c/0xf0 fs/kernfs/inode.c:191
+ vfs_getattr_nosec+0x2ac/0x430 fs/stat.c:213
+ vfs_getattr+0x4a/0x60 fs/stat.c:262
+ loop_query_min_dio_size.isra.0+0x117/0x250 drivers/block/loop.c:455
+ loop_assign_backing_file drivers/block/loop.c:508 [inline]
+ loop_change_fd drivers/block/loop.c:586 [inline]
+ lo_ioctl+0x1d2e/0x2760 drivers/block/loop.c:1515
+ blkdev_ioctl+0x277/0x6d0 block/ioctl.c:704
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl fs/ioctl.c:893 [inline]
+ __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f9ba538e9a9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f9ba6276038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f9ba55b6080 RCX: 00007f9ba538e9a9
+RDX: 0000000000000004 RSI: 0000000000004c06 RDI: 0000000000000003
+RBP: 00007f9ba5410d69 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007f9ba55b6080 R15: 00007ffc5d44de88
+ </TASK>
+
+
+Tested on:
+
+commit:         89be9a83 Linux 6.16-rc7
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=145f638c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9f175a9275d2cdd7
+dashboard link: https://syzkaller.appspot.com/bug?extid=4bb2305559463e8f6a2a
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Note: no patches were applied.
 
