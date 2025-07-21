@@ -1,249 +1,207 @@
-Return-Path: <linux-kernel+bounces-739140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C769CB0C240
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:10:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A868B0C248
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 13:11:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82D19168DBF
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:10:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 787624E111D
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 11:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0C329ACC8;
-	Mon, 21 Jul 2025 11:09:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DADFF293C78;
+	Mon, 21 Jul 2025 11:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WjIwYztp"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Kkm38Y2L"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D8CB293C75
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 11:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4042D295519
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 11:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753096146; cv=none; b=GEUoWFO9oiJBw6XzwnlXAoowDpiH930cSFiI3ladCPCJnD3x93cYIA2VOAlejU3eCcm16J9ykdFeAHdnIr7cf2RlFUULNEgs7ZJ8P4sDcgp3fZ1oKqgjcI6xamzJ3ErqTcNlyLkLMv8dsHAX0ltwqIVW31z3NIat4FG5oTaIp9s=
+	t=1753096201; cv=none; b=LQc6L7I3JmjxkPEJzKAehowLDGraWETrHzNI1uesVy6RtD25bWBOMamBmaSl6To7X0eJreETqgAXUTv7Z+13wXE7zw2QbZlmsHWqYWd/j/6dqWsJPvms7jFw7TRwLgyQ68GQOHnbfRDGX8MGbBXeApyJr4Az9GJ7qqhwwSVkwZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753096146; c=relaxed/simple;
-	bh=SsD61A8hR5q9MQ8QKFckZ6cN9hCMs+AKO11xNPKYjkA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q/ZyOd+RCodER9+VQmSEKIiLFPvJETxl1nzB2N3k0oJv1rh+5p2daobXRS65j9SG/Ux7DjtXrHXzpHZf24kzufq8Mb7IFrSIFt/X6PQk5rFX1juHIHldMV40Qz189C/kosBo9z619PKkOvy5CN9DRR+hd7cdRyxgX7lXLO+4G90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WjIwYztp; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4563a57f947so9007535e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 04:09:02 -0700 (PDT)
+	s=arc-20240116; t=1753096201; c=relaxed/simple;
+	bh=sB5Y3BU3Xtwi3wF9nhNOXV9hrQqBf3LqIEohBOIRQTA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KwqgPvU2zxoku/P0HYX7ShBo9bmfda38oOFeFv9L06qBzgxOf1p42x4drLzbiq0qSl94xOpOmmGFNWOqnY4TorW/DR1wYpbT8f0YqfA4cDCXQKRstNYcmXWamcrledVmnlg2Z5zwbFTWTMXDdgWzqo0YcUvgif65AZxcw0wbas0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Kkm38Y2L; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-32b43846e8cso30597251fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 04:09:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753096141; x=1753700941; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KmtXN5LOpsy9wnbFF88f1TFJAOYpmO6pOglF7c6OjGE=;
-        b=WjIwYztphIyNa3/uYZOZTtxJcn7ek7HtPzVIWEzMj0zXwnLZfy5p3X72oOCPdJzP2V
-         uiIa2taSc2Gb3PIvaNbDVedfyUPhT1IdGGFnl11ayRDQlOcyw5pLovDkCrV33b+TynG+
-         fJuSXgYxR5xGpyqN2YGXNYqV0buURma4ZGlDStiMkOZjTTLUUtXP8fp8S2vK582ZufQT
-         YybMsb6p/+q3+jTw+8xI67H2uGWWnYQUixh9zsBE1zwABUwgLLOPW7LLck8f9E89T0pm
-         6tLCcTHk4KaLmgZaLVOGOw7M7g2oBiFtZTpQOCSa10CCfNxnhEI+Mi8pTG1U6uREzA4p
-         ffEQ==
+        d=chromium.org; s=google; t=1753096197; x=1753700997; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4WW2uf9Dse9OAFXSGg4nVLrSNNR6IaqC06E35FrZCQw=;
+        b=Kkm38Y2L5XxZCQ3d+HKL5hzrLow83EiPjgb3sOqPMKf0XbrTLL7vZZ5SkDF8UEpcRv
+         NfVEu7R3Bp6E63AvTagKs5gFzKYQCy+7p7kMPvQ4ld4mqjma87XiF29eLHidhKNu0rWa
+         OjQPX/Gy/SuNsIDcEoZD5ey4P8IUHBqck7ZNY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753096141; x=1753700941;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KmtXN5LOpsy9wnbFF88f1TFJAOYpmO6pOglF7c6OjGE=;
-        b=HwtjXJHRf15OieMPBkSIwmAjoZQgu4zWNSiLld0jkE5tMWs7tqZj956oaI53COrn4D
-         L9MK99o+qDJ4BuewQFP9gi0ZjNiq/37Ze97XlMEQjwvrWasHSIeqzfimLrVqHObz8m7m
-         zQDdZ2P84IKCrsb+P8w1rAYW1/T6hFEwN6v0k8ExABPMUDcKEnTjrIols9dgs+Oh67pf
-         FkXtFil3hzZ8Gdx7gt2FV1+8hAG8Tz7lZF9gYBFk5uRwAiDPGZhaxiXC9/lDC/HuG16p
-         XgbxaHzlE08taD+kuy9KggB/6nusVVh8cCsP3nnHlkpGwMoFJ/Uu1wUefQsscv76V91U
-         zHzw==
-X-Forwarded-Encrypted: i=1; AJvYcCUT1gHvtanEPGndlFORInQq8KagQYjD4URL/1GmlIGoga5Z1eeJNNcInkz1fjVOzQcaDnnFJb7delfRfCg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwASO9ViPHgfuimIkpr257fBRNXLg2CDGBE1lYzagF1+x67cPP2
-	Qh0kOJ7PqgzaNrSaCA5FDARB9RLivGues7ZMFA3TMGgaU2KsXJ3rD5W2pav1+7Cc9Ag=
-X-Gm-Gg: ASbGncvfPDfwVtJGYPd8VXXkubK+l6PI4ToNLVIKoSg3IbRFNTHzuwwRwddV6WEGkrs
-	AjHi1bJmaRWgqXkgovLA7lGPdqBI4iuVncYhCihBUguKCbcjmbAeGD/10J/2NRIYyaFftbINoUe
-	S+e92eKTo+EL/bmye1ZkuImbJ6CXyrKjPRiuSVKB0Fy4P+OI0SIRu0X3o9bT6lWMrWhp7o032xy
-	slGhHwRuO9YppuQnYSCb7nYXxMb7d7hfyj78eVrJSt1fSKNzCt/arMw43Kq/2cH3JDGPSSCkBpF
-	3VxR1oXFVwtnV2yUBmosK3Hs+ZcgtL7jSVBlZi+PxdDTpDEJUG+NB7OHJuNHVb2SoDgzZwXzB9L
-	a1IrBa2hU53lgJPj9rklkG7kaUBdH59OqHMMMh7P7pOAjT5IS3ge/o20//qnKzXs=
-X-Google-Smtp-Source: AGHT+IF/p9/8BzW3lB8bZPpYYHRczY58A+Ne9dELqgeiVrztj+TKGERiYVH004vi+cnHyij4U7BDBg==
-X-Received: by 2002:a05:600c:c4a6:b0:455:f7b8:235c with SMTP id 5b1f17b1804b1-456348c644emr159193895e9.14.1753096141413;
-        Mon, 21 Jul 2025 04:09:01 -0700 (PDT)
-Received: from [192.168.1.36] (p549d4bd0.dip0.t-ipconnect.de. [84.157.75.208])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca5c813sm10201962f8f.84.2025.07.21.04.08.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Jul 2025 04:09:00 -0700 (PDT)
-Message-ID: <68251793-d1d2-4f7d-be00-a47a4fd5f80e@linaro.org>
-Date: Mon, 21 Jul 2025 13:08:59 +0200
+        d=1e100.net; s=20230601; t=1753096197; x=1753700997;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4WW2uf9Dse9OAFXSGg4nVLrSNNR6IaqC06E35FrZCQw=;
+        b=YL0leE5S676eSfTiAcVYbOcJ8jZnCaDjr8jZUMpAI0P2hEjyqggR0n5CAmo+wGqtoy
+         Z3iZQB26AhaiEUhOpGlKdFckLhPe4DQF6gLZhJFU6xONe0/agdXIpM7pwzrSo8hYtHNn
+         mfI7jt2oxGRSN/hcsuSOmOcqFaOeu4R7rdtIpZyHGRVG/RK0k4NNSqcx+hbogf4OgipG
+         31ZiH37bQ/DrIyMuFTgtKQsQhcWXCyf9F11OZcz/uQAE54lGFbA1KjVymYvDrWXzw9ZM
+         PMcwpU7uGFa7WopLbNqWidqY2go6CWWDvekC7CGGJZ8MxmGeNwyYUHfqnSteF25k80Mn
+         KwAg==
+X-Forwarded-Encrypted: i=1; AJvYcCU2CluXE4n93a6zDDVHeE8Spu00kh8AnkfcB65ASieIoxIUCHOEXjat936QC0/jR5r5z+3b/MJR8OOA7GQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywEst4guOuOIAHfk2jSo5sXqnR8wVcKWvoWTrfC//B61Motfe8
+	+XT3/cRRyRHR+7u5pSyKdxH/wWefdSgs3D6XHMwtl4WrvmPw+VXHAWVFW7D5jt2tvpiRd63hnpp
+	kjCzqyfQX1O+AXZDU88UxAAGE0KSXZuPMCRR4y6w4
+X-Gm-Gg: ASbGncuX4DzzmvWX05TsWvAPKI42rMNf06Z5wp9bGkQWKYzm//Cx16juoavKKqYZS6D
+	BTCgR7O16OlOdbLipUqn5GF20U2IwJkfIZcgpe5V0RTu3aZgyfhjVlNUAFttw08LECGu0kPK86F
+	L/xsiuKf05wLirKrwdIIjnN4c4ti/ChRM5pIaehPScwBoC0iQ9ydnLTGomT3mi7W8SRWGQUlNm1
+	SN+u1wr9VsvV4OQL7ywuu3/Yd5uSgCgkWejYuNdGAqzng==
+X-Google-Smtp-Source: AGHT+IF4nBN7l8BVpT48NL044EtxxNCfvAewP1ZUdA31VvrzYipiWFMocffu+xLGFjFA/wIBhY4ZsuRqkeecG+8Cpu0=
+X-Received: by 2002:a05:651c:3241:b0:32f:522e:f040 with SMTP id
+ 38308e7fff4ca-330a7b352d4mr27431031fa.12.1753096197351; Mon, 21 Jul 2025
+ 04:09:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/4] QRTR bus and Qualcomm Sensor Manager IIO drivers
-Content-Language: en-US
-To: y.oudjana@protonmail.com, Manivannan Sadhasivam <mani@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor
- <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>,
- Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Luca Weiss <luca@lucaweiss.eu>
-Cc: linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
- linux-iio@vger.kernel.org
-References: <20250710-qcom-smgr-v2-0-f6e198b7aa8e@protonmail.com>
-From: Casey Connolly <casey.connolly@linaro.org>
-In-Reply-To: <20250710-qcom-smgr-v2-0-f6e198b7aa8e@protonmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250721081459.16278-1-laura.nao@collabora.com> <20250721081459.16278-7-laura.nao@collabora.com>
+In-Reply-To: <20250721081459.16278-7-laura.nao@collabora.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Mon, 21 Jul 2025 19:09:45 +0800
+X-Gm-Features: Ac12FXzx8td7SOjqLltSsFYEC21ZPF3VEQHs0mR_h7cbh7ksB6i9GixQOdHUn5w
+Message-ID: <CAGXv+5Fgha-3xAa8gOEsub0u=Qr5RjQVzkyPoZ=iDkJL_KCXEg@mail.gmail.com>
+Subject: Re: [PATCH 6/9] thermal/drivers/mediatek/lvts: Add support for ATP mode
+To: Laura Nao <laura.nao@collabora.com>
+Cc: srini@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com, 
+	lukasz.luba@arm.com, matthias.bgg@gmail.com, 
+	angelogioacchino.delregno@collabora.com, andrew-ct.chen@mediatek.com, 
+	lala.lin@mediatek.com, arnd@arndb.de, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, nfraprado@collabora.com, 
+	devicetree@vger.kernel.org, u.kleine-koenig@baylibre.com, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	kernel@collabora.com, colin.i.king@gmail.com, bchihi@baylibre.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Yassine,
-
-On 10/07/2025 10:06, Yassine Oudjana via B4 Relay wrote:
-> Sensor Manager is a QMI service available on several Qualcomm SoCs which
-> exposes available sensors and allows for getting data from them. This
-> service is provided by either:
-> 
-> - SSC (Snapdragon Sensor Core): Also known as SLPI (Sensor Low Power
->   Island). Has its own set of pins and peripherals to which sensors are
->   connected. These peripherals are generally inaccessible from the AP,
->   meaning sensors need to be operated exclusively through SSC. The only
->   known SoCs in this category are MSM8996 and MSM8998 (and their
->   derivatives).
-> - ADSP (Audio DSP): Shares pins and peripherals with the AP. At least on
->   some devices, these pins could be configured as GPIOs which allows the AP
->   to access sensors by bit-banging their interfaces. Some SoCs in this
->   category are SDM630/660, MSM8953, MSM8974 and MSM8226.
-> 
-> Before Sensor Manager becomes accessible, another service known as Sensor
-> Registry needs to be provided by the AP. The remote processor that provides
-> Sensor Manager will then request data from it, and once that process is
-> done, will expose several services including Sensor Manager.
-
-arguably a bit of a nit pick, but it might be worth clarifying that
-newer SoCs starting with sdm845 also work in much the same way, except
-the actual data is packed into protobuf messages which are sent over
-QMI, rather than using QMI itself for the sensor data (and hence aren't
-supported by this series).
-
-That said, this is really awesome :D
-
-Kind regards,>
-> This series adds a kernel driver for the Sensor Manager service, exposing
-> sensors accessible through it as IIO devices. To facilitate probing of this
->  driver, QRTR is turned into a bus, with services being exposed as devices.
-> Once the Sensor Manager service becomes available, the kernel attaches its
-> device to the driver added in this series. This allows for dynamic probing
-> of Sensor Manager without the need for static DT bindings, which would also
-> not be ideal because they would be describing software rather than
-> hardware. Sensor Manager is given as a working example of the QRTR bus.
-> Kernel drivers for other services may also be able to benefit from this
-> change.
-> 
-> As previously mentioned, a Sensor Registry server must run on the AP to
-> provide the remote processor (either SLPI or ADSP) with necessary data.
-> A userspace implementation of this server is made[1]. The server can be
-> supplied with the necessary data in the form of a plain-text configuration
-> file that can be pulled from the Android vendor partition (sample[2]), or
-> generated from a binary file that can be pulled from the persist partition.
-> A more recently developed kernel implementation of the Sensor Registry
-> server[3] can also be used. This last implementation only supports reading
-> data from the binary file pulled from persist. Sensor Registry remains out
-> of the scope of this patch series, as the Sensor Registry server and Sensor
-> Manager client (this series) are fully independent components.
-> 
-> Due to the total lack of documentation on Sensor Manager, this driver was
-> almost entirely the result of a process of capturing transactions between
-> SSC and the proprietary Android daemons with several methods and manually
-> decoding and interpreting them, sometimes by comparing with values acquired
-> from Android APIs. A blog post[4] describes part of this process more
-> detail. A little piece of downstream Android open-source code[5] was also
-> used as reference during later stages of development. All of this, as well
-> as a lack of time on my side for the last couple of years, meant that this
-> driver had to go through a slow and intermittent development process for
-> more than 3 years before reaching its current state.
-> 
-> Currently supported sensor types include accelerometers, gyroscopes,
-> magentometers, proximity and pressure sensors. Other types (namely
-> light and temperature sensors) are close to being implemented.
-> 
-> Some testing instructions may also be found here[6].
-> 
-> [1] https://gitlab.com/msm8996-mainline/sns-reg
-> [2] https://github.com/nian0114/android_vendor_xiaomi_scorpio/blob/mkn-mr1/proprietary/etc/sensors/sensor_def_qcomdev.conf
-> [3] https://github.com/sdm660-mainline/linux/pull/57
-> [4] https://emainline.gitlab.io/2022/04/08/Unlocking_SSC_P2.html
-> [5] https://android.googlesource.com/platform/system/chre/+/android-8.0.0_r2/platform/slpi
-> [6] https://gitlab.postmarketos.org/postmarketOS/pmaports/-/merge_requests/4118
-> 
-> Changes since v1:
-> - Split qdev renaming into separate patch
-> - Export new QRTR symbols with namespace
-> - Change struct initialization style
-> - Remove redundant NULL initialization of qdev->dev.driver
-> - Remove redundant devm_kfree
-> - Use variable in sizeof rather than type
-> - Change error return style in qcom_smd_qrtr_init
-> - Change order of operations in qcom_smd_qrtr_exit
-> - Use FIELD_PREP and GENMASK in QRTR_INSTANCE macro and add a CONST variant
-> - Remove per-sensor subdrivers and eliminate use of platform devices
-> - Put year range in copyright statements
-> - Use dev_err_probe for error messages in probe
-> - Remove unused include of linux/of.h
-> - Avoid casting away const in qcom_smgr_buffering_report_handler
-> - Use iio_push_to_buffers instead of iio_push_to_buffers_with_timestamp
-> - Preprocess proximity sensor data before pushing to buffer
-> - Add warning message for report with unknown ID received
-> - Change sentinel value style in array of struct initialization
-> - Refuse to set sampling frequency when buffer enabled
-> - Return -EINVAL inside default case in all applicable switch statements
-> - Move samp_freq_vals in qcom_smgr_iio_read_avail to priv and fix maximum
-> - Add devm_add_action_or_reset for releasing QMI handle and get rid of
->   qcom_smgr_remove
-> - Add service versions and instance IDs found on some platforms to QRTR
->   match table
-> - Fix null pointer dereference on registering unsupported sensor
-> 
-> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+On Mon, Jul 21, 2025 at 4:33=E2=80=AFPM Laura Nao <laura.nao@collabora.com>=
+ wrote:
+>
+> MT8196/MT6991 uses ATP (Abnormal Temperature Prevention) mode to detect
+> abnormal temperature conditions, which involves reading temperature data
+> from a dedicated set of registers separate from the ones used for
+> immediate and filtered modes.
+>
+> Add support for ATP mode and its relative registers to ensure accurate
+> temperature readings and proper thermal management on MT8196/MT6991
+> devices.
+>
+> Signed-off-by: Laura Nao <laura.nao@collabora.com>
 > ---
-> Yassine Oudjana (4):
->       net: qrtr: smd: Rename qdev to qsdev
->       net: qrtr: Turn QRTR into a bus
->       net: qrtr: Define macro to convert QMI version and instance to QRTR instance
->       iio: Add Qualcomm Sensor Manager driver
-> 
->  MAINTAINERS                                     |  13 +
->  drivers/iio/accel/qcom_smgr_accel.c             | 138 ++++
->  drivers/iio/common/Kconfig                      |   1 +
->  drivers/iio/common/Makefile                     |   1 +
->  drivers/iio/common/qcom_smgr/Kconfig            |  16 +
->  drivers/iio/common/qcom_smgr/Makefile           |   8 +
->  drivers/iio/common/qcom_smgr/qcom_smgr.c        | 840 ++++++++++++++++++++++++
->  drivers/iio/common/qcom_smgr/qmi/Makefile       |   3 +
->  drivers/iio/common/qcom_smgr/qmi/qmi_sns_smgr.c | 713 ++++++++++++++++++++
->  drivers/iio/common/qcom_smgr/qmi/qmi_sns_smgr.h | 161 +++++
->  drivers/soc/qcom/qmi_interface.c                |   5 +-
->  include/linux/iio/common/qcom_smgr.h            |  80 +++
->  include/linux/mod_devicetable.h                 |   9 +
->  include/linux/soc/qcom/qrtr.h                   |  46 ++
->  net/qrtr/af_qrtr.c                              |  23 +-
->  net/qrtr/qrtr.h                                 |   3 +
->  net/qrtr/smd.c                                  | 252 ++++++-
->  scripts/mod/devicetable-offsets.c               |   4 +
->  scripts/mod/file2alias.c                        |  10 +
->  19 files changed, 2302 insertions(+), 24 deletions(-)
-> ---
-> base-commit: 835244aba90de290b4b0b1fa92b6734f3ee7b3d9
-> change-id: 20250710-qcom-smgr-8db96d370b10
-> 
-> Best regards,
+>  drivers/thermal/mediatek/lvts_thermal.c | 34 ++++++++++++++++++++++---
+>  1 file changed, 31 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/me=
+diatek/lvts_thermal.c
+> index 3c34956e37c1..8f9da0d5b886 100644
+> --- a/drivers/thermal/mediatek/lvts_thermal.c
+> +++ b/drivers/thermal/mediatek/lvts_thermal.c
+> @@ -44,6 +44,10 @@
+>  #define LVTS_EDATA01(__base)   (__base + 0x0058)
+>  #define LVTS_EDATA02(__base)   (__base + 0x005C)
+>  #define LVTS_EDATA03(__base)   (__base + 0x0060)
+> +#define LVTS_ATP0(__base)              (__base + 0x0070)
+> +#define LVTS_ATP1(__base)              (__base + 0x0074)
+> +#define LVTS_ATP2(__base)              (__base + 0x0078)
+> +#define LVTS_ATP3(__base)              (__base + 0x007C)
+>  #define LVTS_MSR0(__base)              (__base + 0x0090)
+>  #define LVTS_MSR1(__base)              (__base + 0x0094)
+>  #define LVTS_MSR2(__base)              (__base + 0x0098)
+> @@ -90,6 +94,7 @@
+>
+>  #define LVTS_MSR_IMMEDIATE_MODE                0
+>  #define LVTS_MSR_FILTERED_MODE         1
+> +#define LVTS_MSR_ATP_MODE              2
 
--- 
-// Casey (she/her)
+Nit: I suggest changing this to an enum since they are related, and
+also because these are artificial (unrelated to hardware values).
 
+Otherwise,
+
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+
+>  #define LVTS_MSR_READ_TIMEOUT_US       400
+>  #define LVTS_MSR_READ_WAIT_US          (LVTS_MSR_READ_TIMEOUT_US / 2)
+> @@ -207,6 +212,10 @@ static const struct debugfs_reg32 lvts_regs[] =3D {
+>         LVTS_DEBUG_FS_REGS(LVTS_EDATA01),
+>         LVTS_DEBUG_FS_REGS(LVTS_EDATA02),
+>         LVTS_DEBUG_FS_REGS(LVTS_EDATA03),
+> +       LVTS_DEBUG_FS_REGS(LVTS_ATP0),
+> +       LVTS_DEBUG_FS_REGS(LVTS_ATP1),
+> +       LVTS_DEBUG_FS_REGS(LVTS_ATP2),
+> +       LVTS_DEBUG_FS_REGS(LVTS_ATP3),
+>         LVTS_DEBUG_FS_REGS(LVTS_MSR0),
+>         LVTS_DEBUG_FS_REGS(LVTS_MSR1),
+>         LVTS_DEBUG_FS_REGS(LVTS_MSR2),
+> @@ -621,6 +630,13 @@ static int lvts_sensor_init(struct device *dev, stru=
+ct lvts_ctrl *lvts_ctrl,
+>                 LVTS_IMMD3(lvts_ctrl->base)
+>         };
+>
+> +       void __iomem *atp_regs[] =3D {
+> +               LVTS_ATP0(lvts_ctrl->base),
+> +               LVTS_ATP1(lvts_ctrl->base),
+> +               LVTS_ATP2(lvts_ctrl->base),
+> +               LVTS_ATP3(lvts_ctrl->base)
+> +       };
+> +
+>         int i;
+>
+>         lvts_for_each_valid_sensor(i, lvts_ctrl_data) {
+> @@ -656,8 +672,20 @@ static int lvts_sensor_init(struct device *dev, stru=
+ct lvts_ctrl *lvts_ctrl,
+>                 /*
+>                  * Each sensor has its own register address to read from.
+>                  */
+> -               lvts_sensor[i].msr =3D lvts_ctrl_data->mode =3D=3D LVTS_M=
+SR_IMMEDIATE_MODE ?
+> -                       imm_regs[i] : msr_regs[i];
+> +               switch (lvts_ctrl_data->mode) {
+> +               case LVTS_MSR_IMMEDIATE_MODE:
+> +                       lvts_sensor[i].msr =3D imm_regs[i];
+> +                       break;
+> +               case LVTS_MSR_FILTERED_MODE:
+> +                       lvts_sensor[i].msr =3D msr_regs[i];
+> +                       break;
+> +               case LVTS_MSR_ATP_MODE:
+> +                       lvts_sensor[i].msr =3D atp_regs[i];
+> +                       break;
+> +               default:
+> +                       lvts_sensor[i].msr =3D imm_regs[i];
+> +                       break;
+> +               }
+>
+>                 lvts_sensor[i].low_thresh =3D INT_MIN;
+>                 lvts_sensor[i].high_thresh =3D INT_MIN;
+> @@ -907,7 +935,7 @@ static void lvts_ctrl_monitor_enable(struct device *d=
+ev, struct lvts_ctrl *lvts_
+>         u32 sensor_map =3D 0;
+>         int i;
+>
+> -       if (lvts_ctrl->mode !=3D LVTS_MSR_FILTERED_MODE)
+> +       if (lvts_ctrl->mode =3D=3D LVTS_MSR_IMMEDIATE_MODE)
+>                 return;
+>
+>         if (enable) {
+> --
+> 2.39.5
+>
+>
 
