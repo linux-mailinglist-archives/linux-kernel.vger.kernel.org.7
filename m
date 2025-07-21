@@ -1,122 +1,118 @@
-Return-Path: <linux-kernel+bounces-739747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2ADFB0CA5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:13:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75059B0CA67
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:22:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D46B170C0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:13:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 450301AA7D47
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:23:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249F82E041F;
-	Mon, 21 Jul 2025 18:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C352E1731;
+	Mon, 21 Jul 2025 18:22:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lnzcuyCO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b="b2+taER/"
+Received: from mail.nearlyone.de (mail.nearlyone.de [49.12.199.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D4FE1A3154
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 18:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499A11E32D3;
+	Mon, 21 Jul 2025 18:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.199.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753121610; cv=none; b=a93+xjHEuIuMwSx0z+nRy31JWyXg6vqZhl9qL0IuDc33sZxq4NcU7imjHeXyYh/bb4hFMumgX0WWX+iHJvA8kPyHwP6LZ9Z7TSWMTWV/14+wv9B9kb213Ue6JQnIUJ5W8fcKPdPlt49vSQodNURNfz5/KMRu9+U1WAikXavzvIo=
+	t=1753122166; cv=none; b=E8+yFdjaC38N4v+N/u6wxQiUBaDCFrEcE8sekMsm/d7UMLdfP/HD2s5duvS8elfySgT7m606n9eHF+JLAAb6/JYRhpjeUcsqKW/Qf64X3ARL+hS7k3Q9+C1LUu+zNidJhGb6Z8oPS1HycfTiluy51rentYAq27LonPDVafuDNSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753121610; c=relaxed/simple;
-	bh=0k4Ep98AIDWYfjT4YyfcsC89vreGR1g5sBXJkeCCX54=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HA3T723i+7EiFcfdVAUor5Ht7A8UzbifnPaTwM7ZaVFFiNAxIKZwcD77KedDXNea5SJSnrPHKEcVWQLJQp2+2tShGgTY+zDjDwOMS2PG9ztKE2JaC0IOKngfnki57e8nqSpzLs5hgsRO6IL/WP7uPVjlXQ4J/IigL5DA9vsNWMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lnzcuyCO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A08FAC4CEED;
-	Mon, 21 Jul 2025 18:13:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753121610;
-	bh=0k4Ep98AIDWYfjT4YyfcsC89vreGR1g5sBXJkeCCX54=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lnzcuyCOFObuupJKwOhtjIS+S/3A5n+OyF4rHkjfoimOBE/tvPDjA2tcW8S6DzaSM
-	 uBoQ50QoM/TBgzAWzKnd9GbzEF1A50fp4BL5djDbFDetVmt+Nddy0S26GWRG5d6yKm
-	 tmUuO8c85+R4BecoKAuFss0SYADeUCqkIeAlXATQAGMCadDPB3Rs6NJ5OoR7roosWV
-	 H3xcKQi0ec1fe5ah83f3d/lkRqz12rS6ir4EdHL1aUt/Od98RciRhWY4Q9cLOO4nrK
-	 nIeOfdpia++vPQ14DxPlKNe6RGta0OI47uj9QR6riQ+dPR3w7Yp9YFigwyyaOfs1iC
-	 xU78LGDPhVWWQ==
-Message-ID: <c7f895b1-4f48-4d41-91ed-26ca857e3665@kernel.org>
-Date: Mon, 21 Jul 2025 13:13:27 -0500
+	s=arc-20240116; t=1753122166; c=relaxed/simple;
+	bh=v0JnckTKa9Wzk2b8bnJecoMDCfc+d/+mvsfcwwI9uCE=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ruEi9/t0dafwJ9P9VDhT2i0It9HxmvcijpxKY2LbctnRb3ZyAGCXe+CwB5/m9UJ5epXeBVX+mHvZDWFc0HpO/vReFUEIcMB4Y8DZC10QILxjUra6kPV+J7pv8ZKcXGt49Nm8qfzKS2LeZ8Sczi8aUgiCF8c9wMqJvfavvZAI1e0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org; spf=pass smtp.mailfrom=monom.org; dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b=b2+taER/; arc=none smtp.client-ip=49.12.199.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=monom.org
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A6ED2DE37A;
+	Mon, 21 Jul 2025 20:15:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monom.org; s=dkim;
+	t=1753121761; h=from:subject:date:message-id:to:mime-version:content-type;
+	bh=fceeiNxSrGcA0LQkHYYLM6vTS6LX9M+BjUXdE/4Ejac=;
+	b=b2+taER/nFELQpNV3QNJZSQP/HVVYf/tGA+tV9mXtgr7BnFaJ7CPKgPzE2c2QJDnIc+3aD
+	fFq2e4UznK4fU9LPLs1eNXztgYBKbVN/mRpitSlEHpC8wK3OjbhxTLqpY6yMK7XjlG0I1C
+	CtjKFoXQgRGNbyfNEhCzGisZs0bXN9ajSS3D/FG1cUiGMX1GCeNSYmISWzEESo8eQ4//Vr
+	+8RuD3ZEnwOWPS3YRseOawrI/qOIyX7yyJFvAoLnhe5C/eLTAQeJ0qQ+3V1y4TNY2TJfR6
+	B++eeDCYsNs0DjtWHiJwcTGkJaJvHuwbkPUofrSfv4OrRPCUZgOLjD/lm62C8Q==
+Date: Mon, 21 Jul 2025 20:15:53 +0200
+From: Daniel Wagner <wagi@monom.org>
+To: LKML <linux-kernel@vger.kernel.org>, linux-rt-users@vger.kernel.org, 
+	stable-rt@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Tom Zanussi <tom.zanussi@linux.intel.com>, Clark Williams <williams@redhat.com>
+Subject: [ANNOUNCE] 6.12.39-rt11
+Message-ID: <175312127913.526655.11942829521744876779@nitrogen>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/CPU/AMD: Ignore invalid reset reason value
-To: Yazen Ghannam <yazen.ghannam@amd.com>, x86@kernel.org
-Cc: linux-kernel@vger.kernel.org, Libing He <libhe@redhat.com>,
- David Arcari <darcari@redhat.com>
-References: <20250721181155.3536023-1-yazen.ghannam@amd.com>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <20250721181155.3536023-1-yazen.ghannam@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 7/21/25 1:11 PM, Yazen Ghannam wrote:
-> The reset reason value may be "all bits set", e.g. 0xFFFFFFFF. This is a
-> commonly used error response from hardware. This may occur due to a real
-> hardware issue or when running in a VM.
-> 
-> The user will see all reset reasons reported in this case.
-> 
-> Check for an error response value and return early to avoid decoding
-> invalid data.
-> 
-> Also, adjust the data variable type to match the hardware register size.
-> 
-> Fixes: ab8131028710 ("x86/CPU/AMD: Print the reason for the last reset")
-> Reported-by: Libing He <libhe@redhat.com>
-> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-> Cc: David Arcari <darcari@redhat.com>
-> Cc: Mario Limonciello <mario.limonciello@amd.com>
-> Cc: stable@vger.kernel.org
-Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+Hello RT-list!
 
-> ---
->   arch/x86/kernel/cpu/amd.c | 8 ++++++--
->   1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-> index 50f88fe51816..db0f9e0d181a 100644
-> --- a/arch/x86/kernel/cpu/amd.c
-> +++ b/arch/x86/kernel/cpu/amd.c
-> @@ -1274,8 +1274,8 @@ static const char * const s5_reset_reason_txt[] = {
->   
->   static __init int print_s5_reset_status_mmio(void)
->   {
-> -	unsigned long value;
->   	void __iomem *addr;
-> +	u32 value;
->   	int i;
->   
->   	if (!cpu_feature_enabled(X86_FEATURE_ZEN))
-> @@ -1288,12 +1288,16 @@ static __init int print_s5_reset_status_mmio(void)
->   	value = ioread32(addr);
->   	iounmap(addr);
->   
-> +	/* Value with "all bits set" is an error response and should be ignored. */
-> +	if (value == U32_MAX)
-> +		return 0;
-> +
->   	for (i = 0; i < ARRAY_SIZE(s5_reset_reason_txt); i++) {
->   		if (!(value & BIT(i)))
->   			continue;
->   
->   		if (s5_reset_reason_txt[i]) {
-> -			pr_info("x86/amd: Previous system reset reason [0x%08lx]: %s\n",
-> +			pr_info("x86/amd: Previous system reset reason [0x%08x]: %s\n",
->   				value, s5_reset_reason_txt[i]);
->   		}
->   	}
-> 
-> base-commit: 65f55a30176662ee37fe18b47430ee30b57bfc98
+I'm pleased to announce the 6.12.39-rt11 stable release. This is just
+an update to the latest stable release. No RT specific changes.
 
+I've taken over the maintenance of the v6.12-rt branch from Sebastian. With
+this, I've also changed the workflow to follow the devel-rt workflow. That is,
+the source is the quilt tree (-patches). I've started to add support to the
+existing stable-rt-tool. It works, but it's still a bit rough. The tooling will
+get better over time.
+
+That being said, this shouldn't really matter for this release artifact. If
+there is something off, please let me know.
+
+You can get this release via the git tree at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+
+  branch: v6.12-rt
+  Head SHA1: ae9a9818f45c14db5eccf65ae7da725d8e578e72
+
+Or to build 6.12.39-rt11 directly, the following patches should be applied:
+
+  https://www.kernel.org/pub/linux/kernel/v6.x/linux-6.12.tar.xz
+
+  https://www.kernel.org/pub/linux/kernel/v6.x/patch-6.12.39.xz
+
+  https://www.kernel.org/pub/linux/kernel/projects/rt/6.12/older/patch-6.12.39-rt11.patch.xz
+
+Signing key fingerprint:
+
+  5BF6 7BC5 0826 72CA BB45  ACAE 587C 5ECA 5D0A 306C
+
+All keys used for the above files and repositories can be found on the
+following git repository:
+
+   git://git.kernel.org/pub/scm/docs/kernel/pgpkeys.git
+
+Enjoy!
+Daniel
+
+Changes from v6.12.28-rt10:
+---
+
+Daniel Wagner (1):
+      v6.12.39-rt11
+---
+localversion-rt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+---
+diff --git a/localversion-rt b/localversion-rt
+index d79dde624aaa..05c35cb58077 100644
+--- a/localversion-rt
++++ b/localversion-rt
+@@ -1 +1 @@
+--rt10
++-rt11
 
