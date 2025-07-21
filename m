@@ -1,121 +1,128 @@
-Return-Path: <linux-kernel+bounces-739843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C1DEB0CBD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:25:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28528B0CBDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 22:32:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52B341733CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:25:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C142A7A6C25
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 20:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B39B23B61D;
-	Mon, 21 Jul 2025 20:25:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C8323BF9E;
+	Mon, 21 Jul 2025 20:31:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ga4uIzK2"
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jqvP+GEz"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF7923A9AB
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 20:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662427DA7F;
+	Mon, 21 Jul 2025 20:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753129542; cv=none; b=lAMxEkjvoZx8/rF0uBBnAXMcK2sbs2JEH6LOJLsmqP1n4oKNTOt8A53fVDng/5Ceh+P4tKNoqJGiJrnQgzNhSovGDpwVDpO+orSU6LDhhpZU0x/KdaxbSzRDA7VL+bVbjH74BYtvuN+iiuAOG5YdHcHAjbnjZI2hGOjs85Itz2A=
+	t=1753129915; cv=none; b=oiPpWp3fp+YLsCGKT55v1+GTrZ3GYDT0aqftfzyMsXc1l5xYbFiaNYAheYq1WTOeP7vK8+G2J7bJ5xIY3JaBqg44Tnc2BGM63ja7B7us1G7eW6JrRlm5/IQtCnSuFEOhl/VWoVeAZ4xrAnqhA4rKgTwaKaM+U557zDxXgb9DG9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753129542; c=relaxed/simple;
-	bh=hGFN/us4PJA4Xsf/DhXn3P6fmy4Y1hnlhz5wLuKVoqo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TqJyoFtq18hlXI9SFMyGOArg7Uh3FLYp65yP2Lify6P1o5ypGqEoN/ijQoxzk/KzDUkuN5GPT4AMMIm9fIc9CiLSrW9x7ZWkihsOFhO4jO0L/+tV+4O9gLneUF5bUVlxCwLNoz3fvEravZzqh16U670eLK1SqWGAEys4eneWWrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ga4uIzK2; arc=none smtp.client-ip=209.85.210.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-72c14138668so1978568a34.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 13:25:40 -0700 (PDT)
+	s=arc-20240116; t=1753129915; c=relaxed/simple;
+	bh=g5A9KOanO+cfCnC2DzKbBgwUK1XEgUVRRT2guId11mE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ge45oDoSYOwGC90zFQGIFwjfVlV9qp4tMZRfXB10h9tMsHzdtC2LM7cjn/MOhE6zLHLJSZkCExb5/RVhY6/BY2T4JWIe2vejkxs0SOzi27B6mJm8EWTGu2YnWLYkHGRO179lY61F8HAU0KwThhePXGUcvJbdjW81mNAkOEcnxDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jqvP+GEz; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-555163cd09aso3869018e87.3;
+        Mon, 21 Jul 2025 13:31:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1753129540; x=1753734340; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4GRM/S7FS5n33a8EgF1WPjJ5PYFBbiyNz3lEYziTLbc=;
-        b=ga4uIzK2PSMOO9pDXUSGq+vuJcXn1U3ljZdO7+FH8d+50DZs2KNiaSo66P/KGKwCpR
-         ++6TO/Cu9KTpxoIQOBt8mF1TLwR8c2DI3BUn+Hal37GCtT0L+12g5v4groHj+wcRCu8h
-         KQWlPwhg7VpDN+CPWq88C9UY9UvjoDTv/Ain7Jzrv9sYTbWbHpX+pZ4ukcDX4lMC5EOp
-         oCD0k4WO4fqrSQkb41SToYsoyAqZf6LdDTdUowl5tzD77/kvkzjLp4nZVp1CKniOcZx7
-         fmq30LncP6/lCJFmPWfr6Xx7Ja2p0tfpFmcUvPjJJMqr8qr9QX+f02j/l3OsTIXJ5KSG
-         A6UQ==
+        d=gmail.com; s=20230601; t=1753129911; x=1753734711; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g5A9KOanO+cfCnC2DzKbBgwUK1XEgUVRRT2guId11mE=;
+        b=jqvP+GEzmMIcut//TyCN8goYafOKEx7WWtTZlUZZw9DTkw+S8CtShjFEYm5TUdU7X1
+         lt8bA5t1sidQzh6fOtaSkDkYd8zKKQvVH6toSft9n5Pe5DQ1k/8BsaELg1R8XDpxq1BJ
+         9kFA3OULtLj7ta5BofKRTL0/UwLy3rXHIUCifiN03cbylhAg+FKOiUerazazoS3Tqb01
+         wzkec3UTd5GMarJrAu+zS32hSK83HNVLIn4Tx1fMEbeWUVVQLg440ygux5pT7+h7h7yv
+         dY+x6fX/r9o+iktyJWUtdlfc7/p7YbifSGz36Fbs33+oPdH+k1RvI3fH2V6MXS+i74DV
+         LSmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753129540; x=1753734340;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4GRM/S7FS5n33a8EgF1WPjJ5PYFBbiyNz3lEYziTLbc=;
-        b=C/rEkASa7WEZp9n6FGDLLhV9cHp0ql/cp4nxUimj9d7sT0JpqjvtYgrX4Lhp2BgtYw
-         3EFZ518sCi9A49WzmBKZVjn+uyyyyMUTqS5FORW7SnsNwFBWziL4/6ZpZ0kxXoF2TBHX
-         kyc0qjPaP18P7xj9hJhsXs2Hh+wzr6UVN2nn+jxgVHjL7pwldnuy8kb8qb8SMYevm/WZ
-         BS3ow6ZfcNFpaQWdg9hOkEiBXte7pUfJx7I80nbBKGjz4LXKuDh+i/qnOKC9G9yn1jV2
-         qjwXx1Wy9yi7SIP3rkX/2tFGKvbK1MX2H2R89vHH57vgRsVk7Ak87Iz3ceWg+l3H8/Uk
-         k1IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWnpODAcaoenYfebR5U7VBkdc3g12wEIiR2IuRLbqvFZDe63NNyenTep2QhQ4UQoTa3A5T2ZOoKHFmyQFM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0N0agXuryKtGTSpeErV3gLZYNCiN2RN2qK+BGcgelJ02Stwm2
-	c1L62Z8T+EmmixCk0Osz2AENTrwT+4VPAF/FvL7bP8UDnGeRb/CtSWa9WF4SK8RTPCQ=
-X-Gm-Gg: ASbGncuhzK8AZPv1ovtYlBwKb/KvLXInMlzvUriFbo70pvOAbE/+EQED3SueIHaNi4g
-	QISbrGM6p3BP6lcsiVW/7k3twAA5rSRYnWEefBxNfg1yvb5AXuQqXVRAdA+cpO6QTCoHL204AVA
-	mufV1eBo/oDHOBdFJbUnk14R4B63jTAx6z02M+ikYO918veJVMm5dJQpzKdSSH4f4z+pvMqVRCZ
-	pWZJolqSCK+gRERcI6wibXlh4mTx/m/8Ova5pQxkw25AeRflYEZsBGpm2W7FikZkj2Im7R6IoAz
-	4wkwsJ8Q9BeaAY01/UUoXbD4sBB0KgTZiwicS2uIee9T9kG0DUS69fyFZHH1Kb4wmSrcchffxb3
-	nCjQyJvHUaIEd3tiT+HZNf5NjB2JguEb5coLyFC8t6YNudIx7FHYik9vr1KcdsgX9VZh0Lp5kP6
-	Y=
-X-Google-Smtp-Source: AGHT+IGZ5R2xSYQSO+30c9/IoRg0zcaorUVpPKcfzRe0hDQV6gsrMv5yUTLMuWd7PTbmA0KUa4uNzw==
-X-Received: by 2002:a05:6830:710c:b0:73c:f8be:988b with SMTP id 46e09a7af769-73e835a52bbmr13035612a34.26.1753129539787;
-        Mon, 21 Jul 2025 13:25:39 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:3bea:f296:60f2:c6cb? ([2600:8803:e7e4:1d00:3bea:f296:60f2:c6cb])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73e83be5d8dsm3131100a34.64.2025.07.21.13.25.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Jul 2025 13:25:39 -0700 (PDT)
-Message-ID: <a88e1a8e-d29c-41e7-b3cd-5db965a055df@baylibre.com>
-Date: Mon, 21 Jul 2025 15:25:38 -0500
+        d=1e100.net; s=20230601; t=1753129911; x=1753734711;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g5A9KOanO+cfCnC2DzKbBgwUK1XEgUVRRT2guId11mE=;
+        b=ZhSDU55M6JUs+tCmXCmDpRaTQ2htQy5GRMbY+SZu6m0Z9eegjOBuU2OZvg8+7vSp8D
+         Nam0hDxd8HLxQ1+A+nLhxQaf59Eu5Ivk3jGnqTp6RbgWiORQZBZ+DMlVlAlU2eFEFxo5
+         hV1Lc9RkIM4g48gN/ndZlfIc6ZZ9k5IuOUpBnbqLHoKH2yIxGKuoaT3WuzZrGC4ykSO+
+         TaRkQAyWk7IO2Nx6J0qxq0MbJigTPo/KvjPvvAjHZBWo6Fbo06y6bcLz/MSUJI7+K3WU
+         lUEff4ZTcTDKqFCrSfoyYSV5ktd1mAQhPWWi8snaQ7iWJnw1xr/ON5ARKxixT9uMRDNC
+         ryTw==
+X-Forwarded-Encrypted: i=1; AJvYcCUiiuO8Wuctfe/jzEhK4bLRU+I1AH//FHLJWmYyn0nqa/KbMwYIXyW7Ecq8MqFhn6KO5DOQnfuM@vger.kernel.org, AJvYcCUwyfeHnzEhA13mSyrkfVDBO8SsWAb1czJBhWt6uM1aSv4tnBX0JB4mgGFVc8fZNjgTwymliEin2UPG@vger.kernel.org, AJvYcCWBtxK2QE2Y/tZenAhzz/2U8icLMDLSu7D0eyi3O6FaDqyMwKyWNusaYC5Xv2EBw9HHhbu8W9tu3LSmIuMKQWnI@vger.kernel.org, AJvYcCWIeBbz8zNDSbPVMB5grQdD4rmv4Q0QWx/g0g5XBYcuQyg6WXz1DTgQHj3Q2f3hMt2Z5p8R3VNfBiOm3uhVHL8=@vger.kernel.org, AJvYcCXMBJfeVWwNtv1TJXqGaa3y7wEDBbEk6+eG2jLxLlsls966lRWPtTEK8MVzOSIM84XPIWPefF+MohI=@vger.kernel.org, AJvYcCXoPs77LppdhX7FpPr4QU1IzlnSXJYfbJYZwUlkwqwrajA2QblNjEV4e6OwYLa5t1q8hzIMqblc+HV3RxH7@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWJFGOigDcRLBY+2kS97lJn2JomPtG5euRRER8uE27Tmse27+3
+	eu+c3wNFzf2EOvIh+OoON2mxTilm5qLpAGhtCnVcA7KaxZLI3fDNlblT8edZLDk6d6Rau2eN0dP
+	FUNtHWXg11p4CPkA1QQYrL5G9wQ6NKtg=
+X-Gm-Gg: ASbGncvrXVb/eHF7D1gciTIGxsQJRrNOVgyUP5LpEsZOfMeuQ2wHI0WcpC52tIVXS/C
+	XCPZ0zp31ljm2L05qv828rXQfnPVCiB+lZwpOuT1XW2Zb4tA1L+WjPClow+eoH0esGwgvclSC3t
+	MSgguEte4t/XIVIrP85lzDJ2nSwUrBQJkWZ5DsHXNBqXCbwr39wqfUgHcQ6ScRCS4sefugvlkZ3
+	zWjf5gJC2xWvIvLxCM=
+X-Google-Smtp-Source: AGHT+IFR2lRHIzOwJj3JIlIo6gx45Mp51Ht2b7RDYiFrG52gvnrp+p/uZ3Tj+777Jg5nVJOtwaPjIzJjlMYwrAVYkHM=
+X-Received: by 2002:a05:6512:398d:b0:553:35ad:2f45 with SMTP id
+ 2adb3069b0e04-55a29729104mr5367527e87.50.1753129911239; Mon, 21 Jul 2025
+ 13:31:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] iio: light: ltr390: Add sysfs attribute to report
- data freshness
-To: Akshay Jindal <akshayaj.lkd@gmail.com>, anshulusr@gmail.com,
- jic23@kernel.org, nuno.sa@analog.com, andy@kernel.org
-Cc: shuah@kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250721195419.526920-1-akshayaj.lkd@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250721195419.526920-1-akshayaj.lkd@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250719-core-cstr-fanout-1-v2-0-e1cb53f6d233@gmail.com> <CANiq72mRWuQRFaouOSazi3GTXoHFaeVpyNMZcP0Lkymb+aXrqA@mail.gmail.com>
+In-Reply-To: <CANiq72mRWuQRFaouOSazi3GTXoHFaeVpyNMZcP0Lkymb+aXrqA@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Mon, 21 Jul 2025 16:31:15 -0400
+X-Gm-Features: Ac12FXwThiyNWkPFtuHHqyDRKx2RF3BqA4YU0Qjx3AoUK2MCPhmxxwTXBXJI9Qc
+Message-ID: <CAJ-ks9ne+YFezFvQ8nZH2UTjwqb3+3JtG0ztqecN-A46tC5SSw@mail.gmail.com>
+Subject: Re: [PATCH v2 00/10] rust: use `core::ffi::CStr` method names
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+	Leon Romanovsky <leon@kernel.org>, Breno Leitao <leitao@debian.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/21/25 2:54 PM, Akshay Jindal wrote:
-> Some IIO sensors provide a status bit indicating whether the current data
-> register holds freshly measured data or stale data previously read.
-> 
-> Expose this status via a new read-only sysfs attribute, 'data_fresh',
-> which returns:
->   - 1 if the data is freshly sampled
->   - 0 if the data is stale
-> 
-> This attribute allows userspace to observe data freshness directly, which
-> can be useful for debugging or application-level filtering.
+On Mon, Jul 21, 2025 at 4:20=E2=80=AFPM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> On Sun, Jul 20, 2025 at 12:42=E2=80=AFAM Tamir Duberstein <tamird@gmail.c=
+om> wrote:
+> >
+> > Subsystem maintainers: I would appreciate your `Acked-by`s so that this
+> > can be taken through Miguel's tree (where the other series must go).
+>
+> Did you apply this with `b4`? I think you picked Danilo's Acked-by,
+> which was for a subset, for other patches too. I can remove it when I
+> apply it.
 
-For debugging, using debugfs would make more sense.
+Yes, please do. I did indeed use b4 - and Alice also let me know that
+this was not correct. Sorry about that! Same is true for 2a, I'll
+reply to that email as well.
 
-For application level filtering, why does it matter if we have
-read the same value before or not? The sampling_frequency is
-available, so the application should be able to deduce when
-fresh data should be available based on time.
+> (Greg's Acked-by may also have been just for his bits back in the
+> previous series, but in his case he didn't say anything explicitly)
 
-I could see maybe polling this in the kernel in order to implement
-a buffered capture mode, but not sure passing this on to userspace
-is the best way to go about it.
-
-
+I believe it was for everything, as he didn't specify otherwise.
 
