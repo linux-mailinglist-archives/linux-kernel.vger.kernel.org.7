@@ -1,161 +1,144 @@
-Return-Path: <linux-kernel+bounces-738770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 904B8B0BCD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:40:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C21ABB0BC6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 08:20:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 314431896BB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:40:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E7A0189B03C
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 06:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B5BE27EFFF;
-	Mon, 21 Jul 2025 06:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F4426E70C;
+	Mon, 21 Jul 2025 06:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OAm2B0e2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YUKuj6sU"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA4521A92F;
-	Mon, 21 Jul 2025 06:40:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2A8F26E6F3
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 06:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753080002; cv=none; b=lW42oB0Qx9Er/ScD8/TYq7GtFO9ppebpHNHp/a4YuGB7Yb1jiV0NBnRGf8y3LgMhi25v+kHV8iHsXco5VGYVkILVXhGNkUjW9DdMFMclH/UjVs9Lei9pbILNUi9N8FC8fiHphO4QYmbPZzY7Eiv23s4kTo9jI0zH2QucCZG0nEc=
+	t=1753078845; cv=none; b=mgMOQ8erXWkeCB09/xnmbo5RMlNYi7DfQ7cI4le+TrHVNCvqAzryQvMTKM2BKp4SvI2QTg04Kk91UgvlG/I9uYqUlSSL8afO2K5ak1PIc7jDke1B7KIUkdH+GeVQ0sby26ESO4Hcpi4MdC4MLApKQ9A8qucFwTxM4yssPLgacwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753080002; c=relaxed/simple;
-	bh=ziiq34GeIGmiORnWXKfFphxGRAPSfNCDjGeyjoK5urA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UDAmVlRTigRDt2gqtlIT+U06GxpG/xRkRBTaZPsJpxg39D0gcjQiy8ucn6KSPWH+Zd4hxUIUPiQ4ZyW7qTMU+ZU4/4rLoECJgdLyEBRP41t0JwcasrvvgIbcaJOXyihnu5zVjC464V8BUxgWYL68T0+uGvdeAUV3C09J0MhXVSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OAm2B0e2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60B11C4CEED;
-	Mon, 21 Jul 2025 06:39:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753080002;
-	bh=ziiq34GeIGmiORnWXKfFphxGRAPSfNCDjGeyjoK5urA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OAm2B0e25RfRju2Ra80I7Y4/q7Fn7R8YzwLGQuZ23R4fytfiOpGZ7wgiT6yvrpLMx
-	 u6AxGpemuM2ApQ2GIfJJ2QmnKVtnTTx9+tsCUmmOytapowls2GVYUD9Rt7y06SEDTn
-	 nC3YDjVQSywuFfcIu/TBj1y3S5hvJTXDn4xXHfitYgDb1Lhb92ni+Z5p05Zm1ZhJ3h
-	 OKV0gpg6AJDc3PI811au35HSUM6fi83f0ykevyqPIFd/vt6/pS/t+qzyBYvevgsON6
-	 EdnhVNm5+AE7sRS3C+ljtjnr03NNLXcPw4ElZKpZN/KrR4dyLwpyaxyWBO/AdWxZr7
-	 U1zUPCHEg+Faw==
-Message-ID: <99977f38-f055-46ed-8eb0-4b757da2bcdd@kernel.org>
-Date: Mon, 21 Jul 2025 08:39:52 +0200
+	s=arc-20240116; t=1753078845; c=relaxed/simple;
+	bh=fQk6nSWeQuF0vCVcMA4Ltmv16D5fu/QW6hFWoM8Z/G0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=XJc9KId1XD1P00XpQGWEfzzeOjM+uRQ7pl1ibnx788NeQBAwVGe6g/iRZRhQl19FRZgIjpe2ul0tg6L+AxNU2KsL7ULrjNmCCohLr1JfNbn/3hld5hbmVwYzKOITXAHu4zmI1z9bUjsmmNsk68P3g0EwEX+KvSBvGsnR3GVzCBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=YUKuj6sU; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250721062039epoutp01ddbef981a4e94cfe04e9128b3b9aaa54~UL_qiHwOf2864228642epoutp01I
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 06:20:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250721062039epoutp01ddbef981a4e94cfe04e9128b3b9aaa54~UL_qiHwOf2864228642epoutp01I
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1753078839;
+	bh=/XDvTMExPc0Dk39AQxulHgbEVBf+0npFbOQqjpCb3KM=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=YUKuj6sUvf7gsaAK5mqAKjZIZEAsIkwQA6JuY1EZvAeLkB2S6heUWo5dBUfZ11lEC
+	 DqF6BoS7SX87q6WTnt07sRET2DQ8e1Gcg6GvTBl/llizIKJESuLxYh0zWDiYGZkhuV
+	 zQlXwhoeXs/jH5JhZ3zdbx5GMJTrcknoUxSj4ICQ=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250721062039epcas2p231de33c9e10289860dec2211b5db9ca6~UL_p7L4xK0939509395epcas2p2P;
+	Mon, 21 Jul 2025 06:20:39 +0000 (GMT)
+Received: from epcas2p3.samsung.com (unknown [182.195.36.68]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4blqyZ3ZDHz2SSKf; Mon, 21 Jul
+	2025 06:20:38 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250721062037epcas2p25fd6fcf66914a419ceefca3285ea09f3~UL_ouoOxF0449004490epcas2p24;
+	Mon, 21 Jul 2025 06:20:37 +0000 (GMT)
+Received: from rack03.dsn.sec.samsung.com (unknown [10.229.95.126]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250721062037epsmtip18cc76bfe8dac1a5b8d8cb913d91e9f0d~UL_opJvV50948009480epsmtip1K;
+	Mon, 21 Jul 2025 06:20:37 +0000 (GMT)
+From: "hy50.seo" <hy50.seo@samsung.com>
+To: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	alim.akhtar@samsung.com, avri.altman@wdc.com, jejb@linux.ibm.com,
+	martin.petersen@oracle.com, beanhuo@micron.com, bvanassche@acm.org,
+	kwangwon.min@samsung.com, kwmad.kim@samsung.com, cpgs@samsung.com,
+	h10.kim@samsung.com, willdeacon@google.com, jaegeuk@google.com,
+	chao@kernel.org, linux-fsdevel@vger.kernel.org
+Cc: "hy50.seo" <hy50.seo@samsung.com>
+Subject: [PATCH v1] writback: remove WQ_MEM_RECLAIM flag in bdi_wq
+Date: Mon, 21 Jul 2025 15:40:24 +0900
+Message-Id: <20250721064024.113841-1-hy50.seo@samsung.com>
+X-Mailer: git-send-email 2.26.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/16] Add support for the Axis ARTPEC-8 SoC
-To: SeonGu Kang <ksk4725@coasia.com>, Jesper Nilsson
- <jesper.nilsson@axis.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa
- <tomasz.figa@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: kenkim <kenkim@coasia.com>, Jongshin Park <pjsin865@coasia.com>,
- GunWoo Kim <gwk1013@coasia.com>, HaGyeong Kim <hgkim05@coasia.com>,
- GyoungBo Min <mingyoungbo@coasia.com>, SungMin Park <smn1196@coasia.com>,
- Pankaj Dubey <pankaj.dubey@samsung.com>, Shradha Todi
- <shradha.t@samsung.com>, Ravi Patel <ravi.patel@samsung.com>,
- Inbaraj E <inbaraj.e@samsung.com>, Swathi K S <swathi.ks@samsung.com>,
- Hrishikesh <hrishikesh.d@samsung.com>, Dongjin Yang <dj76.yang@samsung.com>,
- Sang Min Kim <hypmean.kim@samsung.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@axis.com, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, soc@lists.linux.dev
-References: <20250710002047.1573841-1-ksk4725@coasia.com>
- <847e908b-1073-46ea-93f3-1f36cc93d8b8@kernel.org>
- <bfdc2eddde554e1d1808dd8399bc6a693f681c9b.camel@coasia.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <bfdc2eddde554e1d1808dd8399bc6a693f681c9b.camel@coasia.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250721062037epcas2p25fd6fcf66914a419ceefca3285ea09f3
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+X-CPGSPASS: Y
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250721062037epcas2p25fd6fcf66914a419ceefca3285ea09f3
+References: <CGME20250721062037epcas2p25fd6fcf66914a419ceefca3285ea09f3@epcas2p2.samsung.com>
 
-On 21/07/2025 06:50, SeonGu Kang wrote:
-> 2025-07-10 (목), 09:07 +0200, Krzysztof Kozlowski:
->> On 10/07/2025 02:20, ksk4725@coasia.com wrote:
->>> From: SeonGu Kang <ksk4725@coasia.com>
->>>
->>> Add basic support for the Axis ARTPEC-8 SoC.
->>> This SoC contains four Cortex-A53 CPUs and other several IPs.
->>>
->>> Patches 1 to 10 provide the support for the clock controller,
->>> which is similar to other Samsung SoCs.
->>>
->> You should explain here (and in DTS patches or the bindings) the
->> hardware, that this is Samsung SoC.
->>
->> You could also explain the differences from Exynos and proposed
->> handling
->> of patches (because this is odd)
->>
->> Also, entire patchset has wrong and incomplete SoBs. Your SoB is
->> missing
->> everywhere, others have wrong order.
->>
->> Please read submitting patches first.
->>
-> 
-> This Custom SoC is owned by the Axis (OEM) and manufactured by the
-> Samsung (ODM). It has standard Samsung specific IP blocks.
+if it write with the write back option with f2fs, kernel panic occurs.
+Because the write back function uses bdi_wq and WQ_MEM_RECLAIM flag
+is included and created.
+However, this function calls f2fs_do_quota() of f2fs and finally tries to
+perform quota_release_work.
+the quota_release_work is performed in the events_unbound workqueue,
+but the WQ_MEM_RECLAIM flag is not included.
+Therefore, it causes warn_on_panic.
 
+workqueue: WQ_MEM_RECLAIM writeback:wb_workfn is flushing !WQ_MEM_RECLAIM events_unbound:quota_release_workfn
+Workqueue: writeback wb_workfn (flush-8:0)
+Call trace:
+ check_flush_dependency+0x160/0x16c
+ __flush_work+0x168/0x738
+ flush_delayed_work+0x58/0x70
+ dquot_writeback_dquots+0x90/0x4bc
+ f2fs_do_quota_sync+0x120/0x284
+ f2fs_write_checkpoint+0x58c/0xe18
+ f2fs_gc+0x3e8/0xd78
+ f2fs_balance_fs+0x204/0x284
+ f2fs_write_single_data_page+0x700/0xaf0
+ f2fs_write_data_pages+0xe94/0x15bc
+ do_writepages+0x170/0x3f8
+ __writeback_single_inode+0xa0/0x8c4
+ writeback_sb_inodes+0x2ac/0x708
+ __writeback_inodes_wb+0xc0/0x118
+ wb_writeback+0x1f4/0x664
+ wb_workfn+0x62c/0x900
+ process_one_work+0x3f8/0x968
+ worker_thread+0x610/0x794
+ kthread+0x1c4/0x1e4
+ ret_from_fork+0x10/0x20
 
-It is designed by Samsung. It is Samsung SoC.
+Signed-off-by: hy50.seo <hy50.seo@samsung.com>
+---
+ mm/backing-dev.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Anyway, don't explain to me, but in your patchset.
+diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+index 783904d8c5ef..6ef5f23810fc 100644
+--- a/mm/backing-dev.c
++++ b/mm/backing-dev.c
+@@ -491,8 +491,7 @@ postcore_initcall(bdi_class_init);
+ 
+ static int __init default_bdi_init(void)
+ {
+-	bdi_wq = alloc_workqueue("writeback", WQ_MEM_RECLAIM | WQ_UNBOUND |
+-				 WQ_SYSFS, 0);
++	bdi_wq = alloc_workqueue("writeback", WQ_UNBOUND | WQ_SYSFS, 0);
+ 	if (!bdi_wq)
+ 		return -ENOMEM;
+ 	return 0;
+-- 
+2.26.0
 
-
-Best regards,
-Krzysztof
 
