@@ -1,138 +1,145 @@
-Return-Path: <linux-kernel+bounces-739622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38638B0C8AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:25:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89D5CB0C8B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 18:26:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09227188A046
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:26:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ADDC543CAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 16:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CA282E0935;
-	Mon, 21 Jul 2025 16:24:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1CD82E1C50;
+	Mon, 21 Jul 2025 16:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dMJRbuK/"
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I0N8KIng"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DF12E0924
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 16:24:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B3C2E093F;
+	Mon, 21 Jul 2025 16:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753115092; cv=none; b=GE3yTxlHdwbW1viC3HX8E+KxI3KsI0N+1I2oHa1i5TAp7gnwForT71SZLus4ChDkvGVi+J59umpuF8n/iNd9EDAxDwvhutQ0TkHOVmzEQUpcp7N63TBPANIHqeupmHEBQ1LHTpJ0jHeR+AC0DEAMteC7ZYk57UfpLFGGSsFdVYM=
+	t=1753115098; cv=none; b=BJM/Itn6dJ7UxRUa58duj83eeZUdEhEakY7ZRiWmHxjBgbfCYEJ29SLq/5yX3iK6+EfG/2t1fBZ28m9vhpbYJBxsRuoV0K4H3UKgo2kE7lrvm7S/yI1hoSREW4H229H64bXWglHEqXuJ2zWpMHgQZE8aJTipXBT8TJp2tRt8kpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753115092; c=relaxed/simple;
-	bh=nNq5fh4+3k/pfge/EewOdEvIoN/PYlIwcTyZWDDbQZA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WvOw5CEPG1HmmNw/JNytTwAkICKG2YivDMQfUiHUeFUIMO3ve/WNd8tUmEZjOT2VtxxvI9aUx1J4DPF2EaFih0KWG8XJ0RR4USd4+f3+L26FR/YnVwZPfjYfSJAnKakdxBW9i6eKBBVUtgd1VRbcWeb+5Uud3BEhIQhYVH8TJpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dMJRbuK/; arc=none smtp.client-ip=209.85.160.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-2ebb72384dbso1181500fac.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 09:24:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753115090; x=1753719890; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7eWGrSP/wKlOyy9FKBxoza5IYmU5GaAPav4azuEf3Sc=;
-        b=dMJRbuK/rVQpybkzyd5eNvNqJi8RNHOVUUf1ZaODg45NYBiuGsrCUx5cS5CYnOBfYR
-         tgLF9OPeCz9TcdldZVxtsB5StkUh+UcLynr+2djFKVmQdsi8B5olKtD7ma/CODt4oIK4
-         q6FgL+fk7l/zQUkR8sf62wWT/y6+J8iWbW6/pKLgJnT2jtpkqb25dHqMpkd3+EcUKo9G
-         zQjkdBDWAQA6syR3M/zOCclhscLYTPbSX8TBNiHQ+zCg1JN3G2ANIdYHA6plDOuJT1T+
-         A27RjNLPXR03mQPtN/wWRcVC/GURZgpeDEL/rvNQsr0QCt0NDXsupjVRUYXdN+Z0QjzX
-         JTpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753115090; x=1753719890;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7eWGrSP/wKlOyy9FKBxoza5IYmU5GaAPav4azuEf3Sc=;
-        b=YPL9HE4KsSpDOQ+TXUXKgMx2vVzfEOf5i9eUhDEY2i/INqjEoC/QxIrY7Kf70xCCwz
-         znwJcam16RQPQgtO8FZ4Be0Dd6jYOXyl4YRW5VjGXA/4X/mJe6gkcFv457Q54CRcp/CK
-         PZaS59wNFIthojvi3pwUidlFTYgvhB1javxNkutHG/WZ9gZn12tSGdZxpo5yVX9uK+Ha
-         epi5H40OvJjEACeY0FszMRN2GfTY8sXXSqB5wiTJlP5V1CqIvvT8LxfsSpkTHh3H+tRx
-         QztptHmzjEpRk1jJLGC0TyP3GH0/35ELZ4IA2MPwkXDW+QCB+eziqLNxlevFLCiXeniu
-         HQ7g==
-X-Forwarded-Encrypted: i=1; AJvYcCU3vFi/xAdAcxcUdsXBnnbSWyBZVn6YGphCzgNuiYFsmnoMOEWyMdcZ5OiS9nJNb1v+rOUJLDwM5bZMmpc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJxH3U4ib5S9o6MPPrlSWEalXbe71OZNXi4lj30rtrt5+KdqPx
-	USVgQr/JluIFKMKAo+yEEaDCNOxBAJSMBtXxWNoZhdM+6NvOvCWpcUiZ
-X-Gm-Gg: ASbGncu/Ss907iDD7p/2sjQWT6eArklsKGKFawYQCXRLDEiqGuqEkFmp6A9WiCBrW6p
-	ZECDeYCKHcPVxfh8zTqa4Cz5cZj0NbRR3ZQRXBNFdYsh0MbaVlvAYZJg282cbpbaDiNkGzi/lQW
-	sFkl6ZEyzmUjr7dG739nZzM5GQDV5xzLpD4aSBQbhR4CfJHlvBFnlvht95Rd4Lpj9oKdKOplc9C
-	uS1PNOrNgeup+Er9HT31owhZce47l1owHLElL3oBmy6qNLKe/g51ViXSUC3bWsWYZ0LZqOkrEHb
-	f2RmTkr/KNjNuOYvS8JYenFYoedFfdD9Lc9xdh+NRaFfmBKhTv1lyiaS2vd3oRSRz2eg5gJxx2e
-	A8FeOCH1qqV/GT/NjZqNWHJKhR9tpWDrdlHeOpSozy+/DBYCP0PRkLw==
-X-Google-Smtp-Source: AGHT+IEoj0GVECoFAJJiWHHIL5aQYQVk5/iNCBYmvSa+HEvZ7odXYNWWXScVOPZjkXC0XA54zDtlbw==
-X-Received: by 2002:a05:6871:8781:b0:2ff:b276:97f4 with SMTP id 586e51a60fabf-300e8c5ddcbmr7840325fac.8.1753115090219;
-        Mon, 21 Jul 2025 09:24:50 -0700 (PDT)
-Received: from fedora (181-162-150-76.baf.movistar.cl. [181.162.150.76])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73e83bca6b5sm2935120a34.59.2025.07.21.09.24.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 09:24:49 -0700 (PDT)
-From: =?UTF-8?q?Ignacio=20Pe=C3=B1a?= <ignacio.pena87@gmail.com>
-To: Joe Perches <joe@perches.com>,
-	Andy Whitcroft <apw@canonical.com>
-Cc: Dwaipayan Ray <dwaipayanray1@gmail.com>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ignacio Pena <ignacio.pena87@gmail.com>
-Subject: [PATCH 3/3] checkpatch: suggest including testing evidence
-Date: Mon, 21 Jul 2025 12:24:34 -0400
-Message-ID: <20250721162437.6691-3-ignacio.pena87@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250721162437.6691-1-ignacio.pena87@gmail.com>
-References: <20250721162437.6691-1-ignacio.pena87@gmail.com>
+	s=arc-20240116; t=1753115098; c=relaxed/simple;
+	bh=Y0c8fyTNCDbBI1ib06Eg9UDIUghtCzMuq8qbf2t/k5w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cf3j7S1b9ph2BQHlxi+rOtGRkPvyaeEtbcpY38VR1SgdAgiUjJBXb3Zz0i0BTXuaBMZaK3FrhSVcU2yaGiQbnC14yujM6YapjNKfONcgZCP7+KM7gAqgZn6ja4qSncYj4PcJ1rwbjsnC7H7uikhR7GkHTOzhjtyBgJUrlkcWLaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I0N8KIng; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753115097; x=1784651097;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Y0c8fyTNCDbBI1ib06Eg9UDIUghtCzMuq8qbf2t/k5w=;
+  b=I0N8KIng0drH2AyEy2zklWBPTdbm//+e0uM5oHYx5Cal8Jw3+cDPZvWY
+   lwrQ7dgUFrmD4mLHANl2fEAk+XZodaqvHVaAm07NnayIW8jQs2asFojd/
+   lYzAnvk++G69LRW8LqHyPyg4NMMV07zBiXFreTtmuX+tpVGnlEECxsvWR
+   TofXtuIvHen3AVThmU9V3XQaDRXTPdqIv19z4yDb+ZfIZa9KHjr+aF1yT
+   wS5c4Jz1OhWxdssH4mzGOFmwdJiuhAjIcxkspe/Hw92ZiX8QnTgRKQ1tI
+   m4HyauRyfDTvE7RDxqWKD4U411pKijmhJwXRTGCykZjUOx9vhFXr5LlKd
+   Q==;
+X-CSE-ConnectionGUID: RaKZtsdBRkWdEuS5bBUoig==
+X-CSE-MsgGUID: MXo5+SD7TjGwhcEfKGBqfw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11499"; a="72791487"
+X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
+   d="scan'208";a="72791487"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 09:24:56 -0700
+X-CSE-ConnectionGUID: /80dSFaRRlanM/T6SY8zFw==
+X-CSE-MsgGUID: l0qUhxBCQz+Cpzl2V+Cj2A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,329,1744095600"; 
+   d="scan'208";a="158184620"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 21 Jul 2025 09:24:49 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1udtJn-000GyP-0h;
+	Mon, 21 Jul 2025 16:24:47 +0000
+Date: Tue, 22 Jul 2025 00:24:42 +0800
+From: kernel test robot <lkp@intel.com>
+To: Breno Leitao <leitao@debian.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, James Morse <james.morse@arm.com>,
+	Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>,
+	Robert Moore <robert.moore@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Hanjun Guo <guohanjun@huawei.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+	Oliver O'Halloran <oohall@gmail.com>,
+	Bjorn Helgaas <helgaas@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-media@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev,
+	osandov@osandov.com, xueshuai@linux.alibaba.com,
+	konrad.wilk@oracle.com, linux-edac@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org,
+	kernel-team@meta.com, Breno Leitao <leitao@debian.org>
+Subject: Re: [PATCH v2] vmcoreinfo: Track and log recoverable hardware errors
+Message-ID: <202507220057.iVSR8aqd-lkp@intel.com>
+References: <20250721-vmcore_hw_error-v2-1-ab65a6b43c5a@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250721-vmcore_hw_error-v2-1-ab65a6b43c5a@debian.org>
 
-For non-trivial changes, it's valuable to know how the change was
-tested. Add a gentle suggestion when commit messages don't mention
-any testing, verification, or validation.
+Hi Breno,
 
-This is a CHECK level notification, not a WARNING, as testing methods
-vary greatly depending on the subsystem and type of change.
+kernel test robot noticed the following build warnings:
 
-The check is skipped for very short commit messages (documentation
-fixes, typos) where testing information would be excessive.
+[auto build test WARNING on 97987520025658f30bb787a99ffbd9bbff9ffc9d]
 
-Link: https://docs.kernel.org/process/submitting-patches.html
-Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Ignacio Pena <ignacio.pena87@gmail.com>
----
- scripts/checkpatch.pl | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+url:    https://github.com/intel-lab-lkp/linux/commits/Breno-Leitao/vmcoreinfo-Track-and-log-recoverable-hardware-errors/20250721-181439
+base:   97987520025658f30bb787a99ffbd9bbff9ffc9d
+patch link:    https://lore.kernel.org/r/20250721-vmcore_hw_error-v2-1-ab65a6b43c5a%40debian.org
+patch subject: [PATCH v2] vmcoreinfo: Track and log recoverable hardware errors
+config: i386-buildonly-randconfig-001-20250721 (https://download.01.org/0day-ci/archive/20250722/202507220057.iVSR8aqd-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250722/202507220057.iVSR8aqd-lkp@intel.com/reproduce)
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 204800232..358310e6c 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -3319,6 +3319,16 @@ sub process {
- 		      $commit_log_possible_stack_dump)) {
- 			WARN("COMMIT_LOG_LONG_LINE",
- 			     "Prefer a maximum 75 chars per line (possible unwrapped commit description?)\n" . $herecurr);
-+
-+# Suggest including test information for non-trivial changes
-+		if ($in_commit_log && !$non_utf8_charset &&
-+		    $line !~ /test|verify|tried|ran|checked|confirmed/i &&
-+		    $commit_log_lines > 3) {
-+			if ($commit_log_long_line eq "" && $commit_log_has_diff) {
-+				CHECK("NO_TEST_INFO",
-+				      "Consider mentioning how this change was tested\n" . $herecurr);
-+			}
-+		}
- 			$commit_log_long_line = 1;
- 		}
- 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507220057.iVSR8aqd-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from init/initramfs.c:603:
+   In file included from include/linux/kexec.h:18:
+>> include/linux/vmcore_info.h:91:6: warning: no previous prototype for function 'hwerror_tracking_log' [-Wmissing-prototypes]
+      91 | void hwerror_tracking_log(enum hwerror_tracking_source src) {};
+         |      ^
+   include/linux/vmcore_info.h:91:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+      91 | void hwerror_tracking_log(enum hwerror_tracking_source src) {};
+         | ^
+         | static 
+   1 warning generated.
+
+
+vim +/hwerror_tracking_log +91 include/linux/vmcore_info.h
+
+    87	
+    88	#ifdef CONFIG_VMCORE_INFO
+    89	void hwerror_tracking_log(enum hwerror_tracking_source src);
+    90	#else
+  > 91	void hwerror_tracking_log(enum hwerror_tracking_source src) {};
+    92	#endif
+    93	
+
 -- 
-2.50.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
