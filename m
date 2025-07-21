@@ -1,177 +1,184 @@
-Return-Path: <linux-kernel+bounces-739091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-739092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65116B0C1A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:46:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E610B0C1A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 12:46:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C81F3A298C
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:46:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFE0018C2864
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 10:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB61298CD1;
-	Mon, 21 Jul 2025 10:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E20A322156D;
+	Mon, 21 Jul 2025 10:45:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uKMwD7tk"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tUBAHWr8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10683298CAB
-	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 10:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B2681F03C5
+	for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 10:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753094672; cv=none; b=fTciPq0WReDw1bOJSsVCfoNqAXZi9A0e9IXCFEcSUo1nWOSWRYUT/ix0qQkvdTDH5hu0MsOI2cphvWnWrCWWHZyTllLP+8URk10BZSKGFfTHwQWEjNURYY2ClZwaTuhkimatMzhNX9dHYRw2ntsU9V0mkLyUcsamlN6SdhGxJE4=
+	t=1753094754; cv=none; b=mFBb4uqE8TlgL4KHs5+xn8QKRgjY7k9xu08JvWJclUwTGF/mZL3BhNVI/Srf76JTIHQnMnHz5HDTHe4rb1CH5qomBsIgoaynm0Ow/iJX8JTSMnrirBBCHBu1ZUuFzZDlU3if6q/D8RwNTUrL9MMd6KJXYUu2bckZJByqhnR9ThU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753094672; c=relaxed/simple;
-	bh=Jyg9VIduqhzzijMHnSKAC2B6G1xD8WFdq0kn3G+RX/E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SuAhFUj6oTCjgy8jPqz+y9KQg7mJ/lHXRW8jIKXEEvtsLQF4EaQ8IV2J0hfj8ZOjCC2NJMwQMeGs9HrOmMI1NVNUc25zggbHKe2WrF8Y9KF9jhEgUATKgPrFiWv1tjlM/t8F4Gj3d6Bgup7OVmSqIzcSWPlYL2VfZCmydkQyodM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uKMwD7tk; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a528243636so2499726f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 03:44:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753094668; x=1753699468; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Jv8CKZAnBLUK/0fb5CiuD7Hp6E+b8QPJo8tRAQ5ZhDg=;
-        b=uKMwD7tkDvM6y1ai4Cu5EVRzwrIwC83suT5zEhID5qe2mwleN7zru6IM8MNu7+SUbd
-         vgX4l23PX6jIuXULkaJ+TZ3rQ8DgvCSmsxzitnTo+2P+xR1z05kAhjPbNO6apTwr4DNw
-         GmJgdxYa2PqJOo0U+EiI1aiKju5Ov4DsUZBp//Q+IZKwDwDBHfy4Cs5PN/+snhj940Cs
-         s+wcZA+nsqI0Ywhwe7pY9zH8/gYB6FboDPs8KArN3fVKdyB6hxVxGyqOE8f/YxHjxS5k
-         Qq3uIYladgqRGv6yBgyWOrT1rgbsPT1QMm9kqMQdY3DKEFtIM0h0D4TmxlDxvzaX1xRg
-         musA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753094668; x=1753699468;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jv8CKZAnBLUK/0fb5CiuD7Hp6E+b8QPJo8tRAQ5ZhDg=;
-        b=WgSOu/885Wiramd9aHvZKlZrglhR+e5ofVWKB/SuuC6Jz2YIlqeHaTxFLS+cLwMMQE
-         tJ6FPMcDOSJviRR9uWfsOIQttuNx1PacxokJx7FAUWnkyvwwA8AUHnDtJbVMbzZlQi3p
-         zkr/sevj6urXo9mQoO/AojP8yQppAQ7GcKgtUNmyfFFsKkEOTLYCR2RiqcoAXtp5gwUX
-         4NvOJrab8KyS4sZ9CpGdzqdYl7GKortP5hcdi4dG+yxzpOXrgAhvJ8eNMhe/4H1bNdVm
-         IPd5T821DfanYTnP7ijFkjGiNud12mnYuumNIxVnE/yBT3O2Wf/5yckDCXuNxHU+4fgg
-         bW8A==
-X-Forwarded-Encrypted: i=1; AJvYcCUsVe0x3JOg6qb03lG+TwnZfJ7mf2Dqcx8SFKYl077mTkIbwkZhLEuItWjaTaIv315veL7BzSsGP6PY3yA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBKsLTPMOtT85N7FBZUY86i35p6bNWO2bvg3xX6vgcZwNBQN6i
-	ZNdqyLirZqvFLamEo0Mr5Yq3kyj6APtiMJAXMUGOIsWVtnfRv4G7jTgwfaZDBByyKOg=
-X-Gm-Gg: ASbGncuHiYX2v+SeQ/ijmNaK0amllZ/jxt/Wb/cLFbS6+FEywLlljDBU2FNeSR6o3tW
-	stp2F+YcmHaN50/NWaCrniAhiJM86ZYin3qPb0NnLqxW0mFypChtSmzNXPjqleCElzRwYn1a4L9
-	E2LvTn0F87F1U9rKbnDXJ7h3EgwWlbbXXfmfWt4RVgfwqvFl3Tij2BXn0z04y7I4qQMyN1T9J2t
-	FpuxDby39jB4AUIuvsGdm931chUYGC1SDuJejPx/FQwB4Vkuot3iGHKltZQQJ6EDHxLgSS1t1p0
-	8ZfqFKi2R9OAicCsh50wUag8Mi1GS1x/QPOIJxPw6GpLMPXhBRwOaXhFGIBNPzR46DGGGn+u3f/
-	023ZbSxaKOU+Lcz14ZJtK6LWpW86RDXTH/Bvt1YRtCn3DoHXhwfXucfQl8gJ2FclPqImKsgi3/Q
-	==
-X-Google-Smtp-Source: AGHT+IHsr6BfHmmGvAFEpmk7FK7MXUXtHfZVvvvivtdI5mefMv0lLuRMGQqdMBTcEDjNOnr/mFRYmQ==
-X-Received: by 2002:a05:6000:4108:b0:3a4:dc42:a0c3 with SMTP id ffacd0b85a97d-3b61b22ec16mr7504872f8f.56.1753094668208;
-        Mon, 21 Jul 2025 03:44:28 -0700 (PDT)
-Received: from [192.168.1.36] (p549d4bd0.dip0.t-ipconnect.de. [84.157.75.208])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca48c40sm10159988f8f.58.2025.07.21.03.44.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Jul 2025 03:44:27 -0700 (PDT)
-Message-ID: <e724e6a2-21a8-436a-8809-ce73c0afa433@linaro.org>
-Date: Mon, 21 Jul 2025 12:44:26 +0200
+	s=arc-20240116; t=1753094754; c=relaxed/simple;
+	bh=JTydR5BdkjW/STvnduR9ADHyVlGb0CvPo5AgcV7udnY=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=X9wjCuT/48LUErD7uH0hE9xaUNmDAp7rCtLCdzdOTaRrj1/ruvjSYBI6KJc1YDezegjdP44paSBL7BVQ3CnMrg/cyAkYggUm4Ft6DnGgGHNSTi/wb7f5PW4sC6/a44APxqsgArYbG2j9+BSAERK8fmd4c7o9zTeknbXH1MZTd8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tUBAHWr8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDDBEC4CEF1;
+	Mon, 21 Jul 2025 10:45:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753094753;
+	bh=JTydR5BdkjW/STvnduR9ADHyVlGb0CvPo5AgcV7udnY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tUBAHWr8DqkY0FS3bOALdajoeNVjdrg+gO5GUvIopEcNAU64dx+2kK8hBZ9Evwwa6
+	 DpyNLZlIed+J4mjtis/jR6MECeXPWmKyccC+QTMOxnTI//t6rnqFf0tSE2eKKOT8PK
+	 5OlDCPyJo4sdmfRjr8loz5VH+6qRPVsWCoe9LS0NjA17cp/RTISxCKeD2bmN5QheQJ
+	 GA90nV26SxuPCVzfSxnVkvrzAozVKbq9DBRivWvJchSLW73oVVh4wZ76aXY0e0iUPw
+	 I+w2o2j2tOzsTdqul8zaEdn7t+nORZT+l5oqEIEW1mIWj2zsRyrK6ZDH90qX7EBE6L
+	 D4NBAxc3XT7zg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1udo1n-00HZc7-Nw;
+	Mon, 21 Jul 2025 11:45:51 +0100
+Date: Mon, 21 Jul 2025 11:45:51 +0100
+Message-ID: <86pldt9600.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: jackysliu <1972843537@qq.com>,
+	<tglx@linutronix.de>,
+	<herve.codina@bootlin.com>,
+	<antonio.borneo@foss.st.com>,
+	<anup@brainfault.org>,
+	<jirislaby@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] irqchip/gic-v3: fix resource leak in partition_domain_translate()
+In-Reply-To: <20250721112718.00002e23@huawei.com>
+References: <tencent_72EDAD7F6E52D8FB5933030A569A08AEC406@qq.com>
+	<86qzya7xwu.wl-maz@kernel.org>
+	<20250721112718.00002e23@huawei.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/7] nvmem: qcom-spmi-sdam: Migrate to
- devm_spmi_subdevice_alloc_and_add()
-Content-Language: en-US
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- sboyd@kernel.org
-Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
- andy@kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org,
- srini@kernel.org, vkoul@kernel.org, kishon@kernel.org, sre@kernel.org,
- krzysztof.kozlowski@linaro.org, u.kleine-koenig@baylibre.com,
- linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-pm@vger.kernel.org, kernel@collabora.com, wenst@chromium.org
-References: <20250721075525.29636-1-angelogioacchino.delregno@collabora.com>
- <20250721075525.29636-3-angelogioacchino.delregno@collabora.com>
-From: Casey Connolly <casey.connolly@linaro.org>
-In-Reply-To: <20250721075525.29636-3-angelogioacchino.delregno@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: Jonathan.Cameron@huawei.com, 1972843537@qq.com, tglx@linutronix.de, herve.codina@bootlin.com, antonio.borneo@foss.st.com, anup@brainfault.org, jirislaby@kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi Angelo,
-
-On 21/07/2025 09:55, AngeloGioacchino Del Regno wrote:
-> Some Qualcomm PMICs integrate a SDAM device, internally located in
-> a specific address range reachable through SPMI communication.
+On Mon, 21 Jul 2025 11:27:18 +0100,
+Jonathan Cameron <Jonathan.Cameron@huawei.com> wrote:
 > 
-> Instead of using the parent SPMI device (the main PMIC) as a kind
-> of syscon in this driver, register a new SPMI sub-device for SDAM
-> and initialize its own regmap with this sub-device's specific base
-> address, retrieved from the devicetree.
+> On Mon, 21 Jul 2025 09:25:53 +0100
+> Marc Zyngier <maz@kernel.org> wrote:
 > 
-> This allows to stop manually adding the register base address to
-> every R/W call in this driver, as this can be, and is now, handled
-> by the regmap API instead.
-
-This is honestly a really nice improvement :D>
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> ---
->  drivers/nvmem/qcom-spmi-sdam.c | 41 +++++++++++++++++++++++++---------
->  1 file changed, 30 insertions(+), 11 deletions(-)
+> > On Mon, 21 Jul 2025 08:28:04 +0100,
+> > jackysliu <1972843537@qq.com> wrote:
+> > > 
+> > > There is a device node reference leak in partition_domain_translate().
+> > > After the function obtains the device node np via of_find_node_by_phandle,
+> > > it does not call of_node_put(np) to release the node reference
+> > > in both the error path and the normal return path.
+> > > This causes the node reference count to increase each time
+> > > the function is called, causing a resource leak.
+> > >
+> > > This issue was detected by rule based static tools
+> > > developed by Tencent.
+> > > 
+> > > Fixes: 87228532e7e9 ("irqchip: Switch to of_fwnode_handle()")
+> > > 
+> > > Signed-off-by: jackysliu <1972843537@qq.com>  
+> > 
+> > Drop the spurious blank line.
+> > 
+> > > ---
+> > >  drivers/irqchip/irq-gic-v3.c | 6 +++++-
+> > >  1 file changed, 5 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+> > > index efc791c43d44..61c1d404b726 100644
+> > > --- a/drivers/irqchip/irq-gic-v3.c
+> > > +++ b/drivers/irqchip/irq-gic-v3.c
+> > > @@ -1821,12 +1821,16 @@ static int partition_domain_translate(struct irq_domain *d,
+> > >  		return -EINVAL;
+> > >  
+> > >  	ret = gic_irq_domain_translate(d, fwspec, &ppi_intid, type);
+> > > -	if (WARN_ON_ONCE(ret))
+> > > +	if (WARN_ON_ONCE(ret)) {
+> > > +		of_node_put(np);
+> > >  		return 0;
+> > > +	}
+> > >  
+> > >  	ppi_idx = __gic_get_ppi_index(ppi_intid);
+> > >  	ret = partition_translate_id(gic_data.ppi_descs[ppi_idx],
+> > >  				     of_fwnode_handle(np));
+> > > +	of_node_put(np);
+> > > +
+> > >  	if (ret < 0)
+> > >  		return ret;
+> > >    
+> > 
+> > Frankly, this looks awful, and we have much better ways to solve this
+> > whole class of problems. Why can't the (untested) patch below do the
+> > right thing, without the ugliness?
+> > 
+> > 	M.
+> > 
+> > diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+> > index efc791c43d441..c4839032ce8d0 100644
+> > --- a/drivers/irqchip/irq-gic-v3.c
+> > +++ b/drivers/irqchip/irq-gic-v3.c
+> > @@ -1808,8 +1808,8 @@ static int partition_domain_translate(struct irq_domain *d,
+> >  				      unsigned long *hwirq,
+> >  				      unsigned int *type)
+> >  {
+> > +	struct device_node *np __free(device_node) = NULL;
 > 
-> diff --git a/drivers/nvmem/qcom-spmi-sdam.c b/drivers/nvmem/qcom-spmi-sdam.c
-> index 4f1cca6eab71..1b80e8563a33 100644
-> --- a/drivers/nvmem/qcom-spmi-sdam.c
-> +++ b/drivers/nvmem/qcom-spmi-sdam.c
-> @@ -9,6 +9,7 @@
->  #include <linux/nvmem-provider.h>
->  #include <linux/platform_device.h>
->  #include <linux/regmap.h>
-> +#include <linux/spmi.h>
->  
->  #define SDAM_MEM_START			0x40
->  #define REGISTER_MAP_ID			0x40
-> @@ -20,7 +21,6 @@
->  struct sdam_chip {
->  	struct regmap			*regmap;
->  	struct nvmem_config		sdam_config;
-> -	unsigned int			base;
->  	unsigned int			size;
->  };
->  
-> @@ -73,7 +73,7 @@ static int sdam_read(void *priv, unsigned int offset, void *val,
->  		return -EINVAL;
->  	}
->  
-> -	rc = regmap_bulk_read(sdam->regmap, sdam->base + offset, val, bytes);
-> +	rc = regmap_bulk_read(sdam->regmap, offset, val, bytes);
->  	if (rc < 0)
->  		dev_err(dev, "Failed to read SDAM offset %#x len=%zd, rc=%d\n",
->  						offset, bytes, rc);
-> @@ -100,7 +100,7 @@ static int sdam_write(void *priv, unsigned int offset, void *val,
->  		return -EINVAL;
->  	}
->  
-> -	rc = regmap_bulk_write(sdam->regmap, sdam->base + offset, val, bytes);
-> +	rc = regmap_bulk_write(sdam->regmap, offset, val, bytes);
->  	if (rc < 0)
->  		dev_err(dev, "Failed to write SDAM offset %#x len=%zd, rc=%d\n",
->  						offset, bytes, rc);
-> @@ -110,28 +110,47 @@ static int sdam_write(void *priv, unsigned int offset, void *val,
->  
->  static int sdam_probe(struct platform_device *pdev)
->  {
-> +	struct regmap_config sdam_regmap_config = {
-> +		.reg_bits = 16,
-> +		.val_bits = 16,
+> Linus has expressed fairly strongly that he really doesn't like separation
+> of the constructor and destructor.  See guidance in cleanup.h which was
+> based on that and bunch of other early discussion around this stuff.
+> 
+> Here it's easy to solve though. Just move that declaration down to
+> give something like:
+> 
+> 
+> >  	unsigned long ppi_intid;
+> > -	struct device_node *np;
+> >  	unsigned int ppi_idx;
+> >  	int ret;
+> >  
+> 	if (!gic_data.ppi_descs)
+> 		return -ENOMEM;
+> 
+> 	struct device_node *np __free(device_node) =
+> 		of_find_node_by_phandle(fwspec->param[3]);
+> 
+> 
+> 	if (WARN_ON(!np))
+> 		return -EINVAL;
+> 
 
-I believe registers are 8 bits wide, at least on Qualcomm platforms.
+Yeah, something like that -- it doesn't change a thing in this
+context, but I can see how that could degenerate if we added other
+cleanup statements.
 
-Kind regards,
+In any case, this is the sort of thing I want to see going forward.
+Nothing like the original patch.
+
+	M.
+
 -- 
-// Casey (she/her)
-
+Without deviation from the norm, progress is not possible.
 
