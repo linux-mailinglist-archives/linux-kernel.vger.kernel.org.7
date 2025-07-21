@@ -1,164 +1,261 @@
-Return-Path: <linux-kernel+bounces-738643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-738644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96EB4B0BB61
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 05:26:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6CD8B0BB63
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 05:27:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 042E27A7924
-	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 03:25:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52BBC18977AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 21 Jul 2025 03:27:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A965201270;
-	Mon, 21 Jul 2025 03:26:24 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E4541FDE3D;
+	Mon, 21 Jul 2025 03:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XyfRTwyq"
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA662B9A9;
-	Mon, 21 Jul 2025 03:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE1B1990D8;
+	Mon, 21 Jul 2025 03:27:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753068384; cv=none; b=VG+QzZqO274+lLpz+QowWZvEtYlRQyUZUXyWCBT2yNY+t1ZcgWo6Fz1fGNw25Oai00e+5VfQwyH0djzLl9OqyuNV0fPeBPgoDUsQzGSJ+2zfLAaeuqRq9NeNBz1rOq6gH4Zwq0zLSvOXLRu9PfL/stqJjDec/IEJuIYuKzmkeHE=
+	t=1753068434; cv=none; b=Ep7ZFfgF3TLo5FdlJqz/BvQYdUve+lSO94v4c+3gB7ro6Oer+Ln0CijLWyNdVkLR3cb+sOAyYZETGTyY83lhVrQ80qMpGdoIe9cYljw8C1LNyzJxaYXmqSq8LImjhkmoAR9feTpWbgVSDr+D4kLta3Ghlkdjf7WLi/B69WRwfxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753068384; c=relaxed/simple;
-	bh=W+YfrMOENzIpLr/Qkswe58O644OPQZbKS+3T3IF478k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QtWG6wXjRZC7UMwH7CoU4iuFrcyF10gM6Uv9uzsV23M4YjQC6m2ph8QBSxtiq4oeoq4PXo+BFyGb3tV1xh4UBMSAEITvObdIOCDFn1X3pQWqvZxNfNwxNRdQDXPzhqwbEqNUdMx+E7kQa7wKq92MzqttV3rxR+S+9NjcOd9YZPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 754b54d865e211f0b29709d653e92f7d-20250721
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:5e8adfa0-374c-4564-9d9a-4e43569f2290,IP:0,U
-	RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-25
-X-CID-META: VersionHash:6493067,CLOUDID:13f64e50f4a71a7c6c8684f9ccdc46e2,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:-3,IP:
-	nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,L
-	ES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 754b54d865e211f0b29709d653e92f7d-20250721
-Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
-	(envelope-from <lijiayi@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1603985306; Mon, 21 Jul 2025 11:26:15 +0800
-Received: from node4.com.cn (localhost [127.0.0.1])
-	by node4.com.cn (NSMail) with SMTP id 1956716004280;
-	Mon, 21 Jul 2025 11:26:15 +0800 (CST)
-X-ns-mid: postfix-687DB355-6808681889
-Received: from kylin-pc.. (unknown [172.25.130.133])
-	by node4.com.cn (NSMail) with ESMTPA id 3FA8516001A01;
-	Mon, 21 Jul 2025 03:26:13 +0000 (UTC)
-From: Jiayi Li <lijiayi@kylinos.cn>
-To: rafael@kernel.org
-Cc: jiayi_dec@163.com,
-	lenb@kernel.org,
-	lijiayi@kylinos.cn,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] ACPI: Fix initial QoS constraint application order in PPC initialization
-Date: Mon, 21 Jul 2025 11:26:06 +0800
-Message-ID: <20250721032606.3459369-1-lijiayi@kylinos.cn>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250718020312.856168-1-lijiayi@kylinos.cn>
-References: <20250718020312.856168-1-lijiayi@kylinos.cn>
+	s=arc-20240116; t=1753068434; c=relaxed/simple;
+	bh=OgN9dZKAVvXJmFroQccrEWHmRE9qiT/R0uEuicJgwfI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Dn5qnjnD3ayxk7Jv6QAVAhq8rpsSHDMZ/ZZ27OIJt3zT4i0kpJkbpE0zkmKgW4TnZNbNn/XgcLeEgwcsMGibwVj0Oho51j0cboK6eH90/2gIVFlg4G0l+Qqx3olA3mvHoZVvQxNbcFFw0wY1lkTWvgAFy0sv1I/TSCz1rApigKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XyfRTwyq; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-879c49e8ac3so286277139f.1;
+        Sun, 20 Jul 2025 20:27:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753068432; x=1753673232; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5GJULZkEl8j6az+Nmf6Q9IdIMazJkldN2OlkYV3zqRI=;
+        b=XyfRTwyq+IDlDFIZhqqdumaYQaMeo2cAovVyYsrwCKbtzYSiGqVN94ZzjqeoSTxO/7
+         lOoEukrEWE1Ye9fMW6QFnZfpONWfRkM0ng5JGVDMd4Di6WQEEfizeAtMUvxapP35t6iN
+         gXDQkrCEOHkMaBQipLviMpwUbsaY3Z4BC9UQPcJaMsQ1rDQh4FNImK+XVUtmxXPhT2bw
+         9rNIrRchEblzFy3/vnHLneh9weKw0HujiYCLKmazNpLbJUJksOoU+DsAiGH+/eQeZpCN
+         egKsW4OwSTKc1P8SQYUAiGP+TbDcdIQOUww6T6/h7EpOPjhzzJO57uxTiBRJlAV9LQLz
+         aDFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753068432; x=1753673232;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5GJULZkEl8j6az+Nmf6Q9IdIMazJkldN2OlkYV3zqRI=;
+        b=maTqDBeyHkaUCuJhE9S2JBikXi9mYIdhR4EfnZ/NcGOqx25AbpE7ah20xHR96qR25C
+         bVzysRR/0vSxZ3ok70dmDw5DTjRcCJVMKbwk43EObs/sNCCRK7/MQVgjIM2xnb9ZX52P
+         szNkUgq1IMKdgZG/ls68vEmFL3WUqXrIx+g52YvifK6ULdt1MCmgLGViyzaae4yN7Po7
+         CHRRuWKIf3rjNg0F+WsmpgdFFYNfbTFI5YWEyN6JUj9IiBPogqdixiH0+wMiXpY+jC4D
+         E3n/8wY/JrN/Yfea1MdEEBG4g6FqKFmFd9PANXjgxJQwSCyjvHIlfAOd2DU5zY478iHG
+         L8ww==
+X-Forwarded-Encrypted: i=1; AJvYcCWkeNFFGXtmgDd5HnvtcA2Wu2YEGZq37DEN38el1YYucPrF3Wf8oiO47nunZ6/UGixsjlr/FzYNNMK6@vger.kernel.org, AJvYcCXLw9dmnPH5K+fBeySU6djA0eHzUsa1s6tedg2Q5vGNv7snAXUv3o9/20bOCVlrUXQ7jxGalWdWUn+cy3Yt@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiFyBba6f+GQcz9sQW2p+O/+vZ18/nJnNdVXaJ4ZlmOLuWXujI
+	4cgdu59aG4k/JYG2KTO1m7MIi6q2l46PV88H5qwsj8bYP/MQckzHYJe1W3hGl5E+PpPydoEQLxa
+	FMQGYNSpb8+wEXlCVUBBV9kySABeJxzk=
+X-Gm-Gg: ASbGncsTTWvQzeGCup0MudySMdyrrDnNebvJ0cuJ7uIJabxHpVhIt1UTfRFENBk7NzM
+	ieh8039Hgp5XGVwpm9qUlx8CDu29uJ0yzREvvYw9neWNzX8LOaO1HaoOU6L6TfkiUJEoC+rRRGG
+	pK6lz9xmCFLJKNzbXAWix6TQQjiO8NmNsLp4p7IYpiRRaB8y7/Bfsbj3+14A2eTht0+FvLYP1Tq
+	WWLwD2Gv/acgrD5sA==
+X-Google-Smtp-Source: AGHT+IG8vUHFP70UXed9iRLKIptriKCIABWtAWB4NI0eKfx64HKik6dvxbUYvCeLTR40uVNuIWcVYOwlyUyYpDWTz70=
+X-Received: by 2002:a05:6e02:2587:b0:3e2:9f78:3783 with SMTP id
+ e9e14a558f8ab-3e29f783956mr91962715ab.21.1753068432378; Sun, 20 Jul 2025
+ 20:27:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250718101150.3681002-1-shengjiu.wang@nxp.com>
+ <20250718101150.3681002-4-shengjiu.wang@nxp.com> <aHp1be6omEO8qB8o@lizhi-Precision-Tower-5810>
+In-Reply-To: <aHp1be6omEO8qB8o@lizhi-Precision-Tower-5810>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Mon, 21 Jul 2025 11:26:56 +0800
+X-Gm-Features: Ac12FXxLXoN3PdgILVQcoB0Vod44PqH8KIxOUI90ky-y_nERjNH_OhhfrJs7NGk
+Message-ID: <CAA+D8AMz4MAn7M40ipTefXapQ0-KZnUT3H6iVzBscO4UmrK6cw@mail.gmail.com>
+Subject: Re: [PATCH 3/4] dt-bindings: display: imx: add binding for i.MX8MP
+ HDMI PAI
+To: Frank Li <Frank.li@nxp.com>
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, andrzej.hajda@intel.com, 
+	neil.armstrong@linaro.org, rfoss@kernel.org, 
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
+	airlied@gmail.com, simona@ffwll.ch, lumag@kernel.org, dianders@chromium.org, 
+	cristian.ciocaltea@collabora.com, luca.ceresoli@bootlin.com, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	victor.liu@nxp.com, shawnguo@kernel.org, s.hauer@pengutronix.de, 
+	kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, p.zabel@pengutronix.de, devicetree@vger.kernel.org, 
+	l.stach@pengutronix.de
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-This patch fixes an issue where _PPC frequency limits set by the BIOS
-failed to take effect due to incorrect call ordering. Previously,
-freq_qos_update_request() was being called before freq_qos_add_request(),
-causing the constraint updates to be ignored. With this fix, the frequenc=
-y
-limits are now properly enforced as intended.
-The original initialization sequence was:
+On Sat, Jul 19, 2025 at 12:25=E2=80=AFAM Frank Li <Frank.li@nxp.com> wrote:
+>
+> On Fri, Jul 18, 2025 at 06:11:49PM +0800, Shengjiu Wang wrote:
+>
+> Subject needn't said binding again.
+>
+> dt-bindings: display: imx: add HDMI PAI for i.MX8MP
+>
+> > Add binding for the i.MX8MP HDMI parallel Audio interface block.
+>
+> Need empty line between two paragraph
 
-cpufreq_policy_online()
-    acpi_cpufreq_cpu_init()
-        acpi_processor_get_platform_limit()
-            freq_qos_update_request(&perflib_req)
-    blocking_notifier_call_chain(...)
-        acpi_processor_ppc_init()
-            freq_qos_add_request(&perflib_req)
+Ok.
+>
+> > As this port is linked to imx8mp-hdmi-tx, add port@2 in
+> > fsl,imx8mp-hdmi-tx.yaml document.
+>
+> In fsl,imx8mp-hdmi-tx.yaml, add port@2 that linked to imx8mp-hdmi-tx (
+> look like pai_to_hdmi_tx?)
 
-The new sequence explicitly ensures:
+yes, linked to pai_to_hdmi_tx.
+>
+> >
+> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > ---
+> >  .../display/bridge/fsl,imx8mp-hdmi-tx.yaml    | 13 ++++
+> >  .../display/imx/fsl,imx8mp-hdmi-pai.yaml      | 61 +++++++++++++++++++
+> >  2 files changed, 74 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,i=
+mx8mp-hdmi-pai.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/display/bridge/fsl,imx8m=
+p-hdmi-tx.yaml b/Documentation/devicetree/bindings/display/bridge/fsl,imx8m=
+p-hdmi-tx.yaml
+> > index 05442d437755..cf810b277557 100644
+> > --- a/Documentation/devicetree/bindings/display/bridge/fsl,imx8mp-hdmi-=
+tx.yaml
+> > +++ b/Documentation/devicetree/bindings/display/bridge/fsl,imx8mp-hdmi-=
+tx.yaml
+> > @@ -49,9 +49,14 @@ properties:
+> >          $ref: /schemas/graph.yaml#/properties/port
+> >          description: HDMI output port
+> >
+> > +      port@2:
+> > +        $ref: /schemas/graph.yaml#/properties/port
+> > +        description: Parallel audio input port
+> > +
+> >      required:
+> >        - port@0
+> >        - port@1
+> > +      - port@2
+>
+> Are you sure it is required?  It may cause may dtb check warning.
 
-cpufreq_policy_online()
-    acpi_cpufreq_cpu_init()
-        acpi_processor_get_platform_limit()
-            freq_qos_update_request(&perflib_req)
-    blocking_notifier_call_chain(...)
-        acpi_processor_ppc_init()
-            freq_qos_add_request(&perflib_req)
-+           acpi_processor_get_platform_limit()
-+               freq_qos_update_request(&perflib_req)
+yes, it is required.
+>
+> >
+> >  required:
+> >    - compatible
+> > @@ -98,5 +103,13 @@ examples:
+> >                      remote-endpoint =3D <&hdmi0_con>;
+> >                  };
+> >              };
+> > +
+> > +            port@2 {
+> > +                reg =3D <2>;
+> > +
+> > +                endpoint {
+> > +                    remote-endpoint =3D <&pai_to_hdmi_tx>;
+> > +                };
+> > +            };
+> >          };
+> >      };
+> > diff --git a/Documentation/devicetree/bindings/display/imx/fsl,imx8mp-h=
+dmi-pai.yaml b/Documentation/devicetree/bindings/display/imx/fsl,imx8mp-hdm=
+i-pai.yaml
+> > new file mode 100644
+> > index 000000000000..d2d723935032
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/display/imx/fsl,imx8mp-hdmi-pai=
+.yaml
+> > @@ -0,0 +1,61 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/display/imx/fsl,imx8mp-hdmi-pai.yam=
+l#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Freescale i.MX8MP HDMI Parallel Audio Interface
+> > +
+> > +maintainers:
+> > +  - Shengjiu Wang <shengjiu.wang@nxp.com>
+> > +
+> > +description:
+> > +  The HDMI TX Parallel Audio Interface (HTX_PAI) is a digital module t=
+hat acts as the
+> > +  bridge between the Audio Subsystem to the HDMI TX Controller.
+>
+> remove "a digital module that acts as the"
 
-The critical change adds an immediate platform limit update after the
-QoS request is registered. This guarantees that the initial P-state
-constraint is applied before any subsequent updates, resolving the window
-where constraints could be applied out-of-order.
+Ok, will update it in the next version.
 
-Fixes: d15ce412737a ("ACPI: cpufreq: Switch to QoS requests instead of cp=
-ufreq notifier")
-Signed-off-by: Jiayi Li <lijiayi@kylinos.cn>
----
-v1 -> v2:
-- Modify the commit.
-- Add pr->performance check in acpi_processor_ppc_init loop.
----
----
- drivers/acpi/processor_perflib.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+best regards
+Shengjiu Wang
 
-diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor_pe=
-rflib.c
-index 64b8d1e19594..56f2b8354d62 100644
---- a/drivers/acpi/processor_perflib.c
-+++ b/drivers/acpi/processor_perflib.c
-@@ -173,6 +173,9 @@ void acpi_processor_ppc_init(struct cpufreq_policy *p=
-olicy)
- {
- 	unsigned int cpu;
-=20
-+	if (ignore_ppc =3D=3D 1)
-+		return;
-+
- 	for_each_cpu(cpu, policy->related_cpus) {
- 		struct acpi_processor *pr =3D per_cpu(processors, cpu);
- 		int ret;
-@@ -180,6 +183,9 @@ void acpi_processor_ppc_init(struct cpufreq_policy *p=
-olicy)
- 		if (!pr)
- 			continue;
-=20
-+		if (!pr->performance)
-+			continue;
-+
- 		/*
- 		 * Reset performance_platform_limit in case there is a stale
- 		 * value in it, so as to make it match the "no limit" QoS value
-@@ -193,6 +199,11 @@ void acpi_processor_ppc_init(struct cpufreq_policy *=
-policy)
- 		if (ret < 0)
- 			pr_err("Failed to add freq constraint for CPU%d (%d)\n",
- 			       cpu, ret);
-+
-+		ret =3D acpi_processor_get_platform_limit(pr);
-+		if (ret)
-+			pr_err("Failed to update freq constraint for CPU%d (%d)\n",
-+			       cpu, ret);
- 	}
- }
-=20
---=20
-2.47.1
-
+>
+> Frank
+>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: fsl,imx8mp-hdmi-pai
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  interrupts:
+> > +    maxItems: 1
+> > +
+> > +  power-domains:
+> > +    maxItems: 1
+> > +
+> > +  port:
+> > +    $ref: /schemas/graph.yaml#/properties/port
+> > +    description: Output to the HDMI TX controller.
+> > +    unevaluatedProperties: false
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - interrupts
+> > +  - power-domains
+> > +  - port
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/interrupt-controller/irq.h>
+> > +    #include <dt-bindings/power/imx8mp-power.h>
+> > +
+> > +    hdmi@32fc4800 {
+> > +        compatible =3D "fsl,imx8mp-hdmi-pai";
+> > +        reg =3D <0x32fc4800 0x800>;
+> > +        interrupt-parent =3D <&irqsteer_hdmi>;
+> > +        interrupts =3D <14>;
+> > +        power-domains =3D <&hdmi_blk_ctrl IMX8MP_HDMIBLK_PD_PAI>;
+> > +
+> > +        port {
+> > +
+> > +            pai_to_hdmi_tx: endpoint {
+> > +                remote-endpoint =3D <&hdmi_tx_from_pai>;
+> > +            };
+> > +        };
+> > +    };
+> > --
+> > 2.34.1
+> >
 
