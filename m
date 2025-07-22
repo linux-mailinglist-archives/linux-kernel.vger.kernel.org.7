@@ -1,96 +1,205 @@
-Return-Path: <linux-kernel+bounces-741059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 329C2B0DFA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:55:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAF67B0DFC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:59:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 478E21893510
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:50:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC864188C9E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:53:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE5FF2EA736;
-	Tue, 22 Jul 2025 14:49:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888AE2EBDFC;
+	Tue, 22 Jul 2025 14:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gKG6FrnF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Rylzj8wd"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287D21DA23;
-	Tue, 22 Jul 2025 14:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E34D2EACF5
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 14:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753195789; cv=none; b=EN6T4uIN/BxZRCMTQU+Pp3rV5XkriDq72OzMj86q64vhOpyNZ7DL7dTjpinIzMGsCuOyqqsxyeoumTS4INOorbSY0FNZCW+QMOAahF3yogb7ypBXzG7GiqD0qNYJAjew6VMTYA3Lw3txA5IYV5DknCSYoNb+CUeaDCtLjdRqN0Q=
+	t=1753195937; cv=none; b=XrVX0WCNHp1gm9jDqyV/3FVjHS6CoreWDWYzv490+Q4YhU7PJn1P1uc+t1OPx0DXPzcgpZ67VJ71DnnR6GDs/blHWewby5ikAarJrjNR2mbI18pJv62zyAkvIrUaL3mMVVIoQfsl0UUyQ7dXpZPsmUldCej/acT0yZ0hADbF9yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753195789; c=relaxed/simple;
-	bh=9KedupEOeC1GTtcgABYGZjT7vXJB5Z4qbLfJRo2EeH4=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=e1hqMk8b4VO1dMUwdhNR+rDJPUqnNb8RWUa5WvV3ZgfysS1D1JbGyeCD1baoapNr31BSUboRK7qAIqz9chWe6lNXhlI2n2joGzqkOmlSPoD5UtluuimL32hYVD9jnG5U5qzFYdToJcwCxRt9gM2KeP1/hX6J/Uo/bpiBfqWBz0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gKG6FrnF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A72BBC4CEEB;
-	Tue, 22 Jul 2025 14:49:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753195787;
-	bh=9KedupEOeC1GTtcgABYGZjT7vXJB5Z4qbLfJRo2EeH4=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=gKG6FrnFv/rUuwUjHtYDCBgwjD/3x2Oy73jA9euVK96svtLdxnSkeHHbyLksF35Gk
-	 i8wRhmjVlfrcbmyJQqHza3xohK2J/inQUf7GJWddHZBu2mC99YXAnbXXU0B/2XvoCT
-	 3JYxHQ0H8ipa8LLGwGXJVgbq0mRhWCkll/3JzypW0C7wX3hx+62H8s2QaU64dGOSvm
-	 +5pPQC7bk+ZT1e/FdO4xST++TVDObFvVXcQ9RC3YDvac41oAwpSxukbqWqh+BCUEe+
-	 Y96BuhcN2yOHtokyemY6PtWObC+v++dUTYllHpA0p0ISCOCyIId+dl2z9PBlQR8gsn
-	 VhsqK11okoVVw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D6B383BF5D;
-	Tue, 22 Jul 2025 14:50:07 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1753195937; c=relaxed/simple;
+	bh=QptCdfvykdDw3mSwfgLPntt5smoEgwzkhb48jG2MnBc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=k1TWszI1p1yy+L8W8zsN4PqA8dSb63us5bCT4iU/EuW+UJ0ZAVekucd5F7arsjgMbiRSmx0/Sd+L+FSgOuDYBFvPA0Bk7llQChTWI6qJv9Hr9pV1So/dSQ0vvrSOQjcF8XP6VTmzRYCiqb5rbn7k4Qu8rKEArGWmpba7J5Ywr4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Rylzj8wd; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-32b4876dfecso58566241fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 07:52:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1753195933; x=1753800733; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ASqqLKV7bTOZHh+QoLYPQiepbbVzcIRPmS7WnFNjHYU=;
+        b=Rylzj8wdII24dUVahw5uUpv+ZlivET4HvEkoifNSSJ5MAMYXNePHa/g9enfiiaelK4
+         atgI1Nt9Xq7A69iLf67O7QgUJF5uIN09pvzK/CKkbW7vACpzsOmwnUYOYHlxyvLbmBWi
+         RDWm48OYFiGN0IJdNtDC1DDK/JSB/HH4Rz4hQzJ78TpvAywuXlzqhXIa/WWQaxWAVKkC
+         omk/5rY1TKOD83TIpMCrb1lCEi0VjVnmnTEHeP5un0D9fLQ3T9PEuLzvLQzhvulON4Ug
+         w+qB4mpbJzRV//eEnjUvKL8F4ObVwZLL4XAAVNFWBeCgScguFVfKuydvhmS8ywk7irMg
+         6FSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753195933; x=1753800733;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ASqqLKV7bTOZHh+QoLYPQiepbbVzcIRPmS7WnFNjHYU=;
+        b=lF0ken6JReJcxQzvNkl+GqFrPrOM34gOv2bBP21cR3+yYFOtL8kbEDJrhTtBGwofz0
+         eRCLLf+3/KgW0K6qZqlf/U84FbAW3uSRypTyMHgBMVBgPXekWoSlETXhyglgRQWjsU9F
+         TYBlJJFk55gcll4s9/v/XUYi8LSqzdDMn0GIZqwe2nFGYvdjQYDa40otsSQD7Q9FRkO4
+         21gci+Ox5OcWgNqXKggjDHDmST+Mcu1g0rnH8ZuhCeDcB6uL/D6k7Usw4jam4u4/IE0x
+         GVUaIvOGZFEvsEKMpab23nlY2nnWuSrrkd3mvGDd0riBPtpCZ4Cv8MIJDZHUweBymuI+
+         E/JA==
+X-Forwarded-Encrypted: i=1; AJvYcCXngrAgSWvQmLhITAeYzOvm45xRi7J4bSMXjTq/QW6bVHbkoPbisLcTkVjAdadg2Q0qEoZQYVghlXgzAwU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQSmOHnLyDn7IE/WAuTV1jNhDRCC2Dg0OMqt1UI0FqjQCKqMlZ
+	AwMGXr6+VRVTKxBveYMy7L/bHJEafuw0qF95LoQDDIZNXT8ZWc1SWFAut1OdWQmz3VeikBxwVKx
+	TA0rr8f/fgd9/DxeFHppfduZMYWNOLQc8A5lsMOBsE3ebBofbd8wk
+X-Gm-Gg: ASbGnctUod3P4p2r7E4nqmihTXbts892C9QS5xEbY1ZNFb9IHD33ps8FvK8twvWJpv5
+	Uk38CZbaJepdbbMa0QSNL5OrAIWLugoK8BL9rhbyhMI/aahRcZiaZsAosLVf5uLRnNBrYvYCenP
+	yspoDgM6qJpSB8wrGXBn14Ykunska4jSlwI6tHyUbwlIwVnP7Reagc1mBR/Kvh5lQrYs6Q5gMQF
+	kA9kvm2tZN1SgMA3OOI5zg8R0js+b90T10eIA==
+X-Google-Smtp-Source: AGHT+IFFeuzQyysu6UbiTgYyXjNhyet5KnMKaIrTOY6lGXsapE59WD9CvOGRswKVyAeZi1GXx6ySe7/m8egNRed2iQY=
+X-Received: by 2002:a05:651c:2221:b0:329:136e:300f with SMTP id
+ 38308e7fff4ca-330d2615568mr12136631fa.13.1753195932997; Tue, 22 Jul 2025
+ 07:52:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] Bluetooth: Add PA_LINK to distinguish BIG sync and PA
- sync
- connections
-From: patchwork-bot+bluetooth@kernel.org
-Message-Id: 
- <175319580626.844166.13673275741050259648.git-patchwork-notify@kernel.org>
-Date: Tue, 22 Jul 2025 14:50:06 +0000
-References: <20250710-pa_link-v1-1-88cac0c0b776@amlogic.com>
-In-Reply-To: <20250710-pa_link-v1-1-88cac0c0b776@amlogic.com>
-To: Yang Li <yang.li@amlogic.com>
-Cc: marcel@holtmann.org, johan.hedberg@gmail.com, luiz.dentz@gmail.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- horms@kernel.org, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+References: <20250721162215.30327-1-davthompson@nvidia.com>
+In-Reply-To: <20250721162215.30327-1-davthompson@nvidia.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 22 Jul 2025 16:52:02 +0200
+X-Gm-Features: Ac12FXxEPv4XqzBEYN1mC45x64VjToB_w4CqfiuYbLU7-hd--JtE0CqJrybcrak
+Message-ID: <CAMRc=Mfg42wvT9qdYrhvFq_wdvThmWpbvvo-p9bHSsyK0pn+bw@mail.gmail.com>
+Subject: Re: [PATCH v3] gpio-mlxbf2: only get IRQ for device instances 0 and 3
+To: David Thompson <davthompson@nvidia.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: linus.walleij@linaro.org, davem@davemloft.net, asmaa@nvidia.com, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org, Shravan Kumar Ramani <shravankr@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+On Mon, Jul 21, 2025 at 6:22=E2=80=AFPM David Thompson <davthompson@nvidia.=
+com> wrote:
+>
+> The gpio-mlxbf2 driver interfaces with four GPIO controllers,
+> device instances 0-3. There are two IRQ resources shared between
+> the four controllers, and they are found in the ACPI table for
+> device instances 0 and 3.  The driver should not attempt to get
+> an IRQ resource when probing device instance 1 or 2, otherwise
+> the following error is logged:
+>   mlxbf2_gpio MLNXBF22:01: error -ENXIO: IRQ index 0 not found
+>
+> Fixes: 2b725265cb08 ("gpio: mlxbf2: Introduce IRQ support")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: David Thompson <davthompson@nvidia.com>
+> Reviewed-by: Shravan Kumar Ramani <shravankr@nvidia.com>
+> ---
+> v3: added version history
+> v2: added tag "Cc: stable@vger.kernel.org"
+>
+>  drivers/gpio/gpio-mlxbf2.c | 56 ++++++++++++++++++++++++--------------
+>  1 file changed, 36 insertions(+), 20 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-mlxbf2.c b/drivers/gpio/gpio-mlxbf2.c
+> index 6f3dda6b635f..fc56ac81e344 100644
+> --- a/drivers/gpio/gpio-mlxbf2.c
+> +++ b/drivers/gpio/gpio-mlxbf2.c
+> @@ -353,7 +353,9 @@ mlxbf2_gpio_probe(struct platform_device *pdev)
+>         struct gpio_chip *gc;
+>         unsigned int npins;
+>         const char *name;
+> +       char *colon_ptr;
+>         int ret, irq;
+> +       long num;
+>
+>         name =3D dev_name(dev);
+>
+> @@ -397,26 +399,40 @@ mlxbf2_gpio_probe(struct platform_device *pdev)
+>         gc->ngpio =3D npins;
+>         gc->owner =3D THIS_MODULE;
+>
+> -       irq =3D platform_get_irq(pdev, 0);
+> -       if (irq >=3D 0) {
+> -               girq =3D &gs->gc.irq;
+> -               gpio_irq_chip_set_chip(girq, &mlxbf2_gpio_irq_chip);
+> -               girq->handler =3D handle_simple_irq;
+> -               girq->default_type =3D IRQ_TYPE_NONE;
+> -               /* This will let us handle the parent IRQ in the driver *=
+/
+> -               girq->num_parents =3D 0;
+> -               girq->parents =3D NULL;
+> -               girq->parent_handler =3D NULL;
+> -
+> -               /*
+> -                * Directly request the irq here instead of passing
+> -                * a flow-handler because the irq is shared.
+> -                */
+> -               ret =3D devm_request_irq(dev, irq, mlxbf2_gpio_irq_handle=
+r,
+> -                                      IRQF_SHARED, name, gs);
+> -               if (ret) {
+> -                       dev_err(dev, "failed to request IRQ");
+> -                       return ret;
+> +       colon_ptr =3D strchr(dev_name(dev), ':');
+> +       if (!colon_ptr) {
+> +               dev_err(dev, "invalid device name format\n");
+> +               return -EINVAL;
+> +       }
+> +
+> +       ret =3D kstrtol(++colon_ptr, 16, &num);
+> +       if (ret) {
+> +               dev_err(dev, "invalid device instance\n");
+> +               return ret;
+> +       }
+> +
 
-This patch was applied to bluetooth/bluetooth-next.git (master)
-by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
+That is *really* fragile. Andy, Mika: does this look remotely correct
+to you? I don't know much about ACPI systems.
 
-On Thu, 10 Jul 2025 18:52:47 +0800 you wrote:
-> From: Yang Li <yang.li@amlogic.com>
-> 
-> Currently, BIS_LINK is used for both BIG sync and PA sync connections,
-> which makes it impossible to distinguish them when searching for a PA
-> sync connection.
-> 
-> Adding PA_LINK will make the distinction clearer and simplify future
-> extensions for PA-related features.
-> 
-> [...]
+Bart
 
-Here is the summary with links:
-  - Bluetooth: Add PA_LINK to distinguish BIG sync and PA sync connections
-    https://git.kernel.org/bluetooth/bluetooth-next/c/1ffee96604de
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+> +       if (!num || num =3D=3D 3) {
+> +               irq =3D platform_get_irq(pdev, 0);
+> +               if (irq >=3D 0) {
+> +                       girq =3D &gs->gc.irq;
+> +                       gpio_irq_chip_set_chip(girq, &mlxbf2_gpio_irq_chi=
+p);
+> +                       girq->handler =3D handle_simple_irq;
+> +                       girq->default_type =3D IRQ_TYPE_NONE;
+> +                       /* This will let us handle the parent IRQ in the =
+driver */
+> +                       girq->num_parents =3D 0;
+> +                       girq->parents =3D NULL;
+> +                       girq->parent_handler =3D NULL;
+> +
+> +                       /*
+> +                        * Directly request the irq here instead of passi=
+ng
+> +                        * a flow-handler because the irq is shared.
+> +                        */
+> +                       ret =3D devm_request_irq(dev, irq, mlxbf2_gpio_ir=
+q_handler,
+> +                                              IRQF_SHARED, name, gs);
+> +                       if (ret) {
+> +                               dev_err(dev, "failed to request IRQ");
+> +                               return ret;
+> +                       }
+>                 }
+>         }
+>
+> --
+> 2.30.1
+>
 
