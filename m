@@ -1,279 +1,176 @@
-Return-Path: <linux-kernel+bounces-741371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B997FB0E351
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:16:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F9A3B0E356
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:17:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 813ED1C81E23
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:17:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0A413A8527
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD3D9280A5C;
-	Tue, 22 Jul 2025 18:16:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E3028000F;
+	Tue, 22 Jul 2025 18:17:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yYk98nco"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u93PhvyU"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC6E1A23BD;
-	Tue, 22 Jul 2025 18:16:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4C5203710
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 18:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753208205; cv=none; b=aTJHKbA8jZu6wZMVs5tzHfSOhloLFsaZWN9qOXEx5Wx8npyE7icq4WlsSyT9y7IcmUC5lTPbPAzngWwV0jsLounnhCKQe6jFrn9n7x8k3TYpCAl6d5fxrqHbeKrflLvr/uiwbiB1XGyoU6C7uSJJJp1IOH7nMyIjZVAxzp++Zx0=
+	t=1753208263; cv=none; b=T/ZHl0709NbUKmQ9LvXxFLYbnEK0t/fjUcUwAnWWe8N7wWKfp2F9oBgNB7SEoETm8/5DCGM7hK3iTmjhAh9mi0sVQvgEcV8qUjv0QI04pBCeW+4DlZ9ark926JdjGcwtYxKJq2Fr4hnNnWj2Zy5XLdED0WzHSQ/laNJOvP8JE5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753208205; c=relaxed/simple;
-	bh=hdewdQJtwsEUxtFCV4AgtSwI6v6Y/SFrQqXmXPClc+A=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=inNy21jIpebRWS22V3EJ+2cEB9piSbEdWSiF/plMMbfQEWa88fFpfKz7otF/fRP5FpgHOUYSkcA4AyndLfluSfhuRdWVR31Pl0qleexyDi8zJ6F+tVkd+nf3gPEz+yeYJHhfgVQ22ztoH3VRwrPKcSphhgDLk6vNuL6T0BUNwSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=yYk98nco; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56MIGAax1094699;
-	Tue, 22 Jul 2025 13:16:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1753208170;
-	bh=U+X8Q9d9YTCMPOkM64QY5kCBem8QaasAWMNo5UopHAE=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=yYk98ncox0x4v2YqPUY1JhPnn5VEoNq51+mvPCFwYrMDqocX0vjUImaOAB0lzpVMN
-	 eC0UiMaC3mJJX86CKrj5ObzkmQznAvy52DFPvUoX5cMjB6pJhzwkoXoYlYNDKIS/pE
-	 KIsYkZC92hQBF1+3ybdmwwxABhFG21cVxgNQYNHQ=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56MIGAjw1805525
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 22 Jul 2025 13:16:10 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 22
- Jul 2025 13:16:09 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Tue, 22 Jul 2025 13:16:09 -0500
-Received: from DMZ007XYY.dhcp.ti.com (dmz007xyy.dhcp.ti.com [128.247.29.251])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56MIG9iG1439422;
-	Tue, 22 Jul 2025 13:16:09 -0500
-From: Shree Ramamoorthy <s-ramamoorthy@ti.com>
-To: <aaro.koskinen@iki.fi>, <andreas@kemnade.info>, <khilman@baylibre.com>,
-        <rogerq@kernel.org>, <tony@atomide.com>, <linus.walleij@linaro.org>,
-        <brgl@bgdev.pl>, <linux-omap@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>
-CC: <m-leonard@ti.com>, <praneeth@ti.com>, <jcormier@criticallink.com>,
-        <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH v8 2/2] gpio: tps65219: Add support for TI TPS65214 PMIC
-Date: Tue, 22 Jul 2025 13:16:09 -0500
-Message-ID: <20250722181609.1541739-3-s-ramamoorthy@ti.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250722181609.1541739-1-s-ramamoorthy@ti.com>
-References: <20250722181609.1541739-1-s-ramamoorthy@ti.com>
+	s=arc-20240116; t=1753208263; c=relaxed/simple;
+	bh=2f+84DwTTfKGBlhXcojMr2iRvuLhc2YGodSIxuLtokw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=D2WqFbBssE64i1e8Dn3BERBocC4QYllNl+ACsTVl5tVN+cZEzdao33wwNv4v64MVmGlmyRAhBN+DNdyupongQgIEvdTZ0qPR3p+qu73HcHmmNwvvpp8P4iND+KYI941l0Cm8ojEv2CHY8O8DqakByn5eoBDOAd7mRomKQFjE/S0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u93PhvyU; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-74b4d2f67d5so5043404b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 11:17:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753208262; x=1753813062; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0uhWfOICElzP/Lw68mkivYLCjTmw/FAHTOP1H5PpS5c=;
+        b=u93PhvyUPJp+PHfG57ulsEHvkXiD3sfyNoTEAjDYa4rmqk9aLV3uHPvrL7/yM4cjf6
+         tm1ZO4Wf1rr+lrMY9r43bEBLQUwlGbBq4PAEtOHW2k/ALGggx3MI0UaQZo7Le/Jk9DOe
+         Hs82G8o/j3QxY85a5NGWeOEr/h05C7ntbyVZlD10sK+fFPYym8r0yEjP4tjR4tLM772m
+         AoJWemZMi3i+0LpAEZqVrNkRKBntuipcjGRB8cciqWlD6U5ALLo+umQDT5gTTtWgjP+u
+         AQAjS/Klx0n1IQJeKGYXaTjNE+RsLXgYwTUr45wWUlgWyHsj32DZAV80STArI3TQQYB2
+         eSJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753208262; x=1753813062;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0uhWfOICElzP/Lw68mkivYLCjTmw/FAHTOP1H5PpS5c=;
+        b=HEWOWxt+oxEFPStzy/28kSnFJtLyw46Hj5d1sNoJEBeV/n49CsP3oHkl31gIw3Vsvk
+         fiElpWdhDY3/cV/51BBWNQlegYQQNnpqOmy6LMEaYPUM/MWkb0kNhs9lwZ27ix/MAz6g
+         AFzV3v7MlePzE7BY55l1nGlxrnq7vIRMCAX/Dc6YD4EiMVi3vpQ8ykNjNjeSk6jKOukn
+         SC6pLh0Z9lAvJzS+o5pIf6oHQWmlw3DNsSMZF9BBO8Ik8zA+aJzq8trnomdxpQYLbDjy
+         XBxIaYLU9kiwz1w4R/C1L7UVxQyY8Fl1hHBoQuzOgR1vOSa3j0ows3mcvWgVcqp2oPoE
+         nxVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV2DVDYIjuzx8wZB1adGODCmf5zEIGTZVzShOEWvlHNOgUhnD8tLfX7rfndsjlwVs87Yj515LTeP6l7ueg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2Xo76F2F4ht1Rp59O/rUGV2gZhxDLvVZLZTWdeQTk4mzdxv1q
+	9ijteSDIqrcRT6zSj0s2XKBNXmlfgaq7R5ZFnzCrgwagbtH/es2ECDty8Tl3zA6gomZ+OCsQuot
+	9aodM57YKyuv92zztrMbDkm+Lpw==
+X-Google-Smtp-Source: AGHT+IEZPq9JAZBfv/HDTaiqlxwio+gpwy5VWQkFScjzBWu4+U5mfVT+UUJR8YyZ7zO116a8IO9RMjZ+2gQY1usLMg==
+X-Received: from pfbcj22.prod.google.com ([2002:a05:6a00:2996:b0:747:a9de:9998])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:aa7:88c8:0:b0:736:3ea8:4805 with SMTP id d2e1a72fcca58-76034c56938mr377906b3a.7.1753208261268;
+ Tue, 22 Jul 2025 11:17:41 -0700 (PDT)
+Date: Tue, 22 Jul 2025 11:17:39 -0700
+In-Reply-To: <aH4PRnuztKTqgEYo@yilunxu-OptiPlex-7050>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Mime-Version: 1.0
+References: <CAGtprH_Evyc7tLhDB0t0fN+BUx5qeqWq8A2yZ5-ijbJ5UJ5f-g@mail.gmail.com>
+ <9502503f-e0c2-489e-99b0-94146f9b6f85@amd.com> <20250624130811.GB72557@ziepe.ca>
+ <CAGtprH_qh8sEY3s-JucW3n1Wvoq7jdVZDDokvG5HzPf0HV2=pg@mail.gmail.com>
+ <aGTvTbPHuXbvj59t@yzhao56-desk.sh.intel.com> <diqz8qknhj3l.fsf@ackerleytng-ctop.c.googlers.com>
+ <aHjDIxxbv0DnqI6S@yilunxu-OptiPlex-7050> <diqzqzyeg3j2.fsf@ackerleytng-ctop.c.googlers.com>
+ <aHm2F95XwzdD7nod@yilunxu-OptiPlex-7050> <687a6483506f2_3c6f1d2945a@iweiny-mobl.notmuch>
+ <aH4PRnuztKTqgEYo@yilunxu-OptiPlex-7050>
+Message-ID: <diqzwm803xa4.fsf@ackerleytng-ctop.c.googlers.com>
+Subject: Re: [RFC PATCH v2 04/51] KVM: guest_memfd: Introduce
+ KVM_GMEM_CONVERT_SHARED/PRIVATE ioctls
+From: Ackerley Tng <ackerleytng@google.com>
+To: Xu Yilun <yilun.xu@linux.intel.com>, Ira Weiny <ira.weiny@intel.com>
+Cc: Yan Zhao <yan.y.zhao@intel.com>, Vishal Annapurve <vannapurve@google.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Alexey Kardashevskiy <aik@amd.com>, Fuad Tabba <tabba@google.com>, kvm@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	linux-fsdevel@vger.kernel.org, ajones@ventanamicro.com, 
+	akpm@linux-foundation.org, amoorthy@google.com, anthony.yznaga@oracle.com, 
+	anup@brainfault.org, aou@eecs.berkeley.edu, bfoster@redhat.com, 
+	binbin.wu@linux.intel.com, brauner@kernel.org, catalin.marinas@arm.com, 
+	chao.p.peng@intel.com, chenhuacai@kernel.org, dave.hansen@intel.com, 
+	david@redhat.com, dmatlack@google.com, dwmw@amazon.co.uk, 
+	erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, graf@amazon.com, 
+	haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, 
+	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
+	jarkko@kernel.org, jgowans@amazon.com, jhubbard@nvidia.com, jroedel@suse.de, 
+	jthoughton@google.com, jun.miao@intel.com, kai.huang@intel.com, 
+	keirf@google.com, kent.overstreet@linux.dev, kirill.shutemov@intel.com, 
+	liam.merwick@oracle.com, maciej.wieczor-retman@intel.com, 
+	mail@maciej.szmigiero.name, maz@kernel.org, mic@digikod.net, 
+	michael.roth@amd.com, mpe@ellerman.id.au, muchun.song@linux.dev, 
+	nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev, palmer@dabbelt.com, 
+	pankaj.gupta@amd.com, paul.walmsley@sifive.com, pbonzini@redhat.com, 
+	pdurrant@amazon.co.uk, peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, 
+	qperret@google.com, quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
+	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
+	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
+	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
+	rppt@kernel.org, seanjc@google.com, shuah@kernel.org, steven.price@arm.com, 
+	steven.sistare@oracle.com, suzuki.poulose@arm.com, thomas.lendacky@amd.com, 
+	usama.arif@bytedance.com, vbabka@suse.cz, viro@zeniv.linux.org.uk, 
+	vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org, 
+	willy@infradead.org, xiaoyao.li@intel.com, yilun.xu@intel.com, 
+	yuzenghui@huawei.com, zhiquan1.li@intel.com
+Content-Type: text/plain; charset="UTF-8"
 
-Add support for the TI TPS65214 PMIC with the addition of an id_table,
-separate TPS65214 template_chip, and device-specific _change_direction
-functions.
+Xu Yilun <yilun.xu@linux.intel.com> writes:
 
-- Use platform_get_device_id() to assign dev-specific information.
-- Use different change_direction() functions since TPS65214's GPIO
-  configuration bits are changeable during device operation through bit
-  GPIO_CONFIG in GENERAL_CONFIG register.
-- Remove MODULE_ALIAS since it is now generated by MODULE_DEVICE_TABLE.
+>> > > >> Yan, Yilun, would it work if, on conversion,
+>> > > >> 
+>> > > >> 1. guest_memfd notifies IOMMU that a conversion is about to happen for a
+>> > > >>    PFN range
+>> > > >
+>> > > > It is the Guest fw call to release the pinning.
+>> > > 
+>> > > I see, thanks for explaining.
+>> > > 
+>> > > > By the time VMM get the
+>> > > > conversion requirement, the page is already physically unpinned. So I
+>> > > > agree with Jason the pinning doesn't have to reach to iommu from SW POV.
+>> > > >
+>> > > 
+>> > > If by the time KVM gets the conversion request, the page is unpinned,
+>> > > then we're all good, right?
+>> > 
+>> > Yes, unless guest doesn't unpin the page first by mistake.
+>> 
+>> Or maliciously?  :-(
+>
+> Yes.
+>
+>> 
+>> My initial response to this was that this is a bug and we don't need to be
+>> concerned with it.  However, can't this be a DOS from one TD to crash the
+>> system if the host uses the private page for something else and the
+>> machine #MC's?
+>
+> I think we are already doing something to prevent vcpus from executing
+> then destroy VM, so no further TD accessing. But I assume there is
+> concern a TD could just leak a lot of resources, and we are
+> investigating if host can reclaim them.
+>
+> Thanks,
+> Yilun
 
-Reviewed-by: Jonathan Cormier <jcormier@criticallink.com>
-Tested-by: Jonathan Cormier <jcormier@criticallink.com>
-Signed-off-by: Shree Ramamoorthy <s-ramamoorthy@ti.com>
----
- drivers/gpio/gpio-tps65219.c | 92 +++++++++++++++++++++++++++++++++---
- 1 file changed, 86 insertions(+), 6 deletions(-)
+Sounds like a malicious guest could skip unpinning private memory, and
+guest_memfd's unmap will fail, leading to a KVM_BUG_ON() as Yan/Rick
+suggested here [1].
 
-diff --git a/drivers/gpio/gpio-tps65219.c b/drivers/gpio/gpio-tps65219.c
-index c8f8f88b4239..c0177088c54c 100644
---- a/drivers/gpio/gpio-tps65219.c
-+++ b/drivers/gpio/gpio-tps65219.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * GPIO driver for TI TPS65215/TPS65219 PMICs
-+ * GPIO driver for TI TPS65214/TPS65215/TPS65219 PMICs
-  *
-  * Copyright (C) 2022, 2025 Texas Instruments Incorporated - http://www.ti.com/
-  */
-@@ -13,10 +13,15 @@
- #include <linux/regmap.h>
- 
- #define TPS65219_GPIO0_DIR_MASK		BIT(3)
-+#define TPS65214_GPIO0_DIR_MASK		BIT(1)
- #define TPS6521X_GPIO0_OFFSET		2
- #define TPS6521X_GPIO0_IDX		0
- 
- /*
-+ * TPS65214 GPIO mapping
-+ * Linux gpio offset 0 -> GPIO (pin16) -> bit_offset 2
-+ * Linux gpio offset 1 -> GPO1 (pin9 ) -> bit_offset 0
-+ *
-  * TPS65215 & TPS65219 GPIO mapping
-  * Linux gpio offset 0 -> GPIO (pin16) -> bit_offset 2
-  * Linux gpio offset 1 -> GPO1 (pin8 ) -> bit_offset 0
-@@ -24,10 +29,26 @@
-  */
- 
- struct tps65219_gpio {
-+	int (*change_dir)(struct gpio_chip *gc, unsigned int offset, unsigned int dir);
- 	struct gpio_chip gpio_chip;
- 	struct tps65219 *tps;
- };
- 
-+static int tps65214_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct tps65219_gpio *gpio = gpiochip_get_data(gc);
-+	int ret, val;
-+
-+	if (offset != TPS6521X_GPIO0_IDX)
-+		return GPIO_LINE_DIRECTION_OUT;
-+
-+	ret = regmap_read(gpio->tps->regmap, TPS65219_REG_GENERAL_CONFIG, &val);
-+	if (ret)
-+		return ret;
-+
-+	return !(val & TPS65214_GPIO0_DIR_MASK);
-+}
-+
- static int tps65219_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
- {
- 	struct tps65219_gpio *gpio = gpiochip_get_data(gc);
-@@ -118,6 +139,33 @@ static int tps65219_gpio_change_direction(struct gpio_chip *gc, unsigned int off
- 	return -ENOTSUPP;
- }
- 
-+static int tps65214_gpio_change_direction(struct gpio_chip *gc, unsigned int offset,
-+					  unsigned int direction)
-+{
-+	struct tps65219_gpio *gpio = gpiochip_get_data(gc);
-+	struct device *dev = gpio->tps->dev;
-+	int val, ret;
-+
-+	/**
-+	 * Verified if GPIO or GPO in parent function
-+	 * Masked value: 0 = GPIO, 1 = VSEL
-+	 */
-+	ret = regmap_read(gpio->tps->regmap, TPS65219_REG_MFP_1_CONFIG, &val);
-+	if (ret)
-+		return ret;
-+
-+	ret = !!(val & BIT(TPS65219_GPIO0_DIR_MASK));
-+	if (ret)
-+		dev_err(dev, "GPIO%d configured as VSEL, not GPIO\n", offset);
-+
-+	ret = regmap_update_bits(gpio->tps->regmap, TPS65219_REG_GENERAL_CONFIG,
-+				 TPS65214_GPIO0_DIR_MASK, direction);
-+	if (ret)
-+		dev_err(dev, "Fail to change direction to %u for GPIO%d.\n", direction, offset);
-+
-+	return ret;
-+}
-+
- static int tps65219_gpio_direction_input(struct gpio_chip *gc, unsigned int offset)
- {
- 	struct tps65219_gpio *gpio = gpiochip_get_data(gc);
-@@ -131,11 +179,13 @@ static int tps65219_gpio_direction_input(struct gpio_chip *gc, unsigned int offs
- 	if (tps65219_gpio_get_direction(gc, offset) == GPIO_LINE_DIRECTION_IN)
- 		return 0;
- 
--	return tps65219_gpio_change_direction(gc, offset, GPIO_LINE_DIRECTION_IN);
-+	return gpio->change_dir(gc, offset, GPIO_LINE_DIRECTION_IN);
- }
- 
- static int tps65219_gpio_direction_output(struct gpio_chip *gc, unsigned int offset, int value)
- {
-+	struct tps65219_gpio *gpio = gpiochip_get_data(gc);
-+
- 	tps65219_gpio_set(gc, offset, value);
- 	if (offset != TPS6521X_GPIO0_IDX)
- 		return 0;
-@@ -143,9 +193,22 @@ static int tps65219_gpio_direction_output(struct gpio_chip *gc, unsigned int off
- 	if (tps65219_gpio_get_direction(gc, offset) == GPIO_LINE_DIRECTION_OUT)
- 		return 0;
- 
--	return tps65219_gpio_change_direction(gc, offset, GPIO_LINE_DIRECTION_OUT);
-+	return gpio->change_dir(gc, offset, GPIO_LINE_DIRECTION_OUT);
- }
- 
-+static const struct gpio_chip tps65214_template_chip = {
-+	.label			= "tps65214-gpio",
-+	.owner			= THIS_MODULE,
-+	.get_direction		= tps65214_gpio_get_direction,
-+	.direction_input	= tps65219_gpio_direction_input,
-+	.direction_output	= tps65219_gpio_direction_output,
-+	.get			= tps65219_gpio_get,
-+	.set_rv			= tps65219_gpio_set,
-+	.base			= -1,
-+	.ngpio			= 2,
-+	.can_sleep		= true,
-+};
-+
- static const struct gpio_chip tps65219_template_chip = {
- 	.label			= "tps65219-gpio",
- 	.owner			= THIS_MODULE,
-@@ -161,6 +224,7 @@ static const struct gpio_chip tps65219_template_chip = {
- 
- static int tps65219_gpio_probe(struct platform_device *pdev)
- {
-+	enum pmic_id chip = platform_get_device_id(pdev)->driver_data;
- 	struct tps65219 *tps = dev_get_drvdata(pdev->dev.parent);
- 	struct tps65219_gpio *gpio;
- 
-@@ -168,22 +232,38 @@ static int tps65219_gpio_probe(struct platform_device *pdev)
- 	if (!gpio)
- 		return -ENOMEM;
- 
-+	if (chip == TPS65214) {
-+		gpio->gpio_chip = tps65214_template_chip;
-+		gpio->change_dir = tps65214_gpio_change_direction;
-+	} else if (chip == TPS65219) {
-+		gpio->gpio_chip = tps65219_template_chip;
-+		gpio->change_dir = tps65219_gpio_change_direction;
-+	} else {
-+		return -ENODATA;
-+	}
-+
- 	gpio->tps = tps;
--	gpio->gpio_chip = tps65219_template_chip;
- 	gpio->gpio_chip.parent = tps->dev;
- 
- 	return devm_gpiochip_add_data(&pdev->dev, &gpio->gpio_chip, gpio);
- }
- 
-+static const struct platform_device_id tps6521x_gpio_id_table[] = {
-+	{ "tps65214-gpio", TPS65214 },
-+	{ "tps65219-gpio", TPS65219 },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(platform, tps6521x_gpio_id_table);
-+
- static struct platform_driver tps65219_gpio_driver = {
- 	.driver = {
- 		.name = "tps65219-gpio",
- 	},
- 	.probe = tps65219_gpio_probe,
-+	.id_table = tps6521x_gpio_id_table,
- };
- module_platform_driver(tps65219_gpio_driver);
- 
--MODULE_ALIAS("platform:tps65219-gpio");
- MODULE_AUTHOR("Jonathan Cormier <jcormier@criticallink.com>");
--MODULE_DESCRIPTION("TPS65215/TPS65219 GPIO driver");
-+MODULE_DESCRIPTION("TPS65214/TPS65215/TPS65219 GPIO driver");
- MODULE_LICENSE("GPL");
--- 
-2.43.0
+Actually it seems like a legacy guest would also lead to unmap failures
+and the KVM_BUG_ON(), since when TDX connect is enabled, the pinning
+mode is enforced, even for non-IO private pages?
 
+I hope your team's investigations find a good way for the host to
+reclaim memory, at least from dead TDs! Otherwise this would be an open
+hole for guests to leak a host's memory.
+
+Circling back to the original topic [2], it sounds like we're okay for
+IOMMU to *not* take any refcounts on pages and can rely on guest_memfd
+to keep the page around on behalf of the VM?
+
+[1] https://lore.kernel.org/all/diqzcya13x2j.fsf@ackerleytng-ctop.c.googlers.com/
+[2] https://lore.kernel.org/all/CAGtprH_qh8sEY3s-JucW3n1Wvoq7jdVZDDokvG5HzPf0HV2=pg@mail.gmail.com/
 
