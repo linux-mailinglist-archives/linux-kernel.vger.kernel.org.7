@@ -1,172 +1,161 @@
-Return-Path: <linux-kernel+bounces-740925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B714B0DB42
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:47:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CD2AB0DB65
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:49:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F0AD561E6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:47:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2160175E3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:48:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2256D2EA469;
-	Tue, 22 Jul 2025 13:47:12 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F222EA15C;
+	Tue, 22 Jul 2025 13:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Aua7JZUA"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B947433A8;
-	Tue, 22 Jul 2025 13:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DE51A01B9;
+	Tue, 22 Jul 2025 13:48:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753192031; cv=none; b=o12KucFNR1DKQqBJcDDmCYhq3xMu1LuhmwjUQfr9vhGZP+UEcxQZFjTCv8a14aqit+tDd76o3PINtTvitpmaemgye3pBmegEVqfqy6IcOBzCyqlRJaPIolVpU6i+jJFFWONPjERfOWm/lLcfTndpzetsZ+tew9CuirPYo+lzdng=
+	t=1753192131; cv=none; b=UWhqKmA4FNjlbIGKL4aCHjiZa17vsRwZTeIinJqXVWt/5PgPOnQ3R9px+g/WUElce5wL+GIuZFeSGXPCTnQ35e5Z1P0e4LEMhQDDCBODWfB1xY6DjvknB+xcBtLJeBgwxI8aULjE6jr7uYco3I3y+HRNq+0vTDUKK2mO4OokJwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753192031; c=relaxed/simple;
-	bh=/38O0a49Nl2fkTlWe1aq3jycEaW+CNYGPJk/1tyUWAQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=BXhDYiKdgeAJd3wu/Xd2vJe6UTaDhAkvxSZ7MUGXKc/YRvqwXopJqzyq009WONxbq8gYz3mhxfbfCTiu+uuL+NzC+xXtI547UQH0QsD2ZheMiM+bvYCjmrbeTXO2cSIR8jAq/YyRgxZet4X5qKzpYDYIeoTxvkM0h4hmLSWae4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay05.hostedemail.com (Postfix) with ESMTP id C75BE58B89;
-	Tue, 22 Jul 2025 13:47:04 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf03.hostedemail.com (Postfix) with ESMTPA id AC81C6000D;
-	Tue, 22 Jul 2025 13:47:02 +0000 (UTC)
-Date: Tue, 22 Jul 2025 09:47:34 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, kvm@vger.kernel.org,
- loongarch@lists.linux.dev
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
- Huacai Chen <chenhuacai@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>
-Subject: [PATCH] LoongArch: KVM: Move kvm_iocsr tracepoint out of generic
- code
-Message-ID: <20250722094734.4920545b@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753192131; c=relaxed/simple;
+	bh=1jvLzi+PABW8D5dB5D3oS0wH9SR2ZfgvF0LVM3mA5VI=;
+	h=From:Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:
+	 References:In-Reply-To; b=TbmL3tdrqd3hv0CAghEfNqpNwKthpESHAtWSyZtptbZxIK3gMhN2cJYv0aaGfQNz8i1ABlX/uRgLkEDK8s/oOuKnWSZvoY91HN0flCcaqYSqxIs5QHkZLL/1Wzdphxrqy6LWdBY5iCVLaipM0w7XCQ+LbTrSytadjBdPdF/M3Ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Aua7JZUA; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-454f428038eso47687555e9.2;
+        Tue, 22 Jul 2025 06:48:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753192128; x=1753796928; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:message-id:date
+         :content-transfer-encoding:mime-version:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+ldRIZOo7b+ExrUWiM8bxC7vu6GZt+hWk+F7iitUy7Q=;
+        b=Aua7JZUAejOB0fhZc2esGbTDE+WtOmLUTjM9vuNg8+SmLf8uB+dtBETdFJFsRl8CSQ
+         fWNAtyhcm7MwtKND7NNdPAmNVo/P9QfFzVrPfNCm05sDG0Yyc5TPkrRMPu+JFw48fJYO
+         gkIL63Kd6+HN4u6tq+IM+b9y/26YaAI9ZfcOpZI+ltx9ZCguYS6LyhAtRM9Gm6RWIDDh
+         +3AsZCBeIXAFRNNn3n3JAm5QCLUjOOC9PHb8aGTMjsEhX+WRJgt/AiER5+NPc33jrsi2
+         u62C1uR1BBT7NGuNBal3Th39Ff1WMXT9FEJPHw037QHBgFi+oBUSQbEcGZytTsMGHWrR
+         jksA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753192128; x=1753796928;
+        h=in-reply-to:references:subject:cc:to:message-id:date
+         :content-transfer-encoding:mime-version:from:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=+ldRIZOo7b+ExrUWiM8bxC7vu6GZt+hWk+F7iitUy7Q=;
+        b=EX1Q7cKHe1di/QVtylO0oNgkQPajKTxU3HurPB9qm4e4lxDAHArGRch8ILsuXRZSp1
+         q0NvWL5isNOr3KIqfbpZBM82IdztcaDNAm8AnqFevz2mt418JY4OZvkUGO6OUNtFBLJ/
+         kMcCbXHfSkPuWAJzS+MWtAImWAY7MbtZup50CMk73Zp1He7wxQ87NcZ2XOhMHXMvlWro
+         cl8inUqAJSYRGXuHw5GtHSGf7YH0oXxu8Y1GF52+RDteV+sAMbxqutO/sNjCSEJhvRDR
+         4sY7HhhEpgIPLrf31fby9W1gVj+urjDvm3rqEa9d3cvmNdl8y48eidIeTWl3k2W5/pez
+         1dyw==
+X-Forwarded-Encrypted: i=1; AJvYcCUImEnBc5737XxfnR1ZiTaH95tRf0y7ka9mTWZjpMsrfJT170Y3I9ifOxU+zT4TaOJygtHsSOA/MYC/mZm7bQ==@vger.kernel.org, AJvYcCUcztAvWa10n3WC5G+db81/wbkvCvWYtBivvIu6u6FkMDFw3Q8ZjVktkQ4HYNHamHZA79T+gRzMATPO@vger.kernel.org, AJvYcCUpSLM0rDLUYyFiIX+ebRXHlUIxwSgYphDvVvaOp0pseWoLCVI+FsB5KD51Lc03gp8V6jN0UTBDhgNqhbck@vger.kernel.org
+X-Gm-Message-State: AOJu0YxE40wi4e2uSq16UANiriI1p+gUMtD/X9kBpX0dwUwmS5X8AztS
+	8R49keNeande1ZsbdCNrVZz1zSCdsF69xZ4G3UvDHjQyhv3lB2iFFbsZ
+X-Gm-Gg: ASbGncsOzg1y/Lu+mmA6RMRt43CfQOhpN4N8JLa/+s21QSJ6n9apdsevzor9WYAhJPf
+	EbQ9fan3Qgpa546IM1fIjRkEtEXoLSt07QiMLVazr9HJRfmdRvG39pIXyS0stSw9lx6n1NIR4Ew
+	QlxJ9+BdAVdX+vlMi/PH5jyubklHeGsbRVGX+osm9LPKrkG0fTHrU7L0wVOSiUSZw+MXq5BMdjk
+	QDgKt1NA/KuUl2sPVrtLZjS8ep6NtKsrydk6MZ2MfSubaqqvkqxk4GQLT0mssLbG8SvzYmcCOfP
+	oY3bgYSjrCz4yqk9HEedVP/oNF4PG5+7D8UyPbmfcxDDMkhBvubzOpc3x3QqgGiEceO4NOAuGAb
+	gXXcuJT9lRzqafVsapGkj2/3hgWxk0/N0+trGYz7A22yst+uL4qrAJ0LuZwi0
+X-Google-Smtp-Source: AGHT+IHOsD2HonrK3ieI5Sd51hJX0fvzUE7WJgdLvFb4OsH0yW2r6mqQo7lyaumurv4xcpwqbOBCnQ==
+X-Received: by 2002:a05:600c:3496:b0:456:1b8b:b8c6 with SMTP id 5b1f17b1804b1-4562edaa066mr235088475e9.14.1753192127819;
+        Tue, 22 Jul 2025 06:48:47 -0700 (PDT)
+Received: from localhost (a95-94-245-170.cpe.netcabo.pt. [95.94.245.170])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45863a131aasm17025115e9.2.2025.07.22.06.48.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jul 2025 06:48:47 -0700 (PDT)
+From: Rui Miguel Silva <rmfrfs@gmail.com>
+X-Google-Original-From: "Rui Miguel Silva" <rui.silva@linaro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: AC81C6000D
-X-Stat-Signature: cw9yqkxp4a9wi4qx7s15fa4muzpkrsub
-X-Rspamd-Server: rspamout02
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19Ftd3lTtUwfr1yCBrITaCewJ6P8z9IiT8=
-X-HE-Tag: 1753192022-163098
-X-HE-Meta: U2FsdGVkX18UudbkKX+QbAnANaDsrraKoCAGN0Lnp3uc5eXpMlEczEIXMfJqpNJEW6W28wkkInmqYbCTquD3lSySI/TdMScCFNpcDA6Prz87YKiQ2wapK0t4gTKUEsY4eXq7OqUf66t3r/d6GKFWmCFsWfSEkbFvxjSx2+/j1XdHbBDkcVOfvIY+A9EkCMq29qqpvWkHg2OvB9Q5xTnx73vow8z20Vrd5kA+ecU75As4FHttw1oa80dkkcmhbbO9821uGtG8uueLbV37GNFHXJhFNmItj0SV/DIsAcrNFSZ/z17VShqfeVFrDD2u1LXurkJdTz9/Z3YjEBXCiBdU8oZF425hvig5nsQpHE8KRbqaG8bum/OGBADwgxPFnDsb
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 22 Jul 2025 14:48:46 +0100
+Message-Id: <DBIMQO2CS0I3.17XLZPKPCVW2S@linaro.com>
+To: "Neil Armstrong" <neil.armstrong@linaro.org>, "Johan Hovold"
+ <johan@kernel.org>, "Christopher Obbard" <christopher.obbard@linaro.org>
+Cc: "Douglas Anderson" <dianders@chromium.org>, "Jessica Zhang"
+ <quic_jesszhan@quicinc.com>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, "Bjorn Andersson" <andersson@kernel.org>,
+ "Konrad Dybcio" <konradybcio@kernel.org>, "Dmitry Baryshkov"
+ <dmitry.baryshkov@oss.qualcomm.com>, <dri-devel@lists.freedesktop.org>,
+ <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>, "Rui
+ Miguel Silva" <rui.silva@linaro.org>, "Abel Vesa" <abel.vesa@linaro.org>,
+ <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v5 0/3] Add support for OLED panel used on Snapdragon
+ Lenovo T14s Gen6
+References: <20250402-wip-obbardc-qcom-t14s-oled-panel-v5-0-ff33f4d0020f@linaro.org> <aCw9pYehCdfXXeiR@hovoldconsulting.com> <aG-QyF12rGY55gcG@hovoldconsulting.com> <d431435b-4ac0-44aa-922d-0bde126ca563@linaro.org>
+In-Reply-To: <d431435b-4ac0-44aa-922d-0bde126ca563@linaro.org>
 
-From: Steven Rostedt <rostedt@goodmis.org>
+Hey Neil,
 
-The tracepoint kvm_iocsr is only used by the loongarch architecture. As
-trace events can take up to 5K of memory, move this tracepoint into the
-loongarch specific tracing file so that it doesn't waste memory for all
-other architectures.
+On Tue Jul 22, 2025 at 2:01 PM WEST, Neil Armstrong wrote:
 
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- arch/loongarch/kvm/trace.h | 35 +++++++++++++++++++++++++++++++++++
- include/trace/events/kvm.h | 35 -----------------------------------
- 2 files changed, 35 insertions(+), 35 deletions(-)
+> On 10/07/2025 12:07, Johan Hovold wrote:
+>> Hi Chris (and Neil),
+>>=20
+>> On Tue, May 20, 2025 at 10:30:29AM +0200, Johan Hovold wrote:
+>>=20
+>>> On Wed, Apr 02, 2025 at 03:36:31PM +0100, Christopher Obbard wrote:
+>>>> The Snapdragon Lenovo T14s Gen6 can be bought with a number of differe=
+nt
+>>>> panels. This patch series adds support for the OLED model which has a
+>>>> Samsung ATNA40YK20 panel.
+>>>>
+>>>> With this patch series the backlight of the OLED eDP panel does not
+>>>> illuminate since the brightness is incorrectly read from the eDP panel
+>>>> as (to be clear this is not a regression). This is fixed in [0].
+>>>>
+>>>> [0]: https://lore.kernel.org/all/20250330-wip-obbardc-qcom-t14s-oled-p=
+anel-brightness-v6-1-84ad1cd1078a@linaro.org/
+>>>
+>>> It would be good to get OLED support for the T14s merged. Are you
+>>> planning on sending another revision of this series?
+>>=20
+>> No reply for over a month. Do you intend to respin these or should
+>> someone else take over?
+>>=20
+>> Neil, do you have the OLED version now?
+>
+> I'm not sure, how do I determine that ? Is there something specific in th=
+e type number ?
 
-diff --git a/arch/loongarch/kvm/trace.h b/arch/loongarch/kvm/trace.h
-index 145514dab6d5..d73dea8afb74 100644
---- a/arch/loongarch/kvm/trace.h
-+++ b/arch/loongarch/kvm/trace.h
-@@ -115,6 +115,41 @@ TRACE_EVENT(kvm_exit_gspr,
- 			__entry->inst_word)
- );
- 
-+#define KVM_TRACE_IOCSR_READ_UNSATISFIED 0
-+#define KVM_TRACE_IOCSR_READ 1
-+#define KVM_TRACE_IOCSR_WRITE 2
-+
-+#define kvm_trace_symbol_iocsr \
-+	{ KVM_TRACE_IOCSR_READ_UNSATISFIED, "unsatisfied-read" }, \
-+	{ KVM_TRACE_IOCSR_READ, "read" }, \
-+	{ KVM_TRACE_IOCSR_WRITE, "write" }
-+
-+TRACE_EVENT(kvm_iocsr,
-+	TP_PROTO(int type, int len, u64 gpa, void *val),
-+	TP_ARGS(type, len, gpa, val),
-+
-+	TP_STRUCT__entry(
-+		__field(	u32,	type	)
-+		__field(	u32,	len	)
-+		__field(	u64,	gpa	)
-+		__field(	u64,	val	)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->type		= type;
-+		__entry->len		= len;
-+		__entry->gpa		= gpa;
-+		__entry->val		= 0;
-+		if (val)
-+			memcpy(&__entry->val, val,
-+			       min_t(u32, sizeof(__entry->val), len));
-+	),
-+
-+	TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
-+		  __print_symbolic(__entry->type, kvm_trace_symbol_iocsr),
-+		  __entry->len, __entry->gpa, __entry->val)
-+);
-+
- #define KVM_TRACE_AUX_SAVE		0
- #define KVM_TRACE_AUX_RESTORE		1
- #define KVM_TRACE_AUX_ENABLE		2
-diff --git a/include/trace/events/kvm.h b/include/trace/events/kvm.h
-index 8b7252b8d751..b282e3a86769 100644
---- a/include/trace/events/kvm.h
-+++ b/include/trace/events/kvm.h
-@@ -156,41 +156,6 @@ TRACE_EVENT(kvm_mmio,
- 		  __entry->len, __entry->gpa, __entry->val)
- );
- 
--#define KVM_TRACE_IOCSR_READ_UNSATISFIED 0
--#define KVM_TRACE_IOCSR_READ 1
--#define KVM_TRACE_IOCSR_WRITE 2
--
--#define kvm_trace_symbol_iocsr \
--	{ KVM_TRACE_IOCSR_READ_UNSATISFIED, "unsatisfied-read" }, \
--	{ KVM_TRACE_IOCSR_READ, "read" }, \
--	{ KVM_TRACE_IOCSR_WRITE, "write" }
--
--TRACE_EVENT(kvm_iocsr,
--	TP_PROTO(int type, int len, u64 gpa, void *val),
--	TP_ARGS(type, len, gpa, val),
--
--	TP_STRUCT__entry(
--		__field(	u32,	type	)
--		__field(	u32,	len	)
--		__field(	u64,	gpa	)
--		__field(	u64,	val	)
--	),
--
--	TP_fast_assign(
--		__entry->type		= type;
--		__entry->len		= len;
--		__entry->gpa		= gpa;
--		__entry->val		= 0;
--		if (val)
--			memcpy(&__entry->val, val,
--			       min_t(u32, sizeof(__entry->val), len));
--	),
--
--	TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
--		  __print_symbolic(__entry->type, kvm_trace_symbol_iocsr),
--		  __entry->len, __entry->gpa, __entry->val)
--);
--
- #define kvm_fpu_load_symbol	\
- 	{0, "unload"},		\
- 	{1, "load"}
--- 
-2.47.2
+Yes, yours is the OLED version, the exact models stated above.
+
+Cheers,
+     Rui
+
+>
+> Neil
+>
+>>=20
+>>>> Christopher Obbard (3):
+>>>>        arm64: dts: qcom: x1e80100: add epd hpd pinctrl
+>>>>        arm64: dts: qcom: x1e78100-t14s: add hpd gpio to dp controller
+>>>
+>>>>        arm64: dts: qcom: x1e78100-t14s-oled: add edp panel
+>>>
+>>> Strictly speaking you could have posted this last patch on it's own as
+>>> it doesn't depend on adding the hpd pinctrl.
+>>=20
+>> Johan
+
+
 
 
