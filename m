@@ -1,129 +1,100 @@
-Return-Path: <linux-kernel+bounces-740168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EA44B0D0E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:22:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F1FDB0D0E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:25:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2780544F59
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 04:22:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A48A6C05B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 04:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5F0287261;
-	Tue, 22 Jul 2025 04:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="gwd+R0cO"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B15622EF4;
-	Tue, 22 Jul 2025 04:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B79E1E0E00;
+	Tue, 22 Jul 2025 04:25:31 +0000 (UTC)
+Received: from invmail3.skhynix.com (exvmail3.hynix.com [166.125.252.90])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB0F22EF4
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 04:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753158168; cv=none; b=ldfhj+MaWyE5tWAXFAGWOVBf60WFXMjUmMYsX8mIyayQAGUtxaE5OVkZJxquMXDTFqqJicBi34yoZtLxmSaT9s83TxcUd9EG9vP7Cj0MpABgr6JHsLE96Vpci4NaxHCdcjQVYgvYg8//oYNbJpAoiLkx/ZMoqGHLoRRdnM5PZWE=
+	t=1753158331; cv=none; b=WEY8iBYRHU6reGBYeJ5RZW7hScPeLHT1I67X5cEu4Vzyw4D8jiX8UZ8/wGMobNfqzpqoZKdp/BkmRlyFzC8HlSeglC7BiRwAJJ5zQt6HBwfI/yrP4nFkncCAWoBAdtO+LQc1OJ9XhDmnW8CVazApcQYHjOGH5BPSiAldwc6BBYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753158168; c=relaxed/simple;
-	bh=cfPJuk0o4vsCqdMkcZ4oBmnUMIJoiy9Luf/3kfpGLGE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gR5yydfgToT5zLwwMz8AdnAYpFMVUM9u4toFRV+it8KTJcyUjfFMFy6DnJeYRoztwepT6NEiDGwGjc8tz6oHrIErY+GsimXPU3+L0a3/wxuInyO4VsQMlHf2M+40YIExbB3D9ROHV3K2L+zObF01I9INxsas5oaTn2IUkmmDaBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=gwd+R0cO; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 75CE940E0257;
-	Tue, 22 Jul 2025 04:22:42 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id z7Kv2FnvKOfR; Tue, 22 Jul 2025 04:22:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1753158158; bh=cs3S2e7h0WG904CGjnFsYVwouZTWTl18WW7+GaIg4bs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gwd+R0cOL967Jasj3yXDec+XLojDDMC4o7McC/JYeU8kH0rBzFAZNZ8Dt0Bi8IJQ2
-	 3aW8/3+Uw0+YacNoLwlJ4rtqQO+BRy/z8W+lDeWmMRPEcqI8zpMa1VvDwghgNRIY+x
-	 0rIeRe9Bqipra94r3hgPevf08xAiQDE27ABSo2wmRDKSud3zfCzWO/9irPp3J4fH/N
-	 pzsc1PJ9e2upp4cjV9L2l3iS/IqN3Fw5ZOq451mhFLRGKQKLP9b4cdvWNHnnSa1W5y
-	 NSsVIJgyyxd/K1JVbVJlEe8ytbXpyADktRTS/vsLyLYonrTK4RjHUjtovLMcHgLGZD
-	 cqI8mzu0UxMG5AvvAk9aOU9PZaN9FNc9cJe7WxftDNgQf5W08AsCC7YDMBcwXjKERL
-	 1kFUU8+AWg6kTWcpulZ25vnowBkHrGhqbBj8BF/oraJ8oknRKkesKSdAMClF0acX02
-	 TIxCwAOsSItkME0yY+SCIdUUVUHVLKboOFGccr/VPAhxwbGoqANwBcSPhgOw2AmKqd
-	 KDtOHMs5cPOg4zwFSoByUv4/EbT6y6bnOlRFVOyRMuqnG210uS81CPrIcK9yc/N3n4
-	 +q3ijN3tqKdXAD5auSNAMlsZQTjIe+b43X4E3h+boEvHoJDLewOUV/wv3p4bqtEDoQ
-	 uJ1xVmpwL2EFQffUh3xgNaag=
-Received: from rn.tnic (unknown [78.130.214.207])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 1458640E021A;
-	Tue, 22 Jul 2025 04:22:30 +0000 (UTC)
-Date: Tue, 22 Jul 2025 06:24:31 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Michael Zhivich <mzhivich@akamai.com>
-Cc: stable@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/bugs: Fix use of possibly uninit value in
- amd_check_tsa_microcode()
-Message-ID: <20250722042431.GAaH8Sf1CuHB1JRgk9@renoirsky.local>
-References: <20250721230712.2093341-1-mzhivich@akamai.com>
+	s=arc-20240116; t=1753158331; c=relaxed/simple;
+	bh=NJfpPEo48sCyc1vl9ymSGEX+cBooghUOSphJTYW1cxo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Bp08nJ0JXJ2WGdqNKn7J/4lqjGA/6+gtMnnEeVEo7X2Qo150Aq5zhgh0v/TJwcQy7R4UkfBQl/hC8gIsM0ibQPAz3uCjDXgHxghmgL8geaAkdfJ0gDQbkCGIAxUCczLOv++xRplWxiDermSG1yFCe/Q8q4H5z+p8YxgKPBnLUVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc59-03fff7000000aab6-83-687f12ad647c
+From: "yohan.joung" <yohan.joung@sk.com>
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: chao@kernel.org,
+	jaegeuk@kernel.org,
+	linux-kernel@vger.kernel.org,
+	pilhyun.kim@sk.com,
+	yohan.joung@sk.com
+Subject: Re: [f2fs-dev] [PATCH] f2fs: zone: wait for inflight dio completion, excluding pinned files
+Date: Tue, 22 Jul 2025 13:25:14 +0900
+Message-ID: <20250722042515.1403-1-yohan.joung@sk.com>
+X-Mailer: git-send-email 2.49.0.windows.1
+In-Reply-To: <fed85e52-2965-41d0-9e73-8f2e15dbef06@kernel.org>
+References: <fed85e52-2965-41d0-9e73-8f2e15dbef06@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250721230712.2093341-1-mzhivich@akamai.com>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOLMWRmVeSWpSXmKPExsXC9ZZnoe4GofoMg7Vt7Banp55lsniyfhaz
+	xaVF7haXd81hc2Dx2LSqk81j94LPTB6fN8kFMEdx2aSk5mSWpRbp2yVwZTzZ9o+pYAN7xao3
+	39gaGJvYuhg5OSQETCTe7/8JZHOA2f+eSYCE2QQ0JP709jKD2CICWhITG/4ygtjMAqUSvc+X
+	gdnCAikSk07cBLNZBFQlDpw6wA5i8wqYSdx/8owRYrymxI4v55lAbE4BO4nuHRBxIQFbiRur
+	Z7BA1AtKnJz5hAVivrxE89bZQHu5gHo/skqsPH+XHWKQpMTBFTdYJjDyz0LSMwtJzwJGplWM
+	Ipl5ZbmJmTnGesXZGZV5mRV6yfm5mxiBwbes9k/kDsZvF4IPMQpwMCrx8Co01GUIsSaWFVfm
+	HmKU4GBWEuH9thsoxJuSWFmVWpQfX1Sak1p8iFGag0VJnNfoW3mKkEB6YklqdmpqQWoRTJaJ
+	g1OqgXFOfJlKsPDpb75bDVU3rp184z5La/uXeaIHFh8oKKqadHaT20y/T09fa/4Sdbu2xs14
+	2wndOvV0/Qd2/KGL5fY2CUxiXFKn7jBr9/5zR37Ou78x9rbFst5PpQyGhQt02S15p0aK35PM
+	+BrC8o7tKcMGwaqGl7fbeu4G8H/z1F106vrq/LDrEX+VWIozEg21mIuKEwEG88yyOgIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprALMWRmVeSWpSXmKPExsXCNUNlju5aofoMgyM3GC1OTz3LZPFk/Sxm
+	i0uL3C0u75rDZjFh7lUmi/db7zE6sHlsWtXJ5rF7wWcmj2+3PTw+b5ILYInisklJzcksSy3S
+	t0vgyniy7R9TwQb2ilVvvrE1MDaxdTFycEgImEj8eybRxcjJwSagIfGnt5cZxBYR0JKY2PCX
+	EcRmFiiV6H2+DMwWFkiRmHTiJpjNIqAqceDUAXYQm1fATOL+k2dgcQkBTYkdX84zgdicAnYS
+	3Tsg4kICthI3Vs9ggagXlDg58wkLxHx5ieats5knMPLMQpKahSS1gJFpFaNIZl5ZbmJmjple
+	cXZGZV5mhV5yfu4mRmA4Lav9M2kH47fL7ocYBTgYlXh4FRrqMoRYE8uKK3MPMUpwMCuJ8H7b
+	DRTiTUmsrEotyo8vKs1JLT7EKM3BoiTO6xWemiAkkJ5YkpqdmlqQWgSTZeLglGpg3LfCRkDz
+	U7v4/p2evOJy/w/te3L6nUCU8lzJBwoz3l1lTw5w27X0+aRN/O9rwz78FNa7EV/V7t5fcPK9
+	XNTmtcsy/Y3aneJ09l3JSY61t9accbUn6HvILLGwhO4+JqFg1ReWCydKrv/bs/zLrTO+aiIx
+	kRmsk87LyW9eXiGRIDXZwqVp43YOJZbijERDLeai4kQAP3QtzCMCAAA=
+X-CFilter-Loop: Reflected
 
-On Mon, Jul 21, 2025 at 07:07:12PM -0400, Michael Zhivich wrote:
-> Note: I believe this change only applies to stable backports.
-
-Right, I need to go look in detail which of the 5.10-6.12 stable trees
-which got this variant, do have CONFIG_INIT_STACK_NONE.
-
-> For kernels compiled with CONFIG_INIT_STACK_NONE=y, the value of __reserved
-> bitfield in zen_patch_rev union on the stack may be garbage.  If so, it will
-> prevent correct microcode check when consulting p.ucode_rev, resulting in
-> incorrect mitigation selection.
-
-Uuuh, nasty. Good catch.
-
-> Signed-off-by: Michael Zhivich <mzhivich@akamai.com>
-> Fixes: 7a0395f6607a ("x86/bugs: Add a Transient Scheduler Attacks mitigation")
-> ---
->  arch/x86/kernel/cpu/amd.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-> index efd42ee9d1cc..91b21814ce8c 100644
-> --- a/arch/x86/kernel/cpu/amd.c
-> +++ b/arch/x86/kernel/cpu/amd.c
-> @@ -371,7 +371,7 @@ static void bsp_determine_snp(struct cpuinfo_x86 *c)
->  static bool amd_check_tsa_microcode(void)
->  {
->  	struct cpuinfo_x86 *c = &boot_cpu_data;
-> -	union zen_patch_rev p;
-> +	union zen_patch_rev p = {0};
-
-Instead of doing this...
-
->  	u32 min_rev = 0;
->  
->  	p.ext_fam	= c->x86 - 0xf;
-
-... you should assign __reserved here to 0 too and put a comment above
-it why we're doing that.
-
-This will save us the init writes to 0 which get overwritten with the
-actual f/m/s anyway.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+>On 7/21/25 13:41, yohan.joung wrote:
+>> pinfile is excluded as it operates with direct I/O
+>
+>pinfile can use buffer IO as well?
+only considered direct I/O. I'll re-upload the pinfile considering buffered I/O
+Thanks
+>
+>Thanks,
+>
+>> 
+>> Signed-off-by: yohan.joung <yohan.joung@sk.com>
+>> ---
+>>  fs/f2fs/file.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>> index 4039ccb5022c..cac8c9650a7a 100644
+>> --- a/fs/f2fs/file.c
+>> +++ b/fs/f2fs/file.c
+>> @@ -4844,7 +4844,8 @@ static ssize_t f2fs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>>  
+>>  	/* In LFS mode, if there is inflight dio, wait for its completion */
+>>  	if (f2fs_lfs_mode(F2FS_I_SB(inode)) &&
+>> -	    get_pages(F2FS_I_SB(inode), F2FS_DIO_WRITE))
+>> +	    get_pages(F2FS_I_SB(inode), F2FS_DIO_WRITE) &&
+>> +		!f2fs_is_pinned_file(inode))
+>>  		inode_dio_wait(inode);
+>>  
 
