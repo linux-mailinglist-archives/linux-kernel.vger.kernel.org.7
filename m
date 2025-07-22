@@ -1,147 +1,87 @@
-Return-Path: <linux-kernel+bounces-740875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 204A5B0DA82
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:07:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DA0FB0DA90
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:14:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A05983AA6DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:06:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AFB85458A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:14:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25632E9ECA;
-	Tue, 22 Jul 2025 13:07:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JvLprJn5"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D9DA2E9ED3;
+	Tue, 22 Jul 2025 13:14:07 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9697A2E972E
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 13:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD74128C2B7
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 13:14:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753189620; cv=none; b=Un6cng8fStqW2FxDV3VVfnEOhgZR9YSVFkPyPeJcVNJEUPnVwDZSuyqRizervrLNITAauaYPVykTNXNI90cM584uqi/p5Cm7dke5d1c1KxOZ7JwjrpxPcbq8qgOgMuFKn/pub7bJTQZtah37lp5uJ/DV4T2zr7sI7+HN0R+Wt9U=
+	t=1753190047; cv=none; b=c8WyQ3RI0NxPqmkPD44HitR361tQLM+CPcyDqjijf3LdZ+r2XMU0L+0om+JDCpD3Imn0exI7MiHZNIKNfFnnkOLurb/xwY6uUOX5sl4ozCXTiJ306XtbyB+qXw3FbiVWsKRzgZH3QJnrQKTbn8+YsMOArbGF1+TWQ64NJ6/9E1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753189620; c=relaxed/simple;
-	bh=hilKGZUP7y5d1I7SUkMYXuUmhe9zt7HQf/8BUez4l/s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=peosrZ73yo/vtJRwO9FtrBMmAP2RtZArECbp5cef1EFbUyvILEIz9h5dvA1c2CxZ/rFJrjHuEdhxhZ11ksnKAEwUwUq2wBeeechJ1gLrIyBzQ+xe/1yeuK7D5MYxwGEdVl9NsO6UWqBOPopk2Te0+c/u2aqdqLUd7Us8expscd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JvLprJn5; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4ab58105261so101269551cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 06:06:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753189617; x=1753794417; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wHXGkDCdTi/1FkvrPEpgEX+BFsQbleVdLRAj1y6UuUA=;
-        b=JvLprJn5gd4PYFv+E1dRx/LmZ1CMBkdt8d7T9earOL+kyrXh7l5wkj41dw9aOK802C
-         WrRDTaWPlF4efKz7HezTJYIcNW/aMjJXhw4xaczTVq5wxsWMkBjh10JyKrq1MSWpQ1mV
-         38/DIM/L3jw813waIVS+ei8WAqCF6fKf6duI/jlt9kuz0VPNysBZ8d1ebApeJbbOJHec
-         sapNEsu73BGMTAXT0bH8F/XCH6sFYPjKkrYRct8BIHidhKuGG9C7g8tiwT+2N7fE5Qci
-         SDyXoq9W+NBgdf4RlkWd22Pswwe7fedG2Qll91Fxvf3e4d287G+7wk0r6/2P7tzolDFZ
-         LZYA==
+	s=arc-20240116; t=1753190047; c=relaxed/simple;
+	bh=wQL9RZiqmv2J4tT1vLX3wh8pDTuNjMTc5ALQpqpom6w=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=FP/jyBvD3btkWZSFkNvxcYF19dtAregWY1zu8pU9lbog2amQUfxUVsB5RnMgrr/ZAlxqUjJJqgke+TkAbyb74n4uY2ai4SoTZD9dF1hFtv2728bQtMCOmRdmOhlOan8dq05o0dyeRMnQ6Rha4ENcL2CYnnHqSrOX1YBZFJ9n/Hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-87c467931c1so320984939f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 06:14:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753189617; x=1753794417;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wHXGkDCdTi/1FkvrPEpgEX+BFsQbleVdLRAj1y6UuUA=;
-        b=UmTWVd5sTb0vqVQjYr+LFuBCIxCDDt99Ru/A53dgkrqxsIPG61z9odHQ4+6MzfQbh+
-         xhRBomutUAbxUo8KKvCOCDNxQtCOEfmijIi0Vjbknc1qo+KmxfOM7SNALtIjUN4uga3n
-         FXcjJXbV0GB5L6V51gCtN2aROHnWRWgRHp6MCjA3fEuO+fvQaHZJNrTEKRcj+8ZFV2v4
-         8TmzcamGG70ZbI9iYL3+Dlvhduo9lvxkNwIgABbgm0Hjca0OWHQWemFnMNUW4awgEKTh
-         xUyuJIULQZLmwIP0xK56rJO4xTnYyvCVQ9u4waXJ/BGVwHSdSSHZJq7vxe2aVlnk7NKM
-         D+og==
-X-Forwarded-Encrypted: i=1; AJvYcCXU+hV/3W4p4loI5ODu7otiP9ksPkSf7ccvsAMHL2C0YD8csQvilx5ae1G2UYW8+RM9dV4EvzqSjgPQFd8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1BB8d5RTlkkJyq86LO1n7z/9jm7qv0flk9T70xUMU2ec6Hjef
-	jl5CcHDjKKXddIDsuXXEWetaaRg0hzmW1AJqPZ2dFmCubn8YRhB1j6Ti
-X-Gm-Gg: ASbGncu3/el/UYzsmcYAbcxXIdUi+2lNBtZ5C9zZkMQN5UeBjYgyVyWzwvffQpn+Gle
-	4SWUqr5a0FtDRETsiwNxh69s3UkxT7nl4hb4E9IQPRqAJJ/KlrPG/h11Clr97sZZeE+UtcY1cj/
-	sE9gbDlEKNNmsWJ9pmU706F6XlcdzppizxgSq+Z4iC79Kge/bu+4RyQqNaGY6mOUgSE4oZgVE3k
-	66kE8IfCc6bbH+r2OJz1j7giI/2Y1moiGtezUO+IPfOFQ6E9HRjQsGC4HG84KB6yCQyRRJZFE7M
-	i8mSFAG0eGM0MnqVCps3NuLIXpG4EyTodoCtFB9ohIN36tX/mxEyFMSESbHHf4oDS7NiuhfpG4l
-	JeRTt/MHe+LtWrQHIB/4WJQ==
-X-Google-Smtp-Source: AGHT+IF6IjDqyjw6zDnG3oxKNR+WfveKAXP2vd7OChY+/7yqNei8ee7Mwd/9T8BjrslIPwUvBnIohw==
-X-Received: by 2002:ac8:7d82:0:b0:4ab:62cc:971b with SMTP id d75a77b69052e-4abb2cab50amr310328961cf.17.1753189617109;
-        Tue, 22 Jul 2025 06:06:57 -0700 (PDT)
-Received: from iman-pc.home ([142.186.9.88])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4abb49802efsm53977981cf.7.2025.07.22.06.06.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 06:06:56 -0700 (PDT)
-From: Seyediman Seyedarab <imandevel@gmail.com>
-X-Google-Original-From: Seyediman Seyedarab <ImanDevel@gmail.com>
-To: dwmw2@infradead.org,
-	baolu.lu@linux.intel.com,
-	joro@8bytes.org,
-	will@kernel.org,
-	robin.murphy@arm.com
-Cc: skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Seyediman Seyedarab <ImanDevel@gmail.com>
-Subject: [PATCH] iommu/vt-d: replace snprintf with scnprintf in dmar_latency_snapshot()
-Date: Tue, 22 Jul 2025 09:11:17 -0400
-Message-ID: <20250722131117.2739-1-ImanDevel@gmail.com>
-X-Mailer: git-send-email 2.50.1
+        d=1e100.net; s=20230601; t=1753190045; x=1753794845;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZiR6ctww0qSKcSywG2l39+m7qh7QrL5zsr/Nu/Xh+do=;
+        b=JE0nca+qbjXNLgktOj9ys25MN5/JJjDnO90SPCggiI4LhwB+jFEDnhPKXxPuv2aKP8
+         kn5COmnEO5f8UwJat7LI+xaNv6vebqYDRmxILcuQd8FY/KH3mFWqodjFmMM3SvZHz2hv
+         c6bYTGt4Lr/U8XDzVaFopsI3ewksZyBgnhc6Pv0UsGpB+qnLFIaj7x+cURyVOtMbSTxH
+         kKPeoA0tO8jDyqBlxI4N9q22Og3SR9T2bGg/LZWYS3/koYOJJykfwNmf+wvE+xnTZ2hZ
+         1bs7Em7yBp6P4nBZJuwX7l2omSxRnBXzGOFI5aK37en/eMqhjqEm7dxV4G9Y51zxcqTd
+         YeZA==
+X-Forwarded-Encrypted: i=1; AJvYcCWrGkQ4Btq2K+fQVi723vgIHBavS5/gr7OUKD8u+e37yjDdl1OsZdffRAGHZfynthjK3RFoKDlc7plQDes=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8pABw3J+RYD+RS4GtBunH65w37mWFTi09x1pG+88K+WAIabOV
+	h+OnVnU8I1R5x4HA3C3A4fBdJ5OM1fIChLE3MZnAjNULCsDK/UCR8LtlOHB6ZUk6nDZjivJmvfv
+	/Qk3AOXPtJRbzLCF6XtrcetUlZYIJ/QCojRSTil9+E4TWSWGoo3eQKpmqsKk=
+X-Google-Smtp-Source: AGHT+IEgkNvzb/wDkbygt3hT/c/l8powZYWGAu7q2mXKyeewStKY0dhh0A1IyDnOieB2ou3KBMKN9RtlTugwh4oGJPH2DsYkeP7n
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:3fc2:b0:87c:3417:cc11 with SMTP id
+ ca18e2360f4ac-87c3417cf50mr1388116939f.1.1753190044896; Tue, 22 Jul 2025
+ 06:14:04 -0700 (PDT)
+Date: Tue, 22 Jul 2025 06:14:04 -0700
+In-Reply-To: <cf0447d1-3590-4540-932d-4be299edc432@kernel.dk>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <687f8e9c.a70a0220.21b99c.000c.GAE@google.com>
+Subject: Re: [syzbot] [kernel] KASAN: slab-use-after-free Read in io_poll_remove_entries
+From: syzbot <syzbot+01523a0ae5600aef5895@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-snprintf returns the number of bytes that would have been written,
-not the number actually written to the buffer. When accumulating
-the byte count with the return value of snprintf, this can cause
-the offset to exceed the actual buffer size if truncation occurs.
+Hello,
 
-The byte count is passed to seq_puts() in latency_show_one() with-
-out checking for truncation.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Replace snprintf with scnprintf, ensuring the buffer offset stays
-within bound.
+Reported-by: syzbot+01523a0ae5600aef5895@syzkaller.appspotmail.com
+Tested-by: syzbot+01523a0ae5600aef5895@syzkaller.appspotmail.com
 
-Signed-off-by: Seyediman Seyedarab <ImanDevel@gmail.com>
----
- drivers/iommu/intel/perf.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Tested on:
 
-diff --git a/drivers/iommu/intel/perf.c b/drivers/iommu/intel/perf.c
-index adc4de6bb..cee4821f4 100644
---- a/drivers/iommu/intel/perf.c
-+++ b/drivers/iommu/intel/perf.c
-@@ -122,7 +122,7 @@ int dmar_latency_snapshot(struct intel_iommu *iommu, char *str, size_t size)
- 	memset(str, 0, size);
- 
- 	for (i = 0; i < COUNTS_NUM; i++)
--		bytes += snprintf(str + bytes, size - bytes,
-+		bytes += scnprintf(str + bytes, size - bytes,
- 				  "%s", latency_counter_names[i]);
- 
- 	spin_lock_irqsave(&latency_lock, flags);
-@@ -130,7 +130,7 @@ int dmar_latency_snapshot(struct intel_iommu *iommu, char *str, size_t size)
- 		if (!dmar_latency_enabled(iommu, i))
- 			continue;
- 
--		bytes += snprintf(str + bytes, size - bytes,
-+		bytes += scnprintf(str + bytes, size - bytes,
- 				  "\n%s", latency_type_names[i]);
- 
- 		for (j = 0; j < COUNTS_NUM; j++) {
-@@ -156,7 +156,7 @@ int dmar_latency_snapshot(struct intel_iommu *iommu, char *str, size_t size)
- 				break;
- 			}
- 
--			bytes += snprintf(str + bytes, size - bytes,
-+			bytes += scnprintf(str + bytes, size - bytes,
- 					  "%12lld", val);
- 		}
- 	}
--- 
-2.50.1
+commit:         89be9a83 Linux 6.16-rc7
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16ee5f22580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=186272c644ef9aa3
+dashboard link: https://syzkaller.appspot.com/bug?extid=01523a0ae5600aef5895
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=15cf24f0580000
 
+Note: testing is done by a robot and is best-effort only.
 
