@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-740805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ECE6B0D973
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:23:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC547B0D979
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:25:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1517AA58A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:22:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7368F18852A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7290F2EA142;
-	Tue, 22 Jul 2025 12:20:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18D02EA155;
+	Tue, 22 Jul 2025 12:20:07 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1AD2E9EB0
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 12:20:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509C72E9EC9
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 12:20:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753186805; cv=none; b=NMxcgqbMq5d0zvtoJp75vZiJfjccW8rZbZkUYVSfGb0V6FwBKQZefAqOYJ+xD9SFqGZ6YnmFiQUlyWy9QktxguwGiSIIaQLZ3QtuoJQOG0sIYnb+M+hCZSuvn+JsQRkgbuwB7VCyB+jS9q3jtAyxijjKH6u14pONruplia6lyjY=
+	t=1753186807; cv=none; b=D46CnvjTxi58GB5pwSOo/kl5bETCU3uPpVcR5J1UDPWn/NeK+v8V82id9ZF3sDf6obbYTI4geXcz1metNAULRBVwAUVqyrgsXtGPQn2qUBQP+4QUaPkZV8re2lRcDaUp2rzcP8rF9Ajz3ZFJelTiuWYNE+XLseAcXPP/eU6rJXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753186805; c=relaxed/simple;
-	bh=18O32Qquo+7xdJm6b6kD3Cbr6E5LknxchlbNYBSK7Dg=;
+	s=arc-20240116; t=1753186807; c=relaxed/simple;
+	bh=pjTUdVTOG9MPrzlV/yAcMLcqZdhbHR7qiM6fBTK1V/c=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=u5I5mnCPZFvixNQpVJE/85TDftYGVV+Y41eYweLmL1siP7rNSuykuHIPSMgTosKCV20sDEr6RuMcfMqe2XUYoiFoJsr/L0oDSLQtu3fgA9kxoWy9n2WyddEu34iMjwAACyvlmaPrACw/f0yuValO9fgAyj1aQZ8LpSRs4BrwETk=
+	 MIME-Version; b=R1DV8HMawhztUEvioVl+Tj8D0etGtPsYe9//Y6ontw4eyoUMw/0Y9BdIVmtD38d/SoFqeXcezLlzrG+mpZvK4mvy6SuQa9ixbmaTvssRcMRv3gJQMR5IUDJpDJnMl0UcsCmlGeTjUM7mJ6HhvC2Kdolz6SVS5CUMYFvQVbaCLEw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CB9AF1595;
-	Tue, 22 Jul 2025 05:19:57 -0700 (PDT)
-Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CB80B3F59E;
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 81008169E;
 	Tue, 22 Jul 2025 05:20:00 -0700 (PDT)
+Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7A52E3F59E;
+	Tue, 22 Jul 2025 05:20:03 -0700 (PDT)
 From: Yeoreum Yun <yeoreum.yun@arm.com>
 To: catalin.marinas@arm.com,
 	will@kernel.org,
@@ -50,9 +50,9 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	kvmarm@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: [PATCH v5 1/5] arm64: cpufeature: add FEAT_LSUI
-Date: Tue, 22 Jul 2025 13:19:52 +0100
-Message-Id: <20250722121956.1509403-2-yeoreum.yun@arm.com>
+Subject: [PATCH v5 2/5] KVM: arm64: expose FEAT_LSUI to guest
+Date: Tue, 22 Jul 2025 13:19:53 +0100
+Message-Id: <20250722121956.1509403-3-yeoreum.yun@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250722121956.1509403-1-yeoreum.yun@arm.com>
 References: <20250722121956.1509403-1-yeoreum.yun@arm.com>
@@ -64,56 +64,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Since Armv9.6, FEAT_LSUI supplies load/store instructions
-for privileged level to access user memory without clearing PSTATE.PAN bit.
-
-Add LSUI feature so that the unprevilieged load/store instructions
-could be used when kernel accesses user memory without clearing PSTATE.PAN bit.
+expose FEAT_LSUI to guest.
 
 Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+Acked-by: Marc Zyngier <maz@kernel.org>
 ---
- arch/arm64/kernel/cpufeature.c | 8 ++++++++
- arch/arm64/tools/cpucaps       | 1 +
- 2 files changed, 9 insertions(+)
+ arch/arm64/kvm/sys_regs.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index e151585c6cca..eaf958a0d8bc 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -278,6 +278,7 @@ static const struct arm64_ftr_bits ftr_id_aa64isar2[] = {
- 
- static const struct arm64_ftr_bits ftr_id_aa64isar3[] = {
- 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64ISAR3_EL1_FPRCVT_SHIFT, 4, 0),
-+	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64ISAR3_EL1_LSUI_SHIFT, 4, ID_AA64ISAR3_EL1_LSUI_NI),
- 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64ISAR3_EL1_FAMINMAX_SHIFT, 4, 0),
- 	ARM64_FTR_END,
- };
-@@ -3061,6 +3062,13 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
- 		.matches = has_pmuv3,
- 	},
- #endif
-+	{
-+		.desc = "Unprivileged Load Store Instructions (LSUI)",
-+		.capability = ARM64_HAS_LSUI,
-+		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
-+		.matches = has_cpuid_feature,
-+		ARM64_CPUID_FIELDS(ID_AA64ISAR3_EL1, LSUI, IMP)
-+	},
- 	{},
- };
- 
-diff --git a/arch/arm64/tools/cpucaps b/arch/arm64/tools/cpucaps
-index 10effd4cff6b..31f2cd655666 100644
---- a/arch/arm64/tools/cpucaps
-+++ b/arch/arm64/tools/cpucaps
-@@ -43,6 +43,7 @@ HAS_HCX
- HAS_LDAPR
- HAS_LPA2
- HAS_LSE_ATOMICS
-+HAS_LSUI
- HAS_MOPS
- HAS_NESTED_VIRT
- HAS_PAN
+diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+index c20bd6f21e60..cfdf99e92cda 100644
+--- a/arch/arm64/kvm/sys_regs.c
++++ b/arch/arm64/kvm/sys_regs.c
+@@ -1636,7 +1636,8 @@ static u64 __kvm_read_sanitised_id_reg(const struct kvm_vcpu *vcpu,
+ 			val &= ~ARM64_FEATURE_MASK(ID_AA64ISAR2_EL1_WFxT);
+ 		break;
+ 	case SYS_ID_AA64ISAR3_EL1:
+-		val &= ID_AA64ISAR3_EL1_FPRCVT | ID_AA64ISAR3_EL1_FAMINMAX;
++		val &= ID_AA64ISAR3_EL1_FPRCVT | ID_AA64ISAR3_EL1_FAMINMAX |
++		       ID_AA64ISAR3_EL1_LSUI;
+ 		break;
+ 	case SYS_ID_AA64MMFR2_EL1:
+ 		val &= ~ID_AA64MMFR2_EL1_CCIDX_MASK;
+@@ -2921,7 +2922,7 @@ static const struct sys_reg_desc sys_reg_descs[] = {
+ 					ID_AA64ISAR2_EL1_APA3 |
+ 					ID_AA64ISAR2_EL1_GPA3)),
+ 	ID_WRITABLE(ID_AA64ISAR3_EL1, (ID_AA64ISAR3_EL1_FPRCVT |
+-				       ID_AA64ISAR3_EL1_FAMINMAX)),
++				       ID_AA64ISAR3_EL1_FAMINMAX | ID_AA64ISAR3_EL1_LSUI)),
+ 	ID_UNALLOCATED(6,4),
+ 	ID_UNALLOCATED(6,5),
+ 	ID_UNALLOCATED(6,6),
 -- 
 LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
 
