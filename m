@@ -1,206 +1,106 @@
-Return-Path: <linux-kernel+bounces-741652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE743B0E74B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:45:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9A16B0E74D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:46:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 021A13AF83D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 23:45:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19BAF3AFA07
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 23:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 731BA28C032;
-	Tue, 22 Jul 2025 23:45:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 762E328B3EC;
+	Tue, 22 Jul 2025 23:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Lmcvv86+"
-Received: from mail-oa1-f73.google.com (mail-oa1-f73.google.com [209.85.160.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="s6jcfCpU"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2531C28C2BE
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 23:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857E6E555;
+	Tue, 22 Jul 2025 23:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753227921; cv=none; b=DQlQnaMzKUHn5Xa+3WBb5AZ4YXIXfdEI0URO9FHkLOZ30n1nrQctXVIIR7Q9iODdGNec0qAErtoj2CKd3O1X9ah/hyOD0ltRVCqmqwnZ9uKmAIi7FGBPDd4DUWnm7raNKqGW+co3b3aC9bP6Q5jNSxQFLFQ6oKb/rjvnfT+bHPg=
+	t=1753227972; cv=none; b=JITkPhrXoFmhfFN6mxrN9oLCXRzF88D1BUHwBMDDH+ps0Mj+RpSMM2BJtc4A/zbd34aAc0rTy/H2+arqfS5HVOBmIgp/5liWjHxQ3EBuUpWc4tBQ6lGchC7uJMynDV0Tp5WHIrY3CV9oyhwLomGb4m/8QGeS9VyvZVIUQ5H/4vU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753227921; c=relaxed/simple;
-	bh=wKItO+g8xJ9nYcQ9o9ej5OT0785WfI2medOlAaevYlg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=NVAudOB/ZjMXPYPsFPr94XYunahD/q1CLg8yD3k3AIZ/IroeuJ3Ch8NiZvGMa4n4UGguitD7/UAI1bKT1H4HVcFNdXJnPPDlw07BxQgSBwDKkB4KifYxAHEF1NkTd8+JEMYWeJaxMmcReQAkUAIYFs/uKVa5kd4mOeSlSbYu5bM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Lmcvv86+; arc=none smtp.client-ip=209.85.160.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com
-Received: by mail-oa1-f73.google.com with SMTP id 586e51a60fabf-2f3b9f042a6so6207181fac.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 16:45:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753227919; x=1753832719; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ymOJFkk9cAqxbyOq2CFl3E1omI8ig1iTY04bOmR9Mog=;
-        b=Lmcvv86+47ynWUKImStsf/eqZV6SY2dGiTRci/ll5CITmGrEs2ilgHOHupJcbaiycT
-         2H1DuvFZQwgBjl6A6n/UYay8IodkEJwRdnfvgbIHeq43CWD4AFQ2420W2Nad6PoO20v7
-         MCB5rdP1Pn7OiXJzArZ9gSbJEZPsHFkLFvOJ08hbPDzPxpJgfFsKWr1iGBVaXGoa8Yez
-         jwhl2Y6JydYQDVMipq43VT4FJTn+gLmwUlf68ZoKLKLwyWnSP/uoQtIxcrwOn1lW+T9J
-         zzmKLAMXe0sWni85S40iS+gJHXO03I29fMZHs0gs15FL10sipdjAyVlfmWoxiTik2KVy
-         aorw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753227919; x=1753832719;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ymOJFkk9cAqxbyOq2CFl3E1omI8ig1iTY04bOmR9Mog=;
-        b=B2d2FHDJcz3Ss8H70pWMV7oML9kkWgG8bp9LLuyqIg+lPjx+Qcc3VCKoxHjI+TWBoN
-         ANIaNmHJrFH4pITp1+9q/JsB5uVQOchRG53yoVRxt5CXXa4Eb93wjPxFFX25oV3qIVTC
-         ToJEKv0E3izfPs6Uno0IFx1R6/WjQGSBZ2owaz1adoP884UlfTQBlid1BLFlFE7TUrwp
-         rZeDjPPiN4wDuOzPeWZ1hOJrjIYu9g09ujV6wTcxreM3CeESy6RVVUEvjMIIRCNMK/oM
-         JoH8qSVLly/npaMYXTkGkKeSBWKwnYyqPDuT+FdzwrOrMnMJYzA52vP+DFo61/zV9PHx
-         Hedg==
-X-Gm-Message-State: AOJu0YxQellvO5BmKu2vil+lZ8ELalbNclMTTzOIOjq0CmLuL5ihkfWd
-	ZOLe9GbRayKPVXEEThOcgH/S1HCKwLjTR4+08HRDsJfM1BVcCDPwyP7tQnbtjiFcXAQ8UXOj3UQ
-	KFv/Is7IO2g5sNGyxdZwAOSKNUbEdkCG9Qbc4Sld9srICzRsxbmjuaf++1gDy/8LP6AHXdfKiBT
-	u+c0agoi1RZQsPtwWENYHJ22wcavJkJa4BnE4AbTMceN9s9clKRA==
-X-Google-Smtp-Source: AGHT+IHnqAj8P5CO/OXhRB0OUthRBxdYC/P1oqIRfraQc8gklY9NaxsaPXadOGjupc7H0glTXMG8rmUyZ7ui
-X-Received: from oabwh20.prod.google.com ([2002:a05:6871:a694:b0:2ff:a390:4466])
- (user=ynaffit job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6871:2113:b0:2ff:8ad9:f12
- with SMTP id 586e51a60fabf-306c725055amr659320fac.22.1753227919146; Tue, 22
- Jul 2025 16:45:19 -0700 (PDT)
-Date: Tue, 22 Jul 2025 16:45:07 -0700
-In-Reply-To: <20250722234508.232228-1-ynaffit@google.com>
+	s=arc-20240116; t=1753227972; c=relaxed/simple;
+	bh=jcXrRP5I6TzRxlrs7fYkLBzLeKyEl/9AhZdKRjISDxc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=RNTksiyV2ewG//AJzKZcPQrkNbmxW+WcSUyR4uTIQSbF1P5yGZLcZBJNdJ4qTPGEzgSKbhKw9zCLOQyYYFLiZFq28DR3Uwd9dAvfHbgTMG5/Ndy/pfBYMBfvEUcSPgB0q+a7tt5b2S6o/UC02LzTL/7lCO15Hxegtl2qgo1m340=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=s6jcfCpU; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753227796;
+	bh=RcSuioHgqQvCMYpuNH5o7E0rW1clnpzbAkq57g8dlHs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=s6jcfCpUsBKTqHO4zuns4rOE2gE/EkPJ8Ps6wEQv9hscbZ3IIDlBwvgKI+un0wnoV
+	 uOSCfKFFESl1RX2g8YkPFxKhkHjimIvdo9d7cM8SIETPnOGvpoGkR0PFeUEtGaJ8hv
+	 55BfZn1Y/jSvHqpWMngX+kSVCHjJ2wQiaRK7QNQDdpWtA//ERPuetFrI4R0z1NYlCY
+	 vllbD/v/JQ/kXYyaSiIWz6JVkm2JpIvgoeEiP9Cw6RMB+fq+kqclUKqS3Lq8rBHcWU
+	 J6xntTfbpeA/b12ITSVaio+ovyqyn0ANtzna86MYREbG4cjNqUb1zQrALkJ0crok8C
+	 nmC9imENwZU/Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bmv372pPKz4wbY;
+	Wed, 23 Jul 2025 09:43:15 +1000 (AEST)
+Date: Wed, 23 Jul 2025 09:45:58 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>, Arnd Bergmann
+ <arnd@arndb.de>
+Cc: ARM <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the fsl tree
+Message-ID: <20250723094558.5bcfca69@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250722234508.232228-1-ynaffit@google.com>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250722234508.232228-2-ynaffit@google.com>
-Subject: [PATCH v2 2/2] binder: Use seq_buf in binder_alloc kunit tests
-From: Tiffany Yang <ynaffit@google.com>
-To: linux-kernel@vger.kernel.org
-Cc: Carlos Llamas <cmllamas@google.com>, Joel Fernandes <joelagnelf@nvidia.com>, kernel-team@android.com, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Christian Brauner <brauner@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/WJAG2PuqecvQ03WJeBM4B/8";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Replace instances of snprintf with seq_buf functions, as suggested by
-Kees [1].
+--Sig_/WJAG2PuqecvQ03WJeBM4B/8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-[1] https://lore.kernel.org/all/202507160743.15E8044@keescook/
+Hi all,
 
-Fixes: d1934ed9803c ("binder: encapsulate individual alloc test cases")
-Suggested-by: Kees Cook <kees@kernel.org>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>
-Signed-off-by: Tiffany Yang <ynaffit@google.com>
----
-This patch is based on top of char-misc-next.
----
- drivers/android/tests/binder_alloc_kunit.c | 46 ++++++++++------------
- 1 file changed, 21 insertions(+), 25 deletions(-)
+The following commit is also in the arm-soc tree as a different commit
+(but the same patch):
 
-diff --git a/drivers/android/tests/binder_alloc_kunit.c b/drivers/android/tests/binder_alloc_kunit.c
-index f8c05bf15c2d..9b884d977f76 100644
---- a/drivers/android/tests/binder_alloc_kunit.c
-+++ b/drivers/android/tests/binder_alloc_kunit.c
-@@ -15,6 +15,7 @@
- #include <linux/fs.h>
- #include <linux/mm.h>
- #include <linux/mman.h>
-+#include <linux/seq_buf.h>
- #include <linux/sizes.h>
- 
- #include "../binder_alloc.h"
-@@ -107,40 +108,33 @@ static const char *const buf_end_align_type_strs[LOOP_END] = {
- };
- 
- struct binder_alloc_test_case_info {
-+	char alignments[ALIGNMENTS_BUFLEN];
-+	struct seq_buf alignments_sb;
- 	size_t *buffer_sizes;
- 	int *free_sequence;
--	char alignments[ALIGNMENTS_BUFLEN];
- 	bool front_pages;
- };
- 
--static void stringify_free_seq(struct kunit *test, int *seq, char *buf,
--			       size_t buf_len)
-+static void stringify_free_seq(struct kunit *test, int *seq, struct seq_buf *sb)
- {
--	size_t bytes = 0;
- 	int i;
- 
--	for (i = 0; i < BUFFER_NUM; i++) {
--		bytes += snprintf(buf + bytes, buf_len - bytes, "[%d]", seq[i]);
--		if (bytes >= buf_len)
--			break;
--	}
--	KUNIT_EXPECT_LT(test, bytes, buf_len);
-+	for (i = 0; i < BUFFER_NUM; i++)
-+		seq_buf_printf(sb, "[%d]", seq[i]);
-+
-+	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(sb));
- }
- 
- static void stringify_alignments(struct kunit *test, int *alignments,
--				 char *buf, size_t buf_len)
-+				 struct seq_buf *sb)
- {
--	size_t bytes = 0;
- 	int i;
- 
--	for (i = 0; i < BUFFER_NUM; i++) {
--		bytes += snprintf(buf + bytes, buf_len - bytes, "[ %d:%s ]", i,
--				  buf_end_align_type_strs[alignments[i]]);
--		if (bytes >= buf_len)
--			break;
--	}
-+	for (i = 0; i < BUFFER_NUM; i++)
-+		seq_buf_printf(sb, "[ %d:%s ]", i,
-+			       buf_end_align_type_strs[alignments[i]]);
- 
--	KUNIT_EXPECT_LT(test, bytes, buf_len);
-+	KUNIT_EXPECT_FALSE(test, seq_buf_has_overflowed(sb));
- }
- 
- static bool check_buffer_pages_allocated(struct kunit *test,
-@@ -311,19 +305,20 @@ static void permute_frees(struct kunit *test, struct binder_alloc *alloc,
- 	int i;
- 
- 	if (index == BUFFER_NUM) {
--		char freeseq_buf[FREESEQ_BUFLEN];
-+		DECLARE_SEQ_BUF(freeseq_sb, FREESEQ_BUFLEN);
- 
- 		case_failed = binder_alloc_test_alloc_free(test, alloc, tc, end);
- 		*runs += 1;
- 		*failures += case_failed;
- 
- 		if (case_failed || PRINT_ALL_CASES) {
--			stringify_free_seq(test, tc->free_sequence, freeseq_buf,
--					   FREESEQ_BUFLEN);
-+			stringify_free_seq(test, tc->free_sequence,
-+					   &freeseq_sb);
- 			kunit_err(test, "case %lu: [%s] | %s - %s - %s", *runs,
- 				  case_failed ? "FAILED" : "PASSED",
- 				  tc->front_pages ? "front" : "back ",
--				  tc->alignments, freeseq_buf);
-+				  seq_buf_str(&tc->alignments_sb),
-+				  seq_buf_str(&freeseq_sb));
- 		}
- 
- 		return;
-@@ -383,8 +378,9 @@ static void gen_buf_offsets(struct kunit *test, struct binder_alloc *alloc,
- 	if (index == BUFFER_NUM) {
- 		struct binder_alloc_test_case_info tc = {0};
- 
--		stringify_alignments(test, alignments, tc.alignments,
--				     ALIGNMENTS_BUFLEN);
-+		seq_buf_init(&tc.alignments_sb, tc.alignments,
-+			     ALIGNMENTS_BUFLEN);
-+		stringify_alignments(test, alignments, &tc.alignments_sb);
- 
- 		gen_buf_sizes(test, alloc, &tc, end_offset, runs, failures);
- 		return;
--- 
-2.50.0.727.gbf7dc18ff4-goog
+  8b3da0519ae6 ("soc: fsl: qe: convert set_multiple() to returning an integ=
+er")
 
+This is commit
+
+  12702f0c3834 ("soc: fsl: qe: convert set_multiple() to returning an integ=
+er")
+
+in the arm-soc tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/WJAG2PuqecvQ03WJeBM4B/8
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiAIrYACgkQAVBC80lX
+0Gz8tAgAm64hSR4znmbazwp3rKdkOF6D+jSnwMdhch4uF3Uqf1MXN+YdkAaa7hOj
+tuHgKe6uZ+olwXIP+dK7ZStD9GFcLCZ0hNc4Y3PZQJduvMJKtffSlwAqKBLVsDuQ
+UuwqdTE09kHoCYebJR2eHiO0PI2gBOhY1OSOH/jFl+Kj7UlLzqNrGT4Lt1RU8sqX
+6A+rVmFkHFaESbLP0oXC5u/zzifIXM5weeaXmHWEK8uyeB8WuloY9CWMcJGLhgbC
+QkGC/CIK2422WnGG/9ORThsbENFwCUBhbJGuYGMnbTyMIw7XQWW035egC7XXt5BP
+y8GiSa2aQanEXYgK4QHxdLdpwZczLw==
+=SgVy
+-----END PGP SIGNATURE-----
+
+--Sig_/WJAG2PuqecvQ03WJeBM4B/8--
 
