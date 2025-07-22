@@ -1,88 +1,96 @@
-Return-Path: <linux-kernel+bounces-741283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 588EEB0E26B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:10:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3428FB0E26C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:10:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 600D2AA7F43
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:09:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B5F0AC0203
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:10:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB6427F171;
-	Tue, 22 Jul 2025 17:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 916C527EFFA;
+	Tue, 22 Jul 2025 17:10:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="gmRxUazu"
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11023107.outbound.protection.outlook.com [40.107.201.107])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hybww62Y";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="YpG9FAMV"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161C56AA7;
-	Tue, 22 Jul 2025 17:10:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4606AA7
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 17:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753204212; cv=fail; b=bKjzYJ4vnhs71N7Btw9WpZe16YwmstEpH484cIHXijN21LPWvxGC9vJGwihK1fgCx0FoE+rJAgKc0rgSN2qMGA8QhOaL6gMBydyBEY6JbuZBudD0/JGGh81+bCxZP4QREFi6W4fMUay8Tb04fV0YGyaozxItsu+2ZicfDMhBpPI=
+	t=1753204244; cv=fail; b=tPUTvgZU05zmjvn8XWB+8M6WK51QWnBj3lmtHzwpL4ytvr7yt1HmZVhJeoOFq3OhrYlTSr567C33gGvp9FVlzQ1/KMvRB+gtYlz4cai/5Y1Vbo1zfKLqSKW+uBmlnGi6bbQsBrGORnywFByuXKdA5NPqFGQurswEwo7cideG3oI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753204212; c=relaxed/simple;
-	bh=82Md+ltrChnuRDP0Y7ahK1CJTz1OChSCOu0RU6RWnLU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Xft61tx8HI881Z2/CRswr7/+Bh+5qa4mk+8FcbzT3Cr7IRcc1evsvJSt0MwooVLbVz03FgtnkvZmSNNt6dd3lQZjhkvNdigJZz6OrG3EmkSueKP9WAnO1+kjbjCVUx7Nl+1L8eRJYpKL8u7lHVV85wdi1LbT+oqrTPNpKUwE9tE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=fail (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b=gmRxUazu reason="key not found in DNS"; arc=fail smtp.client-ip=40.107.201.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+	s=arc-20240116; t=1753204244; c=relaxed/simple;
+	bh=+RUWbPJGoCngkHUXMLQU+GRnkinc41OkXP3g5a0TbSs=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=BVCQ91i5AOwxehtxplvgclwWknVSOdV7CTbPpwWcYTVdXPv8hvy12g8nqx4lGhC4JwdjKirMzbpnRdmfgpHyNBW+c8vid0cWUtblbxbYaVIFphjZ/FCtFNXtQNiLEE5mT44NTQauu2/rYyNvA3l/Ds6DH1R9kzDbz/+yFwlmF+U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=hybww62Y; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=YpG9FAMV; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56MFXrl1028512;
+	Tue, 22 Jul 2025 17:10:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=corp-2025-04-25; bh=YYwj7Dy7LvZchDCn
+	Bu/9KmYzYaBvXXKph89lmT0qfsQ=; b=hybww62Y/XdAmMcxA9evAwd5Itl5RfEJ
+	ClfM34s8SoUAUwqK3PB351serhJZRO5F+kjgx+2MnMijVd9DGWk4qiml2PVJhRiB
+	hC+nzQVGtbMlYHOLMvuH10RCP+omzuW2ePo6uayfnslWV0wUoZh9jT8WJIO7gh+1
+	neKIOQbZIZ/uK7L4+Fy7tuEukioO61BzMY2PAxIzdP+Uz4rdBYW+UnkcvMpd+zRp
+	EPxzQzua/gZmOvAcJguox+Cyz304TCklwj1MMI+t65TrLAGwU85Mo15YSwKrGka+
+	75Wf8S9+HAsJBayMe46MWFsDgVRQqwejiYbLW6fQbsPWeMOlA4Kqpw==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 482cwhrbam-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 22 Jul 2025 17:10:32 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56MH7p2i011064;
+	Tue, 22 Jul 2025 17:10:32 GMT
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11on2045.outbound.protection.outlook.com [40.107.236.45])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4801t9kmhc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 22 Jul 2025 17:10:31 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EwEnuaJEfdIRns01JYyMXkNn16FzgpcX0ANacp8mDrc9ubm7vAr5oaX6zGL23NMGo0SFl+PR2+Xv075jrHagHBKYFtbcCYltGlyJ730UdGiJG4AL0bCPgTAQKqfJAkcdK9f1Nak8XCaoHpialQH8HKWQmGCa4/Pr8FyPN7mqZajawurCgrRcfvIGE+tD88PIsgw8sN55PI1WAH2Ln36rsZPs83ItfLVogw9BvwWa3L3V+zIBHTljiSDcckIplD4ZrLrUD2mfNFbU5BzgNh6nRtDEAFApzyJpb2eoUAYiBKwjE6XFAtZb8XXbChdlSH0ljWPG3dJIFvnx9ScAipFFGg==
+ b=X3KF7F/7/Cejvinktumfxf8D7tICaRGckZ2iqdEEM+dLk3edskRXoFiGNfFzKi2cGT5itql23s/6KWA21tAV18cB2PTYutr9YSnZ7EHJNfmSd/WSnkerh1nFfEyDQALt81HaH/280RlGlh/EVXxmVJ4kqUPOq3hPXu5rNNs1huXKokUFCVGbFCDZpTZWGo79/LqDiEJPkFS8RoJ1zpUIPIjHYqd7KA9nfcOLApQqBkKGBPBxTnNwUlDAGvNLJod68wD3cvBAf/ZEEzPzABHRJmHmNsmuVPB0I6AfpHPDacY0Dsqco6IkE3/L6eklStZkvVhELtQgDIhVaOP895Nm1A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IM3o5WkXWS4yQurTFdToa6Q6MJd04aEEWW/sFtUldUI=;
- b=rPxN1gUwenA2jEs4+QtSqHSIhPsQR3QtSMwof26BaIZwyXmzDB+Z8qqk2t6axkyEbBqL3DuEVAhOlt/j9uI6pKHhrX3N8hhJ3mghIu7Ku3ZvBz0XE2Oyd54jLzKihFSgFsd9wbVH9ouab8KWbfaDY5xR4Mozt2vhpCz4jDfNWLd0Ea81ds1OLwZbLx3UoDMwyYYRiUy5H26Yf7H53cQFXM8LJYC4WN3VdUY4GaWeetKE4pf4f9Sr5gymZXwQ3nBr5J9rQsPFTKogjjE1TBquuBOVQD6Ct1xGvk67XUKC00eFYQ7KzUQ9xkrlL1oPbS56RU1ecFdkzTUBR1Pkk3Lzww==
+ bh=YYwj7Dy7LvZchDCnBu/9KmYzYaBvXXKph89lmT0qfsQ=;
+ b=G+4fY3HSuLHCBeghcpeZOjK7kS6CZs11NkS7WKKtGHoTi2T45I0wmGIG+GkWRlfpma1/QGqpzor523sdSb5Sw6WMJ4NQLOq8KSBJAwWZOCldjAETUVxc9F73Lhv8dFMueEos8OBdV2RMnPHIbQs1ERvHBnppXDGisBh+MMvOmYNrsMh1roGxw3/AAUAcd5mARMs3dZBjC1gUhjfCJ1U+uGGEuz0V46b5+62tnx1gV0zqZCzjdl7pF1WPLW0i/pwoBZX75iQfuS+UcBCaEXdwx7AjpvScJ+8HTOJJxfZ7R4NMSlwVRJp/aBN26jPhYo6hEkBlv+yY8WF3ngEd4ivPcg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=amperemail.onmicrosoft.com; dkim=pass
- header.d=amperemail.onmicrosoft.com; arc=none
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amperemail.onmicrosoft.com; s=selector1-amperemail-onmicrosoft-com;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IM3o5WkXWS4yQurTFdToa6Q6MJd04aEEWW/sFtUldUI=;
- b=gmRxUazugGWyb0uOiy/qKjx0QcwskRVCCMhkvcFVp2m7LEHy5c4a0bntTvR2SGaBKN3vInLt/3JIVsI0N2IU97nCrHxTvHoy0gkOyTMdztOQFsQnmzGUZ0qRD31GZQCiMHyWs+WVwBNCvo4yhIdaxmrHtoSJ1KY+gTIo/TpQr+c=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amperemail.onmicrosoft.com;
-Received: from BN3PR01MB9212.prod.exchangelabs.com (2603:10b6:408:2cb::8) by
- SJ2PR01MB7956.prod.exchangelabs.com (2603:10b6:a03:4cf::18) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8943.30; Tue, 22 Jul 2025 17:10:05 +0000
-Received: from BN3PR01MB9212.prod.exchangelabs.com
- ([fe80::3513:ad6e:208c:5dbd]) by BN3PR01MB9212.prod.exchangelabs.com
- ([fe80::3513:ad6e:208c:5dbd%4]) with mapi id 15.20.8964.019; Tue, 22 Jul 2025
- 17:10:05 +0000
-Message-ID: <bb544194-d8af-4086-b569-4a4b4befd6ad@amperemail.onmicrosoft.com>
-Date: Tue, 22 Jul 2025 13:10:01 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v23 1/2] mailbox/pcc: support mailbox management of the
- shared buffer
-To: admiyo@os.amperecomputing.com, Sudeep Holla <sudeep.holla@arm.com>,
- Jassi Brar <jassisinghbrar@gmail.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Robert Moore <robert.moore@intel.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jeremy Kerr <jk@codeconstruct.com.au>,
- Matt Johnston <matt@codeconstruct.com.au>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Huisong Li <lihuisong@huawei.com>
-References: <20250715001011.90534-1-admiyo@os.amperecomputing.com>
- <20250715001011.90534-2-admiyo@os.amperecomputing.com>
-Content-Language: en-US
-From: Adam Young <admiyo@amperemail.onmicrosoft.com>
-In-Reply-To: <20250715001011.90534-2-admiyo@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+ bh=YYwj7Dy7LvZchDCnBu/9KmYzYaBvXXKph89lmT0qfsQ=;
+ b=YpG9FAMVILX27154LsCsvgMS6pork/KXNita75AvBYeJThHFR8DaPrtEZhl2izqCKk+z8RjF5KOfp7eEPeEoPt0qaKt0Ac8eL5wYVgAyzP/3eMst5QNA7lL577pjO8I+OHOFzpNHHN0fOLrly2N2BI8GglxqlISYNLIATxNnZb0=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by PH7PR10MB7803.namprd10.prod.outlook.com (2603:10b6:510:30d::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.29; Tue, 22 Jul
+ 2025 17:10:29 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%4]) with mapi id 15.20.8943.029; Tue, 22 Jul 2025
+ 17:10:29 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
+        Christoph Lameter <cl@gentwo.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] MAINTAINERS: add missing percpu-internal.h file to per-cpu section
+Date: Tue, 22 Jul 2025 18:10:23 +0100
+Message-ID: <20250722171023.139777-1-lorenzo.stoakes@oracle.com>
+X-Mailer: git-send-email 2.50.1
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SN7PR04CA0117.namprd04.prod.outlook.com
- (2603:10b6:806:122::32) To BN3PR01MB9212.prod.exchangelabs.com
- (2603:10b6:408:2cb::8)
+Content-Type: text/plain
+X-ClientProxiedBy: LO2P265CA0203.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:9e::23) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,360 +98,127 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PR01MB9212:EE_|SJ2PR01MB7956:EE_
-X-MS-Office365-Filtering-Correlation-Id: 534e9920-bfc5-4d39-d142-08ddc9429a58
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|PH7PR10MB7803:EE_
+X-MS-Office365-Filtering-Correlation-Id: 36f71ba7-72bc-4f21-4dbc-08ddc942a884
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OGFSYUlIQStOMmJ0bERLbDZ0eHdFT1ZSc0VpSEdZNnhKRzNramwrZ01KdE91?=
- =?utf-8?B?S3NZNm9uSFkvb3czK09VZTFBcUxadmtSOHlNRHlEMVY1aXI4aVZQSTdvK2dL?=
- =?utf-8?B?aHYzanJuWmw0YzlIU25HMjFzOWNla0RoS0RZazVSVGlCT1o1UGJQL0NYcTNu?=
- =?utf-8?B?VytrTXJFTGhpNW9pRWtnWkVWOWFreTQ0RG1VV3I5dWhxdnBYVVRKKy92QVBm?=
- =?utf-8?B?QjNwMW5qK05lS3VvdTlHcVo1Y3g2T1ZpU0trNGw4QjdubTFhYjJ1THVSVndO?=
- =?utf-8?B?YTVPZTVhck5kZnN4c3B0aVUyaWpuNnpMa2g4dHB5NG5jZVpUQWxCVnhlMmtM?=
- =?utf-8?B?a3MzRC9yVUc4TTRpZ0FwWk5TUFJ6TWZsdGdleFU0RzBxS1FSbmh5N25pUzk2?=
- =?utf-8?B?VXFIaGNSVHErTnh3dEo3OGdWV2tLL0grbVpGZGY5TFFOUHFxejMxMFBIN3Ey?=
- =?utf-8?B?eWlsaHlTUm1NbVpqbUVFNGhjWHNrWkVsanhOSGU4S0NORWtUbWdsb1c3NUpT?=
- =?utf-8?B?eURRVEd4L0svVExnbzhqN1pncFNMdW1ZaW1nckJwOE9jUXlTcGdiUXYxQ09M?=
- =?utf-8?B?YjZsSWxKb05zN1JPWkY5eFhZVEpiMWdKNy9IUy92ZFc1d0lLTFRPTnJIT1dG?=
- =?utf-8?B?K1YwQUVnb1pMajdCMk1vVjF1WnJVTFNOQWFqbkFmeG1SeDlsVjZUWmJML2di?=
- =?utf-8?B?NTYvM3MrOUJLVkEyNzRBVmNRZW9oNHJsOTZGVU9kWFFBOEUzUGZNbU0wUzlF?=
- =?utf-8?B?VldXdHRBZUhrTkIvNUh0cUdlTXdURnhFZGIrMnovVENMTFdHblZzZWphdDZ3?=
- =?utf-8?B?dkZGNVZ0Q3cwd0pWendGSEE4RzJFSUZnVXF0RUhVa1gzQzZzZ3F0bzlEeE4x?=
- =?utf-8?B?OHZjUlFJamZKazAxcHRXdUt6Z1d5bzFkellUMjNlcTFodEQvUGZyU09kMzJZ?=
- =?utf-8?B?NGlyZStVU3lIeW9GYUhoT2JBT2dEd09QQ0xTSDNkS21PQ0RVV0RQc2NWL2Nj?=
- =?utf-8?B?TkRpU2dvdzJDR0tQRnA0YXNaYnBMaTVQTldtVW1va0ovMTRVa0QveVdseFJz?=
- =?utf-8?B?WjZ1K0cvZlFDaWZNZkQvM1c4RjE3a3ZKUzV4UUVQMVpNZ3NGR0JYVHdHTDBa?=
- =?utf-8?B?S1pMY2Qvblp0NEhoYm1tMWlZakZNUUFLUUh0TXEvVmF1SytLT2h6VkYwWnZP?=
- =?utf-8?B?YzNZNlhibUp4NXZCRDNHK0lQYnhQNVczdXVYbmNZSXpPcmREcGdtWWVpSXM2?=
- =?utf-8?B?V3VlUWp3cTEzR2RET1RvcC93NVZXRFRkdnBNUmR2N0YzYy9zb1JuNHk4eHBC?=
- =?utf-8?B?V1ZQcFozdkQ1d28zQUk4WTNnR1o4V0lvemxZaE40OVFjTWtKZDVrTEVtWUYz?=
- =?utf-8?B?QnI4SGp6RFVkbnBlNTgzT1A4TjRsaEdOKyt3UUpJVys3OGl1L3hqdUtyaHBG?=
- =?utf-8?B?RXU3UTJRVUFLYlNBL3BZL0FmalEvMFNuYkdqTEJwbTN2S21UaDNGcUYva08y?=
- =?utf-8?B?S0wwN3A3Q25kNzI0bTROOXpFc3lGOFQ5U0poMnEwaUJ4Rit6V3FHQkxVZW9X?=
- =?utf-8?B?aG1WMXFWWWlCMUFHcllKdEVyS2xZWE9tVGgrNEVtNzJRL3B5bEtuUlRZY2hz?=
- =?utf-8?B?dlA0QVg2Rld5NmhyYnpudlovQit0QVA5MnRZb2U5RnRGOUtYSmlHQ2xqME0v?=
- =?utf-8?B?OU5JWVlCT3puS3VhWWN0Wml1Ylh4SWRQWkNKbzgvVUZ1NG9kM2VjVWhtOHox?=
- =?utf-8?B?bmJIbGZaZ2dqTDUxblVqWmRiZUxBcDB0VWcydGY1YllUT1Vkd1RWaHh0WHE2?=
- =?utf-8?B?UDZSTzNyWHpYVDRZUVZscnlxenhFMDZiZlNRVGVuRTRlU1EwSzlzbEphVUFE?=
- =?utf-8?B?bTkxZVJXUjJJc0xabG9nRGdHRnEzTHA5MUlydHg0aEFFL05zSSsrcnBhUDVj?=
- =?utf-8?Q?SsO5EnW54Tc=3D?=
+	=?us-ascii?Q?X5miyXVOu6yU/PXrGAal5WQ+l+y1UEzxtt7hK2PGUcqkZo8chc+k9R5t4PcE?=
+ =?us-ascii?Q?8S7yRVea/QEP5kBiImJlMKvmCaYP4Ke0fuxA39bEBRfr3PsqaArBXyGI+4wU?=
+ =?us-ascii?Q?zYz1SyyOWIrf7yizLsgottUxS8GH21qLgwk2rN+aDFgQfxqGUZhuIP2hbMN1?=
+ =?us-ascii?Q?MB97/h5dSk0K65FbJ7xi7UfqwHeppoux/sNj1FSf/WH9u1NnJlqcLiHLwXx2?=
+ =?us-ascii?Q?UOsPfZVLVP1dBc0Qf7TCv6Bv/tIbgLkpf0QKnn/0W1e5WtqkfFmTMOapUsiV?=
+ =?us-ascii?Q?ASOBFCsw6ySExpC5Br1qwrC+/9ru7uS/LMycy0a4OSkfcITdwyvJntYBPTGS?=
+ =?us-ascii?Q?6Bo4UYQfS+xwGULb4bkBrUbzdtxM8YrtVDlutvZ9XsqhxOcEPN3j3Syxw5/1?=
+ =?us-ascii?Q?hk91TgSvT28GTkna2B4jSw1fXxwy3Fb48/YVW8BZPYByRY0g99zWF0MXogvA?=
+ =?us-ascii?Q?5PKJVTkbTWaatdFHzloo1j1Nx5C+h49mWPEEup/cPten5lXpgQOgDV9O/Yvh?=
+ =?us-ascii?Q?lFsZu0PtQ1eySKkEbd/I+3yCw1RabLBDsm1a/vgjDjGmPennEIdZl2RKSzNx?=
+ =?us-ascii?Q?xJCecmoyyBt8v+Qf986ybRuG4BUpS0yZMgiOfz52GG6mHmm1MEAT8Be2UT4K?=
+ =?us-ascii?Q?JnWzBjA6mf15aOMS40FZxW16MueCtqJE/NFkM9Hy4X57kWAjbltvmuVsDH+M?=
+ =?us-ascii?Q?2KCCXN+puj1Jb3upKtRVC5p73ZwO7VXJ+fZXCPE79Bh/Uv+th9Sc5MBWayfn?=
+ =?us-ascii?Q?8/ALlUeQyfRMlsAwsKrLC3mFOxfnSBWDJIpbZBBopgkdjzZEv+DQDjnaAlKj?=
+ =?us-ascii?Q?W3FON9QRoPXQ2OHOGmouF8oDdZJG71FJ1JvK7oZ6G+syVXIkdJf7aAbfH+fu?=
+ =?us-ascii?Q?iHrrvbNRVxvLuNwGk0eDi79tDPk+Teh4sQnL96Wg+OH5Xp4esrim3nTHU0Iy?=
+ =?us-ascii?Q?IblCaY52IrTOjFNniWfS4zhQcg4yHiz2vGA+wKCjKk+LjQmdefGL3wYVCJFg?=
+ =?us-ascii?Q?wjKJc3G5/PhCfJ9CD1Z8BqMbYnIsQbWZYC5n0rvijRcJqXhy/8Xz+6JDLh0o?=
+ =?us-ascii?Q?90l/53En0cOV2+Jzd/YNfpO0/EW7gfed19nlKVTBcMmLAP5G7fQlvQ1jcQij?=
+ =?us-ascii?Q?B3ROpmmCrI2zzze0n+RO3b338HKLCph56Hy26DsaFEeCqfQqQH2G5r05H14Y?=
+ =?us-ascii?Q?vE4+trHJr4rYnaM6PaWk3mB5Tk4aHhm/D1TnEm33ngujTncweZIFkrU8DFs9?=
+ =?us-ascii?Q?8BTMhhitD5FLnLhRGZaMallf/RUlA9yO6zKW6c6y8/8WozsbajOc6r3OsEXs?=
+ =?us-ascii?Q?8hEmcNmmBYjkw7kFLYjq+RdIJNXRsfhMpvqNAT8EMn6aL1xsQ6ims5S2FMni?=
+ =?us-ascii?Q?SBQf59HUjinImUcmFTBqr0ggLfDBuE8qZ3ERQFbzoUghTpLShq0T1A/RA3E3?=
+ =?us-ascii?Q?FJ9M8iJgH2k=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN3PR01MB9212.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Sy9tVnRTdmwwM0EvbkNOUTlJWWJHWStBSEdHWTRmV3UyS3VweHJJU3ErUENy?=
- =?utf-8?B?Zm1XYkxPaURWTG84USt0b2Q4b3FsellSZWdwMUF2WDQwSkJrVlU4b0dBWm91?=
- =?utf-8?B?L2JjSTU2UXlQMnhPR09jNkxNWTZtck41YlZMU0c5ZGcrTFNGTjQrRVN6S3hP?=
- =?utf-8?B?OWQyWmVxc3AraWVVRWc4bVptSytQS2JqK041eUVpazIzeVRWS0tBWnUrZXRa?=
- =?utf-8?B?NUxDa1l0cjR4dFdhZzcvVFcvSWtyd3Z0Yng0Z3hCdHgzOFMxU3ZkTlpjVmow?=
- =?utf-8?B?QTlsdEpkWmN1SUVEaVBzWWp2bk9kUjdObTUzTHRoaU1rUVgzVmFNK3U4eU0y?=
- =?utf-8?B?Y1hmQ1FORktvNTRGY05PajNTTHY0TmNZQVpFZVlmMWpGRmh2bENRSnZqSEI5?=
- =?utf-8?B?ZjBhQ3Zyb0Rwc0w0QmI3Qy95a2hNbVNCRVkxQ2FReUgzSC9yNnZjc0kxczZv?=
- =?utf-8?B?WXZlWkxUQ0RRYms5ZkF4T0cvV3hnQzFwSi9HTkJJRWFhbUkvcDNCR2JpN2ZK?=
- =?utf-8?B?RG5SRkYvWUJoZWhHVUdRV2pvUGUzMlY2VUMrMnRsU1pBeFpTbHRraE5naGQ3?=
- =?utf-8?B?bmVaZTJOK2Z0aGVuWWhkTHp0VExYM0VvbXpCQjBlN1kzeStMd2treTMrMG1E?=
- =?utf-8?B?b2tHcVhldmhHaUNEZEVjZ2tjczkzVkZhYjhabzZpcHBoNUJvYW11NDAwRXVs?=
- =?utf-8?B?d0Q5ZHlPdzAxcEJkd1NQZWl0cVBkRU91V0FUcytMZXN2WkFLRVd4cVVsRXF2?=
- =?utf-8?B?K0hZdUJoRE9QcGk0NCtTeEFpc1EyWkRmNW4wcmJ3aDZSM2NPa2RhSDFHWC81?=
- =?utf-8?B?QXBIZ0JlZmQ3TVVzSHc3VXk2eFNMRjJtM0tvZE1OcUl1azFxZFNyR1Fwc1B1?=
- =?utf-8?B?bkJwOWtzR0xJTW9nZ01YTXdKVHIzQnpFelU5UXJ2ZGdkNFBYdjd3NWJDeWJn?=
- =?utf-8?B?cThMZkFqMG5WblNxS2tvMkhUYUljWC9tQUlJVEpFd0JJK2dMcEFUOHRJa0NT?=
- =?utf-8?B?cGhvR1N4SnhXbkpvNE5zZXJlVG9mZXB6M0Jhek1mWmZmSlYrczV1Zmx6TVdP?=
- =?utf-8?B?bndnVURSUkdHd3dLUEVSMlU4d3VMWG1LZEs1ZEV1Uy9KZUtlbld3OUZ0KzdL?=
- =?utf-8?B?RlcvOUl1T2Q2MzU4amYwL2pkUjQzVTJFOXRTcGlnMHhRQ2RDK2lwcXQ5aEpJ?=
- =?utf-8?B?MU5STC9ESTQyT0xGbERPcGhDQkdKcHd5OUFNZGY2YkdwMTcwbzZEenZBSGVE?=
- =?utf-8?B?WW5ldTBzdmJqM0FWdTVENkQydGpQNlBMUlNNam8va0xNU1UwamxEaFJHRjVl?=
- =?utf-8?B?ODVyRGlVeGJ5TTA2WGQzbzhvY2cwcXIwVkhCQ2JvQTlQWHRyWFd0cGdNMmhS?=
- =?utf-8?B?QmQxMWZnRG12UENDRk03Z0lRS0dLdlZISjFwRE5WUmRqeEZ5V2ZBVUFRYUJx?=
- =?utf-8?B?bHRXMUNkRGFyVy9YM09VOG4zYzBOOGp6Z1NEbVdkalljWmhId1JZODBYREdr?=
- =?utf-8?B?WWs4SGtYVUZkN3BOZk1LdVlVU2dkeHFhS1N3R1dZNXFLQjd6eFpjTlZvSkIx?=
- =?utf-8?B?MWdCZFh6K3NXeGgrazNLdjBBa1FlL3RPUXRKeE1kaG1OQTM4WWNlZ2FteWE3?=
- =?utf-8?B?d1hCbHhxeXZOQkE4K2d6blc1eXJhNlFGSlh2UWhWUG5saFUzVkkzVW9BcHhE?=
- =?utf-8?B?emxzYTlBOXNta1dwUk1MM0hVckVISE1sblpuVUtFbVZ6bnBzeUNHU0s1bDBQ?=
- =?utf-8?B?WXgzNndDQ2NHVW1TZ3YvTVVTdEFSdGNYNGNRQWhUWis3ZFdyV0V6Y2dGV0k1?=
- =?utf-8?B?N0w4czRJRDE2TVZzZU5tM0QvUE5XNDFsOGZBeEdWeVVnYTNhSy9pQ2M4YXJ2?=
- =?utf-8?B?M3JCc2pqKy8xdTM3MEdEeUVUcThFbFFaYkUyQ1o2ZkdNQXJvb0I0TFgyZm5U?=
- =?utf-8?B?N2VkSU5tWS8yRXJqaWlVc2JoVEtpTjUwU3ZaVE81MEYzelQxQ0VWNGpKeDFW?=
- =?utf-8?B?U3YrazJtVHhJZXp5NStKSGt1N3RuZHNKbGpKa0NZQnFiNjJSRDNYR1RIUzZ3?=
- =?utf-8?B?eEhRbWlndkh0dUZYZk9NcXpuM0ZxeHR0VnhLdzVPeTZkMnVHbTE3Q2JwZEZr?=
- =?utf-8?B?NGlLOEY1dWdkYklpS25xVERMdzlSWGp4dDhGYlVONHNTYnJlY09vaTduVUJx?=
- =?utf-8?B?ejRmbldvMDM4bi9wREIrOUtGT05PRmV3OWxqMU5ZT2pzY0NjellrWWVLYzRJ?=
- =?utf-8?Q?RHMeT2o8QVzTfVYPgmFRbN2I5Jb+acXQL3Fkjm2q8g=3D?=
-X-OriginatorOrg: amperemail.onmicrosoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 534e9920-bfc5-4d39-d142-08ddc9429a58
-X-MS-Exchange-CrossTenant-AuthSource: BN3PR01MB9212.prod.exchangelabs.com
+	=?us-ascii?Q?R+Z6AqkZmASvYIX8xQo1nxzio2KZvRyj0qVN1BWpRg4a01Z7YN93S0+nW9Re?=
+ =?us-ascii?Q?RUIzq2yiAd5KTiAGK7kSgUhR9z6uBopr937fyQzaqHsT6NxT/G4nGyuVb2vh?=
+ =?us-ascii?Q?x/V/hdHT7FKQxGKYQrCp1kTdPg6EzOsS8eKlCy2IgfDoPETsz4OShKUkUdYl?=
+ =?us-ascii?Q?nz1bga4BuKQWZuKtbhQ7FgO7DjwDCJIHeicowV7Pfl7lalTAiCuFOZjWsD55?=
+ =?us-ascii?Q?9k0L07Wpl1WxxttbnJNbCNDU5q5ddnGJ8pQyE+figY7Zfaq/kXQnbdmD7Orp?=
+ =?us-ascii?Q?ZeNE5y3ixj40kBzZoN3WOdxXWkX8SGsxXpnM5nM1Pn7c3IyTc8DWxRyn130f?=
+ =?us-ascii?Q?0bcWiMo8phI6rwFThjjhQ9KsRljpYPeBXCuK7gHR+Bb+8lbwk0tgNr325F3j?=
+ =?us-ascii?Q?Ew/C0uIu40UkSnSSDiTjqVUr/5YSm3nys+2fbcX59eZC2VdR1MpG+gO3MZyu?=
+ =?us-ascii?Q?J3KH75FmvxIKi/8nc12QcNyAft2RESLOp5GwLpHL0vno1mfb5rPnwnyD4cWR?=
+ =?us-ascii?Q?GSem0lPq0ViQ0+FFTqyP3iroCWLfRbHRXHVkChVaVjDRvPiNILYTuu2b7Vah?=
+ =?us-ascii?Q?mlhfw4c2itPXaUU922YKTmB9bqGk/3ynvMfihT31Ij639IsTMrnsBs/RJIeR?=
+ =?us-ascii?Q?7wrXdJU1rUzAMlNZUz8olvDgEhu/jHLwttGvLm8kk5dg6MelovwGMHv1sRtP?=
+ =?us-ascii?Q?kl1fc6xFJY0NNcPj/DEJhc8XtDv6ZL6/QRhCko9VOw/uEYydO7a9gXfJ4jn5?=
+ =?us-ascii?Q?/++owt+r4uRhPkMU99HFzoFw9bqQMnRwXDEl97901urikec2yaVUKseLeaGp?=
+ =?us-ascii?Q?UshxRE8uTJ0QJdDWDI/OXxC9UQsVoXhDCpLO2WidFok2FDw2mcNdjFYC6DXH?=
+ =?us-ascii?Q?YmnFiYXevp3GLkljjOa/jiNz4is6LihwrdnEADziFXwkqVDmUTrYfVKpF9kn?=
+ =?us-ascii?Q?SgbZSqKtfCdkc4WJiVuVwf8xR99EWknmUil+xqPe+RVLDD8Njn8gXBBG7B0W?=
+ =?us-ascii?Q?gL32Xq3u9OF+O4FUczNq/mqtjIAIt7JGEUq072fOvK4QOBufq9C5nQQWtY1I?=
+ =?us-ascii?Q?N9Rtovb8f7jxjxhXGmx758avQbN871GEtRxQ3hie+4DET5GHF+pHGlTX1ONC?=
+ =?us-ascii?Q?C6a9B4a6vbmfEZK4vwGa73vYF345shuDZDnobOmjFjv72B99nHU+p1jNV9jI?=
+ =?us-ascii?Q?IVJ3LTOoa7K57Eyv0tcvwlFA7FdYSBKjwz0Agw2qbJFMzlet8oTkJ8eBx5Pd?=
+ =?us-ascii?Q?4ow4OlEJo93qUnVT4wNBD88aE2k4J3DqYM2lBnQHkXEjlLgWubimKL6bC6jm?=
+ =?us-ascii?Q?WaKp3BQHQRkOBq8cp7wOxpME1t4ZtBBgBaHCqflV4G8mMa43B2VLeQvvLMTK?=
+ =?us-ascii?Q?raMgCf7/kLQmwQiMyrNPDU+Jwi+PxGFRPWrpvPbdjp3i35uKb+c74cYZxCv3?=
+ =?us-ascii?Q?HmObNyDt5JwDIOPK8IlHUPE7RqQS/IJMJ3caOolf6cPnDcvfVrtAjxy0M3rU?=
+ =?us-ascii?Q?J8xfScOnmcnMGuVfW2EIGjUgfP0R3/VxxH8/pVfYaI9zESv4K2WkerYdo2vz?=
+ =?us-ascii?Q?X5LU/MVp4ZWKOHhiSfTHuUWz9aSsiAWiTqTL1hF7jvX6rzNogPaRGQWR0W6/?=
+ =?us-ascii?Q?Ug=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	XNcrRt34ATieOoP6NQjudEJJLOYlbyh5C7x2UAtLT1Q/UObUCz2mXR6stxQwU/QuVPkRiBhSQ/0dTIWr4eElIs0gAJa7vWgun6QvIjLczJRKmy+/peG3yj4nDxoj6nnSaZai/X4OGcDlNse8gjOXgBxJzC74Mke0h3jZemAUyV6e2aN2X727dgSCingoobq45w+Uwxuc6odGf421qefFd1GUr5TEmPLwtn8Un78e4itjh9T9J2sQc8RGRhe0Rnkw9Z0y5cKQF+TsmvnFry6OKVyqwzD6/ql4fx+knNmgzIYodgkupNHR2PY0UdsOOzN4tiQiIx5xdxtuFGIwUhHnRgs1d08XMzU3smtzn0NZ/gkMuNqBTYKJdKLvkq0Ax3EZkzE9Llm8fGlXo3eGfiyz1yLpV0Y9ICn+dx7d+DzHYDEA0NbZDP+bt4LhftaDkt25DGWgv04/iLoDs5cJhiGzA4NzgEA9aOfgh9W633Jq5Sb81uhNsUTApcrXiI6OMI7Q/7DrMajVmMsaUA9KN3HBfqbcFIHwXmcMxvNakJaXa55qlmBiFuTSvEUnhLt6+r1OEZJ8vEt2tCSuJAPnRXAmZuHmf9SKhh8k/Fucd9KYVDk=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 36f71ba7-72bc-4f21-4dbc-08ddc942a884
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2025 17:10:05.3300
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2025 17:10:28.9473
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rvyFbvFGmYd9wabUrxHr+7GgESlPxby1F6tbd95N8Riq0cKQ6qqOJ8BsR/PaqDn8KZCA4ltQvXD5ExZ53CY288oeFttM/MVkel6wYI08CMzoHi/mttkY8/YfKwxJiIfH
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR01MB7956
+X-MS-Exchange-CrossTenant-UserPrincipalName: HPjsZH1zuldgUJyByJT+aMTTBoEq3LLHXuZ7aPPGV72D3mblXHjelNngwKFkymNk2PkHy2xC2rdygQ/TC9uXWnvAKU16sqejmUYapXQQrjg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB7803
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-22_02,2025-07-21_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 phishscore=0
+ mlxscore=0 bulkscore=0 mlxlogscore=999 suspectscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2507220144
+X-Proofpoint-GUID: mOi9fE1s4EJg-0q4m9CT2LWihMrGAP-w
+X-Proofpoint-ORIG-GUID: mOi9fE1s4EJg-0q4m9CT2LWihMrGAP-w
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDE0NSBTYWx0ZWRfX4gUUWXJwB8cO
+ ZJgI5eOIJXQDM9wX0SNuqRJhkEZDYfd8OYvy/EinuLwUFyQKaT+/aOh49Lfzqf+4zOPUYfGLn2q
+ skekxtYG8iS8YzERle29hZY9+WWoWOBphRUrWstIg1RwvTFCSEdRFEl0/CZAxS94srGAhxHMvue
+ zmQ4XUv4i0heRDciQmauaZl6pXHyvKMiHf+0LNbfXk32P5UJNZe5kMZSOrdIKnYVCumCG3dsAdY
+ xd/wcKrnhKqdL13gEk/atfujJKUydxl4WdjKxMBy0IqhBx7zJulw7H6OQvz4IKirgF88cbATUTs
+ avF2BtOa0crwEbTrr+OjRC7xsDDbT0sF0Ybd5QZqm5Jqkxs7Uenhiiv+veCW6J8i/OgSpgCKlKy
+ uzecIyg0/EfxsZwDDUB2QDTpwPayQLHuGg3fLmbQ5pl1oCLeKntZUpbeZHJnTPyPjhtZrMYc
+X-Authority-Analysis: v=2.4 cv=IPoCChvG c=1 sm=1 tr=0 ts=687fc609 cx=c_pps
+ a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8
+ a=pGLkceISAAAA:8 a=qkL2R8eei8n8AvbQuZYA:9
 
+This file seems to most appropriately belong to the PER-CPU MEMORY
+ALLOCATOR section, so place it there.
 
-On 7/14/25 20:10, admiyo@os.amperecomputing.com wrote:
-> From: Adam Young <admiyo@os.amperecomputing.com>
->
-> Define a new, optional, callback that allows the driver to
-> specify how the return data buffer is allocated.  If that callback
-> is set,  mailbox/pcc.c is now responsible for reading from and
-> writing to the PCC shared buffer.
->
-> This also allows for proper checks of the Commnand complete flag
-> between the PCC sender and receiver.
->
-> For Type 4 channels, initialize the command complete flag prior
-> to accepting messages.
->
-> Since the mailbox does not know what memory allocation scheme
-> to use for response messages, the client now has an optional
-> callback that allows it to allocate the buffer for a response
-> message.
->
-> When an outbound message is written to the buffer, the mailbox
-> checks for the flag indicating the client wants an tx complete
-> notification via IRQ.  Upon receipt of the interrupt It will
-> pair it with the outgoing message. The expected use is to
-> free the kernel memory buffer for the previous outgoing message.
->
-> Signed-off-by: Adam Young <admiyo@os.amperecomputing.com>
-> ---
->   drivers/mailbox/pcc.c | 102 ++++++++++++++++++++++++++++++++++++++++--
->   include/acpi/pcc.h    |  29 ++++++++++++
->   2 files changed, 127 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
-> index f6714c233f5a..0a00719b2482 100644
-> --- a/drivers/mailbox/pcc.c
-> +++ b/drivers/mailbox/pcc.c
-> @@ -306,6 +306,22 @@ static void pcc_chan_acknowledge(struct pcc_chan_info *pchan)
->   		pcc_chan_reg_read_modify_write(&pchan->db);
->   }
->   
-> +static void *write_response(struct pcc_chan_info *pchan)
-> +{
-> +	struct pcc_header pcc_header;
-> +	void *buffer;
-> +	int data_len;
-> +
-> +	memcpy_fromio(&pcc_header, pchan->chan.shmem,
-> +		      sizeof(pcc_header));
-> +	data_len = pcc_header.length - sizeof(u32) + sizeof(struct pcc_header);
-> +
-> +	buffer = pchan->chan.rx_alloc(pchan->chan.mchan->cl, data_len);
-> +	if (buffer != NULL)
-> +		memcpy_fromio(buffer, pchan->chan.shmem, data_len);
-> +	return buffer;
-> +}
-> +
->   /**
->    * pcc_mbox_irq - PCC mailbox interrupt handler
->    * @irq:	interrupt number
-> @@ -317,6 +333,8 @@ static irqreturn_t pcc_mbox_irq(int irq, void *p)
->   {
->   	struct pcc_chan_info *pchan;
->   	struct mbox_chan *chan = p;
-> +	struct pcc_header *pcc_header = chan->active_req;
+Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-OK, so it looks a little strange to re-initialize this later. Would it 
-be better to not have it initialized?
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 837bc5cd6166..279c539f4c12 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -19460,6 +19460,7 @@ F:	arch/*/include/asm/percpu.h
+ F:	include/linux/percpu*.h
+ F:	lib/percpu*.c
+ F:	mm/percpu*.c
++F:	mm/percpu-internal.h
+ 
+ PER-TASK DELAY ACCOUNTING
+ M:	Balbir Singh <bsingharora@gmail.com>
+-- 
+2.50.1
 
-
-> +	void *handle = NULL;
->   
->   	pchan = chan->con_priv;
->   
-> @@ -340,7 +358,17 @@ static irqreturn_t pcc_mbox_irq(int irq, void *p)
->   	 * required to avoid any possible race in updatation of this flag.
->   	 */
->   	pchan->chan_in_use = false;
-> -	mbox_chan_received_data(chan, NULL);
-> +
-> +	if (pchan->chan.rx_alloc)
-> +		handle = write_response(pchan);
-> +
-> +	if (chan->active_req) {
-> +		pcc_header = chan->active_req;
-> +		if (pcc_header->flags & PCC_CMD_COMPLETION_NOTIFY)
-
-Note that this is the counterpoint to my earlier patch that only 
-notifies the platform if the platform requests it.  This is part of the 
-specification.
-
-> +			mbox_chan_txdone(chan, 0);
-> +	}
-> +
-> +	mbox_chan_received_data(chan, handle);
->   
->   	pcc_chan_acknowledge(pchan);
->   
-> @@ -384,9 +412,24 @@ pcc_mbox_request_channel(struct mbox_client *cl, int subspace_id)
->   	pcc_mchan = &pchan->chan;
->   	pcc_mchan->shmem = acpi_os_ioremap(pcc_mchan->shmem_base_addr,
->   					   pcc_mchan->shmem_size);
-> -	if (pcc_mchan->shmem)
-> -		return pcc_mchan;
-> +	if (!pcc_mchan->shmem)
-> +		goto err;
-> +
-> +	pcc_mchan->manage_writes = false;
-> +
-> +	/* This indicates that the channel is ready to accept messages.
-> +	 * This needs to happen after the channel has registered
-> +	 * its callback. There is no access point to do that in
-> +	 * the mailbox API. That implies that the mailbox client must
-> +	 * have set the allocate callback function prior to
-> +	 * sending any messages.
-> +	 */
-> +	if (pchan->type == ACPI_PCCT_TYPE_EXT_PCC_SLAVE_SUBSPACE)
-> +		pcc_chan_reg_read_modify_write(&pchan->cmd_update);
-Is there a better  way to do this?  The flag is not accessable from the 
-driver.
-> +
-> +	return pcc_mchan;
->   
-> +err:
->   	mbox_free_channel(chan);
->   	return ERR_PTR(-ENXIO);
->   }
-> @@ -417,8 +460,38 @@ void pcc_mbox_free_channel(struct pcc_mbox_chan *pchan)
->   }
->   EXPORT_SYMBOL_GPL(pcc_mbox_free_channel);
->   
-> +static int pcc_write_to_buffer(struct mbox_chan *chan, void *data)
-> +{
-> +	struct pcc_chan_info *pchan = chan->con_priv;
-> +	struct pcc_mbox_chan *pcc_mbox_chan = &pchan->chan;
-> +	struct pcc_header *pcc_header = data;
-> +
-> +	if (!pchan->chan.manage_writes)
-> +		return 0;
-> +
-> +	/* The PCC header length includes the command field
-> +	 * but not the other values from the header.
-> +	 */
-> +	int len = pcc_header->length - sizeof(u32) + sizeof(struct pcc_header);
-> +	u64 val;
-> +
-> +	pcc_chan_reg_read(&pchan->cmd_complete, &val);
-> +	if (!val) {
-> +		pr_info("%s pchan->cmd_complete not set", __func__);
-> +		return -1;
-> +	}
-> +	memcpy_toio(pcc_mbox_chan->shmem,  data, len);
-> +	return 0;
-> +}
-> +
-
-I think this is the pattern that we  want all of the PCC mailbox clients 
-to migrate to.  Is there any reason it was not implmented this way 
-originally?-
-
-> +
->   /**
-> - * pcc_send_data - Called from Mailbox Controller code. Used
-> + * pcc_send_data - Called from Mailbox Controller code. If
-> + *		pchan->chan.rx_alloc is set, then the command complete
-> + *		flag is checked and the data is written to the shared
-> + *		buffer io memory.
-> + *
-> + *		If pchan->chan.rx_alloc is not set, then it is used
->    *		here only to ring the channel doorbell. The PCC client
->    *		specific read/write is done in the client driver in
->    *		order to maintain atomicity over PCC channel once
-> @@ -434,17 +507,37 @@ static int pcc_send_data(struct mbox_chan *chan, void *data)
->   	int ret;
->   	struct pcc_chan_info *pchan = chan->con_priv;
->   
-> +	ret = pcc_write_to_buffer(chan, data);
-> +	if (ret)
-> +		return ret;
-> +
->   	ret = pcc_chan_reg_read_modify_write(&pchan->cmd_update);
->   	if (ret)
->   		return ret;
->   
->   	ret = pcc_chan_reg_read_modify_write(&pchan->db);
-> +
->   	if (!ret && pchan->plat_irq > 0)
->   		pchan->chan_in_use = true;
->   
->   	return ret;
->   }
->   
-> +
-> +static bool pcc_last_tx_done(struct mbox_chan *chan)
-> +{
-> +	struct pcc_chan_info *pchan = chan->con_priv;
-> +	u64 val;
-> +
-> +	pcc_chan_reg_read(&pchan->cmd_complete, &val);
-> +	if (!val)
-> +		return false;
-> +	else
-> +		return true;
-> +}
-> +
-> +
-> +
->   /**
->    * pcc_startup - Called from Mailbox Controller code. Used here
->    *		to request the interrupt.
-> @@ -490,6 +583,7 @@ static const struct mbox_chan_ops pcc_chan_ops = {
->   	.send_data = pcc_send_data,
->   	.startup = pcc_startup,
->   	.shutdown = pcc_shutdown,
-> +	.last_tx_done = pcc_last_tx_done,
->   };
->   
->   /**
-> diff --git a/include/acpi/pcc.h b/include/acpi/pcc.h
-> index 840bfc95bae3..9af3b502f839 100644
-> --- a/include/acpi/pcc.h
-> +++ b/include/acpi/pcc.h
-> @@ -17,6 +17,35 @@ struct pcc_mbox_chan {
->   	u32 latency;
->   	u32 max_access_rate;
->   	u16 min_turnaround_time;
-> +
-> +	/* Set to true to indicate that the mailbox should manage
-> +	 * writing the dat to the shared buffer. This differs from
-> +	 * the case where the drivesr are writing to the buffer and
-> +	 * using send_data only to  ring the doorbell.  If this flag
-> +	 * is set, then the void * data parameter of send_data must
-> +	 * point to a kernel-memory buffer formatted in accordance with
-> +	 * the PCC specification.
-> +	 *
-> +	 * The active buffer management will include reading the
-> +	 * notify_on_completion flag, and will then
-> +	 * call mbox_chan_txdone when the acknowledgment interrupt is
-> +	 * received.
-> +	 */
-> +	bool manage_writes;
-> +
-> +	/* Optional callback that allows the driver
-> +	 * to allocate the memory used for receiving
-> +	 * messages.  The return value is the location
-> +	 * inside the buffer where the mailbox should write the data.
-> +	 */
-> +	void *(*rx_alloc)(struct mbox_client *cl,  int size);
-> +};
-> +
-> +struct pcc_header {
-> +	u32 signature;
-> +	u32 flags;
-> +	u32 length;
-> +	u32 command;
->   };
-
-Fairly certain these should not be explicitly little endian IAW the 
-spec. It has been a source of discussion in the past.
-
-
->   
->   /* Generic Communications Channel Shared Memory Region */
 
