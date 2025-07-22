@@ -1,186 +1,103 @@
-Return-Path: <linux-kernel+bounces-740654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36B35B0D74F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:27:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E027B0D751
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:28:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60E363BFD88
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:27:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DB45169380
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:28:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7BE2E0909;
-	Tue, 22 Jul 2025 10:27:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71CCF2E0919;
+	Tue, 22 Jul 2025 10:27:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VbF9q9TM"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37CE19DF62;
-	Tue, 22 Jul 2025 10:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Ftjrvg9T"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3CCE288528
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 10:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753180063; cv=none; b=RFCalp/v4WRXFSLxImmJ0hWZ8xMWvPmH6u6VTR29Y2K0rgV4SfBdIZtbt1ys0dzi8kmWcBGFG5RqokwURcnBlxkBdy7rlV03YDp99MOAAgggZbaZ4R9RrMblicmpKfgN9wV1OH4qxrx4iRdHOnaOsFxyEYfIQnfEPtk3DHCX+G8=
+	t=1753180073; cv=none; b=B1D0bQ70XHGSEZwfIPXNXCNMkFg88NjKGazrfA4lDxtjci5LYeDSe9V408jh2tgXVAPXA6Iz7KNgVzX2sHSxm9CpFPmmyd/rw+TeKnwt+3yyRfXG+2K70d/JLBS/hUeeZkN/l6JoeBRK6yYBg5hmv8/12ZLP/DRSiQzlNbDjefM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753180063; c=relaxed/simple;
-	bh=9lvqZk5oEPRo1rY1fpzcNNUqnPMnD9A+snxT1q84jkE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ATFADbsPYEdT5zyQ4DdUMw35+HuhLIVNvHQIzhOvXnmtL0KRZjM1ZeVa17ysVxDRpfO3IXIzJK2XhvmJYTzrgaZhh25RL0sJTGto8TOrb4dHT43Q44lWUGmRxGCuSWE0lqFHHaQM1Ok9x4dC0pWv14BDD8vnZhtEWZxECQhHQd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VbF9q9TM; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1753180059;
-	bh=9lvqZk5oEPRo1rY1fpzcNNUqnPMnD9A+snxT1q84jkE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VbF9q9TM9iU5hikHWxzeBS6I11iDTIJOgU24E63elkGQegue9c0JhTAJ64AMaQX91
-	 LfvBCXWbCmcQ6rTHckq5/Ld2LjTmbe5O1xUuFFYuRKNPcJNHE3ZCTQr4R4oe13qFk2
-	 m/jl1fSN6S4AMSwjUZCIHefXhHByPwoss4CSd/zKWxdHZalC4vravkj+OgSE+8ivrU
-	 o0sCRzh90Wsg0wrJ/W5PPBuOYIB/awoXdlHIHXhZIrmFgM+ep1IlCf1+zCKe+b/9ZK
-	 dAH/Nvdfdth3BURdamdHwCG+Ze+mkU/0p2zEnS3gMd7bC9K3tV/4EgufCeWCLOaot8
-	 SbYbUbwvRHngQ==
-Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:bd9c:eae9:88b0:783c])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laura.nao)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 804F217E0B72;
-	Tue, 22 Jul 2025 12:27:38 +0200 (CEST)
-From: Laura Nao <laura.nao@collabora.com>
-To: wenst@chromium.org
-Cc: andrew-ct.chen@mediatek.com,
-	angelogioacchino.delregno@collabora.com,
-	arnd@arndb.de,
-	bchihi@baylibre.com,
-	colin.i.king@gmail.com,
-	conor+dt@kernel.org,
-	daniel.lezcano@linaro.org,
-	devicetree@vger.kernel.org,
-	kernel@collabora.com,
-	krzk+dt@kernel.org,
-	lala.lin@mediatek.com,
-	laura.nao@collabora.com,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1753180073; c=relaxed/simple;
+	bh=ZA8vXYmj2axQOYi02RwWpQXyR+lzyL2z0lMdOGcy8Lw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BSwGFa5WviAbXmnwcZlXAKwxpq+JBUmvOtHmPUeRwqn/2bqwJFowqBb7bBEeuH0CN9/02h1oHQsYj7T7G397AATICfK3etguttSqIw1Ni3o+tuwE2ENWkFEsY72kAhFLbrk3GDLU6PnQeqvCe4vhGmGNbpKWhGHRshFvI/LOQQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Ftjrvg9T; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=lB
+	XlC4JtAXtnVPhmyXizUjaqmuQupzk/Y7wvzszghCU=; b=Ftjrvg9TBeiuY24kr7
+	BGQ62H4MvR6tVQkYOJiOlnGEv1bDbl3naT7Pbx++Q6pjyNY0/ONlaN6vuDk5gGYQ
+	Rmswb/dBiRf4JKdysheR1DVDjygVozlnPILIAXfHY7NHf8xDJC/6H2s6qfJzqcu0
+	eS53lXHoybyQVkz4nARY6kPbI=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wDnt9KGZ39oRKU8Gg--.16241S2;
+	Tue, 22 Jul 2025 18:27:20 +0800 (CST)
+From: oushixiong1025@163.com
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-pm@vger.kernel.org,
-	lukasz.luba@arm.com,
-	matthias.bgg@gmail.com,
-	nfraprado@collabora.com,
-	rafael@kernel.org,
-	robh@kernel.org,
-	rui.zhang@intel.com,
-	srini@kernel.org,
-	u.kleine-koenig@baylibre.com
-Subject: Re: [PATCH 5/9] thermal/drivers/mediatek/lvts: Add lvts_temp_to_raw variant for positive temp_factor
-Date: Tue, 22 Jul 2025 12:26:53 +0200
-Message-Id: <20250722102653.30851-1-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <CAGXv+5F9NwJ7uGFPWZM-Dywbbk4f6aiYS5M4m6_VFETVGEwr9A@mail.gmail.com>
-References: <CAGXv+5F9NwJ7uGFPWZM-Dywbbk4f6aiYS5M4m6_VFETVGEwr9A@mail.gmail.com>
+	Shixiong Ou <oushixiong@kylinos.cn>
+Subject: [PATCH] drm/shmem-helper: Remove duplicate dma_resv_assert_held
+Date: Tue, 22 Jul 2025 18:27:17 +0800
+Message-Id: <20250722102717.2247698-1-oushixiong1025@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDnt9KGZ39oRKU8Gg--.16241S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWrZFWfuFWDKry7Kr48Cw4xCrg_yoW8JrW5pF
+	ZrA34UKrW8KFZ0qFZ7Zws7Aa45CanaqFW0qFW5W3y3uFn7JFnrtryFkFyDZFy7ArW7ur1Y
+	qryDCFWrCryUKF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UWlk-UUUUU=
+X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/1tbiXQWSD2h-YTh75QAAsV
 
-On 7/21/25 13:12, Chen-Yu Tsai wrote:
-> On Mon, Jul 21, 2025 at 4:31 PM Laura Nao <laura.nao@collabora.com> wrote:
->>
->> The current lvts_temp_to_raw() implementation assumes a negative
->> temperature-to-raw slope (temp_factor), which holds for the SoCs
->> currently supported by the driver. However, this assumption breaks on
->> MT8196/MT6991, where the slope is positive.
->
-> I don't think that's really a problem. The formula is:
->
->     temp = (raw * factor) >> 14 + golden
->
-> If we move the terms around we get
->
->     ((temp - golden) << 14) / factor = raw
->
-> Or
->
->     raw = ((golden - temp) << 14) / -factor
->
->
-> The calculations should work regardless of whether the factor is positive
-> or negative, as long as the intermediate and final values are within
-> the range of s64.
->
->> Add a variant of the function that inverts the calculation logic
->> accordingly. This ensures accurate raw value generation for temperature
->> thresholds,avoiding spurious thermal interrupts or unintended hardware
->> resets on MT8196/MT6991.
->>
->> Signed-off-by: Laura Nao <laura.nao@collabora.com>
->> ---
->>  drivers/thermal/mediatek/lvts_thermal.c | 12 ++++++++++++
->>  1 file changed, 12 insertions(+)
->>
->> diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/mediatek/lvts_thermal.c
->> index db83137c7537..3c34956e37c1 100644
->> --- a/drivers/thermal/mediatek/lvts_thermal.c
->> +++ b/drivers/thermal/mediatek/lvts_thermal.c
->> @@ -296,6 +296,18 @@ static u32 lvts_temp_to_raw(int temperature, int temp_factor)
->>         return div_s64(raw_temp, -temp_factor);
->>  }
->>
->> +static u32 lvts_temp_to_raw_v2(int temperature, int temp_factor)
->> +{
->> +       u32 raw_temp;
->> +
->> +       if (temp_factor == 0)
->> +               return temperature;
->> +
->> +       raw_temp = temperature - golden_temp_offset;
->> +
->> +       return div_s64((s64)temp_factor << 14, raw_temp);
->> +}
->
-> Here you have
->
->     raw = (factor << 14) / (temp - golden)
->
-> which, barring integer arithmetic limitations, is actually the
-> multiplicative inverse of the original version.
->
-> So I think the commit message is misleading. It's not negative or
-> positive that matters, but that the hardware expects the
-> multiplicative inverse in this version.
->
-> (or the downstream code is just botched.)
->
+From: Shixiong Ou <oushixiong@kylinos.cn>
 
-Right - the positive temp_factor on MT8196 is one distinction from older 
-SoCs, and I initially assumed that was the reason a different conversion 
-formula was needed. That assumption was partly based on the original 
-lvts_temp_to_raw() implementation, which assigns 
-((s64)(golden_temp_offset - temperature) << 14) to a u32, losing the 
-sign when golden_temp_offset is negative. However, even correcting that 
-to preserve the sign doesn't make the function work on MT8196 as it 
-still requires using the multiplicative inverse form of the formula. 
+The call to dma_resv_assert_held(shmem->base.resv) is duplicated
+in the vmap() and vunamp() function.
 
-I'll reword the commit message to clarify this.
+Remove the duplicate call to clean up the code.
 
-Thanks!
+Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
+---
+ drivers/gpu/drm/drm_gem_shmem_helper.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-Laura
-
-> ChenYu
->
->> +
->>  static int lvts_get_temp(struct thermal_zone_device *tz, int *temp)
->>  {
->>         struct lvts_sensor *lvts_sensor = thermal_zone_device_priv(tz);
->> --
->> 2.39.5
->>
->>
+diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
+index 8ac0b1fa5287..10e20209f3b2 100644
+--- a/drivers/gpu/drm/drm_gem_shmem_helper.c
++++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
+@@ -355,8 +355,6 @@ int drm_gem_shmem_vmap_locked(struct drm_gem_shmem_object *shmem,
+ 	} else {
+ 		pgprot_t prot = PAGE_KERNEL;
+ 
+-		dma_resv_assert_held(shmem->base.resv);
+-
+ 		if (refcount_inc_not_zero(&shmem->vmap_use_count)) {
+ 			iosys_map_set_vaddr(map, shmem->vaddr);
+ 			return 0;
+@@ -415,8 +413,6 @@ void drm_gem_shmem_vunmap_locked(struct drm_gem_shmem_object *shmem,
+ 	if (drm_gem_is_imported(obj)) {
+ 		dma_buf_vunmap(obj->dma_buf, map);
+ 	} else {
+-		dma_resv_assert_held(shmem->base.resv);
+-
+ 		if (refcount_dec_and_test(&shmem->vmap_use_count)) {
+ 			vunmap(shmem->vaddr);
+ 			shmem->vaddr = NULL;
+-- 
+2.25.1
 
 
