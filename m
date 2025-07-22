@@ -1,78 +1,54 @@
-Return-Path: <linux-kernel+bounces-741147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8661BB0E0A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:36:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E591B0E0AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:37:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D52D8564798
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:36:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EBB3AC04F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5559C278E5D;
-	Tue, 22 Jul 2025 15:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622D527935C;
+	Tue, 22 Jul 2025 15:37:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Zo/i6WCf"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="TntS18SD"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E05279323
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 15:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7166124DCE1;
+	Tue, 22 Jul 2025 15:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753198579; cv=none; b=HGBtC4CoqxBITlVXnL4hLGkMWvvmmediR7QSYCIdVE7gDEYexpTpAKZMKhIB6Tacw+hRSNdBOXFdlYNENBU+DUzNnGRgZKumZOwkA06+HEkecWHLkRzWI2uzZuPT9Sm22Ms18yPJgPg5klIhoHtivQ7jGneo5cIxfpymaltC8oo=
+	t=1753198639; cv=none; b=AH4xoLuooCjuKusGk7kzEUaEdU64QQg46Z0RE5ZWDpvM17v5kiKy1AHnGDJJmX1N2RH7kvhrb8yhTrFPNTUStdhhRGXLeC85z4eToXWyItfazBTcYH/9uOS2EfeTm+Qc1gDVPzXkRbQlR9TwcdLuQkL8XygeLpE1bFf1p6iVhzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753198579; c=relaxed/simple;
-	bh=CpImRA/MNF6ygemwiM580UfVJuGAeyS4pEPmQRxmmDo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G7fpqtlAz+RNEykLgfyrXncfoMwlvhmTU7NAEPtcVamrHzaXI4B5LldVxZAGn0W0xPuamr81qFCtsw1rywc/RzR8kiCGd2q8og9O/N+gdL/vx2nHkhZwnukLngWc8x0V7uVaENS9oq/m6WUqAAHHrAkXJ1KdLuexZ6PV/m6rYe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Zo/i6WCf; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3df303e45d3so17794255ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 08:36:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1753198574; x=1753803374; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kUVC54+EoQx7608UlnTnCAf9wCePVkITE/xRBCso7Co=;
-        b=Zo/i6WCfVXp0KIuhM0en9xdu89youOSfL62NH1Uj+boEEVyJ3UiDgJ4cAo5cfIii4O
-         NA4JZNhRBNs1Oo2+NlWY0QjavZ9rxizngn91OmECvqieE7EaXCE2WPoWqCyRbDH1MUNK
-         1kdl1kSpcn8j9KT/ej4Rz26Jo84I3WK3JNTPjioxIcpulJ7I6IfIhklk+qnCE/A84fzR
-         tSsJmgvVWEISRtFrjtmqBip415O8nsqzHxrZRuxFavLtW/ECOXnU9qeUhaDJVZrNQnD6
-         SK2fE67u/M0TyKIxuNt1j0fY24dC4zQyyh8GWKAFeBKqqmc6wzXObA3HoEyRE4hVd5xW
-         XelQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753198574; x=1753803374;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kUVC54+EoQx7608UlnTnCAf9wCePVkITE/xRBCso7Co=;
-        b=pdSEwurQh2psm/g8qRLhBnGikRb20pdt0rREWgQAQGT1511+eehGRIQ8QCQmpIdXvI
-         wJnaWOq9XGrMpDGiGcPsbljEdwiZECaH/JMa5z7kth0noKLFULKkYKKm+QvPWq2fFmms
-         I+mBGHuG6MH8Q6mZ2/cizsxLi39qoyuXQ66KjzToT0e9xhdBNuISSi3YbwTH8bZ523N/
-         /MbCjDwliL5SRRQDUPsLiCDTsQnXjbYh73E2FhpSMG0hacyuZagXj46s3k1X0wBFgTQl
-         fJltvwBum1j4QTdVMFH3RO0kqUOSM8wjd30R8R/LnmUlgvemG4doRFvQmDijrqcYP2M/
-         1Taw==
-X-Gm-Message-State: AOJu0YxV+yCunOj+uT7ahLUXv/Mbh65IE4oa9JAk/V4R1WEjOFWfEmd1
-	0LiJ34ECBeTOYxrfagag192m6GFs5yunR1r32c6vnt5hwacvYSgMOfcrJ6muzhj4wsg=
-X-Gm-Gg: ASbGncuw6RZxD/yRfI/oSojAnqXGeMMF+uVoojUuioTF0PEn39KfnPlpeTuUzHyOiF5
-	eRGKsFUsh8coNHHx99DUzhiNerkZSXUGm0QrFXvXx6MxXevhyPEei6Xj9GM3VfAUka7ZHHscrRR
-	gHUkbZSHCkepZ/FfAO8QcKn81HvEtq7zo4LauSJRQUb5sYUBZRvpK12X7lhpGp9UHoN/JyttkD+
-	znRUa1abpYuzmjlaJlPqbd17Sv8zuJVxX1AbRvDzG/Cl7g8yuqjMt4zwGyH5yVTFTBihNg0Wnlq
-	WmzQxakBgzDUa2MJCSRhWTvhqBl8etM6vJwaJn9W3hlMQWesHaatwdbrv2LCDi2zcQFgS2IbbP7
-	p8DG7nD7jssmqLzCJwg==
-X-Google-Smtp-Source: AGHT+IFt3/mKsFa3R4egXJfuUVvj6bEsTKiwwleHCqVW2MoDc3Ifov3VrbtC/7+i1FAZqWMxxaVthg==
-X-Received: by 2002:a05:6e02:2786:b0:3dd:8663:d182 with SMTP id e9e14a558f8ab-3e28d49a89amr242572365ab.13.1753198573713;
-        Tue, 22 Jul 2025 08:36:13 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e29816021asm31566225ab.16.2025.07.22.08.36.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Jul 2025 08:36:13 -0700 (PDT)
-Message-ID: <496a7fa6-0850-41b1-9528-3448a562f25a@kernel.dk>
-Date: Tue, 22 Jul 2025 09:36:12 -0600
+	s=arc-20240116; t=1753198639; c=relaxed/simple;
+	bh=9vRudx1kT9fm0OhYSnpTEwatIGsSFR9B5AOqsXa3Mdw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=DllkTSwPDjcqD6b8yta85UsKdzH5mBt961ONF6X5lEvhDPhL0mKVnCDLlyW750/OG+G7oMxvzrWWmaD1/xlKsIA6mrhJIEnQ7bRxKlPrA431sLJOqKL68lYVWwui/Dtu4Qiz2ZFw9X1/B0qxsye9T26sg9t8d46hrdbL30t1dNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=TntS18SD; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1753198618; x=1753803418; i=markus.elfring@web.de;
+	bh=NaK6/RFxq9QNHVkIk7snI9Kx/nnfVL4eDyfpZlhWR6s=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=TntS18SDmVH+ZTtQOt5/4Q6XyHUPsnU2rp8adTXXxk0ZW7WARSngDd1SbgD9j09L
+	 G80+CKxJ33SuqaJGsrz3eOieG7SBA5oSKgvBdnQuI+vWPQIz27o2jbxbo58NHoyY6
+	 ELiBhnyZKZlJX0DEsitQ5PdLBlt5RkjX0ozDPdNR8swFhnktC3Kur3v+47QJohADO
+	 RIIqfuTP/8A/P1d+DtgaPk2SMF0sHUACx8hf3n4PJxuKI4YcHM5qhVOtQPDQCyiAq
+	 9OLILo/CZoR3yOhDv0jy3TLT5cIjgdaMHLmgl9WmH5WHKXBnr3qzf/SpHP44bdrK/
+	 tRiZVR51TSkFwqm1qw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.92.215]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mf3qY-1v698l2nn8-00i12h; Tue, 22
+ Jul 2025 17:36:57 +0200
+Message-ID: <46fb997f-ba83-44af-aad3-c8406fc7cbea@web.de>
+Date: Tue, 22 Jul 2025 17:36:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,131 +56,120 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] comedi: include poll wait state in busy assessment
-To: Ian Abbott <abbotti@mev.co.uk>, hsweeten@visionengravers.com,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <de833d76-0176-4514-b102-dc83bf93491f@kernel.dk>
- <4c4400e0-dd8c-4694-8030-f35273e5522d@mev.co.uk>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <4c4400e0-dd8c-4694-8030-f35273e5522d@mev.co.uk>
+To: "Andrew F. Davis" <afd@ti.com>,
+ Basharath Hussain Khaja <basharath@couthit.com>,
+ Parvathi Pudi <parvathi@couthit.com>, Roger Quadros <rogerq@ti.com>,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Conor Dooley <conor+dt@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Diogo Ivo <diogo.ivo@siemens.com>, Eric Dumazet <edumazet@google.com>,
+ Guillaume La Roque <glaroque@baylibre.com>,
+ Jacob Keller <jacob.e.keller@intel.com>, Jakub Kicinski <kuba@kernel.org>,
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Kory Maincent <kory.maincent@bootlin.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ MD Danish Anwar <danishanwar@ti.com>, Meghana Malladi <m-malladi@ti.com>,
+ Murali Karicheri <m-karicheri2@ti.com>, Paolo Abeni <pabeni@redhat.com>,
+ Richard Cochran <richardcochran@gmail.com>, Rob Herring <robh@kernel.org>,
+ Sai Krishna <saikrishnag@marvell.com>,
+ Santosh Shilimkar <ssantosh@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Simon Horman <horms@kernel.org>,
+ Suman Anna <s-anna@ti.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, krishna@couthit.com,
+ mohan@couthit.com, pmohan@couthit.com, prajith@ti.com,
+ Praneeth Bajjuri <praneeth@ti.com>, Pratheesh Gangadhar <pratheesh@ti.com>,
+ Sriramakrishnan <srk@ti.com>, Roger Quadros <rogerq@kernel.org>,
+ Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+ Vignesh Raghavendra <vigneshr@ti.com>
+References: <20250722132700.2655208-3-parvathi@couthit.com>
+Subject: Re: [PATCH net-next v11 2/5] net: ti: prueth: Adds ICSSM Ethernet
+ driver
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250722132700.2655208-3-parvathi@couthit.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Q4vxNDLCNYUx/MWdxPaTqvyXy0TYyiEQrItXy+6yjhKJeurUc39
+ iabfAOmXG6R1Xij5VZILZVi7owC38NoG9RQqTd8jQo5OTvqZOfsSslyjU806hovQC1yUsoS
+ arWmk5++wRYYiZNSh2RbYYajjEWMp/cYSi2YtXLSPzhhFNRXNyztmCHgBynh1dQzAB5amxh
+ LR67e9vxzYMKjqKVsKR+w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:N1nOrVbTMis=;/rgcWO5i1NflaRGjsOEhKmS3+02
+ 5yjf3CM6gNDTAetsKK5yVS4PXZdqaXV3PQVPkGmFa69VCGsaQJEee4B6xET4HsDfzlF6UIQVC
+ FOErFhrr2Yg5gOI3QAY/maaSNIKDTS4gLOtxol+olVNgpYrhCGLaQGIQYgm455gasowDYnR8y
+ 4aJBuQI3YKTuAZnYw15NJXy+WsBLJoZfL1aP9CM/Y4X1a/toel+AuyI6iFl6NLjHODkJ2iqUH
+ aJWEmIY7qARh9TQUdVGsQmVbGJyFIQ26BjzSTsmdKij27KDs7+1rZrzXko9NaTGVnJ1MWomd7
+ 8vI5PYeWMfA88Rlj1+LWzURQOklk1/2+8wrW/bv08IEA4rBdGf8Yc1D7dIn3aiaDdsiq4NuH6
+ sgDxoQJL2ol/GUkW6y4h8sctBglWMvY3jN+lsAVSMKF7KBgtJXbB4HDC3ztVOxhNJHzJUPQLO
+ 61a+rQDHVkdYEpLEqPqFBMz1R17vuyl4LRUjvn0IerlGhn3iIW/osgwLAF9hmrLlPMog/eJf/
+ 1foEdJStgbJrA/l+rrK0droZlZwM5+UkZWwJKx8mJMgYP5T22z7H6vfH8IRiFbf/cFtT7FrOl
+ ZF4hah54KUnmpnfNfwD/KsUsi21MdZUiw7ikHAHWQomHFLXDvyBGk2ak5DqUZYAMMA6sPhy9s
+ mDafh2DrcgAF13UJCZ9LmNShogccEwN9DzYCl7G1slHyQk7Bf9aFKQjvaAZ9zoI0vL8tvk7Zg
+ p1Xgmx+VMC5056LkCHDk7GmmGtdXnH4FwN8yGJVhDDYmXbQ+q9Y764cBNSD+gdGBHPr3fZq0z
+ zmxQnkaEOrauaTT0mBTPTgDBYHuXA+Nrys+Q52+aASufLCMkz0TLrkdIAsdiaJVIVyH2Rf0xS
+ 0/kyllivkrrF3SZbrRZyIGjMlMC0Gu9D2XKDtzMYV1bfhKQEoGVnNJNhUv591VEayomX93aL1
+ Xl80okd1rTXFS6gHJg0T1gMQ9x1dbPqr04YoVeqRLlKJHxCdyEKDO1sMEdRCOaBm2ckWcpWj/
+ 2kbC/hYdZxiX2OUyLI06bhXVLNbXoguO/cQbFb+AalHVQBMmY3OSBgIWIXrAmCxUyDyIW+uOF
+ 7d43wNe5vd4ThRG2awuulyl5BSz+VNaGWi8hl6m1nK/7DIF6cm8Ph5p07eylfjl+1OdLsSlHT
+ vkS+prIBoU+3RPxd9G57Tkmcu1V24Qdr1VmO+WB640E3xjkG25L1xBjjXdGkN39bss2EXiAFk
+ KSuW33TRaVJRC5BE2QCiz9j963V7FUE915pmrnoy4yLAEDqb9h3i0vTfonvZSFFUGPdxJSQnW
+ z+rGfC714H4FP78s0mt0i/aZKcyYpd8EpwrbAI4vCuN4lfvfUGZdp7QjuHmz00CNBM6FmVMCH
+ 0T3NfpKzf9WrcRS1Tn/GWFpAis0zKX3hV6NRkq3kf1LwFAMZm7nm5QmACR0V4QD2EAysmrgQ8
+ aM2QSJJPo9as8fz/Wq8Ojz6YDX5yFo/tXJEZCChMoI6P7rUobIONIwoWGv2tUxcyAh0p+sC6f
+ wWZ9zD97/FLmZlVTfQ20LzdyP+2H/vtmCOxYC40hm43jT8Cq/Pgx3QqsRjpe5eMVTF2p3bvmt
+ 0d1SV3A/AJNB30CB0SNH0TLYp6z1PRu96fJQTHTuFRsnC5DWVHytE88iMiOtYXJKmidjEcjB8
+ ZmDNou4P7vtjDj8I9q/XeAFOjqCBqV4svTsk0zNayt9cqd1fkeQuKbSZG0Q6P6WitWCJX1JZa
+ iRskRMyxo6oanHKBVmZfEn+MV95uhzpXrSw/d8Kyna8JCTT4qY/vcdzH1D2S6ryZgtLbk0wwr
+ OcyNggzqYXDc6dLMUBAHiSHPeGzolvaMBgZ31JaGPyuhj7kHEUo5OSyjkV/+HG7vjd/UauinS
+ TvqnFDXYpz+bw8JywwZieoaFbiFZiLuksxjVLSQMpPxVeYZE5iI+g5sPRiewAVnCFGF8nuB55
+ F53D9i5q7f50GK3hIUW2gkKd6jwh+Qco1KbxyieoqQOiFIxB9j7hzkL1Ystg23bPNiJQr+obU
+ I/En/QI5OhjSCNkiqfg+h5hTS/J46To0IhOfDGHtTK75kyX6deuQtnVWdRJ18qsOn0NqfI+o9
+ S0f2EG4/54T87PJJWHWySJop3sY2/2/gcY/d0emIGndfPNlZ8IhSr+bMAo0jnsGHXov6ki1mg
+ CZ4stxlsvVT8PPJR1EWC/fSa8ti5wVUWOrTvqQ4DByTu65L8pttkNmejHWK3tSbzCaTmSiXvS
+ kA4QcisY+Tad3VK7LUCIyfRXJ1DblEaKE1TqAsB8qQz899jdhFsyGifWa+jEj19ySTACUimyR
+ MoXrNCZ4XIG942/a+Lvs4DNk1isC9Frel+fCiL5zg3fPeRlkxrUMpReS9HmdpKRsmpGaEByvg
+ UBIGSHmaTaoxvjy1ZgglxZY242off933R+NKXVA3W6caV0cdtohajilpEVbkhMNP1u6LLnoXW
+ D/0mqnTl6z1QqRkXJmh7sg/s41WarGC76kedLnhFfU2Gzr04woeEZ0Q4GnGfvAjYUd+Harclj
+ khkOEqyv14s0B3tcu4rUEgRCVCK3odMpQw1UVMKdqqPw2KZCIE70RN2eZXU41VdCKqFKUykuk
+ vf1gVBl6PurJ/2d9aXjuJJKC+8IUVFY1mTwUr8AE2L5eHWZbvDfoLZmDhN1k60VYHgPix4wb5
+ OR6wAgLuE86ligtCqpgEzCYueAb6X5/QSbdjdwJHNE3wMlVOCzB12WQhbSMARyzr6DKckKMJD
+ Kx7GgTJ+BwjMt2OtQZSB5P3D1FlWYGWtzXXhvLSM4NvrLu4xKxyZ52rL3Bo83PdAn9bnLaKf1
+ o9eUGtnfJd7lIHeeRdflaId9ikQxG3SSrEtYZKUGTUXsKQK3+/EFAg4IfCzc3Vy6ElKWZfqJZ
+ kbom7J5CVGJQF+qL781CSfvMSuvKYfXjJQP4NSpf3NUxhvXQKAWAGSXEeoYB2p9cm2dJ/tWVk
+ MSzggk47+gRVZ0q2PAvcURoANzkurZZw73D6TG++O9gE17oX6FuOqCvjoEyB7z1+CZ9QtHGnl
+ 81t6FYS3HCiZ92Uw2NBzSJkB1r5n3CrJi5AsVoioA6kHKSJZx1vYWZqcFjuNoq48um58IV0by
+ OT1jTkYOHF4tz/WFCL7hwX+04qGdhBZVXbcfWPxvsTabxU4utTSYHBqgwtao1ng0ded5ZyA9D
+ kEOEBBvksexTet2v08Ke6CP27Hxs1DJCbOEasFhy0fdW6IRCGFJM3C5fFKa5Vc/HQEGu0GEzq
+ IZ2Ua+zSQdMgELq4riKw+u7XdUqPZan78xR1IUK0+JPWn59QqNShJHNmgEzBMh9B83M5r8Vbm
+ C2O4vIRwNbIEdSHcKGzewN8KgU6rLAWwOZkGJM8iLvCL+tkunw=
 
-On 7/22/25 9:29 AM, Ian Abbott wrote:
-> On 22/07/2025 13:49, Jens Axboe wrote:
->> syzbot reports a use-after-free in comedi in the below link, which is
->> due to comedi gladly removing the allocated async area even though poll
->> requests are still active on the wait_queue_head inside of it. This can
->> cause a use-after-free when the poll entries are later triggered or
->> removed, as the memory for the wait_queue_head has been freed. The
->> notion of being busy in comedi seems mostly centered around sync
->> syscalls, where the comedi subdevice stores the file in 'busy' as a
->> marker. This is obviously broken for things like poll which can be
->> persistent across syscalls.
->>
->> Rename is_device_busy() to start_detach(), and move it under the
->> dev->attach_lock. The latter serializes it with poll attempts. If
->> start_detach() is successful, then it will have marked the device with
->> ->detaching == 1 and this will prevent further poll attempts.
->>
->> Similarly, have start_detach() check for active polls on the device, and
->> return busy for that case.
->>
->> Cc: stable@vger.kernel.org
->> Fixes: 8ffdff6a8cfb ("staging: comedi: move out of staging directory")
->> Link: https://lore.kernel.org/all/687bd5fe.a70a0220.693ce.0091.GAE@google.com/
->> Reported-by: syzbot+01523a0ae5600aef5895@syzkaller.appspotmail.com
->> Tested-by: syzbot+01523a0ae5600aef5895@syzkaller.appspotmail.com
->> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>
->> ---
->>
->> diff --git a/drivers/comedi/comedi_fops.c b/drivers/comedi/comedi_fops.c
->> index c83fd14dd7ad..58b034e45283 100644
->> --- a/drivers/comedi/comedi_fops.c
->> +++ b/drivers/comedi/comedi_fops.c
->> @@ -782,24 +782,33 @@ void comedi_device_cancel_all(struct comedi_device *dev)
->>       }
->>   }
->>   -static int is_device_busy(struct comedi_device *dev)
->> +static int start_detach(struct comedi_device *dev)
->>   {
->>       struct comedi_subdevice *s;
->> -    int i;
->> +    int i, is_busy = 0;
->>         lockdep_assert_held(&dev->mutex);
->> +    lockdep_assert_held(&dev->attach_lock);
->>       if (!dev->attached)
->>           return 0;
->>         for (i = 0; i < dev->n_subdevices; i++) {
->>           s = &dev->subdevices[i];
->> -        if (s->busy)
->> -            return 1;
->> -        if (s->async && comedi_buf_is_mmapped(s))
->> -            return 1;
->> +        if (s->busy) {
->> +            is_busy = 1;
->> +            break;
->> +        }
->> +        if (!s->async)
->> +            continue;
->> +        if (comedi_buf_is_mmapped(s) ||
->> +            wq_has_sleeper(&s->async->wait_head)) {
->> +            is_busy = 1;
->> +            break;
->> +        }
->>       }
->> -
->> -    return 0;
->> +    if (!is_busy)
->> +        dev->detaching = 1;
->> +    return is_busy;
->>   }
->>     /*
->> @@ -825,8 +834,13 @@ static int do_devconfig_ioctl(struct comedi_device *dev,
->>           return -EPERM;
->>         if (!arg) {
->> -        if (is_device_busy(dev))
->> +        /* prevent new polls */
->> +        down_write(&dev->attach_lock);
->> +        if (start_detach(dev)) {
->> +            up_write(&dev->attach_lock);
->>               return -EBUSY;
->> +        }
->> +        up_write(&dev->attach_lock);
->>           if (dev->attached) {
->>               struct module *driver_module = dev->driver->module;
->>   @@ -2479,7 +2493,7 @@ static __poll_t comedi_poll(struct file *file, poll_table *wait)
->>         down_read(&dev->attach_lock);
->>   -    if (!dev->attached) {
->> +    if (!dev->attached || dev->detaching) {
->>           dev_dbg(dev->class_dev, "no driver attached\n");
->>           goto done;
->>       }
->> diff --git a/include/linux/comedi/comedidev.h b/include/linux/comedi/comedidev.h
->> index 4cb0400ad616..b2bec668785f 100644
->> --- a/include/linux/comedi/comedidev.h
->> +++ b/include/linux/comedi/comedidev.h
->> @@ -545,6 +545,7 @@ struct comedi_device {
->>       const char *board_name;
->>       const void *board_ptr;
->>       unsigned int attached:1;
->> +    unsigned int detaching:1;
->>       unsigned int ioenabled:1;
->>       spinlock_t spinlock;    /* generic spin-lock for low-level driver */
->>       struct mutex mutex;    /* generic mutex for COMEDI core */
->>
-> 
-> Thanks for the patch.  I'll post my version shortly.  One problem with
-> this patch is that dev->detaching does not get cleared.
+=E2=80=A6
+> +++ b/drivers/net/ethernet/ti/icssm/icssm_prueth.c
+> @@ -0,0 +1,609 @@
+=E2=80=A6
+> +static int icssm_prueth_probe(struct platform_device *pdev)
+> +{
+=E2=80=A6
+> +	/* register the network devices */
+> +	if (eth0_node) {
+=E2=80=A6
+> +	}
+> +
+> +	if (eth1_node) {
+=E2=80=A6
+> +	}
+> +
+> +	if (eth1_node)
+> +		of_node_put(eth1_node);
+> +	if (eth0_node)
+> +		of_node_put(eth0_node);
+> +	return 0;
+=E2=80=A6
 
-I'm fine with your patch, no obligations on this one. Main thing was
-getting to the bottom of what that issue was, you know the code better
-and can propose a better solution based on that. I only wrote this one
-to ensure the issue didn't get ignored.
+I suggest to avoid duplicate condition checks for such a function implemen=
+tation.
+Can any code be reused from another function?
 
--- 
-Jens Axboe
+Regards,
+Markus
 
