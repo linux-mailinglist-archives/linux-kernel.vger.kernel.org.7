@@ -1,115 +1,292 @@
-Return-Path: <linux-kernel+bounces-741431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B82BB0E403
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 21:18:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AB28B0E405
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 21:20:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAA607B47C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:16:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4077F1AA8230
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:20:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50561284694;
-	Tue, 22 Jul 2025 19:18:17 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0865283CB1;
+	Tue, 22 Jul 2025 19:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="UGzAW7iV"
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30DA17C224;
-	Tue, 22 Jul 2025 19:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316AB280305
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 19:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753211896; cv=none; b=r2nGx8lhAThD5UcxjJ1LsYvQzDyrOzU6fX5qJAm2mqArhd2kkjcKHQv7ApYzxo03BZ8LJPaAOZENoMWcK2ikcfTLjQ4NaYJLKRQ0Im2VKrU363grVI+iFBoEuvcyrYfYtIVGZ4knBV8w39NuqMzMKNUNYrnKgTI9g1NcjFCRL8k=
+	t=1753212020; cv=none; b=nf4PDD3ht8pFvT9lGcG52ECNb+CivomqLkCY1RMo6Rg8dkHLrqOvd9FHF5o9JaSNLG+MsEgX/OC2Rc7/4Il/+Q0bZGK3lhAtaQq/dmyRe9W4aqEA4OZFYZdp76JALzis8LXKYvye5Hoi20lvtdqXA9PJnfJ2qYeso7imEtOCC8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753211896; c=relaxed/simple;
-	bh=9R6Ax9GxruuQjRfCABR/xn3kzf0bjrP5zgk181FzYXY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=h7AU/77YFkt+xfej9w4gU8weTHNY1fug4jQB4/gdoNxRjhPhTgTu/a0h5JseUQRuMMnEaDklSOjnqhFIQkofhgubDFVmyYeEfAvy4A1mLQfszrExvEVNsFOs1j/7rvuiTLmXJojhaUJykSjlIGgLscbOO4Xx2IgvKbPmj66oztQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf01.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay09.hostedemail.com (Postfix) with ESMTP id D46E2804FF;
-	Tue, 22 Jul 2025 19:18:05 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf01.hostedemail.com (Postfix) with ESMTPA id D1A2A60011;
-	Tue, 22 Jul 2025 19:18:00 +0000 (UTC)
-Date: Tue, 22 Jul 2025 15:17:59 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Jose E. Marchesi" <jemarch@gnu.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu
- <mhiramat@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri Olsa
- <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner
- <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat
- <indu.bhagat@oracle.com>, Beau Belgrave <beaub@linux.microsoft.com>, Jens
- Remus <jremus@linux.ibm.com>, Linus Torvalds
- <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>,
- Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>, Sam
- James <sam@gentoo.org>, Brian Robbins <brianrob@microsoft.com>, Elena
- Zannoni <elena.zannoni@oracle.com>
-Subject: Re: [RFC] New codectl(2) system call for sframe registration
-Message-ID: <20250722151759.616bd551@batman.local.home>
-In-Reply-To: <87jz40hx5c.fsf@gnu.org>
-References: <2fa31347-3021-4604-bec3-e5a2d57b77b5@efficios.com>
-	<20250721145343.5d9b0f80@gandalf.local.home>
-	<e7926bca-318b-40a0-a586-83516302e8c1@efficios.com>
-	<20250721171559.53ea892f@gandalf.local.home>
-	<1c00790c-66c4-4bce-bd5f-7c67a3a121be@efficios.com>
-	<20250722122538.6ce25ca2@batman.local.home>
-	<87jz40hx5c.fsf@gnu.org>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753212020; c=relaxed/simple;
+	bh=uC+cJzF1sL7UGXFBRf+LsG4ZqTCJIrhWBTRWb6aCCks=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OSMEG1+jyVUxhFkZ1eCWt3aifGoEs9AKX3kUn0Wi6RElt9UouZo/at21eGB02M+y2asdX2QHvPPEUJxm+KoSRzaFWuBaCvGa9c8z4uEg0/bodTzMG1wh09GrXeRyab3y3gpo2j5ho4t311UPUo5DcGt1pX9JBl3JuElJ9a6OxpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=UGzAW7iV; arc=none smtp.client-ip=209.85.167.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-41bc2668f46so1511470b6e.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 12:20:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1753212016; x=1753816816; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZDtejlZx5yEfYYq9UmbQwFH5oHPr/mFoQRNc2bfGPRA=;
+        b=UGzAW7iVKUYuPNK5lACiO6wS/iY0AA18X/umIlesrk0FPCIS0Y0g6spW27mpHWwd92
+         xtSyfK8sKrfxoDiUekkrbzhH8JdoLjsc6yAjJRX3BrecQ+siYyDJveF6ajQkFAJIW84/
+         22WPcfJBEuQTsNVzYXzh3JwdbIwoC4FX0fF8PRXAGsFD3ReBqoKix4+F5Wio62UcloOK
+         xxcMWrNvQkRykNRtldpeq7ZSMGmm8Wk/Gt8buh2TX5VN0TJZy1OSasFfreh0OySP2B/t
+         mqoJC1jWyfcUWHyox3aYKm25gl6kuXfEW6BmoX9LjNCD5a4VNctgB+QMd5tg4OHlQF9N
+         FEKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753212016; x=1753816816;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZDtejlZx5yEfYYq9UmbQwFH5oHPr/mFoQRNc2bfGPRA=;
+        b=OYMXTsF26P2r1W8HjmVyuWIHxZ4pdRz61JRoVInbO+xxWp2B3YuxFuS1wlBqucI/Vn
+         p+omRRc5VWO8zlYDD1OT7RdSN/Dol8OL/2ZvpSmK3KbD3+n01+KBb6HKfxByX9odjOsd
+         G3lmQL18k+rQzdHWLjAqsmeTwVXns6PeSX5NiasPp9hX314jXrVOhrDymwfjCQWK4uRC
+         kUksrHG/Jgq9TK7q6OIb+WnZ1e8/EkfDRGm2ef+e2EKZs11awfvercPBhAzHdKTHJYJ+
+         ioAwSk44HG7LCX4zlke9i/9Q4xElNcKWpJGk5xMKphAjMud/k7M3rO7xPEazo97UqNC9
+         BlNg==
+X-Forwarded-Encrypted: i=1; AJvYcCVDzczTk8y+bK94ElB3prlGmdk8apPG3SUrjp6/GG+v8gBPXhYIYZJJ3nV9TYExg/21kIEn8LVlBUa3wTc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQwdgGDyNEXP7+01hnczavvzaMe2NFLTfQrMp/BgHSxW2sGlCx
+	IjhOYgDoK34NdP2HHeZX/EKOJyZHnSnHtjVnAurwsToENDEwlc07o45chVFHZog+azqgqvWDJqm
+	JT1sy
+X-Gm-Gg: ASbGncsbk05ceMRJkLg55r+JJvZWoCUyWjHYyT0M9yC9IHWd5aaC+qKtC7/KjobC8l5
+	h4fNJ0D2AKzAK2WTHqzmJqVk2toXBEamNy6I8i7tnMclvBgtzekSVoMq0vFQHsGUA1K5QqwJkcl
+	jXcGhy+RGPSqf6iHfzEnT4Imhse/bOri2GXg0prO3PPLv164S7Gr63IZfCzOfYPDlTQiv0cyEZT
+	09Ffx7ZUoYiX77H2W1EMnViM09teaEFhM8b+EMfQzR3O3NziKBL7U5S/yaeEkNG1z7pXel0PZU0
+	bX+/N9skz5oqjoC6o8u9Us/83ukW2cx8pWDcSs2zsSC2AhOaazUZJkiqUlzoHXP7a9oy8GtxRFY
+	LMfKtvqs62tEWqk+d7sooBLkLtxjR8G08pU3clzg=
+X-Google-Smtp-Source: AGHT+IHdTAwakxYbl/tQkk84omytF+ZWmZXptDfN6ewyRtV6WT8zT92E79UtxFwipK0+X4mNs4CluA==
+X-Received: by 2002:a05:6808:170b:b0:40a:bcbf:2d83 with SMTP id 5614622812f47-426c6919360mr415042b6e.28.1753212016058;
+        Tue, 22 Jul 2025 12:20:16 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:2a79:4b55:6a01:85d7])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-41fd10c25d1sm3294381b6e.9.2025.07.22.12.20.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jul 2025 12:20:15 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Date: Tue, 22 Jul 2025 14:20:07 -0500
+Subject: [PATCH v2] iio: adc: ad7173: prevent scan if too many setups
+ requested
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: D1A2A60011
-X-Stat-Signature: ybsyzp1dr8cb6ziks7idajrbc9gw9gzx
-X-Rspamd-Server: rspamout02
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1979V1hD2x9nTSMk+tj+8Oc7hlb+oyCHjQ=
-X-HE-Tag: 1753211880-344321
-X-HE-Meta: U2FsdGVkX1+dUvzKuwYx+6/w3W9bHUQsFKKf9bOQxhmxbU3BIJvAmm9SMNfnMGL2ZS/extKenm9CxsxeotXsVGrgn75e0b7YdYcKTzmNexkzqSV68BuTWmh/TnDzTQrTtD+/G0MX1Klou5nM1AFtEU28hf8mpdSc/3BVTOpImg9R7hWmtU7ZcTilXzPXmFqhhBFTE1s1jmq/3cENJMpUO0S/PjSy1jtoECRx4eZoC0zzGBR+Pp/P9spUMgEit9DpEXOp1s+Bt2JifOwQ6qabmnBLNg9okGNBOvw6xZwfhTxUpPNINOdUKFgln4Guzzism+iUPq+re/fpE+Kp804AmibZrq0O/YJM
+Message-Id: <20250722-iio-adc-ad7173-fix-setup-use-limits-v2-1-8e96bdb72a9c@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIAGbkf2gC/5WNOw6DMBBEr4K2zka2+Tikyj0iChtvwkqAkQ0oC
+ HH3ONwgxRRvNHqzQ6TAFOGe7RBo5ch+TKAuGbSdGd+E7BKDEqoUWtTI7NG4NkVLneOLPxhpXiZ
+ cImHPA88RhSmdspWp9E1AMk2B0u58eTaJO46zD9t5uspf+59/lSiRCqnyXKjaFcXDmq1nG+ja+
+ gGa4zi+RZ1bJtkAAAA=
+X-Change-ID: 20250709-iio-adc-ad7173-fix-setup-use-limits-0a5d2b6a6780
+To: Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6769; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=uC+cJzF1sL7UGXFBRf+LsG4ZqTCJIrhWBTRWb6aCCks=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBof+RoWv/qA6bCB8XGnnXfSG3My+OYmKEqpdJQe
+ +AajWj2iKCJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaH/kaAAKCRDCzCAB/wGP
+ wFmiCACetjpVLz21pQLERkdVwFqPdvTArL/PHW/41Atnh19fh9Eow4HBO5eSsOi5Chf8G7ncu3G
+ RJG+h6GetKYadh2EphtShI6HLnIBrL9ZiphmMrOErdIUkd/QdjdaudfNwgMJvRzq+AwWkd8hmu9
+ M2viDwGZuYRiHMaq5kqMKCj94d4ugGoCw0aATeFzIRNXnhSYXiBo1Dt+ko+VtAOiPZoOpJEWCpu
+ F651va4E/McDQcLe+B5RFX2sxgD+UnzQ4KJitsV8TQ2ItHTdxIfmD+ITmcq2M2o0Ck1NE0hUUeW
+ 33ECjfjimPxA2WVtKxS8fru/IQI69fxo1Jo74ikYvs8477tq
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-On Tue, 22 Jul 2025 20:56:47 +0200
-"Jose E. Marchesi" <jemarch@gnu.org> wrote:
+Add a check to ad7173_update_scan_mode() to ensure that we didn't exceed
+the maximum number of unique channel configurations.
 
-> I think glibc could "register" loaded SFrame data by just pointing the
-> kernel to the VM address where it got loaded, "you got some SFrame
-> there".  Starting from that address it is then possible to find the
-> referred code locations just by applying the offsets, without needing
-> any additional information nor ELF foobar...
-> 
-> Or thats how I understand it.  Indu will undoubtly correct me if I am
-> wrong 8-)
+In the AD7173 family of chips, there are some chips that have 16
+CHANNELx registers but only 8 setups (combination of CONFIGx, FILTERx,
+GAINx and OFFSETx registers). Since commit 92c247216918 ("iio: adc:
+ad7173: fix num_slots"), it is possible to have more than 8 channels
+enabled in a scan at the same time, so it is possible to get a bad
+configuration when more than 8 channels are using unique configurations.
+This happens because the algorithm to allocate the setup slots only
+takes into account which slot has been least recently used and doesn't
+know about the maximum number of slots available.
 
-Maybe I'm wrong, but if you know where the text is loaded (the final
-location it is in memory), it is possible to figure out the relocations
-in the sframe section.
+Since the algorithm to allocate the setup slots is quite complex, it is
+simpler to check after the fact if the current state is valid or not.
+So this patch adds a check in ad7173_update_scan_mode() after setting up
+all of the configurations to make sure that the actual setup still
+matches the requested setup for each enabled channel. If not, we prevent
+the scan from being enabled and return an error.
 
-> 
-> > In the future, if we wants to compress the sframe section, it will not
-> > even be a loadable ELF section. But the system call can tell the
-> > kernel: "there's a sframe compressed section at this offset/size in
-> > this file" for this text address range and then the kernel will do the
-> > rest.  
-> 
-> I think supporting compressed SFrame will probably require to do some
-> sort of relocation of the offsets in the uncompressed data, depending on
-> where the uncompressed data will get eventually loaded.
+The setup comparison in ad7173_setup_equal() is refactored to a separate
+function since we need to call it in two places now.
 
-Assuming that all the text is at a given offset, would that be enough
-to fill in the blanks?
+Fixes: 92c247216918 ("iio: adc: ad7173: fix num_slots")
+Signed-off-by: David Lechner <dlechner@baylibre.com>
+---
+My musings in v1 might have confused things a bit, but my intention is
+to have this patch fix things well enough for backporting stable kernels
+and then perhaps look at a better way of handling the setup slots in the
+future.
+---
+Changes in v2:
+- Updated the commit hash of the commit being fixed since it was rebased
+  before being sent to Greg.
+- Fixed a few typos in the commit message.
+- Link to v1: https://lore.kernel.org/r/20250709-iio-adc-ad7173-fix-setup-use-limits-v1-1-e41233029d44@baylibre.com
+---
+ drivers/iio/adc/ad7173.c | 87 +++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 75 insertions(+), 12 deletions(-)
 
-As the text would have already been linked into memory before the
-system call is made. If this is not the case, then we definitely need
-the linker to load the sframe into memory before it does the system
-call, and just give the kernel that address.
+diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
+index 4413207be28f60a4d9529e3522f5d2fd6276bcc2..131cd1cf8a23c57dfeb156a96864e6cf2a2b6bf9 100644
+--- a/drivers/iio/adc/ad7173.c
++++ b/drivers/iio/adc/ad7173.c
+@@ -200,7 +200,7 @@ struct ad7173_channel_config {
+ 	/*
+ 	 * Following fields are used to compare equality. If you
+ 	 * make adaptations in it, you most likely also have to adapt
+-	 * ad7173_find_live_config(), too.
++	 * ad7173_setup_equal(), too.
+ 	 */
+ 	struct_group(config_props,
+ 		bool bipolar;
+@@ -561,12 +561,19 @@ static void ad7173_reset_usage_cnts(struct ad7173_state *st)
+ 	st->config_usage_counter = 0;
+ }
+ 
+-static struct ad7173_channel_config *
+-ad7173_find_live_config(struct ad7173_state *st, struct ad7173_channel_config *cfg)
++/**
++ * ad7173_setup_equal - Compare two channel setups
++ * @cfg1: First channel configuration
++ * @cfg2: Second channel configuration
++ *
++ * Compares all configuration options that affect the registers connected to
++ * SETUP_SEL, namely CONFIGx, FILTERx, GAINx and OFFSETx.
++ *
++ * Returns: true if the setups are identical, false otherwise
++ */
++static bool ad7173_setup_equal(const struct ad7173_channel_config *cfg1,
++			       const struct ad7173_channel_config *cfg2)
+ {
+-	struct ad7173_channel_config *cfg_aux;
+-	int i;
+-
+ 	/*
+ 	 * This is just to make sure that the comparison is adapted after
+ 	 * struct ad7173_channel_config was changed.
+@@ -579,14 +586,22 @@ ad7173_find_live_config(struct ad7173_state *st, struct ad7173_channel_config *c
+ 				     u8 ref_sel;
+ 			     }));
+ 
++	return cfg1->bipolar == cfg2->bipolar &&
++	       cfg1->input_buf == cfg2->input_buf &&
++	       cfg1->odr == cfg2->odr &&
++	       cfg1->ref_sel == cfg2->ref_sel;
++}
++
++static struct ad7173_channel_config *
++ad7173_find_live_config(struct ad7173_state *st, struct ad7173_channel_config *cfg)
++{
++	struct ad7173_channel_config *cfg_aux;
++	int i;
++
+ 	for (i = 0; i < st->num_channels; i++) {
+ 		cfg_aux = &st->channels[i].cfg;
+ 
+-		if (cfg_aux->live &&
+-		    cfg->bipolar == cfg_aux->bipolar &&
+-		    cfg->input_buf == cfg_aux->input_buf &&
+-		    cfg->odr == cfg_aux->odr &&
+-		    cfg->ref_sel == cfg_aux->ref_sel)
++		if (cfg_aux->live && ad7173_setup_equal(cfg, cfg_aux))
+ 			return cfg_aux;
+ 	}
+ 	return NULL;
+@@ -1228,7 +1243,7 @@ static int ad7173_update_scan_mode(struct iio_dev *indio_dev,
+ 				   const unsigned long *scan_mask)
+ {
+ 	struct ad7173_state *st = iio_priv(indio_dev);
+-	int i, ret;
++	int i, j, k, ret;
+ 
+ 	for (i = 0; i < indio_dev->num_channels; i++) {
+ 		if (test_bit(i, scan_mask))
+@@ -1239,6 +1254,54 @@ static int ad7173_update_scan_mode(struct iio_dev *indio_dev,
+ 			return ret;
+ 	}
+ 
++	/*
++	 * On some chips, there are more channels that setups, so if there were
++	 * more unique setups requested than the number of available slots,
++	 * ad7173_set_channel() will have written over some of the slots. We
++	 * can detect this by making sure each assigned cfg_slot matches the
++	 * requested configuration. If it doesn't, we know that the slot was
++	 * overwritten by a different channel.
++	 */
++	for_each_set_bit(i, scan_mask, indio_dev->num_channels) {
++		const struct ad7173_channel_config *cfg1, *cfg2;
++
++		cfg1 = &st->channels[i].cfg;
++
++		for_each_set_bit(j, scan_mask, indio_dev->num_channels) {
++			cfg2 = &st->channels[j].cfg;
++
++			/*
++			 * Only compare configs that are assigned to the same
++			 * SETUP_SEL slot and don't compare channel to itself.
++			 */
++			if (i == j || cfg1->cfg_slot != cfg2->cfg_slot)
++				continue;
++
++			/*
++			 * If we find two different configs trying to use the
++			 * same SETUP_SEL slot, then we know that the that we
++			 * have too many unique configurations requested for
++			 * the available slots and at least one was overwritten.
++			 */
++			if (!ad7173_setup_equal(cfg1, cfg2)) {
++				/*
++				 * At this point, there isn't a way to tell
++				 * which setups are actually programmed in the
++				 * ADC anymore, so we could read them back to
++				 * see, but it is simpler to just turn off all
++				 * of the live flags so that everything gets
++				 * reprogramed on the next attempt read a sample.
++				 */
++				for (k = 0; k < st->num_channels; k++)
++					st->channels[k].cfg.live = false;
++
++				dev_err(&st->sd.spi->dev,
++					"Too many unique channel configurations requested for scan\n");
++				return -EINVAL;
++			}
++		}
++	}
++
+ 	return 0;
+ }
+ 
 
--- Steve
+---
+base-commit: 0a686b9c4f847dc21346df8e56d5b119918fefef
+change-id: 20250709-iio-adc-ad7173-fix-setup-use-limits-0a5d2b6a6780
+
+Best regards,
+-- 
+David Lechner <dlechner@baylibre.com>
+
 
