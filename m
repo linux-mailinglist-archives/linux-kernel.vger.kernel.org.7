@@ -1,215 +1,386 @@
-Return-Path: <linux-kernel+bounces-741442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CE31B0E421
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 21:27:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76E0EB0E424
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 21:27:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B0A9581392
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:27:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 972DA5813E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:27:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E86E283FDE;
-	Tue, 22 Jul 2025 19:27:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32B4E284B39;
+	Tue, 22 Jul 2025 19:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="LmmEy/FC"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="rEjguxPb";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="x+lJmfkP"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0F027FB31
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 19:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753212423; cv=none; b=dIqr/OFUzU6pR3hFvAjbnsTNjNrLLPg6m7oBnDXgjFIETQ+6kcl1NXSLzEpZmGNd06+Yq9J5IOUFYc1H05RyD6Tn4Ul8tvf6UVYvaLQL/4DB2oKr4YdxI3RpLycp5nyFXX7Qmmw6JKYZtCw4du1P4dADeEDLFRJJi8ObEdnudus=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753212423; c=relaxed/simple;
-	bh=nL7kBrzyr7z+2vE9AXFIMqKnMDrBlfMMLL7j8sAKYoM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=U2wnHO2f1jApTJd9gOLdsZ3q6EWxk5qw1zzezPTutVm6wfCbk6NmbPLQKMdh5puQBybSXhFK8oHpBs+JzD9Y6W4+jxvoRZpa9jHUO+4UTfzYcIBoAK21wk/9bVbLzvYfraKksRH3+iFywU65KG0GP1DLN0v/H0vcBgEaqjfyYI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=LmmEy/FC; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e8bcbe46cf1so5534539276.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 12:27:00 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D4A27FD48
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 19:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753212455; cv=fail; b=Q8OgVCqmuAZt8HQ/AFEQ0rp87CUOxDWyauj6UHLSa8TsBuzyQ+RESE/ATRlfQrMO2moy1QGF6lG3IcOpAb6E6UMCBXRlAcB+UaylYrf54B82tAm9x+BHb95xVHSi7aPYWE/mptCHZFKO3qs7Rre2Q1b8cJpIad281aPqhlz/XGk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753212455; c=relaxed/simple;
+	bh=U/P1pqD68Ipn1OtlbwyRQmo1gxOWr6IjCg52sYk2IhA=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=IbZ28eFOFlXxk/of5MQIHkqN1BfJBUArECGCxxbFEo1fbUPp2Wu0TWmERfdk+AjWrobCHqpOM7tQiTVkTXTkngYBjZT/0c/iXTKVeLyDiozxWsPVHMAcrWhrjkGr3dW6J99Z6Rq0CAEadWARDJ+/9tXaLpnp0Q4uURwyjXablxk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=rEjguxPb; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=x+lJmfkP; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56MFYQMF011941;
+	Tue, 22 Jul 2025 19:27:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=corp-2025-04-25; bh=rTiFmgENuacljzXc
+	/CAnvVgX6mleKQvhJzFW19/yBo8=; b=rEjguxPblgTW4xvBLmlLiXyom+LKdtOg
+	nXXuNoSZQT7ekCjggQzHGpZpB28RPbDPAO1+57m1P/mDc7e+2vNUkHyOoWHm0VFw
+	bxpnepfbLWacNSQM/YCSq04XBV9ZsppWDb8zNIAz9AWSMtRDodVrX0TgsbCeO7s7
+	MvzBL/2z4vc87807gd5zEf1MF0yyyUIZXrJMbem2HV3AaU7kUAr0Yko8cpyVjSUG
+	+cpwgNCrXJrFFNsoNOVCqRbGpxITmZIlNR5xW8yc8fb9/6hPzF/3KqZUeMiurpX2
+	7+JFWTl95V2RPjJjJKIgbDBi+1dcPS9Lzz15JwNSnzfQyCD2oQg11Q==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4805tx667e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 22 Jul 2025 19:27:17 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56MHsVMZ010809;
+	Tue, 22 Jul 2025 19:27:16 GMT
+Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam02on2055.outbound.protection.outlook.com [40.107.95.55])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4801t9q791-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 22 Jul 2025 19:27:16 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bMDhA/lCE0EUexyARuqiFJWhUyT83P7nsYQx0fYC8dgqv2LYN2pesEIuvbtzbWpnrxdU+5stpEvibHtAUarptO4OqPyAzWlHUPX9sfJKG4pehLmsb0RyycZdqfMZktE1m8Om8JTOwfzFL3bZop+4YSWJ2E6q01qEOdEsSiIDoKnI6FHk1u9wcA97NlWOU+QBP3PG9Mk/qsn1+IEZBwDgNR6/dF3gc6PtGHcMT3BEZhG4Yydxtpst3CJlCs8UIllrwWQPM+bITYfHyCPwqgvUDlyAJf5/ikzG8a8+KwNKbNCqPYN5cu8FrA10zx/vlhf8qqe9TYt7pN5Qzle9ZXXqgQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rTiFmgENuacljzXc/CAnvVgX6mleKQvhJzFW19/yBo8=;
+ b=lBMWFaTWiOaR0Tf9CmB8H153QQYlSu7dH3xFtos0APylUv7Ie29dAHqjNlCjaz8kVk72JZ6h487TbGlfFpICpb1zUI+7qQbcOCy7VklWGZZqvyQg3EywOHc/c6Tmp0Qnf6sqthKmJPq4XPLzAu0JYVtybHtDqTWqaeKzYttGq/AyYKuhLG0yeVItvbg16zAjWBMnQL+JGPpcIdNzxX2xQ3qpa+D9bDgOjX5S1wIBLqhIupLMZ2Sng7xUHTWR/jvJOc0JUXLRrexB/2ONOGWVQPEl9fN95jLExH1BqK3mX6Y3gYfVgEq9qNNhI4YWob4LI3+EFDVvaQ3/yfYDjJRJmw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1753212419; x=1753817219; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=f6rA10mAFSIy2EN44P/5y4VeVI9jpKueAsjkjfz2urE=;
-        b=LmmEy/FCJwFTijiejYVnrXN9xZpk1rl/WeLb672iXR6USCKJ3VhtMPcN8Vq4Ttueha
-         jBms13N7wPy7ueHXPJGv/cQOTgugvsXy4V22P9/I5O2wLeB4NqCgcUAdINnRlehR4zsW
-         VPJltNdP9RQkz9bqmjCZhtVAk/U09va85yeDio8d/pwkij4MXyDf3Q8XT1voIgtS23AW
-         8d2Pg2XsVPktqMh+M534MkMkqLkTMehV38PPwFvVG7EUficHe5HseIzTIeqZKDYTWzED
-         iTaaBmunNDdp/+o5+H5Qkwqsep2x3vh8i0nP1Xn0qTqMmot5Nie1oVpu9+vfgWg3nhOG
-         OENA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753212419; x=1753817219;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=f6rA10mAFSIy2EN44P/5y4VeVI9jpKueAsjkjfz2urE=;
-        b=sgtJ2oBNBnpSM0dEPFwiQJKs1sIQGGSXpc+5wNZcj7W9avRgwcbNFFZwdgUqZTcUgl
-         a9HB7tbiDrb9BoMtUnvO9ccMec6KVPdQ38zftlebhx8Ia3l3OMu230vJmO2cOBe9HqhZ
-         g0JV4HbtahZ8rBYpjx8wUR2RIbm9FhBbze/+GkCFIA43NJ3ufE4UqWtsVkTknygpHmro
-         wFugqI+cygL/tRJ6aCx5BRJEKznowfq34QqWdT7HISu00J/mXLK91WdMtvjMdKLBg4hU
-         lg645npagWOscOjHXf7v6jP+xbqepTYqi2JfgvF6r9QPHhqXiYwcxcNT+NIPacABcS2z
-         6Nfg==
-X-Forwarded-Encrypted: i=1; AJvYcCW5Z3QzntnHYNlnzCM2i2U05xw2Dq1GNDAcIhWGEMvQucKBDPqjSI5ohZmZa5FEcNEgrZzfGuJIOBUurCw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyfHW3iy5s5iqL7dt1en83g0r2/o1po89jq86JWrZt3lz5hhbE
-	pywUiHfs16Vphz0Q98ApxnP3aDdgcTB55ogzWqlBHKAz/EL6hnjX6oKsn6S60mQMTUOYmOPC7UU
-	9sOu0
-X-Gm-Gg: ASbGncvChifZ4HZDD7cY+69cyGIKyjVV3jT1kTSm/lk8LDapdMrDFWEh4efhod4UOyz
-	5rWVQ+CimMv8RCHZ1mvKjcn6ZYS07H8Sew4H9J3UoA4lOQDwWtjD/6cjWX/vaTPMtxjWAihatzP
-	6waWvMBqo3kcLHuPo5uC/4uASbVfv9dkGFUbcWfqsdgaxf3cnd7VdtmEQpKDJqMgGA2zwfZ5/Tz
-	KhbTSFu9WHihzfirBzm8xW0hVtkAhG4QfS80jxoo/zYX/y3gFPNYs5gnxeqhRp8s9m7e744Btyb
-	69PUb2yUcNUgbJWc0ONX4dv/5Bh2zbypLvct6n/jRCXeP3LLHx3qvn4LZHb5uRDv1dG+wWB57Oo
-	CbEX2+Ai+ib9TNbwhGepdRY3mNOGdEmUoeC/Z0kWHvUwETvEWmav1EVS6k0/WoBh8TFUS5g==
-X-Google-Smtp-Source: AGHT+IEM19VoZ2NkyDOPbbFddXU+rX7b8ADde+ckX3B0jE15Ou9SvsZhtRtbB/s4TGJTCugucCzFtA==
-X-Received: by 2002:a05:6902:161c:b0:e84:3657:e50 with SMTP id 3f1490d57ef6-e8dc5873435mr671236276.3.1753212419284;
-        Tue, 22 Jul 2025 12:26:59 -0700 (PDT)
-Received: from ?IPv6:2600:1700:6476:1430:7b5e:cc7f:ebd6:8d83? ([2600:1700:6476:1430:7b5e:cc7f:ebd6:8d83])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e8db79336a4sm787559276.22.2025.07.22.12.26.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 12:26:58 -0700 (PDT)
-Message-ID: <4a9de6f3edb1d7a894437fb5dda18d709285a628.camel@dubeyko.com>
-Subject: Re: [PATCH v4 3/3] hfs: fix to update ctime after rename
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: Yangtao Li <frank.li@vivo.com>, glaubitz@physik.fu-berlin.de
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 22 Jul 2025 12:26:57 -0700
-In-Reply-To: <20250722071347.1076367-3-frank.li@vivo.com>
-References: <20250722071347.1076367-1-frank.li@vivo.com>
-	 <20250722071347.1076367-3-frank.li@vivo.com>
-Autocrypt: addr=slava@dubeyko.com; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 (by Flathub.org) 
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rTiFmgENuacljzXc/CAnvVgX6mleKQvhJzFW19/yBo8=;
+ b=x+lJmfkPyHBqrz83WjIzmUbgt1NmeQ7XfeWAGN5oUdvdZ5mU17S2dFDw0PAhSiOyFMO2W8n4gY98Beo3ra2LIZzckdqQN1Yc9JS1+V6TxqFaA16UKLDVK6DKbBI5Qw7ajQ1IKTaFx2prNwIGmngAS7JkNFkYRhToVtxHe1+1+/c=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by SJ0PR10MB6327.namprd10.prod.outlook.com (2603:10b6:a03:44d::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.28; Tue, 22 Jul
+ 2025 19:27:13 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%4]) with mapi id 15.20.8943.029; Tue, 22 Jul 2025
+ 19:27:13 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        David Hildenbrand <david@redhat.com>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>
+Subject: [PATCH] MAINTAINERS: rename MM to MM MISC, add missing files
+Date: Tue, 22 Jul 2025 20:27:04 +0100
+Message-ID: <20250722192704.164758-1-lorenzo.stoakes@oracle.com>
+X-Mailer: git-send-email 2.50.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: LO6P123CA0011.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:338::15) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|SJ0PR10MB6327:EE_
+X-MS-Office365-Filtering-Correlation-Id: fb72657d-5342-4672-7973-08ddc955c2be
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?GdhuxVlurnNdQTaK+dwUFk5oYJOLZDv7Zta1qDb8UZ0w2lAeDdEk5stXyWSK?=
+ =?us-ascii?Q?fJ/Tfe0ACkeqMcFS1j5fEjGy9y87EjKiaJMBAGneFjDe0YCYqlRxBqFgsS8U?=
+ =?us-ascii?Q?1YYBSXDXxdAyEn+4O1719IbhlZhdkJzQS1Ct9CGmip+M7hEvKy0W9IP3X9qa?=
+ =?us-ascii?Q?PJepnPoXqwkt1c/dOfeDCw0Nt7VYykI/xQ8FunyTVbECgQiIGKN0JIIXH5VT?=
+ =?us-ascii?Q?zHeEz6hco1jduO3THYDwXKmakFv5yQtco/YsaGzLDyDsiYUcy6FpHSb/7Z1z?=
+ =?us-ascii?Q?etw6j6xJfCL2qx7PiUpovn21T8arUn0YEAKR3yQLHQj4VbNcM2sLVDGtbWIb?=
+ =?us-ascii?Q?8KZ1ZAyHxedMN87ReZv8QewpdBX2wS1xudO5h1uu4NbWJUlFLAILnjxZgiig?=
+ =?us-ascii?Q?j4DZcZWMkLuG0KrHJkbs0XwKr8zvNVvihKwe30vd7eVceaDwk/RaMYSj8wMb?=
+ =?us-ascii?Q?ubMCsYW1hfAfPWIanRmoQ5exLmFzv2kZyNSwxipus2vhQxy3i1YKLpLU0tyP?=
+ =?us-ascii?Q?u4qC+cnlc+IZlHT+lSE6NQUoVOwvtk6segbNSBOiwuEwipkCXO3f+P+pG9tX?=
+ =?us-ascii?Q?to5fSnYQ2r2E39DHPsvkgdn9szy7s06grjySXdDOKvPjh52BiYQXHe3cm1Gp?=
+ =?us-ascii?Q?qlG3y3ROu9GeaGYxoEi8nVzsTSZulhKsdpjoy+RbVqa+phLeyCxSdi+uQkzo?=
+ =?us-ascii?Q?2DyE4/XniIUJilDDJUuWgYjxy2MMMkCZMKlgTvQWX7KTIASHBP++OnfTlFYM?=
+ =?us-ascii?Q?376FFhu+VJddpKK7h8gu6CUCtmTqylabsVD+/uNQW5iN3r7a6P5YLQ/eaDoR?=
+ =?us-ascii?Q?CqsAPPZGsoh+kJcCZrKPLmNGr4W/QN2/8K1ViE+T+bVwFTXyWTe5ZBYfe5jh?=
+ =?us-ascii?Q?RDgTqvfDWu5SKId7cH8+mS3D1e3gF29hKbjc9U/8go9agh3zAEoRhbPsWdQY?=
+ =?us-ascii?Q?Vssc7l7NlPWGw6c4IrlfTv7ZlEOX4wxbQgYcKKwzj4C2bnRXckyVksOUbYKn?=
+ =?us-ascii?Q?ybb44UAesyqp6IDURfqcyJoPSU8FEYP5NF+ZfbRlHYH/+HAQSHTrqWcPcKQc?=
+ =?us-ascii?Q?I8srq7fMHkcOtGdHpu7yUewuA3flLnGOnQ9R+pTaupspBHbyL9X6MylHBLTD?=
+ =?us-ascii?Q?kQ2BQOfnPWoUyMgX1NISTJ1dTgx7i3hQauwPmNWW5EB7SThLMdak4JSW9Lrg?=
+ =?us-ascii?Q?MIQAmlkg/NmVyzs8RkbEGB5gSfIBmB5u5G/EhURT6Sji2bbqtik9PfYHBATc?=
+ =?us-ascii?Q?TKyp9sj6aUT6tOGcnkrKpZfznj+qaM8SK4ay6RQfN9llreIUOkdn4G4r9+KD?=
+ =?us-ascii?Q?KDrJiczn1/zn5l4W2Wq6DZwoEhAkpDGfESomhWZs07Pl/Cyke8HWLDUhOObw?=
+ =?us-ascii?Q?DyeKOdUbFfTcCgKekKU7CYMUNpNW?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(13003099007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?+F3yLVqwcz338xdXh60ZW6meE5QDgDG6YUdIMgALQS3EmoQzRlOMY3DMuT5P?=
+ =?us-ascii?Q?Mu5sHJTcNXnbkg5MQ1/k6D7nT0WeYpE8HvpKnGGzIjZgQ/oEWrcUevSx7zgL?=
+ =?us-ascii?Q?eMg5Rskr/qN76vHqOZ8TSF8eqbV1aOQsyG1lsbFLfPuHpRPiB4wxmghXYaxJ?=
+ =?us-ascii?Q?OHAlO5QNEt2Sh+S1IU593WrCtofzX6xFGgoUiZRZ3TN9wN0N7UWRvw3bHcwB?=
+ =?us-ascii?Q?UqW0KL+Bd3Po6sdfh195DcUCZaxClM24AsBY8EHGYiBbz4b5Kp/ZOyecB1Ay?=
+ =?us-ascii?Q?ynBUH6WeACykOMPUR/W+Pyc9Jkr+mryAvlcsBHRP7DclmFsb+WNXYLrpl517?=
+ =?us-ascii?Q?Udv5QAxKafJ/BmXeAs9R+haPnAx1uQMF5d0WVka6YRfkE01VQWLmaR9QR/ve?=
+ =?us-ascii?Q?OyBIO97RC2MBPOblfUkPGa9b6JQhFFyjtFjxq1AXaI5Cg+BY/SMerlzKT24v?=
+ =?us-ascii?Q?zDSj+3gLDowKp9M1DyEH8u7pXKj87kZexvY6uvtD+R/at7Tn3HMBAT/8iCGH?=
+ =?us-ascii?Q?lImP5IpSclChK+9VFIT01+GNGg1zlXk7ued1zvJ4EVyyWxHWLUTdJ0RRiOyP?=
+ =?us-ascii?Q?Dmi1EIm0YxfEG6+NPzqQu4goGXWeo46df2gFH/sk88lhO4dqdzGnqSpOU17k?=
+ =?us-ascii?Q?ghawE4c3Fh9G/icZDY2u6JuYF1NUk2Ko7NupG4COVSaSM8KXm+L3cMbAnraz?=
+ =?us-ascii?Q?hJyT7DzMrRuH/8hr2fwqMAD+o0Q5TpqN56+KURcqSMu1i4l3MC6F7Q2SB74/?=
+ =?us-ascii?Q?KoBMY3RTHFCUYOHvDXDZuy/8RXFZZlMUjkbBN8OulZZ58xcFy+kNzyJ2TotX?=
+ =?us-ascii?Q?ymSnTbW7NMvrXfkjUPavDYjTFb5vKgSH492o2p91MCnkvB3KgLrIxQTwcLLB?=
+ =?us-ascii?Q?grwTLd/y5AtWsrWOVSJx5baIMxLaNpu0rIrxyAAfv9ngUwP0DBuvEBN7Iu0I?=
+ =?us-ascii?Q?A/X3oX0MYtLk41nUjn0wYBofvDjMTCyY+Y9X8/j/DUBbyp3I8eUmZ5wyzR/p?=
+ =?us-ascii?Q?hPqggZQQEMqjG36RHqP9GkxiLRXg4XAc2RBwLZayQKevcfCaEXZoEfS40Cq3?=
+ =?us-ascii?Q?cdsYJLa4qEDMNgdDylhZuFinDxZG3WMuVO5CAhPz7NymkFUEJkl7i9ezf3Pn?=
+ =?us-ascii?Q?Ul8Fgz3jBECw/V7d19kXouDPC7EQZCKUGW8SQeOc6MXrkP19nH/ACMi9yY30?=
+ =?us-ascii?Q?R8V8VjyePi8U0mPSYzZErht96g7DrAdkn7SF4TAq2U5sVxjjb5wvqwQVCIqg?=
+ =?us-ascii?Q?+eKnluI7sXmCpkhcPq7dr/yXGT8gWuAAEBvPvp6jNkJRBpbDI/oUYl6CvUm5?=
+ =?us-ascii?Q?e69G43f80qSVKWq9YJgAr64FhhJocgrL6YEoWsNm7jhI01IUS5WbMEjQ8azr?=
+ =?us-ascii?Q?Fate+ij0vpicALLvNsXXhbCFpHKDbT2LCbw0f4dnHfP7EAqeoHqwNzQlqyfo?=
+ =?us-ascii?Q?9hXtXwvIRNX8x39mlj0GRvZJRTqkG0pDE8DlpY9LBQts9l87KDlVBPWZ2XAx?=
+ =?us-ascii?Q?+3IUfcixr+Q4uee0Xa7Ur+dv0wdl8/oD2X86PqyuVBm0JjeZGI8zinceKbbm?=
+ =?us-ascii?Q?l2eokF+qxd0CrM8BW+gs5vebpgGhaDjoazNVfnWuDOCvFzHmJ9nza8MtsEZb?=
+ =?us-ascii?Q?4A=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	2y2wkminx99mPMkhLhHrN4ggO/3ZvFW7qgi6bWflptfSUuoyuf+ngpLkHBG7l3ZzAFjAQudYTCtrhdLlr/kjOy45m9As+mT5j1I0ftUjAHijYChOHZXRyWkzmrgAOEaNAnlVtvlaXp+tDGUCm733M3B2HMmEz9EUzW20QKEqT3EGFseKdfIuFws97XfL6wvI8+O8GUFA2F4fXuMtN+hgvd0U5Q/IiM44hhBX5JagQdQk+XtLQOQpGVWAiR8pf7s5cf8b4U9vIWKc4vnz4w1YpS/ymdseODrEUQXJ9GZgg5w9KQ6okWQ186DycGy2KZdHinedjIxhexjQAwoN2nJogIH0V/yS6WJzspdkHFe3jpQHBfHQQrG01KpMpZAT51kKhrs7lSOiaqOiHcP6g78YL5RiMVWxJPLGAXUj6HYJPLN7v72rSaaRJ1WLnmDzu8hT6OuPI+4POK0uuOAPxCaMqx0RiT4ZP1W9ZrMYzkw6rWBK6Kc/mFo0Mxh7+tHwqRyDH6ImoVMaBbYkDHFvrxMeR7KbnHS2YlEzKYCv3ZWaGk1c7Zy6hlOka3k0MJKzC5rEr3O1Ay2fy1B6o3civd6PKEEKm7+lDJ4RRbyHk/aLB2E=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fb72657d-5342-4672-7973-08ddc955c2be
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2025 19:27:13.3882
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dJlQFKuTOa3D6dgyJIe3c0WdbclYc9ZtuD+rvHPdTecFMbD363cwdujee7ylRHL1jLbDIr1VkgKefX76tVad/AS07z/WxaV64DqVXQ7wtK4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB6327
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-22_02,2025-07-21_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0
+ mlxlogscore=999 bulkscore=0 adultscore=0 suspectscore=0 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2505160000 definitions=main-2507220166
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDE2NiBTYWx0ZWRfX2pFlR2mQ7FaO
+ 0URdgH6ykpX+wRcAmbvveG0mJtWmWsMCEFhE8nt3eLhpOZiygTdVY8UY6n0GaTAIC2UkeRdq1OE
+ 0lG7PB2ibsJWJPsJGT0C4AxQJD1zALbTFAyTj3SfcU3ezxY9nCq310s3/8fpxd2gbUR8cPZ50DI
+ rhen4Hq8jmjpnQZ2RVy3J9MLU5SV4UndG05BkDCO3PUgVIRz9k8YeKcRj4Y02lgASRPvzw9LHpd
+ s9nGDJfsQWSvRGVYUWo+lklhlOLvHn3vW7GIek4xZc5p0AG7A1WqcSldQvSqpVUJii7Gqndc8vl
+ yNk3og/a1r48nmMkdJNnzVdpBiM8oG6+CHiJkLZUqEsr2HKd3vnkrOeP1DWv7gGUYmTIO653OwD
+ tBKMpq7gi1+hwlS15xK3O6tMuRBGZrhz8ISFlyVR23/mXc6y8o0Ahwpo7Cp8JnA3BFdgLswI
+X-Proofpoint-GUID: M5ZYQiXeUgqmaJyOHNigIWaIUXb-k8x4
+X-Authority-Analysis: v=2.4 cv=IsYecK/g c=1 sm=1 tr=0 ts=687fe615 b=1 cx=c_pps
+ a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8
+ a=yPCof4ZbAAAA:8 a=1-S1nHsFAAAA:8 a=Z4Rwk6OoAAAA:8 a=37rDS-QxAAAA:8
+ a=20KFwNOVAAAA:8 a=1XWaLZrsAAAA:8 a=iox4zFpeAAAA:8 a=BhBO9pqS-LKupugTUQkA:9
+ a=gK44uIRsrOYWoX5St5dO:22 a=HkZW87K1Qel5hWWM3VKY:22 a=k1Nq6YrhK2t884LQW06G:22
+ a=WzC6qhA0u3u7Ye7llzcV:22
+X-Proofpoint-ORIG-GUID: M5ZYQiXeUgqmaJyOHNigIWaIUXb-k8x4
 
-On Tue, 2025-07-22 at 01:13 -0600, Yangtao Li wrote:
-> Similar to hfsplus, let's update file ctime after the rename
-> operation
-> in hfs_rename().
->=20
+To fit in with other sections within MAINTAINERS for memory management
+files, rename the MEMORY MANAGEMENT section to MEMORY MANAGEMENT - MISC to
+contain files that are not described by other sections.
 
-I am not completely happy about mentioning HFS+ in the patch for HFS.
-:) We make this fix because HFS should work in correct way but not
-because HFS+ does it. Imagine that HFS+ will completely disappear or
-HFS+ code will be heavily changed. Nobody will be able to follow this
-comment. I prefer to see the explanation something like "The file ctime
-should be updated after rename operation and blah, blah, blah". :) =20
+We also add missing files to MEMORY MANAGEMENT - MISC and MEMORY MANAGEMENT
+- CORE sections.
 
-> W/ patch, the following error in xfstest generic/003 disappears:
->=20
-> =C2=A0+ERROR: change time has not been updated after changing file1
->=20
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> ---
-> v4:
-> -update commit msg
-> =C2=A0fs/hfs/dir.c | 17 ++++++++++-------
-> =C2=A01 file changed, 10 insertions(+), 7 deletions(-)
->=20
-> diff --git a/fs/hfs/dir.c b/fs/hfs/dir.c
-> index 86a6b317b474..756ea7b895e2 100644
-> --- a/fs/hfs/dir.c
-> +++ b/fs/hfs/dir.c
-> @@ -284,6 +284,7 @@ static int hfs_rename(struct mnt_idmap *idmap,
-> struct inode *old_dir,
-> =C2=A0		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct dentry *old_dentry, struct =
-inode
-> *new_dir,
-> =C2=A0		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct dentry *new_dentry, unsigne=
-d int flags)
-> =C2=A0{
-> +	struct inode *inode =3D d_inode(old_dentry);
-> =C2=A0	int res;
-> =C2=A0
-> =C2=A0	if (flags & ~RENAME_NOREPLACE)
-> @@ -296,14 +297,16 @@ static int hfs_rename(struct mnt_idmap *idmap,
-> struct inode *old_dir,
-> =C2=A0			return res;
-> =C2=A0	}
-> =C2=A0
-> -	res =3D hfs_cat_move(d_inode(old_dentry)->i_ino,
-> -			=C2=A0=C2=A0 old_dir, &old_dentry->d_name,
-> +	res =3D hfs_cat_move(inode->i_ino, old_dir, &old_dentry-
-> >d_name,
-> =C2=A0			=C2=A0=C2=A0 new_dir, &new_dentry->d_name);
-> -	if (!res)
-> -		hfs_cat_build_key(old_dir->i_sb,
-> -				=C2=A0 (btree_key
-> *)&HFS_I(d_inode(old_dentry))->cat_key,
-> -				=C2=A0 new_dir->i_ino, &new_dentry-
-> >d_name);
-> -	return res;
-> +	if (res)
-> +		return res;
-> +
-> +	hfs_cat_build_key(old_dir->i_sb, (btree_key *)&HFS_I(inode)-
-> >cat_key,
-> +			=C2=A0 new_dir->i_ino, &new_dentry->d_name);
-> +	inode_set_ctime_current(inode);
-> +	mark_inode_dirty(inode);
-> +	return 0;
-> =C2=A0}
-> =C2=A0
-> =C2=A0const struct file_operations hfs_dir_operations =3D {
+Move over appropriate files to the core section, and in both sections add
+remaining missing files. At this point, with the other recent MAINTAINERS
+changes, this should now mean that every memory management-related file has
+a section and assigned maintainers/reviewers.
 
-Looks good.
+For the time being, we maintain catch-all mm/ and tools/mm/ entries for MM
+- MISC, though in future we may wish to remove these to make it obvious
+when files don't have assigned entries.
 
-Reviewed-by: Viacheslav Dubeyko <slava@dubeyko.com>
+Finally, we copy across the maintainers/reviewers from MEMORY MANAGEMENT -
+CORE to MEMORY MANAGEMENT - MISC, as it seems the two are sufficiently
+related for this to be sensible.
 
-Thanks,
-Slava.
+Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+---
+
+Andrew - apologies, but there will likely be some small conflicts here
+given other MAINTAINERS patches move stuff from the MEMORY MANAGEMENT
+section too.
+
+I kept patches separate in case one ends up having push-back we can still
+have the rest putting missing files in place.
+
+Note that we also have [0] going through the slab tree, as it seemed a more
+suitable place to do that change to minimise conflicts on that front.
+
+[0]: https://lore.kernel.org/all/20250722175901.152272-1-lorenzo.stoakes@oracle.com/
+
+REVIEWERS NOTES:
+
+This is based on discussions had in [1] both about this newly renamed
+section and where David indicated he was open to maintainership of the misc
+section.
+
+I am sending un-RFC'd as, while a lot of files being moved about, it seems
+relatively safe to put these files in core/misc and we can move them around
+later if necessary.
+
+Additionally, on the reviewers being added, these files are broadly files
+that could have been placed in the 'core' section, so this is more or less
+an administrative decision to split into two and so it seems reasonable to
+maintain the same list of people.
+
+Apologies if this is overly presumptuous, the intent here is for us to
+finally reach a point (with the other patches applied) where (as far as I
+can tell) every memory management-related file should now have MAINTAINERS
+entries.
+
+[1]: https://lore.kernel.org/all/20250616203844.566056-1-lorenzo.stoakes@oracle.com/
+
+ MAINTAINERS | 82 +++++++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 57 insertions(+), 25 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 837bc5cd6166..9374dbc3a6ea 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15732,31 +15732,6 @@ F:	include/linux/memory_hotplug.h
+ F:	mm/memory_hotplug.c
+ F:	tools/testing/selftests/memory-hotplug/
+
+-MEMORY MANAGEMENT
+-M:	Andrew Morton <akpm@linux-foundation.org>
+-L:	linux-mm@kvack.org
+-S:	Maintained
+-W:	http://www.linux-mm.org
+-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
+-T:	quilt git://git.kernel.org/pub/scm/linux/kernel/git/akpm/25-new
+-F:	Documentation/admin-guide/mm/
+-F:	Documentation/mm/
+-F:	include/linux/gfp.h
+-F:	include/linux/gfp_types.h
+-F:	include/linux/memory_hotplug.h
+-F:	include/linux/memory-tiers.h
+-F:	include/linux/mempolicy.h
+-F:	include/linux/mempool.h
+-F:	include/linux/memremap.h
+-F:	include/linux/mmzone.h
+-F:	include/linux/mmu_notifier.h
+-F:	include/linux/pagewalk.h
+-F:	include/trace/events/ksm.h
+-F:	mm/
+-F:	tools/mm/
+-F:	tools/testing/selftests/mm/
+-N:	include/linux/page[-_]*
+-
+ MEMORY MANAGEMENT - CORE
+ M:	Andrew Morton <akpm@linux-foundation.org>
+ M:	David Hildenbrand <david@redhat.com>
+@@ -15770,18 +15745,33 @@ L:	linux-mm@kvack.org
+ S:	Maintained
+ W:	http://www.linux-mm.org
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
++T:	quilt git://git.kernel.org/pub/scm/linux/kernel/git/akpm/25-new
++F:	include/linux/gfp.h
++F:	include/linux/gfp_types.h
+ F:	include/linux/memory.h
+ F:	include/linux/mm.h
+ F:	include/linux/mm_*.h
++F:	include/linux/mmzone.h
+ F:	include/linux/mmdebug.h
+ F:	include/linux/pagewalk.h
+ F:	kernel/fork.c
+ F:	mm/Kconfig
+ F:	mm/debug.c
++F:	mm/folio-compat.c
++F:	mm/highmem.c
+ F:	mm/init-mm.c
++F:	mm/internal.h
++F:	mm/maccess.c
+ F:	mm/memory.c
++F:	mm/mmzone.c
+ F:	mm/pagewalk.c
++F:	mm/pgtable-generic.c
++F:	mm/sparse-vmemmap.c
++F:	mm/sparse.c
+ F:	mm/util.c
++F:	mm/vmpressure.c
++F:	mm/vmstat.c
++N:	include/linux/page[-_]*
+
+ MEMORY MANAGEMENT - EXECMEM
+ M:	Andrew Morton <akpm@linux-foundation.org>
+@@ -15843,6 +15833,48 @@ F:	mm/mempolicy.c
+ F:	mm/migrate.c
+ F:	mm/migrate_device.c
+
++MEMORY MANAGEMENT - MISC
++M:	Andrew Morton <akpm@linux-foundation.org>
++M:	David Hildenbrand <david@redhat.com>
++R:	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
++R:	Liam R. Howlett <Liam.Howlett@oracle.com>
++R:	Vlastimil Babka <vbabka@suse.cz>
++R:	Mike Rapoport <rppt@kernel.org>
++R:	Suren Baghdasaryan <surenb@google.com>
++R:	Michal Hocko <mhocko@suse.com>
++L:	linux-mm@kvack.org
++S:	Maintained
++W:	http://www.linux-mm.org
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
++F:	Documentation/admin-guide/mm/
++F:	Documentation/mm/
++F:	include/linux/memory-tiers.h
++F:	include/linux/mempolicy.h
++F:	include/linux/mempool.h
++F:	include/linux/memremap.h
++F:	include/linux/mmu_notifier.h
++F:	include/trace/events/ksm.h
++F:	mm/
++F:	mm/backing-dev.c
++F:	mm/cma.c
++F:	mm/cma_debug.c
++F:	mm/cma_sysfs.c
++F:	mm/dmapool.c
++F:	mm/dmapool_test.c
++F:	mm/early_ioremap.c
++F:	mm/fadvise.c
++F:	mm/io-mapping.c
++F:	mm/ioremap.c
++F:	mm/mapping_dirty_helpers.c
++F:	mm/memory-tiers.c
++F:	mm/mmu_notifier.c
++F:	mm/page_idle.c
++F:	mm/pgalloc-track.h
++F:	mm/process_vm_access.c
++F:	mm/ptdump.c
++F:	tools/mm/
++F:	tools/testing/selftests/mm/
++
+ MEMORY MANAGEMENT - NUMA MEMBLOCKS AND NUMA EMULATION
+ M:	Andrew Morton <akpm@linux-foundation.org>
+ M:	Mike Rapoport <rppt@kernel.org>
+--
+2.50.1
 
