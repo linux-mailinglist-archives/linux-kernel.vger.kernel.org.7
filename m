@@ -1,241 +1,147 @@
-Return-Path: <linux-kernel+bounces-740400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D340B0D3DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:49:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4846EB0D3DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:49:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E01816CAF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:43:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 731703BE1CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:44:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FBA02DAFAA;
-	Tue, 22 Jul 2025 07:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 516F62D97AC;
+	Tue, 22 Jul 2025 07:40:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="IeG1UAF5"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012053.outbound.protection.outlook.com [52.101.66.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LcJS1hv7"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7C92E6122;
-	Tue, 22 Jul 2025 07:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753169904; cv=fail; b=N6ZzOt7hCsmJgLqOii4AOOLdll/AqjsviVRnRFeM0IyMBlVMobiGUvAV1a7JJ+O+8Gsx2SOsa7gHv9+SkOuYP/tNShwr6ZVVbgylP8vHeVE6eVpa4IgdiV0VjSNPL3lTY+95fhfo+kGhk17erH9WRBItrAF0/rvopbqLRlu+qHI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753169904; c=relaxed/simple;
-	bh=oH6iYU+UBlSRarCpnQxRHiy5cRcmIJoPKZRmqLUsb3Y=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=dKIsCTGbyjT6bSbtVgKwGVP0LDs4X5wx2kfDTIWi8+/B8T+XrP9UmAqApES4fMRiTuY3Tf+RDzuzy5lWXMSQg43vYigH9OnvBSTWi3b8fPqdHp5AHlZ9MraHrMRFBksQyHAbDEAS7znAN/MIsrlYN8cwV1z6m7AeOi0DpCHWzsE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=IeG1UAF5; arc=fail smtp.client-ip=52.101.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Eisn2s5m2RcaVcJPIDWZsf2QZonWbiFfF3e/OGPsVETx6rzdreAj9x4jCSoxFiwbTgnkdeT8GRU1Wyo1IB2gbJ3mEMcQr8p7eMXXwLQg04KwNLGhk6t/tkYsPeRqX5LJRzkFWNYdrEQ5uXv8bGL1Em0745BbjYcIQ17hqjyLRQNhzGAz1gwV6R2bBXKd4F09jGwe+WnF/f4R+TKJfXENvtsIcLITXlJoryvmgdfozBwRSS1P0yn7+U0S01w5cMHSsrEPe8pEvWGIwLcOl+rEqzk0TQlwrwSMXz/NJuLW/GR7SMxeHNkzTt6sJx1AM5SHts0N1m0dd4AwPJ63d4gQ8w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QyKL1sNMM/rAunt65IASn7CfBD+F9gtj3RAslIbeg/8=;
- b=V2e95qIbLjrbbIjAY+H6ik3ILj64ihjD9PGLBLc5WfSdcOJvrwscR3q/qYA99W6UY8Jo4TUmfi83U61N5DnkWrkKGDttNao0//UwZeMI4PmS1Wr1QzNO2YNdqEsPER6Uy4R097yCaC41B+adwvCg7w3KaSzx9rUQr2yfmtjO+xrsIvG5GUmRkTBUAeJspmRoKuUILY/W7q9a034G4aYkJkMFNnBVViGwtW7ZovPedpeDr/7z0f7oEEJ2ByB5IPfHUJTviWOgfLNkeBZR05sGC0udlb4MOk30dWKGprFas//DwBFTsfYY11AfcRL8gjz+LG9zn9v+4pxKr203Q0WG7w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QyKL1sNMM/rAunt65IASn7CfBD+F9gtj3RAslIbeg/8=;
- b=IeG1UAF5JDULwPj7tOYK0Ge0uzQMgjbCAPNHgNgP+LFae3Z1SS6J34dQ3UVO4tYjlEWyC1TUikUczc/6YM5sfJVpX4XLZI9d/JvHmJhf65y225hmF77s4IaeJdKH9nyLhOn3WjA1sknckrvF5wTKcu4JhUhyLJ5q7QWj2PVnRg+xaFWWg1EaF/AddiTX1qAlbn1dG2zqpnAw8bQxqpv1IPA5a7RMMQO28RXnauiWq9wP2zIjD9OEDqNsE8ug5/BXspdNJPpK7bJhb/JgEooVvTiqikttGJYf3cdGcBIc61LN60XFr4oohVg8ivDJ2o7XhqssImtfUBCaHZ+WId1DGA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by VI1PR04MB6847.eurprd04.prod.outlook.com (2603:10a6:803:134::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Tue, 22 Jul
- 2025 07:38:18 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90%5]) with mapi id 15.20.8922.037; Tue, 22 Jul 2025
- 07:38:17 +0000
-Message-ID: <4731eb9b-9a29-4065-8dac-06f558e78e02@nxp.com>
-Date: Tue, 22 Jul 2025 15:39:48 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] drm/bridge: dw-hdmi: Add function to get plat_data
-To: Shengjiu Wang <shengjiu.wang@nxp.com>, andrzej.hajda@intel.com,
- neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- lumag@kernel.org, dianders@chromium.org, cristian.ciocaltea@collabora.com,
- luca.ceresoli@bootlin.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
- kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, p.zabel@pengutronix.de, devicetree@vger.kernel.org,
- l.stach@pengutronix.de, shengjiu.wang@gmail.com
-References: <20250718101150.3681002-1-shengjiu.wang@nxp.com>
- <20250718101150.3681002-2-shengjiu.wang@nxp.com>
-From: Liu Ying <victor.liu@nxp.com>
-Content-Language: en-US
-In-Reply-To: <20250718101150.3681002-2-shengjiu.wang@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MA5P287CA0013.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:179::11) To AM7PR04MB7046.eurprd04.prod.outlook.com
- (2603:10a6:20b:113::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2532DECCC
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 07:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753170035; cv=none; b=Qa2uFjoPLXhd/z6kLMCu2jLuhDb6PCuaWiqqpxVevDeor4KUuZbArcSPk/1ozRXclupSHWUR25pt0buxBKwcTg9cuQ9I+V2DYwUS8qUJLZW1d0yNErHgIWBnWXDS/v+iLO8HnaDfraGyifEv762lbzDv9fhChDOWFTRA7YBLJlk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753170035; c=relaxed/simple;
+	bh=PMCF5ES/3ZTia8Zi2R1TmRc2+w6IRtpnMyRVCb/pk3Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AVtu8y5qP7tqfY6yjjzm9n8xZcWcltou1zYzlbtW7fMfC0KUKpGsCj7Z65eKhgz8gQpS0FZsKbj/mZpKf+Z2086R4wxIeA/ybVGjC/sCidcBLmPY09QsW7oz40OpRyrpOS6wvoINo/ZYzvfpms7wumFJCa9QzeQsCNyH9qsExf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LcJS1hv7; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-33097e1133fso47003561fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 00:40:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1753170032; x=1753774832; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=41B/ekEx4m/gKNRr2HYhyza2JcZwd1YnIux2XMK+KqY=;
+        b=LcJS1hv7Dnvkmpmd3enHoh0/aBteDEftmoXfwpD6OxOmIvHyq5E69z7T7eWISBXLXe
+         6n2dVeHuqHbJWgqsD11EYSbpw54u6d69PospkeBWMDOYmLKdD1dRXpBUv3CQcIVSRbbg
+         X/JLOTQaLaWj4pbzvUdqAUG9SonpBa5MGGRuU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753170032; x=1753774832;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=41B/ekEx4m/gKNRr2HYhyza2JcZwd1YnIux2XMK+KqY=;
+        b=iQob4tRivGnbop/OitcgpfGeka5Ho6JL2uZGiMlaCS9bHYzb+DF1vPUP9AorfrtMez
+         Peo236mDN2clqYnLTXp3USuvn868hMvYdIPM89jpULiGATx1S8mO17Xo0Oc65bjCBPzu
+         vWEINKDrE8j1vPwMLCbfvid6cKZRqDE6D37ooXMuXJv/F2QX76pH3SMbWL2WXX3RDPvh
+         30oQtWqEaKnwJ+r/M5q0TcL21KX2SZjt+1Da/munEr2LlknwpXXhzzWolJqsX0QQRfBo
+         64Iq7SwkSSc7myhAoLY6HK92fgHDOzTkzo8kg2UTmvMngU0zTPxkv137bssw/f65NwyO
+         kiGA==
+X-Forwarded-Encrypted: i=1; AJvYcCXiMJnDzMGAInMSZxX1MachgFs66nlbtx8j9pYtjbMo4Pvt8t0LJxoVt21gzAlIddgj0F+d3BGcGPqUlsM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypC7QBrbZtD9+gW92jzuySxeQHZWJhPgvdi1tGH/hIDRqawJWp
+	PkDawfPKjEB983pCcYXLeA9ASthjc5rVQrtITQhIIPjX/m4DbhXzGAHfmZ9n3pCNfi8MrHLswhw
+	H1Pp6ekkSKqvPEKdIIiXHwT9LbVxv1XmenQDvVUlL
+X-Gm-Gg: ASbGncvys0siPI3lh3uCveCuVxu/CtRSESe21j3vTmuXNtHcrfEH0JwGnRbJbDz4XT5
+	qF/I7mStKG0EuE3onERIWG9EKt2T9+mAPmS9JfajMxpeek/J+1de9NbizoyHizV6SCfpugwg1CM
+	K1UMZEFDZZHE80WAS3ffjtaOtqCnKmTtaNA+BHlc2D/kEmPnsv2aDQUtq61xKjejeMCFKh3Fb2m
+	b+BPnO7X0hxl8BKUhow9aPfKfS+baSMNqE=
+X-Google-Smtp-Source: AGHT+IEQ22SyB/ySXRKt1KC3gl7QbzYcQMLoMwBK32ZhmBBhXQtJp8OUPSRF0MOxntL5QFsaUhmhC/a9dY2DEPGCwaM=
+X-Received: by 2002:a2e:a58f:0:b0:32b:34c5:225d with SMTP id
+ 38308e7fff4ca-330a7ae1057mr36760231fa.1.1753170031911; Tue, 22 Jul 2025
+ 00:40:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|VI1PR04MB6847:EE_
-X-MS-Office365-Filtering-Correlation-Id: ff2c42d9-9f37-46e6-d925-08ddc8f2b909
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|7416014|376014|366016|1800799024|19092799006|921020;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?dHVvNUR4MjhkYWNOaG5DcU4venRXNzRwLzBWc1JnZnJyVy9XUnBSU1J3dG5E?=
- =?utf-8?B?alM5aHNtRVp5aXhjeUtVVmRCQ1NoNjBtSUVPVzJENDN4Sy9ZWkhUYUlrUjBF?=
- =?utf-8?B?OTVSeTZsZndsYzhrNE5FbGNhZVVSMXB6QVJOOWJKeUFNOWtkcEloSXFQRWll?=
- =?utf-8?B?V0VyaDcwQTFHNmU0MHRaTmZkZ2hEVXoxYXh5ZFE2M05lT1BhSTZQVzhVSEh3?=
- =?utf-8?B?Zlljem9FWENEbisvdDRXWGR4WTBPckluN0pCNE1RMVA0QXA5RDQxeTFIZHJ6?=
- =?utf-8?B?RFhkNkVMcnNzUU9oYzBKbllhOWlHRGhTNzVnN0k5WjFiOHR4a25jc3U4TjBv?=
- =?utf-8?B?S1ZrM2V3YWxxSUpFdys1VWprMUJLTW1nc20zNTJ3aFExc00vWGwyblFOMWxI?=
- =?utf-8?B?U1MvZjJQdWw2T1V2aFpqd1V3MFRDSjFKelRJQ1cwSExhditNYjFoMDBicHB4?=
- =?utf-8?B?OGV5OHVBODZnVUxtdXRKcURUVXRKMmdIZDB0Y2dMa29LMGxxdlJOVW9jN3N3?=
- =?utf-8?B?UFYrUEpFRVNNWjFQSXRpN3RvRjk4bWFSMDEvaUZVQmtXb2tpMitNei9nUkF5?=
- =?utf-8?B?Y0U1cTZMWWMrY2xlUlJPNEtsaXBueDZncEpUbDJmU005MnQ5VTVTd0ZwRkQz?=
- =?utf-8?B?eXM3SHJxVkpRUlNHN2VYYThMcFJySWhqdDcwMDJnUFFGZU14NU5ZRnF6VXBK?=
- =?utf-8?B?UlE2UnhYODl1TSthY1c5ZE9URWw2YXNBaE0xTWR1QjE2bHNRYmdPYnVVbGxX?=
- =?utf-8?B?VTIwUmNNT2toWnNNbHFKempUd2tLNm5kWDdsK2ZzUlpvVER1R3FhaUtITzdR?=
- =?utf-8?B?WDRnQml0RGtSR2dJWms0Yk1PbWJxODBaTkNYUkFMM2VzVGdKRFBnNXBSK2E1?=
- =?utf-8?B?UUlrMm1nbUJLL2NjVTdUb05ob1JSQkY4UUxwSUl3MzdhOVdlUk9UYWxaTWFs?=
- =?utf-8?B?QzRxaCszMm9Wb01zeEhKTDJNUVZvM25QT2NSUzQydHpFSUFNTlQ2ZVdnakNX?=
- =?utf-8?B?LzdRK2lIVFYwWnpEWlZsUkJsYTBNRlA2akFFdE4xVWgwVDk1WHVaWTF3UHRW?=
- =?utf-8?B?QmZxMkRMbktwSWp0NzZVRFYvOUZKZmNSNy9qM1RQakdRQk9Xc2NiSGVzU09E?=
- =?utf-8?B?L0p1eDBuZkNkVG1iUk5BTkVxdEtjR25odzF1NmN0VldvK2doNStrVDVQOVBz?=
- =?utf-8?B?a3VNRmlKMU9ZaWRRY1BDenRjM3AxWjM4K3BwdmFWaDVlZkpSUElFT1V3eHBq?=
- =?utf-8?B?cDJqRndpbU5QaDVPTHJvS0llakQxbVV6NldWOWk2am5JbEtYMkxXQW45SHlI?=
- =?utf-8?B?a0lHaTdHTmJZU2NlMThLdWFaaDdrc1FqUDQ4aUZlSmJiSGFVNm80VXRIOFVF?=
- =?utf-8?B?ZEdCaHVBZ2JWUSswMW9ZdXVlTkFmQitydWNjMnNPNUV0YVBjUlRTdVowaFFH?=
- =?utf-8?B?clpTMytPUjArTTBIT1VKTCs4WTBKV0xQcGw3ZEhiMnFWUDd6OGU1akV3Tmtv?=
- =?utf-8?B?TnFwK284b2ZlNFlZTVBhdmsvQ3dRS1NCMVVadk05eVRJV2Yrb2c5Rkl6ZU5O?=
- =?utf-8?B?ZmRqTFlMUC9LYVE4UVBwd3dRbFphWWdPZnpGTkUvdWVqYnVDRTJ3RmQ1aEIz?=
- =?utf-8?B?TERPaWFnUEZzczhUMHpTTlpIZnVYS2JCRFFveE1LUVJLT1kwSXEwRVlqNnZt?=
- =?utf-8?B?V1JpTFUvSitNb3Vsa2NVQllOUkwweHJ5aEpvUE9VVVRCcXp2R0YyZG4wbVdP?=
- =?utf-8?B?cjJrRXp2VkpFUWpieDhISjNKUzBwNFBCTlhDSTVycC8vY3BKWERudGdySlNV?=
- =?utf-8?B?RXpDZUsyTG9DUG5adTdEZmRZelgrN1FyNEoyN2g3SzAwY08rNVNoZFVqZDhW?=
- =?utf-8?B?Nkc4RWpWWlVwWENTV2ZqSzVqZjJ4QlkwVnNNVWdnOU1lZWp3azRSZXhZNVFZ?=
- =?utf-8?B?ZjRUWEJBNjNqTitVLytZSEEvTU5mam4yRWdCemI4am5tRm1nb0hXbVp3aHJF?=
- =?utf-8?B?SUJIWkJsaGJRPT0=?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(19092799006)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?SG9UNS9Nbm1MWXllT3pOTTR3ZGpQdUxsaVNZWlE4TEhXa0dsUGVDMWh4QnRy?=
- =?utf-8?B?d0VZdE5aYU5oVHpZT2RJYnNobHJsYVZTdWtVejJVc2xqN0Y3YVByeXZJaTQ5?=
- =?utf-8?B?dkFkWFAzZnZaWllqanpHL054cjhwczFxS2tYbGxRWjFROXl4L0cwZHNqZndT?=
- =?utf-8?B?SXpIdzRmTVJBMXNQS2pPOU5saGRJQVRHU0R2OUcrSFJ6YkVCb2pvSDJMdlUr?=
- =?utf-8?B?RG9LOEhJcVNrSEVsQTlWTExjUlZXTndPSzcyN0w2bEdlOGhpZ2xoeXRtd2xl?=
- =?utf-8?B?d0JTKy82YmxXM1VjT2hremdITmlETDhTY3hRMXN4RFNEVzJaK1lYRUE0VnBJ?=
- =?utf-8?B?QmVlc3BxMTM3VDNIOHFtcmx1ZnJuVjRHMXR3U0h5blhYNWFVMk1yZEt1YmxH?=
- =?utf-8?B?YjM3aEIwcWo2OWt1dHV4Z2c4ZUYwQ1kwQWlMY1JTcXpaRWdXaHY3eTQzdmx1?=
- =?utf-8?B?QzR5YjhEUGxDaGZ6dys1VUt6RHh2NmMrR1NuRkhXUU02dGQvM3RFa0J6dWVJ?=
- =?utf-8?B?dEtodFZOdzVqYWNyRE1wN2NjckRIVDBTTXRVTmx2Sy82K1U4dWViYU5SMjZE?=
- =?utf-8?B?OFJWNDA1WDlHclE0QnBnWXQraEduWDRyc1NpKy8yaWpmMU55bitxL0dtL1hv?=
- =?utf-8?B?OHJsb3ozMEYzZ2NscUdTbVR2NWovSDJIMmI4OTE4cHZ3TTdjYXR6Qlg5SzlL?=
- =?utf-8?B?Z1pTNWV2TzJuc2Q1WmgyWUltTE01MzJ2VmpjM3JteTIxNFFkOFZqbE5hUUE3?=
- =?utf-8?B?b0N2MHhXdHFFZU82eERsUnhXZnFHOG5XenEzS2licksrSkd3WE5yYWwwcFk0?=
- =?utf-8?B?aHhPS2xUZUlreTZZdXZWcVAvRjh3bE1JdXcxOG8xNnNveWJFMDVpTmRZb2tt?=
- =?utf-8?B?UHgxVUFRSDlwZUw5VmZRQU9FOU9RL2x0bStKc0VKQmhlVzZqUThwMmRIM2RC?=
- =?utf-8?B?SS9MRS96aEsyTXMybCt5MTd2VlcvaG10R2psaG1VVVZTOEdUNFZNSkVhVjla?=
- =?utf-8?B?d3lyMVlIWXhHSmlFU2tYVjlBc3VPT0JkM1hpNk5SaTZqOVdwUTdzU1dEUitM?=
- =?utf-8?B?bFNuWnoxaFo2VStkMEdiYURSdmU5Y1RTcHBhVmhwUUcvZlBBaGlPZm9vQmxr?=
- =?utf-8?B?TFBpaUhRU3M4WURoelBqQlRkT0FuSHRvY01URU1RRmFmTFg1SWhQcGl2djJn?=
- =?utf-8?B?T3EwTlUrNTRkaGZ6L3FWU2FleFpJbXdIWkxQUlk1UEE2cTloRysvT2xUQzFy?=
- =?utf-8?B?U0dIUjJwWmNaaHhDS3loYnE1UFBPbEtOZXlCZnJTdHpvVC92RldBWjFKeHoz?=
- =?utf-8?B?Z1JRb21QR0QzOGpOMGZUWEo4KzdmdTg3Ymg0SDEvQXE4TzRYV1Bqcmx2QzVh?=
- =?utf-8?B?b1h3MUhIT0phS0poNTJJNGtWbnViZnpLZFJjOEo1QmUxVzRXRUVWWDIxN2Ev?=
- =?utf-8?B?YzRla3kzYkQ3RS9xdXI1Nmg3bmZBZHJUck5zYmJGaExaNk5TcW12VmxZNlh6?=
- =?utf-8?B?RGhuNTBqS3RHM1EzcWE3VlJQNEtmbzVJY1g4UDZGM2N0NkdrNUVhRWJYaFRt?=
- =?utf-8?B?SXV2bkxlekMySUlsbnNiWWIzc3dxYzVqRDEvQWl4MnZZbkJSb0k3eUpldVV1?=
- =?utf-8?B?TDNWQytzeUlBWkQ5cU9QSERCMFJHYkpWbEVENHByQU5kdFo3M0F5MG5qU2pI?=
- =?utf-8?B?SnpNS1pmTEo5Y0IzTkVWMVhYelBIaFV4N3RIM0I1eXI1V3NTeWtoWHZ6V3M5?=
- =?utf-8?B?R3gvcW1qQnA4bndPb3VFb3d6TE1mUVJSM0M5ZlFvaGE5TkFQUDNzbkZWVkE0?=
- =?utf-8?B?TmF2aEREQ3c2SUN6azBtNmZ4ZzFrZjZoTGY0eGVscVMvVnNrOFFqZkd4clRk?=
- =?utf-8?B?UGxwcmo5em84RDlIRXFUQVRNMUQzRndKajJMM2tNMnhSSHV0MUJvRjB5allu?=
- =?utf-8?B?bXA1M0JjVHdBb2N4a1ZoRG5aQXQ5SDRnV211Rmt2L2VZU3JNbm5lN3BhZy9V?=
- =?utf-8?B?OXFqdkl2NS9WZ1hpdW1pTUpmNXJrWVRqREJjbEJFWEUzWk1ILzIvZm00TWY2?=
- =?utf-8?B?aFoxQmV4Q3dmaGZDc2lObTZFUEhvUnlOWFJBZ1FJUGo1NWVSelBhSjJzS3p6?=
- =?utf-8?Q?k7QXi3CVsmnqj7bF8nB0+EV54?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ff2c42d9-9f37-46e6-d925-08ddc8f2b909
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2025 07:38:17.0061
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: AD8HDyZY2i+O9s3DJt26y/dKi2dCopIEyAdUTFr+HtgRWFSdxNOM0BmWtM4Z/rADPdNiu6lifddvGYcf34+ldw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6847
+References: <20250721081459.16278-1-laura.nao@collabora.com>
+In-Reply-To: <20250721081459.16278-1-laura.nao@collabora.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Tue, 22 Jul 2025 15:40:21 +0800
+X-Gm-Features: Ac12FXwHVu2xheACj_ug47v0VGmRzFUiGV73WGs8r_Guigs_NEMfWXqCZqRQckQ
+Message-ID: <CAGXv+5EmigF=m1zDZ71AMv02XwyYWQxpiRpiwc7YMg=8vc2FZA@mail.gmail.com>
+Subject: Re: [PATCH 0/9] Add thermal sensor driver support for Mediatek MT8196
+To: Laura Nao <laura.nao@collabora.com>
+Cc: srini@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com, 
+	lukasz.luba@arm.com, matthias.bgg@gmail.com, 
+	angelogioacchino.delregno@collabora.com, andrew-ct.chen@mediatek.com, 
+	lala.lin@mediatek.com, arnd@arndb.de, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, nfraprado@collabora.com, 
+	devicetree@vger.kernel.org, u.kleine-koenig@baylibre.com, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	kernel@collabora.com, colin.i.king@gmail.com, bchihi@baylibre.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Shengjiu,
+Hi,
 
-On 07/18/2025, Shengjiu Wang wrote:
-> The enable_audio() and disable_audio() callback pointers are in
-> plat_data structure, and the audio device driver needs to get plat_data
-> for assign these pointers. So add a function to export plat_data
+On Mon, Jul 21, 2025 at 4:18=E2=80=AFPM Laura Nao <laura.nao@collabora.com>=
+ wrote:
+>
+> This patch series extends the MediaTek LVTS thermal driver to support the
+> MT8196 SoC.
+>
+> MT8196 uses a positive temp_factor for temperature conversion, requiring
+> slight adjustments in the conversion logic.
+>
+> To support this, the series introduces:
+>
+> - A new struct lvts_platform_ops to allow platform-specific
+>   conversion logic between raw sensor values and temperature
+> - A variant of the lvts_temp_to_raw() implementation for SoCs with positi=
+ve
+>   temp_factor values
+> - Platform data and controller definitions for MT8196
 
-{enable,disable}_audio pointers are directly assigned to plat_data in patch 2,
-instead of using dw_hdmi_to_plat_data().  dw_hdmi_to_plat_data() is only
-used in patch 2 to get hdmi_pai pointer through pdata->priv_audio.
+I see the GPU and APU thermal sensors were left out. Was there a reason
+for this?
 
-const struct dw_hdmi_plat_data *pdata = dw_hdmi_to_plat_data(dw_hdmi);
-struct imx8mp_hdmi_pai *hdmi_pai = (struct imx8mp_hdmi_pai *)pdata->priv_audio;
+Thanks
+ChenYu
 
-> structure.
-> 
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> ---
->  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 6 ++++++
->  include/drm/bridge/dw_hdmi.h              | 1 +
->  2 files changed, 7 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> index 76c6570e2a85..3dfa42178f6c 100644
-> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> @@ -198,6 +198,12 @@ struct dw_hdmi {
->  	enum drm_connector_status last_connector_result;
->  };
->  
-> +const struct dw_hdmi_plat_data *dw_hdmi_to_plat_data(struct dw_hdmi *hdmi)
-> +{
-> +	return hdmi->plat_data;
-> +}
-> +EXPORT_SYMBOL_GPL(dw_hdmi_to_plat_data);
-> +
->  #define HDMI_IH_PHY_STAT0_RX_SENSE \
->  	(HDMI_IH_PHY_STAT0_RX_SENSE0 | HDMI_IH_PHY_STAT0_RX_SENSE1 | \
->  	 HDMI_IH_PHY_STAT0_RX_SENSE2 | HDMI_IH_PHY_STAT0_RX_SENSE3)
-> diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
-> index 6a46baa0737c..a56a3519a22a 100644
-> --- a/include/drm/bridge/dw_hdmi.h
-> +++ b/include/drm/bridge/dw_hdmi.h
-> @@ -208,4 +208,5 @@ void dw_hdmi_phy_setup_hpd(struct dw_hdmi *hdmi, void *data);
->  
->  bool dw_hdmi_bus_fmt_is_420(struct dw_hdmi *hdmi);
->  
-> +const struct dw_hdmi_plat_data *dw_hdmi_to_plat_data(struct dw_hdmi *hdmi);
-
-Nit: Add a blank line as it was here.
-
->  #endif /* __IMX_HDMI_H__ */
-
--- 
-Regards,
-Liu Ying
+> Laura Nao (9):
+>   dt-bindings: thermal: mediatek: Add LVTS thermal controller support
+>     for MT8196
+>   thermal/drivers/mediatek/lvts: Make number of calibration offsets
+>     configurable
+>   thermal/drivers/mediatek/lvts: Guard against zero temp_factor in
+>     lvts_raw_to_temp
+>   thermal: mediatek: lvts: Add platform ops to support alternative
+>     conversion logic
+>   thermal/drivers/mediatek/lvts: Add lvts_temp_to_raw variant for
+>     positive temp_factor
+>   thermal/drivers/mediatek/lvts: Add support for ATP mode
+>   thermal/drivers/mediatek/lvts: Support MSR offset for 16-bit
+>     calibration data
+>   thermal/drivers/mediatek/lvts_thermal: Add MT8196 support
+>   dt-bindings: nvmem: mediatek: efuse: Add support for MT8196
+>
+>  .../bindings/nvmem/mediatek,efuse.yaml        |   1 +
+>  .../thermal/mediatek,lvts-thermal.yaml        |   2 +
+>  drivers/thermal/mediatek/lvts_thermal.c       | 315 ++++++++++++++++--
+>  .../thermal/mediatek,lvts-thermal.h           |  26 ++
+>  4 files changed, 325 insertions(+), 19 deletions(-)
+>
+> --
+> 2.39.5
+>
+>
 
