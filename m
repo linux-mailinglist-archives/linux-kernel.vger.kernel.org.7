@@ -1,72 +1,61 @@
-Return-Path: <linux-kernel+bounces-741146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97CE6B0E0A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:36:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95464B0E0AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:37:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97F96AA7ACE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:35:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCFE05658D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3806727876A;
-	Tue, 22 Jul 2025 15:35:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BD8727933F;
+	Tue, 22 Jul 2025 15:36:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lGlIGhXR"
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ea8/2Rlk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 983D527932E
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 15:35:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0060A278E5D;
+	Tue, 22 Jul 2025 15:36:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753198555; cv=none; b=Y6ScICNihDpTq60+xHpbUIuyijOMXmPFtw0ZNEUD/x+bJ6e/nIxYKV/NcDK5UVUoCxa5DvnNffcc/LHK7jX/JYh/gIKMHHmyoRC49HpZ95S7xFhnZzkIQg8VhEwqVb8aqi0oBIS3jNEq11epHW7fBHUOX0UHPbjntYp8cqACjpo=
+	t=1753198604; cv=none; b=K2y9hxjto/aDlZNgU3NPf69WZPIF6oRbM/3G3ClRbCYv5QBhhngHrd17ODZIc6F9RyoUjdxSFGlKzUmgswvnrOAklJ2sU2O6U8WxgR4jGCp2FlvAMap05cIjrvvMMq/nRWN79zhPQTFP+Lt9wkbhwW7N+fCJ/fqIFMDl5bzKwEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753198555; c=relaxed/simple;
-	bh=mCBqL8xjfR57vJvMp9lpkKBV0ktGg7kwsgafi+ri44o=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=l0pvj4WFGvUVgZxR8qEfNTTITWELgcC4twQJZlLhuTn77owCQ6KoV2jdgpeKTD7AO/ROG9ULzM3UOYKdZ9HRc3pO57kfPgEOLt2JvpN3GlcX3hfmk6Edr5M54gO1tmahMa9sU8Dodc8H/UaHzb33vun8xQGoXu1zUydR6Hp+e0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lGlIGhXR; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753198551;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I8bpiq7NXE+7ykTDyyrt/AdiHWnh4KywpW8frQH5Gv0=;
-	b=lGlIGhXRq+W2dOq48FTPdLjh7u8bFYIMW5z/rMgW8PB8mmSZYuhxxvNoeWO0ROAQKid6RK
-	xh8i/G/nOGGsAND9EzuZvUdA4tQ2hKsevfV6yVJGIAZQ9okZelPSTm7rwAi3k7NBW4HFEG
-	sPWAnF2X8IDk0m3pOdU0xbMthCttqbQ=
-From: KaFai Wan <kafai.wan@linux.dev>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	john.fastabend@gmail.com,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	mykolal@fb.com,
-	shuah@kernel.org,
-	kafai.wan@linux.dev,
-	laoar.shao@gmail.com,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	leon.hwang@linux.dev
-Subject: [PATCH bpf-next v3 4/4] selftests/bpf: Migrate fexit_noreturns case into tracing_failure test suite
-Date: Tue, 22 Jul 2025 23:34:34 +0800
-Message-ID: <20250722153434.20571-5-kafai.wan@linux.dev>
-In-Reply-To: <20250722153434.20571-1-kafai.wan@linux.dev>
-References: <20250722153434.20571-1-kafai.wan@linux.dev>
+	s=arc-20240116; t=1753198604; c=relaxed/simple;
+	bh=sKE1I+XBnE0OVrhlro0vxqyA8Rd8ZCj8d4EvJPENldc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bCOdNW4+51HoeYXlHJYMD2T89/w9AZsSyhlC1czQmcLLxOG1jD0LS0DiV7CB2rroBWvWM+ULSPSxfh9ancr9zCq0eodTlus4UAsLyV6+sScgtdydApXrbxRrfQef8vtPg9P6NmvpQdNCaFdh1+YzrD5cHqoja02qm9+dmO0J8t8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ea8/2Rlk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41C05C4CEEB;
+	Tue, 22 Jul 2025 15:36:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753198603;
+	bh=sKE1I+XBnE0OVrhlro0vxqyA8Rd8ZCj8d4EvJPENldc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ea8/2Rlk91FRdAAqv98bM28Jq5h4boF22SuZ5+pwDxDpCGQ5NMS8djQ681nuT93fB
+	 evgaKLkPqHItRzR9X4M2LK3ZLRqu55YDSEfIQVVYFc57TFFODU+WRllrQb8KmaIYHc
+	 yiEz9sSG2EIIrOcSaxki4XlQ4Ipk4KuOXKFoydnprBTemcC+uVaKV4YNQ4MruKY04N
+	 5LSyZ2iiYEgrz2HCLei4+J1DqfPHCMZk3vYO+K8QRkwjDNxHzGT1Wr8Ue554ctn0HH
+	 ntX3JWLbTw4UQC4Wf3+/6tijbC66B20Nfe5W4MNJ3cJm4M63w87dyCZ44tKnqtGb7a
+	 Pzg9lLsp1qTUA==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Peng Fan <peng.fan@nxp.com>,
+	Lee Jones <lee@kernel.org>,
+	Koichiro Den <koichiro.den@canonical.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] gpiolib: make legacy interfaces optional
+Date: Tue, 22 Jul 2025 17:35:43 +0200
+Message-Id: <20250722153634.3683927-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,159 +63,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Delete fexit_noreturns.c files and migrate the cases into
-tracing_failure.c files.
+From: Arnd Bergmann <arnd@arndb.de>
 
-The result:
+The traditional interfaces are only used on a small number of ancient
+boards. Make these optional now so they can be disabled by default.
 
- $ tools/testing/selftests/bpf/test_progs -t tracing_failure/fexit_noreturns
- #467/4   tracing_failure/fexit_noreturns:OK
- #467     tracing_failure:OK
- Summary: 1/1 PASSED, 0 SKIPPED, 0 FAILED
-
-Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- .../bpf/prog_tests/fexit_noreturns.c          |  9 ----
- .../bpf/prog_tests/tracing_failure.c          | 47 +++++++++++++------
- .../selftests/bpf/progs/fexit_noreturns.c     | 15 ------
- .../selftests/bpf/progs/tracing_failure.c     |  6 +++
- 4 files changed, 39 insertions(+), 38 deletions(-)
- delete mode 100644 tools/testing/selftests/bpf/prog_tests/fexit_noreturns.c
- delete mode 100644 tools/testing/selftests/bpf/progs/fexit_noreturns.c
+This is the first patch of a series to turn off the legacy interfaces
+by default. If we can still have this one in linux-6.17, we can more
+easily merge the other patches for 6.18.
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/fexit_noreturns.c b/tools/testing/selftests/bpf/prog_tests/fexit_noreturns.c
-deleted file mode 100644
-index 568d3aa48a78..000000000000
---- a/tools/testing/selftests/bpf/prog_tests/fexit_noreturns.c
-+++ /dev/null
-@@ -1,9 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
+See for the longer series:
+https://git.kernel.org/pub/scm/linux/kernel/git/arnd/playground.git/log/?h=config-gpio-legacy
+
+I'm sure there are still problems in the other patches, but it
+does pass my randconfig build tests on the three architectures
+I'm testing on. I plan to post them after some more testing
+once -rc1 is out.
+
+ drivers/gpio/Kconfig  |  3 +++
+ drivers/gpio/Makefile |  2 +-
+ include/linux/gpio.h  | 10 ++++++----
+ 3 files changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 12bdf6e965f1..8bda3c9d47b4 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -14,6 +14,9 @@ menuconfig GPIOLIB
+ 
+ if GPIOLIB
+ 
++config GPIOLIB_LEGACY
++	def_bool y
++
+ config GPIOLIB_FASTPATH_LIMIT
+ 	int "Maximum number of GPIOs for fast path"
+ 	range 32 512
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 88dedd298256..b01ff2b68bf6 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -5,7 +5,7 @@ ccflags-$(CONFIG_DEBUG_GPIO)	+= -DDEBUG
+ 
+ obj-$(CONFIG_GPIOLIB)		+= gpiolib.o
+ obj-$(CONFIG_GPIOLIB)		+= gpiolib-devres.o
+-obj-$(CONFIG_GPIOLIB)		+= gpiolib-legacy.o
++obj-$(CONFIG_GPIOLIB_LEGACY)	+= gpiolib-legacy.o
+ obj-$(CONFIG_OF_GPIO)		+= gpiolib-of.o
+ obj-$(CONFIG_GPIO_CDEV)		+= gpiolib-cdev.o
+ obj-$(CONFIG_GPIO_SYSFS)	+= gpiolib-sysfs.o
+diff --git a/include/linux/gpio.h b/include/linux/gpio.h
+index ff99ed76fdc3..8f85ddb26429 100644
+--- a/include/linux/gpio.h
++++ b/include/linux/gpio.h
+@@ -13,6 +13,11 @@
+ #define __LINUX_GPIO_H
+ 
+ #include <linux/types.h>
++#ifdef CONFIG_GPIOLIB
++#include <linux/gpio/consumer.h>
++#endif
++
++#ifdef CONFIG_GPIOLIB_LEGACY
+ 
+ struct device;
+ 
+@@ -22,9 +27,6 @@ struct device;
+ #define GPIOF_OUT_INIT_HIGH	((0 << 0) | (1 << 1))
+ 
+ #ifdef CONFIG_GPIOLIB
 -
--#include <test_progs.h>
--#include "fexit_noreturns.skel.h"
+-#include <linux/gpio/consumer.h>
 -
--void test_fexit_noreturns(void)
--{
--	RUN_TESTS(fexit_noreturns);
--}
-diff --git a/tools/testing/selftests/bpf/prog_tests/tracing_failure.c b/tools/testing/selftests/bpf/prog_tests/tracing_failure.c
-index 140fb0d175cf..01c1997b705f 100644
---- a/tools/testing/selftests/bpf/prog_tests/tracing_failure.c
-+++ b/tools/testing/selftests/bpf/prog_tests/tracing_failure.c
-@@ -28,37 +28,54 @@ static void test_bpf_spin_lock(bool is_spin_lock)
- 	tracing_failure__destroy(skel);
+ /*
+  * "valid" GPIO numbers are nonnegative and may be passed to
+  * setup routines like gpio_request().  Only some valid numbers
+@@ -170,5 +172,5 @@ static inline int devm_gpio_request_one(struct device *dev, unsigned gpio,
  }
  
--static void test_tracing_deny(void)
-+static void test_tracing_fail_prog(const char *prog_name, const char *exp_msg)
- {
- 	struct tracing_failure *skel;
-+	struct bpf_program *prog;
- 	char log_buf[256];
--	int btf_id, err;
+ #endif /* ! CONFIG_GPIOLIB */
 -
--	/* migrate_disable depends on CONFIG_SMP */
--	btf_id = libbpf_find_vmlinux_btf_id("migrate_disable", BPF_TRACE_FENTRY);
--	if (btf_id <= 0) {
--		test__skip();
--		return;
--	}
-+	int err;
- 
- 	skel = tracing_failure__open();
- 	if (!ASSERT_OK_PTR(skel, "tracing_failure__open"))
- 		return;
- 
--	bpf_program__set_autoload(skel->progs.tracing_deny, true);
--	bpf_program__set_log_buf(skel->progs.tracing_deny, log_buf, sizeof(log_buf));
-+	prog = bpf_object__find_program_by_name(skel->obj, prog_name);
-+	if (!ASSERT_OK_PTR(prog, "bpf_object__find_program_by_name"))
-+		goto out;
-+
-+	bpf_program__set_autoload(prog, true);
-+	bpf_program__set_log_buf(prog, log_buf, sizeof(log_buf));
- 
- 	err = tracing_failure__load(skel);
- 	if (!ASSERT_ERR(err, "tracing_failure__load"))
- 		goto out;
- 
--	ASSERT_HAS_SUBSTR(log_buf,
--			  "Attaching tracing programs to function 'migrate_disable' is rejected.",
--			  "log_buf");
-+	ASSERT_HAS_SUBSTR(log_buf, exp_msg, "log_buf");
- out:
- 	tracing_failure__destroy(skel);
- }
- 
-+static void test_tracing_deny(void)
-+{
-+	int btf_id;
-+
-+	/* migrate_disable depends on CONFIG_SMP */
-+	btf_id = libbpf_find_vmlinux_btf_id("migrate_disable", BPF_TRACE_FENTRY);
-+	if (btf_id <= 0) {
-+		test__skip();
-+		return;
-+	}
-+
-+	test_tracing_fail_prog("tracing_deny",
-+			       "Attaching tracing programs to function 'migrate_disable' is rejected.");
-+}
-+
-+static void test_fexit_noreturns(void)
-+{
-+	test_tracing_fail_prog("fexit_noreturns",
-+			       "Attaching fexit/fmod_ret to __noreturn function 'do_exit' is rejected.");
-+}
-+
- void test_tracing_failure(void)
- {
- 	if (test__start_subtest("bpf_spin_lock"))
-@@ -67,4 +84,6 @@ void test_tracing_failure(void)
- 		test_bpf_spin_lock(false);
- 	if (test__start_subtest("tracing_deny"))
- 		test_tracing_deny();
-+	if (test__start_subtest("fexit_noreturns"))
-+		test_fexit_noreturns();
- }
-diff --git a/tools/testing/selftests/bpf/progs/fexit_noreturns.c b/tools/testing/selftests/bpf/progs/fexit_noreturns.c
-deleted file mode 100644
-index b1c33d958ae2..000000000000
---- a/tools/testing/selftests/bpf/progs/fexit_noreturns.c
-+++ /dev/null
-@@ -1,15 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--
--#include <linux/bpf.h>
--#include <bpf/bpf_helpers.h>
--#include <bpf/bpf_tracing.h>
--#include "bpf_misc.h"
--
--char _license[] SEC("license") = "GPL";
--
--SEC("fexit/do_exit")
--__failure __msg("Attaching fexit/fmod_ret to __noreturn function 'do_exit' is rejected.")
--int BPF_PROG(noreturns)
--{
--	return 0;
--}
-diff --git a/tools/testing/selftests/bpf/progs/tracing_failure.c b/tools/testing/selftests/bpf/progs/tracing_failure.c
-index dfa152e8194e..70a123e8fe9c 100644
---- a/tools/testing/selftests/bpf/progs/tracing_failure.c
-+++ b/tools/testing/selftests/bpf/progs/tracing_failure.c
-@@ -24,3 +24,9 @@ int BPF_PROG(tracing_deny)
- {
- 	return 0;
- }
-+
-+SEC("?fexit/do_exit")
-+int BPF_PROG(fexit_noreturns)
-+{
-+	return 0;
-+}
++#endif /* CONFIG_GPIOLIB_LEGACY */
+ #endif /* __LINUX_GPIO_H */
 -- 
-2.43.0
+2.39.5
 
 
