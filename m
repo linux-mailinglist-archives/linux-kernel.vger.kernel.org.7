@@ -1,110 +1,97 @@
-Return-Path: <linux-kernel+bounces-741269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2A29B0E236
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:56:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7D57B0E23A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:57:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACC3E1AA5CA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:57:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A4A23B1F85
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71BB27E079;
-	Tue, 22 Jul 2025 16:56:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CE7F27EFFA;
+	Tue, 22 Jul 2025 16:56:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="wrZnyrWG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u6An+Cuo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14BBD1FECAF;
-	Tue, 22 Jul 2025 16:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A279B26A1BB;
+	Tue, 22 Jul 2025 16:56:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753203404; cv=none; b=XJsApd3aSe4Ob9qcWDhqkbQbetbKhG3HzggfWL9GG+FtUSGZivcTuC69j6RP51YDxUX3u929U16nIW/J0KOL8btvmV3NR2TbAI/rm+Uwsl67b/t/TpoN+XaoWOiPC3gjsOiOydVPvi2EZ1Ac/LCj780u+/HO04s/vbaZI8fyN3Q=
+	t=1753203412; cv=none; b=UBBCdIk/ij4ChXORHHwt5xeVd40sam2Xdi4SFJV5l6ZuuoxJBPAVkmZcqyZngybtQ8TVKJqk409TBeZqDZmuci1z43dlkqEHXNfsD+SEFrUVhfy7RiLTP8iMoAWMYC6nW0W637nugKnspT2cnmu4ZWTb9cxK1tyyPUGNJ4Ekmas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753203404; c=relaxed/simple;
-	bh=zs1NQWnNp7XQsncuGCuB7JtNCj7MZLHC06EhaBgNnKM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fej43UBVlTq6LculggaXGIkXBsencs04E8a12GqYU5Sj9d+enSDIt16vqJDpRkmF0WyOSbLCJgVgjbKgpc54qsmiQDL9e+rRs5XeeBwQGYrwa4eDINR5mWRfv/0u1yuJxNHDik3WHKyM2cFqzaakhm4fX+ChqPyfT4SPyUFEl2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=wrZnyrWG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B666C4CEEB;
-	Tue, 22 Jul 2025 16:56:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1753203402;
-	bh=zs1NQWnNp7XQsncuGCuB7JtNCj7MZLHC06EhaBgNnKM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=wrZnyrWGeNYZafl9tfGe47aGZqMcY2WA+m37wxAvofufLop+T/OqvWKRticmNRKGH
-	 q2EHVXFDPXaBUGn/2oubuhxwEASg13tPrkOfXVGvwf2my9J2XyEPtVC46HyqWovr3A
-	 +cRiR2EoIDCHZ6YzcGnCLMiQbauxTQvr/J9XAM1E=
-Date: Tue, 22 Jul 2025 18:56:39 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Michael Zhivich <mzhivich@akamai.com>, stable@vger.kernel.org,
-	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-	x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] x86/bugs: Fix use of possibly uninit value in
- amd_check_tsa_microcode()
-Message-ID: <2025072219-mulberry-shallow-da0d@gregkh>
-References: <20250722122844.2199661-1-mzhivich@akamai.com>
- <20250722142254.GAaH-evk-BqchvvIaZ@renoirsky.local>
+	s=arc-20240116; t=1753203412; c=relaxed/simple;
+	bh=NZFrikSV/AG26VVF+grEqLNPygLwmoKqqxmwzNhYQ3w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gtAsz+Hfv7RQF0TzoNt2iNclsAYaOASVmCyn5mit/2h4VISWSw95sVIYIZfn29NTmTUaZo/cIhJmn4nhSaIp1tm7njjkRaoqiF7hMYMb6m1ikC578Dl0B3Y1UoDnqH2V/FKiJpMtRRBUpNVK/2TZ7CTPWmd8n7JrgIwFa3iYTrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u6An+Cuo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B331C4CEEB;
+	Tue, 22 Jul 2025 16:56:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753203412;
+	bh=NZFrikSV/AG26VVF+grEqLNPygLwmoKqqxmwzNhYQ3w=;
+	h=From:To:Cc:Subject:Date:From;
+	b=u6An+Cuoc9pkQmmCrQacieTjUDdJlwh83FPwf3bAPi9/YwSwq5/NYauHJlDzM09Zx
+	 +rDk5/5pf1FFNScuJVGO5c7d09RlkVSKKmDzCoBbTCErkshuM7wvvgIFAPPLth89wU
+	 6FbRAa53uGHvCY420Q5iJ1OBQYs3EccOszHfEjcCMVLGqEqjUvoPxCTWWbyRuquPAW
+	 +PVxVQQ5JptL8rbv53U9zDbFIAAZhUr7wFYHWCChjcXnmLYVjhc/QSHSkrcQPUbDkx
+	 eswP+0wtvdfVVcOaUJX0huSBxzEUgGPxWTLqhdSdbCEJXlV2sl0dkBTtehvk40QjZz
+	 9sEVbPfNhdZdg==
+From: Kees Cook <kees@kernel.org>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: Kees Cook <kees@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH net-next] MAINTAINERS: Add in6.h to MAINTAINERS
+Date: Tue, 22 Jul 2025 09:56:49 -0700
+Message-Id: <20250722165645.work.047-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250722142254.GAaH-evk-BqchvvIaZ@renoirsky.local>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=910; i=kees@kernel.org; h=from:subject:message-id; bh=NZFrikSV/AG26VVF+grEqLNPygLwmoKqqxmwzNhYQ3w=; b=owGbwMvMwCVmps19z/KJym7G02pJDBn1hy6udfvenRcn3vfS/XR5zzWu3Ko/Z/nTw2a9fhzv8 OpH0tqejlIWBjEuBlkxRZYgO/c4F4+37eHucxVh5rAygQxh4OIUgInsDWRkuO2rf6LO68PUs1sC bsdFNBsa+u2e+/2KwLVUEzfJS1nbihn+l2/YwmFWxGK+yEUqwTowqOfal7wJ+hq9ey+3/TS8rPC FGwA=
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 22, 2025 at 04:22:54PM +0200, Borislav Petkov wrote:
-> On Tue, Jul 22, 2025 at 08:28:44AM -0400, Michael Zhivich wrote:
-> > For kernels compiled with CONFIG_INIT_STACK_NONE=y, the value of __reserved
-> > field in zen_patch_rev union on the stack may be garbage.  If so, it will
-> > prevent correct microcode check when consulting p.ucode_rev, resulting in
-> > incorrect mitigation selection.
-> 
-> "This is a stable-only fix." so that the AI is happy. :-P
-> 
-> > Cc: <stable@vger.kernel.org>
-> > Signed-off-by:  Michael Zhivich <mzhivich@akamai.com>
-> 
-> Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
-> 
-> > Fixes: 7a0395f6607a5 ("x86/bugs: Add a Transient Scheduler Attacks mitigation")
-> 
-> That commit in Fixes: is the 6.12 stable one.
-> 
-> The 6.6 one is:
-> 
-> Fixes: 90293047df18 ("x86/bugs: Add a Transient Scheduler Attacks mitigation")
-> 
-> The 6.1 is:
-> 
-> Fixes: d12145e8454f ("x86/bugs: Add a Transient Scheduler Attacks mitigation")
-> 
-> The 5.15 one:
-> 
-> Fixes: f2b75f1368af ("x86/bugs: Add a Transient Scheduler Attacks mitigation")
-> 
-> and the 5.10 one is
-> 
-> Fixes: 78192f511f40 ("x86/bugs: Add a Transient Scheduler Attacks mitigation")
-> 
-> and since all stable kernels above have INIT_STACK_NONE, that same
-> one-liner should be applied to all of them.
-> 
-> Greg, I'm thinking this one-liner should apply to all of the above with
-> some fuzz. Can you simply add it to each stable version with a different
-> Fixes: tag each?
-> 
-> Or do you prefer separate submissions?
+My CC-adding automation returned nothing on a future patch to the
+include/linux/in6.h file, and I went looking for why. Add the missed
+in6.h to MAINTAINERS.
 
-Ideally, separate submissions, otherwise I have to do this all by hand
-:(
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>
+Cc: Simon Horman <horms@kernel.org>
+Cc: <netdev@vger.kernel.org>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-thanks
+diff --git a/MAINTAINERS b/MAINTAINERS
+index ffb35359f1e2..210e8402cc2a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -17563,6 +17563,7 @@ F:	include/linux/ethtool.h
+ F:	include/linux/framer/framer-provider.h
+ F:	include/linux/framer/framer.h
+ F:	include/linux/in.h
++F:	include/linux/in6.h
+ F:	include/linux/indirect_call_wrapper.h
+ F:	include/linux/inet.h
+ F:	include/linux/inet_diag.h
+-- 
+2.34.1
 
-greg k-h
 
