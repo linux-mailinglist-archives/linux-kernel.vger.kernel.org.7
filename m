@@ -1,163 +1,138 @@
-Return-Path: <linux-kernel+bounces-741359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EEF7B0E32E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:00:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08120B0E333
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:02:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 735F0AA40FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:00:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E40F7BA8E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:01:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 731C327F013;
-	Tue, 22 Jul 2025 18:00:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1C7280312;
+	Tue, 22 Jul 2025 18:02:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zSTmL38H"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="bU71hCOU"
+Received: from smtp.smtpout.orange.fr (smtp-80.smtpout.orange.fr [80.12.242.80])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE2F27EFE1
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 18:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B052D1DF270;
+	Tue, 22 Jul 2025 18:02:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753207246; cv=none; b=FqPLRYjcLVYmPDmc9WFv3BeQ62o0QwQU4LmIn9b+zGTIsYJ/jSCW4M7GBL5Y3bGDfZOP2VCrkhvVllqVe7EAAS6+mU7fCsG0xs1YFFPjLLL1fk9OcdlRZAssdHcgpoQzGOU2f2c+qqujku94i1l9ZdRXnjaMRJhrpI8PTqv1auQ=
+	t=1753207353; cv=none; b=FfEvK8BC25ti+GqAcbmHyGKs/LKh8NhATlElW8doGsjDjmCuoRG8Jpi1UV/BSbTkR+z+u0aTs1c5dvWnYPvmRtGe9tbo2V1czPCknCye2vorjKPpRsdZhV4iGo0f8TC5t4UmxwE2iF1v5GJBpe+a7Vvt2NboqSNNY01KZxd5iig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753207246; c=relaxed/simple;
-	bh=YVtu41alI3J1y0N+ZggPSzt7lkdH9t/iPzc26jPFrYQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mdaV4dkZkCA2VJysLY5bh0XZFADDPLCspnjfrWNDpixPuLxuCX+rmJp867Z1tVa2i6W3DVZuz+sJMOMKIxFZuOeuFjFk8B85022qmL3tEC9Egk1HMbr6OHSFfeWznzNH4PKyR6rUtB6S1vofp3h2W9PIL+E+9+ID5SS8q6T/7OI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zSTmL38H; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-313f68bc519so3678097a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 11:00:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753207244; x=1753812044; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Px2ISLgVozuB6r8zgwA8tkISmDkVGlK4ZTL8goB7E8M=;
-        b=zSTmL38H3byXvemZ0Nd611RvCtnf+mO2jKbqoAaS88EofYkoOXdZhPq2QgHcPSpyZD
-         ssJ07u+aA9EqUnpxis8t1LkB5LqCbtry6NEu5L9TsCpijO9haJncsFRFPCghJdeCANIA
-         BbI73Ii1qEMhvz4XR1+ZWK6KFH6QX0Wj28CVkSHskNA9RP5L6g+hwd68ElyUqfc0y710
-         cNMB/FEzUzFUsLtX/uJ9Hgnpr5kJUAuSKF/FxudRVyLnMVIOG6aLLOpCuWaj2n4zgrBW
-         knHiVgZ3LzZuThJ1EXoDkq0LRpSQwixZkRK6BpF3oSkuHcuF/05Cv5zauDD31+UzdOWn
-         ZQew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753207244; x=1753812044;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Px2ISLgVozuB6r8zgwA8tkISmDkVGlK4ZTL8goB7E8M=;
-        b=ptOWeCxUY6aMmux7YERWIF6h6wZkNi/52Afu5IJlG3mk79xrYvAXxMY/Gdi0ByslZU
-         fDDh3HdkNGR/fAQ0s5hSO7RkwPF0aJot83/ivz4qmkvkXPaEP2sfWar+7d4wfTv084iN
-         zrEx1TmAtuR671l2y83Mh4iumo21Yv0lFvg9eHUbpRlog/28s2ARhZpuhavAfh3VukZv
-         gK9fPvTzAHLwgfahgsc1U3ebA4spwmkLddGTXNfpwErCJIzkAp/lZQNztT8ZCCsJ14gX
-         DKzZcL+P/p7u1xmabXaUsVr5D8XWeV+Kbbn3bBMTQYD9vXtk49d1lm8/VuNTUhWH2SRo
-         KxUg==
-X-Forwarded-Encrypted: i=1; AJvYcCUsri0tS/Aii2xegZwTrz2Fa4coEoz9886WmiG+U3yMS1mN8/p9QeGMXPegnbLRPhusWCKE4AgJhClJEYE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMOgk6ukvR3pwompYuMAqX9mhu5YIIZ8aGGqWall8bmIFr2PT2
-	x/TpoZot/yn6m589J5UK7aZYHviURqKLd3a9R0cm17argSb4XeB4A2PAXIngOucekfNm9mdIcn8
-	bE9yasI20Xmr6CLQlTxE+9hgycItj+1U1psXfSJPisA==
-X-Gm-Gg: ASbGncsNbMBVpr1RHI+rC4k7OhXwKH8uWKzGq9YxmSm3xiAudcuAy6e4e5/TDLAX+JS
-	J0HKOO/+yo4DRcwAuYuhouL8nV06u/jqoGZMNzul+OL0FlLK9uBiz3ZfIoD59f1MNlJMry2nJcg
-	yAMzyGrP2czME0tMXQPu4QOU621I/n9FZh7ZL4cGaCDq31L+AA5oqpzidV0B5DhaS6/xhjfkted
-	7OW/95/guJ/e35XjYMXVdRoShryjHvzKFqTUw==
-X-Google-Smtp-Source: AGHT+IF1c0ECz1dHQBMozDVaGJegjDQ+xVWv6X/ujXbFpey4CFIuQxZFRfSj60viTUAnlrJuZLxqs44XGNMAeZvlUx8=
-X-Received: by 2002:a17:90a:d60b:b0:311:f30b:c21 with SMTP id
- 98e67ed59e1d1-31e5082cc31mr280553a91.26.1753207244493; Tue, 22 Jul 2025
- 11:00:44 -0700 (PDT)
+	s=arc-20240116; t=1753207353; c=relaxed/simple;
+	bh=ohSbxCZo1MGSSKhP1RrM5PesDAWqXEpJa0cXSeKerxY=;
+	h=Message-ID:Date:MIME-Version:Subject:References:From:To:Cc:
+	 In-Reply-To:Content-Type; b=S1HkqFdT6mWkozUuxvd8gb/da1zi1fmH5+pfxHyzN57Y+QJpsE/YgYY06bgRFngTyoLki01vMUkyuPfi1rVoQI0NIj5mpS9zgSmXGGGY1gt1RDCM3zByuaI2EnqNkw4XWSseNjxiMv0JZwG1oEIZoCskCyd/drl5froDrlbMcyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=bU71hCOU; arc=none smtp.client-ip=80.12.242.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id eHIluGXwGlRPceHIluHOmd; Tue, 22 Jul 2025 20:01:21 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1753207281;
+	bh=RsdHt510/2iHrRRCRfkCz61iL9/9WAdLGdGdy3eepjg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To;
+	b=bU71hCOUq+wzPYSUTgP5XRsJ0VCdgDKatPuTx60NPFLmSXgVtq8iVAxAwlZFr5CLI
+	 eP0U2fo8bb16pY3S21j6mgfcLqcqnIVzAT/C5dxjixFpNqYBbe97OqgE1oHh0/N4S/
+	 ZBuuS3JPAmslgGkh1yf6V9Op+NeLKqXlP0V/W9TNx2FHY76LRfn69Xty8A+8ZvmzwY
+	 v4l/ijS3vfnFwWNKpc93aVjkzK7UvdSZM8dwzbfqgRie4fG4HjuJS/WG+Bq7Px4LP7
+	 Gl/jDX9yVP4kN/PE7JJWR7G+fe0OmK+vXPmGK5BelTR8DYNs+zbFamKRWZURkwRlTN
+	 ERqsStQ1BNpYg==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Tue, 22 Jul 2025 20:01:21 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <0f52bdd7-0318-4762-8557-1fd1ab7a9f1f@wanadoo.fr>
+Date: Tue, 22 Jul 2025 20:01:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250722134340.596340262@linuxfoundation.org>
-In-Reply-To: <20250722134340.596340262@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Tue, 22 Jul 2025 23:30:32 +0530
-X-Gm-Features: Ac12FXzKOsmLQ8yujNcTxBZG6536oHN-0krbleAUzT7bCEwfhEyQGS7hbv_zCoY
-Message-ID: <CA+G9fYu8JY=k-r0hnBRSkQQrFJ1Bz+ShdXNwC1TNeMt0eXaxeA@mail.gmail.com>
-Subject: Re: [PATCH 6.12 000/158] 6.12.40-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, clang-built-linux <llvm@lists.linux.dev>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org, Nathan Chancellor <nathan@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
-	Ben Copeland <benjamin.copeland@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 4/7] PCI: keystone: Add support for PVU-based DMA
+ isolation on AM654
+References: <20250721025945.204422-1-huaqian.li@siemens.com>
+ <20250721025945.204422-5-huaqian.li@siemens.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: huaqian.li@siemens.com
+Cc: baocheng.su@siemens.com, bhelgaas@google.com, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, diogo.ivo@siemens.com, helgaas@kernel.org,
+ jan.kiszka@siemens.com, kristo@kernel.org, krzk+dt@kernel.org, kw@linux.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, lpieralisi@kernel.org, nm@ti.com,
+ robh@kernel.org, s-vadapalli@ti.com, ssantosh@kernel.org, vigneshr@ti.com
+In-Reply-To: <20250721025945.204422-5-huaqian.li@siemens.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, 22 Jul 2025 at 19:27, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.12.40 release.
-> There are 158 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 24 Jul 2025 13:43:10 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.40-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Le 21/07/2025 à 04:59, 
+huaqian.li-kv7WeFo6aLtBDgjK7y7TUQ@public.gmane.org a écrit :
+> From: Jan Kiszka <jan.kiszka-kv7WeFo6aLtBDgjK7y7TUQ@public.gmane.org>
+> 
+> The AM654 lacks an IOMMU, thus does not support isolating DMA requests
+> from untrusted PCI devices to selected memory regions this way. Use
+> static PVU-based protection instead. The PVU, when enabled, will only
+> accept DMA requests that address previously configured regions.
+> 
+> Use the availability of a restricted-dma-pool memory region as trigger
+> and register it as valid DMA target with the PVU. In addition, enable
+> the mapping of requester IDs to VirtIDs in the PCI RC. Use only a single
+> VirtID so far, catching all devices.
 
-With addition to the previous report on the stable-rc 6.15.8-rc1 review
-While building allyesconfig build for arm64 and x86 with the toolchain
-clang-nightly version 22.0.0 the following build warnings / errors
-noticed on the stable-rc 6.12.40-rc1 review.
+Hi,
 
-Regression Analysis:
-- New regression? Yes
-- Reproducibility? Yes
+...
 
-Build regression: arm64 x86 kcsan_test.c error variable 'dummy' is
-uninitialized when passed as a const pointer argument here
+>   	case DW_PCIE_EP_TYPE:
+>   		if (!IS_ENABLED(CONFIG_PCI_KEYSTONE_EP)) {
+> @@ -1346,6 +1450,8 @@ static int ks_pcie_probe(struct platform_device *pdev)
+>   
+>   err_ep_init:
+>   	dw_pcie_ep_deinit(&pci->ep);
+> +err_dma_cleanup:
+> +	ks_release_restricted_dma(pdev);
+>   err_get_sync:
+>   	pm_runtime_put(dev);
+>   	pm_runtime_disable(dev);
+> @@ -1362,9 +1468,15 @@ static void ks_pcie_remove(struct platform_device *pdev)
+>   {
+>   	struct keystone_pcie *ks_pcie = platform_get_drvdata(pdev);
+>   	struct device_link **link = ks_pcie->link;
+> +	const struct ks_pcie_of_data *data;
+>   	int num_lanes = ks_pcie->num_lanes;
+>   	struct device *dev = &pdev->dev;
+>   
+> +	data = of_device_get_match_data(dev);
+> +	if (data && data->mode == DW_PCIE_RC_TYPE) {
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+If this test against DW_PCIE_RC_TYPE is needed in the remove function,
+should the same be done in the error handling path of the probe?
 
-## Build log
+If we go through "case DW_PCIE_EP_TYPE", we can end to "goto 
+err_ep_init" and call ks_release_restricted_dma() unconditionally.
 
-kernel/kcsan/kcsan_test.c:591:41: error: variable 'dummy' is
-uninitialized when passed as a const pointer argument here
-[-Werror,-Wuninitialized-const-pointer]
-  591 |         KCSAN_EXPECT_READ_BARRIER(atomic_read(&dummy), false);
-      |                                                ^~~~~
-1 error generated.
+If it is not an issue in the error handling path of the probe, then I 
+suppose that it can be removed from the remove function as well.
 
 
-## Source
-* Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-* Git sha: 596aae841edf981aab1df1845e6df012bed94594
-* Git describe: v6.12.39-159-g596aae841edf
-* Architectures: arm64 x86
-* Toolchains: Debian clang version 22.0.0
-(++20250721112855+43a829a7e894-1~exp1~20250721112913.1588)
-* Kconfigs: allyesconfig
+(and BTW, the extra {} could be removed)
 
-## Build
-* Build log: https://regressions.linaro.org/lkft/linux-stable-rc-linux-6.12.y/v6.12.39-159-g596aae841edf/build/clang-nightly-allyesconfig/
-* Build run: https://regressions.linaro.org/lkft/linux-stable-rc-linux-6.12.y/v6.12.39-159-g596aae841edf/testruns/1703644/
-* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/30EXE6Cnct6e7DCgsWWrXlMdO0z/
-* Kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/30EXE6Cnct6e7DCgsWWrXlMdO0z/config
+CJ
 
-## Steps to reproduce
-* tuxmake --runtime podman --target-arch arm64 --toolchain
-clang-nightly --kconfig allyesconfig LLVM=1 LLVM_IAS=1
+> +		ks_release_restricted_dma(pdev);
+> +	}
+> +
+>   	pm_runtime_put(dev);
+>   	pm_runtime_disable(dev);
+>   	ks_pcie_disable_phy(ks_pcie);
 
---
-Linaro LKFT
-https://lkft.linaro.org
 
