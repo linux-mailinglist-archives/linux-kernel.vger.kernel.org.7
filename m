@@ -1,105 +1,60 @@
-Return-Path: <linux-kernel+bounces-740128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E851CB0D047
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 05:27:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B412B0D056
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 05:29:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56EC23B98F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:27:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B60D6C1A6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:28:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D77228B7F8;
-	Tue, 22 Jul 2025 03:27:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437FA28C00B;
+	Tue, 22 Jul 2025 03:28:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mdKj2z+m"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Edum0jjp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7768E22FF59
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 03:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931BB22EF4;
+	Tue, 22 Jul 2025 03:28:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753154853; cv=none; b=fZGlSbBSGakCbaPmB5mdDqT0wDQLJ/zGpjqkb60oI6ZWAfxAWHjWYXAqUd9V4QE6LBCJJn/++aRBwY5Q7T6rGRo/w5I6MXAcbmUOsijZVzA8+8pa0gn1O3LldZ3BFS0BDVRAKLDBKziY45D+EPERXOUVx41us4UWYDFe2D3OK6A=
+	t=1753154936; cv=none; b=USs7gsCOcjRW2UCCUJVKHZmb+K+qUtLkxnTC5hKFfXGvrjuLsoP2O6w6eOkVRPrYKwonNZCkLUsMsqHjroWKmhFhp5YURNpb0hWMHS60po2GS73F2RfouRdUxsAAViHzmH90Ar49tK8EjCiDONh7vDbQgfUzpjs+urJqD+nhI3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753154853; c=relaxed/simple;
-	bh=rybnPHNQaWtEYh9P8NGg87PYwoHOjTqXZlA3TioA/Gk=;
+	s=arc-20240116; t=1753154936; c=relaxed/simple;
+	bh=kJw5y/pTKzs+28qiU9DcV11vaetOeUeIzA0KMoRkwUw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fK+MEGcLATvS5HiCowVBCYpnTa1rBdxnnqMvGXGGaGcAfMche1D2DO4YTIEXsq3xFWDxpbkZsZ8+KoYVObr0mKF1q0dAKnuAFN6RIFyNWzUp7jK7ECiwU7s4PsHvWeBjg98MZbVZVzYRGbaJsqtNJtVNxse3tt8HGWAnmC4D0O4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mdKj2z+m; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-748e378ba4fso5850592b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 20:27:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753154851; x=1753759651; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9n3vZldR94+dA+R993bdHJdlDsdK9CxAgbpvmVuXZ7I=;
-        b=mdKj2z+m/MS1sZlSlb2v+5p6LgVIyg3+uji4XxCkOmFbrJD4OnacMwnyUfpj7FbbVm
-         3YfT4LeaQew5rBQRF8PbI83X4SeMNP42SJwRELP5GN88p1NXH3pfjVbWCJ67Rl2DINeS
-         /CkiUPgTMnTMLBItxSQQAzNRFP2OuyUoSfZ6E122Mz41w7fO93Yk3PEZvZ/7Qb0qNNhE
-         ZxJFrMABwRcnce3pPTEBznzFviXFyErc61PDEIXGHMfRyn7qtBQdYmA7N+u0doql26OR
-         1SVFz/gN4pGOVuB4bxIVthw7aFdY+1WciovaHA5wqRv73j48RAKuFjGREymNTHyCsmi8
-         vs+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753154851; x=1753759651;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9n3vZldR94+dA+R993bdHJdlDsdK9CxAgbpvmVuXZ7I=;
-        b=Fg0SVYpL+L9s6Tx/RxDHOicaFNIHyMZjFSfxS0R5Tl+i7uiwf0HBEzom4XB+ZPJCxm
-         pUzM3zFDu8whY1g1s68dd2nCwukt3GzsmFz8y3XpJVHV95mDti9+Ft4RdYMfh62jkjbT
-         /9czTTMsXT49K5yNmW+7Hn1gNNA9FrLH2tK1zoL1+5IfSdxll4u7U0BepCg2xtv6SIuN
-         /D7FfaaIGYJ9CYXuro6d//GvpMW1KShKlEhPvj6lt59tBAtR6vLmFyKbCDtUhqyJEDSF
-         aei+qN57Q192RBqnu75YTr2ivgXKtlarPTOf7YP3NIQoHH/vlWgF4Fw/4KzomiZ4IohH
-         daEw==
-X-Forwarded-Encrypted: i=1; AJvYcCXLysxKka5tdUvBgs2N61AnK+nmoPBtnJpeNm20mvtODi3j+takwRN8p/XAIP4bd1FVwu1L3X2Js1Jpbew=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTvqo13oe0Uqn8Bdpt8iFsWX9Wn7sNIWB9pxvXb3hYX09/b9+3
-	5Et4ro6c6K5KdrMuZW5+uTDG/GcPPJvaed+YkCAvsVUg1VVX07zJ/fJtxDT8eimIOjk=
-X-Gm-Gg: ASbGncsnO2ziKHuJ/Cbokn+Vq54B0IoDxmDzhLpHtsS0CBrXQV4uEK+jNFHbwHhso05
-	C4veZGxkFYfUjPJlQuOVz4Ny8P+ffMn5Tfax5d8+HtFOFQ7UT48/LKBRZKL4CAlI1O9RfkXIUcP
-	IuIGqke8rZd1TBghH3f4s+i/JeqQUAGhdhm2dXl2LQwBXk8rHGHZL+X1EmpUFHd7o/iU6q6yI/N
-	sap7BTFzVNsn36uTPndoeC6iD0aSIHMEFjVLliyrdC2bEqaK6Feay3kKUD5+cS7Z7IRcHSEJ/RQ
-	LL78In+SJHkOxPXZaGH/TP7mtmBGKR75EhOJAte+raTRumj1HOVGooqyyt0wFXdNkrlqZFf7DHJ
-	oGWnPXrnFogZ6mKi3joye9UA=
-X-Google-Smtp-Source: AGHT+IHMk+QFzQv06GlweYpnpIsiItziaGaige6hONJgvfku+e/v14Yrznf2Rog/c8HhV/kb3Rh0tw==
-X-Received: by 2002:a05:6a20:1583:b0:231:a5f3:4d0c with SMTP id adf61e73a8af0-2390dc2dc9emr25205981637.26.1753154850730;
-        Mon, 21 Jul 2025 20:27:30 -0700 (PDT)
-Received: from localhost ([122.172.81.72])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f2ff61ff2sm5020397a12.35.2025.07.21.20.27.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 20:27:30 -0700 (PDT)
-Date: Tue, 22 Jul 2025 08:57:27 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Prashant Malani <pmalani@google.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Beata Michalska <beata.michalska@arm.com>,
-	Jie Zhan <zhanjie9@hisilicon.com>,
-	Ionela Voinescu <ionela.voinescu@arm.com>,
-	Ben Segall <bsegall@google.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
-	Mel Gorman <mgorman@suse.de>, Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	z00813676 <zhenglifeng1@huawei.com>, sudeep.holla@arm.com
-Subject: Re: [PATCH v2 2/2] cpufreq: CPPC: Dont read counters for idle CPUs
-Message-ID: <20250722032727.zmdwj6ztitkmr4pf@vireshk-i7>
-References: <ef3f933a-742c-9e8e-9da4-762b33f2de94@hisilicon.com>
- <CAFivqmLCW2waDnJ0nGbjBd5gs+w+DeszPKe0be3VRLVu06-Ytg@mail.gmail.com>
- <CAFivqm+D9mbGku-nZKSUEMcQV5XK_ayarxL9gpV5JyfmhirsPw@mail.gmail.com>
- <aGuGLu2u7iKxR3ul@arm.com>
- <CAFivqmJL90xsELhz4tPtkYA9vMzS9C=V__nwo=kWJKjKS=mE_Q@mail.gmail.com>
- <CAFivqmKBgYVa6JUh82TS2pO915PUDYZMH+k-5=-0u1-K9-gMMw@mail.gmail.com>
- <aHTOSyhwIAaW_1m1@arm.com>
- <CAFivqmJ912sEdSih_DFkiWRm478XUJhNDe=s2M_UO2gVTu4e3w@mail.gmail.com>
- <CAJZ5v0irG16e2cM_tX_UeEJVmB_EdUvk-4Nv36dXoUS=Ud3U5A@mail.gmail.com>
- <CAFivqmLoDv_pWdmBG8ws-CMUBXcb9bS1TgMaxW9YZMqqHpRSyA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=A2jrxV716qxrFntqUGpMZJeitaJ81Rj6DDUcitdo2Kqfjo52fA8/7sgrNYwgLH4IfHYHRx42O7dT/XFPprmrvSENYRzKmw4TvY2sNgYwtXSUHP8e+8F04/G0LOabjOudprzEJKHoBWEartPkeYtJg5IKkaNE3RVsdHbiZYMxv7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Edum0jjp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46001C4CEEB;
+	Tue, 22 Jul 2025 03:28:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753154936;
+	bh=kJw5y/pTKzs+28qiU9DcV11vaetOeUeIzA0KMoRkwUw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Edum0jjpxzTw1Zcr2ZQfQ0YJBn/OKDz+KbEw5VRXLgEdjSdKnBi6XXMdg7DVQzqLG
+	 tMp8xDDOyh4+W99O6mWTg2zIOWBZB5A5cx84e6XAVUGo9Sx8uu7zpQuUKOU/LxLKYR
+	 tTFvO6bWDFg9nEGElUDe08AU+7CdAA9x/RtWYUSgPpIpNQ+OZuWZkx+VKVp0IKXVMT
+	 3Tvau/AomJ0IvUErTDQ72XDptrcqnAyiHhDYI6TM2zoxbqBRjkmqfGI4mZYLnvax6T
+	 7sJJsDhATA2CnSMSrQujEcNcv8YoLHbJeHEUpPieQES+as6qoCnnZYUEToAJaBzgN4
+	 ZmxVNXVja1bUw==
+Date: Mon, 21 Jul 2025 22:28:53 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Pankaj Patil <pankaj.patil@oss.qualcomm.com>, sboyd@kernel.org, 
+	mturquette@baylibre.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	quic_rjendra@quicinc.com, taniya.das@oss.qualcomm.com, linux-clk@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 7/7] clk: qcom: gcc: Add support for Global Clock
+ Controller
+Message-ID: <digzi2kxw3aexslmyx3hspwjptrjm5yd4kzkgz6gg45inadmmr@6zerdpg5njdb>
+References: <20250716152017.4070029-1-pankaj.patil@oss.qualcomm.com>
+ <20250716152017.4070029-8-pankaj.patil@oss.qualcomm.com>
+ <28ea2b11-a269-4536-8306-185bf272bd60@kernel.org>
+ <2yekmjqihkzsfjr223vepigfj4hfruleigguhrlekp6s7riuxk@ta5kghr2kafi>
+ <4559a710-8b4f-4988-b063-40486fe0ffe2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -108,22 +63,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAFivqmLoDv_pWdmBG8ws-CMUBXcb9bS1TgMaxW9YZMqqHpRSyA@mail.gmail.com>
+In-Reply-To: <4559a710-8b4f-4988-b063-40486fe0ffe2@kernel.org>
 
-On 21-07-25, 12:40, Prashant Malani wrote:
-> On Mon, 21 Jul 2025 at 10:00, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> > Why don't you flag the driver as CPUFREQ_NEED_UPDATE_LIMITS?
-> >
-> > That would kind of make sense given how the driver works overall, or
-> > am I missing anything?
+On Sun, Jul 20, 2025 at 02:18:19PM +0200, Krzysztof Kozlowski wrote:
+> On 20/07/2025 05:46, Bjorn Andersson wrote:
+> > On Wed, Jul 16, 2025 at 06:28:15PM +0200, Krzysztof Kozlowski wrote:
+> >> On 16/07/2025 17:20, Pankaj Patil wrote:
+> > [..]
+> >>> diff --git a/drivers/clk/qcom/gcc-glymur.c b/drivers/clk/qcom/gcc-glymur.c
+> >>> new file mode 100644
+> >>> index 000000000000..a1a6da62ed35
+> >>> --- /dev/null
+> >>> +++ b/drivers/clk/qcom/gcc-glymur.c
+> >>> @@ -0,0 +1,8623 @@
+> >>> +// SPDX-License-Identifier: GPL-2.0-only
+> >>> +/*
+> >>> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+> >>
+> >> Missing date.
+> >>
+> > 
+> > Per updated company guidelines we don't want a year here. Please let us
+> > know if you have any concerns with this.
+> > 
+> I remember the guidelines and they were about publishing your code, not
+> about contributing to open-source projects. And whatever you have
+> internally does not cover us at all. You can have internal guideline
+> saying you need to buy me a beer or I need to buy you a beer. Does not
+> matter.
+> 
+> That above copyright statement without date does not adhere to expected
+> format. Explanation how this should be written:
+> 
+> https://www.gnu.org/licenses/gpl-howto.en.html#copyright-notice
+> 
+> The GPL-2.0 license in the kernel also uses date:
+> 
+> "Copyright (C) <year>  <name of author>    "
+> 
+> There is no option without date in the license or GPL faq. I am not a
+> lawyer, so no clue whether this is what we want, but I also should not
+> be my task to figure out whether different copyright statement is okay
+> or not. It's your burden.
+> 
 
-+1
+It's the guidelines/directives from our lawyers that has been updated to
+not include the year. I will bring this back for confirmation.
+Thanks for the link.
 
-> Sounds fine to me (it doesn't fix the lingering accuracy issue, but at
-> least frequency
-> setting will get unblocked). I can put together a patch if there are
-> no objections.
+> Or drop the Copyright statement complete to avoid any questions.
+> 
 
--- 
-viresh
+That I don't think we can do for new files.
+
+@Pankaj, please include the year as you resubmit this, until we get
+other clarification on how to proceed.
+
+Regards,
+Bjorn
+
+> Best regards,
+> Krzysztof
 
