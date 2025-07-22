@@ -1,205 +1,381 @@
-Return-Path: <linux-kernel+bounces-741377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD918B0E364
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:21:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72E96B0E366
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:23:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88B531C8443F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:21:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 306D91C84494
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:23:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3387628003A;
-	Tue, 22 Jul 2025 18:21:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77BCC280A35;
+	Tue, 22 Jul 2025 18:23:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H7HtROlz"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="daJCb8J+";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="IFIHZwjB"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFAF62E36FD;
-	Tue, 22 Jul 2025 18:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753208494; cv=none; b=Y/ipf6qXFX57Cix1ByyYgmCh2ziSbJ+q99novPXewbKvJky42LYCPD2Xfsmcv85ubXDUaFveexb0wqb18LTAp7G06DJmguXfto/rWESC6pOOWaZJBAv8I/bQIWV1V6bcOU7VfmXH3pkk40vg6009260pUIqoBVnWMNvBZ9RaEcU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753208494; c=relaxed/simple;
-	bh=qUqSSv3ifayW+xtWbyUpGpvV2Zozny15J74dw4n6dzM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W4sBQdou+m8AAEhTVTkJmwhnjslfnQ1wX/xlOGspzueupLnPzYf6CXlnaJSHhz3pqNt1MmKFE1Nwkdn/rIuqTFRV9V/tnmLFofUig5oGOuNYAKDpppbxp6WwMvYD/F1NP8/EZjlybdWiMwu617nY13OzxEumRHrotyQo4xmRh0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H7HtROlz; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5561d41fc96so6755431e87.1;
-        Tue, 22 Jul 2025 11:21:32 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF1E27EFFA;
+	Tue, 22 Jul 2025 18:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753208584; cv=fail; b=BTFeRAeK8vIZOYt9fH3QS5hYw5gf50lMQaorqwkB4FDah5NM7dr6ZqCROfRbq4vx/4yh/XmW0ePg4IDwjRKA95KvUVTe0UKzrOfAMtu+qdFoNVDylJtfE5paib7jgZ7/1VaDrYhfzHk1IOc0QyeYaord97B9/ZsdpSGZLRJ8Z1Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753208584; c=relaxed/simple;
+	bh=kSlUbTsic25lCmNuWHNUzK8NBOxICANV4C7NWCy/GYw=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=eK2aJZYtvQ8u3qKRJHSovTg4R0FdXawvSM86fDYyYbPj/ehtkJ3pDsQxVB6JticDNOdOLC36dVlGNcCHSUNLUEtwdUF3UUQiqmMJxjvDEE08OBOpIXkMhZNfyV0+oBFhlZDh8AzXubROZy9jqvQY9W8zt3CeTmOD2x6HubnrWxg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=daJCb8J+; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=IFIHZwjB; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56MFXr7A028534;
+	Tue, 22 Jul 2025 18:21:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=WHBjIlOIGqlwBuYP7h3uWOGZN15YXyC1djnZ/8lCZUE=; b=
+	daJCb8J+eKTecDUD9vTVKEM3SWIXAY20WJ2IWkfU67BpVqE3uJ0iKPatZIebou+o
+	D4pP16zvPOnNRxEeoVX4rwK3XufkXMLSg2CN0g48YqS0nD3LdQS54SJUEB3bAclm
+	zCE0E7jbJuKBvyLmzT+oKFtzz8l2b7nI/mUMpcpNZyNwg7iBwHDIgDcmz7hg/oCg
+	YxM73juUiHmkn9V9D64dpPNHaDBTSDcHwTMdk4bBAH3BxtpVQmlkvKjP2rfDJYHJ
+	Uelg7we1Hd+cW1HQGM79UICyw9vGWssDbC+8jsrAoXhN+sC+AyFq+iw5fQ0fiR1s
+	DoCE+wpkrubfZoiERd3ifQ==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 482cwhrfve-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 22 Jul 2025 18:21:26 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56MHpIlI031482;
+	Tue, 22 Jul 2025 18:21:26 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10on2079.outbound.protection.outlook.com [40.107.93.79])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4801tfy73w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 22 Jul 2025 18:21:26 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uY9/9skzG6tfX/Sk0WgGeSwndv1GorP/OXbaHL1M+DdyMocSGmL5GmRzSDGsEDPkGEeQmdBNtB8PJbaAVN6MFugrSayyMNvVFVbWDFHXkEP9DMDiMr0DjXE8q9hl/Aj8CD+ov/Mn77nQvBZjtM1OpC5KA4Rt6hs9ttIXVm7EpkpHsJ8Etkk8JLlDTsIL4+MgH+H8IqDogtSpQUr+cb4se91uJP9+p8LQ0StN/gqBGoFARxBgyAr26pHIEJMzRac6StuW4rl2Mnu9UJmyLBEUWBIIU3xiYjYQbZ0eEswi8HXGB/s28MYSYRSgSy0d8aKZIsTUOW8HYUG519WfsLxm1Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WHBjIlOIGqlwBuYP7h3uWOGZN15YXyC1djnZ/8lCZUE=;
+ b=lb/d74hkfGsQ5rwgdoMwA/xL09twb/3hhWIM73YlNCAMFOlXvh6dBI+fR7CT1fMiKtZGG9Lclz0rBo7lhnZX+VKAzfWrjLxyaws/+g96nT9JTegwHt68sOWThMoxlz+yUxDDOuCn6lWX0j9WNcQzWcz/o2zx3GJ2y6i0VMcC08Fg7CFINS5RFvYXzyUb0VS/3ftDRux1AkrtgjFxw9TyFl2jkqQoUZy7hFmzenyUKgjtPDqMSeaxOHZAvElX1MpiNv8HlPdLaWDT/TkRlWhr/xObcJiLwkMZfawOZATWapDBm/yO/oATST1UEV11ZxkvSqYYtFqABAWM2U1fStuM9Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753208491; x=1753813291; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s1bfHAcPl/XMz8xDguK3teTl09r5v0kLVciBst2DtbI=;
-        b=H7HtROlz+aCNBCEWL4P2T3zZjLURX5opQ92DGhXslcAW5Ke9jjPbnnNOTDStH9kzA5
-         aNFyJy79XnPl5EjwK9ymx7CDr8FDnjm4G845TYzn1ctznvC8Ae8a+V8ObzvpRVRGkPDx
-         JRlpsARcFsKUv4TRKpeRlQ383gKy4bwnqnc5FZ/Wg59ygoSgEcRMBcgSorw9Da1FU4lE
-         LCEQAWZRUAHhCYhyXtvehGWRokMhcsz6muAiEQGwuvU7RTvN6jhzhICIVU9jowYitFGs
-         uaYfUUhOHoOh5Cq3zvaBpr4jti1G8RJ6usgZ5/S4KmDRjIVhj4ydwreS7TwQqWVCFEs1
-         phbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753208491; x=1753813291;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s1bfHAcPl/XMz8xDguK3teTl09r5v0kLVciBst2DtbI=;
-        b=jj/dvmibnm2XtzeZ2swtZJb6Zk/K7oANEkiKenutEHiUZIAh73Pbd9N21pUxWSRGo+
-         3I2gV6veVyCDodsz4EBs49TrrWy5C59nEDtKnUCnRgDpeg+cKQbKDHw0m8lI4g6tWmro
-         Vi/J++WrU7uG+vQQ8C3TbmGU/iQlPaBdJihUz66N1K0IRV3L5TERUs8Zp0roxOcF44hp
-         MMn55ySbiePvxTbyZ3M0aJoXccXApGOt2NK8nGQYA48p2sgBfoI2ICLt0Qtu+mze+DCg
-         GffoIJz5hZtw0fGj+iYDvd9SM4s8V3K2+OK40dTVyWlFAy0vh2xlev3902TLYE61Xhlh
-         HYng==
-X-Forwarded-Encrypted: i=1; AJvYcCUGpLYwdkBKhmytdHVEkRVQkFcJXjPmoiancQdXzuyYzZ3BAbm9HTCOTRmtpn+ba1S0J3cCdZXf749OO0E=@vger.kernel.org, AJvYcCUgHEmvjtazkEILwLpAd+tzQO8Hm3nfsqdlg92+zK9/IoA9vAx3VNVAL+ZqIINBv2DDAzTQPxUzVHAjYg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5PVeGwtLb6/RQQR/6ICPhWM7xS159Cs5oDh50lLY5ppnzmtTl
-	4jihM1WIbdQLQy+h1sfI5xeX12fyUY8oypL+ALWdX67CdJKoUingguPm9N1iDDzqG7V5mrMF849
-	hXEvR7jPuoJNDJ5vUWhtX/7Kaf5mqEjM=
-X-Gm-Gg: ASbGnctI0lkaeSHWQHtrx8DWu5cH8QJgM94g/Soua5KZs+rbFhBRqOiRI2xQBNRI2Hw
-	73xQ2t2PuUKh9dNkvUUg9fL7zYMkMR2odfehXptqumYcPoDj0R//T8GXzSjHLerme8D+JwcvlxB
-	p5ve1zTjRhr4Adk+0KfHExSmGr7SsF/nR8+PDL0g1G3abifVVkG11jTPQaGvTnkjKFP1HLUaBI/
-	krsAps=
-X-Google-Smtp-Source: AGHT+IHgqZRO4CHZDXwO8i4qviF6GOSHLcIqgaK9MAu32BIYgiKkWD327bPslpy0X0mdn5DHRJd+TcwlCu2XTW4y0IA=
-X-Received: by 2002:a05:6512:4021:b0:553:2190:fef8 with SMTP id
- 2adb3069b0e04-55a513998a5mr31899e87.7.1753208490745; Tue, 22 Jul 2025
- 11:21:30 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WHBjIlOIGqlwBuYP7h3uWOGZN15YXyC1djnZ/8lCZUE=;
+ b=IFIHZwjBK+WcpN4syNVpP2hzAaR/sAGigrpkVeyb717yafqi+W/idymSzL5HlgMrw1GssHacyj708RA5vmO4qbQv3AveBFGO/JBBkRxnuEv9lyGl2FiqEiPKgZSlmJ6NP8aTuCYLlzPiGEMOUTohbLErZzoRvtEI23jggcgDhUE=
+Received: from SA1PR10MB6365.namprd10.prod.outlook.com (2603:10b6:806:255::12)
+ by DM6PR10MB4284.namprd10.prod.outlook.com (2603:10b6:5:21f::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Tue, 22 Jul
+ 2025 18:21:23 +0000
+Received: from SA1PR10MB6365.namprd10.prod.outlook.com
+ ([fe80::81bb:1fc4:37c7:a515]) by SA1PR10MB6365.namprd10.prod.outlook.com
+ ([fe80::81bb:1fc4:37c7:a515%6]) with mapi id 15.20.8964.019; Tue, 22 Jul 2025
+ 18:21:23 +0000
+Message-ID: <69d09381-2315-4c95-ba5a-28d148ffd19d@oracle.com>
+Date: Tue, 22 Jul 2025 11:21:14 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] New codectl(2) system call for sframe registration
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+        bpf@vger.kernel.org, x86@kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        "Jose E. Marchesi" <jemarch@gnu.org>,
+        Beau Belgrave <beaub@linux.microsoft.com>,
+        Jens Remus
+ <jremus@linux.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
+        Sam James <sam@gentoo.org>, Brian Robbins <brianrob@microsoft.com>,
+        Elena Zannoni <elena.zannoni@oracle.com>
+References: <2fa31347-3021-4604-bec3-e5a2d57b77b5@efficios.com>
+Content-Language: en-US
+From: Indu Bhagat <indu.bhagat@oracle.com>
+In-Reply-To: <2fa31347-3021-4604-bec3-e5a2d57b77b5@efficios.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MW4PR03CA0221.namprd03.prod.outlook.com
+ (2603:10b6:303:b9::16) To SA1PR10MB6365.namprd10.prod.outlook.com
+ (2603:10b6:806:255::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250717142732.292822-1-snovitoll@gmail.com> <f10f3599-509d-4455-94a3-fcbeeffd8219@gmail.com>
-In-Reply-To: <f10f3599-509d-4455-94a3-fcbeeffd8219@gmail.com>
-From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Date: Tue, 22 Jul 2025 23:21:13 +0500
-X-Gm-Features: Ac12FXzOVMCIvnTEhZltt3TS4XKarYeDIkGkWcMAqG0GgJ62pPTw9Xni6fYiOgs
-Message-ID: <CACzwLxjD0oXGGm2dkDdXjX0sxoNC2asQbjigkDWGCn48bitxSw@mail.gmail.com>
-Subject: Re: [PATCH v3 00/12] kasan: unify kasan_arch_is_ready() and remove
- arch-specific implementations
-To: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-Cc: hca@linux.ibm.com, christophe.leroy@csgroup.eu, andreyknvl@gmail.com, 
-	agordeev@linux.ibm.com, akpm@linux-foundation.org, glider@google.com, 
-	dvyukov@google.com, kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
-	loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org, 
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
-	linux-um@lists.infradead.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA1PR10MB6365:EE_|DM6PR10MB4284:EE_
+X-MS-Office365-Filtering-Correlation-Id: e01d97af-c59f-4208-5751-08ddc94c9061
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|10070799003|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eVJQMUdsY05xUXZQbWI4TWs1K0lVcEwvQ2JjeCtzTnY2TG1XU0hNbTVIV0hW?=
+ =?utf-8?B?S1EvVE16VVNRVW9iNCtnK2xyRXVlZmtCVjduaHJuLzZwZGlLTTl6akR2VXZz?=
+ =?utf-8?B?d3RxMmY1VjA2dU9ZVkU3NWMwT2F3dHlaNWg5RnBFQ293VnkrWnlaM0V0R1FR?=
+ =?utf-8?B?R2hsUjU3K0Q0NW4zcEgrTzFQa1NsbHJZVzlucW1mWGVsWEtXdGZBMjI2L2F1?=
+ =?utf-8?B?cmdtYVRuRGp5ckJockhoVnFic1BrallYMDVwUTA2eVQ3Q0xka2hEWlcvVG92?=
+ =?utf-8?B?R1J1Y0dWWURLbEwvSnVXS3pHRnI1bFlnNXVpWWhNcW11TDBOY1NBei9WQ2xY?=
+ =?utf-8?B?N3QvNVV1KzNwbUJaZFJnOEk5UzZpcTJjejlybWZqeWVXb0M5SVl1N1cxQTVG?=
+ =?utf-8?B?LzF3cTB5WUs0SDVGVE8yR1oraFcwOGRidzdUUFUxcHhKR3grV2RETVVwbkp6?=
+ =?utf-8?B?elBoZ3c4Wmg2WlJwRGJoREorQzgrbDlQRHk5NUl5MGk5OUJYekNVbFpkREZF?=
+ =?utf-8?B?TWhTZVI3aGdZRU9abFNXQ2lhWUthZ0FaU0pNWEpsT2Z1TkRYeGk0ZTN6bjNL?=
+ =?utf-8?B?MFZvbTBFVEZOeEJheU1wZ0k5UHYvN2hINnFnaEovMlNlWCs5TzZQQVRvZFEy?=
+ =?utf-8?B?WEYwbHo4RVNBWFFHNWpFY3ZkZ1Bndm80UW5Wa2F4QlZaRnlEakowSXRDUkQ2?=
+ =?utf-8?B?ZnhDa1pXanRuT0YyVXlkSGlqOWZ0RElSKzVqeWFFT0xkTWRFdnRKc3VHNytR?=
+ =?utf-8?B?aGtRT2RHdTFzNTl6ZVVpblJrS04yb0pPblhvNGxxaWQvRkRwRzYzOG1hbnN4?=
+ =?utf-8?B?bXY2aWd2VklTMGExOGZEWnpJRU4zK3BLdUxqTVdXb0k5UXhkT1pwdnBNUXEy?=
+ =?utf-8?B?LzdIU2hrMCtiL2ZBRXliaU9wVTZKVDI0d1ViaWtNWU1UcjBNczBvOWlMd05V?=
+ =?utf-8?B?R3VwL0lpWU05UUVIUWwrNlJLNWtmR2pnUnBqVFNybFZ6TVhNWGNYcVY3VmtC?=
+ =?utf-8?B?YXdWdGllZUpmSU5aMitsUjZOQlhqOC9GaVllMURDMU9pZjlmTksxZnk3dlgy?=
+ =?utf-8?B?bUR0cTRXcGVUOG1nQzBHMGY3b0pNajYvalY2cVJRdUNoVHBoSVhPZVZsUnFB?=
+ =?utf-8?B?RnVjcm5lMGNCemd1SGRiUUR6amdpSFR1Q0xOeTFnYUJodmJwL3FyWGZYRTly?=
+ =?utf-8?B?VnA1UVhzc2JpZDB6Sks1aktFaTV5UDIzbFAxOHBlSWhpckRreUx3NE1iVnJX?=
+ =?utf-8?B?c0JSSHl4SnhWTUQ2clFVTjFDR1NSS0k5SWtnSW1peERwZGJ2dXNHeThiSFA3?=
+ =?utf-8?B?UlI3dnZEOTlIWGZhN3NHdUlVOWsvK3BPbTVJamkxbTEyNzVYcnE4TDdjdi9v?=
+ =?utf-8?B?MUVuakpwNkZTZDVCdmlMTUtZUTZMVXFSZFpkUWtMRFg4ZHdlWjQwM01rMG5L?=
+ =?utf-8?B?cWU2L0RWNnQreTBEanpvWlNiL3dhNDBGbFpxOTREK3JwMnlsSEoxVjk1d0Qv?=
+ =?utf-8?B?enlBM0c5b0xyWTBvS1NrR2ZuTUhTUFFRSW53Z0h3NlRJNE5qTUFxVW03aTNo?=
+ =?utf-8?B?QUFnT3U0TlZiYVQyTmpmTk5wOE94b2MvZDc0WittT1FLTEZ6V0JZMzR2Si9j?=
+ =?utf-8?B?RTdaVk84ekZad0k3QnBWdnlFN21mczFEZFQrNUhmWDVyek5uZHk2dy83aG1Z?=
+ =?utf-8?B?RWxldWdIQW9aZ3NSNFVOSkxjU2xPL05sYlYzclNkS3JRY01tbWRwUFR1K2lr?=
+ =?utf-8?B?MWw1di82cm9YLzllTm1LMUFmY2FQWUI1d25KMjlndGpidnNZSlhXYmcybTdO?=
+ =?utf-8?Q?AypSZM2r5PqyiqJZcpkPb7k60oPxU8GD2qgw0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR10MB6365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(10070799003)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SGxvK200QnhxdVJzRmFVNVZ5QW5QeFFCTVhBSDV5bm1tanNKSzV0bW9jSFcz?=
+ =?utf-8?B?RU5nTXNWL2p1U3FOZ2E1YmJvU3lnaUFxT3UvLy9TYmhNSzUrZ2tuRXdJVDhF?=
+ =?utf-8?B?VzJtSHpCcytpemZmbW9udFUyK3pmb0NSUGJTZkViN3pmSzZZWDlJZ1BVdnZP?=
+ =?utf-8?B?RllTS2lIb2RCZUg1OUZTelpoK1hPUVh6M1ZMY3pTRkJ2aE5sM0doWVV3dTd2?=
+ =?utf-8?B?U0dZaCtrdENRYkRXbzhUcnJ1NStvWFcyMEVvQXFCMGJuQ2tPUGd2L3dSMjR1?=
+ =?utf-8?B?U2tNT1VRV3BFdVNldHIweEUyejBYWTB0Q0VoY2lBdHhPeE8zZ3BOcjBLSms1?=
+ =?utf-8?B?RTNTTXdGbE1PM1ZHUk9uSjdNOVhrN2g0Q1d1M1BjbVVBOSttZmNUT1g1ZUZ6?=
+ =?utf-8?B?aHpNbzZEL3VmN3JTVlFLOS9GbFVmbXhXTnphV0N6UXlmaDk1NlhFNTc0TXhM?=
+ =?utf-8?B?aXNFN2xIeVB1UlpjYS9TWkZEMWpmRkg1b3I0eWlRN2JHQUtQdFVESFJWOHM5?=
+ =?utf-8?B?dVVPY1c0VVpwcmhQdTdtUlBQYWZpNm5wS0YxN1dUM0kxcFFCYWRZaUpWYUZJ?=
+ =?utf-8?B?S1hUbVF1cVNKY1NRV3ZXRzU5bGljeUtIQkRnMGtDWnBqY0x4Vm1ZN2pMcnk4?=
+ =?utf-8?B?YlhpZi85TTBoTnMzM1VudUxFeW5wYUoxZlRGQlYzcElzY0xjTlcwUXpScnNv?=
+ =?utf-8?B?aXRjL2psTVI4NUVNTkVzZWhhUWV5SkpiZk5HWllXcUF1N2RwL09IYkkxWThk?=
+ =?utf-8?B?YkdMd3dHd3djLzBPL3lxOGRwejNUTmhIRmdFUTVuYUR1U3RtbjJIMFJ2SGQw?=
+ =?utf-8?B?S2tsYkZWdHhPN09VdkJsVU5pOFdQazNSOWNIcjVRWDl1L0hlcVBBY2lLTTJN?=
+ =?utf-8?B?ZVJyOEs0MlJwSGdEUmlkcDdIUVVXOEdSSmxrbEFyRzdoK0dXbEtxdDZXQXJu?=
+ =?utf-8?B?V2t2VWswNXRlSDBXNlZpZllMQXlueU1TeFV5U3NrRTR6QytvU3pQZ3g2SzB5?=
+ =?utf-8?B?NjdqL0hDeHBPY25HOFkzT1AraWhweXY1dDRiNDZsamtLVk5xWlFXeEdLTVlX?=
+ =?utf-8?B?a1pmeE1SNjNmUXZMeVF2ck96VXlKZXpoME9yMlhrSGx6VUZIME5ZZE5LNlpk?=
+ =?utf-8?B?T2hFd0Y3TEM2S0pwOHF1VXVrL0JUUmcwL2w4NlBQVVU5K1czS2pCQzAvd2Ew?=
+ =?utf-8?B?SnhFT2k2d2FsR1I1NC9HWWxsYlFYaDFTMXBnQzVpTkVWOUxrL1lMSklCTUlL?=
+ =?utf-8?B?b1NyZGt4V1BFdzg3YlVNR0dheld6dStEdm9KbFZTNVZ5SUJyU1pZM0JIblhx?=
+ =?utf-8?B?Ym00WmFud2h1K24zaGNYYVlCcUJEOG0wNlluWFRXb1o5T3lwaE4wTUZPWmNY?=
+ =?utf-8?B?YVY0Z1FDb2J3WGZ3Y1lGMG9qS3kxUWFHancxZDNwMWJabjgxTHl5NThHQXhU?=
+ =?utf-8?B?Vk5tYjFYMGtNYUROaVlLWWZBZ05hb0VZZHB0SjdwbG0wQTdvVi9KQWZFcHFQ?=
+ =?utf-8?B?a2RGZTdScVBZQTNFZkdhVlhTM2FxRTI0eUlkcm5HMk1TeVloeFRJT0VlYTZV?=
+ =?utf-8?B?S2dVVVByZFFwdWNBVm5xak9KNDkwajI0dmJBQjFJNWh4VTQvQ3ArWWN0NUhZ?=
+ =?utf-8?B?aHBZTG9GOUlnU2Fsd3czVG5MQm1qQ3BGczdydVBuck40bjlyRGNoYlIwSnFw?=
+ =?utf-8?B?eCs4THNGR0JHL1cwY1dzRmYxRnZmUXIxcURldFBpSWc3UmNqcW5LaGtNdWpv?=
+ =?utf-8?B?aThkc25hekNUcW5JRlJGWnZ5dGFXT3M2a2F6STJTeVFsakxPZ1NpdS9WZVpD?=
+ =?utf-8?B?dmwyM3FYdlYrcm05aGJHZUVqR0ZYdnZoOHB2VzRoU2paVi9VbEVucDFnaDBp?=
+ =?utf-8?B?eCs1WUgzWlVLL1FXMVhiL2hySHlmdEpkZHdhZ3FaVGhtb1BqYkM3RUswSFNw?=
+ =?utf-8?B?SjRaWk9nUDdBZWtVTEpnWkVUSWppZE5xckZDaWdiR3JBa1hwT2lTU2UxUFlw?=
+ =?utf-8?B?SlRlaWp1MjJKM3NIT2V6c3Fxc0p4ajlVTkZVZDRyKytqYVRzbnZqc2c1MVg0?=
+ =?utf-8?B?aGNtUnB1VFlFYWVCNDVneEE0U0FGQ3RZRFZSTklaaHllQzBNeTYwU0JyQ3ha?=
+ =?utf-8?B?M1paZVk1NWRNMkx2R2xFWW0rR2RwY0dTdXpiazh4RkwxWG1DTHl3L1JRbGxN?=
+ =?utf-8?Q?pb+0SB8gYYT8SyNVoY8ZXVM=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	1qUfiBN2Iak8MK+U6Pi5/0dJUOyY7g/0TGVUfUMcS2854NBEtvn+CbNwYV+d8zpeWPMWSW7ig86FlrU6IVp8nPECSss9bqnpDJF2HM2jzuczhHuu/tSGlPjTWz2eBE+upmhHAsR/QvYoQB+z08t5q218w+jGKBKfb77QaheglkrKwPAZPLt0aloQzpfHdcBbi/JXKBnedEQS5lsSHd+SHQYEpfCYhFEEvzjCcNdeBAgsAuAFkPVNysWru4VIgfQE09e161iup8PbAwVuiyRpuTs41tLiEMNQnwr59oWJ28gBDKGX2wOkrGTTaNYlpxDDR3AoCb1xNLqUiCNl0Yyuunbbo7dpNovum06x1BGpwS/fBY85JiMI4r+hBfz5+h86aO/WVFAVwbRl9y0cEK0JriRbqjacmFXXW2S4YnvKbaVwwv+2BPJTdj5WEPgmLaxO2SBNwgHOlL7hNN+v5I/T9m6VJSDmPhnprynpqX6k1UGMLEgmBfoIBG58x89DQKa2gSq9tdUA7iFa/3u3PhbLavk2aMpvLef0myf9ehImPb+/zNU+kj8F32chVCCrCn/ic8uo5euOqDTP6iRcY/6+ll0V583F6mY5AH9nc5Oao7A=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e01d97af-c59f-4208-5751-08ddc94c9061
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR10MB6365.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2025 18:21:23.5209
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: oHDPmJzPMHjrCg79dvu8DkIPpcUI0Wbvwn4Bxermv4RmN8mZIWVX2RFSCRIenKGWu7uVKUg9sQhQqvk0m1ftAQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR10MB4284
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-22_02,2025-07-21_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0 mlxscore=0
+ suspectscore=0 malwarescore=0 spamscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2507220155
+X-Proofpoint-GUID: 53g8X7_lA1ATioknsXgiXseZ_jAVJ1f3
+X-Proofpoint-ORIG-GUID: 53g8X7_lA1ATioknsXgiXseZ_jAVJ1f3
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDE1NiBTYWx0ZWRfX0M6mAdoSxmib
+ w/mCo2MG73/lfLAi3f7/GANzuMCgXvsnp2nG2FgalauA1hudZ7g1k3TbhaWwkwDeGxlx5PwVPUR
+ 1jO5zXJJG5XSnYnLock3g8hNgF8kHez63tOgdOfcYd4fPTzx2F+5thg48NZnoSWdCxZgEejBxQY
+ RD1XZ09dKre0o76eElfvyzs+xIk1YsVHwArLBbn8xscXbsWXq9GQvB9oShfd++sdXm710fdJzk6
+ nKNjSuqXNq8ORV5lzYPZrd6BQlyC8fGPGCku1BVmhtWbisabe189sHEzdFuvvzC6qROxanqXaHN
+ mYe778o74LMnV9DcJE/6CIz2TdyyVQOlStDhKKX/oBNcYGVfRcZ6/PNSIfZ97wkA0TMuwe6Qpba
+ Y/UUlUrAXJKFgl1+baN+yCPLxpPz2IKMyPlDewOfAKjWCsi9wg73vLcEq94xCgUIAVlLlvns
+X-Authority-Analysis: v=2.4 cv=IPoCChvG c=1 sm=1 tr=0 ts=687fd6a7 b=1 cx=c_pps
+ a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10
+ a=U40Yx87jAAAA:8 a=xs52Cs_lJFdGfbY3zQEA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=yv_D6YSC6K1Ih23S2Yuy:22 cc=ntf awl=host:13600
 
-On Tue, Jul 22, 2025 at 3:59=E2=80=AFAM Andrey Ryabinin <ryabinin.a.a@gmail=
-.com> wrote:
->
->
->
-> On 7/17/25 4:27 PM, Sabyrzhan Tasbolatov wrote:
->
-> > =3D=3D=3D Testing with patches
-> >
-> > Testing in v3:
-> >
-> > - Compiled every affected arch with no errors:
-> >
-> > $ make CC=3Dclang LD=3Dld.lld AR=3Dllvm-ar NM=3Dllvm-nm STRIP=3Dllvm-st=
-rip \
-> >       OBJCOPY=3Dllvm-objcopy OBJDUMP=3Dllvm-objdump READELF=3Dllvm-read=
-elf \
-> >       HOSTCC=3Dclang HOSTCXX=3Dclang++ HOSTAR=3Dllvm-ar HOSTLD=3Dld.lld=
- \
-> >       ARCH=3D$ARCH
-> >
-> > $ clang --version
-> > ClangBuiltLinux clang version 19.1.4
-> > Target: x86_64-unknown-linux-gnu
-> > Thread model: posix
-> >
-> > - make ARCH=3Dum produces the warning during compiling:
-> >       MODPOST Module.symvers
-> >       WARNING: modpost: vmlinux: section mismatch in reference: \
-> >               kasan_init+0x43 (section: .ltext) -> \
-> >               kasan_init_generic (section: .init.text)
-> >
-> > AFAIU, it's due to the code in arch/um/kernel/mem.c, where kasan_init()
-> > is placed in own section ".kasan_init", which calls kasan_init_generic(=
-)
-> > which is marked with "__init".
-> >
-> > - Booting via qemu-system- and running KUnit tests:
-> >
-> > * arm64  (GENERIC, HW_TAGS, SW_TAGS): no regression, same above results=
-.
-> > * x86_64 (GENERIC): no regression, no errors
-> >
->
-> It would be interesting to see whether ARCH_DEFER_KASAN=3Dy arches work.
-> These series add static key into __asan_load*()/_store*() which are calle=
-d
-> from everywhere, including the code patching static branches during the s=
-witch.
->
-> I have suspicion that the code patching static branches during static key=
- switch
-> might not be prepared to the fact the current CPU might try to execute th=
-is static
-> branch in the middle of switch.
+On 7/21/25 8:20 AM, Mathieu Desnoyers wrote:
+> Hi!
+> 
+> I've written up an RFC for a new system call to handle sframe registration
+> for shared libraries. There has been interest to cover both sframe in
+> the short term, but also JIT use-cases in the long term, so I'm
+> covering both here in this RFC to provide the full context. Implementation
+> wise we could start by only covering the sframe use-case.
+> 
+> I've called it "codectl(2)" for now, but I'm of course open to feedback.
+> 
+> For ELF, I'm including the optional pathname, build id, and debug link
+> information which are really useful to translate from instruction pointers
+> to executable/library name, symbol, offset, source file, line number.
+> This is what we are using in LTTng-UST and Babeltrace debug-info filter
+> plugin [1], and I think this would be relevant for kernel tracers as well
+> so they can make the resulting stack traces meaningful to users.
+> 
+> sys_codectl(2)
+> =================
+> 
+> * arg0: unsigned int @option:
+> 
+> /* Additional labels can be added to enum code_opt, for extensibility. */
+> 
+> enum code_opt {
+>      CODE_REGISTER_ELF,
+>      CODE_REGISTER_JIT,
+>      CODE_UNREGISTER,
+> };
+> 
+> * arg1: void * @info
+> 
+> /* if (@option == CODE_REGISTER_ELF) */
+> 
+> /*
+>   * text_start, text_end, sframe_start, sframe_end allow unwinding of the
+>   * call stack.
+>   *
+>   * elf_start, elf_end, pathname, and either build_id or debug_link allows
+>   * mapping instruction pointers to file, symbol, offset, and source file
+>   * location.
+>   */
+> struct code_elf_info {
+> :   __u64 elf_start;
+>      __u64 elf_end;
 
-AFAIU, you're referring to this function in mm/kasan/generic.c:
+What are the elf_start , elf_end intended for ?
 
-static __always_inline bool check_region_inline(const void *addr,
+>      __u64 text_start;
+>      __u64 text_end;
+>      __u64 sframe_start;
+>      __u64 sframe_end;
+>      __u64 pathname;              /* char *, NULL if unavailable. */
+> 
+>      __u64 build_id;              /* char *, NULL if unavailable. */
+>      __u64 debug_link_pathname;   /* char *, NULL if unavailable. */
+>      __u32 build_id_len;
+>      __u32 debug_link_crc;
+> };
+> 
+> 
+> /* if (@option == CODE_REGISTER_JIT) */
+> 
+> /*
+>   * Registration of sorted JIT unwind table: The reserved memory area is
+>   * of size reserved_len. Userspace increases used_len as new code is
+>   * populated between text_start and text_end. This area is populated in
+>   * increasing address order, and its ABI requires to have no overlapping
+>   * fre. This fits the common use-case where JITs populate code into
+>   * a given memory area by increasing address order. The sorted unwind
+>   * tables can be chained with a singly-linked list as they become full.
+>   * Consecutive chained tables are also in sorted text address order.
+>   *
+>   * Note: if there is an eventual use-case for unsorted jit unwind table,
+>   * this would be introduced as a new "code option".
+>   */
+> 
+> struct code_jit_info {
+>      __u64 text_start;      /* text_start >= addr */
+>      __u64 text_end;        /* addr < text_end */
+>      __u64 unwind_head;     /* struct code_jit_unwind_table * */
+> };
+> 
 
-      size_t size, bool write,
+I see the discussion has evolved here with the general sentiment that 
+the JIT part needs to be kept in mind for a rough sketch but cannot be 
+designed at this time. But two comments (if we keep JIT part in the 
+discussion):
+   - I think we need to keep __u64 unwind_head not a pointer to a 
+defined structure (struct code_jit_unwind_table * above), but some 
+opaque type like we have for SFrame case.
+   - The reserved_len should ideally be a part of code_jit_info, so the 
+length can be known without parsing the contents.
 
-      unsigned long ret_ip)
-{
-        if (!kasan_shadow_initialized())
-                return true;
-...
-}
+> struct code_jit_unwind_fre {
+>      /*
+>       * Contains info similar to sframe, allowing unwind for a given
+>       * code address range.
+>       */
+>      __u32 size;
+>      __u32 ip_off;  /* offset from text_start */
+>      __s32 cfa_off;
+>      __s32 ra_off;
+>      __s32 fp_off;
+>      __u8 info;
+> };
+> 
+> struct code_jit_unwind_table {
+>      __u64 reserved_len;
+>      __u64 used_len; /*
+>                       * Incremented by userspace (store-release), read by
+>                       * the kernel (load-acquire).
+>                       */
+>      __u64 next;     /* Chain with next struct code_jit_unwind_table. */
+>      struct code_jit_unwind_fre fre[];
+> };
+> 
+> /* if (@option == CODE_UNREGISTER) */
+> 
+> void *info
+> 
+> * arg2: size_t info_size
+> 
+> /*
+>   * Size of @info structure, allowing extensibility. See
+>   * copy_struct_from_user().
+>   */
+> 
+> * arg3: unsigned int flags (0)
+> 
+> /* Flags for extensibility. */
+> 
+> Your feedback is welcome,
+> 
+> Thanks,
+> 
+> Mathieu
+> 
+> [1] https://babeltrace.org/docs/v2.0/man7/babeltrace2-filter.lttng- 
+> utils.debug-info.7/
+> 
 
-and particularly, to architectures that selects ARCH_DEFER_KASAN=3Dy, which=
- are
-loongarch, powerpc, um. So when these arch try to enable the static key:
-
-1. static_branch_enable(&kasan_flag_enabled) called
-2. Kernel patches code - changes jump instructions
-3. Code patching involves memory writes
-4. Memory writes can trigger any KASAN wrapper function
-5. Wrapper calls kasan_shadow_initialized()
-6. kasan_shadow_initialized() calls static_branch_likely(&kasan_flag_enable=
-d)
-7. This reads the static key being patched --- this is the potential issue?
-
-The current runtime check is following in tis v3 patch series:
-
-#ifdef CONFIG_ARCH_DEFER_KASAN
-...
-static __always_inline bool kasan_shadow_initialized(void)
-{
-        return static_branch_likely(&kasan_flag_enabled);
-}
-...
-#endif
-
-I wonder, if I should add some protection only for KASAN_GENERIC,
-where check_region_inline() is called (or for all KASAN modes?):
-
-#ifdef CONFIG_ARCH_DEFER_KASAN
-...
-static __always_inline bool kasan_shadow_initialized(void)
-{
-        /* Avoid recursion (?) during static key patching */
-        if (static_key_count(&kasan_flag_enabled.key) < 0)
-                return false;
-        return static_branch_likely(&kasan_flag_enabled);
-}
-...
-#endif
-
-Please suggest where the issue is and if I understood the problem.
-I might try to run QEMU on powerpc with KUnits to see if I see any logs.
 
