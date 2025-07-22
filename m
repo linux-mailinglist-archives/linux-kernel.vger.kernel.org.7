@@ -1,119 +1,113 @@
-Return-Path: <linux-kernel+bounces-740985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1D24B0DE58
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:26:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68319B0DE77
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:27:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4A1D3BA2C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:17:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62CE1AC5F21
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:18:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B432E1724;
-	Tue, 22 Jul 2025 14:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PDQV1Dwf"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C0BC2EB5D5;
+	Tue, 22 Jul 2025 14:14:21 +0000 (UTC)
+Received: from lgeamrelo03.lge.com (lgeamrelo03.lge.com [156.147.51.102])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079921D6193
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 14:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7652EB5D4
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 14:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.51.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753193628; cv=none; b=izi/Xpqbf1pNmH21lc7LdZe8aZCwrpodWInoKI90jdtMVmHWyLZDUrIjZT6EeSUG7r9zcyKAbGJUJIrNeljGRJzFGI8GLZeLFFpiOWG5WrpMl40fwCXu0DYPWkfVzHLg4TGuZ3xaG2dglJEabr2lTAS790ipYvRLFizJdKBc+Hg=
+	t=1753193660; cv=none; b=V+DfDAjYVb/LFLnKHSyXovJnC+OeT1S5DfmJhz8ZnIxe4nSy2xYxpSO8EGSFyjNLbp9GLW3ZoD23zwSMO6klvTuwmIYGxCvw7VrK2A6kDcX3zurq+s/MsNUfgLae+hbcV8BRQQzPgSYozah/A/4JcRqJOKm9QfPIGVWLsvCE/rM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753193628; c=relaxed/simple;
-	bh=SIVeV/5x+C+aiI03S1yS9XTn1eCXwkQ8UaH2ikV0LOM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=JGpeV8R8uZHXzuPUKzG4EhiWx+MPOxucdb9sOJt0X4NNqu5CFDnVxy9Pq5CEuJLwynTKg4z893D0xCHmqiaeqN9QLa48SnNn6UkXAKsOZw0gvjg3954icWz0a88VADhQz1hv2OsQXzmrJ/sagBCPg+xoKeHDe9gtciqY9ZFNoJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PDQV1Dwf; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b38ec062983so3811760a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 07:13:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753193626; x=1753798426; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=20QLCvcSY004GezKtjT3+306FnS1qCy6LGwEuBD+8PQ=;
-        b=PDQV1DwfZmU8I+tEYB/6rFr8+Qw6rWmy+NVOPOo0aZB+O44qLApABV/adtGv75mAq7
-         VaxGD/GhCXpP4AtG+Uqn/SI1qpeDDfdhdY8j9hi7TSRJa2lsrBC+Ig3AxSnTrPJlM7z3
-         l7VRiodD2P1IELY9NSw0Z3VNAF5DJhgW9PznBeEriaYQWrS5NR3wFNTBVEdGWAjcLrR2
-         zmoQY4satICRkCvknv1cVomSxFSA/kNyY57al7XsGsEsl2NbCEeEpkiGqLs/Gx6yNkJH
-         9yCtmJcauJn2Qe5mAPy1vX4P/U8c+PLU43mcm8NAGX+1Kt/+TjPFRwByh94I02dqscOf
-         kl4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753193626; x=1753798426;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=20QLCvcSY004GezKtjT3+306FnS1qCy6LGwEuBD+8PQ=;
-        b=D0fSEpdPER7yorIlpCv/8HUkuoZtotNqLeR2pBt1/EJYmyliwb8Cse2SPt8M0oM28X
-         xnzlrJKDrE2zuYo8Wu6ax9jHkqWohGtHP6Jvu4ZaF2WSg36UJQcx0kCAwQSxqnrYAUdG
-         Wx6IHOd7Sq+eY+ui409gnyqshkExAMA8ZQoTnEnnc01h/4W+KWkvIEzlF/UFZxYBfO2P
-         zlGFdwDHODGI2Qw2urXJ9EFJgOLd2GNOVfsKlnQZwfk2awBq2TQE9I0hwG1IPPYEmMEX
-         jOXQC96HW/x5kY0NrQ5f6/3JFoVWgHCxSMzrqla057gBDrNBFP2jAbXFbumI0wvW4fxZ
-         oESQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWH3h3ylUexoy7rriqafUXlYNB9acLO2uNMkll3yTwWBRvjG1p0xxIVgmZ2UaECZOtw0lgniW3cgBw1HkA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydMSd75SXeFu2twqUEi1k3RaGTz2D2axNU7vuGkyzImYRPQhUb
-	h6JcegZWwKm926lqhDCVCdnwjRDUbAqD/iwd3/+YM6M8svzcjFZZZQGGgYiRbmEE0c1QMC2ZXLm
-	+00vm1A==
-X-Google-Smtp-Source: AGHT+IHfoyKyRi4QOiUDSxvjqgLFDO1L/1RhSMjfXAzLTeEHcAyBHXnbeLhZO6F6DXRrf5fW+BcFtbQoa1I=
-X-Received: from pjh16.prod.google.com ([2002:a17:90b:3f90:b0:312:eaf7:aa0d])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1c04:b0:312:e9bd:5d37
- with SMTP id 98e67ed59e1d1-31cc2515a29mr24112775a91.6.1753193626228; Tue, 22
- Jul 2025 07:13:46 -0700 (PDT)
-Date: Tue, 22 Jul 2025 07:13:44 -0700
-In-Reply-To: <96a0a8b2-3ebd-466c-9c6e-8ba63cd4e2e3@grsecurity.net>
+	s=arc-20240116; t=1753193660; c=relaxed/simple;
+	bh=YbZj6IAnk6i1IGZYhFj9C06BbWO/yAXaTN7raclAZtM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lx1ovFLl5G7NVNiiVCA0Gp9s8r3txSfcMRyFNZ+i7TFDraIuK8XGc4i/EVqYmm4BMRScxic8LVmO7XE99k34MzxJbSCls7he9KXVuiezKkIKmfdQViJ6TU+F4ytgpx4l7uf1ToOY4ML5RpoDfAVUp787mZdKiSLa1UkKi394xuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.51.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
+Received: from unknown (HELO yjaykim-PowerEdge-T330) (10.177.112.156)
+	by 156.147.51.102 with ESMTP; 22 Jul 2025 23:14:16 +0900
+X-Original-SENDERIP: 10.177.112.156
+X-Original-MAILFROM: youngjun.park@lge.com
+Date: Tue, 22 Jul 2025 23:14:09 +0900
+From: YoungJun Park <youngjun.park@lge.com>
+To: kernel test robot <lkp@intel.com>
+Cc: akpm@linux-foundation.org, hannes@cmpxchg.org,
+	oe-kbuild-all@lists.linux.dev, mhocko@kernel.org,
+	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+	muchun.song@linux.dev, shikemeng@huaweicloud.com,
+	kasong@tencent.com, nphamcs@gmail.com, bhe@redhat.com,
+	baohua@kernel.org, chrisl@kernel.org, cgroups@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, gunho.lee@lge.com,
+	iamjoonsoo.kim@lge.com, taejoon.song@lge.com,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+Subject: Re: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for
+ cgroup-based swap priority
+Message-ID: <aH+csQxNcCmQMgZa@yjaykim-PowerEdge-T330>
+References: <20250716202006.3640584-2-youngjun.park@lge.com>
+ <202507212243.Lf8fSo0T-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250704085027.182163-1-chao.gao@intel.com> <20250704085027.182163-20-chao.gao@intel.com>
- <4114d399-8649-41de-97bf-3b63f29ec7e8@grsecurity.net> <aH58w_wHx3Crklp4@google.com>
- <96a0a8b2-3ebd-466c-9c6e-8ba63cd4e2e3@grsecurity.net>
-Message-ID: <aH-cmDRPPp2X7OxN@google.com>
-Subject: Re: [PATCH v11 19/23] KVM: x86: Enable CET virtualization for VMX and
- advertise to userspace
-From: Sean Christopherson <seanjc@google.com>
-To: Mathias Krause <minipli@grsecurity.net>
-Cc: Chao Gao <chao.gao@intel.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	x86@kernel.org, pbonzini@redhat.com, dave.hansen@intel.com, 
-	rick.p.edgecombe@intel.com, mlevitsk@redhat.com, john.allen@amd.com, 
-	weijiang.yang@intel.com, xin@zytor.com, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202507212243.Lf8fSo0T-lkp@intel.com>
 
-On Tue, Jul 22, 2025, Mathias Krause wrote:
-> On 21.07.25 19:45, Sean Christopherson wrote:
-> > On Mon, Jul 21, 2025, Mathias Krause wrote:
-> >> Can we please make CR4.CET a guest-owned bit as well (sending a patch in
-> >> a second)? It's a logical continuation to making CR0.WP a guest-owned
-> >> bit just that it's even easier this time, as no MMU role bits are
-> >> involved and it still makes a big difference, at least for grsecurity
-> >> guest kernels.
-> > 
-> > Out of curiosity, what's the use case for toggling CR4.CET at runtime?
+On Mon, Jul 21, 2025 at 11:13:24PM +0800, kernel test robot wrote:
+> Hi Youngjun,
 > 
-> Plain and simple: architectural requirements to be able to toggle CR0.WP.
-
-Ugh, right.  That was less fun than I as expecting :-)
-
-> > E.g. at one point CR4.LA57 was a guest-owned bit, and the code was buggy.  Fixing
-> > things took far more effort than it should have there was no justification for
-> > the logic (IIRC, it was done purely on the whims of the original developer).
-> > 
-> > KVM has had many such cases, where some weird behavior was never documented/justified,
-> > and I really, really want to avoid committing the same sins that have caused me
-> > so much pain :-)
+> kernel test robot noticed the following build warnings:
 > 
-> I totally understand your reasoning, "just because" shouldn't be the
-> justification. In this case, however, not making it a guest-owned bit
-> has a big performance impact for grsecurity, we would like to address.
+> [auto build test WARNING on 347e9f5043c89695b01e66b3ed111755afcf1911]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Youngjun-Park/mm-swap-memcg-Introduce-infrastructure-for-cgroup-based-swap-priority/20250717-042648
+> base:   347e9f5043c89695b01e66b3ed111755afcf1911
+> patch link:    https://lore.kernel.org/r/20250716202006.3640584-2-youngjun.park%40lge.com
+> patch subject: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for cgroup-based swap priority
+> config: loongarch-randconfig-r123-20250721 (https://download.01.org/0day-ci/archive/20250721/202507212243.Lf8fSo0T-lkp@intel.com/config)
+> compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
+> reproduce: (https://download.01.org/0day-ci/archive/20250721/202507212243.Lf8fSo0T-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202507212243.Lf8fSo0T-lkp@intel.com/
+> 
+> sparse warnings: (new ones prefixed by >>)
+> >> mm/swap_cgroup_priority.c:115:16: sparse: sparse: incompatible types in comparison expression (different address spaces):
+>    mm/swap_cgroup_priority.c:115:16: sparse:    struct swap_cgroup_priority [noderef] __rcu *
+>    mm/swap_cgroup_priority.c:115:16: sparse:    struct swap_cgroup_priority *
+>    mm/swap_cgroup_priority.c:729:9: sparse: sparse: incompatible types in comparison expression (different address spaces):
+>    mm/swap_cgroup_priority.c:729:9: sparse:    struct swap_cgroup_priority [noderef] __rcu *
+>    mm/swap_cgroup_priority.c:729:9: sparse:    struct swap_cgroup_priority *
+>    mm/swap_cgroup_priority.c:638:25: sparse: sparse: incompatible types in comparison expression (different address spaces):
+>    mm/swap_cgroup_priority.c:638:25: sparse:    struct swap_cgroup_priority [noderef] __rcu *
+>    mm/swap_cgroup_priority.c:638:25: sparse:    struct swap_cgroup_priority *
+> 
+> vim +115 mm/swap_cgroup_priority.c
+> 
+>    108	
+>    109	static struct swap_cgroup_priority *get_swap_cgroup_priority(
+>    110		struct mem_cgroup *memcg)
+>    111	{
+>    112		if (!memcg)
+>    113			return NULL;
+>    114	
+>  > 115		return rcu_dereference(memcg->swap_priority);
+>    116	}
+>    117	
+> 
 
-Oh, I'm not objecting to the change, at all.  I just want to make sure we capture
-the justification in the changelog.
+This part of the code, which retrieves the object, 
+is expected to be properly updated in a subsequent patch series. 
+Therefore, I believe it's reasonable to leave it as-is for now.
+
+Best Regard,
+Youngjun Park
 
