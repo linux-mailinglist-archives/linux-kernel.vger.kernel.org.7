@@ -1,47 +1,46 @@
-Return-Path: <linux-kernel+bounces-740685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5651B0D7E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:10:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57293B0D7DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:09:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0041D561CD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:09:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0015C7A7A07
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:08:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2690628C5A0;
-	Tue, 22 Jul 2025 11:09:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BAAB28B3FD;
+	Tue, 22 Jul 2025 11:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ssYsamx7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3891C84DD;
-	Tue, 22 Jul 2025 11:09:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Bz5GvyOs"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66E3C38FA6;
+	Tue, 22 Jul 2025 11:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753182558; cv=none; b=Lu4V0dj0M8P633dSjzhjTc3OGVGSOIKQDCn+Bla/qdAtK4mOT8DRxlHMeKQPaQEXLaME3foe0Wgla6N8NC2/SCQMy9IOdNVhZOaEUMTqP4RhQMZKDD+O3pM+S4xM5C1SDd8k83QBx3n5sdGfVR9oI2hGwCQGFh8t/GIH6LnruZo=
+	t=1753182580; cv=none; b=jj8eu5SHmp7uS6WAOADPsYU0Ug0ArN+2Xk4acUy8FMf4zcNKKDFrEp19fqwK7gmnNlhsRvUZ4PtuLHSEVjj6S3aCEhfGfn8wf9R4NOgkITZ06tLEtNmrg8WF9KFs8uMI8cOQX4a7/jALMM0cCG3QSgJXrTe/KxM+Pxx6jAmVFlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753182558; c=relaxed/simple;
-	bh=beXaQ6bn7VZ4kwXIr7bZnROMX0CLkZfQr4F/O0JFJTk=;
+	s=arc-20240116; t=1753182580; c=relaxed/simple;
+	bh=CYEuHscZcABKMhg9fyn4rl48So0qm7kln60VrpBEK7w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M/Eki7g0ekQSHeSbHavSPGoxh32qddVr1KKC1HOh6A/3yzkI8PcOj4VU0jJHGPP+EefbVSWqJDJqVp91An8j9r6QxpHYQ8C/AomykWNlkTBKod73yiWzWWrvNGNegsJ8r50BCloQvDLAab6V54GAwy1dZMbXMnO20F5SdWtZ1fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ssYsamx7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29DEFC4CEEB;
-	Tue, 22 Jul 2025 11:09:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753182558;
-	bh=beXaQ6bn7VZ4kwXIr7bZnROMX0CLkZfQr4F/O0JFJTk=;
+	 In-Reply-To:Content-Type; b=b66t8/+NrX4sJPY7AEm/VYRIO0/LijUMsKiZhtfzqb0J1RNXK3gxXG6/YzgsiIz9B+T/3UoyIDRu/6AQTx5yPSmnRjEFozfw2xSAOKpQLFkkkt/ir6BfUXEBbyDTDe5tbPtYASeP86IfpeLfq8TjaE6oh6AQ4LqOKmb9LERmfuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Bz5GvyOs; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.95.67.184] (unknown [167.220.238.152])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 9589A212688F;
+	Tue, 22 Jul 2025 04:09:29 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9589A212688F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1753182572;
+	bh=lh25vDj5YrwsIUZawZQXQwVqfw4K8J7lH5Gkoly0HGM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ssYsamx7ZfqFjggJyRK7l+C1u3LcnNCAuoLrcPp6hQWVaqh5lkmnVccDMhaLi0eC8
-	 /k9xi7NS3UC0ElAnmomm+hSWroEXYNVeHOd6kPCvIG7Ut1QQD+HGmln3ilcLgWlZm7
-	 oig8yV30RHJeHg/JUbjOHcRR/27+0M7tV77dJqCgWypNxCuMRR2OTSpGhIxmVX9L59
-	 BZjpoMg85PmwXTsIdURUVZO+Ff5hgaSG8UqtnL4QlG9nANfcxej579H39t/kuYzMrA
-	 N72OULbtS/j0hl6gwOv7vLXFTVbTuxpb8S3gqE5CLjvg03dBlXo83U+TolmCKTNnhn
-	 23MHIc7ks6FdA==
-Message-ID: <31e72f14-bb61-411a-86c8-19c7212d2d31@kernel.org>
-Date: Tue, 22 Jul 2025 13:09:09 +0200
+	b=Bz5GvyOsM1hfeOZhVyoL+nKrWJv9t8duTIcqxCDFMt0C4/yDnY2rQR7o5OlCRz1Eh
+	 eHguE1836ZWOVddnRfnQsAISHoD5IMQND+nQm6l6Dv4R8BqRtZr7gd4iss4D/Oau4L
+	 ItJGH3iSlfrmVBuol8btK2ngf3KC5bFFY+Nn32Eg=
+Message-ID: <5bf4e550-34e1-4b6b-8ee2-137681a72d42@linux.microsoft.com>
+Date: Tue, 22 Jul 2025 16:39:25 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,113 +48,323 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 7/8] dt-bindings: media: Add MT8189
- mediatek,vcodec-encoder
-To: =?UTF-8?B?S3lyaWUgV3UgKOWQtOaZlyk=?= <Kyrie.Wu@mediatek.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- =?UTF-8?B?R2VvcmdlIFN1biAo5a2Z5p6XKQ==?= <George.Sun@mediatek.com>,
- =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= <tiffany.lin@mediatek.com>,
- "andrzejtp2010@gmail.com" <andrzejtp2010@gmail.com>,
- "nhebert@chromium.org" <nhebert@chromium.org>,
- "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "mchehab@kernel.org" <mchehab@kernel.org>,
- "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
- "nicolas.dufresne@collabora.com" <nicolas.dufresne@collabora.com>,
- =?UTF-8?B?WXVuZmVpIERvbmcgKOiRo+S6kemjnik=?= <Yunfei.Dong@mediatek.com>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- =?UTF-8?B?SXJ1aSBXYW5nICjnjovnkZ4p?= <Irui.Wang@mediatek.com>,
- "robh@kernel.org" <robh@kernel.org>,
- "sebastian.fricke@collabora.com" <sebastian.fricke@collabora.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "christophe.jaillet@wanadoo.fr" <christophe.jaillet@wanadoo.fr>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>, "arnd@arndb.de" <arnd@arndb.de>,
- =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?=
- <Andrew-CT.Chen@mediatek.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>
-References: <20250721105520.5625-1-kyrie.wu@mediatek.com>
- <20250721105520.5625-8-kyrie.wu@mediatek.com>
- <20250722-lovely-mustard-scorpion-e07e92@kuoka>
- <1d51ab1398ea0eec7bcaeaa31f52e4c39d11bd7b.camel@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v5 2/2] Drivers: hv: Introduce mshv_vtl driver
+To: Michael Kelley <mhklinux@outlook.com>,
+ "K . Y . Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>
+Cc: Roman Kisel <romank@linux.microsoft.com>,
+ Anirudh Rayabharam <anrayabh@linux.microsoft.com>,
+ Saurabh Sengar <ssengar@linux.microsoft.com>,
+ Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
+ Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+ ALOK TIWARI <alok.a.tiwari@oracle.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>
+References: <20250611072704.83199-1-namjain@linux.microsoft.com>
+ <20250611072704.83199-3-namjain@linux.microsoft.com>
+ <SN6PR02MB4157F9F1F8493C74C9FCC6E4D449A@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <42bc5294-219f-4c26-ad05-740f6190aff3@linux.microsoft.com>
+ <SN6PR02MB415781ABC3D523B719BDE280D450A@SN6PR02MB4157.namprd02.prod.outlook.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <1d51ab1398ea0eec7bcaeaa31f52e4c39d11bd7b.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Naman Jain <namjain@linux.microsoft.com>
+In-Reply-To: <SN6PR02MB415781ABC3D523B719BDE280D450A@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 22/07/2025 10:16, Kyrie Wu (吴晗) wrote:
-> On Tue, 2025-07-22 at 09:26 +0200, Krzysztof Kozlowski wrote:
->> External email : Please do not click links or open attachments until
->> you have verified the sender or the content.
+
+
+On 7/18/2025 8:37 PM, Michael Kelley wrote:
+> From: Naman Jain <namjain@linux.microsoft.com> Sent: Thursday, July 17, 2025 9:36 PM
 >>
->>
->> On Mon, Jul 21, 2025 at 06:55:19PM +0800, Kyrie Wu wrote:
->>> Add MT8189 encoder compatible string, which will reference SCP
->>> device.
->>
->> And the device is not compatible or is different because of what?
->>
->> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>
->> Best regards,
->> Krzysztof
->>
-> Dear Krzysztof,
+>> On 7/9/2025 10:49 PM, Michael Kelley wrote:
+>>> From: Naman Jain <namjain@linux.microsoft.com> Sent: Wednesday, June 11, 2025 12:27 AM
 > 
-> The reason, adding a new compatible strings for the MT8189 encoder, is
-> same as for decoder, to use different of_device_id data and to
-> distinguish the chip name.
+> [snip]
+> 
+>>
+>>> Separately, "allow_bitmap" size is 64K bytes, or 512K bits. Is that the
+>>> correct size?  From looking at mshv_vtl_hvcall_is_allowed(), I think this
+>>> bitmap is indexed by the HV call code, which is a 16 bit value. So you
+>>> only need 64K bits, and the size is too big by a factor of 8. In any case,
+>>> it seems like the size should not be expressed in terms of PAGE_SIZE.
+>>
+>> There are HVcall codes which are of type u16. So max(HVcall code) =
+>> 0xffff.
+>>
+>> For every HVcall that needs to be allowed, we are saving HVcall code
+>> info in a bitmap in below fashion:
+>> if x = HVCall code and bitmap is an array of u64, of size
+>> ((0xffff/64=1023) + 1)
+>>
+>> bitmap[x / 64] = (u64)1 << (x%64);
+>>
+>> Later on in mshv_vtl_hvcall_is_allowed(), we calculate the array index
+>> by dividing it by 64, and then see if call_code/64 bit is set.
+> 
+> I didn't add comments in mshv_vtl_hvcall_is_allowed(), but that code
+> can be simplified by recognizing that the Linux kernel bitmap utilities
+> can operate on bitmaps that are much larger than just 64 bits. Let's
+> assume that the allow_bitmap field in struct mshv_vtl_hvcall_fds has
+> 64K bits, regardless of whether it is declared as an array of u64,
+> an array of u16, or an array of u8. Then mshv_vtl_hvcall_is_allowed()
+> can be implemented as a single line:
+> 
+> 	return test_bit(call_code, fd->allow_bitmap);
+> 
+> There's no need to figure out which array element contains the bit,
+> or to construct a mask to select that particular bit in the array element.
+> And since call_code is a u16, test_bit won't access outside the allocated
+> 64K bits.
+> 
 
-You speak about drivers, this is not relevant. Explain the hardware -
-WHY it is not compatible, what is the difference
+I understood it now. This works and is much better. Will incorporate it
+in next patch.
 
-Best regards,
-Krzysztof
+>>
+>> Coming to size of allow_bitmap[], it is independent of PAGE_SIZE, and
+>> can be safely initialized to 1024 (reducing by a factor of 8).
+>> bitmap_size's maximum value is going to be 1024 in current
+>> implementation, picking u64 was not mandatory, u16 will also work. Also,
+>> item_index is also u16, so I should make bitmap_size as u16.
+> 
+> The key question for me is whether bitmap_size describes the number
+> of bits in allow_bitmap, or whether it describes the number of array
+> elements in the declared allow_bitmap array. It's more typical to
+> describe a bitmap size as the number of bits. Then the value is
+> independent of the array element size, as the array element size
+> usually doesn't really matter anyway if using the Linux kernel's
+> bitmap utilities. The array element size only matters in allocating
+> the correct amount of space is for whatever number of bits are
+> needed in the bitmap.
+> 
+
+I tried to put your suggestions in code. Please let me know if below 
+works. I tested this and it works. Just that, I am a little hesitant in 
+changing things on Userspace side of it, which passes these parameters 
+in IOCTL. This way, userspace remains the same, the confusion of names 
+may go away, and the code becomes simpler.
+
+--- a/include/uapi/linux/mshv.h
++++ b/include/uapi/linux/mshv.h
+@@ -332,7 +332,7 @@ struct mshv_vtl_set_poll_file {
+  };
+
+  struct mshv_vtl_hvcall_setup {
+-       __u64 bitmap_size;
++       __u64 bitmap_array_size;
+         __u64 allow_bitmap_ptr; /* pointer to __u64 */
+  };
+
+
+--- a/drivers/hv/mshv_vtl_main.c
++++ b/drivers/hv/mshv_vtl_main.c
+@@ -52,10 +52,12 @@ static bool has_message;
+  static struct eventfd_ctx *flag_eventfds[HV_EVENT_FLAGS_COUNT];
+  static DEFINE_MUTEX(flag_lock);
+  static bool __read_mostly mshv_has_reg_page;
+-#define MAX_BITMAP_SIZE 1024
++
++/* hvcall code is of type u16, allocate a bitmap of size (1 << 16) to 
+accomodate it */
++#define MAX_BITMAP_SIZE (1 << 16)
+
+  struct mshv_vtl_hvcall_fd {
+-       u64 allow_bitmap[MAX_BITMAP_SIZE];
++       u64 allow_bitmap[MAX_BITMAP_SIZE / 64];
+         bool allow_map_initialized;
+         /*
+          * Used to protect hvcall setup in IOCTLs
+
+@@ -1204,12 +1207,12 @@ static int mshv_vtl_hvcall_do_setup(struct 
+mshv_vtl_hvcall_fd *fd,
+                            sizeof(struct mshv_vtl_hvcall_setup))) {
+                 return -EFAULT;
+         }
+-       if (hvcall_setup.bitmap_size > ARRAY_SIZE(fd->allow_bitmap)) {
++       if (hvcall_setup.bitmap_array_size > ARRAY_SIZE(fd->allow_bitmap)) {
+                 return -EINVAL;
+         }
+         if (copy_from_user(&fd->allow_bitmap,
+                            (void __user *)hvcall_setup.allow_bitmap_ptr,
+-                          hvcall_setup.bitmap_size)) {
++                          hvcall_setup.bitmap_array_size)) {
+                 return -EFAULT;
+         }
+
+@@ -1221,11 +1224,7 @@ static int mshv_vtl_hvcall_do_setup(struct 
+mshv_vtl_hvcall_fd *fd,
+
+  static bool mshv_vtl_hvcall_is_allowed(struct mshv_vtl_hvcall_fd *fd, 
+u16 call_code)
+  {
+-       u8 bits_per_item = 8 * sizeof(fd->allow_bitmap[0]);
+-       u16 item_index = call_code / bits_per_item;
+-       u64 mask = 1ULL << (call_code % bits_per_item);
+-
+-       return fd->allow_bitmap[item_index] & mask;
++       return test_bit(call_code, (unsigned long *)fd->allow_bitmap);
+  }
+
+> [snip]
+> 
+>>>> +
+>>>> +	event_flags = (union hv_synic_event_flags *)per_cpu->synic_event_page +
+>>>> +			VTL2_VMBUS_SINT_INDEX;
+>>>> +	for (i = 0; i < HV_EVENT_FLAGS_LONG_COUNT; i++) {
+>>>> +		if (READ_ONCE(event_flags->flags[i])) {
+>>>> +			word = xchg(&event_flags->flags[i], 0);
+>>>> +			for_each_set_bit(j, &word, BITS_PER_LONG) {
+>>>
+>>> Is there a reason for the complexity in finding and resetting bits that are
+>>> set in the sync_event_page?  See the code in vmbus_chan_sched() that I
+>>> think is doing the same thing, but with simpler code.
+>>
+>> I am sorry, but I am not sure how this can be written similar to
+>> vmbus_chan_sched(). We don't have eventfd signaling mechanism there.
+>> Can you please share some more info/code snippet of what you were
+>> suggesting?
+> 
+> See below.
+> 
+>>
+>>
+>>>
+>>>> +				rcu_read_lock();
+>>>> +				eventfd = READ_ONCE(flag_eventfds[i * BITS_PER_LONG + j]);
+>>>> +				if (eventfd)
+>>>> +					eventfd_signal(eventfd);
+>>>> +				rcu_read_unlock();
+>>>> +			}
+>>>> +		}
+>>>> +	}
+> 
+> Here's what I would suggest. As with the hvcall allow_bitmap, this uses
+> the Linux kernel bitmap utilities' ability to operate on large bitmaps, instead
+> of going through each ulong in the array, and then going through each bit
+> in the ulong.
+> 
+> event_flags = (union hv_synic_event_flags *)per_cpu->synic_event_page + VTL2_VMBUS_SINT_INDEX;
+> 
+> for_each_set_bit(i, event_flags->flags, HV_EVENT_FLAGS_COUNT) {
+> 	if (!sync_test_and_clear_bit(i, event_flags->flags))
+> 		continue;
+> 	rcu_read_lock();
+> 	eventfd = READ_ONCE(flag_eventfds[i]);
+> 	if (eventfd)
+> 		eventfd_signal(eventfd);
+> 	rcu_read_unlock();
+> }
+> 
+> I haven't even compile tested the above, but hopefully you get the
+> idea and can fix any stupid mistakes. Note that HV_EVENT_FLAGS_COUNT
+> is a bit count, not a count of ulong's. And with the above code, you don't
+> need to add a definition of HV_EVENT_FLAGS_LONG_COUNT.
+
+Thanks for sharing this, it works. Will change it in next patch.
+
+> 
+> [snip]
+> 
+>>>> +	pgmap = kzalloc(sizeof(*pgmap), GFP_KERNEL);
+>>>> +	if (!pgmap)
+>>>> +		return -ENOMEM;
+>>>> +
+>>>> +	pgmap->ranges[0].start = PFN_PHYS(vtl0_mem.start_pfn);
+>>>> +	pgmap->ranges[0].end = PFN_PHYS(vtl0_mem.last_pfn) - 1;
+>>>
+>>> Perhaps this should be
+>>>
+>>> 	pgmap->ranges[0].end = PFN_PHYS(vtl0_mem.last_pfn + 1) - 1
+>>>
+>>> otherwise the last page won't be included in the range. Or is excluding the
+>>> last page intentional?
+>>
+>> Excluding the last page is intentional. Hence there is a check for this
+>> as well:
+>> if (vtl0_mem.last_pfn <= vtl0_mem.start_pfn) {
+>>
+> 
+> OK, this test requires that at least 2 PFNs be provided, because the
+> last one will be excluded.
+> 
+> I'd suggest adding a comment that the last page is intentionally
+> excluded, and why it is excluded. Somebody in future looking at this
+> code will appreciate the explanation. :-)
+> 
+
+Acked.
+
+
+> [snip]
+> 
+>>>
+>>>> +
+>>>> +	if (!cpu_online(input.cpu))
+>>>> +		return -EINVAL;
+>>>
+>>> Having tested that the target CPU is online, does anything ensure that the
+>>> CPU stays online during the completion of this function? Usually the
+>>> cpus_read_lock() needs to be held to ensure that an online CPU stays
+>>> online for the duration of an operation.
+>>
+>> Added cpus_read_lock() block around per_cpu_ptr operation. In general,
+>> CPUs are never hotplugged in kernel from our Usecase POV. I have omitted
+>> adding these locks at other places for now. Please let me know your
+>> thoughts on this, in case you feel we need to have it.
+>>
+> 
+> My understanding of VTL2 behavior is limited, so let me ask some clarifying
+> questions. If a vCPU is running in VTL0, then presumably that vCPU is also
+> running in VTL2. If that vCPU is then taken offline in VTL0, does it stay
+> online in VTL2? And then if the vCPU is brought back online in VTL0,
+> nothing changes in VTL2, correct?
+> 
+> If that is the correct understanding, and vCPUs never go offline in VTL2,
+> it would be more robust to enforce that. For example, in hv_vtl_setup_synic()
+> where cpuhp_setup_state() is called, the teardown argument is currently
+> NULL. You could provide a teardown function that just returns an error.
+> Then any attempts to take a vCPU offline in VTL2 would fail, and the vCPU
+> would stay online. However, some additional logic might be needed to
+> ensure that normal shutdown and the panic case work correctly -- I'm not
+> sure what VTL2 needs to do for these scenarios.
+> 
+> All that said, if you can be sure that vCPUs don't go offline in VTL2,
+> I would be OK with not adding the cpus_read_lock(). Perhaps a comment
+> would be helpful in the places where you are not using cpus_read_lock()
+> for this reason, assuming there is a reasonable number of such places.
+
+Not to make any assumptions, I am trying to gather more information on
+this, I will respond to it soon.
+
+> 
+> [snip]
+> 
+>>>> +
+>>>> +struct mshv_vtl_hvcall_setup {
+>>>> +	__u64 bitmap_size;
+>>>
+>>> What are the units of "bitmap_size"?  Bits? Bytes? u64?
+>>
+>> It would be length of bitmap array.
+> 
+> To me "length of bitmap array" is still ambiguous. Is it the
+> number of elements in the declared array field? Per my
+> earlier comments, I think the number of bits in the bitmap
+> would be more typical.
+
+does bitmap_array_size work?
+
+> 
+>>
+>>>
+>>>> +	__u64 allow_bitmap_ptr; /* pointer to __u64 */
+>>>> +};
+> 
+> Michael
+
+
+Regards,
+Naman
+
 
