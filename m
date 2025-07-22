@@ -1,228 +1,160 @@
-Return-Path: <linux-kernel+bounces-740236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E088FB0D1B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:09:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 573A9B0D1A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93CCE1AA4E7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:10:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B204F546F47
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:07:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72C728D85D;
-	Tue, 22 Jul 2025 06:09:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8561F28F534;
+	Tue, 22 Jul 2025 06:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sw6ZZbDD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OjSw4PMk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC034502F
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 06:09:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7B428B41A;
+	Tue, 22 Jul 2025 06:07:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753164593; cv=none; b=MpEtu2/WXxHUTfFzi4l4nBPrRmybH+t0pWnoSIeiL1HdnB9LB/fTzJ3ZU4bHtPXX20aDFVP2zRh38j19je5iOw4mXvsD2+MgQ4D2ExbK5HtqdqgtsMHb51aybitVq3lByVMtiiqdlcvEPgqJF9loQ6RG19Rw952d53uhDZcYFnU=
+	t=1753164455; cv=none; b=WTt00CkUpYyRfJszPb8jWvcOMXAo4B0BE7f5Xdt0uNKdO796EYdF/XaqIEs2LXmQ6hCfFjtuhiq+s8BphHDNjK1gmMEFhXMWe/36olhdfFoEOpzR6GoXTIDVLm+K4jYzA+L+yExyvxNxhADJxEkDOT/LUw/uLOFnRWKydeKw+cE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753164593; c=relaxed/simple;
-	bh=XGAIAHIZBmEv3evmUan1R6uHqDA6sAxZQIqw2i8fDaA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=nZHQhR2F399kjjaq3MGqPJ+cjrV8TsfL6RxOSQCkeb0N77/Q1do5SDPWfMV1P7lhtG/pN0fdP+e2aDRdyifmibjrFv5y3E9v3S27392dikBMpPHjPDIkJJwmtvrSvE1sRrQfO7KOSxUUd2KTQxXxlPuWP4vzAe9KW4QgHZedhDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sw6ZZbDD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 925C9C4CEEB;
-	Tue, 22 Jul 2025 06:09:52 +0000 (UTC)
+	s=arc-20240116; t=1753164455; c=relaxed/simple;
+	bh=yATiUc4oTPybMF8AkOrbPWmB8D++3bAs6ZdVj2hVxAc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YyN5Y1okP3kqinLEWivtm07KNqny8GSaib0bomFM0VEb0kbFJSE1noy5Izo/79onp2nkop606GyZMXCGFaMroyaP3h97ujqGvSdKBCwL3ox4nN0haXiUeRpzMlizqIVkXLmMwLqnQuqT3Hznie1XxxeahJj5tCCTdC+svOSF9xY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OjSw4PMk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0227C4CEEB;
+	Tue, 22 Jul 2025 06:07:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753164592;
-	bh=XGAIAHIZBmEv3evmUan1R6uHqDA6sAxZQIqw2i8fDaA=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=sw6ZZbDDsaqqUR/58lb3a9ol4DENQAwYBUNWbg9gkVvzrfsI+u5yyPkjDxSb1HStn
-	 JvMFo/qsdJlfv+5tw12PNlzG8qvI+LW0dE1oet2xlL8eB/mq2WYV2qV3CyWC8CRm2o
-	 3nOCOWx3Xo7LjaC9sVkwhOKH1IjfvHJ/w6z9L7F00bgHrk4YT/kTv0cmMDrPCZWz4S
-	 9yeUU7gf2V3FoLhTvP7mtbF8UK16PUnkEyFI3IYEOznog+Yjaq68UVQeYkciO6IofN
-	 eqp8KD+5s7MicXNgnYt2qRSpTX2oaapC9t1MB6xADwUgtQfUKmZOj08iVyNYeAf3vt
-	 vNDX1OS71VihQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E664C83F25;
-	Tue, 22 Jul 2025 06:09:52 +0000 (UTC)
-From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Date: Tue, 22 Jul 2025 14:06:58 +0800
-Subject: [PATCH v2] soc: amlogic: clk-measure: Optimize measurement
- accuracy
+	s=k20201202; t=1753164454;
+	bh=yATiUc4oTPybMF8AkOrbPWmB8D++3bAs6ZdVj2hVxAc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OjSw4PMkrLHOAa1rdHzxwPJN2pMNgALoBooZg+wF4oyTKgh/sTMrYPeRLhtOLqnI+
+	 ShkM/j6QE61GAMlWRSCMXSjT7U3TSiFILk9/6/bCDlJfp0JUAAakO/llXGbOMpJGwx
+	 TEHP37j943gcdLhfGjiiANAABvMoyQSy88nbBTvF6usTFWKDbpTWJARZ32bDlP9HxV
+	 dbrerABvMVILhQqVcY/tdgy2Rx+imSdx9wPVx3xmmFAPh7K7c5MP6PIR/qqD3mMyfh
+	 CZf8VZTWpujfnaHPbVIX5rGbcxFNBD3FTHJxGjttfHaN4VOBZeed2MEdjAhxE8mECQ
+	 kUzyVzWfIpOGQ==
+Message-ID: <9a97cc9e-2221-44d6-83e9-25b1bec10a6f@kernel.org>
+Date: Tue, 22 Jul 2025 08:07:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250722-optimize_clk-measure_accuracy-v2-1-cb121fd57e6d@amlogic.com>
-X-B4-Tracking: v=1; b=H4sIAIEqf2gC/4XNQQ6CMBCF4auQrq2hLVB15T0MIXU6wkRKSQtEJ
- NxdxAO4/N/iewuLGAgjuyQLCzhRJN9tIQ8Jg8Z0NXKyWzOZyjzNpeK+H8jRGyton9yhiWPAygC
- MwcDMzygKRJUV1kq2GX3AB712/1Zu3VAcfJj3u0l815+shf4jT4ILru4naTWA1Zm6Gtf6muAI3
- rFyXdcPHuTCBMwAAAA=
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Chuan Liu <chuan.liu@amlogic.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753164591; l=5869;
- i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=oQhUGoSZxIi1keYigrFF8wPRjrcx7Jaid/BmEwKEBDI=;
- b=bpOdsOdMACbofeQdme94D/tMNvgjUoxblptycdgowPS4uvd+6e1Q/u5IQ9xiLpOl2r7MsinL4
- trf8cV7rEWnDBlVa18F4KqZXXj0gV+MqS9yJu1AYIUQzZI8RERXJcDz
-X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
- pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
-X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
- auth_id=203
-X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
-Reply-To: chuan.liu@amlogic.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
+ ExynosAutov920 HS phy compatible
+To: Pritam Manohar Sutar <pritam.sutar@samsung.com>,
+ 'Krzysztof Kozlowski' <krzysztof.kozlowski@linaro.org>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, alim.akhtar@samsung.com, andre.draszik@linaro.org,
+ peter.griffin@linaro.org, neil.armstrong@linaro.org, kauschluss@disroot.org,
+ ivo.ivanov.ivanov1@gmail.com, m.szyprowski@samsung.com,
+ s.nawrocki@samsung.com, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ rosa.pila@samsung.com, dev.tailor@samsung.com, faraz.ata@samsung.com,
+ muhammed.ali@samsung.com, selvarasu.g@samsung.com
+References: <20250701120706.2219355-1-pritam.sutar@samsung.com>
+ <CGME20250701115955epcas5p320cfe73ca33522cd2f9f7970cfde1c63@epcas5p3.samsung.com>
+ <20250701120706.2219355-2-pritam.sutar@samsung.com>
+ <20250706-fresh-meaty-cougar-5af170@krzk-bin>
+ <07d301dbf0ae$0658cbe0$130a63a0$@samsung.com>
+ <9a2d0ad7-cb1f-473d-a91a-3a1b59b71280@kernel.org>
+ <000c01dbf70b$ccdbf630$6693e290$@samsung.com>
+ <a43cfe4f-8ff9-4dbd-b7f4-07ccc3d8e01b@kernel.org>
+ <00ff01dbfac1$ee528860$caf79920$@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <00ff01dbfac1$ee528860$caf79920$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Chuan Liu <chuan.liu@amlogic.com>
+On 22/07/2025 06:34, Pritam Manohar Sutar wrote:
+>>>> Nothing is explained in changelog/cover letter. You claim you only added Rb
+>> tag.
+>>>> This is an entirely silent change while keeping the review.
+>>>
+>>> Will add more explanations in cover letter/changelog why this block is added.
+>>>
+>>>> Combined with not even following DTS style!
+>>>
+>>> Ok got it. Will change supplies name as below avdd075_usb =>
+>>> avdd075-usb
+>>> avdd18_usb20 => avdd18-usb20
+>>> avdd33_usb20 => avdd33-usb20
+>>>
+>>> Confirm the above change that is meant in terms of DTS style.
+>> Yes. I have doubts that actual supplies have suffix usb20. Are there more than
+>> one avdd18 for this block?
+>>
+> 
+> Yes, there are more than one vdd18 supplies for this block. 
 
-The cycle count register has a 20-bit effective width, but the driver
-only utilizes 16 bits. This reduces the sampling window when measuring
-high-frequency clocks, resulting in (slightly) degraded measurement
-accuracy.
+And their names are?
 
-The input clock signal path from gate (Controlled by MSR_RUN) to internal
-sampling circuit in clk-measure has a propagation delay requirement: 24
-clock cycles must elapse after mux selection before sampling.
+> 
+> Re-analysed your comment on adding new supplies. 
+> Going to re-use existing supplies as mentioned below, rather than 
+> introducing new supplies
+> 
+>   dvdd-usb20-supply   => for 0.75v
+>   vddh-usb20-supply   => for 1.8v
+>   vdd33-usb20-supply => for 3.3v
 
-The measurement circuit employs single-edge sampling for clock frequency
-detection, resulting in a ±1 cycle count error within the measurement window.
 
-+1 cycle: 3 rising edges captured in 2-cycle measurement window.
-    __    __    __
- __↑  |__↑  |__↑  |__
-  ^             ^
-
--1 cycle: 2 rising edges captured in 3-cycle measurement window.
-    __    __    __
- __↑  |__↑  |__↑  |__↑
-    ^               ^
-
-Change-Id: If367c013fe2a8d0c8f5f06888bb8f30a1e46b927
-Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
----
-Improve measurement accuracy by increasing the bit width of the cycle
-counter register and adding delay during measurement.
-
-The 800μs delay between enabling the input clock gate and activating
-sampling is determined by the minimum sampling frequency of 30kHz (the
-lowest commonly used frequency in applications is 32.768kHz).
-
-Here are the test comparisons based on C3:
-
-Pre-optimization:
-cat /sys/kernel/debug/meson-clk-msr/measure_summary 
-  clock                     rate    precision
----------------------------------------------
- sys_clk               166664063    +/-5208Hz
- axi_clk               499968750    +/-15625Hz
- rtc_clk                23982813    +/-3125Hz
- p20_usb2_ckout        479968750    +/-15625Hz
- eth_mpll_test         499992188    +/-15625Hz
- sys_pll              1919875000    +/-62500Hz
- cpu_clk_div16         119998162    +/-3676Hz
- ts_pll                        0    +/-3125Hz
- fclk_div2             999843750    +/-31250Hz
- fclk_div2p5           799953125    +/-31250Hz
- fclk_div3             666625000    +/-20833Hz
- fclk_div4             499914063    +/-15625Hz
- fclk_div5             399987500    +/-12500Hz
- fclk_div7             285709821    +/-8928Hz
- fclk_50m               49982813    +/-3125Hz
- sys_oscin32k_i            26563    +/-3125Hz
-
-Post-optimization:
-cat /sys/kernel/debug/meson-clk-msr/measure_summary 
-  clock                     rate    precision
----------------------------------------------
- sys_clk               166665625    +/-1562Hz
- axi_clk               499996875    +/-1562Hz
- rtc_clk                24000000    +/-1562Hz
- p20_usb2_ckout        479996875    +/-1562Hz
- eth_mpll_test         499996875    +/-1562Hz
- sys_pll              1919987132    +/-1838Hz
- cpu_clk_div16         119998438    +/-1562Hz
- ts_pll                        0    +/-1562Hz
- fclk_div2             999993750    +/-1562Hz
- fclk_div2p5           799995313    +/-1562Hz
- fclk_div3             666656250    +/-1562Hz
- fclk_div4             499996875    +/-1562Hz
- fclk_div5             399993750    +/-1562Hz
- fclk_div7             285712500    +/-1562Hz
- fclk_50m               49998438    +/-1562Hz
- sys_oscin32k_i            32813    +/-1562Hz
----
-Changes in v2:
-- Change "HACK" in comments to "NOTE" according to Martin's suggestion.
-- Link to v1: https://lore.kernel.org/r/20250717-optimize_clk-measure_accuracy-v1-1-3b82d7ccd743@amlogic.com
----
- drivers/soc/amlogic/meson-clk-measure.c | 27 ++++++++++++++++++---------
- 1 file changed, 18 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/soc/amlogic/meson-clk-measure.c b/drivers/soc/amlogic/meson-clk-measure.c
-index d862e30a244e..df395e015f26 100644
---- a/drivers/soc/amlogic/meson-clk-measure.c
-+++ b/drivers/soc/amlogic/meson-clk-measure.c
-@@ -22,7 +22,7 @@ static DEFINE_MUTEX(measure_lock);
- #define MSR_CLK_SRC		GENMASK(26, 20)
- #define MSR_BUSY		BIT(31)
- 
--#define MSR_VAL_MASK		GENMASK(15, 0)
-+#define MSR_VAL_MASK		GENMASK(19, 0)
- 
- #define DIV_MIN			32
- #define DIV_STEP		32
-@@ -805,14 +805,23 @@ static int meson_measure_id(struct meson_msr_id *clk_msr_id,
- 	regmap_update_bits(priv->regmap, reg->freq_ctrl, MSR_DURATION,
- 			   FIELD_PREP(MSR_DURATION, duration - 1));
- 
--	/* Set ID */
--	regmap_update_bits(priv->regmap, reg->freq_ctrl, MSR_CLK_SRC,
--			   FIELD_PREP(MSR_CLK_SRC, clk_msr_id->id));
-+	/* Set the clock channel ID and enable the input clock gate. */
-+	regmap_update_bits(priv->regmap, reg->freq_ctrl, MSR_CLK_SRC | MSR_RUN,
-+			   FIELD_PREP(MSR_CLK_SRC, clk_msr_id->id) | MSR_RUN);
- 
--	/* Enable & Start */
--	regmap_update_bits(priv->regmap, reg->freq_ctrl,
--			   MSR_RUN | MSR_ENABLE,
--			   MSR_RUN | MSR_ENABLE);
-+	/*
-+	 * NOTE: The input clock signal path from gate (Controlled by MSR_RUN)
-+	 * to internal sampling circuit in clk-measure has a propagation delay
-+	 * requirement: 24 clock cycles must elapse after mux selection before
-+	 * sampling.
-+	 *
-+	 * For a 30kHz measurement clock, this translates to an 800μs delay:
-+	 * 800us = 24 / 30000Hz.
-+	 */
-+	fsleep(800);
-+
-+	/* Enable the internal sampling circuit and start clock measurement. */
-+	regmap_update_bits(priv->regmap, reg->freq_ctrl, MSR_ENABLE, MSR_ENABLE);
- 
- 	ret = regmap_read_poll_timeout(priv->regmap, reg->freq_ctrl,
- 				       val, !(val & MSR_BUSY), 10, 10000);
-@@ -846,7 +855,7 @@ static int meson_measure_best_id(struct meson_msr_id *clk_msr_id,
- 	do {
- 		ret = meson_measure_id(clk_msr_id, duration);
- 		if (ret >= 0)
--			*precision = (2 * 1000000) / duration;
-+			*precision = 1000000 / duration;
- 		else
- 			duration -= DIV_STEP;
- 	} while (duration >= DIV_MIN && ret == -EINVAL);
-
----
-base-commit: 58abdca0eb653c1a2e755ba9ba406ee475d87636
-change-id: 20250523-optimize_clk-measure_accuracy-9e16ee346dd2
+You just expect us to guess whether this is correct...
 
 Best regards,
--- 
-Chuan Liu <chuan.liu@amlogic.com>
-
-
+Krzysztof
 
