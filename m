@@ -1,240 +1,321 @@
-Return-Path: <linux-kernel+bounces-740652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4180CB0D749
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:27:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFD21B0D74B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:27:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62720167C60
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:27:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE4F53B67E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:26:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE3A2E093B;
-	Tue, 22 Jul 2025 10:26:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98AAA28C2A2;
+	Tue, 22 Jul 2025 10:27:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="SFgwQb7u"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2124.outbound.protection.outlook.com [40.107.220.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dZ9mgQgi"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA1BE28C2A2
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 10:26:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.124
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753180016; cv=fail; b=TISW1l+dIB9EYisZSwpIuC6prwXwmQD3Iqrug4gN2gTBc7NxU8PybkDwv51cbexsUnBkNmUY6wn8pcCCF/ZIsQdRO4/Bn2WE7OP9pSt/FjywQSeIZew0Riq7cf4WJpTQnFrsYeXqlg1IzSPBKnApEchZNNwQaE4N9IUz7McsR/o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753180016; c=relaxed/simple;
-	bh=ZH0neJQ7hH7PemSWaRbXJpRuCVORblADAq1Bkn0uSf0=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=k6dfk1L7AWM7FxpSo30+08BAjHGeyLeg0dkTNDUbTJrUBNYKkXpT7XOUkf3Rls3LU9TOkL0X+cCMlFch2Gd03W5xTyfbBFTIcxPMGOSZ2n9pp4TSWQDwePGQgBKnPL4kDjJfrrYvIDo1ko9mjnY7xn6fFsJh8R6Xv2lDpC7s10c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=SFgwQb7u; arc=fail smtp.client-ip=40.107.220.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=C9oLFNNZatG3tv1nXR7L1RwzO8CuEeuZMkwp9TA77CkzDpyv5kgMjFBqVrdGZydXOAETJQ+pLc8tJA7Vuc91OUhpY+iGUHLwDp9gCZyz+Mkw7jpinIH0tTumsd9WYyyqLKoXqkA9zWY9zSaI4x8LHGbK1taRnXQJgHfN0nQ31yodjbjyGtsuSF06CtIlkzmyNq0wsb2UwdSKEiqwXDYNnEzgoWEv4JLy+UthTldbwkxrhdqCThY+thGspFxL1a6a7dUpJfdifjHV8lDK/eB4avSLDzTmdbVLN7ZusHjYcWsgI1gdHzGqvknFrZA8LLU3nIsC1DpvlCVnTIYWuUZUGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iKmLPJSseNSjMuWWR9+u7LURghlz0GgHobxxTblc5TY=;
- b=iYFJqKP6PWuMQRNmKt8cHmr7BH4Eza0N2pn6I5yLNKM1U5uOF9a2Q89KpSBLGk4Yw6OiTC8PmEcFZJ88otsIDsTvXUQ+VE7jzzNaDnoCRIlpwFKv6LIYhH8roLE0gcNatoB+uFg65FFde7Yc4eK/iqsFDrCI9JGyWl6c5i7pb88fGRgssL5fzzQ6wCSq0blVXnJzylOD9TiJviIVvgX70PteR+8s00ZqHLket2u/fzIKK00l5RR7PgnwIN1r+NrguHtuHBvecxMbO5mCc0OdXQ5P0rS4B+0t6wISvO2yKBsNu3iU9aIIUvdIUlnw1AyTJYLWsBVMkbAMkYsyIxVHYA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iKmLPJSseNSjMuWWR9+u7LURghlz0GgHobxxTblc5TY=;
- b=SFgwQb7uJcqVjPWGhzAxnaN3/OvVZ//XqHLHPpXfG5d/Yrgi8GJb9mEI8WlHrc09rSs/KklYAx/hxQhW7Gc5x89P4ROQvlUpr7Jz82w8jCTOJPaLwPzNnp9ea2nk9wHxa3kkEwQEtX01U5rPV5+Tc6sRusJHYKe3N0hqpWKAcwM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from PH0PR01MB7975.prod.exchangelabs.com (2603:10b6:510:26d::15) by
- BL3PR01MB6945.prod.exchangelabs.com (2603:10b6:208:358::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8943.30; Tue, 22 Jul 2025 10:26:51 +0000
-Received: from PH0PR01MB7975.prod.exchangelabs.com
- ([fe80::6926:a627:118e:8050]) by PH0PR01MB7975.prod.exchangelabs.com
- ([fe80::6926:a627:118e:8050%4]) with mapi id 15.20.8943.028; Tue, 22 Jul 2025
- 10:26:51 +0000
-From: Huang Shijie <shijie@os.amperecomputing.com>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	vschneid@redhat.com
-Cc: patches@amperecomputing.com,
-	cl@linux.com,
-	Shubhang@os.amperecomputing.com,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	linux-kernel@vger.kernel.org,
-	Huang Shijie <shijie@os.amperecomputing.com>
-Subject: [PATCH v5] sched/fair: do not scan twice in detach_tasks()
-Date: Tue, 22 Jul 2025 18:26:00 +0800
-Message-Id: <20250722102600.25976-1-shijie@os.amperecomputing.com>
-X-Mailer: git-send-email 2.40.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR02CA0023.apcprd02.prod.outlook.com
- (2603:1096:4:195::11) To PH0PR01MB7975.prod.exchangelabs.com
- (2603:10b6:510:26d::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B569223F413
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 10:27:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753180024; cv=none; b=LykB6SfbZ3KT06NZAQSj0DyOUNpp4OBpUQ126prbgGswPOGt7/Hp6/6guL0qpXQMKIHCWgkaYToyVc/rRklpXzqvRlm0/9HqX/NeVJTXt+vhuZjetxIxKEzkwAnjeTZiIgZm/17LWEkSOC3BUS3bC7tupjK+t97yJrafAz7SVGA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753180024; c=relaxed/simple;
+	bh=4wmPtlDB1x0y4A/q2tPmMwmk1pBC4oi/6vxid7Hcrs8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mVIkzzdNVV7JTj2OKI8C8FDjpZu2OadVrCNpqyNIX0/7/ptL+GjOiagPr3uM1jxE6lVCghlnLFHEPuTBQbUGFCg96nQWnLCDuU0AW2taa9bnCpWAQM680S/3Z2EXIuryDjlcnvJyg6cuxMottC3PmFUC+26ZC80xieOxRoPra34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dZ9mgQgi; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <fc0d3fa9-67a8-4ac7-a213-283e2971227d@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753180010;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YEQ1wMDSwpcY8zt0lXOU9uKmIaPhkBJvfQX9gZU5V+0=;
+	b=dZ9mgQgi6SVpE3dzsnXQjyChbgECJF0Te0lNtdgP21mnyDKF35TdyKnQabS1ewB+L3cIwN
+	NOktDbpX7WAC+ez99cdYSWHmVuCVUQYEewqXATbrNHuPd5p4z4MeM93otemzIg3FYJYCbw
+	+y0UNec4a/OPT5QxvrmSMWyT0avk9Ec=
+Date: Tue, 22 Jul 2025 11:26:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR01MB7975:EE_|BL3PR01MB6945:EE_
-X-MS-Office365-Filtering-Correlation-Id: 09643b19-32de-4e17-bf81-08ddc90a4555
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|366016|52116014|7416014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?k9Z8xndZfI4VbxZSEQBSSS8B20Fncy14VMttIHqWG84AP9c8PyrZBZKM3uP/?=
- =?us-ascii?Q?/ha7ClnRHqmWg6DypCuOfQz6+7XBlBjDRjofY4iYVqp+oeXN+Ki69OlAiLOy?=
- =?us-ascii?Q?yXSHsEoQD/Usjxg0ZNkBzwurbdNZnJSJ3Gk+lTpCOo2i8hC0PgIjQdt+xl3V?=
- =?us-ascii?Q?41O3Q9gCHiR0B3FCtYFbYHOoiQ9etDFk/FFZGOX+7WZ7TNHAhbgnNtuDPeNd?=
- =?us-ascii?Q?kTtOy7Xt+pbUeyHmS5ZLyqLNznItxhDE305RtscL+8NyKlTJApXNX89cbgfL?=
- =?us-ascii?Q?Xg9mqLzZDmcIcvUBEq5D3L+OR1xn3cHqF4plo5Cvi7z/+JmjlgIHE3aJD9LB?=
- =?us-ascii?Q?8FTJQfcXGTFj8IEmGpKQi8VG9ijETcbCukNWZrQo4Aj4fjcYGLjvnXzPAxHT?=
- =?us-ascii?Q?Tk8zaBNxo2yZCIpwogaE3CdAecFxUab55CTp9oz4udomrcOyhJ4QojqS5hu5?=
- =?us-ascii?Q?O5K/614aycO2USb8DbHhWl7roCKnOsgsmCcySnbteCpP8X+Jsz1WvcJxL/Ca?=
- =?us-ascii?Q?2HvJF6sFsQ4kmjbARPvk00SK0TvPzG9jC5rZq6wikMVRWdYRHts8PX2+rXTn?=
- =?us-ascii?Q?aRi1ZroNsqBG4IouqegDNIlemp3qNMhb2ieuf653yMXdQeD78IDNJ86ZQBUW?=
- =?us-ascii?Q?vN9KFpkq3FP42W3UpJqPV8J9GDnJmaJJaGzJnQHnJP8lyk5ThfsJJzxWN85O?=
- =?us-ascii?Q?XFgxBi/TyNSfK+4zTwAdqAW66rhs/TdMYSUYOrP0jH1+zJSaDMPaB65rnPfv?=
- =?us-ascii?Q?t/fYo1xDHxTNBTn7uenc2AvaeCXOGafOtAg2ALFhGv99GXuxbCureRG3N7MH?=
- =?us-ascii?Q?RmkT30bTED0B0UW2o8Ul66e4vRBKIo8Xpf16MsbzmfjnimAmb70o1t5KvTeq?=
- =?us-ascii?Q?1Bs1YgVaGpLfOnFp96pyb3hpT22cdVhWG/QxxmNb2vbcnc87RVMNuxshHcpc?=
- =?us-ascii?Q?ypXzhYirzR9XsBG7IFkE0MSTTYAJurwlZ634GLcix/wr65OzJnh11iz7R4ra?=
- =?us-ascii?Q?jeORR3VuBg2cIIBf3E5QeBb0Ijfql/tuSuFJ0dwrE9ohJAcEsujr6ql+upF/?=
- =?us-ascii?Q?/YsgoJ4w82H2/wKxbRPop8WcXuyGuW+gh8XHiH+dvc3X/RV3ag4CfP3d+SM0?=
- =?us-ascii?Q?048k//8tPRCZJy24Tmq+KJ4XaOujyLCcADizYzV7DVQlhZ7OHH/BlmhpINEZ?=
- =?us-ascii?Q?M43TBY1BWTYj1P+TX//v0h3TFoPfo3ik3/E2Iq7ixLbKxfy3whCiw+ZMz04d?=
- =?us-ascii?Q?CFT/wCYdDbjHOlSyuXemnQ+ODXCd4mj38ZqnecW714/lKBHePO8xWsxoaFgK?=
- =?us-ascii?Q?83BFnzvTLk0v972sUPv0a5YkxEs0fuecRn92jqg6jm3ybjUL75E5Otu7GrzH?=
- =?us-ascii?Q?euECVKJ4su/J2aVTFcWDwgIov7gpQlNEf3EBp6IARUlZ8O8psAjPDDtkYdSc?=
- =?us-ascii?Q?eXjhPclaymz0RJXcCR0oVA7o0CRxG9FlLll2Jl2ISl1HwusidBVH6HEoVF29?=
- =?us-ascii?Q?Ci44u22Rd6rL1Qo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR01MB7975.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(52116014)(7416014)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?N9Frnej7OOcdSkJ95WS97fb3SukuTrvjR/kFneRLzGrfkEC0Zax8qJldeSts?=
- =?us-ascii?Q?SbeAZFtl2y30kpqijSTsLg/jbIqjrZJNjTXEHYAau1khK76X7b8YLjpXH4Ic?=
- =?us-ascii?Q?dalAwkKDaelCSJ2C7nFK5H4l1PtTRMQylxcDZpmAuES+3bmRL0Y1P2O3z7EW?=
- =?us-ascii?Q?VON5D2oea/Q1tSBk9Vvd78t9BjfWnRZW0IgQW++uzWKe8+KqA9Rq94d2I5Zs?=
- =?us-ascii?Q?Kup42xqsG+03bbkMDeJj8Fk0vu3h8aWy7kEpawHzoxuARE/Xu1y5rx2Z2+q6?=
- =?us-ascii?Q?Ka6SMsTfYFZwMtT4QcfTxwmlTOBhPtS/2+Aw8SXIZB9T9b6T5aT2q0uRvCYx?=
- =?us-ascii?Q?K7v/8vkDO+xysQhDo53E1ARc71MOz99U5IaQ1ERw/fTV4MxsfY+CiO645DmP?=
- =?us-ascii?Q?w1oPIpxVVRK1Uu/gOQWXGu1Jh6GkKVx0qqUoVxZ56utI0sDhQO6V3xNE/XHL?=
- =?us-ascii?Q?VeBnu715y89VHIYS+us7/H4yeTluWI1QVYwjfZ8v4d2MpsiL9rT6kXvsMhDX?=
- =?us-ascii?Q?fDMTChmBneHTx/EnN8vNnyNnvt3iC2AQ+4ds5a/jZ1MPD51CGxwElzftwFq0?=
- =?us-ascii?Q?nXZqkkH9yJywNpC88C3xDSlVNAMIv8VHHguTYqfwLk0rzO2nq4CyzsqYan88?=
- =?us-ascii?Q?gBfIKweuJWCYZRaQYkqQNpnMkW763x2gw8ui3/OrOUlayCvC//jtvP7WyC0l?=
- =?us-ascii?Q?QbdgYID38aukOvMycZf/0FbSErQLTioxPINnW+wmnKgUpfiQATnAoF9+SBAe?=
- =?us-ascii?Q?DjLQIBL1HARJh9Q5/z+MFIjsGiUTXY8DzMlFSjLw9MC2utKgnvObbiDRqbw/?=
- =?us-ascii?Q?gqZhoHJe2EgZePOs15rT/4CTBsxyx8W9BFM+z8aLsXzqBrvQufpUtLzD6ch2?=
- =?us-ascii?Q?QkeL8wwLL5pEAdMX0LSndBlc2ekBiBr8FgfPXAewpNYi4w9AxDqfulh5ZU4u?=
- =?us-ascii?Q?X0jixEHd5xCGBOLyNeXi/5BTozyPpz6r4F5fgPO50SZqiADtaPqRY+xAx+bR?=
- =?us-ascii?Q?XOqQ5mQfY/VxAe161IumV9MHnYICU7x4p1b5L3uEHCgoJs0b/AY4NbmYyD/w?=
- =?us-ascii?Q?960vdRu7MfZhWVo0erCLmzVJt/CRELOrKEudZNSij0YXvQVfyfT1hDUJB6EJ?=
- =?us-ascii?Q?1K/IEsMh4rA+9YUMPi51usV+7VVXS08oc4fbL78TyuYLW17lujueR4bPb6Uz?=
- =?us-ascii?Q?3FRbbkse7+r/oDzUvRrijfZ4U5hq2WqRGtBtHau6HqKfi0ic4mvzlmGTkD+y?=
- =?us-ascii?Q?9RzBb/ZZlWf1P815y1pwcXWvhH6YwyxgtitAPk9fmOxyXzLDcEuohLHFep/k?=
- =?us-ascii?Q?u+bF5VarBpwaqXd9VYdYsDZt9fVUs25iwl4XvZWgAQMAt6VOhY3+hLTSDLvC?=
- =?us-ascii?Q?+Fbfkr+jY84h9BDpHGcBAayjF4AyjcF2hozwCEDd3BCkrqDDo5UmGITAPKZj?=
- =?us-ascii?Q?jwSas8pTexd3KhpIvc9LjSZZtErnTGRG1yM1X+4SSLjqPXR2Qu07fO2IXTXA?=
- =?us-ascii?Q?qcZwsUO4PDW92btIoVhWojS3FQVVGZdCA2XTmivKeKWpXvd7UvvQc3Zzd2Gm?=
- =?us-ascii?Q?xTbUXZgniraN3iOYzhY/TSn9vHxoPqZ81Lr2haT4iOC65x5gEtGmZqme1s/m?=
- =?us-ascii?Q?aK6ivaDlg3+HRu1cMKTzTuY=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 09643b19-32de-4e17-bf81-08ddc90a4555
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR01MB7975.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2025 10:26:50.9534
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ICimwRODH/p6GZiErLLczJaVLkd8NhK2P+TefGOzSr7KnghlIM2YMd66mH2UEZ1Z1V3LkpwrOpfn79b1MJUNMSPeLnoXEQwFMSHyuYxY4jyxPs3QYj1+h4USt9ET+8VM
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR01MB6945
+Subject: Re: [PATCH v2 02/15] net: rnpgbe: Add n500/n210 chip support
+To: Yibo Dong <dong100@mucse.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
+ gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
+ danishanwar@ti.com, lee@trager.us, gongfan1@huawei.com, lorenzo@kernel.org,
+ geert+renesas@glider.be, Parthiban.Veerasooran@microchip.com,
+ lukas.bulwahn@redhat.com, alexanderduyck@fb.com, richardcochran@gmail.com,
+ netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250721113238.18615-1-dong100@mucse.com>
+ <20250721113238.18615-3-dong100@mucse.com>
+ <b4233af1-7143-402b-a45c-379c39edf274@linux.dev>
+ <911D202AA380FB7F+20250722095159.GA120552@nic-Precision-5820-Tower>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <911D202AA380FB7F+20250722095159.GA120552@nic-Precision-5820-Tower>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-detach_tasks() uses struct lb_env.loop_max as an env.src_rq->cfs_tasks
-iteration count limit. It is however set without the source RQ lock held.
+On 22/07/2025 10:51, Yibo Dong wrote:
+> On Mon, Jul 21, 2025 at 03:21:23PM +0100, Vadim Fedorenko wrote:
+>> On 21/07/2025 12:32, Dong Yibo wrote:
+>>> Initialize n500/n210 chip bar resource map and
+>>> dma, eth, mbx ... info for future use.
+>>>
+>>> Signed-off-by: Dong Yibo <dong100@mucse.com>
+>>> ---
+>>>    drivers/net/ethernet/mucse/rnpgbe/Makefile    |   4 +-
+>>>    drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    | 138 ++++++++++++++++++
+>>>    .../net/ethernet/mucse/rnpgbe/rnpgbe_chip.c   | 138 ++++++++++++++++++
+>>>    drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h |  27 ++++
+>>>    .../net/ethernet/mucse/rnpgbe/rnpgbe_main.c   |  68 ++++++++-
+>>>    5 files changed, 370 insertions(+), 5 deletions(-)
+>>>    create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+>>>    create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
+>>>
 
-This means that env.loop_max and the actual length of env.src_rq->cfs_tasks
-as observed within detach_tasks() can differ. This can cause some tasks to
-be unnecessarily iterated over more than once, for instance:
+[...]
 
-  env.loop_max := 4
-  detach_tasks()
-    // Here env.src->cfs_tasks only contains two tasks which can't be
-    // migrated anywhere, so they're put back in the list each time.
-    env.src->cfs_tasks := [p1, p0]
-    // The iteration goes:
-    p0; cfs_tasks := [p0, p1]
-    p1; cfs_tasks := [p1, p0]
-    p0; cfs_tasks := [p0, p1]
-    p1; cfs_tasks := [p1, p0]
+>>> +/**
+>>> + * rnpgbe_get_invariants_n500 - setup for hw info
+>>> + * @hw: hw information structure
+>>> + *
+>>> + * rnpgbe_get_invariants_n500 initializes all private
+>>> + * structure, such as dma, eth, mac and mbx base on
+>>> + * hw->addr for n500
+>>> + **/
+>>> +static void rnpgbe_get_invariants_n500(struct mucse_hw *hw)
+>>> +{
+>>> +	struct mucse_dma_info *dma = &hw->dma;
+>>> +	struct mucse_eth_info *eth = &hw->eth;
+>>> +	struct mucse_mac_info *mac = &hw->mac;
+>>> +	struct mucse_mbx_info *mbx = &hw->mbx;
+>>> +
+>>> +	/* setup msix base */
+>>> +	hw->ring_msix_base = hw->hw_addr + 0x28700;
+>>> +	/* setup dma info */
+>>> +	dma->dma_base_addr = hw->hw_addr;
+>>> +	dma->dma_ring_addr = hw->hw_addr + RNPGBE_RING_BASE;
+>>> +	dma->max_tx_queues = RNPGBE_MAX_QUEUES;
+>>> +	dma->max_rx_queues = RNPGBE_MAX_QUEUES;
+>>> +	dma->back = hw;
+>>> +	/* setup eth info */
+>>> +	eth->eth_base_addr = hw->hw_addr + RNPGBE_ETH_BASE;
+>>> +	eth->back = hw;
+>>> +	eth->mc_filter_type = 0;
+>>> +	eth->mcft_size = RNPGBE_MC_TBL_SIZE;
+>>> +	eth->vft_size = RNPGBE_VFT_TBL_SIZE;
+>>> +	eth->num_rar_entries = RNPGBE_RAR_ENTRIES;
+>>> +	/* setup mac info */
+>>> +	mac->mac_addr = hw->hw_addr + RNPGBE_MAC_BASE;
+>>> +	mac->back = hw;
+>>> +	/* set mac->mii */
+>>> +	mac->mii.addr = RNPGBE_MII_ADDR;
+>>> +	mac->mii.data = RNPGBE_MII_DATA;
+>>> +	mac->mii.addr_shift = 11;
+>>> +	mac->mii.addr_mask = 0x0000F800;
+>>> +	mac->mii.reg_shift = 6;
+>>> +	mac->mii.reg_mask = 0x000007C0;
+>>> +	mac->mii.clk_csr_shift = 2;
+>>> +	mac->mii.clk_csr_mask = GENMASK(5, 2);
+>>> +	mac->clk_csr = 0x02; /* csr 25M */
+>>> +	/* hw fixed phy_addr */
+>>> +	mac->phy_addr = 0x11;
+>>> +
+>>> +	mbx->mbx_feature |= MBX_FEATURE_NO_ZERO;
+>>> +	/* mbx offset */
+>>> +	mbx->vf2pf_mbox_vec_base = 0x28900;
+>>> +	mbx->fw2pf_mbox_vec = 0x28b00;
+>>> +	mbx->pf_vf_shm_base = 0x29000;
+>>> +	mbx->mbx_mem_size = 64;
+>>> +	mbx->pf2vf_mbox_ctrl_base = 0x2a100;
+>>> +	mbx->pf_vf_mbox_mask_lo = 0x2a200;
+>>> +	mbx->pf_vf_mbox_mask_hi = 0;
+>>> +	mbx->fw_pf_shm_base = 0x2d000;
+>>> +	mbx->pf2fw_mbox_ctrl = 0x2e000;
+>>> +	mbx->fw_pf_mbox_mask = 0x2e200;
+>>> +	mbx->fw_vf_share_ram = 0x2b000;
+>>> +	mbx->share_size = 512;
+>>> +
+>>> +	/* setup net feature here */
+>>> +	hw->feature_flags |= M_NET_FEATURE_SG |
+>>> +			     M_NET_FEATURE_TX_CHECKSUM |
+>>> +			     M_NET_FEATURE_RX_CHECKSUM |
+>>> +			     M_NET_FEATURE_TSO |
+>>> +			     M_NET_FEATURE_VLAN_FILTER |
+>>> +			     M_NET_FEATURE_VLAN_OFFLOAD |
+>>> +			     M_NET_FEATURE_RX_NTUPLE_FILTER |
+>>> +			     M_NET_FEATURE_RX_HASH |
+>>> +			     M_NET_FEATURE_USO |
+>>> +			     M_NET_FEATURE_RX_FCS |
+>>> +			     M_NET_FEATURE_STAG_FILTER |
+>>> +			     M_NET_FEATURE_STAG_OFFLOAD;
+>>> +	/* start the default ahz, update later */
+>>> +	hw->usecstocount = 125;
+>>> +}
+>>> +
+>>> +/**
+>>> + * rnpgbe_get_invariants_n210 - setup for hw info
+>>> + * @hw: hw information structure
+>>> + *
+>>> + * rnpgbe_get_invariants_n210 initializes all private
+>>> + * structure, such as dma, eth, mac and mbx base on
+>>> + * hw->addr for n210
+>>> + **/
+>>> +static void rnpgbe_get_invariants_n210(struct mucse_hw *hw)
+>>> +{
+>>> +	struct mucse_mbx_info *mbx = &hw->mbx;
+>>> +	/* get invariants based from n500 */
+>>> +	rnpgbe_get_invariants_n500(hw);
+>>
+>> it's not a good pattern. if you have some configuration that is
+>> shared amoung devices, it's better to create *base() or *common()
+>> helper and call it from each specific initializer. BTW, why do you
+>> name these functions get_invariants*()? They don't get anything, but
+>> rather init/setup configuration values. It's better to rename it
+>> according to the function.
+>>
+> 
+> I try to devide hardware to dma, eth, mac, mbx modules. Different
+> chips may use the same mbx module with different reg-offset in bar.
+> So I setup reg-offset in get_invariants for each chip. And common code,
+> such as mbx achieve functions with the reg-offset.
+> Ok, I will rename it.
 
-    // IOW we iterate over each task twice
+I fully understand your intention. My point is that calling
+rnpgbe_get_invariants_n500(hw) in rnpgbe_get_invariants_n210() and
+then replace almost half of the values is not a good pattern.
+It's better to have another function to setup values that are the same
+across models, and keep only specifics in *n500() and *n210().
 
-In the Specjbb test, the similar issues can be caught many times.
-(Over 330,000 times in a 30-minites Specjbb test)
+> 
+>>> +
+>>> +	/* update msix base */
+>>> +	hw->ring_msix_base = hw->hw_addr + 0x29000;
+>>> +	/* update mbx offset */
+>>> +	mbx->vf2pf_mbox_vec_base = 0x29200;
+>>> +	mbx->fw2pf_mbox_vec = 0x29400;
+>>> +	mbx->pf_vf_shm_base = 0x29900;
+>>> +	mbx->mbx_mem_size = 64;
+>>> +	mbx->pf2vf_mbox_ctrl_base = 0x2aa00;
+>>> +	mbx->pf_vf_mbox_mask_lo = 0x2ab00;
+>>> +	mbx->pf_vf_mbox_mask_hi = 0;
+>>> +	mbx->fw_pf_shm_base = 0x2d900;
+>>> +	mbx->pf2fw_mbox_ctrl = 0x2e900;
+>>> +	mbx->fw_pf_mbox_mask = 0x2eb00;
+>>> +	mbx->fw_vf_share_ram = 0x2b900;
+>>> +	mbx->share_size = 512;
+>>> +	/* update hw feature */
+>>> +	hw->feature_flags |= M_HW_FEATURE_EEE;
+>>> +	hw->usecstocount = 62;
+>>> +}
 
-This patch sets env.loop_max only once RQ lock is taken,
-and uses busiest->cfs.h_nr_queued for setting the env.loop_max.
+[...]
 
-After this patch, I cannot catch any above issue in the Specjbb test.
+>>> @@ -58,7 +72,54 @@ static int rnpgbe_add_adapter(struct pci_dev *pdev)
+>>>    		 rnpgbe_driver_name, mucse->bd_number);
+>>>    	pci_set_drvdata(pdev, mucse);
+>>> +	hw = &mucse->hw;
+>>> +	hw->back = mucse;
+>>> +	hw->hw_type = ii->hw_type;
+>>> +
+>>> +	switch (hw->hw_type) {
+>>> +	case rnpgbe_hw_n500:
+>>> +		/* n500 use bar2 */
+>>> +		hw_addr = devm_ioremap(&pdev->dev,
+>>> +				       pci_resource_start(pdev, 2),
+>>> +				       pci_resource_len(pdev, 2));
+>>> +		if (!hw_addr) {
+>>> +			dev_err(&pdev->dev, "map bar2 failed!\n");
+>>> +			return -EIO;
+>>> +		}
+>>> +
+>>> +		/* get dma version */
+>>> +		dma_version = m_rd_reg(hw_addr);
+>>> +		break;
+>>> +	case rnpgbe_hw_n210:
+>>> +	case rnpgbe_hw_n210L:
+>>> +		/* check bar0 to load firmware */
+>>> +		if (pci_resource_len(pdev, 0) == 0x100000)
+>>> +			return -EIO;
+>>> +		/* n210 use bar2 */
+>>> +		hw_addr = devm_ioremap(&pdev->dev,
+>>> +				       pci_resource_start(pdev, 2),
+>>> +				       pci_resource_len(pdev, 2));
+>>> +		if (!hw_addr) {
+>>> +			dev_err(&pdev->dev, "map bar2 failed!\n");
+>>> +			return -EIO;
+>>> +		}
+>>> +
+>>> +		/* get dma version */
+>>> +		dma_version = m_rd_reg(hw_addr);
+>>> +		break;
+>>> +	default:
+>>> +		err = -EIO;
+>>> +		goto err_free_net;
+>>> +	}
+>>> +	hw->hw_addr = hw_addr;
+>>> +	hw->dma.dma_version = dma_version;
+>>> +	ii->get_invariants(hw);
+>>> +
+>>>    	return 0;
+>>> +
+>>> +err_free_net:
+>>> +	free_netdev(netdev);
+>>> +	return err;
+>>>    }
+>>
+>> You have err_free_net label, which is used only in really impossible
+>> case of unknown device, while other cases can return directly and
+>> memleak netdev...>>
+> 
+> Yes, It is really impossible case of unknown device. But maybe switch
+> should always has 'default case'? And if in 'default case', nothing To
+> do but free_netdev and return err.
+> Other cases return directly with return 0, and netdev will be freed in
+> rnpgbe_rm_adapter() when rmmod. Sorry, I may not have got the memleak
+> point?
 
-Signed-off-by: Huang Shijie <shijie@os.amperecomputing.com>
----
-v4 --> v5:
-    Set the env.loop_max once the rq lock is taken.
-    v4:https://lore.kernel.org/all/20250721023939.19703-1-shijie@os.amperecomputing.com/
+Both rnpgbe_hw_n500 and rnpgbe_hw_n200 cases have error paths which
+directly return -EIO. In this case netdev is not freed and
+rnpgbe_rm_adapter() will not happen as rnpgbe_add_adapter() didn't
+succeed.
 
-v3 --> v4:
-    Changed the commit message suggested by Valentin Schneider.
-    v3: https://lore.kernel.org/all/20250718063523.9232-1-shijie@os.amperecomputing.com/
 
-v2 --> v3:
-    Fix a typo in the commit message.
-    v2: https://lore.kernel.org/all/20250718054709.8781-1-shijie@os.amperecomputing.com/
-
-v1 --> v2:
-    Add more comment from Valentin Schneider
-    v1: https://lore.kernel.org/all/20250707083636.38380-1-shijie@os.amperecomputing.com/
----
- kernel/sched/fair.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 7cc9d50e3e11..9c1f21d59b5c 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -11708,12 +11708,15 @@ static int sched_balance_rq(int this_cpu, struct rq *this_rq,
- 		 * still unbalanced. ld_moved simply stays zero, so it is
- 		 * correctly treated as an imbalance.
- 		 */
--		env.loop_max  = min(sysctl_sched_nr_migrate, busiest->nr_running);
--
- more_balance:
- 		rq_lock_irqsave(busiest, &rf);
- 		update_rq_clock(busiest);
- 
-+		if (!env.loop_max)
-+			env.loop_max  = min(sysctl_sched_nr_migrate, busiest->cfs.h_nr_queued);
-+		else
-+			env.loop_max  = min(env.loop_max, busiest->cfs.h_nr_queued);
-+
- 		/*
- 		 * cur_ld_moved - load moved in current iteration
- 		 * ld_moved     - cumulative load moved across iterations
--- 
-2.40.1
+> 
+>>>    /**
+>>> @@ -74,6 +135,7 @@ static int rnpgbe_add_adapter(struct pci_dev *pdev)
+>>>     **/
+>>>    static int rnpgbe_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+>>>    {
+>>> +	const struct rnpgbe_info *ii = rnpgbe_info_tbl[id->driver_data];
+>>>    	int err;
+>>>    	err = pci_enable_device_mem(pdev);
+>>> @@ -97,7 +159,7 @@ static int rnpgbe_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+>>>    	pci_set_master(pdev);
+>>>    	pci_save_state(pdev);
+>>> -	err = rnpgbe_add_adapter(pdev);
+>>> +	err = rnpgbe_add_adapter(pdev, ii);
+>>>    	if (err)
+>>>    		goto err_regions;
+>>
+>>
+> 
+> Thanks for your feedback.
+> 
 
 
