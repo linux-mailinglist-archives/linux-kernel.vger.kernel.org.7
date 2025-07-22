@@ -1,80 +1,64 @@
-Return-Path: <linux-kernel+bounces-740529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE1AEB0D54D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:08:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4BD2B0D568
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:12:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B940C7B1FE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:07:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D33653ACE01
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:11:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53862D97A2;
-	Tue, 22 Jul 2025 09:08:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA1932DC33B;
+	Tue, 22 Jul 2025 09:12:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OQYWW1tm"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="emrs40NK"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D952D94B9
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 09:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387342DAFB8;
+	Tue, 22 Jul 2025 09:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753175298; cv=none; b=Zc/cgWM1eFAM8ih5ev0212Of4n9VF8hmN0nY4gLn3nJLFWVoQvYDtrKriZIQ0mEDwIct3FAOQx+PTIOMIqwrRAylIKdQ9nNJb2Kg8rOMc33Qy9jmk5UCCzWEabzcghSTI/fAWPMTmVO8HZFfYXTV2r11kJf4+N2rjFxgBanaU3g=
+	t=1753175527; cv=none; b=swKOaJXh+R2PX3CqKJJT0/BSgiJOOOhgFMjqBVmg2Sq5Hza8UclJ+pFt+USP2qGRpkG4s2j4I8stxIGhNPfOdV5zTGk3iFnsGIo6Xd2Adg27J+jgFCInKPUPv81BE+feIhI5cIzbKC2j5Et+pNXMWHxKiBJyJ1r/qD7TEdfYPP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753175298; c=relaxed/simple;
-	bh=83y5T3BM2ZAJfHW+ZSwnCHCOGkeZBOQGBR5TAJpsVHA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fU1KjyiNM6ieu1UD4q0Erlw97srqvhDVGC06SDqtDR/W4bZRHrxx+HmbyeWK60Z/wZKRfYPYpcJK4DB/qbZjo7HBI4IXtXHtomyNPPLly14O/pw+ly+ehAYbE4xnE5gTucPy54FVf9q64ApV5ZVVDiJadoTqFZMJf1KYfFZwG4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OQYWW1tm; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4561607166aso40368795e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 02:08:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753175294; x=1753780094; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=On3JvqZOf5viVWmDtf1F5EeuSK6iuUoSgcnf4ZkG6MQ=;
-        b=OQYWW1tmk8QoyecUn/2m5gL34JQVn5XkNTNdVTp5VHbJ8WGisQrKd/zf3DX/fsozq+
-         6+KfiAY4zwzwIpLYtV1iLOnEfqf18fdt4hWGMLCp664D5JNO9IXOxNDT14oUlYy9ERF2
-         XFMGvA5Orv4GbSoHLYRX/oHoJayimuWFBS+02fNtWom0ry5UKObAQu+PissT7eSVf7DW
-         igxOzdjeCHnbv0guO1FcY7bq8ytgZaQO7NUg9BCY8yDZDd03/YHg0C77rgUOt6m/b2Xr
-         OKU3x0jzBwx+FJu7Nk45iXAfxitXOeWRkFS36nvB7F8RdLwIy9gKvvoW4kHyNq2gJqwJ
-         +lUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753175294; x=1753780094;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=On3JvqZOf5viVWmDtf1F5EeuSK6iuUoSgcnf4ZkG6MQ=;
-        b=Pk/4rmvj7JBXa3EdblGM7cmPAfjOMTcrFUp+JIXYpSGrDChMgWJAVJ4FFTp2Ipep/O
-         2fh8CXvcxZWOe8e6Ek4k3cwO8SeW5eOQyDXu5+sR0gj0gYGk3eu6X1tQTGCklhEuM8ft
-         199/SOkHZKqkQgUbesvmYmvtRK7G86GC4C9FrRytd7fG5oukfygQ3hYwcPidC5pLUQNE
-         1hBrTBNkQt3t5ohxxFZm2hS61NompEhJ6pzaGuQ5j8ND29WwtDGIc2zV3kATEoK74UEA
-         ipRbR7r/YWJyVGIKOJ6WwRFPzutjdNcBGaJRy7DXDFre/3mCa6rjPGJ2X1qnbEf8x+zO
-         JlWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXsFqOh6MWBguwonnAATmZ3WokLJf4iaINSm/KqPjXUZGRhB3A4SQk9jln0sIUSmN+Bq5gwmUvVyN4sZyY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBG84ZFEsN0V+a1tcKvhORz0PGOVCHixQY9kNF/vItuAEaIZIB
-	97KAuMmCsSJ4uQzuxldGB7oqTdYyoNtIBllZhEMeZQoHhbcT1CUYZPk4wxr9hQ4eLEc=
-X-Gm-Gg: ASbGncvifP1+u4TlI0/Sp9wfwDsp5WRCaf9oP/WddVPdF6LBZyeG9XifF9KY8voNi6E
-	Ne7d79ZFVlrOzTBfwEhyyD/92Jz97T4ohqdZt6Hn4SLDhTBKw+kQVRhUXHJ0QSj1Njkqb+V5Asb
-	TpMGq6Ho8vksV0IVGXOe3Eq3Ep+Ey4ibdaOsC5HXNa+Qhoy99ecyJynw4WQ3gX9ogx0Aj+c/j68
-	OKAG7oslc7RXFlyg9wCCLCGzQmnwnAu2pIhycXyoztsK6sDWpbBAGvipE69J1Jo0cg6piyFkTDj
-	LZW8ntr0N2V46NQppw17J3IGWHCB1zQkHhl8FDAH50nhBpDliPw9pA5nx7yM0GlIj97rSfcVO44
-	YYTz8RJa9cC8zaex4Sq9bD0VsFbq7ufx49U7ln/mLfbeD5RXTdZrtHhG9GvlrzDX4ugu7wmOcNQ
-	==
-X-Google-Smtp-Source: AGHT+IGIe5v+xkseT1R+b83ynGM35H1dtttBfIBKdXEdhjXXuEssWueZy6PEB6lRJfSUU+5XBI6EAg==
-X-Received: by 2002:a05:600c:8b85:b0:456:2347:3f01 with SMTP id 5b1f17b1804b1-456355c60d3mr166991665e9.20.1753175294468;
-        Tue, 22 Jul 2025 02:08:14 -0700 (PDT)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca253f9sm13035086f8f.6.2025.07.22.02.08.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Jul 2025 02:08:13 -0700 (PDT)
-Message-ID: <4edefe21-27b6-4884-befa-ddb451bb9376@linaro.org>
-Date: Tue, 22 Jul 2025 10:08:11 +0100
+	s=arc-20240116; t=1753175527; c=relaxed/simple;
+	bh=EH6215FFGwk8dFMtWg2oH/Cq3wmZbzjrowwMaoTp/Ic=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=p1k6kwUPyDTVRIgkussjpi8Ruq5FHseuGJw8jp1q7t+1DgaPjWh8ObgXUCDG87wvrgLlo0RPyEaa00qUT9OKaMOokzhpoiEX7LQRx59zA48aY7H579dwrXvvy/fEnuijjJLH1PPjnv0bnuELVbibRZKjOXu89PuGz6ggeDoRtxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=emrs40NK; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56M96AmW018853;
+	Tue, 22 Jul 2025 11:11:35 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	eBniFFc5/p1IPtlwHJOG5fqf0eKdncuC7yttR4e44n8=; b=emrs40NKUFiOHe07
+	UKXpZ3p5RlKp6YDSqSzhyJq8BEahW8MgEAUZFFKO0JBr6OUU9WNLPRqdpV5ribCz
+	e/M227uIfWHcPwL8zGvLAaCDDSjZV+SAOVsXipBxfNIOMhEbTWkXRMGosqea4fNC
+	0soau/20fRmFQgfb109Zd3/Ug5TzWJ+SeHC88HNUXET8HxBIQoEPpZDFAVq+qwca
+	Xys6yBDsvbYvyTU1+mAk4A1Zht2XwWrwMRdasdqUdAh9OxNaDZ1ar06YY0l5bGre
+	KwjxxSXsBzxqxrm2SBmJJaB0jPXgqF8O8NOqZmhkQZGJfp1/TDe4XNDjgle/5pRv
+	DGHKaQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48028g4spn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Jul 2025 11:11:35 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 5CEFB40052;
+	Tue, 22 Jul 2025 11:09:54 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1C95F769739;
+	Tue, 22 Jul 2025 11:08:32 +0200 (CEST)
+Received: from [10.48.87.141] (10.48.87.141) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 22 Jul
+ 2025 11:08:31 +0200
+Message-ID: <383299bb-883c-43bf-a52a-64d7fda71064@foss.st.com>
+Date: Tue, 22 Jul 2025 11:08:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,67 +66,119 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] phy: qcom-mipi-csi2: Add a CSI2 MIPI D-PHY driver
-To: Neil Armstrong <neil.armstrong@linaro.org>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250710-x1e-csi2-phy-v1-0-74acbb5b162b@linaro.org>
- <20250710-x1e-csi2-phy-v1-2-74acbb5b162b@linaro.org>
- <11b573d5-ce4d-476c-b94c-216d427cd838@linaro.org>
- <08261aa4-689b-4d6b-bfd2-221c1976d254@linaro.org>
- <a7f64b31-4767-4281-b452-a2bc5351d745@mleia.com>
- <c93624bb-ee7b-45ac-8b53-b5391f11c9c9@linaro.org>
- <eac3a877-a4aa-4789-9013-ab8b6c91e0f3@linaro.org>
- <0a12879f-dc4a-47fb-87a0-ac4b8bcd4d75@linaro.org>
- <53a19b1d-5665-4937-a07c-5dd1fcde06c5@linaro.org>
- <3b760685-97db-46e3-80a3-7fad69ad31cd@oss.qualcomm.com>
- <94b75177-9401-4e0c-966b-5847a29cb6f7@linaro.org>
- <427548c0-b0e3-4462-a15e-bd7843f00c7f@oss.qualcomm.com>
- <3UXVZ6ANM9mDjVdMV4SXsiIx_pT3S1lp3RC_Q7mh_o7jF2dpYsni1Sl2TAWv6OCMCRTFmi9aE6BxDquGkOnwEg==@protonmail.internalid>
- <8b908a20-0bf3-447d-82ea-a5ecee1bf54c@linaro.org>
- <57501e81-7e9c-4cb1-9a37-18307d1e06ca@linaro.org>
- <33d76d7f-ab14-4e76-8ffb-eb370901a046@linaro.org>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH net-next 1/4] dt-bindings: net: document st,phy-wol
+ property
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Krzysztof Kozlowski <krzk@kernel.org>,
+        Andrew Lunn
+	<andrew+netdev@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Christophe Roullier <christophe.roullier@foss.st.com>,
+        Heiner Kallweit
+	<hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>, Simon Horman
+	<horms@kernel.org>,
+        Tristram Ha <Tristram.Ha@microchip.com>,
+        Florian Fainelli
+	<florian.fainelli@broadcom.com>,
+        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20250721-wol-smsc-phy-v1-0-89d262812dba@foss.st.com>
+ <20250721-wol-smsc-phy-v1-1-89d262812dba@foss.st.com>
+ <faea23d5-9d5d-4fbb-9c6a-a7bc38c04866@kernel.org>
+ <f5c4bb6d-4ff1-4dc1-9d27-3bb1e26437e3@foss.st.com>
+ <e3c99bdb-649a-4652-9f34-19b902ba34c1@lunn.ch>
+ <38278e2a-5a1b-4908-907e-7d45a08ea3b7@foss.st.com>
+ <5b8608cb-1369-4638-9cda-1cf90412fc0f@lunn.ch>
 Content-Language: en-US
-In-Reply-To: <33d76d7f-ab14-4e76-8ffb-eb370901a046@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
+In-Reply-To: <5b8608cb-1369-4638-9cda-1cf90412fc0f@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-22_01,2025-07-21_02,2025-03-28_01
 
-On 22/07/2025 09:32, Neil Armstrong wrote:
-> The whole key point here is the combo mode, as I understood the combo 
-> mode feature
-> makes the PHY lanes available as 2 separate streams, like if you got 2 
-> "controllers"
-> attached to the same PHY. So in fact, the PHY should have a single node, 
-> but 2 PHY
-> interfaces in combo mode.
+
+
+On 7/21/25 19:07, Andrew Lunn wrote:
+>> Regarding this property, somewhat similar to "mediatek,mac-wol",
+>> I need to position a flag at the mac driver level. I thought I'd go
+>> using the same approach.
 > 
-> This makes all this controller/phy model very complex to handle and add 
-> a lot of
-> logic in the camss side. Moving the "csiphy" as an independent media 
-> device that
-> can declare up to 2 endpoints in combo mode makes things much simpler, 
-> and allows
-> us to attach each "csiphy" stream to any "controller" side of camss.
+> Ideally, you don't need such a flag. WoL should be done as low as
+> possible. If the PHY can do the WoL, the PHY should be used. If not,
+> fall back to MAC.
+> 
+> Many MAC drivers don't support this, or they get the implementation
+> wrong. So it could be you need to fix the MAC driver.
+> 
+> MAC get_wol() should ask the PHY what it supports, and then OR in what
+> the MAC supports.
+> 
+> When set_wol() is called, the MAC driver should ask the PHY driver to
+> do it. If it return 0, all is good, and the MAC driver can be
+> suspended when times comes. If the PHY driver returns EOPNOTSUPP, it
+> means it cannot support all the enabled WoL operations, so the MAC
+> driver needs to do some of them. The MAC driver then needs to ensure
+> it is not suspended.
+> 
+> If the PHY driver is missing the interrupt used to wake the system,
+> the get_wol() call should not return any supported WoL modes. The MAC
+> will then do WoL. Your "vendor,mac-wol" property is then pointless.
+> 
 
-I think there should be a generic extension to PHY/linux-media to 
-support that instead of something Qualcomm specific.
+Seems like a fair and logical approach. It seems reasonable that the
+MAC driver relies on the get_wol() API to know what's supported.
 
-The first task is qcom/CAMSS specific which is separate the CSIPHYs out 
-from the CAMSS block - done in this series and do so in a way that 
-doesn't break the existing ABI - done in the context of adding Hamoa/x1e.
+The tricky thing for the PHY used in this patchset is to get this
+information:
 
-The second step should be to extend the existing linux-media and PHY API 
-to support multiple sensors on the same CSIPHY in a generic way.
+Extract from the documentation of the LAN8742A PHY:
+"The WoL detection can be configured to assert the nINT interrupt pin
+or nPME pin"
 
-If you want to ship me some hardware, I'll help.
+This PHY proposes several pins with alternate configurations so they
+can act as either nINT, nPME or other type of pin. While the nPME
+is dedicated to raise a signal on a WoL event, WoL event can also,
+if configured, raise a signal on a nINT pin. However, the latter
+case expect (extract again):
+"While waiting for a WoL event to occur, it is possible that other
+interrupts may be triggered. To prevent such conditions, all other
+interrupts shall be masked by system software, or the alternative nPME
+pin may be used"
+therefore preventing other types of interrupt from triggering.
 
----
-bod
+Today, the WoL is statically configured so that the nPME pin is
+asserted on such event in lan874x_phy_config_init(). For it to
+be functional, the nPME pin has to be wired to a wake up input of
+a wake up capable interrupt controller.
+On the stm32mp135f-dk board, e.g, that's the case for only one of the
+two ethernet ports.
+
+Overall it's both a combination of what pin is asserted on a WoL
+and what pin is wired to a wake up capable interrupt controller.
+What would be a correct approach to get the information from the PHY
+driver that the WoL is indeed supported considering all of this?
+
+Tristram, can you tell me if what I'm saying here makes any
+sense?
+
+> Correctly describe the PHY in DT, list the interrupt it uses for
+> waking the system.
+> 
+> 	Andrew
 
