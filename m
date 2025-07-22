@@ -1,194 +1,145 @@
-Return-Path: <linux-kernel+bounces-740203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA286B0D158
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:45:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB983B0D159
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:45:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3F0217FC42
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 05:45:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E198E7AB8C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 05:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CE928C873;
-	Tue, 22 Jul 2025 05:45:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C36028AAEB;
+	Tue, 22 Jul 2025 05:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AfqZew4R"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="j7QpvljM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A50289344
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 05:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ADF728C877
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 05:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753163100; cv=none; b=d356usF1POzKylEz7drKTdhvcagjmmakr89Jvf1ps+MFIbIhTtlo445jUGd22nA1gwo5C/3Ir2uwIDniQmzIZNX/yQIrdr46fTmN0uaLR916N52n9c+SkVWZm2MWoPqc28IVKsbG4AXx6xq0y6sQZVNUmxhvAAJggsN34dAC8ms=
+	t=1753163111; cv=none; b=DYH6sVjAJ34/nqlwiYs1smw1aMD5KGjqqaU/yAsd2TTQzPHfblY5nZNwElrn0VTEBx7zpB+Cfpf4yQnv0be3ykLvKtr7Dlg29DQ9SqS15p9MeNlt4oT/nvwIQaIWMvsZIT+L25Pn2mWUjxvv4SqqDWDyOtyCDNI21ieob0J+DjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753163100; c=relaxed/simple;
-	bh=ukjz107venpREw1AXh4B8olSE8I9TNZM92z3x+eADHg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=U1gyarz74BNPcfA2ayP3ipd5EgEG0nTtJDzgRx0et9zchsC83A9B+UoPWV0RdHLennklrg+/iBHNblSnjUxxGxqzGtPciFvjNbh/hHVkVC+5EFRPWpJjfeqCoFPc1CYQdINKdDw7apJOD7TWGW6XY8TwSyOvsEbP1V+MT44PLm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AfqZew4R; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56M15u4e016274
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 05:44:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=75DfiJpF1MttMuOkBOXm8Q+i0oMIyLyaAAI
-	5qQMiwVg=; b=AfqZew4R8muh4CKK8rI/aLL9YpauWYXGwTy0jrzj9HZSdDVDGpN
-	kvmnfyPPHsr0uSJnDXZNeAeEYsydQgMGeEjB8rKThZp8zmSywNFb1XNpe6EXb++G
-	ph/NWR04SR7Hp9/Bevm9w8X96bCUrlbWS0nis6bRcPTVGTND35w6ecQw8ZxCY9tK
-	k4PBit6ogsMDGz1vgM4IjkgQsMRS5TAS45ppsv6xjyslIzAmEbO11BF4UgEI3E5b
-	81TBug5vcvvJ90j019jZbndD0Gw4U3moVjSGkeUApgq+2OnRAo/4NB+uAppTgKUL
-	iaO4yzhN2DrESObcL0HQJxZ9q5GfPESLJ5Q==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48048s095h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 05:44:56 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2363bb41664so40735625ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 22:44:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753163095; x=1753767895;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=75DfiJpF1MttMuOkBOXm8Q+i0oMIyLyaAAI5qQMiwVg=;
-        b=Shlb15RSPbH3qD7DQmNGdOCAR7yl0vWn5WLmd0qV3expnCrWgTt3F3x/gFnB15r/+w
-         srPftfWh/JFUnRBKj+xURpavtiMnxmqAMJpnPoCM88iisKe5BeAHUGazD6RTSVrfkPjW
-         YjhQuhCniAFg69x0JLYq6/WDCcJhoaHN0t7A8h6cy6aS46CKZ0pYy3/aoTM+7kkmWXlY
-         DhSCZfEERk5eDsAQLkJZCyeHxnkeEoX0zo5f+sxP8mJr4S1MRty7KFfASJZ3s6DrnDKa
-         krb37bZj7PRg/WZSXlv9164kNSGrFK/q+2yC8Za6QdPzc99LA9sMMKATZoaClKEM7nh4
-         OjQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUsPILLZXOwhoI7b+L6rjcvOveoBxIicOPqOspQkVawS+6D7INrLFCzz29Jk9qD7a8SWPUsOnYZjt6sLjI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIDve4q39MPHiDs+JMmuN1sjRd4ZNQ3jIx5x+HKDxC8kjueCvI
-	u8L8LygMoIqEYKl357vkys3vXfONmfc5zZFQgBqwOD1HtSH2L7LkHcS/PqDEJeTKli7a9kbzJOx
-	eWyIjFZee4IeaYSTq0j6QfX6ouKhUHWUCJg+5w3x0WulRuohsB4N+5nTzcSGIuu/3l88=
-X-Gm-Gg: ASbGncsRSIAN9YgtrtIeRi08HGoy4GtwfLHNh8Vvn8H5OT++Po2qspuLghJlVzMHIPs
-	KmKXl010siOnCHrMtZZViq8HwJSe6JZ64QrdCrbIsEsgHvP90nhpgQOXz7rLdO4zEt6g0Hl8782
-	hj57d0BMOUj/nmSh3veCcPzZVFgzXGTEMlZzFaqas3gO5Ndo4Y7OsSjqbmtr4bNL8UkOqVWJorx
-	q2cwB9CeQcKI4YHBBsON6uB+gQ95EVcyaUTI3RETxL0diSuc5P5D6gqUKhKkwgaqRuP5KJFSpmP
-	0RUqQHhgVtXOAjx1DMOc5Gbbq6Tzxwqm3PCSWBZ7KT7hoMYZ8q+nhIPw2k6sOUoBKsXmz8B/5DE
-	OlIH7Ldzvxnieb0E=
-X-Received: by 2002:a17:902:ebcb:b0:237:e753:1808 with SMTP id d9443c01a7336-23f8accd820mr31458675ad.20.1753163094787;
-        Mon, 21 Jul 2025 22:44:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFjnBKOTKbEfvmKSJ25MWepQGV65OWl3NjJ9lnM4agFmO6tGJ8XkNxJ1NO5Wil99RX2LWYPxA==
-X-Received: by 2002:a17:902:ebcb:b0:237:e753:1808 with SMTP id d9443c01a7336-23f8accd820mr31458375ad.20.1753163094335;
-        Mon, 21 Jul 2025 22:44:54 -0700 (PDT)
-Received: from yuanjiey.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b6b4d65sm67494375ad.109.2025.07.21.22.44.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 22:44:53 -0700 (PDT)
-From: yuanjie yang <yuanjie.yang@oss.qualcomm.com>
-To: andersson@kernel.org, linus.walleij@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: kernel@oss.qualcomm.com, quic_tingweiz@quicinc.com,
-        quic_yuanjiey@quicinc.com
-Subject: [PATCH] pinctrl: qcom: Fix logic error when TLMM reg-names property is missing
-Date: Tue, 22 Jul 2025 13:44:46 +0800
-Message-Id: <20250722054446.3432-1-yuanjie.yang@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1753163111; c=relaxed/simple;
+	bh=wiq/us2Oz59OggVrNFpR/QNSFuLKVRucyRykzTBbm7A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XaasEl47XGXImo+upL9sD0dhEkQLzH/sN2aZEqLRq3NpC2RUn5rn0yP5xqW41vdKJ3+CRhXJsnsmmPWXK3Eh0tbw9RMWrED5QB1qeP/nsneZ37D8zOacAkcDA3vmvqcesOFZBuZsQGpGZzZdlYQMXL22EqqVKGMhDqVakHNmwCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=j7QpvljM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62CF5C4CEEB;
+	Tue, 22 Jul 2025 05:45:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1753163110;
+	bh=wiq/us2Oz59OggVrNFpR/QNSFuLKVRucyRykzTBbm7A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=j7QpvljMWzREorHJEufvkKjUIRJagDzBdKRXdhtiDb+UTPFl4XzaaIk6Q6+oDlB+4
+	 0MZF6jAXSiwiXNtC62WF4Hm2F7EaMqaLPS9EvgTcPbBYeSXwUXeS7yoKKTx2bOIFWl
+	 MupM4JXD+aObBhoysyA21cx7DtTKv0Ki1N1v5umc=
+Date: Tue, 22 Jul 2025 07:45:06 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jia He <justin.he@arm.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: percpu: Introduce normalized CPU-to-NUMA node
+ mapping to  reduce max_distance
+Message-ID: <2025072202-june-cable-d658@gregkh>
+References: <20250722041418.2024870-1-justin.he@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDA0NSBTYWx0ZWRfX47P1KdMhHYgL
- bjmokwot/nxQqNn/1EsLZcNrXy4fo1lj+Wmv9mschQcz7WyW5XLyf+gQWT/AtWuSt5J13lH3Kvr
- QPaHJIOiUw0onaCCBL0WW4c5PeA8o307B8FPCYxxO1Cf0PDX9bB+CGFme5iR8k3pbycARWb5erY
- cWlyg9GY6HztU/RNn85bkPsLailw0uUOGxdKRkfiEsfC35+nQq/rOBCVi6/TVOEXLpee2T1yNDQ
- LKLJxolPvYTNSkGgAeT5cli8G4PvVfAcZ7xf5ECwtvWAlTkx0Aqxhpe2DuGUF9qz7eyOC7hkm8r
- DwLZf3tPPrf5mnNMsJ8PDAX5CrRif24g6X6AtaZfFpR8ep8QHG/LEwKKx+S4WoCKRh7qZB17MnS
- zv6E6qUhtZSY4SXHG2kAcz3gfhrbNREuqykn30YZcOEuJUMfts5F7ETlFHlg1NGSiUTpRrWB
-X-Proofpoint-ORIG-GUID: 5ylisJL7eiRTpcjFeKaO-qh3WrlXS6At
-X-Proofpoint-GUID: 5ylisJL7eiRTpcjFeKaO-qh3WrlXS6At
-X-Authority-Analysis: v=2.4 cv=OPUn3TaB c=1 sm=1 tr=0 ts=687f2558 cx=c_pps
- a=cmESyDAEBpBGqyK7t0alAg==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=WDoE7Cz0S_A2IT9AzmkA:9
- a=1OuFwYUASf3TG4hYMiVC:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-22_01,2025-07-21_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 clxscore=1011 mlxlogscore=999 lowpriorityscore=0 suspectscore=0
- spamscore=0 mlxscore=0 bulkscore=0 priorityscore=1501 phishscore=0
- malwarescore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507220045
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250722041418.2024870-1-justin.he@arm.com>
 
-From: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
+On Tue, Jul 22, 2025 at 04:14:18AM +0000, Jia He wrote:
+> pcpu_embed_first_chunk() allocates the first percpu chunk via
+> pcpu_fc_alloc() and used as-is without being mapped into vmalloc area. On
+> NUMA systems, this can lead to a sparse CPU->unit mapping, resulting in a
+> large physical address span (max_distance) and excessive vmalloc space
+> requirements.
 
-Some Qualcomm platforms, such as sm8750.dtsi, define a single TLMM
-region without the reg-names property. This is a valid and expected
-configuration. However, the current code incorrectly treats the absence
-of reg-names as an error, resulting in unintended behavior.
+Why is the subject line "mm: percpu:" when this is driver-core code?
 
-Refactoring the logic to handle both cases correctly:
-If only the gpio parameter is provided, default to TLMM region 0.
-If both gpio and name are provided, compare the reg-names entries in the
-TLMM node with the given name to select the appropriate region.
+And if it is mm code, please cc: the mm maintainers and list please.
 
-This ensures proper handling of platforms with either single or multiple
-TLMM regions.
+> For example, on an arm64 N2 server with 256 CPUs, the memory layout
+> includes:
+> [    0.000000] NUMA: NODE_DATA [mem 0x100fffff0b00-0x100fffffffff]
+> [    0.000000] NUMA: NODE_DATA [mem 0x500fffff0b00-0x500fffffffff]
+> [    0.000000] NUMA: NODE_DATA [mem 0x600fffff0b00-0x600fffffffff]
+> [    0.000000] NUMA: NODE_DATA [mem 0x700ffffbcb00-0x700ffffcbfff]
+> 
+> With the following NUMA distance matrix:
+> node distances:
+> node   0   1   2   3
+>   0:  10  16  22  22
+>   1:  16  10  22  22
+>   2:  22  22  10  16
+>   3:  22  22  16  10
+> 
+> In this configuration, pcpu_embed_first_chunk() computes a large
+> max_distance:
+> percpu: max_distance=0x5fffbfac0000 too large for vmalloc space 0x7bff70000000
+> 
+> As a result, the allocator falls back to pcpu_page_first_chunk(), which
+> uses page-by-page allocation with nr_groups = 1, leading to degraded
+> performance.
 
-Fixes: 56ffb63749f4 ("pinctrl: qcom: add multi TLMM region option parameter")
+But that's intentional, you don't want to go across the nodes, right?
 
-Signed-off-by: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
----
- drivers/pinctrl/qcom/tlmm-test.c | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+> This patch introduces a normalized CPU-to-NUMA node mapping to mitigate
+> the issue. Distances of 10 and 16 are treated as local (LOCAL_DISTANCE),
 
-diff --git a/drivers/pinctrl/qcom/tlmm-test.c b/drivers/pinctrl/qcom/tlmm-test.c
-index 7d7fff538755..6de8cf23f9f0 100644
---- a/drivers/pinctrl/qcom/tlmm-test.c
-+++ b/drivers/pinctrl/qcom/tlmm-test.c
-@@ -581,25 +581,25 @@ static int tlmm_reg_base(struct device_node *tlmm, struct resource *res)
- 	int ret;
- 	int i;
- 
--	count = of_property_count_strings(tlmm, "reg-names");
--	if (count <= 0) {
--		pr_err("failed to find tlmm reg name\n");
--		return count;
--	}
--
--	reg_names = kcalloc(count, sizeof(char *), GFP_KERNEL);
--	if (!reg_names)
--		return -ENOMEM;
--
--	ret = of_property_read_string_array(tlmm, "reg-names", reg_names, count);
--	if (ret != count) {
--		kfree(reg_names);
--		return -EINVAL;
--	}
--
- 	if (!strcmp(tlmm_reg_name, "default_region")) {
- 		ret = of_address_to_resource(tlmm, 0, res);
- 	} else {
-+		count = of_property_count_strings(tlmm, "reg-names");
-+		if (count <= 0) {
-+			pr_err("failed to find tlmm reg name\n");
-+			return -EINVAL;
-+		}
-+
-+		reg_names = kcalloc(count, sizeof(char *), GFP_KERNEL);
-+		if (!reg_names)
-+			return -ENOMEM;
-+
-+		ret = of_property_read_string_array(tlmm, "reg-names", reg_names, count);
-+		if (ret != count) {
-+			kfree(reg_names);
-+			return -EINVAL;
-+		}
-+
- 		for (i = 0; i < count; i++) {
- 			if (!strcmp(reg_names[i], tlmm_reg_name)) {
- 				ret = of_address_to_resource(tlmm, i, res);
+Why?  What is this going to now break on those systems that assumed that
+those were NOT local?
 
-base-commit: d086c886ceb9f59dea6c3a9dae7eb89e780a20c9
--- 
-2.34.1
+> allowing CPUs from nearby nodes to be grouped together. Consequently,
+> nr_groups will be 2 and pcpu_fc_alloc() uses the normalized node ID to
+> allocate memory from a common node.
+> 
+> For example:
+> - cpu0 belongs to node 0
+> - cpu64 belongs to node 1
+> Both CPUs are considered local and will allocate memory from node 0.
+> This normalization reduces max_distance:
+> percpu: max_distance=0x500000380000, ~64% of vmalloc space 0x7bff70000000
+> 
+> In addition, add a flag _need_norm_ to indicate the normalization is needed
+> iff when cpu_to_norm_node_map[] is different from cpu_to_node_map[].
+> 
+> Signed-off-by: Jia He <justin.he@arm.com>
 
+I think this needs a lot of testing and verification and acks from
+maintainers of other arches that can say "this also works for us" before
+we can take it, as it has the potential to make major changes to
+systems.
+
+What did you test this on?
+
+
+> ---
+>  drivers/base/arch_numa.c | 47 +++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 46 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/base/arch_numa.c b/drivers/base/arch_numa.c
+> index c99f2ab105e5..f746d88239e9 100644
+> --- a/drivers/base/arch_numa.c
+> +++ b/drivers/base/arch_numa.c
+> @@ -17,6 +17,8 @@
+>  #include <asm/sections.h>
+>  
+>  static int cpu_to_node_map[NR_CPUS] = { [0 ... NR_CPUS-1] = NUMA_NO_NODE };
+> +static int cpu_to_norm_node_map[NR_CPUS] = { [0 ... NR_CPUS-1] = NUMA_NO_NODE };
+> +static bool need_norm;
+
+Shouldn't these be marked __initdata as you don't touch them afterward?
+
+thanks,
+
+greg k-h
 
