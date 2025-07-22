@@ -1,155 +1,85 @@
-Return-Path: <linux-kernel+bounces-740602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF33AB0D64D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:52:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E968B0D652
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:52:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CFA81C26CA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:52:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F161E54098B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8B32DFF04;
-	Tue, 22 Jul 2025 09:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cbyzv/mx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC1B52E040F;
+	Tue, 22 Jul 2025 09:52:01 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 401D72DECB1;
-	Tue, 22 Jul 2025 09:51:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B87C2DEA9D;
+	Tue, 22 Jul 2025 09:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753177914; cv=none; b=MyLEmeyV20ubrtl3wkvVolblZne9SMneXeZugodZ09SjBkEUHxeGV3zo1Li0lTS6aN2CuKI2LI9NioB6s2H0JTyJdfDPZfCMRDhr2J9z75QAfhyvz8jIn/hWe+cKVq0OmbsKZdwxmVMfkcu9TLR+AVI/g7OqTm7+6JXNMvlTD94=
+	t=1753177921; cv=none; b=hYhz7xVWEvYPBhDWyCMfispfPNxsEOwwp8WvIsRBpwf7zZzQO9/kYyvdR8zletm33ibThJvrAzQlk5JYSlL5jj7mqLcqvpaTxnv2Xj7kScFl0FSWzcsyJWArYYfODKHjCRMKr1BYpzd+OBRG59Us0DsE5tm6tzBMo0HA+jp/CDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753177914; c=relaxed/simple;
-	bh=g9Czfb6/NYPOxRMMj/Y+35i+ICwKvV5Vq7aeNekjp6E=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=gBI5toehtZyqi5VsN+d3t2vSLBM6q10exnF8USlNguJFJxX+0xJjYZHQXZqIFKgDyo/zhfTxZ7ABA8IDtWyl7QRmQKccqeuX/GB/BgqCARtmTe5d2l1aptiPbTawUZsUpRNxO3fTzAg/M+Jw9Ws82Ad+vDkP3LEke9ulGAsUHOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cbyzv/mx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F0C8C4CEEB;
-	Tue, 22 Jul 2025 09:51:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753177913;
-	bh=g9Czfb6/NYPOxRMMj/Y+35i+ICwKvV5Vq7aeNekjp6E=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=cbyzv/mxrBzEHhit25wf2Vl1yiDppfGeX+HJQtnUXsD86a+hxphTEp9xlqjL5FPcY
-	 veZer4iy1oL6RO/Dw1KlvU05Ctm8okCKnnV9+Kuj6hLxo5LDIyDYdMIoVjs7wmXi88
-	 9mYzBdaQeQBZLDP49SqotiBmnsDjcZfGSRqVsvvNAbGzcsmIqXhy65LfxrZRjklU2b
-	 8ePQoLF1iUAdQb1VN8mLC5Bq5vzDljA5IfslofyeSA8UAXD2VPl/cQceKD3ot7owlD
-	 +t5UzXz6rCViogRJfecaEnOZOHgV2iX1demFLog6Q7cFuuyXawqy96yYTEOHRxN2Ug
-	 rCVr21lZVq4Cg==
+	s=arc-20240116; t=1753177921; c=relaxed/simple;
+	bh=PT53kWuiP2WqxLGSJ4oCc+1vLX6oy7vXbe/AGWMwlV8=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OBxewmbpX8fAkPIwRaeNyL7/oneioYHOsBRC8zgOVSPKq2apJc0OcHuae20SqyJazm2DX82ex0sbVtaNs95eH/cR8VvtqwZgl47LZIIjaGYW+8XtSzZ2bvsm28q51dKbk0CB7J1YMyAD1iOBSR2Yas6V3+N3OQE+DbolGlHzIgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 22 Jul
+ 2025 17:51:56 +0800
+Received: from twmbx02.aspeed.com (192.168.10.13) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Tue, 22 Jul 2025 17:51:56 +0800
+From: Ryan Chen <ryan_chen@aspeedtech.com>
+To: ryan_chen <ryan_chen@aspeedtech.com>, Thomas Gleixner
+	<tglx@linutronix.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley
+	<joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, Kevin Chen
+	<kevin_chen@aspeedtech.com>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-aspeed@lists.ozlabs.org>
+Subject: [PATCH v3 0/2] irqchip: aspeed: Add AST2700 INTC debugfs support and yaml update
+Date: Tue, 22 Jul 2025 17:51:54 +0800
+Message-ID: <20250722095156.1672873-1-ryan_chen@aspeedtech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 22 Jul 2025 11:51:48 +0200
-Message-Id: <DBIHP8IP3OHA.8Y1S9ZV1Y1SZ@kernel.org>
-Subject: Re: [PATCH v2 1/2] rust: Update PCI binding safety comments and add
- inline compiler hint
-Cc: "Benno Lossin" <lossin@kernel.org>, <rust-for-linux@vger.kernel.org>,
- "Bjorn Helgaas" <bhelgaas@google.com>,
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
- Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "John Hubbard" <jhubbard@nvidia.com>, "Alexandre Courbot"
- <acourbot@nvidia.com>, <linux-pci@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-To: "Alistair Popple" <apopple@nvidia.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250710022415.923972-1-apopple@nvidia.com>
- <DB87TX9Y5018.N1WDM8XRN74K@kernel.org>
- <DB9BF6WK8KMH.1RQOOMYBL6UAO@kernel.org>
- <DB9FUEJUOH3L.14CYPZ8YQT52E@kernel.org>
- <DB9H6HEF9CKG.2SAPXM8F9KOO3@kernel.org>
- <DB9IQAU4WPSP.XZL4ZDPT59KU@kernel.org>
- <bwbern2t7k5fcj6zxze6bjpasu3t26n6dmfptlmhbhd7qmligs@3fgwifsw7qai>
-In-Reply-To: <bwbern2t7k5fcj6zxze6bjpasu3t26n6dmfptlmhbhd7qmligs@3fgwifsw7qai>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue Jul 22, 2025 at 7:17 AM CEST, Alistair Popple wrote:
-> On Fri, Jul 11, 2025 at 10:46:13PM +0200, Benno Lossin wrote:
->> On Fri Jul 11, 2025 at 9:33 PM CEST, Danilo Krummrich wrote:
->> > On Fri Jul 11, 2025 at 8:30 PM CEST, Benno Lossin wrote:
->> >> On Fri Jul 11, 2025 at 5:02 PM CEST, Danilo Krummrich wrote:
->> >>> On Thu Jul 10, 2025 at 10:01 AM CEST, Benno Lossin wrote:
->> >>>> On Thu Jul 10, 2025 at 4:24 AM CEST, Alistair Popple wrote:
->> >>>>> diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
->> >>>>> index 8435f8132e38..5c35a66a5251 100644
->> >>>>> --- a/rust/kernel/pci.rs
->> >>>>> +++ b/rust/kernel/pci.rs
->> >>>>> @@ -371,14 +371,18 @@ fn as_raw(&self) -> *mut bindings::pci_dev {
->> >>>>> =20
->> >>>>>  impl Device {
->> >>>>>      /// Returns the PCI vendor ID.
->> >>>>> +    #[inline]
->> >>>>>      pub fn vendor_id(&self) -> u16 {
->> >>>>> -        // SAFETY: `self.as_raw` is a valid pointer to a `struct =
-pci_dev`.
->> >>>>> +        // SAFETY: by its type invariant `self.as_raw` is always =
-a valid pointer to a
->> >>>>
->> >>>> s/by its type invariant/by the type invariants of `Self`,/
->> >>>> s/always//
->> >>>>
->> >>>> Also, which invariant does this refer to? The only one that I can s=
-ee
->> >>>> is:
->> >>>>
->> >>>>     /// A [`Device`] instance represents a valid `struct device` cr=
-eated by the C portion of the kernel.
->> >>>>
->> >>>> And this doesn't say anything about the validity of `self.as_raw()`=
-...
->> >>>
->> >>> Hm...why not? If an instance of Self always represents a valid struc=
-t pci_dev,
->> >>> then consequently self.as_raw() can only be a valid pointer to a str=
-uct pci_dev,
->> >>> no?
->> >>
->> >> While it's true, you need to look into the implementation of `as_raw`=
-.
->> >> It could very well return a null pointer...
->> >>
->> >> This is where we can use a `Guarantee` on that function. But since it=
-'s
->> >> not shorter than `.0.get()`, I would just remove it.
->> >
->> > We have 15 to 20 as_raw() methods of this kind in the tree. If this re=
-ally needs
->> > a `Guarantee` to be clean, we should probably fix it up in a treewide =
-change.
->> >
->> > as_raw() is a common pattern and everyone knows what it does, `.0.get(=
-)` seems
->> > much less obvious.
->
-> Coming from a C kernel programming background I agree `.as_raw()` is more
-> obvious than `.0.get()`. However now I'm confused ... what if anything ne=
-eds
-> changing to get these two small patches merged?
+This patch series adds device tree bindings and driver support for the
+AST2700 SoC¡¦s two interrupt controllers (INTC0 and INTC1), along with
+debugfs entries for runtime inspection of routing and register protection
+status, and bindings example refine.
 
-I think they're good, but we're pretty late in the cycle now. That should b=
-e
-fine though, we can probably take them through the nova tree, or in the wor=
-st
-case share a tag, if needed.
+v3:
+- aspeed,ast2700-intc.yaml
+  - improve commit message description.
+- irq-aspeed-intc.c
+  - add platform driver for "aspeed,ast2700-intc0/1" compatible nodes.
 
-Given that, it would probably be good to add the Guarantee section on as_ra=
-w(),
-as proposed by Benno, right away.
+v2:
+- fix dt bindingcheck
 
-@Benno: Any proposal on what this section should say?
+Ryan Chen (2):
+  dt-bindings: interrupt-controller: aspeed: Add parent node compatibles
+    and refine documentation
+  irqchip: aspeed: add debugfs support and AST2700 INTC0/INTC1
+    routing/protection display
 
-One minor nit would be to start the safety comments with a capital letter
-instead.
+ .../aspeed,ast2700-intc.yaml                  | 158 ++++++++----
+ drivers/irqchip/irq-aspeed-intc.c             | 238 ++++++++++++++++++
+ 2 files changed, 353 insertions(+), 43 deletions(-)
+
+-- 
+2.34.1
+
 
