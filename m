@@ -1,126 +1,123 @@
-Return-Path: <linux-kernel+bounces-740708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 928CAB0D82F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:27:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4711AB0D834
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:28:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF5BE3A38D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:26:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADBF91C27016
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAEC82E425E;
-	Tue, 22 Jul 2025 11:26:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 764512E2F1C;
+	Tue, 22 Jul 2025 11:28:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nZ87M1xL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="KuAvm1U7"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CBA92E2F05;
-	Tue, 22 Jul 2025 11:26:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753183590; cv=none; b=IIM3BJhLe/7x/3HgKQA0zZOowIi2HOo06KahQtg8N1XpvcRpfyPaNkAO9FxQULT/unT9DkAW62ON1pJgr5ZUdSCYsXAlDlfNQ+4woRsTejEacmn9rv6hoZZ4Rthu3DJwusig66hlHQY3mmYUH3ryeFfrL6V2qvzUaIrznZFfRj8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753183590; c=relaxed/simple;
-	bh=gpUTUqXOWbULFlsiYSGEN3jZoAtqx3OWjHms0p86oTg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Zg6JV/4O1Hqoure7YSLOIparSudA+KLO7U7gFWPfeRx1025c8aC7+4iZCCU7NV+5AFkLbmSDaS3KOAyD+8kbZNQJQ5qsKu2o9CNQ06fHlIHAXKmCcLwim4pH7LZLnX5CIcyLkGPhYSoRNBfIC33lVuZxo5lMv/XgSLvOuTxICm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nZ87M1xL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BC823C4CEF7;
-	Tue, 22 Jul 2025 11:26:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753183589;
-	bh=gpUTUqXOWbULFlsiYSGEN3jZoAtqx3OWjHms0p86oTg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=nZ87M1xL6Yk0BG7E0SFkozay2PjlaXgqwer7C0N6jR664uq26o+naJBL59ZRez01w
-	 4TE5jePrre9dRrcoC3Tj5u2CxZ+K8JrPsOZCeOMVmucV63ZNO+vFHJDlwqy0jbEVPi
-	 6+IEqOHUMtEx4yEyFGYP4b8CnNMnFPLJFmLja2ahGXwQdHArBl1W6SOPwuvQiG7+9C
-	 ZkhYyDqHK1RfRO6gCiDeTuK+2nfRPpDXEHsN+Tnav1D1pNrlbQ7hnbhaSv9JXqIWgr
-	 dE4WiETx19O8cz3oKSUW85vNHjoTjj9OPwClFJ+85m2y9Hjy8KdvSOaqbKo92/xAJm
-	 vfxRn+F7uVJYg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1FC1C87FC5;
-	Tue, 22 Jul 2025 11:26:29 +0000 (UTC)
-From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
-Date: Tue, 22 Jul 2025 19:26:29 +0800
-Subject: [PATCH v2 3/3] arm64: dts: amlogic: c3: Add tempsensor controller
- node
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2A930100;
+	Tue, 22 Jul 2025 11:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753183693; cv=pass; b=sRSst3wN240U5lh7fzqlaqg4/dT5MBdxvrb/V29Oby1CAFmSKHheHUfGFlHpW/fFM4Rt8cgxpkJQgmqqT+6MSCNYiVW4M4MJnwWnLKzgtfizkg022mAPdoM+s8V37tftmu0c8oReHpxTlAk5sbq5fW3ZlEYKXvoaA6LcSZs74lQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753183693; c=relaxed/simple;
+	bh=ikD0rMcKmRVjoAxqulFqg/X3a6tVlFz2ZfIGnWg5/Bk=;
+	h=MIME-Version:From:To:In-Reply-To:Cc:Subject:Message-ID:Date:
+	 Content-Type; b=gRcPJ2LqJ+9gAY/kYQDSwGhMkpM9cPLmyE96dRUeSa7l0WVz0GJOSEidkomQgzf8Hiebnxbg/Qt0fQl7Vyac+ynOKO7iKMK2DC0/ZXzz/HIcewfZypKWpzjvWxoFVF6zzVMerb5/akQCIM0lLhiVvMgZlavCnwGWbj8zQn4e+2w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=KuAvm1U7; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
+ARC-Seal: i=1; a=rsa-sha256; t=1753183646; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=L8uXSYQxwzi6GnqOKA5+M/zFPG4YsKprlvaiueZ6tyTNaDL5JdRi7F4krtqMduJ4Ag69Rg7U4KPh8r5llGt06szaffvPBwsjPG0Le/CnRbR41qo1u8JBxhK3xiCfh25Qe6QdZrzckGLUiHvZWTJDa2Lh7TQZOFLxLKr6lu3WOQs=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753183646; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=oSWzK9+1+wJc6wh6CDIQZWQCvimKKJe8O5m5BgUOpHM=; 
+	b=jrZKYr4L4LdOFAuzndQZW5Qz+Lz1wmRU490h2L4eC6Dm7C9X8bR490PUz42rHs55ViumCFNLmb3iufzWwCweDrl45bjqjmsw4JatKBu9sJKx0MY8pNkHVBJRTExu6uVWhYFPEH83ifRRTLuzU0+RPMY/hB1j8jI6sOUcSLnwtLA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=pigmoral.tech;
+	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
+	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753183646;
+	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
+	h=MIME-Version:From:From:To:To:In-Reply-To:Cc:Cc:Subject:Subject:Message-ID:Date:Date:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=oSWzK9+1+wJc6wh6CDIQZWQCvimKKJe8O5m5BgUOpHM=;
+	b=KuAvm1U7/rkniCfUxMjB0BR6KZ2ypIXEi2EuO2iqtr7dyL10XVPnZaVwSM6o14Sj
+	38SyFAnkKq7IVnSYBHIVmUJx0CNsrmkcDmyn4geRQiBGTO5bg4Vz8byXslcL198w104
+	zbn14B6zSUpYB83NsJcFigm/jWU7OkcYb3JkyYwg=
+Received: by mx.zohomail.com with SMTPS id 1753183643006882.6847732993253;
+	Tue, 22 Jul 2025 04:27:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+From: "Junhui Liu" <junhui.liu@pigmoral.tech>
+To: "Krzysztof Kozlowski" <krzk@kernel.org>
+In-Reply-To: <20250722-berserk-octopus-of-destiny-f4475e@kuoka>
+Cc: "Rob Herring" <robh@kernel.org>, 
+	"Krzysztof Kozlowski" <krzk+dt@kernel.org>, 
+	"Conor Dooley" <conor+dt@kernel.org>, 
+	"Paul Walmsley" <paul.walmsley@sifive.com>, 
+	"Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>, 
+	"Alexandre Ghiti" <alex@ghiti.fr>, 
+	"Daniel Lezcano" <daniel.lezcano@linaro.org>, 
+	"Thomas Gleixner" <tglx@linutronix.de>, 
+	"Samuel Holland" <samuel.holland@sifive.com>, 
+	"Anup Patel" <anup@brainfault.org>, 
+	"Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, 
+	"Jiri Slaby" <jirislaby@kernel.org>, <devicetree@vger.kernel.org>, 
+	<linux-kernel@vger.kernel.org>, "Palmer Dabbelt" <palmer@sifive.com>, 
+	"Conor Dooley" <conor@kernel.org>, <linux-riscv@lists.infradead.org>, 
+	<linux-serial@vger.kernel.org>
+Subject: Re: [PATCH RFC 07/10] riscv: Add Anlogic SoC famly Kconfig support
+Message-ID: <18548f39bd190d28.fca9acf422f7bf67.f37c65074e24e08a@Jude-Air.local>
+Date: Tue, 22 Jul 2025 11:27:13 +0000
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250722-c3-thermal-v2-3-b2231b4be79e@amlogic.com>
-References: <20250722-c3-thermal-v2-0-b2231b4be79e@amlogic.com>
-In-Reply-To: <20250722-c3-thermal-v2-0-b2231b4be79e@amlogic.com>
-To: Guillaume La Roque <glaroque@baylibre.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-pm@vger.kernel.org, linux-amlogic@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- Xianwei Zhao <xianwei.zhao@amlogic.com>, 
- Liming Xue <liming.xue@amlogic.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753183587; l=1174;
- i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
- bh=IoRBkt3TWKHWrtMJz187CwMxwu8yF7DTD3qyajQTJnE=;
- b=LmYFK1+8fHyOjr607kbVF4ATEFnyzGdngoasYURRQr2BWxwHZ8cPDjAMx45X65KAZp/FxwlMx
- Wbt4Q7TQ7uSApW4HfcfFSbzCQjIKrOLYrapEVKroqNXJs8E1KIBHOc7
-X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
- pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
-X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
- auth_id=107
-X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Reply-To: xianwei.zhao@amlogic.com
+Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
 
-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
 
-Add the Tempsensor controller node for C3 SoC family.
 
-Signed-off-by: Liming Xue <liming.xue@amlogic.com>
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
----
- arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+On 22/07/2025 09:29, Krzysztof Kozlowski wrote:
+> On Mon, Jul 21, 2025 at 11:46:13PM +0800, Junhui Liu wrote:
+>> The first SoC in the Anlogic series is DR1V90, which contains a RISC-V
+>> core from Nuclei.
+>>=20
+>> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
+>> ---
+>>  arch/riscv/Kconfig.socs | 5 +++++
+>>  1 file changed, 5 insertions(+)
+>>=20
+>> diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
+>> index a9c3d2f6debca1469f4a912b3414711eb709baab..de163cdddcda1c08e7c9e9871=
+6eaf043d4c4555a 100644
+>> --- a/arch/riscv/Kconfig.socs
+>> +++ b/arch/riscv/Kconfig.socs
+>> @@ -1,5 +1,10 @@
+>>  menu "SoC selection"
+>> =20
+>> +config ARCH_ANLOGIC
+>> +	bool "Anlogic SoCs"
+>> +	help
+>> +		This enables support for Anlogic SoC platform hardware.
+>=20
+> Wrong indentation. See everything else in this file or just read coding
+> style.
 
-diff --git a/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
-index cb9ea3ca6ee0..c853390eca6c 100644
---- a/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
-@@ -727,6 +727,17 @@ clkc_pll: clock-controller@8000 {
- 					      "fix";
- 			};
- 
-+			temperature-sensor@20000 {
-+				compatible = "amlogic,c3-cpu-thermal";
-+				reg = <0x0 0x20000 0x0 0x50>;
-+				interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clkc_periphs CLKID_TS>;
-+				assigned-clocks = <&clkc_periphs CLKID_TS>;
-+				assigned-clock-rates = <500000>;
-+				amlogic,ao-secure = <&sec_ao>;
-+				#thermal-sensor-cells = <0>;
-+			};
-+
- 			eth_phy: mdio-multiplexer@28000 {
- 				compatible = "amlogic,g12a-mdio-mux";
- 				reg = <0x0 0x28000 0x0 0xa4>;
+Thanks for pointing this out. I overlooked it and will fix it in the
+next version.
 
--- 
-2.37.1
+>=20
+> Best regards,
+> Krzysztof
 
+--=20
+Best regards,
+Junhui Liu
 
 
