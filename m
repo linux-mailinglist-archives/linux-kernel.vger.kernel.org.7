@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-740615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A98ADB0D6D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:06:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75027B0D6E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:07:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91A5A548B89
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:04:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E4BD54990D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C622E264F;
-	Tue, 22 Jul 2025 10:00:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C032E2EF5;
+	Tue, 22 Jul 2025 10:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="lSWBxzAV"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="oWrN6AWa"
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 053B82E0402;
-	Tue, 22 Jul 2025 10:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBAC42E7658;
+	Tue, 22 Jul 2025 10:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753178444; cv=none; b=cchk9CnB66wZw5E1X0VO8o5tzen09R8OY9XCeo9ZrLOWJHF6xFrT2t+mCyx0aN+aSOQ8ThqFwl8nnrs5CFRAv8Glxy1ELfbpINrW8mdgAuq1oppNchLc7zBTZyGOuoYkerdwnbspMTEPg0AhEpbDPZlmHxE4JeyPEgxWGwFu16A=
+	t=1753178450; cv=none; b=qKtXpuIOscotJRWdFCgtkTyJBk/Ye7RJBcmWiTmoKFQ3ssVgeCcgLhQhIwWbf3SKh+VSxenIVZnKfGsDCITexU0mUM1EgWc4+c/ZhvJSAvwji1WRv3sKo7ZS1nwre6Gf1KwmFzerng1vHxtxbNVXfLA1VToCpq0aATPrDisuOUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753178444; c=relaxed/simple;
-	bh=8YKGjpMzeEknsjq1h3Y6UJ7KcbQXboDSUy92iWzcFvM=;
+	s=arc-20240116; t=1753178450; c=relaxed/simple;
+	bh=9KKGtC/eAQdmsyrYbT5A3KhgXOXNHvoyazeOTg7og3g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=N26HvucFgB9vkT85kpVQkPlaZaoFSgLrzjwrsADgjLWpFTGdvzO+Hg0CUzhkj53pkrIs7oYgBi1zdQ+xiaN2lg9sA2gpeCd/OwCz6bMTelW2QQyoRTt9T7cNEkF4R61cUO/H86jyKkZC653kayPkAkxo/CAmJ+LRQedO5qut5JU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=lSWBxzAV; arc=none smtp.client-ip=115.124.30.111
+	 MIME-Version; b=cZVX247aqYJ5L8+pVuuurKS773wV6I3+I1rO+iaWcj7qCxh5b7d+VV+oVVgy6t6Jsnwn1yUstasnwE/LkhGIiw0GYfEB276UZ9EqbcEBUGlL7KRES3IJmo9UP5wvyPxQwVxY9PhOZfqu6oNh6qLd/DefWB2Phdv+VEuya1X4gCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=oWrN6AWa; arc=none smtp.client-ip=115.124.30.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1753178437; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=ZF3uulUA+O49eHkCxAbB2EunI3MkghBKmd/YNGAhKRU=;
-	b=lSWBxzAVejulqNtCsU0y5NODdHNzLOr51Zh38/TRsMS5ePNBkCJLBED+lyrU4FTHoDoc08iRor+YwqhuQTCth5DKeb9josVFdK/VM3DXK/hqPBFlgzl16MZY+KehaPSHbDtEFJE65XJqadl+769Ajds4g5Y16JnD8XY788r+aJc=
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WjVvTpN_1753178435 cluster:ay36)
+	t=1753178439; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=peBcjQkGGRXveCOODLAnQs8d0uMvJgOnnZ+JapebP7o=;
+	b=oWrN6AWaS1Q+ccRGyflLeYjsw2ADe9ARCuZqTrHGEUbt0eQsyUTwPsCXA71SBHToSZZSte0V7k3kvGNNZ6am9AgnE303ZgSabHn6RCwdHCd7/CIJlkSeucSASmUYN5p4EPJ9xps7cceOIDtam7+mSWSG07Y7gggb3tpulLw7Sqc=
+Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WjVvTqv_1753178437 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Tue, 22 Jul 2025 18:00:36 +0800
+          Tue, 22 Jul 2025 18:00:38 +0800
 From: Gao Xiang <hsiangkao@linux.alibaba.com>
 To: stable@vger.kernel.org,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -47,11 +47,10 @@ Cc: linux-erofs@lists.ozlabs.org,
 	LKML <linux-kernel@vger.kernel.org>,
 	Gao Xiang <hsiangkao@linux.alibaba.com>,
 	Yue Hu <huyue2@coolpad.com>,
-	Jingbo Xu <jefflexu@linux.alibaba.com>,
 	Chao Yu <chao@kernel.org>
-Subject: [PATCH 6.1.y 1/5] erofs: get rid of debug_one_dentry()
-Date: Tue, 22 Jul 2025 18:00:25 +0800
-Message-ID: <20250722100029.3052177-2-hsiangkao@linux.alibaba.com>
+Subject: [PATCH 6.1.y 3/5] erofs: drop z_erofs_page_mark_eio()
+Date: Tue, 22 Jul 2025 18:00:27 +0800
+Message-ID: <20250722100029.3052177-4-hsiangkao@linux.alibaba.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20250722100029.3052177-1-hsiangkao@linux.alibaba.com>
 References: <20250722100029.3052177-1-hsiangkao@linux.alibaba.com>
@@ -63,59 +62,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-commit e324eaa9790614577c93e819651e0a83963dac79 upstream.
+commit 9a05c6a8bc26138d34e87b39e6a815603bc2a66c upstream.
 
-Since erofsdump is available, no need to keep this debugging
-functionality at all.
+It can be folded into z_erofs_onlinepage_endio() to simplify the code.
 
-Also drop a useless comment since it's the VFS behavior.
-
-Link: https://lore.kernel.org/r/20230114125746.399253-1-xiang@kernel.org
 Reviewed-by: Yue Hu <huyue2@coolpad.com>
-Reviewed-by: Jingbo Xu <jefflexu@linux.alibaba.com>
 Reviewed-by: Chao Yu <chao@kernel.org>
 Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+Link: https://lore.kernel.org/r/20230817082813.81180-5-hsiangkao@linux.alibaba.com
 ---
- fs/erofs/dir.c | 17 -----------------
- 1 file changed, 17 deletions(-)
+ fs/erofs/zdata.c | 29 +++++++++--------------------
+ 1 file changed, 9 insertions(+), 20 deletions(-)
 
-diff --git a/fs/erofs/dir.c b/fs/erofs/dir.c
-index 966a88cc529e..963bbed0b699 100644
---- a/fs/erofs/dir.c
-+++ b/fs/erofs/dir.c
-@@ -6,21 +6,6 @@
-  */
- #include "internal.h"
+diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
+index 5c0f855ab18d..b05ca443cfdf 100644
+--- a/fs/erofs/zdata.c
++++ b/fs/erofs/zdata.c
+@@ -144,22 +144,17 @@ static inline void z_erofs_onlinepage_split(struct page *page)
+ 	atomic_inc((atomic_t *)&page->private);
+ }
  
--static void debug_one_dentry(unsigned char d_type, const char *de_name,
--			     unsigned int de_namelen)
--{
--#ifdef CONFIG_EROFS_FS_DEBUG
--	/* since the on-disk name could not have the trailing '\0' */
--	unsigned char dbg_namebuf[EROFS_NAME_LEN + 1];
--
--	memcpy(dbg_namebuf, de_name, de_namelen);
--	dbg_namebuf[de_namelen] = '\0';
--
--	erofs_dbg("found dirent %s de_len %u d_type %d", dbg_namebuf,
--		  de_namelen, d_type);
--#endif
+-static inline void z_erofs_page_mark_eio(struct page *page)
++static void z_erofs_onlinepage_endio(struct page *page, int err)
+ {
+-	int orig;
++	int orig, v;
++
++	DBG_BUGON(!PagePrivate(page));
+ 
+ 	do {
+ 		orig = atomic_read((atomic_t *)&page->private);
+-	} while (atomic_cmpxchg((atomic_t *)&page->private, orig,
+-				orig | Z_EROFS_PAGE_EIO) != orig);
 -}
 -
- static int erofs_fill_dentries(struct inode *dir, struct dir_context *ctx,
- 			       void *dentry_blk, struct erofs_dirent *de,
- 			       unsigned int nameoff, unsigned int maxsize)
-@@ -52,10 +37,8 @@ static int erofs_fill_dentries(struct inode *dir, struct dir_context *ctx,
- 			return -EFSCORRUPTED;
- 		}
+-static inline void z_erofs_onlinepage_endio(struct page *page)
+-{
+-	unsigned int v;
++		v = (orig - 1) | (err ? Z_EROFS_PAGE_EIO : 0);
++	} while (atomic_cmpxchg((atomic_t *)&page->private, orig, v) != orig);
  
--		debug_one_dentry(d_type, de_name, de_namelen);
- 		if (!dir_emit(ctx, de_name, de_namelen,
- 			      le64_to_cpu(de->nid), d_type))
--			/* stopped by some reason */
- 			return 1;
- 		++de;
- 		ctx->pos += sizeof(struct erofs_dirent);
+-	DBG_BUGON(!PagePrivate(page));
+-	v = atomic_dec_return((atomic_t *)&page->private);
+ 	if (!(v & ~Z_EROFS_PAGE_EIO)) {
+ 		set_page_private(page, 0);
+ 		ClearPagePrivate(page);
+@@ -930,9 +925,7 @@ static int z_erofs_do_read_page(struct z_erofs_decompress_frontend *fe,
+ 		goto repeat;
+ 
+ out:
+-	if (err)
+-		z_erofs_page_mark_eio(page);
+-	z_erofs_onlinepage_endio(page);
++	z_erofs_onlinepage_endio(page, err);
+ 	return err;
+ }
+ 
+@@ -1035,9 +1028,7 @@ static void z_erofs_fill_other_copies(struct z_erofs_decompress_backend *be,
+ 			cur += len;
+ 		}
+ 		kunmap_local(dst);
+-		if (err)
+-			z_erofs_page_mark_eio(bvi->bvec.page);
+-		z_erofs_onlinepage_endio(bvi->bvec.page);
++		z_erofs_onlinepage_endio(bvi->bvec.page, err);
+ 		list_del(p);
+ 		kfree(bvi);
+ 	}
+@@ -1205,9 +1196,7 @@ static int z_erofs_decompress_pcluster(struct z_erofs_decompress_backend *be,
+ 		/* recycle all individual short-lived pages */
+ 		if (z_erofs_put_shortlivedpage(be->pagepool, page))
+ 			continue;
+-		if (err)
+-			z_erofs_page_mark_eio(page);
+-		z_erofs_onlinepage_endio(page);
++		z_erofs_onlinepage_endio(page, err);
+ 	}
+ 
+ 	if (be->decompressed_pages != be->onstack_pages)
 -- 
 2.43.5
 
