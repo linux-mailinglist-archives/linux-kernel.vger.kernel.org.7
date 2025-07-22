@@ -1,469 +1,218 @@
-Return-Path: <linux-kernel+bounces-740206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F00DB0D161
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:49:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00EB3B0D164
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:49:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B39D5544865
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 05:49:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E79F8188FCE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 05:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677F028CF40;
-	Tue, 22 Jul 2025 05:48:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE8A28C877;
+	Tue, 22 Jul 2025 05:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jkr7B2K3"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=grsecurity.net header.i=@grsecurity.net header.b="A1Y3CgrJ"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581EC28AB10
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 05:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E907E5A79B
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 05:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753163336; cv=none; b=ccQUJiuQeSkHuRbBRWJcU2+ALgdX7YTdTet/eBnor1rTiDxI48vFgZgg/eKSGn2AJVyBGmmqXJQy9kdIjz26VivLZIBg8UTEA2gYP8pPLVmpPjV6z/Rf+Z4hbzK9ApqIx+yqOYXbDP+nPzpMN4hqKCiraRn8mdnhGgFtsNlgMnU=
+	t=1753163370; cv=none; b=IM9ZUt1IJzMrS/BjiB9NiunrwoB2GCQuqc2fgGY7b2SEP3CSvznf5qICRumXzRhDx0ZI6cW1vjfLI1w2wnJaqr2SyxdzmOJ9fZkfIsbHDG2IL3UPUS82iFzHeU69O5dO/bFawVmSb5Pz4lXHPEMsm3lX2PMbR8erpDTk3v2Z4eE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753163336; c=relaxed/simple;
-	bh=C3xpCXSwydRrWzTdRceLtbVq+xVHgKzdzMnpKU5QheM=;
+	s=arc-20240116; t=1753163370; c=relaxed/simple;
+	bh=EYsiutdD7obro3J8tRqNKcz0V+WlOluUDDcO6lr16h8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hsGL+vhpfwSTN6r/uyQiW+jzP9UPIsmopLxdTqTOVaIyiNfr/pNSTztKXq0ElTaAsT0p9iN99itQcAbvL9bDKuCHFyGQZk1anEWoLKtqyaA0nb+8oNw7zHOXtH9PNvmRulPyzB95yJyCkvkDq+ePys9ZubuZseZ9lyRk0RAH9A0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jkr7B2K3; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <06387128-8d34-49fd-a409-d35f5d60b094@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753163321;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m/iwLPdiIBFi6lp1IENj7q/2PClonPRpthSmWe4Tk/c=;
-	b=jkr7B2K3bc55GgaXWR4zwgbI1qDEq33XvAeRPGQONKTIqbOL+Egj3NJ6SWLapcygwaXrC4
-	sMssxCc7+JR962mGrWBwE9HosZGL+IsI/VHm5euAQ8z6uxER/1eth+FE9WRa5sKl01Cf5V
-	MKlHMuZ1HcNgfrqxzO1Xx1PC9fX8aYk=
-Date: Tue, 22 Jul 2025 13:48:28 +0800
+	 In-Reply-To:Content-Type; b=MqvgyxMLfURwK9jk13kTTb6+8qggdaxZTck36vYsKJWMmjdY+jzwCirF09WVTMygkQkw1ZifEJfBLIyYd89P2Ut/ptQWVacxKYfIrbB/rm8HOIrbqnW2lKQbq4u+OSx3BgRqJ86hCRP5E+vupkwHGWvhuJNWx/u9UENxFXaqFO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grsecurity.net; spf=pass smtp.mailfrom=opensrcsec.com; dkim=pass (2048-bit key) header.d=grsecurity.net header.i=@grsecurity.net header.b=A1Y3CgrJ; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grsecurity.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensrcsec.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b3bcb168fd5so4263637a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 22:49:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=grsecurity.net; s=grsec; t=1753163368; x=1753768168; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=AnoJBa5+d/Xeyj/TiIdw33DeMjcCXsPUii0CNLMcpN8=;
+        b=A1Y3CgrJg1GNVLeN1VA+OwPFqp6SjsoOnyY6BWK1yzU8JGWn13fEBl6T1E99ufiqx8
+         51gudzyXKMqejG7uXhsTDvH0igSe+EYeh2QG12vnp8fsiYC5KHOXYioSG3K1GwEk0qAF
+         uNeiLkJODLyYsJjuXIUbeFBSM7dl8/pg53lpgoicCN3BAGwb4a6LsEV7gaYy6nMSumbb
+         pav7m5sFGeG32Q0MzbPuFIpg+2qOn0MU0vnC06T+QMc0vP/goI3zbD5tc7o2FIgBzXjk
+         503+AUZKRu3lvWmlw/wic0p2gjyOswsSFzTn8mG+fjbM4tAxhLZWINUAT2CPH2QbRsBp
+         2V6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753163368; x=1753768168;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AnoJBa5+d/Xeyj/TiIdw33DeMjcCXsPUii0CNLMcpN8=;
+        b=DJi5i2odAYpXAu0m0beypnfaznJdDggG51Mq70H9Ib8KwS488sFdPBvZZJXBtuTdBT
+         yJjT7ZyLGaYkZe+0jxQoLOJ5FtewLaQFcM2JSkxTCSBjmwJCfG14TmdMlFGsCZTetsGI
+         kd32u+BgTdb+pidREIScBmgxKTjN6STE2K7kPw1hxap9ZS+qhAfo5K8g8E1goss2X0wn
+         KJt0+zZONTz8sp7aygY0PsrChh7Shjok2zuRt8lS9ygBPYWmw40zVpLcL3a6P8vDxtSn
+         Gg8ERt0kKWWLa1Mwln0MJG0ffzLxkDcjaUcLvVXF6da8PByd2Qj90Fx+7z5XOWC0+QeE
+         gCFg==
+X-Forwarded-Encrypted: i=1; AJvYcCXENGItTzzdTQppLgeTqwcSZM9NVomN/ec4Sxdaou3IRTkC4ESPqk/LaLWd/V3L2JAtxcSSJkNY1tkw8/c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/I/0vNhvEB+MMVzrjUTJp2SBxiMKE+/ni7xyyN5xKZXwrm5ie
+	8QVxBwZxiez2fXS315OwAFAU+uOB3NTif7wEK84DFWJ9kP07w/pK4dgfxvSrHn1p81Q=
+X-Gm-Gg: ASbGncu2GRTCCbeRyooeVE3I2mqpqA6hUNYbdPBtcFtuw5WbKp30w1VoPSdBnKZC2N5
+	RnFbUgheLlYTb0wbt6/ikbQF/7THq61+IKznMAUNCdYrLL7Yali26IpLTIpe1ldsXUwVKH1q6OQ
+	5w+cHJaK7/z2aWi5zqN04QUVIBSvy3EDfr83ru+ZDd6fpG3r/pzsyKb+e9NG/7OmR9gHgky3/a0
+	KkRov3M08qV2lfol87+wZ5kZWSJtsr70xTaotrLbP0W79s5lazdLzKsdpDft9f/phjFHlS5x2PE
+	rAgTX0oAJgjmRH0Lsui7D5rNnSzZ9k8t0dBEXqCrhYD1VSmGPPRhXsAHLGce4LLqo1UhXy2GXsw
+	q+UKTCwqP9d3F2Ii2qda0OJTQmBAUwH3naN7q7fh/ASaermNVEfn9N8cxFFgHMO5dep95IUuIic
+	ZjdvuW7mXvAoZr4P3GPZSU/BLax0OQ2eFD9dCI45o3BNx+z8I8Me3vjuk=
+X-Google-Smtp-Source: AGHT+IGy7zc48edkju9bcZ32HPIv6nt5zr1Ku2glRdmr2ANOmtNOGOqnrirNkfszas0t7uVz5kPKvg==
+X-Received: by 2002:a05:6a20:12cb:b0:220:78b9:f849 with SMTP id adf61e73a8af0-23812c45ea0mr37911064637.24.1753163368136;
+        Mon, 21 Jul 2025 22:49:28 -0700 (PDT)
+Received: from ?IPV6:2003:fa:af22:cf00:2208:a86d:dff:5ae9? (p200300faaf22cf002208a86d0dff5ae9.dip0.t-ipconnect.de. [2003:fa:af22:cf00:2208:a86d:dff:5ae9])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759cb76d4e4sm6849616b3a.106.2025.07.21.22.49.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Jul 2025 22:49:27 -0700 (PDT)
+Message-ID: <96a0a8b2-3ebd-466c-9c6e-8ba63cd4e2e3@grsecurity.net>
+Date: Tue, 22 Jul 2025 07:49:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next 1/2] bpftool: Add bpf_token show
-To: Quentin Monnet <qmo@kernel.org>, ast@kernel.org, daniel@iogearbox.net,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, davem@davemloft.net,
- kuba@kernel.org, hawk@kernel.org
-Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org
-References: <20250720173310.1334483-1-chen.dylane@linux.dev>
- <6b0669fd-fef6-4f4e-b80d-512769e86938@kernel.org>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Tao Chen <chen.dylane@linux.dev>
-In-Reply-To: <6b0669fd-fef6-4f4e-b80d-512769e86938@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 19/23] KVM: x86: Enable CET virtualization for VMX and
+ advertise to userspace
+To: Sean Christopherson <seanjc@google.com>
+Cc: Chao Gao <chao.gao@intel.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, x86@kernel.org, pbonzini@redhat.com,
+ dave.hansen@intel.com, rick.p.edgecombe@intel.com, mlevitsk@redhat.com,
+ john.allen@amd.com, weijiang.yang@intel.com, xin@zytor.com,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>
+References: <20250704085027.182163-1-chao.gao@intel.com>
+ <20250704085027.182163-20-chao.gao@intel.com>
+ <4114d399-8649-41de-97bf-3b63f29ec7e8@grsecurity.net>
+ <aH58w_wHx3Crklp4@google.com>
+Content-Language: en-US, de-DE
+From: Mathias Krause <minipli@grsecurity.net>
+Autocrypt: addr=minipli@grsecurity.net; keydata=
+ xsDNBF4u6F8BDAC1kCIyATzlCiDBMrbHoxLywJSUJT9pTbH9MIQIUW8K1m2Ney7a0MTKWQXp
+ 64/YTQNzekOmta1eZFQ3jqv+iSzfPR/xrDrOKSPrw710nVLC8WL993DrCfG9tm4z3faBPHjp
+ zfXBIOuVxObXqhFGvH12vUAAgbPvCp9wwynS1QD6RNUNjnnAxh3SNMxLJbMofyyq5bWK/FVX
+ 897HLrg9bs12d9b48DkzAQYxcRUNfL9VZlKq1fRbMY9jAhXTV6lcgKxGEJAVqXqOxN8DgZdU
+ aj7sMH8GKf3zqYLDvndTDgqqmQe/RF/hAYO+pg7yY1UXpXRlVWcWP7swp8OnfwcJ+PiuNc7E
+ gyK2QEY3z5luqFfyQ7308bsawvQcFjiwg+0aPgWawJ422WG8bILV5ylC8y6xqYUeSKv/KTM1
+ 4zq2vq3Wow63Cd/qyWo6S4IVaEdfdGKVkUFn6FihJD/GxnDJkYJThwBYJpFAqJLj7FtDEiFz
+ LXAkv0VBedKwHeBaOAVH6QEAEQEAAc0nTWF0aGlhcyBLcmF1c2UgPG1pbmlwbGlAZ3JzZWN1
+ cml0eS5uZXQ+wsERBBMBCgA7AhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEEd7J359B9
+ wKgGsB94J4hPxYYBGYYFAmBbH/cCGQEACgkQJ4hPxYYBGYaX/gv/WYhaehD88XjpEO+yC6x7
+ bNWQbk7ea+m82fU2x/x6A9L4DN/BXIxqlONzk3ehvW3wt1hcHeF43q1M/z6IthtxSRi059RO
+ SarzX3xfXC1pc5YMgCozgE0VRkxH4KXcijLyFFjanXe0HzlnmpIJB6zTT2jgI70q0FvbRpgc
+ rs3VKSFb+yud17KSSN/ir1W2LZPK6er6actK03L92A+jaw+F8fJ9kJZfhWDbXNtEE0+94bMa
+ cdDWTaZfy6XJviO3ymVe3vBnSDakVE0HwLyIKvfAEok+YzuSYm1Nbd2T0UxgSUZHYlrUUH0y
+ tVxjEFyA+iJRSdm0rbAvzpwau5FOgxRQDa9GXH6ie6/ke2EuZc3STNS6EBciJm1qJ7xb2DTf
+ SNyOiWdvop+eQZoznJJte931pxkRaGwV+JXDM10jGTfyV7KT9751xdn6b6QjQANTgNnGP3qs
+ TO5oU3KukRHgDcivzp6CWb0X/WtKy0Y/54bTJvI0e5KsAz/0iwH19IB0vpYLzsDNBF4u6F8B
+ DADwcu4TPgD5aRHLuyGtNUdhP9fqhXxUBA7MMeQIY1kLYshkleBpuOpgTO/ikkQiFdg13yIv
+ q69q/feicsjaveIEe7hUI9lbWcB9HKgVXW3SCLXBMjhCGCNLsWQsw26gRxDy62UXRCTCT3iR
+ qHP82dxPdNwXuOFG7IzoGBMm3vZbBeKn0pYYWz2MbTeyRHn+ZubNHqM0cv5gh0FWsQxrg1ss
+ pnhcd+qgoynfuWAhrPD2YtNB7s1Vyfk3OzmL7DkSDI4+SzS56cnl9Q4mmnsVh9eyae74pv5w
+ kJXy3grazD1lLp+Fq60Iilc09FtWKOg/2JlGD6ZreSnECLrawMPTnHQZEIBHx/VLsoyCFMmO
+ 5P6gU0a9sQWG3F2MLwjnQ5yDPS4IRvLB0aCu+zRfx6mz1zYbcVToVxQqWsz2HTqlP2ZE5cdy
+ BGrQZUkKkNH7oQYXAQyZh42WJo6UFesaRAPc3KCOCFAsDXz19cc9l6uvHnSo/OAazf/RKtTE
+ 0xGB6mQN34UAEQEAAcLA9gQYAQoAIAIbDBYhBHeyd+fQfcCoBrAfeCeIT8WGARmGBQJeORkW
+ AAoJECeIT8WGARmGXtgL/jM4NXaPxaIptPG6XnVWxhAocjk4GyoUx14nhqxHmFi84DmHUpMz
+ 8P0AEACQ8eJb3MwfkGIiauoBLGMX2NroXcBQTi8gwT/4u4Gsmtv6P27Isn0hrY7hu7AfgvnK
+ owfBV796EQo4i26ZgfSPng6w7hzCR+6V2ypdzdW8xXZlvA1D+gLHr1VGFA/ZCXvVcN1lQvIo
+ S9yXo17bgy+/Xxi2YZGXf9AZ9C+g/EvPgmKrUPuKi7ATNqloBaN7S2UBJH6nhv618bsPgPqR
+ SV11brVF8s5yMiG67WsogYl/gC2XCj5qDVjQhs1uGgSc9LLVdiKHaTMuft5gSR9hS5sMb/cL
+ zz3lozuC5nsm1nIbY62mR25Kikx7N6uL7TAZQWazURzVRe1xq2MqcF+18JTDdjzn53PEbg7L
+ VeNDGqQ5lJk+rATW2VAy8zasP2/aqCPmSjlCogC6vgCot9mj+lmMkRUxspxCHDEms13K41tH
+ RzDVkdgPJkL/NFTKZHo5foFXNi89kA==
+In-Reply-To: <aH58w_wHx3Crklp4@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-在 2025/7/22 00:23, Quentin Monnet 写道:
-> Thanks a lot for this!
+On 21.07.25 19:45, Sean Christopherson wrote:
+> On Mon, Jul 21, 2025, Mathias Krause wrote:
+>> Can we please make CR4.CET a guest-owned bit as well (sending a patch in
+>> a second)? It's a logical continuation to making CR0.WP a guest-owned
+>> bit just that it's even easier this time, as no MMU role bits are
+>> involved and it still makes a big difference, at least for grsecurity
+>> guest kernels.
 > 
+> Out of curiosity, what's the use case for toggling CR4.CET at runtime?
 
-Hi Quenin,
+Plain and simple: architectural requirements to be able to toggle CR0.WP.
 
-> 
-> 2025-07-21 01:33 UTC+0800 ~ Tao Chen <chen.dylane@linux.dev>
->> Add `bpftool token show` command to get token info
->> from bpf fs in /proc/mounts.
+>> Using the old test from [1] gives the following numbers (perf stat -r 5
+>> ssdd 10 50000):
 >>
->> Example plain output for `token show`:
->> token_info:
->>          /sys/fs/bpf/token
+>> * grsec guest on linux-6.16-rc5 + cet patches:
+>>   2.4647 +- 0.0706 seconds time elapsed  ( +-  2.86% )
 >>
->> allowed_cmds:
->>          map_create          prog_load
+>> * grsec guest on linux-6.16-rc5 + cet patches + CR4.CET guest-owned:
+>>   1.5648 +- 0.0240 seconds time elapsed  ( +-  1.53% )
 >>
->> allowed_maps:
+>> Not only is it ~35% faster, it's also more stable, less fluctuation due
+>> to less VMEXITs, I believe.
+
+Above test exercises the "pain path" by single-stepping a process and
+constantly switching between tracer and tracee. The scheduling part
+involves a CR0.WP toggle in grsecurity to be able to write to r/o
+memory, which now requires toggling CR4.CET as well.
+
 >>
->> allowed_progs:
->>          kprobe
+>> Thanks,
+>> Mathias
 >>
->> allowed_attachs:
->>          xdp
+>> [1]
+>> https://lore.kernel.org/kvm/20230322013731.102955-1-minipli@grsecurity.net/
+> 
+>> From 14ef5d8b952744c46c32f16fea3b29184cde3e65 Mon Sep 17 00:00:00 2001
+>> From: Mathias Krause <minipli@grsecurity.net>
+>> Date: Mon, 21 Jul 2025 13:45:55 +0200
+>> Subject: [PATCH] KVM: VMX: Make CR4.CET a guest owned bit
 >>
->> Example json output for `token show`:
->> {
->>      "token_info": "/sys/fs/bpf/token",
->>      "allowed_cmds": ["map_create","prog_load"
->>      ],
->>      "allowed_maps":
+>> There's no need to intercept changes of CR4.CET, make it a guest-owned
+>> bit where possible.
 > 
-> 
-> This is not valid JSON. You're missing a value for "allowed_maps" (here
-> it should likely be an empty array), and the comma:
-> 
-> 	"allowed_maps": [],
-> 
-> 
->>      "allowed_progs": ["kprobe"
->>      ],
->>      "allowed_attachs": ["xdp"
->>      ]
->> }
->>
->> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
->> ---
->>   tools/bpf/bpftool/main.c  |   3 +-
->>   tools/bpf/bpftool/main.h  |   1 +
->>   tools/bpf/bpftool/token.c | 229 ++++++++++++++++++++++++++++++++++++++
->>   3 files changed, 232 insertions(+), 1 deletion(-)
->>   create mode 100644 tools/bpf/bpftool/token.c
->>
->> diff --git a/tools/bpf/bpftool/main.c b/tools/bpf/bpftool/main.c
->> index 2b7f2bd3a7d..0f1183b2ed0 100644
->> --- a/tools/bpf/bpftool/main.c
->> +++ b/tools/bpf/bpftool/main.c
->> @@ -61,7 +61,7 @@ static int do_help(int argc, char **argv)
->>   		"       %s batch file FILE\n"
->>   		"       %s version\n"
->>   		"\n"
->> -		"       OBJECT := { prog | map | link | cgroup | perf | net | feature | btf | gen | struct_ops | iter }\n"
->> +		"       OBJECT := { prog | map | link | cgroup | perf | net | feature | btf | gen | struct_ops | iter | token }\n"
->>   		"       " HELP_SPEC_OPTIONS " |\n"
->>   		"                    {-V|--version} }\n"
->>   		"",
->> @@ -87,6 +87,7 @@ static const struct cmd commands[] = {
->>   	{ "gen",	do_gen },
->>   	{ "struct_ops",	do_struct_ops },
->>   	{ "iter",	do_iter },
->> +	{ "token",	do_token },
->>   	{ "version",	do_version },
->>   	{ 0 }
->>   };
->> diff --git a/tools/bpf/bpftool/main.h b/tools/bpf/bpftool/main.h
->> index 6db704fda5c..a2bb0714b3d 100644
->> --- a/tools/bpf/bpftool/main.h
->> +++ b/tools/bpf/bpftool/main.h
->> @@ -166,6 +166,7 @@ int do_tracelog(int argc, char **arg) __weak;
->>   int do_feature(int argc, char **argv) __weak;
->>   int do_struct_ops(int argc, char **argv) __weak;
->>   int do_iter(int argc, char **argv) __weak;
->> +int do_token(int argc, char **argv) __weak;
->>   
->>   int parse_u32_arg(int *argc, char ***argv, __u32 *val, const char *what);
->>   int prog_parse_fd(int *argc, char ***argv);
->> diff --git a/tools/bpf/bpftool/token.c b/tools/bpf/bpftool/token.c
->> new file mode 100644
->> index 00000000000..2fcaff4f2ba
->> --- /dev/null
->> +++ b/tools/bpf/bpftool/token.c
->> @@ -0,0 +1,229 @@
->> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +
->> +#ifndef _GNU_SOURCE
->> +#define _GNU_SOURCE
->> +#endif
->> +#include <errno.h>
->> +#include <fcntl.h>
->> +#include <stdbool.h>
->> +#include <stdio.h>
->> +#include <stdlib.h>
->> +#include <string.h>
->> +#include <unistd.h>
->> +#include <mntent.h>
->> +#include <sys/types.h>
->> +#include <sys/stat.h>
->> +
->> +#include "json_writer.h"
->> +#include "main.h"
->> +
->> +#define MOUNTS_FILE "/proc/mounts"
->> +
->> +#define zclose(fd) do { if (fd >= 0) close(fd); fd = -1; } while (0)
-> 
-> 
-> Seems unused?
-> 
-My fault, will remove it in v2, thanks.
+> In the changelog, please elaborate on the assertion that CR4.CET doesn't need to
+> be intercepted, and include the motiviation and perf numbers.  KVM's "rule" is
+> to disable interception of something if and only if there is a good reason for
+> doing so, because generally speaking intercepting is safer.  E.g. KVM bugs are
+> less likely to put the host at risk.  "Because we can" isn't not a good reason :-)
+
+Understood, will extend the changelog accordingly.
 
 > 
->> +
->> +static bool has_delegate_options(const char *mnt_ops)
->> +{
->> +	return strstr(mnt_ops, "delegate_cmds") != NULL ||
->> +	       strstr(mnt_ops, "delegate_maps") != NULL ||
->> +	       strstr(mnt_ops, "delegate_progs") != NULL ||
->> +	       strstr(mnt_ops, "delegate_attachs") != NULL;
->> +}
->> +
->> +static char *get_delegate_value(const char *opts, const char *key)
->> +{
->> +	char *token, *rest, *ret = NULL;
->> +	char *opts_copy = strdup(opts);
->> +
->> +	if (!opts_copy)
->> +		return NULL;
->> +
->> +	for (token = strtok_r(opts_copy, ",", &rest); token != NULL;
->> +			token = strtok_r(NULL, ",", &rest)) {
->> +		if (strncmp(token, key, strlen(key)) == 0 &&
->> +				token[strlen(key)] == '=') {
->> +			ret = token + strlen(key) + 1;
->> +			break;
->> +		}
->> +	}
->> +	free(opts_copy);
->> +
->> +	return ret;
->> +}
->> +
->> +static void print_items_per_line(const char *input, int items_per_line)
->> +{
->> +	char *str, *rest;
->> +	int cnt = 0;
->> +	char *strs = strdup(input);
->> +
->> +	if (!strs)
->> +		return;
->> +
->> +	for (str = strtok_r(strs, ":", &rest); str != NULL;
->> +			str = strtok_r(NULL, ":", &rest)) {
->> +		if (cnt % items_per_line == 0)
->> +			printf("\n\t");
->> +
->> +		printf("%-20s", str);
->> +		cnt++;
->> +	}
->> +
->> +	free(strs);
->> +}
->> +
->> +#define ITEMS_PER_LINE 4
->> +static void show_token_info_plain(struct mntent *mntent)
->> +{
->> +	char *value;
->> +
->> +	printf("\ntoken_info:");
->> +	printf("\n\t%s\n", mntent->mnt_dir);
->> +
->> +	printf("\nallowed_cmds:");
->> +	value = get_delegate_value(mntent->mnt_opts, "delegate_cmds");
->> +	if (value)
->> +		print_items_per_line(value, ITEMS_PER_LINE);
->> +	printf("\n");
->> +
->> +	printf("\nallowed_maps:");
->> +	value = get_delegate_value(mntent->mnt_opts, "delegate_maps");
->> +	if (value)
->> +		print_items_per_line(value, ITEMS_PER_LINE);
->> +	printf("\n");
->> +
->> +	printf("\nallowed_progs:");
->> +	value = get_delegate_value(mntent->mnt_opts, "delegate_progs");
->> +	if (value)
->> +		print_items_per_line(value, ITEMS_PER_LINE);
->> +	printf("\n");
->> +
->> +	printf("\nallowed_attachs:");
->> +	value = get_delegate_value(mntent->mnt_opts, "delegate_attachs");
->> +	if (value)
->> +		print_items_per_line(value, ITEMS_PER_LINE);
->> +	printf("\n");
->> +}
->> +
->> +static void __json_array_str(const char *input)
+> E.g. at one point CR4.LA57 was a guest-owned bit, and the code was buggy.  Fixing
+> things took far more effort than it should have there was no justification for
+> the logic (IIRC, it was done purely on the whims of the original developer).
 > 
-> 
-> Nit: Why the double underscore in the function name? Let's use a more
-> explicit name also, maybe something like "split_to_json_array"?
-> 
+> KVM has had many such cases, where some weird behavior was never documented/justified,
+> and I really, really want to avoid committing the same sins that have caused me
+> so much pain :-)
 
-Well, it looks better, will change it in v2.
+I totally understand your reasoning, "just because" shouldn't be the
+justification. In this case, however, not making it a guest-owned bit
+has a big performance impact for grsecurity, we would like to address.
 
-> >> +{
->> +	char *str, *rest;
->> +	char *strs = strdup(input);
->> +
->> +	if (!strs)
->> +		return;
->> +
->> +	jsonw_start_array(json_wtr);
->> +	for (str = strtok_r(strs, ":", &rest); str != NULL;
->> +			str = strtok_r(NULL, ":", &rest)) {
->> +		jsonw_string(json_wtr, str);
->> +	}
->> +	jsonw_end_array(json_wtr);
->> +
->> +	free(strs);
->> +}
->> +
->> +static void show_token_info_json(struct mntent *mntent)
->> +{
->> +	char *value;
->> +
->> +	jsonw_start_object(json_wtr);
->> +
->> +	jsonw_string_field(json_wtr, "token_info", mntent->mnt_dir);
->> +
->> +	jsonw_name(json_wtr, "allowed_cmds");
->> +	value = get_delegate_value(mntent->mnt_opts, "delegate_cmds");
->> +	if (value)
->> +		__json_array_str(value);
-> 
-> 
-> As mentioned above, you need to change __json_array_str() to print
-> something when you don't get a "value" here - just have it print an
-> empty array.
-> 
+The defines and asserts regarding KVM_MMU_CR4_ROLE_BITS and
+KVM_POSSIBLE_CR4_GUEST_BITS (and KVM_MMU_CR0_ROLE_BITS /
+KVM_POSSIBLE_CR0_GUEST_BITS too) should catch future attempts on
+involving CR4.CET in any MMU-related decisions and I found no other use
+of the (nested) guest's CR4.CET value beside for sanity checks to
+prevent invalid architectural state (CR4.CET=1 but CR0.WP=0).
 
-As you mentioned, the 'value' will be checked within the 
-__json_array_str, and print empty array if it is NULL in v2.
+That is, imho, existing documentation regarding the expectations on
+guest-owned bits and, even better, with BUILD_BUG_ON()s enforcing these.
 
-> 
->> +
->> +	jsonw_name(json_wtr, "allowed_maps");
->> +	value = get_delegate_value(mntent->mnt_opts, "delegate_maps");
->> +	if (value)
->> +		__json_array_str(value);
->> +
->> +	jsonw_name(json_wtr, "allowed_progs");
->> +	value = get_delegate_value(mntent->mnt_opts, "delegate_progs");
->> +	if (value)
->> +		__json_array_str(value);
->> +
->> +	jsonw_name(json_wtr, "allowed_attachs");
->> +	value = get_delegate_value(mntent->mnt_opts, "delegate_attachs");
->> +	if (value)
->> +		__json_array_str(value);
->> +
->> +	jsonw_end_object(json_wtr);
->> +}
->> +
->> +static int __show_token_info(struct mntent *mntent)
->> +{
->> +
->> +	if (json_output)
->> +		show_token_info_json(mntent);
->> +	else
->> +		show_token_info_plain(mntent);
->> +
->> +	return 0;
->> +}
->> +
->> +static int show_token_info(void)
->> +{
->> +	FILE *fp;
->> +	struct mntent *ent;
->> +	bool hit = false;
->> +
->> +	fp = setmntent(MOUNTS_FILE, "r");
->> +	if (!fp) {
->> +		p_err("Failed to open:%s", MOUNTS_FILE);
-> 
-> 
-> Missing space after the colon, in the error message.
-> 
 
-will fix it in v2.
-
-> 
->> +		return -1;
->> +	}
->> +
->> +	while ((ent = getmntent(fp)) != NULL) {
->> +		if (strcmp(ent->mnt_type, "bpf") == 0) {
-> 
-> 
-> File common.c has:
-> 
-> 		if (strncmp(mntent->mnt_type, "bpf", 3) != 0)
-> 			continue;
-> 
-> Maybe do the same for consistency, and to avoid indenting too far right?
-> 
-
-Yes, i will refrence that, thanks.
-
-> 
->> +			if (has_delegate_options(ent->mnt_opts)) {
->> +				hit = true;
->> +				break;
-> 
-> 
-> Apologies, my knowledge of BPF tokens is limited. Can you have only one
-> token exposed through a bpffs at a time? Asking because I know you can
-> have several bpffs on your system, if each can have delegate options
-> then why stop after the first bpffs mount point you find?
-> 
-
-Yes it is, only the first bpffs with token info will be showed above.
-Actually, it will not be limited how many bpffs ceated in kernel, it 
-depends on the user scenarios. In most cases, only one will be created. 
-But, maybe it's better to show all. I will change it in v2.
-
-> 
->> +			}
->> +		}
->> +	}
->> +
->> +	if (hit)
->> +		__show_token_info(ent);
-> 
-> 
-> Maybe at least a p_info() message if you don't find anything to print?
-> 
-Ok, will add it in v2.
-
-> 
->> +	endmntent(fp);
->> +
->> +	return 0;
->> +}
->> +
->> +static int do_show(int argc, char **argv)
->> +{
->> +	if (argc)
->> +		return BAD_ARG();
->> +
->> +	return show_token_info();
->> +}
->> +
->> +static int do_help(int argc, char **argv)
->> +{
->> +	if (json_output) {
->> +		jsonw_null(json_wtr);
->> +		return 0;
->> +	}
->> +
->> +	fprintf(stderr,
->> +		"Usage: %1$s %2$s { show | list }\n"
->> +		"	%1$s %2$s help\n"
->> +		"\n"
->> +		"",
->> +		bin_name, argv[-2]);
->> +	return 0;
->> +}
->> +
->> +static const struct cmd cmds[] = {
->> +	{ "show",	do_show },
->> +	{ "help",	do_help },
->> +	{ "list",	do_show },
-> 
-> 
-> Nit: Can we have "help" coming third, below both "show" and "list" please?
-> 
-
-will change it in v2.
-
-> 
->> +	{ 0 }
->> +};
->> +
->> +int do_token(int argc, char **argv)
->> +{
->> +	return cmd_select(cmds, argc, argv, do_help);
->> +}
-> 
--- 
-Best Regards
-Tao Chen
+Thanks,
+Mathias
 
