@@ -1,159 +1,203 @@
-Return-Path: <linux-kernel+bounces-740586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81599B0D613
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:39:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F017B0D5E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:25:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B652017EB81
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:39:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 352451AA1895
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:25:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134202DEA88;
-	Tue, 22 Jul 2025 09:39:01 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1162DC33C;
+	Tue, 22 Jul 2025 09:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZyYMQuTx"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04F11DFE0B;
-	Tue, 22 Jul 2025 09:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8611D2DCBEC;
+	Tue, 22 Jul 2025 09:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753177140; cv=none; b=Dx5+NIkMU9YTD0/3UQod/ulWHsY5SeIU6XmtValUjSjopHOXr6DDHGPsaJ1q5Hr1+P4v8ufGOg2lrZKMmXOqSkT+a+yaKbqVIhHwH25G86vH9AKRTZXNJDwBwZnn4YXtzq+yxJeIrjN6aXoWAaV2R5rf3zdHdkabLmAZzU9NzjE=
+	t=1753176287; cv=none; b=f27Qmod5Z8hsvrcbki8PtX+yD+zj/Pu6mWOezJaD+YdKMlpscEYYufzRxbYq3kD/ak6+NkgHWcL4QsLOG/wBKDhxaYibECNp2PfECsvK7RzDcv+MpB9hcgMjQiAJ/wOCctSY4WJ+NdMmkoe3xg4pVxBd5DLauVCd6ufg+r/AA98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753177140; c=relaxed/simple;
-	bh=qEiN+8NGsRRggnwR8H/Pc0+TGCIZldtdbKd45XV0l7E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KtnrCGUTTAepBKsn/oJ28OB6KNUshYwhDkgz2e0vfxkFHu/VZhY/cv7J8S0GSdFsGzCObVvx5+rs+okiU3iTKmPB/gQzKA/BEelqwrS+O9TQSHIji+UxvU7+ABqiVN0PyU5409Smf/sGcGPmOOsaGk7AjCk00WGtNYKv8gBBYB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bmXJv61ZLzKHMrg;
-	Tue, 22 Jul 2025 17:38:55 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 8D58D1A1983;
-	Tue, 22 Jul 2025 17:38:54 +0800 (CST)
-Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
-	by APP4 (Coremail) with SMTP id gCh0CgCHURIaXH9oCzBnBA--.21969S2;
-	Tue, 22 Jul 2025 17:38:54 +0800 (CST)
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: tj@kernel.org,
-	hannes@cmpxchg.org,
-	mkoutny@suse.com,
-	lizefan@huawei.com
-Cc: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lujialin4@huawei.com,
-	chenridong@huawei.com,
-	gaoyingjie@uniontech.com
-Subject: [PATCH -next] cgroup: remove offline draining in root destruction to avoid hung_tasks
-Date: Tue, 22 Jul 2025 09:24:44 +0000
-Message-Id: <20250722092444.4108989-1-chenridong@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1753176287; c=relaxed/simple;
+	bh=vq9nwGCbpNJCvIIWiXBqGK2FeNXxXaFw/7Fny809tjE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h7K1G/FLnCew3e/yScjBVdUrke1DZQe3VQub2gECzjgZoGMYquzHy8+Je/78osegldvTOKff9qJujBZzldVMAf2gNvIiMVmSetinj6I6cK5nLadMXcaTeSmDbzvEZnCObbGHASewKjVSHAHJ+xom7WvdXUjg64DrMdQw+B+rywE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZyYMQuTx; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45629702e52so23182135e9.2;
+        Tue, 22 Jul 2025 02:24:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753176284; x=1753781084; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=D+//jYCN9fJ3UKB3gQrh8TeOMN1LQzo1k6VYys+m57I=;
+        b=ZyYMQuTxvzAIOYmTkb9Bpm+4l7FXviKmQF29wYHJ2/lWOWkUzOR+T1oATvrh22EveH
+         BQzjr4zZ20A8nGcw/qV31vFAzNSmjUJcl6xNrBfesexnfTA8nXk3bb1vjGRz5hpwj5cZ
+         730HeCjY+XF1vvtUUG7f733jC/Tt0PWKtcVaoO+RwXhLPn7m0YnTx9aevaW42QUNw2tn
+         pxIhKIxJNKAokpoDjfozelB3h07ovyDvvu+7051UWZCaBX7itdyhxFBJxHRo6Jn/pp6Y
+         r+41db+9AOpvZzcDJKYYyVqxB+MTOh4yvt4yfS4nQBc8i8RNHbS7b8UEPLAQcavcFQ7l
+         +WDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753176284; x=1753781084;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D+//jYCN9fJ3UKB3gQrh8TeOMN1LQzo1k6VYys+m57I=;
+        b=d7/hUfjUY0ixhfNOKPwPZrpOX21X5EkjtokRYZtXwXgqI3vqvYLRVXvam2z6IB6CE5
+         ENUoa5jcAxVOszPo61/khXNDXM6IZ40ZEVJKuvUbu3htJQMzop/orWc3RyWRf/wOh5ON
+         vqbILLoEVqYqMyOrfvXi5bGUX8iltmJB027IQ2oyP8Lew+PF4HeM1rqYUoftbMYsuVaM
+         5zqi3eJ35zjM/RM0cBHL1WYqNoLcE5KUfR2yH4VNy/GlMf6q/l6CY6hNbkgl8y8mkUCR
+         d0UsVQLhjC3nbQTYRav6DSp7b7TKpi858A4+dHYV4I8NeZafTAf2SdfVRsvg4eUC93xS
+         DCUA==
+X-Forwarded-Encrypted: i=1; AJvYcCURKIS6O5C1YgEnAIFZBc0lKNBomCU2YsUP2SsZ1GSpF7zcvHjPY8Fkha0lkqnLBXTFe8pKmGVrqho=@vger.kernel.org, AJvYcCWlhJtjhHkGusAmu+cR6mFz9jEflWsQedO2R42deQWAXY7YJlEcqkM7k9gmzSgspQ9mvitWtFH1yk2wBreQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3AlUikif8WhXifIlUKr1cdSwd2UikXMMPe4VgrUBLoh74fc90
+	YDhEKhlUiAuHsfJdRD1fcTRmXwJDv6T0UuYzdjiw73ZLFCImhaaf5Af4
+X-Gm-Gg: ASbGnctmbJuCIq0Gvh+ubhC1yENt9IQq11K+GzdfX5Q5x8FSk/nQNfCNbpdTnlBe0MZ
+	cP5v8p4UKyjBpOr8RGEbRY3Q0nBoo+j6A2JT09+QaWyoJbb4WPd9ZWCY99AkmCa5GYtJU8s5jcC
+	qGefsQpIGli0BakvHOabA/MMoxpCzjApLuMXdCINrhsGWeA3q7rZ/+lstmN3AG8ooL87oGcDx/f
+	EOttCglrCG28Ml0TbDyqUmHIMGADbQQNKcpdF8eqsK70yHBo29BrZdW1rx/4iRhuhH+lUMPhEkY
+	7xmdPhwn/ZbXcyizjd7HeDBt8NWXNtmLl5BHKofmQQ0YseWuXkmNhov9TPd/Sb9aFFDckrfZPDm
+	S5q14xiO2gA==
+X-Google-Smtp-Source: AGHT+IFS4JFdYUjRXvwa6PQG6LzBe+yHOPx1nP72j3LNTxLgT1+qD+QgeFECSpuWPgbAAOPMEXKNLA==
+X-Received: by 2002:a05:6000:420f:b0:3a3:5f36:33ee with SMTP id ffacd0b85a97d-3b60e4f2d43mr18277380f8f.32.1753176283506;
+        Tue, 22 Jul 2025 02:24:43 -0700 (PDT)
+Received: from nsa ([89.40.212.7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca2bac1sm12944186f8f.25.2025.07.22.02.24.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jul 2025 02:24:43 -0700 (PDT)
+Date: Tue, 22 Jul 2025 10:24:56 +0100
+From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, 
+	Matt Ranostay <mranostay@gmail.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] iio: temperature: maxim_thermocouple: use DMA-safe
+ buffer for spi_read()
+Message-ID: <pj2pzpd33covkhi2ho3nsoazqqqpfeiy6n42fkmada6drpr6bj@2dm4iqxdhotj>
+References: <20250721-iio-use-more-iio_declare_buffer_with_ts-3-v2-1-0c68d41ccf6c@baylibre.com>
+ <bd5c1587-c830-40e6-90d5-be7fad215cef@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCHURIaXH9oCzBnBA--.21969S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxZry8Kr4rAw17tF1xuF1kuFg_yoW5Ar1DpF
-	s8Cw12yw4rWFn8K3ykta4Iga4F9a10qw4Uta4Igw48AF17Xryjq3Z2yF1UXF10yFsrCay2
-	yrWYvrn7C34jy37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
-	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+In-Reply-To: <bd5c1587-c830-40e6-90d5-be7fad215cef@baylibre.com>
 
-From: Chen Ridong <chenridong@huawei.com>
+On Mon, Jul 21, 2025 at 06:06:39PM -0500, David Lechner wrote:
+> On 7/21/25 6:04 PM, David Lechner wrote:
+> > Replace using stack-allocated buffers with a DMA-safe buffer for use
+> > with spi_read(). This allows the driver to be safely used with
+> > DMA-enabled SPI controllers.
+> > 
+> > The buffer array is also converted to a struct with a union to make the
+> > usage of the memory in the buffer more clear and ensure proper alignment.
+> > 
+> > Fixes: 1f25ca11d84a ("iio: temperature: add support for Maxim thermocouple chips")
+> > Signed-off-by: David Lechner <dlechner@baylibre.com>
+> > ---
+> > Changes in v2:
+> > - This is a new patch since when looking at it again, I noticed a bug
+> >   with passing stack-allocated memory to spi_read(). So now the primary
+> >   purpose is a fix and converting the array to a struct comes free with
+> >   it.
+> > - Link to v1: https://lore.kernel.org/r/20250711-iio-use-more-iio_declare_buffer_with_ts-3-v1-1-f6dd3363fd85@baylibre.com
+> > ---
+> >  drivers/iio/temperature/maxim_thermocouple.c | 26 ++++++++++++++++----------
+> >  1 file changed, 16 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/drivers/iio/temperature/maxim_thermocouple.c b/drivers/iio/temperature/maxim_thermocouple.c
+> > index cae8e84821d7fd521d59432580d51def939fa4d1..fa648a6542a4e2f08adb556c776b68331ae69631 100644
+> > --- a/drivers/iio/temperature/maxim_thermocouple.c
+> > +++ b/drivers/iio/temperature/maxim_thermocouple.c
+> > @@ -11,6 +11,7 @@
+> >  #include <linux/module.h>
+> >  #include <linux/err.h>
+> >  #include <linux/spi/spi.h>
+> > +#include <linux/types.h>
+> >  #include <linux/iio/iio.h>
+> >  #include <linux/iio/sysfs.h>
+> >  #include <linux/iio/trigger.h>
+> > @@ -121,8 +122,15 @@ struct maxim_thermocouple_data {
+> >  	struct spi_device *spi;
+> >  	const struct maxim_thermocouple_chip *chip;
+> >  	char tc_type;
+> > -
+> > -	u8 buffer[16] __aligned(IIO_DMA_MINALIGN);
+> > +	/* Buffer for reading up to 2 hardware channels. */
+> > +	struct {
+> > +		union {
+> > +			__be16 raw16;
+> > +			__be32 raw32;
+> > +			__be16 raw[2];
+> > +		};
+> > +		aligned_s64 timestamp;
+> > +	} buffer __aligned(IIO_DMA_MINALIGN);
+> >  };
+> >  
+> >  static int maxim_thermocouple_read(struct maxim_thermocouple_data *data,
+> > @@ -130,18 +138,16 @@ static int maxim_thermocouple_read(struct maxim_thermocouple_data *data,
+> >  {
+> >  	unsigned int storage_bytes = data->chip->read_size;
+> >  	unsigned int shift = chan->scan_type.shift + (chan->address * 8);
+> > -	__be16 buf16;
+> > -	__be32 buf32;
+> >  	int ret;
+> >  
+> >  	switch (storage_bytes) {
+> >  	case 2:
+> > -		ret = spi_read(data->spi, (void *)&buf16, storage_bytes);
+> > -		*val = be16_to_cpu(buf16);
+> > +		ret = spi_read(data->spi, &data->buffer.raw16, storage_bytes);
+> > +		*val = be16_to_cpu(data->buffer.raw16);
+> >  		break;
+> >  	case 4:
+> > -		ret = spi_read(data->spi, (void *)&buf32, storage_bytes);
+> > -		*val = be32_to_cpu(buf32);
+> > +		ret = spi_read(data->spi, &data->buffer.raw32, storage_bytes);
+> > +		*val = be32_to_cpu(data->buffer.raw32);
+> >  		break;
+> >  	default:
+> >  		ret = -EINVAL;
+> > @@ -166,9 +172,9 @@ static irqreturn_t maxim_thermocouple_trigger_handler(int irq, void *private)
+> >  	struct maxim_thermocouple_data *data = iio_priv(indio_dev);
+> >  	int ret;
+> >  
+> > -	ret = spi_read(data->spi, data->buffer, data->chip->read_size);
+> > +	ret = spi_read(data->spi, &data->buffer.raw, data->chip->read_size);
+> 
+> Compile check didn't catch this. Need to drop the &.
+> data->buffer.raw is already an array.
 
-A hung task can occur during LTP cgroup testing when repeatedly
-mounting/unmounting perf_event and net_prio controllers with
-systemd.unified_cgroup_hierarchy=1. The hang manifests in
-cgroup_lock_and_drain_offline() during root destruction.
+Neither did I :). I should have looked into this email __before__ (and
+not after) sending my tag. Anyways, consider the tag with the above
+fixed.
 
-Call Trace:
-	cgroup_lock_and_drain_offline+0x14c/0x1e8
-	cgroup_destroy_root+0x3c/0x2c0
-	css_free_rwork_fn+0x248/0x338
-	process_one_work+0x16c/0x3b8
-	worker_thread+0x22c/0x3b0
-	kthread+0xec/0x100
-	ret_from_fork+0x10/0x20
+- Nuno Sá
 
-Root Cause:
-
-CPU0                            CPU1
-mount perf_event                umount net_prio
-cgroup1_get_tree                cgroup_kill_sb
-rebind_subsystems               // root destruction enqueues
-				// cgroup_destroy_wq
-// kill all perf_event css
-                                // one perf_event css A is dying
-                                // css A offline enqueues cgroup_destroy_wq
-                                // root destruction will be executed first
-                                css_free_rwork_fn
-                                cgroup_destroy_root
-                                cgroup_lock_and_drain_offline
-                                // some perf descendants are dying
-                                // cgroup_destroy_wq max_active = 1
-                                // waiting for css A to die
-
-Problem scenario:
-1. CPU0 mounts perf_event (rebind_subsystems)
-2. CPU1 unmounts net_prio (cgroup_kill_sb), queuing root destruction work
-3. A dying perf_event CSS gets queued for offline after root destruction
-4. Root destruction waits for offline completion, but offline work is
-   blocked behind root destruction in cgroup_destroy_wq (max_active=1)
-
-Solution:
-Move cgroup_lock_and_drain_offline() to the start of unmount operations.
-This ensures:
-1. cgroup_lock_and_drain_offline() will not be called within
-   cgroup_destroy_wq context.
-2. No new dying csses for the subsystem being unmounted can appear in
-   cgrp_dfl_root between unmount start and subsystem rebinding.
-
-Fixes: 334c3679ec4b ("cgroup: reimplement rebind_subsystems() using cgroup_apply_control() and friends")
-Reported-by: Gao Yingjie <gaoyingjie@uniontech.com>
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
----
- kernel/cgroup/cgroup.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index 312c6a8b55bb..7a71410b350e 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -1346,8 +1346,7 @@ static void cgroup_destroy_root(struct cgroup_root *root)
- 
- 	trace_cgroup_destroy_root(root);
- 
--	cgroup_lock_and_drain_offline(&cgrp_dfl_root.cgrp);
--
-+	cgroup_lock();
- 	BUG_ON(atomic_read(&root->nr_cgrps));
- 	BUG_ON(!list_empty(&cgrp->self.children));
- 
-@@ -2336,6 +2335,7 @@ static void cgroup_kill_sb(struct super_block *sb)
- 	 *
- 	 * And don't kill the default root.
- 	 */
-+	cgroup_lock_and_drain_offline(&cgrp_dfl_root.cgrp);
- 	if (list_empty(&root->cgrp.self.children) && root != &cgrp_dfl_root &&
- 	    !percpu_ref_is_dying(&root->cgrp.self.refcnt))
- 		percpu_ref_kill(&root->cgrp.self.refcnt);
--- 
-2.34.1
-
+> 
+> 
+> >  	if (!ret) {
+> > -		iio_push_to_buffers_with_ts(indio_dev, data->buffer,
+> > +		iio_push_to_buffers_with_ts(indio_dev, &data->buffer,
+> >  					    sizeof(data->buffer),
+> >  					    iio_get_time_ns(indio_dev));
+> >  	}
+> > 
+> > ---
+> > base-commit: cd2731444ee4e35db76f4fb587f12d327eec5446
+> > change-id: 20250711-iio-use-more-iio_declare_buffer_with_ts-3-2cc387a66bdc
+> > 
+> > Best regards,
+> 
 
