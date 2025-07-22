@@ -1,92 +1,72 @@
-Return-Path: <linux-kernel+bounces-740014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE992B0CE9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 02:09:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7BC3B0CEA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 02:13:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 837576C1F40
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 00:09:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DB1B545C68
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 00:13:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC927440C;
-	Tue, 22 Jul 2025 00:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 697771876;
+	Tue, 22 Jul 2025 00:13:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TdKkbVnO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FiQiIz8P"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 138EBA32;
-	Tue, 22 Jul 2025 00:09:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C27097F9;
+	Tue, 22 Jul 2025 00:13:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753142988; cv=none; b=sZomCSsdmBWPVRFx44+oZGs9ywH6aY9/ZwQ1zOOiQsOXyVvqSPZ9cCc9IB36bu3X4wMtcaaDP1WXh/ZuUqPEoHIw5QZLqUY/PxxMgXcmbgITDQP5A++MAzeAMwvkRNujdrm9k3QqmcQ5Ql+TTyrHp3z1DTlLDEiDWcWmEHTfMuE=
+	t=1753143219; cv=none; b=o2PhcBlL6Jh283gNK1LtgZj9HcgwpwRG0QfcM8YpifsvOMCMRk40jO5rv2kqaeuckKTBKH7cnt6X0atY/TxeKsl5cOxSLlb96fcfrpYz75fJbvJVqP4Ed9lq+1JfELyWplTIn4MGl6389LUEvLsBas2Z2FkHmd+/q1mbRg0VOjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753142988; c=relaxed/simple;
-	bh=xElt16jMokiTAI4pjYxxd+MfCABOTQfiea9gnreY4rQ=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=BZ4UJLgTt1b3Yyib3lWF2V7HI0rSMC4YJzBkfzFHyz3iMLeQ1KmMxo6zYhJvDb2dZbMnyn3kFpSKhMbaCxk+SzBwalVajzjc/AAYq3EjFJ61lZE55W2rF8oh6V6ARoQhZB1Ua71T7BYbXnpoV6tPBltDfKiaZF+ONmAnWcAnbf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TdKkbVnO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88B1CC4CEED;
-	Tue, 22 Jul 2025 00:09:47 +0000 (UTC)
+	s=arc-20240116; t=1753143219; c=relaxed/simple;
+	bh=C4dC6WGf35fUs4kvD2XDKyOabQB1kXDVHpeKt0kWxFo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=i1N0I9ZXFqNabTz7b2bBagnoB0PDAPRU2d1i5dw9nQzLF29pggESgpmNcwnFHLAtv7PseUFZJ0ROpNdQgVKAINggX7qarevB6UUt5nlw4eOlMHI13vDv6ci8UbNEzQl9eF0E5X0fUoZBJ1+C4grfoY8WkZztAllyATLGA+mpP4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FiQiIz8P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F472C4CEED;
+	Tue, 22 Jul 2025 00:13:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753142987;
-	bh=xElt16jMokiTAI4pjYxxd+MfCABOTQfiea9gnreY4rQ=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=TdKkbVnO5k8mQ3T95tpqRJOJnH/U5+/6TPCe85wRr8ykhYyahriykx6TgIOQITbmJ
-	 y7oATVd2m4mqQ5OC0If0Wa19NT/pGnGszK8AQxA2nITbhs9BOIpfcx8+pnVw5y1hkR
-	 uEM7Vk/roNeKYCiWieZMJebD6+2JHyio0utWuvp6PW7gKACWByykuu7FPmbhD30uYt
-	 7wEIebJGT9K4Ep7B1n4F0VBytGipBV5CE5BUbbahnAQMUsrM5PgNTPKoZ0yS+mY2+5
-	 60DQK4chPtK3WnsqosXv08A5zz0B4GdNMSNjiA79p7ONSb1+Z1BvzWwOoRWS5I+6TJ
-	 ipI5NFCaAjcog==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E21383B267;
-	Tue, 22 Jul 2025 00:10:07 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1753143215;
+	bh=C4dC6WGf35fUs4kvD2XDKyOabQB1kXDVHpeKt0kWxFo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FiQiIz8PuivLGxssxlUtyn84n66QIAeUpERhXMdUDUohbcTTZ6JnH5DcjVP2U++GO
+	 RquEhgk+SP9a2hkZyIqCJcXPH/ZsU8PXv2HTY9D/ZGVK6f2XnCrc8QaeF40AQ5tZPq
+	 h1YLF71HuCQW+vIUBvH3z1QdbKF/k+GuUdmuUYZhzllBtEMSl0AzbtR6wZsPn/9mXH
+	 mNARm72W6e/IAl9/XEpKUEk2Pd26RG0CIdzmvWDdSTyjNdGVkTpN1Di8vyFJGkNw0t
+	 N6cAD4Uekjo7+Owtsl/9c4JAWXjaF6EY5rtyJwkwF/It+CyHNP2DdhX6hHuAZicuW6
+	 eIbCjd9QpIUAg==
+Date: Mon, 21 Jul 2025 17:13:33 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: <fan.yu9@zte.com.cn>
+Cc: <edumazet@google.com>, <ncardwell@google.com>, <davem@davemloft.net>,
+ <dsahern@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
+ <kuniyu@google.com>, <rostedt@goodmis.org>, <mhiramat@kernel.org>,
+ <mathieu.desnoyers@efficios.com>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+ <yang.yang29@zte.com.cn>, <xu.xin16@zte.com.cn>, <tu.qiang35@zte.com.cn>,
+ <jiang.kun2@zte.com.cn>, <qiu.yutan@zte.com.cn>, <wang.yaxin@zte.com.cn>,
+ <he.peilin@zte.com.cn>
+Subject: Re: [PATCH net-next v7 RESEND] tcp: trace retransmit failures in
+ tcp_retransmit_skb
+Message-ID: <20250721171333.6caced4f@kernel.org>
+In-Reply-To: <20250721111607626_BDnIJB0ywk6FghN63bor@zte.com.cn>
+References: <20250721111607626_BDnIJB0ywk6FghN63bor@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2] net: appletalk: Fix use-after-free in AARP proxy probe
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175314300625.238860.12795177023377657376.git-patchwork-notify@kernel.org>
-Date: Tue, 22 Jul 2025 00:10:06 +0000
-References: <20250717012843.880423-1-hxzene@gmail.com>
-In-Reply-To: <20250717012843.880423-1-hxzene@gmail.com>
-To: Kito Xu (veritas501) <hxzene@gmail.com>
-Cc: kuba@kernel.org, Yeking@Red54.com, davem@davemloft.net,
- edumazet@google.com, horms@kernel.org, linux-kernel@vger.kernel.org,
- mingo@kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
- tglx@linutronix.de
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello:
+On Mon, 21 Jul 2025 11:16:07 +0800 (CST) fan.yu9@zte.com.cn wrote:
+> Subject: [PATCH net-next v7 RESEND] tcp: trace retransmit failures in tcp_retransmit_skb
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Thu, 17 Jul 2025 01:28:43 +0000 you wrote:
-> The AARP proxy‐probe routine (aarp_proxy_probe_network) sends a probe,
-> releases the aarp_lock, sleeps, then re-acquires the lock.  During that
-> window an expire timer thread (__aarp_expire_timer) can remove and
-> kfree() the same entry, leading to a use-after-free.
-> 
-> race condition:
-> 
-> [...]
-
-Here is the summary with links:
-  - [v2] net: appletalk: Fix use-after-free in AARP proxy probe
-    https://git.kernel.org/netdev/net/c/6c4a92d07b08
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Why did you resend this??
 
