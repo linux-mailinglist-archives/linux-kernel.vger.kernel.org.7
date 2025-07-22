@@ -1,82 +1,121 @@
-Return-Path: <linux-kernel+bounces-740579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1715CB0D5FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:29:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A9ACB0D5FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:29:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B1073B3E3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:28:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF116547D0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ABCB2DCC1A;
-	Tue, 22 Jul 2025 09:29:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031042DCF47;
+	Tue, 22 Jul 2025 09:29:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="epOLk3cq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WdQtm57j";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="S9rb3WN5"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F242BEFE3;
-	Tue, 22 Jul 2025 09:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90652DCBEC;
+	Tue, 22 Jul 2025 09:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753176552; cv=none; b=ckuSjqgAS8RqjwuTaLU4e9XHKSp9HwwV9pBaN6DG7YCIjxd3BeeYzkJUt86zHtRcWqhxNQSW0pW71jTrIM8M5MWgNe64517a0/2rLN2QtJzHq94CBn5/+E+sgNJ0VewNbnE+gNVuoNWSTZX6suLhAnQgwAflVd059eMhQ6wXQaQ=
+	t=1753176570; cv=none; b=C+8eNXO9dVbPAq6Tep9hFrZfHrsSyfKQbNAek0PQ7YdxSBP5DDPOwnbdHD3qVW7yjEWNLJsUZDlR5CQWCUxLqsQeXRoxncg9pBoI9eHOdxIwzUqVdp4iNGxbnQtMte/8JPOSg8NeVSroHiUBx6bC3X9IBxTWgGbAfHy8o2dn514=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753176552; c=relaxed/simple;
-	bh=enVP14U28hE+PnqiYzRdLrXgVSE41+FcW7F4HH/TMug=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=D5NakjeSRobNl2zQis9f9E3ib7Ufa28LMOu+Maa5hPLsUP6rPLFCVjEip9VG0rjDS3fNA9rCzIXP9Z+Tcshgb3mn6eepURhSX3/nQKL2gB9tywPNiDSmPDYQXLyQnCeYHFji3Bijz6CJhxE2Uw8lGaujJxTFhTX864Sqx6RSDpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=epOLk3cq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79EFCC4CEEB;
-	Tue, 22 Jul 2025 09:29:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753176552;
-	bh=enVP14U28hE+PnqiYzRdLrXgVSE41+FcW7F4HH/TMug=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=epOLk3cqY1C1/UIHczxHBajXBQ7VAK5QENDgP7SOlW3GcnU7EDU9dsqQ+DMvpiTd6
-	 40R4RWsysPr4dEkLSRwobE22Z2CLghn529FXtvOftLptOlOjLxEA3CowZVyw921Vmk
-	 W94sIIEuarC5f0ixcqjJCAKeDR4Jho+YWoe/EoXUlTq5LPqeX9mtjPdmkgbFw7+ZHl
-	 wGoRcmiDDHHJaW6aKhKmq99ZXGiiAauy9fptjv4AproU/f3ZOZ38D1ge5e4Q29UcGo
-	 a0WoE0b5I+WGWFItv3SZ4ILXV1ls4mG8jTPTfLgj3tn0HYfrjY7D1bmRPd7dLvHMt2
-	 81V/qu8lhw8fA==
+	s=arc-20240116; t=1753176570; c=relaxed/simple;
+	bh=dpvoSwf+sTIPvv23actFJfg1YhNNuo4V8BfYc+jojnY=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=p7j7a2r8qqTl9KtyQQue+mS1pyasLws8z7dTti+xzIiClGFJcPy/RZnFk/+wFRc9FBk4+7fDppHFAtVKDgAnA5kzFp8MIcO6g82lpPnE97ANX9bfqLKuFNC5OcVXErBy+bYdwyULJGP9QmeG5o8UZH5Fvp5FALGeDLFCSud5tKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WdQtm57j; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=S9rb3WN5; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 22 Jul 2025 09:29:25 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1753176566;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qh/PDDSJ/kPRKma5VsJ5bV8KcMM+faYORFyeh6rjU0Y=;
+	b=WdQtm57jXWfn+Z6o6yzMvOhKQhLXh6bZvbvWvExCQ9VXnreuyQnxI4ubbK2UjrZcTwKJsz
+	ml3NRSY+vOTiTGFnZqNkDCrUWoaIVVM/C9TjW/Wp+izpIwt0YnoNQNKgALnZQyqzlghFnX
+	dtGrv2+/drHZ8qRCDxzyYKUs39mQziwBUHDzFs9+Kw9F2nF837LPv0n2VOXj15mBQeMswe
+	iy5cLV0czeIIj7rG1DzmzyJS2TgumssekLX450T4AJBkMWIlR5NyUp5dNaySD1iU+AVDaf
+	OTwQirU20Sbd0NyFgGS2E1un/E1Naq3TAfxPSpxqrBW8kYFWG5agk0k4d8RufQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1753176566;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qh/PDDSJ/kPRKma5VsJ5bV8KcMM+faYORFyeh6rjU0Y=;
+	b=S9rb3WN5pa2Nya0x546zb07BfWfec6q+H3CZKS5l+HCmsknP1dYQ8WLzg/Tfvc/49/HjCF
+	I5UUAQol7nmFGwAw==
+From: "tip-bot2 for Colin Ian King" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: locking/futex] selftests/futex: Fix spelling mistake
+ "Succeffuly" -> "Successfully"
+Cc: Colin Ian King <colin.i.king@gmail.com>,
+ Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250715130627.1907017-1-colin.i.king@gmail.com>
+References: <20250715130627.1907017-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Message-ID: <175317656537.1420.8667684723514409693.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 22 Jul 2025 11:29:07 +0200
-Message-Id: <DBIH7VEMJY0E.4KMGP0KSLZHG@kernel.org>
-Subject: Re: [PATCH 1/2] rust: io: fix broken intra-doc link to missing
- `flags` module
-Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <patches@lists.linux.dev>
-To: "Miguel Ojeda" <ojeda@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250722085500.1360401-1-ojeda@kernel.org>
-In-Reply-To: <20250722085500.1360401-1-ojeda@kernel.org>
 
-On Tue Jul 22, 2025 at 10:54 AM CEST, Miguel Ojeda wrote:
-> There is no `mod flags` in this case, unlike others. Instead, they are
-> associated constants for the `Flags` type.
->
-> Thus reword the sentence to fix the broken intra-doc link, providing
-> an example of constant and linking to it to clarify which ones we are
-> referring to.
->
-> Fixes: 493fc33ec252 ("rust: io: add resource abstraction")
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+The following commit has been merged into the locking/futex branch of tip:
 
-Thanks for catching this and the other documentation warning.
+Commit-ID:     e40892214b454c8734350d82374f46c2e495a4d2
+Gitweb:        https://git.kernel.org/tip/e40892214b454c8734350d82374f46c2e49=
+5a4d2
+Author:        Colin Ian King <colin.i.king@gmail.com>
+AuthorDate:    Tue, 15 Jul 2025 14:06:26 +01:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Tue, 22 Jul 2025 11:18:43 +02:00
 
-Applied to driver-core-testing, thanks!
+selftests/futex: Fix spelling mistake "Succeffuly" -> "Successfully"
+
+There is a spelling mistake in a ksft_exit_fail_msg() message. Fix it.
+
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20250715130627.1907017-1-colin.i.king@gmail=
+.com
+
+---
+ tools/testing/selftests/futex/functional/futex_priv_hash.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/testing/selftests/futex/functional/futex_priv_hash.c b/too=
+ls/testing/selftests/futex/functional/futex_priv_hash.c
+index a9cedc3..aea001a 100644
+--- a/tools/testing/selftests/futex/functional/futex_priv_hash.c
++++ b/tools/testing/selftests/futex/functional/futex_priv_hash.c
+@@ -122,7 +122,7 @@ static void futex_dummy_op(void)
+ 	}
+ 	ret =3D pthread_mutex_timedlock(&lock, &timeout);
+ 	if (ret =3D=3D 0)
+-		ksft_exit_fail_msg("Succeffuly locked an already locked mutex.\n");
++		ksft_exit_fail_msg("Successfully locked an already locked mutex.\n");
+=20
+ 	if (ret !=3D ETIMEDOUT)
+ 		ksft_exit_fail_msg("pthread_mutex_timedlock() did not timeout: %d.\n", ret=
+);
 
