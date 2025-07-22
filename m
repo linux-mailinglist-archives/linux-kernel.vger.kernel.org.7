@@ -1,150 +1,210 @@
-Return-Path: <linux-kernel+bounces-741419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39DFEB0E3D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 21:05:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39587B0E3DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 21:06:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60BE0566DE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:05:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F1615675DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:06:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF002836BE;
-	Tue, 22 Jul 2025 19:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A9D28314C;
+	Tue, 22 Jul 2025 19:06:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MUxoL7Yr"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="B8og0IIM"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3037A27F18B
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 19:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C1C244679
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 19:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753211145; cv=none; b=u0a5kG7WG8/MWvVHJUccnZ7ypWjLg610JZT4mz1tOJHdX2o0VsOewI3/WUzl0foBUJgekR+ob/kUCrM1QYLiEmcrObKkK0FdR16/Jc46J4/PYMy4vtuupV2zaz3cKvjf7AXykq/Mv0+4u/TyUsLR+N7TnakO/OTlrXy1XgTNxqk=
+	t=1753211213; cv=none; b=Bo81NNfWyMr5llr7ltKGPVyYTlEtoAXB5mPD8Y6tQuUUqcM58ivxmrBBzHbTNH+7GyFepRCye2QYXpyBkIu6C49GmnNyr2Eg8rNf87Zvwbs6FC1QksSQ+UdY7BPYpGM7fq2RjekXOtq6W002n+3YcfbFvzJJ7+n1vonXLBjHb2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753211145; c=relaxed/simple;
-	bh=xZlxAmn3kRUUxhK5EyFi4gKntDMk5ctn9fLRRBn2z/4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q3BNTrmE19CNJRNk+OLAP1EWIFZqMa5BuLEd/kf4B3xGUeR702E6Rr0SDpeC/NFb2KnuMsABvbvVlnqFIDZKD8wsdhLv3th1YGCmkTh9AUt9DJCta/kX8FcZy+p2Jw5zz8emZCAvIdsewcUgenU4hlWaGRQMH5PC4qWvjv+H80w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MUxoL7Yr; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56MAFSWN016289
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 19:05:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=P2+6l4qAfd3G8OT0Vp0C7LdE
-	m1O9SDlPysbdkSzFPqg=; b=MUxoL7Yr83E+66mLMhAAylNYCqeVBssfMOlrmT4S
-	aAbjRbfxz0+QE7G2I3hT8WVzhyN9cIyCDNOlDGs8qUjrVHsHNB5+SznDuCxI/NmL
-	D8YY8gq4AZtUpYzHJTaGtePF+jv6xZ5d1syLl53KWwgNcji7lUHHw0idozwBbuOX
-	I2SoEvbhgHHIBUnySrmJzzSWEpJPfGR4pgOFRK+PXzvnsfBHHEt01U9VozkdoRe3
-	uF6uGBnVid5pHvfGaUDSgZ3NBB8N801sBD5eyPE67oHK3FL230RT//0e1GJt0tAs
-	GYh4r5vWb5o+UmzGzOC6eRLhVpeXtmYOph5AAFLw4kvXuw==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48048s2pkh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 19:05:42 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c790dc38b4so34723085a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 12:05:42 -0700 (PDT)
+	s=arc-20240116; t=1753211213; c=relaxed/simple;
+	bh=XkgNOqeuinuA5Mk7YTu58TDMc+OUok+0JFwRFKjQetY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=BSJuXV2xyBDKBKywPC3FQcHX2SvH7M8cgHRHuZGbKFktuat00vDgAMyFHOTnW/IvEXtGksYODPmiIX+/SFGljAtB3OHZPL8U7t2bFDr6Y7qiZljjXD9PEwJJrpyvp4itel7g8tc02KYg8PA3nidvbBQ0Q2DAdcaNqClIlW+dNS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=B8og0IIM; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e8bcbe46cf1so5518647276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 12:06:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1753211210; x=1753816010; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=uNrRwgfrTvGU24RYMFx+vtCK7Bks5pGUToQFKmLgYyw=;
+        b=B8og0IIM4Ric8O/vn/tjsa069+Gg4S44wftEK8N6JIhVNL/x7djZgXesYwIRgcxmYa
+         dBcW99GxPiyS960Fxxz5J/Z0WBtWUWet/RCSLm2WbVnz8/Li0bSjL9s30hQlssjsQi64
+         nZhpt8fjHDX9cZaJDncRf8hQGesnjOGYKUDVVSMaAi0a808/QAuVyjCWtNpHQJ52E3zM
+         cmvGLar/vQrN8AD2kOc/9vnQue9/TH/ZE++JJ6VxfVlgLGP9AizJjXN3FsGKy7vys5/W
+         kn1T3FB3KOprazfYjFKokbne0Hp3H9HEE5oxLhvtFR2+qfxA9ksldte8hfHEF3SAl8vK
+         +DtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753211142; x=1753815942;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P2+6l4qAfd3G8OT0Vp0C7LdEm1O9SDlPysbdkSzFPqg=;
-        b=THbgXSTgJwbKiSQkUYwbb5kgQS8k7EiV6u8TNeGQiDFdc+G0cYQ9tpF5yd9abae0QN
-         c1tBiogcsJElo8/eC6DqcqH2AbR6QyO/X6+YLNjaqjuMn74uaTNIsqMs+jVIji6PX3BG
-         z7kaLC0+a98aNdV4vtotSLEPFv3J44D9W3HJepREfYmTlOjHIbss8HNjszUlP7QBr9Nu
-         AkGagprbeKW93Lt3csTHHD0nh1143uPoTQU9rsGGAKWqJKJvHWY3ztU2CqAB+9t6V9Cj
-         Z7z7mTjarUldyG4ZCLEfwA/05vC/SdixJa2rDe461Z36j6i3beo8YP+AT3bFqpw46apT
-         LgBg==
-X-Forwarded-Encrypted: i=1; AJvYcCUwReQfcpja2cP777YBzzUosYliZIS+f4/I0vD6++q9TX/kW6f5re74eRxqstqaH1SLpt685JbpClwuF5o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3MADAPI+K1tyMlmFE86MEQYbVkG9yMVmPuyosadEWRJWs757P
-	3jnqJdZxkKAkwmICSu6YMDdhxDmUewgVfTs36zzSxU+zmzKNyImWCRzjblzpEcBCpGiJclsYMLa
-	GIbsYnlMhWKR39UYkNMpti7Mqe9BvCO+fPAc9Qt53IUIXyMOT06gI/F06L0HHI9OokQA=
-X-Gm-Gg: ASbGncu0ecuiJXNUcAoLvmTh5UO8xcY6AN29EamAsLBMyt2qlHXbzT+ZhFAP4Q4zUfK
-	ay4T79u7ernlHOdoYP4ggrvIWREWz0sA0Lx5Z0xBlydHEg7YBsw1iBV8KrX3dYoi5fqynXJ8M4U
-	uPhisynNuZHxIQ4Lvp5fXMIPDqt5D1XG0WrsDX4mh3oLsiUwxLvsOOIfoCtbEopqfN2zMUcMuep
-	/ui/muG+8lhizwHBT0+SjA+GuPLShH+y3qT5OKclnXhmKyLkGWjtFZOT5CLeiYzdykOGq+LV8fm
-	5OxHiwILEAGOL5eZhgBWr/sN/pPiaSWJgN073YHwkwRTcB1mNy5GSaV5oFm3JoB9l06V+xrO8W2
-	XJkAUJA+BEvTprR6GwWoH4go1bI6OoDOoubE5aNJV0b1JKBNlT6Km
-X-Received: by 2002:a05:620a:7004:b0:7e1:aeab:41b6 with SMTP id af79cd13be357-7e62123d2admr639044985a.18.1753211141800;
-        Tue, 22 Jul 2025 12:05:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEnWw82SLv09ir9ZtrixO/tE940fX1DelTTNbNTu76eCwjlOF98H3Zx1i+G/fDCf6mx0HVYLg==
-X-Received: by 2002:a05:620a:7004:b0:7e1:aeab:41b6 with SMTP id af79cd13be357-7e62123d2admr639040285a.18.1753211141325;
-        Tue, 22 Jul 2025 12:05:41 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55a31aba0f7sm2051200e87.83.2025.07.22.12.05.40
+        d=1e100.net; s=20230601; t=1753211210; x=1753816010;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uNrRwgfrTvGU24RYMFx+vtCK7Bks5pGUToQFKmLgYyw=;
+        b=AYChdOtvJoDJ9maiEplcl1zlKSBgc7rXN4Kvio7IFONN2x7pWUpvknMqBUFUQDMm0e
+         Lx9xetqC/bJTF3v6gBdZ/nEJ/VOM52vYz2GQ2cjpVA9Hfh6FmBGycaRcLq465ozL+Kfs
+         AlEcT9bO+Xapnx0WCKiasEk/L7psV6cj/JzojNR5/9QleY45Co9qjIlwG76j9+DQohRP
+         65F8udjAE9wRLAqSwj3PbGYslBWORcVQ0Hiwnpq191+fysFWrtJGXZS+2ILZnGi/kVwT
+         CdqQd5tJLhB8AIUryCDTgT9VNu+c82klSnWaezIzuv1V7JGt5eMtTNXlUKFxgfoj5LQl
+         w/2g==
+X-Forwarded-Encrypted: i=1; AJvYcCWPjUZprhfL6CUnp4mxUufyW5ce7BckQo/cB8t+4yq+xXto859R8EspGISxm1EnvIONbF7nWdym9QNN4Uo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkBRVytEN8qy/Xbp8OulU/ckm+HoNftNbPciP4ZXSR/gWd3L+a
+	s9snG2c5JZEVsE1NXm5YkuA1H1UNRAboRTkVjmjJmS2Nkee55SFBPP0KjR9+HhiYIZs=
+X-Gm-Gg: ASbGncuzIS7k6Pj/TW6BcshQKgVnadGZhBJDEcCMEgatzNq1drWg1HR/O/g5FhxLQvD
+	sXXZkZSiiHUIs30y9UdV6sSoSlFpzWa/uVDOh3N/AgKDskBru+KDSBuVFyUL72UFyh1N3GM0XSr
+	Oq+JL8PYgT2uAdzYYenoFtkC8JdHuFP/plgzwSjTfaajn5kX2DvNVdah3iazQIcQ7UQYyMmgjSG
+	lFe4JGJWMbKKDZEN8PchCM4U/LXdLsGVRi6OhvLrDTsv/fXNts31D2tW7e3wtlLnDKVLFTwNLyd
+	+LZLoo1/IkY9H/pd6WzEtONYGEp86Cyvve3T/75EUDpdfXPZP6QOivSsClq9/+JAONZ7/ImZTMS
+	5+qPhScp5GoyGHWAe7Isa0hEk1n1JR77XZYWGEKwUDkkQfDI5E5lpKLYzQP152tRK00X5Ig==
+X-Google-Smtp-Source: AGHT+IEn/sE6hOTjO9tJda5VfgVU+BKH2F4YuyVHg6w0FevhwE3sckHH4CjS4w11cEPc8Wi2Y8Cjgg==
+X-Received: by 2002:a05:6902:460f:b0:e81:e494:eee0 with SMTP id 3f1490d57ef6-e8dc5a25bf8mr501347276.27.1753211210167;
+        Tue, 22 Jul 2025 12:06:50 -0700 (PDT)
+Received: from ?IPv6:2600:1700:6476:1430:7b5e:cc7f:ebd6:8d83? ([2600:1700:6476:1430:7b5e:cc7f:ebd6:8d83])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e8d7ce572b2sm3372391276.38.2025.07.22.12.06.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 12:05:40 -0700 (PDT)
-Date: Tue, 22 Jul 2025 22:05:38 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Brigham Campbell <me@brighamcampbell.com>
-Cc: dianders@chromium.org, tejasvipin76@gmail.com,
-        diogo.ivo@tecnico.ulisboa.pt, skhan@linuxfoundation.org,
-        linux-kernel-mentees@lists.linux.dev, dri-devel@lists.freedesktop.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Subject: Re: [PATCH v6 3/4] drm: Remove unused MIPI write seq and chatty
- functions
-Message-ID: <46h32rtuyamdvg36wegmi5fonfg6o6gau2ek377mhumscd4k57@3mw47znxnj7p>
-References: <20250722015313.561966-1-me@brighamcampbell.com>
- <20250722015313.561966-4-me@brighamcampbell.com>
+        Tue, 22 Jul 2025 12:06:49 -0700 (PDT)
+Message-ID: <a9296e54612d5f23c4e4acc671916f2f81a03e1f.camel@dubeyko.com>
+Subject: Re: [PATCH v4 2/3] hfs: correct superblock flags
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: Yangtao Li <frank.li@vivo.com>, glaubitz@physik.fu-berlin.de
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 22 Jul 2025 12:06:48 -0700
+In-Reply-To: <20250722071347.1076367-2-frank.li@vivo.com>
+References: <20250722071347.1076367-1-frank.li@vivo.com>
+	 <20250722071347.1076367-2-frank.li@vivo.com>
+Autocrypt: addr=slava@dubeyko.com; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250722015313.561966-4-me@brighamcampbell.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDE2MyBTYWx0ZWRfX5WMjk+C2Xu5w
- PXjjy2Hi+lKmS5rC0F+/ShlSRJ8IYhIotqgqLOlKla2nNVqeZlVJOB3TY8gA7pd1Fj3mpYPgE+B
- Gw3o9I/f1o/hD9ay2QAogP1290yz/Hq+cNZ3/XFEPiIF2xL0W3w/bxBe5dAdhqionFXM9n4xLOu
- NxPZvV5rzurpSFj3MkQK92HkuEiDv8xMzkMUvVAoNv797R5XcA9xWhqdOAzhF2TRyWCaCPxdYle
- KAOdiSQQddvnFabVN9HicmxLCfpf32D4zQMcdEXioMceH/BCxhORtqYhVM/bHKWYTfZpdO/vPI0
- tfNNkNsL2rS2ZQzSfphqhq90m5/DAzz5HcimBoLOXhDmaoFCLTvlX0JiV/rg6hF49eOOJRMRYUm
- 52cRD3PCVdkfmRtgjp20Mn6VnKnmN/dXPHv5yniTSE4WenVIWFq6eP2MbbmS72ZyHUhmthCH
-X-Proofpoint-ORIG-GUID: -HVjffnO5A4WRIx_G9qsJuIDifMn8PE2
-X-Proofpoint-GUID: -HVjffnO5A4WRIx_G9qsJuIDifMn8PE2
-X-Authority-Analysis: v=2.4 cv=OPUn3TaB c=1 sm=1 tr=0 ts=687fe106 cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=Wb1JkmetP80A:10 a=cm27Pg_UAAAA:8 a=wukD7SXyAAAA:8 a=EUspDBNiAAAA:8
- a=BQFrTPDZmi-2fyfDvBEA:9 a=CjuIK1q_8ugA:10 a=IoWCM6iH3mJn3m4BftBB:22
- a=n7THaJik3DRP1sDdJiGm:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-22_02,2025-07-21_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 clxscore=1015 mlxlogscore=596 lowpriorityscore=0 suspectscore=0
- spamscore=0 mlxscore=0 bulkscore=0 priorityscore=1501 phishscore=0
- malwarescore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507220163
 
-On Mon, Jul 21, 2025 at 07:53:10PM -0600, Brigham Campbell wrote:
-> Remove the deprecated mipi_dsi_generic_write_seq() and
-> mipi_dsi_generic_write_chatty() functions now that they are no longer
-> used.
-> 
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> Signed-off-by: Brigham Campbell <me@brighamcampbell.com>
+On Tue, 2025-07-22 at 01:13 -0600, Yangtao Li wrote:
+> We don't support atime updates of any kind,
+> because hfs actually does not have atime.
+>=20
+> =C2=A0=C2=A0 dirCrDat:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 LongInt;=C2=A0=C2=A0=
+=C2=A0 {date and time of creation}
+> =C2=A0=C2=A0 dirMdDat:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 LongInt;=C2=A0=C2=A0=
+=C2=A0 {date and time of last modification}
+> =C2=A0=C2=A0 dirBkDat:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 LongInt;=C2=A0=C2=A0=
+=C2=A0 {date and time of last backup}
+>=20
+> =C2=A0=C2=A0 filCrDat:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 LongInt;=C2=A0=C2=A0=
+=C2=A0 {date and time of creation}
+> =C2=A0=C2=A0 filMdDat:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 LongInt;=C2=A0=C2=A0=
+=C2=A0 {date and time of last modification}
+> =C2=A0=C2=A0 filBkDat:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 LongInt;=C2=A0=C2=A0=
+=C2=A0 {date and time of last backup}
+>=20
+
+I have troubles with the current state of the comment. If I am trying
+to find dirCrDat, dirMdDat, ..., filBkDat in HFS driver source code,
+then I cannot find it. So, I prefer to cite the HFS declaration here:
+
+/* The catalog record for a file */
+struct hfs_cat_file {
+<skipped>
+	__be32 CrDat;			/* The creation date */
+	__be32 MdDat;			/* The modified date */
+	__be32 BkDat;			/* The last backup date */
+<skipped>
+} __packed;
+
+/* the catalog record for a directory */
+struct hfs_cat_dir {
+<skipped>
+	__be32 CrDat;			/* The creation date */
+	__be32 MdDat;			/* The modification date */
+	__be32 BkDat;			/* The last backup date */
+<skipped>
+} __packed;
+
+I assume that you showing information from HFS specification. So, it
+makes sense to mention that you are using the HFS specification details
+and, maybe, share more detailed explanation of this. Let's combine HFS
+driver declarations and citation of HFS specification.
+
+The rest looks pretty good to me.
+
+Thanks,
+Slava.
+
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
 > ---
->  drivers/gpu/drm/drm_mipi_dsi.c | 34 +++-------------------------------
->  include/drm/drm_mipi_dsi.h     | 23 -----------------------
->  2 files changed, 3 insertions(+), 54 deletions(-)
-> 
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-
-
--- 
-With best wishes
-Dmitry
+> v4:
+> -add both SB_NODIRATIME and SB_NOATIME flags
+> =C2=A0fs/hfs/super.c | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/fs/hfs/super.c b/fs/hfs/super.c
+> index fe09c2093a93..417950d388b4 100644
+> --- a/fs/hfs/super.c
+> +++ b/fs/hfs/super.c
+> @@ -331,7 +331,7 @@ static int hfs_fill_super(struct super_block *sb,
+> struct fs_context *fc)
+> =C2=A0	sbi->sb =3D sb;
+> =C2=A0	sb->s_op =3D &hfs_super_operations;
+> =C2=A0	sb->s_xattr =3D hfs_xattr_handlers;
+> -	sb->s_flags |=3D SB_NODIRATIME;
+> +	sb->s_flags |=3D SB_NODIRATIME | SB_NOATIME;
+> =C2=A0	mutex_init(&sbi->bitmap_lock);
+> =C2=A0
+> =C2=A0	res =3D hfs_mdb_get(sb);
 
