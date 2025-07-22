@@ -1,146 +1,194 @@
-Return-Path: <linux-kernel+bounces-740569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4598DB0D5D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:23:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E97AB0D5DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:23:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90EE51651F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:23:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E6BE6C43A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE382DCBE3;
-	Tue, 22 Jul 2025 09:23:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3752E2DE1E5;
+	Tue, 22 Jul 2025 09:23:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fG6YjahE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RuTV563L"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD5E28AAE7;
-	Tue, 22 Jul 2025 09:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6574323AE84;
+	Tue, 22 Jul 2025 09:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753176194; cv=none; b=WBzOCZz2BiZI8zS1Bo9O/32emUBHvFMLVY2ZRlatuZbURZnIMWu504uc6DHfuQwTxS9tP1FoyRzTSOmkxzNUPig7MchD69gVIMUmZ7lId3vGCd01K2bCQiATNvG2rmX4aUbFzo0ada64FIdB8QKC1YS1v42KsgjymGPYp1AwERI=
+	t=1753176196; cv=none; b=VnZDfNmIQe1XdO0oYKxplDbceeFZL7FykEnIwAbWpsD9bzNPKkRtMgeiJDasrkOE4dkl6LiaD42a5ZsMiRnRWkgbbr/pnw/wWbeYwQ2QqslO6jNDQH2E5sADXNwS0eCZgTkHS2bLS7fgCU4t+p3CryxJ3vTuL/05MFt/4oZgvCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753176194; c=relaxed/simple;
-	bh=iYT38q0vkIlt677rfAYxqq2CIp6/tDmkB90sG8ZjiEg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bB3MuFnh4Uu2HbX6Cltxa1WncAfFO9oaZdXMFhWQBlC2yO0dEuy2oz94XKagx/wg2B7vi0iuyYLNNGcSRd3QOG467dfpHHp+LgAw2/92HWIzuAvpL/gIE5ggGI4jvpmrCntbiRvVAMYLMnj3d+m2IDfNR/ucLWQ5nBniKyF3bGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fG6YjahE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 836E3C4CEEB;
-	Tue, 22 Jul 2025 09:23:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753176193;
-	bh=iYT38q0vkIlt677rfAYxqq2CIp6/tDmkB90sG8ZjiEg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fG6YjahE5uoLdVNFku95vCJ0a0w4aUb1MNaf0i3k4IILzQIOxneUF7CiCk9cMNk8J
-	 hVbAjlkwQtXGKWGte08hqP8gHK3bxPA2hTsN3y4ogEQr0rwWYUfGTexv9FlacNI0lA
-	 Ti62dH2SIsDGg1MVS2bwJzOQRjtrXAeU9UuNhokrZKusXFj+SkupGiYlumvegg1Rvy
-	 2BshPnAIPHJYhBkmeIc7nHSYGQbl5aVF4iLsRMlgVPVewXgWkzdWWIHXeElNzCIyVs
-	 Rk90bpJ4sm7zIKNFnReSiO5HD7DVeY/MOq/twalrl8aPGVPZiTvXoeX8wY91f7wDxu
-	 V03OIqOcnMMTg==
-Message-ID: <b810f0d9-b1e8-4182-9551-601b248d572d@kernel.org>
-Date: Tue, 22 Jul 2025 11:23:05 +0200
+	s=arc-20240116; t=1753176196; c=relaxed/simple;
+	bh=ZwKkSsRNiK4vw3joNNnkDFtMauOnJ34010/H72gzG/8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FK0nIVo61AQnoThfrYvSH8FBr5LrTHOS2kTSlCDWQdhXEZJmolOqyNI0ITfFmuFlvIxw+2z42kaSCmY8xpr/mwPRf7bDuuAuxwDIqBFMZS8RWNj6k/pxrNLU8fs1qp7HO/KtQOM633tRMLjOOAKMtsV3AOWJo4mGUtcPUE0sbuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RuTV563L; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4561ca74829so57809445e9.0;
+        Tue, 22 Jul 2025 02:23:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753176190; x=1753780990; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=1+4woj2blIMxZESntw7ogJ3WkdZPq4l3eTQIyRBKHxg=;
+        b=RuTV563L7F1JVeoIyYkr8+ShImVfHwHUksLHgjX1dDfGJqkuKYqD8gu3/bT+6buZku
+         gAqbSjh944PakCPhFo75Tq2En7Ej7PC3cmTTtidAtq0fWztEVJCQ8tOX7QhfBSksqCRf
+         0S5u24zVOmuuBT2nmyGNcBF0x0OGlshQc9A3v+h+4SCbSaoIevm93I8aMYWBKnxv6PNZ
+         DrJliISpCvVO/YDItwT18M7Zmx6yN9hTEAin9XctFSFJdUUHcICUJcLdchoJiS8C5cg4
+         f8EB38FgS2sI85hy0AmPW27+TpNLFeffNLj39SPQkdh1hnIYQ8EDvjqYS28cNw9G7N8t
+         IHdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753176190; x=1753780990;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1+4woj2blIMxZESntw7ogJ3WkdZPq4l3eTQIyRBKHxg=;
+        b=N2vPlngSkTVyGyxxO9Y+XV7hMEWdVnSsG+iIJmzQGIPvSJvlycpDp8ksZh8xoe8YpA
+         4Xd3awv0Lye2cn0f2K+4TPM+tvLsm52J5KoDn8yWUdAtuctfjvv7qIVjPZGb5MLaY+9S
+         nkMTHM54EO3WcN/eVEZVD674fIHg08iQBRO0mY9XQsp7L83yyeOMST1SEHJw3uIZzyM5
+         5c2xB8aI+/mxTPj2asrYsYsmejlSuJYq9INy2/b56XxdMqFeLY99KZLsUl7kxVjPt/2Z
+         NEmFY5hLk0rcY9lUSJ0hVD6ZkQ5PR1GXl2jFniYPB7LhgJ0zgcGenYIA9OKXolqLR7mf
+         3Glw==
+X-Forwarded-Encrypted: i=1; AJvYcCUhIl7xaE8Gu7fG3wqVNZitSCAs/2mQ5GdScIS7KJOsOOKKSwjlAvVnSAm4KPdipP5F7sAOhNGC2QzeVonM@vger.kernel.org, AJvYcCXCZPtV7HK/bY1hFwBbyM8xNA3Hzn77+JlTiMTBA2F4BsdssyRkdZbnEOYEn8muUo2xi0I/KksX02g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3ISvNfsbDRygUcHWXQMCzJdLjsRqeRFdbJD47zeiJpGYfz6JP
+	P//9zcum/cjSjMpzSxvjw19ttWWvU7MKFNJmYd7bmu4XNsqO+n2aJRle
+X-Gm-Gg: ASbGncsQYYkf1cdttHjRHmdwdHIKHjU4yrNILMZ9qvOBQpnXjiQYVZSMropAlwQgiDR
+	5R67SIwmsd8JdFy+aOXWKXhC+9ARQSf4sIjM4o6q49RYESNmIdfl3IYBh6ZWGdPgpjTcXJ3BWxj
+	HmAJ4t+Wm3s2OWySWB/N0nevjplVt8TIYwx2WmzcEcQj896S9B+0luVl86jQ0ry7GKFBxyyK41H
+	qPSEdNDYSKaDbDKbxx83qEg0ZKfecATQ9XnqSf1tIaO3GIvYiIi7egesOKq/6G5asedMzY9p0rQ
+	ohagApYOSYokxDWeWUcKfIq9hQLmlVR3cF0JyAbwObQnDGX5tne38mjnqk2L6/jK+Bn9QAcoMii
+	mDYJe/ieKuA==
+X-Google-Smtp-Source: AGHT+IHVWrEROMcnqT4miDnQ7GxbEIR5JrMq3IhppJY/3sv/iFGHOzAOkTsX1+81XKwkX2SaNmarNA==
+X-Received: by 2002:a05:600c:5298:b0:456:15c7:ce90 with SMTP id 5b1f17b1804b1-4562e38a72fmr234178475e9.12.1753176189335;
+        Tue, 22 Jul 2025 02:23:09 -0700 (PDT)
+Received: from nsa ([89.40.212.7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca4d732sm12803311f8f.61.2025.07.22.02.23.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jul 2025 02:23:09 -0700 (PDT)
+Date: Tue, 22 Jul 2025 10:23:22 +0100
+From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, 
+	Matt Ranostay <mranostay@gmail.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] iio: temperature: maxim_thermocouple: use DMA-safe
+ buffer for spi_read()
+Message-ID: <tazq2tbbg3trlhrpcozznyaa3yujqijdxrurjruuvbzrjaah7i@nupdjs7vi4qp>
+References: <20250721-iio-use-more-iio_declare_buffer_with_ts-3-v2-1-0c68d41ccf6c@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/13] dt-bindings: display/msm: Document DP on QCS615
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>,
- Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov
- <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>,
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
- konrad.dybcio@oss.qualcomm.com, fange.zhang@oss.qualcomm.com,
- quic_lliu6@quicinc.com, quic_yongmou@quicinc.com
-References: <20250722-add-displayport-support-for-qcs615-platform-v2-0-42b4037171f8@oss.qualcomm.com>
- <20250722-add-displayport-support-for-qcs615-platform-v2-1-42b4037171f8@oss.qualcomm.com>
- <e15df8ba-f058-4eb2-919c-bc327290e66a@kernel.org>
- <5ec480ac-ee60-473d-83e6-c2f25d3d30d8@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <5ec480ac-ee60-473d-83e6-c2f25d3d30d8@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250721-iio-use-more-iio_declare_buffer_with_ts-3-v2-1-0c68d41ccf6c@baylibre.com>
 
-On 22/07/2025 11:16, Dmitry Baryshkov wrote:
-> On 22/07/2025 12:13, Krzysztof Kozlowski wrote:
->> On 22/07/2025 09:22, Xiangxu Yin wrote:
->>> The QCS615 platform is based on the SM6150 SoC. Since the DP hardware is
->>> shared with SM6150, the compatible string qcom,sm6150-dp is used to
->>> represent the DP controller on QCS615.
->>
->>
->> No, you cannot use other SoC compatible for different one. Look at
->> qcs615.dtsi and board DTS - there is nothing saying that this is the
->> same die.
+On Mon, Jul 21, 2025 at 06:04:04PM -0500, David Lechner wrote:
+> Replace using stack-allocated buffers with a DMA-safe buffer for use
+> with spi_read(). This allows the driver to be safely used with
+> DMA-enabled SPI controllers.
 > 
-> Please take another look, we even have renamed qcs615.dtsi to sm6150.dtsi
+> The buffer array is also converted to a struct with a union to make the
+> usage of the memory in the buffer more clear and ensure proper alignment.
+> 
+> Fixes: 1f25ca11d84a ("iio: temperature: add support for Maxim thermocouple chips")
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
+> Changes in v2:
+> - This is a new patch since when looking at it again, I noticed a bug
+>   with passing stack-allocated memory to spi_read(). So now the primary
+>   purpose is a fix and converting the array to a struct comes free with
+>   it.
+> - Link to v1: https://lore.kernel.org/r/20250711-iio-use-more-iio_declare_buffer_with_ts-3-v1-1-f6dd3363fd85@baylibre.com
+> ---
 
-I checked on recent next, although not latest next-20250716. Commit msg
-should explain that. Any qcs615 feel then inappropriate here.
+Reviewed-by: Nuno Sá <nuno.sa@analog.com>
 
-Subject says clearly "on QCS615". Patch does something completely else!
-
-For gods sake how anyone can understand this?
-
-Best regards,
-Krzysztof
+>  drivers/iio/temperature/maxim_thermocouple.c | 26 ++++++++++++++++----------
+>  1 file changed, 16 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/iio/temperature/maxim_thermocouple.c b/drivers/iio/temperature/maxim_thermocouple.c
+> index cae8e84821d7fd521d59432580d51def939fa4d1..fa648a6542a4e2f08adb556c776b68331ae69631 100644
+> --- a/drivers/iio/temperature/maxim_thermocouple.c
+> +++ b/drivers/iio/temperature/maxim_thermocouple.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/module.h>
+>  #include <linux/err.h>
+>  #include <linux/spi/spi.h>
+> +#include <linux/types.h>
+>  #include <linux/iio/iio.h>
+>  #include <linux/iio/sysfs.h>
+>  #include <linux/iio/trigger.h>
+> @@ -121,8 +122,15 @@ struct maxim_thermocouple_data {
+>  	struct spi_device *spi;
+>  	const struct maxim_thermocouple_chip *chip;
+>  	char tc_type;
+> -
+> -	u8 buffer[16] __aligned(IIO_DMA_MINALIGN);
+> +	/* Buffer for reading up to 2 hardware channels. */
+> +	struct {
+> +		union {
+> +			__be16 raw16;
+> +			__be32 raw32;
+> +			__be16 raw[2];
+> +		};
+> +		aligned_s64 timestamp;
+> +	} buffer __aligned(IIO_DMA_MINALIGN);
+>  };
+>  
+>  static int maxim_thermocouple_read(struct maxim_thermocouple_data *data,
+> @@ -130,18 +138,16 @@ static int maxim_thermocouple_read(struct maxim_thermocouple_data *data,
+>  {
+>  	unsigned int storage_bytes = data->chip->read_size;
+>  	unsigned int shift = chan->scan_type.shift + (chan->address * 8);
+> -	__be16 buf16;
+> -	__be32 buf32;
+>  	int ret;
+>  
+>  	switch (storage_bytes) {
+>  	case 2:
+> -		ret = spi_read(data->spi, (void *)&buf16, storage_bytes);
+> -		*val = be16_to_cpu(buf16);
+> +		ret = spi_read(data->spi, &data->buffer.raw16, storage_bytes);
+> +		*val = be16_to_cpu(data->buffer.raw16);
+>  		break;
+>  	case 4:
+> -		ret = spi_read(data->spi, (void *)&buf32, storage_bytes);
+> -		*val = be32_to_cpu(buf32);
+> +		ret = spi_read(data->spi, &data->buffer.raw32, storage_bytes);
+> +		*val = be32_to_cpu(data->buffer.raw32);
+>  		break;
+>  	default:
+>  		ret = -EINVAL;
+> @@ -166,9 +172,9 @@ static irqreturn_t maxim_thermocouple_trigger_handler(int irq, void *private)
+>  	struct maxim_thermocouple_data *data = iio_priv(indio_dev);
+>  	int ret;
+>  
+> -	ret = spi_read(data->spi, data->buffer, data->chip->read_size);
+> +	ret = spi_read(data->spi, &data->buffer.raw, data->chip->read_size);
+>  	if (!ret) {
+> -		iio_push_to_buffers_with_ts(indio_dev, data->buffer,
+> +		iio_push_to_buffers_with_ts(indio_dev, &data->buffer,
+>  					    sizeof(data->buffer),
+>  					    iio_get_time_ns(indio_dev));
+>  	}
+> 
+> ---
+> base-commit: cd2731444ee4e35db76f4fb587f12d327eec5446
+> change-id: 20250711-iio-use-more-iio_declare_buffer_with_ts-3-2cc387a66bdc
+> 
+> Best regards,
+> -- 
+> David Lechner <dlechner@baylibre.com>
+> 
 
