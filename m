@@ -1,159 +1,101 @@
-Return-Path: <linux-kernel+bounces-740047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E662B0CF05
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:15:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76310B0CF0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:18:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06DC61AA412F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 01:15:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E8F41662EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 01:18:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E96191493;
-	Tue, 22 Jul 2025 01:14:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE3ED1607A4;
+	Tue, 22 Jul 2025 01:18:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ZjVwWu9P"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SkvE889j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C67EC5;
-	Tue, 22 Jul 2025 01:14:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C7A323D;
+	Tue, 22 Jul 2025 01:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753146896; cv=none; b=o03CZQ+QaP5GQEPfjAkN4TLhrjy76/JoUYhnmjtAPHKnP/7kzDGpNS7y2PSoVPDr5w5hpDYb7QiWRVD6OybwTKPZg/sMBC9m5HBmCrsafBnVe2XPpmbID8GKpfvXc2RLcvEdCo5xz2vBShDD5o+z/lXdVFuTjMjLuCpATgEgkpQ=
+	t=1753147089; cv=none; b=XiaMb7QzbKSsbINlAfOXgfWNxbvB0aLXOw8RsOA8jhsSczRUUnqmWL0C/XubpFNNbdHeywuxY8evuemKjju1xm6sNpM2aiW5JsB6PegXjR0IsC/b73ynyIngC1JytPrW2biA1Rauf8QCjX7K3WGYUccnnBj1EoofCJydMGuCnN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753146896; c=relaxed/simple;
-	bh=ZyY4PExMxEOKVdqiLGrdi79e8Qe799VgbI8KM0RWKCM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=CsjYu2ZiZtVHYQYXl67yTbLsA+53UyqjEoGnFlCLZ5NjnKDQGVRofHwNhbWxy9abTJVZHejsg6pZe3mH5T6RJIZZ7ZYGwozsry9Zr7SUxzI1BJCC7cgUGNxbtMgiygxBzI5jluhX5fzkAdw9nOSG4doMHZr2PvN0aXCde8WIvR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ZjVwWu9P; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1753146732;
-	bh=IbtrKg/FwI2zyW7puEU3DT9rKVvustOl2IwtxnY+xWA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ZjVwWu9PU/v0TNnqSr2TGvOeNbGsYNMTBM7dKIrxH9Ydj3MXO+Lv579psaSUzkTkJ
-	 ZzdoXJvkdnyCL4Wv7t49oV2axlEAQ5emCMrCDg3IQ9NQ0pQc//CabamJ85rf16yR5W
-	 XOgHqHl1Fxa0VWBMUrty7+n0y2U/NHPw1QNfR7QctB/dCS8hsXdMAjkN/cNGWrNZEF
-	 e0hkqZKGHQzC4gLijM0rUxNF0t02AMEBe3qPae+7kspI+DuYzu8pNvsjtYr/SWgsSC
-	 onjszdIQrOUTTYbDgglq79WJLc6KF3Ltts+3d/KgFlje77vcTg2rKNkwjr/OuKz9bY
-	 ni3cfZlHbJIig==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bmK4C6B6Cz4x11;
-	Tue, 22 Jul 2025 11:12:11 +1000 (AEST)
-Date: Tue, 22 Jul 2025 11:14:48 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jassi Brar <jassisinghbrar@gmail.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: ARM <linux-arm-kernel@lists.infradead.org>, Gary Yang
- <gary.yang@cixtech.com>, Guomin Chen <Guomin.Chen@cixtech.com>, Justin Chen
- <justin.chen@broadcom.com>, Lihua Liu <Lihua.Liu@cixtech.com>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Peter Chen <peter.chen@cixtech.com>
-Subject: linux-next: manual merge of the mailbox tree with the arc-soc tree
-Message-ID: <20250722111448.2426a159@canb.auug.org.au>
+	s=arc-20240116; t=1753147089; c=relaxed/simple;
+	bh=58G4hQ5/WYB9qMDV9HoXS6b9QDxGVyYptlpx2v3QD/Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=p3h/EVFynzDz1ZySlwQuz4u6K+FBkG6qHq8C2EMlpXq097/gn+5wqIjfj/HIg4EYtqosIZYyGcn+VXjoodFbAC64J+lbOMiU/g6By4tlYB+SozWZQonsuEnqey6uRL28qwNNnZqOIblgcHYIAMyG7UYTrhz/ArDGHJqJViT9/1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SkvE889j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8779C4CEED;
+	Tue, 22 Jul 2025 01:18:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753147088;
+	bh=58G4hQ5/WYB9qMDV9HoXS6b9QDxGVyYptlpx2v3QD/Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=SkvE889jbt5tv9l+yFT7rv5B6aYpVQUYphLe3loTTj5Osrqt+yE7GmeObt1mh/NPo
+	 HnoUSXMZiacKTQlKXFI5emlCOhuTWYN5t9/5rsXf7v0uXzquyb1yRBlcpme3PTmNjU
+	 QLool18G89qHgen63lJWGy8G2a9E3veXOQrKr36cQe6tvB7GDCHeHP4qHzgOeN+jfE
+	 a/CY8n8m2thbYipGA1H+B3SEUMBwkNYA6Vhmvsa2lDMKLjWvAVerqJ4MXTIH7dZqv3
+	 di4zdID86qSBaDL+EVYGGB5uhd8MlXJg/KK2CeNa5au2VC4iJTJynX49EeovcUBwue
+	 Q7qW4kf3QIbwQ==
+Date: Mon, 21 Jul 2025 18:18:07 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Jason Wang <jasowang@redhat.com>
+Cc: Cindy Lu <lulu@redhat.com>, "K. Y. Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+ <horms@kernel.org>, Michael Kelley <mhklinux@outlook.com>, Shradha Gupta
+ <shradhagupta@linux.microsoft.com>, Kees Cook <kees@kernel.org>, Stanislav
+ Fomichev <sdf@fomichev.me>, Kuniyuki Iwashima <kuniyu@google.com>,
+ Alexander Lobakin <aleksander.lobakin@intel.com>, Guillaume Nault
+ <gnault@redhat.com>, Joe Damato <jdamato@fastly.com>, Ahmed Zaki
+ <ahmed.zaki@intel.com>, "open list:Hyper-V/Azure CORE AND DRIVERS"
+ <linux-hyperv@vger.kernel.org>, "open list:NETWORKING DRIVERS"
+ <netdev@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RESEND] netvsc: transfer lower device max tso size
+Message-ID: <20250721181807.752af6a4@kernel.org>
+In-Reply-To: <CACGkMEtqhjTjdxPc=eqMxPNKFsKKA+5YP+uqWtonm=onm0gCrg@mail.gmail.com>
+References: <20250718061812.238412-1-lulu@redhat.com>
+	<20250721162834.484d352a@kernel.org>
+	<CACGkMEtqhjTjdxPc=eqMxPNKFsKKA+5YP+uqWtonm=onm0gCrg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Z+.EPQLc.AK9CfzH83iy0fK";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/Z+.EPQLc.AK9CfzH83iy0fK
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Tue, 22 Jul 2025 09:04:20 +0800 Jason Wang wrote:
+> On Tue, Jul 22, 2025 at 7:28=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> =
+wrote:
+> > On Fri, 18 Jul 2025 14:17:55 +0800 Cindy Lu wrote: =20
+> > > Subject: [PATCH RESEND] netvsc: transfer lower device max tso size =20
+> >
+> > You say RESEND but I don't see a link to previous posting anywhere.
 
-Today's linux-next merge of the mailbox tree got conflicts in:
+Someone should respond to this part, please.
 
-  drivers/mailbox/Kconfig
-  drivers/mailbox/Makefile
+> > I'd rather we didn't extend the magic behavior of hyperv/netvsc any
+> > further. =20
+>=20
+> Are you referring to the netdev coupling model of the VF acceleration?
 
-between commit:
+Yes, it tries to apply whole bunch of policy automatically in=20
+the kernel.
 
-  fe2aa2361ddb ("mailbox: add CIX mailbox driver")
+> > We have enough problems with it.
+>=20
+> But this fixes a real problem, otherwise nested VM performance will be
+> broken due to the GSO software segmentation.
 
-from the arc-soc tree and commit:
-
-  6aecd1f31f8e ("mailbox: Add support for bcm74110")
-
-from the mailbox tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/mailbox/Kconfig
-index 4fef4797b110,865da8986e53..000000000000
---- a/drivers/mailbox/Kconfig
-+++ b/drivers/mailbox/Kconfig
-@@@ -340,14 -349,14 +349,24 @@@ config THEAD_TH1520_MBO
-  	  kernel is running, and E902 core used for power management among other
-  	  things.
- =20
- +config CIX_MBOX
- +        tristate "CIX Mailbox"
- +        depends on ARCH_CIX || COMPILE_TEST
- +        depends on OF
- +        help
- +          Mailbox implementation for CIX IPC system. The controller suppo=
-rts
- +          11 mailbox channels with different operating mode and every cha=
-nnel
- +          is unidirectional. Say Y here if you want to use the CIX Mailbox
- +          support.
- +
-+ config BCM74110_MAILBOX
-+ 	tristate "Brcmstb BCM74110 Mailbox"
-+ 	depends on ARCH_BRCMSTB || COMPILE_TEST
-+ 	default ARCH_BRCMSTB
-+ 	help
-+ 	  Broadcom STB mailbox driver present starting with brcmstb bcm74110
-+ 	  SoCs. The mailbox is a communication channel between the host
-+ 	  processor and coprocessor that handles various power management task
-+ 	  and more.
-+=20
-  endif
-diff --cc drivers/mailbox/Makefile
-index 786a46587ba1,1c0627297474..000000000000
---- a/drivers/mailbox/Makefile
-+++ b/drivers/mailbox/Makefile
-@@@ -73,4 -75,4 +75,6 @@@ obj-$(CONFIG_QCOM_IPCC)		+=3D qcom-ipcc.
- =20
-  obj-$(CONFIG_THEAD_TH1520_MBOX)	+=3D mailbox-th1520.o
- =20
- +obj-$(CONFIG_CIX_MBOX)	+=3D cix-mailbox.o
-++
-+ obj-$(CONFIG_BCM74110_MAILBOX)	+=3D bcm74110-mailbox.o
-
---Sig_/Z+.EPQLc.AK9CfzH83iy0fK
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh+5ggACgkQAVBC80lX
-0GxaAgf/RCHyEV46T8yTy+kQyZz5scJxBQN/bm7G/e9/JZJtpgut1ES8QvxKf9ys
-PqFRNIIHyRIgRCvbiGqzq7KCrsrQMZ5EoPvWHwEUTUo+waAC+t7+iqw/3U5WHPs7
-W2X/dOv0/W1hHToT/ktArSnHKgnA6xB1jFAQTqS0risUgM/jM5U4dJLpNLBSaj+B
-BEgZmLWhFfkLN5ny5ZXCMa/xyS++aiSgGfVkGH2/SjUz93+xOKLH8Qez10oWqEPi
-VCYB+2p4QShv94r5thFgAn6HmLtwveKXwLK2gMZs1IsVQjH4X/UQCrLXxaEqp+WH
-TVQOztMFQ+ebKwVnlrYrxebnJll+qA==
-=W1aI
------END PGP SIGNATURE-----
-
---Sig_/Z+.EPQLc.AK9CfzH83iy0fK--
+Perhaps, possibly, a migration plan can be devised, away from the
+netvsc model, so we don't have to deal with nuggets of joy like:
+https://lore.kernel.org/all/1752870014-28909-1-git-send-email-haiyangz@linu=
+x.microsoft.com/
 
