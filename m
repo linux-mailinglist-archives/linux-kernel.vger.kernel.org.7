@@ -1,146 +1,186 @@
-Return-Path: <linux-kernel+bounces-741404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FA85B0E3AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:50:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01D96B0E3B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:51:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDEF517F4F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:50:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22F865657EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:51:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11EF8283680;
-	Tue, 22 Jul 2025 18:50:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5776A28314B;
+	Tue, 22 Jul 2025 18:51:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t07SyrOC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="aY1pLO3f"
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA0521516E;
-	Tue, 22 Jul 2025 18:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD59D2798F3
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 18:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753210225; cv=none; b=EXfNHqUeGP8hA1lGr4o7CaJfa9vJlg8WCJWvs1fMAF6VTaKYIlnbs7IdVUCYG8gh3RtSWk9Cby03CNq1lErf9UVIT91rugVKIGlxbWlL3xkKtDnrgaYrkFehMk7HVeZeVUPeI/YgUxJPP8v8K/tUfkFdbcB6ntcTipMNb9T+g3w=
+	t=1753210283; cv=none; b=Qwf9mO/mYwIxM4QD0gX5kCe+BWnxDLcvDtb2KSlI/tdSP5yji8b1JqT72d0o24WH4fWGvDV0OYTFElmQWg+Ox7z4fIGDfuMVGaj4CabCtwbAZrwyf4j7/D7F7G0nDe4PbxjOSWLBVK76rCdL5bXxNNMHEs2SKMfHKXjy7IpAnBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753210225; c=relaxed/simple;
-	bh=TKaehvJFYucpqRsCQiA/i3iI7bsv4bNIH/1U9NLuV6o=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=PSDk4D4D11mfbTWhAHObnLqgO5sp6nsZbM/Ffk+K48KJps208MxdmJoEiAUfapGI03ylCyAEOyDr54U94k2UpF/Dr0yrtt86zXj0Dk9KGjQYuXjNiYvQakImCNKrXSie6RXi4qzG46UtBTwFhLnUbKI3upBWpHt9XdsnD1Dzs0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t07SyrOC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31E38C4CEEB;
-	Tue, 22 Jul 2025 18:50:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753210225;
-	bh=TKaehvJFYucpqRsCQiA/i3iI7bsv4bNIH/1U9NLuV6o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t07SyrOCN+jt16upJhz/Zr7FzQyb5HRf810CZRhIbKO1AyVC8bQ8Lj9XY/xuE3Ogz
-	 Jru5i2/nryRgMYsWxsOMb47sim2naQv9yshKVY/Uxhn8pAXCEG/ejtGXpy0iqLVkz6
-	 Ili5KEOm0/DnqWZDiPGiJZV814av/KZa34XYs8uaYh2SDgax0m57iMVkLNutJz05ZJ
-	 4Cw1RtUToIcJyF9hmwrO5swBBtBx2R1EJHDaixm+b5MiuwFKUrdu7OU0f28vux5vKt
-	 fLKqyrMBjgfm4UdxTmXbfWzPdmjzu6fubZF1YkVlyBv0VnZU3KjfsX4xKPycc9Miy1
-	 /DB8DVaUyxvnA==
+	s=arc-20240116; t=1753210283; c=relaxed/simple;
+	bh=WK8DYN602+GcVD91EGUlyWjmHfpP2vQ62Fan2FjfyBU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ITcIDglZYSyfYs4yOkHMMgp93lsbzrMx8Cus826ej1xpZn0DeEAv2ZUHRWs/4Hg2p8OtMEJxfsaTmTcEkqU62f82O/AsmxYX7aahaFL1o3GCr5n3I7UazNVapFfFYMQxzWRSI/izOjGyAf0ildbtBda9Hdw8PmWYbzUOj1qx1Vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=aY1pLO3f; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e8986a25cbfso4156660276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 11:51:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1753210281; x=1753815081; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=WK8DYN602+GcVD91EGUlyWjmHfpP2vQ62Fan2FjfyBU=;
+        b=aY1pLO3f0yIPzNJUCAyoM8QreVvTR1QXy+hiD834uLe79hc971OW6QCi/y7/nlezdF
+         wQpQVgYOpFMcAk07FU6gr9Hb9dw4q94UmSI4/bwxZxfUS1I3Hm+TMffyH+tXqxyFpM4w
+         GpUBT99jt9pPBhHzPm+FxPQjFdoQLph2lCITFTIbA9XoAi+PenHZ3V2We38eeoJQxCdm
+         GXtYwHO+eBmdni0830E4Fn82Qs2zcCWLx2pzmVC8U8gBLFt8/13ExomcX5Qzu+fA0PNz
+         EfRWFfZMMGcVeGOfGFn6DdvNHkG7aDZQXd/C0gJ6m3Z0lGEb8aMKX5FpQI8Lio7iTJmE
+         NGCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753210281; x=1753815081;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WK8DYN602+GcVD91EGUlyWjmHfpP2vQ62Fan2FjfyBU=;
+        b=iSvg6d+/n12Ip5/yVMaG4e8avfNhkZgfYjWupmk2KvLp57fVhOErPJbqyzpy37jwMP
+         1jYHIbzV/AvakAKR0hHvUhw3/EaMGMKIyl+uYAi8GYur2jUz6wd5HnuvDU0KCr74RCzh
+         /xUDK60fSnHKjfx9JLUgOw1dEnnHhx+xDyTftN9E4332jAF4RRcteX3iRxuEmvBzUVFd
+         PgkjjXYcbX/7IVbRnl1sVoZA86e8Z80CuxVvHSyG/tbyDv87G6E1StgPjObeQjtrE4bd
+         7+gXoAB2i3n7rC82S60tcOu0L0zB2bGNu6ZRLavXdtXcYKt7qaWLYN227MLJ6+PkQcC3
+         St3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXVAAL27xqyrZgZEqmhiE6FtkokHdYcLrhaP2kkWwVX8HZxzudqKKqJzU1/rKKeDFxrnAnKr8t373ZYPfU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywsLFNMDIJQ58CW1Jty7FyFBujJcGAnJ6mKWyZPcwIumt8HibA
+	f61vB5aCkgXXh0Bkh1JL9keGhHF85YKox/CSD8aTYsqBKFmcOHNaljjb4byvAkQJOTo=
+X-Gm-Gg: ASbGncuKMn6p10z47TOgpW+JvKLdUPHWKPZmttl+9sG2Cqxvo88UnRS9NhKf+r9NyJL
+	x07UidBjbY7kGh3+m/OG/99MtzO54SpwgmHM/KmigBVi3ffoLCfuj5L8ejHwAucP6QdJi2MX1Fc
+	yo97A+mRhNvaOQDLo+oz9hKAxYuRmgkDyL0+j64PqbJLO/zvGRd4DQXZHgjRqCyHVFRw9lMfAjv
+	zdWfUrYS+kunhkUp1nWFx8wL6Wg17my4vTYvXv5WQ0M+YkG/5dqcGzshDjvZUoMPUQPz2rHvdGl
+	4VZpo4gADqiSErfjbFpfesVcPJCsrgF2aU5jSo5yVYjiSMuwpM2mBTjt4I0cT68j1ZidH9qngSA
+	8Sonh3EtjFjojisV/xKTHEEUaOVqOS7N+YkT1Yfp19q6CCDD4Jnu4k6PrteW4/LD3L4tZdg==
+X-Google-Smtp-Source: AGHT+IFratboz2BjZXyZLG+NvQJuMYJbryhm/xSoaYQ94OrdhP0SHzFyHmacfQC/3iA06ofvst830w==
+X-Received: by 2002:a05:6902:620a:b0:e8d:7b84:cb46 with SMTP id 3f1490d57ef6-e8dc59c5239mr406470276.32.1753210280679;
+        Tue, 22 Jul 2025 11:51:20 -0700 (PDT)
+Received: from ?IPv6:2600:1700:6476:1430:7b5e:cc7f:ebd6:8d83? ([2600:1700:6476:1430:7b5e:cc7f:ebd6:8d83])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e8d7cc0eb6dsm3455584276.6.2025.07.22.11.51.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jul 2025 11:51:19 -0700 (PDT)
+Message-ID: <efd70965b87382c7172495b161bfef7cfdffb431.camel@dubeyko.com>
+Subject: Re: [PATCH v4 1/3] hfsplus: fix to update ctime after rename
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: Yangtao Li <frank.li@vivo.com>, glaubitz@physik.fu-berlin.de
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 22 Jul 2025 11:51:18 -0700
+In-Reply-To: <20250722071347.1076367-1-frank.li@vivo.com>
+References: <20250722071347.1076367-1-frank.li@vivo.com>
+Autocrypt: addr=slava@dubeyko.com; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 22 Jul 2025 20:50:20 +0200
-Message-Id: <DBIT5KD4CXDZ.1MZUPQMAWL4Y8@kernel.org>
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Boqun Feng" <boqun.feng@gmail.com>
-Cc: "Alice Ryhl" <aliceryhl@google.com>, "Miguel Ojeda" <ojeda@kernel.org>,
- "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <benno.lossin@proton.me>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
- "Lyude Paul" <lyude@redhat.com>, "Mitchell Levy" <levymitchell0@gmail.com>,
- "Wedson Almeida Filho" <wedsonaf@gmail.com>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] rust: sync: fix safety comment for `static_lock_class`
-X-Mailer: aerc 0.20.1
-References: <20250520231714.323931-1-lossin@kernel.org>
- <DBIJLR7XNI6U.21PMPODHE83DZ@kernel.org>
- <CAH5fLgh9aEF5V9rNq2a8utS=NxSU8rdxpKsNbsuPoMpDfHN0fg@mail.gmail.com>
- <DBIKI0KDP1J8.3MOHF5G3A6JEH@kernel.org> <aH-hcnZ3hiQIQj-5@tardis-2.local>
-In-Reply-To: <aH-hcnZ3hiQIQj-5@tardis-2.local>
+MIME-Version: 1.0
 
-On Tue Jul 22, 2025 at 4:34 PM CEST, Boqun Feng wrote:
-> On Tue, Jul 22, 2025 at 02:03:25PM +0200, Benno Lossin wrote:
->> On Tue Jul 22, 2025 at 1:34 PM CEST, Alice Ryhl wrote:
->> > On Tue, Jul 22, 2025 at 1:21=E2=80=AFPM Benno Lossin <lossin@kernel.or=
-g> wrote:
->> >> On Wed May 21, 2025 at 1:17 AM CEST, Benno Lossin wrote:
->> >> > The safety comment mentions lockdep -- which from a Rust perspectiv=
-e
->> >> > isn't important -- and doesn't mention the real reason for why it's
->> >> > sound to create `LockClassKey` as uninitialized memory.
->> >> >
->> >> > Signed-off-by: Benno Lossin <lossin@kernel.org>
->> >> > ---
->> >> >
->> >> > I don't think we need to backport this.
->> >> >
->> >> > ---
->> >> >  rust/kernel/sync.rs | 7 +++++--
->> >> >  1 file changed, 5 insertions(+), 2 deletions(-)
->> >> >
->> >> > diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
->> >> > index 36a719015583..a10c812d8777 100644
->> >> > --- a/rust/kernel/sync.rs
->> >> > +++ b/rust/kernel/sync.rs
->> >> > @@ -93,8 +93,11 @@ fn drop(self: Pin<&mut Self>) {
->> >> >  macro_rules! static_lock_class {
->> >> >      () =3D> {{
->> >> >          static CLASS: $crate::sync::LockClassKey =3D
->> >> > -            // SAFETY: lockdep expects uninitialized memory when i=
-t's handed a statically allocated
->> >> > -            // lock_class_key
->> >> > +            // Lockdep expects uninitialized memory when it's hand=
-ed a statically allocated `struct
->> >> > +            // lock_class_key`.
->> >> > +            //
->> >> > +            // SAFETY: `LockClassKey` transparently wraps `Opaque`=
- which permits uninitialized
->> >> > +            // memory.
->> >> >              unsafe { ::core::mem::MaybeUninit::uninit().assume_ini=
-t() };
->> >>
->> >> Looking at this patch with fresh eyes (thanks for the bump, Alice :) =
-I
->> >> think we should rather have a public unsafe function on `LockClassKey=
-`
->> >> that creates an uninitialized lock class key. I'd like to avoid the
->> >> `MaybeUninit::uninit().assume_init()` pattern, as it might confuse
->> >> people & it looks very wrong.
->> >>
->> >> We can take this patch, as it definitely is an improvement, but I thi=
-nk
->> >> we should also just fix this properly. Any thoughts?
->> >
->> > Could that constructor be used in non-static cases?
->>=20
->> I don't know lockdep, so maybe yes? Or do you mean that it could be
->
-> Using in non-static cases is wrong. For static keys, lockdep could use
-> it address as keys but for dynamic keys, since they can be freed, they
-> have to be registered before use (that's what
-> `LockClassKey::new_dynamic()` is about.
->
-> See this:
->
-> 	https://lore.kernel.org/rust-for-linux/20240815074519.2684107-3-nmi@meta=
-space.dk/
->
-> We would need to add "for static only" for the proposed unsafe function.
+On Tue, 2025-07-22 at 01:13 -0600, Yangtao Li wrote:
+> [BUG]
+> $ sudo ./check generic/003
+> FSTYP=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -- hfsplus
+> PLATFORM=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -- Linux/x86_64 graphic 6.8.0-58-g=
+eneric #60~22.04.1-
+> Ubuntu
+> MKFS_OPTIONS=C2=A0 -- /dev/loop29
+> MOUNT_OPTIONS -- /dev/loop29 /mnt/scratch
+>=20
+> generic/003=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - output mismatch
+> =C2=A0=C2=A0=C2=A0 --- tests/generic/003.out=C2=A0=C2=A0 2025-04-27 08:49=
+:39.876945323 -0600
+> =C2=A0=C2=A0=C2=A0 +++ /home/graphic/fs/xfstests-dev/results//generic/003=
+.out.bad
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0 QA output created by 003
+> =C2=A0=C2=A0=C2=A0 +ERROR: change time has not been updated after changin=
+g file1
+> =C2=A0=C2=A0=C2=A0=C2=A0 Silence is golden
+> =C2=A0=C2=A0=C2=A0 ...
+>=20
+> Ran: generic/003
+> Failures: generic/003
+> Failed 1 of 1 tests
+>=20
+> [CAUSE]
+> change time has not been updated after changing file1
+>=20
+> [FIX]
+> Update file ctime after rename in hfsplus_rename().
+>=20
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> Tested-by: Viacheslav Dubeyko <slava@dubeyko.com>
+> Reviewed-by: Viacheslav Dubeyko <slava@dubeyko.com>
+> ---
+> =C2=A0fs/hfsplus/dir.c | 11 ++++++++---
+> =C2=A01 file changed, 8 insertions(+), 3 deletions(-)
+>=20
 
-Yeah sounds good, I like it better than using the pattern above. We can
-also make it `#[doc(hidden)]`, so people don't use it :)
+Probably, it was not very good idea to combine the HFS+ patch with HFS
+patches, because I cannot take this one without others. :)
 
----
-Cheers,
-Benno
+Also, from my point of view, the patchset requires a cover letter.
+Otherwise, it looks slightly unusual. :)
+
+Thanks,
+Slava.
+
 
