@@ -1,254 +1,161 @@
-Return-Path: <linux-kernel+bounces-741571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C50B5B0E601
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 00:00:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4BE1B0E604
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 00:01:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 062561CC1196
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 22:00:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38ECD1CC0C30
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 22:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DB812877E2;
-	Tue, 22 Jul 2025 21:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BBD5286D5B;
+	Tue, 22 Jul 2025 22:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H3GNjtSK"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="efkh5OYu"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 600E6280338;
-	Tue, 22 Jul 2025 21:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C22128395;
+	Tue, 22 Jul 2025 22:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753221595; cv=none; b=BIRRmbgS4nU/iO2xdS2Ayd+K4ds0sMZfjfru9uCi4GWMFCQyCDBDJS/LspL7ZLON5hoCSSeu96/mBqPHp91YZKMbVm8qmmnPXCpO6nln+TiAflTjDbtGx4Oo7M0pgokMXitvoTYq/qT/R7YbcxpzCrP2PSNXh8/BlntZo2pxb/g=
+	t=1753221655; cv=none; b=rz4Iv/+3S/2WlD8Ssd4CZvPm3+mQq0yJPQ+P41FKBe1xcpoIX+gUuqZ7DZyHiPY+KkNhKcmlxxtR2k182wtCkJ3zEllQvR2vkGTgHZgeLndASp59ocZ5kmNlrBNTClWQykPdXa07Fc4WefI7KakucNU+tY53VSmZKj0ZPIJ5Lj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753221595; c=relaxed/simple;
-	bh=KvXYd1CwJ7QTIbFtnYdMiYYKixJOHrpPwHoY7QT3uPs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G6FGpkdqP3IL+5u75rqQSiriIFsoVX7gyF7U9kZvFwcit3uIK+Ede+3CtMQgmUlQCY5h+THkYvv0O8zFiZNqEnZ+6VLH7QlFAy2okTQqgMN8gaeZoeRWu2exRlWU4TDo3qMHyW99TgnAanucj4ocHLzekW8UKip0Cc9Ks8Ip38A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H3GNjtSK; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ae401ebcbc4so1007172366b.1;
-        Tue, 22 Jul 2025 14:59:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753221592; x=1753826392; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=taA4UGn8qSCl0OPntQ8WtwZ5TDYoqD6jr4p1tjoaXu4=;
-        b=H3GNjtSKIsPuOpADYXUGAhjr8l0hPyewVHcgYYMh0V4J1/XTwYJiafj6lrhFPLFa4Q
-         7UBBntX1gmJeU68cQU+aUAL34bN04bAc1skzYzy+df1j2zaIKcdfpzr4F9R5Dg3F4zg+
-         HcYtAZV5F8TxEN2feIQ19VGQ+UYXvgGd6RdoC0Rjy5l09JLGsiqpLaktIj8kXvGIJFV+
-         UDwWXA/fzXiPF+/T28zhivjNabTSyrmwpOukCMqOcWUGqWmCwiJ78OkjGzmEzA20YKY7
-         HeL/IcJsL39uMpTnaled+zWBq5hD4z/vuRbXfHop1lz2Q5yM3QOl00YKRZZznNac95hA
-         ILBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753221592; x=1753826392;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=taA4UGn8qSCl0OPntQ8WtwZ5TDYoqD6jr4p1tjoaXu4=;
-        b=C/oqKbZRPInLQ2fx3SR5XtZcO57WhYanWOCmjrO0wGeR6mh3CCSmTTaoSPGfHbP351
-         kjmCjRIumIQ2QTF+yoMv2kPX/vFRPHCz4vNu3y8DE1szB3VWw6scqrrAJdA3pzPqnWFI
-         7f72P44QV+pcdNHu2LCzbpi6sO3zZFN90+u6BhAiB1uML9sjjWEQ4wHSE16aBuJ0P5jp
-         W0G1zUh76Ni4L7+H8gaf2t71d5x30diVN/mYowo/V4XqUBc2A5LSExlLpTiiiM5wD8R3
-         7DsTPbjZa4hRB06RfIL2xDpSrkdLBIvy2/+oSkxhV65u9529QmX0hyDWdf7TGXp6jQ/C
-         KU7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUsR0WTnW3zaxoy0+gRkg8Qt0jTfEWD+FRmj0OsM4hl/IUykaS20y/ScF/lnGNuEyDQyPqaCLvcVkBp@vger.kernel.org, AJvYcCXBI44PfdMgv/Kwlwco93lx4AZguneSCFkAUQ3EL4jNc+PYQyeVhK3oDRA1+xSSGQZqWZNFadL83k4Xl2g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeOwoLztv+i58BRgyM2p9cbIBoZLm6cDO1VW983uG0+H/WSTVY
-	mNADprFfMHCKGj1lbgcPNS1z9rpAxnKQymWpplLlJPIf7kf32s24qiuZLiS5gDUAN0dR15TJJxr
-	wp6GqL/FKmJPSMZVr+k0W/ybezga8ZnTQTrYp9QQ=
-X-Gm-Gg: ASbGncu6NVEzX2QdZcDe/qwQn3RmomHTFOSiuXDXLbdMfQeEpfgIAQritUpwaDCtCSQ
-	rJWRO8Ugmm6iPKr6nAIyMrj+IaidaQztzyApPjDlPn9wmep0IB0T7+pKctQSsD2iKo2AtkXSEFo
-	BUVNhZsshsJ/LVG9Hq9zCbLxVy2EkZOleIrliU9ncAWDAKnJnmXSLg2IHgoQrerYUEg03swxshL
-	2lX9QgJoxG9IwwGPA==
-X-Google-Smtp-Source: AGHT+IHi+1hksiPT9zFYrGDBMbCTT2dzY7L4GFC1VCmwtvqiIwEbAiL+J5ypVfUJ6i9xgIklCoCZBVzn3xiPTJhI1uM=
-X-Received: by 2002:a17:907:788:b0:af2:c9c7:7ee8 with SMTP id
- a640c23a62f3a-af2f928c5d2mr45925966b.55.1753221591450; Tue, 22 Jul 2025
- 14:59:51 -0700 (PDT)
+	s=arc-20240116; t=1753221655; c=relaxed/simple;
+	bh=D28me53HqI/b4OOy5Jg1frH4LmAnj0yC4yp5g60srig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t+Gm4eLlH2yElVX05iOS3D3sW4/PyH/ToG+hm7cPf3KVU/mJS8EN7o0l0PDm3l/b/Fvj2i11QF+Hh2OBp8CaQ6ScMlDgwJimrhb7LUqZOH+awAPCzF4EDybMc8OS/HNNuh9x5LSKPgPZ5HDLvXDaXlH+f0v8Bx7hOyeTAvj/yUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=efkh5OYu; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=XSSmyEAVCfx6UoBN6/vyS4ypSsBayt+epb+whGNpxlc=; b=efkh5OYuxMntLpQJfhREDs00bT
+	e31RvBopK3XWSjzCJceqzHhiBJnPqtcwtbFK2oBy1s+de/r7ALJUKHqz9WXbLx63YkB6KsGHefWJm
+	bVpZBLUWfqTjXLGYD+9/yA6JkLuiDEHB3SC1+2EKu+hGz0nnQxP1d51EvqA0oztSftHu8f8AOUXY6
+	Uh/2FYBf5MV7yTGyrYO4gHZrkZeLx8Ol7t4D5hCvcROVO2KkTqzCgOZJcAGkyqZoeh6yqbhEV3BMY
+	oRfBIsyD+K7rDqe/zylRjiXU91hxTdGab+qPmrM/htdnJM+aafdw8LQLtBZ3+B02TzBlV0zgqVBdg
+	xuuzHWUQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:56144)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1ueL2L-0000hK-0z;
+	Tue, 22 Jul 2025 23:00:37 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1ueL2I-0007UG-0n;
+	Tue, 22 Jul 2025 23:00:34 +0100
+Date: Tue, 22 Jul 2025 23:00:34 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Christophe Roullier <christophe.roullier@foss.st.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Simon Horman <horms@kernel.org>,
+	Tristram Ha <Tristram.Ha@microchip.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 1/4] dt-bindings: net: document st,phy-wol
+ property
+Message-ID: <aIAKAlkdB5S8UiYx@shell.armlinux.org.uk>
+References: <faea23d5-9d5d-4fbb-9c6a-a7bc38c04866@kernel.org>
+ <f5c4bb6d-4ff1-4dc1-9d27-3bb1e26437e3@foss.st.com>
+ <e3c99bdb-649a-4652-9f34-19b902ba34c1@lunn.ch>
+ <38278e2a-5a1b-4908-907e-7d45a08ea3b7@foss.st.com>
+ <5b8608cb-1369-4638-9cda-1cf90412fc0f@lunn.ch>
+ <383299bb-883c-43bf-a52a-64d7fda71064@foss.st.com>
+ <2563a389-4e7c-4536-b956-476f98e24b37@lunn.ch>
+ <aH_yiKJURZ80gFEv@shell.armlinux.org.uk>
+ <ae31d10f-45cf-47c8-a717-bb27ba9b7fbe@lunn.ch>
+ <aIAFKcJApcl5r7tL@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250720210847.30998-1-mtormento80@gmail.com> <36a75fd9-71a4-4f53-9a35-560cd9cd5687@rowland.harvard.edu>
- <CACF_UwqpzNJWm0=zJh=1N_9p1Q6YjmU+DSofB_OOySkdWC_AxA@mail.gmail.com> <b7468de2-d186-4706-8db3-594285ba264b@rowland.harvard.edu>
-In-Reply-To: <b7468de2-d186-4706-8db3-594285ba264b@rowland.harvard.edu>
-From: Marco Tormento <mtormento80@gmail.com>
-Date: Tue, 22 Jul 2025 23:59:40 +0200
-X-Gm-Features: Ac12FXwOuXynWvjB4Nb6QEKLH9wqFavKtKG4sOmxJh5KikfBM6ww-qaLncZwxCU
-Message-ID: <CACF_Uwo2jZ2duXm_B6GdcLd3yPr0+CJ0sCBTDRqwkuX_KF81Ug@mail.gmail.com>
-Subject: Re: [PATCH] USB: hub: Move typec deattach before children
- disconnections in usb_disconnect()
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aIAFKcJApcl5r7tL@shell.armlinux.org.uk>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Tue, 22 Jul 2025 at 05:05, Alan Stern <stern@rowland.harvard.edu> wrote:
->
-> On Tue, Jul 22, 2025 at 01:18:25AM +0200, Marco Tormento wrote:
-> > On Mon, 21 Jul 2025 at 03:21, Alan Stern <stern@rowland.harvard.edu> wrote:
-> > > I'm not a typec expert; in fact I know practically nothing about it.
-> > > Nevertheless, this sounds strange.  The recursive usb_disconnect() calls
-> > > should affect the connectors to the monitor's children and the monitor's
-> > > own ports, not the connector or port on the monitor's parent hub.
-> >
-> > What you wrote makes total sense, let me add some detail though.
-> > When I plug the monitor to the thunderbolt port, 3 usb hubs pop up, but only 2
-> > are backed by XHCI Host Controllers: usb3 and usb4.
->
-> I don't know what you mean when you say "backed by".  usb3 and usb4 are
-> the two root hubs of the xHCI host controller.  usb3-1 is an internal
-> hub (presumably built into the monitor) attached to the usb3 root hub.
+On Tue, Jul 22, 2025 at 10:39:53PM +0100, Russell King (Oracle) wrote:
+> rtl8211f_get_wol() does not take account of whether the PMEB pin is
+> wired or not. Thus, stmmac can't just forward the get_wol() and
+> set_wol() ops to the PHY driver and let it decide, as suggested
+> earlier. As stmmac gets used with multiple PHYs, (and hey, we can't
+> tell what they are, because DT doesn't list what the PHY actually is!)
+> we can't know how many other PHY drivers also have this problem.
 
-Mine was a failed attempt at expressing what you wrote :-).
-My understanding is that usb3 and usb4 root hubs are somehow part of the
-thunderbolt controller, because they are not brought up if I plug the monitor
-into the other typec port.
+I've just read a bit more of the RTL8211F datasheet, and looked at the
+code, and I'm now wondering whether WoL has even been tested with
+RTL8211F. What I'm about to state doesn't negate anything I've said
+in my previous reply.
 
-> > typec port0: bound usb3-port1 (ops connector_ops [usbcore])
-> > typec port0: bound usb4-port1 (ops connector_ops [usbcore])
-> > typec port1: bound usb3-port2 (ops connector_ops [usbcore])
-> > typec port1: bound usb4-port2 (ops connector_ops [usbcore])
->
-> Why are the usb3 port connectors getting bound at this point rather than
-> when usb3 was registered?
 
-Not sure, but maybe this is a consequence of the fact usb4 is on a shared hcd of
-usb3 pci device? See the stack traces below.
+So, the RTL8211F doesn't have a separate PMEB pin. It has a pin that
+is shared between "interrupt" and "PMEB".
 
-> > When I unplug the monitor though, usb 3-1 is not processed as part of
-> > hub_disconnect_children() of usb3 hub, as I would expect.
->
-> Are you sure about this?  How did you reach that conclusion?
+Register 22, page 0xd40, bit 5 determines whether this pin is used for
+PMEB (in which case it is pulsed on wake-up) or whether it is used as
+an interrupt. It's one or the other function, but can't be both.
 
-I checked the stack traces of usb_disconnect().
+rtl8211f_set_wol() manipulates this bit depending on whether
+WAKE_MAGIC is enabled or not.
 
-usb 3-1 is triggered by hub_event():
+The effect of this is...
 
-usb 3-1: [usb_disconnect] debugging()
-...cut...
-Workqueue: usb_hub_wq hub_event [usbcore]
-Call Trace:
- <TASK>
- dump_stack_lvl+0x5d/0x80
- usb_disconnect+0x38/0x2f4 [usbcore d46dddc5902949f0a284aff7ecf8d6e861774323]
- hub_event.cold+0x73e/0xc50 [usbcore d46dddc5902949f0a284aff7ecf8d6e861774323]
-...cut
+If we're using PHY interrupts from the RTL8211F, and then userspace
+configures magic packet WoL on the PHY, then we reconfigure the
+interrupt pin to become a wakeup pin, disabling the interrupt
+function - we no longer receive interrupts from the RTL8211F !!!!!!!
 
-usb4 is not:
+Yes, the driver does support interrupts for this device!
 
-usb usb4: [usb_disconnect] debugging()
-...cut...
-Workqueue: kacpi_hotplug acpi_hotplug_work_fn
-Call Trace:
- <TASK>
- dump_stack_lvl+0x5d/0x80
- usb_disconnect+0x38/0x2f4 [usbcore d46dddc5902949f0a284aff7ecf8d6e861774323]
- usb_remove_hcd.cold+0xc6/0x1bb [usbcore
-d46dddc5902949f0a284aff7ecf8d6e861774323]
- xhci_pci_remove+0x6a/0xd0 [xhci_pci 89d1427fd34e7648221e69cd90b20ad6e1fd2fd6]
- pci_device_remove+0x47/0xc0
-...cut
+This is surely wrong because it will break phylib's ability to track
+the link state as there will be no further interrupts _and_ phylib
+won't be expecting to poll the PHY.
 
-usb3 is a little bit different compared to usb4, it has a call to
-usb_hcd_pci_remove():
+The really funny thing is that the PHY does have the ability to
+raise an interrupt if a wakeup occurs through the interrupt pin
+(when configured as such) via register 18, page 0xa42, bit 7...
+but the driver doesn't touch that.
 
-usb usb3: [usb_disconnect] debugging()
-...cut...
-Workqueue: kacpi_hotplug acpi_hotplug_work_fn
-Call Trace:
- <TASK>
- dump_stack_lvl+0x5d/0x80
- usb_disconnect+0x38/0x2f4 [usbcore d46dddc5902949f0a284aff7ecf8d6e861774323]
- usb_remove_hcd.cold+0xc6/0x1bb [usbcore
-d46dddc5902949f0a284aff7ecf8d6e861774323]
- usb_hcd_pci_remove+0x7a/0x110 [usbcore
-d46dddc5902949f0a284aff7ecf8d6e861774323]
- xhci_pci_remove+0x89/0xd0 [xhci_pci 89d1427fd34e7648221e69cd90b20ad6e1fd2fd6]
- pci_device_remove+0x47/0xc0
-...cut
 
-There's a branch in xhci_pci_remove() on xhci->shared_hcd being valid.
+Jetson Xavier NX uses interrupts from this PHY. Forwarding an
+ethtool .set_wol() op to the PHY driver which enables magic packet
+will, as things stand, switch the interrupt pin to wake-up only
+mode, preventing delivery of further link state change events to
+phylib, breaking phylib.
 
-So it seems:
-- xhci_pci_remove() is called
-- xhci->shared_hcd is valid so usb_remove_hcd() is called which triggers usb4
-  usb_disconnect()
-- usb_hcd_pci_remove() is then called which does a lot of stuff + calls
-  usb_remove_hcd() which triggers usb3 usb_disconnect()
+Maybe there's a need for this behaviour with which-ever network
+driver first used RTL8211F in the kernel. Maybe the set of network
+drivers that use interrupts from the RTL8211F don't use WoL and
+vice versa. If there's any network drivers that do forward WoL
+calls to the RTL8211F driver _and_ use interrupts from the PHY...
+that's just going to break if magic packet WoL is ever enabled at
+the PHY.
 
-No idea what this shared hcd implies, by the way.
-
-I also got this stack trace of the port unbinding, which happens
-in typec_aggregate_unbind() in the usb4 usb_disconnect() trace:
-
-usb usb4: [hub_disconnect] debugging
-usb usb4-port2: [usb_hub_remove_port_device] debugging: port 1
-...cut...
-Workqueue: kacpi_hotplug acpi_hotplug_work_fn
-Call Trace:
- <TASK>
- dump_stack_lvl+0x5d/0x80
- typec_aggregate_unbind+0x12/0x30 [typec
-6de6f75aa8c9f6a0a8c73a05ed9c668a2b7634cf]
- component_del+0xb8/0x150
- usb_hub_remove_port_device+0xf8/0x115 [usbcore
-d46dddc5902949f0a284aff7ecf8d6e861774323]
- hub_disconnect+0x95/0x160 [usbcore d46dddc5902949f0a284aff7ecf8d6e861774323]
- usb_unbind_interface+0xb6/0x1ef [usbcore
-d46dddc5902949f0a284aff7ecf8d6e861774323]
- ? kernfs_remove_by_name_ns+0xbe/0xe0
- device_release_driver_internal+0x19e/0x200
- bus_remove_device+0xc2/0x130
- device_del+0x160/0x3d0
- ? kobject_put+0xa2/0x200
- usb_disable_device+0xf4/0x220 [usbcore
-d46dddc5902949f0a284aff7ecf8d6e861774323]
- usb_disconnect+0x117/0x2f4 [usbcore d46dddc5902949f0a284aff7ecf8d6e861774323]
- usb_remove_hcd.cold+0xc6/0x1bb [usbcore
-d46dddc5902949f0a284aff7ecf8d6e861774323]
- xhci_pci_remove+0x6a/0xd0 [xhci_pci 89d1427fd34e7648221e69cd90b20ad6e1fd2fd6]
- pci_device_remove+0x47/0xc0
-...cut...
- </TASK>
-typec port1: [connector_unbind] unbinding connector from usb4-port2
-typec port1: [connector_unbind] unbinding connector from usb3-port2
-
-> > Maybe usb 3-1 should be disconnected as a child of usb3, but even in that case
-> > we would still end up in the same situation because it's usb4 disconnection that
-> > is doing the unbinding.
-> > Since there's no dependency between usb3 and usb4 they can be
-> > disconnected in any order and it's just a matter of luck as it is right now.
->
-> That last sentence is totally wrong.  usb3 and usb4 are closely
-> connected, since they represent logical components of the same xHCI
-> controller, and they will always be unregistered in the same order.
-> usb3 is the USB-2 root hub (the one connected to the physical wires
-> carrying the USB-2 low/full/high-speed signals), and usb4 is the USB-3
-> root hub (the one connected to the physical wires carrying the USB-3
-> SuperSpeed and SuperSpeedPlus signals).
-
-That makes a lot of sense.
-Unfortunately I realized this could be the order half an hour after having
-pressed "send"...
-Thank you for the explanation!
-
-> This still leaves the puzzle about why the typec things are handled this
-> way.  In particular, if connector_unbind undoes the binding of the typec
-> ports that happened when usb4 was registered, then what action is
-> typec_unregister_partner supposed to undo, and when was it supposed to
-> happen?  As a general rule, disconnection and unregistration actions
-> take place in the reverse order of the corresponding connection and
-> registration actions.
->
-> Questions like this are best directed at the maintainers of the
-> USB-4/Thunderbolt and typec subsystems.
-
-Should I just cc them here or should I open a new thread with them?
-
-Marco Tormento
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
