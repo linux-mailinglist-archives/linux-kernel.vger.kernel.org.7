@@ -1,150 +1,278 @@
-Return-Path: <linux-kernel+bounces-740621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37881B0D6DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:07:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF46DB0D6EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:08:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D5747B4CEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:03:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41415562A88
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:05:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E9D2E266E;
-	Tue, 22 Jul 2025 10:03:27 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C772DCF4F;
-	Tue, 22 Jul 2025 10:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14DD92E0911;
+	Tue, 22 Jul 2025 10:04:07 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 532C31A3A8A;
+	Tue, 22 Jul 2025 10:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753178606; cv=none; b=kfKidLanpLoy0TG6SqMsNpkzZjcED7dgU8y0a8Rc3vca2dOmuJ9PoprX3a0HrNz80ZcaWM11TLAnzcjmRp7WGHuZBiSGBJfgqE0e2N+Nq35l8IY1y7evzd8ANrnyKRZLLx28Urh3YYrgzQ/pqWhc3SRqd5IbJDfdJavx1+2idHs=
+	t=1753178646; cv=none; b=rZft6zrNCOfwlLM9MfwD600iOiTkYJst2dL9ALUKcXLIsLb3pcCy9q2LUHom46mJskCs1ojbxL319NmKjGr6apu+rIQpMU/bnJ1f+q6HA1n5/oT+/EziUUJV4zF12yuAzZfuInXdnUW8VJQZxB0HiSfjiQXqKBkGGddE8PoEiqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753178606; c=relaxed/simple;
-	bh=KRSoslysxubJvKlodptdIN8Cr0CnxifhWfGSE9GeFgM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DS7NUo5jum4zgLfAp5akCOycPs23yX9zwxdq5D/NVWdYOr6B8k4as3SwrINj4ZNqLOEQU6S1aP5GG6LTXVT4WjXzi+hEqJH4iZ4s9cRa/WIb6Lme2p9q9akKP4A+9K3EN5MogwVsx7q4r4BgX11jNucMKUX2Qk08JUsnYyNZXsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CC462152B;
-	Tue, 22 Jul 2025 03:03:18 -0700 (PDT)
-Received: from [10.57.0.201] (unknown [10.57.0.201])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E1B363F59E;
-	Tue, 22 Jul 2025 03:03:21 -0700 (PDT)
-Message-ID: <c93b34ca-1abf-4db0-90f9-3802ac02c25a@arm.com>
-Date: Tue, 22 Jul 2025 11:03:18 +0100
+	s=arc-20240116; t=1753178646; c=relaxed/simple;
+	bh=ciQe6j8mxWOcy3iJT12t1gBIn5aZbJ3XYHxczD1+HzY=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=IuLT34TuUMibwvSLQD1RWXoQ8VwlDODzPTIGzhKE9+nJDzJpoXeiUUzSfW/aWbwE1tZ09ODQZqv2C4DWqgCTTrlsDPBaX7oltXSzPbP7Y9elj8ks1tSQWFz6y3Cu4H3O84DPB5X3IPArf2to7rNevF3HXT3rXBwlV0YVw3fdgm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bmXpl4BTdz1R8gb;
+	Tue, 22 Jul 2025 18:01:19 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9F284140118;
+	Tue, 22 Jul 2025 18:03:59 +0800 (CST)
+Received: from kwepemq500002.china.huawei.com (7.202.195.240) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 22 Jul 2025 18:03:59 +0800
+Received: from kwepemq200002.china.huawei.com (7.202.195.90) by
+ kwepemq500002.china.huawei.com (7.202.195.240) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 22 Jul 2025 18:03:59 +0800
+Received: from kwepemq200002.china.huawei.com ([7.202.195.90]) by
+ kwepemq200002.china.huawei.com ([7.202.195.90]) with mapi id 15.02.1544.011;
+ Tue, 22 Jul 2025 18:03:59 +0800
+From: duchangbin <changbin.du@huawei.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim
+	<namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "Alexander
+ Shishkin" <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>, "linux-perf-users@vger.kernel.org"
+	<linux-perf-users@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] perf: ftrace: add graph tracer options
+ args/retval/retval-hex/retaddr
+Thread-Topic: [PATCH] perf: ftrace: add graph tracer options
+ args/retval/retval-hex/retaddr
+Thread-Index: AQHb3FgJ+kCFGr9YTkC54VEFB2tYbLQ+JxcA
+Date: Tue, 22 Jul 2025 10:03:58 +0000
+Message-ID: <cee4d3e644ab4bea8959eff1c16d2a20@huawei.com>
+References: <20250613114048.132336-1-changbin.du@huawei.com>
+In-Reply-To: <20250613114048.132336-1-changbin.du@huawei.com>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-imapappendstamp: kwepemq200002.china.huawei.com (15.02.1544.011)
+x-ms-exchange-messagesentrepresentingtype: 1
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <4B23A9DF356B2C41B1D09D3EACF3B3A1@huawei.com>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Excessive page cache occupies DMA32 memory
-To: Greg KH <gregkh@linuxfoundation.org>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
- Baochen Qiang <baochen.qiang@oss.qualcomm.com>,
- Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
- Manivannan Sadhasivam <mani@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, kernel@collabora.com,
- Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
- iommu@lists.linux.dev
-References: <766ef20e-7569-46f3-aa3c-b576e4bab4c6@collabora.com>
- <aH51JnZ8ZAqZ6N5w@casper.infradead.org>
- <2025072238-unplanted-movable-7dfb@gregkh>
- <91fc0c41-6d25-4f60-9de3-23d440fc8e00@collabora.com>
- <2025072234-cork-unadvised-24d3@gregkh>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <2025072234-cork-unadvised-24d3@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-On 2025-07-22 8:24 am, Greg KH wrote:
-> On Tue, Jul 22, 2025 at 11:05:11AM +0500, Muhammad Usama Anjum wrote:
->> Adding ath/mhi and dma API developers to the discussion.
->>
->> On 7/22/25 10:32 AM, Greg KH wrote:
->>> On Mon, Jul 21, 2025 at 06:13:10PM +0100, Matthew Wilcox wrote:
->>>> On Mon, Jul 21, 2025 at 08:03:12PM +0500, Muhammad Usama Anjum wrote:
->>>>> Hello,
->>>>>
->>>>> When 10-12GB our of total 16GB RAM is being used as page cache
->>>>> (active_file + inactive_file) at suspend time, the drivers fail to allocate
->>>>> dma memory at resume as dma memory is either occupied by the page cache or
->>>>> fragmented. Example:
->>>>>
->>>>> kworker/u33:5: page allocation failure: order:7, mode:0xc04(GFP_NOIO|GFP_DMA32), nodemask=(null),cpuset=/,mems_allowed=0
->>>>
->>>> Just to be clear, this is not a page cache problem.  The driver is asking
->>>> us to do a 512kB allocation without doing I/O!  This is a ridiculous
->>>> request that should be expected to fail.
->>>>
->>>> The solution, whatever it may be, is not related to the page cache.
->>>> I reject your diagnosis.  Almost all of the page cache is clean and
->>>> could be dropped (as far as I can tell from the output below).
->>>>
->>>> Now, I'm not too familiar with how the page allocator chooses to fail
->>>> this request.  Maybe it should be trying harder to drop bits of the page
->>>> cache.  Maybe it should be doing some compaction.
->> That's very thoughtful. I'll look at the page allocator why isn't it dropping
->> cache or doing compaction.
->>
->>>> I am not inclined to
->>>> go digging on your behalf, because frankly I'm offended by the suggestion
->>>> that the page cache is at fault.
->> I apologize—that wasn't my intention.
->>
->>>>
->>>> Perhaps somebody else will help you, or you can dig into this yourself.
->>>
->>> I'm with Matthew, this really looks like a driver bug somehow.  If there
->>> is page cache memory that is "clean", the driver should be able to
->>> access it just fine if really required.
->>>
->>> What exact driver(s) is having this problem?  What is the exact error,
->>> and on what lines of code?
->> The issue occurs on both ath11k and mhi drivers during resume, when
->> dma_alloc_coherent(GFP_KERNEL) fails and returns -ENOMEM. This failure has
->> been observed at multiple points in these drivers.
->>
->> For example, in the mhi driver, the failure is triggered when the
->> MHI's st_worker gets scheduled-in at resume.
->>
->> mhi_pm_st_worker()
->> -> mhi_fw_load_handler()
->>     -> mhi_load_image_bhi()
->>        -> mhi_alloc_bhi_buffer()
->>           -> dma_alloc_coherent(GFP_KERNEL) returns -ENOMEM
-> 
-> And what is the exact size you are asking for here?
-> What is the dma ops set to for your system?  Are you sure that is
-> working properly for your platform?  What platform is this exactly?
-> 
-> The driver isn't asking for DMA32 here, so that shouldn't be the issue,
-> so why do you feel it is?  Have you tried using the tracing stuff for
-> dma allocations to see exactly what is going on for this failure?
+Kindly ping.
 
-I'm guessing the device has a 32-bit DMA mask, and the allocation ends 
-up in __dma_direct_alloc_pages() such that that adds GFP_DMA32 in order 
-to try to satisfy the mask via regular page allocation. How GFP_KERNEL 
-turns into GFP_NOIO, though, given that the DMA layer certainly isn't 
-(knowingly) messing with __GFP_IO or __GFP_FS, is more of a mystery... I 
-suppose "during resume" is the red flag there - is this worker perhaps 
-trying to run too early in some restricted context before the rest of 
-the system has fully woken up?
+On Fri, Jun 13, 2025 at 07:40:47PM +0800, Changbin Du wrote:
+> This change adds support for new funcgraph tracer options funcgraph-args,
+> funcgraph-retval, funcgraph-retval-hex and funcgraph-retaddr.
+>=20
+> The new added options are:
+>   - args       : Show function arguments.
+>   - retval     : Show function return value.
+>   - retval-hex : Show function return value in hexadecimal format.
+>   - retaddr    : Show function return address.
+>=20
+>  # ./perf ftrace -G vfs_write --graph-opts retval,retaddr
+>  # tracer: function_graph
+>  #
+>  # CPU  DURATION                  FUNCTION CALLS
+>  # |     |   |                     |   |   |   |
+>  5)               |  mutex_unlock() { /* <-rb_simple_write+0xda/0x150 */
+>  5)   0.188 us    |    local_clock(); /* <-lock_release+0x2ad/0x440 ret=
+=3D0x3bf2a3cf90e */
+>  5)               |    rt_mutex_slowunlock() { /* <-rb_simple_write+0xda/=
+0x150 */
+>  5)               |      _raw_spin_lock_irqsave() { /* <-rt_mutex_slowunl=
+ock+0x4f/0x200 */
+>  5)   0.123 us    |        preempt_count_add(); /* <-_raw_spin_lock_irqsa=
+ve+0x23/0x90 ret=3D0x0 */
+>  5)   0.128 us    |        local_clock(); /* <-__lock_acquire.isra.0+0x17=
+a/0x740 ret=3D0x3bf2a3cfc8b */
+>  5)   0.086 us    |        do_raw_spin_trylock(); /* <-_raw_spin_lock_irq=
+save+0x4a/0x90 ret=3D0x1 */
+>  5)   0.845 us    |      } /* _raw_spin_lock_irqsave ret=3D0x292 */
+>  5)               |      _raw_spin_unlock_irqrestore() { /* <-rt_mutex_sl=
+owunlock+0x191/0x200 */
+>  5)   0.097 us    |        local_clock(); /* <-lock_release+0x2ad/0x440 r=
+et=3D0x3bf2a3cff1f */
+>  5)   0.086 us    |        do_raw_spin_unlock(); /* <-_raw_spin_unlock_ir=
+qrestore+0x23/0x60 ret=3D0x1 */
+>  5)   0.104 us    |        preempt_count_sub(); /* <-_raw_spin_unlock_irq=
+restore+0x35/0x60 ret=3D0x0 */
+>  5)   0.726 us    |      } /* _raw_spin_unlock_irqrestore ret=3D0x8000000=
+0 */
+>  5)   1.881 us    |    } /* rt_mutex_slowunlock ret=3D0x0 */
+>  5)   2.931 us    |  } /* mutex_unlock ret=3D0x0 */
+>=20
+> Signed-off-by: Changbin Du <changbin.du@huawei.com>
+> ---
+>  tools/perf/Documentation/perf-ftrace.txt |  4 ++
+>  tools/perf/builtin-ftrace.c              | 60 +++++++++++++++++++++++-
+>  tools/perf/util/ftrace.h                 |  4 ++
+>  3 files changed, 67 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/tools/perf/Documentation/perf-ftrace.txt b/tools/perf/Docume=
+ntation/perf-ftrace.txt
+> index b77f58c4d2fd..4b21a755132f 100644
+> --- a/tools/perf/Documentation/perf-ftrace.txt
+> +++ b/tools/perf/Documentation/perf-ftrace.txt
+> @@ -123,6 +123,10 @@ OPTIONS for 'perf ftrace trace'
+>  --graph-opts::
+>  	List of options allowed to set:
+> =20
+> +	  - args         - Show function arguments.
+> +	  - retval       - Show function return value.
+> +	  - retval-hex   - Show function return value in hexadecimal format.
+> +	  - retaddr      - Show function return address.
+>  	  - nosleep-time - Measure on-CPU time only for function_graph tracer.
+>  	  - noirqs       - Ignore functions that happen inside interrupt.
+>  	  - verbose      - Show process names, PIDs, timestamps, etc.
+> diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
+> index bba36ebc2aa7..f7cf1dd7b64b 100644
+> --- a/tools/perf/builtin-ftrace.c
+> +++ b/tools/perf/builtin-ftrace.c
+> @@ -301,6 +301,10 @@ static void reset_tracing_options(struct perf_ftrace=
+ *ftrace __maybe_unused)
+>  	write_tracing_option_file("funcgraph-proc", "0");
+>  	write_tracing_option_file("funcgraph-abstime", "0");
+>  	write_tracing_option_file("funcgraph-tail", "0");
+> +	write_tracing_option_file("funcgraph-args", "0");
+> +	write_tracing_option_file("funcgraph-retval", "0");
+> +	write_tracing_option_file("funcgraph-retval-hex", "0");
+> +	write_tracing_option_file("funcgraph-retaddr", "0");
+>  	write_tracing_option_file("latency-format", "0");
+>  	write_tracing_option_file("irq-info", "0");
+>  }
+> @@ -542,6 +546,41 @@ static int set_tracing_sleep_time(struct perf_ftrace=
+ *ftrace)
+>  	return 0;
+>  }
+> =20
+> +static int set_tracing_funcgraph_args(struct perf_ftrace *ftrace)
+> +{
+> +	if (ftrace->graph_args) {
+> +		if (write_tracing_option_file("funcgraph-args", "1") < 0)
+> +			return -1;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int set_tracing_funcgraph_retval(struct perf_ftrace *ftrace)
+> +{
+> +	if (ftrace->graph_retval || ftrace->graph_retval_hex) {
+> +		if (write_tracing_option_file("funcgraph-retval", "1") < 0)
+> +			return -1;
+> +	}
+> +
+> +	if (ftrace->graph_retval_hex) {
+> +		if (write_tracing_option_file("funcgraph-retval-hex", "1") < 0)
+> +			return -1;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int set_tracing_funcgraph_retaddr(struct perf_ftrace *ftrace)
+> +{
+> +	if (ftrace->graph_retaddr) {
+> +		if (write_tracing_option_file("funcgraph-retaddr", "1") < 0)
+> +			return -1;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int set_tracing_funcgraph_irqs(struct perf_ftrace *ftrace)
+>  {
+>  	if (!ftrace->graph_noirqs)
+> @@ -642,6 +681,21 @@ static int set_tracing_options(struct perf_ftrace *f=
+trace)
+>  		return -1;
+>  	}
+> =20
+> +	if (set_tracing_funcgraph_args(ftrace) < 0) {
+> +		pr_err("failed to set tracing option funcgraph-args\n");
+> +		return -1;
+> +	}
+> +
+> +	if (set_tracing_funcgraph_retval(ftrace) < 0) {
+> +		pr_err("failed to set tracing option funcgraph-retval\n");
+> +		return -1;
+> +	}
+> +
+> +	if (set_tracing_funcgraph_retaddr(ftrace) < 0) {
+> +		pr_err("failed to set tracing option funcgraph-retaddr\n");
+> +		return -1;
+> +	}
+> +
+>  	if (set_tracing_funcgraph_irqs(ftrace) < 0) {
+>  		pr_err("failed to set tracing option funcgraph-irqs\n");
+>  		return -1;
+> @@ -1607,6 +1661,10 @@ static int parse_graph_tracer_opts(const struct op=
+tion *opt,
+>  	int ret;
+>  	struct perf_ftrace *ftrace =3D (struct perf_ftrace *) opt->value;
+>  	struct sublevel_option graph_tracer_opts[] =3D {
+> +		{ .name =3D "args",		.value_ptr =3D &ftrace->graph_args },
+> +		{ .name =3D "retval",		.value_ptr =3D &ftrace->graph_retval },
+> +		{ .name =3D "retval-hex",		.value_ptr =3D &ftrace->graph_retval_hex },
+> +		{ .name =3D "retaddr",		.value_ptr =3D &ftrace->graph_retaddr },
+>  		{ .name =3D "nosleep-time",	.value_ptr =3D &ftrace->graph_nosleep_time=
+ },
+>  		{ .name =3D "noirqs",		.value_ptr =3D &ftrace->graph_noirqs },
+>  		{ .name =3D "verbose",		.value_ptr =3D &ftrace->graph_verbose },
+> @@ -1699,7 +1757,7 @@ int cmd_ftrace(int argc, const char **argv)
+>  	OPT_CALLBACK('g', "nograph-funcs", &ftrace.nograph_funcs, "func",
+>  		     "Set nograph filter on given functions", parse_filter_func),
+>  	OPT_CALLBACK(0, "graph-opts", &ftrace, "options",
+> -		     "Graph tracer options, available options: nosleep-time,noirqs,ver=
+bose,thresh=3D<n>,depth=3D<n>",
+> +		     "Graph tracer options, available options: args,retval,retval-hex,=
+retaddr,nosleep-time,noirqs,verbose,thresh=3D<n>,depth=3D<n>",
+>  		     parse_graph_tracer_opts),
+>  	OPT_CALLBACK('m', "buffer-size", &ftrace.percpu_buffer_size, "size",
+>  		     "Size of per cpu buffer, needs to use a B, K, M or G suffix.", pa=
+rse_buffer_size),
+> diff --git a/tools/perf/util/ftrace.h b/tools/perf/util/ftrace.h
+> index a9bc47da83a5..782c33227e92 100644
+> --- a/tools/perf/util/ftrace.h
+> +++ b/tools/perf/util/ftrace.h
+> @@ -29,6 +29,10 @@ struct perf_ftrace {
+>  	int			graph_depth;
+>  	int			func_stack_trace;
+>  	int			func_irq_info;
+> +	int			graph_args;
+> +	int			graph_retval;
+> +	int			graph_retval_hex;
+> +	int			graph_retaddr;
+>  	int			graph_nosleep_time;
+>  	int			graph_noirqs;
+>  	int			graph_verbose;
+> --=20
+> 2.43.0
+>=20
 
-Thanks,
-Robin.
-
-> 
-> I think you need to do a bit more debugging :)
-> 
-> thanks,
-> 
-> greg k-h
-
+--=20
+Cheers,
+Changbin Du
 
