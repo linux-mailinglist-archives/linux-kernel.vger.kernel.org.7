@@ -1,64 +1,41 @@
-Return-Path: <linux-kernel+bounces-740465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0024EB0D476
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:24:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 848AFB0D46B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:23:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F96216EB2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:23:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 909847AD8C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BACE2D879C;
-	Tue, 22 Jul 2025 08:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W+cfuH2F"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E6D2D3A97;
+	Tue, 22 Jul 2025 08:22:48 +0000 (UTC)
+Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1552D3EFF
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 08:23:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24DF01ABED9;
+	Tue, 22 Jul 2025 08:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753172601; cv=none; b=aAbazHom+TANJOGmA94O0mprk473V3ddFkk8DkpLL4EZobP2b7A6l/nWRhTgEo/XDWGTdpeuw1osj4g5Fwgz6sYmvFlcbmlnsvPwFsbBqmqNwH8yNmeOPrOIUtqO9iCOLb2mZbU5miWWxkSeBur6ijJ2ZCnirK2hK5Up/LtuG2A=
+	t=1753172567; cv=none; b=KxuUnwq0+5QSaJB5D6y24bShKCV0uDt+5FtgPf/1ehXtDu8lipG7Yya2l1egBrcz+CE1EuQ2TwxMuVcUaJSV5t5MwP/J4GWV/cCjg35B42/18Ovx0XttI6OGD2ehUxtTm7kulXFm8HjfKJClRoEhB3/Yoi/fkxOpT9EyLRwXyVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753172601; c=relaxed/simple;
-	bh=EVKH3r1RmX90dfNfApo8O+ln82pBZbwJWIJ5+jemPbE=;
+	s=arc-20240116; t=1753172567; c=relaxed/simple;
+	bh=2VOw9OZQqJGqbwq5qu3nzTogcdWhKeuGiM8fJb6jDZo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qc8+RRmTDEu0E96apypzFg4ZitCOmTCrRc3adgrdaKu7JFzQHhgNpPSZpSK5tjjxcLVWAD2ulctWo+mZt7alNqIyfLVeeVQFHIf1EYjgFxJznbKODubjBvyrJ9OQigJZbj78dxrrH5f0+SGgvzFYZguQ5E9HDvvvkWkh76OFB1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W+cfuH2F; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753172599; x=1784708599;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=EVKH3r1RmX90dfNfApo8O+ln82pBZbwJWIJ5+jemPbE=;
-  b=W+cfuH2F+oAg9pwxop4s5OdXTxxnRIZkBwe8twZKvxcW+mYcqEMqOYvM
-   ButlB3C5MSWoRwh+CrLWjdIQw/pUwriISwkPE7sJHWj99qlYNdxe83avt
-   g99ZPJ1z7PFo4sQviYMeMPSH5cHTqbqWnhWZQeAJ1dJOE3cMmdHQTCfW2
-   jXRjh/7EKP5ZNJJfUWfxzQlLcAF307Z6ZGsjWgA9b5HoEdMA0Rlb6zO86
-   0jHToda9aqpWtwuaVmbRHSDmUZSb3PFUzz5u6TM2UgkpSdYbRzpz8TAPk
-   hmGhIpt3oM3xVXIUrO0tYjMMBAOLeneEdN/xa3QFnSULKgiP5QPwrZov8
-   w==;
-X-CSE-ConnectionGUID: WSSYPrdmRrytOGfOhLb98Q==
-X-CSE-MsgGUID: lamdhLVwRPareakt2OjErw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11499"; a="80855146"
-X-IronPort-AV: E=Sophos;i="6.16,331,1744095600"; 
-   d="scan'208";a="80855146"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 01:22:09 -0700
-X-CSE-ConnectionGUID: uY5bYjH9QsKUFP6/TZDs8w==
-X-CSE-MsgGUID: +vixDTb3Q52K89d3UAmSoQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,331,1744095600"; 
-   d="scan'208";a="159162926"
-Received: from wdziedzi-mobl.ger.corp.intel.com (HELO [10.245.113.213]) ([10.245.113.213])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 01:22:07 -0700
-Message-ID: <b013b26b-dd57-4c10-9e51-d826fea14317@linux.intel.com>
-Date: Tue, 22 Jul 2025 10:22:04 +0200
+	 In-Reply-To:Content-Type; b=tGUcipBwTv5nMmtuRlXjcBFWzQeDTgBW4g9iigLswzH10DqJUm6c3bYvV0EVCIZJ/6/uNYgNpEnpCgojWMYuTM9i48mBV6G8eU3M5IfWPoLWxvOdTNdbNX6Zzk4jPcjXkUGYC7GfZ+oKeLJn0/tFrjWCcrqV51L2R7MZwrUN3Vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
+Received: from [10.48.133.23] (unknown [15.248.2.227])
+	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id F2F9F41584;
+	Tue, 22 Jul 2025 08:22:36 +0000 (UTC)
+Authentication-Results: Plesk;
+        spf=pass (sender IP is 15.248.2.227) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=[10.48.133.23]
+Received-SPF: pass (Plesk: connection is authenticated)
+Message-ID: <f4d33bc8-f988-4237-ad99-ceb2036bc197@arnaud-lcm.com>
+Date: Tue, 22 Jul 2025 09:22:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,586 +43,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] accel/amdxdna: Support user space allocated buffer
-To: Lizhi Hou <lizhi.hou@amd.com>, ogabbay@kernel.org,
- quic_jhugo@quicinc.com, dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org, max.zhen@amd.com, sonal.santan@amd.com,
- mario.limonciello@amd.com
-References: <20250716164414.112091-1-lizhi.hou@amd.com>
+Subject: Re: [PATCH] usb: mon: Fix slab-out-of-bounds in mon_bin_event due to
+ unsafe URB transfer_buffer access
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk, snovitoll@gmail.com,
+ syzbot+86b6d7c8bcc66747c505@syzkaller.appspotmail.com,
+ syzkaller-bugs@googlegroups.com
+References: <20250720200057.19720-1-contact@arnaud-lcm.com>
+ <8bbc84ee-44c9-4a85-b5bf-3980b3c81e5c@rowland.harvard.edu>
+ <6cd8b6bd-d07b-404c-af23-42fcae9ed9df@arnaud-lcm.com>
+ <cfc6d242-df9d-42cf-b275-08de2da669e8@rowland.harvard.edu>
 Content-Language: en-US
-From: Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>
-Organization: Intel Technology Poland sp. z o.o. - ul. Slowackiego 173, 80-298
- Gdansk - KRS 101882 - NIP 957-07-52-316
-In-Reply-To: <20250716164414.112091-1-lizhi.hou@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: "Lecomte, Arnaud" <contact@arnaud-lcm.com>
+In-Reply-To: <cfc6d242-df9d-42cf-b275-08de2da669e8@rowland.harvard.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: <175317255751.8396.11842046552390480196@Plesk>
+X-PPP-Vhost: arnaud-lcm.com
 
-Reviewed-by: Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>
+It clarifies things and makes more sense now.
+Appreciate the explanation :), thanks for your time
 
-On 7/16/2025 6:44 PM, Lizhi Hou wrote:
-> Enhance DRM_IOCTL_AMDXDNA_CREATE_BO to accept user space allocated
-> buffer pointer. The buffer pages will be pinned in memory. Unless
-> the CAP_IPC_LOCK is enabled for the application process, the total
-> pinned memory can not beyond rlimit_memlock.
-> 
-> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
-> ---
->  drivers/accel/amdxdna/Makefile       |   1 +
->  drivers/accel/amdxdna/amdxdna_gem.c  | 139 +++++++++++++---
->  drivers/accel/amdxdna/amdxdna_ubuf.c | 232 +++++++++++++++++++++++++++
->  drivers/accel/amdxdna/amdxdna_ubuf.h |  19 +++
->  include/uapi/drm/amdxdna_accel.h     |  25 +++
->  5 files changed, 391 insertions(+), 25 deletions(-)
->  create mode 100644 drivers/accel/amdxdna/amdxdna_ubuf.c
->  create mode 100644 drivers/accel/amdxdna/amdxdna_ubuf.h
-> 
-> diff --git a/drivers/accel/amdxdna/Makefile b/drivers/accel/amdxdna/Makefile
-> index 0e9adf6890a0..6797dac65efa 100644
-> --- a/drivers/accel/amdxdna/Makefile
-> +++ b/drivers/accel/amdxdna/Makefile
-> @@ -15,6 +15,7 @@ amdxdna-y := \
->  	amdxdna_mailbox_helper.o \
->  	amdxdna_pci_drv.o \
->  	amdxdna_sysfs.o \
-> +	amdxdna_ubuf.o \
->  	npu1_regs.o \
->  	npu2_regs.o \
->  	npu4_regs.o \
-> diff --git a/drivers/accel/amdxdna/amdxdna_gem.c b/drivers/accel/amdxdna/amdxdna_gem.c
-> index 0f85a0105178..d407a36eb412 100644
-> --- a/drivers/accel/amdxdna/amdxdna_gem.c
-> +++ b/drivers/accel/amdxdna/amdxdna_gem.c
-> @@ -18,6 +18,7 @@
->  #include "amdxdna_ctx.h"
->  #include "amdxdna_gem.h"
->  #include "amdxdna_pci_drv.h"
-> +#include "amdxdna_ubuf.h"
->  
->  #define XDNA_MAX_CMD_BO_SIZE	SZ_32K
->  
-> @@ -296,7 +297,7 @@ static int amdxdna_insert_pages(struct amdxdna_gem_obj *abo,
->  
->  	vma->vm_private_data = NULL;
->  	vma->vm_ops = NULL;
-> -	ret = dma_buf_mmap(to_gobj(abo)->dma_buf, vma, 0);
-> +	ret = dma_buf_mmap(abo->dma_buf, vma, 0);
->  	if (ret) {
->  		XDNA_ERR(xdna, "Failed to mmap dma buf %d", ret);
->  		return ret;
-> @@ -391,10 +392,47 @@ static const struct dma_buf_ops amdxdna_dmabuf_ops = {
->  	.vunmap = drm_gem_dmabuf_vunmap,
->  };
->  
-> +static int amdxdna_gem_obj_vmap(struct drm_gem_object *obj, struct iosys_map *map)
-> +{
-> +	struct amdxdna_gem_obj *abo = to_xdna_obj(obj);
-> +
-> +	iosys_map_clear(map);
-> +
-> +	dma_resv_assert_held(obj->resv);
-> +
-> +	if (is_import_bo(abo))
-> +		dma_buf_vmap(abo->dma_buf, map);
-> +	else
-> +		drm_gem_shmem_object_vmap(obj, map);
-> +
-> +	if (!map->vaddr)
-> +		return -ENOMEM;
-> +
-> +	return 0;
-> +}
-> +
-> +static void amdxdna_gem_obj_vunmap(struct drm_gem_object *obj, struct iosys_map *map)
-> +{
-> +	struct amdxdna_gem_obj *abo = to_xdna_obj(obj);
-> +
-> +	dma_resv_assert_held(obj->resv);
-> +
-> +	if (is_import_bo(abo))
-> +		dma_buf_vunmap(abo->dma_buf, map);
-> +	else
-> +		drm_gem_shmem_object_vunmap(obj, map);
-> +}
-> +
->  static struct dma_buf *amdxdna_gem_prime_export(struct drm_gem_object *gobj, int flags)
->  {
-> +	struct amdxdna_gem_obj *abo = to_xdna_obj(gobj);
->  	DEFINE_DMA_BUF_EXPORT_INFO(exp_info);
->  
-> +	if (abo->dma_buf) {
-> +		get_dma_buf(abo->dma_buf);
-> +		return abo->dma_buf;
-> +	}
-> +
->  	exp_info.ops = &amdxdna_dmabuf_ops;
->  	exp_info.size = gobj->size;
->  	exp_info.flags = flags;
-> @@ -451,8 +489,8 @@ static const struct drm_gem_object_funcs amdxdna_gem_shmem_funcs = {
->  	.pin = drm_gem_shmem_object_pin,
->  	.unpin = drm_gem_shmem_object_unpin,
->  	.get_sg_table = drm_gem_shmem_object_get_sg_table,
-> -	.vmap = drm_gem_shmem_object_vmap,
-> -	.vunmap = drm_gem_shmem_object_vunmap,
-> +	.vmap = amdxdna_gem_obj_vmap,
-> +	.vunmap = amdxdna_gem_obj_vunmap,
->  	.mmap = amdxdna_gem_obj_mmap,
->  	.vm_ops = &drm_gem_shmem_vm_ops,
->  	.export = amdxdna_gem_prime_export,
-> @@ -494,6 +532,68 @@ amdxdna_gem_create_object_cb(struct drm_device *dev, size_t size)
->  	return to_gobj(abo);
->  }
->  
-> +static struct amdxdna_gem_obj *
-> +amdxdna_gem_create_shmem_object(struct drm_device *dev, size_t size)
-> +{
-> +	struct drm_gem_shmem_object *shmem = drm_gem_shmem_create(dev, size);
-> +
-> +	if (IS_ERR(shmem))
-> +		return ERR_CAST(shmem);
-> +
-> +	shmem->map_wc = false;
-> +	return to_xdna_obj(&shmem->base);
-> +}
-> +
-> +static struct amdxdna_gem_obj *
-> +amdxdna_gem_create_ubuf_object(struct drm_device *dev, struct amdxdna_drm_create_bo *args)
-> +{
-> +	struct amdxdna_dev *xdna = to_xdna_dev(dev);
-> +	enum amdxdna_ubuf_flag flags = 0;
-> +	struct amdxdna_drm_va_tbl va_tbl;
-> +	struct drm_gem_object *gobj;
-> +	struct dma_buf *dma_buf;
-> +
-> +	if (copy_from_user(&va_tbl, u64_to_user_ptr(args->vaddr), sizeof(va_tbl))) {
-> +		XDNA_DBG(xdna, "Access va table failed");
-> +		return ERR_PTR(-EINVAL);
-> +	}
-> +
-> +	if (va_tbl.num_entries) {
-> +		if (args->type == AMDXDNA_BO_CMD)
-> +			flags |= AMDXDNA_UBUF_FLAG_MAP_DMA;
-> +
-> +		dma_buf = amdxdna_get_ubuf(dev, flags, va_tbl.num_entries,
-> +					   u64_to_user_ptr(args->vaddr + sizeof(va_tbl)));
-> +	} else {
-> +		dma_buf = dma_buf_get(va_tbl.dmabuf_fd);
-> +	}
-> +
-> +	if (IS_ERR(dma_buf))
-> +		return ERR_CAST(dma_buf);
-> +
-> +	gobj = amdxdna_gem_prime_import(dev, dma_buf);
-> +	if (IS_ERR(gobj)) {
-> +		dma_buf_put(dma_buf);
-> +		return ERR_CAST(gobj);
-> +	}
-> +
-> +	dma_buf_put(dma_buf);
-> +
-> +	return to_xdna_obj(gobj);
-> +}
-> +
-> +static struct amdxdna_gem_obj *
-> +amdxdna_gem_create_object(struct drm_device *dev,
-> +			  struct amdxdna_drm_create_bo *args)
-> +{
-> +	size_t aligned_sz = PAGE_ALIGN(args->size);
-> +
-> +	if (args->vaddr)
-> +		return amdxdna_gem_create_ubuf_object(dev, args);
-> +
-> +	return amdxdna_gem_create_shmem_object(dev, aligned_sz);
-> +}
-> +
->  struct drm_gem_object *
->  amdxdna_gem_prime_import(struct drm_device *dev, struct dma_buf *dma_buf)
->  {
-> @@ -545,16 +645,12 @@ amdxdna_drm_alloc_shmem(struct drm_device *dev,
->  			struct drm_file *filp)
->  {
->  	struct amdxdna_client *client = filp->driver_priv;
-> -	struct drm_gem_shmem_object *shmem;
->  	struct amdxdna_gem_obj *abo;
->  
-> -	shmem = drm_gem_shmem_create(dev, args->size);
-> -	if (IS_ERR(shmem))
-> -		return ERR_CAST(shmem);
-> -
-> -	shmem->map_wc = false;
-> +	abo = amdxdna_gem_create_object(dev, args);
-> +	if (IS_ERR(abo))
-> +		return ERR_CAST(abo);
->  
-> -	abo = to_xdna_obj(&shmem->base);
->  	abo->client = client;
->  	abo->type = AMDXDNA_BO_SHMEM;
->  
-> @@ -569,7 +665,6 @@ amdxdna_drm_create_dev_heap(struct drm_device *dev,
->  	struct amdxdna_client *client = filp->driver_priv;
->  	struct iosys_map map = IOSYS_MAP_INIT_VADDR(NULL);
->  	struct amdxdna_dev *xdna = to_xdna_dev(dev);
-> -	struct drm_gem_shmem_object *shmem;
->  	struct amdxdna_gem_obj *abo;
->  	int ret;
->  
-> @@ -586,14 +681,12 @@ amdxdna_drm_create_dev_heap(struct drm_device *dev,
->  		goto mm_unlock;
->  	}
->  
-> -	shmem = drm_gem_shmem_create(dev, args->size);
-> -	if (IS_ERR(shmem)) {
-> -		ret = PTR_ERR(shmem);
-> +	abo = amdxdna_gem_create_object(dev, args);
-> +	if (IS_ERR(abo)) {
-> +		ret = PTR_ERR(abo);
->  		goto mm_unlock;
->  	}
->  
-> -	shmem->map_wc = false;
-> -	abo = to_xdna_obj(&shmem->base);
->  	abo->type = AMDXDNA_BO_DEV_HEAP;
->  	abo->client = client;
->  	abo->mem.dev_addr = client->xdna->dev_info->dev_mem_base;
-> @@ -657,7 +750,6 @@ amdxdna_drm_create_cmd_bo(struct drm_device *dev,
->  {
->  	struct iosys_map map = IOSYS_MAP_INIT_VADDR(NULL);
->  	struct amdxdna_dev *xdna = to_xdna_dev(dev);
-> -	struct drm_gem_shmem_object *shmem;
->  	struct amdxdna_gem_obj *abo;
->  	int ret;
->  
-> @@ -671,12 +763,9 @@ amdxdna_drm_create_cmd_bo(struct drm_device *dev,
->  		return ERR_PTR(-EINVAL);
->  	}
->  
-> -	shmem = drm_gem_shmem_create(dev, args->size);
-> -	if (IS_ERR(shmem))
-> -		return ERR_CAST(shmem);
-> -
-> -	shmem->map_wc = false;
-> -	abo = to_xdna_obj(&shmem->base);
-> +	abo = amdxdna_gem_create_object(dev, args);
-> +	if (IS_ERR(abo))
-> +		return ERR_CAST(abo);
->  
->  	abo->type = AMDXDNA_BO_CMD;
->  	abo->client = filp->driver_priv;
-> @@ -691,7 +780,7 @@ amdxdna_drm_create_cmd_bo(struct drm_device *dev,
->  	return abo;
->  
->  release_obj:
-> -	drm_gem_shmem_free(shmem);
-> +	drm_gem_object_put(to_gobj(abo));
->  	return ERR_PTR(ret);
->  }
->  
-> @@ -702,7 +791,7 @@ int amdxdna_drm_create_bo_ioctl(struct drm_device *dev, void *data, struct drm_f
->  	struct amdxdna_gem_obj *abo;
->  	int ret;
->  
-> -	if (args->flags || args->vaddr || !args->size)
-> +	if (args->flags)
->  		return -EINVAL;
->  
->  	XDNA_DBG(xdna, "BO arg type %d vaddr 0x%llx size 0x%llx flags 0x%llx",
-> diff --git a/drivers/accel/amdxdna/amdxdna_ubuf.c b/drivers/accel/amdxdna/amdxdna_ubuf.c
-> new file mode 100644
-> index 000000000000..077b2261cf2a
-> --- /dev/null
-> +++ b/drivers/accel/amdxdna/amdxdna_ubuf.c
-> @@ -0,0 +1,232 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2025, Advanced Micro Devices, Inc.
-> + */
-> +
-> +#include <drm/amdxdna_accel.h>
-> +#include <drm/drm_device.h>
-> +#include <drm/drm_print.h>
-> +#include <linux/dma-buf.h>
-> +#include <linux/pagemap.h>
-> +#include <linux/vmalloc.h>
-> +
-> +#include "amdxdna_pci_drv.h"
-> +#include "amdxdna_ubuf.h"
-> +
-> +struct amdxdna_ubuf_priv {
-> +	struct page **pages;
-> +	u64 nr_pages;
-> +	enum amdxdna_ubuf_flag flags;
-> +	struct mm_struct *mm;
-> +};
-> +
-> +static struct sg_table *amdxdna_ubuf_map(struct dma_buf_attachment *attach,
-> +					 enum dma_data_direction direction)
-> +{
-> +	struct amdxdna_ubuf_priv *ubuf = attach->dmabuf->priv;
-> +	struct sg_table *sg;
-> +	int ret;
-> +
-> +	sg = kzalloc(sizeof(*sg), GFP_KERNEL);
-> +	if (!sg)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	ret = sg_alloc_table_from_pages(sg, ubuf->pages, ubuf->nr_pages, 0,
-> +					ubuf->nr_pages << PAGE_SHIFT, GFP_KERNEL);
-> +	if (ret)
-> +		return ERR_PTR(ret);
-> +
-> +	if (ubuf->flags & AMDXDNA_UBUF_FLAG_MAP_DMA) {
-> +		ret = dma_map_sgtable(attach->dev, sg, direction, 0);
-> +		if (ret)
-> +			return ERR_PTR(ret);
-> +	}
-> +
-> +	return sg;
-> +}
-> +
-> +static void amdxdna_ubuf_unmap(struct dma_buf_attachment *attach,
-> +			       struct sg_table *sg,
-> +			       enum dma_data_direction direction)
-> +{
-> +	struct amdxdna_ubuf_priv *ubuf = attach->dmabuf->priv;
-> +
-> +	if (ubuf->flags & AMDXDNA_UBUF_FLAG_MAP_DMA)
-> +		dma_unmap_sgtable(attach->dev, sg, direction, 0);
-> +
-> +	sg_free_table(sg);
-> +	kfree(sg);
-> +}
-> +
-> +static void amdxdna_ubuf_release(struct dma_buf *dbuf)
-> +{
-> +	struct amdxdna_ubuf_priv *ubuf = dbuf->priv;
-> +
-> +	unpin_user_pages(ubuf->pages, ubuf->nr_pages);
-> +	kvfree(ubuf->pages);
-> +	atomic64_sub(ubuf->nr_pages, &ubuf->mm->pinned_vm);
-> +	mmdrop(ubuf->mm);
-> +	kfree(ubuf);
-> +}
-> +
-> +static vm_fault_t amdxdna_ubuf_vm_fault(struct vm_fault *vmf)
-> +{
-> +	struct vm_area_struct *vma = vmf->vma;
-> +	struct amdxdna_ubuf_priv *ubuf;
-> +	unsigned long pfn;
-> +	pgoff_t pgoff;
-> +
-> +	ubuf = vma->vm_private_data;
-> +	pgoff = (vmf->address - vma->vm_start) >> PAGE_SHIFT;
-> +
-> +	pfn = page_to_pfn(ubuf->pages[pgoff]);
-> +	return vmf_insert_pfn(vma, vmf->address, pfn);
-> +}
-> +
-> +static const struct vm_operations_struct amdxdna_ubuf_vm_ops = {
-> +	.fault = amdxdna_ubuf_vm_fault,
-> +};
-> +
-> +static int amdxdna_ubuf_mmap(struct dma_buf *dbuf, struct vm_area_struct *vma)
-> +{
-> +	struct amdxdna_ubuf_priv *ubuf = dbuf->priv;
-> +
-> +	vma->vm_ops = &amdxdna_ubuf_vm_ops;
-> +	vma->vm_private_data = ubuf;
-> +	vm_flags_set(vma, VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP);
-> +
-> +	return 0;
-> +}
-> +
-> +static int amdxdna_ubuf_vmap(struct dma_buf *dbuf, struct iosys_map *map)
-> +{
-> +	struct amdxdna_ubuf_priv *ubuf = dbuf->priv;
-> +	void *kva;
-> +
-> +	kva = vmap(ubuf->pages, ubuf->nr_pages, VM_MAP, PAGE_KERNEL);
-> +	if (!kva)
-> +		return -EINVAL;
-> +
-> +	iosys_map_set_vaddr(map, kva);
-> +	return 0;
-> +}
-> +
-> +static void amdxdna_ubuf_vunmap(struct dma_buf *dbuf, struct iosys_map *map)
-> +{
-> +	vunmap(map->vaddr);
-> +}
-> +
-> +static const struct dma_buf_ops amdxdna_ubuf_dmabuf_ops = {
-> +	.map_dma_buf = amdxdna_ubuf_map,
-> +	.unmap_dma_buf = amdxdna_ubuf_unmap,
-> +	.release = amdxdna_ubuf_release,
-> +	.mmap = amdxdna_ubuf_mmap,
-> +	.vmap = amdxdna_ubuf_vmap,
-> +	.vunmap = amdxdna_ubuf_vunmap,
-> +};
-> +
-> +struct dma_buf *amdxdna_get_ubuf(struct drm_device *dev,
-> +				 enum amdxdna_ubuf_flag flags,
-> +				 u32 num_entries, void __user *va_entries)
-> +{
-> +	struct amdxdna_dev *xdna = to_xdna_dev(dev);
-> +	unsigned long lock_limit, new_pinned;
-> +	struct amdxdna_drm_va_entry *va_ent;
-> +	struct amdxdna_ubuf_priv *ubuf;
-> +	u32 npages, start = 0;
-> +	struct dma_buf *dbuf;
-> +	int i, ret;
-> +	DEFINE_DMA_BUF_EXPORT_INFO(exp_info);
-> +
-> +	if (!can_do_mlock())
-> +		return ERR_PTR(-EPERM);
-> +
-> +	ubuf = kzalloc(sizeof(*ubuf), GFP_KERNEL);
-> +	if (!ubuf)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	ubuf->flags = flags;
-> +	ubuf->mm = current->mm;
-> +	mmgrab(ubuf->mm);
-> +
-> +	va_ent = kvcalloc(num_entries, sizeof(*va_ent), GFP_KERNEL);
-> +	if (!va_ent) {
-> +		ret = -ENOMEM;
-> +		goto free_ubuf;
-> +	}
-> +
-> +	if (copy_from_user(va_ent, va_entries, sizeof(*va_ent) * num_entries)) {
-> +		XDNA_DBG(xdna, "Access va entries failed");
-> +		ret = -EINVAL;
-> +		goto free_ent;
-> +	}
-> +
-> +	for (i = 0, exp_info.size = 0; i < num_entries; i++) {
-> +		if (!IS_ALIGNED(va_ent[i].vaddr, PAGE_SIZE) ||
-> +		    !IS_ALIGNED(va_ent[i].len, PAGE_SIZE)) {
-> +			XDNA_ERR(xdna, "Invalid address or len %llx, %llx",
-> +				 va_ent[i].vaddr, va_ent[i].len);
-> +			ret = -EINVAL;
-> +			goto free_ent;
-> +		}
-> +
-> +		exp_info.size += va_ent[i].len;
-> +	}
-> +
-> +	ubuf->nr_pages = exp_info.size >> PAGE_SHIFT;
-> +	lock_limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
-> +	new_pinned = atomic64_add_return(ubuf->nr_pages, &ubuf->mm->pinned_vm);
-> +	if (new_pinned > lock_limit && !capable(CAP_IPC_LOCK)) {
-> +		XDNA_DBG(xdna, "New pin %ld, limit %ld, cap %d",
-> +			 new_pinned, lock_limit, capable(CAP_IPC_LOCK));
-> +		ret = -ENOMEM;
-> +		goto sub_pin_cnt;
-> +	}
-> +
-> +	ubuf->pages = kvmalloc_array(ubuf->nr_pages, sizeof(*ubuf->pages), GFP_KERNEL);
-> +	if (!ubuf->pages) {
-> +		ret = -ENOMEM;
-> +		goto sub_pin_cnt;
-> +	}
-> +
-> +	for (i = 0; i < num_entries; i++) {
-> +		npages = va_ent[i].len >> PAGE_SHIFT;
-> +
-> +		ret = pin_user_pages_fast(va_ent[i].vaddr, npages,
-> +					  FOLL_WRITE | FOLL_LONGTERM,
-> +					  &ubuf->pages[start]);
-> +		if (ret < 0 || ret != npages) {
-> +			ret = -ENOMEM;
-> +			XDNA_ERR(xdna, "Failed to pin pages ret %d", ret);
-> +			goto destroy_pages;
-> +		}
-> +
-> +		start += ret;
-> +	}
-> +
-> +	exp_info.ops = &amdxdna_ubuf_dmabuf_ops;
-> +	exp_info.priv = ubuf;
-> +	exp_info.flags = O_RDWR | O_CLOEXEC;
-> +
-> +	dbuf = dma_buf_export(&exp_info);
-> +	if (IS_ERR(dbuf)) {
-> +		ret = PTR_ERR(dbuf);
-> +		goto destroy_pages;
-> +	}
-> +	kvfree(va_ent);
-> +
-> +	return dbuf;
-> +
-> +destroy_pages:
-> +	if (start)
-> +		unpin_user_pages(ubuf->pages, start);
-> +	kvfree(ubuf->pages);
-> +sub_pin_cnt:
-> +	atomic64_sub(ubuf->nr_pages, &ubuf->mm->pinned_vm);
-> +free_ent:
-> +	kvfree(va_ent);
-> +free_ubuf:
-> +	mmdrop(ubuf->mm);
-> +	kfree(ubuf);
-> +	return ERR_PTR(ret);
-> +}
-> diff --git a/drivers/accel/amdxdna/amdxdna_ubuf.h b/drivers/accel/amdxdna/amdxdna_ubuf.h
-> new file mode 100644
-> index 000000000000..e5cb3bdb3ec9
-> --- /dev/null
-> +++ b/drivers/accel/amdxdna/amdxdna_ubuf.h
-> @@ -0,0 +1,19 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (C) 2025, Advanced Micro Devices, Inc.
-> + */
-> +#ifndef _AMDXDNA_UBUF_H_
-> +#define _AMDXDNA_UBUF_H_
-> +
-> +#include <drm/drm_device.h>
-> +#include <linux/dma-buf.h>
-> +
-> +enum amdxdna_ubuf_flag {
-> +	AMDXDNA_UBUF_FLAG_MAP_DMA = 1,
-> +};
-> +
-> +struct dma_buf *amdxdna_get_ubuf(struct drm_device *dev,
-> +				 enum amdxdna_ubuf_flag flags,
-> +				 u32 num_entries, void __user *va_entries);
-> +
-> +#endif /* _AMDXDNA_UBUF_H_ */
-> diff --git a/include/uapi/drm/amdxdna_accel.h b/include/uapi/drm/amdxdna_accel.h
-> index a706ead39082..ce523e9ccc52 100644
-> --- a/include/uapi/drm/amdxdna_accel.h
-> +++ b/include/uapi/drm/amdxdna_accel.h
-> @@ -153,6 +153,31 @@ enum amdxdna_bo_type {
->  	AMDXDNA_BO_CMD,
->  };
->  
-> +/**
-> + * struct amdxdna_drm_va_entry
-> + * @vaddr: Virtual address.
-> + * @len: Size of entry.
-> + */
-> +struct amdxdna_drm_va_entry {
-> +	__u64 vaddr;
-> +	__u64 len;
-> +};
-> +
-> +/**
-> + * struct amdxdna_drm_va_tbl
-> + * @dmabuf_fd: The fd of dmabuf.
-> + * @num_entries: Number of va entries.
-> + * @va_entries: Array of va entries.
-> + *
-> + * The input can be either a dmabuf fd or a virtual address entry table.
-> + * When dmabuf_fd is used, num_entries must be zero.
-> + */
-> +struct amdxdna_drm_va_tbl {
-> +	__s32 dmabuf_fd;
-> +	__u32 num_entries;
-> +	struct amdxdna_drm_va_entry va_entries[];
-> +};
-> +
->  /**
->   * struct amdxdna_drm_create_bo - Create a buffer object.
->   * @flags: Buffer flags. MBZ.
+Arnaud
 
+On 21/07/2025 14:51, Alan Stern wrote:
+> On Mon, Jul 21, 2025 at 09:22:40AM +0100, Lecomte, Arnaud wrote:
+>> Hi Alan, thanks for your reply.
+>>
+>> Your point raises an important question for me: Is there a specific reason
+>> why we don’t have
+>>   a synchronization mechanism in place to protect the URB's transfer buffer ?
+> Protect it from what?  Access by some driver at an inappropriate time?
+> Drivers are supposed to know (and this is alluded to in the kerneldoc
+> for usb_submit_urb()) that they aren't allowed to touch the transfer
+> buffer while an URB is queued.
+>
+> Alan Stern
 
