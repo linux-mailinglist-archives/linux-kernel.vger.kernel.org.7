@@ -1,119 +1,204 @@
-Return-Path: <linux-kernel+bounces-741450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F7FFB0E44F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 21:38:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30D2AB0E451
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 21:39:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0A5917BE70
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:38:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 525C817A645
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:39:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D49284B59;
-	Tue, 22 Jul 2025 19:38:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04BFF284B51;
+	Tue, 22 Jul 2025 19:39:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="ENtn9vxk"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="e4QA7s9W"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2208F156677;
-	Tue, 22 Jul 2025 19:38:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8714217E4
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 19:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753213124; cv=none; b=OfuaPreOMPeo2lBRLHhmbQDCdz8S4/y2EluMVZmNAXC9/eRKmycOx50GpBniiXpe3tA6ra7R+QjNPYuAm18B6SNqlZV8S+0Bj0uhegYw7K/LHfzQg6UlqhMjBLwD2rpS0nmLa/QDIspOfGuKdLJE6Hu7D17uE+gsx/ltBwfGxGo=
+	t=1753213178; cv=none; b=Q7wqeGxZanGACPmqqBFsasCXKNg0dpTsuEcfoj6nttBeyjlAh/O8N2mmcdXXNJ3lu8g3g+mYMDcg4HVFELjPJdqN+WmTdmSQGfJr5BiOAPaRuOzZ+7vrAQKjPZcO1P3RVa5pv271JGHmXT6mPUbIWaQOEgnJhRvuf7wVpDcaRRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753213124; c=relaxed/simple;
-	bh=jwyAwao4oPJjdf7FpSRPigfPtomo1g/hUFFqJP0uxSg=;
+	s=arc-20240116; t=1753213178; c=relaxed/simple;
+	bh=5xr6KLwLPy50U76Y7R7i7qmSOKcJQj5y4DYs/Y/1Kr8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lxeykqw2su8VDeZ1VOhWUToTA14ue5U4Qr6J47Ep9iXXFzvc9s/i2OMyBO9tl1YBh1IxwG0HuauJXCTB68fomPDwV0nSL6Ke6zXWAlg3yO9kOnxFJtwsmWlA4e1Tm4LoTpxctN2QlqaBj2e98mScQAtQusc4VxWYfRnpG6LLv8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=ENtn9vxk; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-237311f5a54so47651465ad.2;
-        Tue, 22 Jul 2025 12:38:41 -0700 (PDT)
+	 To:Cc:Content-Type; b=A+qUz6iigKEWrQ578Hw35VveHDploUEt8U16a6V5LC2HIfrIEst94WzTOjrLj9Zx7f6QU36/EOMy6e/GXiEr6shzN+JSzm+L+VKUXWvjChmb3hvNOYp6KU8tEhBKTV5lVl/5W1+Wu2rs4l3BbmkCOid5Z1BHbD+DrcWJiu2h4bE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=e4QA7s9W; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-60c01f70092so10107965a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 12:39:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1753213121; x=1753817921; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1753213175; x=1753817975; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jwyAwao4oPJjdf7FpSRPigfPtomo1g/hUFFqJP0uxSg=;
-        b=ENtn9vxkNbAHTvF8nf6gvg4A9xEj6fv+YiZOODFR9eEd+uctWkcbJqSNhiPO6ZngRc
-         ZE1zHORCcjRND+pwU2VZguvVVhj8WizxXzNorjGZ+Aqrfa4KlMZvLm2BFv01GK2QJND2
-         nVGWxRnShKMH/NWesnbsPcer5DX/v5GwUDqUYd5IJWV/KiYH4jcv7lBIqkf1kcZziKuN
-         xAVCqx0nMYddGWqZCNMPOic388Sh7fXeipLx0yeIjmgLI/yf1Nin3Y6pU78rZQ2qZVh0
-         C85VuN4iYcwj4wzdihSuI2++xG1kVTmIvXyHO4ptxR95/SO/0lVSQRM4GBoVjQ4pFxMi
-         P/QA==
+        bh=jEM6NtKqTnDVAsyCqROCUL2IX6X5XMs4/UEk6e3ZmK8=;
+        b=e4QA7s9WResGJ8zKgxSgDk3fJWCdyXBVGZr7EpRzFfrSrBjoxHyhwDQGr1GvaAxsLN
+         8QswBN7XN6TGHGy0dVKnSwjtm9qeoGdXoYU+9T5qLxyF4m3V7PcCAr8HDn6hmBkcP7j6
+         tOOifI1ZEDvzolUMzPafegdKqI2lqvJrUtqeo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753213121; x=1753817921;
+        d=1e100.net; s=20230601; t=1753213175; x=1753817975;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jwyAwao4oPJjdf7FpSRPigfPtomo1g/hUFFqJP0uxSg=;
-        b=la0EqY7UpYRC5ABE7amlHIVHxd0HJOPQL3u3VdOLy+E52PrlA2LNjB4ec9Gy0l5f/u
-         QDzrRhXFQyriIEgBKZgUd0SubKFjyTcQnFZD8yLthgMbqIZcPcW3aYDeWLPukojGAiJe
-         XL+1eivNJn4zjMG+cuTO5KULzcGKYnv0Kl1LhuzTVzz2h3/F3sYiragFwqr+ogc6LlIP
-         vQFS1Q8h3YZyDVxI4sA38lguaLFm65ms70ZmB+esyWEMOHD3agePZQnhul6Mt1EY3mg8
-         HmEfN28sroh75wn9YB4phoCk5z9W1TAJtPAuhJLLwaP+84LGJMW0t76re1VQgjiH56P3
-         u1kw==
-X-Forwarded-Encrypted: i=1; AJvYcCVJG2vs/ZAG3gFDC8FKIDyl+vP2SFpxKc0eFGB9gqx1XIh217o86/NB+wql5oBbboT+frpqzvHiDNVC@vger.kernel.org, AJvYcCWwV8Blj1V/fDukFtIVMG+LLwzsYut9SQG39PNKDKYXWgdj7JkITIVjdVw1eSbQYhDY8rLT2fyQ@vger.kernel.org, AJvYcCXa8BcBJZLs9YUmk6vZPB7bYjBUcBpzA9SosNCEQgtRlwpzYtauhTbn0Yy4osIFfm3tCicpmRE3ylVJ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9qMVIqXxXmSKtud9ytkZVMOgQzTizcP43jIG9K+JfcJbz81r6
-	lb5COPSEyU1Pm5d9FjFzYfftb9tA1ZL8XNdPiwoexfYvsBwk2yKwzWxATE42YzpGJ2omuDc1bCM
-	qJgUcnSv6JJmOTfBcLbXRY75q1mcsT5E=
-X-Gm-Gg: ASbGncsrBlaxx/uKj90e0L6Dh5PHVCVafxeLeFYryV04WCMAub8OrPLCvs/ZQlfOHKj
-	urkXwJ6kwHKj2+6jzUTjLlBy3eSfTEUzE7e9G/3lO78vFNhvNoL20TubquOsMaDq4QqPD9EwY2d
-	Y5LOLOCtiHVW5Huz1Ht4wASRiqaCU1yFjcEDR7BXbu3ttIQnsQVsx01k711izU3YIwVaXyLf6Yt
-	lPU8cPUnlwZQ+ItYb8hew==
-X-Google-Smtp-Source: AGHT+IGsEsP2+Lauu71M+oW4n4HRG//Lxp5u7eb8uK45PKFMboS8RYf4aGCjOdXnbHCp/CGkWd7DOfhjjO/CU0YvNwA=
-X-Received: by 2002:a17:902:cec4:b0:23d:fa76:5c3b with SMTP id
- d9443c01a7336-23f9814e9a7mr3452365ad.22.1753213121296; Tue, 22 Jul 2025
- 12:38:41 -0700 (PDT)
+        bh=jEM6NtKqTnDVAsyCqROCUL2IX6X5XMs4/UEk6e3ZmK8=;
+        b=Yxm6b/e05720ctSu/kLe6E5Jq3iCzO5qr5/9hYNxn4RK4oK923u8j1+H1R7X8rcO/o
+         YjNxYSjl6TbLNokS6BxiYz3RO9AB0iVoPg5F7/GFtvfePO5AG5fngv0IoT2MTgivu8ZL
+         khYIRGC040VfbG29lZvracvXXY7Bx11TxkmU1tUNR+mM+my0GRCX1+iBzJsXD6zCeOWi
+         UABDJ2IzJlzcxv5RtoHqFkQQ3IPIS2ewAidNvwy7ucXCcFHEyCoRC8sMqFAFiwhXD3OA
+         EbFBH7/EJPrSlRjZRSp/rgS9TSQ+NEvhbxEKOaKFPpG7hgmBtKKKkwv5lhhjjmnY1leh
+         y33Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWFeq5SIpXYIpsPPssSoxuqOl3itC+50n3alpFNU6SMBh1s71mW5DsUb6hGfXwAXXzaqk9Lixh/g9iwJpk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTY6aUpqe1couvUF5sVadpRe60sUyDyLXDsb7PPcWHPdFar6ht
+	KSmJF5tAk36p43evQsdanFZp1requSEuuhKITTMQ3tFgtmt/vr+dTqaEqqD7HHStr55HLAo1y18
+	seNrrlmwXaez+fZT18+CY9FXcfn/OnbUFcl8rwsDg
+X-Gm-Gg: ASbGnct7CvZVOpM0Knnypg5nIX28mxbl3cF5thTTuheeVaoZV61UvwsaY00CV8Ff5oQ
+	YnvuoHcn3+taK6jPom4rV2/TnAp2X/1rAhyoYLktxSxY+LCBpcwTfMl1+MvZUCsRnsTdHAvPmk6
+	ovbCuIsL9CpEVEfk2QT7ZfrEfRlZK8VdLraJ7iZm4yDA+rO8HAdd2b54rumihB2mBPSxTMFdBp9
+	9SBtpM=
+X-Google-Smtp-Source: AGHT+IEXhK1131XWCxvi7Nio2+68OjFD+uuKTnM3IyahEOE8+SxQmj0cr6JJq5Z4EymBmSkfKMUBkrSQPB3Jk18uL2k=
+X-Received: by 2002:a17:907:7b96:b0:af2:3c43:b104 with SMTP id
+ a640c23a62f3a-af2f927315bmr7197266b.54.1753213174869; Tue, 22 Jul 2025
+ 12:39:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250722170513.5854-1-sanjaysuthar661996@gmail.com>
-In-Reply-To: <20250722170513.5854-1-sanjaysuthar661996@gmail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Tue, 22 Jul 2025 21:38:30 +0200
-X-Gm-Features: Ac12FXwCtPAOsiQDY47hJ2_tvejllz9nr8xSmIyDW7TLGWTLqhLQAI8E9IianHU
-Message-ID: <CAFBinCCmsw=XGPtrk1XbphOu=OwhxmAiZ+2h4x_M-_f64Vo-7A@mail.gmail.com>
-Subject: Re: [PATCH v3] dt-bindings: cleanup: fix duplicated 'is is' in YAML docs
-To: Sanjay Suthar <sanjaysuthar661996@gmail.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-iio@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
-	ribalda@kernel.org, jic23@kernel.org, dlechner@baylibre.com, 
-	nuno.sa@analog.com, andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	neil.armstrong@linaro.org, khilman@baylibre.com, jbrunet@baylibre.com
+References: <20250717-su-v1-1-0f740fd8bfb6@chromium.org> <7ebb8be3-ce67-4989-bae6-8459aef74528@kernel.org>
+ <CAEs41JAt5Hjp7G6LPr36e+BT0dp6RU5p25kzCwnwBpBfF-3dJw@mail.gmail.com> <2ea2202c-d9bf-4fc1-a33f-2565ebe1d425@kernel.org>
+In-Reply-To: <2ea2202c-d9bf-4fc1-a33f-2565ebe1d425@kernel.org>
+From: Allen Ballway <ballway@chromium.org>
+Date: Tue, 22 Jul 2025 12:39:23 -0700
+X-Gm-Features: Ac12FXw9ATIB01PJWLFPAzqRnJ_m6YQA-jqJ9ZowEDQNiVWvR9_fUo-Roi8FqVI
+Message-ID: <CAEs41JAYytgJMD4L_ZVxAm4v29gQdjSvMrQ-jx5zE1TydtZ2WA@mail.gmail.com>
+Subject: Re: [PATCH] media: ov8865: Preserve hflip in ov8865_mode_binning_configure
+To: Hans de Goede <hansg@kernel.org>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 22, 2025 at 7:06=E2=80=AFPM Sanjay Suthar
-<sanjaysuthar661996@gmail.com> wrote:
+Hello,
+
+On Tue, Jul 22, 2025 at 2:19=E2=80=AFAM Hans de Goede <hansg@kernel.org> wr=
+ote:
 >
-> Fix minor grammatical issues by removing duplicated "is" in two devicetre=
-e
-> binding documents:
+> Hi,
 >
-> - net/amlogic,meson-dwmac.yaml
-> - iio/dac/ti,dac7612.yaml
+> On 21-Jul-25 7:46 PM, Allen Ballway wrote:
+> > Hello,
+> >
+> > On Mon, Jul 21, 2025 at 4:51=E2=80=AFAM Hans de Goede <hansg@kernel.org=
+> wrote:
+> >>
+> >> Hi,
+> >>
+> >> On 17-Jul-25 11:07 PM, Allen Ballway wrote:
+> >>> Prevents ov8865_mode_binning_configure from overwriting the hflip
+> >>> register values. Allows programs to configure the hflip.
+> >>>
+> >>> Signed-off-by: Allen Ballway <ballway@chromium.org>
+> >>
+> >> Thank you for your patch.
+> >>
+> >>> ---
+> >>>  drivers/media/i2c/ov8865.c | 8 +++++++-
+> >>>  1 file changed, 7 insertions(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/drivers/media/i2c/ov8865.c b/drivers/media/i2c/ov8865.c
+> >>> index 95ffe7536aa6aba814f4e5c3d12e7279470b2f07..40a852d31f13aff960acf=
+d09b378d71525e19332 100644
+> >>> --- a/drivers/media/i2c/ov8865.c
+> >>> +++ b/drivers/media/i2c/ov8865.c
+> >>> @@ -1746,7 +1746,13 @@ static int ov8865_mode_binning_configure(struc=
+t ov8865_sensor *sensor,
+> >>>       if (ret)
+> >>>               return ret;
+> >>>
+> >>> -     value =3D OV8865_FORMAT2_HSYNC_EN;
+> >>> +     ret =3D ov8865_read(sensor, OV8865_FORMAT2_REG, &value);
+> >>> +     if (ret)
+> >>> +             return ret;
+> >>> +
+> >>> +     value &=3D OV8865_FORMAT2_FLIP_HORZ_ISP_EN |
+> >>> +               OV8865_FORMAT2_FLIP_HORZ_SENSOR_EN;
+> >>> +     value |=3D OV8865_FORMAT2_HSYNC_EN;
+> >>>
+> >>>       if (mode->binning_x)
+> >>>               value |=3D OV8865_FORMAT2_FST_HBIN_EN;
+> >>
+> >> this change should not be necessary. Lets assume we start
+> >> with the sensor runtime-suspended, then ov8865_resume()
+> >> will call:
+> >>
+> >> ov8865_sensor_power(true)
+> >> ov8865_sensor_init()
+> >>   ov8865_state_configure()
+> >>     ov8865_mode_configure()
+> >>       ov8865_mode_binning_configure()
+> >> __v4l2_ctrl_handler_setup()
+> >>
+> >> Where the __v4l2_ctrl_handler_setup() call will apply
+> >> all control settings including hflip.
+> >>
+> >> So unless you manage to hit a code-path where somehow
+> >> ov8865_state_configure() gets called without calling
+> >> __v4l2_ctrl_handler_setup() afterwards then this should
+> >> not be necessary.
+> >
+> > ov8865_state_configure() is also being called from ov8865_set_fmt(),
+> > and makes no calls to __v4l2_ctrl_handler_setup(). I'm not sure if
+> > calling __v4l2_ctrl_handler_setup() here as well is the right fix, but
+> > the driver ov8865 seems to be based upon, ov5648, seems to avoid
+> > this issue by preserving the flip values when setting the binning
+> > register values in ov5648_mode_configure by using
+> > ov5648_update_bits() rather than ov5648_write(). I believe that we
+> > just need to preserve the register values unrelated to binning inside
+> > ov8865_mode_binning_configure, possibly by just using
+> > ov8865_update_bits() instead of ov8865_write().
 >
-> Signed-off-by: Sanjay Suthar <sanjaysuthar661996@gmail.com>
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> But you cannot call ov8865_set_fmt() while streaming, since
+> it has :
+>
+>         if (sensor->state.streaming) {
+>                 ret =3D -EBUSY;
+>                 goto complete;
+>         }
+>
+> in there.
+>
+> And when not streaming the sensor is off. So inside ov8865_state_configur=
+e()
+> the ov8865_mode_configure() and thus ov8865_mode_binning_configure()
+> will be skipped since that is protected by if (!pm_runtime_suspended())
+> as mentioned before this is all a bit messy in this driver and it would
+> be good to untangle this a bit, I think the ov8865_mode_configure()
+> should be moved out of ov8865_state_configure() and instead done
+> separately on power-up.
 
-Thank you for spotting and fixing this!
+I see now. ov8865_set_fmt() will be called multiple times after the sensor =
+is
+resumed but before it is streaming, calling through to ov8865_mode_configur=
+e()
+and then stomping the register values. Moving the ov8865_mode_configure()
+call out of ov8865_state_configure() and into ov8865_sensor_init() prevents
+this and allows the flip to be configured correctly.
 
-To my knowledge nobody else is currently working on amlogic,meson-dwmac cha=
-nges.
-Meaning: with an ACK from the netdev or iio maintainers this patch can
-go through any tree (iio, netdev, devicetree).
+Thanks for the feedback, I'll send out a new patch for the above change soo=
+n.
 
-
-Best regards,
-Martin
+Allen
+>
+> Regards,
+>
+> Hans
+>
 
