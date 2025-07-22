@@ -1,253 +1,469 @@
-Return-Path: <linux-kernel+bounces-740205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67028B0D15E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:47:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F00DB0D161
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:49:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 222B11AA2E4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 05:47:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B39D5544865
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 05:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0FD28C2A8;
-	Tue, 22 Jul 2025 05:47:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677F028CF40;
+	Tue, 22 Jul 2025 05:48:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R+OfOwjB"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jkr7B2K3"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E7852AE8B;
-	Tue, 22 Jul 2025 05:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581EC28AB10
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 05:48:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753163235; cv=none; b=YKwo2Vx+f+hm+/wXY4KLxo8wvUJ9OPuTxKXNBOnh8lcPOshSdCmgdLatdiGI825kDE604C6qawZ4MDRo7fq7tONuSCfEZMH8tKx7/wHhrSnGWpsFvT9GtIwixGhcE6eDVsEd9Z9KR7mSktx902Qc6wxoIFbLRmmJkiGgTpqXayE=
+	t=1753163336; cv=none; b=ccQUJiuQeSkHuRbBRWJcU2+ALgdX7YTdTet/eBnor1rTiDxI48vFgZgg/eKSGn2AJVyBGmmqXJQy9kdIjz26VivLZIBg8UTEA2gYP8pPLVmpPjV6z/Rf+Z4hbzK9ApqIx+yqOYXbDP+nPzpMN4hqKCiraRn8mdnhGgFtsNlgMnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753163235; c=relaxed/simple;
-	bh=4KTMcMNqa+Cs50akbCmfe4w7zBHigyKxTjl0IWyGT9M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rfHeU8liAs+KXRYl+MG5U/SFAk+Ao4eda9jf2tjcTyF5j8KVRrFwStbwiXyfR50Ibo/sAq2KQOgT9sOM2TL+w40Xyh+AzK6L8FhvNdJcJBE1tby14TFaPQt3n21nkfyrfY2MlrCszJtiAxOSuBIkLzZVy0+R80I5MzoZEjC+uD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R+OfOwjB; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7de159778d4so473490585a.1;
-        Mon, 21 Jul 2025 22:47:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753163232; x=1753768032; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s4az7oS3cJK4znd7m6hzbxOfo+D7DIH7z4MXzj8mANU=;
-        b=R+OfOwjBTPQckVmYjEEBPu3VpVJbI8jiQ+Jpfqg9/PvsRPOMV7fh27MX5YMtho2JYB
-         EHcALmUif7uICfRqrH+F5Q3F5nJTRvAXRYGsjrzaxdYJMqwfAKUjJAe4rowQ5c+UA/0L
-         k/8SClBzXe3w+RH5HGT1b1KtJJgxWao6rC6awHlwhSmSz7N2YptxIUqcFcETdu0nmqui
-         xd+sV2Qc+pRwHu0QMlVImKyaYzvtvGSd/qrtp0DlQxH/FlaL9SFNDKuEnGeX11d+zbRH
-         /xAy87G5HykIqfjtEmyoZEHhTnQ8QYHHNDkklFB/2UAal1YcvhErnHvpmbWUifSujktm
-         FAzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753163232; x=1753768032;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s4az7oS3cJK4znd7m6hzbxOfo+D7DIH7z4MXzj8mANU=;
-        b=MM3KF45z00sZjz8vTTN+xHWwMhDoPFodX44KnqRJAKbR7NNk6PI78L69gpy1nFwftl
-         BplUOpWEOzdiJvusxB3s3ArgpqtDBQG8apBfPZPyKbLGM+kDW/VcrqbxNGmzu3PW6wkT
-         iTHuTEovoz3U0em6RbLBaTsCB68GqpLcsO1PBbbZ/JdMNc7/G7xynPD5RQi7uPhJZWgE
-         sKNZeEtXuCDvii9r/rm8zetbs/vLSB8AUpZlgRT8adbgz4jhKWFF5xondpUlV6NlnySH
-         sy4Y09FSb/HHOsyyZ33gPlKBxZU+L5yfNWNK41eV3+8tndAU3TT8GuOyvoQ2Js+bFRiu
-         4gmw==
-X-Forwarded-Encrypted: i=1; AJvYcCVkW1KFOiQ9QNvsDL3tcO9r3xtPKjchVRqOrA4mABVaKAmrcsqzH4d+03ZzQ9u+wP1gznjhfThI74toWbyG@vger.kernel.org, AJvYcCX4XuNWty6NLpcXkoCWgVpm3dhJ0TWLvyKZfDBdkpmNMGK0lTU69gFtYPWo3rPTcimcDFuRnt/szO0UDA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAeLLyPWxh4OUU9H93b2I6sucYjmI9HA3r39Et5sIuPh4PNkRa
-	amhJYNcJDqvjt8INpsPuh7po//4/iZl74m1uLV2tcTqxPqkP/xEHPhkIOTyNyFKcTmrrfs4IKbO
-	bYY/KfCqT0ZhL0sybEQQCuz97WYirAx0=
-X-Gm-Gg: ASbGncsKuwFe5rBvHwluDr5xyEhD0luUilTqKXeOlsOXAw3AzJOSaBKm+1clg4n+JRh
-	oB1CfJzNGiqGTOBIeqtPPeh0Y4D8Xf5JpYGmDS2tg9SZ7/pJVOy0P90Y73ua8yjFf/MjCB8REw+
-	FeRZ42XSbKUpaUvGsatZV9o2ASzWJ6miyn0fptkpdVCg+o3z4y8/XSuWxQbO/DuZxCtieDX/9Id
-	Qp/VNIuPhn+daLrIi8=
-X-Google-Smtp-Source: AGHT+IHj7uZcjEGUf2a3Kt47PuPScQ7waQRxbjRqzMOqSNcrB+dm3z9uHThN3oEZFcyLvA+N8NAsISPEdQITGUMPp54=
-X-Received: by 2002:ad4:5c43:0:b0:703:c1d0:b358 with SMTP id
- 6a1803df08f44-704f6adbab8mr336694116d6.28.1753163232230; Mon, 21 Jul 2025
- 22:47:12 -0700 (PDT)
+	s=arc-20240116; t=1753163336; c=relaxed/simple;
+	bh=C3xpCXSwydRrWzTdRceLtbVq+xVHgKzdzMnpKU5QheM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hsGL+vhpfwSTN6r/uyQiW+jzP9UPIsmopLxdTqTOVaIyiNfr/pNSTztKXq0ElTaAsT0p9iN99itQcAbvL9bDKuCHFyGQZk1anEWoLKtqyaA0nb+8oNw7zHOXtH9PNvmRulPyzB95yJyCkvkDq+ePys9ZubuZseZ9lyRk0RAH9A0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jkr7B2K3; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <06387128-8d34-49fd-a409-d35f5d60b094@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753163321;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m/iwLPdiIBFi6lp1IENj7q/2PClonPRpthSmWe4Tk/c=;
+	b=jkr7B2K3bc55GgaXWR4zwgbI1qDEq33XvAeRPGQONKTIqbOL+Egj3NJ6SWLapcygwaXrC4
+	sMssxCc7+JR962mGrWBwE9HosZGL+IsI/VHm5euAQ8z6uxER/1eth+FE9WRa5sKl01Cf5V
+	MKlHMuZ1HcNgfrqxzO1Xx1PC9fX8aYk=
+Date: Tue, 22 Jul 2025 13:48:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250625-dualsense-hid-jack-v2-0-596c0db14128@collabora.com>
- <s4596421-sr43-893r-o90r-86nr588sp32q@xreary.bet> <74d4675d-d6f5-41ed-b715-f62fb569df5d@collabora.com>
- <CAEc3jaAFV_PXdFAX9th4-hhKNAhBKdVCNP+Qf8nH=g8FwoCabQ@mail.gmail.com>
-In-Reply-To: <CAEc3jaAFV_PXdFAX9th4-hhKNAhBKdVCNP+Qf8nH=g8FwoCabQ@mail.gmail.com>
-From: Roderick Colenbrander <thunderbird2k@gmail.com>
-Date: Mon, 21 Jul 2025 22:47:01 -0700
-X-Gm-Features: Ac12FXzDbvmmPc0WpbDb6J93GVU9pfXb9f9xfOSeIwJj4AonZZo1JR1KPlShXns
-Message-ID: <CAEc3jaAGP3HV_+tGLHWZXA-baD4HkA2nYWGxpmox4cuZMh+ksw@mail.gmail.com>
-Subject: Re: [PATCH v2 00/11] HID: playstation: Add support for audio jack
- handling on DualSense
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Roderick Colenbrander <roderick.colenbrander@sony.com>, Jiri Kosina <jikos@kernel.org>, 
-	Benjamin Tissoires <bentiss@kernel.org>, Henrik Rydberg <rydberg@bitmath.org>, kernel@collabora.com, 
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH bpf-next 1/2] bpftool: Add bpf_token show
+To: Quentin Monnet <qmo@kernel.org>, ast@kernel.org, daniel@iogearbox.net,
+ andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, davem@davemloft.net,
+ kuba@kernel.org, hawk@kernel.org
+Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org
+References: <20250720173310.1334483-1-chen.dylane@linux.dev>
+ <6b0669fd-fef6-4f4e-b80d-512769e86938@kernel.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Tao Chen <chen.dylane@linux.dev>
+In-Reply-To: <6b0669fd-fef6-4f4e-b80d-512769e86938@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Christian,
+在 2025/7/22 00:23, Quentin Monnet 写道:
+> Thanks a lot for this!
+> 
 
-I just got back from Japan (trip was a bit extended). In the meantime
-I had some of employees had a look as well.
+Hi Quenin,
 
-The audio patches towards the end seem to be okay. We tried to dig for
-the official volume numbers, but they were too hard to find (too many
-layers, too many repositories). When we use a PS5, the default volume
-for the headset and speaker are both close to 70% (just eyeballing).
-At the hardware level the volume is quite non-linear and internally we
-use a mapping table (not sure what the curve is based on). For the
-speaker this starts at 0x3d as you found out already. The 70% volume
-for the speaker seems to correspond to a value of 93 and headphones
-83.
-The set pre-amp gain of 0x2 is a common value we seem to set and means
-+6dB, so change comment around to mean that I guess.
+> 
+> 2025-07-21 01:33 UTC+0800 ~ Tao Chen <chen.dylane@linux.dev>
+>> Add `bpftool token show` command to get token info
+>> from bpf fs in /proc/mounts.
+>>
+>> Example plain output for `token show`:
+>> token_info:
+>>          /sys/fs/bpf/token
+>>
+>> allowed_cmds:
+>>          map_create          prog_load
+>>
+>> allowed_maps:
+>>
+>> allowed_progs:
+>>          kprobe
+>>
+>> allowed_attachs:
+>>          xdp
+>>
+>> Example json output for `token show`:
+>> {
+>>      "token_info": "/sys/fs/bpf/token",
+>>      "allowed_cmds": ["map_create","prog_load"
+>>      ],
+>>      "allowed_maps":
+> 
+> 
+> This is not valid JSON. You're missing a value for "allowed_maps" (here
+> it should likely be an empty array), and the comma:
+> 
+> 	"allowed_maps": [],
+> 
+> 
+>>      "allowed_progs": ["kprobe"
+>>      ],
+>>      "allowed_attachs": ["xdp"
+>>      ]
+>> }
+>>
+>> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+>> ---
+>>   tools/bpf/bpftool/main.c  |   3 +-
+>>   tools/bpf/bpftool/main.h  |   1 +
+>>   tools/bpf/bpftool/token.c | 229 ++++++++++++++++++++++++++++++++++++++
+>>   3 files changed, 232 insertions(+), 1 deletion(-)
+>>   create mode 100644 tools/bpf/bpftool/token.c
+>>
+>> diff --git a/tools/bpf/bpftool/main.c b/tools/bpf/bpftool/main.c
+>> index 2b7f2bd3a7d..0f1183b2ed0 100644
+>> --- a/tools/bpf/bpftool/main.c
+>> +++ b/tools/bpf/bpftool/main.c
+>> @@ -61,7 +61,7 @@ static int do_help(int argc, char **argv)
+>>   		"       %s batch file FILE\n"
+>>   		"       %s version\n"
+>>   		"\n"
+>> -		"       OBJECT := { prog | map | link | cgroup | perf | net | feature | btf | gen | struct_ops | iter }\n"
+>> +		"       OBJECT := { prog | map | link | cgroup | perf | net | feature | btf | gen | struct_ops | iter | token }\n"
+>>   		"       " HELP_SPEC_OPTIONS " |\n"
+>>   		"                    {-V|--version} }\n"
+>>   		"",
+>> @@ -87,6 +87,7 @@ static const struct cmd commands[] = {
+>>   	{ "gen",	do_gen },
+>>   	{ "struct_ops",	do_struct_ops },
+>>   	{ "iter",	do_iter },
+>> +	{ "token",	do_token },
+>>   	{ "version",	do_version },
+>>   	{ 0 }
+>>   };
+>> diff --git a/tools/bpf/bpftool/main.h b/tools/bpf/bpftool/main.h
+>> index 6db704fda5c..a2bb0714b3d 100644
+>> --- a/tools/bpf/bpftool/main.h
+>> +++ b/tools/bpf/bpftool/main.h
+>> @@ -166,6 +166,7 @@ int do_tracelog(int argc, char **arg) __weak;
+>>   int do_feature(int argc, char **argv) __weak;
+>>   int do_struct_ops(int argc, char **argv) __weak;
+>>   int do_iter(int argc, char **argv) __weak;
+>> +int do_token(int argc, char **argv) __weak;
+>>   
+>>   int parse_u32_arg(int *argc, char ***argv, __u32 *val, const char *what);
+>>   int prog_parse_fd(int *argc, char ***argv);
+>> diff --git a/tools/bpf/bpftool/token.c b/tools/bpf/bpftool/token.c
+>> new file mode 100644
+>> index 00000000000..2fcaff4f2ba
+>> --- /dev/null
+>> +++ b/tools/bpf/bpftool/token.c
+>> @@ -0,0 +1,229 @@
+>> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +
+>> +#ifndef _GNU_SOURCE
+>> +#define _GNU_SOURCE
+>> +#endif
+>> +#include <errno.h>
+>> +#include <fcntl.h>
+>> +#include <stdbool.h>
+>> +#include <stdio.h>
+>> +#include <stdlib.h>
+>> +#include <string.h>
+>> +#include <unistd.h>
+>> +#include <mntent.h>
+>> +#include <sys/types.h>
+>> +#include <sys/stat.h>
+>> +
+>> +#include "json_writer.h"
+>> +#include "main.h"
+>> +
+>> +#define MOUNTS_FILE "/proc/mounts"
+>> +
+>> +#define zclose(fd) do { if (fd >= 0) close(fd); fd = -1; } while (0)
+> 
+> 
+> Seems unused?
+> 
+My fault, will remove it in v2, thanks.
 
-As for the other patches I'm not entirely sure yet. I know they were
-well intended, but let me just say, they rubbed some of my team
-members quite the wrong way resulting in some heavy discussion. I have
-somewhat similar feelings about the ultra strict checkpatch toggle as
-well.
+> 
+>> +
+>> +static bool has_delegate_options(const char *mnt_ops)
+>> +{
+>> +	return strstr(mnt_ops, "delegate_cmds") != NULL ||
+>> +	       strstr(mnt_ops, "delegate_maps") != NULL ||
+>> +	       strstr(mnt_ops, "delegate_progs") != NULL ||
+>> +	       strstr(mnt_ops, "delegate_attachs") != NULL;
+>> +}
+>> +
+>> +static char *get_delegate_value(const char *opts, const char *key)
+>> +{
+>> +	char *token, *rest, *ret = NULL;
+>> +	char *opts_copy = strdup(opts);
+>> +
+>> +	if (!opts_copy)
+>> +		return NULL;
+>> +
+>> +	for (token = strtok_r(opts_copy, ",", &rest); token != NULL;
+>> +			token = strtok_r(NULL, ",", &rest)) {
+>> +		if (strncmp(token, key, strlen(key)) == 0 &&
+>> +				token[strlen(key)] == '=') {
+>> +			ret = token + strlen(key) + 1;
+>> +			break;
+>> +		}
+>> +	}
+>> +	free(opts_copy);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static void print_items_per_line(const char *input, int items_per_line)
+>> +{
+>> +	char *str, *rest;
+>> +	int cnt = 0;
+>> +	char *strs = strdup(input);
+>> +
+>> +	if (!strs)
+>> +		return;
+>> +
+>> +	for (str = strtok_r(strs, ":", &rest); str != NULL;
+>> +			str = strtok_r(NULL, ":", &rest)) {
+>> +		if (cnt % items_per_line == 0)
+>> +			printf("\n\t");
+>> +
+>> +		printf("%-20s", str);
+>> +		cnt++;
+>> +	}
+>> +
+>> +	free(strs);
+>> +}
+>> +
+>> +#define ITEMS_PER_LINE 4
+>> +static void show_token_info_plain(struct mntent *mntent)
+>> +{
+>> +	char *value;
+>> +
+>> +	printf("\ntoken_info:");
+>> +	printf("\n\t%s\n", mntent->mnt_dir);
+>> +
+>> +	printf("\nallowed_cmds:");
+>> +	value = get_delegate_value(mntent->mnt_opts, "delegate_cmds");
+>> +	if (value)
+>> +		print_items_per_line(value, ITEMS_PER_LINE);
+>> +	printf("\n");
+>> +
+>> +	printf("\nallowed_maps:");
+>> +	value = get_delegate_value(mntent->mnt_opts, "delegate_maps");
+>> +	if (value)
+>> +		print_items_per_line(value, ITEMS_PER_LINE);
+>> +	printf("\n");
+>> +
+>> +	printf("\nallowed_progs:");
+>> +	value = get_delegate_value(mntent->mnt_opts, "delegate_progs");
+>> +	if (value)
+>> +		print_items_per_line(value, ITEMS_PER_LINE);
+>> +	printf("\n");
+>> +
+>> +	printf("\nallowed_attachs:");
+>> +	value = get_delegate_value(mntent->mnt_opts, "delegate_attachs");
+>> +	if (value)
+>> +		print_items_per_line(value, ITEMS_PER_LINE);
+>> +	printf("\n");
+>> +}
+>> +
+>> +static void __json_array_str(const char *input)
+> 
+> 
+> Nit: Why the double underscore in the function name? Let's use a more
+> explicit name also, maybe something like "split_to_json_array"?
+> 
 
-We had to move mountains to be allowed to even upstream controller
-code among our limited time (it is closer to a hobby thing, even
-though many products nowadays use it as well). So that's a factor
-which adds up a bit as well.
+Well, it looks better, will change it in v2.
 
-I think some of the patches we could live with if it came to it. There
-is no real agreed up full kernel standard (as it is contentious). So
-for example we tend to prefer more uint8_t family, where older kernel
-style was more u8 and the kernel allows for both. I think we would
-probably lean towards keeping it at the modern form.
+> >> +{
+>> +	char *str, *rest;
+>> +	char *strs = strdup(input);
+>> +
+>> +	if (!strs)
+>> +		return;
+>> +
+>> +	jsonw_start_array(json_wtr);
+>> +	for (str = strtok_r(strs, ":", &rest); str != NULL;
+>> +			str = strtok_r(NULL, ":", &rest)) {
+>> +		jsonw_string(json_wtr, str);
+>> +	}
+>> +	jsonw_end_array(json_wtr);
+>> +
+>> +	free(strs);
+>> +}
+>> +
+>> +static void show_token_info_json(struct mntent *mntent)
+>> +{
+>> +	char *value;
+>> +
+>> +	jsonw_start_object(json_wtr);
+>> +
+>> +	jsonw_string_field(json_wtr, "token_info", mntent->mnt_dir);
+>> +
+>> +	jsonw_name(json_wtr, "allowed_cmds");
+>> +	value = get_delegate_value(mntent->mnt_opts, "delegate_cmds");
+>> +	if (value)
+>> +		__json_array_str(value);
+> 
+> 
+> As mentioned above, you need to change __json_array_str() to print
+> something when you don't get a "value" here - just have it print an
+> empty array.
+> 
 
-Some of the macros also felt a little too magical. Our feeling tends
-to be if you have to go many layers deep to understand what a macro or
-line of code does (and it is easier to then printk the value),
-something feels off...
+As you mentioned, the 'value' will be checked within the 
+__json_array_str, and print empty array if it is NULL in v2.
 
-Thanks,
+> 
+>> +
+>> +	jsonw_name(json_wtr, "allowed_maps");
+>> +	value = get_delegate_value(mntent->mnt_opts, "delegate_maps");
+>> +	if (value)
+>> +		__json_array_str(value);
+>> +
+>> +	jsonw_name(json_wtr, "allowed_progs");
+>> +	value = get_delegate_value(mntent->mnt_opts, "delegate_progs");
+>> +	if (value)
+>> +		__json_array_str(value);
+>> +
+>> +	jsonw_name(json_wtr, "allowed_attachs");
+>> +	value = get_delegate_value(mntent->mnt_opts, "delegate_attachs");
+>> +	if (value)
+>> +		__json_array_str(value);
+>> +
+>> +	jsonw_end_object(json_wtr);
+>> +}
+>> +
+>> +static int __show_token_info(struct mntent *mntent)
+>> +{
+>> +
+>> +	if (json_output)
+>> +		show_token_info_json(mntent);
+>> +	else
+>> +		show_token_info_plain(mntent);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int show_token_info(void)
+>> +{
+>> +	FILE *fp;
+>> +	struct mntent *ent;
+>> +	bool hit = false;
+>> +
+>> +	fp = setmntent(MOUNTS_FILE, "r");
+>> +	if (!fp) {
+>> +		p_err("Failed to open:%s", MOUNTS_FILE);
+> 
+> 
+> Missing space after the colon, in the error message.
+> 
 
-Roderick Colenbrander
-Sr. Director - Hardware & Systems Engineering
-Sony Interactive Entertainment, LLC
+will fix it in v2.
 
-On Thu, Jul 10, 2025 at 2:31=E2=80=AFPM Roderick Colenbrander
-<thunderbird2k@gmail.com> wrote:
->
-> Hi Cristian,
->
-> I'm on a business trip to Japan, I started looking during my flight
-> last weekend. But due to meetings haven't had a lot of opportunity. I
-> may have a little bit of time in the coming days in between meetings.
->
-> Thanks,
-> Roderick
->
-> On Wed, Jul 9, 2025 at 10:24=E2=80=AFPM Cristian Ciocaltea
-> <cristian.ciocaltea@collabora.com> wrote:
-> >
-> > Hi Roderick,
-> >
-> > On 7/3/25 10:48 AM, Jiri Kosina wrote:
-> > > On Wed, 25 Jun 2025, Cristian Ciocaltea wrote:
-> > >
-> > >> The Sony DualSense wireless controller (PS5) provides an internal mo=
-no
-> > >> speaker, in addition to the 3.5mm jack socket for headphone output a=
-nd
-> > >> headset microphone input.  However, the default audio output path is=
- set
-> > >> to headphones, regardless of whether they are actually inserted or n=
-ot.
-> > >>
-> > >> This patch series aims to improve the audio support when operating i=
-n
-> > >> USB mode, by implementing the following changes:
-> > >>
-> > >> * Detect when the plugged state of the audio jack changes and toggle
-> > >>   audio output between headphones and internal speaker, as required.
-> > >>   The latter is achieved by essentially routing the right channel of=
- the
-> > >>   audio source to the mono speaker.
-> > >>
-> > >> * Adjust the speaker volume since its default level is too low and,
-> > >>   therefore, cannot generate any audible sound.
-> > >>
-> > >> * Register a dedicated input device for the audio jack and use it to
-> > >>   report all headphone and headset mic insert events.
-> > >>
-> > >> It's worth noting the latter is necessary since the controller compl=
-ies
-> > >> with v1.0 of the USB Audio Class spec (UAC1) and, therefore, cannot
-> > >> advertise any jack detection capability.
-> > >>
-> > >> However, this feature can be implemented in the generic USB audio dr=
-iver
-> > >> via quirks, i.e. by configuring an input handler to receive hotplug
-> > >> events from the HID driver.  That's exactly what has been accomplish=
-ed
-> > >> via the "ALSA: usb-audio: Support jack detection on Sony DualSense"
-> > >> patchset [1], which has been already merged and should be available =
-in
-> > >> v6.17.
-> > >>
-> > >> Unrelated to the above, also provide a few driver cleanup patches, e=
-.g.
-> > >> make use of bitfields macros, simplify locking, fix coding style.
-> > >>
-> > >> [1] https://lore.kernel.org/all/20250526-dualsense-alsa-jack-v1-0-1a=
-821463b632@collabora.com/
-> > >>
-> > >> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> > >> ---
-> > >> Changes in v2:
-> > >> - Updated cover letter including a reference to the usb-audio patch =
-series
-> > >> - Updated 'HID: playstation: Make use of bitfield macros' patch to d=
-rop
-> > >>   DS_STATUS_CHARGING_SHIFT and use FIELD_GET() for battery status op=
-s
-> > >> - Replaced 'HID: playstation: Rename DualSense input report status
-> > >>   field' with 'HID: playstation: Redefine DualSense input report sta=
-tus
-> > >>   field' changing data type to a 3-byte array instead of renaming th=
-e
-> > >>   struct member (Roderick)
-> > >> - Updated 'HID: playstation: Support DualSense audio jack hotplug
-> > >>   detection' according to Roderick's feedback:
-> > >>  * Used DS_STATUS1_ prefixes for the plugged status register and ren=
-ame
-> > >>    its bits to match the datasheet
-> > >>  * Defined MIC_VOLUME_ENABLE bit of DS_OUTPUT_VALID_FLAG0 register
-> > >>  * Renamed the newly introduced audio controls members in struct
-> > >>    dualsense_output_report_common: headphone_volume, speaker_volume,
-> > >>    mic_volume, audio_control, audio_control2
-> > >> - Restricted audio jack hotplug detection and event reporting to USB
-> > >>   operation mode only, since Bluetooth audio is currently not suppor=
-ted
-> > >>   and it might have a negative impact on the battery life (Roderick)
-> > >> - Rebased series onto next-20250624
-> > >> - Link to v1: https://lore.kernel.org/r/20250526-dualsense-hid-jack-=
-v1-0-a65fee4a60cc@collabora.com
-> > >
-> > > Just for the record -- I like the v2, and am inclined to merge it, bu=
-t
-> > > would prefer doing that with Roderick's Ack, so I am waiting for a bi=
-t
-> > > here.
-> >
-> > Could you please confirm you are fine with the latest changes so that J=
-iri
-> > is able to merge the series?
-> >
-> > If you cannot find the time to look into every detail right now, we can
-> > still take care of any non-essential matters afterwards.
-> >
-> > Thanks,
-> > Cristian
+> 
+>> +		return -1;
+>> +	}
+>> +
+>> +	while ((ent = getmntent(fp)) != NULL) {
+>> +		if (strcmp(ent->mnt_type, "bpf") == 0) {
+> 
+> 
+> File common.c has:
+> 
+> 		if (strncmp(mntent->mnt_type, "bpf", 3) != 0)
+> 			continue;
+> 
+> Maybe do the same for consistency, and to avoid indenting too far right?
+> 
+
+Yes, i will refrence that, thanks.
+
+> 
+>> +			if (has_delegate_options(ent->mnt_opts)) {
+>> +				hit = true;
+>> +				break;
+> 
+> 
+> Apologies, my knowledge of BPF tokens is limited. Can you have only one
+> token exposed through a bpffs at a time? Asking because I know you can
+> have several bpffs on your system, if each can have delegate options
+> then why stop after the first bpffs mount point you find?
+> 
+
+Yes it is, only the first bpffs with token info will be showed above.
+Actually, it will not be limited how many bpffs ceated in kernel, it 
+depends on the user scenarios. In most cases, only one will be created. 
+But, maybe it's better to show all. I will change it in v2.
+
+> 
+>> +			}
+>> +		}
+>> +	}
+>> +
+>> +	if (hit)
+>> +		__show_token_info(ent);
+> 
+> 
+> Maybe at least a p_info() message if you don't find anything to print?
+> 
+Ok, will add it in v2.
+
+> 
+>> +	endmntent(fp);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int do_show(int argc, char **argv)
+>> +{
+>> +	if (argc)
+>> +		return BAD_ARG();
+>> +
+>> +	return show_token_info();
+>> +}
+>> +
+>> +static int do_help(int argc, char **argv)
+>> +{
+>> +	if (json_output) {
+>> +		jsonw_null(json_wtr);
+>> +		return 0;
+>> +	}
+>> +
+>> +	fprintf(stderr,
+>> +		"Usage: %1$s %2$s { show | list }\n"
+>> +		"	%1$s %2$s help\n"
+>> +		"\n"
+>> +		"",
+>> +		bin_name, argv[-2]);
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct cmd cmds[] = {
+>> +	{ "show",	do_show },
+>> +	{ "help",	do_help },
+>> +	{ "list",	do_show },
+> 
+> 
+> Nit: Can we have "help" coming third, below both "show" and "list" please?
+> 
+
+will change it in v2.
+
+> 
+>> +	{ 0 }
+>> +};
+>> +
+>> +int do_token(int argc, char **argv)
+>> +{
+>> +	return cmd_select(cmds, argc, argv, do_help);
+>> +}
+> 
+-- 
+Best Regards
+Tao Chen
 
