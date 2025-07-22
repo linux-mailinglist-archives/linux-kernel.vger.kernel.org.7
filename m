@@ -1,227 +1,169 @@
-Return-Path: <linux-kernel+bounces-740597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E9CCB0D63D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:47:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDE17B0D643
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:48:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38D691C269B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:48:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA6DF177B85
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:48:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D506723E35D;
-	Tue, 22 Jul 2025 09:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED0B2DC33B;
+	Tue, 22 Jul 2025 09:48:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bNmGnpZB"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uY3jpVhI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD6F938FA6
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 09:47:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A385523C50E;
+	Tue, 22 Jul 2025 09:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753177672; cv=none; b=AH0PBHbRdt3SKdC9TpntAkSyAaA0qEDnvID9IIuF1q5u6fWA8HpAf/b2/sHsJ71T++HzMJK/XoLcAtCk5mqH4gTsU1pYIyr2em5PRMwxaYQbmN/HMnJytcA6lfquQYhLIlczwg4K0rVROzFtsTKZvZ0/zu8Q4fXKnvFhqyZvdxY=
+	t=1753177701; cv=none; b=A2exwGr6o3S5CJQF5boUPL3t/0LR30lIpp3VHrak4EiWa4pSq8UYFKZoMiabKtf7jurlIInKlOrd5s3P3MlWTL/0lCsYwdyoWRPml63fL9h2aHux59lweXm4pTaLvxnMYx4XrHvAtzI0UCww98Hh8/BLdg0fNPNpd/g9P8n9rUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753177672; c=relaxed/simple;
-	bh=/A5bLX16piFxZp3C1uvq7w0g/FlmchWFhW3t4OYe1G4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SUj9JrX0cr8AZK0z8o+TXQCFG1K0HV7JilloTC8RG0YWF3ipwFLzBpGly5ywU4fPfXQwkb3RRtUhyybpjGW3uUu+CzACYGr7tIv9HEFqxQ8U+jY4XybEuTWgE8ikMgdsNlHO1V8PvG+r8mOxaDWX14lIOfIRaBUMu2O3hy+PrfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bNmGnpZB; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56M7YWkE013238
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 09:47:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8BjM9ebfFLsQQcZe6TQ0vgUH4ajpI01hnGqNMGuQ5N4=; b=bNmGnpZBKEr/+gT+
-	Gf7YHgqDyL36SAGt8rwfkfYdw1+m84Sa/N8PyIrOktbzpow0609ipmsdR8zbGoTT
-	v20gVWNzdF5F8d1S5/4ZrXGo23r7sFMTaOlqcQKYZ91x58pk6XxlYQ7eDXQuwsF1
-	7JKMJx8KI74TlvzC4Q5kn2Z1av2o+gkjjvgJVbFV4bfPMsXv0U39DF99xGajnJrf
-	0Nq6ru8p/FDV0JMnSecEVJiSy6a2hyty7wM1416WdVdZPzOoLhxzD94KKWRXzOAo
-	XXh+LF5n5HcQL6zVRZMZKqsK54dIISctG49NJF5SEfSQFKVqzbRolryju45TWIpO
-	ABzC8w==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 481g3eksa4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 09:47:49 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-236725af87fso74374015ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 02:47:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753177669; x=1753782469;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8BjM9ebfFLsQQcZe6TQ0vgUH4ajpI01hnGqNMGuQ5N4=;
-        b=cwx44Z7j4j3xqo0lmOBH/UKsC884mrB0pSrDWireujKRgxdaD0UZZ1+cCOl85+XAqu
-         0p5qElHuNohVnplfe6wYeQxpygMXUcXXmabmh98wMG8vbjpmve4I4/Vx+TtCb+JPVuk7
-         3hE4O8ELb52LRa+saS9dSLnziLwnb7uHDuugEe+fQPG2Piq4Cd78iEEZVoLYCevYTXyK
-         UCAJSv7AuUUpoIQXxyiORQBC6Sglwef1dN09CFYg5X0l4gJo/0t7wfeTRLOBvsBIZTUv
-         /rlyjLhAeIajltWCChZ/jSwzbTpi/49km0nU6gRImyzBrAdoOObe+nx3aLjgakth5zZh
-         QKnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWZEMKUktGxG476miDBGv1b5bLSpT+d+4/6ZvCA4ugyHUEoaaB0RjfACn8ZgTnWbbHghAdTgkDrXQ8VtxI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx24z/JqCWb9fJ6LD9TApIKbd3JCgCphGSleQsGDofFuxGriFOw
-	wl1eoyRJxnf2VqwYB4hDWSIwO0/bnjGYELa1ddAz+XgIuN7KNNLepRPliLvE3mNpvUwfI31rrGI
-	Q8tBIX7Qe3vqrdMIarL1VnFXXiMCYZZbkoJohs5Q/VyWG0ra+HlmfYx0qUdzKSI71Nlo=
-X-Gm-Gg: ASbGncvSEifdVk1QNfz7VX4+hAMKnrL8IaIN4qZUfornR/AAeAIEnOxWjA6Zb9K7Pv/
-	JgQNeld+ZeXCEa70yApaPVKLLA9uugTytpUJPJPB9fnAXsRm6+sfuLSPJkeg9hKAzpbUi7ifnlU
-	ZLNazbyU3pwE/iwkLPY9qFsxBdZ7ROoJXOZ5JZWPP+k5kkkEyimuXWWx7opsAeT+xy6c2R6Mgcu
-	yAbJzq7mAxXC/TmvXH8VO5OlEFeTEICPzesTS60pTFykf0RJSZjW5yU2I7I9XecPe7WgceKxJfU
-	nPopP+Ker9bvPCOJTF5AibKeHMFsb6U2/mmD5jPt+ABLZMJJaONeDvmXVeUQwpzOkBCJBcRaBu4
-	rSh/RZEPB3jkNHP4wjhfvaXLa1/zUvxY=
-X-Received: by 2002:a17:903:2d2:b0:234:c5c1:9b84 with SMTP id d9443c01a7336-23e3035f2eamr249469245ad.37.1753177668779;
-        Tue, 22 Jul 2025 02:47:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFb4WZW5dxHh8zGqRjkvN4xW3CSAyaaR3EwQbz0e6h/H5rEz1JsDrBRAu/UMYCUGTF2EEQHYA==
-X-Received: by 2002:a17:903:2d2:b0:234:c5c1:9b84 with SMTP id d9443c01a7336-23e3035f2eamr249468855ad.37.1753177668301;
-        Tue, 22 Jul 2025 02:47:48 -0700 (PDT)
-Received: from [10.133.33.45] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b6ef9aesm72272625ad.211.2025.07.22.02.47.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Jul 2025 02:47:47 -0700 (PDT)
-Message-ID: <1598d25d-e254-410e-ac5c-66d5450fd686@oss.qualcomm.com>
-Date: Tue, 22 Jul 2025 17:47:43 +0800
+	s=arc-20240116; t=1753177701; c=relaxed/simple;
+	bh=/fkjRHbtz6L40UsKyBjKVzJsr6GgvV345DTaJqD2qqw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IFnKHMjc5ddNyzQEmEqhhyoapxFaMnA7U4Y87uwJSdgBNfo5BUDIWTUoj0VagGnEOt++MLSivc1Q4LHnXO3fV3HPF2VmwKZRgzIH+hMzUsRrMNa2qziraIx5Fyp1OulGFrkNmPN3pTy/AiV4J7yINNWIAztUD0TxA6gFpywY/gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uY3jpVhI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D80FC4CEF5;
+	Tue, 22 Jul 2025 09:48:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753177701;
+	bh=/fkjRHbtz6L40UsKyBjKVzJsr6GgvV345DTaJqD2qqw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=uY3jpVhIrJXrnJoyRCM8Kz2D0ikZfV4UaKvE/s46ETcnW2xM2RH5rsH8+p48fg62n
+	 DV8wmvTmHkUzx1fCy3HqiosXk9ZXn4bG7y40hh5jLWNMF6jzx4g42KmtN7a9uKBlcs
+	 DnnNnMT+MEwE282k60g5dW6QNwypY/myaHwjZhyUgLOCkUVNkx8EiSWJWpTMqlUe4p
+	 BLU8CthLpRmFfyVndjD81unqnPDKaxlETV1P5NW51h7k3TmRmp5HliIUrMJ48y4atG
+	 zMB+tiBaj8tBwNXgc9N7sTsaBeu7jJlqg3CCBfj5cdqlGr7JEC8SMqzBKpj9ZlwHSi
+	 6wLSTNEOwDsiA==
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-613b02e801aso3053827eaf.2;
+        Tue, 22 Jul 2025 02:48:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWQQdZDRHwqnx2keYzaX8N8Nk3hgW+OIQAz77YYvRz3ABy/y+a9/+zBZYcskytWn8rRb7c9ycEdX9GfAPrY@vger.kernel.org, AJvYcCWv1L1+tTtY6fKCEqAo7HzOGC70GRUYr/Yem37gzUlJmuKWc9m0LHLRmaYwVMpys2TcIwNHQayQnOlUbCQSMFk=@vger.kernel.org, AJvYcCX0c9xSb42bz1AU49BLiu8nQsXd+ECC/MtIYq7sZbKjYdxXWJ86/xVXV3nJkRso28FljIDqDeU9ERtZ@vger.kernel.org, AJvYcCXhnMhFIyiWvQHrMsronmsqEvBopTjv6A3xOYdlt/zMpv7EO0F64BAzq8ucyElWmx7GkqhtuliKUczNpw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqMNZYldIkh6Bqo4gWz/jiHrCO3MHYoPPDoI/mtHbUrPJXljyi
+	A4RFUPPzEU9sEbC6DwG/RqCJB678SHVmovh2vS0aDM/Z5GfqccWDFkkrGo30mRrpo/UMDaN5R40
+	Auh5q89dkzHuCivnvtgKlALwyLewld1k=
+X-Google-Smtp-Source: AGHT+IEfTTSEyAOWYu++w5ruAiPqSTMP5i2OLym7qvAO9o3zZKs/j+u5M18LziWEI2JeDHbEZLYaFm+Dh+IghvOJRP4=
+X-Received: by 2002:a05:6820:8186:b0:615:ca49:388f with SMTP id
+ 006d021491bc7-615ca493bf4mr8078409eaf.4.1753177700484; Tue, 22 Jul 2025
+ 02:48:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] wifi: ath11k: HAL SRNG: don't deinitialize and
- re-initialize again
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        Manikanta Pubbisetty <quic_mpubbise@quicinc.com>,
-        kbuild test robot <lkp@intel.com>, Julia Lawall <julia.lawall@lip6.fr>,
-        Sven Eckelmann <sven@narfation.org>,
-        Sathishkumar Muruganandam <quic_murugana@quicinc.com>
-Cc: kernel@collabora.com, stable@vger.kernel.org,
-        Baochen Qiang <baochen.qiang@oss.qualcomm.com>,
-        Muna Sinada <quic_msinada@quicinc.com>,
-        Anilkumar Kolli <quic_akolli@quicinc.com>,
-        Kalle Valo <kvalo@kernel.org>, Miles Hu <milehu@codeaurora.org>,
-        linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20250722053121.1145001-1-usama.anjum@collabora.com>
-Content-Language: en-US
-From: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
-In-Reply-To: <20250722053121.1145001-1-usama.anjum@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: IjAoCCDJM68vu1Gcyi0ctukEA9zvXBZ5
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDA4MSBTYWx0ZWRfX6FPfZYZrUvdr
- KS7R5BybaG797UrKM3w9VqSq29IxyjdnvWi/qBdfvUUcQwz+iuohLHXwctQxvEHaWV2CLZAtRVz
- JorLVkYlS0bPbVxgsghzRLIG5rb9fd0IGC38cZaRgwYtbNDXLoiC2kx/yFmy5pMTLBNqZjLkFBx
- TjvTCfEwbYBUzH74IN+aXGavKKpiuiT9fUHzeHxFnpPDzBQmAW3TQLZAkxPsUbpTB2VrhkGOfHB
- qS6MZxbZa9Z9+hc503GuCFn7BRhTvNuyXiSgS/QhQXDhNQ08Kr7DMlBzt83kxExFWJpQpDvrReD
- SVGizXuewpBgav/4QWHOFVzmLpmYzKfE6yMdN5UEc9THWEMRX/SbUo4+BhRo7ITe5goHQ7Pj0T3
- kLhl0pAACV08dug0ouqTegc1gj2eRq0elAg0i9jud+5LXiQlc1nuxARe321yWOnVfsHKkAtQ
-X-Authority-Analysis: v=2.4 cv=Q+fS452a c=1 sm=1 tr=0 ts=687f5e45 cx=c_pps
- a=cmESyDAEBpBGqyK7t0alAg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=QX4gbG5DAAAA:8 a=FO1u493g7a1ack9Z5SAA:9 a=QEXdDO2ut3YA:10
- a=1OuFwYUASf3TG4hYMiVC:22 a=AbAUZ8qAyYyZVLSsDulk:22
-X-Proofpoint-GUID: IjAoCCDJM68vu1Gcyi0ctukEA9zvXBZ5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-22_01,2025-07-21_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 adultscore=0 phishscore=0 mlxscore=0 lowpriorityscore=0
- mlxlogscore=999 suspectscore=0 spamscore=0 priorityscore=1501 malwarescore=0
- bulkscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507220081
+References: <20250721145952.2601422-1-colin.i.king@gmail.com> <20250721214004.GA2756360@bhelgaas>
+In-Reply-To: <20250721214004.GA2756360@bhelgaas>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 22 Jul 2025 11:48:07 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gT1X9zuoAfxGS5XP0s1TD1tyP2shbC_cbiRJPjDg4=jA@mail.gmail.com>
+X-Gm-Features: Ac12FXyrTfRVdkTJQlvj2cygHb3kv9Y5PxK2A1xgwD3hpMohtoUsDBnOxKEKga0
+Message-ID: <CAJZ5v0gT1X9zuoAfxGS5XP0s1TD1tyP2shbC_cbiRJPjDg4=jA@mail.gmail.com>
+Subject: Re: [PATCH][next] ACPI: pci_link: Remove space before \n newline
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Colin Ian King <colin.i.king@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-pci@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Jul 21, 2025 at 11:40=E2=80=AFPM Bjorn Helgaas <helgaas@kernel.org>=
+ wrote:
+>
+> On Mon, Jul 21, 2025 at 03:59:52PM +0100, Colin Ian King wrote:
+> > There is an extraneous space before a newline in an acpi_handle_debug
+> > message.  Remove it.
+> >
+> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+>
+> FWIW,
+>
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+>
+> Fixes for more ACPI-related typos below, feel free to squash or I can
+> send separately.
 
+If I can assume your sign-off on this, no need to resend.
 
-On 7/22/2025 1:31 PM, Muhammad Usama Anjum wrote:
-> Don't deinitialize and reinitialize the HAL helpers. The dma memory is
-> deallocated and there is high possibility that we'll not be able to get
-> the same memory allocated from dma when there is high memory pressure.
-> 
-> Tested-on: WCN6855 hw2.0 PCI WLAN.HSP.1.1-03926.13-QCAHSPSWPL_V2_SILICONZ_CE-2.52297.6
-> 
-> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
-> Cc: stable@vger.kernel.org
-> Cc: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
-> Reviewed-by: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> ---
-> Changes since v1:
-> - Cc stable and fix tested on tag
-> - Clear essential fields as they may have stale data
-> 
-> Changes since v2:
-> - Add comment and reviewed by tag
-> ---
->  drivers/net/wireless/ath/ath11k/core.c |  6 +-----
->  drivers/net/wireless/ath/ath11k/hal.c  | 16 ++++++++++++++++
->  drivers/net/wireless/ath/ath11k/hal.h  |  1 +
->  3 files changed, 18 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/ath/ath11k/core.c b/drivers/net/wireless/ath/ath11k/core.c
-> index 4488e4cdc5e9e..34b27711ed00f 100644
-> --- a/drivers/net/wireless/ath/ath11k/core.c
-> +++ b/drivers/net/wireless/ath/ath11k/core.c
-> @@ -2213,14 +2213,10 @@ static int ath11k_core_reconfigure_on_crash(struct ath11k_base *ab)
->  	mutex_unlock(&ab->core_lock);
->  
->  	ath11k_dp_free(ab);
-> -	ath11k_hal_srng_deinit(ab);
-> +	ath11k_hal_srng_clear(ab);
->  
->  	ab->free_vdev_map = (1LL << (ab->num_radios * TARGET_NUM_VDEVS(ab))) - 1;
->  
-> -	ret = ath11k_hal_srng_init(ab);
-> -	if (ret)
-> -		return ret;
-> -
->  	clear_bit(ATH11K_FLAG_CRASH_FLUSH, &ab->dev_flags);
->  
->  	ret = ath11k_core_qmi_firmware_ready(ab);
-> diff --git a/drivers/net/wireless/ath/ath11k/hal.c b/drivers/net/wireless/ath/ath11k/hal.c
-> index b32de563d453a..e8ebf963f195c 100644
-> --- a/drivers/net/wireless/ath/ath11k/hal.c
-> +++ b/drivers/net/wireless/ath/ath11k/hal.c
-> @@ -1359,6 +1359,22 @@ void ath11k_hal_srng_deinit(struct ath11k_base *ab)
->  }
->  EXPORT_SYMBOL(ath11k_hal_srng_deinit);
->  
-> +void ath11k_hal_srng_clear(struct ath11k_base *ab)
-> +{
-> +	/* No need to memset rdp and wrp memory since each individual
-> +	 * segment would get cleared ath11k_hal_srng_src_hw_init() and
-
-nit: s/cleared /cleared in/
-
-> +	 * ath11k_hal_srng_dst_hw_init().
-> +	 */
-> +	memset(ab->hal.srng_list, 0,
-> +	       sizeof(ab->hal.srng_list));
-> +	memset(ab->hal.shadow_reg_addr, 0,
-> +	       sizeof(ab->hal.shadow_reg_addr));
-> +	ab->hal.avail_blk_resource = 0;
-> +	ab->hal.current_blk_index = 0;
-> +	ab->hal.num_shadow_reg_configured = 0;
-> +}
-> +EXPORT_SYMBOL(ath11k_hal_srng_clear);
-> +
->  void ath11k_hal_dump_srng_stats(struct ath11k_base *ab)
->  {
->  	struct hal_srng *srng;
-> diff --git a/drivers/net/wireless/ath/ath11k/hal.h b/drivers/net/wireless/ath/ath11k/hal.h
-> index 601542410c752..839095af9267e 100644
-> --- a/drivers/net/wireless/ath/ath11k/hal.h
-> +++ b/drivers/net/wireless/ath/ath11k/hal.h
-> @@ -965,6 +965,7 @@ int ath11k_hal_srng_setup(struct ath11k_base *ab, enum hal_ring_type type,
->  			  struct hal_srng_params *params);
->  int ath11k_hal_srng_init(struct ath11k_base *ath11k);
->  void ath11k_hal_srng_deinit(struct ath11k_base *ath11k);
-> +void ath11k_hal_srng_clear(struct ath11k_base *ab);
->  void ath11k_hal_dump_srng_stats(struct ath11k_base *ab);
->  void ath11k_hal_srng_get_shadow_config(struct ath11k_base *ab,
->  				       u32 **cfg, u32 *len);
-
+> > ---
+> >  drivers/acpi/pci_link.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/acpi/pci_link.c b/drivers/acpi/pci_link.c
+> > index 08e10b6226dc..e4560b33b8ad 100644
+> > --- a/drivers/acpi/pci_link.c
+> > +++ b/drivers/acpi/pci_link.c
+> > @@ -268,7 +268,7 @@ static int acpi_pci_link_get_current(struct acpi_pc=
+i_link *link)
+> >
+> >       link->irq.active =3D irq;
+> >
+> > -     acpi_handle_debug(handle, "Link at IRQ %d \n", link->irq.active);
+> > +     acpi_handle_debug(handle, "Link at IRQ %d\n", link->irq.active);
+> >
+> >        end:
+> >       return result;
+>
+> diff --git a/Documentation/ABI/testing/sysfs-firmware-acpi b/Documentatio=
+n/ABI/testing/sysfs-firmware-acpi
+> index f4de60c4134d..72e7c9161ce7 100644
+> --- a/Documentation/ABI/testing/sysfs-firmware-acpi
+> +++ b/Documentation/ABI/testing/sysfs-firmware-acpi
+> @@ -108,15 +108,15 @@ Description:
+>                 number of a "General Purpose Events" (GPE).
+>
+>                 A GPE vectors to a specified handler in AML, which
+> -               can do a anything the BIOS writer wants from
+> +               can do anything the BIOS writer wants from
+>                 OS context.  GPE 0x12, for example, would vector
+>                 to a level or edge handler called _L12 or _E12.
+>                 The handler may do its business and return.
+> -               Or the handler may send send a Notify event
+> +               Or the handler may send a Notify event
+>                 to a Linux device driver registered on an ACPI device,
+>                 such as a battery, or a processor.
+>
+> -               To figure out where all the SCI's are coming from,
+> +               To figure out where all the SCIs are coming from,
+>                 /sys/firmware/acpi/interrupts contains a file listing
+>                 every possible source, and the count of how many
+>                 times it has triggered::
+> diff --git a/Documentation/firmware-guide/acpi/gpio-properties.rst b/Docu=
+mentation/firmware-guide/acpi/gpio-properties.rst
+> index db0c0b1f3700..1e603189b5b1 100644
+> --- a/Documentation/firmware-guide/acpi/gpio-properties.rst
+> +++ b/Documentation/firmware-guide/acpi/gpio-properties.rst
+> @@ -92,8 +92,8 @@ and polarity settings. The table below shows the expect=
+ations:
+>  |             | Low         | as low, assuming active                   =
+    |
+>  +-------------+-------------+-------------------------------------------=
+----+
+>
+> -That said, for our above example the both GPIOs, since the bias setting
+> -is explicit and _DSD is present, will be treated as active with a high
+> +That said, for our above example, since the bias setting is explicit and
+> +_DSD is present, both GPIOs will be treated as active with a high
+>  polarity and Linux will configure the pins in this state until a driver
+>  reprograms them differently.
+>
+> diff --git a/drivers/acpi/bus.c b/drivers/acpi/bus.c
+> index c2ab2783303f..a984ccd4a2a0 100644
+> --- a/drivers/acpi/bus.c
+> +++ b/drivers/acpi/bus.c
+> @@ -1406,7 +1406,7 @@ static int __init acpi_bus_init(void)
+>                 goto error1;
+>
+>         /*
+> -        * Register the for all standard device notifications.
+> +        * Register for all standard device notifications.
+>          */
+>         status =3D
+>             acpi_install_notify_handler(ACPI_ROOT_OBJECT, ACPI_SYSTEM_NOT=
+IFY,
 
