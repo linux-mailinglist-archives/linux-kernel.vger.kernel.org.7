@@ -1,125 +1,109 @@
-Return-Path: <linux-kernel+bounces-740225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96B55B0D195
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:02:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28ABCB0D196
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:03:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABF4A543390
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:02:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F8676C1AD8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:02:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99B128B4F3;
-	Tue, 22 Jul 2025 06:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oGuT9ykO"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C891A28C000
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 06:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9DD28CF56;
+	Tue, 22 Jul 2025 06:02:58 +0000 (UTC)
+Received: from invmail3.skhynix.com (exvmail3.hynix.com [166.125.252.90])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9167628B4F3
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 06:02:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753164135; cv=none; b=f9dQp3u4jonqv2sVi1I+zSXy37jO7Itf5PKn+1+RCyLCmiqAnAG0+gp3wkkThQ27A37EJxqbMdmzEqlzmqE9pIGknLsbAIIMPbFXZXfYSKLMRiBDYSOtJDGNvrZkFlAC3242zsG68DWvwgQayZiZYPCo+FRaWQ5wemuRCoD2j88=
+	t=1753164178; cv=none; b=FZ1kYWm6LW5+gxc/eHMBQj9yNKn72yg9/fZbvSHEShXPJMAuNPB206zMOIFCr6u8b9C6WObsusjNN4DTHuTgPCPjt3vmLTDaoVvit1Qlj/E4jp3BDnsOrorJlkBFVYOscqzGlAkewR5K8t+8C88XmkIO6CykIrVuBPwGBdEtCCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753164135; c=relaxed/simple;
-	bh=Gmi615c2Mk45pQvT0Gq0YQYiGmnW3uk8v8avbHfmyjk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UzWSzsUpvzarEVITq8xtLworp6r+Jq3rh44mqvMK0PdIM3g3gUp0cQu6jSLA8YtMBQuOhO0AM6Lsp25xJJvGcjmNHF7FHuhI8IfdMTObY8z5PUFD3JfDbjZpW5azKtrXhd01A8HF7AnNBIbB6RVUGmIh8c6Zw3jUXvZlCfVSA+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oGuT9ykO; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4ab86a29c98so217631cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 23:02:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753164133; x=1753768933; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=iEGjdg7HJToRLli3XYx/W9dwn4YsTbR+WFCHWgF6+f4=;
-        b=oGuT9ykOJ+EJMPp7LuojOIaYtRPgCIVP0/kVGB8ShRAuphufc2SKoaUo4+uVahya6Z
-         SDzZaA1wBZ4mYqYL4o4tNcZd1+VO2SifWBwkX7DIWo7N8SxR5tjXXLMbCIFOZozze8i3
-         3IEhM5AZFEoB70JzaGmcQu/QYAearz0k09F7hkAu6Mz8E0MidNmy0YJq2oXyZu4UQbyU
-         FVPwU/aGEakxm7Z8XVSuQXxeKPsxhjCbCSh16bKKrBaydzCvaS+TgQx1kqM1thNZOaWB
-         JwZqkrhssyrsSSeMsMSS0WaKAv7rjbRwajD2+lsXeKB1WKh0M/XYie99zMiGYTwMMPhv
-         WSLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753164133; x=1753768933;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iEGjdg7HJToRLli3XYx/W9dwn4YsTbR+WFCHWgF6+f4=;
-        b=FC/10rjZj2UxfXdT4wDa6hJIYGayc/lx2Lh+W6X7jp5QvwvW0Ff1WvfcwTHs1lB6Ow
-         vWKSICbRarMx2VRaQaWN/NeX8ZGQFDxkZoLEbjRq5ZC0zCu/js7dGtZ+xajRoO/xjcEN
-         TJ5pgU7AacKjSn+iFN4IPLvsBVVZ1t1+DXOPqkxwOnkJS+tqsdkf6Ky7G6fD0+T3NFAr
-         GSWFZhAhbxtr4E6kLPdm9LwPUfxQaoXi7epW53eGQU6IXoST4uj2Vu6dtDnY+pw+F+m2
-         xTzowf8L5mOXbh7En76LFcBK3Z2wdZqRxMic3G9zh0NIMUvNLNHQ/mxFQuTdPX7GNR2N
-         fo/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXK7bHsQeYfhtkOxBpRoz/RvgRFhni/y3NR8mxVHANrdSh/kPrPfEW2CLZkQYt4judr2jGatbrlZLKbmoQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0YhkuO8YVq9kxOfvbptoQfAMmbglx1uazhSdF+HhDRT833ITu
-	/lPwcu/8PsV6B2pZY1+VoBrMQYdU3fyhUlFs+hDlyz6oUNo+uA2+IQ/ghtzxxuZUjeiQChXNJHB
-	bdeFGmJ0+lDppKuhCz163XKcj3PMRZOpsofcEJ6L8
-X-Gm-Gg: ASbGncsG1EgPsGo3NiDpJC4qVU20oSLi6Gpy5YuvGcQjaW0KJ4FmoO+ubZO+bLVyulG
-	uGh/LhqwjVJZ46vZM086/mceh+141BgXa8Dk3flBKhEu5mcmR3VITvIBWEajLLXQQtA06JyUOHv
-	+M9UgqUUmHmOZmLpbeRQ6e+u3YLI4fSiUmfCcOYjAix3fT8YtQWKeeMMZWLU4qCtUVQZUFha861
-	quIDa6ZHidEu9Ib
-X-Google-Smtp-Source: AGHT+IF1ds2IGRRFxMjxvhf4WbCFuR3dcQBemZde69IbNC1CMkGkd1veI6ndQqgJOZIxiZ/aM3hOhlqIf2oSwFkNZYk=
-X-Received: by 2002:a05:622a:a916:b0:4aa:cba2:2e67 with SMTP id
- d75a77b69052e-4ae5f1c81b8mr1519071cf.21.1753164132291; Mon, 21 Jul 2025
- 23:02:12 -0700 (PDT)
+	s=arc-20240116; t=1753164178; c=relaxed/simple;
+	bh=UfQ3VJGtVqSJsSlcGejXJaFG7CD0ZGrElD20IS5KC0g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fiTZIZGW+skHbRPhljgym3CXqbAy7Sfvt4vomNtoKQze9gkCp0S+J5G6A787uFidfde7bPbkcuTpGGkOUmKHbd26jraj/X9b19YFu/CIPPVHmWFlw86ZRic9KTj4Qho6aYlXoIc+cEL1EMN1G/2W160IXGp2Tqs4tkYz6BVaCTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc59-03fff7000000aab6-42-687f298450ec
+From: "yohan.joung" <yohan.joung@sk.com>
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	pilhyun.kim@sk.com,
+	"yohan.joung" <yohan.joung@sk.com>
+Subject: [PATCH v3] f2fs: zone: wait for inflight dio completion, excluding pinned files read using dio
+Date: Tue, 22 Jul 2025 15:02:40 +0900
+Message-ID: <20250722060240.1469-1-yohan.joung@sk.com>
+X-Mailer: git-send-email 2.49.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ef3f933a-742c-9e8e-9da4-762b33f2de94@hisilicon.com>
- <CAFivqmLCW2waDnJ0nGbjBd5gs+w+DeszPKe0be3VRLVu06-Ytg@mail.gmail.com>
- <CAFivqm+D9mbGku-nZKSUEMcQV5XK_ayarxL9gpV5JyfmhirsPw@mail.gmail.com>
- <aGuGLu2u7iKxR3ul@arm.com> <CAFivqmJL90xsELhz4tPtkYA9vMzS9C=V__nwo=kWJKjKS=mE_Q@mail.gmail.com>
- <CAFivqmKBgYVa6JUh82TS2pO915PUDYZMH+k-5=-0u1-K9-gMMw@mail.gmail.com>
- <aHTOSyhwIAaW_1m1@arm.com> <CAFivqmJ912sEdSih_DFkiWRm478XUJhNDe=s2M_UO2gVTu4e3w@mail.gmail.com>
- <CAJZ5v0irG16e2cM_tX_UeEJVmB_EdUvk-4Nv36dXoUS=Ud3U5A@mail.gmail.com>
- <CAFivqmLoDv_pWdmBG8ws-CMUBXcb9bS1TgMaxW9YZMqqHpRSyA@mail.gmail.com> <20250722032727.zmdwj6ztitkmr4pf@vireshk-i7>
-In-Reply-To: <20250722032727.zmdwj6ztitkmr4pf@vireshk-i7>
-From: Prashant Malani <pmalani@google.com>
-Date: Mon, 21 Jul 2025 23:02:00 -0700
-X-Gm-Features: Ac12FXw9x-XOA3MzVY_33fyjp1cuCwaiwH8fQqimf2-LTEovczW0oY6k1rMCrTA
-Message-ID: <CAFivqmLG0LriipbmM8qXZMKRRpH3_D02dNipnzj2aWRf9mSdCA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] cpufreq: CPPC: Dont read counters for idle CPUs
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Beata Michalska <beata.michalska@arm.com>, 
-	Jie Zhan <zhanjie9@hisilicon.com>, Ionela Voinescu <ionela.voinescu@arm.com>, 
-	Ben Segall <bsegall@google.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>, Mel Gorman <mgorman@suse.de>, 
-	Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Valentin Schneider <vschneid@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	z00813676 <zhenglifeng1@huawei.com>, sudeep.holla@arm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnluLIzCtJLcpLzFFi42LhesuzULdFsz7D4NZXPovTU88yWTxZP4vZ
+	4tIid4vLu+awObB4bFrVyeaxe8FnJo/Pm+QCmKO4bFJSczLLUov07RK4MloeRhVs4KrofHeR
+	qYFxH0cXIyeHhICJxNITs5lg7Ne9R9hAbDYBDYk/vb3MILaIgKbEkc6Z7F2MXBzMAm2MEu1H
+	m1hBEsIC6RJtT2aC2SwCqhLT+7rZQWxeATOJ1pdTWSCGakrs+HKeCSIuKHFy5hOwOLOAvETz
+	1tnMEDV3WSUm36qCsCUlDq64wTKBkXcWkpZZSFoWMDKtYhTJzCvLTczMMdYrzs6ozMus0EvO
+	z93ECAymZbV/IncwfrsQfIhRgINRiYdXoaEuQ4g1say4MvcQowQHs5II77fdQCHelMTKqtSi
+	/Pii0pzU4kOM0hwsSuK8Rt/KU4QE0hNLUrNTUwtSi2CyTBycUg2MlmsPJQX3paRflgrsyxET
+	axNsF3l2zGdK9J7TsyfsOSEZZHK32v9YqXR2lMW3z6bWltPOtN5+xlY41zRR+sakcK3LB7n6
+	TFduFrLanVISs6pvgpXOq51x+a3+k58vLlGaeObX2/yfzOGOc4u1tCIzPxk9Xeezu01p7y2D
+	9HMn2hIWdp3fmGigxFKckWioxVxUnAgANLIxZyICAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrJJMWRmVeSWpSXmKPExsXCNUNljm6LZn2GwbTFrBanp55lsniyfhaz
+	xaVF7haXd81hs5gw9yqTxfut9xgd2Dw2repk89i94DOTx7fbHh6fN8kFsERx2aSk5mSWpRbp
+	2yVwZbQ8jCrYwFXR+e4iUwPjPo4uRk4OCQETide9R9hAbDYBDYk/vb3MILaIgKbEkc6Z7F2M
+	XBzMAm2MEu1Hm1hBEsIC6RJtT2aC2SwCqhLT+7rZQWxeATOJ1pdTWSCGakrs+HKeCSIuKHFy
+	5hOwOLOAvETz1tnMExi5ZiFJzUKSWsDItIpRJDOvLDcxM8dMrzg7ozIvs0IvOT93EyMwQJbV
+	/pm0g/HbZfdDjAIcjEo8vAoNdRlCrIllxZW5hxglOJiVRHi/7QYK8aYkVlalFuXHF5XmpBYf
+	YpTmYFES5/UKT00QEkhPLEnNTk0tSC2CyTJxcEo1MG698p3N0mHqRqvmH7cc5k8LOR4SwP9z
+	9295pULPncd+ZWouFtk5Tffgma9fjr35MU2ZOdzC2jz0YlvP2i3zSl57Hmd4f51LZZmUIhvL
+	9JCon35eKqfORQdEvGYUEbra/jj10enbyoxpZyNXqplr7pxl8Ohi9TNfs9Oib4w28jr3LTNJ
+	PBG/ab0SS3FGoqEWc1FxIgDtdD7QDAIAAA==
+X-CFilter-Loop: Reflected
 
-Hi Viresh and Rafael,
+read for the pinfile using Direct I/O do not wait for dio write.
 
-Thank you for taking the time to look at this series.
+Signed-off-by: yohan.joung <yohan.joung@sk.com>
+---
+ fs/f2fs/file.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-On Mon, 21 Jul 2025 at 20:27, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 21-07-25, 12:40, Prashant Malani wrote:
-> > On Mon, 21 Jul 2025 at 10:00, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> > > Why don't you flag the driver as CPUFREQ_NEED_UPDATE_LIMITS?
-> > >
-> > > That would kind of make sense given how the driver works overall, or
-> > > am I missing anything?
->
-> +1
-
-Thanks, I posted [1] which implements what's suggested by Rafael. PTAL
-
-Best regards,
-
-[1] https://lore.kernel.org/linux-pm/20250722055611.130574-2-pmalani@google.com/
-
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 4039ccb5022c..58a4d25eb08f 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -4834,6 +4834,7 @@ static ssize_t f2fs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	struct inode *inode = file_inode(iocb->ki_filp);
+ 	const loff_t pos = iocb->ki_pos;
+ 	ssize_t ret;
++	bool dio;
+ 
+ 	if (!f2fs_is_compress_backend_ready(inode))
+ 		return -EOPNOTSUPP;
+@@ -4842,12 +4843,15 @@ static ssize_t f2fs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 		f2fs_trace_rw_file_path(iocb->ki_filp, iocb->ki_pos,
+ 					iov_iter_count(to), READ);
+ 
++	dio = f2fs_should_use_dio(inode, iocb, to);
++
+ 	/* In LFS mode, if there is inflight dio, wait for its completion */
+ 	if (f2fs_lfs_mode(F2FS_I_SB(inode)) &&
+-	    get_pages(F2FS_I_SB(inode), F2FS_DIO_WRITE))
++	    get_pages(F2FS_I_SB(inode), F2FS_DIO_WRITE) &&
++		(!f2fs_is_pinned_file(inode) || !dio))
+ 		inode_dio_wait(inode);
+ 
+-	if (f2fs_should_use_dio(inode, iocb, to)) {
++	if (dio) {
+ 		ret = f2fs_dio_read_iter(iocb, to);
+ 	} else {
+ 		ret = filemap_read(iocb, to, 0);
 -- 
--Prashant
+2.33.0
+
 
