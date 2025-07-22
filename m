@@ -1,96 +1,89 @@
-Return-Path: <linux-kernel+bounces-740300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 539CEB0D261
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:15:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12601B0D263
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:16:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38BDC3A84E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:15:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3554A546FEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:16:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF2C2989B4;
-	Tue, 22 Jul 2025 07:15:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3FF028C5AC;
+	Tue, 22 Jul 2025 07:15:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F5QyJmO0"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="GmLsYwfE"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FAF821FF46;
-	Tue, 22 Jul 2025 07:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8051E1DB122
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 07:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753168520; cv=none; b=GSASsy5m9R7r884ispYNKjOq0nttMAULaPCVsk0c06R3mXLB3XG7MCCQLt4F0O8+ASmccg8lW58tQb0WU4d6vLmaeRblLAz/xywypmxKuHCCnM150mM5Ls7qvlGISkEsnVZfiPE4RYgT1pJNb4YpwrTa8EccNlG/mkc56T0Dk7U=
+	t=1753168553; cv=none; b=pWEh47IsAKpeR81Bh3uVO+hSEQo4AV0lal5h8nReBI/15PhvaSSEGiDPtOjJa6Mzm5PudPM1YofxaOpOHQg99vknKLAY6KmNrhY8OwDmHGAEL+n8eX+6PbIaOugLp/H3xbifh7TyKsJNU4yMJp67K9o2rbfEkS/UbjMP7WMW5r0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753168520; c=relaxed/simple;
-	bh=akOILnwcc9pmGNevA3WX5BCXInqcsvZXjaatCCQKodE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J4/cwfbO4xrd/3lR3yumNcq8nY6/4JvfidK7M0xEEN5B9zotqcwH5bKCfDpbJdQgDt26CrmlnTvEOLcyBFUNWm6T6hI02sCSkPcLCylfWqx/yARsalHUvdvcv+KzJSv5nZb0RTVWgoAkELIP8GcH8d0GvpO+rrzu5uhgIVXJwTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F5QyJmO0; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2353a2bc210so45921915ad.2;
-        Tue, 22 Jul 2025 00:15:19 -0700 (PDT)
+	s=arc-20240116; t=1753168553; c=relaxed/simple;
+	bh=j3SEh17yKJdtaTA6jlli22VQ1COpA7yRszYPMxwE5ZA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q6PRCdgw30ZRRMLLiVS+wqaMHkS4VQGjEUYIWJSjKTe79DoXMpmlOjQ59oHgDwPLxHMacAigxgPHFihBEgHAvbikZfyYaLE/ARxxtNJeREQjbAQZm60BuHHOK7XZtU18AFKJ35YC04Cs09ixUV0H5KIN5dWp0QAQAe8pMvVFx/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=GmLsYwfE; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a6e8b1fa37so3584474f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 00:15:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753168519; x=1753773319; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1753168549; x=1753773349; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=C+VMjOAQQOuEXnxm/JTcqhzieaE2t0Z16ySCSWuJaF4=;
-        b=F5QyJmO0Z5z5EnfcI6SpJtIUIR8TCEp6MgtQFmDicSTX2sHn7Nlb10fbHP+5rN39Ml
-         JZSQKhWGUBPtNo6iDhRALMiu+qZ5a4cbpAVfkAZryHKxNkmIGOLm7irzLkkAPl3Emt71
-         fAsRc7MtnU4g7FK6avHv/BTpSaArLBLfSdT8ebCwTZuGLulRxFAgqkbqUEScJRV6oC/h
-         ct0IwH9YljbxhJTFlchVpdKwse6YxNPvqCt9hz+fbbQWnF9xjXtYDHFHytBo3c/augqe
-         ejCqPqiWhFstwxtf0rtNcDh3kmRQFC6AeoyebFjiNm13fPb6ehT3+w2HDfzgSdnReUK5
-         JAZg==
+        bh=yQ3vEmjwKiSfWo9bCKh2Tpilewzv/3IegJxtxqqielQ=;
+        b=GmLsYwfEZt2DxPLbUbEpaM+uBrXlN3zh4WmYZS8AdHX/DOEAaZUTYpyXoawmqGjg9b
+         UsOnA/k0djcWLvz/BibjV8yHSqlxv2xcPDz+MRWyyvb846obFzPMHXLhGqC30rpz1nMS
+         kitUX3FhbD4Ec+FJ0NI98wlkAjr8HShYdsaZ4ueRmOolVE/IjPciwdiOpt0fy9xi8USu
+         Bt2icd2yIj7gonF7Z93qNkdeeIJSFEmX6uE8Rjqwz950XMjNxR0h3BMAbDUa3y3NDzrg
+         +MTStH7bfn1H1Y+/Ws7EsGm5C9l4fb77kH+B8nBBXtedKTvEkq6KL4ZI7smHpph4So4k
+         F55w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753168519; x=1753773319;
+        d=1e100.net; s=20230601; t=1753168549; x=1753773349;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=C+VMjOAQQOuEXnxm/JTcqhzieaE2t0Z16ySCSWuJaF4=;
-        b=wZukFW8upVosOe7mmztf5k1eK2ixaoFFo/D3A7VZHUlGaZ1A8HPNRJ9uNEi8bo1f/F
-         XeyzhBzJIRz6Z3udgJTvIIVM2SZHaRqigQTr527B8Tny2qBQhxTmeXi3qG2jXt9AuvSE
-         8wug7nU/8eeFuBf1/Ym3hghUThDS9QBsbATfT1h9ybRgMMujHUJI8HNKkchnZ9bOtDjS
-         pgLdFvrcbEkFM9gnGx/qg3WvAXrfUH3Fqc0HaUC3HcckL1hkyLLJS64Llx4YgYmv8e/N
-         ML1Q8Owjrh1tt7MZkm5BR3t7FEXkDNqD/sMFL5M4+NWRjFfhv2u8D3E88XD5oZrJ6GVz
-         /tyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUSv2AHHoWvnUui3wR0oS/Kb1wj5apFHnRBmm6wj2DHp/CsKZ2w2+QrwT50tHQ4lax0/3Ws5gdT@vger.kernel.org, AJvYcCX8QhC6/eQGNBBNo+WHOt9AB06YAVjsX7U23CofWP7qqe5fqFzMEW014A8RU+7OT+HmCBbMZN6wAlNLtEs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrIRMoGX+QrpzvH9j0YyYS0qPK/O2TVMTNZOyBfhijxhodEiWl
-	oxEy9zhP4yny5h6C1XmxWNFpkOeLldMhnOPEIQU7Ucti1KfNxOSjUdvF
-X-Gm-Gg: ASbGnctioFjDpwT/ZLI+w/3dgrnqdwe6AV7M2hkF97exFPNczkLM9w1oSnCGs5jVH5R
-	Px4/Cvz3qkp9x8jUje22hDojBy2KGPD/vpsSTMfQu4PyZsxpmA7YrUobURA1o9bJs7ZL7D17IkV
-	MwfWwN6K1wWSCYr4K81XDLxmsq84FWvnpXMVe/IbChntFPuFcXXFTGZhuQeK/pwJu5Nn/XjzO0N
-	WLBro316UeGK0OpyKSxUaG73RE4O4r1bUOpEunaP/0FHwhPD6jDxUdnz0BgFmDowRRfr1eRfNkQ
-	OLJbpaHBHj2hc7VZP3xtOs6kEx5tnZ5q/rSXMcwX3ndcAJcKRngL2lgbmYu5Rmrg8Rxy3r9pQEW
-	khRTvx3XM5SoMowHtmzliA5BdDWRJvQ==
-X-Google-Smtp-Source: AGHT+IFFtyJvM2a2AEb7k9Jrp9kmCsiJqx3vXKdoGAMsFsONk/ZGr1SJZlzNLSxI6ryLGWuWN2M70w==
-X-Received: by 2002:a17:902:ea01:b0:235:2403:77c7 with SMTP id d9443c01a7336-23e2576e462mr261559035ad.37.1753168518460;
-        Tue, 22 Jul 2025 00:15:18 -0700 (PDT)
-Received: from archlinux ([38.188.108.234])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3c3a5d15sm69056005ad.62.2025.07.22.00.15.12
+        bh=yQ3vEmjwKiSfWo9bCKh2Tpilewzv/3IegJxtxqqielQ=;
+        b=oXpnLFFP3NKWWaiXYqBF/dnfm8ZJGgapgEUsHnMHC6vLCde0Ekn76eUw3lxFE8GvL0
+         rp+btdFVOQlVFOvYDj6ENjBx55J0ZIddvu9AUpM8jgqwcl/vUfbjs9anXgx4yFTFOvrp
+         DR/WDeFDRoIa2cuv5OPazCAUrTtY2iEamghT+ODWq4A5vkpoNmVoi1qcrSMMHBUCiI4s
+         tW22Kbk8JKq+mYBDctJzDk0pxNJ14gSQc8oePDW4VjsOJbXVJgLgF1Mou1Fd6V975kvS
+         D1z7jD4YOLRNP33YXLC22asz8OpB7BLs8Tm6XHaWRJWQ15jStYjrs7o6tO0ZRUMNzeH0
+         FfBg==
+X-Forwarded-Encrypted: i=1; AJvYcCWt787g5VZSaglrcUgqC6VFYuP54RWTSZMsoGTzV4gW+ZC5twr8iEy624nJkqtpkt3sRMV69G11GLIk2EI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8r7EcMOvNGMEQXrDKDp/5HYsuoQgrNNXMkFtcRJkBRGWe12wW
+	84AnXo0GqwgpQHJzpGakm/2C2H25AYz0/5pG0dXbkUFBducudy62UWALWHcyt9cCN30=
+X-Gm-Gg: ASbGncts4xqdd9fN1jItlR49ZBSWrLWkznMM2BeJ7K+Sd6+rNvyU+soiSm5EUZJUtya
+	TrUdgkQb5it7AqbjY++BbjjiQxWwQjWK0KbScPGhilbSuBrP2BOWmGgUT+tNfR3eD6CizF1lAyw
+	Hw5w0++MKe8qMJkrnii+lpIvpk7q1wZXUd3mQzCyMW5s9mj7l6eMKyNfTK12hAXf24fcqsWMShM
+	oA5fd0gFpJm8qVxUGNfw2jZEO7qXSEuvz1RAMpCvX+7iZW9QMwPhCXLGZq0oMMVqkVuhXi0tE/r
+	k5LR6Df/4RJrt+Tw55z4b2pmy87ZFJfgjHUrZ98/1YvgcZD2OKTdxkp34WN7yEXW+MU0Sm0ICDC
+	2XxByGJyWjaCcd+BXmCly1Nte/chwrLdi
+X-Google-Smtp-Source: AGHT+IHYIREMnXqJzvIrKSlpu72TKoCe2oI41qKi1zUISJbrlyCEP1q0OUDLmdmVYJabSs5VX3PelA==
+X-Received: by 2002:a5d:64c3:0:b0:3a3:71cb:f0bd with SMTP id ffacd0b85a97d-3b60e4d2b7amr16271092f8f.23.1753168548308;
+        Tue, 22 Jul 2025 00:15:48 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:2548:4ac:d051:6197])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca5c632sm12725706f8f.80.2025.07.22.00.15.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 00:15:18 -0700 (PDT)
-From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	jhs@mojatatu.com,
-	xiyou.wangcong@gmail.com,
-	jiri@resnulli.us,
-	sdf@fomichev.me,
-	kuniyu@google.com,
-	aleksander.lobakin@intel.com,
-	netdev@vger.kernel.org
-Cc: skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
+        Tue, 22 Jul 2025 00:15:47 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Arnd Bergmann <arnd@arndb.de>,
+	Russell King <linux@armlinux.org.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jiri Slaby <jirislaby@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Suchit Karunakaran <suchitkarunakaran@gmail.com>
-Subject: [PATCH] net: Revert tx queue length on partial failure in dev_qdisc_change_tx_queue_len()
-Date: Tue, 22 Jul 2025 12:45:08 +0530
-Message-ID: <20250722071508.12497-1-suchitkarunakaran@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	linux-gpio@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] ARM: sa110/gpio: convert set_multiple() to returning an integer
+Date: Tue, 22 Jul 2025 09:15:42 +0200
+Message-ID: <20250722071542.19030-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,87 +92,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When changing the tx queue length via dev_qdisc_change_tx_queue_len(),
-if one of the updates fails, the function currently exits
-without rolling back previously modified queues. This can leave the
-device and its qdiscs in an inconsistent state. This patch adds rollback logic
-that restores the original dev->tx_queue_len and re-applies it to each previously
-updated queue's qdisc by invoking qdisc_change_tx_queue_len() again.
-To support this, dev_qdisc_change_tx_queue_len() now takes an additional
-parameter old_len to remember the original tx_queue_len value.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Note: I have built the kernel with these changes to ensure it compiles, but I
-have not tested the runtime behavior, as I am currently unsure how to test this
-change.
+The conversion to using the new GPIO line setter callbacks missed the
+set_multiple() in this file. Convert it to using the new callback.
 
-Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+Fixes: 9c3782118a57 ("ARM: sa1100/gpio: use new line value setter callbacks")
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- include/net/sch_generic.h |  2 +-
- net/core/dev.c            |  2 +-
- net/sched/sch_generic.c   | 12 +++++++++---
- 3 files changed, 11 insertions(+), 5 deletions(-)
+ arch/arm/common/sa1111.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/include/net/sch_generic.h b/include/net/sch_generic.h
-index 638948be4c50..a4f59df2982f 100644
---- a/include/net/sch_generic.h
-+++ b/include/net/sch_generic.h
-@@ -681,7 +681,7 @@ void qdisc_class_hash_remove(struct Qdisc_class_hash *,
- void qdisc_class_hash_grow(struct Qdisc *, struct Qdisc_class_hash *);
- void qdisc_class_hash_destroy(struct Qdisc_class_hash *);
- 
--int dev_qdisc_change_tx_queue_len(struct net_device *dev);
-+int dev_qdisc_change_tx_queue_len(struct net_device *dev, unsigned int old_len);
- void dev_qdisc_change_real_num_tx(struct net_device *dev,
- 				  unsigned int new_real_tx);
- void dev_init_scheduler(struct net_device *dev);
-diff --git a/net/core/dev.c b/net/core/dev.c
-index be97c440ecd5..afa3c5a9bba1 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -9630,7 +9630,7 @@ int netif_change_tx_queue_len(struct net_device *dev, unsigned long new_len)
- 		res = notifier_to_errno(res);
- 		if (res)
- 			goto err_rollback;
--		res = dev_qdisc_change_tx_queue_len(dev);
-+		res = dev_qdisc_change_tx_queue_len(dev, orig_len);
- 		if (res)
- 			goto err_rollback;
- 	}
-diff --git a/net/sched/sch_generic.c b/net/sched/sch_generic.c
-index 16afb834fe4a..701dfbe722ed 100644
---- a/net/sched/sch_generic.c
-+++ b/net/sched/sch_generic.c
-@@ -1445,7 +1445,7 @@ void mq_change_real_num_tx(struct Qdisc *sch, unsigned int new_real_tx)
+diff --git a/arch/arm/common/sa1111.c b/arch/arm/common/sa1111.c
+index 86b271cc29e1..d7e2ea27ce59 100644
+--- a/arch/arm/common/sa1111.c
++++ b/arch/arm/common/sa1111.c
+@@ -578,8 +578,8 @@ static int sa1111_gpio_set(struct gpio_chip *gc, unsigned int offset, int value)
+ 	return 0;
  }
- EXPORT_SYMBOL(mq_change_real_num_tx);
  
--int dev_qdisc_change_tx_queue_len(struct net_device *dev)
-+int dev_qdisc_change_tx_queue_len(struct net_device *dev, unsigned int old_len)
+-static void sa1111_gpio_set_multiple(struct gpio_chip *gc, unsigned long *mask,
+-	unsigned long *bits)
++static int sa1111_gpio_set_multiple(struct gpio_chip *gc, unsigned long *mask,
++				    unsigned long *bits)
  {
- 	bool up = dev->flags & IFF_UP;
- 	unsigned int i;
-@@ -1456,12 +1456,18 @@ int dev_qdisc_change_tx_queue_len(struct net_device *dev)
- 
- 	for (i = 0; i < dev->num_tx_queues; i++) {
- 		ret = qdisc_change_tx_queue_len(dev, &dev->_tx[i]);
--
--		/* TODO: revert changes on a partial failure */
- 		if (ret)
- 			break;
- 	}
- 
-+	if (ret) {
-+		dev->tx_queue_len = old_len;
-+		while (i >= 0) {
-+			qdisc_change_tx_queue_len(dev, &dev->_tx[i]);
-+			i--;
-+		}
-+	}
+ 	struct sa1111 *sachip = gc_to_sa1111(gc);
+ 	unsigned long flags;
+@@ -597,6 +597,8 @@ static void sa1111_gpio_set_multiple(struct gpio_chip *gc, unsigned long *mask,
+ 	sa1111_gpio_modify(reg + SA1111_GPIO_PCDWR, (msk >> 12) & 255, val >> 12);
+ 	sa1111_gpio_modify(reg + SA1111_GPIO_PCSSR, (msk >> 12) & 255, val >> 12);
+ 	spin_unlock_irqrestore(&sachip->lock, flags);
 +
- 	if (up)
- 		dev_activate(dev);
- 	return ret;
++	return 0;
+ }
+ 
+ static int sa1111_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
+@@ -616,7 +618,7 @@ static int sa1111_setup_gpios(struct sa1111 *sachip)
+ 	sachip->gc.direction_output = sa1111_gpio_direction_output;
+ 	sachip->gc.get = sa1111_gpio_get;
+ 	sachip->gc.set_rv = sa1111_gpio_set;
+-	sachip->gc.set_multiple = sa1111_gpio_set_multiple;
++	sachip->gc.set_multiple_rv = sa1111_gpio_set_multiple;
+ 	sachip->gc.to_irq = sa1111_gpio_to_irq;
+ 	sachip->gc.base = -1;
+ 	sachip->gc.ngpio = 18;
 -- 
-2.50.1
+2.48.1
 
 
