@@ -1,51 +1,68 @@
-Return-Path: <linux-kernel+bounces-740754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D93EB0D8A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:58:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 832C4B0D8AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:59:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CE256C28E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:57:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33EBBAA2290
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA962E4247;
-	Tue, 22 Jul 2025 11:58:16 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0682A920;
-	Tue, 22 Jul 2025 11:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D7C2E4259;
+	Tue, 22 Jul 2025 11:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="s8XpoOgD"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C494C2D9497
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 11:58:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753185496; cv=none; b=tTN+nzROB9P7CxhtE0CuDCh3ENG6g0pRu5YTloUm7eETyzAEycC+pp+/rE2chDB+N9duehZg2xa7+CmjlCEa6SiQkZZDR3g+2vl8z5MOD87s43QA5XdqvtuZKib0mzPgCG6TkvkQhWyWwMpdWm9R12xVC2PcQttn8mYxbB7QXbg=
+	t=1753185532; cv=none; b=JFDrDRmefh416wmZzc2TYEy8/VWYcRTY3QkFCl1K6b7zxY63GXQO/T1+aCj2CTH3roWcV5TZgHVjFM0hx8EH52ZWMAvZC26mn3uY9CPkkIYTLEOCt3Qrg6RJaOAlcuG33JC/rGwQq6n/Af0VCXs4qwUflAtHyl0pkpuyA1Ajsc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753185496; c=relaxed/simple;
-	bh=FYFNJZU/pShI/0xENZjgDKpYDZJS22uxFteKyrwwyQY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IIaq0KNylRtbcacV/BFrhjwrVAlwfuwmYEnV0HxIaJSqySADWQOsTs7plIgkdBTUvBWS5DyzQHKxLmcirha/jok+BsGjlDvlypH4ibaApGk1zjftBMiyiCFBdj2ETu8hbl6w0T3P0XAlUo4NGDNGf9Najs0P+QdGt/S7vmtZCNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.69.45])
-	by gateway (Coremail) with SMTP id _____8BxnmtqfH9o5pIvAQ--.56009S3;
-	Tue, 22 Jul 2025 19:56:26 +0800 (CST)
-Received: from localhost.localdomain (unknown [223.64.69.45])
-	by front1 (Coremail) with SMTP id qMiowJDxscJlfH9oBdYhAA--.19687S2;
-	Tue, 22 Jul 2025 19:56:25 +0800 (CST)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Paolo Bonzini <pbonzini@redhat.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Tianrui Zhao <zhaotianrui@loongson.cn>,
-	Bibo Mao <maobibo@loongson.cn>
-Cc: kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [GIT PULL] LoongArch KVM changes for v6.17
-Date: Tue, 22 Jul 2025 19:56:09 +0800
-Message-ID: <20250722115609.3754289-1-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1753185532; c=relaxed/simple;
+	bh=UWOsxDW4wNbm+cwDgqi8i0/t6t8eiMPBQol3sPy5HDM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kSYFv7SwBeZmQbQ3h6Sv4anXcNjtdHRy1MHb3lWzC4Wtg+2PycQqYttqyBUSbFjKRJF4Z6ucF09m60MxxAAKfNX3QMQUVXjLVpr/8QFEGFjHDFaON3UuvEdFvbRq19aUUoBCiTLoVihWEqyQC7OCJEntpX2gDscF662S5PA0jU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=s8XpoOgD; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753185517;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=pLbp31z2Sp/stf08Tea2LEkAy17kQTrn/aAQvN+dazk=;
+	b=s8XpoOgDzUTb9HRzBFKrAftf3dPrcfE3OeMTfo6jxq4Z3Lcpohl/qsuEvrskdy6sUwb812
+	OcgSnnxhaYdm+HVgu7BPOz7+9lnQJCsQq3n8rxeOQmcgJJC9M9Giyj/8eM/CbyC8gwr7TM
+	XLzUnGqwgms6fACiwRnwyk0S1NA9W6Q=
+From: Tao Chen <chen.dylane@linux.dev>
+To: qmo@kernel.org,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	davem@davemloft.net,
+	kuba@kernel.org,
+	hawk@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Tao Chen <chen.dylane@linux.dev>
+Subject: [PATCH bpf-next v2 1/3] bpftool: Add bpf_token show
+Date: Tue, 22 Jul 2025 19:58:13 +0800
+Message-ID: <20250722115815.1390761-1-chen.dylane@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,72 +70,324 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJDxscJlfH9oBdYhAA--.19687S2
-X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoW7CFWrZF1kCw4DKFW3Kr4fCrX_yoW8ZrWxpr
-	13urnrJFs8GrZ5Jryqq343uwnrAFn7CryxXF4UKFW8ur4UZr1UXry8Xrn3JFy5C3yrJry0
-	vr1rGw1jqF1UAacCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUvEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
-	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWU
-	AwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI4
-	8JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r1Y
-	6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7
-	AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE
-	2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcV
-	C2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73
-	UjIFyTuYvjxU2MKZDUUUU
+X-Migadu-Flow: FLOW_OUT
 
-The following changes since commit 89be9a83ccf1f88522317ce02f854f30d6115c41:
+Add `bpftool token show` command to get token info
+from bpffs in /proc/mounts.
 
-  Linux 6.16-rc7 (2025-07-20 15:18:33 -0700)
+Example plain output for `token show`:
+token_info  /sys/fs/bpf/token
+	allowed_cmds:
+	  map_create          prog_load
+	allowed_maps:
+	allowed_progs:
+	  kprobe
+	allowed_attachs:
+	  xdp
+token_info  /sys/fs/bpf/token2
+	allowed_cmds:
+	  map_create          prog_load
+	allowed_maps:
+	allowed_progs:
+	  kprobe
+	allowed_attachs:
+	  xdp
 
-are available in the Git repository at:
+Example json output for `token show`:
+[{
+	"token_info": "/sys/fs/bpf/token",
+	"allowed_cmds": ["map_create", "prog_load"],
+	"allowed_maps": [],
+	"allowed_progs": ["kprobe"],
+	"allowed_attachs": ["xdp"]
+}, {
+	"token_info": "/sys/fs/bpf/token2",
+	"allowed_cmds": ["map_create", "prog_load"],
+	"allowed_maps": [],
+	"allowed_progs": ["kprobe"],
+	"allowed_attachs": ["xdp"]
+}]
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git tags/loongarch-kvm-6.17
+Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+---
+ tools/bpf/bpftool/main.c  |   3 +-
+ tools/bpf/bpftool/main.h  |   1 +
+ tools/bpf/bpftool/token.c | 232 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 235 insertions(+), 1 deletion(-)
+ create mode 100644 tools/bpf/bpftool/token.c
 
-for you to fetch changes up to 36d09b96d3e79518e2be31fc7960cc694702afb8:
-
-  LoongArch: KVM: Add tracepoints for CPUCFG and CSR emulation exits (2025-07-21 09:26:35 +0800)
-
-----------------------------------------------------------------
-LoongArch KVM changes for v6.17
-
-1. Simplify some KVM routines.
-2. Enhance in-kernel irqchip emulation.
-3. Add stat information with kernel irqchip.
-4. Add tracepoints for CPUCFG and CSR emulation exits.
-
-----------------------------------------------------------------
-Bibo Mao (8):
-      LoongArch: KVM: Remove unnecessary local variable
-      LoongArch: KVM: Remove unused parameter len
-      LoongArch: KVM: Remove never called default case statement
-      LoongArch: KVM: Use standard bitops API with eiointc
-      LoongArch: KVM: Use generic function loongarch_eiointc_read()
-      LoongArch: KVM: Use generic function loongarch_eiointc_write()
-      LoongArch: KVM: Replace eiointc_enable_irq() with eiointc_update_irq()
-      LoongArch: KVM: Add stat information with kernel irqchip
-
-Yulong Han (1):
-      LoongArch: KVM: Add tracepoints for CPUCFG and CSR emulation exits
-
-Yury Norov (NVIDIA) (2):
-      LoongArch: KVM: Rework kvm_send_pv_ipi()
-      LoongArch: KVM: Simplify kvm_deliver_intr()
-
- arch/loongarch/include/asm/kvm_host.h |  12 +-
- arch/loongarch/kvm/exit.c             |  33 +-
- arch/loongarch/kvm/intc/eiointc.c     | 553 +++++-----------------------------
- arch/loongarch/kvm/intc/ipi.c         |  28 +-
- arch/loongarch/kvm/intc/pch_pic.c     |   4 +-
- arch/loongarch/kvm/interrupt.c        |  25 +-
- arch/loongarch/kvm/trace.h            |  14 +-
- arch/loongarch/kvm/vcpu.c             |   8 +-
- 8 files changed, 132 insertions(+), 545 deletions(-)
+diff --git a/tools/bpf/bpftool/main.c b/tools/bpf/bpftool/main.c
+index 2b7f2bd3a7d..0f1183b2ed0 100644
+--- a/tools/bpf/bpftool/main.c
++++ b/tools/bpf/bpftool/main.c
+@@ -61,7 +61,7 @@ static int do_help(int argc, char **argv)
+ 		"       %s batch file FILE\n"
+ 		"       %s version\n"
+ 		"\n"
+-		"       OBJECT := { prog | map | link | cgroup | perf | net | feature | btf | gen | struct_ops | iter }\n"
++		"       OBJECT := { prog | map | link | cgroup | perf | net | feature | btf | gen | struct_ops | iter | token }\n"
+ 		"       " HELP_SPEC_OPTIONS " |\n"
+ 		"                    {-V|--version} }\n"
+ 		"",
+@@ -87,6 +87,7 @@ static const struct cmd commands[] = {
+ 	{ "gen",	do_gen },
+ 	{ "struct_ops",	do_struct_ops },
+ 	{ "iter",	do_iter },
++	{ "token",	do_token },
+ 	{ "version",	do_version },
+ 	{ 0 }
+ };
+diff --git a/tools/bpf/bpftool/main.h b/tools/bpf/bpftool/main.h
+index 6db704fda5c..a2bb0714b3d 100644
+--- a/tools/bpf/bpftool/main.h
++++ b/tools/bpf/bpftool/main.h
+@@ -166,6 +166,7 @@ int do_tracelog(int argc, char **arg) __weak;
+ int do_feature(int argc, char **argv) __weak;
+ int do_struct_ops(int argc, char **argv) __weak;
+ int do_iter(int argc, char **argv) __weak;
++int do_token(int argc, char **argv) __weak;
+ 
+ int parse_u32_arg(int *argc, char ***argv, __u32 *val, const char *what);
+ int prog_parse_fd(int *argc, char ***argv);
+diff --git a/tools/bpf/bpftool/token.c b/tools/bpf/bpftool/token.c
+new file mode 100644
+index 00000000000..f72a116f9c6
+--- /dev/null
++++ b/tools/bpf/bpftool/token.c
+@@ -0,0 +1,232 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++/* Copyright (C) 2025 Didi Technology Co., Tao Chen */
++
++#ifndef _GNU_SOURCE
++#define _GNU_SOURCE
++#endif
++#include <errno.h>
++#include <fcntl.h>
++#include <stdbool.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <unistd.h>
++#include <mntent.h>
++#include <sys/types.h>
++#include <sys/stat.h>
++
++#include "json_writer.h"
++#include "main.h"
++
++#define MOUNTS_FILE "/proc/mounts"
++
++static bool has_delegate_options(const char *mnt_ops)
++{
++	return strstr(mnt_ops, "delegate_cmds") != NULL ||
++	       strstr(mnt_ops, "delegate_maps") != NULL ||
++	       strstr(mnt_ops, "delegate_progs") != NULL ||
++	       strstr(mnt_ops, "delegate_attachs") != NULL;
++}
++
++static char *get_delegate_value(const char *opts, const char *key)
++{
++	char *token, *rest, *ret = NULL;
++	char *opts_copy = strdup(opts);
++
++	if (!opts_copy)
++		return NULL;
++
++	for (token = strtok_r(opts_copy, ",", &rest); token != NULL;
++			token = strtok_r(NULL, ",", &rest)) {
++		if (strncmp(token, key, strlen(key)) == 0 &&
++				token[strlen(key)] == '=') {
++			ret = token + strlen(key) + 1;
++			break;
++		}
++	}
++	free(opts_copy);
++
++	return ret;
++}
++
++static void print_items_per_line(const char *input, int items_per_line)
++{
++	char *str, *rest, *strs;
++	int cnt = 0;
++
++	if (!input)
++		return;
++
++	strs = strdup(input);
++	if (!strs)
++		return;
++
++	for (str = strtok_r(strs, ":", &rest); str != NULL;
++			str = strtok_r(NULL, ":", &rest)) {
++		if (cnt % items_per_line == 0)
++			printf("\n\t  ");
++
++		printf("%-20s", str);
++		cnt++;
++	}
++
++	free(strs);
++}
++
++#define ITEMS_PER_LINE 4
++static void show_token_info_plain(struct mntent *mntent)
++{
++	char *value;
++
++	printf("token_info  %s", mntent->mnt_dir);
++
++	printf("\n\tallowed_cmds:");
++	value = get_delegate_value(mntent->mnt_opts, "delegate_cmds");
++	print_items_per_line(value, ITEMS_PER_LINE);
++
++	printf("\n\tallowed_maps:");
++	value = get_delegate_value(mntent->mnt_opts, "delegate_maps");
++	print_items_per_line(value, ITEMS_PER_LINE);
++
++	printf("\n\tallowed_progs:");
++	value = get_delegate_value(mntent->mnt_opts, "delegate_progs");
++	print_items_per_line(value, ITEMS_PER_LINE);
++
++	printf("\n\tallowed_attachs:");
++	value = get_delegate_value(mntent->mnt_opts, "delegate_attachs");
++	print_items_per_line(value, ITEMS_PER_LINE);
++	printf("\n");
++}
++
++static void split_json_array_str(const char *input)
++{
++	char *str, *rest, *strs;
++
++	if (!input) {
++		jsonw_start_array(json_wtr);
++		jsonw_end_array(json_wtr);
++		return;
++	}
++
++	strs = strdup(input);
++	if (!strs)
++		return;
++
++	jsonw_start_array(json_wtr);
++	for (str = strtok_r(strs, ":", &rest); str != NULL;
++			str = strtok_r(NULL, ":", &rest)) {
++		jsonw_string(json_wtr, str);
++	}
++	jsonw_end_array(json_wtr);
++
++	free(strs);
++}
++
++static void show_token_info_json(struct mntent *mntent)
++{
++	char *value;
++
++	jsonw_start_object(json_wtr);
++
++	jsonw_string_field(json_wtr, "token_info", mntent->mnt_dir);
++
++	jsonw_name(json_wtr, "allowed_cmds");
++	value = get_delegate_value(mntent->mnt_opts, "delegate_cmds");
++	split_json_array_str(value);
++
++	jsonw_name(json_wtr, "allowed_maps");
++	value = get_delegate_value(mntent->mnt_opts, "delegate_maps");
++	split_json_array_str(value);
++
++	jsonw_name(json_wtr, "allowed_progs");
++	value = get_delegate_value(mntent->mnt_opts, "delegate_progs");
++	split_json_array_str(value);
++
++	jsonw_name(json_wtr, "allowed_attachs");
++	value = get_delegate_value(mntent->mnt_opts, "delegate_attachs");
++	split_json_array_str(value);
++
++	jsonw_end_object(json_wtr);
++}
++
++static int __show_token_info(struct mntent *mntent)
++{
++
++	if (json_output)
++		show_token_info_json(mntent);
++	else
++		show_token_info_plain(mntent);
++
++	return 0;
++}
++
++static int show_token_info(void)
++{
++	FILE *fp;
++	struct mntent *ent;
++	bool hit = false;
++
++	fp = setmntent(MOUNTS_FILE, "r");
++	if (!fp) {
++		p_err("Failed to open: %s", MOUNTS_FILE);
++		return -1;
++	}
++
++	if (json_output)
++		jsonw_start_array(json_wtr);
++
++	while ((ent = getmntent(fp)) != NULL) {
++		if (strncmp(ent->mnt_type, "bpf", 3) == 0) {
++			if (has_delegate_options(ent->mnt_opts)) {
++				__show_token_info(ent);
++				hit = true;
++			}
++		}
++	}
++
++	if (json_output)
++		jsonw_end_array(json_wtr);
++
++	if (!hit)
++		p_info("Token info not found");
++
++	endmntent(fp);
++
++	return 0;
++}
++
++static int do_show(int argc, char **argv)
++{
++	if (argc)
++		return BAD_ARG();
++
++	return show_token_info();
++}
++
++static int do_help(int argc, char **argv)
++{
++	if (json_output) {
++		jsonw_null(json_wtr);
++		return 0;
++	}
++
++	fprintf(stderr,
++		"Usage: %1$s %2$s { show | list }\n"
++		"	%1$s %2$s help\n"
++		"\n"
++		"",
++		bin_name, argv[-2]);
++	return 0;
++}
++
++static const struct cmd cmds[] = {
++	{ "show",	do_show },
++	{ "list",	do_show },
++	{ "help",	do_help },
++	{ 0 }
++};
++
++int do_token(int argc, char **argv)
++{
++	return cmd_select(cmds, argc, argv, do_help);
++}
+-- 
+2.48.1
 
 
