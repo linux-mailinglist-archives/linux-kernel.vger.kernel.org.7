@@ -1,123 +1,127 @@
-Return-Path: <linux-kernel+bounces-740500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75571B0D4FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:51:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90EECB0D502
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:53:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F452560BFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:51:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAE827AB2AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:52:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAAB52D8DC4;
-	Tue, 22 Jul 2025 08:51:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E0B2D94A3;
+	Tue, 22 Jul 2025 08:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="nolYdeTi"
-Received: from out.smtpout.orange.fr (out-69.smtpout.orange.fr [193.252.22.69])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Fxwv+pY9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A090222571;
-	Tue, 22 Jul 2025 08:51:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C66121C178;
+	Tue, 22 Jul 2025 08:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753174269; cv=none; b=ugEET/hHwA5lsnNdHtE/Gf77172IBPLSdGIS88zsjKCnPcpLT9MuPxWS9dabpE5Db+UINKfG6BkPwikZE8a47tq6RFa9E0r1LZHKTTIg7EXdfNvTXYi7vdHkLsMcc2TbJuiDppp0A0Qn5aOYbx2SREmRqkZslVeQ2jxcc2M26AQ=
+	t=1753174400; cv=none; b=pUjZjI81SSp7isLOYAocOaAIvvrFiv4ahZt/+KvbqqGcIsnwaXxlzgMk45sS0WJ/8qJTVxYi8osQ+CcpTkbDTj93npuO7HKPT3lcYvrA04sxVQwE4PhASe9/05qqdsFl6sMPqHVx4wTDYAeQTyqOkYVq7wgPSFUW2Dj3gHHruBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753174269; c=relaxed/simple;
-	bh=Gnb5NMjsI9cancTxlFaoJOHyxjGFsm3mUzULyH+q+EM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jis5vMGJI6Hlr/SG62rTkK5MXp+BsgDgcDm8jVbGJXUH1W8RvLaxdiJDiSawqSrkOYg7bsnAD3YwfJGtRH20Fg9qupbdrd8jWp3rfkAfH6Iob7kl/+AOLs7wXPMXXBm7SAyLLiSquXx1UOuqfJ2hHCHaNPiz3xZy+1L5KIVd5Qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=nolYdeTi; arc=none smtp.client-ip=193.252.22.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id e8i9ufli8Q4Mme8iAupR80; Tue, 22 Jul 2025 10:51:02 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1753174263;
-	bh=5smbSKke5f39kRSBejeC2o9Nj4GKcStou/AtwBkTZnQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=nolYdeTiM1/nexwunDPZkLpBOzGKiQ7aWHVXlqNm7sCAeYs+d3WihThA3maSq2af/
-	 ch+GBS+lzh75S0Tc/2+Mb/mksPHtU/+kWpTnMNRR21Ae/YW84BVSDMkOQOPKGmGMRi
-	 JUS3RlGKkcvnTzmgYqry7WPyutN3H9bBY/k88oidIscs0fPP1RbOT9xAaOoj2JKB1d
-	 qbJOxZ9yi58/oIjsaTAXLaDuD+9kHgi9BEIt0PDFmxgUFxI0qUXu6xtsgJSQmtb/++
-	 pZADEqhyTQbJeDLNMWLwLkrO6rPaHP0H+uQbxdC2LVhMCXqDZwLdc4e7Cyjg4LxtD+
-	 0dqQ55TbhTr+w==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 22 Jul 2025 10:51:03 +0200
-X-ME-IP: 124.33.176.97
-Message-ID: <83498a43-9e39-44ae-821d-7a7492f57a83@wanadoo.fr>
-Date: Tue, 22 Jul 2025 17:50:56 +0900
+	s=arc-20240116; t=1753174400; c=relaxed/simple;
+	bh=LIgm7MYVKFyNqnPEDEWOXJrkPP+VHDItG+qZ/AuDuPw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m4zV+vJ0zHo32rSQ+a9MBplXK7zRCEmZhxTLYCgUSgQp4wOFS9ZHGNY6J/I3uOmla6m9ZknWoAyqAN7sumsrY/JrH35vcC3+sbHizmRR1M485Ezj1us0/cnmIchMvrn0CwhxRhcc+SO0yRvSxjSP3+90JnhTkZuO6Fqpv5b40+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Fxwv+pY9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EE2CC4CEEB;
+	Tue, 22 Jul 2025 08:53:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1753174399;
+	bh=LIgm7MYVKFyNqnPEDEWOXJrkPP+VHDItG+qZ/AuDuPw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Fxwv+pY9oovWwqYn5pWnoVVG5XcuGGR0IhD5/MBGY3MneBTI11aH/JyzgQQpyIDQR
+	 zajP2Ok4TldR/u1rCqzASioC9/F8A8esyYRxJ6XaMlmonZKwE3w9mMp14aVU5Yv0OH
+	 tDJ9r+Jhq3M9AKYX9RCSebz5A4XT7cXKwfos/+nc=
+Date: Tue, 22 Jul 2025 10:53:16 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Daniel Gomez <da.gomez@kernel.org>,
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Matthias Maennich <maennich@google.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Christoph Hellwig <hch@infradead.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	David Hildenbrand <david@redhat.com>,
+	Shivank Garg <shivankg@amd.com>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3] module: Rename EXPORT_SYMBOL_GPL_FOR_MODULES to
+ EXPORT_SYMBOL_FOR_MODULES
+Message-ID: <2025072246-unexpired-deletion-a0f8@gregkh>
+References: <20250715-export_modules-v3-1-11fffc67dff7@suse.cz>
+ <b340eb9f-a336-461c-befe-6b09c68b731e@kernel.org>
+ <24f995fe-df76-4495-b9c6-9339b6afa6be@suse.cz>
+ <49eeff09-993f-42a0-8e3b-b3f95b41dbcf@kernel.org>
+ <2025072219-dollhouse-margarita-de67@gregkh>
+ <9d61a747-2655-4f4c-a8fe-5db51ff33ff7@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] docs: Fix kernel-doc error in CAN driver
-To: Pavel Pisa <pisa@fel.cvut.cz>
-Cc: Luis Felipe Hernandez <luis.hernandez093@gmail.com>,
- Randy Dunlap <rdunlap@infradead.org>, Ondrej Ille <ondrej.ille@gmail.com>,
- linux-can@vger.kernel.org, linux-kernel@vger.kernel.org,
- Marc Kleine-Budde <mkl@pengutronix.de>
-References: <20250722035352.21807-1-luis.hernandez093@gmail.com>
- <202507220837.23333.pisa@fel.cvut.cz>
- <399941c7-2ee5-4d8b-a7c6-c8ed7d85b565@wanadoo.fr>
- <202507220957.14122.pisa@fel.cvut.cz>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
- GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
- bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
- BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
- 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
- yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
- CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
- ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <202507220957.14122.pisa@fel.cvut.cz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9d61a747-2655-4f4c-a8fe-5db51ff33ff7@suse.cz>
 
-On 22/07/2025 at 16:57, Pavel Pisa wrote:
-> On Tuesday 22 of July 2025 09:27:39 Vincent Mailhol wrote:
->> On 22/07/2025 at 15:37, Pavel Pisa wrote:
->>> On Tuesday 22 of July 2025 06:06:30 Vincent Mailhol wrote:
->>>> On 22/07/2025 at 12:53, Luis Felipe Hernandez wrote:
->>>>> Fix kernel-doc formatting issue causing unexpected indentation error
->>>>> in ctucanfd driver documentation build. Convert main return values
->>>>> to bullet list format while preserving numbered sub-list in order to
->>>>> correct indentation error and visual structure in rendered html.
->>>>>
->>>>> Signed-off-by: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
->>>>
->>>> Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
->>>
->>> Reviewed-by: Vincent Mailhol <pisa@fel.cvut.cz>
->>
->>                ^^^^^^^^^^^^^^^
->> Are you trying to impersonate me?
->>
->> Can you reply again with the proper Reviewed-by tag? ;)
->>
->>
->> Yours sincerely,
->> Vincent Mailhol
+On Tue, Jul 22, 2025 at 10:49:48AM +0200, Vlastimil Babka wrote:
+> On 7/22/25 10:46, Greg Kroah-Hartman wrote:
+> > On Tue, Jul 22, 2025 at 10:26:43AM +0200, Daniel Gomez wrote:
+> >> > 
+> >> > Maybe with no reply, you can queue it then?
+> >> 
+> >> + Jiri, Stephen and Greg, added to the To: list.
+> >> 
+> >> EXPORT_SYMBOL_GPL_FOR_MODULES macro was merged [1] through Masahiro's
+> >> pull request in v6.16-rc1. This patch from Vlastimil renames the macro to
+> >> EXPORT_SYMBOL_FOR_MODULES. This means Jiri's patch b20d6576cdb3 "serial: 8250:
+> >> export RSA functions" will need to be updated accordingly. I'd like like to
+> >> know how you prefer to proceed, since it was requested to have this merged as a
+> >> fix before Linus releases a new kernel with the former name.
+> > 
+> > So you want this in 6.16-final?  Ok, do so and then someone needs to fix
+> > up the build breakage in linux-next and in all of the pull requests to
+> > Linus for 6.17-rc1 :)
+> > 
+> >> Link: https://lore.kernel.org/all/CAK7LNAQunzxOHR+vMZLf8kqxyRtLx-Z2G2VZquJmndrT9TZjiQ@mail.gmail.com/ [1]
+> >> 
+> >> 
+> >> Masahiro, just a heads-up that I plan to merge this through the linux-modules
+> >> tree unless you advise otherwise.
+> > 
+> > Why not just do the rename after 6.17-rc1 is out?  That way all new
+> > users will be able to be caught at that point in time.  There's no issue
 > 
-> Reviewed-by: Pavel Pisa <pisa@fel.cvut.cz>
-> 
-> Excuse, I have been in too much hurry.
+> Hm there might be people basing their new exports for 6.18 on 6.17-rc1. They
+> would have to be told to use rc2 then.
 
-No problem :)
+Yes, that's normal, nothing wrong with that at all, we make api name
+changes across the tree quite often (i.e. almost every-other release.)
 
-Marc, b4 will not be able to manage the review tags correctly. Can you please
-fix it manually when picking up the patch?
+> Maybe the best way would be if Linus
+> did this just before tagging rc1, while fixing up all users merged during
+> the merge window?
 
+Again, what's wrong with -rc2?  Anyone caught using this on only -rc1
+will get a quick "this broke the build" report in linux-next so it's not
+like this is going to be unnoticed at all.
 
-Yours sincerely,
-Vincent Mailhol
+thanks,
 
+greg k-h
 
