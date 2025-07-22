@@ -1,142 +1,187 @@
-Return-Path: <linux-kernel+bounces-740658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C848B0D75C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:29:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F64DB0D760
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:34:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A175D3B3B25
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:29:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C44826C3904
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:33:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B84D228C2A2;
-	Tue, 22 Jul 2025 10:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAE942DC347;
+	Tue, 22 Jul 2025 10:34:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mx45qlBE"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W0pHPfzd"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6B22DFA3A
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 10:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A2C4155CB3;
+	Tue, 22 Jul 2025 10:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753180164; cv=none; b=tZ6zgQwqliuCud1m0v7kpvrksC78PBAPQ5DT+sTQtGDJObh36qwlraEDQ6P5VEq53T0MUaynpADWx1RrdHFL35sjYFP8c9lM0lG9xRh+p2b71Wqz67tqdyVZ7wZWK2usfTBHD8PQP86HWavCkdCiBDiZg7ihqq7Pr1tGPR+yM98=
+	t=1753180451; cv=none; b=qCK+KWFTJEd/wd2k+DtFdSI3g7MTRb1LovxAaFNXLSXxnDsF9wSi0q/DRBCnJSoBDyQ/Wm9R2+hsNID36x1XSTFJf0nexTfFhG6tgzqfm6PIME7TeGhUD3dqWuYOB22oK/tZx0+IMe/WE5MEpSfcrMXwrVlo9xkFVX+jO6wwTgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753180164; c=relaxed/simple;
-	bh=rVhTQfn+06SZjykkCx//yMRYe1F42mvD3bufyn8Eoec=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MsdvET4Sv3aU0+rSaKtyG2eWEALwAqN+4YLaLxEF68ekxeqjqGUgVL6uuFRbP985Hly7QymZmJROXXqkzXuDJXAJ2Sok9aXaNM0qfHLAi3SrJaKTEqjfA9+M82APHHE0SGoHoSfUSx2tmBdgmSIeeto5EfJwLMoE7HJQl51ARMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mx45qlBE; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4555f89b236so52726445e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 03:29:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753180161; x=1753784961; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fxZUVGACW46ROFRrurwhfL/bIVT9DSzn+Z7eP3oj7pY=;
-        b=mx45qlBEQdz2UyOhX4FOHrNJkrkWcBdmEfKuWVk7rNXGiE614hPDrXXv/eQkUBJZq5
-         7Au6NWRkLmySvbhhKYk1Tudml+DhPJfIPPN0Z36U1FvD2tmlUZF9Ymev9xjNsPBlONZW
-         Iky9CE9gAzwrBtudz9/dBL+huBPeyDKFg3dXN09Z1bS2bgHhjBK8JWYxRmr/qiC/EZX7
-         qh8P1u7v2k37d7vdDrFab7R8fFmUFMF99sZt02spUoR63HUNkIVcJZ1e671cpYRLHRe5
-         gRUq1o8aObr3AiDTmUGo1OGqXiqnCgZt7XFtGn6ubSodCwGr3gKyBN9Ao/nkPLgsr3VT
-         vcEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753180161; x=1753784961;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fxZUVGACW46ROFRrurwhfL/bIVT9DSzn+Z7eP3oj7pY=;
-        b=D97qm9CEryWLHdqUfn1oKA4LOY02eOAJSd3pHGm/EIpqtnoTGbvvp+iOo9DqbEUb53
-         Yud4iXJ/JMP6uGfrdFm2NtutlmOmSm6XDk3MA2H59xSzCc0sDfr3TDcNfslc5wAzrnbF
-         X4jXiNHD9NYVK1WbMdaLg9CEXVGgIkbFQIVSeReHRws42puf8b0DTd1bncBHrZ9yzv1U
-         f99zwH6FczcvOFXgk6n8/n/OqGxlY19A0lFP3vcYMj2CQTwG4TAG/qEmZjA8S1cu+DxJ
-         FmZ16aAZEey6PUgAeV7T8Hm+HmHxFQJ2li0eZd5zHh459Mt8BxRfU7qUas5OaxSLbifz
-         Rz9w==
-X-Forwarded-Encrypted: i=1; AJvYcCWaD3sAULK42SdTuSUjS2tTuXpdPldstawL8WwcHlemcGcFxZtr2WdhV/UCz712sYEjHzNG6ZLsRHq/Wh8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5faprdieOcCsYN852q22edjW3G7AOm616jDXSeG6l2EZjbh/c
-	FcxFBWfbrrLN5B5jn9Ze6qUp1MRr6WKs2LAivW0mU7spf96a8VwITLeUpkX7W1/i
-X-Gm-Gg: ASbGnctf2DyudG9EPn1R+r+wjZZ9WFbuPL3El6O3VDHHIHzbKw9AHzziTWoOTQa4JmS
-	MadYq1N42547GqM2Ed4kIJe7FAgs5vdBFlaQR3FLxPlZz5LK684pOiQHi2FuZU8d8JL3YGapP/C
-	gXB7wGWPzju9H6IZTruv8zu0Iytu/GiY2nhR00NnTWykLMG2uGoIIVjfaNTT8p2GmmeFmtO45eb
-	R9zJOeIO6XJUq+PR2dk+ieX0SL8aJSnsxn7qlacWQyTxKHH2/Ek88Nmt+QN+raC0OloTnpOWJOK
-	Fn6iu6wvcTdadtdUbZX3Bkl73EKI579LxnF/tPczd4eCYSZ+O0PJKOnahr5Qf05mm4Wa/gA0ssO
-	picC3s2M8+gzDvlRWhwsOZ3qo3WuqWY0=
-X-Google-Smtp-Source: AGHT+IEHBlNbQ1YPEWSxQJSYPHljQ9UoaZeqhCRzRGrQ0XzA5BTAIrm5I1v2Kds708E89K2m5lCgjg==
-X-Received: by 2002:a05:6000:4b17:b0:3a4:e1e1:7779 with SMTP id ffacd0b85a97d-3b60e50ff22mr18202349f8f.32.1753180160588;
-        Tue, 22 Jul 2025 03:29:20 -0700 (PDT)
-Received: from debian.local ([81.78.104.57])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4563b75de26sm125434925e9.33.2025.07.22.03.29.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 03:29:20 -0700 (PDT)
-Date: Tue, 22 Jul 2025 11:29:17 +0100
-From: Chris Bainbridge <chris.bainbridge@gmail.com>
-To: Satadru Pramanik <satadru@gmail.com>
-Cc: Arnd Bergmann <arnd@kernel.org>, airlied@gmail.com, airlied@redhat.com,
-	arnd@arndb.de, bskeggs@nvidia.com, bskeggs@redhat.com,
-	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Lyude Paul <lyude@redhat.com>, nouveau@lists.freedesktop.org,
-	simona@ffwll.ch, ttabi@nvidia.com,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	regressions@lists.linux.dev
-Subject: Re: [PATCH] drm/nouveau: check ioctl command codes better
-Message-ID: <aH9n_QGMFx2ZbKlw@debian.local>
-References: <CAFrh3J85tsZRpOHQtKgNHUVnn=EG=QKBnZTRtWS8eWSc1K1xkA@mail.gmail.com>
+	s=arc-20240116; t=1753180451; c=relaxed/simple;
+	bh=smKLsezLIZa0scOE5rYi92MesHkaVn/aIX3+RY7RYic=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=PVv47LkZncGdf8+5d0ea0PyIMpNy2UyXJKmueOol6iE241f1Ub25flC5T4Y6C881rtfFxdOlyYvXu4VSsSy2TvL86DNREiFA0xokLOkU47i5azIQ6uyn6XTmb41ve3xwzXaaEJyxebTMtF3Az3VbBB1Soc5CW83o4FCyc8bO74k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=W0pHPfzd; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
+	In-Reply-To:Date:To:From:Subject:Message-ID:Sender:Reply-To:Cc:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=smKLsezLIZa0scOE5rYi92MesHkaVn/aIX3+RY7RYic=; b=W0pHPfzd0FmgT8Wzr2KjN1k7ya
+	pAjvKJY7XzKic5yTfNkf/gh47vIkfwpXDdCycQ0F0B2UEgqBbn/28uLPqjezRAcAf3R/+w/aYxIvb
+	dRIoazeX8b+VXRp5PN1s/Ptv8bReRyeXcFkLSthUhIizMT+3Cxut4s8jCqUXrwt41wSVbqS6URAce
+	jrcW/zg/a/mdxWkobTWN/xCIy+hafsSl76iF+vpzpIxLP2UOKHpRxQ1sT2P1UUCfJI9DCFr07rMbk
+	JV7P7OszwLTaLnZq3AFMK1HUeRlflbFHYrAZa7BY9uoOu/YlX/P/fS9ff8CVAU8nwwAH4Dn4ffUZV
+	z1niaebA==;
+Received: from [54.239.6.185] (helo=freeip.amazon.com)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ueAJl-00000008zl6-1o6I;
+	Tue, 22 Jul 2025 10:33:54 +0000
+Message-ID: <a0476a256e35345c4ca874268dd9d51883fe0c61.camel@infradead.org>
+Subject: Re: KVM: arm64: vgic-its: Return -ENXIO to invalid
+ KVM_DEV_ARM_VGIC_GRP_CTRL attrs
+From: David Woodhouse <dwmw2@infradead.org>
+To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+ Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Jing Zhang
+ <jingzhangos@google.com>, Kunkun Jiang <jiangkunkun@huawei.com>, Paolo
+ Bonzini <pbonzini@redhat.com>, Sebastian Ott <sebott@redhat.com>, Maxim
+ Levitsky <mlevitsk@redhat.com>, Keisuke Nishimura
+ <keisuke.nishimura@inria.fr>, linux-arm-kernel@lists.infradead.org, 
+ kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+Date: Tue, 22 Jul 2025 12:33:52 +0200
+In-Reply-To: <bbbddd56135399baf699bc46ffb6e7f08d9f8c9f.camel@infradead.org>
+References: <bbbddd56135399baf699bc46ffb6e7f08d9f8c9f.camel@infradead.org>
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
+	boundary="=-K+Gh5BZZSVdK6vxLmdAS"
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFrh3J85tsZRpOHQtKgNHUVnn=EG=QKBnZTRtWS8eWSc1K1xkA@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 
-On Mon, Jul 21, 2025 at 08:22:48AM -0400, Satadru Pramanik wrote:
-> Hello all,
-> 
-> I suspect this commit in 6.16-rc7 has broken acceleration with Mesa's
-> nouveau drivers on my machine.
-> 
-> glxinfo -B reports that I'm using llvmpipe.
-> 
-> Reverting this in 6.16-rc7 restores nouveau acceleration, and glxinfo
-> then reports: "OpenGL renderer string: NVE7"
-> 
-> inxi -G
-> Graphics:
->   Device-1: NVIDIA GK107M [GeForce GT 750M Mac Edition] driver: nouveau
->     v: kernel
->   Display: wayland server: X.Org v: 24.1.8 with: Xwayland v: 24.1.8
->     compositor: gnome-shell v: 48.0 driver: X: loaded: modesetting
->     unloaded: fbdev,vesa dri: nouveau gpu: nouveau resolution: 2880x1800~60Hz
->   API: EGL v: 1.5 drivers: nouveau,swrast
->     platforms: gbm,wayland,x11,surfaceless,device
->   API: OpenGL v: 4.5 compat-v: 4.3 vendor: mesa
->     v: 25.2.0~rc1+git2507191056.03f67b52319~p~mesarc0 renderer: NVE7
->   API: Vulkan v: 1.4.304 drivers: N/A surfaces: xcb,xlib,wayland
->   Info: Tools: api: eglinfo, glxinfo, vulkaninfo x11: xdriinfo, xdpyinfo,
->     xprop, xrandr
-> 
-> Best,
-> Satadru Pramanik
 
-I also bisected an issue to this commit. On my laptop, this commit
-results in an intermittent desktop crash (Xorg segfault) when changing
-display scale, which can be more reliably reproduced with:
+--=-K+Gh5BZZSVdK6vxLmdAS
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-for x in {1..100}; do
-  xrandr --output eDP-1 --mode 2560x1600 --scale 0.5 --filter nearest
-  xrandr --output eDP-1 --mode 2560x1600 --scale 1 --filter nearest
-done
+On Mon, 2025-06-23 at 15:22 +0200, David Woodhouse wrote:
+> From: David Woodhouse <dwmw@amazon.co.uk>
+>=20
+> A preliminary version of a hack to invoke unmap_all_vpes() from an ioctl
+> didn't work very well. We eventually determined this was because we were
+> invoking it on the wrong file descriptor, but not getting an error.
+>=20
+> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 
-I also see the same glxinfo llvmpipe change that Satadru reported.
-Reverting the commit fixes my scale test case, and also the glxinfo
-renderer.
+Ping?
 
-#regzbot introduced: e5478166dffb51fa64e76cdbb5c24421f22f2d43 ^
-#regzbot title: nouveau hardware acceleration broken
+--=-K+Gh5BZZSVdK6vxLmdAS
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCD9Aw
+ggSOMIIDdqADAgECAhAOmiw0ECVD4cWj5DqVrT9PMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYT
+AlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAi
+BgNVBAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0yNDAxMzAwMDAwMDBaFw0zMTEx
+MDkyMzU5NTlaMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYDVQQDExdWZXJv
+a2V5IFNlY3VyZSBFbWFpbCBHMjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMjvgLKj
+jfhCFqxYyRiW8g3cNFAvltDbK5AzcOaR7yVzVGadr4YcCVxjKrEJOgi7WEOH8rUgCNB5cTD8N/Et
+GfZI+LGqSv0YtNa54T9D1AWJy08ZKkWvfGGIXN9UFAPMJ6OLLH/UUEgFa+7KlrEvMUupDFGnnR06
+aDJAwtycb8yXtILj+TvfhLFhafxroXrflspavejQkEiHjNjtHnwbZ+o43g0/yxjwnarGI3kgcak7
+nnI9/8Lqpq79tLHYwLajotwLiGTB71AGN5xK+tzB+D4eN9lXayrjcszgbOv2ZCgzExQUAIt98mre
+8EggKs9mwtEuKAhYBIP/0K6WsoMnQCcCAwEAAaOCAVwwggFYMBIGA1UdEwEB/wQIMAYBAf8CAQAw
+HQYDVR0OBBYEFIlICOogTndrhuWByNfhjWSEf/xwMB8GA1UdIwQYMBaAFEXroq/0ksuCMS1Ri6en
+IZ3zbcgPMA4GA1UdDwEB/wQEAwIBhjAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIweQYI
+KwYBBQUHAQEEbTBrMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQwYIKwYB
+BQUHMAKGN2h0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RD
+QS5jcnQwRQYDVR0fBD4wPDA6oDigNoY0aHR0cDovL2NybDMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0
+QXNzdXJlZElEUm9vdENBLmNybDARBgNVHSAECjAIMAYGBFUdIAAwDQYJKoZIhvcNAQELBQADggEB
+ACiagCqvNVxOfSd0uYfJMiZsOEBXAKIR/kpqRp2YCfrP4Tz7fJogYN4fxNAw7iy/bPZcvpVCfe/H
+/CCcp3alXL0I8M/rnEnRlv8ItY4MEF+2T/MkdXI3u1vHy3ua8SxBM8eT9LBQokHZxGUX51cE0kwa
+uEOZ+PonVIOnMjuLp29kcNOVnzf8DGKiek+cT51FvGRjV6LbaxXOm2P47/aiaXrDD5O0RF5SiPo6
+xD1/ClkCETyyEAE5LRJlXtx288R598koyFcwCSXijeVcRvBB1cNOLEbg7RMSw1AGq14fNe2cH1HG
+W7xyduY/ydQt6gv5r21mDOQ5SaZSWC/ZRfLDuEYwggWbMIIEg6ADAgECAhAH5JEPagNRXYDiRPdl
+c1vgMA0GCSqGSIb3DQEBCwUAMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYD
+VQQDExdWZXJva2V5IFNlY3VyZSBFbWFpbCBHMjAeFw0yNDEyMzAwMDAwMDBaFw0yODAxMDQyMzU5
+NTlaMB4xHDAaBgNVBAMME2R3bXcyQGluZnJhZGVhZC5vcmcwggIiMA0GCSqGSIb3DQEBAQUAA4IC
+DwAwggIKAoICAQDali7HveR1thexYXx/W7oMk/3Wpyppl62zJ8+RmTQH4yZeYAS/SRV6zmfXlXaZ
+sNOE6emg8WXLRS6BA70liot+u0O0oPnIvnx+CsMH0PD4tCKSCsdp+XphIJ2zkC9S7/yHDYnqegqt
+w4smkqUqf0WX/ggH1Dckh0vHlpoS1OoxqUg+ocU6WCsnuz5q5rzFsHxhD1qGpgFdZEk2/c//ZvUN
+i12vPWipk8TcJwHw9zoZ/ZrVNybpMCC0THsJ/UEVyuyszPtNYeYZAhOJ41vav1RhZJzYan4a1gU0
+kKBPQklcpQEhq48woEu15isvwWh9/+5jjh0L+YNaN0I//nHSp6U9COUG9Z0cvnO8FM6PTqsnSbcc
+0j+GchwOHRC7aP2t5v2stVx3KbptaYEzi4MQHxm/0+HQpMEVLLUiizJqS4PWPU6zfQTOMZ9uLQRR
+ci+c5xhtMEBszlQDOvEQcyEG+hc++fH47K+MmZz21bFNfoBxLP6bjR6xtPXtREF5lLXxp+CJ6KKS
+blPKeVRg/UtyJHeFKAZXO8Zeco7TZUMVHmK0ZZ1EpnZbnAhKE19Z+FJrQPQrlR0gO3lBzuyPPArV
+hvWxjlO7S4DmaEhLzarWi/ze7EGwWSuI2eEa/8zU0INUsGI4ywe7vepQz7IqaAovAX0d+f1YjbmC
+VsAwjhLmveFjNwIDAQABo4IBsDCCAawwHwYDVR0jBBgwFoAUiUgI6iBOd2uG5YHI1+GNZIR//HAw
+HQYDVR0OBBYEFFxiGptwbOfWOtMk5loHw7uqWUOnMDAGA1UdEQQpMCeBE2R3bXcyQGluZnJhZGVh
+ZC5vcmeBEGRhdmlkQHdvb2Rob3Uuc2UwFAYDVR0gBA0wCzAJBgdngQwBBQEBMA4GA1UdDwEB/wQE
+AwIF4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwewYDVR0fBHQwcjA3oDWgM4YxaHR0
+cDovL2NybDMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDA3oDWgM4YxaHR0
+cDovL2NybDQuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDB2BggrBgEFBQcB
+AQRqMGgwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBABggrBgEFBQcwAoY0
+aHR0cDovL2NhY2VydHMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNydDANBgkq
+hkiG9w0BAQsFAAOCAQEAQXc4FPiPLRnTDvmOABEzkIumojfZAe5SlnuQoeFUfi+LsWCKiB8Uextv
+iBAvboKhLuN6eG/NC6WOzOCppn4mkQxRkOdLNThwMHW0d19jrZFEKtEG/epZ/hw/DdScTuZ2m7im
+8ppItAT6GXD3aPhXkXnJpC/zTs85uNSQR64cEcBFjjoQDuSsTeJ5DAWf8EMyhMuD8pcbqx5kRvyt
+JPsWBQzv1Dsdv2LDPLNd/JUKhHSgr7nbUr4+aAP2PHTXGcEBh8lTeYea9p4d5k969pe0OHYMV5aL
+xERqTagmSetuIwolkAuBCzA9vulg8Y49Nz2zrpUGfKGOD0FMqenYxdJHgDCCBZswggSDoAMCAQIC
+EAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQELBQAwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoT
+B1Zlcm9rZXkxIDAeBgNVBAMTF1Zlcm9rZXkgU2VjdXJlIEVtYWlsIEcyMB4XDTI0MTIzMDAwMDAw
+MFoXDTI4MDEwNDIzNTk1OVowHjEcMBoGA1UEAwwTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJ
+KoZIhvcNAQEBBQADggIPADCCAgoCggIBANqWLse95HW2F7FhfH9bugyT/danKmmXrbMnz5GZNAfj
+Jl5gBL9JFXrOZ9eVdpmw04Tp6aDxZctFLoEDvSWKi367Q7Sg+ci+fH4KwwfQ8Pi0IpIKx2n5emEg
+nbOQL1Lv/IcNiep6Cq3DiyaSpSp/RZf+CAfUNySHS8eWmhLU6jGpSD6hxTpYKye7PmrmvMWwfGEP
+WoamAV1kSTb9z/9m9Q2LXa89aKmTxNwnAfD3Ohn9mtU3JukwILRMewn9QRXK7KzM+01h5hkCE4nj
+W9q/VGFknNhqfhrWBTSQoE9CSVylASGrjzCgS7XmKy/BaH3/7mOOHQv5g1o3Qj/+cdKnpT0I5Qb1
+nRy+c7wUzo9OqydJtxzSP4ZyHA4dELto/a3m/ay1XHcpum1pgTOLgxAfGb/T4dCkwRUstSKLMmpL
+g9Y9TrN9BM4xn24tBFFyL5znGG0wQGzOVAM68RBzIQb6Fz758fjsr4yZnPbVsU1+gHEs/puNHrG0
+9e1EQXmUtfGn4InoopJuU8p5VGD9S3Ikd4UoBlc7xl5yjtNlQxUeYrRlnUSmdlucCEoTX1n4UmtA
+9CuVHSA7eUHO7I88CtWG9bGOU7tLgOZoSEvNqtaL/N7sQbBZK4jZ4Rr/zNTQg1SwYjjLB7u96lDP
+sipoCi8BfR35/ViNuYJWwDCOEua94WM3AgMBAAGjggGwMIIBrDAfBgNVHSMEGDAWgBSJSAjqIE53
+a4blgcjX4Y1khH/8cDAdBgNVHQ4EFgQUXGIam3Bs59Y60yTmWgfDu6pZQ6cwMAYDVR0RBCkwJ4ET
+ZHdtdzJAaW5mcmFkZWFkLm9yZ4EQZGF2aWRAd29vZGhvdS5zZTAUBgNVHSAEDTALMAkGB2eBDAEF
+AQEwDgYDVR0PAQH/BAQDAgXgMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDB7BgNVHR8E
+dDByMDegNaAzhjFodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
+Y3JsMDegNaAzhjFodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
+Y3JsMHYGCCsGAQUFBwEBBGowaDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29t
+MEAGCCsGAQUFBzAChjRodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVt
+YWlsRzIuY3J0MA0GCSqGSIb3DQEBCwUAA4IBAQBBdzgU+I8tGdMO+Y4AETOQi6aiN9kB7lKWe5Ch
+4VR+L4uxYIqIHxR7G2+IEC9ugqEu43p4b80LpY7M4KmmfiaRDFGQ50s1OHAwdbR3X2OtkUQq0Qb9
+6ln+HD8N1JxO5nabuKbymki0BPoZcPdo+FeRecmkL/NOzzm41JBHrhwRwEWOOhAO5KxN4nkMBZ/w
+QzKEy4PylxurHmRG/K0k+xYFDO/UOx2/YsM8s138lQqEdKCvudtSvj5oA/Y8dNcZwQGHyVN5h5r2
+nh3mT3r2l7Q4dgxXlovERGpNqCZJ624jCiWQC4ELMD2+6WDxjj03PbOulQZ8oY4PQUyp6djF0keA
+MYIDuzCCA7cCAQEwVTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMX
+VmVyb2tleSBTZWN1cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJYIZIAWUDBAIBBQCg
+ggE3MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDcyMjEwMzM1
+MlowLwYJKoZIhvcNAQkEMSIEIIvWb4RlegMn3o051Jxuqa688w+nrrnRnpDXbg93gmEaMGQGCSsG
+AQQBgjcQBDFXMFUwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoTB1Zlcm9rZXkxIDAeBgNVBAMTF1Zl
+cm9rZXkgU2VjdXJlIEVtYWlsIEcyAhAH5JEPagNRXYDiRPdlc1vgMGYGCyqGSIb3DQEJEAILMVeg
+VTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMXVmVyb2tleSBTZWN1
+cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQEBBQAEggIAt14/uL6W3Z5h
+roesI5ZZrQJc/C06vC9SoQ0Sj6l9jNFyVtE1T2dIJ4PW/IQneyPrV9XjyyeiiTpEr1+Mh5aVFSTS
+BojcguV4UStfn8MIFT9r5GYYa2A0nJjWlnuIlOBC6fpIuZJD0mThJ1sAQTLB6s3PGTvj259k8MJB
+9LGhKKYoLfgz69qE9D9BmL9QbgIT6F7T8jgwz3D+KbP8luPumnUWPDKvR712B714UhrWRJFljpXa
+R+U7i+QMwURogvLWHwus1qT443bTjNlcldsUVgdS4aGbYG7Lj8Z5T+j7pvedaaqCsqWtg3RDjAlx
+vgesLh/kLs+dbGmLZbkZgDKFNVQbfeX+E+Y4HoOWlMpxvQW2mrrpoTxz2ffV8KLdw3DIe6s43leI
+g9z4inTJS5mJzxo37QTOveTuCJoVPrQCZwh6Dw5eGj8vSl1BHWPGAcdsm9vsolrqer1dkDvxvRqJ
+Wan4h8IQu0uoJ5uMkd4RttbzZndYvZt4F4pYIgvm3WQOzlF2htEBIK28vOBM9zTv26y0J9GVDvS6
+TAeUsrxy1lpTZPxzzQEZXxv1+m5X6GUP9uDHFGMhNHfvibEW8oyloB27HLg9Cl29qXg3B5jnHpXm
+DHVECQhSRlo71gLMX0cSaXv+v5OBZQWx29sp8bZV94XXkP0XF3fOn5ymdZFX0oIAAAAAAAA=
+
+
+--=-K+Gh5BZZSVdK6vxLmdAS--
 
