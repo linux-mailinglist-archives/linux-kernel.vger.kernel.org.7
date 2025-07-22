@@ -1,121 +1,192 @@
-Return-Path: <linux-kernel+bounces-740626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75114B0D6F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:09:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56F46B0D6E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:08:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77C5E563E9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:06:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7319E1C246FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:07:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150B72E091C;
-	Tue, 22 Jul 2025 10:05:41 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A07E2DFA28;
+	Tue, 22 Jul 2025 10:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="btDw2eRE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5E72DFA28;
-	Tue, 22 Jul 2025 10:05:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9C92E06ED;
+	Tue, 22 Jul 2025 10:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753178740; cv=none; b=H3ndazexKROwEOGTjMcuHy2ImbdbeW/DAwtRYiDzdxF2jpOUsE03wr6U/oAW8wmRNWkyb659B7kraHg0dDTxlFvfWZygttq4T5NblZAeffz2xtYrRY2ytWYM678JrBm7r3wMGa2lk1ZQB4Ezy7OTfePqp7xcEbuM04InsbWbPq8=
+	t=1753178744; cv=none; b=mmjA7Nkee0IL3YhxShY6OfmtUWaRsXdgd+Svcgkq5BgSGJAfuWkqw94tS7T5qIed8cpEWBc3G0SBU9XfQIhEpF79DyTbvgMe5faoLUeNaQZFIxwCKfqyji+9vsJmDtxq60AO8JHX7qOj22aEctmc6W30u+6/quuSyKJV1F8zMyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753178740; c=relaxed/simple;
-	bh=lSZJM+Cmkevs2pRpsraF39Zvx0NW8Mvm/3hNXQnS4JE=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S/MCE4V/CZZ9+kK0WiMBeoUCOhV7I7KckKfM0KuZLXvg/tMvtB6sQM+Ui8/gF0ZZrWVrVL/0GdmNjp+rFO8FnXDOuMx0iHyGjMfBpucgT33RERRNxlz+SsLH2EgO5FGlB76rfz4hXrBHtxtmxQIfe261zpVMT/qzXbBMPE8uGrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bmXsq1MCFz6GBbq;
-	Tue, 22 Jul 2025 18:03:59 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id BEE5C140158;
-	Tue, 22 Jul 2025 18:05:28 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 22 Jul
- 2025 12:05:28 +0200
-Date: Tue, 22 Jul 2025 11:05:26 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Johan Hovold <johan+linaro@kernel.org>
-CC: Bjorn Helgaas <bhelgaas@google.com>, Manivannan Sadhasivam
-	<mani@kernel.org>, <linux-pci@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 1/3] PCI/pwrctrl: Fix device leak at registration
-Message-ID: <20250722110526.00002a60@huawei.com>
-In-Reply-To: <20250721153609.8611-2-johan+linaro@kernel.org>
-References: <20250721153609.8611-1-johan+linaro@kernel.org>
-	<20250721153609.8611-2-johan+linaro@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1753178744; c=relaxed/simple;
+	bh=IlLy1p8cz2ISRMPbvg4/n/abtc9H+c/qnZ5bEjePPwU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LHaWn0mR8Y9TfIB+XHz/+LKy5yziIFvq7psEuSmIqQdPqfxJvqlsHQhfMulVE4rSmKrBFch2aglhfzy1MfHligZZ8Y+5QiYyVcy6e3RWAA07sXF+I7aus7jX7Nw09JUMwvoHSbFrJH8CfNjtFDGgUkLl9WFeuB0s5veaPceeB+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=btDw2eRE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7899C4CEEB;
+	Tue, 22 Jul 2025 10:05:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753178744;
+	bh=IlLy1p8cz2ISRMPbvg4/n/abtc9H+c/qnZ5bEjePPwU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=btDw2eRExWr9siGIr/Xozyp7idZEf4Glqg6nrxtHxAJGV6UxAVFbid784++CxNqLR
+	 AiIwI6+8gI0Z03hvOVKnLiCRL8lLR44oXK7tlSZicaXaLiiHbHHZ6xQX10HdbkKnfO
+	 Q2x2B5D5QNf+V/mR8OICiAHO78w9/jlS/FWJPZAekIPjGDhQIPahef967LaSgn9KRF
+	 ADNf7PsvEGxF4jOPtegyLIexbq41U7Oo4dPkkIK6K+X6qMt6ag5YUQDOtkizjHn5sm
+	 7+4gIB53fqepnLwx9qSkLOISWjQMyk/wzjxf73F4NOU81fmHLi5I6Qob/bIVyxgVRt
+	 YgoeOjhLG18Uw==
+Date: Tue, 22 Jul 2025 12:05:38 +0200
+From: Alexey Gladkov <legion@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Petr Pavlu <petr.pavlu@suse.com>, Luis Chamberlain <mcgrof@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-scsi@vger.kernel.org
+Subject: Re: [PATCH v4 0/7] Add generated modalias to modules.builtin.modinfo
+Message-ID: <aH9icpCpoHqBBzEm@example.org>
+References: <cover.1750511018.git.legion@kernel.org>
+ <aHUI8KqD0_dtTY3D@example.org>
+ <CAK7LNARjC_FCam14RXfTVTQ4_jtXuBKfDsdyG84_k9L1x5zJyg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK7LNARjC_FCam14RXfTVTQ4_jtXuBKfDsdyG84_k9L1x5zJyg@mail.gmail.com>
 
-On Mon, 21 Jul 2025 17:36:07 +0200
-Johan Hovold <johan+linaro@kernel.org> wrote:
-
-> Make sure to drop the reference to the pwrctrl device taken by
-> of_find_device_by_node() when registering a PCI device.
+On Wed, Jul 16, 2025 at 01:23:26AM +0900, Masahiro Yamada wrote:
+> Hi, sorry for the delay.
 > 
-> Fixes: b458ff7e8176 ("PCI/pwrctl: Ensure that pwrctl drivers are probed before PCI client drivers")
-> Cc: stable@vger.kernel.org	# 6.13
-> Cc: Manivannan Sadhasivam <mani@kernel.org>
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-
-Hi Johan,
-
-Perhaps time for 
-DEFINE_FREE(put_pdev, struct platform_device *, if (_T) put_device(&_T->dev));
-
-then...
-
-> ---
->  drivers/pci/bus.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
+> On Mon, Jul 14, 2025 at 10:41 PM Alexey Gladkov <legion@kernel.org> wrote:
+> >
+> > On Sat, Jun 21, 2025 at 03:57:12PM +0200, Alexey Gladkov wrote:
+> > > The modules.builtin.modinfo file is used by userspace (kmod to be specific) to
+> > > get information about builtin modules. Among other information about the module,
+> > > information about module aliases is stored. This is very important to determine
+> > > that a particular modalias will be handled by a module that is inside the
+> > > kernel.
+> > >
+> > > There are several mechanisms for creating modalias for modules:
+> > >
+> > > The first is to explicitly specify the MODULE_ALIAS of the macro. In this case,
+> > > the aliases go into the '.modinfo' section of the module if it is compiled
+> > > separately or into vmlinux.o if it is builtin into the kernel.
+> > >
+> > > The second is the use of MODULE_DEVICE_TABLE followed by the use of the
+> > > modpost utility. In this case, vmlinux.o no longer has this information and
+> > > does not get it into modules.builtin.modinfo.
+> > >
+> > > For example:
+> > >
+> > > $ modinfo pci:v00008086d0000A36Dsv00001043sd00008694bc0Csc03i30
+> > > modinfo: ERROR: Module pci:v00008086d0000A36Dsv00001043sd00008694bc0Csc03i30 not found.
+> > >
+> > > $ modinfo xhci_pci
+> > > name:           xhci_pci
+> > > filename:       (builtin)
+> > > license:        GPL
+> > > file:           drivers/usb/host/xhci-pci
+> > > description:    xHCI PCI Host Controller Driver
+> > >
+> > > The builtin module is missing alias "pci:v*d*sv*sd*bc0Csc03i30*" which will be
+> > > generated by modpost if the module is built separately.
+> > >
+> > > To fix this it is necessary to add the generated by modpost modalias to
+> > > modules.builtin.modinfo.
+> > >
+> > > Fortunately modpost already generates .vmlinux.export.c for exported symbols. It
+> > > is possible to use this file to create a '.modinfo' section for builtin modules.
+> > > The modules.builtin.modinfo file becomes a composite file. One part is extracted
+> > > from vmlinux.o, the other part from .vmlinux.export.o.
+> >
+> > Masahiro Yamada, does this version of the patchset look better to you ?
 > 
-> diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
-> index 69048869ef1c..0394a9c77b38 100644
-> --- a/drivers/pci/bus.c
-> +++ b/drivers/pci/bus.c
-> @@ -362,11 +362,15 @@ void pci_bus_add_device(struct pci_dev *dev)
->  	 * before PCI client drivers.
->  	 */
->  	pdev = of_find_device_by_node(dn);
-> -	if (pdev && of_pci_supply_present(dn)) {
-> -		if (!device_link_add(&dev->dev, &pdev->dev,
-> -				     DL_FLAG_AUTOREMOVE_CONSUMER))
-> -			pci_err(dev, "failed to add device link to power control device %s\n",
-> -				pdev->name);
+> 
+> Looks better, but this may break s390 build:
+> 
+> https://lore.kernel.org/linux-kbuild/202506062053.zbkFBEnJ-lkp@intel.com/
+> 
+> I have not taken a close look at it.
+> If we do not find how to fix the warning, we would
+> end up with the original solution.
 
-	struct platform_device *pdev __free(put_pdev) =
-		of_find_device_by_node(dn);
-> +	if (pdev) {
-> +		if (of_pci_supply_present(dn)) {
-> +			if (!device_link_add(&dev->dev, &pdev->dev,
-> +					     DL_FLAG_AUTOREMOVE_CONSUMER)) {
-> +				pci_err(dev, "failed to add device link to power control device %s\n",
-> +					pdev->name);
-> +			}
-> +		}
-> +		put_device(&pdev->dev);
+I think I found a problem. I just pushed fix to my branch. I'll make a new
+version of the patchset in a few days. I want to test it a bit longer.
 
-and no need for any explicit put.
+> > > Notes:
+> > > - v4:
+> > >   * Rework the patchset based on top of Masahiro Yamada's patches.
+> > >   * Add removal of unnecessary __mod_device_table__* symbols to avoid symbol
+> > >     table growth in vmlinux.
+> > >   * rust code takes into account changes in __mod_device_table__*.
+> > >   * v3: https://lore.kernel.org/all/cover.1748335606.git.legion@kernel.org/
+> > >
+> > > - v3:
+> > >   * Add `Reviewed-by` tag to patches from Petr Pavlu.
+> > >   * Rebase to v6.15.
+> > >   * v2: https://lore.kernel.org/all/20250509164237.2886508-1-legion@kernel.org/
+> > >
+> > > - v2:
+> > >   * Drop patch for mfd because it was already applied and is in linux-next.
+> > >   * The generation of aliases for builtin modules has been redone as
+> > >     suggested by Masahiro Yamada.
+> > >   * Rebase to v6.15-rc5-136-g9c69f8884904
+> > >   * v1: https://lore.kernel.org/all/cover.1745591072.git.legion@kernel.org/
+> > >
+> > >
+> > > Alexey Gladkov (3):
+> > >   scsi: Always define blogic_pci_tbl structure
+> > >   modpost: Add modname to mod_device_table alias
+> > >   modpost: Create modalias for builtin modules
+> > >
+> > > Masahiro Yamada (4):
+> > >   module: remove meaningless 'name' parameter from __MODULE_INFO()
+> > >   kbuild: always create intermediate vmlinux.unstripped
+> > >   kbuild: keep .modinfo section in vmlinux.unstripped
+> > >   kbuild: extract modules.builtin.modinfo from vmlinux.unstripped
+> > >
+> > >  drivers/scsi/BusLogic.c           |  2 -
+> > >  include/asm-generic/vmlinux.lds.h |  2 +-
+> > >  include/crypto/algapi.h           |  4 +-
+> > >  include/linux/module.h            | 21 ++++-----
+> > >  include/linux/moduleparam.h       |  9 ++--
+> > >  include/net/tcp.h                 |  4 +-
+> > >  rust/kernel/device_id.rs          |  8 ++--
+> > >  scripts/Makefile.vmlinux          | 74 +++++++++++++++++++++----------
+> > >  scripts/Makefile.vmlinux_o        | 26 +----------
+> > >  scripts/mksysmap                  |  6 +++
+> > >  scripts/mod/file2alias.c          | 34 ++++++++++++--
+> > >  scripts/mod/modpost.c             | 17 ++++++-
+> > >  scripts/mod/modpost.h             |  2 +
+> > >  13 files changed, 131 insertions(+), 78 deletions(-)
+> > >
+> > > --
+> > > 2.49.0
+> > >
+> >
+> > --
+> > Rgrds, legion
+> >
+> 
+> 
+> -- 
+> Best Regards
+> Masahiro Yamada
+> 
 
-We already do this extensively in some subsystems (e.g. CXL) and it
-greatly simplifies code.
-
->  	}
->  
->  	if (!dn || of_device_is_available(dn))
+-- 
+Rgrds, legion
 
 
