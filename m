@@ -1,95 +1,58 @@
-Return-Path: <linux-kernel+bounces-740249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6717CB0D1D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:28:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18641B0D1DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:28:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9067546FC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:28:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4108E7B1207
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD9F2BE63D;
-	Tue, 22 Jul 2025 06:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l3yhXiBP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E5328A718;
+	Tue, 22 Jul 2025 06:28:44 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C4328B50B;
-	Tue, 22 Jul 2025 06:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D0528CF56
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 06:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753165682; cv=none; b=OJkVM3aUxVp/US4FU7v2mgcMglXFPfH6dTu/tY1+/EuBlwlhpTuqj24557frHviVkUWD3d3tm2k0Obym8FPLfrOiTYOy1f05onDTSnW0OJXHqlTMOxT7EZojBPZoOUM4lJv+B2NO1uS98/ipGRVPOBpx/M2KOroHnCOlgvEx49k=
+	t=1753165723; cv=none; b=qU63FfDSznVyS5AQYZCGIgSxz5FxltdMpI4PJL3LOjNOFt1tKfuetSBtmt3BNwKd6TE6GNeo49qe/0ut4PDm+mI3WV8Otbor3HjNy8s8zlhslIapLVuhhz+gNbtsXUTi+E86GZBsPe+DB3hpPbT1OkSNEWeSHRHg7ZkcsIzNwJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753165682; c=relaxed/simple;
-	bh=pJZ8mhS5LDJbKuAjpcYWd1QM10ESPDFde8uZW8OLd90=;
+	s=arc-20240116; t=1753165723; c=relaxed/simple;
+	bh=SBKOdxW28jmuDVPViy2Scq83g0cvOJ2w8ggLjiNpmFA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ANOozpFWeeAM8A1QIpTUZTsitbT6R7Od7yON3avXGn7CtXTpqr/hoqCEAS6GWF6ZVd4M2yF23WX2fzhjCOiN5N1sNzKCcwS2LuoYBoBSNufg9FslGUUqqCgYTyfyqQAoMOYzCXTGSxFDaNmLdtDxZ7T6guS77qYqo0yOI145F9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l3yhXiBP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B532C4CEEB;
-	Tue, 22 Jul 2025 06:28:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753165682;
-	bh=pJZ8mhS5LDJbKuAjpcYWd1QM10ESPDFde8uZW8OLd90=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l3yhXiBPVEf315vdyJEOMAP3o7xujPgnL9BivoCYfTKWYDKT5AzaPrI+K/G15S9Ck
-	 rUtLcYBzWx88LmS/QHppHCBojbbTWzcN+23Q3Xo6c0olL1S+n+Jcq+3tQnAYKQb2NZ
-	 VT/yxfGZPwDO5X6tlCr0Cwz1Nukb32uMLtXZEukKEEE1pDr/b5pyUGcJ7OQJkYMzqc
-	 tQGKbSOkVTI/hwjk6eiEPV11qOeQptDSYOyXHb7z2R8M1/ZhZeEigDcSZXEMeaoHU8
-	 DbmnIQD6f9mqTTePOfnY2JTRwAV5PqFKeEK2OA5ZqbqJ71+7MHSVNP3AUR3nHrDhw4
-	 bXy3HMh7RNtgQ==
-Date: Tue, 22 Jul 2025 08:27:59 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Praveen Talari <quic_ptalari@quicinc.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
-	devicetree@vger.kernel.org, dmitry.baryshkov@oss.qualcomm.com, bryan.odonoghue@linaro.org, 
-	psodagud@quicinc.com, djaggi@quicinc.com, quic_msavaliy@quicinc.com, 
-	quic_vtanuku@quicinc.com, quic_arandive@quicinc.com, quic_cchiluve@quicinc.com, 
-	quic_shazhuss@quicinc.com
-Subject: Re: [PATCH v7 0/8] Enable QUPs and Serial on SA8255p Qualcomm
- platforms
-Message-ID: <20250722-curious-attentive-moth-e3d52c@kuoka>
-References: <20250721174532.14022-1-quic_ptalari@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nbxsFEAXqaAQKkC1frvleiGqGHh5EBQgKEz0G5ww9xWcs73ljN/knuinl2hbFmMIOWNBFW76OrQbGhxqjX7/HcLnMB8O9YJFpjxhPt2uQidXkhtJoPaJ2THGBYzMYMdPzl6DvAtdLJ8A8U9UYexyzB/jlxpHTM3lGEEyYCBsapE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id BA4B468AA6; Tue, 22 Jul 2025 08:28:30 +0200 (CEST)
+Date: Tue, 22 Jul 2025 08:28:30 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Nitesh Shetty <nj.shetty@samsung.com>
+Cc: Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	Chaitanya Kulkarni <kch@nvidia.com>, gost.dev@samsung.com,
+	nitheshshetty@gmail.com, linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] nvmet: Add support for FDP in fabrics passthru path
+Message-ID: <20250722062830.GA15013@lst.de>
+References: <CGME20250716134010epcas5p1c7ca7bcc7addf12c4cab2e4aefb7e020@epcas5p1.samsung.com> <20250716133944.1384388-1-nj.shetty@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250721174532.14022-1-quic_ptalari@quicinc.com>
+In-Reply-To: <20250716133944.1384388-1-nj.shetty@samsung.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Mon, Jul 21, 2025 at 11:15:24PM +0530, Praveen Talari wrote:
-> The Qualcomm automotive SA8255p SoC relies on firmware to configure
-> platform resources, including clocks, interconnects and TLMM. The device
-> drivers request resources operations over SCMI using power and
-> performance protocols.
-> 
-> The SCMI power protocol enables or disables resources like clocks,
-> interconnect paths, and TLMM (GPIOs) using runtime PM framework APIs,
-> such as resume/suspend, to control power states(on/off).
-> 
-> The SCMI performance protocol manages UART baud rates, with each baud
-> rate represented by a performance level. Drivers use the
-> dev_pm_opp_set_level() API to request the desired baud rate by
-> specifying the performance level.
-> 
-> The QUP drivers are SCMI clients, with clocks, interconnects, pinctrl
-> and power-domains abstracted by a SCMI server.
-> 
-> The serial driver has a dependency on the dev_pm_opp_set_level() function,
-> which is applied in the OPP tree's linux-next branch.
+Thanks,
 
-Where is the changelog with lore links?
-
-Best regards,
-Krzysztof
+added to nvme-6.17.
 
 
