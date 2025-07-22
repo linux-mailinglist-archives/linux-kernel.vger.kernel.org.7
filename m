@@ -1,381 +1,442 @@
-Return-Path: <linux-kernel+bounces-740930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CFE9B0DB9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:51:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C72C0B0DBBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:53:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF209188EAA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:51:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA93E1C823A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E452EA47D;
-	Tue, 22 Jul 2025 13:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979502EAB97;
+	Tue, 22 Jul 2025 13:51:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="KU3tMa/O"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="XSQRvDA5"
+Received: from CAN01-YT3-obe.outbound.protection.outlook.com (mail-yt3can01on2121.outbound.protection.outlook.com [40.107.115.121])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE802EA491
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 13:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753192245; cv=none; b=cNDD+o9YHQrSqetFtqVQMFKGeih0tj0IzECm7nnoMBANqaC/a1F3Psi0Vw0fnYzUQKogN3aznh95SkgmEaPIB0XVB5J3SyELywVemtzj87pAMniiee58obMzwOB7Oxj9WCrD7HSRy/GsUD0PFLvvxMHuaDYyPqOZJq/KiwAV5mo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753192245; c=relaxed/simple;
-	bh=19WPdN8GJcZ3ODINSe5xYgikHKW09f8PlmIDV98wZNI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bDnQXjOMX4OWTnetwncunEjXjQX21jEqW/vAcy+xB7+/naiR73XM49V9FQdfEi8yNxMtPq34iYP4VWW+NQTEIZZyNVyt8Iiusz9U2adffTjZQ1TD7m4VckZRGmob2BBNdqPuoCP5n5nohNk3rnFTQ2P2vn5rnNXeiORNmd61sek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=KU3tMa/O; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-879c737bcebso226304239f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 06:50:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1753192240; x=1753797040; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kCJvPV7O6cehuG+smZ6dTqxgtRihjDSFEC+yr7r81Ck=;
-        b=KU3tMa/OHtLGx/TmPo+nE0XfMDv84bnVxluN24JmXigLJ2UI9X1/DCZuKyNybed5MT
-         YbujBBpwo284u9Zm+Pe85La730oDFhTjWwJ32FOaawjBpqHnoX+Zca0MGRC6RpoEKW4W
-         SkG4J1E9iYQSDCgLF22hbq9b5qvUKPHGYoUDaAMyFqyaXRhHDQREFAr/NscWkV/hddAF
-         Vgexx4ZlxCz3UYGcojKvOcE+iCD0wlRo7xT/mqmv5/vBeqaPKShGBHLDlRfkUsmsJr3Y
-         JozK/NEY+eTjjr+71YP62/yCD1B8c9LNms4Dfwo5NeJIOWjen461M8WHO4xZWjMbc/k6
-         JArg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753192240; x=1753797040;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kCJvPV7O6cehuG+smZ6dTqxgtRihjDSFEC+yr7r81Ck=;
-        b=AKFRoA3/rq2Ns/PpUemokICZykQbYsNTFaeCzOfaA2dxp/OJXTIDz38pzzI23CIRjJ
-         uaJtDylfqJ2t4odI1VQNxs0IPEttRUqNZjha393obWFjZTeyTGa80uPaF6RTfVGvt5jG
-         Wa7UjWCOtnhO7afoTloTqkm4kGVXBJ+yDEKdx51B0ATWbIiHSqBSMd7ND4CUpH2yNzRa
-         5XQSx0FYlOX6a6LTrCp9a4PDpV3o2pvwYNit86c0u0upvNNAdSbwVOzM6BIQQ0e7Yb/G
-         8AIlm+iH1Y1T2I0jJowK5leuVhHD9swngKOFOBwlIzCKWd9pMwb3gCnYoMmKIpmQUSRd
-         GZVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXEvqavML6pp+7++7PSY9LJPuKKN4AwCFEkCdJ2jJ0Fh5AKBHeZNt+LnNJV+3JnHJqY7kWSOJHVslid8PA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRETEvSZxUXP8MmTYaFxSivVhZafMO54rTOzWBZLks7H5Q8GAc
-	yVC0xLaKl1gHlxm6S8JcSXkEb+mrUjKAgetHFrzLF/jww2CeO3DrxLt0BASEbnqXabY377ly/QD
-	fNAER
-X-Gm-Gg: ASbGnctLnDeguHuwK+M7oo5xg0cDAzdWSq8Tll3+7DuLLcnDVq7cCZGaUSVdoEqBMhy
-	5O9nxyUwzez9rThx9tfy7f3QO3s/rmKUULqDPOVCkCB3xK48bpgXFBL+e45nZ/Ece88x1WBwW4u
-	S9TTyXZzZsO9rapNa/fwzzu6epCVt5gFxoFWWU9GFDV9fcm7nsHqfze15S1OpoiyH3Ms/j/7ktt
-	b5hccItUi2Z1Cvy31CPER4udsHgVe23UPFARiL2MwFSTT8pIQ1A5qZdxXTX9lx5L2jkOR0xIy6E
-	6JKGkX0B565k8U08FXb4VmK02ERdTF8QOJIGrzEBIz1iackCuWXhjqPuMkj5e7DjiSmESR5VQo/
-	ETYdXh2ddCh0IFGDRXt0=
-X-Google-Smtp-Source: AGHT+IGbTFH70Na3aMhk0zWbHgYEda5IMsNrYELzyef9UPX0S3u74iQbSJyOK/c9iW50KlxnV2nZhA==
-X-Received: by 2002:a05:6e02:b4c:b0:3df:e7d:fda8 with SMTP id e9e14a558f8ab-3e2be699f52mr54908785ab.1.1753192239894;
-        Tue, 22 Jul 2025 06:50:39 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5084ca01e78sm2506990173.91.2025.07.22.06.50.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Jul 2025 06:50:39 -0700 (PDT)
-Message-ID: <f6487a42-f82d-4e69-b708-b8e4e8f4c5aa@kernel.dk>
-Date: Tue, 22 Jul 2025 07:50:38 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E1892EA140;
+	Tue, 22 Jul 2025 13:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.115.121
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753192293; cv=fail; b=RQuISeainql7W70ptB6GmtZFgZukbCgjNe+duqxMEk1cRPRboFhuj1U899FagMwQLZUk3NrM9OgsHMX4S0x992qH29sjsNRYX6IAiCnogbwZZuelQ9RmbGlfXkK/7rokjJAfUJHZr/ZBENXeXK+zSbjy2YZ9ozctibObDc66RQc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753192293; c=relaxed/simple;
+	bh=LqK8D1MmpH499vnutLW5cDSe/4TQXjEzQ2+9cGK9xaA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=QBX5mGK+Da4FQq++SMmByvS544MQNo5bUzdcWI1K/E69k+RbmXp4JPTX8S+GWn0mv5AG8AonaCI9X6A8dtyRbTc1Tho1qxGHyYo/6bw7tfFj9S+7fvjVhQBXlN4aYMjT86WrhLvE0cL29WP4WK2zNFusG/ocD7HeikrCM97qC3A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=XSQRvDA5; arc=fail smtp.client-ip=40.107.115.121
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=K36RNnqXQAHfF5cHiuVet/DUWOtF+Cl/rn7lPHeugLtCut2In0hkj3a9piBqiPY/hmNZdLM9TdzEJp2mMebMnHN/GTJp6lUD6djWpJdfEatnVfKG+6QQ5fKzdv2hIkoLOeLhorZN1tGMo3DHLKgzk47oj/fpujkO4npwDqsFEjcJJp+wo3lUFVG06H9i+de8o8cRWby2m2IWll1K1b4eokcZGeEh3O0WNVRlX7kraK4Qc+X5qvaoBCZiyLj20quUw/5fz39ZTBPb7kDabXvFsOZIUV8iir6Jb5Px1QS5WlvqFFDvWC/VWyViKXZ722c4vCGTgzsGbL5Ae3wa2lNtjA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GMFxLfgKRGQxaTKXNjs6I+VpWM2qMsQkwtMZ0jJI/3s=;
+ b=Drf376cbhCP/wkefmMLepgeepIHDr5vJvqCcpyRKy748IQxghOLyT+V4nDD04v9Z6zwcdJWDI5JfSH/xrv0FE7Izj004fLkPV80WLeWAqsZfCkVYxZ9d39pLQUTwSjnEUPvrEri9SfKnlbUAtI2ollFAXiNbxL3poOwv12eczs59M1RzuMvdL29S3Ac+93R1kciSh7pTGaGFSzopZPny3+EnB0q5SYYv+TyQp5bF0GbGovlOgY16J0rQX0Gdr5fgxHmChUlczkPhu1yvGjFTaV74FBAaPL6O5UeeXd0Tsg/8X2uDVwLWuM3ybAVOe1W9YIZO9y4gCFEP7Dczpi9QIw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
+ dkim=pass header.d=efficios.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GMFxLfgKRGQxaTKXNjs6I+VpWM2qMsQkwtMZ0jJI/3s=;
+ b=XSQRvDA5tNfPKBISldI/jKvevFFDlfYHZ1WRXpW0mhhdXW5BVcpp3QVNxvlDkfnTYOJLsO1S75bXfYsYYANaqkvA60TZG1T+rrx1g/pSjfOQCHikiHwZDBzu6j9rwIkqkS6oWDnsdc5QL1taiFU0GolxWxvCIWrbFRdWe3CHNf3qCBIYFCj2itX04a04utcgz+Qz8I5ulOaTNlUoH02vt2ebUGO7vT5icIKuMa+lc6DyPkHatfmeEJhcE8S+E7YoWIa+klLsJSnMVIrZLCq/FD8/Oeg4x8omsfoJD+1FXqrack0OhOinb8TLEH/j5uzqm/kGu7sqNoOPcyo80q6rOA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=efficios.com;
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
+ by YT3PR01MB8772.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:7d::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Tue, 22 Jul
+ 2025 13:51:25 +0000
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4%3]) with mapi id 15.20.8943.029; Tue, 22 Jul 2025
+ 13:51:25 +0000
+Message-ID: <1c00790c-66c4-4bce-bd5f-7c67a3a121be@efficios.com>
+Date: Tue, 22 Jul 2025 09:51:22 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] New codectl(2) system call for sframe registration
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>,
+ "Jose E. Marchesi" <jemarch@gnu.org>,
+ Beau Belgrave <beaub@linux.microsoft.com>, Jens Remus
+ <jremus@linux.ibm.com>, Linus Torvalds <torvalds@linux-foundation.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>,
+ Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>,
+ Brian Robbins <brianrob@microsoft.com>,
+ Elena Zannoni <elena.zannoni@oracle.com>
+References: <2fa31347-3021-4604-bec3-e5a2d57b77b5@efficios.com>
+ <20250721145343.5d9b0f80@gandalf.local.home>
+ <e7926bca-318b-40a0-a586-83516302e8c1@efficios.com>
+ <20250721171559.53ea892f@gandalf.local.home>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20250721171559.53ea892f@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YQZPR01CA0006.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:85::28) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:be::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] KASAN: slab-use-after-free Read in
- io_poll_remove_entries
-To: Ian Abbott <abbotti@mev.co.uk>
-Cc: syzbot <syzbot+01523a0ae5600aef5895@syzkaller.appspotmail.com>,
- io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com, hsweeten@visionengravers.com,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <687bd5fe.a70a0220.693ce.0091.GAE@google.com>
- <9385a1a6-8c10-4eb5-9ab9-87aaeb6a7766@kernel.dk>
- <ede52bb4-c418-45c0-b133-4b5fb6682b04@kernel.dk>
- <d407c9f1-e625-4153-930f-6e44d82b32b5@kernel.dk>
- <20250722134724.6671e45b@ian-deb>
- <e029eef8-2c2b-4dfe-a01f-9903f309e39e@kernel.dk>
- <d92489ea-a517-4a8f-a84b-33575379c885@mev.co.uk>
- <20250722143128.339d4462@ian-deb>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250722143128.339d4462@ian-deb>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT3PR01MB8772:EE_
+X-MS-Office365-Filtering-Correlation-Id: 560cd2c5-c181-4d4b-f921-08ddc926d970
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?d1p0T0JxblZuVUE2UUN3T280ZWs1OFIwL1VndDBHbWkrdy9WdnhmbDljVkVt?=
+ =?utf-8?B?RGdtc0M3SVc0dUFmMUQxbEQ2aStzUnh0Z2xzSTk2MkQvUnVtaWl5TFIyRFVZ?=
+ =?utf-8?B?V2ErWWUyZ3dKRFAzS29hUmdEYS9UK1c3Nm45Wnc2bjlPdHV0L2Z4NkxMdy94?=
+ =?utf-8?B?U3JaVitlekp4TjViMkdVaDFUckJ1VUN1YUFSZ0pWMUtNOUZndnJVYjZ2VkRt?=
+ =?utf-8?B?M1pLNVVySFB4bTdveXh3R3hYOWxUdWFkNFI1cGRyOU1SWFRzbTY3WmxZbGd0?=
+ =?utf-8?B?RHBOMlZoUmlmOVNGY2pCUm1aWkV2d3NiRjNZRzkwSHY0OXRHMzZOWGdkTDRR?=
+ =?utf-8?B?UTltMk1aU3l2YUxJc0oxT2lVaWxaSXJHUFZQVHJpL1FlaG9qd3hOL0Y0bzB6?=
+ =?utf-8?B?Qk85b0pkYmJUOUtTRnlxOEdJNEdIVGdIOEV3L0JEc1hWeGd3NElOT3N6STRo?=
+ =?utf-8?B?SXk1Z1RIcHlrWnNzNFlBaHdDSW80dTd1aWJ1Sm8yWGthL0FOdkZtTVpLU0tP?=
+ =?utf-8?B?SUFEU1k0cFhNUzdIYnpCdUVPekZkZUtUVDl0UEVpYWpGalNhdVFtRjEwM2Zy?=
+ =?utf-8?B?cGtSS0NkTDEzbzIyWnNVQk1DUkxaaFpsK3U1VVk4bGNPeXh0TDlNbmtzWXY2?=
+ =?utf-8?B?VkJLU2NxdVMrRzhiWXhINGNVTGhBS3hoY3BsSGlZLzhsMHJiSTQ2czFCcjVJ?=
+ =?utf-8?B?ZlFLYVJBaGhpRGxvNithU1kzLzA3L2czR3hObHRDb3ZCSFFoWWlvdHBPQXpH?=
+ =?utf-8?B?eExuTEVUeHVadVdiTHhGc2c5Y2ZkazBQVEtqSU1hTWN2b2VEOGxSU3YxRXZh?=
+ =?utf-8?B?VzNQVFhkT2EzSk5zdUplbjU5b0ZFWGhwK1RXdUljZ3kybE44ZEhyTjJabDBR?=
+ =?utf-8?B?ZVF1bUNtSFhVOUxyNWtrbndqUXBmNUlxYWY3SXZqa1pueDllaUFFejE1RjFE?=
+ =?utf-8?B?clFQUHVCSFlRVDJNTW1WWFB6aUI0ZHVwaGVFMngyUUdxbFJpTXdEa0F3MWlM?=
+ =?utf-8?B?RGJ1MzZNcUFuTTFkcXZ5Vi9hYWs0VUYzL1N3UTYzNlBQczAvMjJNLzN2V3pT?=
+ =?utf-8?B?dDBINVNqZFgrSVYvQ21iMVN4YVkxcS9JWG5jeGFuWEhXK3JRS1p6NnNnTTUx?=
+ =?utf-8?B?cTRTaXZkSE5XSklLVWF6ZDhnUjVDT0h1S0hIS0FPL0h5S2FGankwanJoK1or?=
+ =?utf-8?B?MmtoZFA0bjAzZnBBUFl6d1NDRHpKTzdQNElXUHV0SzZqakZlNHh1cmp5bkZL?=
+ =?utf-8?B?S0hQTXM2N2xSd0lsN3FyUUNlaXZSbWkyNitLVTFMK3ZXUCtCYzhIa2hIK25N?=
+ =?utf-8?B?UzdUekdJeXdOQjdhdFJ0bWdqcUVHQXF4MXVERGc4Y3pNOXkxcS9sNDVOZUJq?=
+ =?utf-8?B?ZUxkQWt3RllPWGJSQUZaUUI5ZksxQnpRQXpiaHUyMDArZmhZZWlzK0NSbTl0?=
+ =?utf-8?B?dXBzcnpHR1BkNWFKL2J2WkF2cTNVVEFXVmkrTmFTMk00RjJ3TXFmSGJRQ0RR?=
+ =?utf-8?B?VTFHNXczVHBnd3ZCSXdCOWlKcUxMbFMzOExPMkNYdWR1ZHNBOHhWQ2xWTVZp?=
+ =?utf-8?B?OEFMb3Mwc0pPQy9MUEZ1aGhuMElmU3RzdHhWK3ZiVEMrL0RHM3dUeWdQRlNp?=
+ =?utf-8?B?alNsWTROK2NNeE5ud01CM3UwZExWeU1DT3MveHAyeUFwRUV3OWlaUUpYVVdh?=
+ =?utf-8?B?ajJRMVRwNWVXVXBLdFpsVldtUzlXNkNjT2p6YlFGWnJiKzEvVmp5SjVJVDdh?=
+ =?utf-8?B?eXlqYjF4aldXTjd3RkNLUVQ2K0xBM3NFMHRDeDFrbFVQcTltQkszTzFUcDdB?=
+ =?utf-8?Q?3BoZykZO42zQERxnowEM1IoJxy/VUgr+2khpM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dVpnK0JQQ2VSMkEwcUtVc3VuSVpIYjN6VG8yK1lLdFpjK2tXbzcrNGFzWHdm?=
+ =?utf-8?B?TVRwaHhxUUNHRjNPUlVOVEE5OWRGenBZaWphU2VmYkpTcEZYL3RPWGdlUDN4?=
+ =?utf-8?B?b3I0SEJmMjI4QStMZUNXNmgwRElLQjlDRmozdmk3eUpWZU9CUytHbjBjNlM4?=
+ =?utf-8?B?dnFLSlFuTzZnRGg3eHNSSG00VVBFWWpLTkRhWFNJV2NaSHJPWndyYnoxVkRQ?=
+ =?utf-8?B?dEVMMElpZ1JLWDhFTXhTQ29HQjZFcldFVVV6Y1JPZ0ZCOTZPek5aYUJidmMy?=
+ =?utf-8?B?NTVkdTR5Mm1PNUp2MllBMUZDQ3NXSGx5eVV1SUtnU0VYVHpSQ2xIeUQyOGVH?=
+ =?utf-8?B?c1dDUzZ0T1VCMXEyZmk2WlNUVHFjT0NZc2IxanR0SVdKZ0sxMFRZZ3BjaHIw?=
+ =?utf-8?B?YXFZUG15cGk4aXhvZW9zakd3TXFjWXNvbG5EM3RqeDEySjl0ckcyTE13TmZw?=
+ =?utf-8?B?NHFNVld4MllBYjAzOURiaVZlZGdETVdjL282TStpalRpVENXY0xvcituY0pC?=
+ =?utf-8?B?Y2JUK1pIMWtWMDhlN1JHOVpTN25uODRoZzFrRzQwMU9uY0h4SWZXUTJoY3Z0?=
+ =?utf-8?B?SjIxeWxUdUxCQ1FxcnV0cktjK05QVXFyUVFWUVlSZitRRTBsQzlmOXExOVE2?=
+ =?utf-8?B?NU5ZaFZ3MGI2Q3h0RUV2azV3R2lvVFVpeHRobERZL2JkQmM1RkZqUWxscjUy?=
+ =?utf-8?B?cWVNUFg2bnB4Q2g2bFpvY1Y3QXdJbHJLOWlLU2N5aVQ0Vi9icElUem1VcmNz?=
+ =?utf-8?B?VVhzWExNZ0VKTmtkYXExT2hxT2FhYi9JM0RWOXJnMlJLSmhrVURFRnE4b2NV?=
+ =?utf-8?B?VnZsUklwU2ZSNTd4SFNWMWhQL2h1QUNFQ29iRENpbldrNWw2WnJWdjhXd1lY?=
+ =?utf-8?B?U0RtYWxxOGF3aXpXNnZEZ2JEeWFDVFlVNWY5ZFNTNlB5ZWhDc1JUcEtPankv?=
+ =?utf-8?B?Q3ZTUUxFWExlUzN6R0JpdTY1WjBRUFJiVGdSdlFza1JuUGZhakNOSjlzUXpW?=
+ =?utf-8?B?azVGbHVGVDA4VVQxZ05LTDEyRFpsS1ZsWjJ5dFVMMUE2VUxUOTZLdXg1QlhN?=
+ =?utf-8?B?WWRFNHVYWngwYUdDUWYzeUN1T0RPUEU1NisvMkJ6VWtEVUIrOUJTaWRBTi9t?=
+ =?utf-8?B?cHRVSUxFYUlQcU5JQ2cvUk1XQktJc3lwUitJUXNBb3VUT0pqa0lDd0YyQ09N?=
+ =?utf-8?B?MHFicnZ2WnZoMmhuTnFnaU5weUk5TUs5STUrdGo1M0piSENzVnRJMWJNM2ho?=
+ =?utf-8?B?YTJTVkh5elpxZ296Zk50RzNuVHc5VDh5WVVlTmlDdy96QjJENFAybzVkNmFT?=
+ =?utf-8?B?VUl6a2VxQUlFM01ybnI3MWhIOERRZW5FMklreGhITGZlQUdab0tjc2VHS2M2?=
+ =?utf-8?B?NytKK2VoU2pPdmtBN2dxcEVBZVhvTndxS2FUalVDRTkrN3ZaQlIyNW0yUXVx?=
+ =?utf-8?B?M2ZnZW1ubTVaVUk3blJFbE9QUm14ZnlrWmxMU1BINDhxbzFNYnFzeWxtN2hL?=
+ =?utf-8?B?anh1OUZiR1lHMjE4bCtUbFV5dTlSMzdZUEZmVHB6N1FJT2JLQlhROERBMFdh?=
+ =?utf-8?B?bTlHNkRIYStUSmdFaWw5bjE2YTR4UjQxR21DT0t4TVZqVFFwVEJpcnlaZjhP?=
+ =?utf-8?B?RmFvMUR3KzFrMFBnZGZSRTZ2a2QrMWtLUFFLekQyT0k0Vlo2dE8zZGswVkdS?=
+ =?utf-8?B?NHZGRlB1bTRzWEZ3ZDlOMHBoSklieUpzdExLcyszV1YxU09kdkwwZFpWQ0dN?=
+ =?utf-8?B?dGttb3ZDbXJHYms3Q254V25kVmgrR1hXL1ZOQkhqcUhkczhwVVVhYS8zZzBY?=
+ =?utf-8?B?N0lPNWVUaVdVdVFHRnAvcDR6aUw4RWhRMVZtVEpESHdSS0V5Q1lDNERmQUxp?=
+ =?utf-8?B?STVmeU5XSTZ5R1hsc3NJcytZQmk3cWZ6Y2w2d0gwZmdrVFUvcThTSzlBcHNE?=
+ =?utf-8?B?SFZOT2pYU1NCK0phSzM5UEYzTTc2N0pBRklwYzV3MjFMQXltRWRUb2J6NW56?=
+ =?utf-8?B?Q1k4QlUzeHpmV3BpeVIxS1AwZVdCcE45N0l1WVF4S0dDL3dyNFhaeHErcXhX?=
+ =?utf-8?B?THhjWXVoNmdDMmlGbjYwRTBsc2hmTFhuYVNaRnM3MkNva0x4UkhLekNVKzAz?=
+ =?utf-8?B?SkNhbGx3REFhTjMxV25iVEV5QmxBQWdMY0NNR2dvTkpraXo4TXZzUUNUMmg5?=
+ =?utf-8?Q?5uAuReMkclq3Pn1dohiSkoA=3D?=
+X-OriginatorOrg: efficios.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 560cd2c5-c181-4d4b-f921-08ddc926d970
+X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2025 13:51:25.3779
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TvphvPotWZmjTtGz4RhXDc8RLZSsdKz+OgINUO5O+G6LzZztAHYJ4DMp8amk0PcJVSNkie+OYMwFkHanaUednbE2oovHnWPWkkym6AFmhdA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT3PR01MB8772
 
-On 7/22/25 7:31 AM, Ian Abbott wrote:
-> On Tue, 22 Jul 2025 14:07:45 +0100
-> Ian Abbott <abbotti@mev.co.uk> wrote:
+On 2025-07-21 17:15, Steven Rostedt wrote:
+> On Mon, 21 Jul 2025 16:58:43 -0400
+> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
 > 
->> On 22/07/2025 14:00, Jens Axboe wrote:
->>> On 7/22/25 6:47 AM, Ian Abbott wrote:  
->>>> On Sun, 20 Jul 2025 13:00:59 -0600
->>>> Jens Axboe <axboe@kernel.dk> wrote:
->>>>  
->>>>> On 7/20/25 12:49 PM, Jens Axboe wrote:  
->>>>>> On 7/20/25 12:24 PM, Jens Axboe wrote:  
->>>>>>> On 7/19/25 11:29 AM, syzbot wrote:  
->>>>>>>> Hello,
->>>>>>>>
->>>>>>>> syzbot found the following issue on:
->>>>>>>>
->>>>>>>> HEAD commit:    4871b7cb27f4 Merge tag
->>>>>>>> 'v6.16-rc6-smb3-client-fixes' of gi.. git tree:       upstream
->>>>>>>> console output:
->>>>>>>> https://syzkaller.appspot.com/x/log.txt?x=1288c38c580000 kernel
->>>>>>>> config:
->>>>>>>> https://syzkaller.appspot.com/x/.config?x=fa738a4418f051ee
->>>>>>>> dashboard link:
->>>>>>>> https://syzkaller.appspot.com/bug?extid=01523a0ae5600aef5895
->>>>>>>> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU
->>>>>>>> Binutils for Debian) 2.40 syz repro:
->>>>>>>> https://syzkaller.appspot.com/x/repro.syz?x=1688c38c580000 C
->>>>>>>> reproducer:
->>>>>>>> https://syzkaller.appspot.com/x/repro.c?x=166ed7d4580000
->>>>>>>>
->>>>>>>> Downloadable assets:
->>>>>>>> disk image (non-bootable):
->>>>>>>> https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-4871b7cb.raw.xz
->>>>>>>> vmlinux:
->>>>>>>> https://storage.googleapis.com/syzbot-assets/4a9dea51d821/vmlinux-4871b7cb.xz
->>>>>>>> kernel image:
->>>>>>>> https://storage.googleapis.com/syzbot-assets/f96c723cdfe6/bzImage-4871b7cb.xz
->>>>>>>>
->>>>>>>> IMPORTANT: if you fix the issue, please add the following tag
->>>>>>>> to the commit: Reported-by:
->>>>>>>> syzbot+01523a0ae5600aef5895@syzkaller.appspotmail.com
->>>>>>>>
->>>>>>>> ==================================================================
->>>>>>>> BUG: KASAN: slab-use-after-free in __raw_spin_lock_irq
->>>>>>>> include/linux/spinlock_api_smp.h:119 [inline] BUG: KASAN:
->>>>>>>> slab-use-after-free in _raw_spin_lock_irq+0x36/0x50
->>>>>>>> kernel/locking/spinlock.c:170 Read of size 1 at addr
->>>>>>>> ffff88803c6f42b0 by task kworker/2:2/1339
->>>>>>>>
->>>>>>>> CPU: 2 UID: 0 PID: 1339 Comm: kworker/2:2 Not tainted
->>>>>>>> 6.16.0-rc6-syzkaller-00253-g4871b7cb27f4 #0 PREEMPT(full)
->>>>>>>> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS
->>>>>>>> 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014 Workqueue: events
->>>>>>>> io_fallback_req_func Call Trace: <TASK>
->>>>>>>>   __dump_stack lib/dump_stack.c:94 [inline]
->>>>>>>>   dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
->>>>>>>>   print_address_description mm/kasan/report.c:378 [inline]
->>>>>>>>   print_report+0xcd/0x610 mm/kasan/report.c:480
->>>>>>>>   kasan_report+0xe0/0x110 mm/kasan/report.c:593
->>>>>>>>   __kasan_check_byte+0x36/0x50 mm/kasan/common.c:557
->>>>>>>>   kasan_check_byte include/linux/kasan.h:399 [inline]
->>>>>>>>   lock_acquire kernel/locking/lockdep.c:5845 [inline]
->>>>>>>>   lock_acquire+0xfc/0x350 kernel/locking/lockdep.c:5828
->>>>>>>>   __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119
->>>>>>>> [inline] _raw_spin_lock_irq+0x36/0x50
->>>>>>>> kernel/locking/spinlock.c:170 spin_lock_irq
->>>>>>>> include/linux/spinlock.h:376 [inline] io_poll_remove_entry
->>>>>>>> io_uring/poll.c:146 [inline]
->>>>>>>> io_poll_remove_entries.part.0+0x14e/0x7e0 io_uring/poll.c:179
->>>>>>>> io_poll_remove_entries io_uring/poll.c:159 [inline]
->>>>>>>> io_poll_task_func+0x4cd/0x1130 io_uring/poll.c:326
->>>>>>>> io_fallback_req_func+0x1c7/0x6d0 io_uring/io_uring.c:259
->>>>>>>> process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3238
->>>>>>>> process_scheduled_works kernel/workqueue.c:3321 [inline]
->>>>>>>> worker_thread+0x6c8/0xf10 kernel/workqueue.c:3402
->>>>>>>> kthread+0x3c5/0x780 kernel/kthread.c:464
->>>>>>>> ret_from_fork+0x5d4/0x6f0 arch/x86/kernel/process.c:148
->>>>>>>> ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
->>>>>>>> </TASK>
->>>>>>>>
->>>>>>>> Allocated by task 6154:
->>>>>>>>   kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
->>>>>>>>   kasan_save_track+0x14/0x30 mm/kasan/common.c:68
->>>>>>>>   poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
->>>>>>>>   __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
->>>>>>>>   kmalloc_noprof include/linux/slab.h:905 [inline]
->>>>>>>>   kzalloc_noprof include/linux/slab.h:1039 [inline]
->>>>>>>>   __comedi_device_postconfig_async drivers/comedi/drivers.c:664
->>>>>>>> [inline] __comedi_device_postconfig
->>>>>>>> drivers/comedi/drivers.c:721 [inline]
->>>>>>>> comedi_device_postconfig+0x2cb/0xc80
->>>>>>>> drivers/comedi/drivers.c:756 comedi_device_attach+0x3cf/0x900
->>>>>>>> drivers/comedi/drivers.c:998 do_devconfig_ioctl+0x1a7/0x580
->>>>>>>> drivers/comedi/comedi_fops.c:855
->>>>>>>> comedi_unlocked_ioctl+0x15bb/0x2e90
->>>>>>>> drivers/comedi/comedi_fops.c:2136 vfs_ioctl fs/ioctl.c:51
->>>>>>>> [inline] __do_sys_ioctl fs/ioctl.c:907 [inline] __se_sys_ioctl
->>>>>>>> fs/ioctl.c:893 [inline] __x64_sys_ioctl+0x18e/0x210
->>>>>>>> fs/ioctl.c:893 do_syscall_x64 arch/x86/entry/syscall_64.c:63
->>>>>>>> [inline] do_syscall_64+0xcd/0x4c0
->>>>>>>> arch/x86/entry/syscall_64.c:94
->>>>>>>> entry_SYSCALL_64_after_hwframe+0x77/0x7f
->>>>>>>>
->>>>>>>> Freed by task 6156:
->>>>>>>>   kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
->>>>>>>>   kasan_save_track+0x14/0x30 mm/kasan/common.c:68
->>>>>>>>   kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:576
->>>>>>>>   poison_slab_object mm/kasan/common.c:247 [inline]
->>>>>>>>   __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
->>>>>>>>   kasan_slab_free include/linux/kasan.h:233 [inline]
->>>>>>>>   slab_free_hook mm/slub.c:2381 [inline]
->>>>>>>>   slab_free mm/slub.c:4643 [inline]
->>>>>>>>   kfree+0x2b4/0x4d0 mm/slub.c:4842
->>>>>>>>   comedi_device_detach_cleanup drivers/comedi/drivers.c:171
->>>>>>>> [inline] comedi_device_detach+0x2a4/0x9e0
->>>>>>>> drivers/comedi/drivers.c:208 do_devconfig_ioctl+0x46c/0x580
->>>>>>>> drivers/comedi/comedi_fops.c:833
->>>>>>>> comedi_unlocked_ioctl+0x15bb/0x2e90
->>>>>>>> drivers/comedi/comedi_fops.c:2136 vfs_ioctl fs/ioctl.c:51
->>>>>>>> [inline] __do_sys_ioctl fs/ioctl.c:907 [inline] __se_sys_ioctl
->>>>>>>> fs/ioctl.c:893 [inline] __x64_sys_ioctl+0x18e/0x210
->>>>>>>> fs/ioctl.c:893 do_syscall_x64 arch/x86/entry/syscall_64.c:63
->>>>>>>> [inline] do_syscall_64+0xcd/0x4c0
->>>>>>>> arch/x86/entry/syscall_64.c:94
->>>>>>>> entry_SYSCALL_64_after_hwframe+0x77/0x7f  
->>>>>>>
->>>>>>> I took a quick look at this, and surely looks like a comedi bug.
->>>>>>> If you call the ioctl part (do_devconfig_ioctl()) with a NULL
->>>>>>> arg, it just does a detach and frees the device, regardless of
->>>>>>> whether anyone has it opened or not?! It's got some odd notion
->>>>>>> of checking whether it's busy or not. For this case, someone
->>>>>>> has a poll active on the device, yet it still happily frees it.
->>>>>>>
->>>>>>> CC'ing some folks, as this looks utterly broken.  
->>>>>>
->>>>>> Case in point, I added:
->>>>>>
->>>>>> diff --git a/drivers/comedi/drivers.c b/drivers/comedi/drivers.c
->>>>>> index 376130bfba8a..4d5fde012558 100644
->>>>>> --- a/drivers/comedi/drivers.c
->>>>>> +++ b/drivers/comedi/drivers.c
->>>>>> @@ -167,6 +167,7 @@ static void
->>>>>> comedi_device_detach_cleanup(struct comedi_device *dev)
->>>>>> kfree(s->private); comedi_free_subdevice_minor(s);
->>>>>>   			if (s->async) {
->>>>>> +
->>>>>> WARN_ON_ONCE(waitqueue_active(&s->async->wait_head));
->>>>>> comedi_buf_alloc(dev, s, 0); kfree(s->async);
->>>>>>   			}
->>>>>>
->>>>>> and this is the first thing that triggers:
->>>>>>
->>>>>> WARNING: CPU: 1 PID: 807 at drivers/comedi/drivers.c:170
->>>>>> comedi_device_detach+0x510/0x720 Modules linked in:
->>>>>> CPU: 1 UID: 0 PID: 807 Comm: comedi Not tainted
->>>>>> 6.16.0-rc6-00281-gf4a40a4282f4-dirty #1438 NONE Hardware name:
->>>>>> linux,dummy-virt (DT) pstate: 21400005 (nzCv daif +PAN -UAO -TCO
->>>>>> +DIT -SSBS BTYPE=--) pc : comedi_device_detach+0x510/0x720
->>>>>> lr : comedi_device_detach+0x1dc/0x720
->>>>>> sp : ffff80008aeb7880
->>>>>> x29: ffff80008aeb7880 x28: 1fffe00020251205 x27: ffff000101289028
->>>>>> x26: ffff00010578a000 x25: ffff000101289000 x24: 0000000000000007
->>>>>> x23: 1fffe00020af1437 x22: 1fffe00020af1438 x21: 0000000000000000
->>>>>> x20: 0000000000000000 x19: dfff800000000000 x18: ffff0000db102ec0
->>>>>> x17: ffff80008208e6dc x16: ffff80008362e120 x15: ffff800080a47c1c
->>>>>> x14: ffff8000826f5aec x13: ffff8000836a0cc4 x12: ffff700010adcd15
->>>>>> x11: 1ffff00010adcd14 x10: ffff700010adcd14 x9 : ffff8000836a105c
->>>>>> x8 : ffff800085bc0cc0 x7 : ffff00000b035b50 x6 : 0000000000000000
->>>>>> x5 : 0000000000000000 x4 : ffff800080960e08 x3 : 0000000000000001
->>>>>> x2 : ffff00000b4bf930 x1 : 0000000000000000 x0 : ffff0000d7e2b0d8
->>>>>> Call trace:
->>>>>>   comedi_device_detach+0x510/0x720 (P)
->>>>>>   do_devconfig_ioctl+0x37c/0x4b8
->>>>>>   comedi_unlocked_ioctl+0x33c/0x2bd8
->>>>>>   __arm64_sys_ioctl+0x124/0x1a0
->>>>>>   invoke_syscall.constprop.0+0x60/0x2a0
->>>>>>   el0_svc_common.constprop.0+0x148/0x240
->>>>>>   do_el0_svc+0x40/0x60
->>>>>>   el0_svc+0x44/0xe0
->>>>>>   el0t_64_sync_handler+0x104/0x130
->>>>>>   el0t_64_sync+0x170/0x178
->>>>>>
->>>>>> Not sure what the right fix for comedi is here, it'd probably be
->>>>>> at least somewhat saner if it only allowed removal of the device
->>>>>> when the ref count would be 1 (for the ioctl itself). Just
->>>>>> ignoring the file ref and allowing blanket removal seems highly
->>>>>> suspicious / broken.
->>>>>>
->>>>>> As there's no comedi subsystem in syzbot, moving it to kernel:
->>>>>>
->>>>>> #syz set subsystems: kernel  
->>>>>
->>>>> Something like the below may help, at least it'll tell us the
->>>>> device is busy if there's a poll active on it.
->>>>>
->>>>> #syz test:
->>>>> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
->>>>> master
->>>>>
->>>>>
->>>>> diff --git a/drivers/comedi/comedi_fops.c
->>>>> b/drivers/comedi/comedi_fops.c index 3383a7ce27ff..ea96bc4b818e
->>>>> 100644 --- a/drivers/comedi/comedi_fops.c
->>>>> +++ b/drivers/comedi/comedi_fops.c
->>>>> @@ -785,21 +785,31 @@ void comedi_device_cancel_all(struct
->>>>> comedi_device *dev) static int is_device_busy(struct comedi_device
->>>>> *dev) {
->>>>>   	struct comedi_subdevice *s;
->>>>> -	int i;
->>>>> +	int i, is_busy = 0;
->>>>>   
->>>>>   	lockdep_assert_held(&dev->mutex);
->>>>>   	if (!dev->attached)
->>>>>   		return 0;
->>>>>   
->>>>> +	/* prevent new polls */
->>>>> +	down_write(&dev->attach_lock);
->>>>> +
->>>>>   	for (i = 0; i < dev->n_subdevices; i++) {
->>>>>   		s = &dev->subdevices[i];
->>>>> -		if (s->busy)
->>>>> -			return 1;
->>>>> -		if (s->async && comedi_buf_is_mmapped(s))
->>>>> -			return 1;
->>>>> +		if (s->busy) {
->>>>> +			is_busy = 1;
->>>>> +			break;
->>>>> +		}
->>>>> +		if (!s->async)
->>>>> +			continue;
->>>>> +		if (comedi_buf_is_mmapped(s) ||
->>>>> +		    waitqueue_active(&s->async->wait_head)) {
->>>>> +			is_busy = 1;
->>>>> +			break;
->>>>> +		}
->>>>>   	}
->>>>> -
->>>>> -	return 0;
->>>>> +	up_write(&dev->attach_lock);
->>>>> +	return is_busy;
->>>>>   }
->>>>>   
->>>>>   /*
->>>>>  
+>>> Honestly, I'm not sure it needs to be an ELF file. Just a file that has an
+>>> sframe section in it.
+>>
+>> Indu told me on IRC that for GNU/Linux, SFrame will be an
+>> allocated,loaded section in elf files.
+> 
+> Yes it is, but is that a requirement for this interface? I just don't want
+> to add requirements based on how thing currently work if they are not
+> needed.
+
+The ELF-specific optional fields I am suggesting (pathname, build id,
+debug info) are useful for tooling. AFAIR this is what gdb uses to
+find the debug info associated with each binary file.
+
+> 
+>>
+>> I'm planning to add optional fields (build id, debug link) that are
+>> ELF-specific. I therefore think it's best that we keep this specific as
+>> registration of an elf file.
+> 
+> Here's a hypothetical, what if for some reason (say having the sframe
+> sections outside of the elf file) that the linker shares that?
+
+So your hypothetical scenario is having sframe provided as a separate
+file. This sframe file (or part of it) would still describe how to
+unwind a given elf file text range. So I would argue that this would
+still fit into the model of CODE_REGISTER_ELF, it's just that the
+address range from sframe_start to sframe_end would be mapped from
+a different file. This is entirely up to the dynamic loader and should
+not impact the kernel ABI.
+
+AFAIK the a.out binary support was deprecated in Linux kernel v5.1. So
+being elf specific is not an issue.
+
+And if for some reason we end up inventing a new model to hand over the
+sframe information in the future, for instance if we choose not to map
+the sframe information in userspace and hand over a sframe-file pathname
+and offset instead, we'll just extend the code_opt enum with a new
+label.
+
+> 
+> For instance, if the sframe sections are downloaded separately as a
+> separate package for a given executable (to make it not mandatory for an
+> install), the linker could be smart enough to see that they exist in some
+> special location and then pass that to the kernel. In other words, this is
+> option is specific for sframe and not ELF. I rather call it by that.
+
+As I explained above, if the dynamic loader populates the sframe section
+in userspace memory, this fits within the CODE_REGISTER_ELF ABI. If we
+eventually choose not to map the sframe section into userspace memory
+(even though this is not an envisioned use-case at the moment), we can
+just extend enum code_opt with a new label.
+
+> 
+>>
+>> If there are other file types in the future that happen to contain an
+>> sframe section (but are not ELF), then we can simply add a new label to
+>> enum code_opt.
+>>
+>>>    
 >>>>
->>>> Thanks for your investigation and initial fix. I think
->>>> dev->attach_lock needs to be write-locked before calling
->>>> is_device_busy() and released after comedi_device_detach()
->>>> (although that also write-locks it, so we need to refactor that).
->>>> Otherwise, someone could get added to the wait_head after
->>>> is_device_busy() returns.  
+>>>> sys_codectl(2)
+>>>> =================
+>>>>
+>>>> * arg0: unsigned int @option:
+>>>>
+>>>> /* Additional labels can be added to enum code_opt, for extensibility. */
+>>>>
+>>>> enum code_opt {
+>>>>        CODE_REGISTER_ELF,
 >>>
->>> That's fine too, this is what my v2 addressed as well. I don't know
->>> comedi well enough so I was worried about having ->attach_lock held
->>> over comedi_device_cancel_all() -> do_cancel() -> s->cancel() as
->>> that appears to be a new pattern. If you know this is fine, then
->>> yes by all means, we should just hold ->attach_lock over the whole
->>> thing and not need a detaching state.  
+>>> Perhaps the above should be: CODE_REGISTER_SFRAME,
+>>>
+>>> as currently SFrame is read only via files.
 >>
->> I think it's fine. do_cancel() (and s->cancel()) do not use
->> attach_lock.
->>
->> Actually, I was thinking it might be safer just to move the 
->> `wait_queue_head_t wait_head;` member out of `struct comedi_async`
->> and into `struct comedi_subdevice`, then it should not matter if
->> there are any transient poll_wait() callers waiting on it.
->>
+>> As I pointed out above, on GNU/Linux, sframe is always an allocated,loaded
+>> ELF section. AFAIU, your comment implies that we'd want to support other scenarios
+>> where the sframe is in files outside of elf binary sframe sections. Can you
+>> expand on the use-case you have for this, or is it just for future-proofing ?
 > 
-> Moving wait_head out of struct comedi_async:
+> Heh, I just did above (before reading this). But yeah, it could be. As I
+> mentioned above, this is not about ELF files. Sframes just happen to be in
+> an ELF file. CODE_REGISTER_ELF sounds like this is for doing special
+> actions to an ELF file, when in reality it is doing special actions to tell
+> the kernel this is an sframe table. It just happens that sframes are in
+> ELF. Let's call it for what it is used for.
 
-Not sure that's going to help, surely the device is going away as well,
-not just the async part?
+I see sframe as one "aspect" of an ELF file. Sure, we could do one
+system call for every aspect of an ELF file that we want to register,
+but that would require many round trips from userspace to the kernel
+every time a library is loaded. In my opinion it makes sense to combine
+all aspects of an elf file that we want the kernel to know about into
+one registration system call. In that sense, we're not registering just
+sframe, but the various aspects of an ELF file, which include sframe.
+
+By the way, the sframe section is optional as well. If we allow
+sframe_start and sframe_end to be NULL, this would let libc register
+an sframe-less ELF file with its pathname, build-id, and debug info
+to the kernel. This would be immediately useful on its own for
+distributions that have frame pointers enabled even without sframe
+section.
+
+[...]
+
+>>>    
+>>>> };
+>>>>
+>>>> * arg1: void * @info
+>>>>
+>>>> /* if (@option == CODE_REGISTER_ELF) */
+>>>>
+>>>> /*
+>>>>     * text_start, text_end, sframe_start, sframe_end allow unwinding of the
+>>>>     * call stack.
+>>>>     *
+>>>>     * elf_start, elf_end, pathname, and either build_id or debug_link allows
+>>>>     * mapping instruction pointers to file, symbol, offset, and source file
+>>>>     * location.
+>>>>     */
+>>>> struct code_elf_info {
+>>>> :   __u64 elf_start;
+>>>>        __u64 elf_end;
+>>>
+>>> Perhaps:
+>>>
+>>> 	__u64 file_start;
+>>> 	__u64 file_end;
+>>>
+>>> ?
+>>>
+>>> And call it "struct code_sframe_info"
+>>>    
+>>>>        __u64 text_start;
+>>>>        __u64 text_end;
+>>>    
+>>>>        __u64 sframe_start;
+>>>>        __u64 sframe_end;
+>>>
+>>> What is the above "sframe" for?
+> 
+> Still wondering what the above is for.
+
+Well we have an sframe section which is mapped into userspace memory
+from sframe_start to sframe_end, which contains the unwind information
+that covers the code from text_start to text_end.
+
+Am I unknowingly adding some kind of redundancy here ?
+
+> 
+>>>    
+>>>>        __u64 pathname;              /* char *, NULL if unavailable. */
+>>>>
+>>>>        __u64 build_id;              /* char *, NULL if unavailable. */
+>>>>        __u64 debug_link_pathname;   /* char *, NULL if unavailable. */
+>>>
+>>> Maybe just list the above three as "optional" ?
+>>
+>> This is what I had in mind with "NULL if unavailable", but I can clarify
+>> them as being "optional" in the comment.
+>>
+>> Do you envision that the sizeof(struct code_elf_info) could be smaller
+>> and not include the optional fields, or just specifying them as NULL if
+>> unavailable is enough ?
+> 
+> Hmm, are we going to allow this structure to expand? Should we give it a
+> size. Or just state that different options could have different sizes (and
+> make this more of a union than a structure).
+
+This is extensible. The size of this structure is expected in
+arg2: size_t info_size.
+
+Each "@option" label select which structure is expected, and each of
+those structures are extensible, with their size expected as arg2.
+
+> 
+>>
+>>>
+>>> It may be available, but the implementer just doesn't want to implement it.
+>>>    
+>>>>        __u32 build_id_len;
+>>>>        __u32 debug_link_crc;
+>>>> };
+>>>>
+>>>>
+>>>> /* if (@option == CODE_REGISTER_JIT) */
+>>>>
+>>>> /*
+>>>>     * Registration of sorted JIT unwind table: The reserved memory area is
+>>>>     * of size reserved_len. Userspace increases used_len as new code is
+>>>>     * populated between text_start and text_end. This area is populated in
+>>>>     * increasing address order, and its ABI requires to have no overlapping
+>>>>     * fre. This fits the common use-case where JITs populate code into
+>>>>     * a given memory area by increasing address order. The sorted unwind
+>>>>     * tables can be chained with a singly-linked list as they become full.
+>>>>     * Consecutive chained tables are also in sorted text address order.
+>>>>     *
+>>>>     * Note: if there is an eventual use-case for unsorted jit unwind table,
+>>>>     * this would be introduced as a new "code option".
+>>>>     */
+>>>>
+>>>> struct code_jit_info {
+>>>>        __u64 text_start;      /* text_start >= addr */
+>>>>        __u64 text_end;        /* addr < text_end */
+>>>>        __u64 unwind_head;     /* struct code_jit_unwind_table * */
+>>>> };
+>>>>
+>>>> struct code_jit_unwind_fre {
+>>>>        /*
+>>>>         * Contains info similar to sframe, allowing unwind for a given
+>>>>         * code address range.
+>>>>         */
+>>>>        __u32 size;
+>>>>        __u32 ip_off;  /* offset from text_start */
+>>>>        __s32 cfa_off;
+>>>>        __s32 ra_off;
+>>>>        __s32 fp_off;
+>>>>        __u8 info;
+>>>> };
+>>>>
+>>>> struct code_jit_unwind_table {
+>>>>        __u64 reserved_len;
+>>>>        __u64 used_len; /*
+>>>>                         * Incremented by userspace (store-release), read by
+>>>>                         * the kernel (load-acquire).
+>>>>                         */
+>>>>        __u64 next;     /* Chain with next struct code_jit_unwind_table. */
+>>>>        struct code_jit_unwind_fre fre[];
+>>>> };
+>>>
+>>> I wonder if we should avoid the "jit" portion completely for now until we
+>>> know what exactly we need.
+>>
+>> I don't want to spend too much discussion time on the jit portion at this stage,
+>> but I think it's good to keep this in mind so we come up with an ABI that will
+>> naturally extend to cover that use case. I favor keeping the JIT portion in these
+>> discussions but not implement it initially.
+> 
+> As long as the structure is flexible to handle this. We could even add the
+> JIT enum, but return -EINVAL (or whatever) if it is used to state that it's
+> not currently implemented.
+
+Sure, we can indeed initially have the JIT label, and return -EINVAL for
+now.
+
+Thanks,
+
+Mathieu
 
 -- 
-Jens Axboe
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
