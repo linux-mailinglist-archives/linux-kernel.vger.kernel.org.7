@@ -1,113 +1,129 @@
-Return-Path: <linux-kernel+bounces-740073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C7C6B0CF47
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:48:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9879EB0CF49
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:48:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 648281C21A60
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 01:48:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7717E16E938
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 01:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734BF1B4F08;
-	Tue, 22 Jul 2025 01:47:42 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65CFD1C07D9;
+	Tue, 22 Jul 2025 01:48:24 +0000 (UTC)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C551DDA3E
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 01:47:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6354A191493;
+	Tue, 22 Jul 2025 01:48:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753148862; cv=none; b=gQXCP6zQqYuz70gDyUJL6y13EW7RUV4SDcjU1sHEL/eDPwLcTCEzhq2voYj/YyHI3Px2+vggBRw+ap/pjfFj+n+gPRosZdeIoZE48Q+6phUHJ9jn6CYaXvBdvDqG+d/NUJ0/a+omudu4rBZcv4oK7lg2Lk0TGr2WGJvrRMchF6M=
+	t=1753148904; cv=none; b=elOlVFHBHl+g1Qp4C+EBxZ88fydh+0ll+ecEAUwiAN2yUMcooS3Vggkgqy6J4JixRbvHDFQt/9Gwun9B8TReYddOvWPPZl+hVBwY1WOthxLZp6CBrYI1IrRkDlL03YJvB6aP307zZBhXy5UiLRV3RlZtHfD/mqhrrBzUTOaGDvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753148862; c=relaxed/simple;
-	bh=oI8lChqLMTPlFSYYmRKPwGhNfQDFW/EmvyD6oTzAjv0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MMezmGFnJPMCnzMxk5fmq8u3Lnf+WrDffU4KDe8LhC04pjJDSTLty9jv7ciqTfzlt4jgX5Pgmjj0Yk89XEveftLaRgEmGsAYym3C/9l+bHtV4H3ThwuP1rZiZ4ywU03n2/vsgF/roVNG0RzWPKTTZI6C7A/xxi28We/eyMxpais=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bmKpY56Yjz2FbQq;
-	Tue, 22 Jul 2025 09:45:25 +0800 (CST)
-Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id D62E71A0191;
-	Tue, 22 Jul 2025 09:47:36 +0800 (CST)
-Received: from kwepemq200011.china.huawei.com (7.202.195.155) by
- dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 22 Jul 2025 09:47:31 +0800
-Received: from [10.67.110.108] (10.67.110.108) by
- kwepemq200011.china.huawei.com (7.202.195.155) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 22 Jul 2025 09:47:30 +0800
-Message-ID: <1b17f637-ecba-43cc-8ca6-e4bb73bd152e@huawei.com>
-Date: Tue, 22 Jul 2025 09:47:30 +0800
+	s=arc-20240116; t=1753148904; c=relaxed/simple;
+	bh=bA+R9DffdAGIkPh6d0LbRL52OwjbyFaPjg4ZD3/c4z8=;
+	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
+	 Subject:Content-Type; b=ZVys1zmIL5igJEiytTyXaiI9oheapP+Kt7mw6h14sKxceGIxCRxAGUbKzSz1EiKhgjprdXIHoW36suqweTX/20om5j/QbgTsW1epzzLfJAfe+9fgbKIAq/KiX9RN8g3gWaMZZwG/YfJ1fNjojHvZAbV5FpcxUXvaqrYcl2p5VkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4bmKsr2h3rz59ys5;
+	Tue, 22 Jul 2025 09:48:16 +0800 (CST)
+Received: from xaxapp05.zte.com.cn ([10.99.98.109])
+	by mse-fl1.zte.com.cn with SMTP id 56M1m88x055895;
+	Tue, 22 Jul 2025 09:48:08 +0800 (+08)
+	(envelope-from fan.yu9@zte.com.cn)
+Received: from mapi (xaxapp01[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Tue, 22 Jul 2025 09:48:08 +0800 (CST)
+Date: Tue, 22 Jul 2025 09:48:08 +0800 (CST)
+X-Zmail-TransId: 2af9687eedd8ffffffff9a6-f911e
+X-Mailer: Zmail v1.0
+Message-ID: <20250722094808945ENOLvzY108YsJFz4CqbaI@zte.com.cn>
+In-Reply-To: <20250721171333.6caced4f@kernel.org>
+References: 20250721111607626_BDnIJB0ywk6FghN63bor@zte.com.cn,20250721171333.6caced4f@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] SCTLR_EL1.TIDCP toggling for performance
-To: =?UTF-8?Q?Kristina_Mart=C5=A1enko?= <kristina.martsenko@arm.com>
-CC: <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, <catalin.marinas@arm.com>,
-	<will@kernel.org>, <mark.rutland@arm.com>, <sashal@kernel.org>,
-	<yangjiangshui@h-partners.com>, <zouyipeng@huawei.com>, <justin.he@arm.com>,
-	<zengheng4@huawei.com>, <yangyicong@hisilicon.com>, ruanjinjie
-	<ruanjinjie@huawei.com>
-References: <24afb8de-622a-4865-bd8e-8e89ccfff8f4@huawei.com>
- <4b010cc5-9244-450d-9a03-4ff6bf5c9a20@arm.com>
-From: "Liao, Chang" <liaochang1@huawei.com>
-In-Reply-To: <4b010cc5-9244-450d-9a03-4ff6bf5c9a20@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemq200011.china.huawei.com (7.202.195.155)
+Mime-Version: 1.0
+From: <fan.yu9@zte.com.cn>
+To: <kuba@kernel.org>
+Cc: <edumazet@google.com>, <ncardwell@google.com>, <davem@davemloft.net>,
+        <dsahern@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
+        <kuniyu@google.com>, <rostedt@goodmis.org>, <mhiramat@kernel.org>,
+        <mathieu.desnoyers@efficios.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+        <yang.yang29@zte.com.cn>, <xu.xin16@zte.com.cn>,
+        <tu.qiang35@zte.com.cn>, <jiang.kun2@zte.com.cn>,
+        <qiu.yutan@zte.com.cn>, <wang.yaxin@zte.com.cn>,
+        <he.peilin@zte.com.cn>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCBuZXQtbmV4dCB2NyBSRVNFTkRdIHRjcDogdHJhY2UgcmV0cmFuc21pdCBmYWlsdXJlcyBpbiB0Y3BfcmV0cmFuc21pdF9za2I=?=
+Content-Type: multipart/mixed;
+	boundary="=====_001_next====="
+X-MAIL:mse-fl1.zte.com.cn 56M1m88x055895
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: fan.yu9@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.132 unknown Tue, 22 Jul 2025 09:48:16 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 687EEDE0.001/4bmKsr2h3rz59ys5
 
 
 
-在 2025/7/19 1:28, Kristina Martšenko 写道:
-> Hi Chang,
-> 
-> On 18/07/2025 03:32, Liao, Chang wrote:
->> Hi, Kristina
->>
->> I've reviewed your patch [1] for FEAT_TIDCP1 support, which by default traps EL0
->> accesses to implementation-defined system registers and instructions at EL1/EL2.
->>
->> Do you have any plans to add support for toggling the SCTLR_EL1.TIDCP1 bit? I'm
->> encountering performance degradation on CPU where certain implementation-defined
->> registers and instructions are designed for EL0 performance use. The trapping
->> overhead is substantial enough to compromise any benefits, and it's even worse
->> in virtualization. Therefore, I'm hoping there's a way to clear the SCTLR_EL1.TIDCP1
->> bit on such platforms, perhaps via a kernel config option or command-line parameter.
->> Alternatively, do you have a better solution for gracefully toggling this bit on
->> and off?
->>
->> Thanks
->>
->> [1] https://lore.kernel.org/linux-arm-kernel/Yrw3NWkH6D0CgRsF@sirena.org.uk/T/#m5cfdb27b48d9d7e30db73e991fc6c232ba8a7349
-> 
-> I don't have any plans to add support for toggling it. You could try sending a
-> patch for a Kconfig option or kernel command-line parameter. I'm not really
+--=====_001_next=====
+Content-Type: multipart/related;
+	boundary="=====_002_next====="
 
-Kristina, I am going to send a patch for command-line paramter as Catalin suggested.
 
-Thanks.
+--=====_002_next=====
+Content-Type: multipart/alternative;
+	boundary="=====_003_next====="
 
-> sure what the maintainers' view on supporting IMP-DEF features is.
-> 
-> Thanks,
-> Kristina
-> 
-> 
 
--- 
-BR
-Liao, Chang
+--=====_003_next=====
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+PiBPbiBNb24sIDIxIEp1bCAyMDI1IDExOjE2OjA3ICswODAwIChDU1QpIGZhbi55dTlAenRlLmNv
+bS5jbiB3cm90ZToNCj4gPiBTdWJqZWN0OiBbUEFUQ0ggbmV0LW5leHQgdjcgUkVTRU5EXSB0Y3A6
+IHRyYWNlIHJldHJhbnNtaXQgZmFpbHVyZXMgaW4gdGNwX3JldHJhbnNtaXRfc2tiDQo+IA0KPiBX
+aHkgZGlkIHlvdSByZXNlbmQgdGhpcz8/DQoNCkhpIEpha3ViLA0KDQpUaGFua3MgZm9yIGNoZWNr
+aW5nISBJIGp1c3Qgd2FudGVkIHRvIGVuc3VyZSB0aGUgdjcgcGF0Y2ggd2FzbuKAmXQgbWlzc2Vk
+IOKAlCBpdOKAmXMgaWRlbnRpY2FsIHRvIHRoZSBvcmlnaW5hbC4NClBsZWFzZSBsZXQgbWUga25v
+dyBpZiBhbnkgdXBkYXRlcyBhcmUgbmVlZGVkLiBBcHByZWNpYXRlIHlvdXIgdGltZSENCg0KQmVz
+dCByZWdhcmRzLA0KRmFuIFl1
+
+
+--=====_003_next=====
+Content-Type: text/html ;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+PGRpdiBjbGFzcz0iemNvbnRlbnRSb3ciPjxwPiZndDsgT24gTW9uLCAyMSBKdWwgMjAyNSAxMTox
+NjowNyArMDgwMCAoQ1NUKSBmYW4ueXU5QHp0ZS5jb20uY24gd3JvdGU6PC9wPjxwPiZndDsgJmd0
+OyBTdWJqZWN0OiBbUEFUQ0ggbmV0LW5leHQgdjcgUkVTRU5EXSB0Y3A6IHRyYWNlIHJldHJhbnNt
+aXQgZmFpbHVyZXMgaW4gdGNwX3JldHJhbnNtaXRfc2tiPC9wPjxwPiZndDsmbmJzcDs8L3A+PHA+
+Jmd0OyBXaHkgZGlkIHlvdSByZXNlbmQgdGhpcz8/PC9wPjxwPjxicj48L3A+PHA+SGkgSmFrdWIs
+PC9wPjxwPjxicj48L3A+PHA+VGhhbmtzIGZvciBjaGVja2luZyEgSSBqdXN0IHdhbnRlZCB0byBl
+bnN1cmUgdGhlIHY3IHBhdGNoIHdhc27igJl0IG1pc3NlZCDigJQgaXTigJlzIGlkZW50aWNhbCB0
+byB0aGUgb3JpZ2luYWwuPC9wPjxwPlBsZWFzZSBsZXQgbWUga25vdyBpZiBhbnkgdXBkYXRlcyBh
+cmUgbmVlZGVkLiBBcHByZWNpYXRlIHlvdXIgdGltZSE8L3A+PHA+PGJyPjwvcD48cD5CZXN0IHJl
+Z2FyZHMsPC9wPjxwPkZhbiBZdTwvcD48L2Rpdj4=
+
+
+--=====_003_next=====--
+
+--=====_002_next=====--
+
+--=====_001_next=====--
 
 
