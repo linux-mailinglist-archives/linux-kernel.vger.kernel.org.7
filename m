@@ -1,117 +1,379 @@
-Return-Path: <linux-kernel+bounces-740657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C012B0D75B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:29:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00CC1B0D75E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:30:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 189E31887858
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:29:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F3D318888B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:30:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262582E0919;
-	Tue, 22 Jul 2025 10:29:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770F02E0907;
+	Tue, 22 Jul 2025 10:29:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="REpiLnab"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4672DE1E5;
-	Tue, 22 Jul 2025 10:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="mIZarsTk"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7344728C2A2
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 10:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753180142; cv=none; b=iRsfB6S0Ywhg4pLPLQj7zJHZImwRllelnrfP8CVCcusO+cu6wMQ3ok4LMJa9YvHhvSfMMZVE4stSksx4yfX0KhspZKx7cIK730H+yzjKcpwpR+wppDyRC4DdmWXqDIli/tcRHoJjlUH4ReLuoBAf5WvT92+xKtRrQtTlUhY8I5g=
+	t=1753180194; cv=none; b=NcNcP5y6iNgYxaAU9UUFRx+DII0Hb/JDyTSKbwXvt3GLviwPJwSJJ29bMbvVRf4ttANE4xkBomGCcPvGJHqOkBf1lKADV4DZ9ppKDTl880wggLIIokJuWK3wzvJzaYM9sq6cTcBkgoAFFd0QCN0r/IVxPj8aMNZS+y3MHYZ+aWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753180142; c=relaxed/simple;
-	bh=kmsBUmTbcFqMAlUGoznBkV3pnZIyizNNQNeCUvRN870=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g+OeGlAp9GiLogVV+QDpGQksXx2XK0RIRpx3JftQ/m9H/aSgKeLP44LqO2JXyVz3iCXz7VmmsIpOOZVd3y0QTQhK5xQXN3TjORpnU0qXQd7AOtegZIMHg/qqy60dwTXB1Cfck/FuZVw77ZLDxpZaVqZyE7tLJIGnqOLWIrdQ/jE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=REpiLnab; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-312efc384fcso135580a91.3;
-        Tue, 22 Jul 2025 03:29:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753180140; x=1753784940; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rw/ju9rvHXHnonIseX34aE2nlCCcwdEJg+zhSfxvjRE=;
-        b=REpiLnab2icGSng06mpj6cEBngLFhui4LEK2EErNzOfvmhzOYP9DTYitCyl6Fa8P/D
-         IXdBfx5fFD5JEQADzQJN/bwpwUcURKSeaK4UtLi/QCEh01BHa1O2Mb54t8mtZBd289Ec
-         u8kVxhoK5mGtfuyi7+nZFH3sQ1sjcv0ZSiEvYp2j+AC05w+Yz6n4/yAszIfhRh/utEsU
-         54N/e7FU7XwfHfB+E1v/2I89QbLCzKMPtjWhQZ3RzPGsRYIL9B/CDug93E65hiUqdLYD
-         Cz4Q9RruD+i0BTF7/iB/gkMVzSMibkUHoJCBfCC44oCUmP/HDFVLDj3KYXiDp+hzHOmp
-         LOAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753180140; x=1753784940;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Rw/ju9rvHXHnonIseX34aE2nlCCcwdEJg+zhSfxvjRE=;
-        b=KTbU36UyrmMaC9pKFXeGBslUtGW5+SxAWAxvuHdNGpYtiOFBXKbMmFyX+TmEDiF57o
-         bowSvOLDxDelxmURJlBzhfnYnGnPHu7w0G0eMqZFaPWjS2R44SrwpJu9+ke1z9dXlJI+
-         ytNUP8VbqgyK3W/VqnKZ5dsfR/zctVAjNVLNAEPimWmfNubDFal2O27c32XzRl54qW2A
-         UkFAO/LA5BqdqTk/TDxCOGIc2l7kLCHzlpZfEUNe31VHRZY9zqxOS1NJowKqL2er35f0
-         KeOyUlzAP1ZisWPNJ5gEv8utV8UPWkrKscuOkahQFh1xZxIiB/JtiqqDL7x1ztk18CjZ
-         2IIA==
-X-Forwarded-Encrypted: i=1; AJvYcCXAiJTlr5DnKCs0mKt/4iPyHalDJ/LFzCO/BF8n8+qw9z43eYtXOKxg+ensM6wwBob4RezSliLTNybWanBqvMk=@vger.kernel.org, AJvYcCXCOZnf2JT3AAq9aTx5jwbW74v/i8UG68MNnRLX+jiHucccdMST3gBAH5tgT14jgvrw8+DJCKOdjBUXY0I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxswpSomQBAGm1roYoNanXoyNTkkZ9G1FsWfJsFEP6NeaYM22y
-	OJe9zM1Npt0IRdtNazzhxq7/ok12VUaVOa45W6nhLPOXmTM7Eay50A6EQ/5aszCeGPJQ2b9/v5t
-	xw9Wm9qKeUDb2RpcmWNxz0R2BwR6yKUA=
-X-Gm-Gg: ASbGncsiiJd9AZxoKZInX73AFXEo6QQtQA2F68TZ2FypOUmyeulQyhQZNGKveKsHP2/
-	jZLrzGi+pruxSZI1kw62GQxqFC/opjnZ1sweDSOoF21bbEdFP5qCHa+/EK8cbzlyQVT4qipRADK
-	GkGnj7zBrVPOp8uZfPnCWUXgGKITCekzsfExXwiXjXAJjWn7DdqjAH7ik9o65YGgavDLvmgbUh2
-	kQ6f+Tj
-X-Google-Smtp-Source: AGHT+IFZRUIcJKoJI1N/811uHl/+6xL1FcqAxJgYR5GedPqfBofKM11Z48fkZMwPdT7cuHhTbzif2+tsEl/CCkj4vuA=
-X-Received: by 2002:a17:90b:2542:b0:310:8d79:dfe4 with SMTP id
- 98e67ed59e1d1-31c9e760d63mr12910238a91.4.1753180140334; Tue, 22 Jul 2025
- 03:29:00 -0700 (PDT)
+	s=arc-20240116; t=1753180194; c=relaxed/simple;
+	bh=y6K+BmWl/8HOSj/sW4XrLYao2aq9MJ1APtsuseqlaIk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LoTAPPzLG/gcHzmrO78q6oyFA+IIGYJoB9ElcFE7A8y0uWRTQv2P1gNCqTTggcxnGnnWwdBCnkOy5GzJjfxEttDH6azGRcEm7KtJ9Pq+oMpff0ndYMQ3AVP+mA+JYnCUuBoMXlCp9LreHL+6xW8fTyYid/DtCp09nVzZcKUgcB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=mIZarsTk; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=uq
+	UFJbVekLDgeDQMYnUJjp+Rm3wS/RISllxNOdae4fI=; b=mIZarsTk1luWEGAP3v
+	qIz/ZI3HKhbnvOAoLrZMbRfsxxqO7lYse8P+gQQJieIwLOZSDRPC3dqqAXp8KbU3
+	sDNWIjw21MkZhC+eQ6UsHH0mYPiTI7NbTUu7wW13as31FMEyeXMDsxi75Na8u7eE
+	O5A/oYJ36Hnczj519mKV1sxl0=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id PCgvCgCH93_5Z39o5HhiAA--.9828S2;
+	Tue, 22 Jul 2025 18:29:13 +0800 (CST)
+From: oushixiong1025@163.com
+To: Dave Airlie <airlied@redhat.com>
+Cc: Sean Paul <sean@poorly.run>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Shixiong Ou <oushixiong@kylinos.cn>
+Subject: [PATCH] drm/udl: add noblocking dirtyfb support
+Date: Tue, 22 Jul 2025 18:29:12 +0800
+Message-Id: <20250722102912.2256895-1-oushixiong1025@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250715110423.334744-1-shankari.ak0208@gmail.com>
- <CANiq72nZMLghTj8bHerEfXyYMtbWDH_WVxYeQY65ymWjSuxA_g@mail.gmail.com> <DBIHASMYLFEZ.19R61CE8V745Q@kernel.org>
-In-Reply-To: <DBIHASMYLFEZ.19R61CE8V745Q@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 22 Jul 2025 12:28:47 +0200
-X-Gm-Features: Ac12FXyKBAbQXxGBytZnrKSboIFI-2NK3V0UTEhIkQk0DFie2t3OIpnw-M93LmM
-Message-ID: <CANiq72k-BaJFzY7bBci3Xqj6UKXEibpu5fGuxa2rkSZdjjvyRg@mail.gmail.com>
-Subject: Re: [PATCH v4] rust: move ARef and AlwaysRefCounted to sync::aref
-To: Benno Lossin <lossin@kernel.org>
-Cc: Shankari Anand <shankari.ak0208@gmail.com>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PCgvCgCH93_5Z39o5HhiAA--.9828S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxKrW3Gw43ZrWkCF48Zr4Utwb_yoWfGF4DpF
+	s8XasIyrWjqF4Fgrn7Gr48AFy3Gw1Ik3ykG3yxCanakF15KryUXFyrAFyv9F15Jr43GFnx
+	XF9rKFyqkFWUJrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j05l8UUUUU=
+X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/1tbiXQWSD2h-YTh75QABsU
 
-On Tue, Jul 22, 2025 at 11:33=E2=80=AFAM Benno Lossin <lossin@kernel.org> w=
-rote:
->
-> `ARef` specifically is about supporting types that already have their
-> own "built-in" reference counting. I'm not sure if built-in is the best
-> word to describe that, some alternatives are inherent or internal.
+From: Shixiong Ou <oushixiong@kylinos.cn>
 
-Yeah, it is a bit ambiguous (e.g. it could also be understood as that
-the code is always built as built-in, which is true currently).
+[WHY]
+The DIRTYFB IOCTL is blocking by default. In multi-GPU setups, this
+may rate-limit the Primary GPU if the UDL handles damage too slowly.
+For example, in a cloud virtual desktop environment, when a USB
+DisplayLink device is connected to the client, the primary screen's
+refresh rate may significantly degrade. This occurs because the DIRTYFB
+operations must first be transmitted over the network (to the remote host)
+before the actual USB display commands can be executed.
 
-> Maybe we can just expand the module level docs with:
->
->     //! Internal Reference Counting Support.
+[HOW]
+Add non-blocking DIRTYFB support for UDL as an optional feature.
+Move udl_handle_damage() to a dedicated kthread, and try to merge damage regions
+before processing to prevent display content from lagging behind the latest
+data too much.
 
-That would be nice, yeah, please send a patch. I will use "Internal"
-for the time being so that it matches what you have here. (Inherent
-sounded also good to me.)
+In my cloud desktop system environment, the udl_handle_damage() takes up to
+dozens of milliseconds. After using this optional feature, the desktop display
+becomes smoother and more responsive.
 
-Thanks!
+Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
+---
+ drivers/gpu/drm/udl/udl_drv.c     |   4 +
+ drivers/gpu/drm/udl/udl_drv.h     |  16 ++++
+ drivers/gpu/drm/udl/udl_main.c    |  41 ++++++++++
+ drivers/gpu/drm/udl/udl_modeset.c | 132 ++++++++++++++++++++++++++++++
+ 4 files changed, 193 insertions(+)
 
-Cheers,
-Miguel
+diff --git a/drivers/gpu/drm/udl/udl_drv.c b/drivers/gpu/drm/udl/udl_drv.c
+index 1506094..c2fc4b3 100644
+--- a/drivers/gpu/drm/udl/udl_drv.c
++++ b/drivers/gpu/drm/udl/udl_drv.c
+@@ -17,6 +17,10 @@
+ 
+ #include "udl_drv.h"
+ 
++int udl_noblocking_damage;
++MODULE_PARM_DESC(noblocking_damage, "Noblocking damage (1 = enabled, 0 = disabled(default))");
++module_param_named(noblocking_damage, udl_noblocking_damage, int, 0444);
++
+ static int udl_usb_suspend(struct usb_interface *interface,
+ 			   pm_message_t message)
+ {
+diff --git a/drivers/gpu/drm/udl/udl_drv.h b/drivers/gpu/drm/udl/udl_drv.h
+index 282ebd6..6ed4346 100644
+--- a/drivers/gpu/drm/udl/udl_drv.h
++++ b/drivers/gpu/drm/udl/udl_drv.h
+@@ -21,6 +21,8 @@
+ #include <drm/drm_framebuffer.h>
+ #include <drm/drm_gem.h>
+ #include <drm/drm_plane.h>
++#include <linux/list.h>
++#include <linux/spinlock.h>
+ 
+ struct drm_mode_create_dumb;
+ 
+@@ -34,6 +36,13 @@ struct drm_mode_create_dumb;
+ 
+ struct udl_device;
+ 
++struct damage_work_node {
++	struct drm_framebuffer *fb;
++	struct drm_rect *clip;
++
++	struct list_head list;
++};
++
+ struct urb_node {
+ 	struct list_head entry;
+ 	struct udl_device *dev;
+@@ -74,10 +83,17 @@ struct udl_device {
+ 	int sku_pixel_limit;
+ 
+ 	struct urb_list urbs;
++
++
++	struct list_head	damage_queue;
++	spinlock_t		damage_lock;
++	struct work_struct	damage_work;
+ };
+ 
+ #define to_udl(x) container_of(x, struct udl_device, drm)
+ 
++extern int udl_noblocking_damage;
++
+ static inline struct usb_device *udl_to_usb_device(struct udl_device *udl)
+ {
+ 	return interface_to_usbdev(to_usb_interface(udl->drm.dev));
+diff --git a/drivers/gpu/drm/udl/udl_main.c b/drivers/gpu/drm/udl/udl_main.c
+index 3ebe2ce..3de1a06 100644
+--- a/drivers/gpu/drm/udl/udl_main.c
++++ b/drivers/gpu/drm/udl/udl_main.c
+@@ -9,6 +9,7 @@
+  */
+ 
+ #include <drm/drm.h>
++#include <drm/drm_gem_framebuffer_helper.h>
+ #include <drm/drm_print.h>
+ #include <drm/drm_probe_helper.h>
+ 
+@@ -348,10 +349,50 @@ err:
+ 	return ret;
+ }
+ 
++static void udl_free_damage_queue(struct drm_device *dev)
++{
++	struct udl_device *udl = to_udl(dev);
++	struct list_head *entry, *tmp;
++	struct drm_gem_object *obj;
++	unsigned long flags;
++	int i;
++
++	if (!udl_noblocking_damage)
++		return;
++
++	udl_noblocking_damage = false;
++
++	spin_lock_irqsave(&udl->damage_lock, flags);
++
++	list_for_each_safe(entry, tmp, &udl->damage_queue) {
++		struct damage_work_node *damage;
++
++		damage = list_entry(entry, struct damage_work_node, list);
++		if (damage == NULL)
++			continue;
++		list_del(&damage->list);
++
++		for (i = 0; i < damage->fb->format->num_planes; ++i) {
++			obj = drm_gem_fb_get_obj(damage->fb, i);
++			if (obj)
++				drm_gem_object_put(obj);
++		}
++
++		drm_framebuffer_put(damage->fb);
++
++		kfree(damage->clip);
++		kfree(damage);
++	}
++
++	spin_unlock_irqrestore(&udl->damage_lock, flags);
++}
++
++
+ int udl_drop_usb(struct drm_device *dev)
+ {
+ 	struct udl_device *udl = to_udl(dev);
+ 
++	udl_free_damage_queue(dev);
+ 	udl_free_urb_list(dev);
+ 	put_device(udl->dmadev);
+ 	udl->dmadev = NULL;
+diff --git a/drivers/gpu/drm/udl/udl_modeset.c b/drivers/gpu/drm/udl/udl_modeset.c
+index 5a15399..a4a4c4b 100644
+--- a/drivers/gpu/drm/udl/udl_modeset.c
++++ b/drivers/gpu/drm/udl/udl_modeset.c
+@@ -261,6 +261,124 @@ static const uint64_t udl_primary_plane_fmtmods[] = {
+ 	DRM_FORMAT_MOD_INVALID
+ };
+ 
++static void udl_damage_work_func(struct work_struct *work)
++{
++	struct udl_device *udl = container_of(work, struct udl_device, damage_work);
++	struct drm_gem_object *obj;
++	unsigned long flags;
++	unsigned int i;
++	int ret;
++
++	if (!list_empty(&udl->damage_queue)) {
++		struct damage_work_node *damage;
++
++		spin_lock_irqsave(&udl->damage_lock, flags);
++
++		damage = list_first_entry(&udl->damage_queue,
++					  struct damage_work_node, list);
++		list_del(&damage->list);
++		spin_unlock_irqrestore(&udl->damage_lock, flags);
++
++		if (damage->clip && damage->fb) {
++			struct iosys_map map[DRM_FORMAT_MAX_PLANES];
++
++			ret = drm_gem_fb_vmap(damage->fb, map, NULL);
++			if (ret) {
++				DRM_ERROR("vmap damage fb error %d\n", ret);
++				goto free;
++			}
++
++			udl_handle_damage(damage->fb, &map[0], damage->clip);
++			drm_gem_fb_vunmap(damage->fb, map);
++
++free:
++			for (i = 0; i < damage->fb->format->num_planes; ++i) {
++				obj = drm_gem_fb_get_obj(damage->fb, i);
++				if (obj)
++					drm_gem_object_put(obj);
++			}
++
++			drm_framebuffer_put(damage->fb);
++
++			kfree(damage->clip);
++			kfree(damage);
++		}
++	}
++}
++
++void udl_damage_merged(const struct drm_rect *rect, struct drm_rect *dst_rect)
++{
++	dst_rect->x1 = min(dst_rect->x1, rect->x1);
++	dst_rect->y1 = min(dst_rect->y1, rect->y1);
++	dst_rect->x2 = max(dst_rect->x2, rect->x2);
++	dst_rect->y2 = max(dst_rect->y2, rect->y2);
++}
++
++static void udl_queue_damage_work(struct udl_device *udl, struct drm_framebuffer *fb,
++				  const struct drm_rect *clip)
++{
++	struct list_head *entry, *tmp;
++	unsigned long flags;
++
++	spin_lock_irqsave(&udl->damage_lock, flags);
++
++	/* Just merge the damage if the same framebuffer damage is already queued */
++	list_for_each_safe(entry, tmp, &udl->damage_queue) {
++		struct damage_work_node *dirty_work;
++
++		dirty_work = list_entry(entry, struct damage_work_node, list);
++		if (dirty_work == NULL)
++			continue;
++
++		if (dirty_work->fb == fb) {
++			/* Merged clips */
++			udl_damage_merged(clip, dirty_work->clip);
++			spin_unlock_irqrestore(&udl->damage_lock, flags);
++
++			return;
++		}
++	}
++
++	struct damage_work_node *new_work;
++	struct drm_rect *new_damage;
++
++	new_work = kzalloc(sizeof(*new_work), GFP_KERNEL);
++	if (!new_work)
++		goto err;
++
++	new_damage = kzalloc(sizeof(*new_damage), GFP_KERNEL);
++	if (!new_damage)
++		goto free_work;
++
++	memcpy(new_damage, clip, sizeof(*clip));
++
++	new_work->fb = fb;
++	new_work->clip = new_damage;
++	drm_framebuffer_get(fb);
++
++	struct drm_gem_object *obj;
++	unsigned int i;
++
++	for (i = 0; i < fb->format->num_planes; ++i) {
++		obj = drm_gem_fb_get_obj(fb, i);
++		if (obj)
++			drm_gem_object_get(obj);
++	}
++
++	/* Queue a new damage request */
++	list_add_tail(&new_work->list, &udl->damage_queue);
++	spin_unlock_irqrestore(&udl->damage_lock, flags);
++
++	schedule_work(&udl->damage_work);
++
++	return;
++
++free_work:
++	kfree(new_work);
++err:
++	spin_unlock_irqrestore(&udl->damage_lock, flags);
++}
++
+ static void udl_primary_plane_helper_atomic_update(struct drm_plane *plane,
+ 						   struct drm_atomic_state *state)
+ {
+@@ -276,6 +394,14 @@ static void udl_primary_plane_helper_atomic_update(struct drm_plane *plane,
+ 	if (!fb)
+ 		return; /* no framebuffer; plane is disabled */
+ 
++	if (udl_noblocking_damage) {
++		struct udl_device *udl = to_udl(dev);
++
++		drm_atomic_helper_damage_merged(old_plane_state, plane_state, &damage);
++		udl_queue_damage_work(udl, fb, &damage);
++		return;
++	}
++
+ 	ret = drm_gem_fb_begin_cpu_access(fb, DMA_FROM_DEVICE);
+ 	if (ret)
+ 		return;
+@@ -600,5 +726,11 @@ int udl_modeset_init(struct drm_device *dev)
+ 
+ 	drm_mode_config_reset(dev);
+ 
++	if (udl_noblocking_damage) {
++		INIT_LIST_HEAD(&udl->damage_queue);
++		spin_lock_init(&udl->damage_lock);
++		INIT_WORK(&udl->damage_work, udl_damage_work_func);
++	}
++
+ 	return 0;
+ }
+-- 
+2.43.0
+
 
