@@ -1,78 +1,92 @@
-Return-Path: <linux-kernel+bounces-741440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56AC6B0E41A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 21:26:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7625B0E422
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 21:27:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81ADB58133D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:26:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D004AA18D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:26:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CEF028467D;
-	Tue, 22 Jul 2025 19:26:35 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 215292820B2;
-	Tue, 22 Jul 2025 19:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70CE0284B38;
+	Tue, 22 Jul 2025 19:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Aa9xRmED"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35202283FDE
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 19:27:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753212395; cv=none; b=XT7OVKvamKwxRfeTPN1zV3WYfDrHKe4axYOv5JTC72HoBJon7Q80K++16WAUqq7FeeQSgleQK8piibohGQwrmS8XB9nfqN2kG+72SSZVg2rE1X8oEEz/S8WKkoytDlE5uOM6R0rruXGDVfR/ZzL6MUSFE6b5f/bRpbYEOwr4Ouo=
+	t=1753212433; cv=none; b=nEzw4RvvwxWFA7j5aUzkT/1ePJmrRMUN4Y4gj5H3AvK1/7jPBd0H8P6XQ+2vEinxaUkVcDrcLSxUdmPUVzH3FhxQanwmgse7gVIBD3rd7AH2vYXhHZWR8Ri1xI8HDIdpuQ+jUSN+Wqph8oydZJwTklNR2Z6CgXgG146gz2Wrm5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753212395; c=relaxed/simple;
-	bh=ieYC/Kg/WckhcAxK/XsYXyAurG8mkSMcaSOr+UWMmuE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dr238PnhuhEdk98EMgU7EWhX6i1a6VB/in1id/xMthmyRUSF/4NQLSxJkeXk6VRvi3Xo7xU1KIatihDG0/uNVz8uNf5aLDlFYvh88ONblJVctD8ggcLP6vivJp6AJQJYcsn6Esn7iBsZkEiNpMtOfPblJngkG8Rh4a6wELJs6nQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 67D681424;
-	Tue, 22 Jul 2025 12:26:26 -0700 (PDT)
-Received: from arm.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1B0BE3F6A8;
-	Tue, 22 Jul 2025 12:26:28 -0700 (PDT)
-Date: Tue, 22 Jul 2025 20:26:25 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Will Deacon <will@kernel.org>, Russell King <linux@armlinux.org.uk>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Nicolas Pitre <nico@fluxnic.net>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH] tracing: arm: arm64: Hide trace events ipi_raise,
- ipi_entry and ipi_exit
-Message-ID: <aH_l4cCzzGB5Cd1K@arm.com>
-References: <20250722103714.64eba013@gandalf.local.home>
+	s=arc-20240116; t=1753212433; c=relaxed/simple;
+	bh=9epL9+Wc1zrAwpTU8IbXlsI54D2Y9lUQ4aWYVcSXrj0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YvMtdKhLDLlL8XM3egIo4gb6RJRxCUTo3FclTIDMQ+DBRCFFudOfwKlusriywb687+RVF5IIoXT8UmbQTLJEvnMgx/KrQM09fQ+7aqAvxcMnDDphcfnD5w1tHnPRRYCJgnhq4yYGXOR87reWGVj1ApvjSmwIMbFYzE6LsL8AjeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Aa9xRmED; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [IPV6:2601:646:8081:9484:425f:161c:76a:170a] ([IPv6:2601:646:8081:9484:425f:161c:76a:170a])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56MJQo1W720928
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Tue, 22 Jul 2025 12:26:50 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56MJQo1W720928
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025062101; t=1753212411;
+	bh=p8DUMkMzGZLgdPsR7TDsc3CITTx+hnylGhZVDJtBxSM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Aa9xRmEDivKKGv8RWjolcUlb0xdiygWugU8S9ccZvj7SP0qnyzZopSzakoHuiJxOw
+	 HiVhqUQiHPCiCABx+d2tjIGdDWIdqtSzb2on8vTuHhwdSOWKwTbgh8R3FTABixU8Rv
+	 wE5kxFhAuzxguVGAKeo9eTe4soHgeeSuYsiWp8H1xdZx7zEip3z5MdHPkl0SIX5ypZ
+	 YZgaYWTIwLVABMjFfGOZhxg/aRy/orZj8mBr+pl9gpAuWXGDUQJI1v6MdmwsRWdNgX
+	 PQHlsueYqEgsT7wKCJb39fIQZzznLEMJYHm2MdVm+oITnb6CWQAw+sC6jwB/AIviFy
+	 PqGND6bKfwKAw==
+Message-ID: <4d6275f1-f3a4-4d70-9c25-42bd4563c6d0@zytor.com>
+Date: Tue, 22 Jul 2025 12:26:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250722103714.64eba013@gandalf.local.home>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/math64: handle #DE in mul_u64_u64_div_u64()
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: David Laight <david.laight.linux@gmail.com>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Li,Rongqing"
+ <lirongqing@baidu.com>,
+        Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+        x86@kernel.org
+References: <20250721130422.GA31640@redhat.com>
+ <20250721192053.58843751@pumpkin> <20250722105034.GA2845@redhat.com>
+ <0818676F-ED90-44B1-AB10-42DDB7F1B139@zytor.com>
+ <20250722175807.GC2845@redhat.com>
+ <548B24CC-2E58-4CC5-9025-950408BDCAA5@zytor.com>
+ <20250722183853.GD2845@redhat.com>
+Content-Language: en-US
+From: "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <20250722183853.GD2845@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 22, 2025 at 10:37:14AM -0400, Steven Rostedt wrote:
-> From: Steven Rostedt <rostedt@goodmis.org>
+On 2025-07-22 11:38, Oleg Nesterov wrote:
+>>
+>> But that's what you want to optimize for, since that is all the modern compilers, even if you have to have two versions as a result.
 > 
-> The ipi tracepoints are mostly generic, but the tracepoints ipi_raise,
-> ipi_entry and ipi_exit are only used by arm and arm64. This means these
-> trace events are wasting memory in all the other architectures that do not
-> use them.
+> Well, this 'divq' is slow anyway, I don't won't to add 2 versions.
+> Can we add the optimized version later if it really makes sense?
 > 
-> Add CONFIG_HAVE_EXTRA_IPI_TRACEPOINTS and have arm and arm64 select it to
-> enable these trace events. The config makes it easy if other architectures
-> decide to trace these as well.
-> 
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+Then it will guaranteed get forgotten.
+
+	-hpa
+
 
