@@ -1,86 +1,110 @@
-Return-Path: <linux-kernel+bounces-740532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E009B0D554
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:09:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C491B0D604
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:33:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE4BAAA1FB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:08:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56A50188D835
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:33:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4B02DA77E;
-	Tue, 22 Jul 2025 09:09:20 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443F72DC35D;
+	Tue, 22 Jul 2025 09:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CY+NhB8D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550BC2D94B9;
-	Tue, 22 Jul 2025 09:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B732557A;
+	Tue, 22 Jul 2025 09:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753175360; cv=none; b=lfsliDau40kl4LmYHsRjlnLPGd20a0dn0ie1zFNTjVpqH6HTK7DKXGCmzufcq9Q/vgCiWJIReZOfI/jkzyacZ4+Y+MuhrxWCW0yhSOdZzJhvft1TchNAexxlpuuuLn+CCop2Vmzabyimg+KwfEuENqc3+eRP7aHEq0UiygX/TPU=
+	t=1753176781; cv=none; b=WaJJ2+4RbNJ1dMUGsEkWuUTD+TsoMek1uZTbvjcUeGuFpSxk75ZjYbgNsrxNWd0oI/K/d5AaBM59Y78Sq+ycZO1AKeL29JEpoCfRXYMfuUDad8yZ1KKYxX5IDR3D4EaCWT/wCDwQhNuezukxZLzs4GKjtUmaE8xyI65Z3sfIeEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753175360; c=relaxed/simple;
-	bh=1o/LTkJI+I2+3ykr4kZAtYM62gPlyP8GbeRfcVdGTwY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DFQW4DWUyOmjSz/TUoma9tmCWl0KBO48SkSZ2ZKijKNuEviCtg7DXWiZoRoZvxvxwsWt5LhOp36sn4ZS0DO6QzeMFYG/6POtzWdze1IBlELCSkIguZXJ883VEzg73jgDLuzNBQL4mK6OUEgAExshw98nDH3feeXY7CzBiRlI1dY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bmWY44yTyz14LqZ;
-	Tue, 22 Jul 2025 17:04:24 +0800 (CST)
-Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3045A147B64;
-	Tue, 22 Jul 2025 17:09:14 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by dggpemf500016.china.huawei.com
- (7.185.36.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 22 Jul
- 2025 17:09:12 +0800
-From: Wang Liang <wangliang74@huawei.com>
-To: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <razor@blackwall.org>,
-	<idosch@nvidia.com>, <petrm@nvidia.com>, <menglong8.dong@gmail.com>
-CC: <yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
-	<wangliang74@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH net-next] vxlan: remove redundant conversion of vni in vxlan_nl2conf
-Date: Tue, 22 Jul 2025 17:30:49 +0800
-Message-ID: <20250722093049.1527505-1-wangliang74@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1753176781; c=relaxed/simple;
+	bh=T/54e2GKIMBgth/Ma53cxRrBRLK1haj82m9epjW0LDs=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=NJUXJUOdRgpvmvJqaDtlogEbrudrVcCriKxY0oYNnxDwUFH3OHMfWwyqSDlvIZ78cvox70BXFbajPtggQQmCIJ/qvZm8KSYSSv1huIqzQbZG2a3kCSwJUZmSgPZbHOBezvYojaet0qevyte7pfNUGVWa+YAXtdUgYapo4c0zKpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CY+NhB8D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A44DDC4CEEB;
+	Tue, 22 Jul 2025 09:32:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753176781;
+	bh=T/54e2GKIMBgth/Ma53cxRrBRLK1haj82m9epjW0LDs=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=CY+NhB8DTrw9xxzsjxSCR2ADIEQxmTkF63h7rnTfySvttx6+T9BOVyAbjoxjgaK/s
+	 qSK35/7eD9QdQV2Weg8jYoydjFw0GV9z3MILHQ8//p69+8HX7yJCnvNVFKi0c1rGgC
+	 jLpFpvVkW/5BQOgxgQCppTvowkPlSQgJRrbTZ0XlRHoRl0s9mwv9vR6dZS3q9EDh/8
+	 SBrBuewBK1tdOFStytyt28vfIjsMoAtlY3SNGlYAGCj59sxkV8pdaC1hQs1hynsGMd
+	 hgCXnelGzW/wWCe4FHQ7j8pT7lfi0qXkRdfWqMZDsFX6UBcfoXuCq4QdNDqQLbiFo0
+	 VyI8Ii5l++IzQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- dggpemf500016.china.huawei.com (7.185.36.197)
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 22 Jul 2025 11:32:56 +0200
+Message-Id: <DBIHASMYLFEZ.19R61CE8V745Q@kernel.org>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>, "Shankari Anand"
+ <shankari.ak0208@gmail.com>
+Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
+ "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH v4] rust: move ARef and AlwaysRefCounted to sync::aref
+From: "Benno Lossin" <lossin@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250715110423.334744-1-shankari.ak0208@gmail.com>
+ <CANiq72nZMLghTj8bHerEfXyYMtbWDH_WVxYeQY65ymWjSuxA_g@mail.gmail.com>
+In-Reply-To: <CANiq72nZMLghTj8bHerEfXyYMtbWDH_WVxYeQY65ymWjSuxA_g@mail.gmail.com>
 
-The IFLA_VXLAN_ID data has been converted to local variable vni in
-vxlan_nl2conf(), there is no need to do it again when set conf->vni.
+On Tue Jul 22, 2025 at 12:46 AM CEST, Miguel Ojeda wrote:
+> On Tue, Jul 15, 2025 at 1:04=E2=80=AFPM Shankari Anand
+> <shankari.ak0208@gmail.com> wrote:
+>>
+>> +//! Built-in Reference Counting Support
+>
+> What is it meant by "built-in" here? Could we just use "Reference
+> counting support."? Or do you have another suggestion, Benno?
 
-Signed-off-by: Wang Liang <wangliang74@huawei.com>
+`ARef` specifically is about supporting types that already have their
+own "built-in" reference counting. I'm not sure if built-in is the best
+word to describe that, some alternatives are inherent or internal.
+
+Maybe we can just expand the module level docs with:
+
+    //! Internal Reference Counting Support.
+    //!
+    //! Many C types already have their own reference counting mechanism (e=
+.g. by storing a
+    //! `refcount_t`). This module provides support for directly using thei=
+r internal reference count
+    //! from Rust; instead of making users have to use an additional Rust-r=
+eference count in the form of
+    //! [`Arc`].
+    //!
+    //! The smart pointer [`ARef<T>`] acts similarly to [`Arc<T>`] in that =
+it holds a refcount on the
+    //! underlying object, but this refcount is internal to the object. It =
+essentially is a Rust
+    //! implementation of the `get_` and `put_` pattern used in C for refer=
+ence counting.
+    //!
+    //! To make use of [`ARef<MyType>`], `MyType` needs to implement [`Alwa=
+ysRefCounted`]. It is a trait
+    //! for accessing the internal reference count of an object of the `MyT=
+ype` type.
+
+Thoughts?
+
 ---
- drivers/net/vxlan/vxlan_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/vxlan/vxlan_core.c b/drivers/net/vxlan/vxlan_core.c
-index 97792de896b7..77dbfe9a6b13 100644
---- a/drivers/net/vxlan/vxlan_core.c
-+++ b/drivers/net/vxlan/vxlan_core.c
-@@ -4036,7 +4036,7 @@ static int vxlan_nl2conf(struct nlattr *tb[], struct nlattr *data[],
- 			NL_SET_ERR_MSG_ATTR(extack, tb[IFLA_VXLAN_ID], "Cannot change VNI");
- 			return -EOPNOTSUPP;
- 		}
--		conf->vni = cpu_to_be32(nla_get_u32(data[IFLA_VXLAN_ID]));
-+		conf->vni = vni;
- 	}
- 
- 	if (data[IFLA_VXLAN_GROUP]) {
--- 
-2.34.1
-
+Cheers,
+Benno
 
