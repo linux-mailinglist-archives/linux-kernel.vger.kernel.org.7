@@ -1,192 +1,178 @@
-Return-Path: <linux-kernel+bounces-740627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56F46B0D6E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:08:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BC8EB0D6F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:09:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7319E1C246FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:07:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC4CD5647A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:07:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A07E2DFA28;
-	Tue, 22 Jul 2025 10:05:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3432E11B6;
+	Tue, 22 Jul 2025 10:06:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="btDw2eRE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BSH6ISmE"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9C92E06ED;
-	Tue, 22 Jul 2025 10:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9292422B5A5
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 10:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753178744; cv=none; b=mmjA7Nkee0IL3YhxShY6OfmtUWaRsXdgd+Svcgkq5BgSGJAfuWkqw94tS7T5qIed8cpEWBc3G0SBU9XfQIhEpF79DyTbvgMe5faoLUeNaQZFIxwCKfqyji+9vsJmDtxq60AO8JHX7qOj22aEctmc6W30u+6/quuSyKJV1F8zMyk=
+	t=1753178759; cv=none; b=bSH9vprM/tYbgKIVEA9kQ3yEs0xic5yLbWbd3L8N2baLMrge9TCH/hE0FXYMw1Oyj4xpVPSKeCwAR+fJ2lqZzEbVVnxeEXRFp0GO0rRGl0RAeW68JHqmaZOIaFoXwlPPSgwyCQXqPBSRVIrHLlPKb05m5Vp2yjIMEgSOFT1QI9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753178744; c=relaxed/simple;
-	bh=IlLy1p8cz2ISRMPbvg4/n/abtc9H+c/qnZ5bEjePPwU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LHaWn0mR8Y9TfIB+XHz/+LKy5yziIFvq7psEuSmIqQdPqfxJvqlsHQhfMulVE4rSmKrBFch2aglhfzy1MfHligZZ8Y+5QiYyVcy6e3RWAA07sXF+I7aus7jX7Nw09JUMwvoHSbFrJH8CfNjtFDGgUkLl9WFeuB0s5veaPceeB+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=btDw2eRE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7899C4CEEB;
-	Tue, 22 Jul 2025 10:05:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753178744;
-	bh=IlLy1p8cz2ISRMPbvg4/n/abtc9H+c/qnZ5bEjePPwU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=btDw2eRExWr9siGIr/Xozyp7idZEf4Glqg6nrxtHxAJGV6UxAVFbid784++CxNqLR
-	 AiIwI6+8gI0Z03hvOVKnLiCRL8lLR44oXK7tlSZicaXaLiiHbHHZ6xQX10HdbkKnfO
-	 Q2x2B5D5QNf+V/mR8OICiAHO78w9/jlS/FWJPZAekIPjGDhQIPahef967LaSgn9KRF
-	 ADNf7PsvEGxF4jOPtegyLIexbq41U7Oo4dPkkIK6K+X6qMt6ag5YUQDOtkizjHn5sm
-	 7+4gIB53fqepnLwx9qSkLOISWjQMyk/wzjxf73F4NOU81fmHLi5I6Qob/bIVyxgVRt
-	 YgoeOjhLG18Uw==
-Date: Tue, 22 Jul 2025 12:05:38 +0200
-From: Alexey Gladkov <legion@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Petr Pavlu <petr.pavlu@suse.com>, Luis Chamberlain <mcgrof@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, linux-scsi@vger.kernel.org
-Subject: Re: [PATCH v4 0/7] Add generated modalias to modules.builtin.modinfo
-Message-ID: <aH9icpCpoHqBBzEm@example.org>
-References: <cover.1750511018.git.legion@kernel.org>
- <aHUI8KqD0_dtTY3D@example.org>
- <CAK7LNARjC_FCam14RXfTVTQ4_jtXuBKfDsdyG84_k9L1x5zJyg@mail.gmail.com>
+	s=arc-20240116; t=1753178759; c=relaxed/simple;
+	bh=39YNoWp4OX6qnLsieXmLV9zCGjbhYjyloInkDj4pUC8=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=YQ7aVzz3wbi33JBMfKni/a/JVgEyuP4iVfk5t+QAeFHGE+zWMfQFwd7YvW/2s48zuf/g5MzoTcUkOQYc2nCKuxc1+SrWZcpntW5xqTad+yt+zG7yXlLR3IyZ4dOVvXFcT9v3Au2kvdoDfrf6PdqBndbUgX0Oo1f4v4xdUJmcEc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BSH6ISmE; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4560d176f97so57060075e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 03:05:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753178756; x=1753783556; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K6tvj/DkNBulYt/YV/mLvh6U0WsYjvJUAB4Jgyqsz68=;
+        b=BSH6ISmE69q5IXtzmw3SbUWR11Ed02ig44M8tcvHldMKuOS3pCR/cX5r/7biuxZDwh
+         akqq7aBnYxtoDCqu+15Tx0uZ7HPypCNF7ZIfsX9e1aod+ACfpom1vhRclKuCHK8nK9Lo
+         nHSkQGDAPBqPxA/TLJ4OMi4RIPF6FvbWN8Fl0jdx//HIZk3z8QssmJYK+lxV0WPtO0GI
+         X6APd5W07f3qQo1kaH7vTOpF3CRBeRzqKo9adujoLJNzFj99d7vitOUS1W57R5C8ynpB
+         CLPYbjLP7EaNuI5uPc5SOgEXXnLSOzvI90iPviYGY9xmtf8xcppzjwjW1Dt3dNQgF5MI
+         Hmtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753178756; x=1753783556;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=K6tvj/DkNBulYt/YV/mLvh6U0WsYjvJUAB4Jgyqsz68=;
+        b=SIBzYbcBDrHxJ3G1DvjLiB5uCTsceoYHuZgezGvJtLV/bh2R+SSqKKRpkNnBrK4MOd
+         T9HRfjKxk5KnMNYfCdgdOH0FuutVHKL5vCRsn0GKMoC74fuXh1icbwr3n/67Z8T1AvBx
+         a+ERXuyJrMy3jnH9vPP2fDqsnoepr40/iaI3vqLvuVE4k0YjsJNodtpkGA7M3vtIc77C
+         0kZeE1XD/sz5Yx+rh0cLNnMam7Yg0tndVr1qo0BgoTbDOHr/cZ8nJCCh9RJiH6Su48+v
+         u/plcwcSLXC746yqQgeRhMOZH0IC4KB/CsLESz+eFVtov1F9INHLYzK1er1L+dltcKhn
+         YteA==
+X-Forwarded-Encrypted: i=1; AJvYcCXfER7N1A3eo489u62qxZFc/Re7ZPiDJszJzpQzpkJnIA3iW6CwCFDuRJdHD8F0bCCE0McWwOAbkKg7FXA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKI4xTbnvW0FR5ydF7S0xSBQzDGXojoRGla2jlhjPwrvgRknXW
+	T+CKdWmbWaQ4qVLiCEFBBhOY/LPu9aHyBkl1WKn2HVjxWMqchJuAYwfn2ZRbyCFIESU=
+X-Gm-Gg: ASbGncts1BZMI9h07WxvBso1Bka5usBfB4cR/XsgijMlvllqGBqWxCt9QjKadU8t08u
+	BrqQDkiv7YWwv5t9B+Y6eiJx8+OWHvcZm26+TmV2eKvGXK/EleYja55cgfS7iTh1HwYmkwS2z+F
+	Mie8HDjcvQ3FRtPr972DtCyVto8Nk/iidAdaMqfb1Q2j+VyZvCgviw9lKuQx5x5YuozVjIqruaT
+	Qn2iUn1223vnIU1M2SuNEQu9dqs2XVjTPkkri/zHt3E5q8qcI7LdXERoDSzNyuEp9nGKE6J0b0U
+	carfm5KV2AdEsdUKpAw2dI/eJmoTLBQkOT73tqWRVs4hC4HGY6aULjFIftE8O1P0x+rSxnSJx9h
+	Cdd+erIt8q2puzWriUTGe65cyEVgOLIchrr9P79223gCzuaYYChNXu3v/aQGbvIiPNXBCD8GgCW
+	fIXenwd+4jQg==
+X-Google-Smtp-Source: AGHT+IF6xHLS/NKb0FDDLslT+SQ8Ge7DpH9qHjfZKBiFCLY7EOoCDjUS/Zdn1Tv9T1Zp8mEzCtRq7w==
+X-Received: by 2002:a05:600c:3acf:b0:456:e39:ec1a with SMTP id 5b1f17b1804b1-456348e70f4mr208884215e9.14.1753178755675;
+        Tue, 22 Jul 2025 03:05:55 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:bce4:725d:6922:d1ba? ([2a01:e0a:3d9:2080:bce4:725d:6922:d1ba])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61c9f16d9sm13213953f8f.0.2025.07.22.03.05.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Jul 2025 03:05:55 -0700 (PDT)
+Message-ID: <4a78f570-62fd-4779-aba2-1c9c558989f2@linaro.org>
+Date: Tue, 22 Jul 2025 12:05:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNARjC_FCam14RXfTVTQ4_jtXuBKfDsdyG84_k9L1x5zJyg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH 2/2] arm64: dts: amlogic: C3: Add RTC controller node
+To: xianwei.zhao@amlogic.com, Yiting Deng <yiting.deng@amlogic.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+ Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org, linux-rtc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20250717-rtc-c3-node-v1-0-4f9ae059b8e6@amlogic.com>
+ <20250717-rtc-c3-node-v1-2-4f9ae059b8e6@amlogic.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20250717-rtc-c3-node-v1-2-4f9ae059b8e6@amlogic.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 16, 2025 at 01:23:26AM +0900, Masahiro Yamada wrote:
-> Hi, sorry for the delay.
+On 17/07/2025 11:38, Xianwei Zhao via B4 Relay wrote:
+> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
 > 
-> On Mon, Jul 14, 2025 at 10:41 PM Alexey Gladkov <legion@kernel.org> wrote:
-> >
-> > On Sat, Jun 21, 2025 at 03:57:12PM +0200, Alexey Gladkov wrote:
-> > > The modules.builtin.modinfo file is used by userspace (kmod to be specific) to
-> > > get information about builtin modules. Among other information about the module,
-> > > information about module aliases is stored. This is very important to determine
-> > > that a particular modalias will be handled by a module that is inside the
-> > > kernel.
-> > >
-> > > There are several mechanisms for creating modalias for modules:
-> > >
-> > > The first is to explicitly specify the MODULE_ALIAS of the macro. In this case,
-> > > the aliases go into the '.modinfo' section of the module if it is compiled
-> > > separately or into vmlinux.o if it is builtin into the kernel.
-> > >
-> > > The second is the use of MODULE_DEVICE_TABLE followed by the use of the
-> > > modpost utility. In this case, vmlinux.o no longer has this information and
-> > > does not get it into modules.builtin.modinfo.
-> > >
-> > > For example:
-> > >
-> > > $ modinfo pci:v00008086d0000A36Dsv00001043sd00008694bc0Csc03i30
-> > > modinfo: ERROR: Module pci:v00008086d0000A36Dsv00001043sd00008694bc0Csc03i30 not found.
-> > >
-> > > $ modinfo xhci_pci
-> > > name:           xhci_pci
-> > > filename:       (builtin)
-> > > license:        GPL
-> > > file:           drivers/usb/host/xhci-pci
-> > > description:    xHCI PCI Host Controller Driver
-> > >
-> > > The builtin module is missing alias "pci:v*d*sv*sd*bc0Csc03i30*" which will be
-> > > generated by modpost if the module is built separately.
-> > >
-> > > To fix this it is necessary to add the generated by modpost modalias to
-> > > modules.builtin.modinfo.
-> > >
-> > > Fortunately modpost already generates .vmlinux.export.c for exported symbols. It
-> > > is possible to use this file to create a '.modinfo' section for builtin modules.
-> > > The modules.builtin.modinfo file becomes a composite file. One part is extracted
-> > > from vmlinux.o, the other part from .vmlinux.export.o.
-> >
-> > Masahiro Yamada, does this version of the patchset look better to you ?
+> Add the RTC controller node for C3 SoC family.
 > 
+> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+> ---
+>   arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi | 16 ++++++++++++++++
+>   1 file changed, 16 insertions(+)
 > 
-> Looks better, but this may break s390 build:
-> 
-> https://lore.kernel.org/linux-kbuild/202506062053.zbkFBEnJ-lkp@intel.com/
-> 
-> I have not taken a close look at it.
-> If we do not find how to fix the warning, we would
-> end up with the original solution.
-
-I think I found a problem. I just pushed fix to my branch. I'll make a new
-version of the patchset in a few days. I want to test it a bit longer.
-
-> > > Notes:
-> > > - v4:
-> > >   * Rework the patchset based on top of Masahiro Yamada's patches.
-> > >   * Add removal of unnecessary __mod_device_table__* symbols to avoid symbol
-> > >     table growth in vmlinux.
-> > >   * rust code takes into account changes in __mod_device_table__*.
-> > >   * v3: https://lore.kernel.org/all/cover.1748335606.git.legion@kernel.org/
-> > >
-> > > - v3:
-> > >   * Add `Reviewed-by` tag to patches from Petr Pavlu.
-> > >   * Rebase to v6.15.
-> > >   * v2: https://lore.kernel.org/all/20250509164237.2886508-1-legion@kernel.org/
-> > >
-> > > - v2:
-> > >   * Drop patch for mfd because it was already applied and is in linux-next.
-> > >   * The generation of aliases for builtin modules has been redone as
-> > >     suggested by Masahiro Yamada.
-> > >   * Rebase to v6.15-rc5-136-g9c69f8884904
-> > >   * v1: https://lore.kernel.org/all/cover.1745591072.git.legion@kernel.org/
-> > >
-> > >
-> > > Alexey Gladkov (3):
-> > >   scsi: Always define blogic_pci_tbl structure
-> > >   modpost: Add modname to mod_device_table alias
-> > >   modpost: Create modalias for builtin modules
-> > >
-> > > Masahiro Yamada (4):
-> > >   module: remove meaningless 'name' parameter from __MODULE_INFO()
-> > >   kbuild: always create intermediate vmlinux.unstripped
-> > >   kbuild: keep .modinfo section in vmlinux.unstripped
-> > >   kbuild: extract modules.builtin.modinfo from vmlinux.unstripped
-> > >
-> > >  drivers/scsi/BusLogic.c           |  2 -
-> > >  include/asm-generic/vmlinux.lds.h |  2 +-
-> > >  include/crypto/algapi.h           |  4 +-
-> > >  include/linux/module.h            | 21 ++++-----
-> > >  include/linux/moduleparam.h       |  9 ++--
-> > >  include/net/tcp.h                 |  4 +-
-> > >  rust/kernel/device_id.rs          |  8 ++--
-> > >  scripts/Makefile.vmlinux          | 74 +++++++++++++++++++++----------
-> > >  scripts/Makefile.vmlinux_o        | 26 +----------
-> > >  scripts/mksysmap                  |  6 +++
-> > >  scripts/mod/file2alias.c          | 34 ++++++++++++--
-> > >  scripts/mod/modpost.c             | 17 ++++++-
-> > >  scripts/mod/modpost.h             |  2 +
-> > >  13 files changed, 131 insertions(+), 78 deletions(-)
-> > >
-> > > --
-> > > 2.49.0
-> > >
-> >
-> > --
-> > Rgrds, legion
-> >
-> 
-> 
-> -- 
-> Best Regards
-> Masahiro Yamada
+> diff --git a/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
+> index cb9ea3ca6ee0..b81bffac7732 100644
+> --- a/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
+> @@ -53,6 +53,13 @@ xtal: xtal-clk {
+>   		#clock-cells = <0>;
+>   	};
+>   
+> +	xtal_32k: xtal-clk-32k {
+> +		compatible = "fixed-clock";
+> +		clock-frequency = <32768>;
+> +		clock-output-names = "xtal_32k";
+> +		#clock-cells = <0>;
+> +	};
+> +
+>   	sm: secure-monitor {
+>   		compatible = "amlogic,meson-gxbb-sm";
+>   
+> @@ -967,6 +974,15 @@ nand: nand-controller@8d000 {
+>   				clock-names = "core", "device";
+>   				status = "disabled";
+>   			};
+> +
+> +			rtc@9a000 {
+> +				compatible = "amlogic,c3-rtc",
+> +					     "amlogic,a5-rtc";
+> +				reg = <0x0 0x9a000 0x0 0x38>;
+> +				interrupts = <GIC_SPI 131 IRQ_TYPE_EDGE_RISING>;
+> +				clocks = <&xtal_32k>, <&clkc_periphs CLKID_SYS_RTC>;
+> +				clock-names = "osc", "sys";
+> +			};
+>   		};
+>   
+>   		ethmac: ethernet@fdc00000 {
 > 
 
--- 
-Rgrds, legion
-
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
