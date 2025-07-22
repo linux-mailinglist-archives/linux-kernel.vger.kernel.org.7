@@ -1,113 +1,192 @@
-Return-Path: <linux-kernel+bounces-740900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC7E8B0DAC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:29:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B027FB0DAD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:30:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E61A53B7F3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:29:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6529E546C73
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:29:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03AD72EA16C;
-	Tue, 22 Jul 2025 13:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BD62EA17E;
+	Tue, 22 Jul 2025 13:29:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e2fhEWVT"
-Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="icCzbYE3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8652EA72B
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 13:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC5C2D3EFB;
+	Tue, 22 Jul 2025 13:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753190913; cv=none; b=g+64EMWMieqtU2Rl+JWUHcMMcwI3aaj+E9aV8ADwxQj3FvgiwGF+xnI4bJPskmRy1hB68eYTx1ePNPGJlQt8KAjys6CawdNUJNno4Fa16pz5Qz4rqwNJRh1xNxYhgHhSIgijNoktG6hpuLASYRDYzYg9knAuqfRl/tEv83p/tqA=
+	t=1753190973; cv=none; b=jUbfq6LzYuDe8e2xZhmDFylAk82T8N+MMEYIKpBxojGEidYm6Vylg0yaPAmkkshn63vdVSCUD90HSWt9MO0R3nd1J32RRgIX4mb0D6rlNoWgRNSg1PxGtO5l89YlRRw1xld2RfKsd6w/+ImvwDJYoACPN0XaAhdiTKSZlVwGOhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753190913; c=relaxed/simple;
-	bh=lZfuCpsNtCDFtD2mIkqfNGc6k19kTKUYwNokWS/5tAM=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=KEtzQsv9Jz9NjoOEJEjUbENYnD7ps1NKOA96xzaxnbPS2XoEFfjdt4juZtJo32mNDCCiWfi+H7mxgdiP2TqGwc60mubwbWuTGew8YHZPmvAhLOCa3qEEnhtDXL0laoJxzPZFiAu6W0YHVaIvo1VdFHuxYKOatpJkX3UaP+nC4BI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--tmichalec.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e2fhEWVT; arc=none smtp.client-ip=209.85.208.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--tmichalec.bounces.google.com
-Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-60c6d568550so4595701a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 06:28:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753190910; x=1753795710; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=y2ZdCOMadLYtwQ17YQBl/MkVa95WXMm29CGtxSF5vMk=;
-        b=e2fhEWVToHDrG9kXVGIfRQCH5ADIQkXLo/RORrj/O8WgSkiUKCPwEqTWVXI1BJjSAI
-         PtaS0rON2xCalrXM6KBf5nmeie9QSPJWCbtGogUxJKthpUHVktfw4zdxKvQzUw4WvFIG
-         zL8DDcCGCuKwAEbaCkkheOvQrMcoGlq6814T5grrIjEfV4JFFgCBhwrKZzY8lqERKGjr
-         sUnPPTl/zbTKL52yd/uivhtmgHtdtMGt8g7aZJipRUmf5tmSW3wGPxyd6QfaM7u2yKuQ
-         ZkdLqtrRFY8nEKHHwOHVz3CTnW88gOMjwS1+wV437sizB5LWYpf5GwqvoHhizmE0kgya
-         O0aQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753190910; x=1753795710;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=y2ZdCOMadLYtwQ17YQBl/MkVa95WXMm29CGtxSF5vMk=;
-        b=u8D8iYC2V1amRhh+j81HYNV6HrTpzxWR/wlG0K4ps2ihh/C1xZ4+gtlvlWrJkwKp5u
-         HJU1A/bjiVJyGBUA5/noqXN/vLQNPHFmp4a1CIMDvsQEY15BJnQ37OPn7joF37SGoRri
-         puUr/KGuQmTq69ELnCeogHD55/Ivilb87zVQYqkq7ifP5OvJbUxKfRCpYGRV2JtMTmQk
-         ffsPqlcXdljE6ABXhjFyO5NDxESttw8SXL4FgGfFFx0CKIEJCuvOxxSNeCrl9SN8E6pw
-         WFOD/780gFFSjgsrcq4X7P32bMM8uHPxW8+2BRXBq92zaXjOrhPxgZUHniKjlLxDrgeb
-         MVjA==
-X-Forwarded-Encrypted: i=1; AJvYcCVPCb6yp1YRDUD34VmxM5bOvNj1WjgHfaewdIFORARHKQ5U1akK8ypOtL3sHjx5tfpUWe956zKVQPlt590=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywm15SqL7d9pDL8mn+WyCWHw9wTrJv9cWzUzqnRO4vPFfeqaOje
-	cdzSgAq1LqVuoUHvkBA1KKTYrd4VrCtnXbFUUtuurfFWCZXbtp5kehOw/FmNxyTqf/IS7hpqUW4
-	4rmL0IcNStOFLxy88Gw==
-X-Google-Smtp-Source: AGHT+IHhABfNDI6aFdSjh37rLs3eT9u7XfYoSpwrqg3BaY2FdWTG8XAloBBVS7kg58Tqg+LF5DEduLfWGJgT9C8=
-X-Received: from edys5.prod.google.com ([2002:a05:6402:17c5:b0:607:3229:efd5])
- (user=tmichalec job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6402:270b:b0:612:c928:ead0 with SMTP id 4fb4d7f45d1cf-612c9292d12mr15692866a12.19.1753190910362;
- Tue, 22 Jul 2025 06:28:30 -0700 (PDT)
-Date: Tue, 22 Jul 2025 15:28:26 +0200
+	s=arc-20240116; t=1753190973; c=relaxed/simple;
+	bh=v5BLSIwd7srHi/OWA5ndIBkdalmEzmLEQmrp+RewTTQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IGItBp7f0LJtFN0uHXVdSHBZ7Iu7ohLohoEN0sVtiLa0UUj8G20bvsqoZjSP4BErfMdtD4RlWkyaRGSWt6bsjq7zMwMV4jXbODJdDpGEMpH1y8lqKrHlolk0AgMXEnqGIcwunW3BYJWaZpefdQsci7y5deQ/aHn4RQNvfZPCnrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=icCzbYE3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B00BC4CEEB;
+	Tue, 22 Jul 2025 13:29:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753190972;
+	bh=v5BLSIwd7srHi/OWA5ndIBkdalmEzmLEQmrp+RewTTQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=icCzbYE3Gw4FMkjzZQGdd5PRl3DLgwJi4XEJMOcR2bhXW2g1yFhd+T0X/aqMi3/BP
+	 CibFuID4nbj6OAYkc1NMOYpqf8N3QkVei13FupO8PIGWwd7LMLFew2Gjxu4KdVUg1O
+	 DkTKaYgXxxbbsiX0+w7BLz0w/qJZtmL94y+JVE7CzC9ZZx6kQNyfp3ET4nPZ9scvga
+	 Dn2CpPG5UqY1IGli6LRySAYz4YmMRdxPp1TJllyeOcCWdL2WRYt94l/h9D04DE4+Uc
+	 MGgZG1jWvtMVVXZVVriPuhmhhcn2IesGNkPl/Ho6XBcy/wvha6uvWcQ0AKEDdQ4Ukm
+	 HjjZtlQLlu8FQ==
+Date: Tue, 22 Jul 2025 14:29:19 +0100
+From: Will Deacon <will@kernel.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Kees Cook <kees@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+	Michal Wilczynski <michal.wilczynski@intel.com>,
+	Juergen Gross <jgross@suse.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Roger Pau Monne <roger.pau@citrix.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Usama Arif <usama.arif@bytedance.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Thomas Huth <thuth@redhat.com>, Brian Gerst <brgerst@gmail.com>,
+	kvm@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net,
+	platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
+	linux-mm@kvack.org, Ingo Molnar <mingo@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
+	kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH v3 04/13] x86: Handle KCOV __init vs inline mismatches
+Message-ID: <aH-SL2V2bSPkJ18o@willie-the-truck>
+References: <20250717231756.make.423-kees@kernel.org>
+ <20250717232519.2984886-4-kees@kernel.org>
+ <aHoHkDvvp4AHIzU1@kernel.org>
+ <202507181541.B8CFAC7E@keescook>
+ <CAMj1kXGAwjChyFvjQcTbL8dFXkFWnn9n47bkN7FP=+EsLNsJdg@mail.gmail.com>
+ <aH42--h-ARsvX5Wk@willie-the-truck>
+ <202507211311.8DAC4C7@keescook>
+ <202507211349.D93679FB25@keescook>
+ <CAMj1kXGoy7D+_hKyQrT_uXdjuFMYGUEMDYdRf6mx69PLeuBQQg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250722132826.707087-1-tmichalec@google.com>
-Subject: [PATCH] platform/chrome: cros_ec_typec: Check ec platform device pointer
-From: Tomasz Michalec <tmichalec@google.com>
-To: Benson Leung <bleung@chromium.org>, 
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>, Jameson Thies <jthies@google.com>, 
-	Andrei Kuchynski <akuchynski@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>
-Cc: Guenter Roeck <groeck@chromium.org>, Konrad Adamczyk <konrada@google.com>, 
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	chromeos-krk-upstreaming@google.com, Tomasz Michalec <tmichalec@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXGoy7D+_hKyQrT_uXdjuFMYGUEMDYdRf6mx69PLeuBQQg@mail.gmail.com>
 
-It is possible that parent device for cros_ec_typec device is already
-available, but ec pointer in parent driver data isn't populated yet. It
-may happen when cros_typec_probe is running in parallel with
-cros_ec_register. This leads to NULL pointer dereference when
-cros_typec_probe tries to get driver data from typec->ec->ec->dev.
+On Tue, Jul 22, 2025 at 04:55:47PM +1000, Ard Biesheuvel wrote:
+> On Tue, 22 Jul 2025 at 06:49, Kees Cook <kees@kernel.org> wrote:
+> >
+> > On Mon, Jul 21, 2025 at 01:14:36PM -0700, Kees Cook wrote:
+> > > On Mon, Jul 21, 2025 at 01:47:55PM +0100, Will Deacon wrote:
+> > > > On Sun, Jul 20, 2025 at 04:10:01PM +1000, Ard Biesheuvel wrote:
+> > > > > On Sat, 19 Jul 2025 at 08:51, Kees Cook <kees@kernel.org> wrote:
+> > > > > > On Fri, Jul 18, 2025 at 11:36:32AM +0300, Mike Rapoport wrote:
+> > > > > > > On Thu, Jul 17, 2025 at 04:25:09PM -0700, Kees Cook wrote:
+> > > > > > > > When KCOV is enabled all functions get instrumented, unless the
+> > > > > > > > __no_sanitize_coverage attribute is used. To prepare for
+> > > > > > > > __no_sanitize_coverage being applied to __init functions, we have to
+> > > > > > > > handle differences in how GCC's inline optimizations get resolved. For
+> > > > > > > > x86 this means forcing several functions to be inline with
+> > > > > > > > __always_inline.
+> > > > > > > >
+> > > > > > > > Signed-off-by: Kees Cook <kees@kernel.org>
+> > > > > > >
+> > > > > > > ...
+> > > > > > >
+> > > > > > > > diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+> > > > > > > > index bb19a2534224..b96746376e17 100644
+> > > > > > > > --- a/include/linux/memblock.h
+> > > > > > > > +++ b/include/linux/memblock.h
+> > > > > > > > @@ -463,7 +463,7 @@ static inline void *memblock_alloc_raw(phys_addr_t size,
+> > > > > > > >                                       NUMA_NO_NODE);
+> > > > > > > >  }
+> > > > > > > >
+> > > > > > > > -static inline void *memblock_alloc_from(phys_addr_t size,
+> > > > > > > > +static __always_inline void *memblock_alloc_from(phys_addr_t size,
+> > > > > > > >                                             phys_addr_t align,
+> > > > > > > >                                             phys_addr_t min_addr)
+> > > > > > >
+> > > > > > > I'm curious why from all memblock_alloc* wrappers this is the only one that
+> > > > > > > needs to be __always_inline?
+> > > > > >
+> > > > > > Thread-merge[1], adding Will Deacon, who was kind of asking the same
+> > > > > > question.
+> > > > > >
+> > > > > > Based on what I can tell, GCC has kind of fragile inlining logic, in the
+> > > > > > sense that it can change whether or not it inlines something based on
+> > > > > > optimizations. It looks like the kcov instrumentation being added (or in
+> > > > > > this case, removed) from a function changes the optimization results,
+> > > > > > and some functions marked "inline" are _not_ inlined. In that case, we end up
+> > > > > > with __init code calling a function not marked __init, and we get the
+> > > > > > build warnings I'm trying to eliminate.
+> > > >
+> > > > Got it, thanks for the explanation!
+> > > >
+> > > > > > So, to Will's comment, yes, the problem is somewhat fragile (though
+> > > > > > using either __always_inline or __init will deterministically solve it).
+> > > > > > We've tripped over this before with GCC and the solution has usually
+> > > > > > been to just use __always_inline and move on.
+> > > > > >
+> > > > >
+> > > > > Given that 'inline' is already a macro in the kernel, could we just
+> > > > > add __attribute__((__always_inline__)) to it when KCOV is enabled?
+> > > >
+> > > > That sounds like a more robust approach and, by the sounds of it, we
+> > > > could predicate it on GCC too. That would also provide a neat place for
+> > > > a comment describing the problem.
+> > > >
+> > > > Kees, would that work for you?
+> > >
+> > > That seems like an extremely large hammer for this problem, IMO. It
+> > > feels like it could cause new strange corner cases. I'd much prefer the
+> > > small fixes I've currently got since it keeps it focused. KCOV is
+> > > already enabled for "allmodconfig", so any new instances would be found
+> > > very quickly, etc. (And GCC's fragility in this regard has already been
+> > > exposed to these cases -- it's just that I changed one of the
+> > > combinations of __init vs inline vs instrumentation.
+> > >
+> > > I could give it a try, if you really prefer the big hammer approach...
+> >
+> > I gave it a try -- it fails spectacularly. ;) Let's stick to my small
+> > fixes instead?
+> >
+> 
+> Fair enough :-)
 
-Check if typec->ec->ec is set before using it in cros_typec_probe.
+(but please add the helpful explanation you provided to the commit message!)
 
-Signed-off-by: Tomasz Michalec <tmichalec@google.com>
----
- drivers/platform/chrome/cros_ec_typec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform/chrome/cros_ec_typec.c
-index 7678e3d05fd3..1ef181614d4a 100644
---- a/drivers/platform/chrome/cros_ec_typec.c
-+++ b/drivers/platform/chrome/cros_ec_typec.c
-@@ -1271,7 +1271,7 @@ static int cros_typec_probe(struct platform_device *pdev)
- 	typec->dev = dev;
- 
- 	typec->ec = dev_get_drvdata(pdev->dev.parent);
--	if (!typec->ec) {
-+	if (!typec->ec || !typec->ec->ec) {
- 		dev_err(dev, "couldn't find parent EC device\n");
- 		return -ENODEV;
- 	}
--- 
-2.50.0.727.gbf7dc18ff4-goog
-
+Will
 
