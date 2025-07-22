@@ -1,280 +1,229 @@
-Return-Path: <linux-kernel+bounces-740030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81035B0CED7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 02:48:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BC7BB0CEDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 02:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B62F66C5A0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 00:48:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AC7A6C6FB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 00:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25FE57BAEC;
-	Tue, 22 Jul 2025 00:48:34 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D60313C81B;
+	Tue, 22 Jul 2025 00:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Rnvxcgk8"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2077.outbound.protection.outlook.com [40.107.237.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7FEE1853
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 00:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753145313; cv=none; b=tnnP9NVydM/ibCfQiJK3utmHcBiUUovLWfTEuQuMXT0LP2xc/RV+ssT/5CY7R1MaChM6jmep7HsE0H6APtuLqI3jHiyXby2cD+3328TUgD9BQ55Qj9MTYtYc1pkp8AXIwoFKlEs8muPxZLJmCQ3xloQJvrpuKzd1pPb9L9IzC4Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753145313; c=relaxed/simple;
-	bh=Xy0PDqev0d68CuYCFm+zN4FjMB/RbfjqXQ/KokFjoFM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=P7wehjJJxrxdjCDd/A8XglvyFKqVdqAzWeXnOmfYNgAYjxhTanxO7k8HX4yJJHFxL28n0WF73eBc+ZFFFDuWrz7sF/cCAgVrVUtFlsgNCPqhDKZmFOtnundI4W9Lgv3tqUKdPXLOm34h2L+6Z2qC9Xxkir50nxTvlb0iQJxNyL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-87c30329a56so385598739f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 17:48:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753145311; x=1753750111;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ov3cBdx0uXH/MSU9o+zl21AAqKnIA/RqYihem1aVyJw=;
-        b=gOoRHdfgYpBNTqXRnis6StTEBi9ut4Q3oV1Vt0gckBQQgNUWAephynANu+E/Nc688y
-         YTNLAhRTjASWh5TpkyVp/W5LWkAbwiJd80TOiqjH6Jf6wb6K+APhguo/5sHbyE8+ex2X
-         oVFFxD+3j5XnSOnsaYTJ58NmoRSjs+GmC9Igiyz/mc6pyEECjvz4FoQRn+GqfaoSm7vk
-         p3Tafaw2D6H+Kiy0omNtmfjgfdOuyI+cmLYZsPtooKMqQ0A034uxkm6MBWdk++oFy2IW
-         Qf+9T+5owtIi0t1/jiNfRmkxKzJ004HQNqgOKejR/pB7SvBRZi+O27a9sdzogwzF3K0N
-         aCKA==
-X-Forwarded-Encrypted: i=1; AJvYcCVvLrrMefz7fu+ezSHLJl6NFLG2h9Dr7gOZD+H4/cTJg7kNYsculip/Bejl70Lal0rsOYnIKR3QowB5AoU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygzpCCRO3XmCDAw+R48OElS/j2lvZ85lA80byetj82Q1ofGtbw
-	OPK4THiKxCVnUEEBhyuUOrCK/nicqMqr2xerebfFwB9PPQS+8IT1T9Aw6aBRAyreDmmooLylkyH
-	7mEumtA4gphme0oQBLqGlbbQACHwv1IWhKSZzFjZPVx3EYPb4CFzGzmU8bK4=
-X-Google-Smtp-Source: AGHT+IEPSXfP/VfUbCdWq2taTKh7DbG/SM7TZxb+E9ZonANhj/7trQOrzjJcnoykjYTzZEwqDmGGmX9kvGT/zi8CSlNFO+4pxZFV
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60AB12F50;
+	Tue, 22 Jul 2025 00:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753145364; cv=fail; b=Rrcoa/X7G5uNTeYe3B5F/o24rAaCi8MBbqm2G2tKpAJ+HmPW6q4IK9eHiZvoxkZDFdvXArH4bnm5RbzD+JapEfh20QbA9e6FX+t7XlG87AGAZdu0aDASu/h55dFMB51HPNkKH/SA9zeBEq9SzXuKUO0Si1x5ue1WSrGsbnIpBf8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753145364; c=relaxed/simple;
+	bh=xlm0OhVD/CTIKH0Qs61uNWtW6Zpt58ZCY8MBdbB6YDM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=PK2OCstppXfQV4XVeQ3IrRGdrXsA50F8yraQS0KCJZoZpdU1A/e5I+SqY9BTXpKNEu2JoOiQFj6xWniYszc+P4VibbgGHs1I+jjpKsWBg+Z6cnfJDnvmrgntbPhGymoD6SB4i3q1pD8FFH+UVxmC/kuqnxtfMxfnBpttACFXJSk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Rnvxcgk8; arc=fail smtp.client-ip=40.107.237.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LueGKxqZ+kRBRyc/+b1xWm30DgfMc+tq8YJvEo4ihRftQGJzOomSJUKN5dUZNNv9abmdYOij991VKMXDLFAtz3Z853Xo1vn8hWyEFOZOflpbyZbO91l6ffb3yShnvmuQp8S2Aj4ocZPoo59SVi91G/gHz0DjVC+7qqGO34zC7SdAPUbyjwtEZ/9YNQLoo+ykbGsQyfK8QHZpDYJxgxFpgsOuuu8aOVEH+vVsNvuR0rf68aR+tyneduEYIIkPY96L8L05/bEBxds5a/7TSjXrol5tFwGNV2C9q7XKmLluMcL2/5Tls0Jcc3RPLbLccCwKneCe88rBzkqNq7l8RO4h2Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tu18ogzMJNTZ9pdtntO2WV9nNs9m2zsqI51OiBulFWU=;
+ b=rlOrG/C5LUV6IfHQO8ak+ipuFDtWExMEwbTwz8uV4wxspzeNGsj4E2cfP5Lr6Ysq2abJS2C9Ahjaf0WVNyqaaRK5A0zgHDaNMZAnE2yXBVxT1T7n4sm6mGoXAtkJfVFpeKalCgfEI5g2jvx6Pqn/tcFLFlEE3Fotk0aq+UH6Pkex+BU6M7RuD1t4uY2ubm7WcM18H4MJXk6E1Egxo9zVqRmZ/MNPsHwsm4yLQTb31FJEJozUzjK/qR2oP+Vb6RTLFS6m2Xi2iSBf8AFcrV3tvD6ApRJ+c26GE36RtQK2Y7gShjABo1b1Rau1+sVhAwe4SsxUUy5oZUw0rfZpCNmp8g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tu18ogzMJNTZ9pdtntO2WV9nNs9m2zsqI51OiBulFWU=;
+ b=Rnvxcgk84cz3z7mAeWgy0BHeDbwDKcpb7vz+X6A+bsFPLk9alZ3KlUatSRbTi1oszMldTNd2l/6ko2QnNzcSdBZE+3qqiI8F8MYRjaX1chvmEI1Ug3ynaTLcHlK7DeLpelYBGE9zjol/zb84nt5Umnkbc4jJ35CvJ0y0ljaMygbGCDpEQVEQGjrZaqD0lwXNi2Wf68nBHkPHr7ZwaybtIGtAPusRpbNyXb4XM9xp3PgjjWYuwWqJSHXcpxSCLNAC5G9YwQN4NWR90YHRXzCAtC/2/zJ28GJ2z+E0g+csVirsjr5kV8CPCkbBk6uk8YjUViNAA2ero83m9JXaUTMKRw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
+ SA3PR12MB7808.namprd12.prod.outlook.com (2603:10b6:806:31b::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.24; Tue, 22 Jul
+ 2025 00:49:18 +0000
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe%3]) with mapi id 15.20.8943.029; Tue, 22 Jul 2025
+ 00:49:18 +0000
+Date: Tue, 22 Jul 2025 10:49:10 +1000
+From: Alistair Popple <apopple@nvidia.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Yonatan Maman <ymaman@nvidia.com>, 
+	=?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Leon Romanovsky <leon@kernel.org>, Lyude Paul <lyude@redhat.com>, 
+	Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Ben Skeggs <bskeggs@nvidia.com>, 
+	Michael Guralnik <michaelgur@nvidia.com>, Or Har-Toov <ohartoov@nvidia.com>, 
+	Daisuke Matsuda <dskmtsd@gmail.com>, Shay Drory <shayd@nvidia.com>, linux-mm@kvack.org, 
+	linux-rdma@vger.kernel.org, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Gal Shalom <GalShalom@nvidia.com>
+Subject: Re: [PATCH v2 1/5] mm/hmm: HMM API to enable P2P DMA for device
+ private pages
+Message-ID: <7lvduvov3rvfsgixbkyyinnzz3plpp3szxam46ccgjmh6v5d7q@zoz4k723vs3d>
+References: <20250718115112.3881129-1-ymaman@nvidia.com>
+ <20250718115112.3881129-2-ymaman@nvidia.com>
+ <aHpXXKTaqp8FUhmq@casper.infradead.org>
+ <20250718144442.GG2206214@ziepe.ca>
+ <aH4_QaNtIJMrPqOw@casper.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aH4_QaNtIJMrPqOw@casper.infradead.org>
+X-ClientProxiedBy: ME3PR01CA0013.ausprd01.prod.outlook.com
+ (2603:10c6:220:19e::15) To DS0PR12MB7726.namprd12.prod.outlook.com
+ (2603:10b6:8:130::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6a8b:b0:87c:155f:d0c with SMTP id
- ca18e2360f4ac-87c155f23d7mr1952432939f.0.1753145310897; Mon, 21 Jul 2025
- 17:48:30 -0700 (PDT)
-Date: Mon, 21 Jul 2025 17:48:30 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <687edfde.a70a0220.61950.0089.GAE@google.com>
-Subject: [syzbot] [bcachefs?] KASAN: slab-use-after-free Write in bch2_do_discards
-From: syzbot <syzbot+8e47e16c9fe5b95a3a88@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|SA3PR12MB7808:EE_
+X-MS-Office365-Filtering-Correlation-Id: 85b08ef6-2a1a-42d9-85d9-08ddc8b996b6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?PwyJGdfKqksh5WDx6VfQXyUNOyqpKex2GksjJ5GUCMzjcS4o1pkHaBBXGdxr?=
+ =?us-ascii?Q?R2XlvicuIeIcW1/HywvY1ucvOwl2+SE5SMDNI1QnXoNWo9KK9JYq6xR7tHyb?=
+ =?us-ascii?Q?JqEtRBJiYTxahI23atwdvQCpomCkY8JOaZxBWYfzS9rR7Zr6y8jPhxbswYXe?=
+ =?us-ascii?Q?Y84BIDYhlU5HImUaWnRwgBSIQhDQ4x1G8rzPDs0u13+FOVzAMhebEcobcR/2?=
+ =?us-ascii?Q?Fx9wYngUk3Hfh7rha8hpWYD1BnLuVdPwPqhNXxkxjd1lbJx1dWDfhLf/eM1u?=
+ =?us-ascii?Q?7wEAcP0i6ASNzqEnCq0ze6OtpT1iVp0uYOxVtlbi9m99qw8ACBQMWtcofoIB?=
+ =?us-ascii?Q?Yy5Jya3gWYvJutdx2cu6XxV+stk70AqO5Mej9ISP/lyh7ir9x/ADtu1hGvPc?=
+ =?us-ascii?Q?Xb58Wkz29rygSA4jfLe7GFHQPUA1ohaXjgAKXBBJ1idBwtVd12fujANbaM1C?=
+ =?us-ascii?Q?SXz1Nk3dNsvNSx4s/Y4bLtXLSuqVzZ6on6SqbpdUDyUKsOi2guYufCXRRp6S?=
+ =?us-ascii?Q?CdaYOLqda4MoPbr3082UBlYTRpP/zE5B3uxrbvj588H5FV89yo3VdT2PqaqZ?=
+ =?us-ascii?Q?i8zsef3xAZ6nMXsDaNkZCYWk1l46Mnd4RDzBBSgp+7F4rcIyw926ePPk5bNu?=
+ =?us-ascii?Q?IQG8t6ZJu+5fAqXqg2NcN9StisS4TqE9jCc1QtaPS+CsGyTpqlZ89P4XtX5a?=
+ =?us-ascii?Q?L6I2zrVAHxjDEOPDEsf/hsRP7zVZ8xTEj/YyuqlrUUgcLP7y2HIfy5Suh0xj?=
+ =?us-ascii?Q?QEZ2+mrgAV+Dlf/DEf6pqM+eSjCIO7bRdCDv95BLT+TQ38z+8cJcEdRzki/N?=
+ =?us-ascii?Q?XL2keTXIe+/A8Nhiy+u0Vo/F09FbvIytbS+z3FH53deYXR9rdOrSo/e+SssG?=
+ =?us-ascii?Q?AcNSApYlobu2hTIv8Jh6NlRpeBPTHVjvt75rKlMFd3QfojiyopiqNEjMp6xc?=
+ =?us-ascii?Q?ILAgJaWZ12JWCs3udDgB12tJ39ZF2offASVeF8uPjBv1m6S9NgFRoac9W4g3?=
+ =?us-ascii?Q?x4vTkcij09I7B0NoD8cbPtza1avk6290oIR9TfTGrWJjGKxZEjGt+ERpLflb?=
+ =?us-ascii?Q?odSSPporrlv4l1qUx8qm1Px1q03GOKj+N+xECRs5zYtxatY4Qdg8zHc8yQ34?=
+ =?us-ascii?Q?9etgcCoFzINMOKMuiZTU9/iIgWD3TzRTLFP2/7EQriYHDoF/FCTwXqnM83HK?=
+ =?us-ascii?Q?VnVR8emzCDII3Na0eQTRHwkI8Pv5CIpCuQjGD3USDo/3wigGgVhU7TrAO+vr?=
+ =?us-ascii?Q?gwc3QD23GbhIrySgwLzit2U26X4dlVx7amMMZhtsDAbbaxCWL+Q1eBg9HDUC?=
+ =?us-ascii?Q?adQxy7nCo/IamLSShH3Co5jgNQ85UGdEa5nPs34o7H32IPP+2NPmFbuITMwB?=
+ =?us-ascii?Q?3puKZxxmyND9F/SNkbptBo1eGf4j7Epnm38ntH2wHBe2LhpBhw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?8D6ftjIixqBnNlS9JGytKM9/NC/Uz18ZiRF42Kvm4QltHDEakl4jENCq2jTd?=
+ =?us-ascii?Q?paXoq0eKoVx43ZbEfHdvSY0pqS/7I/hjYSiGcuegQhAVxwFuaSF7HfQwE34n?=
+ =?us-ascii?Q?QPNiGwTAjMb8k47FchxaSp+nsBDhcpY3Pge2uLEh4r1RfX/7Qs1l032c6KLo?=
+ =?us-ascii?Q?s2wnmJpgFV933hzQFyBPTwJ4bnqpT0nE4UjLzm043h9zlUgGzk8ZNstWldfJ?=
+ =?us-ascii?Q?5ABcwJnyyM8APofkzcT+k4cKfVaTY4hjb/yr6DSE2WcaQPd6mYDl4tiTipA1?=
+ =?us-ascii?Q?z9Xw6OzA0MeS795u28X4ZN1u2XitAMj5cksBsiBRUjBXvU2HvYaFx+WKNDks?=
+ =?us-ascii?Q?4mnPCDyypqhyXGe4kesQUKOg+wafb3b0R0UfyoM3t2TBq0qXmTTROFUL5FKt?=
+ =?us-ascii?Q?TlQ6PqctWzRDE/oFvLb3oPqhiTBExpB8XPfYeemgW9Xz8SQClVL1OZRTYg/D?=
+ =?us-ascii?Q?uJPDJ9HAqJ2HZwIRANgu3QlhWusw0SeyzrWeux/Wtqi7SvkQNNn52n65IYI5?=
+ =?us-ascii?Q?89kuaTbhafcfIDdr2SiSk7or9WHW1YoXEL5aP+hHiBurTCcWjhfrwCXrJ5fd?=
+ =?us-ascii?Q?EzzUfYoJyv0jEZ9szxEx3UIo0XrR2V8XcrpRAfEMGc2/Q/mKJYqxA5favp+x?=
+ =?us-ascii?Q?fTqyBUVgnj01F7Xx5qTjtTfqOFro04dLrmBjLnzTYCnppi7eDoE8argcZcqA?=
+ =?us-ascii?Q?FvyFO7iczIG/mO45gd4UnYMEeab+f4Gbl5awrxtT1t7rivDS3sn7yqEFn2E5?=
+ =?us-ascii?Q?7Rk3dpezAQCoyJvJ8BSGv6+BoSKzLFKfDHpdxpcNUZjeRRZ9O/jcLtFL7Y5C?=
+ =?us-ascii?Q?8c2tbWm0LFmvm1a/F4ZMzBEXK5EaYqxr/JiUjEPby8xeeJHlXABIR1+J5g28?=
+ =?us-ascii?Q?IJGYunkvC8Es4xWKkQfC1vpEaaaOfQvJ/wJqjHmsL9k783/JcUjxq/R0YkM1?=
+ =?us-ascii?Q?TtahbHFQ0GegZ7uIXqAxq9YujtoAqwtd3m5XshDEp5/BuFxb4K0d4OBa4iA3?=
+ =?us-ascii?Q?oIpj/1dsEbfq8TeuuImVpA9+nwxnTCoWSdYsnlcTfBY2Qep1s3pDXNmSqhkF?=
+ =?us-ascii?Q?dteGNtuF8Wctyp16I9WbDWWo6NUsyzUTltuHfy4im0ifXC1gmDdd644L3q2g?=
+ =?us-ascii?Q?DApn6OTwzjEyiUXIrkPDMqwAVoyiLoaQaczUNC9GVQA/O6+I4Pv1lS3bxi0R?=
+ =?us-ascii?Q?w7UcV4KlNd5bbmh8dS5dRZOv4woGcGTW/wkKnTa8uSvzcRe9uBdV7p+aXTpQ?=
+ =?us-ascii?Q?a+Jq0nS1EiqyQTj7lNyETaclA6/2c88ffWtdXwjvFv/Pg2Uj7bAVs1lF1JVx?=
+ =?us-ascii?Q?DOURXxwUWqldmFinOPJZoHdmYqRFeklxtyik9iT+qzgFyGtHHpVGYRW3EErw?=
+ =?us-ascii?Q?IG2Pr0E3W5SA84IJZJHtBSwVbmFjn9M1lGamEWqiJHXs+DbVAqZaR2KzGUK0?=
+ =?us-ascii?Q?AGOpWbT9Pvrs6PebJ7p8DY0FKQrRpsWY1qa8dkxaUTlCSouxjamW17Mu3pHx?=
+ =?us-ascii?Q?5iN1mlbKi0u74RtawTUhzfrGimVqaHxHOzYIo0ArZDjYKIdH/pU8n5htUd5b?=
+ =?us-ascii?Q?gLE89Qbt3yy2JH7SIMzGKSJVfCTKcph8CyEYFmAr?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 85b08ef6-2a1a-42d9-85d9-08ddc8b996b6
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2025 00:49:18.2980
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gkCAtAczPFv3Oj7KySf+LT8GdQ9ccMaUSGL+1NVo/IkrXcPl/JCZLxYl51PkHtwHqM0PaecblKgMXsQlBa9/Vg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7808
 
-Hello,
+On Mon, Jul 21, 2025 at 02:23:13PM +0100, Matthew Wilcox wrote:
+> On Fri, Jul 18, 2025 at 11:44:42AM -0300, Jason Gunthorpe wrote:
+> > On Fri, Jul 18, 2025 at 03:17:00PM +0100, Matthew Wilcox wrote:
+> > > On Fri, Jul 18, 2025 at 02:51:08PM +0300, Yonatan Maman wrote:
+> > > > +++ b/include/linux/memremap.h
+> > > > @@ -89,6 +89,14 @@ struct dev_pagemap_ops {
+> > > >  	 */
+> > > >  	vm_fault_t (*migrate_to_ram)(struct vm_fault *vmf);
+> > > >  
+> > > > +	/*
+> > > > +	 * Used for private (un-addressable) device memory only. Return a
+> > > > +	 * corresponding PFN for a page that can be mapped to device
+> > > > +	 * (e.g using dma_map_page)
+> > > > +	 */
+> > > > +	int (*get_dma_pfn_for_device)(struct page *private_page,
+> > > > +				      unsigned long *dma_pfn);
+> > > 
+> > > This makes no sense.  If a page is addressable then it has a PFN.
+> > > If a page is not addressable then it doesn't have a PFN.
+> > 
+> > The DEVICE_PRIVATE pages have a PFN, but it is not usable for
+> > anything.
+> 
+> OK, then I don't understand what DEVICE PRIVATE means.
+> 
+> I thought it was for memory on a PCIe device that isn't even visible
+> through a BAR and so the CPU has no way of addressing it directly.
 
-syzbot found the following issue on:
+Correct.
 
-HEAD commit:    89be9a83ccf1 Linux 6.16-rc7
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11931f22580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9ea24e637865d5be
-dashboard link: https://syzkaller.appspot.com/bug?extid=8e47e16c9fe5b95a3a88
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15931f22580000
+> But now you say that it has a PFN, which means it has a physical
+> address, which means it's accessible to the CPU.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/73db8bd9dfbe/disk-89be9a83.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/265feaaa0bee/vmlinux-89be9a83.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a605d08a17df/bzImage-89be9a83.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/a06aa633e5b0/mount_2.gz
+Having a PFN doesn't mean it's actually accessible to the CPU. It is a real
+physical address in the CPU address space, but it is a completely bogus/invalid
+address - if the CPU actually tries to access it will cause a machine check
+or whatever other exception gets generated when accessing an invalid physical
+address.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8e47e16c9fe5b95a3a88@syzkaller.appspotmail.com
+Obviously we're careful to avoid that. The PFN is used solely to get to/from a
+struct page (via pfn_to_page() or page_to_pfn()).
 
-==================================================================
-BUG: KASAN: slab-use-after-free in instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
-BUG: KASAN: slab-use-after-free in atomic_long_inc_return include/linux/atomic/atomic-instrumented.h:3609 [inline]
-BUG: KASAN: slab-use-after-free in bch2_dev_get fs/bcachefs/sb-members.h:114 [inline]
-BUG: KASAN: slab-use-after-free in bch2_get_next_dev fs/bcachefs/sb-members.h:145 [inline]
-BUG: KASAN: slab-use-after-free in bch2_do_discards+0x319/0x570 fs/bcachefs/alloc_background.c:1984
-Write of size 8 at addr ffff8880322ee040 by task kworker/u9:1/5163
+> So what is it?
 
-CPU: 1 UID: 0 PID: 5163 Comm: kworker/u9:1 Not tainted 6.16.0-rc7-syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Workqueue: bcachefs_journal journal_write_done
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xcd/0x610 mm/kasan/report.c:480
- kasan_report+0xe0/0x110 mm/kasan/report.c:593
- check_region_inline mm/kasan/generic.c:183 [inline]
- kasan_check_range+0x100/0x1b0 mm/kasan/generic.c:189
- instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
- atomic_long_inc_return include/linux/atomic/atomic-instrumented.h:3609 [inline]
- bch2_dev_get fs/bcachefs/sb-members.h:114 [inline]
- bch2_get_next_dev fs/bcachefs/sb-members.h:145 [inline]
- bch2_do_discards+0x319/0x570 fs/bcachefs/alloc_background.c:1984
- journal_write_done+0xee4/0x1430 fs/bcachefs/journal_io.c:1821
- process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3238
- process_scheduled_works kernel/workqueue.c:3321 [inline]
- worker_thread+0x6c8/0xf10 kernel/workqueue.c:3402
- kthread+0x3c5/0x780 kernel/kthread.c:464
- ret_from_fork+0x5d7/0x6f0 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+IMHO a hack, because obviously we shouldn't require real physical addresses for
+something the CPU can't actually address anyway and this causes real problems
+(eg. it doesn't actually work on anything other than x86_64). There's no reason
+the "PFN" we store in device-private entries couldn't instead just be an index
+into some data structure holding pointers to the struct pages. So instead of
+using pfn_to_page()/page_to_pfn() we would use device_private_index_to_page()
+and page_to_device_private_index().
 
-Allocated by task 6436:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
- kmalloc_noprof include/linux/slab.h:905 [inline]
- kzalloc_noprof include/linux/slab.h:1039 [inline]
- __bch2_dev_alloc+0xb5/0xff0 fs/bcachefs/super.c:1487
- bch2_dev_alloc+0xb8/0x190 fs/bcachefs/super.c:1558
- bch2_fs_alloc+0x19ca/0x23f0 fs/bcachefs/super.c:1051
- bch2_fs_open+0x838/0xc50 fs/bcachefs/super.c:2433
- bch2_fs_get_tree+0xcb0/0x1b70 fs/bcachefs/fs.c:2472
- vfs_get_tree+0x8e/0x340 fs/super.c:1804
- do_new_mount fs/namespace.c:3902 [inline]
- path_mount+0x1414/0x2020 fs/namespace.c:4226
- do_mount fs/namespace.c:4239 [inline]
- __do_sys_mount fs/namespace.c:4450 [inline]
- __se_sys_mount fs/namespace.c:4427 [inline]
- __x64_sys_mount+0x28d/0x310 fs/namespace.c:4427
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+We discussed this briefly at LSFMM, I think your suggestion for a data structure
+was to use a maple tree. I'm yet to look at this more deeply but I'd like to
+figure out where memdescs fit in this picture too.
 
-Freed by task 6436:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:576
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2381 [inline]
- slab_free mm/slub.c:4643 [inline]
- kfree+0x2b4/0x4d0 mm/slub.c:4842
- kobject_cleanup lib/kobject.c:689 [inline]
- kobject_release lib/kobject.c:720 [inline]
- kref_put include/linux/kref.h:65 [inline]
- kobject_put+0x1e7/0x5a0 lib/kobject.c:737
- bch2_fs_free+0x225/0x420 fs/bcachefs/super.c:728
- bch2_fs_get_tree+0xd5e/0x1b70 fs/bcachefs/fs.c:2604
- vfs_get_tree+0x8e/0x340 fs/super.c:1804
- do_new_mount fs/namespace.c:3902 [inline]
- path_mount+0x1414/0x2020 fs/namespace.c:4226
- do_mount fs/namespace.c:4239 [inline]
- __do_sys_mount fs/namespace.c:4450 [inline]
- __se_sys_mount fs/namespace.c:4427 [inline]
- __x64_sys_mount+0x28d/0x310 fs/namespace.c:4427
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+ - Alistair
 
-Last potentially related work creation:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_record_aux_stack+0xa7/0xc0 mm/kasan/generic.c:548
- insert_work+0x36/0x230 kernel/workqueue.c:2183
- __queue_work+0x97e/0x10f0 kernel/workqueue.c:2341
- queue_work_on+0x1a4/0x1f0 kernel/workqueue.c:2392
- bch2_btree_node_read_done+0x2bf9/0x4e50 fs/bcachefs/btree_io.c:1156
- btree_node_read_work+0x2c9/0xe00 fs/bcachefs/btree_io.c:1440
- bch2_btree_node_read+0x891/0xe20 fs/bcachefs/btree_io.c:1865
- __bch2_btree_root_read fs/bcachefs/btree_io.c:1906 [inline]
- bch2_btree_root_read+0x2d1/0x480 fs/bcachefs/btree_io.c:1928
- read_btree_roots fs/bcachefs/recovery.c:615 [inline]
- bch2_fs_recovery+0x2271/0x48a0 fs/bcachefs/recovery.c:1006
- bch2_fs_start+0xdd0/0x1450 fs/bcachefs/super.c:1213
- bch2_fs_get_tree+0xd9b/0x1b70 fs/bcachefs/fs.c:2488
- vfs_get_tree+0x8e/0x340 fs/super.c:1804
- do_new_mount fs/namespace.c:3902 [inline]
- path_mount+0x1414/0x2020 fs/namespace.c:4226
- do_mount fs/namespace.c:4239 [inline]
- __do_sys_mount fs/namespace.c:4450 [inline]
- __se_sys_mount fs/namespace.c:4427 [inline]
- __x64_sys_mount+0x28d/0x310 fs/namespace.c:4427
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff8880322ee000
- which belongs to the cache kmalloc-4k of size 4096
-The buggy address is located 64 bytes inside of
- freed 4096-byte region [ffff8880322ee000, ffff8880322ef000)
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x322e8
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000040 ffff88801b842140 dead000000000100 dead000000000122
-raw: 0000000000000000 0000000000040004 00000000f5000000 0000000000000000
-head: 00fff00000000040 ffff88801b842140 dead000000000100 dead000000000122
-head: 0000000000000000 0000000000040004 00000000f5000000 0000000000000000
-head: 00fff00000000003 ffffea0000c8ba01 00000000ffffffff 00000000ffffffff
-head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 1, tgid 1 (swapper/0), ts 32707965621, free_ts 0
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1c0/0x230 mm/page_alloc.c:1704
- prep_new_page mm/page_alloc.c:1712 [inline]
- get_page_from_freelist+0x1321/0x3890 mm/page_alloc.c:3669
- __alloc_frozen_pages_noprof+0x261/0x23f0 mm/page_alloc.c:4959
- alloc_pages_mpol+0x1fb/0x550 mm/mempolicy.c:2419
- alloc_slab_page mm/slub.c:2451 [inline]
- allocate_slab mm/slub.c:2619 [inline]
- new_slab+0x23b/0x330 mm/slub.c:2673
- ___slab_alloc+0xd9c/0x1940 mm/slub.c:3859
- __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3949
- __slab_alloc_node mm/slub.c:4024 [inline]
- slab_alloc_node mm/slub.c:4185 [inline]
- __kmalloc_cache_noprof+0xfb/0x3e0 mm/slub.c:4354
- kmalloc_noprof include/linux/slab.h:905 [inline]
- kzalloc_noprof include/linux/slab.h:1039 [inline]
- kobject_uevent_env+0x265/0x1870 lib/kobject_uevent.c:540
- version_sysfs_builtin kernel/params.c:877 [inline]
- param_sysfs_builtin_init+0xd9/0x4c0 kernel/params.c:985
- do_one_initcall+0x123/0x6e0 init/main.c:1274
- do_initcall_level init/main.c:1336 [inline]
- do_initcalls init/main.c:1352 [inline]
- do_basic_setup init/main.c:1371 [inline]
- kernel_init_freeable+0x5c2/0x900 init/main.c:1584
- kernel_init+0x1c/0x2b0 init/main.c:1474
- ret_from_fork+0x5d7/0x6f0 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-page_owner free stack trace missing
-
-Memory state around the buggy address:
- ffff8880322edf00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff8880322edf80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff8880322ee000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                           ^
- ffff8880322ee080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff8880322ee100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> > This is effectively converting from a DEVICE_PRIVATE page to an actual
+> > DMA'able address of some kind. The DEVICE_PRIVATE is just a non-usable
+> > proxy, like a swap entry, for where the real data is sitting.
+> > 
+> > Jason
+> > 
 
