@@ -1,249 +1,222 @@
-Return-Path: <linux-kernel+bounces-740695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0B90B0D804
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:19:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77E7CB0D80F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:22:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07B923BB3D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:18:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36E951C26ADC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:22:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0242F2E0B45;
-	Tue, 22 Jul 2025 11:19:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E272E4259;
+	Tue, 22 Jul 2025 11:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a9OY86lF"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="y03WOVm4"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5148F40;
-	Tue, 22 Jul 2025 11:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2DBC2E3B07;
+	Tue, 22 Jul 2025 11:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753183148; cv=none; b=gmYzm1cs+GUTa9GsueIPMUIi695/yoGrcQnF5wVag0wKh1Hj15zIE8mGvhekrizvp179T3ZL/vdWBvcDjwGCWO7s25xzODnSI5FWO6qaTFQ8DMihiIupOV5GIahrvSSXchS0sxvHFQTsEpl80knh1t9Ny+E2XhDwBUktp4hSl10=
+	t=1753183311; cv=none; b=K/QpmQW5C4+7sbwkyFWcI2cy+Td4x+UcBVCiWmx1qXRagLJck/kAZsVvaCr97ASyQj/6p9WfOjqLNO4Ue+AJ8mxM2lkxb89tjdfGRdbTQRb8VlWMhX9Ry9lcZUirkVpGqBzavRMeY3Jssg60VRA3OkhaFPY3fYket0lgCEqxXBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753183148; c=relaxed/simple;
-	bh=/pi07YCWUK9NhuZCP73XtyvuKXHE+FC+o9jjLgf76MU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HmcYBakVlLj63/8O6APinlqJmmTvs1WhqLDy+SfAk/GAlhgL8XFMjQb+VtODtfKZRDU2BONe4Qq+/ERqaZTgLpAoclHDHvLJfK8AQOFtDcvLskvL+IfhY4DTTj0QLNqT5rEsQJJnqn78d8a1MW+pTAawv6mrrBtGeMHDQ70Mbvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a9OY86lF; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a510432236so3203955f8f.0;
-        Tue, 22 Jul 2025 04:19:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753183145; x=1753787945; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wEurD6iXsPr7RepkDOyveYJGKHwIE5RRMqk4xOBcUeM=;
-        b=a9OY86lF2FI4Byrs5UoOZZpejQX4HMhMcTI/V3ReGVLYfByY1kCI+HxnDVnL63Oq0P
-         OrQ34sQjvaD5Id42Ix+2r7knDsa9+7zZPwnYOA+q+ksebxjhE6s3e+wpgBCDrwSaWVAc
-         9GT3AhdWNm2cP9N9zlpf+yyvt26k7Io/ZQcHmWp0QMZwcVa8ny47XfrQiZbIHB44JfQn
-         Ay23Yv7TpVuYZ2RLxe59Jr1DReYVCMPd62/22eMwyHy6oVsxyDMGdViooficFyCawWj/
-         +NiQHHYkfa5RnCD8q7WuQJvzoSNAi+779uUOPt6srq+yQl3s9x9XWhtboWwiBh0shzkb
-         4ZLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753183145; x=1753787945;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wEurD6iXsPr7RepkDOyveYJGKHwIE5RRMqk4xOBcUeM=;
-        b=Wt7/+fKSWDOYEpaeOL3ogS/jWZlUKaDV0GqTvEaGQiF1rQM0SUqfNwHAh0X+WOtXOC
-         PZlrZKq9ugOEe8QfpCfF5jWubRr+puYzHERO3tGvmrRsPrp8SWPtPmH6fzGGUoZOc22C
-         ON5OeLWp3HjbmAmqW0+YVpJ7tzv6ewr78GHkOhDZMD/LYGfM74yRBHRYzjUy7g6GrcSY
-         ldSwPYFJ1GS6JEMUGJd9toYaMBhbA33JxsQybRtZSBxGPHaZvT93LcCY3tYVKqDobRZO
-         sSJjeA4xgszdBM3DYkLribONT3buhrwg9+8OyY8azEXGuCu27JHolJw4Gzku0j1U51sG
-         gnVw==
-X-Forwarded-Encrypted: i=1; AJvYcCWtLnsidzMJq0fRTof94BZFavg34A7/Ao53AkaiPB2BETeSyIQE8SJGv4hCw1ULQaYZwwjkEYNmFg2E8A==@vger.kernel.org, AJvYcCXosLsctGtsyEuYv3B76Ny+BHqVg1xqnQ5d1N7vLCthASp/sPqBWPlXn9BVvDXta4U0dBrI6P9s4dipATCO@vger.kernel.org, AJvYcCXxyxyVjMQ73enpvLkDNDjCzZ2Q4S1vAUpy15tu4VDZI++h4hSN7sUWkjEHL7qyEwSblGPfeUrR@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvoP4GtERjr/jP5fIG1a92aPF1s/rDcftzFnjtkskcwBKOpte+
-	qEDtZml5OEu4sKiYxK74EJJl2ouYi3dPqJkSPIVN6zwAxcAtsXbED5dW
-X-Gm-Gg: ASbGncu3uyY5beUDZluIChgtCIicc4XYQxwfSz5itDlfN2SZfM370AQyolQNoGJIFQM
-	9u9hV01G+E9IXHNp9Pxtwy8uSCjMd4AxvCcUNWZRR6jCGr38LfNDAq3b7a8TDPu28KJK9aSxStZ
-	SUH6Qqn+F7YwdiU1zTWCbADVEzspkZlODuOJ17dPaEOe4EMYxfsXslzmX31qs35CmmmM8CRO2c7
-	+E5TMDjP/p/AV+mgg4vL//d46nDytGhoeX6Gd1qasZk7eppMm1Ki/xZMdbreX4+owFDXlMYF0Pa
-	Kc+Ax/DFGQ4Obx3e5kofX/OGMBInAFTdSm4j4G1d/sea/w5GV+fHGt+AO+aR8D4+py5RWQTBLcd
-	02txGqth4zdgJEoNCels=
-X-Google-Smtp-Source: AGHT+IF6XPEcSkqdIT7aDFpbGYg19VkOPLerg36vUxXct9CB8PNS8G+//5b23f6j4/cqnq91dQ5iZA==
-X-Received: by 2002:a05:6000:3102:b0:3a4:ec23:dba5 with SMTP id ffacd0b85a97d-3b60e4c910dmr17528503f8f.5.1753183144331;
-        Tue, 22 Jul 2025 04:19:04 -0700 (PDT)
-Received: from gmail.com ([2a02:c7c:f4f0:900:2e21:a766:f429:7a71])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca2c013sm13179175f8f.33.2025.07.22.04.19.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 04:19:03 -0700 (PDT)
-Date: Tue, 22 Jul 2025 12:19:01 +0100
-From: Qasim Ijaz <qasdev00@gmail.com>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: jikos@kernel.org, bentiss@kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Dmitry Savin <envelsavinds@gmail.com>
-Subject: Re: [PATCH RESEND] HID: multitouch: fix slab out-of-bounds access in
- mt_report_fixup()
-Message-ID: <aH9zl18IqvL7l9pX@gmail.com>
-References: <20250722080003.3605-1-qasdev00@gmail.com>
- <c90e88a4-7fff-49fa-8a6f-24f3671d9390@kernel.org>
+	s=arc-20240116; t=1753183311; c=relaxed/simple;
+	bh=rbdZjDSLrpVj5DtG98YpTOBmbGpCsBPfCraJQUpvKpo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=B9N4ZblTS2ox2nh3F7lizACn+IScGHljw8+WTkNZJVgSJR69YZtWyvac6xjFkq9tCnTk85FbHIC9v1KvrVo04skVCm3rgYdrWhMDAWOOh1z3o7WtFW59NVN2EuagXY1yOqydjKLrfi+KHpWTkIQ0Lqj7eOc0jZiLvQNjrkZQZAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=y03WOVm4; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56MBKvXT1034159;
+	Tue, 22 Jul 2025 06:20:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1753183257;
+	bh=gd/G+IQueW+F6ETdxeKKpMhqSGQPrgsgg0P5duEJ5SA=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=y03WOVm4GTfsZ8+Axl8kFzgwMK9S660vb2o80D9BFYjYcr06rjXeEFGKCXZ6/Nkeb
+	 m9uIwgj13SFznWzVaWUUnnz66MjovSq1AxO8MR0gaf59YOa9DJuXA+ZuRs2JrowmWU
+	 0nTaIZ8db5LpJeIA8mO1xiQjQzY8Ek29vWGS7ka8=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56MBKvM84059187
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 22 Jul 2025 06:20:57 -0500
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 22
+ Jul 2025 06:20:56 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Tue, 22 Jul 2025 06:20:55 -0500
+Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56MBKnoe1243770;
+	Tue, 22 Jul 2025 06:20:50 -0500
+Message-ID: <5bce6424-51f9-4cc1-9289-93a2c15aa0c1@ti.com>
+Date: Tue, 22 Jul 2025 16:50:48 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c90e88a4-7fff-49fa-8a6f-24f3671d9390@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/15] Add driver for 1Gbe network chips from MUCSE
+To: Dong Yibo <dong100@mucse.com>, <andrew+netdev@lunn.ch>,
+        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <horms@kernel.org>, <corbet@lwn.net>,
+        <gur.stavi@huawei.com>, <maddy@linux.ibm.com>, <mpe@ellerman.id.au>,
+        <lee@trager.us>, <gongfan1@huawei.com>, <lorenzo@kernel.org>,
+        <geert+renesas@glider.be>, <Parthiban.Veerasooran@microchip.com>,
+        <lukas.bulwahn@redhat.com>, <alexanderduyck@fb.com>,
+        <richardcochran@gmail.com>
+CC: <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250721113238.18615-1-dong100@mucse.com>
+Content-Language: en-US
+From: MD Danish Anwar <danishanwar@ti.com>
+In-Reply-To: <20250721113238.18615-1-dong100@mucse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue, Jul 22, 2025 at 11:16:15AM +0200, Jiri Slaby wrote:
-> On 22. 07. 25, 10:00, Qasim Ijaz wrote:
-> > A malicious HID device can trigger a slab out-of-bounds during
-> > mt_report_fixup() by passing in report descriptor smaller than
-> > 607 bytes. mt_report_fixup() attempts to patch byte offset 607
-> > of the descriptor with 0x25 by first checking if byte offset
-> > 607 is 0x15 however it lacks bounds checks to verify if the
-> > descriptor is big enough before conducting this check. Fix
-> > this vulnerability by ensuring the descriptor size is
-> > greater than or equal to 608 before accessing it.
-> > 
-> > Below is the KASAN splat after the out of bounds access happens:
-> > 
-> > [   13.671954] ==================================================================
-> > [   13.672667] BUG: KASAN: slab-out-of-bounds in mt_report_fixup+0x103/0x110
-> > [   13.673297] Read of size 1 at addr ffff888103df39df by task kworker/0:1/10
-> > [   13.673297]
-> > [   13.673297] CPU: 0 UID: 0 PID: 10 Comm: kworker/0:1 Not tainted 6.15.0-00005-gec5d573d83f4-dirty #3
-> > [   13.673297] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/04
-> > [   13.673297] Call Trace:
-> > [   13.673297]  <TASK>
-> > [   13.673297]  dump_stack_lvl+0x5f/0x80
-> > [   13.673297]  print_report+0xd1/0x660
-> > [   13.673297]  kasan_report+0xe5/0x120
-> > [   13.673297]  __asan_report_load1_noabort+0x18/0x20
-> > [   13.673297]  mt_report_fixup+0x103/0x110
-> > [   13.673297]  hid_open_report+0x1ef/0x810
-> > [   13.673297]  mt_probe+0x422/0x960
-> > [   13.673297]  hid_device_probe+0x2e2/0x6f0
-> > [   13.673297]  really_probe+0x1c6/0x6b0
-> > [   13.673297]  __driver_probe_device+0x24f/0x310
-> > [   13.673297]  driver_probe_device+0x4e/0x220
-> > [   13.673297]  __device_attach_driver+0x169/0x320
-> > [   13.673297]  bus_for_each_drv+0x11d/0x1b0
-> > [   13.673297]  __device_attach+0x1b8/0x3e0
-> > [   13.673297]  device_initial_probe+0x12/0x20
-> > [   13.673297]  bus_probe_device+0x13d/0x180
-> > [   13.673297]  device_add+0xe3a/0x1670
-> > [   13.673297]  hid_add_device+0x31d/0xa40
-> > [...]
-> > 
-> > Fixes: c8000deb6836 ("HID: multitouch: Add support for GT7868Q")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
-> > Reviewed-by: Dmitry Savin <envelsavinds@gmail.com>
-> > ---
-> >   drivers/hid/hid-multitouch.c | 25 ++++++++++++++++---------
-> >   1 file changed, 16 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-> > index 7ac8e16e6158..af4abe3ba410 100644
-> > --- a/drivers/hid/hid-multitouch.c
-> > +++ b/drivers/hid/hid-multitouch.c
-> > @@ -1461,18 +1461,25 @@ static const __u8 *mt_report_fixup(struct hid_device *hdev, __u8 *rdesc,
-> >   	if (hdev->vendor == I2C_VENDOR_ID_GOODIX &&
-> >   	    (hdev->product == I2C_DEVICE_ID_GOODIX_01E8 ||
-> >   	     hdev->product == I2C_DEVICE_ID_GOODIX_01E9)) {
-> > -		if (rdesc[607] == 0x15) {
-> > -			rdesc[607] = 0x25;
-> > -			dev_info(
-> > -				&hdev->dev,
-> > -				"GT7868Q report descriptor fixup is applied.\n");
-> > +		if (*size >= 608) {
-> > +			if (rdesc[607] == 0x15) {
-> > +				rdesc[607] = 0x25;
-> > +				dev_info(
-> > +					&hdev->dev,
-> > +					"GT7868Q report descriptor fixup is applied.\n");
-> > +			} else {
-> > +				dev_info(
-> > +					&hdev->dev,
-> > +					"The byte is not expected for fixing the report descriptor. \
-> > +					It's possible that the touchpad firmware is not suitable for applying the fix. \
-> > +					got: %x\n",
+Hi Dong,
+
+On 21/07/25 5:02 pm, Dong Yibo wrote:
+> Hi maintainers,
 > 
-> This is wrong. You have all the spaces/tabs in the string now. Drop all the
-> backslashes, and open and close the string on every line.
+> This patch series introduces support for MUCSE N500/N210 1Gbps Ethernet
+> controllers. Only basic tx/rx is included, more features can be added in
+> the future.
 > 
-> > +					rdesc[607]);
-> > +			}
+> The driver has been tested on the following platform:
+>    - Kernel version: 6.16.0-rc3
+>    - Intel Xeon Processor
 > 
-> As this is superlong and superindented, perhaps introduce a new function for
-> these devices?
+> Changelog:
+> v1 -> v2: 
+>   [patch 01/15]:
+>   1. Fix changed section in MAINTAINERs file by mistake.
+>   2. Fix odd indentaition in 'drivers/net/ethernet/mucse/Kconfig'.
+>   3. Drop pointless driver version.
+>   4. Remove pr_info prints.
+>   5. Remove no need 'memset' for priv after alloc_etherdev_mq.
+>   6. Fix __ function names.
+>   7. Fix description errors from 'kdoc summry'.
+>   [patch 02/15]:
+>   1. Fix define by using the BIT() macro.
+>   2. Remove wrong 'void *' cast.
+>   3. Fix 'reverse Christmas tree' format for local variables.
+>   4. Fix description errors from 'kdoc summry'.
+>   [patch 03/15]:
+>   1. Remove inline functions in C files.
+>   2. Remove use s32, use int.
+>   3. Use iopoll to instead rolling own.
+>   4. Fix description errors from 'kdoc summry'.
+>   [patch 04/15]:
+>   1. Using __le32/__le16 in little endian define.
+>   2. Remove all defensive code.
+>   3. Remove pcie hotplug relative code.
+>   4. Fix 'replace one error code with another' error.
+>   5. Turn 'fw error code' to 'linux/POSIX error code'.
+>   6. Fix description errors from 'kdoc summry'.
+>   [patch 05/15]:
+>   1. Use iopoll to instead rolling own.
+>   2. Use 'linux/POSIX error code'.
+>   3. Use devlink to download flash.
+>   4. Fix description errors from 'kdoc summry'.
+>   [patch 06/15] - [patch 15/15]:
+>   1. Check errors similar to the patches [1-5].
+>   2. Fix description errors from 'kdoc summry'.
 > 
-> >   		} else {
-> >   			dev_info(
-> >   				&hdev->dev,
-> > -				"The byte is not expected for fixing the report descriptor. \
-> > -It's possible that the touchpad firmware is not suitable for applying the fix. \
-> > -got: %x\n",
+> v1: Initial submission
+>   https://lore.kernel.org/netdev/20250703014859.210110-1-dong100@mucse.com/T/#t
 > 
-> This was horrid too, yeah.
 > 
-> > -				rdesc[607]);
-> > +				"GT7868Q fixup: report descriptor only %u bytes, skipping\n",
-> 
-> A predicate missing. Eg. "has only", or "is only".
+> Dong Yibo (15):
+>   net: rnpgbe: Add build support for rnpgbe
+>   net: rnpgbe: Add n500/n210 chip support
+>   net: rnpgbe: Add basic mbx ops support
+>   net: rnpgbe: Add get_capability mbx_fw ops support
+>   net: rnpgbe: Add download firmware for n210 chip
+>   net: rnpgbe: Add some functions for hw->ops
+>   net: rnpgbe: Add get mac from hw
+>   net: rnpgbe: Add irq support
+>   net: rnpgbe: Add netdev register and init tx/rx memory
+>   net: rnpgbe: Add netdev irq in open
+>   net: rnpgbe: Add setup hw ring-vector, true up/down hw
+>   net: rnpgbe: Add link up handler
+>   net: rnpgbe: Add base tx functions
+>   net: rnpgbe: Add base rx function
+>   net: rnpgbe: Add ITR for rx
 > 
 
-Thanks for the feedback Jiri, I took the advice on board, is something
-like this better?
+This series has lots of checkpatch errors / warnings.
 
- static const __u8 *mt_report_fixup(struct hid_device *hdev, __u8 *rdesc,
-				   unsigned int *size)
- {
-          if (hdev->vendor == I2C_VENDOR_ID_GOODIX &&
-              (hdev->product == I2C_DEVICE_ID_GOODIX_01E8 ||
-               hdev->product == I2C_DEVICE_ID_GOODIX_01E9)) {
-		 if (*size < 608) {
-			 dev_info(
-				 &hdev->dev,
-				 "GT7868Q fixup: report descriptor is only %u bytes, skipping\n",
-				 *size);
-                          return rdesc;
-                  }
- 
-		 if (rdesc[607] == 0x15) {
-			 rdesc[607] = 0x25;
-			 dev_info(
-				 &hdev->dev,
-				 "GT7868Q fixup: report descriptor fixup is applied.\n");
-		 } else {
-			 dev_info(&hdev->dev,
-				 "GT7868Q fixup: offset 607 is %x (expected 0x15), "
-				 "descriptor may be malformed, skipping\n",
-				 rdesc[607]);
-		 }
-	  }
- 
- 	  return rdesc;
- }
+Before posting the series please try to run checkpatch on all patches.
 
-the key changes I made are:
+	./scripts/checkpatch.pl --strict --codespell <PATH_TO_PATCHES>
 
-- Move size check to the top, this way the indentation level is decent
-- get rid of message backslashes
-- shorten the fixup failure message when rdesc[607] is not 0x15 and make
-  it a bit clearer since this message was the longest - just a minor
-  cleanup
-- added "is only %u bytes" as you suggested
+For patches within net subsystem, for declaring variables, please follow
+https://www.kernel.org/doc/html/v6.3/process/maintainer-netdev.html#local-variable-ordering-reverse-xmas-tree-rcs
 
-if this is all good I can send v2.
+You can use https://github.com/ecree-solarflare/xmastree to verify
+locally before posting.
 
-Thanks
-qasim
-> > +				*size);
-> >   		}
-> >   	}
+The series also has kdoc warnings, please run below script on all the
+files that the series is modifying.
+	./scripts/kernel-doc -none -Wall
+
+>  .../device_drivers/ethernet/index.rst         |    1 +
+>  .../device_drivers/ethernet/mucse/rnpgbe.rst  |   21 +
+>  MAINTAINERS                                   |    8 +
+>  drivers/net/ethernet/Kconfig                  |    1 +
+>  drivers/net/ethernet/Makefile                 |    1 +
+>  drivers/net/ethernet/mucse/Kconfig            |   35 +
+>  drivers/net/ethernet/mucse/Makefile           |    7 +
+>  drivers/net/ethernet/mucse/rnpgbe/Makefile    |   13 +
+>  drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    |  733 ++++++
+>  .../net/ethernet/mucse/rnpgbe/rnpgbe_chip.c   |  593 +++++
+>  drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h |   66 +
+>  .../net/ethernet/mucse/rnpgbe/rnpgbe_lib.c    | 2320 +++++++++++++++++
+>  .../net/ethernet/mucse/rnpgbe/rnpgbe_lib.h    |  175 ++
+>  .../net/ethernet/mucse/rnpgbe/rnpgbe_main.c   |  901 +++++++
+>  .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c    |  623 +++++
+>  .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx.h    |   49 +
+>  .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.c |  753 ++++++
+>  .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.h |  695 +++++
+>  .../net/ethernet/mucse/rnpgbe/rnpgbe_sfc.c    |  476 ++++
+>  .../net/ethernet/mucse/rnpgbe/rnpgbe_sfc.h    |   30 +
+>  20 files changed, 7501 insertions(+)
+
+7.5K Lines of change is a too much for a series. It becomes very
+difficult for maintainers to review a series like this.
+
+Please try to split this into multiple series if possible.
+
+>  create mode 100644 Documentation/networking/device_drivers/ethernet/mucse/rnpgbe.rst
+>  create mode 100644 drivers/net/ethernet/mucse/Kconfig
+>  create mode 100644 drivers/net/ethernet/mucse/Makefile
+>  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/Makefile
+>  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+>  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+>  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
+>  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_lib.c
+>  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_lib.h
+>  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
+>  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c
+>  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.h
+>  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.c
+>  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.h
+>  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_sfc.c
+>  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_sfc.h
 > 
-> thanks,
-> -- 
-> js
-> suse labs
-> 
+
+
+-- 
+Thanks and Regards,
+Danish
 
