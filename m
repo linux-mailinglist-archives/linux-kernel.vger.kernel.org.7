@@ -1,120 +1,162 @@
-Return-Path: <linux-kernel+bounces-741603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D389B0E67A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 00:36:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A65BB0E677
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 00:35:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 439606C5442
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 22:36:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71EDE6C7087
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 22:34:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C817F285C80;
-	Tue, 22 Jul 2025 22:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C556628983A;
+	Tue, 22 Jul 2025 22:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="grlAPyxU"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="IIlsvvHq"
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BAB10F2;
-	Tue, 22 Jul 2025 22:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF1F2874E0
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 22:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753223792; cv=none; b=hhrHe6wF485CR25aooUIdr/Wjx8U2EjorUP2eUn6457nJ7E7yWsZQkRr7Yh5Ur5ewL9ngoS9kcp2KP37YIQQRf5BqlypSR2GElO0vDxrQ/ToV96ELwlhzEfVqYitOILErhIqZ/W9muzZ3GvdaGkTx9HMyhqUbV+qq1lwQnqroR0=
+	t=1753223696; cv=none; b=kB0bE7CWTFyOnsbXaxsSYsrhn01LK3ygqagUgu3Qi/uuYuBQW78ZYHJZUgtCvZZP8CeWpRgIHMgoxPgEVsejzp2AFtbP572sByEmATsLTKPm1tjcZan3UdyABNLqlcihoU3MHVS6PdpgV/Y3gTlkDN0XGuW9KC6uT0MEqpyZzBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753223792; c=relaxed/simple;
-	bh=hMI0nsOW00t91gdZHOJGLbhrE7TnL+1bESOMcvbzRjE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=jUVLFoP9jldC0168m9tdaBG/2PBJNBRCpLew52+xoZ7pOuN4BUYCJo1XVSRW0Oa0iwhVVl6pMMqnFskZZu6oVoN0ayRdT+FC7g35bdAmrdxjQRtMVfb70GyMwesRdGWLZUOWEkSal40Le7NvaZqZhCZPgBSFs9ayMc+6+hEXgF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=grlAPyxU; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7d9eac11358so586959785a.3;
-        Tue, 22 Jul 2025 15:36:30 -0700 (PDT)
+	s=arc-20240116; t=1753223696; c=relaxed/simple;
+	bh=DI7Py06D/Fb6XwmsmpUlNeYX8jsG+Z8UnZwXBY4+GIo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XJF3yIEy5sG1JtGym0dMEFegqs/km2k9DTXJ1hCl7LRQ2pHsxJYsZQsM9aNgXzdm5k1oqlrsVoSyhREoq1EV4qBuz9FIYGCSuCcYx8JpoLyOH6QnLDiueQPRi2xJmdNdeJ6S14SUFGV7WVar0EbIuZhsV9ijY9d11eA4nXj+gIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=IIlsvvHq; arc=none smtp.client-ip=209.85.210.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-73e586fcc28so178340a34.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 15:34:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753223790; x=1753828590; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TBB+90UYLZMUNkM8Iop40n+D0UzNuJmPLssHgoedKC8=;
-        b=grlAPyxU4wh7T6Yk5iyTpxIhPSXmUdODkfXmUD0cNV+yNVHZCzxbYfJgq+CDh7FcWy
-         9NpGRus99NaIItis2j+c9407spRmpArnAgTiqJNVfanpoz3VzyM7jFnFnhjoBdsei8EJ
-         iJOmpL2ArdDzZFBJ0O974EU0KlEhq4SVtFP16Ql/AkVekKPxLTWIRuzDX9ufSzsrhPX2
-         Ujpe3xC/x3cI/I5cdAOtpMI8GTE2uhnNKow0TqdyRS9lCGwLkKyCUh2qeNkBj3875KE2
-         33DWGML+R+jpHQbPBkGJENX+gtOypkpRXraGxRKevpmS3PaAvj1foY6NdKpnXsfWkMOs
-         rQxQ==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1753223693; x=1753828493; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rcC4a63ILBfBOzpEzRk/1K2T/rRgSqcFhHU1Bre51Eo=;
+        b=IIlsvvHqBSSRxRM2YMGs6hGHBxtvxLGrlO6CEELhDHh72b917RB5AU8+AnYjC5o68e
+         GS9grGCblhO69gKNwf5eIxZD34+/LF4H7mNovkTeel9h0EVp4SkS5aRxgOEhwkloT4s9
+         OQR9mxpOyJdoexUxf2p3uandgdVPy9/ZwIC+pasEcPK3hy+FvJPYn9vb1ZaENfdczT+5
+         qaIf/O4mRXU8GBxhkjsWIKr/SEMxqc/+dCROjAlL9nGw8fr5Q0lXlkGLEpTHBRda2RLH
+         oUCQq0D7spEYtdCKwRNJJNdEmLGmENaRn/hoR8SFZUu2jphfrKKuOzkwmqXur/O5i8Wo
+         jlQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753223790; x=1753828590;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TBB+90UYLZMUNkM8Iop40n+D0UzNuJmPLssHgoedKC8=;
-        b=MoVHPMoz+c8B5AkR7wFGF5rh0kTPeoEhD9oDsu8pMP3DlA6Zkd5B4f+NzNOXdj2CAk
-         pjrYbszma4W5dn8Yh+u+i69N3G38TayK0OWyEQb642kT08f0Bpff2F30+A6HfwnjAYmu
-         bZIguVgBmDqOGIPz69Ytgk5E02WlsVBxhplFKDtc6JZD96/UFJuF6Gb0wsXxAxty06mN
-         /o1TMpdgsi76fbKj6Mzc4MX3uagOJFbuVJdwmGMeL3ptrtB14P/1+Zo11vNDS2wyxkGe
-         ZFZEAeT4eWpH08Kaxx6jKSW37flaP2fiLE9NXaBVTvxQnD7NR1htpgKNnlGgtN/6Hoer
-         zLJA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBEKTX5WAteRg/YS5eRxo3RrsN16hywv0XEK9j1sax08XSlYmU93I5UNnvjF8P6odHkLTd/c1ux9XGBrqMjppURQ==@vger.kernel.org, AJvYcCVsnf3/PJ8saTNabWMVfr/dEh/w3bQJNYknZoZj4FPLHqEvJayTySoS0vvQu4inwXw/Xh9RTm8QLJFGdX8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWZQu6ozMkh5t/+S5Y8F+/EpPUrBuwutaVORDhRYHuEuYG+RIM
-	hmnSLOd07A5ZImQNH4JRVuqeI1pIh2IybLoM+jSEyBZ8JXMG0v2L9hba
-X-Gm-Gg: ASbGncuTqyfmekNWNWwyj9bt995z6gQ+7cOwvuuPM7ZFFCGXQzSmyD96tyU7Yu5HNAH
-	ifJIZyfK12Wy4SaM2BR4jZRAySTpTgqVrZb1Nxdngz4f/Ys+F9y86eVUh4np+FtYcgayVtTgYBz
-	nvEeJ7cRUDI3yy7GPLsDHhkQChKI0fW5sqVumJDQivI7b9PmZJmO+eTHSDXdZ0NLTjn6zsfe/qI
-	PPchYus4Pd1wWu2cF3m3bqG+1Ad+zF5ZpjOxwkqyHD8ZKY+WUhteL6u/wQmLFScuSjRPHJyeB92
-	GHlk/ojg5WuHpMwoYDokgy5ue/WhtSVFsucHDvrupbfFEWVrQrbuxlqJ6VYcisqj4u8aXaxS0TB
-	kc0oUeavt/Rsl9MNDrgBU/KbooRt75Hk=
-X-Google-Smtp-Source: AGHT+IEbe8BbhV+igVqGgr2sIN5xkSIsdDLD4nm09zpSxpKxfdqRu1gZLhD2/emij7TH9ZMxEHKGXQ==
-X-Received: by 2002:a05:620a:6cc4:b0:7e3:417a:9609 with SMTP id af79cd13be357-7e62a03c142mr146618685a.0.1753223789697;
-        Tue, 22 Jul 2025 15:36:29 -0700 (PDT)
-Received: from Gentoo.localdomain ([37.19.198.68])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e356b2a9a6sm595561685a.8.2025.07.22.15.36.23
+        d=1e100.net; s=20230601; t=1753223693; x=1753828493;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rcC4a63ILBfBOzpEzRk/1K2T/rRgSqcFhHU1Bre51Eo=;
+        b=az9D0trmyaRhBxmsCCjdziwfQF9LrXCiOncU05xyYzqKetLZASqYgtkYvtfAUz7F9C
+         98Z+/MYpNtgoaKzALkthJk4wkCjv7LQD7/jYQ2JJNmOp+U3/dtgPNfAS3MF8k9YdHhud
+         JvjOo0rDkk0zNqhPnDgynJn2y2ROTWYwpe2EuSoyT8ogym1tOBs1HqbTyORri0daSpBW
+         OFBBKBWUc2IGSDp1I6n05cFuSkEk0iPHagY7wnG16rERtCXN8MZ5Dky7ocdLmfnURuHV
+         DGpmQipH9dVUEUNgHSllyILrk0m7jZrgHvaefzmtGDu0RpVdRhpxA/cPMbVN6prCKLYl
+         mqnA==
+X-Forwarded-Encrypted: i=1; AJvYcCWqCVuV849rTMh4Qs40GOy+qo6a1o+FtwRqm9wUgGEbC8HKKBeZciUYtkiyFvwX4FYggFgIh5YDGf9tQcw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz76m2C8jzRHx3QCSLGdDQVHhuRm98W4siphlsinaWutP13P5dg
+	vaFit8mKwyM0MO3VxI/FKMOfrUv2hnAGc5WMLJPwOTW62N36rdXOd/l8Y54s+KID7Os=
+X-Gm-Gg: ASbGncv4XJBeGXQaAuuiNZ1koTfvz1o/5+ku6c+wYr0i/oLp5j/Zr9euk8pqUaeU3ER
+	SQjLjD0yLUEZ941ih6S0pgYI/WUJjC5pQkyVNezhDJv+NMJ9Sg8hRNm1MWb3gHJZ/EVgY+zp4B4
+	VCXQpaOTgNxHZDRXKUh3DmmjBK6sXrUPJ3/LBQeu0h5zahnnMHacNQRESM2UhMzR5/V2C6pExsR
+	ArVNHEDgnFNCBKE2qyaXFFDJ5NmYOe/aq1bXkOk+glkWp7miSAxV0EZoBvkrIZuWwnWIfiTcATY
+	DDNy0lBiEYzHdADGZy/3db5PrikHZNs+i+Ryn9AemuidWFPZ7RPXV3+UhGbkbJrT+KqwgKQsafh
+	6xPFt98Y0oRqeeptFRLU2NpFrEVE=
+X-Google-Smtp-Source: AGHT+IEoC1tAXROBGi3RQHF7mZb2ZTqK16V1Kfsyori2hyi2oRRR5xleBX3p+LoUN7WuQjvRPkwP6g==
+X-Received: by 2002:a05:6830:3e17:b0:738:5294:785a with SMTP id 46e09a7af769-73ebb8bff52mr2499090a34.6.1753223693398;
+        Tue, 22 Jul 2025 15:34:53 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:11dd:c0f5:968d:e96])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73eb24b1c04sm1228221a34.35.2025.07.22.15.34.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 15:36:29 -0700 (PDT)
-From: Bhaskar Chowdhury <unixbhaskar@gmail.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	vmolnaro@redhat.com,
-	mpetlan@redhat.com,
-	unixbhaskar@gmail.com,
-	atrajeev@linux.vnet.ibm.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] tools:perf:tests:shell:common This file was missing the shebang line, so added it
-Date: Wed, 23 Jul 2025 04:02:24 +0530
-Message-ID: <20250722223350.414-1-unixbhaskar@gmail.com>
-X-Mailer: git-send-email 2.49.1
+        Tue, 22 Jul 2025 15:34:53 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Date: Tue, 22 Jul 2025 17:34:45 -0500
+Subject: [PATCH] iio: proximity: pulsedlight-lidar-lite-v2: use stack
+ allocated scan struct
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250722-iio-proximity-pulsedlight-lidar-lite-v2-use-stack-allocated-scan-struct-v1-1-4c253339b941@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIAAQSgGgC/x2OQQrCMBBFr1KydiANVdGriIvpZGwHY1IySamU3
+ t3g5sF7m/93o5yF1dy73WReRSXFJv2pMzRjnBjENzfOurO9OgciCZacNvlI+cJSg7IPMs0Fgnj
+ MjYVhdVCVQQvSGzCERFjYgxLGFnOlAiPRONh+uNgbmra2ZH7J9n/yeB7HD9hPqNiZAAAA
+X-Change-ID: 20250722-iio-proximity-pulsedlight-lidar-lite-v2-use-stack-allocated-scan-struct-bccb4014609a
+To: Jonathan Cameron <jic23@kernel.org>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1964; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=DI7Py06D/Fb6XwmsmpUlNeYX8jsG+Z8UnZwXBY4+GIo=;
+ b=owGbwMvMwMV46IwC43/G/gOMp9WSGDIahFgZavapO6dMKBTK/tWa4HhXnuHs5gkXTmRqc5gsk
+ Qvw9hTuZDRmYWDkYpAVU2R5I3FzXhJf87U5NzJmwAxiZQKbwsUpABPxKmf/ZxF24nTm75DLH42j
+ +JxkmlsemskyPzLb3duwWp3d13Wy5fpjPsWz19x6PGFe1ltlaa0IuUr555LHc0743HVZMOX2L50
+ w7hjDeX+FGHzy0vawLLFNvs6/90L00SjDjvLlpu0tO9++8bA5euWYyd1XT70XelbXul5wPVTlcO
+ 6DSKXakxeXK1g45e1LpCSDt0p//bVvWVlI+WHNu54nApJdeLU4Z6xTFnHRD+RcdDjowUmRlPxuK
+ 94sjYOq+RsOPJErKg/t/jjzgXYMe7UjnzgL/zcfh0rBb1tOsR8oOTXt+by5O8raLk2eUXHjyUOp
+ VQftN1+MO2/dJ25u1Myi9bdobb7VI4ETq4w9595cns8GAA==
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-This file was missing the shebang line, so added it.
+Use a stack allocated struct for the scan data instead of using the
+driver state to store the struct. The scan data is not used outside of
+the interrupt handler function so the struct does not need to exist
+outside of that scope.
 
-Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+Signed-off-by: David Lechner <dlechner@baylibre.com>
 ---
- tools/perf/tests/shell/common/init.sh | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/iio/proximity/pulsedlight-lidar-lite-v2.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
-diff --git a/tools/perf/tests/shell/common/init.sh b/tools/perf/tests/shell/common/init.sh
-index 26c7525651e0..9e9d4247ada3 100644
---- a/tools/perf/tests/shell/common/init.sh
-+++ b/tools/perf/tests/shell/common/init.sh
-@@ -1,3 +1,4 @@
-+#!/bin/sh
- # SPDX-License-Identifier: GPL-2.0
- #
- #	init.sh
---
-2.49.1
+diff --git a/drivers/iio/proximity/pulsedlight-lidar-lite-v2.c b/drivers/iio/proximity/pulsedlight-lidar-lite-v2.c
+index 1deaf70e92ceb788ad8a5b82ea0bd1c28faadf1a..01c013acfda2a2d34f89248178ddf9340a77ad11 100644
+--- a/drivers/iio/proximity/pulsedlight-lidar-lite-v2.c
++++ b/drivers/iio/proximity/pulsedlight-lidar-lite-v2.c
+@@ -43,12 +43,6 @@ struct lidar_data {
+ 
+ 	int (*xfer)(struct lidar_data *data, u8 reg, u8 *val, int len);
+ 	int i2c_enabled;
+-
+-	/* Ensure timestamp is naturally aligned */
+-	struct {
+-		u16 chan;
+-		aligned_s64 timestamp;
+-	} scan;
+ };
+ 
+ static const struct iio_chan_spec lidar_channels[] = {
+@@ -235,11 +229,14 @@ static irqreturn_t lidar_trigger_handler(int irq, void *private)
+ 	struct iio_dev *indio_dev = pf->indio_dev;
+ 	struct lidar_data *data = iio_priv(indio_dev);
+ 	int ret;
++	struct {
++		u16 chan;
++		aligned_s64 timestamp;
++	} scan = { };
+ 
+-	ret = lidar_get_measurement(data, &data->scan.chan);
++	ret = lidar_get_measurement(data, &scan.chan);
+ 	if (!ret) {
+-		iio_push_to_buffers_with_ts(indio_dev, &data->scan,
+-					    sizeof(data->scan),
++		iio_push_to_buffers_with_ts(indio_dev, &scan, sizeof(scan),
+ 					    iio_get_time_ns(indio_dev));
+ 	} else if (ret != -EINVAL) {
+ 		dev_err(&data->client->dev, "cannot read LIDAR measurement");
+
+---
+base-commit: cd2731444ee4e35db76f4fb587f12d327eec5446
+change-id: 20250722-iio-proximity-pulsedlight-lidar-lite-v2-use-stack-allocated-scan-struct-bccb4014609a
+
+Best regards,
+-- 
+David Lechner <dlechner@baylibre.com>
 
 
