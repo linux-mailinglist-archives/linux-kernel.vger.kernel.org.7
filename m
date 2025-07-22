@@ -1,575 +1,207 @@
-Return-Path: <linux-kernel+bounces-740179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72248B0D10F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:01:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AB7B6B0D115
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:04:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27AA11C21D4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 05:01:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35B7B1C21C3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 05:04:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E5D28A71D;
-	Tue, 22 Jul 2025 05:00:52 +0000 (UTC)
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6F028C02B;
+	Tue, 22 Jul 2025 05:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Gyvt522G"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2083.outbound.protection.outlook.com [40.107.244.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A9D273805;
-	Tue, 22 Jul 2025 05:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753160451; cv=none; b=VmOvSjDcde3SWWEDSPDPa/mnOTY/CR38ztrMUJnwnCE+H5hzywUhjvWm0imQG8TcsjwF9ZsemuURhJYtcZXVT/ENKDuxJKArUOjjGOCipWcv7N7Eh9u4D7vqbo0P3P57S/GS2HZMi7LXTnQ013pmd/3ZHrJvWAmVXbvia0PA8tA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753160451; c=relaxed/simple;
-	bh=ICTQSQIlIerLcJ6i/esiHC1dyHOpLSXdd1ZtdWJimtM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m0lraSUzNNAG5+DiC7u7UyBrKCw86HpqJHO/IA3pJBsgqGT9AcjkdSEHCottfKMbrf+dNamfBSuwoX2Rl1IliJaIXiDfiNOiRpAiJpM2Y1HacRPOO3PMtIv2Ogn361loqGlAo5JGJ2OfENriqnX3wLJayhHYK0PmdZnC1c9rxaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.204.34.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: esmtpsz16t1753160376te1aa135a
-X-QQ-Originating-IP: GWXMONoS0iyUbrcdyDtvtcgyJARCDgWcvnjBLi7beqA=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 22 Jul 2025 12:59:33 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 17911816034395998073
-Date: Tue, 22 Jul 2025 12:59:33 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: Brett Creeley <bcreeley@amd.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
-	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 01/15] net: rnpgbe: Add build support for rnpgbe
-Message-ID: <A609CC510E3B8CDE+20250722045933.GA99399@nic-Precision-5820-Tower>
-References: <20250721113238.18615-1-dong100@mucse.com>
- <20250721113238.18615-2-dong100@mucse.com>
- <aa667a0c-d1ed-48d7-9e05-1cbed77643b9@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694E1239E9E;
+	Tue, 22 Jul 2025 05:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753160629; cv=fail; b=cdSRnYZP+y1tsfxi07WYQQ0m/+1jw9bdCWGIXf80n/qvRm/nkeO8hDvZI55TVHnVJwSsCA3tJWN3pQLSL+Y3e47qG4+y2YKpMYlSJyLKOB0J2EoNbIEvO3I1UcTV9znAP2ERn2DSiVEa/9j619HFbwQBsCh1kWFIPDNAAgCdS4A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753160629; c=relaxed/simple;
+	bh=Dg5rXHHetPwaxAY1HcjR9CzxqQP0eqUKxX9h3IpxRkE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=fkuc3P2ugzdLr2h87fXAigLTSJGFgiY9IkpAhJiiyhbDYG1RW/u6Md0TCr3Kpkv5Ap5/5bsbhhPVMMYIzlvUIrUEfFpvzNLQDfRQFO1cYEywGNAd8PFKeP4rJi8JOQ0sbGn/uAxM0fVKxqeJXfJb9OO20awlsZXYZnD7rpuTPvY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Gyvt522G; arc=fail smtp.client-ip=40.107.244.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tuWW1NJS0w5sBeuFqpX5rgKC0hrmSUiP84Y1nkrNIONz8BLE+v2iqzA0TCtLCkvMcd0O42rM4lUP91L7m1rdJPvSnnX+L4DY8xI3ffFxa8CJO4H+DW4u0An68sBBYO829QBM9Z2sSGwuN1WpZBrK88B/OgibX7cdYp+J+ye0/vwtAzZSsMMO7DQNtQRT2upE7CJ1AZ9ttiY7BKbljiiGR82bgn0PAIiVTk0UCd+NJ1dSjKt/Bb3sIVl3hRhZtq71vXz5dB3lbSpI5jHzslYsdOwNUuGkcFBvjO/PH5X0qQJr5o0zvrSUvoj3Tqid4I1OTVAAVm4c8lVIsTLQlE/0gg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SpziEwX72ofLhYwd8I8BEgyS8aRVIk6TgbweiHUswVU=;
+ b=YPFaR0NGbD4JTD6iV2GodjVy2VAGlu1jyxJOYA76Wi7pbJM6BBWcDTt431wHRSyskPuU2BL2434+8/vJ/16veUu7Oi0Bu+NrcnBsn/U7wiCBpLUAroNL3Mmt8cl+khBmKUJFLXLHFQAtsDMbvIVzBF07j96tPWgfsPOh+24G/Rq5lygwTyK+R+WgcVqht0SL4ItfJ6MphlVNvWNvN4UxL4dxjKUPIZJOxphuq/5N48BoR7udERnwzGVfQ5vT3qPEw/l0sDl5XbmowM+2YGfYFPO1xdP6hFJ4QEzrdSF9Ed4l/bKcY5ru9vP+XO4zbQmq+QIkBGFT17cUZzVmnC+NGQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SpziEwX72ofLhYwd8I8BEgyS8aRVIk6TgbweiHUswVU=;
+ b=Gyvt522Gv6J2BcgvvW/IJhwtmhZyfdwND/2/Z/gplnlvi+d1dMSZ1pO4/CxC6RNi4jrWp6p0PFNiwpAlq+mROjmDlYc3yBkVuxgnOaBoEIpfKZ9wy+unaDz41uDZ9iePaN9Vh31fE7ZR6iEalLr7hrjDNXbl+pqTFUkEAmdO+SM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
+ (2603:10b6:a0f:fc02::9aa) by PH0PR12MB5630.namprd12.prod.outlook.com
+ (2603:10b6:510:146::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Tue, 22 Jul
+ 2025 05:03:46 +0000
+Received: from SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
+ ([fe80::40bb:ae48:4c30:c3bf]) by SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
+ ([fe80::40bb:ae48:4c30:c3bf%8]) with mapi id 15.20.8722.031; Tue, 22 Jul 2025
+ 05:03:45 +0000
+Message-ID: <696256a9-8acd-4036-9a97-b0aae6411d5c@amd.com>
+Date: Tue, 22 Jul 2025 10:33:22 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V9 5/7] KVM: guest_memfd: Add slab-allocated inode cache
+To: Vlastimil Babka <vbabka@suse.cz>, seanjc@google.com, david@redhat.com,
+ willy@infradead.org, akpm@linux-foundation.org, shuah@kernel.org,
+ pbonzini@redhat.com, brauner@kernel.org, viro@zeniv.linux.org.uk
+Cc: ackerleytng@google.com, paul@paul-moore.com, jmorris@namei.org,
+ serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com, tabba@google.com,
+ vannapurve@google.com, chao.gao@intel.com, bharata@amd.com, nikunj@amd.com,
+ michael.day@amd.com, shdhiman@amd.com, yan.y.zhao@intel.com,
+ Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, michael.roth@amd.com,
+ aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com, peterx@redhat.com,
+ jack@suse.cz, rppt@kernel.org, hch@infradead.org, cgzones@googlemail.com,
+ ira.weiny@intel.com, rientjes@google.com, roypat@amazon.co.uk,
+ ziy@nvidia.com, matthew.brost@intel.com, joshua.hahnjy@gmail.com,
+ rakie.kim@sk.com, byungchul@sk.com, gourry@gourry.net,
+ kent.overstreet@linux.dev, ying.huang@linux.alibaba.com, apopple@nvidia.com,
+ chao.p.peng@intel.com, amit@infradead.org, ddutile@redhat.com,
+ dan.j.williams@intel.com, ashish.kalra@amd.com, gshan@redhat.com,
+ jgowans@amazon.com, pankaj.gupta@amd.com, papaluri@amd.com,
+ yuzhao@google.com, suzuki.poulose@arm.com, quic_eberman@quicinc.com,
+ aneeshkumar.kizhakeveetil@arm.com, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org, kvm@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
+References: <20250713174339.13981-2-shivankg@amd.com>
+ <20250713174339.13981-8-shivankg@amd.com>
+ <78f3032d-dfa4-4907-be42-6a7e8a34371e@suse.cz>
+Content-Language: en-US
+From: Shivank Garg <shivankg@amd.com>
+In-Reply-To: <78f3032d-dfa4-4907-be42-6a7e8a34371e@suse.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN3PR01CA0011.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:95::15) To SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
+ (2603:10b6:a0f:fc02::9aa)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aa667a0c-d1ed-48d7-9e05-1cbed77643b9@amd.com>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: Nwz8Cs33/LprLhz0KE2h1zXcuJemjraaDZTC/97EKg6JgpB/9HGZppFS
-	ds0yzTbWPuyYEdSF0/SijtAZ03el93FwW65m0KpGVfr+tHfcq1KR0wU+DGpjAUqcOgebm0g
-	gNLeheP7rJY+7iUIbtWtF9GEyQ77PO+Ox0M+RbS2t9KtsO1bG6/WGJ6RTbrPrE3FhcYD7BO
-	749EVM8s9WzzM0049mjYIqr0+f38BNOzw+8fqQeDF9OUdpChRYuUp8miApUZIC58WsjnTVD
-	lgBBUD4SoiMFVrs4QxCVwunehKFFPQv8JYpNEUk/DhIH9N0YzmlvPvctXA6WRNKzRhpWddZ
-	LpLmA2KrjPW1cF5R/X2WcibY6SQFFC3EGY8MZbBD+cqIGkHqXeJlgEi7z4+lJjHNDkh78+G
-	+JFAbBLXWb+u/660OdnwN97ZshdYaRBt2OaBrjvlKg5N507ih+q8Sv/fVnY0JvQxBROs8Wx
-	9E+JHbo1rvki1z0Al0VxTz306T81A+ixghjkcs4dO7z1ppkCGyraEFFWmxc5tOeetE4T0x6
-	axoP76BzvMf3cn5bu9+/jnW1huofBg8jXbJDqCZ/XTLkwRy5OaiMkxDOcXEzKCMoiM330B+
-	1dJWf3CXsVPKTONkbKAgPbEtxRq4DlCRQ0MCAuSMlw+7SoCiXBTtKwV4fuGvaATSXRGzLcG
-	5He0M7jgKPzIN0FcXZAue+kv5Fe3TN8cnuf7KRP5aogmr8CgJsPZKbeAiaK5FsPiF/HhDMv
-	wCLVCK/3TbHRvbuFDYHrE9UW/Oo+0CKoCdWtsCQw4KXHnL5nv07nciAwc4pbMVTudBOp7qG
-	jQWGWlIfp/kc84X6a+0JLBcr5sJEF6aa4ze6LB75Z8thSyI/I/gPt6tsDRmumWooozSlIvt
-	Fl68RXmDabq7Cw9n45Z+1vd6cYjstY3lwbkW5oGs3wFn+uX5+axULBIBGOIqLc5FuE3pWeO
-	WHVF4pzf2xmLHGKdqDBzZVGn6+3VF8QIvkT+uJ4Ra0NON3jlCvgek1hS1q9EQRJVkyJ2Gle
-	UpZzGUh5BkdVP0mBM+
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-X-QQ-RECHKSPAM: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PPFF6E64BC2C:EE_|PH0PR12MB5630:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5cd604dc-81e5-40be-4424-08ddc8dd21f4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UWRvSHA0YWJYbTBybElqVGdjQ0JmVTZRdUlyVy92WXdUSStjYW50RHVJL1dh?=
+ =?utf-8?B?NVZOYnRJRlBhZ2dRYkRxcDI2dEJPTTIzY09mWStVVmJDdGtxdkdpSENZRFFV?=
+ =?utf-8?B?Q2FjMVpCTVk1cUZ4czViakZSdllGYXlrVzNmc2ErVy9OVTMyTklkS3Q5Ykpy?=
+ =?utf-8?B?MDFNNFdlYkJVbno2ZHYwblR4bjZPWXVqS3AvcHVMeUJIZkE1OFBqYXNYRXpK?=
+ =?utf-8?B?YWhnMzA1dzZibG0xRUZxT0Zwb3M5djc1SS9NRSt1clhCNXVKbi9rK2pJNU53?=
+ =?utf-8?B?QUhlWVNlaFU2MXo5RmtjdnZLWnBFSXhKNzc1RXg0UW1lNDVuYktzNEt1QXJV?=
+ =?utf-8?B?b0RnRUI0M1ROSWJ0dEtocE1IeGVFOE9XNzBhdy9ueHZialFwaTg2SzRqQVZS?=
+ =?utf-8?B?emFoaWcvMU5Xeko5a2tMdUVIS0lWK1RMdS9DL3kzMjg5QnQ0emlsdC9VOUtF?=
+ =?utf-8?B?RUFCbGVOSzNrNW44cHJBZzRmVU5TTVNaZmFyZldwZWpVUlBseTBWTzU2WjBF?=
+ =?utf-8?B?aVBzSkNGYzhneU9yek8zVVl6eldSNEpMNyt1NzZyS3ZOUmlKUUs0OHNWNUZs?=
+ =?utf-8?B?N0tpNkd4aXIwd0x4Rk5EcHZ2dVRxUlYrTDNaUkhOWTJrckQxdk90RWc2aFdO?=
+ =?utf-8?B?UDJCcDhVdlRBTjRZSDBUNUh2SGh2cGZZc0FnTENkNUpQeTUzSFlXWnJLM3Zk?=
+ =?utf-8?B?czBQY3JiL3M1OU44SG84WnphSVVlRFVzQ2xSTG5FUmpUTFhQc0thcjlmQyt5?=
+ =?utf-8?B?d2xERE9RSXR4T0hvcGFCVW01a282REVYTW8yWE1FNjBRdWVQWW9UWHF3RHU2?=
+ =?utf-8?B?a05xZDFiNDU4RiszZkprVmdHNVBnTFBmNnZtdFdBZE5iMFBDWjJiNTZMQnBW?=
+ =?utf-8?B?Skp4UEVXNHVqQklHQWE0ODB6WmlEb0FqSTV4TXNkRjRPcWpHQmFxMEZGOUIv?=
+ =?utf-8?B?NlJ6ZDNmcEtkTGRHZEdjbEE2czduamtIR29TdUgyazMvemxyNzRGTVU2eFly?=
+ =?utf-8?B?a1BlaGVGRGgwNVNWdzdsSFJYcDZpcUZNZTFHN1NTVStUd05xbC9HRkk4ZnRK?=
+ =?utf-8?B?aVY0SXBpem94WGxTNEhzeW0rMVh3ZEs4ZUV3QVZqWGxMcnhMUjN1YmN1Tk43?=
+ =?utf-8?B?OUUxbXc3d2V6T3lobE1UamZaTjBMWm5melUvTUI0K0dzNGI4RElmVmxEdGRl?=
+ =?utf-8?B?VnZVbUIyK2V5TDMraEZGQmpOS3lnSW40Rng5dlpDWUJSUURIQ2NBekxDL21h?=
+ =?utf-8?B?OXZIc0V0VGwwcEk1dEIxZ3owK2ZDNHBDd1JGN0dodlVyTjNldHozSk44N2ky?=
+ =?utf-8?B?SHovckoya0NCUkR3TVV1aEplWkxkbDYwdHFQT2h6R2VscEJWbVJEYThBek44?=
+ =?utf-8?B?MlNyMUJmZURvcWV0Y1hHWWJoY1ZQalArclJiM2FiZ25nRXlOQTVhZ0lyWVlH?=
+ =?utf-8?B?endEcTRPRWtSWlVXWW9uM3BQZjVjdnNzR3l3UkNNMVJRTGlmVjBLSHU4K1JK?=
+ =?utf-8?B?Z0VKQkJsMnRSa0R2Vlg1dVdTOUVIenZRdEdWdWg1M1Mrek9yV3Jvdnh0ZDBm?=
+ =?utf-8?B?Qm9uR2FvVFhPTXhReWROb2d5M29jaVo5ZDRjZ2xKMkM5eVVkOGIrQ1I0UGtX?=
+ =?utf-8?B?TE9KTm8vWVZYOGxwdTYzaUN2UmxqdWxydER3L0NCaU5ZUXpWSnZvUS9POGZW?=
+ =?utf-8?B?U0ovM3hBOWhzQ05tRWpEV2tzMkpad0NjS0ZBNUM3ZUFjM0wvMWJnZ1h4U1Mz?=
+ =?utf-8?B?OG9vMmYrZnNsYTVkWFpueTZaeGxoUDZKd1YxNWptNW10RllRRWpmbzA4dU9N?=
+ =?utf-8?B?OElYMzNGZUJjLyttTEx2QXRnZkt3ekRLUm5PSHUza2s1Q09NZlQzc0N1M3Fx?=
+ =?utf-8?B?MXNLQWY1R1JsRVhpMm8yQkdXQk02enN3UjJYNGNHVk1FVkZ6WUp3ZVdraTBj?=
+ =?utf-8?Q?/FMmKHpmjrw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ5PPFF6E64BC2C.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aTd2bFRxSlh2RURrMzZybGJWUVFoQzlDdjhQSnFZTXVtM05hMEZWeVZrVDJJ?=
+ =?utf-8?B?TlRIM2dSUUhaa1F6ZGFEWTVEaHFsVG1uWmZrZXZOTzRsRHdPbGZYRHdLVG9H?=
+ =?utf-8?B?bkxYYVAzNDByVHRPT2dYUVk4QXhmMEtObTl3L05UT3NyeW9XbCtnZlZoMlh5?=
+ =?utf-8?B?aVBXaS92TXB0bCtUUndTVkZmZktjU2l4WEIvWHdSWHY4SlhGcnpFRjMrcEh5?=
+ =?utf-8?B?UWkrK1RGNnFXN3hjSGFDaU9qQk1JU0k5bVVmV2w5QVJ2ay9yMXhsbzgybGt5?=
+ =?utf-8?B?YXpWMHJTMTNtREFqeWwyenV3RDhrc1pVSDhNWWhUM21KUXljTkRPeGFUNDZ1?=
+ =?utf-8?B?SHNqQXpSeDhMVURONGtma1kxaWxrc3J1R2szQ2xrNVhDcERwMWZPbDVxVXFJ?=
+ =?utf-8?B?SmJKckpRUFpNRFBXVC9nNTVmMHVId3FUaFRVWjY3QVZqVXJYcllDN3NnOGc1?=
+ =?utf-8?B?ODR1d3MvcUhxSHhZN0N1YUxlTlArV0RGOXdkR3NVeCtKTmxEUzYzYVJqeWFR?=
+ =?utf-8?B?ODBqQllrMWFyUWNiWTcvUTBLaXZ5cmFnenlnUW90YW9SSE9xSWpEeXg3RkNB?=
+ =?utf-8?B?d0xRY0xsSGFLUzBQVk4wOE5KTWs2WW5GTGZGRFE4cEs2TFhFQ2NLcDExc0Nh?=
+ =?utf-8?B?Y1o2WlVxV0NRbnZDbmVrY0EvSytxQ05KaTdINTZNT1A5ZzNNSnJBUG4xdGNw?=
+ =?utf-8?B?cGVtZHh4YTNqOWdqekZwbHY0Zm5qQ1ViVTBmT05jQUQraUtRb3VLOE9EWFpB?=
+ =?utf-8?B?K0RDeWVlakhZN0kwVDFZakdsMU1kWTY2ckZIMjFtMy8wMjM0dnVLNHQ0QmtF?=
+ =?utf-8?B?UlAzNlVKbFJZZUVKS2I5eHhVU2xzT0M2OFFMVjVzd1ludFVaODE3eTRkR1FS?=
+ =?utf-8?B?ZUp3R2JvWVlBSkFvdlFUbGtBcStIalo1S21vbG9yZ3lTUWgyRVRUY0hvSXgr?=
+ =?utf-8?B?S2lCV1k4Q2xKampYSE5hRXN6ZEppL21XWUpLdGpJOGJxRXliUUxGSkJET2VG?=
+ =?utf-8?B?Q09rQU5kYXlnQmtacUJlWDljMk9QRGEzYUYwUldVSWlGSFBaRUN5R1lDQVho?=
+ =?utf-8?B?M3MyTlhEM1c0TWxEbDVNSVNXdFFndHRyOGdSb2htS0dLODJocFRhY24vWVY4?=
+ =?utf-8?B?QUNqazlGUnlSYTFFRHBPZjJQbjJLTG1Vak94ck0zdGpZVjB6OXdGTi9XM0dw?=
+ =?utf-8?B?V2E5OWN2VGpzL2hhR1dId2pFeUhyUEx5eUxKekgra0dBZlllSzduM3orbDNX?=
+ =?utf-8?B?TkhwdU1CejBYcjJQTnJsRjE5dHdzdWtyQnlCOGF6bFNPQ3Y4ck90K3I4V3ox?=
+ =?utf-8?B?WVNUYlZGRk9nTTNBbjZ3clV5TmZ6aU5RK3FoZXFXR3drZnBwTVVxeENGVG4r?=
+ =?utf-8?B?dkNlYWdPSkxoLzc4UFBwdFZiYzJJQjdJbUVyaHFuTGxMbTZTZjVubm05eXgw?=
+ =?utf-8?B?a000YU5UZWxqWjFrWE40MTk0RFNHalY4WUR2ZS9MWmNNZi9rOUdjWm5KYWRP?=
+ =?utf-8?B?a2NLOFFaai82dXJUd0svc3IzdkFDdVgyTDFBOHdUYkh1dXZ3bXlnNkEzN3o4?=
+ =?utf-8?B?OWNHc01nUE5vTGdGcXhFTkdBUE1zSVkyekxCQnZlazZiN0ZxUVlkMFVrQ3Ix?=
+ =?utf-8?B?VjgyekJiVnRHM3dRLzlHbmVXbVFIczhhY2F2OTVSaGRWQTNrd0pXdmU0ZEJt?=
+ =?utf-8?B?OTE1UVZDejh1NDVSSzJYUXZmYkpIUHpHSGJITERabC9Obk90Rk5Fa1JCcmRF?=
+ =?utf-8?B?QW02Z1AvZENwaTdaNkgzM1ZyRTBzOVJHOEZmS0NoSnZIUUpCdHZSamJ1SVRQ?=
+ =?utf-8?B?c29vQ241dHd1VkhvdUlwWVluZVJLekpzWC9kbGplbm15Y2JaZUFFTnhxSTBP?=
+ =?utf-8?B?UkpEWkJxbTNvUjlhcG5HWUQ1djNHR0ZYVzNXdVQ1M1A2YkNiRGlWb0lwVVBS?=
+ =?utf-8?B?eCt1bGVGLzl1R1RMVzEzM3o1TU1IZlJTdUEwOW9UZytXLzY1V1R2elRVUG53?=
+ =?utf-8?B?M01XV1Bnc3d0M3VZdkJyNnFrQ1loUjlUajQ4Zk53VmZSMzgwRms4dzNES2F1?=
+ =?utf-8?B?OVZYU1BBRStrZW5LV3hFM0FiSmRUSmw4OHhtMjR6V2Z2UHQydmhFRExCK0RY?=
+ =?utf-8?Q?Ei9hT/JX7LSuW5gELMFmbZ43O?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5cd604dc-81e5-40be-4424-08ddc8dd21f4
+X-MS-Exchange-CrossTenant-AuthSource: SJ5PPFF6E64BC2C.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2025 05:03:45.0011
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: L72FraOX+G6+UJbbjh/X0VRU+LqmGHa7KYgLfDjBa+gtFZrawVg0xLeXcL7MUkbAu06AOtAvWOJatf/6Cw3tLA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB5630
 
-On Mon, Jul 21, 2025 at 02:23:00PM -0700, Brett Creeley wrote:
-> On 7/21/2025 4:32 AM, Dong Yibo wrote:
-> > Caution: This message originated from an External Source. Use proper caution when opening attachments, clicking links, or responding.
-> > 
-> > 
-> > Add build options and doc for mucse.
-> > Initialize pci device access for MUCSE devices.
-> > 
-> > Signed-off-by: Dong Yibo <dong100@mucse.com>
-> > ---
-> >   .../device_drivers/ethernet/index.rst         |   1 +
-> >   .../device_drivers/ethernet/mucse/rnpgbe.rst  |  21 ++
-> >   MAINTAINERS                                   |   8 +
-> >   drivers/net/ethernet/Kconfig                  |   1 +
-> >   drivers/net/ethernet/Makefile                 |   1 +
-> >   drivers/net/ethernet/mucse/Kconfig            |  34 +++
-> >   drivers/net/ethernet/mucse/Makefile           |   7 +
-> >   drivers/net/ethernet/mucse/rnpgbe/Makefile    |   9 +
-> >   drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    |  33 +++
-> >   .../net/ethernet/mucse/rnpgbe/rnpgbe_main.c   | 226 ++++++++++++++++++
-> >   10 files changed, 341 insertions(+)
-> >   create mode 100644 Documentation/networking/device_drivers/ethernet/mucse/rnpgbe.rst
-> >   create mode 100644 drivers/net/ethernet/mucse/Kconfig
-> >   create mode 100644 drivers/net/ethernet/mucse/Makefile
-> >   create mode 100644 drivers/net/ethernet/mucse/rnpgbe/Makefile
-> >   create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-> >   create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
-> > 
-> > diff --git a/Documentation/networking/device_drivers/ethernet/index.rst b/Documentation/networking/device_drivers/ethernet/index.rst
-> > index 40ac552641a3..0e03c5c10d30 100644
-> > --- a/Documentation/networking/device_drivers/ethernet/index.rst
-> > +++ b/Documentation/networking/device_drivers/ethernet/index.rst
-> > @@ -61,6 +61,7 @@ Contents:
-> >      wangxun/txgbevf
-> >      wangxun/ngbe
-> >      wangxun/ngbevf
-> > +   mucse/rnpgbe
-> > 
-> >   .. only::  subproject and html
-> > 
-> > diff --git a/Documentation/networking/device_drivers/ethernet/mucse/rnpgbe.rst b/Documentation/networking/device_drivers/ethernet/mucse/rnpgbe.rst
-> > new file mode 100644
-> > index 000000000000..7562fb6b8f61
-> > --- /dev/null
-> > +++ b/Documentation/networking/device_drivers/ethernet/mucse/rnpgbe.rst
-> > @@ -0,0 +1,21 @@
-> > +.. SPDX-License-Identifier: GPL-2.0
-> > +
-> > +===========================================================
-> > +Linux Base Driver for MUCSE(R) Gigabit PCI Express Adapters
-> > +===========================================================
-> > +
-> > +MUCSE Gigabit Linux driver.
-> > +Copyright (c) 2020 - 2025 MUCSE Co.,Ltd.
-> > +
-> > +Identifying Your Adapter
-> > +========================
-> > +The driver is compatible with devices based on the following:
-> > +
-> > + * MUCSE(R) Ethernet Controller N500 series
-> > + * MUCSE(R) Ethernet Controller N210 series
-> > +
-> > +Support
-> > +=======
-> > + If you have problems with the software or hardware, please contact our
-> > + customer support team via email at techsupport@mucse.com or check our
-> > + website at https://www.mucse.com/en/
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 1bc1698bc5ae..da0d12e77ddc 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -17033,6 +17033,14 @@ T:     git git://linuxtv.org/media.git
-> >   F:     Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.yaml
-> >   F:     drivers/media/i2c/mt9v111.c
-> > 
-> > +MUCSE ETHERNET DRIVER
-> > +M:     Yibo Dong <dong100@mucse.com>
-> > +L:     netdev@vger.kernel.org
-> > +S:     Maintained
-> > +W:     https://www.mucse.com/en/
-> > +F:     Documentation/networking/device_drivers/ethernet/mucse/*
-> > +F:     drivers/net/ethernet/mucse/*
-> > +
-> >   MULTIFUNCTION DEVICES (MFD)
-> >   M:     Lee Jones <lee@kernel.org>
-> >   S:     Maintained
-> > diff --git a/drivers/net/ethernet/Kconfig b/drivers/net/ethernet/Kconfig
-> > index f86d4557d8d7..77c55fa11942 100644
-> > --- a/drivers/net/ethernet/Kconfig
-> > +++ b/drivers/net/ethernet/Kconfig
-> > @@ -202,5 +202,6 @@ source "drivers/net/ethernet/wangxun/Kconfig"
-> >   source "drivers/net/ethernet/wiznet/Kconfig"
-> >   source "drivers/net/ethernet/xilinx/Kconfig"
-> >   source "drivers/net/ethernet/xircom/Kconfig"
-> > +source "drivers/net/ethernet/mucse/Kconfig"
-> > 
-> >   endif # ETHERNET
-> > diff --git a/drivers/net/ethernet/Makefile b/drivers/net/ethernet/Makefile
-> > index 67182339469a..696825bd1211 100644
-> > --- a/drivers/net/ethernet/Makefile
-> > +++ b/drivers/net/ethernet/Makefile
-> > @@ -107,3 +107,4 @@ obj-$(CONFIG_NET_VENDOR_XIRCOM) += xircom/
-> >   obj-$(CONFIG_NET_VENDOR_SYNOPSYS) += synopsys/
-> >   obj-$(CONFIG_NET_VENDOR_PENSANDO) += pensando/
-> >   obj-$(CONFIG_OA_TC6) += oa_tc6.o
-> > +obj-$(CONFIG_NET_VENDOR_MUCSE) += mucse/
-> > diff --git a/drivers/net/ethernet/mucse/Kconfig b/drivers/net/ethernet/mucse/Kconfig
-> > new file mode 100644
-> > index 000000000000..be0fdf268484
-> > --- /dev/null
-> > +++ b/drivers/net/ethernet/mucse/Kconfig
-> > @@ -0,0 +1,34 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only
-> > +#
-> > +# Mucse network device configuration
-> > +#
-> > +
-> > +config NET_VENDOR_MUCSE
-> > +       bool "Mucse devices"
-> > +       default y
-> > +       help
-> > +         If you have a network (Ethernet) card from Mucse(R), say Y.
-> > +
-> > +         Note that the answer to this question doesn't directly affect the
-> > +         kernel: saying N will just cause the configurator to skip all
-> > +         the questions about Mucse(R) cards. If you say Y, you will
-> > +         be asked for your specific card in the following questions.
-> > +
-> > +if NET_VENDOR_MUCSE
-> > +
-> > +config MGBE
-> > +       tristate "Mucse(R) 1GbE PCI Express adapters support"
-> > +       depends on PCI
-> > +       select PAGE_POOL
-> > +       help
-> > +         This driver supports Mucse(R) 1GbE PCI Express family of
-> > +         adapters.
-> > +
-> > +         More specific information on configuring the driver is in
-> > +         <file:Documentation/networking/device_drivers/ethernet/mucse/rnpgbe.rst>.
-> > +
-> > +         To compile this driver as a module, choose M here. The module
-> > +         will be called rnpgbe.
-> > +
-> > +endif # NET_VENDOR_MUCSE
-> > +
-> > diff --git a/drivers/net/ethernet/mucse/Makefile b/drivers/net/ethernet/mucse/Makefile
-> > new file mode 100644
-> > index 000000000000..f0bd79882488
-> > --- /dev/null
-> > +++ b/drivers/net/ethernet/mucse/Makefile
-> > @@ -0,0 +1,7 @@
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +#
-> > +# Makefile for the Mucse(R) network device drivers.
-> > +#
-> > +
-> > +obj-$(CONFIG_MGBE) += rnpgbe/
-> > +
-> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/Makefile b/drivers/net/ethernet/mucse/rnpgbe/Makefile
-> > new file mode 100644
-> > index 000000000000..0942e27f5913
-> > --- /dev/null
-> > +++ b/drivers/net/ethernet/mucse/rnpgbe/Makefile
-> > @@ -0,0 +1,9 @@
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +# Copyright(c) 2020 - 2025 MUCSE Corporation.
-> > +#
-> > +# Makefile for the MUCSE(R) 1GbE PCI Express ethernet driver
-> > +#
-> > +
-> > +obj-$(CONFIG_MGBE) += rnpgbe.o
-> > +
-> > +rnpgbe-objs := rnpgbe_main.o
-> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-> > new file mode 100644
-> > index 000000000000..224e395d6be3
-> > --- /dev/null
-> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-> > @@ -0,0 +1,33 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +/* Copyright(c) 2020 - 2025 Mucse Corporation. */
-> > +
-> > +#ifndef _RNPGBE_H
-> > +#define _RNPGBE_H
-> > +
-> > +enum rnpgbe_boards {
-> > +       board_n500,
-> > +       board_n210,
-> > +       board_n210L,
-> > +};
-> > +
-> > +struct mucse {
-> > +       struct net_device *netdev;
-> > +       struct pci_dev *pdev;
-> > +       /* board number */
-> > +       u16 bd_number;
-> > +
-> > +       char name[60];
-> > +};
-> > +
-> > +/* Device IDs */
-> > +#ifndef PCI_VENDOR_ID_MUCSE
-> > +#define PCI_VENDOR_ID_MUCSE 0x8848
-> > +#endif /* PCI_VENDOR_ID_MUCSE */
-> > +
-> > +#define PCI_DEVICE_ID_N500_QUAD_PORT 0x8308
-> > +#define PCI_DEVICE_ID_N500_DUAL_PORT 0x8318
-> > +#define PCI_DEVICE_ID_N500_VF 0x8309
-> > +#define PCI_DEVICE_ID_N210 0x8208
-> > +#define PCI_DEVICE_ID_N210L 0x820a
-> > +
-> > +#endif /* _RNPGBE_H */
-> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
-> > new file mode 100644
-> > index 000000000000..13b49875006b
-> > --- /dev/null
-> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
-> > @@ -0,0 +1,226 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/* Copyright(c) 2020 - 2025 Mucse Corporation. */
-> > +
-> > +#include <linux/types.h>
-> > +#include <linux/module.h>
-> > +#include <linux/pci.h>
-> > +#include <linux/netdevice.h>
-> > +#include <linux/string.h>
-> > +#include <linux/etherdevice.h>
-> > +
-> > +#include "rnpgbe.h"
-> > +
-> > +char rnpgbe_driver_name[] = "rnpgbe";
-> > +
-> > +/* rnpgbe_pci_tbl - PCI Device ID Table
-> > + *
-> > + * { PCI_DEVICE(Vendor ID, Device ID),
-> > + *   driver_data (used for different hw chip) }
-> > + */
-> > +static struct pci_device_id rnpgbe_pci_tbl[] = {
-> > +       { PCI_DEVICE(PCI_VENDOR_ID_MUCSE, PCI_DEVICE_ID_N500_QUAD_PORT),
-> > +         .driver_data = board_n500},
-> > +       { PCI_DEVICE(PCI_VENDOR_ID_MUCSE, PCI_DEVICE_ID_N500_DUAL_PORT),
-> > +         .driver_data = board_n500},
-> > +       { PCI_DEVICE(PCI_VENDOR_ID_MUCSE, PCI_DEVICE_ID_N210),
-> > +         .driver_data = board_n210},
-> > +       { PCI_DEVICE(PCI_VENDOR_ID_MUCSE, PCI_DEVICE_ID_N210L),
-> > +         .driver_data = board_n210L},
-> > +       /* required last entry */
-> > +       {0, },
-> > +};
-> > +
-> > +/**
-> > + * rnpgbe_add_adapter - add netdev for this pci_dev
-> > + * @pdev: PCI device information structure
-> > + *
-> > + * rnpgbe_add_adapter initializes a netdev for this pci_dev
-> > + * structure. Initializes Bar map, private structure, and a
-> > + * hardware reset occur.
-> > + *
-> > + * @return: 0 on success, negative on failure
-> > + **/
-> > +static int rnpgbe_add_adapter(struct pci_dev *pdev)
-> > +{
-> > +       struct mucse *mucse = NULL;
-> 
-> Nit, this does not need to be initialized as it will either be allocated in
-> alloc_etherdev* or unused on failure.
-> 
 
-Got it, I will improve this.
 
-> > +       struct net_device *netdev;
-> > +       static int bd_number;
-> > +
-> > +       netdev = alloc_etherdev_mq(sizeof(struct mucse), 1);
-> > +       if (!netdev)
-> > +               return -ENOMEM;
-> > +
-> > +       mucse = netdev_priv(netdev);
-> > +       mucse->netdev = netdev;
-> > +       mucse->pdev = pdev;
-> > +       mucse->bd_number = bd_number++;
-> > +       snprintf(mucse->name, sizeof(netdev->name), "%s%d",
-> > +                rnpgbe_driver_name, mucse->bd_number);
-> > +       pci_set_drvdata(pdev, mucse);
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +/**
-> > + * rnpgbe_probe - Device Initialization Routine
-> > + * @pdev: PCI device information struct
-> > + * @id: entry in rnpgbe_pci_tbl
-> > + *
-> > + * rnpgbe_probe initializes a PF adapter identified by a pci_dev
-> > + * structure. The OS initialization, then call rnpgbe_add_adapter
-> > + * to initializes netdev.
-> > + *
-> > + * @return: 0 on success, negative on failure
-> > + **/
-> 
-> Nit, but think probe() is a pretty well known thing and doesn't typically
-> have a function comment. Same comment applies for all of the pci_driver
-> function implementations in this patch.
-> 
+On 7/21/2025 5:14 PM, Vlastimil Babka wrote:
+>> +	kvm_gmem_inode_cachep = kmem_cache_create("kvm_gmem_inode_cache",
+>> +						  sizeof(struct kvm_gmem_inode_info),
+>> +						  0, SLAB_ACCOUNT,
+>> +						  kvm_gmem_init_inode);
+> Since this is new code, please use the new variant of kmem_cache_create()
+> that takes the args parameter.
 
-Got it. I got some kdoc warnings from 'patchwork websit' in v1 before.
-So I add all function comments to avoid those warnings. 
-I want to know what rules for a function comment? What condition
-that a function needs comment?
-And, dose I have a way to check kdoc locally? I used "/scripts/kernel-doc -v *.c", 
-but it seems not the same with 'kdoc in websit (such as
-https://netdev.bots.linux.dev/static/nipa/984303/14163657/kdoc/)'.
-Please give me some suggestions, thank you.
+Thank you for the review and suggestion.
+I'll update this in the next version.
 
-> > +static int rnpgbe_probe(struct pci_dev *pdev, const struct pci_device_id *id)
-> > +{
-> > +       int err;
-> > +
-> > +       err = pci_enable_device_mem(pdev);
-> > +       if (err)
-> > +               return err;
-> > +
-> > +       /* hw only support 56-bits dma mask */
-> 
-> I don't think this comment is necessary as DMA_BIT_MASK(56).
-> 
-
-Got it, I will remove the comment.
-
-> > +       err = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(56));
-> > +       if (err) {
-> > +               dev_err(&pdev->dev,
-> > +                       "No usable DMA configuration, aborting\n");
-> > +               goto err_dma;
-> > +       }
-> > +
-> > +       err = pci_request_mem_regions(pdev, rnpgbe_driver_name);
-> > +       if (err) {
-> > +               dev_err(&pdev->dev,
-> > +                       "pci_request_selected_regions failed 0x%x\n", err);
-> > +               goto err_pci_req;
-> > +       }
-> > +
-> > +       pci_set_master(pdev);
-> > +       pci_save_state(pdev);
-> > +       err = rnpgbe_add_adapter(pdev);
-> > +       if (err)
-> > +               goto err_regions;
-> > +
-> > +       return 0;
-> > +err_regions:
-> > +       pci_release_mem_regions(pdev);
-> > +err_dma:
-> > +err_pci_req:
-> > +       pci_disable_device(pdev);
-> > +       return err;
-> > +}
-> > +
-> > +/**
-> > + * rnpgbe_rm_adapter - remove netdev for this mucse structure
-> > + * @mucse: pointer to private structure
-> > + *
-> > + * rnpgbe_rm_adapter remove a netdev for this mucse structure
-> > + **/
-> > +static void rnpgbe_rm_adapter(struct mucse *mucse)
-> > +{
-> > +       struct net_device *netdev;
-> > +
-> > +       netdev = mucse->netdev;
-> > +       free_netdev(netdev);
-> > +}
-> > +
-> > +/**
-> > + * rnpgbe_remove - Device Removal Routine
-> > + * @pdev: PCI device information struct
-> > + *
-> > + * rnpgbe_remove is called by the PCI subsystem to alert the driver
-> > + * that it should release a PCI device.  This could be caused by a
-> > + * Hot-Plug event, or because the driver is going to be removed from
-> > + * memory.
-> > + **/
-> > +static void rnpgbe_remove(struct pci_dev *pdev)
-> > +{
-> > +       struct mucse *mucse = pci_get_drvdata(pdev);
-> > +
-> > +       if (!mucse)
-> > +               return;
-> > +
-> > +       rnpgbe_rm_adapter(mucse);
-> > +       pci_release_mem_regions(pdev);
-> > +       pci_disable_device(pdev);
-> > +}
-> > +
-> > +/**
-> > + * rnpgbe_dev_shutdown - Device Shutdown Routine
-> > + * @pdev: PCI device information struct
-> > + * @enable_wake: wakeup status
-> > + **/
-> > +static void rnpgbe_dev_shutdown(struct pci_dev *pdev,
-> > +                               bool *enable_wake)
-> > +{
-> > +       struct mucse *mucse = pci_get_drvdata(pdev);
-> > +       struct net_device *netdev = mucse->netdev;
-> > +
-> > +       *enable_wake = false;
-> > +       netif_device_detach(netdev);
-> > +       pci_disable_device(pdev);
-> > +}
-> > +
-> > +/**
-> > + * rnpgbe_shutdown - Device Shutdown Routine
-> > + * @pdev: PCI device information struct
-> > + *
-> > + * rnpgbe_shutdown is called by the PCI subsystem to alert the driver
-> > + * that os shutdown. Device should setup wakeup state here.
-> > + **/
-> > +static void rnpgbe_shutdown(struct pci_dev *pdev)
-> > +{
-> > +       bool wake = false;
-> 
-> It seems like this will always be set in rnpgbe_dev_shutdown(), so it
-> doesn't need to be initialized here.
-> 
-
-Got it, I will improve this.
-
-> > +
-> > +       rnpgbe_dev_shutdown(pdev, &wake);
-> > +
-> > +       if (system_state == SYSTEM_POWER_OFF) {
-> > +               pci_wake_from_d3(pdev, wake);
-> > +               pci_set_power_state(pdev, PCI_D3hot);
-> > +       }
-> > +}
-> > +
-> > +static struct pci_driver rnpgbe_driver = {
-> > +       .name = rnpgbe_driver_name,
-> > +       .id_table = rnpgbe_pci_tbl,
-> > +       .probe = rnpgbe_probe,
-> > +       .remove = rnpgbe_remove,
-> > +       .shutdown = rnpgbe_shutdown,
-> > +};
-> > +
-> > +/**
-> > + * rnpgbe_init_module - driver init routine
-> > + *
-> > + * rnpgbe_init_module is called when driver insmod
-> > + *
-> > + * @return: 0 on success, negative on failure
-> > + **/
-> > +static int __init rnpgbe_init_module(void)
-> > +{
-> > +       int ret;
-> > +
-> > +       ret = pci_register_driver(&rnpgbe_driver);
-> > +       if (ret)
-> > +               return ret;
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +module_init(rnpgbe_init_module);
-> > +
-> > +/**
-> > + * rnpgbe_exit_module - driver remove routine
-> > + *
-> > + * rnpgbe_exit_module is called when driver is removed
-> > + **/
-> > +static void __exit rnpgbe_exit_module(void)
-> > +{
-> > +       pci_unregister_driver(&rnpgbe_driver);
-> > +}
-> > +
-> > +module_exit(rnpgbe_exit_module);
-> > +
-> > +MODULE_DEVICE_TABLE(pci, rnpgbe_pci_tbl);
-> > +MODULE_AUTHOR("Mucse Corporation, <mucse@mucse.com>");
-> > +MODULE_DESCRIPTION("Mucse(R) 1 Gigabit PCI Express Network Driver");
-> > +MODULE_LICENSE("GPL");
-> > --
-> > 2.25.1
-> > 
-> > 
-> 
-> 
-
-Thanks for your feedback.
 
 
