@@ -1,343 +1,489 @@
-Return-Path: <linux-kernel+bounces-741107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26774B0E01D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:13:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 179DFB0E015
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:12:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E77C2561A80
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:09:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAA681712C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:08:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3B62ECD14;
-	Tue, 22 Jul 2025 15:09:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82ACF2BE7CD;
+	Tue, 22 Jul 2025 15:08:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S1fDguDZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OetOF787"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6079B2EA742;
-	Tue, 22 Jul 2025 15:09:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B919724677C
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 15:08:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753196949; cv=none; b=AXwKQIBJo3s3fQ42Nc6h+0i5QQLLAxLaeDusU5oh/vReaFlWZsF/5LnVlFLdzOeWtnnzZGGe1P3Ta9iGjzHxnGYh6VMWAFOXng8CWsVSeXxhSjZbZ1K7R+DHU/6L0od4CcvYZqRsDB+Vfn6CPHq+uam3YfIh6boRkM/no5YYO3g=
+	t=1753196910; cv=none; b=LSV7grSfXV1dp8g9hsW59ibt1bQ05/IpeLz24gdAPbIXzoE15ykvSbJWDWt6NrP+Nc0uP6of7hi1SCupWkOZFEfo19HCIvBKWw7WBHZrQjL9TMjHF3WopgZafjLO90o6gxxBL/JXHNdmxrdbS4nOVXdIQUqF9Czl/LdemnTWXwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753196949; c=relaxed/simple;
-	bh=kb7yQu9cFrXMBq6waUNjUscIziKeLqsouZSE3H5G5s0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UM1YoQzbQtgAqwwzV68VjtY727QkPeeymSy+2Xdlg91QIv4HO14gAc/k6hoJktIHkUF5f6EuZ7QuGIPm0qQJBknCd2Gmbq7+DIHnGn7qNjw4c+QxIs2XESUPKZo4HDtGFLIu6281l958FWsnnX/HtsrpYaeM4+s4r7z05zdk6bA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S1fDguDZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 209DCC4CEF7;
-	Tue, 22 Jul 2025 15:09:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753196949;
-	bh=kb7yQu9cFrXMBq6waUNjUscIziKeLqsouZSE3H5G5s0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=S1fDguDZ8AoxC5eX6IZL4n1z6q0dcfZowLSi5o1EupjUwGLjBQxS/BVP4xND7K2a8
-	 w29gWcPYrUc04A4wKvDi20wexJa2yTFBDsbKbAIEWF7XKQCBlTH0QwiBuez6JFfjPs
-	 OS/gjQnV6WQirz48Lgts88CBaXmiO9BUYqmZq5k/eK/E3/r8Jp9Dznn5OoKpNZcman
-	 86hgqXxY8ArK9Hpi5x0pynflHT6Vjaz3V9ok4izKibACBdkVauFrOpINcLpSCe02tn
-	 819CNSxmpT20PRznwfrSkBw1qLCcIbc5ivXm6x73+tedNAxIY4clEx/zUtCKs+r2pO
-	 5UmakNRxYymGw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17A05C83F34;
-	Tue, 22 Jul 2025 15:09:09 +0000 (UTC)
-From: Mahesh Rao via B4 Relay <devnull+mahesh.rao.altera.com@kernel.org>
-Date: Tue, 22 Jul 2025 23:07:54 +0800
-Subject: [PATCH 4/4] firmware: stratix10-svc: Add for SDM mailbox doorbell
- interrupt
+	s=arc-20240116; t=1753196910; c=relaxed/simple;
+	bh=TdHd72rU+sWqaPfxkx1W9QKt9zFCkcy+bitA/Lhnc+0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gmxuG1+tV1O08QbnluxLnA6N5vtHHh11Px+T+I4nJxwLpKhORTGrGKQeF9lq6ab69GQmLzbKQmcdeGVWkMlR7q5y3pWzgD2HZ13E3W018IeW1CRf0lgoIp1yTAmmb3oS9xx1g6+NdWWRqNWBZ5+ITdy+zBi714NkddOPPK4H/U4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=OetOF787; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-313a188174fso4873166a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 08:08:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1753196908; x=1753801708; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YvnddP3Fqnz0/+hWWQQyPfey79NsrjEo5E6FDf5e2gA=;
+        b=OetOF787f1DLstrK4ysEduOmzi+EseEyxttp/tJ+8npZgcW6Bz4RZ1bc+VtIulvfrR
+         ibU0cwTfTVmSXb1RlTy4yK5n9nRnihBTvVpwcj3l7IqiPOTZUbCIYD1f1juvzkAxR2dD
+         bDZ7qf0nK/WY1wmr5twU9wgzRvhYa2udJDTa8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753196908; x=1753801708;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YvnddP3Fqnz0/+hWWQQyPfey79NsrjEo5E6FDf5e2gA=;
+        b=asflH6J0R3CDJnRdfbZKZpGf4iQh1DXsszMpcBITUzxUKWwEk9G1gqELxWSK+yoO64
+         jGlJyrKYL7Qj333fz0QalsFikHueCXNw6bCUszEDGAmbwV4N1DMk+DjEwOH8P4zT7NpG
+         htRvVWf9I6moLJ33FB0r6SapX2Ilo3HYYZrA6Vcdtb5gaQtft2LNA8CKLbTkyaGvOm69
+         ezZ9EQ8yvyY6HDf68eieu5QTKFhm4caa4RBUarosuDSH7FqNIHcjuv1PHYxHckeYmJiL
+         sKS0cc+U40TsGvRDPKNg9g3zQAtYEjqi+sAkCh+oSjRl0shUg7Orzgk+uePriCIi+5X0
+         8+vg==
+X-Forwarded-Encrypted: i=1; AJvYcCUh6JeYPw8LIpRb1I5+VHxQ6+13zdbAhTrDVLM4EsvGPDB8rZqzMfmsjakZdvsE3PczUrLpsec74Kczu8o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/avs11z30qaWJhD33I/dfayScNb/qFHfbA/hM0mGRvUkyEo/O
+	RDnBTLLmxlFr0vrVcWfluXSRVQqcG2lL7hRJBkq1DYfg73ZAGLWgSXGLl1r6WM6xjod5d2t9Wq1
+	cSS1JHSZ5p3dReVSn4wmRsshgzR9kJtzPLB/FT16R
+X-Gm-Gg: ASbGncvS+yDrYBPDuARBas6rvsqvR8aT2gpq+wAKuPwGa1rEtZYgFjd77RNb7LhNcf0
+	QPOKX47aWWBH6f/URsABXJjqINxrS7zCjTo8iaski7YkzmiGi0DZoaNatSFZzTrQDAPjzMVhhjg
+	zhmyyB40RJpukVyDCMHPxs/6OfxdB1mZ8cZLdMkSPxhewVC8KAnAfd57xd0dbCbB43ievFAVX8K
+	YezlXGahEIz6BWRfM36QbGhlFtvcWloGQ==
+X-Google-Smtp-Source: AGHT+IEPeejhAmRbk14P17x+h1flJqBJXlgKJ5dzFNqYXacOJiHw9gueZKyo727SDt2/E2hmuOpJP1mxD7wHPUlZD8M=
+X-Received: by 2002:a17:90a:d883:b0:315:aa6d:f20e with SMTP id
+ 98e67ed59e1d1-31e3e0ffbc7mr5339484a91.4.1753196907937; Tue, 22 Jul 2025
+ 08:08:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250722-sip_svc_irq-v1-4-c5b9e02c1ce6@altera.com>
-References: <20250722-sip_svc_irq-v1-0-c5b9e02c1ce6@altera.com>
-In-Reply-To: <20250722-sip_svc_irq-v1-0-c5b9e02c1ce6@altera.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Mahesh Rao <mahesh.rao@altera.com>, 
- Matthew Gerlach <matthew.gerlach@altera.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753196946; l=10436;
- i=mahesh.rao@altera.com; s=20250107; h=from:subject:message-id;
- bh=hx3/zwBUt7WiXtNLJ8gUWse7GWY5YI8ZYnNkxjxE7Gw=;
- b=oXJ2P+IcUmUc3pLrK5YCDxDKYP80B3eGzt7A9Bh6zb1VWvp7MnjrM+FiCGYnHtZonepDgfhPr
- 5IvfIyLswJ+DWbU3r0DFXuEra0O9Uo0SlBAaaO/Q1grsX3oPPu/cmrB
-X-Developer-Key: i=mahesh.rao@altera.com; a=ed25519;
- pk=tQiFUzoKxHrQLDtWeEeaeTeJTl/UfclUHWZy1fjSiyg=
-X-Endpoint-Received: by B4 Relay for mahesh.rao@altera.com/20250107 with
- auth_id=337
-X-Original-From: Mahesh Rao <mahesh.rao@altera.com>
-Reply-To: mahesh.rao@altera.com
+References: <20250630141239.3174390-1-akuchynski@chromium.org>
+ <20250630141239.3174390-6-akuchynski@chromium.org> <2025070143-safeness-prewashed-6e9f@gregkh>
+In-Reply-To: <2025070143-safeness-prewashed-6e9f@gregkh>
+From: Andrei Kuchynski <akuchynski@chromium.org>
+Date: Tue, 22 Jul 2025 17:08:15 +0200
+X-Gm-Features: Ac12FXz73vDrhwbwuJ6ue9xHPqxv1oqYSoyD_s9s7OeX_260niD-XymVJv-L_NQ
+Message-ID: <CAMMMRMeKyi56Pha-X86BaQwcHGCx-xu5F67HCGZg=Yhxuk==OQ@mail.gmail.com>
+Subject: Re: [PATCH v2 05/10] usb: typec: Implement automated mode selection
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>, Benson Leung <bleung@chromium.org>, 
+	Jameson Thies <jthies@google.com>, Tzung-Bi Shih <tzungbi@kernel.org>, linux-usb@vger.kernel.org, 
+	chrome-platform@lists.linux.dev, Guenter Roeck <groeck@chromium.org>, 
+	Dmitry Baryshkov <lumag@kernel.org>, "Christian A. Ehrhardt" <lk@c--e.de>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Mahesh Rao <mahesh.rao@altera.com>
+On Tue, Jul 1, 2025 at 10:41=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Mon, Jun 30, 2025 at 02:12:34PM +0000, Andrei Kuchynski wrote:
+> > This commit introduces mode_selection sysfs attribute to control automa=
+ted
+> > mode negotiation. Writing "yes" to this file activates the automated
+> > selection process for DisplayPort, Thunderbolt alternate modes, and USB=
+4
+> > mode. Conversely, writing "no" will cancel any ongoing selection proces=
+s
+> > and exit the currently active mode.
+> >
+> > Signed-off-by: Andrei Kuchynski <akuchynski@chromium.org>
+> > ---
+> >  Documentation/ABI/testing/sysfs-class-typec |  17 +
+> >  drivers/usb/typec/class.c                   |  52 ++-
+> >  drivers/usb/typec/class.h                   |  10 +
+> >  drivers/usb/typec/mode_selection.c          | 413 ++++++++++++++++++++
+> >  drivers/usb/typec/mode_selection.h          |  30 ++
+> >  include/linux/usb/pd_vdo.h                  |   2 +
+> >  include/linux/usb/typec_altmode.h           |   5 +
+> >  7 files changed, 527 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/Documentation/ABI/testing/sysfs-class-typec b/Documentatio=
+n/ABI/testing/sysfs-class-typec
+> > index ff3296ee8e1c..0ffc71a7c374 100644
+> > --- a/Documentation/ABI/testing/sysfs-class-typec
+> > +++ b/Documentation/ABI/testing/sysfs-class-typec
+> > @@ -263,6 +263,23 @@ Description:     The USB Modes that the partner de=
+vice supports. The active mode
+> >               - usb3 (USB 3.2)
+> >               - usb4 (USB4)
+> >
+> > +What:                /sys/class/typec/<port>-partner/mode_selection
+> > +Date:                June 2025
+> > +Contact:     Andrei Kuchynski <akuchynski@chromium.org>
+> > +Description: Lists the partner-supported alternate modes and mode entr=
+y
+> > +             results with the currently entered mode bracketed. If a c=
+able doesn't
+> > +             support a mode, it's marked as 'nc'. An ellipsis indicate=
+s a mode
+> > +             currently in progress. Automated mode selection is activa=
+ted by writing
+> > +             "yes" to the file. Conversely, writing "no" will cancel a=
+ny ongoing
+> > +             selection process and exit the currently active mode, if =
+any.
+> > +
+> > +             Example values:
+> > +             - "DP TBT=3D... USB4=3Dnc": The cable does not support US=
+B4 mode,
+> > +                     The driver is currently attempting to enter Thund=
+erbolt alt-mode.
+> > +             - "[DP] TBT=3D-EOPNOTSUPP USB4=3D-ETIME": USB4 mode entry=
+ failed due to
+> > +                     a timeout, Thunderbolt failed with the result -EO=
+PNOTSUPP,
+> > +                     and DisplayPort is the active alt-mode.
+>
+> We don't print error codes to userspace like this :(
+>
 
-Add support for SDM (Secure Device Manager) mailbox
-doorbell interrupt for async transactions. On interrupt,
-a workqueue is triggered which polls the ATF for
-pending responses and retrieves the bitmap of all
-retrieved and unprocessed transaction ids of mailbox
-responses from SDM. It then triggers the corresponding
-registered callbacks.
+The intention is to provide detailed status updates regarding failures.
+I will revise this to simplify string parsing in user-space and omit
+any error codes.
 
-Signed-off-by: Mahesh Rao <mahesh.rao@altera.com>
-Reviewed-by: Matthew Gerlach <matthew.gerlach@altera.com>
----
- drivers/firmware/stratix10-svc.c             | 117 ++++++++++++++++++++++++---
- include/linux/firmware/intel/stratix10-smc.h |  23 ++++++
- 2 files changed, 130 insertions(+), 10 deletions(-)
+> And "yes" and "no" are not the traditional sysfs apis for on/off, please
+> use the in-kernel function for that instead that takes many more types
+> of values.
+>
 
-diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
-index 491a8149033f975d515444f025723658c51aa1fe..807226d5ec53bffe7e7f31b60718703434e94c90 100644
---- a/drivers/firmware/stratix10-svc.c
-+++ b/drivers/firmware/stratix10-svc.c
-@@ -9,12 +9,14 @@
- #include <linux/delay.h>
- #include <linux/genalloc.h>
- #include <linux/hashtable.h>
-+#include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/kfifo.h>
- #include <linux/kthread.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/of.h>
-+#include <linux/of_irq.h>
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
-@@ -22,6 +24,7 @@
- #include <linux/firmware/intel/stratix10-smc.h>
- #include <linux/firmware/intel/stratix10-svc-client.h>
- #include <linux/types.h>
-+#include <linux/workqueue.h>
- 
- /**
-  * SVC_NUM_DATA_IN_FIFO - number of struct stratix10_svc_data in the FIFO
-@@ -213,6 +216,7 @@ struct stratix10_async_chan {
-  *                               asynchronous operations
-  * @initialized: Flag indicating whether the control structure has
-  *               been initialized
-+ * @irq: Interrupt request number associated with the asynchronous control
-  * @invoke_fn: Function pointer for invoking Stratix10 service calls
-  *             to EL3 secure firmware
-  * @async_id_pool: Pointer to the ID pool used for asynchronous
-@@ -223,11 +227,13 @@ struct stratix10_async_chan {
-  *                     structure
-  * @trx_list_wr_lock: Spinlock for protecting the transaction list
-  *                    write operations
-+ * @async_work: Work structure for scheduling asynchronous work
-  * @trx_list: Hash table for managing asynchronous transactions
-  */
- 
- struct stratix10_async_ctrl {
- 	bool initialized;
-+	int irq;
- 	void (*invoke_fn)(struct stratix10_async_ctrl *actrl,
- 			  const struct arm_smccc_1_2_regs *args,
- 			  struct arm_smccc_1_2_regs *res);
-@@ -236,6 +242,7 @@ struct stratix10_async_ctrl {
- 	struct stratix10_async_chan *common_async_chan;
- 	/* spinlock to protect the writes to trx_list hash table */
- 	spinlock_t trx_list_wr_lock;
-+	struct work_struct async_work;
- 	DECLARE_HASHTABLE(trx_list, ASYNC_TRX_HASH_BITS);
- };
- 
-@@ -1709,14 +1716,81 @@ static inline void stratix10_smc_1_2(struct stratix10_async_ctrl *actrl,
- 	arm_smccc_1_2_smc(args, res);
- }
- 
-+static irqreturn_t stratix10_svc_async_irq_handler(int irq, void *dev_id)
-+{
-+	struct stratix10_async_ctrl *actrl = &ctrl->actrl;
-+	struct stratix10_svc_controller *ctrl = dev_id;
-+
-+	queue_work(system_bh_wq, &actrl->async_work);
-+	disable_irq_nosync(actrl->irq);
-+	return IRQ_HANDLED;
-+}
-+/**
-+ * stratix10_async_workqueue_handler - Handler for the asynchronous
-+ * workqueue in Stratix10 service controller.
-+ * @work: Pointer to the work structure that contains the asynchronous
-+ *        workqueue handler.
-+ * This function is the handler for the asynchronous workqueue. It performs
-+ * the following tasks:
-+ * - Invokes the asynchronous polling on interrupt supervisory call.
-+ * - On success,it retrieves the bitmap of pending transactions from mailbox
-+ *   fifo in ATF.
-+ * - It processes each pending transaction by calling the corresponding
-+ *   callback function.
-+ *
-+ * The function ensures that the IRQ is enabled after processing the transactions
-+ * and logs the total time taken to handle the transactions along with the number
-+ * of transactions handled and the CPU on which the handler ran.
-+ */
-+static void stratix10_async_workqueue_handler(struct work_struct *work)
-+{
-+	struct stratix10_async_ctrl *actrl =
-+		container_of(work, struct stratix10_async_ctrl, async_work);
-+	struct arm_smccc_1_2_regs
-+		args = { .a0 = INTEL_SIP_SMC_ASYNC_POLL_ON_IRQ }, res;
-+	DECLARE_BITMAP(pend_on_irq, TOTAL_TRANSACTION_IDS);
-+	struct stratix10_svc_async_handler *handler;
-+	unsigned long transaction_id = 0;
-+	u64 bitmap_array[4];
-+
-+	actrl->invoke_fn(actrl, &args, &res);
-+	if (res.a0 == INTEL_SIP_SMC_STATUS_OK) {
-+		bitmap_array[0] = res.a1;
-+		bitmap_array[1] = res.a2;
-+		bitmap_array[2] = res.a3;
-+		bitmap_array[3] = res.a4;
-+		bitmap_from_arr64(pend_on_irq, bitmap_array, TOTAL_TRANSACTION_IDS);
-+		rcu_read_lock();
-+		do {
-+			transaction_id = find_next_bit(pend_on_irq,
-+						       TOTAL_TRANSACTION_IDS,
-+						       transaction_id);
-+			if (transaction_id >= TOTAL_TRANSACTION_IDS)
-+				break;
-+			hash_for_each_possible_rcu_notrace(actrl->trx_list,
-+							   handler, next,
-+							   transaction_id) {
-+				if (handler->transaction_id == transaction_id) {
-+					handler->cb(handler->cb_arg);
-+					break;
-+				}
-+			}
-+			transaction_id++;
-+		} while (transaction_id < TOTAL_TRANSACTION_IDS);
-+		rcu_read_unlock();
-+	}
-+	enable_irq(actrl->irq);
-+}
-+
- /**
-  * stratix10_svc_async_init - Initialize the Stratix10 service
-  *                            controller for asynchronous operations.
-  * @controller: Pointer to the Stratix10 service controller structure.
-  *
-  * This function initializes the asynchronous service controller by
-- * setting up the necessary data structures and initializing the
-- * transaction list.
-+ * setting up the necessary data structures ,initializing the
-+ * transaction list and registering the IRQ handler for asynchronous
-+ * transactions.
-  *
-  * Return: 0 on success, -EINVAL if the controller is NULL or already
-  *         initialized, -ENOMEM if memory allocation fails,
-@@ -1728,7 +1802,7 @@ static int stratix10_svc_async_init(struct stratix10_svc_controller *controller)
- 	struct stratix10_async_ctrl *actrl;
- 	struct arm_smccc_res res;
- 	struct device *dev;
--	int ret;
-+	int ret, irq;
- 
- 	if (!controller)
- 		return -EINVAL;
-@@ -1775,6 +1849,22 @@ static int stratix10_svc_async_init(struct stratix10_svc_controller *controller)
- 	hash_init(actrl->trx_list);
- 	atomic_set(&actrl->common_achan_refcount, 0);
- 
-+	irq = of_irq_get(dev_of_node(dev), 0);
-+	if (irq < 0) {
-+		dev_warn(dev, "Failed to get IRQ, falling back to polling mode\n");
-+	} else {
-+		ret = devm_request_any_context_irq(dev, irq, stratix10_svc_async_irq_handler,
-+						   IRQF_NO_AUTOEN, "stratix10_svc", controller);
-+		if (ret == 0) {
-+			dev_alert(dev,
-+				  "Registered IRQ %d for sip async operations\n",
-+				irq);
-+			actrl->irq = irq;
-+			INIT_WORK(&actrl->async_work, stratix10_async_workqueue_handler);
-+			enable_irq(actrl->irq);
-+		}
-+	}
-+
- 	actrl->initialized = true;
- 	return 0;
- }
-@@ -1784,13 +1874,14 @@ static int stratix10_svc_async_init(struct stratix10_svc_controller *controller)
-  *                            service controller
-  * @ctrl: Pointer to the stratix10_svc_controller structure
-  *
-- * This function performs the necessary cleanup for the asynchronous
-- * service controller. It checks if the controller is valid and if it
-- * has been initialized. It then locks the transaction list and safely
-- * removes and deallocates each handler in the list. The function also
-- * removes any asynchronous clients associated with the controller's
-- * channels and destroys the asynchronous ID pool. Finally, it resets
-- * the asynchronous ID pool and invoke function pointers to NULL.
-+ * This function performs the necessary cleanup for the asynchronous service
-+ * controller. It checks if the controller is valid and if it has been
-+ * initialized. Also If the controller has an IRQ assigned, it frees the IRQ
-+ * and flushes any pending asynchronous work. It then locks the transaction
-+ * list and safely removes and deallocates each handler in the list.
-+ * The function also removes any asynchronous clients associated with the
-+ * controller's channels and destroys the asynchronous ID pool. Finally, it
-+ * resets the asynchronous ID pool and invoke function pointers to NULL.
-  *
-  * Return: 0 on success, -EINVAL if the controller is invalid or not
-  *         initialized.
-@@ -1812,6 +1903,12 @@ static int stratix10_svc_async_exit(struct stratix10_svc_controller *ctrl)
- 
- 	actrl->initialized = false;
- 
-+	if (actrl->irq > 0) {
-+		free_irq(actrl->irq, ctrl);
-+		flush_work(&actrl->async_work);
-+		actrl->irq = 0;
-+	}
-+
- 	spin_lock(&actrl->trx_list_wr_lock);
- 	hash_for_each_safe(actrl->trx_list, i, tmp, handler, next) {
- 		stratix10_deallocate_id(handler->achan->job_id_pool,
-diff --git a/include/linux/firmware/intel/stratix10-smc.h b/include/linux/firmware/intel/stratix10-smc.h
-index f87273af5e284b8912d87eb9d7179eb3d43e40e1..45e9dd4211f4994d67e5a6e00a5a817e96d42a8d 100644
---- a/include/linux/firmware/intel/stratix10-smc.h
-+++ b/include/linux/firmware/intel/stratix10-smc.h
-@@ -645,6 +645,29 @@ INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_FPGA_CONFIG_COMPLETED_WRITE)
- #define INTEL_SIP_SMC_ASYNC_POLL \
- 	INTEL_SIP_SMC_ASYNC_VAL(INTEL_SIP_SMC_ASYNC_FUNC_ID_POLL)
- 
-+/**
-+ * Request INTEL_SIP_SMC_ASYNC_POLL_ON_IRQ
-+ * Async call used by service driver at EL1 to read response from SDM
-+ * mailbox and to retrieve the transaction id's of the read response's.
-+ *
-+ * Call register usage:
-+ * a0 INTEL_SIP_SMC_ASYNC_POLL_ON_IRQ
-+ * a1 transaction job id
-+ * a2-7 will be used to return the response data
-+ *
-+ * Return status
-+ * a0 INTEL_SIP_SMC_STATUS_OK
-+ * a1-a4 will contain bitmap of available responses's transaction id as set
-+ *  bit position.
-+ * a5-17 not used
-+ * Or
-+ * a0 INTEL_SIP_SMC_STATUS_NO_RESPONSE
-+ * a1-17 not used
-+ */
-+#define INTEL_SIP_SMC_ASYNC_FUNC_ID_IRQ_POLL (0xC9)
-+#define INTEL_SIP_SMC_ASYNC_POLL_ON_IRQ \
-+	INTEL_SIP_SMC_ASYNC_VAL(INTEL_SIP_SMC_ASYNC_FUNC_ID_IRQ_POLL)
-+
- /**
-  * Request INTEL_SIP_SMC_ASYNC_RSU_GET_SPT
-  * Async call to get RSU SPT from SDM.
+kstrtobool() is used. It is just not documented here. I will update the
+documentation
 
--- 
-2.35.3
+> And again, multiple values in a sysfs file are not usually a good idea
+> at all as now userspace has to parse them properly.  What userspace tool
+> is going to do that?
+>
 
+By combining results into a single, complex status string, the user can
+receive the information atomically. This is why type_mode_selection_get
+function is mutex-protected. It prevents the user from encountering
+inconsistent states when reading different files.
 
+> > +
+> >  USB Type-C cable devices (eg. /sys/class/typec/port0-cable/)
+> >
+> >  Note: Electronically Marked Cables will have a device also for one cab=
+le plug
+> > diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
+> > index 93eadbcdd4c0..8455e07a9934 100644
+> > --- a/drivers/usb/typec/class.c
+> > +++ b/drivers/usb/typec/class.c
+> > @@ -741,6 +741,33 @@ static ssize_t number_of_alternate_modes_show(stru=
+ct device *dev, struct device_
+> >  }
+> >  static DEVICE_ATTR_RO(number_of_alternate_modes);
+> >
+> > +static ssize_t mode_selection_show(struct device *dev,
+> > +                                struct device_attribute *attr,
+> > +                                char *buf)
+> > +{
+> > +     struct typec_partner *partner =3D to_typec_partner(dev);
+> > +
+> > +     return typec_mode_selection_get(partner, buf);
+> > +}
+> > +
+> > +static ssize_t mode_selection_store(struct device *dev, struct device_=
+attribute *attr,
+> > +                           const char *buf, size_t size)
+> > +{
+> > +     struct typec_partner *partner =3D to_typec_partner(dev);
+> > +     bool start;
+> > +     int ret =3D kstrtobool(buf, &start);
+> > +
+> > +     if (!ret) {
+> > +             if (start)
+> > +                     ret =3D typec_mode_selection_start(partner);
+> > +             else
+> > +                     ret =3D typec_mode_selection_reset(partner);
+> > +     }
+> > +
+> > +     return ret ? : size;
+>
+> Again, only use ? : if you have to (hint, you don't have to here.)
+>
+
+Will be replaced with an if/else statement.
+
+> > +static unsigned int mode_selection_timeout =3D 4000;
+> > +module_param(mode_selection_timeout, uint, 0644);
+> > +MODULE_PARM_DESC(mode_selection_timeout, "The timeout mode entry, ms")=
+;
+> > +
+> > +static unsigned int mode_selection_delay =3D 1000;
+> > +module_param(mode_selection_delay, uint, 0644);
+> > +MODULE_PARM_DESC(mode_selection_delay,
+> > +     "The delay between attempts to enter or exit a mode, ms");
+> > +
+> > +static unsigned int mode_selection_entry_attempts =3D 4;
+> > +module_param(mode_selection_entry_attempts, uint, 0644);
+> > +MODULE_PARM_DESC(mode_selection_entry_attempts,
+> > +     "Max attempts to enter mode on BUSY result");
+>
+> This is not the 1990's, please NEVER add new module parameters
+> (especially ones that you never even documented in the changelog!)
+>
+> This just will not work, attributes for functionality either need to
+> "just work properly" or you need to make them on a per-controller type
+> basis as remember, systems have multiple controllers in them...
+>
+
+The current values are suitable for all controllers we work with,
+rendering per-controller adjustments unnecessary. Therefore, I will
+proceed with removing these module parameters.
+
+> > +
+> >  static const char * const mode_names[] =3D {
+> >       [TYPEC_DP_ALTMODE] =3D "DP",
+> >       [TYPEC_TBT_ALTMODE] =3D "TBT",
+> > @@ -15,6 +31,15 @@ static const char * const mode_names[] =3D {
+> >  };
+> >  static const char * const default_priorities =3D "USB4 TBT DP";
+> >
+> > +struct mode_selection_state {
+> > +     int mode;
+>
+> Shouldn't this be an enum?
+>
+
+enum is much better, thanks
+
+> > +     bool enable;
+> > +     bool cable_capability;
+> > +     bool enter;
+> > +     int attempt_count;
+> > +     int result;
+> > +};
+>
+> No documentation for what this structure is for?
+>
+
+This, of course, needs to be described.
+
+> > +
+> >  /* -------------------------------------------------------------------=
+------- */
+> >  /* port 'mode_priorities' attribute */
+> >  static int typec_mode_parse_priority_string(const char *str, int *list=
+)
+> > @@ -114,3 +139,391 @@ int typec_mode_priorities_get(struct typec_port *=
+port, char *buf)
+> >
+> >       return count + sysfs_emit_at(buf, count, "\n");
+> >  }
+> > +
+> > +/* -------------------------------------------------------------------=
+------- */
+> > +/* partner 'mod_selection' attribute */
+> > +
+> > +/**
+> > + * mode_selection_next() - Process mode selection results and schedule=
+ next
+> > + * action
+> > + *
+> > + * This function evaluates the outcome of the previous mode entry or e=
+xit
+> > + * attempt. Based on this result, it determines the next mode to proce=
+ss and
+> > + * schedules `mode_selection_work()` if further actions are required.
+> > + *
+> > + * If the previous mode entry was successful, the mode selection seque=
+nce is
+> > + * considered complete for the current cycle.
+> > + *
+> > + * If the previous mode entry failed, this function schedules
+> > + * `mode_selection_work()` to attempt exiting the mode that was partia=
+lly
+> > + * activated but not fully entered.
+> > + *
+> > + * If the previous operation was an exit (after a failed entry attempt=
+),
+> > + * `mode_selection_next()` then advances the internal list of candidat=
+e
+> > + * modes to determine the next mode to enter.
+> > + */
+> > +static void mode_selection_next(
+> > +     struct typec_partner *partner, struct mode_selection_state *ms)
+> > +{
+> > +     if (!ms->enter) {
+> > +             kfifo_skip(&partner->mode_sequence);
+> > +     } else if (!ms->result) {
+> > +             dev_info(&partner->dev, "%s mode entered\n", mode_names[m=
+s->mode]);
+>
+> Please remove debugging code.
+>
+> > +
+> > +             partner->active_mode =3D ms;
+> > +             kfifo_reset(&partner->mode_sequence);
+> > +     } else {
+> > +             dev_err(&partner->dev, "%s mode entry failed: %pe\n",
+> > +                     mode_names[ms->mode], ERR_PTR(ms->result));
+>
+> What can a user do with this error message?
+>
+
+All prints will be removed.
+
+> > +
+> > +             if (ms->result !=3D -EBUSY ||
+> > +                     ms->attempt_count >=3D mode_selection_entry_attem=
+pts)
+> > +                     ms->enter =3D false;
+> > +     }
+> > +
+> > +     if (!kfifo_is_empty(&partner->mode_sequence))
+> > +             schedule_delayed_work(&partner->mode_selection_work,
+> > +                     msecs_to_jiffies(mode_selection_delay));
+> > +}
+> > +
+> > +static void mode_selection_complete(struct typec_partner *partner,
+> > +                             const int mode, const int result)
+> > +{
+> > +     struct mode_selection_state *ms;
+> > +
+> > +     mutex_lock(&partner->mode_sequence_lock);
+>
+> You use a lock here, but not in the function above? Why?
+>
+
+`mode_sequence_lock` mutex protects `mode_sequence` kfifo state. It
+should be locked before kfifo_peek()
+
+> > +     if (kfifo_peek(&partner->mode_sequence, &ms)) {
+> > +             if (ms->mode =3D=3D mode) {
+> > +                     ms->result =3D result;
+> > +                     cancel_delayed_work(&partner->mode_selection_work=
+);
+> > +                     mode_selection_next(partner, ms);
+>
+> Ah, you need to have the lock held, you didn't document that in text or
+> in a way the compiler can verify/check it :(
+>
+>
+
+It is a good case for __must_hold macro. Thanks
+
+> > +             }
+> > +     }
+> > +     mutex_unlock(&partner->mode_sequence_lock);
+> > +}
+> > +
+> > +void typec_mode_selection_altmode_complete(struct typec_altmode *alt,
+> > +                             const int result)
+> > +{
+> > +     mode_selection_complete(to_typec_partner(alt->dev.parent),
+> > +             typec_svid_to_altmode(alt->svid), result);
+> > +}
+> > +EXPORT_SYMBOL_GPL(typec_mode_selection_altmode_complete);
+> > +
+> > +void typec_mode_selection_usb4_complete(struct typec_partner *partner,
+> > +                             const int result)
+> > +{
+> > +     mode_selection_complete(partner, TYPEC_USB4_MODE, result);
+> > +}
+> > +EXPORT_SYMBOL_GPL(typec_mode_selection_usb4_complete);
+> > +
+> > +static void mode_selection_activate_usb4_mode(struct typec_partner *pa=
+rtner,
+> > +     struct mode_selection_state *ms)
+> > +{
+> > +     struct typec_port *port =3D to_typec_port(partner->dev.parent);
+> > +     int result =3D -EOPNOTSUPP;
+> > +
+> > +     if (port->ops && port->ops->enter_usb_mode) {
+> > +             if (ms->enter && port->usb_mode !=3D USB_MODE_USB4)
+> > +                     result =3D -EPERM;
+> > +             else
+> > +                     result =3D port->ops->enter_usb_mode(port,
+> > +                             ms->enter ? USB_MODE_USB4 : USB_MODE_USB3=
+);
+> > +     }
+> > +
+> > +     if (ms->enter)
+> > +             ms->result =3D result;
+> > +}
+> > +
+> > +static int mode_selection_activate_altmode(struct device *dev, void *d=
+ata)
+> > +{
+> > +     struct typec_altmode *alt =3D to_typec_altmode(dev);
+> > +     struct mode_selection_state *ms =3D (struct mode_selection_state =
+*)data;
+> > +     int result =3D -ENODEV;
+> > +
+> > +     if (!strcmp(dev->type->name, ALTERNATE_MODE_DEVICE_TYPE_NAME)) {
+> > +             if (ms->mode =3D=3D typec_svid_to_altmode(alt->svid)) {
+> > +                     if (alt->ops && alt->ops->activate)
+> > +                             result =3D alt->ops->activate(alt, ms->en=
+ter ? 1 : 0);
+> > +                     else
+> > +                             result =3D -EOPNOTSUPP;
+> > +             }
+> > +     }
+> > +
+> > +     if (ms->enter)
+> > +             ms->result =3D result;
+> > +
+> > +     return result =3D=3D -ENODEV ? 0 : 1;
+> > +}
+> > +
+> > +static void mode_selection_activate_mode(struct typec_partner *partner=
+,
+> > +     struct mode_selection_state *ms)
+> > +{
+> > +     dev_info(&partner->dev, "%s %s mode\n",
+> > +             ms->enter ? "Enter" : "Exit", mode_names[ms->mode]);
+>
+> Again, please remove debugging code.
+>
+> When drivers work properly, they are quiet.
+>
+> And this really is the only valid use for ? : around, so that's ok here :=
+)
+>
+
+Sadly, the only good case will be removed :)
+
+> > +void typec_mode_selection_add_cable(struct typec_partner *partner,
+> > +             struct typec_cable *cable)
+> > +{
+> > +     const u32 id_header =3D cable->identity->id_header;
+> > +     const u32 vdo1 =3D cable->identity->vdo[0];
+> > +     const u32 type =3D PD_IDH_PTYPE(id_header);
+> > +     const u32 speed =3D VDO_TYPEC_CABLE_SPEED(vdo1);
+> > +     bool capability[] =3D {
+> > +             [TYPEC_DP_ALTMODE] =3D true,
+> > +             [TYPEC_TBT_ALTMODE] =3D false,
+> > +             [TYPEC_USB4_MODE] =3D false,
+> > +     };
+>
+> Why are these the default capabilities?  Where is that documented?  Why
+> these specific values to start with?
+>
+
+These values are currently utilized in ChromeOS when VDO is 0 and the
+cable is neither passive nor active. This unfortunately includes some USB
+dongles with DisplayPort support. I will document this behavior.
+
+Thanks for the review!
+Andrei
+
+> thanks,
+>
+> greg k-h
 
