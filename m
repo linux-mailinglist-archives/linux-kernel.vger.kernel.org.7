@@ -1,117 +1,150 @@
-Return-Path: <linux-kernel+bounces-740620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF3A5B0D6CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:05:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37881B0D6DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:07:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A10FA3A87E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:04:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D5747B4CEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADFC92E0907;
-	Tue, 22 Jul 2025 10:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EQcTP3it"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428FB23F28B;
-	Tue, 22 Jul 2025 10:02:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E9D2E266E;
+	Tue, 22 Jul 2025 10:03:27 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C772DCF4F;
+	Tue, 22 Jul 2025 10:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753178570; cv=none; b=Ymqrgoosk5sCbq2EUKZ8JiiZYcO2HBB03ICsVXI5YVuI4V6psznSVfMmIQJ8cSnrPdYKxy1Mcw3v0elj5e+Lf/LFN4x4qFOnu5JJ5Izybr1QbklJMsTqG1eol0vPRQW83O5ROpHiPzOGGnOu7EZ92SfIY+AFLP2oh7ZdIIqx7To=
+	t=1753178606; cv=none; b=kfKidLanpLoy0TG6SqMsNpkzZjcED7dgU8y0a8Rc3vca2dOmuJ9PoprX3a0HrNz80ZcaWM11TLAnzcjmRp7WGHuZBiSGBJfgqE0e2N+Nq35l8IY1y7evzd8ANrnyKRZLLx28Urh3YYrgzQ/pqWhc3SRqd5IbJDfdJavx1+2idHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753178570; c=relaxed/simple;
-	bh=7x/MblA9hDrEH8tsts/ya4UsiNQfzuJJXKVBSxrh69E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Maoj5LFR3z21elo0unI1+rQ1S9QVDqKzx5mfUBHonP86XgqsF4sMF3nbwTv6EcJNBVkCMMC0TJ4rpLvoTWgjzdlIqBWLOZTLY2WSVPvdMpfV4ewCjUfUDBQt4iiXDxEt40Ln/IGaosu/RkOerEODFYeHDbs+RfDC3GCzxMrdF+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EQcTP3it; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45619d70c72so48398135e9.0;
-        Tue, 22 Jul 2025 03:02:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753178567; x=1753783367; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HJLkThqv/dSOl8n/5REBMN665eVsmLLXtOyGbSyEBng=;
-        b=EQcTP3itgGhq4XHwoF8il9QaIawIB5uotLYyZcXvVCh8A4iC9aeQILRRa1lwtA1huC
-         mUsMrO8DS7emAQSgFhKyEk6mv7j3KqR/LZybs2P8XC+ZQMOxxdTZzwf3ONCiOZgwixY7
-         36FdmokxM9aNs+7h+ADjoJzbZNekfHj9MKzT6PtAJjwr8ZVZ01ybsn3jMppEMpAI8qFU
-         viz8XntStUPNvJOzUpnhW0cqi4GxadTvbkWHUZihjSACm7Q7mUHlGAdWTM0vKExesw+7
-         uGXMqUwi60Cdv+bTD62DEvoS1uWxlf30YOYOQxQdq8l4Rv+BAT6prOhhYgolrFb6NdsT
-         eGiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753178567; x=1753783367;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HJLkThqv/dSOl8n/5REBMN665eVsmLLXtOyGbSyEBng=;
-        b=JLyccIovY+qXHOi/IU53DkqxPnXWc4X3EXFHKmNEpBPq2u0a6iJBzA9/AIv5fVBQr/
-         zvnSItCsffRnxdeA5aOmGMMMPoyMA4J1hzP6Dd469asNmr0jdebYsMtGI/BJZC0z2+97
-         MiaMVjN8Tw4hG5YI1oLJ5OkqddIyzlGJQcaUYj7P1z//41O3xOKGDAHQ/RiwwmheK77J
-         UkIWdZPsGmtqZGempVSc1DFI34xRdavpzN7M+PcwapKuohelg/WTkbL+Rm8ekwrpTfVP
-         AuMlWwC4EZfS2Kmn7mpTGxEtwo1LljajJRZ856+DNrvZkjrlhLAknQAYOzy+2Z2/vFEc
-         gSEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVpKjvWj7cZpiOcSlukU4fLoJxIWV5qv6gF93NIrbFqCALHcGugxXTBcpKUju+kYKkuk14tuwJASjUe7EE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxa4xAUF8prnJQGgJmxmK4z8WdZBYshq+DZTVIng19m1ihq4AoW
-	vnICwwfFcOI/cwHZVfcCMNpESdx4SQ22IopPIC3oKZdG4p4+gQ8odAvW26sYxHWLbqA=
-X-Gm-Gg: ASbGnctHHKdCVTjlkLeWjVlZkOHSAvez+yRuCSkrxfR4Sr/DIR5/3m9He1FeaJLU+M3
-	m+VNx++15ILFzFrnvlkaTad6sMBSa4Jo2Ek4cR+gEbgLbPWshPLSufTGhIndQEqynlYDeO4/eS/
-	JKy3nAMYB7t3aEgygxlm54E3kpdyhXuSPGX1CD8oDFNd4HMEbKGWAa43sfY9rUSDI3RThQQcXWv
-	AHaaUITujNRTUsbb7S7EXpO03Vd7APHM5/zALHfNCULrywLyPX2JEV8tJW8qJz+Dhfd5EPmiN5O
-	PaBdTaoi4sJjHwFbjPMp7tckYTr0CH3VngZKDWvKxiSYA3MD5wlW/GoIMFwj/NKjPfEuNWOBXcy
-	zezXE2z+ORBKlEMGKlj4dFJfpyvTOHEQ=
-X-Google-Smtp-Source: AGHT+IF0laoKtKkFN/t6ngrLWQPIvWKMXmimOZe8OVNH0SnTJ2DeY5aDhhTHsNtNElR2dVPijh5fDg==
-X-Received: by 2002:a05:600c:48a2:b0:456:22f8:3aa1 with SMTP id 5b1f17b1804b1-458626fe2c9mr15146055e9.2.1753178567181;
-        Tue, 22 Jul 2025 03:02:47 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4562e89c308sm184216065e9.30.2025.07.22.03.02.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 03:02:46 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Peter Chen <peter.chen@cixtech.com>,
-	Fugang Duan <fugang.duan@cixtech.com>,
-	CIX Linux Kernel Upstream Group <cix-kernel-upstream@cixtech.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] mailbox: cix: Fix spelling mistake "overlow" -> "overflow"
-Date: Tue, 22 Jul 2025 11:02:14 +0100
-Message-ID: <20250722100214.3792075-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1753178606; c=relaxed/simple;
+	bh=KRSoslysxubJvKlodptdIN8Cr0CnxifhWfGSE9GeFgM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DS7NUo5jum4zgLfAp5akCOycPs23yX9zwxdq5D/NVWdYOr6B8k4as3SwrINj4ZNqLOEQU6S1aP5GG6LTXVT4WjXzi+hEqJH4iZ4s9cRa/WIb6Lme2p9q9akKP4A+9K3EN5MogwVsx7q4r4BgX11jNucMKUX2Qk08JUsnYyNZXsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CC462152B;
+	Tue, 22 Jul 2025 03:03:18 -0700 (PDT)
+Received: from [10.57.0.201] (unknown [10.57.0.201])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E1B363F59E;
+	Tue, 22 Jul 2025 03:03:21 -0700 (PDT)
+Message-ID: <c93b34ca-1abf-4db0-90f9-3802ac02c25a@arm.com>
+Date: Tue, 22 Jul 2025 11:03:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: Excessive page cache occupies DMA32 memory
+To: Greg KH <gregkh@linuxfoundation.org>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+ Baochen Qiang <baochen.qiang@oss.qualcomm.com>,
+ Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
+ Manivannan Sadhasivam <mani@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, kernel@collabora.com,
+ Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ iommu@lists.linux.dev
+References: <766ef20e-7569-46f3-aa3c-b576e4bab4c6@collabora.com>
+ <aH51JnZ8ZAqZ6N5w@casper.infradead.org>
+ <2025072238-unplanted-movable-7dfb@gregkh>
+ <91fc0c41-6d25-4f60-9de3-23d440fc8e00@collabora.com>
+ <2025072234-cork-unadvised-24d3@gregkh>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <2025072234-cork-unadvised-24d3@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-There is a spelling mistake in a dev_err message. Fix it.
+On 2025-07-22 8:24 am, Greg KH wrote:
+> On Tue, Jul 22, 2025 at 11:05:11AM +0500, Muhammad Usama Anjum wrote:
+>> Adding ath/mhi and dma API developers to the discussion.
+>>
+>> On 7/22/25 10:32 AM, Greg KH wrote:
+>>> On Mon, Jul 21, 2025 at 06:13:10PM +0100, Matthew Wilcox wrote:
+>>>> On Mon, Jul 21, 2025 at 08:03:12PM +0500, Muhammad Usama Anjum wrote:
+>>>>> Hello,
+>>>>>
+>>>>> When 10-12GB our of total 16GB RAM is being used as page cache
+>>>>> (active_file + inactive_file) at suspend time, the drivers fail to allocate
+>>>>> dma memory at resume as dma memory is either occupied by the page cache or
+>>>>> fragmented. Example:
+>>>>>
+>>>>> kworker/u33:5: page allocation failure: order:7, mode:0xc04(GFP_NOIO|GFP_DMA32), nodemask=(null),cpuset=/,mems_allowed=0
+>>>>
+>>>> Just to be clear, this is not a page cache problem.  The driver is asking
+>>>> us to do a 512kB allocation without doing I/O!  This is a ridiculous
+>>>> request that should be expected to fail.
+>>>>
+>>>> The solution, whatever it may be, is not related to the page cache.
+>>>> I reject your diagnosis.  Almost all of the page cache is clean and
+>>>> could be dropped (as far as I can tell from the output below).
+>>>>
+>>>> Now, I'm not too familiar with how the page allocator chooses to fail
+>>>> this request.  Maybe it should be trying harder to drop bits of the page
+>>>> cache.  Maybe it should be doing some compaction.
+>> That's very thoughtful. I'll look at the page allocator why isn't it dropping
+>> cache or doing compaction.
+>>
+>>>> I am not inclined to
+>>>> go digging on your behalf, because frankly I'm offended by the suggestion
+>>>> that the page cache is at fault.
+>> I apologize—that wasn't my intention.
+>>
+>>>>
+>>>> Perhaps somebody else will help you, or you can dig into this yourself.
+>>>
+>>> I'm with Matthew, this really looks like a driver bug somehow.  If there
+>>> is page cache memory that is "clean", the driver should be able to
+>>> access it just fine if really required.
+>>>
+>>> What exact driver(s) is having this problem?  What is the exact error,
+>>> and on what lines of code?
+>> The issue occurs on both ath11k and mhi drivers during resume, when
+>> dma_alloc_coherent(GFP_KERNEL) fails and returns -ENOMEM. This failure has
+>> been observed at multiple points in these drivers.
+>>
+>> For example, in the mhi driver, the failure is triggered when the
+>> MHI's st_worker gets scheduled-in at resume.
+>>
+>> mhi_pm_st_worker()
+>> -> mhi_fw_load_handler()
+>>     -> mhi_load_image_bhi()
+>>        -> mhi_alloc_bhi_buffer()
+>>           -> dma_alloc_coherent(GFP_KERNEL) returns -ENOMEM
+> 
+> And what is the exact size you are asking for here?
+> What is the dma ops set to for your system?  Are you sure that is
+> working properly for your platform?  What platform is this exactly?
+> 
+> The driver isn't asking for DMA32 here, so that shouldn't be the issue,
+> so why do you feel it is?  Have you tried using the tracing stuff for
+> dma allocations to see exactly what is going on for this failure?
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/mailbox/cix-mailbox.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I'm guessing the device has a 32-bit DMA mask, and the allocation ends 
+up in __dma_direct_alloc_pages() such that that adds GFP_DMA32 in order 
+to try to satisfy the mask via regular page allocation. How GFP_KERNEL 
+turns into GFP_NOIO, though, given that the DMA layer certainly isn't 
+(knowingly) messing with __GFP_IO or __GFP_FS, is more of a mystery... I 
+suppose "during resume" is the red flag there - is this worker perhaps 
+trying to run too early in some restricted context before the rest of 
+the system has fully woken up?
 
-diff --git a/drivers/mailbox/cix-mailbox.c b/drivers/mailbox/cix-mailbox.c
-index 5bb1416c26a5..443620e8ae37 100644
---- a/drivers/mailbox/cix-mailbox.c
-+++ b/drivers/mailbox/cix-mailbox.c
-@@ -346,7 +346,7 @@ static void cix_mbox_isr_fifo(struct mbox_chan *chan)
- 		/* FIFO overflow is generated */
- 		if (int_status & CIX_FIFO_OFLOW_INT) {
- 			status = cix_mbox_read(priv, CIX_FIFO_STAS);
--			dev_err(priv->dev, "fifo overlow: int_stats %d\n", status);
-+			dev_err(priv->dev, "fifo overflow: int_stats %d\n", status);
- 			cix_mbox_write(priv, CIX_FIFO_OFLOW_INT, CIX_INT_CLEAR);
- 		}
- 	}
--- 
-2.50.0
+Thanks,
+Robin.
+
+> 
+> I think you need to do a bit more debugging :)
+> 
+> thanks,
+> 
+> greg k-h
 
 
