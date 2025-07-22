@@ -1,219 +1,345 @@
-Return-Path: <linux-kernel+bounces-740607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EE9AB0D65C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:54:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 45DCDB0D65E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:54:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52930AA3DF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:53:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7169CAA02DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E37BF2E040F;
-	Tue, 22 Jul 2025 09:53:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F8E2BEFFD;
+	Tue, 22 Jul 2025 09:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fXbAGeUy"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="RCvA5YTB"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011067.outbound.protection.outlook.com [52.101.70.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499642DEA6A;
-	Tue, 22 Jul 2025 09:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753178004; cv=none; b=W+vZ+NMlEvyDWMLIfpBJt5HL3ggWJOCCgRvAOjLlWSvIMBtf5L9f6otppTD0nmJG+WGUmToxnLO6JtMb5zLRdi5AJ1iRHBplE0OjltEWDI9jAqo5yiK4rQeussa7m+kiv0QPAYTG4sWfkwq7WJza9haJLuRkAM0Z0uh/Qxn7LxM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753178004; c=relaxed/simple;
-	bh=0ahjYebJTcBwY5yNy4z0UV0/9vcA93nCL1qO41tahCg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mXD8mMH50cUKaYqaOYsdeQCpdTcc3gK1YGY38oX1X9x8iixru5UBGjo5QpceX2RXMmOyw3Kk/GQWV6veHjOEpOVaKoS/BiWBbOYHldDtDkH9I45bRHR6hYaNxLY/nxUqjg2VgQj9wpp5Ibo0VUj+9tCcKEClZC95TdBFEf+kXPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fXbAGeUy; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56M0oVZJ032317;
-	Tue, 22 Jul 2025 09:53:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=iXPjagKe1OfX88cYSdt0ScY3MiGeMz
-	nFbHV/ry44zF8=; b=fXbAGeUyES5WdcPTM3njnI/JE+Y8U8Hxh3Eep8PZlwHGZ9
-	D2vOi0ZaimIx+kRvFt7x/Lo2KalvjFnIaYVZc/bDWi+jVi4teA9fqub5pNzR+Lzt
-	SlzVhBptbPXimx4/P/AnVEd/qMJaHOI4bi13+3c8gY8cCT+yiDlr2D4wJtdQ7I8u
-	9hDTCOMJ+vUfYJSnHfvq2vyrP+X1TRRw0fwRqXWb7T/zofueKJlEzwTISYiRJEpQ
-	QKlQbhDGV5tyuwfOn44pCAk6G8n8V/uZDlIF8+XseHmAiv8NQLaW90Y7Ix3qcEUn
-	qMLCzt29HKCEU7KB5yIIPz0QmD1XbWwZqW6ArIBA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4805hfwk52-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Jul 2025 09:53:13 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 56M9cwWW011936;
-	Tue, 22 Jul 2025 09:53:13 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4805hfwk50-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Jul 2025 09:53:13 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56M5tSTu024964;
-	Tue, 22 Jul 2025 09:53:12 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 480nptjf7m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Jul 2025 09:53:12 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56M9r7ih51773934
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 22 Jul 2025 09:53:07 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A088720043;
-	Tue, 22 Jul 2025 09:53:07 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 494F420040;
-	Tue, 22 Jul 2025 09:53:05 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.18.185])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 22 Jul 2025 09:53:05 +0000 (GMT)
-Date: Tue, 22 Jul 2025 15:23:02 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
-        Ritesh Harjani <ritesh.list@gmail.com>, john.g.garry@oracle.com,
-        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v3 02/13] common/rc: Fix fsx for ext4 with bigalloc
-Message-ID: <aH9ffl7-2ri2Exgv@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <cover.1752329098.git.ojaswin@linux.ibm.com>
- <84a1820482419a1f1fb599bc35c2b7dcc1abbcb9.1752329098.git.ojaswin@linux.ibm.com>
- <20250717161154.GF2672039@frogsfrogsfrogs>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A15D2BEFEB;
+	Tue, 22 Jul 2025 09:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753178043; cv=fail; b=ubCZ8rhKzTGe+N0APb9eFfWqqA3l26YHJBTy0SL4gPHBIzIDwSa4/Pnq1tHRXct+EIhkUliBG4ExR7Uj5fXI34ymquY+SmSXu+dcA0iRJwmZ+G2kVblk9gYelYQ27V1kIoO1p+rUelyrmRXslC74lsnVfzDahafML8AJIwaFkYA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753178043; c=relaxed/simple;
+	bh=eF6/NRflEdCdp4MMI5eLfSoLw6LOXJk4WE+nXYDhXKM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ohiDuusow4a7jg+RPcyu3SHf4hhFr1n1aCHfPOnzr+PM/+q5f1VG3udsnRvwhB5kWUcl5ZxK9yrgscv8sP7NnprnJAdyB5gSPOHCYmOuQe444LGx9oJh/i+oufjo1t9ORyO3pzOFe8M5UhJ/bOJI+8eV1vuvafEgI2fuCVdy8+A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=RCvA5YTB; arc=fail smtp.client-ip=52.101.70.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=c4q4DxZ6XnPqeZWLLOwOL087S1Dko4igxoLWFAwUoXKT3ZC72obNtJRK+oYXP5iiPAqZ6n7IuCsYKH/pIiHkWGhs8Jeg4G2Il8G6ZiAyDg3Fa78z5j4TeNDrtf0MCrARfkM1uZrJS5gh88ItIh9Ejr4V7p18IC1muhs+D8MpEGM9cZr73BAXfb3u6+zgTJx+QVic/rQoTcU2mTaHzo2xhJKXkFXio+3OFeIA/UAozV5fjjFQwcviFG8CPm94rMrFFPeiUJNUYeB3fI5Tf5j90+bOtOuecS2olQW+Ua0l95ZdjfjEE1BbdPT7vR+NdimnTcZlX9bFnGhGHAtxPgDcUA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tkIxgasmLXn92LXMedILIBS3S+dP3oIf1rFzNwgg5PM=;
+ b=nqlESmRxy/eze5D88C/YvyK7ziFIRZMLFwAtsPEzxhM5237f1fiDiJzORjEsGFvZ3gsdQ/82QTwStTCu5/ic8zk9uE4Cdx1YsPLFoHrX+9wjDHKDqr4/wlzruvDMKNr50OUKv2dBK5PJiZsQl79wWBlZLjV5RMftDgoqXXU2x7w2W/kY66XWWSC7iklhUS1BkWSrUUcdzk1ih5StpkZWb/jhB4xbT4RDQ2ntRq5uUSDCz70XtD0JvxJIZD5X5oV/chVo6hlPMkfk2DqWbFr9JIswrydZw0QtiPzeqbGzg8x3F2HyQtYbuUMOI+oy+uAPADp99gY9TSGs6WNCTHizXA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tkIxgasmLXn92LXMedILIBS3S+dP3oIf1rFzNwgg5PM=;
+ b=RCvA5YTBs7By3ZZTHahz4cXXTrxYNreDDueebKrcCw0W1WTeA7MVpFPHjs6WWNVOTRYvPkexq/nqDkAw5ct6COKHI/Wf6YNyVrZGwIh8So9QXa4xGEiZFzKxQB5GmEqrEq9eBie17VJf5YZKa8Q13xKdYbDNGSFampj40Hkmlz5RwNFzm11LqRJpuN+X3Y7CRJKfku+0BC6BMNo/8V8nOM/zPXS1wRS8GBWB7NSTtCTtN2n3HC9YpJREpmDwNpXsmkylPA6+xi/7JvltAPeONbbuQnme7ltPXinJOlnO36WLcs7WTtS5PtC/1ua4S8sMhPWpiANIH62q6A90IUlJRA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM9PR04MB8147.eurprd04.prod.outlook.com (2603:10a6:20b:3e0::22)
+ by GVXPR04MB10475.eurprd04.prod.outlook.com (2603:10a6:150:1ea::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Tue, 22 Jul
+ 2025 09:53:55 +0000
+Received: from AM9PR04MB8147.eurprd04.prod.outlook.com
+ ([fe80::eace:e980:28a4:ef8a]) by AM9PR04MB8147.eurprd04.prod.outlook.com
+ ([fe80::eace:e980:28a4:ef8a%6]) with mapi id 15.20.8964.019; Tue, 22 Jul 2025
+ 09:53:55 +0000
+Message-ID: <dddcad1a-1f0a-4ecc-8093-8a75ec24d2ec@nxp.com>
+Date: Tue, 22 Jul 2025 11:53:53 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 0/2] Add standard exposure and gain controls for multiple
+ captures
+To: Mirela Rabulea <mirela.rabulea@nxp.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: mchehab@kernel.org, sakari.ailus@linux.intel.com,
+ hverkuil-cisco@xs4all.nl, ribalda@chromium.org, jai.luthra@ideasonboard.com,
+ laurentiu.palcu@nxp.com, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, LnxRevLi@nxp.com, celine.laurencin@nxp.com
+References: <20250710220544.89066-1-mirela.rabulea@nxp.com>
+ <20250715235952.GE19299@pendragon.ideasonboard.com>
+ <20250716001205.GG19299@pendragon.ideasonboard.com>
+ <38e022d0-cc8f-4df2-8a81-69513c854035@nxp.com>
+Content-Language: en-US
+From: Julien Vuillaumier <julien.vuillaumier@nxp.com>
+In-Reply-To: <38e022d0-cc8f-4df2-8a81-69513c854035@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR2P281CA0094.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:9b::20) To AM9PR04MB8147.eurprd04.prod.outlook.com
+ (2603:10a6:20b:3e0::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250717161154.GF2672039@frogsfrogsfrogs>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDA3OSBTYWx0ZWRfX7lUwW1+Q5zWa
- wuiWsDx8+a4mjfw8gOtpvTo7qAO1Zqml6+9DARLyt9nIVz/oY938OX7KvXkeTUQuR/J0kcov4J6
- CZ2IDHDhSa6JWPpc0jjwL6lbp60HaVqnftbourjIPdW1No0CxWUd/qqvB7ELUTPO0c8idtnurEB
- vjEbDUXeretDzGAwJRuiRNi0/tebnLK8VfADZmwP1KCaS/TGk8IV0Uue8KT0jB3nXMs6lrk4noZ
- jTN1JwYypR4kRtioTk3SrWhUSUlvQL4W0wN953U3bfQyPx3BZHXkc69Zj8y8WhO8xmHF6xBdMmg
- 8u7ZbYtxWUOl1hYf6i4wmOGWFiFbIz4r776HM8jk8m948FfhDI8VSNCRa1BTErhOhzxSmuxTsNS
- w9KG3Dx6Jye2Q3okqTj1O97DUZ+eMgsLAGnglyPWZ5QdbFtgyOPYQWoGwm/dpcL28AX6yAZs
-X-Proofpoint-GUID: uVC4Ndc0eYIstplw9f8qLXS3t_zWHjGM
-X-Proofpoint-ORIG-GUID: 1-5EotLC-Bt5v-VEBZmlBtzd989lpf7d
-X-Authority-Analysis: v=2.4 cv=X9RSKHTe c=1 sm=1 tr=0 ts=687f5f89 cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=pGLkceISAAAA:8 a=VnNF1IyMAAAA:8
- a=WmCSGEEz2f1fRig7hz0A:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-22_01,2025-07-21_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 priorityscore=1501 adultscore=0 lowpriorityscore=0
- phishscore=0 malwarescore=0 clxscore=1015 mlxscore=0 spamscore=0
- suspectscore=0 mlxlogscore=999 bulkscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507220079
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM9PR04MB8147:EE_|GVXPR04MB10475:EE_
+X-MS-Office365-Filtering-Correlation-Id: a32d5a5f-63bd-45a5-8f96-08ddc905abe2
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|19092799006;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?Y0JORDFYUGozZE00WEpKOWFmNHR5aTZlekF3VlM2SVJrcWFhNWZjTWZFSDQw?=
+ =?utf-8?B?c3BjWU1sR0p3eEM0cEoxU3FsNFVTSnEwNUhEYXFYRXBrTUIyQ2xNMFVyNnAv?=
+ =?utf-8?B?MGM0aVEvUGlONkhWdWthdTcxK251YWE1T3JmeS9rTVVEV2ExZ3BLTUU3bThr?=
+ =?utf-8?B?dG1iU3AraE5KY3I2cjNXcDhzdFMyZjFLVFBmalNNZmtqMGh6Z1M3LzZra3cx?=
+ =?utf-8?B?QVFaU0pNY3lZVWRZdFVNTUk5azRYMjRxeHk0TFBxQkhGdFJTc3RhQ1JvVHpj?=
+ =?utf-8?B?eXpKWlVzcDNxN3RnMU84U2tTNkI3dnN6MitTeVM2amRZbnJac1djMUlmVmFU?=
+ =?utf-8?B?ajZsVjM2TWNGMFNJbkw1TWp4dFpsc3I4cTJVVmRLTThSaDV6Nm5sUmtwRmRI?=
+ =?utf-8?B?Tm5zQk9jQmgvSFdPYmZxYnRYRlh6bmtDYU5zNzhFVDdLczgwWE04aUYxaVpJ?=
+ =?utf-8?B?cHV1andIa3gvdE9raXZpaUt1L2tGWUQxOHlsUnRTUlloWnNacEVSWTZXRjhN?=
+ =?utf-8?B?dzdiaWZUZnJwTlM3VTQ1NXRGc1JJU2p3c1FtNHUvV3FjN0dLenorOVU2Y0hJ?=
+ =?utf-8?B?Zkx3a3I4ZWlrREFPWWVIYnE2Y0JHc2MxTXNPMXRCVnd2eUtoMDZVblN6N2Q2?=
+ =?utf-8?B?aXpUNGxVSW82T1ZYcnNKME9QcTdaWm9Yd1Vwb1lycmREd3JrZWpwMzROS0NO?=
+ =?utf-8?B?dndhbDRKK1BnTXh3bUNLcGFKNlFMK1NLRVYrU0g1UTBrSGowQXVhOFJWM2F5?=
+ =?utf-8?B?S3YwZTFrN0cyakozNjVYREVHUVpJRE5BNmI4NlJWNkc1NXQyeW5wV2VSckxD?=
+ =?utf-8?B?cDdoV1IvUVBhQVNUNnhPYVI2NWZNOURlanNrSnN2a1ZQSFB3QjB1dmdKV1VX?=
+ =?utf-8?B?d1BySDlZeUpzMGxqUnd4WVFNVy9ZcmRPakd2NENzeG1IRVlLdHFjeldBZVY0?=
+ =?utf-8?B?bm1XNUNPTTBjYmczSnphbTRISTVtZmd5R3MzV0U2LzVBY05TMUdZKzRHTW1H?=
+ =?utf-8?B?Z05VdndNd2hFK3RzN25uWEpTKzA0bHBlSFRhbXB0VWwvY1ByTmtYb0RUZG1a?=
+ =?utf-8?B?M2xSMmxEZ0VsaFhtMWVjaFpVZytFUHovZXpiTlJraFBtZW1PemVNRTBTWXB6?=
+ =?utf-8?B?bE9HM056U2F5Ym1oOVcxbVg0YTA4TnVqOWk3U3NLZC93ZkMrWEg4VmJHRUxK?=
+ =?utf-8?B?K1JsVzRkekZvUzI4T0dhZ2h2cjVaNmd4NXpaeERNajBlRlk5b0E5aGNaU3ZE?=
+ =?utf-8?B?ekFEQ2s2RnJPWTQ4SDBETUhWNUcrL0FtTzd6QTl4V0xqMGZsbTB1RDI0WjJ5?=
+ =?utf-8?B?Q25jemJZZkVpY2NNejJIWE43OXRpeFErbmR6c2h6MVRzRmg1b1J5YUtlVC9n?=
+ =?utf-8?B?RFBhRCsvbDFTeHZRblNoby96UGhVUW4zRzBvR2JpY0lvSGMzdVFnc3NyRTBD?=
+ =?utf-8?B?aEdRekxVUE10eEJ6RXIvckdUbzMzZXFndnJEUGJSSnBLQlgzNlB6Zlc4WGJs?=
+ =?utf-8?B?WVErblA5b0tBUmtOZlNReUI3aTA2bDZPTVM2SmJlVERuTzZCWWU0NHhmVkhk?=
+ =?utf-8?B?NnM4WHM5bGRSZ1pKQ2kwU0xFN1ZPakVGeEI0NjBaaWRMZFFYeVZvbmtudkdV?=
+ =?utf-8?B?N0U4SjZOU0lhZVpFVVo1UThER0NiK1JDZ1IvNEhySWF3a1c0bktQTnd4MVlh?=
+ =?utf-8?B?ODRJcUNTNDkzSExBNVIzMWRib3hBRFFUR3NrRnNHV2RILzYxYzJodU0xb20z?=
+ =?utf-8?B?M0NrbEw4d29scE1sU1J1eGlVWmxaODZBWXQrQW0rNFBLbjRPd1N2OGxQaTBV?=
+ =?utf-8?B?OUtHNTZNSTFTK1FSL0kyeDBSdUx2Um50THVzdFk2R0xTU1d6dWkyT21XcmN5?=
+ =?utf-8?B?eDVadEczVHQ5RVNLblYxQVIwbWZqSGtJUS9HcDZTL0xUb0NWOTJlOG9DZkN2?=
+ =?utf-8?Q?Ia+sMgOxwOQ=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8147.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(19092799006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?NENCVys0ZnovNngxNWxTOG9KUGhwaFE4cytWM0EzU2FEOVVlQUpWT0lYNUcy?=
+ =?utf-8?B?NitWQjRPR2dsUTlXWVNnREl1ZnRqeHkrY0NVOWltSTJpaDJzVStrMU5pZTRv?=
+ =?utf-8?B?ejhiYXlRTzZpNTREZ0MySktxeFFrVHRybjJPTS9TYjFVck1pSkNGUjZJTmpa?=
+ =?utf-8?B?TGM5WlBqc1FRWVc3S05OME84OXZLY2x2bHVQTTJrVGZTNFlmZC96NWVJQnRY?=
+ =?utf-8?B?Vlo3dXlsMWtjTXhzZk9VRmNuU1VWWWw5a1EyR3pJMUVOdGZRS1lwWm1sUTln?=
+ =?utf-8?B?SERwNVU4ejdRV0hRWjNYYjZNejY2NHFlTWsxRU5zZWE0UFBFOS9ZQWdxNDk0?=
+ =?utf-8?B?VzBGMmY5enBFbEpKbnl3bUNuUUlmR3Zma2lIY251aHVnVy95eWdlNXFBZDU1?=
+ =?utf-8?B?YytqeHVadFFiUnEvcmcveWZTd2cvbHp0aDA5aFR6TGhTUU9rcWxpVlI3WHVF?=
+ =?utf-8?B?ampBL1gva1hlcjhmUEk2NU5HbUVCTno2SGZZRnN2elprN1JZN0I4WTlBRHFT?=
+ =?utf-8?B?akJzTUx1QkQrakxWLzNrbVVPbjNmeUlNYTdMWEw5K2JrSVE0dm5qYkJCd1p2?=
+ =?utf-8?B?MjFrWFRaNWVCRzIzTlpZdjRLZmUvNS9aTU10U1U2Wko5aERRZ2xHT3NYbmxp?=
+ =?utf-8?B?c1ZRbUV1NWJQZ2d6WGEwRnBNamFyOEJzM2cxN3B5b1kzaW9FYnZ4Wjh1eGR3?=
+ =?utf-8?B?dXFVUzdkZmFsVWdvbGNUKzdPemR1eWVKUHQ1ZVljRnNxWGkvald0bXRTVFVs?=
+ =?utf-8?B?YmhjdkdLc0FqTWhVajllSlREcDh1a1NGQzhoeTNSYnIxL3RQTmFnTHFMWEtE?=
+ =?utf-8?B?NXc0c3VZa1BCUFIyZjBVOFYrdi9oZEhmUU5SaFZyRjBkTkN2RDJqTk1iS2lD?=
+ =?utf-8?B?TUJOSFpad2xvR21EQkN5MmpydkxNekp4NVpneHBaTnUva0g3dm9UbGdtcVcv?=
+ =?utf-8?B?eTJwdVhsZWwzOFhhU29QL2paclNKbU5Lb2dnM3RWSzBZc0tycnB0N2k2bDhL?=
+ =?utf-8?B?UXcxMEtSYmJZWUZYVTZTdlBoWWNpR2I2NkY5YnVQakxoY2EyUlEzTkZkdHdU?=
+ =?utf-8?B?NDRESnYzckVVSU12YW5obFN4dTFxbS9JODhpSzJhYnMyamp5S0pBWERrUitJ?=
+ =?utf-8?B?L1Y3OEQ2cDc3bnh5VjZNLzFxQ3NlRU5yUjhyNS9xMDU4bVBrUFZORGNReGRI?=
+ =?utf-8?B?c1F6Z0Q4aTVldjFDTEVLL09UWVgwNkRlbXZOZ2U1cjB2eHRKanJ5RTFpYTdN?=
+ =?utf-8?B?K1dDUzREdjMxZ2V5aCtHbzNIZkRhb0dHVGFlTzJvVjhwc1k5YUpPOTFTTVBC?=
+ =?utf-8?B?bW9Ca2JUSmR3S2c5Tk8yNVZucEpiVWxvZnFxYlVJSVFjS0xpQzdSSk9NYnFP?=
+ =?utf-8?B?WXpyeGNDSjA2Z1pjdjM0SDRqSTZ4TGFFNkUvdC8rZGhvaktoRzBnSU54VVAr?=
+ =?utf-8?B?Z2xUV1lMaU4wTkJCVEd0ZzlUQkxRTzVzV0RrQ1UvRG1Kb09TVFU5WjA4SStN?=
+ =?utf-8?B?ZTZNY0VTZzNUY1JsdVNiK1A1ZzhWTVkrNTVJWDBJdWkvdXRSQlBINmRSbWx5?=
+ =?utf-8?B?c3NNeGNQZ1JaSFF4aDVNVnhaWFZPdG9KMitoR1JIZnRpbUZVS1pZbXZEN2Iy?=
+ =?utf-8?B?aDUvcXRVNHJZcWYxMDEwZ0MxZEZsTXkrcGxORTVtMTljWWJPOFc3VC8vZE9W?=
+ =?utf-8?B?bTFQczN6K0lUOTQya2YxZ2lUZ1RGL2UzZmxrbGs0TmlvZy9nQUNVY0cvNi9z?=
+ =?utf-8?B?SDFLLzV1QWR1MG5vd1d6Tk9tREFEbDYrU0I5ZUVFNjArVXhqa0p0OUR3K1hX?=
+ =?utf-8?B?NnA2ZW5WckNFQzNncHF1b3ZOS3NHck5JamFaUTBSem9CZFdCL093VFo5RThn?=
+ =?utf-8?B?TnZ2aGRqd2puUXJ5a2ZySzFEQ3VJRDhKZmgrOFJqU084NXY1SVRwb0laSzg5?=
+ =?utf-8?B?MjBkK0VhNGdWRGtuRHRTYWp2RkhFdEFYdUJyc2liZU91dCtCajNFMGpTbzhE?=
+ =?utf-8?B?b003MDNUVWk2VG5MdU45ck1XdGJIa3M1YjloUWZsNzZIdTR0OVVSdjZyTHk4?=
+ =?utf-8?B?UVQ3WHBmbWdxUHRoV3VyYVdIRE5rMVBTdUpyYjkxVVRraFZEMWQ0UFVLR3ZZ?=
+ =?utf-8?B?dmRqTkRjWFV3MHRmcFQxT2svZmdDbmVBTXBNR3oyci83aDdabUcydEFQNDdB?=
+ =?utf-8?B?VlE9PQ==?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a32d5a5f-63bd-45a5-8f96-08ddc905abe2
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8147.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2025 09:53:55.3645
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +VYEoOrTK4vxxrlLWHnGCChv/yTLu0ZV1shK25Q1pqfNTuD199+0GXX7YkJEW4aAOGSO7AirlBCj/OI0w60Zeq+7umazoEZ6t4SUf0WdC1I=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10475
 
-On Thu, Jul 17, 2025 at 09:11:54AM -0700, Darrick J. Wong wrote:
-> On Sat, Jul 12, 2025 at 07:42:44PM +0530, Ojaswin Mujoo wrote:
-> > Insert range and collapse range only works with bigalloc in case
-> > the range is cluster size aligned, which fsx doesnt take care. To
-> > work past this, disable insert range and collapse range on ext4, if
-> > bigalloc is enabled.
-> > 
-> > This is achieved by defining a new function _set_default_fsx_avoid
-> > called via run_fsx helper. This can be used to selectively disable
-> > fsx options based on the configuration.
-> > 
-> > Co-developed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> > Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> > ---
-> >  common/rc | 27 +++++++++++++++++++++++++++
-> >  1 file changed, 27 insertions(+)
-> > 
-> > diff --git a/common/rc b/common/rc
-> > index 9a9d3cc8..218cf253 100644
-> > --- a/common/rc
-> > +++ b/common/rc
-> > @@ -5113,10 +5113,37 @@ _require_hugepage_fsx()
-> >  		_notrun "fsx binary does not support MADV_COLLAPSE"
-> >  }
-> >  
-> > +_set_default_fsx_avoid() {
-> > +	local file=$1
-> > +
-> > +	case "$FSTYP" in
-> > +	"ext4")
-> > +		local dev=$(findmnt -n -o SOURCE --target $file)
-> > +
-> > +		# open code instead of _require_dumpe2fs cause we don't
-> > +		# want to _notrun if dumpe2fs is not available
-> > +		if [ -z "$DUMPE2FS_PROG" ]; then
-> > +			echo "_set_default_fsx_avoid: dumpe2fs not found, skipping bigalloc check." >> $seqres.full
-> > +			return
-> > +		fi
+Hi Mirela,
+
+On 20/07/2025 20:56, Mirela Rabulea wrote:
+> Hi Laurent,
 > 
-> I hate to be the guy who says one thing and then another, but ...
+> On 7/16/25 03:12, Laurent Pinchart wrote:
+>>
+>>
+>> On Wed, Jul 16, 2025 at 02:59:54AM +0300, Laurent Pinchart wrote:
+>>> On Fri, Jul 11, 2025 at 01:05:42AM +0300, Mirela Rabulea wrote:
+>>>> Add new standard controls as U32 arrays, for sensors with multiple
+>>>> captures: V4L2_CID_EXPOSURE_MULTI, V4L2_CID_AGAIN_MULTI and
+>>>> V4L2_CID_DGAIN_MULTI. These will be particularly useful for sensors
+>>>> that have multiple captures, but the HDR merge is done inside the 
+>>>> sensor,
+>>>> in the end exposing a single stream, but still requiring AEC control
+>>>> for all captures.
+>>>
+>>> It's also useful for sensors supporting DOL or DCG with HDR merge being
+>>> performed outside of the sensor.
+>>
+>> Regarless of where HDR merge is implemented, we will also need controls
+>> to select the HDR mode. We have V4L2_CID_HDR_SENSOR_MODE, which doesn't
+>> standardize the values, and that's not good enough. At least for DOL and
+>> DCG with HDR merge implemented outside of the sensor, we need to
+>> standardize the modes.
+>>
+>> Can you tell which sensor(s) you're working with ?
 > 
-> If we extended _get_file_block_size to report the ext4 bigalloc cluster
-> size, would that be sufficient to keep testing collapse/insert range?
+> We are working mostly with these 3:
+> Omnivision's os08a20 (2 exposures staggered hdr, each exposure on a 
+> separate virtual channel, there are also other hdr modes which we do not 
+> use)
+> Omnivision ox05b1s (RGB-Ir with context switching based on group holds, 
+> 1 context optimized for RGB, the other context optimized for Ir, each 
+> context on a different virtual channel)
+> Omnivision ox03c10 (4 exposures, hdr merge in sensor).
 > 
-> I guess the tricky part here is that bigalloc allows sub-cluster
-> mappings and we might not want to do all file IO testing in such big
-> units.
+>>
+>>>> All controls are in the same class, so they could all be set
+>>>> atomically via VIDIOC_S_EXT_CTRLS, this could turn out to be
+>>>> useful in case of sensors with context switching.
+>>>
+>>> Agreed, we should be able to set them all. Are we still unable to set
+>>> controls from multiple classes atomatically ? I thought that limitation
+>>> has been lifted.
+> 
+> 
+> Maybe I need some background check on this, but looking at kernel tag 
+> next-20250718, this comment still lies in the documentation:
+> "These ioctls allow the caller to get or set multiple controls
+> atomically. Control IDs are grouped into control classes (see
+> :ref:`ctrl-class`) and all controls in the control array must belong
+> to the same control class."
+> 
+> Maybe it needs to be updated, or not...since there is also this check in 
+> check_ext_ctrls():
+>      /* Check that all controls are from the same control class. */
+>      for (i = 0; i < c->count; i++) {
+>          if (V4L2_CTRL_ID2WHICH(c->controls[i].id) != c->which) {
+>              c->error_idx = ioctl == VIDIOC_TRY_EXT_CTRLS ? i :
+>                                        c->count;
+>              return false;
+>          }
+>      }
+> 
+> There is also another inconvenient, the VIDIOC_S_EXT_CTRLS does not 
+> reach the v4l2 subdevice driver, what we get in the sensor driver is a 
+> set of .s_ctrl calls. I don't know about other sensors, but for the 
+> Omivision sensors which I am familiar with, the group holds feature 
+> could be used to get multiple registers to be applied atomically in the 
+> same frame, but the sensor driver would need to know when to start and 
+> when to end filling the group hold with the desired registers. If there 
+> is some similar feature in other sensors, I think the VIDIOC_S_EXT_CTRLS 
+> should have a corresponding v4l2-subdev operation, so that it can be 
+> implemented in the sensor subdevice driver. This would probably require 
+> some changes in the v4l2 core, as currently the subdev_do_ioctl() 
+> function does not let the VIDIOC_S_EXT_CTRLS go to the subdevice.
+> 
+> Laurent, Hans, any thoughts on this?
+> 
+> 
+>>>
+>>>> Each element of the array will hold an u32 value (exposure or gain)
+>>>> for one capture. The size of the array is up to the sensor driver which
+>>>> will implement the controls and initialize them via 
+>>>> v4l2_ctrl_new_custom().
+>>>> With this approach, the user-space will have to set valid values
+>>>> for all the captures represented in the array.
+>>>
+>>> I'll comment on the controls themselves in patch 2/2.
+>>>
+>>>> The v4l2-core only supports one scalar min/max/step value for the
+>>>> entire array, and each element is validated and adjusted to be within
+>>>> these bounds in v4l2_ctrl_type_op_validate(). The significance for the
+>>>> maximum value for the exposure control could be "the max value for the
+>>>> long exposure" or "the max value for the sum of all exposures". If none
+>>>> of these is ok, the sensor driver can adjust the values as supported 
+>>>> and
+>>>> the user space can use the TRY operation to query the sensor for the
+>>>> minimum or maximum values.
+>>>
+>>> Hmmmm... I wonder if we would need the ability to report different
+>>> limits for different array elements. There may be over-engineering
+>>> though, my experience with libcamera is that userspace really needs
+>>> detailed information about those controls, and attempting to convey the
+>>> precise information through the kernel-userspace API is bound to fail.
+>>> That's why we implement a sensor database in libcamera, with information
+>>> about how to convert control values to real gain and exposure time.
+>>> Exposing (close to) raw register values and letting userspace handle the
+>>> rest may be better.
+> 
+> Julien, any thoughts on this?
 
-Hmm, so maybe a better way is to just add a parameter like alloc_unit in
-fsx where we can pass the cluster_size to which INSERT/COLLAPSE range be
-aligned to. For now we can pass it explicitly in the tests if needed.
 
-I do plan on working on your suggestion of exposing alloc unit via
-statx(). Once we have that in the kernel, fsx can use that as well.
+Reporting min/max value per array element could have made sense for some 
+controls. For instance we have a HDR sensor whose long capture analog 
+gain range is different from the shorter captures gain. Conversely, it 
+may not work well for the multi-capture exposure control where the 
+constraint can be more about the sum of the exposures for each capture 
+rather than the individual exposure values. In that case, exposing 
+min/max values per array element does not really help the user space.
 
-If this approach sounds okay I can try to maybe send the whole "fixing
-of insert/collpase range in fsx" as a patchset separate from atomic
-writes.
-
+Thus, having the user space to have the necessary insight into each 
+sensor specifics for its AEC control seems to be the versatile option.
 
 > 
-> > +
-> > +		$DUMPE2FS_PROG -h $dev 2>&1 | grep -q bigalloc && {
-> > +			export FSX_AVOID+=" -I -C"
+> If we don't need to report different limits for different array 
+> elements, we are fine, just we need to document better what those limits 
+> stand for in case of arrays.
 > 
-> No need to export FSX_AVOID to subprocesses.
+>>>
+>>>> Mirela Rabulea (2):
+>>>>    LF-15161-6: media: Add exposure and gain controls for multiple
+>>>>      captures
+>>>>    LF-15161-7: Documentation: media: Describe exposure and gain 
+>>>> controls
+>>>>      for multiple captures
+>>>
+>>> Did you forget to remove the LF-* identifiers ? :-)
 > 
-> --D
-
-Got it, will fix. Thanks for review!
-
-
-Regards,
-ojaswin
+> Yes, at least in the cover-letter, my bad :(
 > 
-> > +		}
-> > +		;;
-> > +	# Add other filesystem types here as needed
-> > +	*)
-> > +		;;
-> > +	esac
-> > +}
-> > +
-> >  _run_fsx()
-> >  {
-> >  	echo "fsx $*"
-> >  	local args=`echo $@ | sed -e "s/ BSIZE / $bsize /g" -e "s/ PSIZE / $psize /g"`
-> > +
-> > +	_set_default_fsx_avoid $testfile
-> > +
-> >  	set -- $FSX_PROG $args $FSX_AVOID $TEST_DIR/junk
-> >  	echo "$@" >>$seqres.full
-> >  	rm -f $TEST_DIR/junk
-> > -- 
-> > 2.49.0
-> > 
-> > 
+> Thanks for feedback.
+> 
+> Regards,
+> Mirela
+>>>
+>>>>
+>>>>   .../media/v4l/ext-ctrls-image-source.rst             | 12 
+>>>> ++++++++++++
+>>>>   drivers/media/v4l2-core/v4l2-ctrls-defs.c            |  8 ++++++++
+>>>>   include/uapi/linux/v4l2-controls.h                   |  3 +++
+>>>>   3 files changed, 23 insertions(+)
+>>
+>> -- 
+>> Regards,
+>>
+>> Laurent Pinchart
+> 
+
+Thanks,
+Julien
+
 
