@@ -1,89 +1,133 @@
-Return-Path: <linux-kernel+bounces-740572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4FCBB0D5E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:24:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7A99B0D5E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:24:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A765F18978A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:24:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77D1A164466
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:24:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB0D2DCBE3;
-	Tue, 22 Jul 2025 09:24:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915282DCF65;
+	Tue, 22 Jul 2025 09:24:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Vap6x1qD";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LbQI0CjY"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MjJRYeJZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8A32DAFC1
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 09:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8218F189902;
+	Tue, 22 Jul 2025 09:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753176247; cv=none; b=A/veUyklyTtIOFvRyzJsEPAb6sENDjkNpXpBM4q1qnLqBM14TTfHJwd7eiMZ2mXtfcWM6uPR/C9MddXsPuKELnPZu1uNgabWZRowEGAwWdgs+FtuN6L1qBD4AQ+hqhFIEZvrU59gH+2HNvUhoHSH5bzVzU22PsIJbt5EknI8eVA=
+	t=1753176272; cv=none; b=DlUlAhNpldZkz0ooqfPapBxY/KnuOA6TrrMT4w0sE6uE1V/ZuM+iGZC/sEMdeniXDgqhatVUoy1nc+Q0XO/MtZyOk+zNL3htQRzS5nAECnc590d4MdaZ+yrD5dPn/SLP6rt6Sw6FnM7u7UY1lU2VH/ZNOnzuGjgw+1iHWXoGOKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753176247; c=relaxed/simple;
-	bh=BFmGu5onRhNC7oCFD6HQWHvUKHNJDs2FmdzhpgzLs44=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kHt1WjqmYONnTxLEOmMpCMGLzC3BeCMUf8JpdQKr/+FjUE5aq47zmu89MqC8RbdYPUdPT4QYe904HWWztXePLPmXZH2t2BiNGYSCZvVTyvas6Psd0tRMavw8zbZGrkq3BCm9K4IZBRZny6YwaKKgUvJvXJZ5dAGd9FyR8Sex1mY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Vap6x1qD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LbQI0CjY; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 22 Jul 2025 11:24:02 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753176244;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BFmGu5onRhNC7oCFD6HQWHvUKHNJDs2FmdzhpgzLs44=;
-	b=Vap6x1qDls3aE1XarapJgdisRQ84gWiHdxF+OZlLlHab1Wi/pkGoKAX04NZv2jV1LRwa4N
-	B1uae0PVks7/UKezhCChoeMJl8xgxi/a3ZOC1FIFeyFRCPAWHWxZbgWQUPz8CT+mPxKH6q
-	tPzUOuypFdF2Sdby0CGbxwgIg1y5xr2xXGpPILAyJtiEok7srAXBJH7gUfpFhYlq6yTD5x
-	GW8TepMfPiY71MaHbdzAAPcgx7VbUFgvbi919T1FteBxxTMu32XH/L7HsdhcqbGfDsAkwJ
-	OxATR/OaOOrhCHf9FUYFhUGgkh4mx9/LBLCjZpngnQlOTCczsWnxf4WdMr2xmQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753176244;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BFmGu5onRhNC7oCFD6HQWHvUKHNJDs2FmdzhpgzLs44=;
-	b=LbQI0CjY/6FtiEgNBnARlAY/0AQbn08RbLGf/Y9w9iyW6yeX+K4YtAzKScr1iPov7hP+cd
-	kGFC2X1d8EIWIGDg==
-From: Nam Cao <namcao@linutronix.de>
-To: Gautam Menghani <gautam@linux.ibm.com>
-Cc: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] powerpc: Cleanup and convert to MSI parent domain
-Message-ID: <20250722092402.uMLOYoII@linutronix.de>
-References: <cover.1750861319.git.namcao@linutronix.de>
- <aH9Na8ZqrI0jPhtl@li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com>
+	s=arc-20240116; t=1753176272; c=relaxed/simple;
+	bh=Ksr4RcpyiaVxvdAz9Ft+gR94b9IMq2d1CEO85zHMm3o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ozdi7zxKbUqjVpS7bhPaGPOyba+XSkcY455kr2390EfonGP85biUUp9cXiGLNr9gVbbeTJ+MgwGtO0D32hkHab3nWo1xwF/bGoaBk/cKjpIi85g6kTgFijANpAAaCz9w+glrzCbw2yUhCsIgjDjHfmCUPY2N4E2iLwGsY0Fld2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MjJRYeJZ; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753176271; x=1784712271;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=Ksr4RcpyiaVxvdAz9Ft+gR94b9IMq2d1CEO85zHMm3o=;
+  b=MjJRYeJZpalrlHw+UcPoLhG0hsnDsFWT4Vl198E033SFSD8VB0j88IgK
+   tsdjYlB+nUlOBtv2gmxqzWzz9v+1Vz7qcqmQRLBAvR7KjSNbfuZ3TSzwx
+   6qaTp8+EIIpqjbs7F1OpPp5qYQBh9Dmgn1p5WW0Z46zH98v9JSfFuaIof
+   mP7E3btZygMf7XIArG3cCmTUHgD3AJV5tezE1D566DfnmyOrKeYuvS5xy
+   aEiF4fT4jF51WLsfHPlb0dYBL8C8bnah7e9LuE9zS+DhxKao1yeS5i3uh
+   FKU4YUYIuD8NilU9B5NSz6N2dJHzhdmg7f0JBMvNqHTQ++GDVFQ8Titq4
+   w==;
+X-CSE-ConnectionGUID: dXx7JM3uS8aac5OU3dpXgA==
+X-CSE-MsgGUID: L+02RNx2QLSMDZdllhWsjQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11499"; a="55574717"
+X-IronPort-AV: E=Sophos;i="6.16,331,1744095600"; 
+   d="scan'208";a="55574717"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 02:24:30 -0700
+X-CSE-ConnectionGUID: cbehGU95QkWPRtX5+LVZGA==
+X-CSE-MsgGUID: 7OhfXV8JRdOAnLadikdZ1w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,331,1744095600"; 
+   d="scan'208";a="163133052"
+Received: from vpanait-mobl.ger.corp.intel.com (HELO [10.245.244.202]) ([10.245.244.202])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 02:24:17 -0700
+Message-ID: <ffd58e1a8b51c98cac9be49e85d367f1a3a24c2d.camel@linux.intel.com>
+Subject: Re: [PATCH v3 3/8] drm/xe: Fix typo "notifer"
+From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+To: WangYuli <wangyuli@uniontech.com>
+Cc: airlied@gmail.com, akpm@linux-foundation.org,
+ alison.schofield@intel.com, 	andrew+netdev@lunn.ch,
+ andriy.shevchenko@linux.intel.com, 	arend.vanspriel@broadcom.com,
+ bp@alien8.de, brcm80211-dev-list.pdl@broadcom.com, 
+	brcm80211@lists.linux.dev, colin.i.king@gmail.com, cvam0000@gmail.com, 
+	dan.j.williams@intel.com, dave.hansen@linux.intel.com,
+ dave.jiang@intel.com, 	dave@stgolabs.net, davem@davemloft.net,
+ dri-devel@lists.freedesktop.org, 	edumazet@google.com,
+ gregkh@linuxfoundation.org, guanwentao@uniontech.com, 	hpa@zytor.com,
+ ilpo.jarvinen@linux.intel.com, intel-xe@lists.freedesktop.org, 
+	ira.weiny@intel.com, j@jannau.net, jeff.johnson@oss.qualcomm.com,
+ jgross@suse.com, 	jirislaby@kernel.org, johannes.berg@intel.com,
+ jonathan.cameron@huawei.com, 	kuba@kernel.org, kvalo@kernel.org,
+ kvm@vger.kernel.org, linux-cxl@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, linux@treblig.org,
+ lucas.demarchi@intel.com, 	marcin.s.wojtas@gmail.com, ming.li@zohomail.com,
+ mingo@kernel.org, 	mingo@redhat.com, netdev@vger.kernel.org,
+ niecheng1@uniontech.com, 	oleksandr_tyshchenko@epam.com, pabeni@redhat.com,
+ pbonzini@redhat.com, 	quic_ramess@quicinc.com, ragazenta@gmail.com,
+ rodrigo.vivi@intel.com, 	seanjc@google.com, shenlichuan@vivo.com,
+ simona@ffwll.ch, sstabellini@kernel.org, 	tglx@linutronix.de,
+ vishal.l.verma@intel.com, wangyuli@deepin.org, x86@kernel.org, 
+	xen-devel@lists.xenproject.org, yujiaoliang@vivo.com, zhanjun@uniontech.com
+Date: Tue, 22 Jul 2025 11:24:15 +0200
+In-Reply-To: <94190C5F54A19F3E+20250722073431.21983-3-wangyuli@uniontech.com>
+References: <576F0D85F6853074+20250722072734.19367-1-wangyuli@uniontech.com>
+	 <94190C5F54A19F3E+20250722073431.21983-3-wangyuli@uniontech.com>
+Organization: Intel Sweden AB, Registration Number: 556189-6027
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aH9Na8ZqrI0jPhtl@li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com>
 
-On Tue, Jul 22, 2025 at 02:05:55PM +0530, Gautam Menghani wrote:
-> I am seeing a boot failure after applying this series on top of the pci
-> tree [1]. Note that this error was seen on a system where I have a
-> dedicated NVME. Systems without dedicated disk boot fine
+On Tue, 2025-07-22 at 15:34 +0800, WangYuli wrote:
+> There is a spelling mistake of 'notifer' in the comment which
+> should be 'notifier'.
+>=20
+> Signed-off-by: WangYuli <wangyuli@uniontech.com>
+Reviewed-by: Thomas Hellstr=C3=B6m <thomas.hellstrom@linux.intel.com>
 
-Thanks for the report.
+> ---
+> =C2=A0drivers/gpu/drm/xe/xe_vm_types.h | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/xe/xe_vm_types.h
+> b/drivers/gpu/drm/xe/xe_vm_types.h
+> index 1979e9bdbdf3..0ca27579fd1f 100644
+> --- a/drivers/gpu/drm/xe/xe_vm_types.h
+> +++ b/drivers/gpu/drm/xe/xe_vm_types.h
+> @@ -259,7 +259,7 @@ struct xe_vm {
+> =C2=A0		 * up for revalidation. Protected from access with
+> the
+> =C2=A0		 * @invalidated_lock. Removing items from the list
+> =C2=A0		 * additionally requires @lock in write mode, and
+> adding
+> -		 * items to the list requires either the
+> @userptr.notifer_lock in
+> +		 * items to the list requires either the
+> @userptr.notifier_lock in
+> =C2=A0		 * write mode, OR @lock in write mode.
+> =C2=A0		 */
+> =C2=A0		struct list_head invalidated;
 
-Using QEMU, I cannot reproduce the exact same problem, but I do observe a
-different one. They are likely from the same root cause.
-
-Let me investigate..
-
-Nam
 
