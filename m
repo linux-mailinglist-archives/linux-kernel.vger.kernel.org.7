@@ -1,112 +1,125 @@
-Return-Path: <linux-kernel+bounces-740944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 026C3B0DC60
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:01:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CED3B0DCAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:04:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 009723AFC63
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:56:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DBE21608E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7BC2EAB69;
-	Tue, 22 Jul 2025 13:56:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871962EA15B;
+	Tue, 22 Jul 2025 14:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="VywL/X9X"
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G44437V6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA78288C01
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 13:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA88F2E9759
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 14:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753192618; cv=none; b=S97QlrqM9aoVxGUuySXsKFrRDWiWMIlxBo34N5uvcFk6GyL6PiwaL2C9Fsn8tptrMbTO75y11tfgp6CWgoywaXYz4dTXECdyg0dWL+fQOVUzoffrpK7qh5TwNhzDcpVIiuNqppCgIlsGYmqseC+F9ghBGBwZdsKsFzcEb8n8d5U=
+	t=1753192919; cv=none; b=MHQw34Mu25a9NUEimH9+Dx8aOoaik8Yibsz2xAZGXJh73O8rkVRcjVIs58uDkAZv+5AfrCErwiHsdfDV5kPZCa9YRy3cXOMeNi7pjGnfgDkMIEfNKaB8mmV45koxKK7FOhAkn7izFEcc9kGNgsJhRet/PjLMQF4eJDJCZ0zBFHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753192618; c=relaxed/simple;
-	bh=WD4UPgWwrp87c7JvBmxtXsetEVuHqNKEul4WKe735JY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EE+nc/l6uIsu+guPQMNh8Ql8dUInv/SaQBJuGOtJdTcTMp2RfTQYvQS6BE1BP4pPyv/T06JG3lnrEH2S6FKi8MRESn3qI6BsL/Ab7BPVGvUecMWNk+Rua7k9D/iBy+xqvgCp01s7ojjzewDE1kMM6OWp1wNgt3EqxpNHslMZHgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=VywL/X9X; arc=none smtp.client-ip=209.85.166.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-87c14e0675dso138573239f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 06:56:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1753192616; x=1753797416; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tjmFlUiMS8WhvA/SoS60Dh4RJFEn5lp/yFwJABcPh+o=;
-        b=VywL/X9XlLouPHqv4vY9/WsyCGZBjKEdSwRdltghOutRBpeDDfsizJbgrlBN9jDVqu
-         H5xgN2/NtYPf0kt7fzAn/NtH3fR3ymSAnoSwFx7p6dd76I5+/kmwEu0xsRtzsxLajfvh
-         78HxqmC93Psx0g4wmFsVeC9lw3qWAVOUVPLRsp0HW1Q7e3Ihvr8fh/HhwWqtSBp/Ictp
-         kS+wClNzeGGLUYpWcc68wGSRlXjuoalINKMjDy7tocN3aimOVX6NFxxpXJsMNkYh7LJJ
-         B6FWCrXWC4Gw1FKszlm1bz9g6OeXMXLwFDzwE4ApB0ttB7KwyLAuJqsbF9TN6ymqEPA5
-         bSyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753192616; x=1753797416;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tjmFlUiMS8WhvA/SoS60Dh4RJFEn5lp/yFwJABcPh+o=;
-        b=GWd0wAglKd9ugI4RCR3LRAehyz5k8lfs/zmPTTJ/kX5Ki10a+/blYVB1LKcLOLS12E
-         0epOZ/jO1vzksGku/V3a1WYstsWiVMAsLQI60hIsJgGQ+T3I6X7eQ/e4t2TbgVuqrJtg
-         PpDTUgpGeDngvgXMIVLwhgyLzYTpC1CheDFpDYfg2slYVJutuxAPpoNVi7/uUXlpR7GK
-         NYxMQPeS3DNx7YP16MXMQGP5za1awCgdCDjyLszbFNLnuQD72f7AGOwn24RGBDmA9xuX
-         Ip6VQuVpTTRZLGcqeyiWYdmsVqLvs0kEEVgJqrR7YtFsPrLy4FclalBvIxaOKAGayrUl
-         z28w==
-X-Forwarded-Encrypted: i=1; AJvYcCW3v3BCAq6b8dnoyb19ZLVr/i/+kGfudJLDigqcgufFpYEUzleesJV3oOptxVYvGeH7A3XDCIzAwYE4EmQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8cx6wyYk4OqpTOCndgJkxzOvk7iOsx44rU7siqfrTXNaxUZNU
-	qcq8ob2HXsGL5pbDy0N2DfnbflRGAuQ7oKlHYASUqtONCyoFZjT68BsqFLVQpxFF4mExGC2H3YU
-	9RCa9
-X-Gm-Gg: ASbGncupmYpN8nyHO0yYTe1CyDSCjiMaS9IfB03YVhFBXarVN2KEg1PC04Auo+RPIlw
-	gymw7e5/nWto/qOieKbKFdfihlh7+IeeylTxaoM9AgcYMOiG0abIYm0Wt9DYT2PZpS5j331fIkE
-	CU2f6d3AnaxoNMCAqn2zemsl1WHBveJEL2nuDqmANTzm/f1dZmrFADVrQWIWuV3IWGmKEgIp0nM
-	IadcQADvOltCGZpfEefQp+rDHsetFQoDQ7jxIEV1K7N+BHmcSLFyeH1Th/wogDwIs0jFD2ek/Vd
-	iZBxa1ZFDXbeTGM2jB3HsCorEk0t0cHjpR+3AiGkebTigul4h7sYPVcgKJNX2iTZPBIVt68xCYW
-	+Y//wj4gcvhmTnn28gATVBIviSiKhAg==
-X-Google-Smtp-Source: AGHT+IFDr+fErNv5tH7IdOj2j7uUgenlIGzMOgYCLt1qeLE9jnEGv4AQM7YVl9je3Z12CEdDAW/qHw==
-X-Received: by 2002:a05:6e02:1fe4:b0:3dd:cc4f:d85a with SMTP id e9e14a558f8ab-3e28d3b88bamr240624905ab.6.1753192615551;
-        Tue, 22 Jul 2025 06:56:55 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5084ca5f843sm2502681173.129.2025.07.22.06.56.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Jul 2025 06:56:55 -0700 (PDT)
-Message-ID: <62b5f680-5d54-48e3-979b-8d09a876130f@kernel.dk>
-Date: Tue, 22 Jul 2025 07:56:54 -0600
+	s=arc-20240116; t=1753192919; c=relaxed/simple;
+	bh=oujexYziHgPEDcDx7x1RYjfQC+/RIpBUJRP2MbMPYJE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Eg76uRZHItZnzD9/Isv0H5wgY0QLmZa5tL6kK57PdBMzM35b5Es4kr/ZepiCD1RLfxmWgqrhgyk+d58kbWF6w5eD+bk7Rw/tyWCuo9JyYao1hrpnmPRcMw7ZLMxp+JVIwyICGxNEmc2fezklM3GuSkkiz/2Ru4GLytdzPx9Xp0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G44437V6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7561AC4CEF7;
+	Tue, 22 Jul 2025 14:01:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753192918;
+	bh=oujexYziHgPEDcDx7x1RYjfQC+/RIpBUJRP2MbMPYJE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G44437V6zc3RRb1EuCGCfuuEnJ07kAW/wsYjpBm8OmiB9hTdtAv80wb1ej2FX2EnN
+	 6+HmEVHCE1bDMhZAF+Vt8TYCvH71Q+HtgWWukjAJu+KaZYNC5GbBhqeuC12GXOz6Va
+	 bvPuGtxnV8YqXpR1IpQ/+pRPFEp1/pI5hgv0np+dO5+J5xFiknR3J61cL0A9o7cJZm
+	 54PdtwRRVaTH5sPuotqtWT7QjUQdIDJUMNs7cGWIRCJSe5cUHKOSbvi2EqsyGZqtTL
+	 sEF6B9IiUtrnq3AaEUQZNOd4FjMOE4x2mbp5enjjF0v21taQAIZvOY4DcMHV3dSUNF
+	 NwFyFRSblIffg==
+Date: Tue, 22 Jul 2025 15:01:53 +0100
+From: Will Deacon <will@kernel.org>
+To: James Morse <james.morse@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>, sudeep.holla@arm.com,
+	Rob Herring <robh@kernel.org>, Ben Horgan <ben.horgan@arm.com>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Gavin Shan <gshan@redhat.com>
+Subject: Re: [PATCH v3 3/3] arm64: cacheinfo: Provide helper to compress
+ MPIDR value into u32
+Message-ID: <aH-Z0SNzNVz0cToB@willie-the-truck>
+References: <20250711182743.30141-1-james.morse@arm.com>
+ <20250711182743.30141-4-james.morse@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Fixed several coding style issues in the efi driver as
- reported by checkpatch.pl:
-To: Dishank Jogi <dishank.jogi@siqol.com>, Davidlohr Bueso
- <dave@stgolabs.net>, linux-efi@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Manish Narani <manish.narani@siqol.com>
-References: <20250722121927.780623-1-dishank.jogi@siqol.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250722121927.780623-1-dishank.jogi@siqol.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250711182743.30141-4-james.morse@arm.com>
 
-On 7/22/25 6:19 AM, Dishank Jogi wrote:
-> - Moved assignments out of 'if' conditions.
-> - Removed trailing whitespaces.
-> - Fixed indentation and spacing inconsistencies.
-> - Replaced 'unsigned' with 'unsigned int'.
+On Fri, Jul 11, 2025 at 06:27:43PM +0000, James Morse wrote:
+> Filesystems like resctrl use the cache-id exposed via sysfs to identify
+> groups of CPUs. The value is also used for PCIe cache steering tags. On
+> DT platforms cache-id is not something that is described in the
+> device-tree, but instead generated from the smallest MPIDR of the CPUs
+> associated with that cache. The cache-id exposed to user-space has
+> historically been 32 bits.
 > 
-> These changes improve readability and follow kernel coding style guidelines.
+> MPIDR values may be larger than 32 bits.
+> 
+> MPIDR only has 32 bits worth of affinity data, but the aff3 field lives
+> above 32bits. The corresponding lower bits are masked out by
+> MPIDR_HWID_BITMASK and contain an SMT flag and Uni-Processor flag.
+> 
+> Swizzzle the aff3 field into the bottom 32 bits and using that.
+> 
+> In case more affinity fields are added in the future, the upper RES0
+> area should be checked. Returning a value greater than 32 bits from
+> this helper will cause the caller to give up on allocating cache-ids.
+> 
+> Signed-off-by: James Morse <james.morse@arm.com>
+> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Reviewed-by: Gavin Shan <gshan@redhat.com>
+> ---
+> Changes since v1:
+>  * Removal of unrelated changes.
+>  * Added a comment about how the RES0 bit safety net works.
+> ---
+>  arch/arm64/include/asm/cache.h | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+> diff --git a/arch/arm64/include/asm/cache.h b/arch/arm64/include/asm/cache.h
+> index 99cd6546e72e..09963004ceea 100644
+> --- a/arch/arm64/include/asm/cache.h
+> +++ b/arch/arm64/include/asm/cache.h
+> @@ -87,6 +87,23 @@ int cache_line_size(void);
+>  
+>  #define dma_get_cache_alignment	cache_line_size
+>  
+> +/* Compress a u64 MPIDR value into 32 bits. */
+> +static inline u64 arch_compact_of_hwid(u64 id)
+> +{
+> +	u64 aff3 = MPIDR_AFFINITY_LEVEL(id, 3);
+> +
+> +	/*
+> +	 * These bits are expected to be RES0. If not, return a value with
+> +	 * the upper 32 bits set to force the caller to give up on 32 bit
+> +	 * cache ids.
+> +	 */
+> +	if (FIELD_GET(GENMASK_ULL(63, 40), id))
+> +		return id;
 
-Will only cause backport/stable issues. Please don't send checkpatch
-fixes for existing code, it's for new patches only.
+Why is it safe to ignore the other RES bits (i.e. 31, 29:25)? If the
+architects decide to pack some additional affinity information in there,
+we're in trouble, no?
 
--- 
-Jens Axboe
-
+Will
 
