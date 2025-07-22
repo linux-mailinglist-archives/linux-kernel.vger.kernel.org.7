@@ -1,213 +1,385 @@
-Return-Path: <linux-kernel+bounces-740552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF721B0D59E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:16:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70A13B0D5A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:17:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 089053A181A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:16:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C57517B2EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6002DCC02;
-	Tue, 22 Jul 2025 09:16:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210CC2DCF43;
+	Tue, 22 Jul 2025 09:16:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cBxOqtus"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="LjIbbUbJ"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D792DE1FC;
-	Tue, 22 Jul 2025 09:16:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED80B28A726;
+	Tue, 22 Jul 2025 09:16:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753175778; cv=none; b=cD7XItQkSPyj/tTO52PW9vfvA7w/4B6MZW3hryWfmsDegBAoCxgqxJ9mgueqy8XCjBaZ7ZWfnjsKn0x34nPs6NlY+nCEKTunKEzMhhLmVRx7eMT0HUAj2huK1dKSzOaZdVLpUBoAlAZQr8rd6X/o4xnR64DY/Jy30xK5v0QWR0g=
+	t=1753175812; cv=none; b=YAJ1h9dkSH29DI6RbogyuEuR5nfJQM4M2ek8BXSJW3/1TIHcrxS17cvaAIoMgj/7c2HBlxiBYLt0NiebjVPaCb7kEKaIqaMeXfkDEtXOFWov/O3/YEIpvdFpwkspyMDxClaj16c5HqX/N2wvr2GxZZx6j0AVc3KvknNqP8d+4qE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753175778; c=relaxed/simple;
-	bh=RimQmuozwByG0iSLT6X7qn726idglDwFDvH2n7RL6ao=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ryv3PpBmVVmUOWOyiPBpdMkDTDFlSmFDDXok5swk3mXSbu96M9CWtk8MqAlKHAsuVLUm/9yQhqohz4Ge+cwwjp7xQ7cMJljnSfLR3TzSn/CqFX/U4YJYb9xaLqZBBB+jK9MwZYOZIeckoDEEPsonTROeUaWi9GpYUTdP+lPWRyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cBxOqtus; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DB9EC4CEFA;
-	Tue, 22 Jul 2025 09:16:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753175778;
-	bh=RimQmuozwByG0iSLT6X7qn726idglDwFDvH2n7RL6ao=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cBxOqtusF2Bnd8lVWete81JTCi0L77PbsvcgKONG4hSKS6LxuqkyZDwWVQXYHl2nt
-	 iLiLfR/aTaCczBAF0mZG3G94KRyYlpqvOkxWCN5S7REDmXLo1EVi3v8Ozj++4ERtD3
-	 gHWMz6WYBHpewMhrsPaT+r29xwvaEOfL4ozN/4z7TgspLriUFPOqB5iqa7el4OyH8U
-	 mlZAfcugtfPnRmUon+gwba9QR7OtA9YwXD11kpjDGWwLHAa3U2tvmVD0UoPdXHowcS
-	 CSCMOq6gWwZnXGfxdGbK9jS8nyOpnKbwLrX7PDXWt+h3k+E6UX6+SDtIElHWqssiBa
-	 s9rWPO691gHfg==
-Message-ID: <c90e88a4-7fff-49fa-8a6f-24f3671d9390@kernel.org>
-Date: Tue, 22 Jul 2025 11:16:15 +0200
+	s=arc-20240116; t=1753175812; c=relaxed/simple;
+	bh=5+4IEnUDH3MfCtlep0Aiyd/brnRqsZn5r0qKrEkJN88=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ujVd2LEtKpcUZGfT3vINA3+QeH5UFodwUoV8I/Vmg0yG1hhvwJTkddhxnsVCVrz7XPZr4TGptavO/GNCXvrvROAfGFF9WouSZjjoCd+WO3ictKFDvubok0a6CmZB0Kb6OKpXnoJx+W198SoU/XgLAYfIhZhAHzK49bsUelFtb4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=LjIbbUbJ; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 529FC1026E02C;
+	Tue, 22 Jul 2025 11:16:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1753175806; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=4nY9hNH8Xulfxtod44cCabgUPMOownby6PT6DFrz5lQ=;
+	b=LjIbbUbJbG2EhihBKkxwPGR29XItOid1lgo5AYyInQTAhh+5DuxFeZGRqnhC9o6cS/qwfG
+	fuUPlRKJga3Ujq45JSB74KI5S35BWjlox4tLdVQPgxj+qR49/+LHsntQNaW8uRNjSX9jZS
+	L6T7euknFsOZyFWvGs3duEpnVoewPiPzPZ5XiSyNQfgkn8WObJumJgYsBiuyq3PdvOswzf
+	b4NNteNWy7NlZ9OLeQJSGZcNR+1HZsV5sdmAeJL85/apZep1P9YtI5HfdIehos1eBBABwp
+	0W/JEWaj0OGyZoATbfVYsVBrVKV8KEaTcf2Ta96KI4g4s9M2aFWAaO/0/TlPtQ==
+Date: Tue, 22 Jul 2025 11:16:39 +0200
+From: Lukasz Majewski <lukma@denx.de>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Richard Cochran
+ <richardcochran@gmail.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, Stefan Wahren
+ <wahrenst@gmx.net>, Simon Horman <horms@kernel.org>
+Subject: Re: [net-next v15 06/12] net: mtip: Add net_device_ops functions to
+ the L2 switch driver
+Message-ID: <20250722111639.3a53b450@wsk>
+In-Reply-To: <20250718182840.7ab7e202@kernel.org>
+References: <20250716214731.3384273-1-lukma@denx.de>
+	<20250716214731.3384273-7-lukma@denx.de>
+	<20250718182840.7ab7e202@kernel.org>
+Organization: denx.de
+X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] HID: multitouch: fix slab out-of-bounds access in
- mt_report_fixup()
-To: Qasim Ijaz <qasdev00@gmail.com>, jikos@kernel.org, bentiss@kernel.org
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, Dmitry Savin <envelsavinds@gmail.com>
-References: <20250722080003.3605-1-qasdev00@gmail.com>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20250722080003.3605-1-qasdev00@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/m4ErR0/Y681iJgWNOq_wn4J";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 22. 07. 25, 10:00, Qasim Ijaz wrote:
-> A malicious HID device can trigger a slab out-of-bounds during
-> mt_report_fixup() by passing in report descriptor smaller than
-> 607 bytes. mt_report_fixup() attempts to patch byte offset 607
-> of the descriptor with 0x25 by first checking if byte offset
-> 607 is 0x15 however it lacks bounds checks to verify if the
-> descriptor is big enough before conducting this check. Fix
-> this vulnerability by ensuring the descriptor size is
-> greater than or equal to 608 before accessing it.
-> 
-> Below is the KASAN splat after the out of bounds access happens:
-> 
-> [   13.671954] ==================================================================
-> [   13.672667] BUG: KASAN: slab-out-of-bounds in mt_report_fixup+0x103/0x110
-> [   13.673297] Read of size 1 at addr ffff888103df39df by task kworker/0:1/10
-> [   13.673297]
-> [   13.673297] CPU: 0 UID: 0 PID: 10 Comm: kworker/0:1 Not tainted 6.15.0-00005-gec5d573d83f4-dirty #3
-> [   13.673297] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/04
-> [   13.673297] Call Trace:
-> [   13.673297]  <TASK>
-> [   13.673297]  dump_stack_lvl+0x5f/0x80
-> [   13.673297]  print_report+0xd1/0x660
-> [   13.673297]  kasan_report+0xe5/0x120
-> [   13.673297]  __asan_report_load1_noabort+0x18/0x20
-> [   13.673297]  mt_report_fixup+0x103/0x110
-> [   13.673297]  hid_open_report+0x1ef/0x810
-> [   13.673297]  mt_probe+0x422/0x960
-> [   13.673297]  hid_device_probe+0x2e2/0x6f0
-> [   13.673297]  really_probe+0x1c6/0x6b0
-> [   13.673297]  __driver_probe_device+0x24f/0x310
-> [   13.673297]  driver_probe_device+0x4e/0x220
-> [   13.673297]  __device_attach_driver+0x169/0x320
-> [   13.673297]  bus_for_each_drv+0x11d/0x1b0
-> [   13.673297]  __device_attach+0x1b8/0x3e0
-> [   13.673297]  device_initial_probe+0x12/0x20
-> [   13.673297]  bus_probe_device+0x13d/0x180
-> [   13.673297]  device_add+0xe3a/0x1670
-> [   13.673297]  hid_add_device+0x31d/0xa40
-> [...]
-> 
-> Fixes: c8000deb6836 ("HID: multitouch: Add support for GT7868Q")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
-> Reviewed-by: Dmitry Savin <envelsavinds@gmail.com>
-> ---
->   drivers/hid/hid-multitouch.c | 25 ++++++++++++++++---------
->   1 file changed, 16 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-> index 7ac8e16e6158..af4abe3ba410 100644
-> --- a/drivers/hid/hid-multitouch.c
-> +++ b/drivers/hid/hid-multitouch.c
-> @@ -1461,18 +1461,25 @@ static const __u8 *mt_report_fixup(struct hid_device *hdev, __u8 *rdesc,
->   	if (hdev->vendor == I2C_VENDOR_ID_GOODIX &&
->   	    (hdev->product == I2C_DEVICE_ID_GOODIX_01E8 ||
->   	     hdev->product == I2C_DEVICE_ID_GOODIX_01E9)) {
-> -		if (rdesc[607] == 0x15) {
-> -			rdesc[607] = 0x25;
-> -			dev_info(
-> -				&hdev->dev,
-> -				"GT7868Q report descriptor fixup is applied.\n");
-> +		if (*size >= 608) {
-> +			if (rdesc[607] == 0x15) {
-> +				rdesc[607] = 0x25;
-> +				dev_info(
-> +					&hdev->dev,
-> +					"GT7868Q report descriptor fixup is applied.\n");
-> +			} else {
-> +				dev_info(
-> +					&hdev->dev,
-> +					"The byte is not expected for fixing the report descriptor. \
-> +					It's possible that the touchpad firmware is not suitable for applying the fix. \
-> +					got: %x\n",
+--Sig_/m4ErR0/Y681iJgWNOq_wn4J
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This is wrong. You have all the spaces/tabs in the string now. Drop all 
-the backslashes, and open and close the string on every line.
+Hi Jakub,
 
-> +					rdesc[607]);
-> +			}
+> On Wed, 16 Jul 2025 23:47:25 +0200 Lukasz Majewski wrote:
+> > +static netdev_tx_t mtip_start_xmit_port(struct sk_buff *skb,
+> > +					struct net_device *dev,
+> > int port) +{
+> > +	struct mtip_ndev_priv *priv =3D netdev_priv(dev);
+> > +	struct switch_enet_private *fep =3D priv->fep;
+> > +	unsigned short status;
+> > +	struct cbd_t *bdp;
+> > +	void *bufaddr;
+> > +
+> > +	spin_lock(&fep->hw_lock); =20
+>=20
+> I see some inconsistencies in how you take this lock.
+> Bunch of bare spin_lock() calls from BH context, but there's also
+> a _irqsave() call in mtip_adjust_link().
 
-As this is superlong and superindented, perhaps introduce a new function 
-for these devices?
+In the legacy NXP (Freescale) code for this IP block (i.e. MTIP switch)
+the recommended way to re-setup it, when link or duplex changes, is to
+reset and reconfigure it.
 
->   		} else {
->   			dev_info(
->   				&hdev->dev,
-> -				"The byte is not expected for fixing the report descriptor. \
-> -It's possible that the touchpad firmware is not suitable for applying the fix. \
-> -got: %x\n",
+It requires setting up interrupts as well... In that situation, IMHO
+disabling system interrupts is required to avoid some undefined
+behaviour.
 
-This was horrid too, yeah.
+> Please align to the strictest
+> context (not sure if the irqsave is actually needed, at a glance, IOW
+> whether the lock is taken from an IRQ)
 
-> -				rdesc[607]);
-> +				"GT7868Q fixup: report descriptor only %u bytes, skipping\n",
+The spin_lock() for xmit port is similar to what is done for
+fec_main.c. As this switch uses single uDMA for both ports as well as
+there is no support (and need) for multiple queues it can be omitted.
 
-A predicate missing. Eg. "has only", or "is only".
+>=20
+> > +	if (!fep->link[0] && !fep->link[1]) {
+> > +		/* Link is down or autonegotiation is in progress.
+> > */
+> > +		netif_stop_queue(dev);
+> > +		spin_unlock(&fep->hw_lock);
+> > +		return NETDEV_TX_BUSY;
+> > +	}
+> > +
+> > +	/* Fill in a Tx ring entry */
+> > +	bdp =3D fep->cur_tx;
+> > +
+> > +	/* Force read memory barier on the current transmit
+> > description */ =20
+>=20
+> Barrier are between things. What is this barrier separating, and what
+> write barrier does it pair with? As far as I can tell cur_tx is just
+> a value in memory, and accesses are under ->hw_lock, so there should
+> be no ordering concerns.
 
-> +				*size);
->   		}
->   	}
->   
+The bdp is the uDMA descritptor (memory allocated in the coherent dma
+area). It is used by the uDMA when data is transferred to MTIP switch
+internal buffer.
 
-thanks,
--- 
-js
-suse labs
+The bdp->cbd_sc is a half word, which is modified by uDMA engine, to
+indicate if there are errors or transfer has ended.
 
+The rmb() shall improve robustness - it assures that the status
+corresponds to what was set by uDMA. On the other hand dma coherent
+allocation shall do this as well.
+
+The fec_main.c places the rmb() in similar places, so I followed their
+approach.
+
+>=20
+> > +	rmb();
+> > +	status =3D bdp->cbd_sc;
+> > +
+> > +	if (status & BD_ENET_TX_READY) {
+> > +		/* All transmit buffers are full. Bail out.
+> > +		 * This should not happen, since dev->tbusy should
+> > be set.
+> > +		 */
+> > +		netif_stop_queue(dev);
+> > +		dev_err(&fep->pdev->dev, "%s: tx queue full!.\n",
+> > dev->name); =20
+>=20
+> This needs to be rate limited, we don't want to flood the logs in case
+> there's a bug.
+
++1
+
+>=20
+> Also at a glance it seems like you have one fep for multiple netdevs.
+
+Yes.
+
+> So stopping one netdev's Tx queue when fep fills up will not stop the
+> other ports from pushing frames, right?
+
+This is a bit more complicated...
+
+Other solutions - like cpsw_new - are conceptually simple; there are
+two DMAs to two separate eth IP blocks.
+During startup two separate devices are created. When one wants to
+enable bridge (i.e. start in-hw offloading) - just single bit is setup
+and ... that's it.
+
+With vf610 / imx287 and MTIP it is a bit different (imx287 is even
+worse as second ETH interface has incomplete functionality by design).
+
+When switch is not active - you have two uDMA ports to two ENET IP
+blocks. Full separation. That is what is done with fec_main.c driver.
+
+When you enable MTIP switch - then you have just a single uDMA0 active
+for "both" ports. In fact you "bridge" two ports into a single one -
+that is why Freescale/NXP driver (for 2.6.y) just had eth0 to "model"
+bridged interfaces. That was "simpler" (PHY management was done in the
+driver as well).
+
+Now, in this driver, we do have two network devices, which are "bridged"
+(so there is br0). And of course there must be separation between
+lan0/1 when this driver is used, but bridge is not (yet) created. This
+works :-)
+
+
+So I do have - 2x netdevs (handled by single uDMA0) + 2PHYS + br0 +
+NAPI + switchdev (to avoid broadcast frame storms + {R}STP + FDB -
+WIP).
+
+
+Just pure fun :-) to model it all ... and make happy all maintainers :-)
+
+>=20
+> > +		spin_unlock(&fep->hw_lock);
+> > +		return NETDEV_TX_BUSY;
+> > +	}
+> > +
+> > +	/* Clear all of the status flags */
+> > +	status &=3D ~BD_ENET_TX_STATS;
+> > +
+> > +	/* Set buffer length and buffer pointer */
+> > +	bufaddr =3D skb->data;
+> > +	bdp->cbd_datlen =3D skb->len;
+> > +
+> > +	/* On some FEC implementations data must be aligned on
+> > +	 * 4-byte boundaries. Use bounce buffers to copy data
+> > +	 * and get it aligned.spin
+> > +	 */
+> > +	if ((unsigned long)bufaddr & MTIP_ALIGNMENT) { =20
+>=20
+> I think you should add=20
+>=20
+> 	if ... ||
+>            fep->quirks & FEC_QUIRK_SWAP_FRAME)
+>=20
+> here. You can't modify skb->data without calling skb_cow_data()
+> but you already have buffers allocated so can as well use them.
+
+The vf610 doesn't need the frame to be swapped, but has requirements
+for alignment as well.
+
+I would keep things as they are now - as they just improve readability.
+
+Please keep in mind that this version only supports imx287, but the
+plan is to add vf610 as well (to be more specific - this driver also
+works on vf610, but I plan to add those patches after this one is
+accepted and pulled).=20
+
+>=20
+> > +		unsigned int index;
+> > +
+> > +		index =3D bdp - fep->tx_bd_base;
+> > +		memcpy(fep->tx_bounce[index],
+> > +		       (void *)skb->data, skb->len); =20
+>=20
+> this fits on one 80 char line BTW, quite easily:
+>=20
+> 		memcpy(fep->tx_bounce[index], (void *)skb->data,
+> skb->len);
+>=20
+> Also the cast to void * is not necessary in C.
+
++1
+
+>=20
+> > +		bufaddr =3D fep->tx_bounce[index];
+> > +	}
+> > +
+> > +	if (fep->quirks & FEC_QUIRK_SWAP_FRAME)
+> > +		swap_buffer(bufaddr, skb->len);
+> > +
+> > +	/* Save skb pointer. */
+> > +	fep->tx_skbuff[fep->skb_cur] =3D skb;
+> > +
+> > +	fep->skb_cur =3D (fep->skb_cur + 1) & TX_RING_MOD_MASK; =20
+>=20
+> Not sure if this is buggy, but maybe delay updating things until the
+> mapping succeeds? Fewer things to unwind.
+
+Yes, the skb storage as well as ring buffer modification can be done
+after dma mapping code.
+
+>=20
+> > +	/* Push the data cache so the CPM does not get stale memory
+> > +	 * data.
+> > +	 */
+> > +	bdp->cbd_bufaddr =3D dma_map_single(&fep->pdev->dev, bufaddr,
+> > +					  MTIP_SWITCH_TX_FRSIZE,
+> > +					  DMA_TO_DEVICE);
+> > +	if (unlikely(dma_mapping_error(&fep->pdev->dev,
+> > bdp->cbd_bufaddr))) {
+> > +		dev_err(&fep->pdev->dev,
+> > +			"Failed to map descriptor tx buffer\n");
+> > +		dev->stats.tx_errors++;
+> > +		dev->stats.tx_dropped++; =20
+>=20
+> dropped and errors are two different counters
+> I'd stick to dropped
+
+Ok.
+
+>=20
+> > +		dev_kfree_skb_any(skb);
+> > +		goto err;
+> > +	}
+> > +
+> > +	/* Send it on its way.  Tell FEC it's ready, interrupt
+> > when done,
+> > +	 * it's the last BD of the frame, and to put the CRC on
+> > the end.
+> > +	 */
+> > +
+> > +	status |=3D (BD_ENET_TX_READY | BD_ENET_TX_INTR
+> > +			| BD_ENET_TX_LAST | BD_ENET_TX_TC); =20
+>=20
+> The | goes at the end of the previous line, start of new line adjusts=20
+> to the opening brackets..
+>=20
+
+I've refactored it.
+
+> > +
+> > +	/* Synchronize all descriptor writes */
+> > +	wmb();
+> > +	bdp->cbd_sc =3D status;
+> > +
+> > +	netif_trans_update(dev); =20
+>=20
+> Is this call necessary?
+
+I've added it when I was forward porting the old driver. It can be
+removed.
+
+>=20
+> > +	skb_tx_timestamp(skb);
+> > +
+> > +	/* Trigger transmission start */
+> > +	writel(MCF_ESW_TDAR_X_DES_ACTIVE, fep->hwp + ESW_TDAR);
+> > +
+> > +	dev->stats.tx_bytes +=3D skb->len;
+> > +	/* If this was the last BD in the ring,
+> > +	 * start at the beginning again.
+> > +	 */
+> > +	if (status & BD_ENET_TX_WRAP)
+> > +		bdp =3D fep->tx_bd_base;
+> > +	else
+> > +		bdp++;
+> > +
+> > +	if (bdp =3D=3D fep->dirty_tx) {
+> > +		fep->tx_full =3D 1;
+> > +		netif_stop_queue(dev);
+> > +	}
+> > +
+> > +	fep->cur_tx =3D bdp;
+> > + err:
+> > +	spin_unlock(&fep->hw_lock);
+> > +
+> > +	return NETDEV_TX_OK;
+> > +} =20
+
+
+Thanks for the feedback.
+
+Best regards,
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH, Managing Director: Johanna Denk,
+Tabea Lutz HRB 165235 Munich, Office: Kirchenstr.5, D-82194
+Groebenzell, Germany
+Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+
+--Sig_/m4ErR0/Y681iJgWNOq_wn4J
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmh/VvcACgkQAR8vZIA0
+zr0EkQf+OKA9kVy9T6DLsGgkcx0n/BaQWjeHYKKNdbWFdsYqtJ+1WK0SgmlnezPx
+6W/7JzwKVM1DBH3Nw8iJUpUT7K5t4WIQTuL8amoncPzpQq3WZPf0gcRNyEKZUH9A
+zsXc5Z1KcU4B9RqSz/cBQbqezZYeDUZOgJYzttjZhL51F865oe8BIOUaJIBf+WJQ
+zyYcPqREs61l4QsBonzuLECUW5Ps6oUWPPOVWg6EX4YrDm01gZlkVgKr3m4lEu2F
+taQChqtcKHfRbEoZ4l2tVh5kIqt2zDtqhe5bKg69fLwv3aTqly+aUlQ1QA1P3ec9
+1EFyQFEyRxedvE+CctCupZGB1v0y0Q==
+=VUW3
+-----END PGP SIGNATURE-----
+
+--Sig_/m4ErR0/Y681iJgWNOq_wn4J--
 
