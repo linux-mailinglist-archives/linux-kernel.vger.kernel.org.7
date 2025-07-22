@@ -1,312 +1,168 @@
-Return-Path: <linux-kernel+bounces-741305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 946ABB0E2A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:35:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FD83B0E2A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:35:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACFC95613ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:35:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F563563653
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A0D927FB1B;
-	Tue, 22 Jul 2025 17:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74DE27A446;
+	Tue, 22 Jul 2025 17:35:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="GEagDvOA";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="xjplKfgn"
-Received: from esa1.hgst.iphmx.com (esa1.hgst.iphmx.com [68.232.141.245])
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="oebFX3ik"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7779527A127
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 17:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.141.245
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753205708; cv=fail; b=oI4gINp1RixtbBHVKzEh/5keHMgBffFVfyQg1vk1uIcTGu+1ppf4cSa14knMzABjhAMnz0ap3nkxkxl1ohxR99OzuBHzj2EXLmcKATQMHaRy8/k+cCsGTMXgvs8G7gUK2CQhU2rqRWJuJX3AMQ5BS4QADXZrug+tt2zh+I+vrl0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753205708; c=relaxed/simple;
-	bh=qaAdthYGFTjBhAUe6rCL3b5DaVcKDiWEDe9RhUmYuCI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=u5iM3KZag7c4cFx9lMCcgkg5TsfeK8exSQs7y2sOq06Vcvh8r4roXOChDMIxmF8lTBFa+AtIo5GBeeadUCrbguSaXC6X0inOLHiVknKIRit/es58DfMDh/rW7571CATd2o4yuPHiedSsaz3wUlqnSDTNYI7KVrsOPa68Q33p+2g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=GEagDvOA; dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b=xjplKfgn; arc=fail smtp.client-ip=68.232.141.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1753205706; x=1784741706;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=qaAdthYGFTjBhAUe6rCL3b5DaVcKDiWEDe9RhUmYuCI=;
-  b=GEagDvOAfzI/RnEiyJncsGE63xZBikYogqjYfv+o8Ff0GIqWuOP3/kJ+
-   DsHXN0j80VPruxEACFUSBX7rxRzvg0I8dlt3eNg7dY+5OHq/9fKCPjn0i
-   kt9iYOmKjVpcVYFLjr/50s8DgorP7hdJ8bQGdklQsmi2DNPCrEGW6RzcW
-   kBgT5mfl0wJJHhff7lCxnLpF2k6m5wTKWQuz34r+BR/skbXOvY/vA8riD
-   hH9TDNUj0dm7ue6gGc8sMyz/hRPiDTNz6ob15wGiyY+e9B2RWHZgNxq+x
-   1EQGQXTA6Cn6HkGQlcnW/ScjM9MoU3F7Uc77XXUr4YAWcy3HK1DxdX9cD
-   g==;
-X-CSE-ConnectionGUID: fhw6tsr8RgOFmhGpsIksfQ==
-X-CSE-MsgGUID: Bt+9FTb3SnCOD0VpR1TMrA==
-X-IronPort-AV: E=Sophos;i="6.16,332,1744041600"; 
-   d="scan'208";a="94543390"
-Received: from mail-dm6nam12on2053.outbound.protection.outlook.com (HELO NAM12-DM6-obe.outbound.protection.outlook.com) ([40.107.243.53])
-  by ob1.hgst.iphmx.com with ESMTP; 23 Jul 2025 01:34:58 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dR+hRqJkMLicWrxeqn5OugRp2/Hlq7a1IQ2Tb7gr3ShkL+VqV2PS84F5RX/nmTMXxPUacBtbNL/bPrXf331qNOoZ4eD0puhJw898Z+wlZTv6JleT7rvsxG4gjGo6je8COI1vCH461zBkvYLw7rtwXAFxAkHnWevrPuIruCcD+pZL/ZSCrkC7SDp2P7Kgb814JdCa48ccUkl7rFo+OSfWUtXjbc8cdRcZ8jkBqUgHsiF2EtXL5xwsicDZ0XZQRRsZpvUuSBvFum1Vli5ou4E91SQSkn57LEnpt/0u1YmmYImdLfPo0gpqQ2vNTihBYXHpVSTbr/3T/kg9UpSRbAZK7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qaAdthYGFTjBhAUe6rCL3b5DaVcKDiWEDe9RhUmYuCI=;
- b=HFCu94MluOXaQja/vWe2yx8pqngFG0uvklCtB27S+hqXCVgQQleRTLh2GU5b+EvdCkK264KOb0OwfY0zJN76XECSmZ33/bs/n2DrLMuKV9dPGOAt8/8WxEgMJtuYt9k4g+FcuNwhGAPL8Tr3pDtaBbGsEcky/g0dVeYuJ+mp9a14IhxGj7RKxlcLT2Brag7DJjyqevxpQXen9BsGQG10vQZ6JkgVvmnFXzHdZvMcAOG+KzYSFMCGhwhqUQaPz5iyXJwy9k4kFUfGXcsf6lwriGlEkRZVKPMKOGd76i2KQh+6jOP58HP9mbGE7MxfrWWXsE+PCQfpQBmlgR2gTNMKaA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qaAdthYGFTjBhAUe6rCL3b5DaVcKDiWEDe9RhUmYuCI=;
- b=xjplKfgnnIiWHsmaJ7BYPqresk38zPAGoUSSlsRw7YRn1Jg4Npdc5CTShq1ucbUhUY2dRX84qp8eMgvt1yM1gIKHarTPU6L64S8sNI0xwXySpYZ+Glz5NNSFG+CVFh6tpgst3l44sAwPH6xwDJQAQGRlAG3cCgigrTiwtpX/8J8=
-Received: from BY5PR04MB6849.namprd04.prod.outlook.com (2603:10b6:a03:228::17)
- by CH7PR04MB9644.namprd04.prod.outlook.com (2603:10b6:610:252::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Tue, 22 Jul
- 2025 17:34:56 +0000
-Received: from BY5PR04MB6849.namprd04.prod.outlook.com
- ([fe80::a414:8a6d:1caa:13d5]) by BY5PR04MB6849.namprd04.prod.outlook.com
- ([fe80::a414:8a6d:1caa:13d5%4]) with mapi id 15.20.8943.029; Tue, 22 Jul 2025
- 17:34:56 +0000
-From: Kamaljit Singh <Kamaljit.Singh1@wdc.com>
-To: Hannes Reinecke <hare@suse.de>, "kbusch@kernel.org" <kbusch@kernel.org>,
-	"axboe@kernel.dk" <axboe@kernel.dk>, hch <hch@lst.de>, "sagi@grimberg.me"
-	<sagi@grimberg.me>, "linux-nvme@lists.infradead.org"
-	<linux-nvme@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-CC: "cassel@kernel.org" <cassel@kernel.org>, "dlemoal@kernel.org"
-	<dlemoal@kernel.org>
-Subject: Re: [PATCH v3 1/2] nvme: add capability to connect to an
- administrative controller
-Thread-Topic: [PATCH v3 1/2] nvme: add capability to connect to an
- administrative controller
-Thread-Index: AQHb93jsk1kwbVcJmEiy6h+WN4wmDrQ9vz6AgACoKMY=
-Date: Tue, 22 Jul 2025 17:34:56 +0000
-Message-ID:
- <BY5PR04MB6849799468BC4F5118343015BC5CA@BY5PR04MB6849.namprd04.prod.outlook.com>
-References: <20250718001415.3774178-1-kamaljit.singh1@wdc.com>
- <20250718001415.3774178-2-kamaljit.singh1@wdc.com>
- <845e9caa-093c-466b-9a9b-905359517568@suse.de>
-In-Reply-To: <845e9caa-093c-466b-9a9b-905359517568@suse.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wdc.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BY5PR04MB6849:EE_|CH7PR04MB9644:EE_
-x-ms-office365-filtering-correlation-id: 984f6cbd-847e-46a0-c716-08ddc9461328
-x-ld-processed: b61c8803-16f3-4c35-9b17-6f65f441df86,ExtAddr
-wdcipoutbound: EOP-TRUE
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|19092799006|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?LYvGClE2fj/du53lXW8kmfwouAqnkz2UT5cM0yePiXA79nE0mZzli4cHu1?=
- =?iso-8859-1?Q?ApBjd/nIlJsNCE3oj8S0zYBUpAle5CHKh27CDI/hQA+qxwYK+1QGiwQIwt?=
- =?iso-8859-1?Q?kfyiVierUaXARyT0EwCovmlNwXytWAcZXUJJxTjAIwfwKr5e8z/+cddqnN?=
- =?iso-8859-1?Q?T0kkVD6cf5jYjtCIo2kOQNdgKerfXCY6aGr0yrImByET4v4EveplpKkR21?=
- =?iso-8859-1?Q?snb9OekyKnZv/yP3Rtji8ckgrPkXhIOtQWqOvOGwKaZVYORKuPqCGl/WF2?=
- =?iso-8859-1?Q?9X4fSVyOwlqsr+LgGdYIphWIgLWJVZc4bErkxp27dkUtKCzlJBq8D2GuOA?=
- =?iso-8859-1?Q?mtYr2nMFoGuXyjvUg1AR1VTvYIt+UqN/WqzLDeVfaH9LjORyHYq1k8vcRe?=
- =?iso-8859-1?Q?Pl7uFMF39CJXumLe7EKU+ssnUYwYUR3EVJG6bK3yD4JJBJPE0C8FACg8j3?=
- =?iso-8859-1?Q?5vj34/uyEfxqMXmDHBHL4zYvyMmPTvDzdkwTVLiYvN/CfZbjXO9WtVDBG+?=
- =?iso-8859-1?Q?0GVWQ9Q1H0Ip6+bVXN86qtRUHmnQnaV6hVufE/VgPWFp0qWZF0c4I8I8bR?=
- =?iso-8859-1?Q?8HjuK9mONkGn5UXpLzpxjj0htXzgc28Q7Q+Iot4N76oTY6mOqJIHpxAmQF?=
- =?iso-8859-1?Q?5ToK51eZwhgY3THfOC2T8vNS+jn4R6oMT8a6L/CVMLDsi6jCT7fSZep8se?=
- =?iso-8859-1?Q?QHGJghuxk5+kSN4PXMvUEiG3yKrcRbKEzGdBD560IRwKw9PiJtmRZbSFwz?=
- =?iso-8859-1?Q?kT33pP5kamJiLnGAkNHOJLwBB0+vn2Zkr2OzbayaCPlIATf2RwzwWx+oHH?=
- =?iso-8859-1?Q?A+ap1B1n2JUvHO7zkA8Y4QB/DNWiOzdAXpwnEZhZ0GzvPS5fNubZ/89y/v?=
- =?iso-8859-1?Q?9fjNIF/3cPX1FJjFqp5YNUcbSeFVbwmQZ9l+5FS8gk9m+PTdZ6RQa9OnTD?=
- =?iso-8859-1?Q?rarhu3CU038d/n+Rb8MxX6s3mVAgAeE4tmMI8ZtyGc50RcXQicD2Wisc78?=
- =?iso-8859-1?Q?6W430pSW84F/4xSrRUo3JwM97TYtSmQoXP2f1hsNwNZnU9sjFP+CMFwi4u?=
- =?iso-8859-1?Q?Udq9y1JIH90PFXeR0tEdL4/Wl3jB62LtbIzNUIXLdDMEJ+IAaU7yLMJJZ5?=
- =?iso-8859-1?Q?AJhd08QU5gv5sV3r2AlYJPWZcVJxBuo7tMhQsHab70s+ETvcTv0jjvm8Qs?=
- =?iso-8859-1?Q?1VKtN8c8ZuYNX4O/zNOdiWGBceSAA2FDB1B/hpSQ2IOZH4LrsxiKPGYP24?=
- =?iso-8859-1?Q?wi5MXCAfgjmsOCSW9yKQWcMs20MD5j/4vNnscLLJmB6Y/wbZIrDZTbENDi?=
- =?iso-8859-1?Q?piCYfsbW3r5JkOKKk2HDKoUCY+gyFpZVIns0VmA/hVExy8zQDuCpploJAt?=
- =?iso-8859-1?Q?8ZnJm7RGui+W1XUmarDHBRrJPeDvz3wq1tnG3B7y6egYLf/5pa9EdCER2o?=
- =?iso-8859-1?Q?jNx2N1Gknxfr6pMZ9POsuORINNDTci8kmFX2eQpcmyL2Be9tN63RiOVNBr?=
- =?iso-8859-1?Q?Oba/h1YKoib9MDcSRjqdr6kcm0rzt+0pzB6XoS+bDSIw=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR04MB6849.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?599mn7VSPisexyjN3yWaKLrpQzoOLxAOhrxkkAHUOeqMKjUSqwTIijZgmt?=
- =?iso-8859-1?Q?Cr9hQOlF/NF6JOsnIbmVd1XT75OfQr1/K0pb5gTaLESQr24yvcVSjcGA3+?=
- =?iso-8859-1?Q?ZAFI/C1s5t1jtEr+bsuTZjLJW0DFmvRkJpLcv5OsJZlZ1oLqt2KT4tYLNX?=
- =?iso-8859-1?Q?Lcq6TL+Tcpn2QcKbd7f3/Obzkv1jVIl76r9y21v3SfOvxGk3juxsB3oYdA?=
- =?iso-8859-1?Q?YB6aWQh0XT76xXyDv1Ser2kpEnxzZkKhT4lspERiCzjkdLQ3Aea1feixSM?=
- =?iso-8859-1?Q?GhNKSesNueuLx2BLnjozbW6468a7mUOCUEHpkR84fNjD7K3UfE8Hwia+XU?=
- =?iso-8859-1?Q?avNB0NQhqsdCeri4LY79YD9Q4kxxP9eBdxEyMLSr1xEsPZLqGl6le5wC8v?=
- =?iso-8859-1?Q?rLCRNmL0RCAez+KW3kf69NUmS3Mol1Mc4ORSMj5CWeSPlaUUtgmAm3E5Sv?=
- =?iso-8859-1?Q?dGhuZGhB8G2tdVeJueQZXfbjkxR/+aD77HKe8S0lnoAbtjXFfPNj8JnVZo?=
- =?iso-8859-1?Q?Rx3WpKHRmf7EBMAOMtUD9bCSk4C+29OAnqOJ4AR2CbB/noxrddFaNb2kwz?=
- =?iso-8859-1?Q?pF01wbTWsJSBnyGqw/Y/O+yneU/4xcTsRpUulMkh9rNQ86OOkwNUMg4cFV?=
- =?iso-8859-1?Q?YRUAYkEo4Rfr4slzEu8hDLTsx3Wm2idcfYz/2KoRMZPf0mH7rZqKCoRWbm?=
- =?iso-8859-1?Q?x8mlQM5Qmn9tU1dahO9MIg2FNRTwLfmh2oCrhcnOVxCTNOiKr07CmkHUJ3?=
- =?iso-8859-1?Q?WvAP0959OCTvRYSHiGXbmPaYHlob7c9oZrv1G5VcSr2IGHtDNECPEhNdcw?=
- =?iso-8859-1?Q?TTjsQEu8mIueM+KRIjX7xuE73Smm0ZR2UeSPgz7LsGoS9Br3FvkAsJJ5tu?=
- =?iso-8859-1?Q?FAaK0nzxefXmydt3EfQ72+w/XfVwriNyPJney3ThrUVaGTAkNueoJIQRpp?=
- =?iso-8859-1?Q?tEvaB6drgVMtQ8ftj7Ok2ugi9XjqZD/njSP9Mx0zi+fdD+6wqFSgmBSaw5?=
- =?iso-8859-1?Q?z1xgEnXfbYWeDMdYVyjlz3xXDb9INep5C5hwiQuPMF9AiHEARSHsquCkY2?=
- =?iso-8859-1?Q?K5fng3cO2Gh1hEtDONPowhgribpvEhEFy6rMX1kxRpuvTG1yfzpMO8bLnc?=
- =?iso-8859-1?Q?AvkY8IqmzkReNaxJGq8TjKD3d7gE8vyIww9795IrUKX0yTBPzvdGZvZ/Ct?=
- =?iso-8859-1?Q?dcWu9Wn1svIf7B5FMyBl2pIfk3fk+nIMXbuOx9wrFF7G8SvxYkC/pXg3Sa?=
- =?iso-8859-1?Q?Jkp/hywScHvdP9vIEA4bx31INNCEf0cPmE8AkuGNZSqhqXNREYTz7td34E?=
- =?iso-8859-1?Q?pq0qCXBygijVnWeYdJKfKEFJFxljUN7IsZ1ETbMyxn61ork7/Gk/olUWhy?=
- =?iso-8859-1?Q?f6hqk4vh8LwA8fLws0xIHjY8IYTKKgNqHpGxWEXVtTJeN5g6BpPKolni/a?=
- =?iso-8859-1?Q?cdeo7omJOwGjClktRaw9L4VtoyrjxbNZ54lFv5AGCiBYpk98muQmKBGCWB?=
- =?iso-8859-1?Q?shxCasMHEseQwAqfzYnUBTbJTNLbpcIMDTItDpXmI2ZTgGm5NzPRu5dtz1?=
- =?iso-8859-1?Q?ydzgpHt1eVmHTUZLXQLWSAjrLLw6xaqieUTFzM6OadD69w51ej6GRLBoKl?=
- =?iso-8859-1?Q?EltDaakWHbFDbYrpDM8xMUxoYTb1jebYT8?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8FB268683
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 17:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753205729; cv=none; b=i5hTTfmi6Jn68DJatftReX1JxKN/1aJjTN7ZjeB3BNGMcb91VHxic6Wb8qiB8wPcPVoJxf8ZpyMcwUDtfacRtrYfUZZVkxcvAGHI1rtauxf4iCNSp2+XGDknN+dwhsK8R5bHegeccFmcsjXlVuYgYTC2j6QsvHJtGkrGccKFUbM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753205729; c=relaxed/simple;
+	bh=egFOTGkOyDcV4J5NREJqL9Yw/K+BYd8iLqwvY4ED5O0=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=EePPQR1l4j+2TCnjvLXU0sHSUoFuhGchGVR8YM4PowEh9Qq6yacY1PaY3xaXouz/iBeyIWIO2DGUIU2PDXg31JW5jWSh7zG+fj/K4z/PS3/RPMPza/Lew5k+2HZxfgL7ZvdxCUSMYYjWj6LV53q87JazovWLXib8jtwBPl62BDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=oebFX3ik; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 7B6DC1C00C1; Tue, 22 Jul 2025 19:35:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1753205717;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type;
+	bh=OfW7Jg0YMs+6IaSe1tQS8HPxTR9c5LDgzG/4nEotd2Y=;
+	b=oebFX3ik8yrXaasDYIuDEynRjzbuFRHdRzKFV+NPapqSLjTw1Micawb9NGWuRAZSyC5+IN
+	mwMZmOUpdA8Yp2qnCONb0u20ajTs2j7ce0MRJvEcRKeHNAosLeOyXTGDVF99pBBOwj7iQc
+	zJGqWZ7wZJQZ80FEmC6ISVQmo5ZXw4Y=
+Date: Tue, 22 Jul 2025 19:35:16 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: kernel list <linux-kernel@vger.kernel.org>, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com
+Subject: 6.16-rcX: crashing way too often on thinkpad X220
+Message-ID: <aH/L1PCwtwe8Y1+a@duo.ucw.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	INSwSv0Q+bBCR4OJ5c323Pyk5zB10w1HCvJCCQLYfYEeL2lzv/LfMAwyLps2QmzmgNgmwH0VObRRy75pcaigYO8tWv6wYrDJpA0VexT7szuoz4HYfQplSf7zNmxJUVMt7sGg8oEh4id0cdDKOZrVJNvufrNTLqSire5uht56VR3E02mAZEiG3DlhZFiLb9pNT6yv8M1ULT57FDOqNe32BNdOQaj3cbqeSyuGEpM422c11+FZ0eyMQBJwaW80S/NmorzBXPXl7XvapN9JGhnHt9sA/Z7H1Qv1pmCsv9NvJEdAhkp62xGWeleSFDTPEvLrTyMHQok0NfMEarWLvt19m1G+h3XRJ45xoOM6HFkWTaf5rQR7dUiLw16QpJhGa24NpBkyq6Lq5wrbXsMP3YHtf5upuCYucDwj8de61l1v0JA/CiSTUE829bVD2fI+Y2doUvfcQxfuK6+WzHPrCzEUS6fcoMxnZ1VhOdO44gFYtwIa8DIqKDUA2z3tpFULzP5vke+dqoVh5Icb6HX3+EyfMKwtHbf/hysvaVhiibZcshREkWWtXi80ycGosaiKVJhHbcbYZQikN2airgnXakEQF6JgbP0PiRDpxgLIBu+zUedMrjWw48jekTNumHbXRPpK
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR04MB6849.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 984f6cbd-847e-46a0-c716-08ddc9461328
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jul 2025 17:34:56.2271
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 1o2oz9pOcY5nybrmqjJT1JybQV35TH8c/tKcLqjI+IVQbvYk8V2kuctL7mAIBg/0AbD75hBbRjFuHG8Wyy6uXw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH7PR04MB9644
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="F26XiQ8NZZXpyrH/"
+Content-Disposition: inline
 
-Hi Hannes,=0A=
-=A0=0A=
-From: Hannes Reinecke <hare@suse.de>=0A=
-Date: Tuesday, July 22, 2025=A0at 00:06=0A=
->> Suggested-by: Niklas Cassel <cassel@kernel.org>=0A=
->>=0A=
->> Add capability to connect to an administrative controller by=0A=
->> preventing ioq creation for admin-controllers.=0A=
->>=0A=
->> * Add helper nvme_admin_ctrl() to check for an administrative controller=
-=0A=
->> * Add helper nvme_override_prohibited_io_queues() to override queue_coun=
-t=0A=
->> * Call nvme_override_prohibited_io_queues() from nvme_init_ctrl_finish()=
-=0A=
->>=A0=A0=A0 so it applies to nvme/tcp and nvme/rdma=0A=
->>=0A=
->> Signed-off-by: Kamaljit Singh <kamaljit.singh1@wdc.com>=0A=
->> ---=0A=
->>=A0=A0 drivers/nvme/host/core.c | 21 +++++++++++++++++++++=0A=
->>=A0=A0 1 file changed, 21 insertions(+)=0A=
->>=0A=
->> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c=0A=
->> index e533d791955d..105127638c31 100644=0A=
->> --- a/drivers/nvme/host/core.c=0A=
->> +++ b/drivers/nvme/host/core.c=0A=
->> @@ -3149,6 +3149,21 @@ static inline bool nvme_discovery_ctrl(struct nvm=
-e_ctrl *ctrl)=0A=
->>=A0=A0=A0=A0=A0=A0 return ctrl->opts && ctrl->opts->discovery_nqn;=0A=
->>=A0=A0 }=0A=
->>=0A=
->> +static inline bool nvme_admin_ctrl(struct nvme_ctrl *ctrl)=0A=
->> +{=0A=
->> +=A0=A0=A0=A0 return ctrl->cntrltype =3D=3D NVME_CTRL_ADMIN;=0A=
->> +}=0A=
->> +=0A=
->> +/*=0A=
->> + * An admin controller has one admin queue, but no I/O queues.=0A=
->> + * Override queue_count so it only creates an admin queue.=0A=
->> + */=0A=
->> +static inline void nvme_override_prohibited_io_queues(struct nvme_ctrl =
-*ctrl)=0A=
->> +{=0A=
->> +=A0=A0=A0=A0 if (nvme_admin_ctrl(ctrl))=0A=
->> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 ctrl->queue_count =3D 1;=0A=
->> +}=0A=
->> +=0A=
->>=A0=A0 static bool nvme_validate_cntlid(struct nvme_subsystem *subsys,=0A=
->>=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 struct nvme_ctrl *ctrl, struct=
- nvme_id_ctrl *id)=0A=
->>=A0=A0 {=0A=
->> @@ -3670,6 +3685,12 @@ int nvme_init_ctrl_finish(struct nvme_ctrl *ctrl,=
- bool was_suspended)=0A=
->>=A0=A0=A0=A0=A0=A0 if (ret)=0A=
->>=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 return ret;=0A=
->>=0A=
->> +=A0=A0=A0=A0 if (nvme_admin_ctrl(ctrl))=0A=
->> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 dev_dbg(ctrl->device,=0A=
->> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 "Subsystem=
- %s is an administrative controller",=0A=
->> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 ctrl->subs=
-ys->subnqn);=0A=
->> +=A0=A0=A0=A0 nvme_override_prohibited_io_queues(ctrl);=0A=
->> +=0A=
->>=A0=A0=A0=A0=A0=A0 ret =3D nvme_configure_apst(ctrl);=0A=
->>=A0=A0=A0=A0=A0=A0 if (ret < 0)=0A=
->>=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 return ret;=0A=
->=0A=
->One wonders why this is done for admin controllers only; surely=0A=
->discovery controllers also don't support I/O queues, and should=0A=
->therefore have the same setting?=0A=
-I agree. That was my patch-3 in v2, which I retracted in v3 based on=0A=
-your comment below. Is someone taking that action item to discuss at FMDS?=
-=0A=
-I haven't attended it in a while.=0A=
-=0A=
-If everyone agrees, I can add patch-3 back in and create v5 or since v4=0A=
-patch-1 was accepted, I can issue a standalone patch just for this change.=
-=0A=
-Please let me know.=0A=
-=0A=
-=0A=
-=0A=
->From: Hannes Reinecke <hare@suse.de>=0A=
->Date: Thursday, July 3, 2025 at 02:42=0A=
->> Prevent ioq creation for discovery-controllers as the spec prohibits=0A=
->> them, similarly to the administrative controllers.=0A=
->>=0A=
->> Reference: NVMe Base rev 2.2, sec 3.1.3.4, fig 28.=0A=
->>=0A=
->While this might be true, we already deal with discovery controllers=0A=
->just fine, and never had issues with I/O queues being created.=0A=
->Presumably because discovery controllers never exposed I/O queues=0A=
->in the first place.=0A=
->=0A=
->Which also means that admin controllers should work already if they=0A=
->would not expose I/O queues.=0A=
-BTW, the reason admin controllers didn't work without my patch is that=0A=
-nvme-cli "nvme connect" doesn't allow "--nr-io-queues=3D0" and the default=
-=0A=
-=3D1 forces the kernel to create an I/O queue, which my patch overrides.=0A=
-=0A=
->=0A=
->We _might_ reduce the number of queues to '1' in nvme_set_queue_count(),=
-=0A=
->but then we should issue a warning here as this would be a configuration=
-=0A=
->error on the target side.=0A=
->=0A=
->'Prohibited' cuts both ways; the host shouldn't ask for it and the=0A=
->controller shouldn't advertise it...=0A=
->=0A=
->Or that's at least my reading. Might be worthwhile clarifying this=0A=
->at FMDS.=0A=
-=0A=
-Regards,=0A=
-Kamaljit=
+
+--F26XiQ8NZZXpyrH/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+I have had 4th or so crash with 6.16. That's not usual.
+
+This time capslock was blinking, indicating panic. Two crashes were
+like that, two were just lockups.
+
+This time I checked logs, and nothing unusual (besides this, but..)
+
+Jul 22 09:05:20 duo pipewire[3473]: Failed to receive portal pid: org.freed=
+esktop.DBus.Error.NameHasNoOwner: Could not get PID of nam>
+Jul 22 19:08:57 duo pulseaudio[3474]: ALSA woke us up to write new data to =
+the device, but there was actually nothing to write.
+Jul 22 19:08:57 duo pulseaudio[3474]: Most likely this is a bug in the ALSA=
+ driver 'snd_hda_intel'. Please report this issue to the A>
+Jul 22 19:08:57 duo pulseaudio[3474]: We were woken up with POLLOUT
+set -- however a subsequent snd_pcm_avail() returned 0 or another>
+
+Digging through older logs, I get:
+
+Jul 06 15:22:20 duo kernel: iwlwifi 0000:03:00.0: can't disable ASPM; OS do=
+esn't have ASPM control
+Jul 06 15:22:20 duo kernel: iwlwifi 0000:03:00.0: pci_enable_msi failed - -=
+38
+Jul 06 15:22:20 duo kernel: ACPI: \: failed to evaluate _DSM 2c176672-0b22-=
+294b-814f-75e4dd26b5fd rev:0 func:0 (0x1001)
+Jul 06 15:22:20 duo kernel: ACPI: \: failed to evaluate _DSM 2c176672-0b22-=
+294b-814f-75e4dd26b5fd rev:0 func:0 (0x1001)
+Jul 06 15:22:20 duo kernel: ENERGY_PERF_BIAS: Set to 'normal', was 'perform=
+ance'
+Jul 06 15:22:20 duo kernel: platform regulatory.0: Direct firmware load for=
+ regulatory.db failed with error -2
+Jul 06 15:22:20 duo kernel: Bluetooth: hci0: BCM: firmware Patch file not f=
+ound, tried:
+Jul 06 15:22:20 duo kernel: Bluetooth: hci0: BCM: 'brcm/BCM20702A1-0a5c-21e=
+6.hcd'
+Jul 06 15:22:20 duo kernel: Bluetooth: hci0: BCM: 'brcm/BCM-0a5c-21e6.hcd'
+
+=2E..
+
+Jul 08 08:21:32 duo kernel: Bluetooth: hci0: BCM: firmware Patch file not f=
+ound, tried:
+Jul 08 08:21:32 duo kernel: Bluetooth: hci0: BCM: 'brcm/BCM20702A1-0a5c-21e=
+6.hcd'
+Jul 08 08:21:32 duo kernel: Bluetooth: hci0: BCM: 'brcm/BCM-0a5c-21e6.hcd'
+Jul 08 09:40:07 duo kernel: iwlwifi 0000:03:00.0: Microcode SW error detect=
+ed.  Restarting 0x2000000.
+Jul 08 09:40:07 duo kernel: iwlwifi 0000:03:00.0: Loaded firmware version: =
+18.168.6.1 6000g2a-6.ucode
+Jul 08 09:40:07 duo kernel: iwlwifi 0000:03:00.0: Start IWL Error Log Dump:
+Jul 08 09:40:07 duo kernel: iwlwifi 0000:03:00.0: Status: 0x0000044C, count=
+: 6
+Jul 08 09:40:07 duo kernel: iwlwifi 0000:03:00.0: 0x00001030 | ADVANCED_SYS=
+ASSERT         =20
+Jul 08 09:40:07 duo kernel: iwlwifi 0000:03:00.0: 0x0000C064 | uPc
+Jul 08 09:40:07 duo kernel: iwlwifi 0000:03:00.0: 0x0000C05C | branchlink1
+Jul 08 09:40:07 duo kernel: iwlwifi 0000:03:00.0: 0x0000C05C | branchlink2
+Jul 08 09:40:07 duo kernel: iwlwifi 0000:03:00.0: 0x0000D6BE | interruptlin=
+k1
+Jul 08 09:40:07 duo kernel: iwlwifi 0000:03:00.0: 0x00000000 | interruptlin=
+k2
+Jul 08 09:40:07 duo kernel: iwlwifi 0000:03:00.0: 0x003B00F7 | data1
+Jul 08 09:40:07 duo kernel: iwlwifi 0000:03:00.0: 0x00000000 | data2
+Jul 08 09:40:07 duo kernel: iwlwifi 0000:03:00.0: 0x00000800 | line
+Jul 08 09:40:07 duo kernel: iwlwifi 0000:03:00.0: 0xED408AD8 | beacon time
+Jul 08 09:40:07 duo kernel: iwlwifi 0000:03:00.0: 0x40AC6528 | tsf low
+Jul 08 09:40:07 duo kernel: iwlwifi 0000:03:00.0: 0x0000000E | tsf hi
+Jul 08 09:40:07 duo kernel: iwlwifi 0000:03:00.0: 0x00000578 | time gp1
+Jul 08 09:40:07 duo kernel: iwlwifi 0000:03:00.0: 0x190D1D6C | time gp2
+Jul 08 09:40:07 duo kernel: iwlwifi 0000:03:00.0: 0x00000000 | time gp3
+Jul 08 09:40:07 duo kernel: iwlwifi 0000:03:00.0: 0x754312A8 | uCode version
+Jul 08 09:40:07 duo kernel: iwlwifi 0000:03:00.0: 0x000000B0 | hw version
+
+=2E..
+
+Jul 08 12:23:29 duo kernel: usb 1-1-port2: unable to enumerate USB device
+Jul 08 12:50:42 duo kernel: mmc0: tried to HW reset card, got error -123
+Jul 08 13:44:20 duo kernel: usb 1-1.2: device descriptor read/64, error -71
+Jul 08 13:44:20 duo kernel: usb 1-1.2: device descriptor read/64, error -71
+Jul 08 13:44:57 duo kernel: usb 1-1.2: device descriptor read/64, error -71
+
+But I doubt any of that is related.
+
+Any ideas? Does anyone see similar crashes?
+
+Best regards,
+									Pavel
+--=20
+I don't work for Nazis and criminals, and neither should you.
+Boycott Putin, Trump, and Musk!
+
+--F26XiQ8NZZXpyrH/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaH/L1AAKCRAw5/Bqldv6
+8qZWAJ9+XkxTCikOOb6QGVjBPEAsr+FYvACeIXk0V7yMxJdTP1x8id76aK1BU/4=
+=FQ2n
+-----END PGP SIGNATURE-----
+
+--F26XiQ8NZZXpyrH/--
 
