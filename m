@@ -1,153 +1,176 @@
-Return-Path: <linux-kernel+bounces-740335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E360B0D2EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:28:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72004B0D303
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FE5A1888F6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:26:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95ABC3A4D4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:26:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10102D6630;
-	Tue, 22 Jul 2025 07:24:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E202C159F;
+	Tue, 22 Jul 2025 07:26:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="DRjxpDyC"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="0FAJ0XmK"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2044.outbound.protection.outlook.com [40.107.94.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F412D5C89;
-	Tue, 22 Jul 2025 07:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753169089; cv=none; b=jL4iJHXPUaqKNrVSjku5FQcoqgt3+/9uUVmemmz1/pkG5MP/+yooe+C+s3nMW4jC6sDqE6DMIq61caDze0velNgN6NpiKBEFjUJfci49x36YBcSzh6yGGfmLVbmPdiOcInY+JYHz3m5ea96YEpi9kwnuWdCrbsyzvyCvROlLvEI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753169089; c=relaxed/simple;
-	bh=NKFAAK1bYRNZFBYpr97jStjHpbFo4r8a32WqU1lxnrA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ipP9AO0CACedQ4tgmibKDOAhBodrr2cuhw4S7l32bpji4zYzW78J1b9N4nBGvt+Cv4+lUof7gLo+L6Xdk7exUcsqxCFxI/Vo1SX/ZC83NhZwoqxp7X2BigNimSCb9jhr18HS0atuGAsZh3c3qpFPz688V07Fp7r87SCIWzwpI7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=DRjxpDyC; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1753169084;
-	bh=NKFAAK1bYRNZFBYpr97jStjHpbFo4r8a32WqU1lxnrA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DRjxpDyCILnHFo0KPUjoa0uDdfeXKcbhuDlahuHjD+jDd7z5z9fzghPvgO3uPs23+
-	 olfWegtqHZ8yYAxyhjZytlH4Z72QnXLGzUt0953OAf7qdhzA14ADL0Ec1yi16yzJU2
-	 EuqydPziE/j7MrcA31pLoib+mId5ZEgp8tionlM/xsdR7pfkOrTb0V9O2egnjUDiIk
-	 tniez+qBh4wd40wLSacMRBNLwOSVGb1qjamU3qSuTfdTb4So4Sdf3TUos3mAXL2Xkq
-	 fUGcwpkxFFxpeg6gf5Fhi76XsFt1MSxwlyhPyfgUxPlA2Y0iSiusrcZxyWjs+pnehd
-	 8We8H77Kd339g==
-Received: from [192.168.1.90] (unknown [82.79.138.60])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 894FA17E05F0;
-	Tue, 22 Jul 2025 09:24:44 +0200 (CEST)
-Message-ID: <44468cbc-6dc1-4b73-a2f5-eca7742241b3@collabora.com>
-Date: Tue, 22 Jul 2025 10:24:44 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09E512C325B;
+	Tue, 22 Jul 2025 07:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753169159; cv=fail; b=nKi2Dk0Dj78xAI3xqul8nk+eBAz015Ac81toZVKAQhoN0Afr/aDkmAWC6I93vOc4g8YACDIaD6O6rPlNJVDoFdg48TwkSdoUI4nlOlE7g6oWpDSphP39cSG8RJzVgrpuqUwX6oG8liJUhaC9JUMg8qQSiKEA7yOGIDizKtlEwco=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753169159; c=relaxed/simple;
+	bh=Xuz2Ss+fAKb9JcXWY/ctb4XzXc/RczkVynZwN2Tt4uo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Rz5FKrKiXbtb4Tt//h21D0cyaPl6d2wKwxiqGKgQTNnOuJ8psPaGXjj0agbrFNXYOSfAvYY/8+dxo2+q9+Xt3CFfiY7IPr/GDsN23KJS8XgEBK75GrMBr7txVtUCYkPkL8VIt65K6L2A0pvyTA57N80DjnPNkNb2GvTEYtYviI4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=0FAJ0XmK; arc=fail smtp.client-ip=40.107.94.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jXPxTFvdyZtQmSwhLO0vN0JlsuvlKNlYJxjacvmiCQjaJJ1WfF5CHRigf1fyZP1jcyEBVqpEFXllrMOd2Nywa4Hsl8kiLZjwgCdsig/ljKUeW5xVw9n0fEnJyzGdTd5G12qqd/Phl/70sc02bQoSV26uf3K40W2cUoCFbZ+cAqLmdzdl52UqblkT9/kh4ZDYUyYCEE2iGrnHSqpt7roBTEWsXFLswj/Zw7g/6S5HO6mczn9Dm1uqS3WreHTdecV2BTR2WqGbAj+gJk30xAXC1RyDmcMIgV8oil6c6jv5a5u7/7EQ9SldHLsEB5lGI1dlU34wnlMfc07jN5PO/pcxUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=O4m973f87rAnFx+476yGwWLsRPKf/joapI8NGgSARr4=;
+ b=yGjT8Hx1cIlVU1fm7/mzOn0NahXJTthqBoEnEVqx9jOk5Eb0aoqhN4UmhhG9S+9OXwsiIiudNnbtK4OqEVojs0SLyzKXATiadF9qocCgMlCqbWQCtLCy7nR60zL0YQfH79CM0GRQPjSFJk0LOTh3RV5Y6He7VCzr7UTrmPzV6BTyPVBwbaL6qGxVuh165ISM2mg0ZmsFY4c2UXlugU2TuWi/9QFAGo5V4p6P5mCvfqgx4jvL5MC1YKMunrVf3faXUdsfJ7esfyltcId/8aJCLDqOwhuwbzcAdkgZVE020dTrzX0wwMXQFrYK99/Sb66o+ELFZ+H4BH8lWn8DAXK6tw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=O4m973f87rAnFx+476yGwWLsRPKf/joapI8NGgSARr4=;
+ b=0FAJ0XmKpRvVTtEDubSTb3EBWRu6RViP+ePf6yI2lo/bUcDPo//CBMPb1RcLf//MqZtileXvHVlHvvkqFYFSi9D+jzdS31QuHzRK/G5wu834ylWM/KdNj0h8aXSKxY3no+4VsLBHj6IhJ4mF1FXf6H5mwJLZmjYzW8FHVkVRxB4=
+Received: from SA0PR11CA0086.namprd11.prod.outlook.com (2603:10b6:806:d2::31)
+ by CY3PR12MB9702.namprd12.prod.outlook.com (2603:10b6:930:103::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Tue, 22 Jul
+ 2025 07:25:53 +0000
+Received: from SN1PEPF000252A2.namprd05.prod.outlook.com
+ (2603:10b6:806:d2:cafe::a2) by SA0PR11CA0086.outlook.office365.com
+ (2603:10b6:806:d2::31) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.29 via Frontend Transport; Tue,
+ 22 Jul 2025 07:25:53 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SN1PEPF000252A2.mail.protection.outlook.com (10.167.242.9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8964.20 via Frontend Transport; Tue, 22 Jul 2025 07:25:53 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 22 Jul
+ 2025 02:25:51 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 22 Jul
+ 2025 02:25:49 -0500
+Received: from localhost (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39 via Frontend
+ Transport; Tue, 22 Jul 2025 02:25:49 -0500
+From: Michal Simek <michal.simek@amd.com>
+To: <linux-kernel@vger.kernel.org>, <monstr@monstr.eu>,
+	<michal.simek@xilinx.com>, <git@xilinx.com>
+CC: Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, "Conor
+ Dooley" <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
+	<paul.walmsley@sifive.com>, Rob Herring <robh@kernel.org>, "open list:OPEN
+ FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"open list:RISC-V ARCHITECTURE" <linux-riscv@lists.infradead.org>
+Subject: [PATCH] dt-bindings: riscv: cpus: Add AMD MicroBlaze V 64bit compatible
+Date: Tue, 22 Jul 2025 09:25:40 +0200
+Message-ID: <adf316c097ae416eb8565f2f1d67a98c413a71d2.1753169138.git.michal.simek@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/11] HID: playstation: Add support for audio jack
- handling on DualSense
-To: Roderick Colenbrander <thunderbird2k@gmail.com>
-Cc: Roderick Colenbrander <roderick.colenbrander@sony.com>,
- Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
- Henrik Rydberg <rydberg@bitmath.org>, kernel@collabora.com,
- linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250625-dualsense-hid-jack-v2-0-596c0db14128@collabora.com>
- <s4596421-sr43-893r-o90r-86nr588sp32q@xreary.bet>
- <74d4675d-d6f5-41ed-b715-f62fb569df5d@collabora.com>
- <CAEc3jaAFV_PXdFAX9th4-hhKNAhBKdVCNP+Qf8nH=g8FwoCabQ@mail.gmail.com>
- <CAEc3jaAGP3HV_+tGLHWZXA-baD4HkA2nYWGxpmox4cuZMh+ksw@mail.gmail.com>
-Content-Language: en-US
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-In-Reply-To: <CAEc3jaAGP3HV_+tGLHWZXA-baD4HkA2nYWGxpmox4cuZMh+ksw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=845; i=michal.simek@amd.com; h=from:subject:message-id; bh=Xuz2Ss+fAKb9JcXWY/ctb4XzXc/RczkVynZwN2Tt4uo=; b=owGbwMvMwCG2mv3fB7+vgl8ZT6slMWTU23x7Nl98zUaLNXNUZ5wS0q2yfBzhJfLmwrycByu0r C+o+OWad5SyMIhxMMiKKbJMZ9JxWPPt2lKx5ZH5MHNYmUCGMHBxCsBEuksZ/mcqhsxwabosWPl3 Z0bjchVOVdVXyvMP96Rz6ZzvPbL1+W9Ghs29qU1fE96wSR7K0jt1WP5ef+/8G8fDdphPDnxQZij OzgsA
+X-Developer-Key: i=michal.simek@amd.com; a=openpgp; fpr=67350C9BF5CCEE9B5364356A377C7F21FE3D1F91
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF000252A2:EE_|CY3PR12MB9702:EE_
+X-MS-Office365-Filtering-Correlation-Id: eb20fe11-62c0-44e5-a361-08ddc8f0fe19
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|82310400026|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Z3g0lleLBZlfPtEl8NPLh7Yq3vmEMu7tefM8iFNZDrUJTQ98tA8wCW1rZhI6?=
+ =?us-ascii?Q?Tx1c+VEwyfN0r0knh053gR1L6DmORYIIt2uwoqco+xFk+in8EDaG4FgwI6bS?=
+ =?us-ascii?Q?z3MdUdrDUpEtzca+BE9EzpExVvTL5V3i+i+BQu95dQD4lH5rLFQxIsvaNGlT?=
+ =?us-ascii?Q?ikioKzz5JkiKp1jfAFNGhxlr8CrTTWiC00UW3fdtbT/SRzLKJ59gitarKsCz?=
+ =?us-ascii?Q?SyBRNbOA+X6s0XiMppRb1BSLB4kahxcUwGD6UdAJCfjCa419YI3xHpW2adU9?=
+ =?us-ascii?Q?fpeZh6Pv2GtMdJvkH1Rm1u00HX8lsUUeoiffc0UPkKIEqdQnoVBr/V6ktKQS?=
+ =?us-ascii?Q?NgZiAfZ0vBaO1z4uuRNCrfuFKjLR4Xr6n9ZB0baT1rGMrh0eZJaIEwWHws4J?=
+ =?us-ascii?Q?WtoLDbx2TLIkdxD2N6ypxIXwAAgvewwXJmuNl85MWY6UM6LepeTZkCwsu7Cs?=
+ =?us-ascii?Q?KrpEMnylOfEmEylziLqLSjNyFfcA1LWOBDHb3dEPJLWTzfPR1iQpB8ZB9U8Y?=
+ =?us-ascii?Q?0fmU8rzVaxijFM9B6JqKS7/p1w0btsxkfnAstnQiHoiF3O1ihqxsZ+XAf02T?=
+ =?us-ascii?Q?nPpkbPEOO788AIRs+0V8BFT2AwfiJxGfTIRd3KGiRJuIndKrWqkOZQEQAG74?=
+ =?us-ascii?Q?PfR4Rs/q/b8MbBEyU/DXUXr9TIUMlfcLxOOIZt3jBh68YJfgiBWoLplDFXuT?=
+ =?us-ascii?Q?ksOjENX7fOhOEkcAI93Do8Vli7rv3QZ4QZ1sUA+bGsmZVBB0r00iquYCIkSI?=
+ =?us-ascii?Q?AC/ReqwqFM1E56LlEMoIBdtT4O/7d4qK9H2tOiWTht7SpwTtxtEEAG9MHPWG?=
+ =?us-ascii?Q?w5DHWaEFPEW2ibN8j1rKV8oJ5lOAIbZeUPJ2S/wLJBzaJu5dlPteNVq4EnbW?=
+ =?us-ascii?Q?zo0rjH4+2GUaGUiYZza/L0tXCJ56Z6DwEDx3ajUekdrF6hkX88WYTsE0IPg0?=
+ =?us-ascii?Q?k+/oIOS1+IxzK9+2ln006GCmNXgfAz51LNC1H06KoUSL/6QS7LECD26VzPHu?=
+ =?us-ascii?Q?6byw6kCc+gcfTOiOJ8v6MTkFW0H2SpJbvHzrr+vFTyB/Ts/T2gne10vO92y8?=
+ =?us-ascii?Q?qITAos3QeIycOJizNGI5KG3IcF3+v40Bqqfk3y+afhsLcFRPVcpFEwBBShpc?=
+ =?us-ascii?Q?UNusbzEeLmQW/C9PymM0fhLn9OMDBiUreIYx0r2yWxGdtTapYpATvJnx0TJs?=
+ =?us-ascii?Q?7MXCKVcX50Yai49+aQYphqH4gWkQI5nWL4iw+2FVJ/2o6KDSDUxa+7EmyvTK?=
+ =?us-ascii?Q?cG9VreWOA6ENgP3CCWs7MuVtz6LqhF3T9kgFmH6AUVngjq1rHiaknyWidPPA?=
+ =?us-ascii?Q?zPXj7Kv3kz+btSGDDF9jn/TjrAUirDrGNsZFB9aEgAIa6eWCshJJjiYSFxon?=
+ =?us-ascii?Q?pjzE4tQqjjph8o0FbS42VMysan51PcxpIYMK6CrTliGiVTuZ0e8i/YKpGdb6?=
+ =?us-ascii?Q?35WUrbTlq5cbJRFoajJeSM6Z8NmcaehosDbh0mR+2nGeWXjv7fHueU6ErLkz?=
+ =?us-ascii?Q?ggLP4fahLM5muxeElXoqUgqt+J3XXQlT9g+q?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(82310400026)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2025 07:25:53.6628
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: eb20fe11-62c0-44e5-a361-08ddc8f0fe19
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF000252A2.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY3PR12MB9702
 
-Hi Roderick,
+32bit version has been added by commit 4a6b93f56296 ("dt-bindings: riscv:
+cpus: Add AMD MicroBlaze V compatible") but 64bit version also exists and
+should be covered by binding too.
 
-On 7/22/25 8:47 AM, Roderick Colenbrander wrote:
-> Hi Christian,
-> 
-> I just got back from Japan (trip was a bit extended). In the meantime
-> I had some of employees had a look as well.
-> 
-> The audio patches towards the end seem to be okay. We tried to dig for
-> the official volume numbers, but they were too hard to find (too many
-> layers, too many repositories). When we use a PS5, the default volume
-> for the headset and speaker are both close to 70% (just eyeballing).
-> At the hardware level the volume is quite non-linear and internally we
-> use a mapping table (not sure what the curve is based on). For the
-> speaker this starts at 0x3d as you found out already. The 70% volume
-> for the speaker seems to correspond to a value of 93 and headphones
-> 83.
-> The set pre-amp gain of 0x2 is a common value we seem to set and means
-> +6dB, so change comment around to mean that I guess.
-
-Thanks for the additional clarifications.  I added a fixup below, if Jiri is
-fine applying that before merging, just to avoid respinning the whole
-series:
-
-Subject: [PATCH] fixup! HID: playstation: Support DualSense audio jack
- hotplug detection
-
+Signed-off-by: Michal Simek <michal.simek@amd.com>
 ---
- drivers/hid/hid-playstation.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hid/hid-playstation.c b/drivers/hid/hid-playstation.c
-index 4285260c7e22..641c6337ff63 100644
---- a/drivers/hid/hid-playstation.c
-+++ b/drivers/hid/hid-playstation.c
-@@ -1352,7 +1352,7 @@ static void dualsense_output_worker(struct work_struct *work)
- 				 */
- 				common->valid_flag0 |= DS_OUTPUT_VALID_FLAG0_SPEAKER_VOLUME_ENABLE;
- 				common->speaker_volume = 0x64;
--				/* Set SP preamp gain to ~30% */
-+				/* Set SP preamp gain to +6dB */
- 				common->valid_flag1 = DS_OUTPUT_VALID_FLAG1_AUDIO_CONTROL2_ENABLE;
- 				common->audio_control2 =
- 					FIELD_PREP(DS_OUTPUT_AUDIO_FLAGS2_SP_PREAMP_GAIN, 0x2);
+ Documentation/devicetree/bindings/riscv/cpus.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/Documentation/devicetree/bindings/riscv/cpus.yaml b/Documentation/devicetree/bindings/riscv/cpus.yaml
+index 2c72f148a74b..1a0cf0702a45 100644
+--- a/Documentation/devicetree/bindings/riscv/cpus.yaml
++++ b/Documentation/devicetree/bindings/riscv/cpus.yaml
+@@ -45,6 +45,7 @@ properties:
+       - items:
+           - enum:
+               - amd,mbv32
++              - amd,mbv64
+               - andestech,ax45mp
+               - canaan,k210
+               - sifive,bullet0
+-- 
+2.43.0
 
-> As for the other patches I'm not entirely sure yet. I know they were
-> well intended, but let me just say, they rubbed some of my team
-> members quite the wrong way resulting in some heavy discussion. I have
-> somewhat similar feelings about the ultra strict checkpatch toggle as
-> well.
-> 
-> We had to move mountains to be allowed to even upstream controller
-> code among our limited time (it is closer to a hobby thing, even
-> though many products nowadays use it as well). So that's a factor
-> which adds up a bit as well.
-> 
-> I think some of the patches we could live with if it came to it. There
-> is no real agreed up full kernel standard (as it is contentious). So
-> for example we tend to prefer more uint8_t family, where older kernel
-> style was more u8 and the kernel allows for both. I think we would
-> probably lean towards keeping it at the modern form.
-> 
-> Some of the macros also felt a little too magical. Our feeling tends
-> to be if you have to go many layers deep to understand what a macro or
-> line of code does (and it is easier to then printk the value),
-> something feels off...
-
-I'm sorry for all the troubles introduced with the additional patches! My
-intention was not to highlight deficiencies with the current implementation,
-but to bring the driver as close as possible to the coding standard agreed
-by the kernel community, to avoid dealing with the kind of problems that I
-tried to explain a while ago.
-
-Thanks again for your support,
-Cristian
 
