@@ -1,66 +1,46 @@
-Return-Path: <linux-kernel+bounces-740164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CECF9B0D0D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:11:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2501BB0D0D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:14:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A53AD1C22DBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 04:11:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47D846C25C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 04:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC39B28C87A;
-	Tue, 22 Jul 2025 04:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="buD7Ak1k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C8E287261;
-	Tue, 22 Jul 2025 04:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797C6273817;
+	Tue, 22 Jul 2025 04:14:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B904C92
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 04:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753157459; cv=none; b=sPaOMfdMKN3mkW0xwF+2R0aoLoOZl1rRWIoxxaFKky+BTJVpV2+xMYAEqTp1gspc1rZm9SveFPRjf8Yj2VEZR3r1nOI3baMyGReSLQFfZ4DHGvtIO/myBZNNZT12BOKjbMzwRxpdv7UlrsgN3NNktxpaipiqZ41S53LWZbibCJE=
+	t=1753157670; cv=none; b=qogIAolkFOIdgTkgg8Y0uMkJDGBnM5MtOK5Irfqa6ZS1SSpXR2jtAVRWVKeaIknFsWlK75h3aRQQ0CcUI3laO7oebKIbel86bfjRbrWwmr/l/xbPsaoaMYNG6JoO1+5UmcU8KZJfBlKXcvTSjY4ArqWI1tuJDSlfgvylD9UeX+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753157459; c=relaxed/simple;
-	bh=5pRINa2Uw1HJ6EfpIJKtL5DXahUnPGMFtESCs6BNIqk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sL6EIhDBKb+nzpskXh7CiuwnWalSFcVDs7lHgajf/jp8uJA9+T/agKtvo18DafqcxwSJxX48CUvHnKVIgICEdV8mGC9KRrkGD5aKm+QAJgj3o9gNcsdMU6lHy0X6hoWznIjc3ZCju9uTVonl0HxsQ+M560jrhEpwUbXTqM+PrSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=buD7Ak1k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A58EEC4CEF1;
-	Tue, 22 Jul 2025 04:10:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753157458;
-	bh=5pRINa2Uw1HJ6EfpIJKtL5DXahUnPGMFtESCs6BNIqk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=buD7Ak1k7SYer/ngoEjMz6g9j9J2Lrb6uOlA4vixmgTpJl6hj8FNeY4DCyHovW0Ze
-	 8FQkMj/zZw3iVjlBz4gtk32WTb37m7LFfw0ozc8AQDQ34cqUXyBjid1f6/y09lM0Mk
-	 I9+GvWDSZ+g7zD7FuLvJftEmXNw/coA2FgWDLMTZKtYGPxJ3F/17pGsRN1z8ov7w37
-	 kmT9LEchVbHDohgI50JMCr3OFvxycA9l2NiPmM3oU5eZo9O7bhP46RU4Odn+PPtYuR
-	 11SJgYW1wk55SlprO8YYrg61/ytmBwjRuawljxXuKdUQ6UaxQSZTY7Myht1uGc/uPJ
-	 5L0mPcG7e74Qw==
-From: Mario Limonciello <superm1@kernel.org>
-To: David Airlie <airlied@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
-	linux-kernel@vger.kernel.org (open list),
-	linux-pci@vger.kernel.org (open list:PCI SUBSYSTEM),
-	Daniel Dadap <ddadap@nvidia.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH v5 2/2] PCI: Adjust visibility of boot_display attribute instead of creation
-Date: Mon, 21 Jul 2025 23:10:51 -0500
-Message-ID: <20250722041051.3354121-3-superm1@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250722041051.3354121-1-superm1@kernel.org>
-References: <20250722041051.3354121-1-superm1@kernel.org>
+	s=arc-20240116; t=1753157670; c=relaxed/simple;
+	bh=UNfIDnQBXn4P4O+vzhZSIsUf4m34jpXPCzOngL7KTL0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TCDB4/rysmN5mb7ZBuDmNGX8iD8Eo/S26gZjZSCGdJC5WoFAQ/vquXRK696xl4kkHeNnliWoMyYsryHRDyGzQbI/OQjhNFfJ4451VRVVPeqrxMp4ZjjCv4gT8KE8l8aC+TxZzHZSZYbyg5WCc05JwMCyLR1LgxqiZbf9oEV0xYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DA9581595;
+	Mon, 21 Jul 2025 21:14:21 -0700 (PDT)
+Received: from entos-yitian-01.shanghai.arm.com (unknown [10.169.217.82])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A23E63F66E;
+	Mon, 21 Jul 2025 21:14:25 -0700 (PDT)
+From: Jia He <justin.he@arm.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	Jia He <justin.he@arm.com>
+Subject: [PATCH] mm: percpu: Introduce normalized CPU-to-NUMA node mapping to  reduce max_distance
+Date: Tue, 22 Jul 2025 04:14:18 +0000
+Message-Id: <20250722041418.2024870-1-justin.he@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,127 +49,131 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Mario Limonciello <mario.limonciello@amd.com>
+pcpu_embed_first_chunk() allocates the first percpu chunk via
+pcpu_fc_alloc() and used as-is without being mapped into vmalloc area. On
+NUMA systems, this can lead to a sparse CPU->unit mapping, resulting in a
+large physical address span (max_distance) and excessive vmalloc space
+requirements.
 
-There is a desire to avoid creating new sysfs files late, so instead
-of dynamically deciding to create the boot_display attribute, make
-it static.
+For example, on an arm64 N2 server with 256 CPUs, the memory layout
+includes:
+[    0.000000] NUMA: NODE_DATA [mem 0x100fffff0b00-0x100fffffffff]
+[    0.000000] NUMA: NODE_DATA [mem 0x500fffff0b00-0x500fffffffff]
+[    0.000000] NUMA: NODE_DATA [mem 0x600fffff0b00-0x600fffffffff]
+[    0.000000] NUMA: NODE_DATA [mem 0x700ffffbcb00-0x700ffffcbfff]
 
-This also fixes a compilation failure when compiled without
-CONFIG_VIDEO on sparc.
+With the following NUMA distance matrix:
+node distances:
+node   0   1   2   3
+  0:  10  16  22  22
+  1:  16  10  22  22
+  2:  22  22  10  16
+  3:  22  22  16  10
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Closes: https://lore.kernel.org/linux-next/20250718224118.5b3f22b0@canb.auug.org.au/
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+In this configuration, pcpu_embed_first_chunk() computes a large
+max_distance:
+percpu: max_distance=0x5fffbfac0000 too large for vmalloc space 0x7bff70000000
+
+As a result, the allocator falls back to pcpu_page_first_chunk(), which
+uses page-by-page allocation with nr_groups = 1, leading to degraded
+performance.
+
+This patch introduces a normalized CPU-to-NUMA node mapping to mitigate
+the issue. Distances of 10 and 16 are treated as local (LOCAL_DISTANCE),
+allowing CPUs from nearby nodes to be grouped together. Consequently,
+nr_groups will be 2 and pcpu_fc_alloc() uses the normalized node ID to
+allocate memory from a common node.
+
+For example:
+- cpu0 belongs to node 0
+- cpu64 belongs to node 1
+Both CPUs are considered local and will allocate memory from node 0.
+This normalization reduces max_distance:
+percpu: max_distance=0x500000380000, ~64% of vmalloc space 0x7bff70000000
+
+In addition, add a flag _need_norm_ to indicate the normalization is needed
+iff when cpu_to_norm_node_map[] is different from cpu_to_node_map[].
+
+Signed-off-by: Jia He <justin.he@arm.com>
 ---
-v5
- * Fixups for comma and CONFIG_VIDEO
- * Drop sysfs_update_group() as it's no longer needed
- * Drop pointers in pci_boot_display_visible()
-v3:
- * Move to pci_sysfs_init()
-v2:
- * Change to sysfs_update_group() instead
----
- drivers/pci/pci-sysfs.c | 58 ++++++++++++++---------------------------
- 1 file changed, 20 insertions(+), 38 deletions(-)
+ drivers/base/arch_numa.c | 47 +++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 46 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-index 6b1a0ae254d3a..f5d98795a12fe 100644
---- a/drivers/pci/pci-sysfs.c
-+++ b/drivers/pci/pci-sysfs.c
-@@ -1059,37 +1059,6 @@ void pci_remove_legacy_files(struct pci_bus *b)
+diff --git a/drivers/base/arch_numa.c b/drivers/base/arch_numa.c
+index c99f2ab105e5..f746d88239e9 100644
+--- a/drivers/base/arch_numa.c
++++ b/drivers/base/arch_numa.c
+@@ -17,6 +17,8 @@
+ #include <asm/sections.h>
+ 
+ static int cpu_to_node_map[NR_CPUS] = { [0 ... NR_CPUS-1] = NUMA_NO_NODE };
++static int cpu_to_norm_node_map[NR_CPUS] = { [0 ... NR_CPUS-1] = NUMA_NO_NODE };
++static bool need_norm;
+ 
+ bool numa_off;
+ 
+@@ -149,9 +151,40 @@ int early_cpu_to_node(int cpu)
+ 	return cpu_to_node_map[cpu];
  }
- #endif /* HAVE_PCI_LEGACY */
  
--/**
-- * pci_create_boot_display_file - create a file in sysfs for @dev
-- * @pdev: dev in question
-- *
-- * Creates a file `boot_display` in sysfs for the PCI device @pdev
-- * if it is the boot display device.
-- */
--static int pci_create_boot_display_file(struct pci_dev *pdev)
--{
--#ifdef CONFIG_VIDEO
--	if (video_is_primary_device(&pdev->dev))
--		return sysfs_create_file(&pdev->dev.kobj, &dev_attr_boot_display.attr);
--#endif
--	return 0;
--}
--
--/**
-- * pci_remove_boot_display_file - remove the boot display file for @dev
-- * @pdev: dev in question
-- *
-- * Removes the file `boot_display` in sysfs for the PCI device @pdev
-- * if it is the boot display device.
-- */
--static void pci_remove_boot_display_file(struct pci_dev *pdev)
--{
--#ifdef CONFIG_VIDEO
--	if (video_is_primary_device(&pdev->dev))
--		sysfs_remove_file(&pdev->dev.kobj, &dev_attr_boot_display.attr);
--#endif
--}
--
- #if defined(HAVE_PCI_MMAP) || defined(ARCH_GENERIC_PCI_MMAP_RESOURCE)
- /**
-  * pci_mmap_resource - map a PCI resource into user memory space
-@@ -1691,17 +1660,30 @@ static const struct attribute_group pci_dev_resource_resize_group = {
- 	.is_visible = resource_resize_is_visible,
- };
- 
--int __must_check pci_create_sysfs_dev_files(struct pci_dev *pdev)
-+static struct attribute *pci_display_attrs[] = {
-+	&dev_attr_boot_display.attr,
-+	NULL
-+};
-+
-+static umode_t pci_boot_display_visible(struct kobject *kobj,
-+					struct attribute *a, int n)
- {
--	int retval;
-+	if (video_is_primary_device(kobj_to_dev(kobj)))
-+		return a->mode;
- 
-+	return 0;
++int __init early_cpu_to_norm_node(int cpu)
++{
++	return cpu_to_norm_node_map[cpu];
 +}
 +
-+static const struct attribute_group pci_display_attr_group = {
-+	.attrs = pci_display_attrs,
-+	.is_visible = pci_boot_display_visible,
-+};
+ static int __init pcpu_cpu_distance(unsigned int from, unsigned int to)
+ {
+-	return node_distance(early_cpu_to_node(from), early_cpu_to_node(to));
++	int distance = node_distance(early_cpu_to_node(from), early_cpu_to_node(to));
 +
-+int __must_check pci_create_sysfs_dev_files(struct pci_dev *pdev)
++	if (distance > LOCAL_DISTANCE && distance < REMOTE_DISTANCE && !need_norm)
++		need_norm = true;
++
++	return distance;
++}
++
++static int __init pcpu_cpu_norm_distance(unsigned int from, unsigned int to)
 +{
- 	if (!sysfs_initialized)
- 		return -EACCES;
- 
--	retval = pci_create_boot_display_file(pdev);
--	if (retval)
--		return retval;
--
- 	return pci_create_resource_files(pdev);
++	int distance = pcpu_cpu_distance(from, to);
++
++	if (distance >= REMOTE_DISTANCE)
++		return REMOTE_DISTANCE;
++
++	/*
++	 * If the distance is in the range [LOCAL_DISTANCE, REMOTE_DISTANCE),
++	 * normalize the node map, choose the first local numa node id as its
++	 * normalized node id.
++	 */
++	if (cpu_to_norm_node_map[from] == NUMA_NO_NODE)
++		cpu_to_norm_node_map[from] = cpu_to_node_map[from];
++
++	if (cpu_to_norm_node_map[to] == NUMA_NO_NODE)
++		cpu_to_norm_node_map[to] = cpu_to_norm_node_map[from];
++
++	return LOCAL_DISTANCE;
  }
  
-@@ -1716,7 +1698,6 @@ void pci_remove_sysfs_dev_files(struct pci_dev *pdev)
- 	if (!sysfs_initialized)
- 		return;
- 
--	pci_remove_boot_display_file(pdev);
- 	pci_remove_resource_files(pdev);
- }
- 
-@@ -1845,6 +1826,7 @@ static const struct attribute_group pcie_dev_attr_group = {
- 
- const struct attribute_group *pci_dev_attr_groups[] = {
- 	&pci_dev_attr_group,
-+	&pci_display_attr_group,
- 	&pci_dev_hp_attr_group,
- #ifdef CONFIG_PCI_IOV
- 	&sriov_pf_dev_attr_group,
+ void __init setup_per_cpu_areas(void)
+@@ -169,6 +202,18 @@ void __init setup_per_cpu_areas(void)
+ 					    PERCPU_DYNAMIC_RESERVE, PAGE_SIZE,
+ 					    pcpu_cpu_distance,
+ 					    early_cpu_to_node);
++
++		if (rc < 0 && need_norm) {
++			/* Try the normalized node distance again */
++			pr_info("PERCPU: %s allocator, trying the normalization mode\n",
++				   pcpu_fc_names[pcpu_chosen_fc]);
++
++			rc = pcpu_embed_first_chunk(PERCPU_MODULE_RESERVE,
++						    PERCPU_DYNAMIC_RESERVE, PAGE_SIZE,
++						    pcpu_cpu_norm_distance,
++						    early_cpu_to_norm_node);
++		}
++
+ #ifdef CONFIG_NEED_PER_CPU_PAGE_FIRST_CHUNK
+ 		if (rc < 0)
+ 			pr_warn("PERCPU: %s allocator failed (%d), falling back to page size\n",
 -- 
-2.48.1
+2.34.1
 
 
