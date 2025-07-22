@@ -1,88 +1,172 @@
-Return-Path: <linux-kernel+bounces-740922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A07ADB0DB2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:45:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B714B0DB42
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:47:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA3DC3A7861
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:45:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F0AD561E6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:47:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C0892EA15C;
-	Tue, 22 Jul 2025 13:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y22bl0eW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2256D2EA469;
+	Tue, 22 Jul 2025 13:47:12 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7807172624;
-	Tue, 22 Jul 2025 13:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B947433A8;
+	Tue, 22 Jul 2025 13:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753191931; cv=none; b=ntFtUEJBKJMkcaU+fIN3GioOrwxtvs2AeGgTaEgcNRXFHguSc+rtjfVBYt+nhfkuKyTFS1Xhbl18OwVgfAlmRaL0KhqAx0qwY0WUvJlWHQPkXZavueKeILkKGfLmq6/ZBhZv/AUtNt5uY426C03TWCftpW8fGeUjMmDBj8PkVwQ=
+	t=1753192031; cv=none; b=o12KucFNR1DKQqBJcDDmCYhq3xMu1LuhmwjUQfr9vhGZP+UEcxQZFjTCv8a14aqit+tDd76o3PINtTvitpmaemgye3pBmegEVqfqy6IcOBzCyqlRJaPIolVpU6i+jJFFWONPjERfOWm/lLcfTndpzetsZ+tew9CuirPYo+lzdng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753191931; c=relaxed/simple;
-	bh=sfAWqqVOyewgocr2//DhDzraJRp2DIpL9qG6LOpMwuU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O0wJ3yVuZ8jbWhxiSPfcNBTR4VlynBluQaGvYN0oDp6p5y1QXoxDNmD8M9uAtlfKjGITAOAE3Epd9xpDFSCuKRZOguePIG8Rki/mG+5P6R3IsKSuFA3ExyXRB0+oIeJhLeBR7Tw0PQWwKQK4mFraucyxKxMqtnIjqSfbNG4QoT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y22bl0eW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AE5FC4CEEB;
-	Tue, 22 Jul 2025 13:45:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753191931;
-	bh=sfAWqqVOyewgocr2//DhDzraJRp2DIpL9qG6LOpMwuU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y22bl0eWsGv86R2Jte5IQjy42edUn48LoY0DNFpqoKfu97wZNzIIEigIDCJ1RwG2y
-	 dY22z/C3WOMMUSzt0notL5JDhHYg8gZ7GhBr053bnTb+E2xA07Zu5GzhXP5aJFAEGA
-	 WbvttXa2lywD3zJNVsOCMbBtY7Eb5Ev2odAk5EwnBNiHwif+oP1LuMHHj/d3d6uLX6
-	 BvYPQviqY3ibNQd3xigJpLvSTgC+AlqHjzSkKApH9TzRVgDGyjzpAb3Uvz5mPdkvJH
-	 uXL6wkGTOfMGNtKomsL+bGNBP9XWxwxcFKHIYdQkLsobx56g5bGZ80jwbhyt3YEgfl
-	 9XOWXwgclt/aA==
-Date: Tue, 22 Jul 2025 15:45:26 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: lkml <linux-kernel@vger.kernel.org>, 
-	linux-i2c <linux-i2c@vger.kernel.org>
-Subject: Re: [GIT PULL] i2c-host-fixes for v6.16-rc7
-Message-ID: <wxsmvpqszpz5rcutlqzuznmur2snfgvilpukxmlzdtvqxmlv5u@njfcqtmmbrio>
-References: <2lbfr4r4icozrhnh5vgitzc6dylnxvh7x6fkdytacsy3oncsfe@7usj2u6nbk45>
- <aH0zRiDe75dAPHkk@shikoro>
+	s=arc-20240116; t=1753192031; c=relaxed/simple;
+	bh=/38O0a49Nl2fkTlWe1aq3jycEaW+CNYGPJk/1tyUWAQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=BXhDYiKdgeAJd3wu/Xd2vJe6UTaDhAkvxSZ7MUGXKc/YRvqwXopJqzyq009WONxbq8gYz3mhxfbfCTiu+uuL+NzC+xXtI547UQH0QsD2ZheMiM+bvYCjmrbeTXO2cSIR8jAq/YyRgxZet4X5qKzpYDYIeoTxvkM0h4hmLSWae4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay05.hostedemail.com (Postfix) with ESMTP id C75BE58B89;
+	Tue, 22 Jul 2025 13:47:04 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf03.hostedemail.com (Postfix) with ESMTPA id AC81C6000D;
+	Tue, 22 Jul 2025 13:47:02 +0000 (UTC)
+Date: Tue, 22 Jul 2025 09:47:34 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, kvm@vger.kernel.org,
+ loongarch@lists.linux.dev
+Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
+ Huacai Chen <chenhuacai@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>
+Subject: [PATCH] LoongArch: KVM: Move kvm_iocsr tracepoint out of generic
+ code
+Message-ID: <20250722094734.4920545b@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aH0zRiDe75dAPHkk@shikoro>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: AC81C6000D
+X-Stat-Signature: cw9yqkxp4a9wi4qx7s15fa4muzpkrsub
+X-Rspamd-Server: rspamout02
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19Ftd3lTtUwfr1yCBrITaCewJ6P8z9IiT8=
+X-HE-Tag: 1753192022-163098
+X-HE-Meta: U2FsdGVkX18UudbkKX+QbAnANaDsrraKoCAGN0Lnp3uc5eXpMlEczEIXMfJqpNJEW6W28wkkInmqYbCTquD3lSySI/TdMScCFNpcDA6Prz87YKiQ2wapK0t4gTKUEsY4eXq7OqUf66t3r/d6GKFWmCFsWfSEkbFvxjSx2+/j1XdHbBDkcVOfvIY+A9EkCMq29qqpvWkHg2OvB9Q5xTnx73vow8z20Vrd5kA+ecU75As4FHttw1oa80dkkcmhbbO9821uGtG8uueLbV37GNFHXJhFNmItj0SV/DIsAcrNFSZ/z17VShqfeVFrDD2u1LXurkJdTz9/Z3YjEBXCiBdU8oZF425hvig5nsQpHE8KRbqaG8bum/OGBADwgxPFnDsb
 
-Hi Wolfram,
+From: Steven Rostedt <rostedt@goodmis.org>
 
-On Sun, Jul 20, 2025 at 08:19:50PM +0200, Wolfram Sang wrote:
-> Hi Andi,
-> 
-> > in this pull request you have included also the previous week's
-> > patches. Everything is rebased on top of rc6.
-> 
-> Sorry, not pulled. Maybe they slipped through the cracks, but I wrote
-> two mails *not* to send me a rebased branch but an incrementally updated
-> one [1] [2]. Rebasing public trees pulled in by someone else lead to a
-> number of problems e.g. original mail of thread [2].
+The tracepoint kvm_iocsr is only used by the loongarch architecture. As
+trace events can take up to 5K of memory, move this tracepoint into the
+loongarch specific tracing file so that it doesn't waste memory for all
+other architectures.
 
-sorry, I missed your second e-mail and I misunderstood your first
-e-mail (I thought you haven't pulled anything, yet).
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ arch/loongarch/kvm/trace.h | 35 +++++++++++++++++++++++++++++++++++
+ include/trace/events/kvm.h | 35 -----------------------------------
+ 2 files changed, 35 insertions(+), 35 deletions(-)
 
-> So, I just sent last weeks PR to Linus. If that is in rc7, then you can
-> rebase the missing patches from here to rc7. Because that one I haven't
-> pulled yet.
-> 
-> Makes sense?
+diff --git a/arch/loongarch/kvm/trace.h b/arch/loongarch/kvm/trace.h
+index 145514dab6d5..d73dea8afb74 100644
+--- a/arch/loongarch/kvm/trace.h
++++ b/arch/loongarch/kvm/trace.h
+@@ -115,6 +115,41 @@ TRACE_EVENT(kvm_exit_gspr,
+ 			__entry->inst_word)
+ );
+ 
++#define KVM_TRACE_IOCSR_READ_UNSATISFIED 0
++#define KVM_TRACE_IOCSR_READ 1
++#define KVM_TRACE_IOCSR_WRITE 2
++
++#define kvm_trace_symbol_iocsr \
++	{ KVM_TRACE_IOCSR_READ_UNSATISFIED, "unsatisfied-read" }, \
++	{ KVM_TRACE_IOCSR_READ, "read" }, \
++	{ KVM_TRACE_IOCSR_WRITE, "write" }
++
++TRACE_EVENT(kvm_iocsr,
++	TP_PROTO(int type, int len, u64 gpa, void *val),
++	TP_ARGS(type, len, gpa, val),
++
++	TP_STRUCT__entry(
++		__field(	u32,	type	)
++		__field(	u32,	len	)
++		__field(	u64,	gpa	)
++		__field(	u64,	val	)
++	),
++
++	TP_fast_assign(
++		__entry->type		= type;
++		__entry->len		= len;
++		__entry->gpa		= gpa;
++		__entry->val		= 0;
++		if (val)
++			memcpy(&__entry->val, val,
++			       min_t(u32, sizeof(__entry->val), len));
++	),
++
++	TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
++		  __print_symbolic(__entry->type, kvm_trace_symbol_iocsr),
++		  __entry->len, __entry->gpa, __entry->val)
++);
++
+ #define KVM_TRACE_AUX_SAVE		0
+ #define KVM_TRACE_AUX_RESTORE		1
+ #define KVM_TRACE_AUX_ENABLE		2
+diff --git a/include/trace/events/kvm.h b/include/trace/events/kvm.h
+index 8b7252b8d751..b282e3a86769 100644
+--- a/include/trace/events/kvm.h
++++ b/include/trace/events/kvm.h
+@@ -156,41 +156,6 @@ TRACE_EVENT(kvm_mmio,
+ 		  __entry->len, __entry->gpa, __entry->val)
+ );
+ 
+-#define KVM_TRACE_IOCSR_READ_UNSATISFIED 0
+-#define KVM_TRACE_IOCSR_READ 1
+-#define KVM_TRACE_IOCSR_WRITE 2
+-
+-#define kvm_trace_symbol_iocsr \
+-	{ KVM_TRACE_IOCSR_READ_UNSATISFIED, "unsatisfied-read" }, \
+-	{ KVM_TRACE_IOCSR_READ, "read" }, \
+-	{ KVM_TRACE_IOCSR_WRITE, "write" }
+-
+-TRACE_EVENT(kvm_iocsr,
+-	TP_PROTO(int type, int len, u64 gpa, void *val),
+-	TP_ARGS(type, len, gpa, val),
+-
+-	TP_STRUCT__entry(
+-		__field(	u32,	type	)
+-		__field(	u32,	len	)
+-		__field(	u64,	gpa	)
+-		__field(	u64,	val	)
+-	),
+-
+-	TP_fast_assign(
+-		__entry->type		= type;
+-		__entry->len		= len;
+-		__entry->gpa		= gpa;
+-		__entry->val		= 0;
+-		if (val)
+-			memcpy(&__entry->val, val,
+-			       min_t(u32, sizeof(__entry->val), len));
+-	),
+-
+-	TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
+-		  __print_symbolic(__entry->type, kvm_trace_symbol_iocsr),
+-		  __entry->len, __entry->gpa, __entry->val)
+-);
+-
+ #define kvm_fpu_load_symbol	\
+ 	{0, "unload"},		\
+ 	{1, "load"}
+-- 
+2.47.2
 
-OK, I will now rebase everything missing on top of rc7.
-
-Thanks and sorry for the confusion,
-Andi
 
