@@ -1,119 +1,107 @@
-Return-Path: <linux-kernel+bounces-740719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4030FB0D84C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:35:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB13CB0D850
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:36:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E0671AA7454
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:36:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01FDF5618E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B8A2E3AE2;
-	Tue, 22 Jul 2025 11:35:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 438232E3B03;
+	Tue, 22 Jul 2025 11:36:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IkNGrXyO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="StWvaIKB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA9E1C32;
-	Tue, 22 Jul 2025 11:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B302E2EFF;
+	Tue, 22 Jul 2025 11:36:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753184149; cv=none; b=lsEx6frKVVStUELD6AmqViOAPlvr4j/d0ut4CwIy3ZOoxEMCmi/W9QBvH/Cez/sAzOwM56qwcSwYdt+dsV7YdAN69qgWfuw3oMYmuTn8KTeh1R9A+ODE6/ShrNxUr6Ckgt3ZeVPJmL76p2cgckM0t90HH3gVjuX46OjvqFCFIv4=
+	t=1753184175; cv=none; b=bNZDAVezy98RwH96rDIsUHrZl6S6bx1Q4BVpl18pUIAWhqLEI/MhMI174FxiLRJWdm14BBkC+z+VuV14bua8SpQsjRIbtdI+hI1ECUjxdhUYq4mrAsuV9aOf+eTrJTT72iy3nyTnZTqdHwG+kuZmaLfMU3IgNAxHqYr334NO+E0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753184149; c=relaxed/simple;
-	bh=sMwVPTltHfO3qpFSttmFHlGGR/BCEXmL5/49LYpJ8XI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fZKLMYxlONpukWXkzeQquI6hbETCxfw4EEqJT/mcEP767hLTt7XwZ+nFek3BTKszsTlVCnYShcI8bLCzpMxHlT0X55ud/CPu3BqZFGLsozhFS0nYKYPswEH7znEAQKPJdrCPJWRT8X6UsQEtfjeucZnYjD+dt73tFkNMRAqZBfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IkNGrXyO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1A50C4CEEB;
-	Tue, 22 Jul 2025 11:35:44 +0000 (UTC)
+	s=arc-20240116; t=1753184175; c=relaxed/simple;
+	bh=6jt5GTK+6dNViwg0jv8XmC2xhjI3baxH4ZvaFc5mP4s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b3eoOocaYrcY8QeJciIk86ngYn7YHX+oFF2lX8dnjlIixhuycg96lmjDAsCNqFFmCNode8krBPPJXOaiAo2z68X9B3qA3Jkx0zGNpY95xX0HpiZPY0/i352BmcofvyBJiYmZF0GvMuDxCpGLybTfEebdf4ics4eeEofafN2SRaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=StWvaIKB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79D10C4CEEB;
+	Tue, 22 Jul 2025 11:36:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753184148;
-	bh=sMwVPTltHfO3qpFSttmFHlGGR/BCEXmL5/49LYpJ8XI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IkNGrXyOz7gYZ9G45raLdOnyB/1qKAZKWiu0evveWS5FL259QVDUdr5wf/hMt0vdL
-	 ep8501P3fa5noxjlZl11z1uG6+7cxVttIxch42QnB/+ZkWdzUyGBFfJrKVuyRZQ7+C
-	 pdqOTqz8NhNG5/LFvLozDNRFOoFoH41QGmw+oJpR1EVivyNYtX+Ao/MhgI6kID33kN
-	 C0oR7RqzbqbHJ0C1tgvId+gQh0SS1eUnt2SZFbJoWnzXxvs7iyy/swjJRLmc12sv/v
-	 28O+sUHw2rDZ9kcFr/4SLldWeWgHCvWGDD3zS9OYcegyKXUt1Xq97iXt9wUlmbY5IP
-	 /DhGJAH9wX+3w==
-Date: Tue, 22 Jul 2025 12:35:42 +0100
-From: Simon Horman <horms@kernel.org>
-To: Dong Yibo <dong100@mucse.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, corbet@lwn.net,
-	gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
-	danishanwar@ti.com, lee@trager.us, gongfan1@huawei.com,
-	lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 03/15] net: rnpgbe: Add basic mbx ops support
-Message-ID: <20250722113542.GG2459@horms.kernel.org>
-References: <20250721113238.18615-1-dong100@mucse.com>
- <20250721113238.18615-4-dong100@mucse.com>
+	s=k20201202; t=1753184175;
+	bh=6jt5GTK+6dNViwg0jv8XmC2xhjI3baxH4ZvaFc5mP4s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=StWvaIKBx7VqaynVbI/AZYu1cCXsyFJRkejL4J2AtdBwwEPMzat9W0QAvS+9Mh0ei
+	 /3BwOJ+McrGyto0rwKt8CG72NBFVbZLVQYFqTSvXoWfHETVXJ+D00MGkN7FHxefHkn
+	 7DheYPT3W5Jy4AKGs9gekdZlz4LTxboWrqKS8a2KVx6I9HR/XFvSDv/gZ5NcZ12Vp0
+	 jEHB/cfAN/0moVw5FGPsOlsTQh9YsEpY9uk8pJl2BXPgNX2XWwnzmyzcpfrEIvXeiW
+	 eR1UdYPwjd8VmOiDJ8ALnaDXoqpKNt+dvjlp/heCDnyKK/lqcFY44fLaTruWHQFcKv
+	 Mhf5hzPoS/Ltw==
+Message-ID: <c5ba329d-ea62-4a8c-97df-594eb8c6b3af@kernel.org>
+Date: Tue, 22 Jul 2025 13:36:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250721113238.18615-4-dong100@mucse.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] rust: Update PCI binding safety comments and add
+ inline compiler hint
+To: Benno Lossin <lossin@kernel.org>
+Cc: Alistair Popple <apopple@nvidia.com>, rust-for-linux@vger.kernel.org,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, John Hubbard <jhubbard@nvidia.com>,
+ Alexandre Courbot <acourbot@nvidia.com>, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250710022415.923972-1-apopple@nvidia.com>
+ <DB87TX9Y5018.N1WDM8XRN74K@kernel.org>
+ <DB9BF6WK8KMH.1RQOOMYBL6UAO@kernel.org>
+ <DB9FUEJUOH3L.14CYPZ8YQT52E@kernel.org>
+ <DB9H6HEF9CKG.2SAPXM8F9KOO3@kernel.org>
+ <DB9IQAU4WPSP.XZL4ZDPT59KU@kernel.org>
+ <bwbern2t7k5fcj6zxze6bjpasu3t26n6dmfptlmhbhd7qmligs@3fgwifsw7qai>
+ <DBIHP8IP3OHA.8Y1S9ZV1Y1SZ@kernel.org> <DBIJ3POBANNM.KSO1I5557PFV@kernel.org>
+ <be42295e-63e1-4e2f-986f-aef962f531bd@kernel.org>
+ <DBIJM4PTRHAS.3KXPG1MHNS8K0@kernel.org>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <DBIJM4PTRHAS.3KXPG1MHNS8K0@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 21, 2025 at 07:32:26PM +0800, Dong Yibo wrote:
-> Initialize basic mbx function.
+On 7/22/25 1:21 PM, Benno Lossin wrote:
+> On Tue Jul 22, 2025 at 1:02 PM CEST, Danilo Krummrich wrote:
+>> On 7/22/25 12:57 PM, Benno Lossin wrote:
+>>> On Tue Jul 22, 2025 at 11:51 AM CEST, Danilo Krummrich wrote:
+>>>> I think they're good, but we're pretty late in the cycle now. That should be
+>>>> fine though, we can probably take them through the nova tree, or in the worst
+>>>> case share a tag, if needed.
+>>>>
+>>>> Given that, it would probably be good to add the Guarantee section on as_raw(),
+>>>> as proposed by Benno, right away.
+>>>>
+>>>> @Benno: Any proposal on what this section should say?
+>>>
+>>> At a minimum I'd say "The returned pointer is valid.", but that doesn't
+>>> really say for what it's valid... AFAIK you're mostly using this pointer
+>>> to pass it to the C side, in that case, how about:
+>>
+>> It is used for for FFI calls and to access fields of the underlying
+>> struct pci_dev.
 > 
-> Signed-off-by: Dong Yibo <dong100@mucse.com>
+> By "access fields" you mean read-only?
 
-...
-
-> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c
-
-...
-
-> +/**
-> + * mucse_obtain_mbx_lock_pf - obtain mailbox lock
-> + * @hw: pointer to the HW structure
-> + * @mbx_id: Id of vf/fw to obtain
-> + *
-> + * This function maybe used in an irq handler.
-> + *
-> + * @return: 0 if we obtained the mailbox lock
-> + **/
-> +static int mucse_obtain_mbx_lock_pf(struct mucse_hw *hw, enum MBX_ID mbx_id)
-> +{
-> +	struct mucse_mbx_info *mbx = &hw->mbx;
-> +	int try_cnt = 5000, ret;
-> +	u32 reg;
-> +
-> +	reg = (mbx_id == MBX_FW) ? PF2FW_MBOX_CTRL(mbx) :
-> +				   PF2VF_MBOX_CTRL(mbx, mbx_id);
-> +	while (try_cnt-- > 0) {
-> +		/* Take ownership of the buffer */
-> +		mbx_wr32(hw, reg, MBOX_PF_HOLD);
-> +		/* force write back before check */
-> +		wmb();
-> +		if (mbx_rd32(hw, reg) & MBOX_PF_HOLD)
-> +			return 0;
-> +		udelay(100);
-> +	}
-> +	return ret;
-
-ret is declared, and returned here.
-But it is never initialised.
-
-Perhaps it is appropriate to return an error value here,
-and update the kernel doc for this function accordingly.
-
-Flagged by W=1 builds with Clang 20.1.8, and Smatch.
-
-> +}
-
-...
+We might also write them, but currently we only write them through FFI calls on
+the C side.
 
