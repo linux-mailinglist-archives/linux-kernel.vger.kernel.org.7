@@ -1,88 +1,44 @@
-Return-Path: <linux-kernel+bounces-740692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD023B0D7F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:12:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39712B0D7FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:14:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B779C7AD8BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:10:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EE7A1C20C7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F30362DEA87;
-	Tue, 22 Jul 2025 11:12:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kuDjK8lV"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC0328981C;
+	Tue, 22 Jul 2025 11:14:11 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB6328B7E5
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 11:12:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE68FDDC3;
+	Tue, 22 Jul 2025 11:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753182728; cv=none; b=drAwiMC0NTSoDs67SE75Mr6Ckq6d9wjNZJJ+EghnxlKGCEUw+ZsY07b/cVqLt+eN5NjE6YQpP3n/T9SqAAi8KEfUs0EwnWjmcINFaKMpgemMyLtds6AhDx1rfiL4QcZ44KU30elgPdoJMg9Dg+56/X81I/10FWmDldVJ2vjYd10=
+	t=1753182850; cv=none; b=blK2lKBxTHE/DkGK5GR2Sp/ufeupldaP5E+ZRLG8WQb3f1pZVa42ZrSZYo49YcmsDR+dUuEIXMouXxQh5EMzxZnuqJmKs10Ieb7OQX6HfHAJ8nqZxD6Zo6gw8ryOgXbk2iNtztMEbPjuaP+72c/ju168Q12xZ6bpWt39i93ZK0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753182728; c=relaxed/simple;
-	bh=AdS/HEGQYIwXAPgGKh/dj7/4HJqP4YWiQMnvmpzNaGA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JBNujKx4roZcdruEShuXL86POozcDvskMB6pXWK1geSu7nJkHSTKdc1HTLR1yg08Qf5da6JVNSAtZNMS7V0B1vMcFcHSSoEecuu/Cn0P1s4CnpGjw1HVUWqUlQKjx2WqlP76vuW6TDagnNb9+vr6HcMhSiCDGqnM4GOXCpTIRHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kuDjK8lV; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56M7GHi0008073
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 11:12:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Lp9oCAfC0uqs28+yLNSlWvHOEvpNJYHHvb1kBs8yoFw=; b=kuDjK8lVrMQ29mM2
-	NnvkBJtssHyZ940GjxnoRNMKZIaxrrUx8OXjNq0M/7BtxrF5bJvbBeYk6ggjByLo
-	PwzeE6UzPYbeH2HjAjXIWWUlV2lGbdSN2XiTlUTL9IgR/r9Zn7QKGAkBaD9K5lyN
-	RIKWxENkALQGIO+ipEuOmfCiHWx3pFg+M73KWyqTq/Rz26jIV2vpsG6lgUxrkti2
-	Lh3UHvoSbhksgHnFKlfDBWl+tzn/5QD0hSvpBlrkZIXA2MLcqD25MBwTkjLj/obA
-	SmTVTcuY9IMCN16lD/Tackv2Syvpf+s7q0WFRV6BqDaEkCr62XhpKPUTbzRoxzuf
-	HnrRrQ==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48045vyj1f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 11:12:06 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-702ad4ec207so731576d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 04:12:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753182724; x=1753787524;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lp9oCAfC0uqs28+yLNSlWvHOEvpNJYHHvb1kBs8yoFw=;
-        b=MiGrHY7TBvgb/3wgBpqpXCadDGNd3vBRMavdyt74YsDrM5q9wu3j+8oJ616gbZQqnb
-         hcS7m5BzsqOsbH70SFUNE8we7squu8f278fZENE57kaQ0joPM3MKU5jhn7q25tk81wDG
-         RtGHI9KqtPrEs3n9kG/LTl6BQchLcW7i+av1tH8+A3VKoHhdZbWHjEdr39hQs7/8ZWVJ
-         9RsSYsbZPux5vpiUCO/uf2zagyDpVlghDumJ5+nyKjAxW+LWVRfRGN6q6j/+Tp7Q9Wzy
-         P7dViuGHVi2ICPauIVMCNovSfvgd8lBKDb/Etwmb6YvAu/d4rI6Uj3uzO5wdtp0l4/+U
-         TrOA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0Pu8cy3f+fcS28tSBay68iMe5oG9HsIjoJGUd7jNEMJcD8e5b4Z2gPYTx1NqlmodmmuFnfglxyz+yt+Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxraCzwbLhoapwS5olDHqT02/MUXDJ+K5wMjnv6pxvDyMmSHhRd
-	W3WZPspQzC9e5V+fUPCqHgNkYA81bf2BQ6gYIDB/+WaaNyBv+psm52PmDoJM5GMKZYeGlVML50C
-	dwna4Ddy44cl4Mm7BEWhVua5RfCpjCmRYWJEIUQMtPXNw6IceITOXv/Uo9miTAssFE60c933Fqo
-	8=
-X-Gm-Gg: ASbGncvrJ4jZMlI+yk+7UejQ+xX3+fCNWj/g5I2cHEj4sg4gVUSz2Q7mUQqCjg+q16E
-	YMoET4JNjA2tJQzutINFe6Z82/SIxLW8O2SfpJUGNev8Aa8r2Y+Q9z0kWFhkKFtp25VJGwdTOaC
-	gsD+XHGypHQQpJZYdOgwTJQrhfoQTsfqbRGXEZ2VCBi0zSWqtTig2PUnmssAAiAFfnkygy8uuA7
-	wYzsrX5JiTRZHIYqUYbCuAaXev7IMoTfcTaK706HoTcACLz0rU1glOX7vv4+AqajCAJB588oR7d
-	y0jlM0YBKag1iJ3815kwvZUtrtcz18nGIt15MhVBvhdeIa2m1t9jStOZRgJYYVuNEHxD60etPwS
-	BP26ltr4PIhDIhMdWVQBX
-X-Received: by 2002:a05:620a:4894:b0:7e3:2c3a:aac5 with SMTP id af79cd13be357-7e342b70ea4mr1315160885a.12.1753182724447;
-        Tue, 22 Jul 2025 04:12:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGsVndy6GfF1/rbOfATVToveGOqPm5CxByBr7sl2oaOgD0x8vxoWl1Wqyb/DMzWWuenDTrgHg==
-X-Received: by 2002:a05:620a:4894:b0:7e3:2c3a:aac5 with SMTP id af79cd13be357-7e342b70ea4mr1315159785a.12.1753182723749;
-        Tue, 22 Jul 2025 04:12:03 -0700 (PDT)
-Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-612c8f36f96sm6863713a12.23.2025.07.22.04.12.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Jul 2025 04:12:02 -0700 (PDT)
-Message-ID: <41dda9bd-12c8-485a-a6d0-69d040d724cd@oss.qualcomm.com>
-Date: Tue, 22 Jul 2025 13:11:59 +0200
+	s=arc-20240116; t=1753182850; c=relaxed/simple;
+	bh=cj2sZHrXw6UcTDsmYxotfixJ9xFcJBEAMHb+X6xmpPo=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=tRYzOrvAh6LBugjWiw/Wla0c9O2VbPcHhhvKtGnJMgUtgnre/I0hbF910zXZkqcjGNyN7o3cR934VA6qA9KJEFYVQB/o7i/OWC8w07sy8JK9lCpZWoDxZ8n9HQaPgarac3WPBaqDcNLGtPKRF482R1FW0PcBYTC4rWLzQac0WN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bmZQh5bGCzKHMdl;
+	Tue, 22 Jul 2025 19:14:04 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 7D5481A1905;
+	Tue, 22 Jul 2025 19:14:03 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP1 (Coremail) with SMTP id cCh0CgBXyLN6cn9otuxaBA--.37742S2;
+	Tue, 22 Jul 2025 19:14:03 +0800 (CST)
+Message-ID: <be35ab6e-6670-414c-ab3b-c86a690c6cef@huaweicloud.com>
+Date: Tue, 22 Jul 2025 19:14:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,66 +46,120 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/7] nvmem: qcom-spmi-sdam: Migrate to
- devm_spmi_subdevice_alloc_and_add()
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-        sboyd@kernel.org
-Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
-        andy@kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org,
-        srini@kernel.org, vkoul@kernel.org, kishon@kernel.org, sre@kernel.org,
-        krzysztof.kozlowski@linaro.org, u.kleine-koenig@baylibre.com,
-        linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-pm@vger.kernel.org, kernel@collabora.com, wenst@chromium.org,
-        casey.connolly@linaro.org
-References: <20250722101317.76729-1-angelogioacchino.delregno@collabora.com>
- <20250722101317.76729-3-angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH -next] cgroup: remove offline draining in root destruction
+ to avoid hung_tasks
+From: Chen Ridong <chenridong@huaweicloud.com>
+To: tj@kernel.org, hannes@cmpxchg.org, mkoutny@suse.com, lizefan@huawei.com
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lujialin4@huawei.com, chenridong@huawei.com, gaoyingjie@uniontech.com
+References: <20250722092444.4108989-1-chenridong@huaweicloud.com>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250722101317.76729-3-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20250722092444.4108989-1-chenridong@huaweicloud.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=LL1mQIW9 c=1 sm=1 tr=0 ts=687f7206 cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=QX4gbG5DAAAA:8 a=EUspDBNiAAAA:8
- a=Y_nGuXgBD960inqFf4MA:9 a=QEXdDO2ut3YA:10 a=OIgjcC2v60KrkQgK7BGD:22
- a=AbAUZ8qAyYyZVLSsDulk:22
-X-Proofpoint-GUID: iPRrEjNftR_CyK2T-Ix25l0ACJGOqz_U
-X-Proofpoint-ORIG-GUID: iPRrEjNftR_CyK2T-Ix25l0ACJGOqz_U
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDA5MSBTYWx0ZWRfX75qJ9UB58qy+
- Tz38AJk92t8CojfA0qeH9KDKZtX6d5UgXlNxywb+2eOoPSOm+NM5/L31X+U3sdP/HME6qrO4zsE
- 3r3RTNMaxkkr4tg1Y/dCAXwqsbnSbRMl7/SGGzt8mDJJPPwuSKCtmobMgHnJWsWIpvavfbgCmmV
- sqlWRcfu/FP2p30LlEh2KK1zG795OiUWO5WpNNV3PUqJRhWaou6TlX8JiIXnQF+XMCpMih/55Hz
- sBFWmyhlLO7YK1Qdf006DfLC0v6BhTGMuWNj+gpsHrYD+RfgNvTI5j7Xs08RK1GmwAyh2XxiYub
- HZJ4EsSg0NZcnLKrlYH4cIlV1YIfnVWDs/xNvFy1J8t5CHN8EY8qp1EASLSqTfaJi0vFJbAF7Uq
- 2TSlNzA2aQROuU+HX/GVW6SDz0UW4526VzBxPSA0ZnGx53t4yjLzRoIaLS3PtJfkg0tgfVcS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-22_02,2025-07-21_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 mlxlogscore=754 clxscore=1015 mlxscore=0 adultscore=0
- suspectscore=0 spamscore=0 malwarescore=0 impostorscore=0 bulkscore=0
- lowpriorityscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507220091
+X-CM-TRANSID:cCh0CgBXyLN6cn9otuxaBA--.37742S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxZryrJFyUXFyrtFWxWFyrtFb_yoW5CFykpF
+	s5Cw1jya1rGF90g3yvya4vga4F9a10q3yUt342qw48Ar17G342q3W0yr1jqF1UAFsrC3y2
+	yFZ0vrn7C34jy37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On 7/22/25 12:13 PM, AngeloGioacchino Del Regno wrote:
-> Some Qualcomm PMICs integrate a SDAM device, internally located in
-> a specific address range reachable through SPMI communication.
+
+
+On 2025/7/22 17:24, Chen Ridong wrote:
+> From: Chen Ridong <chenridong@huawei.com>
 > 
-> Instead of using the parent SPMI device (the main PMIC) as a kind
-> of syscon in this driver, register a new SPMI sub-device for SDAM
-> and initialize its own regmap with this sub-device's specific base
-> address, retrieved from the devicetree.
+> A hung task can occur during LTP cgroup testing when repeatedly
+> mounting/unmounting perf_event and net_prio controllers with
+> systemd.unified_cgroup_hierarchy=1. The hang manifests in
+> cgroup_lock_and_drain_offline() during root destruction.
 > 
-> This allows to stop manually adding the register base address to
-> every R/W call in this driver, as this can be, and is now, handled
-> by the regmap API instead.
+> Call Trace:
+> 	cgroup_lock_and_drain_offline+0x14c/0x1e8
+> 	cgroup_destroy_root+0x3c/0x2c0
+> 	css_free_rwork_fn+0x248/0x338
+> 	process_one_work+0x16c/0x3b8
+> 	worker_thread+0x22c/0x3b0
+> 	kthread+0xec/0x100
+> 	ret_from_fork+0x10/0x20
 > 
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Root Cause:
+> 
+> CPU0                            CPU1
+> mount perf_event                umount net_prio
+> cgroup1_get_tree                cgroup_kill_sb
+> rebind_subsystems               // root destruction enqueues
+> 				// cgroup_destroy_wq
+> // kill all perf_event css
+>                                 // one perf_event css A is dying
+>                                 // css A offline enqueues cgroup_destroy_wq
+>                                 // root destruction will be executed first
+>                                 css_free_rwork_fn
+>                                 cgroup_destroy_root
+>                                 cgroup_lock_and_drain_offline
+>                                 // some perf descendants are dying
+>                                 // cgroup_destroy_wq max_active = 1
+>                                 // waiting for css A to die
+> 
+> Problem scenario:
+> 1. CPU0 mounts perf_event (rebind_subsystems)
+> 2. CPU1 unmounts net_prio (cgroup_kill_sb), queuing root destruction work
+> 3. A dying perf_event CSS gets queued for offline after root destruction
+> 4. Root destruction waits for offline completion, but offline work is
+>    blocked behind root destruction in cgroup_destroy_wq (max_active=1)
+> 
+> Solution:
+> Move cgroup_lock_and_drain_offline() to the start of unmount operations.
+> This ensures:
+> 1. cgroup_lock_and_drain_offline() will not be called within
+>    cgroup_destroy_wq context.
+> 2. No new dying csses for the subsystem being unmounted can appear in
+>    cgrp_dfl_root between unmount start and subsystem rebinding.
+> 
+> Fixes: 334c3679ec4b ("cgroup: reimplement rebind_subsystems() using cgroup_apply_control() and friends")
+> Reported-by: Gao Yingjie <gaoyingjie@uniontech.com>
+> Signed-off-by: Chen Ridong <chenridong@huawei.com>
 > ---
+>  kernel/cgroup/cgroup.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+> index 312c6a8b55bb..7a71410b350e 100644
+> --- a/kernel/cgroup/cgroup.c
+> +++ b/kernel/cgroup/cgroup.c
+> @@ -1346,8 +1346,7 @@ static void cgroup_destroy_root(struct cgroup_root *root)
+>  
+>  	trace_cgroup_destroy_root(root);
+>  
+> -	cgroup_lock_and_drain_offline(&cgrp_dfl_root.cgrp);
+> -
+> +	cgroup_lock();
+>  	BUG_ON(atomic_read(&root->nr_cgrps));
+>  	BUG_ON(!list_empty(&cgrp->self.children));
+>  
+> @@ -2336,6 +2335,7 @@ static void cgroup_kill_sb(struct super_block *sb)
+>  	 *
+>  	 * And don't kill the default root.
+>  	 */
+> +	cgroup_lock_and_drain_offline(&cgrp_dfl_root.cgrp);
+>  	if (list_empty(&root->cgrp.self.children) && root != &cgrp_dfl_root &&
+>  	    !percpu_ref_is_dying(&root->cgrp.self.refcnt))
+>  		percpu_ref_kill(&root->cgrp.self.refcnt);
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Sorry, this is a mistake, I will send the new one.
 
-Konrad
+Best regards,
+Ridong
+
 
