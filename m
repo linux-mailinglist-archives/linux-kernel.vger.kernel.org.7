@@ -1,74 +1,89 @@
-Return-Path: <linux-kernel+bounces-740907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59930B0DAF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:37:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 440E5B0DAF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:37:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C232A5629CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:37:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05EE9562C03
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67AF62E9EDB;
-	Tue, 22 Jul 2025 13:37:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE7E2EA163;
+	Tue, 22 Jul 2025 13:37:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QcAs1mxG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kKdkPJku"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7954288CA7;
-	Tue, 22 Jul 2025 13:37:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28FA62882BB;
+	Tue, 22 Jul 2025 13:37:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753191421; cv=none; b=DPp8bB18OyzJimP00hnZa7qwydwx257hdZS6NYCMnGLXe31nZMzqbN2NngKbvADEXtyEzS8w3V/2VkjvrrJb/XzpILHE75CPXAqjUEtzG7LbOZfYwLmyROjhAR7iUUMG9EXbeAIXib8WyZ0FlPEctviW2u+5NrfwkwYcfngLFrs=
+	t=1753191443; cv=none; b=H4qr44v7UeaBYd3pIHhVQI1dsGt9lh/0+x7iLSuEOVITvdrxqA+jlxIXXjln6HNbgvIpCNPdTPlGb1jelv2vb8XLAE4mFWGCnEqW33LTEJ1lFJ62flMJK8PQ6pu5qw1VnjTLNITjGhubVN3tHGRPABC9sxSmZqfM21rrEw0Toqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753191421; c=relaxed/simple;
-	bh=OLtsNCN/mVtmIDBr0zUT/Ud+gMxwwxwZFvH9g9qFLc0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o0aV+MXOzdjTTIhyCRaAWgn46ry/BS64hFZZ4mOmN3mn2fiKlPtP3+W8poBSXeQUhhHPE2tkL7exzEYXijzRBjyP9pYL97ymJnCrw9VsJfJWA1fUnhQOYh13WiZrUFf2EEOXLzp7Tpx/E9ebxD2/kdiTVYCaxKaJ10KHAW20R8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QcAs1mxG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC080C4CEEB;
-	Tue, 22 Jul 2025 13:37:00 +0000 (UTC)
+	s=arc-20240116; t=1753191443; c=relaxed/simple;
+	bh=7mFmuNX7jxwdHzGeVnnaIEXERSOB5a76i4j3QEz5V3s=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=JIVhMR1vJDZAv0AfNrpKk0AkcFxa/lFQ8OwyVgX09mdh5gYpWbTPiXPcRMsqPDJmys/fzPJlTLWS0qtzV9bOuje1rAvzMUVcTmoU4wRPymJFmob0gRvQOQfErv/RiD+XZEnM3jAlyDAspYpdMhl7q6RgK+gfNuEADv/QJTTrIq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kKdkPJku; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9FE8C4CEF6;
+	Tue, 22 Jul 2025 13:37:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753191421;
-	bh=OLtsNCN/mVtmIDBr0zUT/Ud+gMxwwxwZFvH9g9qFLc0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QcAs1mxGN2ObuMekwZxCHspOj0Z5RhcFmPsSVE2wpvwXSSDmrDx47IsQPZ8U8WNkL
-	 wg8S0fsZALh8kNSq1Cy7RRp3CLV+NNIoUT8P/uReK73adR8a1LygqX7GGkdsEz45QX
-	 wqbFZZ1DIN+Wgise7Vk0Nb3OwFqhVCBq4QaqXy3atqSmqHSNxAw5aIQEfg3X6NpjAE
-	 r6twe88SZqPu0nS/87ZspWLi/0VoLzv8QJejSuPcwI1XIg1N6yvVE68uzfEvjSWz/x
-	 Cx8RPX1DiewS3cgXjp/s2zxrZ+ZghvS6ycJyERJZaq/mXDY718aWOpZW9HED0fMtzz
-	 cc7UaNq48E8Lg==
-Date: Tue, 22 Jul 2025 06:36:59 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Suchit Karunakaran <suchitkarunakaran@gmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- horms@kernel.org, jhs@mojatatu.com, xiyou.wangcong@gmail.com,
- jiri@resnulli.us, sdf@fomichev.me, kuniyu@google.com,
- aleksander.lobakin@intel.com, netdev@vger.kernel.org,
- skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: Revert tx queue length on partial failure in
- dev_qdisc_change_tx_queue_len()
-Message-ID: <20250722063659.3a439879@kernel.org>
-In-Reply-To: <20250722071508.12497-1-suchitkarunakaran@gmail.com>
-References: <20250722071508.12497-1-suchitkarunakaran@gmail.com>
+	s=k20201202; t=1753191442;
+	bh=7mFmuNX7jxwdHzGeVnnaIEXERSOB5a76i4j3QEz5V3s=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=kKdkPJkuEmnkarEbU7yP2kcVVtVeYD16fuqEzyOPzj6lqUhezuwHrh8df/jPb4uG0
+	 l8nckVyAl/N/xlaSei/5fId8CvuhOZRqG7MMsRUk8DKSa0ZuEdwlpFzfNLBePFcO6L
+	 1JhnEjeu1p1PuOiLmqphvPejZthvPee3YWNrsUQ9bMPyH8Iqj1+7u+zf2sJpubYK3v
+	 VNkt3oPkV2AyWXNiybbYW47brnwkqo6td4CPygxVXw8dzT9XAv+B51ebWojnrco66l
+	 o7SgqUJ3uOpX/RVIN1XeePA3GoJL1wgzyzGU0p3xGRI3BHc9Lqkk7A/Axk1Ah46DzX
+	 KJkWEorqlbHQw==
+From: Vinod Koul <vkoul@kernel.org>
+To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
+ krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com, 
+ mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org, 
+ bhelgaas@google.com, johan+linaro@kernel.org, kishon@kernel.org, 
+ neil.armstrong@linaro.org, abel.vesa@linaro.org, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+ linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com, 
+ quic_krichai@quicinc.com, quic_vbadigan@quicinc.com
+In-Reply-To: <20250703095630.669044-1-ziyue.zhang@oss.qualcomm.com>
+References: <20250703095630.669044-1-ziyue.zhang@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH v8 0/3] pci: qcom: Add QCS615 PCIe support
+Message-Id: <175319143640.114152.11286071190627190841.b4-ty@kernel.org>
+Date: Tue, 22 Jul 2025 19:07:16 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On Tue, 22 Jul 2025 12:45:08 +0530 Suchit Karunakaran wrote:
-> +		while (i >= 0) {
-> +			qdisc_change_tx_queue_len(dev, &dev->_tx[i]);
-> +			i--;
 
-i is unsigned, this loop will never end
+On Thu, 03 Jul 2025 02:56:27 -0700, Ziyue Zhang wrote:
+> This series adds document, phy, configs support for PCIe in QCS615.
+> 
+> This series depend on the dt-bindings change
+> https://lore.kernel.org/all/20250521-topic-8150_pcie_drop_clocks-v1-0-3d42e84f6453@oss.qualcomm.com/
+> 
+> 
+
+Applied, thanks!
+
+[1/3] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Update pcie phy bindings for QCS615
+      commit: dfef90f29811b5b8bc6353e259cac6134a88671f
+
+Best regards,
 -- 
-pw-bot: cr
+~Vinod
+
+
 
