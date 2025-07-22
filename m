@@ -1,144 +1,145 @@
-Return-Path: <linux-kernel+bounces-741511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 223E6B0E526
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 22:58:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF7A6B0E524
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 22:57:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3BDD1C2386F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:57:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25B5B3B7835
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA9C2857DA;
-	Tue, 22 Jul 2025 20:57:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1166F28134C;
+	Tue, 22 Jul 2025 20:57:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="lTnQNjde"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bn//0Btr"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C3D27FB3B;
-	Tue, 22 Jul 2025 20:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 083DC157A67
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 20:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753217853; cv=none; b=SpaTJ44H01Bq8OHPFA2UZmurziN25XTRStIIlyVMH5nYNFV/284pjoKddSO/82nqxzdtK6ItNe3NmpgVYehiuOjKwUgZrpPE8snj/pgx/secWneV3whgisACRIFkDgLNe3w6/Dn5vnoVrQ2xCbsdfC2+4Bu4/QCZsn4MqtbxJpU=
+	t=1753217837; cv=none; b=N4uCsWIWCF3Fief8rb5Dv/+spUF8qnKQEMZK+AJ1JSvZFx6uyAmAFnukb0av1nD3iKsup/UDZrs0PKmterd4AoOkCGJmKqGuaTRnncSuAfVlZDxAf2KDD2HGghEGlgu5+B5Q30tWdA4u7hVDP56OvZHcd15uhradbGgum+6rliA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753217853; c=relaxed/simple;
-	bh=r4C21SkimRR08+NTBL+o805O4fZz3IMa1+Az8OJAWJg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r7/TBOt5tuBPPm0MCxeMFs8Mxgxx7HlNYkxIeN87fx0cbhLva462ggzHpKyyrEHyDuB20AO/2rx4TH1LvsJ9T07GamOpLA/EmcZQG6wdRlz3h0nCoikstN8Zp9c++JYJkpIqQxcIVIoO5IWSPteg67i2Bk//j5jZ43eJGLbGqIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=lTnQNjde; arc=none smtp.client-ip=212.227.126.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
-	s=s1-ionos; t=1753217829; x=1753822629; i=christian@heusel.eu;
-	bh=xi0dLzoPvspJ0Thu656QhGnHYoK1rauDUKPcuEJO+pU=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:In-Reply-To:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=lTnQNjdeGDEkjBMOiq74kFi8ng/eHdlCC5emgKqZ9hi5oS30m6VzitUQvP9Vy34O
-	 wrypAN8nIW6tottOhD4sSfaPYQzqP4Fh/WmcUtTy6BT5hMJWGDFAwefvmHGBSdKlx
-	 pQTW35djiis1sDj7CJYbqyfHJRGzUbPee2PNwc27EJgMgvN9BG20fQ6Jw/+KshT6S
-	 UnTiX/07Dbm0V4ufbipCam2a5g0um1D0GEqaLViCsvmA1OZZdS1JELqiBiIlvPkRE
-	 MtZewti+4NJZ5DH5lRjQgqj0ghGP2sydtwN1sTZ4/j88Xgpv165JMO3rI04uE5Pry
-	 QFpXsubzwGy8ZEzQzw==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([89.244.90.40]) by mrelayeu.kundenserver.de
- (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MpD7H-1uw04I1HhP-00jFYm; Tue, 22 Jul 2025 22:57:09 +0200
-Date: Tue, 22 Jul 2025 22:57:06 +0200
-From: Christian Heusel <christian@heusel.eu>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, 
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, 
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, 
-	hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.15 000/187] 6.15.8-rc1 review
-Message-ID: <b82800d6-0849-4b88-8026-6a8596ff4276@heusel.eu>
-References: <20250722134345.761035548@linuxfoundation.org>
+	s=arc-20240116; t=1753217837; c=relaxed/simple;
+	bh=xSPzksZNwBR9SNi+Q5CzDpsVZ4hExuAC80mJru1Tt4Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QNFlErwrnDBMwKImdkg4WqhTDh1hy4/AHNQdFZLcRsGC8zvbiA3aag6dSP4WpbnjiXq/DvH3YG8SgtqvD6nYSaHeVbhhRCAtcHHl7sR3yamxABG0WROFoaCuNhe5mxcQV8AJlgzCCVA8uN75UydOwKBF0bKxHgln1PR5sPQQwc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bn//0Btr; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7e33010556eso11900485a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 13:57:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753217835; x=1753822635; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9Ni4reSpg/ovbb+dQzWuFGbKfq/xFDZYYdVHUx+/XF8=;
+        b=Bn//0Btr/Y0cANWg0wpz3G23M6WRul767S0UAQDWqOu4V7KxANC4k9bVVmj+puMXMH
+         U4J5XkezNk2n1r4LtQKtZwX5IA2BhHfHjNIut3d5CWV4HSznWfBNc/XhU8XtslKXdCuK
+         z37da9DjgVQLcCsy0cH6KH9uqYuFqXXTIzCw7XFHpHUgLmakZfH6o5JHTS4WrwNTM0lo
+         QQvcxriStmafzJZExmDmDIV/1niaRTc2wOH2YtXH6Xf9mSZQ7KnWBKNvF1Jtq+DLN1+o
+         +JaMDS5SuVE7XoW5uG9fgPKrvuB7wyQ/x0Rhpxn0R/IcC9npNPPXoQuNR3xRD89PYLkO
+         K71g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753217835; x=1753822635;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9Ni4reSpg/ovbb+dQzWuFGbKfq/xFDZYYdVHUx+/XF8=;
+        b=raGe1WJzYr1Bg/x4nll/k3gpUT+WQjdlAC8/gGDCYY6bijGt8lLRVKVCch5R7wLbY/
+         WCgYUwL60i9yjnXYiZEaeGsyxnQ4QUvPpby4l8mRci9OdKhzlCamEFfFnfieKe5PmVBv
+         NEDN+O1WuFkqOABHwAS0O3ZvjPDyZMnqsvVAg7iRYFZA7Ez8OwtDZhiL6VTonlLruSEY
+         caNcoD60lWcR5IFl1FexA+oytvCpHrvOVk6uSgf8OvJLG4ZcEkybRm37rcCzfwpuqRnJ
+         0Uj9VPiIJACUWC3GFsFdH9C0j0y/ZeP1O3AXElbtXhsDVnA92cpvTPMfVjOtgLrdYvv2
+         yivg==
+X-Forwarded-Encrypted: i=1; AJvYcCUG/kzNzYZHOx50GXdf8sGs3jGe5SfCkDozI+0DUa6cj+kOjFg4P+xAWLNU7APu9d2xBSBoDY/u076aI0Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCUggKwUBdwbUqJ6mSli07xdKGGSCfoLKSsYtDcP78DeNJW1xh
+	dsRqZKvsJCGNgwMawUvF/+rSnN3kidalBc7mggRAanxOQcXGIgtwzww=
+X-Gm-Gg: ASbGnctHaG2Dh3UJ7A3/i0WJVVTjaH9Yfi8V8jPHKypg3Q6g7rs12GGM5OvQ4S+NASv
+	4jMrEvhriLwv1dAbMNQHF321heb9kP63PArGDTs3m4HMu6PS8DBsppZA/lIs16m0HObEW/K4fEn
+	3Oi6joa3feq1rjrkoVaDI7XVMKYMHccRazLVW025iqEOxP2uXior9z70RIzm/nSHCw0oLAeEC0H
+	m1MT/4gR6RQFfLRdUtjWx9kPomTOne/k6KR9yCNRBOnfkTBhdn7poSluIoihhjmvwBrg7iSwqDH
+	0XmBOP8P4B5BKcLJB0nFETChWFqMgX+qs5OuFPYKgPtovbZv4T0gsABZvorPNVQQlnHkc7btMmx
+	Xz/lR9re1ywpOOLs+8Us=
+X-Google-Smtp-Source: AGHT+IFI703RqUMPXBkK6u4DMpbC2ERSWtTtuSuXl4kfMXLj5oteqvHgAkjlrCVXUcf5ncI2KnMTyg==
+X-Received: by 2002:a05:620a:3720:b0:7e3:30a8:4c90 with SMTP id af79cd13be357-7e62a134a91mr49551185a.3.1753217834709;
+        Tue, 22 Jul 2025 13:57:14 -0700 (PDT)
+Received: from ise-alpha.. ([2620:0:e00:550a:642:1aff:fee8:511b])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e356c9230asm570181385a.93.2025.07.22.13.57.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jul 2025 13:57:14 -0700 (PDT)
+From: Chenyuan Yang <chenyuan0y@gmail.com>
+To: andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org,
+	laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se,
+	jernej.skrabec@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Chenyuan Yang <chenyuan0y@gmail.com>
+Subject: [PATCH] drm/bridge: lt9211: Add null pointer check for LT9211
+Date: Tue, 22 Jul 2025 15:57:12 -0500
+Message-Id: <20250722205712.3527922-1-chenyuan0y@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nssu6z7k4mv5iuds"
-Content-Disposition: inline
-In-Reply-To: <20250722134345.761035548@linuxfoundation.org>
-X-Provags-ID: V03:K1:cUTCdnko56eAGlcXq0rMTE3VMELH5cEz6YWh/nlebymBc0yaR8S
- qkMxzV9k74diggYDMxJkWYgd4RGTKxw2FxRS4P+ig0J8QZu4h8cubKynbFBuK9XrLfXBWMX
- G5v4QPanUeHPjZ7DHvCU8noZP2hj/BuufVjmvBJsrlBuKhQTwKb9IO8z9gZOq6ysrrG3yVP
- KPOPyC1iUG8IVMcN9Orug==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:7Ms0Xm8iVG0=;Ves26EMaJk72R5wXgSqGejbzLy0
- hhUz8vp9hnXG/OKJMGOKXUPTkSQYrdNuVN0gNYZ9/dG4H1kWeHTn7oSTuoGMYyByE/y5wJpmH
- djP08C5JhIkEHLW40SuKdIKDP8J1Bk44a4id7iQxiK6wc8VMM8MadMU0140bH6axOZcw/wTvQ
- V02c7a4XypmCRMZafdveJFN1jDwXSJC5XgtVIGHNKgqn3g8eF8X0ydpzsOHZsRzpX9/yOeWSq
- 5OHNC2Vswd/uoBNlFy7e5pJa6tDt7FKjrnHQwY89WNzVSlqSBMgtUQF0GUvBn7q72zDbz18Vx
- hYfMZE7L64lyVYdOBkkDCYo5AyMKQdSwdTKRiQjoYaW2B3N31x4ABb3Sz3azKXKw5ZoOEPjLf
- EXUfLdQVe9YU3WWFTIfochhCo2ahxIqUVEy92V5hZ14XR/aZ1Xawv4OLnQ1Kdl3EYvd5qum6s
- /3pmabGS87+Xx5r5CuZpdhyjOcxNfA4YQEDtxsLiX5CoOL7phi1iOGPWJa7cJWMC9Vf9/LkM9
- rn8ajpOGP8j8Dp+lEZdFH7frDj1u0Gcn13T/3oeOF5FLvSSu07CLWZa9iVxs5jNLfoD8o/x9n
- UjHkv4Id/fuTZ7tHrblAFXVOW/tIgIiytf2SjQt1dc1AiKmI1gkOGNcDb9p1McwM93i9VTZKB
- SnKKD/T7D78Rgr53thx2SLmr+lYDtk0eDZQFerrBzh2g+n0NubvMHk/nasrT+VAkNyVjhdXMg
- MIlcCNLtPNZVm6tSUGFw4q1rI9QHfDFWtorLRosCeXZKJSMIKovtFxr630255NK3DBU3OOjK/
- mpW6yMuJ7utRMPQd+iWsFK3x3PtxBRwQm5b3cbwQdWLYA0VYhseqwLQHqilkKhVE2DpneuCdw
- 8hgOBkOYYYzSPrbX46D7hqjv1mMI6Al1Ly0wSM+n0kO9n+BiiLM4si4BMrsKk5/JzvVvoeYzC
- PYFcUT5ihqVQ5oG40i0/jYXxmLh1rae7O0ZmgRp2MUikJ4BzH2YwMB9vRSviJdoY+X62h1J/8
- qNDhzAMJiV/VkxP8eKySuht9BHVNRS3HxVQuS/sbVmRhy1b4OoFokxh09zIAXjDpubpx4OZbO
- a0T94ATQ/xkPprJIhNRgn5XEV1A/BX++fBKqSjN2JMvrbtLu4x+4xXd8kWiyk8qmK02W/vSyy
- VLvW+pihj3Ppn/NNtI8oypcka4y277h3a4wb0gbBI4ZyjpI7tcCtfd//uaDrq2nvukGFxHowG
- njFyIUTdWjmwtqTgBigjX6Iijn5cu6+kHA5hxr1sE2PbyHc+1ZKqjyMQo1PYn3phZW1G0m52C
- iptOc3s6a8iIBVRLxhA54QMgY53ax258wLRwP2En1mcvK2jIogTAVfj2qGf0UasNnx0K3LZjR
- BmMosd8QwRo6ED9vcN4dw+ndPx/4r/7FUH4X/u7CGw3uQmRJixgNZL7LuolArXv5F8rPl+LwH
- UIyKkbSwWWFmtKNA0m+uryfzQyKyMfcEyz1vlHAXWN4jCaIyH24vVsAYvHWXULuo/hEgCmo04
- lHI1opY6SnoKJ7qGhuXUO9SJePbZ6svMhTpGeuja5z/717rsgKchdedHUdYNXQ==
+Content-Transfer-Encoding: 8bit
 
+drm_atomic_get_new_connector_for_encoder and
+drm_atomic_get_new_connector_state could return Null.
+Thus, add the null pointer check for them with a similar format with
+lt9611_bridge_atomic_enable in LT9611.
 
---nssu6z7k4mv5iuds
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 6.15 000/187] 6.15.8-rc1 review
-MIME-Version: 1.0
+Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
+---
+ drivers/gpu/drm/bridge/lontium-lt9211.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-On 25/07/22 03:42PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.15.8 release.
-> There are 187 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->=20
-> Responses should be made by Thu, 24 Jul 2025 13:43:10 +0000.
-> Anything received after that time might be too late.
+diff --git a/drivers/gpu/drm/bridge/lontium-lt9211.c b/drivers/gpu/drm/bridge/lontium-lt9211.c
+index 9b2dac9bd63c..6be30c8bdf15 100644
+--- a/drivers/gpu/drm/bridge/lontium-lt9211.c
++++ b/drivers/gpu/drm/bridge/lontium-lt9211.c
+@@ -463,6 +463,7 @@ static void lt9211_atomic_enable(struct drm_bridge *bridge,
+ 	const struct drm_crtc_state *crtc_state;
+ 	const struct drm_display_mode *mode;
+ 	struct drm_connector *connector;
++	struct drm_connector_state *conn_state;
+ 	struct drm_crtc *crtc;
+ 	bool lvds_format_24bpp;
+ 	bool lvds_format_jeida;
+@@ -516,8 +517,18 @@ static void lt9211_atomic_enable(struct drm_bridge *bridge,
+ 	 */
+ 	connector = drm_atomic_get_new_connector_for_encoder(state,
+ 							     bridge->encoder);
+-	crtc = drm_atomic_get_new_connector_state(state, connector)->crtc;
++	if (WARN_ON(!connector))
++		return;
++
++	conn_state = drm_atomic_get_new_connector_state(state, connector);
++	if (WARN_ON(!conn_state))
++		return;
++
++	crtc = conn_state->crtc;
+ 	crtc_state = drm_atomic_get_new_crtc_state(state, crtc);
++	if (WARN_ON(!crtc_state))
++		return;
++
+ 	mode = &crtc_state->adjusted_mode;
+ 
+ 	ret = lt9211_read_chipid(ctx);
+-- 
+2.34.1
 
-Tested-by: Christian Heusel <christian@heusel.eu>
-
-Tested on a ThinkPad E14 Gen 3 with a AMD Ryzen 5 5500U CPU and a
-Framework Desktop.
-
---nssu6z7k4mv5iuds
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmh/+yIACgkQwEfU8yi1
-JYVD2w//SHeaSPH5JVhapqeMyaq7CZhnD4yWi2do1hgNshN0JSPiYUDb5Nc9FxaP
-licsd1ulDwLVdRynevsqrsyKs+vrpmK1cKE6eYifcSovRknsCoN8lurmNtKMuYU6
-250Fq8nkjPQeLZ/H5pAHYVNxI1LfBwfNHfM3ZD5XQegTsUM8cqe7EroDbHAhqUgm
-uTKQLejWSKNw4Ln01qLRysSa5j6ie/Zd7v/yHAlJFJcERg9T2nTFjf6MKp+KSVGK
-ewD+6dMElbUU4RKxm2upzkqGuArCWl2JO6Ozpe1pRr3sJ1qbjAtT7ToUvOGTq7BZ
-sMjFODvNQ/nTOsi7msEVG+v7p8BGOBgqb/MqTqSy9ZYFGt+C3QIXjltAgxm/JmMq
-xfoaXTdP94HnzZN/9gnDGpqlXAfHycP4Kw0DFGl9IFzXmWoc2uPawuRosBc3SxXd
-MY2YNdQNVSg7qlTIrl/eZFC/d63TNCUD53ELNwrenfwZ8rgEtEgWpSex9zRKui4v
-qO/nJNSk8C37SjfrrH5kswiSUhddkQMnzFGTw+iOjm74il9AGkcDOILu5hXdPp+D
-j7gFoVlFt+u1srsT43A8xfqrVt/v3mVmOHYkrnIjXMymDfTLmaKTrIPHLTirAHqE
-hd3OnzmX7BjGYJqvC2iI0xTttkXViT77pBlNMaxVUQQmprLVR9o=
-=iD6y
------END PGP SIGNATURE-----
-
---nssu6z7k4mv5iuds--
 
