@@ -1,107 +1,188 @@
-Return-Path: <linux-kernel+bounces-740177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D823B0D10A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:58:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 481F8B0D10B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:59:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 666486C3981
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 04:58:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 056411AA5879
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 04:59:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD8328C5AF;
-	Tue, 22 Jul 2025 04:58:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC0D28C5A3;
+	Tue, 22 Jul 2025 04:58:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LATWByUv"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PwIIUxEI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1132428C2BD
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 04:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9771DF247
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 04:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753160318; cv=none; b=UGdvjKSve7R6ZJcZ76nLl0jJMtRjMIQ2dKfrikLTaZB1Zu2qYOZPfsAIsXL391itbjJh6gjwUDjeVECclUkIvStYEFmx2IV6ZnqtECqZQkw1juJU1H7ODeFcCLRj3L3d+lCf8nbDsg8U8yIDDyXaKBCznKxCIEeCvrK+iPgMI1U=
+	t=1753160335; cv=none; b=hi1wDFuFacPCki9GSKakIUsTOIHCpZTNMYtfcWM2T9abKNe9n/bQHgOkjtTsKYenIYOVZ7iy2qjuqk1pPsyThKpr+x5bdZzB5VNDnvO+ukf0SEhuoSD+DffSV5j3CaICfsbZn29vvu9kXGnM0Js4+W2KSjYwR7f29GpDBSDw6eA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753160318; c=relaxed/simple;
-	bh=zUf4AlEkQu4akq53baJqj49MOp0hPw1pbtMFQqaD0kY=;
+	s=arc-20240116; t=1753160335; c=relaxed/simple;
+	bh=IK8le6k75swK3scgq7snJYPoekkdezXHD9o2Jp9yvhM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yo+54BfmZSzi/Qyq58G48xkD17RAKj/Lq33dcTLFu2SObGyOOii6OOZZL+dSgMCex/2yFTPx4p2hw0FDMTn0Us6DFvNGA7s1YTZyIaZRm7vnMTnf8lhEF+eJSyU4KFBeFhui3ZrWJ8eLrkq+PvK6MXkxxMyNAGuhxYo4SpDGHhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LATWByUv; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-32b4876dfecso53796981fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 21:58:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1753160314; x=1753765114; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zUf4AlEkQu4akq53baJqj49MOp0hPw1pbtMFQqaD0kY=;
-        b=LATWByUv+olVJQNT+w8RvwbcWmVtfd0mY+op9jUDOoD+KPeFMa5+wbaSuwprYc4uEi
-         FUKxxdArznBM66EcWk9sE0iPorYYB1lbWPJwEqGW3SMa/osFVije2FzTCXItK5I8OfPR
-         WG+fq1LtZkp/o6g3pZd7lKSc6jhE773tDVpAE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753160314; x=1753765114;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zUf4AlEkQu4akq53baJqj49MOp0hPw1pbtMFQqaD0kY=;
-        b=nPPOJUqBo1WTkheYzRjf/KTFik3R92Nk1+FIaWyna6vZulUSioDlE4N25AysctyDTL
-         tK4sj3saQcPcLMCXJVMG7l/G4k+Da6WC8U2vTm5hTE4anYYn9gSou6HN5zLHZwEOOwsf
-         ALoThEOeCkie0FI/mggKdx6JkmMJPEUWvmIfzzfGGeSlo29pdij9eOXCMUlHsD9+1Fin
-         wMZUcmymp35Fs4a5Ls9tHNmyvuq9WstAqdY3UDPbVYNb3TsP++lVPJhlWo6Kyp1ElcWp
-         QsYnUQtyngaYaBOK0LHyBcLqGDbxlktt3wStCbxBs+SOgIMn0leLly+avzNR0v96GUoa
-         qv4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXgzmTQuu65+E4YjDILC+pBsCAUlNr3mbEZtdN0FazmvaGDYYpu2jltyyd24ahfYVeXi0uX6PP00YhVAJI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycTbc8tN58t90If1wkQAkE0nAXGVDBF1WN6G+ee+McDk1kgvd6
-	uQ1EFhe5uYhBeRv2HpXcrPI/RuDKFJqVC4/JbMp/bs0KsmF8IA/pWDcQNY+oOi1Jl3S2rdwW+6Q
-	3DfAgjrISQ44LOgpmVGOWqQ150r7CD+omaQtfmDjv
-X-Gm-Gg: ASbGncuJlhKQHC1Hprzl7GI7Er6qKlkaWyMvKyLrE51MM42Q6TV4ApHZr87AQjbEFh/
-	7QX2ziJsL8fEpKRg3agiEU/NhKSeX37K/ZI35FcBTJXLS98EU9J58pIjXdRnzaYHUCoiv0xI4z8
-	iQhPrQ40HKFhS3YgWR34r7krMVQwp2SMiw1HKOylqzyHNvUlrY9HXteFZdpX+CCGmy0BkKqQdsQ
-	w2dUKCnPKOtCtb9eqMKlzl+6FSnhv2tJJU=
-X-Google-Smtp-Source: AGHT+IEyU+tFAsFMORjYCQnykMeU/pbwHrSE3Y7T/aLBjOwuzBCNRlXwUTyFrlR8NysXmCw/f9p80hu9ipZkTsFJIJQ=
-X-Received: by 2002:a05:651c:40cc:b0:32b:4521:73d1 with SMTP id
- 38308e7fff4ca-330d260dbc5mr3824561fa.20.1753160313915; Mon, 21 Jul 2025
- 21:58:33 -0700 (PDT)
+	 To:Cc:Content-Type; b=BjvcRMaWDFhieocqDdyjWyR9C34w/wyv6h8AI0OpgXk3J6VqoZau/yrU+PV3+FcSgDAidGcIq4J8oozKAddr0NRt1sgJwTRyaofPOw8EEx4N7FSpOoyiPDMQaWpZsrxFWFYL+GdFt69iFSvJffKH69Pwrp4SK9a6bn56wkYFw8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PwIIUxEI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A164C4CEF6
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 04:58:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753160335;
+	bh=IK8le6k75swK3scgq7snJYPoekkdezXHD9o2Jp9yvhM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=PwIIUxEIE89S5x9ASf7H6mH1xtEXLYHTQKlY9flLDnjkTYgBhmA0y4Q4azQWlnKMF
+	 ufBn7As/HpLZfUBPmeB+hxVJcwE9czQOYJotchFnL16DDpRIerPe65JsqBVAfQJ0kt
+	 yJRfQcgYdOFgX4KrnEo/k6rNlHTtsCEcoS5VotB6BkqSIAU6XaxM+xDeQy323lDQQr
+	 gf9+GnE4nGhUOIXJ7VghPxeDpJbziKcwAsNN+BjE0RyLDsKpz/vQ0Kw45STezJqJHc
+	 9nsd7lLYc/giXV3l2cjU93r+j8kAj1NeGehw6Io9pIh63GRCgxPCoYcRIKZXysQLhT
+	 ArP/vc+DIudrg==
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-60c01b983b6so10294492a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 21:58:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUZ/JKEy0xQrZ7Bfie5pt8jrMKpTUUfjCFj8xegazgV4hoYrpy74BdBmxxTGQVytgXZzogkQfOTGnfUez0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4lE9ghubaoLe9mtvV2Ug8ARLq2LEjtwWOrRplQqSlzCEZ5LQp
+	Q0UosP5UMGpbKMl60T+D6ZfLBAVLcxAU8vIZe09O4PbPz9kkXFNqczGcRFIDJ11xYjYvztbWpm8
+	Npg5t7XbcL3kULjErUfUIRIgNb4XOWto=
+X-Google-Smtp-Source: AGHT+IGJAiPrgU0A02RgZ+fnnEhGK/Lib3wpGhcGaOt7UgsgJacrpCB2KGGqNf90d5UD4zkiGS8L53pBwVC5c3EZx/8=
+X-Received: by 2002:a05:6402:210f:b0:601:d0ec:fea0 with SMTP id
+ 4fb4d7f45d1cf-61346cae52bmr1700396a12.5.1753160334048; Mon, 21 Jul 2025
+ 21:58:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250715140224.206329-1-angelogioacchino.delregno@collabora.com> <20250715140224.206329-2-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20250715140224.206329-2-angelogioacchino.delregno@collabora.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Tue, 22 Jul 2025 12:58:22 +0800
-X-Gm-Features: Ac12FXwqm1vj4VltrzTTMYOVI1lGXo2qDa8kdMFLAUiRJFcrn2uXXat6X0eoKOM
-Message-ID: <CAGXv+5FXr-mGDG4mfqFx0o_dhi=Q3s=Yjpj79UVfEQKf2Wit2w@mail.gmail.com>
-Subject: Re: [PATCH v5 1/8] dt-bindings: regulator: Document MediaTek MT6316
- PMIC Regulators
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-mediatek@lists.infradead.org, lee@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com, 
-	lgirdwood@gmail.com, broonie@kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	kernel@collabora.com
+References: <20250721091248.3896152-1-maobibo@loongson.cn> <202507220309.mDl9W32Y-lkp@intel.com>
+ <7a5789f1-d6a5-3892-98c1-2c4b8515459d@loongson.cn>
+In-Reply-To: <7a5789f1-d6a5-3892-98c1-2c4b8515459d@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 22 Jul 2025 12:58:41 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H74EpbKsPpc_ToGqP6LKx04z+Dvyuw52u-1A4nQ-wr6WQ@mail.gmail.com>
+X-Gm-Features: Ac12FXxHedyRjuOtLS-BqEO_BeAoXt0_uydR3h_DoVHDdGqUy-3erBCL5QUVgpU
+Message-ID: <CAAhV-H74EpbKsPpc_ToGqP6LKx04z+Dvyuw52u-1A4nQ-wr6WQ@mail.gmail.com>
+Subject: Re: [PATCH v2] LoongArch: Implement physical address with ELF program header
+To: Bibo Mao <maobibo@loongson.cn>
+Cc: kernel test robot <lkp@intel.com>, llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, 
+	WANG Xuerui <kernel@xen0n.name>, Xi Ruoyao <xry111@xry111.site>, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 15, 2025 at 10:03=E2=80=AFPM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
+On Tue, Jul 22, 2025 at 9:33=E2=80=AFAM Bibo Mao <maobibo@loongson.cn> wrot=
+e:
 >
-> Add bindings for the regulators found in the MediaTek MT6316 PMIC,
-> usually found in board designs using the MT6991 Dimensity 9400 and
-> on MT8196 Kompanio SoC for Chromebooks.
+> Oops, it is the obvious compile issue. And I am messed with parallel
+> tasks and do not notice this, what I test is old kernel.
 >
-> This chip is fully controlled by SPMI and has multiple variants
-> providing different phase configurations.
->
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
-abora.com>
+> Regards
+> Bibo Mao
+Add this part to the patch is enough.
 
-The descriptions match the datasheet and design notice I have.
+diff --git a/arch/loongarch/include/asm/addrspace.h
+b/arch/loongarch/include/asm/addrspace.h
+index fe198b473f84..babcc1c6c820 100644
+--- a/arch/loongarch/include/asm/addrspace.h
++++ b/arch/loongarch/include/asm/addrspace.h
+@@ -18,11 +18,20 @@
+ /*
+  * This gives the physical RAM offset.
+  */
+-#ifndef __ASSEMBLER__
++#ifdef __ASSEMBLER__
++
++#ifndef PHYS_OFFSET
++#define PHYS_OFFSET    0
++#endif
++
++#else
++
+ #ifndef PHYS_OFFSET
+ #define PHYS_OFFSET    _UL(0)
+ #endif
++
+ extern unsigned long vm_map_base;
++
+ #endif /* __ASSEMBLER__ */
 
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+ #ifndef IO_BASE
+
+>
+> On 2025/7/22 =E4=B8=8A=E5=8D=883:19, kernel test robot wrote:
+> > Hi Bibo,
+> >
+> > kernel test robot noticed the following build errors:
+> >
+> > [auto build test ERROR on 89be9a83ccf1f88522317ce02f854f30d6115c41]
+> >
+> > url:    https://github.com/intel-lab-lkp/linux/commits/Bibo-Mao/LoongAr=
+ch-Implement-physical-address-with-ELF-program-header/20250721-171418
+> > base:   89be9a83ccf1f88522317ce02f854f30d6115c41
+> > patch link:    https://lore.kernel.org/r/20250721091248.3896152-1-maobi=
+bo%40loongson.cn
+> > patch subject: [PATCH v2] LoongArch: Implement physical address with EL=
+F program header
+> > config: loongarch-allnoconfig (https://download.01.org/0day-ci/archive/=
+20250722/202507220309.mDl9W32Y-lkp@intel.com/config)
+> > compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project=
+ 853c343b45b3e83cc5eeef5a52fc8cc9d8a09252)
+> > reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/arc=
+hive/20250722/202507220309.mDl9W32Y-lkp@intel.com/reproduce)
+> >
+> > If you fix the issue in a separate patch/commit (i.e. not just a new ve=
+rsion of
+> > the same patch/commit), kindly add following tags
+> > | Reported-by: kernel test robot <lkp@intel.com>
+> > | Closes: https://lore.kernel.org/oe-kbuild-all/202507220309.mDl9W32Y-l=
+kp@intel.com/
+> >
+> > All errors (new ones prefixed by >>):
+> >
+> >>> ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:15: symbol not fou=
+nd: PHYS_OFFSET
+> >     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:18: symbol not f=
+ound: PHYS_OFFSET
+> >     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:33: symbol not f=
+ound: PHYS_OFFSET
+> >     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:34: symbol not f=
+ound: PHYS_OFFSET
+> >     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:41: symbol not f=
+ound: PHYS_OFFSET
+> >     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:46: symbol not f=
+ound: PHYS_OFFSET
+> >     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:47: symbol not f=
+ound: PHYS_OFFSET
+> >     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:50: symbol not f=
+ound: PHYS_OFFSET
+> >     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:57: symbol not f=
+ound: PHYS_OFFSET
+> >     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:57: symbol not f=
+ound: PHYS_OFFSET
+> >     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:57: symbol not f=
+ound: PHYS_OFFSET
+> >     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:57: symbol not f=
+ound: PHYS_OFFSET
+> >     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:57: symbol not f=
+ound: PHYS_OFFSET
+> >     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:57: symbol not f=
+ound: PHYS_OFFSET
+> >     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:57: symbol not f=
+ound: PHYS_OFFSET
+> >     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:57: symbol not f=
+ound: PHYS_OFFSET
+> >     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:57: symbol not f=
+ound: PHYS_OFFSET
+> >     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:57: symbol not f=
+ound: PHYS_OFFSET
+> >     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:57: symbol not f=
+ound: PHYS_OFFSET
+> >     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:57: symbol not f=
+ound: PHYS_OFFSET
+> >     ld.lld: error: too many errors emitted, stopping now (use --error-l=
+imit=3D0 to see all errors)
+> >
+>
 
