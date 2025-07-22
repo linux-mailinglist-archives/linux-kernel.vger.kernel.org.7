@@ -1,136 +1,126 @@
-Return-Path: <linux-kernel+bounces-741075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0765BB0DFBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:59:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 097C2B0DFC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:00:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B0373A97EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:56:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 783A63AEDF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:57:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BDEC2EAB8B;
-	Tue, 22 Jul 2025 14:56:30 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B51E228C5B4
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 14:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15EB32ECD30;
+	Tue, 22 Jul 2025 14:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b="XQA9YfLw"
+Received: from nbd.name (nbd.name [46.4.11.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13DB92EBDC3;
+	Tue, 22 Jul 2025 14:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.4.11.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753196189; cv=none; b=OYRYh6iBibXF93j1fGOJShl7xWnbxvFcQwoLF7WPvFeXk83CKmRmNHMDLyUrf/B/C1CUlG5HOvLLzbgn6s5iuFY4qluPATTwoIRORFR2LH3UP6Vy6joCpFa2bZhg+Z96fHTxhLZbCW82dqnqwZ1q9Tg4IipULDawS8Z1OaPRvN4=
+	t=1753196197; cv=none; b=hrInvEu0teLsXIGhLzyR/pvGqZ3BVIybFfFzQWMEPfHfZIGyB9ROnX+5Mfve5kKA65QTeB2L94zHvMhZbq8KvQE5fEo1EMQFy80OEfFX9e3WgzUQMrig9NToITA5JuRR+211a4e7oAUaaitFEor8hyk6f4JisJhD7NTTRRlX3XA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753196189; c=relaxed/simple;
-	bh=DwcswQ0G98csfq+HjDJJZQ4vC+N5acrodfen4/TmfRw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y6o5pv+r2BJKJJ4rawSwiOpGbGR03cIVsr3u1e4/QmI/H17nZlRS5Yjnx34YpTDLg0HI4w2M0kJ4wMls9QFrSMWNj5ilCikV71LLbxi4c6OEQZCq1I7gCGQVnf/+vJoT/rOYIEs/IfNhvYftTVZrz1wcP0MBtnnA1KyImNdL6BY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3425A152B;
-	Tue, 22 Jul 2025 07:56:21 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B543F3F6A8;
-	Tue, 22 Jul 2025 07:56:25 -0700 (PDT)
-Date: Tue, 22 Jul 2025 15:56:20 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Weikang Guo <guoweikang.kernel@gmail.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: mm: Ensure phys_to_ttbr on pgdir for
- idmap_cpu_replace_ttbr1
-Message-ID: <aH-mlN88NrTzahfM@J2N7QTR9R3>
-References: <20250722082117.1777570-1-guoweikang.kernel@gmail.com>
+	s=arc-20240116; t=1753196197; c=relaxed/simple;
+	bh=nyOCIRsk7cHuWx7Mr65MokWumesb6obxAJCtEisKfiw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uIVfAMy9sLMG0c9qzUYPY4aGWemzmWwm298o8+q4g1B2k8qwsaIzaxcU6mFQghKrbQnv5fCuqKHhwXEZqDlqpM2hQ1amgQJPLnihdZMixzGrUV6TdOY7T94JrZWT9VUuyzx54nP8ROIPn8gOGfrcP8I0aCEvopxnHIsuaZqFxkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name; spf=none smtp.mailfrom=nbd.name; dkim=pass (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b=XQA9YfLw; arc=none smtp.client-ip=46.4.11.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nbd.name
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
+	s=20160729; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=3sUNkmwxLGiEvzprnrdV3XYHqqaQvavIxb9/5p2P1Tw=; b=XQA9YfLwm6Sdg+GalXlPMS9yJM
+	FCJT1dxrIiwPKf34mkeDREy/onjWhA6ahU7P1OE+QqOcx5XBnIEkvHyz4fkdkN+qTDW7fqrz61yBj
+	rj5nQ748xR5WxKlQ1zazxto8TALf+3LQ9wQysgmb1Y69oMEfNVr62+6VHYIb7P2oX2hc=;
+Received: from p5b2062ed.dip0.t-ipconnect.de ([91.32.98.237] helo=nf.local)
+	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96)
+	(envelope-from <nbd@nbd.name>)
+	id 1ueEPq-00G5hB-2q;
+	Tue, 22 Jul 2025 16:56:26 +0200
+Message-ID: <439bd3e3-85d1-44b9-9587-052bd9c35dec@nbd.name>
+Date: Tue, 22 Jul 2025 16:56:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250722082117.1777570-1-guoweikang.kernel@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2] net: pppoe: implement GRO support
+To: Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>
+Cc: netdev@vger.kernel.org, Michal Ostrowski <mostrows@earthlink.net>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ linux-kernel@vger.kernel.org
+References: <20250716081441.93088-1-nbd@nbd.name>
+ <CANn89i+SHNfG3UxTOwr9kE26hbF-0_E7YJpt=3OHriMGLG7PeQ@mail.gmail.com>
+ <d1bc6357-9bdd-444e-86f8-9e6955f46624@redhat.com>
+From: Felix Fietkau <nbd@nbd.name>
+Content-Language: en-US
+Autocrypt: addr=nbd@nbd.name; keydata=
+ xsDiBEah5CcRBADIY7pu4LIv3jBlyQ/2u87iIZGe6f0f8pyB4UjzfJNXhJb8JylYYRzIOSxh
+ ExKsdLCnJqsG1PY1mqTtoG8sONpwsHr2oJ4itjcGHfn5NJSUGTbtbbxLro13tHkGFCoCr4Z5
+ Pv+XRgiANSpYlIigiMbOkide6wbggQK32tC20QxUIwCg4k6dtV/4kwEeiOUfErq00TVqIiEE
+ AKcUi4taOuh/PQWx/Ujjl/P1LfJXqLKRPa8PwD4j2yjoc9l+7LptSxJThL9KSu6gtXQjcoR2
+ vCK0OeYJhgO4kYMI78h1TSaxmtImEAnjFPYJYVsxrhay92jisYc7z5R/76AaELfF6RCjjGeP
+ wdalulG+erWju710Bif7E1yjYVWeA/9Wd1lsOmx6uwwYgNqoFtcAunDaMKi9xVQW18FsUusM
+ TdRvTZLBpoUAy+MajAL+R73TwLq3LnKpIcCwftyQXK5pEDKq57OhxJVv1Q8XkA9Dn1SBOjNB
+ l25vJDFAT9ntp9THeDD2fv15yk4EKpWhu4H00/YX8KkhFsrtUs69+vZQwc0cRmVsaXggRmll
+ dGthdSA8bmJkQG5iZC5uYW1lPsJgBBMRAgAgBQJGoeQnAhsjBgsJCAcDAgQVAggDBBYCAwEC
+ HgECF4AACgkQ130UHQKnbvXsvgCgjsAIIOsY7xZ8VcSm7NABpi91yTMAniMMmH7FRenEAYMa
+ VrwYTIThkTlQzsFNBEah5FQQCACMIep/hTzgPZ9HbCTKm9xN4bZX0JjrqjFem1Nxf3MBM5vN
+ CYGBn8F4sGIzPmLhl4xFeq3k5irVg/YvxSDbQN6NJv8o+tP6zsMeWX2JjtV0P4aDIN1pK2/w
+ VxcicArw0VYdv2ZCarccFBgH2a6GjswqlCqVM3gNIMI8ikzenKcso8YErGGiKYeMEZLwHaxE
+ Y7mTPuOTrWL8uWWRL5mVjhZEVvDez6em/OYvzBwbkhImrryF29e3Po2cfY2n7EKjjr3/141K
+ DHBBdgXlPNfDwROnA5ugjjEBjwkwBQqPpDA7AYPvpHh5vLbZnVGu5CwG7NAsrb2isRmjYoqk
+ wu++3117AAMFB/9S0Sj7qFFQcD4laADVsabTpNNpaV4wAgVTRHKV/kC9luItzwDnUcsZUPdQ
+ f3MueRJ3jIHU0UmRBG3uQftqbZJj3ikhnfvyLmkCNe+/hXhPu9sGvXyi2D4vszICvc1KL4RD
+ aLSrOsROx22eZ26KqcW4ny7+va2FnvjsZgI8h4sDmaLzKczVRIiLITiMpLFEU/VoSv0m1F4B
+ FtRgoiyjFzigWG0MsTdAN6FJzGh4mWWGIlE7o5JraNhnTd+yTUIPtw3ym6l8P+gbvfoZida0
+ TspgwBWLnXQvP5EDvlZnNaKa/3oBes6z0QdaSOwZCRA3QSLHBwtgUsrT6RxRSweLrcabwkkE
+ GBECAAkFAkah5FQCGwwACgkQ130UHQKnbvW2GgCeMncXpbbWNT2AtoAYICrKyX5R3iMAoMhw
+ cL98efvrjdstUfTCP2pfetyN
+In-Reply-To: <d1bc6357-9bdd-444e-86f8-9e6955f46624@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 22, 2025 at 04:21:13PM +0800, Weikang Guo wrote:
-> Commit 5ffdfaedfa0a ("arm64: mm: Support Common Not Private translations")
-> changed the contract of idmap_cpu_replace_ttbr1, requiring that the TTBR
-> argument passed in should already be processed by phys_to_ttbr (i.e., in
-> TTBR format, not just a raw physical address).
+On 22.07.25 16:47, Paolo Abeni wrote:
+> On 7/22/25 4:04 PM, Eric Dumazet wrote:
+>> On Wed, Jul 16, 2025 at 1:14 AM Felix Fietkau <nbd@nbd.name> wrote:
+>>>
+>>> Only handles packets where the pppoe header length field matches the exact
+>>> packet length. Significantly improves rx throughput.
+>>>
+>>> When running NAT traffic through a MediaTek MT7621 devices from a host
+>>> behind PPPoE to a host directly connected via ethernet, the TCP throughput
+>>> that the device is able to handle improves from ~130 Mbit/s to ~630 Mbit/s,
+>>> using fraglist GRO.
+>>>
+>>> Signed-off-by: Felix Fietkau <nbd@nbd.name>
+>>> ---
+>> 
+>> Shouldn't we first add GSO support ?
 > 
-> However, the current map_kernel implementation does not always convert the
-> pgdir/ttbr argument via phys_to_ttbr before calling
-> idmap_cpu_replace_ttbr1. This can lead to issues on systems with
-> CONFIG_ARM64_PA_BITS_52 enabled, as the TTBR would not be properly folded
-> per the ARMv8.2+ requirements.
+> I *think* the current __skb_gso_segment() should be able to segment a
+> pppoe GSO packet, as the pppoe header is static/constant, skb->mac_len
+> will include both eth/pppoe and skb->protocol should be the actual L3.
 
-For the cases below I don't believe that this is actually a problem.
-Since commit:
+If the packet is received on a ppp device, __skb_gso_segment works 
+afterwards.
+However, for the bridge forwarding case, Eric is correct. In this case, 
+skb->protocol will not be the L3 protocol.
 
-  453dfcee70c5c344 ("arm64: booting: Require placement within 48-bit addressable memory")
+I will add GSO support in v3.
 
-... we require that the kernel Image (including any trailing unallocated
-bytes accounted for in image_size) are below the 48-bit address limit,
-and so there should be no difference between the PA and TTBR format.
+Thanks,
 
-We could probably test and enforce that in the early boot code somehow,
-if we're not doing that already.
-
-If we were going to change things to avoid accidents in future, I think
-it would be better to enforce this with the type system. e.g. we could
-have a ttbr_val type that's distinct from phys_addr_t. Even then, for
-the idmap code I think it's better to avoid the phys_to_ttbr() dance,
-since that has runtime patching.
-
-Mark.
-
-> 
-> Signed-off-by: Weikang Guo <guoweikang.kernel@gmail.com>
-> 
-> ---
-> Note: I do not currently have access to ARM64 hardware or an emulation
-> environment that supports 52-bit physical address (PA52). I would
-> greatly appreciate if anyone with such a platform could help test
-> this patch. Thank you!
-> ---
->  arch/arm64/kernel/pi/map_kernel.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm64/kernel/pi/map_kernel.c b/arch/arm64/kernel/pi/map_kernel.c
-> index 0f4bd7771859..05a04eb91e81 100644
-> --- a/arch/arm64/kernel/pi/map_kernel.c
-> +++ b/arch/arm64/kernel/pi/map_kernel.c
-> @@ -18,7 +18,7 @@
->  
->  extern const u8 __eh_frame_start[], __eh_frame_end[];
->  
-> -extern void idmap_cpu_replace_ttbr1(void *pgdir);
-> +extern void idmap_cpu_replace_ttbr1(phys_addr_t);
->  
->  static void __init map_segment(pgd_t *pg_dir, u64 *pgd, u64 va_offset,
->  			       void *start, void *end, pgprot_t prot,
-> @@ -90,7 +90,7 @@ static void __init map_kernel(u64 kaslr_offset, u64 va_offset, int root_level)
->  		    true, root_level);
->  	dsb(ishst);
->  
-> -	idmap_cpu_replace_ttbr1(init_pg_dir);
-> +	idmap_cpu_replace_ttbr1(phys_to_ttbr((u64)init_pg_dir));
->  
->  	if (twopass) {
->  		if (IS_ENABLED(CONFIG_RELOCATABLE))
-> @@ -129,7 +129,7 @@ static void __init map_kernel(u64 kaslr_offset, u64 va_offset, int root_level)
->  	/* Copy the root page table to its final location */
->  	memcpy((void *)swapper_pg_dir + va_offset, init_pg_dir, PAGE_SIZE);
->  	dsb(ishst);
-> -	idmap_cpu_replace_ttbr1(swapper_pg_dir);
-> +	idmap_cpu_replace_ttbr1(phys_to_ttbr((u64)swapper_pg_dir));
->  }
->  
->  static void noinline __section(".idmap.text") set_ttbr0_for_lpa2(u64 ttbr)
-> -- 
-> 2.25.1
-> 
-> 
+- Felix
 
