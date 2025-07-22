@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-740033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BCC4B0CEDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 02:50:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAD98B0CEE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 02:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B34C6C6137
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 00:49:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3FA87B3055
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 00:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D5B315442A;
-	Tue, 22 Jul 2025 00:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3933219F419;
+	Tue, 22 Jul 2025 00:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DhTYHwIR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ANvOkAkh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB8D13C81B;
-	Tue, 22 Jul 2025 00:49:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 958A71624C0;
+	Tue, 22 Jul 2025 00:49:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753145390; cv=none; b=S7ht1t3MnXzEHPe9RCXiHNp+ouXidOJ36GcL3jsmDB3M5Nk1yAdcChFYvWu5z8cuKWDr+8dBNLZL3Ky6nXJc1EqkYAv6wIgkPOHvbhh/h5QVz/2XHCf9c9gX0xNKwbEgOky/87FxGLlCM85zG55Ln7m+6Btborfwu6t0YuJXMU8=
+	t=1753145393; cv=none; b=Ij/azCKbDHjz5oSyy94ouipUpJATZqDXFgWf14/mOgiUTB7Zwl25P1V57oLi2YkamC3CDSu2Px3ebrnCVeGjJaMMlc3Ei9H9M0Z5hXwCcORDovoPBBDSH71379TSVGGVZH1xt4801stZUz9F6crFbxAczubkOQ7741qduJmb4hY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753145390; c=relaxed/simple;
-	bh=qqVtg7wIZdHVzZMMsK9AjxJx4S/Xq3p0wGOEHw6p0V4=;
+	s=arc-20240116; t=1753145393; c=relaxed/simple;
+	bh=Rintk8p+QWVFS44yRmEWgxkYxlizz2pX+UPGMDe+X/E=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=uCY52bX0RUXAG+izheYhhSvPY+RSVqYczvXkECPm5oeVqoH5i/1fDC6CMm4O974LGqpNr/znf0NRoPxcevjJX4dxea5G54EbV8ondKYDlSugD9MM8ijLxWdKeUnzxpZ9V+n1+3s0G5wr5FNWvKNYHG7rRN944yteCLb1eYncGNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DhTYHwIR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00C89C4CEED;
-	Tue, 22 Jul 2025 00:49:50 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=VcrqlcOlca9P5hyViDYVkBO88oPi0A7v4pktbB7tVBL7vwhSxNmb4sGDy6sjvW7g4GfqQ+0xxT6gBjzWOia+wF3aSEHaOujxYwR86CuLjqcV5EkrmSit9oPkfghHq6yqWCUMLx9FhyD86flhA/X9kmMTMkuU54wk0Z62WtU+K/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ANvOkAkh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BD8BC4CEED;
+	Tue, 22 Jul 2025 00:49:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753145390;
-	bh=qqVtg7wIZdHVzZMMsK9AjxJx4S/Xq3p0wGOEHw6p0V4=;
+	s=k20201202; t=1753145393;
+	bh=Rintk8p+QWVFS44yRmEWgxkYxlizz2pX+UPGMDe+X/E=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=DhTYHwIRAQuW4LM7++mtXEFNLpWYAjOi0dkD4mGH/Az+QiTol5w/HG6Cu0ARKO/NF
-	 qw/+DC+3c5eksZhZmV9AFsXploQrV+hjHiAxdr1z1Cm3OHqT8eKVlf4kSk0ee1Dzgx
-	 LJVHbWa1yWNNO0c9Dqr9t/ujCrJP7zZ3tmuBaDzI0ak3C2OBcgHJcXsCbWEPUymHlm
-	 34MHuY67ipSRXUDxJz43vRz6uBaS7p8Pk0T/Xo3rQ8IrINrmotTPMFagJDqZSjoagC
-	 MLzHgklQmR5iTMiFxC0pqKPzD3IFTbC21LM6wJPbC9F9BKWjbn+ZZHq/UIZqQQeTIt
-	 v0f0MVA50XDeg==
+	b=ANvOkAkhNhGB8Eek/OpGmmeqnewdROAmxERz1lzyQi0NguhRLaeMFz6pm+jqgJark
+	 +ZF6LH6xZTkOBbcqk8eZVk/34nrmFB6OcJmOlgDhFJBQGJqh+5ZeNZprZAHXMAzk7O
+	 jBC+Czo2zlUDnI0w4OTBCStSshb8nrhZyZNNTecydsD95ux2ZUGpmR8KhmNeUbdxWE
+	 hDuyqlSCuK5JnodlQisIqeRRa6i71P/GuYNVhB+sPQDavkF5rkwu8IvIJbETV/fcro
+	 85mFdsJr5RN2lPq143UBl+yy0oJAwhSTmDZv7Y0fXys68bqu9aiAZqMSLQ6nG7rlNq
+	 XgY8fT6B3+8ng==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id E1767383B267;
-	Tue, 22 Jul 2025 00:50:09 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAEB8383B267;
+	Tue, 22 Jul 2025 00:50:12 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,39 +51,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: phy: qcom: qca807x: Enable WoL support
- using
- shared library
+Subject: Re: [PATCH net-next v1 1/1] net: usb: smsc95xx: add support for
+ ethtool
+ pause parameters
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <175314540876.247888.8839150831029400214.git-patchwork-notify@kernel.org>
-Date: Tue, 22 Jul 2025 00:50:08 +0000
-References: <20250718-qca807x_wol_support-v1-1-cfe323cbb4e8@quicinc.com>
-In-Reply-To: <20250718-qca807x_wol_support-v1-1-cfe323cbb4e8@quicinc.com>
-To: Luo Jie <quic_luoj@quicinc.com>
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, maxime.chevallier@bootlin.com
+ <175314541150.247888.9267793850029224418.git-patchwork-notify@kernel.org>
+Date: Tue, 22 Jul 2025 00:50:11 +0000
+References: <20250718075157.297923-1-o.rempel@pengutronix.de>
+In-Reply-To: <20250718075157.297923-1-o.rempel@pengutronix.de>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: steve.glendinning@shawell.net, andrew@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ kernel@pengutronix.de, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ UNGLinuxDriver@microchip.com
 
 Hello:
 
 This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Fri, 18 Jul 2025 21:57:48 +0800 you wrote:
-> The Wake-on-LAN (WoL) functionality for the QCA807x series is identical
-> to that of the AT8031. WoL support for QCA807x is enabled by utilizing
-> the at8031_set_wol() function provided in the shared library.
+On Fri, 18 Jul 2025 09:51:56 +0200 you wrote:
+> Implement ethtool .get_pauseparam and .set_pauseparam handlers for
+> configuring flow control on smsc95xx. The driver now supports enabling
+> or disabling transmit and receive pause frames, with or without
+> autonegotiation. Pause settings are applied during link-up based on
+> current PHY state and user configuration.
 > 
-> Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+> Previously, the driver used phy_get_pause() during link-up handling,
+> but lacked initialization and an ethtool interface to configure pause
+> modes. As a result, flow control support was effectively non-functional.
 > 
 > [...]
 
 Here is the summary with links:
-  - [net-next] net: phy: qcom: qca807x: Enable WoL support using shared library
-    https://git.kernel.org/netdev/net-next/c/14e710d7080f
+  - [net-next,v1,1/1] net: usb: smsc95xx: add support for ethtool pause parameters
+    https://git.kernel.org/netdev/net-next/c/c521b8c9f212
 
 You are awesome, thank you!
 -- 
