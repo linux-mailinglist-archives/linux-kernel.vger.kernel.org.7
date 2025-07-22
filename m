@@ -1,102 +1,151 @@
-Return-Path: <linux-kernel+bounces-740988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE861B0DE4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:25:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B4F1B0DE70
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:27:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FC9D1CA10C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:20:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E45918930D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:21:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B232ECEBB;
-	Tue, 22 Jul 2025 14:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92DE82EE28D;
+	Tue, 22 Jul 2025 14:16:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="zL1SBL5N"
-Received: from smtp86.iad3b.emailsrvr.com (smtp86.iad3b.emailsrvr.com [146.20.161.86])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=criticallink.com header.i=@criticallink.com header.b="cthboUTM"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5FB2ECEB5
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 14:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=146.20.161.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C33B23F413
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 14:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753193730; cv=none; b=d4Vtggfme7ITWouq8z+XdgCUNMIL7n4N008USuzSoqoXK3UkO3ULklAN+dWcIvr66VrZxOtXOBE8kFB3CakUe6NrWMCmGj7B+u8Gf/j3aJ1HYb/FOTaAjcNtwtQNCbMfccJc5plH3tfmNyBQTzYDwybzj3I3AmGDxi7zZUelQvg=
+	t=1753193814; cv=none; b=mRkRfI8YiSmN0QGrQo4CfgIbj/VCAyt57jTsf+XdikJctOUcp3FGt2IH82zx03s6XZbTBr0+wRM/QB6qqCPK64qInSVTS3LpGbiM2arPTvzBZ5Y6A4MBB06zsVa+LZShHvwOOv2yCLHoDWdUeJtfS73ogTvvGnkVFyewYGKEwRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753193730; c=relaxed/simple;
-	bh=32pIRkzV4n+K4q/AZ2pGxE0sg38YoX8IIHochykUVCk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OISKZ3eWABXn5irIqz6SPkUsDrRM227KA0srDz7NMQP9VsCtUZSCPRrWIHVunfFsod5OzKmlGk5W/00PZ2M5u369m06uc39Dvy2i0MoR4kVjhDa5Nyob0SvdM20TJuJs1rVk5iRINY7ZYNspyPFczG4w8fsAuA+wxgljXTjrKSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=zL1SBL5N; arc=none smtp.client-ip=146.20.161.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-	s=20221208-6x11dpa4; t=1753193728;
-	bh=32pIRkzV4n+K4q/AZ2pGxE0sg38YoX8IIHochykUVCk=;
-	h=Date:Subject:To:From:From;
-	b=zL1SBL5NyhP0JUu4nNNOOnwS4ok3flukRKp2/ZLInvsCqNwCv3+E0qvGdzfp67aCb
-	 hbEn9zZR4uugKWSqX3yk8CJ1uiqh8MGTIUwwORMYhYumlBj0gc1KMLPwl9t/zJJejr
-	 8sSNw4Er8t6gXCsDLyYDI5ReBs7+BQgfCpTvCs3Q=
-X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp3.relay.iad3b.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 277D94011A;
-	Tue, 22 Jul 2025 10:15:27 -0400 (EDT)
-Message-ID: <2f78d094-275d-4134-ba50-6769c191e96e@mev.co.uk>
-Date: Tue, 22 Jul 2025 15:15:26 +0100
+	s=arc-20240116; t=1753193814; c=relaxed/simple;
+	bh=VgF3YVg7j0A3Z4BF38oA80AX3KGiFBUsUIcqgCgCx84=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WbOsFhjXGGBMrpMj5stbfq9Ozu4JEEVzV+2UlsfiB2YGLY9R9n30qEpB/+zTSpo/JtDlYvotCcAs+saW2yqLtFxjMBWcSrSytPB3DwKKEohCuNX2pgQUefZOIrwlz0LN1wfOkI2V2Zz/6IHfeoCwMHMENFwlNG3WqwPBsg2vtAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=criticallink.com; spf=pass smtp.mailfrom=criticallink.com; dkim=pass (2048-bit key) header.d=criticallink.com header.i=@criticallink.com header.b=cthboUTM; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=criticallink.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=criticallink.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-70e75f30452so36167347b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 07:16:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=criticallink.com; s=google; t=1753193810; x=1753798610; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DLLBhbPdBkBAifwS3c4NzxbMRa+Sqhs2OsCY4dOuxvg=;
+        b=cthboUTMsrb+mP0TN+DgeYEfTFmid9tJ47+DqYkMCugKpDsbNLaTEj5pMocSI3GWky
+         NBrm1hkkKnZRbi4DaNHFU0yhEBxLq3sgRbM1TOu2O/tTds6BL2nXCyoZEFTp/4fNENHm
+         6CY5l2m61AGhvY+pr4GKeFU1lfO1Io5a+G+mNGzKs2aLfgCrhEdDUWDI18aksljzJ+3U
+         33RL6D/NKTk/4onWUvUxID099yvjBXuXrott06Pfrzi//BaLmE7frZuhzijJCYPtw8Xy
+         ovwjz2vcHuvnbxEJfUsG0x5aEkOpYr9t/dZq+/QzD1SfFNwWBf4bAM/cY/O2lSPbUZeq
+         OoYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753193810; x=1753798610;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DLLBhbPdBkBAifwS3c4NzxbMRa+Sqhs2OsCY4dOuxvg=;
+        b=qQrWbhO+xCQNUtDlfJ9cKw55+KAvn2BZHdnEiYvc1z8TvcVxiphcVychOjyxsCnUhN
+         +xv1nTjNWE37IFokNLgWEIunYR75laz1HJmyutJx3Td5Cf8J/zmGQ7ozRp2BAJN8uhcF
+         geJFAXIH4lebxt5HhUb2A13uAmvCr22pug3nn8RwO4zplEN4FsaMF6PY3bNwYygv3yla
+         4mieD5ejkxtOFNw2IBH0b0kAH+V2b4G2nyJttEv+2s2K64M1p8Zd3FgfKC1Lu96ibxbm
+         +WTBdGSz6uV3cxpYG/5sOIOtzSSw5Vcp+RLZ4hujHcFnvqUmmnDXz67yaiLmsmB2T6Ir
+         xXeg==
+X-Forwarded-Encrypted: i=1; AJvYcCWGZklM0y3IXArT9xNje+l6Q0jM5EFCwvb7EMJCYBaciIrtIyhHWUpEVna2XixD8zxNlk0eHs6gAqaXsPQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVbX1mlBScNHRkYpSMYc4SBmQogwhgX2szrxuhyVVUmuqKry6C
+	+tBmv9Sa6+rh9W7/ur7/IQ5buKBwLFq+wxu2Tv9YdU9bq6gUi7ZNQ+wsXBAY+WgLq0+h547o7sc
+	TFoZpEsLhyD+a59yxp87MrUzTng0I9tHl799vdpkh
+X-Gm-Gg: ASbGncv8hlkzlaHh6sEtP2tMsgoyMQPXsU2Gvpo58z+ft2IhtWPdmZKfAsc4f6ifJUG
+	40BrzuKl1M8+d7D/mvyP5prm1NrS0nEYvNGJ7vRwQGbg3STFa1164BqdaO2pnAe0eU0JWREzEyk
+	my8s8PnclB8qQn6f9fRTIQWm0sDG65I1bnL/Nn4rTQI4lxTE4hTvamDEbPc1/N8oZhsqtvBCPd4
+	VQdIH1B/nFF9zXO
+X-Google-Smtp-Source: AGHT+IEAusMMRxJv/4kenS4u2xWRco7tvJDmOmg4xje0HYxpNUnbtf8FDEI6YDJTxu6Nqtvrz384/0PUMhVHK8NdTDU=
+X-Received: by 2002:a05:690c:9a8a:b0:70e:7503:1180 with SMTP id
+ 00721157ae682-71834f363e9mr354128567b3.1.1753193810048; Tue, 22 Jul 2025
+ 07:16:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] KASAN: slab-use-after-free Read in
- io_poll_remove_entries
-To: Jens Axboe <axboe@kernel.dk>
-Cc: syzbot <syzbot+01523a0ae5600aef5895@syzkaller.appspotmail.com>,
- io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com, hsweeten@visionengravers.com,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <687bd5fe.a70a0220.693ce.0091.GAE@google.com>
- <9385a1a6-8c10-4eb5-9ab9-87aaeb6a7766@kernel.dk>
- <ede52bb4-c418-45c0-b133-4b5fb6682b04@kernel.dk>
- <d407c9f1-e625-4153-930f-6e44d82b32b5@kernel.dk>
- <20250722134724.6671e45b@ian-deb>
- <8320bd2b-b6d2-4ed8-84c6-cb04999e9f53@kernel.dk>
-Content-Language: en-GB
-From: Ian Abbott <abbotti@mev.co.uk>
-Organization: MEV Ltd.
-In-Reply-To: <8320bd2b-b6d2-4ed8-84c6-cb04999e9f53@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Classification-ID: 42e97f67-1fb7-4d94-9323-749955c81092-1-1
+References: <20250721233146.962225-1-s-ramamoorthy@ti.com> <CAMRc=McTJnTn1sf6Kc42yePvUyP87h1utJ7B_ynWjUxxm0E4Lw@mail.gmail.com>
+In-Reply-To: <CAMRc=McTJnTn1sf6Kc42yePvUyP87h1utJ7B_ynWjUxxm0E4Lw@mail.gmail.com>
+From: Jon Cormier <jcormier@criticallink.com>
+Date: Tue, 22 Jul 2025 10:16:38 -0400
+X-Gm-Features: Ac12FXw6Zmlkt5j8dq6rsx00GEtPhx20EHVdwU2_nlr4qMv2Js3WQIT7UbtZmPc
+Message-ID: <CADL8D3YaF4zt2Wu0Vv1=8W9e9n5BKM+2npgfVmLhJ=wz-jHMKQ@mail.gmail.com>
+Subject: Re: [PATCH v7 0/2] Add TI TPS65214 PMIC GPIO Support
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Shree Ramamoorthy <s-ramamoorthy@ti.com>, aaro.koskinen@iki.fi, andreas@kemnade.info, 
+	khilman@baylibre.com, rogerq@kernel.org, tony@atomide.com, 
+	linus.walleij@linaro.org, linux-omap@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, m-leonard@ti.com, 
+	praneeth@ti.com, christophe.jaillet@wanadoo.fr
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 22/07/2025 14:53, Jens Axboe wrote:
->> Thanks for your investigation and initial fix. I think dev->attach_lock
->> needs to be write-locked before calling is_device_busy() and released
->> after comedi_device_detach() (although that also write-locks it, so we
->> need to refactor that). Otherwise, someone could get added to the
->> wait_head after is_device_busy() returns.
-> 
-> Looked at this one post coffee, and this looks good to me. If the
-> ->cancel() part is all fine with attach_lock being held, this looks like
-> the simplest solution to the issue.
-> 
-> I still think the whole busy notion etc needs rethinking in comedi, it
-> should follow a more idiomatic approach rather than be special. But
-> that's really separate from this fix.
-> 
+On Tue, Jul 22, 2025 at 8:33=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
+>
+> On Tue, Jul 22, 2025 at 1:32=E2=80=AFAM Shree Ramamoorthy <s-ramamoorthy@=
+ti.com> wrote:
+> >
+> > The related MFD series was integrated in mainline during 6.15 cycle [0]=
+.
+> >
+> > TPS65214 is a Power Management Integrated Circuit (PMIC) that has
+> > significant register map overlap with TPS65219. The series introduces
+> > TPS65214 and restructures the existing driver to support multiple devic=
+es.
+> >
+> > TPS65215's GPIO specs are the same as TPS65219, so the "tps65219-gpio"
+> > compatible string is assigned to two devices in the TPS65219 MFD driver=
+.
+> > No additional support is required in the GPIO driver for TPS65215.
+> >
+> > - TPS65214 has 1 GPIO & 1 GPO, whereas TPS65219/TPS65215 both have 1 GP=
+IO &
+> >   2 GPOs.
+> > - TPS65214' GPIO direction can be changed with register GENERAL_CONFIG =
+and
+> >   bit GPIO_CONFIG during device operation.
+> > - TPS65219's MULTI_DEVICE_ENABLE bit in register MFP_1_CFG maps to
+> >   TPS65214's GPIO_VSEL_CONFIG bit.
+> >
+> > TPS65214 Datasheet: https://www.ti.com/lit/gpn/TPS65214
+> > TPS65214 TRM: https://www.ti.com/lit/pdf/slvud30
+> > TPS65215 TRM: https://www.ti.com/lit/pdf/slvucw5/
+> >
+> > Tested on Jon Cormier's AM62x platform with TPS65219.
+> > GPIO offsets remained consistent and functional.
+> >
+> > Signed-off-by: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+> > Tested-by: Jonathan Cormier <jcormier@criticallink.com>
+> > ---
+>
+> This doesn't apply on top of my gpio/for-next branch. Do you think you
+> can quickly submit another iteration rebased on top of it?
+Maybe this is a basic question but is there a rule of thumb for where
+to base patches to be submitted to the mailing lists?  I've generally
+been basing them off the latest tag in linux-stable/master.  I suppose
+this might be one of those it depends on the subsystem things?
+>
+> Bartosz
 
-The reason for the separate dev->attach_lock and dev->mutex is to reduce 
-the latency for read() and write() operations because dev->mutex can 
-sometimes be locked for quite a while when processing the 
-COMEDI_INSNLIST ioctl command, for example.  (At some point, I want to 
-make the COMEDI_BUFINFO ioctl use dev->attach_lock instead of 
-dev->mutex, because that is used when using mmap() instead of 
-read()/write().)
 
--- 
--=( Ian Abbott <abbotti@mev.co.uk> || MEV Ltd. is a company  )=-
--=( registered in England & Wales.  Regd. number: 02862268.  )=-
--=( Regd. addr.: S11 & 12 Building 67, Europa Business Park, )=-
--=( Bird Hall Lane, STOCKPORT, SK3 0XA, UK. || www.mev.co.uk )=-
+
+--=20
+Jonathan Cormier
+Senior Software Engineer
+
+Voice:  315.425.4045 x222
+
+http://www.CriticalLink.com
+6712 Brooklawn Parkway, Syracuse, NY 13211
 
