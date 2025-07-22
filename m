@@ -1,165 +1,231 @@
-Return-Path: <linux-kernel+bounces-741168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA804B0E0DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:44:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2125B0E0DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:47:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC5573BA3F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:43:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA74BAA2B5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:47:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33DDF27934A;
-	Tue, 22 Jul 2025 15:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8785C2797B1;
+	Tue, 22 Jul 2025 15:47:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FtJ7sLLX"
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U3eI/avi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02DEC7F9
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 15:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9432236E8;
+	Tue, 22 Jul 2025 15:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753199031; cv=none; b=insy4bCkOYg271McPy0YTZlyaKUNnWM4Zd3Zty4GAM6yaIEXkfyAPEaQHj2DRU36cZLVcFTqy/zic6gFlR574BvlGxucmk3iMWEBy11cryg2UI7OVLuiXfZWH2U7HnVwEaYmdjEu/iee2G9aGWsDGUkyjU3FsZk3P6dZPfz15dQ=
+	t=1753199249; cv=none; b=GhdNUl6EoCT7oqH5t8+v6KB1BZHfU8jlUyiEqdKqSJntJFng1fVF0oOvF2+JXNlwn/TKTkWkaI7waNbhbqi1vE7yw5H64jGm9+nKCuCtQvQM3nE4DJ/qsoTLwT/O4A/xNWHBqzF8i3DCpVmHelnLf+jZuSpeZ5+JLSQUxdxA3do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753199031; c=relaxed/simple;
-	bh=CUrTdEs39c/xgtv2X/zGY8xDO2egeXZ2WsKsIN2+tRQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qGuqFWOj2ACl72WulxGHgMxJV6miAc7EbNhOlqVlGW6ZHYe9Y1cXtP/mE5/kjp9P+2b82CK6C7WMCEG38KLZ61PQzPAZWwXEFu1/DEMwWJFo/QGL34XcaRdLCCme1tP/NLjixT23cF8VmxjiuXjGySXYcuqwOyPxl29Rav0Eiow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FtJ7sLLX; arc=none smtp.client-ip=209.85.166.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3e2429bd4b3so141025ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 08:43:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753199029; x=1753803829; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3cRByzjmXlHakbUDADfLIA3gNPpHcsdJJeFT7D+jLIo=;
-        b=FtJ7sLLXvjUVett84jUXd3vhbMLOOCrJ+oq0KZHVQX0rajEQy02LMjrVL1RaAt87IA
-         jrXn8C+/62L12S/BXzDm8HfiUUcxgPosoYfTOcikrJa6fVrNFFVqCj1MaQGQrM8NHK+j
-         f52y4TD/9JTQOvTzWPLV+a/kHeaxBkKEGxokddtijFuKyZURFNv/0xJFiuHHtJsMZ9jV
-         66lT2qcN2/CLwVuHNyjhi3wciAHLSp0V1GDhLU2BRV5UJJTLw+CJ9caYY4VnAxEceWm3
-         ILr3CBTJ8qbzekaI1OvhzLN/9eA6NDzUIZuV7AIkeuLZE99aGb5AiD2fDOXaIZhigoWJ
-         CE1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753199029; x=1753803829;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3cRByzjmXlHakbUDADfLIA3gNPpHcsdJJeFT7D+jLIo=;
-        b=P4gUV6Yzx8dKo0V3G/uP7KtXsFX/3Hcwh+qk9oFdJltDK7qj+uAEco+4KfY6RdM0S1
-         z+ThyNTFLTk27xIuPajka4PQqzV4w3FZXfv0Q/KokNupJgnwv73Pe4/cwEhZmOjFewn3
-         mVEyGUfPn84Js5xxJnSYUtACJMy9WzwcU7KnH4qb6WAa1GxKwo7uzqrMuq6qVUHYY3zx
-         vVDsnXGtOa7U4khKRpcJJ/onDlRToa8k6FYZ5tpEqrIlT8j7yClPpNIZvyRkXvHXYCaH
-         OfUWCCGFSsd1Cueim86QcKiv997pPMxendEPNRL5nQuIs3OK4U26VaoyUmq2PbNA4R16
-         czSw==
-X-Forwarded-Encrypted: i=1; AJvYcCUb5qBk0QXqPBIzrCbKVrLa7CRLF+nz3IMNP/7+C2YSAzHcvem8ppFyDcNuykQWM0dPOOTI4LqZnnmUILA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxap3jhql4jTkgwgNxscofjsfOS4QWsgNUGmX+rPhNZilZ+hCtb
-	X2fyb2T70D2ThCix50iCT5Bj1izpLQ3zDV5qcxVGSKhShgINHF1TdLlx5YV6rgOViiwzMS7h9HO
-	B+Ml8LWcNzUQ3VOB+lenEtx0qBBwRErmXzvyb6h2q
-X-Gm-Gg: ASbGncsvIXy9S0HO4Ze3cs7gH/izBAZBrOWR5d5U1MNHmxj/osktyzO/GuPxiSKa31i
-	HpZGrq7cGaDsyYhOTqBoGyvdFXd9fUaA9XMsx8zgZP1ugUc9Q8aZJdR0fZbrAKXt6Dlmxvy08+i
-	kegdFq1tXUNwiPmUMswZmWM7wOER51ClnEoKzc7K3KeVmpmJs4LrCLHz59KTVE5GVJQhTTJiIN6
-	S942UConx4uFh9+XASgKTFjRt9dPI9x/bQH
-X-Google-Smtp-Source: AGHT+IH+1Dq67RD41KZSIEi7UFc4mBYEq0GfKGkf8/oIBzjLtcGadoHu0BGd9A8Brk9Hqz+0mZw9anBuKj0rUYDY1BU=
-X-Received: by 2002:a05:6e02:214c:b0:3e0:51fc:6e8 with SMTP id
- e9e14a558f8ab-3e2c043f895mr3638245ab.15.1753199028463; Tue, 22 Jul 2025
- 08:43:48 -0700 (PDT)
+	s=arc-20240116; t=1753199249; c=relaxed/simple;
+	bh=M3Mc51dw7b8Gz9b/pdMV6wSzhw/d2UXhK7/Q+XXRt9c=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=l9IzjQRXImSQCGmUqIqgSFPU/RsuyZAOZbeW4UuSrsw7XIhkgGsD5EcyxkUUz+RYaQpgiJrxwEhPjC2pzORjcIHORJia8q0dXyQPzJ7HjX3Pv343bKARcjQ8xmht9GTFeMSFja7MP6chkebxqzyHCAkHWQvoGgZ//47zO/bfIVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U3eI/avi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BBC1C4CEEB;
+	Tue, 22 Jul 2025 15:47:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753199249;
+	bh=M3Mc51dw7b8Gz9b/pdMV6wSzhw/d2UXhK7/Q+XXRt9c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=U3eI/aviIJXp8gXKT1xbu+rMiWmUs7riUKvyqXgOQ+FepLvXOfJPUAtaeByyVeygF
+	 kxYHkSq9sEubs3CmSIQ4L8sUo08d7jLBwKQX9gM1C0hjs8oTyb/dLu3WVQK25AUNWe
+	 /DbCBI3o6o1qcXSKoeSr1MapTL4L5ANg8tC2x8e37JEqPwJRCwQV+0QN0KXwwQpbDK
+	 UijxJh72OZFEhsu4YCP4o4gtBhTpRD6LRXe0XvB9XOdvzqFB8XDbJpFk1xCxGoy+bA
+	 oPEkQxjUulFPw2ZrCzLBiJTbNUOlZLVpqMsBOzRpLd0VSxTzQNLx9c2fTGZ7Sil44k
+	 8TjrJJCjgHx8Q==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1ueFDD-000P2e-0K;
+	Tue, 22 Jul 2025 16:47:27 +0100
+Date: Tue, 22 Jul 2025 16:47:26 +0100
+Message-ID: <86h5z48bxt.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: kvmarm@lists.linux.dev,
+	kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	jackabt@amazon.com
+Subject: Re: [PATCH] KVM: arm64: selftest: Add standalone test checking for KVM's own UUID
+In-Reply-To: <20250722-87ac9d7e0b27cf7c67a4fbd3@orel>
+References: <20250721155136.892255-1-maz@kernel.org>
+	<20250722-87ac9d7e0b27cf7c67a4fbd3@orel>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250722061335.285249-1-changqing.li@windriver.com> <20250722061335.285249-2-changqing.li@windriver.com>
-In-Reply-To: <20250722061335.285249-2-changqing.li@windriver.com>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 22 Jul 2025 08:43:37 -0700
-X-Gm-Features: Ac12FXyliPqCkQcVPBqslolnXj7AP69BbNQgfIPMLhspxbvqujqVq8jFiYuM56Y
-Message-ID: <CAP-5=fWE4y=t0EF0zwnYyyacncFH0xpwJQGAWW3T2Ruu=STotA@mail.gmail.com>
-Subject: Re: [PATCH 1/1] tools/build: Let link command read option from file
-To: changqing.li@windriver.com
-Cc: namhyung@kernel.org, charlie@rivosinc.com, james.clark@linaro.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: ajones@ventanamicro.com, kvmarm@lists.linux.dev, kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, joey.gouly@arm.com, suzuki.poulose@arm.com, oliver.upton@linux.dev, yuzenghui@huawei.com, will@kernel.org, mark.rutland@arm.com, jackabt@amazon.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Mon, Jul 21, 2025 at 11:13=E2=80=AFPM <changqing.li@windriver.com> wrote=
-:
->
-> From: Changqing Li <changqing.li@windriver.com>
->
-> ld_multi will link multiple objects, when there are many objects, and
-> O=3D[absolute_path] is set, and the absolute_path is relatively long. It
-> is possile that this line "$(call if_changed,$(host)ld_multi)" will
-> report error:
-> "make[4]: /bin/sh: Argument list too long"
->
-> So make the ld command read option from file to fix above error. In
-> order to convenient debug, write the file content in dot-target.cmd
-> as comments.
->
-> Signed-off-by: Changqing Li <changqing.li@windriver.com>
+On Tue, 22 Jul 2025 10:18:10 +0100,
+Andrew Jones <ajones@ventanamicro.com> wrote:
+> 
+> Hi Marc,
+> 
+> On Mon, Jul 21, 2025 at 04:51:36PM +0100, Marc Zyngier wrote:
+> > Tinkering with UUIDs is a perilious task, and the KVM UUID gets
+> > broken at times. In order to spot this early enough, add a selftest
+> > that will shout if the expected value isn't found.
+> > 
+> > Signed-off-by: Marc Zyngier <maz@kernel.org>
+> > Link: https://lore.kernel.org/r/20250721130558.50823-1-jackabt.amazon@gmail.com
+> > ---
+> >  tools/testing/selftests/kvm/Makefile.kvm     |  1 +
+> >  tools/testing/selftests/kvm/arm64/kvm-uuid.c | 67 ++++++++++++++++++++
+> >  2 files changed, 68 insertions(+)
+> >  create mode 100644 tools/testing/selftests/kvm/arm64/kvm-uuid.c
+> > 
+> > diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selftests/kvm/Makefile.kvm
+> > index ce817a975e50a..e1eb1ba238a2a 100644
+> > --- a/tools/testing/selftests/kvm/Makefile.kvm
+> > +++ b/tools/testing/selftests/kvm/Makefile.kvm
+> > @@ -167,6 +167,7 @@ TEST_GEN_PROGS_arm64 += arm64/vgic_irq
+> >  TEST_GEN_PROGS_arm64 += arm64/vgic_lpi_stress
+> >  TEST_GEN_PROGS_arm64 += arm64/vpmu_counter_access
+> >  TEST_GEN_PROGS_arm64 += arm64/no-vgic-v3
+> > +TEST_GEN_PROGS_arm64 += arm64/kvm-uuid
+> >  TEST_GEN_PROGS_arm64 += access_tracking_perf_test
+> >  TEST_GEN_PROGS_arm64 += arch_timer
+> >  TEST_GEN_PROGS_arm64 += coalesced_io_test
+> > diff --git a/tools/testing/selftests/kvm/arm64/kvm-uuid.c b/tools/testing/selftests/kvm/arm64/kvm-uuid.c
+> > new file mode 100644
+> > index 0000000000000..89d9c8b182ae5
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/kvm/arm64/kvm-uuid.c
+> > @@ -0,0 +1,67 @@
+> > +#include <errno.h>
+> > +#include <linux/arm-smccc.h>
+> > +#include <asm/kvm.h>
+> > +#include <kvm_util.h>
+> > +
+> > +#include "processor.h"
+> > +
+> > +/*
+> > + * Do NOT redefine these constants, or try to replace them with some
+> > + * "common" version. They are hardcoded here to detect any potential
+> > + * breakage happening in the rest of the kernel.
+> > + *
+> > + * KVM UID value: 28b46fb6-2ec5-11e9-a9ca-4b564d003a74
+> > + */
+> > +#define ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_0	0xb66fb428U
+> > +#define ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_1	0xe911c52eU
+> > +#define ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_2	0x564bcaa9U
+> > +#define ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_3	0x743a004dU
+> > +
+> > +static void guest_code(void)
+> > +{
+> > +	struct arm_smccc_res res = {};
+> > +
+> > +	smccc_hvc(ARM_SMCCC_VENDOR_HYP_CALL_UID_FUNC_ID, 0, 0, 0, 0, 0, 0, 0, &res);
+> > +
+> > +	__GUEST_ASSERT(res.a0 != SMCCC_RET_NOT_SUPPORTED, "a0 = %lx\n", res.a0);
+> 
+> Should this check res.a0 == SMCCC_RET_SUCCESS instead?
 
-Hi Changqing,
+Yeah, probably.
 
-I believe your change makes sense. I notice that the regular kernel
-build has had to work around this problem too:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/scripts/Makefile.build#n290
-https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/scripts/Makefile.build#n463
-but in those workarounds the need for an extra .in file isn't
-necessary. Would such a change be possible here and avoid the need for
-cleaning up an extra file?
+> 
+> > +	__GUEST_ASSERT(res.a0 == ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_0 &&
+> > +		       res.a1 == ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_1 &&
+> > +		       res.a2 == ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_2 &&
+> > +		       res.a3 == ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_3,
+> > +		       "Unexpected KVM-specific UID %lx %lx %lx %lx\n", res.a0, res.a1, res.a2, res.a3);
+> > +	GUEST_DONE();
+> > +}
+> > +
+> > +int main (int argc, char *argv[])
+> > +{
+> > +	struct kvm_vcpu *vcpu;
+> > +	struct kvm_vm *vm;
+> > +	struct ucall uc;
+> > +	bool guest_done = false;
+> > +
+> > +	vm = vm_create_with_one_vcpu(&vcpu, guest_code);
+> > +
+> > +	while (!guest_done) {
+> > +		vcpu_run(vcpu);
+> > +
+> > +		switch (get_ucall(vcpu, &uc)) {
+> > +		case UCALL_SYNC:
+> > +			break;
+> > +		case UCALL_DONE:
+> > +			guest_done = true;
+> > +			break;
+> > +		case UCALL_ABORT:
+> > +			REPORT_GUEST_ASSERT(uc);
+> > +			break;
+> > +		case UCALL_PRINTF:
+> > +			printf("%s", uc.buffer);
+> > +			break;
+> > +		default:
+> > +			TEST_FAIL("Unexpected guest exit");
+> > +		}
+> > +	}
+> 
+> This is becoming a very common and useful pattern. I wonder if it's time
+> for a ucall helper
+> 
+> static void ucall_vcpu_run(struct kvm_vcpu *vcpu,
+>                            void (*sync_func)(struct kvm_vcpu *, void *),
+>                            void *sync_data)
+> {
+>         bool guest_done = false;
+>         struct ucall uc;
+> 
+>         while (!guest_done) {
+>                 vcpu_run(vcpu);
+> 
+>                 switch (get_ucall(vcpu, &uc)) {
+>                 case UCALL_SYNC:
+>                         if (sync_func)
+>                                 sync_func(vcpu, sync_data);
+>                         break;
+>                 case UCALL_DONE:
+>                         guest_done = true;
+>                         break;
+>                 case UCALL_ABORT:
+>                         REPORT_GUEST_ASSERT(uc);
+>                         break;
+>                 case UCALL_PRINTF:
+>                         printf("%s", uc.buffer);
+>                         break;
+>                 default:
+>                         TEST_FAIL("Unexpected guest exit");
+>                 }
+>         }
+> }
+
+Honestly, I don't know. My understanding is that the common kvm
+selftest code is now mostly a pile of x86-specific stuff, and I've
+made it a goal not to touch any of it.
 
 Thanks,
-Ian
 
-> ---
->  tools/build/Makefile.build | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
->
-> diff --git a/tools/build/Makefile.build b/tools/build/Makefile.build
-> index 3584ff308607..e57ce8c34685 100644
-> --- a/tools/build/Makefile.build
-> +++ b/tools/build/Makefile.build
-> @@ -70,11 +70,13 @@ quiet_cmd_gen =3D GEN     $@
->  # If there's nothing to link, create empty $@ object.
->  quiet_cmd_ld_multi =3D LD      $@
->        cmd_ld_multi =3D $(if $(strip $(obj-y)),\
-> -                     $(LD) -r -o $@  $(filter $(obj-y),$^),rm -f $@; $(A=
-R) rcs $@)
-> +                     $(LD) -r -o $@ @$@.in,rm -f $@; $(AR) rcs $@)
->
->  quiet_cmd_host_ld_multi =3D HOSTLD  $@
->        cmd_host_ld_multi =3D $(if $(strip $(obj-y)),\
-> -                          $(HOSTLD) -r -o $@  $(filter $(obj-y),$^),rm -=
-f $@; $(HOSTAR) rcs $@)
-> +                          $(HOSTLD) -r -o $@ @$@.in,rm -f $@; $(HOSTAR) =
-rcs $@)
-> +
-> +output_ld_multi_dotin =3D $(if $(quiet),,@printf "# %s:\n# " $@.in >> $(=
-dot-target).cmd;cat $@.in >> $(dot-target).cmd)
->
->  ifneq ($(filter $(obj),$(hostprogs)),)
->    host =3D host_
-> @@ -145,7 +147,10 @@ $(sort $(subdir-obj-y)): $(subdir-y) ;
->
->  $(in-target): $(obj-y) $(test-y) FORCE
->         $(call rule_mkdir)
-> +       $(file >$@.in,$(filter $(obj-y),$^))
->         $(call if_changed,$(host)ld_multi)
-> +       $(if $(strip $(any-prereq) $(arg-check)), $(output_ld_multi_dotin=
-))
-> +       @rm $@.in
->
->  __build: $(in-target)
->         @:
-> --
-> 2.34.1
->
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
