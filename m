@@ -1,257 +1,481 @@
-Return-Path: <linux-kernel+bounces-740809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BFA8B0D981
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:26:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12ABEB0D97A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:25:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 732AA1C81803
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:24:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A5936C3DC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C8E2EA49A;
-	Tue, 22 Jul 2025 12:20:16 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B4642EA48B
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 12:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0FA02EA750;
+	Tue, 22 Jul 2025 12:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="owAZfsII"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80FB82E8E05;
+	Tue, 22 Jul 2025 12:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753186816; cv=none; b=pKUU4Y2EDw96pKy2GPHVq+ow09gkrJeoWdzJMD5RZbHjmPY5b5IrhUZ7UVJaZs0bBO7kmE2XbVDBG9aVtvqjQWHUGEcfkCILeyvrMkvEkokgxgEun46cy4pLsadhjE1ihH0Uygda6ItZpRbz4CBNedvAt9Wpo+ixqGBcY6W9CAU=
+	t=1753186826; cv=none; b=dijFm7wZ8nTYi44olNo3G+0HbqIHi40L9bV+FVoi/6d1c/5ot87nBeqmzgfiOSfF++WPiynjKAHbeeWkcvmjoHrklfy3VHIuz0IXkvKlrcjf8vt10FRpUr4AG+ifIiUOSrVX6XtQBU+h3RAeCHZJbhHVhNd8a5s725ejrX2uy/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753186816; c=relaxed/simple;
-	bh=R/uCGAFuKyk/yhRsJFbZFTF2BDn+0ZJdwuNVRlQb7rU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gwh14IlW60cFSMGfgSL4jsjf+PD/sTUMse8SAc2aWpGg/3i8DhFuaPYcuCyUY3obHQbz9A1JnEscNi02sI7FMBnFEy94MglraDTOplwx8SQimRUjuDQQbvzNs1I9KtCqH/Jh2Hq9rcwxGyRIaeii+FyhdIK16iX2CJgR0DGUB9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8A5CE169E;
-	Tue, 22 Jul 2025 05:20:08 -0700 (PDT)
-Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8C9103F59E;
-	Tue, 22 Jul 2025 05:20:11 -0700 (PDT)
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: catalin.marinas@arm.com,
-	will@kernel.org,
-	broonie@kernel.org,
-	maz@kernel.org,
-	oliver.upton@linux.dev,
-	shameerali.kolothum.thodi@huawei.com,
-	joey.gouly@arm.com,
-	james.morse@arm.com,
-	ardb@kernel.org,
-	scott@os.amperecomputing.com,
-	suzuki.poulose@arm.com,
-	yuzenghui@huawei.com,
-	mark.rutland@arm.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: [PATCH v5 5/5] arm64: futex: support futex with FEAT_LSUI
-Date: Tue, 22 Jul 2025 13:19:56 +0100
-Message-Id: <20250722121956.1509403-6-yeoreum.yun@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250722121956.1509403-1-yeoreum.yun@arm.com>
-References: <20250722121956.1509403-1-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1753186826; c=relaxed/simple;
+	bh=ybCI5rPiPPljW6mxwKD4b1ykjuLur8/0LSAG5G/Jjmo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=J6utkjLXqGYgpmRXB8Nan5Fz4pNhjHb34Ige+Omz+pPxMsJq2As1gkrW5r9uBfNzTy1CnFdQQVPOIOdRjB5nhG94nVohP4Ir9BvKGNV58c7mkZfvpff0OmxxCGaT0VN/UbhaBaTPNOrMIXkijZSLjlcSczZe0SSceL0yxa8ac2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=owAZfsII; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56M7UBs6007509;
+	Tue, 22 Jul 2025 12:20:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	V2EWKptsP/09VktODjIcn6lEW2XiqugJ56Ae4NbGiWs=; b=owAZfsIIhh3IHQAr
+	HZiRmovhP5n1O8/U6YjECWzFTeGKbU5lQE4E+J6+GJNW3bHwMaZ12aQEx1W0GdRA
+	WHWPrmc3PVuqRIfKoEd/GdjhQupjJm2JnTUCJJJIzy/pYYJfJSNPBEzmJze+Xxrj
+	IyckcnR0zuZv5ewmN+j27t9uSFPANGyJOlnPlhOCRZyZD2w4uBRtTKap3ZHBi9fg
+	BQIly9KIWQwVsTD+/i8A2Ym+BUjTvWLd+lGoz0UINnIi5vecyWam9NIfnzobtkA8
+	HdrUCm3e1dOzp7Kd93SH1rrKRFpEhdnpAwjrrCBO31JFZx+535BkhjohtqZHWTHn
+	XTNf9Q==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 480459qvba-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Jul 2025 12:20:17 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56MCKH1h021961
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Jul 2025 12:20:17 GMT
+Received: from [10.216.43.82] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 22 Jul
+ 2025 05:20:12 -0700
+Message-ID: <53dd18ec-9a65-4bf7-8490-ca3eb56ce2a5@quicinc.com>
+Date: Tue, 22 Jul 2025 17:50:08 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/2] i2c: i2c-qcom-geni: Add Block event interrupt
+ support
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: Vinod Koul <vkoul@kernel.org>,
+        Mukesh Kumar Savaliya
+	<quic_msavaliy@quicinc.com>,
+        Viken Dadhaniya <quic_vdadhani@quicinc.com>,
+        Andi Shyti <andi.shyti@kernel.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <linaro-mm-sig@lists.linaro.org>, <quic_vtanuku@quicinc.com>
+References: <ba7559c8-36b6-4628-8fc4-26121f00abd5@quicinc.com>
+ <w6epbao7dwwx65crst6md4uxi3iivkcj55mhr2ko3z5olezhdl@ffam3xif6tmh>
+ <5ed77f6d-14d7-4b62-9505-ab988fa43bf2@quicinc.com>
+ <644oygj43z2um42tmmldp3feemgzrdoirzfw7pu27k4zi76bwg@wfxbtgqqgh4p>
+ <dc7358a1-ddc5-402e-9024-283f8e46e3b6@quicinc.com>
+ <CAO9ioeVuAO6mYpBSpiTW0jhFRPtkubZ5eEskd1yLBHVdR8_YMA@mail.gmail.com>
+ <1b55d9d4-f3ff-4cd9-8906-5f370da55732@quicinc.com>
+ <28d26c70-178f-413b-b7f8-410c508cfdd7@quicinc.com>
+ <CAO9ioeXBwFYL8q7x7_fHvx5YO+qyAXk4wpnfPrku4iY9yBsk0Q@mail.gmail.com>
+ <cac5e84b-fbdb-47a9-860d-16a7fa4dc773@quicinc.com>
+ <4q3vlydi5xgltd3pcez54alxgrehhfn4pppg47ngwp6y5k7n33@d4d4htntj64k>
+Content-Language: en-US
+From: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+In-Reply-To: <4q3vlydi5xgltd3pcez54alxgrehhfn4pppg47ngwp6y5k7n33@d4d4htntj64k>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: OseWpkD-g4xrPKiq58xxdjneQYxsGGMK
+X-Authority-Analysis: v=2.4 cv=fdyty1QF c=1 sm=1 tr=0 ts=687f8201 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
+ a=BhchBCipybXHn-8tsvIA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: OseWpkD-g4xrPKiq58xxdjneQYxsGGMK
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDEwMCBTYWx0ZWRfXwHKgHAGDYESC
+ 3p8G783YLNiA5XPtvkPgOOG9ILmhD/zpQI6OBPYSq+9WwidzNgBEnpk3NBuZ7dFDl5Vs358urIX
+ 4PqwVj9qg2SnkujkPa/a25Pb+72QDBE347eG/46a6+I94NKkYOZtlQW6bbdKCBLbu0x878bty+X
+ /Ef4RN6Etk7TPXdUryyHkthphQNDqRDJQeNPL29L07Iv3cxd0MCFnYLL0hCIn+Yyo/pkjbIqSBY
+ 33kiORilPJuUqY4kyE7wEEtDEjV5WHSLnmUUlrgBtIwcWmsOKDeanW2CIVu5oLtuOsyL10aK2aj
+ GXvM/V5Hi9cOvPR65J7SwCBF1x6Bz9kh7ZwWpbLZOauLoMrm8mCWnYSxUB3jukDAY5b9/U4dsYj
+ uXBM9ZNqOak/YTB83GvQnJV5C1MW8vQPNsQJ5gbgA4mBB3Uoyhg5dnU8BT4tbek/rq8QOjma
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-22_02,2025-07-21_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 priorityscore=1501 phishscore=0 impostorscore=0
+ mlxlogscore=999 mlxscore=0 spamscore=0 bulkscore=0 malwarescore=0
+ lowpriorityscore=0 adultscore=0 clxscore=1015 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507220100
 
-Current futex atomic operations are implemented with ll/sc instructions
-and clearing PSTATE.PAN.
 
-Since Armv9.6, FEAT_LSUI supplies not only load/store instructions but
-also atomic operation for user memory access in kernel it doesn't need
-to clear PSTATE.PAN bit anymore.
 
-With theses instructions some of futex atomic operations don't need to
-be implmented with ldxr/stlxr pair instead can be implmented with
-one atomic operation supplied by FEAT_LSUI.
+On 7/19/2025 3:27 PM, Dmitry Baryshkov wrote:
+> On Mon, Jul 07, 2025 at 09:58:30PM +0530, Jyothi Kumar Seerapu wrote:
+>>
+>>
+>> On 7/4/2025 1:11 AM, Dmitry Baryshkov wrote:
+>>> On Thu, 3 Jul 2025 at 15:51, Jyothi Kumar Seerapu
+>>> <quic_jseerapu@quicinc.com> wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 6/19/2025 9:46 PM, Jyothi Kumar Seerapu wrote:
+>>>>>
+>>>>>
+>>>>> On 6/18/2025 1:02 AM, Dmitry Baryshkov wrote:
+>>>>>> On Tue, 17 Jun 2025 at 17:11, Jyothi Kumar Seerapu
+>>>>>> <quic_jseerapu@quicinc.com> wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>> On 5/30/2025 10:12 PM, Dmitry Baryshkov wrote:
+>>>>>>>> On Fri, May 30, 2025 at 07:36:05PM +0530, Jyothi Kumar Seerapu wrote:
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> On 5/21/2025 6:15 PM, Dmitry Baryshkov wrote:
+>>>>>>>>>> On Wed, May 21, 2025 at 03:58:48PM +0530, Jyothi Kumar Seerapu wrote:
+>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>> On 5/9/2025 9:31 PM, Dmitry Baryshkov wrote:
+>>>>>>>>>>>> On 09/05/2025 09:18, Jyothi Kumar Seerapu wrote:
+>>>>>>>>>>>>> Hi Dimitry, Thanks for providing the review comments.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> On 5/6/2025 5:16 PM, Dmitry Baryshkov wrote:
+>>>>>>>>>>>>>> On Tue, May 06, 2025 at 04:48:44PM +0530, Jyothi Kumar Seerapu
+>>>>>>>>>>>>>> wrote:
+>>>>>>>>>>>>>>> The I2C driver gets an interrupt upon transfer completion.
+>>>>>>>>>>>>>>> When handling multiple messages in a single transfer, this
+>>>>>>>>>>>>>>> results in N interrupts for N messages, leading to significant
+>>>>>>>>>>>>>>> software interrupt latency.
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> To mitigate this latency, utilize Block Event Interrupt (BEI)
+>>>>>>>>>>>>>>> mechanism. Enabling BEI instructs the hardware to prevent
+>>>>>>>>>>>>>>> interrupt
+>>>>>>>>>>>>>>> generation and BEI is disabled when an interrupt is necessary.
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> Large I2C transfer can be divided into chunks of 8 messages
+>>>>>>>>>>>>>>> internally.
+>>>>>>>>>>>>>>> Interrupts are not expected for the first 7 message
+>>>>>>>>>>>>>>> completions, only
+>>>>>>>>>>>>>>> the last message triggers an interrupt, indicating the
+>>>>>>>>>>>>>>> completion of
+>>>>>>>>>>>>>>> 8 messages. This BEI mechanism enhances overall transfer
+>>>>>>>>>>>>>>> efficiency.
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> Why do you need this complexity? Is it possible to set the
+>>>>>>>>>>>>>> DMA_PREP_INTERRUPT flag on the last message in the transfer?
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> If i undertsand correctly, the suggestion is to get the single
+>>>>>>>>>>>>> intetrrupt for last i2c message only.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> But With this approach, we can't handle large number of i2c
+>>>>>>>>>>>>> messages
+>>>>>>>>>>>>> in the transfer.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> In GPI driver, number of max TREs support is harcoded to 64
+>>>>>>>>>>>>> (#define
+>>>>>>>>>>>>> CHAN_TRES   64) and for I2C message, we need Config TRE, GO TRE
+>>>>>>>>>>>>> and
+>>>>>>>>>>>>> DMA TREs. So, the avilable TREs are not sufficient to handle
+>>>>>>>>>>>>> all the
+>>>>>>>>>>>>> N messages.
+>>>>>>>>>>>>
+>>>>>>>>>>>> It sounds like a DMA driver issue. In other words, the DMA
+>>>>>>>>>>>> driver can
+>>>>>>>>>>>> know that it must issue an interrupt before exausting 64 TREs in
+>>>>>>>>>>>> order
+>>>>>>>>>>>> to
+>>>>>>>>>>>>
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> Here, the plan is to queue i2c messages (QCOM_I2C_GPI_MAX_NUM_MSGS
+>>>>>>>>>>>>> or 'num' incase for less messsages), process and unmap/free
+>>>>>>>>>>>>> upon the
+>>>>>>>>>>>>> interrupt based on QCOM_I2C_GPI_NUM_MSGS_PER_IRQ.
+>>>>>>>>>>>>
+>>>>>>>>>>>> Why? This is some random value which has no connection with
+>>>>>>>>>>>> CHAN_TREs.
+>>>>>>>>>>>> Also, what if one of the platforms get a 'liter' GPI which
+>>>>>>>>>>>> supports less
+>>>>>>>>>>>> TREs in a single run? Or a super-premium platform which can use 256
+>>>>>>>>>>>> TREs? Please don't workaround issues from one driver in another
+>>>>>>>>>>>> one.
+>>>>>>>>>>>
+>>>>>>>>>>> We are trying to utilize the existing CHAN_TRES mentioned in the
+>>>>>>>>>>> GPI driver.
+>>>>>>>>>>> With the following approach, the GPI hardware can process N
+>>>>>>>>>>> number of I2C
+>>>>>>>>>>> messages, thereby improving throughput and transfer efficiency.
+>>>>>>>>>>>
+>>>>>>>>>>> The main design consideration for using the block event interrupt
+>>>>>>>>>>> is as
+>>>>>>>>>>> follows:
+>>>>>>>>>>>
+>>>>>>>>>>> Allow the hardware to process the TREs (I2C messages), while the
+>>>>>>>>>>> software
+>>>>>>>>>>> concurrently prepares the next set of TREs to be submitted to the
+>>>>>>>>>>> hardware.
+>>>>>>>>>>> Once the TREs are processed, they can be freed, enabling the
+>>>>>>>>>>> software to
+>>>>>>>>>>> queue new TREs. This approach enhances overall optimization.
+>>>>>>>>>>>
+>>>>>>>>>>> Please let me know if you have any questions, concerns, or
+>>>>>>>>>>> suggestions.
+>>>>>>>>>>
+>>>>>>>>>> The question was why do you limit that to
+>>>>>>>>>> QCOM_I2C_GPI_NUM_MSGS_PER_IRQ.
+>>>>>>>>>> What is the reason for that limit, etc. If you think about it, The
+>>>>>>>>>> GENI
+>>>>>>>>>> / I2C doesn't impose any limit on the number of messages processed in
+>>>>>>>>>> one go (if I understand it correctly). Instead the limit comes
+>>>>>>>>>> from the
+>>>>>>>>>> GPI DMA driver. As such, please don't add extra 'handling' to the I2C
+>>>>>>>>>> driver. Make GPI DMA driver responsible for saying 'no more for now',
+>>>>>>>>>> then I2C driver can setup add an interrupt flag and proceed with
+>>>>>>>>>> submitting next messages, etc.
+>>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> For I2C messages, we need to prepare TREs for Config, Go and DMAs.
+>>>>>>>>> However,
+>>>>>>>>> if a large number of I2C messages are submitted then may may run
+>>>>>>>>> out of
+>>>>>>>>> memory for serving the TREs. The GPI channel supports a maximum of
+>>>>>>>>> 64 TREs,
+>>>>>>>>> which is insufficient to serve 32 or even 16 I2C messages
+>>>>>>>>> concurrently,
+>>>>>>>>> given the multiple TREs required per message.
+>>>>>>>>>
+>>>>>>>>> To address this limitation, a strategy has been implemented to
+>>>>>>>>> manage how
+>>>>>>>>> many messages can be queued and how memory is recycled. The constant
+>>>>>>>>> QCOM_I2C_GPI_MAX_NUM_MSGS is set to 16, defining the upper limit of
+>>>>>>>>> messages that can be queued at once. Additionally,
+>>>>>>>>> QCOM_I2C_GPI_NUM_MSGS_PER_IRQ is set to 8, meaning that
+>>>>>>>>> half of the queued messages are expected to be freed or deallocated
+>>>>>>>>> per
+>>>>>>>>> interrupt.
+>>>>>>>>> This approach ensures that the driver can efficiently manage TRE
+>>>>>>>>> resources
+>>>>>>>>> and continue queuing new I2C messages without exhausting memory.
+>>>>>>>>>> I really don't see a reason for additional complicated handling in
+>>>>>>>>>> the
+>>>>>>>>>> geni driver that you've implemented. Maybe I misunderstand
+>>>>>>>>>> something. In
+>>>>>>>>>> such a case it usually means that you have to explain the design
+>>>>>>>>>> in the
+>>>>>>>>>> commit message / in-code comments.
+>>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> The I2C Geni driver is designed to prepare and submit descriptors
+>>>>>>>>> to the GPI
+>>>>>>>>> driver one message at a time.
+>>>>>>>>> As a result, the GPI driver does not have visibility into the current
+>>>>>>>>> message index or the total number of I2C messages in a transfer.
+>>>>>>>>> This lack
+>>>>>>>>> of context makes it challenging to determine when to set the block
+>>>>>>>>> event
+>>>>>>>>> interrupt, which is typically used to signal the completion of a
+>>>>>>>>> batch of
+>>>>>>>>> messages.
+>>>>>>>>>
+>>>>>>>>> So, the responsibility for deciding when to set the BEI should lie
+>>>>>>>>> with the
+>>>>>>>>> I2C driver.
+>>>>>>>>>
+>>>>>>>>> If this approach is acceptable, I will proceed with updating the
+>>>>>>>>> relevant
+>>>>>>>>> details in the commit message.
+>>>>>>>>>
+>>>>>>>>> Please let me know if you have any concerns or suggestions.
+>>>>>>>>
+>>>>>>> Hi Dmitry, Sorry for the delayed response, and thank you for the
+>>>>>>> suggestions.
+>>>>>>>
+>>>>>>>> - Make gpi_prep_slave_sg() return NULL if flags don't have
+>>>>>>>>       DMA_PREP_INTERRUPT flag and there are no 3 empty TREs for the
+>>>>>>>>       interrupt-enabled transfer.
+>>>>>>> "there are no 3 empty TREs for the interrupt-enabled transfer."
+>>>>>>> Could you please help me understand this a bit better?
+>>>>>>
+>>>>>> In the GPI driver you know how many TREs are available. In
+>>>>>> gpi_prep_slave_sg() you can check that and return an error if there
+>>>>>> are not enough TREs available.
+>>>>>>
+>>>>>>>>
+>>>>>>>> - If I2C driver gets NULL from dmaengine_prep_slave_single(), retry
+>>>>>>>>       again, adding DMA_PREP_INTERRUPT. Make sure that the last one
+>>>>>>>> always
+>>>>>>>>       gets DMA_PREP_INTERRUPT.
+>>>>>>> Does this mean we need to proceed to the next I2C message and ensure
+>>>>>>> that the DMA_PREP_INTERRUPT flag is set for the last I2C message in each
+>>>>>>> chunk? And then, should we submit the chunk of messages to the GSI
+>>>>>>> hardware for processing?
+>>>>>>
+>>>>>> No. You don't have to peek at the next I2C message. This all concerns
+>>>>>> the current I2C message. The only point where you have to worry is to
+>>>>>> explicitly set the flag for the last message.
+>>>>>>
+>>>>>>>
+>>>>>>>>
+>>>>>>>> - In geni_i2c_gpi_xfer() split the loop to submit messages until you
+>>>>>>>>       can, then call wait_for_completion_timeout() and then
+>>>>>>>>       geni_i2c_gpi_unmap() for submitted messages, then continue with
+>>>>>>>> a new
+>>>>>>>>       portion of messages.
+>>>>>>> Since the GPI channel supports a maximum of 64 TREs, should we consider
+>>>>>>> submitting a smaller number of predefined messages — perhaps fewer than
+>>>>>>> 32, such as 16?
+>>>>>>
+>>>>>> Why? Just submit messages until they fit, then flush the DMA async
+>>>>>> channel.
+>>>>>>
+>>>>>>> This is because handling 32 messages would require one TRE for config
+>>>>>>> and 64 TREs for the Go and DMA preparation steps, which exceeds the
+>>>>>>> channel's TRE capacity of 64.
+>>>>>>>
+>>>>>>> We designed the approach to submit a portion of the messages — for
+>>>>>>> example, 16 at a time. Once 8 messages are processed and freed, the
+>>>>>>> hardware can continue processing the TREs, while the software
+>>>>>>> simultaneously prepares the next set of TREs. This parallelism helps in
+>>>>>>> efficiently utilizing the hardware and enhances overall system
+>>>>>>> optimization.
+>>>>>>
+>>>>>>
+>>>>>> And this overcomplicates the driver and introduces artificial
+>>>>>> limitations which need explanation. Please fix it in a simple way
+>>>>>> first. Then you can e.g. implement the watermark at the half of the
+>>>>>> GPI channel depth and request DMA_PREP_INTERRUPT to be set in the
+>>>>>> middle of the full sequence, allowing it to be used asynchronously in
+>>>>>> the background.
+>>>>>>
+>>>>>
+>>>>> Okay, will review it. Thanks.
+>>>>>
+>>>>>
+>>>>
+>>>> Hi Dmitry,
+>>>>
+>>>> Can you please check and confirm the approach to follow is something
+>>>> like the pseudo code mentioned below:
+>>>
+>>> Yes, this is what I've had in mind.
+>>
+>> So, Apart from the changes related to "submitting I2C messages until they
+>> fit" and "unmapping all processed I2C messages together", the rest of the
+>> code looks remains the same as in the v6 patch ?
+>> Also, in the GPI driver, we need to add logic to retrieve the number of
+>> available TREs.
+>>
+>> I have a concern regarding throughput and achieving parallelism between
+>> software and hardware processing with this new approach. Since we need to
+>> unmap all processed messages together, the software cannot queue the next
+>> set of TREs while the hardware is still processing the current ones.
+> 
+> Does that warrant the over-complexity of the driver or close-coupling of
+> I2C and GPE drivers?
+> 
+> The I2C is a slow bus and it is not expected to be used for
+> high-throughput data.
+> 
+The block event interrupt and multi-descriptor handling are primarily 
+added to support a camera use case, where multiple registers are need to 
+be configured in a single I2C transfer with 200 or more i2c messages. 
+This enhancement is expected to improve throughput and meet performance 
+KPIs.
 
-However, some of futex atomic operations still need to use ll/sc way
-via ldtxr/stltxr supplied by FEAT_LSUI since there is no correspondant
-atomic instruction or doesn't support word size operation.
-(i.e) eor, cas{mb}t
+>>
+>> As I mentioned earlier, the previous approach allowed partial unmapping
+>> where half of the messages processed by the hardware could be
+>> freed/unmapped. This enabled the hardware to continue processing the
+>> remaining TREs while the software simultaneously prepared the next batch.
+>> This parallelism helped in better hardware utilization and improved overall
+>> system performance.
+> 
+> Measurements / values / impact?
+> 
+>>
+>> Could you please confirm if can go with the similar approach of unmap the
+>> processed TREs based on a fixed threshold or constant value, instead of
+>> unmapping them all at once?
+> 
+> I'd still say, that's a bad idea. Please stay within the boundaries of
+> the DMA API.
+ >
+I agree with the approach you suggested—it's the GPI's responsibility to 
+manage the available TREs.
 
-But It's good to work without clearing PSTATE.PAN bit.
+However, I'm curious whether can we set a dynamic watermark value 
+perhaps half the available TREs) to trigger unmapping of processed TREs 
+? This would allow the software to prepare the next set of TREs while 
+the hardware continues processing the remaining ones, enabling better 
+parallelism and throughput.
 
-Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
----
- arch/arm64/include/asm/futex.h | 142 ++++++++++++++++++++++++++++++++-
- 1 file changed, 141 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/include/asm/futex.h b/arch/arm64/include/asm/futex.h
-index fdec4f3f2b15..38fc98f4af46 100644
---- a/arch/arm64/include/asm/futex.h
-+++ b/arch/arm64/include/asm/futex.h
-@@ -9,6 +9,8 @@
- #include <linux/uaccess.h>
- #include <linux/stringify.h>
- 
-+#include <asm/alternative.h>
-+#include <asm/alternative-macros.h>
- #include <asm/errno.h>
- 
- #define LLSC_MAX_LOOPS	128 /* What's the largest number you can think of? */
-@@ -115,11 +117,149 @@ __llsc_futex_cmpxchg(u32 __user *uaddr, u32 oldval, u32 newval, u32 *oval)
- 	return ret;
- }
- 
-+#ifdef CONFIG_AS_HAS_LSUI
-+
-+#define __LSUI_PREAMBLE	".arch_extension lsui\n"
-+
-+#define LSUI_FUTEX_ATOMIC_OP(op, asm_op, mb)				\
-+static __always_inline int						\
-+__lsui_futex_atomic_##op(int oparg, u32 __user *uaddr, int *oval)	\
-+{									\
-+	int ret = 0;							\
-+	int val;							\
-+									\
-+	mte_enable_tco();						\
-+	uaccess_ttbr0_enable();						\
-+									\
-+	asm volatile("// __lsui_futex_atomic_" #op "\n"			\
-+	__LSUI_PREAMBLE							\
-+	"1:	" #asm_op #mb "	%w3, %w2, %1\n"				\
-+	"2:\n"								\
-+	_ASM_EXTABLE_UACCESS_ERR(1b, 2b, %w0)				\
-+	: "+r" (ret), "+Q" (*uaddr), "=r" (val)				\
-+	: "r" (oparg)							\
-+	: "memory");							\
-+									\
-+	mte_disable_tco();						\
-+	uaccess_ttbr0_disable();					\
-+									\
-+	if (!ret)							\
-+		*oval = val;						\
-+									\
-+	return ret;							\
-+}
-+
-+LSUI_FUTEX_ATOMIC_OP(add, ldtadd, al)
-+LSUI_FUTEX_ATOMIC_OP(or, ldtset, al)
-+LSUI_FUTEX_ATOMIC_OP(andnot, ldtclr, al)
-+LSUI_FUTEX_ATOMIC_OP(set, swpt, al)
-+
-+static __always_inline int
-+__lsui_futex_atomic_and(int oparg, u32 __user *uaddr, int *oval)
-+{
-+	return __lsui_futex_atomic_andnot(~oparg, uaddr, oval);
-+}
-+
-+static __always_inline int
-+__lsui_futex_atomic_eor(int oparg, u32 __user *uaddr, int *oval)
-+{
-+	unsigned int loops = LLSC_MAX_LOOPS;
-+	int ret, val, tmp;
-+
-+	mte_enable_tco();
-+	uaccess_ttbr0_enable();
-+
-+	/*
-+	 * there are no ldteor/stteor instructions...
-+	 */
-+	asm volatile("// __lsui_futex_atomic_eor\n"
-+	__LSUI_PREAMBLE
-+	"	prfm	pstl1strm, %2\n"
-+	"1:	ldtxr	%w1, %2\n"
-+	"	eor	%w3, %w1, %w5\n"
-+	"2:	stltxr	%w0, %w3, %2\n"
-+	"	cbz	%w0, 3f\n"
-+	"	sub	%w4, %w4, %w0\n"
-+	"	cbnz	%w4, 1b\n"
-+	"	mov	%w0, %w6\n"
-+	"3:\n"
-+	"	dmb	ish\n"
-+	_ASM_EXTABLE_UACCESS_ERR(1b, 3b, %w0)
-+	_ASM_EXTABLE_UACCESS_ERR(2b, 3b, %w0)
-+	: "=&r" (ret), "=&r" (val), "+Q" (*uaddr), "=&r" (tmp),
-+	  "+r" (loops)
-+	: "r" (oparg), "Ir" (-EAGAIN)
-+	: "memory");
-+
-+	mte_disable_tco();
-+	uaccess_ttbr0_disable();
-+
-+	if (!ret)
-+		*oval = val;
-+
-+	return ret;
-+}
-+
-+static __always_inline int
-+__lsui_futex_cmpxchg(u32 __user *uaddr, u32 oldval, u32 newval, u32 *oval)
-+{
-+	int ret = 0;
-+	unsigned int loops = LLSC_MAX_LOOPS;
-+	u32 val, tmp;
-+
-+	mte_enable_tco();
-+	uaccess_ttbr0_enable();
-+
-+	/*
-+	 * cas{al}t doesn't support word size...
-+	 */
-+	asm volatile("//__lsui_futex_cmpxchg\n"
-+	__LSUI_PREAMBLE
-+	"	prfm	pstl1strm, %2\n"
-+	"1:	ldtxr	%w1, %2\n"
-+	"	eor	%w3, %w1, %w5\n"
-+	"	cbnz	%w3, 4f\n"
-+	"2:	stltxr	%w3, %w6, %2\n"
-+	"	cbz	%w3, 3f\n"
-+	"	sub	%w4, %w4, %w3\n"
-+	"	cbnz	%w4, 1b\n"
-+	"	mov	%w0, %w7\n"
-+	"3:\n"
-+	"	dmb	ish\n"
-+	"4:\n"
-+	_ASM_EXTABLE_UACCESS_ERR(1b, 4b, %w0)
-+	_ASM_EXTABLE_UACCESS_ERR(2b, 4b, %w0)
-+	: "+r" (ret), "=&r" (val), "+Q" (*uaddr), "=&r" (tmp), "+r" (loops)
-+	: "r" (oldval), "r" (newval), "Ir" (-EAGAIN)
-+	: "memory");
-+
-+	mte_disable_tco();
-+	uaccess_ttbr0_disable();
-+
-+	if (!ret)
-+		*oval = oldval;
-+
-+	return ret;
-+}
-+
-+#define __lsui_llsc_body(op, ...)					\
-+({									\
-+	alternative_has_cap_likely(ARM64_HAS_LSUI) ?			\
-+		__lsui_##op(__VA_ARGS__) : __llsc_##op(__VA_ARGS__);	\
-+})
-+
-+#else	/* CONFIG_AS_HAS_LSUI */
-+
-+#define __lsui_llsc_body(op, ...)	__llsc_##op(__VA_ARGS__)
-+
-+#endif	/* CONFIG_AS_HAS_LSUI */
-+
-+
- #define FUTEX_ATOMIC_OP(op)						\
- static __always_inline int						\
- __futex_atomic_##op(int oparg, u32 __user *uaddr, int *oval)		\
- {									\
--	return __llsc_futex_atomic_##op(oparg, uaddr, oval);		\
-+	return __lsui_llsc_body(futex_atomic_##op, oparg, uaddr, oval);	\
- }
- 
- FUTEX_ATOMIC_OP(add)
--- 
-LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+>>>
+>>>>
+>>>> GPI driver:
+>>>> In gpi_prep_slave_sg() function,
+>>>>
+>>>> if (!(flags & DMA_PREP_INTERRUPT) && !gpi_available_tres(chan))
+>>>>           return NULL;
+>>>>
+>>>>
+>>>> I2C GENI driver:
+>>>>
+>>>> for (i = 0; i < num; i++)
+>>>> {
+>>>>       /* Always set interrupt for the last message */
+>>>>       if (i == num_msgs - 1)
+>>>>           flags |= DMA_PREP_INTERRUPT;
+>>>>
+>>>>
+>>>>       desc = dmaengine_prep_slave_single(chan, dma_addr, len, dir, flags);
+>>>>       if (!desc && !(flags & DMA_PREP_INTERRUPT)) {
+>>>>             /* Retry with interrupt if not enough TREs */
+>>>>             flags |= DMA_PREP_INTERRUPT;
+>>>>             desc = dmaengine_prep_slave_single(chan, dma_addr, len, dir,   flags);
+>>>>       }
+>>>>
+>>>>
+>>>>       if (!desc)
+>>>>           break;
+>>>>
+>>>>
+>>>>        dmaengine_submit(desc);
+>>>>        msg_idx++;
+>>>> }
+>>>>
+>>>> dma_async_issue_pending(chan));
+>>>>
+>>>> time_left = wait_for_completion_timeout(&gi2c->done, XFER_TIMEOUT);
+>>>> if (!time_left)
+>>>>           return -ETIMEDOUT;
+>>>>
+>>>> Now Invoke "geni_i2c_gpi_unmap" for unmapping all submitted I2C messages.
+>>>>
+>>>>
+>>>> Thanks,
+>>>> JyothiKumar
+>>>>
+>>>>
+>>>>
+>>>
+>>>
+>>
+> 
 
 
