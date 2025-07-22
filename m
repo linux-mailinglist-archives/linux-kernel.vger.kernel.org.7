@@ -1,212 +1,310 @@
-Return-Path: <linux-kernel+bounces-741108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21E65B0E02C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:16:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C662B0E02F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:16:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAF5A1C80DA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:10:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0BED188C075
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:11:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EDA62EA495;
-	Tue, 22 Jul 2025 15:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A91128B7C7;
+	Tue, 22 Jul 2025 15:10:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ey3Ss0rf"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qQImAd8V"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7030A2EA156
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 15:09:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4BFC1C84DE
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 15:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753196973; cv=none; b=rmWvsqJ+7ZeudyhC0olplK6VnfaBbdlEPNOIR91XnTsbsr5RPzuMTT07+A3sx0eVBJsfFtHgA9BBK3hSb4bpA/B/lPYjTXK+NZTmCL/StkGWKnIwbAPK+AkJQBqqPiR2q5pV+YfBQnr+9Jqe3oDNvlCciNut/Xlrrz2Y96kDfXI=
+	t=1753197053; cv=none; b=NpnrqabmD/1NnhCj6Vwf0D+afAL2pznbin3lwFpVy1Y42B038xgeYrRvGT2+d47kFKg+kSRIUAGB3W/xzxclZ59wbhAcIfcXh31XYW6GFT+YouBIE0ArEfAWfgnQAmO/bk8v08sbnHpeOfO3hbINctLmhSlHwP72oBTSx/xLZYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753196973; c=relaxed/simple;
-	bh=8sr6LThGTFN/5LAOo0/+N4gENZSD+AbbBtmgTBNp9uY=;
+	s=arc-20240116; t=1753197053; c=relaxed/simple;
+	bh=bXiIcUS4ZKUlE5EGfppXIJnyr0fdlKsJLvXnKOv53uo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pfxqZKii7QLVuUb0/dWHAxgq+pHytwXUg/UN3Uq4/962WxRNSpv9X/yAYqYi4IFXotkyor54ShF8b0pAheZ21BeWkMtt+0YyrFhh+QsjTJtI5E2gmlBS0wlah99/zKX0NcLVhIvqU/2nA21l1yr4LvRoIfPhnvGF1jRqytWWegk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ey3Ss0rf; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6129ff08877so8857519a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 08:09:31 -0700 (PDT)
+	 To:Cc:Content-Type; b=YbwB5gLWrqu6zXC6+A1lq3QklGDMYcVjBJF5NWyyyoPVp6qrKY2jM3m9SnajN3dXVbHOn/VunIhIXzrlddUzybx2PnfqYYsRZMY+J1hCuc2BsV8ilE1FqsJhK2Ds/cHoIsTYsWlvfn2jV6VoJb2L9ZBaHnNkNPzoG7kwG5kntyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qQImAd8V; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3df371e1d29so115415ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 08:10:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753196970; x=1753801770; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=YKz1T7vmhDi74XbPi/EE55Hox/g8J5sLC+33/H3TOKg=;
-        b=Ey3Ss0rfR/LbvhtEggkS/Zv6ugizL22CL97up/keGyqtBv8XaSWJv2jnutUZeoOucC
-         Omib4sc2Jjj9z0Buo+49kA3obBdO2tA1Cn61boO8u04cqAzJSBJlJ8Hjk2Pwmie5R+po
-         PRkQ6qAi773X3RPn/L6Pl3lrlrY4c9xAQR/5OCs/2nDTAsimZR34nyYIGOoEk8fqAlP5
-         0okL+ZUsjEeU/VZiNeN7A4cccX5FE79JvchBk67p0gA6EIUiexCFIe4Q16JrNLRZsz+d
-         PZSBinBjX1uowMKHFuwh9E3DhhtxAzE7SnZgwKJdkU0o3it575kGl/QVPU1rS0xcvGdQ
-         MzUQ==
+        d=google.com; s=20230601; t=1753197051; x=1753801851; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UrnjuIg4e+o8/wr4oPnV/ZDCtxDk7IDXvR/lvcR7L34=;
+        b=qQImAd8VSxpvdBSvfDThmr2e25VBbAXwKZqoTTbvEZmdMNSiCi5Keh0ERyuVOCBJ2j
+         7UyDJcLS28+Ue6zbMJjFRfl71x56kKKl7uJ7TiQ2lxKyBkoXFCCRfQWXPTngiRfcqsUu
+         xQW2+1zvmXlB7sKhaAYCp2B5hw+J+A06tMEa5TmAESrm7ARSvfqcxHkGeX9Fzhka6glT
+         7+jI2zkOXlz3fM8EmgmLxPAQ3lqDHXP+mwtvASMmkd6IjWwhz3phBCo0L9NpSQbj/sJ9
+         uVfu4ItHud9qIJR/nKlKuUFwDUp2WrqRTSsONxUXkfV+LhwBtGS0KxXne/Qz4daxPQxf
+         Vswg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753196970; x=1753801770;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YKz1T7vmhDi74XbPi/EE55Hox/g8J5sLC+33/H3TOKg=;
-        b=Z+5HIsoSPOS3Jnp49SDURIbDlSJCcpxtcvmKRwcyCyRzsVBGu6UlTe+iS259HT0WL+
-         nzNXUs90ktehX0eH+TlP+n2xOGmJTvVFIgbtrSPwzIn4z6j+1QlbXn8NAFY/lvXhdFQA
-         wzz7lbf4fdXNnuqXZKFLtLu5IcP/vOEuoDbwwNkukh/UQ046wRCxB10VxDqA6BKGg18d
-         1W5OqemvoF5/ipDXAidIMrE+IrB21jbtB6VT6D4K9A8due3tmBt8JDdLKPPs9/vCsRDR
-         LmHrc8LJ+q0lK4+L+2VDK8HsxltXDeunGlLXRfhrWv2XCDgdYCszGyts51xY7OMPcQYy
-         0GfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX1w7YxvSW8Imyp6hZ+xRCujd3XFRK8RPpcfJZtWJd6cHeiT/MP6NDqdJMbrFCtFYQLQA2DHtG7+M9b76M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXY43sgATHgK0TjQerHKPbt3TJvCCdRoa0FR67tl5EnlEU17Ci
-	bJ/J5DBKXNaE+wxOmRnDIVoLm3uzURtt572xAMMsK+TE7yAWyJamzfe+yrOr2COSU0yrBw0aDsw
-	v7n3kDVa5HiVuP0HGnTveknBRqkiT9qR2jMbLVFdN1w==
-X-Gm-Gg: ASbGncuH4DJk5oTXZJnn12NSmrlvXJOoZU8KyTQx4VWSgss9sO2sMppgBz6YA/+JFmT
-	l6XCx4hc6OaXEJtFABqmgbvBYrNMXtLnvT/uuq1N7NbTXbteb0Tuy6VdxoFpp/mJykuBrffSrwY
-	HTXMclM2KTOrmdrIgSRTFgRxrUePWe7O3c9amvOGZ1Yb3iHMgV5zh+3My2GK2h1JtrbYNm0NdYZ
-	j5SD8td
-X-Google-Smtp-Source: AGHT+IGpbjpX0grZZPVQmZw54+wx4altW7i3KDxNPLIE1PMRey0GQaLdxv8J+phJGzB0ugLj/bW3oRXI/qzLkenwXwU=
-X-Received: by 2002:a17:907:9703:b0:ae2:3544:8121 with SMTP id
- a640c23a62f3a-af1529e3c52mr389560266b.9.1753196969564; Tue, 22 Jul 2025
- 08:09:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753197051; x=1753801851;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UrnjuIg4e+o8/wr4oPnV/ZDCtxDk7IDXvR/lvcR7L34=;
+        b=Jsa/uZJYHVxn2opEisPnAI7RGQa+axAcU5z8tMsAk1KIvxGKlic7pymM/FfYukbnaa
+         6o8Ves6qBGZFbRXXQwWwyZLYA4jeJ1dil16/XYX1aDtNmejiJyiD6ZCCBMNHtyUB4UHz
+         vdzFAep9rbufR+/ZP7uxSBmC2wbkFTRNbmUulUpjcF+25rRznhDSsnkU5IKShA+Hsrpv
+         Yi1Wf93YeNQITke26QuTyUiOe/o+Cr2nvyUF5moxjx8CXkE2npgglJSJUtHDNoG0nRiS
+         GwhJaE2PJkNUQJppCHghHBOG4MAImhPiZ5E9HxomXaDHb3fb84ehGH6KWr7JzMZl3t1P
+         MBdw==
+X-Forwarded-Encrypted: i=1; AJvYcCUqurQ4t5o1bhyy5SXSBAqx4HcrtR09j8WalRXi2AUvDGZA+2qPSabRc69G+uwwDon8sTwcb3uH4A8+cPM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNDjZpOTKEGF11F5bXd4Ee9Rhle8xQnEaUBl6VBEDRKdz72s+6
+	5DnBWW8DHJrothFIFaFr0X9x4ENGCjW1JUR/BR2S1wHbtxPl/hvnvc0j0fQMmGJKzfmgO3z8Ncd
+	uQgvJhuvCz94h12n0BPdSZpYXwvPr6agL6fbSVJ3T
+X-Gm-Gg: ASbGncvcdGWGi3RvX0zPPxe5tCpq3yYVbrLhouJYY6lYBmfFcUJJRx9uFBzGGvhTVnk
+	2gWVzJ3ujOrozDaxZUFJcavyUWnDs/wi6td7SS5DOZeM2naNWYR8LrIZ/esWGmH8/1VRM9+tZeo
+	2SiXSnKaC0wAsu3nugQ9Clr+wx3EOHcCUIrTIHxcvbFgFfDqRmBBAQFHCmtE9Rn6/Wu8cY4YDE0
+	pXg3Fuusnm4M0aGvpJoIe5HJGQigkct20xs
+X-Google-Smtp-Source: AGHT+IE2E7+83BOEx6tLs/66ORgFia6L7tH6SAgAtRa4Ppe0kHWFhpLdHDLDf1GERndmzTI1sLB37BFfvgRJ09LGfEY=
+X-Received: by 2002:a05:6e02:2282:b0:3dd:872d:b3fd with SMTP id
+ e9e14a558f8ab-3e2bf1152a8mr4685215ab.2.1753197049845; Tue, 22 Jul 2025
+ 08:10:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250714063109.591-1-jie.gan@oss.qualcomm.com>
-In-Reply-To: <20250714063109.591-1-jie.gan@oss.qualcomm.com>
-From: Mike Leach <mike.leach@linaro.org>
-Date: Tue, 22 Jul 2025 16:09:15 +0100
-X-Gm-Features: Ac12FXyw9fjZ_hHkKsJzmg7jt57Reyq6o7fHyn-BAdPCUShE29PhKSCLcUeB0K4
-Message-ID: <CAJ9a7ViCf=_wmLX93TzgT82vjZvbKj3XLbr8takyfC1niQESsg@mail.gmail.com>
-Subject: Re: [PATCH v3 RESEND 00/10] coresight: ctcu: Enable byte-cntr
- function for TMC ETR
-To: Jie Gan <jie.gan@oss.qualcomm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark <james.clark@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Tingwei Zhang <quic_tingweiz@quicinc.com>, Yuanfang Zhang <quic_yuanfang@quicinc.com>, 
-	Mao Jinlong <quic_jinlmao@quicinc.com>, Jie Gan <quic_jiegan@quicinc.com>, 
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org
+References: <20250613114048.132336-1-changbin.du@huawei.com>
+In-Reply-To: <20250613114048.132336-1-changbin.du@huawei.com>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 22 Jul 2025 08:10:38 -0700
+X-Gm-Features: Ac12FXwWJZVb2aJmP4nhddrCkEkMezDz_pPuVMIzQRc4SFP-iDAuPJGdnMDR4Ks
+Message-ID: <CAP-5=fX6jNrGhP9xH=KhGgT60r+SDgLpUT6jc0V67jAu2H5YOg@mail.gmail.com>
+Subject: Re: [PATCH] perf: ftrace: add graph tracer options args/retval/retval-hex/retaddr
+To: Changbin Du <changbin.du@huawei.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi
+On Fri, Jun 13, 2025 at 4:41=E2=80=AFAM Changbin Du <changbin.du@huawei.com=
+> wrote:
+>
+> This change adds support for new funcgraph tracer options funcgraph-args,
+> funcgraph-retval, funcgraph-retval-hex and funcgraph-retaddr.
+>
+> The new added options are:
+>   - args       : Show function arguments.
+>   - retval     : Show function return value.
+>   - retval-hex : Show function return value in hexadecimal format.
+>   - retaddr    : Show function return address.
+>
+>  # ./perf ftrace -G vfs_write --graph-opts retval,retaddr
+>  # tracer: function_graph
+>  #
+>  # CPU  DURATION                  FUNCTION CALLS
+>  # |     |   |                     |   |   |   |
+>  5)               |  mutex_unlock() { /* <-rb_simple_write+0xda/0x150 */
+>  5)   0.188 us    |    local_clock(); /* <-lock_release+0x2ad/0x440 ret=
+=3D0x3bf2a3cf90e */
+>  5)               |    rt_mutex_slowunlock() { /* <-rb_simple_write+0xda/=
+0x150 */
+>  5)               |      _raw_spin_lock_irqsave() { /* <-rt_mutex_slowunl=
+ock+0x4f/0x200 */
+>  5)   0.123 us    |        preempt_count_add(); /* <-_raw_spin_lock_irqsa=
+ve+0x23/0x90 ret=3D0x0 */
+>  5)   0.128 us    |        local_clock(); /* <-__lock_acquire.isra.0+0x17=
+a/0x740 ret=3D0x3bf2a3cfc8b */
+>  5)   0.086 us    |        do_raw_spin_trylock(); /* <-_raw_spin_lock_irq=
+save+0x4a/0x90 ret=3D0x1 */
+>  5)   0.845 us    |      } /* _raw_spin_lock_irqsave ret=3D0x292 */
+>  5)               |      _raw_spin_unlock_irqrestore() { /* <-rt_mutex_sl=
+owunlock+0x191/0x200 */
+>  5)   0.097 us    |        local_clock(); /* <-lock_release+0x2ad/0x440 r=
+et=3D0x3bf2a3cff1f */
+>  5)   0.086 us    |        do_raw_spin_unlock(); /* <-_raw_spin_unlock_ir=
+qrestore+0x23/0x60 ret=3D0x1 */
+>  5)   0.104 us    |        preempt_count_sub(); /* <-_raw_spin_unlock_irq=
+restore+0x35/0x60 ret=3D0x0 */
+>  5)   0.726 us    |      } /* _raw_spin_unlock_irqrestore ret=3D0x8000000=
+0 */
+>  5)   1.881 us    |    } /* rt_mutex_slowunlock ret=3D0x0 */
+>  5)   2.931 us    |  } /* mutex_unlock ret=3D0x0 */
+>
+> Signed-off-by: Changbin Du <changbin.du@huawei.com>
 
-I have had a look at a few of the patches. The buffer swap mechanism
-appears to be good.
+I tried testing but lacked the kernel features. It built and I checked the =
+code:
 
-However there is a lot of byte-ctr code in the "core" tmc / etr source
-files. As much of this code as possible needs to be moved to the
-byte-cntr specifc source.
+Reviewed-by: Ian Rogers <irogers@google.com>
 
-I suggest having a helper function such as qcom_byte_ctr_in_use() to
-call from the core code, and if true then call back into the byte-cntr
-specific code to do the specialist functionality.
+Thanks,
+Ian
 
-One other possibility is to have a flag / enum in the tmc->drvdata
-structure to indicate a variant. - e.g. TMC_STD, TMC_QCOM_BYTE_CTR,
-set at initialisation stage to remove the need for checking the device
-tree every call.
-
-Regards
-
-Mike
-
-On Mon, 14 Jul 2025 at 07:31, Jie Gan <jie.gan@oss.qualcomm.com> wrote:
+> ---
+>  tools/perf/Documentation/perf-ftrace.txt |  4 ++
+>  tools/perf/builtin-ftrace.c              | 60 +++++++++++++++++++++++-
+>  tools/perf/util/ftrace.h                 |  4 ++
+>  3 files changed, 67 insertions(+), 1 deletion(-)
 >
-> The byte-cntr function provided by the CTCU device is used to count the
-> trace data entering the ETR. An interrupt is triggered if the data size
-> exceeds the threshold set in the BYTECNTRVAL register. The interrupt
-> handler counts the number of triggered interruptions.
+> diff --git a/tools/perf/Documentation/perf-ftrace.txt b/tools/perf/Docume=
+ntation/perf-ftrace.txt
+> index b77f58c4d2fd..4b21a755132f 100644
+> --- a/tools/perf/Documentation/perf-ftrace.txt
+> +++ b/tools/perf/Documentation/perf-ftrace.txt
+> @@ -123,6 +123,10 @@ OPTIONS for 'perf ftrace trace'
+>  --graph-opts::
+>         List of options allowed to set:
 >
-> Based on this concept, the irq_cnt can be used to determine whether
-> the etr_buf is full. The ETR device will be disabled when the active
-> etr_buf is nearly full or a timeout occurs. The nearly full buffer will
-> be switched to background after synced. A new buffer will be picked from
-> the etr_buf_list, then restart the ETR device.
+> +         - args         - Show function arguments.
+> +         - retval       - Show function return value.
+> +         - retval-hex   - Show function return value in hexadecimal form=
+at.
+> +         - retaddr      - Show function return address.
+>           - nosleep-time - Measure on-CPU time only for function_graph tr=
+acer.
+>           - noirqs       - Ignore functions that happen inside interrupt.
+>           - verbose      - Show process names, PIDs, timestamps, etc.
+> diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
+> index bba36ebc2aa7..f7cf1dd7b64b 100644
+> --- a/tools/perf/builtin-ftrace.c
+> +++ b/tools/perf/builtin-ftrace.c
+> @@ -301,6 +301,10 @@ static void reset_tracing_options(struct perf_ftrace=
+ *ftrace __maybe_unused)
+>         write_tracing_option_file("funcgraph-proc", "0");
+>         write_tracing_option_file("funcgraph-abstime", "0");
+>         write_tracing_option_file("funcgraph-tail", "0");
+> +       write_tracing_option_file("funcgraph-args", "0");
+> +       write_tracing_option_file("funcgraph-retval", "0");
+> +       write_tracing_option_file("funcgraph-retval-hex", "0");
+> +       write_tracing_option_file("funcgraph-retaddr", "0");
+>         write_tracing_option_file("latency-format", "0");
+>         write_tracing_option_file("irq-info", "0");
+>  }
+> @@ -542,6 +546,41 @@ static int set_tracing_sleep_time(struct perf_ftrace=
+ *ftrace)
+>         return 0;
+>  }
 >
-> The byte-cntr reading functions can access data from the synced and
-> deactivated buffer, transferring trace data from the etr_buf to userspace
-> without stopping the ETR device.
+> +static int set_tracing_funcgraph_args(struct perf_ftrace *ftrace)
+> +{
+> +       if (ftrace->graph_args) {
+> +               if (write_tracing_option_file("funcgraph-args", "1") < 0)
+> +                       return -1;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int set_tracing_funcgraph_retval(struct perf_ftrace *ftrace)
+> +{
+> +       if (ftrace->graph_retval || ftrace->graph_retval_hex) {
+> +               if (write_tracing_option_file("funcgraph-retval", "1") < =
+0)
+> +                       return -1;
+> +       }
+> +
+> +       if (ftrace->graph_retval_hex) {
+> +               if (write_tracing_option_file("funcgraph-retval-hex", "1"=
+) < 0)
+> +                       return -1;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int set_tracing_funcgraph_retaddr(struct perf_ftrace *ftrace)
+> +{
+> +       if (ftrace->graph_retaddr) {
+> +               if (write_tracing_option_file("funcgraph-retaddr", "1") <=
+ 0)
+> +                       return -1;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+>  static int set_tracing_funcgraph_irqs(struct perf_ftrace *ftrace)
+>  {
+>         if (!ftrace->graph_noirqs)
+> @@ -642,6 +681,21 @@ static int set_tracing_options(struct perf_ftrace *f=
+trace)
+>                 return -1;
+>         }
 >
-> The byte-cntr read operation has integrated with the file node tmc_etr,
-> for example:
-> /dev/tmc_etr0
-> /dev/tmc_etr1
->
-> There are two scenarios for the tmc_etr file node with byte-cntr function:
-> 1. BYTECNTRVAL register is configured and byte-cntr is enabled -> byte-cntr read
-> 2. BYTECNTRVAL register is reset or byte-cntr is disabled -> original behavior
->
-> Shell commands to enable byte-cntr reading for etr0:
-> echo 0x10000 > /sys/bus/coresight/devices/ctcu0/irq_val
-> echo 1 > /sys/bus/coresight/devices/tmc_etr0/enable_sink
-> echo 1 > /sys/bus/coresight/devices/etm0/enable_source
-> cat /dev/tmc_etr0
->
-> Reset the BYTECNTR register for etr0:
-> echo 0 > /sys/bus/coresight/devices/ctcu0/irq_val
->
-> Changes in V3 resend:
-> 1. rebased on next-20250711.
-> Link to V3 - https://lore.kernel.org/all/20250624060438.7469-1-jie.gan@oss.qualcomm.com/
->
-> Changes in V3:
-> 1. The previous solution has been deprecated.
-> 2. Add a etr_buf_list to manage allcated etr buffers.
-> 3. Add a logic to switch buffer for ETR.
-> 4. Add read functions to read trace data from synced etr buffer.
-> Link to V2 - https://lore.kernel.org/all/20250410013330.3609482-1-jie.gan@oss.qualcomm.com/
->
-> Changes in V2:
-> 1. Removed the independent file node /dev/byte_cntr.
-> 2. Integrated the byte-cntr's file operations with current ETR file
->    node.
-> 3. Optimized the driver code of the CTCU that associated with byte-cntr.
-> 4. Add kernel document for the export API tmc_etr_get_rwp_offset.
-> 5. Optimized the way to read the rwp_offset according to Mike's
->    suggestion.
-> 6. Removed the dependency of the dts patch.
-> Link to V1 - https://lore.kernel.org/all/20250310090407.2069489-1-quic_jiegan@quicinc.com/
->
-> Jie Gan (10):
->   coresight: core: Refactoring ctcu_get_active_port and make it generic
->   coresight: core: add a new API to retrieve the helper device
->   dt-bindings: arm: add an interrupt property for Coresight CTCU
->   coresight: ctcu: enable byte-cntr for TMC ETR devices
->   coresight: tmc: add etr_buf_list to store allocated etr_buf
->   coresight: tmc: add create/delete functions for etr_buf_node
->   coresight: tmc: add prepare/unprepare functions for byte-cntr
->   coresight: tmc: add a switch buffer function for byte-cntr
->   coresight: tmc: add read function for byte-cntr
->   arm64: dts: qcom: sa8775p: Add interrupts to CTCU device
->
->  .../testing/sysfs-bus-coresight-devices-ctcu  |   5 +
->  .../bindings/arm/qcom,coresight-ctcu.yaml     |  17 ++
->  arch/arm64/boot/dts/qcom/sa8775p.dtsi         |   5 +
->  drivers/hwtracing/coresight/Makefile          |   2 +-
->  drivers/hwtracing/coresight/coresight-core.c  |  54 ++++
->  .../coresight/coresight-ctcu-byte-cntr.c      | 102 +++++++
->  .../hwtracing/coresight/coresight-ctcu-core.c | 113 ++++++--
->  drivers/hwtracing/coresight/coresight-ctcu.h  |  49 +++-
->  drivers/hwtracing/coresight/coresight-priv.h  |   4 +
->  .../hwtracing/coresight/coresight-tmc-core.c  |  70 ++++-
->  .../hwtracing/coresight/coresight-tmc-etr.c   | 270 ++++++++++++++++++
->  drivers/hwtracing/coresight/coresight-tmc.h   |  29 ++
->  12 files changed, 688 insertions(+), 32 deletions(-)
->  create mode 100644 Documentation/ABI/testing/sysfs-bus-coresight-devices-ctcu
->  create mode 100644 drivers/hwtracing/coresight/coresight-ctcu-byte-cntr.c
->
+> +       if (set_tracing_funcgraph_args(ftrace) < 0) {
+> +               pr_err("failed to set tracing option funcgraph-args\n");
+> +               return -1;
+> +       }
+> +
+> +       if (set_tracing_funcgraph_retval(ftrace) < 0) {
+> +               pr_err("failed to set tracing option funcgraph-retval\n")=
+;
+> +               return -1;
+> +       }
+> +
+> +       if (set_tracing_funcgraph_retaddr(ftrace) < 0) {
+> +               pr_err("failed to set tracing option funcgraph-retaddr\n"=
+);
+> +               return -1;
+> +       }
+> +
+>         if (set_tracing_funcgraph_irqs(ftrace) < 0) {
+>                 pr_err("failed to set tracing option funcgraph-irqs\n");
+>                 return -1;
+> @@ -1607,6 +1661,10 @@ static int parse_graph_tracer_opts(const struct op=
+tion *opt,
+>         int ret;
+>         struct perf_ftrace *ftrace =3D (struct perf_ftrace *) opt->value;
+>         struct sublevel_option graph_tracer_opts[] =3D {
+> +               { .name =3D "args",               .value_ptr =3D &ftrace-=
+>graph_args },
+> +               { .name =3D "retval",             .value_ptr =3D &ftrace-=
+>graph_retval },
+> +               { .name =3D "retval-hex",         .value_ptr =3D &ftrace-=
+>graph_retval_hex },
+> +               { .name =3D "retaddr",            .value_ptr =3D &ftrace-=
+>graph_retaddr },
+>                 { .name =3D "nosleep-time",       .value_ptr =3D &ftrace-=
+>graph_nosleep_time },
+>                 { .name =3D "noirqs",             .value_ptr =3D &ftrace-=
+>graph_noirqs },
+>                 { .name =3D "verbose",            .value_ptr =3D &ftrace-=
+>graph_verbose },
+> @@ -1699,7 +1757,7 @@ int cmd_ftrace(int argc, const char **argv)
+>         OPT_CALLBACK('g', "nograph-funcs", &ftrace.nograph_funcs, "func",
+>                      "Set nograph filter on given functions", parse_filte=
+r_func),
+>         OPT_CALLBACK(0, "graph-opts", &ftrace, "options",
+> -                    "Graph tracer options, available options: nosleep-ti=
+me,noirqs,verbose,thresh=3D<n>,depth=3D<n>",
+> +                    "Graph tracer options, available options: args,retva=
+l,retval-hex,retaddr,nosleep-time,noirqs,verbose,thresh=3D<n>,depth=3D<n>",
+>                      parse_graph_tracer_opts),
+>         OPT_CALLBACK('m', "buffer-size", &ftrace.percpu_buffer_size, "siz=
+e",
+>                      "Size of per cpu buffer, needs to use a B, K, M or G=
+ suffix.", parse_buffer_size),
+> diff --git a/tools/perf/util/ftrace.h b/tools/perf/util/ftrace.h
+> index a9bc47da83a5..782c33227e92 100644
+> --- a/tools/perf/util/ftrace.h
+> +++ b/tools/perf/util/ftrace.h
+> @@ -29,6 +29,10 @@ struct perf_ftrace {
+>         int                     graph_depth;
+>         int                     func_stack_trace;
+>         int                     func_irq_info;
+> +       int                     graph_args;
+> +       int                     graph_retval;
+> +       int                     graph_retval_hex;
+> +       int                     graph_retaddr;
+>         int                     graph_nosleep_time;
+>         int                     graph_noirqs;
+>         int                     graph_verbose;
 > --
-> 2.34.1
+> 2.43.0
 >
-
-
--- 
-Mike Leach
-Principal Engineer, ARM Ltd.
-Manchester Design Centre. UK
 
