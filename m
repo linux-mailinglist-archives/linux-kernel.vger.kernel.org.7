@@ -1,120 +1,171 @@
-Return-Path: <linux-kernel+bounces-740173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D830B0D0ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:46:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E898B0D0F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:53:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5283F1AA3462
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 04:46:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E34954371E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 04:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8F341C84DE;
-	Tue, 22 Jul 2025 04:46:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C10228A1CE;
+	Tue, 22 Jul 2025 04:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b="FMWVlV2N"
-Received: from lf-1-19.ptr.blmpb.com (lf-1-19.ptr.blmpb.com [103.149.242.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="NxFDVGLu"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C604414
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 04:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.149.242.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EEE91581F8
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 04:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753159562; cv=none; b=mmyHuxkDb5vXb/RdRcppKK4UQ7WqzJEYJonuti2huJrZtKlLdexiysmQ0G1JbXpWzFLSg1o0YcPnqZSzhPdmhun/WpmJadoglukQt/uiZXMEH0tOb1I7BEt5wxclf5NNrkiM6G2v1yd3bUb8CwEwfE/6KGy9MggEGlKNAOvaQg4=
+	t=1753160027; cv=none; b=ibRa9HSc9K49kh4Njk1LUfcVGeE4HBhIqrG21h/uj2ZiPpoWvoycA+N6DJO+DjJ+zR7lJqEdOwkKV1uB+MI/E/bVoAmnRXbhOWC00mCNJlC/OTC6sYeblHXad8jm4f9lL4edxNv6CGuW6gfEfEOIePqUPMWDBGCdZmRA50rUQyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753159562; c=relaxed/simple;
-	bh=1vQNK9Rt/Cndv7jSwRWun40QhRNeUa/Z2lEx7rUuFuA=;
-	h=From:Message-Id:Content-Type:To:Cc:Subject:Date:Mime-Version:
-	 References:In-Reply-To; b=LK/rV+ZU488frg5PfzYcHFKloCFgXcXDgBIN+i0NStGjtpp1TP+l2e0K1yrNTlzndTF2XyLfXc1bkmurfc2TXYSwzBHSlpOdo7CeM1mNtZQ2NPcmmQ/4OJ6NRCpzou3dypOpULDO9xtqCBInly72vuawYqsKaKwcjmK6b6L3k+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com; spf=pass smtp.mailfrom=lanxincomputing.com; dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b=FMWVlV2N; arc=none smtp.client-ip=103.149.242.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lanxincomputing.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=s1; d=lanxincomputing-com.20200927.dkim.feishu.cn; t=1753158788;
-  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
- reply-to:content-type:mime-version:in-reply-to:message-id;
- bh=Hzmpv4N547W+vBo+aJGwLDOqtL6G3pdPOh8VAcFg3f0=;
- b=FMWVlV2NyE7xWZUc8CjC12utDtxMol9z6LaGOHNWrDbtQe1YTcYVHyrONrj04w49lshIrV
- M1v8CRdWCbctUPTF9PTiLIjaP/v5EUD+drxo2cv5ZZtquo7V9kMwV/Iwbcb2nclELgIZdr
- p1vVq3pyXTEmKPcqMnXadLK251HrM07cb2nUlWqa4hPmaZ+xP5wjMzwXf3CC8qxiQICpLy
- eiuCjIzSu8yAR2x5DTL6r8R79A2l6BxyRGwB7bJXdczEiK+jZEZofH3UIjttm1ndtv4D9f
- rD9sswza6mG/WUm9nHoO78LdNANufl56EHN4ubYZnVty4AzEODy42VfuTwKD9Q==
-From: "Nutty Liu" <liujingqi@lanxincomputing.com>
-Message-Id: <b7dd1004-4bfd-43c7-aba7-823c0290b5d3@lanxincomputing.com>
-X-Original-From: Nutty Liu <liujingqi@lanxincomputing.com>
-Content-Type: text/plain; charset=UTF-8
-To: "Junhui Liu" <junhui.liu@pigmoral.tech>, 
-	"Paul Walmsley" <paul.walmsley@sifive.com>, 
-	"Palmer Dabbelt" <palmer@dabbelt.com>, 
-	"Albert Ou" <aou@eecs.berkeley.edu>, "Alexandre Ghiti" <alex@ghiti.fr>
-Cc: <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Lms-Return-Path: <lba+2687f1482+5142a2+vger.kernel.org+liujingqi@lanxincomputing.com>
-Subject: Re: [PATCH 1/2] riscv: mm: Return intended SATP mode for noXlvl options
-Date: Tue, 22 Jul 2025 12:33:03 +0800
+	s=arc-20240116; t=1753160027; c=relaxed/simple;
+	bh=IV3D5VFa0b3TKylL0rBqO2E0kmhVFDoKkyFGukLBZQA=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=ZnnvxNH8FI0eoYQfzepTiIdQ6Rg40luSdozmLF5jQXB6Rpi4O/geIw32UNNnXoms0Ibx0USVNm5Wo4zp3gcn5THuZKcEdD/wPMTYMxwbINRqMC4ljL9V1tcE6Oxosz4QY2psTtA8+anv44iD10WnW3pzntMkCGOKstODvSKdzFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=NxFDVGLu; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250722045338epoutp0163fcae4e8c4a1f7ce10938d83f85d599~Ueb9sQMy-2579525795epoutp01k
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 04:53:38 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250722045338epoutp0163fcae4e8c4a1f7ce10938d83f85d599~Ueb9sQMy-2579525795epoutp01k
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1753160018;
+	bh=oHgbp2zI6pWHBoFSpFNJfPfed8jnhU/boVEitqs7EpY=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=NxFDVGLuy5TCLBbqOezmS6BcX2oGoWTGLVzO/HvO5sijcUQuELxZe91KozSOqb7lW
+	 dnop2oWOj6lSW3WwvIn0EIgeO+2ohHctBLzl7IwrLOni8Mn3MgJTJX8R9GEzRmIPJX
+	 +JvEsDbnEDWIR6za8sfQ6EpQ5zNvnrshPsG26dfA=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250722045336epcas5p40ecb63ff167b91f84375d516fef00fa5~Ueb8vawWq0587105871epcas5p4T;
+	Tue, 22 Jul 2025 04:53:36 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.88]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4bmPzg6htyz2SSKk; Tue, 22 Jul
+	2025 04:53:35 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250722043437epcas5p25e73a61921d2d15cae61388fa042de75~UeLXT5Vxm3047830478epcas5p2G;
+	Tue, 22 Jul 2025 04:34:37 +0000 (GMT)
+Received: from INBRO001840 (unknown [107.122.3.105]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250722043434epsmtip131fb92dc6a6a0c2b894d89da91b3a9ab~UeLUTk9r90921009210epsmtip18;
+	Tue, 22 Jul 2025 04:34:33 +0000 (GMT)
+From: "Pritam Manohar Sutar" <pritam.sutar@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Krzysztof Kozlowski'"
+	<krzysztof.kozlowski@linaro.org>
+Cc: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
+	<andre.draszik@linaro.org>, <peter.griffin@linaro.org>,
+	<neil.armstrong@linaro.org>, <kauschluss@disroot.org>,
+	<ivo.ivanov.ivanov1@gmail.com>, <m.szyprowski@samsung.com>,
+	<s.nawrocki@samsung.com>, <linux-phy@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<rosa.pila@samsung.com>, <dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
+	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
+In-Reply-To: <a43cfe4f-8ff9-4dbd-b7f4-07ccc3d8e01b@kernel.org>
+Subject: RE: [PATCH v4 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
+ ExynosAutov920 HS phy compatible
+Date: Tue, 22 Jul 2025 10:04:32 +0530
+Message-ID: <00ff01dbfac1$ee528860$caf79920$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250722-satp-from-fdt-v1-0-5ba22218fa5f@pigmoral.tech> <20250722-satp-from-fdt-v1-1-5ba22218fa5f@pigmoral.tech>
-Received: from [127.0.0.1] ([116.237.111.137]) by smtp.feishu.cn with ESMTPS; Tue, 22 Jul 2025 12:33:05 +0800
-In-Reply-To: <20250722-satp-from-fdt-v1-1-5ba22218fa5f@pigmoral.tech>
-User-Agent: Mozilla Thunderbird
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJAgQZ9LFXBZrDskwNBYris6jFv1AKCX9A9Aa5wAf0Bi5UAqwCML2yKAWUlSf8CRPacEQIi1iyNsxPSqvA=
+Content-Language: en-in
+X-CMS-MailID: 20250722043437epcas5p25e73a61921d2d15cae61388fa042de75
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250701115955epcas5p320cfe73ca33522cd2f9f7970cfde1c63
+References: <20250701120706.2219355-1-pritam.sutar@samsung.com>
+	<CGME20250701115955epcas5p320cfe73ca33522cd2f9f7970cfde1c63@epcas5p3.samsung.com>
+	<20250701120706.2219355-2-pritam.sutar@samsung.com>
+	<20250706-fresh-meaty-cougar-5af170@krzk-bin>
+	<07d301dbf0ae$0658cbe0$130a63a0$@samsung.com>
+	<9a2d0ad7-cb1f-473d-a91a-3a1b59b71280@kernel.org>
+	<000c01dbf70b$ccdbf630$6693e290$@samsung.com>
+	<a43cfe4f-8ff9-4dbd-b7f4-07ccc3d8e01b@kernel.org>
 
-On 7/22/2025 12:53 AM, Junhui Liu wrote:
-> Change the return value of match_noXlvl() to return the SATP mode that
-> will be used, rather than the mode being disabled. This enables unified
-> logic for return value judgement with the function that obtains mmu-type
-> from the fdt, avoiding extra conversion. This only changes the naming,
-> with no functional impact.
->
-> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
-> ---
->   arch/riscv/kernel/pi/cmdline_early.c | 4 ++--
->   arch/riscv/mm/init.c                 | 4 ++--
->   2 files changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/riscv/kernel/pi/cmdline_early.c b/arch/riscv/kernel/pi/cmdline_early.c
-> index fbcdc9e4e14322af0cedd31343aeb9403ba2dd14..389d086a071876dde2fd57ee6f6661e65c38b7c4 100644
-> --- a/arch/riscv/kernel/pi/cmdline_early.c
-> +++ b/arch/riscv/kernel/pi/cmdline_early.c
-> @@ -41,9 +41,9 @@ static char *get_early_cmdline(uintptr_t dtb_pa)
->   static u64 match_noXlvl(char *cmdline)
->   {
->   	if (strstr(cmdline, "no4lvl"))
-> -		return SATP_MODE_48;
-> +		return SATP_MODE_39;
->   	else if (strstr(cmdline, "no5lvl"))
-> -		return SATP_MODE_57;
-> +		return SATP_MODE_48;
->   
->   	return 0;
->   }
-> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-> index 8d0374d7ce8ed72320f58e4cea212d0e2bce8fd4..d03e02a92379f2338a4f4df0ab797a7859b83dfc 100644
-> --- a/arch/riscv/mm/init.c
-> +++ b/arch/riscv/mm/init.c
-> @@ -864,9 +864,9 @@ static __init void set_satp_mode(uintptr_t dtb_pa)
->   
->   	kernel_map.page_offset = PAGE_OFFSET_L5;
->   
-> -	if (satp_mode_cmdline == SATP_MODE_57) {
-> +	if (satp_mode_cmdline == SATP_MODE_48) {
->   		disable_pgtable_l5();
-> -	} else if (satp_mode_cmdline == SATP_MODE_48) {
-> +	} else if (satp_mode_cmdline == SATP_MODE_39) {
->   		disable_pgtable_l5();
->   		disable_pgtable_l4();
->   		return;
+Hi Krzysztof,=20
 
-Nice, this change is a good idea. It's more readable.
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> Sent: 17 July 2025 04:59 PM
+> To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>; 'Krzysztof Kozlows=
+ki'
+> <krzysztof.kozlowski=40linaro.org>
+> Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
+> krzk+dt=40kernel.org; conor+dt=40kernel.org; alim.akhtar=40samsung.com;
+> andre.draszik=40linaro.org; peter.griffin=40linaro.org; neil.armstrong=40=
+linaro.org;
+> kauschluss=40disroot.org; ivo.ivanov.ivanov1=40gmail.com;
+> m.szyprowski=40samsung.com; s.nawrocki=40samsung.com; linux-
+> phy=40lists.infradead.org; devicetree=40vger.kernel.org; linux-
+> kernel=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux-s=
+amsung-
+> soc=40vger.kernel.org; rosa.pila=40samsung.com; dev.tailor=40samsung.com;
+> faraz.ata=40samsung.com; muhammed.ali=40samsung.com;
+> selvarasu.g=40samsung.com
+> Subject: Re: =5BPATCH v4 1/6=5D dt-bindings: phy: samsung,usb3-drd-phy: a=
+dd
+> ExynosAutov920 HS phy compatible
+>=20
+> On 17/07/2025 13:13, Pritam Manohar Sutar wrote:
+> >>
+> >>
+> >> Nothing is explained in changelog/cover letter. You claim you only add=
+ed Rb
+> tag.
+> >> This is an entirely silent change while keeping the review.
+> >
+> > Will add more explanations in cover letter/changelog why this block is =
+added.
+> >
+> >> Combined with not even following DTS style=21
+> >
+> > Ok got it. Will change supplies name as below avdd075_usb =3D>
+> > avdd075-usb
+> > avdd18_usb20 =3D> avdd18-usb20
+> > avdd33_usb20 =3D> avdd33-usb20
+> >
+> > Confirm the above change that is meant in terms of DTS style.
+> Yes. I have doubts that actual supplies have suffix usb20. Are there more=
+ than
+> one avdd18 for this block?
+>=20
 
-Reviewed-by: Nutty Liu <liujingqi@lanxincomputing.com>
+Yes, there are more than one vdd18 supplies for this block.=20
 
-Thanks,
-Nutty
+Re-analysed your comment on adding new supplies.=20
+Going to re-use existing supplies as mentioned below, rather than=20
+introducing new supplies
+
+  dvdd-usb20-supply   =3D> for 0.75v
+  vddh-usb20-supply   =3D> for 1.8v
+  vdd33-usb20-supply =3D> for 3.3v
+
+> Best regards,
+> Krzysztof
+
+
+Thank you.
+
+Regards,
+Pritam
+
 
