@@ -1,147 +1,150 @@
-Return-Path: <linux-kernel+bounces-740541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B71CB0D57C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:13:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CFC4B0D55E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:11:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5FF11AA32A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:13:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2944D1896D5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:11:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D302DAFD6;
-	Tue, 22 Jul 2025 09:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="XvNedHfm"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F9F2DAFD5;
+	Tue, 22 Jul 2025 09:11:27 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992712D239F;
-	Tue, 22 Jul 2025 09:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF9D2270EA5;
+	Tue, 22 Jul 2025 09:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753175609; cv=none; b=X7ZH3e0cXFTJ01B82BJtP6ZlfLnkpmov3X5Of56PqxHn6ndez0D3N0XPToIhNE+9qX0dslNgPESjugUXsh42/bq1aeKh7I9eWNage4LE50FYN0Ews8L1L8WG2L+wmL+OhH3QmC4G1Dji4oyFvdtgM3Ze9jqeSM3SYBich65A3cM=
+	t=1753175486; cv=none; b=elPmJtISfaDrVEwjrmWazBsWP4HE9//veNF+BzElNgb1T5jhHFZqGghIVouEXIspguukhhuqX9z4swo4Kj0HixGzlYBpHr8Nffe9I1Cc2HkmoHfXR1S4NvFys95OxDx6VlSIy8iojbqmnH/OgTPT80wDCBUjqwUC+7IH1J43tRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753175609; c=relaxed/simple;
-	bh=K46LKlryytsBzCQQYLjIod+ITNfG15qvoOugzrudCpc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=sPkYmv7kNd0LREnZIMDrE4otTSy91W2jhZ8Yhzg9yLakTkwf1CCZFTs+24z1InWa7MFIij6/llA6coQMoq7Fw8M90KZhYSKxJS9jAEJv3fkiHlZH/A4xBnixuAteG5bLpi/8dMHTU0UgXHQQgX75NzluE6+EerNlGumjFbbwEGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=XvNedHfm; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56M8r4kG007617;
-	Tue, 22 Jul 2025 11:13:04 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	pw+9abg65qtzhopcWRW98RquusMS7BgzR4MlvBoonYE=; b=XvNedHfmkxe2wPK5
-	udHnCKBe65lKGJ/EmrVyk+X4ukBk8VCa4AOgxvwLVVYCc1eTGh2AeBx1MjKEUejr
-	qHXSFJHOIPEujzDGikw4mpaJEZ7drJvlj55iOPTjNy/lAJaDeCDvcy7H5VCW1YMg
-	HOu4UWZ5u5IXVD964KBVN0/dawCOcx7O0mI2Ep5wMymr/+sQngCM9Py2Zj9gboc/
-	mVpsh4djFXgZzKuT0NcTGfT0R51ezrk65713VYY0tE29KIAfSGhwrL8IFCR9GkQO
-	ytYY1FBVo9ELsJergwp0f9mVufzD79O7fult2etdIesVrT2OmYhR3/xYk6ATmHjn
-	yn56UA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4800skwnmg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Jul 2025 11:13:03 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 18F3540044;
-	Tue, 22 Jul 2025 11:11:22 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5702376C468;
-	Tue, 22 Jul 2025 11:10:41 +0200 (CEST)
-Received: from [10.48.87.141] (10.48.87.141) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 22 Jul
- 2025 11:10:40 +0200
-Message-ID: <cb006404-e7d1-4a08-b2b4-460ede971799@foss.st.com>
-Date: Tue, 22 Jul 2025 11:10:39 +0200
+	s=arc-20240116; t=1753175486; c=relaxed/simple;
+	bh=V3XzBkGhsHgFumMqo+6Q5lo1lKhko6FY90AOtBRNUww=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=LQ0mGEPyKgvp01a0w1H6DZ7Slb82ejQ/yU3U3zv4KvrktBfQRKC0Bb7FSwatMN1wpY8Ptdxaw2AGKjZJ88s2DmtTgWOve8AfZTna2+oDIGB57uNG7dCAtf0hZ0Nd2a9sojcF9FN4SFjRMpV+RZcG59vG/cInZC7AursxcWSMspY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4bmWj40ZwCz6FyCJ;
+	Tue, 22 Jul 2025 17:11:20 +0800 (CST)
+Received: from xaxapp04.zte.com.cn ([10.99.98.157])
+	by mse-fl2.zte.com.cn with SMTP id 56M9B3LG038560;
+	Tue, 22 Jul 2025 17:11:03 +0800 (+08)
+	(envelope-from wang.yaxin@zte.com.cn)
+Received: from mapi (xaxapp02[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Tue, 22 Jul 2025 17:11:05 +0800 (CST)
+Date: Tue, 22 Jul 2025 17:11:05 +0800 (CST)
+X-Zmail-TransId: 2afa687f55a9ffffffffab2-230a8
+X-Mailer: Zmail v1.0
+Message-ID: <20250722171105251YZi7zdexFaeEVQIj2iYZq@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 1/4] dt-bindings: net: document st,phy-wol
- property
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-CC: Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski <krzk@kernel.org>,
-        Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo
- Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Christophe Roullier <christophe.roullier@foss.st.com>,
-        Heiner Kallweit
-	<hkallweit1@gmail.com>,
-        Simon Horman <horms@kernel.org>,
-        Tristram Ha
-	<Tristram.Ha@microchip.com>,
-        Florian Fainelli
-	<florian.fainelli@broadcom.com>,
-        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20250721-wol-smsc-phy-v1-0-89d262812dba@foss.st.com>
- <20250721-wol-smsc-phy-v1-1-89d262812dba@foss.st.com>
- <faea23d5-9d5d-4fbb-9c6a-a7bc38c04866@kernel.org>
- <f5c4bb6d-4ff1-4dc1-9d27-3bb1e26437e3@foss.st.com>
- <e3c99bdb-649a-4652-9f34-19b902ba34c1@lunn.ch>
- <38278e2a-5a1b-4908-907e-7d45a08ea3b7@foss.st.com>
- <aH8-nQtNVuewNuwU@shell.armlinux.org.uk>
-Content-Language: en-US
-From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
-In-Reply-To: <aH8-nQtNVuewNuwU@shell.armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-22_01,2025-07-21_02,2025-03-28_01
+Mime-Version: 1.0
+From: <wang.yaxin@zte.com.cn>
+To: <alexs@kernel.org>, <si.yanteng@linux.dev>, <corbet@lwn.net>
+Cc: <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <xu.xin16@zte.com.cn>, <yang.yang29@zte.com.cn>,
+        <wang.yaxin@zte.com.cn>, <fan.yu9@zte.com.cn>, <he.peilin@zte.com.cn>,
+        <tu.qiang35@zte.com.cn>, <qiu.yutan@zte.com.cn>,
+        <zhang.yunkai@zte.com.cn>, <sun.yuxi@zte.com.cn>,
+        <jiang.kun2@zte.com.cn>
+Subject: =?UTF-8?B?RG9jcy96aF9DTjogVHJhbnNsYXRlCgogbmV0d29ya2luZyBkb2NzIHRvIFNpbXBsaWZpZWQgQ2hpbmVzZQ==?=
+Content-Type: multipart/mixed;
+	boundary="=====_001_next====="
+X-MAIL:mse-fl2.zte.com.cn 56M9B3LG038560
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: wang.yaxin@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.133 unknown Tue, 22 Jul 2025 17:11:20 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 687F55B8.000/4bmWj40ZwCz6FyCJ
 
 
 
-On 7/22/25 09:32, Russell King (Oracle) wrote:
-> On Mon, Jul 21, 2025 at 05:56:17PM +0200, Gatien CHEVALLIER wrote:
->> Here's an extract from the Microchip datasheet for the LAN8742A PHY:
->>
->> "In addition to the main interrupts described in this section, an nPME
->> pin is provided exclusively for WoL specific interrupts."
-> 
-> So the pin on the PHY for WoL is called nPME? If this pin isn't wired
-> to an interrupt controller, then the PHY doesn't support WoL. If it is
-> wired, then could it be inferred that WoL is supported?
-> 
+--=====_001_next=====
+Content-Type: multipart/related;
+	boundary="=====_002_next====="
 
-For this PHY yes, but it's a bit more tricky. In my response to Andrew,
-I added a bit more information.
 
-> If so, then it seems to me the simple solution here is for the PHY
-> driver to say "if the nPME pin is connected to an interrupt controller,
-> then PHY-side WoL is supported, otherwise PHY-side WoL is not
-> supported".
-> 
+--=====_002_next=====
+Content-Type: multipart/alternative;
+	boundary="=====_003_next====="
 
-If there's a proper way to do this, sure!
 
-> Then, I wonder if the detection of the WoL capabilities of the PHY
-> in stmmac_init_phy() could be used to determine whether PHY WoL
-> should be used or not.
-> 
+--=====_003_next=====
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
 
-Yes, sure.
+RnJvbTogV2FuZyBZYXhpbiA8d2FuZy55YXhpbkB6dGUuY29tLmNuPg0KDQp0cmFuc2xhdGUgbmV0
+d29ya2luZyBkb2NzIHRvIFNpbXBsaWZpZWQgQ2hpbmVzZQ0KDQpXYW5nIFlheGluICgyKToNCiAg
+RG9jcy96aF9DTjogVHJhbnNsYXRlIHRpbWVzdGFtcGluZy5yc3QgdG8gU2ltcGxpZmllZCAgQ2hp
+bmVzZQ0KICBEb2NzL3poX0NOOiBUcmFuc2xhdGUgc2tidWZmLnJzdCB0byBTaW1wbGlmaWVkICBD
+aGluZXNlDQpTdW4geXV4aSAoMik6DQogIERvY3MvemhfQ046IFRyYW5zbGF0ZSBnZW5lcmljLWhk
+bGMucnN0IHRvIFNpbXBsaWZpZWQgIENoaW5lc2UNCiAgRG9jcy96aF9DTjogVHJhbnNsYXRlIG1w
+dGNwLXN5c2N0bC5yc3QgdG8gU2ltcGxpZmllZCAgQ2hpbmVzZQ0KDQogLi4uL3poX0NOL25ldHdv
+cmtpbmcvZ2VuZXJpYy1oZGxjLnJzdCAgICAgICAgIHwgMTc2ICsrKysrDQogLi4uL3RyYW5zbGF0
+aW9ucy96aF9DTi9uZXR3b3JraW5nL2luZGV4LnJzdCAgIHwgICA4ICstDQogLi4uL3poX0NOL25l
+dHdvcmtpbmcvbXB0Y3Atc3lzY3RsLnJzdCAgICAgICAgIHwgMTM5ICsrKysNCiAuLi4vdHJhbnNs
+YXRpb25zL3poX0NOL25ldHdvcmtpbmcvc2tidWZmLnJzdCAgfCAgNDQgKysNCiAuLi4vemhfQ04v
+bmV0d29ya2luZy90aW1lc3RhbXBpbmcucnN0ICAgICAgICAgfCA2NzQgKysrKysrKysrKysrKysr
+KysrDQogNSBmaWxlcyBjaGFuZ2VkLCAxMDM3IGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0p
+DQogY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vdHJhbnNsYXRpb25zL3poX0NOL25l
+dHdvcmtpbmcvZ2VuZXJpYy1oZGxjLnJzdA0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0
+aW9uL3RyYW5zbGF0aW9ucy96aF9DTi9uZXR3b3JraW5nL21wdGNwLXN5c2N0bC5yc3QNCiBjcmVh
+dGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi90cmFuc2xhdGlvbnMvemhfQ04vbmV0d29ya2lu
+Zy9za2J1ZmYucnN0DQogY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vdHJhbnNsYXRp
+b25zL3poX0NOL25ldHdvcmtpbmcvdGltZXN0YW1waW5nLnJzdA0KDQotLSANCjIuMjUuMQ==
 
-Best regards,
-Gatien
+
+--=====_003_next=====
+Content-Type: text/html ;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+PGRpdiBjbGFzcz0iemNvbnRlbnRSb3ciPjxwPkZyb206IFdhbmcgWWF4aW4gJmx0O3dhbmcueWF4
+aW5AenRlLmNvbS5jbiZndDs8L3A+PHA+PGJyPjwvcD48cD50cmFuc2xhdGUgbmV0d29ya2luZyBk
+b2NzIHRvIFNpbXBsaWZpZWQgQ2hpbmVzZTwvcD48cD48YnI+PC9wPjxwPldhbmcgWWF4aW4gKDIp
+OjwvcD48cD4mbmJzcDsgRG9jcy96aF9DTjogVHJhbnNsYXRlIHRpbWVzdGFtcGluZy5yc3QgdG8g
+U2ltcGxpZmllZCZuYnNwOyBDaGluZXNlPC9wPjxwPiZuYnNwOyBEb2NzL3poX0NOOiBUcmFuc2xh
+dGUgc2tidWZmLnJzdCB0byBTaW1wbGlmaWVkJm5ic3A7IENoaW5lc2U8L3A+PHA+U3VuIHl1eGkg
+KDIpOjwvcD48cD4mbmJzcDsgRG9jcy96aF9DTjogVHJhbnNsYXRlIGdlbmVyaWMtaGRsYy5yc3Qg
+dG8gU2ltcGxpZmllZCZuYnNwOyBDaGluZXNlPC9wPjxwPiZuYnNwOyBEb2NzL3poX0NOOiBUcmFu
+c2xhdGUgbXB0Y3Atc3lzY3RsLnJzdCB0byBTaW1wbGlmaWVkJm5ic3A7IENoaW5lc2U8L3A+PHA+
+PGJyPjwvcD48cD4mbmJzcDsuLi4vemhfQ04vbmV0d29ya2luZy9nZW5lcmljLWhkbGMucnN0Jm5i
+c3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwO3wgMTc2ICsrKysrPC9wPjxwPiZuYnNwOy4u
+Li90cmFuc2xhdGlvbnMvemhfQ04vbmV0d29ya2luZy9pbmRleC5yc3QmbmJzcDsgJm5ic3A7fCZu
+YnNwOyAmbmJzcDs4ICstPC9wPjxwPiZuYnNwOy4uLi96aF9DTi9uZXR3b3JraW5nL21wdGNwLXN5
+c2N0bC5yc3QmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7fCAxMzkgKysrKzwvcD48
+cD4mbmJzcDsuLi4vdHJhbnNsYXRpb25zL3poX0NOL25ldHdvcmtpbmcvc2tidWZmLnJzdCZuYnNw
+OyB8Jm5ic3A7IDQ0ICsrPC9wPjxwPiZuYnNwOy4uLi96aF9DTi9uZXR3b3JraW5nL3RpbWVzdGFt
+cGluZy5yc3QmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7fCA2NzQgKysrKysrKysr
+KysrKysrKysrPC9wPjxwPiZuYnNwOzUgZmlsZXMgY2hhbmdlZCwgMTAzNyBpbnNlcnRpb25zKCsp
+LCA0IGRlbGV0aW9ucygtKTwvcD48cD4mbmJzcDtjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRh
+dGlvbi90cmFuc2xhdGlvbnMvemhfQ04vbmV0d29ya2luZy9nZW5lcmljLWhkbGMucnN0PC9wPjxw
+PiZuYnNwO2NyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0aW9uL3RyYW5zbGF0aW9ucy96aF9D
+Ti9uZXR3b3JraW5nL21wdGNwLXN5c2N0bC5yc3Q8L3A+PHA+Jm5ic3A7Y3JlYXRlIG1vZGUgMTAw
+NjQ0IERvY3VtZW50YXRpb24vdHJhbnNsYXRpb25zL3poX0NOL25ldHdvcmtpbmcvc2tidWZmLnJz
+dDwvcD48cD4mbmJzcDtjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi90cmFuc2xhdGlv
+bnMvemhfQ04vbmV0d29ya2luZy90aW1lc3RhbXBpbmcucnN0PC9wPjxwPjxicj48L3A+PHA+LS0m
+bmJzcDs8L3A+PHA+Mi4yNS4xPC9wPjwvZGl2Pg==
+
+
+--=====_003_next=====--
+
+--=====_002_next=====--
+
+--=====_001_next=====--
+
 
