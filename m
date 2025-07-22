@@ -1,75 +1,94 @@
-Return-Path: <linux-kernel+bounces-740256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9D7BB0D1EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:34:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82161B0D1F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:35:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC30E3BAC07
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:33:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CD5C17B942
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79C32BE7B6;
-	Tue, 22 Jul 2025 06:34:18 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D919D2BE65E;
+	Tue, 22 Jul 2025 06:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HnZdhae9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E47028B3EF;
-	Tue, 22 Jul 2025 06:34:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337BF46BF;
+	Tue, 22 Jul 2025 06:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753166058; cv=none; b=mBi+AULmC3UuPvhJE+Dlch0ny3kRiQ9vmgSiRKMSfV3iJFsWnW1EhhQLHijo+6rtSqYCIo7GRSy3yW5VXwldayP/AIXFzzPWqrl96Asu/gAEuJ3Z5R9dWvnqQmvuDV7rg0y1yhROZX80QBqoGFKwTvKx1fqFF2s8Di+GAzvq4G8=
+	t=1753166131; cv=none; b=UO2YllSeQE81Ttx/xPXwD5hw7y6Ar+A/JDE9cSbzy96ojTrGTm/orZBqLz8XmXVwhF/FLmTMbn4ytWus1/0sB6pehiavQTEheFT1NzlsryiRX9Y5vGV/iG3ZADSNu+r2a9S+xM4IZj8/QNWAKXq9A4pl/q9x/AeDtaqZGhbbJjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753166058; c=relaxed/simple;
-	bh=N/v7R+Fl7+iv6YaY5wCby2oN8ISmfSeARKg5HuG62Lg=;
+	s=arc-20240116; t=1753166131; c=relaxed/simple;
+	bh=QoC4VDOHBDQl8oqOfQ7J9EPreRbenyXCGwEV1XEUaAQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dOXpp1B6KM8whVmFOxdLfjCQ8rH3lB3S1UcfOUG52mBWSxah0dGtDgbqglnXL/JSgO7l8QKPH72O18X58qKfCOSzcWb2d88SCCYoC+l36h1nzXB0WUM7nTB+yk8rfc5hR7aKTwt2Ss1Qd6aRO7hQyfbyn0KlYw3HXRoPs1lCAso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 4F5FA68C4E; Tue, 22 Jul 2025 08:34:13 +0200 (CEST)
-Date: Tue, 22 Jul 2025 08:34:11 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next 2/2] umd: Remove usermode driver framework
-Message-ID: <20250722063411.GC15403@lst.de>
-References: <20250721-remove-usermode-driver-v1-0-0d0083334382@linutronix.de> <20250721-remove-usermode-driver-v1-2-0d0083334382@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iUne1fr9GlKjwFZwcvCd0pmLH3/H/0nZNvK0Fc2t5I8YpOrtGXgx/M10FcO8tZmPedphiyR0WUwfEtRuEAH/drvh1DVW/rGztUUtYCHuXrV1ljj3rz0y1mwq55j/h4rr3YriwdK09zuIS57RlPD099mA+uqqgoK2gbrMRjv5Qnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HnZdhae9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B904C4CEEB;
+	Tue, 22 Jul 2025 06:35:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753166130;
+	bh=QoC4VDOHBDQl8oqOfQ7J9EPreRbenyXCGwEV1XEUaAQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HnZdhae9Zfdk27Wdjp/BAGTZNIFpfCAq9khCZSe4XERIrIY3j2z1dqpgGeWuZts5S
+	 18duwTjKUZwaoZ9RQEW5cCn+7FkV/MEyXsjh8wIDh/NgHqCcWV+T8Uamj/mBb6d/Ms
+	 EUfvW89T6kxlw4snbtXTSafCQCStfR1zerCkndR/W9FjgkcNvl7Nt9wW7HL/E7r7WG
+	 F1anreGPI0wUw6AvKJg2eftf/WxoSKngKAH7A9XO4trBg1qkucdOlZW0Hya6x9DBge
+	 MFf0c2hUPUL5N2j3ogJ6ly0atONET1oj2mk2eUQe8ZiMQ73H8vzIYs4agXxqPXmOYG
+	 Vsflwf15hKZCw==
+Date: Tue, 22 Jul 2025 08:35:28 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Praveen Talari <quic_ptalari@quicinc.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+	devicetree@vger.kernel.org, dmitry.baryshkov@oss.qualcomm.com, bryan.odonoghue@linaro.org, 
+	psodagud@quicinc.com, djaggi@quicinc.com, quic_msavaliy@quicinc.com, 
+	quic_vtanuku@quicinc.com, quic_arandive@quicinc.com, quic_cchiluve@quicinc.com, 
+	quic_shazhuss@quicinc.com, Nikunj Kela <quic_nkela@quicinc.com>
+Subject: Re: [PATCH v7 1/8] dt-bindings: serial: describe SA8255p
+Message-ID: <20250722-optimal-striped-ermine-ba3da2@kuoka>
+References: <20250721174532.14022-1-quic_ptalari@quicinc.com>
+ <20250721174532.14022-2-quic_ptalari@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250721-remove-usermode-driver-v1-2-0d0083334382@linutronix.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20250721174532.14022-2-quic_ptalari@quicinc.com>
 
-On Mon, Jul 21, 2025 at 11:04:42AM +0200, Thomas Weißschuh wrote:
-> The code is unused since commit 98e20e5e13d2 ("bpfilter: remove bpfilter"),
+On Mon, Jul 21, 2025 at 11:15:25PM +0530, Praveen Talari wrote:
+> From: Nikunj Kela <quic_nkela@quicinc.com>
+> 
+> SA8255p platform abstracts resources such as clocks, interconnect and
+> GPIO pins configuration in Firmware. SCMI power and perf protocols are
+> used to send request for resource configurations.
+> 
+> Add DT bindings for the QUP GENI UART controller on sa8255p platform.
+> 
+> The wakeup interrupt (IRQ) is treated as optional, as not all UART
+> instances have a wakeup-capable interrupt routed via the PDC.
+> 
+> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
+> Co-developed-by: Praveen Talari <quic_ptalari@quicinc.com>
+> Signed-off-by: Praveen Talari <quic_ptalari@quicinc.com>
+> ---
 
-Overly long commit message here.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> remove it.
+Place the review tag in correct place, not in random or before you
+received this patch.
 
-Otherwise looks good:
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Best regards,
+Krzysztof
 
 
