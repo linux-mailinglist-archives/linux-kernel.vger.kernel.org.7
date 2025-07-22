@@ -1,167 +1,122 @@
-Return-Path: <linux-kernel+bounces-740547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 524F7B0D592
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:15:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D4B3B0D593
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:15:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21C86169E0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:15:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BE8F1709FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073942DCBFA;
-	Tue, 22 Jul 2025 09:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25AF22D7805;
+	Tue, 22 Jul 2025 09:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AC/2QcXX"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="g63L2QrV"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32D22D239F;
-	Tue, 22 Jul 2025 09:14:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D233223644F
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 09:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753175694; cv=none; b=r+m1Lii+LJE92uCbrSkQpMUTYzqjBZ2FdHhBStKls3ZKNd2K2M8jaffaC7R7/GYdEizZUeuR4TUEKf5ZR1FF4r8T+bbX9JZasa/Kig6p3Akxxn3NBALbUfoq4EGWxq8KCJ8aGlGlUNv9tXmYFQ0sQHY7vJ0NwHsVrSIebzaDEHQ=
+	t=1753175720; cv=none; b=KLbH2R0gvmXb/z2PPriTthr2lWBdGFnYuE/4fz0WWtpxic3a0Hnn5rw9UqM7Lu7MZatnfiqD4YtzvpJdqhZX6+LJffdbTeUHa964D74GjvwqHpzPgYB9fttYTeBxbcPCdSm6t53ZsrtDfKZI1sR7J8EtAJQwMfbH4NSTFFRH/eE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753175694; c=relaxed/simple;
-	bh=cacMjn5/p/M8y3JTVH1h91zknzrPaScjzMmXin+dy3M=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=AWGebMDKIpKeqjt+0S3SCL6nfMxUM5Bg3AfKy7ugH1iS4dGs/6oxVPvesacSri0sSZGD8WUbbmVO69eyeDw0qvVhOJ22Flf8QcDrAyp4R2qL9PK6c5KpVX340g747LMsDVhWNHZHhyaeCO77F3oA1smuTcIHhhOA8wsCNDSXj5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AC/2QcXX; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2180D43352;
-	Tue, 22 Jul 2025 09:14:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1753175684;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=y9hR42QpuegsrOqNZrIg+mtU4sgDTD0im7FtvEt+1js=;
-	b=AC/2QcXXFQdFdcZZ3ah5NtQEdVzZS5Fv72MsSYFPI44WtrzCCNbhClR8o9ajNNaElOpejA
-	oHhKfLcvkhD4+j+nIlnVyl2DIB+y+iXeStU/n0cNedk3uXbuUJSxRPM4gjIEkEeCeAS+mP
-	bwWiSHmokEgwNg41kcbxL3pGydQ2GfVCvtQW84gAAWbWn8+9DY8ev+lPF2TIpusZLYQqvy
-	9ZYKrPzk6s2+HTLLV9GFZh7rCfAlw1SdhZvM7cC1r7cBiD4YQt2FJrDhRX81+2EDgumC3R
-	bLR/0icnlUHT81dL1J8Xtg/LdepwKyjPglRRCF3IkDE6hVCrYBOStabbFwCOwA==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Chen-Yu Tsai <wens@kernel.org>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>,  Peng Fan
- <peng.fan@oss.nxp.com>,  Carlos Song <carlos.song@nxp.com>,  Ulf Hansson
- <ulf.hansson@linaro.org>,  Stephen Boyd <sboyd@kernel.org>,
-  "imx@lists.linux.dev" <imx@lists.linux.dev>,  "rafael@kernel.org"
- <rafael@kernel.org>,  "mturquette@baylibre.com" <mturquette@baylibre.com>,
-  Frank Li <frank.li@nxp.com>,  "linux-i2c@vger.kernel.org"
- <linux-i2c@vger.kernel.org>,  "dakr@kernel.org" <dakr@kernel.org>,
-  "festevam@gmail.com" <festevam@gmail.com>,  "linux-clk@vger.kernel.org"
- <linux-clk@vger.kernel.org>,  "pavel@kernel.org" <pavel@kernel.org>,
-  Bough Chen <haibo.chen@nxp.com>,  "len.brown@intel.com"
- <len.brown@intel.com>,  Andi Shyti <andi.shyti@kernel.org>,
-  "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-  "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-  "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,  Aisheng Dong
- <aisheng.dong@nxp.com>,  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-  "kernel@pengutronix.de" <kernel@pengutronix.de>,  "shawnguo@kernel.org"
- <shawnguo@kernel.org>,  Jun Li <jun.li@nxp.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: Dead lock with clock global prepare_lock mutex and device's
- power.runtime_status
-In-Reply-To: <CAGb2v64PfUiKjrJyhcthuLt6FXQS6VoaShYZ3A3WO__3pu4O+w@mail.gmail.com>
-	(Chen-Yu Tsai's message of "Tue, 8 Jul 2025 01:28:08 +0800")
-References: <VI2PR04MB11147CCEFE4204B852807AAF2E841A@VI2PR04MB11147.eurprd04.prod.outlook.com>
-	<20250707105816.GF11488@nxa18884-linux>
-	<20250707-careful-pragmatic-quail-e1a2d8-mkl@pengutronix.de>
-	<CAGb2v64PfUiKjrJyhcthuLt6FXQS6VoaShYZ3A3WO__3pu4O+w@mail.gmail.com>
-User-Agent: mu4e 1.12.7; emacs 30.1
-Date: Tue, 22 Jul 2025 11:14:41 +0200
-Message-ID: <87pldsd1tq.fsf@bootlin.com>
+	s=arc-20240116; t=1753175720; c=relaxed/simple;
+	bh=MdWshbce3XUzAERPh+DbFtCFVpzrXq2WR7/dSR+x+10=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=NXcTQjyw7WsZBUyUtFFPvV9bOybjL4U7d7ZalPn4QPaTdWkin2hmST7PIXi1/EyzLwQKu45y6YSN5fzDVGsKo22y8YWNY8+qj2y9WBL4fyk/Q7vNhDkRac6Bb+6ZLHECXzrTQJXIF82u/FlqOU0560+8Onh3IUUCCYelSfNGQjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=g63L2QrV; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-74b56b1d301so3439083b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 02:15:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1753175718; x=1753780518; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sDpd/9R1FbFO45b0pyVOCvmilI+82TcVxnKdkYIR8qQ=;
+        b=g63L2QrV71D1KPI5bRt4z8FkpiWo8Yatj0L3DcTcX12l48cYpuk4587C9YL+aq6OkD
+         z0Eyh8dXoMYBWcttbD4LWfYwvPeUx1XJYOzhhDqneBepWA7zHZGcICMENo2+aLfQgbei
+         /SCSahw+Crn0B3/O4A1b3cZn6ksqpvZ1sy/+03asKrMqhy5QZbwcHly/UGLAU4KolOl3
+         gEMku751a3gl9lpEevk6mSkd1DlWRO7YZnGAxNZ3SvS39U/PXTU6Z+OwXx1K7xO3U4xj
+         uihJtgzlwxElvTPJtPnJg8q/R8XCgWOagr78tiKbhdnzOvi8WqMuROVC0nr3qAqRqDDW
+         9XgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753175718; x=1753780518;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sDpd/9R1FbFO45b0pyVOCvmilI+82TcVxnKdkYIR8qQ=;
+        b=Q7jk44tJP+5vrPQOiOn3KBtzgY3wPqW4umXHVlEZB9fPNMNRrRcFcM2WosYavAEIr1
+         9rVxmx0kGAtX/IQoGtz3SzvyggnmO6ga53AoizDpCo29cC0Ybv7sV8GxLn8Yp3kyMjV5
+         rfp23Mj7dIWAxUZucVLiozxnKX6ef2Er9oXmdOhVttgY5C7LQctuUstK1eM+7bFY15qY
+         TMkBs8l3FSl65HMvwHjCmCq97FVQ+2i4JZtjcIkzHAJzA/GT0WWGxP+zwUGGLbZ6DWUk
+         h/TuZ7Ag4Mv8kl1ML6zLvV/we+Fg3Eywsst/OuwwVH09HyK6uKc9le4RapVjyZGrjf5N
+         L9nA==
+X-Forwarded-Encrypted: i=1; AJvYcCWrExbZJ/eibBHtBOJzJGjfZJVT3vCCLMUWcrWxJK3lDZ/sP2RbR8GWow/OWMKW/d9IVYmLP0w7geML6MA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxasUCKBiaQ9LelTjSgA+9OiMXE/1HG8ej1+6ywNicMQV9kPYGd
+	lYsgP5z2Cw4G4nF8xP71bql+OlyyczDket3kWdsLF2PoctzoGqdBlL8UPy82hPxG78I=
+X-Gm-Gg: ASbGncsTboD6+RDL8TFlS3qCzyHgsObW0KPEQr6/aEFfHuqZ+0TGJy6Ewe6jjiZiGIt
+	ICs8LG+UCy6mNlv8MXOqn0aT22Gzlrx+LswECkLulDMmabYXe+McBZqFxgay+2JR++pwBYE95u8
+	rvQFmY8CrkIs/sk5BYjTzkW6eydkr2etOVsQjis71dqbsHMIc4+Di40ApU7bqbdvYLwAmNQQTQH
+	pd+41TdLPX3m+IdkTV7uzd9apmVKCCKpZuQlDAAMwWXh6bqcyBueO85Ya8FoHD29eS26j3ipkZg
+	7GFrA+PhrrMLUT91iUSogVRQs+XyW5KqSnYizU4sxvXho8rB+8MEG/TTLNjkc/oOAsyxZ9GzhRn
+	oOKE7mES7s0R/W0h5AE1XZdO4O5Bh4rlgWxIBBMS/CqN8Mmim4gJqMXEj
+X-Google-Smtp-Source: AGHT+IFdLWXKtYtTpg9kzQmOA7PQCO4tbUE9up/LbFHwS0ttZD0Bn895xLmmJwWm4I3jiNDzOrHtgw==
+X-Received: by 2002:a05:6a00:2d19:b0:749:14b5:921f with SMTP id d2e1a72fcca58-75724a8ac06mr32920614b3a.18.1753175717942;
+        Tue, 22 Jul 2025 02:15:17 -0700 (PDT)
+Received: from L6YN4KR4K9.bytedance.net ([139.177.225.236])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759c84e2008sm6676900b3a.30.2025.07.22.02.15.11
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 22 Jul 2025 02:15:17 -0700 (PDT)
+From: Yunhui Cui <cuiyunhui@bytedance.com>
+To: paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	akpm@linux-foundation.org,
+	catalin.marinas@arm.com,
+	anshuman.khandual@arm.com,
+	kas@kernel.org,
+	ryan.roberts@arm.com,
+	cuiyunhui@bytedance.com,
+	samuel.holland@sifive.com,
+	namcao@linutronix.de,
+	willy@infradead.org,
+	abrestic@rivosinc.com,
+	yongxuan.wang@sifive.com,
+	apopple@nvidia.com,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/1] introduce ioremap_wc()
+Date: Tue, 22 Jul 2025 17:15:03 +0800
+Message-Id: <20250722091504.45974-1-cuiyunhui@bytedance.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejgeehudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefujghffgffkfggtgfgsehtqhertddtreejnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepjeegfedtfeelvdeigedvjeelgfelgeejhffgueelvefgtdejheduffehvdehgeeunecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvkedprhgtphhtthhopeifvghnsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhhklhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtohepphgvnhhgrdhfrghnsehoshhsrdhngihprdgtohhmpdhrtghpthhtoheptggrrhhlohhsrdhsohhnghesnhigphdrtghomhdprhgtphhtthhopehulhhfrdhhrghnshhsohhnsehlihhnrghrohdro
- hhrghdprhgtphhtthhopehssghohigusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehimhigsehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrgh
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Compared with IO attributes, NC attributes can improve performance,
+specifically in these aspects: Relaxed Order, Gathering, Supports Read
+Speculation, Supports Unaligned Access.
 
-Thanks Chen-Yu for the heads up!
+When I replied to this patch (https://lore.kernel.org/all/CAEEQ3wmVPrZ6s8msM8RgcyZePGhXM1ikYMc5wW2n8q3Bf90EVw@mail.gmail.com/),
+I found the author's email address was invalid. So, based on this patch,
+I made slight modifications and resubmitted it.
 
-On 08/07/2025 at 01:28:08 +08, Chen-Yu Tsai <wens@kernel.org> wrote:
 
-> Hi,
->
-> On Mon, Jul 7, 2025 at 7:05=E2=80=AFPM Marc Kleine-Budde <mkl@pengutronix=
-.de> wrote:
->>
->> On 07.07.2025 18:58:16, Peng Fan wrote:
->> > On Tue, Jul 01, 2025 at 03:16:08AM +0000, Carlos Song wrote:
->> > >Hi, All:
->> > >
->> > >We met the dead lock issue recently and think it should be common iss=
-ue and not sure how to fix it.
->> > >
->> > >We use gpio-gate-clock clock provider (drivers/clk/clk-gpio.c), gpio =
-is one of i2c gpio expander (drivers/gpio/gpio-pcf857x.c). Our i2c driver e=
-nable run time pm (drivers/i2c/busses/i2c-imx-lpi2c.c [1]). System random b=
-locked when at reboot.
->> > >
->> > >The dead lock happen as below call stacks
->> > >
->> > >Task 117                                                Task 120
->> > >
->> > >schedule()
->> > >clk_prepare_lock()--> wait prepare_lock(mutex_lock)     schedule() wa=
-it for power.runtime_status exit RPM_SUSPENDING
->> > >                           ^^^^ A                       ^^^^ B
->> > >clk_bulk_unprepare()                                    rpm_resume()
->> > >lpi2c_runtime_suspend()                                 pm_runtime_re=
-sume_and_get()
->> > >...                                                     lpi2c_imx_xfe=
-r()
->> > >                                                        ...
->> > >rpm_suspend() set RPM_SUSPENDING                        pcf857x_set();
->> > >                           ^^^^ B                       ...
->> > >                                                        clk_prepare_l=
-ock() --> hold prepare_lock
->> > >                                                        ^^^^ A
->> > >                                                        ...
->> > >
->> >
->> > This is a common issue that clk use a big prepare lock which is easy
->> > to trigger dead lock with runtime pm. I recalled that pengutronix rais=
-ed
->> > this, but could not find the information.
->>
->> Alexander Stein stumbled over this issue some time ago:
->>
->> | https://lore.kernel.org/all/20230421-kinfolk-glancing-e185fd9c47b4-mkl=
-@pengutronix.de/
->>
->> I encountered it too, while trying to add a clock provider driver for a
->> SPI attached CAN controller which uses runtime pm.
->
-> Miquel from Bootlin posted a more formal description of the problem and
-> some possible solutions last year [1].
->
-> [1] https://lore.kernel.org/all/20240527181928.4fc6b5f0@xps-13/
+Yunhui Cui (1):
+  riscv: introduce ioremap_wc()
 
-I also sent an RFC in April:
-https://lore.kernel.org/all/20250326-cross-lock-dep-v1-0-3199e49e8652@bootl=
-in.com/
+ arch/riscv/include/asm/io.h      | 4 ++++
+ arch/riscv/include/asm/pgtable.h | 1 +
+ 2 files changed, 5 insertions(+)
 
-I haven't got the energy yet to process the interesting feedback from
-Rafael and Stephen. But getting a broader audience and maybe more
-feedback will certainly help!
+-- 
+2.39.5
 
-Thanks,
-Miqu=C3=A8l
 
