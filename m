@@ -1,208 +1,266 @@
-Return-Path: <linux-kernel+bounces-741019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A040B0DEF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:39:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5923AB0DF07
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:41:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32212582B39
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:34:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66E59583F24
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:35:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE1F2EAB8C;
-	Tue, 22 Jul 2025 14:34:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70892EAB7A;
+	Tue, 22 Jul 2025 14:35:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LTI1FH+0"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OzlmYC83"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D7C2236E8;
-	Tue, 22 Jul 2025 14:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221E928C017
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 14:35:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753194872; cv=none; b=sTM8T9UL7PrJ12jrze7KSsBPgBR/CMXNSKDOfGsNJaJhvB3qvejq1lt3hSgbPo+1aSpeXyF0tNSado2DD7cnEp30tI2enczIRUZ8+ckOfZAYVqOojYzcJtG3V37LgzlWKX4+4hYctWwkG6X2AmB7+icZebaRhuvb0onqVqNxpKo=
+	t=1753194947; cv=none; b=bjUG4l5ma7/dJIUxLgutsApX+AM74+SLPa0Y5shU8ZreVLSSk7CNtfsr5zf/KPgqTRHN3YQfuG9JYXAmkpKrC5w/wMAC+NSFhjF9LGgr9JUcA7MvFDLbMbl+B6qe+EHXoMi2iTVgV3heZqsNmUS9tEVnllWYl4eyQXF8gcR+5Zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753194872; c=relaxed/simple;
-	bh=WbS1AEBNeY7MKsTnTG+Fdp4S4p4dysRYufHASJvUyCY=;
+	s=arc-20240116; t=1753194947; c=relaxed/simple;
+	bh=FtMcpts9tF0PQFNX2Xy1OLTiS5qBzXfp3waJCk/dUso=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kypXrdaAmvxPaBnZb05opBozk2ENZziI02CIGBblRFvZbBUAY97fspX/vHql1ut9x72W8uZOBbi98uxq10Q5PoWz530vR0nPvmplOK0miLKb3tSQaGCQjozCy6jKYurYsICv23l3FqDc4RrcTC7Wxl6CUs6GYGtQZ1RFWoBkM1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LTI1FH+0; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7e2e3108841so654540785a.3;
-        Tue, 22 Jul 2025 07:34:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753194870; x=1753799670; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=XXA8ehJAeU9SuKzdIpK8b9KgCTF/AV+BxhlLom5+gUQ=;
-        b=LTI1FH+0tLEnWynB/b58clrKgfav6kGw6A5HcVeR33H50bq/+8lwxnKVU0WGTDYQjw
-         RWUatIGi4TekKlS4K7237DN7xlzVaJJBcGZZMX6sHzM7kdjfHyaukYe2+2134+MoMYIm
-         CpTfOwgo+Zm/56SKHeHXsxaVIRNFeCQeE2BzS9hVz9feNOsm5nQQ/r0CYXqzOU9ZuKNR
-         e19tGP9FOHwfR/AvhWxvUsjZAedd7XvdvZHAPCSGP1ayOotHVdJZ6Y0f+MP/E1Jh5JJG
-         s3M/OkmS8w98SIw0OkAbvh1oi4c8c65YXiNeK4e3FtFLwAVfsdNZgyvDYXbX/BHuPRBU
-         kq/g==
+	 Content-Type:Content-Disposition:In-Reply-To; b=emNtWGkRg2i6oYEkie1x2ZvCqsf+mEpL8eGEYtUoVDwTt/mFElDy7m6El5/QyAYSv7p4D8ta7WL5JYXkBrH1NbSfrj3xt9ah8WSRLFINV2eKM0PWG/EX7ek5kpBgMGi2hKCYQ0xT1GWVSmkVpVrZKF7Xa56viEi+6p+/gEzkIOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OzlmYC83; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753194945;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fzB7P1BusfnapG0uVAVGElcUdQoH/V3AcX2/zWIOBVg=;
+	b=OzlmYC83I/SGl5fUi+JgMaK569Ve3WoZH/AtZMuneSo6vPFsvQQx/QjDYg3PvX1XGyihh4
+	w83KaBMy1WF+OuE2hL26q02rfVio3Yp0hqjoxeaj7MVLsfuwWm/suimUY8Q05VTnWuDvb2
+	wIFNQTDOvGEGNFgEAM2pkCn8fMDNJYw=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-308-JhJAX_5LNayi7q0Zs-g7Lw-1; Tue, 22 Jul 2025 10:35:42 -0400
+X-MC-Unique: JhJAX_5LNayi7q0Zs-g7Lw-1
+X-Mimecast-MFC-AGG-ID: JhJAX_5LNayi7q0Zs-g7Lw_1753194941
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-ade6db50b9cso562169266b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 07:35:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753194870; x=1753799670;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XXA8ehJAeU9SuKzdIpK8b9KgCTF/AV+BxhlLom5+gUQ=;
-        b=Rxyq0JHufUdyrZq4NKcvLfLwbQ7Bdp1ynvayRs3m4DVoK1e/SWalfmjkeEVqbf4AC0
-         9SpaTlvxmgnaMG3RKcdseWtOnQhq0XTEtYLc7wFwIwUvAPDcwM+flyRwMW/87MGuTWqX
-         47PE3eJjEr/7HKZj+wb9aPa3golDZqR0FsAKk4S6NMdCOM1F+uI9ODwHcdVdrVuGsy+5
-         L5fRUC5A9sbychzdG9rePOz7xBI8EPPkIq6mWIVGmD8tbMiZExywVR2xYJVTJIb6zo3E
-         ji6nggIjcNvt2YeHyutiNtlk5yNgxcWtfOwIUV211gILoGJKKv1IK9iOTCvAqPozbU8t
-         YFYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUhUf+tT1w2ni9gIyhW6qi5z70xZ672YOsF2tgMBSnTx23mXEZsh/27povpBbqTeorhbGtg/JUEgqFBI9g=@vger.kernel.org, AJvYcCVPRCz5WAoXAUBWc2jhWsuk17U8jUKlNaeQeWT4vEgjazb6+x8W4d2O+Z2f4gPVfrqCNHfc//VPLb4l5UE7Cvk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJ93Nzo2sZqk7+MPw8j6rY1rIjnlmBED/L/l+YZA8c1TGtchVs
-	nzs0J/+t69E33D7kMOiNWlBXYPe0CvfPHBzoazPoFPLu3pF9ZxIIDEOb
-X-Gm-Gg: ASbGncsXkdsUpXcvPL+PYdRxF/Q1bZo5Ent+HPkIwU1KK8DN7xTAJTAx6J+2QKHe01J
-	JSlQ5aSkyKl0nJ8s8XXstq63njPO0q1vtFNK3EAOQYyJI7FB+2xlJOt4Qq4XUH/mkzzSOMPyqtn
-	GFewGU5UQjdOLXr47r/kS4IeVoLD8EcdhmYetiWHgzBgTJQKhfSzKgOlfWVvxUfkBGP307wXAHM
-	q7iorv9D2ZMC9DYjHpdLgSKKrQWqBEmxtc03uLvoREBgP1MApB5p54z84yyHtmhx8Ll1yJNeFYR
-	SpzgUl0cKXaXYJNOkBUVliw1iIiS2aBCEKPtNIaeJBgy5dSjBuqpIIydOnSBYlbzyIMSDqgcP3R
-	qtB9fnfxL5oBdnqFQncg54Dxgjs+vuZWwK0a7LVP/MminlmYSa86D52O+9L01tleBmM//hFob6D
-	KiZ40D1S9xpUQ4WgTso2Vpwxs=
-X-Google-Smtp-Source: AGHT+IGC4psX7BFwVp5/EZt6AoO2fspksDrjm6JpJHYnD3pPfkeUYVyd8slfJ9SVHbiSFD5UxYWBkg==
-X-Received: by 2002:a05:6214:8113:b0:704:f7d8:703e with SMTP id 6a1803df08f44-704f7d88982mr248917056d6.50.1753194869529;
-        Tue, 22 Jul 2025 07:34:29 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7051bab2a55sm52170026d6.96.2025.07.22.07.34.28
+        d=1e100.net; s=20230601; t=1753194941; x=1753799741;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fzB7P1BusfnapG0uVAVGElcUdQoH/V3AcX2/zWIOBVg=;
+        b=s4WguhRqzLb07COjv5/DjaWDooiRIQGblwYk4sozQMF4Rx7i1z33ioEZN4DQIpXV/W
+         +R5v8ID+H3G1kieUYuqszvU+UG3qIm2c2jQeaDB6c7nbe5V4lvo+P6Q3Fvz09BiCZ6cX
+         KsgjR/ZK/UXvZetNwrcyyEU38NnCxfXrDsFo0G7HRnKu+jBs96n8xq8Vh9yRy/bzSViK
+         zpuitou5Qd1UGSUs8FeyhO5v/qlmv80aTY8q9Ukc6MFVfKPvMwfFaog7Kcw4j0MoNWiT
+         Jq++19sdgGIw4ZYTmU6Jkmcc4vJD+Iy4H/UWqglgwCP+hs04g8LCOOmmVAzvjvBZDU4h
+         R+Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCWR4T7bTtQGXA/nF0doEUgOkqcDz0aGSknD7OyC6hcXJ4kOB5fR1WNNwY/zHEAN9IJ3yCRXiS3Nh/cz4Dw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaPCRK0bIvoIduOy94CTMXCBbcMEzfXvZAo6zipQ5nbAMeTmc4
+	BLaNsV2hUNNNUmKnSddHydZiKf6HMcfFmpqvonaoy+HXk7I8sm09OM6/PoShPfcMiya/zklRI5i
+	hxWpEefzCYhIY9v8hgil8/iQOIT+sDr3DlNfsNTTF4FIaV3B6rGnF0ilKyfnaG8vjiw==
+X-Gm-Gg: ASbGncux1yX/4ft7HJEioUHUUUBjfALWOeZjVojy5cRKCnmlp+byoWCjoLeqWuiJzde
+	AC5SejScaoluNv6Qu42C7ONigaBDsDMh0ful+BPqQI7tcV6G6dgCG7qi2ipDHjT01EUbVQyiSl1
+	9m3LhbJvQkUrwmkAWCozdUSlwHJwDTP/b8gP1XkJaq/bAcANgy3cbze7WE9GuAXEcExZkDKH1Y4
+	hCzdnvEypCr9GgKjA4QW7WiCfdfeWjeho9xUaaHqItDPAe2j8KU14pYU8JV6B8wVJOUpSB0+vBY
+	grSQ1Kev6CUo7txl04qfxUGkGQ0/Ityl9qfTK931X/lChaoeD1Ij5We+8tMSPneb95ltTuESQOA
+	X+M+FKnQjM9N9mjE=
+X-Received: by 2002:a17:906:7946:b0:ae9:8dcb:4dac with SMTP id a640c23a62f3a-ae9c99bac5fmr2438078166b.14.1753194941127;
+        Tue, 22 Jul 2025 07:35:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF/TeWm8DeewR5crPsEXii/8MlhRmlF6n2C6fHO5dz/5iDDWZFbxMXiWYmWah7yJm8iOWS6rw==
+X-Received: by 2002:a17:906:7946:b0:ae9:8dcb:4dac with SMTP id a640c23a62f3a-ae9c99bac5fmr2438071766b.14.1753194940260;
+        Tue, 22 Jul 2025 07:35:40 -0700 (PDT)
+Received: from sgarzare-redhat (host-79-45-205-118.retail.telecomitalia.it. [79.45.205.118])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6c7d9941sm879107266b.56.2025.07.22.07.35.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 07:34:29 -0700 (PDT)
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 826B2F40068;
-	Tue, 22 Jul 2025 10:34:28 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Tue, 22 Jul 2025 10:34:28 -0400
-X-ME-Sender: <xms:dKF_aNKo4bahADCRMV18cZHgHpDbozMzBWiWyqfShDKy0ETsRJ3xSg>
-    <xme:dKF_aBCYBHR-mpvo_F0dnHdqPU2WSv4ooDvp_IjZNe9sbg3Dx9OaaUCyGOyQ-pFNF
-    Gjql-Yo2h1Hy3UJHA>
-X-ME-Received: <xmr:dKF_aFF-Bkm_vXObk0kvYmDlaY_PYmapp-yM4FdscdTLU427xnj-4eYEPQo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejheduhecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeenucfhrhhomhepuehoqhhunhcu
-    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtth
-    gvrhhnpeejhfeikeekffejgeegueevffdtgeefudetleegjeelvdffteeihfelfeehvdeg
-    keenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgv
-    rhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfh
-    gvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthho
-    peduiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhoshhsihhnsehkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomhdp
-    rhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhgvgi
-    drghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghgrrhihsehgrghrhihg
-    uhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhrohhtohhnmhgrihhlrd
-    gtohhmpdhrtghpthhtohepsggvnhhnohdrlhhoshhsihhnsehprhhothhonhdrmhgvpdhr
-    tghpthhtoheprgdrhhhinhgusghorhhgsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    htmhhgrhhoshhssehumhhitghhrdgvughu
-X-ME-Proxy: <xmx:dKF_aGIWPrJxLP-tx3DeaeM3spRkxBO3bs1CsD8nYcx2Ih7SQTqOWQ>
-    <xmx:dKF_aMrRaSocZCYI943g00YAnmXPieb-1AwGiOiVCs-OvQH2JJiaWA>
-    <xmx:dKF_aNjqvSkKLM79YhvAHy5--BjuvGk-ucavxD50CiPvlZwUym_TxA>
-    <xmx:dKF_aLZZYQfJPS-EBunA9ZuMTd-2ezhPGEScIhH39Ku12IJ3Sme3Fg>
-    <xmx:dKF_aFn00_IUNKSSE19RlBILYXl6q97oG2bfsEpHr1kOR3p2VyQBov73>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 22 Jul 2025 10:34:27 -0400 (EDT)
-Date: Tue, 22 Jul 2025 07:34:26 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Benno Lossin <lossin@kernel.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, Lyude Paul <lyude@redhat.com>,
-	Mitchell Levy <levymitchell0@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rust: sync: fix safety comment for `static_lock_class`
-Message-ID: <aH-hcnZ3hiQIQj-5@tardis-2.local>
-References: <20250520231714.323931-1-lossin@kernel.org>
- <DBIJLR7XNI6U.21PMPODHE83DZ@kernel.org>
- <CAH5fLgh9aEF5V9rNq2a8utS=NxSU8rdxpKsNbsuPoMpDfHN0fg@mail.gmail.com>
- <DBIKI0KDP1J8.3MOHF5G3A6JEH@kernel.org>
+        Tue, 22 Jul 2025 07:35:39 -0700 (PDT)
+Date: Tue, 22 Jul 2025 16:35:25 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Amery Hung <ameryhung@gmail.com>
+Cc: stefanha@redhat.com, mst@redhat.com, jasowang@redhat.com, 
+	xuanzhuo@linux.alibaba.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org, 
+	decui@microsoft.com, bryantan@vmware.com, vdasa@vmware.com, pv-drivers@vmware.com, 
+	dan.carpenter@linaro.org, simon.horman@corigine.com, oxffffaa@gmail.com, 
+	kvm@vger.kernel.org, virtualization@lists.linux-foundation.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org, 
+	bpf@vger.kernel.org, bobby.eshleman@bytedance.com, jiang.wang@bytedance.com, 
+	amery.hung@bytedance.com, xiyou.wangcong@gmail.com
+Subject: Re: [RFC PATCH net-next v6 00/14] virtio/vsock: support datagrams
+Message-ID: <dsamf7k2byoflztkwya3smj7jyczyq7aludvd36lufdrboxdqk@u73iwrcyb5am>
+References: <20240710212555.1617795-1-amery.hung@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <DBIKI0KDP1J8.3MOHF5G3A6JEH@kernel.org>
+In-Reply-To: <20240710212555.1617795-1-amery.hung@bytedance.com>
 
-On Tue, Jul 22, 2025 at 02:03:25PM +0200, Benno Lossin wrote:
-> On Tue Jul 22, 2025 at 1:34 PM CEST, Alice Ryhl wrote:
-> > On Tue, Jul 22, 2025 at 1:21 PM Benno Lossin <lossin@kernel.org> wrote:
-> >> On Wed May 21, 2025 at 1:17 AM CEST, Benno Lossin wrote:
-> >> > The safety comment mentions lockdep -- which from a Rust perspective
-> >> > isn't important -- and doesn't mention the real reason for why it's
-> >> > sound to create `LockClassKey` as uninitialized memory.
-> >> >
-> >> > Signed-off-by: Benno Lossin <lossin@kernel.org>
-> >> > ---
-> >> >
-> >> > I don't think we need to backport this.
-> >> >
-> >> > ---
-> >> >  rust/kernel/sync.rs | 7 +++++--
-> >> >  1 file changed, 5 insertions(+), 2 deletions(-)
-> >> >
-> >> > diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
-> >> > index 36a719015583..a10c812d8777 100644
-> >> > --- a/rust/kernel/sync.rs
-> >> > +++ b/rust/kernel/sync.rs
-> >> > @@ -93,8 +93,11 @@ fn drop(self: Pin<&mut Self>) {
-> >> >  macro_rules! static_lock_class {
-> >> >      () => {{
-> >> >          static CLASS: $crate::sync::LockClassKey =
-> >> > -            // SAFETY: lockdep expects uninitialized memory when it's handed a statically allocated
-> >> > -            // lock_class_key
-> >> > +            // Lockdep expects uninitialized memory when it's handed a statically allocated `struct
-> >> > +            // lock_class_key`.
-> >> > +            //
-> >> > +            // SAFETY: `LockClassKey` transparently wraps `Opaque` which permits uninitialized
-> >> > +            // memory.
-> >> >              unsafe { ::core::mem::MaybeUninit::uninit().assume_init() };
-> >>
-> >> Looking at this patch with fresh eyes (thanks for the bump, Alice :) I
-> >> think we should rather have a public unsafe function on `LockClassKey`
-> >> that creates an uninitialized lock class key. I'd like to avoid the
-> >> `MaybeUninit::uninit().assume_init()` pattern, as it might confuse
-> >> people & it looks very wrong.
-> >>
-> >> We can take this patch, as it definitely is an improvement, but I think
-> >> we should also just fix this properly. Any thoughts?
-> >
-> > Could that constructor be used in non-static cases?
-> 
-> I don't know lockdep, so maybe yes? Or do you mean that it could be
+Hi Amery,
 
-Using in non-static cases is wrong. For static keys, lockdep could use
-it address as keys but for dynamic keys, since they can be freed, they
-have to be registered before use (that's what
-`LockClassKey::new_dynamic()` is about.
+On Wed, Jul 10, 2024 at 09:25:41PM +0000, Amery Hung wrote:
+>Hey all!
+>
+>This series introduces support for datagrams to virtio/vsock.
 
-See this:
+any update on v7 of this series?
 
-	https://lore.kernel.org/rust-for-linux/20240815074519.2684107-3-nmi@metaspace.dk/
+Thanks,
+Stefano
 
-We would need to add "for static only" for the proposed unsafe function.
+>
+>It is a spin-off (and smaller version) of this series from the summer:
+>  https://lore.kernel.org/all/cover.1660362668.git.bobby.eshleman@bytedance.com/
+>
+>Please note that this is an RFC and should not be merged until
+>associated changes are made to the virtio specification, which will
+>follow after discussion from this series.
+>
+>Another aside, the v4 of the series has only been mildly tested with a
+>run of tools/testing/vsock/vsock_test. Some code likely needs cleaning
+>up, but I'm hoping to get some of the design choices agreed upon before
+>spending too much time making it pretty.
+>
+>This series first supports datagrams in a basic form for virtio, and
+>then optimizes the sendpath for all datagram transports.
+>
+>The result is a very fast datagram communication protocol that
+>outperforms even UDP on multi-queue virtio-net w/ vhost on a variety
+>of multi-threaded workload samples.
+>
+>For those that are curious, some summary data comparing UDP and VSOCK
+>DGRAM (N=5):
+>
+>	vCPUS: 16
+>	virtio-net queues: 16
+>	payload size: 4KB
+>	Setup: bare metal + vm (non-nested)
+>
+>	UDP: 287.59 MB/s
+>	VSOCK DGRAM: 509.2 MB/s
+>
+>Some notes about the implementation...
+>
+>This datagram implementation forces datagrams to self-throttle according
+>to the threshold set by sk_sndbuf. It behaves similar to the credits
+>used by streams in its effect on throughput and memory consumption, but
+>it is not influenced by the receiving socket as credits are.
+>
+>The device drops packets silently.
+>
+>As discussed previously, this series introduces datagrams and defers
+>fairness to future work. See discussion in v2 for more context around
+>datagrams, fairness, and this implementation.
+>
+>Signed-off-by: Bobby Eshleman <bobby.eshleman@bytedance.com>
+>Signed-off-by: Amery Hung <amery.hung@bytedance.com>
+>---
+>Changes in v6:
+>- allow empty transport in datagram vsock
+>- add empty transport checks in various paths
+>- transport layer now saves source cid and port to control buffer of skb
+>  to remove the dependency of transport in recvmsg()
+>- fix virtio dgram_enqueue() by looking up the transport to be used when
+>  using sendto(2)
+>- fix skb memory leaks in two places
+>- add dgram auto-bind test
+>- Link to v5: https://lore.kernel.org/r/20230413-b4-vsock-dgram-v5-0-581bd37fdb26@bytedance.com
+>
+>Changes in v5:
+>- teach vhost to drop dgram when a datagram exceeds the receive buffer
+>  - now uses MSG_ERRQUEUE and depends on Arseniy's zerocopy patch:
+>	"vsock: read from socket's error queue"
+>- replace multiple ->dgram_* callbacks with single ->dgram_addr_init()
+>  callback
+>- refactor virtio dgram skb allocator to reduce conflicts w/ zerocopy series
+>- add _fallback/_FALLBACK suffix to dgram transport variables/macros
+>- add WARN_ONCE() for table_size / VSOCK_HASH issue
+>- add static to vsock_find_bound_socket_common
+>- dedupe code in vsock_dgram_sendmsg() using module_got var
+>- drop concurrent sendmsg() for dgram and defer to future series
+>- Add more tests
+>  - test EHOSTUNREACH in errqueue
+>  - test stream + dgram address collision
+>- improve clarity of dgram msg bounds test code
+>- Link to v4: https://lore.kernel.org/r/20230413-b4-vsock-dgram-v4-0-0cebbb2ae899@bytedance.com
+>
+>Changes in v4:
+>- style changes
+>  - vsock: use sk_vsock(vsk) in vsock_dgram_recvmsg instead of
+>    &sk->vsk
+>  - vsock: fix xmas tree declaration
+>  - vsock: fix spacing issues
+>  - virtio/vsock: virtio_transport_recv_dgram returns void because err
+>    unused
+>- sparse analysis warnings/errors
+>  - virtio/vsock: fix unitialized skerr on destroy
+>  - virtio/vsock: fix uninitialized err var on goto out
+>  - vsock: fix declarations that need static
+>  - vsock: fix __rcu annotation order
+>- bugs
+>  - vsock: fix null ptr in remote_info code
+>  - vsock/dgram: make transport_dgram a fallback instead of first
+>    priority
+>  - vsock: remove redundant rcu read lock acquire in getname()
+>- tests
+>  - add more tests (message bounds and more)
+>  - add vsock_dgram_bind() helper
+>  - add vsock_dgram_connect() helper
+>
+>Changes in v3:
+>- Support multi-transport dgram, changing logic in connect/bind
+>  to support VMCI case
+>- Support per-pkt transport lookup for sendto() case
+>- Fix dgram_allow() implementation
+>- Fix dgram feature bit number (now it is 3)
+>- Fix binding so dgram and connectible (cid,port) spaces are
+>  non-overlapping
+>- RCU protect transport ptr so connect() calls never leave
+>  a lockless read of the transport and remote_addr are always
+>  in sync
+>- Link to v2: https://lore.kernel.org/r/20230413-b4-vsock-dgram-v2-0-079cc7cee62e@bytedance.com
+>
+>
+>Bobby Eshleman (14):
+>  af_vsock: generalize vsock_dgram_recvmsg() to all transports
+>  af_vsock: refactor transport lookup code
+>  af_vsock: support multi-transport datagrams
+>  af_vsock: generalize bind table functions
+>  af_vsock: use a separate dgram bind table
+>  virtio/vsock: add VIRTIO_VSOCK_TYPE_DGRAM
+>  virtio/vsock: add common datagram send path
+>  af_vsock: add vsock_find_bound_dgram_socket()
+>  virtio/vsock: add common datagram recv path
+>  virtio/vsock: add VIRTIO_VSOCK_F_DGRAM feature bit
+>  vhost/vsock: implement datagram support
+>  vsock/loopback: implement datagram support
+>  virtio/vsock: implement datagram support
+>  test/vsock: add vsock dgram tests
+>
+> drivers/vhost/vsock.c                   |   62 +-
+> include/linux/virtio_vsock.h            |    9 +-
+> include/net/af_vsock.h                  |   24 +-
+> include/uapi/linux/virtio_vsock.h       |    2 +
+> net/vmw_vsock/af_vsock.c                |  343 ++++++--
+> net/vmw_vsock/hyperv_transport.c        |   13 -
+> net/vmw_vsock/virtio_transport.c        |   24 +-
+> net/vmw_vsock/virtio_transport_common.c |  188 ++++-
+> net/vmw_vsock/vmci_transport.c          |   61 +-
+> net/vmw_vsock/vsock_loopback.c          |    9 +-
+> tools/testing/vsock/util.c              |  177 +++-
+> tools/testing/vsock/util.h              |   10 +
+> tools/testing/vsock/vsock_test.c        | 1032 ++++++++++++++++++++---
+> 13 files changed, 1638 insertions(+), 316 deletions(-)
+>
+>-- 
+>2.20.1
+>
 
-Regards,
-Boqun
-
-> abused?
-> 
-> ---
-> Cheers,
-> Benno
 
