@@ -1,78 +1,81 @@
-Return-Path: <linux-kernel+bounces-740141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B438B0D08D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 05:48:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E7000B0D0A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 05:49:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBFB23B816F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:47:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32E5B3B8731
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9638B28C5BD;
-	Tue, 22 Jul 2025 03:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9E828B408;
+	Tue, 22 Jul 2025 03:49:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XHyRN+OO"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LuMsOPoT"
 Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72AD246BF;
-	Tue, 22 Jul 2025 03:47:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD35546BF;
+	Tue, 22 Jul 2025 03:49:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753156065; cv=none; b=t6OYrqAI8xcB7bXzUnjsSDJICaQ2VuZGIOVLE0lxeX2Re3QJkkjYWlvfSR6Y6NKyZvy8aGnQo1Fm15Wz/7zAw82bmFd/UXcy9EFxo+3qRt94xmLr0Nnro4NvmdkPyBut0brf/1SyjES+aGiRNt6ljVf0AG/gxEt1Zm96uaZbopo=
+	t=1753156185; cv=none; b=REXZaizIv3a0ZyCtDGdh077grj5ZyEaN59Waks/QorYCNiiujsEphk7V4Dq+v8QcVwt4ojXj/EZxuv2Hz1X2x+tycvLcQ7WhG2utO4xX/b/6g1H+Z5Vu+R6iOUw/PG/VG8pi9a7h3Ha5Vn6X2bSSLvdfezCjfkgU+QtAj3wp/Fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753156065; c=relaxed/simple;
-	bh=0p0yfQ2H2n5PoakLPzlSYM+Q6Fjj9C31UGox0oSL52Y=;
+	s=arc-20240116; t=1753156185; c=relaxed/simple;
+	bh=1sAJw5Z8pGpYqXjM91kFENsuF2VTncuGNJM3z2Z/HUM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hzUmRdEuoHBiulmnChSGC2CNkE3FIYjcYba0uMDIsT/gR3R6MlYrLi+OvptkVQ4JhJ0ReZyqauWoCVgiHgnCxv9ZD/GlFJ/WTQqNSjUCV9bMjhJ0MJdqNZLioLMP1DmOgWxuOtJ7axxzTtgSw7DuYBtw/wQhBoe0RQLMF5+QzLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=XHyRN+OO; arc=none smtp.client-ip=205.220.177.32
+	 MIME-Version:Content-Type; b=KH04ilHEDuxNps8cM7RM3ZaVdm2f/Sl0KbZOO6Saac1zqKi2jKEFTo3Gv+Vk+vfnuhynfoWck/s/RFxG3/Fm4YFdm9w6szh/+yOFtO3S+aO0N5oY75Ncg4W6sIK5LqWH2PBx9NPyNDaI+LWsiPGSzd16/7tqf63RpEU6A+DNGTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=LuMsOPoT; arc=none smtp.client-ip=205.220.177.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56M1BqUo019352;
-	Tue, 22 Jul 2025 03:47:37 GMT
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56M1Bx9J019815;
+	Tue, 22 Jul 2025 03:47:39 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=vzEjL/rNIboXo0WYuyjNeNMnpUjYsdF2y4mpxRL8oFE=; b=
-	XHyRN+OOBtP38h3Iu6mqP6VcpbT6UBHJcPHwUqG4MvXfBdx6HDVwxheQwbcfNwlH
-	Gy64v+0lHUiv5vJtQFFHYZ9yW0npbkhYanp8XOUAotcMATbY5+moODmXGznhlXZN
-	P1WXVvy6i0yj38Fw34HMlVs5MmVA4ml+Yg412J+EVrlArLW+UPXspS+i1NKWGwAy
-	k/07l1Fmvr31LQTrFn/6k34scrl0X22x0rir+lwuiX5Ft6s2qDt2i3kqXBP8FYU7
-	XqtkgRN+Z+z+qtkoAlZ1zvz7bdUpKMS/m2uCBhKN1fOV5dv61RGBGFawSRjMl6Tk
-	zxkYbpEl8PREOr195yaiGg==
+	corp-2025-04-25; bh=WMPnQJM7Rf6E+qkjuPWRmvwT+AvEva0iBF2oYQUQVw4=; b=
+	LuMsOPoT0Fj0oZEm3JTbgTRGk3Pe8OT13s+Il88WA3EygGq4CZ7la1P1K5YEa9Gj
+	mfzwKQJni7MCUanAXavEDW+fuRqMMr1uTyEtkuye9lKPg2qOps2sM7af1CO/vAyr
+	9LXnGdgfQUhJqiDeoo+PKpwV9+TUCl8gQSmS+HI5h6djGi73xckEwXvN007aa8uC
+	IwqG9bqX6ulzYtExjot9RX6434UFRfgqnn4lp7RSLSU0ulPwKy/0poUTpRx/nUP2
+	0/J68twavzsMd6oTJIdif5apBuOJhaHI7iTgP84yRtVKpvRLDutbttxoYmZNGpJH
+	dKDf4qM/SqdtptiGmL7/fQ==
 Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4805hpc8sq-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4805hpc8sr-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 22 Jul 2025 03:47:37 +0000 (GMT)
+	Tue, 22 Jul 2025 03:47:38 +0000 (GMT)
 Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56M1JN57038305;
-	Tue, 22 Jul 2025 03:47:36 GMT
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56M1M4Ww037738;
+	Tue, 22 Jul 2025 03:47:38 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4801t8te9d-1
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4801t8tea1-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 22 Jul 2025 03:47:36 +0000
+	Tue, 22 Jul 2025 03:47:38 +0000
 Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56M3lZj1031915;
-	Tue, 22 Jul 2025 03:47:36 GMT
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56M3lZj9031915;
+	Tue, 22 Jul 2025 03:47:37 GMT
 Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 4801t8te8u-2;
-	Tue, 22 Jul 2025 03:47:36 +0000
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 4801t8te8u-6;
+	Tue, 22 Jul 2025 03:47:37 +0000
 From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux SCSI <linux-scsi@vger.kernel.org>,
-        Bagas Sanjaya <bagasdotme@gmail.com>
+To: Thomas Fourier <fourier.thomas@gmail.com>
 Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Tyrel Datwyler <tyreld@linux.ibm.com>,
         "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Rob Landley <rob@landley.net>, Bart Van Assche <bvanassche@acm.org>
-Subject: Re: [PATCH v2] scsi: Format scsi_track_queue_full() return values as bullet list
-Date: Mon, 21 Jul 2025 23:46:55 -0400
-Message-ID: <175315388522.3946361.577268331521500450.b4-ty@oracle.com>
+        Nicholas Bellinger <nab@linux-iscsi.org>,
+        Steven Royer <seroyer@linux.vnet.ibm.com>,
+        "Bryant G. Ly" <bryantly@linux.vnet.ibm.com>,
+        Michael Cyr <mikecyr@linux.vnet.ibm.com>, linux-scsi@vger.kernel.org,
+        target-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ibmvscsis: Fix dma_unmap_sg() nents value
+Date: Mon, 21 Jul 2025 23:46:59 -0400
+Message-ID: <175315388520.3946361.12422996243439246848.b4-ty@oracle.com>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250702035822.18072-2-bagasdotme@gmail.com>
-References: <20250702035822.18072-2-bagasdotme@gmail.com>
+In-Reply-To: <20250630111803.94389-2-fourier.thomas@gmail.com>
+References: <20250630111803.94389-2-fourier.thomas@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,38 +88,34 @@ X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-07-21_05,2025-07-21_02,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 suspectscore=0
- bulkscore=0 malwarescore=0 adultscore=0 spamscore=0 mlxlogscore=764
+ bulkscore=0 malwarescore=0 adultscore=0 spamscore=0 mlxlogscore=656
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
  definitions=main-2507220028
-X-Proofpoint-ORIG-GUID: z9gqIS0pG55QIw8IK5p_S-ktqpkAs_19
-X-Authority-Analysis: v=2.4 cv=YY+95xRf c=1 sm=1 tr=0 ts=687f09d9 b=1 cx=c_pps
+X-Proofpoint-ORIG-GUID: ur1xi85gw-OwfzHkbqyD5E_f3N-Edvc8
+X-Authority-Analysis: v=2.4 cv=YY+95xRf c=1 sm=1 tr=0 ts=687f09da b=1 cx=c_pps
  a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=rdU_RhUVJ40YM6w5-0kA:9
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=HazmFS4AVfT1MZ3w-mIA:9
  a=QEXdDO2ut3YA:10 cc=ntf awl=host:12062
-X-Proofpoint-GUID: z9gqIS0pG55QIw8IK5p_S-ktqpkAs_19
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDAyOCBTYWx0ZWRfXxJcAQs0vFZKE
- sLWxHbaWPk7DMWCnnBG12zZa4t1cOQ2JxePQMX8W5ZMOKPc6ggcekeET910mOxwl7VuTakIEx5M
- aUbkPngRUFB7D3ICfTd0EeKLV1lOgfN//YUAo6hadCxSH9XheoU6Nb7VIi8ZebdAhihI5CFG6dQ
- v24bzV11kuXDQiBqOfDRXlGJ7P63WtrRMReP4V7fz3ewV6+iZLns5lQTL2i62Yyt4BZMb+LFItD
- Dn3PWi51K/n3ekHPgoraLvU+cd5Le0+8mPEAfQlsm+x3pV4/ELaO+dOmqHkehfebgss7lZajE5m
- Jzr+93GmTVjITbJGQCniXJybJjSjddub7I/DpUKwLB0sbiTJb+NV6pSwkTrd2HuhewNOapKeIE9
- s+0eRVriLR2MtyPpUnof8CPYTsR1gofrfMfJM1Pgwf6TIY2bPfL1yUok3nzZabfbXilpnFIs
+X-Proofpoint-GUID: ur1xi85gw-OwfzHkbqyD5E_f3N-Edvc8
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDAyOCBTYWx0ZWRfX6fI/t7ggWoFu
+ +FMoF31Z/MmXltbLFurOX9cbf8bAllBf6N4N1cZu2oFOdMHITMCbVCU1sKMzJzf3B8kMVcr4EJW
+ 3j86eH0COP6oWYx1sMlgASYzRZ8ItMgfnYNlngeORRP+AfGNHuSFCkZpVEYRA33h1HNSYy6PzNu
+ Q0Ps2KPdF0UsSS+e6B4Xp0TF7tklY7rLH5jmFCnlwg2wIcZplwTaLlc2DzmcoOYsSkMSDPecznD
+ NI2qhsibgZfa0O47WWTL4697BULuB2rZPvPeEvwVBnhbjeUq+nc1/DCySz95M9ObC2tnJSLamXk
+ JfA74MR0DhpcqI9F+vePbJaC+3LLekCoG9mHXdGy3MCAenWf5tOZVBzkRFf8nJjVGVt2IQntJSl
+ UGlRegwexLmG5gF29W1rtONDG4pvT5QtksPpuhPZyXGBInC17nWOHK02Oo1ewkrH5B0ncSOh
 
-On Wed, 02 Jul 2025 10:58:23 +0700, Bagas Sanjaya wrote:
+On Mon, 30 Jun 2025 13:18:02 +0200, Thomas Fourier wrote:
 
-> Sphinx reports indentation warning on scsi_track_queue_full() return
-> values:
+> The dma_unmap_sg() functions should be called with the same nents as the
+> dma_map_sg(), not the value the map function returned.
 > 
-> Documentation/driver-api/scsi:101: ./drivers/scsi/scsi.c:247: ERROR: Unexpected indentation. [docutils]
 > 
-> Fix the warning by making the return values listing a bullet list.
-> 
-> [...]
 
 Applied to 6.17/scsi-queue, thanks!
 
-[1/1] scsi: Format scsi_track_queue_full() return values as bullet list
-      https://git.kernel.org/mkp/scsi/c/6070bd558aee
+[1/1] ibmvscsis: Fix dma_unmap_sg() nents value
+      https://git.kernel.org/mkp/scsi/c/023a293b9cd0
 
 -- 
 Martin K. Petersen	Oracle Linux Engineering
