@@ -1,83 +1,97 @@
-Return-Path: <linux-kernel+bounces-741604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 459C5B0E67B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 00:38:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5A8DB0E67D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 00:38:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B3486C5B8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 22:37:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A05306C6BA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 22:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D726328724B;
-	Tue, 22 Jul 2025 22:38:20 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91DFB28727A;
+	Tue, 22 Jul 2025 22:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="F3yLZ9FH"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196C110F2;
-	Tue, 22 Jul 2025 22:38:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795DB284B3F;
+	Tue, 22 Jul 2025 22:38:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753223900; cv=none; b=aBn6PYjW2U2W+i7tn0MaW+dymc046bw2IRxbbUg123VcXPeOMWj1/u4ie+SWT/Msw7VLZpeEwL8GzCsO0H9RdwvhbaZsLM6ZFZ+/UkdzjJqwCd+z6P3CWrOs1O0Ztj2fc9I/SnBD3U9vILeKqI+dtOuglqabRWEx94DSpKyPOLA=
+	t=1753223916; cv=none; b=g6G0qiNnVnddVvPgSbcGtEm3AUi29i4D3VIfQM+3+SYmCcKCqrIWODG1eAajf7XEKGXZf66GPRJWDB3COyv/2kE0F7RpriWPyBe5Qgz6gnIfZysE161HIRnvRrSfJtZh0dczisei2qlT4wGuJihnPXlp5oARG/nuvsewM1tOrxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753223900; c=relaxed/simple;
-	bh=O4lTGhJPt0Y+JJtY/1ypIqNNSxQvZLpaqQoEtc6MRhA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SD40syBP4MHQaZtJ55oiwGhwdlNhpLvw6AfGYbXR2EaFrsD32xOuuh/luLRoVTJfCuphVTJ0QXGxkoUaLYo187gjkHhqOWzgXhL5FyRiDz4Kf6fYaEXV5hp8vmHdWQOcK6Tgto0SbyZ2avMqYhguIlGQn3C2vPAccfzCZAIGT7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay05.hostedemail.com (Postfix) with ESMTP id DC58C59353;
-	Tue, 22 Jul 2025 22:38:15 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf03.hostedemail.com (Postfix) with ESMTPA id 34AF46000C;
-	Tue, 22 Jul 2025 22:38:14 +0000 (UTC)
-Date: Tue, 22 Jul 2025 18:38:13 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/7] tracing: probe: Allocate
- traceprobe_parse_context from heap
-Message-ID: <20250722183813.74dd1386@gandalf.local.home>
-In-Reply-To: <175322170601.44400.16839124706616607558.stgit@devnote2>
-References: <175322168606.44400.9155291012158349647.stgit@devnote2>
-	<175322170601.44400.16839124706616607558.stgit@devnote2>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753223916; c=relaxed/simple;
+	bh=OQtXShIE35kj5CDbYc42jZTiZEib0mb/ThNpYqTsteA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=lttb9XUfWyMyn8bQQrW7DMCDvav5BxflmwL0y4eg5tq6eMwwu7r5dh6iktDZPnAULup4x9fOxuJc+QyH5fI++DEMJUwfmB9kewwUsNIhLP7/6cGV55oQmHX/s3vAwZxIDF68MC9DUrHU0cvUDIRcJdGBpnZxL3xEOgkw9ZV4AOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=F3yLZ9FH; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753223747;
+	bh=CzMTqux1hKvkQEveIXKWPXkDeDj3OL1RLGwMEzWtja4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=F3yLZ9FHWvX51VAWWuC4CObGh8Ub9kVmZBrY38XyDrjUTuBmDNm0safLSjf/LF4/F
+	 u02UfHSMUkbdu0HcZPux0sO2P2kJ8QjkIefd/5qO91x3AYt15vKoB3Ncx19MRmXbiN
+	 QmCTRQc5Y3mOiSnCFJZXTXhKLQG0bE8BBkYClzqFKFf2CX0W7kqgfpzVxVSY3kCgd+
+	 LqUEO8aFnCxe3kFax9A88qUcTsGE+JbqhAV/ApCZHoI35thhScL0nD2HViqh9IcbHH
+	 9Zal9Dx0KyR0unmLXOJH/Wu8lMFY1BcqJxpQoEFCnj+FPg7vmP16VjJzF/CG8cYD5+
+	 YXfpKFPhJwJUA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bmsYH2qySz4w2K;
+	Wed, 23 Jul 2025 08:35:46 +1000 (AEST)
+Date: Wed, 23 Jul 2025 08:38:29 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Drew Fustini <drew@pdp7.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the thead-clk tree
+Message-ID: <20250723083829.34ee8f91@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/mm5xnxRV3P8fPsNAzFUmZLd";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/mm5xnxRV3P8fPsNAzFUmZLd
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: ahe595rfxbyrusj76d6eqfdxag4nf7cn
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: 34AF46000C
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+YE4SSP3kdxcYZkd1J/kCI3qbFgQxVdxQ=
-X-HE-Tag: 1753223894-968788
-X-HE-Meta: U2FsdGVkX1/+IKfaPGRmCn402R3POCQxNFAgY7fI0DncJyo/8AXG3pNvxqIudi2XcUD/k4Pct5/agBODstVyfou682GQDb5w4eaHXGYYq4/LQB7H3ajdsqTfz7mbKdkzrKlk0D6KN8i17rKqoCMg1cZQg6D6u/kVYDVlQsNzCQbjPFr9tIV61yyfmp1Efn61kTif/lnJll1N8l3v/BOh08YJyXnDRMlnC2GtYL1yqH9ha7en0gFg/CRyMAbuv0g08c3h/NQ51mv3OZrfns2+ePVhBS7SVCaFEzNRdI1lwAhKB0l18q2NyTOmDP18QOBSfaa5HCbOCwkDGY5Jw8eMPxu0/Qfr9lOOzs5ofvOlFFnZOuh5Wk6JzRZV5IabUm4IROMBTU/otKzZoQfWKWWrBCM007GRid5xmVzSm34fHOk=
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 23 Jul 2025 07:01:46 +0900
-"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+Hi all,
 
-> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> 
-> Instead of allocating traceprobe_parse_context on stack, allocate it
-> dynamically from heap (slab).
-> 
-> This change is likely intended to prevent potential stack overflow
-> issues, which can be a concern in the kernel environment where stack
-> space is limited.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202506240416.nZIhDXoO-lkp@intel.com/
-> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Commit
 
-Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+  e468d81fbf5e ("clk: thead: th1520-ap: Describe mux clocks with clk_mux")
 
--- Steve
+is missing a Signed-off-by from its committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/mm5xnxRV3P8fPsNAzFUmZLd
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiAEuUACgkQAVBC80lX
+0Gzs+wf8Cq4Ily467++ZPNFdS3lg7YGs4KDJ40KBx7vWcdefkfSKa4m1Pd1moOZB
+UerV6mySNaDORy5kO9qIw9TCa6BBjGxA2Tp73qxcIoS06GnAWozw2ceXquivJ769
+od5489zPm8inoCfqd6/UlEQ5rH+/2LYCXKKhwLi4HPyvpO/IHCKZwJnymvFp1/jb
+luYRz+8E0B7R4tKdRxYyIQiTxUc2us3BYTOl1iuw/x5qS3KH8tUktdl1XGl5LX9q
+RGdgNMwFNmFErPpwBMLmz2ww26ZXbNCKy4mC3NayAl/c37PDh7/s5sRRPWlmco8x
+eS2YdRlR2N7+QCGF2ju5qGV3DD1M0Q==
+=RxHU
+-----END PGP SIGNATURE-----
+
+--Sig_/mm5xnxRV3P8fPsNAzFUmZLd--
 
