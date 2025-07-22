@@ -1,140 +1,290 @@
-Return-Path: <linux-kernel+bounces-740240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 846DDB0D1BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:16:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04ADFB0D1C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:18:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4EB3166A3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:16:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 358C73A374B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826C028D844;
-	Tue, 22 Jul 2025 06:16:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B576E291C1F;
+	Tue, 22 Jul 2025 06:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="oNLRZH83"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j+CwmpQj"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C54190477
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 06:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3805C1D6DB9;
+	Tue, 22 Jul 2025 06:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753164997; cv=none; b=h8AsFpj6zVng9vy8jclpyBgE17tmSukMU6cWoDojcgow5vpsLB/huSB5Picao4hjCVm7tjzNYZ0A+RWtpO1Cxkh4HFudzHw587YeadS9bgQ/xtLWt/QvMvLglRmdgYsSeB297uSGKuLZDZDuxstBQuLnRXJaPH60qEr+7OuHSt0=
+	t=1753165110; cv=none; b=tmlzlIyx7uf/T6xblc0PHpO94Tnbii16ZXYkSjL51r1PbsLyri9/RSWwJdz8bDjgFkqwcjRWaWekaC1dHJdRcrZ/j0DXQmHvv4DNDN/9qOULTWVfkm0EkX3TDHgvSKuTWi0jnAIzCv8wijJEG4eNKnr/xLZbJiFCtAqfC+DYTPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753164997; c=relaxed/simple;
-	bh=hQmYNw1nxxnjx5AEwNuBdEzfygugW6y3m3bQETQLK1A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dRre388f4yBEXhXpSHUWapJmZpGi3iHm2WV3IM5zfHu5pRqEJ/EONOw7GiRBnN0JPRv4q0ZcmuGfU22HjOQ/Bh/4591F99KIWlgYOg+tnSoYoBXU81Zy4ay1ddwdT0wr3/ZKR0A9vSjLXMhuMpOx0QnZ9cR3yU7TlBwDevmCb2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=oNLRZH83; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1753164987;
-	bh=hQmYNw1nxxnjx5AEwNuBdEzfygugW6y3m3bQETQLK1A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oNLRZH830rm/on4tkN3zXpzMq0pa4V7HFVCHhV+cb5mNxE5g84KOmLHpDLkzEroQX
-	 +olYVd9AZj6OIj+GO5ETwk/R34sIhslu+G57OM03t1nOL4FIYTKo0UxIrVh4PrxeT8
-	 5426rc6mK3G1PE+4HLHi5RLL7W9+LKjuSxWeBWpYZsIRJ6o1sP0o1po2+55EhCfpro
-	 ymeA9lxg/w4n9gglwocZs6bqKz+dY7pk4cukbRtX5cQnycKHinZEvr+JqbAqXJnaQ2
-	 tQY9xoK//oO9DHgu9nonm6PRg2fCxhuGqKiBG9Lwsgi/Q7WnXyCHD31Mn/fkFxi017
-	 bkSfPZ1/PoXvg==
-Received: from [192.168.1.90] (unknown [82.79.138.60])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id BB2AC17E0F66;
-	Tue, 22 Jul 2025 08:16:26 +0200 (CEST)
-Message-ID: <c5624dad-93cb-4cc3-88ad-808dcc43274d@collabora.com>
-Date: Tue, 22 Jul 2025 09:16:26 +0300
+	s=arc-20240116; t=1753165110; c=relaxed/simple;
+	bh=3UA6Ar8A0xjj3pi1VnE5cBS2CaGqdVH3Y2CbdyYIaIs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qu3FDQrOReTf5DyPf83PU0N07zH9CtgHZvV+HazIwxkBlvA2GMc06x/0rTUp0KxKMC+9ShhsjxT5wbtI3kcJuPf/jQ5RtpcDJOIIfCQiEhba2F8BUtU5swFAz/poMif+0oiy7X6U0Ap5E2K+6WWDyhaTGwk8x4rNz49CxxUpuDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j+CwmpQj; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4ab39fb71dbso61961191cf.3;
+        Mon, 21 Jul 2025 23:18:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753165107; x=1753769907; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g591JV7Lll7dveL4Ui28HG8oXXAGz8E3BlnpzXheLN4=;
+        b=j+CwmpQjsH4dZSKBPFswi8cfRnBWQHgT0QUaHLaLZiK6c7qsQtVw75cXGXov2aVBp4
+         bA6Q0LRtxF5wJocde/64Y5MOyybm807i2F2DXITMNqGKtjNHOSUqci/jKnZBqPUWuWNj
+         jfKOLC/zSaPVTyKOxx9Q4gJc1oHQs74GSmWoReKHbfwjOkfjfCpVGHpPidGQn31mPGeD
+         OUYHL9emBP8qcrs0FCJR3LpLWI9ZDTR5J2O1Sjml2Vn8n6w/Tg5hpxkqM8LKibrKj/pZ
+         3tUDJ6k+qWzDf4vbsjKITsCnGhORRrxgOm0zgaO2lmOFdBrFKbIqS3ie03UvVnJMy8wt
+         FJRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753165107; x=1753769907;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g591JV7Lll7dveL4Ui28HG8oXXAGz8E3BlnpzXheLN4=;
+        b=xTOlMBZHW2ARiJh3O4bwUzgI+3YiBENT7xn7MtTBnjizHVMkLaogUx/vThkXmgNZGx
+         EhaT3I7ahivBPWi6qZzjAF24XNpm5HSBWx70eK5LBcB7Nfo66NbWYxC3TUtodkWNqyYv
+         5ecpRDuVep74NbsnkKZRw5LkTkKxxWzGulLh0XyoL2/mZd8bt3AzdA4eSsFoQKxHotAU
+         /9UZtbJsMuTGLygRDt8iUWU8dopsxmcKLYnsfTsT1iZmeb2F4L6tfl+6a0EFROM4L5X7
+         88rY/zugqNsMqUajMV2KowyRcMvTJVwneobx6fkHezPlOs/A7PkWBUDe8zpFW35qw3lY
+         7ixg==
+X-Forwarded-Encrypted: i=1; AJvYcCU24OdvjMXdDeGUbzhJgZ7YyVd3lOLjGGzVzMNThltan49Q+n13tQfdN2Vzn9tOkgU/dHEWHiF7odWoNA==@vger.kernel.org, AJvYcCUWElwxQX2+LAVWHeLZosSLPgYoZZW+SCmGLigTWm0+iMxBSw6vLwLzNpmwrvyxRZJsFJBYyp4ScR6+LjuN@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzse4vREuiUxRUyxls5MY7Q+Ce44vxwg2FJb0OcTxs9Ha5d5jf5
+	RdH8L79m1pW/Tfs8LUIYzjRlo/ypfu5ne9f53e0j0Nk4x3NKtbpCcduwa8Q0Z7lM1KH8xx18lpE
+	8IVVZBP+FZ68eLxw8YSq6hmU4JRwWS/k=
+X-Gm-Gg: ASbGncu8ZL+twdR7QPPUj7I4ecrrONPzNjHbM8d769kTv4ObjnfGPoBajsESgSUFghs
+	feivW1fCpP8GPO2o64VDUk743rXZcsAne61g5zrBgyyxgYgkh+jSliZb3V5RSkkfFD2PEr710qm
+	j213hnIzmNfVJI5NGp+9QIAfsTeXXrNa/3IrkyPcn4PqwRUA6Lt5+SQmr1faCTyuWGfru9vciFa
+	8GPOZFB
+X-Google-Smtp-Source: AGHT+IHkWGztWe6BDJ2uioDwfmFupXEEi7HThTeunVyKy8Mnt755Zxuor9DCXiBgyE66Xb3EhMocfOmPmgq78Qsl4Ew=
+X-Received: by 2002:a05:6214:529a:b0:706:c5f3:1da0 with SMTP id
+ 6a1803df08f44-706c5f32e0emr182664836d6.36.1753165106845; Mon, 21 Jul 2025
+ 23:18:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] drm/rockchip: vop2: Add high color depth support
-To: Andy Yan <andyshrk@163.com>, Algea Cao <algea.cao@rock-chips.com>
-Cc: Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
- <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- kernel@collabora.com, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250721-rk3588-10bpc-v1-0-e95a4abcf482@collabora.com>
- <20250721-rk3588-10bpc-v1-1-e95a4abcf482@collabora.com>
- <3ceb2c70.2145.1982ff28b9c.Coremail.andyshrk@163.com>
-Content-Language: en-US
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-In-Reply-To: <3ceb2c70.2145.1982ff28b9c.Coremail.andyshrk@163.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250625-dualsense-hid-jack-v2-0-596c0db14128@collabora.com>
+ <s4596421-sr43-893r-o90r-86nr588sp32q@xreary.bet> <74d4675d-d6f5-41ed-b715-f62fb569df5d@collabora.com>
+ <CAEc3jaAFV_PXdFAX9th4-hhKNAhBKdVCNP+Qf8nH=g8FwoCabQ@mail.gmail.com> <CAEc3jaAGP3HV_+tGLHWZXA-baD4HkA2nYWGxpmox4cuZMh+ksw@mail.gmail.com>
+In-Reply-To: <CAEc3jaAGP3HV_+tGLHWZXA-baD4HkA2nYWGxpmox4cuZMh+ksw@mail.gmail.com>
+From: Roderick Colenbrander <thunderbird2k@gmail.com>
+Date: Mon, 21 Jul 2025 23:18:15 -0700
+X-Gm-Features: Ac12FXyNgPQ2XAD25FbDzjEaJqQ5SPj3zc4XmK8veuB5jZ0vymP-1u9lezLlJyw
+Message-ID: <CAEc3jaD8tUNW6hkPHDp=iGmdwD5m3uKg0vNtyZr-u1mmPSAkVQ@mail.gmail.com>
+Subject: Re: [PATCH v2 00/11] HID: playstation: Add support for audio jack
+ handling on DualSense
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Roderick Colenbrander <roderick.colenbrander@sony.com>, Jiri Kosina <jikos@kernel.org>, 
+	Benjamin Tissoires <bentiss@kernel.org>, Henrik Rydberg <rydberg@bitmath.org>, kernel@collabora.com, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Andy,
+Hi Cristian and Jiri,
 
-On 7/22/25 5:24 AM, Andy Yan wrote:
-> 
-> Hello Cristian，
-> 
-> At 2025-07-22 01:39:04, "Cristian Ciocaltea" <cristian.ciocaltea@collabora.com> wrote:
->> Take the bits per color channel into consideration when computing DCLK
->> rate.
->>
->> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
->> ---
->> drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 3 +++
->> 1 file changed, 3 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
->> index 186f6452a7d359f079662bc580850929632ea8fe..a714bcbb02de16267e7febbaeb1eb270c70aaef2 100644
->> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
->> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
->> @@ -1731,6 +1731,9 @@ static void vop2_crtc_atomic_enable(struct drm_crtc *crtc,
->> 		clock *= 2;
->> 	}
->>
->> +	if (vcstate->output_bpc > 8)
->> +		clock = DIV_ROUND_CLOSEST(clock * vcstate->output_bpc, 8);
-> 
-> 
-> This seems not right,  regardless of the value of bpc, the dclk of VOP must be
-> consistent with mode->crtc_clock.
-> If the dclk of VOP is increased in accordance with the BPC ratio here, then the refresh rate of VOP will also increase proportionally.
-> This would be inconsistent with the timing described in the mode.
-> For a hight color depth,  the frequency needs to be increased for the HDMI PHY's clock.
+One thing I forgot to bring up is whether it is best to have the audio
+plug logic have its separate input device or have it be part of an
+existing (e.g. main gamepad). The patch currently creates a separate
+input device. Originally we added multiple input devices (gamepad,
+touchpad and sensors) due to axes and button collisions really.
 
-The HDMI PHY's clock is actually computed at HDMI connector framework level
-[1], taking into account the current bpc value, which is determined as part
-of hdmi_compute_config() [2].
+For this feature there is no collision. There are not many devices in
+the kernel, which support these audio EV_SW. I see for example the
+Switch 2 controller has a mini jack port as well. Some xbox
+controllers too (though audio not supported in the kernel from a quick
+glance or at least no HID or xpad driver features for them).
 
-That means conn_state->hdmi.tmds_char_rate in
-dw_hdmi_qp_rockchip_encoder_atomic_check() does already include the bpc
-related adjustment, and we pass that directly to the PHY via
-phy_configure().  Note there's still the need to handle bpc separately via
-phy_configure_opts in order to setup CMN_REG(0086) [3].
+I don't have a strong opinion yet. Initial feeling was perhaps have it
+on the 'main' input device. But on the other hand, I'm not sure what
+software is normally listening for these kinds of EV_SW events. What
+would be listening for this like a pipewire?
 
-Since VOP2 switches to PHY PLL as DCLK source for modes up to 4K@60Hz, it
-needs to take color depth into account, to keep them in sync.  As a matter
-of fact, the clock adjustment in VOP2 is mainly necessary for legacy
-reasons, since HDPTX PHY allowed changing TMDS char rate via the Common
-Clock Framework API.  We landed a proper solution for that via the HDMI PHY
-API, hence the plan would be to make CCF API readonly after the switch to
-PHY API is completed, which means VOP2 shouldn't deal anymore with clock
-calculations when using the PHY PLL as DCLK source.
+Thanks,
+Roderick
 
-Regardless, I should probably move this clock adjustment to the conditional
-block handling DCLK source switch.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/gpu/drm/display/drm_hdmi_state_helper.c?h=v6.16-rc7#n525
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/gpu/drm/display/drm_hdmi_state_helper.c?h=v6.16-rc7#n608
-[3] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c?h=v6.16-rc7#n1034
+On Mon, Jul 21, 2025 at 10:47=E2=80=AFPM Roderick Colenbrander
+<thunderbird2k@gmail.com> wrote:
+>
+> Hi Christian,
+>
+> I just got back from Japan (trip was a bit extended). In the meantime
+> I had some of employees had a look as well.
+>
+> The audio patches towards the end seem to be okay. We tried to dig for
+> the official volume numbers, but they were too hard to find (too many
+> layers, too many repositories). When we use a PS5, the default volume
+> for the headset and speaker are both close to 70% (just eyeballing).
+> At the hardware level the volume is quite non-linear and internally we
+> use a mapping table (not sure what the curve is based on). For the
+> speaker this starts at 0x3d as you found out already. The 70% volume
+> for the speaker seems to correspond to a value of 93 and headphones
+> 83.
+> The set pre-amp gain of 0x2 is a common value we seem to set and means
+> +6dB, so change comment around to mean that I guess.
+>
+> As for the other patches I'm not entirely sure yet. I know they were
+> well intended, but let me just say, they rubbed some of my team
+> members quite the wrong way resulting in some heavy discussion. I have
+> somewhat similar feelings about the ultra strict checkpatch toggle as
+> well.
+>
+> We had to move mountains to be allowed to even upstream controller
+> code among our limited time (it is closer to a hobby thing, even
+> though many products nowadays use it as well). So that's a factor
+> which adds up a bit as well.
+>
+> I think some of the patches we could live with if it came to it. There
+> is no real agreed up full kernel standard (as it is contentious). So
+> for example we tend to prefer more uint8_t family, where older kernel
+> style was more u8 and the kernel allows for both. I think we would
+> probably lean towards keeping it at the modern form.
+>
+> Some of the macros also felt a little too magical. Our feeling tends
+> to be if you have to go many layers deep to understand what a macro or
+> line of code does (and it is easier to then printk the value),
+> something feels off...
+>
+> Thanks,
+>
+> Roderick Colenbrander
+> Sr. Director - Hardware & Systems Engineering
+> Sony Interactive Entertainment, LLC
+>
+> On Thu, Jul 10, 2025 at 2:31=E2=80=AFPM Roderick Colenbrander
+> <thunderbird2k@gmail.com> wrote:
+> >
+> > Hi Cristian,
+> >
+> > I'm on a business trip to Japan, I started looking during my flight
+> > last weekend. But due to meetings haven't had a lot of opportunity. I
+> > may have a little bit of time in the coming days in between meetings.
+> >
+> > Thanks,
+> > Roderick
+> >
+> > On Wed, Jul 9, 2025 at 10:24=E2=80=AFPM Cristian Ciocaltea
+> > <cristian.ciocaltea@collabora.com> wrote:
+> > >
+> > > Hi Roderick,
+> > >
+> > > On 7/3/25 10:48 AM, Jiri Kosina wrote:
+> > > > On Wed, 25 Jun 2025, Cristian Ciocaltea wrote:
+> > > >
+> > > >> The Sony DualSense wireless controller (PS5) provides an internal =
+mono
+> > > >> speaker, in addition to the 3.5mm jack socket for headphone output=
+ and
+> > > >> headset microphone input.  However, the default audio output path =
+is set
+> > > >> to headphones, regardless of whether they are actually inserted or=
+ not.
+> > > >>
+> > > >> This patch series aims to improve the audio support when operating=
+ in
+> > > >> USB mode, by implementing the following changes:
+> > > >>
+> > > >> * Detect when the plugged state of the audio jack changes and togg=
+le
+> > > >>   audio output between headphones and internal speaker, as require=
+d.
+> > > >>   The latter is achieved by essentially routing the right channel =
+of the
+> > > >>   audio source to the mono speaker.
+> > > >>
+> > > >> * Adjust the speaker volume since its default level is too low and=
+,
+> > > >>   therefore, cannot generate any audible sound.
+> > > >>
+> > > >> * Register a dedicated input device for the audio jack and use it =
+to
+> > > >>   report all headphone and headset mic insert events.
+> > > >>
+> > > >> It's worth noting the latter is necessary since the controller com=
+plies
+> > > >> with v1.0 of the USB Audio Class spec (UAC1) and, therefore, canno=
+t
+> > > >> advertise any jack detection capability.
+> > > >>
+> > > >> However, this feature can be implemented in the generic USB audio =
+driver
+> > > >> via quirks, i.e. by configuring an input handler to receive hotplu=
+g
+> > > >> events from the HID driver.  That's exactly what has been accompli=
+shed
+> > > >> via the "ALSA: usb-audio: Support jack detection on Sony DualSense=
+"
+> > > >> patchset [1], which has been already merged and should be availabl=
+e in
+> > > >> v6.17.
+> > > >>
+> > > >> Unrelated to the above, also provide a few driver cleanup patches,=
+ e.g.
+> > > >> make use of bitfields macros, simplify locking, fix coding style.
+> > > >>
+> > > >> [1] https://lore.kernel.org/all/20250526-dualsense-alsa-jack-v1-0-=
+1a821463b632@collabora.com/
+> > > >>
+> > > >> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.co=
+m>
+> > > >> ---
+> > > >> Changes in v2:
+> > > >> - Updated cover letter including a reference to the usb-audio patc=
+h series
+> > > >> - Updated 'HID: playstation: Make use of bitfield macros' patch to=
+ drop
+> > > >>   DS_STATUS_CHARGING_SHIFT and use FIELD_GET() for battery status =
+ops
+> > > >> - Replaced 'HID: playstation: Rename DualSense input report status
+> > > >>   field' with 'HID: playstation: Redefine DualSense input report s=
+tatus
+> > > >>   field' changing data type to a 3-byte array instead of renaming =
+the
+> > > >>   struct member (Roderick)
+> > > >> - Updated 'HID: playstation: Support DualSense audio jack hotplug
+> > > >>   detection' according to Roderick's feedback:
+> > > >>  * Used DS_STATUS1_ prefixes for the plugged status register and r=
+ename
+> > > >>    its bits to match the datasheet
+> > > >>  * Defined MIC_VOLUME_ENABLE bit of DS_OUTPUT_VALID_FLAG0 register
+> > > >>  * Renamed the newly introduced audio controls members in struct
+> > > >>    dualsense_output_report_common: headphone_volume, speaker_volum=
+e,
+> > > >>    mic_volume, audio_control, audio_control2
+> > > >> - Restricted audio jack hotplug detection and event reporting to U=
+SB
+> > > >>   operation mode only, since Bluetooth audio is currently not supp=
+orted
+> > > >>   and it might have a negative impact on the battery life (Roderic=
+k)
+> > > >> - Rebased series onto next-20250624
+> > > >> - Link to v1: https://lore.kernel.org/r/20250526-dualsense-hid-jac=
+k-v1-0-a65fee4a60cc@collabora.com
+> > > >
+> > > > Just for the record -- I like the v2, and am inclined to merge it, =
+but
+> > > > would prefer doing that with Roderick's Ack, so I am waiting for a =
+bit
+> > > > here.
+> > >
+> > > Could you please confirm you are fine with the latest changes so that=
+ Jiri
+> > > is able to merge the series?
+> > >
+> > > If you cannot find the time to look into every detail right now, we c=
+an
+> > > still take care of any non-essential matters afterwards.
+> > >
+> > > Thanks,
+> > > Cristian
 
