@@ -1,110 +1,150 @@
-Return-Path: <linux-kernel+bounces-740951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D58D3B0DD0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:08:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC718B0DE81
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:28:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F746188E450
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:05:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 101B51888679
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:22:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5EB12EA753;
-	Tue, 22 Jul 2025 14:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Wot0JqVP"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B532E49AF;
+	Tue, 22 Jul 2025 14:20:28 +0000 (UTC)
+Received: from lgeamrelo03.lge.com (lgeamrelo03.lge.com [156.147.51.102])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88BC52E1724
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 14:05:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8242E2652
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 14:20:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.51.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753193102; cv=none; b=ErOgtrsRM3oKKiVC6gqTei3qao1F1/z2yraiTFmbbC+vqFNKxklI9lCVsgg2MUDgg2R4h2olvNR/wj1jMy+kyMQULJa9CwKaoK49Z+crcv9t4cyt65nZ5VQv1kbOhmj6wagq4xstPP7bRBvVkFjiFahguz95TBQ16bNJyLXYkps=
+	t=1753194028; cv=none; b=ITqHdMqVSpTDgKiiSKbPQjCfZGzFRe/lbLuq602/l6X1D1FYbQu4dcotoJHUjJ5jeYVrh2HfpQvyeXvxgmWXpOT86JRcI6f0kGSAjmTKqyQz4+RJ/yjC3pxlOTZEtHh4Bk5/g/76IWiG7xrvpZHjJzQ8A4N5c0haw59c07xnQdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753193102; c=relaxed/simple;
-	bh=/oJFpL/qioW8vYik6ecZfIbYZuNesfEGbgYsl9ugCps=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uN+61rRswOQhDSVY4twyvRFujjzyZEb7cHcbE8aq/1uhbA1M2h3rZd3Zi3Aj0q63kh5L9BAcxhKE9uaSBBss2uoPtwXTfHUvUEUx4v8zaBJH7iFxOTSMo5ALiHB6zkaj/TutDWGUFeFDyldQwJhu4dZr6QKrSaKT1LWU7VFmZLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Wot0JqVP; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4ab61ecc1e8so41279341cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 07:05:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753193099; x=1753797899; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/oJFpL/qioW8vYik6ecZfIbYZuNesfEGbgYsl9ugCps=;
-        b=Wot0JqVPEXkMSLT7AC7eeCvy7FXrJjh1TIParIHDUzTWLnxoOAOj+0zzarP1DNEmFG
-         jjIxNgMnsDvTHsLM2j9eSqHPU+L/hy+wzx/KW5dUi/GIwSdc6b6ZHb85c2xmhVCGdMcr
-         bN/W/wJ3Cdk47Xlwk/J6FiyFGvBFh8gpCzubAlxhuLrjL2xjBrAX4MJuhcy8C4LrCHbC
-         Kt51rfa3CpeidfNsTBQmwFmEj5cjIEZXoGdKju0j17GkAlM/0JIsf1pexE6aovMK7kVL
-         UeGm9Ykv9lGexGIylWxZxs7kQB9DyiYu092bSp2Kco3isQE2Wut78+Ns1jTNn5HZd1fU
-         VlGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753193099; x=1753797899;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/oJFpL/qioW8vYik6ecZfIbYZuNesfEGbgYsl9ugCps=;
-        b=q7KGQDQTiaxxZzYYztfjSEkbZGihz/wo3ux4sHfflkgdhEBl+9oOo6qzUUewQbm4fG
-         WmJmmutBQtDPYuZWJQnhQaeuIp2k1qLpuTtS0NnNF21MyM0SnjuqPFqyQwAiz8ffe2+N
-         KHnp393Y3d3SSIILBXBrbOip9SAiSyQC7Pj2uEeRLv9/0tW0JHMQSigcarME+lExCRtx
-         GN9LyVsR+qgicP1dtqq1NLDh3GscUv8rCxnJNDLYfq9kDGSepREttt97NsNEcPhmKPb5
-         y7IIb06te1LzWSlx160d0pocnq24+vsyUoBpCl3gz4apqtb5clXwlX+DmgalivIzubby
-         B7wg==
-X-Forwarded-Encrypted: i=1; AJvYcCUqx3Mdp68v/RpKFD+aBLWhMVNU9JERePOf0qjpSkGgCj5kAj46UQFKCXNV1AKsJXJAfQttxYKDIvTjx0M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvWN0GrVmOlA5PE6r2qPX2w5P83T6iz9oPqVJ0wELlqoLTHGgi
-	xGku3Kv3+Xqrr+L8+GV5inlXsuEdUMS8fGI2fqEYEaMxGh7nQlKFKRyUZJ2hKXhJwwhcct90PYc
-	lk6/wx1qmarvureWD5GtgSy212EmmzFusVHosBn9P
-X-Gm-Gg: ASbGncv1GGgY4T61ghR9j6XThdEHlSmiwft2/DjfTux8aylnZEVn94vemIQD162uIOV
-	ZyFcxVqccIynTeeTh6/bx9El5TVFi8Vqlw6E1XNOVUtoomJ0vc7V58F2jcalhe30xhpdPPNwIYH
-	LwEJletgrYf6mdWzRPUPfgFxcLpYOtDptxEhmn4ZCedRxlidr4CvjWhL+qz+arJ5hZjg7GQp86x
-	URzwu5mYVsoiWiX
-X-Google-Smtp-Source: AGHT+IHfWFn0yBFNphwhG6GHfW6hWSddAmiFuPrhbHTKC8yPHWBWCSlcRrgV4lNzSaqZhZd21fW1iq9s7XLPhpv1Gxw=
-X-Received: by 2002:a05:622a:653:b0:4ab:af74:e0be with SMTP id
- d75a77b69052e-4abaf74e17amr253639241cf.43.1753193098809; Tue, 22 Jul 2025
- 07:04:58 -0700 (PDT)
+	s=arc-20240116; t=1753194028; c=relaxed/simple;
+	bh=9Bl9q5Duw5lVvDQl/Wh9TmXqCYoIAncNLJVb/L/J4gU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GXv85s3owEIiUIUZvyh6M3DwRcstLoRbD56mhepBVT3MKwcD95MXnD0SXNmRfh0NC3tpuHzrzs3fQuJgdRpbH4ua/8l14gPlGGzxsm7xSIYcq4+B2ytjRzEGS0dIyXMv1hYDUOFJPQz6I8sGk+pP3GtId74fgb5OSltbWA+uOuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.51.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
+Received: from unknown (HELO yjaykim-PowerEdge-T330) (10.177.112.156)
+	by 156.147.51.102 with ESMTP; 22 Jul 2025 23:05:24 +0900
+X-Original-SENDERIP: 10.177.112.156
+X-Original-MAILFROM: youngjun.park@lge.com
+Date: Tue, 22 Jul 2025 23:05:24 +0900
+From: YoungJun Park <youngjun.park@lge.com>
+To: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org,
+	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+	muchun.song@linux.dev, shikemeng@huaweicloud.com,
+	kasong@tencent.com, nphamcs@gmail.com, bhe@redhat.com,
+	baohua@kernel.org, chrisl@kernel.org, cgroups@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, gunho.lee@lge.com,
+	iamjoonsoo.kim@lge.com, taejoon.song@lge.com
+Subject: Re: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for
+ cgroup-based swap priority
+Message-ID: <aH+apAbBCmkMGPlO@yjaykim-PowerEdge-T330>
+References: <20250716202006.3640584-1-youngjun.park@lge.com>
+ <20250716202006.3640584-2-youngjun.park@lge.com>
+ <jrkh2jy2pkoxgsxgsstpmijyhbzzyige6ubltvmvwl6fwkp3s7@kzc24pj2tcko>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250716081441.93088-1-nbd@nbd.name>
-In-Reply-To: <20250716081441.93088-1-nbd@nbd.name>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 22 Jul 2025 07:04:47 -0700
-X-Gm-Features: Ac12FXxqPV_GV0PovyzMNBY1n0-MH84t7kYRdSouBY061BcCtVj6nz7uduEtEVo
-Message-ID: <CANn89i+SHNfG3UxTOwr9kE26hbF-0_E7YJpt=3OHriMGLG7PeQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v2] net: pppoe: implement GRO support
-To: Felix Fietkau <nbd@nbd.name>
-Cc: netdev@vger.kernel.org, Michal Ostrowski <mostrows@earthlink.net>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <jrkh2jy2pkoxgsxgsstpmijyhbzzyige6ubltvmvwl6fwkp3s7@kzc24pj2tcko>
 
-On Wed, Jul 16, 2025 at 1:14=E2=80=AFAM Felix Fietkau <nbd@nbd.name> wrote:
->
-> Only handles packets where the pppoe header length field matches the exac=
-t
-> packet length. Significantly improves rx throughput.
->
-> When running NAT traffic through a MediaTek MT7621 devices from a host
-> behind PPPoE to a host directly connected via ethernet, the TCP throughpu=
-t
-> that the device is able to handle improves from ~130 Mbit/s to ~630 Mbit/=
-s,
-> using fraglist GRO.
->
-> Signed-off-by: Felix Fietkau <nbd@nbd.name>
-> ---
+On Tue, Jul 22, 2025 at 10:41:20AM +0200, Michal Koutný wrote:
+> On Thu, Jul 17, 2025 at 05:20:03AM +0900, Youngjun Park <youngjun.park@lge.com> wrote:
+> > +  memory.swap.priority
+> > +    A read-write flat-keyed file which exists on non-root cgroups.
+> > +    This interface allows you to set per-swap-device priorities for the current
+> > +    cgroup and to define how they differ from the global swap system.
+> > +
+> > +    To assign priorities or define specific behaviors for swap devices
+> > +    in the current cgroup, write one or more lines in the following
+> > +    formats:
+> > +
+> > +     - <swap_device_id> <priority>
+> > +     - <swap_device_id> disabled
+> > +     - <swap_device_id> none
+> > +     - default none
+> > +     - default disabled
+> > +
+> > +    Each <swap_device_id> refers to a unique swap device registered
+> > +    in the system. You can check the ID, device path, and current
+> > +    priority of active swap devices through the `/proc/swaps` file.
+> 
+> Do you mean row number as the ID? Or does this depend on some other
+> patches or API?
 
-Shouldn't we first add GSO support ?
+You're right to ask for clarification. The `<swap_device_id>` refers
+to a unique identifier added to each swap device entry in `/proc/swaps`.
+I will revise the documentation to make this clearer.
 
-Otherwise forwarding will break ?
+As a side note, I initially had concerns about breaking the existing ABI.
+However, the additional ID column does not significantly change the
+current output format and is gated behind `CONFIG_SWAP_CGROUP_PRIORITY`,
+so it should be safe and intuitive to expose it through `/proc/swaps
+
+> > +    This provides a clear mapping between swap devices and the IDs
+> > +    used in this interface.
+> > +
+> > +    The 'default' keyword sets the fallback priority behavior rule for
+> > +    this cgroup. If no specific entry matches a swap device, this default
+> > +    applies.
+> > +
+> > +    * 'default none': This is the default if no configuration
+> > +      is explicitly written. Swap devices follow the system-wide
+> > +      swap priorities.
+> > +
+> > +    * 'default disabled': All swap devices are excluded from this cgroup’s
+> > +      swap priority list and will not be used by this cgroup.
+> 
+> This duplicates memory.swap.max=0. I'm not sure it's thus necessary.
+> At the same time you don't accept 'default <priority>' (that's sane).
+
+That's a valid observation. While `memory.swap.max=0` controls the overall
+swap usage limit, the `default disabled` entry is intended to disable
+specific swap devices within the scope of this cgroup interface. The
+motivation was to offer more granular control over device selection
+rather than total swap usage.
+
+> > +
+> > +    The priority semantics are consistent with the global swap system:
+> > +
+> > +      - Higher numerical values indicate higher preference.
+> > +      - See Documentation/admin-guide/mm/swap_numa.rst for details on
+> > +        swap NUMA autobinding and negative priority rules.
+> > +
+> > +    The handling of negative priorities in this cgroup interface
+> > +    has specific behaviors for assignment and restoration:
+> > +
+> > +    * Negative Priority Assignment
+> 
+> Even in Documentation/admin-guide/mm/swap_numa.rst it's part of "Implementation details".
+> I admit I'm daunted by this paragraphs. Is it important for this interface?
+
+Thank you for pointing this out. My original philosophy was to preserve
+as much of the existing swap functionality as possible, including
+NUMA-aware behaviors.
+
+However, I agree that the explanation is complex and also not be
+necessary for my proposed usage. After some reflection, I believe the
+implementation (and documentation) will be clearer and simpler without
+supporting negative priorities here. 
+
+Unless further objections arise, I plan to drop this behavior in the next
+version of the patch, as you suggested. If compelling use cases emerge in
+the future, we can consider reintroducing the support at that time.
+
+Thanks again for your helpful review!
+
+Best regards,
+Youngjun Park
 
