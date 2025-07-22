@@ -1,308 +1,134 @@
-Return-Path: <linux-kernel+bounces-740503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 638E0B0D506
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:55:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5670DB0D50B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:56:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85A82560D2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:55:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88E481C244FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1559C2D9EFB;
-	Tue, 22 Jul 2025 08:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="WvpaVfXQ"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A09D82882D9;
-	Tue, 22 Jul 2025 08:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ECDD2D97A9;
+	Tue, 22 Jul 2025 08:56:01 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F792D9497
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 08:55:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753174517; cv=none; b=VGubZ6bNn1eGshT7e/9H/xxgNaGsKLpua3W5ticbU2KEp+LmvmWPVm3iM/gL0ZvoeFAmHO7ac3ssu3MVN6Xp8MVxzBKEdInYD7p+UAv4S4BEk4Wl55UpHWJMl3PWrVsqqn4ayErbqD92RAfKOrXQrHOoTS4S8EtQ+4+zIXUmwKY=
+	t=1753174561; cv=none; b=fzI4iUAneK1Fdlp5uYsAxaUWc+42JqE4D+blsi7PeaSohFNahxTwIkNe21G4XkT2PCnu5wK0jPiOYmHSlUZbfr2SnD1OhbfvfuS/BXHVVWb9JCAhJku/q3RXwHRCP3cgb5eNptlCZX0lVB+9sG4SMotq5DdOMYnI++eNh87unMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753174517; c=relaxed/simple;
-	bh=yQ64aKRLAQPMYlgOsuVD/3UpxF7mGUxKVYUJsVP9ekM=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=ut/BeNJkOUF7Fv8UEAfcYe5R5yQ/N7YO0mlEAnGRj9qEyCG8l0FsLUOTtHFFKZQ0Y917iUBag4Fs9QeN4Eo4IWZ7dUR+s3Vta9EYC974eVmW8LcvzL2+5C3TTe5Xr3YpEI6oWb5CNa7sZKSF6LCKAcJmHn7aJpMJKg7wYTHgUrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=WvpaVfXQ; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1186)
-	id 39D97201BA1A; Tue, 22 Jul 2025 01:55:15 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 39D97201BA1A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1753174515;
-	bh=GeAVuDnjnOT2gahzNJRdx7msISy4ivH7H0c4/ZZ6M54=;
-	h=From:To:Cc:Subject:Date:From;
-	b=WvpaVfXQX3MDCx0+B3wL7IeLq+aQ/VaEytSY8bDRiwavmJEJezAcYj5RRIqQjgpgi
-	 qGFvgDSrlKmH3kpBlCvDL2aV188OykCQBS6wV1sCtc1UHQchK2LAAmmzAcDGGqsnlU
-	 A9eTk2zWQQwguimajTTV8QIMHKCqlnB7HZiITaT4=
-From: Konstantin Taranov <kotaranov@linux.microsoft.com>
-To: kotaranov@microsoft.com,
-	longli@microsoft.com,
-	jgg@ziepe.ca,
-	leon@kernel.org
-Cc: linux-rdma@vger.kernel.org,
+	s=arc-20240116; t=1753174561; c=relaxed/simple;
+	bh=s0J+ssL0OGtRm/HV9JGbxizeCnhuuijegazWnFBNyQs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YVGa8yGHmGk7cHQ+XDqhh0nH5sVMvd67Cb9si/+ZSsoYlKGIm1vqsEuaz/qWlhDMbDjdEXO7NgjAhChLUq3wHsSCTzh6KP/5ulGuCHkKHJH9i0hFtt25NbxlYX0IXGWsCe0eihe9cqKUhtZsAvEFn9ZWyGTG8w6+WDYADaOB8LY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9702D152B
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 01:55:53 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D1E5B3F66E
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 01:55:58 -0700 (PDT)
+Date: Tue, 22 Jul 2025 09:55:46 +0100
+From: Liviu Dudau <liviu.dudau@arm.com>
+To: Erik Faye-Lund <erik.faye-lund@collabora.com>
+Cc: Karunika Choo <karunika.choo@arm.com>, dri-devel@lists.freedesktop.org,
+	nd@arm.com, Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH rdma-next v2 1/1] RDMA/mana_ib: add support of multiple ports
-Date: Tue, 22 Jul 2025 01:55:15 -0700
-Message-Id: <1753174515-23634-1-git-send-email-kotaranov@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+Subject: Re: [PATCH v5 3/6] drm/panthor: Add support for Mali-G710, Mali-G510
+ and Mali-G310
+Message-ID: <aH9SEno547vpIJxy@e110455-lin.cambridge.arm.com>
+References: <20250721111344.1610250-1-karunika.choo@arm.com>
+ <20250721111344.1610250-4-karunika.choo@arm.com>
+ <abc0eae5319ed14409c88baab3160b7aed2061b2.camel@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <abc0eae5319ed14409c88baab3160b7aed2061b2.camel@collabora.com>
 
-From: Konstantin Taranov <kotaranov@microsoft.com>
+On Tue, Jul 22, 2025 at 10:29:21AM +0200, Erik Faye-Lund wrote:
+> On Mon, 2025-07-21 at 12:13 +0100, Karunika Choo wrote:
+> > This patch adds GPU model name and FW binary support for Mali-G710,
+> > Mali-G510, and Mali-G310.
+> > 
+> > Signed-off-by: Karunika Choo <karunika.choo@arm.com>
+> > ---
+> >  drivers/gpu/drm/panthor/panthor_fw.c | 2 ++
+> >  drivers/gpu/drm/panthor/panthor_hw.c | 6 ++++++
+> >  2 files changed, 8 insertions(+)
+> > 
+> > diff --git a/drivers/gpu/drm/panthor/panthor_fw.c
+> > b/drivers/gpu/drm/panthor/panthor_fw.c
+> > index 36f1034839c2..b7b454d16f12 100644
+> > --- a/drivers/gpu/drm/panthor/panthor_fw.c
+> > +++ b/drivers/gpu/drm/panthor/panthor_fw.c
+> > @@ -1402,3 +1402,5 @@ int panthor_fw_init(struct panthor_device
+> > *ptdev)
+> >  }
+> >  
+> >  MODULE_FIRMWARE("arm/mali/arch10.8/mali_csffw.bin");
+> > +MODULE_FIRMWARE("arm/mali/arch10.10/mali_csffw.bin");
+> > +MODULE_FIRMWARE("arm/mali/arch10.12/mali_csffw.bin");
+> 
+> This isn't a problem with this series per-se, but these (as well as the
+> ones you're adding in later commits here) are all missing from here:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/tree/arm/mali
+> 
+> Any plans on upstreaming these so people without DDK access can
+> actually try these patches?
 
-If the HW indicates support of multiple ports for rdma, create an IB device
-with a port per netdev in the ethernet mana driver.
+If you want to try the patches the cover letter has the link for the binaries.
+Once we're happy with the patches I will send a pull request to linux-firmware for the binaries.
 
-CM is only available on port 1, but RC QPs are supported on all
-ports.
+Best regards,
+Liviu
 
-Signed-off-by: Konstantin Taranov <kotaranov@microsoft.com>
----
-v2: added check on null for return values of mana_get_primary_netdev()
+> 
+> > diff --git a/drivers/gpu/drm/panthor/panthor_hw.c
+> > b/drivers/gpu/drm/panthor/panthor_hw.c
+> > index f39010c0ca86..7f138974d43b 100644
+> > --- a/drivers/gpu/drm/panthor/panthor_hw.c
+> > +++ b/drivers/gpu/drm/panthor/panthor_hw.c
+> > @@ -15,8 +15,14 @@ static char *get_gpu_model_name(struct
+> > panthor_device *ptdev)
+> >  						GPU_PROD_MAJOR(gpu_i
+> > d));
+> >  
+> >  	switch (product_id) {
+> > +	case GPU_PROD_ID_MAKE(10, 2):
+> > +		return "Mali-G710";
+> >  	case GPU_PROD_ID_MAKE(10, 7):
+> >  		return "Mali-G610";
+> > +	case GPU_PROD_ID_MAKE(10, 3):
+> > +		return "Mali-G510";
+> > +	case GPU_PROD_ID_MAKE(10, 4):
+> > +		return "Mali-G310";
+> >  	}
+> >  
+> >  	return "(Unknown Mali GPU)";
 
- drivers/infiniband/hw/mana/device.c  | 114 ++++++++++++++-------------
- drivers/infiniband/hw/mana/main.c    |  13 ++-
- drivers/infiniband/hw/mana/mana_ib.h |   1 +
- 3 files changed, 71 insertions(+), 57 deletions(-)
-
-diff --git a/drivers/infiniband/hw/mana/device.c b/drivers/infiniband/hw/mana/device.c
-index 65d0af740..fa60872f1 100644
---- a/drivers/infiniband/hw/mana/device.c
-+++ b/drivers/infiniband/hw/mana/device.c
-@@ -77,28 +77,31 @@ static int mana_ib_netdev_event(struct notifier_block *this,
- 	struct gdma_context *gc = dev->gdma_dev->gdma_context;
- 	struct mana_context *mc = gc->mana.driver_data;
- 	struct net_device *ndev;
-+	int i;
- 
- 	/* Only process events from our parent device */
--	if (event_dev != mc->ports[0])
--		return NOTIFY_DONE;
--
--	switch (event) {
--	case NETDEV_CHANGEUPPER:
--		ndev = mana_get_primary_netdev(mc, 0, &dev->dev_tracker);
--		/*
--		 * RDMA core will setup GID based on updated netdev.
--		 * It's not possible to race with the core as rtnl lock is being
--		 * held.
--		 */
--		ib_device_set_netdev(&dev->ib_dev, ndev, 1);
--
--		/* mana_get_primary_netdev() returns ndev with refcount held */
--		netdev_put(ndev, &dev->dev_tracker);
--
--		return NOTIFY_OK;
--	default:
--		return NOTIFY_DONE;
--	}
-+	for (i = 0; i < dev->ib_dev.phys_port_cnt; i++)
-+		if (event_dev == mc->ports[i]) {
-+			switch (event) {
-+			case NETDEV_CHANGEUPPER:
-+				ndev = mana_get_primary_netdev(mc, i, &dev->dev_tracker);
-+				/*
-+				 * RDMA core will setup GID based on updated netdev.
-+				 * It's not possible to race with the core as rtnl lock is being
-+				 * held.
-+				 */
-+				ib_device_set_netdev(&dev->ib_dev, ndev, i + 1);
-+
-+				/* mana_get_primary_netdev() returns ndev with refcount held */
-+				if (ndev)
-+					netdev_put(ndev, &dev->dev_tracker);
-+
-+				return NOTIFY_OK;
-+			default:
-+				return NOTIFY_DONE;
-+			}
-+		}
-+	return NOTIFY_DONE;
- }
- 
- static int mana_ib_probe(struct auxiliary_device *adev,
-@@ -111,7 +114,7 @@ static int mana_ib_probe(struct auxiliary_device *adev,
- 	struct net_device *ndev;
- 	struct mana_ib_dev *dev;
- 	u8 mac_addr[ETH_ALEN];
--	int ret;
-+	int ret, i;
- 
- 	dev = ib_alloc_device(mana_ib_dev, ib_dev);
- 	if (!dev)
-@@ -126,34 +129,11 @@ static int mana_ib_probe(struct auxiliary_device *adev,
- 
- 	if (mana_ib_is_rnic(dev)) {
- 		dev->ib_dev.phys_port_cnt = 1;
--		ndev = mana_get_primary_netdev(mc, 0, &dev->dev_tracker);
--		if (!ndev) {
--			ret = -ENODEV;
--			ibdev_err(&dev->ib_dev, "Failed to get netdev for IB port 1");
--			goto free_ib_device;
--		}
--		ether_addr_copy(mac_addr, ndev->dev_addr);
--		addrconf_addr_eui48((u8 *)&dev->ib_dev.node_guid, ndev->dev_addr);
--		ret = ib_device_set_netdev(&dev->ib_dev, ndev, 1);
--		/* mana_get_primary_netdev() returns ndev with refcount held */
--		netdev_put(ndev, &dev->dev_tracker);
--		if (ret) {
--			ibdev_err(&dev->ib_dev, "Failed to set ib netdev, ret %d", ret);
--			goto free_ib_device;
--		}
--
--		dev->nb.notifier_call = mana_ib_netdev_event;
--		ret = register_netdevice_notifier(&dev->nb);
--		if (ret) {
--			ibdev_err(&dev->ib_dev, "Failed to register net notifier, %d",
--				  ret);
--			goto free_ib_device;
--		}
--
-+		addrconf_addr_eui48((u8 *)&dev->ib_dev.node_guid, mc->ports[0]->dev_addr);
- 		ret = mana_ib_gd_query_adapter_caps(dev);
- 		if (ret) {
- 			ibdev_err(&dev->ib_dev, "Failed to query device caps, ret %d", ret);
--			goto deregister_net_notifier;
-+			goto free_ib_device;
- 		}
- 
- 		ib_set_device_ops(&dev->ib_dev, &mana_ib_stats_ops);
-@@ -163,16 +143,42 @@ static int mana_ib_probe(struct auxiliary_device *adev,
- 		ret = mana_ib_create_eqs(dev);
- 		if (ret) {
- 			ibdev_err(&dev->ib_dev, "Failed to create EQs, ret %d", ret);
--			goto deregister_net_notifier;
-+			goto free_ib_device;
- 		}
- 
- 		ret = mana_ib_gd_create_rnic_adapter(dev);
- 		if (ret)
- 			goto destroy_eqs;
- 
--		ret = mana_ib_gd_config_mac(dev, ADDR_OP_ADD, mac_addr);
-+		if (dev->adapter_caps.feature_flags & MANA_IB_FEATURE_MULTI_PORTS_SUPPORT)
-+			dev->ib_dev.phys_port_cnt = mc->num_ports;
-+
-+		for (i = 0; i < dev->ib_dev.phys_port_cnt; i++) {
-+			ndev = mana_get_primary_netdev(mc, i, &dev->dev_tracker);
-+			if (!ndev) {
-+				ret = -ENODEV;
-+				ibdev_err(&dev->ib_dev,
-+					  "Failed to get netdev for IB port %d", i + 1);
-+				goto destroy_rnic;
-+			}
-+			ether_addr_copy(mac_addr, ndev->dev_addr);
-+			ret = ib_device_set_netdev(&dev->ib_dev, ndev, i + 1);
-+			/* mana_get_primary_netdev() returns ndev with refcount held */
-+			netdev_put(ndev, &dev->dev_tracker);
-+			if (ret) {
-+				ibdev_err(&dev->ib_dev, "Failed to set ib netdev, ret %d", ret);
-+				goto destroy_rnic;
-+			}
-+			ret = mana_ib_gd_config_mac(dev, ADDR_OP_ADD, mac_addr);
-+			if (ret) {
-+				ibdev_err(&dev->ib_dev, "Failed to add Mac address, ret %d", ret);
-+				goto destroy_rnic;
-+			}
-+		}
-+		dev->nb.notifier_call = mana_ib_netdev_event;
-+		ret = register_netdevice_notifier(&dev->nb);
- 		if (ret) {
--			ibdev_err(&dev->ib_dev, "Failed to add Mac address, ret %d", ret);
-+			ibdev_err(&dev->ib_dev, "Failed to register net notifier, %d", ret);
- 			goto destroy_rnic;
- 		}
- 	} else {
-@@ -188,7 +194,7 @@ static int mana_ib_probe(struct auxiliary_device *adev,
- 				       MANA_AV_BUFFER_SIZE, 0);
- 	if (!dev->av_pool) {
- 		ret = -ENOMEM;
--		goto destroy_rnic;
-+		goto deregister_net_notifier;
- 	}
- 
- 	ibdev_dbg(&dev->ib_dev, "mdev=%p id=%d num_ports=%d\n", mdev,
-@@ -205,15 +211,15 @@ static int mana_ib_probe(struct auxiliary_device *adev,
- 
- deallocate_pool:
- 	dma_pool_destroy(dev->av_pool);
-+deregister_net_notifier:
-+	if (mana_ib_is_rnic(dev))
-+		unregister_netdevice_notifier(&dev->nb);
- destroy_rnic:
- 	if (mana_ib_is_rnic(dev))
- 		mana_ib_gd_destroy_rnic_adapter(dev);
- destroy_eqs:
- 	if (mana_ib_is_rnic(dev))
- 		mana_ib_destroy_eqs(dev);
--deregister_net_notifier:
--	if (mana_ib_is_rnic(dev))
--		unregister_netdevice_notifier(&dev->nb);
- free_ib_device:
- 	xa_destroy(&dev->qp_table_wq);
- 	ib_dealloc_device(&dev->ib_dev);
-@@ -227,9 +233,9 @@ static void mana_ib_remove(struct auxiliary_device *adev)
- 	ib_unregister_device(&dev->ib_dev);
- 	dma_pool_destroy(dev->av_pool);
- 	if (mana_ib_is_rnic(dev)) {
-+		unregister_netdevice_notifier(&dev->nb);
- 		mana_ib_gd_destroy_rnic_adapter(dev);
- 		mana_ib_destroy_eqs(dev);
--		unregister_netdevice_notifier(&dev->nb);
- 	}
- 	xa_destroy(&dev->qp_table_wq);
- 	ib_dealloc_device(&dev->ib_dev);
-diff --git a/drivers/infiniband/hw/mana/main.c b/drivers/infiniband/hw/mana/main.c
-index 41a24a186..6a2471f2e 100644
---- a/drivers/infiniband/hw/mana/main.c
-+++ b/drivers/infiniband/hw/mana/main.c
-@@ -563,8 +563,14 @@ int mana_ib_get_port_immutable(struct ib_device *ibdev, u32 port_num,
- 	immutable->gid_tbl_len = attr.gid_tbl_len;
- 
- 	if (mana_ib_is_rnic(dev)) {
--		immutable->core_cap_flags = RDMA_CORE_PORT_IBA_ROCE_UDP_ENCAP;
--		immutable->max_mad_size = IB_MGMT_MAD_SIZE;
-+		if (port_num == 1) {
-+			immutable->core_cap_flags = RDMA_CORE_PORT_IBA_ROCE_UDP_ENCAP;
-+			immutable->max_mad_size = IB_MGMT_MAD_SIZE;
-+		} else {
-+			immutable->core_cap_flags = RDMA_CORE_CAP_PROT_ROCE_UDP_ENCAP
-+						    | RDMA_CORE_CAP_ETH_AH;
-+			immutable->max_mad_size = 0;
-+		}
- 	} else {
- 		immutable->core_cap_flags = RDMA_CORE_PORT_RAW_PACKET;
- 	}
-@@ -633,8 +639,9 @@ int mana_ib_query_port(struct ib_device *ibdev, u32 port,
- 	props->pkey_tbl_len = 1;
- 	if (mana_ib_is_rnic(dev)) {
- 		props->gid_tbl_len = 16;
--		props->port_cap_flags = IB_PORT_CM_SUP;
- 		props->ip_gids = true;
-+		if (port == 1)
-+			props->port_cap_flags = IB_PORT_CM_SUP;
- 	}
- 
- 	return 0;
-diff --git a/drivers/infiniband/hw/mana/mana_ib.h b/drivers/infiniband/hw/mana/mana_ib.h
-index 369825fde..e782dc7f1 100644
---- a/drivers/infiniband/hw/mana/mana_ib.h
-+++ b/drivers/infiniband/hw/mana/mana_ib.h
-@@ -220,6 +220,7 @@ struct mana_ib_query_adapter_caps_req {
- enum mana_ib_adapter_features {
- 	MANA_IB_FEATURE_CLIENT_ERROR_CQE_SUPPORT = BIT(4),
- 	MANA_IB_FEATURE_DEV_COUNTERS_SUPPORT = BIT(5),
-+	MANA_IB_FEATURE_MULTI_PORTS_SUPPORT = BIT(6),
- };
- 
- struct mana_ib_query_adapter_caps_resp {
 -- 
-2.43.0
-
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
 
