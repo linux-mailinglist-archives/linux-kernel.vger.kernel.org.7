@@ -1,342 +1,608 @@
-Return-Path: <linux-kernel+bounces-740605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97BF3B0D656
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:53:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A8C5B0D65A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D38D43BC0A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:52:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB3486C1C21
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED652E0B6E;
-	Tue, 22 Jul 2025 09:52:06 +0000 (UTC)
-Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 205382BE045;
+	Tue, 22 Jul 2025 09:53:21 +0000 (UTC)
+Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565532E0909;
-	Tue, 22 Jul 2025 09:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A184628AAE0;
+	Tue, 22 Jul 2025 09:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753177926; cv=none; b=qrltOZBrGuet0NsyDa1GPnFGQsgGaeFOiIuwsmChk6XH88ByXcwf2CoqqoqeIaOfVQZc10GKS37rj+qq4+WGAfNMZgiYYBvzOfvpo/KhL+srH0ZvwMx9ztbxauXoF/cBVK+qJmF3g7X9alrkaDyS1HRSMU65dDCkrGx/xV+zWm4=
+	t=1753178000; cv=none; b=ML/Yb2UgZFyroXL2V326cZsUy4UKVwFamOspcuwXmKSplb+BgdbnPUP1EOMm0voaVhffRgB2d8oBeoT1yu4eAE5fF7OGvNJgE1HpiTR085W6h77F4V2Wl88ehSXNAGTMYwUm/Z55zB5207tPdPQXnlngxoO1Fxeq/1Xw+0hOVhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753177926; c=relaxed/simple;
-	bh=qGb/ZkmgFjNq7T/topc1r0Q8cQ257wMI3+s1S0GrCk0=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rqsfDnHFr1t8oA0PYaTMJ/X+sw25QuMeOScYbUlHdF+e7uvCVQhYAEf16iqrv7/hCsACEUamnfi5Rnw8I/uZEWMdCoU8LDTiW3tx3rEhH3ZpTuxbRqLiMyIOagtkMZ1YeUsyROVxRBsQ8fXmHqmbxRvgDaKuB4AN0QsU+LPQbok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 22 Jul
- 2025 17:51:56 +0800
-Received: from twmbx02.aspeed.com (192.168.10.13) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Tue, 22 Jul 2025 17:51:56 +0800
-From: Ryan Chen <ryan_chen@aspeedtech.com>
-To: ryan_chen <ryan_chen@aspeedtech.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley
-	<joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, Kevin Chen
-	<kevin_chen@aspeedtech.com>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-aspeed@lists.ozlabs.org>
-Subject: [PATCH v3 2/2] irqchip: aspeed: add debugfs support and AST2700 INTC0/INTC1 routing/protection display
-Date: Tue, 22 Jul 2025 17:51:56 +0800
-Message-ID: <20250722095156.1672873-3-ryan_chen@aspeedtech.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250722095156.1672873-1-ryan_chen@aspeedtech.com>
-References: <20250722095156.1672873-1-ryan_chen@aspeedtech.com>
+	s=arc-20240116; t=1753178000; c=relaxed/simple;
+	bh=277QhWsgLThKqcczoaSyj1ua8yoGMNFouor4LanU5kE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NkI3uFjn25u1xKPfdPdkuYejMV5Zq0Pj371FekNZWn+19b32DdFGmAST+xBCeEPW8wNM6kDQKJcuSTxGRSU+/FDV7RgxEtDJ5wrNq/bkV7GE4gMAzVamgKrzrZ324TkdWEKixqg0CR2YKL/uvixM34jl9Au3AFKKpXlDBxfuans=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=52.59.177.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: zesmtpgz4t1753177921t0978c379
+X-QQ-Originating-IP: U9ajFXEoJrL6B+DxmWpsePAlXbBZuVmgdJVFDzJbCBA=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 22 Jul 2025 17:51:59 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 13951642469092028887
+Date: Tue, 22 Jul 2025 17:51:59 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 02/15] net: rnpgbe: Add n500/n210 chip support
+Message-ID: <911D202AA380FB7F+20250722095159.GA120552@nic-Precision-5820-Tower>
+References: <20250721113238.18615-1-dong100@mucse.com>
+ <20250721113238.18615-3-dong100@mucse.com>
+ <b4233af1-7143-402b-a45c-379c39edf274@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b4233af1-7143-402b-a45c-379c39edf274@linux.dev>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NWLpwLZrMWrIsiRCXDgamtgYlriX8SJby7wMclSU3hKikg7j9UFqCZt7
+	4sodhS9q525nCO/nszWNUcTHJ8cqWXC6P4DynZaqp40IJJreUdD1Peq4RVAhjbY5W2x/5EV
+	3r0s3p4EwWteM7WXxPO7Gc3jGfgCrPvoIeq4Nee4ii+3/UFCY3z1qBs6/IDdaHWy7M7KUNu
+	h2PnyQDzpGk07hP0koTJog59a0PfMfQKYh5FDt6Cg808U/vpo02g3l4IoEjfwJyAFEbnNEF
+	rqegQj/vYgP5YS8LulKlUX84l3XfxQMK4UaTYG8KIIhHxlduirGjtVtiMnQ5NoldLIcwQNb
+	AIbE2RRNwoAhtDLCmPvyvOE23Nbj3n1L0t56TJu2nMg7fPLzg4v/UPbYpTVH+cF1Up/9pz7
+	YbodPgrZfTB4O3ttZ2c9UEANokCsBLV77N0aMNh4/NaIsh9W0Pgb+ATR6M7Uh3E6jtBz1aq
+	eNbnjLP3FbuoZJPacDX8xTOYrMZYYcDZb9a/imUz4YgWQdxubGa9RyTgX2yyC8luv7FnxBH
+	HrMELbZPJYacBHjgY7FUdWtQkTFR3mUWW/cbX0OZvDMpg8RXhV2avppbALYDhPUf2QM+Ppm
+	9JQtccBWDj/9kHIfKA0RyoTjbmQd/qTjYMjhQbx/8Jr/hD4blGKja6yBkDPp81RodEn7UCG
+	0IRHhA/wnNKcRvMcJuYEh0IgPtyglb0luG6BKycN4LugY3Iqtlwci2+FWNyoCXrU942j/36
+	UC2GEDm6jg+9yEQHFftKG981SxQYF44Kf0H9ZTfj6AzgixZs6IYgGS+Drp7tLI640d/S5tt
+	M9waoUJaEd9d/Oc+TyazfRcq7S2Iqn8hU+xcJgbmNtTRylUwsfIUCJe8d9fQ/7nHkhyQHMK
+	fXZUTf9xYa1GNTmC4bXK1dNB6xmX1WunftsT3QoLSvtVRFLtE+ADw3AzVYq0sKwHiP3xxk+
+	0gRJY2hmHyK2eqS+KrWuwjg4mDmaXTR7RMwL7/uNKIBdS32o8+X2Am+dLSfj214jSZaxmco
+	T2N6sHpMmKUHJfmouJ
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 
-AST2700 INTC0/INTC1 nodes ("aspeed,ast2700-intc0/1") not only
-include the interrupt controller child node ("aspeed,ast2700-intc-ic"),
-but also provide interrupt routing and register protection features.
-This patch adds debugfs entries for interrupt routing and protection
-status for AST2700 INTC0/INTC1.
+On Mon, Jul 21, 2025 at 03:21:23PM +0100, Vadim Fedorenko wrote:
+> On 21/07/2025 12:32, Dong Yibo wrote:
+> > Initialize n500/n210 chip bar resource map and
+> > dma, eth, mbx ... info for future use.
+> > 
+> > Signed-off-by: Dong Yibo <dong100@mucse.com>
+> > ---
+> >   drivers/net/ethernet/mucse/rnpgbe/Makefile    |   4 +-
+> >   drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    | 138 ++++++++++++++++++
+> >   .../net/ethernet/mucse/rnpgbe/rnpgbe_chip.c   | 138 ++++++++++++++++++
+> >   drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h |  27 ++++
+> >   .../net/ethernet/mucse/rnpgbe/rnpgbe_main.c   |  68 ++++++++-
+> >   5 files changed, 370 insertions(+), 5 deletions(-)
+> >   create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+> >   create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
+> > 
+> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/Makefile b/drivers/net/ethernet/mucse/rnpgbe/Makefile
+> > index 0942e27f5913..42c359f459d9 100644
+> > --- a/drivers/net/ethernet/mucse/rnpgbe/Makefile
+> > +++ b/drivers/net/ethernet/mucse/rnpgbe/Makefile
+> > @@ -5,5 +5,5 @@
+> >   #
+> >   obj-$(CONFIG_MGBE) += rnpgbe.o
+> > -
+> > -rnpgbe-objs := rnpgbe_main.o
+> > +rnpgbe-objs := rnpgbe_main.o\
+> > +	       rnpgbe_chip.o
+> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+> > index 224e395d6be3..2ae836fc8951 100644
+> > --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+> > @@ -4,21 +4,156 @@
+> >   #ifndef _RNPGBE_H
+> >   #define _RNPGBE_H
+> > +#include <linux/types.h>
+> > +#include <linux/netdevice.h>
+> > +
+> > +extern const struct rnpgbe_info rnpgbe_n500_info;
+> > +extern const struct rnpgbe_info rnpgbe_n210_info;
+> > +extern const struct rnpgbe_info rnpgbe_n210L_info;
+> > +
+> >   enum rnpgbe_boards {
+> >   	board_n500,
+> >   	board_n210,
+> >   	board_n210L,
+> >   };
+> > +enum rnpgbe_hw_type {
+> > +	rnpgbe_hw_n500 = 0,
+> > +	rnpgbe_hw_n210,
+> > +	rnpgbe_hw_n210L,
+> > +	rnpgbe_hw_unknow
+> > +};
+> > +
+> > +struct mucse_dma_info {
+> > +	u8 __iomem *dma_base_addr;
+> > +	u8 __iomem *dma_ring_addr;
+> > +	void *back;
+> > +	u32 max_tx_queues;
+> > +	u32 max_rx_queues;
+> > +	u32 dma_version;
+> > +};
+> > +
+> > +#define RNPGBE_MAX_MTA 128
+> > +struct mucse_eth_info {
+> > +	u8 __iomem *eth_base_addr;
+> > +	void *back;
+> > +	u32 mta_shadow[RNPGBE_MAX_MTA];
+> > +	int mc_filter_type;
+> > +	u32 mcft_size;
+> > +	u32 vft_size;
+> > +	u32 num_rar_entries;
+> > +};
+> > +
+> > +struct mii_regs {
+> > +	unsigned int addr; /* MII Address */
+> > +	unsigned int data; /* MII Data */
+> > +	unsigned int addr_shift; /* MII address shift */
+> > +	unsigned int reg_shift; /* MII reg shift */
+> > +	unsigned int addr_mask; /* MII address mask */
+> > +	unsigned int reg_mask; /* MII reg mask */
+> > +	unsigned int clk_csr_shift;
+> > +	unsigned int clk_csr_mask;
+> > +};
+> > +
+> > +struct mucse_mac_info {
+> > +	u8 __iomem *mac_addr;
+> > +	void *back;
+> > +	struct mii_regs mii;
+> > +	int phy_addr;
+> > +	int clk_csr;
+> > +};
+> > +
+> > +#define MAX_VF_NUM (8)
+> > +
+> > +struct mucse_mbx_info {
+> > +	u32 timeout;
+> > +	u32 usec_delay;
+> > +	u32 v2p_mailbox;
+> > +	u16 size;
+> > +	u16 vf_req[MAX_VF_NUM];
+> > +	u16 vf_ack[MAX_VF_NUM];
+> > +	u16 fw_req;
+> > +	u16 fw_ack;
+> > +	/* lock for only one use mbx */
+> > +	struct mutex lock;
+> > +	bool irq_enabled;
+> > +	int mbx_size;
+> > +	int mbx_mem_size;
+> > +#define MBX_FEATURE_NO_ZERO BIT(0)
+> > +#define MBX_FEATURE_WRITE_DELAY BIT(1)
+> > +	u32 mbx_feature;
+> > +	/* fw <--> pf mbx */
+> > +	u32 fw_pf_shm_base;
+> > +	u32 pf2fw_mbox_ctrl;
+> > +	u32 pf2fw_mbox_mask;
+> > +	u32 fw_pf_mbox_mask;
+> > +	u32 fw2pf_mbox_vec;
+> > +	/* pf <--> vf mbx */
+> > +	u32 pf_vf_shm_base;
+> > +	u32 pf2vf_mbox_ctrl_base;
+> > +	u32 pf_vf_mbox_mask_lo;
+> > +	u32 pf_vf_mbox_mask_hi;
+> > +	u32 pf2vf_mbox_vec_base;
+> > +	u32 vf2pf_mbox_vec_base;
+> > +	u32 fw_vf_share_ram;
+> > +	int share_size;
+> > +};
+> > +
+> > +struct mucse_hw {
+> > +	void *back;
+> > +	u8 pfvfnum;
+> > +	u8 pfvfnum_system;
+> > +	u8 __iomem *hw_addr;
+> > +	u8 __iomem *ring_msix_base;
+> > +	struct pci_dev *pdev;
+> > +	u16 device_id;
+> > +	u16 vendor_id;
+> > +	u16 subsystem_device_id;
+> > +	u16 subsystem_vendor_id;
+> > +	enum rnpgbe_hw_type hw_type;
+> > +	struct mucse_dma_info dma;
+> > +	struct mucse_eth_info eth;
+> > +	struct mucse_mac_info mac;
+> > +	struct mucse_mbx_info mbx;
+> > +#define M_NET_FEATURE_SG BIT(0)
+> > +#define M_NET_FEATURE_TX_CHECKSUM BIT(1)
+> > +#define M_NET_FEATURE_RX_CHECKSUM BIT(2)
+> > +#define M_NET_FEATURE_TSO BIT(3)
+> > +#define M_NET_FEATURE_TX_UDP_TUNNEL BIT(4)
+> > +#define M_NET_FEATURE_VLAN_FILTER BIT(5)
+> > +#define M_NET_FEATURE_VLAN_OFFLOAD BIT(6)
+> > +#define M_NET_FEATURE_RX_NTUPLE_FILTER BIT(7)
+> > +#define M_NET_FEATURE_TCAM BIT(8)
+> > +#define M_NET_FEATURE_RX_HASH BIT(9)
+> > +#define M_NET_FEATURE_RX_FCS BIT(10)
+> > +#define M_NET_FEATURE_HW_TC BIT(11)
+> > +#define M_NET_FEATURE_USO BIT(12)
+> > +#define M_NET_FEATURE_STAG_FILTER BIT(13)
+> > +#define M_NET_FEATURE_STAG_OFFLOAD BIT(14)
+> > +#define M_NET_FEATURE_VF_FIXED BIT(15)
+> > +#define M_VEB_VLAN_MASK_EN BIT(16)
+> > +#define M_HW_FEATURE_EEE BIT(17)
+> > +#define M_HW_SOFT_MASK_OTHER_IRQ BIT(18)
+> > +	u32 feature_flags;
+> > +	u16 usecstocount;
+> > +};
+> > +
+> >   struct mucse {
+> >   	struct net_device *netdev;
+> >   	struct pci_dev *pdev;
+> > +	struct mucse_hw hw;
+> >   	/* board number */
+> >   	u16 bd_number;
+> >   	char name[60];
+> >   };
+> > +struct rnpgbe_info {
+> > +	int total_queue_pair_cnts;
+> > +	enum rnpgbe_hw_type hw_type;
+> > +	void (*get_invariants)(struct mucse_hw *hw);
+> > +};
+> > +
+> >   /* Device IDs */
+> >   #ifndef PCI_VENDOR_ID_MUCSE
+> >   #define PCI_VENDOR_ID_MUCSE 0x8848
+> > @@ -30,4 +165,7 @@ struct mucse {
+> >   #define PCI_DEVICE_ID_N210 0x8208
+> >   #define PCI_DEVICE_ID_N210L 0x820a
+> > +#define m_rd_reg(reg) readl(reg)
+> > +#define m_wr_reg(reg, val) writel((val), reg)
+> > +
+> >   #endif /* _RNPGBE_H */
+> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+> > new file mode 100644
+> > index 000000000000..38c094965db9
+> > --- /dev/null
+> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+> > @@ -0,0 +1,138 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/* Copyright(c) 2020 - 2025 Mucse Corporation. */
+> > +
+> > +#include <linux/types.h>
+> > +#include <linux/string.h>
+> > +
+> > +#include "rnpgbe.h"
+> > +#include "rnpgbe_hw.h"
+> > +
+> > +/**
+> > + * rnpgbe_get_invariants_n500 - setup for hw info
+> > + * @hw: hw information structure
+> > + *
+> > + * rnpgbe_get_invariants_n500 initializes all private
+> > + * structure, such as dma, eth, mac and mbx base on
+> > + * hw->addr for n500
+> > + **/
+> > +static void rnpgbe_get_invariants_n500(struct mucse_hw *hw)
+> > +{
+> > +	struct mucse_dma_info *dma = &hw->dma;
+> > +	struct mucse_eth_info *eth = &hw->eth;
+> > +	struct mucse_mac_info *mac = &hw->mac;
+> > +	struct mucse_mbx_info *mbx = &hw->mbx;
+> > +
+> > +	/* setup msix base */
+> > +	hw->ring_msix_base = hw->hw_addr + 0x28700;
+> > +	/* setup dma info */
+> > +	dma->dma_base_addr = hw->hw_addr;
+> > +	dma->dma_ring_addr = hw->hw_addr + RNPGBE_RING_BASE;
+> > +	dma->max_tx_queues = RNPGBE_MAX_QUEUES;
+> > +	dma->max_rx_queues = RNPGBE_MAX_QUEUES;
+> > +	dma->back = hw;
+> > +	/* setup eth info */
+> > +	eth->eth_base_addr = hw->hw_addr + RNPGBE_ETH_BASE;
+> > +	eth->back = hw;
+> > +	eth->mc_filter_type = 0;
+> > +	eth->mcft_size = RNPGBE_MC_TBL_SIZE;
+> > +	eth->vft_size = RNPGBE_VFT_TBL_SIZE;
+> > +	eth->num_rar_entries = RNPGBE_RAR_ENTRIES;
+> > +	/* setup mac info */
+> > +	mac->mac_addr = hw->hw_addr + RNPGBE_MAC_BASE;
+> > +	mac->back = hw;
+> > +	/* set mac->mii */
+> > +	mac->mii.addr = RNPGBE_MII_ADDR;
+> > +	mac->mii.data = RNPGBE_MII_DATA;
+> > +	mac->mii.addr_shift = 11;
+> > +	mac->mii.addr_mask = 0x0000F800;
+> > +	mac->mii.reg_shift = 6;
+> > +	mac->mii.reg_mask = 0x000007C0;
+> > +	mac->mii.clk_csr_shift = 2;
+> > +	mac->mii.clk_csr_mask = GENMASK(5, 2);
+> > +	mac->clk_csr = 0x02; /* csr 25M */
+> > +	/* hw fixed phy_addr */
+> > +	mac->phy_addr = 0x11;
+> > +
+> > +	mbx->mbx_feature |= MBX_FEATURE_NO_ZERO;
+> > +	/* mbx offset */
+> > +	mbx->vf2pf_mbox_vec_base = 0x28900;
+> > +	mbx->fw2pf_mbox_vec = 0x28b00;
+> > +	mbx->pf_vf_shm_base = 0x29000;
+> > +	mbx->mbx_mem_size = 64;
+> > +	mbx->pf2vf_mbox_ctrl_base = 0x2a100;
+> > +	mbx->pf_vf_mbox_mask_lo = 0x2a200;
+> > +	mbx->pf_vf_mbox_mask_hi = 0;
+> > +	mbx->fw_pf_shm_base = 0x2d000;
+> > +	mbx->pf2fw_mbox_ctrl = 0x2e000;
+> > +	mbx->fw_pf_mbox_mask = 0x2e200;
+> > +	mbx->fw_vf_share_ram = 0x2b000;
+> > +	mbx->share_size = 512;
+> > +
+> > +	/* setup net feature here */
+> > +	hw->feature_flags |= M_NET_FEATURE_SG |
+> > +			     M_NET_FEATURE_TX_CHECKSUM |
+> > +			     M_NET_FEATURE_RX_CHECKSUM |
+> > +			     M_NET_FEATURE_TSO |
+> > +			     M_NET_FEATURE_VLAN_FILTER |
+> > +			     M_NET_FEATURE_VLAN_OFFLOAD |
+> > +			     M_NET_FEATURE_RX_NTUPLE_FILTER |
+> > +			     M_NET_FEATURE_RX_HASH |
+> > +			     M_NET_FEATURE_USO |
+> > +			     M_NET_FEATURE_RX_FCS |
+> > +			     M_NET_FEATURE_STAG_FILTER |
+> > +			     M_NET_FEATURE_STAG_OFFLOAD;
+> > +	/* start the default ahz, update later */
+> > +	hw->usecstocount = 125;
+> > +}
+> > +
+> > +/**
+> > + * rnpgbe_get_invariants_n210 - setup for hw info
+> > + * @hw: hw information structure
+> > + *
+> > + * rnpgbe_get_invariants_n210 initializes all private
+> > + * structure, such as dma, eth, mac and mbx base on
+> > + * hw->addr for n210
+> > + **/
+> > +static void rnpgbe_get_invariants_n210(struct mucse_hw *hw)
+> > +{
+> > +	struct mucse_mbx_info *mbx = &hw->mbx;
+> > +	/* get invariants based from n500 */
+> > +	rnpgbe_get_invariants_n500(hw);
+> 
+> it's not a good pattern. if you have some configuration that is
+> shared amoung devices, it's better to create *base() or *common()
+> helper and call it from each specific initializer. BTW, why do you
+> name these functions get_invariants*()? They don't get anything, but
+> rather init/setup configuration values. It's better to rename it
+> according to the function.
+> 
 
-- Register platform driver for "aspeed,ast2700-intc0" and
- "aspeed,ast2700-intc1" compatible nodes.
-- Add show_routing/show_prot callbacks for both intc0 and intc1,
- displaying current interrupt routing and protection register status.
-- Expose routing/protection information via debugfs for debugging
- and validation.
+I try to devide hardware to dma, eth, mac, mbx modules. Different
+chips may use the same mbx module with different reg-offset in bar.
+So I setup reg-offset in get_invariants for each chip. And common code,
+such as mbx achieve functions with the reg-offset.
+Ok, I will rename it.
 
-Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
----
- drivers/irqchip/irq-aspeed-intc.c | 238 ++++++++++++++++++++++++++++++
- 1 file changed, 238 insertions(+)
+> > +
+> > +	/* update msix base */
+> > +	hw->ring_msix_base = hw->hw_addr + 0x29000;
+> > +	/* update mbx offset */
+> > +	mbx->vf2pf_mbox_vec_base = 0x29200;
+> > +	mbx->fw2pf_mbox_vec = 0x29400;
+> > +	mbx->pf_vf_shm_base = 0x29900;
+> > +	mbx->mbx_mem_size = 64;
+> > +	mbx->pf2vf_mbox_ctrl_base = 0x2aa00;
+> > +	mbx->pf_vf_mbox_mask_lo = 0x2ab00;
+> > +	mbx->pf_vf_mbox_mask_hi = 0;
+> > +	mbx->fw_pf_shm_base = 0x2d900;
+> > +	mbx->pf2fw_mbox_ctrl = 0x2e900;
+> > +	mbx->fw_pf_mbox_mask = 0x2eb00;
+> > +	mbx->fw_vf_share_ram = 0x2b900;
+> > +	mbx->share_size = 512;
+> > +	/* update hw feature */
+> > +	hw->feature_flags |= M_HW_FEATURE_EEE;
+> > +	hw->usecstocount = 62;
+> > +}
+> > +
+> > +const struct rnpgbe_info rnpgbe_n500_info = {
+> > +	.total_queue_pair_cnts = RNPGBE_MAX_QUEUES,
+> > +	.hw_type = rnpgbe_hw_n500,
+> > +	.get_invariants = &rnpgbe_get_invariants_n500,
+> > +};
+> > +
+> > +const struct rnpgbe_info rnpgbe_n210_info = {
+> > +	.total_queue_pair_cnts = RNPGBE_MAX_QUEUES,
+> > +	.hw_type = rnpgbe_hw_n210,
+> > +	.get_invariants = &rnpgbe_get_invariants_n210,
+> > +};
+> > +
+> > +const struct rnpgbe_info rnpgbe_n210L_info = {
+> > +	.total_queue_pair_cnts = RNPGBE_MAX_QUEUES,
+> > +	.hw_type = rnpgbe_hw_n210L,
+> > +	.get_invariants = &rnpgbe_get_invariants_n210,
+> > +};
+> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
+> > new file mode 100644
+> > index 000000000000..2c7372a5e88d
+> > --- /dev/null
+> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
+> > @@ -0,0 +1,27 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +/* Copyright(c) 2020 - 2025 Mucse Corporation. */
+> > +
+> > +#ifndef _RNPGBE_HW_H
+> > +#define _RNPGBE_HW_H
+> > +/*                     BAR                   */
+> > +/* ----------------------------------------- */
+> > +/*      module  | size  |  start   |    end  */
+> > +/*      DMA     | 32KB  | 0_0000H  | 0_7FFFH */
+> > +/*      ETH     | 64KB  | 1_0000H  | 1_FFFFH */
+> > +/*      MAC     | 32KB  | 2_0000H  | 2_7FFFH */
+> > +/*      MSIX    | 32KB  | 2_8000H  | 2_FFFFH */
+> > +
+> > +#define RNPGBE_RING_BASE (0x1000)
+> > +#define RNPGBE_MAC_BASE (0x20000)
+> > +#define RNPGBE_ETH_BASE (0x10000)
+> > +/* chip resourse */
+> > +#define RNPGBE_MAX_QUEUES (8)
+> > +/* multicast control table */
+> > +#define RNPGBE_MC_TBL_SIZE (128)
+> > +/* vlan filter table */
+> > +#define RNPGBE_VFT_TBL_SIZE (128)
+> > +#define RNPGBE_RAR_ENTRIES (32)
+> 
+> no need for extra parentheses
+> 
 
-diff --git a/drivers/irqchip/irq-aspeed-intc.c b/drivers/irqchip/irq-aspeed-intc.c
-index 8330221799a0..8385f3d5f901 100644
---- a/drivers/irqchip/irq-aspeed-intc.c
-+++ b/drivers/irqchip/irq-aspeed-intc.c
-@@ -6,6 +6,7 @@
-  */
- 
- #include <linux/bitops.h>
-+#include <linux/debugfs.h>
- #include <linux/irq.h>
- #include <linux/irqchip.h>
- #include <linux/irqchip/chained_irq.h>
-@@ -15,6 +16,13 @@
- #include <linux/io.h>
- #include <linux/spinlock.h>
- 
-+#define INTC0_ROUTING0_SEL0	0x200
-+#define INTC0_ROUTING0_SEL1	0x300
-+#define INTC0_ROUTING0_SEL2	0x400
-+#define INTC1_ROUTING0_SEL0	0x80
-+#define INTC1_ROUTING0_SEL1	0xa0
-+#define INTC1_ROUTING0_SEL2	0xc0
-+
- #define INTC_INT_ENABLE_REG	0x00
- #define INTC_INT_STATUS_REG	0x04
- #define INTC_IRQS_PER_WORD	32
-@@ -137,3 +145,233 @@ static int __init aspeed_intc_ic_of_init(struct device_node *node,
- }
- 
- IRQCHIP_DECLARE(ast2700_intc_ic, "aspeed,ast2700-intc-ic", aspeed_intc_ic_of_init);
-+
-+struct aspeed_intc {
-+	void __iomem *base;
-+	struct device *dev;
-+	struct dentry *dbg_root;
-+	int (*show_routing)(struct seq_file *s, void *unused);
-+	int (*show_prot)(struct seq_file *s, void *unused);
-+};
-+
-+/*
-+ * 000: Route interrupt INTn to PSP GICINT0-31
-+ * 001: Route interrupt INTn to SSPINT0-31
-+ * 010: Route interrupt INTn to TSPINT0-31
-+ */
-+static int aspeed_intc0_show_routing(struct seq_file *s, void *unused)
-+{
-+	struct aspeed_intc *intc = s->private;
-+	int group, bit;
-+
-+	seq_puts(s, "int | PSP | SSP | TSP\n");
-+	seq_puts(s, "----+-----+-----+----\n");
-+
-+	for (group = 0; group < 4; group++) {
-+		u32 reg0 = readl(intc->base + INTC0_ROUTING0_SEL0 + group * 4);
-+		u32 reg1 = readl(intc->base + INTC0_ROUTING0_SEL1 + group * 4);
-+		u32 reg2 = readl(intc->base + INTC0_ROUTING0_SEL2 + group * 4);
-+
-+		for (bit = 0; bit < 32; bit++) {
-+			int idx = group * 32 + bit;
-+			u8 routing = (((reg2 >> bit) & 0x1) << 2) |
-+				     (((reg1 >> bit) & 0x1) << 1) |
-+				     (((reg0 >> bit) & 0x1) << 0);
-+
-+			const char *ca35 = (routing == 0) ? " O " : " - ";
-+			const char *ssp  = (routing == 1) ? " O " : " - ";
-+			const char *tsp  = (routing == 2) ? " O " : " - ";
-+
-+			seq_printf(s, "%-4d| %s | %s | %s\n", idx, ca35, ssp, tsp);
-+		}
-+	}
-+	return 0;
-+}
-+
-+static int aspeed_intc0_show_prot(struct seq_file *s, void *unused)
-+{
-+	struct aspeed_intc *intc = s->private;
-+	u32 prot = readl(intc->base + 0x40);
-+
-+	seq_printf(s, "INTC040 : 0x%08x\n", prot);
-+
-+	static const char * const prot_bits[] = {
-+		"hprot_ca35: Protect INTC010~018,1xxx accessed by PSP only",
-+		"hprot_ssp: Protect INTC020~028,2xxx accessed by SSP only",
-+		"hprot_tsp: Protect INTC030~038,3xxx accessed by TSP only",
-+		"hprot_sirqs: Protect INTC0C0~0D4 to be read only",
-+		"hprot_sirqs_1700: Protect INTC0D8~0DC to be read only",
-+		"hprot_sirqs_ext: Protect INTC0E0 to be read only",
-+		"hprot_reg_prot: Protect INTC044,2xx~3xx to be read only",
-+		"hprot_rd1_prot: Read protect for INTC044,200-438",
-+		"hprot_rd2_prot: Read protect for INTC0C0~164",
-+		"hprot_rd3_prot: Read protect for INTC02x,1xxx to be read by PSP only",
-+		"hprot_rd4_prot: Read protect for INTC03x,2xxx to be read by SSP only",
-+		"hprot_rd5_prot: Read protect for INTC04x,3xxx to be read by TSP only",
-+		"hprot_mcu0: Protect INTC050~054,028 accessed by MCU0 only",
-+		"hprot_ca35p: Protect INTC010~018 accessed by PSP secure only"
-+	};
-+
-+	for (int i = 0; i < 14; i++)
-+		seq_printf(s, "  [%2d] %s: %s\n", i, prot_bits[i],
-+			   (prot & BIT(i)) ? "Enable" : "Disable");
-+	return 0;
-+}
-+
-+/*
-+ * 000: Route interrupt INTi to PSP(default)
-+ * 001: Route interrupt INTi to INTC controller
-+ * 010: Route interrupt INTi to SSP
-+ * 011: Route interrupt INTi to TSP
-+ * 100: Route interrupt INTi to PSP S1
-+ * 101: Route interrupt INTi to PSP S2
-+ * 110: Route interrupt INTi to MCU0
-+ */
-+static int aspeed_intc1_show_routing(struct seq_file *s, void *unused)
-+{
-+	struct aspeed_intc *intc = s->private;
-+	int group, bit;
-+
-+	seq_puts(s, "index      | PSP | INTC| SSP | TSP | S1  | S2  | MCU0\n");
-+	seq_puts(s, "-----------+-----+-----+-----+-----+-----+-----+-----\n");
-+
-+	for (group = 0; group < 6; group++) {
-+		u32 reg0 = readl(intc->base + INTC1_ROUTING0_SEL0 + group * 4);
-+		u32 reg1 = readl(intc->base + INTC1_ROUTING0_SEL1 + group * 4);
-+		u32 reg2 = readl(intc->base + INTC1_ROUTING0_SEL2 + group * 4);
-+
-+		for (bit = 0; bit < 32; bit++) {
-+			u8 routing = (((reg2 >> bit) & 0x1) << 2) |
-+				     (((reg1 >> bit) & 0x1) << 1) |
-+				     (((reg0 >> bit) & 0x1) << 0);
-+
-+			const char *psp  = (routing == 0) ? " O " : " - ";
-+			const char *intc = (routing == 1) ? " O " : " - ";
-+			const char *ssp  = (routing == 2) ? " O " : " - ";
-+			const char *tsp  = (routing == 3) ? " O " : " - ";
-+			const char *s1   = (routing == 4) ? " O " : " - ";
-+			const char *s2   = (routing == 5) ? " O " : " - ";
-+			const char *mcu0 = (routing == 6) ? " O " : " - ";
-+
-+			seq_printf(s, "intc1_%d_%02d | %s | %s | %s | %s | %s | %s | %s\n",
-+				   group, bit, psp, intc, ssp, tsp, s1, s2, mcu0);
-+		}
-+	}
-+	return 0;
-+}
-+
-+static int aspeed_intc1_show_prot(struct seq_file *s, void *unused)
-+{
-+	struct aspeed_intc *intc = s->private;
-+	u32 prot = readl(intc->base);
-+
-+	seq_printf(s, "INTC1: 0x%08x\n", prot);
-+
-+	static const char * const prot_bits[] = {
-+		"pprot_ca35: Protect INTC100~150,280~2D0,300~350 write by PSP only",
-+		"pprot_ssp: Protect INTC180~1D0 write by SSP only",
-+		"pprot_tsp: Protect INTC200~250 write by TSP only",
-+		"pprot_reg_prot: Protect INTC080~0D4 to be read only",
-+		"pprot_regrd: Protect INTC080~0D4 to be read protected",
-+		"pprot_regrd2: Protect INTC100~150,280~2D0,300~350 read by PSP only",
-+		"pprot_regrd3: Protect INTC180~1D0 read by SSP only",
-+		"pprot_regrd4: Protect INTC200~250 read by TSP only",
-+		"pprot_mcu0: Protect INTC010,014 write by MCU0 only",
-+		"pprot_regrd5: Protect INTC010,014 read by MCU0 only",
-+		"pprot_treg: Protect INTC040~054 to be read protected"
-+	};
-+
-+	for (int i = 0; i < 11; i++)
-+		seq_printf(s, "  [%2d] %s: %s\n", i, prot_bits[i],
-+			   (prot & BIT(i)) ? "Enable" : "Disable");
-+	return 0;
-+}
-+
-+static int aspeed_intc_open_routing(struct inode *inode, struct file *file)
-+{
-+	struct aspeed_intc *intc = inode->i_private;
-+
-+	if (!intc->show_routing)
-+		return -ENODEV;
-+	return single_open(file, intc->show_routing, intc);
-+}
-+
-+static int aspeed_intc_open_prot(struct inode *inode, struct file *file)
-+{
-+	struct aspeed_intc *intc = inode->i_private;
-+
-+	if (!intc->show_prot)
-+		return -ENODEV;
-+	return single_open(file, intc->show_prot, intc);
-+}
-+
-+static const struct file_operations aspeed_intc_routing_fops = {
-+	.owner   = THIS_MODULE,
-+	.open    = aspeed_intc_open_routing,
-+	.read    = seq_read,
-+	.llseek  = seq_lseek,
-+	.release = single_release,
-+};
-+
-+static const struct file_operations aspeed_intc_prot_fops = {
-+	.owner   = THIS_MODULE,
-+	.open    = aspeed_intc_open_prot,
-+	.read    = seq_read,
-+	.llseek  = seq_lseek,
-+	.release = single_release,
-+};
-+
-+static int aspeed_intc_probe(struct platform_device *pdev)
-+{
-+	struct aspeed_intc *intc;
-+	struct resource *res;
-+
-+	intc = devm_kzalloc(&pdev->dev, sizeof(*intc), GFP_KERNEL);
-+	if (!intc)
-+		return -ENOMEM;
-+	intc->dev = &pdev->dev;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	intc->base = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(intc->base))
-+		return PTR_ERR(intc->base);
-+
-+	if (of_device_is_compatible(pdev->dev.of_node, "aspeed,ast2700-intc0")) {
-+		intc->show_routing = aspeed_intc0_show_routing;
-+		intc->show_prot    = aspeed_intc0_show_prot;
-+	} else if (of_device_is_compatible(pdev->dev.of_node, "aspeed,ast2700-intc1")) {
-+		intc->show_routing = aspeed_intc1_show_routing;
-+		intc->show_prot    = aspeed_intc1_show_prot;
-+	} else {
-+		intc->show_routing = NULL;
-+		intc->show_prot = NULL;
-+	}
-+
-+	platform_set_drvdata(pdev, intc);
-+
-+	intc->dbg_root = debugfs_create_dir(dev_name(&pdev->dev), NULL);
-+	if (intc->dbg_root) {
-+		debugfs_create_file("routing", 0400, intc->dbg_root, intc,
-+				    &aspeed_intc_routing_fops);
-+		debugfs_create_file("protection", 0400, intc->dbg_root, intc,
-+				    &aspeed_intc_prot_fops);
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id aspeed_intc_of_match[] = {
-+	{ .compatible = "aspeed,ast2700-intc0", },
-+	{ .compatible = "aspeed,ast2700-intc1", },
-+	{},
-+};
-+
-+static struct platform_driver aspeed_intc_driver = {
-+	.probe  = aspeed_intc_probe,
-+	.driver = {
-+		.name = "ast2700-intc",
-+		.of_match_table = aspeed_intc_of_match,
-+	},
-+};
-+builtin_platform_driver(aspeed_intc_driver);
-+
--- 
-2.34.1
+Got it, I will fix it.
+
+> > +
+> > +#define RNPGBE_MII_ADDR 0x00000010 /* MII Address */
+> > +#define RNPGBE_MII_DATA 0x00000014 /* MII Data */
+> > +#endif /* _RNPGBE_HW_H */
+> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
+> > index 13b49875006b..08f773199e9b 100644
+> > --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
+> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
+> > @@ -11,6 +11,11 @@
+> >   #include "rnpgbe.h"
+> >   char rnpgbe_driver_name[] = "rnpgbe";
+> > +static const struct rnpgbe_info *rnpgbe_info_tbl[] = {
+> > +	[board_n500] = &rnpgbe_n500_info,
+> > +	[board_n210] = &rnpgbe_n210_info,
+> > +	[board_n210L] = &rnpgbe_n210L_info,
+> > +};
+> >   /* rnpgbe_pci_tbl - PCI Device ID Table
+> >    *
+> > @@ -33,6 +38,7 @@ static struct pci_device_id rnpgbe_pci_tbl[] = {
+> >   /**
+> >    * rnpgbe_add_adapter - add netdev for this pci_dev
+> >    * @pdev: PCI device information structure
+> > + * @ii: chip info structure
+> >    *
+> >    * rnpgbe_add_adapter initializes a netdev for this pci_dev
+> >    * structure. Initializes Bar map, private structure, and a
+> > @@ -40,16 +46,24 @@ static struct pci_device_id rnpgbe_pci_tbl[] = {
+> >    *
+> >    * @return: 0 on success, negative on failure
+> >    **/
+> > -static int rnpgbe_add_adapter(struct pci_dev *pdev)
+> > +static int rnpgbe_add_adapter(struct pci_dev *pdev,
+> > +			      const struct rnpgbe_info *ii)
+> >   {
+> >   	struct mucse *mucse = NULL;
+> > +	struct mucse_hw *hw = NULL;
+> > +	u8 __iomem *hw_addr = NULL;
+> >   	struct net_device *netdev;
+> >   	static int bd_number;
+> > +	u32 dma_version = 0;
+> > +	int err = 0;
+> > +	u32 queues;
+> > -	netdev = alloc_etherdev_mq(sizeof(struct mucse), 1);
+> > +	queues = ii->total_queue_pair_cnts;
+> > +	netdev = alloc_etherdev_mq(sizeof(struct mucse), queues);
+> >   	if (!netdev)
+> >   		return -ENOMEM;
+> > +	SET_NETDEV_DEV(netdev, &pdev->dev);
+> >   	mucse = netdev_priv(netdev);
+> >   	mucse->netdev = netdev;
+> >   	mucse->pdev = pdev;
+> > @@ -58,7 +72,54 @@ static int rnpgbe_add_adapter(struct pci_dev *pdev)
+> >   		 rnpgbe_driver_name, mucse->bd_number);
+> >   	pci_set_drvdata(pdev, mucse);
+> > +	hw = &mucse->hw;
+> > +	hw->back = mucse;
+> > +	hw->hw_type = ii->hw_type;
+> > +
+> > +	switch (hw->hw_type) {
+> > +	case rnpgbe_hw_n500:
+> > +		/* n500 use bar2 */
+> > +		hw_addr = devm_ioremap(&pdev->dev,
+> > +				       pci_resource_start(pdev, 2),
+> > +				       pci_resource_len(pdev, 2));
+> > +		if (!hw_addr) {
+> > +			dev_err(&pdev->dev, "map bar2 failed!\n");
+> > +			return -EIO;
+> > +		}
+> > +
+> > +		/* get dma version */
+> > +		dma_version = m_rd_reg(hw_addr);
+> > +		break;
+> > +	case rnpgbe_hw_n210:
+> > +	case rnpgbe_hw_n210L:
+> > +		/* check bar0 to load firmware */
+> > +		if (pci_resource_len(pdev, 0) == 0x100000)
+> > +			return -EIO;
+> > +		/* n210 use bar2 */
+> > +		hw_addr = devm_ioremap(&pdev->dev,
+> > +				       pci_resource_start(pdev, 2),
+> > +				       pci_resource_len(pdev, 2));
+> > +		if (!hw_addr) {
+> > +			dev_err(&pdev->dev, "map bar2 failed!\n");
+> > +			return -EIO;
+> > +		}
+> > +
+> > +		/* get dma version */
+> > +		dma_version = m_rd_reg(hw_addr);
+> > +		break;
+> > +	default:
+> > +		err = -EIO;
+> > +		goto err_free_net;
+> > +	}
+> > +	hw->hw_addr = hw_addr;
+> > +	hw->dma.dma_version = dma_version;
+> > +	ii->get_invariants(hw);
+> > +
+> >   	return 0;
+> > +
+> > +err_free_net:
+> > +	free_netdev(netdev);
+> > +	return err;
+> >   }
+> 
+> You have err_free_net label, which is used only in really impossible
+> case of unknown device, while other cases can return directly and
+> memleak netdev...
+> 
+> 
+
+Yes, It is really impossible case of unknown device. But maybe switch
+should always has 'default case'? And if in 'default case', nothing To
+do but free_netdev and return err. 
+Other cases return directly with return 0, and netdev will be freed in
+rnpgbe_rm_adapter() when rmmod. Sorry, I may not have got the memleak
+point? 
+
+> >   /**
+> > @@ -74,6 +135,7 @@ static int rnpgbe_add_adapter(struct pci_dev *pdev)
+> >    **/
+> >   static int rnpgbe_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+> >   {
+> > +	const struct rnpgbe_info *ii = rnpgbe_info_tbl[id->driver_data];
+> >   	int err;
+> >   	err = pci_enable_device_mem(pdev);
+> > @@ -97,7 +159,7 @@ static int rnpgbe_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+> >   	pci_set_master(pdev);
+> >   	pci_save_state(pdev);
+> > -	err = rnpgbe_add_adapter(pdev);
+> > +	err = rnpgbe_add_adapter(pdev, ii);
+> >   	if (err)
+> >   		goto err_regions;
+> 
+> 
+
+Thanks for your feedback.
 
 
