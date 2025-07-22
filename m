@@ -1,124 +1,129 @@
-Return-Path: <linux-kernel+bounces-741608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB371B0E695
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 00:41:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B808B0E69A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 00:42:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 125275665E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 22:41:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41A931C87933
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 22:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427D5289344;
-	Tue, 22 Jul 2025 22:41:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7453F289809;
+	Tue, 22 Jul 2025 22:42:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cJu9Riqt"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OiwP4pKb"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB2D2877E5
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 22:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB2C728727A;
+	Tue, 22 Jul 2025 22:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753224074; cv=none; b=fMIEvWrmU6BtcMp8ftOAj+7d8wJNpFAaV+0PHffZSucVEsYgedyS5FjwE8OXrCDuVKz4KYksEV11qc2MQbLXqY/lo0oEgxX7A1ATlo3nVVSmT23fIk1lkmmgX4Ywn6h2R77eG+2XweVCglzl5rYmr5tVM+f6eWrQ8+RtQENaHTg=
+	t=1753224141; cv=none; b=VBYcB75dINq0DtfznHP+rdD5BCZXwAbOmAdau9YW3B8292wxHudIPeHmjbCF+tZsYGbO66rV+RQ0c47eiMiCPnyrAv8K5vh6arIiA20uDQritQTrpF1ORRU7JukZlEJhROew/b1Znf3bqm6hSeOXS9HMAaP5yjU4Tpm0auXkFJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753224074; c=relaxed/simple;
-	bh=RIVO37juCsCqXBzxtTjGZr09W7FZSUQUcewbbNK0LR0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=NgohcJStkVLmfCHsrMz46sfWoEFCuBc2F15RMU0vKbZ9F2fKHJgVxXwoRoUDc+A77PM0WOPA2JoIeBu469kcDTSTFMHmu3ls4OAgEVdlU7Lshe/Ga1aojASBkfKtaWFKp7eX2mvaOWOd6/I4FiX3LpCICWdX9x/JZmpTJFs/Bcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cJu9Riqt; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31cb5cc3edcso5128763a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 15:41:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753224072; x=1753828872; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:user-agent:references:mime-version
-         :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZOYa7ZEGNBK60fTKVSOtfx+dioBHWECsFxuIzKb+U7o=;
-        b=cJu9RiqtZLXnZa1yPlljl+GNIs797jBnDS69KJ3Mc66ZgfictHywvc6e6vdEfbiNCe
-         wB/Or2tCMONKmt3GcunU0pRyrR58mDasKeCf1XD1NBi6UFZ8XbDaIxxPRfCt+ATEVrn6
-         UQe8OENDogJ0o5/hYy3TxHEq2f6gtfqpOb71JXQ+Yuj9i2JkGtAsdwzmgRUHKUMJHzM4
-         Uzs8UE5oO5+EtUJYwZP6oj7eZFKJg06THxS12YajvCdiriY9tGNG3foTn4KOJiChjrQM
-         Igjc8jCMPipuHOe779tlDVEqZVSiO+oAO/CVsDT6sKtfanHh2kaJqiviH7ykLyhIIRbX
-         MOOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753224072; x=1753828872;
-        h=cc:to:from:subject:message-id:user-agent:references:mime-version
-         :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZOYa7ZEGNBK60fTKVSOtfx+dioBHWECsFxuIzKb+U7o=;
-        b=bt4D0vE7Y3yiGwwH63XvdnXpgZYCpkXNF6p3qE6lsWIL383i6edgI2qC0d3wRg75xw
-         Bu9k+4/YVpamhfWnE9IsHNYaI1ta9KK9Y/UL283EEyZ/BKAFl64JofwhKJHnuQqT3xNc
-         VV1UAlsd4EOfTgbj+a/KsEU7rqt7GYMom1FjqBiS4NNvtUxX6P1qKhvU0dRAZJqmhhWH
-         /x1ZgoM70+4TyQ8nuiLHiGqyes0hHKx9HFS435oq5oNdUYCDjiiDoa+vYQFpULvN5VW1
-         0yriw11xtLa7X2dYvu2BvSnlqCzzlAFuIAEiFJeQ+iNrcg+CelHbg6SVb0bfBDC6vIoN
-         UQ9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVCo4WltdLe3zQEIshgC+fBcJuUaBdAMmkSo1emOU8BdDIJ6QhnTnav9tmEkVpAnCQR1IS5X0X+x3M8JEE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKl4t1orhWRBex+xCEk3MeQ2zfb4NNfLy8uNyqSWKohl/9Z11I
-	Yfu3Tx9au5m9zx5KFGNk0itOLCzBUd4JosskMBnbR0pDCEvaYmPo2iu95vEMvBzNAvD+g6jajeM
-	FSNRIbT3OPw==
-X-Google-Smtp-Source: AGHT+IEQDJG0XdYJdm4y/wzvyxG233Rn2TkKUiTzy/vJJmjMYQfTNdCOJXvVMg3gnXeY82hjHaO1NgRYqbs+
-X-Received: from pji6.prod.google.com ([2002:a17:90b:3fc6:b0:313:2213:1f54])
- (user=ynaffit job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1f8c:b0:313:283e:e881
- with SMTP id 98e67ed59e1d1-31e506ef4f7mr1324033a91.11.1753224072599; Tue, 22
- Jul 2025 15:41:12 -0700 (PDT)
-Date: Tue, 22 Jul 2025 15:41:11 -0700
-In-Reply-To: <aHktgqO3BUg8exXH@slm.duckdns.org> (Tejun Heo's message of "Thu,
- 17 Jul 2025 07:06:10 -1000")
+	s=arc-20240116; t=1753224141; c=relaxed/simple;
+	bh=ldaHuURYnlqZqVA1+U4sCKk5t6+FG1lj5JJep03e6hg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m9jii7WSFCYbEM6xBBwWsGyipk6teiC3gC7v7InFA8iz8NbT5N+EWk4EL+xMv95fCtjZfSGjq4dHDIt0kgAz9tR6r/Gc5u4CXIGvKAe+Xh6Ny5O9t7Tr82A763grVKQcLzUbUSbPzDqpXWFDBo7kGvmMCzjhozsvoSAZQllctwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OiwP4pKb; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 69C9943275;
+	Tue, 22 Jul 2025 22:42:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1753224136;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=b5Yg+pdTXpo6t0O7UQl+RIbiB4LOKOnIdXdXoBOJyck=;
+	b=OiwP4pKbiIk4mcSLaL9RdN2P/6K+rHryH62SPWAsZd52iz5Z/rFoylJzCtRSvzA2tb7on4
+	Cc+C1huFf+QizyFqpxlSeHww+c27B+NZbxavUsmSYrsFLRmzmwATEOBRdHu/X4+i8rNedF
+	2Rt+a/ijrDx8kZhxNeKML482g2M6o/w7sLBzT7INqvxOROp87kjKZhylh0BO0pXsSKSaAm
+	8TCPBtxwgM1FWhZWQj5TMO6jTubmAUh0Ad+QSa1VcFrFdJ291BxVmw0E+cYdPHvpUTuVT3
+	uHDpKLgC1+i+WXdaDsm52o61H8G7VrwA+8WYRlDT/vS+J283lNr85hBFHGxudw==
+Date: Wed, 23 Jul 2025 00:42:14 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Harshit Shah <hshah@axiado.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Michal Simek <michal.simek@amd.com>,
+	=?utf-8?Q?Przemys=C5=82aw?= Gaj <pgaj@cadence.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Arnd Bergmann <arnd@arndb.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, soc@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+	Jan Kotas <jank@cadence.com>, linux-serial@vger.kernel.org,
+	linux-i3c@lists.infradead.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v6 06/10] dt-bindings: i3c: cdns: add Axiado AX3000 I3C
+ controller
+Message-ID: <20250722224214cd72ae8b@mail.local>
+References: <20250722-axiado-ax3000-soc-and-evaluation-board-support-v6-0-543979a60ccf@axiado.com>
+ <20250722-axiado-ax3000-soc-and-evaluation-board-support-v6-6-543979a60ccf@axiado.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250714050008.2167786-2-ynaffit@google.com> <5rm53pnhpdeqljxqywh26gffh6vlyb5j5s6pzxhv52odhkl4fm@o6p7daoponsn>
- <6c9278b7-4eb4-4b47-b61a-a5bcc7e558b0@huaweicloud.com> <aHktgqO3BUg8exXH@slm.duckdns.org>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Message-ID: <dbx8bjpbalx4.fsf@ynaffit-andsys.c.googlers.com>
-Subject: Re: [RFC PATCH v2] cgroup: Track time in cgroup v2 freezer
-From: Tiffany Yang <ynaffit@google.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: Chen Ridong <chenridong@huaweicloud.com>, 
-	"Michal =?utf-8?Q?Koutn?= =?utf-8?Q?=C3=BD?=" <mkoutny@suse.com>, linux-kernel@vger.kernel.org, 
-	John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
-	Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Chen Ridong <chenridong@huawei.com>, 
-	kernel-team@android.com, Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org, 
-	linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250722-axiado-ax3000-soc-and-evaluation-board-support-v6-6-543979a60ccf@axiado.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejiedufecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehlvgigrghnughrvgcuuegvlhhlohhnihcuoegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegieduueethefhkeegjeevfefhiedujeeuhffgleejgfejgeekueejuefgheeggfenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegvtdgrmegsieehmegsvdhftdemkegsleekmeejledtheemrggsvgelmeduhedvvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemvgdtrgemsgeiheemsgdvfhdtmeeksgelkeemjeeltdehmegrsggvleemudehvddvpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvgedprhgtphhtthhopehhshhhrghhsegrgihirgguohdrtghomhdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehjihhrihhsl
+ hgrsgihsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmihgthhgrlhdrshhimhgvkhesrghmugdrtghomhdprhgtphhtthhopehpghgrjhestggruggvnhgtvgdrtghomhdprhgtphhtthhopefhrhgrnhhkrdfnihesnhigphdrtghomhdprhgtphhtthhopegssghrvgiiihhllhhonheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrgh
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-Tejun Heo <tj@kernel.org> writes:
+On 22/07/2025 13:15:34-0700, Harshit Shah wrote:
+> Add binding for AX3000 I3C controller. So far, no changes known,
+> so it can fallback to default compatible.
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Harshit Shah <hshah@axiado.com>
 
-> On Thu, Jul 17, 2025 at 09:52:38PM +0800, Chen Ridong wrote:
->> > With the given implementation (and use scenario), this'd better exposed
->> > in
->> >   cgroup.freeze.stat.local
->> >
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
->> Would it be possible to add this field to either cgroup.event or  
->> cgroup.stat?
->> Since the frozen status is already tracked in cgroup.event, this  
->> placement would maintain better
->> cohesion with existing metrics.
 
->> This is just a suggestion.
 
-> Yeah, given that the freezer is an integral part of cgroup core, using
-> cgroup.stat[.local] probably makes more sense.
-
-> Thanks.
-
-One of the reasons I avoided cgroup.stat was because I interpreted its
-purpose to be for exposing cgroup metadata (i.e., descendants and
-descendants per subsystem), and I didn't think this value fit in neatly.
-
-It doesn't seem like there currently exists a cgroup.stat.local, but if
-that is the preferred location for this accounting, I could create one
-and print it there!
+> ---
+>  Documentation/devicetree/bindings/i3c/cdns,i3c-master.yaml | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/i3c/cdns,i3c-master.yaml b/Documentation/devicetree/bindings/i3c/cdns,i3c-master.yaml
+> index cad6d53d0e2e35ddaaad35215ec93dd182f28319..6fa3078074d0298d9786a26d7f1f2dd2c15329a7 100644
+> --- a/Documentation/devicetree/bindings/i3c/cdns,i3c-master.yaml
+> +++ b/Documentation/devicetree/bindings/i3c/cdns,i3c-master.yaml
+> @@ -14,7 +14,12 @@ allOf:
+>  
+>  properties:
+>    compatible:
+> -    const: cdns,i3c-master
+> +    oneOf:
+> +      - const: cdns,i3c-master
+> +      - items:
+> +          - enum:
+> +              - axiado,ax3000-i3c
+> +          - const: cdns,i3c-master
+>  
+>    reg:
+>      maxItems: 1
+> 
+> -- 
+> 2.25.1
+> 
 
 -- 
-Tiffany Y. Yang
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
