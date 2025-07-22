@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-741460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E46AAB0E467
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 21:52:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9754B0E468
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 21:52:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0D8D1C86699
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:53:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 250EE5815C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:52:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B042853F2;
-	Tue, 22 Jul 2025 19:52:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E70A5284B3F;
+	Tue, 22 Jul 2025 19:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cNpCt08M"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NtObtWU9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E882288D2
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 19:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F655221297
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 19:52:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753213951; cv=none; b=uTHE8LSFce9/Lj82YD0n9gOpfYImF6PZ3BEK4aeUappyaxCvXxd/V2Qn4ZhJTM00p/lSkqSIJbtExlW3AFYomw+WWzJhtDPpaYRDiTX3yTlM8VWclz/a56EhUjz36CFlU9LEY+3TNEs5ExqS/JspuhGXc8nj45SMNzZ6rtd/xOA=
+	t=1753213966; cv=none; b=XJPnKrR09YEwJYkI9GqdehOzqgg9s0Jw3R/z8GrvO+WkyVHBQAoAv7hw1AcHu2l1vvrTIi6lo2RPFyoF9+PpQKgfFjYMaerGN6Gf7TVMq7sZXpidnraYh+w3/PKTpBSOgx+NrEjcIzfGEygB7du5nNMM61I22Z2nGzYeGj/GgIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753213951; c=relaxed/simple;
-	bh=7+pcUyqgjMHQAplOzyoZQFSGbEZWMIEasB3Fc7ZZGnQ=;
+	s=arc-20240116; t=1753213966; c=relaxed/simple;
+	bh=9aLW6WzkW8Dlkxa5+sE4bNKMghEMyAvLa3OeabqQX/A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ye1VWe1teQBZYf4XyJFKAmXcXYSCDzBkPvzUDTfhvez+5HwyfQEOvNKV7g1FRP49sVsfz6yde8j2NAAv1H6pIu6Q9Ef6BJaFWuBBqY6nh7+/OX61/MYuDxBv4GSfXgoeM6UOclAOhDfgnovDs3xxboqgUMfdriVB+lEah4DxEg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cNpCt08M; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=XHjyK2kcBRb/CB+4t1hkhhbBxThUpV7Dahcm231BYAIa4zCe40QMe/2kUCDwsSsuhIZXsXdolJV9w7TbudJGewUB9WSvdOCZ0FqxEwouZ2bsko8/rgTAZKK3uR0L3hCsyVVF43tDInDQMbjf1NY74zPd0oouEnC9QL+QH77MIbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NtObtWU9; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753213945;
+	s=mimecast20190719; t=1753213963;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=tD9jiUjYIe8zYIe4eFuBdSpjTfktPJUQThqoL5NZe28=;
-	b=cNpCt08M6BeFY29y+WDJn1avVhXCddG4SvSYwXMmSPbkJCfHJsznXHJKJiehhj+mtHaFjs
-	BwVvbJ1xoMyQ4sOKtulh84b15jcJ6Mp1V10UREuECNIk4u8+M+XwjJ1m8yX29oejTwwsee
-	lJTqyFHydBwZF3vYQRAU0s8AQQ3ndPE=
+	bh=afDMNM/ets1wQdqXC3stxVj6V8QJ54jbNPfFinJzgxA=;
+	b=NtObtWU9vGFSNxXgLTfcastkL5zFz1fihvYxgXFWaX2GiypvbagwYux6vvuDDwNNCXkV96
+	JldGaxiumG34B365MkXC0GOJMVwx5oPWDqO/FUGY0TBc5fdmZPOgQq1EXMqlhRz3llOVZM
+	VDBXWnOzqrIvAGWEuIGnTW78t5zekAg=
 Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
  [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-335-hVHqd-_YMtKtvPg78Clvtw-1; Tue, 22 Jul 2025 15:52:23 -0400
-X-MC-Unique: hVHqd-_YMtKtvPg78Clvtw-1
-X-Mimecast-MFC-AGG-ID: hVHqd-_YMtKtvPg78Clvtw_1753213943
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a6d90929d6so2266930f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 12:52:23 -0700 (PDT)
+ us-mta-636-dYwWAw98OSSoJf_ZIQT82w-1; Tue, 22 Jul 2025 15:52:41 -0400
+X-MC-Unique: dYwWAw98OSSoJf_ZIQT82w-1
+X-Mimecast-MFC-AGG-ID: dYwWAw98OSSoJf_ZIQT82w_1753213961
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a4f858bc5eso4727474f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 12:52:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753213943; x=1753818743;
+        d=1e100.net; s=20230601; t=1753213960; x=1753818760;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=tD9jiUjYIe8zYIe4eFuBdSpjTfktPJUQThqoL5NZe28=;
-        b=GqKS7rHMOMUUecr/drNZLIBJN916AGGLS+G69hZY5BwgMyt4/aVbY73oP1GeuB2fUp
-         fg69ajvPs/i1qe6BiEjhsWvxkoM5ZSI+NZYXyx0g04qe4TFVAyeqF5iofm06Z/nT+9PG
-         cKOuKzTLGdL//V8CoygnklGvuPmnzz+gIN0hZNd+4LdItfzOjp3sxRWXScoSB0mCBLfG
-         ZAi/1w0OCWxeUHSWTV2QPiF0QMre/j1uPk73vYKuK3sLZCF2Gb0bWL/mBY+k/MWuX9zT
-         o6bHorEzTeqjMYvw5ye+B6whHQMytY+o6nueci9FbZoJneW+UkRLrlU0gJiEq0bqoUmI
-         a0pw==
-X-Forwarded-Encrypted: i=1; AJvYcCWX+latnIqI8xdrPrsIvU+YDr9SnkdQPfdVcvaxxzIFMWU7/PROGDyJupQl1zgQo+OjUJxu45qSiDNAbH4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkAWHkpqQOc0ZCoUGG9SrPhzzX1jl4qwpSwbdWEOBedwAlr8jb
-	CmFbADD7TmUeN0cIPwDGV5j75C08wOXxYmHKzeY4jP+DSIpyH4mBtyYYN2XG42PTzMXy6DkXSQR
-	dkIVB0Z32BJc/9ksn2LYj9diOTyGcPk0P5rzLEVMZGCdqTk1TBdJpVTG3qr2cIR5E2Q==
-X-Gm-Gg: ASbGnctHqFN27ESRNTIC6xMPADbGzVaLSDr3mXnEs3VfuVr9nYIn3lTXwT1VyeZepEu
-	XHobXs1kKSqL2a2YoKAM4+2G5qNM62D2Jd1z72VJ3vt/fBTrtyRFUdeoaC2CNJl7bjHKbH8cVv0
-	VfDysMcqKAb4u9WILrOqLJ7Yp+s9De2NFPDD0AcEfooO/Ita6WvqDgbJXql6Lm3te+PkJ4AJ3KU
-	BBT3T53Ak2HXapCiTdM5aS/9wvlzxfN2yYUqwFeX4BKtAKT80ZXEIRiv2P4kc7McH2CJ9vW/rwL
-	XhsvUhxqgAa+Qr8ARREcEOZ73ivuuXH1gPvY7Zfzbjz1M2vd6fMC0U4jnaIt/1OH+3elsYfUH63
-	/o/RZwRojalzEbd4QWxLvr3MdiO+kWIXI4chM6x3wtjIgZ19HYFdvgUqE2xHNB+es3x8=
-X-Received: by 2002:a05:6000:2901:b0:3a6:d255:7eda with SMTP id ffacd0b85a97d-3b768ef3c05mr430508f8f.28.1753213942677;
-        Tue, 22 Jul 2025 12:52:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHxjPzE6sEuOfFSda8Shbpmks8LbyR4O8i10oMHV+LZdZJzBpZoh5NGpkpHb9XCz+0yB5hopw==
-X-Received: by 2002:a05:6000:2901:b0:3a6:d255:7eda with SMTP id ffacd0b85a97d-3b768ef3c05mr430492f8f.28.1753213942208;
-        Tue, 22 Jul 2025 12:52:22 -0700 (PDT)
+        bh=afDMNM/ets1wQdqXC3stxVj6V8QJ54jbNPfFinJzgxA=;
+        b=GyxrMczG/UgPx+O/B2FRX8I0CmHce0ErlLdxGvR4DqDuKvCi3kbupr5JAxbnNv+N9f
+         s5A6xC6dDKqBgDUPu1765JluwZ9/FX98LvCTaLP3QFXH/QrhqzsOFvYKa22ixaY1/NvB
+         Iw8KZ7QVPR4lVbttgSBDqJU5vivfKgfUdyToI4dCUUxvgU7UDcL3g7nfoX+ZR9a0XbuU
+         32dAVmeSmiYNa6t0zdh1vnarw+WA4fRukRP6OuCs4NDBuJVllnbmtp8xTut4t3K7vCh/
+         CHTmgOdon7iyZqR3H+Sb9QiLOmgLtuAgQA7eiBQuotH5tvMfCcS+igkEgtR/pQFfGqKH
+         vmRA==
+X-Forwarded-Encrypted: i=1; AJvYcCVoKT5Mg1H2jtHgYFqVx87VFtl/IHT1UNPUYNgKOI2X1cPyRfD1T0DdanUOqL8zPBHV25cqGPX8Du5/lBU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzjbc50DwvDZbicTTO69NCyTcv+I492C4rj3OhPuKJOhLeUpItI
+	/C2JYICvMm3MPNnrlNR3qSky5UMD7hLqnpIvNnYdSV9obUle44/PJX+4k6eiw48uFZKcIGnzUM2
+	gy6samndjnX6bxv3SLxoo1SEl4njZK1xQa4gkD8BvjlkBFCAZmmGNh0HJvxj7Wd1ZGQ==
+X-Gm-Gg: ASbGnct9LDpFoIba3sflLhddLQ4wzH1pji5gcrRXWr6IzHrdeEcaxCavsJZuCuAJzPG
+	yth0l7j0qDY7C7NbMjdfwsTQNp7CPKAqt738UqUoKLrorv1pAccvqB9GUXLft2XhUXj0umTgQcz
+	JOVdJWotxKsYUdCuSx/imyHpPYPXUHpPUSyWE0/EwPsl8FHuVPZMj2ds8cOfYSzTJtMwBhWj7g/
+	sUq+3813CFmveg/UGg0GAIqOdlU+LwLHm2KBGg1GCzTqP9Dh+DvY7DCfIFb53dfQSt+Q5Up9KBP
+	DPcLqzavwxhJngkYpaFzEnfYgfDnXnKjLUzm66OeV2xIP8KIqnzoZzYO3pX6ZtmJq75IUGNgfwB
+	3ngEC7e5Q2uL1ZUQKsUePDrVZ4HbAPmvgTAHfQEsyNdQsZK+DGw0+IfdDg3lyA/OxoOs=
+X-Received: by 2002:a5d:5d13:0:b0:3b4:990a:e6 with SMTP id ffacd0b85a97d-3b768c80d4emr397453f8f.0.1753213960400;
+        Tue, 22 Jul 2025 12:52:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHst35ufjkfwSNwPNOo1bjqZrrkvMHnLiHFO3xBOhfcFGHyxPurs2yOJhrQR/AngBAvhnG9wQ==
+X-Received: by 2002:a5d:5d13:0:b0:3b4:990a:e6 with SMTP id ffacd0b85a97d-3b768c80d4emr397427f8f.0.1753213959873;
+        Tue, 22 Jul 2025 12:52:39 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f28:de00:1efe:3ea4:63ba:1713? (p200300d82f28de001efe3ea463ba1713.dip0.t-ipconnect.de. [2003:d8:2f28:de00:1efe:3ea4:63ba:1713])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca2bb80sm14421672f8f.23.2025.07.22.12.52.21
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca4d7fasm14352053f8f.69.2025.07.22.12.52.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Jul 2025 12:52:21 -0700 (PDT)
-Message-ID: <883296f4-ec25-4961-aafb-b2ccb1607422@redhat.com>
-Date: Tue, 22 Jul 2025 21:52:21 +0200
+        Tue, 22 Jul 2025 12:52:39 -0700 (PDT)
+Message-ID: <d1f70fc0-ef5a-4946-bc4e-8508b5e265a3@redhat.com>
+Date: Tue, 22 Jul 2025 21:52:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,12 +89,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: move memremap.[ch] to hotplug section
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Oscar Salvador <osalvador@suse.de>
-References: <20250722172258.143488-1-lorenzo.stoakes@oracle.com>
+Subject: Re: [PATCH] MAINTAINERS: add missing mm_slot.h file THP section
+To: Nico Pache <npache@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>
+References: <20250722171904.142306-1-lorenzo.stoakes@oracle.com>
+ <CAA1CXcBY4rFLkNqJM2Dj-EajPw9TMTHNcYapw9P=U0bo=QNqkw@mail.gmail.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -142,42 +147,39 @@ Autocrypt: addr=david@redhat.com; keydata=
  WBe5lqcozu9LpNDH/brVSzHCSb7vjNGvvSVESDuoiHK8gNlf0v+epy5WYd7CGAgODPvDShGN
  g3eXuA==
 Organization: Red Hat
-In-Reply-To: <20250722172258.143488-1-lorenzo.stoakes@oracle.com>
+In-Reply-To: <CAA1CXcBY4rFLkNqJM2Dj-EajPw9TMTHNcYapw9P=U0bo=QNqkw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 22.07.25 19:22, Lorenzo Stoakes wrote:
-> This seems to be the most appropriate place for these files.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
->   MAINTAINERS | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 837bc5cd6166..68b8407926a6 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -15729,6 +15729,8 @@ F:	Documentation/admin-guide/mm/memory-hotplug.rst
->   F:	Documentation/core-api/memory-hotplug.rst
->   F:	drivers/base/memory.c
->   F:	include/linux/memory_hotplug.h
-> +F:	include/linux/memremap.h
-> +F:	mm/memremap.c
->   F:	mm/memory_hotplug.c
->   F:	tools/testing/selftests/memory-hotplug/
->   
-> @@ -15747,7 +15749,6 @@ F:	include/linux/memory_hotplug.h
- >   F:	include/linux/memory-tiers.h>   F:	include/linux/mempolicy.h
->   F:	include/linux/mempool.h
-> -F:	include/linux/memremap.h
->   F:	include/linux/mmzone.h
->   F:	include/linux/mmu_notifier.h
->   F:	include/linux/pagewalk.h
+On 22.07.25 19:43, Nico Pache wrote:
+> On Tue, Jul 22, 2025 at 11:19 AM Lorenzo Stoakes
+> <lorenzo.stoakes@oracle.com> wrote:
+>>
+>> This seems to be the most appropriate place for this file.
+>>
+>> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>> ---
+>>   MAINTAINERS | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 837bc5cd6166..3f83fb317f51 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -15966,6 +15966,7 @@ F:      include/linux/khugepaged.h
+>>   F:     include/trace/events/huge_memory.h
+>>   F:     mm/huge_memory.c
+>>   F:     mm/khugepaged.c
+>> +F:     mm/mm_slot.h
+>>   F:     tools/testing/selftests/mm/khugepaged.c
+>>   F:     tools/testing/selftests/mm/split_huge_page_test.c
+>>   F:     tools/testing/selftests/mm/transhuge-stress.c
+>> --
+>> 2.50.1
+> It might also be worth adding it to the KSM section since both of them
+> utilize it.
 
-As discussed, alternatively some ZONE_DEVICE stuff.
-
-But memory hotplug is fine with me as well
+Yes, good point
 
 Acked-by: David Hildenbrand <david@redhat.com>
 
