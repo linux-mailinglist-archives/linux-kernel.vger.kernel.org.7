@@ -1,109 +1,180 @@
-Return-Path: <linux-kernel+bounces-740699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5604CB0D812
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:22:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEB45B0D819
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:25:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4B8A5482A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:22:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED8B9189C42D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940CD2E49AB;
-	Tue, 22 Jul 2025 11:21:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B252E2F1C;
+	Tue, 22 Jul 2025 11:24:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RBVbEAzo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="NpseaKQX"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6DA12E425C;
-	Tue, 22 Jul 2025 11:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753183313; cv=none; b=GHShF9NJy17SZa/s8gyvSotyUbzawpnhZDMB+yGyuVnmNOZSwRRPVb+og5zpMR8TBuxEeLJMJLcFp1aEZqqLT7ZyZHd88DWIS56aHb+FUKjuZaSaoBBW1aGd6CeGXiNEmQH8bD27G+1NNlPltSjwasNEuF4OfvwdQtzO8WHicWc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753183313; c=relaxed/simple;
-	bh=tzsVfb1kk8DsL7ewK+ArZQHuqErMnKOq7wSuG4wpvUg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=YZ/Q9xIQClWzRjcCOc5Iq3k4A8wEfk3ZewhtCeOMmljND4ypfpdAW8Bi2DzNVXRb9DvSwN+ABPWlvGH1Ij5onxWZUb/mLhQacA3ngF3PlFifdCmRlsmoROpxUPqdb5/SlKduHtFhQ3bHOTSGqFHvuj+XYZK7idaB19vCp4aqmYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RBVbEAzo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3E67C4CEF4;
-	Tue, 22 Jul 2025 11:21:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753183312;
-	bh=tzsVfb1kk8DsL7ewK+ArZQHuqErMnKOq7wSuG4wpvUg=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=RBVbEAzobwbTYs19yr3TB8IbNsRXakQ/UM1Uev57Anq0LYTlc01u0efkcXlsBsjjF
-	 CYLht6GR6trBTJHTuw4x2xE9mHtC7J6YDBQFk9ngJChaCkDk0t5/KKtr4dVSV7O3dt
-	 tnb2Ejmgo9sED3EJ0z0pMIFJoZHCCdnmLXP62DRmX5CY9ciPrMsVY8U+pIpS+BowQx
-	 jX8rAuEjYoKUkkpo+HC0ob7SRQp9YfgdRa9JogLo6D4Zore+mNNEEiTAgDzs+xb60R
-	 IrsGal2X8piI1k5g417tUBwb6oHUBx7J9dLdqWQlASK3INbxxvFrKhveeyusbV+nTG
-	 Pccvp47GTKd2Q==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06531940A2;
+	Tue, 22 Jul 2025 11:24:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753183489; cv=pass; b=TqXlmTphQZ3WxYVHKpPqqFx+QWZhwHkoduf8LzSTYjB9TDK5ttKmG7aAHpj+ba9UrPBYhTUrRBD5kZH//Y/iiosUyLyYOyK6nOg5c7zs9B2s3faC8SbDc1FX2vnlg7LdOrlbKIB2xZEXRv7FC0hagkaNtRxAU87HpfCwxuocl6k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753183489; c=relaxed/simple;
+	bh=yjugOcdgW2N+DES1QO2Kfdt5BcIsQi3WNXedEjMpztc=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=dkw4v4xaGWd8/9fXka8MhLNP6LzASnDtDM58hG5k5XLwnG/KU4XEvKt22kTNby7RME6if2dmZe4jspyy+36W6PMtpkrXphZ1saQIs3Wk9tgWa0AA+R4rJtIL+hhkXem4Y9NXppqvbxA2CPTP+DDclgtW4TWJEYSuP4VpGtYHLTo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=NpseaKQX; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753183444; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=AM5rf5qTRMzd7B0mcgd3eoqRkznkHh298xcYgOjrM9NXYTQwKyTRR+ypqZB2mP/mAn6R6CwQZIw/OKidgtsUjqVQKU6AGiWv2qPL4Z5O6BkEPlmyoj9bMYLXPU0uMxow306OomcNP+6zp1U/eOQvUELhT6rtT2cR6CaT0DysfUs=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753183444; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=lFb9As+tGUSsfLRTQC2OOODRjXdSTQs59XrJQlNc9GI=; 
+	b=MRgsn2aL9kEwvhAYF5BoZauUK27DjiIVrD2uRBZi2N0d7x/UqpurXBIPtyKNB36seUK9gSqC3rjgpp/ba21zZWTvm3TYW4sUmcLfs616dC6wV+1mmyg+AS4QQjkcziYtcGDXhYGz7uA1t9CwZS0xAh88dH9/amlEvlaQyUhCWJ8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
+	dmarc=pass header.from=<usama.anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753183444;
+	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=lFb9As+tGUSsfLRTQC2OOODRjXdSTQs59XrJQlNc9GI=;
+	b=NpseaKQXDA7i4X7EY+DW3lqKjkD2veGr+YrHY4zaJf4Slf7vbh3PlL8b8oU/G0W+
+	wr7zyWzLsvMPfU45Ydv5D1UuxOfsutLhFXMeg794F7IYW9LnlDDc7vIQtUtV41ZUBYO
+	ylyM+8rlfnW3UqvOtP0+b4Uuyrr+b1L4c7OdbRDU=
+Received: by mx.zohomail.com with SMTPS id 1753183441522359.46150902403406;
+	Tue, 22 Jul 2025 04:24:01 -0700 (PDT)
+Message-ID: <ae7a08cb-af73-4a27-aad4-c852be5f77aa@collabora.com>
+Date: Tue, 22 Jul 2025 16:23:55 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: usama.anjum@collabora.com, kernel@collabora.com, stable@vger.kernel.org,
+ Muna Sinada <quic_msinada@quicinc.com>,
+ Anilkumar Kolli <quic_akolli@quicinc.com>, Miles Hu <milehu@codeaurora.org>,
+ linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>,
+ Baochen Qiang <baochen.qiang@oss.qualcomm.com>,
+ Sathishkumar Muruganandam <quic_murugana@quicinc.com>,
+ Jeff Johnson <jjohnson@kernel.org>, kbuild test robot <lkp@intel.com>,
+ Manikanta Pubbisetty <quic_mpubbise@quicinc.com>,
+ Sven Eckelmann <sven@narfation.org>
+Subject: Re: [PATCH v3] wifi: ath11k: HAL SRNG: don't deinitialize and
+ re-initialize again
+To: Kalle Valo <kvalo@kernel.org>
+References: <20250722053121.1145001-1-usama.anjum@collabora.com>
+ <1598d25d-e254-410e-ac5c-66d5450fd686@oss.qualcomm.com>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <1598d25d-e254-410e-ac5c-66d5450fd686@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Tue, 22 Jul 2025 13:21:47 +0200
-Message-Id: <DBIJM4PTRHAS.3KXPG1MHNS8K0@kernel.org>
-Cc: "Alistair Popple" <apopple@nvidia.com>,
- <rust-for-linux@vger.kernel.org>, "Bjorn Helgaas" <bhelgaas@google.com>,
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
- Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "John Hubbard" <jhubbard@nvidia.com>, "Alexandre Courbot"
- <acourbot@nvidia.com>, <linux-pci@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] rust: Update PCI binding safety comments and add
- inline compiler hint
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Danilo Krummrich" <dakr@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250710022415.923972-1-apopple@nvidia.com>
- <DB87TX9Y5018.N1WDM8XRN74K@kernel.org>
- <DB9BF6WK8KMH.1RQOOMYBL6UAO@kernel.org>
- <DB9FUEJUOH3L.14CYPZ8YQT52E@kernel.org>
- <DB9H6HEF9CKG.2SAPXM8F9KOO3@kernel.org>
- <DB9IQAU4WPSP.XZL4ZDPT59KU@kernel.org>
- <bwbern2t7k5fcj6zxze6bjpasu3t26n6dmfptlmhbhd7qmligs@3fgwifsw7qai>
- <DBIHP8IP3OHA.8Y1S9ZV1Y1SZ@kernel.org>
- <DBIJ3POBANNM.KSO1I5557PFV@kernel.org>
- <be42295e-63e1-4e2f-986f-aef962f531bd@kernel.org>
-In-Reply-To: <be42295e-63e1-4e2f-986f-aef962f531bd@kernel.org>
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On Tue Jul 22, 2025 at 1:02 PM CEST, Danilo Krummrich wrote:
-> On 7/22/25 12:57 PM, Benno Lossin wrote:
->> On Tue Jul 22, 2025 at 11:51 AM CEST, Danilo Krummrich wrote:
->>> I think they're good, but we're pretty late in the cycle now. That shou=
-ld be
->>> fine though, we can probably take them through the nova tree, or in the=
- worst
->>> case share a tag, if needed.
->>>
->>> Given that, it would probably be good to add the Guarantee section on a=
-s_raw(),
->>> as proposed by Benno, right away.
->>>
->>> @Benno: Any proposal on what this section should say?
->>=20
->> At a minimum I'd say "The returned pointer is valid.", but that doesn't
->> really say for what it's valid... AFAIK you're mostly using this pointer
->> to pass it to the C side, in that case, how about:
->
-> It is used for for FFI calls and to access fields of the underlying
-> struct pci_dev.
+Hi Kalle,
 
-By "access fields" you mean read-only?
+On 7/22/25 2:47 PM, Baochen Qiang wrote:
+> 
+> 
+> On 7/22/2025 1:31 PM, Muhammad Usama Anjum wrote:
+>> Don't deinitialize and reinitialize the HAL helpers. The dma memory is
+>> deallocated and there is high possibility that we'll not be able to get
+>> the same memory allocated from dma when there is high memory pressure.
+>>
+>> Tested-on: WCN6855 hw2.0 PCI WLAN.HSP.1.1-03926.13-QCAHSPSWPL_V2_SILICONZ_CE-2.52297.6
+>>
+>> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
+>> Cc: stable@vger.kernel.org
+>> Cc: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
+>> Reviewed-by: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
+>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+>> ---
+>> Changes since v1:
+>> - Cc stable and fix tested on tag
+>> - Clear essential fields as they may have stale data
+>>
+>> Changes since v2:
+>> - Add comment and reviewed by tag
+>> ---
+>>  drivers/net/wireless/ath/ath11k/core.c |  6 +-----
+>>  drivers/net/wireless/ath/ath11k/hal.c  | 16 ++++++++++++++++
+>>  drivers/net/wireless/ath/ath11k/hal.h  |  1 +
+>>  3 files changed, 18 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/net/wireless/ath/ath11k/core.c b/drivers/net/wireless/ath/ath11k/core.c
+>> index 4488e4cdc5e9e..34b27711ed00f 100644
+>> --- a/drivers/net/wireless/ath/ath11k/core.c
+>> +++ b/drivers/net/wireless/ath/ath11k/core.c
+>> @@ -2213,14 +2213,10 @@ static int ath11k_core_reconfigure_on_crash(struct ath11k_base *ab)
+>>  	mutex_unlock(&ab->core_lock);
+>>  
+>>  	ath11k_dp_free(ab);
+>> -	ath11k_hal_srng_deinit(ab);
+>> +	ath11k_hal_srng_clear(ab);
+>>  
+>>  	ab->free_vdev_map = (1LL << (ab->num_radios * TARGET_NUM_VDEVS(ab))) - 1;
+>>  
+>> -	ret = ath11k_hal_srng_init(ab);
+>> -	if (ret)
+>> -		return ret;
+>> -
+>>  	clear_bit(ATH11K_FLAG_CRASH_FLUSH, &ab->dev_flags);
+>>  
+>>  	ret = ath11k_core_qmi_firmware_ready(ab);
+>> diff --git a/drivers/net/wireless/ath/ath11k/hal.c b/drivers/net/wireless/ath/ath11k/hal.c
+>> index b32de563d453a..e8ebf963f195c 100644
+>> --- a/drivers/net/wireless/ath/ath11k/hal.c
+>> +++ b/drivers/net/wireless/ath/ath11k/hal.c
+>> @@ -1359,6 +1359,22 @@ void ath11k_hal_srng_deinit(struct ath11k_base *ab)
+>>  }
+>>  EXPORT_SYMBOL(ath11k_hal_srng_deinit);
+>>  
+>> +void ath11k_hal_srng_clear(struct ath11k_base *ab)
+>> +{
+>> +	/* No need to memset rdp and wrp memory since each individual
+>> +	 * segment would get cleared ath11k_hal_srng_src_hw_init() and
+> 
+> nit: s/cleared /cleared in/
+Please can you make this change while applying the patch?
 
----
-Cheers,
-Benno
+> 
+>> +	 * ath11k_hal_srng_dst_hw_init().
+>> +	 */
+>> +	memset(ab->hal.srng_list, 0,
+>> +	       sizeof(ab->hal.srng_list));
+>> +	memset(ab->hal.shadow_reg_addr, 0,
+>> +	       sizeof(ab->hal.shadow_reg_addr));
+>> +	ab->hal.avail_blk_resource = 0;
+>> +	ab->hal.current_blk_index = 0;
+>> +	ab->hal.num_shadow_reg_configured = 0;
+>> +}
+>> +EXPORT_SYMBOL(ath11k_hal_srng_clear);
+>> +
+>>  void ath11k_hal_dump_srng_stats(struct ath11k_base *ab)
+>>  {
+>>  	struct hal_srng *srng;
+>> diff --git a/drivers/net/wireless/ath/ath11k/hal.h b/drivers/net/wireless/ath/ath11k/hal.h
+>> index 601542410c752..839095af9267e 100644
+>> --- a/drivers/net/wireless/ath/ath11k/hal.h
+>> +++ b/drivers/net/wireless/ath/ath11k/hal.h
+>> @@ -965,6 +965,7 @@ int ath11k_hal_srng_setup(struct ath11k_base *ab, enum hal_ring_type type,
+>>  			  struct hal_srng_params *params);
+>>  int ath11k_hal_srng_init(struct ath11k_base *ath11k);
+>>  void ath11k_hal_srng_deinit(struct ath11k_base *ath11k);
+>> +void ath11k_hal_srng_clear(struct ath11k_base *ab);
+>>  void ath11k_hal_dump_srng_stats(struct ath11k_base *ab);
+>>  void ath11k_hal_srng_get_shadow_config(struct ath11k_base *ab,
+>>  				       u32 **cfg, u32 *len);
+> 
+
 
