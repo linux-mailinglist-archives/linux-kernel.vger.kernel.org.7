@@ -1,232 +1,127 @@
-Return-Path: <linux-kernel+bounces-741502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8026CB0E511
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 22:47:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2E3FB0E514
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 22:47:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82EF53A863D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:46:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42A6E1C28444
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9318427FD56;
-	Tue, 22 Jul 2025 20:46:59 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2A1285C92;
+	Tue, 22 Jul 2025 20:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aO6hZyB7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23162A95C;
-	Tue, 22 Jul 2025 20:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238A0A95C;
+	Tue, 22 Jul 2025 20:47:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753217219; cv=none; b=pP9aLFWcqlTKtrVGdD7XPvvh0noCL8Z1/73ltKcfR3mScrkQSJOhR86J+gYppuY5Sc53/wRKOS17FUY/1VcZV+FroBOMxI21h9JsjeoudkGQHb/FpVKpPpwUkph0UN8Z/KfFYTPSXfKZgvbesrGktKldIrRT8//b48VJ3cAXorg=
+	t=1753217226; cv=none; b=TnUfT2hvqFzCqxkE20RiIxxnEvIUkfGmY8oEis7/U9WsDKrM+wXltcp4rcQhPJxY8FK0Q/Pp9lErnnnDKOJufconpBu/R6qCTqfYxYwL6RM4ZImkoCYLe/pGpoMbhbRVI5uGY7xSJQ+uHdh4DOKKiKxx+1DaaDl7AF2xY/L7vfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753217219; c=relaxed/simple;
-	bh=ByEva/ORtVcV2K5KGudMa3fmsyE/PS6W1+DwRMbKYM0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=tMNWdK2AJOoD0MwvCFzn3An7OoT//HumjT0jL8qcCHDzNB6c9XMgaHz4LaZLpOSfroavFaoZAAUnQK73TiMueT4y8kVB8SE7bA4X3bogTHo3Ruy89HtcRMSGMz0Xp5350Xfp3OE3l7k7JryJ0tR6TqoE0Wqy7l4K/sxqEZNaxDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf09.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay05.hostedemail.com (Postfix) with ESMTP id 6B5D959393;
-	Tue, 22 Jul 2025 20:46:47 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf09.hostedemail.com (Postfix) with ESMTPA id 7554F20024;
-	Tue, 22 Jul 2025 20:46:43 +0000 (UTC)
-Date: Tue, 22 Jul 2025 16:46:42 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
- <linux-trace-kernel@vger.kernel.org>, "linux-trace-users@vger.kernel.org"
- <linux-trace-users@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>,
- Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner
- <tglx@linutronix.de>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Namhyung Kim <namhyung@kernel.org>, Linus Torvalds
- <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Al Viro
- <viro@ZenIV.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
- <jack@suse.cz>, Arnaldo Carvalho de Melo <acme@kernel.org>, Frederic
- Weisbecker <fweisbec@gmail.com>, Jiri Olsa <jolsa@redhat.com>, Ian Rogers
- <irogers@google.com>
-Subject: [PATCH v3] tracing: Deprecate auto-mounting tracefs in debugfs
-Message-ID: <20250722164642.6dea3b6a@batman.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753217226; c=relaxed/simple;
+	bh=/sxFwYUyBdxHVgbNyek2wBg4Uk82NRyFiZxIzDBnIs4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=aiqVHXdb+2n0RDDJXm1fU1Vfv41qSfV0eq3BQra2pn8ek1K+LyKFBdpiCzFLFwKB3yd/dsb5krT+AVa6lAzFFiygCI6SwZUXtGMItA8nGh2xsuO+UIDgdgPRW3tQWOr9ipU3H71M9NvlJ7VEwRS0nt3kWafwNJHFTAzYpvNpEXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aO6hZyB7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88561C4CEEB;
+	Tue, 22 Jul 2025 20:47:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753217225;
+	bh=/sxFwYUyBdxHVgbNyek2wBg4Uk82NRyFiZxIzDBnIs4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=aO6hZyB7vN81Un5hba7wW6Ql7I5ci2Z6++fnxK1N+B6uWOg2jTwNX1Uau7rZiYT5e
+	 AOcAgtWIFwH7Nz7plV0qxsFzT9sOlR4vz4FaTVau6e1tcQhlZgVhsEYur1Ddxb+2Up
+	 i0uRqXQuq1y15hjJ7pQ+4offCfJ6eK6OlyzR/DZUiWo8J7wg9hheEgm24Fvt04kTFu
+	 PoAVyzmb6Z4Ue4KyFxdq1k++Fo6uJE4HtCM1XFxyQCWhRClM2tMgz1jJyaSZFAWw32
+	 mzbgFKQFD7LWON8AQD9BqQg+KisPWLzKmseMc4c8E+743oZjhhTP8RmpEU/MMmhORD
+	 KezzqnP4+4FDg==
+Date: Tue, 22 Jul 2025 15:47:04 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Mahesh J Salgaonkar <mahesh@linux.ibm.com>
+Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-pci <linux-pci@vger.kernel.org>,
+	christophe leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Shawn Anastasio <sanastasio@raptorengineering.com>,
+	Timothy Pearson <tpearson@raptorengineering.com>
+Subject: Re: [PATCH v3 0/6] PowerNV PCIe Hotplug Driver Fixes
+Message-ID: <20250722204704.GA2815491@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 7554F20024
-X-Stat-Signature: thukgar3ecsk9oa9okbzmb33pd3xekt5
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+sH7BdvC7gdIj3jM3EZzIG59d6KFcUFvY=
-X-HE-Tag: 1753217203-481086
-X-HE-Meta: U2FsdGVkX1+CivnFynhGQ/TBrncJZoCedcE0MtV0X1p6MlZpr70kllYt3cjFpFekb7j4DRcx8tKf1Dtz8YMFXRdlVDdZmy1gTjrXtY0Z7kSEwO4E7mJyPf/TBoPOTiiuuOiL1OBehgwSnZM0YKt+x86V2gH4zV6G9HmzqqXKkvIQthJHReDVF5C6XJfp5QR9dpO+TNLSH5YmIKt36W7VNq/Ca42GmK4+dyZssQH6/QvZASqv5gIkMFTJS7E8fAc4FPanPJNdPXxK/5AZYWxLpHTFkM/pDDoJSiFs8VbBZQw6hVbaBpMvbkowYYuQDnjty70IeSJjgnOL5AKjMuwhN9nFGnKr83PU5iOfdq35aMF3wnsEXxNPyGHBJEfCLOp5GHNFlzJochqIZkh8YAemqg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250717232752.GA2662535@bhelgaas>
 
-From: Steven Rostedt <rostedt@goodmis.org>
+[-> to: Madhavan, Michael, Mahesh; seeking acks]
 
-In January 2015, tracefs was created to allow access to the tracing
-infrastructure without needing to compile in debugfs. When tracefs is
-configured, the directory /sys/kernel/tracing will exist and tooling is
-expected to use that path to access the tracing infrastructure.
+On Thu, Jul 17, 2025 at 06:27:52PM -0500, Bjorn Helgaas wrote:
+> On Tue, Jul 15, 2025 at 04:31:49PM -0500, Timothy Pearson wrote:
+> > Hello all,
+> > 
+> > This series includes several fixes for bugs in the PowerNV PCIe hotplug
+> > driver that were discovered in testing with a Microsemi Switchtec PM8533
+> > PFX 48xG3 PCIe switch on a PowerNV system, as well as one workaround for
+> > PCIe switches that don't correctly implement slot presence detection
+> > such as the aforementioned one. Without the workaround, the switch works
+> > and downstream devices can be hot-unplugged, but the devices never come
+> > back online after being plugged in again until the system is rebooted.
+> > Other hotplug drivers (like pciehp_hpc) use a similar workaround.
+> > 
+> > Also included are fixes for the EEH driver to make it hotplug safe,
+> > and a small patch to enable all three attention indicator states per
+> > the PCIe specification.
+> > 
+> > Thanks,
+> > 
+> > Shawn Anastasio (2):
+> >   PCI: pnv_php: Properly clean up allocated IRQs on unplug
+> >   PCI: pnv_php: Work around switches with broken presence detection
+> > 
+> > Timothy Pearson (4):
+> >   powerpc/eeh: Export eeh_unfreeze_pe()
+> >   powerpc/eeh: Make EEH driver device hotplug safe
+> >   PCI: pnv_php: Fix surprise plug detection and recovery
+> >   PCI: pnv_php: Enable third attention indicator state
+> > 
+> >  arch/powerpc/kernel/eeh.c         |   1 +
+> >  arch/powerpc/kernel/eeh_driver.c  |  48 ++++--
+> >  arch/powerpc/kernel/eeh_pe.c      |  10 +-
+> >  arch/powerpc/kernel/pci-hotplug.c |   3 +
+> >  drivers/pci/hotplug/pnv_php.c     | 244 +++++++++++++++++++++++++++---
+> >  5 files changed, 263 insertions(+), 43 deletions(-)
+> 
+> I'm OK with this from a PCI perspective, and I optimistically put it
+> on pci/hotplug.
+> 
+> I'm happy to merge via the PCI tree, but would need acks from the
+> powerpc folks for the arch/powerpc parts.
+> 
+> Alternatively it could be merged via powerpc with my ack on the
+> drivers/pci patches:
+> 
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> 
+> If you do merge via powerpc, I made some comment formatting and commit
+> log tweaks that I would like reflected in the drivers/pci part.  These
+> are on
+> https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/log/?h=hotplug
 
-To allow backward compatibility, when debugfs is mounted, it would
-automount tracefs in its "tracing" directory so that tooling that had hard
-coded /sys/kernel/debug/tracing would still work.
+Powerpc folks: let me know how you want to handle this.  I haven't
+included it in pci/next yet because I don't have acks for the
+arch/powerpc parts.
 
-It has been over 10 years since the new interface was introduced, and all
-tooling should now be using it. Start the process of deprecating the old
-path so that it doesn't need to be maintained anymore.
-
-A new config is added to allow distributions to disable automounting of
-tracefs on debugfs.
-
-If /sys/kernel/debug/tracing is accessed, a pr_warn() will trigger stating:
-
-"NOTICE: Automounting of tracing to debugfs is deprecated and will be removed in 2030"
-
-Expect to remove this feature in 5 years (2030).
-
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
-Changes since v2: https://lore.kernel.org/20250617162625.1d44862b@gandalf.local.home
-
-- Change the time to remove it from 2 to 5 years, as that should
-  hopefully be plenty enough.
-
-
- .../ABI/obsolete/automount-tracefs-debugfs    | 20 +++++++++++++++++++
- kernel/trace/Kconfig                          | 13 ++++++++++++
- kernel/trace/trace.c                          | 14 +++++++++----
- 3 files changed, 43 insertions(+), 4 deletions(-)
- create mode 100644 Documentation/ABI/obsolete/automount-tracefs-debugfs
-
-diff --git a/Documentation/ABI/obsolete/automount-tracefs-debugfs b/Documentation/ABI/obsolete/automount-tracefs-debugfs
-new file mode 100644
-index 000000000000..8d03cf9e579f
---- /dev/null
-+++ b/Documentation/ABI/obsolete/automount-tracefs-debugfs
-@@ -0,0 +1,20 @@
-+What:		/sys/kernel/debug/tracing
-+Date:		May 2008
-+KernelVersion:	2.6.27
-+Contact:	linux-trace-kernel@vger.kernel.org
-+Description:
-+
-+	The ftrace was first added to the kernel, its interface was placed
-+	into the debugfs file system under the "tracing" directory. Access
-+	to the files were in /sys/kernel/debug/tracing. As systems wanted
-+	access to the tracing interface without having to enable debugfs, a
-+	new interface was created called "tracefs". This was a stand alone
-+	file system and was usually mounted in /sys/kernel/tracing.
-+
-+	To allow older tooling to continue to operate, when mounting
-+	debugfs, the tracefs file system would automatically get mounted in
-+	the "tracing" directory of debugfs. The tracefs interface was added
-+	in January 2015 in the v4.1 kernel.
-+
-+	All tooling should now be using tracefs directly and the "tracing"
-+	directory in debugfs should be removed by January 2030.
-diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-index c2ce834313a9..a3ae11beafb2 100644
---- a/kernel/trace/Kconfig
-+++ b/kernel/trace/Kconfig
-@@ -194,6 +194,19 @@ menuconfig FTRACE
- 
- if FTRACE
- 
-+config TRACEFS_AUTOMOUNT_DEPRECATED
-+	bool "Automount tracefs on debugfs [DEPRECATED]"
-+	depends on TRACING
-+	default y
-+	help
-+	  The tracing interface was moved from /sys/kernel/debug/tracing
-+	  to /sys/kernel/tracing in 2015, but the tracing file system
-+	  was still automounted in /sys/kernel/debug for backward
-+	  compatibility with tooling.
-+
-+	  The new interface has been around for more than 10 years and
-+	  the old debug mount will soon be removed.
-+
- config BOOTTIME_TRACING
- 	bool "Boot-time Tracing support"
- 	depends on TRACING
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 95ae7c4e5835..2dafe2748b16 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -6303,7 +6303,7 @@ static bool tracer_options_updated;
- static void add_tracer_options(struct trace_array *tr, struct tracer *t)
- {
- 	/* Only enable if the directory has been created already. */
--	if (!tr->dir)
-+	if (!tr->dir && !(tr->flags & TRACE_ARRAY_FL_GLOBAL))
- 		return;
- 
- 	/* Only create trace option files after update_tracer_options finish */
-@@ -8984,13 +8984,13 @@ static inline __init int register_snapshot_cmd(void) { return 0; }
- 
- static struct dentry *tracing_get_dentry(struct trace_array *tr)
- {
--	if (WARN_ON(!tr->dir))
--		return ERR_PTR(-ENODEV);
--
- 	/* Top directory uses NULL as the parent */
- 	if (tr->flags & TRACE_ARRAY_FL_GLOBAL)
- 		return NULL;
- 
-+	if (WARN_ON(!tr->dir))
-+		return ERR_PTR(-ENODEV);
-+
- 	/* All sub buffers have a descriptor */
- 	return tr->dir;
- }
-@@ -10256,6 +10256,7 @@ init_tracer_tracefs(struct trace_array *tr, struct dentry *d_tracer)
- 	ftrace_init_tracefs(tr, d_tracer);
- }
- 
-+#ifdef CONFIG_TRACEFS_AUTOMOUNT_DEPRECATED
- static struct vfsmount *trace_automount(struct dentry *mntpt, void *ingore)
- {
- 	struct vfsmount *mnt;
-@@ -10277,6 +10278,8 @@ static struct vfsmount *trace_automount(struct dentry *mntpt, void *ingore)
- 	if (IS_ERR(fc))
- 		return ERR_CAST(fc);
- 
-+	pr_warn("NOTICE: Automounting of tracing to debugfs is deprecated and will be removed in 2030\n");
-+
- 	ret = vfs_parse_fs_string(fc, "source",
- 				  "tracefs", strlen("tracefs"));
- 	if (!ret)
-@@ -10287,6 +10290,7 @@ static struct vfsmount *trace_automount(struct dentry *mntpt, void *ingore)
- 	put_fs_context(fc);
- 	return mnt;
- }
-+#endif
- 
- /**
-  * tracing_init_dentry - initialize top level trace array
-@@ -10311,6 +10315,7 @@ int tracing_init_dentry(void)
- 	if (WARN_ON(!tracefs_initialized()))
- 		return -ENODEV;
- 
-+#ifdef CONFIG_TRACEFS_AUTOMOUNT_DEPRECATED
- 	/*
- 	 * As there may still be users that expect the tracing
- 	 * files to exist in debugfs/tracing, we must automount
-@@ -10319,6 +10324,7 @@ int tracing_init_dentry(void)
- 	 */
- 	tr->dir = debugfs_create_automount("tracing", NULL,
- 					   trace_automount, NULL);
-+#endif
- 
- 	return 0;
- }
--- 
-2.47.2
-
+Bjorn
 
