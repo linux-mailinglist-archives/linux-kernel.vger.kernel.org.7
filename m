@@ -1,122 +1,191 @@
-Return-Path: <linux-kernel+bounces-741252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72584B0E202
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:36:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C27CB0E205
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:37:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF4E71C81339
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:37:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45B873A36F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21F2B27CCEE;
-	Tue, 22 Jul 2025 16:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NOMA9KL7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A78A27816E;
-	Tue, 22 Jul 2025 16:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D8527BF84;
+	Tue, 22 Jul 2025 16:37:15 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D4A1E5B69
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 16:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753202210; cv=none; b=D3PqgDzOm1o/tQ+sVBJNbUZptNSTbUOA92DsyRUz/2GQTnQroi7i55XMimzlu6AHxIOQo6H9GV6y+8dfH9pKt7ww1ArBOcQE4SW8secemQyLK8RqN7PCqKZuY1TiHnUGg7mayjRGcyYJ6d4SyJhgkflx6oLcdYLuIvNJtmEDui4=
+	t=1753202235; cv=none; b=tl1aCQ4mTdvvO9TH5/UyuLu2llJqr4hTm9V+f0i4Q+JXHosxTovi5KVkBIbW3PLejsuywoRNwqAysjESqIrZYJccT2F5YnNQDIJwHilLHG2h8y3qFchrLuV13A6phfpmTp7SKW1VjH5b3CyTpz0XQb9Wb+YCk9ZfNUOSdvo+RX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753202210; c=relaxed/simple;
-	bh=8IC9X4ZB0VrVik2Ye+ACM6bdPab587yF0W5iK7IqWaY=;
+	s=arc-20240116; t=1753202235; c=relaxed/simple;
+	bh=7nZg7NqjYH1H6JgtaArIT/6n27NslXHEFoJA+fbWTYI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=al9PuMvZvpXakDXOybG3Bx2X9jcV9GucUDB5k8quc+sIpguc4BOcG9TuNn1sMMoB/IY9JCHxxJnSDqeTTo1IIe6vRQX7lDjqiZoTVDDI5pgSarWo9G++7P9EX+7A0X+/4EdTUvSsyWWCDYAbdzMEW0JKch26ZJk10L2eOK0Jsdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NOMA9KL7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A79C7C4CEEB;
-	Tue, 22 Jul 2025 16:36:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753202210;
-	bh=8IC9X4ZB0VrVik2Ye+ACM6bdPab587yF0W5iK7IqWaY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NOMA9KL73oysLWi64ODYzAOI47zlxxF4AjjYjCyCOqKPhP/Sj2ZCKmojt2qpPy08o
-	 JJtQEE+StXu7Yk7ikwJ1wETIwp+miTppOc/znDjN0+qqi7kHbqOd6gm6o6u1tPFmbt
-	 SUWoK0zRwCgE9nJG/eDsd+4sSawSF/yLIZMKtJPAc2b5jVowT7ba42lIyl+BbqWezi
-	 FzaSvMGb+z/Ea6hf2CuvcTSJWgWfAhuwkpbK1Ji/rvjJt7tEGR7E9DQGH+8a1OaVGS
-	 tXRaWeTOWGS35u/7103m5VMyU8v4m/O1pD9c/oQZfL53rWWa0D1N6cX1dkldLlbdN/
-	 mKAAHRNiVCCxQ==
-Date: Tue, 22 Jul 2025 17:36:45 +0100
-From: Simon Horman <horms@kernel.org>
-To: Stanislav Fomichev <sdf@fomichev.me>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, sd@queasysnail.net,
-	andrew+netdev@lunn.ch, shuah@kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	Cosmin Ratiu <cratiu@nvidia.com>
-Subject: Re: [PATCH net 1/2] macsec: set IFF_UNICAST_FLT priv flag
-Message-ID: <20250722163645.GP2459@horms.kernel.org>
-References: <20250721165423.990313-1-sdf@fomichev.me>
+	 Content-Type:Content-Disposition:In-Reply-To; b=s5BGag6twH/D6c0vHMwu7Urph6VG3Iaj1uLh0Z5yKqx3Sl47IovSDs8CNwdHeoo6FfkgVUV+b9TMJl8OnA1OeThZX0NbbtN3nLhWEmZGpzTky13KSa7VCuxOwSSMZgviHCexwwmw9EkSXYmXxR8pcPlwKcZuDib4pm8Csg1uW6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6AEB01515;
+	Tue, 22 Jul 2025 09:37:07 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B36AE3F5A1;
+	Tue, 22 Jul 2025 09:37:09 -0700 (PDT)
+Date: Tue, 22 Jul 2025 17:37:06 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Will Deacon <will@kernel.org>
+Cc: Per Larsen <perl@immunant.com>, mark.rutland@arm.com,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Marc Zyngier <maz@kernel.org>, perlarsen@google.com,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, ahomescu@google.com,
+	armellel@google.com, ayrton@google.com, qperret@google.com,
+	sebastianene@google.com, qwandor@google.com
+Subject: Re: [PATCH v7 2/5] KVM: arm64: Use SMCCC 1.2 for FF-A initialization
+ and in host handler
+Message-ID: <20250722-shrewd-hyena-from-saturn-dbcfc1@sudeepholla>
+References: <20250701-virtio-msg-ffa-v7-0-995afc3d385e@google.com>
+ <20250701-virtio-msg-ffa-v7-2-995afc3d385e@google.com>
+ <8634bdbgaz.wl-maz@kernel.org>
+ <3b10fa81-bfdd-4325-a330-c79df2e21621@immunant.com>
+ <aHpOClH1k-3NhI_y@willie-the-truck>
+ <67cc6766-6493-4171-a6b1-2a105c3e6ff5@immunant.com>
+ <CAMP5XgeUwDnf=PbySy6aoF_zc7dtxymDQZEp8DuRSOLg4WEnFQ@mail.gmail.com>
+ <dd136db0-1ac7-4f75-b550-ccf7e14c032a@immunant.com>
+ <aH-0cx9YhdWRe2nq@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250721165423.990313-1-sdf@fomichev.me>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aH-0cx9YhdWRe2nq@willie-the-truck>
 
-On Mon, Jul 21, 2025 at 09:54:22AM -0700, Stanislav Fomichev wrote:
-> Cosmin reports the following locking issue:
+On Tue, Jul 22, 2025 at 04:55:31PM +0100, Will Deacon wrote:
+> [Sudeep & Mark to To:]
 > 
->   # BUG: sleeping function called from invalid context at
->   kernel/locking/mutex.c:275
->   #   dump_stack_lvl+0x4f/0x60
->   #   __might_resched+0xeb/0x140
->   #   mutex_lock+0x1a/0x40
->   #   dev_set_promiscuity+0x26/0x90
->   #   __dev_set_promiscuity+0x85/0x170
->   #   __dev_set_rx_mode+0x69/0xa0
->   #   dev_uc_add+0x6d/0x80
->   #   vlan_dev_open+0x5f/0x120 [8021q]
->   #  __dev_open+0x10c/0x2a0
->   #  __dev_change_flags+0x1a4/0x210
->   #  netif_change_flags+0x22/0x60
->   #  do_setlink.isra.0+0xdb0/0x10f0
->   #  rtnl_newlink+0x797/0xb00
->   #  rtnetlink_rcv_msg+0x1cb/0x3f0
->   #  netlink_rcv_skb+0x53/0x100
->   #  netlink_unicast+0x273/0x3b0
->   #  netlink_sendmsg+0x1f2/0x430
+> On Mon, Jul 21, 2025 at 05:20:01PM -0700, Per Larsen wrote:
+> > On 7/21/25 4:01 AM, Arve Hjønnevåg wrote:
+> > > On Fri, Jul 18, 2025 at 10:54 PM Per Larsen <perl@immunant.com> wrote:
+> > > > On 7/18/25 6:37 AM, Will Deacon wrote:
+> > > > > On Mon, Jul 07, 2025 at 05:06:23PM -0700, Per Larsen wrote:
+> > > > > > On 7/3/25 5:38 AM, Marc Zyngier wrote:
+> > > > > > > On Tue, 01 Jul 2025 23:06:35 +0100,
+> > > > > > > Per Larsen via B4 Relay <devnull+perlarsen.google.com@kernel.org> wrote:
+> > > > > > > > +  /*
+> > > > > > > > +   * DEN0028C 2.6: SMC32/HVC32 call from aarch64 must preserve x8-x30.
+> > > > > > > > +   *
+> > > > > > > > +   * The most straightforward approach is to look at the function ID
+> > > > > > > > +   * sent by the caller. However, the caller could send FFA_MSG_WAIT
+> > > > > > > > +   * which is a 32-bit interface but the reply could very well be 64-bit
+> > > > > > > > +   * such as FFA_FN64_MSG_SEND_DIRECT_REQ or FFA_MSG_SEND_DIRECT_REQ2.
+> > > > > > > > +   *
+> > > > > > > > +   * Instead, we could look at the function ID in the response (a0) but
+> > > > > > > > +   * that doesn't work either as FFA_VERSION responses put the version
+> > > > > > > > +   * number (or error code) in w0.
+> > > > > > > > +   *
+> > > > > > > > +   * Set x8-x17 iff response contains 64-bit function ID in a0.
+> > > > > > > > +   */
+> > > > > > > > +  if (func_id != FFA_VERSION && ARM_SMCCC_IS_64(res->a0)) {
+> > > > > > > > +          cpu_reg(ctxt, 8) = res->a8;
+> > > > > > > > +          cpu_reg(ctxt, 9) = res->a9;
+> > > > > > > > +          cpu_reg(ctxt, 10) = res->a10;
+> > > > > > > > +          cpu_reg(ctxt, 11) = res->a11;
+> > > > > > > > +          cpu_reg(ctxt, 12) = res->a12;
+> > > > > > > > +          cpu_reg(ctxt, 13) = res->a13;
+> > > > > > > > +          cpu_reg(ctxt, 14) = res->a14;
+> > > > > > > > +          cpu_reg(ctxt, 15) = res->a15;
+> > > > > > > > +          cpu_reg(ctxt, 16) = res->a16;
+> > > > > > > > +          cpu_reg(ctxt, 17) = res->a17;
+> > > > > > > > +  }
+> > > > > > > >     }
+> > > > > > > 
+> > > > > > > I don't see how that can ever work.
+> > > > > > > 
+> > > > > > > Irrespective of how FFA_MSG_WAIT actually works (and I couldn't find
+> > > > > > > anything in the spec that supports the above), the requester will
+> > > > > > > fully expect its registers to be preserved based on the initial
+> > > > > > > function type, and that alone. No ifs, no buts.
+> > > > > > > 
+> > > > > > > If what you describe can happen (please provide a convincing example),
+> > > > > > > then the spec is doomed.
+> > > > > > 
+> > > > > > DEN0077A 1.2 Section 8.2 (Runtime Model for FFA_RUN) and 8.3 (Runtime Model
+> > > > > > for Direct request ABIs) contains Figures 8.1 and 8.2. Each figure shows
+> > > > > > transitions between states "waiting", "blocked", "running", and "preempted".
+> > > > > > Key to my understanding is that the waiting state in Figure 8.1 and Figure
+> > > > > > 8.2 is the exact same state. This appears to be the case per Section 4.10.
+> > > > > > 
+> > > > > > So we have to consider the ways to get in and out of the waiting state by
+> > > > > > joining the state machines in Figures 8.1 and 8.2. Figure 8.1 has an edge
+> > > > > > between "running" and "waiting" caused by FFA_MSG_WAIT. Figure 8.2 has an
+> > > > > > edge between "waiting" and "running" caused by a "Direct request ABI".
+> > > > > > 
+> > > > > > Direct request ABIs include FFA_MSG_SEND_DIRECT_REQ2 which is why the FF-A
+> > > > > > 1.2 spec, in my read, permits the response to a 32-bit FFA_MSG_WAIT call can
+> > > > > > be a 64-bit FFA_MSG_SEND_DIRECT_REQ2 reply.
+> > > > > 
+> > > > > That seems bonkers to me and I agree with Marc's assessment above. The
+> > > > > SMCCC is crystal clear that a caller using the SM32/HVC32 calling
+> > > > > convention can rely on x8-x30 (as well as the stack pointers) being
+> > > > > preserved. If FF-A has a problem with that then it needs to be fixed
+> > > > > there and not bodged in Linux.
+> > > > Ack. Patchset v8 addresses Marc's feedback by using the func_id detect
+> > > > SMC64 instead.>
+> > > > > Setting that aside, I'm still not sure I follow this part of your check:
+> > > > > 
+> > > > >        if (... && ARM_SMCCC_IS_64(res->a0))
+> > > > > 
+> > > > > won't res->a0 contain something like FFA_SUCCESS? The FFA spec states:
+> > > > > 
+> > > > >     FFA_SUCCESS64, is used only if any result register encodes a 64-bit
+> > > > >     parameter.
+> > > > > 
+> > > > > which doesn't really seem related to whether or not the initial call
+> > > > > was using SMC32 or SMC64. What am I missing?I agree that we cannot use res->a0 to distinguish SMC32/SMC64 for the
+> > > > reason you stated.
+> > > 
+> > > I don't think using the function-id of the original call works
+> > > correctly in this context though. If you look at
+> > > drivers/firmware/arm_ffa/driver.c:ffa_msg_send_direct_req2 it has the
+> > > same problem as the FFA_MSG_WAIT example in your comment. In the
+> > > simple case it will use FFA_MSG_SEND_DIRECT_REQ2 for the call and
+> > > FFA_MSG_SEND_DIRECT_RESP2 for the response, both 64 bit opcodes, and
+> > > either approach here will have the same correct result. However if
+> > > FFA_MSG_SEND_DIRECT_REQ2 responds with FFA_INTERRUPT or FFA_YIELD,
+> > > then the driver will resume the call with FFA_RUN, a 32 bit opcode,
+> > > and still expect a 64 bit FFA_MSG_SEND_DIRECT_RESP2 response with a
+> > > full response in x4-17. If you use ARM_SMCCC_IS_64(func_id) here
+> > > instead of ARM_SMCCC_IS_64(res->a0), then the part of response in
+> > > x8-x17 will be lost.
 > 
-> Which is similar to recent syzkaller reports in [0] and [1] and triggers
-> because macsec does not advertise IFF_UNICAST_FLT although it has proper
-> ndo_set_rx_mode callback that takes care of pushing uc/mc addresses
-> down to the real device.
+> Can't we just update the FF-A driver? This is clearly all the result of
+> a half-baked spec...
 > 
-> In general, dev_uc_add call path is problematic for stacking
-> non-IFF_UNICAST_FLT because we might grab netdev instance lock under
-> addr_list_lock spinlock, so this is not a systemic fix.
+> Sudeep -- any chance you can add support for the hot-off-the-press
+> 64-bit FFA_RUN call to the Linux driver, please? Without that, I don't
+> see how the REQ2/RESP2 calls can work properly.
 > 
-> 0: https://lore.kernel.org/netdev/686d55b4.050a0220.1ffab7.0014.GAE@google.com
-> 1: https://lore.kernel.org/netdev/68712acf.a00a0220.26a83e.0051.GAE@google.com/
-> Link: 2aff4342b0f5b1539c02ffd8df4c7e58dd9746e7.camel@nvidia.com
 
-I think that Link: should be followed by a URL
+Apologies for the delay in following up on this thread. Yes, we can certainly
+add the 64-bit FFA_RUN, but we'll need to align with the spec authors first.
+I'll follow up internally to ensure there's no conflict between how it's
+defined in the spec and how it's used in the kernel.
 
-Link: https://lore.kernel.org/netdev/2aff4342b0f5b1539c02ffd8df4c7e58dd9746e7.camel@nvidia.com
+It looks like the change in the spec is already WIP which I was made aware
+just now, so I don't see any issue updating the driver.
 
-> Fixes: 7e4d784f5810 ("net: hold netdev instance lock during rtnetlink operations")
-> Reported-by: Cosmin Ratiu <cratiu@nvidia.com>
-> Tested-by: Cosmin Ratiu <cratiu@nvidia.com>
-> Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
-
-Hi Stan,
-
-I ran the test provided by patch 2/2.
-When run with with a debug kernel using VNG.
-
-It reliably passes with patch 1/2 applied. And fails without patch 1/2 applied.
-Where fails means the kernel panics along the lines of the stack trace in
-the commit message.
-
-Reviewed-by: Simon Horman <horms@kernel.org>
-Tested-by: Simon Horman <horms@kernel.org>
-
-...
+-- 
+Regards,
+Sudeep
 
