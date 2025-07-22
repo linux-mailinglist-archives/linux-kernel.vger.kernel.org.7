@@ -1,106 +1,114 @@
-Return-Path: <linux-kernel+bounces-741001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59C02B0DEB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:32:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30879B0DEA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:31:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF253AC5166
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:23:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA8861883722
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E49723AB9D;
-	Tue, 22 Jul 2025 14:23:47 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E495928BA96;
+	Tue, 22 Jul 2025 14:28:15 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D8A3195
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 14:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2158221D3CD
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 14:28:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753194226; cv=none; b=qRSKhNgyvkercc/lEB7JtvIEn0YvB6k7C1imnUkfWa5ehV/fYQ5yQMsR5YvKzv9NsLyC13/Ls983HR1g+p1PUS/EnMLduRD9otHlb+zQ5UjOzw14Rf0jjloFlBXp1Q8vVhjCR9OtQ310sryM5CG+P8a/cJdjdFePXPqoj/Cu9jQ=
+	t=1753194495; cv=none; b=FKYAPQtkZnciHDAtq7TOlB9Bjtf5oSkqSgR6XM6i0ZcD3pYZtFOtPLs71OaN40GWcBlbAQwTuO7tihTpryfXNiYi7ee7dEYrocI3yEpRtxS9HnZg6Rj6kp4bsv98qqy+VM6EeBY+FfprdR4RhaphMQW8P+ajTlbkTblyXGX1l6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753194226; c=relaxed/simple;
-	bh=6HMmRzV3Vv3TzxnjFgwzgMzd6L8joE5nHO4prk28S/U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ff+8J+A0NHDhft2AGIbS7GlD4rYpu1qpWjwpYZI+r5pvkvi9H0sAIbz/QjKtoFu/7hsEnpIF/JPK5a/pykpHx1UKORN8R2kMgupZdO0DOTfe6R2pheZJg+9st7kJrGgactK27P42jSEOHBysn9tEjbfqqXeLKtkQgwmrYmma2HA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf13.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay04.hostedemail.com (Postfix) with ESMTP id 009731A044A;
-	Tue, 22 Jul 2025 14:23:42 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf13.hostedemail.com (Postfix) with ESMTPA id 5FC372001E;
-	Tue, 22 Jul 2025 14:23:41 +0000 (UTC)
-Date: Tue, 22 Jul 2025 10:24:13 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, apparmor@lists.ubuntu.com
-Cc: John Johansen <john.johansen@canonical.com>
-Subject: Re: Lockdep warning for non-static key in apparmor code
-Message-ID: <20250722102413.52083c6e@gandalf.local.home>
-In-Reply-To: <20250722100413.117462d2@gandalf.local.home>
-References: <20250722100413.117462d2@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753194495; c=relaxed/simple;
+	bh=B3bygHlyEuQarYDMb68vgIOtWnbigauGCxhWDgOrMho=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=m9EzSSdfiA2xUm3dw/t7qDJgEeN1NNhnLPdSuFl68ZJqCci+ceQIpaoW3t6+oHpIraw1BqC3v9XqIvOEhbMRcyZoVNbofjRqCTWTuGWLmvVZAOffdqbU+2Nfekp7p8T8IZ60qrpnNcTyGiliga/c6vLvq9Q/9CfBBsI4msQXDsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bmffD2LSjz6L4sV;
+	Tue, 22 Jul 2025 22:24:20 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id A7A961402C8;
+	Tue, 22 Jul 2025 22:28:10 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 22 Jul
+ 2025 16:28:09 +0200
+Date: Tue, 22 Jul 2025 15:28:07 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: James Morse <james.morse@arm.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	"Rob Herring" <robh@kernel.org>, Ben Horgan <ben.horgan@arm.com>, Rohit
+ Mathew <rohit.mathew@arm.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+	"Zeng Heng" <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>,
+	"Carl Worth" <carl@os.amperecomputing.com>,
+	<shameerali.kolothum.thodi@huawei.com>, D Scott Phillips OS
+	<scott@os.amperecomputing.com>, <lcherian@marvell.com>,
+	<bobo.shaobowang@huawei.com>, <tan.shaopeng@fujitsu.com>,
+	<baolin.wang@linux.alibaba.com>, Jamie Iles <quic_jiles@quicinc.com>, Xin Hao
+	<xhao@linux.alibaba.com>, <peternewman@google.com>, <dfustini@baylibre.com>,
+	<amitsinght@marvell.com>, David Hildenbrand <david@redhat.com>, Rex Nie
+	<rex.nie@jaguarmicro.com>, Dave Martin <dave.martin@arm.com>, Koba Ko
+	<kobak@nvidia.com>, Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [RFC PATCH 05/36] ACPI / PPTT: Add a helper to fill a cpumask
+ from a processor container
+Message-ID: <20250722152807.000069d3@huawei.com>
+In-Reply-To: <20250711183648.30766-6-james.morse@arm.com>
+References: <20250711183648.30766-1-james.morse@arm.com>
+	<20250711183648.30766-6-james.morse@arm.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: tstywm9r9h4xms6bpc8um9j9o66e3g36
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: 5FC372001E
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/zZ/aSobjVQGUAd7jsEcxZrvkd+kE9VrQ=
-X-HE-Tag: 1753194221-783310
-X-HE-Meta: U2FsdGVkX1/+pY7V+uD2DWTro7Xrm4Z/iaDwMTZKKDCdKCgWn1d0TDWd6kLTDrJFBsUAS8nw6VCtsUCuDg+v/0aBKfLR8lTYaOw8OtMjPUW7Xetl4pPxe028btGvv4a+0JajdyLcfZbB+q3EcatWiGDRh1jw16YUIppc49Bjtv4/P2J10d5XJwD9QWTp2rCKYOyHomdYkmF+uvfAuupU7nbq/PhkzdrkFpH3cRpdyoRS8OGnSPtiVzVcgdVqYyMqJRwPr+fEc4fBFKYEhEmZY0m3SXvMNQEg9QGGNU+OJe1OZFEXyhkMVOwIBJ/xGOpbO0we7MAAaKtEd2iw+xD/HHdeT4l+gjs0rgCbnjf8cNJgYluLP2iPrHhJieX7qbD4
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Tue, 22 Jul 2025 10:04:13 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Fri, 11 Jul 2025 18:36:17 +0000
+James Morse <james.morse@arm.com> wrote:
 
-> Booting latest linux-next, I triggered this warning.
-> 
-> Looks to be associated to apparmor. Was there an allocated spinlock not
-> initialized properly?
+> The PPTT describes CPUs and caches, as well as processor containers.
+> The ACPI table for MPAM describes the set of CPUs that can access an MSC
+> with the UID of a processor container.
+>=20
+> Add a helper to find the processor container by its id, then walk
+> the possible CPUs to fill a cpumask with the CPUs that have this
+> processor container as a parent.
+>=20
+> CC: Dave Martin <dave.martin@arm.com>
+> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
 
-Yeah, you don't initialize the spin lock. Is there a reason you commented
-out the spin lock initialization in 88fec3526e841 ("apparmor: make sure
-unix socket labeling is correctly updated.")?
 
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -508,7 +508,6 @@ static int apparmor_file_alloc_security(struct file *file)
-        struct aa_file_ctx *ctx = file_ctx(file);
-        struct aa_label *label = begin_current_label_crit_section();
- 
--       spin_lock_init(&ctx->lock);
-        rcu_assign_pointer(ctx->label, aa_get_label(label));
-        end_current_label_crit_section(label);
-        return 0;
-@@ -1076,12 +1075,29 @@ static int apparmor_userns_create(const struct cred *cred)
-        return error;
- }
- 
-+static int apparmor_sk_alloc_security(struct sock *sk, int family, gfp_t gfp)
-+{
-+       struct aa_sk_ctx *ctx = aa_sock(sk);
-+       struct aa_label *label;
-+       bool needput;
-+
-+       label = __begin_current_label_crit_section(&needput);
+> +/**
+> + * acpi_pptt_get_cpus_from_container() - Populate a cpumask with all CPU=
+s in a
+> + *                                       processor containers
+> + * @acpi_cpu_id:	The UID of the processor container.
+> + * @cpus		The resulting CPU mask.
+Missing colon.
 
-+       //spin_lock_init(&ctx->lock);
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-+       rcu_assign_pointer(ctx->label, aa_get_label(label));
-+       rcu_assign_pointer(ctx->peer, NULL);
-+       rcu_assign_pointer(ctx->peer_lastupdate, NULL);
-+       __end_current_label_crit_section(label, needput);
-+       return 0;
-+}
-
--- Steve
+=46rom a W=3D1 build (and hence kernel-doc warning).
+> + *
+> + * Find the specified Processor Container, and fill @cpus with all the c=
+pus
+> + * below it.
+> + *
+> + * Not all 'Processor' entries in the PPTT are either a CPU or a Process=
+or
+> + * Container, they may exist purely to describe a Private resource. CPUs
+> + * have to be leaves, so a Processor Container is a non-leaf that has the
+> + * 'ACPI Processor ID valid' flag set.
+> + *
+> + * Return: 0 for a complete walk, or an error if the mask is incomplete.
+> + */
+> +int acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t *cpus)
 
