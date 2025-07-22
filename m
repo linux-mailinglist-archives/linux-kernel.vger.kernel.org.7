@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-741196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82672B0E153
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:10:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB2ECB0E154
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:10:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95E3517D1B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:10:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24F93AC11E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:10:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D200127A930;
-	Tue, 22 Jul 2025 16:09:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 565A827BF80;
+	Tue, 22 Jul 2025 16:10:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="d3F6G5zd"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="RWjg2kl6"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8EE1DC9BB
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 16:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D3827A915
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 16:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753200598; cv=none; b=tgD9trUYdgCJtDQ5JWhKdjXtUZg+xIGg4tr+gFlIYDbpLSCpvFxwNIKifG+IdSM+Hu7Y+F6j0hY5v/1XZeiDS1eaGtkZ0vciSH8yAW1MfxSt2XqwZ8FquR3zcG6VXm7Jz/bfzlmsJEfLCQzkkr0U4/0OjI01vGwq1tiq0iEuDn0=
+	t=1753200599; cv=none; b=Igt05RTftrEQN2UYB0j76nmsk/FSgWhvU+tai/1XwsQySMDOVzVReGwWmy80rqtbePeTRBRawinsUz/uwnDtzG+fWRCUlGryV0xzfZjQiYpA+qItr5Mm8qFVeMDXeaZukDb6UawkksgnWX+kN5FdfjVkif0fcAic5odq5uKbPPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753200598; c=relaxed/simple;
-	bh=nCw+7FL8gL6JYK/43daQJi0qJyB4vyEjDwnHebjT1fc=;
+	s=arc-20240116; t=1753200599; c=relaxed/simple;
+	bh=prr2gppYJVhksqdSSSfeWn6Qq8se3DaVIAjVlNSb8RY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Nf3feBuAYpkxwLQ5AgW93U50Fny1PGFbYQtILmIB6+m5enzzgw1enx4buwaKufN/NnbGEKm2tyXNNImKcnzRqFSSyPCV7rGyISa6LTqHfqh9x0WpISoLaYDlOyGwP0sPnGrDz/+G46t/WIn64wt+xWi6IqMohuweWPuB8FdVKyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=d3F6G5zd; arc=none smtp.client-ip=209.85.128.45
+	 MIME-Version:Content-Type; b=kL+2FyEVF6GOQgVs9ErRUQTCm5fMvxSxadLkRDrSowwgca+35LmGkuu4CyoeIXaDpBKTG0gCsvQgNVxkC2npccBpYwKp6bsXkXNYULa1g/vcBNflFSAsKcHdT7KJmQ5seWIUfneNaYTEDWuOIg90jadqUmFZz2v68j9320TCUBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=RWjg2kl6; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4535fc0485dso10115435e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 09:09:56 -0700 (PDT)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4535fc0485dso10115485e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 09:09:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1753200595; x=1753805395; darn=vger.kernel.org;
+        d=ventanamicro.com; s=google; t=1753200596; x=1753805396; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yHn0RK1bDtnQTih55k+PE+Oh/xAeSlFKCAvFjBlOT6o=;
-        b=d3F6G5zd4NrMrj7UGyZfRcW0poJ6MKl2aAOeVg+jkpMDWjvjIy1e/XD9g8tm4/vP+O
-         N9y0o5PWkGYFpVBzcBjfKoS028eXIge+0PWs9nHDIREU/MM8ZiJo9IfPOcvDNaA65BZD
-         c3WsjaiaqL+vvRVevm2wkuKKk+kSgi0qIg3NccP+wgHTkK/x/4qqXzPeJEQ97kjo7tBd
-         4Mg3fmfnkiBxJ1vhflJqvmc7mONLrIRZ2s9VbZ7Wo+gVsmZK3PLYXCOwpaX5MyPksO5I
-         2yzMxdnTJGvqrfTcLqY3fxaOMoW64uFYprIMG+FwwnIskw9cnxOSlG4pH3OKx7iWByTU
-         Y2Vw==
+        bh=gUIN734c8F9Q1V9KdFeOGIQnf08UJxOJxruFh9+meKQ=;
+        b=RWjg2kl6mj/95ZwIZY/GhfTufGSYsOWDBCmV76M+59yBFaG2Co302pOBPdb1uJNTnv
+         gpamr05+quF785Mz1vxs77HnOYdbMlOn3DXPBsFof5IkD7uGmy+cmpsm5c1HKA+iD0if
+         +ITaJCHJSqcDPFXUQgCk1+Pry+WAq+tPm3B71mN5eRcpIhEK/UwrVUyXYvk/F7RVbvz3
+         Op8IDvKXKMCdcIL5H8GLnsBrT6WIOfHvzp05i8unW85I/ccVo+P+T+MtB7f9H8662Gdt
+         Zg9WlJS39NGEi80liug22sEa0Lf+t2erIMpRbC3m3D4TUI0ODLOy/u/genSfMA1rirzp
+         FcJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753200595; x=1753805395;
+        d=1e100.net; s=20230601; t=1753200596; x=1753805396;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yHn0RK1bDtnQTih55k+PE+Oh/xAeSlFKCAvFjBlOT6o=;
-        b=d7FcZ1rxvIt5i6t+ZYIIFaPJDQIs1HBwt3pgxzU0IRFtCigeSYY24KFHRo+nwJHK7z
-         8MmFALhEXRGalifXf/lwot0A2b2szwmA9wk52FE+D7goglKzomnzA4dKlovZq8TZmBsm
-         ZNLTg2LzjIWv0XSM6Q2lRYPlVygRbLGYQuuWDTt0Awo3ZRCDm3wAfBK9LRxGX2i5URty
-         YizA0AKH18p4IZHELhu78BncM8iR12DFvtujqhBjQA6r4u5Cnr8xoPJY0UK7v/ZOb1na
-         6pbjfrPmaJnWE5cczd9f2xaGh3iu4byplB04v77QNLzX+7U3XWctGIYIun6OvAt6nI1F
-         63Cw==
-X-Gm-Message-State: AOJu0YwUoxuEbnnOrWTLprW2iB9yKdGlSqNYXXqKoAOwGN233bM9OvP7
-	PFX8Q8nKi+8oifj5kMVWQmjkOGoB524WJkM6AAjhc695W4TaQnoC567kFWIpSN3i/VU=
-X-Gm-Gg: ASbGnctexNMs6o0igz2vB1Ss+7d6XHBaWQEicbNuwBzifmnERVsvSuOM1WaVwih/ih7
-	KeHOo5oIdGbkOAucj7isibks13EtvnJiBFNb3Fw76pbb6aqX7x4p4wDyctykkbNDMHFuZiWGcTD
-	zQq9+u4sSf9eoo2884zsgoq9pSSNpAz0XXeniP6szQDvuArhBQSj0R0gumz5g+pwtAo26omHVNA
-	Oe9fxBVhySU9Zlh0NWWR2epw619MfSm7S4RPyRziKMw9pni8qSitxbHKEYeZrwfPTvoFkBoR0mB
-	kNaanhCiJxODiC/erZ2O0FRyqdTMMKUYpuKGmuY4E6ogfPe9o6ziAI8p//Eohhlr/vuhHrkUPz6
-	MvrgfQD5vxKBLPReBT5Ygp5mOUhH+KlYsUvU6xp33
-X-Google-Smtp-Source: AGHT+IFOOj2pCZuzkvgcI2e++izR9WZ44Bo7bX1ttKedDTZ/7/TUO4123SUu0NVdtBBwikHGaWbn/w==
-X-Received: by 2002:a05:600c:548b:b0:43b:c844:a4ba with SMTP id 5b1f17b1804b1-4562e047a0amr104331465e9.3.1753200594690;
-        Tue, 22 Jul 2025 09:09:54 -0700 (PDT)
+        bh=gUIN734c8F9Q1V9KdFeOGIQnf08UJxOJxruFh9+meKQ=;
+        b=XBC89GXTr0f3uEAwmQWueCJ2oYS3E/3oaXmve32tIZCp6ZXs6Th11hwVYr1vXoFfVh
+         XYxG6f1F2UNR+RzNRN9+8wnESgEsd74W1deQveyfpLkO5ZGJo06uIWLyWQoMyMK5s4W7
+         vYoGDgBjhczEtqrDjcQKZ4l/OTFuQQsPCLPvN68zx8U+ll78ZkZoFFr1w5Brd+TOnxMY
+         SqBDB25kgRcf/wq71YU010r8c/rI8tT4OKmHom+YkQTP7m4OkpPPxyVhlgEe6d0rPu5e
+         2XLAAu0NKQoQsMX8Ffjiq4A62dGWh+lmsJqAI7st0TMS+mxV3JOsDtXmSVOlwgaC3r67
+         vNRg==
+X-Gm-Message-State: AOJu0YwohEGfJHkQZa2FHKRUZD4q0QGBnhg2/Xyu5DwRnQqUmlTg6i01
+	CZeFdFCYCb2FDIKLiulz/jPW/WyJZt8zcwyna/wFYuOQtILsl5AVJu+yUeSFwGO2cLA=
+X-Gm-Gg: ASbGnct7xRAYm01DzPmhm3l8BiFeh/BX7zi0jNHeJelt4MoDQlvgJVJtIDPxrd/gjU+
+	vV0eXCxVUh4h629vgtWmXpBqUBD8sbLcuM22lfK33zsayotqKIck7HgfxZ7unjQQIC37m/yuPoO
+	mirjN6XzOrD5i+qSMxjhRo5yHorqigxG/rJyVTwb/KxoaO3qNZA4qROnQ/iKcQXwX+zqvtJErc5
+	jxLNZ4e3WCsmZVZo1n1z9vHei30G7v3y91hOgUcly1UrsQJyiu5ykz4mY6CU3ChALxzd1lp8EB/
+	r8TIpIeH4wKBB6jPxhMpff4zqTmMlXIqdyJlUA4G4Ic2jmt4zxNTMkGGvfuX68zIk50JhVwMtov
+	ojSYMSccyuGiRluUwmpdr3GW17Tx1mQ==
+X-Google-Smtp-Source: AGHT+IGyGnUn7vJdarGNb0EVJqGL251dIgBLpKbjL2CJ9wo77hAS7BHWXW7JVTY6NvJ4447wrID6KQ==
+X-Received: by 2002:a05:600c:c097:b0:442:e0e0:24d with SMTP id 5b1f17b1804b1-4562f706949mr80974655e9.7.1753200596089;
+        Tue, 22 Jul 2025 09:09:56 -0700 (PDT)
 Received: from localhost ([2a02:8308:a00c:e200:30d6:4986:8040:bb0a])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b61ca4c754sm13900391f8f.59.2025.07.22.09.09.53
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-458639ffca5sm19058775e9.1.2025.07.22.09.09.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 09:09:53 -0700 (PDT)
+        Tue, 22 Jul 2025 09:09:55 -0700 (PDT)
 From: =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
 To: linux-riscv@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org,
@@ -79,9 +79,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Albert Ou <aou@eecs.berkeley.edu>,
 	Alexandre Ghiti <alex@ghiti.fr>,
 	Deepak Gupta <debug@rivosinc.com>
-Subject: [PATCH 2/3] riscv: use lw instead of REG_L when reading int cpu
-Date: Tue, 22 Jul 2025 18:05:56 +0200
-Message-ID: <20250722160556.2216925-4-rkrcmar@ventanamicro.com>
+Subject: [PATCH 3/3] riscv: pack rv64 thread_info better
+Date: Tue, 22 Jul 2025 18:05:57 +0200
+Message-ID: <20250722160556.2216925-5-rkrcmar@ventanamicro.com>
 X-Mailer: git-send-email 2.50.0
 In-Reply-To: <20250722160556.2216925-2-rkrcmar@ventanamicro.com>
 References: <20250722160556.2216925-2-rkrcmar@ventanamicro.com>
@@ -94,44 +94,34 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-REG_L is wrong, because thread_info.cpu is 32-bit, not xlen-bit wide.
-The struct currently has a hole after cpu, so little endian accesses
-seemed fine.
+On rv64, preempt_count and cpu were both 32-bit followed by 64-bit, so
+placing one in the hole saves 8 bytes in the struct.
 
-Fixes: be97d0db5f44 ("riscv: VMAP_STACK overflow detection thread-safe")
-Fixes: 503638e0babf ("riscv: Stop emitting preventive sfence.vma for new vmalloc mappings")
 Signed-off-by: Radim Krčmář <rkrcmar@ventanamicro.com>
 ---
- arch/riscv/include/asm/asm.h | 2 +-
- arch/riscv/kernel/entry.S    | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/riscv/include/asm/thread_info.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/riscv/include/asm/asm.h b/arch/riscv/include/asm/asm.h
-index b3022bc224ec..93b1e4ce34d1 100644
---- a/arch/riscv/include/asm/asm.h
-+++ b/arch/riscv/include/asm/asm.h
-@@ -91,7 +91,7 @@
- #endif
- 
- .macro asm_per_cpu dst sym tmp
--	REG_L \tmp, TASK_TI_CPU(tp)
-+	lw    \tmp, TASK_TI_CPU(tp)
- 	slli  \tmp, \tmp, PER_CPU_OFFSET_SHIFT
- 	la    \dst, __per_cpu_offset
- 	add   \dst, \dst, \tmp
-diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-index 75656afa2d6b..4fdf187a62bf 100644
---- a/arch/riscv/kernel/entry.S
-+++ b/arch/riscv/kernel/entry.S
-@@ -46,7 +46,7 @@
- 	 * a0 = &new_vmalloc[BIT_WORD(cpu)]
- 	 * a1 = BIT_MASK(cpu)
- 	 */
--	REG_L 	a2, TASK_TI_CPU(tp)
-+	lw	a2, TASK_TI_CPU(tp)
+diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/include/asm/thread_info.h
+index f5916a70879a..c267d6bd838e 100644
+--- a/arch/riscv/include/asm/thread_info.h
++++ b/arch/riscv/include/asm/thread_info.h
+@@ -53,6 +53,7 @@
+ struct thread_info {
+ 	unsigned long		flags;		/* low level flags */
+ 	int                     preempt_count;  /* 0=>preemptible, <0=>BUG */
++	int			cpu;
  	/*
- 	 * Compute the new_vmalloc element position:
- 	 * (cpu / 64) * 8 = (cpu >> 6) << 3
+ 	 * These stack pointers are overwritten on every system call or
+ 	 * exception.  SP is also saved to the stack it can be recovered when
+@@ -60,7 +61,6 @@ struct thread_info {
+ 	 */
+ 	long			kernel_sp;	/* Kernel stack pointer */
+ 	long			user_sp;	/* User stack pointer */
+-	int			cpu;
+ 	unsigned long		syscall_work;	/* SYSCALL_WORK_ flags */
+ #ifdef CONFIG_SHADOW_CALL_STACK
+ 	void			*scs_base;
 -- 
 2.50.0
 
