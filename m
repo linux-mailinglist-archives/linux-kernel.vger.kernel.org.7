@@ -1,288 +1,656 @@
-Return-Path: <linux-kernel+bounces-741334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4659DB0E2E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:46:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF0C4B0E30F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0016D1C8257A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:46:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 775A37B85DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68972280339;
-	Tue, 22 Jul 2025 17:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA5372857F8;
+	Tue, 22 Jul 2025 17:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="Vp7S/2PR"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10olkn2025.outbound.protection.outlook.com [40.92.41.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B/KdZ7qL"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7255283FE5;
-	Tue, 22 Jul 2025 17:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.41.25
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753206286; cv=fail; b=BmqFnC/362Hh8dXnll7AMHLmlzgtTuzmHeJvamD96AeStLZWlTbaxr8xo8nsMUYewBzzI/npkTbfLVzy1KypX6hBGVAayUqXOV5itU/CwWEJuMVd86orCNJmJ8b2v8PvKSjFPqU9V4ZAHkml1waqttlt5z5rIfVpLfUoEybyI/c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753206286; c=relaxed/simple;
-	bh=zkNsTMNQYlhNCnLB0gLQa13OCmunXEQmkcVt3n8Cats=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=PDDuQcisARY4DxqhUwkuscxACllqtWnm9beDgv+dHPwEoqge65u+pCFCZ+Hb02A6P6j3FpLI+yx0XEHyU/XKAIOiebEmHT62WuNXuJIrNG2ow7gJ3TcuvFYS7HOlZXyG24vDtjndHgATFCJy7UevAclXrgisSZa18eyb2IxN5gs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=Vp7S/2PR; arc=fail smtp.client-ip=40.92.41.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=G9mUW1zk3pvtgE2WyrNKiB5byoVYypPNPZEo1zBou2n2TjGk3MvzwYzUKqjQCT+k2h7fuNaZRQo2tBzVZ2qmZAh+KDJf8ARhbSmi5zNKtkTwoBiVBaSiEIoiFXZKO798w/V5ajWg3kF1nlDesHfYnFeM9KzFk3dykEv9gU615nXIJ8zgwQ10A2q8Z+DdmL9N3JQNe7BmWIYzzo20huCcq0RXqEmXNVZXPLInmciHtCCg9KQS/00GdwnOHpryyuvyJOqKLa1Qmf4UZXX/OO/ZOSZfGB/qrzjqukJyQzC4sS1SjZ2nhal+1UsFe3cXG6aa0skd6DKEnd4hjoAsNUrqlQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=77sfAm1jXhKXWz84Qj5vrsNqnfC6N7NQ6qUsYSl8HUw=;
- b=GsW9p9qCC++7yrSQXD8u6YHQVIDlfTvsVag6ChLrwdzCcofAjahyPO0mB+unCtuD96DfmOH036qReVIMCIstEHBPm/j+e92r/M24ZskKiA+Pq/ara49wMIALSe9TbhzIMiZlpiOKzpOJl2o5TBcuEYeBEtovcekpems9XqC8fXd2ULNSC7eAOM9aUTIPPy+OQ7Y/rXefxcJ+h/vb/6KsliYnwdMj3zAHgQf0jrno3Si/cr/QrTcTGhaHFGCMhIY/ung+yyoXxLN2UUeZ2BjpbFqICM++ulPaTnpYv+F4PoelA+MM15kYHozlw76+DSiI2mjmL9iLeE8uB71SWjAn1Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=77sfAm1jXhKXWz84Qj5vrsNqnfC6N7NQ6qUsYSl8HUw=;
- b=Vp7S/2PR6izXSteDwuaOfsiQ0SFOlv1UCW5erk5wbrgZlcv88GWcv+5oz5/qG2CDhKHbJaZSQEAYCqp5agBlChigHZfa+NnhrsXMSZP052nXDEogDCzzaEhoeXqxUyMXIdfiYtPx+aRYza9+9La6sdgHpGYohmNgaQ0EoOZIb7onzys5hWOMdGmP0sf38sDpDZoX7nzpyps6JXPuQvg0DI2rVA3CcZicnG1g4r48pDRYdu3Wjg4DqG3Vs7sonLqy+K7miqCc3N8LdcnOm252NAWDfWdUikhmVdjqTRrl6HoaLrgG2e/8EwsmvJwepf5PMz96AYpWbxnQlkZKKBF5Kw==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by CY8PR02MB9201.namprd02.prod.outlook.com (2603:10b6:930:9c::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.28; Tue, 22 Jul
- 2025 17:44:41 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%4]) with mapi id 15.20.8943.029; Tue, 22 Jul 2025
- 17:44:41 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Roman Kisel <romank@linux.microsoft.com>, "alok.a.tiwari@oracle.com"
-	<alok.a.tiwari@oracle.com>, "arnd@arndb.de" <arnd@arndb.de>, "bp@alien8.de"
-	<bp@alien8.de>, "corbet@lwn.net" <corbet@lwn.net>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"decui@microsoft.com" <decui@microsoft.com>, "haiyangz@microsoft.com"
-	<haiyangz@microsoft.com>, "hpa@zytor.com" <hpa@zytor.com>,
-	"kys@microsoft.com" <kys@microsoft.com>, "mingo@redhat.com"
-	<mingo@redhat.com>, "rdunlap@infradead.org" <rdunlap@infradead.org>,
-	"tglx@linutronix.de" <tglx@linutronix.de>, "Tianyu.Lan@microsoft.com"
-	<Tianyu.Lan@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>,
-	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>
-CC: "apais@microsoft.com" <apais@microsoft.com>, "benhill@microsoft.com"
-	<benhill@microsoft.com>, "bperkins@microsoft.com" <bperkins@microsoft.com>,
-	"sunilmut@microsoft.com" <sunilmut@microsoft.com>
-Subject: RE: [PATCH hyperv-next v4 10/16] Drivers: hv: Rename the SynIC enable
- and disable routines
-Thread-Topic: [PATCH hyperv-next v4 10/16] Drivers: hv: Rename the SynIC
- enable and disable routines
-Thread-Index: AQHb9Qzc5KtxPdsuSkybfEfhH+3e0bQ4myOA
-Date: Tue, 22 Jul 2025 17:44:41 +0000
-Message-ID:
- <SN6PR02MB4157E01A2FFB276C3E79AC54D45CA@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20250714221545.5615-1-romank@linux.microsoft.com>
- <20250714221545.5615-11-romank@linux.microsoft.com>
-In-Reply-To: <20250714221545.5615-11-romank@linux.microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|CY8PR02MB9201:EE_
-x-ms-office365-filtering-correlation-id: 0cdd01a3-8b62-4e14-de04-08ddc9476fb9
-x-microsoft-antispam:
- BCL:0;ARA:14566002|15080799012|461199028|41001999006|40105399003|3412199025|440099028|12091999003|102099032;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?WkVKGLYanr8rx1s5jTlcisc+dQ3niOTMDOImjX/1dAyV1qKvKMI0RHbm7paK?=
- =?us-ascii?Q?5ZoPBEdtb3LvAJQAxVcdSNR/VWejzp/Es1bARdey93EUgH7x1OmdpbnxNsGf?=
- =?us-ascii?Q?3lucvwvSW3paUElrVzwlJ/7iLmbohTHjFxfx4Pb4pG42Fzro87cmgb8f24mN?=
- =?us-ascii?Q?ddbDp5KMTmVt2npc0c5cA/HUM//Worg32FgvRem6GzAB2MlVE7UD8+CYJHfQ?=
- =?us-ascii?Q?jFPu3vkfs1lnWyeAnbMwTrdVLERw1+W4kAP4TXJHJ8tYTs4UZ8l5aZ9Xr/xr?=
- =?us-ascii?Q?8ZO1cy5ObXZelQZwTx50uTJ8qo5iq6V1RwtfFEmTIcEMh/stgRxW/vu1+Qa2?=
- =?us-ascii?Q?ZJa/yT+nI+H/qApSsKA0c+4+bNj5zu+rGs0fP/ZqTxl5AL80CZ14hrdLNdKw?=
- =?us-ascii?Q?+mxnuLuazgZWcRxzLWVy0Dx0Nrq52RI9XWDqPMtFDyf7SsuHrBgudH4VqoC1?=
- =?us-ascii?Q?A3aZ1XRFQXDfVSEUqBtQFniGbS/bQmPJFlP71Pj7QCPxSBrBSqqWnoomkRA/?=
- =?us-ascii?Q?AK55HyqGuGx1/7rFGN8DxFVthSR47fqnsEUJDDKwUXOOYlZeCclHGhDv/Bjf?=
- =?us-ascii?Q?cl2KkXQPhiicIgqyln7Iya0FoeZqLAlISLkko52NNnCd/ye9hwOugiFEomV4?=
- =?us-ascii?Q?aNFUxV7xhoNeBjYtEQ6w178IF+60DOs3HSsXYDjdC7omsPtRMeHJ03v0+FM9?=
- =?us-ascii?Q?rZF+a8KjgEGL8VVLHEam8OiYrAtKkaT9oQxnmukQjc+1x9uiPISXt6d/8TcU?=
- =?us-ascii?Q?7a2FiD7y4eUTj5oauKv8lou+Y4lCut5N7Xdra4oI4zoBINYz2IMv5NDJxgsd?=
- =?us-ascii?Q?8eg3758EhxWoy4WEJ+/JNJG/CiXpKlnx14I8oCASiguv4f0UN3ee2Wpdyayu?=
- =?us-ascii?Q?d80jpLVxv3wHpBhiGypnu7andapkpSs48XH3CQiWtAWRhM4Pb9HhGT7tMRxB?=
- =?us-ascii?Q?WYDwrfN+abaitoQIzQuntV4KVTaGJFf8r0CIiU4awWTCrSUFwAxcw04sblPi?=
- =?us-ascii?Q?wJKUoyio5fPrRg1vA+A/xNDywcgsMrlt35wL82vO/gtY7/i2IT1+9GNldjjH?=
- =?us-ascii?Q?qNR1iYONYW3aN7gbHESchB7hz2FNHQ=3D=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?/ag8d7QUa4JZLZBIjK390kuBbp6SuI/rr+rVcylmHFjxfJ/vriBTra4s/YLI?=
- =?us-ascii?Q?JlxWJc0ozsOfXcAuaCMTj1Am3FCSkZ7lbq8pR5LiayvEXMzbY+vxY74W+r72?=
- =?us-ascii?Q?cw4qUkcakrETzluCABN2H+0CKgJbY9mn2IajwfT/0Cw0ehg7Bblg+rUlgTQk?=
- =?us-ascii?Q?YnwanYylAibDhz/+CO7flM2q9iDG+aqAhJw7g8vZk4YB/+h5YWpoj6cmZ2Wc?=
- =?us-ascii?Q?fTJRCLgz5cYgVcu/utGjlSh/KUDswC1gPh4Iau5jhuCaJ7/ASB9/MBHKn7E5?=
- =?us-ascii?Q?/zcfxcMnCYW0FD41kjFv3CzldT/WXuOx0dJSyPtoGSgiLf7+gETZZ51uJLgY?=
- =?us-ascii?Q?kMvLOyZQUl+M8I4To5FDBOttqqxjtgnYqICSLcczw5iiwH8DqGcVJzR5O3MY?=
- =?us-ascii?Q?XlGVAt2jbQfkZcq6uRH/L/feaBdM+UYSDt0fSmND3awxG16s9/bk2QsgexQG?=
- =?us-ascii?Q?MdpOaFeUIwcbPUYvjigfje/iFfcvmDg3Hn3r7KMcmg84LNA57jXy1wLJMSOx?=
- =?us-ascii?Q?yOUegp+U0P5q9+jKvgUfoi5sU/c0pZY7JyuonF6IAJoConjlMjlGdgFU4CdQ?=
- =?us-ascii?Q?F8N+NqzPWyrjZLmmGXgksZBP30hLKxW/QitCXaPdHmNEzBeVOqubEUXckCuM?=
- =?us-ascii?Q?yj7ErFKmp0PK31a9qN1BAMuGt5ncQfoUGx/7qPch2oJ4/bCUmRfAVooD88fv?=
- =?us-ascii?Q?WwjipmQ4NGCefd+CU6k6y7ut/Q4Aj2LjEUI5EzsYaFNol3LRN7UEQYBrOwpH?=
- =?us-ascii?Q?Ty5t7Ku0UAiLZO2ChRbAziOEwghJ3VRMETiSCi6kNhbGSUprTlNlEH04CUcE?=
- =?us-ascii?Q?Vw4Q9eqItAaF7W8Hi+XkGbsPheKcTUTRskRU6gF3R3LSH130G8fw5ncyjTry?=
- =?us-ascii?Q?4Un0Qj7rXHXngjuc/SCjWJo+PzII/faXaSUXkUv8WNWNlVR2sBw7YBVUh19C?=
- =?us-ascii?Q?klkuB7NMffh7pho3EPJUmQYDbrHf2Vs5F3lvOBQQknIL7qifKcCOHuNhwLwi?=
- =?us-ascii?Q?Ayp6rxduKaSyvU7AIQyQVmakKk+LnsQSfdgGx0/nfARTRCrnU7e0XTDZX5eo?=
- =?us-ascii?Q?QDOy1JccNACqXU1V2ivFfkaNJfV41VR72w815TBknOsnyco60dvr9jP5LsRq?=
- =?us-ascii?Q?ux/rIPz8Ql/GY4YX2kSG5TbxNVSP2yqSGVqHXku02C7IvYX7pdC5UZK8g3kX?=
- =?us-ascii?Q?t0jvInI66iTBX+igoAOw28KbidRFQwESSpadIXbFg8JHZzZwNYmjkMhik7Y?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1FDD28134F;
+	Tue, 22 Jul 2025 17:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753206332; cv=none; b=bHZzDsliUU2lVXdBzQJAo+dMm6pAczFt5tCKO3QUJNAyy20J4aRf6frE5vdzUeh2aWG7C7vqhgc606vaExT6zqMpSJie3Hg+G7I1L5SIvNutodbzbocbtn7eS1zvX5w3fPcHb/owqpcvJLfJAMzx12BV7qp7zoQGzPZ62PCa/0s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753206332; c=relaxed/simple;
+	bh=rOgq3i3j5TiypNmfGfxrmV389ym7bTxBHNRGTJKz+5c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NYsIkkmLKRgjIEuCjiihtT1T3XGgLX76axaEr3NRS0+E++WML/9TfFAH9GLvuKmmUhs6jtb6laheJ5JHZaBZnP7QvZfbkFYXP9PSQZZ+rTt6MnbOnE5mHDnAbj8TCRdF3AJQDjvKhqnPsjhJ06h8PWSwIPLG7qy2A6apUrHnNw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B/KdZ7qL; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-32f1aaf0d60so58643251fa.1;
+        Tue, 22 Jul 2025 10:45:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753206328; x=1753811128; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XjFuwE8taiWiJN5pZzHXNakG5MTT87qFINxfeX0KwoI=;
+        b=B/KdZ7qLjbNXbQq3UmyUq8IBVWC9bvAQEZVfCcF3AZiJWc4Ni/MxWSzHIFI6S4BBiG
+         SalIO+I1EIEYEyh/BJqTnen1YpQU0KgsUWusruI/bgvo0Kwu2QlwvUBLCcAxjX3yILJc
+         ADD5vZvtGoJ2XJnTrdmKB2uUV2zqpUpOWb6/21rbB5VKxk9KfbqbyXNGcA/8WG2l2oyD
+         WTDGEzO/xrJt6hVoTJu5gd0BxMe0qAje0CwQ2F7Fl82AHxltOhW5GS4QZpZalZWSiS1Y
+         sf5oD8kKYKExcxy/nwWdVmNyy5U7IpAyAaTV4UoFsCxZwzMFyjs8QoL8SfkQeoeT4m8j
+         x3pQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753206328; x=1753811128;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XjFuwE8taiWiJN5pZzHXNakG5MTT87qFINxfeX0KwoI=;
+        b=JnQcPSmKe0bgWFleKXaOhvV9QV4GRkKZB7+bsWlNtAGWINoF8rFue8BPk484Y1HB4U
+         sjxurSoV0XLveCvYdBuy5IFstqqWX+Mmwncp+7iUEaK3926UQZN494Ve8feJRFaBN4BP
+         FveIivlKZR7UH3ma9KX2ONmL7ynrxbtt4AvWkjVwyORD3yYtFy2dqUpm0j0LGmbHcwwx
+         eUnrP1pl/vQVTPM6uEdRdiwJGN6CUXkIBWZsxWeKB7UFqbAL4X8996Olocxn0OGJcndf
+         T8LZ2LOaF+WGvUzCTrDGZXDN0FkDwgMyonxv3fK4mxVqUf6XtJDXqKUjfpUVIOUScRyw
+         weTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUDy4gkryi1moyFspQtSUJWK/DQTx10tNONa6Ene1alJ6/7bd5TmqMI//ZUBbv/6cO857ssIQl8aIWkdJ2C@vger.kernel.org, AJvYcCWsguIWIYPAbVcE9CwpOyH6wldav5BWBASdw/dAK5d6s11XabvBbbEUwyGXVZNs62jQ72DKuthV@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIfcbtV9sBkjfL5A3wvHG7MFt4jIcfzptMFxp/rmX90wmePeqW
+	rT990I92i8OTKm5kdsTKcdzyElhxIaUZtcvYRzNOkDL2ZAEBxEZAHYiWg1NeYFOYNwD376F+vz1
+	+SYYAw/Sb+LbUj/COaNkutw0LvOxjtzE=
+X-Gm-Gg: ASbGncujh6eNQt8hzlqpW9U+6DIWil7UdYlmRkfqzlapDuWXaq0GEbOnO2FoIglzvTa
+	RICgxswZUZrasXMOcHCCzblF6HL26ST6Fut+z6Skmh8CXY20NEkWyZ/UtmYHoBk6TY6qMm0JwRL
+	TPN2YoSUuTgcJe6Q2dAaSSLczDcmFi8omwzCrBa9PMc0nb5sqNhYs/o7KvfQTGmccixZQBUHjUy
+	jsxvpM=
+X-Google-Smtp-Source: AGHT+IFDF2mlLYaYBZGWLln98c4PCkofuMMIHb20qfTy6ayrJ+cpDu7CIoPj4/AIk3dXq3Z3l24UI3QC+X31rLhOYGA=
+X-Received: by 2002:a05:651c:211b:b0:32f:1f1b:1e68 with SMTP id
+ 38308e7fff4ca-3309a4fa50bmr65974791fa.18.1753206327200; Tue, 22 Jul 2025
+ 10:45:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0cdd01a3-8b62-4e14-de04-08ddc9476fb9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jul 2025 17:44:41.0217
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR02MB9201
+References: <20250716202006.3640584-1-youngjun.park@lge.com> <20250716202006.3640584-5-youngjun.park@lge.com>
+In-Reply-To: <20250716202006.3640584-5-youngjun.park@lge.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Wed, 23 Jul 2025 01:44:49 +0800
+X-Gm-Features: Ac12FXzJvzXCImBzHeVF2F_uGI5AlIAZiwACCt3ZAEB8qvt4tn9o8yZaQ-naP_E
+Message-ID: <CAMgjq7COLbfGwd4CYxNBaLTi4UaPDkKQzkLhsV-caoA-xq1V-g@mail.gmail.com>
+Subject: Re: [PATCH 4/4] mm: swap: Per-cgroup per-CPU swap device cache with
+ shared clusters
+To: Youngjun Park <youngjun.park@lge.com>
+Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org, 
+	roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev, 
+	shikemeng@huaweicloud.com, nphamcs@gmail.com, bhe@redhat.com, 
+	baohua@kernel.org, chrisl@kernel.org, cgroups@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, gunho.lee@lge.com, 
+	iamjoonsoo.kim@lge.com, taejoon.song@lge.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Roman Kisel <romank@linux.microsoft.com> Sent: Monday, July 14, 2025 =
-3:16 PM
->=20
-> The confidential VMBus requires support for the both hypervisor
-> facing SynIC and the paravisor one.
->=20
-> Rename the functions that enable and disable SynIC with the
-> hypervisor. No functional changes.
->=20
-> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
-
-Reviewed-by: Michael Kelley <mhklinux@outlook.com>
-
+On Thu, Jul 17, 2025 at 4:21=E2=80=AFAM Youngjun Park <youngjun.park@lge.co=
+m> wrote:
+>
+> This patch introduces a new swap allocation mechanism that supports
+> per-cgroup per-CPU swap device caches, combined with per-device per-CPU
+> cluster management.
+>
+> The existing global swap allocator uses a per-CPU device cache and
+> cluster, shared by all cgroups. Under this model, per-cgroup swap
+> priorities cannot be effectively honored on the fast path, as allocations
+> do not distinguish between cgroups.
+>
+> To address this, we introduce per-cgroup per-CPU swap device caches.
+> This allows fast-path swap allocations to respect each cgroup=E2=80=99s
+> individual priority settings.
+>
+> To avoid an explosion of cluster structures proportional to the number
+> of cgroups, clusters remain per-device and are shared across cgroups.
+> This strikes a balance between performance and memory overhead.
+>
+> Suggested-by: Nhat Pham <nphamcs@gmail.com>
+> Suggested-by: Kairui Song <kasong@tencent.com>
+> Signed-off-by: Youngjun Park <youngjun.park@lge.com>
 > ---
->  drivers/hv/channel_mgmt.c |  2 +-
->  drivers/hv/hv.c           | 11 ++++++-----
->  drivers/hv/hyperv_vmbus.h |  4 ++--
->  drivers/hv/vmbus_drv.c    |  6 +++---
->  4 files changed, 12 insertions(+), 11 deletions(-)
->=20
-> diff --git a/drivers/hv/channel_mgmt.c b/drivers/hv/channel_mgmt.c
-> index 6f87220e2ca3..ca2fe10c110a 100644
-> --- a/drivers/hv/channel_mgmt.c
-> +++ b/drivers/hv/channel_mgmt.c
-> @@ -845,7 +845,7 @@ static void vmbus_wait_for_unload(void)
->  			/*
->  			 * In a CoCo VM the hyp_synic_message_page is not allocated
->  			 * in hv_synic_alloc(). Instead it is set/cleared in
-> -			 * hv_synic_enable_regs() and hv_synic_disable_regs()
-> +			 * hv_hyp_synic_enable_regs() and
-> hv_hyp_synic_disable_regs()
->  			 * such that it is set only when the CPU is online. If
->  			 * not all present CPUs are online, the message page
->  			 * might be NULL, so skip such CPUs.
-> diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
-> index a8669843c56e..94a81bb3c8c7 100644
-> --- a/drivers/hv/hv.c
-> +++ b/drivers/hv/hv.c
-> @@ -266,9 +266,10 @@ void hv_synic_free(void)
->  }
->=20
+>  include/linux/swap.h      |   7 ++
+>  mm/swap_cgroup_priority.c | 156 +++++++++++++++++++++++++++++++++++++-
+>  mm/swap_cgroup_priority.h |  39 ++++++++++
+>  mm/swapfile.c             |  47 +++++++-----
+>  4 files changed, 228 insertions(+), 21 deletions(-)
+>
+> diff --git a/include/linux/swap.h b/include/linux/swap.h
+> index bfddbec2ee28..ab15f4c103a1 100644
+> --- a/include/linux/swap.h
+> +++ b/include/linux/swap.h
+> @@ -283,6 +283,12 @@ enum swap_cluster_flags {
+>  #define SWAP_NR_ORDERS         1
+>  #endif
+>
+> +#ifdef CONFIG_SWAP_CGROUP_PRIORITY
+> +struct percpu_cluster {
+> +       unsigned int next[SWAP_NR_ORDERS]; /* Likely next allocation offs=
+et */
+> +};
+> +#endif
+> +
 >  /*
-> - * hv_synic_enable_regs - Initialize the Synthetic Interrupt Controller.
-> + * hv_hyp_synic_enable_regs - Initialize the Synthetic Interrupt Control=
-ler
-> + * with the hypervisor.
+>   * We keep using same cluster for rotational device so IO will be sequen=
+tial.
+>   * The purpose is to optimize SWAP throughput on these device.
+> @@ -341,6 +347,7 @@ struct swap_info_struct {
+>         struct list_head discard_clusters; /* discard clusters list */
+>  #ifdef CONFIG_SWAP_CGROUP_PRIORITY
+>         u64 id;
+> +       struct percpu_cluster __percpu *percpu_cluster; /* per cpu's swap=
+ location */
+>  #endif
+>         struct plist_node avail_lists[]; /*
+>                                            * entries in swap_avail_heads,=
+ one
+> diff --git a/mm/swap_cgroup_priority.c b/mm/swap_cgroup_priority.c
+> index 84e876b77f01..f960c3dcab48 100644
+> --- a/mm/swap_cgroup_priority.c
+> +++ b/mm/swap_cgroup_priority.c
+> @@ -21,6 +21,17 @@
+>  #include "swap_cgroup_priority.h"
+>  #include "memcontrol-v1.h"
+>
+> +/*
+> + * We do maintain a cache on a per-cgroup-per-swap-device basis.
+> + * However, the underlying cluster cache itself is managed
+> + * per-swap-device. This design prevents each individual
+> + * swap_cgroup_priority entry from caching its own cluster data,
+> + * even as the number of such entries increases.
+> + */
+> +struct percpu_swap_device {
+> +       struct swap_info_struct *si[SWAP_NR_ORDERS];
+> +};
+> +
+>  static DEFINE_MUTEX(swap_cgroup_priority_inherit_lck);
+>  static LIST_HEAD(swap_cgroup_priority_list);
+>
+> @@ -49,6 +60,7 @@ static LIST_HEAD(swap_cgroup_priority_list);
+>   * least_priority - Current lowest priority.
+>   * distance - Priority differences from global swap priority.
+>   * default_prio - Default priority for this cgroup.
+> + * pcpu_swapdev - Per-CPU swap device.
+>   * plist - Priority list head.
 >   */
-> -void hv_synic_enable_regs(unsigned int cpu)
-> +void hv_hyp_synic_enable_regs(unsigned int cpu)
->  {
->  	struct hv_per_cpu_context *hv_cpu =3D
->  		per_cpu_ptr(hv_context.cpu_context, cpu);
-> @@ -334,14 +335,14 @@ void hv_synic_enable_regs(unsigned int cpu)
->=20
->  int hv_synic_init(unsigned int cpu)
->  {
-> -	hv_synic_enable_regs(cpu);
-> +	hv_hyp_synic_enable_regs(cpu);
->=20
->  	hv_stimer_legacy_init(cpu, VMBUS_MESSAGE_SINT);
->=20
->  	return 0;
->  }
->=20
-> -void hv_synic_disable_regs(unsigned int cpu)
-> +void hv_hyp_synic_disable_regs(unsigned int cpu)
->  {
->  	struct hv_per_cpu_context *hv_cpu =3D
->  		per_cpu_ptr(hv_context.cpu_context, cpu);
-> @@ -528,7 +529,7 @@ int hv_synic_cleanup(unsigned int cpu)
->  always_cleanup:
->  	hv_stimer_legacy_cleanup(cpu);
->=20
-> -	hv_synic_disable_regs(cpu);
-> +	hv_hyp_synic_disable_regs(cpu);
->=20
->  	return ret;
->  }
-> diff --git a/drivers/hv/hyperv_vmbus.h b/drivers/hv/hyperv_vmbus.h
-> index 16b5cf1bca19..2873703d08a9 100644
-> --- a/drivers/hv/hyperv_vmbus.h
-> +++ b/drivers/hv/hyperv_vmbus.h
-> @@ -189,10 +189,10 @@ extern int hv_synic_alloc(void);
->=20
->  extern void hv_synic_free(void);
->=20
-> -extern void hv_synic_enable_regs(unsigned int cpu);
-> +extern void hv_hyp_synic_enable_regs(unsigned int cpu);
->  extern int hv_synic_init(unsigned int cpu);
->=20
-> -extern void hv_synic_disable_regs(unsigned int cpu);
-> +extern void hv_hyp_synic_disable_regs(unsigned int cpu);
->  extern int hv_synic_cleanup(unsigned int cpu);
->=20
->  /* Interface */
-> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-> index 72940a64b0b6..13aca5abc7d8 100644
-> --- a/drivers/hv/vmbus_drv.c
-> +++ b/drivers/hv/vmbus_drv.c
-> @@ -2809,7 +2809,7 @@ static void hv_crash_handler(struct pt_regs *regs)
->  	 */
->  	cpu =3D smp_processor_id();
->  	hv_stimer_cleanup(cpu);
-> -	hv_synic_disable_regs(cpu);
-> +	hv_hyp_synic_disable_regs(cpu);
+>  struct swap_cgroup_priority {
+> @@ -64,6 +76,7 @@ struct swap_cgroup_priority {
+>         int least_priority;
+>         s8 distance;
+>         int default_prio;
+> +       struct percpu_swap_device __percpu *pcpu_swapdev;
+>         struct plist_head plist[];
 >  };
->=20
->  static int hv_synic_suspend(void)
-> @@ -2834,14 +2834,14 @@ static int hv_synic_suspend(void)
->  	 * interrupts-disabled context.
->  	 */
->=20
-> -	hv_synic_disable_regs(0);
-> +	hv_hyp_synic_disable_regs(0);
->=20
->  	return 0;
+>
+> @@ -132,6 +145,21 @@ static struct swap_cgroup_priority *get_effective_sw=
+ap_cgroup_priority(
+>         return swap_priority->effective;
 >  }
->=20
->  static void hv_synic_resume(void)
+>
+> +static struct swap_cgroup_priority *get_effective_swap_cgroup_priority_r=
+cu(
+> +       struct mem_cgroup *memcg)
+> +{
+> +       struct swap_cgroup_priority *swap_priority;
+> +
+> +       if (!memcg)
+> +               return NULL;
+> +
+> +       swap_priority =3D rcu_dereference(memcg->swap_priority);
+> +       if (!swap_priority)
+> +               return NULL;
+> +
+> +       return rcu_dereference(swap_priority->effective);
+> +}
+> +
+>  static bool validate_effective_swap_cgroup_priority(
+>         struct mem_cgroup *memcg,
+>         struct swap_cgroup_priority **swap_priority)
+> @@ -172,6 +200,9 @@ static void free_swap_cgroup_priority_pnode(
+>  static void free_swap_cgroup_priority(
+>         struct swap_cgroup_priority *swap_priority)
 >  {
-> -	hv_synic_enable_regs(0);
-> +	hv_hyp_synic_enable_regs(0);
->=20
->  	/*
->  	 * Note: we don't need to call hv_stimer_init(0), because the timer
-> --
-> 2.43.0
+> +       if (swap_priority->pcpu_swapdev)
+> +               free_percpu(swap_priority->pcpu_swapdev);
+> +
+>         for (int i =3D 0; i < MAX_SWAPFILES; i++)
+>                 free_swap_cgroup_priority_pnode(swap_priority->pnode[i]);
+>
+> @@ -187,6 +218,12 @@ static struct swap_cgroup_priority *alloc_swap_cgrou=
+p_priority(void)
+>         if (!swap_priority)
+>                 return NULL;
+>
+> +       swap_priority->pcpu_swapdev =3D alloc_percpu(struct percpu_swap_d=
+evice);
+> +       if (!swap_priority->pcpu_swapdev) {
+> +               kvfree(swap_priority);
+> +               return NULL;
+> +       }
+> +
+>         /*
+>          * Pre-allocates pnode array up to nr_swapfiles at init.
+>          * Individual pnodes are assigned on swapon, but not freed
+> @@ -326,10 +363,34 @@ bool swap_alloc_cgroup_priority(struct mem_cgroup *=
+memcg,
+>         unsigned long offset;
+>         int node;
+>
+> -       /*
+> -        * TODO: Per-cpu swap cluster cache can't be used directly
+> -        * as cgroup-specific priorities may select different devices.
+> -        */
+> +       rcu_read_lock();
+> +       if (!(swap_priority =3D get_effective_swap_cgroup_priority_rcu(me=
+mcg))) {
+> +               rcu_read_unlock();
+> +               return false;
+> +       }
+> +
+> +       /* Fast path */
+> +       si =3D this_cpu_read(swap_priority->pcpu_swapdev->si[order]);
+> +       if (si && get_swap_device_info(si)) {
+> +               offset =3D cluster_alloc_swap_entry(si, order, SWAP_HAS_C=
+ACHE);
+> +               if (offset) {
+> +                       *entry =3D swp_entry(si->type, offset);
+> +                       /*
+> +                        * Protected by 'percpu_swap_cluster' local_lock;
+> +                        * CPU migration is disabled during this operatio=
+n.
+> +                        */
+> +                       this_cpu_write(swap_priority->pcpu_swapdev->si[or=
+der],
+> +                                      si);
+> +                       put_swap_device(si);
+> +                       rcu_read_unlock();
+> +
+> +                       return true;
+> +               }
+> +               put_swap_device(si);
+> +       }
+> +       rcu_read_unlock();
+> +
+> +       /* Slow path */
 
+Hi Youngjun
+
+One thing I noticed after a quick glance is that this
+swap_alloc_cgroup_priority is bloated and it is doing similar things
+as folio_alloc_swap.
+
+I imagined that we can just have a struct (eg. let's call it struct
+swap_percpu_info / pi) as a closure of what the allocator needs, it
+contains the plist and fast path device.
+
+With slight changes to folio_alloc_swap, it can respect either the
+cgroup's pi or global pi. (might be a horrible name though, feel free
+to change it)
+
+For example first thing swap_alloc_fast do will be:
+
+`struct swap_percpu_info *pi =3D folio_swap_percpu_info(folio);`
+
+folio_swap_percpu_info returns the cgroup's swap_percpu_info or the global =
+one.
+
+swap_alloc_slow can do a similar thing, it then can just use pi->plist
+and pi->pcpu_swapdev, (cluster info will be in si) ignoring all the
+cgroup differences.
+
+Also it is better to check your patches with ./scripts/checkpatch.pl,
+I'm seeing some styling issues.
+
+I'll check your other patches too later this week, thanks for the
+update on this idea.
+
+>         spin_lock(&swap_avail_lock);
+>         node =3D numa_node_id();
+>
+> @@ -350,6 +411,14 @@ bool swap_alloc_cgroup_priority(struct mem_cgroup *m=
+emcg,
+>                 if (get_swap_device_info(si)) {
+>                         offset =3D cluster_alloc_swap_entry(si, order,
+>                                                           SWAP_HAS_CACHE)=
+;
+> +                       /*
+> +                        * Protected by 'percpu_swap_cluster' local_lock;
+> +                        * CPU migration is disabled during this operatio=
+n.
+> +                        */
+> +                       if (memcg->swap_priority =3D=3D swap_priority)
+> +                               this_cpu_write(
+> +                                       swap_priority->pcpu_swapdev->si[o=
+rder],
+> +                                       si);
+>                         put_swap_device(si);
+>                         if (offset) {
+>                                 *entry =3D swp_entry(si->type, offset);
+> @@ -687,6 +756,21 @@ static int __apply_swap_cgroup_priority(
+>         return 0;
+>  }
+>
+> +static int init_swap_cgroup_priority_pcpu_swapdev_cache(
+> +       struct swap_cgroup_priority *swap_priority)
+> +{
+> +       int cpu;
+> +
+> +       for_each_possible_cpu(cpu) {
+> +               struct percpu_swap_device *pcp_swap_dev =3D
+> +                       per_cpu_ptr(swap_priority->pcpu_swapdev, cpu);
+> +               for (int i =3D 0; i < SWAP_NR_ORDERS; i++)
+> +                       pcp_swap_dev->si[i] =3D NULL;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+>  /*
+>   * If this is the top-level swap_cgroup_priority, propagation is needed.
+>   * We traverse the 'mem_cgroup_tree' using 'for_each_mem_cgroup_tree'.
+> @@ -795,6 +879,8 @@ int apply_swap_cgroup_priority(struct mem_cgroup *mem=
+cg, u64 id, int prio)
+>         for_each_node(nid)
+>                 plist_head_init(&swap_priority->plist[nid]);
+>
+> +       init_swap_cgroup_priority_pcpu_swapdev_cache(swap_priority);
+> +
+>  prio_set:
+>         spin_lock(&swap_lock);
+>         spin_lock(&swap_avail_lock);
+> @@ -843,6 +929,23 @@ int apply_swap_cgroup_priority(struct mem_cgroup *me=
+mcg, u64 id, int prio)
+>
+>         spin_unlock(&swap_avail_lock);
+>         spin_unlock(&swap_lock);
+> +       /*
+> +        * XXX: We cannot fully synchronize with swap_alloc_cgroup_priori=
+ty
+> +        * when updating the next si.
+> +        * Still, we ensure that flush operations inside swap_priority
+> +        * are performed as reliably as possible.
+> +        */
+> +       if (id !=3D DEFAULT_ID &&
+> +           swap_priority =3D=3D swap_priority->effective && !new) {
+> +               int cpu;
+> +               struct swap_info_struct **pcp_si;
+> +               for_each_possible_cpu(cpu) {
+> +                       pcp_si =3D per_cpu_ptr(
+> +                               swap_priority->pcpu_swapdev->si, cpu);
+> +                       for (int i =3D 0; i < SWAP_NR_ORDERS; i++)
+> +                               pcp_si[i] =3D NULL;
+> +               }
+> +       }
+>         mutex_unlock(&swap_cgroup_priority_inherit_lck);
+>         return 0;
+>
+> @@ -886,3 +989,48 @@ void delete_swap_cgroup_priority(struct mem_cgroup *=
+memcg)
+>         spin_unlock(&swap_avail_lock);
+>         mutex_unlock(&swap_cgroup_priority_inherit_lck);
+>  }
+> +
+> +void flush_swap_cgroup_priority_percpu_swapdev(struct swap_info_struct *=
+si)
+> +{
+> +       int cpu, i;
+> +       struct swap_info_struct **pcp_si;
+> +       struct swap_cgroup_priority *swap_priority;
+> +
+> +       rcu_read_lock();
+> +       list_for_each_entry_rcu(swap_priority,
+> +                               &swap_cgroup_priority_list, link) {
+> +               for_each_possible_cpu(cpu) {
+> +                       pcp_si =3D per_cpu_ptr(
+> +                                       swap_priority->pcpu_swapdev->si, =
+cpu);
+> +
+> +                       for (i =3D 0; i < SWAP_NR_ORDERS; i++)
+> +                               cmpxchg(&pcp_si[i], si, NULL);
+> +               }
+> +       }
+> +       rcu_read_unlock();
+> +}
+> +
+> +bool alloc_percpu_swap_cluster(struct swap_info_struct *si)
+> +{
+> +       si->percpu_cluster =3D alloc_percpu(struct percpu_cluster);
+> +       if (!si->percpu_cluster)
+> +               return false;
+> +
+> +       int cpu;
+> +       int i;
+> +       for_each_possible_cpu(cpu) {
+> +               struct percpu_cluster *cluster;
+> +
+> +               cluster =3D per_cpu_ptr(si->percpu_cluster, cpu);
+> +               for (i =3D 0; i < SWAP_NR_ORDERS; i++)
+> +                       cluster->next[i] =3D SWAP_ENTRY_INVALID;
+> +       }
+> +
+> +       return true;
+> +}
+> +
+> +void free_percpu_swap_cluster(struct swap_info_struct *si)
+> +{
+> +       free_percpu(si->percpu_cluster);
+> +       si->percpu_cluster =3D NULL;
+> +}
+> diff --git a/mm/swap_cgroup_priority.h b/mm/swap_cgroup_priority.h
+> index 5d16b63d12e0..815822ebd0d1 100644
+> --- a/mm/swap_cgroup_priority.h
+> +++ b/mm/swap_cgroup_priority.h
+> @@ -47,6 +47,22 @@ struct swap_cgroup_priority *inherit_swap_cgroup_prior=
+ity(
+>  bool swap_alloc_cgroup_priority(struct mem_cgroup *memcg, swp_entry_t *e=
+ntry,
+>                                 int order);
+>  void delete_swap_cgroup_priority(struct mem_cgroup *memcg);
+> +void flush_swap_cgroup_priority_percpu_swapdev(struct swap_info_struct *=
+si);
+> +
+> +bool alloc_percpu_swap_cluster(struct swap_info_struct *si);
+> +void free_percpu_swap_cluster(struct swap_info_struct *si);
+> +static inline void write_percpu_swap_cluster_next(struct swap_info_struc=
+t *si,
+> +                                                 int order,
+> +                                                 unsigned int next)
+> +{
+> +       this_cpu_write(si->percpu_cluster->next[order], next);
+> +}
+> +
+> +static inline unsigned int read_percpu_swap_cluster_next(
+> +       struct swap_info_struct *si, int order)
+> +{
+> +        return __this_cpu_read(si->percpu_cluster->next[order]);
+> +}
+>  #else
+>  int swap_node(struct swap_info_struct *si);
+>  unsigned long cluster_alloc_swap_entry(struct swap_info_struct *si, int =
+order,
+> @@ -85,5 +101,28 @@ static inline bool swap_alloc_cgroup_priority(struct =
+mem_cgroup *memcg,
+>  static inline void delete_swap_cgroup_priority(struct mem_cgroup *memcg)
+>  {
+>  }
+> +static inline void flush_swap_cgroup_priority_percpu_swapdev(
+> +       struct swap_info_struct *si)
+> +{
+> +}
+> +static inline bool alloc_percpu_swap_cluster(struct swap_info_struct *si=
+)
+> +{
+> +       return true;
+> +}
+> +static inline void free_percpu_swap_cluster(struct swap_info_struct *si)
+> +{
+> +}
+> +static inline void write_percpu_swap_cluster_next(struct swap_info_struc=
+t *si,
+> +                                                 int order,
+> +                                                 unsigned int next)
+> +{
+> +       return;
+> +}
+> +
+> +static inline unsigned int read_percpu_swap_cluster_next(
+> +       struct swap_info_struct *si, int order)
+> +{
+> +       return SWAP_ENTRY_INVALID;
+> +}
+>  #endif
+>  #endif
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index bfd0532ad250..6a5ac9962e9f 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -817,12 +817,15 @@ static unsigned int alloc_swap_scan_cluster(struct =
+swap_info_struct *si,
+>  out:
+>         relocate_cluster(si, ci);
+>         unlock_cluster(ci);
+> +
+>         if (si->flags & SWP_SOLIDSTATE) {
+>                 this_cpu_write(percpu_swap_cluster.offset[order], next);
+
+Why not just remove the `percpu_swap_cluster.offset` and just share
+si->percpu_cluster among all cgroups (including root cgroup)?
+
+Otherwise, eg. if rootcg's pcpu cluster and one cgroup's pcpu
+cluster are pointing to one same cluster, they might be in
+contention on allocation of different order, or even in the same order
+the performance might not be good as multiple CPUs will race
+with each other.
+
+It will be easier to implement too.
+
+
+
+
+>                 this_cpu_write(percpu_swap_cluster.si[order], si);
+> +               write_percpu_swap_cluster_next(si, order, next);
+>         } else {
+>                 si->global_cluster->next[order] =3D next;
+>         }
+> +
+>         return found;
+>  }
+>
+> @@ -892,26 +895,29 @@ unsigned long cluster_alloc_swap_entry(struct swap_=
+info_struct *si, int order,
+>         if (order && !(si->flags & SWP_BLKDEV))
+>                 return 0;
+>
+> -       if (!(si->flags & SWP_SOLIDSTATE)) {
+> +       if (si->flags & SWP_SOLIDSTATE) {
+> +               offset =3D read_percpu_swap_cluster_next(si, order);
+> +       } else {
+>                 /* Serialize HDD SWAP allocation for each device. */
+>                 spin_lock(&si->global_cluster_lock);
+>                 offset =3D si->global_cluster->next[order];
+> -               if (offset =3D=3D SWAP_ENTRY_INVALID)
+> -                       goto new_cluster;
+> +       }
+>
+> -               ci =3D lock_cluster(si, offset);
+> -               /* Cluster could have been used by another order */
+> -               if (cluster_is_usable(ci, order)) {
+> -                       if (cluster_is_empty(ci))
+> -                               offset =3D cluster_offset(si, ci);
+> -                       found =3D alloc_swap_scan_cluster(si, ci, offset,
+> -                                                       order, usage);
+> -               } else {
+> -                       unlock_cluster(ci);
+> -               }
+> -               if (found)
+> -                       goto done;
+> +       if (offset =3D=3D SWAP_ENTRY_INVALID)
+> +               goto new_cluster;
+> +
+> +       ci =3D lock_cluster(si, offset);
+> +       /* Cluster could have been used by another order */
+> +       if (cluster_is_usable(ci, order)) {
+> +               if (cluster_is_empty(ci))
+> +                       offset =3D cluster_offset(si, ci);
+> +               found =3D alloc_swap_scan_cluster(si, ci, offset,
+> +                                               order, usage);
+> +       } else {
+> +               unlock_cluster(ci);
+>         }
+> +       if (found)
+> +               goto done;
+>
+>  new_cluster:
+>         ci =3D isolate_lock_cluster(si, &si->free_clusters);
+> @@ -991,6 +997,7 @@ unsigned long cluster_alloc_swap_entry(struct swap_in=
+fo_struct *si, int order,
+>  done:
+>         if (!(si->flags & SWP_SOLIDSTATE))
+>                 spin_unlock(&si->global_cluster_lock);
+> +
+>         return found;
+>  }
+>
+> @@ -2674,6 +2681,8 @@ static void flush_percpu_swap_cluster(struct swap_i=
+nfo_struct *si)
+>                 for (i =3D 0; i < SWAP_NR_ORDERS; i++)
+>                         cmpxchg(&pcp_si[i], si, NULL);
+>         }
+> +
+> +       flush_swap_cgroup_priority_percpu_swapdev(si);
+>  }
+>
+>
+> @@ -2802,6 +2811,7 @@ SYSCALL_DEFINE1(swapoff, const char __user *, speci=
+alfile)
+>         arch_swap_invalidate_area(p->type);
+>         zswap_swapoff(p->type);
+>         mutex_unlock(&swapon_mutex);
+> +       free_percpu_swap_cluster(p);
+>         kfree(p->global_cluster);
+>         p->global_cluster =3D NULL;
+>         vfree(swap_map);
+> @@ -2900,7 +2910,6 @@ static void swap_stop(struct seq_file *swap, void *=
+v)
+>         mutex_unlock(&swapon_mutex);
+>  }
+>
+> -
+>  #ifndef CONFIG_SWAP_CGROUP_PRIORITY
+>  static int swap_show(struct seq_file *swap, void *v)
+>  {
+> @@ -3239,7 +3248,10 @@ static struct swap_cluster_info *setup_clusters(st=
+ruct swap_info_struct *si,
+>         for (i =3D 0; i < nr_clusters; i++)
+>                 spin_lock_init(&cluster_info[i].lock);
+>
+> -       if (!(si->flags & SWP_SOLIDSTATE)) {
+> +       if (si->flags & SWP_SOLIDSTATE) {
+> +               if (!alloc_percpu_swap_cluster(si))
+> +                       goto err_free;
+> +       } else {
+>                 si->global_cluster =3D kmalloc(sizeof(*si->global_cluster=
+),
+>                                      GFP_KERNEL);
+>                 if (!si->global_cluster)
+> @@ -3532,6 +3544,7 @@ SYSCALL_DEFINE2(swapon, const char __user *, specia=
+lfile, int, swap_flags)
+>  bad_swap_unlock_inode:
+>         inode_unlock(inode);
+>  bad_swap:
+> +       free_percpu_swap_cluster(si);
+>         kfree(si->global_cluster);
+>         si->global_cluster =3D NULL;
+>         inode =3D NULL;
+> --
+> 2.34.1
+>
+>
 
