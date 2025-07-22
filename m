@@ -1,141 +1,215 @@
-Return-Path: <linux-kernel+bounces-741584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18A5EB0E613
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 00:06:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B3DEB0E771
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 02:02:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5272617F3BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 22:06:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 894004E55C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 00:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD22287255;
-	Tue, 22 Jul 2025 22:06:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0848F49;
+	Wed, 23 Jul 2025 00:02:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="JnN3kkXK"
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IAj2DzIM"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6D544C94
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 22:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF5B1FDA;
+	Wed, 23 Jul 2025 00:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753221964; cv=none; b=tZ1hI4mV15DrMtGdLY7rs+hTN9sWMcwFNM947/w5avzhzRC8ze7wASu+a/sJZZrWA4BR6fv0LPI1SF2aGzRrfSQHhLrrl9n/ILUybafhI9RXk/tJ3nGYjrMkZW4b4XsxvgwQ2JO1THQzZ1M6uIFwF56EuprV55qmCIc/p/I/F3k=
+	t=1753228931; cv=none; b=l9FNM/R1lurZeUVX97yXPmoP2pemdK3f/Lm3cukS2aS7n3L0eJKPeb60mV2c6aR2NBCo3unZXeO1Sg1qrqmIMYd6CtT+Btww4AMJEVzppADcAlN6JalgH718SuYnXN0ebeFwc9++fnITZjAMCMBUXN2GXqOFJcZM8V0nQpICnjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753221964; c=relaxed/simple;
-	bh=lpFJnljj6qw5DPDCllOk3KLfDdS3/fflg4syde/pRRw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=qW1In9FQIRV0p09QD9Nnzp9UwOxJDjgr2bjon+3XpoRfcVXZtO7gktzX5Zlop5TS6iLkHgmMPaxQrEoOsziECquMevABYGyFMVGDC/CCty7FDqCKOrzu86qlttUqvdRR+XGadfxdCVfzyzH75X9mEshcUjtloP18AwI0DviJDdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=JnN3kkXK; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-30174a93186so2961346fac.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 15:06:01 -0700 (PDT)
+	s=arc-20240116; t=1753228931; c=relaxed/simple;
+	bh=dewk3TAValYYQExAPJkqLo7eeu1mdvuRf3ddUbYlT50=;
+	h=From:To:Cc:Subject:Date:References:In-reply-to:Message-ID:
+	 MIME-Version:Content-Type; b=YmK/14Nl7fU5ab5jTt4e4HY+ooqXSRnx4BP9KXSMR+go/i0/YcbsImItJa0NMybuKrCM1YHJlOB67RO5wUGLIyDOUWr9R9SeyppsFf1eqWXbZhiULyb9hgItS8003BVav3g6HQzn+Dp8wBlShbZoZnZg3wMPO/qWRdYabO9MxK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IAj2DzIM; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-748d982e92cso4089496b3a.1;
+        Tue, 22 Jul 2025 17:02:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1753221961; x=1753826761; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UHWF2/V5NpEgDswj8L/zqvJZDHIBpGOIkvyGm+1bSdo=;
-        b=JnN3kkXK5wJik/0Dqf2HteE8s9BxXdkY5CI6uRQAotFF4mdwjs9H4EIAX6BI0R4DRl
-         nC6li6sTJbr2O3JhgIMkY9N3Wm/da38/ddbFpy1jDZDcXFsYUdBy+zgr8BH/JeEpaLQv
-         3FUWGQri0SL9dj1HA8dyvcNdQyXEVSAKJ5XJz0od4YD86UVrdViPf3A1UIbOgIB9CEQm
-         buGOr3XZKMJjy8/nIx7vrUk60oZeB3zZu68SSX3FgoggmeRhTOulgW9P9gPE8zHCetPo
-         VuyqeuxFlwpLg5Zo4zDTzsFuo9//sLck6i9Xh1Szzoo9aHKs4u2K94Iy5Lx3sQfj9waz
-         c5+Q==
+        d=gmail.com; s=20230601; t=1753228929; x=1753833729; darn=vger.kernel.org;
+        h=mime-version:message-id:in-reply-to:user-agent:references:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=afioNrw39xivAx0anOKx/PDNnLStyhXg1rvkkGxqeuY=;
+        b=IAj2DzIMXqzjWTLRYOTSEOCVkh1q4c/3h+3dkF0IaRLHtWFZAbzBLJcDHm9FoBMxRW
+         lX9F/tF5ewl6OixEhAeOHgQiQr+PKM0Bq1/EWpcuK6FjEIKxrbUxKGrkDWpcS9b4uz12
+         8L41N2BrgfHx69/7ae9qLZpa+o7sndemJDAJnUoxxQ0FNuEhan7pUaDt81V3iXmWjgz9
+         p4JC0zS172mNy/KJnc9hD1TvlRSHf37sPu2e3fH345LDeQpGgnmIM+DnQi+VwbptFxcB
+         4MupB26J+4Lq/xQz61gOJRXvFQ04UvGPZ7QkTpbTTp5r9IVIZC3dOWFyqVfAtMCTHHs6
+         DamQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753221961; x=1753826761;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UHWF2/V5NpEgDswj8L/zqvJZDHIBpGOIkvyGm+1bSdo=;
-        b=og/7/AZFPsjFkcck3Jln+OiVYJihOCNDtiLSfwXtHMvTUMpA6/zpaOAH3rNcc/KnmY
-         rvA328xQfVJ/Wxwg5SkdEJ/Px/cEnjFIAj6JIcl/N23wKt/ORHhNsOhvzOFslbI2aVO5
-         3MnuX60CV4JHaeQ6WGvd0RLEjXbjiKHR9KDsM1VWucZdhgTKR+TMck2f86fP6Cw5Sbev
-         3pvTITbY2t8J0nbfs+2fEghorkjSbgqjW246O5/jQMz/uf+zFBxRDeU4E/Pk49qsZAuM
-         awAJ+e4c0V83Fum5XDeKGTM+cGjeievXvUHuUzIgTGnlYQQ1+lx2XZOUZupRBKWP83Z/
-         WoQw==
-X-Forwarded-Encrypted: i=1; AJvYcCXdH8fVapeLdjC1/s3alWvki8y9qdQ09DjjNSdKZwtBPMBLZlDLjXA4ghJgMEMBUH8cVWz9YmhWSfYV5/0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTYmrgmkjGCts1ewlOnXBNha61P0A++4iD0iEaNMf6AxA6Gmim
-	Xa13clYR5uuIAH2dmJ59xBsrzYCuZCVqAdE/cmo/3PDPTiGgbjgmElvmgrJLrJ2pxvg=
-X-Gm-Gg: ASbGncsIj4ydkQ37VjnrAyvm+XVJvWAhw32K7eHyE4W+UohJuZnDxszYbYiuhEJx0QT
-	5ukXNTMOxw5UyT22TpkBhZWPio02prD3LbFg+g1Che86nN3xItcAqV41662R4QJrwG9ngTyWdVF
-	h/kkqcsjz2ZMLDFiqQcR6WtCsV7tvrOwvZBf2P12p48gd5U62oSGO7fZXHH9AtruOK4mAadjdBI
-	riCpdMo0cc5Kl8nUaKoEuNPc52qANr4IL9zn3fsvS0h2q/P2MeqQMugCwBk8j1anhaKm0AkIl4x
-	OsK+jqCR6W9kwGEyK3I30iZRa8oAW80K0d82KlajOLq9w8otWcgYbqYiEdi1vkqiDQKKVjd1UmU
-	OIWLVbH5NTbZxJSIFf8ZSBa8Fo6bwlFEuJeh1zw==
-X-Google-Smtp-Source: AGHT+IG8AZUaOOthsN+h4ZByvI4M5G8r0CxEn7gVrJrhlLHm1ZIS6+SECI89whk6IPjJs2cOzTYtUg==
-X-Received: by 2002:a05:6870:d24b:b0:2ff:a802:6885 with SMTP id 586e51a60fabf-306c6fb8174mr511708fac.11.1753221960919;
-        Tue, 22 Jul 2025 15:06:00 -0700 (PDT)
-Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:11dd:c0f5:968d:e96])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-615bcda2865sm2191120eaf.26.2025.07.22.15.05.59
+        d=1e100.net; s=20230601; t=1753228929; x=1753833729;
+        h=mime-version:message-id:in-reply-to:user-agent:references:date
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=afioNrw39xivAx0anOKx/PDNnLStyhXg1rvkkGxqeuY=;
+        b=c0nSV5MBMpH6zN6RxtS/t7bu3rqU/rV2lDx4KkJ/L4QQ53I2/60uIStL7zPs1DK90u
+         UPwwJrU3Mootf1+7FIaqVCkoC9sPrKNBhF4o40HVmac2zgUcHebmks5ByGdSiZro46HH
+         YsrZQ4TSgMljQIXKFd8EwgiEOCZfjQQgJ4eHGXdavx82dqoPLvuciIZ1OfZqFfCTqQGo
+         Y31tbsCgwbPrDTq2dFT4S+SmaiA9CIE/p4zYC6OxyP2aEokP6kXXrfelF9tyqjzLtNJo
+         fqaAUG7GMNIwhe38fZrF33RseezxPtEJpIelRMq1eWRcslLcXYXBm2ytQ0jb3LfhFnCy
+         JyHw==
+X-Forwarded-Encrypted: i=1; AJvYcCUP0ni5f/ddLuckEOSAd7fIAWWZ9iJUwDZ8GV1W6NbFdtLRL9GD4ChV4/keAJem5bY4365CzEIFqhMt5nGbDYH9gEG6LCfa@vger.kernel.org, AJvYcCWOF1j42vDL04S/zZJ5/cRX6z1Hd4/buQcN+60Emb3r24aRPHY3Fk+9hU0pR/hL8SJM0sD507B15Y28Rng=@vger.kernel.org, AJvYcCXOqvU6CBiDR3Zrap1et1If2KiMFJO58szIEKopUQbYve8zqC99yHddVW8/KSOGHV3BS6kR82KgoM22tdAGrq6P@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKDZN69PheFDG9BgpZnXyH+WY+u/CKjXVBKwU9EUx2Y/tjvzPe
+	fsXIkEi74xkx+TsCXIfo/1YsJ88yt/PMIQdmdaZisYNN4r6MPck7PUpz
+X-Gm-Gg: ASbGncuNkP4hYe28R2dXw3AgvhPijJQ/Uqd9+uDcegEvc0xeq8xYDVz2np2AjG/5U8k
+	JdWOt2RD43pxLGNKaZY9pmljPZPMpV6m6ykJqOx35T+I88MGT7viTUSocaDXi97d68J80CNqU1f
+	c410PqnIH2inur4Anwl/9q8fOw2hBScs1MpkZB97nQawOUEOvZlYThlD2zQiE3hAbOPW1PyGP0M
+	bNb+aOesEyG3tDuFWC0GsPM0A/S7OHYC5uoVqHT8Vrybt95odJgrEMmYKct9kD/3oJnX38GF/C4
+	otLyQdaD87ZOnabgdvrn0pWOjrLJCAS0OrPxyANpxJ3eGR7m5h0qr24BR6Iwp6S8YCjbNs07MuV
+	vC3K2HzuJTLVVCCKQKcXG7BY=
+X-Google-Smtp-Source: AGHT+IEOrOtE3x8MeA1SKBJMd59JULb3/k3gDSOBVNnDEa6DvuyNQgbznfPDnTFZY/cLR7sKgxhnHQ==
+X-Received: by 2002:a05:6a21:6b0d:b0:222:d191:5bbd with SMTP id adf61e73a8af0-23d491446f0mr1142486637.39.1753228928763;
+        Tue, 22 Jul 2025 17:02:08 -0700 (PDT)
+Received: from 1337 ([136.159.213.219])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759c89d5820sm8437213b3a.52.2025.07.22.17.02.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 15:06:00 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-Date: Tue, 22 Jul 2025 17:05:46 -0500
-Subject: [PATCH] media: pci: mg4b: fix uninitialized iio scan data
+        Tue, 22 Jul 2025 17:02:08 -0700 (PDT)
+From: Abhinav Saxena <xandfury@gmail.com>
+To: Fan Wu <wufan@kernel.org>
+Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, =?utf-8?Q?G?=
+ =?utf-8?Q?=C3=BCnther?= Noack <gnoack@google.com>,
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge
+ E. Hallyn" <serge@hallyn.com>, Shuah Khan <shuah@kernel.org>, Nathan
+ Chancellor <nathan@kernel.org>, Nick Desaulniers
+ <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>,
+ Justin Stitt <justinstitt@google.com>,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH RFC 2/4] landlock: implement memfd detection
+Date: Tue, 22 Jul 2025 15:56:38 -0600
+References: <20250719-memfd-exec-v1-0-0ef7feba5821@gmail.com>
+ <20250719-memfd-exec-v1-2-0ef7feba5821@gmail.com>
+ <CAKtyLkEJKLgO1GvpTNmW=DnRhrsiPXGgz9=F7oJXVQPLSocSeA@mail.gmail.com>
+User-agent: mu4e 1.10.8; emacs 30.1
+In-reply-to: <CAKtyLkEJKLgO1GvpTNmW=DnRhrsiPXGgz9=F7oJXVQPLSocSeA@mail.gmail.com>
+Message-ID: <87v7nj7p1d.fsf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250722-media-pci-mg4b-fix-uninitialized-iio-scan-data-v1-1-5b236115264a@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIADkLgGgC/x2NwQrCQAwFf6XkbKAbWor+iniIm1gf2G3ZbUUs/
- XcXj3OYmZ2KZ3ihS7NT9jcK5lQhnBqKT02jM6wySSt9O4jw5AblJYKnsbvzAx/eEhJW6AtfNwZ
- mLlETm67KYtFDP3QW/Ew1umSvyn94vR3HDxp/4C2AAAAA
-X-Change-ID: 20250722-media-pci-mg4b-fix-uninitialized-iio-scan-data-2dce1574d1e9
-To: Martin Tuma <martin.tuma@digiteqautomotive.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jonathan Cameron <jic23@kernel.org>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, 
- linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1109; i=dlechner@baylibre.com;
- h=from:subject:message-id; bh=lpFJnljj6qw5DPDCllOk3KLfDdS3/fflg4syde/pRRw=;
- b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBogAtAZJN3Fu2i8eNt5P0L9WthmCBSa/IDvl7pN
- 7pgwzYaa/aJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaIALQAAKCRDCzCAB/wGP
- wMNOB/9jWyieuoXD5wmD38r6ar6s1K0cEqX9t/aCwGb+i/jdZqwTzjKHaI9vTuKHG5nXCk2G1DM
- OL3OIES+c0pNaZ+RdYR47Q9XE4YxaKXJCm1epGD8idJQAZzYSOVJF/znQdUwXaO673j9A88c3R8
- XhxT+9E5Q88BacHK65JYD+7HsICElpMrWV+g9CHqa0omWlbHg8qQG/GUe9hviScICLqCi5kcUmT
- 4FVdDK5iX0eVZmuQbrfn68LEe/HOWcR93OyyKMCpUD8j3tPxMz0USutdawDigZEqwC1oBnEt4kJ
- ENMY6IhLrJOrLpW5c+yqhY9nFNwkq9XEvdNNySK36BjGWjLY
-X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
- fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
+Content-Type: multipart/mixed; boundary="=-=-="
 
-Fix potential leak of uninitialized stack data to userspace by ensuring
-that the `scan` structure is zeroed before use.
+--=-=-=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: 0ab13674a9bd ("media: pci: mgb4: Added Digiteq Automotive MGB4 driver")
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
- drivers/media/pci/mgb4/mgb4_trigger.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Fan Wu <wufan@kernel.org> writes:
 
-diff --git a/drivers/media/pci/mgb4/mgb4_trigger.c b/drivers/media/pci/mgb4/mgb4_trigger.c
-index 923650d53d4c82e87b542f87c3a0fbf6170dadc8..d7dddc5c8728e81c6249b03a4cbf692da15a4ced 100644
---- a/drivers/media/pci/mgb4/mgb4_trigger.c
-+++ b/drivers/media/pci/mgb4/mgb4_trigger.c
-@@ -91,7 +91,7 @@ static irqreturn_t trigger_handler(int irq, void *p)
- 	struct {
- 		u32 data;
- 		s64 ts __aligned(8);
--	} scan;
-+	} scan = { };
- 
- 	scan.data = mgb4_read_reg(&st->mgbdev->video, 0xA0);
- 	mgb4_write_reg(&st->mgbdev->video, 0xA0, scan.data);
+> On Sat, Jul 19, 2025 at 4:13=E2=80=AFAM Abhinav Saxena <xandfury@gmail.co=
+m> wrote:
+>>
+>> Add is_memfd_file() function to reliably detect memfd files by checking
+>> for =E2=80=9Cmemfd:=E2=80=9D prefix in dentry names on shmem-backed file=
+s. This
+>> distinguishes true memfd files from regular shmem files.
+>>
+>> Move domain_is_scoped() to domain.c for reuse across subsystems.
+>> Add comprehensive kunit tests for memfd detection edge cases.
+>>
+>> Signed-off-by: Abhinav Saxena <xandfury@gmail.com>
+>> =E2=80=94
+>>  security/landlock/domain.c |  67 +++++++++++++++
+>>  security/landlock/domain.h |   4 +
+>>  security/landlock/fs.c     | 210 ++++++++++++++++++++++++++++++++++++++=
++++++++
+>>  security/landlock/task.c   |  67 =E2=80=94=E2=80=94=E2=80=94=E2=80=94=
+=E2=80=94
+>>  4 files changed, 281 insertions(+), 67 deletions(-)
+>
+> =E2=80=A6
+>
+>>
+>> +/**
+>> + * is_memfd_file - Check if file was created via memfd_create()
+>> + * @file: File to check
+>> + *
+>> + * Returns true if @file was created via memfd_create(), false otherwis=
+e.
+>> + *
+>> + * memfd files are shmem-backed files with =E2=80=9Cmemfd:=E2=80=9D pre=
+fix in their dentry name.
+>> + * This is the definitive way to distinguish memfd files from regular s=
+hmem
+>> + * files.
+>> + */
+>> +static bool is_memfd_file(struct file *file)
+>> +{
+>> +       const struct dentry *dentry;
+>> +       const unsigned char *name;
+>> +       size_t name_len;
+>> +
+>> +       /* Fast path: basic validation */
+>> +       if (unlikely(!file))
+>> +               return false;
+>> +
+>> +       /* Must be shmem-backed first - this is the cheapest definitive =
+check */
+>> +       if (!shmem_file(file))
+>> +               return false;
+>> +
+>> +#ifdef CONFIG_MEMFD_CREATE
+>> +
+>> +       /* Validate dentry and get name info */
+>> +       dentry =3D file->f_path.dentry;
+>> +       if (unlikely(!dentry))
+>> +               return false;
+>> +
+>> +       name_len =3D dentry->d_name.len;
+>> +       name =3D dentry->d_name.name;
+>> +
+>> +       /* memfd files always have =E2=80=9Cmemfd:=E2=80=9D prefix (6 ch=
+aracters) */
+>> +       if (name_len < 6 || unlikely(!name))
+>> +               return false;
+>> +
+>> +       /* Check for exact =E2=80=9Cmemfd:=E2=80=9D prefix */
+>> +       return memcmp(name, =E2=80=9Cmemfd:=E2=80=9D, 6) =3D=3D 0;
+>> +#else
+>> +       return false;
+>> +#endif
+>
+> I was trying to do something similar early this year but didn=E2=80=99t h=
+ear
+> feedback from the linux-mm folks.
+> <https://lore.kernel.org/linux-security-module/20250129203932.22165-1-wuf=
+an@kernel.org/>
+>
+> I have considered this approach but didn=E2=80=99t use it. My concern is,
+> potentially a malicious user can create a file in a shmem fs, e.g.
+> tmpfs , with the =E2=80=9Cmemfd:=E2=80=9D prefix, which can be used to by=
+pass security
+> policy.
+> (Resending this message due to a misconfiguration with my email
+> client. Apologies for any inconvenience.)
+>
+> -Fan
 
----
-base-commit: cd2731444ee4e35db76f4fb587f12d327eec5446
-change-id: 20250722-media-pci-mg4b-fix-uninitialized-iio-scan-data-2dce1574d1e9
+Hi Fan,
 
-Best regards,
--- 
-David Lechner <dlechner@baylibre.com>
+Thanks for your comments.
 
+I agree that an LSM hook into memfd_create() would be a much better
+solution. In the absence of such a function, do you think adding a
+`d_unlinked(dentry)` check could serve as an additional verification?
+
+I say things since I *think* that legitimate memfd files are always
+unlinked while spoofed tmpfs files remain linked. I could be wrong
+though.
+
+In any case, we can test this approach using kprobes to validate
+the behavior.
+
+-Abhinav
+
+--=-=-=--
 
