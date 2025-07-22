@@ -1,1071 +1,683 @@
-Return-Path: <linux-kernel+bounces-740404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6450BB0D3CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:48:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B29BB0D3D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:48:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 256001888BD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:45:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D32C3B5DF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:44:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E1572E03F8;
-	Tue, 22 Jul 2025 07:40:50 +0000 (UTC)
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407012DCF60;
+	Tue, 22 Jul 2025 07:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RV4M+Sqc"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D12C2E03ED;
-	Tue, 22 Jul 2025 07:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A9F428B7C7;
+	Tue, 22 Jul 2025 07:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753170049; cv=none; b=b9rf7dR4VuX3fIyHD00+7TnGjg7rxQllSbWECHMwCHklUB2aliXrxgnYOrf8VYq1ebQd8Cwigmg835t2p913+Ad8a/3Xbp4OhNLhdjKav5PPK1t+CENrwQIBcI/C8ZKArjZruzNd4zerHVhFDJ65wsr70QtUqLI/eYYhDqMTb8g=
+	t=1753169994; cv=none; b=UPLNDoqtHg5WYMHwTTEHyaSD6zZaRDTGetsPUeBNAUPfj6UzgtdYs2+jU58QCJeQoysHC182XtneWu97Gcjc6+X38TBaU4iveNKcTPVhGwDswUCEAjq+kjnW+5nMQbbBR0GGGALaEU7Y8jRBAs7UT6OjMRgEbnd+/BYhl1Qh5X8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753170049; c=relaxed/simple;
-	bh=KG2CQ8JaSCc5Hudhq30I9SLS6QRzHZa9ufiHeowdwZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xr0CBo2NuZWLfov8G1s29ClStaO9mDs41Bdu8KFEpVLUMDd1YM17LYf+svI0BT05rjQN8zWEpLiUwKOYOQfqaM+brSP3UEfar2841s5rM74fH+1FXgiUal5j25xFoyD9585C2gT90OwQ020A4xUmqvagYyGWI1GX7B70OdpFI1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=18.169.211.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: esmtpgz13t1753169972t3a0fb5fc
-X-QQ-Originating-IP: uodqX2yQWmKmED3vUDH5xzOWcUJxkeNwbDPOqN7iCbY=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 22 Jul 2025 15:39:30 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 13522765026505502154
-Date: Tue, 22 Jul 2025 15:39:30 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: Brett Creeley <bcreeley@amd.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
-	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 03/15] net: rnpgbe: Add basic mbx ops support
-Message-ID: <B857D1489497DD88+20250722073930.GE99399@nic-Precision-5820-Tower>
-References: <20250721113238.18615-1-dong100@mucse.com>
- <20250721113238.18615-4-dong100@mucse.com>
- <6a0c5728-64a4-497a-a200-a0571ebe38f1@amd.com>
+	s=arc-20240116; t=1753169994; c=relaxed/simple;
+	bh=SV/+i+H3e1ZV/YgjX4e3kIkofZ1EPR8RmG1o1M3hwqY=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=eA4q8D9GfiI4Tc24FvfqI7qZI4dCTZr7vBZ3PoecS9ykYYVQGrhlhwn4QzaT5JEbjHPaD0dat5W+BnPDkaqOd+2J+Zc1UObcxmUuU83Ol25vtATJKBbh0PInQc/h5zm0CyLND+/xG2QzQrFw9nSk0oDa/Dm9Uta6KNeNW9FNqKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RV4M+Sqc; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753169991; x=1784705991;
+  h=message-id:subject:from:to:date:in-reply-to:references:
+   content-transfer-encoding:mime-version;
+  bh=SV/+i+H3e1ZV/YgjX4e3kIkofZ1EPR8RmG1o1M3hwqY=;
+  b=RV4M+SqcZ470BEyePvt40lZ4nkv1Q9goq/NQguatKGL84QED1OEXzq3J
+   0i49Wv1EbABl2xL5OXpz62Ea6CVELgL3bkqef9GrJWJMKSidsBg/45qJ+
+   drNkWduj34gzgd1JYu0/xsPo40MqvCnBwTQE6+IXvfPQhUv2Uc4IEUHAE
+   YirAuNI6Wjiwt8Rz0/PtOWrrveJe+Je+Ao9ALRpm776qKPw0HOF3KvWRw
+   i7mjzfHzS0AK5pwFv6etWPu7BiQ9THVB7hhXCi8c4Z5Is1nuFuLCnq5E9
+   xEQcRkoox8UUN0YExFg2ms90OnHuWPQANAqu+dkdZ4weBBLJPzmPNPFXk
+   w==;
+X-CSE-ConnectionGUID: 3C524VWlRByma8mHod6vQw==
+X-CSE-MsgGUID: bt57wgvBRjms2pW/AXwYzA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11499"; a="66751316"
+X-IronPort-AV: E=Sophos;i="6.16,330,1744095600"; 
+   d="scan'208";a="66751316"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 00:39:50 -0700
+X-CSE-ConnectionGUID: bUvHc75fQT+hvbzf14PvfA==
+X-CSE-MsgGUID: KkRdzK38S8SBw4qBc3kNZg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,330,1744095600"; 
+   d="scan'208";a="158370565"
+Received: from vpanait-mobl.ger.corp.intel.com (HELO [10.245.244.202]) ([10.245.244.202])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 00:39:49 -0700
+Message-ID: <8369f596d02735c49d618af2f0df4a4db4ae71f2.camel@linux.intel.com>
+Subject: Re: 6.15/regression/bisected - lockdep warning: circular locking
+ dependency detected when plugging USB stick after ffa1e7ada456
+From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>, axboe@kernel.dk, 
+	linux-block@vger.kernel.org, Linux List Kernel Mailing
+	 <linux-kernel@vger.kernel.org>, Ming Lei <ming.lei@redhat.com>, Linux
+ regressions mailing list <regressions@lists.linux.dev>
+Date: Tue, 22 Jul 2025 09:39:46 +0200
+In-Reply-To: <CABXGCsPgCBahYRtEZUZiAZtkX51gDE_XZQqK=apuhZ_fOK=Dkg@mail.gmail.com>
+References: 
+	<CABXGCsPgCBahYRtEZUZiAZtkX51gDE_XZQqK=apuhZ_fOK=Dkg@mail.gmail.com>
+Organization: Intel Sweden AB, Registration Number: 556189-6027
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6a0c5728-64a4-497a-a200-a0571ebe38f1@amd.com>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: M0wYV6TTeeWiEeYxizJD87qfeEDItjcm6l0qa+5jt8bVB5Ej1gtJBNee
-	bE1TgmAyT9hlrC5JG2aWx2rhHSHHEw7B1KDNXFfTqbbbvbVPQWs8e7pk5P2j5IcV/8gU1fV
-	Wlh7vTGAtu94aD/nxQmT5QscOP1hl/p+YStXZr2BQZwQRJnZgGpfBbWxLBoZXIOGh6J1NFv
-	xxDmPiiePFLd7g8K0Ror7m8jpLUvKWoRuO3BW2EBVs/4qugGtXoZlvDv+Ba42ABNtbFcLIb
-	gl/cf9wPsRx88CqnpzK1z+KR1DcepzhRJCQZH9MkGGoB0bC7/W0i3doLq6lcvkuXKk1zs0E
-	dG+1+2CDgdPUvFSGbBDymikNUXp/uuVebOqS8Ii8uW/rvRFP6JmqTXOzjo3cWnDeAv4cWax
-	kJzhiqHyLgLidmQUucDqp+RNa9z9tSFI07OpTd3rv44+UosGTJd+CqEfoNgv8Ac4ChHyxJS
-	7HOJvlU8dVjxU9EVpqJMLoVvcV6slEd4RN727xfgMmw4xyJhobKOkLduKLpnkyAlaLf5dpl
-	ChlS6pIrXg2us8rlWOnt8uTK/GH4oGYo8Ap27P/FHszEnvUd3fmzovqqrI7eCgeu4abPRmx
-	QHkDHcbuFZ8MxfBhIVv51/+wfOVq1sogi0Fq8cdtxmAPNNsguComESj6oDzG7Frc+Nr7Zum
-	To7mlWxJugcAxeO6gkSdkfu1F5iBt4Ch0zIlstGIu35xrXmJ/YYhQgAqGBZ7ZGevr/szDC/
-	/AiOJxtD3R8u2tNu+KX722MT7+JnJMzCfHYwznd6p8z91gmpC2ESy/S/lFg8ERZWplyZnre
-	J1r+h410NjRhYGUtaihCVWZBTJaSUH2g+TB0qq9hvJXKob8WpN9pgPmyXRQMS/xSnkhAYNi
-	yeJEbV6Bw3Wt5nBShwvTldUw5thLqzRxvKO4Deqa8auFGHQd+YHZ39ZsnvHx/zWYzkJj+bM
-	rWbi/LqJW7AlPkIxCs7M16LolI1keiztHMMt/Nuy093e1x2rIye7pembOovWm21ZVo7rZU2
-	DYMYGD4l5a2btt7No05gi1ZMQTklA=
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-RECHKSPAM: 0
 
-On Mon, Jul 21, 2025 at 02:54:00PM -0700, Brett Creeley wrote:
-> On 7/21/2025 4:32 AM, Dong Yibo wrote:
-> > Caution: This message originated from an External Source. Use proper caution when opening attachments, clicking links, or responding.
-> > 
-> > 
-> > Initialize basic mbx function.
-> > 
-> > Signed-off-by: Dong Yibo <dong100@mucse.com>
-> > ---
-> >   drivers/net/ethernet/mucse/rnpgbe/Makefile    |   5 +-
-> >   drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    |  46 ++
-> >   .../net/ethernet/mucse/rnpgbe/rnpgbe_chip.c   |   5 +-
-> >   drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h |   2 +
-> >   .../net/ethernet/mucse/rnpgbe/rnpgbe_main.c   |   1 +
-> >   .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c    | 623 ++++++++++++++++++
-> >   .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx.h    |  48 ++
-> >   7 files changed, 727 insertions(+), 3 deletions(-)
-> >   create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c
-> >   create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.h
-> > 
-> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/Makefile b/drivers/net/ethernet/mucse/rnpgbe/Makefile
-> > index 42c359f459d9..41177103b50c 100644
-> > --- a/drivers/net/ethernet/mucse/rnpgbe/Makefile
-> > +++ b/drivers/net/ethernet/mucse/rnpgbe/Makefile
-> > @@ -5,5 +5,6 @@
-> >   #
-> > 
-> >   obj-$(CONFIG_MGBE) += rnpgbe.o
-> > -rnpgbe-objs := rnpgbe_main.o\
-> > -              rnpgbe_chip.o
-> > +rnpgbe-objs := rnpgbe_main.o \
-> > +              rnpgbe_chip.o \
-> > +              rnpgbe_mbx.o
-> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-> > index 2ae836fc8951..46e2bb2fe71e 100644
-> > --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-> > @@ -63,9 +63,51 @@ struct mucse_mac_info {
-> >          int clk_csr;
-> >   };
-> > 
-> > +struct mucse_hw;
-> > +
-> > +enum MBX_ID {
-> > +       MBX_VF0 = 0,
-> > +       MBX_VF1,
-> > +       MBX_VF2,
-> > +       MBX_VF3,
-> > +       MBX_VF4,
-> > +       MBX_VF5,
-> > +       MBX_VF6,
-> > +       MBX_VF7,
-> > +       MBX_CM3CPU,
-> > +       MBX_FW = MBX_CM3CPU,
-> > +       MBX_VFCNT
-> > +};
-> > +
-> > +struct mucse_mbx_operations {
-> > +       void (*init_params)(struct mucse_hw *hw);
-> > +       int (*read)(struct mucse_hw *hw, u32 *msg,
-> > +                   u16 size, enum MBX_ID id);
-> > +       int (*write)(struct mucse_hw *hw, u32 *msg,
-> > +                    u16 size, enum MBX_ID id);
-> > +       int (*read_posted)(struct mucse_hw *hw, u32 *msg,
-> > +                          u16 size, enum MBX_ID id);
-> > +       int (*write_posted)(struct mucse_hw *hw, u32 *msg,
-> > +                           u16 size, enum MBX_ID id);
-> > +       int (*check_for_msg)(struct mucse_hw *hw, enum MBX_ID id);
-> > +       int (*check_for_ack)(struct mucse_hw *hw, enum MBX_ID id);
-> > +       void (*configure)(struct mucse_hw *hw, int num_vec,
-> > +                         bool enable);
-> > +};
-> > +
-> > +struct mucse_mbx_stats {
-> > +       u32 msgs_tx;
-> > +       u32 msgs_rx;
-> > +       u32 acks;
-> > +       u32 reqs;
-> > +       u32 rsts;
-> > +};
-> > +
-> >   #define MAX_VF_NUM (8)
-> > 
-> >   struct mucse_mbx_info {
-> > +       struct mucse_mbx_operations ops;
-> > +       struct mucse_mbx_stats stats;
-> >          u32 timeout;
-> >          u32 usec_delay;
-> >          u32 v2p_mailbox;
-> > @@ -99,6 +141,8 @@ struct mucse_mbx_info {
-> >          int share_size;
-> >   };
-> > 
-> > +#include "rnpgbe_mbx.h"
-> > +
-> >   struct mucse_hw {
-> >          void *back;
-> >          u8 pfvfnum;
-> > @@ -110,6 +154,8 @@ struct mucse_hw {
-> >          u16 vendor_id;
-> >          u16 subsystem_device_id;
-> >          u16 subsystem_vendor_id;
-> > +       int max_vfs;
-> > +       int max_vfs_noari;
-> >          enum rnpgbe_hw_type hw_type;
-> >          struct mucse_dma_info dma;
-> >          struct mucse_eth_info eth;
-> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
-> > index 38c094965db9..b0e5fda632f3 100644
-> > --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
-> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
-> > @@ -6,6 +6,7 @@
-> > 
-> >   #include "rnpgbe.h"
-> >   #include "rnpgbe_hw.h"
-> > +#include "rnpgbe_mbx.h"
-> > 
-> >   /**
-> >    * rnpgbe_get_invariants_n500 - setup for hw info
-> > @@ -67,7 +68,7 @@ static void rnpgbe_get_invariants_n500(struct mucse_hw *hw)
-> >          mbx->fw_pf_mbox_mask = 0x2e200;
-> >          mbx->fw_vf_share_ram = 0x2b000;
-> >          mbx->share_size = 512;
-> > -
-> > +       memcpy(&hw->mbx.ops, &mucse_mbx_ops_generic, sizeof(hw->mbx.ops));
-> >          /* setup net feature here */
-> >          hw->feature_flags |= M_NET_FEATURE_SG |
-> >                               M_NET_FEATURE_TX_CHECKSUM |
-> > @@ -83,6 +84,7 @@ static void rnpgbe_get_invariants_n500(struct mucse_hw *hw)
-> >                               M_NET_FEATURE_STAG_OFFLOAD;
-> >          /* start the default ahz, update later */
-> >          hw->usecstocount = 125;
-> > +       hw->max_vfs = 7;
-> >   }
-> > 
-> >   /**
-> > @@ -117,6 +119,7 @@ static void rnpgbe_get_invariants_n210(struct mucse_hw *hw)
-> >          /* update hw feature */
-> >          hw->feature_flags |= M_HW_FEATURE_EEE;
-> >          hw->usecstocount = 62;
-> > +       hw->max_vfs_noari = 7;
-> >   }
-> > 
-> >   const struct rnpgbe_info rnpgbe_n500_info = {
-> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
-> > index 2c7372a5e88d..ff7bd9b21550 100644
-> > --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
-> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
-> > @@ -14,6 +14,8 @@
-> >   #define RNPGBE_RING_BASE (0x1000)
-> >   #define RNPGBE_MAC_BASE (0x20000)
-> >   #define RNPGBE_ETH_BASE (0x10000)
-> > +
-> > +#define RNPGBE_DMA_DUMY (0x000c)
-> >   /* chip resourse */
-> >   #define RNPGBE_MAX_QUEUES (8)
-> >   /* multicast control table */
-> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
-> > index 08f773199e9b..1e8360cae560 100644
-> > --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
-> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
-> > @@ -114,6 +114,7 @@ static int rnpgbe_add_adapter(struct pci_dev *pdev,
-> >          hw->hw_addr = hw_addr;
-> >          hw->dma.dma_version = dma_version;
-> >          ii->get_invariants(hw);
-> > +       hw->mbx.ops.init_params(hw);
-> > 
-> >          return 0;
-> > 
-> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c
-> > new file mode 100644
-> > index 000000000000..56ace3057fea
-> > --- /dev/null
-> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c
-> > @@ -0,0 +1,623 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/* Copyright(c) 2022 - 2025 Mucse Corporation. */
-> > +
-> > +#include <linux/pci.h>
-> > +#include <linux/errno.h>
-> > +#include <linux/delay.h>
-> > +#include <linux/iopoll.h>
-> > +#include "rnpgbe.h"
-> > +#include "rnpgbe_mbx.h"
-> > +#include "rnpgbe_hw.h"
-> > +
-> > +/**
-> > + * mucse_read_mbx - Reads a message from the mailbox
-> > + * @hw: Pointer to the HW structure
-> > + * @msg: The message buffer
-> > + * @size: Length of buffer
-> > + * @mbx_id: Id of vf/fw to read
-> > + *
-> > + * @return: 0 on success, negative on failure
-> > + **/
-> > +int mucse_read_mbx(struct mucse_hw *hw, u32 *msg, u16 size,
-> > +                  enum MBX_ID mbx_id)
-> > +{
-> > +       struct mucse_mbx_info *mbx = &hw->mbx;
-> > +
-> > +       /* limit read to size of mailbox */
-> > +       if (size > mbx->size)
-> > +               size = mbx->size;
-> 
-> This is just min(size, mbx->size). There's no need to open code min().
-> 
+SGkgTWlraGFpbCwKCk9uIFR1ZSwgMjAyNS0wNy0yMiBhdCAwMjo1NCArMDUwMCwgTWlraGFpbCBH
+YXZyaWxvdiB3cm90ZToKPiBIaSBUaG9tYXMsCj4gCj4gQWZ0ZXIgY29tbWl0Cj4gZmZhMWU3YWRh
+NDU2ICgiYmxvY2s6IE1ha2UgcmVxdWVzdF9xdWV1ZSBsb2NrZGVwIHNwbGF0cyBzaG93IHVwCj4g
+ZWFybGllciIpLAo+IEkgc3RhcnRlZCBzZWVpbmcgbG9ja2RlcCB3YXJuaW5ncyBhYm91dCBjaXJj
+dWxhciBsb2NraW5nIGRlcGVuZGVuY2llcwo+IGluIHRoZSBrZXJuZWwgbG9nIGV2ZXJ5IHRpbWUg
+SSBwbHVnIGluIGEgVVNCIGZsYXNoIGRyaXZlLgoKVGhpcyBtZWFucyB0aGF0IHRoZXJlIGlzIGEg
+cmVhbCBjaXJjdWxhciBsb2NraW5nIGRlcGVuZGVuY3kgcHJvYmxlbS4KSG93ZXZlciB0aGUgY29t
+bWl0IHlvdSBhcmUgcG9pbnRpbmcgdG8gb25seSBtYWtlcyBpdCBzaG93IHVwIGVhcmx5LgpXaXRo
+b3V0IHRoZSBjb21taXQgYSBzaW1pbGFyIChidXQgbm90IGlkZW50aWNhbCkgbG9ja2RlcCBzcGxh
+dCB3b3VsZApoYXZlIHNob3duIHVwIHVuZGVyIG1lbW9yeSBwcmVzc3VyZSB3aXRoIHN3YXBwaW5n
+IGFjdGl2YXRlZC4KClNpbmNlIEknbSBub3QgdGhlIHJpZ2h0IHBlcnNvbiB0byBmaXggdGhlIHVu
+ZGVybHlpbmcgbG9ja2luZyBvcmRlcgp2aW9sYXRpb24sIHRoaXMgd2lsbCBsaWtlbHkgZ2V0IHBp
+Y2tlZCB1cCBieSBzb21lb25lIG9uIHRoZSBsaW51eC1ibG9jawpsaXN0LgoKVGhhbmtzIGZvciBy
+ZXBvcnRpbmcsClRob21hcy4KCgo+IAo+IFRoZSB3YXJuaW5nIGxvb2tzIGxpa2UgdGhpczoKPiBb
+wqAgMjQ3LjQ1Mzc3M10gc2QgNjowOjA6MDogW3NkYV0gQXR0YWNoZWQgU0NTSSByZW1vdmFibGUg
+ZGlzawo+IAo+IFvCoCAyNDcuNDg2MTkzXSA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT0KPiBbwqAgMjQ3LjQ4NjE5NV0gV0FSTklORzogcG9zc2li
+bGUgY2lyY3VsYXIgbG9ja2luZyBkZXBlbmRlbmN5IGRldGVjdGVkCj4gW8KgIDI0Ny40ODYxOTdd
+IDYuMTYuMC1yYzcgIzM2IFRhaW50ZWQ6IEfCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgTAo+IFvC
+oCAyNDcuNDg2MTk5XSAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0KPiBbwqAgMjQ3LjQ4NjIwMF0gKHVkZXYtd29ya2VyKS80MjU3IGlzIHRyeWlu
+ZyB0byBhY3F1aXJlIGxvY2s6Cj4gW8KgIDI0Ny40ODYyMDJdIGZmZmY4ODgxNmI5YzA2NTAgKCZx
+LT5lbGV2YXRvcl9sb2NrKXsrLisufS17NDo0fSwgYXQ6Cj4gZWxldmF0b3JfY2hhbmdlKzB4YjYv
+MHgzODAKPiBbwqAgMjQ3LjQ4NjIxM10KPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGJ1
+dCB0YXNrIGlzIGFscmVhZHkgaG9sZGluZyBsb2NrOgo+IFvCoCAyNDcuNDg2MjE0XSBmZmZmODg4
+MTZiOWMwMGIwCj4gKCZxLT5xX3VzYWdlX2NvdW50ZXIoaW8pIzYpeysrKyt9LXswOjB9LCBhdDoK
+PiBibGtfbXFfZnJlZXplX3F1ZXVlX25vbWVtc2F2ZSsweDE2LzB4MzAKPiBbwqAgMjQ3LjQ4NjIy
+MV0KPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHdoaWNoIGxvY2sgYWxyZWFkeSBkZXBl
+bmRzIG9uIHRoZSBuZXcgbG9jay4KPiAKPiBbwqAgMjQ3LjQ4NjIyMl0KPiDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIHRoZSBleGlzdGluZyBkZXBlbmRlbmN5IGNoYWluIChpbiByZXZlcnNl
+IG9yZGVyKSBpczoKPiBbwqAgMjQ3LjQ4NjIyNF0KPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgIC0+ICMzICgmcS0+cV91c2FnZV9jb3VudGVyKGlvKSM2KXsrKysrfS17MDowfToKPiBbwqAg
+MjQ3LjQ4NjIyOF3CoMKgwqDCoMKgwqDCoCBfX2xvY2tfYWNxdWlyZSsweDU2YS8weGJlMAo+IFvC
+oCAyNDcuNDg2MjMzXcKgwqDCoMKgwqDCoMKgIGxvY2tfYWNxdWlyZS5wYXJ0LjArMHhjOC8weDI3
+MAo+IFvCoCAyNDcuNDg2MjM1XcKgwqDCoMKgwqDCoMKgIGJsa19hbGxvY19xdWV1ZSsweDVjZC8w
+eDcyMAo+IFvCoCAyNDcuNDg2MjM3XcKgwqDCoMKgwqDCoMKgIGJsa19tcV9hbGxvY19xdWV1ZSsw
+eDE0ZC8weDI2MAo+IFvCoCAyNDcuNDg2MjM5XcKgwqDCoMKgwqDCoMKgIHNjc2lfYWxsb2Nfc2Rl
+disweDg2Mi8weGM5MAo+IFvCoCAyNDcuNDg2MjQyXcKgwqDCoMKgwqDCoMKgIHNjc2lfcHJvYmVf
+YW5kX2FkZF9sdW4rMHg0YmUvMHhjMTAKPiBbwqAgMjQ3LjQ4NjI0NV3CoMKgwqDCoMKgwqDCoCBf
+X3Njc2lfc2Nhbl90YXJnZXQrMHgxOGIvMHgzYjAKPiBbwqAgMjQ3LjQ4NjI0N13CoMKgwqDCoMKg
+wqDCoCBzY3NpX3NjYW5fY2hhbm5lbCsweGVlLzB4MTgwCj4gW8KgIDI0Ny40ODYyNTBdwqDCoMKg
+wqDCoMKgwqAgc2NzaV9zY2FuX2hvc3Rfc2VsZWN0ZWQrMHgxZmQvMHgyYzAKPiBbwqAgMjQ3LjQ4
+NjI1Ml3CoMKgwqDCoMKgwqDCoCBkb19zY2FuX2FzeW5jKzB4NDIvMHg0NTAKPiBbwqAgMjQ3LjQ4
+NjI1NF3CoMKgwqDCoMKgwqDCoCBhc3luY19ydW5fZW50cnlfZm4rMHg5NC8weDU0MAo+IFvCoCAy
+NDcuNDg2MjU4XcKgwqDCoMKgwqDCoMKgIHByb2Nlc3Nfb25lX3dvcmsrMHg4N2EvMHgxNGQwCj4g
+W8KgIDI0Ny40ODYyNjBdwqDCoMKgwqDCoMKgwqAgd29ya2VyX3RocmVhZCsweDVmMi8weGZkMAo+
+IFvCoCAyNDcuNDg2MjYyXcKgwqDCoMKgwqDCoMKgIGt0aHJlYWQrMHgzYjAvMHg3NzAKPiBbwqAg
+MjQ3LjQ4NjI2Nl3CoMKgwqDCoMKgwqDCoCByZXRfZnJvbV9mb3JrKzB4M2VmLzB4NTEwCj4gW8Kg
+IDI0Ny40ODYyNjldwqDCoMKgwqDCoMKgwqAgcmV0X2Zyb21fZm9ya19hc20rMHgxYS8weDMwCj4g
+W8KgIDI0Ny40ODYyNzFdCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAtPiAjMiAoZnNf
+cmVjbGFpbSl7Ky4rLn0tezA6MH06Cj4gW8KgIDI0Ny40ODYyNzVdwqDCoMKgwqDCoMKgwqAgX19s
+b2NrX2FjcXVpcmUrMHg1NmEvMHhiZTAKPiBbwqAgMjQ3LjQ4NjI3N13CoMKgwqDCoMKgwqDCoCBs
+b2NrX2FjcXVpcmUucGFydC4wKzB4YzgvMHgyNzAKPiBbwqAgMjQ3LjQ4NjI3OV3CoMKgwqDCoMKg
+wqDCoCBmc19yZWNsYWltX2FjcXVpcmUrMHhkOS8weDEzMAo+IFvCoCAyNDcuNDg2MjgyXcKgwqDC
+oMKgwqDCoMKgIHByZXBhcmVfYWxsb2NfcGFnZXMrMHgxNTMvMHg1YTAKPiBbwqAgMjQ3LjQ4NjI4
+NF3CoMKgwqDCoMKgwqDCoCBfX2FsbG9jX2Zyb3plbl9wYWdlc19ub3Byb2YrMHgxNDIvMHg0OTAK
+PiBbwqAgMjQ3LjQ4NjI4Nl3CoMKgwqDCoMKgwqDCoCBfX2FsbG9jX3BhZ2VzX25vcHJvZisweDEy
+LzB4MjEwCj4gW8KgIDI0Ny40ODYyODhdwqDCoMKgwqDCoMKgwqAgcGNwdV9hbGxvY19wYWdlcy5p
+c3JhLjArMHhmYS8weDRkMAo+IFvCoCAyNDcuNDg2MjkxXcKgwqDCoMKgwqDCoMKgIHBjcHVfcG9w
+dWxhdGVfY2h1bmsrMHgzOS8weDgwCj4gW8KgIDI0Ny40ODYyOTNdwqDCoMKgwqDCoMKgwqAgcGNw
+dV9hbGxvY19ub3Byb2YrMHg3NTkvMHhlYjAKPiBbwqAgMjQ3LjQ4NjI5Nl3CoMKgwqDCoMKgwqDC
+oCBpb21tdV9kbWFfaW5pdF9mcSsweDE5Yy8weDdjMAo+IFvCoCAyNDcuNDg2Mjk5XcKgwqDCoMKg
+wqDCoMKgIGlvbW11X2RtYV9pbml0X2RvbWFpbisweDUzZi8weDdmMAo+IFvCoCAyNDcuNDg2MzAx
+XcKgwqDCoMKgwqDCoMKgIGlvbW11X3NldHVwX2RtYV9vcHMrMHhkMy8weDIwMAo+IFvCoCAyNDcu
+NDg2MzAzXcKgwqDCoMKgwqDCoMKgIGJ1c19pb21tdV9wcm9iZSsweDFmMC8weDRiMAo+IFvCoCAy
+NDcuNDg2MzA2XcKgwqDCoMKgwqDCoMKgIGlvbW11X2RldmljZV9yZWdpc3RlcisweDE4Ni8weDI4
+MAo+IFvCoCAyNDcuNDg2MzA4XcKgwqDCoMKgwqDCoMKgIGlvbW11X2luaXRfcGNpKzB4YzhjLzB4
+ZDAwCj4gW8KgIDI0Ny40ODYzMTJdwqDCoMKgwqDCoMKgwqAgYW1kX2lvbW11X2luaXRfcGNpKzB4
+ODMvMHg0ZTAKPiBbwqAgMjQ3LjQ4NjMxNF3CoMKgwqDCoMKgwqDCoCBzdGF0ZV9uZXh0KzB4Mjhm
+LzB4NWMwCj4gW8KgIDI0Ny40ODYzMTddwqDCoMKgwqDCoMKgwqAgaW9tbXVfZ29fdG9fc3RhdGUr
+MHgyYi8weDYwCj4gW8KgIDI0Ny40ODYzMTldwqDCoMKgwqDCoMKgwqAgYW1kX2lvbW11X2luaXQr
+MHgyMS8weDYwCj4gW8KgIDI0Ny40ODYzMjFdwqDCoMKgwqDCoMKgwqAgcGNpX2lvbW11X2luaXQr
+MHgzOC8weDYwCj4gW8KgIDI0Ny40ODYzMjVdwqDCoMKgwqDCoMKgwqAgZG9fb25lX2luaXRjYWxs
+KzB4ZDIvMHg0NTAKPiBbwqAgMjQ3LjQ4NjMyN13CoMKgwqDCoMKgwqDCoCBkb19pbml0Y2FsbHMr
+MHgyMTYvMHgyNDAKPiBbwqAgMjQ3LjQ4NjMzMF3CoMKgwqDCoMKgwqDCoCBrZXJuZWxfaW5pdF9m
+cmVlYWJsZSsweDI5OS8weDJkMAo+IFvCoCAyNDcuNDg2MzMyXcKgwqDCoMKgwqDCoMKgIGtlcm5l
+bF9pbml0KzB4MWMvMHgxNTAKPiBbwqAgMjQ3LjQ4NjMzNV3CoMKgwqDCoMKgwqDCoCByZXRfZnJv
+bV9mb3JrKzB4M2VmLzB4NTEwCj4gW8KgIDI0Ny40ODYzMzddwqDCoMKgwqDCoMKgwqAgcmV0X2Zy
+b21fZm9ya19hc20rMHgxYS8weDMwCj4gW8KgIDI0Ny40ODYzMzhdCj4gwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCAtPiAjMSAocGNwdV9hbGxvY19tdXRleCl7Ky4rLn0tezQ6NH06Cj4gW8Kg
+IDI0Ny40ODYzNDJdwqDCoMKgwqDCoMKgwqAgX19sb2NrX2FjcXVpcmUrMHg1NmEvMHhiZTAKPiBb
+wqAgMjQ3LjQ4NjM0NF3CoMKgwqDCoMKgwqDCoCBsb2NrX2FjcXVpcmUucGFydC4wKzB4YzgvMHgy
+NzAKPiBbwqAgMjQ3LjQ4NjM0Nl3CoMKgwqDCoMKgwqDCoCBfX211dGV4X2xvY2srMHgxYjIvMHgx
+YjcwCj4gW8KgIDI0Ny40ODYzNDhdwqDCoMKgwqDCoMKgwqAgcGNwdV9hbGxvY19ub3Byb2YrMHg4
+ODQvMHhlYjAKPiBbwqAgMjQ3LjQ4NjM1MV3CoMKgwqDCoMKgwqDCoCBzYml0bWFwX2luaXRfbm9k
+ZSsweDI1Mi8weDZhMAo+IFvCoCAyNDcuNDg2MzU0XcKgwqDCoMKgwqDCoMKgIHNiaXRtYXBfcXVl
+dWVfaW5pdF9ub2RlKzB4MmQvMHg0MjAKPiBbwqAgMjQ3LjQ4NjM1Nl3CoMKgwqDCoMKgwqDCoCBi
+bGtfbXFfaW5pdF90YWdzKzB4MTU0LzB4MmEwCj4gW8KgIDI0Ny40ODYzNTldwqDCoMKgwqDCoMKg
+wqAgYmxrX21xX2FsbG9jX21hcF9hbmRfcnFzKzB4YTYvMHgzMTAKPiBbwqAgMjQ3LjQ4NjM2MV3C
+oMKgwqDCoMKgwqDCoCBibGtfbXFfaW5pdF9zY2hlZCsweDJhNC8weDU4MAo+IFvCoCAyNDcuNDg2
+MzYzXcKgwqDCoMKgwqDCoMKgIGVsZXZhdG9yX3N3aXRjaCsweDE4Yi8weDYzMAo+IFvCoCAyNDcu
+NDg2MzY1XcKgwqDCoMKgwqDCoMKgIGVsZXZhdG9yX2NoYW5nZSsweDIwOS8weDM4MAo+IFvCoCAy
+NDcuNDg2MzY4XcKgwqDCoMKgwqDCoMKgIGVsZXZhdG9yX3NldF9kZWZhdWx0KzB4MjJkLzB4MmEw
+Cj4gW8KgIDI0Ny40ODYzNzBdwqDCoMKgwqDCoMKgwqAgYmxrX3JlZ2lzdGVyX3F1ZXVlKzB4MzNh
+LzB4NDkwCj4gW8KgIDI0Ny40ODYzNzJdwqDCoMKgwqDCoMKgwqAgX19hZGRfZGlzaysweDVmZC8w
+eGQ1MAo+IFvCoCAyNDcuNDg2Mzc0XcKgwqDCoMKgwqDCoMKgIGFkZF9kaXNrX2Z3bm9kZSsweDEx
+My8weDU5MAo+IFvCoCAyNDcuNDg2Mzc3XcKgwqDCoMKgwqDCoMKgIHNkX3Byb2JlKzB4ODczLzB4
+ZTEwCj4gW8KgIDI0Ny40ODYzODBdwqDCoMKgwqDCoMKgwqAgcmVhbGx5X3Byb2JlKzB4MWRlLzB4
+ODkwCj4gW8KgIDI0Ny40ODYzODNdwqDCoMKgwqDCoMKgwqAgX19kcml2ZXJfcHJvYmVfZGV2aWNl
+KzB4MThjLzB4MzkwCj4gW8KgIDI0Ny40ODYzODVdwqDCoMKgwqDCoMKgwqAgZHJpdmVyX3Byb2Jl
+X2RldmljZSsweDRhLzB4MTIwCj4gW8KgIDI0Ny40ODYzODhdwqDCoMKgwqDCoMKgwqAgX19kZXZp
+Y2VfYXR0YWNoX2RyaXZlcisweDE1Ni8weDI4MAo+IFvCoCAyNDcuNDg2Mzg5XcKgwqDCoMKgwqDC
+oMKgIGJ1c19mb3JfZWFjaF9kcnYrMHgxMTEvMHgxYTAKPiBbwqAgMjQ3LjQ4NjM5Ml3CoMKgwqDC
+oMKgwqDCoCBfX2RldmljZV9hdHRhY2hfYXN5bmNfaGVscGVyKzB4MTljLzB4MjQwCj4gW8KgIDI0
+Ny40ODYzOTRdwqDCoMKgwqDCoMKgwqAgYXN5bmNfcnVuX2VudHJ5X2ZuKzB4OTQvMHg1NDAKPiBb
+wqAgMjQ3LjQ4NjM5Nl3CoMKgwqDCoMKgwqDCoCBwcm9jZXNzX29uZV93b3JrKzB4ODdhLzB4MTRk
+MAo+IFvCoCAyNDcuNDg2Mzk4XcKgwqDCoMKgwqDCoMKgIHdvcmtlcl90aHJlYWQrMHg1ZjIvMHhm
+ZDAKPiBbwqAgMjQ3LjQ4NjQwMF3CoMKgwqDCoMKgwqDCoCBrdGhyZWFkKzB4M2IwLzB4NzcwCj4g
+W8KgIDI0Ny40ODY0MDJdwqDCoMKgwqDCoMKgwqAgcmV0X2Zyb21fZm9yaysweDNlZi8weDUxMAo+
+IFvCoCAyNDcuNDg2NDA0XcKgwqDCoMKgwqDCoMKgIHJldF9mcm9tX2ZvcmtfYXNtKzB4MWEvMHgz
+MAo+IFvCoCAyNDcuNDg2NDA2XQo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgLT4gIzAg
+KCZxLT5lbGV2YXRvcl9sb2NrKXsrLisufS17NDo0fToKPiBbwqAgMjQ3LjQ4NjQwOV3CoMKgwqDC
+oMKgwqDCoCBjaGVja19wcmV2X2FkZCsweGUxLzB4Y2YwCj4gW8KgIDI0Ny40ODY0MTFdwqDCoMKg
+wqDCoMKgwqAgdmFsaWRhdGVfY2hhaW4rMHg0Y2YvMHg3NDAKPiBbwqAgMjQ3LjQ4NjQxM13CoMKg
+wqDCoMKgwqDCoCBfX2xvY2tfYWNxdWlyZSsweDU2YS8weGJlMAo+IFvCoCAyNDcuNDg2NDE0XcKg
+wqDCoMKgwqDCoMKgIGxvY2tfYWNxdWlyZS5wYXJ0LjArMHhjOC8weDI3MAo+IFvCoCAyNDcuNDg2
+NDE2XcKgwqDCoMKgwqDCoMKgIF9fbXV0ZXhfbG9jaysweDFiMi8weDFiNzAKPiBbwqAgMjQ3LjQ4
+NjQxOF3CoMKgwqDCoMKgwqDCoCBlbGV2YXRvcl9jaGFuZ2UrMHhiNi8weDM4MAo+IFvCoCAyNDcu
+NDg2NDIwXcKgwqDCoMKgwqDCoMKgIGVsdl9pb3NjaGVkX3N0b3JlKzB4MjRhLzB4MmMwCj4gW8Kg
+IDI0Ny40ODY0MjJdwqDCoMKgwqDCoMKgwqAgcXVldWVfYXR0cl9zdG9yZSsweDIzOC8weDM0MAo+
+IFvCoCAyNDcuNDg2NDI1XcKgwqDCoMKgwqDCoMKgIGtlcm5mc19mb3Bfd3JpdGVfaXRlcisweDM5
+Yi8weDVhMAo+IFvCoCAyNDcuNDg2NDI4XcKgwqDCoMKgwqDCoMKgIHZmc193cml0ZSsweDUyNC8w
+eGU3MAo+IFvCoCAyNDcuNDg2NDMwXcKgwqDCoMKgwqDCoMKgIGtzeXNfd3JpdGUrMHhmZi8weDIw
+MAo+IFvCoCAyNDcuNDg2NDMyXcKgwqDCoMKgwqDCoMKgIGRvX3N5c2NhbGxfNjQrMHg5OC8weDNj
+MAo+IFvCoCAyNDcuNDg2NDM1XcKgwqDCoMKgwqDCoMKgIGVudHJ5X1NZU0NBTExfNjRfYWZ0ZXJf
+aHdmcmFtZSsweDc2LzB4N2UKPiBbwqAgMjQ3LjQ4NjQzOF0KPiDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgIG90aGVyIGluZm8gdGhhdCBtaWdodCBoZWxwIHVzIGRlYnVnIHRoaXM6Cj4gCj4g
+W8KgIDI0Ny40ODY0MzldIENoYWluIGV4aXN0cyBvZjoKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCAmcS0+ZWxldmF0b3JfbG9jayAtLT4gZnNfcmVjbGFpbSAtLT4gJnEtCj4gPnFf
+dXNhZ2VfY291bnRlcihpbykjNgo+IAo+IFvCoCAyNDcuNDg2NDQ0XcKgIFBvc3NpYmxlIHVuc2Fm
+ZSBsb2NraW5nIHNjZW5hcmlvOgo+IAo+IFvCoCAyNDcuNDg2NDQ2XcKgwqDCoMKgwqDCoMKgIENQ
+VTDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBDUFUxCj4gW8KgIDI0Ny40
+ODY0NDddwqDCoMKgwqDCoMKgwqAgLS0tLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgIC0tLS0KPiBbwqAgMjQ3LjQ4NjQ0OF3CoMKgIGxvY2soJnEtPnFfdXNhZ2VfY291bnRl
+cihpbykjNik7Cj4gW8KgIDI0Ny40ODY0NTFdwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgbG9jayhmc19yZWNsYWltKTsKPiBbwqAg
+MjQ3LjQ4NjQ1M13CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCBsb2NrKCZxLQo+ID5xX3VzYWdlX2NvdW50ZXIoaW8pIzYpOwo+IFvC
+oCAyNDcuNDg2NDU2XcKgwqAgbG9jaygmcS0+ZWxldmF0b3JfbG9jayk7Cj4gW8KgIDI0Ny40ODY0
+NThdCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICoqKiBERUFETE9DSyAqKioKPiAK
+PiBbwqAgMjQ3LjQ4NjQ1OV0gNiBsb2NrcyBoZWxkIGJ5ICh1ZGV2LXdvcmtlcikvNDI1NzoKPiBb
+wqAgMjQ3LjQ4NjQ2MV3CoCAjMDogZmZmZjg4ODE3YjQ5YzQ1OCAoc2Jfd3JpdGVycyM0KXsuKy4r
+fS17MDowfSwgYXQ6Cj4ga3N5c193cml0ZSsweGZmLzB4MjAwCj4gW8KgIDI0Ny40ODY0NjddwqAg
+IzE6IGZmZmY4ODgxOWU3Njc0OTAgKCZvZi0+bXV0ZXgjMil7Ky4rLn0tezQ6NH0sIGF0Ogo+IGtl
+cm5mc19mb3Bfd3JpdGVfaXRlcisweDI1Yi8weDVhMAo+IFvCoCAyNDcuNDg2NDczXcKgICMyOiBm
+ZmZmODg4M2IzNTJjOGMwIChrbi0+YWN0aXZlIzIwNCl7LisuK30tezA6MH0sCj4gYXQ6Cj4ga2Vy
+bmZzX2ZvcF93cml0ZV9pdGVyKzB4MjdlLzB4NWEwCj4gW8KgIDI0Ny40ODY0NzldwqAgIzM6IGZm
+ZmY4ODgxNjllY2MzYzAKPiAoJnNldC0+dXBkYXRlX25yX2h3cV9sb2NrKXsuKy4rfS17NDo0fSwg
+YXQ6Cj4gZWx2X2lvc2NoZWRfc3RvcmUrMHgxYmEvMHgyYzAKPiBbwqAgMjQ3LjQ4NjQ4NF3CoCAj
+NDogZmZmZjg4ODE2YjljMDBiMAo+ICgmcS0+cV91c2FnZV9jb3VudGVyKGlvKSM2KXsrKysrfS17
+MDowfSwgYXQ6Cj4gYmxrX21xX2ZyZWV6ZV9xdWV1ZV9ub21lbXNhdmUrMHgxNi8weDMwCj4gW8Kg
+IDI0Ny40ODY0OTBdwqAgIzU6IGZmZmY4ODgxNmI5YzAwZjAKPiAoJnEtPnFfdXNhZ2VfY291bnRl
+cihxdWV1ZSkjNSl7KysrK30tezA6MH0sIGF0Ogo+IGJsa19tcV9mcmVlemVfcXVldWVfbm9tZW1z
+YXZlKzB4MTYvMHgzMAo+IFvCoCAyNDcuNDg2NDk1XQo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgc3RhY2sgYmFja3RyYWNlOgo+IFvCoCAyNDcuNDg2NDk4XSBDUFU6IDMgVUlEOiAwIFBJ
+RDogNDI1NyBDb21tOiAodWRldi13b3JrZXIpIFRhaW50ZWQ6IEcKPiDCoMKgwqDCoMKgwqDCoMKg
+wqDCoCBMwqDCoMKgwqDCoCA2LjE2LjAtcmM3ICMzNiBQUkVFTVBUKGxhenkpCj4gW8KgIDI0Ny40
+ODY1MDFdIFRhaW50ZWQ6IFtMXT1TT0ZUTE9DS1VQCj4gW8KgIDI0Ny40ODY1MDFdIEhhcmR3YXJl
+IG5hbWU6IEFTUm9jayBCNjUwSSBMaWdodG5pbmcgV2lGaS9CNjUwSQo+IExpZ2h0bmluZyBXaUZp
+LCBCSU9TIDMuMzAgMDYvMTYvMjAyNQo+IFvCoCAyNDcuNDg2NTAzXSBDYWxsIFRyYWNlOgo+IFvC
+oCAyNDcuNDg2NTAzXcKgIDxUQVNLPgo+IFvCoCAyNDcuNDg2NTA1XcKgIGR1bXBfc3RhY2tfbHZs
+KzB4ODQvMHhkMAo+IFvCoCAyNDcuNDg2NTA5XcKgIHByaW50X2NpcmN1bGFyX2J1Zy5jb2xkKzB4
+MzgvMHg0Ngo+IFvCoCAyNDcuNDg2NTEyXcKgIGNoZWNrX25vbmNpcmN1bGFyKzB4MTRhLzB4MTcw
+Cj4gW8KgIDI0Ny40ODY1MTVdwqAgY2hlY2tfcHJldl9hZGQrMHhlMS8weGNmMAo+IFvCoCAyNDcu
+NDg2NTE3XcKgID8gbG9ja19hY3F1aXJlLnBhcnQuMCsweGM4LzB4MjcwCj4gW8KgIDI0Ny40ODY1
+MThdwqAgdmFsaWRhdGVfY2hhaW4rMHg0Y2YvMHg3NDAKPiBbwqAgMjQ3LjQ4NjUyMF3CoCBfX2xv
+Y2tfYWNxdWlyZSsweDU2YS8weGJlMAo+IFvCoCAyNDcuNDg2NTIyXcKgIGxvY2tfYWNxdWlyZS5w
+YXJ0LjArMHhjOC8weDI3MAo+IFvCoCAyNDcuNDg2NTI0XcKgID8gZWxldmF0b3JfY2hhbmdlKzB4
+YjYvMHgzODAKPiBbwqAgMjQ3LjQ4NjUyNl3CoCA/IF9fbG9ja19yZWxlYXNlLmlzcmEuMCsweDFj
+Yi8weDM0MAo+IFvCoCAyNDcuNDg2NTI3XcKgID8gcmN1X2lzX3dhdGNoaW5nKzB4MTUvMHhlMAo+
+IFvCoCAyNDcuNDg2NTMwXcKgID8gX19wZnhfX19taWdodF9yZXNjaGVkKzB4MTAvMHgxMAo+IFvC
+oCAyNDcuNDg2NTMyXcKgID8gZWxldmF0b3JfY2hhbmdlKzB4YjYvMHgzODAKPiBbwqAgMjQ3LjQ4
+NjUzNF3CoCA/IGxvY2tfYWNxdWlyZSsweGY3LzB4MTQwCj4gW8KgIDI0Ny40ODY1MzVdwqAgX19t
+dXRleF9sb2NrKzB4MWIyLzB4MWI3MAo+IFvCoCAyNDcuNDg2NTM3XcKgID8gZWxldmF0b3JfY2hh
+bmdlKzB4YjYvMHgzODAKPiBbwqAgMjQ3LjQ4NjUzOV3CoCA/IGVsZXZhdG9yX2NoYW5nZSsweGI2
+LzB4MzgwCj4gW8KgIDI0Ny40ODY1NDFdwqAgPyBfX3BmeF94YV9maW5kX2FmdGVyKzB4MTAvMHgx
+MAo+IFvCoCAyNDcuNDg2NTQzXcKgID8gX19wZnhfX19tdXRleF9sb2NrKzB4MTAvMHgxMAo+IFvC
+oCAyNDcuNDg2NTQ1XcKgID8gX19wZnhfX19taWdodF9yZXNjaGVkKzB4MTAvMHgxMAo+IFvCoCAy
+NDcuNDg2NTQ3XcKgID8gYmxrX21xX2NhbmNlbF93b3JrX3N5bmMrMHhjMC8weDEwMAo+IFvCoCAy
+NDcuNDg2NTQ5XcKgID8gX19wZnhfYmxrX21xX2NhbmNlbF93b3JrX3N5bmMrMHgxMC8weDEwCj4g
+W8KgIDI0Ny40ODY1NTFdwqAgPyBlbGV2YXRvcl9jaGFuZ2UrMHhiNi8weDM4MAo+IFvCoCAyNDcu
+NDg2NTUzXcKgIGVsZXZhdG9yX2NoYW5nZSsweGI2LzB4MzgwCj4gW8KgIDI0Ny40ODY1NTZdwqAg
+ZWx2X2lvc2NoZWRfc3RvcmUrMHgyNGEvMHgyYzAKPiBbwqAgMjQ3LjQ4NjU1OF3CoCA/IF9fcGZ4
+X2Vsdl9pb3NjaGVkX3N0b3JlKzB4MTAvMHgxMAo+IFvCoCAyNDcuNDg2NTYwXcKgID8gX19wZnhf
+X19taWdodF9yZXNjaGVkKzB4MTAvMHgxMAo+IFvCoCAyNDcuNDg2NTYyXcKgID8gX19wZnhfc3lz
+ZnNfa2Zfd3JpdGUrMHgxMC8weDEwCj4gW8KgIDI0Ny40ODY1NjRdwqAgcXVldWVfYXR0cl9zdG9y
+ZSsweDIzOC8weDM0MAo+IFvCoCAyNDcuNDg2NTY2XcKgID8gX19wZnhfcXVldWVfYXR0cl9zdG9y
+ZSsweDEwLzB4MTAKPiBbwqAgMjQ3LjQ4NjU2N13CoCA/IF9fbG9ja19hY3F1aXJlKzB4NTZhLzB4
+YmUwCj4gW8KgIDI0Ny40ODY1NjldwqAgPyBsb2NrX2FjcXVpcmUucGFydC4wKzB4YzgvMHgyNzAK
+PiBbwqAgMjQ3LjQ4NjU3MF3CoCA/IGZpbmRfaGVsZF9sb2NrKzB4MmIvMHg4MAo+IFvCoCAyNDcu
+NDg2NTcyXcKgID8gX19sb2NrX3JlbGVhc2UuaXNyYS4wKzB4MWNiLzB4MzQwCj4gW8KgIDI0Ny40
+ODY1NzRdwqAgPyBzeXNmc19maWxlX2tvYmorMHhiMy8weDFjMAo+IFvCoCAyNDcuNDg2NTc2XcKg
+ID8gc3lzZnNfZmlsZV9rb2JqKzB4YmQvMHgxYzAKPiBbwqAgMjQ3LjQ4NjU3N13CoCA/IHN5c2Zz
+X2tmX3dyaXRlKzB4NjUvMHgxNzAKPiBbwqAgMjQ3LjQ4NjU3OV3CoCA/IF9fcGZ4X3N5c2ZzX2tm
+X3dyaXRlKzB4MTAvMHgxMAo+IFvCoCAyNDcuNDg2NTgwXcKgIGtlcm5mc19mb3Bfd3JpdGVfaXRl
+cisweDM5Yi8weDVhMAo+IFvCoCAyNDcuNDg2NTgyXcKgID8gX19wZnhfa2VybmZzX2ZvcF93cml0
+ZV9pdGVyKzB4MTAvMHgxMAo+IFvCoCAyNDcuNDg2NTg0XcKgIHZmc193cml0ZSsweDUyNC8weGU3
+MAo+IFvCoCAyNDcuNDg2NTg2XcKgID8gX19wZnhfdmZzX3dyaXRlKzB4MTAvMHgxMAo+IFvCoCAy
+NDcuNDg2NTg4XcKgID8gX19wZnhfX19zZWNjb21wX2ZpbHRlcisweDEwLzB4MTAKPiBbwqAgMjQ3
+LjQ4NjU5MV3CoCBrc3lzX3dyaXRlKzB4ZmYvMHgyMDAKPiBbwqAgMjQ3LjQ4NjU5M13CoCA/IF9f
+cGZ4X2tzeXNfd3JpdGUrMHgxMC8weDEwCj4gW8KgIDI0Ny40ODY1OTVdwqAgPyBzeXNjYWxsX3Ry
+YWNlX2VudGVyKzB4OGUvMHgyZTAKPiBbwqAgMjQ3LjQ4NjU5OF3CoCBkb19zeXNjYWxsXzY0KzB4
+OTgvMHgzYzAKPiBbwqAgMjQ3LjQ4NjYwMF3CoCA/IF9feDY0X3N5c19vcGVuYXQrMHgxMGUvMHgy
+MTAKPiBbwqAgMjQ3LjQ4NjYwMl3CoCA/IGRvX3N5c2NhbGxfNjQrMHgxNjEvMHgzYzAKPiBbwqAg
+MjQ3LjQ4NjYwNF3CoCA/IGRvX3N5c19vcGVuYXQyKzB4MTA5LzB4MTgwCj4gW8KgIDI0Ny40ODY2
+MDVdwqAgPyBfX3BmeF9fX3g2NF9zeXNfb3BlbmF0KzB4MTAvMHgxMAo+IFvCoCAyNDcuNDg2NjA3
+XcKgID8gX19wZnhfZG9fc3lzX29wZW5hdDIrMHgxMC8weDEwCj4gW8KgIDI0Ny40ODY2MDldwqAg
+PyBsb2NrZGVwX2hhcmRpcnFzX29uKzB4OGMvMHgxMzAKPiBbwqAgMjQ3LjQ4NjYxMV3CoCA/IGVu
+dHJ5X1NZU0NBTExfNjRfYWZ0ZXJfaHdmcmFtZSsweDc2LzB4N2UKPiBbwqAgMjQ3LjQ4NjYxM13C
+oCA/IGRvX3N5c2NhbGxfNjQrMHgxNjEvMHgzYzAKPiBbwqAgMjQ3LjQ4NjYxNV3CoCA/IF9feDY0
+X3N5c19vcGVuYXQrMHgxMGUvMHgyMTAKPiBbwqAgMjQ3LjQ4NjYxNl3CoCA/IGxvY2tkZXBfaGFy
+ZGlycXNfb24rMHg4Yy8weDEzMAo+IFvCoCAyNDcuNDg2NjE4XcKgID8gX19wZnhfX194NjRfc3lz
+X29wZW5hdCsweDEwLzB4MTAKPiBbwqAgMjQ3LjQ4NjYyMV3CoCA/IGxvY2tkZXBfaGFyZGlycXNf
+b24rMHg4Yy8weDEzMAo+IFvCoCAyNDcuNDg2NjIzXcKgID8gZW50cnlfU1lTQ0FMTF82NF9hZnRl
+cl9od2ZyYW1lKzB4NzYvMHg3ZQo+IFvCoCAyNDcuNDg2NjI0XcKgID8gZG9fc3lzY2FsbF82NCsw
+eDE2MS8weDNjMAo+IFvCoCAyNDcuNDg2NjI2XcKgIGVudHJ5X1NZU0NBTExfNjRfYWZ0ZXJfaHdm
+cmFtZSsweDc2LzB4N2UKPiBbwqAgMjQ3LjQ4NjYyN10gUklQOiAwMDMzOjB4N2Y5YWZkNjdiNWM2
+Cj4gW8KgIDI0Ny40ODY2NDJdIENvZGU6IDVkIGU4IDQxIDhiIDkzIDA4IDAzIDAwIDAwIDU5IDVl
+IDQ4IDgzIGY4IGZjIDc1Cj4gMTkgODMgZTIgMzkgODMgZmEgMDggNzUgMTEgZTggMjYgZmYgZmYg
+ZmYgNjYgMGYgMWYgNDQgMDAgMDAgNDggOGIgNDUKPiAxMCAwZiAwNSA8NDg+IDhiIDVkIGY4IGM5
+IGMzIDBmIDFmIDQwIDAwIGYzIDBmIDFlIGZhIDU1IDQ4IDg5IGU1IDQ4Cj4gODMKPiBlYyAwOAo+
+IFvCoCAyNDcuNDg2NjQzXSBSU1A6IDAwMmI6MDAwMDdmZmYyNDRlYjIxMCBFRkxBR1M6IDAwMDAw
+MjAyIE9SSUdfUkFYOgo+IDAwMDAwMDAwMDAwMDAwMDEKPiBbwqAgMjQ3LjQ4NjY0Nl0gUkFYOiBm
+ZmZmZmZmZmZmZmZmZmRhIFJCWDogMDAwMDU1ZTQxNzk2ZTA2MCBSQ1g6Cj4gMDAwMDdmOWFmZDY3
+YjVjNgo+IFvCoCAyNDcuNDg2NjQ3XSBSRFg6IDAwMDAwMDAwMDAwMDAwMDMgUlNJOiAwMDAwN2Zm
+ZjI0NGViNTYwIFJESToKPiAwMDAwMDAwMDAwMDAwMDE0Cj4gW8KgIDI0Ny40ODY2NDddIFJCUDog
+MDAwMDdmZmYyNDRlYjIzMCBSMDg6IDAwMDAwMDAwMDAwMDAwMDAgUjA5Ogo+IDAwMDAwMDAwMDAw
+MDAwMDAKPiBbwqAgMjQ3LjQ4NjY0OF0gUjEwOiAwMDAwMDAwMDAwMDAwMDAwIFIxMTogMDAwMDAw
+MDAwMDAwMDIwMiBSMTI6Cj4gMDAwMDAwMDAwMDAwMDAwMwo+IFvCoCAyNDcuNDg2NjQ5XSBSMTM6
+IDAwMDAwMDAwMDAwMDAwMDMgUjE0OiAwMDAwN2ZmZjI0NGViNTYwIFIxNToKPiAwMDAwN2ZmZjI0
+NGViNTYwCj4gW8KgIDI0Ny40ODY2NTJdwqAgPC9UQVNLPgo+IAo+IEkgYmlzZWN0ZWQgdGhlIGlz
+c3VlIHRvIHRoaXMgY29tbWl0Ogo+IGZmYTFlN2FkYTQ1NjA4N2MyNDAyYjM3Y2Q2YjI4NjNjZWQy
+OWFmZjAgaXMgdGhlIGZpcnN0IGJhZCBjb21taXQKPiBjb21taXQgZmZhMWU3YWRhNDU2MDg3YzI0
+MDJiMzdjZDZiMjg2M2NlZDI5YWZmMAo+IEF1dGhvcjogVGhvbWFzIEhlbGxzdHLDtm0gPHRob21h
+cy5oZWxsc3Ryb21AbGludXguaW50ZWwuY29tPgo+IERhdGU6wqDCoCBUdWUgTWFyIDE4IDEwOjU1
+OjQ4IDIwMjUgKzAxMDAKPiAKPiDCoMKgwqAgYmxvY2s6IE1ha2UgcmVxdWVzdF9xdWV1ZSBsb2Nr
+ZGVwIHNwbGF0cyBzaG93IHVwIGVhcmxpZXIKPiAKPiDCoMKgwqAgSW4gcmVjZW50IGtlcm5lbHMs
+IHRoZXJlIGFyZSBsb2NrZGVwIHNwbGF0cyBhcm91bmQgdGhlCj4gwqDCoMKgIHN0cnVjdCByZXF1
+ZXN0X3F1ZXVlOjppb19sb2NrZGVwX21hcCwgc2ltaWxhciB0byBbMV0sIGJ1dCB0aGV5Cj4gwqDC
+oMKgIHR5cGljYWxseSBkb24ndCBzaG93IHVwIHVudGlsIHJlY2xhaW0gd2l0aCB3cml0ZWJhY2sg
+aGFwcGVucy4KPiAKPiDCoMKgwqAgSGF2aW5nIG11bHRpcGxlIGtlcm5lbCB2ZXJzaW9ucyByZWxl
+YXNlZCB3aXRoIGEga25vd24gcmlzYyBvZgo+IGtlcm5lbAo+IMKgwqDCoCBkZWFkbG9jayBkdXJp
+bmcgcmVjbGFpbSB3cml0ZWJhY2sgc2hvdWxkIElNSE8gYmUgYWRkcmVzc2VkIGFuZAo+IMKgwqDC
+oCBiYWNrcG9ydGVkIHRvIC1zdGFibGUgd2l0aCB0aGUgaGlnaGVzdCBwcmlvcml0eS4KPiAKPiDC
+oMKgwqAgSW4gb3JkZXIgdG8gaGF2ZSB0aGVzZSBsb2NrZGVwIHNwbGF0cyBzaG93IHVwIGVhcmxp
+ZXIsCj4gwqDCoMKgIHByZWZlcnJhYmx5IGR1cmluZyBzeXN0ZW0gaW5pdGlhbGl6YXRpb24sIHBy
+aW1lIHRoZQo+IMKgwqDCoCBzdHJ1Y3QgcmVxdWVzdF9xdWV1ZTo6aW9fbG9ja2RlcF9tYXAgYXMg
+R0ZQX0tFUk5FTCByZWNsYWltLQo+IMKgwqDCoCB0YWludGVkLiBUaGlzIHdpbGwgaW5zdGVhZCBs
+ZWFkIHRvIGxvY2tkZXAgc3BsYXRzIGxvb2tpbmcgc2ltaWxhcgo+IMKgwqDCoCB0byBbMl0sIGJ1
+dCB3aXRob3V0IHRoZSBuZWVkIGZvciByZWNsYWltICsgd3JpdGViYWNrCj4gwqDCoMKgIGhhcHBl
+bmluZy4KPiAKPiDCoMKgwqAgWzFdOgo+IMKgwqDCoCBbwqAgMTg5Ljc2MjI0NF0KPiA9PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0KPiDCoMKgwqAg
+W8KgIDE4OS43NjI0MzJdIFdBUk5JTkc6IHBvc3NpYmxlIGNpcmN1bGFyIGxvY2tpbmcgZGVwZW5k
+ZW5jeQo+IGRldGVjdGVkCj4gwqDCoMKgIFvCoCAxODkuNzYyNDQxXSA2LjE0LjAtcmM2LXhlKyAj
+NiBUYWludGVkOiBHwqDCoMKgwqAgVQo+IMKgwqDCoCBbwqAgMTg5Ljc2MjQ1MF0gLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiAtLS0tCj4gwqDCoMKg
+IFvCoCAxODkuNzYyNDU5XSBrc3dhcGQwLzExOSBpcyB0cnlpbmcgdG8gYWNxdWlyZSBsb2NrOgo+
+IMKgwqDCoCBbwqAgMTg5Ljc2MjQ2N10gZmZmZjg4ODExMGNlYjcxMAo+ICgmcS0+cV91c2FnZV9j
+b3VudGVyKGlvKSMyNil7KysrK30tezA6MH0sIGF0OiBfX3N1Ym1pdF9iaW8rMHg3Ni8weDIzMAo+
+IMKgwqDCoCBbwqAgMTg5Ljc2MjQ4NV0KPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgYnV0IHRhc2sgaXMgYWxyZWFkeSBob2xkaW5nIGxvY2s6Cj4gwqDCoMKgIFvCoCAxODku
+NzYyNDk0XSBmZmZmZmZmZjgzNGM5N2MwIChmc19yZWNsYWltKXsrLisufS17MDowfSwgYXQ6Cj4g
+YmFsYW5jZV9wZ2RhdCsweGJlLzB4YjAwCj4gwqDCoMKgIFvCoCAxODkuNzYyNTA3XQo+IMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB3aGljaCBsb2NrIGFscmVhZHkgZGVwZW5k
+cyBvbiB0aGUgbmV3IGxvY2suCj4gCj4gwqDCoMKgIFvCoCAxODkuNzYyNTE5XQo+IMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB0aGUgZXhpc3RpbmcgZGVwZW5kZW5jeSBjaGFp
+biAoaW4gcmV2ZXJzZSBvcmRlcikKPiBpczoKPiDCoMKgwqAgW8KgIDE4OS43NjI1MjldCj4gwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIC0+ICMyIChmc19yZWNsYWltKXsrLisu
+fS17MDowfToKPiDCoMKgwqAgW8KgIDE4OS43NjI1NDBdwqDCoMKgwqDCoMKgwqAgZnNfcmVjbGFp
+bV9hY3F1aXJlKzB4YzUvMHgxMDAKPiDCoMKgwqAgW8KgIDE4OS43NjI1NDhdwqDCoMKgwqDCoMKg
+wqAga21lbV9jYWNoZV9hbGxvY19scnVfbm9wcm9mKzB4NGEvMHg0ODAKPiDCoMKgwqAgW8KgIDE4
+OS43NjI1NThdwqDCoMKgwqDCoMKgwqAgYWxsb2NfaW5vZGUrMHhhYS8weGUwCj4gwqDCoMKgIFvC
+oCAxODkuNzYyNTY2XcKgwqDCoMKgwqDCoMKgIGlnZXRfbG9ja2VkKzB4MTU3LzB4MzMwCj4gwqDC
+oMKgIFvCoCAxODkuNzYyNTczXcKgwqDCoMKgwqDCoMKgIGtlcm5mc19nZXRfaW5vZGUrMHgxYi8w
+eDExMAo+IMKgwqDCoCBbwqAgMTg5Ljc2MjU4Ml3CoMKgwqDCoMKgwqDCoCBrZXJuZnNfZ2V0X3Ry
+ZWUrMHgxYjAvMHgyZTAKPiDCoMKgwqAgW8KgIDE4OS43NjI1OTBdwqDCoMKgwqDCoMKgwqAgc3lz
+ZnNfZ2V0X3RyZWUrMHgxZi8weDYwCj4gwqDCoMKgIFvCoCAxODkuNzYyNTk3XcKgwqDCoMKgwqDC
+oMKgIHZmc19nZXRfdHJlZSsweDJhLzB4ZjAKPiDCoMKgwqAgW8KgIDE4OS43NjI2MDVdwqDCoMKg
+wqDCoMKgwqAgcGF0aF9tb3VudCsweDRjZC8weGMwMAo+IMKgwqDCoCBbwqAgMTg5Ljc2MjYxM13C
+oMKgwqDCoMKgwqDCoCBfX3g2NF9zeXNfbW91bnQrMHgxMTkvMHgxNTAKPiDCoMKgwqAgW8KgIDE4
+OS43NjI2MjFdwqDCoMKgwqDCoMKgwqAgeDY0X3N5c19jYWxsKzB4MTRmMi8weDIzMTAKPiDCoMKg
+wqAgW8KgIDE4OS43NjI2MzBdwqDCoMKgwqDCoMKgwqAgZG9fc3lzY2FsbF82NCsweDkxLzB4MTgw
+Cj4gwqDCoMKgIFvCoCAxODkuNzYyNjM3XcKgwqDCoMKgwqDCoMKgIGVudHJ5X1NZU0NBTExfNjRf
+YWZ0ZXJfaHdmcmFtZSsweDc2LzB4N2UKPiDCoMKgwqAgW8KgIDE4OS43NjI2NDddCj4gwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIC0+ICMxICgmcm9vdC0+a2VybmZzX3J3c2Vt
+KXsrKysrfS17MzozfToKPiDCoMKgwqAgW8KgIDE4OS43NjI2NTldwqDCoMKgwqDCoMKgwqAgZG93
+bl93cml0ZSsweDNlLzB4ZjAKPiDCoMKgwqAgW8KgIDE4OS43NjI2NjddwqDCoMKgwqDCoMKgwqAg
+a2VybmZzX3JlbW92ZSsweDMyLzB4NjAKPiDCoMKgwqAgW8KgIDE4OS43NjI2NzZdwqDCoMKgwqDC
+oMKgwqAgc3lzZnNfcmVtb3ZlX2RpcisweDRmLzB4NjAKPiDCoMKgwqAgW8KgIDE4OS43NjI2ODVd
+wqDCoMKgwqDCoMKgwqAgX19rb2JqZWN0X2RlbCsweDMzLzB4YTAKPiDCoMKgwqAgW8KgIDE4OS43
+NjI3MDldwqDCoMKgwqDCoMKgwqAga29iamVjdF9kZWwrMHgxMy8weDMwCj4gwqDCoMKgIFvCoCAx
+ODkuNzYyNzE2XcKgwqDCoMKgwqDCoMKgIGVsdl91bnJlZ2lzdGVyX3F1ZXVlKzB4NTIvMHg4MAo+
+IMKgwqDCoCBbwqAgMTg5Ljc2MjcyNV3CoMKgwqDCoMKgwqDCoCBlbGV2YXRvcl9zd2l0Y2grMHg2
+OC8weDM2MAo+IMKgwqDCoCBbwqAgMTg5Ljc2MjczM13CoMKgwqDCoMKgwqDCoCBlbHZfaW9zY2hl
+ZF9zdG9yZSsweDE0Yi8weDFiMAo+IMKgwqDCoCBbwqAgMTg5Ljc2Mjc1Nl3CoMKgwqDCoMKgwqDC
+oCBxdWV1ZV9hdHRyX3N0b3JlKzB4MTgxLzB4MWUwCj4gwqDCoMKgIFvCoCAxODkuNzYyNzY1XcKg
+wqDCoMKgwqDCoMKgIHN5c2ZzX2tmX3dyaXRlKzB4NDkvMHg4MAo+IMKgwqDCoCBbwqAgMTg5Ljc2
+Mjc3M13CoMKgwqDCoMKgwqDCoCBrZXJuZnNfZm9wX3dyaXRlX2l0ZXIrMHgxN2QvMHgyNTAKPiDC
+oMKgwqAgW8KgIDE4OS43NjI3ODFdwqDCoMKgwqDCoMKgwqAgdmZzX3dyaXRlKzB4MjgxLzB4NTQw
+Cj4gwqDCoMKgIFvCoCAxODkuNzYyNzkwXcKgwqDCoMKgwqDCoMKgIGtzeXNfd3JpdGUrMHg3Mi8w
+eGYwCj4gwqDCoMKgIFvCoCAxODkuNzYyNzk4XcKgwqDCoMKgwqDCoMKgIF9feDY0X3N5c193cml0
+ZSsweDE5LzB4MzAKPiDCoMKgwqAgW8KgIDE4OS43NjI4MDddwqDCoMKgwqDCoMKgwqAgeDY0X3N5
+c19jYWxsKzB4MmEzLzB4MjMxMAo+IMKgwqDCoCBbwqAgMTg5Ljc2MjgxNV3CoMKgwqDCoMKgwqDC
+oCBkb19zeXNjYWxsXzY0KzB4OTEvMHgxODAKPiDCoMKgwqAgW8KgIDE4OS43NjI4MjNdwqDCoMKg
+wqDCoMKgwqAgZW50cnlfU1lTQ0FMTF82NF9hZnRlcl9od2ZyYW1lKzB4NzYvMHg3ZQo+IMKgwqDC
+oCBbwqAgMTg5Ljc2MjgzM10KPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
+LT4gIzAgKCZxLT5xX3VzYWdlX2NvdW50ZXIoaW8pIzI2KXsrKysrfS17MDowfToKPiDCoMKgwqAg
+W8KgIDE4OS43NjI4NDVdwqDCoMKgwqDCoMKgwqAgX19sb2NrX2FjcXVpcmUrMHgxNTI1LzB4Mjc2
+MAo+IMKgwqDCoCBbwqAgMTg5Ljc2Mjg1NF3CoMKgwqDCoMKgwqDCoCBsb2NrX2FjcXVpcmUrMHhj
+YS8weDMxMAo+IMKgwqDCoCBbwqAgMTg5Ljc2Mjg2MV3CoMKgwqDCoMKgwqDCoCBibGtfbXFfc3Vi
+bWl0X2JpbysweDhhMi8weGJhMAo+IMKgwqDCoCBbwqAgMTg5Ljc2Mjg3MF3CoMKgwqDCoMKgwqDC
+oCBfX3N1Ym1pdF9iaW8rMHg3Ni8weDIzMAo+IMKgwqDCoCBbwqAgMTg5Ljc2Mjg3OF3CoMKgwqDC
+oMKgwqDCoCBzdWJtaXRfYmlvX25vYWNjdF9ub2NoZWNrKzB4MzIzLzB4NDMwCj4gwqDCoMKgIFvC
+oCAxODkuNzYyODg4XcKgwqDCoMKgwqDCoMKgIHN1Ym1pdF9iaW9fbm9hY2N0KzB4MmNjLzB4NjIw
+Cj4gwqDCoMKgIFvCoCAxODkuNzYyODk2XcKgwqDCoMKgwqDCoMKgIHN1Ym1pdF9iaW8rMHgzOC8w
+eDExMAo+IMKgwqDCoCBbwqAgMTg5Ljc2MjkwNF3CoMKgwqDCoMKgwqDCoCBfX3N3YXBfd3JpdGVw
+YWdlKzB4ZjUvMHgzODAKPiDCoMKgwqAgW8KgIDE4OS43NjI5MTJdwqDCoMKgwqDCoMKgwqAgc3dh
+cF93cml0ZXBhZ2UrMHgzYzcvMHg2MDAKPiDCoMKgwqAgW8KgIDE4OS43NjI5MjBdwqDCoMKgwqDC
+oMKgwqAgc2htZW1fd3JpdGVwYWdlKzB4M2RhLzB4NGYwCj4gwqDCoMKgIFvCoCAxODkuNzYyOTI5
+XcKgwqDCoMKgwqDCoMKgIHBhZ2VvdXQrMHgxM2YvMHgzMTAKPiDCoMKgwqAgW8KgIDE4OS43NjI5
+MzddwqDCoMKgwqDCoMKgwqAgc2hyaW5rX2ZvbGlvX2xpc3QrMHg2MWMvMHhmNjAKPiDCoMKgwqAg
+W8KgIDE4OS43NjMyNjFdwqDCoMKgwqDCoMKgwqAgZXZpY3RfZm9saW9zKzB4Mzc4LzB4Y2QwCj4g
+wqDCoMKgIFvCoCAxODkuNzYzNTg0XcKgwqDCoMKgwqDCoMKgIHRyeV90b19zaHJpbmtfbHJ1dmVj
+KzB4MWIwLzB4MzYwCj4gwqDCoMKgIFvCoCAxODkuNzYzOTQ2XcKgwqDCoMKgwqDCoMKgIHNocmlu
+a19vbmUrMHgxMGUvMHgyMDAKPiDCoMKgwqAgW8KgIDE4OS43NjQyNjZdwqDCoMKgwqDCoMKgwqAg
+c2hyaW5rX25vZGUrMHhjMDIvMHgxNDkwCj4gwqDCoMKgIFvCoCAxODkuNzY0NTg2XcKgwqDCoMKg
+wqDCoMKgIGJhbGFuY2VfcGdkYXQrMHg1NjMvMHhiMDAKPiDCoMKgwqAgW8KgIDE4OS43NjQ5MzRd
+wqDCoMKgwqDCoMKgwqAga3N3YXBkKzB4MWU4LzB4NDMwCj4gwqDCoMKgIFvCoCAxODkuNzY1MjQ5
+XcKgwqDCoMKgwqDCoMKgIGt0aHJlYWQrMHgxMGIvMHgyNjAKPiDCoMKgwqAgW8KgIDE4OS43NjU1
+NTldwqDCoMKgwqDCoMKgwqAgcmV0X2Zyb21fZm9yaysweDQ0LzB4NzAKPiDCoMKgwqAgW8KgIDE4
+OS43NjU4ODldwqDCoMKgwqDCoMKgwqAgcmV0X2Zyb21fZm9ya19hc20rMHgxYS8weDMwCj4gwqDC
+oMKgIFvCoCAxODkuNzY2MTk4XQo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oCBvdGhlciBpbmZvIHRoYXQgbWlnaHQgaGVscCB1cyBkZWJ1ZyB0aGlzOgo+IAo+IMKgwqDCoCBb
+wqAgMTg5Ljc2NzA4OV0gQ2hhaW4gZXhpc3RzIG9mOgo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgJnEtPnFfdXNhZ2VfY291bnRlcihpbykjMjYgLS0+Cj4gJnJvb3Qt
+Pmtlcm5mc19yd3NlbSAtLT4gZnNfcmVjbGFpbQo+IAo+IMKgwqDCoCBbwqAgMTg5Ljc2Nzk3MV3C
+oCBQb3NzaWJsZSB1bnNhZmUgbG9ja2luZyBzY2VuYXJpbzoKPiAKPiDCoMKgwqAgW8KgIDE4OS43
+Njg1NTVdwqDCoMKgwqDCoMKgwqAgQ1BVMMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgIENQVTEKPiDCoMKgwqAgW8KgIDE4OS43Njg4NDldwqDCoMKgwqDCoMKgwqAgLS0tLcKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIC0tLS0KPiDCoMKgwqAgW8KgIDE4
+OS43NjkxMzZdwqDCoCBsb2NrKGZzX3JlY2xhaW0pOwo+IMKgwqDCoCBbwqAgMTg5Ljc2OTQyMV3C
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoCBsb2NrKCZyb290LQo+ID5rZXJuZnNfcndzZW0pOwo+IMKgwqDCoCBbwqAgMTg5Ljc2OTcx
+NF3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCBsb2NrKGZzX3JlY2xhaW0pOwo+IMKgwqDCoCBbwqAgMTg5Ljc3MDAxNl3CoMKgIHJs
+b2NrKCZxLT5xX3VzYWdlX2NvdW50ZXIoaW8pIzI2KTsKPiDCoMKgwqAgW8KgIDE4OS43NzAzMDVd
+Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKioqIERFQURMT0NLICoq
+Kgo+IAo+IMKgwqDCoCBbwqAgMTg5Ljc3MTE2N10gMSBsb2NrIGhlbGQgYnkga3N3YXBkMC8xMTk6
+Cj4gwqDCoMKgIFvCoCAxODkuNzcxNDUzXcKgICMwOiBmZmZmZmZmZjgzNGM5N2MwIChmc19yZWNs
+YWltKXsrLisufS17MDowfSwKPiBhdDoKPiBiYWxhbmNlX3BnZGF0KzB4YmUvMHhiMDAKPiDCoMKg
+wqAgW8KgIDE4OS43NzE3NzBdCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+IHN0YWNrIGJhY2t0cmFjZToKPiDCoMKgwqAgW8KgIDE4OS43NzIzNTFdIENQVTogNCBVSUQ6IDAg
+UElEOiAxMTkgQ29tbToga3N3YXBkMCBUYWludGVkOiBHCj4gVcKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoCA2LjE0LjAtcmM2LXhlKyAjNgo+IMKgwqDCoCBbwqAgMTg5Ljc3MjM1M10gVGFpbnRlZDog
+W1VdPVVTRVIKPiDCoMKgwqAgW8KgIDE4OS43NzIzNTRdIEhhcmR3YXJlIG5hbWU6IEFTVVMgU3lz
+dGVtIFByb2R1Y3QgTmFtZS9QUklNRQo+IEI1NjBNLUEgQUMsIEJJT1MgMjAwMSAwMi8wMS8yMDIz
+Cj4gwqDCoMKgIFvCoCAxODkuNzcyMzU0XSBDYWxsIFRyYWNlOgo+IMKgwqDCoCBbwqAgMTg5Ljc3
+MjM1NV3CoCA8VEFTSz4KPiDCoMKgwqAgW8KgIDE4OS43NzIzNTZdwqAgZHVtcF9zdGFja19sdmwr
+MHg2ZS8weGEwCj4gwqDCoMKgIFvCoCAxODkuNzcyMzU5XcKgIGR1bXBfc3RhY2srMHgxMC8weDE4
+Cj4gwqDCoMKgIFvCoCAxODkuNzcyMzYwXcKgIHByaW50X2NpcmN1bGFyX2J1Zy5jb2xkKzB4MTdh
+LzB4MWI3Cj4gwqDCoMKgIFvCoCAxODkuNzcyMzYzXcKgIGNoZWNrX25vbmNpcmN1bGFyKzB4MTNh
+LzB4MTUwCj4gwqDCoMKgIFvCoCAxODkuNzcyMzY1XcKgID8gX19wZnhfc3RhY2tfdHJhY2VfY29u
+c3VtZV9lbnRyeSsweDEwLzB4MTAKPiDCoMKgwqAgW8KgIDE4OS43NzIzNjhdwqAgX19sb2NrX2Fj
+cXVpcmUrMHgxNTI1LzB4Mjc2MAo+IMKgwqDCoCBbwqAgMTg5Ljc3MjM2OF3CoCA/IHJldF9mcm9t
+X2ZvcmtfYXNtKzB4MWEvMHgzMAo+IMKgwqDCoCBbwqAgMTg5Ljc3MjM3MV3CoCBsb2NrX2FjcXVp
+cmUrMHhjYS8weDMxMAo+IMKgwqDCoCBbwqAgMTg5Ljc3MjM3Ml3CoCA/IF9fc3VibWl0X2Jpbysw
+eDc2LzB4MjMwCj4gwqDCoMKgIFvCoCAxODkuNzcyMzc1XcKgID8gbG9ja19yZWxlYXNlKzB4ZDUv
+MHgyYzAKPiDCoMKgwqAgW8KgIDE4OS43NzIzNzZdwqAgYmxrX21xX3N1Ym1pdF9iaW8rMHg4YTIv
+MHhiYTAKPiDCoMKgwqAgW8KgIDE4OS43NzIzNzhdwqAgPyBfX3N1Ym1pdF9iaW8rMHg3Ni8weDIz
+MAo+IMKgwqDCoCBbwqAgMTg5Ljc3MjM4MF3CoCBfX3N1Ym1pdF9iaW8rMHg3Ni8weDIzMAo+IMKg
+wqDCoCBbwqAgMTg5Ljc3MjM4Ml3CoCA/IHRyYWNlX2hhcmRpcnFzX29uKzB4MWUvMHhlMAo+IMKg
+wqDCoCBbwqAgMTg5Ljc3MjM4NF3CoCBzdWJtaXRfYmlvX25vYWNjdF9ub2NoZWNrKzB4MzIzLzB4
+NDMwCj4gwqDCoMKgIFvCoCAxODkuNzcyMzg2XcKgID8gc3VibWl0X2Jpb19ub2FjY3Rfbm9jaGVj
+aysweDMyMy8weDQzMAo+IMKgwqDCoCBbwqAgMTg5Ljc3MjM4N13CoCA/IF9fbWlnaHRfc2xlZXAr
+MHg1OC8weGEwCj4gwqDCoMKgIFvCoCAxODkuNzcyMzkwXcKgIHN1Ym1pdF9iaW9fbm9hY2N0KzB4
+MmNjLzB4NjIwCj4gwqDCoMKgIFvCoCAxODkuNzcyMzkxXcKgID8gY291bnRfbWVtY2dfZXZlbnRz
+KzB4NjgvMHg5MAo+IMKgwqDCoCBbwqAgMTg5Ljc3MjM5M13CoCBzdWJtaXRfYmlvKzB4MzgvMHgx
+MTAKPiDCoMKgwqAgW8KgIDE4OS43NzIzOTVdwqAgX19zd2FwX3dyaXRlcGFnZSsweGY1LzB4Mzgw
+Cj4gwqDCoMKgIFvCoCAxODkuNzcyMzk2XcKgIHN3YXBfd3JpdGVwYWdlKzB4M2M3LzB4NjAwCj4g
+wqDCoMKgIFvCoCAxODkuNzcyMzk3XcKgIHNobWVtX3dyaXRlcGFnZSsweDNkYS8weDRmMAo+IMKg
+wqDCoCBbwqAgMTg5Ljc3MjQwMV3CoCBwYWdlb3V0KzB4MTNmLzB4MzEwCj4gwqDCoMKgIFvCoCAx
+ODkuNzcyNDA2XcKgIHNocmlua19mb2xpb19saXN0KzB4NjFjLzB4ZjYwCj4gwqDCoMKgIFvCoCAx
+ODkuNzcyNDA5XcKgID8gaXNvbGF0ZV9mb2xpb3MrMHhlODAvMHgxNmIwCj4gwqDCoMKgIFvCoCAx
+ODkuNzcyNDEwXcKgID8gbWFya19oZWxkX2xvY2tzKzB4NDYvMHg5MAo+IMKgwqDCoCBbwqAgMTg5
+Ljc3MjQxMl3CoCBldmljdF9mb2xpb3MrMHgzNzgvMHhjZDAKPiDCoMKgwqAgW8KgIDE4OS43NzI0
+MTRdwqAgPyBldmljdF9mb2xpb3MrMHgzNGEvMHhjZDAKPiDCoMKgwqAgW8KgIDE4OS43NzI0MTVd
+wqAgPyBsb2NrX2lzX2hlbGRfdHlwZSsweGEzLzB4MTMwCj4gwqDCoMKgIFvCoCAxODkuNzcyNDE3
+XcKgIHRyeV90b19zaHJpbmtfbHJ1dmVjKzB4MWIwLzB4MzYwCj4gwqDCoMKgIFvCoCAxODkuNzcy
+NDIwXcKgIHNocmlua19vbmUrMHgxMGUvMHgyMDAKPiDCoMKgwqAgW8KgIDE4OS43NzI0MjFdwqAg
+c2hyaW5rX25vZGUrMHhjMDIvMHgxNDkwCj4gwqDCoMKgIFvCoCAxODkuNzcyNDIzXcKgID8gc2hy
+aW5rX25vZGUrMHhhMDgvMHgxNDkwCj4gwqDCoMKgIFvCoCAxODkuNzcyNDI0XcKgID8gc2hyaW5r
+X25vZGUrMHhiZDgvMHgxNDkwCj4gwqDCoMKgIFvCoCAxODkuNzcyNDI1XcKgID8gbWVtX2Nncm91
+cF9pdGVyKzB4MzY2LzB4NDgwCj4gwqDCoMKgIFvCoCAxODkuNzcyNDI3XcKgIGJhbGFuY2VfcGdk
+YXQrMHg1NjMvMHhiMDAKPiDCoMKgwqAgW8KgIDE4OS43NzI0MjhdwqAgPyBiYWxhbmNlX3BnZGF0
+KzB4NTYzLzB4YjAwCj4gwqDCoMKgIFvCoCAxODkuNzcyNDMwXcKgID8gdHJhY2VfaGFyZGlycXNf
+b24rMHgxZS8weGUwCj4gwqDCoMKgIFvCoCAxODkuNzcyNDMxXcKgID8gZmluaXNoX3Rhc2tfc3dp
+dGNoLmlzcmEuMCsweGNiLzB4MzMwCj4gwqDCoMKgIFvCoCAxODkuNzcyNDMzXcKgID8gX19zd2l0
+Y2hfdG9fYXNtKzB4MzMvMHg3MAo+IMKgwqDCoCBbwqAgMTg5Ljc3MjQzN13CoCBrc3dhcGQrMHgx
+ZTgvMHg0MzAKPiDCoMKgwqAgW8KgIDE4OS43NzI0MzhdwqAgPyBfX3BmeF9hdXRvcmVtb3ZlX3dh
+a2VfZnVuY3Rpb24rMHgxMC8weDEwCj4gwqDCoMKgIFvCoCAxODkuNzcyNDQwXcKgID8gX19wZnhf
+a3N3YXBkKzB4MTAvMHgxMAo+IMKgwqDCoCBbwqAgMTg5Ljc3MjQ0MV3CoCBrdGhyZWFkKzB4MTBi
+LzB4MjYwCj4gwqDCoMKgIFvCoCAxODkuNzcyNDQzXcKgID8gX19wZnhfa3RocmVhZCsweDEwLzB4
+MTAKPiDCoMKgwqAgW8KgIDE4OS43NzI0NDRdwqAgcmV0X2Zyb21fZm9yaysweDQ0LzB4NzAKPiDC
+oMKgwqAgW8KgIDE4OS43NzI0NDZdwqAgPyBfX3BmeF9rdGhyZWFkKzB4MTAvMHgxMAo+IMKgwqDC
+oCBbwqAgMTg5Ljc3MjQ0N13CoCByZXRfZnJvbV9mb3JrX2FzbSsweDFhLzB4MzAKPiDCoMKgwqAg
+W8KgIDE4OS43NzI0NTBdwqAgPC9UQVNLPgo+IAo+IMKgwqDCoCBbMl06Cj4gwqDCoMKgIFvCoMKg
+wqAgOC43NjAyNTNdCj4gPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09Cj4gwqDCoMKgIFvCoMKgwqAgOC43NjAyNTRdIFdBUk5JTkc6IHBvc3NpYmxl
+IGNpcmN1bGFyIGxvY2tpbmcgZGVwZW5kZW5jeQo+IGRldGVjdGVkCj4gwqDCoMKgIFvCoMKgwqAg
+OC43NjAyNTVdIDYuMTQuMC1yYzYteGUrICM3IFRhaW50ZWQ6IEfCoMKgwqDCoCBVCj4gwqDCoMKg
+IFvCoMKgwqAgOC43NjAyNTZdIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tCj4gLS0tLQo+IMKgwqDCoCBbwqDCoMKgIDguNzYwMjU3XSAodWRldi13b3Jr
+ZXIpLzY3NCBpcyB0cnlpbmcgdG8gYWNxdWlyZSBsb2NrOgo+IMKgwqDCoCBbwqDCoMKgIDguNzYw
+MjU5XSBmZmZmODg4MTAwZTM5MTQ4ICgmcm9vdC0+a2VybmZzX3J3c2VtKXsrKysrfS0KPiB7Mzoz
+fSwKPiBhdDoga2VybmZzX3JlbW92ZSsweDMyLzB4NjAKPiDCoMKgwqAgW8KgwqDCoCA4Ljc2MDI2
+NV0KPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgYnV0IHRhc2sgaXMgYWxy
+ZWFkeSBob2xkaW5nIGxvY2s6Cj4gwqDCoMKgIFvCoMKgwqAgOC43NjAyNjZdIGZmZmY4ODgxMTBk
+Yzc2ODAKPiAoJnEtPnFfdXNhZ2VfY291bnRlcihpbykjMjcpeysrKyt9LXswOjB9LCBhdDoKPiBi
+bGtfbXFfZnJlZXplX3F1ZXVlX25vbWVtc2F2ZSsweDEyLzB4MzAKPiDCoMKgwqAgW8KgwqDCoCA4
+Ljc2MDI3Ml0KPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgd2hpY2ggbG9j
+ayBhbHJlYWR5IGRlcGVuZHMgb24gdGhlIG5ldyBsb2NrLgo+IAo+IMKgwqDCoCBbwqDCoMKgIDgu
+NzYwMjcyXQo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB0aGUgZXhpc3Rp
+bmcgZGVwZW5kZW5jeSBjaGFpbiAoaW4gcmV2ZXJzZSBvcmRlcikKPiBpczoKPiDCoMKgwqAgW8Kg
+wqDCoCA4Ljc2MDI3M10KPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgLT4g
+IzIgKCZxLT5xX3VzYWdlX2NvdW50ZXIoaW8pIzI3KXsrKysrfS17MDowfToKPiDCoMKgwqAgW8Kg
+wqDCoCA4Ljc2MDI3Nl3CoMKgwqDCoMKgwqDCoCBibGtfYWxsb2NfcXVldWUrMHgzMGEvMHgzNTAK
+PiDCoMKgwqAgW8KgwqDCoCA4Ljc2MDI3OV3CoMKgwqDCoMKgwqDCoCBibGtfbXFfYWxsb2NfcXVl
+dWUrMHg2Yi8weGUwCj4gwqDCoMKgIFvCoMKgwqAgOC43NjAyODFdwqDCoMKgwqDCoMKgwqAgc2Nz
+aV9hbGxvY19zZGV2KzB4Mjc2LzB4M2MwCj4gwqDCoMKgIFvCoMKgwqAgOC43NjAyODRdwqDCoMKg
+wqDCoMKgwqAgc2NzaV9wcm9iZV9hbmRfYWRkX2x1bisweDIyYS8weDQ0MAo+IMKgwqDCoCBbwqDC
+oMKgIDguNzYwMjg2XcKgwqDCoMKgwqDCoMKgIF9fc2NzaV9zY2FuX3RhcmdldCsweDEwOS8weDIz
+MAo+IMKgwqDCoCBbwqDCoMKgIDguNzYwMjg4XcKgwqDCoMKgwqDCoMKgIHNjc2lfc2Nhbl9jaGFu
+bmVsKzB4NjUvMHhjMAo+IMKgwqDCoCBbwqDCoMKgIDguNzYwMjkwXcKgwqDCoMKgwqDCoMKgIHNj
+c2lfc2Nhbl9ob3N0X3NlbGVjdGVkKzB4ZmYvMHgxNDAKPiDCoMKgwqAgW8KgwqDCoCA4Ljc2MDI5
+Ml3CoMKgwqDCoMKgwqDCoCBkb19zY3NpX3NjYW5faG9zdCsweGE3LzB4YzAKPiDCoMKgwqAgW8Kg
+wqDCoCA4Ljc2MDI5M13CoMKgwqDCoMKgwqDCoCBkb19zY2FuX2FzeW5jKzB4MWMvMHgxNjAKPiDC
+oMKgwqAgW8KgwqDCoCA4Ljc2MDI5NV3CoMKgwqDCoMKgwqDCoCBhc3luY19ydW5fZW50cnlfZm4r
+MHgzMi8weDE1MAo+IMKgwqDCoCBbwqDCoMKgIDguNzYwMjk5XcKgwqDCoMKgwqDCoMKgIHByb2Nl
+c3Nfb25lX3dvcmsrMHgyMjQvMHg1ZjAKPiDCoMKgwqAgW8KgwqDCoCA4Ljc2MDMwMl3CoMKgwqDC
+oMKgwqDCoCB3b3JrZXJfdGhyZWFkKzB4MWQ0LzB4M2UwCj4gwqDCoMKgIFvCoMKgwqAgOC43NjAz
+MDRdwqDCoMKgwqDCoMKgwqAga3RocmVhZCsweDEwYi8weDI2MAo+IMKgwqDCoCBbwqDCoMKgIDgu
+NzYwMzA2XcKgwqDCoMKgwqDCoMKgIHJldF9mcm9tX2ZvcmsrMHg0NC8weDcwCj4gwqDCoMKgIFvC
+oMKgwqAgOC43NjAzMDldwqDCoMKgwqDCoMKgwqAgcmV0X2Zyb21fZm9ya19hc20rMHgxYS8weDMw
+Cj4gwqDCoMKgIFvCoMKgwqAgOC43NjAzMTJdCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgIC0+ICMxIChmc19yZWNsYWltKXsrLisufS17MDowfToKPiDCoMKgwqAgW8KgwqDC
+oCA4Ljc2MDMxNV3CoMKgwqDCoMKgwqDCoCBmc19yZWNsYWltX2FjcXVpcmUrMHhjNS8weDEwMAo+
+IMKgwqDCoCBbwqDCoMKgIDguNzYwMzE3XcKgwqDCoMKgwqDCoMKgIGttZW1fY2FjaGVfYWxsb2Nf
+bHJ1X25vcHJvZisweDRhLzB4NDgwCj4gwqDCoMKgIFvCoMKgwqAgOC43NjAzMTldwqDCoMKgwqDC
+oMKgwqAgYWxsb2NfaW5vZGUrMHhhYS8weGUwCj4gwqDCoMKgIFvCoMKgwqAgOC43NjAzMjJdwqDC
+oMKgwqDCoMKgwqAgaWdldF9sb2NrZWQrMHgxNTcvMHgzMzAKPiDCoMKgwqAgW8KgwqDCoCA4Ljc2
+MDMyM13CoMKgwqDCoMKgwqDCoCBrZXJuZnNfZ2V0X2lub2RlKzB4MWIvMHgxMTAKPiDCoMKgwqAg
+W8KgwqDCoCA4Ljc2MDMyNV3CoMKgwqDCoMKgwqDCoCBrZXJuZnNfZ2V0X3RyZWUrMHgxYjAvMHgy
+ZTAKPiDCoMKgwqAgW8KgwqDCoCA4Ljc2MDMyN13CoMKgwqDCoMKgwqDCoCBzeXNmc19nZXRfdHJl
+ZSsweDFmLzB4NjAKPiDCoMKgwqAgW8KgwqDCoCA4Ljc2MDMyOV3CoMKgwqDCoMKgwqDCoCB2ZnNf
+Z2V0X3RyZWUrMHgyYS8weGYwCj4gwqDCoMKgIFvCoMKgwqAgOC43NjAzMzJdwqDCoMKgwqDCoMKg
+wqAgcGF0aF9tb3VudCsweDRjZC8weGMwMAo+IMKgwqDCoCBbwqDCoMKgIDguNzYwMzM0XcKgwqDC
+oMKgwqDCoMKgIF9feDY0X3N5c19tb3VudCsweDExOS8weDE1MAo+IMKgwqDCoCBbwqDCoMKgIDgu
+NzYwMzM2XcKgwqDCoMKgwqDCoMKgIHg2NF9zeXNfY2FsbCsweDE0ZjIvMHgyMzEwCj4gwqDCoMKg
+IFvCoMKgwqAgOC43NjAzMzhdwqDCoMKgwqDCoMKgwqAgZG9fc3lzY2FsbF82NCsweDkxLzB4MTgw
+Cj4gwqDCoMKgIFvCoMKgwqAgOC43NjAzNDBdwqDCoMKgwqDCoMKgwqAgZW50cnlfU1lTQ0FMTF82
+NF9hZnRlcl9od2ZyYW1lKzB4NzYvMHg3ZQo+IMKgwqDCoCBbwqDCoMKgIDguNzYwMzQyXQo+IMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAtPiAjMCAoJnJvb3QtPmtlcm5mc19y
+d3NlbSl7KysrK30tezM6M306Cj4gwqDCoMKgIFvCoMKgwqAgOC43NjAzNDVdwqDCoMKgwqDCoMKg
+wqAgX19sb2NrX2FjcXVpcmUrMHgxNTI1LzB4Mjc2MAo+IMKgwqDCoCBbwqDCoMKgIDguNzYwMzQ3
+XcKgwqDCoMKgwqDCoMKgIGxvY2tfYWNxdWlyZSsweGNhLzB4MzEwCj4gwqDCoMKgIFvCoMKgwqAg
+OC43NjAzNDhdwqDCoMKgwqDCoMKgwqAgZG93bl93cml0ZSsweDNlLzB4ZjAKPiDCoMKgwqAgW8Kg
+wqDCoCA4Ljc2MDM1MF3CoMKgwqDCoMKgwqDCoCBrZXJuZnNfcmVtb3ZlKzB4MzIvMHg2MAo+IMKg
+wqDCoCBbwqDCoMKgIDguNzYwMzUxXcKgwqDCoMKgwqDCoMKgIHN5c2ZzX3JlbW92ZV9kaXIrMHg0
+Zi8weDYwCj4gwqDCoMKgIFvCoMKgwqAgOC43NjAzNTNdwqDCoMKgwqDCoMKgwqAgX19rb2JqZWN0
+X2RlbCsweDMzLzB4YTAKPiDCoMKgwqAgW8KgwqDCoCA4Ljc2MDM1NV3CoMKgwqDCoMKgwqDCoCBr
+b2JqZWN0X2RlbCsweDEzLzB4MzAKPiDCoMKgwqAgW8KgwqDCoCA4Ljc2MDM1Nl3CoMKgwqDCoMKg
+wqDCoCBlbHZfdW5yZWdpc3Rlcl9xdWV1ZSsweDUyLzB4ODAKPiDCoMKgwqAgW8KgwqDCoCA4Ljc2
+MDM1OF3CoMKgwqDCoMKgwqDCoCBlbGV2YXRvcl9zd2l0Y2grMHg2OC8weDM2MAo+IMKgwqDCoCBb
+wqDCoMKgIDguNzYwMzYwXcKgwqDCoMKgwqDCoMKgIGVsdl9pb3NjaGVkX3N0b3JlKzB4MTRiLzB4
+MWIwCj4gwqDCoMKgIFvCoMKgwqAgOC43NjAzNjJdwqDCoMKgwqDCoMKgwqAgcXVldWVfYXR0cl9z
+dG9yZSsweDE4MS8weDFlMAo+IMKgwqDCoCBbwqDCoMKgIDguNzYwMzY0XcKgwqDCoMKgwqDCoMKg
+IHN5c2ZzX2tmX3dyaXRlKzB4NDkvMHg4MAo+IMKgwqDCoCBbwqDCoMKgIDguNzYwMzY2XcKgwqDC
+oMKgwqDCoMKgIGtlcm5mc19mb3Bfd3JpdGVfaXRlcisweDE3ZC8weDI1MAo+IMKgwqDCoCBbwqDC
+oMKgIDguNzYwMzY3XcKgwqDCoMKgwqDCoMKgIHZmc193cml0ZSsweDI4MS8weDU0MAo+IMKgwqDC
+oCBbwqDCoMKgIDguNzYwMzcwXcKgwqDCoMKgwqDCoMKgIGtzeXNfd3JpdGUrMHg3Mi8weGYwCj4g
+wqDCoMKgIFvCoMKgwqAgOC43NjAzNzJdwqDCoMKgwqDCoMKgwqAgX194NjRfc3lzX3dyaXRlKzB4
+MTkvMHgzMAo+IMKgwqDCoCBbwqDCoMKgIDguNzYwMzc0XcKgwqDCoMKgwqDCoMKgIHg2NF9zeXNf
+Y2FsbCsweDJhMy8weDIzMTAKPiDCoMKgwqAgW8KgwqDCoCA4Ljc2MDM3Nl3CoMKgwqDCoMKgwqDC
+oCBkb19zeXNjYWxsXzY0KzB4OTEvMHgxODAKPiDCoMKgwqAgW8KgwqDCoCA4Ljc2MDM3N13CoMKg
+wqDCoMKgwqDCoCBlbnRyeV9TWVNDQUxMXzY0X2FmdGVyX2h3ZnJhbWUrMHg3Ni8weDdlCj4gwqDC
+oMKgIFvCoMKgwqAgOC43NjAzODBdCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgIG90aGVyIGluZm8gdGhhdCBtaWdodCBoZWxwIHVzIGRlYnVnIHRoaXM6Cj4gCj4gwqDCoMKg
+IFvCoMKgwqAgOC43NjAzODBdIENoYWluIGV4aXN0cyBvZjoKPiDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgICZyb290LT5rZXJuZnNfcndzZW0gLS0+IGZzX3JlY2xhaW0g
+LS0+Cj4gJnEtPnFfdXNhZ2VfY291bnRlcihpbykjMjcKPiAKPiDCoMKgwqAgW8KgwqDCoCA4Ljc2
+MDM4NF3CoCBQb3NzaWJsZSB1bnNhZmUgbG9ja2luZyBzY2VuYXJpbzoKPiAKPiDCoMKgwqAgW8Kg
+wqDCoCA4Ljc2MDM4NF3CoMKgwqDCoMKgwqDCoCBDUFUwwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAgQ1BVMQo+IMKgwqDCoCBbwqDCoMKgIDguNzYwMzg1XcKgwqDCoMKgwqDC
+oMKgIC0tLS3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAtLS0tCj4gwqDC
+oMKgIFvCoMKgwqAgOC43NjAzODVdwqDCoCBsb2NrKCZxLT5xX3VzYWdlX2NvdW50ZXIoaW8pIzI3
+KTsKPiDCoMKgwqAgW8KgwqDCoCA4Ljc2MDM4N13CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBsb2NrKGZzX3JlY2xhaW0pOwo+IMKg
+wqDCoCBbwqDCoMKgIDguNzYwMzg4XQo+IGxvY2soJnEtPnFfdXNhZ2VfY291bnRlcihpbykjMjcp
+Owo+IMKgwqDCoCBbwqDCoMKgIDguNzYwMzkwXcKgwqAgbG9jaygmcm9vdC0+a2VybmZzX3J3c2Vt
+KTsKPiDCoMKgwqAgW8KgwqDCoCA4Ljc2MDM5MV0KPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCAqKiogREVBRExPQ0sgKioqCj4gCj4gwqDCoMKgIFvCoMKgwqAgOC43NjAz
+OTFdIDYgbG9ja3MgaGVsZCBieSAodWRldi13b3JrZXIpLzY3NDoKPiDCoMKgwqAgW8KgwqDCoCA4
+Ljc2MDM5Ml3CoCAjMDogZmZmZjg4ODEyMDlhYzQyMCAoc2Jfd3JpdGVycyM0KXsuKy4rfS17MDow
+fSwKPiBhdDoga3N5c193cml0ZSsweDcyLzB4ZjAKPiDCoMKgwqAgW8KgwqDCoCA4Ljc2MDM5OF3C
+oCAjMTogZmZmZjg4ODEwYzgwZjQ4OCAoJm9mLT5tdXRleCMyKXsrLisufS17MzozfSwKPiBhdDog
+a2VybmZzX2ZvcF93cml0ZV9pdGVyKzB4MTM2LzB4MjUwCj4gwqDCoMKgIFvCoMKgwqAgOC43NjA0
+MDJdwqAgIzI6IGZmZmY4ODgxMjVkMWQzMzAgKGtuLT5hY3RpdmUjMTAxKXsuKy4rfS0KPiB7MDow
+fSwKPiBhdDoga2VybmZzX2ZvcF93cml0ZV9pdGVyKzB4MTNmLzB4MjUwCj4gwqDCoMKgIFvCoMKg
+wqAgOC43NjA0MDZdwqAgIzM6IGZmZmY4ODgxMTBkYzdiYjAgKCZxLT5zeXNmc19sb2NrKXsrLisu
+fS0KPiB7MzozfSwKPiBhdDogcXVldWVfYXR0cl9zdG9yZSsweDE0OC8weDFlMAo+IMKgwqDCoCBb
+wqDCoMKgIDguNzYwNDExXcKgICM0OiBmZmZmODg4MTEwZGM3NjgwCj4gKCZxLT5xX3VzYWdlX2Nv
+dW50ZXIoaW8pIzI3KXsrKysrfS17MDowfSwgYXQ6Cj4gYmxrX21xX2ZyZWV6ZV9xdWV1ZV9ub21l
+bXNhdmUrMHgxMi8weDMwCj4gwqDCoMKgIFvCoMKgwqAgOC43NjA0MTZdwqAgIzU6IGZmZmY4ODgx
+MTBkYzc2YjgKPiAoJnEtPnFfdXNhZ2VfY291bnRlcihxdWV1ZSkjMjcpeysrKyt9LXswOjB9LCBh
+dDoKPiBibGtfbXFfZnJlZXplX3F1ZXVlX25vbWVtc2F2ZSsweDEyLzB4MzAKPiDCoMKgwqAgW8Kg
+wqDCoCA4Ljc2MDQyMV0KPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgc3Rh
+Y2sgYmFja3RyYWNlOgo+IMKgwqDCoCBbwqDCoMKgIDguNzYwNDIyXSBDUFU6IDcgVUlEOiAwIFBJ
+RDogNjc0IENvbW06ICh1ZGV2LXdvcmtlcikKPiBUYWludGVkOgo+IEfCoMKgwqDCoCBVwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgIDYuMTQuMC1yYzYteGUrICM3Cj4gwqDCoMKgIFvCoMKgwqAgOC43
+NjA0MjRdIFRhaW50ZWQ6IFtVXT1VU0VSCj4gwqDCoMKgIFvCoMKgwqAgOC43NjA0MjVdIEhhcmR3
+YXJlIG5hbWU6IEFTVVMgU3lzdGVtIFByb2R1Y3QgTmFtZS9QUklNRQo+IEI1NjBNLUEgQUMsIEJJ
+T1MgMjAwMSAwMi8wMS8yMDIzCj4gwqDCoMKgIFvCoMKgwqAgOC43NjA0MjZdIENhbGwgVHJhY2U6
+Cj4gwqDCoMKgIFvCoMKgwqAgOC43NjA0MjddwqAgPFRBU0s+Cj4gwqDCoMKgIFvCoMKgwqAgOC43
+NjA0MjhdwqAgZHVtcF9zdGFja19sdmwrMHg2ZS8weGEwCj4gwqDCoMKgIFvCoMKgwqAgOC43NjA0
+MzFdwqAgZHVtcF9zdGFjaysweDEwLzB4MTgKPiDCoMKgwqAgW8KgwqDCoCA4Ljc2MDQzM13CoCBw
+cmludF9jaXJjdWxhcl9idWcuY29sZCsweDE3YS8weDFiNwo+IMKgwqDCoCBbwqDCoMKgIDguNzYw
+NDM3XcKgIGNoZWNrX25vbmNpcmN1bGFyKzB4MTNhLzB4MTUwCj4gwqDCoMKgIFvCoMKgwqAgOC43
+NjA0NDFdwqAgPyBzYXZlX3RyYWNlKzB4NTQvMHgzNjAKPiDCoMKgwqAgW8KgwqDCoCA4Ljc2MDQ0
+NV3CoCBfX2xvY2tfYWNxdWlyZSsweDE1MjUvMHgyNzYwCj4gwqDCoMKgIFvCoMKgwqAgOC43NjA0
+NDZdwqAgPyBpcnFlbnRyeV9leGl0KzB4M2EvMHhiMAo+IMKgwqDCoCBbwqDCoMKgIDguNzYwNDQ4
+XcKgID8gc3lzdmVjX2FwaWNfdGltZXJfaW50ZXJydXB0KzB4NTcvMHhjMAo+IMKgwqDCoCBbwqDC
+oMKgIDguNzYwNDUyXcKgIGxvY2tfYWNxdWlyZSsweGNhLzB4MzEwCj4gwqDCoMKgIFvCoMKgwqAg
+OC43NjA0NTNdwqAgPyBrZXJuZnNfcmVtb3ZlKzB4MzIvMHg2MAo+IMKgwqDCoCBbwqDCoMKgIDgu
+NzYwNDU3XcKgIGRvd25fd3JpdGUrMHgzZS8weGYwCj4gwqDCoMKgIFvCoMKgwqAgOC43NjA0NTld
+wqAgPyBrZXJuZnNfcmVtb3ZlKzB4MzIvMHg2MAo+IMKgwqDCoCBbwqDCoMKgIDguNzYwNDYwXcKg
+IGtlcm5mc19yZW1vdmUrMHgzMi8weDYwCj4gwqDCoMKgIFvCoMKgwqAgOC43NjA0NjJdwqAgc3lz
+ZnNfcmVtb3ZlX2RpcisweDRmLzB4NjAKPiDCoMKgwqAgW8KgwqDCoCA4Ljc2MDQ2NF3CoCBfX2tv
+YmplY3RfZGVsKzB4MzMvMHhhMAo+IMKgwqDCoCBbwqDCoMKgIDguNzYwNDY2XcKgIGtvYmplY3Rf
+ZGVsKzB4MTMvMHgzMAo+IMKgwqDCoCBbwqDCoMKgIDguNzYwNDY3XcKgIGVsdl91bnJlZ2lzdGVy
+X3F1ZXVlKzB4NTIvMHg4MAo+IMKgwqDCoCBbwqDCoMKgIDguNzYwNDcwXcKgIGVsZXZhdG9yX3N3
+aXRjaCsweDY4LzB4MzYwCj4gwqDCoMKgIFvCoMKgwqAgOC43NjA0NzJdwqAgZWx2X2lvc2NoZWRf
+c3RvcmUrMHgxNGIvMHgxYjAKPiDCoMKgwqAgW8KgwqDCoCA4Ljc2MDQ3NV3CoCBxdWV1ZV9hdHRy
+X3N0b3JlKzB4MTgxLzB4MWUwCj4gwqDCoMKgIFvCoMKgwqAgOC43NjA0NzldwqAgPyBsb2NrX2Fj
+cXVpcmUrMHhjYS8weDMxMAo+IMKgwqDCoCBbwqDCoMKgIDguNzYwNDgwXcKgID8ga2VybmZzX2Zv
+cF93cml0ZV9pdGVyKzB4MTNmLzB4MjUwCj4gwqDCoMKgIFvCoMKgwqAgOC43NjA0ODJdwqAgPyBs
+b2NrX2lzX2hlbGRfdHlwZSsweGEzLzB4MTMwCj4gwqDCoMKgIFvCoMKgwqAgOC43NjA0ODVdwqAg
+c3lzZnNfa2Zfd3JpdGUrMHg0OS8weDgwCj4gwqDCoMKgIFvCoMKgwqAgOC43NjA0ODddwqAga2Vy
+bmZzX2ZvcF93cml0ZV9pdGVyKzB4MTdkLzB4MjUwCj4gwqDCoMKgIFvCoMKgwqAgOC43NjA0ODld
+wqAgdmZzX3dyaXRlKzB4MjgxLzB4NTQwCj4gwqDCoMKgIFvCoMKgwqAgOC43NjA0OTRdwqAga3N5
+c193cml0ZSsweDcyLzB4ZjAKPiDCoMKgwqAgW8KgwqDCoCA4Ljc2MDQ5N13CoCBfX3g2NF9zeXNf
+d3JpdGUrMHgxOS8weDMwCj4gwqDCoMKgIFvCoMKgwqAgOC43NjA0OTldwqAgeDY0X3N5c19jYWxs
+KzB4MmEzLzB4MjMxMAo+IMKgwqDCoCBbwqDCoMKgIDguNzYwNTAyXcKgIGRvX3N5c2NhbGxfNjQr
+MHg5MS8weDE4MAo+IMKgwqDCoCBbwqDCoMKgIDguNzYwNTA0XcKgID8gdHJhY2VfaGFyZGlycXNf
+b2ZmKzB4NWQvMHhlMAo+IMKgwqDCoCBbwqDCoMKgIDguNzYwNTA2XcKgID8gaGFuZGxlX3NvZnRp
+cnFzKzB4NDc5LzB4NGQwCj4gwqDCoMKgIFvCoMKgwqAgOC43NjA1MDhdwqAgPyBocnRpbWVyX2lu
+dGVycnVwdCsweDEzZi8weDI4MAo+IMKgwqDCoCBbwqDCoMKgIDguNzYwNTExXcKgID8gaXJxZW50
+cnlfZXhpdF90b191c2VyX21vZGUrMHg4Yi8weDI2MAo+IMKgwqDCoCBbwqDCoMKgIDguNzYwNTEz
+XcKgID8gY2xlYXJfYmhiX2xvb3ArMHgxNS8weDcwCj4gwqDCoMKgIFvCoMKgwqAgOC43NjA1MTVd
+wqAgPyBjbGVhcl9iaGJfbG9vcCsweDE1LzB4NzAKPiDCoMKgwqAgW8KgwqDCoCA4Ljc2MDUxNl3C
+oCA/IGNsZWFyX2JoYl9sb29wKzB4MTUvMHg3MAo+IMKgwqDCoCBbwqDCoMKgIDguNzYwNTE4XcKg
+IGVudHJ5X1NZU0NBTExfNjRfYWZ0ZXJfaHdmcmFtZSsweDc2LzB4N2UKPiDCoMKgwqAgW8KgwqDC
+oCA4Ljc2MDUyMF0gUklQOiAwMDMzOjB4N2FhM2JmMmY1NTA0Cj4gwqDCoMKgIFvCoMKgwqAgOC43
+NjA1MjJdIENvZGU6IGM3IDAwIDE2IDAwIDAwIDAwIGI4IGZmIGZmIGZmIGZmIGMzIDY2IDJlIDBm
+Cj4gMWYgODQgMDAgMDAgMDAgMDAgMDAgZjMgMGYgMWUgZmEgODAgM2QgYzUgOGIgMTAgMDAgMDAg
+NzQgMTMgYjggMDEgMDAKPiAwMCAwMCAwZiAwNSA8NDg+IDNkIDAwIGYwIGZmIGZmIDc3IDU0IGMz
+IDBmIDFmIDAwIDU1IDQ4IDg5IGU1IDQ4IDgzCj4gZWMKPiAyMCA0OCA4OQo+IMKgwqDCoCBbwqDC
+oMKgIDguNzYwNTIzXSBSU1A6IDAwMmI6MDAwMDdmZmMxZTM2OTdkOCBFRkxBR1M6IDAwMDAwMjAy
+Cj4gT1JJR19SQVg6IDAwMDAwMDAwMDAwMDAwMDEKPiDCoMKgwqAgW8KgwqDCoCA4Ljc2MDUyNl0g
+UkFYOiBmZmZmZmZmZmZmZmZmZmRhIFJCWDogMDAwMDAwMDAwMDAwMDAwMyBSQ1g6Cj4gMDAwMDdh
+YTNiZjJmNTUwNAo+IMKgwqDCoCBbwqDCoMKgIDguNzYwNTI3XSBSRFg6IDAwMDAwMDAwMDAwMDAw
+MDMgUlNJOiAwMDAwN2ZmYzFlMzY5YWUwIFJESToKPiAwMDAwMDAwMDAwMDAwMDFjCj4gwqDCoMKg
+IFvCoMKgwqAgOC43NjA1MjhdIFJCUDogMDAwMDdmZmMxZTM2OTgwMCBSMDg6IDAwMDA3YWEzYmYz
+ZjUxYzggUjA5Ogo+IDAwMDA3ZmZjMWUzNjk4YjAKPiDCoMKgwqAgW8KgwqDCoCA4Ljc2MDUyOF0g
+UjEwOiAwMDAwMDAwMDAwMDAwMDAwIFIxMTogMDAwMDAwMDAwMDAwMDIwMiBSMTI6Cj4gMDAwMDAw
+MDAwMDAwMDAwMwo+IMKgwqDCoCBbwqDCoMKgIDguNzYwNTI5XSBSMTM6IDAwMDA3ZmZjMWUzNjlh
+ZTAgUjE0OiAwMDAwNjEzY2NmMjFmMmYwIFIxNToKPiAwMDAwN2FhM2JmM2Y0ZTgwCj4gwqDCoMKg
+IFvCoMKgwqAgOC43NjA1MzNdwqAgPC9UQVNLPgo+IAo+IMKgwqDCoCB2MjoKPiDCoMKgwqAgLSBV
+cGRhdGUgYSBjb2RlIGNvbW1lbnQgdG8gaW5jcmVhc2UgcmVhZGFiaWxpdHkgKE1pbmcgTGVpKS4K
+PiAKPiDCoMKgwqAgQ2M6IEplbnMgQXhib2UgPGF4Ym9lQGtlcm5lbC5kaz4KPiDCoMKgwqAgQ2M6
+IGxpbnV4LWJsb2NrQHZnZXIua2VybmVsLm9yZwo+IMKgwqDCoCBDYzogbGludXgta2VybmVsQHZn
+ZXIua2VybmVsLm9yZwo+IMKgwqDCoCBDYzogTWluZyBMZWkgPG1pbmcubGVpQHJlZGhhdC5jb20+
+Cj4gwqDCoMKgIFNpZ25lZC1vZmYtYnk6IFRob21hcyBIZWxsc3Ryw7ZtCj4gPHRob21hcy5oZWxs
+c3Ryb21AbGludXguaW50ZWwuY29tPgo+IMKgwqDCoCBSZXZpZXdlZC1ieTogTWluZyBMZWkgPG1p
+bmcubGVpQHJlZGhhdC5jb20+Cj4gwqDCoMKgIExpbms6Cj4gaHR0cHM6Ly9sb3JlLmtlcm5lbC5v
+cmcvci8yMDI1MDMxODA5NTU0OC41MTg3LTEtdGhvbWFzLmhlbGxzdHJvbUBsaW51eC5pbnRlbC5j
+b20KPiDCoMKgwqAgU2lnbmVkLW9mZi1ieTogSmVucyBBeGJvZSA8YXhib2VAa2VybmVsLmRrPgo+
+IAo+IMKgYmxvY2svYmxrLWNvcmUuYyB8IDYgKysrKysrCj4gwqAxIGZpbGUgY2hhbmdlZCwgNiBp
+bnNlcnRpb25zKCspCj4gCj4gUmV2ZXJ0aW5nIGNvbW1pdCBmZmExZTdhZGE0NTYgb24gdG9wIG9m
+IDYuMTYtcmM3IGNvbXBsZXRlbHkKPiBlbGltaW5hdGVzCj4gdGhlIHdhcm5pbmcuIE5vIGxvY2tk
+ZXAgc3BsYXRzIG9jY3VyIHdoZW4gcGx1Z2dpbmcgaW4gVVNCIGRldmljZXMKPiBhZnRlciB0aGUg
+cmV2ZXJ0Lgo+IAo+IFRoZSBmdWxsIGRtZXNnIHRyYWNlLCBrZXJuZWwgY29uZmlnLCBhbmQgaGFy
+ZHdhcmUgcHJvYmUgYXJlIGF0dGFjaGVkCj4gYmVsb3c6Cj4gCj4gSGFyZHdhcmU6IGh0dHBzOi8v
+bGludXgtaGFyZHdhcmUub3JnLz9wcm9iZT0zNDdmYTRjMmM2Cj4gS2VybmVsIGNvbmZpZzogKGF0
+dGFjaGVkKQo+IEZ1bGwga2VybmVsIGxvZzogKGF0dGFjaGVkKQo+IAo+IFRoaXMgbG9va3MgbGlr
+ZSBhIGZhbHNlLXBvc2l0aXZlIGludHJvZHVjZWQgYnkgcHJpbWluZyBpb19sb2NrZGVwX21hcAo+
+IGVhcmxpZXIsIGFzIGV4cGxhaW5lZCBpbiB0aGUgY29tbWl0IG1lc3NhZ2UuIEhvd2V2ZXIsIGl0
+IGNyZWF0ZXMKPiBub2lzZQo+IGZvciByZWd1bGFyIHVzZXJzIGFuZCBtYXkgb2JzY3VyZSBtb3Jl
+IGNyaXRpY2FsIGxvY2tkZXAgcmVwb3J0cy4KPiAKPiBUaGFua3MgZm9yIGxvb2tpbmcgaW50byB0
+aGlzLgo+IAoK
 
-Got it. I will improve it.
-
-> > +
-> > +       if (!mbx->ops.read)
-> > +               return -EIO;
-> > +
-> > +       return mbx->ops.read(hw, msg, size, mbx_id);
-> > +}
-> > +
-> > +/**
-> > + * mucse_write_mbx - Write a message to the mailbox
-> > + * @hw: Pointer to the HW structure
-> > + * @msg: The message buffer
-> > + * @size: Length of buffer
-> > + * @mbx_id: Id of vf/fw to write
-> > + *
-> > + * @return: 0 on success, negative on failure
-> > + **/
-> > +int mucse_write_mbx(struct mucse_hw *hw, u32 *msg, u16 size,
-> > +                   enum MBX_ID mbx_id)
-> > +{
-> > +       struct mucse_mbx_info *mbx = &hw->mbx;
-> > +
-> > +       if (size > mbx->size)
-> > +               return -EINVAL;
-> > +
-> > +       if (!mbx->ops.write)
-> > +               return -EIO;
-> > +
-> > +       return mbx->ops.write(hw, msg, size, mbx_id);
-> > +}
-> > +
-> > +/**
-> > + * mucse_mbx_get_req - Read req from reg
-> > + * @hw: Pointer to the HW structure
-> > + * @reg: Register to read
-> > + *
-> > + * @return: the req value
-> > + **/
-> > +static u16 mucse_mbx_get_req(struct mucse_hw *hw, int reg)
-> > +{
-> > +       /* force memory barrier */
-> > +       mb();
-> > +       return ioread32(hw->hw_addr + reg) & GENMASK(15, 0);
-> > +}
-> > +
-> > +/**
-> > + * mucse_mbx_get_ack - Read ack from reg
-> > + * @hw: Pointer to the HW structure
-> > + * @reg: Register to read
-> > + *
-> > + * @return: the ack value
-> > + **/
-> > +static u16 mucse_mbx_get_ack(struct mucse_hw *hw, int reg)
-> > +{
-> > +       /* force memory barrier */
-> > +       mb();
-> > +       return (mbx_rd32(hw, reg) >> 16);
-> > +}
-> > +
-> > +/**
-> > + * mucse_mbx_inc_pf_req - Increase req
-> > + * @hw: Pointer to the HW structure
-> > + * @mbx_id: Id of vf/fw to read
-> > + *
-> > + * mucse_mbx_inc_pf_req read pf_req from hw, then write
-> > + * new value back after increase
-> > + **/
-> > +static void mucse_mbx_inc_pf_req(struct mucse_hw *hw,
-> > +                                enum MBX_ID mbx_id)
-> > +{
-> > +       struct mucse_mbx_info *mbx = &hw->mbx;
-> > +       u32 reg, v;
-> > +       u16 req;
-> > +
-> > +       reg = (mbx_id == MBX_FW) ? PF2FW_COUNTER(mbx) :
-> > +                                  PF2VF_COUNTER(mbx, mbx_id);
-> > +       v = mbx_rd32(hw, reg);
-> > +       req = (v & GENMASK(15, 0));
-> > +       req++;
-> > +       v &= GENMASK(31, 16);
-> > +       v |= req;
-> > +       /* force before write to hw */
-> > +       mb();
-> > +       mbx_wr32(hw, reg, v);
-> > +       /* update stats */
-> 
-> Nit, but this comment is unnecessary. Same comment for all of the other
-> identical comments. They are just repeating "what" you are doing.
-> 
-
-Got it, I will try to check other patches. 
-
-> > +       hw->mbx.stats.msgs_tx++;
-> > +}
-> > +
-> > +/**
-> > + * mucse_mbx_inc_pf_ack - Increase ack
-> > + * @hw: Pointer to the HW structure
-> > + * @mbx_id: Id of vf/fw to read
-> > + *
-> > + * mucse_mbx_inc_pf_ack read pf_ack from hw, then write
-> > + * new value back after increase
-> > + **/
-> > +static void mucse_mbx_inc_pf_ack(struct mucse_hw *hw,
-> > +                                enum MBX_ID mbx_id)
-> > +{
-> > +       struct mucse_mbx_info *mbx = &hw->mbx;
-> > +       u32 reg, v;
-> > +       u16 ack;
-> > +
-> > +       reg = (mbx_id == MBX_FW) ? PF2FW_COUNTER(mbx) :
-> > +                                  PF2VF_COUNTER(mbx, mbx_id);
-> > +       v = mbx_rd32(hw, reg);
-> > +       ack = (v >> 16) & GENMASK(15, 0);
-> > +       ack++;
-> > +       v &= GENMASK(15, 0);
-> > +       v |= (ack << 16);
-> > +       /* force before write to hw */
-> > +       mb();
-> > +       mbx_wr32(hw, reg, v);
-> > +       /* update stats */
-> > +       hw->mbx.stats.msgs_rx++;
-> > +}
-> > +
-> > +/**
-> > + * mucse_check_for_msg - Checks to see if vf/fw sent us mail
-> > + * @hw: Pointer to the HW structure
-> > + * @mbx_id: Id of vf/fw to check
-> > + *
-> > + * @return: 0 on success, negative on failure
-> > + **/
-> > +int mucse_check_for_msg(struct mucse_hw *hw, enum MBX_ID mbx_id)
-> > +{
-> > +       struct mucse_mbx_info *mbx = &hw->mbx;
-> > +
-> > +       if (!mbx->ops.check_for_msg)
-> > +               return -EIO;
-> > +
-> > +       return mbx->ops.check_for_msg(hw, mbx_id);
-> > +}
-> > +
-> > +/**
-> > + * mucse_check_for_ack - Checks to see if vf/fw sent us ACK
-> > + * @hw: Pointer to the HW structure
-> > + * @mbx_id: Id of vf/fw to check
-> > + *
-> > + * @return: 0 on success, negative on failure
-> > + **/
-> > +int mucse_check_for_ack(struct mucse_hw *hw, enum MBX_ID mbx_id)
-> > +{
-> > +       struct mucse_mbx_info *mbx = &hw->mbx;
-> > +
-> > +       if (!mbx->ops.check_for_ack)
-> > +               return -EIO;
-> > +       return mbx->ops.check_for_ack(hw, mbx_id);
-> > +}
-> > +
-> > +/**
-> > + * mucse_poll_for_msg - Wait for message notification
-> > + * @hw: Pointer to the HW structure
-> > + * @mbx_id: Id of vf/fw to poll
-> > + *
-> > + * @return: 0 on success, negative on failure
-> > + **/
-> > +static int mucse_poll_for_msg(struct mucse_hw *hw, enum MBX_ID mbx_id)
-> > +{
-> > +       struct mucse_mbx_info *mbx = &hw->mbx;
-> > +       int countdown = mbx->timeout;
-> > +       int val;
-> > +
-> > +       if (!countdown || !mbx->ops.check_for_msg)
-> > +               return -EIO;
-> > +
-> > +       return read_poll_timeout(mbx->ops.check_for_msg,
-> > +                                val, val == 0, mbx->usec_delay,
-> > +                                countdown * mbx->usec_delay,
-> > +                                false, hw, mbx_id);
-> > +}
-> > +
-> > +/**
-> > + * mucse_poll_for_ack - Wait for message acknowledgment
-> > + * @hw: Pointer to the HW structure
-> > + * @mbx_id: Id of vf/fw to poll
-> > + *
-> > + * @return: 0 if it successfully received a message acknowledgment
-> > + **/
-> > +static int mucse_poll_for_ack(struct mucse_hw *hw, enum MBX_ID mbx_id)
-> > +{
-> > +       struct mucse_mbx_info *mbx = &hw->mbx;
-> > +       int countdown = mbx->timeout;
-> > +       int val;
-> > +
-> > +       if (!countdown || !mbx->ops.check_for_ack)
-> > +               return -EIO;
-> > +
-> > +       return read_poll_timeout(mbx->ops.check_for_ack,
-> > +                                val, val == 0, mbx->usec_delay,
-> > +                                countdown * mbx->usec_delay,
-> > +                                false, hw, mbx_id);
-> > +}
-> > +
-> > +/**
-> > + * mucse_read_posted_mbx - Wait for message notification and receive message
-> > + * @hw: Pointer to the HW structure
-> > + * @msg: The message buffer
-> > + * @size: Length of buffer
-> > + * @mbx_id: Id of vf/fw to read
-> > + *
-> > + * @return: 0 if it successfully received a message notification and
-> > + * copied it into the receive buffer.
-> > + **/
-> > +static int mucse_read_posted_mbx(struct mucse_hw *hw, u32 *msg, u16 size,
-> > +                                enum MBX_ID mbx_id)
-> > +{
-> > +       struct mucse_mbx_info *mbx = &hw->mbx;
-> > +       int ret_val;
-> > +
-> > +       if (!mbx->ops.read)
-> > +               return -EIO;
-> > +
-> > +       ret_val = mucse_poll_for_msg(hw, mbx_id);
-> > +
-> > +       /* if ack received read message, otherwise we timed out */
-> > +       if (!ret_val)
-> > +               ret_val = mbx->ops.read(hw, msg, size, mbx_id);
-> > +
-> > +       return ret_val;
-> 
-> IMO a more typical flow would be the following:
-> 
-> ret_val = mucse_poll_for_msg();
-> if (ret_val)
-> 	return ret_val;
-> 
-> return mbx->ops.read();
-> 
-
-Got it, I will improve it.
-
-> > +}
-> > +
-> > +/**
-> > + * mucse_write_posted_mbx - Write a message to the mailbox, wait for ack
-> > + * @hw: Pointer to the HW structure
-> > + * @msg: The message buffer
-> > + * @size: Length of buffer
-> > + * @mbx_id: Id of vf/fw to write
-> > + *
-> > + * @return: 0 if it successfully copied message into the buffer and
-> > + * received an ack to that message within delay * timeout period
-> > + **/
-> > +static int mucse_write_posted_mbx(struct mucse_hw *hw, u32 *msg, u16 size,
-> > +                                 enum MBX_ID mbx_id)
-> > +{
-> > +       struct mucse_mbx_info *mbx = &hw->mbx;
-> > +       int ret_val;
-> > +
-> > +       /* exit if either we can't write or there isn't a defined timeout */
-> > +       if (!mbx->ops.write || !mbx->timeout)
-> > +               return -EIO;
-> > +
-> > +       /* send msg and hold buffer lock */
-> > +       ret_val = mbx->ops.write(hw, msg, size, mbx_id);
-> > +
-> > +       /* if msg sent wait until we receive an ack */
-> > +       if (!ret_val)
-> > +               ret_val = mucse_poll_for_ack(hw, mbx_id);
-> > +
-> > +       return ret_val;
-> 
-> 
-> IMO a more typical flow would be the following:
-> 
-> ret_val = mbx->ops.write();
-> if (ret_val)
-> 	return ret_val;
-> 
-> return mucse_poll_for_ack();
-> 
-
-Got it, I will improve it.
-
-> > +}
-> > +
-> > +/**
-> > + * mucse_check_for_msg_pf - checks to see if the vf/fw has sent mail
-> > + * @hw: Pointer to the HW structure
-> > + * @mbx_id: Id of vf/fw to check
-> > + *
-> > + * @return: 0 if the vf/fw has set the Status bit or else
-> > + * -EIO
-> > + **/
-> > +static int mucse_check_for_msg_pf(struct mucse_hw *hw,
-> > +                                 enum MBX_ID mbx_id)
-> > +{
-> > +       struct mucse_mbx_info *mbx = &hw->mbx;
-> > +       u16 hw_req_count = 0;
-> > +       int ret_val = -EIO;
-> > +
-> > +       if (mbx_id == MBX_FW) {
-> > +               hw_req_count = mucse_mbx_get_req(hw, FW2PF_COUNTER(mbx));
-> > +               /* reg in hw should avoid 0 check */
-> 
-> This comment explains "what" you are doing/preventing, but if the comment is
-> necessary it should explain "why" it's being done.
-> 
-
-Got it, maybe like this?
-Some chip's register FW2PF_COUNTER(mbx) is reset to 0 when rc send reset mbx
-command. This causes 'hw_req_count != hw->mbx.fw_req' be true before fw really
-reply. Driver must wait fw reset done reply before using chip.
-
-> > +               if (mbx->mbx_feature & MBX_FEATURE_NO_ZERO) {
-> > +                       if (hw_req_count != 0 &&
-> > +                           hw_req_count != hw->mbx.fw_req) {
-> > +                               ret_val = 0;
-> > +                               hw->mbx.stats.reqs++;
-> > +                       }
-> > +               } else {
-> > +                       if (hw_req_count != hw->mbx.fw_req) {
-> > +                               ret_val = 0;
-> > +                               hw->mbx.stats.reqs++;
-> > +                       }
-> > +               }
-> > +       } else {
-> > +               if (mucse_mbx_get_req(hw, VF2PF_COUNTER(mbx, mbx_id)) !=
-> > +                   hw->mbx.vf_req[mbx_id]) {
-> > +                       ret_val = 0;
-> > +                       hw->mbx.stats.reqs++;
-> > +               }
-> > +       }
-> > +
-> > +       return ret_val;
-> 
-> Nit, but ret_val isn't really needed in this function. You can just return 0
-> in all of the places where you set ret_val to 0. If you get here you can
-> "return -EIO".
-> 
-
-Got it, I will improve it.
-
-> > +}
-> > +
-> > +/**
-> > + * mucse_check_for_ack_pf - checks to see if the VF has ACKed
-> > + * @hw: Pointer to the HW structure
-> > + * @mbx_id: Id of vf/fw to check
-> > + *
-> > + * @return: 0 if the vf/fw has set the Status bit or else
-> > + * -EIO
-> > + **/
-> > +static int mucse_check_for_ack_pf(struct mucse_hw *hw, enum MBX_ID mbx_id)
-> > +{
-> > +       struct mucse_mbx_info *mbx = &hw->mbx;
-> > +       int ret_val = -EIO;
-> > +       u16 hw_fw_ack;
-> > +
-> > +       if (mbx_id == MBX_FW) {
-> > +               hw_fw_ack = mucse_mbx_get_ack(hw, FW2PF_COUNTER(mbx));
-> > +               if (hw_fw_ack != 0 &&
-> > +                   hw_fw_ack != hw->mbx.fw_ack) {
-> > +                       ret_val = 0;
-> > +                       hw->mbx.stats.acks++;
-> > +               }
-> > +       } else {
-> > +               if (mucse_mbx_get_ack(hw, VF2PF_COUNTER(mbx, mbx_id)) !=
-> > +                   hw->mbx.vf_ack[mbx_id]) {
-> > +                       ret_val = 0;
-> > +                       hw->mbx.stats.acks++;
-> > +               }
-> > +       }
-> > +
-> > +       return ret_val;
-> 
-> Ditto on ret_val being unnecessary.
-> 
-
-Got it, I will improve it.
-
-> > +}
-> > +
-> > +/**
-> > + * mucse_obtain_mbx_lock_pf - obtain mailbox lock
-> > + * @hw: pointer to the HW structure
-> > + * @mbx_id: Id of vf/fw to obtain
-> > + *
-> > + * This function maybe used in an irq handler.
-> 
-> 
-> Nit, s/maybe/may be/
-> 
-
-Got it, I will fix it.
-
-> > + *
-> > + * @return: 0 if we obtained the mailbox lock
-> > + **/
-> > +static int mucse_obtain_mbx_lock_pf(struct mucse_hw *hw, enum MBX_ID mbx_id)
-> > +{
-> > +       struct mucse_mbx_info *mbx = &hw->mbx;
-> > +       int try_cnt = 5000, ret;
-> > +       u32 reg;
-> > +
-> > +       reg = (mbx_id == MBX_FW) ? PF2FW_MBOX_CTRL(mbx) :
-> > +                                  PF2VF_MBOX_CTRL(mbx, mbx_id);
-> > +       while (try_cnt-- > 0) {
-> > +               /* Take ownership of the buffer */
-> > +               mbx_wr32(hw, reg, MBOX_PF_HOLD);
-> > +               /* force write back before check */
-> > +               wmb();
-> > +               if (mbx_rd32(hw, reg) & MBOX_PF_HOLD)
-> > +                       return 0;
-> > +               udelay(100);
-> > +       }
-> > +       return ret;
-> 
-> Just as Andrew said, this is uninitialized. I don't think ret is needed at
-> all in this function.
-> 
-> Please think about whether local variables are needed or not in the rest of
-> the patches.
-> 
-> In this case you return 0 right away on success and can return -ETIMEDOUT
-> (or whatever is appropriate) on failure.
-> 
-
-Yes, you are right. I will check rest of the patches.
-
-> > +}
-> > +
-> > +/**
-> > + * mucse_write_mbx_pf - Places a message in the mailbox
-> > + * @hw: pointer to the HW structure
-> > + * @msg: The message buffer
-> > + * @size: Length of buffer
-> > + * @mbx_id: Id of vf/fw to write
-> > + *
-> > + * This function maybe used in an irq handler.
-> > + *
-> > + * @return: 0 if it successfully copied message into the buffer
-> > + **/
-> > +static int mucse_write_mbx_pf(struct mucse_hw *hw, u32 *msg, u16 size,
-> > +                             enum MBX_ID mbx_id)
-> > +{
-> > +       struct mucse_mbx_info *mbx = &hw->mbx;
-> > +       u32 data_reg, ctrl_reg;
-> > +       int ret_val = 0;
-> > +       u16 i;
-> > +
-> > +       data_reg = (mbx_id == MBX_FW) ? FW_PF_SHM_DATA(mbx) :
-> > +                                       PF_VF_SHM_DATA(mbx, mbx_id);
-> > +       ctrl_reg = (mbx_id == MBX_FW) ? PF2FW_MBOX_CTRL(mbx) :
-> > +                                       PF2VF_MBOX_CTRL(mbx, mbx_id);
-> > +       if (size > MUCSE_VFMAILBOX_SIZE)
-> > +               return -EINVAL;
-> > +
-> > +       /* lock the mailbox to prevent pf/vf/fw race condition */
-> > +       ret_val = mucse_obtain_mbx_lock_pf(hw, mbx_id);
-> > +       if (ret_val)
-> > +               goto out_no_write;
-> 
-> Just return directly here. No need for a goto.
-> 
-
-Got it, I will improve it.
-
-> > +
-> > +       /* copy the caller specified message to the mailbox memory buffer */
-> > +       for (i = 0; i < size; i++)
-> > +               mbx_wr32(hw, data_reg + i * 4, msg[i]);
-> > +
-> > +       /* flush msg and acks as we are overwriting the message buffer */
-> > +       if (mbx_id == MBX_FW) {
-> > +               hw->mbx.fw_ack = mucse_mbx_get_ack(hw, FW2PF_COUNTER(mbx));
-> > +       } else {
-> > +               hw->mbx.vf_ack[mbx_id] =
-> > +                       mucse_mbx_get_ack(hw, VF2PF_COUNTER(mbx, mbx_id));
-> > +       }
-> > +       mucse_mbx_inc_pf_req(hw, mbx_id);
-> > +
-> > +       /* Interrupt VF/FW to tell it a message
-> > +        * has been sent and release buffer
-> > +        */
-> > +       if (mbx->mbx_feature & MBX_FEATURE_WRITE_DELAY)
-> > +               udelay(300);
-> 
-> This delay seems arbitrary. How do you know 300us is sufficient?
-> 
-
-Yes, it is sufficient. But there is no explicit condition for it...
-It is used to avoid timing issue in chip bus.
-'Delay some time before write MBOX_CTRL_REQ reg' is required by chip
-designer.
-
-> > +       mbx_wr32(hw, ctrl_reg, MBOX_CTRL_REQ);
-> > +
-> > +out_no_write:
-> 
-> This label isn't required, unless it's used in a future patch. If that's the
-> case introduce it in the future patch.
-> 
-
-Got it, I will improve it.
-
-> > +       return ret_val;
-> > +}
-> > +
-> > +/**
-> > + * mucse_read_mbx_pf - Read a message from the mailbox
-> > + * @hw: pointer to the HW structure
-> > + * @msg: The message buffer
-> > + * @size: Length of buffer
-> > + * @mbx_id: Id of vf/fw to read
-> > + *
-> > + * This function copies a message from the mailbox buffer to the caller's
-> > + * memory buffer.  The presumption is that the caller knows that there was
-> > + * a message due to a vf/fw request so no polling for message is needed.
-> > + *
-> > + * @return: 0 on success, negative on failure
-> > + **/
-> > +static int mucse_read_mbx_pf(struct mucse_hw *hw, u32 *msg, u16 size,
-> > +                            enum MBX_ID mbx_id)
-> > +{
-> > +       struct mucse_mbx_info *mbx = &hw->mbx;
-> > +       u32 data_reg, ctrl_reg;
-> > +       int ret_val;
-> > +       u32 i;
-> > +
-> > +       data_reg = (mbx_id == MBX_FW) ? FW_PF_SHM_DATA(mbx) :
-> > +                                       PF_VF_SHM_DATA(mbx, mbx_id);
-> > +       ctrl_reg = (mbx_id == MBX_FW) ? PF2FW_MBOX_CTRL(mbx) :
-> > +                                       PF2VF_MBOX_CTRL(mbx, mbx_id);
-> > +
-> > +       if (size > MUCSE_VFMAILBOX_SIZE)
-> > +               return -EINVAL;
-> > +       /* lock the mailbox to prevent pf/vf race condition */
-> > +       ret_val = mucse_obtain_mbx_lock_pf(hw, mbx_id);
-> > +       if (ret_val)
-> > +               goto out_no_read;
-> > +
-> > +       /* we need this */
-> 
-> This comment doesn't seem useful at all. Why do you need this comment?
-> 
-
-Yes, as Andrew pointed out, I should check 'mb()' here.
-
-> > +       mb();
-> > +       /* copy the message from the mailbox memory buffer */
-> > +       for (i = 0; i < size; i++)
-> > +               msg[i] = mbx_rd32(hw, data_reg + 4 * i);
-> > +       mbx_wr32(hw, data_reg, 0);
-> > +
-> > +       /* update req */
-> > +       if (mbx_id == MBX_FW) {
-> > +               hw->mbx.fw_req = mucse_mbx_get_req(hw, FW2PF_COUNTER(mbx));
-> > +       } else {
-> > +               hw->mbx.vf_req[mbx_id] =
-> > +                       mucse_mbx_get_req(hw, VF2PF_COUNTER(mbx, mbx_id));
-> > +       }
-> > +       /* Acknowledge receipt and release mailbox, then we're done */
-> > +       mucse_mbx_inc_pf_ack(hw, mbx_id);
-> > +       /* free ownership of the buffer */
-> > +       mbx_wr32(hw, ctrl_reg, 0);
-> > +
-> > +out_no_read:
-> > +       return ret_val;
-> > +}
-> > +
-> > +/**
-> > + * mucse_mbx_reset - reset mbx info, sync info from regs
-> > + * @hw: Pointer to the HW structure
-> > + *
-> > + * This function reset all mbx variables to default.
-> > + **/
-> > +static void mucse_mbx_reset(struct mucse_hw *hw)
-> > +{
-> > +       struct mucse_mbx_info *mbx = &hw->mbx;
-> > +       int idx, v;
-> > +
-> > +       for (idx = 0; idx < hw->max_vfs; idx++) {
-> > +               v = mbx_rd32(hw, VF2PF_COUNTER(mbx, idx));
-> > +               hw->mbx.vf_req[idx] = v & GENMASK(15, 0);
-> > +               hw->mbx.vf_ack[idx] = (v >> 16) & GENMASK(15, 0);
-> > +               mbx_wr32(hw, PF2VF_MBOX_CTRL(mbx, idx), 0);
-> > +       }
-> > +       v = mbx_rd32(hw, FW2PF_COUNTER(mbx));
-> > +       hw->mbx.fw_req = v & GENMASK(15, 0);
-> > +       hw->mbx.fw_ack = (v >> 16) & GENMASK(15, 0);
-> > +
-> > +       mbx_wr32(hw, PF2FW_MBOX_CTRL(mbx), 0);
-> > +
-> > +       if (PF_VF_MBOX_MASK_LO(mbx))
-> > +               mbx_wr32(hw, PF_VF_MBOX_MASK_LO(mbx), 0);
-> > +       if (PF_VF_MBOX_MASK_HI(mbx))
-> > +               mbx_wr32(hw, PF_VF_MBOX_MASK_HI(mbx), 0);
-> > +
-> > +       mbx_wr32(hw, FW_PF_MBOX_MASK(mbx), GENMASK(31, 16));
-> > +}
-> > +
-> > +/**
-> > + * mucse_mbx_configure_pf - configure mbx to use nr_vec interrupt
-> > + * @hw: Pointer to the HW structure
-> > + * @nr_vec: Vector number for mbx
-> > + * @enable: TRUE for enable, FALSE for disable
-> > + *
-> > + * This function configure mbx to use interrupt nr_vec.
-> > + **/
-> > +static void mucse_mbx_configure_pf(struct mucse_hw *hw, int nr_vec,
-> > +                                  bool enable)
-> > +{
-> > +       struct mucse_mbx_info *mbx = &hw->mbx;
-> > +       int idx = 0;
-> 
-> Nit, you don't need to initialize idx. It's always initialized before it's
-> used.
-> 
-
-Got it, I will improve it.
-
-> > +       u32 v;
-> > +
-> > +       if (enable) {
-> > +               for (idx = 0; idx < hw->max_vfs; idx++) {
-> > +                       v = mbx_rd32(hw, VF2PF_COUNTER(mbx, idx));
-> > +                       hw->mbx.vf_req[idx] = v & GENMASK(15, 0);
-> > +                       hw->mbx.vf_ack[idx] = (v >> 16) & GENMASK(15, 0);
-> > +
-> > +                       mbx_wr32(hw, PF2VF_MBOX_CTRL(mbx, idx), 0);
-> > +               }
-> > +               v = mbx_rd32(hw, FW2PF_COUNTER(mbx));
-> > +               hw->mbx.fw_req = v & GENMASK(15, 0);
-> > +               hw->mbx.fw_ack = (v >> 16) & GENMASK(15, 0);
-> > +               mbx_wr32(hw, PF2FW_MBOX_CTRL(mbx), 0);
-> > +
-> > +               for (idx = 0; idx < hw->max_vfs; idx++) {
-> > +                       /* vf to pf req interrupt */
-> > +                       mbx_wr32(hw, VF2PF_MBOX_VEC(mbx, idx),
-> > +                                nr_vec);
-> > +               }
-> > +
-> > +               if (PF_VF_MBOX_MASK_LO(mbx))
-> > +                       mbx_wr32(hw, PF_VF_MBOX_MASK_LO(mbx), 0);
-> > +               /* allow vf to vectors */
-> > +
-> > +               if (PF_VF_MBOX_MASK_HI(mbx))
-> > +                       mbx_wr32(hw, PF_VF_MBOX_MASK_HI(mbx), 0);
-> > +               /* enable irq */
-> > +               /* bind fw mbx to irq */
-> > +               mbx_wr32(hw, FW2PF_MBOX_VEC(mbx), nr_vec);
-> > +               /* allow CM3FW to PF MBX IRQ */
-> > +               mbx_wr32(hw, FW_PF_MBOX_MASK(mbx), GENMASK(31, 16));
-> > +       } else {
-> > +               if (PF_VF_MBOX_MASK_LO(mbx))
-> > +                       mbx_wr32(hw, PF_VF_MBOX_MASK_LO(mbx),
-> > +                                GENMASK(31, 0));
-> > +               /* disable irq */
-> > +               if (PF_VF_MBOX_MASK_HI(mbx))
-> > +                       mbx_wr32(hw, PF_VF_MBOX_MASK_HI(mbx),
-> > +                                GENMASK(31, 0));
-> > +
-> > +               /* disable CM3FW to PF MBX IRQ */
-> > +               mbx_wr32(hw, FW_PF_MBOX_MASK(mbx), 0xfffffffe);
-> > +
-> > +               /* reset vf->pf status/ctrl */
-> > +               for (idx = 0; idx < hw->max_vfs; idx++)
-> > +                       mbx_wr32(hw, PF2VF_MBOX_CTRL(mbx, idx), 0);
-> > +               /* reset pf->cm3 ctrl */
-> > +               mbx_wr32(hw, PF2FW_MBOX_CTRL(mbx), 0);
-> > +               /* used to sync link status */
-> > +               mbx_wr32(hw, RNPGBE_DMA_DUMY, 0);
-> > +       }
-> > +}
-> > +
-> > +/**
-> > + * mucse_init_mbx_params_pf - set initial values for pf mailbox
-> > + * @hw: pointer to the HW structure
-> > + *
-> > + * Initializes the hw->mbx struct to correct values for pf mailbox
-> > + */
-> > +static void mucse_init_mbx_params_pf(struct mucse_hw *hw)
-> > +{
-> > +       struct mucse_mbx_info *mbx = &hw->mbx;
-> > +
-> > +       mbx->usec_delay = 100;
-> > +       mbx->timeout = (4 * 1000 * 1000) / mbx->usec_delay;
-> > +       mbx->stats.msgs_tx = 0;
-> > +       mbx->stats.msgs_rx = 0;
-> > +       mbx->stats.reqs = 0;
-> > +       mbx->stats.acks = 0;
-> > +       mbx->stats.rsts = 0;
-> > +       mbx->size = MUCSE_VFMAILBOX_SIZE;
-> > +
-> > +       mutex_init(&mbx->lock);
-> > +       mucse_mbx_reset(hw);
-> > +}
-> > +
-> > +struct mucse_mbx_operations mucse_mbx_ops_generic = {
-> > +       .init_params = mucse_init_mbx_params_pf,
-> > +       .read = mucse_read_mbx_pf,
-> > +       .write = mucse_write_mbx_pf,
-> > +       .read_posted = mucse_read_posted_mbx,
-> > +       .write_posted = mucse_write_posted_mbx,
-> > +       .check_for_msg = mucse_check_for_msg_pf,
-> > +       .check_for_ack = mucse_check_for_ack_pf,
-> > +       .configure = mucse_mbx_configure_pf,
-> > +};
-> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.h
-> > new file mode 100644
-> > index 000000000000..0b4183e53e61
-> > --- /dev/null
-> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.h
-> > @@ -0,0 +1,48 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +/* Copyright(c) 2020 - 2025 Mucse Corporation. */
-> > +
-> > +#ifndef _RNPGBE_MBX_H
-> > +#define _RNPGBE_MBX_H
-> > +
-> > +#include "rnpgbe.h"
-> > +
-> > +/* 14 words */
-> > +#define MUCSE_VFMAILBOX_SIZE 14
-> 
-> Instead of the comment and the name, wouldn't it make more sense to
-> incorporate "words" into the define? Something like:
-> 
-> #define MUCSE_VFMAILBOX_WORDS 14
-> 
-> 
-
-Got it, I will improve it.
-
-> > +/* ================ PF <--> VF mailbox ================ */
-> > +#define SHARE_MEM_BYTES 64
-> > +static inline u32 PF_VF_SHM(struct mucse_mbx_info *mbx, int vf)
-> > +{
-> > +       return mbx->pf_vf_shm_base + mbx->mbx_mem_size * vf;
-> > +}
-> > +
-> > +#define PF2VF_COUNTER(mbx, vf) (PF_VF_SHM(mbx, vf) + 0)
-> > +#define VF2PF_COUNTER(mbx, vf) (PF_VF_SHM(mbx, vf) + 4)
-> > +#define PF_VF_SHM_DATA(mbx, vf) (PF_VF_SHM(mbx, vf) + 8)
-> > +#define VF2PF_MBOX_VEC(mbx, vf) ((mbx)->vf2pf_mbox_vec_base + 4 * (vf))
-> > +#define PF2VF_MBOX_CTRL(mbx, vf) ((mbx)->pf2vf_mbox_ctrl_base + 4 * (vf))
-> > +#define PF_VF_MBOX_MASK_LO(mbx) ((mbx)->pf_vf_mbox_mask_lo)
-> > +#define PF_VF_MBOX_MASK_HI(mbx) ((mbx)->pf_vf_mbox_mask_hi)
-> > +/* ================ PF <--> FW mailbox ================ */
-> > +#define FW_PF_SHM(mbx) ((mbx)->fw_pf_shm_base)
-> > +#define FW2PF_COUNTER(mbx) (FW_PF_SHM(mbx) + 0)
-> > +#define PF2FW_COUNTER(mbx) (FW_PF_SHM(mbx) + 4)
-> > +#define FW_PF_SHM_DATA(mbx) (FW_PF_SHM(mbx) + 8)
-> > +#define FW2PF_MBOX_VEC(mbx) ((mbx)->fw2pf_mbox_vec)
-> > +#define PF2FW_MBOX_CTRL(mbx) ((mbx)->pf2fw_mbox_ctrl)
-> > +#define FW_PF_MBOX_MASK(mbx) ((mbx)->fw_pf_mbox_mask)
-> > +#define MBOX_CTRL_REQ BIT(0) /* WO */
-> > +#define MBOX_PF_HOLD (BIT(3)) /* VF:RO, PF:WR */
-> > +#define MBOX_IRQ_EN 0
-> > +#define MBOX_IRQ_DISABLE 1
-> > +#define mbx_rd32(hw, reg) m_rd_reg((hw)->hw_addr + (reg))
-> > +#define mbx_wr32(hw, reg, val) m_wr_reg((hw)->hw_addr + (reg), (val))
-> > +
-> > +extern struct mucse_mbx_operations mucse_mbx_ops_generic;
-> > +
-> > +int mucse_read_mbx(struct mucse_hw *hw, u32 *msg, u16 size,
-> > +                  enum MBX_ID mbx_id);
-> > +int mucse_write_mbx(struct mucse_hw *hw, u32 *msg, u16 size,
-> > +                   enum MBX_ID mbx_id);
-> > +int mucse_check_for_msg(struct mucse_hw *hw, enum MBX_ID mbx_id);
-> > +int mucse_check_for_ack(struct mucse_hw *hw, enum MBX_ID mbx_id);
-> > +#endif /* _RNPGBE_MBX_H */
-> > --
-> > 2.25.1
-> > 
-> > 
-> 
-> 
 
