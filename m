@@ -1,159 +1,138 @@
-Return-Path: <linux-kernel+bounces-741497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B420B0E4FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 22:31:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6215B0E502
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 22:32:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B7AD1CC0B95
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:32:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6BE6580F83
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB9F280A5C;
-	Tue, 22 Jul 2025 20:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF197285047;
+	Tue, 22 Jul 2025 20:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OguZwGLT";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FBhjcHAS"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ag37R/j0"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE79E4C92
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 20:31:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96CFE4C92;
+	Tue, 22 Jul 2025 20:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753216312; cv=none; b=IshxLPbdc7hppy0qItZ7VixZ38mMJAbex3zkE0awpAK8UkSMk0m+pZJC1n1fZel6cCijcO8VkCznobp8THubLZBuQlz7feJCvWVCQCUqkfHdrQ/VDkeY5QXViAy+QY3mGnFc2V9nI7MAMWU/OJaL/SlQSZlooA7wAe+rtfEnYLc=
+	t=1753216341; cv=none; b=dEOQC25xTHgfbfzdtrDTZcaUyn6ez2wJYNqgQ4kZnxHjcmyyI4NJrKR7HutLpM44/9KHOyvYzop0YCSrX+LANj3DxqFOcCeI5mb1b1vc32LfDB+6qoGLQ4Eji+u25W/0T04cr4M9HGYOBxaoqNf3VZwYkL2jtoV2jw2FAhPf9mM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753216312; c=relaxed/simple;
-	bh=QzGsIpVDNnmMB9yY40z4tZwLUpMYADykSqVelZFmZE4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hRObZXld/uLcWTJ04P0y6TiLOOMDXgtJiIvNyLDzMdHORgHZKsEAx5IqOO9H+0fWEaazsAepDHLnoHov+kKqbM0hzlbmfDQ8cuTkcatlteRY5Atgte7jlJwtwSohrENs9tzttiI2NNxHuA9h/gxrOctJ/ac0Vo2L83lDDHy6Ruw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OguZwGLT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FBhjcHAS; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 22 Jul 2025 22:31:45 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753216308;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hetnCMXtpudx5SS3SZrduYJl7SdapCss9YBCODWh/oc=;
-	b=OguZwGLTIV/TP6wxTPTO2eIVfceWBS46xHtqKuhmXuJ6XFHGWi8SbtvpYVEg9RYX6965GF
-	XdT10JTfkJRtuG2hCng7P4qxRhdKr7L/UGiy68zxaA0LuH+yeBiboqIVOo9nlGan88kIk1
-	74RedlN8GWM7n/fR7Rsnl9Bw3M5fFHDolxb1m2G5qnsY/nt1zkcAQYGfYZzPNhIDDU+mlZ
-	cH9FybSnQZXSljTPmL+AiBWEVHnAV91yDPOomBelPdNIQn62FOL6gL0GLKM7T0BXZWj/fY
-	AMffps7nmiJIps8LbMcm5DrTh4s7GKze7AFS8l/eHxbZFdl+FDVoIaka+kcuUg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753216308;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hetnCMXtpudx5SS3SZrduYJl7SdapCss9YBCODWh/oc=;
-	b=FBhjcHASNO3ItsJFzMJ6H2tfMBtfFTf8agVkhj7hfcm67sph+xe5Vpv9fiYP9wzUyvI4p6
-	Q3FICOeelC/M+PAg==
-From: Nam Cao <namcao@linutronix.de>
-To: Gautam Menghani <gautam@linux.ibm.com>
-Cc: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] powerpc: Cleanup and convert to MSI parent domain
-Message-ID: <20250722203145.Y0vncMx8@linutronix.de>
-References: <cover.1750861319.git.namcao@linutronix.de>
- <aH9Na8ZqrI0jPhtl@li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com>
- <20250722092402.uMLOYoII@linutronix.de>
+	s=arc-20240116; t=1753216341; c=relaxed/simple;
+	bh=SiE7peuWE5Z3IZWbTyAH0/m05LSMfAM5iBmRLL4a6P0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GnEmXY2v9BoJIb6seERXyRLO3kr7Z1EJhGpXpzn2iSpLs+5hyyVLycqXsydgXX7kUoI7mB4jazsLSRN1DbCAt8hoObiTU95+h+TD6hrm+NByRfLUlU1sCgUWVEZ2U2FfEL8qAijNd+k4c48D07waOt2ils922i5jwsyMXZMxUMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ag37R/j0; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4aaaf1a63c1so45780871cf.3;
+        Tue, 22 Jul 2025 13:32:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753216337; x=1753821137; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6UwaG0Ur5ZFEJrfPoRwyrNV2Un1EmxTc/2Z33GQL6KQ=;
+        b=Ag37R/j0dag34ZuVEoTQxbfIhbY01BXKTHUM/jerCGUYd5SixhVU5MwQQ3duGZUqvB
+         Qm+5pG9BxLB3dCIhPyLGdzgEx+Wb6/FpLR2dpoSNGhLd9uCT5mmhUlgoqtq8G8sJC1S0
+         UY4qDTkXyGJ1yBiIphN8O1JbMl/owim81+9szpc0KlXM0igKD5PP/iHmCq+JT6aFNgLG
+         mRKGQA4eHyEwuYZXBmRMGHQHWjT6GJW0RBAcolt9dia86aBKZlkeTOBxPZDKF8uuot+y
+         5jD2tFIM5I990pNZQelbOInNZ5edu2dIyb642eAowYiN9D4QaJGFReIPcY4zfyJJ+BuU
+         lNgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753216337; x=1753821137;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6UwaG0Ur5ZFEJrfPoRwyrNV2Un1EmxTc/2Z33GQL6KQ=;
+        b=Cfm+kBGJsKPwyJl+REWnOBelm9szT1lbtnz+lcb80W8DZbQkXI6+HPuSoRGwy8BS+Q
+         NuGvQiZ1lrhBeV6cfJKk94DAceoSRH5lfiTSKvPXrJ67ywnRcK/Ci80u5kd3qxZlH0N4
+         kQemK/qRBheH9yXMwqNH0gdc+VDrbhb2JaxCneNVNGMv8QEps/fTd67KF3KsCD2Wsr1A
+         ubOU852XoZf7HIZx0wvUavUhrYzOzUgEY2lZyzgBRXfAdeTenIMFwotikkmd6ZvXoIfb
+         VCeCpa2MWLkzkZ28jl+/OIswTZgDXDj/ZFOQFMXWcTgzXgF6khHoaDGXZy9vEw4zwd7r
+         +f2w==
+X-Forwarded-Encrypted: i=1; AJvYcCWxEeanu2HC23LnaCCDNosPZ9zhdV/THA4m9x+r8QX4/K7Q2DV9eQladRFtoeWQihbm09sb183wh+qWCNM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPPp/fdcv7e8gwFTSbwvOiJSXOFtH5uz0fHsvvj/OE8J5wzco7
+	wF4bGJf6M/nyAXe07nPYdn1oggLsvqDgVcdiyafnbrZXn3v7yVuDeyTx
+X-Gm-Gg: ASbGnctH8TAvvaB2HKsYMB4dYr5FiSVrVPeP9T3seYKWOxgK0+mI/rSbXAIlZ2ffXZU
+	ZEGlfLmad+XUgBb2+MDGpI3vmhh5KrR6GoFzHLovL6tvKkaeXdOCZV8R2g+TmDuBUFTt1sp1tst
+	U+MiZ7rigebEwypAhUVz8mAqgX52IJmZCxmL7X+nhVg6c5RxHGya1gNnjx1/7k1iPHPjndFw3MG
+	bVipyQAi1KRSIw2o4qSJCHf1i0GOvGgM63+aCgXRSX8CX3JAgT9uNXmURK1FMrU20UCTqBSmwwE
+	DrB0A2A0manrSD3v0h4d59MEMmc+rtyInlyxG2tAAgUcQdhI63n4mmc8R+jfnBB5MklS3HY/9EL
+	6ADbIvayRGzZj0d7sfrTS3apkzedMkIl+tMq7sS6O4Q0jiJ3oR11KYKlNlNuVqeOYGw4yHUUUUk
+	E=
+X-Google-Smtp-Source: AGHT+IFZO+INRxMBea9uQnl7mVblxY5p03lyGE73I1c+ipJwqdUZwqA6J9gpYponXblEKwi+0Ghzgw==
+X-Received: by 2002:ac8:5ccd:0:b0:4ab:38c1:f9a9 with SMTP id d75a77b69052e-4ae6de83addmr8039551cf.19.1753216337418;
+        Tue, 22 Jul 2025 13:32:17 -0700 (PDT)
+Received: from anbernal-thinkpadt14sgen2i.boston.csb ([2600:1000:b191:467c:33a8:e32c:94a8:9ef9])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4abb49c5c52sm56627991cf.30.2025.07.22.13.32.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jul 2025 13:32:16 -0700 (PDT)
+From: Andrew Bernal <andrewlbernal@gmail.com>
+To: "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Bernal <andrewlbernal@gmail.com>
+Subject: [PATCH] scsi_debug: add implicit zones in max_open check
+Date: Tue, 22 Jul 2025 16:32:13 -0400
+Message-ID: <20250722203213.8762-1-andrewlbernal@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250722092402.uMLOYoII@linutronix.de>
+Content-Transfer-Encoding: 8bit
 
-> On Tue, Jul 22, 2025 at 02:05:55PM +0530, Gautam Menghani wrote:
-> > I am seeing a boot failure after applying this series on top of the pci
-> > tree [1]. Note that this error was seen on a system where I have a
-> > dedicated NVME. Systems without dedicated disk boot fine
-> 
-> Thanks for the report.
-> 
-> Using QEMU, I cannot reproduce the exact same problem, but I do observe a
-> different one. They are likely from the same root cause.
-> 
-> Let me investigate..
+`max_open` also needs to check implicit open, not just explicit
+This is consistent with the logic in `zbc_open_zone`, on line 3809.
 
-So the problem is due to the pair msi_prepare() and msi_post_free(). Before
-this series, msi_prepare() is called whenever interrupt is allocated.
-However, after this series, msi_prepare() is called only at domain
-creation.
+https://zonedstorage.io/docs/introduction/zoned-storage Open Zones limit
+is defined as a "limit on the total number of zones that can simultaneously
+be in an implicit open or explicit open state"
 
-For most device drivers, this difference does not have any impact. However,
-the NVME driver is slightly "special", it does this:
+Signed-off-by: Andrew Bernal <andrewlbernal@gmail.com>
+---
+ drivers/scsi/scsi_debug.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-	1. Allocate interrupts
-	2. Free interrupts
-	3. Allocate interrupts again
-
-Before this series:
-
-	(1) calls msi_prepare()
-	(2) calls msi_post_free()
-	(3) calls msi_prepare() again
-
-and it happens to work. However, after this series:
-
-	(1) calls msi_prepare()
-	(2) calls msi_post_free()
-	(3) does not call either
-
-and we are in trouble.
-
-A simple solution is using msi_teardown() instead, which is called at
-domain destruction. It makes more sense this way as well, because
-msi_teardown() is supposed to reverse what msi_prepare() does.
-
-This would also remove the only user of msi_post_free(), allowing us to
-delete that callback.
-
-The below patch fixes the problem that I saw with QEMU. Does it fix the
-problem on your side as well?
-
-Best regards,
-Nam
-
-
-diff --git a/arch/powerpc/platforms/pseries/msi.c b/arch/powerpc/platforms/pseries/msi.c
-index 70be6e24427d..7da142dd5baa 100644
---- a/arch/powerpc/platforms/pseries/msi.c
-+++ b/arch/powerpc/platforms/pseries/msi.c
-@@ -441,12 +441,12 @@ static int pseries_msi_ops_prepare(struct irq_domain *domain, struct device *dev
-  * RTAS can not disable one MSI at a time. It's all or nothing. Do it
-  * at the end after all IRQs have been freed.
-  */
--static void pseries_msi_post_free(struct irq_domain *domain, struct device *dev)
-+static void pseries_msi_ops_teardown(struct irq_domain *domain, msi_alloc_info_t *arg)
- {
--	if (WARN_ON_ONCE(!dev_is_pci(dev)))
--		return;
-+	struct msi_desc *desc = arg->desc;
-+	struct pci_dev *pdev = msi_desc_to_pci_dev(desc);
+diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
+index aef33d1e346a..0edb9a4698ca 100644
+--- a/drivers/scsi/scsi_debug.c
++++ b/drivers/scsi/scsi_debug.c
+@@ -3943,7 +3943,7 @@ static int check_zbc_access_params(struct scsi_cmnd *scp,
+ 	/* Handle implicit open of closed and empty zones */
+ 	if (zsp->z_cond == ZC1_EMPTY || zsp->z_cond == ZC4_CLOSED) {
+ 		if (devip->max_open &&
+-		    devip->nr_exp_open >= devip->max_open) {
++		    devip->nr_imp_open + devip->nr_exp_open >= devip->max_open) {
+ 			mk_sense_buffer(scp, DATA_PROTECT,
+ 					INSUFF_RES_ASC,
+ 					INSUFF_ZONE_ASCQ);
+@@ -6101,7 +6101,7 @@ static int resp_open_zone(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
+ 	if (all) {
+ 		/* Check if all closed zones can be open */
+ 		if (devip->max_open &&
+-		    devip->nr_exp_open + devip->nr_closed > devip->max_open) {
++		    devip->nr_imp_open + devip->nr_exp_open + devip->nr_closed > devip->max_open) {
+ 			mk_sense_buffer(scp, DATA_PROTECT, INSUFF_RES_ASC,
+ 					INSUFF_ZONE_ASCQ);
+ 			res = check_condition_result;
+@@ -6136,7 +6136,7 @@ static int resp_open_zone(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
+ 	if (zc == ZC3_EXPLICIT_OPEN || zc == ZC5_FULL)
+ 		goto fini;
  
--	rtas_disable_msi(to_pci_dev(dev));
-+	rtas_disable_msi(pdev);
- }
- 
- static void pseries_msi_shutdown(struct irq_data *d)
-@@ -482,7 +482,7 @@ static bool pseries_init_dev_msi_info(struct device *dev, struct irq_domain *dom
- 	chip->irq_write_msi_msg	= pseries_msi_write_msg;
- 
- 	info->ops->msi_prepare = pseries_msi_ops_prepare;
--	info->ops->msi_post_free = pseries_msi_post_free;
-+	info->ops->msi_teardown = pseries_msi_ops_teardown;
- 
- 	return true;
- }
+-	if (devip->max_open && devip->nr_exp_open >= devip->max_open) {
++	if (devip->max_open && devip->nr_imp_open + devip->nr_exp_open >= devip->max_open) {
+ 		mk_sense_buffer(scp, DATA_PROTECT, INSUFF_RES_ASC,
+ 				INSUFF_ZONE_ASCQ);
+ 		res = check_condition_result;
+-- 
+2.49.0
+
 
