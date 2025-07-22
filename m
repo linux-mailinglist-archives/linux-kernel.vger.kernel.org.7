@@ -1,165 +1,112 @@
-Return-Path: <linux-kernel+bounces-740943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A316B0DC3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:59:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 026C3B0DC60
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:01:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B749D18935C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:57:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 009723AFC63
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:56:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B422EA493;
-	Tue, 22 Jul 2025 13:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7BC2EAB69;
+	Tue, 22 Jul 2025 13:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MTF8JVtM"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="VywL/X9X"
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BACD1288C01;
-	Tue, 22 Jul 2025 13:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA78288C01
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 13:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753192608; cv=none; b=lj6VovM8Pc1ZLCSTZV6ysKP2Pb6KBByC82E4nh+H6Fmf01GL3QYLH9N83TxIUsGnC2cP0mFRGOJYIEXjXg9ZyVPlZF8ZL3Aknlh/uVXvsinBVXHMTjLOGUp8zmS/O4Swt2QxYfn4iWjc+0gcJFKAmF5qEFRopFXZ1FIVUhrtb38=
+	t=1753192618; cv=none; b=S97QlrqM9aoVxGUuySXsKFrRDWiWMIlxBo34N5uvcFk6GyL6PiwaL2C9Fsn8tptrMbTO75y11tfgp6CWgoywaXYz4dTXECdyg0dWL+fQOVUzoffrpK7qh5TwNhzDcpVIiuNqppCgIlsGYmqseC+F9ghBGBwZdsKsFzcEb8n8d5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753192608; c=relaxed/simple;
-	bh=kYYGasiChIGrOp2WfdbyJu8FXaB5dOTDpOSPPXTmqKc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Isdz7THZ7xXLLi5fH+IKr/BsB8TU+4qy5Rrgjns4j8J6LbeQVLTJDKspN7Atn8H8yjAVm/W9SNK5uSh7NTb8WC3MvNkp68MDZFvdWuH08eAneaneJAVX1O60SjN2DEv0/nRtKa4tqcDZG3ooQN6jq4jtYV3coFHFZxyVAd5izcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MTF8JVtM; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45610582d07so43416425e9.0;
-        Tue, 22 Jul 2025 06:56:45 -0700 (PDT)
+	s=arc-20240116; t=1753192618; c=relaxed/simple;
+	bh=WD4UPgWwrp87c7JvBmxtXsetEVuHqNKEul4WKe735JY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EE+nc/l6uIsu+guPQMNh8Ql8dUInv/SaQBJuGOtJdTcTMp2RfTQYvQS6BE1BP4pPyv/T06JG3lnrEH2S6FKi8MRESn3qI6BsL/Ab7BPVGvUecMWNk+Rua7k9D/iBy+xqvgCp01s7ojjzewDE1kMM6OWp1wNgt3EqxpNHslMZHgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=VywL/X9X; arc=none smtp.client-ip=209.85.166.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-87c14e0675dso138573239f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 06:56:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753192604; x=1753797404; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=juq2LsaB2ZlgXJfLDxNWAXy+l+g+CamQA/55GYnNXGQ=;
-        b=MTF8JVtMdMfifC7WMEG5jFRRgshh2dk4WsmDSnnHnMOhK2U9M04ZL/0X+r46Gttd+t
-         TUoJdwShZPbr5wvm3m6dZKML+9vxPvGQ+aBwqapqoJYjwVyTDYhNosuJTvtpN7iE5jfp
-         a7tO455Ql2nkDUBvl0IFdHw7021yPU8cZJnNNyTwLCLxu/Hppwwcmwk1qxHaUjg6oncI
-         kkQdrZ/dQSPDjhpoRt/if2zcK1B6/7in26kSntWsfBbeXmq6qZEVU+6VhctuW0q5wDrV
-         Hapk88JXd3tQROZARhaZ+De4/nUTTC8IiqQJi4/h6qVq775aYoas2njGBSGvajgrHBdX
-         sDMg==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1753192616; x=1753797416; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tjmFlUiMS8WhvA/SoS60Dh4RJFEn5lp/yFwJABcPh+o=;
+        b=VywL/X9XlLouPHqv4vY9/WsyCGZBjKEdSwRdltghOutRBpeDDfsizJbgrlBN9jDVqu
+         H5xgN2/NtYPf0kt7fzAn/NtH3fR3ymSAnoSwFx7p6dd76I5+/kmwEu0xsRtzsxLajfvh
+         78HxqmC93Psx0g4wmFsVeC9lw3qWAVOUVPLRsp0HW1Q7e3Ihvr8fh/HhwWqtSBp/Ictp
+         kS+wClNzeGGLUYpWcc68wGSRlXjuoalINKMjDy7tocN3aimOVX6NFxxpXJsMNkYh7LJJ
+         B6FWCrXWC4Gw1FKszlm1bz9g6OeXMXLwFDzwE4ApB0ttB7KwyLAuJqsbF9TN6ymqEPA5
+         bSyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753192604; x=1753797404;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=juq2LsaB2ZlgXJfLDxNWAXy+l+g+CamQA/55GYnNXGQ=;
-        b=H2/enbslyVmfAbdjqjb9fGsJqzOtVBVE7PF1XQXGL98F1d/0prT8yo5PJxYU+Ej4Qb
-         EfkltjI9wqw7NbAkAbMcODVg0HejLrKO2r8D9iEJn134q02GHlSNEV/rIVGTM1CN4Pld
-         rzFh9d0zzf7L29hj5N1ioMhvJ/WVoAgi/20XcD9TJhRWiKLSqWe0QhvbAsYfdzuw2Fw0
-         TgvFON+qVIw2N5K4AQ/3x6jWmouUjF9qAgmivNCDJZ0Z2euLOecOSTmzrs90ZOOmoNlt
-         pDm9FPDXIdp20Bw+iots5IgUXl+IQFzLKI2mH9NW4GQSxVMTnMmSKizdg9fz9scJZ3/0
-         K/Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCUApe6s2fksXuUZlg1hX4fxXAZS+NS1F3WvfAiMIWt9yBm0V44FFul9rzbPfl83zpQKLELv57O9XWfcyssa@vger.kernel.org, AJvYcCUU59zv/vSrCcdQzolNQ9eAlhcIg7p/mh5kRfpDtbZb4p1gnUSNUNFZAM+Y2SHvhBWqn+FtRCwZSLbc@vger.kernel.org, AJvYcCUykiTcRYOrPN0b/mSfOgDMvSt33jgUp/RMyle1+cBe9yOy2hUerMsSASwkR0peowtK8y8Ia93Et884@vger.kernel.org, AJvYcCVS1OaIfZAsZNo82qthNxiU2es0KZ/YkGNjFvo87ZE85q9k0k/MX3voYYT2DcD5x1KWQekaH8Zwzaut4w==@vger.kernel.org, AJvYcCWrFODVljnhkpRLphUK24v1pQi3+dKxn9BaNFQuFBLICe3ROzwTMc7okbrB4NDdM9u9iRQi4Su2o/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBMDjysXRIJR9IHggEhZvP4qd3gLRMjlL863QagtEZmuWwl+A6
-	ajjenTAIuJbmjKEH2oIVnsl4w0hLHgwUjA7xrygVz6hEyzHm4mcZcpEBjlzoHQ==
-X-Gm-Gg: ASbGncuGRNOXeMvc+TkpmaQk/x0ZPr/3OOJ/Z2h/wvpv5SZ1+9i8Ezq80EMHE/Qu40Y
-	zw5WEGu1mf3/+gbnZPQ1Q0hvddH1HnL/XljvRxRYxF594kOrHTGWbToTlczFAACDCEPiJwbBQbX
-	UUj7G0ErpLkeWvLRpGZRp3fhKfvsSgXeGa22sBSBqEmL4wTrw+EcQxpp8fWIDbUx9wlSQ+ICyOW
-	nvVO/rSZFwNURADwpH5IQHh2ZUtbsaECsiPsGgOmE8VsMR1y5yP+pwRoOGSfE4VZHaiDq/rkTyj
-	hS/wVi802+PWnllhG2zWyV6LgEWvMeZP4io1IyeWyMsM/rGBF6Ug2s9E3Imckx4l2t2037a4IAg
-	zJEuNfnIEIz0oZ8qLIPFvm66FnvSRksPuieik5z+cEk38cys3dI/yRzkU8a/iEw2Q53rz4pBFAA
-	3NiVH5eufQ
-X-Google-Smtp-Source: AGHT+IEXfV5AQDvaaCQOegEyKdsH0umt5I9YjBYWNMUwcatDOEmZLLM8MRQ3Lk0kGHyWW+MsfUSbDg==
-X-Received: by 2002:a05:600c:c16d:b0:442:dc75:5625 with SMTP id 5b1f17b1804b1-456352d0b70mr190106725e9.5.1753192603600;
-        Tue, 22 Jul 2025 06:56:43 -0700 (PDT)
-Received: from orome (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e7f2d4fsm197624025e9.4.2025.07.22.06.56.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 06:56:42 -0700 (PDT)
-Date: Tue, 22 Jul 2025 15:56:40 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: x86@kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-mips@vger.kernel.org, loongarch@lists.linux.dev, 
-	linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/7] syscore: Pass context data to callbacks
-Message-ID: <l54i36uk33je744w4f47tehdopk5dsjotvozfv5b2hehmxrwpq@eins7awyq4dy>
-References: <20250717103241.2806798-1-thierry.reding@gmail.com>
- <2025071716-phoney-object-1648@gregkh>
- <rzbzah5iigz25jtxyqadnitkzkazxsaxntajhlfrfdslyioevk@pylcjkfh5n42>
- <2025071919-patience-cattishly-cf7c@gregkh>
+        d=1e100.net; s=20230601; t=1753192616; x=1753797416;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tjmFlUiMS8WhvA/SoS60Dh4RJFEn5lp/yFwJABcPh+o=;
+        b=GWd0wAglKd9ugI4RCR3LRAehyz5k8lfs/zmPTTJ/kX5Ki10a+/blYVB1LKcLOLS12E
+         0epOZ/jO1vzksGku/V3a1WYstsWiVMAsLQI60hIsJgGQ+T3I6X7eQ/e4t2TbgVuqrJtg
+         PpDTUgpGeDngvgXMIVLwhgyLzYTpC1CheDFpDYfg2slYVJutuxAPpoNVi7/uUXlpR7GK
+         NYxMQPeS3DNx7YP16MXMQGP5za1awCgdCDjyLszbFNLnuQD72f7AGOwn24RGBDmA9xuX
+         Ip6VQuVpTTRZLGcqeyiWYdmsVqLvs0kEEVgJqrR7YtFsPrLy4FclalBvIxaOKAGayrUl
+         z28w==
+X-Forwarded-Encrypted: i=1; AJvYcCW3v3BCAq6b8dnoyb19ZLVr/i/+kGfudJLDigqcgufFpYEUzleesJV3oOptxVYvGeH7A3XDCIzAwYE4EmQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8cx6wyYk4OqpTOCndgJkxzOvk7iOsx44rU7siqfrTXNaxUZNU
+	qcq8ob2HXsGL5pbDy0N2DfnbflRGAuQ7oKlHYASUqtONCyoFZjT68BsqFLVQpxFF4mExGC2H3YU
+	9RCa9
+X-Gm-Gg: ASbGncupmYpN8nyHO0yYTe1CyDSCjiMaS9IfB03YVhFBXarVN2KEg1PC04Auo+RPIlw
+	gymw7e5/nWto/qOieKbKFdfihlh7+IeeylTxaoM9AgcYMOiG0abIYm0Wt9DYT2PZpS5j331fIkE
+	CU2f6d3AnaxoNMCAqn2zemsl1WHBveJEL2nuDqmANTzm/f1dZmrFADVrQWIWuV3IWGmKEgIp0nM
+	IadcQADvOltCGZpfEefQp+rDHsetFQoDQ7jxIEV1K7N+BHmcSLFyeH1Th/wogDwIs0jFD2ek/Vd
+	iZBxa1ZFDXbeTGM2jB3HsCorEk0t0cHjpR+3AiGkebTigul4h7sYPVcgKJNX2iTZPBIVt68xCYW
+	+Y//wj4gcvhmTnn28gATVBIviSiKhAg==
+X-Google-Smtp-Source: AGHT+IFDr+fErNv5tH7IdOj2j7uUgenlIGzMOgYCLt1qeLE9jnEGv4AQM7YVl9je3Z12CEdDAW/qHw==
+X-Received: by 2002:a05:6e02:1fe4:b0:3dd:cc4f:d85a with SMTP id e9e14a558f8ab-3e28d3b88bamr240624905ab.6.1753192615551;
+        Tue, 22 Jul 2025 06:56:55 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5084ca5f843sm2502681173.129.2025.07.22.06.56.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Jul 2025 06:56:55 -0700 (PDT)
+Message-ID: <62b5f680-5d54-48e3-979b-8d09a876130f@kernel.dk>
+Date: Tue, 22 Jul 2025 07:56:54 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="sm7baow4ljogvsjb"
-Content-Disposition: inline
-In-Reply-To: <2025071919-patience-cattishly-cf7c@gregkh>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Fixed several coding style issues in the efi driver as
+ reported by checkpatch.pl:
+To: Dishank Jogi <dishank.jogi@siqol.com>, Davidlohr Bueso
+ <dave@stgolabs.net>, linux-efi@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Manish Narani <manish.narani@siqol.com>
+References: <20250722121927.780623-1-dishank.jogi@siqol.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20250722121927.780623-1-dishank.jogi@siqol.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 7/22/25 6:19 AM, Dishank Jogi wrote:
+> - Moved assignments out of 'if' conditions.
+> - Removed trailing whitespaces.
+> - Fixed indentation and spacing inconsistencies.
+> - Replaced 'unsigned' with 'unsigned int'.
+> 
+> These changes improve readability and follow kernel coding style guidelines.
 
---sm7baow4ljogvsjb
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 0/7] syscore: Pass context data to callbacks
-MIME-Version: 1.0
+Will only cause backport/stable issues. Please don't send checkpatch
+fixes for existing code, it's for new patches only.
 
-On Sat, Jul 19, 2025 at 08:52:41AM +0200, Greg Kroah-Hartman wrote:
-> On Fri, Jul 18, 2025 at 03:49:37PM +0200, Thierry Reding wrote:
-> > On Thu, Jul 17, 2025 at 02:11:41PM +0200, Greg Kroah-Hartman wrote:
-> > > On Thu, Jul 17, 2025 at 12:32:34PM +0200, Thierry Reding wrote:
-[...]
-> > 	struct syscore;
-> >=20
-> > 	struct syscore_ops {
-> > 		int (*suspend)(struct syscore *syscore);
-> > 		void (*resume)(struct syscore *syscore);
-> > 		void (*shutdown)(struct syscore *syscore);
-> > 	};
-> >=20
-> > 	struct syscore {
-> > 		const struct syscore_ops *ops;
-> > 		struct list_head node;
-> > 	};
-> >=20
-> > Is that what you had in mind?
->=20
-> I missed the list_head, so yes, this would be better, but don't pass
-> back the syscore structure, how about just a void * instead, making the
-> whole container_of() stuff go away?
+-- 
+Jens Axboe
 
-Yeah, that's a possibility. I personally don't like passing the void *
-around because it's easier to make mistakes that way. I also find it
-unintuitive because it doesn't immediately show you what the functions
-expect.
-
-My understanding is that the container_of() should get optimized away
-most of the time, so there aren't any obvious downsides that I can see.
-
-But I don't feel very strongly, so if you have a strong preference for
-void pointers, I can do that.
-
-Thierry
-
---sm7baow4ljogvsjb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmh/mJUACgkQ3SOs138+
-s6FyzhAAq8z/gI18SVH4qmKTQkcFaPuXBegHTP2dgId1CA1dad3cmBj4tcAz1+Ng
-liio3geyWrxKqZSJTrQOYYYloM4s9UhkY3AvXvDB+L4/DZC/HBgAGnL5dMKte/WQ
-sNUniNOWw1gW2tluO+vi9saSGE4Test34XaIWpBaItJYO9uhuiAC57jJw9Uutl0h
-wkjvwyxaOXSleKiCSwlnSBx31PCz7k5nhb8pIeptnxbxw+Q7+IsDzK/cH2PrV979
-7AzVNifmqUfpO9Xy0FsSrYU0SrUCM7I8WU6elGSeuswDL7+Mlsh9kn/KfVyL86ed
-0jP2iQRyzteg2ATh6dQJLM7KEPK8DnGZqaLDLJlzn3af7Mv5MvRGO1cx7dVGhcTA
-ADto5YN6dKXC63ijHppnQ2xjZ725T1zuVpj1z5OTlXpKtlGvYiIejh+B5tjFMMrr
-zTNbjIBbykgIZXvIvn52ttFRDrLgpnh2mQPzI8VWp9Bv0DaBH6Q1jfxUlWXQiSaQ
-bWrFys6N7IBy5+o83FiAGZvQ//IFZhyF8T/6HD+6OuoX26vTOa5vwrPgs5qru2/s
-T5iJf9UOqnHAuzssCGk2OZcqcVn17seSpXcJScckVPt/HhegIgcgxoVTCOBQ0K7J
-xUhlsns/ZnbEGVKtLr2T/t7UTeCDZIkqo0pEloVCu9UGfeAI16c=
-=Cczj
------END PGP SIGNATURE-----
-
---sm7baow4ljogvsjb--
 
