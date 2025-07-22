@@ -1,176 +1,138 @@
-Return-Path: <linux-kernel+bounces-740665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02DEBB0D773
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:37:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9A05B0D778
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 207A55617EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:37:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5C911C2529A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C202E2F16;
-	Tue, 22 Jul 2025 10:37:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C39D2BEFE3;
+	Tue, 22 Jul 2025 10:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vdww0zWn"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="eXdbux7Q"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FBB42BEFE3
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 10:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A58A28A725;
+	Tue, 22 Jul 2025 10:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753180641; cv=none; b=VEVQSoD0kUkZMimGTrm0seRgVpaVtJeW50VwbZOuw7fTHFxsGMCBKMXdHPCzy0SxLFcdzGEI5ujuDZD/U3R5+SG05Ryg9Mj4Xsw/h98CHnz5iA2JqKvd1/Envbj573koe98ce5fDb+nS+MUf1DuuQ4SScsd/cckP0pf8SYnU1vM=
+	t=1753180702; cv=none; b=eNSPc0ptoaYgxK7u4pTjQ0BuVeK8PuZ1Mg8SSagTpGmspUWw0Kazu/kjC+/RoyP1J7oOqwkkyNWnwOJ7fug3ZkBCP13Wmqm25jBAaGr2XNo3wv67swfi+ZK4EIl0VyBDyUvQuhU50LfqDn6wwPF9PomvE/A1RVcGETzPn2ceiw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753180641; c=relaxed/simple;
-	bh=EcaPmOZF17vzAybqgUPsCVqCSYrKhcslVWazMxbu63M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sTpVBFS1ZzpCKEsbBJ3tFPL8/DQCbPF6SdoN1FeJBfZXc+eZ0ZtQAB8TcKZrhWms45nICsIgdAt6FjfL7TgypW4iFkT3Um5c7MxZNo8QIpsK2j8eFN4MV+xJMdwU+iNTrCbCPpv43w7++CciUnORWC5xPeXq+n9rCLE2uB/af7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vdww0zWn; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3b611665b96so2986864f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 03:37:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753180637; x=1753785437; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/Y4ZK31qukkhLkAHxdpW7gih6/ZCt1oA0i9NknuiOE4=;
-        b=vdww0zWnoWp9QeU1u00mPbHHCE6Vq4Dszs2UlBmvmeWgey68lOYoQJnaur6eL3KcFv
-         0/+0RPu9W91z6Q3ecq4lE6WyCvswGAqgyIXkGWc4N8QlvXw2+Glzldt8KvssKewDUvj2
-         AyUJJ8y4pVZGU8GlvkrWyd3w2GOO5VrfBLw22K+KT08m+OevW7xqIcZSXScCbxAcX/Qc
-         xTQeXTIJOPa6+PIj23bDw236w5oaHfrMg/+WG7lCIvR5v1Z3ycsXL28iai6H11IlZB43
-         aLzrvNmbs8073u+Zd1Y2d2zfDnulnM8BvS54LdYeBxG0wND9tGGPf2PQYtgDTY5zxNB3
-         CDPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753180637; x=1753785437;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/Y4ZK31qukkhLkAHxdpW7gih6/ZCt1oA0i9NknuiOE4=;
-        b=LR0QATj7XnKlEChGT5lsMh67oI/NaQy09sQewQuCrXzXtzFAYoq20IihAm+VxxvpLj
-         LPHfu2+ljsRaASWcJFACgXvL1eqVE05E37/ZfjpQWViTTMZ8HtYyWo4LZFVRwzB8MlyE
-         75ARMQWFgzBHIUsy1tNs7UBIfla5uIw1R9pcBvFXjHC2J6XIS1/5hlP+XNTaydilGchw
-         Wduyu1+8yYphzioFYEF3d1BKgP2gNpShCDZk0/VZ2XbTNvmJ0vJ0wL3jS0K3mTRFQGJ2
-         ci+Cusglvm7t8mDNW52l778nyoG6cB5oyR7qL9CTc8bfqOzZGK69bZ1vrglH2p5honqz
-         UH8w==
-X-Forwarded-Encrypted: i=1; AJvYcCWOxpnalYIT8abbjFyabsy60vZarNII5lGUYVQqdMO5FMElzlAHgBgrbr3kvqXSt3V3NuVVQ2nzxFsVvn8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywzx2TUtIc54IhRvTQbkIkk1SNJnUkB3f5zwJheL/hmxLFAkfbN
-	v0fBv8b9w3YMlyPFXPyLcCRc8ErW72flH4Ip4UrsFqxGWH9rW12IGij8Cy+MdlkNN1Y=
-X-Gm-Gg: ASbGncsC0XK8QghkBRsAZpbGG/lGm7v95sMHEg4vLvmopRFe9QWmG6iG33TPooWRBqx
-	0UybwZHZiEMMBGGK5P+CHwJ4gKZA4mLndmD6bTT7HZx+MVetJXnz/EH84xNGK4Y3QIbmE46kJNE
-	+Rq/+/akHWmSDR+GFN0UVLbGObhAX6Ee6H+xztueTeyYAKwVgu3RV3Hel1dlXRbUYNPeTjZMiUE
-	6q0kKCdFa5lkhnLlO4Ndwkdyt5v/yJBlD3M+5vNYh5W2GcZy3FSIHTMLddaCEEoLOOH3R5oPaZ4
-	yp1LuF8sASh2eBSlPpn5MLzlmwgdhMfCI17To0e7W16zQ/NFeAry/K8l4pBV3CqZwuWS238HoQk
-	QstYiPU8rmgVPB0goUuYd1N0BCv3yuCOGxu21QWXZjfDdt2CwQ+tHy0ZY1RpkH2k=
-X-Google-Smtp-Source: AGHT+IGTCim13XVcGSW21AueFsi3fYd4EJtmzmvQeTtBGNVJD3KZN4i5HjdFzRy4dW3lSossDfE26A==
-X-Received: by 2002:a05:6000:288b:b0:3a5:8934:493a with SMTP id ffacd0b85a97d-3b60e51bb18mr20015822f8f.44.1753180637147;
-        Tue, 22 Jul 2025 03:37:17 -0700 (PDT)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca4d581sm12938939f8f.64.2025.07.22.03.37.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Jul 2025 03:37:16 -0700 (PDT)
-Message-ID: <7e1073da-6773-489e-80f5-97409f013acc@linaro.org>
-Date: Tue, 22 Jul 2025 11:37:15 +0100
+	s=arc-20240116; t=1753180702; c=relaxed/simple;
+	bh=bkY2GEXAbZCEgimSdKFm2IARS0ffaAm1hymKFyKVnv0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=hZfNGvrpuBK7oJlfsbGG6QeZyd8AOfsq6qTegUKezeRXoga585kr0hNO9Feg/eE6WxCuW7E4z7FW/CWxSLUed0vzTRKsQ8v+kAOV64C5H/ZW3D8+X2xQUv8Z2JnL+tSMkVBmP58w/RiYyQq83U4ORzcy5dykZCnqLXHyUFnb3nM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=eXdbux7Q; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1753180698;
+	bh=bkY2GEXAbZCEgimSdKFm2IARS0ffaAm1hymKFyKVnv0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=eXdbux7QGObp+HZOOdFAxjOZIbimZVtKUGpGttgN9rUum33zjv7HhTR3SrOKrEJdi
+	 2DtVVJqbiPby5tbabC6G6tSXm49COXRayntenGTka9I05bOYpYLKwyowdvpVqeC/T4
+	 a5QWU2DOjmMPRGcdWi6e4eEyMhcjVLwKrwGYpMXs0W/rBHeNhImne8tCTdALWPExtX
+	 0/VrL/Cg24AdWQ8LOZotmViIrpd+bTCF/U705jqr4NM5p9r6ZYaAmnqjFWTiPi21fX
+	 nseJPXOlNyRwyo79RS6rdTSxGO138uwH58XH/W/m0AfQmAl2YptMjpXf0174UX+iGy
+	 wPtOhZacXN/Wg==
+Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:bd9c:eae9:88b0:783c])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: laura.nao)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 22DF017E0B72;
+	Tue, 22 Jul 2025 12:38:17 +0200 (CEST)
+From: Laura Nao <laura.nao@collabora.com>
+To: angelogioacchino.delregno@collabora.com
+Cc: andrew-ct.chen@mediatek.com,
+	arnd@arndb.de,
+	bchihi@baylibre.com,
+	colin.i.king@gmail.com,
+	conor+dt@kernel.org,
+	daniel.lezcano@linaro.org,
+	devicetree@vger.kernel.org,
+	frank-w@public-files.de,
+	kernel@collabora.com,
+	krzk+dt@kernel.org,
+	lala.lin@mediatek.com,
+	laura.nao@collabora.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-pm@vger.kernel.org,
+	lukasz.luba@arm.com,
+	matthias.bgg@gmail.com,
+	nfraprado@collabora.com,
+	rafael@kernel.org,
+	robh@kernel.org,
+	rui.zhang@intel.com,
+	srini@kernel.org,
+	u.kleine-koenig@baylibre.com
+Subject: Re: [PATCH 9/9] dt-bindings: nvmem: mediatek: efuse: Add support for MT8196
+Date: Tue, 22 Jul 2025 12:37:18 +0200
+Message-Id: <20250722103718.31804-1-laura.nao@collabora.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <24c65ecf-ab89-4970-b2ae-00185259d359@collabora.com>
+References: <24c65ecf-ab89-4970-b2ae-00185259d359@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] phy: qcom-mipi-csi2: Add a CSI2 MIPI D-PHY driver
-To: Neil Armstrong <neil.armstrong@linaro.org>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250710-x1e-csi2-phy-v1-0-74acbb5b162b@linaro.org>
- <20250710-x1e-csi2-phy-v1-2-74acbb5b162b@linaro.org>
- <11b573d5-ce4d-476c-b94c-216d427cd838@linaro.org>
- <08261aa4-689b-4d6b-bfd2-221c1976d254@linaro.org>
- <a7f64b31-4767-4281-b452-a2bc5351d745@mleia.com>
- <c93624bb-ee7b-45ac-8b53-b5391f11c9c9@linaro.org>
- <eac3a877-a4aa-4789-9013-ab8b6c91e0f3@linaro.org>
- <0a12879f-dc4a-47fb-87a0-ac4b8bcd4d75@linaro.org>
- <53a19b1d-5665-4937-a07c-5dd1fcde06c5@linaro.org>
- <3b760685-97db-46e3-80a3-7fad69ad31cd@oss.qualcomm.com>
- <94b75177-9401-4e0c-966b-5847a29cb6f7@linaro.org>
- <427548c0-b0e3-4462-a15e-bd7843f00c7f@oss.qualcomm.com>
- <3UXVZ6ANM9mDjVdMV4SXsiIx_pT3S1lp3RC_Q7mh_o7jF2dpYsni1Sl2TAWv6OCMCRTFmi9aE6BxDquGkOnwEg==@protonmail.internalid>
- <8b908a20-0bf3-447d-82ea-a5ecee1bf54c@linaro.org>
- <57501e81-7e9c-4cb1-9a37-18307d1e06ca@linaro.org>
- <33d76d7f-ab14-4e76-8ffb-eb370901a046@linaro.org>
- <4edefe21-27b6-4884-befa-ddb451bb9376@linaro.org>
- <84eea632-02d8-4b7f-a4ca-36ce7159a170@linaro.org>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <84eea632-02d8-4b7f-a4ca-36ce7159a170@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 22/07/2025 10:59, Neil Armstrong wrote:
-> On 22/07/2025 11:08, Bryan O'Donoghue wrote:
->> On 22/07/2025 09:32, Neil Armstrong wrote:
->>> The whole key point here is the combo mode, as I understood the combo 
->>> mode feature
->>> makes the PHY lanes available as 2 separate streams, like if you got 
->>> 2 "controllers"
->>> attached to the same PHY. So in fact, the PHY should have a single 
->>> node, but 2 PHY
->>> interfaces in combo mode.
->>>
->>> This makes all this controller/phy model very complex to handle and 
->>> add a lot of
->>> logic in the camss side. Moving the "csiphy" as an independent media 
->>> device that
->>> can declare up to 2 endpoints in combo mode makes things much 
->>> simpler, and allows
->>> us to attach each "csiphy" stream to any "controller" side of camss.
+On 7/22/25 11:04, AngeloGioacchino Del Regno wrote:
+> Il 21/07/25 10:14, Laura Nao ha scritto:
+>> Add compatible for MT8196 SoC.
 >>
->> I think there should be a generic extension to PHY/linux-media to 
->> support that instead of something Qualcomm specific.
-> 
-> Can you point out what's missing ? AFAIK it's more a matter of proper 
-> representation of all
-> the CAMSS components with a proper ports/endpoint graph design that 
-> adding new kernel APIs.
+>
+> This is compatible with MT8186's layout - not with the others - and
+> besides: "mediatek,efuse" is deprecated.
+>
+> Adding something to deprecated bindings is not even really permitted (unless
+> there's a *very* good reason to, which you definitely don't have in this case).
+>
+> Also, this commit has no description - repeating the same as the title adds
+> no information and doesn't help at all.
+>
+> NACK.
+>
 
-Perhaps I'm not understanding the pushback.
+Got it, thanks both for the feedback - I'll fix this in the next 
+revision.
 
-Vlad's design puts the CSIPHY nodes under CAMSS and doesn't use the 
-upstream PHY API, which if I've understood right is done to facilitate 
-multiple sensors on the same CSIPHY.
+Best,
 
-If the kernel APIs or standard representations of CSIPHYs in the 
-upstream kernel are insufficent to facilitate this model, then I think 
-that change should be done separately so that all of the existing 
-upstream stuff can benefit.
+Laura
 
-CAMSS should have a standard PHY interface. That's what this series 
-provides.
+> Regards,
+> Angelo
+>
+>> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+>> ---
+>>   Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml b/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml
+>> index 32b8c1eb4e80..e209a1132a26 100644
+>> --- a/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml
+>> +++ b/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml
+>> @@ -37,6 +37,7 @@ properties:
+>>                 - mediatek,mt8188-efuse
+>>                 - mediatek,mt8192-efuse
+>>                 - mediatek,mt8195-efuse
+>> +              - mediatek,mt8196-efuse
+>>                 - mediatek,mt8516-efuse
+>>             - const: mediatek,efuse
+>>         - const: mediatek,mt8173-efuse 
+>
+>
+>
 
-If multiple sensors on the CSIPHY can't fit into that standard model, 
-then we need a series to rectify.
-
-I've given an example of how two sensors could be routed to one CSIPHY 
-in DT. Another possibility is virtual channels.
-
-I don't know if your sensors support VCs, have you explored that ?
-
-If the message is "we need a custom PHY interface in CAMSS for multiple 
-sensors" then I think in fact what that points to additional work that 
-needs to be done in CAMSS and perhaps in the kernel linux-media and PHY 
-layer to facilitate.
-
-Like I say I'm happy to help you guys do that, ship me some hardware.
-
----
-bod
 
