@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-740684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B611B0D7DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:09:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5651B0D7E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:10:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93F6617562F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:08:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0041D561CD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20712E3397;
-	Tue, 22 Jul 2025 11:07:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2690628C5A0;
+	Tue, 22 Jul 2025 11:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gW45WRJ6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ssYsamx7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D8D28C2B2;
-	Tue, 22 Jul 2025 11:07:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3891C84DD;
+	Tue, 22 Jul 2025 11:09:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753182468; cv=none; b=HO0541ePuy2NhNmaCudXcbeLJHMlUaHk9syEweaKOoTh1cWGxL9UhPwqowCuXkSmbC66r9noNVA0/HL+8kadPo6miUT5ZR8CC1IZ4Mm8Wsusz3JNr3M5GNWec91CrZNR4ZTJ/wjBASUeelareZWD9mXYc/nL5tnIJaAmGzeNjiY=
+	t=1753182558; cv=none; b=Lu4V0dj0M8P633dSjzhjTc3OGVGSOIKQDCn+Bla/qdAtK4mOT8DRxlHMeKQPaQEXLaME3foe0Wgla6N8NC2/SCQMy9IOdNVhZOaEUMTqP4RhQMZKDD+O3pM+S4xM5C1SDd8k83QBx3n5sdGfVR9oI2hGwCQGFh8t/GIH6LnruZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753182468; c=relaxed/simple;
-	bh=/14uXHwAwgSzAFwwMlCyP9/kFWZdtLnT4aQT+J/gJeM=;
+	s=arc-20240116; t=1753182558; c=relaxed/simple;
+	bh=beXaQ6bn7VZ4kwXIr7bZnROMX0CLkZfQr4F/O0JFJTk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LzkVDtSq+MVevwrhk3/PA6sgn2lv1JFXc4gMb7YpYl33XzrRnF3GQ9pI8ULLkYM4j39aszUP7HilwZINi+zkX+16aBmrpK0R/uSKCwog3+Bm/c6fwgWCasXO2kjLj1HeWtCGsHgb4npsSmMWFsuZrk3nWkRiNVVSAlM2pQwBpeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gW45WRJ6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8896CC4CEEB;
-	Tue, 22 Jul 2025 11:07:42 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=M/Eki7g0ekQSHeSbHavSPGoxh32qddVr1KKC1HOh6A/3yzkI8PcOj4VU0jJHGPP+EefbVSWqJDJqVp91An8j9r6QxpHYQ8C/AomykWNlkTBKod73yiWzWWrvNGNegsJ8r50BCloQvDLAab6V54GAwy1dZMbXMnO20F5SdWtZ1fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ssYsamx7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29DEFC4CEEB;
+	Tue, 22 Jul 2025 11:09:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753182467;
-	bh=/14uXHwAwgSzAFwwMlCyP9/kFWZdtLnT4aQT+J/gJeM=;
+	s=k20201202; t=1753182558;
+	bh=beXaQ6bn7VZ4kwXIr7bZnROMX0CLkZfQr4F/O0JFJTk=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gW45WRJ6520Gtzde2MTNJNG/WTRctoEQS/jOoYMh5KKIZkAcxGIJT6aa/TV3WyHmK
-	 X2fXDNM6iwYTuSZkQndh1aBuyrg14w4hVGkLtvP29O/SdOILBp3UT6OlD704hPR0o5
-	 9NyImMd6XXmkcJ96Sb6OSxMTgbV1LMoBtKFdslSQv5LYY0JuWzW/RHdM1wS2AW2gQZ
-	 DLgtz0SytHpEebb6LhMrlbB8bFi3V0Q2A+3ZvlPa2pkU/CHXywOobI4ZsuhV/DgAcH
-	 aICP06t3ew7J6TupHEJEdFnMCHNCV8RGaSqvN8vj3xg878T2+9dGxJwYuagZt53cwa
-	 mazM7CaZESpsg==
-Message-ID: <07ac9244-c4cb-441e-83c1-20dfd01b2fe7@kernel.org>
-Date: Tue, 22 Jul 2025 13:07:40 +0200
+	b=ssYsamx7ZfqFjggJyRK7l+C1u3LcnNCAuoLrcPp6hQWVaqh5lkmnVccDMhaLi0eC8
+	 /k9xi7NS3UC0ElAnmomm+hSWroEXYNVeHOd6kPCvIG7Ut1QQD+HGmln3ilcLgWlZm7
+	 oig8yV30RHJeHg/JUbjOHcRR/27+0M7tV77dJqCgWypNxCuMRR2OTSpGhIxmVX9L59
+	 BZjpoMg85PmwXTsIdURUVZO+Ff5hgaSG8UqtnL4QlG9nANfcxej579H39t/kuYzMrA
+	 N72OULbtS/j0hl6gwOv7vLXFTVbTuxpb8S3gqE5CLjvg03dBlXo83U+TolmCKTNnhn
+	 23MHIc7ks6FdA==
+Message-ID: <31e72f14-bb61-411a-86c8-19c7212d2d31@kernel.org>
+Date: Tue, 22 Jul 2025 13:09:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,27 +49,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: (subset) [PATCH v1 0/3] spidev: introduce trivial abb sensor
- device
-To: hs@denx.de, Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Andrei Lalaev <andrey.lalaev@gmail.com>,
- Chanh Nguyen <chanh@os.amperecomputing.com>,
- Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>,
- Grant Peltier <grantpeltier93@gmail.com>, Guenter Roeck
- <linux@roeck-us.net>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Michal Simek <michal.simek@amd.com>,
- Naresh Solanki <naresh.solanki@9elements.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Rob Herring <robh@kernel.org>, Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>,
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-References: <20250719063355.73111-1-hs@denx.de>
- <175311337130.327079.7374455187420344577.b4-ty@kernel.org>
- <d677ecd9-42d6-43fe-8fe1-a5afd4d270e2@kernel.org>
- <8a8106ea-83d3-e02a-9ae7-ea4a66e4c248@denx.de>
+Subject: Re: [PATCH v1 7/8] dt-bindings: media: Add MT8189
+ mediatek,vcodec-encoder
+To: =?UTF-8?B?S3lyaWUgV3UgKOWQtOaZlyk=?= <Kyrie.Wu@mediatek.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ =?UTF-8?B?R2VvcmdlIFN1biAo5a2Z5p6XKQ==?= <George.Sun@mediatek.com>,
+ =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= <tiffany.lin@mediatek.com>,
+ "andrzejtp2010@gmail.com" <andrzejtp2010@gmail.com>,
+ "nhebert@chromium.org" <nhebert@chromium.org>,
+ "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "mchehab@kernel.org" <mchehab@kernel.org>,
+ "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
+ "nicolas.dufresne@collabora.com" <nicolas.dufresne@collabora.com>,
+ =?UTF-8?B?WXVuZmVpIERvbmcgKOiRo+S6kemjnik=?= <Yunfei.Dong@mediatek.com>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ =?UTF-8?B?SXJ1aSBXYW5nICjnjovnkZ4p?= <Irui.Wang@mediatek.com>,
+ "robh@kernel.org" <robh@kernel.org>,
+ "sebastian.fricke@collabora.com" <sebastian.fricke@collabora.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ "christophe.jaillet@wanadoo.fr" <christophe.jaillet@wanadoo.fr>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>, "arnd@arndb.de" <arnd@arndb.de>,
+ =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?=
+ <Andrew-CT.Chen@mediatek.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>
+References: <20250721105520.5625-1-kyrie.wu@mediatek.com>
+ <20250721105520.5625-8-kyrie.wu@mediatek.com>
+ <20250722-lovely-mustard-scorpion-e07e92@kuoka>
+ <1d51ab1398ea0eec7bcaeaa31f52e4c39d11bd7b.camel@mediatek.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -115,72 +126,35 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <8a8106ea-83d3-e02a-9ae7-ea4a66e4c248@denx.de>
+In-Reply-To: <1d51ab1398ea0eec7bcaeaa31f52e4c39d11bd7b.camel@mediatek.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 22/07/2025 06:05, Heiko Schocher wrote:
-> Hello Krzysztof,
-> 
-> On 21.07.25 18:24, Krzysztof Kozlowski wrote:
->> On 21/07/2025 17:56, Mark Brown wrote:
->>> On Sat, 19 Jul 2025 08:33:51 +0200, Heiko Schocher wrote:
->>>> This series introduces the changes needed for trivial spi
->>>> based sensors from ABB, currently operated from userspace.
->>>>
->>>> The last patch adds the spidevices to the DTS files, already
->>>> in mainline.
->>>>
->>>> make dtbs_check showed no errors/warnings for the dts files
->>>>
->>>> [...]
->>>
->>> Applied to
->>>
->>>     https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
->>>
->>> Thanks!
->>>
->>> [1/3] dt-bindings: trivial-devices: Document ABB sensors
->>>        commit: aad2f87cbcab56b322109d26d7b11842a09df91f
->>> [2/3] spi: spidev: Add an entry for the ABB spi sensors
->>>        commit: d60f7cab7c04944a79af16caa43c141e780a59c6
->>>
+On 22/07/2025 10:16, Kyrie Wu (吴晗) wrote:
+> On Tue, 2025-07-22 at 09:26 +0200, Krzysztof Kozlowski wrote:
+>> External email : Please do not click links or open attachments until
+>> you have verified the sender or the content.
 >>
 >>
->> That's unexpected, Mark. Patches received two objections/comments and I
->> don't think discussion was resolved.
+>> On Mon, Jul 21, 2025 at 06:55:19PM +0800, Kyrie Wu wrote:
+>>> Add MT8189 encoder compatible string, which will reference SCP
+>>> device.
 >>
->> ABB is huge company, probably making hundreds or more of sensors. The
->> patchset basically claims that all of them work with spidev. It does not
->> providing any model names or details, so it seems really incomplete to
->> call them trivial devices.
+>> And the device is not compatible or is different because of what?
+>>
+>> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>
+>> Best regards,
+>> Krzysztof
+>>
+> Dear Krzysztof,
 > 
-> I do not know how many different sensors they have, nor if that department can
-> speak for the whole company...
+> The reason, adding a new compatible strings for the MT8189 encoder, is
+> same as for decoder, to use different of_device_id data and to
+> distinguish the chip name.
 
-Considering how big company is, they could have 1 or 1000 sensors.
-
-> 
-> What I have as information is:
-> https://lore.kernel.org/linux-spi/2477dc64-92a0-9dc9-d168-56646d0d796e@denx.de/
-> 
-> and I get no more information about them currently. May I should
-> add some sort of trivial into compatible name? Something like
-> 
-> "abb,spi-trivial-sensor"
-> or
-> "abb,spidev-trivial-sensor"
-
-No, you need model numbers.
-
-> 
-> which makes it clearer, that only ABB trivial sensor, controlled through spidev
-> driver, is connected here?
-
-No, what is trivial? Which one is trivial and which one is not? How one
-judges that one sensor should go here and other should not?
-
+You speak about drivers, this is not relevant. Explain the hardware -
+WHY it is not compatible, what is the difference
 
 Best regards,
 Krzysztof
