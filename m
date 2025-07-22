@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-741118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB4A2B0E041
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:20:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1286B0E047
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:21:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2C77189EC2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:19:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C639E54270C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A204E25742F;
-	Tue, 22 Jul 2025 15:18:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 237032609EE;
+	Tue, 22 Jul 2025 15:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LZ0MV35p"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hoHEsi/6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1541B2561D9
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 15:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE1325F799
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 15:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753197534; cv=none; b=cYN6WjGZ+aUNhjTLc82L6zBow1DRL/UqsoOUhLZ7qrddH7RG2tp48pjfdQIATBFqsULjZ4PnmMcIOFF9jj6ZiNAC2EAKCnFjX36cgsmZV2TZrvrXPAC5/sLHUMYfvjQf7ZfxoWhHqvHg7iBONpL81DfRiytKnRZYr2R3ZIiDRZY=
+	t=1753197633; cv=none; b=jbCRMNWsDD/HN0bwW1R6dXA/L5trWfc9dNLcnK7L0tYbmp8Cdu1y66CNcTx7tcRaN34zsu3ylYsMvvCZMgc1QRAlRs70ycbIZI2yHE72nqf3QN/w/EkEFw3pxKsdD+uoUGxpQ3Qp+ZqP6q6MrvfbN8lwIb/kH2ATkmUGCsG7lE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753197534; c=relaxed/simple;
-	bh=/WcZ1CtXBk0PGDSvY/bmb4xGlyzv32cUyKEBqFYxoWU=;
+	s=arc-20240116; t=1753197633; c=relaxed/simple;
+	bh=EgrrwcZ6j7CSJT5s0hlrma2bExgZWXc7DwZ6upbMXg0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=njCpvwITZ5QAKWEFwdZP3QGCWvHc7sxYZupvb3vdk5Jl+zAU1W1J8w5o8ITQ7oP9bTK5EaPf0qDSuSgIlW0y3J1tEHTUkpgrxAnXFXiRzANf4BbH1oFwfZNZPoyvp7Y820WjZofLD4SHNSaec9zhMwenWcgutzSf2YdtYMznnJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LZ0MV35p; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=dT29Xon9COqPb44Y6L+3ba1Sk1thJicU/FDH1/4iKVewHBECUJmAFnm/CxO/c9EOVhN4X0B+fQAU7TKTjb8hpR60vOVQkKyo2X6el/7yzBsC8m1ZcjapQdZJG8DmXEL8SNR6Cf2whObKzKnF1h8mAU7NXwr/mVZEEJRGJ9PNinQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hoHEsi/6; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753197532;
+	s=mimecast20190719; t=1753197630;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=vPWTF5ngQjwKpl0CL91lanYqN0TafLkJwtT/q59+/yM=;
-	b=LZ0MV35pEwAvDUXkaL/RMUm+nioeyMMtSl6m4h7eBLykbvACNtAamA3m0ljs/4GszG3iI+
-	JtEJ1Sudw0nEAojcSP2BzLyy1VzZAxK6h7ZXzmaMqYBT0e0HM9vgll7YDkyz9wiIltAv77
-	gkCLfkDUMqbFJLIrnlzYny0loQZbsa0=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=UR686UB6W95T3RcYAhWHnco9tSypYtrsdOEb8UEkv7E=;
+	b=hoHEsi/66pffmkvxXXf03JMlFY38CKwJH+nWsdaHsZWNrgXOMXuFMgjdSlDifZJs/7j6pQ
+	ZZMdcQUEaqb8r2Z6+ON+UYRPNnsPDNMtENIiXul2zovCyhNxL+M77NyoU0yUVeKnmTbzoQ
+	wU3v3WjPePjV/BdMjyHGKTUBM7BN6ek=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-111-O9rX7gSnNACfXd1wGwhZXQ-1; Tue, 22 Jul 2025 11:18:50 -0400
-X-MC-Unique: O9rX7gSnNACfXd1wGwhZXQ-1
-X-Mimecast-MFC-AGG-ID: O9rX7gSnNACfXd1wGwhZXQ_1753197530
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3a523ce0bb2so2290755f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 08:18:50 -0700 (PDT)
+ us-mta-274-Hy7TuL_PO-uj1vYMSqFueQ-1; Tue, 22 Jul 2025 11:20:28 -0400
+X-MC-Unique: Hy7TuL_PO-uj1vYMSqFueQ-1
+X-Mimecast-MFC-AGG-ID: Hy7TuL_PO-uj1vYMSqFueQ_1753197627
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-454dee17a91so48275935e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 08:20:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753197530; x=1753802330;
+        d=1e100.net; s=20230601; t=1753197627; x=1753802427;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=vPWTF5ngQjwKpl0CL91lanYqN0TafLkJwtT/q59+/yM=;
-        b=ZaMRGtsBLiiVU8aC+ykPNg6A39nRDZAYveap2vSgPD/DAoFGneq/04RSFf29SbCFxM
-         wCIVjXuOF8wlI9zvtdOGZnATd3gpRVDcfxF6yEIJ4cUA3C0/GkdzXMLXN6Fyan5BzI7I
-         8mVdWe7RIwpUxUA9v2cclVIasm1i5Pa6YsN3XGTGhvng3cPdvqSgiFxyYsLMX0rxvAAG
-         F60UJwTzOUePCeHVfCCxcylYpCpSYTYhHJWwdvSYuYBCOBUTs8HQXppVvqRore83LvHT
-         n3bpvvoJr0gKe8RIeqf1vLk5doyRwhHm/N5xs+AfMTEGtpTF6X1sPkQ40gmU2ZCMTtUr
-         ezUg==
-X-Forwarded-Encrypted: i=1; AJvYcCX8iMA7onI4b/usO2/GLEprZ3KHUF2Xn8uAzq74lkDhsDs6Igb5QC1R8mEg8ZAA6ynp5hmlUpLo9MRPFwA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yykn6ub1HVP5MukhHXMaW+KLBz8q5RyCdHr9e//foBMKXCwy9Ch
-	VjXjcADrHX03bLv0+FBMWnhFH7+OOyNESQsUnW2Twu9vBmM1B0/HJGVuzU8Xz6veQT8Hh3R91RT
-	f97H26JlDe5Ipz8grMK/cZ86hdg2EqpYHI3WA3KhgyEnJXodcDZiUqvBnVm8IgiDaww==
-X-Gm-Gg: ASbGnctYp5RnYPFJI+NSNUCTUjRC6p7JdRb7Sx+7Q+x13xTdy7rEj+0fa14foL+wNtR
-	EMLrq7aZqyGQ/i1JfPgVdSiWnqkgjqHwy/svhM3WMNMtkckvHf6Yj0xIjO7ANok21wqn4lZ23P/
-	aMSL6wuZctftKyDPxcJiiuUQjis9X8Y0f7+Wd2d89df2EGrihl4Ixk4JU2EkuNWfAlaEbB3JoEM
-	UbbXgWgEfsESHHhr6s8rzizgcLTu88q7zJGL/sW9fEpWHq/yDMXn7mA/guywz2nof6REEKggGnY
-	Cqja6HSL/YAnqJSBhiT7IJWDwVO5Hfn5lBVRB+YXvvRVlOhnnWr5Cw8gQAdHxIMcZ/g4ioc+Z2e
-	nUcKpqFBelLH7lfolegLp6IB6cMi1Nr5VYsmaoXUiovIbwWvRqqV6Oiv83xvBf+bO9kQ=
-X-Received: by 2002:a05:6000:40d9:b0:3b4:4876:9088 with SMTP id ffacd0b85a97d-3b60e510003mr19315466f8f.46.1753197529244;
-        Tue, 22 Jul 2025 08:18:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHRxjtA5vVT+h5NsfGd2wOVYh5rvJSzktGMXJjPKH1XZUXenLSFb1S6kEQiO5Y9viU/4gAJBg==
-X-Received: by 2002:a05:6000:40d9:b0:3b4:4876:9088 with SMTP id ffacd0b85a97d-3b60e510003mr19315421f8f.46.1753197528555;
-        Tue, 22 Jul 2025 08:18:48 -0700 (PDT)
+        bh=UR686UB6W95T3RcYAhWHnco9tSypYtrsdOEb8UEkv7E=;
+        b=gRI+LvFgblSWpoJM5urfU2EPpDfN7w9FlRCEy0+EbJNWgHlQCqYufImb1VO+puwDPy
+         o69vtPHKVZ/VBmqV4nbrZLCFt3l9V1tH3V451ZQY89ecAI9nV4vGJwQjzaD/O2FPWpTq
+         Y1yscFpMVJT2lH4UtdB8H2NYoz6GHYL2/tr94iqWZR3SVWaXhi4B6v4OIhdXwTockOfh
+         ghSAErD/g+F/n2TEsJ1DTXakg6s4A23bj7vgEVA6PVJ6v1sq0NztxegouhFOILLXRSwt
+         DDqVPx2/3SgUgP4aPQ7Sj8TGWpCKKt99O5q2hbKD06j4vP6gRKEUJBXLpkpAQnH3sEul
+         iDag==
+X-Forwarded-Encrypted: i=1; AJvYcCUDe94zoCGhmefdDSU6lmudrf4OY3XaCVVXbAvBsnxC55A0/z7dLKyLSog0duN0ZYhRLmuu5ocWkgK44Kw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUliWP6FtSkakUDqIZNPxt8qE8PRJzMjhksKdgtOf7rDU8xj9F
+	AOBVgSU0UXbehrPM9E0HZHA3J/GtCTY13TfLPeglVyNlDIIbFiHshm9ecVJvzDpjWA34BT1JRIm
+	Q9b3CNrjcilVJOUzjOQNRSbFMTJkMFdNo9YSEVGKjGQ1+Wf0Axgjx0HRSjOv7eDtBjQ==
+X-Gm-Gg: ASbGncseglmKZYt7SeXPWG8ZiLHIOJ0skbn5Qu4EnblQyEuZmkuNegudrop9brIxRI2
+	DI/8ienh6F/4QIZVhk6Bifz5eKWIQv5Q7075pJ5zlsp3RL9ZAkZEIYKStixq11U1dfEOAZ2B6lm
+	lyHU07caSN/uXly7nM0Ud6Od16pVUBwdbrPgzRA5cwgM2sAo5NtiaEHg7vP0Xx2wAtiSZU0Mt5E
+	BTiBWX76xFoIFRXIBBmza8sUIlYrViiAX+qkAMkTMbAenR6MDwbvcIBEtOMAjp+2fuSxbwEnbMe
+	WkRhJDtQs1y4caXuu9LUxW2gqYp8/ZvP9WgWtqCfDRxwqzFH42Agbs8O79+4xScF6SAeR1YCdnm
+	mpyZ1XYnLyFAY9U83pqjnixYTLNX0UAh+ufBwslvo761VnfFKz6XWnNmG/y/Jkf1mzkY=
+X-Received: by 2002:a05:600c:4f4b:b0:450:d01f:de6f with SMTP id 5b1f17b1804b1-456340160d3mr221374475e9.15.1753197626658;
+        Tue, 22 Jul 2025 08:20:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHa43nqfLMQERCC1j/wmVHQ7UtK8l0NZCMFbPH2YHsoDOoAl1UMnjReWSKUBgR3S4TG9WNPmw==
+X-Received: by 2002:a05:600c:4f4b:b0:450:d01f:de6f with SMTP id 5b1f17b1804b1-456340160d3mr221373905e9.15.1753197625794;
+        Tue, 22 Jul 2025 08:20:25 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f28:de00:1efe:3ea4:63ba:1713? (p200300d82f28de001efe3ea463ba1713.dip0.t-ipconnect.de. [2003:d8:2f28:de00:1efe:3ea4:63ba:1713])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca2bf82sm13809742f8f.26.2025.07.22.08.18.46
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4586144f80asm38163855e9.1.2025.07.22.08.20.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Jul 2025 08:18:48 -0700 (PDT)
-Message-ID: <1e37e4e7-aa7b-4a2a-b1aa-1243f8094dcb@redhat.com>
-Date: Tue, 22 Jul 2025 17:18:45 +0200
+        Tue, 22 Jul 2025 08:20:25 -0700 (PDT)
+Message-ID: <2dae19aa-7913-4350-b031-38d00a20057f@redhat.com>
+Date: Tue, 22 Jul 2025 17:20:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,8 +89,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V9 1/7] KVM: guest_memfd: Use guest mem inodes instead of
- anonymous inodes
+Subject: Re: [PATCH V9 2/7] mm/filemap: Add NUMA mempolicy support to
+ filemap_alloc_folio()
 To: Shivank Garg <shivankg@amd.com>, seanjc@google.com, vbabka@suse.cz,
  willy@infradead.org, akpm@linux-foundation.org, shuah@kernel.org,
  pbonzini@redhat.com, brauner@kernel.org, viro@zeniv.linux.org.uk
@@ -114,7 +114,7 @@ Cc: ackerleytng@google.com, paul@paul-moore.com, jmorris@namei.org,
  linux-security-module@vger.kernel.org, kvm@vger.kernel.org,
  linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
 References: <20250713174339.13981-2-shivankg@amd.com>
- <20250713174339.13981-4-shivankg@amd.com>
+ <20250713174339.13981-5-shivankg@amd.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -162,171 +162,27 @@ Autocrypt: addr=david@redhat.com; keydata=
  WBe5lqcozu9LpNDH/brVSzHCSb7vjNGvvSVESDuoiHK8gNlf0v+epy5WYd7CGAgODPvDShGN
  g3eXuA==
 Organization: Red Hat
-In-Reply-To: <20250713174339.13981-4-shivankg@amd.com>
+In-Reply-To: <20250713174339.13981-5-shivankg@amd.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 13.07.25 19:43, Shivank Garg wrote:
-> From: Ackerley Tng <ackerleytng@google.com>
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 > 
-> guest_memfd's inode represents memory the guest_memfd is
-> providing. guest_memfd's file represents a struct kvm's view of that
-> memory.
+> Add a mempolicy parameter to filemap_alloc_folio() to enable NUMA-aware
+> page cache allocations. This will be used by upcoming changes to
+> support NUMA policies in guest-memfd, where guest_memory need to be
+> allocated NUMA policy specified by VMM.
 > 
-> Using a custom inode allows customization of the inode teardown
-> process via callbacks. For example, ->evict_inode() allows
-> customization of the truncation process on file close, and
-> ->destroy_inode() and ->free_inode() allow customization of the inode
-> freeing process.
+> All existing users pass NULL maintaining current behavior.
 > 
-> Customizing the truncation process allows flexibility in management of
-> guest_memfd memory and customization of the inode freeing process
-> allows proper cleanup of memory metadata stored on the inode.
-> 
-> Memory metadata is more appropriately stored on the inode (as opposed
-> to the file), since the metadata is for the memory and is not unique
-> to a specific binding and struct kvm.
-> 
-> Co-developed-by: Fuad Tabba <tabba@google.com>
-> Signed-off-by: Fuad Tabba <tabba@google.com>
-> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+> Reviewed-by: Pankaj Gupta <pankaj.gupta@amd.com>
+> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > Signed-off-by: Shivank Garg <shivankg@amd.com>
 > ---
 
-[...]
-
->   
->   #include "kvm_mm.h"
->   
-> +static struct vfsmount *kvm_gmem_mnt;
-> +
->   struct kvm_gmem {
->   	struct kvm *kvm;
->   	struct xarray bindings;
-> @@ -388,9 +392,51 @@ static struct file_operations kvm_gmem_fops = {
->   	.fallocate	= kvm_gmem_fallocate,
->   };
->   
-> -void kvm_gmem_init(struct module *module)
-> +static const struct super_operations kvm_gmem_super_operations = {
-> +	.statfs		= simple_statfs,
-> +};
-> +
-> +static int kvm_gmem_init_fs_context(struct fs_context *fc)
-> +{
-> +	struct pseudo_fs_context *ctx;
-> +
-> +	if (!init_pseudo(fc, GUEST_MEMFD_MAGIC))
-> +		return -ENOMEM;
-> +
-> +	ctx = fc->fs_private;
-> +	ctx->ops = &kvm_gmem_super_operations;
-
-Curious, why is that required? (secretmem doesn't have it, so I wonder)
-
-> +
-> +	return 0;
-> +}
-> +
-> +static struct file_system_type kvm_gmem_fs = {
-> +	.name		 = "kvm_guest_memory",
-
-It's GUEST_MEMFD_MAGIC but here "kvm_guest_memory".
-
-For secretmem it's SECRETMEM_MAGIC vs. "secretmem".
-
-So naturally, I wonder if that is to be made consistent :)
-
-> +	.init_fs_context = kvm_gmem_init_fs_context,
-> +	.kill_sb	 = kill_anon_super,
-> +};
-> +
-> +static int kvm_gmem_init_mount(void)
-> +{
-> +	kvm_gmem_mnt = kern_mount(&kvm_gmem_fs);
-> +
-> +	if (IS_ERR(kvm_gmem_mnt))
-> +		return PTR_ERR(kvm_gmem_mnt);
-> +
-> +	kvm_gmem_mnt->mnt_flags |= MNT_NOEXEC;
-> +	return 0;
-> +}
-> +
-> +int kvm_gmem_init(struct module *module)
->   {
->   	kvm_gmem_fops.owner = module;
-> +
-> +	return kvm_gmem_init_mount();
-> +}
-> +
-> +void kvm_gmem_exit(void)
-> +{
-> +	kern_unmount(kvm_gmem_mnt);
-> +	kvm_gmem_mnt = NULL;
->   }
->   
->   static int kvm_gmem_migrate_folio(struct address_space *mapping,
-> @@ -472,11 +518,71 @@ static const struct inode_operations kvm_gmem_iops = {
->   	.setattr	= kvm_gmem_setattr,
->   };
->   
-> +static struct inode *kvm_gmem_inode_make_secure_inode(const char *name,
-> +						      loff_t size, u64 flags)
-> +{
-> +	struct inode *inode;
-> +
-> +	inode = anon_inode_make_secure_inode(kvm_gmem_mnt->mnt_sb, name, NULL);
-> +	if (IS_ERR(inode))
-> +		return inode;
-> +
-> +	inode->i_private = (void *)(unsigned long)flags;
-> +	inode->i_op = &kvm_gmem_iops;
-> +	inode->i_mapping->a_ops = &kvm_gmem_aops;
-> +	inode->i_mode |= S_IFREG;
-> +	inode->i_size = size;
-> +	mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
-> +	mapping_set_inaccessible(inode->i_mapping);
-> +	/* Unmovable mappings are supposed to be marked unevictable as well. */
-> +	WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
-> +
-> +	return inode;
-> +}
-> +
-> +static struct file *kvm_gmem_inode_create_getfile(void *priv, loff_t size,
-> +						  u64 flags)
-> +{
-> +	static const char *name = "[kvm-gmem]";
-> +	struct inode *inode;
-> +	struct file *file;
-> +	int err;
-> +
-> +	err = -ENOENT;
-> +	if (!try_module_get(kvm_gmem_fops.owner))
-> +		goto err;
-
-Curious, shouldn't there be a module_put() somewhere after this function 
-returned a file?
-
-> +
-> +	inode = kvm_gmem_inode_make_secure_inode(name, size, flags);
-> +	if (IS_ERR(inode)) {
-> +		err = PTR_ERR(inode);
-> +		goto err_put_module;
-> +	}
-> +
-> +	file = alloc_file_pseudo(inode, kvm_gmem_mnt, name, O_RDWR,
-> +				 &kvm_gmem_fops);
-> +	if (IS_ERR(file)) {
-> +		err = PTR_ERR(file);
-> +		goto err_put_inode;
-> +	}
-> +
-> +	file->f_flags |= O_LARGEFILE;
-> +	file->private_data = priv;
-> +
->
-
-Nothing else jumped at me.
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
 -- 
 Cheers,
