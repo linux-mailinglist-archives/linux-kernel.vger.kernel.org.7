@@ -1,100 +1,89 @@
-Return-Path: <linux-kernel+bounces-740473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DE68B0D496
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:27:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 367D3B0D498
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:28:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31E91166A3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:27:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14CC86C22CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0BEF2D3A97;
-	Tue, 22 Jul 2025 08:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iDyzCr+m";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IvewGc8a"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649DB2D372F;
+	Tue, 22 Jul 2025 08:28:18 +0000 (UTC)
+Received: from mblankhorst.nl (lankhorst.se [141.105.120.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0FDD21B191;
-	Tue, 22 Jul 2025 08:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8908117741
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 08:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.105.120.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753172865; cv=none; b=Hs+fFpFVhebu2M2UH0/hZMADCGMujxOBE4UbC5xcvlybMoPhqoyYNErw/PqdcYPPUCMKeno3GIJP5XL+GUVbxZSTJblASq2kLFmwr3gxv+TEvcYcW1I6+e3kTLm/kDdZ+IIcOrNlc5M7fOdbrd/8GbwxcnU47/s+YFYDYGkVP/8=
+	t=1753172898; cv=none; b=ErvSuFLGS5jQcbh3iXPNefnwSO3yXlJoKCmcaMo10utWTWTWt0C7iY/0hH5RiW0oNuPb426IPlE6URBk/zNKU13Dgz51INbvkyLO0JBKqp4yeXGEYkC1Vv2Rb2nBV4IIInIm5ytM9vyVsibVFiwvMN5ts7Q8yfejc0KWtDjoAHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753172865; c=relaxed/simple;
-	bh=uJt42FEYyOPDVYWHeoObVF7KyZy+Rhx4cUnr/zrSZT0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NQR+RYoHd7rS8HByGgpRMrSw6dICtC8Jxk/T/CKW6CkEyuf/XIz8xAbuShxrdNH3lb04CGMh1DqBXo+L0qpKPf3mDIqmUa+dkIGUprLoe/8FEh8VrCtLa0kzQEWrmTGeB8nEHIvV+um6dkc2pVd1X+siMHyq0vewhpUwj4AooNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iDyzCr+m; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IvewGc8a; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 22 Jul 2025 10:27:40 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753172861;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uJt42FEYyOPDVYWHeoObVF7KyZy+Rhx4cUnr/zrSZT0=;
-	b=iDyzCr+mXdSoYZBvbOBHFsRS6RAOS4nNC60NPuHQmr5ZxDpvoilKzjJQFqpx9MoLWfVHIw
-	gaPcHwzle+SzLEaAUv6LmD4iKLYKRbY5AJDLXz8IZOd3cN31syFbdGwxaOIJGP2FTE35Kx
-	fsLRiHrEn3ieTscp03fgbjQ1ybeBVZhHqpLS7qgtvZ8V9cjNSTQZlKvyhdlW4mluJ9XcVm
-	UsZFTMaFyAT/zsKJoU1ibk43kUUeGMMo2hUusEWpI2rSzlIMSLBbpBwwnUcxRa2GoOwSey
-	OvgbIuMg5S8gB941a7Iux9EE41+IId21T4SX8IKlsI6AExdlIzkt2gJlg5IJ3Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753172861;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uJt42FEYyOPDVYWHeoObVF7KyZy+Rhx4cUnr/zrSZT0=;
-	b=IvewGc8arpdd0qX9eVaNLcm47F0PxTibK3PP613ix68bH9cqwja9mWsEbsgjD/nkiZTfNw
-	a8ccsSydkXqSnzBg==
-From: Nam Cao <namcao@linutronix.de>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/6] rv: Remove rv_reactor's reference counter
-Message-ID: <20250722082740.a0kYzRv_@linutronix.de>
-References: <cover.1753091084.git.namcao@linutronix.de>
- <4ebe4d49e07890eadae41da233e111f8723fba12.1753091084.git.namcao@linutronix.de>
- <2de814842fbbeee888e076db2f80bf2028fdbb0d.camel@redhat.com>
- <20250721140425.OeD16I4D@linutronix.de>
- <eabfae8b0f29c88437cc51af21797e869d99aef6.camel@redhat.com>
+	s=arc-20240116; t=1753172898; c=relaxed/simple;
+	bh=cykTOngrnbCr//Kc9KMRHa+O2/mlQEXw/ntI6485ZGM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tdX1YXDK/63DmcebCRiOw+heLi81nm6hKhddWG11m3xDi6udQzCwaBX/VjU0LvXOUDZPMLHGqgo2ph4GEpBq/m1mewR+rO6s4EZX2WdMnzCCqW1QmUyAPTM62GmkJZkQ63/JNCDzU02hVtQwfPDjAC6WC0W1cmAOpRCkCmOJgVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lankhorst.se; spf=pass smtp.mailfrom=lankhorst.se; arc=none smtp.client-ip=141.105.120.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lankhorst.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lankhorst.se
+Message-ID: <60257b86-bba4-4f52-a5e4-1e4caeb3412f@lankhorst.se>
+Date: Tue, 22 Jul 2025 10:28:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eabfae8b0f29c88437cc51af21797e869d99aef6.camel@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] accel/ivpu: Remove lockdep_assert_irqs_disabled()
+To: Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
+ Maciej Falkowski <maciej.falkowski@linux.intel.com>,
+ Oded Gabbay <ogabbay@kernel.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-rt-devel@lists.linux.dev
+References: <20250715165919.33754-1-dev@lankhorst.se>
+ <f14e9187-e3b1-494d-b04f-9e7875a17e5a@linux.intel.com>
+Content-Language: en-US
+From: Maarten Lankhorst <dev@lankhorst.se>
+In-Reply-To: <f14e9187-e3b1-494d-b04f-9e7875a17e5a@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 21, 2025 at 05:49:02PM +0200, Gabriele Monaco wrote:
-> Yeah I get your point. If I understand you correctly, what's broken is
-> that we just return EBUSY and ignore that on __exit instead of doing
-> something about it (set nop to all monitors using this reactor).
+Hey,
 
-Yeah, EBUSY is ignored.
+Den 2025-07-22 kl. 09:53, skrev Jacek Lawrynowicz:
+> Reviewed-by: Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>
 
-> I wonder if we shouldn't also fix this (using the module refcount).
-> But that can be done in the future, I'm not even sure reactors as
-> modules currently work.
+Thanks, pushed to misc-next.
 
-Yes, let's worry about it when we allow building reactors as modules.
+Best regards,
+~Maarten
+ 
+> On 7/15/2025 6:59 PM, Maarten Lankhorst wrote:
+>> This breaks on PREEMPT_RT, and should be unneeded since
+>> lockdep can track irq disabled status itself.
+>>
+>> Signed-off-by: Maarten Lankhorst <dev@lankhorst.se>
+>> ---
+>>  drivers/accel/ivpu/ivpu_ipc.c | 1 -
+>>  1 file changed, 1 deletion(-)
+>>
+>> diff --git a/drivers/accel/ivpu/ivpu_ipc.c b/drivers/accel/ivpu/ivpu_ipc.c
+>> index 39f83225c1815..5f00809d448af 100644
+>> --- a/drivers/accel/ivpu/ivpu_ipc.c
+>> +++ b/drivers/accel/ivpu/ivpu_ipc.c
+>> @@ -141,7 +141,6 @@ ivpu_ipc_rx_msg_add(struct ivpu_device *vdev, struct ivpu_ipc_consumer *cons,
+>>  	struct ivpu_ipc_rx_msg *rx_msg;
+>>  
+>>  	lockdep_assert_held(&ipc->cons_lock);
+>> -	lockdep_assert_irqs_disabled();
+>>  
+>>  	rx_msg = kzalloc(sizeof(*rx_msg), GFP_ATOMIC);
+>>  	if (!rx_msg) {
+> 
 
-> Also, I'd need to verify this but depending on the order of exit
-> functions, we might be seeing the same problems with built-in reactors
-> when active on shutdown. I'm going to play a bit with this and see if
-> this workaround of not deleting the reactor was introduced for that (I
-> doubt though).
-
-I'm not sure I follow. exit functions are never called for built-in
-reactors. They are even discarded out of the built image.
-
-Nam
 
