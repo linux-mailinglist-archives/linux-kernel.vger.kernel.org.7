@@ -1,139 +1,168 @@
-Return-Path: <linux-kernel+bounces-740081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25FB3B0CF76
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 04:00:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01A6CB0CF79
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 04:01:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 616F26C64A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 02:00:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0812A540106
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 02:01:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B0C1DB122;
-	Tue, 22 Jul 2025 02:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6712D1A2632;
+	Tue, 22 Jul 2025 02:01:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="H41QB2Su"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A39818E25;
-	Tue, 22 Jul 2025 02:00:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="FCwsnUrR"
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D64918E25;
+	Tue, 22 Jul 2025 02:01:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753149649; cv=none; b=aMrSDm3ohUxBf5EIYULZr4876tFmRfyojsgd9a41LEYxAIJei/6T5uVbra8XaTgtKRRhheylO1eznLemh+Y4VYyIsumDRQYqlS2IbbBChWaPNUZ3Dgn2JWAMkitPz8t52MFi4IDAMoK/shD1Ut3U8SHRFpHBfnC2YgU0TkCPO0A=
+	t=1753149700; cv=none; b=ADr7J57u0UDSneLMOhH5Oykk+4w063aEIzhYt8D7mcQngcDjKdos425IMpkLTAyTRqw70xK0bKVckJnHoQwytjF89LMkVfTXpHseaZiiQKZWTFafqFZrHsqeqiR87jFhRGLaPQZ0abt73YdTbBZqnzXjx6TxwFzu1RRpl0FlN84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753149649; c=relaxed/simple;
-	bh=Arb2kAB1fXl/ujCv5AJq7KwPVB5a1pOLsP9iJnNeYbo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NjWH5FSZ/DeCl2PnY+vdln1ojVKj/53k1vHto4pJ/Er3MR+Q3YSH2gw3yo3M9zkGIbwblRc5FVBPfTduY/Krx1ZDvQYYqzuwo14thofGNingFHQTTFq7GypfdUk8sDEZ51VJw5ggrFRLtOywwygBQ7p8TzeBOW9GofW+B+zW1lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=H41QB2Su; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=3n
-	24UHjigYYU3h9cCdzH+X8JMSVYyulsYNgdJQYdlTY=; b=H41QB2Su2LBJRiuyF8
-	QqFhri7v0a3Z2S+eFMVdgRkFmbxDjhVwMZ81mgmE//mjffqeYPlDaa4lhyU4VQkV
-	63+6SCfHNkIYWHlfvhh5I5B8K0LeRzq2GtMxAB+FW9vm/Gyo8EsxcV18eooi+goA
-	UIjjbeA0S0glLtY6eyNlgGXiY=
-Received: from 163.com (unknown [])
-	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wDHewun8H5o60m0GQ--.7S2;
-	Tue, 22 Jul 2025 10:00:10 +0800 (CST)
-From: chenyuan_fl@163.com
-To: qmo@kernel.org,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	yonghong.song@linux.dev
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yuan Chen <chenyuan@kylinos.cn>
-Subject: [PATCH v4] bpftool: Add CET-aware symbol matching for x86/x86_64 architectures
-Date: Tue, 22 Jul 2025 10:00:00 +0800
-Message-Id: <20250722020000.20037-1-chenyuan_fl@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <9f233a20-6649-4796-9ef4-a499382b0006@linux.dev>
-References: <9f233a20-6649-4796-9ef4-a499382b0006@linux.dev>
+	s=arc-20240116; t=1753149700; c=relaxed/simple;
+	bh=zadc3FUqslMHFJYHO8aC1wjvFGNjIULcllHpfpeN+2E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h5ac0BFt8qmuePlqxpzsfDpcPKSRCwJGyDcH+EmRezlZVyzYln6RVXKR0TKYSFRb8h2QylSuhkaqvS5reimBc38rOPp+SkcpCAZOLf5qdo13eUmZMCCmHzTCw9cd8cQe6SBV4lpUXxhIcW2BOGdY8030KJpXZEzMghc5YDLjPaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=FCwsnUrR; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1753149688; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=JXNM3pwI7U37QIp2W81rPzC0o3Xw9VVk8ohyCB9V5Ac=;
+	b=FCwsnUrRJxgiweJJ11fjW4DGMy5PY0FPxwOwx5lg0WNpYURHuMYejaXD2jNdZjx9JOxLojoipIWoTveyWwa7d4p+46wGWFzt3dJrBKhC1Dn88RPYoS4EjfLq5CVseZdk6LSlk+v59RTVsfRBJrE7TaKI97ySJP/6rOQkG+Bzyh4=
+Received: from localhost(mailfrom:yaoyuan@linux.alibaba.com fp:SMTPD_---0WjTepwY_1753149687 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 22 Jul 2025 10:01:27 +0800
+Date: Tue, 22 Jul 2025 10:01:27 +0800
+From: Yao Yuan <yaoyuan@linux.alibaba.com>
+To: Keir Fraser <keirf@google.com>
+Cc: Yao Yuan <yaoyuan0329os@gmail.com>, 
+	Sean Christopherson <seanjc@google.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, Eric Auger <eric.auger@redhat.com>, 
+	Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH v2 2/4] KVM: arm64: vgic: Explicitly implement
+ vgic_dist::ready ordering
+Message-ID: <lb3i3h2rwq3kvm6tqoiiyrqcpqe2ctxcwmapgifii3dzqzfuqh@eqcqeudpfjlg>
+References: <20250716110737.2513665-1-keirf@google.com>
+ <20250716110737.2513665-3-keirf@google.com>
+ <kb7nwrco6s7e6catcareyic72pxvx52jbqbfc5gbqb5zu434kg@w3rrzbut3h34>
+ <aHphgd0fOjHXjPCI@google.com>
+ <5zpxxmymnyzncdnewdonnglvmvbtggjyxyqvkf6yars2bbyr4b@gottasrtoq2s>
+ <aHtQG_k_1q3862s3@google.com>
+ <4i65mgp4rtfox2ttchamijofcmwjtd6sefmuhdkfdrjwaznhoc@2uhcfv2ziegj>
+ <aH3w9t78dvxsDjhV@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDHewun8H5o60m0GQ--.7S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7AF4rGw1fur1UZFyxWw1fCrg_yoW5JrW8pr
-	WrAwsYyFWUXrW3Wws3Aa1ayFWayFsavw47AF97G3429r15Zrn2yFyxCF1IyF1aqFn5Jw47
-	AF1akFZ8KFZavrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jF6wZUUUUU=
-X-CM-SenderInfo: xfkh05pxdqswro6rljoofrz/1tbiNw6SvWh+7D4fwQABsN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aH3w9t78dvxsDjhV@google.com>
 
-From: Yuan Chen <chenyuan@kylinos.cn>
+On Mon, Jul 21, 2025 at 07:49:10AM +0800, Keir Fraser wrote:
+> On Sun, Jul 20, 2025 at 08:08:30AM +0800, Yao Yuan wrote:
+> > On Sat, Jul 19, 2025 at 07:58:19AM +0000, Keir Fraser wrote:
+> > > On Sat, Jul 19, 2025 at 10:15:56AM +0800, Yao Yuan wrote:
+> > > > On Fri, Jul 18, 2025 at 08:00:17AM -0700, Sean Christopherson wrote:
+> > > > > On Thu, Jul 17, 2025, Yao Yuan wrote:
+> > > > > > On Wed, Jul 16, 2025 at 11:07:35AM +0800, Keir Fraser wrote:
+> > > > > > > In preparation to remove synchronize_srcu() from MMIO registration,
+> > > > > > > remove the distributor's dependency on this implicit barrier by
+> > > > > > > direct acquire-release synchronization on the flag write and its
+> > > > > > > lock-free check.
+> > > > > > >
+> > > > > > > Signed-off-by: Keir Fraser <keirf@google.com>
+> > > > > > > ---
+> > > > > > >  arch/arm64/kvm/vgic/vgic-init.c | 11 ++---------
+> > > > > > >  1 file changed, 2 insertions(+), 9 deletions(-)
+> > > > > > >
+> > > > > > > diff --git a/arch/arm64/kvm/vgic/vgic-init.c b/arch/arm64/kvm/vgic/vgic-init.c
+> > > > > > > index 502b65049703..bc83672e461b 100644
+> > > > > > > --- a/arch/arm64/kvm/vgic/vgic-init.c
+> > > > > > > +++ b/arch/arm64/kvm/vgic/vgic-init.c
+> > > > > > > @@ -567,7 +567,7 @@ int kvm_vgic_map_resources(struct kvm *kvm)
+> > > > > > >  	gpa_t dist_base;
+> > > > > > >  	int ret = 0;
+> > > > > > >
+> > > > > > > -	if (likely(dist->ready))
+> > > > > > > +	if (likely(smp_load_acquire(&dist->ready)))
+> > > > > > >  		return 0;
+> > > > > > >
+> > > > > > >  	mutex_lock(&kvm->slots_lock);
+> > > > > > > @@ -598,14 +598,7 @@ int kvm_vgic_map_resources(struct kvm *kvm)
+> > > > > > >  		goto out_slots;
+> > > > > > >  	}
+> > > > > > >
+> > > > > > > -	/*
+> > > > > > > -	 * kvm_io_bus_register_dev() guarantees all readers see the new MMIO
+> > > > > > > -	 * registration before returning through synchronize_srcu(), which also
+> > > > > > > -	 * implies a full memory barrier. As such, marking the distributor as
+> > > > > > > -	 * 'ready' here is guaranteed to be ordered after all vCPUs having seen
+> > > > > > > -	 * a completely configured distributor.
+> > > > > > > -	 */
+> > > > > > > -	dist->ready = true;
+> > > > > > > +	smp_store_release(&dist->ready, true);
+> > > > > >
+> > > > > > No need the store-release and load-acquire for replacing
+> > > > > > synchronize_srcu_expedited() w/ call_srcu() IIUC:
+> > > > >
+> > > > > This isn't about using call_srcu(), because it's not actually about kvm->buses.
+> > > > > This code is concerned with ensuring that all stores to kvm->arch.vgic are ordered
+> > > > > before the store to set kvm->arch.vgic.ready, so that vCPUs never see "ready==true"
+> > > > > with a half-baked distributor.
+> > > > >
+> > > > > In the current code, kvm_vgic_map_resources() relies on the synchronize_srcu() in
+> > > > > kvm_io_bus_register_dev() to provide the ordering guarantees.  Switching to
+> > > > > smp_store_release() + smp_load_acquire() removes the dependency on the
+> > > > > synchronize_srcu() so that the synchronize_srcu() call can be safely removed.
+> > > >
+> > > > Yes, I understand this and agree with your point.
+> > > >
+> > > > Just for discusstion: I thought it should also work even w/o
+> > > > introduce the load acqure + store release after switch to
+> > > > call_srcu(): The smp_mb() in call_srcu() order the all store
+> > > > to kvm->arch.vgic before store kvm->arch.vgic.ready in
+> > > > current implementation.
+> > >
+> > > The load-acquire would still be required, to ensure that accesses to
+> > > kvm->arch.vgic do not get reordered earlier than the lock-free check
+> > > of kvm->arch.vgic.ready. Otherwise that CPU could see that the vgic is
+> > > initialised, but then use speculated reads of uninitialised vgic state.
+> > >
+> >
+> > Thanks for your explanation.
+> >
+> > I see. But there's "mutex_lock(&kvm->slot_lock);" before later
+> > acccessing to the kvm->arch.vgic, so I think the order can be
+> > guaranteed. Of cause as you said a explicitly acquire-load +
+> > store-release is better than before implicitly implementation.
+>
+> If vgic_dist::ready is observed true by the lock-free read (the one
+> which is turned into load-acquire by this patch) then the function
+> immediately returns with no mutex_lock() executed. It is reads of
+> vgic_dist *after* return from kvm_vgic_map_resources() that you have
+> to worry about, and which require load-acquire semantics.
 
-Adjust symbol matching logic to account for Control-flow Enforcement
-Technology (CET) on x86/x86_64 systems. CET prefixes functions with
-a 4-byte 'endbr' instruction, shifting the actual hook entry point to
-symbol + 4.
+I think this is the main purpose of such lock-free reading
+here, to avoid lock contention on VM w/ large vCPUs for
+vcpus' first time run together.
 
-Changed in PATCH v4:
-* Refactor repeated code into a function.
-* Add detection for the x86 architecture.
+store-release makes sure the changes to vgic_dist::ready
+become visible after the changes to vgic_dist become
+visible, but it doesn't guarantee the vgic_dist::ready
+becomes visible to reader on aother CPU **IMMEDIATELY**,
+thus load-acquire in reader side is request for this.
+Is above understanding correct ?
 
-Signed-off-by: Yuan Chen <chenyuan@kylinos.cn>
----
- tools/bpf/bpftool/link.c | 26 ++++++++++++++++++++++++--
- 1 file changed, 24 insertions(+), 2 deletions(-)
-
-diff --git a/tools/bpf/bpftool/link.c b/tools/bpf/bpftool/link.c
-index a773e05d5ade..717ca8c5ff83 100644
---- a/tools/bpf/bpftool/link.c
-+++ b/tools/bpf/bpftool/link.c
-@@ -282,6 +282,28 @@ get_addr_cookie_array(__u64 *addrs, __u64 *cookies, __u32 count)
- 	return data;
- }
- 
-+static bool
-+symbol_matches_target(__u64 sym_addr, __u64 target_addr)
-+{
-+	if (sym_addr == target_addr)
-+		return true;
-+
-+#if defined(__i386__) || defined(__x86_64__)
-+	/*
-+	 * On x86 architectures with CET (Control-flow Enforcement Technology),
-+	 * function entry points have a 4-byte 'endbr' instruction prefix.
-+	 * This causes kprobe hooks to target the address *after* 'endbr'
-+	 * (symbol address + 4), preserving the CET instruction.
-+	 * Here we check if the symbol address matches the hook target address minus 4,
-+	 * indicating a CET-enabled function entry point.
-+	 */
-+	if (sym_addr == target_addr - 4)
-+		return true;
-+#endif
-+
-+	return false;
-+}
-+
- static void
- show_kprobe_multi_json(struct bpf_link_info *info, json_writer_t *wtr)
- {
-@@ -307,7 +329,7 @@ show_kprobe_multi_json(struct bpf_link_info *info, json_writer_t *wtr)
- 		goto error;
- 
- 	for (i = 0; i < dd.sym_count; i++) {
--		if (dd.sym_mapping[i].address != data[j].addr)
-+		if (!symbol_matches_target(dd.sym_mapping[i].address, data[j].addr))
- 			continue;
- 		jsonw_start_object(json_wtr);
- 		jsonw_uint_field(json_wtr, "addr", dd.sym_mapping[i].address);
-@@ -744,7 +766,7 @@ static void show_kprobe_multi_plain(struct bpf_link_info *info)
- 
- 	printf("\n\t%-16s %-16s %s", "addr", "cookie", "func [module]");
- 	for (i = 0; i < dd.sym_count; i++) {
--		if (dd.sym_mapping[i].address != data[j].addr)
-+		if (!symbol_matches_target(dd.sym_mapping[i].address, data[j].addr))
- 			continue;
- 		printf("\n\t%016lx %-16llx %s",
- 		       dd.sym_mapping[i].address, data[j].cookie, dd.sym_mapping[i].name);
--- 
-2.25.1
-
+>
+> >
+> > > > >
 
