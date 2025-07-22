@@ -1,450 +1,847 @@
-Return-Path: <linux-kernel+bounces-740146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38198B0D09E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 05:49:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83A63B0D06B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 05:40:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FBFC1886D89
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:49:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40A66543D24
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 190CC1A29A;
-	Tue, 22 Jul 2025 03:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SiXXbxoM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6C628B7D6;
+	Tue, 22 Jul 2025 03:40:10 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408471581F8;
-	Tue, 22 Jul 2025 03:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753156142; cv=fail; b=Ijar26doOak1CPPwl4p1mus+zd4SrXnLp8xEwlJnFjMjAQe5T6XZHuJv0yFsjRo51EZKdSv1ML4s28Ria76qG2GICMHFTc2P69zBt/EccHGt52mo5ZtDpkqOWjAuswugUTbSGQX3GbvzbQxnMFn82N90WI1JCezEy006b1QOa5s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753156142; c=relaxed/simple;
-	bh=xydyFnA1T3e4AT432cIV4RRxjbvRk1wUPBrEOju3Ax4=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=bzgQDXqhHtBnNB8HPbINVn5eQ1Zqsr34K3OFJbBA0RAtSkE6DkaQmXSzWrxZrroeqeQpaTKGlPGvjjbKbfKYkoNarHNnQUTHGT5sZYZiby4sci9ap5x4h7q/015DbT+ZceNOj+glWDIJw21F4sdV8oYV7lci0hWzWbW8OiZnjt4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SiXXbxoM; arc=fail smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753156140; x=1784692140;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=xydyFnA1T3e4AT432cIV4RRxjbvRk1wUPBrEOju3Ax4=;
-  b=SiXXbxoM/z1SAhpwjACiSZFVh2UhQgeV84kZSGldfUuesa1iA0Bn/H9M
-   D/ZyUzWAWVttm89mCVGiDjqeNcrAackycqkAfUkYWmbiyc1Qd4a2FSVIf
-   /6zHQX98Z4HqgV/yve0nQxrdxwUwozslqtEZ1uJSb7qKrUdZAVLyjdzi5
-   mashcGpRhFgWxxcJO/u5oZ2B6daNxI5PSmgA7KCdId+H5pKi0GAyYKqmi
-   UcBPIe6700+vsKbChAWhyuT+1Qg5J45CGCnjRE4LrHPJ+LFRINfmgKSwY
-   AjoS/GnMN4wD4/wiFwjGdMuiixaGd/QAintvhQxEOODJ68z6jfXg6iO5E
-   g==;
-X-CSE-ConnectionGUID: SC9iT6RpQPm9+B1/SCVaeg==
-X-CSE-MsgGUID: qiP1o/eSQoOttGXiCIQq4g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11499"; a="65954335"
-X-IronPort-AV: E=Sophos;i="6.16,330,1744095600"; 
-   d="scan'208";a="65954335"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 20:48:59 -0700
-X-CSE-ConnectionGUID: yL+mL7eBRlSHzu1DTvt0aQ==
-X-CSE-MsgGUID: ZQmJPEdGT5uEP5VJBffT1w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,330,1744095600"; 
-   d="scan'208";a="159740282"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2025 20:48:58 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Mon, 21 Jul 2025 20:48:57 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Mon, 21 Jul 2025 20:48:57 -0700
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (40.107.100.81)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Mon, 21 Jul 2025 20:48:57 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FK9nK1nvV3dh08OgO1/lDPX1i8Iw/jxOGG9af8ThTLBYEOJB0CbU+CtNthlGDmLzbBw0FHRhHYeTVGgUIqAzncHkH4RblYQ1fqgSSA79D1t7q8pQeHAc+bXbggXL53RwHx1RO0Q6SUJ+zPsm+DivXSsqgXQT270NU3+xCXXAElT2xKQ1mKWmqLKXUsx92ab1S+Gt4SU3ST1cpMt0syFYJM7fBvxI2s0MRlLoMBMDtw3ms2wcuol5KP3KcdQJzF2R7oUSrjohpjfmr92losm16ZkcUr7SkuNcotF15udpMCtGd0cVFT3FFVCf5sSjLRPzc/iRotanTpULMn2aZbYM2A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qYkd01jpb8yqKBddW721khxUlU9EuV/FpU9sCJexl8c=;
- b=LWrzLJLZLM/1XXWP2E8djyXpnN5CLTvEYauhzqvX2rk3zDu36/DpP8tePV1RRkutcDfrqu1ZCNXQ671Z+H/3x89llN/w9To/13PxdtkKHCXYVKMk1u9ci1jEfPmFTv1P6wbU+p/UvkGdoRkr7oyTcS8kmozzetCWTa0YIt0csNqKk+j0r6az8BxiioOL9QY8fEpMd4gSos9YpEFEsoC0i5D0B4Jq5mq5PmtDNG5DpvrBEHdwhLPDDYdeZFN5DN8MfNGRJHnkh5L/sCgPkaO/mab8fxYcWXmcj54B2bP2/YCKXJ/7mPx4g8EdxpoCSib5n+XWpDSa7kej+pCOO21Qzg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by DS0PR11MB7903.namprd11.prod.outlook.com (2603:10b6:8:f7::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Tue, 22 Jul
- 2025 03:32:58 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%4]) with mapi id 15.20.8943.028; Tue, 22 Jul 2025
- 03:32:58 +0000
-Message-ID: <82045638-2b26-4682-9374-1c3e400a580a@intel.com>
-Date: Mon, 21 Jul 2025 20:32:55 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 10/10] fs/resctrl: Introduce interface to modify
- io_alloc Capacity Bit Masks
-To: Babu Moger <babu.moger@amd.com>, <corbet@lwn.net>, <tony.luck@intel.com>,
-	<Dave.Martin@arm.com>, <james.morse@arm.com>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>
-CC: <x86@kernel.org>, <hpa@zytor.com>, <akpm@linux-foundation.org>,
-	<paulmck@kernel.org>, <rostedt@goodmis.org>, <Neeraj.Upadhyay@amd.com>,
-	<david@redhat.com>, <arnd@arndb.de>, <fvdl@google.com>, <seanjc@google.com>,
-	<thomas.lendacky@amd.com>, <pawan.kumar.gupta@linux.intel.com>,
-	<yosry.ahmed@linux.dev>, <sohil.mehta@intel.com>, <xin@zytor.com>,
-	<kai.huang@intel.com>, <xiaoyao.li@intel.com>, <peterz@infradead.org>,
-	<me@mixaill.net>, <mario.limonciello@amd.com>, <xin3.li@intel.com>,
-	<ebiggers@google.com>, <ak@linux.intel.com>, <chang.seok.bae@intel.com>,
-	<andrew.cooper3@citrix.com>, <perry.yuan@amd.com>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <cover.1752167718.git.babu.moger@amd.com>
- <a6f4ae3a709185e2c0904d53267e99e395a492ed.1752167718.git.babu.moger@amd.com>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Content-Language: en-US
-In-Reply-To: <a6f4ae3a709185e2c0904d53267e99e395a492ed.1752167718.git.babu.moger@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR03CA0001.namprd03.prod.outlook.com
- (2603:10b6:303:8f::6) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1217028C2BD;
+	Tue, 22 Jul 2025 03:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753155609; cv=none; b=lHeD2aafgLeIxXQz9sBFL8zLI+tTE4mRdmtC0Zv+hqk9ycdIoeAXoYSoQQSlnvAdQ5c+11iis5GEXSze2mXI61K13KIaKQ0pWIlv3yH/NT/zsGokDT1w0XXjYnspAPCVb7qQetD9zviyVNAQpqjlxjEVZdbjYWQ8yxH54pid7Ug=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753155609; c=relaxed/simple;
+	bh=t9riPm+utDZOW2hEoCsdeYodn0+qcALenPgM9DrnRvQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hoPPRzTKO3fY5ioEgyDoi1YW+/67phSu3n0fD940jqXkwfs9tex8N7F1oke3/sldIgDpGn4fM1g6azobOrCHA2zkAbe6GF2PaIPboiM/h0UOmK9GkmjB6e2sw7fR5zjyyT1IG+Zl6sQFngPFcsTkYtnW/zBGsYxXh8h88pwplSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bmNLq3rCyzYQvD7;
+	Tue, 22 Jul 2025 11:40:03 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 40BB41A0D49;
+	Tue, 22 Jul 2025 11:40:02 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgBXIBEQCH9oWh9LBA--.4813S4;
+	Tue, 22 Jul 2025 11:40:02 +0800 (CST)
+From: linan666@huaweicloud.com
+To: agk@redhat.com,
+	snitzer@kernel.org,
+	mpatocka@redhat.com,
+	song@kernel.org,
+	yukuai3@huawei.com
+Cc: dm-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-raid@vger.kernel.org,
+	linan666@huaweicloud.com,
+	yangerkun@huawei.com,
+	yi.zhang@huawei.com
+Subject: [PATCH v2 md-6.17] md: rename recovery_cp to resync_offset
+Date: Tue, 22 Jul 2025 11:33:40 +0800
+Message-Id: <20250722033340.1933388-1-linan666@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|DS0PR11MB7903:EE_
-X-MS-Office365-Filtering-Correlation-Id: f2e5dddc-ffbe-4de9-f5ef-08ddc8d0742a
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?bmc2K1pGTzNKNmZjWVRHYkxpVk1tdDlFUVE2MXpFZW5DTmJWZDlCeEhSeUo3?=
- =?utf-8?B?bnNUVEZlN1NzOVBpbzBDWEliWmNvRXdNSituQ2tOdlIxZk0zekN3OWExdTN3?=
- =?utf-8?B?L2hpUWdwSmtqdTRZSkprazcwNDU2U2JJSjNJd1pUTWtBUm9DVUgrQ01NQ0VZ?=
- =?utf-8?B?K1d6dHlCQXJ0cEpEQ0M3SVI2TE14SzcvUm5IVCtZRmZGQ0xhR1d1cDFrTTZK?=
- =?utf-8?B?b1JVWlhXZFZkSkFtay9mTmxoOXV0amdCNmJqWVhwVzVsUnJyTkV1UndSbldC?=
- =?utf-8?B?ZXU4eU11YmhuYjlvd2hCZHFjOGxjUDEzS2MwSjFuZnZSNTBqZGxtbFloanV6?=
- =?utf-8?B?V2kwZHBaOWl3NlBCcC9YVHJIeXRKMTk0R1dXY2xVR0JLblFZOCthZVVlK29R?=
- =?utf-8?B?T1ZWWVJiMVJOUnU3K1RpQ0JIaUJqcGRBUjBCbnEvWkNxckM5NWdiTld4SXUr?=
- =?utf-8?B?bHo0VkZyVEM5eWdUSVl2bXVuSTZWa09oaUVvMEwzdjlyb2NVdEhZbFU2T1JC?=
- =?utf-8?B?YVlzRnNWSXZNU01Vekdsay9tUnVLSWxCVHRvclk4bFVzdjRSaStRTUdFZVA3?=
- =?utf-8?B?d3ZydkowL2thUXFZZlhoK0FzRk9LeHQ5bnRjb09pV1NCdnNzSVFLaGJ5bXh0?=
- =?utf-8?B?blFLVVQ2SllXUTVodlpKU3IzcU9uM3JLaGorSnlvYjBYSzhHSVVoY3BCY1R1?=
- =?utf-8?B?VitiYWRiNDJhdklzOVZJeXFNeXdNREVYS25SazNpdU1NS2x0WllJV01wbFY4?=
- =?utf-8?B?Zk01M25idVNWcXZnSlcvNlpSb0dXWWx1dGYvUnlKN0lONGVBb3FRc3I0Nmhm?=
- =?utf-8?B?QndNUHZPVFhvaWhkSzNTUi9PRWhiUkdLdXFGQ3p6R3c5c3hRY0JBOFlVTUFj?=
- =?utf-8?B?OGExWFRveEtOZnEwWXE2SUVyb2pxamwzSGVtVTlzT0Vja2VUd2tkS2NhSjhj?=
- =?utf-8?B?S0tvdFgrcFBLNVo5NG4wMWVFRjhESVkyTVV5bnN5TS9JNzZSOFJWT0tJOXNI?=
- =?utf-8?B?SlhlQ1dKU0FyRGdTYmNVNUpKNitwK0V3dFB2MTZ0Rk9KTVFOTkNYRldRV255?=
- =?utf-8?B?dVZSYnBVYUtjRnpqYnhsZFVpcEhhOHd4aFdiVTF3WXBlT1hYZ3pCNHgyb3Mz?=
- =?utf-8?B?UG8xVmc1V2pPSFAwbEIyTzZWV2lJdHViblRVS0p5TEcwKzZUY1A1YnVzZGZp?=
- =?utf-8?B?VWtWeU5lRVIraDhqT1BMdG85MGZJSzdubWhRMWVhcGVRNWZOazBjM3ZhcHpQ?=
- =?utf-8?B?Qm5OMkFiL3dyYVF2Z2UzL0pqT1l4ZzFGczc4WVM2dXFhenFiaHZ4QXloRHdB?=
- =?utf-8?B?VEhXZm5UUHh0OFNGOVZTN1hXVWg0QXZiRFZUZnFSRjVrSzZGOFJXM2NEWm9C?=
- =?utf-8?B?dlEwNVRCVHVaTHY4VUFlMTJRTThpbjNZSFRramlvR0ozTFVsOE9sRnJJOFNC?=
- =?utf-8?B?VWNVOUJLUGhIN3ZKY3NnRmU1SVpiR2xLdGhQN2pZVjJSQkV3VzMvcVZTL1pP?=
- =?utf-8?B?WnNWZGxYOXlBT2haVW5oaUp0OHhVRFlQWUJUczJJVkkxNnUzK2E5UTNndEpo?=
- =?utf-8?B?YldmSk1IbzlnQ3JGaTg0WHNkdS9JZVAwNitDS0pwTHZpd0hlSjA0cDVMdVkr?=
- =?utf-8?B?RmdJdi96TXRXZW1HSkQvM3FDTVROSnArc1dGSHpuUTZLTmVKOExzSWhkSGNk?=
- =?utf-8?B?Q0xjblppMFRwclNNZ3pNV040bzAzcnh6MFhVMVVkdnFPOTVtTnk0UFRta3dy?=
- =?utf-8?B?SlA4NzgrcDJSUkNRdGd2dE4vcVJVT2ZzL1pGOFovUkZKRWMvOVBvODNISVFI?=
- =?utf-8?B?OWxNUEJUTGVadGxKNDV6clVZRmcvY05kcTZpc2VSZ0p1eWo1Z3BUZWc2OVht?=
- =?utf-8?B?YXZ5WmpjV2NtZ0V2UStSSHJDdDFPMHpHM1JYZjl4a1duWTNUK0tuaFdmc25a?=
- =?utf-8?Q?oCKVqUOsq1Y=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Q1FDU1g1TlMzMFpsa2daYk03dGlvYWQ4NXloWXN6MVRlZjE4Wmx4TGZvVjNh?=
- =?utf-8?B?ak13UHk4UG16ZzJuN1VTNkdvSnYvR1JuMHZzVHZkUzY5SkFDSWZmajFQOVZC?=
- =?utf-8?B?UThLQUl2aGZvT20wNHlvUnp3VkVEUHBhQU1GVzFrRDBaTytucjl2eXp6UkFj?=
- =?utf-8?B?bFBZcGdUR2NSZzNPcFpHMnZVWFkwb0xNSkRlM20vME5PYTN0L2w3Wjh0eUIw?=
- =?utf-8?B?ZjRpbmFQNTh6VW5KdllKMWl1blRqaHVmUjJqa0JYZCt3K0lzSXAvZVNWNU56?=
- =?utf-8?B?c0xldGViSnY2WXM3SUNycm1hajV0b1pEaHczOTR4dmFiZVk5QVJtWFdtYzFh?=
- =?utf-8?B?d1QrUjFlcjlaOTdjZU9wS2FzeVVzVWJYRHVXNG5Zd3BnU01lL2FhYzRjUXZt?=
- =?utf-8?B?cjlNT2ZrNlRtak83eHZpM3pkNG1RSVJlbmwyaFVpY1U2T2RJMGpIclZKRUlP?=
- =?utf-8?B?N3V2V3ZHQU5qSU9ncXJOTkcxMEY3RVkwVDV6VzNMOCszUlk0N2c3V2h4ZnBo?=
- =?utf-8?B?RWFGTkY1Qk1lK0xmZzZ3R0wrMnFMZDE5enJuR1FRVEJHZXJVelUxTnA1VGJ4?=
- =?utf-8?B?VVROVnhTOWdrY0lzSzRBK2ZINERscytzbXZ4V0szd0xOb2ZycGlQZ2U4S1Mv?=
- =?utf-8?B?L2VXZVlIRHhPaUE5QWh3SmpDa3NkZTZrZGZMOG1hOFZWSlpINmkzWjRQdnZW?=
- =?utf-8?B?UDBWSTN3bmRnR1lzR3RVYndOYnR1UVpTaXhsQ0lCdi9HNk5wYXJ3MnZlTmtP?=
- =?utf-8?B?SEFzS3RHcnJ6ZkdSbzhPYlFwblhsRjZDaWZkczlrQmRiNWVaR3MzV0hXZWYv?=
- =?utf-8?B?RGxNeWQzcVlCTzkrd1YvdGN6TlMwR2lyMVJKVWdqMDhlb1FRbEhSYyt5dVVF?=
- =?utf-8?B?NVlveXNxVkM3bGl4V09PZ2JZT3lSR3VOS3BhMVdDbSt2eFVrS0g1VmJXYnBQ?=
- =?utf-8?B?ZVBTQ1NxNlZGN2psQm9TOFYycFdHeGx3clNFV1EzM3RvWEVxSVFSeVpKekY5?=
- =?utf-8?B?L085RHJUQWszNnhGWEtUbzVtaitwQ2FnK1pBTTBEZXRUV3JMM1hGZUlHdzJH?=
- =?utf-8?B?c3RzTW1DZmdyaFhySnZLaFI1Ly9mM2FTQ2RGRjk5eWlHd0lOb202MEtQM1Yy?=
- =?utf-8?B?Z1pLZXZ1MktnSk54MVhhK2tQT0tySEFPdmwzNUJYeU9aRkd3OE1TMnRlb1NN?=
- =?utf-8?B?WElsY0xxZFZHLzFIT3UrUFNhYWlPSnl0dXA3WGc5TjNScDdOVmRVWnVUbzlL?=
- =?utf-8?B?YXhLRm5DaHN5Z2F2elZhdzlPRnBZTUFpbndoOU1KUlYrNjZ5R3hRUXF2bWlu?=
- =?utf-8?B?SjdhS3lER1F0em1VL3RmWnoyb3RiT2FkTFJSRng3NkpYcmdlZmVYZ1NmdTdH?=
- =?utf-8?B?U2N6WUdDSGdiczFac0ltTmQ5YXV4RzBkSkFrWmY0eHNUR0thbDVGcjZVbUE4?=
- =?utf-8?B?MXFkY2cvQWV6S0daTXI2VklGcUYzTFFTdzR1STUwVElsbjlUM24xeHRVNld2?=
- =?utf-8?B?aFh2c3JJZWRMMXIyL2pldmYrRDZremowREJZRS95SUpKRDROUWFyOFBuWEwx?=
- =?utf-8?B?dVZFOFBuSlcwbmFsZHpBTmUzcjhoRzFrOTBiRlJXQWtpRFZVd3Voc1VYZjhu?=
- =?utf-8?B?ZWovZ2ZYTFZTajFab0VWcEN2T0xweEY2WGRjK0tqVGFvU0xKTDY0MHdSd3Nu?=
- =?utf-8?B?TzFpWER4Wi92NDhOQmI4bUVLTGRzTzlSSThkd1c1WE5oaDQyUTN2ZW1RUlBa?=
- =?utf-8?B?djVPREdsdXd1U0pRa0VGTUpOZFVHYUU1RWoyVkh5R1lsd2k1eUZXMGV0bXhi?=
- =?utf-8?B?V2l4K2JkdFJsUGtSWTloZythZkZoWWJLbGtwWjlYdS96UWw2Q0luQS85RjBR?=
- =?utf-8?B?N1l1SWZMa21EUDJFWEZlbHYvaHk4RWo4cHFCYVQrd2VHK0xsSEs5NEpTV2JQ?=
- =?utf-8?B?MllWVHJuRGVLYW00cFc1SDFKd0pBa1ZtbnhEOFhMOTA3OHlTTmFCMytUNnU0?=
- =?utf-8?B?Wnp0L1ZXblVkbjN2N1RtVnhjQlpWckxoL24zSWZSZWhxaUJZc3N2WmxqK3Qx?=
- =?utf-8?B?NmszcHVCckIwV2x0bkdWZ3pJR0taUm8wN09nWXkxRklROTVrU3VHN283NEc5?=
- =?utf-8?B?MUtqTnBubWNkeFRDRXl3Z3pGTEtRMGRiV3ZNSWlXbElZVTZsTWtmZ016Nlgz?=
- =?utf-8?B?UHc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: f2e5dddc-ffbe-4de9-f5ef-08ddc8d0742a
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2025 03:32:58.6174
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: s+dXOPRGXiojPPtU1OVhxIvL4JRUawTDnybAdvPEx6uhTdJGg+2ifzDxsRntb77htfdDgmPQTQgf8i0q3BmqRgwYitaWLBcHP/IA1/Yfdvs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7903
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBXIBEQCH9oWh9LBA--.4813S4
+X-Coremail-Antispam: 1UD129KBjvAXoWfXrWkXFW7CF1fAw4DCry3urg_yoW5AF1kZo
+	Za9ry2vr4rWw15Wr97tr1UtFW3Was8Jr45tw15ZrZ5XFnF9w48Jrn3XrW3JF15trsIga4x
+	X3sYgr18XFW7CrZ7n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+	AaLaJ3UjIYCTnIWjp_UUUOj7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20EY4v20xva
+	j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2
+	x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8
+	Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
+	xl6s0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
+	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJV
+	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
+	0VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7M4kE6xkIj40Ew7xC0wCY1x0262kKe7AKxV
+	WUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
+	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIx
+	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAF
+	wI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r
+	4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUBrWrU
+	UUUU=
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-Hi Babu,
+From: Li Nan <linan122@huawei.com>
 
-On 7/10/25 10:16 AM, Babu Moger wrote:
-> "io_alloc" feature enables direct insertion of data from I/O devices into
-> the cache. By directly caching data from I/O devices rather than first
-> storing the I/O data in DRAM, it reduces the demands on DRAM bandwidth and
-> reduces latency to the processor consuming the I/O data.
-> 
-> Provide the interface to modify io_alloc CBMs (Capacity Bit Mask) when
+'recovery_cp' was used to represent the progress of sync, but its name
+contains recovery, which can cause confusion. Replaces 'recovery_cp'
+with 'resync_offset' for clarity.
 
-"Provide the interface to modify io_alloc CBMs (Capacity Bit Mask) when feature is
-enabled." ->
-"Enable users to modify io_alloc CBMs (Capacity Bit Masks) via the io_alloc_cbm
-resctrl file when io_alloc is enabled."?
+Signed-off-by: Li Nan <linan122@huawei.com>
+---
+v2: cook on md-6.17
 
-> feature is enabled. Update the CBMs for both CDP_DATA and CDP_CODE when CDP
-> is enabled.
-> 
-> Signed-off-by: Babu Moger <babu.moger@amd.com>
-> ---
+ drivers/md/md.h                |  2 +-
+ include/uapi/linux/raid/md_p.h |  2 +-
+ drivers/md/dm-raid.c           | 42 ++++++++++++++--------------
+ drivers/md/md-bitmap.c         |  8 +++---
+ drivers/md/md-cluster.c        | 16 +++++------
+ drivers/md/md.c                | 50 +++++++++++++++++-----------------
+ drivers/md/raid0.c             |  6 ++--
+ drivers/md/raid1-10.c          |  2 +-
+ drivers/md/raid1.c             | 10 +++----
+ drivers/md/raid10.c            | 16 +++++------
+ drivers/md/raid5-ppl.c         |  6 ++--
+ drivers/md/raid5.c             | 30 ++++++++++----------
+ 12 files changed, 95 insertions(+), 95 deletions(-)
 
-...
+diff --git a/drivers/md/md.h b/drivers/md/md.h
+index b8ff70841fbe..edea7df579c8 100644
+--- a/drivers/md/md.h
++++ b/drivers/md/md.h
+@@ -524,7 +524,7 @@ struct mddev {
+ 	unsigned long			normal_io_events; /* IO event timestamp */
+ 	atomic_t			recovery_active; /* blocks scheduled, but not written */
+ 	wait_queue_head_t		recovery_wait;
+-	sector_t			recovery_cp;
++	sector_t			resync_offset;
+ 	sector_t			resync_min;	/* user requested sync
+ 							 * starts here */
+ 	sector_t			resync_max;	/* resync should pause
+diff --git a/include/uapi/linux/raid/md_p.h b/include/uapi/linux/raid/md_p.h
+index ad1c84e772ba..2963c3dab57e 100644
+--- a/include/uapi/linux/raid/md_p.h
++++ b/include/uapi/linux/raid/md_p.h
+@@ -173,7 +173,7 @@ typedef struct mdp_superblock_s {
+ #else
+ #error unspecified endianness
+ #endif
+-	__u32 recovery_cp;	/* 11 recovery checkpoint sector count	      */
++	__u32 resync_offset;	/* 11 resync checkpoint sector count	      */
+ 	/* There are only valid for minor_version > 90 */
+ 	__u64 reshape_position;	/* 12,13 next address in array-space for reshape */
+ 	__u32 new_level;	/* 14 new level we are reshaping to	      */
+diff --git a/drivers/md/dm-raid.c b/drivers/md/dm-raid.c
+index e8c0a8c6fb51..9835f2fe26e9 100644
+--- a/drivers/md/dm-raid.c
++++ b/drivers/md/dm-raid.c
+@@ -439,7 +439,7 @@ static bool rs_is_reshapable(struct raid_set *rs)
+ /* Return true, if raid set in @rs is recovering */
+ static bool rs_is_recovering(struct raid_set *rs)
+ {
+-	return rs->md.recovery_cp < rs->md.dev_sectors;
++	return rs->md.resync_offset < rs->md.dev_sectors;
+ }
+ 
+ /* Return true, if raid set in @rs is reshaping */
+@@ -769,7 +769,7 @@ static struct raid_set *raid_set_alloc(struct dm_target *ti, struct raid_type *r
+ 	rs->md.layout = raid_type->algorithm;
+ 	rs->md.new_layout = rs->md.layout;
+ 	rs->md.delta_disks = 0;
+-	rs->md.recovery_cp = MaxSector;
++	rs->md.resync_offset = MaxSector;
+ 
+ 	for (i = 0; i < raid_devs; i++)
+ 		md_rdev_init(&rs->dev[i].rdev);
+@@ -913,7 +913,7 @@ static int parse_dev_params(struct raid_set *rs, struct dm_arg_set *as)
+ 		rs->md.external = 0;
+ 		rs->md.persistent = 1;
+ 		rs->md.major_version = 2;
+-	} else if (rebuild && !rs->md.recovery_cp) {
++	} else if (rebuild && !rs->md.resync_offset) {
+ 		/*
+ 		 * Without metadata, we will not be able to tell if the array
+ 		 * is in-sync or not - we must assume it is not.  Therefore,
+@@ -1696,20 +1696,20 @@ static void rs_setup_recovery(struct raid_set *rs, sector_t dev_sectors)
+ {
+ 	/* raid0 does not recover */
+ 	if (rs_is_raid0(rs))
+-		rs->md.recovery_cp = MaxSector;
++		rs->md.resync_offset = MaxSector;
+ 	/*
+ 	 * A raid6 set has to be recovered either
+ 	 * completely or for the grown part to
+ 	 * ensure proper parity and Q-Syndrome
+ 	 */
+ 	else if (rs_is_raid6(rs))
+-		rs->md.recovery_cp = dev_sectors;
++		rs->md.resync_offset = dev_sectors;
+ 	/*
+ 	 * Other raid set types may skip recovery
+ 	 * depending on the 'nosync' flag.
+ 	 */
+ 	else
+-		rs->md.recovery_cp = test_bit(__CTR_FLAG_NOSYNC, &rs->ctr_flags)
++		rs->md.resync_offset = test_bit(__CTR_FLAG_NOSYNC, &rs->ctr_flags)
+ 				     ? MaxSector : dev_sectors;
+ }
+ 
+@@ -2144,7 +2144,7 @@ static void super_sync(struct mddev *mddev, struct md_rdev *rdev)
+ 	sb->events = cpu_to_le64(mddev->events);
+ 
+ 	sb->disk_recovery_offset = cpu_to_le64(rdev->recovery_offset);
+-	sb->array_resync_offset = cpu_to_le64(mddev->recovery_cp);
++	sb->array_resync_offset = cpu_to_le64(mddev->resync_offset);
+ 
+ 	sb->level = cpu_to_le32(mddev->level);
+ 	sb->layout = cpu_to_le32(mddev->layout);
+@@ -2335,18 +2335,18 @@ static int super_init_validation(struct raid_set *rs, struct md_rdev *rdev)
+ 	}
+ 
+ 	if (!test_bit(__CTR_FLAG_NOSYNC, &rs->ctr_flags))
+-		mddev->recovery_cp = le64_to_cpu(sb->array_resync_offset);
++		mddev->resync_offset = le64_to_cpu(sb->array_resync_offset);
+ 
+ 	/*
+ 	 * During load, we set FirstUse if a new superblock was written.
+ 	 * There are two reasons we might not have a superblock:
+ 	 * 1) The raid set is brand new - in which case, all of the
+ 	 *    devices must have their In_sync bit set.	Also,
+-	 *    recovery_cp must be 0, unless forced.
++	 *    resync_offset must be 0, unless forced.
+ 	 * 2) This is a new device being added to an old raid set
+ 	 *    and the new device needs to be rebuilt - in which
+ 	 *    case the In_sync bit will /not/ be set and
+-	 *    recovery_cp must be MaxSector.
++	 *    resync_offset must be MaxSector.
+ 	 * 3) This is/are a new device(s) being added to an old
+ 	 *    raid set during takeover to a higher raid level
+ 	 *    to provide capacity for redundancy or during reshape
+@@ -2391,8 +2391,8 @@ static int super_init_validation(struct raid_set *rs, struct md_rdev *rdev)
+ 			      new_devs > 1 ? "s" : "");
+ 			return -EINVAL;
+ 		} else if (!test_bit(__CTR_FLAG_REBUILD, &rs->ctr_flags) && rs_is_recovering(rs)) {
+-			DMERR("'rebuild' specified while raid set is not in-sync (recovery_cp=%llu)",
+-			      (unsigned long long) mddev->recovery_cp);
++			DMERR("'rebuild' specified while raid set is not in-sync (resync_offset=%llu)",
++			      (unsigned long long) mddev->resync_offset);
+ 			return -EINVAL;
+ 		} else if (rs_is_reshaping(rs)) {
+ 			DMERR("'rebuild' specified while raid set is being reshaped (reshape_position=%llu)",
+@@ -2697,11 +2697,11 @@ static int rs_adjust_data_offsets(struct raid_set *rs)
+ 	}
+ out:
+ 	/*
+-	 * Raise recovery_cp in case data_offset != 0 to
++	 * Raise resync_offset in case data_offset != 0 to
+ 	 * avoid false recovery positives in the constructor.
+ 	 */
+-	if (rs->md.recovery_cp < rs->md.dev_sectors)
+-		rs->md.recovery_cp += rs->dev[0].rdev.data_offset;
++	if (rs->md.resync_offset < rs->md.dev_sectors)
++		rs->md.resync_offset += rs->dev[0].rdev.data_offset;
+ 
+ 	/* Adjust data offsets on all rdevs but on any raid4/5/6 journal device */
+ 	rdev_for_each(rdev, &rs->md) {
+@@ -2756,7 +2756,7 @@ static int rs_setup_takeover(struct raid_set *rs)
+ 	}
+ 
+ 	clear_bit(MD_ARRAY_FIRST_USE, &mddev->flags);
+-	mddev->recovery_cp = MaxSector;
++	mddev->resync_offset = MaxSector;
+ 
+ 	while (d--) {
+ 		rdev = &rs->dev[d].rdev;
+@@ -2764,7 +2764,7 @@ static int rs_setup_takeover(struct raid_set *rs)
+ 		if (test_bit(d, (void *) rs->rebuild_disks)) {
+ 			clear_bit(In_sync, &rdev->flags);
+ 			clear_bit(Faulty, &rdev->flags);
+-			mddev->recovery_cp = rdev->recovery_offset = 0;
++			mddev->resync_offset = rdev->recovery_offset = 0;
+ 			/* Bitmap has to be created when we do an "up" takeover */
+ 			set_bit(MD_ARRAY_FIRST_USE, &mddev->flags);
+ 		}
+@@ -3222,7 +3222,7 @@ static int raid_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+ 			if (r)
+ 				goto bad;
+ 
+-			rs_setup_recovery(rs, rs->md.recovery_cp < rs->md.dev_sectors ? rs->md.recovery_cp : rs->md.dev_sectors);
++			rs_setup_recovery(rs, rs->md.resync_offset < rs->md.dev_sectors ? rs->md.resync_offset : rs->md.dev_sectors);
+ 		} else {
+ 			/* This is no size change or it is shrinking, update size and record in superblocks */
+ 			r = rs_set_dev_and_array_sectors(rs, rs->ti->len, false);
+@@ -3446,7 +3446,7 @@ static sector_t rs_get_progress(struct raid_set *rs, unsigned long recovery,
+ 
+ 	} else {
+ 		if (state == st_idle && !test_bit(MD_RECOVERY_INTR, &recovery))
+-			r = mddev->recovery_cp;
++			r = mddev->resync_offset;
+ 		else
+ 			r = mddev->curr_resync_completed;
+ 
+@@ -4074,9 +4074,9 @@ static int raid_preresume(struct dm_target *ti)
+ 	}
+ 
+ 	/* Check for any resize/reshape on @rs and adjust/initiate */
+-	if (mddev->recovery_cp && mddev->recovery_cp < MaxSector) {
++	if (mddev->resync_offset && mddev->resync_offset < MaxSector) {
+ 		set_bit(MD_RECOVERY_REQUESTED, &mddev->recovery);
+-		mddev->resync_min = mddev->recovery_cp;
++		mddev->resync_min = mddev->resync_offset;
+ 		if (test_bit(RT_FLAG_RS_GROW, &rs->runtime_flags))
+ 			mddev->resync_max_sectors = mddev->dev_sectors;
+ 	}
+diff --git a/drivers/md/md-bitmap.c b/drivers/md/md-bitmap.c
+index bd694910b01b..c74fe9c18658 100644
+--- a/drivers/md/md-bitmap.c
++++ b/drivers/md/md-bitmap.c
+@@ -1987,12 +1987,12 @@ static void bitmap_dirty_bits(struct mddev *mddev, unsigned long s,
+ 
+ 		md_bitmap_set_memory_bits(bitmap, sec, 1);
+ 		md_bitmap_file_set_bit(bitmap, sec);
+-		if (sec < bitmap->mddev->recovery_cp)
++		if (sec < bitmap->mddev->resync_offset)
+ 			/* We are asserting that the array is dirty,
+-			 * so move the recovery_cp address back so
++			 * so move the resync_offset address back so
+ 			 * that it is obvious that it is dirty
+ 			 */
+-			bitmap->mddev->recovery_cp = sec;
++			bitmap->mddev->resync_offset = sec;
+ 	}
+ }
+ 
+@@ -2258,7 +2258,7 @@ static int bitmap_load(struct mddev *mddev)
+ 	    || bitmap->events_cleared == mddev->events)
+ 		/* no need to keep dirty bits to optimise a
+ 		 * re-add of a missing device */
+-		start = mddev->recovery_cp;
++		start = mddev->resync_offset;
+ 
+ 	mutex_lock(&mddev->bitmap_info.mutex);
+ 	err = md_bitmap_init_from_disk(bitmap, start);
+diff --git a/drivers/md/md-cluster.c b/drivers/md/md-cluster.c
+index 94221d964d4f..5497eaee96e7 100644
+--- a/drivers/md/md-cluster.c
++++ b/drivers/md/md-cluster.c
+@@ -337,11 +337,11 @@ static void recover_bitmaps(struct md_thread *thread)
+ 			md_wakeup_thread(mddev->sync_thread);
+ 
+ 		if (hi > 0) {
+-			if (lo < mddev->recovery_cp)
+-				mddev->recovery_cp = lo;
++			if (lo < mddev->resync_offset)
++				mddev->resync_offset = lo;
+ 			/* wake up thread to continue resync in case resync
+ 			 * is not finished */
+-			if (mddev->recovery_cp != MaxSector) {
++			if (mddev->resync_offset != MaxSector) {
+ 				/*
+ 				 * clear the REMOTE flag since we will launch
+ 				 * resync thread in current node.
+@@ -863,9 +863,9 @@ static int gather_all_resync_info(struct mddev *mddev, int total_slots)
+ 			lockres_free(bm_lockres);
+ 			continue;
+ 		}
+-		if ((hi > 0) && (lo < mddev->recovery_cp)) {
++		if ((hi > 0) && (lo < mddev->resync_offset)) {
+ 			set_bit(MD_RECOVERY_NEEDED, &mddev->recovery);
+-			mddev->recovery_cp = lo;
++			mddev->resync_offset = lo;
+ 			md_check_recovery(mddev);
+ 		}
+ 
+@@ -1027,7 +1027,7 @@ static int leave(struct mddev *mddev)
+ 	 * Also, we should send BITMAP_NEEDS_SYNC message in
+ 	 * case reshaping is interrupted.
+ 	 */
+-	if ((cinfo->slot_number > 0 && mddev->recovery_cp != MaxSector) ||
++	if ((cinfo->slot_number > 0 && mddev->resync_offset != MaxSector) ||
+ 	    (mddev->reshape_position != MaxSector &&
+ 	     test_bit(MD_CLOSING, &mddev->flags)))
+ 		resync_bitmap(mddev);
+@@ -1605,8 +1605,8 @@ static int gather_bitmaps(struct md_rdev *rdev)
+ 			pr_warn("md-cluster: Could not gather bitmaps from slot %d", sn);
+ 			goto out;
+ 		}
+-		if ((hi > 0) && (lo < mddev->recovery_cp))
+-			mddev->recovery_cp = lo;
++		if ((hi > 0) && (lo < mddev->resync_offset))
++			mddev->resync_offset = lo;
+ 	}
+ out:
+ 	return err;
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index 9a704ddc107a..c3723ac57775 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -1410,13 +1410,13 @@ static int super_90_validate(struct mddev *mddev, struct md_rdev *freshest, stru
+ 			mddev->layout = -1;
+ 
+ 		if (sb->state & (1<<MD_SB_CLEAN))
+-			mddev->recovery_cp = MaxSector;
++			mddev->resync_offset = MaxSector;
+ 		else {
+ 			if (sb->events_hi == sb->cp_events_hi &&
+ 				sb->events_lo == sb->cp_events_lo) {
+-				mddev->recovery_cp = sb->recovery_cp;
++				mddev->resync_offset = sb->resync_offset;
+ 			} else
+-				mddev->recovery_cp = 0;
++				mddev->resync_offset = 0;
+ 		}
+ 
+ 		memcpy(mddev->uuid+0, &sb->set_uuid0, 4);
+@@ -1542,13 +1542,13 @@ static void super_90_sync(struct mddev *mddev, struct md_rdev *rdev)
+ 	mddev->minor_version = sb->minor_version;
+ 	if (mddev->in_sync)
+ 	{
+-		sb->recovery_cp = mddev->recovery_cp;
++		sb->resync_offset = mddev->resync_offset;
+ 		sb->cp_events_hi = (mddev->events>>32);
+ 		sb->cp_events_lo = (u32)mddev->events;
+-		if (mddev->recovery_cp == MaxSector)
++		if (mddev->resync_offset == MaxSector)
+ 			sb->state = (1<< MD_SB_CLEAN);
+ 	} else
+-		sb->recovery_cp = 0;
++		sb->resync_offset = 0;
+ 
+ 	sb->layout = mddev->layout;
+ 	sb->chunk_size = mddev->chunk_sectors << 9;
+@@ -1898,7 +1898,7 @@ static int super_1_validate(struct mddev *mddev, struct md_rdev *freshest, struc
+ 		mddev->bitmap_info.default_space = (4096-1024) >> 9;
+ 		mddev->reshape_backwards = 0;
+ 
+-		mddev->recovery_cp = le64_to_cpu(sb->resync_offset);
++		mddev->resync_offset = le64_to_cpu(sb->resync_offset);
+ 		memcpy(mddev->uuid, sb->set_uuid, 16);
+ 
+ 		mddev->max_disks =  (4096-256)/2;
+@@ -2084,7 +2084,7 @@ static void super_1_sync(struct mddev *mddev, struct md_rdev *rdev)
+ 	sb->utime = cpu_to_le64((__u64)mddev->utime);
+ 	sb->events = cpu_to_le64(mddev->events);
+ 	if (mddev->in_sync)
+-		sb->resync_offset = cpu_to_le64(mddev->recovery_cp);
++		sb->resync_offset = cpu_to_le64(mddev->resync_offset);
+ 	else if (test_bit(MD_JOURNAL_CLEAN, &mddev->flags))
+ 		sb->resync_offset = cpu_to_le64(MaxSector);
+ 	else
+@@ -2765,7 +2765,7 @@ void md_update_sb(struct mddev *mddev, int force_change)
+ 	/* If this is just a dirty<->clean transition, and the array is clean
+ 	 * and 'events' is odd, we can roll back to the previous clean state */
+ 	if (nospares
+-	    && (mddev->in_sync && mddev->recovery_cp == MaxSector)
++	    && (mddev->in_sync && mddev->resync_offset == MaxSector)
+ 	    && mddev->can_decrease_events
+ 	    && mddev->events != 1) {
+ 		mddev->events--;
+@@ -4301,9 +4301,9 @@ __ATTR(chunk_size, S_IRUGO|S_IWUSR, chunk_size_show, chunk_size_store);
+ static ssize_t
+ resync_start_show(struct mddev *mddev, char *page)
+ {
+-	if (mddev->recovery_cp == MaxSector)
++	if (mddev->resync_offset == MaxSector)
+ 		return sprintf(page, "none\n");
+-	return sprintf(page, "%llu\n", (unsigned long long)mddev->recovery_cp);
++	return sprintf(page, "%llu\n", (unsigned long long)mddev->resync_offset);
+ }
+ 
+ static ssize_t
+@@ -4329,7 +4329,7 @@ resync_start_store(struct mddev *mddev, const char *buf, size_t len)
+ 		err = -EBUSY;
+ 
+ 	if (!err) {
+-		mddev->recovery_cp = n;
++		mddev->resync_offset = n;
+ 		if (mddev->pers)
+ 			set_bit(MD_SB_CHANGE_CLEAN, &mddev->sb_flags);
+ 	}
+@@ -6488,7 +6488,7 @@ static void md_clean(struct mddev *mddev)
+ 	mddev->external_size = 0;
+ 	mddev->dev_sectors = 0;
+ 	mddev->raid_disks = 0;
+-	mddev->recovery_cp = 0;
++	mddev->resync_offset = 0;
+ 	mddev->resync_min = 0;
+ 	mddev->resync_max = MaxSector;
+ 	mddev->reshape_position = MaxSector;
+@@ -7434,9 +7434,9 @@ int md_set_array_info(struct mddev *mddev, struct mdu_array_info_s *info)
+ 	 * openned
+ 	 */
+ 	if (info->state & (1<<MD_SB_CLEAN))
+-		mddev->recovery_cp = MaxSector;
++		mddev->resync_offset = MaxSector;
+ 	else
+-		mddev->recovery_cp = 0;
++		mddev->resync_offset = 0;
+ 	mddev->persistent    = ! info->not_persistent;
+ 	mddev->external	     = 0;
+ 
+@@ -8375,7 +8375,7 @@ static int status_resync(struct seq_file *seq, struct mddev *mddev)
+ 				seq_printf(seq, "\tresync=REMOTE");
+ 			return 1;
+ 		}
+-		if (mddev->recovery_cp < MaxSector) {
++		if (mddev->resync_offset < MaxSector) {
+ 			seq_printf(seq, "\tresync=PENDING");
+ 			return 1;
+ 		}
+@@ -9018,7 +9018,7 @@ static sector_t md_sync_position(struct mddev *mddev, enum sync_action action)
+ 		return mddev->resync_min;
+ 	case ACTION_RESYNC:
+ 		if (!mddev->bitmap)
+-			return mddev->recovery_cp;
++			return mddev->resync_offset;
+ 		return 0;
+ 	case ACTION_RESHAPE:
+ 		/*
+@@ -9256,8 +9256,8 @@ void md_do_sync(struct md_thread *thread)
+ 				   atomic_read(&mddev->recovery_active) == 0);
+ 			mddev->curr_resync_completed = j;
+ 			if (test_bit(MD_RECOVERY_SYNC, &mddev->recovery) &&
+-			    j > mddev->recovery_cp)
+-				mddev->recovery_cp = j;
++			    j > mddev->resync_offset)
++				mddev->resync_offset = j;
+ 			update_time = jiffies;
+ 			set_bit(MD_SB_CHANGE_CLEAN, &mddev->sb_flags);
+ 			sysfs_notify_dirent_safe(mddev->sysfs_completed);
+@@ -9377,19 +9377,19 @@ void md_do_sync(struct md_thread *thread)
+ 	    mddev->curr_resync > MD_RESYNC_ACTIVE) {
+ 		if (test_bit(MD_RECOVERY_SYNC, &mddev->recovery)) {
+ 			if (test_bit(MD_RECOVERY_INTR, &mddev->recovery)) {
+-				if (mddev->curr_resync >= mddev->recovery_cp) {
++				if (mddev->curr_resync >= mddev->resync_offset) {
+ 					pr_debug("md: checkpointing %s of %s.\n",
+ 						 desc, mdname(mddev));
+ 					if (test_bit(MD_RECOVERY_ERROR,
+ 						&mddev->recovery))
+-						mddev->recovery_cp =
++						mddev->resync_offset =
+ 							mddev->curr_resync_completed;
+ 					else
+-						mddev->recovery_cp =
++						mddev->resync_offset =
+ 							mddev->curr_resync;
+ 				}
+ 			} else
+-				mddev->recovery_cp = MaxSector;
++				mddev->resync_offset = MaxSector;
+ 		} else {
+ 			if (!test_bit(MD_RECOVERY_INTR, &mddev->recovery))
+ 				mddev->curr_resync = MaxSector;
+@@ -9605,7 +9605,7 @@ static bool md_choose_sync_action(struct mddev *mddev, int *spares)
+ 	}
+ 
+ 	/* Check if resync is in progress. */
+-	if (mddev->recovery_cp < MaxSector) {
++	if (mddev->resync_offset < MaxSector) {
+ 		remove_spares(mddev, NULL);
+ 		set_bit(MD_RECOVERY_SYNC, &mddev->recovery);
+ 		clear_bit(MD_RECOVERY_RECOVER, &mddev->recovery);
+@@ -9786,7 +9786,7 @@ void md_check_recovery(struct mddev *mddev)
+ 		test_bit(MD_RECOVERY_DONE, &mddev->recovery) ||
+ 		(mddev->external == 0 && mddev->safemode == 1) ||
+ 		(mddev->safemode == 2
+-		 && !mddev->in_sync && mddev->recovery_cp == MaxSector)
++		 && !mddev->in_sync && mddev->resync_offset == MaxSector)
+ 		))
+ 		return;
+ 
+diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
+index c65732b330eb..d08d71e1fb41 100644
+--- a/drivers/md/raid0.c
++++ b/drivers/md/raid0.c
+@@ -674,7 +674,7 @@ static void *raid0_takeover_raid45(struct mddev *mddev)
+ 	mddev->raid_disks--;
+ 	mddev->delta_disks = -1;
+ 	/* make sure it will be not marked as dirty */
+-	mddev->recovery_cp = MaxSector;
++	mddev->resync_offset = MaxSector;
+ 	mddev_clear_unsupported_flags(mddev, UNSUPPORTED_MDDEV_FLAGS);
+ 
+ 	create_strip_zones(mddev, &priv_conf);
+@@ -717,7 +717,7 @@ static void *raid0_takeover_raid10(struct mddev *mddev)
+ 	mddev->raid_disks += mddev->delta_disks;
+ 	mddev->degraded = 0;
+ 	/* make sure it will be not marked as dirty */
+-	mddev->recovery_cp = MaxSector;
++	mddev->resync_offset = MaxSector;
+ 	mddev_clear_unsupported_flags(mddev, UNSUPPORTED_MDDEV_FLAGS);
+ 
+ 	create_strip_zones(mddev, &priv_conf);
+@@ -760,7 +760,7 @@ static void *raid0_takeover_raid1(struct mddev *mddev)
+ 	mddev->delta_disks = 1 - mddev->raid_disks;
+ 	mddev->raid_disks = 1;
+ 	/* make sure it will be not marked as dirty */
+-	mddev->recovery_cp = MaxSector;
++	mddev->resync_offset = MaxSector;
+ 	mddev_clear_unsupported_flags(mddev, UNSUPPORTED_MDDEV_FLAGS);
+ 
+ 	create_strip_zones(mddev, &priv_conf);
+diff --git a/drivers/md/raid1-10.c b/drivers/md/raid1-10.c
+index b8b3a9069701..52881e6032da 100644
+--- a/drivers/md/raid1-10.c
++++ b/drivers/md/raid1-10.c
+@@ -283,7 +283,7 @@ static inline int raid1_check_read_range(struct md_rdev *rdev,
+ static inline bool raid1_should_read_first(struct mddev *mddev,
+ 					   sector_t this_sector, int len)
+ {
+-	if ((mddev->recovery_cp < this_sector + len))
++	if ((mddev->resync_offset < this_sector + len))
+ 		return true;
+ 
+ 	if (mddev_is_clustered(mddev) &&
+diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+index 7e37f1015646..0a0668fa148e 100644
+--- a/drivers/md/raid1.c
++++ b/drivers/md/raid1.c
+@@ -2821,7 +2821,7 @@ static sector_t raid1_sync_request(struct mddev *mddev, sector_t sector_nr,
+ 	}
+ 
+ 	if (mddev->bitmap == NULL &&
+-	    mddev->recovery_cp == MaxSector &&
++	    mddev->resync_offset == MaxSector &&
+ 	    !test_bit(MD_RECOVERY_REQUESTED, &mddev->recovery) &&
+ 	    conf->fullsync == 0) {
+ 		*skipped = 1;
+@@ -3282,9 +3282,9 @@ static int raid1_run(struct mddev *mddev)
+ 	}
+ 
+ 	if (conf->raid_disks - mddev->degraded == 1)
+-		mddev->recovery_cp = MaxSector;
++		mddev->resync_offset = MaxSector;
+ 
+-	if (mddev->recovery_cp != MaxSector)
++	if (mddev->resync_offset != MaxSector)
+ 		pr_info("md/raid1:%s: not clean -- starting background reconstruction\n",
+ 			mdname(mddev));
+ 	pr_info("md/raid1:%s: active with %d out of %d mirrors\n",
+@@ -3345,8 +3345,8 @@ static int raid1_resize(struct mddev *mddev, sector_t sectors)
+ 
+ 	md_set_array_sectors(mddev, newsize);
+ 	if (sectors > mddev->dev_sectors &&
+-	    mddev->recovery_cp > mddev->dev_sectors) {
+-		mddev->recovery_cp = mddev->dev_sectors;
++	    mddev->resync_offset > mddev->dev_sectors) {
++		mddev->resync_offset = mddev->dev_sectors;
+ 		set_bit(MD_RECOVERY_NEEDED, &mddev->recovery);
+ 	}
+ 	mddev->dev_sectors = sectors;
+diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+index 375543f8153f..169bc5fe2d4f 100644
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -2109,7 +2109,7 @@ static int raid10_add_disk(struct mddev *mddev, struct md_rdev *rdev)
+ 	int last = conf->geo.raid_disks - 1;
+ 	struct raid10_info *p;
+ 
+-	if (mddev->recovery_cp < MaxSector)
++	if (mddev->resync_offset < MaxSector)
+ 		/* only hot-add to in-sync arrays, as recovery is
+ 		 * very different from resync
+ 		 */
+@@ -3177,7 +3177,7 @@ static sector_t raid10_sync_request(struct mddev *mddev, sector_t sector_nr,
+ 	 * of a clean array, like RAID1 does.
+ 	 */
+ 	if (mddev->bitmap == NULL &&
+-	    mddev->recovery_cp == MaxSector &&
++	    mddev->resync_offset == MaxSector &&
+ 	    mddev->reshape_position == MaxSector &&
+ 	    !test_bit(MD_RECOVERY_SYNC, &mddev->recovery) &&
+ 	    !test_bit(MD_RECOVERY_REQUESTED, &mddev->recovery) &&
+@@ -4137,7 +4137,7 @@ static int raid10_run(struct mddev *mddev)
+ 		disk->recovery_disabled = mddev->recovery_disabled - 1;
+ 	}
+ 
+-	if (mddev->recovery_cp != MaxSector)
++	if (mddev->resync_offset != MaxSector)
+ 		pr_notice("md/raid10:%s: not clean -- starting background reconstruction\n",
+ 			  mdname(mddev));
+ 	pr_info("md/raid10:%s: active with %d out of %d devices\n",
+@@ -4237,8 +4237,8 @@ static int raid10_resize(struct mddev *mddev, sector_t sectors)
+ 
+ 	md_set_array_sectors(mddev, size);
+ 	if (sectors > mddev->dev_sectors &&
+-	    mddev->recovery_cp > oldsize) {
+-		mddev->recovery_cp = oldsize;
++	    mddev->resync_offset > oldsize) {
++		mddev->resync_offset = oldsize;
+ 		set_bit(MD_RECOVERY_NEEDED, &mddev->recovery);
+ 	}
+ 	calc_sectors(conf, sectors);
+@@ -4267,7 +4267,7 @@ static void *raid10_takeover_raid0(struct mddev *mddev, sector_t size, int devs)
+ 	mddev->delta_disks = mddev->raid_disks;
+ 	mddev->raid_disks *= 2;
+ 	/* make sure it will be not marked as dirty */
+-	mddev->recovery_cp = MaxSector;
++	mddev->resync_offset = MaxSector;
+ 	mddev->dev_sectors = size;
+ 
+ 	conf = setup_conf(mddev);
+@@ -5079,8 +5079,8 @@ static void raid10_finish_reshape(struct mddev *mddev)
+ 		return;
+ 
+ 	if (mddev->delta_disks > 0) {
+-		if (mddev->recovery_cp > mddev->resync_max_sectors) {
+-			mddev->recovery_cp = mddev->resync_max_sectors;
++		if (mddev->resync_offset > mddev->resync_max_sectors) {
++			mddev->resync_offset = mddev->resync_max_sectors;
+ 			set_bit(MD_RECOVERY_NEEDED, &mddev->recovery);
+ 		}
+ 		mddev->resync_max_sectors = mddev->array_sectors;
+diff --git a/drivers/md/raid5-ppl.c b/drivers/md/raid5-ppl.c
+index c0fb335311aa..56b234683ee6 100644
+--- a/drivers/md/raid5-ppl.c
++++ b/drivers/md/raid5-ppl.c
+@@ -1163,7 +1163,7 @@ static int ppl_load_distributed(struct ppl_log *log)
+ 		    le64_to_cpu(pplhdr->generation));
+ 
+ 	/* attempt to recover from log if we are starting a dirty array */
+-	if (pplhdr && !mddev->pers && mddev->recovery_cp != MaxSector)
++	if (pplhdr && !mddev->pers && mddev->resync_offset != MaxSector)
+ 		ret = ppl_recover(log, pplhdr, pplhdr_offset);
+ 
+ 	/* write empty header if we are starting the array */
+@@ -1422,14 +1422,14 @@ int ppl_init_log(struct r5conf *conf)
+ 
+ 	if (ret) {
+ 		goto err;
+-	} else if (!mddev->pers && mddev->recovery_cp == 0 &&
++	} else if (!mddev->pers && mddev->resync_offset == 0 &&
+ 		   ppl_conf->recovered_entries > 0 &&
+ 		   ppl_conf->mismatch_count == 0) {
+ 		/*
+ 		 * If we are starting a dirty array and the recovery succeeds
+ 		 * without any issues, set the array as clean.
+ 		 */
+-		mddev->recovery_cp = MaxSector;
++		mddev->resync_offset = MaxSector;
+ 		set_bit(MD_SB_CHANGE_CLEAN, &mddev->sb_flags);
+ 	} else if (mddev->pers && ppl_conf->mismatch_count > 0) {
+ 		/* no mismatch allowed when enabling PPL for a running array */
+diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
+index 11307878a982..8e74cee3fb8e 100644
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -3740,7 +3740,7 @@ static int want_replace(struct stripe_head *sh, int disk_idx)
+ 	    && !test_bit(Faulty, &rdev->flags)
+ 	    && !test_bit(In_sync, &rdev->flags)
+ 	    && (rdev->recovery_offset <= sh->sector
+-		|| rdev->mddev->recovery_cp <= sh->sector))
++		|| rdev->mddev->resync_offset <= sh->sector))
+ 		rv = 1;
+ 	return rv;
+ }
+@@ -3832,7 +3832,7 @@ static int need_this_block(struct stripe_head *sh, struct stripe_head_state *s,
+ 	 * is missing/faulty, then we need to read everything we can.
+ 	 */
+ 	if (!force_rcw &&
+-	    sh->sector < sh->raid_conf->mddev->recovery_cp)
++	    sh->sector < sh->raid_conf->mddev->resync_offset)
+ 		/* reconstruct-write isn't being forced */
+ 		return 0;
+ 	for (i = 0; i < s->failed && i < 2; i++) {
+@@ -4097,7 +4097,7 @@ static int handle_stripe_dirtying(struct r5conf *conf,
+ 				  int disks)
+ {
+ 	int rmw = 0, rcw = 0, i;
+-	sector_t recovery_cp = conf->mddev->recovery_cp;
++	sector_t resync_offset = conf->mddev->resync_offset;
+ 
+ 	/* Check whether resync is now happening or should start.
+ 	 * If yes, then the array is dirty (after unclean shutdown or
+@@ -4107,14 +4107,14 @@ static int handle_stripe_dirtying(struct r5conf *conf,
+ 	 * generate correct data from the parity.
+ 	 */
+ 	if (conf->rmw_level == PARITY_DISABLE_RMW ||
+-	    (recovery_cp < MaxSector && sh->sector >= recovery_cp &&
++	    (resync_offset < MaxSector && sh->sector >= resync_offset &&
+ 	     s->failed == 0)) {
+ 		/* Calculate the real rcw later - for now make it
+ 		 * look like rcw is cheaper
+ 		 */
+ 		rcw = 1; rmw = 2;
+-		pr_debug("force RCW rmw_level=%u, recovery_cp=%llu sh->sector=%llu\n",
+-			 conf->rmw_level, (unsigned long long)recovery_cp,
++		pr_debug("force RCW rmw_level=%u, resync_offset=%llu sh->sector=%llu\n",
++			 conf->rmw_level, (unsigned long long)resync_offset,
+ 			 (unsigned long long)sh->sector);
+ 	} else for (i = disks; i--; ) {
+ 		/* would I have to read this buffer for read_modify_write */
+@@ -4770,14 +4770,14 @@ static void analyse_stripe(struct stripe_head *sh, struct stripe_head_state *s)
+ 	if (test_bit(STRIPE_SYNCING, &sh->state)) {
+ 		/* If there is a failed device being replaced,
+ 		 *     we must be recovering.
+-		 * else if we are after recovery_cp, we must be syncing
++		 * else if we are after resync_offset, we must be syncing
+ 		 * else if MD_RECOVERY_REQUESTED is set, we also are syncing.
+ 		 * else we can only be replacing
+ 		 * sync and recovery both need to read all devices, and so
+ 		 * use the same flag.
+ 		 */
+ 		if (do_recovery ||
+-		    sh->sector >= conf->mddev->recovery_cp ||
++		    sh->sector >= conf->mddev->resync_offset ||
+ 		    test_bit(MD_RECOVERY_REQUESTED, &(conf->mddev->recovery)))
+ 			s->syncing = 1;
+ 		else
+@@ -7781,7 +7781,7 @@ static int raid5_run(struct mddev *mddev)
+ 	int first = 1;
+ 	int ret = -EIO;
+ 
+-	if (mddev->recovery_cp != MaxSector)
++	if (mddev->resync_offset != MaxSector)
+ 		pr_notice("md/raid:%s: not clean -- starting background reconstruction\n",
+ 			  mdname(mddev));
+ 
+@@ -7922,7 +7922,7 @@ static int raid5_run(struct mddev *mddev)
+ 				mdname(mddev));
+ 			mddev->ro = 1;
+ 			set_disk_ro(mddev->gendisk, 1);
+-		} else if (mddev->recovery_cp == MaxSector)
++		} else if (mddev->resync_offset == MaxSector)
+ 			set_bit(MD_JOURNAL_CLEAN, &mddev->flags);
+ 	}
+ 
+@@ -7989,7 +7989,7 @@ static int raid5_run(struct mddev *mddev)
+ 	mddev->resync_max_sectors = mddev->dev_sectors;
+ 
+ 	if (mddev->degraded > dirty_parity_disks &&
+-	    mddev->recovery_cp != MaxSector) {
++	    mddev->resync_offset != MaxSector) {
+ 		if (test_bit(MD_HAS_PPL, &mddev->flags))
+ 			pr_crit("md/raid:%s: starting dirty degraded array with PPL.\n",
+ 				mdname(mddev));
+@@ -8329,8 +8329,8 @@ static int raid5_resize(struct mddev *mddev, sector_t sectors)
+ 
+ 	md_set_array_sectors(mddev, newsize);
+ 	if (sectors > mddev->dev_sectors &&
+-	    mddev->recovery_cp > mddev->dev_sectors) {
+-		mddev->recovery_cp = mddev->dev_sectors;
++	    mddev->resync_offset > mddev->dev_sectors) {
++		mddev->resync_offset = mddev->dev_sectors;
+ 		set_bit(MD_RECOVERY_NEEDED, &mddev->recovery);
+ 	}
+ 	mddev->dev_sectors = sectors;
+@@ -8424,7 +8424,7 @@ static int raid5_start_reshape(struct mddev *mddev)
+ 		return -EINVAL;
+ 
+ 	/* raid5 can't handle concurrent reshape and recovery */
+-	if (mddev->recovery_cp < MaxSector)
++	if (mddev->resync_offset < MaxSector)
+ 		return -EBUSY;
+ 	for (i = 0; i < conf->raid_disks; i++)
+ 		if (conf->disks[i].replacement)
+@@ -8649,7 +8649,7 @@ static void *raid45_takeover_raid0(struct mddev *mddev, int level)
+ 	mddev->raid_disks += 1;
+ 	mddev->delta_disks = 1;
+ 	/* make sure it will be not marked as dirty */
+-	mddev->recovery_cp = MaxSector;
++	mddev->resync_offset = MaxSector;
+ 
+ 	return setup_conf(mddev);
+ }
+-- 
+2.39.2
 
-> ---
->  Documentation/filesystems/resctrl.rst |   8 ++
->  fs/resctrl/ctrlmondata.c              |   4 +-
->  fs/resctrl/internal.h                 |   2 +
->  fs/resctrl/rdtgroup.c                 | 112 +++++++++++++++++++++++++-
->  4 files changed, 123 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/resctrl.rst b/Documentation/filesystems/resctrl.rst
-> index c22a9dd667cd..b9c3ffdec27f 100644
-> --- a/Documentation/filesystems/resctrl.rst
-> +++ b/Documentation/filesystems/resctrl.rst
-> @@ -189,6 +189,14 @@ related to allocation:
->  			# cat /sys/fs/resctrl/info/L3/io_alloc_cbm
->  			0=ffff;1=ffff
->  
-> +		CBMs can be configured by writing to the interface.
-> +
-> +		Example::
-> +
-> +			# echo 1=FF > /sys/fs/resctrl/info/L3/io_alloc_cbm
-> +			# cat /sys/fs/resctrl/info/L3/io_alloc_cbm
-> +			0=ffff;1=00ff
-> +
->  		When CDP is enabled "io_alloc_cbm" associated with the DATA and CODE
->  		resources may reflect the same values. For example, values read from and
->  		written to /sys/fs/resctrl/info/L3DATA/io_alloc_cbm may be reflected by
-> diff --git a/fs/resctrl/ctrlmondata.c b/fs/resctrl/ctrlmondata.c
-> index 5c16557fb7a8..23c72a5ac043 100644
-> --- a/fs/resctrl/ctrlmondata.c
-> +++ b/fs/resctrl/ctrlmondata.c
-> @@ -148,8 +148,8 @@ static bool cbm_validate(char *buf, u32 *data, struct rdt_resource *r)
->   * Read one cache bit mask (hex). Check that it is valid for the current
->   * resource type.
->   */
-> -static int parse_cbm(struct rdt_parse_data *data, struct resctrl_schema *s,
-> -		     struct rdt_ctrl_domain *d)
-> +int parse_cbm(struct rdt_parse_data *data, struct resctrl_schema *s,
-> +	      struct rdt_ctrl_domain *d)
-
-This can remain static by moving caller to ctrlmondata.c
-
->  {
->  	enum rdtgrp_mode mode = data->mode;
->  	struct resctrl_staged_config *cfg;
-> diff --git a/fs/resctrl/internal.h b/fs/resctrl/internal.h
-> index ab76a1e2e679..011564e69ed5 100644
-> --- a/fs/resctrl/internal.h
-> +++ b/fs/resctrl/internal.h
-> @@ -382,6 +382,8 @@ bool closid_allocated(unsigned int closid);
->  int resctrl_find_cleanest_closid(void);
->  void show_doms(struct seq_file *s, struct resctrl_schema *schema,
->  	       char *name, int closid);
-> +int parse_cbm(struct rdt_parse_data *data, struct resctrl_schema *s,
-> +	      struct rdt_ctrl_domain *d);
->  
->  #ifdef CONFIG_RESCTRL_FS_PSEUDO_LOCK
->  int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp);
-> diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
-> index 008657e43656..1093ec5e385b 100644
-> --- a/fs/resctrl/rdtgroup.c
-> +++ b/fs/resctrl/rdtgroup.c
-> @@ -2036,6 +2036,115 @@ static int resctrl_io_alloc_cbm_show(struct kernfs_open_file *of,
->  	return ret;
->  }
->  
-> +static int resctrl_io_alloc_parse_line(char *line,  struct rdt_resource *r,
-> +				       struct resctrl_schema *s, u32 closid)
-
-Please move to ctrlmondata.c
-
-> +{
-> +	struct rdt_parse_data data;
-> +	struct rdt_ctrl_domain *d;
-> +	char *dom = NULL, *id;
-> +	unsigned long dom_id;
-> +
-> +next:
-> +	if (!line || line[0] == '\0')
-> +		return 0;
-> +
-> +	dom = strsep(&line, ";");
-> +	id = strsep(&dom, "=");
-> +	if (!dom || kstrtoul(id, 10, &dom_id)) {
-> +		rdt_last_cmd_puts("Missing '=' or non-numeric domain\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	dom = strim(dom);
-> +	list_for_each_entry(d, &r->ctrl_domains, hdr.list) {
-> +		if (d->hdr.id == dom_id) {
-> +			data.buf = dom;
-> +			data.mode = RDT_MODE_SHAREABLE;
-> +			data.closid = closid;
-> +			if (parse_cbm(&data, s, d))
-> +				return -EINVAL;
-> +			goto next;
-> +		}
-> +	}
-> +	return -EINVAL;
-> +}
-> +
-> +static ssize_t resctrl_io_alloc_cbm_write(struct kernfs_open_file *of,
-> +					  char *buf, size_t nbytes, loff_t off)
-
-Please move to ctrlmondata.c
-
-> +{
-> +	struct resctrl_schema *s = rdt_kn_parent_priv(of->kn);
-> +	enum resctrl_conf_type peer_type;
-> +	struct rdt_resource *r = s->res;
-> +	struct resctrl_schema *peer_s;
-> +	u32 io_alloc_closid;
-> +	char *peer_buf;
-> +	int ret = 0;
-> +
-> +	/* Valid input requires a trailing newline */
-> +	if (nbytes == 0 || buf[nbytes - 1] != '\n')
-> +		return -EINVAL;
-> +
-> +	buf[nbytes - 1] = '\0';
-> +
-> +	cpus_read_lock();
-> +	mutex_lock(&rdtgroup_mutex);
-> +
-> +	if (!r->cache.io_alloc_capable) {
-> +		rdt_last_cmd_printf("io_alloc is not supported on %s\n", s->name);
-
-rdt_last_cmd_clear() is required before any write to the buffer.
-
-> +		ret = -EINVAL;
-> +		goto out_unlock;
-> +	}
-> +
-> +	rdt_last_cmd_clear();
-> +	rdt_staged_configs_clear();
-> +
-> +	if (!resctrl_arch_get_io_alloc_enabled(r)) {
-> +		rdt_last_cmd_printf("io_alloc is not enabled on %s\n", s->name);
-> +		ret = -EINVAL;
-
-Inconsistent error codes when io_alloc is not enabled.  resctrl_io_alloc_write()
-and resctrl_io_alloc_cbm_show() returns -ENODEV.
-
-> +		goto out_unlock;
-> +	}
-> +
-> +	io_alloc_closid = resctrl_io_alloc_closid(r);
-> +
-> +	/*
-> +	 * When CDP is enabled, update the schema for both CDP_DATA and CDP_CODE.
-> +	 * Since the buffer is altered during parsing, create a copy to handle
-> +	 * peer schemata separately.
-> +	 */
-> +	if (resctrl_arch_get_cdp_enabled(r->rid)) {
-> +		peer_type = resctrl_peer_type(s->conf_type);
-> +		peer_s = resctrl_get_schema(peer_type);
-> +		peer_buf = kmalloc(nbytes, GFP_KERNEL);
-> +		if (!peer_buf) {
-> +			rdt_last_cmd_puts("Out of Memory - io_alloc update failed\n");
-> +			ret = -ENOMEM;
-> +			goto out_unlock;
-> +		}
-> +
-> +		memcpy(peer_buf, buf, nbytes);
-> +
-> +		if (peer_s)
-> +			ret = resctrl_io_alloc_parse_line(peer_buf, r, peer_s, io_alloc_closid);
-
-Similar to resctrl_io_alloc_write() this looks unnecessary. I think this can be simplified
-by moving the CDP check to resctrl_io_alloc_parse_line() where the provided CBM can be parsed
-*once* and the staged config of a CDP type just copied to the staged config of its peer type.
-
-> +
-> +		kfree(peer_buf);
-> +	}
-> +
-> +	if (!ret)
-> +		ret = resctrl_io_alloc_parse_line(buf, r, s, io_alloc_closid);
-> +
-> +	if (ret)
-> +		goto out_unlock;
-> +
-> +	ret = resctrl_arch_update_domains(r, io_alloc_closid);
-> +
-> +out_unlock:
-> +	rdt_staged_configs_clear();
-> +	mutex_unlock(&rdtgroup_mutex);
-> +	cpus_read_unlock();
-> +
-> +	return ret ?: nbytes;
-> +}
-> +
->  /* rdtgroup information files for one cache resource. */
->  static struct rftype res_common_files[] = {
->  	{
-> @@ -2135,9 +2244,10 @@ static struct rftype res_common_files[] = {
->  	},
->  	{
->  		.name		= "io_alloc_cbm",
-> -		.mode		= 0444,
-> +		.mode		= 0644,
->  		.kf_ops		= &rdtgroup_kf_single_ops,
->  		.seq_show	= resctrl_io_alloc_cbm_show,
-> +		.write		= resctrl_io_alloc_cbm_write,
->  	},
->  	{
->  		.name		= "max_threshold_occupancy",
-
-Reinette
 
