@@ -1,127 +1,99 @@
-Return-Path: <linux-kernel+bounces-740161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D94BB0D0CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:10:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DBCBB0D0D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:11:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA255188AE69
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 04:11:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFFD17A9B34
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 04:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA8128B7F9;
-	Tue, 22 Jul 2025 04:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14598289E21;
+	Tue, 22 Jul 2025 04:10:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wr/BPF+v"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NJ8yVbhm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F27D4C92
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 04:10:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724FB4C92;
+	Tue, 22 Jul 2025 04:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753157451; cv=none; b=amoE+T3LrUGGCWIkQdR1c2gxF/qexg5eEvI30wUBFC+TfsZ8OtS9blR9VRUe46+a1GunYIqsDSJoaOdYUmJvnPvmR4YGarX1R+yStWrJenhAPvJFVDhyu89weVA5aPPkWcvHLmRptlg3YIIaIea9AoilI3otrZKP+/YeZx2OiWc=
+	t=1753157456; cv=none; b=TRp6kN6I8ZPWbSL9X3RDCDZ/sFtQ1O4PNvMM5yygYPiH9d63J2B4LcAg7+dFzG/6m2+8DlSI69G0nP5QMM3evk7VH+Ga6IQ0X5Mh3IoZ+da4vvhFPatT9Xxr3lz/WAQn+nA47xNlnOPnAdL5hbKILeGFZDPasClfFFwV2gJHwF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753157451; c=relaxed/simple;
-	bh=OqCNRS+72uajszDzG6n+T34z5A+LL4ACekiWWd6EEzc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hfdR3Yo+E74QWROunb+xbEHAzl5YiVmwEhiQOaPdH7gnQuXbesoFR4lmyzrOf3BIg2blUDsml3KhHUV9NUHOK2vgBwiPhDzqX5u+1FNahXWupjGJoLB1LMSbJjIkEnc3S8mRMQVYpN9RQ9d0hhqUvyW4loiGPMeqbBBrBv8H9XQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Wr/BPF+v; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-74b52bf417cso3314346b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 21:10:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753157449; x=1753762249; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nlBEY6HRx3gs6GmX9n8FOaCyjO7em88PtYwWGu+mg9c=;
-        b=Wr/BPF+vf/8Jh980foQMoEUznzRA7ZAjuL3JQ+v8LvyydzqW1nNIZBWDXvAzE4qfAG
-         xKz54LHvoq4IRfpFzYo2PWvqNb7t9Jsw5K5qRJl3rzI9EDyaMs+MAEx5wHm7BVGSJCni
-         XBbs/wnGUmxlDyTtf6pIynJrBFtYJpk4pKxb7wvl/ct4gRuVTJXPB9WoVCdAMW3Z3RZK
-         kA/r/AG90FM0V03YkXEJB5LwLCONJir1WUq7x2BkeFD/5LRLfr3bgZgBWqYN3ZGAQSsI
-         uqa11XqJPLt0hXQmtGJHoCmLLj6v6MkaDP9QqdCCD5OrKqxIEpzhKbhOOWkiODpImmDh
-         VqPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753157449; x=1753762249;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nlBEY6HRx3gs6GmX9n8FOaCyjO7em88PtYwWGu+mg9c=;
-        b=Voa+xw+uLlfw3pmZrx1aW80BZ1geb986+5jcv0cziNYQ1/bMnbpgtIp+6zbFT8O2yV
-         SMqZkRD8+ixdY22g1LvJbeWIutsLaCmwV41py7X48xRbMxw6udC499g0jDxS1Yh2lt9Y
-         o1Ex/bAei6vwm1pKH3oYtrrjAAyjMk36vA3UBmpqZoum4szdo9RljrnpdS63XS/NWT/W
-         LWXcgr5ZG50VcC4At/FqEoohXMJeKjgpx/iDYfOgp8O7iiSWfmBnaKJZjHzCFcAIq0kA
-         3FPNA3r6ukrBk6YdrbLOiTrNhOAUoP/UHMeZuH/4YgxwLuzDShB1lpWn+p0XjrsSieVL
-         P+aw==
-X-Forwarded-Encrypted: i=1; AJvYcCWogekUPjhEJ8aFGk6MEnNTtZhyh0P/yyWkiWI5I63KHAuVo2kKlX9kVbZpL8p5PydgWSi8mNMOpnSTFg0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEpEuDH1mCQuPodyRnxynEd6lUkjGcfK4GA6/o9reIVqLqGv/N
-	pv4dKiWWTLSBO3UTH/enkcgMIF5SP5V7qZ48CN8u1PI9ptMzE6w0FCf5nXQy8GUheD8=
-X-Gm-Gg: ASbGnct525Zp1i1XhzVq8yVy0sHZ2CZZ5C10Y2lX3i/ffjj+PR9QTafFCaukgznKlPs
-	eJ/pt+bJFglj0a2sQnudXC9uRiecU3WySyfJyh0Vw7LFx8s1NaSjlF4jMXtuMNE67wNnIND5yxa
-	bBuL7LWfBhJHn/RmoJzCejH+9blWeeBV8XsTGYBkKohCl3OEs1pjUnsuibrAW/ciytbwuUw/YcW
-	t/j4iLXeBrpF9rfY8MLscgGeg/fN+bFaOMo+T7mQKccoi0t1i6Kyt9GvAXHwwvNajuYqvJTM/32
-	eR+VRlto+1P04GP/AMibTteRtQN1imJu3mvtzBI7gSAhERtmy6/cMHrcTzzFCwY6d4Ng5vF79lq
-	Jn2RYi/Orwmc3M5bCwXwgbrg7kw3BIkak1Q==
-X-Google-Smtp-Source: AGHT+IHOKWMEzyu46KKsaJPjgo0xgycpcDzWx6CxVzgF6SZy+41yLFML71qXIxEHlqlltMpTlo5GzA==
-X-Received: by 2002:a05:6a21:648a:b0:231:4bbc:ff09 with SMTP id adf61e73a8af0-2381313ca9bmr31553876637.36.1753157449486;
-        Mon, 21 Jul 2025 21:10:49 -0700 (PDT)
-Received: from localhost ([122.172.81.72])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759c84e2c91sm6537501b3a.5.2025.07.21.21.10.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 21:10:48 -0700 (PDT)
-Date: Tue, 22 Jul 2025 09:40:46 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	kernel@collabora.com, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v3 0/4] MT8196 CPUFreq Support
-Message-ID: <20250722041046.lf4b267bmolm4exq@vireshk-i7>
-References: <20250716-mt8196-cpufreq-v3-0-d440fb810d7e@collabora.com>
+	s=arc-20240116; t=1753157456; c=relaxed/simple;
+	bh=FH7yks64NF643MaNnJLEAGnr3ziSpbc76lbP3ZXYW1M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CluBkAjdBho2qsXyxu15PRnno11Cd7+xIMiH8SFnQkjEi08r+vu0Duhz0SIUdopb/SNhMzvuBny1Lin4hQ8sPDX3wYNqtDf4TdvSAP2IfyNu2sZuiCuJxpsiXDo2g498+Qw+a+cl0HKO9Dwp5kRX2HBsb5KQI3a/pcteRpXmBFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NJ8yVbhm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7038C4CEF1;
+	Tue, 22 Jul 2025 04:10:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753157456;
+	bh=FH7yks64NF643MaNnJLEAGnr3ziSpbc76lbP3ZXYW1M=;
+	h=From:To:Cc:Subject:Date:From;
+	b=NJ8yVbhmwkYdTSvohJFHgXSfMVdYq8MKiRO6iJTgorH4zcdSgIX+1fblApJOPT+pL
+	 qH/lMGjO4kpCxjjGngKUpCaTTfYnvXucTeNInjG013K7t/e3age9IGaBVqT/IZDuSB
+	 PCDM/KQKlMbVq/+ckotEdJ2XTwnyaPg2vjffFJ1tO8NeZzmYQZLGBD/c/eJ70dOF6J
+	 gEPx05Mu5FgkjOkyP6SJXQj0J7k1v2JP5h7N4iAIzS206RdwM8i6nPqkXDUfCqA8w6
+	 9DjIA5HAdLE2bn7WMzY9zsVxFsADgT60mgARn+POvyeDn8FYdw/nsY0ZUOVEjEXRfS
+	 TBgTBK6wcnMHg==
+From: Mario Limonciello <superm1@kernel.org>
+To: David Airlie <airlied@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
+	linux-kernel@vger.kernel.org (open list),
+	linux-pci@vger.kernel.org (open list:PCI SUBSYSTEM),
+	Daniel Dadap <ddadap@nvidia.com>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: [PATCH v5 0/2] Alternative approach for boot_display visibility
+Date: Mon, 21 Jul 2025 23:10:49 -0500
+Message-ID: <20250722041051.3354121-1-superm1@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250716-mt8196-cpufreq-v3-0-d440fb810d7e@collabora.com>
+Content-Transfer-Encoding: 8bit
 
-On 16-07-25, 19:51, Nicolas Frattaroli wrote:
-> This series adds the necessary bindings and driver changes to integrate
-> MT8196 CPUFreq into the existing mediatek-cpufreq-hw driver. This
-> necessitated two preparatory cleanup patches to the driver.
-> 
-> The CPU frequency was verified to actually be changing by comparing
-> sysbench cpu numbers between fdvfs being enabled and it not being
-> enabled.
-> 
-> Enablement in the DT will be done once the MT8196 DT lands, so don't be
-> surprised that no node uses these new compatibles so far.
-> 
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> ---
-> Changes in v3:
-> - bindings: changed title as per angelo's suggestions
-> - bindings: dropped the fdvfs magic register range
-> - bindings: dropped redundant description for #performance-domain-cells
-> - driver: made fdvfs frequency divisor a `#define` instead of part of
->   the variant struct
-> - driver: dropped fdvfs magic check
-> - driver: reworked performance domain resource offset
-> - Link to v2: https://lore.kernel.org/r/20250714-mt8196-cpufreq-v2-0-cc85e78855c7@collabora.com
+From: Mario Limonciello <mario.limonciello@amd.com>
 
-Applied. Thanks.
+The past few days there have been various discussions about what to do
+with the boot_display sysfs file so that it doesn't need to be made so
+late in startup.
+
+Bjorn had an aha moment pointing out that there is no reason to "find"
+the PCI device using screen_info_pci_dev() because the device is already
+known.  Instead we just need to check if it has the screen resources.
+
+This series adjusts the boot_display behavior to use that and then convert
+boot_display into a static sysfs file that can be loaded when the device
+is created without needing to change visibility.
+
+This is an ALTERNATIVE to moving it to DRM, which is what v4 does [1].
+Either solution can be picked up depending upon the collective decision
+whether to keep boot_display file in PCI core or DRM core.
+
+Link: https://lore.kernel.org/linux-pci/20250721185726.1264909-1-superm1@kernel.org/T/#me4356b3a172cbdafe83393bedce10f17a86e0da7
+
+Mario Limonciello (2):
+  fbcon: Stop using screen_info_pci_dev()
+  PCI: Adjust visibility of boot_display attribute instead of creation
+
+ arch/x86/video/video-common.c | 12 ++++++--
+ drivers/pci/pci-sysfs.c       | 58 ++++++++++++-----------------------
+ 2 files changed, 30 insertions(+), 40 deletions(-)
 
 -- 
-viresh
+2.48.1
+
 
