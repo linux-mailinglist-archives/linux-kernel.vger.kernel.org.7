@@ -1,186 +1,178 @@
-Return-Path: <linux-kernel+bounces-741405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01D96B0E3B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:51:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D253B0E3B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:51:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22F865657EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:51:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FE1A580FD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:51:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5776A28314B;
-	Tue, 22 Jul 2025 18:51:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDBD1283FFD;
+	Tue, 22 Jul 2025 18:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="aY1pLO3f"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IKvDLxuP"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD59D2798F3
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 18:51:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D0C283FD8
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 18:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753210283; cv=none; b=Qwf9mO/mYwIxM4QD0gX5kCe+BWnxDLcvDtb2KSlI/tdSP5yji8b1JqT72d0o24WH4fWGvDV0OYTFElmQWg+Ox7z4fIGDfuMVGaj4CabCtwbAZrwyf4j7/D7F7G0nDe4PbxjOSWLBVK76rCdL5bXxNNMHEs2SKMfHKXjy7IpAnBw=
+	t=1753210287; cv=none; b=fPSBEBQGkJpGc+Icz8BPfoMHSBOpTLSo8XnXAb0CnrkwGR462y+FTOBV04GuK9cewDBSY5436iQ2QoLS1O1+53QBQWgytf9a3QcZHtzsFJp6TWce1z2E1KXbPc7pZTWsnXGHx7sgFOTj3MnWzbhL01FzI2SVAyKE85qSVnocisk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753210283; c=relaxed/simple;
-	bh=WK8DYN602+GcVD91EGUlyWjmHfpP2vQ62Fan2FjfyBU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ITcIDglZYSyfYs4yOkHMMgp93lsbzrMx8Cus826ej1xpZn0DeEAv2ZUHRWs/4Hg2p8OtMEJxfsaTmTcEkqU62f82O/AsmxYX7aahaFL1o3GCr5n3I7UazNVapFfFYMQxzWRSI/izOjGyAf0ildbtBda9Hdw8PmWYbzUOj1qx1Vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=aY1pLO3f; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e8986a25cbfso4156660276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 11:51:21 -0700 (PDT)
+	s=arc-20240116; t=1753210287; c=relaxed/simple;
+	bh=0gJflN5+ftncUl1+V5yfeO9DL6q4suunebrkcoCQ1SQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f7AKROwfcNkoCSsY52stBLKsl1YSLLo6MjaOsaZI3ZtvvHJPpY7j7SBdpZDK6WKFsJMy7JrridaaVLadOprLsJaHg6L2VrPeKRkNkmsxPNoLoRwH1enSNOzY+maEBNWR8HhLIrVmR4mhta5g3j0sDsrG11zXDAv4dC0XzH9kM+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IKvDLxuP; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4ab3ad4c61fso77701cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 11:51:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1753210281; x=1753815081; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=WK8DYN602+GcVD91EGUlyWjmHfpP2vQ62Fan2FjfyBU=;
-        b=aY1pLO3f0yIPzNJUCAyoM8QreVvTR1QXy+hiD834uLe79hc971OW6QCi/y7/nlezdF
-         wQpQVgYOpFMcAk07FU6gr9Hb9dw4q94UmSI4/bwxZxfUS1I3Hm+TMffyH+tXqxyFpM4w
-         GpUBT99jt9pPBhHzPm+FxPQjFdoQLph2lCITFTIbA9XoAi+PenHZ3V2We38eeoJQxCdm
-         GXtYwHO+eBmdni0830E4Fn82Qs2zcCWLx2pzmVC8U8gBLFt8/13ExomcX5Qzu+fA0PNz
-         EfRWFfZMMGcVeGOfGFn6DdvNHkG7aDZQXd/C0gJ6m3Z0lGEb8aMKX5FpQI8Lio7iTJmE
-         NGCw==
+        d=google.com; s=20230601; t=1753210284; x=1753815084; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Y4v/0bSm2eOQeRU/QVLO9OgyL4pkFF+iWSGFdfVifOE=;
+        b=IKvDLxuPSJxIJBBStDUOAeBr0YMs85ALIEYoBVb1g8eoB+Sf75MrpJbiaSXSwSbE5b
+         ep350QhIsBc5JnfNVF73u7MtF9YybgeVVcOGu+7/Rg7mjOC62QxdN2oEJqzyadACXUjn
+         +ofRRN09DFisBFlyBrSSAev1XB1rE2WjkDB0glY+UwrMHJ6d9PlTkTAheMOyyzfFeiIN
+         9jP5e7oU2/Us/hbaSk1JW9XWWOeg+2/+Dx99uAo/a19W+iAu9BtAdE4t4aUP12decs06
+         yYn7hFz0VdsCWmvKPAQ41gFPpUyQY6lOMSya56/8ga3aW876db28336KhbAyEQqLGTBe
+         4Thg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753210281; x=1753815081;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
+        d=1e100.net; s=20230601; t=1753210284; x=1753815084;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WK8DYN602+GcVD91EGUlyWjmHfpP2vQ62Fan2FjfyBU=;
-        b=iSvg6d+/n12Ip5/yVMaG4e8avfNhkZgfYjWupmk2KvLp57fVhOErPJbqyzpy37jwMP
-         1jYHIbzV/AvakAKR0hHvUhw3/EaMGMKIyl+uYAi8GYur2jUz6wd5HnuvDU0KCr74RCzh
-         /xUDK60fSnHKjfx9JLUgOw1dEnnHhx+xDyTftN9E4332jAF4RRcteX3iRxuEmvBzUVFd
-         PgkjjXYcbX/7IVbRnl1sVoZA86e8Z80CuxVvHSyG/tbyDv87G6E1StgPjObeQjtrE4bd
-         7+gXoAB2i3n7rC82S60tcOu0L0zB2bGNu6ZRLavXdtXcYKt7qaWLYN227MLJ6+PkQcC3
-         St3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXVAAL27xqyrZgZEqmhiE6FtkokHdYcLrhaP2kkWwVX8HZxzudqKKqJzU1/rKKeDFxrnAnKr8t373ZYPfU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywsLFNMDIJQ58CW1Jty7FyFBujJcGAnJ6mKWyZPcwIumt8HibA
-	f61vB5aCkgXXh0Bkh1JL9keGhHF85YKox/CSD8aTYsqBKFmcOHNaljjb4byvAkQJOTo=
-X-Gm-Gg: ASbGncuKMn6p10z47TOgpW+JvKLdUPHWKPZmttl+9sG2Cqxvo88UnRS9NhKf+r9NyJL
-	x07UidBjbY7kGh3+m/OG/99MtzO54SpwgmHM/KmigBVi3ffoLCfuj5L8ejHwAucP6QdJi2MX1Fc
-	yo97A+mRhNvaOQDLo+oz9hKAxYuRmgkDyL0+j64PqbJLO/zvGRd4DQXZHgjRqCyHVFRw9lMfAjv
-	zdWfUrYS+kunhkUp1nWFx8wL6Wg17my4vTYvXv5WQ0M+YkG/5dqcGzshDjvZUoMPUQPz2rHvdGl
-	4VZpo4gADqiSErfjbFpfesVcPJCsrgF2aU5jSo5yVYjiSMuwpM2mBTjt4I0cT68j1ZidH9qngSA
-	8Sonh3EtjFjojisV/xKTHEEUaOVqOS7N+YkT1Yfp19q6CCDD4Jnu4k6PrteW4/LD3L4tZdg==
-X-Google-Smtp-Source: AGHT+IFratboz2BjZXyZLG+NvQJuMYJbryhm/xSoaYQ94OrdhP0SHzFyHmacfQC/3iA06ofvst830w==
-X-Received: by 2002:a05:6902:620a:b0:e8d:7b84:cb46 with SMTP id 3f1490d57ef6-e8dc59c5239mr406470276.32.1753210280679;
-        Tue, 22 Jul 2025 11:51:20 -0700 (PDT)
-Received: from ?IPv6:2600:1700:6476:1430:7b5e:cc7f:ebd6:8d83? ([2600:1700:6476:1430:7b5e:cc7f:ebd6:8d83])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e8d7cc0eb6dsm3455584276.6.2025.07.22.11.51.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 11:51:19 -0700 (PDT)
-Message-ID: <efd70965b87382c7172495b161bfef7cfdffb431.camel@dubeyko.com>
-Subject: Re: [PATCH v4 1/3] hfsplus: fix to update ctime after rename
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: Yangtao Li <frank.li@vivo.com>, glaubitz@physik.fu-berlin.de
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 22 Jul 2025 11:51:18 -0700
-In-Reply-To: <20250722071347.1076367-1-frank.li@vivo.com>
-References: <20250722071347.1076367-1-frank.li@vivo.com>
-Autocrypt: addr=slava@dubeyko.com; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 (by Flathub.org) 
+        bh=Y4v/0bSm2eOQeRU/QVLO9OgyL4pkFF+iWSGFdfVifOE=;
+        b=fApSJno2W3pxbffWbVgUUaoTmq76R5W9kffcM2/xRBCDYF0OLFKxZscMPSLU7KUdVD
+         3oUH2c8VGLPtsfAANHH223nGrh7jpmmYSRDUyml7kr8TESffIdJpluHxEGdJ4X2lZYYv
+         LtyugrXQjb9Im4SY/sYVv/JNZNVAUUegUu0Bf0YOqmlwFWx3ca6rV80gN7be/tsVWtTx
+         f1BnDkOMH+rqlcdJoBBh5WUomzKdaZTqA/Frfby17Q0OrR1bkuwpMmwFc1nT88sIJIfH
+         Y1Qg2PmHGLl2QQLcnbo8QltceChQ5Rsjnrp45IVu1Fzu6zxwYRJYf+GfB611pbYI57qR
+         G63A==
+X-Forwarded-Encrypted: i=1; AJvYcCWkCC+io1NecNr56Ztet3bRYahYQ3GF+4sHz7AGKyAPbPB61zOAPA7+aiFYOivkXl67DyibwpsVgqmpbro=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsEpiQn/uIxznsNHkt8xS3CyCoENVbtbrRfLvMlf+D8RHA2U3d
+	RHxO/78GYPC/k5p7Y0GZTkPiPId7n4BdTeLEuE3M5JXYZXL66ltM2Km3cp1C7sUfA91Q1KNa4sN
+	G3LOp0j0e
+X-Gm-Gg: ASbGncvI5p4Evv0SBsbQ/30bO5Wbr6tWk8Qymrli4K9SriK5SoEu/0Dh4IZTn7o8AKn
+	qVA0nX84pUXztFdKV8Fo0XaSXY2W70J5Y4ZfbUtOdZiJ8qpbg3mN5AFid+cSheU+l8UKGiEmUU4
+	gCXxMpNAehBhNNiLDiJr8AT/QHDvtu4bs01x/rDxvVuSPsGQruQhNhQLbGnFPE8YOhlK5GyvhW8
+	hJHnRF/Fyfj3Kccnzc3Tk+rGVnrByVZFH5aQ/CZS3A8a0lTlC1oV0TTDqLOGlPQmkePlRcsi9DD
+	eys/Xofruowl2p4O14K3+QM7RAkR3W0SYwdI03XyV0OivaCT2DepiGm0Y8pqvDaiTEMae1KiUgZ
+	Zwr05zobNMSbqRnK9G6qk+fiItwRiNOIQ4Pfya2/g8rVuRidLgRB7UEBpSjlS
+X-Google-Smtp-Source: AGHT+IHlSLCdiZvSP/je7fwpuEm0Rkobn5lZYibCSnHYZ1wOnpR0k9uvVTjSvbsymnzgnmsfE/Qdsg==
+X-Received: by 2002:a05:622a:a547:b0:497:75b6:e542 with SMTP id d75a77b69052e-4ae6d77cb7bmr374721cf.10.1753210283624;
+        Tue, 22 Jul 2025 11:51:23 -0700 (PDT)
+Received: from [192.168.1.31] (d-24-233-113-28.nh.cpe.atlanticbb.net. [24.233.113.28])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4abb499fea2sm57461881cf.22.2025.07.22.11.51.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Jul 2025 11:51:22 -0700 (PDT)
+Message-ID: <dcc38ba0-cbb4-494e-bc10-2df2b4aa2cb0@google.com>
+Date: Tue, 22 Jul 2025 14:51:21 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/resctrl: avoid divide by 0 num_rmid
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: Tony Luck <tony.luck@intel.com>, Dave Martin <Dave.Martin@arm.com>,
+ James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+ "x86@kernel.org" <x86@kernel.org>
+References: <20250721180051.3645697-1-brho@google.com>
+ <c4518fe2-dce3-46d1-8d79-cd63377bdcad@intel.com>
+From: Barret Rhoden <brho@google.com>
+Content-Language: en-US
+In-Reply-To: <c4518fe2-dce3-46d1-8d79-cd63377bdcad@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 2025-07-22 at 01:13 -0600, Yangtao Li wrote:
-> [BUG]
-> $ sudo ./check generic/003
-> FSTYP=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -- hfsplus
-> PLATFORM=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -- Linux/x86_64 graphic 6.8.0-58-g=
-eneric #60~22.04.1-
-> Ubuntu
-> MKFS_OPTIONS=C2=A0 -- /dev/loop29
-> MOUNT_OPTIONS -- /dev/loop29 /mnt/scratch
->=20
-> generic/003=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - output mismatch
-> =C2=A0=C2=A0=C2=A0 --- tests/generic/003.out=C2=A0=C2=A0 2025-04-27 08:49=
-:39.876945323 -0600
-> =C2=A0=C2=A0=C2=A0 +++ /home/graphic/fs/xfstests-dev/results//generic/003=
-.out.bad
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0 QA output created by 003
-> =C2=A0=C2=A0=C2=A0 +ERROR: change time has not been updated after changin=
-g file1
-> =C2=A0=C2=A0=C2=A0=C2=A0 Silence is golden
-> =C2=A0=C2=A0=C2=A0 ...
->=20
-> Ran: generic/003
-> Failures: generic/003
-> Failed 1 of 1 tests
->=20
-> [CAUSE]
-> change time has not been updated after changing file1
->=20
-> [FIX]
-> Update file ctime after rename in hfsplus_rename().
->=20
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> Tested-by: Viacheslav Dubeyko <slava@dubeyko.com>
-> Reviewed-by: Viacheslav Dubeyko <slava@dubeyko.com>
-> ---
-> =C2=A0fs/hfsplus/dir.c | 11 ++++++++---
-> =C2=A01 file changed, 8 insertions(+), 3 deletions(-)
->=20
+On 7/22/25 2:19 PM, Reinette Chatre wrote:
+> Hi Barret,
+> 
+> On 7/21/25 11:00 AM, Barret Rhoden wrote:
+>> x86_cache_max_rmid's default is -1.  If the hardware or VM doesn't set
+>> the right cpuid bits, num_rmid can be 0.
+>>
+>> Signed-off-by: Barret Rhoden <brho@google.com>
+>>
+>> ---
+>> I ran into this on a VM on granite rapids.  I guess the VMM told the
+>> kernel it was a GNR, but didn't set all the cache/rsctl bits.
+>>
+> 
+> The -1 default of x86_cache_max_rmid is assigned if the hardware does not
+> support *any* L3 monitoring. Specifically:
+> 
+> resctrl_cpu_detect():
+> 	if (!cpu_has(c, X86_FEATURE_CQM_LLC)) {
+> 		c->x86_cache_max_rmid  = -1;
+> 		...
+> 	}
+> 
+> The function modified by this patch, rdt_get_mon_l3_config() only runs if
+> the hardware supports one or more of the L3 monitoring sub-features
+> (X86_FEATURE_CQM_OCCUP_LLC, X86_FEATURE_CQM_MBM_TOTAL, or
+> X86_FEATURE_CQM_MBM_LOCAL) that depend on X86_FEATURE_CQM_LLC per cpuid_deps[].
+> 
+> I tried to reproduce the issue on real hardware by using clearcpuid to
+> disable X86_FEATURE_CQM_LLC and the CPUID dependencies did the right thing
+> by automatically disabling X86_FEATURE_CQM_OCCUP_LLC, X86_FEATURE_CQM_MBM_TOTAL,
+> X86_FEATURE_CQM_MBM_LOCAL, not running rdt_get_mon_l3_config() at all, and
+> not even attempt to enumerate any of the L3 monitoring details.
+> 
+> What are the symptoms when you encounter this issue?
 
-Probably, it was not very good idea to combine the HFS+ patch with HFS
-patches, because I cannot take this one without others. :)
+Linux crashes during boot with a divide error, and the splat backtrace 
+is in rdt_get_mon_l3_config().
 
-Also, from my point of view, the patchset requires a cover letter.
-Otherwise, it looks slightly unusual. :)
+> Would it be possible to send me the CPUID flags of leaf 7, subleaf 0 as
+> well as all sub-leaves of leaf 0xF?
+
+# ./cpuid 0x7 0
+CPUID for Leaf 0x00000007, Sublevel 0x00000000:
+	eax: 00000002
+	ebx: f1bf2ffb
+	ecx: 1b415f7e
+	edx: bc814410
+
+# ./cpuid 0x7 1
+CPUID for Leaf 0x00000007, Sublevel 0x00000001:
+	eax: 00201c30
+	ebx: 00000000
+	ecx: 00000000
+	edx: 00084000
+
+# ./cpuid 0x7 2
+CPUID for Leaf 0x00000007, Sublevel 0x00000002:
+	eax: 00000000
+	ebx: 00000000
+	ecx: 00000000
+	edx: 0000003f
+
+> Could you please also elaborate what the impact of this issue is? Is this
+> a VM that has been released with many users impacted or something encountered
+> during development of this VM?
+
+This is with cloud-hypervisor.  We do have a couple of local patches for 
+running on machines with more than 256 cpus.  I didn't see anything in 
+our changes related to cpuid 0x7, but maybe it's on our end.
+
+But I imagine the problem isn't widespread and could be considered 
+developmental.
+
+I'll keep poking on my end - maybe I had some other cruft in my system 
+(in the kernel build or in cloud_hypervisor).
 
 Thanks,
-Slava.
+Barret
 
 
