@@ -1,156 +1,169 @@
-Return-Path: <linux-kernel+bounces-741218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25F93B0E199
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:21:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76C1CB0E19A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:22:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0B10565FCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:20:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A8226C0B2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD2027A90A;
-	Tue, 22 Jul 2025 16:20:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A782279DDB;
+	Tue, 22 Jul 2025 16:21:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XSOsjRh3"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CrZtZYmm"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88FED4685
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 16:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCC1925F7B4
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 16:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753201255; cv=none; b=ZYOq8pvfT/rU3EreKwfYghbviSHWUsoFC8LcmFhzzYn4w0CZNagOq8SqcQZ2+SwIA9dq7MCvfe4Wfh8MwjxTlxBXBXVmg8CCS/qxAIaWD5V68h43yn+6BT27Pe08mzHzqng+M5JIJZnDNek5viDnmuATZ6GOOxKQWLy2XCRCeJ8=
+	t=1753201269; cv=none; b=ZjeGXZd8wtMMa7k7hkV3cYXMKjDPc8OfvtxBNoV7B90KVtdyG6c/rLRfaS6P1rEmRAxn0O5cTxQr6zWwYODB/Jv2jss2fNsAX6TS0WtdrE+NixSxryKbwflrlq021IqcBG7wnaZRhgw+zRhxK/Qzk7pMx3l7hqqRmIZqozmTQYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753201255; c=relaxed/simple;
-	bh=9NhsPub8Dwc9EnXZIJv3NRiBAhBjEG9mmwT11504ntE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BmQqZmdCVsTM5CBLsuAdkC36s5BwSAQrvWdC+AES4PeHSzdDetIhQmdUX0Q2RyUQwhn4Iz6tRNPPMD9lZyV2KKaZwf6JjniQWWkoigI+trlu03wb0tvG99yH3Nfv3dmC+v57dKr3uIYBxcOwTqQLVII35yMpn6bu0Ucof+ABLr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XSOsjRh3; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7490702fc7cso3632631b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 09:20:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1753201253; x=1753806053; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZwHRFu4FSql/d/NwVvAy0lekcQX4lLK0gqetRRULkuc=;
-        b=XSOsjRh3+SQUa7NE2KLrw2fV7LnvJFVNKp83cUcUPHc9UIkJOJVnpJSLTbsIbTO4HC
-         NiK38T4zV4/HOMFPi2lNz6YjPd6Xv1eacfZZzGLjfIN5Dd7qFxOr2soA+4zBEz4Yeyp+
-         wQiAuqbeGXAi+V2KTgpTbWzIJ/Vgl7/8RoK1U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753201253; x=1753806053;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZwHRFu4FSql/d/NwVvAy0lekcQX4lLK0gqetRRULkuc=;
-        b=YWYlKlykuPmK3X0XdmPZfKfYaKxAyd6lNUGb9NM1P2o6cUFvRalkM/H8VcoYW6hMDR
-         JFEtj1MVL7CjSi8vYt80YN6ygPbyKfQA+NpMPSOuH30vDXbraMc4oj4s4wgF6FrmYtoQ
-         TIXUr870h7ARkbZZ+LpSo38qW4kUm2UxIXy/E9NZfAubORdRp7ruYj1rzHcjOso08I05
-         mMBhcy7ntgNFI8v79PJVcuW0X6wP+bhRpUL9wZDVH+cE6aD3e9wlOdQrz55DNeM8M7lf
-         fwohTydQSfV+ChK425bNtxnkpKEAUnUe8BZlhxfRMipg5qFpXxaoKECQDFln+9mhcFvO
-         +Uow==
-X-Forwarded-Encrypted: i=1; AJvYcCVwYIZqYyVth3q3+uCpJo/pHWIcWD1IGpL+kEbJKDHtuhBIR7STR8gTCAPIXWfnZ17p26HlF7V5aem9LxE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztaGMxEvmng56xJKQSeZRQU9h553aHPUK6ztqDrTFE137LGwi4
-	p1VihvtB1pPXoo5bu6C8XXSZ6CHZSDu7xPFE1VpW5UOLWe2GlNb+x8dcOFFaUC2fa9rzh8jAAVo
-	uEk4=
-X-Gm-Gg: ASbGncuV6wjuHcw3MbFXAwhHKAE0m+xsm+70qw+mCqzqbpYgEvWfOnJC44xL2nqRVY+
-	fu2tUWYRcKWIErj9G6UIUMyuxw9jelNZtnqV+FSzOXkucfzV8GLuOmLSK41IfqVR57adCBt7q9q
-	vUqnU9Gpf5LfVQbaX/qo25TMbxunLCOAqDTy3cLDn1fa5joh1xL3yDO4yiFzrR5kXywXGXJ5QgH
-	7GaBZrAzq/CMFgI0Hnw7+gidFu/PJmo/xqDoMbruM0RoUSnWRf9/uHUgEWjy6X4W3je2PlYffYc
-	4Nd/k5M2dinELEXmt/j+nA0d5p1jlJubVBfDKLoM2wkVux5MH/3ZHaDuge/cBcdMsW34FXdSwe1
-	iGxwbHcAwB5uc740oDPh1ZAPkcVCw8gd7bINnmKi94soMbTuz+QB00CwxJ7T5bYOXtQ==
-X-Google-Smtp-Source: AGHT+IEQD5Y5oGNF6Rl9taw1DLnnvqRocguYtLtgUa5EkyQHVYPxyenmnCxMFlLUICvpCU9BW0b2wA==
-X-Received: by 2002:a05:6300:6e17:b0:238:3f54:78f2 with SMTP id adf61e73a8af0-2383f548db8mr22114439637.44.1753201252669;
-        Tue, 22 Jul 2025 09:20:52 -0700 (PDT)
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com. [209.85.215.181])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759cbc6bf14sm7807505b3a.158.2025.07.22.09.20.52
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Jul 2025 09:20:52 -0700 (PDT)
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b3bdab4bf19so4383778a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 09:20:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXGM9uJSPGQ8pBF4oLxz7TqC+hUxYTKZTu7Pj3xZd8MuYlzXShNusHUyQrWLM27Pu56TBUnQTNiYXfvov8=@vger.kernel.org
-X-Received: by 2002:a17:90b:3f8d:b0:316:d69d:49fb with SMTP id
- 98e67ed59e1d1-31c9e70915amr41164532a91.14.1753201251543; Tue, 22 Jul 2025
- 09:20:51 -0700 (PDT)
+	s=arc-20240116; t=1753201269; c=relaxed/simple;
+	bh=WZ5zblbFjn5nzCnrQaOPKKWOCgSc/1RSP/OY9Ph4mH4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J5euKkD7y2c8huTc1+puq+YXMM02hFSuqg8cx27c58g0WSfUsOrXMvy1DtGj9nOrtVkJj8Oae4Wj1eRzoBFdW7IVthcwfGQCD/ao5Q/nQSK8DSEA8LwbJh3E7uXyKXW2ek5akm4/eCfLdCLaZY+L3GkALGOWRc2B4OryqQaKNBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CrZtZYmm; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 22 Jul 2025 12:20:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753201264;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J4hYFek2OVZlJqI5+fP55CNQUvcRLJWSENQJ1oK5FKQ=;
+	b=CrZtZYmmdom/GKJa43rt39CagC0+SAIzHQn1BpNn8qYS60hzuM5QE36cS4A6sxCp1rjqCS
+	BTtmbpRBoFG0UF87f5tOR0+Nqdg9y0AdBmcJHmRq5utQ+ur53r3tvmyOyfVAb8lTNf9e75
+	/EFAKPSCCjC5x0C8E+dqDkXmjq2pbgk=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: syzbot <syzbot+e3f91c76099a777cbf16@syzkaller.appspotmail.com>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bcachefs?] kernel BUG in
+ do_bch2_trans_commit_to_journal_replay
+Message-ID: <i5jizyac6siolrwgsd6dtj4shebjophbf6mk6itete7rusmrxn@hbebk47xym6v>
+References: <687c89c0.a70a0220.693ce.00b1.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250722015313.561966-1-me@brighamcampbell.com> <20250722015313.561966-2-me@brighamcampbell.com>
-In-Reply-To: <20250722015313.561966-2-me@brighamcampbell.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 22 Jul 2025 09:20:39 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XGO5y0F40oaOANW-r-q5qZPFYRwO7aQHi3R6Ag-aeMag@mail.gmail.com>
-X-Gm-Features: Ac12FXwtfJseOxsGp7nVtSJKfbTvysXVQqEuN_xMYIUstfIqb9Hrqert7fbtJBI
-Message-ID: <CAD=FV=XGO5y0F40oaOANW-r-q5qZPFYRwO7aQHi3R6Ag-aeMag@mail.gmail.com>
-Subject: Re: [PATCH v6 1/4] drm: Create mipi_dsi_dual* macros
-To: Brigham Campbell <me@brighamcampbell.com>
-Cc: tejasvipin76@gmail.com, diogo.ivo@tecnico.ulisboa.pt, 
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev, 
-	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Jianhua Lu <lujianhua000@gmail.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <687c89c0.a70a0220.693ce.00b1.GAE@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-Hi,
-
-On Mon, Jul 21, 2025 at 6:53=E2=80=AFPM Brigham Campbell <me@brighamcampbel=
-l.com> wrote:
->
-> Create mipi_dsi_dual, mipi_dsi_dual_dcs_write_seq_multi, and
-> mipi_dsi_dual_generic_write_seq_multi macros for panels which are driven
-> by two parallel serial interfaces. This allows for the reduction of code
-> duplication in drivers for these panels.
->
-> Remove mipi_dsi_dual_dcs_write_seq_multi definition from
-> panel-novatek-nt36523.c to avoid the duplicate definition. Make novatek
-> driver pass mipi_dsi_context struct as a pointer.
->
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> Signed-off-by: Brigham Campbell <me@brighamcampbell.com>
+On Sat, Jul 19, 2025 at 11:16:32PM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    d086c886ceb9 Add linux-next specific files for 20250718
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=174f04f0580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=cc0cd9fdf69889c3
+> dashboard link: https://syzkaller.appspot.com/bug?extid=e3f91c76099a777cbf16
+> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/4435f80a19c4/disk-d086c886.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/9a7dc57a5ea3/vmlinux-d086c886.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/da9f2dc22ae1/bzImage-d086c886.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+e3f91c76099a777cbf16@syzkaller.appspotmail.com
+> 
+>   features: lz4,new_siphash,inline_data,new_extent_overwrite,btree_ptr_v2,new_varint,journal_no_flush,alloc_v2,extents_across_btree_nodes
+> bcachefs (loop0): Using encoding defined by superblock: utf8-12.1.0
+> bcachefs (loop0): initializing new filesystem
+> ------------[ cut here ]------------
+> kernel BUG at fs/bcachefs/btree_trans_commit.c:1027!
+> Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
+> CPU: 0 UID: 0 PID: 7573 Comm: syz.0.296 Not tainted 6.16.0-rc6-next-20250718-syzkaller #0 PREEMPT(full) 
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+> RIP: 0010:do_bch2_trans_commit_to_journal_replay+0x10f3/0x1120 fs/bcachefs/btree_trans_commit.c:1027
+> Code: 48 c7 c1 79 7b 99 8d 49 89 c0 e8 f8 7a 2b 00 4c 89 ff e8 10 c7 0d 00 48 8b 7c 24 68 e8 d6 1b 00 00 90 0f 0b e8 4e e3 92 fd 90 <0f> 0b e8 46 e3 92 fd eb ad e8 3f e3 92 fd eb a6 e8 38 e3 92 fd 90
+> RSP: 0018:ffffc9000494edb8 EFLAGS: 00010283
+> RAX: ffffffff842ccdc2 RBX: 00000000fffff7ab RCX: 0000000000080000
+> RDX: ffffc9000b829000 RSI: 0000000000043784 RDI: 0000000000043785
+> RBP: ffff88807e458000 R08: ffff888063f849e3 R09: 1ffff1100c7f093c
+> R10: dffffc0000000000 R11: ffffed100c7f093d R12: ffff88807e458028
+> R13: 0000000000000000 R14: ffff88807e4580d2 R15: ffff8880269a6000
+> FS:  00007f6f1c5f26c0(0000) GS:ffff888125be3000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fc41ced2048 CR3: 0000000059546000 CR4: 00000000003526f0
+> Call Trace:
+>  <TASK>
+>  __bch2_trans_commit+0x1b13/0x8a70 fs/bcachefs/btree_trans_commit.c:1060
+>  bch2_trans_commit fs/bcachefs/btree_update.h:270 [inline]
+>  bch2_dev_usage_init+0x22c/0x3f0 fs/bcachefs/disk_accounting.c:934
+>  bch2_fs_initialize+0x4b5/0xe60 fs/bcachefs/recovery.c:1179
+>  bch2_fs_start+0xa00/0xcc0 fs/bcachefs/super.c:1217
+>  bch2_fs_get_tree+0xb39/0x1540 fs/bcachefs/fs.c:2456
+>  vfs_get_tree+0x92/0x2b0 fs/super.c:1815
+>  do_new_mount+0x2a2/0x9e0 fs/namespace.c:3805
+>  do_mount fs/namespace.c:4133 [inline]
+>  __do_sys_mount fs/namespace.c:4344 [inline]
+>  __se_sys_mount+0x317/0x410 fs/namespace.c:4321
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f6f1b79014a
+> Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007f6f1c5f1e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffda RBX: 00007f6f1c5f1ef0 RCX: 00007f6f1b79014a
+> RDX: 0000200000000140 RSI: 0000200000000100 RDI: 00007f6f1c5f1eb0
+> RBP: 0000200000000140 R08: 00007f6f1c5f1ef0 R09: 0000000002800000
+> R10: 0000000002800000 R11: 0000000000000246 R12: 0000200000000100
+> R13: 00007f6f1c5f1eb0 R14: 0000000000005a7a R15: 0000200000000300
+>  </TASK>
+> Modules linked in:
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:do_bch2_trans_commit_to_journal_replay+0x10f3/0x1120 fs/bcachefs/btree_trans_commit.c:1027
+> Code: 48 c7 c1 79 7b 99 8d 49 89 c0 e8 f8 7a 2b 00 4c 89 ff e8 10 c7 0d 00 48 8b 7c 24 68 e8 d6 1b 00 00 90 0f 0b e8 4e e3 92 fd 90 <0f> 0b e8 46 e3 92 fd eb ad e8 3f e3 92 fd eb a6 e8 38 e3 92 fd 90
+> RSP: 0018:ffffc9000494edb8 EFLAGS: 00010283
+> RAX: ffffffff842ccdc2 RBX: 00000000fffff7ab RCX: 0000000000080000
+> RDX: ffffc9000b829000 RSI: 0000000000043784 RDI: 0000000000043785
+> RBP: ffff88807e458000 R08: ffff888063f849e3 R09: 1ffff1100c7f093c
+> R10: dffffc0000000000 R11: ffffed100c7f093d R12: ffff88807e458028
+> R13: 0000000000000000 R14: ffff88807e4580d2 R15: ffff8880269a6000
+> FS:  00007f6f1c5f26c0(0000) GS:ffff888125ce3000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fc8ab0e9000 CR3: 0000000059546000 CR4: 00000000003526f0
+> 
+> 
 > ---
->  drivers/gpu/drm/drm_mipi_dsi.c                |  48 ++
->  drivers/gpu/drm/panel/panel-novatek-nt36523.c | 804 +++++++++---------
->  include/drm/drm_mipi_dsi.h                    |  95 +++
->  3 files changed, 541 insertions(+), 406 deletions(-)
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 
-Just because I was curious and wanted to confirm my claim that this
-would result in a nice space savings for novatek, I ran bloat-o-meter
-on the novatek module comparing before and after your patch:
+fixed in the updated version of
+bcachefs: do_bch2_trans_commit_to_journal_replay handles accounting
 
-add/remove: 0/0 grow/shrink: 0/4 up/down: 0/-8754 (-8754)
-Function                                     old     new   delta
-elish_csot_init_sequence.d                   758     379    -379
-elish_boe_init_sequence.d                    846     423    -423
-elish_csot_init_sequence                    9136    5380   -3756
-elish_boe_init_sequence                    10192    5996   -4196
-Total: Before=3D33880, After=3D25126, chg -25.84%
-
-So the new way of defining mipi_dsi_dual_dcs_write_seq_multi() did
-indeed give a pretty sweet space savings! :-)
-
-This patch looks good to me now. Thanks for putting up with all my
-requests. I know this is a lot bigger than you thought it would be
-when you posted your first patch, but I appreciate you sticking with
-it!
-
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-
-My plan would be to give this series another week on the list. If
-there is no additional feedback then I'll plan to land it.
-
-
--Doug
+#syz test: git://evilpiepirate.org/bcachefs.git for-next
 
