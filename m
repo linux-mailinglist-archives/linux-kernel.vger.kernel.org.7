@@ -1,136 +1,165 @@
-Return-Path: <linux-kernel+bounces-740530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B161AB0D550
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:08:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 343B1B0D557
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:10:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7216218926EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:09:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67F4C3A4CBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:10:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31BD2DA76A;
-	Tue, 22 Jul 2025 09:08:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911D62DA76A;
+	Tue, 22 Jul 2025 09:10:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fTbuEeH4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OdkXyP9X"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E8C9189F5C;
-	Tue, 22 Jul 2025 09:08:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE84270EA5;
+	Tue, 22 Jul 2025 09:10:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753175318; cv=none; b=YE2UQ+T9OzyRJ+XaAeWJCDNfocQWXwRCmSmMjDGVHhwkxFcnMCuA0b09MpaQ1T29BXrgEUvynTxlplC28Dp0A5AKk+XFYXIuLx2HqlmQu/pgPo1nF0FE7HXYDDZXxrBMSxGe07JTpv3KZnsBxh93PlnMHHAGoApuIVmL6TeineE=
+	t=1753175429; cv=none; b=stBSHF/bNNkLud6AqNKzaeaQVhYKtvBexhHLihWOAbDUhrc+YLjpwuJkXDmnqBiz28W+kt6ZtduhfaerEaawuxOdiY9HNUiyTLrZnHb81UIRa6gdRk9z1qmDJj2SBGBm2GD/NWYMs1Kb+USp+F7fPgI4f0KcBbNZI/ScGv9MBjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753175318; c=relaxed/simple;
-	bh=bpDft6oO+lFmar4gUVFA5oPCPI7YERjD3nM/ltmpdLg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Pjdhlhy3g5pPMwdQjmW5fDGjp7D0umWxYnAZxPx0X/EfcAgdF9fQA/62GZWHV1dKZuC9syKVfupG4j93b/8tZK4cSB2jK4aNgB/bqG3/O47m9Axubr/8vMWrHQithdgqHPXx58TvM9q80EHl5lTsmE93I0/tQhmUaaVOCIZ9bpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fTbuEeH4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B046C4CEEB;
-	Tue, 22 Jul 2025 09:08:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753175317;
-	bh=bpDft6oO+lFmar4gUVFA5oPCPI7YERjD3nM/ltmpdLg=;
-	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fTbuEeH43Z/f3Fxffb7Z/yQ4rg69ui3KXpFD/Wf9NFdU8u0noTtyC5R6HIZD3cft5
-	 rad884nOOJrLawmfJB0M11oQ9L8zlp8VTJSQUKNOfZU66uPEicDqIZcXkBICKZHCez
-	 vPxAjcVPQwHExWCD0e6SG7vYSFltb6jWdVlqC/QZvVZnFZtzm+GEAF8zupIanlvTgx
-	 1/bH7RomwwB/y5RZTbJlDFY+eiNvW+oSyt6zHd01S0L4ArAFWY2X23CZIWV8wY7L5y
-	 42/WKnssfOlr/MJlCk2PNfAN8HfFWZhwnDCuhaWnyP1ju54GRLENyyuHJTUtnPTBXF
-	 fHsGSr/ggPm7A==
-Message-ID: <946c55cb-4810-4c1f-8f87-4456b6ceb37f@kernel.org>
-Date: Tue, 22 Jul 2025 11:08:31 +0200
+	s=arc-20240116; t=1753175429; c=relaxed/simple;
+	bh=+d3evjGw0d+DVZwR47JVejQOmqBqPDo3ZqdDJY5dYJM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZEnQ0+FAfdsmitWxs83krfaowVeah1K51LkZy/o/4mHpQ6D1aKDhm7XL9h+kBUBL0a1RMYl4Rwe6kU3VmrJotUw9tb1yzumv9/rEGJ+NGwFNTbFPeJSlq4xf1KID+p0Wo1BZMprgKR8i+Rv/JfrnuRdtCy0ksgGmQVIcRfkWbhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OdkXyP9X; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-451d3f72391so53499895e9.3;
+        Tue, 22 Jul 2025 02:10:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753175426; x=1753780226; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+XWwmum3R+GIflcR2H9ndlZEFY3jk1LUJA8NM9kbmm0=;
+        b=OdkXyP9Xyu7ZyZB1QcVsCwZRkfuTqst9p4la3WFYo55BsVvP9AyBzZkI6xzWmgclpV
+         jklv34w8jQi0nwWOC5gcYWO1xbg77Kb1UDycs3nt5K3dKgibl/JctF0djtiYpn82SLTz
+         l+Vcv1xHcWXHlb49Cwm1QW567OwumEq9It6C87ocm/4U9hSwms6qLEFjbzI5dxABRf9h
+         GfRfj5w/aE01jPK4eVR+B34n62mu7SgLVRgUSbdAaSdXvqsT6cCRvzZnDt0A2AKF2TfY
+         nzzewuqeOCX7QaoFgkRiBxx1T1gY1OrOdNqw6RlJm2SsDVdMoGs9T7IORtNTkwrV3hdK
+         QKtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753175426; x=1753780226;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+XWwmum3R+GIflcR2H9ndlZEFY3jk1LUJA8NM9kbmm0=;
+        b=cVdz2F/AgFtFmVxzxnv7BoLudzjNEUfy60mC9tTjt5tpEZdKmnclUc/1zhOmbzqa5M
+         CG/aRNjqPIteDVrnZFYnoZvaGdYxsuy3tV5L8Jb/k8Z+fWkd8kr4+aL84X6W1MMO8N3d
+         sCFhiC7qbzNY4mFLSpB8VsQIlTFcMWaAsUaQb5a8gQN0llW82/AsJ29jyROTM6OtIgn4
+         BLWBIIBJA0WLFgRmMOCMZVa0Q23YPLcVaeljJWMbFX4dFf6NlbcRRJ9or19DF3k4ixfh
+         zW5MmNQoxdNoVHF3PyDmmrfAKZ6U1DJAL3fTSqHChsdx1zlGw6td9NkfbA/Kspp+QyjA
+         YJWw==
+X-Forwarded-Encrypted: i=1; AJvYcCW+peGfaYm1jU+Pyaog6AtpK+R5QFw2/D10PbYKkm2BDiDnn2M3SABej8RhpIXN2IaVC54DcmyXcQQ3zkWx@vger.kernel.org, AJvYcCWlIpyqvZQ/0MekS/Utd+t2XLxdzmMHnq58VF4VdNPsu9aafmqrAm0gy4h8mfQdi0BvMxMalQNlSPc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNWqTFaq751ydmCp02qBS70KGxP9ea8YuxjcsNyq3el/xTti8E
+	IUeJqhtAIfBd60yaobLyWk2xMMRA1RflKKur71vk5kDmgcABhgi7BMug
+X-Gm-Gg: ASbGncugD7d9Dpx13tpxYhxksTQzYtWUnFnF1K1Pd/oJvsI8U6KkBf4l0n/UfATCO4a
+	QujrUewkrNO23OJo9qnWCrYY0seiN4Yn4Th0GrdTk3mWz8U895dlilavTvSBMiIHouMKi+pChrL
+	pEGyIFAgpc3+pgObZ45E1ox1lyx0XUzgW2uC88fSzD5H9/YXbvqUaTfnEbxnkpsu34Yx4t4O+nY
+	ulDNe1VB26M4h/qgwfT/rKTViFZi+/sA96Us16vKyMMRhGZ/Skm7c83YfDY4Cecgyh8Brt8e51q
+	BaKMOyslUDqiJ35cdxT3oJ0Y7vBpHSgY+fsJFDGdVE/EfFU+1js+jrcGGKVNpEs+fr5UcKvX21+
+	g5M+vCUI4FA==
+X-Google-Smtp-Source: AGHT+IEw445q7Jig1Z3knFleS+D9QBcTWSPKi2eD2VUGkre8uGpLbl76HLgDvGpdeDylmgXPiiViyg==
+X-Received: by 2002:a05:600c:a305:b0:453:8bc7:5e53 with SMTP id 5b1f17b1804b1-4562e853505mr194573555e9.0.1753175425381;
+        Tue, 22 Jul 2025 02:10:25 -0700 (PDT)
+Received: from nsa ([89.40.212.7])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e80731bsm182948865e9.15.2025.07.22.02.10.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jul 2025 02:10:25 -0700 (PDT)
+Date: Tue, 22 Jul 2025 10:10:38 +0100
+From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Andreas Klinger <ak@it-klinger.de>, 
+	Jonathan Cameron <jic23@kernel.org>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] iio: proximity: srf08: use stack allocated scan buffer
+Message-ID: <xnacdjv6bmp2ghh2wcloetec5okl7vbwbihpzsf2b3u4vqyc3z@dobmhdkiruib>
+References: <20250721-iio-use-more-iio_declare_buffer_with_ts-6-v2-1-8b66e5b4e75a@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: Daniel Gomez <da.gomez@kernel.org>
-Subject: Re: [PATCH v3] module: Rename EXPORT_SYMBOL_GPL_FOR_MODULES to
- EXPORT_SYMBOL_FOR_MODULES
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Vlastimil Babka <vbabka@suse.cz>, Christian Brauner <brauner@kernel.org>
-Cc: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
- Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Gomez
- <da.gomez@samsung.com>, Matthias Maennich <maennich@google.com>,
- Jonathan Corbet <corbet@lwn.net>, Luis Chamberlain <mcgrof@kernel.org>,
- Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>,
- Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor
- <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
- Christoph Hellwig <hch@infradead.org>, Peter Zijlstra
- <peterz@infradead.org>, David Hildenbrand <david@redhat.com>,
- Shivank Garg <shivankg@amd.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
- linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20250715-export_modules-v3-1-11fffc67dff7@suse.cz>
- <b340eb9f-a336-461c-befe-6b09c68b731e@kernel.org>
- <24f995fe-df76-4495-b9c6-9339b6afa6be@suse.cz>
- <49eeff09-993f-42a0-8e3b-b3f95b41dbcf@kernel.org>
- <2025072219-dollhouse-margarita-de67@gregkh>
- <9d61a747-2655-4f4c-a8fe-5db51ff33ff7@suse.cz>
- <2025072246-unexpired-deletion-a0f8@gregkh>
-Content-Language: en-US
-From: Daniel Gomez <da.gomez@kernel.org>
-Organization: kernel.org
-In-Reply-To: <2025072246-unexpired-deletion-a0f8@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250721-iio-use-more-iio_declare_buffer_with_ts-6-v2-1-8b66e5b4e75a@baylibre.com>
 
-
-
-On 22/07/2025 10.53, Greg Kroah-Hartman wrote:
-> On Tue, Jul 22, 2025 at 10:49:48AM +0200, Vlastimil Babka wrote:
->> On 7/22/25 10:46, Greg Kroah-Hartman wrote:
->>> On Tue, Jul 22, 2025 at 10:26:43AM +0200, Daniel Gomez wrote:
->>>>>
->>>>> Maybe with no reply, you can queue it then?
->>>>
->>>> + Jiri, Stephen and Greg, added to the To: list.
->>>>
->>>> EXPORT_SYMBOL_GPL_FOR_MODULES macro was merged [1] through Masahiro's
->>>> pull request in v6.16-rc1. This patch from Vlastimil renames the macro to
->>>> EXPORT_SYMBOL_FOR_MODULES. This means Jiri's patch b20d6576cdb3 "serial: 8250:
->>>> export RSA functions" will need to be updated accordingly. I'd like like to
->>>> know how you prefer to proceed, since it was requested to have this merged as a
->>>> fix before Linus releases a new kernel with the former name.
->>>
->>> So you want this in 6.16-final?  Ok, do so and then someone needs to fix
->>> up the build breakage in linux-next and in all of the pull requests to
->>> Linus for 6.17-rc1 :)
->>>
-
-I see... that doesn't sound like it was the right approach. I didn't expect
-follow-up fixes to be needed for the next merge window. Thanks for the heads-up.
-I'll hold off on merging this for now.
-
->>>> Link: https://lore.kernel.org/all/CAK7LNAQunzxOHR+vMZLf8kqxyRtLx-Z2G2VZquJmndrT9TZjiQ@mail.gmail.com/ [1]
->>>>
->>>>
->>>> Masahiro, just a heads-up that I plan to merge this through the linux-modules
->>>> tree unless you advise otherwise.
->>>
->>> Why not just do the rename after 6.17-rc1 is out?  That way all new
->>> users will be able to be caught at that point in time.  There's no issue
->>
->> Hm there might be people basing their new exports for 6.18 on 6.17-rc1. They
->> would have to be told to use rc2 then.
+On Mon, Jul 21, 2025 at 05:21:08PM -0500, David Lechner wrote:
+> Use a stack allocated scan struct in srf08_trigger_handler(). Since the
+> scan buffer isn't used outside of this function and doesn't need to be
+> DMA-safe, it doesn't need to be in struct srf08_data. We can also
+> eliminate an extra local variable for the return value of
+> srf08_read_ranging() by using scan.chan directly.
 > 
-> Yes, that's normal, nothing wrong with that at all, we make api name
-> changes across the tree quite often (i.e. almost every-other release.)
-> 
->> Maybe the best way would be if Linus
->> did this just before tagging rc1, while fixing up all users merged during
->> the merge window?
-> 
-> Again, what's wrong with -rc2?  Anyone caught using this on only -rc1
-> will get a quick "this broke the build" report in linux-next so it's not
-> like this is going to be unnoticed at all.
+> Reviewed-by: Andreas Klinger <ak@it-klinger.de>
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
+> Changes in v2:
+> - Zero-init the scan struct to avoid leaking uninitialized stack to userspace.
+> - Link to v1: https://lore.kernel.org/r/20250711-iio-use-more-iio_declare_buffer_with_ts-6-v1-1-25c70b990d6c@baylibre.com
+> ---
 
-I think Christian had some renaming candidates. Christian, does this work for
-you?
+Reviewed-by: Nuno Sá <nuno.sa@analog.com>
+
+>  drivers/iio/proximity/srf08.c | 18 +++++++-----------
+>  1 file changed, 7 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/iio/proximity/srf08.c b/drivers/iio/proximity/srf08.c
+> index 6e32fdfd161b93a5624f757d5b7de579415b1055..d7e4cc48cfbf700c7828235de99a66324767316a 100644
+> --- a/drivers/iio/proximity/srf08.c
+> +++ b/drivers/iio/proximity/srf08.c
+> @@ -63,12 +63,6 @@ struct srf08_data {
+>  	int			range_mm;
+>  	struct mutex		lock;
+>  
+> -	/* Ensure timestamp is naturally aligned */
+> -	struct {
+> -		s16 chan;
+> -		aligned_s64 timestamp;
+> -	} scan;
+> -
+>  	/* Sensor-Type */
+>  	enum srf08_sensor_type	sensor_type;
+>  
+> @@ -182,16 +176,18 @@ static irqreturn_t srf08_trigger_handler(int irq, void *p)
+>  	struct iio_poll_func *pf = p;
+>  	struct iio_dev *indio_dev = pf->indio_dev;
+>  	struct srf08_data *data = iio_priv(indio_dev);
+> -	s16 sensor_data;
+> +	struct {
+> +		s16 chan;
+> +		aligned_s64 timestamp;
+> +	} scan = { };
+>  
+> -	sensor_data = srf08_read_ranging(data);
+> -	if (sensor_data < 0)
+> +	scan.chan = srf08_read_ranging(data);
+> +	if (scan.chan < 0)
+>  		goto err;
+>  
+>  	mutex_lock(&data->lock);
+>  
+> -	data->scan.chan = sensor_data;
+> -	iio_push_to_buffers_with_ts(indio_dev, &data->scan, sizeof(data->scan),
+> +	iio_push_to_buffers_with_ts(indio_dev, &scan, sizeof(scan),
+>  				    pf->timestamp);
+>  
+>  	mutex_unlock(&data->lock);
+> 
+> ---
+> base-commit: cd2731444ee4e35db76f4fb587f12d327eec5446
+> change-id: 20250711-iio-use-more-iio_declare_buffer_with_ts-6-6ffc8e99552d
+> 
+> Best regards,
+> -- 
+> David Lechner <dlechner@baylibre.com>
+> 
 
