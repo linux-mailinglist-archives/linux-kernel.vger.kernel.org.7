@@ -1,127 +1,80 @@
-Return-Path: <linux-kernel+bounces-741503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2E3FB0E514
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 22:47:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75FAEB0E515
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 22:47:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42A6E1C28444
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:47:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 983EA1C28302
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:47:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2A1285C92;
-	Tue, 22 Jul 2025 20:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29EA22853E5;
+	Tue, 22 Jul 2025 20:47:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aO6hZyB7"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="mf+02rr/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238A0A95C;
-	Tue, 22 Jul 2025 20:47:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8588F2641E3
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 20:47:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753217226; cv=none; b=TnUfT2hvqFzCqxkE20RiIxxnEvIUkfGmY8oEis7/U9WsDKrM+wXltcp4rcQhPJxY8FK0Q/Pp9lErnnnDKOJufconpBu/R6qCTqfYxYwL6RM4ZImkoCYLe/pGpoMbhbRVI5uGY7xSJQ+uHdh4DOKKiKxx+1DaaDl7AF2xY/L7vfA=
+	t=1753217240; cv=none; b=tWvL2RlbYONxSGg1rajO18YFjbvB2YZgGf4HNuq6U6Z4swh2GBvGEW1HcTKJVDR6Q7y43IvRxj1JGhZoKrNhDxxxMIx+3ZHXgvAlVGVktJDchEYKTYyT4wbXy3gOusgCPFUe1JyffpCIB1UMtjBMV9ssTKlVq6YicjPRIw+v4tA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753217226; c=relaxed/simple;
-	bh=/sxFwYUyBdxHVgbNyek2wBg4Uk82NRyFiZxIzDBnIs4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=aiqVHXdb+2n0RDDJXm1fU1Vfv41qSfV0eq3BQra2pn8ek1K+LyKFBdpiCzFLFwKB3yd/dsb5krT+AVa6lAzFFiygCI6SwZUXtGMItA8nGh2xsuO+UIDgdgPRW3tQWOr9ipU3H71M9NvlJ7VEwRS0nt3kWafwNJHFTAzYpvNpEXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aO6hZyB7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88561C4CEEB;
-	Tue, 22 Jul 2025 20:47:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753217225;
-	bh=/sxFwYUyBdxHVgbNyek2wBg4Uk82NRyFiZxIzDBnIs4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=aO6hZyB7vN81Un5hba7wW6Ql7I5ci2Z6++fnxK1N+B6uWOg2jTwNX1Uau7rZiYT5e
-	 AOcAgtWIFwH7Nz7plV0qxsFzT9sOlR4vz4FaTVau6e1tcQhlZgVhsEYur1Ddxb+2Up
-	 i0uRqXQuq1y15hjJ7pQ+4offCfJ6eK6OlyzR/DZUiWo8J7wg9hheEgm24Fvt04kTFu
-	 PoAVyzmb6Z4Ue4KyFxdq1k++Fo6uJE4HtCM1XFxyQCWhRClM2tMgz1jJyaSZFAWw32
-	 mzbgFKQFD7LWON8AQD9BqQg+KisPWLzKmseMc4c8E+743oZjhhTP8RmpEU/MMmhORD
-	 KezzqnP4+4FDg==
-Date: Tue, 22 Jul 2025 15:47:04 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Mahesh J Salgaonkar <mahesh@linux.ibm.com>
-Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-pci <linux-pci@vger.kernel.org>,
-	christophe leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Shawn Anastasio <sanastasio@raptorengineering.com>,
-	Timothy Pearson <tpearson@raptorengineering.com>
-Subject: Re: [PATCH v3 0/6] PowerNV PCIe Hotplug Driver Fixes
-Message-ID: <20250722204704.GA2815491@bhelgaas>
+	s=arc-20240116; t=1753217240; c=relaxed/simple;
+	bh=U4DORizE/f7hNR9eFeDGUav+ZFR1aFMf+KdprGRWYNI=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=XSKFyx0AGtAKWc6f99YTOExqLDHhOioKA2R5Ckl/TCqc+tEJhGQNMb3Wreeo85lwgNVoayBVrHkrmLRl+KqgjUMCVY76SGG3K1j2TJIqYzKh4hcrMF0lgSSLo50jpm8vKOGhdhR0+8SzlLX/TfPh8n8wOjwG4U26cJtyCraIvRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=mf+02rr/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB2AFC4CEEB;
+	Tue, 22 Jul 2025 20:47:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1753217238;
+	bh=U4DORizE/f7hNR9eFeDGUav+ZFR1aFMf+KdprGRWYNI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=mf+02rr/c0d3kW1n35vEDCRg28UcNcK336t1EvLB9wFb9F4LIK4EjPkTCxTknAb1h
+	 rwxYJDBgaX+NjVqK+anuV3pRqvn5RtzuwY502sv1cd+A+YNCH0yOskV2D503NB877g
+	 7rRqIsaJ8KyKh/vLrBeURSUbNJXoMkfwgpycjzB4=
+Date: Tue, 22 Jul 2025 13:47:17 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Dev Jain <dev.jain@arm.com>
+Cc: david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, npache@redhat.com,
+ ryan.roberts@arm.com, baohua@kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] mm: add get_and_clear_ptes() and clear_ptes()
+Message-Id: <20250722134717.b8c9b09b8915b552447cb419@linux-foundation.org>
+In-Reply-To: <20250722150559.96465-2-dev.jain@arm.com>
+References: <20250722150559.96465-1-dev.jain@arm.com>
+	<20250722150559.96465-2-dev.jain@arm.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250717232752.GA2662535@bhelgaas>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-[-> to: Madhavan, Michael, Mahesh; seeking acks]
+On Tue, 22 Jul 2025 20:35:57 +0530 Dev Jain <dev.jain@arm.com> wrote:
 
-On Thu, Jul 17, 2025 at 06:27:52PM -0500, Bjorn Helgaas wrote:
-> On Tue, Jul 15, 2025 at 04:31:49PM -0500, Timothy Pearson wrote:
-> > Hello all,
-> > 
-> > This series includes several fixes for bugs in the PowerNV PCIe hotplug
-> > driver that were discovered in testing with a Microsemi Switchtec PM8533
-> > PFX 48xG3 PCIe switch on a PowerNV system, as well as one workaround for
-> > PCIe switches that don't correctly implement slot presence detection
-> > such as the aforementioned one. Without the workaround, the switch works
-> > and downstream devices can be hot-unplugged, but the devices never come
-> > back online after being plugged in again until the system is rebooted.
-> > Other hotplug drivers (like pciehp_hpc) use a similar workaround.
-> > 
-> > Also included are fixes for the EEH driver to make it hotplug safe,
-> > and a small patch to enable all three attention indicator states per
-> > the PCIe specification.
-> > 
-> > Thanks,
-> > 
-> > Shawn Anastasio (2):
-> >   PCI: pnv_php: Properly clean up allocated IRQs on unplug
-> >   PCI: pnv_php: Work around switches with broken presence detection
-> > 
-> > Timothy Pearson (4):
-> >   powerpc/eeh: Export eeh_unfreeze_pe()
-> >   powerpc/eeh: Make EEH driver device hotplug safe
-> >   PCI: pnv_php: Fix surprise plug detection and recovery
-> >   PCI: pnv_php: Enable third attention indicator state
-> > 
-> >  arch/powerpc/kernel/eeh.c         |   1 +
-> >  arch/powerpc/kernel/eeh_driver.c  |  48 ++++--
-> >  arch/powerpc/kernel/eeh_pe.c      |  10 +-
-> >  arch/powerpc/kernel/pci-hotplug.c |   3 +
-> >  drivers/pci/hotplug/pnv_php.c     | 244 +++++++++++++++++++++++++++---
-> >  5 files changed, 263 insertions(+), 43 deletions(-)
+> Let's add variants to be used where "full" does not apply -- which will
+> be the majority of cases in the future. "full" really only applies if
+> we are about to tear down a full MM.
 > 
-> I'm OK with this from a PCI perspective, and I optimistically put it
-> on pci/hotplug.
+> Use get_and_clear_ptes() in existing code, clear_ptes() users will
+> be added next.
 > 
-> I'm happy to merge via the PCI tree, but would need acks from the
-> powerpc folks for the arch/powerpc parts.
-> 
-> Alternatively it could be merged via powerpc with my ack on the
-> drivers/pci patches:
-> 
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> If you do merge via powerpc, I made some comment formatting and commit
-> log tweaks that I would like reflected in the drivers/pci part.  These
-> are on
-> https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/log/?h=hotplug
+> Should we make these inline functions instead and add separate docs?
 
-Powerpc folks: let me know how you want to handle this.  I haven't
-included it in pci/next yet because I don't have acks for the
-arch/powerpc parts.
+inlined functions would be preferable.
 
-Bjorn
+> Probably not worth it for now.
+
+Well, as David has called for a v4 I suggest you make that change.
+
+Thanks, I'll queue the series in mm-new for a bit of testing.
 
