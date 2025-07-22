@@ -1,140 +1,245 @@
-Return-Path: <linux-kernel+bounces-740885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59A7BB0DA9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:17:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 425F0B0DAA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:19:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 043CB1C25AFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:18:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72F4C3A2411
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99375139CE3;
-	Tue, 22 Jul 2025 13:17:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC122E426F;
+	Tue, 22 Jul 2025 13:19:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZJNhgn6q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iq+lxiGc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0028525776;
-	Tue, 22 Jul 2025 13:17:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48285242D94;
+	Tue, 22 Jul 2025 13:19:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753190258; cv=none; b=SULFLelkltuow1eagNixkrN4kyqovSXBQhM5Q2RnifDyw+TxLhFMpV9PLM3/jPX6rIm/fPZqtDDyVpl1+1nLmP2cRFnyFVGjN86WnxZhXP7HtFXtZ8V8/lDwN79CoQ1Bk+yu3Oer99KWzOHpPM3Lc0nwnXXlb0fpy0ilbeNklbc=
+	t=1753190358; cv=none; b=FoQxHKLJEZcIuN1YY4P85whwYL9Lz0O2IlRlH0cQHYIjV4fYtunvu9KjRdOvXxSBUVxlE61hUhhA/sZxB9kHmQJ1hGcfkLV4NCuV3gslM9Oin7hhH/+s95M8l+8eUv1En9lD62KNOXym6mzVfAaCC+Iqzyv9V05LyN50eX4sxXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753190258; c=relaxed/simple;
-	bh=3leS8riuCJe+lnyQnQIcRHprkIXpvrMzyIhcjLqEY1w=;
+	s=arc-20240116; t=1753190358; c=relaxed/simple;
+	bh=P/WzJ2D9t/ao8VHQl5uRNGISLH+oh58TVVF1a3iiIzk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mrxkruyIx7doW+vfQM4I91fKbhuCDiDi9vaHEKg4RoS+y9S6+b4GM4CimXCAm4l8KlP+BKeKEVOVrNkmpLsl0FwS1repVV+0VNciLQ6po7Dc9GYL3FGfqd5HoMt4nq7oag3JcT9nYrf7ik9HyxlNLICZcRL8SD+Wy7dGdmLWtqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZJNhgn6q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68EE0C4CEEB;
-	Tue, 22 Jul 2025 13:17:33 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qqur/ILUC63w07MfGmcGt68qf6ctkR6y404BZ/HiBhF3j5XAE4NG554yQ4OkFkDrr681/xyeyhkb58eM5obvXSGJg5rpsf8MhQeLw0pbF3Q/PnIfxomUgCJWayBkrhr+WxaEdtANG4f0vat00ZEA04SZku4gnbHX6xZFBGBzgH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iq+lxiGc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D72FFC4CEF1;
+	Tue, 22 Jul 2025 13:19:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753190255;
-	bh=3leS8riuCJe+lnyQnQIcRHprkIXpvrMzyIhcjLqEY1w=;
+	s=k20201202; t=1753190357;
+	bh=P/WzJ2D9t/ao8VHQl5uRNGISLH+oh58TVVF1a3iiIzk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZJNhgn6qehAH7M6iwdt46ZSRtnpNN7QCYzYCFtpxyCOf9hD4MrstgMo6XRuzOF91c
-	 sjv8RgAd4UifKt4aPajQt1uLJIdA0CTSwNfFbDlcF8QJmy0M1E/dH6Wnj4IbwqUdGe
-	 ykJV6IdS8vz+9K5Gck9anM2yCECJ0V9cL76ZDvhaL3VsgFphEVvk35vu854JJEIwlA
-	 mZWzP7DiEysaVcb+3NYpPiKRGR79NaQI9mdGR3PpkUTqTS0UDACcR/srpvBKQCaSpU
-	 pNXOiIOJ9CTniD++dcKH1fM5/oz7ADMNXTsOBMNvN1K4Jc/tbgBPJI1VGCJ8Pig1kl
-	 UZQ70MIhMgvQg==
-Date: Tue, 22 Jul 2025 14:17:30 +0100
-From: Will Deacon <will@kernel.org>
-To: Anup Patel <anup@brainfault.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Mayuresh Chitale <mchitale@ventanamicro.com>,
-	linux-riscv@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
-	Atish Patra <atishp@rivosinc.com>
-Subject: Re: [PATCH v4 0/9] Add SBI v3.0 PMU enhancements
-Message-ID: <aH-PanNcaHsbSlOd@willie-the-truck>
-References: <20250721-pmu_event_info-v4-0-ac76758a4269@rivosinc.com>
- <CAAhSdy2XM+3UQD0FZehJnmCbjwRMCZQpt1cEkb4gmJu+LFsaKQ@mail.gmail.com>
+	b=iq+lxiGcFWezWsXBtQ//ad86nasH9e1YuE6TQ2fxJB2uKgCqHG646V9iQjX+E7yaw
+	 ya1Nr28lfdtv83ebYJRcEb0J1glIRtoTJn83Z+GoFb3Iv2Y365Tlbf5VCMNGKsuL7X
+	 QQZPPgn86YflmG81yBbJhplRD7hzSCBlKE6ifE6THzvvZG5oETKlsIz2TyEK5JRyrU
+	 CzdxvfF0/IcG5WLoqMw4IZnGUSefpDwKp9p9UaecrnHp1JZPe86dcq7n46w3ZAR4RZ
+	 S3I5L7k+7T+uB/CXdIMWszW7a4Owjy362YSHHjfdqCsuIdgPfsty1qiFBDtc7jvvry
+	 a8TBzP7gZ+scw==
+Date: Tue, 22 Jul 2025 14:19:11 +0100
+From: Simon Horman <horms@kernel.org>
+To: Dong Yibo <dong100@mucse.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, corbet@lwn.net,
+	gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
+	danishanwar@ti.com, lee@trager.us, gongfan1@huawei.com,
+	lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 04/15] net: rnpgbe: Add get_capability mbx_fw ops
+ support
+Message-ID: <20250722131911.GH2459@horms.kernel.org>
+References: <20250721113238.18615-1-dong100@mucse.com>
+ <20250721113238.18615-5-dong100@mucse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAhSdy2XM+3UQD0FZehJnmCbjwRMCZQpt1cEkb4gmJu+LFsaKQ@mail.gmail.com>
+In-Reply-To: <20250721113238.18615-5-dong100@mucse.com>
 
-On Tue, Jul 22, 2025 at 09:29:40AM +0530, Anup Patel wrote:
-> On Tue, Jul 22, 2025 at 8:45 AM Atish Patra <atishp@rivosinc.com> wrote:
-> >
-> > SBI v3.0 specification[1] added two new improvements to the PMU chaper.
-> > The SBI v3.0 specification is frozen and under public review phase as
-> > per the RISC-V International guidelines.
-> >
-> > 1. Added an additional get_event_info function to query event availablity
-> > in bulk instead of individual SBI calls for each event. This helps in
-> > improving the boot time.
-> >
-> > 2. Raw event width allowed by the platform is widened to have 56 bits
-> > with RAW event v2 as per new clarification in the priv ISA[2].
-> >
-> > Apart from implementing these new features, this series improves the gpa
-> > range check in KVM and updates the kvm SBI implementation to SBI v3.0.
-> >
-> > The opensbi patches have been merged. This series can be found at [3].
-> >
-> > [1] https://github.com/riscv-non-isa/riscv-sbi-doc/releases/download/v3.0-rc7/riscv-sbi.pdf
-> > [2] https://github.com/riscv/riscv-isa-manual/issues/1578
-> > [3] https://github.com/atishp04/linux/tree/b4/pmu_event_info_v4
-> >
-> > Signed-off-by: Atish Patra <atishp@rivosinc.com>
-> > ---
-> > Changes in v4:
-> > - Rebased on top of v6.16-rc7
-> > - Fixed a potential compilation issue in PATCH5.
-> > - Minor typos fixed PATCH2 and PATCH3.
-> > - Fixed variable ordering in PATCH6
-> > - Link to v3: https://lore.kernel.org/r/20250522-pmu_event_info-v3-0-f7bba7fd9cfe@rivosinc.com
-> >
-> > Changes in v3:
-> > - Rebased on top of v6.15-rc7
-> > - Link to v2: https://lore.kernel.org/r/20250115-pmu_event_info-v2-0-84815b70383b@rivosinc.com
-> >
-> > Changes in v2:
-> > - Dropped PATCH 2 to be taken during rcX.
-> > - Improved gpa range check validation by introducing a helper function
-> >   and checking the entire range.
-> > - Link to v1: https://lore.kernel.org/r/20241119-pmu_event_info-v1-0-a4f9691421f8@rivosinc.com
-> >
-> > ---
-> > Atish Patra (9):
-> >       drivers/perf: riscv: Add SBI v3.0 flag
-> >       drivers/perf: riscv: Add raw event v2 support
-> >       RISC-V: KVM: Add support for Raw event v2
-> >       drivers/perf: riscv: Implement PMU event info function
-> >       drivers/perf: riscv: Export PMU event info function
-> >       KVM: Add a helper function to validate vcpu gpa range
-> >       RISC-V: KVM: Use the new gpa range validate helper function
-> >       RISC-V: KVM: Implement get event info function
-> >       RISC-V: KVM: Upgrade the supported SBI version to 3.0
-> >
-> >  arch/riscv/include/asm/kvm_vcpu_pmu.h |   3 +
-> >  arch/riscv/include/asm/kvm_vcpu_sbi.h |   2 +-
-> >  arch/riscv/include/asm/sbi.h          |  13 +++
-> >  arch/riscv/kvm/vcpu_pmu.c             |  75 ++++++++++++-
-> >  arch/riscv/kvm/vcpu_sbi_pmu.c         |   3 +
-> >  arch/riscv/kvm/vcpu_sbi_sta.c         |   6 +-
-> >  drivers/perf/riscv_pmu_sbi.c          | 191 +++++++++++++++++++++++++---------
-> >  include/linux/kvm_host.h              |   2 +
-> >  include/linux/perf/riscv_pmu.h        |   1 +
-> >  virt/kvm/kvm_main.c                   |  21 ++++
-> >  10 files changed, 258 insertions(+), 59 deletions(-)
+On Mon, Jul 21, 2025 at 07:32:27PM +0800, Dong Yibo wrote:
+> Initialize get hw capability from mbx_fw ops.
 > 
-> Are you okay with this series going through the KVM RISC-V tree ?
+> Signed-off-by: Dong Yibo <dong100@mucse.com>
 
-The Risc-V PMU stuff usually goes via Palmer, so whatever he reckons.
+...
 
-Will
+> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.h
+
+...
+
+> +struct hw_abilities {
+> +	u8 link_stat;
+> +	u8 lane_mask;
+> +	__le32 speed;
+> +	__le16 phy_type;
+> +	__le16 nic_mode;
+> +	__le16 pfnum;
+> +	__le32 fw_version;
+> +	__le32 axi_mhz;
+> +	union {
+> +		u8 port_id[4];
+> +		__le32 port_ids;
+> +	};
+> +	__le32 bd_uid;
+> +	__le32 phy_id;
+> +	__le32 wol_status;
+> +	union {
+> +		__le32 ext_ability;
+> +		struct {
+> +			__le32 valid : 1; /* 0 */
+> +			__le32 wol_en : 1; /* 1 */
+> +			__le32 pci_preset_runtime_en : 1; /* 2 */
+> +			__le32 smbus_en : 1; /* 3 */
+> +			__le32 ncsi_en : 1; /* 4 */
+> +			__le32 rpu_en : 1; /* 5 */
+> +			__le32 v2 : 1; /* 6 */
+> +			__le32 pxe_en : 1; /* 7 */
+> +			__le32 mctp_en : 1; /* 8 */
+> +			__le32 yt8614 : 1; /* 9 */
+> +			__le32 pci_ext_reset : 1; /* 10 */
+> +			__le32 rpu_availble : 1; /* 11 */
+> +			__le32 fw_lldp_ability : 1; /* 12 */
+> +			__le32 lldp_enabled : 1; /* 13 */
+> +			__le32 only_1g : 1; /* 14 */
+> +			__le32 force_down_en: 1; /* 15 */
+> +		} e;
+
+I am not sure how __le32 bitfields work on big endian hosts. Do they?
+
+I would suggest using some combination of BIT/GENMASK,
+FIELD_PREP/FIELT_GET, and le32_from_cpu/cpu_from_le32 instead.
+
+Flagged by Sparse.
+
+> +		struct {
+> +			u32 valid : 1; /* 0 */
+> +			u32 wol_en : 1; /* 1 */
+> +			u32 pci_preset_runtime_en : 1; /* 2 */
+> +			u32 smbus_en : 1; /* 3 */
+> +			u32 ncsi_en : 1; /* 4 */
+> +			u32 rpu_en : 1; /* 5 */
+> +			u32 v2 : 1; /* 6 */
+> +			u32 pxe_en : 1; /* 7 */
+> +			u32 mctp_en : 1; /* 8 */
+> +			u32 yt8614 : 1; /* 9 */
+> +			u32 pci_ext_reset : 1; /* 10 */
+> +			u32 rpu_availble : 1; /* 11 */
+> +			u32 fw_lldp_ability : 1; /* 12 */
+> +			u32 lldp_enabled : 1; /* 13 */
+> +			u32 only_1g : 1; /* 14 */
+> +			u32 force_down_en: 1; /* 15 */
+> +		} e_host;
+> +	};
+> +} __packed;
+
+...
+
+> +/* req is little endian. bigendian should be conserened */
+> +struct mbx_fw_cmd_req {
+
+...
+
+> +		struct {
+> +			__le32 lane;
+> +			__le32 op;
+> +			__le32 enable;
+> +			__le32 inteval;
+
+interval
+
+Flagged by checkpatch.pl --codespell
+
+...
+
+> +/* firmware -> driver */
+> +struct mbx_fw_cmd_reply {
+> +	/* fw must set: DD, CMP, Error(if error), copy value */
+> +	__le16 flags;
+> +	/* from command: LB,RD,VFC,BUF,SI,EI,FE */
+> +	__le16 opcode; /* 2-3: copy from req */
+> +	__le16 error_code; /* 4-5: 0 if no error */
+> +	__le16 datalen; /* 6-7: */
+> +	union {
+> +		struct {
+> +			__le32 cookie_lo; /* 8-11: */
+> +			__le32 cookie_hi; /* 12-15: */
+> +		};
+> +		void *cookie;
+> +	};
+> +	/* ===== data ==== [16-64] */
+> +	union {
+> +		u8 data[40];
+> +
+> +		struct version {
+> +			__le32 major;
+> +			__le32 sub;
+> +			__le32 modify;
+> +		} version;
+> +
+> +		struct {
+> +			__le32 value[4];
+> +		} r_reg;
+> +
+> +		struct {
+> +			__le32 new_value;
+> +		} modify_reg;
+> +
+> +		struct get_temp {
+> +			__le32 temp;
+> +			__le32 volatage;
+
+voltage
+
+> +		} get_temp;
+> +
+> +		struct {
+> +#define MBX_SFP_READ_MAX_CNT 32
+> +			u8 value[MBX_SFP_READ_MAX_CNT];
+> +		} sfp_read;
+> +
+> +		struct mac_addr {
+> +			__le32 lanes;
+> +			struct _addr {
+> +				/*
+> +				 * for macaddr:01:02:03:04:05:06
+> +				 * mac-hi=0x01020304 mac-lo=0x05060000
+> +				 */
+> +				u8 mac[8];
+> +			} addrs[4];
+> +		} mac_addr;
+> +
+> +		struct get_dump_reply {
+> +			__le32 flags;
+> +			__le32 version;
+> +			__le32 bytes;
+> +			__le32 data[4];
+> +		} get_dump;
+> +
+> +		struct get_lldp_reply {
+> +			__le32 value;
+> +			__le32 inteval;
+
+interval
+
+> +		} get_lldp;
+> +
+> +		struct rnpgbe_eee_cap phy_eee_abilities;
+> +		struct lane_stat_data lanestat;
+> +		struct hw_abilities hw_abilities;
+> +		struct phy_statistics phy_statistics;
+> +	};
+> +} __packed;
+
+...
 
