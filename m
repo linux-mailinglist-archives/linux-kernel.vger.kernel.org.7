@@ -1,129 +1,178 @@
-Return-Path: <linux-kernel+bounces-741552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DBE0B0E5A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 23:40:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C3B1B0E5AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 23:41:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94DD13B2160
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 21:40:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5822458152D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 21:41:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB222286429;
-	Tue, 22 Jul 2025 21:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60BC7286887;
+	Tue, 22 Jul 2025 21:41:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Op1G5WdA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EFU09Jt6"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D654028541F
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 21:40:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 189E0286426
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 21:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753220449; cv=none; b=B6bClvjB2omrouF+R97OYNaiM2VkMWgIRzMDBNrpu28s3hZXjU+4Q8hVW1v7i8AmBjhLD3O7GWojykiT32tIDC/f0PrjBvs0zFbIw2RVFcvZTMrWgAjcC1HQWYad3Ocl+F2Lq3/8PdtG5CgmJnkrEQgV4VLbvDv7QsXAXgaEV1c=
+	t=1753220472; cv=none; b=PrwgaDYrAVgP23c2C3usAyEtQ/w2U0jK9DURhBOD6pBLlbVfXXIAFKjSdeViMVEfLaQ6zbbG9F0DL3L5oYMsJG7WWsFkGM4zaPbR4kzv3kmieQ20eJdjwqw8MiyN7JETU9ss/MOJUiwGSRX2PTxRJvaMAT/hmyzSu3/JBk3nswg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753220449; c=relaxed/simple;
-	bh=qiReswE8/+4iVK+wineobsk/lyxBNtH9smHzwQ1PNpQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tx+0k8+sZWHrdHkfXmM14CsmvlCpIK98w2QEl/ZaLr/JxF+ogUC2dVzeGMn9I3ElsWtxDlrBOZfrVGunVwz3sEPeT7zWq/g5CvSgpDeYheK+0e1xSWsTtmnEjl7taAhRGExkhMUOfLOZSsh9tyfGZorSAGpS/jmbUncIIQ8T+10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Op1G5WdA; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753220448; x=1784756448;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qiReswE8/+4iVK+wineobsk/lyxBNtH9smHzwQ1PNpQ=;
-  b=Op1G5WdAMiVDNjBRQ69+346oEMexqt/pQfzVdXBRIiGFTGu7nboB8o9o
-   UmlWLEoWRB/EMpamGrCMFKtJgyBXKR7NlyG4vfP3eqQ7TcVsCf5vjbRAR
-   W//pRrYVP0ODGgJjU6QWqSwA6Mi48RpjiShDqdtLITjYjCHmMxa8H9sEs
-   F9A9+q/jhD1V5tmn4E7qgUkPcPh6B1C2QS00MBYBcG+JTLc8WNfmT8VzH
-   j01xrZQ3Ix1das7Vh8ii9GNA/RSQFIaSyJLlxxS719pc502dkQwMAzpkZ
-   fDW9+jbIEbrKIKfbp88LrRStb2PFs39kCuuJvd9eLNePJZ8e+rPUes7xV
-   Q==;
-X-CSE-ConnectionGUID: tX+dW7psQeCl7+aLsrXJfg==
-X-CSE-MsgGUID: rzkk6jX6R12AfTiEbCD3lg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11500"; a="66829971"
-X-IronPort-AV: E=Sophos;i="6.16,332,1744095600"; 
-   d="scan'208";a="66829971"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 14:40:47 -0700
-X-CSE-ConnectionGUID: IYD1rorpRraSq8kzCk+mCQ==
-X-CSE-MsgGUID: k+VwqMUtSM6o59wVqaBPuw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,332,1744095600"; 
-   d="scan'208";a="196340436"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 22 Jul 2025 14:40:45 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ueKj4-000IjH-36;
-	Tue, 22 Jul 2025 21:40:42 +0000
-Date: Wed, 23 Jul 2025 05:40:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jia He <justin.he@arm.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Jia He <justin.he@arm.com>
-Subject: Re: [PATCH] mm: percpu: Introduce normalized CPU-to-NUMA node
- mapping to  reduce max_distance
-Message-ID: <202507230509.juShbryQ-lkp@intel.com>
-References: <20250722041418.2024870-1-justin.he@arm.com>
+	s=arc-20240116; t=1753220472; c=relaxed/simple;
+	bh=1++6CwyVXIhS0UVn0IwIwObfps05A2Vqkiy+jJBxzzA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ADgZgmaq1S3WEF7HYFJbve6mOciyB4i6W4SJERTw/LdK6iAJ6ew4xrw5BKNdEps8pDs33VfvDso4vzSiScH+oRnfZP1Wmn1/hE81S9MkbWcH3EY/DPSqBqg5c6AAnDy2c4JqbEC9/9/tGuXsly8ZsXv+TvbODvMIVsXxYHd1mpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EFU09Jt6; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56MKTPqo030717
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 21:41:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	jjqeRMS/46ph8PMRqSc+j1jHH5fh1ltcyKMQO/fuhWo=; b=EFU09Jt6AD+YRXLL
+	pLgqiVq0wEeKhRgF5abY5Z0yiZHrPlHbor7i2DdETV0Z3EXMDY/qc51RT/cEOjvx
+	MktNxllr1DW/6HMysgzyNTIYJ+k9kOCUiVeka24JsXhrX/tTvUUlygbRKQhAsM97
+	0eW6nYR8woBJK9Kewf2BSSyLHigkdwDiAoLDe5TzznK9szmnksJrskPoFNJXmMnk
+	yZoNDUyzXJXDHrskBoAmo3Kk07ePvld60vV92H0XUmXRIb8yiB0CWNU75FM0C5EW
+	4ajn/hULaAumpB0Tp2AgpsA+NnvRAr/cx1DeQAXfBlts45kaJlOZLzkxZlrUld09
+	69/Ncg==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48048v98g9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 21:41:10 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-75e28bcec3bso2836163b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 14:41:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753220469; x=1753825269;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jjqeRMS/46ph8PMRqSc+j1jHH5fh1ltcyKMQO/fuhWo=;
+        b=L1ZGlovrtYtYIKhCFrtXJKvcyCjVWOwMxV9lc1ivBDLkGZT64x/yaTj356ByIVx4Pf
+         f5AVHlPx0TgW8jar88J5ifsu7CxjhOUw9B7x0J1W4I9OOeZziOD9U/BuGdeqqpK22C7r
+         bX16jZSdMukwJpsCOj+V0XsMwR7vyr99EJIF+dguKL9BMUNHrVkVpC/xGA/PlY4ruTPW
+         vh7pZK3fAldTS5QkIeWc/4IrbApvFdz5avqpVq1YRr38ZgpgtX9mbJYoM5x5/CpSk2CD
+         XQZPzhuOvF8IWK/1ruQSeqZY48VkYqe7ll+tShDpUF8GlmlpBxHkEK7i36Ugi48iAngF
+         W4Xw==
+X-Forwarded-Encrypted: i=1; AJvYcCXww9M7LGEnUQgozeULP44FQ0W2ajEF1BNQdQ2uvaz5VkGdsw5z37Rrjjfoc4OXTGS4ScJw6KWF5y67dYU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzx76Xp4WDWJ6/9hBQEWBLAgP5jdjerf2Wur5aIJ3ORDsnzEY6n
+	iOlgIjUOVj0Oma/lEUrHiCYavb1Oxd2cMaKs1kkXRJxzZJtxdsXNEKI8B61DtBt07mTrPDfru9S
+	+Kuc/0BatkgBLFgnDt5lwAyPSyZuAlPrCwzNnEuxckzAlhlUIGhl47sUqZ6bNxSaI39g=
+X-Gm-Gg: ASbGnctE5DegQHrMAN8TmD2YMNSHNuTXJCNjed2XCU+ODLVp0YG5MMCjnRp3dqUdcuh
+	0zQ3/nUYqTAodlAiTq3EovgIK/CxVFhShtqcFHaOZelufpud85ZAlVyXBCgqPCq7rZfs+JPU1Sv
+	lnnNXk3AOHPfVT+xwVYfJzMlui4xg3GA/maeOULEhqz+0xsWJat/L0qXc6pvu++gD2AR5SXd/rS
+	yAkEySYPVqZ4J9emR/+d8i6vUmVZXIB0uoYUvy7mYWHwE+4dLTxk33UGTmAb9CxE4JU+uwOaev9
+	BqdaZy81GVW+GkPpNsyWVSRHjEgiqxHolu4puP2Djx2WYnY1V0DY9/pDN0YEWXOc
+X-Received: by 2002:a05:6a20:9148:b0:217:ff4b:cc57 with SMTP id adf61e73a8af0-23d4915fb8amr590774637.39.1753220469364;
+        Tue, 22 Jul 2025 14:41:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFAegiXBmz6me1rwnZXHQKFdO1xAzXIAxFFtINhqI1FUmRxyNoREYp9vqjr22X1YmcsF9Ffmg==
+X-Received: by 2002:a05:6a20:9148:b0:217:ff4b:cc57 with SMTP id adf61e73a8af0-23d4915fb8amr590746637.39.1753220468954;
+        Tue, 22 Jul 2025 14:41:08 -0700 (PDT)
+Received: from [192.168.1.4] ([106.222.235.133])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-75ef7510655sm2143552b3a.55.2025.07.22.14.41.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Jul 2025 14:41:08 -0700 (PDT)
+Message-ID: <02d1fa2a-0faf-44db-a683-53c5a51e09f1@oss.qualcomm.com>
+Date: Wed, 23 Jul 2025 03:11:03 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250722041418.2024870-1-justin.he@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 16/17] drm/msm/a6xx: Enable IFPC on Adreno X1-85
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250720-ifpc-support-v1-0-9347aa5bcbd6@oss.qualcomm.com>
+ <20250720-ifpc-support-v1-16-9347aa5bcbd6@oss.qualcomm.com>
+ <38100984-df2c-4a15-a192-7f38b8671145@oss.qualcomm.com>
+From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <38100984-df2c-4a15-a192-7f38b8671145@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: b2rbW81oqCmwje1MxovxSDnV8avFJp5s
+X-Authority-Analysis: v=2.4 cv=SYL3duRu c=1 sm=1 tr=0 ts=68800576 cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=4dphQItTPUswyQvINXrzgA==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=wgrHQ5V9N6DtgpC36WEA:9
+ a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDE4NyBTYWx0ZWRfX11H6Hror5ps6
+ btx7K+8axnoMbQ+IwuQcbQba3pzrFN2RL7jaW2ObaM0d/ss+b7KfGSZ1I3tU21kGqxJYMN2N5hC
+ Y22EC58cpMPadEpajr6GAcy6KgVTvE43omv+H+2QnKtO4YCYMTs67GdJdqZZvDX3Q4vAtOYP7Sr
+ Y2uKaS8axBQceXv2LLevd3JcBaVkdLzpAyzPM0m3gasUYxJp3jRo7Qp6UC6MXkvq6ab54z7ommJ
+ 317LNMs/KE82yleIxUhZgWbs7C/+sOtRzaWI6DXbhJZqISaieqkjdqkX+nwW908rh6WKh9qWNuJ
+ 8Fu8Dw+P07oN1awIzACw4ct5Ud+audDXY3iihgsQJnx1W/B++GCJg5ZuF4L3i7kzrwizz/AlX5q
+ OJioA8/GSGpxlVOLvjwWJ1Li1ToHgvqt2rFcs+wtZP649Py+HyKMu4u6cR/VMUgey3RY8CkJ
+X-Proofpoint-ORIG-GUID: b2rbW81oqCmwje1MxovxSDnV8avFJp5s
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-22_03,2025-07-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 suspectscore=0 mlxscore=0 bulkscore=0 mlxlogscore=596
+ lowpriorityscore=0 phishscore=0 malwarescore=0 spamscore=0 clxscore=1015
+ priorityscore=1501 adultscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507220187
 
-Hi Jia,
+On 7/22/2025 8:25 PM, Konrad Dybcio wrote:
+> On 7/20/25 2:16 PM, Akhil P Oommen wrote:
+>> Add the IFPC restore register list and enable IFPC support on Adreno
+>> X1-85 gpu.
+>>
+>> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+>> ---
+>>  drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 67 ++++++++++++++++++++++++++++++-
+>>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 15 +++++--
+>>  drivers/gpu/drm/msm/adreno/a6xx_gpu.h     |  1 +
+>>  3 files changed, 78 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+>> index 70f7ad806c34076352d84f32d62c2833422b6e5e..07fcabed472c3b9ca47faf1a8b3f7cf580801981 100644
+>> --- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+>> @@ -1343,6 +1343,69 @@ static const uint32_t a7xx_pwrup_reglist_regs[] = {
+>>  
+>>  DECLARE_ADRENO_REGLIST_LIST(a7xx_pwrup_reglist);
+>>  
+>> +/* Applicable for X185, A750 */
+>> +static const u32 a750_ifpc_reglist_regs[] = {
+>> +	REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE_0,
+>> +	REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE_1,
+>> +	REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE_2,
+>> +	REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE_3,
+>> +	REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE_4,
+>> +	REG_A6XX_TPL1_NC_MODE_CNTL,
+>> +	REG_A6XX_SP_NC_MODE_CNTL,
+>> +	REG_A6XX_CP_DBG_ECO_CNTL,
+>> +	REG_A6XX_CP_PROTECT_CNTL,
+>> +	REG_A6XX_CP_PROTECT(0),
+>> +	REG_A6XX_CP_PROTECT(1),
+> 
+> Is it fair to assume that we'd like to saverestore all CP_PROT
+> registers on all SKUs, always? We can save some space in .rodata
+> this way..
 
-kernel test robot noticed the following build warnings:
+Yeah. Makes sense, but lets do that when we duplicate it in future.
 
-[auto build test WARNING on akpm-mm/mm-everything]
+-Akhil
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jia-He/mm-percpu-Introduce-normalized-CPU-to-NUMA-node-mapping-to-reduce-max_distance/20250722-121559
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20250722041418.2024870-1-justin.he%40arm.com
-patch subject: [PATCH] mm: percpu: Introduce normalized CPU-to-NUMA node mapping to  reduce max_distance
-config: arm64-randconfig-001-20250722 (https://download.01.org/0day-ci/archive/20250723/202507230509.juShbryQ-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 853c343b45b3e83cc5eeef5a52fc8cc9d8a09252)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250723/202507230509.juShbryQ-lkp@intel.com/reproduce)
+> 
+> Konrad
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507230509.juShbryQ-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/base/arch_numa.c:154:12: warning: no previous prototype for function 'early_cpu_to_norm_node' [-Wmissing-prototypes]
-     154 | int __init early_cpu_to_norm_node(int cpu)
-         |            ^
-   drivers/base/arch_numa.c:154:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-     154 | int __init early_cpu_to_norm_node(int cpu)
-         | ^
-         | static 
-   1 warning generated.
-
-
-vim +/early_cpu_to_norm_node +154 drivers/base/arch_numa.c
-
-   153	
- > 154	int __init early_cpu_to_norm_node(int cpu)
-   155	{
-   156		return cpu_to_norm_node_map[cpu];
-   157	}
-   158	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
