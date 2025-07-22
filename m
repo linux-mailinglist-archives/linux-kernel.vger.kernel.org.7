@@ -1,219 +1,175 @@
-Return-Path: <linux-kernel+bounces-740611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF4DEB0D676
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:00:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0A4DB0D6BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:04:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C406F3BB373
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:59:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 214521C24DB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:03:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4DDB2E11CC;
-	Tue, 22 Jul 2025 09:59:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053CB2E62BA;
+	Tue, 22 Jul 2025 10:00:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="m/O49DTU"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F274qOZ5"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE012E03E0;
-	Tue, 22 Jul 2025 09:59:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 710312E5B31
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 10:00:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753178381; cv=none; b=VpERZmFdDGD8Nkgt4npf4dHrDN0olwyTcNv89Znnw8YGllTK+To2i54QMykYIC5FQ6i3KvyY5+vswzVBL5JPIKY+NsqYfCana8BF+51DvGA3e316n8oFso12Ul7MfzyGK4qEDmPSWp69hIjIwdp6MYE/I8mGu2MjAe4RZqBO6Ns=
+	t=1753178404; cv=none; b=SxqSxjnc/RxTvX5w2rSYC11KhxwHGDPAfb/DHbCGmRuUDJkKGsW7/q6FILX3JsozjEr5yHjvoPwNsZHOgqyf/4SqtydIiFtvJwTV/52XCFzlVZubd/WqOLY1upeR7hiRh8UlnQTSqWsp8sIoR9FEnA/MF8iDKxNMdahUay3QfWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753178381; c=relaxed/simple;
-	bh=9lAHiBwoo8jGTNinYh/ijsaneKOOiolgCjybVc2fj1U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UO8k3Vl5n44oWn/pCI832ulSxn1OQoL7WXaI2+XM4xkbamEhZev8vRLm0mevlCQ8frBeRnNON9l2mqo//yvjfWzLGTuXa0CRGggrCXmB9YXYJ73qANosZEyf7gpS5yvxcRdJlr6Utv9n+jhWD0qWMjrgPssr/ZiUqqPH3dcETQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=m/O49DTU; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56M8xTd5009164;
-	Tue, 22 Jul 2025 09:59:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=QNi9XzvfVxCwjgas+8tBNVhNwsc6Wl
-	y29wriyx3/p7g=; b=m/O49DTUDdwY7AISTXrwrRvug3FDe4RCwEjkgJMjIK5f8k
-	gTPyiraUNoWEe8n6MOFReNFfHX/GjX1upniWgyTpj5NPKFFqKhmXIk3U417BqDI2
-	7AYPlDiJ78cvytPbXcfbJXKTMUgIzWsLc9l9pbQc7N3kpaTyOwuHiBEbj5e+ynbZ
-	+so/XPY+QDg2H1ZiSbHAC+tnKDTqlvGWrocHSNkFvC0oALERZRjocTGXGiulzjmC
-	Vj+42bzcmVWJL5mOr/um2ifK9WD/nkE5Rxk8W+TJCmQEwj8cMM82wlgngCuMdy2f
-	CxFOWpPDFf0U+68u/BVrQbAWmzUbFl9u7GRwM90Q==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4805ut5grt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Jul 2025 09:59:11 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 56M9vwHl015887;
-	Tue, 22 Jul 2025 09:59:10 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4805ut5grn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Jul 2025 09:59:10 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56M6AHHd005470;
-	Tue, 22 Jul 2025 09:59:09 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 480tvqsfua-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Jul 2025 09:59:09 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56M9x7gN52822374
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 22 Jul 2025 09:59:07 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C56B520043;
-	Tue, 22 Jul 2025 09:59:07 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8760020040;
-	Tue, 22 Jul 2025 09:59:05 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.18.185])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 22 Jul 2025 09:59:05 +0000 (GMT)
-Date: Tue, 22 Jul 2025 15:29:02 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
-        Ritesh Harjani <ritesh.list@gmail.com>, john.g.garry@oracle.com,
-        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v3 04/13] ltp/fsx.c: Add atomic writes support to fsx
-Message-ID: <aH9g5jkwnXAkQUJl@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <cover.1752329098.git.ojaswin@linux.ibm.com>
- <5bbd19e1615ca2a485b3b430c92f0260ee576f5e.1752329098.git.ojaswin@linux.ibm.com>
- <20250717161747.GG2672039@frogsfrogsfrogs>
+	s=arc-20240116; t=1753178404; c=relaxed/simple;
+	bh=l9j2EV2tpH6xu+YOscGGd1tAx9tRjSTtnP2IboucQDk=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ns7JURp6Vnc/08P8Fbl5eM929/WgWEMyQcY/WwSW3I684BnoHWsjqiY2Ra9pB+r1LCk8h2Dbduntjzic9NZ8IEGPJI2LEGeqLtnZuYdWdkMaWOSBACLEUuZ+NmA3nU4A5RXLO78cwG6dJKoC6yRJlWMYq/hN5yU/dBB4O1yoC70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F274qOZ5; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4550709f2c1so40134075e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 03:00:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753178401; x=1753783201; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=B9mVbnLu7a1SKXyW78ldUvJa6+GK0T8z2V8R3kTNrD4=;
+        b=F274qOZ5agzEmzUN7yQ8cFkFMCdb65/i3OlE2Cqe/K81aZQPq4bsEADh9BMesOEQYD
+         IHV9tS82OFkQGqjEPCDUwryjMglTgw2w2WwREREAiCIFm0NtStNHmjMACdH56DBGdKQN
+         6tiok5z4R8gR+1UyVQTXd+uWYncS0lJ5qViXemn/N7Bb07q7I7gmGX7D/InNVNxuraVs
+         sTqLi4kGPPGwmFs2GoXuJbT820vpMpSCnTspHaP0D+0TNCrSThZrZz5PMubiFNCFOMv9
+         qm97iFQ8evKPh+J3mccoxx+WOpepkdbU3ORdnQb3fqinbV/7nWIJlMtIZnDbs848hqsD
+         UuFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753178401; x=1753783201;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=B9mVbnLu7a1SKXyW78ldUvJa6+GK0T8z2V8R3kTNrD4=;
+        b=sc5EKmpjtMyMCiB2p6zQnXKOZJhuFxeZPojDOXiH3QUudtYMVkSNMDa8nu1AOIJhEj
+         xu6P4Pnw5pfgszs+gJN87T8pfzM+0KSqGiICqbrz6iN+ujRGO7Ng7/NUyzFDwXnu53ol
+         Wrl4Api9xAXk7tnlWlzzhs+BwHa7drgUI2J/b6McvK/LEmmbRBEB1jQvZ35YsR4jvUZg
+         gzA44tfZGKvUy6LiGEJZsAOn5DSUNXVLNcogKulyLEF8bPe34vgANPomvFf82chyshAu
+         9UVF725xvTephsOVip0Lr7TcyRcvECL+/mm32wwM9zPQYFIJ/2NDaaIeusW72wIKlkvz
+         DN0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX5QPdu6SYtN/dgmPjfPnROrLj7ZsBsNsLOvK6lr0WY1bP4DHtfHXdlM6nmooCN5qXDfcsdBy0TXMFqk/w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzW+QxPNeo/F4248FJ8/mNB4/TI/ll4CYs85kWfTOE/A5NGKbEt
+	UYVpMpS0q7bvzcqlwl37z5TE3GuWlXXz5Z2bckSTzi8RxAFR4fJ2mYgT7JHK204Aj0U=
+X-Gm-Gg: ASbGncv5pKv8RL0Zv5PLbuYMb3/E6iunDqnXaXLpfeAXh8BFsOMFaROKwZ71srZt4vz
+	ZART0xooJ58A/yMh4AgrqmE+xFVhHBw6CpqEg+ho95gi9r9eEudgfMQsxIxF5M2xxbj2TpTKURd
+	xa26fHdypGVapiZ61GSpHj+iSGd0QlitnlAmZHkiCvewdugh1EHTcYqbEmnDy8cg42ZGA/uwC22
+	rEu6krJZJAcjkyESLNC62Q+kYpNltuBrHktcltXBNPhKcXsIS7ukhMFsZtjS7VvVxhmrqffNMsj
+	ypgRhto42PHANJXkbsztlvr1LxgYc6n2jpLFJWUxchXk1mn+BMWXm9lVHoFlbjnvHesCzf5n3Lm
+	wi0zGpf2r6Mass7TI5YQ/0NqMq5nFuSzqaJRuixCgr4+/UUixz1WDkhwPfyno5Sqk7iDNvycy4b
+	4=
+X-Google-Smtp-Source: AGHT+IGcJyJZcZl6JmFdEcmEQZt5L5wILaf0S4QQxyjYW5ekrqujhnwASeqFRVCxYUAXxFw93P/L3A==
+X-Received: by 2002:a05:6000:4b09:b0:3b5:f168:5e60 with SMTP id ffacd0b85a97d-3b61b0f1eadmr11797144f8f.19.1753178400603;
+        Tue, 22 Jul 2025 03:00:00 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:bce4:725d:6922:d1ba? ([2a01:e0a:3d9:2080:bce4:725d:6922:d1ba])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e88476csm189714485e9.21.2025.07.22.02.59.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Jul 2025 03:00:00 -0700 (PDT)
+Message-ID: <84eea632-02d8-4b7f-a4ca-36ce7159a170@linaro.org>
+Date: Tue, 22 Jul 2025 11:59:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250717161747.GG2672039@frogsfrogsfrogs>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDA3OSBTYWx0ZWRfX1d0DcaK6nuRc
- Ykn4QE+rWz1xLNyk01nNXPFVshatEvYaqlOcrLWJGMLyRu1RUIH/8Gu09U1vTZpVggolp4Ou29q
- Zslfq1aTj8mJqCILMhvecMIZUcF3aNsH4pKz3W+zZTViYEM93jLgGFjUPSYKs1muVRTDXho61pd
- 9hCg0niKlOeCzNXKgV1wVt8i1x4/fIqhe/AnJWUK6UiknngXwMseG+h8B1Eglxn+7eC0aXzVzeV
- SvAqVnH7znABNEW5aemXvsAe28E+QfVrfJau33rAqZ2POOGQUuqAqhcKJw+OBYDfEcL1S3m7Ty4
- CgEDHFuPmZRvcDUn46/67MhnaRweUfkGHBkwSm6aHQhnvtfqSRdaoU4wTk7Bz1cAiopHfUuT4fA
- CFYeu8V3M66kbub9Ck1FRWJ2xLu1+NfN0tJLaugSFDFI7Ie2rmwvI+ku7jZkwmSUfcyJZ6RO
-X-Proofpoint-ORIG-GUID: xmIFSctcK-dyd90AKesi5vAaqMFHatIm
-X-Authority-Analysis: v=2.4 cv=cIDgskeN c=1 sm=1 tr=0 ts=687f60ef cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=IipzgdfrNufsr-TDSacA:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: pLWncaHFwhK7sN5QcqX_s5BCD-TJg0qo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-22_01,2025-07-21_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 mlxlogscore=999 mlxscore=0 spamscore=0 suspectscore=0
- adultscore=0 phishscore=0 impostorscore=0 bulkscore=0 lowpriorityscore=0
- priorityscore=1501 clxscore=1015 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507220079
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH 2/2] phy: qcom-mipi-csi2: Add a CSI2 MIPI D-PHY driver
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250710-x1e-csi2-phy-v1-0-74acbb5b162b@linaro.org>
+ <20250710-x1e-csi2-phy-v1-2-74acbb5b162b@linaro.org>
+ <11b573d5-ce4d-476c-b94c-216d427cd838@linaro.org>
+ <08261aa4-689b-4d6b-bfd2-221c1976d254@linaro.org>
+ <a7f64b31-4767-4281-b452-a2bc5351d745@mleia.com>
+ <c93624bb-ee7b-45ac-8b53-b5391f11c9c9@linaro.org>
+ <eac3a877-a4aa-4789-9013-ab8b6c91e0f3@linaro.org>
+ <0a12879f-dc4a-47fb-87a0-ac4b8bcd4d75@linaro.org>
+ <53a19b1d-5665-4937-a07c-5dd1fcde06c5@linaro.org>
+ <3b760685-97db-46e3-80a3-7fad69ad31cd@oss.qualcomm.com>
+ <94b75177-9401-4e0c-966b-5847a29cb6f7@linaro.org>
+ <427548c0-b0e3-4462-a15e-bd7843f00c7f@oss.qualcomm.com>
+ <3UXVZ6ANM9mDjVdMV4SXsiIx_pT3S1lp3RC_Q7mh_o7jF2dpYsni1Sl2TAWv6OCMCRTFmi9aE6BxDquGkOnwEg==@protonmail.internalid>
+ <8b908a20-0bf3-447d-82ea-a5ecee1bf54c@linaro.org>
+ <57501e81-7e9c-4cb1-9a37-18307d1e06ca@linaro.org>
+ <33d76d7f-ab14-4e76-8ffb-eb370901a046@linaro.org>
+ <4edefe21-27b6-4884-befa-ddb451bb9376@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <4edefe21-27b6-4884-befa-ddb451bb9376@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 17, 2025 at 09:17:47AM -0700, Darrick J. Wong wrote:
-
-<snip>
-
-> > +
-> > +/*
-> > + * Round down n to nearest power of 2.
-> > + * If n is already a power of 2, return n;
-> > + */
-> > +static int rounddown_pow_of_2(int n) {
-> > +	int i = 0;
-> > +
-> > +	if (is_power_of_2(n))
-> > +		return n;
-> > +
-> > +	for (; (1 << i) < n; i++);
-> > +
-> > +	return 1 << (i - 1);
-> > +}
-> > +
-> >  void
-> >  dowrite(unsigned offset, unsigned size, int flags)
-> >  {
-> > @@ -1081,6 +1113,27 @@ dowrite(unsigned offset, unsigned size, int flags)
-> >  	offset -= offset % writebdy;
-> >  	if (o_direct)
-> >  		size -= size % writebdy;
-> > +	if (flags & RWF_ATOMIC) {
-> > +		/* atomic write len must be inbetween awu_min and awu_max */
-> > +		if (size < awu_min)
-> > +			size = awu_min;
-> > +		if (size > awu_max)
-> > +			size = awu_max;
-> > +
-> > +		/* atomic writes need power-of-2 sizes */
-> > +		size = rounddown_pow_of_2(size);
-> > +
-> > +		/* atomic writes need naturally aligned offsets */
-> > +		offset -= offset % size;
+On 22/07/2025 11:08, Bryan O'Donoghue wrote:
+> On 22/07/2025 09:32, Neil Armstrong wrote:
+>> The whole key point here is the combo mode, as I understood the combo mode feature
+>> makes the PHY lanes available as 2 separate streams, like if you got 2 "controllers"
+>> attached to the same PHY. So in fact, the PHY should have a single node, but 2 PHY
+>> interfaces in combo mode.
+>>
+>> This makes all this controller/phy model very complex to handle and add a lot of
+>> logic in the camss side. Moving the "csiphy" as an independent media device that
+>> can declare up to 2 endpoints in combo mode makes things much simpler, and allows
+>> us to attach each "csiphy" stream to any "controller" side of camss.
 > 
-> I don't think you should be modifying offset/size here.  Normally for
-> fsx we do all the rounding of the file range in the switch statement
-> after the "calculate appropriate op to run" comment statement.
-> 
-> --D
+> I think there should be a generic extension to PHY/linux-media to support that instead of something Qualcomm specific.
 
-Yes, I noticed that but then I saw we make size/offset adjustments in
-do write for writebdy and I wanted atomic writes adjustments to be done
-after that.
+Can you point out what's missing ? AFAIK it's more a matter of proper representation of all
+the CAMSS components with a proper ports/endpoint graph design that adding new kernel APIs.
 
-Regads,
-ojaswin
+Neil
 
 > 
-> > +
-> > +		/* Skip the write if we are crossing max filesize */
-> > +		if ((offset + size) > maxfilelen) {
-> > +			if (!quiet && testcalls > simulatedopcount)
-> > +				prt("skipping atomic write past maxfilelen\n");
-> > +			log4(OP_WRITE_ATOMIC, offset, size, FL_SKIPPED);
-> > +			return;
-> > +		}
-> > +	}
-> >  	if (size == 0) {
-> >  		if (!quiet && testcalls > simulatedopcount && !o_direct)
-> >  			prt("skipping zero size write\n");
-> > @@ -1088,7 +1141,10 @@ dowrite(unsigned offset, unsigned size, int flags)
-> >  		return;
-> >  	}
-> >  
-> > -	log4(OP_WRITE, offset, size, FL_NONE);
-> > +	if (flags & RWF_ATOMIC)
-> > +		log4(OP_WRITE_ATOMIC, offset, size, FL_NONE);
-> > +	else
-> > +		log4(OP_WRITE, offset, size, FL_NONE);
-> >  
-> >  	gendata(original_buf, good_buf, offset, size);
-> >  	if (offset + size > file_size) {
-> > @@ -1108,8 +1164,9 @@ dowrite(unsigned offset, unsigned size, int flags)
-> >  		       (monitorstart == -1 ||
-> >  			(offset + size > monitorstart &&
-> >  			(monitorend == -1 || offset <= monitorend))))))
-> > -		prt("%lld write\t0x%x thru\t0x%x\t(0x%x bytes)\tdontcache=%d\n", testcalls,
-> > -		    offset, offset + size - 1, size, (flags & RWF_DONTCACHE) != 0);
-> > +		prt("%lld write\t0x%x thru\t0x%x\t(0x%x bytes)\tdontcache=%d atomic_wr=%d\n", testcalls,
-> > +		    offset, offset + size - 1, size, (flags & RWF_DONTCACHE) != 0,
-> > +		    (flags & RWF_ATOMIC) != 0);
-> >  	iret = fsxwrite(fd, good_buf + offset, size, offset, flags);
-> >  	if (iret != size) {
-> >  		if (iret == -1)
-> > @@ -1785,6 +1842,30 @@ do_dedupe_range(unsigned offset, unsigned length, unsigned dest)
-> >  }
-> >  #endif
-> >  
-> > +int test_atomic_writes(void) {
-> > +	int ret;
-> > +	struct statx stx;
-> > +
+> The first task is qcom/CAMSS specific which is separate the CSIPHYs out from the CAMSS block - done in this series and do so in a way that doesn't break the existing ABI - done in the context of adding Hamoa/x1e.
+> 
+> The second step should be to extend the existing linux-media and PHY API to support multiple sensors on the same CSIPHY in a generic way.
+> 
+> If you want to ship me some hardware, I'll help.
+> 
+> ---
+> bod
+
 
