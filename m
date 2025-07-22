@@ -1,99 +1,133 @@
-Return-Path: <linux-kernel+bounces-740834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86750B0D9C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:37:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18509B0D9C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:37:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89FC716940D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:37:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2865F7A7951
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:36:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBBA92E92BB;
-	Tue, 22 Jul 2025 12:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A48381E4A9;
+	Tue, 22 Jul 2025 12:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jqRz5ZTh";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QNuLfQzA"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PGb3ZP68";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f1kTWZ2p"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA447155CB3
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 12:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77A922E3AE4;
+	Tue, 22 Jul 2025 12:37:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753187816; cv=none; b=Lj/mK1e8fBDWh8BJ9FOXVUB4+i8oUuwkZYb85TIZCAoykBg2mtnQnaI0H+dPjoIdU+k82EE6H+JWCSPD9OJSuHTAsc3D9uDrlPyJ/Zob3PmpcX7Hngqtzy581wOS25jUlDiA/PU1S3a/v6gNLGqg9pFwrQ1ErZZyBPG1dthOBEQ=
+	t=1753187844; cv=none; b=LNRzMKH2FhvVkb3NL/N3fzsQ7RutPBfIg7IDa/VB6jXfJ3kENz57jFlWoLVWig3cSaWwmwKc2sgesfSLt74MVJHKjvduv7lKAb/LCaMqdp/rYFa/onVR41xs+nz0ey2rzvo6kFds9/8T3PDnkPD48h9xylYTxT+5G9QbZYQwkd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753187816; c=relaxed/simple;
-	bh=kphWtzDgyCjxtixAH5G3+tjAQ4SHcPyDwtj0yf4OFu8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=rppTmkGN+hiV1fwCk44X7Pa2naQgIVf02NOxbxUlUTraqVM3GlZfdm94kPDSnUnBKDPlvjs84ViMckPkPtOrfOsSOQ3HniMbPghq/GABsZvN+vktvt9JW5+6vwtvK165qwVwfxcskkdIy1iPmzqQORniZjK9tOFpURwwiVh4HPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jqRz5ZTh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QNuLfQzA; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1753187844; c=relaxed/simple;
+	bh=bGhKMVHdpFfrLajjJU9NNrRCtCrMdUhBZrHf2+KD1eQ=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=oKlIPAk8z2tQE1CZwww6v+WXzCLFOLsK0KRhh3ENL8/crT5cvt423wRl5tE/h+NwxVhRmsFdMNczIGhG6AH5mzRkC5DMKhaA52IlJoHmC+vN5nppNOksXYnSRk8JIGF+zD8vhppGXe+n4NpvbT8DhIQGHmv5jb8aSQ88zcQVZYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PGb3ZP68; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f1kTWZ2p; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
+Date: Tue, 22 Jul 2025 12:37:17 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753187810;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=2020; t=1753187839;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=cj3RJo7LhXbFe8x/bjHima/6s5igm92zkD+UOzN9wco=;
-	b=jqRz5ZThgeRXJkLsv2DeW3u6BrnaOK3/yD3ChIVl+ecZBXwLgwb+2WBeq8ywMTgdwXX7pR
-	c7h07XyYawVRqpOZUs/rjx0GUCLe6RXx4P12RjA7PNp+dJp5itdQRD+XIx18Z4+NFLRBYe
-	zmth+Bsrv+k8yHZLCT6vq7oucwBkbxAaTplFLHD4KuNjIw1hoAOvN8cyCezHQdVP3PA4LB
-	ACKGqSzoqZLHrn+93kX2InxXBH0Gc5fKei7qZZGTK9kt+pX/3D3SmUr0tTQdVNGIdhIXt5
-	+0SyZb1H+diLhLcCC3kYfs5Hp+ZDRFT4RTeoJzmrFOqY5H7PpHLx5XT+lYxtnQ==
+	bh=vSN+57bUdSAASPNRSh7B8cTDUyZPdO1WhS/qa0EAPCs=;
+	b=PGb3ZP68N7zk43qgOaREf5k+W30nHqdz3JqfHmEf22VnydB5Mk8clFyyF8JCRydmbbGUL9
+	GTiWHO7g5LEzz19VEXlv/oh9HCIuHIvc+ow6lerHGdvFxcnJhVHtopi+r/qYhzn9xUr1y3
+	0PQpriMq2ZYc4UZooyUku/x0YueBTs4x9YVTy/j3aQAkluG3puIaH06nUtRbIlBZKP76Vf
+	H/q73oVaB6ts63jHWQRrS0qi9y2iIUKQ2X6hbiEz3fAxXI33e8XaIDkxFKUhqc2pU/uNRH
+	MxecUSja0hjFJqik6ezqAC6gF2f6fDV2UNlj61kDh9gUlMhYgJx7nbvP+iZQYg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753187810;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=2020e; t=1753187839;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=cj3RJo7LhXbFe8x/bjHima/6s5igm92zkD+UOzN9wco=;
-	b=QNuLfQzAUnaJPKPulpTcAtbjxacN0/sKKv6gcjuDim5grrbnAk5pVPFspa9W7zmHBGTQiU
-	ONca1AVQ2k/9tuCg==
-To: Jiri Slaby <jirislaby@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Cc: Liangyan <liangyan.peng@bytedance.com>, Yicong Shen
- <shenyicong.1023@bytedance.com>
-Subject: Re: [patch 2/4] genirq: Move irq_wait_for_poll() to call site
-In-Reply-To: <b97f4d0d-ddb6-4fca-bf96-e9f11e00e060@kernel.org>
-References: <20250718184935.232983339@linutronix.de>
- <20250718185311.948555026@linutronix.de>
- <b97f4d0d-ddb6-4fca-bf96-e9f11e00e060@kernel.org>
-Date: Tue, 22 Jul 2025 14:36:49 +0200
-Message-ID: <875xfktna6.ffs@tglx>
+	bh=vSN+57bUdSAASPNRSh7B8cTDUyZPdO1WhS/qa0EAPCs=;
+	b=f1kTWZ2pa0GOJR5LwbBvxQVYhUPUyG86MyE5aNdBI5KBd968EZXJrVy3GAjnI0U+oZoj6v
+	+jl8u6sknWOWGYCg==
+From: tip-bot2 for Markus =?utf-8?q?Bl=C3=B6chl?= <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/urgent] timekeeping: Zero initialize system_counterval
+ when querying time from phc drivers
+Cc: markus@blochl.de, Thomas Gleixner <tglx@linutronix.de>,
+ John Stultz <jstultz@google.com>, stable@vger.kernel.org, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250720-timekeeping_uninit_crossts-v2-1-f513c885b7c2@blochl.de>
+References: <20250720-timekeeping_uninit_crossts-v2-1-f513c885b7c2@blochl.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Message-ID: <175318783799.1420.6062932319598101589.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 22 2025 at 09:07, Jiri Slaby wrote:
->> +	if (IS_ENABLED(CONFIG_SMP)) {
->> +		do {
->> +			raw_spin_unlock(&desc->lock);
->> +			while (irqd_irq_inprogress(&desc->irq_data))
->> +				cpu_relax();
->> +			raw_spin_lock(&desc->lock);
->> +		} while (irqd_irq_inprogress(&desc->irq_data));
->> +	}
->> +	/* Might have been disabled in meantime */
->> +	return !irqd_irq_disabled(&desc->irq_data) && desc->action;
->
-> Just noting that this line is newly evaluated on !SMP too. But it is 
-> still supposed to evaluate to false, given we are here on this only CPU.
+The following commit has been merged into the timers/urgent branch of tip:
 
-It does not, but in that case the code is not reached because the check
-at the call site which evaluates whether the polling CPU is the current
-CPU triggers. So it does not really matter in this context.
+Commit-ID:     67c632b4a7fbd6b76a08b86f4950f0f84de93439
+Gitweb:        https://git.kernel.org/tip/67c632b4a7fbd6b76a08b86f4950f0f84de=
+93439
+Author:        Markus Bl=C3=B6chl <markus@blochl.de>
+AuthorDate:    Sun, 20 Jul 2025 15:54:51 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Tue, 22 Jul 2025 14:25:21 +02:00
 
-But for the other case in handle_edge_irq() this has to return false. It
-should not ever get there because interrupts are disabled while
-INPROGRESS is set, emphasis on *should* :)
+timekeeping: Zero initialize system_counterval when querying time from phc dr=
+ivers
 
-So I moved it back into the CONFIG_SMP conditional. Thanks for spotting
-it!
+Most drivers only populate the fields cycles and cs_id of system_counterval
+in their get_time_fn() callback for get_device_system_crosststamp(), unless
+they explicitly provide nanosecond values.
 
-        tglx
+When the use_nsecs field was added to struct system_counterval, most
+drivers did not care.  Clock sources other than CSID_GENERIC could then get
+converted in convert_base_to_cs() based on an uninitialized use_nsecs field,
+which usually results in -EINVAL during the following range check.
+
+Pass in a fully zero initialized system_counterval_t to cure that.
+
+Fixes: 6b2e29977518 ("timekeeping: Provide infrastructure for converting to/f=
+rom a base clock")
+Signed-off-by: Markus Bl=C3=B6chl <markus@blochl.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: John Stultz <jstultz@google.com>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/all/20250720-timekeeping_uninit_crossts-v2-1-f5=
+13c885b7c2@blochl.de
+
+---
+ kernel/time/timekeeping.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index a009c91..83c65f3 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -1256,7 +1256,7 @@ int get_device_system_crosststamp(int (*get_time_fn)
+ 				  struct system_time_snapshot *history_begin,
+ 				  struct system_device_crosststamp *xtstamp)
+ {
+-	struct system_counterval_t system_counterval;
++	struct system_counterval_t system_counterval =3D {};
+ 	struct timekeeper *tk =3D &tk_core.timekeeper;
+ 	u64 cycles, now, interval_start;
+ 	unsigned int clock_was_set_seq =3D 0;
 
