@@ -1,101 +1,79 @@
-Return-Path: <linux-kernel+bounces-740917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14488B0DB1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:40:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DAA0B0DB20
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:40:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD0AC3BF4F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:39:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 490871630CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D54F23B611;
-	Tue, 22 Jul 2025 13:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04E62EA155;
+	Tue, 22 Jul 2025 13:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="opGsLQ5t"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="1+uOPwRX"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E506F2D3EFB
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 13:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957C42D3EFB;
+	Tue, 22 Jul 2025 13:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753191579; cv=none; b=BSwUIOrmREzZR5K5SurZH/1/oBUIawExqllrOWgK4fext8iBPviPdlgAi86yR9DE/3Sl7vBSSq2QT4xlmns6zB9V+MaO+6RNl2/fv+8dm/nDAQpQG/67SucTalVtxDCmVzklD2h3fTXU0GymVENZcF7xex/P0fBO5pjTNKltq0M=
+	t=1753191635; cv=none; b=s95XoxpqFNloyPCcr+oKmr885Q8RDYJTr6c1eRmNQbdCYRmtXAagNy+jOYmK5fvyTRFzjUV3oz47nXKFuf4KBV8N3hbS9e5eZgVMaWqZhT76+f3N7Ft0fGNuykRuLggPX+EDpxX9Lb3hQ0YKLs3PD71gOfuhw0nH/sgjpH4DHus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753191579; c=relaxed/simple;
-	bh=P7CZhpr4+5Zeq4LJPJNDI2y80s9ZygaDR15AlHLHptQ=;
+	s=arc-20240116; t=1753191635; c=relaxed/simple;
+	bh=MXO9EWlF1pSPtYi/UYwYFw2pS/bbhVXy0OKvJ0qTjks=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E5JQYelEGeQYDhIUkI7WV8hb1kRgMg5Lg1Ijmp4Ht8Iuy99z1h5oNMOrSG0YeIuoVxNxo0HC2qR8dl27EanV+6scj0Pmp61gjau4/lO+6/HOwr8X5cq4TjpbqKwGD+FMop6eLMs+rx8To6yCZfxfCPc4lPK57jJUJOgMq3kaDLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=opGsLQ5t; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56MC5Dhi000902
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 13:39:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=4w3F0joZHW750KxFalsn9QVx
-	Ns0FPKKZPb2uX1yiarA=; b=opGsLQ5tSzq299+AcwZy9AxOaTjfrG7Vq/UQSF0g
-	hTPLYon4gdQzd5Hv3rvlsy1dxpv7549YPoSBbF7HXwDnRagGztr1FyBNT4Ki0O1r
-	Ib5ompQdFhVzwomnNGgwEKTmt6OCWSFlSXaxphsUH7eEy2HKJwaH80Dk+20bWRRD
-	51NjxrKzOWOhnARKS69h9VSclxz9jS1PpTo55/JUcLsqYdCOCiqJFPghUY5RpWJs
-	aeINXIeim2ECvUImYEkdcX4jiqGB+foL7Cyb3s0OaxUx/0uTfkZzyNhCdMsWZSYG
-	MtrbCYK9hoQ9a2eWw2yAb3w5dJujpgQkgGTvhPpOv7qBng==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48044dhetx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 13:39:34 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c955be751aso769420685a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 06:39:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753191573; x=1753796373;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4w3F0joZHW750KxFalsn9QVxNs0FPKKZPb2uX1yiarA=;
-        b=Ym5/xhmgszFjIiqJXipj2+fk42RwER1pGMJtQq8Cb6+LuzW6lvOFDGLp3u+nlrzRz9
-         uWk4TlEyKlQou30lDD04QdldZYjYgMMHGisKUewiT0K0ACNBynN2drI/Lop8gm4c35SW
-         evbbon3Z96ijAaL7g0pnUpewoTEpgTNaXjv0mzS+UwGxFjRjHzR1Bzin/4EgvbQ1RqDH
-         descYLWGYtwHnstAf+zqnvZFflQHLcFb9VI6mJiFUR3A9l+5+4ShQ/EeixoMBN/Fjafw
-         wOLAYJrXJSN2l1WASAoSjYAxe4hX1u2hS0AtSF5xmZb7P713ajxwiEMxLCqRfiJ/OLFs
-         VmjA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZQ9M/Qh1Rq1DEujC7+9iFGZ5+LiwARB+EnT5n7G61OM82sjdJOHqc2mknGM0YgPQ4aa7wTs7gTsywsTg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPx3Y80DjfF2EKAGA1XhtsgM/Te9XsljU4IN9m3TEvT0RwHO32
-	zNqIdxfX/gYbkO2gavK8BQ8eQrPVpmYelPdkysX96vabCvUVNhklOmy99rtgnBM8g3KPoPBtFFY
-	7ZwS4MssNTv3gg45tP/Jn3yVvgTXbfYVM6A1PRVJFxIbtsDA63TPOikzwBjDoenExMTQTTaLEGB
-	g=
-X-Gm-Gg: ASbGncu/dGlvSQ4Iipl7cCqMRtesHVAAN8ol7+d/xvhTQsAU0GK5GczyOipogPKXJH6
-	L0jTkCVj8P31k8A62IFqYmjCXQl0wJrH2nkX3mP5PAaS2PyiT5+bG3hZ9bbU7vcLDOYDrOgrctH
-	itIzRzbNEy9Fo++bn2nGB3/9kMBOJtDasTfk3jGY1Kw5lVmAmFU3xtcMNbIla+oqThMXJliga/f
-	sqEKEFcvMqzi6leRg0KoWl6XbN9YtgJCtG/e2sdI0z8eZ2tH71uGODMKNpZ4n3NEioMmf8tjIq7
-	53YsDy0kN41VPTgANtX4fNdPLReigXZ4SFdvI9kHBLVbSdj590wuJElSmCc+YZmxBP+5JV4mIxM
-	oUS4aj26inWpJY1YPBfwtWxot6MKsPdRhSIx8vaO5GlDWRhoH9Gxu
-X-Received: by 2002:a05:620a:19a5:b0:7e3:52f6:66e5 with SMTP id af79cd13be357-7e352f6672amr2503270685a.35.1753191573344;
-        Tue, 22 Jul 2025 06:39:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHWXNAeEBRYm0Qc899vTrFNNPTNnIjLTPXDWYSnbj33m9VCWWBjQI/8iRumSgWsa8P13k24+Q==
-X-Received: by 2002:a05:620a:19a5:b0:7e3:52f6:66e5 with SMTP id af79cd13be357-7e352f6672amr2503264185a.35.1753191572771;
-        Tue, 22 Jul 2025 06:39:32 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-330a91f640csm16330041fa.91.2025.07.22.06.39.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 06:39:31 -0700 (PDT)
-Date: Tue, 22 Jul 2025 16:39:30 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/17] drm/msm/adreno: Add fenced regwrite support
-Message-ID: <tyjkwrdmsj7k7tkqqxdd65l5v5jxugr5me3ivg5onn3hbffkwp@7uhsbzolqiyd>
-References: <20250720-ifpc-support-v1-0-9347aa5bcbd6@oss.qualcomm.com>
- <20250720-ifpc-support-v1-7-9347aa5bcbd6@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qQtfqt+1HJ7NGXCb922T1SKStCKKfGzGm9ZUg9qmnKs1+s/i/AzxE1L+EZYsvdyzuujN70Ke0EQm8dZbtPWum6+flbKfsl7F4GZy/ucOqhIOzX6anBWUrx9b+hnBRa8WeHW8Z6tQyk7Qwzp7V9jsywPkJeMgPl5SrsFiLs/YgfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=1+uOPwRX; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=J8qiQBG36WBSmQUwYyp0uzxMsuI5XvwcDQhc2TTCUsM=; b=1+uOPwRXEBL1bsymdavVsthvYW
+	PIxAm0lVjGxP5QIRq9kR9moqG69iPLRejLM6DR8ey+R6MoRoChI7PhS95xy5RDt21pHF5hI0Lnbpm
+	/MRewzSUzB7pzCLs42MWPvp1XDtZuWHHwPs+XSCnNM5XnUzm6Rc+gzje3gyTJ3ixqr7k=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1ueDE8-002TAs-HI; Tue, 22 Jul 2025 15:40:16 +0200
+Date: Tue, 22 Jul 2025 15:40:16 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Christophe Roullier <christophe.roullier@foss.st.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Simon Horman <horms@kernel.org>,
+	Tristram Ha <Tristram.Ha@microchip.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 1/4] dt-bindings: net: document st,phy-wol
+ property
+Message-ID: <2563a389-4e7c-4536-b956-476f98e24b37@lunn.ch>
+References: <20250721-wol-smsc-phy-v1-0-89d262812dba@foss.st.com>
+ <20250721-wol-smsc-phy-v1-1-89d262812dba@foss.st.com>
+ <faea23d5-9d5d-4fbb-9c6a-a7bc38c04866@kernel.org>
+ <f5c4bb6d-4ff1-4dc1-9d27-3bb1e26437e3@foss.st.com>
+ <e3c99bdb-649a-4652-9f34-19b902ba34c1@lunn.ch>
+ <38278e2a-5a1b-4908-907e-7d45a08ea3b7@foss.st.com>
+ <5b8608cb-1369-4638-9cda-1cf90412fc0f@lunn.ch>
+ <383299bb-883c-43bf-a52a-64d7fda71064@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,221 +82,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250720-ifpc-support-v1-7-9347aa5bcbd6@oss.qualcomm.com>
-X-Authority-Analysis: v=2.4 cv=BJ6zrEQG c=1 sm=1 tr=0 ts=687f9496 cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=A7g6f4VAW18hdwHdu84A:9 a=CjuIK1q_8ugA:10
- a=IoWCM6iH3mJn3m4BftBB:22
-X-Proofpoint-GUID: 3qpzOsjYIQKZrZVLh0QCFGae-zkueFLp
-X-Proofpoint-ORIG-GUID: 3qpzOsjYIQKZrZVLh0QCFGae-zkueFLp
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDExMiBTYWx0ZWRfX1f8dee1RXO5a
- 4kOJCe/UqD004yXsym+2cRWfEx2JlNQCwBsIEGOpE9Hx3eMsHNk+1syCB2g6mOhteTz/Aioz0Yh
- VMYYsBUm27kygStm1Lau9EkLAKisVhKsSi/YzJJzo+9uVmSf+SldcpBkeSJPMlktdg9PrHwH7yM
- 8ylBrTyIHS9UdM2Z7UrtJBKBWRowqF//t6rrkM0lSrx/ILNQHuglzeaNzH52MLHbygDcxO3jxst
- ODAvkjvx4TC5Sj72W4lqeicOd5AR/T10RLliqjvE5fFI5669y6ffI3+7rg6SMrUzzK2SJA0NomF
- efbsJrk/subWloLyfTbU8y42JbW4Nq3lFtb3fqtxwdy4dusdpQ+nzkRJMmm5slLgQUldj9oMa+2
- oMiSqWNmXwxBTEssnyNA3dl7UpyBLO911hG5wmUinsCeidm7CBkYWvy/PcGt6yEJahUEg5U5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-22_02,2025-07-21_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 lowpriorityscore=0 clxscore=1015 spamscore=0
- mlxlogscore=999 suspectscore=0 impostorscore=0 phishscore=0 adultscore=0
- mlxscore=0 malwarescore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507220112
+In-Reply-To: <383299bb-883c-43bf-a52a-64d7fda71064@foss.st.com>
 
-On Sun, Jul 20, 2025 at 05:46:08PM +0530, Akhil P Oommen wrote:
-> There are some special registers which are accessible even when GX power
-> domain is collapsed during an IFPC sleep. Accessing these registers
-> wakes up GPU from power collapse and allow programming these registers
-> without additional handshake with GMU. This patch adds support for this
-> special register write sequence.
+I know Russell has also replied about issues with stmmac. Please
+consider that when reading what i say... It might be not applicable.
+
+> Seems like a fair and logical approach. It seems reasonable that the
+> MAC driver relies on the get_wol() API to know what's supported.
 > 
-> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-> ---
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 63 ++++++++++++++++++++++++++++++-
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.h     |  1 +
->  drivers/gpu/drm/msm/adreno/a6xx_preempt.c | 20 +++++-----
->  3 files changed, 73 insertions(+), 11 deletions(-)
+> The tricky thing for the PHY used in this patchset is to get this
+> information:
 > 
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> index 491fde0083a202bec7c6b3bca88d0e5a717a6560..8c004fc3abd2896d467a9728b34e99e4ed944dc4 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> @@ -16,6 +16,67 @@
->  
->  #define GPU_PAS_ID 13
->  
-> +static bool fence_status_check(struct msm_gpu *gpu, u32 offset, u32 value, u32 status, u32 mask)
-> +{
-> +	/* Success if !writedropped0/1 */
-> +	if (!(status & mask))
-> +		return true;
-> +
-> +	udelay(10);
+> Extract from the documentation of the LAN8742A PHY:
+> "The WoL detection can be configured to assert the nINT interrupt pin
+> or nPME pin"
 
-Why do we need udelay() here? Why can't we use interval setting inside
-gmu_poll_timeout()?
+https://www.kernel.org/doc/Documentation/devicetree/bindings/power/wakeup-source.txt
 
-> +
-> +	/* Try to update fenced register again */
-> +	gpu_write(gpu, offset, value);
-> +	return false;
-> +}
-> +
-> +static int fenced_write(struct a6xx_gpu *a6xx_gpu, u32 offset, u32 value, u32 mask)
-> +{
-> +	struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
-> +	struct msm_gpu *gpu = &adreno_gpu->base;
-> +	struct a6xx_gmu *gmu = &a6xx_gpu->gmu;
-> +	u32 status;
-> +
-> +	gpu_write(gpu, offset, value);
-> +
-> +	/* Nothing else to be done in the case of no-GMU */
-> +	if (adreno_has_gmu_wrapper(adreno_gpu))
-> +		return 0;
-> +
-> +	if (!gmu_poll_timeout(gmu, REG_A6XX_GMU_AHB_FENCE_STATUS, status,
-> +			fence_status_check(gpu, offset, value, status, mask), 0, 1000))
-> +		return 0;
-> +
-> +	dev_err_ratelimited(gmu->dev, "delay in fenced register write (0x%x)\n",
-> +			offset);
-> +
-> +	/* Try again for another 1ms before failing */
-> +	gpu_write(gpu, offset, value);
-> +	if (!gmu_poll_timeout(gmu, REG_A6XX_GMU_AHB_FENCE_STATUS, status,
-> +			fence_status_check(gpu, offset, value, status, mask), 0, 1000))
-> +		return 0;
-> +
-> +	dev_err_ratelimited(gmu->dev, "fenced register write (0x%x) fail\n",
-> +			offset);
-> +
-> +	return -ETIMEDOUT;
-> +}
-> +
-> +int a6xx_fenced_write(struct a6xx_gpu *a6xx_gpu, u32 offset, u64 value, u32 mask, bool is_64b)
-> +{
-> +	int ret;
-> +
-> +	ret = fenced_write(a6xx_gpu, offset, lower_32_bits(value), mask);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (!is_64b)
-> +		return 0;
-> +
-> +	ret = fenced_write(a6xx_gpu, offset + 1, upper_32_bits(value), mask);
+It is a bit messy, but in the device tree, you could have:
 
-no need for a separate ret assignment.
+    interrupts = <&sirq 0 IRQ_TYPE_LEVEL_LOW>
+                 <&pmic 42 IRQ_TYPE_LEVEL_LOW>;
+    interrupt-names = "nINT", "wake";
+    wakeup-source
 
-> +
-> +	return ret;
-> +}
-> +
->  static inline bool _a6xx_check_idle(struct msm_gpu *gpu)
->  {
->  	struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
-> @@ -86,7 +147,7 @@ static void a6xx_flush(struct msm_gpu *gpu, struct msm_ringbuffer *ring)
->  	/* Update HW if this is the current ring and we are not in preempt*/
->  	if (!a6xx_in_preempt(a6xx_gpu)) {
->  		if (a6xx_gpu->cur_ring == ring)
-> -			gpu_write(gpu, REG_A6XX_CP_RB_WPTR, wptr);
-> +			a6xx_fenced_write(a6xx_gpu, REG_A6XX_CP_RB_WPTR, wptr, BIT(0), false);
+You could also have:
 
-I can't stop but notice that we don't handle a6xx_fenced_write() errors.
-Is it fine? Or will it result in some sort of crash / reset?
+    interrupts = <&sirq 0 IRQ_TYPE_LEVEL_LOW>;
+    interrupt-names = "wake";
+    wakeup-source
 
->  		else
->  			ring->restore_wptr = true;
->  	} else {
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h b/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
-> index 9201a53dd341bf432923ffb44947e015208a3d02..2be036a3faca58b4b559c30881e4b31d5929592a 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
-> @@ -291,5 +291,6 @@ int a6xx_gpu_state_put(struct msm_gpu_state *state);
->  
->  void a6xx_bus_clear_pending_transactions(struct adreno_gpu *adreno_gpu, bool gx_off);
->  void a6xx_gpu_sw_reset(struct msm_gpu *gpu, bool assert);
-> +int a6xx_fenced_write(struct a6xx_gpu *gpu, u32 offset, u64 value, u32 mask, bool is_64b);
->  
->  #endif /* __A6XX_GPU_H__ */
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_preempt.c b/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
-> index 3b17fd2dba89115a8e48ba9469e52e4305b0cdbb..5b0fd510ff58d989ab285f1a2497f6f522a6b187 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
-> @@ -41,7 +41,7 @@ static inline void set_preempt_state(struct a6xx_gpu *gpu,
->  }
->  
->  /* Write the most recent wptr for the given ring into the hardware */
-> -static inline void update_wptr(struct msm_gpu *gpu, struct msm_ringbuffer *ring)
-> +static inline void update_wptr(struct a6xx_gpu *a6xx_gpu, struct msm_ringbuffer *ring)
->  {
->  	unsigned long flags;
->  	uint32_t wptr;
-> @@ -51,7 +51,7 @@ static inline void update_wptr(struct msm_gpu *gpu, struct msm_ringbuffer *ring)
->  	if (ring->restore_wptr) {
->  		wptr = get_wptr(ring);
->  
-> -		gpu_write(gpu, REG_A6XX_CP_RB_WPTR, wptr);
-> +		a6xx_fenced_write(a6xx_gpu, REG_A6XX_CP_RB_WPTR, wptr, BIT(0), false);
->  
->  		ring->restore_wptr = false;
->  	}
-> @@ -172,7 +172,7 @@ void a6xx_preempt_irq(struct msm_gpu *gpu)
->  
->  	set_preempt_state(a6xx_gpu, PREEMPT_FINISH);
->  
-> -	update_wptr(gpu, a6xx_gpu->cur_ring);
-> +	update_wptr(a6xx_gpu, a6xx_gpu->cur_ring);
->  
->  	set_preempt_state(a6xx_gpu, PREEMPT_NONE);
->  
-> @@ -268,7 +268,7 @@ void a6xx_preempt_trigger(struct msm_gpu *gpu)
->  	 */
->  	if (!ring || (a6xx_gpu->cur_ring == ring)) {
->  		set_preempt_state(a6xx_gpu, PREEMPT_FINISH);
-> -		update_wptr(gpu, a6xx_gpu->cur_ring);
-> +		update_wptr(a6xx_gpu, a6xx_gpu->cur_ring);
->  		set_preempt_state(a6xx_gpu, PREEMPT_NONE);
->  		spin_unlock_irqrestore(&a6xx_gpu->eval_lock, flags);
->  		return;
-> @@ -302,13 +302,13 @@ void a6xx_preempt_trigger(struct msm_gpu *gpu)
->  
->  	spin_unlock_irqrestore(&ring->preempt_lock, flags);
->  
-> -	gpu_write64(gpu,
-> -		REG_A6XX_CP_CONTEXT_SWITCH_SMMU_INFO,
-> -		a6xx_gpu->preempt_smmu_iova[ring->id]);
-> +	a6xx_fenced_write(a6xx_gpu,
-> +		REG_A6XX_CP_CONTEXT_SWITCH_SMMU_INFO, a6xx_gpu->preempt_smmu_iova[ring->id],
-> +		BIT(1), true);
->  
-> -	gpu_write64(gpu,
-> +	a6xx_fenced_write(a6xx_gpu,
->  		REG_A6XX_CP_CONTEXT_SWITCH_PRIV_NON_SECURE_RESTORE_ADDR,
-> -		a6xx_gpu->preempt_iova[ring->id]);
-> +		a6xx_gpu->preempt_iova[ring->id], BIT(1), true);
->  
->  	a6xx_gpu->next_ring = ring;
->  
-> @@ -328,7 +328,7 @@ void a6xx_preempt_trigger(struct msm_gpu *gpu)
->  	set_preempt_state(a6xx_gpu, PREEMPT_TRIGGERED);
->  
->  	/* Trigger the preemption */
-> -	gpu_write(gpu, REG_A6XX_CP_CONTEXT_SWITCH_CNTL, cntl);
-> +	a6xx_fenced_write(a6xx_gpu, REG_A6XX_CP_CONTEXT_SWITCH_CNTL, cntl, BIT(1), false);
->  }
->  
->  static int preempt_init_ring(struct a6xx_gpu *a6xx_gpu,
-> 
-> -- 
-> 2.50.1
-> 
+In the first example, since there are two interrupts listed, it must
+be using the nPME. For the second, since there is only one, it must be
+using nINT.
 
--- 
-With best wishes
-Dmitry
+Where this does not work so well is when you have a board which does
+not have nINT wired, but does have nPME. The phylib core will see
+there is an interrupt and request it, and disable polling. And then
+nothing will work. We might be able to delay solving that until such a
+board actually exists?
+
+	Andrew
 
