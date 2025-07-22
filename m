@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-740411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80F45B0D3D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:49:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A07DEB0D3E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:51:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F748188DF1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:46:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED5E93A233E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD2F2E172E;
-	Tue, 22 Jul 2025 07:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8061A2E267B;
+	Tue, 22 Jul 2025 07:41:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BCw916cK"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QfPApN1r"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA682D29D5
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 07:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B3662E0902
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 07:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753170091; cv=none; b=NHaHr3zctBo+Tzk79YjEFeu/qMNDWCkZB5t+6kw3Am75HRJPsc0OHNoz7yZ3/rgaSFnuHmUdR9UhsVZi7tqKZ7I84MKjxo+vKgU8Rr8SR6/wWMdErLaVRtZLmb5G0cqlITB+eV6ytpnRjgIQC333SECrl41ML7dGoj/TIr9d51o=
+	t=1753170092; cv=none; b=hTXxOswRkq8/QG7nAD2N5SsP36mikcwhKmgytdN3FUa0VGrRb9Hk99fPIvQUjWNFBXzGCeIYgo87iSVRvRpgP/5Or2l2PYG6RYcdTCEYZIZai3wz69ms8ziUv0unTNsLQhYej+2atZ5Z1C8IHbArdWQsKuosCdstGgsnxfLA8b8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753170091; c=relaxed/simple;
-	bh=LAFzkfsjMSCq3mQX3QMycHLyMEh/8g9K5shOKKAytmw=;
+	s=arc-20240116; t=1753170092; c=relaxed/simple;
+	bh=SyYOr2zV6XxG5xIVDOSbyAo9C7BbNCREXuZ/bamKzU0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kq5UmBt4JAiQZWu2tprtzuK0H93bZm2JcZzEUxkp7LPMxOxpvaYbFcs3OF8zFatAVV1QirwBxTqXwNLbPGSFTli/Bpf30NXuQhyvlp7X2hA4zVC2/6LzlSNZlCCzhwDRF6iEqX8GxHNZrN7tk+JQOTX0FD0yWQLx9RyBpJCYro0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BCw916cK; arc=none smtp.client-ip=209.85.218.42
+	 MIME-Version; b=p78NW22eQitJ+jM1JyVfKhfvRDs02VnQr1HOpbIxaya4qCP5jcLC70nWreW8S1bCyRcphq5Az7rYaaxpQl/W4cuz6kyC8BGvO+2TVCzgHbCxkdb56xLwVA0feWc8EQ+jl68gFaZ1FEWh12YHZSy7VqCr0+LdWp02mzIl12+boLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QfPApN1r; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ae0c571f137so971750266b.0
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aec46b50f33so890593766b.3
         for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 00:41:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1753170088; x=1753774888; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gZNogBY7S57ztBtcwsWdypdOXKto1q8N8tm4BSbYJAQ=;
-        b=BCw916cKuCO8KK3uydYMiYepSpEq6nwR+zmE+LfdNqP1kfI6v6FML9pmYELg4wcR6b
-         CkMe37O484lI/0MAO4VNkEW7bFXzojUz71mGOHWaYuJosF4EI2QsRYG+xKlXe+CrI5Hc
-         kK1synuVRj7HaJM//j8+8mNV4lbxYk5mp7mLD5YBgy9BTRgaycqny+AEPEKrNhTroVC7
-         SwLaGCBqIuwrepuI0V/85V9385VXQM8U1/YdpNGfqUqKoAfdpqnU2KA+K55VCeW3PLKw
-         Xwjdri+POzBjgOtCrez/28fCLgyXhTGmvfFBHvkqQOGBljuryh7ucDGHr7yicOxZHTeB
-         SsQQ==
+        bh=lGU8KfFDM4IZZr2GDAlyAqDQq8y18Wqb22CKVd1xvY8=;
+        b=QfPApN1rg8ULsiyHkY4M0PJmpR4ZK1+4c8bx5NqyJzOMDKPi7KBCwY8vDnvlq9W3m9
+         +zfN1M3lLKOQOsfXz0gxC7SkyMvPiXsF/Bl7HGL/xh72ko0+OpytR+BhqhiNxdTCs/kL
+         Z+8i2J9FPhUyTMTgZzhkb3QgPcZ8bW4z+uYmOLIqa9nui0kvdMcZbwq2mgfNFJLAi0XV
+         oCh5ip3hhBuY1UdoSHS3zixda79CpdgiflCso7It3xzoUGt/v8abzTCPPwJFMRVz47Tn
+         8FW/tqT2M3DDC7EO/7g6leeSc6/LyWZbf1hI2Up8oFRd04DTP6vdf7yDpAoL5Bg3zEiG
+         iH5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1753170088; x=1753774888;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gZNogBY7S57ztBtcwsWdypdOXKto1q8N8tm4BSbYJAQ=;
-        b=jryHrIR857Kf+ne56dePsffDy2F4WjWRSmtywjH2MJGmxXxp2SDHwuC7FCA4Ccdz8O
-         nIHrPzZpe1ajJFi9ONqXBYvfVfNoSB4+UJDfKNiFsxxGPNxf2jfdcZV8tVa7dZrYWXdk
-         WHhWzruMlNiyPfMIgYObkWQ6nvWsrq4nLv3McOGruroBjbuQWUO85f4IED19gS8ulrJY
-         XkVwKUyFFjlooMw0ueix517ZuJ3uoe+e37iRbw5zeATxKZMoG/FKENOJH+jH4j5rGDsm
-         K7oIYdoYv462H1FHqmXq4CcpoOweoDIoHgmu9FhVH8GCxN+BBs/3xvlpGgg9jpp7OZKx
-         QY3g==
-X-Forwarded-Encrypted: i=1; AJvYcCWiMrPMhGKJPqpynyNdNCuXfJiazEuZxdqQ5dw2kxEO2pj4erHZvnhLUkgt9UEoF1O23asqejlgcttZoc0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0dGEvC+99o7S8a2aGVvs7rMD7z+4wd0vBFnMlnxsjQoqezPR+
-	YQROQ83+xuHtVuyEvnambuxci7qRA/RRHFoPXGMZMvi1d8Ptu9xonM8I
-X-Gm-Gg: ASbGnctH1aO3fviJ1SS2bZOE+yMf6z1sALZaA00UAqFv1AMwu3rZ4S6QJpce3q6x+Ex
-	xsSspNI5lYiGneKDmdQElBjGZwavPr4no9fc3Y6vx16T0YyFBijGsMVAphPCYxHs9fmUSo6HWtE
-	vt0AjGzYNkp+9lPKXCUWQGinvXgBfI+Vl4CJEPqrLvpytbVwqcngc1O0+XC8yE9lntNlnlUM/kA
-	NBdVX85ZoN6o/P5XkVoHoTqF0eSP00TfiL/3RtutWbMj1LOjFDE3ygpBEvdLufOf5eFrLWtKHU7
-	EVi5SvMO1+bCBcMCRMMsO4U1ickyQrwfSeCgQO0sDZ1JDEvvh8lmI90l3g4jOVzqa9FAA6elQZv
-	VFlqV4cMuwg4F7Pg28rg1luQ=
-X-Google-Smtp-Source: AGHT+IFW90x0hbLkyLT3UYkJcBiH0wEay939st4w3DBG/C7BPZnwEOkPFBURA4+AnF45CuVZdakffg==
-X-Received: by 2002:a17:906:68d2:b0:ae0:da2f:dcf3 with SMTP id a640c23a62f3a-ae9c9be2d5dmr2050002366b.59.1753170087837;
-        Tue, 22 Jul 2025 00:41:27 -0700 (PDT)
+        bh=lGU8KfFDM4IZZr2GDAlyAqDQq8y18Wqb22CKVd1xvY8=;
+        b=wSrirFudIlBeAREeZjJki5XA/NSofW6UIgnRpXp/JPgkWxB7cXTvR+rUOAEXOj+QTz
+         TX8aSU9FSM/RlFgY2i1ua9xvXfB4JWYkgT7Q4uP2w4KatcbtwjPkVMbzyFeg0zMkISqD
+         PEU9gCE+qU00rSX8LSDkdDKLrBDDsBdFJ9zikrnTNBzElvUb+YzJuorGWjDaKBymlGds
+         8CbQt7n1PyAZFWW8bEmULXVl2YpEisX+HDnBrI7oG4Csiy/kdONwmrg8gna5Jn8vdi4r
+         UJwr7ol8G3hB5UoU2Afh7ynY72Fd+k21M5kYnOMWP0xgRJkgTyUukK7YS+PYtSXwW25A
+         6/fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWolp7atfjv2lMUpLUWdr2rns+eUTZsnxUL9Ou8eLEnfTEpOlTTq7iZzEIvq1F5dvwb98KVXgJhzH9LTaM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyX6GK95+MCjpW9kb6XBV+R+O5CzKI38tXBzeMuYkTAPjIECchp
+	snY8Rtc++dVj9pHzjbjmL9Tm8Xp07fLW8850MUCCpT6g0AOgc0ylN34w
+X-Gm-Gg: ASbGncuLqHGD4dSt4ZOo0IJXMdiQqiBkuHQqzX7Aph++DabpihUmofSRSaSfk07UpV7
+	jLAZvM2LpZbS2oWcmcRaZ+NAIGam1y6JHnLmXCubNlP4OjY/6GjNIf3/PgbIBKchgd8Yj+GVxAd
+	kTLQ+RP+kI9JhcReliUQ4LRe4sfOBUmUXhdLxt2qR+pxFvHouaG7+oBLEFceCrn93NPit1t7Qr4
+	zbgsQC81DYZz8IyGCgr0g+6xHwqEh2SACbltFfoj6eBOYvgPsAh4Vw4DIelb8RgP/mKz2nMxMcQ
+	Pp20jxFxSY2DjIBFcLNqyV6iNlRSpxgWJ2OeM2X9FdmJp+W0ern1fKXn6S+tcJhAMH6zfOBoXcC
+	LHYmMd5MdW4f5G/zuAA/aALg=
+X-Google-Smtp-Source: AGHT+IGDSya8s9ywgwmIycnqxfqEdjtBFsT7b2LHbPorWjslOCCpbtsVDGoOXd2sca4tKDRZhAtDKA==
+X-Received: by 2002:a17:907:cca3:b0:ae9:bf1c:50a4 with SMTP id a640c23a62f3a-ae9ce078f47mr1615975666b.36.1753170088409;
+        Tue, 22 Jul 2025 00:41:28 -0700 (PDT)
 Received: from tumbleweed ([95.90.185.15])
         by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6c79d6c6sm821224666b.32.2025.07.22.00.41.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 00:41:27 -0700 (PDT)
+        Tue, 22 Jul 2025 00:41:28 -0700 (PDT)
 From: Michael Straube <straube.linux@gmail.com>
 To: gregkh@linuxfoundation.org
 Cc: hdegoede@redhat.com,
@@ -79,9 +79,9 @@ Cc: hdegoede@redhat.com,
 	linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 6/7] staging: rtl8723bs: dm_CheckStatistics is empty
-Date: Tue, 22 Jul 2025 09:41:14 +0200
-Message-ID: <20250722074115.35044-7-straube.linux@gmail.com>
+Subject: [PATCH 7/7] staging: rtl8723bs: DoIQK_8723B is empty
+Date: Tue, 22 Jul 2025 09:41:15 +0200
+Message-ID: <20250722074115.35044-8-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250722074115.35044-1-straube.linux@gmail.com>
 References: <20250722074115.35044-1-straube.linux@gmail.com>
@@ -93,38 +93,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The function dm_CheckStatistics is empty, remove it.
+The function DoIQK_8723B is empty, remove the function and code that
+uses it.
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- drivers/staging/rtl8723bs/hal/rtl8723b_dm.c | 7 -------
- 1 file changed, 7 deletions(-)
+ drivers/staging/rtl8723bs/hal/HalPhyRf.h       |  2 --
+ drivers/staging/rtl8723bs/hal/HalPhyRf_8723B.c | 10 ----------
+ drivers/staging/rtl8723bs/hal/HalPhyRf_8723B.h |  7 -------
+ 3 files changed, 19 deletions(-)
 
-diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_dm.c b/drivers/staging/rtl8723bs/hal/rtl8723b_dm.c
-index d1c875cf8e6d..928226679ab4 100644
---- a/drivers/staging/rtl8723bs/hal/rtl8723b_dm.c
-+++ b/drivers/staging/rtl8723bs/hal/rtl8723b_dm.c
-@@ -12,9 +12,6 @@
+diff --git a/drivers/staging/rtl8723bs/hal/HalPhyRf.h b/drivers/staging/rtl8723bs/hal/HalPhyRf.h
+index fdbdd68edf2a..1e79ab9cb773 100644
+--- a/drivers/staging/rtl8723bs/hal/HalPhyRf.h
++++ b/drivers/staging/rtl8723bs/hal/HalPhyRf.h
+@@ -15,7 +15,6 @@ enum pwrtrack_method {
+ };
  
- /*  Global var */
+ typedef void (*FuncSetPwr)(struct dm_odm_t *, enum pwrtrack_method, u8, u8);
+-typedef void (*FuncIQK)(struct dm_odm_t *, u8, u8, u8);
+ typedef void (*FuncLCK)(struct dm_odm_t *);
+ typedef void (*FuncSwing)(struct dm_odm_t *, u8 **, u8 **, u8 **, u8 **);
  
--static void dm_CheckStatistics(struct adapter *Adapter)
+@@ -27,7 +26,6 @@ struct txpwrtrack_cfg {
+ 	u8 RfPathCount;
+ 	u32 ThermalRegAddr;
+ 	FuncSetPwr ODM_TxPwrTrackSetPwr;
+-	FuncIQK DoIQK;
+ 	FuncLCK PHY_LCCalibrate;
+ 	FuncSwing GetDeltaSwingTable;
+ };
+diff --git a/drivers/staging/rtl8723bs/hal/HalPhyRf_8723B.c b/drivers/staging/rtl8723bs/hal/HalPhyRf_8723B.c
+index 81149ab81904..34692cca33f5 100644
+--- a/drivers/staging/rtl8723bs/hal/HalPhyRf_8723B.c
++++ b/drivers/staging/rtl8723bs/hal/HalPhyRf_8723B.c
+@@ -142,15 +142,6 @@ static void setCCKFilterCoefficient(struct dm_odm_t *pDM_Odm, u8 CCKSwingIndex)
+ 	}
+ }
+ 
+-void DoIQK_8723B(
+-	struct dm_odm_t *pDM_Odm,
+-	u8 DeltaThermalIndex,
+-	u8 ThermalValue,
+-	u8 Threshold
+-)
 -{
 -}
- /*  */
- /*  functions */
- /*  */
-@@ -144,10 +141,6 @@ void rtl8723b_HalDmWatchDog(struct adapter *Adapter)
- 		(hw_init_completed == true) &&
- 		((!fw_current_in_ps_mode) && bFwPSAwake)
- 	) {
--		/*  */
--		/*  Calculate Tx/Rx statistics. */
--		/*  */
--		dm_CheckStatistics(Adapter);
- 		rtw_hal_check_rxfifo_full(Adapter);
- 	}
+-
+ /*-----------------------------------------------------------------------------
+  * Function:	odm_TxPwrTrackSetPwr88E()
+  *
+@@ -353,7 +344,6 @@ void ConfigureTxpowerTrack_8723B(struct txpwrtrack_cfg *pConfig)
+ 	pConfig->ThermalRegAddr = RF_T_METER_8723B;
  
+ 	pConfig->ODM_TxPwrTrackSetPwr = ODM_TxPwrTrackSetPwr_8723B;
+-	pConfig->DoIQK = DoIQK_8723B;
+ 	pConfig->PHY_LCCalibrate = PHY_LCCalibrate_8723B;
+ 	pConfig->GetDeltaSwingTable = GetDeltaSwingTable_8723B;
+ }
+diff --git a/drivers/staging/rtl8723bs/hal/HalPhyRf_8723B.h b/drivers/staging/rtl8723bs/hal/HalPhyRf_8723B.h
+index 775095ad0921..c83442917f9d 100644
+--- a/drivers/staging/rtl8723bs/hal/HalPhyRf_8723B.h
++++ b/drivers/staging/rtl8723bs/hal/HalPhyRf_8723B.h
+@@ -18,13 +18,6 @@
+ 
+ void ConfigureTxpowerTrack_8723B(struct txpwrtrack_cfg *pConfig);
+ 
+-void DoIQK_8723B(
+-	struct dm_odm_t *pDM_Odm,
+-	u8 DeltaThermalIndex,
+-	u8 ThermalValue,
+-	u8 Threshold
+-);
+-
+ void ODM_TxPwrTrackSetPwr_8723B(
+ 	struct dm_odm_t *pDM_Odm,
+ 	enum pwrtrack_method Method,
 -- 
 2.50.1
 
