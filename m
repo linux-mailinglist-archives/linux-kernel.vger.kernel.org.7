@@ -1,47 +1,85 @@
-Return-Path: <linux-kernel+bounces-740484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8746B0D4C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:36:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 566CBB0D4C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:36:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E12A56C642A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:35:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30B39547139
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2058F2D5437;
-	Tue, 22 Jul 2025 08:36:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA0D2D8790;
+	Tue, 22 Jul 2025 08:36:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IuqSx5yX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YFlJYYOu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECFC2BD5BB
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 08:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236592D63F3
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 08:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753173370; cv=none; b=EJsUkpR/E5oZry7+F2bHsoHpKhljiKohrmcaKJ9SlQY/nsvjNvIJ7U5lrtmW4ZjMJiyLnqk7LPyeB2lJYRUqP+G0Q7ULvWU99q78vYQjSzbU3ob+F+O5eq0J99Il86QEEcXI18NWOWN7n4LTcLu377JY2yHO/HlgMdT5uk1xYtw=
+	t=1753173404; cv=none; b=GXJon/W/PlCGcw2DNIcBPxA/+0EOG61I2/hrs33b0CoHWmmgbjPuHb677uJLKXukgZtZBubkFv1bdm11z6NmT+3Gsnvg8WLMIwxlk24WhbAAnlBAQc7ZTGACMWp7uQ6DvVNOp3x1c9+TZ4LusYt54cWRDQ57S4+FJ/ybN5kUApU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753173370; c=relaxed/simple;
-	bh=n9bVkjbkbp8D4PYy1fqMbBFg8aL3F8Zum+FdA5TpMtg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=LHF0ie0W4GeionkhGWU3qHBuq0xO7p2BPVTjWZnqCdWlsBCe6PCGlVROPQbMn5qqpVZS2QhK/J2BT4qoHefJaDpAnP0mmaW0SPVkSYYQF2ZuITdV3+u1YOdIYKCB2Z62OVjPGCVnUKfodPkRdeqcJVUFBfImP6ohHN/+YL6k1EE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IuqSx5yX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCC31C4CEEB;
-	Tue, 22 Jul 2025 08:36:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753173369;
-	bh=n9bVkjbkbp8D4PYy1fqMbBFg8aL3F8Zum+FdA5TpMtg=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=IuqSx5yXBRB7pJ/pIi29WvPHFxCshHQ/lzWSkdekZ2IB/p/UjQuTzw1X8txQPhc87
-	 vwv30BL28DOh3zGNnChvXU4UEH5eGYlmJ57xk52Nyp3AznJRa7bv3ONRDOEIfEFUcp
-	 /xkeyIbMXqZghbCVkCqPhhI6rJO6HzYYO3rFeeZtXucc4KnSAQoQ/wgNZMf6bjGmnW
-	 cf+1tUgjY734L0ZnoH1RBVr9UGRT2p0v+KLfeY2RxAJYNT2DSBcIicrNA3t4Cn3zOq
-	 gR1gGCPoVkyfXNwwJqDwMPHo+OHKzMT664CXH9KR6RQUmsCNfX5R16Iq/Z7CFZFTaZ
-	 7hrmhJ7IDSsGw==
-Message-ID: <874a2b30-ec4d-4b72-9f25-81429f03ccb7@kernel.org>
-Date: Tue, 22 Jul 2025 10:36:05 +0200
+	s=arc-20240116; t=1753173404; c=relaxed/simple;
+	bh=wNliSoTcua4ZI5Uh3yJ1tul76CVVgm+R8c7tgQHEW0c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q38OsCcbgUqa4nCVsISsCRBj5H1FBtRBS69tAQutdPE5Xe+YvBij9t52NbDmqvvlt74AOC/U8cid8NKjIqMQf+fPc7E5DXJicuTqW9QRCil/nbkoUkEmWWm0KTTGiY14UnxEDymLSk7xFo45iS1dxSEG4hVBWaPMU1LWyse8CPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YFlJYYOu; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753173401;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=h7XQEQoPcNWIcIvp9Ofoqco5TAp1Io1j1Kf8hikrefc=;
+	b=YFlJYYOubKnEkvArwxluWIHqAMA9ILp8LysEmB2wscrKXU3Iwe3ffa6IeBRlZWtWdqF6XB
+	QGZwFv5sDAAWP09TPJYzRcOZ8w7zPo1lK22m9O19O9yI5B9Zny1qsfhulbvTK9VmP/2SyJ
+	3Cn7GysysWxU0mVV0DFFlNo2oxlgUm0=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-249-QiYJG5jNOLqPhfGBNYq_Bw-1; Tue, 22 Jul 2025 04:36:35 -0400
+X-MC-Unique: QiYJG5jNOLqPhfGBNYq_Bw-1
+X-Mimecast-MFC-AGG-ID: QiYJG5jNOLqPhfGBNYq_Bw_1753173394
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-455f79a2a16so44189055e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 01:36:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753173394; x=1753778194;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=h7XQEQoPcNWIcIvp9Ofoqco5TAp1Io1j1Kf8hikrefc=;
+        b=ak7kUfhFFAVf1nZ9ccih3XXBGyP0T98aZsIn6f4PwBAg3iypDwAFGEWwR9y6E59LW5
+         K+RhXkcaxOkq9BWTZtRb3pxRp+nIL5ECSRYR+m9Lz7fHlKaIcqsZRSmmUT9cgDxamKbR
+         vZ/VSKy1H9lhm7oTlM+sGeIq6KNySt2lzUrzQWUj9Eg+q+Jx33o1qKkbqjeb2mdAna6p
+         H58uDrC+m2atGYxFloin0mf+GyFFHMD4gXG37OZYmWWt9v5MV5Ol65bN1w6pxQCtxj/S
+         nSzT1KjIvXV+amKhN2gk0q3uW2Hmzn7ozLgt89XQRhHwIFjrQ5XEft/++0+RbYBkSOAq
+         K6bQ==
+X-Gm-Message-State: AOJu0Yys0MfeQI6p8h4SYXk//qZbYrfVjxaqkCD6py5qD0vX2aGNp7Y5
+	PDLeBzuetGPKIvPBGC1bAHj1rqrxyL/XV/QxpBgBxE3I4YJi2ZOjk+lAtqU0RggD98JXoiIRNg/
+	62fTj4PusBL3/5uMWpNuS13g9JY1dhRdWBdRTZ7qsC8oC6c1EPzFT/KsmPKY0sBiLVQ==
+X-Gm-Gg: ASbGncuQ0qybsEvi3Hra8s+z8ff38Ptjtk2Hqs0RRNvexiwk8ER59qlmmBCPOgsBi68
+	IJSzHtWUILSupa1C5JdfRJymU/Rrzvhv5aRXgvNMOGvEE9mTCCsIWopIdTVaIlv3I7iv7e+tqqY
+	YFDZrDWEByXASEbZSnnWfuY9e4o5yp9B8ho+067vQxfYC+r2R9VNRn0SP641/m3XwxJuI75IwQT
+	NDUv7ZgKSOHoNrb9flWQFJeWni/GLjwkAqhY3aFAP33xlZOcx0uv9DWhLY0TeK+01I1TRuGnw2m
+	OG7vVQRKQAquatCdt3bggEVXjWaMIsodjs4xaPV0RX/8GZysbKW/NxkT1oM9r98h0vmYHVrZhKs
+	8xPR3lcL7j2s=
+X-Received: by 2002:a05:600c:45ce:b0:456:2397:817 with SMTP id 5b1f17b1804b1-4562e2380b9mr237690775e9.13.1753173393902;
+        Tue, 22 Jul 2025 01:36:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH74FWVoogxQd474DB1B8BF7hhbdi5L1dIVdTms3cbtnlf23yWty5IyX9qpejKuhm6BtyG6+Q==
+X-Received: by 2002:a05:600c:45ce:b0:456:2397:817 with SMTP id 5b1f17b1804b1-4562e2380b9mr237690365e9.13.1753173393376;
+        Tue, 22 Jul 2025 01:36:33 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e886113sm186536825e9.23.2025.07.22.01.36.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Jul 2025 01:36:32 -0700 (PDT)
+Message-ID: <5f250beb-6a81-42b2-bf6f-da02c04cbf15@redhat.com>
+Date: Tue, 22 Jul 2025 10:36:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,115 +87,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] powerpc: pci-ioda: Optimize pnv_ioda_pick_m64_pe()
-To: Yury Norov <yury.norov@gmail.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Thomas Gleixner <tglx@linutronix.de>, Frederic Barrat
- <fbarrat@linux.ibm.com>, Andrew Donnellan <ajd@linux.ibm.com>,
- linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <20250720010552.427903-1-yury.norov@gmail.com>
+Subject: Re: [PATCH net-next v2] net: pppoe: implement GRO support
+To: Felix Fietkau <nbd@nbd.name>, netdev@vger.kernel.org,
+ Michal Ostrowski <mostrows@earthlink.net>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+References: <20250716081441.93088-1-nbd@nbd.name>
 Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20250720010552.427903-1-yury.norov@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250716081441.93088-1-nbd@nbd.name>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 20. 07. 25, 3:05, Yury Norov wrote:
-> bitmap_empty() in pnv_ioda_pick_m64_pe() is O(N) and useless, because
-> the following find_next_bit() does the same work.
-> 
-> Drop it, and while there replace a while() loop with the dedicated
-> for_each_set_bit().
-> 
-> Signed-off-by: Yury Norov <yury.norov@gmail.com>
-> ---
->   arch/powerpc/platforms/powernv/pci-ioda.c | 18 +++++-------------
->   1 file changed, 5 insertions(+), 13 deletions(-)
-> 
-> diff --git a/arch/powerpc/platforms/powernv/pci-ioda.c b/arch/powerpc/platforms/powernv/pci-ioda.c
-> index d8ccf2c9b98a..c7a421ead992 100644
-> --- a/arch/powerpc/platforms/powernv/pci-ioda.c
-> +++ b/arch/powerpc/platforms/powernv/pci-ioda.c
-> @@ -313,24 +313,16 @@ static struct pnv_ioda_pe *pnv_ioda_pick_m64_pe(struct pci_bus *bus, bool all)
->   	/* Figure out reserved PE numbers by the PE */
->   	pnv_ioda_reserve_m64_pe(bus, pe_alloc, all);
->   
-> -	/*
-> -	 * the current bus might not own M64 window and that's all
-> -	 * contributed by its child buses. For the case, we needn't
-> -	 * pick M64 dependent PE#.
-> -	 */
-> -	if (bitmap_empty(pe_alloc, phb->ioda.total_pe_num)) {
-> -		kfree(pe_alloc);
-> -		return NULL;
-> -	}
-> -
->   	/*
->   	 * Figure out the master PE and put all slave PEs to master
->   	 * PE's list to form compound PE.
-> +	 *
-> +	 * The current bus might not own M64 window and that's all
-> +	 * contributed by its child buses. For the case, we needn't
-> +	 * pick M64 dependent PE#.
->   	 */
->   	master_pe = NULL;
-> -	i = -1;
-> -	while ((i = find_next_bit(pe_alloc, phb->ioda.total_pe_num, i + 1)) <
-> -		phb->ioda.total_pe_num) {
-> +	for_each_set_bit(i, pe_alloc, phb->ioda.total_pe_num) {
+On 7/16/25 10:14 AM, Felix Fietkau wrote:
+> +static struct sk_buff *pppoe_gro_receive(struct list_head *head,
+> +					 struct sk_buff *skb)
+> +{
+> +	const struct packet_offload *ptype;
+> +	unsigned int hlen, off_pppoe;
+> +	struct sk_buff *pp = NULL;
+> +	struct pppoe_hdr *phdr;
+> +	struct sk_buff *p;
+> +	__be16 type;
+> +	int flush = 1;
 
-Makes sense. Could you also:
-* use bitmap_alloc()
-* use __cleanup() to free the bitmap
-* make i unsigned
-?
+Minor nit: please respect the reverse christmas tree order above
 
-thanks,
--- 
-js
-suse labs
+> +	off_pppoe = skb_gro_offset(skb);
+> +	hlen = off_pppoe + sizeof(*phdr) + 2;
+> +	phdr = skb_gro_header(skb, hlen, off_pppoe);
+> +	if (unlikely(!phdr))
+> +		goto out;
+> +
+> +	/* ignore packets with padding or invalid length */
+> +	if (skb_gro_len(skb) != be16_to_cpu(phdr->length) + hlen - 2)
+> +		goto out;
+> +
+> +	NAPI_GRO_CB(skb)->network_offsets[NAPI_GRO_CB(skb)->encap_mark] = hlen;
+> +
+> +	type = pppoe_hdr_proto(phdr);
+> +	if (!type)
+> +		goto out;
+> +
+> +	ptype = gro_find_receive_by_type(type);
+> +	if (!ptype)
+> +		goto out;
+> +
+> +	flush = 0;
+> +
+> +	list_for_each_entry(p, head, list) {
+> +		struct pppoe_hdr *phdr2;
+> +
+> +		if (!NAPI_GRO_CB(p)->same_flow)
+> +			continue;
+> +
+> +		phdr2 = (struct pppoe_hdr *)(p->data + off_pppoe);
+> +		if (compare_pppoe_header(phdr, phdr2))
+> +			NAPI_GRO_CB(p)->same_flow = 0;
+> +	}
+> +
+> +	skb_gro_pull(skb, sizeof(*phdr) + 2);
+> +	skb_gro_postpull_rcsum(skb, phdr, sizeof(*phdr) + 2);
+> +
+> +	pp = ptype->callbacks.gro_receive(head, skb);
+
+Here you can use INDIRECT_CALL_INET()
+
+> +
+> +out:
+> +	skb_gro_flush_final(skb, pp, flush);
+> +
+> +	return pp;
+> +}
+> +
+> +static int pppoe_gro_complete(struct sk_buff *skb, int nhoff)
+> +{
+> +	struct pppoe_hdr *phdr = (struct pppoe_hdr *)(skb->data + nhoff);
+> +	__be16 type = pppoe_hdr_proto(phdr);
+> +	struct packet_offload *ptype;
+> +	int err = -ENOENT;
+> +
+> +	ptype = gro_find_complete_by_type(type);
+> +	if (ptype)
+> +		err = ptype->callbacks.gro_complete(skb, nhoff +
+> +						    sizeof(*phdr) + 2);
+
+Possibly even here but it's less relevant.
+
+> +
+> +	return err;
+> +}
+> +
+> +static struct packet_offload pppoe_packet_offload __read_mostly = {
+> +	.type = cpu_to_be16(ETH_P_PPP_SES),
+> +	.priority = 10,
+
+The priority value should be IMHO greater then the exiting ones to avoid
+possible regressions on other protocols. i.e. 20 should do.
+
+Thanks,
+
+Paolo
+
 
