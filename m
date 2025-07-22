@@ -1,186 +1,145 @@
-Return-Path: <linux-kernel+bounces-740397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48486B0D3CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:48:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DDE0B0D3AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:45:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60E1E162065
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:43:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F6B41605E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:41:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449202D3EFF;
-	Tue, 22 Jul 2025 07:38:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1160F2C159F;
+	Tue, 22 Jul 2025 07:37:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="6eOnM2ju"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="eKmk7hNG"
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DAF02C158F;
-	Tue, 22 Jul 2025 07:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80FC728C5BD;
+	Tue, 22 Jul 2025 07:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753169894; cv=none; b=nNPh4qNJ2yfU7FLah1vPKr24FGotdHCErj90fQoEQmKInAUjcQ9bSTTY/Bytqw+n3YatbqumaJQcemSa62PIoeWgOXOE87rk4EKLKw3D7eE1G2PkFS9NSDhQ+3UUT9edTA/jknfGmprjX4y4kH7M+rvkV5HdXlz3XVjnxdyHlhc=
+	t=1753169850; cv=none; b=VQ4E9MH0avKqqQcOKsjt1xAi/pPVpJGS75ke2rn1+muYI9lVYvp97B4lj/1u5oHMxvhQNHSXD1mbWZB6joEKYtWWQLGcV13SAvtXI1Ms/tiT2nQwfZwRU6P77LdqcjkdHFfPCt5Q5diTOTdaWRV43x2F067qknlTMz0CxjwgH+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753169894; c=relaxed/simple;
-	bh=tU/hC7YARMy7oCIo5NRGQiO3UOJ8Lk4XsFZ1nZnZ9NA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=SfoinEAHeLSxYvUD+61WAkl0RdHNhU2cfoW6oOzLGJNUdWVvZpR1LBqZK6rsZWlf3FznAQX5Q3hiw7TsLOvQmeZ812gUnV7BxQRAockWeMLgcoPyVXTmKnm4XnOZKWzoAGaI+P8kcX+/j6N03YH5KD8gEx/w24EOVlNKX4LoMS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=6eOnM2ju; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56M7YcI1017113;
-	Tue, 22 Jul 2025 09:37:50 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	0zlU1QEnD+GWl8jLtn5YK4PZ5fpcfWzBw9uHGSBFh90=; b=6eOnM2juSbRcr0EU
-	IFyVZkojXeQ6Q+YR1EBl3sKBCrityklC8iGDAreH+nVxIlQpGGJ1de2LWFwc4l+l
-	GHdzI1aEcjrUG02EEdibktt04EsuROdoHalxZc6A/VFGiV2d32zsW/LP3ZkEoX8L
-	ed7/sijJ7vkE5DhE2qQgYCwZk7ehjOBdHFYiVBGxRKng/BGeMgMSFprH5ze62kZr
-	rdI9euM21E3mDHLQTqM0HE2BU2fY7b1L1YSL/0CRLPYRX5Nqjz+RIPRaUovQk6Au
-	arroznHHnk0RY1lQ6URTxAejKDuzunNFX2iACfiTmpBsv3BZltL9HBZqRv3WTZUo
-	DVCk5Q==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 480mx4hq09-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Jul 2025 09:37:50 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 571CB4005B;
-	Tue, 22 Jul 2025 09:36:26 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1132476DC2F;
-	Tue, 22 Jul 2025 09:35:09 +0200 (CEST)
-Received: from [10.48.86.185] (10.48.86.185) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 22 Jul
- 2025 09:35:07 +0200
-Message-ID: <ed0efd83-8471-4fce-9745-54d85d6268f9@foss.st.com>
-Date: Tue, 22 Jul 2025 09:35:06 +0200
+	s=arc-20240116; t=1753169850; c=relaxed/simple;
+	bh=1EK2TQsFCA6A4Rh5b5WVVEqCK3IkUuA1s0DimdzqhBc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=doPnOhoPYSb6/7vEPHT49zhPPqG69FB5ruj9qBpOF3AYte7La1Yl9l7S23C1fF2mKxd2X28hBD4c59og2JY7YH6nNiS4GjKXeWrmPYit/bYCRb+3+L2gn0vmLn4npIhIoLUiajvEUVSgWcluuGbsCIpYq7Fro8bkYr1ytikG5ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=eKmk7hNG; arc=none smtp.client-ip=54.254.200.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1753169829;
+	bh=pQ0rrp8kQpeiLV2GXPkNYYVhyLLgxjuHpx2u2oAf54o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:To;
+	b=eKmk7hNG47wZhbqGZY7NRR0pJ6Yd6akWfuxo5X83Cn0Rxtn/eXnub3S5PzQ8+vWyJ
+	 Bq42S/qdNGz4qgU0n5mjnbK0L3mx3dI2I8DOaPrmtOuDYlYhBQt8jzMtDm7rASzDX3
+	 JJ/Q/KZr4RKGanHXYsV/T8zxdnXWyUo015jxrJvI=
+X-QQ-mid: esmtpsz20t1753169822t9cc06cca
+X-QQ-Originating-IP: o/6alvnXRlytoxVwMjxbpu188hGl4Y8IZ2m7pvs1yY8=
+Received: from = ( [61.145.255.150])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 22 Jul 2025 15:36:59 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 3472028324407458743
+EX-QQ-RecipientCnt: 16
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Subject: [PATCH v2 0/2] clk: spacemit: fix sspax_clk
+Date: Tue, 22 Jul 2025 15:36:29 +0800
+Message-Id: <20250722-k1-clk-i2s-v2-0-2f8edfe3dab4@linux.spacemit.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/16] dt-bindings: memory: add jedec,ddr[3-4]-channel
- binding
-To: Rob Herring <robh@kernel.org>
-CC: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Gatien Chevallier
-	<gatien.chevallier@foss.st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Gabriel Fernandez
-	<gabriel.fernandez@foss.st.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Le
- Goffic <legoffic.clement@gmail.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-perf-users@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-References: <20250711-ddrperfm-upstream-v2-0-cdece720348f@foss.st.com>
- <20250711-ddrperfm-upstream-v2-5-cdece720348f@foss.st.com>
- <20250721200926.GA1179079-robh@kernel.org>
-Content-Language: en-US
-From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
-In-Reply-To: <20250721200926.GA1179079-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-22_01,2025-07-21_02,2025-03-28_01
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAH0/f2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHQUlJIzE
+ vPSU3UzU4B8JSMDI1MDc0Nz3WxD3eScbN1Mo2LdVBMjc6M0wzRLQ9MkJaCGgqLUtMwKsGHRsbW
+ 1ADGwC4pcAAAA
+X-Change-ID: 20250717-k1-clk-i2s-e4272f1f915b
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
+ Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>, 
+ Inochi Amaoto <inochiama@outlook.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, 
+ Troy Mitchell <troy.mitchell@linux.spacemit.com>, 
+ Yao Zi <ziyao@disroot.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753169819; l=1511;
+ i=troy.mitchell@linux.spacemit.com; s=20250710; h=from:subject:message-id;
+ bh=1EK2TQsFCA6A4Rh5b5WVVEqCK3IkUuA1s0DimdzqhBc=;
+ b=CTQULKaJ7/EjE652+6Wzwt9+vLnkF0x+lT+4hZ+GRPFNvj6L07fYzAjrjnWRajGOzpU/Xx05C
+ VFmJL1uAPltA3TPbGZ8DBw0dpsEJhVQKGmbHAqDsmGLU0W7P6pUmkXa
+X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=ed25519;
+ pk=lQa7BzLrq8DfZnChqmwJ5qQk8fP2USmY/4xZ2/MSsXc=
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: NnnkygtrMG+qS7QcHiAl5iHK/Y1OfqDGRj8gmtLCwp2AmEnynzPU6haR
+	z9Ru1tshzE5Mb83G+R2EKp5EAQf5PVzHqNClkeOu30PAwJYTrr6/0LNbgSH7ivXpHPsyhwQ
+	87x5is0SCWhzsnNLbpoJM0ouQptazQrXcxMgKF48DKgaCCkkuGIt3s1126Bw+1xslscy9QS
+	OpQIWP4xqEjcuTtg4D54fE4yBduGC4UjtY6vrQ5A+l6pKoIot0YNY6CVGI2GtxPDIccQqGF
+	u83jIPiDOBJd2Lafq/T8KyhANoIxzKRKGuTfRtvqCUXm+gky1NOPNkrUYgUgb0JiSsseFSr
+	TyiNeZUG6JFZwdD3dkiMRpct7CV3sSGHq0BbrbrI0Aj62ceMea7Xt/cyc1oCkcLKCoUPN+0
+	KWTY7l0CnM2gzWTAntgShCtfhqZCj2Pk6dvsejx6oAg0I2hV4Kt/3Y93P6xmyUYczDbk6nM
+	QodZaQLt1KaZVSxFTYIIN1/hS9XZ37e/7kqonPLrl6H52KD5aAM6lfdPsMz4+YOEfRLxeBs
+	LKo0SE9C+oH/llt1F5U7VJh+UzFV/p33DQAmCK0GFSXOrdyPe022dTNuwEnu9SeQtEzL9F0
+	SkLmz9rIUI7Yf9zcXXjcQkXGkmR0l45cK4E1amgyqXEO86uAyPdJyXVIOteLBoRTwux9YFz
+	1HgDjUyj5fM/FbYCRyuFzARdZzWlMGKGL+5/Np8a5cJHv8AUT1VcCXouFRyNBAtJP02ZMPd
+	Z36N5fW3gOEnQ/ykt/nTlVkhXok8yyQMok4brRsD5Q6F8npZm3+GowFecPZy/+rn4ro7OgA
+	jR2sWeIGUNbqwqLnDGzjwwj+WlMV++hZevVPKOE42y1+NytaQPTp3NmCn5UwkgB/SPLoBfu
+	NKQIH4/A5J9owlr2MI0FJQd5reii9xV0nuj43RSepmIsycPaqcVO7PN9XKf+6lLrNYk2Xt6
+	Qd7Lnmbb8jmaBM83aM2hHW9jCaMb1VgKc/LP6IBZZowNtGMdiFlRHps6xMME4iJiluJr304
+	fLi0ExAPrxmI6cGjehTCxbdYDu1+PH6gt6hzYnqrJoPSl6W5yami5ZiURoCmkHqXSxjjaba
+	Rm0ywG3Q48x1n2AFQwKW6NNl9gaOlL7CQNe3sU/t229
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-Hi Rob,
+In the SpacemiT public document, when the FNCLKSEL field of
+the APBC_SSPAX_CLK_RST register is 7 (3'b111),
+which is a reserved value. And BIT3 of the same register is
+a reserved bit.
 
-On 7/21/25 22:09, Rob Herring wrote:
-> On Fri, Jul 11, 2025 at 04:48:57PM +0200, Clément Le Goffic wrote:
->> Introduce as per jedec,lpddrX-channel binding, jdec,ddr[3-4]-channel
->> binding.
->>
->> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
->> ---
->>   .../memory-controllers/ddr/jedec,ddr-channel.yaml  | 53 ++++++++++++++++++++++
->>   1 file changed, 53 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,ddr-channel.yaml b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,ddr-channel.yaml
->> new file mode 100644
->> index 000000000000..31daa22bcd4a
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,ddr-channel.yaml
->> @@ -0,0 +1,53 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/memory-controllers/ddr/jedec,ddr-channel.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: DDR channel with chip/rank topology description
->> +
->> +description:
->> +  A DDR channel is a logical grouping of memory chips that are connected
->> +  to a host system. The main purpose of this node is to describe the
->> +  overall DDR topology of the system, including the amount of individual
->> +  DDR chips.
->> +
->> +maintainers:
->> +  - Clément Le Goffic <legoffic.clement@gmail.com>
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - jedec,ddr3-channel
->> +      - jedec,ddr4-channel
->> +
->> +  io-width:
->> +    description:
->> +      The number of DQ pins in the channel. If this number is different
->> +      from (a multiple of) the io-width of the DDR chip, that means that
->> +      multiple instances of that type of chip are wired in parallel on this
->> +      channel (with the channel's DQ pins split up between the different
->> +      chips, and the CA, CS, etc. pins of the different chips all shorted
->> +      together).  This means that the total physical memory controlled by a
->> +      channel is equal to the sum of the densities of each rank on the
->> +      connected DDR chip, times the io-width of the channel divided by
->> +      the io-width of the DDR chip.
->> +    enum:
->> +      - 8
->> +      - 16
->> +      - 32
->> +      - 64
->> +      - 128
-> 
-> This is duplicating what's in jedec,lpddr-channel.yaml. Refactor or add
-> to it rather than duplicating.
+But the documentation is incorrect. In reality, the value 7 (3'b111)
+of FNCLKSEL is not reserved. Instead, it indicates that i2s_bclk is
+selected as the parent clock. Similarly, bit 3 is not reserved either.
+When FNCLKSEL is set to 7, bit 3 determines whether i2s_bclk is actually
+enabled as the parent clock.
 
-Yes I wanted something unique as "jedec,lpddr-channel.yaml" is 
-specifically for lpddr.
-I think I'll refactor and rename it "jedec,memory-channel.yaml" so it is 
-more generic.
+In all other cases (i.e., when FNCLKSEL is not 7), bit 3 has no effect.
 
-> Is there some reason regular DDR3/4 doesn't have ranks? I'm pretty sure
-> it can...
+Importantly, whenever FNCLKSEL is set to 7, bit 3 must also be set to 1,
+otherwise the selection of i2s_bclk becomes invalid.
 
-Yes it does but I wasn't needing it and they are not required in case of 
-lpddr. It will be fixed by refactoring jedec,lpddr-channel.yaml binding.
+Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+---
+Change log in v2:
+  - Use dummy gate instead of new function for sspa
+  - Add Suggested-by tag: Yao Zi
+  - Add Fixes tag
+  - Link to v1: https://lore.kernel.org/all/20250718-k1-clk-i2s-v1-1-e92c10fd0f60@linux.spacemit.com/
+
+---
+Troy Mitchell (2):
+      clk: spacemit: fix sspax_clk
+      dt-bindings: clock: spacemit: CLK_SSPA_I2S_BCLK for SSPA
+
+ drivers/clk/spacemit/ccu-k1.c                  |  25 +++++-
+ include/dt-bindings/clock/spacemit,k1-syscon.h | 114 +++++++++++++------------
+ 2 files changed, 79 insertions(+), 60 deletions(-)
+---
+base-commit: 733923397fd95405a48f165c9b1fbc8c4b0a4681
+change-id: 20250717-k1-clk-i2s-e4272f1f915b
 
 Best regards,
-Clément
-
-
+-- 
+Troy Mitchell <troy.mitchell@linux.spacemit.com>
 
 
