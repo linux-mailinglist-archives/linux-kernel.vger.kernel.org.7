@@ -1,180 +1,251 @@
-Return-Path: <linux-kernel+bounces-740701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEB45B0D819
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:25:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ABA5B0D820
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:26:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED8B9189C42D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:25:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8A3D3A54EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:25:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B252E2F1C;
-	Tue, 22 Jul 2025 11:24:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="NpseaKQX"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06531940A2;
-	Tue, 22 Jul 2025 11:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753183489; cv=pass; b=TqXlmTphQZ3WxYVHKpPqqFx+QWZhwHkoduf8LzSTYjB9TDK5ttKmG7aAHpj+ba9UrPBYhTUrRBD5kZH//Y/iiosUyLyYOyK6nOg5c7zs9B2s3faC8SbDc1FX2vnlg7LdOrlbKIB2xZEXRv7FC0hagkaNtRxAU87HpfCwxuocl6k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753183489; c=relaxed/simple;
-	bh=yjugOcdgW2N+DES1QO2Kfdt5BcIsQi3WNXedEjMpztc=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=dkw4v4xaGWd8/9fXka8MhLNP6LzASnDtDM58hG5k5XLwnG/KU4XEvKt22kTNby7RME6if2dmZe4jspyy+36W6PMtpkrXphZ1saQIs3Wk9tgWa0AA+R4rJtIL+hhkXem4Y9NXppqvbxA2CPTP+DDclgtW4TWJEYSuP4VpGtYHLTo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=NpseaKQX; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1753183444; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=AM5rf5qTRMzd7B0mcgd3eoqRkznkHh298xcYgOjrM9NXYTQwKyTRR+ypqZB2mP/mAn6R6CwQZIw/OKidgtsUjqVQKU6AGiWv2qPL4Z5O6BkEPlmyoj9bMYLXPU0uMxow306OomcNP+6zp1U/eOQvUELhT6rtT2cR6CaT0DysfUs=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753183444; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=lFb9As+tGUSsfLRTQC2OOODRjXdSTQs59XrJQlNc9GI=; 
-	b=MRgsn2aL9kEwvhAYF5BoZauUK27DjiIVrD2uRBZi2N0d7x/UqpurXBIPtyKNB36seUK9gSqC3rjgpp/ba21zZWTvm3TYW4sUmcLfs616dC6wV+1mmyg+AS4QQjkcziYtcGDXhYGz7uA1t9CwZS0xAh88dH9/amlEvlaQyUhCWJ8=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
-	dmarc=pass header.from=<usama.anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753183444;
-	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=lFb9As+tGUSsfLRTQC2OOODRjXdSTQs59XrJQlNc9GI=;
-	b=NpseaKQXDA7i4X7EY+DW3lqKjkD2veGr+YrHY4zaJf4Slf7vbh3PlL8b8oU/G0W+
-	wr7zyWzLsvMPfU45Ydv5D1UuxOfsutLhFXMeg794F7IYW9LnlDDc7vIQtUtV41ZUBYO
-	ylyM+8rlfnW3UqvOtP0+b4Uuyrr+b1L4c7OdbRDU=
-Received: by mx.zohomail.com with SMTPS id 1753183441522359.46150902403406;
-	Tue, 22 Jul 2025 04:24:01 -0700 (PDT)
-Message-ID: <ae7a08cb-af73-4a27-aad4-c852be5f77aa@collabora.com>
-Date: Tue, 22 Jul 2025 16:23:55 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24CCB2E336B;
+	Tue, 22 Jul 2025 11:25:52 +0000 (UTC)
+Received: from sgoci-sdnproxy-4.icoremail.net (sgoci-sdnproxy-4.icoremail.net [129.150.39.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C4823814C;
+	Tue, 22 Jul 2025 11:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.150.39.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753183551; cv=none; b=vB+8H3yYfVfgNAdxGQapHHdi65TrojRQROG5pQJPaAHJKxvMLGgKewFNtdDPHnc4fed5KX4PBZN9rvYIvyWWhnPeJxk+mkl7EMvrqeiit2LmvFf6BgF7CkxXAw+UFgPVsHv0KZ9GZ1NgJhl3eOhBOGRejjvw/BySx9ZLsETG4Zo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753183551; c=relaxed/simple;
+	bh=aYMZo2Hb/mbL4EnmPmmbJxUgHmuK9W0AgbX8MY4vV7Q=;
+	h=From:To:Cc:References:In-Reply-To:Subject:Date:Message-ID:
+	 MIME-Version:Content-Type; b=AE+eY4ydX2DM6FLiACHGxW/Bqaiy/WvPY5w9V3qI57oKAnBTK/5vghzibxj6wqmBmth+Sx4xCyH73HenGRtFHn7BSZsN/8VHWVaPGypBW5sFT8vqwvGFg/Wv7vpnuHu6hP8brqrgnOlhxCRiDL6CF8+79qlkTmwiJsPk2hHq4Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=129.150.39.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0004057DT (unknown [10.11.96.26])
+	by app1 (Coremail) with SMTP id TAJkCgD3GxL8dH9oJr61AA--.44915S2;
+	Tue, 22 Jul 2025 19:24:46 +0800 (CST)
+From: =?gb2312?B?wO7Wvg==?= <lizhi2@eswincomputing.com>
+To: "'Andrew Lunn'" <andrew@lunn.ch>
+Cc: <weishangjuan@eswincomputing.com>,
+	<andrew+netdev@lunn.ch>,
+	<davem@davemloft.net>,
+	<edumazet@google.com>,
+	<kuba@kernel.org>,
+	<robh@kernel.org>,
+	<krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>,
+	<netdev@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>,
+	<mcoquelin.stm32@gmail.com>,
+	<alexandre.torgue@foss.st.com>,
+	<rmk+kernel@armlinux.org.uk>,
+	<yong.liang.choong@linux.intel.com>,
+	<vladimir.oltean@nxp.com>,
+	<jszhang@kernel.org>,
+	<jan.petrous@oss.nxp.com>,
+	<prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	<inochiama@gmail.com>,
+	<boon.khai.ng@altera.com>,
+	<dfustini@tenstorrent.com>,
+	<0x1207@gmail.com>,
+	<linux-stm32@st-md-mailman.stormreply.com>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<ningyu@eswincomputing.com>,
+	<linmin@eswincomputing.com>,
+	<pinkesh.vaghela@einfochips.com>
+References: <20250703091808.1092-1-weishangjuan@eswincomputing.com> <20250703092015.1200-1-weishangjuan@eswincomputing.com> <c212c50e-52ae-4330-8e67-792e83ab29e4@lunn.ch> <7ccc507d.34b1.1980d6a26c0.Coremail.lizhi2@eswincomputing.com> <e734f2fd-b96f-4981-9f00-a94f3fd03213@lunn.ch> <6c5f12cd.37b0.1982ada38e5.Coremail.lizhi2@eswincomputing.com> <6b3c8130-77f0-4266-b1ed-2de80e0113b0@lunn.ch>
+In-Reply-To: <6b3c8130-77f0-4266-b1ed-2de80e0113b0@lunn.ch>
+Subject: Re: Re: Re: Re: [PATCH v3 2/2] ethernet: eswin: Add eic7700 ethernet driver
+Date: Tue, 22 Jul 2025 19:24:44 +0800
+Message-ID: <006c01dbfafb$3a99e0e0$afcda2a0$@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: usama.anjum@collabora.com, kernel@collabora.com, stable@vger.kernel.org,
- Muna Sinada <quic_msinada@quicinc.com>,
- Anilkumar Kolli <quic_akolli@quicinc.com>, Miles Hu <milehu@codeaurora.org>,
- linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
- linux-kernel@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>,
- Baochen Qiang <baochen.qiang@oss.qualcomm.com>,
- Sathishkumar Muruganandam <quic_murugana@quicinc.com>,
- Jeff Johnson <jjohnson@kernel.org>, kbuild test robot <lkp@intel.com>,
- Manikanta Pubbisetty <quic_mpubbise@quicinc.com>,
- Sven Eckelmann <sven@narfation.org>
-Subject: Re: [PATCH v3] wifi: ath11k: HAL SRNG: don't deinitialize and
- re-initialize again
-To: Kalle Valo <kvalo@kernel.org>
-References: <20250722053121.1145001-1-usama.anjum@collabora.com>
- <1598d25d-e254-410e-ac5c-66d5450fd686@oss.qualcomm.com>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <1598d25d-e254-410e-ac5c-66d5450fd686@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: text/plain;
+	charset="gb2312"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQIWEBQeOCNcc3c3gjOhxIq/03sunAItNhDMAcjfDh0CUDC4/wE99IgTAia8sUkCW0gSXwGv9voh
+Content-Language: zh-cn
+X-CM-TRANSID:TAJkCgD3GxL8dH9oJr61AA--.44915S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxtrWxuF1rJrW7ur4rGw45KFg_yoW7tw15pr
+	W3XF4UWrWDKr1xtwnFkw48uF1rZa95GF13CF1DJr95Jws0vF9avr12kFWYgFy8Wr4v9F1j
+	9rWUWan5ua1qkFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjTRM6wCDUUUU
+X-CM-SenderInfo: xol2xx2s6h245lqf0zpsxwx03jof0z/
 
-Hi Kalle,
+Dear Andrew Lunn,
+Thank you for your professional and valuable suggestions.
+Our questions are embedded below your comments in the
+original email below.
 
-On 7/22/25 2:47 PM, Baochen Qiang wrote:
-> 
-> 
-> On 7/22/2025 1:31 PM, Muhammad Usama Anjum wrote:
->> Don't deinitialize and reinitialize the HAL helpers. The dma memory is
->> deallocated and there is high possibility that we'll not be able to get
->> the same memory allocated from dma when there is high memory pressure.
->>
->> Tested-on: WCN6855 hw2.0 PCI WLAN.HSP.1.1-03926.13-QCAHSPSWPL_V2_SILICONZ_CE-2.52297.6
->>
->> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
->> Cc: stable@vger.kernel.org
->> Cc: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
->> Reviewed-by: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
->> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->> ---
->> Changes since v1:
->> - Cc stable and fix tested on tag
->> - Clear essential fields as they may have stale data
->>
->> Changes since v2:
->> - Add comment and reviewed by tag
->> ---
->>  drivers/net/wireless/ath/ath11k/core.c |  6 +-----
->>  drivers/net/wireless/ath/ath11k/hal.c  | 16 ++++++++++++++++
->>  drivers/net/wireless/ath/ath11k/hal.h  |  1 +
->>  3 files changed, 18 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/net/wireless/ath/ath11k/core.c b/drivers/net/wireless/ath/ath11k/core.c
->> index 4488e4cdc5e9e..34b27711ed00f 100644
->> --- a/drivers/net/wireless/ath/ath11k/core.c
->> +++ b/drivers/net/wireless/ath/ath11k/core.c
->> @@ -2213,14 +2213,10 @@ static int ath11k_core_reconfigure_on_crash(struct ath11k_base *ab)
->>  	mutex_unlock(&ab->core_lock);
->>  
->>  	ath11k_dp_free(ab);
->> -	ath11k_hal_srng_deinit(ab);
->> +	ath11k_hal_srng_clear(ab);
->>  
->>  	ab->free_vdev_map = (1LL << (ab->num_radios * TARGET_NUM_VDEVS(ab))) - 1;
->>  
->> -	ret = ath11k_hal_srng_init(ab);
->> -	if (ret)
->> -		return ret;
->> -
->>  	clear_bit(ATH11K_FLAG_CRASH_FLUSH, &ab->dev_flags);
->>  
->>  	ret = ath11k_core_qmi_firmware_ready(ab);
->> diff --git a/drivers/net/wireless/ath/ath11k/hal.c b/drivers/net/wireless/ath/ath11k/hal.c
->> index b32de563d453a..e8ebf963f195c 100644
->> --- a/drivers/net/wireless/ath/ath11k/hal.c
->> +++ b/drivers/net/wireless/ath/ath11k/hal.c
->> @@ -1359,6 +1359,22 @@ void ath11k_hal_srng_deinit(struct ath11k_base *ab)
->>  }
->>  EXPORT_SYMBOL(ath11k_hal_srng_deinit);
->>  
->> +void ath11k_hal_srng_clear(struct ath11k_base *ab)
->> +{
->> +	/* No need to memset rdp and wrp memory since each individual
->> +	 * segment would get cleared ath11k_hal_srng_src_hw_init() and
-> 
-> nit: s/cleared /cleared in/
-Please can you make this change while applying the patch?
 
-> 
->> +	 * ath11k_hal_srng_dst_hw_init().
->> +	 */
->> +	memset(ab->hal.srng_list, 0,
->> +	       sizeof(ab->hal.srng_list));
->> +	memset(ab->hal.shadow_reg_addr, 0,
->> +	       sizeof(ab->hal.shadow_reg_addr));
->> +	ab->hal.avail_blk_resource = 0;
->> +	ab->hal.current_blk_index = 0;
->> +	ab->hal.num_shadow_reg_configured = 0;
->> +}
->> +EXPORT_SYMBOL(ath11k_hal_srng_clear);
->> +
->>  void ath11k_hal_dump_srng_stats(struct ath11k_base *ab)
->>  {
->>  	struct hal_srng *srng;
->> diff --git a/drivers/net/wireless/ath/ath11k/hal.h b/drivers/net/wireless/ath/ath11k/hal.h
->> index 601542410c752..839095af9267e 100644
->> --- a/drivers/net/wireless/ath/ath11k/hal.h
->> +++ b/drivers/net/wireless/ath/ath11k/hal.h
->> @@ -965,6 +965,7 @@ int ath11k_hal_srng_setup(struct ath11k_base *ab, enum hal_ring_type type,
->>  			  struct hal_srng_params *params);
->>  int ath11k_hal_srng_init(struct ath11k_base *ath11k);
->>  void ath11k_hal_srng_deinit(struct ath11k_base *ath11k);
->> +void ath11k_hal_srng_clear(struct ath11k_base *ab);
->>  void ath11k_hal_dump_srng_stats(struct ath11k_base *ab);
->>  void ath11k_hal_srng_get_shadow_config(struct ath11k_base *ab,
->>  				       u32 **cfg, u32 *len);
-> 
+Best regards,
+
+Li Zhi
+Eswin Computing
+
+
+> -----=D4=AD=CA=BC=D3=CA=BC=FE-----
+> =B7=A2=BC=FE=C8=CB: "Andrew Lunn" <andrew@lunn.ch>
+> =B7=A2=CB=CD=CA=B1=BC=E4:2025-07-21 21:10:55 (=D0=C7=C6=DA=D2=BB)
+> =CA=D5=BC=FE=C8=CB: =C0=EE=D6=BE <lizhi2@eswincomputing.com>
+> =B3=AD=CB=CD: weishangjuan@eswincomputing.com, andrew+netdev@lunn.ch,
+davem@davemloft.net, edumazet@google.com, kuba@kernel.org, =
+robh@kernel.org,
+krzk+dt@kernel.org, conor+dt@kernel.org, netdev@vger.kernel.org,
+devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+rmk+kernel@armlinux.org.uk, yong.liang.choong@linux.intel.com,
+vladimir.oltean@nxp.com, jszhang@kernel.org, jan.petrous@oss.nxp.com,
+prabhakar.mahadev-lad.rj@bp.renesas.com, inochiama@gmail.com,
+boon.khai.ng@altera.com, dfustini@tenstorrent.com, 0x1207@gmail.com,
+linux-stm32@st-md-mailman.stormreply.com,
+linux-arm-kernel@lists.infradead.org, ningyu@eswincomputing.com,
+linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com
+> =D6=F7=CC=E2: Re: Re: Re: [PATCH v3 2/2] ethernet: eswin: Add eic7700 =
+ethernet
+driver
+>=20
+> > > > Let me clarify the purpose of the three elements in each =
+dly_param_*
+array:
+> > > >   dly_param_[x][0]: Delay configuration for TXD signals
+> > > >   dly_param_[x][1]: Delay configuration for control signals =
+(e.g.,
+TX_EN, RX_DV, RX_CLK)
+> > > >   dly_param_[x][2]: Delay configuration for RXD signals
+> > >=20
+> > > Maybe add a #define or an enum for the index.
+> > >=20
+> > > Do these delays represent the RGMII 2ns delay?
+> > >=20
+> >=20
+> > Yes, these delays refer to the RGMII delay, but they are not =
+strictly
+2ns. There are a few points that require further clarification:
+> > 1. Regarding delay configuration logic:
+> >    As you mentioned in version V2, rx-internal-delay-ps and
+tx-internal-delay-ps will be mapped to and overwrite the corresponding =
+bits
+in the EIC7700_DELAY_VALUE1 register, which controls the rx_clk and =
+tx_clk
+delays. Is this understanding and approach correct and feasible?
+>=20
+> Please configure your email client to wrap at about 78
+> characters. Standard network etiquette.
+>=20
+> Yes, if rx-internal-delay-ps or/and tx-internal-delay-ps are in DT,
+> they should configure the delay the MAC applies.
+>=20
+>=20
+> > 2. About the phy-mode setting:
+> >    In our platform, the internal delays are provided by the MAC. =
+When
+configuring rx-internal-delay-ps and tx-internal-delay-ps in the device
+tree, is it appropriate to set phy-mode =3D "rgmii-id" in this case?
+>=20
+> Please read:
+>=20
+>
+https://elixir.bootlin.com/linux/v6.15.7/source/Documentation/devicetree/=
+bin
+dings/net/ethernet-controller.yaml#L287
+>=20
+> It gives a detailed description of what phy-mode =3D "rmgii-id" means. =
+
+>=20
+> > 3. Delay values being greater than 2ns:
+> >    In our platform, the optimal delay values for rx_clk and tx_clk =
+are
+determined based on the board-level timing adjustment, and both are =
+greater
+than 2ns. Given this, is it reasonable and compliant with the RGMII
+specification to set both rx-internal-delay-ps and tx-internal-delay-ps =
+to
+values greater than 2ns in the Device Tree?
+>=20
+> It is O.K. when the total delay is > 2ns. However, please note what is
+> said, the normal way to implement delays in Linux. The PHY does the
+> 2ns delay. The MAC can then do fine tuning, adding additional small
+> delays.
+>=20
+> > There is a question that needs clarification:
+> > The EIC7700_DELAY_VALUE0 and EIC7700_DELAY_VALUE1 registers contain =
+the
+optimal delay configurations determined through board-level phase
+adjustment. Therefore, they are also used as the default values in our
+platform. If the default delay is set to 0ps, the Ethernet interface may
+fail to function correctly in our platform.
+>=20
+> So there is only every going to be one board? There will never produce
+> a cost optimised version with a different, cheaper PHY? You will never
+> support connecting the MAC directly an Ethernet switch? You will never
+> make use of a PHY which can translate to SGMII/1000BaseX, and then
+> have an SFP cage?
+>=20
+> DT properties are there to make your hardware more flexible. You can
+> use it to describe such setups, and handle the timing needed for each.
+>=20
+> By default, when phy-mode is rgmii-id, the MAC adds 0ns, the PHY 2ns,
+> and most systems will just work. That 2ns is what the RGMII standard
+> requires. You can then fine tune it with rx-internal-delay-ps and
+> tx-internal-delay-ps if your design does not correctly follow the
+> RGMII standard.
+>=20
+
+Yes, DT properties are there to make our hardware more flexible.
+
+Our platform uses three dedicated registers to configure RGMII signal
+delays, due to differences in board-level designs. These registers =
+control
+delays for signals including RXD0=A8C3, TXD0=A8C3, RXDV, RXCLK, and =
+TXCLK.
+Among these, RXCLK and TXCLK are directly related to the standard DT
+properties `rx-internal-delay-ps` and `tx-internal-delay-ps`, =
+respectively.
+The remaining signals (such as RXD0-4, TXD0-4, RXDV, etc.) require
+additional configuration that cannot be expressed using standard
+properties.
+
+In v2, `eswin,dly-param-xxx` is used to configure all delay registers =
+via
+device tree, including RXCLK and TXCLK. Based on the latest discussion,
+this approach in the next version:
+- The delay configuration for RXCLK and TXCLK will be handled using the
+ standard DT properties `rx-internal-delay-ps` and =
+`tx-internal-delay-ps`.
+- The remaining delay configuration (e.g., for RXD0-4, TXD0-4, RXDV) =
+will
+ continue to use the vendor-specific `eswin,dly-param-xxx` properties.
+- If the standard delay properties are not specified in DT, a default of =
+0
+ps
+ will be assumed.
+
+Is this understanding and approach correct and feasible?
+
+> 	Andrew
 
 
