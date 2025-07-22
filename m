@@ -1,100 +1,120 @@
-Return-Path: <linux-kernel+bounces-740169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F1FDB0D0E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:25:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D830B0D0ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:46:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A48A6C05B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 04:25:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5283F1AA3462
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 04:46:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B79E1E0E00;
-	Tue, 22 Jul 2025 04:25:31 +0000 (UTC)
-Received: from invmail3.skhynix.com (exvmail3.hynix.com [166.125.252.90])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB0F22EF4
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 04:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8F341C84DE;
+	Tue, 22 Jul 2025 04:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b="FMWVlV2N"
+Received: from lf-1-19.ptr.blmpb.com (lf-1-19.ptr.blmpb.com [103.149.242.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C604414
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 04:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.149.242.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753158331; cv=none; b=WEY8iBYRHU6reGBYeJ5RZW7hScPeLHT1I67X5cEu4Vzyw4D8jiX8UZ8/wGMobNfqzpqoZKdp/BkmRlyFzC8HlSeglC7BiRwAJJ5zQt6HBwfI/yrP4nFkncCAWoBAdtO+LQc1OJ9XhDmnW8CVazApcQYHjOGH5BPSiAldwc6BBYY=
+	t=1753159562; cv=none; b=mmyHuxkDb5vXb/RdRcppKK4UQ7WqzJEYJonuti2huJrZtKlLdexiysmQ0G1JbXpWzFLSg1o0YcPnqZSzhPdmhun/WpmJadoglukQt/uiZXMEH0tOb1I7BEt5wxclf5NNrkiM6G2v1yd3bUb8CwEwfE/6KGy9MggEGlKNAOvaQg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753158331; c=relaxed/simple;
-	bh=NJfpPEo48sCyc1vl9ymSGEX+cBooghUOSphJTYW1cxo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Bp08nJ0JXJ2WGdqNKn7J/4lqjGA/6+gtMnnEeVEo7X2Qo150Aq5zhgh0v/TJwcQy7R4UkfBQl/hC8gIsM0ibQPAz3uCjDXgHxghmgL8geaAkdfJ0gDQbkCGIAxUCczLOv++xRplWxiDermSG1yFCe/Q8q4H5z+p8YxgKPBnLUVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc59-03fff7000000aab6-83-687f12ad647c
-From: "yohan.joung" <yohan.joung@sk.com>
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: chao@kernel.org,
-	jaegeuk@kernel.org,
-	linux-kernel@vger.kernel.org,
-	pilhyun.kim@sk.com,
-	yohan.joung@sk.com
-Subject: Re: [f2fs-dev] [PATCH] f2fs: zone: wait for inflight dio completion, excluding pinned files
-Date: Tue, 22 Jul 2025 13:25:14 +0900
-Message-ID: <20250722042515.1403-1-yohan.joung@sk.com>
-X-Mailer: git-send-email 2.49.0.windows.1
-In-Reply-To: <fed85e52-2965-41d0-9e73-8f2e15dbef06@kernel.org>
-References: <fed85e52-2965-41d0-9e73-8f2e15dbef06@kernel.org>
+	s=arc-20240116; t=1753159562; c=relaxed/simple;
+	bh=1vQNK9Rt/Cndv7jSwRWun40QhRNeUa/Z2lEx7rUuFuA=;
+	h=From:Message-Id:Content-Type:To:Cc:Subject:Date:Mime-Version:
+	 References:In-Reply-To; b=LK/rV+ZU488frg5PfzYcHFKloCFgXcXDgBIN+i0NStGjtpp1TP+l2e0K1yrNTlzndTF2XyLfXc1bkmurfc2TXYSwzBHSlpOdo7CeM1mNtZQ2NPcmmQ/4OJ6NRCpzou3dypOpULDO9xtqCBInly72vuawYqsKaKwcjmK6b6L3k+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com; spf=pass smtp.mailfrom=lanxincomputing.com; dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b=FMWVlV2N; arc=none smtp.client-ip=103.149.242.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lanxincomputing.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=s1; d=lanxincomputing-com.20200927.dkim.feishu.cn; t=1753158788;
+  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
+ reply-to:content-type:mime-version:in-reply-to:message-id;
+ bh=Hzmpv4N547W+vBo+aJGwLDOqtL6G3pdPOh8VAcFg3f0=;
+ b=FMWVlV2NyE7xWZUc8CjC12utDtxMol9z6LaGOHNWrDbtQe1YTcYVHyrONrj04w49lshIrV
+ M1v8CRdWCbctUPTF9PTiLIjaP/v5EUD+drxo2cv5ZZtquo7V9kMwV/Iwbcb2nclELgIZdr
+ p1vVq3pyXTEmKPcqMnXadLK251HrM07cb2nUlWqa4hPmaZ+xP5wjMzwXf3CC8qxiQICpLy
+ eiuCjIzSu8yAR2x5DTL6r8R79A2l6BxyRGwB7bJXdczEiK+jZEZofH3UIjttm1ndtv4D9f
+ rD9sswza6mG/WUm9nHoO78LdNANufl56EHN4ubYZnVty4AzEODy42VfuTwKD9Q==
+From: "Nutty Liu" <liujingqi@lanxincomputing.com>
+Message-Id: <b7dd1004-4bfd-43c7-aba7-823c0290b5d3@lanxincomputing.com>
+X-Original-From: Nutty Liu <liujingqi@lanxincomputing.com>
+Content-Type: text/plain; charset=UTF-8
+To: "Junhui Liu" <junhui.liu@pigmoral.tech>, 
+	"Paul Walmsley" <paul.walmsley@sifive.com>, 
+	"Palmer Dabbelt" <palmer@dabbelt.com>, 
+	"Albert Ou" <aou@eecs.berkeley.edu>, "Alexandre Ghiti" <alex@ghiti.fr>
+Cc: <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Lms-Return-Path: <lba+2687f1482+5142a2+vger.kernel.org+liujingqi@lanxincomputing.com>
+Subject: Re: [PATCH 1/2] riscv: mm: Return intended SATP mode for noXlvl options
+Date: Tue, 22 Jul 2025 12:33:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOLMWRmVeSWpSXmKPExsXC9ZZnoe4GofoMg7Vt7Banp55lsniyfhaz
-	xaVF7haXd81hc2Dx2LSqk81j94LPTB6fN8kFMEdx2aSk5mSWpRbp2yVwZTzZ9o+pYAN7xao3
-	39gaGJvYuhg5OSQETCTe7/8JZHOA2f+eSYCE2QQ0JP709jKD2CICWhITG/4ygtjMAqUSvc+X
-	gdnCAikSk07cBLNZBFQlDpw6wA5i8wqYSdx/8owRYrymxI4v55lAbE4BO4nuHRBxIQFbiRur
-	Z7BA1AtKnJz5hAVivrxE89bZQHu5gHo/skqsPH+XHWKQpMTBFTdYJjDyz0LSMwtJzwJGplWM
-	Ipl5ZbmJmTnGesXZGZV5mRV6yfm5mxiBwbes9k/kDsZvF4IPMQpwMCrx8Co01GUIsSaWFVfm
-	HmKU4GBWEuH9thsoxJuSWFmVWpQfX1Sak1p8iFGag0VJnNfoW3mKkEB6YklqdmpqQWoRTJaJ
-	g1OqgXFOfJlKsPDpb75bDVU3rp184z5La/uXeaIHFh8oKKqadHaT20y/T09fa/4Sdbu2xs14
-	2wndOvV0/Qd2/KGL5fY2CUxiXFKn7jBr9/5zR37Ou78x9rbFst5PpQyGhQt02S15p0aK35PM
-	+BrC8o7tKcMGwaqGl7fbeu4G8H/z1F106vrq/LDrEX+VWIozEg21mIuKEwEG88yyOgIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprALMWRmVeSWpSXmKPExsXCNUNlju5aofoMgyM3GC1OTz3LZPFk/Sxm
-	i0uL3C0u75rDZjFh7lUmi/db7zE6sHlsWtXJ5rF7wWcmj2+3PTw+b5ILYInisklJzcksSy3S
-	t0vgyniy7R9TwQb2ilVvvrE1MDaxdTFycEgImEj8eybRxcjJwSagIfGnt5cZxBYR0JKY2PCX
-	EcRmFiiV6H2+DMwWFkiRmHTiJpjNIqAqceDUAXYQm1fATOL+k2dgcQkBTYkdX84zgdicAnYS
-	3Tsg4kICthI3Vs9ggagXlDg58wkLxHx5ieats5knMPLMQpKahSS1gJFpFaNIZl5ZbmJmjple
-	cXZGZV5mhV5yfu4mRmA4Lav9M2kH47fL7ocYBTgYlXh4FRrqMoRYE8uKK3MPMUpwMCuJ8H7b
-	DRTiTUmsrEotyo8vKs1JLT7EKM3BoiTO6xWemiAkkJ5YkpqdmlqQWgSTZeLglGpg3LfCRkDz
-	U7v4/p2evOJy/w/te3L6nUCU8lzJBwoz3l1lTw5w27X0+aRN/O9rwz78FNa7EV/V7t5fcPK9
-	XNTmtcsy/Y3aneJ09l3JSY61t9accbUn6HvILLGwhO4+JqFg1ReWCydKrv/bs/zLrTO+aiIx
-	kRmsk87LyW9eXiGRIDXZwqVp43YOJZbijERDLeai4kQAP3QtzCMCAAA=
-X-CFilter-Loop: Reflected
+Mime-Version: 1.0
+References: <20250722-satp-from-fdt-v1-0-5ba22218fa5f@pigmoral.tech> <20250722-satp-from-fdt-v1-1-5ba22218fa5f@pigmoral.tech>
+Received: from [127.0.0.1] ([116.237.111.137]) by smtp.feishu.cn with ESMTPS; Tue, 22 Jul 2025 12:33:05 +0800
+In-Reply-To: <20250722-satp-from-fdt-v1-1-5ba22218fa5f@pigmoral.tech>
+User-Agent: Mozilla Thunderbird
 
->On 7/21/25 13:41, yohan.joung wrote:
->> pinfile is excluded as it operates with direct I/O
+On 7/22/2025 12:53 AM, Junhui Liu wrote:
+> Change the return value of match_noXlvl() to return the SATP mode that
+> will be used, rather than the mode being disabled. This enables unified
+> logic for return value judgement with the function that obtains mmu-type
+> from the fdt, avoiding extra conversion. This only changes the naming,
+> with no functional impact.
 >
->pinfile can use buffer IO as well?
-only considered direct I/O. I'll re-upload the pinfile considering buffered I/O
-Thanks
+> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
+> ---
+>   arch/riscv/kernel/pi/cmdline_early.c | 4 ++--
+>   arch/riscv/mm/init.c                 | 4 ++--
+>   2 files changed, 4 insertions(+), 4 deletions(-)
 >
->Thanks,
->
->> 
->> Signed-off-by: yohan.joung <yohan.joung@sk.com>
->> ---
->>  fs/f2fs/file.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->> 
->> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->> index 4039ccb5022c..cac8c9650a7a 100644
->> --- a/fs/f2fs/file.c
->> +++ b/fs/f2fs/file.c
->> @@ -4844,7 +4844,8 @@ static ssize_t f2fs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
->>  
->>  	/* In LFS mode, if there is inflight dio, wait for its completion */
->>  	if (f2fs_lfs_mode(F2FS_I_SB(inode)) &&
->> -	    get_pages(F2FS_I_SB(inode), F2FS_DIO_WRITE))
->> +	    get_pages(F2FS_I_SB(inode), F2FS_DIO_WRITE) &&
->> +		!f2fs_is_pinned_file(inode))
->>  		inode_dio_wait(inode);
->>  
+> diff --git a/arch/riscv/kernel/pi/cmdline_early.c b/arch/riscv/kernel/pi/cmdline_early.c
+> index fbcdc9e4e14322af0cedd31343aeb9403ba2dd14..389d086a071876dde2fd57ee6f6661e65c38b7c4 100644
+> --- a/arch/riscv/kernel/pi/cmdline_early.c
+> +++ b/arch/riscv/kernel/pi/cmdline_early.c
+> @@ -41,9 +41,9 @@ static char *get_early_cmdline(uintptr_t dtb_pa)
+>   static u64 match_noXlvl(char *cmdline)
+>   {
+>   	if (strstr(cmdline, "no4lvl"))
+> -		return SATP_MODE_48;
+> +		return SATP_MODE_39;
+>   	else if (strstr(cmdline, "no5lvl"))
+> -		return SATP_MODE_57;
+> +		return SATP_MODE_48;
+>   
+>   	return 0;
+>   }
+> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+> index 8d0374d7ce8ed72320f58e4cea212d0e2bce8fd4..d03e02a92379f2338a4f4df0ab797a7859b83dfc 100644
+> --- a/arch/riscv/mm/init.c
+> +++ b/arch/riscv/mm/init.c
+> @@ -864,9 +864,9 @@ static __init void set_satp_mode(uintptr_t dtb_pa)
+>   
+>   	kernel_map.page_offset = PAGE_OFFSET_L5;
+>   
+> -	if (satp_mode_cmdline == SATP_MODE_57) {
+> +	if (satp_mode_cmdline == SATP_MODE_48) {
+>   		disable_pgtable_l5();
+> -	} else if (satp_mode_cmdline == SATP_MODE_48) {
+> +	} else if (satp_mode_cmdline == SATP_MODE_39) {
+>   		disable_pgtable_l5();
+>   		disable_pgtable_l4();
+>   		return;
+
+Nice, this change is a good idea. It's more readable.
+
+Reviewed-by: Nutty Liu <liujingqi@lanxincomputing.com>
+
+Thanks,
+Nutty
 
