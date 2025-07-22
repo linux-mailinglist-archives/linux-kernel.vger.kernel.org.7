@@ -1,106 +1,104 @@
-Return-Path: <linux-kernel+bounces-740339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CADE2B0D308
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:30:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5392AB0D2EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:28:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62F8A3A7174
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:27:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BCE27B3006
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D9BA2C08B2;
-	Tue, 22 Jul 2025 07:27:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93FF02D23A8;
+	Tue, 22 Jul 2025 07:28:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="HUSR8GAL"
-Received: from out.smtpout.orange.fr (out-69.smtpout.orange.fr [193.252.22.69])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Anb5ftzH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABFC6288CB6;
-	Tue, 22 Jul 2025 07:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E729F1DF990;
+	Tue, 22 Jul 2025 07:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753169276; cv=none; b=PXpuZVgsBDK4AQqwJ8d/xJOYYMPgUXkvVayLb0Xm89nuwjI8zBCQjppx+xowCRCs66kvm5Oz0YsZTung34m8W2bzISheaKmj1unkgfP4Ud2DC2HGpI3kfndElc942y3HA0LAtY4i1l44c0ZRiL8bQJay3Fn0Hs2jsfZV/x99cms=
+	t=1753169283; cv=none; b=gzCiuMjZ8hT7lNP7gx8cCuFDahVNDIs1vaznOldNXW4SIESjfZO1ccrVAVl/Ju6dOVIuoLoGjKFc+rKToF8LvT7T3EoDeIbT2VXHD5hm7HV3ngBQPwYpUGthVxoPcGVfjbi0eeZwR9wyTAqsauNAp80ssEZ+0nT64mNh69sYK1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753169276; c=relaxed/simple;
-	bh=mL7et0eGo71qySIX8F8hfi5V129JjKfUmnon2D29HxA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c+5O7DT3IYjkjcmGKxDMGhfchI0BZ/q6xT56MSEr2e6bMmM69Ea2kZG8U4efTeEJuDcKd7kaQGM7n+QYJp65FsInKfYqZ/+6Jy6lc5QKSBRiSB080wedRajo9G8gFhqpdNR3k64iU5ikWGsf0Bylhzv5/aCVbTGlxZdc/EPg/Es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=HUSR8GAL; arc=none smtp.client-ip=193.252.22.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id e7PYufBAdQ4Mme7PaumBLR; Tue, 22 Jul 2025 09:27:45 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1753169265;
-	bh=nNzUP58Ff6/imQfkmCqAaoLXlQhUQy9TroMK5CrSMu0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=HUSR8GAL+jau5xsAG5uxbvGFK7PzgCDlL664SZUfx8eyWzz9WgShVO39I6Y7StVag
-	 Fpe77Svs1Ukl0c8QbTuNYGjg5vIcZ89R7knN8YzrAr1VFqkL8loVOwXdCpi72A662L
-	 zJm5xjiIa6cTmhgPobxf5WD6VoGQusInJgusdDCm1XcStzEKVEW7A+ntqz3sPq7jdc
-	 0TTI0jH7E0lx5G0Ui5TAupLlFrKgTif1Q0lD0/P1UoOmazJ4w2Kh66GfHEdBlENLF1
-	 Zm6iNnKKhGv5Wek5sbcytnBeNaK6qWpPKx6nGa/6juZz0f2TyJWhVYfC4x9Kr+PMoE
-	 +7l2CVihpX0iA==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 22 Jul 2025 09:27:45 +0200
-X-ME-IP: 124.33.176.97
-Message-ID: <399941c7-2ee5-4d8b-a7c6-c8ed7d85b565@wanadoo.fr>
-Date: Tue, 22 Jul 2025 16:27:39 +0900
+	s=arc-20240116; t=1753169283; c=relaxed/simple;
+	bh=OS1W1F3+uicr+BJ96OdK0Fwq1c/V2PKY69jVU9c7b1E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YgoE44USUg0NViRzWKB14d9pRdBb6s1IjCvDlDcBt4eQauv00s/bcwDrrF2CtrYAYv99JgYnNMA/Jj6OJwlESAbN6SZmfRKUDas6mC82LpOMhJQny8y0elJwhxMJMBCdMKc0rrxrYBQyELH5Toooqly9c2+i/zITQZ9RD876ngk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Anb5ftzH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB287C4CEEB;
+	Tue, 22 Jul 2025 07:28:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753169282;
+	bh=OS1W1F3+uicr+BJ96OdK0Fwq1c/V2PKY69jVU9c7b1E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Anb5ftzHQ/yX14xJp8PsiMzrMY9MEeKaMm0E7CtepaK9fz3qD32p+mSm+VxnacIaq
+	 uTed1zP9zxx+3p1YJEHuNUe2M+2hkS5okxg3hAdudS6oaDy8ZDDDvFaJqZ3dBVMJk9
+	 6AVXN5T+UUdkKagrek0uBrKfyB3iEawqBiTFUT6IWFpOKD916pivrYdbwtixibiCqb
+	 5Q/bQZL9I3lESdWUJVbnqQ5R6jm7y7j5ccdH9EcFfWYZ94Zy/WSHnHlMA92qH5cegE
+	 lAjV1zRlqTZ6vnrkcZwbimKHVPc5F0077eA69+0EbWwRC5ikbLCrOqoO12IiyyuPuS
+	 SfB1yGOVJPJyQ==
+Date: Tue, 22 Jul 2025 09:27:59 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Junhui Liu <junhui.liu@pigmoral.tech>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@sifive.com>, 
+	Conor Dooley <conor@kernel.org>, linux-riscv@lists.infradead.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH RFC 01/10] dt-bindings: vendor-prefixes: Add Anlogic,
+ Milianke and Nuclei
+Message-ID: <20250722-elite-topaz-parrot-9c5a5e@kuoka>
+References: <20250721-dr1v90-basic-dt-v1-0-5740c5199c47@pigmoral.tech>
+ <20250721-dr1v90-basic-dt-v1-1-5740c5199c47@pigmoral.tech>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] docs: Fix kernel-doc error in CAN driver
-To: Pavel Pisa <pisa@fel.cvut.cz>
-Cc: Luis Felipe Hernandez <luis.hernandez093@gmail.com>,
- Randy Dunlap <rdunlap@infradead.org>, Ondrej Ille <ondrej.ille@gmail.com>,
- linux-can@vger.kernel.org, linux-kernel@vger.kernel.org,
- Marc Kleine-Budde <mkl@pengutronix.de>
-References: <20250722035352.21807-1-luis.hernandez093@gmail.com>
- <b694009f-72eb-4eb9-85b1-db19d93593e0@wanadoo.fr>
- <202507220837.23333.pisa@fel.cvut.cz>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
- GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
- bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
- BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
- 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
- yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
- CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
- ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <202507220837.23333.pisa@fel.cvut.cz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250721-dr1v90-basic-dt-v1-1-5740c5199c47@pigmoral.tech>
 
-On 22/07/2025 at 15:37, Pavel Pisa wrote:
-> On Tuesday 22 of July 2025 06:06:30 Vincent Mailhol wrote:
->> On 22/07/2025 at 12:53, Luis Felipe Hernandez wrote:
->>> Fix kernel-doc formatting issue causing unexpected indentation error
->>> in ctucanfd driver documentation build. Convert main return values
->>> to bullet list format while preserving numbered sub-list in order to
->>> correct indentation error and visual structure in rendered html.
->>>
->>> Signed-off-by: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
->>
->> Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+On Mon, Jul 21, 2025 at 11:46:07PM +0800, Junhui Liu wrote:
+> Add vendor prefixes for "anlogic", "milianke" and "nuclei". These are
+> required for describing the Milianke MLKPAI-FS01 board with DR1V90 SoC
+> from Anlogic, which uses a processor core designed by Nuclei.
 > 
-> Reviewed-by: Vincent Mailhol <pisa@fel.cvut.cz>
-               ^^^^^^^^^^^^^^^
-Are you trying to impersonate me?
+> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
+> ---
+>  Documentation/devicetree/bindings/vendor-prefixes.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
 
-Can you reply again with the proper Reviewed-by tag? ;)
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
+<form letter>
+This is an automated instruction, just in case, because many review
+tags are being ignored. If you know the process, just skip it entirely
+(please do not feel offended by me posting it here - no bad intentions
+intended, no patronizing, I just want to avoid wasted efforts). If you
+do not know the process, here is a short explanation:
 
-Yours sincerely,
-Vincent Mailhol
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions of patchset, under or above your Signed-off-by tag, unless
+patch changed significantly (e.g. new properties added to the DT
+bindings). Tag is "received", when provided in a message replied to you
+on the mailing list. Tools like b4 can help here ('b4 trailers -u ...').
+However, there's no need to repost patches *only* to add the tags. The
+upstream maintainer will do that for tags received on the version they
+apply.
+
+https://elixir.bootlin.com/linux/v6.15/source/Documentation/process/submitting-patches.rst#L591
+</form letter>
+
+Best regards,
+Krzysztof
 
 
