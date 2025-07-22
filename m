@@ -1,149 +1,113 @@
-Return-Path: <linux-kernel+bounces-740899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54FF2B0DAC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:29:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC7E8B0DAC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:29:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 822DB1886584
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:29:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E61A53B7F3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5602EA498;
-	Tue, 22 Jul 2025 13:28:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03AD72EA16C;
+	Tue, 22 Jul 2025 13:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b="L8Rycg9Q"
-Received: from nbd.name (nbd.name [46.4.11.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e2fhEWVT"
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB022E338B;
-	Tue, 22 Jul 2025 13:28:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.4.11.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8652EA72B
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 13:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753190907; cv=none; b=W275R69pgAWmdUtbyKJBzPRq9wM0PybJ50WArJpY0W4X5anrAaEh+Gqg686ohZhZbYVxvyJmHZ3N/46e/o5Ie8d0jcofH3FwzUBy/72rq9JPrzS/Je7okltLUnE4GwBNusxAdWSS4o+8VXVp4kEY6TWC68obQ/36/vALoXUC7vA=
+	t=1753190913; cv=none; b=g+64EMWMieqtU2Rl+JWUHcMMcwI3aaj+E9aV8ADwxQj3FvgiwGF+xnI4bJPskmRy1hB68eYTx1ePNPGJlQt8KAjys6CawdNUJNno4Fa16pz5Qz4rqwNJRh1xNxYhgHhSIgijNoktG6hpuLASYRDYzYg9knAuqfRl/tEv83p/tqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753190907; c=relaxed/simple;
-	bh=UlPoVR5QC1KhInRk9vJr6g7Szxa5HcUjm/ee86z3yn0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ZRyrEXGXRTlzBonmdF3y93KrIzRXWV18lldFyxkuJr5IYb0sWA7mhnQ7h77n9Hs/K97AzfU4gOELpotbcLN1bhDPyM2Do1+TySi9c2RM0zuYUmwEvWnCePPgpyzOK+M7yDFGBIXSyHaDhcw/WW4cmaXModq45Va7Fo5kzI2+NfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name; spf=none smtp.mailfrom=nbd.name; dkim=pass (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b=L8Rycg9Q; arc=none smtp.client-ip=46.4.11.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nbd.name
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
-	s=20160729; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=cQbj0cQcdo0qq8guQgb1++o9RIM4pgMuhBXxGM8ddco=; b=L8Rycg9Qrn7ru2lad/IIluFfsQ
-	TljNaD1lcdmbBIVU4EmLMl12zfqoVbR2y5U32E5r/s1IM/S0q7YlGJ/ztDOPIc2X3pqx08GT+B76l
-	taeTyVtiuA9TX6kRIw9xaT4OeO0cFo9V3g6Ww1SSt9Qi9Fh3lQm+pBpl3NtvA4G+5vms=;
-Received: from p5b2062ed.dip0.t-ipconnect.de ([91.32.98.237] helo=nf.local)
-	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96)
-	(envelope-from <nbd@nbd.name>)
-	id 1ueD2U-00Fylh-0O;
-	Tue, 22 Jul 2025 15:28:14 +0200
-Message-ID: <2e267b4b-0540-45d8-9310-e127bf95fc63@nbd.name>
-Date: Tue, 22 Jul 2025 15:28:13 +0200
+	s=arc-20240116; t=1753190913; c=relaxed/simple;
+	bh=lZfuCpsNtCDFtD2mIkqfNGc6k19kTKUYwNokWS/5tAM=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=KEtzQsv9Jz9NjoOEJEjUbENYnD7ps1NKOA96xzaxnbPS2XoEFfjdt4juZtJo32mNDCCiWfi+H7mxgdiP2TqGwc60mubwbWuTGew8YHZPmvAhLOCa3qEEnhtDXL0laoJxzPZFiAu6W0YHVaIvo1VdFHuxYKOatpJkX3UaP+nC4BI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--tmichalec.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e2fhEWVT; arc=none smtp.client-ip=209.85.208.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--tmichalec.bounces.google.com
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-60c6d568550so4595701a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 06:28:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753190910; x=1753795710; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=y2ZdCOMadLYtwQ17YQBl/MkVa95WXMm29CGtxSF5vMk=;
+        b=e2fhEWVToHDrG9kXVGIfRQCH5ADIQkXLo/RORrj/O8WgSkiUKCPwEqTWVXI1BJjSAI
+         PtaS0rON2xCalrXM6KBf5nmeie9QSPJWCbtGogUxJKthpUHVktfw4zdxKvQzUw4WvFIG
+         zL8DDcCGCuKwAEbaCkkheOvQrMcoGlq6814T5grrIjEfV4JFFgCBhwrKZzY8lqERKGjr
+         sUnPPTl/zbTKL52yd/uivhtmgHtdtMGt8g7aZJipRUmf5tmSW3wGPxyd6QfaM7u2yKuQ
+         ZkdLqtrRFY8nEKHHwOHVz3CTnW88gOMjwS1+wV437sizB5LWYpf5GwqvoHhizmE0kgya
+         O0aQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753190910; x=1753795710;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=y2ZdCOMadLYtwQ17YQBl/MkVa95WXMm29CGtxSF5vMk=;
+        b=u8D8iYC2V1amRhh+j81HYNV6HrTpzxWR/wlG0K4ps2ihh/C1xZ4+gtlvlWrJkwKp5u
+         HJU1A/bjiVJyGBUA5/noqXN/vLQNPHFmp4a1CIMDvsQEY15BJnQ37OPn7joF37SGoRri
+         puUr/KGuQmTq69ELnCeogHD55/Ivilb87zVQYqkq7ifP5OvJbUxKfRCpYGRV2JtMTmQk
+         ffsPqlcXdljE6ABXhjFyO5NDxESttw8SXL4FgGfFFx0CKIEJCuvOxxSNeCrl9SN8E6pw
+         WFOD/780gFFSjgsrcq4X7P32bMM8uHPxW8+2BRXBq92zaXjOrhPxgZUHniKjlLxDrgeb
+         MVjA==
+X-Forwarded-Encrypted: i=1; AJvYcCVPCb6yp1YRDUD34VmxM5bOvNj1WjgHfaewdIFORARHKQ5U1akK8ypOtL3sHjx5tfpUWe956zKVQPlt590=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywm15SqL7d9pDL8mn+WyCWHw9wTrJv9cWzUzqnRO4vPFfeqaOje
+	cdzSgAq1LqVuoUHvkBA1KKTYrd4VrCtnXbFUUtuurfFWCZXbtp5kehOw/FmNxyTqf/IS7hpqUW4
+	4rmL0IcNStOFLxy88Gw==
+X-Google-Smtp-Source: AGHT+IHhABfNDI6aFdSjh37rLs3eT9u7XfYoSpwrqg3BaY2FdWTG8XAloBBVS7kg58Tqg+LF5DEduLfWGJgT9C8=
+X-Received: from edys5.prod.google.com ([2002:a05:6402:17c5:b0:607:3229:efd5])
+ (user=tmichalec job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6402:270b:b0:612:c928:ead0 with SMTP id 4fb4d7f45d1cf-612c9292d12mr15692866a12.19.1753190910362;
+ Tue, 22 Jul 2025 06:28:30 -0700 (PDT)
+Date: Tue, 22 Jul 2025 15:28:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next 1/1] bpf: fix WARNING in __bpf_prog_ret0_warn
- when jit failed
-To: KaFai Wan <mannkafai@gmail.com>, ast@kernel.org, daniel@iogearbox.net,
- john.fastabend@gmail.com, andrii@kernel.org, martin.lau@linux.dev,
- eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
- kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250526133358.2594176-1-mannkafai@gmail.com>
-From: Felix Fietkau <nbd@nbd.name>
-Content-Language: en-US
-Autocrypt: addr=nbd@nbd.name; keydata=
- xsDiBEah5CcRBADIY7pu4LIv3jBlyQ/2u87iIZGe6f0f8pyB4UjzfJNXhJb8JylYYRzIOSxh
- ExKsdLCnJqsG1PY1mqTtoG8sONpwsHr2oJ4itjcGHfn5NJSUGTbtbbxLro13tHkGFCoCr4Z5
- Pv+XRgiANSpYlIigiMbOkide6wbggQK32tC20QxUIwCg4k6dtV/4kwEeiOUfErq00TVqIiEE
- AKcUi4taOuh/PQWx/Ujjl/P1LfJXqLKRPa8PwD4j2yjoc9l+7LptSxJThL9KSu6gtXQjcoR2
- vCK0OeYJhgO4kYMI78h1TSaxmtImEAnjFPYJYVsxrhay92jisYc7z5R/76AaELfF6RCjjGeP
- wdalulG+erWju710Bif7E1yjYVWeA/9Wd1lsOmx6uwwYgNqoFtcAunDaMKi9xVQW18FsUusM
- TdRvTZLBpoUAy+MajAL+R73TwLq3LnKpIcCwftyQXK5pEDKq57OhxJVv1Q8XkA9Dn1SBOjNB
- l25vJDFAT9ntp9THeDD2fv15yk4EKpWhu4H00/YX8KkhFsrtUs69+vZQwc0cRmVsaXggRmll
- dGthdSA8bmJkQG5iZC5uYW1lPsJgBBMRAgAgBQJGoeQnAhsjBgsJCAcDAgQVAggDBBYCAwEC
- HgECF4AACgkQ130UHQKnbvXsvgCgjsAIIOsY7xZ8VcSm7NABpi91yTMAniMMmH7FRenEAYMa
- VrwYTIThkTlQzsFNBEah5FQQCACMIep/hTzgPZ9HbCTKm9xN4bZX0JjrqjFem1Nxf3MBM5vN
- CYGBn8F4sGIzPmLhl4xFeq3k5irVg/YvxSDbQN6NJv8o+tP6zsMeWX2JjtV0P4aDIN1pK2/w
- VxcicArw0VYdv2ZCarccFBgH2a6GjswqlCqVM3gNIMI8ikzenKcso8YErGGiKYeMEZLwHaxE
- Y7mTPuOTrWL8uWWRL5mVjhZEVvDez6em/OYvzBwbkhImrryF29e3Po2cfY2n7EKjjr3/141K
- DHBBdgXlPNfDwROnA5ugjjEBjwkwBQqPpDA7AYPvpHh5vLbZnVGu5CwG7NAsrb2isRmjYoqk
- wu++3117AAMFB/9S0Sj7qFFQcD4laADVsabTpNNpaV4wAgVTRHKV/kC9luItzwDnUcsZUPdQ
- f3MueRJ3jIHU0UmRBG3uQftqbZJj3ikhnfvyLmkCNe+/hXhPu9sGvXyi2D4vszICvc1KL4RD
- aLSrOsROx22eZ26KqcW4ny7+va2FnvjsZgI8h4sDmaLzKczVRIiLITiMpLFEU/VoSv0m1F4B
- FtRgoiyjFzigWG0MsTdAN6FJzGh4mWWGIlE7o5JraNhnTd+yTUIPtw3ym6l8P+gbvfoZida0
- TspgwBWLnXQvP5EDvlZnNaKa/3oBes6z0QdaSOwZCRA3QSLHBwtgUsrT6RxRSweLrcabwkkE
- GBECAAkFAkah5FQCGwwACgkQ130UHQKnbvW2GgCeMncXpbbWNT2AtoAYICrKyX5R3iMAoMhw
- cL98efvrjdstUfTCP2pfetyN
-In-Reply-To: <20250526133358.2594176-1-mannkafai@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <20250722132826.707087-1-tmichalec@google.com>
+Subject: [PATCH] platform/chrome: cros_ec_typec: Check ec platform device pointer
+From: Tomasz Michalec <tmichalec@google.com>
+To: Benson Leung <bleung@chromium.org>, 
+	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>, Jameson Thies <jthies@google.com>, 
+	Andrei Kuchynski <akuchynski@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>
+Cc: Guenter Roeck <groeck@chromium.org>, Konrad Adamczyk <konrada@google.com>, 
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	chromeos-krk-upstreaming@google.com, Tomasz Michalec <tmichalec@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+It is possible that parent device for cros_ec_typec device is already
+available, but ec pointer in parent driver data isn't populated yet. It
+may happen when cros_typec_probe is running in parallel with
+cros_ec_register. This leads to NULL pointer dereference when
+cros_typec_probe tries to get driver data from typec->ec->ec->dev.
 
-On 26.05.25 15:33, KaFai Wan wrote:
-> syzkaller reported an issue:
-> 
-> WARNING: CPU: 3 PID: 217 at kernel/bpf/core.c:2357 __bpf_prog_ret0_warn+0xa/0x20 kernel/bpf/core.c:2357
-> Modules linked in:
-> CPU: 3 UID: 0 PID: 217 Comm: kworker/u32:6 Not tainted 6.15.0-rc4-syzkaller-00040-g8bac8898fe39 #0 PREEMPT(full)
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> Workqueue: ipv6_addrconf addrconf_dad_work
-> RIP: 0010:__bpf_prog_ret0_warn+0xa/0x20 kernel/bpf/core.c:2357
-> RSP: 0018:ffffc900031f6c18 EFLAGS: 00010293
-> RAX: 0000000000000000 RBX: ffffc9000006e000 RCX: 1ffff9200000dc06
-> RDX: ffff8880234ba440 RSI: ffffffff81ca6979 RDI: ffff888031e93040
-> RBP: ffffc900031f6cb8 R08: 0000000000000001 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000000 R12: ffff88802b61e010
-> R13: ffff888031e93040 R14: 00000000000000a0 R15: ffff88802c3d4800
-> FS:  0000000000000000(0000) GS:ffff8880d6ce2000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000055557b6d2ca8 CR3: 000000002473e000 CR4: 0000000000352ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->   <TASK>
->   bpf_dispatcher_nop_func include/linux/bpf.h:1316 [inline]
->   __bpf_prog_run include/linux/filter.h:718 [inline]
->   bpf_prog_run include/linux/filter.h:725 [inline]
->   cls_bpf_classify+0x74a/0x1110 net/sched/cls_bpf.c:105
->   ...
-> 
-> When creating bpf program, 'fp->jit_requested' depends on bpf_jit_enable.
-> Currently the value of bpf_jit_enable is available from 0 to 2, 0 means use
-> interpreter and not jit, 1 and 2 means need to jit. When
-> CONFIG_BPF_JIT_ALWAYS_ON is enabled, bpf_jit_enable is permanently set
-> to 1, when it's not set or disabled, we can set bpf_jit_enable via proc.
-> 
-> This issue is triggered because of CONFIG_BPF_JIT_ALWAYS_ON is not set
-> and bpf_jit_enable is set to 1, causing the arch to attempt JIT the prog,
-> but jit failed due to FAULT_INJECTION. As a result, incorrectly
-> treats the program as valid, when the program runs it calls
-> `__bpf_prog_ret0_warn` and triggers the WARN_ON_ONCE(1).
-> 
-> Reported-by: syzbot+0903f6d7f285e41cdf10@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/bpf/6816e34e.a70a0220.254cdc.002c.GAE@google.com
-> Fixes: fa9dd599b4da ("bpf: get rid of pure_initcall dependency to enable jits")
-> Signed-off-by: KaFai Wan <mannkafai@gmail.com>
+Check if typec->ec->ec is set before using it in cros_typec_probe.
 
-I think this patch may have caused a regression in configurations with 
-CONFIG_BPF_JIT_DEFAULT_ON=y when programs can't be JITed. Attaching the 
-program fails with error -ENOTSUPP.
+Signed-off-by: Tomasz Michalec <tmichalec@google.com>
+---
+ drivers/platform/chrome/cros_ec_typec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Please see https://github.com/openwrt/openwrt/issues/19405 for more 
-information.
+diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform/chrome/cros_ec_typec.c
+index 7678e3d05fd3..1ef181614d4a 100644
+--- a/drivers/platform/chrome/cros_ec_typec.c
++++ b/drivers/platform/chrome/cros_ec_typec.c
+@@ -1271,7 +1271,7 @@ static int cros_typec_probe(struct platform_device *pdev)
+ 	typec->dev = dev;
+ 
+ 	typec->ec = dev_get_drvdata(pdev->dev.parent);
+-	if (!typec->ec) {
++	if (!typec->ec || !typec->ec->ec) {
+ 		dev_err(dev, "couldn't find parent EC device\n");
+ 		return -ENODEV;
+ 	}
+-- 
+2.50.0.727.gbf7dc18ff4-goog
 
-- Felix
 
