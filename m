@@ -1,452 +1,195 @@
-Return-Path: <linux-kernel+bounces-741385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A87FB0E379
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:27:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04A0CB0E37B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:27:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CE407A7F00
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:25:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C08441C8359B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966AA280A5C;
-	Tue, 22 Jul 2025 18:26:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D674280CCE;
+	Tue, 22 Jul 2025 18:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="YqC89PEZ"
-Received: from YT5PR01CU002.outbound.protection.outlook.com (mail-canadacentralazon11021102.outbound.protection.outlook.com [40.107.192.102])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fbBdjSE3"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33994203710;
-	Tue, 22 Jul 2025 18:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.192.102
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753208814; cv=fail; b=LHdchgzXqpUWNiKM35mcEHYE4FHQzjDz2Y5ceH97fz1DikApauLw2OVkDlZJJ2djaw6Npvlz2+tNSwB3lLW/HQ4haYZSBfcMWM7p2kEdTVpeUw/kyTNEXKPqJkYAIjCEkT+I5sBcHCmcO0JYBlMRziUZ8uIhK/1tsN5kN45yQXw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753208814; c=relaxed/simple;
-	bh=S9mpLFYpvjvo/RE+y44aYQNKh4ehuP1QWJ5SjCxFByY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=PdcUzBgZU3p0NFuvYeAQKbmy3GUBlBlSkmvIvX0rmnv6gLhF+FHD4xVSdiuvPBG3xcicv8nbl2Ar0mO27nMWCym6Fs9EvPUustLUgDApRQCsZAxPELPulSnAzXYvVuTS+i7hnWUVTw7q+CrYFHCtsLpnX9xsNUp5pppM601mrkk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=YqC89PEZ; arc=fail smtp.client-ip=40.107.192.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uu9oYiqwn7xEl+6FCtOxBqs64zNq6TLsBLo0F1z8vBjfSzBYJfbBrVzV+ehbqmlZJac+9abEcPu8aFb99vw4ncct+s6aBnjAIGvJGrGUsz2/m89fBbVCO8Z8dJEyzaS3LV85pHehnpC9ImPTz1zNc565zxxm8+gngc/IkOeQrFimNsiLSWn06QGdVUOXSHzWSlGq5h+yUuZp4Bxkr+talJHuTYx/TDgCAcLAxFvUa6BIXlqhX8qV8oGKmItSjPe3WlrLa4c9LPPxEiduvGRGSg0asYyzxd6yCQlqR5aHP/ydu4VsGxLjpu3637LhHaNlfIAqYosJFurrFJjNcYr23Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YsqMWcGEHicHej9dQZYs7jLW/U3Tr+5lA8mdX9UKGS0=;
- b=vi6gl8ZqoemvWDR0oTew0HytwYEGDiA4xsYXU+R24rN43o/XryGh+8MbTeRYly3mivnQaK7lLeaqdMCbBZJ2ZDp6BK6i7RPTaCFA2rmowqHNRgGiBzXcaspEhYCju9LQ5aFZlQ1Ioi8bJchfCXkmVUUkPcb4mQ2YYb+l876gtfyZ6HEg5wCfqlucVZJq9f2uVEM5lCzrMr2xZC0NRUXXtD6v+ULrI20BdDijFEE4KblsqzJUHYQs3Jdtk0JIzsF6Joes9PTdqJuwkNV7CaY6HlDC/CQLaiGZi/1c2SVfoyaV7Lck20GRBmSz3gBD4bFVwNf3m+Cfl/MymCo5a6cr9Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
- dkim=pass header.d=efficios.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YsqMWcGEHicHej9dQZYs7jLW/U3Tr+5lA8mdX9UKGS0=;
- b=YqC89PEZh8UvDoxkFOQCuqBUzx/uuC/ghmPJGcX57C3XJjIymUbMeqJmt3xxTf1aKt72BwTUJCg0LoJ2dU2ElTVlM+fTM8fQsH/yttQi89QNh1SI/8ZiWm2UoGr5PEpN/uqKoQLQo6m0eaxDnLx4WSsGTYSPsQUcoFvXjk1jkVjXDuQibYDVHWh8kP7ibAuoK64Hu3nfQFZHQsl7VHJa4GBg3hy9QX/gfOvpR2qPQ3Ltx5oS0GSzuPImtkWxN6NXeIKQN75mNpRq51rwuQ1YKj5TAcXPLpSWDufvHELNnHvFxiX0Zuhzfhnwndca0Nerl1VqmhzLfaga/uy5he46OQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=efficios.com;
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
- by YQXPR01MB6653.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c01:4e::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Tue, 22 Jul
- 2025 18:26:47 +0000
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4%3]) with mapi id 15.20.8943.029; Tue, 22 Jul 2025
- 18:26:47 +0000
-Message-ID: <af021bce-8465-467d-b88b-8d45d11e0f0a@efficios.com>
-Date: Tue, 22 Jul 2025 14:26:44 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] New codectl(2) system call for sframe registration
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
- Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>,
- "Jose E. Marchesi" <jemarch@gnu.org>,
- Beau Belgrave <beaub@linux.microsoft.com>, Jens Remus
- <jremus@linux.ibm.com>, Linus Torvalds <torvalds@linux-foundation.org>,
- Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>,
- Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>,
- Brian Robbins <brianrob@microsoft.com>,
- Elena Zannoni <elena.zannoni@oracle.com>
-References: <2fa31347-3021-4604-bec3-e5a2d57b77b5@efficios.com>
- <20250721145343.5d9b0f80@gandalf.local.home>
- <e7926bca-318b-40a0-a586-83516302e8c1@efficios.com>
- <20250721171559.53ea892f@gandalf.local.home>
- <1c00790c-66c4-4bce-bd5f-7c67a3a121be@efficios.com>
- <20250722122538.6ce25ca2@batman.local.home>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <20250722122538.6ce25ca2@batman.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YQBPR0101CA0153.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:e::26) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:be::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D9427FD72
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 18:27:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753208840; cv=none; b=oG3IZLRxql5TdIVyCuYi9zmkVDw47pqK2zgk8ELv+if8Lbv/UeXX1XTEN1s3/jkOtamEfssG+YXNlESWGc4jpYDAiflksb0tHd15WtvK51PkfcYC+VmSwX4h2nNTDO++LLacyPqsiAi4BZXIVVbXFbO0hxdO+sq3OiGSVkgPlZ0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753208840; c=relaxed/simple;
+	bh=TzuX4mInNFL0Y71HlZ/CxdY52DbWevcbHeKa5VEl6b4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o4EIq0ffAd/u/8NVie1shjlFiwARWiFvxbzR6e91pXDFea6zd/p59rx7jUEkkHZEmHcd+q64Hr2TvqrAOPA9HCA6H4zzo+7my5Cb/XkCk4n3UuqplEHGAiDMA8e34StWg/9hLXYqYm2OZ8+1YNslryZNPNwqqStuJUSwgUIaSF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fbBdjSE3; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a507e88b0aso4006684f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 11:27:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753208836; x=1753813636; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0Z8+WxTUCxaG+bKBH/CjfFqMsRzOrc36DXiZRhX8IKQ=;
+        b=fbBdjSE3y2GGmYpxw+mlOrzUt9fZZvAVKKg89b6flAay1wOTFChU2s10nR6Php8caf
+         vlHE45fOuBxcyRXk2r8uj/u1iaQr+nJWdzaaHS3Zfa59gBMjsQXoN8fC3SrQUbk7K0iv
+         LUsM82heCOvhFW98e2iorMsaBuDkpKX3UPSUArRQ/wFmco7VLe7DH1y630oPfWuevjqH
+         8QtAKzhQGJ6CfgaEXMCNm4WzxijTZXkgzdlmS1JDSb9M2wzKiLwbEhIavuzwbFi6s2mX
+         TftJiA5QcOpfdzWUHPEPRBaixzcYgyDnKa92qHrjTgnV0/UKQkwmWLrh8Uxycwx/aW5o
+         uzCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753208836; x=1753813636;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0Z8+WxTUCxaG+bKBH/CjfFqMsRzOrc36DXiZRhX8IKQ=;
+        b=uK8zBpH60GSZb/Kl+Bemy6XIeoKa4N7FsYmhPCVVNyKLzjlHbqALlNDDUrvOdF5b3l
+         ymZp5IBQfFqIBo4QSc/TYVE32Ym8v+CHF1U8x/4j9PgWBym7pfq8uZrmpH37sIh27Los
+         TjwskmvqVB0DqwsKkW/BwdLGHN1F+0gNH0nYgQkh9UuNMuh93mCyZdKCKBKNSsT8kRz6
+         XKD7fgZN5O41VOH+cwl9l6gNKIs2rqDvTbmbq60u8cfPNnCGhekdmIhZXuDX2eWqq9iv
+         Y57EcfkP1YPnFOU88jIY7GvSWAB39qcH9Hi90cepHkjH3/lVpXYrWBj3vYmLcZwVDDKF
+         PB7g==
+X-Forwarded-Encrypted: i=1; AJvYcCUsYUwhh2Nx1L3pSCM9O69/yrBbwyHY3DJ4mFxpgWKD6JOVsfsZ6qpZldeKFPI5Lpw1JEgJ9RidiQSfs54=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybrqVww8IZ3vfyJjVCmbb9vJCv2NWVv0qowwgepl/XBRSfyNms
+	UGrn6RQGF5QwdqNl5Ze5Gdsufuxf3J00R03SBTRJwNvZ5h3AlI1hlugX8hxJuD4Uuw==
+X-Gm-Gg: ASbGncvwQsogMl1EiSrTr+/gkE7PbIVWXq6EO4CHOHmu95IIl2zqNsL0W2Zud11Acxn
+	0Y3b7lKfDH0luKS284e6O0Wi2Cf/Ei7zqsLSTDkX5kQDuecbgA+k7r/piFNBfyrFcjZ/Pu3TZRQ
+	YuY1pomcXqsOpaiiUxL+wTtL9LVZZQSReVApt8DYRib/F0ksISafTY8SLOynaFAUAOuPL30WBjT
+	UsnG1Y6bydN12QrqRApGMgmIhRDu67KkB573Ql0mSflAhuGyIuTssDFd4krrybVFc3iRZO52IE+
+	eN2kIkfrc8BIl2nEqZT6NqJvRm8gSbaJKFv+HogHBGjbFw5KFoQ5o2rnk5Y2bd7zFvc8Y3S1XvI
+	/munAb9cpYyL3YXhpjvJVYxwwZMsXQXP6yYRGiMd4Y6Oh+wMeG+4UOWcYuA==
+X-Google-Smtp-Source: AGHT+IHWIMlQSVzvAq85Yom5KJ9BYmsTxVnjI5RbzJDAcwDVZQTDVOTdmdUULBd3ut0q8DI1kuLuUA==
+X-Received: by 2002:a05:6000:1885:b0:3a4:f644:95f0 with SMTP id ffacd0b85a97d-3b768f165f7mr219753f8f.54.1753208835850;
+        Tue, 22 Jul 2025 11:27:15 -0700 (PDT)
+Received: from elver.google.com ([2a00:79e0:2834:9:53e1:3729:be19:c80])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca4d807sm14296542f8f.73.2025.07.22.11.27.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jul 2025 11:27:15 -0700 (PDT)
+Date: Tue, 22 Jul 2025 20:27:08 +0200
+From: Marco Elver <elver@google.com>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	clang-built-linux <llvm@lists.linux.dev>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Ben Copeland <benjamin.copeland@linaro.org>
+Subject: Re: [PATCH 6.12 000/158] 6.12.40-rc1 review
+Message-ID: <aH_X_AVUDoP7oB0E@elver.google.com>
+References: <20250722134340.596340262@linuxfoundation.org>
+ <CA+G9fYu8JY=k-r0hnBRSkQQrFJ1Bz+ShdXNwC1TNeMt0eXaxeA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YQXPR01MB6653:EE_
-X-MS-Office365-Filtering-Correlation-Id: 317c4955-1469-4b3c-0aa7-08ddc94d511b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WjNZOWREUkVDeXl2bTJSL25LZ00wUUlpR1dWREpYNVFTVHNham9ucTVDWTZU?=
- =?utf-8?B?Sm1OaGZjN2U0bzNxNHlhVytyUFowNkM3RnBmZ1JHTzJpblFsbldPY1NycW9U?=
- =?utf-8?B?eW12QjZrMzFPVVpLRy94M1BQWU5nSXRPKzMyYUgrSWhyZEFVRzhCZVlFK254?=
- =?utf-8?B?eVFLcTRWZWxaSTBwTXZlcm96dEdRZXg5NjloNW80MUhFT2xLZTZBSzN4VFVG?=
- =?utf-8?B?MnFIa2lmM2lPSEROcG91RVR3b1FzSkZWZVVYTzRQSzQrSVZDSnFEVXJ4MHhh?=
- =?utf-8?B?YVlhdjhSTEFoT3E1VnQ3YUtzVldUMFVDNDBXakVQMkZxWldoOG5DbytWOWlq?=
- =?utf-8?B?OWJJWlkrM0ZBZWVaV3ZXUDJqcXRyYzFGUVF4N3I0M0pVUW1DMUlMUnBoRnJK?=
- =?utf-8?B?eWxZT1lnV1VLQStnOXZRV3gxd1BLTXdoUHV1YWRVRHpmZVhyOUhVdHdNd0kr?=
- =?utf-8?B?Yno1T1FxSENOL1B1V3JiVDBUaUtjazBjT0N6dkd6RHRGY2o0bEJHWGhKK05R?=
- =?utf-8?B?MVNzSmE3WUFJbi8wMkwzeWlzdXZMbnpVRXhGaG5NODg4WlZsREM4ekQ3WVdQ?=
- =?utf-8?B?NnFWVStwcGZKbDI0Vlp4d3RIU00yUnZGRm4yOUVmblpzNW9YTW9zcjVSOTZM?=
- =?utf-8?B?ZWpPem5FbWtCa2N0d1Z4QStLL2ZDOStTemZEbXpac0g5N2l1NU1TZ21wZXZx?=
- =?utf-8?B?YjBHbk5vQzFaRzl3ZUYyWHpERXdOT1oySzFzK1Q3UE1ySXNwQ2RGUUN0U0RB?=
- =?utf-8?B?Y0hRQWJLdnpGWnlmSTBOSmc3Ym9Sbm5QdHFSS01ZSnhScWJpU3MrRzlkWHZO?=
- =?utf-8?B?ZldnQi9mNlZ6WHRQNWg4T0FVK1VlVnIrMTdPdlZhanFHajdjSlhqdmhqZnlq?=
- =?utf-8?B?WVhES1BOTlBNZm1UeGhackNqazQ5WTkzVTQvVDB2STRhTjY2OXpNOU5mQktK?=
- =?utf-8?B?V1EwTmFERk45eCtqZzgwcWcxa1JvMWkvSEFNUFVHSWNLZ05hdmM4RGU0M2F2?=
- =?utf-8?B?QzZXQWExRGg3R3Eva3VlMGF5ZmVJcERGTElqeTY1WG5ublNQeTdMdDQza1I2?=
- =?utf-8?B?YnM2K1psRElFYVdTMnphcXROUWdPUnVubllpZlVIT3ZPMk1nTWZURXk3SHVy?=
- =?utf-8?B?ZnA0OGhGUmZKaTQ4MXFqdWFWcG5FMmx4WU5oQk5WS2hqSkdMMVVVNmpJL29K?=
- =?utf-8?B?NnlrZ1hCekhhR2ppbU45NE5LeElESklXb0QweEt0TkFUTUpGMmwxSFQweHha?=
- =?utf-8?B?aWlVLzRVZ2xWakducmg3WFdOaUJXcGFHWEtMTGVWd1VFMG4rYWRHOWYwb0pK?=
- =?utf-8?B?NzNvdkI5V0FyMmtnMzJPaVlYa2d3eG4zS3NXL0pubE41RlJHeFVwQnZlc2tz?=
- =?utf-8?B?d3FoYzlOeUhaeTY5bmxldW5UWC9IK01iUCtHTlI2TlBVNTc1Z2RtQVhWSzc2?=
- =?utf-8?B?ZTFzeVJxam5MZ0lDa2Jhbk5kUDAzOWc3czhlWXhzU1hRY2pScmNWY0VMUlkz?=
- =?utf-8?B?VDgzNmpFRHVYNEh1eXZhcy9RcWNvQ0EyRzlKeS9zWHB3eGU2TXRKTGU1Sk4y?=
- =?utf-8?B?cmNRRjNDMUtCMk13bXFUUnI3cXZqa01Ob2RjR0syTGwxVG1kRjAzWmQ0UG1Z?=
- =?utf-8?B?NmNQWTF2L0cvM0tONXF2dGkvN3Z0Um45NUFtdXE5YlJyT1d6cCtyaVM2cE9H?=
- =?utf-8?B?SnZTWFRWQ0dyNitIOXg3cWJLUlZrQm5wUHR1SE1LRE5lYjJUTFVDdkh5YkRl?=
- =?utf-8?B?NnNrb2thWndvRE1URCswZXNiczkzSnRETGFraVJpV3ZvN2JpNmQzbFFTSGV5?=
- =?utf-8?Q?tkOXtxXIWJFiztwVifhNwC/tpDlt0GNbjJsj0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NEhCTUdOa2lKUkJpb21jVG9pQWxVbnhQYnJQZTV5MlVXQnQ4WnFhMExSSVBO?=
- =?utf-8?B?LzgrNExzaVVyZDErUEhpSlVBUnZHTjdXOVFJVDRjREh4VkxXbzFLZmxrYVgv?=
- =?utf-8?B?bHhCYU1rYm55am1RcDMvbGdacnl1Sk9saEYzUTI2SnBUWjRKWllCT245T1lj?=
- =?utf-8?B?dUJqR3pQOFNSbVF1NWdObnB0ZGNPSFJveXphdmpYZ2VpU0tyNlh2Rk1BSksx?=
- =?utf-8?B?Z1N4NXE1TkJyQjNxTjRlVWliZG8reUx2bUFaOHBZUkg2ZDkxRXJUSzQ3R3Zi?=
- =?utf-8?B?TXJFM1RtT0Q1eHdwK3JuVWljZVVZSVRSQkw2QTlDOW14cHFDcmtJWWlWbjZX?=
- =?utf-8?B?TVR2em5UemtzMnJPRW50SkNzTzQrdEVBczk0di84TjdjWEZITGx5M21LcnZI?=
- =?utf-8?B?Z0dhd2VMUG8xWU1qMnI5cU1SZU0vMm5xRU9FTGc0ZEFhYWt2aHgrSDAxYTZw?=
- =?utf-8?B?VW1jTzJ3YUEvM0NsMThxRENMaHFKNGRJVXAwTWdkMmtoMWk5akdSZkhHYmND?=
- =?utf-8?B?a3Q0NlgrdlVSWldNV3FSREtXL1U0NmN0alUrRnllbnBIczN6Z05lYjhVNk1B?=
- =?utf-8?B?V29KTlhiaHFUYVRoMy9aRTlxdm5CZFkzTG9lYlIybDRDZlArSzdiMEh2RTNL?=
- =?utf-8?B?OWxiemoraUZ4eDZiZ3MxOTc4MUJwaWFMaTltZ0tabEZFUnd6dGYvOGg4ZnZ1?=
- =?utf-8?B?L2lZZmIwSk5wSXBrbElxRm9EK21wOUV6NGRVWWI5U0ZxUVpDZnN5MDlWNTVJ?=
- =?utf-8?B?WSsremlrUjdCc2dVV012MDZMRE9zY1ZkMVVmZ0diaXU4aDd6bmFTSE5WcEQ2?=
- =?utf-8?B?elcvVnozTFhMYkJ2VEpSdXVlNCtiWVZlWWNWd0pqZkl2MklObXRMbXpkVHor?=
- =?utf-8?B?REFrWTY4NGJ1c2pURUFQQndUd0dWMnV0b09WcWhSSHdyNy9JbE9qMFNkcU45?=
- =?utf-8?B?Z3AxcW9uZG5MdmYyNW1FcWNuU0VMS3lWQ0tRWG04bUU3VkVzdlBiaHh3TjMv?=
- =?utf-8?B?WmlSNkJQdUV5TDhqZDJ4akM3R1gzVU9MS1hYZWxzQlJVU1gvdFRON1A1Ty94?=
- =?utf-8?B?ZC8zNEFZRkZRd0M2Y2RGWldlZDdIVmphbTkrOWVsall5MFBPTm1RYU5hcm10?=
- =?utf-8?B?SGk1ckdiNkk5V0NqNlNsY3BwQ3d2cVpNaUU4L1l1cHQxVjJPVVFhOUFWYUJs?=
- =?utf-8?B?ZFc3MVJScU80RldsVnNiRXdUcjJNbzhJblI4LzZGaWRES3JHT3MxQjM3Y1ND?=
- =?utf-8?B?MkJ5b2RGRFNoRTB0b3RobHZqMmc5OTFoRmQ4blJsc0xrZlU3Qmx6ZEY5NWoy?=
- =?utf-8?B?a3U3aXIzdGFOOFFTWno2dEcrekVybHBud3o4RHQxcjEyV0tsWHRieGZ3TlFk?=
- =?utf-8?B?cWgrbnNEb2wrcHd6b3BERnIvRHBOdHYyZmtJZ0tOSnZEKzZWWE9oYUZ2RGNF?=
- =?utf-8?B?dmxleGNWb2RiU2ZKclhuUjlGUDgyTmRPZXZoUzE4VjRDY2hVOUJZZXQwL29n?=
- =?utf-8?B?TDFiTmNxOUNtTWczNmx0clNscWlBdWh4UVVZV1JURWJRZ2JMZTdqNWZobjNE?=
- =?utf-8?B?OTdPSnNPTlZUTjJsUEc2WlF4UDJ5UFd4MFBGS0tNYUY3ckZWdCtLU2hWRUQ5?=
- =?utf-8?B?MXhlSXNaMmNlTDJ3NHBXRnJCRTN3UEdmWGxzaG1oSWJSSmhmTTVKSkl5ajd4?=
- =?utf-8?B?RGJYRXdHdmY2UUZuc0pTZjJhM2RnTjBKc25pQmY2SDlFM1pFd2VQKzNwRjB6?=
- =?utf-8?B?QUl0Zk9xRm9xZExWbUVVWGVrc2pOb3NFSzk2d0hOazErWHI3WTZwTGlSZmI0?=
- =?utf-8?B?MVVkcU9JT0JUa0FnbUlzTE5ER1FsU01ydWxTSGVkN3hSMUtYOWFHdHIzUEVj?=
- =?utf-8?B?ZStuRkNlK1BzbTR5SlBNcEJlSi9YS0s0WEg5MTBnK1NINFBNNjgrNUZqVDBh?=
- =?utf-8?B?VEVvck56WU1IR3J4cG9GcFlhZDlZN09oK013ZVpROVd5T1dYM1BrdnRaYWl3?=
- =?utf-8?B?Vk1OaFpNb0d4bDIrRHQyYTdXdG9VcW45NW1WYWl3YVVrRmtCVVF5Zlh6dUMy?=
- =?utf-8?B?Rmd3aUs3eDM3bHQ2V1lURU96d1E1eENySzJNZEswOER4UjZiazFtSjJuakJi?=
- =?utf-8?B?U0ZKZDZPaW1XM1hZc0I2dzZSSWRGbDZNMWdjRVh0MGtqOEROQVJXZWxoZmox?=
- =?utf-8?Q?KGCKO721Ln8/UDncux9dpXs=3D?=
-X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 317c4955-1469-4b3c-0aa7-08ddc94d511b
-X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2025 18:26:46.9076
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OKuc2CYmNqwf/ZaYHeJ7/O0ESgKsZjP2oNwMHsOU4nfJYM+OoMRrxjxyd9n/GVqB0tV9siQHC4Nalvwry+2l5vU9C7x8oTuc8gk2KI8qy6Y=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YQXPR01MB6653
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYu8JY=k-r0hnBRSkQQrFJ1Bz+ShdXNwC1TNeMt0eXaxeA@mail.gmail.com>
+User-Agent: Mutt/2.2.13 (2024-03-09)
 
-On 2025-07-22 12:25, Steven Rostedt wrote:
-> On Tue, 22 Jul 2025 09:51:22 -0400
-> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+On Tue, Jul 22, 2025 at 11:30PM +0530, Naresh Kamboju wrote:
+> On Tue, 22 Jul 2025 at 19:27, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > This is the start of the stable review cycle for the 6.12.40 release.
+> > There are 158 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Thu, 24 Jul 2025 13:43:10 +0000.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.40-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
 > 
->>> Here's a hypothetical, what if for some reason (say having the sframe
->>> sections outside of the elf file) that the linker shares that?
->>
->> So your hypothetical scenario is having sframe provided as a separate
->> file. This sframe file (or part of it) would still describe how to
->> unwind a given elf file text range. So I would argue that this would
+> With addition to the previous report on the stable-rc 6.15.8-rc1 review
+> While building allyesconfig build for arm64 and x86 with the toolchain
+> clang-nightly version 22.0.0 the following build warnings / errors
+> noticed on the stable-rc 6.12.40-rc1 review.
 > 
-> No. It should describe how to get access to an sframe section for some
-> text that has already been loaded in memory.
+> Regression Analysis:
+> - New regression? Yes
+> - Reproducibility? Yes
 > 
-> I'm looking for a mapping between already loaded text memory to how to
-> unwind it that will be in an sframe format somewhere on disk.
-
-OK, so what you have in mind is the compressed sframe use-case.
-
-Ideally, for the compressed sframe use-case I suspect we'd want to do
-lazy on demand decompression which could decompress only the parts that
-are needed for the unwind, rather than expand everything in memory.
-
-Pointing the kernel to a file/offset on disk is rather different than
-the current ELF sframe section scenario, where is it allocated,loaded
-into the process' address space. I suspect we would want to cover this
-with a future new code_opt enum label.
-
+> Build regression: arm64 x86 kcsan_test.c error variable 'dummy' is
+> uninitialized when passed as a const pointer argument here
 > 
->> still fit into the model of CODE_REGISTER_ELF, it's just that the
->> address range from sframe_start to sframe_end would be mapped from
->> a different file. This is entirely up to the dynamic loader and should
->> not impact the kernel ABI.
->>
->> AFAIK the a.out binary support was deprecated in Linux kernel v5.1. So
->> being elf specific is not an issue.
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 > 
-> Yes, but we are not registering ELF. We are registering how to unwind
-> something with sframes. If it's not sframes we are registering, what is
-> it?
-
-I am thinking of sframes as one of the properties of an ELF executable.
-So from my perspective we are registering an ELF file with various
-properties, one of which is its sframe section.
-
-But I think I get where you are getting at: if we define the sframe
-registration for ELF as sframe_start, sframe_end, then it forgoes
-approaches where sframe is provided through other means, such as
-pathname and offset, which would be useful for the compressed sframe
-use-case.
-
-If system call overhead is not too much of an issue at library load,
-then we could break this down into multiple system calls, e.g.
-eventually:
-
-codectl(CODE_REGISTER_SFRAME, /* provide sframe start + end */ )
-codectl(CODE_REGISTER_ELF, /* provide elf-specific info such as build id */ )
-
+> ## Build log
 > 
->>
->> And if for some reason we end up inventing a new model to hand over the
->> sframe information in the future, for instance if we choose not to map
->> the sframe information in userspace and hand over a sframe-file pathname
->> and offset instead, we'll just extend the code_opt enum with a new
->> label.
-> 
-> This is not a new model. We could likely do it today without much
-> effort. We are handing over sframe data regardless if it's in an ELF
-> file or not.
-> 
-> The systemcall is to let the dynamic linker know where the kernel can
-> find the sframes for newly loaded text.
+> kernel/kcsan/kcsan_test.c:591:41: error: variable 'dummy' is
+> uninitialized when passed as a const pointer argument here
+> [-Werror,-Wuninitialized-const-pointer]
+>   591 |         KCSAN_EXPECT_READ_BARRIER(atomic_read(&dummy), false);
+>       |                                                ^~~~~
+> 1 error generated.
 
-I am saying this is a "new" model because the current sframe section is
-allocated,loaded, which means it is present in userspace memory, so it
-seems rather logical to delimit this area with pointers to the start/end
-of that range.
+Thanks for catching this. Newer versions of Clang seem to be getting
+smarter. We can silence the warning with the below patch:
 
-> 
->>
->>>
->>> For instance, if the sframe sections are downloaded separately as a
->>> separate package for a given executable (to make it not mandatory for an
->>> install), the linker could be smart enough to see that they exist in some
->>> special location and then pass that to the kernel. In other words, this is
->>> option is specific for sframe and not ELF. I rather call it by that.
->>
->> As I explained above, if the dynamic loader populates the sframe section
->> in userspace memory, this fits within the CODE_REGISTER_ELF ABI. If we
-> 
-> But this isn't about ELF! It's about sframes! Why not name it that?
+From 56c920457a4e7077b83aafb0c9c8105fb98b0158 Mon Sep 17 00:00:00 2001
+From: Marco Elver <elver@google.com>
+Date: Tue, 22 Jul 2025 20:19:17 +0200
+Subject: [PATCH] kcsan/test: Initialize dummy variable
 
-I understand your position in wanting other "types" of sframe registration
-in the future that would cover compressed sframe files. Because of this,
-it makes sense that the registration becomes specific to sframe, because
-we would not want to tie all "elf" registrations to a specific sframe
-ABI (mapped in userspace memory, within a given address range vs pathname
-and offset).
+Newer compiler versions rightfully point out:
 
-> 
->> eventually choose not to map the sframe section into userspace memory
->> (even though this is not an envisioned use-case at the moment), we can
->> just extend enum code_opt with a new label.
-> 
-> Why call this at all if you don't plan on mapping sframes?
+ kernel/kcsan/kcsan_test.c:591:41: error: variable 'dummy' is
+ uninitialized when passed as a const pointer argument here
+ [-Werror,-Wuninitialized-const-pointer]
+   591 |         KCSAN_EXPECT_READ_BARRIER(atomic_read(&dummy), false);
+       |                                                ^~~~~
+ 1 error generated.
 
-If we split this into separate registrations (sframe vs elf), then it
-would be fine: registering an elf binary (in the future) could be done
-to explicitly register pathname, build-id and debug link. And this is
-independent of sframe. This could come as a future new code_opt label, no
-need to do it now.
+Although this particular test does not care about the value stored in
+the dummy atomic variable, let's silence the warning.
 
-> 
->>
->>>    
->>>>
->>>> If there are other file types in the future that happen to contain an
->>>> sframe section (but are not ELF), then we can simply add a new label to
->>>> enum code_opt.
->>>>   
->>>>>       
->>>>>>
->>>>>> sys_codectl(2)
->>>>>> =================
->>>>>>
->>>>>> * arg0: unsigned int @option:
->>>>>>
->>>>>> /* Additional labels can be added to enum code_opt, for extensibility. */
->>>>>>
->>>>>> enum code_opt {
->>>>>>         CODE_REGISTER_ELF,
->>>>>
->>>>> Perhaps the above should be: CODE_REGISTER_SFRAME,
->>>>>
->>>>> as currently SFrame is read only via files.
->>>>
->>>> As I pointed out above, on GNU/Linux, sframe is always an allocated,loaded
->>>> ELF section. AFAIU, your comment implies that we'd want to support other scenarios
->>>> where the sframe is in files outside of elf binary sframe sections. Can you
->>>> expand on the use-case you have for this, or is it just for future-proofing ?
->>>
->>> Heh, I just did above (before reading this). But yeah, it could be. As I
->>> mentioned above, this is not about ELF files. Sframes just happen to be in
->>> an ELF file. CODE_REGISTER_ELF sounds like this is for doing special
->>> actions to an ELF file, when in reality it is doing special actions to tell
->>> the kernel this is an sframe table. It just happens that sframes are in
->>> ELF. Let's call it for what it is used for.
->>
->> I see sframe as one "aspect" of an ELF file. Sure, we could do one
->> system call for every aspect of an ELF file that we want to register,
->> but that would require many round trips from userspace to the kernel
->> every time a library is loaded. In my opinion it makes sense to combine
->> all aspects of an elf file that we want the kernel to know about into
->> one registration system call. In that sense, we're not registering just
->> sframe, but the various aspects of an ELF file, which include sframe.
-> 
-> So you are making this a generic ELF function?  What other functions do
-> you plan to do with this system call?
+Link: https://lkml.kernel.org/r/CA+G9fYu8JY=k-r0hnBRSkQQrFJ1Bz+ShdXNwC1TNeMt0eXaxeA@mail.gmail.com
+Fixes: 8bc32b348178 ("kcsan: test: Add test cases for memory barrier instrumentation")
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Signed-off-by: Marco Elver <elver@google.com>
+---
+ kernel/kcsan/kcsan_test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-All those I have in mind are part of this RFC.
-
-> 
->>
->> By the way, the sframe section is optional as well. If we allow
->> sframe_start and sframe_end to be NULL, this would let libc register
->> an sframe-less ELF file with its pathname, build-id, and debug info
->> to the kernel. This would be immediately useful on its own for
->> distributions that have frame pointers enabled even without sframe
->> section.
-> 
-> The above is called mission creep. Looks to me that you are using this
-> as a way to have LTTng get easier access to build ids and such. We can
-> add *that* later if needed, as a separate option. This has nothing to
-> do with the current requirements.
-
-I agree on the mission creep argument. I disagree on the stated intent though.
-
-For LTTng, I'm happy to grab this information from userspace. I already have
-it and I don't need it from the kernel. I figured it would be most useful for
-perf and ftrace if you guys can directly get that information without relying
-on a userspace tracer.
-
-So considering the fact that you'll want to introduce new sframe registration
-methods in the future, then indeed it makes sense to make the registration
-sframe-specific.
-
-> 
-> 
->>>>>
->>>>> And call it "struct code_sframe_info"
->>>>>       
->>>>>>         __u64 text_start;
->>>>>>         __u64 text_end;
->>>>>       
->>>>>>         __u64 sframe_start;
->>>>>>         __u64 sframe_end;
->>>>>
->>>>> What is the above "sframe" for?
->>>
->>> Still wondering what the above is for.
->>
->> Well we have an sframe section which is mapped into userspace memory
->> from sframe_start to sframe_end, which contains the unwind information
->> that covers the code from text_start to text_end.
-> 
-> Actually, the sframe section shouldn't be mapped into user space
-> memory. The kernel will be doing that, not the linker.
-
-AFAIU, that's not how the sframe section works today. It's allocated,loaded.
-So userspace maps the section into its address space, and the kernel takes
-the page faults when it needs to load its content.
-
-
-> I would say that
-> the system call can give a hint of where it would like it mapped, but
-> it should allow the kernel to decide where to map it as the user space
-> code doesn't care where it gets mapped.
-
-AFAIU currently the dynamic loader maps the section, not the kernel.
-
-> 
-> In the future, if we wants to compress the sframe section, it will not
-> even be a loadable ELF section. But the system call can tell the
-> kernel: "there's a sframe compressed section at this offset/size in
-> this file" for this text address range and then the kernel will do the
-> rest.
-
-I would see this compressed side-file handled entirely from the kernel
-(not mapped in userspace) as a new enum code_opt option.
-
-> 
->>
->> Am I unknowingly adding some kind of redundancy here ?
->>
-> 
-> Maybe. This systemcall was to add unwinding information for the kernel.
-> It looks like you are having it be much more than that. I'm not against
-> that, but that should only be for extensions, and currently, this is
-> supposed to only make sframes work.
-
-I agree that if we state that "elf" registration has sframe_start/end
-as a mean to express sframe, then we are stuck with a model where userspace
-needs to map the section in its memory. Considering that you want to
-express different models where a filename and offset is provided to the
-kernel instead, then it makes sense to make the registration more specific.
-
-The downside would be that we may have to do more than one system call if we
-want to register more than one "aspect", e.g. sframe vs elf build-id.
-
-I think the overhead of a single vs a few system calls is an important
-aspect to consider. If the overhead of a few more system calls at library
-load does not matter too much, then we should go for the more specific
-registration. I have no clue whether that overhead matters in practice though.
-
-Thoughts ?
-
-Thanks,
-
-Mathieu
-
+diff --git a/kernel/kcsan/kcsan_test.c b/kernel/kcsan/kcsan_test.c
+index c2871180edcc..49ab81faaed9 100644
+--- a/kernel/kcsan/kcsan_test.c
++++ b/kernel/kcsan/kcsan_test.c
+@@ -533,7 +533,7 @@ static void test_barrier_nothreads(struct kunit *test)
+ 	struct kcsan_scoped_access *reorder_access = NULL;
+ #endif
+ 	arch_spinlock_t arch_spinlock = __ARCH_SPIN_LOCK_UNLOCKED;
+-	atomic_t dummy;
++	atomic_t dummy = ATOMIC_INIT(0);
+ 
+ 	KCSAN_TEST_REQUIRES(test, reorder_access != NULL);
+ 	KCSAN_TEST_REQUIRES(test, IS_ENABLED(CONFIG_SMP));
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+2.50.0.727.gbf7dc18ff4-goog
 
