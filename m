@@ -1,186 +1,289 @@
-Return-Path: <linux-kernel+bounces-741300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAF97B0E28E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:26:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F4B3B0E293
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:27:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A13111C8541B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:26:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F6503B7BA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:26:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C48D527FB03;
-	Tue, 22 Jul 2025 17:26:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B6327FB21;
+	Tue, 22 Jul 2025 17:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="EIb6TLQ0"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2055.outbound.protection.outlook.com [40.107.243.55])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CsofTea7"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8950227EC78
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 17:26:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753205191; cv=fail; b=HKS923GxDGw/6FXhmCCM29Tj4TJswjgBoOzWlwCq/A/ub/P4gT9DClJy29jGBPJuz3UqRaJzQ4Cde96uZicS2BQzGeeP84sqQi3roTrfZWnw8pLf4f8jU+FyrLGLukDYFTP1sXShiudQQ9KjYfN2A7OkI4GO3RDgBSe0yMyyL7c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753205191; c=relaxed/simple;
-	bh=5RLWPYJHyvpDV0Co/aJZcm65WAkPJL6f449T5DnMCaE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JHlhsjKti/lOmDBKlCVlWBM5uoYvCMa/4ZapWXG9EA0yEtgoxs9U2piRBEI3zK/zA/6oWcnH/rN8XK68B4KwGfd+F/cGphFy07jRCo5ffzd1k7/sT8WLJ0+i5cm0Lclk8jyiHeAH4tOoPFrx6acltBBfPl3tVLPC4B29jI71Too=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=EIb6TLQ0; arc=fail smtp.client-ip=40.107.243.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BPTija1haEPhHvq//kFz4zuhTIhEJ4jnmFoTjmOZpl7458K6nrRpkz4duZ5iTvsy6L/+EfqXcFO9Vec7YllX2DtesCKFfc7uhEU5EbYWAZu4+k17nXy0kjiyQSIq2BxSzM7VLrtkulpUOxznA8plL+FuBy0eVxgUkSd2yWyPXYNdd7XlbIXBAay7W7SFogb2VklGXMVan//fgJnBnaiPW9mEtIGwc7E7qIbOaf4ll/YjuzS4kde0tLGVGy7qIspUeqWFap98RcikFsL5P7I6la8yGBDC/OnVg7oKjFnZBmo/gTE4s+TbJLvXRDyGkj/k4MLWNRbbaaypmvFJw4ZAJA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3Ho7mEGzE8qh5/5UFBZ5GGrNFut1RxZgpAxrnn522YI=;
- b=hCrflkPwlf/q3vuMJBJ/lttheMiB8R4gMxyE05JnTznuJ6NB5twxJmSNkOwVEla5yAELMr1pOIcffTXd2qRXDb4+Fwb5OkeKLcCX8uR+j3IEiHLOuVmo7o90RSZPKHiBNa2JAbSxMfV4/Kl4EvrbYIcZ2aRumaPTnvc0vd0RLZBDS1+1LyVAENzeLmILiTjgll20t1GKGNsejFigXu2r/D7VKF5nErOjmRRcxm9QBSk+x4BXiknJWXk1tM3tFYjJurSESTkUyr5RS+vW064nFZNjnxD7hUkjhw4U7PwSZ6LVsbo6/DtEVL9lNewoY+wb9Vw2FG+5JIHugtnH0/Bl+w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3Ho7mEGzE8qh5/5UFBZ5GGrNFut1RxZgpAxrnn522YI=;
- b=EIb6TLQ0N+M5FjGVUhS1pPrLeTvZQFVTYcvQnXStOAxUI19yIgR1ILYMrvJ6311gXV/ISX56yb2J3PtOhouYXgAEnULqDCPpN7QoguRWof9vmk1F7v5CyZW+svOmDL0u+Ydv6Nawx6v9rQbfWOy5YqryQRSzL8Ktm+ffd/vjxjcAO9zyojlC/EJ+c7KnBlzo7L25g1kCSiIbXvfWvdiMVKg3uA6johXFLFQbqe/alTz8wD1gNMPzwwhAIIxw0RExw5Xp+zZa5MHngbwpTA+Y19+6PiCgR3b03QQmp3dPbgbd8hP7ssZtWN4FlSfPODmtTkIYcRTPE2cR6cmeq09uaw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- MN2PR12MB4342.namprd12.prod.outlook.com (2603:10b6:208:264::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8943.25; Tue, 22 Jul 2025 17:26:26 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%6]) with mapi id 15.20.8922.037; Tue, 22 Jul 2025
- 17:26:26 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>
-Subject: Re: [PATCH] MAINTAINERS: add missing mm_slot.h file THP section
-Date: Tue, 22 Jul 2025 13:26:21 -0400
-X-Mailer: MailMate (2.0r6272)
-Message-ID: <B2E5CD10-E574-4D3D-9C02-FE23800E11B6@nvidia.com>
-In-Reply-To: <20250722171904.142306-1-lorenzo.stoakes@oracle.com>
-References: <20250722171904.142306-1-lorenzo.stoakes@oracle.com>
-Content-Type: text/plain
-X-ClientProxiedBy: SA1P222CA0115.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:806:3c5::24) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9C84685
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 17:27:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753205233; cv=none; b=q6Ws21ZcFLfF3cE/JBM4L8vyHC9UmJQonW4oeICWwKMAtQYpF3EAQRZFUp/mBDcvcK5m2f10MDauwCnAHRvXmgy9/BWjmpoDp7HRdP8O9+Vui0RewKM/i1NE3N/zoVT8vFt5IKhgqPqZpiHayh5XSf4o4nqYIYv4SOSRpo9yFbk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753205233; c=relaxed/simple;
+	bh=GHQF8tWZuWKKjpmquWpNXwOZJcUgZsbrtI8gxt6iiUk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IQlKKXE/rfCckQ5vNm2y/Mrmoft68Z+lc1nGRPW/99rRN5zwzUaMZc9LvhNYxHDiSIJz7w0ElI0HsTRB02/4W1Aw3MGrJkMUq6+/Rt5ucTHaCjHH85m72Omcxmpo3+lvOZkyYEeJmsttBjH/CbJKZGmtDR7TxUW5YjoM1apkIPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CsofTea7; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56MFE5JB031862
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 17:27:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:to; s=
+	qcppdkim1; bh=YrjoZd7QCC3rgO1NgwMgFJMp5C62tulHsO96Xx3lRDo=; b=Cs
+	ofTea7bG1QFvcknnfaPBsuxWjCB0UwTjj5Zxci9asGpuq3hMstWoQjWAYWaQDz6B
+	SKzUwUS2+OFrMyBfT67QLCCUXA8ajpRXPRsbKJYuCbS1NF/tV2sAGDF3o0x8iBLe
+	fx1o+KOJyRfQSaPRPXzgZTqFM0cyKn8FJmuAtn+/+bSoL8bYkJQ+MpfwEnAjsNPu
+	RD15BGgWVFRAu4Lx6rdPekOfXW+j2+oamlWVWByfQ6cb+s15qRWrFmL8VCPOPk3z
+	PkIj7pRqYREenC2JWlrfUZjc5xmGvWImFdfYSdSRTdusmESyXLdbaUEt4xMrkmRY
+	c2r7LhemJkovIgAzdbyA==
+Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com [209.85.167.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 482d3hrdr4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 17:27:10 +0000 (GMT)
+Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-4139102c7f9so4768537b6e.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 10:27:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753205229; x=1753810029;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YrjoZd7QCC3rgO1NgwMgFJMp5C62tulHsO96Xx3lRDo=;
+        b=Ffvn6q4OXT3PlNGx70ICRFjJH04sNpydPb0oT5WJ0uihlWKeUsg2jax/wOmk9DKx0h
+         bphlJkaI1ow1cwtMASdKfwBhd98ssuVHi1PYsteejdq8Gk0nfToIbl74mfT6Ix5iWEZE
+         dorpDbW1vl9Y3xxtX0HmscorZFfbN29U1/k2JV20q7RuE1Uokhis0ytkHUE4yP/CbpuA
+         AA5xPhA6BlSW/6lzMUFn0HDo1QXaItFJUvDTZZcL5VT1CLb3ifZJD16gY+aesdJ4waDP
+         fJJYmDJ0zOGTS/UEoUcRrlzUK1UTCblGOngQ0x//i/GeOb/GyTV2WLm0VsidgHc2eGTC
+         k2zA==
+X-Forwarded-Encrypted: i=1; AJvYcCXqhs4dM4mzFXU7ZFH7v9z2IT1X/IRwfI02DHEimDy6qfzztWhJ+X8k+gPyTQ29DMqVWXkRxXnYaCv9bP8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzH33f58TmNA5m5HzRrzUDMJSGntbknpSWNd3rj2bjVTWg+Bl48
+	nsA2mOijX3STmWq6ZKi1cdYvhUfHXj36SzL6s4eDJPl58g6lRBe0T2s84GKCw7bMb7IDXr3wl+S
+	x1k00Bs1xKfT0NWtoLmXg1MOB2/tZPP/PIzgzH4Tr5/3xCjLgxmscMCZj8qhxzzvWBd31colKAC
+	ozuLBfnsGm845RkL0W/amJDHEkdSa73LRsS38r4j4bBA==
+X-Gm-Gg: ASbGncu93zh7+jpyp3ODtvLL+DQr8obKrgK0slQE7I/6gnFba46ZoLzkBdWAp6bCyJE
+	L8Qs4MyRblcD1yjW13LwqZmDIpwvqwqe+z8i/A2jbtqiGYWCLoiWIETtAwVnKxPmWXKZuj14GjV
+	sliEw0CyqobZCDyd0B7gWFYFavsHTQwNCNsfpyugRq5/TiGokJVzcp
+X-Received: by 2002:a05:6808:1b2c:b0:41c:1727:8b4d with SMTP id 5614622812f47-426c4bdfe8amr134364b6e.11.1753205229217;
+        Tue, 22 Jul 2025 10:27:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHt351bm791NHr11RGdS2kzc1apQfD8udpp73fwAAszYsw6GEV5yDdNjEt0nwD6ENSLExfzwwg6Dsyx6tcyQ74=
+X-Received: by 2002:a05:6808:1b2c:b0:41c:1727:8b4d with SMTP id
+ 5614622812f47-426c4bdfe8amr134333b6e.11.1753205228734; Tue, 22 Jul 2025
+ 10:27:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|MN2PR12MB4342:EE_
-X-MS-Office365-Filtering-Correlation-Id: 20b4de4c-b2dc-49f4-30ee-08ddc944e374
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?j6FdoT4qBc18ZqwW2Hh1yADIjZe0kscGr/Ny9+ubOGxNCgaDluJdvTwUOmwC?=
- =?us-ascii?Q?+loz8T27WfA7ilSPIc1L8OWfHNt/v5ESQo2qnW6iXM/qgmSPMnjr2ddSJIbD?=
- =?us-ascii?Q?U2vzgLAliB/uqnptapX6xTOu9pJryEbJ/Bergj/FYmO1ZoXiGajyxU0VCt/g?=
- =?us-ascii?Q?j0u11XdvtjyVPUjuSU+djnktL1lzpp8QZKwsHrMi9nsGqIKHrZxbALaSeQ0h?=
- =?us-ascii?Q?SImmjKQHHYfMtzqF/8nXdSrTdnkJXgUHRKUlF9LGM7lrS/6fzEPJoFVSUYgc?=
- =?us-ascii?Q?W9/anX8vqcC7o188xK87gryuhZtzNc34H92UkKNoIonNobsyONyInnHHCC27?=
- =?us-ascii?Q?x3J/vPhi+lxkHR965nDTfZk582UubBBFb/OxDFfQKId4HvLVVw68sp6AMyxM?=
- =?us-ascii?Q?mbp6GLiQZAgpGCqpL9aROgGmSiJZ0oyResc5nlY0CY97SBGZTlHeoz1jmOco?=
- =?us-ascii?Q?PdVyPY70v71pF0SMBIktnNFsiImRhsrPmev/1RslC1wS5r1crhTZaB/eHE+G?=
- =?us-ascii?Q?4UpQAO7A6Uz40m6pA9BWGao0rAAQmeLV74DzDAs2xsj2vRCHGSsejmhUb5Mp?=
- =?us-ascii?Q?FEqKD9yNvV1LvVM9S5chiOqhxExUS37odqDD23Iu2oumRnwzEBogZ0lIwX9/?=
- =?us-ascii?Q?bph2QcDoYF/DvI76vCAou8HjVeXUMk7j1MDUhplcG/fqfjSwjwaQwuJoMXSE?=
- =?us-ascii?Q?iqPg0tnrnN/wCqSAjX4KR2OTL3ydFRyZOD/ZUUNVvPHYNJ0K7gwTNiR3T7Q5?=
- =?us-ascii?Q?CAldVEhn1qS2DESt9NgjRPfwejiuuggoHCEjGwRLYPFVH8O84hKnxPtdRIWT?=
- =?us-ascii?Q?bEnzrW4yT9FrCpWZSVxPyueFtkjzwR/USrhkFHInmZ5lu/rSSvFPnc2Fn41N?=
- =?us-ascii?Q?xi4iivs2hzVtMe3/zdqflcxK5n+aq3TwppB2xrEY4n8ZkDWTpzDMckzNRwNF?=
- =?us-ascii?Q?B5k/1xn8k2aFZ5sP7QZ39jS3hyi8fA9tsKGHHeI566g3pYW9ZzOZQ0gjKHlN?=
- =?us-ascii?Q?m6U+LfdLiEpWrXIgEOQ5GOcTQpR4Yrya6Qm1Z41f7czeWqnhbBApjOvqbt4O?=
- =?us-ascii?Q?+AHPOTeFQZcxNiDaF3/kUeyJOh8ytm6fnEzT4F7MvSfepR5/5htLVo3rPxd6?=
- =?us-ascii?Q?EWbW8WeY/EfJxlmdVe1dz51c72BFPw5gR6CVhXuXf7YvxFO9Je4jHdpk6vul?=
- =?us-ascii?Q?N4dfy7i31jFkwbJjGE2qlqUFJx3k8ALXrOmWAA+ISxWBrTW26SGm2ZHUqZAB?=
- =?us-ascii?Q?OD2ku1gSpY3dp1d3ZtgTa803+PhmC/BC75BugnKlsr0qwyNQJGyF7RJYODFd?=
- =?us-ascii?Q?bmmqCxWpEH5KhcvnpudLAebv4cshJ9riH8uJLQnGZMBEq78a7Z8csquoUJer?=
- =?us-ascii?Q?M/mbBWyd7ecpnnYJyE4Jqg2MsZxZVzdVG5WgSjtNo1rMqZwpkdocxIU8T66d?=
- =?us-ascii?Q?c+9tDHhir3c=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Wc5f4DAhPWfXSLPRM9MRanfgcAZjZC8lWfPMm2WRT2vDuw7V7JiZRbu+m8bO?=
- =?us-ascii?Q?N2xpxfILtYpITX++GnL2vyoXkf2poyUy7v+QYB3hsG/gG2rvInP1wiOpwwZw?=
- =?us-ascii?Q?n7kEiqpmEN4SWxRne/o2gJjMmWNRuVEu6TcjzRHma5HjJj0Q8Wo5OqQJ1y5Y?=
- =?us-ascii?Q?s5qCH8IJLxVxPXFtd71HH5zJD9ovXb+IP/CQLNiIK3LZ1FpPM+iz8aQNfVMs?=
- =?us-ascii?Q?jikzLdI2IynYRz7eIt/n5rDP5Axmr+OfZsLC21Xo02aIFgEl52mBGixgnD19?=
- =?us-ascii?Q?pFKJlbh7kA+nJh7X2UYtbI1KlHrIpCO4u8MhP9211RkCoP00WDWOaPdaf1cC?=
- =?us-ascii?Q?3B3Wr69Jv0mXtRbTY5+XE1Vhr32mwz3IczgxAjfFfM/ba2M/kuUr+zMhLFtu?=
- =?us-ascii?Q?5VmShL815zpkkOVkGTCtchndNUacDbP9iLPOHfOKGlC9jyVC5L3x3ip9W87L?=
- =?us-ascii?Q?Sa9Zv779yDCiOWopmR6KJk6UdLvNU7IrC+kysxKGRqQ9J+DC4NevWITP+VnX?=
- =?us-ascii?Q?A/a6i9w9MZhV/+2fKeVgJSRRcGY1rhXpwi8BBaFdhZuW4QxfEIaMQcpiRABC?=
- =?us-ascii?Q?XOtAXkIN/Pz3C0jbBlveZFzJex6QY03bMufjDRL5aa1/M7sHrX23Kba6eWf8?=
- =?us-ascii?Q?vY0RyuLsjWw/EN+Do0i4BXWg0EX5xB88Q34xuNIZ3kpbSimPtZOe7D5zL1O2?=
- =?us-ascii?Q?YC8e9CaLN18vrNwOegUIWehupcQ1QNYQoui5arJmntZeJn264wbFlpLWkMxy?=
- =?us-ascii?Q?30Ae660Hh5g9WKKySbh0jkJw6DEsqP9zFQNSdIcugM8cannEgNHKZVk9y5bf?=
- =?us-ascii?Q?SYZUqHgl5ENlbvQnCsLwN/ugQy1VMIvdulS2PE3RNyChsrcHBRT0Pe6F542n?=
- =?us-ascii?Q?kZtP5V7IjV4PNE3ofYS6ukUsy3fuajgziexp5/6ehRl7LD4ULAw0zozFAKDW?=
- =?us-ascii?Q?Q1e25f/QKkqmt4Fb9aUablhMYwkJaG996fAQ4bJlK9rmYA0CbO/JuKIpuM2R?=
- =?us-ascii?Q?xGY7Eiu43k6b5TJSDuTZ55GIXscN1XEJgwQmhCC3mrufswGbR8Q0RCydmETa?=
- =?us-ascii?Q?eJSQ+0YM5jWT3M3HF/QPrZrPDwEqEoxSIdKqOktflofeQrAURO0adlzzXjoX?=
- =?us-ascii?Q?SLveS/hWmXTlinl5DQiqmZQ7f3iRe+Ft+R4UVSzgBGM/pCElIny4vQq9Hj9o?=
- =?us-ascii?Q?OeSMzDtoKOcRHWn50GhfSs9IJ0jpNcXtfXax3UCB6lHpPxL+HFM2FImCy+kq?=
- =?us-ascii?Q?Qp9CjSy9uu6e3bQgDHLlsQVzRWa2xhUaKUjP8giftrlqfwglal3dPMVtvA5d?=
- =?us-ascii?Q?/ysbqfZMFYeBvVZhLl6wEkYB14a/fYGsDcpCzDSm02VrXfikrV2Cwa+FtNQV?=
- =?us-ascii?Q?HP9dVGKvMC1Ay8EHLdsuV/ZWld3vpHA/8V+CPfxSbw6OmWpzKlS/il5TE9B/?=
- =?us-ascii?Q?e6JPnYUsdci7miLlNo4rafHwwGTU7Ex8n9uNXjhVg4k4L4xefHIGgrsO38BJ?=
- =?us-ascii?Q?5VwMU/qomsJoyXioyE+pxWWu8Z8GQOZSx+Rko0DY7CflSS4SGeckIyMObf4Q?=
- =?us-ascii?Q?aYJuuXtakhNCfnieilkeS0PvvZLLhg/zgmZT/uHL?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 20b4de4c-b2dc-49f4-30ee-08ddc944e374
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2025 17:26:26.8476
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: IChQHYso/qWMoGazWFqAFnlcqc56W+2FUsXyojjYcRWkxMy703OegzvvGQT9eO4h
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4342
+References: <20250720-ifpc-support-v1-0-9347aa5bcbd6@oss.qualcomm.com>
+ <20250720-ifpc-support-v1-5-9347aa5bcbd6@oss.qualcomm.com> <avni4utnzdmmafc2mf7aqgva3osbhuiqtia7gdngqswk5cmtn6@zo65ir7gyj6y>
+In-Reply-To: <avni4utnzdmmafc2mf7aqgva3osbhuiqtia7gdngqswk5cmtn6@zo65ir7gyj6y>
+Reply-To: rob.clark@oss.qualcomm.com
+From: Rob Clark <rob.clark@oss.qualcomm.com>
+Date: Tue, 22 Jul 2025 10:26:58 -0700
+X-Gm-Features: Ac12FXz7GgAd4CQ5r6mtT-fkFUIs76swU0cXdPQmfmKvXuiUlkOuIL_tdrwpuow
+Message-ID: <CACSVV0346j2y-1Jkj=wasekYy5syax_E495AQZv0bvrrqwCSRw@mail.gmail.com>
+Subject: Re: [PATCH 05/17] drm/msm/a6xx: Fix PDC sleep sequence
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Akhil P Oommen <akhilpo@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Authority-Analysis: v=2.4 cv=G8UcE8k5 c=1 sm=1 tr=0 ts=687fc9ee cx=c_pps
+ a=AKZTfHrQPB8q3CcvmcIuDA==:117 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10
+ a=EUspDBNiAAAA:8 a=5FltqUUlFAtdD00mdp8A:9 a=QEXdDO2ut3YA:10
+ a=pF_qn-MSjDawc0seGVz6:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDE0NiBTYWx0ZWRfXy/Af8atCUHl1
+ eQ28Opw9zXaiErpFYSluClUKKtYWeEoaLJIQX23xncQBE4l+UHvaXyJWP2eALqJxz8S07ZYc8Sr
+ cd7fbDf7YZkV0i3oSTcB757X/T0F3IV9wZXipkTrFGHPc5s/Q99qI007HDCOu4wHmD4GNu4tvN1
+ J5BDQaN7HPH/NTezyiN/SXOVdBaX+06cs/+B3zQ/Vqu80BiYGHrhMhyqHWuIm1aY95tf6fJaYYM
+ A7zSguy4IBVRzWlxYOFNsbj7lflc7iZsUXOT5ylDPGBX77B42ff013Cd1N1TfMGTG2gp8VEvazW
+ 1lLOH+Y65yUK3JlEP4Q8Mb2AfcPsgGV6q0P6bn6QEZDT0QoA26QneoJX3biyGcum6S5stRqnIYm
+ k17XYGS9gWlhcHLz6cwJwyjchUUrXAbNcOb92sRHtZa8BemwFqnC3qlniztc82TJYHvjamms
+X-Proofpoint-GUID: hxYoKLmPaFtuCD5ThIPR2E_V6zdmfMk_
+X-Proofpoint-ORIG-GUID: hxYoKLmPaFtuCD5ThIPR2E_V6zdmfMk_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-22_02,2025-07-21_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 mlxscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
+ bulkscore=0 impostorscore=0 phishscore=0 spamscore=0 lowpriorityscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507220146
 
-On 22 Jul 2025, at 13:19, Lorenzo Stoakes wrote:
-
-> This seems to be the most appropriate place for this file.
+On Tue, Jul 22, 2025 at 6:33=E2=80=AFAM Dmitry Baryshkov
+<dmitry.baryshkov@oss.qualcomm.com> wrote:
 >
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
->  MAINTAINERS | 1 +
->  1 file changed, 1 insertion(+)
+> On Sun, Jul 20, 2025 at 05:46:06PM +0530, Akhil P Oommen wrote:
+> > Since the PDC resides out of the GPU subsystem and cannot be reset in
+> > case it enters bad state, utmost care must be taken to trigger the PDC
+> > wake/sleep routines in the correct order.
+> >
+> > The PDC wake sequence can be exercised only after a PDC sleep sequence.
+> > Additionally, GMU firmware should initialize a few registers before the
+> > KMD can trigger a PDC sleep sequence. So PDC sleep can't be done if the
 >
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 837bc5cd6166..3f83fb317f51 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -15966,6 +15966,7 @@ F:	include/linux/khugepaged.h
->  F:	include/trace/events/huge_memory.h
->  F:	mm/huge_memory.c
->  F:	mm/khugepaged.c
-> +F:	mm/mm_slot.h
->  F:	tools/testing/selftests/mm/khugepaged.c
->  F:	tools/testing/selftests/mm/split_huge_page_test.c
->  F:	tools/testing/selftests/mm/transhuge-stress.c
-> -- 
-> 2.50.1
+> s/KMD/the driver/
 
-Acked-by: Zi Yan <ziy@nvidia.com>
+IMHO for gpu things "KMD" makes sense, to differentiate between kernel
+and user mode (UMD).. this is perhaps different from other areas where
+there isn't a userspace component to the driver stack
 
-Best Regards,
-Yan, Zi
+BR,
+-R
+
+> > GMU firmware has not initialized. Track these dependencies using a new
+> > status variable and trigger PDC sleep/wake sequences appropriately.
+>
+> Again, it looks like there should be a Fixes tag here.
+>
+> >
+> > Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+> > ---
+> >  drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 30 +++++++++++++++++++--------=
+---
+> >  drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  6 ++++++
+> >  2 files changed, 25 insertions(+), 11 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/ms=
+m/adreno/a6xx_gmu.c
+> > index 3bebb6dd7059782ceca29f2efd2acee24d3fc930..4d6c70735e0892ed87d6a68=
+d64f24bda844e5e16 100644
+> > --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> > +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> > @@ -279,6 +279,8 @@ static int a6xx_gmu_start(struct a6xx_gmu *gmu)
+> >       if (ret)
+> >               DRM_DEV_ERROR(gmu->dev, "GMU firmware initialization time=
+d out\n");
+> >
+> > +     set_bit(GMU_STATUS_FW_START, &gmu->status);
+> > +
+> >       return ret;
+> >  }
+> >
+> > @@ -528,6 +530,9 @@ static int a6xx_rpmh_start(struct a6xx_gmu *gmu)
+> >       int ret;
+> >       u32 val;
+> >
+> > +     if (!test_and_clear_bit(GMU_STATUS_PDC_SLEEP, &gmu->status))
+> > +             return 0;
+> > +
+> >       gmu_write(gmu, REG_A6XX_GMU_RSCC_CONTROL_REQ, BIT(1));
+> >
+> >       ret =3D gmu_poll_timeout(gmu, REG_A6XX_GMU_RSCC_CONTROL_ACK, val,
+> > @@ -555,6 +560,11 @@ static void a6xx_rpmh_stop(struct a6xx_gmu *gmu)
+> >       int ret;
+> >       u32 val;
+> >
+> > +     if (test_and_clear_bit(GMU_STATUS_FW_START, &gmu->status))
+> > +             return;
+> > +
+> > +     /* TODO: should we skip if IFPC is not enabled */
+>
+> Is this a question or a statement?
+>
+> > +
+> >       gmu_write(gmu, REG_A6XX_GMU_RSCC_CONTROL_REQ, 1);
+> >
+> >       ret =3D gmu_poll_timeout_rscc(gmu, REG_A6XX_GPU_RSCC_RSC_STATUS0_=
+DRV0,
+> > @@ -563,6 +573,8 @@ static void a6xx_rpmh_stop(struct a6xx_gmu *gmu)
+> >               DRM_DEV_ERROR(gmu->dev, "Unable to power off the GPU RSC\=
+n");
+> >
+> >       gmu_write(gmu, REG_A6XX_GMU_RSCC_CONTROL_REQ, 0);
+> > +
+> > +     set_bit(GMU_STATUS_PDC_SLEEP, &gmu->status);
+> >  }
+> >
+> >  static inline void pdc_write(void __iomem *ptr, u32 offset, u32 value)
+> > @@ -691,8 +703,6 @@ static void a6xx_gmu_rpmh_init(struct a6xx_gmu *gmu=
+)
+> >       /* ensure no writes happen before the uCode is fully written */
+> >       wmb();
+> >
+> > -     a6xx_rpmh_stop(gmu);
+> > -
+> >  err:
+> >       if (!IS_ERR_OR_NULL(pdcptr))
+> >               iounmap(pdcptr);
+> > @@ -852,19 +862,15 @@ static int a6xx_gmu_fw_start(struct a6xx_gmu *gmu=
+, unsigned int state)
+> >       else
+> >               gmu_write(gmu, REG_A6XX_GMU_GENERAL_7, 1);
+> >
+> > -     if (state =3D=3D GMU_WARM_BOOT) {
+> > -             ret =3D a6xx_rpmh_start(gmu);
+> > -             if (ret)
+> > -                     return ret;
+> > -     } else {
+> > +     ret =3D a6xx_rpmh_start(gmu);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     if (state =3D=3D GMU_COLD_BOOT) {
+> >               if (WARN(!adreno_gpu->fw[ADRENO_FW_GMU],
+> >                       "GMU firmware is not loaded\n"))
+> >                       return -ENOENT;
+> >
+> > -             ret =3D a6xx_rpmh_start(gmu);
+> > -             if (ret)
+> > -                     return ret;
+> > -
+> >               ret =3D a6xx_gmu_fw_load(gmu);
+> >               if (ret)
+> >                       return ret;
+> > @@ -1046,6 +1052,8 @@ static void a6xx_gmu_force_off(struct a6xx_gmu *g=
+mu)
+> >
+> >       /* Reset GPU core blocks */
+> >       a6xx_gpu_sw_reset(gpu, true);
+> > +
+> > +     a6xx_rpmh_stop(gmu);
+> >  }
+> >
+> >  static void a6xx_gmu_set_initial_freq(struct msm_gpu *gpu, struct a6xx=
+_gmu *gmu)
+> > diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h b/drivers/gpu/drm/ms=
+m/adreno/a6xx_gmu.h
+> > index b2d4489b40249b1916ab4a42c89e3f4bdc5c4af9..034f1b4e5a3fb9cd601bfbe=
+6d06d64e5ace3b6e7 100644
+> > --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+> > +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+> > @@ -117,6 +117,12 @@ struct a6xx_gmu {
+> >
+> >       struct qmp *qmp;
+> >       struct a6xx_hfi_msg_bw_table *bw_table;
+> > +
+> > +/* To check if we can trigger sleep seq at PDC. Cleared in a6xx_rpmh_s=
+top() */
+> > +#define GMU_STATUS_FW_START  0
+> > +/* To track if PDC sleep seq was done */
+> > +#define GMU_STATUS_PDC_SLEEP 1
+> > +     unsigned long status;
+> >  };
+> >
+> >  static inline u32 gmu_read(struct a6xx_gmu *gmu, u32 offset)
+> >
+> > --
+> > 2.50.1
+> >
+>
+> --
+> With best wishes
+> Dmitry
 
