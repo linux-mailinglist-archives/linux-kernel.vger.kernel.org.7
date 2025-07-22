@@ -1,77 +1,107 @@
-Return-Path: <linux-kernel+bounces-740876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C54AB0DA85
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:08:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7F5DB0DA8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:10:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2E3116B887
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:08:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6B4516D5E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DBF92E9ECC;
-	Tue, 22 Jul 2025 13:08:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="CK/UivTF"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD942BF012;
-	Tue, 22 Jul 2025 13:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3160A2E9ED0;
+	Tue, 22 Jul 2025 13:10:42 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF1ADDC3;
+	Tue, 22 Jul 2025 13:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753189702; cv=none; b=QPjChvYtBjMh+Gsm543yDvu/zf+Qfef75RPJQ/wOkS22cPpruXHwFDfsaTekbLa8OQ2gkkpObmwenkn5nl5SdCxQHjmCjh18B52dzkA8dhvMlxmVIxjbfIZwrGqh9DIRYkV5xaDLKW1qET3bfXBX2u7YTABtuuSapal5SBkF/14=
+	t=1753189841; cv=none; b=ba/vDxDkqvorXcxrvYPD2GCY5xkabV+xrf1+IE2IWeZbWwG0lUH+YuiU7pYtdWP774fFK1+7I+WNAVKaNcyeg6ttDHo7p2IWN/G5vWiw0dzfyge2F3eIc5iUihLX9Hx66+ew8GGNDFhOzTVLlRQvDAh916IGQYkTdcCtA1cns7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753189702; c=relaxed/simple;
-	bh=rW011RMtxUqp0qnKK+maMtp2pVKFsfv65GVLZ/xLwDU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sLalqCLyQgmofPGTzq0F8isv3Jp6UDN8qiX8LF02VqEnhMx0o2/BIWpIRxloWX6U2tOerxxdE9w5qDsIzY/ZsIPY+g5jrPsc5A/MxLPG4wtHROjPa0RC0ON7tsgYio7M3nJFwtBy8aJuiaUCebdEj0masaqmjNHS3zMJb9+ul5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=CK/UivTF; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=UWGTmGLtd4NHFnVVE7+znEH5Rhr4DSV2eI2eMrF8eyM=; b=CK/UivTFhmsOt1EoPc9SGtKbdN
-	bI8wwawl4M0xmLe/rFhEsrlC9Zrz8J69iuHiY3layoQW087QJdWXG578whOsH7uJ3HwbaSeTiu9h8
-	OOge0x+6AW0/8b2qvD6u4rZIuYUTtcuCatfveN/W5rWxf05nqWDHyffi4cV1ZjfGwe88=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1ueCj2-002SuQ-SD; Tue, 22 Jul 2025 15:08:08 +0200
-Date: Tue, 22 Jul 2025 15:08:08 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Horatiu Vultur <horatiu.vultur@microchip.com>
-Cc: hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	o.rempel@pengutronix.de, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: phy: micrel: Add support for lan8842
-Message-ID: <0d0b56bd-6a8e-4179-955d-bc0e2a933b20@lunn.ch>
-References: <20250721071405.1859491-1-horatiu.vultur@microchip.com>
- <4dd62a56-517a-4011-8a13-95f6c9ad2198@lunn.ch>
- <20250722060954.ecaxrk7vq5ibuy55@DEN-DL-M31836.microchip.com>
+	s=arc-20240116; t=1753189841; c=relaxed/simple;
+	bh=xhp3IAbv15GIwkAcxXSngNn7XHPu7+cNfK2ox5C6KZ8=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=vCai6HReg68r/X3+IIACB5F+bw2I41WBdI417ZRfrMpFC5XWpivvgnWKgDVhJa/zq9No8CKS9V/TYWvLIDlK4gOkcccMci9WDmeRMIkTRrykpSVEB95xVMRtuwYDSRzpyd51u2GCthC/oS8Z2X/7R+dF37l3i9gQHEirXEMgcSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8BxJHDJjX9o0ZsvAQ--.55754S3;
+	Tue, 22 Jul 2025 21:10:33 +0800 (CST)
+Received: from [10.130.10.66] (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowJCxdOTHjX9ooeQhAA--.45201S3;
+	Tue, 22 Jul 2025 21:10:31 +0800 (CST)
+Subject: Re: [PATCH net-next 1/2] net: stmmac: Return early if invalid in
+ loongson_dwmac_fix_reset()
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250722062716.29590-1-yangtiezhu@loongson.cn>
+ <20250722062716.29590-2-yangtiezhu@loongson.cn>
+ <20250722144802.637bfde0@fedora.home>
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <2fea78e7-9e0a-4c6b-9d86-6433e4c28e5e@loongson.cn>
+Date: Tue, 22 Jul 2025 21:10:31 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250722060954.ecaxrk7vq5ibuy55@DEN-DL-M31836.microchip.com>
+In-Reply-To: <20250722144802.637bfde0@fedora.home>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJCxdOTHjX9ooeQhAA--.45201S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj9xXoWrurW7KrW5JFWkGF47WrWrXrc_yoWkGFX_WF
+	ZYk3WUW3W5Zr4fCwnFgF9xZrnrX34UG34UWw4UXrnrK345t3srGFs5Zrn5uF43Kan3Jr98
+	Gan8WryaywnF9osvyTuYvTs0mTUanT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+	cSsGvfJTRUUUbDAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
+	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1D
+	McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7
+	I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCF
+	x2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r
+	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij
+	64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
+	0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF
+	0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jFApnUUUUU=
 
-> Yes, I will use PHY_ID_MATCH_MODEL().
-> I was thinking to start with 2 cleanup patches, one to use
-> PHY_ID_MATCH_MODEL in the driver and one to introduce
-> lanphy_modify_page_reg and put it to use.
-> Do you have other suggestions?
+On 2025/7/22 下午8:48, Maxime Chevallier wrote:
+> On Tue, 22 Jul 2025 14:27:15 +0800
+> Tiezhu Yang <yangtiezhu@loongson.cn> wrote:
+> 
+>> If the DMA_BUS_MODE_SFT_RESET bit is 1 before software reset,
+>> there is no need to do anything for this abnormal case, just
+>> return -EINVAL immediately in loongson_dwmac_fix_reset().
+>>
+>> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+> 
+> Do you know when that could ever happen ? I'm asking because this logic
+> for the DMA reset is duplicated in several places in this driver, maybe
+> this could be useful for other users as well. I'm guessing this is to
+> avoid waiting for the timeout when the DMA reset fails, but that is
+> usually when there's a missing clock somewhere (such as the RGMII clock
+> from the PHY), in which case I don't think the RST bit will be set.
 
-I did not look at the driver too closely. There might be other
-cleanups you can do, but those two make sense in the context of what
-you are doing.
+To be honest, I am not quite sure the root cause but this actually
+happened on the test environment, I guess there is a missing clock.
 
-	Andrew
+You are right, the initial aim of this patch is to return early for
+this case to avoid waiting for the timeout when the DMA reset fails.
+
+Thanks,
+Tiezhu
+
 
