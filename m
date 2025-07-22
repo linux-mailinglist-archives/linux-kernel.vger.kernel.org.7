@@ -1,232 +1,211 @@
-Return-Path: <linux-kernel+bounces-741026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFAAFB0DF26
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:43:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9E25B0DF28
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:43:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23C6E17A25E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:37:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2230584F8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:37:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4DA2EAB81;
-	Tue, 22 Jul 2025 14:36:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="oHKXrFVZ"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011019.outbound.protection.outlook.com [52.101.70.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FF4A2E49AF;
+	Tue, 22 Jul 2025 14:36:50 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76362EAB6D;
-	Tue, 22 Jul 2025 14:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753195008; cv=fail; b=sQ4bZF/BcoM354LpO8tmFCWl8lsmXX0TFz02rvYJ7ceDFaix948W2P1X+0jjZrEMj+OYRJ6Hrp3Qryszhn4ZxlXPoY/rKJILqFyaMqX96q6kZJ4YC7kcqiNBSwvUV4K24YqAeNozh/wkPxajDIbhmUn+JwMWHpPML1p86BslQ4I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753195008; c=relaxed/simple;
-	bh=l+vmdkzDdfFfkwoOboEvJYuQJlpmy1vec9+ZUO8SGXY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ArFmvPrhOWhusVocDZsbKSgtHqrzgphoJs/leqKqdGYm4CdqfheOAo1IOtkNLF2e4J/Z16Ce8kAf0Fw6fdlWKfIZPyuqQqcDbBactiHZWwMrGz5cLWTacd/53BM9GOokWpQeLy7gksOxTosfJuvhPasLmLJeP81o5i7C+5yyF60=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=oHKXrFVZ; arc=fail smtp.client-ip=52.101.70.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=P3YR81EGNkVFlcS5CsJE6dH6Cy/lgJUnDiu3srOX7tlJ/beAMz/HnVlyfOBz/eJl4ccOtP7W5KlU8eEaivgOHYIuPbvFSMTZZefzbqKl7e9JCYuOpe4Hy/tHmtOhUvjULkM+5FQO2mPwstE43GoCNETNDiLefH85OI3wkQCc20OrrdtZsfOAo3WDD7DFMm3sBW1U4ToSgs/RfT3cvsUo3y2HRbK902Uol2pbDBcZIo8YULmF8VPFYodq+9/SM/7QugMGuWDze8AUiARYob5Lp/YuBa+v2KveWVAWqayeMrARXUdNKqMfyY1fwHGrgWN+PM/aDnIFrejRG43ziUyThA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Y6l9vCAqr3h83Qgy5ghlKIy6dmhGm3xGaZGah9hgzQM=;
- b=n59noJqb4OBCNJBd080HGcniw2Ko20o1LeNjJANnZkY1fwRLIyzQ/p34gi3TG3nglMcKf42kNcOixkYyzEoxiCO0grGCgK9PvNdEd+1bxd3swtQQCWPjvh7QJBiqY8eaxo4zsqUNd9OqNTUt7FrEYHPxsYYs/1alOO/axpKAjOAW7W1CspdiKneakMsWu5h2cb6ngTElzQCUzt+MrLclrA7VJnZqZgmPlqyfQrAt/0BUkJot1Y8D0X5w1DeqzJDnXC+7ofp704E+/bf9AQlSWx/fyXVZB/UH+DIsqnVQTuA1N4gYN9C664bb/44eGPDH/tnqh5hpYD9vlgvQstto/A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y6l9vCAqr3h83Qgy5ghlKIy6dmhGm3xGaZGah9hgzQM=;
- b=oHKXrFVZAg8HkRjjag19X8y470e8IoaPH3fzMJ8x9Ygc5l9SjW91ywcgzU244Ofu4VWwSL7HTyExOF8Yp5EufiD1gVbTXAkpW6ITycdbhU/IX3Sro2qEi6OEjyipBEz7UiR8elRkiKyvt0mReTzVNu2RLtldZSrIkOSXX+Akvkpa86N8kMg7QqC8d2d7ZvSm7IIERZ1HlCuoUix2h1Wpnkd61rPEgmJ1KY6I0Bg/TeLl5/f/ORvZ/cgIF3+lY2aX4Hx+tiyu6MBDWrmxRd6X1+OcnYz0u8yM68VLhbQlkQTpTmcR3Se46cTY5ZCZOyO3jP5ZP0/jaTd4c3p+WUHWmA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PA4PR04MB7790.eurprd04.prod.outlook.com (2603:10a6:102:cc::8)
- by PR3PR04MB7226.eurprd04.prod.outlook.com (2603:10a6:102:8e::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Tue, 22 Jul
- 2025 14:36:42 +0000
-Received: from PA4PR04MB7790.eurprd04.prod.outlook.com
- ([fe80::6861:40f7:98b3:c2bc]) by PA4PR04MB7790.eurprd04.prod.outlook.com
- ([fe80::6861:40f7:98b3:c2bc%4]) with mapi id 15.20.8943.029; Tue, 22 Jul 2025
- 14:36:42 +0000
-Date: Tue, 22 Jul 2025 17:36:38 +0300
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Wei Fang <wei.fang@nxp.com>, Krzysztof Kozlowski <krzk@kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"richardcochran@gmail.com" <richardcochran@gmail.com>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Clark Wang <xiaoning.wang@nxp.com>,
-	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>,
-	"shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-	"festevam@gmail.com" <festevam@gmail.com>,
-	"F.S. Peng" <fushi.peng@nxp.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: [PATCH v2 net-next 01/14] dt-bindings: ptp: add NETC Timer PTP
- clock
-Message-ID: <20250722143638.av4nlnbqdhgueygx@skbuf>
-References: <20250716073111.367382-1-wei.fang@nxp.com>
- <20250716073111.367382-2-wei.fang@nxp.com>
- <20250717-furry-hummingbird-of-growth-4f5f1d@kuoka>
- <PAXPR04MB8510F642E509E915B85062318851A@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <20250717090547.f5c46ehp5rzey26b@skbuf>
- <PAXPR04MB851096B3E7F59181C7377A128851A@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <20250717124241.f4jca65dswas6k47@skbuf>
- <aHkRbNu61h4tgByd@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aHkRbNu61h4tgByd@lizhi-Precision-Tower-5810>
-X-ClientProxiedBy: VI1PR0102CA0099.eurprd01.prod.exchangelabs.com
- (2603:10a6:803:15::40) To PA4PR04MB7790.eurprd04.prod.outlook.com
- (2603:10a6:102:cc::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49ACF2EB5DF;
+	Tue, 22 Jul 2025 14:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753195009; cv=none; b=YTsnVyKr277I2ri8wMAyOvw+aCtEZjru4vl5vtpxjPdnNbygBZKeEGUZzBCrex80CXQnJgL9/n5CqqTJzL+ahGCYIqU34b5Kw4ZuFznV03y31/mhA4Kud0gfC7cebPXntE0GzEua3SldO9DmRhDwum6DbXtvgykyKH/Vs/z701U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753195009; c=relaxed/simple;
+	bh=HL+8WhdfFZbgTK52v7PV3ojkrsBJqV878uPL099c3wk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=GWrQETd9OQlNQOq3LS1MK0s1KVP//gBAfyFpxQg+F4D0j6kosP4ujTJhfpwCGNXnk2lrcr1b4QNmmDBKrjuAsRShaJzal6YmG4c78skQWTjgEB4gNwl5fCrrTx6HsWJi83BMP1K3Z+SgsdfOmk8ceGHTLJt7zrGuTfFaiwlJTvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf10.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay10.hostedemail.com (Postfix) with ESMTP id 07119C03E0;
+	Tue, 22 Jul 2025 14:36:44 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf10.hostedemail.com (Postfix) with ESMTPA id 453A040;
+	Tue, 22 Jul 2025 14:36:42 +0000 (UTC)
+Date: Tue, 22 Jul 2025 10:37:14 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, linux-arm-kernel@lists.infradead.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Russell King
+ <linux@armlinux.org.uk>, Mark Rutland <mark.rutland@arm.com>, Thomas
+ Gleixner <tglx@linutronix.de>, Valentin Schneider <vschneid@redhat.com>,
+ Nicolas Pitre <nico@fluxnic.net>, Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH] tracing: arm: arm64: Hide trace events ipi_raise, ipi_entry
+ and ipi_exit
+Message-ID: <20250722103714.64eba013@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR04MB7790:EE_|PR3PR04MB7226:EE_
-X-MS-Office365-Filtering-Correlation-Id: ef8118fd-a960-49ab-2409-08ddc92d2d1c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|19092799006|10070799003|376014|366016|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?wm+vL9leibWb9M8wriv7Zch/KxW8OfW9P6oeHb56wuMzOfG3aqin0l0p/Krr?=
- =?us-ascii?Q?Fg1cOdiMAPrFymfxvn8NFPmxv/aPGS6Iv7VP6z4DDIhU6hXmbFfZ0kNrM0ck?=
- =?us-ascii?Q?n2ue2ljNOF7Vibwb/2fm88SHCl1tVizWuRVSKP1yCXlvXWUBUIJETUF5CNHj?=
- =?us-ascii?Q?Ila9f/rlqfacw5kzBoeHSvxu7VcEfEZJW7lSQKQCOaseaBsKX9EwPB6xDMGW?=
- =?us-ascii?Q?AuPFYSlKKR0nmLy0GeZJ4Vn4zd8vd9RyYX54fzFCuma0lDX0/SDE08Q3sMcu?=
- =?us-ascii?Q?KZQnzUu0cyNhdzBI80oQ6GTdeatmbUh2NgyZXFAw/l1Z+gjo7UkO5a+c4haX?=
- =?us-ascii?Q?nO+eOkQZ+Zfm7mXp15PXgHkSQ4uT8hNsmbUim760mXk9wFRJ0PUBKbB68cLA?=
- =?us-ascii?Q?vH6UPderw57hdL3x2q5bdRBKyMwgXAcgnxxpsDtjDksFJV5xSGtWXbdj/Te7?=
- =?us-ascii?Q?axSoTMibW7wOjFaoo8/VbxMipNVw+ke/q133ekrCewklHeNKLFoXc1JbTjrk?=
- =?us-ascii?Q?NSkxb3G5m62qIZ98b09ZWdttMQcueltw21XixOikXpi2sA9qz5fLUOnzBRux?=
- =?us-ascii?Q?pRFvNZmsyCTG6JaZfedOgIx8pFFlI5Ub71giF6I4PJzL/0z0bBvCfxBHQ0ne?=
- =?us-ascii?Q?+d3SwnUTigqWqR2s23OMT3KSoDMDGZeMiq88+0q3uPa2pjC9vG8C7l3Xjzcz?=
- =?us-ascii?Q?Dk0m4PMZuiJByD7D33/Xs2iM+Q1c0Z+Ozmkoubv7rCH+jRjwsM9PYGb0gY/l?=
- =?us-ascii?Q?o/lX2kSURQIk0Kh1obmjwYQ4Cfofr1TaFxjLtNqgFQRtNpZn0dMifXSx6Tvo?=
- =?us-ascii?Q?nZvo/sR8uU7+ZKTbKCBJeRgLpMqaZs9PhO+0yU4qZ7fxbsT3am5hWYyJ9sdX?=
- =?us-ascii?Q?//URuFHeIF2MCS9gtlLnzBD4cf4IGCd19365vxBiJW0opkKV76gDTjs9NNYK?=
- =?us-ascii?Q?ySfbqZAiCBwbwan0Ci0TKjKK2Y1nPdcsuGTiRbaLwoZtNAOgIcvPSYWiP1TT?=
- =?us-ascii?Q?Mfh1mVKNlXOV81iXD6Mqz6hxxgZ1ijpkMZhu6N0KQmT3JvE9jjPY8/XS8f/1?=
- =?us-ascii?Q?5vW5w/szXy+eXi0GSRE9qz5DBqfqrw9AB+66MRfqWVLe2s9LcAJF6oZpTbp1?=
- =?us-ascii?Q?Hug5rQ6Iuk4lr/TYbKKm8BKS4rJ7O5GpwYeRXx/8XlkEDhBq6n0qsDEkWZwO?=
- =?us-ascii?Q?voKSK4bH69m1QMshWRC9jRPHenDdDoIOZKHXdACBjR+DMfyBnWrLAM08W/W3?=
- =?us-ascii?Q?CFPQ/I1WnDQEZGmExAPlgEWmu49xRVhjvhbcLyV71N3x76jNZ3KxgfitXxmr?=
- =?us-ascii?Q?AvmdaqseNrJP58JzXHTahd77rkGeezlaKlBhIFIeNN+DffJloEcuUG8Gr3/4?=
- =?us-ascii?Q?jMAz1Q5XB2Hr03ff9jiFhlyTW4oFpkth2AbFA/iGJVxo8pcT7wdMCRYDs5lx?=
- =?us-ascii?Q?mKXeQ8vjtl0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB7790.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(19092799006)(10070799003)(376014)(366016)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?7Y0tVa8F3Nd9+3NrTh4qSkpQhvJfklwUcZSJmAgnOTWEm8IfW+JaKtW9A+5S?=
- =?us-ascii?Q?jWTrRxjJIWT7g8ZH9BPDE58nzhcVtutDYhIIsc19jasdSAdDO6OxnJAVpyjU?=
- =?us-ascii?Q?6OVCPCCgHqssKR4bGrf6FjDsvHWoAWANhPEYBwsPC9jgcwKLjYFsK6CVCa4h?=
- =?us-ascii?Q?hDUKvvFkumqsKtJ2a9mh3PM7lC52qmMCS1atzGL8PVRUHcZVhnegv45mjaIe?=
- =?us-ascii?Q?G7sXtpefCLIgt4UQOf5bn2DTREFFNaRWHIkYc98Wly5+QlM8UV5KEKyEGlZa?=
- =?us-ascii?Q?QKVLzi6Oq1oyRg0qZSDKcgDtEvD2+NfBBRCevpKR3xehhVkZLPanasyA01p6?=
- =?us-ascii?Q?gHGhCjJn3XwyjrZQfgLSOhUMeTvjL7PhBxCJJu4tMqr1SHyRDfT2mBdeseJH?=
- =?us-ascii?Q?Hy1af62KsxG5QDvUpQzLu/77ge/aoHgsTv809OgjiR+FoDZ1ALpkxi2f/f8f?=
- =?us-ascii?Q?rWXC/M7vqSJk29Z9tjgLBzbFjTAVeWh380v2Yc/OMzeF/FWbI9OufWzuBYYc?=
- =?us-ascii?Q?9y15V9EOwNN/olBRm+wPl06dvpodMpv3ESbZV7OmbNQNYqxi0/fX0PRt6cxN?=
- =?us-ascii?Q?woWWyjIdes3OPw3Y5+no2mcW9u9TsN1LlV29hCfWHAn9Gy0QaalCXfOU+NJx?=
- =?us-ascii?Q?3FWZBlHiwSDQGMlkv2FruM+tV2Ws9pfiwe333CuWmI9fEJxsKsASLs7c5p77?=
- =?us-ascii?Q?5mQchKOQLzy2Iuwgxfjy2FRjtM0T5fOq9eLrX2QTobIuxE/RhZa6Q57GHn9U?=
- =?us-ascii?Q?qGcLbl6IzI/w4vipE+t1RCEfsD2II3dEnvHDyN2IwvmrZjHA3lkcUNQ3MZhy?=
- =?us-ascii?Q?oeRwGVUjQm9egsU1zMRh+xSrWwLW6k+Hj+9gzvLFkIYt8e57mZXCsu+LZO3+?=
- =?us-ascii?Q?LN6AAbI3KL4kUP2jhqiSkM/D2aziWbwZ+faDWJ51nxFKPZPUXK2LuiiULllG?=
- =?us-ascii?Q?f7KwQEYEmLQGrk1S6/fPalZJilKyWalhbFFgQfmF2YsLBWPd1QSneCYV9ahT?=
- =?us-ascii?Q?0edMLVIHydbE3BjgMVDrsYfBJFS6B0Bjoiv9fovnITcei2CHOiDNadXkS+yC?=
- =?us-ascii?Q?w/Co33x7j9Vm9zUQL1vEZNaJVA57XscDHn3HlmFbbL0IgT9YcJG3h6RANbtE?=
- =?us-ascii?Q?RFkAaklHlmHZWwGz6OtS1rWgg8OaUV02hZvYpbCb2tDJkM9y7oeU2ETm3tHr?=
- =?us-ascii?Q?3c+QzzxyfEXjPX3Ymbm8RX1WS+ECYX47KD0d/rtJy46r66fK0QOU9bMJ2vN6?=
- =?us-ascii?Q?+dYS4IAqCBDKx6Pad5l4jc2qNUSINa5Sb9J6K2rQinVsjyt42W9XpxATTIUC?=
- =?us-ascii?Q?A3mIV1qcG2uJTGQHB+SrVNf2+hrMUD3HqP+vghBc8qQktph//wvlUYUOFEYP?=
- =?us-ascii?Q?cTkiuUCzPTFsLBhzXR91WSCPbbyabcGbrjBbPgKacBi8PUOnTsJfjfpJY3NV?=
- =?us-ascii?Q?YzkxMcLUkgMjaauo1xvTrwThWEfI0Xb2GxA5EeorOXzGgfYnf/yAXQ9Z29Lk?=
- =?us-ascii?Q?ybhm1DDD+Exbgc1pttHDBxzcB1o8/XbzpsV3DrZMeh1TKsiRV/v5hBvgbXm9?=
- =?us-ascii?Q?tf+T0C/+Odao6Q6sIdbxlJIVrydMWqnulVjcnAY0KdvGLvKLSfXB6+ntC50j?=
- =?us-ascii?Q?1QY1CfXf0OFxidXFGN162egTv3DBl0g02do1kWpGRe/JidcvpqvRVy1pzy9g?=
- =?us-ascii?Q?T7MWvQ=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ef8118fd-a960-49ab-2409-08ddc92d2d1c
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB7790.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2025 14:36:42.6367
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kG6McjuKWQ8xhORxrhXdBS7oRTV+XC8iUx4DqfjTUSotXo2Acsvb5htLyLDsIzxKOenHsfqWjKnxbKapq/o/sg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7226
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: 6ktp76e7ym1dtny3k5r5zy6o536nog3p
+X-Rspamd-Server: rspamout05
+X-Rspamd-Queue-Id: 453A040
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18HeXsKfKa6DOY2kst9FtohhJJ4c6jfuKQ=
+X-HE-Tag: 1753195002-979874
+X-HE-Meta: U2FsdGVkX1/C7DoKNVwGVKuc/nG3UGqBcstBGU+veKqTtMQfq4csxcDB0KegYzvIKJVnFY2HooHGv+jVbIgZ6KP6z0BxwduUzfsQ4/v05Wk1pLlBmfiUeEX9yu30HCZ2N61WyXNsI3HR6hEvX2KZd2ZgilhaSFueiZnkYsV2KzoAMH4tDjw1y8/GieFuccP8XztDlhF7sQiKdMprZtlUlgqPmQo779H7kDaGVN6yAPGkt4h7M7zCLL5v4t5fvAR4kxlhwpOiRqW4ofcRGEKHMbSFhK3VspYID80jkKY9a2h+wUB8MSzY6A4cg/9S8XRJxsjWbZkZ3MXNGmG/CC0kR1u3WKFJE/emO7HmQBoqPXNBR10K0KCKa12hZsVWRSVu
 
-Hi Frank,
+From: Steven Rostedt <rostedt@goodmis.org>
 
-On Thu, Jul 17, 2025 at 11:06:20AM -0400, Frank Li wrote:
-> On Thu, Jul 17, 2025 at 03:42:41PM +0300, Vladimir Oltean wrote:
-> > On Thu, Jul 17, 2025 at 12:55:27PM +0300, Wei Fang wrote:
-> > > > > "system" is the system clock of the NETC subsystem, we can explicitly specify
-> > > > > this clock as the PTP reference clock of the Timer in the DT node. Or do not
-> > > > > add clock properties to the DT node, it implicitly indicates that the reference
-> > > > > clock of the Timer is the "system" clock.
-> > > >
-> > > > It's unusual to name the clock after the source rather than after the
-> > > > destination. When "clock-names" takes any of the above 3 values, it's
-> > > > still the same single IP clock, just taken from 3 different sources.
-> > > >
-> > > > I see you need to update TMR_CTRL[CK_SEL] depending on where the IP
-> > > > clock is sourced from. You use the "clock-names" for that. Whereas the
-> > > > very similar ptp-qoriq uses a separate "fsl,cksel" property. Was that
-> > > > not an acceptable solution, do we need a new way of achieving the same
-> > > > thing?
-> > >
-> > > This an option, as I also mentioned in v1, either we have to parse the
-> > > clock-names or we need to add a new property.
-> >
-> > I think a new property like "fsl,cksel" is preferable, due to the
-> > arguments above: already used for ptp_qoriq, and the alternative of
-> > parsing the clock-names implies going against the established convention
-> > that the clock name should be from the perspective of this IP, not from
-> > the perspective of the provider.
-> 
-> The similar problem already was discussed at
-> https://lore.kernel.org/imx/20250403103346.3064895-2-ciprianmarian.costea@oss.nxp.com/
-> 
-> Actually there are clock mux inside IP, which have some inputs. Only one
-> was chosen. Rob prefer use clock-names to distingish which one is used.
-> 
-> discuss thread in https://lore.kernel.org/imx/59261ba0-2086-4520-8429-6e3f08107077@oss.nxp.com/
-> 
-> Frank
+The ipi tracepoints are mostly generic, but the tracepoints ipi_raise,
+ipi_entry and ipi_exit are only used by arm and arm64. This means these
+trace events are wasting memory in all the other architectures that do not
+use them.
 
-Thanks for the reference. From the linked discussion you provided, I
-am not able to draw the conclusion "Rob prefers to use clock-names to
-distinguish which one is used". This seems to have been Ciprian Costea's
-preference, and Rob just stated "Really, you probably should [ list all
-possible clock sources ] no matter what, as you need to describe what's
-in the h/w, not configuration".
+Add CONFIG_HAVE_EXTRA_IPI_TRACEPOINTS and have arm and arm64 select it to
+enable these trace events. The config makes it easy if other architectures
+decide to trace these as well.
 
-Really, Rob just didn't object to the use of clock-names to identify the
-source, but I don't see him expressing a preference for it.
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ arch/arm/Kconfig           |  1 +
+ arch/arm64/Kconfig         |  1 +
+ include/trace/events/ipi.h | 58 ++++++++++++++++++++------------------
+ kernel/trace/Kconfig       |  6 ++++
+ 4 files changed, 38 insertions(+), 28 deletions(-)
+
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index c531b49aa98e..33c8ce986ea6 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -100,6 +100,7 @@ config ARM
+ 	select HAVE_BUILDTIME_MCOUNT_SORT
+ 	select HAVE_DEBUG_KMEMLEAK if !XIP_KERNEL
+ 	select HAVE_DMA_CONTIGUOUS if MMU
++	select HAVE_EXTRA_IPI_TRACEPOINTS
+ 	select HAVE_DYNAMIC_FTRACE if !XIP_KERNEL && !CPU_ENDIAN_BE32 && MMU
+ 	select HAVE_DYNAMIC_FTRACE_WITH_REGS if HAVE_DYNAMIC_FTRACE
+ 	select HAVE_EFFICIENT_UNALIGNED_ACCESS if (CPU_V6 || CPU_V6K || CPU_V7) && MMU
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index c58fe08d2897..68a8246d9fb3 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -134,6 +134,7 @@ config ARM64
+ 	select CPU_PM if (SUSPEND || CPU_IDLE)
+ 	select CPUMASK_OFFSTACK if NR_CPUS > 256
+ 	select DCACHE_WORD_ACCESS
++	select HAVE_EXTRA_IPI_TRACEPOINTS
+ 	select DYNAMIC_FTRACE if FUNCTION_TRACER
+ 	select DMA_BOUNCE_UNALIGNED_KMALLOC
+ 	select DMA_DIRECT_REMAP
+diff --git a/include/trace/events/ipi.h b/include/trace/events/ipi.h
+index 3de9bfc982ce..9912f0ded81d 100644
+--- a/include/trace/events/ipi.h
++++ b/include/trace/events/ipi.h
+@@ -7,34 +7,6 @@
+ 
+ #include <linux/tracepoint.h>
+ 
+-/**
+- * ipi_raise - called when a smp cross call is made
+- *
+- * @mask: mask of recipient CPUs for the IPI
+- * @reason: string identifying the IPI purpose
+- *
+- * It is necessary for @reason to be a static string declared with
+- * __tracepoint_string.
+- */
+-TRACE_EVENT(ipi_raise,
+-
+-	TP_PROTO(const struct cpumask *mask, const char *reason),
+-
+-	TP_ARGS(mask, reason),
+-
+-	TP_STRUCT__entry(
+-		__bitmask(target_cpus, nr_cpumask_bits)
+-		__field(const char *, reason)
+-	),
+-
+-	TP_fast_assign(
+-		__assign_bitmask(target_cpus, cpumask_bits(mask), nr_cpumask_bits);
+-		__entry->reason = reason;
+-	),
+-
+-	TP_printk("target_mask=%s (%s)", __get_bitmask(target_cpus), __entry->reason)
+-);
+-
+ TRACE_EVENT(ipi_send_cpu,
+ 
+ 	TP_PROTO(const unsigned int cpu, unsigned long callsite, void *callback),
+@@ -79,6 +51,35 @@ TRACE_EVENT(ipi_send_cpumask,
+ 		  __get_cpumask(cpumask), __entry->callsite, __entry->callback)
+ );
+ 
++#ifdef CONFIG_HAVE_EXTRA_IPI_TRACEPOINTS
++/**
++ * ipi_raise - called when a smp cross call is made
++ *
++ * @mask: mask of recipient CPUs for the IPI
++ * @reason: string identifying the IPI purpose
++ *
++ * It is necessary for @reason to be a static string declared with
++ * __tracepoint_string.
++ */
++TRACE_EVENT(ipi_raise,
++
++	TP_PROTO(const struct cpumask *mask, const char *reason),
++
++	TP_ARGS(mask, reason),
++
++	TP_STRUCT__entry(
++		__bitmask(target_cpus, nr_cpumask_bits)
++		__field(const char *, reason)
++	),
++
++	TP_fast_assign(
++		__assign_bitmask(target_cpus, cpumask_bits(mask), nr_cpumask_bits);
++		__entry->reason = reason;
++	),
++
++	TP_printk("target_mask=%s (%s)", __get_bitmask(target_cpus), __entry->reason)
++);
++
+ DECLARE_EVENT_CLASS(ipi_handler,
+ 
+ 	TP_PROTO(const char *reason),
+@@ -127,6 +128,7 @@ DEFINE_EVENT(ipi_handler, ipi_exit,
+ 
+ 	TP_ARGS(reason)
+ );
++#endif /* CONFIG_HAVE_EXTRA_IPI_TRACEPOINTS */
+ 
+ #endif /* _TRACE_IPI_H */
+ 
+diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
+index 6c28b06c9231..187318802fc5 100644
+--- a/kernel/trace/Kconfig
++++ b/kernel/trace/Kconfig
+@@ -53,6 +53,12 @@ config HAVE_DYNAMIC_FTRACE_WITH_DIRECT_CALLS
+ config HAVE_DYNAMIC_FTRACE_WITH_CALL_OPS
+ 	bool
+ 
++config HAVE_EXTRA_IPI_TRACEPOINTS
++	bool
++	help
++	 For architectures that use ipi_raise, ipi_entry and ipi_exit
++	 tracepoints.
++
+ config HAVE_DYNAMIC_FTRACE_WITH_ARGS
+ 	bool
+ 	help
+-- 
+2.47.2
+
 
