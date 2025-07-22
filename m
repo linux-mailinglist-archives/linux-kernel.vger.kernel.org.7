@@ -1,62 +1,121 @@
-Return-Path: <linux-kernel+bounces-741287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3A99B0E26F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:16:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF65AB0E27B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:19:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94C6DAC1D99
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:15:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00BE0179F83
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494E127FB03;
-	Tue, 22 Jul 2025 17:16:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9354327FD44;
+	Tue, 22 Jul 2025 17:18:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HLGG0YQM"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f6+S8bM7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2CFA27E060
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 17:15:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B3127F16F;
+	Tue, 22 Jul 2025 17:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753204562; cv=none; b=dOTqMJsZRMgxqeJK1zVTg3gWkKtrkweEBRceoecUROrdGIMw6w96YtYYrB+5gGyRn5P7CQjlFa1DLvNY4UCMeAj9r82ZR6IGoZt24H1v1zwfdO+TweGZk+PXBgHtcbIyGCRul84r387wPOFV1jS7ERQlngxHWMC193ThWbDQSSA=
+	t=1753204717; cv=none; b=K+jgQb5iOMX0MhHdpmtGHUNXoG4mRU2pCYtHyYlR187EvmsyKbKs5QkP1LFuDqrCq/gE5fM5boPC3rdcpcioj+8sBEIInlc44/pmbcVYAy+Np4zepVVju8mviwIB0n+JZmcBY8TVf+xs6X20BvfGiKnYHCeVWOPBSShYpQkPPBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753204562; c=relaxed/simple;
-	bh=tPSrDa6p0FO1dYwsbA6ef87U7IdtAuvc2hqHTQkFuTM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Oxoi1vzVCtBivB8qjfD6dh+Cu8RQACNW+egJsiiANwiXOGyXNhAhaTLFC9xTHFTvJQM+7tG0hYCJKScbA8d1QYPX+hT1o0e5ZL4RoPejrGylhGppGNeMYhILjO2uy/MBh0Ek00chvHUFH4sU6nQqtdaGycPEkmT7Pvprtg8hhbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HLGG0YQM; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 22 Jul 2025 13:15:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753204557;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=tPSrDa6p0FO1dYwsbA6ef87U7IdtAuvc2hqHTQkFuTM=;
-	b=HLGG0YQML8yfzwdgPIDUKCHod+aa0roMQ7d/pCUk/Ig8QfNNc8z+sDpuOeSqRPkkeVl/6q
-	q79C8uwkqwOxTRZ4uSAEcc2DW7Qlt1CC63Fz4gTbMtg8WmZueK7QzmAMAd5XwBjDuUYyd3
-	5ofD9Wskovu/1Kf1YVwioFt67SF5xts=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Parav Pandit <parav@nvidia.com>, Petr Mladek <pmladek@suse.com>
-Cc: syzbot+622acb507894a48b2ce9@syzkaller.appspotmail.com, 
-	linux-kernel@vger.kernel.org
-Subject: syzbot -  possible deadlock in console_lock_spinning_enable
-Message-ID: <6v5z7ckfff46tbrjmeupaiwm2pm23yuvbrmy6kbe6tq2vl5e42@3cew7z6fgpye>
+	s=arc-20240116; t=1753204717; c=relaxed/simple;
+	bh=UnNuwo/BfQjXh7XFgPBvTHasv/WlnvVIhRYKBEoO4OM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gioTTMj7fkh6QtD2JLFwh3Yyy3787KeG93gKqrFyET0ftdEZu23r3JR12TN0wdjYRfxxIzou8GgkZRra3+tXPQTuR6iIS0Yn8mfb8pdVin7T3Hiu1pqIM1GBMiSgJ0kn1/1Y0cs4vnk7PZROrX7UFSf9h7OLLsnllM9gNRUCk7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f6+S8bM7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E765C4CEF1;
+	Tue, 22 Jul 2025 17:18:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753204716;
+	bh=UnNuwo/BfQjXh7XFgPBvTHasv/WlnvVIhRYKBEoO4OM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=f6+S8bM7CeQ3p9S6Tyot3Lnuz+8SKrMnJfPpK2LxFEdqhA0SpCo9mnXvn/etxb9lY
+	 f3T5zLqsawoIV11hdjIsXrtTe1RUv52LRmsh4FM5AA5oeHFO8y+J/QrqINMJaCkC5R
+	 sWcay7+pf0THhp8XKiGZRcMGVwJh+yBf4is6nuzysW3D4ROn2zC72KtmZnLTkxXbGU
+	 TR/GFQBlf2ZxoGDngLY4PSwb3cUHQZDd5hKHuF9D8fGat76NCuP/0YUbCwOGiml0/r
+	 r++qnlJohLskB46xLSp4ghvqSRq0d/sjCN8ET3l1eflD3ZnAMBhzY0EPbeeMNG2tk0
+	 aa0UGSycZqmgw==
+From: Kees Cook <kees@kernel.org>
+To: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Cc: Kees Cook <kees@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Xin Long <lucien.xin@gmail.com>,
+	Simon Horman <horms@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	wireguard@lists.zx2c4.com,
+	netdev@vger.kernel.org,
+	linux-sctp@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH net-next 0/3] net: Add sockaddr_inet unified address structure
+Date: Tue, 22 Jul 2025 10:18:30 -0700
+Message-Id: <20250722171528.work.209-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2090; i=kees@kernel.org; h=from:subject:message-id; bh=UnNuwo/BfQjXh7XFgPBvTHasv/WlnvVIhRYKBEoO4OM=; b=owGbwMvMwCVmps19z/KJym7G02pJDBn1x59fDJn7O3mP3sJrcp2XTuYsbeGNcX64IZBtnqjN6 4/tixoXd5SyMIhxMciKKbIE2bnHuXi8bQ93n6sIM4eVCWQIAxenAEyESYCR4XqOqQ5Hw+1lMo37 RQ6JmQbq/zyUv8m641KfrMDbptR9DowMm0+eOVsY+6FWc49m1/X79rmv23fr8jOkyHqHKjG5KnH zAwA=
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-Someone set this to bcachefs, and it's not mine...
+Hi!
 
-https://syzkaller.appspot.com/bug?extid=622acb507894a48b2ce9
+Repeating patch 1, as it has the rationale:
+
+    There are cases in networking (e.g. wireguard, sctp) where a union is
+    used to provide coverage for either IPv4 or IPv6 network addresses,
+    and they include an embedded "struct sockaddr" as well (for "sa_family"
+    and raw "sa_data" access). The current struct sockaddr contains a
+    flexible array, which means these unions should not be further embedded
+    in other structs because they do not technically have a fixed size (and
+    are generating warnings for the coming -Wflexible-array-not-at-end flag
+    addition). But the future changes to make struct sockaddr a fixed size
+    (i.e. with a 14 byte sa_data member) make the "sa_data" uses with an IPv6
+    address a potential place for the compiler to get upset about object size
+    mismatches. Therefore, we need a sockaddr that cleanly provides both an
+    sa_family member and an appropriately fixed-sized sa_data member that does
+    not bloat member usage via the potential alternative of sockaddr_storage
+    to cover both IPv4 and IPv6, to avoid unseemly churn in the affected code
+    bases.
+
+    Introduce sockaddr_inet as a unified structure for holding both IPv4 and
+    IPv6 addresses (i.e. large enough to accommodate sockaddr_in6).
+
+    The structure is defined in linux/in6.h since its max size is sized
+    based on sockaddr_in6 and provides a more specific alternative to the
+    generic sockaddr_storage for IPv4 with IPv6 address family handling.
+
+    The "sa_family" member doesn't use the sa_family_t type to avoid needing
+    layer violating header inclusions.
+
+Also includes the replacements for wireguard and sctp.
+
+Thanks,
+
+-Kees
+
+Kees Cook (3):
+  ipv6: Add sockaddr_inet unified address structure
+  wireguard: peer: Replace sockaddr with sockaddr_inet
+  sctp: Replace sockaddr with sockaddr_inet in sctp_addr union
+
+ drivers/net/wireguard/peer.h | 2 +-
+ include/linux/in6.h          | 7 +++++++
+ include/net/sctp/structs.h   | 2 +-
+ 3 files changed, 9 insertions(+), 2 deletions(-)
+
+-- 
+2.34.1
+
 
