@@ -1,126 +1,162 @@
-Return-Path: <linux-kernel+bounces-740543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A253B0D582
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:14:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7A21B0D58A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:15:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F2FF3B072F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:13:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B87F818851C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:14:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCFF52DAFC5;
-	Tue, 22 Jul 2025 09:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E992DCBF7;
+	Tue, 22 Jul 2025 09:14:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E8hY933x"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="u/nfxHQb"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A252DAFDE
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 09:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647E628A41B;
+	Tue, 22 Jul 2025 09:14:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753175629; cv=none; b=LJVl03oHstMU0RgTgQcBQYoe6T2kiGgC0If8dkxrCw7KtTfIkQsT4QxZYGvtsPl6huBCAIBc4D/jO9C4+WYrs5Q7XkA6EMEdy9kXI6Po9Gv+VU6cbx3/Vel7lM0izv2OzrSBIZep/wIK2W5IemEDtBgyt/gPMOw4ZzW724iBu0E=
+	t=1753175653; cv=none; b=FwxaS52/gY7/GDu0tuz/htAuhdjDhnj8UPHVjdI6kMWxOsTT+BnH8iN1Wp6i7qyRBpiq7NqyX3aT7/BfhbqLJJqGFxablVafV0k3PpfSG9D1U7qXmdcOjHKq1dLdRYUx5WzJhyPTZqmypzoWrTljtGrIYOTJx1lEjALtmMhBWcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753175629; c=relaxed/simple;
-	bh=B2n5ZdY4BWnmq8dgSRdoBM07oIPGeT0nJh0yRSNPcDs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CSqd3UFBHGjWnUcuNWtpVt9PuV9H7oWVcptHyLWVQ1dHiCcRJ7nuBbhQptPlmDF8zpXP/SziLOl3jsxOGbgGh78dORpqGsWwpJBHG7t+cjEjiDRJq5Y00H/m/aTMjC9ohds6n6rgVygki3fnjd8mm9bnAHqzDHzkRNRTUmgWucw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E8hY933x; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753175626;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8KUgQFDAP+t55lsxkHmzTDmsyAfOdX9/W5yq8F7vE3o=;
-	b=E8hY933xzig0alikiRZ3QEqhCQvS6Rr82qB+gfYmNoxt6JOPOy7B0z/7fhB/7QtvhfrTBc
-	8goONBmb7d/rlEedMFVFZ+O2nu5zWlxJjz+30qLQQVQLCn3uMLvw9trQgTEF03Xuc1vhWr
-	DfRbCO4RMCq9XOzP04QcPnUCQz13lIQ=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-63-BxHftbgBM9G2qVgENbYPzw-1; Tue, 22 Jul 2025 05:13:44 -0400
-X-MC-Unique: BxHftbgBM9G2qVgENbYPzw-1
-X-Mimecast-MFC-AGG-ID: BxHftbgBM9G2qVgENbYPzw_1753175623
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45626532e27so35176355e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 02:13:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753175623; x=1753780423;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8KUgQFDAP+t55lsxkHmzTDmsyAfOdX9/W5yq8F7vE3o=;
-        b=vCcJ7R2N51t5zVatBwBXFScrSvJAsTXyDYokxLGogF32fa25oOIj9rf3vXhGTLJxuO
-         SErfbwj1KgMHh6IJux/K6obVGtAjfCO+Hw+ZbuWFVS2qsbMBQYHI1KeWMlnUTXLQmmaY
-         AGQ6bpixGXrMMty7X2NRgodRTED3XAD7kedSKjK780Orc+pz+zXFLClSWmVDtYi79bR/
-         BoA1IxyKtFrAF8YB/NXjPrKP0Ci7P9LZAqJv3i9jhq5zzCbdxbiQZMIvceg5Rko+BKov
-         xadIEZYTnweJiw1JeW6qoEqjuob4Go9/b3wV9sNzKUNoQm2V3/9p6wUEK/KTrEYvLGV6
-         eNaw==
-X-Forwarded-Encrypted: i=1; AJvYcCUTOeP+Vr5uUcshoFmm2GJAKdyNphw9/plO5iB1o/O75MUT6eDf4KfWuwHK3nYw7N6btcxmhCNwORQYu50=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyV3fdHTk++MRxZRlNg+PdG8w+URNDkERZGKY4hszITG6irgfcU
-	o02dipXpE/YClLBjOy878LrrIXXDdmqLRj86eQEr4Koyg7aQb5SnjdHZWREdg7aA0yXh1Dlh/Dm
-	qne2Mk6w5mqfPMMJHay5N+MqE5USLaatQN97PB5X298RePaPTN0Lx1B02vhTfg4qbACixfLSf5A
-	==
-X-Gm-Gg: ASbGncsUoeH0aYdqjbrCKIa/upfOZYNcQUfjAWnqoF+cMwpVFEF0l30x5CdDTQG+JzN
-	n44rNJJprzY8gMO8wW0nnM2/A7asbal+ycca+506ZfM1a3+W0uFmlWJ9QMWooihdjPnffuTD82U
-	q6sxfCb5a8PTj7lR62inouaSTjBsAqXFvzjcx/nfImCJqp/6RpX1ECMsGC8JjluB7NsY78gkXWw
-	ENRzZry7WvGiQXby/zYTNzLz+iMUGhZHwqmK27gds0bq7tNqEgk+TwNl95gCP/UQ7ILysIwBcp0
-	k/OTjfiwJyOMUF6BBL/IK/GwztH57xmFm7PjpCrQ4YW23DdfNCgZDsypB0D3LBmln42JLhPpNkW
-	OdlSIu8ZEmSc=
-X-Received: by 2002:a05:600c:64ca:b0:456:1d61:b0f2 with SMTP id 5b1f17b1804b1-45630b6d6dcmr221103205e9.30.1753175622748;
-        Tue, 22 Jul 2025 02:13:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGq2utjYDgYZbdBZDFtzvubW3FftekBDVtDRK28fBpcCfuSioqYjLDM06EFbnwhSuf99i7wcQ==
-X-Received: by 2002:a05:600c:64ca:b0:456:1d61:b0f2 with SMTP id 5b1f17b1804b1-45630b6d6dcmr221102735e9.30.1753175622268;
-        Tue, 22 Jul 2025 02:13:42 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45862d6908fsm10825645e9.1.2025.07.22.02.13.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Jul 2025 02:13:41 -0700 (PDT)
-Message-ID: <49c4e674-ab1e-4947-9885-5c73810368eb@redhat.com>
-Date: Tue, 22 Jul 2025 11:13:40 +0200
+	s=arc-20240116; t=1753175653; c=relaxed/simple;
+	bh=6I2J+jle/ELUqLINDZ2CMKxGZXVtXDUdJEEej3F4Gmk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ox007gZanCxjxJThw7WaUE78zNeUSsGWmF2hvIjYVzIdfSr5B4nubF02Sg0iyJdJfBaoeOXVZVHQhxOvCfyguvRX4VFmyJBP4uxwheJHYA4HeGjEDu5F1H8mytQvfXulSKP61/j8VdHOXy1VOZQ2KDNMuHWgx9w/yCMpUWf8//U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=u/nfxHQb; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=xnES4CkHik4n+XCGU7bJoql3BaxRdweXbLtakclHrz4=; b=u/nfxHQbWSa54l6Q24jW2OAPoX
+	6Yj4+uH0hBvTF+kb6dENrFod4oSsYqikrJzzCEzGxBoEtih/Zm5LtJDHAZz3mPqIYIyTZbZC9AVts
+	FJgoWVYUEL3EqlXJthKYUSxUQadSpYz9xqY5TxZha6h/I5HPyPMMdU9YzX96ch9JsIWpPGG2XI/mh
+	rTntgtN0DsVjmK1lSXDYXlUc8IdGkV68hmBuwOltT9+ymQhFFnlomQHoapJWhQ19w1VhArh0+OsC6
+	PAOLE2tr9DgBWoaryTp/9sVO06DPoEhKUEZYZdVabSXOt3rgWY/yjJCERjHz+n+XhKh8UP53zYLtJ
+	cFjESOiw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:36626)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1ue94M-00088E-02;
+	Tue, 22 Jul 2025 10:13:54 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1ue94H-00072H-35;
+	Tue, 22 Jul 2025 10:13:49 +0100
+Date: Tue, 22 Jul 2025 10:13:49 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Christophe Roullier <christophe.roullier@foss.st.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Simon Horman <horms@kernel.org>,
+	Tristram Ha <Tristram.Ha@microchip.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 1/4] dt-bindings: net: document st,phy-wol
+ property
+Message-ID: <aH9WTYwty-tso66J@shell.armlinux.org.uk>
+References: <20250721-wol-smsc-phy-v1-0-89d262812dba@foss.st.com>
+ <20250721-wol-smsc-phy-v1-1-89d262812dba@foss.st.com>
+ <faea23d5-9d5d-4fbb-9c6a-a7bc38c04866@kernel.org>
+ <f5c4bb6d-4ff1-4dc1-9d27-3bb1e26437e3@foss.st.com>
+ <e3c99bdb-649a-4652-9f34-19b902ba34c1@lunn.ch>
+ <38278e2a-5a1b-4908-907e-7d45a08ea3b7@foss.st.com>
+ <5b8608cb-1369-4638-9cda-1cf90412fc0f@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3] ptp: add Alibaba CIPU PTP clock driver
-To: Wen Gu <guwen@linux.alibaba.com>, richardcochran@gmail.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org
-Cc: xuanzhuo@linux.alibaba.com, dust.li@linux.alibaba.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250717075734.62296-1-guwen@linux.alibaba.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20250717075734.62296-1-guwen@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5b8608cb-1369-4638-9cda-1cf90412fc0f@lunn.ch>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 7/17/25 9:57 AM, Wen Gu wrote:
-> +#define PTP_CIPU_BAR_0	0
-> +#define PTP_CIPU_REG(reg) \
-> +	offsetof(struct ptp_cipu_regs, reg)
+On Mon, Jul 21, 2025 at 07:07:11PM +0200, Andrew Lunn wrote:
+> > Regarding this property, somewhat similar to "mediatek,mac-wol",
+> > I need to position a flag at the mac driver level. I thought I'd go
+> > using the same approach.
+> 
+> Ideally, you don't need such a flag. WoL should be done as low as
+> possible. If the PHY can do the WoL, the PHY should be used. If not,
+> fall back to MAC.
+> 
+> Many MAC drivers don't support this, or they get the implementation
+> wrong. So it could be you need to fix the MAC driver.
+> 
+> MAC get_wol() should ask the PHY what it supports, and then OR in what
+> the MAC supports.
+> 
+> When set_wol() is called, the MAC driver should ask the PHY driver to
+> do it. If it return 0, all is good, and the MAC driver can be
+> suspended when times comes. If the PHY driver returns EOPNOTSUPP, it
+> means it cannot support all the enabled WoL operations, so the MAC
+> driver needs to do some of them. The MAC driver then needs to ensure
+> it is not suspended.
+> 
+> If the PHY driver is missing the interrupt used to wake the system,
+> the get_wol() call should not return any supported WoL modes. The MAC
+> will then do WoL. Your "vendor,mac-wol" property is then pointless.
+> 
+> Correctly describe the PHY in DT, list the interrupt it uses for
+> waking the system.
 
-Minor nit: no need to use a multiple line macro above
+This would be a good idea if we were talking about a new PHY and MAC
+driver, but we aren't.
 
-[...]
-> +static void ptp_cipu_clear_context(struct ptp_cipu_ctx *ptp_ctx)
-> +{
-> +	cancel_delayed_work_sync(&ptp_ctx->gen_timer);
-> +	cancel_delayed_work_sync(&ptp_ctx->mt_timer);
-> +	cancel_work_sync(&ptp_ctx->sync_work);
+Given the number of platform drivers that stmmac has with numerous
+PHY drivers, changing how this works _now_ will likely break current
+setups. Whether PHY-side WoL is used is dependent on a
+priv->plat->pmt flag which depends on MAC capabilties and also
+whether the platform glue sets/clears the STMMAC_FLAG_USE_PHY_WOL
+flag.
 
-You need to use the 'disable_' variant of the above helper, to avoid the
-work being rescheduled by the last iteration.
+Yes, it's a mess, and it could do with being improved, which will
+likely take considerable time to do to shake out any regressions
+caused - both in stmmac and PHY drivers.
 
-Other than that LGTM, thanks.
+I bet there are _numerous_ PHY drivers that report and accept WoL
+even when the hardware isn't wired to support WoL. For example,
+AT8031 reports that it supports WAKE_KAGIC irrespective of whether
+WOL_INT is wired, and whether or not the INT pin is capable of
+waking the system. I don't think we have any way that a driver can
+determine whether a particular interrupt _can_ wake the system.
 
-Paolo
+The problem for stmmac is that the PHY driver may support WAKE_MAGIC,
+but so can the MAC core. If the PHY isn't electrically capable of
+waking the system for whatever reason, but the PHY driver still
+reports that it can (like AT803x) and we don't program the MAC core,
+then under your idea, WoL will no longer work.
 
+The only thing I can think we can now do is to have yet another
+STMMAC_FLAG_xxx which platform glue can set to enable a new behaviour.
+Yay, a driver with multiple different behaviours depending on flags
+for the same feature.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
