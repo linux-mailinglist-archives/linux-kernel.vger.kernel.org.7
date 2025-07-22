@@ -1,58 +1,90 @@
-Return-Path: <linux-kernel+bounces-740606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A8C5B0D65A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:53:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EE9AB0D65C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:54:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB3486C1C21
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:52:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52930AA3DF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 205382BE045;
-	Tue, 22 Jul 2025 09:53:21 +0000 (UTC)
-Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E37BF2E040F;
+	Tue, 22 Jul 2025 09:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fXbAGeUy"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A184628AAE0;
-	Tue, 22 Jul 2025 09:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499642DEA6A;
+	Tue, 22 Jul 2025 09:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753178000; cv=none; b=ML/Yb2UgZFyroXL2V326cZsUy4UKVwFamOspcuwXmKSplb+BgdbnPUP1EOMm0voaVhffRgB2d8oBeoT1yu4eAE5fF7OGvNJgE1HpiTR085W6h77F4V2Wl88ehSXNAGTMYwUm/Z55zB5207tPdPQXnlngxoO1Fxeq/1Xw+0hOVhw=
+	t=1753178004; cv=none; b=W+vZ+NMlEvyDWMLIfpBJt5HL3ggWJOCCgRvAOjLlWSvIMBtf5L9f6otppTD0nmJG+WGUmToxnLO6JtMb5zLRdi5AJ1iRHBplE0OjltEWDI9jAqo5yiK4rQeussa7m+kiv0QPAYTG4sWfkwq7WJza9haJLuRkAM0Z0uh/Qxn7LxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753178000; c=relaxed/simple;
-	bh=277QhWsgLThKqcczoaSyj1ua8yoGMNFouor4LanU5kE=;
+	s=arc-20240116; t=1753178004; c=relaxed/simple;
+	bh=0ahjYebJTcBwY5yNy4z0UV0/9vcA93nCL1qO41tahCg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NkI3uFjn25u1xKPfdPdkuYejMV5Zq0Pj371FekNZWn+19b32DdFGmAST+xBCeEPW8wNM6kDQKJcuSTxGRSU+/FDV7RgxEtDJ5wrNq/bkV7GE4gMAzVamgKrzrZ324TkdWEKixqg0CR2YKL/uvixM34jl9Au3AFKKpXlDBxfuans=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=52.59.177.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: zesmtpgz4t1753177921t0978c379
-X-QQ-Originating-IP: U9ajFXEoJrL6B+DxmWpsePAlXbBZuVmgdJVFDzJbCBA=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 22 Jul 2025 17:51:59 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 13951642469092028887
-Date: Tue, 22 Jul 2025 17:51:59 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
-	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 02/15] net: rnpgbe: Add n500/n210 chip support
-Message-ID: <911D202AA380FB7F+20250722095159.GA120552@nic-Precision-5820-Tower>
-References: <20250721113238.18615-1-dong100@mucse.com>
- <20250721113238.18615-3-dong100@mucse.com>
- <b4233af1-7143-402b-a45c-379c39edf274@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mXD8mMH50cUKaYqaOYsdeQCpdTcc3gK1YGY38oX1X9x8iixru5UBGjo5QpceX2RXMmOyw3Kk/GQWV6veHjOEpOVaKoS/BiWBbOYHldDtDkH9I45bRHR6hYaNxLY/nxUqjg2VgQj9wpp5Ibo0VUj+9tCcKEClZC95TdBFEf+kXPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fXbAGeUy; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56M0oVZJ032317;
+	Tue, 22 Jul 2025 09:53:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=iXPjagKe1OfX88cYSdt0ScY3MiGeMz
+	nFbHV/ry44zF8=; b=fXbAGeUyES5WdcPTM3njnI/JE+Y8U8Hxh3Eep8PZlwHGZ9
+	D2vOi0ZaimIx+kRvFt7x/Lo2KalvjFnIaYVZc/bDWi+jVi4teA9fqub5pNzR+Lzt
+	SlzVhBptbPXimx4/P/AnVEd/qMJaHOI4bi13+3c8gY8cCT+yiDlr2D4wJtdQ7I8u
+	9hDTCOMJ+vUfYJSnHfvq2vyrP+X1TRRw0fwRqXWb7T/zofueKJlEzwTISYiRJEpQ
+	QKlQbhDGV5tyuwfOn44pCAk6G8n8V/uZDlIF8+XseHmAiv8NQLaW90Y7Ix3qcEUn
+	qMLCzt29HKCEU7KB5yIIPz0QmD1XbWwZqW6ArIBA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4805hfwk52-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Jul 2025 09:53:13 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 56M9cwWW011936;
+	Tue, 22 Jul 2025 09:53:13 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4805hfwk50-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Jul 2025 09:53:13 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56M5tSTu024964;
+	Tue, 22 Jul 2025 09:53:12 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 480nptjf7m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Jul 2025 09:53:12 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56M9r7ih51773934
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 22 Jul 2025 09:53:07 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A088720043;
+	Tue, 22 Jul 2025 09:53:07 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 494F420040;
+	Tue, 22 Jul 2025 09:53:05 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.18.185])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 22 Jul 2025 09:53:05 +0000 (GMT)
+Date: Tue, 22 Jul 2025 15:23:02 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
+        Ritesh Harjani <ritesh.list@gmail.com>, john.g.garry@oracle.com,
+        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v3 02/13] common/rc: Fix fsx for ext4 with bigalloc
+Message-ID: <aH9ffl7-2ri2Exgv@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <cover.1752329098.git.ojaswin@linux.ibm.com>
+ <84a1820482419a1f1fb599bc35c2b7dcc1abbcb9.1752329098.git.ojaswin@linux.ibm.com>
+ <20250717161154.GF2672039@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,548 +93,127 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b4233af1-7143-402b-a45c-379c39edf274@linux.dev>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NWLpwLZrMWrIsiRCXDgamtgYlriX8SJby7wMclSU3hKikg7j9UFqCZt7
-	4sodhS9q525nCO/nszWNUcTHJ8cqWXC6P4DynZaqp40IJJreUdD1Peq4RVAhjbY5W2x/5EV
-	3r0s3p4EwWteM7WXxPO7Gc3jGfgCrPvoIeq4Nee4ii+3/UFCY3z1qBs6/IDdaHWy7M7KUNu
-	h2PnyQDzpGk07hP0koTJog59a0PfMfQKYh5FDt6Cg808U/vpo02g3l4IoEjfwJyAFEbnNEF
-	rqegQj/vYgP5YS8LulKlUX84l3XfxQMK4UaTYG8KIIhHxlduirGjtVtiMnQ5NoldLIcwQNb
-	AIbE2RRNwoAhtDLCmPvyvOE23Nbj3n1L0t56TJu2nMg7fPLzg4v/UPbYpTVH+cF1Up/9pz7
-	YbodPgrZfTB4O3ttZ2c9UEANokCsBLV77N0aMNh4/NaIsh9W0Pgb+ATR6M7Uh3E6jtBz1aq
-	eNbnjLP3FbuoZJPacDX8xTOYrMZYYcDZb9a/imUz4YgWQdxubGa9RyTgX2yyC8luv7FnxBH
-	HrMELbZPJYacBHjgY7FUdWtQkTFR3mUWW/cbX0OZvDMpg8RXhV2avppbALYDhPUf2QM+Ppm
-	9JQtccBWDj/9kHIfKA0RyoTjbmQd/qTjYMjhQbx/8Jr/hD4blGKja6yBkDPp81RodEn7UCG
-	0IRHhA/wnNKcRvMcJuYEh0IgPtyglb0luG6BKycN4LugY3Iqtlwci2+FWNyoCXrU942j/36
-	UC2GEDm6jg+9yEQHFftKG981SxQYF44Kf0H9ZTfj6AzgixZs6IYgGS+Drp7tLI640d/S5tt
-	M9waoUJaEd9d/Oc+TyazfRcq7S2Iqn8hU+xcJgbmNtTRylUwsfIUCJe8d9fQ/7nHkhyQHMK
-	fXZUTf9xYa1GNTmC4bXK1dNB6xmX1WunftsT3QoLSvtVRFLtE+ADw3AzVYq0sKwHiP3xxk+
-	0gRJY2hmHyK2eqS+KrWuwjg4mDmaXTR7RMwL7/uNKIBdS32o8+X2Am+dLSfj214jSZaxmco
-	T2N6sHpMmKUHJfmouJ
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-X-QQ-RECHKSPAM: 0
+In-Reply-To: <20250717161154.GF2672039@frogsfrogsfrogs>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDA3OSBTYWx0ZWRfX7lUwW1+Q5zWa
+ wuiWsDx8+a4mjfw8gOtpvTo7qAO1Zqml6+9DARLyt9nIVz/oY938OX7KvXkeTUQuR/J0kcov4J6
+ CZ2IDHDhSa6JWPpc0jjwL6lbp60HaVqnftbourjIPdW1No0CxWUd/qqvB7ELUTPO0c8idtnurEB
+ vjEbDUXeretDzGAwJRuiRNi0/tebnLK8VfADZmwP1KCaS/TGk8IV0Uue8KT0jB3nXMs6lrk4noZ
+ jTN1JwYypR4kRtioTk3SrWhUSUlvQL4W0wN953U3bfQyPx3BZHXkc69Zj8y8WhO8xmHF6xBdMmg
+ 8u7ZbYtxWUOl1hYf6i4wmOGWFiFbIz4r776HM8jk8m948FfhDI8VSNCRa1BTErhOhzxSmuxTsNS
+ w9KG3Dx6Jye2Q3okqTj1O97DUZ+eMgsLAGnglyPWZ5QdbFtgyOPYQWoGwm/dpcL28AX6yAZs
+X-Proofpoint-GUID: uVC4Ndc0eYIstplw9f8qLXS3t_zWHjGM
+X-Proofpoint-ORIG-GUID: 1-5EotLC-Bt5v-VEBZmlBtzd989lpf7d
+X-Authority-Analysis: v=2.4 cv=X9RSKHTe c=1 sm=1 tr=0 ts=687f5f89 cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=pGLkceISAAAA:8 a=VnNF1IyMAAAA:8
+ a=WmCSGEEz2f1fRig7hz0A:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-22_01,2025-07-21_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 priorityscore=1501 adultscore=0 lowpriorityscore=0
+ phishscore=0 malwarescore=0 clxscore=1015 mlxscore=0 spamscore=0
+ suspectscore=0 mlxlogscore=999 bulkscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507220079
 
-On Mon, Jul 21, 2025 at 03:21:23PM +0100, Vadim Fedorenko wrote:
-> On 21/07/2025 12:32, Dong Yibo wrote:
-> > Initialize n500/n210 chip bar resource map and
-> > dma, eth, mbx ... info for future use.
+On Thu, Jul 17, 2025 at 09:11:54AM -0700, Darrick J. Wong wrote:
+> On Sat, Jul 12, 2025 at 07:42:44PM +0530, Ojaswin Mujoo wrote:
+> > Insert range and collapse range only works with bigalloc in case
+> > the range is cluster size aligned, which fsx doesnt take care. To
+> > work past this, disable insert range and collapse range on ext4, if
+> > bigalloc is enabled.
 > > 
-> > Signed-off-by: Dong Yibo <dong100@mucse.com>
+> > This is achieved by defining a new function _set_default_fsx_avoid
+> > called via run_fsx helper. This can be used to selectively disable
+> > fsx options based on the configuration.
+> > 
+> > Co-developed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> > Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 > > ---
-> >   drivers/net/ethernet/mucse/rnpgbe/Makefile    |   4 +-
-> >   drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    | 138 ++++++++++++++++++
-> >   .../net/ethernet/mucse/rnpgbe/rnpgbe_chip.c   | 138 ++++++++++++++++++
-> >   drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h |  27 ++++
-> >   .../net/ethernet/mucse/rnpgbe/rnpgbe_main.c   |  68 ++++++++-
-> >   5 files changed, 370 insertions(+), 5 deletions(-)
-> >   create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
-> >   create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
+> >  common/rc | 27 +++++++++++++++++++++++++++
+> >  1 file changed, 27 insertions(+)
 > > 
-> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/Makefile b/drivers/net/ethernet/mucse/rnpgbe/Makefile
-> > index 0942e27f5913..42c359f459d9 100644
-> > --- a/drivers/net/ethernet/mucse/rnpgbe/Makefile
-> > +++ b/drivers/net/ethernet/mucse/rnpgbe/Makefile
-> > @@ -5,5 +5,5 @@
-> >   #
-> >   obj-$(CONFIG_MGBE) += rnpgbe.o
-> > -
-> > -rnpgbe-objs := rnpgbe_main.o
-> > +rnpgbe-objs := rnpgbe_main.o\
-> > +	       rnpgbe_chip.o
-> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-> > index 224e395d6be3..2ae836fc8951 100644
-> > --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-> > @@ -4,21 +4,156 @@
-> >   #ifndef _RNPGBE_H
-> >   #define _RNPGBE_H
-> > +#include <linux/types.h>
-> > +#include <linux/netdevice.h>
+> > diff --git a/common/rc b/common/rc
+> > index 9a9d3cc8..218cf253 100644
+> > --- a/common/rc
+> > +++ b/common/rc
+> > @@ -5113,10 +5113,37 @@ _require_hugepage_fsx()
+> >  		_notrun "fsx binary does not support MADV_COLLAPSE"
+> >  }
+> >  
+> > +_set_default_fsx_avoid() {
+> > +	local file=$1
 > > +
-> > +extern const struct rnpgbe_info rnpgbe_n500_info;
-> > +extern const struct rnpgbe_info rnpgbe_n210_info;
-> > +extern const struct rnpgbe_info rnpgbe_n210L_info;
+> > +	case "$FSTYP" in
+> > +	"ext4")
+> > +		local dev=$(findmnt -n -o SOURCE --target $file)
 > > +
-> >   enum rnpgbe_boards {
-> >   	board_n500,
-> >   	board_n210,
-> >   	board_n210L,
-> >   };
-> > +enum rnpgbe_hw_type {
-> > +	rnpgbe_hw_n500 = 0,
-> > +	rnpgbe_hw_n210,
-> > +	rnpgbe_hw_n210L,
-> > +	rnpgbe_hw_unknow
-> > +};
+> > +		# open code instead of _require_dumpe2fs cause we don't
+> > +		# want to _notrun if dumpe2fs is not available
+> > +		if [ -z "$DUMPE2FS_PROG" ]; then
+> > +			echo "_set_default_fsx_avoid: dumpe2fs not found, skipping bigalloc check." >> $seqres.full
+> > +			return
+> > +		fi
+> 
+> I hate to be the guy who says one thing and then another, but ...
+> 
+> If we extended _get_file_block_size to report the ext4 bigalloc cluster
+> size, would that be sufficient to keep testing collapse/insert range?
+> 
+> I guess the tricky part here is that bigalloc allows sub-cluster
+> mappings and we might not want to do all file IO testing in such big
+> units.
+
+Hmm, so maybe a better way is to just add a parameter like alloc_unit in
+fsx where we can pass the cluster_size to which INSERT/COLLAPSE range be
+aligned to. For now we can pass it explicitly in the tests if needed.
+
+I do plan on working on your suggestion of exposing alloc unit via
+statx(). Once we have that in the kernel, fsx can use that as well.
+
+If this approach sounds okay I can try to maybe send the whole "fixing
+of insert/collpase range in fsx" as a patchset separate from atomic
+writes.
+
+
+> 
 > > +
-> > +struct mucse_dma_info {
-> > +	u8 __iomem *dma_base_addr;
-> > +	u8 __iomem *dma_ring_addr;
-> > +	void *back;
-> > +	u32 max_tx_queues;
-> > +	u32 max_rx_queues;
-> > +	u32 dma_version;
-> > +};
-> > +
-> > +#define RNPGBE_MAX_MTA 128
-> > +struct mucse_eth_info {
-> > +	u8 __iomem *eth_base_addr;
-> > +	void *back;
-> > +	u32 mta_shadow[RNPGBE_MAX_MTA];
-> > +	int mc_filter_type;
-> > +	u32 mcft_size;
-> > +	u32 vft_size;
-> > +	u32 num_rar_entries;
-> > +};
-> > +
-> > +struct mii_regs {
-> > +	unsigned int addr; /* MII Address */
-> > +	unsigned int data; /* MII Data */
-> > +	unsigned int addr_shift; /* MII address shift */
-> > +	unsigned int reg_shift; /* MII reg shift */
-> > +	unsigned int addr_mask; /* MII address mask */
-> > +	unsigned int reg_mask; /* MII reg mask */
-> > +	unsigned int clk_csr_shift;
-> > +	unsigned int clk_csr_mask;
-> > +};
-> > +
-> > +struct mucse_mac_info {
-> > +	u8 __iomem *mac_addr;
-> > +	void *back;
-> > +	struct mii_regs mii;
-> > +	int phy_addr;
-> > +	int clk_csr;
-> > +};
-> > +
-> > +#define MAX_VF_NUM (8)
-> > +
-> > +struct mucse_mbx_info {
-> > +	u32 timeout;
-> > +	u32 usec_delay;
-> > +	u32 v2p_mailbox;
-> > +	u16 size;
-> > +	u16 vf_req[MAX_VF_NUM];
-> > +	u16 vf_ack[MAX_VF_NUM];
-> > +	u16 fw_req;
-> > +	u16 fw_ack;
-> > +	/* lock for only one use mbx */
-> > +	struct mutex lock;
-> > +	bool irq_enabled;
-> > +	int mbx_size;
-> > +	int mbx_mem_size;
-> > +#define MBX_FEATURE_NO_ZERO BIT(0)
-> > +#define MBX_FEATURE_WRITE_DELAY BIT(1)
-> > +	u32 mbx_feature;
-> > +	/* fw <--> pf mbx */
-> > +	u32 fw_pf_shm_base;
-> > +	u32 pf2fw_mbox_ctrl;
-> > +	u32 pf2fw_mbox_mask;
-> > +	u32 fw_pf_mbox_mask;
-> > +	u32 fw2pf_mbox_vec;
-> > +	/* pf <--> vf mbx */
-> > +	u32 pf_vf_shm_base;
-> > +	u32 pf2vf_mbox_ctrl_base;
-> > +	u32 pf_vf_mbox_mask_lo;
-> > +	u32 pf_vf_mbox_mask_hi;
-> > +	u32 pf2vf_mbox_vec_base;
-> > +	u32 vf2pf_mbox_vec_base;
-> > +	u32 fw_vf_share_ram;
-> > +	int share_size;
-> > +};
-> > +
-> > +struct mucse_hw {
-> > +	void *back;
-> > +	u8 pfvfnum;
-> > +	u8 pfvfnum_system;
-> > +	u8 __iomem *hw_addr;
-> > +	u8 __iomem *ring_msix_base;
-> > +	struct pci_dev *pdev;
-> > +	u16 device_id;
-> > +	u16 vendor_id;
-> > +	u16 subsystem_device_id;
-> > +	u16 subsystem_vendor_id;
-> > +	enum rnpgbe_hw_type hw_type;
-> > +	struct mucse_dma_info dma;
-> > +	struct mucse_eth_info eth;
-> > +	struct mucse_mac_info mac;
-> > +	struct mucse_mbx_info mbx;
-> > +#define M_NET_FEATURE_SG BIT(0)
-> > +#define M_NET_FEATURE_TX_CHECKSUM BIT(1)
-> > +#define M_NET_FEATURE_RX_CHECKSUM BIT(2)
-> > +#define M_NET_FEATURE_TSO BIT(3)
-> > +#define M_NET_FEATURE_TX_UDP_TUNNEL BIT(4)
-> > +#define M_NET_FEATURE_VLAN_FILTER BIT(5)
-> > +#define M_NET_FEATURE_VLAN_OFFLOAD BIT(6)
-> > +#define M_NET_FEATURE_RX_NTUPLE_FILTER BIT(7)
-> > +#define M_NET_FEATURE_TCAM BIT(8)
-> > +#define M_NET_FEATURE_RX_HASH BIT(9)
-> > +#define M_NET_FEATURE_RX_FCS BIT(10)
-> > +#define M_NET_FEATURE_HW_TC BIT(11)
-> > +#define M_NET_FEATURE_USO BIT(12)
-> > +#define M_NET_FEATURE_STAG_FILTER BIT(13)
-> > +#define M_NET_FEATURE_STAG_OFFLOAD BIT(14)
-> > +#define M_NET_FEATURE_VF_FIXED BIT(15)
-> > +#define M_VEB_VLAN_MASK_EN BIT(16)
-> > +#define M_HW_FEATURE_EEE BIT(17)
-> > +#define M_HW_SOFT_MASK_OTHER_IRQ BIT(18)
-> > +	u32 feature_flags;
-> > +	u16 usecstocount;
-> > +};
-> > +
-> >   struct mucse {
-> >   	struct net_device *netdev;
-> >   	struct pci_dev *pdev;
-> > +	struct mucse_hw hw;
-> >   	/* board number */
-> >   	u16 bd_number;
-> >   	char name[60];
-> >   };
-> > +struct rnpgbe_info {
-> > +	int total_queue_pair_cnts;
-> > +	enum rnpgbe_hw_type hw_type;
-> > +	void (*get_invariants)(struct mucse_hw *hw);
-> > +};
-> > +
-> >   /* Device IDs */
-> >   #ifndef PCI_VENDOR_ID_MUCSE
-> >   #define PCI_VENDOR_ID_MUCSE 0x8848
-> > @@ -30,4 +165,7 @@ struct mucse {
-> >   #define PCI_DEVICE_ID_N210 0x8208
-> >   #define PCI_DEVICE_ID_N210L 0x820a
-> > +#define m_rd_reg(reg) readl(reg)
-> > +#define m_wr_reg(reg, val) writel((val), reg)
-> > +
-> >   #endif /* _RNPGBE_H */
-> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
-> > new file mode 100644
-> > index 000000000000..38c094965db9
-> > --- /dev/null
-> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
-> > @@ -0,0 +1,138 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/* Copyright(c) 2020 - 2025 Mucse Corporation. */
-> > +
-> > +#include <linux/types.h>
-> > +#include <linux/string.h>
-> > +
-> > +#include "rnpgbe.h"
-> > +#include "rnpgbe_hw.h"
-> > +
-> > +/**
-> > + * rnpgbe_get_invariants_n500 - setup for hw info
-> > + * @hw: hw information structure
-> > + *
-> > + * rnpgbe_get_invariants_n500 initializes all private
-> > + * structure, such as dma, eth, mac and mbx base on
-> > + * hw->addr for n500
-> > + **/
-> > +static void rnpgbe_get_invariants_n500(struct mucse_hw *hw)
-> > +{
-> > +	struct mucse_dma_info *dma = &hw->dma;
-> > +	struct mucse_eth_info *eth = &hw->eth;
-> > +	struct mucse_mac_info *mac = &hw->mac;
-> > +	struct mucse_mbx_info *mbx = &hw->mbx;
-> > +
-> > +	/* setup msix base */
-> > +	hw->ring_msix_base = hw->hw_addr + 0x28700;
-> > +	/* setup dma info */
-> > +	dma->dma_base_addr = hw->hw_addr;
-> > +	dma->dma_ring_addr = hw->hw_addr + RNPGBE_RING_BASE;
-> > +	dma->max_tx_queues = RNPGBE_MAX_QUEUES;
-> > +	dma->max_rx_queues = RNPGBE_MAX_QUEUES;
-> > +	dma->back = hw;
-> > +	/* setup eth info */
-> > +	eth->eth_base_addr = hw->hw_addr + RNPGBE_ETH_BASE;
-> > +	eth->back = hw;
-> > +	eth->mc_filter_type = 0;
-> > +	eth->mcft_size = RNPGBE_MC_TBL_SIZE;
-> > +	eth->vft_size = RNPGBE_VFT_TBL_SIZE;
-> > +	eth->num_rar_entries = RNPGBE_RAR_ENTRIES;
-> > +	/* setup mac info */
-> > +	mac->mac_addr = hw->hw_addr + RNPGBE_MAC_BASE;
-> > +	mac->back = hw;
-> > +	/* set mac->mii */
-> > +	mac->mii.addr = RNPGBE_MII_ADDR;
-> > +	mac->mii.data = RNPGBE_MII_DATA;
-> > +	mac->mii.addr_shift = 11;
-> > +	mac->mii.addr_mask = 0x0000F800;
-> > +	mac->mii.reg_shift = 6;
-> > +	mac->mii.reg_mask = 0x000007C0;
-> > +	mac->mii.clk_csr_shift = 2;
-> > +	mac->mii.clk_csr_mask = GENMASK(5, 2);
-> > +	mac->clk_csr = 0x02; /* csr 25M */
-> > +	/* hw fixed phy_addr */
-> > +	mac->phy_addr = 0x11;
-> > +
-> > +	mbx->mbx_feature |= MBX_FEATURE_NO_ZERO;
-> > +	/* mbx offset */
-> > +	mbx->vf2pf_mbox_vec_base = 0x28900;
-> > +	mbx->fw2pf_mbox_vec = 0x28b00;
-> > +	mbx->pf_vf_shm_base = 0x29000;
-> > +	mbx->mbx_mem_size = 64;
-> > +	mbx->pf2vf_mbox_ctrl_base = 0x2a100;
-> > +	mbx->pf_vf_mbox_mask_lo = 0x2a200;
-> > +	mbx->pf_vf_mbox_mask_hi = 0;
-> > +	mbx->fw_pf_shm_base = 0x2d000;
-> > +	mbx->pf2fw_mbox_ctrl = 0x2e000;
-> > +	mbx->fw_pf_mbox_mask = 0x2e200;
-> > +	mbx->fw_vf_share_ram = 0x2b000;
-> > +	mbx->share_size = 512;
-> > +
-> > +	/* setup net feature here */
-> > +	hw->feature_flags |= M_NET_FEATURE_SG |
-> > +			     M_NET_FEATURE_TX_CHECKSUM |
-> > +			     M_NET_FEATURE_RX_CHECKSUM |
-> > +			     M_NET_FEATURE_TSO |
-> > +			     M_NET_FEATURE_VLAN_FILTER |
-> > +			     M_NET_FEATURE_VLAN_OFFLOAD |
-> > +			     M_NET_FEATURE_RX_NTUPLE_FILTER |
-> > +			     M_NET_FEATURE_RX_HASH |
-> > +			     M_NET_FEATURE_USO |
-> > +			     M_NET_FEATURE_RX_FCS |
-> > +			     M_NET_FEATURE_STAG_FILTER |
-> > +			     M_NET_FEATURE_STAG_OFFLOAD;
-> > +	/* start the default ahz, update later */
-> > +	hw->usecstocount = 125;
+> > +		$DUMPE2FS_PROG -h $dev 2>&1 | grep -q bigalloc && {
+> > +			export FSX_AVOID+=" -I -C"
+> 
+> No need to export FSX_AVOID to subprocesses.
+> 
+> --D
+
+Got it, will fix. Thanks for review!
+
+
+Regards,
+ojaswin
+> 
+> > +		}
+> > +		;;
+> > +	# Add other filesystem types here as needed
+> > +	*)
+> > +		;;
+> > +	esac
 > > +}
 > > +
-> > +/**
-> > + * rnpgbe_get_invariants_n210 - setup for hw info
-> > + * @hw: hw information structure
-> > + *
-> > + * rnpgbe_get_invariants_n210 initializes all private
-> > + * structure, such as dma, eth, mac and mbx base on
-> > + * hw->addr for n210
-> > + **/
-> > +static void rnpgbe_get_invariants_n210(struct mucse_hw *hw)
-> > +{
-> > +	struct mucse_mbx_info *mbx = &hw->mbx;
-> > +	/* get invariants based from n500 */
-> > +	rnpgbe_get_invariants_n500(hw);
-> 
-> it's not a good pattern. if you have some configuration that is
-> shared amoung devices, it's better to create *base() or *common()
-> helper and call it from each specific initializer. BTW, why do you
-> name these functions get_invariants*()? They don't get anything, but
-> rather init/setup configuration values. It's better to rename it
-> according to the function.
-> 
-
-I try to devide hardware to dma, eth, mac, mbx modules. Different
-chips may use the same mbx module with different reg-offset in bar.
-So I setup reg-offset in get_invariants for each chip. And common code,
-such as mbx achieve functions with the reg-offset.
-Ok, I will rename it.
-
+> >  _run_fsx()
+> >  {
+> >  	echo "fsx $*"
+> >  	local args=`echo $@ | sed -e "s/ BSIZE / $bsize /g" -e "s/ PSIZE / $psize /g"`
 > > +
-> > +	/* update msix base */
-> > +	hw->ring_msix_base = hw->hw_addr + 0x29000;
-> > +	/* update mbx offset */
-> > +	mbx->vf2pf_mbox_vec_base = 0x29200;
-> > +	mbx->fw2pf_mbox_vec = 0x29400;
-> > +	mbx->pf_vf_shm_base = 0x29900;
-> > +	mbx->mbx_mem_size = 64;
-> > +	mbx->pf2vf_mbox_ctrl_base = 0x2aa00;
-> > +	mbx->pf_vf_mbox_mask_lo = 0x2ab00;
-> > +	mbx->pf_vf_mbox_mask_hi = 0;
-> > +	mbx->fw_pf_shm_base = 0x2d900;
-> > +	mbx->pf2fw_mbox_ctrl = 0x2e900;
-> > +	mbx->fw_pf_mbox_mask = 0x2eb00;
-> > +	mbx->fw_vf_share_ram = 0x2b900;
-> > +	mbx->share_size = 512;
-> > +	/* update hw feature */
-> > +	hw->feature_flags |= M_HW_FEATURE_EEE;
-> > +	hw->usecstocount = 62;
-> > +}
+> > +	_set_default_fsx_avoid $testfile
 > > +
-> > +const struct rnpgbe_info rnpgbe_n500_info = {
-> > +	.total_queue_pair_cnts = RNPGBE_MAX_QUEUES,
-> > +	.hw_type = rnpgbe_hw_n500,
-> > +	.get_invariants = &rnpgbe_get_invariants_n500,
-> > +};
-> > +
-> > +const struct rnpgbe_info rnpgbe_n210_info = {
-> > +	.total_queue_pair_cnts = RNPGBE_MAX_QUEUES,
-> > +	.hw_type = rnpgbe_hw_n210,
-> > +	.get_invariants = &rnpgbe_get_invariants_n210,
-> > +};
-> > +
-> > +const struct rnpgbe_info rnpgbe_n210L_info = {
-> > +	.total_queue_pair_cnts = RNPGBE_MAX_QUEUES,
-> > +	.hw_type = rnpgbe_hw_n210L,
-> > +	.get_invariants = &rnpgbe_get_invariants_n210,
-> > +};
-> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
-> > new file mode 100644
-> > index 000000000000..2c7372a5e88d
-> > --- /dev/null
-> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
-> > @@ -0,0 +1,27 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +/* Copyright(c) 2020 - 2025 Mucse Corporation. */
-> > +
-> > +#ifndef _RNPGBE_HW_H
-> > +#define _RNPGBE_HW_H
-> > +/*                     BAR                   */
-> > +/* ----------------------------------------- */
-> > +/*      module  | size  |  start   |    end  */
-> > +/*      DMA     | 32KB  | 0_0000H  | 0_7FFFH */
-> > +/*      ETH     | 64KB  | 1_0000H  | 1_FFFFH */
-> > +/*      MAC     | 32KB  | 2_0000H  | 2_7FFFH */
-> > +/*      MSIX    | 32KB  | 2_8000H  | 2_FFFFH */
-> > +
-> > +#define RNPGBE_RING_BASE (0x1000)
-> > +#define RNPGBE_MAC_BASE (0x20000)
-> > +#define RNPGBE_ETH_BASE (0x10000)
-> > +/* chip resourse */
-> > +#define RNPGBE_MAX_QUEUES (8)
-> > +/* multicast control table */
-> > +#define RNPGBE_MC_TBL_SIZE (128)
-> > +/* vlan filter table */
-> > +#define RNPGBE_VFT_TBL_SIZE (128)
-> > +#define RNPGBE_RAR_ENTRIES (32)
-> 
-> no need for extra parentheses
-> 
-
-Got it, I will fix it.
-
-> > +
-> > +#define RNPGBE_MII_ADDR 0x00000010 /* MII Address */
-> > +#define RNPGBE_MII_DATA 0x00000014 /* MII Data */
-> > +#endif /* _RNPGBE_HW_H */
-> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
-> > index 13b49875006b..08f773199e9b 100644
-> > --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
-> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
-> > @@ -11,6 +11,11 @@
-> >   #include "rnpgbe.h"
-> >   char rnpgbe_driver_name[] = "rnpgbe";
-> > +static const struct rnpgbe_info *rnpgbe_info_tbl[] = {
-> > +	[board_n500] = &rnpgbe_n500_info,
-> > +	[board_n210] = &rnpgbe_n210_info,
-> > +	[board_n210L] = &rnpgbe_n210L_info,
-> > +};
-> >   /* rnpgbe_pci_tbl - PCI Device ID Table
-> >    *
-> > @@ -33,6 +38,7 @@ static struct pci_device_id rnpgbe_pci_tbl[] = {
-> >   /**
-> >    * rnpgbe_add_adapter - add netdev for this pci_dev
-> >    * @pdev: PCI device information structure
-> > + * @ii: chip info structure
-> >    *
-> >    * rnpgbe_add_adapter initializes a netdev for this pci_dev
-> >    * structure. Initializes Bar map, private structure, and a
-> > @@ -40,16 +46,24 @@ static struct pci_device_id rnpgbe_pci_tbl[] = {
-> >    *
-> >    * @return: 0 on success, negative on failure
-> >    **/
-> > -static int rnpgbe_add_adapter(struct pci_dev *pdev)
-> > +static int rnpgbe_add_adapter(struct pci_dev *pdev,
-> > +			      const struct rnpgbe_info *ii)
-> >   {
-> >   	struct mucse *mucse = NULL;
-> > +	struct mucse_hw *hw = NULL;
-> > +	u8 __iomem *hw_addr = NULL;
-> >   	struct net_device *netdev;
-> >   	static int bd_number;
-> > +	u32 dma_version = 0;
-> > +	int err = 0;
-> > +	u32 queues;
-> > -	netdev = alloc_etherdev_mq(sizeof(struct mucse), 1);
-> > +	queues = ii->total_queue_pair_cnts;
-> > +	netdev = alloc_etherdev_mq(sizeof(struct mucse), queues);
-> >   	if (!netdev)
-> >   		return -ENOMEM;
-> > +	SET_NETDEV_DEV(netdev, &pdev->dev);
-> >   	mucse = netdev_priv(netdev);
-> >   	mucse->netdev = netdev;
-> >   	mucse->pdev = pdev;
-> > @@ -58,7 +72,54 @@ static int rnpgbe_add_adapter(struct pci_dev *pdev)
-> >   		 rnpgbe_driver_name, mucse->bd_number);
-> >   	pci_set_drvdata(pdev, mucse);
-> > +	hw = &mucse->hw;
-> > +	hw->back = mucse;
-> > +	hw->hw_type = ii->hw_type;
-> > +
-> > +	switch (hw->hw_type) {
-> > +	case rnpgbe_hw_n500:
-> > +		/* n500 use bar2 */
-> > +		hw_addr = devm_ioremap(&pdev->dev,
-> > +				       pci_resource_start(pdev, 2),
-> > +				       pci_resource_len(pdev, 2));
-> > +		if (!hw_addr) {
-> > +			dev_err(&pdev->dev, "map bar2 failed!\n");
-> > +			return -EIO;
-> > +		}
-> > +
-> > +		/* get dma version */
-> > +		dma_version = m_rd_reg(hw_addr);
-> > +		break;
-> > +	case rnpgbe_hw_n210:
-> > +	case rnpgbe_hw_n210L:
-> > +		/* check bar0 to load firmware */
-> > +		if (pci_resource_len(pdev, 0) == 0x100000)
-> > +			return -EIO;
-> > +		/* n210 use bar2 */
-> > +		hw_addr = devm_ioremap(&pdev->dev,
-> > +				       pci_resource_start(pdev, 2),
-> > +				       pci_resource_len(pdev, 2));
-> > +		if (!hw_addr) {
-> > +			dev_err(&pdev->dev, "map bar2 failed!\n");
-> > +			return -EIO;
-> > +		}
-> > +
-> > +		/* get dma version */
-> > +		dma_version = m_rd_reg(hw_addr);
-> > +		break;
-> > +	default:
-> > +		err = -EIO;
-> > +		goto err_free_net;
-> > +	}
-> > +	hw->hw_addr = hw_addr;
-> > +	hw->dma.dma_version = dma_version;
-> > +	ii->get_invariants(hw);
-> > +
-> >   	return 0;
-> > +
-> > +err_free_net:
-> > +	free_netdev(netdev);
-> > +	return err;
-> >   }
-> 
-> You have err_free_net label, which is used only in really impossible
-> case of unknown device, while other cases can return directly and
-> memleak netdev...
-> 
-> 
-
-Yes, It is really impossible case of unknown device. But maybe switch
-should always has 'default case'? And if in 'default case', nothing To
-do but free_netdev and return err. 
-Other cases return directly with return 0, and netdev will be freed in
-rnpgbe_rm_adapter() when rmmod. Sorry, I may not have got the memleak
-point? 
-
-> >   /**
-> > @@ -74,6 +135,7 @@ static int rnpgbe_add_adapter(struct pci_dev *pdev)
-> >    **/
-> >   static int rnpgbe_probe(struct pci_dev *pdev, const struct pci_device_id *id)
-> >   {
-> > +	const struct rnpgbe_info *ii = rnpgbe_info_tbl[id->driver_data];
-> >   	int err;
-> >   	err = pci_enable_device_mem(pdev);
-> > @@ -97,7 +159,7 @@ static int rnpgbe_probe(struct pci_dev *pdev, const struct pci_device_id *id)
-> >   	pci_set_master(pdev);
-> >   	pci_save_state(pdev);
-> > -	err = rnpgbe_add_adapter(pdev);
-> > +	err = rnpgbe_add_adapter(pdev, ii);
-> >   	if (err)
-> >   		goto err_regions;
-> 
-> 
-
-Thanks for your feedback.
-
+> >  	set -- $FSX_PROG $args $FSX_AVOID $TEST_DIR/junk
+> >  	echo "$@" >>$seqres.full
+> >  	rm -f $TEST_DIR/junk
+> > -- 
+> > 2.49.0
+> > 
+> > 
 
