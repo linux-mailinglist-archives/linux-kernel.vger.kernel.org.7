@@ -1,127 +1,163 @@
-Return-Path: <linux-kernel+bounces-740148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CDA7B0D0A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 05:51:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A76EB0D0A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 05:53:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D844165943
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:51:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B1211620D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:53:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427F628A73D;
-	Tue, 22 Jul 2025 03:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCBD21CCB40;
+	Tue, 22 Jul 2025 03:53:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Je266k/F"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J9wjqbNv"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F9422FF59
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 03:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EB91CAA4;
+	Tue, 22 Jul 2025 03:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753156272; cv=none; b=rmmmxC+tUyXVkWpHjgucsTfXdu6p3Q8FzflWEorn/jN1KQrF/w7lFugtkj1FDnMTSlIpjDk8YuNxjvXS+/xqg1wzkYdttKQaY0Hqmkxt6TlWDOb91rRJi5v5cUgUo7ed7uMuiZnv+njkpFiWb2OOsDzIv5MN+Jjvqn9x3utaBxc=
+	t=1753156391; cv=none; b=o8RlB4DsH2nSqZl6p8WvOIKuAUXKDFyqPK4U71PHiY012P8VHEPlTiOe/ZeDAaTykT0x9CVNKnEhhzQYcBrrmAMYy7tn171bPDQsQDJZntcaqq5Pi3r63Q0UmsYRgup41DR0pkVpfN2aP/nLhr8AWRwLMhW/5GZ9AiLShEHgUfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753156272; c=relaxed/simple;
-	bh=lJDeYXSX/bvDetfHjkTeV2ORKfWv7rgs+Q7ECkeHLK0=;
+	s=arc-20240116; t=1753156391; c=relaxed/simple;
+	bh=ad6zVFEWTXoS7B5hRyZw1sZ6+Wc2KApbQaX938jAh54=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f6ttiq+CBfpS4i4vNHoYkM4eBiQY1w+8qXvnMnqnlO9liQiXNcVUWgyJtf72dKJ0pcj6GCKBor62mLbbrdYMo890XkQ71VAhoWdnxUQoxQ5jY34RBCVr2ZRZ4GnqFcjKTgzH9hh7+aD7PTWq+/EyWmUsddQZwXGhivVHld+gYto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Je266k/F; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b3aa2a0022cso5109170a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 20:51:10 -0700 (PDT)
+	 To:Cc:Content-Type; b=kjNpdevcuvwguf8lhd59nrpYaH3wTTD6SobIhWKPu/dPjZdcF4Z0YKVDppwRYT2T8Ux9f5GBJiV9ioCoI0KJB7elsOKTlNaok2yJ32Yr0oFfyN6RNyeg7KrrVK11UQjKhRYGFIZ21svoML3awI7EZjPV+5/HPEnv50PPpq2tVEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J9wjqbNv; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-70e64b430daso53966997b3.3;
+        Mon, 21 Jul 2025 20:53:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753156270; x=1753761070; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753156389; x=1753761189; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lJDeYXSX/bvDetfHjkTeV2ORKfWv7rgs+Q7ECkeHLK0=;
-        b=Je266k/F/o/W4OSEELSDKY9x8+y7O2WK1BEfFnA3WRHBkpb1FSv+T5VehlPm/GysCK
-         VRqxjO1O8u5y4RsFdExyjT3AvRuyyiEJsP8yrDZuzG+ezMubS2qRATWZ9/EVRwNsSz7S
-         F0u9O3AFs0Xd9+wtKmYjMt5YOt5xitThgZj3qpGBmZ2CNpnfGqgokHkOg/JCkUDSoc7Y
-         wW15tpUsF76us7oVA64S/44+JS9mfqCJvOrPgqrcLfl9W2p5eSZQsz7wLzAzN448tOnk
-         4TOyMwbWYeFCw/0qtKTk8mTqjOCjq6inmw/Oh/QqDP5kg09eoQEAYL5bxT5cOp9FM8aI
-         jpNg==
+        bh=k+4A4Wcwmx0vcAwCCnC1T75w7LAAjengjw+UcaUHyos=;
+        b=J9wjqbNvs1ujHe2j2foTkbZbllgv/kXKEeQtzjcCCCJ7vX0imXGEHlW4uaE6C3TlXU
+         pZmnJQpWyP7TFl5NDXe7U9/5OkrL8V548iwUPrMBi7rfdasDDpOAYiSu02p9WA3SyX3d
+         EXt02lwjN+U9iyoGsXjWnsQ1NFmT5jB22Y82DXEElaq5cbA78G+q6QPaknbbPmeNpmJu
+         eG4zaZbHB3j5huFKTEIMNwrVzvOk6NZh1GGnByQJ0IQnkI6r2wi5EbMaK1gQsOEZtn62
+         tLeZ+vEiS58GLXKjBX8XWrJ0aQVYxGPZ7If0rD95rc0qkA/WvBhRIIdiDyO9iHSz86Op
+         KSAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753156270; x=1753761070;
+        d=1e100.net; s=20230601; t=1753156389; x=1753761189;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lJDeYXSX/bvDetfHjkTeV2ORKfWv7rgs+Q7ECkeHLK0=;
-        b=adOLJxw/l/62yUz3qMUpb2ucob9HSXUg8MjT/AtojJmsBcr7S4YShImPurjuFi0U+X
-         ouP1Xnc3VXR1VvUirMOGb8OioxtaPozKddH1vLo9OmLW0zVzX6dYVymGkFdgNGqMpkdt
-         g+LWPaqaPhhdCgWHBAk/jJUxH8rpV4oXQiJQEbCRFCl0w5XGlh4+LpALexKNCrIsrOg9
-         VlkxHbkBAG6qFJR1Iqeu5LR/kNRQ1t7E3Wt+XYvsMQ9RbEF/9nr4ieQJwMBVVd4vW2eR
-         EAlfwobF2VgOIQPOV0yV8D0NZlb7/lrwa+6Kog7lY4vH8sOTAxoLs9UJJk73W2huuwWM
-         N1hw==
-X-Forwarded-Encrypted: i=1; AJvYcCX3OVs0HY6DYSp/efXKCrBOvefkMY+wUxmMHfyxCN7J+ZjEVr/LZiMu+2CvxmVLe+FSXPK256nlzldYhfw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwupnBRoTVX5Bgn9RbJ7R0Rh9eQdgzwej/OcMzlhhnJYb8nehp6
-	P5CaKLWdONORgq5CaWe2hDmaR7ztBd2AbCwuImy2JZ33CEvVXwkzC1XLzWRULLS6Zoov2PXv89+
-	yICmGoEJT3XIV6fX8vS0XxJZODKNI8CmQthV0QD6r
-X-Gm-Gg: ASbGncsyKdbdo4SDjQ14qGLNDh1fU0POZAcZL8Inoakpro7cKWH5hihZGfsw6i/pvr7
-	hUPpqfYeot55jtd0fsQeXkFKAbuNPZEbpae9LTnxE0rl9PT8DVvE6GWdS7THVAYXv3/OVf4WzH6
-	W3EMPyMXpTAoIWIHBzXSCmVHXTWLbyXfrQEeRe42T2HV4NnNJRVZWQwInvX/drzvXUG8xyQhipC
-	2qJM3rV+LfSBcVr7LFAtMU29AoVcls8Xpsv0sEw
-X-Google-Smtp-Source: AGHT+IHtpgoTus5lwayXM01SpaU4GwH90Y2FHf3kxlp2FjqLuyW/RgCCnGVdY5X+U0jWSMGmt4T9U/mpCcao819S7/E=
-X-Received: by 2002:a17:90b:35c7:b0:311:fde5:c4b6 with SMTP id
- 98e67ed59e1d1-31c9f3efe45mr33017966a91.6.1753156270321; Mon, 21 Jul 2025
- 20:51:10 -0700 (PDT)
+        bh=k+4A4Wcwmx0vcAwCCnC1T75w7LAAjengjw+UcaUHyos=;
+        b=Z/r4qlW7nZ95KrWtr5D/OdggaicuxHxl89rIggQQ0X3wmKwn02PnC40YUQAWidvqLd
+         86K0pOsJE+xi6iHvTZBueHwjKrtLI6cXxBlhnhmmhbx0RH4hVu5k+PN8J9z1Bktheqou
+         1YFKkSyxbCPuEUzSaC3igHJjAz5lhz8YO0PtjgB0Y6vAAOGFOAi8s8pkWXORX/HMvQLz
+         XgxAUMFKVaAwFJs/iFjmwxIqgUxuvdnaqxAW/TD0FQjgaSSbM57a+X9NSoMPD2CP/paD
+         oTNGM6TTtTKqbxXRNzkSbhAfgCluKhXrI95dHKRyLOA45SRYFKINMYHcc9klR1A5P/dv
+         8WGg==
+X-Forwarded-Encrypted: i=1; AJvYcCULF8j2cbFJAK5Yv36KddfjyoxS4lX36gitompLZWmiS4iofEXL7BRnvgop6hOdRWFnUtHFE09dQvgRSMk=@vger.kernel.org, AJvYcCWxmxVNxQc8j8HFX2S83xdXr2GATpFtdN0QiXG4ZZTurhSfBgoEdmxVQ0upGRK+SgR0dOYmKz+wriciAP05dFWpEg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtXE0a/USP+vp6WjuNOQhcT2v88X1X7XfZ7JAh+4pnXpgmXvlX
+	riRFcmwKDEypc3M3CW2UopFnWVIYU/iBXtQU6u6rGFWx4v0+1hRlNn9HjZ+fcMsGeLu6sMdxKw6
+	2KTaRqDhnvrhd7YQzpAQ2Ijtew3yn/1s=
+X-Gm-Gg: ASbGncu2ClFs3mfOrs2Vsr0VscAuwGuMGEfYp5uxWKGcDggtlr8uxGlSS5XnBCEF7AN
+	ySCihmTz4NJgbJHNlf2ppgBxL1Qd+g1781G3PlOkF2ypl23+XthvLiDPBfKNOSQk5PHfMrALlKc
+	h1dnUEMBpWeGegOw82FvTZcbSdSqR6BhydipiEk81lu/trf7ytdkLbnBBIxar1EQySPFR8V1ooP
+	bHLQ/6uJGlwW7UuFg==
+X-Google-Smtp-Source: AGHT+IE2FkHxdrwRPSB7f1DXPrRY4tIYyDgF/3RU5l1sRBiDems9bE84T4ajYrT80tKcsAE4Nmrz8g+X4HTBOTPFxGA=
+X-Received: by 2002:a05:690c:48c4:b0:70e:2d17:84b3 with SMTP id
+ 00721157ae682-71837547df4mr306229807b3.37.1753156388642; Mon, 21 Jul 2025
+ 20:53:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250721171333.6caced4f@kernel.org> <20250722094808945ENOLvzY108YsJFz4CqbaI@zte.com.cn>
-In-Reply-To: <20250722094808945ENOLvzY108YsJFz4CqbaI@zte.com.cn>
-From: Kuniyuki Iwashima <kuniyu@google.com>
-Date: Mon, 21 Jul 2025 20:50:57 -0700
-X-Gm-Features: Ac12FXy9v416hau5beJ-VqKZOCQ6TgCXB1FDXzhWQtKR1uiwNtaKySQQ5qbKjRo
-Message-ID: <CAAVpQUDaSccbmOC0sgihBYPTdtSE2OsFOJXC6s58QS81a+8nkA@mail.gmail.com>
-Subject: Re: [PATCH net-next v7 RESEND] tcp: trace retransmit failures in tcp_retransmit_skb
-To: fan.yu9@zte.com.cn
-Cc: kuba@kernel.org, edumazet@google.com, ncardwell@google.com, 
-	davem@davemloft.net, dsahern@kernel.org, pabeni@redhat.com, horms@kernel.org, 
-	rostedt@goodmis.org, mhiramat@kernel.org, mathieu.desnoyers@efficios.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, yang.yang29@zte.com.cn, 
-	xu.xin16@zte.com.cn, tu.qiang35@zte.com.cn, jiang.kun2@zte.com.cn, 
-	qiu.yutan@zte.com.cn, wang.yaxin@zte.com.cn, he.peilin@zte.com.cn
+References: <aGjUpI1yNjEhSiAq@brak3rDesk> <CAG+54DZQC+-6E-P3D4BUtVujNegL1qKpcB5SGh28+rX5hrHFiw@mail.gmail.com>
+ <2025071801-driveway-curly-698c@gregkh>
+In-Reply-To: <2025071801-driveway-curly-698c@gregkh>
+From: Rujra Bhatt <braker.noob.kernel@gmail.com>
+Date: Tue, 22 Jul 2025 09:22:57 +0530
+X-Gm-Features: Ac12FXyMU8t_OUOIvb1DtwpsQJHRb5Os8gf_VjBQVLO8HO3XkJ8g8JphfHbx7A8
+Message-ID: <CAG+54DZS36Lp3Wc2nh+uSR14GPOWK+LJePp-jW1oB13uGtiSHw@mail.gmail.com>
+Subject: Re: [PATCH] arc:kernel:perf_event.c : replaced sprintf with sysfs_emit()
+To: Greg KH <greg@kroah.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
+	namhyung@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, 
+	kan.liang@linux.intel.com, vgupta@kernel.org, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-snps-arc@lists.infradead.org, skhan@linuxfoundation.org, 
+	linux-kernel-mentees@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 21, 2025 at 6:48=E2=80=AFPM <fan.yu9@zte.com.cn> wrote:
+On Fri, Jul 18, 2025 at 5:18=E2=80=AFPM Greg KH <greg@kroah.com> wrote:
 >
-> > On Mon, 21 Jul 2025 11:16:07 +0800 (CST) fan.yu9@zte.com.cn wrote:
->
-> > > Subject: [PATCH net-next v7 RESEND] tcp: trace retransmit failures in=
- tcp_retransmit_skb
->
+> On Fri, Jul 18, 2025 at 03:57:20PM +0530, Rujra Bhatt wrote:
+> > Hi,
 > >
+> > On Sat, Jul 5, 2025 at 1:00=E2=80=AFPM Rujra Bhatt <braker.noob.kernel@=
+gmail.com> wrote:
+> > >
+> > > Replaced sprintf() with sysfs_emit() in sysfs*_show() function in
+> > > perf_event.c file to follow the kernel's guidelines from
+> > > documentation/filesystems/sysfs.rst
+> > > This will improve consistency, safety, and makes it easier to maintai=
+n
+> > > and update in future.
+> > >
+> > > Signed-off-by: Rujra Bhatt <braker.noob.kernel@gmail.com>
+> > > ---
+> > >  arch/arc/kernel/perf_event.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/arch/arc/kernel/perf_event.c b/arch/arc/kernel/perf_even=
+t.c
+> > > index ed6d4f0cd621..424ec072c441 100644
+> > > --- a/arch/arc/kernel/perf_event.c
+> > > +++ b/arch/arc/kernel/perf_event.c
+> > > @@ -648,7 +648,7 @@ static ssize_t arc_pmu_events_sysfs_show(struct d=
+evice *dev,
+> > >         struct perf_pmu_events_attr *pmu_attr;
+> > >
+> > >         pmu_attr =3D container_of(attr, struct perf_pmu_events_attr, =
+attr);
+> > > -       return sprintf(page, "event=3D0x%04llx\n", pmu_attr->id);
+> > > +       return sysfs_emit(page, "event=3D0x%04llx\n", pmu_attr->id);
+> > >  }
+> > >
+> > >  /*
+> > > --
+> > > 2.43.0
+> > >
+> >
+> > Gentle reminder for the replacement of sprintf() with the sysfs_emit(),=
+ kindly
+> > review it.
 >
-> > Why did you resend this??
+> Why is this required?  There is no bug in the current code, so no need
+> to change it at all.  Please just use sysfs_emit() for new sysfs files,
+> no need to churn the tree and change all existing entries, otherwise we
+> would have done this a long time ago when we introduced these functions.
 >
->
-> Hi Jakub,
->
->
-> Thanks for checking! I just wanted to ensure the v7 patch wasn=E2=80=99t =
-missed =E2=80=94 it=E2=80=99s identical to the original.
 
-You can check the patch status in patchwork, and actually this v7
-marked the previous v7 as Superseded, so you didn't need to resend :)
+Hi Greg,
+I appreciate your feedback.
 
-https://patchwork.kernel.org/project/netdevbpf/list/?submitter=3D217549&sta=
-te=3D*
+I wanted to bring the formatting in line with the
+latest guidance, especially since sysfs_emit() has become the recommended
+method for sysfs output. I see now, though, that I should restrict myself t=
+o
+using that helper only in the context of genuine bug fixes or in the course
+of adding features.
+I'll make sure to only use sysfs_emit() for new sysfs entries or when
+modifying existing files for actual bugs or feature changes,
+as per your guidance.
 
+Thank you so much for pointing this out.
 
->
-> Please let me know if any updates are needed. Appreciate your time!
->
->
-> Best regards,
->
-> Fan Yu
+regards,
+Rujra Bhatt
 
