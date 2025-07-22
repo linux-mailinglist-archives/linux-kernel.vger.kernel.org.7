@@ -1,81 +1,78 @@
-Return-Path: <linux-kernel+bounces-740632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46F19B0D6F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:10:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0F00B0D6FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:11:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E5C13A22C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:10:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 956CC7B5A19
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB47A2E0417;
-	Tue, 22 Jul 2025 10:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="qaNW1cSX"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374552E03FB;
+	Tue, 22 Jul 2025 10:10:54 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F53623CEFF;
-	Tue, 22 Jul 2025 10:10:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB8A22DCF4F;
+	Tue, 22 Jul 2025 10:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753179022; cv=none; b=jMcGATd20mtH9Bd3RvsR0O5x3hNXaEYYxE6zmfcnyqm2hgLuQ957/VCFoFg36+R9C1ANdmFOYMmHNprBGYsiO/bRvJTaRg6JNIY3f4pcDIxLPPJa1uMNOc/9z9PrZPHWQOMr3GNQ1LyfgzGrSGGSQAtVYuCjVeUUYmP0saqFym4=
+	t=1753179053; cv=none; b=rpUBeVBgQazzvkQDg3vnzIRuCp/93UgIXuCYaSqicFwCjpSItHWtN9VTqPzBdlj13LbvQd51UYhoGNyBYBfyv0OHMPxRxrtIn3evIfa6gGtdKsUU40oIrEhKRWTrpS4IH0aDpI8iCWGBAqIyta2ohZmkmUyhWVISjGJLjEXwADQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753179022; c=relaxed/simple;
-	bh=zry+6/DEBDqbzAcnz4iOImSYYy30ydmUGJusGB7gDp4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZpVu+48Xnt79c+tQNZ4JRG8eXI7Y3gyt9LHob57Wgzp7yi1N3Hg8E6VEbuP/9FcQs+dHIplmL6Zq2WBT48Rol+utGyGUW1LjQysQYJJJdovsIC9kqNFRx/M62Zf4pXe/olhtgLiVLA4zpf8QH4GwcHRZ9wj1gdSJwnPtvAKOCNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=qaNW1cSX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B59EC4CEEB;
-	Tue, 22 Jul 2025 10:10:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1753179018;
-	bh=zry+6/DEBDqbzAcnz4iOImSYYy30ydmUGJusGB7gDp4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qaNW1cSXSkmjstENcKf8zMlowefgIxlAnBSaoBt/w7MOtlBdCmgo/ZEYi24sCF//N
-	 pJfwXntf73Lu99l8Ufr9QykPYgNqMBVDCWcyXsr0tnuq/jS2T96HouGnnnuAGjIZhd
-	 5mMlQmueAdkZTZaAkdHuNFanGUztTCfAOiOTMIF0=
-Date: Tue, 22 Jul 2025 12:10:15 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
-Cc: Souradeep Chowdhury <quic_schowdhu@quicinc.com>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Melody Olvera <quic_molvera@quicinc.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v6] usb: misc: qcom_eud: Access EUD_MODE_MANAGER2 through
- secure calls
-Message-ID: <2025072210-skier-specks-b043@gregkh>
-References: <20250721-eud_mode_manager_secure_access-v6-1-fe603325ac04@oss.qualcomm.com>
- <2025072141-anointer-venus-d99f@gregkh>
- <CAPHGfUOsk4BjhvGiN-b0UP-JZ48UvGeKFU=dhb=KOAvo8NCPZQ@mail.gmail.com>
+	s=arc-20240116; t=1753179053; c=relaxed/simple;
+	bh=3R56aaB/igaMtG/d7evdGFPNKvBcCTq12+3Hpgp6/m0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jUOqbBbgeo9KBpN632I1O1DMy/ZwuN6wnW39CIpcqvngdkrtfUxcNnfZ5TFefM9Xz7VAf/9J0zg86/jKucoorIqBYJ9k2eXge97eGZjHhHBrvH4YGQHXRbrcfSdHrjYJdcy2jf+wLuxscWxO+BzobEKZYlsGUZpq1Bi/MHa7Pmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D48B2C4CEEB;
+	Tue, 22 Jul 2025 10:10:51 +0000 (UTC)
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Will Deacon <will@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Mark Brown <broonie@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] kselftest/arm64: Fixes for fp-ptrace on SME only systems
+Date: Tue, 22 Jul 2025 11:10:49 +0100
+Message-Id: <175317903265.3058188.4852096181091664179.b4-ty@arm.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250718-arm64-fp-ptrace-sme-only-v1-0-3b96dd19a503@kernel.org>
+References: <20250718-arm64-fp-ptrace-sme-only-v1-0-3b96dd19a503@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPHGfUOsk4BjhvGiN-b0UP-JZ48UvGeKFU=dhb=KOAvo8NCPZQ@mail.gmail.com>
 
-On Tue, Jul 22, 2025 at 03:30:11PM +0530, Komal Bajaj wrote:
-> On Mon, Jul 21, 2025 at 12:23 PM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Mon, Jul 21, 2025 at 12:08:41PM +0530, Komal Bajaj wrote:
-> > > EUD_MODE_MANAGER2 register is mapped to a memory region that is marked
-> > > as read-only for HLOS, enforcing access restrictions that prohibit
-> > > direct memory-mapped writes via writel().
-> >
-> > What is "HLOS"?
-> >
+On Fri, 18 Jul 2025 23:14:49 +0100, Mark Brown wrote:
+> When testing SME only systems I noticed that fp-ptrace does not cope at
+> all well with them, this series fixes the major issues so that the test
+> program completes successfully.  The reason I was looking at this is
+> that following the recent round of fixes to ptrace we do not currently
+> offer any mechanism for disabling streaming mode via ptrace, this series
+> brings the program to a point where it tests the currently implemented
+> ABI.  A further series allowing the disabling of streaming mode via
+> ptrace will follow.
 > 
-> By HLOS, I meant operating system running at EL1. Do you want me to
-> change this in the patch?
+> [...]
 
-Yes please.
+Applied to arm64 (for-next/kselftest), thanks!
+
+[1/3] kselftest/arm64: Test SME on SME only systems in fp-ptrace
+      https://git.kernel.org/arm64/c/b021f45d39f3
+[2/3] kselftest/arm64: Fix SVE write data generation for SME only systems
+      https://git.kernel.org/arm64/c/aa7d3c8bc27d
+[3/3] kselftest/arm64: Handle attempts to disable SM on SME only systems
+      https://git.kernel.org/arm64/c/4752dcc156f2
+
+-- 
+Catalin
+
 
