@@ -1,292 +1,203 @@
-Return-Path: <linux-kernel+bounces-741432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AB28B0E405
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 21:20:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C050BB0E408
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 21:22:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4077F1AA8230
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:20:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77FAF1AA8101
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0865283CB1;
-	Tue, 22 Jul 2025 19:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBFB9283FDE;
+	Tue, 22 Jul 2025 19:22:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="UGzAW7iV"
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="CQ60EPoz"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316AB280305
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 19:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753212020; cv=none; b=nf4PDD3ht8pFvT9lGcG52ECNb+CivomqLkCY1RMo6Rg8dkHLrqOvd9FHF5o9JaSNLG+MsEgX/OC2Rc7/4Il/+Q0bZGK3lhAtaQq/dmyRe9W4aqEA4OZFYZdp76JALzis8LXKYvye5Hoi20lvtdqXA9PJnfJ2qYeso7imEtOCC8I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753212020; c=relaxed/simple;
-	bh=uC+cJzF1sL7UGXFBRf+LsG4ZqTCJIrhWBTRWb6aCCks=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OSMEG1+jyVUxhFkZ1eCWt3aifGoEs9AKX3kUn0Wi6RElt9UouZo/at21eGB02M+y2asdX2QHvPPEUJxm+KoSRzaFWuBaCvGa9c8z4uEg0/bodTzMG1wh09GrXeRyab3y3gpo2j5ho4t311UPUo5DcGt1pX9JBl3JuElJ9a6OxpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=UGzAW7iV; arc=none smtp.client-ip=209.85.167.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-41bc2668f46so1511470b6e.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 12:20:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1753212016; x=1753816816; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZDtejlZx5yEfYYq9UmbQwFH5oHPr/mFoQRNc2bfGPRA=;
-        b=UGzAW7iVKUYuPNK5lACiO6wS/iY0AA18X/umIlesrk0FPCIS0Y0g6spW27mpHWwd92
-         xtSyfK8sKrfxoDiUekkrbzhH8JdoLjsc6yAjJRX3BrecQ+siYyDJveF6ajQkFAJIW84/
-         22WPcfJBEuQTsNVzYXzh3JwdbIwoC4FX0fF8PRXAGsFD3ReBqoKix4+F5Wio62UcloOK
-         xxcMWrNvQkRykNRtldpeq7ZSMGmm8Wk/Gt8buh2TX5VN0TJZy1OSasFfreh0OySP2B/t
-         mqoJC1jWyfcUWHyox3aYKm25gl6kuXfEW6BmoX9LjNCD5a4VNctgB+QMd5tg4OHlQF9N
-         FEKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753212016; x=1753816816;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZDtejlZx5yEfYYq9UmbQwFH5oHPr/mFoQRNc2bfGPRA=;
-        b=OYMXTsF26P2r1W8HjmVyuWIHxZ4pdRz61JRoVInbO+xxWp2B3YuxFuS1wlBqucI/Vn
-         p+omRRc5VWO8zlYDD1OT7RdSN/Dol8OL/2ZvpSmK3KbD3+n01+KBb6HKfxByX9odjOsd
-         G3lmQL18k+rQzdHWLjAqsmeTwVXns6PeSX5NiasPp9hX314jXrVOhrDymwfjCQWK4uRC
-         kUksrHG/Jgq9TK7q6OIb+WnZ1e8/EkfDRGm2ef+e2EKZs11awfvercPBhAzHdKTHJYJ+
-         ioAwSk44HG7LCX4zlke9i/9Q4xElNcKWpJGk5xMKphAjMud/k7M3rO7xPEazo97UqNC9
-         BlNg==
-X-Forwarded-Encrypted: i=1; AJvYcCVDzczTk8y+bK94ElB3prlGmdk8apPG3SUrjp6/GG+v8gBPXhYIYZJJ3nV9TYExg/21kIEn8LVlBUa3wTc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQwdgGDyNEXP7+01hnczavvzaMe2NFLTfQrMp/BgHSxW2sGlCx
-	IjhOYgDoK34NdP2HHeZX/EKOJyZHnSnHtjVnAurwsToENDEwlc07o45chVFHZog+azqgqvWDJqm
-	JT1sy
-X-Gm-Gg: ASbGncsbk05ceMRJkLg55r+JJvZWoCUyWjHYyT0M9yC9IHWd5aaC+qKtC7/KjobC8l5
-	h4fNJ0D2AKzAK2WTHqzmJqVk2toXBEamNy6I8i7tnMclvBgtzekSVoMq0vFQHsGUA1K5QqwJkcl
-	jXcGhy+RGPSqf6iHfzEnT4Imhse/bOri2GXg0prO3PPLv164S7Gr63IZfCzOfYPDlTQiv0cyEZT
-	09Ffx7ZUoYiX77H2W1EMnViM09teaEFhM8b+EMfQzR3O3NziKBL7U5S/yaeEkNG1z7pXel0PZU0
-	bX+/N9skz5oqjoC6o8u9Us/83ukW2cx8pWDcSs2zsSC2AhOaazUZJkiqUlzoHXP7a9oy8GtxRFY
-	LMfKtvqs62tEWqk+d7sooBLkLtxjR8G08pU3clzg=
-X-Google-Smtp-Source: AGHT+IHdTAwakxYbl/tQkk84omytF+ZWmZXptDfN6ewyRtV6WT8zT92E79UtxFwipK0+X4mNs4CluA==
-X-Received: by 2002:a05:6808:170b:b0:40a:bcbf:2d83 with SMTP id 5614622812f47-426c6919360mr415042b6e.28.1753212016058;
-        Tue, 22 Jul 2025 12:20:16 -0700 (PDT)
-Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:2a79:4b55:6a01:85d7])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-41fd10c25d1sm3294381b6e.9.2025.07.22.12.20.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 12:20:15 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-Date: Tue, 22 Jul 2025 14:20:07 -0500
-Subject: [PATCH v2] iio: adc: ad7173: prevent scan if too many setups
- requested
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75ACC27A121
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 19:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753212125; cv=pass; b=f/K81BZsbzzMWR5ax7nSu3v76u7e7BXffwo+MQG+NsbMGSYMA3/+iyh91GrGmu15QuXQiJNdkbeqCz84VqAclBvRsblD2D4dp9T6cRhBb1V8NisQ6nBIMNyKKUsCpDcYrVQmZp5RV0ezRHXDF04h/iG0ELQImbjcaNq6DFFdWrE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753212125; c=relaxed/simple;
+	bh=myBrXrprD8vQOswk76iiOoP2AABCnGQbIvTtX5GSO/Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P0odEpKV1woTjsxQPsHxUJ15S/64R4VnKv5La8eiVlEibTO0sBhCZ+iCpvurU2RpqJQnOFzV/v6O3/pf84sXof2Ev5aKvW8LoEMouc7CZ8p8BW6Z3f88OEwdrKKuWy9DAyqBS1hRfmXBnHE1uE0tocbWaXuzKMibM4z248jIFDA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=CQ60EPoz; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753212098; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=YOi6TTEwIU2i9DCnhpi0g1oF/9DeebmF2lachFVjl68/HyOjwDyixlFUsyDM+8ZaikTpedNCH7Df8MoFWFtXSvLoElq9nFa7SY3lLU/WjT+mP2BXngXnLRwfuUUeMnliLj+eFD+DZ//t9yE5sagXFtCsk2goch+18EibRStPsGQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753212098; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Qai5M5VsrAf1/MTCRQHTr0B01Buum0Ep0FyLGUM5vS8=; 
+	b=d1zuihA9HrYBTvYTh+ob+jYW6BlahuDns2mqMGjFdfqM/QRHmgQszjBoPeFAYnZD5N2za9GGveKam6JH+PSrcaIFow+TAq+q3/xEuI4jiRwN2LX3UHwMNyv63ftGS2Yj/hxMUxKzAYv+lbFTzV/dGT32SPv6Gea2atfDlk0a2Rc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753212098;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=Qai5M5VsrAf1/MTCRQHTr0B01Buum0Ep0FyLGUM5vS8=;
+	b=CQ60EPozePG5VpzlDk6J6JJ+PmMEOg6A/Eip79NbBhAnrfkPc+b3d4sXA5MnHcip
+	KUvlOXhHhH5OMVZoe7UHch1ze2nC45l9k8KLQ+lGgUJyVqJmmW3ZQvlxVA15h6SQaWS
+	ZdfDZMa1Yf7gFOlirmiLDd2zMgBEypMPbSc1AxhU=
+Received: by mx.zohomail.com with SMTPS id 1753212096981311.77162614318456;
+	Tue, 22 Jul 2025 12:21:36 -0700 (PDT)
+Date: Tue, 22 Jul 2025 20:21:25 +0100
+From: Adrian Larumbe <adrian.larumbe@collabora.com>
+To: Caterina Shablia <caterina.shablia@collabora.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Frank Binns <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>, 
+	Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>, 
+	Danilo Krummrich <dakr@kernel.org>, Boris Brezillon <boris.brezillon@collabora.com>, 
+	Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, 
+	Lucas De Marchi <lucas.demarchi@intel.com>, 
+	Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org, 
+	intel-xe@lists.freedesktop.org, asahi@lists.linux.dev, Asahi Lina <lina@asahilina.net>
+Subject: Re: [PATCH v4 5/7] drm/gpuvm: Add a flags field to
+ drm_gpuvm_map_req/drm_gpuva_op_map
+Message-ID: <rquyd5sq4y6dhnnbqcmnorvhzvui6kbpysol6idinuwajlmawn@awv2uqosdacl>
+References: <20250707170442.1437009-1-caterina.shablia@collabora.com>
+ <20250707170442.1437009-6-caterina.shablia@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250722-iio-adc-ad7173-fix-setup-use-limits-v2-1-8e96bdb72a9c@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIAGbkf2gC/5WNOw6DMBBEr4K2zka2+Tikyj0iChtvwkqAkQ0oC
- HH3ONwgxRRvNHqzQ6TAFOGe7RBo5ch+TKAuGbSdGd+E7BKDEqoUWtTI7NG4NkVLneOLPxhpXiZ
- cImHPA88RhSmdspWp9E1AMk2B0u58eTaJO46zD9t5uspf+59/lSiRCqnyXKjaFcXDmq1nG+ja+
- gGa4zi+RZ1bJtkAAAA=
-X-Change-ID: 20250709-iio-adc-ad7173-fix-setup-use-limits-0a5d2b6a6780
-To: Lars-Peter Clausen <lars@metafoo.de>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- David Lechner <dlechner@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6769; i=dlechner@baylibre.com;
- h=from:subject:message-id; bh=uC+cJzF1sL7UGXFBRf+LsG4ZqTCJIrhWBTRWb6aCCks=;
- b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBof+RoWv/qA6bCB8XGnnXfSG3My+OYmKEqpdJQe
- +AajWj2iKCJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaH/kaAAKCRDCzCAB/wGP
- wFmiCACetjpVLz21pQLERkdVwFqPdvTArL/PHW/41Atnh19fh9Eow4HBO5eSsOi5Chf8G7ncu3G
- RJG+h6GetKYadh2EphtShI6HLnIBrL9ZiphmMrOErdIUkd/QdjdaudfNwgMJvRzq+AwWkd8hmu9
- M2viDwGZuYRiHMaq5kqMKCj94d4ugGoCw0aATeFzIRNXnhSYXiBo1Dt+ko+VtAOiPZoOpJEWCpu
- F651va4E/McDQcLe+B5RFX2sxgD+UnzQ4KJitsV8TQ2ItHTdxIfmD+ITmcq2M2o0Ck1NE0hUUeW
- 33ECjfjimPxA2WVtKxS8fru/IQI69fxo1Jo74ikYvs8477tq
-X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
- fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250707170442.1437009-6-caterina.shablia@collabora.com>
 
-Add a check to ad7173_update_scan_mode() to ensure that we didn't exceed
-the maximum number of unique channel configurations.
+On 07.07.2025 17:04, Caterina Shablia wrote:
+> From: Asahi Lina <lina@asahilina.net>
+>
+> drm_gpuva objects have a flags field. Currently, this can be managed by
+> drivers out-of-band, without any special handling in drm_gpuvm.
+>
+> To be able to introduce flags that do affect the logic in the drm_gpuvm
+> core, we need to plumb it through the map calls. This will allow the
+> core to check the flags on map and alter the merge/split logic depending
+> on the requested flags and the flags of the existing drm_gpuva ranges
+> that are being split.
+>
+> Signed-off-by: Asahi Lina <lina@asahilina.net>
+> Signed-off-by: Caterina Shablia <caterina.shablia@collabora.com>
+> ---
+>  drivers/gpu/drm/drm_gpuvm.c | 7 +++++++
+>  include/drm/drm_gpuvm.h     | 9 +++++++++
+>  2 files changed, 16 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/drm_gpuvm.c b/drivers/gpu/drm/drm_gpuvm.c
+> index dc3c2f906400..dd949a8853b0 100644
+> --- a/drivers/gpu/drm/drm_gpuvm.c
+> +++ b/drivers/gpu/drm/drm_gpuvm.c
+> @@ -2063,6 +2063,7 @@ op_map_cb(const struct drm_gpuvm_ops *fn, void *priv,
+>  	op.map.va.range = req->va.range;
+>  	op.map.gem.obj = req->gem.obj;
+>  	op.map.gem.offset = req->gem.offset;
+> +	op.map.flags = req->flags;
+>
+>  	return fn->sm_step_map(&op, priv);
+>  }
+> @@ -2175,6 +2176,7 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
+>  					.va.range = range - req->va.range,
+>  					.gem.obj = obj,
+>  					.gem.offset = offset + req->va.range,
+> +					.flags = va->flags,
+>  				};
+>  				struct drm_gpuva_op_unmap u = {
+>  					.va = va,
+> @@ -2193,6 +2195,7 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
+>  				.va.range = ls_range,
+>  				.gem.obj = obj,
+>  				.gem.offset = offset,
+> +				.flags = va->flags,
+>  			};
+>  			struct drm_gpuva_op_unmap u = { .va = va };
+>
+> @@ -2219,6 +2222,7 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
+>  					.gem.obj = obj,
+>  					.gem.offset = offset + ls_range +
+>  						      req->va.range,
+> +					.flags = va->flags,
+>  				};
+>
+>  				ret = op_remap_cb(ops, priv, &p, &n, &u);
+> @@ -2247,6 +2251,7 @@ __drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm,
+>  					.va.range = end - req_end,
+>  					.gem.obj = obj,
+>  					.gem.offset = offset + req_end - addr,
+> +					.flags = va->flags,
+>  				};
+>  				struct drm_gpuva_op_unmap u = {
+>  					.va = va,
+> @@ -2290,6 +2295,7 @@ __drm_gpuvm_sm_unmap(struct drm_gpuvm *gpuvm,
+>  			prev.va.range = req_addr - addr;
+>  			prev.gem.obj = obj;
+>  			prev.gem.offset = offset;
+> +			prev.flags = va->flags;
+>
+>  			prev_split = true;
+>  		}
+> @@ -2299,6 +2305,7 @@ __drm_gpuvm_sm_unmap(struct drm_gpuvm *gpuvm,
+>  			next.va.range = end - req_end;
+>  			next.gem.obj = obj;
+>  			next.gem.offset = offset + (req_end - addr);
+> +			next.flags = va->flags;
+>
+>  			next_split = true;
+>  		}
+> diff --git a/include/drm/drm_gpuvm.h b/include/drm/drm_gpuvm.h
+> index a6e6c33fc10b..f77a89e791f1 100644
+> --- a/include/drm/drm_gpuvm.h
+> +++ b/include/drm/drm_gpuvm.h
+> @@ -847,6 +847,11 @@ struct drm_gpuva_op_map {
+>  		 */
+>  		struct drm_gem_object *obj;
+>  	} gem;
+> +
+> +	/**
+> +	 * @flags: requested flags for the &drm_gpuva for this mapping
+> +	 */
+> +	enum drm_gpuva_flags flags;
+>  };
+>
+>  /**
+> @@ -1074,6 +1079,9 @@ struct drm_gpuvm_map_req {
+>  		/** @offset: offset in the GEM */
+>  		u64 offset;
+>  	} gem;
+> +
+> +	/** @flags: combination of DRM_GPUVA_ flags describing the mapping properties. */
+> +	enum drm_gpuva_flags flags;
 
-In the AD7173 family of chips, there are some chips that have 16
-CHANNELx registers but only 8 setups (combination of CONFIGx, FILTERx,
-GAINx and OFFSETx registers). Since commit 92c247216918 ("iio: adc:
-ad7173: fix num_slots"), it is possible to have more than 8 channels
-enabled in a scan at the same time, so it is possible to get a bad
-configuration when more than 8 channels are using unique configurations.
-This happens because the algorithm to allocate the setup slots only
-takes into account which slot has been least recently used and doesn't
-know about the maximum number of slots available.
+Wouldn't this be better expressed as a u32 combination of enum drm_gpuva_flags flags?
+Calling it 'flags' makes me feel like any OR'd combination of enum values would be possible.
 
-Since the algorithm to allocate the setup slots is quite complex, it is
-simpler to check after the fact if the current state is valid or not.
-So this patch adds a check in ad7173_update_scan_mode() after setting up
-all of the configurations to make sure that the actual setup still
-matches the requested setup for each enabled channel. If not, we prevent
-the scan from being enabled and return an error.
+>  };
+>
+>  struct drm_gpuva_ops *
+> @@ -1097,6 +1105,7 @@ void drm_gpuva_ops_free(struct drm_gpuvm *gpuvm,
+>  static inline void drm_gpuva_init_from_op(struct drm_gpuva *va,
+>  					  struct drm_gpuva_op_map *op)
+>  {
+> +	va->flags = op->flags;
+>  	va->va.addr = op->va.addr;
+>  	va->va.range = op->va.range;
+>  	va->gem.obj = op->gem.obj;
+> --
+> 2.47.2
 
-The setup comparison in ad7173_setup_equal() is refactored to a separate
-function since we need to call it in two places now.
-
-Fixes: 92c247216918 ("iio: adc: ad7173: fix num_slots")
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
-My musings in v1 might have confused things a bit, but my intention is
-to have this patch fix things well enough for backporting stable kernels
-and then perhaps look at a better way of handling the setup slots in the
-future.
----
-Changes in v2:
-- Updated the commit hash of the commit being fixed since it was rebased
-  before being sent to Greg.
-- Fixed a few typos in the commit message.
-- Link to v1: https://lore.kernel.org/r/20250709-iio-adc-ad7173-fix-setup-use-limits-v1-1-e41233029d44@baylibre.com
----
- drivers/iio/adc/ad7173.c | 87 +++++++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 75 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
-index 4413207be28f60a4d9529e3522f5d2fd6276bcc2..131cd1cf8a23c57dfeb156a96864e6cf2a2b6bf9 100644
---- a/drivers/iio/adc/ad7173.c
-+++ b/drivers/iio/adc/ad7173.c
-@@ -200,7 +200,7 @@ struct ad7173_channel_config {
- 	/*
- 	 * Following fields are used to compare equality. If you
- 	 * make adaptations in it, you most likely also have to adapt
--	 * ad7173_find_live_config(), too.
-+	 * ad7173_setup_equal(), too.
- 	 */
- 	struct_group(config_props,
- 		bool bipolar;
-@@ -561,12 +561,19 @@ static void ad7173_reset_usage_cnts(struct ad7173_state *st)
- 	st->config_usage_counter = 0;
- }
- 
--static struct ad7173_channel_config *
--ad7173_find_live_config(struct ad7173_state *st, struct ad7173_channel_config *cfg)
-+/**
-+ * ad7173_setup_equal - Compare two channel setups
-+ * @cfg1: First channel configuration
-+ * @cfg2: Second channel configuration
-+ *
-+ * Compares all configuration options that affect the registers connected to
-+ * SETUP_SEL, namely CONFIGx, FILTERx, GAINx and OFFSETx.
-+ *
-+ * Returns: true if the setups are identical, false otherwise
-+ */
-+static bool ad7173_setup_equal(const struct ad7173_channel_config *cfg1,
-+			       const struct ad7173_channel_config *cfg2)
- {
--	struct ad7173_channel_config *cfg_aux;
--	int i;
--
- 	/*
- 	 * This is just to make sure that the comparison is adapted after
- 	 * struct ad7173_channel_config was changed.
-@@ -579,14 +586,22 @@ ad7173_find_live_config(struct ad7173_state *st, struct ad7173_channel_config *c
- 				     u8 ref_sel;
- 			     }));
- 
-+	return cfg1->bipolar == cfg2->bipolar &&
-+	       cfg1->input_buf == cfg2->input_buf &&
-+	       cfg1->odr == cfg2->odr &&
-+	       cfg1->ref_sel == cfg2->ref_sel;
-+}
-+
-+static struct ad7173_channel_config *
-+ad7173_find_live_config(struct ad7173_state *st, struct ad7173_channel_config *cfg)
-+{
-+	struct ad7173_channel_config *cfg_aux;
-+	int i;
-+
- 	for (i = 0; i < st->num_channels; i++) {
- 		cfg_aux = &st->channels[i].cfg;
- 
--		if (cfg_aux->live &&
--		    cfg->bipolar == cfg_aux->bipolar &&
--		    cfg->input_buf == cfg_aux->input_buf &&
--		    cfg->odr == cfg_aux->odr &&
--		    cfg->ref_sel == cfg_aux->ref_sel)
-+		if (cfg_aux->live && ad7173_setup_equal(cfg, cfg_aux))
- 			return cfg_aux;
- 	}
- 	return NULL;
-@@ -1228,7 +1243,7 @@ static int ad7173_update_scan_mode(struct iio_dev *indio_dev,
- 				   const unsigned long *scan_mask)
- {
- 	struct ad7173_state *st = iio_priv(indio_dev);
--	int i, ret;
-+	int i, j, k, ret;
- 
- 	for (i = 0; i < indio_dev->num_channels; i++) {
- 		if (test_bit(i, scan_mask))
-@@ -1239,6 +1254,54 @@ static int ad7173_update_scan_mode(struct iio_dev *indio_dev,
- 			return ret;
- 	}
- 
-+	/*
-+	 * On some chips, there are more channels that setups, so if there were
-+	 * more unique setups requested than the number of available slots,
-+	 * ad7173_set_channel() will have written over some of the slots. We
-+	 * can detect this by making sure each assigned cfg_slot matches the
-+	 * requested configuration. If it doesn't, we know that the slot was
-+	 * overwritten by a different channel.
-+	 */
-+	for_each_set_bit(i, scan_mask, indio_dev->num_channels) {
-+		const struct ad7173_channel_config *cfg1, *cfg2;
-+
-+		cfg1 = &st->channels[i].cfg;
-+
-+		for_each_set_bit(j, scan_mask, indio_dev->num_channels) {
-+			cfg2 = &st->channels[j].cfg;
-+
-+			/*
-+			 * Only compare configs that are assigned to the same
-+			 * SETUP_SEL slot and don't compare channel to itself.
-+			 */
-+			if (i == j || cfg1->cfg_slot != cfg2->cfg_slot)
-+				continue;
-+
-+			/*
-+			 * If we find two different configs trying to use the
-+			 * same SETUP_SEL slot, then we know that the that we
-+			 * have too many unique configurations requested for
-+			 * the available slots and at least one was overwritten.
-+			 */
-+			if (!ad7173_setup_equal(cfg1, cfg2)) {
-+				/*
-+				 * At this point, there isn't a way to tell
-+				 * which setups are actually programmed in the
-+				 * ADC anymore, so we could read them back to
-+				 * see, but it is simpler to just turn off all
-+				 * of the live flags so that everything gets
-+				 * reprogramed on the next attempt read a sample.
-+				 */
-+				for (k = 0; k < st->num_channels; k++)
-+					st->channels[k].cfg.live = false;
-+
-+				dev_err(&st->sd.spi->dev,
-+					"Too many unique channel configurations requested for scan\n");
-+				return -EINVAL;
-+			}
-+		}
-+	}
-+
- 	return 0;
- }
- 
-
----
-base-commit: 0a686b9c4f847dc21346df8e56d5b119918fefef
-change-id: 20250709-iio-adc-ad7173-fix-setup-use-limits-0a5d2b6a6780
-
-Best regards,
--- 
-David Lechner <dlechner@baylibre.com>
-
+Adrian Larumbe
 
