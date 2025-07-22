@@ -1,126 +1,151 @@
-Return-Path: <linux-kernel+bounces-740712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E0C8B0D838
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:29:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59464B0D785
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:49:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7074F6C333B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:28:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E5C7540174
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:49:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E20BA2E3373;
-	Tue, 22 Jul 2025 11:29:15 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE562E11BC;
+	Tue, 22 Jul 2025 10:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gG92PNxZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF9127456;
-	Tue, 22 Jul 2025 11:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7F028B4E7;
+	Tue, 22 Jul 2025 10:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753183755; cv=none; b=N3dnhh4Bi0hN5g9v5O1G+Zgw0Yx66XPy2cqtL0wwkFKvTgaIBPM3uG/fhOgWSBQea4VEShBwAMRzBYPoFyGakh5+WXDt+4Ox9CkH8JaJmZcnftiUsQez4WceonSGWA7ITeeX0DCMibKzz2LQSI/WJLTd5QaVlTIE2yqF7fD8WjU=
+	t=1753181370; cv=none; b=XXZ/9Z2zGBLaBEQU+YRXhnzOb04ebST3lDyslQc+pLU0vw4i2gPLinx6E+n0/Av9xD2Ff9xFkfvmfy8nGH35vXKOyvsac66iRRpqLxbq4iH77h+oLgJQSIci6QeaMzpfcTDCNS2FtE97j8p7U1YSmhbk93107dms4jhe5WGuWvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753183755; c=relaxed/simple;
-	bh=tDMXmkuXWFEiObLEX0JEu1AbKcmcq54Z8EFGI7S6Iy8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EImySs/nb/B2h9zMeN4XfVgu2EI2FZzpiI9PXB+ultbTTXW1U9TOz9I9X9blaYb53wDQxjTPrdRQCfY2sExatX6sBiDAz1BchrJfCrMqBQm97RG1j1zTNYG2+pRhUNpUWFLAl8JqTmqJhXgK1t52QW+WzdUwEe6L17jUeot05DI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 56MAgdQo090700;
-	Tue, 22 Jul 2025 19:42:39 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 56MAgdPt090697
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 22 Jul 2025 19:42:39 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <38d8f48e-47c3-4d67-9caa-498f3b47004f@I-love.SAKURA.ne.jp>
-Date: Tue, 22 Jul 2025 19:42:35 +0900
+	s=arc-20240116; t=1753181370; c=relaxed/simple;
+	bh=T9qJH4S/R7Y9U7L1zcb7GfuX4Qq01/z/XzvsNVmzdUI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=GBbBUbWmIv2LApG7JBzN4RR3AYBjvYa53pVSLS3B8cIvgBSw0td42OM2xuT46FKuFM7NJIIjB9QfAyDNWUbZ4Nvx5X/dhdfDb7PsNWJZ69g2JRjWrvetoAljNMdF6vss/f3sUcRytMTe581R5WvfruWAXCby3eota3qqy1bvkU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gG92PNxZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BA70C4CEEB;
+	Tue, 22 Jul 2025 10:49:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753181369;
+	bh=T9qJH4S/R7Y9U7L1zcb7GfuX4Qq01/z/XzvsNVmzdUI=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=gG92PNxZ+3Q0VkLVNW2JOOKzinCjpvki4rDXhoOcW2qnYXCfj4dx5GqZZdhvbnirO
+	 Ju8tEV3WxLx3qlIdYs42rZrqRUKUUDZjtT2GcEUs8uy6JCfCWGh59Znq2mcT70kJnP
+	 RpSnA8OYkfXPFlcJCvb84MlFFlvbQs4ZXG8vs9cjT8grubEmsgfefxZA6p9J0F79Rd
+	 URIZQ03BFlJfv3UtINpoqeg2FLa7mqsOTDvaO1XmikN9QqIUoT4IlU3DEZYGyVgTd/
+	 4GJjp2XhIP/I7q4vm35QCson3HQTiiYjI4RghTGVvRVyLKA0ByOvjQVxpvMRAEAhGA
+	 BypGGT8BexvQA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] hfs: remove BUG() from
- hfs_release_folio()/hfs_test_inode()/hfs_write_inode()
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-        "willy@infradead.org" <willy@infradead.org>
-Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-        "frank.li@vivo.com" <frank.li@vivo.com>,
-        "slava@dubeyko.com" <slava@dubeyko.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-References: <ddee2787-dcd9-489d-928b-55a4a95eed6c@I-love.SAKURA.ne.jp>
- <b6e39a3e-f7ce-4f7e-aa77-f6b146bd7c92@I-love.SAKURA.ne.jp>
- <Z1GxzKmR-oA3Fmmv@casper.infradead.org>
- <b992789a-84f5-4f57-88f6-76efedd7d00e@I-love.SAKURA.ne.jp>
- <24e72990-2c48-4084-b229-21161cc27851@I-love.SAKURA.ne.jp>
- <db6a106e-e048-49a8-8945-b10b3bf46c47@I-love.SAKURA.ne.jp>
- <4c1eb34018cabe33f81b1aa13d5eb0adc44661e7.camel@dubeyko.com>
- <175a5ded-518a-4002-8650-cffc7f94aec4@I-love.SAKURA.ne.jp>
- <954d2bfa-f70b-426b-9d3d-f709c6b229c0@I-love.SAKURA.ne.jp>
- <aHlQkTHYxnZ1wrhF@casper.infradead.org>
- <5684510c160d08680f4c35b2f70881edc53e83aa.camel@ibm.com>
- <93338c04-75d4-474e-b2d9-c3ae6057db96@I-love.SAKURA.ne.jp>
- <b601d17a38a335afbe1398fc7248e4ec878cc1c6.camel@ibm.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <b601d17a38a335afbe1398fc7248e4ec878cc1c6.camel@ibm.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav402.rs.sakura.ne.jp
-X-Virus-Status: clean
+Date: Tue, 22 Jul 2025 12:49:24 +0200
+Message-Id: <DBIIXC694S6P.18BOBCI4LZ4HA@kernel.org>
+Cc: "Danilo Krummrich" <dakr@kernel.org>, <rust-for-linux@vger.kernel.org>,
+ "Bjorn Helgaas" <bhelgaas@google.com>,
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Miguel
+ Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
+ Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "John Hubbard" <jhubbard@nvidia.com>, "Alexandre Courbot"
+ <acourbot@nvidia.com>, <linux-pci@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] rust: Update PCI binding safety comments and add
+ inline compiler hint
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Alistair Popple" <apopple@nvidia.com>
+X-Mailer: aerc 0.20.1
+References: <20250710022415.923972-1-apopple@nvidia.com>
+ <DB87TX9Y5018.N1WDM8XRN74K@kernel.org>
+ <DB9BF6WK8KMH.1RQOOMYBL6UAO@kernel.org>
+ <DB9FUEJUOH3L.14CYPZ8YQT52E@kernel.org>
+ <DB9H6HEF9CKG.2SAPXM8F9KOO3@kernel.org>
+ <DB9IQAU4WPSP.XZL4ZDPT59KU@kernel.org>
+ <bwbern2t7k5fcj6zxze6bjpasu3t26n6dmfptlmhbhd7qmligs@3fgwifsw7qai>
+In-Reply-To: <bwbern2t7k5fcj6zxze6bjpasu3t26n6dmfptlmhbhd7qmligs@3fgwifsw7qai>
 
-On 2025/07/22 2:04, Viacheslav Dubeyko wrote:
-> On Fri, 2025-07-18 at 07:08 +0900, Tetsuo Handa wrote:
->> On 2025/07/18 4:49, Viacheslav Dubeyko wrote:
->>> I assume if we created the inode as normal with i_ino == 0, then we can make it
->>> as a dirty. Because, inode will be made as bad inode here [2] only if rec->type
->>> is invalid. But if it is valid, then we can create the normal inode even with
->>> i_ino == 0.
->>
->> You are right. The crafted filesystem image in the reproducer is hitting HFS_CDR_DIR with
->> inode->i_ino = 0 ( https://elixir.bootlin.com/linux/v6.16-rc6/source/fs/hfs/inode.c#L363   ).
-> 
-> So, any plans to rework the patch?
-> 
+On Tue Jul 22, 2025 at 7:17 AM CEST, Alistair Popple wrote:
+> On Fri, Jul 11, 2025 at 10:46:13PM +0200, Benno Lossin wrote:
+>> On Fri Jul 11, 2025 at 9:33 PM CEST, Danilo Krummrich wrote:
+>> > On Fri Jul 11, 2025 at 8:30 PM CEST, Benno Lossin wrote:
+>> >> On Fri Jul 11, 2025 at 5:02 PM CEST, Danilo Krummrich wrote:
+>> >>> On Thu Jul 10, 2025 at 10:01 AM CEST, Benno Lossin wrote:
+>> >>>> On Thu Jul 10, 2025 at 4:24 AM CEST, Alistair Popple wrote:
+>> >>>>> diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
+>> >>>>> index 8435f8132e38..5c35a66a5251 100644
+>> >>>>> --- a/rust/kernel/pci.rs
+>> >>>>> +++ b/rust/kernel/pci.rs
+>> >>>>> @@ -371,14 +371,18 @@ fn as_raw(&self) -> *mut bindings::pci_dev {
+>> >>>>> =20
+>> >>>>>  impl Device {
+>> >>>>>      /// Returns the PCI vendor ID.
+>> >>>>> +    #[inline]
+>> >>>>>      pub fn vendor_id(&self) -> u16 {
+>> >>>>> -        // SAFETY: `self.as_raw` is a valid pointer to a `struct =
+pci_dev`.
+>> >>>>> +        // SAFETY: by its type invariant `self.as_raw` is always =
+a valid pointer to a
+>> >>>>
+>> >>>> s/by its type invariant/by the type invariants of `Self`,/
+>> >>>> s/always//
+>> >>>>
+>> >>>> Also, which invariant does this refer to? The only one that I can s=
+ee
+>> >>>> is:
+>> >>>>
+>> >>>>     /// A [`Device`] instance represents a valid `struct device` cr=
+eated by the C portion of the kernel.
+>> >>>>
+>> >>>> And this doesn't say anything about the validity of `self.as_raw()`=
+...
+>> >>>
+>> >>> Hm...why not? If an instance of Self always represents a valid struc=
+t pci_dev,
+>> >>> then consequently self.as_raw() can only be a valid pointer to a str=
+uct pci_dev,
+>> >>> no?
+>> >>
+>> >> While it's true, you need to look into the implementation of `as_raw`=
+.
+>> >> It could very well return a null pointer...
+>> >>
+>> >> This is where we can use a `Guarantee` on that function. But since it=
+'s
+>> >> not shorter than `.0.get()`, I would just remove it.
+>> >
+>> > We have 15 to 20 as_raw() methods of this kind in the tree. If this re=
+ally needs
+>> > a `Guarantee` to be clean, we should probably fix it up in a treewide =
+change.
+>> >
+>> > as_raw() is a common pattern and everyone knows what it does, `.0.get(=
+)` seems
+>> > much less obvious.
+>
+> Coming from a C kernel programming background I agree `.as_raw()` is more
+> obvious than `.0.get()`.
 
-What do you mean by "rework"?
+Makes sense, then I wouldn't recommend changing it.
 
-I can update patch description if you have one, but I don't plan to try something like below.
+> However now I'm confused ... what if anything needs changing to get
+> these two small patches merged?
 
-@@ -393,20 +393,30 @@ struct inode *hfs_iget(struct super_block *sb, struct hfs_cat_key *key, hfs_cat_
-        switch (rec->type) {
-        case HFS_CDR_DIR:
-                cnid = be32_to_cpu(rec->dir.DirID);
-                break;
-        case HFS_CDR_FIL:
-                cnid = be32_to_cpu(rec->file.FlNum);
-                break;
-        default:
-                return NULL;
-        }
-+       if (cnid < HFS_FIRSTUSER_CNID) {
-+               switch (cnid) {
-+               case HFS_ROOT_CNID:
-+               case HFS_EXT_CNID:
-+               case HFS_CAT_CNID:
-+                       break;
-+               default:
-+                       return NULL;
-+               }
-+       }
-        inode = iget5_locked(sb, cnid, hfs_test_inode, hfs_read_inode, &data);
-        if (inode && (inode->i_state & I_NEW))
-                unlock_new_inode(inode);
-        return inode;
- }
+I'd like to see `as_raw` get a `Guarantee` section, but that is
+independent from this patch series.
 
+---
+Cheers,
+Benno
 
