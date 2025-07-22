@@ -1,149 +1,107 @@
-Return-Path: <linux-kernel+bounces-741657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 963FDB0E75B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:51:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 904CCB0E756
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:51:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D25E8564A6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 23:51:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B804E4E4F58
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 23:50:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E94528C5C0;
-	Tue, 22 Jul 2025 23:51:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0304028C03A;
+	Tue, 22 Jul 2025 23:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="lCikRG/3"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE4A288C06;
-	Tue, 22 Jul 2025 23:51:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="cX1LCA9E"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B74722E371F;
+	Tue, 22 Jul 2025 23:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753228282; cv=none; b=fTlST4OElnFvnmeezOnG6OSYckMwAiAYTFe71+GO15/DXBT/nV6hc1OGZzy2Ewgwj4FQ41Lmx8y75SrHspE3lSBFxRb6c1XdJAUySfYN+QTePF2BHR+zHHLks/SfSClCIoBZqngLxYs2JtE8BiyWvL4VHbS6sC4YGj+/P9pchrE=
+	t=1753228275; cv=none; b=D73I853L0ViwgWavdHU8PXQHcL5oLQeQibcXQEUx4Tja+JrGEleMMPeD5VG+WM9OFYg586P8SqLKqQw2ZD+jwC30gsLpg4REIu1FEE95zxnKIeSu4pw/vNz0sFPzU+30gk9oNdKN6OPgB1E8jXLHfvI0M+4PZzXG26qnNpnr/NA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753228282; c=relaxed/simple;
-	bh=s0SPZUlIJrNHrAp3QQbT8heQEIq53pX0dvoodTTNWgs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=mx++JZvuUjW3EyNCHywGvcKXCok1r1V4kT5Zc/2mTqlg6Z+IfkqJTDQ+mUR4YmRozKObYRJQTIAOWexwIISGGQoBsCCgC0sUEGKA4csfaJddEfhKESKh+/wPyN3Unqg2NzESK/sSVpzPS1Z0J+f+RkCvkFEy231iyb0ikUfX9w8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=lCikRG/3; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1006)
-	id D8CD421268BD; Tue, 22 Jul 2025 16:51:20 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D8CD421268BD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1753228280;
-	bh=fGkskXaadGQwkh+tyKqVMvueO3YLxo/uj7ttzFTaEVQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lCikRG/3FCeKBN1OAAPJCm3/QiZ7DrtSdi90HYRiyysVIhWNcRE7o3S5eA9p419rI
-	 +12XDKcmhvMraXLwa9orWC0kQHW09MvtJmuiUlCOuM9F813Bis6h4d1mPGAJGNY/lW
-	 jFSLUhOcBpslafHoK3n3NojoppFvesS64pO/JEyY=
-From: Haiyang Zhang <haiyangz@linux.microsoft.com>
-To: linux-hyperv@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: haiyangz@microsoft.com,
-	kys@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	andrew+netdev@lunn.ch,
-	sd@queasysnail.net,
-	viro@zeniv.linux.org.uk,
-	chuck.lever@oracle.com,
-	neil@brown.name,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	davem@davemloft.net,
-	kuniyu@google.com,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH net, 2/2] hv_netvsc: Fix panic during namespace deletion with VF
-Date: Tue, 22 Jul 2025 16:50:48 -0700
-Message-Id: <1753228248-20865-3-git-send-email-haiyangz@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1753228248-20865-1-git-send-email-haiyangz@linux.microsoft.com>
-References: <1753228248-20865-1-git-send-email-haiyangz@linux.microsoft.com>
+	s=arc-20240116; t=1753228275; c=relaxed/simple;
+	bh=pSjTUTnBigYPoE87KhTvq+guUmZTsTwJYEHzNpQKlao=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=DrOaSYv5XjWHy1xUCDQjDaYN6XUm7ic1OE9k/8SB0wl8dGhF+J5H2Jz0zpHrhTXWcwGZxE0R/QzK38JW86i+Wr20+v0hLnV1kQAEPq5Fg7DKtJCrrPwKzwEdfN2EsgLBrUopCuAGTrxCNrYH942Yv0g4ORUPBFvnaLr5ILbckFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=cX1LCA9E; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753228107;
+	bh=rFLT+SZL2lnoHRgvDZSzdIXwzoOFqOZM/J0nc7Kd06A=;
+	h=Date:From:To:Cc:Subject:From;
+	b=cX1LCA9EWTvEukeVI/CIUA9T61cB3vvBhyN3D6GZTaGITpTC5jZQiMP+M0XDJv8sr
+	 cIsCZSb8yrkwn+4wVz+dJvjKk45DpqI7RfFu6KfdRHCvdubGRnXTiXus4nBm0sPwb8
+	 9MbYjz3mPcSBkcwK5LtFHmJ2EMFzYboSn/WsJ98ZmIhU4TA+ReKZX1doYIdXkn06KF
+	 jNby971zU+HN88zoyKmlF1ktxHLUSrneWJVvPApjclJP7Pxx59qbOURLzNFXBG8vHE
+	 zIeXwS9xtJtsddyrAQi7UjlYMsZNzD2xLiNMqPjMvX782mPGVdfdRl04N73p80g2na
+	 Cv131KXY58RpQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bmv971KSRz4wbY;
+	Wed, 23 Jul 2025 09:48:27 +1000 (AEST)
+Date: Wed, 23 Jul 2025 09:51:10 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Kevin Hilman <khilman@baylibre.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: ARM <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patches in the omap tree
+Message-ID: <20250723095110.2038c205@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/9Jjba41b6jUujwXjIUhf+dV";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-From: Haiyang Zhang <haiyangz@microsoft.com>
+--Sig_/9Jjba41b6jUujwXjIUhf+dV
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The existing code move the VF NIC to new namespace when NETDEV_REGISTER is
-received on netvsc NIC. During deletion of the namespace,
-default_device_exit_batch() >> default_device_exit_net() is called. When
-netvsc NIC is moved back and registered to the default namespace, it
-automatically brings VF NIC back to the default namespace. This will cause
-the default_device_exit_net() >> for_each_netdev_safe loop unable to detect
-the list end, and hit NULL ptr:
+Hi all,
 
-[  231.449420] mana 7870:00:00.0 enP30832s1: Moved VF to namespace with: eth0
-[  231.449656] BUG: kernel NULL pointer dereference, address: 0000000000000010
-[  231.450246] #PF: supervisor read access in kernel mode
-[  231.450579] #PF: error_code(0x0000) - not-present page
-[  231.450916] PGD 17b8a8067 P4D 0
-[  231.451163] Oops: Oops: 0000 [#1] SMP NOPTI
-[  231.451450] CPU: 82 UID: 0 PID: 1394 Comm: kworker/u768:1 Not tainted 6.16.0-rc4+ #3 VOLUNTARY
-[  231.452042] Hardware name: Microsoft Corporation Virtual Machine/Virtual Machine, BIOS Hyper-V UEFI Release v4.1 11/21/2024
-[  231.452692] Workqueue: netns cleanup_net
-[  231.452947] RIP: 0010:default_device_exit_batch+0x16c/0x3f0
-[  231.453326] Code: c0 0c f5 b3 e8 d5 db fe ff 48 85 c0 74 15 48 c7 c2 f8 fd ca b2 be 10 00 00 00 48 8d 7d c0 e8 7b 77 25 00 49 8b 86 28 01 00 00 <48> 8b 50 10 4c 8b 2a 4c 8d 62 f0 49 83 ed 10 4c 39 e0 0f 84 d6 00
-[  231.454294] RSP: 0018:ff75fc7c9bf9fd00 EFLAGS: 00010246
-[  231.454610] RAX: 0000000000000000 RBX: 0000000000000002 RCX: 61c8864680b583eb
-[  231.455094] RDX: ff1fa9f71462d800 RSI: ff75fc7c9bf9fd38 RDI: 0000000030766564
-[  231.455686] RBP: ff75fc7c9bf9fd78 R08: 0000000000000000 R09: 0000000000000000
-[  231.456126] R10: 0000000000000001 R11: 0000000000000004 R12: ff1fa9f70088e340
-[  231.456621] R13: ff1fa9f70088e340 R14: ffffffffb3f50c20 R15: ff1fa9f7103e6340
-[  231.457161] FS:  0000000000000000(0000) GS:ff1faa6783a08000(0000) knlGS:0000000000000000
-[  231.457707] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  231.458031] CR2: 0000000000000010 CR3: 0000000179ab2006 CR4: 0000000000b73ef0
-[  231.458434] Call Trace:
-[  231.458600]  <TASK>
-[  231.458777]  ops_undo_list+0x100/0x220
-[  231.459015]  cleanup_net+0x1b8/0x300
-[  231.459285]  process_one_work+0x184/0x340
+The following commits are also in the arm-soc tree as different commits
+(but the same patches):
 
-To fix it, skip the VF NIC's namespace change with netvsc when the VF
-namespace is being cleaned up, because the default_device_exit_net() will
-do it later.
+  0711a8dcea2a ("bus: del unnecessary init var")
+  536407b5b87d ("arm: multi_v7_defconfig: Enable TPS65219 regulator")
+  299c277aa74c ("arm: omap2plus_defconfig: Enable TPS65219 regulator")
 
-Cc: stable@vger.kernel.org
-Fixes: 4c262801ea60 ("hv_netvsc: Fix VF namespace also in synthetic NIC NETDEV_REGISTER event")
-Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
----
- drivers/net/hyperv/netvsc_drv.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+These are commits
 
-diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
-index 8be9bce66a4e..8fc05a8c0018 100644
---- a/drivers/net/hyperv/netvsc_drv.c
-+++ b/drivers/net/hyperv/netvsc_drv.c
-@@ -2788,13 +2788,21 @@ static void netvsc_event_set_vf_ns(struct net_device *ndev)
- {
- 	struct net_device_context *ndev_ctx = netdev_priv(ndev);
- 	struct net_device *vf_netdev;
-+	struct net *vfnet;
- 	int ret;
- 
- 	vf_netdev = rtnl_dereference(ndev_ctx->vf_netdev);
- 	if (!vf_netdev)
- 		return;
- 
--	if (!net_eq(dev_net(ndev), dev_net(vf_netdev))) {
-+	vfnet = dev_net(vf_netdev);
-+	/* Do not move it now if its net is being cleaned up,
-+	 * net_cleanup_work will move it.
-+	 */
-+	if (llist_on_list(&vfnet->cleanup_list))
-+		return;
-+
-+	if (!net_eq(dev_net(ndev), vfnet)) {
- 		ret = dev_change_net_namespace(vf_netdev, dev_net(ndev),
- 					       "eth%d");
- 		if (ret)
--- 
-2.34.1
+  8adc8e1657e1 ("bus: del unnecessary init var")
+  acbf491e07ad ("arm: multi_v7_defconfig: Enable TPS65219 regulator")
+  d50faff72218 ("arm: omap2plus_defconfig: Enable TPS65219 regulator")
 
+in the arm-soc tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/9Jjba41b6jUujwXjIUhf+dV
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiAI+4ACgkQAVBC80lX
+0GxvPQf/a/LXGMlP3GXcKR+2jPIo52PRVCiO3jTFD2NbPtZWPW0ITEw89cPDxvlw
+u5lj8RvNnr8ZnBr4onOCR2GCmCIyzKpP6E0eKnc8HElUXpBnj2/iEryc1v947Wq7
+s7SgLQWSfHQJl4UEd/Cb2SY4mSyxHNWjl9+ITMsYqQSMbgtq2inWhrJgMahwyulL
+/e5GmweKtHzoDRHLD4S+QxLI29byL12U7toysLGQumhpX3ESMPkHd55IZhOu2qtq
+nJJZ0hPshcLqN2Lzlr58QC5oLwyEXdI3AbUHeIAUhKKKwtvlY6VxhaG1e8MFFx4E
+qDm+WMYh0Rm8Vntfv7PI3b5LDZ72pw==
+=Gpci
+-----END PGP SIGNATURE-----
+
+--Sig_/9Jjba41b6jUujwXjIUhf+dV--
 
