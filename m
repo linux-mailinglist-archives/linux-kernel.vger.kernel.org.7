@@ -1,164 +1,146 @@
-Return-Path: <linux-kernel+bounces-740688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6CB4B0D7E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:11:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CBA7B0D7E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:11:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3601D561FC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:10:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1DE818906D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903722E3AE4;
-	Tue, 22 Jul 2025 11:09:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1FE2D77EF;
+	Tue, 22 Jul 2025 11:11:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kjirIiKc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gUl+WizS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9592E1C7A;
-	Tue, 22 Jul 2025 11:09:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5F52989B4;
+	Tue, 22 Jul 2025 11:11:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753182594; cv=none; b=pMTXuYx0p4dB7hVI5vEzNKlxU3EJWQbDwRVBI2Q/ztCuIoz/7jnmwee7jyZeWI8fkZplzOsVVHasL5lKm3IDIe8u4B1MazteAzgUFFz+gmH8VXAJ4A0O+Ks475QbspmOVYjNMnynOmFyrPlKodSq/g3VJs4z+o20DP7CCYdjc78=
+	t=1753182665; cv=none; b=CHUxfLN9DHc6eJ+QOS/yLEwoV1HH35zNSPdlUHlOxCKTHMdzCDub18JJLk8UE0PQJoR5cnRUxeP1C+xTS5Np2eszO9lKOdLvcxcmk7vcLhWG82Wr9Vv5dfjZpGLSLZ3Xd5TIYLY67jpo6Y2rVCmZ1UoujNf8uwvh9VP/vmHJYjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753182594; c=relaxed/simple;
-	bh=knCHRYIvYTmiYB6u/STPa5dxiHcIx2CJey7pqvImmZo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AYIj7Noka1CjRP06RbhfLMhA8O6iJGroryH6AgjcEjnyhuK45DiSoLXd4GghgOUMn+p82Y9Ms/8nmNI9HCiz/XOfdDdluCLwSLOcMM/DjxaiiU7zeVXtOFM/lKGx8gsVmnc3XG+qPP4UAMBMzwsYGQyi+n1yQAjU4LamRGIr5HY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kjirIiKc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21F23C4CEEB;
-	Tue, 22 Jul 2025 11:09:48 +0000 (UTC)
+	s=arc-20240116; t=1753182665; c=relaxed/simple;
+	bh=gvtrKAfjWMC9h6Jzp7M0UO2Golla0KnYyG3amvGoSqA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JPSfQSKSxpodNkfPDCqGpPenWBa+dLHOtrIWVMePh54IBKzIhhmAeTVNtgJjpxuNiqE8pyAG1Ba1VYOCrxq/KK22OBvm0tWs9/jZpWsLi4nZA8NeXVhKDMqH8S6CVX6CTQ1GxbYl67gtsxj/NNHNpLCxMu7TVGl8xsBkqCIRG5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gUl+WizS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A83C4C4CEEB;
+	Tue, 22 Jul 2025 11:11:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753182594;
-	bh=knCHRYIvYTmiYB6u/STPa5dxiHcIx2CJey7pqvImmZo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kjirIiKcte0nSMAytRQyqR0+bJMRxy/akYEtt4sihCHMu+oTxKlD8TDiO6j5Hlo/V
-	 LBM5lb+Kc1LQmyz+/xXzKCn0zZHPEC7Kq0ps7r5rS4Dl+vsKMxx8yDMH/LBIvwZ6Hd
-	 PCq4pT3i0JKOpNskKTNlDTvJoA2kxB3VmN7+Mdi9CjOAGjaT5KhThGv+R2Mrg09rNa
-	 7QIeoGOpdYwMtY9lJIjzWLhqxcmCjWHlqVkiRoIS8kugr9QEkWMlQdgB9KLgqAs/uC
-	 sWXqqa/1GRwenVygyrnCVw+eiu+c+CaMegoc0fzdQXc68FBFzMePe7hU1GW9MDikFB
-	 YjiTiS5H6VLmw==
-Message-ID: <86ee9383-d3dd-40f4-adb8-1f7375018bf5@kernel.org>
-Date: Tue, 22 Jul 2025 13:09:47 +0200
+	s=k20201202; t=1753182664;
+	bh=gvtrKAfjWMC9h6Jzp7M0UO2Golla0KnYyG3amvGoSqA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=gUl+WizSkLsK04OclAYFJpDZoXctQJJVP087CqvSIq34a5zr4R+dY5v/lzKKD4Quw
+	 OSnDecK+n5+IMRMULipnROnSy/7pcljsS0+WoCRzrQFiTgpES5/V5CCrHuuISlUSf6
+	 oxXw7KVdB6LzRqu6UxATK12bj5bl5tVRS/czpnzAJ73QRL9UeuJ3uo1+FaCHZutX4X
+	 CY6MT1fC3eOVxL8BjEoO0H8YHNwNG1QOM2c62j8SpRXRcxUsQlN9ZkRpn9s4/zM9ag
+	 KmTAdY0lPmZUNtaLavsWK/P4WvHr7v/s14cflDjS+FtIJzO98w0pmmqRf3eFPAO/Hi
+	 CtLRj3UOJP2Zg==
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-60d666804ebso3151058eaf.1;
+        Tue, 22 Jul 2025 04:11:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWWjxdto5AixjROL1xW0LdbTTQFnQUElKzRuJiRqsgs7M0b6LF336lvtup++XfVFKQZe0C2oaqN8BqO9Ym8@vger.kernel.org, AJvYcCXE7TIuM8POkquqDIKRkXIQxCG7fNH7+qBXFsFGbNLzkAWDa47G1Qgjlyp9VBGnsG3HUMcDSX0Lpbbw@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLbn5bO6R909/tWSM3K73MFxu7PbyAH/qZwhhJK/Fm/1/an8k5
+	hRHngUkoUiOkw2XkANh/qjyk1IufnJ6PaJ55s6oam9tKjpHz3D2USLUG9aQJwxDWMXeNn5Pd3Uc
+	yszfH+huw9QBU7b0bElPSviGuYtcXcAw=
+X-Google-Smtp-Source: AGHT+IEUaAqeddjavenbxmf8JHUpHj1czJXPInIlIk0sSkvKdQsPjT6IAAHFVaMDOmI3Hy6P2FOgT/rdvITuiu4aIUw=
+X-Received: by 2002:a05:6808:188e:b0:407:39f1:ac80 with SMTP id
+ 5614622812f47-424a5c17052mr2396203b6e.5.1753182664011; Tue, 22 Jul 2025
+ 04:11:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/8] dt-bindings: media: mediatek: decoder: Add MT8189
- mediatek,vcodec-decoder
-To: =?UTF-8?B?S3lyaWUgV3UgKOWQtOaZlyk=?= <Kyrie.Wu@mediatek.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- =?UTF-8?B?R2VvcmdlIFN1biAo5a2Z5p6XKQ==?= <George.Sun@mediatek.com>,
- =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= <tiffany.lin@mediatek.com>,
- "andrzejtp2010@gmail.com" <andrzejtp2010@gmail.com>,
- "nhebert@chromium.org" <nhebert@chromium.org>,
- "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "mchehab@kernel.org" <mchehab@kernel.org>,
- "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
- "nicolas.dufresne@collabora.com" <nicolas.dufresne@collabora.com>,
- =?UTF-8?B?WXVuZmVpIERvbmcgKOiRo+S6kemjnik=?= <Yunfei.Dong@mediatek.com>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- =?UTF-8?B?SXJ1aSBXYW5nICjnjovnkZ4p?= <Irui.Wang@mediatek.com>,
- "robh@kernel.org" <robh@kernel.org>,
- "sebastian.fricke@collabora.com" <sebastian.fricke@collabora.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "christophe.jaillet@wanadoo.fr" <christophe.jaillet@wanadoo.fr>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>, "arnd@arndb.de" <arnd@arndb.de>,
- =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?=
- <Andrew-CT.Chen@mediatek.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>
-References: <20250721105520.5625-1-kyrie.wu@mediatek.com>
- <20250721105520.5625-2-kyrie.wu@mediatek.com>
- <20250722-sly-sparkling-kangaroo-6ab9ed@kuoka>
- <7e148282f683f8e0e00a1ad29ada8319ee9e24f4.camel@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <7e148282f683f8e0e00a1ad29ada8319ee9e24f4.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250619061327.1674384-1-lihuisong@huawei.com>
+ <CAJZ5v0gjkZ3a-BwgJxjUJbNwu5E_j9VUUHrR3M=a+KPTA-tZcA@mail.gmail.com>
+ <6a35291a-32e8-461e-a0e5-405b7b5d24ce@huawei.com> <CAJZ5v0hXHgyCKoEOMTtp0c_yu__vGGDcPnqaUML2Xg7hyJWc3g@mail.gmail.com>
+ <4c1926ef-f9fa-49d5-8d5f-ed4ee2638d62@huawei.com>
+In-Reply-To: <4c1926ef-f9fa-49d5-8d5f-ed4ee2638d62@huawei.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 22 Jul 2025 13:10:51 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0j8k3FXx0TCF8nF+KTGcZL8CG7yZ6_Z11jpqOM9x_0w6g@mail.gmail.com>
+X-Gm-Features: Ac12FXy-gqefBxgu4Y37L6F2_GNinpb07bXrbpS2H07UyTOtiCiXWxL-lypkZGA
+Message-ID: <CAJZ5v0j8k3FXx0TCF8nF+KTGcZL8CG7yZ6_Z11jpqOM9x_0w6g@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: processor: idle: Fix resource rollback in acpi_processor_power_init
+To: "lihuisong (C)" <lihuisong@huawei.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linuxarm@huawei.com, 
+	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, 
+	yubowen8@huawei.com, liuyonglong@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 22/07/2025 10:11, Kyrie Wu (吴晗) wrote:
-> On Tue, 2025-07-22 at 09:25 +0200, Krzysztof Kozlowski wrote:
->> External email : Please do not click links or open attachments until
->> you have verified the sender or the content.
->>
->>
->> On Mon, Jul 21, 2025 at 06:55:13PM +0800, Kyrie Wu wrote:
->>> Add compatible for video decoder on MT8189 platform, which is a
->>> pure single core architecture.
->>
->> Looks compatible with existing ones and nothing in commit msg
->> explains
->> why it was not made compatible. Describe the hardware, say something
->> useful to avoid such questions.
->>
->> Best regards,
->> Krzysztof
->>
-> Dear Krzysztof,
-> 
-> There are two reasons for adding a new compatible string to MT8189:
-> On the one hand, MT8189 is a pure single-core hardware chip, so the
-> of_device_id data is different;
+On Mon, Jul 14, 2025 at 3:34=E2=80=AFAM lihuisong (C) <lihuisong@huawei.com=
+> wrote:
+>
+>
+> =E5=9C=A8 2025/7/3 19:09, Rafael J. Wysocki =E5=86=99=E9=81=93:
+> > On Thu, Jul 3, 2025 at 8:23=E2=80=AFAM lihuisong (C) <lihuisong@huawei.=
+com> wrote:
+> >> Hi,
+> >>
+> >> Thanks for your review.
+> >>
+> >>
+> >> =E5=9C=A8 2025/7/3 1:42, Rafael J. Wysocki =E5=86=99=E9=81=93:
+> >>> On Thu, Jun 19, 2025 at 8:13=E2=80=AFAM Huisong Li <lihuisong@huawei.=
+com> wrote:
+> >>>> There are two resource rollback issues in acpi_processor_power_init:
+> >>>> 1> Do not unregister acpi_idle_driver when do kzalloc failed.
+> >>>> 2> Do not free cpuidle device memory when register cpuidle device fa=
+iled.
+> >>>>
+> >>>> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+> >>>> ---
+> >>>>    drivers/acpi/processor_idle.c | 24 +++++++++++++++++-------
+> >>>>    1 file changed, 17 insertions(+), 7 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_=
+idle.c
+> >>>> index 2c2dc559e0f8..3548ab9dac9e 100644
+> >>>> --- a/drivers/acpi/processor_idle.c
+> >>>> +++ b/drivers/acpi/processor_idle.c
+> >>>> @@ -1392,8 +1392,10 @@ int acpi_processor_power_init(struct acpi_pro=
+cessor *pr)
+> >>>>                   }
+> >>>>
+> >>>>                   dev =3D kzalloc(sizeof(*dev), GFP_KERNEL);
+> >>>> -               if (!dev)
+> >>>> -                       return -ENOMEM;
+> >>>> +               if (!dev) {
+> >>>> +                       retval =3D -ENOMEM;
+> >>>> +                       goto unregister_driver;
+> >>> No, unregistering the driver here is pointless.
+> >> I don't quite understand why here is pointless. Can you explain it?
+> > When this function is run for another CPU, it will attempt to register
+> > the driver again if it is unregistered here.
+> Yeah, got it.
+> So registering cpuidle also has a potential race issue here.
+> >
+> > Quite frankly, the driver should be registered before running this
+> > function because it is a CPU hotplug callback and registering a
+> > cpuidle driver from within it is quite questionable.
+> >
+> > Alternatively, it can be registered when all of the CPUs have been brou=
+ght up.
+> Agree with you.
+> The reason why is that the initialization of acpi_idle_driver depands on
+> the power management information of CPU.
+> But the power management information of CPU is obtained in this callback.
+> I have an idea.
+> Because acpi_idle_driver is applied to all possiable CPUs. And use the
+> power information of the first onlined CPU to initialize and register
+> acpi_idle_driver, currently.
+> So I think we can use this logic and dependency to extract a function to
+> initialize and register acpi_idle_driver. And put this function to
+> acpi_processor_driver_init().
+> I tested it is ok.
+> What do you think about this?
 
-Not relevant. Your of_device_id is wrong and based on that you claim the
-hardware is different?
-
-Describe the hardware.
-
-Best regards,
-Krzysztof
+This is one of the options I mentioned above, isn't it?
 
