@@ -1,458 +1,158 @@
-Return-Path: <linux-kernel+bounces-741401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DA98B0E3A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:45:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE227B0E3A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:48:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C37E3188C783
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:45:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADB4C1C85402
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:48:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017EB283159;
-	Tue, 22 Jul 2025 18:45:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A449B28314B;
+	Tue, 22 Jul 2025 18:48:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="kevGk1xd"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dQ5ZvArU"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399B027A90A;
-	Tue, 22 Jul 2025 18:44:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DBB1221297;
+	Tue, 22 Jul 2025 18:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753209902; cv=none; b=e4fRHCwrthGEn0o8EGPW+ms8wNw/jtB/jXHsl1oSJ1Tp4Oq+TWggbjlLxU6M9hFYHXew0r19N41Oic/dw3NOQQqv4rcdfbXkssDrgPEDEGNHfVL3EdOAWi8GDo5E/+Q3hmMDbjZSokiqwQiRnI8iBqfDRzOOAJP4g8y+4+JOOeY=
+	t=1753210113; cv=none; b=sQ7+a5VVeeqxyLekRb4rBuh1KOnmhxVOQtgEKyfr54yU4dJghMtmLLK2pw0Cr2bu8CrlD6RsZ0ASzkEjplcTHWuBmkjfSvK1nUWOhGRNU8dGoZvO3IQdjQT/VkvxnLotb9tx4WVUqLE+x9j/8yzCl1VHBQ62JWokSwapHpJv9SA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753209902; c=relaxed/simple;
-	bh=SLKvzAT89jPUFnUSCiR3xxj8OPGfIaz2voRSwJziO+s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Klwx2f/zo9hxyBx2X8l8263/e47nMWmCy9Or6Tx5sRoQjCXF1WBtt9L4eNYmDHCgopW//8fwVHFLbw9cjUBBmHO8nBQrYIw1C34o+FNkK3jjHv/1M/iPJTbo88L297/B40VJW6brn60QejE28o12xpLIjjJFvILVBFCJzXEzLRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=kevGk1xd; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=3HtOKnsMG2UY345X2kPgN4RXmcGzCUFHRqFBmt+dJNE=; b=kevGk1xdohqAKDwhvqqjLEZdJF
-	Yv4yLCI20yd4Ipp2orXV+G6kH2YV5nV2eVgKWq75Ti1S2IiWZjiBWGhsd/ZLNnRvf9J77FbKttIe6
-	DRLRghsckE6slquFKVKvUHT5kkH5oXtpeGScoXbPGzB5dU8ty+PItxBDshQgpyt9RnPtTGsU++5LE
-	HrKUss+MSW7H7NXngPdxTbDD6R7jZK9OVQjVpQYNRJ7XanI3hr1V+WX4Upx1Bqs4caAAJwGkDcduD
-	NVb/4VrYzQlW84bOfBF5LkLXNWNirP9Bklok1hyhBZlGQP80mGgxSOqY19En0cU+CYIVO+0mgQzUf
-	gcgqD5XQ==;
-Received: from i53875ad2.versanet.de ([83.135.90.210] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1ueHys-0006YW-RQ; Tue, 22 Jul 2025 20:44:50 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Rob Herring <robh@kernel.org>, Erik Beck <xunil@tahomasoft.com>
-Cc: linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH 2/2 v2a]: New board support,LinkStar-H68k-1432v1 (RK3568)
-Date: Tue, 22 Jul 2025 20:44:49 +0200
-Message-ID: <5026588.31r3eYUQgx@diego>
-In-Reply-To: <87FE3887-4787-4075-BE44-D11E8F15A6B7@tahomasoft.com>
-References: <87FE3887-4787-4075-BE44-D11E8F15A6B7@tahomasoft.com>
+	s=arc-20240116; t=1753210113; c=relaxed/simple;
+	bh=zQ/4OwDLfn5dpcA3J5EKTLu+pBN0isLZrN3tDuqtwno=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dQBqrkNSwfff2wIvHUe7Ntpm3k4Q1Ms6fmfhZsgHaN8MIHlIE0XytPd0ps5WEIj6X1+UbNpNy/ctlXE5QSwoCGYxlqh7nYvJeSrYNx/at83EpRfI5yH/Bhz8eFuWqTy71dAYQI3xOAAIgr/CuKfe+0ZjfM8kvCfZlIQXUpKY1FM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dQ5ZvArU; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6fafb6899c2so2449446d6.0;
+        Tue, 22 Jul 2025 11:48:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753210110; x=1753814910; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=9Fj7cC1Bb149c271AILgPqn/RqP8CD+fwWfP4khPOcY=;
+        b=dQ5ZvArUhkGiZoNSjJQjPSvebhnPaChd5ML1CuJYkSccVnTZUmiHucciwilFbaayd0
+         YGb0hE5I4IDNwSe08RrwxpeNjRgFS2n41cuZO7psfDemhysJV15NNWdEKy3ngnH5+bC8
+         lB49054zkcqCxrfPKJDnlEF34dtZp736Eg03uvAfQ6cdIhbGYzKogAEFORZbcYsrYQXj
+         CKppUKbzDQhLOIIZOI91iqSCycSjwXHlvn9g97+eUL2Zi8fOMiyc24Ok5CcxO5aWzjzq
+         V6m/6jmKn/CYaqY43QmdNR8tTmoduJvBXIytRMWPAzNdISdetdxDydFj6tUBovzDZXuv
+         tprw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753210110; x=1753814910;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9Fj7cC1Bb149c271AILgPqn/RqP8CD+fwWfP4khPOcY=;
+        b=COBT1tfNvLcOKbjKHmWdF9Kr7i3h+PM9qnNZKiqbDVKFbLE33Wv00RnLuYZBmpKtP6
+         sWQBAhzDxeaZHZCVgQBCRByRBu0Tcj4PEReJ4Djq0rFKFVcCGNSZ4mCSxfMO4WvvFg9k
+         20/L0N6dDCOxsQvPNAiolmy9S0Lna19BF/wpV5UwADpDd6VCMucfttXSrWN6omq5MD6F
+         AmrgEjeW3NAoEstIkBSkk5kSm1Ifsns6CgNvIPi3D2HSXZ49EyBDCLMMLIUhjDwyBQqq
+         bDGjfLxZO2nIzugKgE7HgoaluGWm6E4rtRBJkxSXflr+6tUPdKCOBsUEgxcOeU3cNylS
+         0LJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVlEY9ijpy5jgkgdqP+RcG2wkYdjwwmDhAXf5wzahozT2fHXPtC9GQJaDp+tJgN4Mimnmp2DO+2C+iCxbY=@vger.kernel.org, AJvYcCXmaqDiUjVvdRnh5Odv14js7r3GvP5RRL5NX8HAC6p5LvL4bdm0sjRDWle8t4od4mb0NJc5ZJp/@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHUWXQDiulHaGyFIxsACPhY/19FQ2b1V9WsLLlbgWZPLBEJFqj
+	P7gHOqm26pNiLL/SRpbzx89KLgKiBea1YLEfnUqR6rIahIAcNP06/RqS
+X-Gm-Gg: ASbGnctHKOk01WKdNL8XOBYfAV0fUGzckcHmNFlEDRDTV2pSYaKLCX7VRZbfHXCcPcA
+	K8ot9Z8nX/EfzJc3BIVxlc10un9HndVM/eRbqQKGdI3hGTTtYTUXaxiOiGPwTZuglw1/GHXwfEN
+	Rz29rycY/xxr4CgrLQfh6XJM5xN1Q+6QzDiUd2fuzXZjqt9rhgs6qOeoTQSF/+CXk56eFP4JaCg
+	mBazZ3B/VTsl1RqUIUy1KrGsQ9OwcHfeBHYKUFK96YVxi7RuNdYucnjeG2p/gbRNTSS/NxhOVNw
+	kSaQa7f8G8z+Pc1sCbuvCbJB0/I1Upxh7/DNdPvcmCF/PVdOLOmkDAsVBs+hQfVDJXI/Kz3c0K8
+	2+wBQ1lRC9Y0OQwZLBr6cl2LNtepzfeInPFnrVG/6enSkBvURdAWYBGAIMBOY
+X-Google-Smtp-Source: AGHT+IE1IdJLWN14lZ/a1hlnhbGAPVlfTg31siwEJTw4A9NxFRu3VoywnycoKul/ySYiWrFw13Skqw==
+X-Received: by 2002:ad4:5f46:0:b0:702:c5d4:3c32 with SMTP id 6a1803df08f44-706eb78a213mr55138156d6.9.1753210110132;
+        Tue, 22 Jul 2025 11:48:30 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7051baaa8c1sm54367276d6.94.2025.07.22.11.48.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Jul 2025 11:48:29 -0700 (PDT)
+Message-ID: <6e16aac4-22e3-4135-b8f4-64c04060e4d3@gmail.com>
+Date: Tue, 22 Jul 2025 11:48:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 00/79] 6.1.147-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250722134328.384139905@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ WlfRzlpjIPmdjgoicA==
+In-Reply-To: <20250722134328.384139905@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Erik,
+On 7/22/25 06:43, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.147 release.
+> There are 79 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 24 Jul 2025 13:43:10 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.147-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Am Dienstag, 22. Juli 2025, 18:49:03 Mitteleurop=C3=A4ische Sommerzeit schr=
-ieb Erik Beck:
-> Thanks Rob;
->=20
-> I had these errors too before I applied my patch to rockchip.yaml. My run=
-s of dtbs_check came up ok after that; I'll double check that my dtschema i=
-s up-to-date.
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-please don't top-post, see [0]
-
-
-> Also, I wound up patching against Heiko's tree, as its rockchip.yaml had =
-more recent additions than Linus' master.
-
-the issue here is more that your mail structure is still broken
-
-I see git-send-email as sender, but somehow you lost the threading.
-Normally git-send-email automatically sends the patches 1+2 as
-"in-reply-to" to the cover-letter. This would mark them as belonging
-together and Robs bot would then handle both patches together.
-
-As it stands now, you "just" sent two completely separate patches.
-
-
-While we're on the topic of structure, the patch subject (first line)
-should reflect the "subsystem" it gets applied to.
-
-So the patch to rockchip.yaml should be something like [1]
-	dt-bindings: arm: rockchip: add LinkStar-H68k-1432v1
-and the patch adding the devicetree should be like [2]
-	arm64: dts: rockchip: add LinkStar-H68k-1432v1
-
-Afterwards a blank line, then a commit message, see all the other
-patches in [1] and [2]. We do expect some short description of the
-device you're adding.
-
-Hope that helps a bit
-Heiko
-
-
-[0] https://www.kernel.org/doc/html/v6.14-rc4/process/submitting-patches.ht=
-ml#use-trimmed-interleaved-replies-in-email-discussions
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/=
-Documentation/devicetree/bindings/arm/rockchip.yaml
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/=
-arch/arm64/boot/dts/rockchip
->=20
-> Thanks for the review and information; I'll stay tuned as this goes throu=
-gh further reviews.
->=20
-> Regards,
->=20
-> Erik
->=20
-> Sent from my iPhone
->=20
-> > On Jul 22, 2025, at 12:39, Rob Herring (Arm) <robh@kernel.org> wrote:
-> > =EF=BB=BF
-> > On Mon, 21 Jul 2025 16:17:12 -0400, Erik Beck wrote:
-> >>=20
-> >> Signed-off-by: Erik Beck <xunil@tahomasoft.com>
-> >> ---
-> >> arch/arm64/boot/dts/rockchip/Makefile         |   1 +
-> >> .../rockchip/rk3568-linkstar-h68k-1432v1.dts  | 740 ++++++++++++++++++
-> >> 2 files changed, 741 insertions(+)
-> >> create mode 100644 arch/arm64/boot/dts/rockchip/rk3568-linkstar-h68k-1=
-432v1.dts
-> >=20
-> >=20
-> > My bot found new DTB warnings on the .dts files added or changed in this
-> > series.
-> >=20
-> > Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-> > are fixed by another series. Ultimately, it is up to the platform
-> > maintainer whether these warnings are acceptable or not. No need to rep=
-ly
-> > unless the platform maintainer has comments.
-> >=20
-> > If you already ran DT checks and didn't see these error(s), then
-> > make sure dt-schema is up to date:
-> >=20
-> >  pip3 install dtschema --upgrade
-> >=20
-> >=20
-> > This patch series was applied (using b4) to base:
-> > Base: attempting to guess base-commit...
-> > Base: tags/v6.16-rc3-17-g404dcaa62651 (exact match)
-> >=20
-> > If this is not the correct base, please add 'base-commit' tag
-> > (or use b4 which does this automatically)
-> >=20
-> > New warnings running 'make CHECK_DTBS=3Dy for arch/arm64/boot/dts/rockc=
-hip/' for 20250721201714.233962-1-xunil@tahomasoft.com:
-> >=20
-> > arch/arm64/boot/dts/rockchip/rk3568-linkstar-h68k-1432v1.dtb: / (seeed,=
-rk3568-linkstar-h68k-1432v1): compatible: 'oneOf' conditional failed, one m=
-ust be fixed:
-> >    ['seeed,rk3568-linkstar-h68k-1432v1', 'rockchip,rk3568'] is too short
-> >    'vamrs,ficus' was expected
-> >    'vamrs,rock960' was expected
-> >    'amarula,vyasa-rk3288' was expected
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['anbernic,rg351m'=
-, 'anbernic,rg351v']
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['anbernic,rg353p'=
-, 'anbernic,rg353ps', 'anbernic,rg353v', 'anbernic,rg353vs', 'anbernic,rg50=
-3', 'anbernic,rg-arc-d', 'anbernic,rg-arc-s']
-> >    'ariaboard,photonicat' was expected
-> >    'armsom,sige5' was expected
-> >    'armsom,sige7' was expected
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['armsom,w3']
-> >    'asus,rk3288-tinker' was expected
-> >    'asus,rk3288-tinker-s' was expected
-> >    'azw,beelink-a1' was expected
-> >    'bigtreetech,cb2-manta' was expected
-> >    'bigtreetech,pi2' was expected
-> >    'mundoreader,bq-curie2' was expected
-> >    'mundoreader,bq-edison2qc' was expected
-> >    'chipspark,popmetal-rk3288' was expected
-> >    'chipspark,rayeager-px2' was expected
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['coolpi,pi-cm5-ev=
-b']
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['coolpi,pi-cm5-ge=
-nbook']
-> >    'coolpi,pi-4b' was expected
-> >    'edgeble,neural-compute-module-2-io' was expected
-> >    'edgeble,neural-compute-module-6a-io' was expected
-> >    'elgin,rv1108-r1' was expected
-> >    'embedfire,lubancat-1' was expected
-> >    'embedfire,lubancat-2' was expected
-> >    'engicam,px30-core-ctouch2' was expected
-> >    'engicam,px30-core-ctouch2-of10' was expected
-> >    'engicam,px30-core-edimm2.2' was expected
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['mntre,reform2-rc=
-ore']
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['firefly,itx-3588=
-j']
-> >    'firefly,px30-jd4-core-mb' was expected
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['firefly,firefly-=
-rk3288', 'firefly,firefly-rk3288-beta']
-> >    'firefly,firefly-rk3288-reload' was expected
-> >    'firefly,firefly-rk3399' was expected
-> >    'firefly,roc-rk3308-cc' was expected
-> >    'firefly,roc-rk3328-cc' was expected
-> >    'firefly,roc-rk3328-pc' was expected
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['firefly,roc-rk33=
-99-pc', 'firefly,roc-rk3399-pc-mezzanine']
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['firefly,roc-rk33=
-99-pc-plus']
-> >    'firefly,roc-rk3576-pc' was expected
-> >    'firefly,rk3566-roc-pc' was expected
-> >    'firefly,rk3568-roc-pc' was expected
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['forlinx,ok3588-c=
-']
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['friendlyarm,nano=
-pi-r2c', 'friendlyarm,nanopi-r2c-plus', 'friendlyarm,nanopi-r2s', 'friendly=
-arm,nanopi-r2s-plus']
-> >    'friendlyarm,nanopi-r3s' was expected
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['friendlyarm,nano=
-pc-t4', 'friendlyarm,nanopi-m4', 'friendlyarm,nanopi-m4b', 'friendlyarm,nan=
-opi-neo4', 'friendlyarm,nanopi-r4s', 'friendlyarm,nanopi-r4s-enterprise']
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['friendlyarm,nano=
-pi-r5c', 'friendlyarm,nanopi-r5s']
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['friendlyarm,nano=
-pi-r6c', 'friendlyarm,nanopi-r6s']
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['friendlyarm,nano=
-pc-t6', 'friendlyarm,nanopc-t6-lts']
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['friendlyarm,cm35=
-88-nas']
-> >    'gameforce,ace' was expected
-> >    'gameforce,chi' was expected
-> >    'geekbuying,geekbox' was expected
-> >    'geniatech,xpi-3128' was expected
-> >    'google,bob-rev13' was expected
-> >    'google,veyron-brain-rev0' was expected
-> >    'google,veyron-fievel-rev8' was expected
-> >    'google,gru-rev15' was expected
-> >    'google,veyron-jaq-rev5' was expected
-> >    'google,veyron-jerry-rev15' was expected
-> >    'google,kevin-rev15' was expected
-> >    'google,veyron-mickey-rev8' was expected
-> >    'google,veyron-mighty-rev5' was expected
-> >    'google,veyron-minnie-rev4' was expected
-> >    'google,veyron-pinky-rev2' was expected
-> >    'google,scarlet-rev15-sku0' was expected
-> >    'google,scarlet-rev15-sku7' was expected
-> >    'google,scarlet-rev15-sku2' was expected
-> >    'google,veyron-speedy-rev9' was expected
-> >    'google,veyron-tiger-rev8' was expected
-> >    'haochuangyi,h96-max-v58' was expected
-> >    'haoyu,marsboard-rk3066' was expected
-> >    'hardkernel,rk3326-odroid-go2' was expected
-> >    'hardkernel,rk3326-odroid-go2-v11' was expected
-> >    'hardkernel,rk3326-odroid-go3' was expected
-> >    'hardkernel,odroid-m1' was expected
-> >    'hardkernel,odroid-m1s' was expected
-> >    'hardkernel,odroid-m2' was expected
-> >    'hugsun,x99' was expected
-> >    'indiedroid,nova' was expected
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['khadas,edge', 'k=
-hadas,edge-captain', 'khadas,edge-v']
-> >    'khadas,edge2' was expected
-> >    'kobol,helios64' was expected
-> >    'mecer,xms6' was expected
-> >    'leez,p710' was expected
-> >    'lckfb,tspi-rk3566' was expected
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['lunzn,fastrhino-=
-r66s', 'lunzn,fastrhino-r68s']
-> >    'mqmaker,miqi' was expected
-> >    'neardi,lba3368' was expected
-> >    'netxeon,r89' was expected
-> >    'openailab,eaidk-610' was expected
-> >    'xunlong,rk3399-orangepi' was expected
-> >    'phytec,rk3288-pcm-947' was expected
-> >    'pine64,pinebook-pro' was expected
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['pine64,pinenote-=
-v1.1', 'pine64,pinenote-v1.2']
-> >    'pine64,pinephone-pro' was expected
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['pine64,pinetab2-=
-v0.1', 'pine64,pinetab2-v2.0']
-> >    'pine64,rock64' was expected
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['pine64,rockpro64=
-=2Dv2.1', 'pine64,rockpro64-v2.0']
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['pine64,quartz64-=
-a', 'pine64,quartz64-b']
-> >    'pine64,quartzpro64' was expected
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['pine64,soquartz-=
-blade', 'pine64,soquartz-cm4io', 'pine64,soquartz-model-a']
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['powkiddy,rgb10ma=
-x3', 'powkiddy,rgb20sx', 'powkiddy,rgb30', 'powkiddy,rk2023', 'powkiddy,x55=
-']
-> >    'prt,mecsbc' was expected
-> >    'qnap,ts433' was expected
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['radxa,cm3-io']
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['radxa,e25']
-> >    'radxa,e20c' was expected
-> >    'radxa,e52c' was expected
-> >    'radxa,rock' was expected
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['radxa,rockpi4a',=
- 'radxa,rockpi4a-plus', 'radxa,rockpi4b', 'radxa,rockpi4b-plus', 'radxa,roc=
-kpi4c']
-> >    'radxa,rock-4c-plus' was expected
-> >    'radxa,rock-4d' was expected
-> >    'radxa,rock-4se' was expected
-> >    'radxa,rockpi-e' was expected
-> >    'radxa,rockpi-n8' was expected
-> >    'radxa,rockpi-n10' was expected
-> >    'radxa,rockpis' was expected
-> >    'radxa,rock2-square' was expected
-> >    'radxa,rock3a' was expected
-> >    'radxa,rock-3b' was expected
-> >    'radxa,rock-3c' was expected
-> >    'radxa,rock-5-itx' was expected
-> >    'radxa,rock-5a' was expected
-> >    'radxa,rock-5b' was expected
-> >    'radxa,rock-5b-plus' was expected
-> >    'radxa,rock-5c' was expected
-> >    'radxa,rock-s0' was expected
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['radxa,zero-3e', =
-'radxa,zero-3w']
-> >    'relfor,saib' was expected
-> >    'rikomagic,mk808' was expected
-> >    'rockchip,rk3036-kylin' was expected
-> >    'rockchip,px3-evb' was expected
-> >    'rockchip,px30-evb' was expected
-> >    'rockchip,px5-evb' was expected
-> >    'rockchip,r88' was expected
-> >    'rockchip,rk3036-evb' was expected
-> >    'rockchip,rk3128-evb' was expected
-> >    'rockchip,rk3228-evb' was expected
-> >    'rockchip,rk3229-evb' was expected
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['rockchip,rk3288-=
-evb-act8846', 'rockchip,rk3288-evb-rk808']
-> >    'rockchip,rk3308-evb' was expected
-> >    'rockchip,rk3328-evb' was expected
-> >    'rockchip,rk3368-evb-act8846' was expected
-> >    'rockchip,rk3399-evb' was expected
-> >    'rockchip,rk3399-evb-ind' was expected
-> >    'rockchip,rk3399-sapphire' was expected
-> >    'rockchip,rk3399-sapphire-excavator' was expected
-> >    'rockchip,rk3562-evb2-v10' was expected
-> >    'rockchip,rk3566-box-demo' was expected
-> >    'rockchip,rk3568-evb1-v10' was expected
-> >    'rockchip,rk3576-evb1-v10' was expected
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['rockchip,rk3588-=
-evb1-v10', 'rockchip,rk3588-evb2-v10']
-> >    'rockchip,rk3588s-evb1-v10' was expected
-> >    'rockchip,rv1108-evb' was expected
-> >    'rockchip,rk3588-toybrick-x0' was expected
-> >    'sinovoip,rk3308-bpi-p2pro' was expected
-> >    'sinovoip,rk3568-bpi-r2pro' was expected
-> >    'itead,sonoff-ihost' was expected
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['tsd,px30-cobra-l=
-tk050h3146w', 'tsd,px30-cobra-ltk050h3146w-a2', 'tsd,px30-cobra-ltk050h3148=
-w', 'tsd,px30-cobra-ltk500hd1829']
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['tsd,px30-pp1516-=
-ltk050h3146w-a2', 'tsd,px30-pp1516-ltk050h3148w']
-> >    'tsd,px30-ringneck-haikou' was expected
-> >    'tsd,rk3368-lion-haikou' was expected
-> >    'tsd,rk3399-puma-haikou' was expected
-> >    'tsd,rk3588-jaguar' was expected
-> >    'tsd,rk3588-tiger-haikou' was expected
-> >    'tronsmart,orion-r68-meta' was expected
-> >    'turing,rk1' was expected
-> >    'wolfvision,rk3568-pf5' was expected
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['xunlong,orangepi=
-=2D3b-v1.1', 'xunlong,orangepi-3b-v2.1']
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['xunlong,orangepi=
-=2D5-max', 'xunlong,orangepi-5-plus', 'xunlong,orangepi-5-ultra']
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['xunlong,orangepi=
-=2Dr1-plus', 'xunlong,orangepi-r1-plus-lts']
-> >    'seeed,rk3568-linkstar-h68k-1432v1' is not one of ['xunlong,orangepi=
-=2D5', 'xunlong,orangepi-5b']
-> >    'zkmagic,a95x-z2' was expected
-> >    'rockchip,rk3399' was expected
-> >    'rockchip,rk3288' was expected
-> >    'rockchip,rk3326' was expected
-> >    'rockchip,rk3566' was expected
-> >    'rockchip,rk3576' was expected
-> >    'rockchip,rk3588' was expected
-> >    'armsom,lm7' was expected
-> >    'rockchip,rk3328' was expected
-> >    'bigtreetech,cb2' was expected
-> >    'rockchip,rk3066a' was expected
-> >    'rockchip,rk3188' was expected
-> >    'coolpi,pi-cm5' was expected
-> >    'rockchip,rk3588s' was expected
-> >    'edgeble,neural-compute-module-2' was expected
-> >    'rockchip,rk3568' is not one of ['edgeble,neural-compute-module-6a',=
- 'edgeble,neural-compute-module-6b']
-> >    'rockchip,rv1108' was expected
-> >    'engicam,px30-core' was expected
-> >    'firefly,icore-3588q' was expected
-> >    'firefly,core-3588j' was expected
-> >    'firefly,px30-jd4-core' was expected
-> >    'rockchip,rk3308' was expected
-> >    'forlinx,fet3588-c' was expected
-> >    'friendlyarm,cm3588' was expected
-> >    'rockchip,rk3368' was expected
-> >    'rockchip,rk3128' was expected
-> >    'google,bob-rev12' was expected
-> >    'google,veyron-brain' was expected
-> >    'google,veyron-fievel-rev7' was expected
-> >    'google,gru-rev14' was expected
-> >    'google,veyron-jaq-rev4' was expected
-> >    'google,veyron-jerry-rev14' was expected
-> >    'google,kevin-rev14' was expected
-> >    'google,veyron-mickey-rev7' was expected
-> >    'google,veyron-mighty-rev4' was expected
-> >    'google,veyron-minnie-rev3' was expected
-> >    'google,veyron-pinky' was expected
-> >    'google,scarlet-rev15' was expected
-> >    'google,scarlet-rev15-sku4' was expected
-> >    'google,veyron-speedy-rev8' was expected
-> >    'google,veyron-tiger-rev7' was expected
-> >    'rockchip,rk3229' was expected
-> >    'phytec,rk3288-phycore-som' was expected
-> >    'pine64,pinenote' was expected
-> >    'pine64,pinetab2' was expected
-> >    'pine64,rockpro64' was expected
-> >    'pine64,soquartz' was expected
-> >    'radxa,cm3' was expected
-> >    'radxa,cm3i' was expected
-> >    'rockchip,rk3528' was expected
-> >    'rockchip,rk3582' was expected
-> >    'radxa,rockpi4' was expected
-> >    'vamrs,rk3288-vmarc-som' was expected
-> >    'vamrs,rk3399pro-vmarc-som' was expected
-> >    'rockchip,rv1109' was expected
-> >    'rockchip,rk3036' was expected
-> >    'rockchip,px3' was expected
-> >    'rockchip,px30' was expected
-> >    'rockchip,px5' was expected
-> >    'rockchip,rk3228' was expected
-> >    'rockchip,rk3562' was expected
-> >    'rockchip,rk3568' is not one of ['rockchip,rv1126', 'rockchip,rv1109=
-']
-> >    'tsd,px30-cobra' was expected
-> >    'tsd,px30-pp1516' was expected
-> >    'tsd,rk3588-tiger' was expected
-> >    'xunlong,orangepi-3b' was expected
-> >    'rockchip,rk3318' was expected
-> >    from schema $id: http://devicetree.org/schemas/arm/rockchip.yaml#
-> > arch/arm64/boot/dts/rockchip/rk3568-linkstar-h68k-1432v1.dtb: /: failed=
- to match any schema with compatible: ['seeed,rk3568-linkstar-h68k-1432v1',=
- 'rockchip,rk3568']
->=20
-
-
-
-
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
