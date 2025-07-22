@@ -1,127 +1,158 @@
-Return-Path: <linux-kernel+bounces-741014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34751B0DEE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:38:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CF43B0DEEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:38:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E18A61725B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:33:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E3AB3A7A21
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CABA2EA73B;
-	Tue, 22 Jul 2025 14:32:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A177E2EA752;
+	Tue, 22 Jul 2025 14:33:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=criticallink.com header.i=@criticallink.com header.b="g8peOOS8"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="BEtMaDSW"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810682EA177
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 14:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B892EA177
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 14:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753194775; cv=none; b=mwdi/t4oyC2YngNgUkH2ds0ixGlCN8+WomQFcv6Kut5Ta/IgN0C46hLLj9JyaU5gCWTLq8/+ArPG8/Xgon7wRjPrmN95rhG6rk3PlAeY8CmIXYxEk/o6FGaGOYnlDrYU1iiq8XeD40SwKQq5q5PVc2Yq3JeX8semStKPSrjawCY=
+	t=1753194810; cv=none; b=tL1v6/tZZzRPwscqhGHSnrWh5K0uiw+H73Fd570x8aUiPvoBvxCRwCkzF+FiyRYAL12Mmdo+cQ14vxdiOL2js2+abLhENU+P48Q7ljID24gy2+BuVfOvAd69hoBB7Jg8ZbsgNkOmTT4/x67KOP3V9oymIMH5QULqghVrln1l9D8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753194775; c=relaxed/simple;
-	bh=RsyPlufZr31PVPnh/EWX43+9YZNSLPJR8i+ZYcSJ4Ag=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LnmxRnkovcgVUPtez9ZsIGWkQc6+ELPwizczp3c+9OB2WRX14V5lrh+EIKb7lC1X0B/DcwMhhiGeEQjaxtcbNY3sMEPJLriviIKAiNFHDXXvqsL+3pmRviN5TyUFX+rchUzTm9F6GCLkpfmOCDYx+fKf6H34fQK/VVBq2TB45qE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=criticallink.com; spf=pass smtp.mailfrom=criticallink.com; dkim=pass (2048-bit key) header.d=criticallink.com header.i=@criticallink.com header.b=g8peOOS8; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=criticallink.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=criticallink.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-719a4206caeso7663207b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 07:32:53 -0700 (PDT)
+	s=arc-20240116; t=1753194810; c=relaxed/simple;
+	bh=fv7AJ047lftjYrvdeOh9awJwbVijUB3ZG9yyk9jPZz0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TflFn/cxHe8AVKmqa0VhMG8I6RHKP4Ug5278yX0PewZGEgSkUWm4T/oG56kio0abYwX+0gkdKEycQ5wjNmd8TnG4rqWRPEXqxAhyEYF4atcjAvVp9U/5MQ2Oeife7YeMN26dQMNTDANztPR6wApbEOrhAykX1RMI+CWfGXuh9Ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=BEtMaDSW; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-748d982e97cso4986169b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 07:33:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=criticallink.com; s=google; t=1753194772; x=1753799572; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Iy3jvsb4tc1nMnyuXE7xVv3bbQGwBcqiT9b1E5knZ2Q=;
-        b=g8peOOS8ecf+5OCnOfgRvCAK+mgnADuVd/6KlRsaeHpMDK9FdYWm76Yb3MGtE2DetK
-         hB5aldX544w+KsL3a9dPArCjovkvTMnZagd9EUwepuMyD4hBX/b0U3dkV3WzeXBtm0vF
-         +9NZJ8FkdpkG09MhAW+dDTULmSEc5vbjaM+EHXlF9dE2oa2EgM4QlwJxDrWG1sTobtbK
-         lEsjSR26l2w+O6iJHXJDAvvEM6YszcRLexjC3eySYZF/ukRplm96aQI1uqfjtcJ0Kobp
-         yWvd9/tZbtnVuxQRAJWGjC6Kpa0mSV2D/FtJAEEf3tMfjOpVa/LdHrMwcXiRGmqqBRhO
-         /z1A==
+        d=furiosa.ai; s=google; t=1753194808; x=1753799608; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=M7fGZKT3ggFMUdBYkzEIRO465LQFB1F7egGN40OaEMk=;
+        b=BEtMaDSWRnEErqlT7JMROzTBNDaniQfYpuvkkaLWdVuc8S/uZcH9ZMvOvWoCBql8j5
+         O0VLmGKvWpCx70qaln764Y2bXuHS7ZlA8U1kNnT421YQ7RFZojot5ittvwVjW5NsUMsr
+         ZKoy93gkMtr+TpKupcYAdB8wQtVIAcY/VnVWA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753194772; x=1753799572;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Iy3jvsb4tc1nMnyuXE7xVv3bbQGwBcqiT9b1E5knZ2Q=;
-        b=kiwhEs/WWilx6izGWzY7+E9VMJdlwCuMebYVAcU3WFz0JJ7Nnbs0SYxqpEWJy5XuwX
-         NsQqQCAHOX7qPqj5ax6Cm5kVdoUtxFOxeUO7fI+p6I0v11qtrLFI6/SgL3+/WWtKAvuN
-         e3pC5IGWMsoZ3/OLqENtVbDuVwg4cg+VJ5U4p9JKh0nbYmvp3jlPwsKWHSQ14cFOUAtL
-         fTFT/x1fn+uIZ+s6hLQeCx4qa7NFY55oJG1ERq1iihGUEw7ojOXO14SFgfXy4qSOLaJc
-         jur/+uM8jcwHkQMvYXeJiK9FvK1g7KlQERKXh5zlq2Fcw3ARspl/3tUZNf2dEjhcNv1b
-         naiA==
-X-Forwarded-Encrypted: i=1; AJvYcCVnjAQL0Kt1fC0W11nwyoN70G3f5OoSHThSrmsHiq728sNeF/Esx8r0yB+iUysfJECzwEDnJaCjQgHVn9Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzW4qUCbCpGEddJubf6rmbb5phI0RCrmmrn+jusWfYtC+fz5Hpc
-	8UnjsP54xkY/okyHfBcEgxsTjXrOVPj7cRE8ezhN3M4Ae5LSxSWJxETVNc8avT+pmGwg46N3+LP
-	lnmOXTj4V4C1Ma2T4OH6zY8o97wy9gaAGU5zhEfAYlHpPY2R3D2SxkmXX
-X-Gm-Gg: ASbGncvvIT+8y1uf2GjvfSdsShdJuQn0pqSplkFe4Dxjkzj/wEg7GPlgUqIz4vOd7fL
-	Z1H9bXpI7nv74kSnklsxjesqRFeNHxkFhaVa+wL+A2FsGD13OdhONQ9u+35WI9TmZPy+1YJSh3D
-	cLHOHmbJh/u4DfL027hoDCGi5gAH3QOJhNMy7vLBam3AuqbLFfZhDqizV0d1dcJ4xxnqD0SwGlL
-	1kh4g==
-X-Google-Smtp-Source: AGHT+IHLgyQbkmFbEUr6Uh7LewyrDsSpPOOYRIa+mMtbYtSMJpZG7OcUm1mC18zFZvRZ3UoLNegv8l+Q7RI3hzXSuhE=
-X-Received: by 2002:a05:690c:6c08:b0:719:7123:ce3a with SMTP id
- 00721157ae682-7197123f70amr165110647b3.2.1753194772136; Tue, 22 Jul 2025
- 07:32:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753194808; x=1753799608;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=M7fGZKT3ggFMUdBYkzEIRO465LQFB1F7egGN40OaEMk=;
+        b=EH38+I4FZCKfhHePN0nGWiyoA4HvGjwppSyYfFjxwsuu766AvkL2FraBBaQtE/nVt0
+         fcwkz1tmOzoLlhf47LxF8mwasO8g9pPnVxjtbcglObX7o0ODflXK0FtjOpbEA9y1l+zv
+         KzEmCqgzx/A89rI5aLePCWmPOOua2KwfkoncjKuPOj/KdGRTnCel48LhLzsIH3MWNJ+/
+         AfD24/YhpagocV2UyLI0E03lnhuV5YtuP51ft5YWUkS+3KKZdyFLPDHknadw4nZyRRHb
+         hG7bmZH8TnaPESwTiQ+ukQsuMdCer8A6nxzWyR4/hzIz+gIovT83Ab4w0b6dZ9v57hMp
+         jw4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVeSzvd6HeARwKnpXZeyNt3aS9ReT8qXaOz1WY+ZFLYrah/N0bvhsaJOpqf6y3hUn7WPwPdKFL7Pjc5pgo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvHI9jzR3FIwCBdjhsqkmy581wuRZy4WIik8o6IY3zeFPF3Wnb
+	EM7i25uRDmWp++Q6NuG/LMK31fisxPC5tbvlK2ScWIe2heH5txKCLMoXn2HMVKKx0xQHSTeMw8P
+	38AcC
+X-Gm-Gg: ASbGnctGsCh2uOvZ4sDTJOoUH1Y7lWD3nCOvXe33hKk3DK3ao52demLPrJKaJ/mST5r
+	TLBhTI6srp9tSvaoq/HNHuNu3mkjQxP//vUua8GhS1zGwHW0VotjhPXlNEcIy+N3McQ+/mTg9VF
+	pfuL6GRCF95p5b+pgNDj+TqbFMYZtr7BCCJXKaloOovOGOE4ZulZbTIOqsmhtTXv8S7Uu5OgKtc
+	tsGT2KMWVAlVTsBMlGl0qIB47v3j4/N6FnLSZ3mS9MMV38YuUmfoOgzqkomiOtBDNErH1ukUphO
+	y9wujBBFoOtTeKA/hWEmOQ610TzOVVyL0TszKdOhEPuCZA6bBxsM8AIxiqvp+u1cjOBCh0BWsOW
+	ATN4bJ4POOxNQSqriwWDAWWSl7QojFy+aMbhTe6Nk9TGQbC4mOMExKEJKpUg1qlrQozRu7w==
+X-Google-Smtp-Source: AGHT+IFWFM/ezEnw+gUjX3lXlEi7sZO9lCCQrwj/IgdE0HPpAyeUUj5d+7M3EkDn2sTRy7/yVS+0Jg==
+X-Received: by 2002:a05:6300:6199:b0:232:9550:128f with SMTP id adf61e73a8af0-23813237521mr37395363637.36.1753194807942;
+        Tue, 22 Jul 2025 07:33:27 -0700 (PDT)
+Received: from sidongui-MacBookPro.local ([61.83.209.48])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759c84e2008sm7230211b3a.30.2025.07.22.07.33.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jul 2025 07:33:27 -0700 (PDT)
+Date: Tue, 22 Jul 2025 23:33:21 +0900
+From: Sidong Yang <sidong.yang@furiosa.ai>
+To: Benno Lossin <lossin@kernel.org>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	Miguel Ojeda <ojeda@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Jens Axboe <axboe@kernel.dk>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [PATCH 2/4] rust: io_uring: introduce rust abstraction for
+ io-uring cmd
+Message-ID: <aH-hMYr4u95x03H0@sidongui-MacBookPro.local>
+References: <20250719143358.22363-1-sidong.yang@furiosa.ai>
+ <20250719143358.22363-3-sidong.yang@furiosa.ai>
+ <CADUfDZoBrnDpnTOxiDq6pBkctJ3NDJq7Wcqm2pUu_ooqMy8yyw@mail.gmail.com>
+ <aH3OsKD6l18pLG92@sidongui-MacBookPro.local>
+ <CADUfDZrLKrf6evTXQ03cJ1W4kj0gxsF9Bopu+i2SjkBObXKnMA@mail.gmail.com>
+ <DBHUR00PDVO2.16BCDQ94SF29J@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250721233146.962225-1-s-ramamoorthy@ti.com> <CAMRc=McTJnTn1sf6Kc42yePvUyP87h1utJ7B_ynWjUxxm0E4Lw@mail.gmail.com>
- <CADL8D3YaF4zt2Wu0Vv1=8W9e9n5BKM+2npgfVmLhJ=wz-jHMKQ@mail.gmail.com> <CAMRc=Me7ade2aSJhn4tEAdNUvB3Y5TRLp8j8w8zgP5J3C6_MkQ@mail.gmail.com>
-In-Reply-To: <CAMRc=Me7ade2aSJhn4tEAdNUvB3Y5TRLp8j8w8zgP5J3C6_MkQ@mail.gmail.com>
-From: Jon Cormier <jcormier@criticallink.com>
-Date: Tue, 22 Jul 2025 10:32:40 -0400
-X-Gm-Features: Ac12FXxo7kCyXFb0iFwNr6tR3KknB8DInMm27gp30SPu0B8ZIwZZ304YZgGvPf0
-Message-ID: <CADL8D3Zw9L+UABmSGdZio_Bq1Nx5tJ226EFtVY6DT3xgYBs92w@mail.gmail.com>
-Subject: Re: [PATCH v7 0/2] Add TI TPS65214 PMIC GPIO Support
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Shree Ramamoorthy <s-ramamoorthy@ti.com>, aaro.koskinen@iki.fi, andreas@kemnade.info, 
-	khilman@baylibre.com, rogerq@kernel.org, tony@atomide.com, 
-	linus.walleij@linaro.org, linux-omap@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, m-leonard@ti.com, 
-	praneeth@ti.com, christophe.jaillet@wanadoo.fr
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <DBHUR00PDVO2.16BCDQ94SF29J@kernel.org>
 
-On Tue, Jul 22, 2025 at 10:31=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl=
-> wrote:
->
-> On Tue, Jul 22, 2025 at 4:16=E2=80=AFPM Jon Cormier <jcormier@criticallin=
-k.com> wrote:
-> > >
-> > > This doesn't apply on top of my gpio/for-next branch. Do you think yo=
-u
-> > > can quickly submit another iteration rebased on top of it?
-> > Maybe this is a basic question but is there a rule of thumb for where
-> > to base patches to be submitted to the mailing lists?  I've generally
-> > been basing them off the latest tag in linux-stable/master.  I suppose
-> > this might be one of those it depends on the subsystem things?
-> > >
->
-> I feed my tree into linux next, so generally using linux-next/master
-> would be your best bet. The rule of thumb typically is checking the
-> subsystem's git tree in MAINTAINERS and using whatever branch goes
-> into the next release.
-Awesome, thanks for the info!
->
-> Bartosz
+On Mon, Jul 21, 2025 at 05:52:41PM +0200, Benno Lossin wrote:
+> On Mon Jul 21, 2025 at 5:04 PM CEST, Caleb Sander Mateos wrote:
+> > On Mon, Jul 21, 2025 at 1:23 AM Sidong Yang <sidong.yang@furiosa.ai> wrote:
+> >> On Sun, Jul 20, 2025 at 03:10:28PM -0400, Caleb Sander Mateos wrote:
+> >> > On Sat, Jul 19, 2025 at 10:34 AM Sidong Yang <sidong.yang@furiosa.ai> wrote:
+> >> > > +    }
+> >> > > +
+> >> > > +    // Called by consumers of io_uring_cmd, if they originally returned -EIOCBQUEUED upon receiving the command
+> >> > > +    #[inline]
+> >> > > +    pub fn done(self, ret: isize, res2: u64, issue_flags: u32) {
+> >> >
+> >> > I don't think it's safe to move io_uring_cmd. io_uring_cmd_done(), for
+> >> > example, calls cmd_to_io_kiocb() to turn struct io_uring_cmd *ioucmd
+> >> > into struct io_kiocb *req via a pointer cast. And struct io_kiocb's
+> >> > definitely need to be pinned in memory. For example,
+> >> > io_req_normal_work_add() inserts the struct io_kiocb into a linked
+> >> > list. Probably some sort of pinning is necessary for IoUringCmd.
+> >>
+> >> Understood, Normally the users wouldn't create IoUringCmd than use borrowed cmd
+> >> in uring_cmd() callback. How about change to &mut self and also uring_cmd provides
+> >> &mut IoUringCmd for arg.
+> >
+> > I'm still a little worried about exposing &mut IoUringCmd without
+> > pinning. It would allow swapping the fields of two IoUringCmd's (and
+> > therefore struct io_uring_cmd's), for example. If a struct
+> > io_uring_cmd belongs to a struct io_kiocb linked into task_list,
+> > swapping it with another struct io_uring_cmd would result in
+> > io_uring_cmd_work() being invoked on the wrong struct io_uring_cmd.
+> > Maybe it would be okay if IoUringCmd had an invariant that the struct
+> > io_uring_cmd is not on the task work list. But I would feel safer with
+> > using Pin<&mut IoUringCmd>. I don't have much experience with Rust in
+> > the kernel, though, so I would welcome other opinions.
+> 
+> Pinning in the kernel isn't much different from userspace. From your
+> description of what normally happens with `struct io_uring_cmd`, it
+> definitely must be pinned.
+> 
+> From a quick glance at the patch series, I don't see a way to create a
+> `IoUringCmd` by-value, which also means that the `done` function won't
+> be callable (also the `fn pdu(&mut self)` function won't be callable,
+> since you only ever create a `&IoUringCmd`). I'm not sure if I'm missing
+> something, do you plan on further patches in the future?
 
+Sure, this version is full of nonsence. v2 will be better than this.
 
+> 
+> How (aside from `from_raw`) are `IoUringCmd` values going to be created
+> or exposed to the user?
 
---=20
-Jonathan Cormier
-Senior Software Engineer
+Nomrally user would gets Pin<&mut IoUringCmd> from MiscDevice::uring_cmd().
 
-Voice:  315.425.4045 x222
+Thanks,
+Sidong
 
-http://www.CriticalLink.com
-6712 Brooklawn Parkway, Syracuse, NY 13211
+> 
+> ---
+> Cheers,
+> Benno
 
