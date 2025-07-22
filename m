@@ -1,158 +1,230 @@
-Return-Path: <linux-kernel+bounces-741421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC1A5B0E3E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 21:08:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6E7CB0E3EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 21:11:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AE671C84E4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:09:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84C7D1AA82CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:12:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34513283FF1;
-	Tue, 22 Jul 2025 19:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="itv+fyIn"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654CF284682;
+	Tue, 22 Jul 2025 19:11:42 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17774278E5A;
-	Tue, 22 Jul 2025 19:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD7B27E077;
+	Tue, 22 Jul 2025 19:11:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753211320; cv=none; b=FhQdkkXKeWy2cDIZniMzaNaWoHpfIxqjZBIDAM7nVOIpEUsyduLzP1kToS/BmyRQYG9CIZEdCD/DwMUcIa1Fffz4ylpPyC8PMbR0d1JKYUhpfILcfFzVFpBGx1p8AM7Hd3m38em+Ljt2dD6DGZuUw+J+S6VBMGoVoUx5M9/jFYU=
+	t=1753211501; cv=none; b=F/1qq02A73yjyGg+aGEdkWglaKIrdrx36VBoKVzqKyH+2RjIdy1Ap01EcBFMXT2DwUumPd7790H+eMg+Cdp9P2VtlyG3Pqso5W96NB5dvwROSyozBQ15/rbj1nnOm4cDsWpCoDWVmgohxEZAw+pSBPqwUpsH+Hu+nIJZnGv1t9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753211320; c=relaxed/simple;
-	bh=WhkRd3BMuVmcqkvwnUgVzQxYn1i3OPyNE6F/d7jYi/4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dusrADCzCK1PaolqCJaiocaFFYpF/wuzS+hSgok/nwHutOBayOIMY79JdrMgsy8dJjSIZTtMlOpgUrn9x6bqZWQwFibGSbXSBVhjv1y6HayHSw+AOIlmzygxK1xPeXQgze/FfXnToUr7yAMHGmCUrdsH3Qfputb1zplO8ZQr778=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=itv+fyIn; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7e169ac6009so601124985a.0;
-        Tue, 22 Jul 2025 12:08:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753211318; x=1753816118; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=FHLZA/TNhkdskUZodZoADZK/4mKalHq7MQxkf8qHFVU=;
-        b=itv+fyInTLFhdhgc8B9c+3xX2/Z03oYJcXdZN4dFA+5b0gCYV9vjkygrcwo+6ts9kU
-         SNb+2Dkm0fBx6LbAlEKUjcElgcuUjtbl808KUJDkzG95l7Jz4eTbZhAxVAYFSyGl19u1
-         wozV4SOCRignK576Kg2s8ca6zKSfV+OCqkyLzhZx0M0r30cnLqjJKJSCK+QtK1XmpoPh
-         3/8eczM7t0IXR7i9Z+3X3kaxGTABP72NZXzlQKBAf5jxBFAN3n61wPmpzq4SJZUA19HM
-         LMT8d78E7bZY9lvYqzL6VFiimG+RjphknwOCySQgtS7dmG5lu6L5O/jPaw86bQQq/SpY
-         5Hiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753211318; x=1753816118;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FHLZA/TNhkdskUZodZoADZK/4mKalHq7MQxkf8qHFVU=;
-        b=JrpMYo9gpibBtzs5HpBRkWvo5vJyZJnDu0flvmd7tl001H+WG9imZgYXFUVPKKqy/D
-         sxrJmbQyflnEZAz/OqVpinSPbbdHjjf8Uf3ftruOAejzQLZr0ZtleCeBmFtwiaPeJA+f
-         EMXb9zRVs+87vCDhq7qG+5auFbp5M4GduyreGGdg0T+iPCR39wDDkCuBuXgORDYEW7t5
-         xDXzTRS+26oo+zXXLOAv3F+i0DJz8ki2oygYIMVl/XBn2r+p69naSa7ipNP2Ne54GPQz
-         weMtgTB2+Du9/RbgdkHb7E0tny+KwFU3iAiWu0cyCrQZ6qCl0Y0jK1jIe4XpxI1XkwYI
-         fX9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW/znJURX9/GcbD5+cXxTWP6UHcIuKHPCumCNNokHO0ZrN8VYEGB2eCDWY1C4I5ZUxJfxntlTg6@vger.kernel.org, AJvYcCX+60cZ2D2r7265gdjI/vVtzT6fDGTFpiMdiNgACKtoYvzzM5R3EXDR46dSmWnUI/3GlZtxdLleYz2XtPU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYDHPTkeaBskGMLPgFKON+LVbhj4/lFcstBPvhrH8WZdWv6tw4
-	uZTQD8mCzFRqUCmTn9mv3SVFN55W0juQWM0ZAq+JW8hXe+zbi8FZMul2
-X-Gm-Gg: ASbGnctqrqKaKj2bFEwjKKvT9dJGOqQWDvJyFZa9rO4Zh2RvP/c+JucOy7Tb1G5JBuQ
-	DsuZALJRHZFrD/8NBYjOdVZ3qzArV86xdVO0tNMH5yDUG6b1CZNQU/3kckyW2OJky9A6By+/Tq+
-	6onTZImMwk+/yRm8Y+ti2Ez4WLC9S63B5fHSw7QlV433BpOxZk4cmJn6AQrq4FOkHxwNrKNqrgY
-	hb/KWuhMWbyWPHBPAOu9YIv3izn9Qg1Tu9i7cceiT4zY4tVWFfUaFTU/lB15qOgTTyw+pU3B5kH
-	BQ+OCPn9yEupNcp8RP8+EtEazYA/8xcav34g0WM0q4W0Z4xkV9XzANWCB8Ij4u0Q2/aZG79Ybvv
-	30c8zHkaNFYYR5SZeQ2aE0iQ+I9kcqmVQ1M1+jfZW7ebnaRp8RQ==
-X-Google-Smtp-Source: AGHT+IGNgcPjfLPdvGxIgYqVQy3cXB62yix4g1E9jrm8kyGNK60UwHpmSb9lrMeYKsJp90dZKBKbRg==
-X-Received: by 2002:a05:620a:454a:b0:7d5:e34d:faaf with SMTP id af79cd13be357-7e62a002111mr66499885a.0.1753211317744;
-        Tue, 22 Jul 2025 12:08:37 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e356c3f7acsm559967485a.51.2025.07.22.12.08.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Jul 2025 12:08:37 -0700 (PDT)
-Message-ID: <acf2e205-12a0-436d-a105-e06198d3544f@gmail.com>
-Date: Tue, 22 Jul 2025 12:08:27 -0700
+	s=arc-20240116; t=1753211501; c=relaxed/simple;
+	bh=5wr86rH1s3ndtBz8PSBjIGV/spc58LLIDaS6Ef23x0s=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JlvvKKyBP8l0hiLCOIQ5vb0vH/urUlkeXIxSds2BeAABG31aVs+UkVUqiVpwa4obYAdr9jGPMLrg4E7y6HA+BNg7nypDUjCttdVgqghkYH+WNYMj+cFsPLrq1LsFVwLCwKTo/MOOZiDH95UiALMnPSQbzPVfFowd1fFD1HsRdtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf16.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay06.hostedemail.com (Postfix) with ESMTP id 9BCC41129A1;
+	Tue, 22 Jul 2025 19:11:33 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf16.hostedemail.com (Postfix) with ESMTPA id A4A892000E;
+	Tue, 22 Jul 2025 19:11:28 +0000 (UTC)
+Date: Tue, 22 Jul 2025 15:11:27 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu
+ <mhiramat@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri Olsa
+ <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat
+ <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, Beau
+ Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, Florian Weimer
+ <fweimer@redhat.com>, Sam James <sam@gentoo.org>, Brian Robbins
+ <brianrob@microsoft.com>, Elena Zannoni <elena.zannoni@oracle.com>
+Subject: Re: [RFC] New codectl(2) system call for sframe registration
+Message-ID: <20250722151127.0b64d3b6@batman.local.home>
+In-Reply-To: <af021bce-8465-467d-b88b-8d45d11e0f0a@efficios.com>
+References: <2fa31347-3021-4604-bec3-e5a2d57b77b5@efficios.com>
+	<20250721145343.5d9b0f80@gandalf.local.home>
+	<e7926bca-318b-40a0-a586-83516302e8c1@efficios.com>
+	<20250721171559.53ea892f@gandalf.local.home>
+	<1c00790c-66c4-4bce-bd5f-7c67a3a121be@efficios.com>
+	<20250722122538.6ce25ca2@batman.local.home>
+	<af021bce-8465-467d-b88b-8d45d11e0f0a@efficios.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.12 000/158] 6.12.40-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250722134340.596340262@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- WlfRzlpjIPmdjgoicA==
-In-Reply-To: <20250722134340.596340262@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Stat-Signature: ej1z1qkbe87t3ese35kmeponunzup3cs
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: A4A892000E
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18CMkj6KtP8wmRWrDbXD2WRngu3I5Z/YpY=
+X-HE-Tag: 1753211488-213026
+X-HE-Meta: U2FsdGVkX1+HDBMhNxRu0G57e0lIQIlbnToAlwuv/AAbBAKMA0dp6DPDkz1gZAd1GY+/hi0CegypxpbD4wqr4zcPCbazqBSxMXARiQlBKbtp1MRNz2gM4ICYTZ5sWjqnQhpFX8srxnYG6ZQ92t2ewXXZ4MNtBlxFlmMdLQC+XYMEJX3LmsXits11qF+NfrlNDtWxouiPFTwiCavotXFotWwEWn86R1AeHX3e1jqgJyDmIv17NnU+YcADK7nTSx2dvmM496u9spgopt7/4tGXqow+J8qAprYTwJ0gl+5WLYfNuryLiEnIFmYJWB6yHDrRfW54gDwSq82js3sRu7UXv18OIoNEtfoQNX38R9+Ji8J3Wr0fYKMkTbjibrvKZs+0
 
-On 7/22/25 06:43, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.12.40 release.
-> There are 158 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 24 Jul 2025 13:43:10 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.40-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+Florian, You may want to read this email as there's some question about
+dynamic linking.
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+
+On Tue, 22 Jul 2025 14:26:44 -0400
+Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+
+> > 
+> > I'm looking for a mapping between already loaded text memory to how to
+> > unwind it that will be in an sframe format somewhere on disk.  
+> 
+> OK, so what you have in mind is the compressed sframe use-case.
+> 
+> Ideally, for the compressed sframe use-case I suspect we'd want to do
+> lazy on demand decompression which could decompress only the parts that
+> are needed for the unwind, rather than expand everything in memory.
+> 
+> Pointing the kernel to a file/offset on disk is rather different than
+> the current ELF sframe section scenario, where is it allocated,loaded
+> into the process' address space. I suspect we would want to cover this
+> with a future new code_opt enum label.
+
+The sframe program header is of type PT_GNU_SFRAME and not PT_LOAD so
+the linker will not be loading it. The code in the kernel has to do
+something special with this section. It's not automatic.
+
+So yes, I never had any expectation that the dynamic linker would even
+load sframes into memory. It would simply tell the kernel where to find
+it and it will load it.
+
+> > 
+> > Yes, but we are not registering ELF. We are registering how to unwind
+> > something with sframes. If it's not sframes we are registering, what is
+> > it?  
+> 
+> I am thinking of sframes as one of the properties of an ELF executable.
+> So from my perspective we are registering an ELF file with various
+> properties, one of which is its sframe section.
+
+That wasn't what I was thinking.
+
+> 
+> But I think I get where you are getting at: if we define the sframe
+> registration for ELF as sframe_start, sframe_end, then it forgoes
+> approaches where sframe is provided through other means, such as
+> pathname and offset, which would be useful for the compressed sframe
+> use-case.
+> 
+> If system call overhead is not too much of an issue at library load,
+> then we could break this down into multiple system calls, e.g.
+> eventually:
+> 
+> codectl(CODE_REGISTER_SFRAME, /* provide sframe start + end */ )
+> codectl(CODE_REGISTER_ELF, /* provide elf-specific info such as build id */ )
+
+IIRC, and Florian (who has been Cc'd) can correct me if I'm wrong,
+dynamic file loading is quite a slow process and a few extra system
+calls isn't going to show up outside the noise.
+
+
+> > The systemcall is to let the dynamic linker know where the kernel can
+> > find the sframes for newly loaded text.  
+> 
+> I am saying this is a "new" model because the current sframe section is
+> allocated,loaded, which means it is present in userspace memory, so it
+> seems rather logical to delimit this area with pointers to the start/end
+> of that range.
+
+But its the kernel that maps it into memory. I was expecting that the
+kernel would map it again into memory just like it does with the ELF
+file. I wasn't expecting the dynamic linker to.
+
+
+> > 
+> > Actually, the sframe section shouldn't be mapped into user space
+> > memory. The kernel will be doing that, not the linker.  
+> 
+> AFAIU, that's not how the sframe section works today. It's allocated,loaded.
+> So userspace maps the section into its address space, and the kernel takes
+> the page faults when it needs to load its content.
+
+Yes, but the kernel maps it. I wasn't expecting the user space dynamic
+linker to map it. I was expecting the system call to simply say "here's
+where the sframe section is in this file" and the kernel would take
+care of the rest.
+
+> 
+> 
+> > I would say that
+> > the system call can give a hint of where it would like it mapped, but
+> > it should allow the kernel to decide where to map it as the user space
+> > code doesn't care where it gets mapped.  
+> 
+> AFAIU currently the dynamic loader maps the section, not the kernel.
+
+You mean the prctl()?
+
+I haven't looked to deep into that systemcall. It may do that
+currently. I'm just thinking what is the best way to do this. I guess
+we should ask Florian which is best for the dynamic linker. If it
+should map it in, or if the kernel should, with thinking about a
+compressed format in mind as well.
+
+
+> 
+> > 
+> > In the future, if we wants to compress the sframe section, it will not
+> > even be a loadable ELF section. But the system call can tell the
+> > kernel: "there's a sframe compressed section at this offset/size in
+> > this file" for this text address range and then the kernel will do the
+> > rest.  
+> 
+> I would see this compressed side-file handled entirely from the kernel
+> (not mapped in userspace) as a new enum code_opt option.
+
+Yes, it would likely be a new emum.
+
+But if the dynamic linker has already mapped the sframe into memory and
+giving it to the kernel, then it is even less an "elf" file. It's
+simply mapping a sframe section in memory with some text in memory. The
+way the dynamic linker mapped it will still do everything as normal.
+
+> 
+> >   
+> >>
+> >> Am I unknowingly adding some kind of redundancy here ?
+> >>  
+> > 
+> > Maybe. This systemcall was to add unwinding information for the kernel.
+> > It looks like you are having it be much more than that. I'm not against
+> > that, but that should only be for extensions, and currently, this is
+> > supposed to only make sframes work.  
+> 
+> I agree that if we state that "elf" registration has sframe_start/end
+> as a mean to express sframe, then we are stuck with a model where userspace
+> needs to map the section in its memory. Considering that you want to
+> express different models where a filename and offset is provided to the
+> kernel instead, then it makes sense to make the registration more specific.
+> 
+> The downside would be that we may have to do more than one system call if we
+> want to register more than one "aspect", e.g. sframe vs elf build-id.
+> 
+> I think the overhead of a single vs a few system calls is an important
+> aspect to consider. If the overhead of a few more system calls at library
+> load does not matter too much, then we should go for the more specific
+> registration. I have no clue whether that overhead matters in practice though.
+
+If the linker needs to map it, it is already doing lots of systemcalls
+to accomplish that ;-)
+
+-- Steve
 
