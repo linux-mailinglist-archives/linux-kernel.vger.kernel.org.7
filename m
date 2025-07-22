@@ -1,72 +1,105 @@
-Return-Path: <linux-kernel+bounces-740015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7BC3B0CEA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 02:13:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0909BB0CEA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 02:18:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DB1B545C68
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 00:13:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 347AC545E51
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 00:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 697771876;
-	Tue, 22 Jul 2025 00:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C546440C;
+	Tue, 22 Jul 2025 00:18:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FiQiIz8P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="DYuCVrvi"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C27097F9;
-	Tue, 22 Jul 2025 00:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81241388;
+	Tue, 22 Jul 2025 00:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753143219; cv=none; b=o2PhcBlL6Jh283gNK1LtgZj9HcgwpwRG0QfcM8YpifsvOMCMRk40jO5rv2kqaeuckKTBKH7cnt6X0atY/TxeKsl5cOxSLlb96fcfrpYz75fJbvJVqP4Ed9lq+1JfELyWplTIn4MGl6389LUEvLsBas2Z2FkHmd+/q1mbRg0VOjM=
+	t=1753143484; cv=none; b=e5l7aSLCyADGWVuymmbSJRWMCbtQSStHP8kKSH1EDgSnqOxhaogiyoLaTQFMbXVUThP8FD3hPn7oHHvtbV5K1oIUBBMgztZuzvKsgG5LSGVl3ZdWzRKvCOar+Tc49hB3fWe5pkgahaqSTk/xFYsCu58Xswx1pffR91lQyU7ddB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753143219; c=relaxed/simple;
-	bh=C4dC6WGf35fUs4kvD2XDKyOabQB1kXDVHpeKt0kWxFo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=i1N0I9ZXFqNabTz7b2bBagnoB0PDAPRU2d1i5dw9nQzLF29pggESgpmNcwnFHLAtv7PseUFZJ0ROpNdQgVKAINggX7qarevB6UUt5nlw4eOlMHI13vDv6ci8UbNEzQl9eF0E5X0fUoZBJ1+C4grfoY8WkZztAllyATLGA+mpP4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FiQiIz8P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F472C4CEED;
-	Tue, 22 Jul 2025 00:13:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753143215;
-	bh=C4dC6WGf35fUs4kvD2XDKyOabQB1kXDVHpeKt0kWxFo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=FiQiIz8PuivLGxssxlUtyn84n66QIAeUpERhXMdUDUohbcTTZ6JnH5DcjVP2U++GO
-	 RquEhgk+SP9a2hkZyIqCJcXPH/ZsU8PXv2HTY9D/ZGVK6f2XnCrc8QaeF40AQ5tZPq
-	 h1YLF71HuCQW+vIUBvH3z1QdbKF/k+GuUdmuUYZhzllBtEMSl0AzbtR6wZsPn/9mXH
-	 mNARm72W6e/IAl9/XEpKUEk2Pd26RG0CIdzmvWDdSTyjNdGVkTpN1Di8vyFJGkNw0t
-	 N6cAD4Uekjo7+Owtsl/9c4JAWXjaF6EY5rtyJwkwF/It+CyHNP2DdhX6hHuAZicuW6
-	 eIbCjd9QpIUAg==
-Date: Mon, 21 Jul 2025 17:13:33 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: <fan.yu9@zte.com.cn>
-Cc: <edumazet@google.com>, <ncardwell@google.com>, <davem@davemloft.net>,
- <dsahern@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
- <kuniyu@google.com>, <rostedt@goodmis.org>, <mhiramat@kernel.org>,
- <mathieu.desnoyers@efficios.com>, <netdev@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
- <yang.yang29@zte.com.cn>, <xu.xin16@zte.com.cn>, <tu.qiang35@zte.com.cn>,
- <jiang.kun2@zte.com.cn>, <qiu.yutan@zte.com.cn>, <wang.yaxin@zte.com.cn>,
- <he.peilin@zte.com.cn>
-Subject: Re: [PATCH net-next v7 RESEND] tcp: trace retransmit failures in
- tcp_retransmit_skb
-Message-ID: <20250721171333.6caced4f@kernel.org>
-In-Reply-To: <20250721111607626_BDnIJB0ywk6FghN63bor@zte.com.cn>
-References: <20250721111607626_BDnIJB0ywk6FghN63bor@zte.com.cn>
+	s=arc-20240116; t=1753143484; c=relaxed/simple;
+	bh=QOGxX4Ex1zBcTzisu11nQ+ZEFsC9wpK644WaSn7XLHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=e5mvadB2V7b5RRaXX8Gq1YlpYEjTkiZnp+gUdg3fYyof7sb/mXkqk85QINSh8ES1+CvHZ2/gn77tOkTqZOLhjzMtHhqjesFNT+deF5bFRXDdUP75U1GmKb8HrL+mizEY/Yp+Em/YF8x+YgRiXjnvmfmuU3TpVkdTMpkXCJqhrNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=DYuCVrvi; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753143321;
+	bh=Ip1rpg8tH7CwBm6qxnB8lmPFPIJENFQ9M4qTy5yBDYU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=DYuCVrviuH9W1xobzCr+6duAApDpTnNyLlFTfxkqL0aNWDRBX8DjV4i78TiDKITq+
+	 /vSVhhJEP113/feJRTsh9EspNsCP/9fzc8BRt9CGXTH0W+jJxLJrm2bgmywLEa74QD
+	 8lwVHC8ZtA9o0gBUZPnoGYNuGl/L9lDJ8EjtR9eBCIo8k56MFw56q/4AHUx1EEOlZc
+	 DDfNP6DIZzGh6nJoPjYd5abvT5kb7fw4lwhXsdMASqFlPjdHpaQ39dI8Ui7KM1ikhW
+	 b/ub20ewFs4HsJl++gz6iN9Rhel4n/o4AlU/ngh4v28lczqDac0Fbg+UYt+SuWNQvg
+	 /rm6t9PRGMp8g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bmHpd3RtZz4wvb;
+	Tue, 22 Jul 2025 10:15:21 +1000 (AEST)
+Date: Tue, 22 Jul 2025 10:17:57 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Jeffery <andrew@codeconstruct.com.au>, Joel Stanley
+ <joel@jms.id.au>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the bmc tree
+Message-ID: <20250722101757.76c39d41@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/aKjoULI32.t+HhehiwuTXmu";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/aKjoULI32.t+HhehiwuTXmu
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 21 Jul 2025 11:16:07 +0800 (CST) fan.yu9@zte.com.cn wrote:
-> Subject: [PATCH net-next v7 RESEND] tcp: trace retransmit failures in tcp_retransmit_skb
+Hi all,
 
-Why did you resend this??
+The following commit is also in the arm-soc tree as a different commit
+(but the same patch):
+
+  532bdc65a79f ("arm64: dts: nuvoton: npcm8xx: Drop the GIC "ppi-partitions=
+" node")
+
+This is commit
+
+  8e7e63fc479a ("arm64: dts: nuvoton: npcm8xx: Drop the GIC "ppi-partitions=
+" node")
+
+in the arm-soc tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/aKjoULI32.t+HhehiwuTXmu
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh+2LUACgkQAVBC80lX
+0Gzbdwf+L3++kJzcxCtxJDhaaZ0vQDCC/jyB+xgpE8thZFUj4pu1yftrlzU5zEwP
+VJSnvcFRw0d4ThqzJalTt94ZjLs6gYrsD6u/2iFuiO7jRZP+7gQRT2Te14V1xeKS
++d9GvBM63va1gGgrryxOVBySI1s1jh7n/1uMxXWnm7uWal8DCk4cgCnicet5IsSB
+jza5mb5/JSnXjio8uQeeVVXZ0rLcZwVTY8pMY1Jvm2ozNyoiKF+6Lvk4VF7eMUvu
+6KEuQBlkDUTjCc3u4x9GRdZ0BnO1WjJGehMxq4pmiUqJ3sA0HkcD66B0aLDQDw8b
+ZrjBz+wQI0W1a6fJY+weFVMXREIrGA==
+=5Yg2
+-----END PGP SIGNATURE-----
+
+--Sig_/aKjoULI32.t+HhehiwuTXmu--
 
