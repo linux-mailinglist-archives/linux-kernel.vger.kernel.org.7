@@ -1,139 +1,86 @@
-Return-Path: <linux-kernel+bounces-740581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C9B9B0D5FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:29:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E009B0D554
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:09:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 712A5561A86
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:29:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE4BAAA1FB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7297A2DCF66;
-	Tue, 22 Jul 2025 09:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="u0YorwOJ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0+zp30zk"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4B02DA77E;
+	Tue, 22 Jul 2025 09:09:20 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE782DC35C;
-	Tue, 22 Jul 2025 09:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550BC2D94B9;
+	Tue, 22 Jul 2025 09:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753176570; cv=none; b=EWJMObk8BP45kd3qXCdoudbuwbIgbpH81HsHfu+JfS+GSqRnfRlGWxOR2LXCMDKrN/aVorVtNXQIeUyfrGDPtnGDiEuqel6AK7b1mw2UqZ2M0uc2KiDZhBPKSF7NSlfSjl3aZeOiRu4vlv8gicWaa2WJafDHt9j9WSX3BLOstwU=
+	t=1753175360; cv=none; b=lfsliDau40kl4LmYHsRjlnLPGd20a0dn0ie1zFNTjVpqH6HTK7DKXGCmzufcq9Q/vgCiWJIReZOfI/jkzyacZ4+Y+MuhrxWCW0yhSOdZzJhvft1TchNAexxlpuuuLn+CCop2Vmzabyimg+KwfEuENqc3+eRP7aHEq0UiygX/TPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753176570; c=relaxed/simple;
-	bh=TJ8CHomWAqVjyYt8ekRh1FF8v3ALHw+duXIkm4eCEm4=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=q+aKA4Id+gR+S41Qjz1EX2hJQeq3InYzmMyXXPzD/vpJQOaYGlbYRAO2ujAAImpYqlo9LMJD1/UaqzHDJBfG17nweCvfGMv4aSueKbCJXucWATsBg3vz+ig9eChGIK/sq1ZL3QDCY/w3+RiE2OnuSOJCaa2MUA214ScEJglKttc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=u0YorwOJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0+zp30zk; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 22 Jul 2025 09:29:26 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753176567;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z7syrHlzDvIKeDfoiiXzATQVHgetK8veEnenegbHWCo=;
-	b=u0YorwOJTajbzhToTJI4BZBpYNBRXGhdtEMBVUrZo1nT0WBc2PZJDMXlVKpa853Xi3H97h
-	c9X2jaV1NNAz6sM26mL+AO37pjRcgjpXUNmWUJbEiF5LO5qDSe3oaPd3thM7nr9OkzUZIA
-	HTMjVFbmrcgdHxGfDYlVscK+Uvz9sHaWhh3WDEXpwPbx2JBEr/REUZ45VLxwnxclQeGMBT
-	76RNkv2+AyIvYe2kS5zFZcBeofBejrtmgwi4v6VAaRebdB67s/E8Xqt78r5bbUwLw9Mvo0
-	UAskINzZ8PAsCX7znMslNz2iJgx4i/o3cUzehuNZQKvzlkFtCW2PZLYS2ASUhw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753176567;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z7syrHlzDvIKeDfoiiXzATQVHgetK8veEnenegbHWCo=;
-	b=0+zp30zkitDJcbztEnFvHnYsBh5SPQ5wX04VZdc3vz4WGcPnBVNDjeXHNOFIQkHenfvxag
-	9HxWfPd7XwlzS6DQ==
-From: "tip-bot2 for Cynthia Huang" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: locking/futex] selftests/futex: Define SYS_futex on 32-bit
- architectures with 64-bit time_t
-Cc: Cynthia Huang <cynthia@andestech.com>,
- "Ben Zong-You Xie" <ben717@andestech.com>,
- Thomas Gleixner <tglx@linutronix.de>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250710103630.3156130-1-ben717@andestech.com>
-References: <20250710103630.3156130-1-ben717@andestech.com>
+	s=arc-20240116; t=1753175360; c=relaxed/simple;
+	bh=1o/LTkJI+I2+3ykr4kZAtYM62gPlyP8GbeRfcVdGTwY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DFQW4DWUyOmjSz/TUoma9tmCWl0KBO48SkSZ2ZKijKNuEviCtg7DXWiZoRoZvxvxwsWt5LhOp36sn4ZS0DO6QzeMFYG/6POtzWdze1IBlELCSkIguZXJ883VEzg73jgDLuzNBQL4mK6OUEgAExshw98nDH3feeXY7CzBiRlI1dY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bmWY44yTyz14LqZ;
+	Tue, 22 Jul 2025 17:04:24 +0800 (CST)
+Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3045A147B64;
+	Tue, 22 Jul 2025 17:09:14 +0800 (CST)
+Received: from huawei.com (10.175.124.27) by dggpemf500016.china.huawei.com
+ (7.185.36.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 22 Jul
+ 2025 17:09:12 +0800
+From: Wang Liang <wangliang74@huawei.com>
+To: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <razor@blackwall.org>,
+	<idosch@nvidia.com>, <petrm@nvidia.com>, <menglong8.dong@gmail.com>
+CC: <yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
+	<wangliang74@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH net-next] vxlan: remove redundant conversion of vni in vxlan_nl2conf
+Date: Tue, 22 Jul 2025 17:30:49 +0800
+Message-ID: <20250722093049.1527505-1-wangliang74@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175317656648.1420.2526056310701166486.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ dggpemf500016.china.huawei.com (7.185.36.197)
 
-The following commit has been merged into the locking/futex branch of tip:
+The IFLA_VXLAN_ID data has been converted to local variable vni in
+vxlan_nl2conf(), there is no need to do it again when set conf->vni.
 
-Commit-ID:     04850819c65c8242072818655d4341e70ae998b5
-Gitweb:        https://git.kernel.org/tip/04850819c65c8242072818655d4341e70ae=
-998b5
-Author:        Cynthia Huang <cynthia@andestech.com>
-AuthorDate:    Thu, 10 Jul 2025 18:36:30 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 22 Jul 2025 11:18:43 +02:00
-
-selftests/futex: Define SYS_futex on 32-bit architectures with 64-bit time_t
-
-The kernel does not provide sys_futex() on 32-bit architectures that do not
-support 32-bit time representations, such as riscv32.
-
-As a result, glibc cannot define SYS_futex, causing compilation failures in
-tests that rely on this syscall. Define SYS_futex as SYS_futex_time64 in
-such cases to ensure successful compilation and compatibility.
-
-Signed-off-by: Cynthia Huang <cynthia@andestech.com>
-Signed-off-by: Ben Zong-You Xie <ben717@andestech.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-Link: https://lore.kernel.org/all/20250710103630.3156130-1-ben717@andestech.c=
-om
-
+Signed-off-by: Wang Liang <wangliang74@huawei.com>
 ---
- tools/testing/selftests/futex/include/futextest.h | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/net/vxlan/vxlan_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/futex/include/futextest.h b/tools/testin=
-g/selftests/futex/include/futextest.h
-index ddbcfc9..7a5fd1d 100644
---- a/tools/testing/selftests/futex/include/futextest.h
-+++ b/tools/testing/selftests/futex/include/futextest.h
-@@ -47,6 +47,17 @@ typedef volatile u_int32_t futex_t;
- 					 FUTEX_PRIVATE_FLAG)
- #endif
-=20
-+/*
-+ * SYS_futex is expected from system C library, in glibc some 32-bit
-+ * architectures (e.g. RV32) are using 64-bit time_t, therefore it doesn't h=
-ave
-+ * SYS_futex defined but just SYS_futex_time64. Define SYS_futex as
-+ * SYS_futex_time64 in this situation to ensure the compilation and the
-+ * compatibility.
-+ */
-+#if !defined(SYS_futex) && defined(SYS_futex_time64)
-+#define SYS_futex SYS_futex_time64
-+#endif
-+
- /**
-  * futex() - SYS_futex syscall wrapper
-  * @uaddr:	address of first futex
+diff --git a/drivers/net/vxlan/vxlan_core.c b/drivers/net/vxlan/vxlan_core.c
+index 97792de896b7..77dbfe9a6b13 100644
+--- a/drivers/net/vxlan/vxlan_core.c
++++ b/drivers/net/vxlan/vxlan_core.c
+@@ -4036,7 +4036,7 @@ static int vxlan_nl2conf(struct nlattr *tb[], struct nlattr *data[],
+ 			NL_SET_ERR_MSG_ATTR(extack, tb[IFLA_VXLAN_ID], "Cannot change VNI");
+ 			return -EOPNOTSUPP;
+ 		}
+-		conf->vni = cpu_to_be32(nla_get_u32(data[IFLA_VXLAN_ID]));
++		conf->vni = vni;
+ 	}
+ 
+ 	if (data[IFLA_VXLAN_GROUP]) {
+-- 
+2.34.1
+
 
