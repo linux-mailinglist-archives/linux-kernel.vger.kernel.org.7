@@ -1,39 +1,54 @@
-Return-Path: <linux-kernel+bounces-741392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10BB1B0E38C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:34:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D83FB0E38F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:34:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D034556118E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:34:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E65191C8508E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:34:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30DE2820B6;
-	Tue, 22 Jul 2025 18:33:57 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B5D27AC44;
-	Tue, 22 Jul 2025 18:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C31CD2820BA;
+	Tue, 22 Jul 2025 18:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="jZD7vNB/"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F56027F747;
+	Tue, 22 Jul 2025 18:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753209237; cv=none; b=X2keS3WOTEI086bXfb2dhW0XqOQtKwQ5BRddMtRK1u6rioGq73XMWlERVDhxb3sBixPcjqlvpu6aPTtualx0T2AiIaGnV2DaXAWNF3oJn4GtR/jBjGXqB1iQSgjEgWWt9PNP7m2Hw7p4mXHBpnIVbpP5FwTfhDuqpnYAXJ9OsK4=
+	t=1753209273; cv=none; b=BufRHrC3PnDWwQj4MX7+mBygctRBgeYkzEuYN2zS0peFsDiuCjbsmynPHGcl7Q3D6t1CDfueZmSbKRj0aX45YUc0CsyFaxmEhQe33lKSSPEgaVamaNF3e2YE5J/ZJNnGUPZgK1Ok0O2Cwl52MFX4gGcUxXmDSq78/B3gQAANezo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753209237; c=relaxed/simple;
-	bh=Do8f/s41nR8VObMpW0ia4Dw4dU8R3/z+HYjGjI6xSRo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mF87J6rv6ZMYmwjfe7toofdJpqVmz7AoiF/pyJTaY6x06lTZT1VhByXMebdTc/+IA8VA8Q/7Bl890TiF4qPBXVvHbox/tWun6Qi/+6Ae0uwq+K/Ohgfzw+DtWmkexeh/fYytfeANSHVbaKbaziO4Bb3SWIxIHP4YGCTsxOd7Gbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 34B9E106F;
-	Tue, 22 Jul 2025 11:33:45 -0700 (PDT)
-Received: from [10.57.0.201] (unknown [10.57.0.201])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D2F513F5A1;
-	Tue, 22 Jul 2025 11:33:46 -0700 (PDT)
-Message-ID: <f81b88df-9959-4968-a60a-b7efd3d5ea24@arm.com>
-Date: Tue, 22 Jul 2025 19:33:43 +0100
+	s=arc-20240116; t=1753209273; c=relaxed/simple;
+	bh=L3vufwGgI09ZsG8XHxO8HCoUgh5XQkAgKqaKlzDDclE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=WNXYsCQpkJMsL5YuFdXop5rzb4aaykiYVengKjmLlEZF4axYQz8gB1l8Ad76CSHxoa/Rzu8tVW/X0gfCzUFuPAWm2DGweB5o3GoZB5itXbORMC9PgTxl8BYb9oCWl6dL3LVZMRGlDi9fYUciTDwKjhnr2ZVVQTfZMGgPn360t6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=jZD7vNB/; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1753209240; x=1753814040; i=markus.elfring@web.de;
+	bh=/kcMsNZpnXXW+LfAHwa/O2YgzoTjb/rnsR6TqBrmKGA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=jZD7vNB/MPYAKTMyieqeZ44bx+0srAqHiM2ROBn8o7R+rzZNa1WNua+uQH7F8Hbh
+	 QJf3DMeUYVqAhcRb1HSe1inFuqGmlnHE0gNZ71/HqgUI4hsRx15BlDbt4RWnlPjhR
+	 2GOiHnII8oW6K7CW+FmDCPJViAGk2MRAuDrsTUfZ9x9A2zFlz0Sru+635edIApKAu
+	 0K3Xyzn+RlCYWB9dVgFI4lVh0a8uA94By1IFb+H4f8ni1EHdQFgdnwQ04EsI6wfw5
+	 vrkdJ+83j/8ZQVwYdvmXwc8Rr1Mn4VXISm+tGf9Z78fo0dMjip5aysEr7i+jeYgqs
+	 y2fsbvPSzyUqS6TJ6g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.92.215]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N8Voj-1uiDkH1DW5-00rbsU; Tue, 22
+ Jul 2025 20:34:00 +0200
+Message-ID: <bf959b95-3e59-4863-bd92-84adee05f9e2@web.de>
+Date: Tue, 22 Jul 2025 20:33:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,157 +56,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/8] mmc: sdhci-of-dwcmshc: add common bulk optional
- clocks support
-To: Chen Wang <unicornxw@gmail.com>, adrian.hunter@intel.com,
- aou@eecs.berkeley.edu, conor+dt@kernel.org, guoren@kernel.org,
- inochiama@outlook.com, jszhang@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, palmer@dabbelt.com,
- paul.walmsley@sifive.com, robh@kernel.org, ulf.hansson@linaro.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mmc@vger.kernel.org, linux-riscv@lists.infradead.org,
- chao.wei@sophgo.com, haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com,
- tingzhu.wang@sophgo.com
-Cc: Chen Wang <unicorn_wang@outlook.com>, Drew Fustini <drew@pdp7.com>,
- Diederik de Haas <didi.debian@cknow.org>,
- "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
-References: <cover.1722847198.git.unicorn_wang@outlook.com>
- <e57e8c51da81f176b49608269a884f840903e78e.1722847198.git.unicorn_wang@outlook.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <e57e8c51da81f176b49608269a884f840903e78e.1722847198.git.unicorn_wang@outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To: Johan Hovold <johan+linaro@kernel.org>, linux-pci@vger.kernel.org,
+ Bjorn Helgaas <bhelgaas@google.com>
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>
+References: <20250721153609.8611-2-johan+linaro@kernel.org>
+Subject: Re: [PATCH 1/3] PCI/pwrctrl: Fix device leak at registration
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250721153609.8611-2-johan+linaro@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:8vf+8TT0dTg9hS92+mlOh3EcTxVoq5GuFL+JfG4QOO1sUK5oxsT
+ gRQSPhVAgSvqyA8I0ehb2ZQgQsX7E0OipLPa5Z3k87WPBUYvcl8joaW/VcEyy7fgplAFm34
+ vjulMoiNRD/SlQ8MOozvHS1JH5geobYG6LaoMjH3jo1SE73t0lxHUPjB4ppY0x7th2IskT8
+ RMYiHqCfvj3y9ccQygqqw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:OEomLu6boB0=;ZBR9UmxKLsBSRvhXK12b+Nl1iyb
+ 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
+ ovCEot1nvEi6aKZBv86pD+o6YBRvA==
 
-A bit late for a "review", but Diederik and I have just been
-IRC-debugging a crash on RK3568 which by inspection seems to be caused
-by this patch:
+=E2=80=A6
+> +++ b/drivers/pci/bus.c
+> @@ -362,11 +362,15 @@ void pci_bus_add_device(struct pci_dev *dev)
+=E2=80=A6
+> +		if (of_pci_supply_present(dn)) {
+> +			if (!device_link_add(&dev->dev, &pdev->dev,
+> +					     DL_FLAG_AUTOREMOVE_CONSUMER)) {
+> +				pci_err(dev, "failed to add device link to power control device %s\=
+n",
+> +					pdev->name);
+> +			}
+> +		}
+=E2=80=A6
 
-On 2024-08-05 10:17 am, Chen Wang wrote:
-> From: Chen Wang <unicorn_wang@outlook.com>
-> 
-> In addition to the required core clock and optional
-> bus clock, the soc will expand its own clocks, so
-> the bulk clock mechanism is abstracted.
-> 
-> Note, I call the bulk clocks as "other clocks" due
-> to the bus clock has been called as "optional".
-> 
-> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
-> Tested-by: Drew Fustini <drew@pdp7.com> # TH1520
-> Tested-by: Inochi Amaoto <inochiama@outlook.com> # Duo and Huashan Pi
-> ---
-[...]
-> +static int dwcmshc_get_enable_other_clks(struct device *dev,
-> +					 struct dwcmshc_priv *priv,
-> +					 int num_clks,
-> +					 const char * const clk_ids[])
-> +{
-> +	int err;
-> +
-> +	if (num_clks > DWCMSHC_MAX_OTHER_CLKS)
-> +		return -EINVAL;
-> +
-> +	for (int i = 0; i < num_clks; i++)
-> +		priv->other_clks[i].id = clk_ids[i];
-> +
-> +	err = devm_clk_bulk_get_optional(dev, num_clks, priv->other_clks);
+How do you think about to reconsider the usage of any curly brackets
+once more?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/coding-style.rst?h=3Dv6.16-rc7#n197
 
-This leaves a pointer into "priv" in the devres list...
-
-> +	if (err) {
-> +		dev_err(dev, "failed to get clocks %d\n", err);
-> +		return err;
-> +	}
-> +
-> +	err = clk_bulk_prepare_enable(num_clks, priv->other_clks);
-> +	if (err)
-> +		dev_err(dev, "failed to enable clocks %d\n", err);
-> +
-> +	priv->num_other_clks = num_clks;
-> +
-> +	return err;
-> +}
-> +
->   /*
->    * If DMA addr spans 128MB boundary, we split the DMA transfer into two
->    * so that each DMA transfer doesn't exceed the boundary.
-[...]
-> @@ -1280,9 +1300,7 @@ static int dwcmshc_probe(struct platform_device *pdev)
->   err_clk:
->   	clk_disable_unprepare(pltfm_host->clk);
->   	clk_disable_unprepare(priv->bus_clk);
-> -	if (rk_priv)
-> -		clk_bulk_disable_unprepare(RK35xx_MAX_CLKS,
-> -					   rk_priv->rockchip_clks);
-> +	clk_bulk_disable_unprepare(priv->num_other_clks, priv->other_clks);
->   free_pltfm:
->   	sdhci_pltfm_free(pdev);
-
-...but upon, say, -EPROBE_DEFER from sdhci_setup_host() because a
-regulator isn't ready yet, that "priv" is freed here, so by the time the
-devres callbacks eventually run, that "devres->clks" pointer which used
-to represent "priv->other_clocks" points to who knows what, and this
-sort of thing happens:
-
-[   12.470827] Unable to handle kernel paging request at virtual address 002df7b378917664
-[   12.472104] Mem abort info:
-[   12.472471]   ESR = 0x0000000096000004
-[   12.475991]   EC = 0x25: DABT (current EL), IL = 32 bits
-[   12.476657]   SET = 0, FnV = 0
-[   12.477146]   EA = 0, S1PTW = 0
-[   12.477547]   FSC = 0x04: level 0 translation fault
-[   12.478127] Data abort info:
-[   12.478126] rockchip-gpio fdd60000.gpio: probed /pinctrl/gpio@fdd60000
-[   12.478413]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-[   12.479826]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-[   12.480418]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[   12.481282] [002df7b378917664] address between user and kernel address ranges
-[   12.482421] Internal error: Oops: 0000000096000004 [#1]  SMP
-[   12.482980] Modules linked in: sdhci_of_dwcmshc drm_dp_aux_bus gpio_rockchip(+) drm_display_helper dw_mmc_rockchip drm_client_lib sdhci_pltfm drm_dma_helper fwnode_mdio sdhci dw_mmc_pltf
-m libphy fixed rockchip_dfi drm_kms_helper cqhci pl330(+) phy_rockchip_naneng_combphy dw_wdt phy_rockchip_snps_pcie3 phy_rockchip_inno_usb2 dw_mmc mdio_bus dwc3 ehci_platform ohci_platform
-ehci_hcd drm ohci_hcd udc_core io_domain i2c_rk3x usbcore ulpi usb_common
-[   12.486871] CPU: 0 UID: 0 PID: 64 Comm: kworker/u16:3 Not tainted 6.16-rc7-arm64-cknow #1 PREEMPTLAZY  Debian 6.16~rc7-1
-[   12.487901] Hardware name: FriendlyElec NanoPi R5S (DT)
-[   12.488412] Workqueue: async async_run_entry_fn
-[   12.488879] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[   12.489539] pc : __clk_put+0x2c/0x138
-[   12.489913] lr : __clk_put+0x2c/0x138
-[   12.490281] sp : ffff800080713b10
-[   12.490607] x29: ffff800080713b10 x28: ffff0001f001a120 x27: 0000000000000000
-[   12.491302] x26: ffff0001f98e01a0 x25: 0000000000000000 x24: ffff0001f0f35408
-[   12.491995] x23: ffffa8da199b4b40 x22: ffff800080713bb0 x21: ffff0001f0f35010
-[   12.492689] x20: ffff0001f94aafd0 x19: 0a2df7b378917634 x18: 00000000ffffffff
-[   12.493381] x17: 3d4d455453595342 x16: 555300307075656b x15: ffff0001f4885650
-[   12.494075] x14: 0000000000000000 x13: ffff0001f025b810 x12: 0000000000008000
-[   12.494765] x11: ffffa8da1a73ef98 x10: ffffa8da1a460000 x9 : 0000000000000078
-[   12.495454] x8 : 0000000000000049 x7 : ffffa8da18c2fbe0 x6 : 0000000000000001
-[   12.496145] x5 : 0000000000000004 x4 : 000000006cb6bb63 x3 : 0000000000000000
-[   12.496833] x2 : 0000000000000000 x1 : ffff0001f1365ac0 x0 : 0000000000000001
-[   12.497524] Call trace:
-[   12.497776]  __clk_put+0x2c/0x138 (P)
-[   12.498154]  clk_put+0x18/0x30
-[   12.498471]  clk_bulk_put+0x40/0x68
-[   12.498825]  devm_clk_bulk_release+0x24/0x40
-[   12.499248]  release_nodes+0x64/0xa0
-[   12.499608]  devres_release_all+0x98/0xf8
-[   12.500004]  device_unbind_cleanup+0x20/0x70
-[   12.500426]  really_probe+0x1e8/0x3a0
-[   12.500793]  __driver_probe_device+0x84/0x160
-[   12.501225]  driver_probe_device+0x44/0x128
-[   12.501640]  __driver_attach_async_helper+0x5c/0x108
-[   12.502125]  async_run_entry_fn+0x40/0x180
-[   12.502535]  process_one_work+0x23c/0x640
-[   12.502939]  worker_thread+0x1b4/0x360
-[   12.503315]  kthread+0x150/0x250
-[   12.503646]  ret_from_fork+0x10/0x20
-[   12.504015] Code: aa0003f3 b140041f 540006c8 97ffd9c4 (b9403260)
-[   12.504598] ---[ end trace 0000000000000000 ]---
-
-
-TBH I'm not sure what to do as a straight revert seems impractical by
-now, so we hope someone else might have a good idea.
-
-Thanks,
-Robin.
+Regards,
+Markus
 
