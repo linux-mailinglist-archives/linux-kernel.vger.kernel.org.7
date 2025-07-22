@@ -1,213 +1,213 @@
-Return-Path: <linux-kernel+bounces-741410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FC17B0E3BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:53:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 009C4B0E3BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:54:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0E4E1C22114
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:53:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F85B4E7A2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:54:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D200285047;
-	Tue, 22 Jul 2025 18:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CA3021516E;
+	Tue, 22 Jul 2025 18:54:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="chi3x1FG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OJ+uu7gn"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B72B284B29;
-	Tue, 22 Jul 2025 18:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4AE22258E
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 18:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753210363; cv=none; b=ElulJ1azfoQu6+sFLPPs1nQfQGX6p3pRZgSZnW26F5lDxB3Mv1CVseQnUTayH9M0/b3ENOfJvMjXMdACWmlZjG8htndeZ8tIZdrHZQc/j7gFNTE/s7sEsYNUzZo6XrIKCxZQif09whqLRhN1PpPxC3v2WJGvZ0LbbHWedZ0y/PA=
+	t=1753210465; cv=none; b=sY6tys00bbRjdGR2CJ7W7/rYmapBzMxgiuQ3dI9tjFEdqK4wRBA7JhRrcvChAJSiKjuURIdAy6jGmsAV/cIKptTrA6ZqCC/4NXU4Nr7bWI4kt5IKnOEBuNNM4ex5MtuZpYUGQuBb/MxG9mPeIsQKqvcXG51/6JUuT5SqkqNBM5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753210363; c=relaxed/simple;
-	bh=iYBw4xhCGRCvfAF5MhNNiyX1HVH5Ue5u6Xd0TVVd7Yc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=O/hwRK28pe0sqrWzI7tOkTpNYDV1o6Mu2zyQW/EYTTqqreezV8xMlN+Q/2uexnGDWe1mBDYxv94tAcm7Ex/j1XYcI7vrNUurbz4AmmcniEMcwB9OMEqVbpvgENjngXbvx2r0Sqku9lwkPYoyVtMXIHKwsYlkBXcK57wcPFACjOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=chi3x1FG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B2FBC4CEF6;
-	Tue, 22 Jul 2025 18:52:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753210363;
-	bh=iYBw4xhCGRCvfAF5MhNNiyX1HVH5Ue5u6Xd0TVVd7Yc=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=chi3x1FGBfA1OeZG+zcjT9/+5HlFk5TvmI3otGjcymBEksXGDCC5xfWQdmbCaEtW/
-	 oYECfWACgWyorQOn5mJy5fpkuCqjvLgWVr6AEx4y5vrbivaA7mCTkoYrPJe5wmmOyv
-	 Vm7e2jkRa7UgyLyIwUIdnkW7W1C0fB0XQ/0E5ZPvwIfRRj6WEQzQUhXD7NIUW3FLZT
-	 Sil5rE4eWIfxX+VYEfxaU32Pfy0jueE4hUlqteQLlnU4xfjGZO+n35kFhwz6/JjcR8
-	 4UMFeFUQTovVYHel4MjqYpd9W7svy2SrebS68ULTt8mYxLxF86xqH30SMOPDA1hFb4
-	 C7UCPPOQIq+Og==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Tue, 22 Jul 2025 14:52:28 -0400
-Subject: [PATCH 2/2] vfs: fix delegated timestamp handling in
- setattr_copy()
+	s=arc-20240116; t=1753210465; c=relaxed/simple;
+	bh=96xfn4tCHea2gia7bvnVjslaPkgqvIGZbOhlkhi2lqQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D9+6lqp7Sk+ZMp054/nRxLg4R8xWaywaHDTBZd8+Et5dmr4UyskY6ie5aUlZs/PDfIKWEBzPMANgLKiXSL7wcaZLfjnflQxQPWBuVZHqVt75IqKhfSOUPM8ZTRz8h7sRMZGsSZiBA28we0MWMKC8GQhxLDhHDR9mHqakewF4+bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OJ+uu7gn; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56MELwlV014607
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 18:54:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=/4kWT0NOLTYGI8Jw3DZJpmHB
+	CM5z1oJo6kgrF1DYaDw=; b=OJ+uu7gn9b6y+gkHNreX6ur2vMNsWU7RvG4zlI4D
+	yUMSXtk6rWUBZiC4Lgr1TOdWW/x7MCIcu/FwC7R2kq9i6C5W6SK1bpYfH08zoWgA
+	uPVLwBVIeTjuMFSkH3hsLljeQzydCoxvqJmZoXhbHzED2PxbNMtuv7VV82BGD8W+
+	kI91abkXerfSYdJKjZnM51yZApXWp42vhHuD9qAfuKWIFIi3CYxterOcR96SV6Fq
+	JwzE5N2h+7RiXdCGiHshDzd50iDXpfLjGhz8duQqsOKW1g13jxMwAMN5q4jf4DeE
+	PqDKNvATfS3URU0mvvHr3YjjQAHVjPjC8JpiU6/McEFbYQ==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 481t6w3qap-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 18:54:23 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4ab69fff4deso115092681cf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 11:54:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753210462; x=1753815262;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/4kWT0NOLTYGI8Jw3DZJpmHBCM5z1oJo6kgrF1DYaDw=;
+        b=qfV9CjZNfgXsjKW4pgkBHy3jwUw7HGLkELUpcZXYqN4mDC/s6UstUZ43NcEHHK6U/v
+         bVkLNiZIFc0WUIXN4ekygok11F+4YUAjAbHM8Fhej3FfyQujmDTD3xDASvzAeJ9Izrcd
+         3RbQ1p3r2OOuiBrP+wnDONNtlMH8/hjf7CsOrtuSJ69SeFyAHWsbvuDkIQ/pcbpt3cER
+         GCeGRkRJlOV913g5qRLsX9lzefhalOS7NLURazeKGHFlMbe7a4uM/gXOSfDNKQsZ6HHT
+         vaf3nQN4D7pZM2fgvI3msMEBcYqIYe9Bg9T3BoRXTLMgA1IEIkwvz6aLk8SdyaGGjoX6
+         379A==
+X-Forwarded-Encrypted: i=1; AJvYcCXnUkR+3tc5RyELLSIjhOYwdSlbkOV5vYu9RHbZvwndg/hqaJ8N+4TbvKpT+oec0KwhmWiqxmNPFoguaRI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt6Iz6vPbtaIvsBUFKWXbfFWebVvyTo0OO69wjXWAh7b5yGlNh
+	Sg+DWDyNTR2ufAut/TZiBHFdF7Hoj+NOJ8C3WC4ZXosM0CCoBJE5MHqKQvrTij74FUDF33PvmdQ
+	pn4VZJPKy3ElpltZLaAtl86J3X1348vjCFFPg0InnglEJVFUvY3H5/4/8zOh98n3OzwI=
+X-Gm-Gg: ASbGncviooGN0Yb5FJ4tFSqgMo5V+L5kVNQy+0Gr4E0zgrmmtdlZEJ9y9eQQr4bVIzd
+	gz6uRjr2GJteTVYRhHDZzsAoBNEQ/wN2sqrXMHFwq1L/W79zFb28+6/Vt8SZuYiRVbS1jPM90d1
+	aVFw8y54tyFziZX8cZrrxlBXcrkLALLR23UKUuZXYjYYakI0plvoenmUx9fZPJ9WP4gttyMSrW2
+	IVI733lcamUOL0e7PRcS5NI6PIiBLLxTnSXjbgeI3GhnRt6ZBNzUQlGooOI7OAINBE8vFiDvw2i
+	+tqf6dy0ZiXorZkB62RogydsS8+rl8qJywW53SoWL77trNWl/D6Ozpoo4A7M7GspK0cEYIWFCOG
+	v5Wkw5/HLCopxAMustkGXVRl4ozqIgc4DGCOV/Txryc/UYy385qC7
+X-Received: by 2002:a05:622a:144d:b0:4ab:377c:b6be with SMTP id d75a77b69052e-4ae6de98f09mr1912411cf.22.1753210461926;
+        Tue, 22 Jul 2025 11:54:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEhRnikguNGu1BrDZFDmisqE4jxon1gG+KvhvICXhN14dMxNM4hz1lupwOy1zhqjhe9hxqXqw==
+X-Received: by 2002:a05:622a:144d:b0:4ab:377c:b6be with SMTP id d75a77b69052e-4ae6de98f09mr1911951cf.22.1753210461368;
+        Tue, 22 Jul 2025 11:54:21 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55a31d912aasm2035430e87.155.2025.07.22.11.54.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jul 2025 11:54:20 -0700 (PDT)
+Date: Tue, 22 Jul 2025 21:54:17 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+Cc: mani@kernel.org, alim.akhtar@samsung.com, avri.altman@wdc.com,
+        bvanassche@acm.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
+        James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
+        agross@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] ufs: ufs-qcom: Add support for DT-based gear and
+ rate limiting
+Message-ID: <2ihbf52nryduic5vzlqdldzgx2fe4zidt4hzcugurqsuosiawq@qs66zxptpmqf>
+References: <20250722161103.3938-1-quic_rdwivedi@quicinc.com>
+ <20250722161103.3938-2-quic_rdwivedi@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250722-nfsd-testing-v1-2-31321c7fc97f@kernel.org>
-References: <20250722-nfsd-testing-v1-0-31321c7fc97f@kernel.org>
-In-Reply-To: <20250722-nfsd-testing-v1-0-31321c7fc97f@kernel.org>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Steven Rostedt <rostedt@goodmis.org>, 
- Masami Hiramatsu <mhiramat@kernel.org>, 
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
- Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
- Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-trace-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4536; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=iYBw4xhCGRCvfAF5MhNNiyX1HVH5Ue5u6Xd0TVVd7Yc=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBof933jwSVWVC4Wssc+UXoCLXpXXdOe6OBGByDN
- FfNnqfKaKKJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaH/d9wAKCRAADmhBGVaC
- FaJqD/9VKfJEvpwwpjcl+kilKWRcwygCTf3opH97hbOIq0FSw/ENAU394+huxg23jAZr4dfY5LE
- EmWcdMcxZC4lpnL5YlRyXDQoVjxVX6I5x3MJWHqBx80X27QWeKjrRdEMPWe1d8V5mxLpeRvBdJj
- wwijWMD+W+CmQ2+6wa/r3i+oVWy8lJ03QGarpEfGG9Y8Hn7SuyurBnS5AA2Wiz2XRcqJndCncDa
- +v82IsVJa6qB2jK52HQ46GBzalRL3NjkVI532lHqz6vTFsWVupRNJ6tzkKYKGHmGP9cAF/PqaKQ
- lH4kxNYYqWNY8lKwvgzA+2C5a1g4Y79EejnQLJednWJqI2Vz6VDbq7ARVH1qEYMXweVCLRsX2w3
- ZOhhI740oirzbGxlQTSvwPy/JxlOc6deByEsd1e0owEQ7WGmMNxnbwgNHZgbK7ijhdRK7DriP69
- FNG9QsZXoJ79QJkgPKJOb2A3wmqo3GYq6qF/X1T3zF5l90q6k8OgroFC9O9IC3IVTznMOa4cvfd
- ksrrujp8QXosxmUWT0VK2uRR49Xnnn9B2SEYwqQ2WS5eUAm+nJMl9RB6jnvkitIDhnKcZx4u+oq
- YBXBK9f1fIzV36vycwqws3aTMVZIQvGCafsgTYIjzUn6yyyxgWXoY3HkbOa7e6HsjM7qFGI+I+1
- Dny5qYhaSRi9Skw==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250722161103.3938-2-quic_rdwivedi@quicinc.com>
+X-Authority-Analysis: v=2.4 cv=SPpCVPvH c=1 sm=1 tr=0 ts=687fde5f cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=neWBWJ4wSANu-z5_DMoA:9 a=CjuIK1q_8ugA:10
+ a=dawVfQjAaf238kedN5IG:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDE2MCBTYWx0ZWRfX43OSHz3Hnjmt
+ gv1LyPWJdKmKCQMwn5xWf7ndLsAS6JgZjiaOBekEevcABGI4ZEDagKOHqlXZNjlcncL4enSgtsQ
+ eLZlp3rX7aTjQJGSMKEXdOfhrH913ZBfg8YLfKkA77VUliixCTXv9rRIQu0Y5xKpKmwGFwkCJq+
+ onem0PnDSI4WCGKB1iybHYAO0EpNGyC8FysJ0tYTlqvofD4YRvt9LvtvGimeCoSu2yrUipSn26k
+ CkQc01FsndHPODcSkKREH0ZhDUux0A67e4yGC13jwrNWDBKDYlNHVcRiewQNbMtS98q0e72g7f0
+ Wz21PPx2krouFgNVT9YKGK+2nG8Q6ii8l0ETNV4TG32FEHr1MAsIQV6XkY57M4X6ncNxBW7jKzK
+ l0S1ZxjDoWjb7JZR7EuB0n024I/TCpCA/ULbUCLI/d6/Jy/cidMUWfFNxY4ZlwwUPhuWpU28
+X-Proofpoint-ORIG-GUID: uTmhEsAL69WgLV-Hc6KXzhUAtbukSadq
+X-Proofpoint-GUID: uTmhEsAL69WgLV-Hc6KXzhUAtbukSadq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-22_02,2025-07-21_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 suspectscore=0 adultscore=0 phishscore=0 malwarescore=0
+ mlxscore=0 bulkscore=0 clxscore=1015 priorityscore=1501 impostorscore=0
+ lowpriorityscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507220160
 
-There are a couple of problems with delegated timestamp updates via
-setattr:
+On Tue, Jul 22, 2025 at 09:41:01PM +0530, Ram Kumar Dwivedi wrote:
+> Add optional device tree properties to limit Tx/Rx gear and rate during UFS
+> initialization. Parse these properties in ufs_qcom_init() and apply them to
+> host->host_params to enforce platform-specific constraints.
+> 
+> Use this mechanism to cap the maximum gear or rate on platforms with
+> hardware limitations, such as those required by some automotive customers
+> using SA8155. Preserve the default behavior if the properties are not
+> specified in the device tree.
+> 
+> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+> ---
+>  drivers/ufs/host/ufs-qcom.c | 28 ++++++++++++++++++++++------
+>  1 file changed, 22 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+> index 4bbe4de1679b..5e7fd3257aca 100644
+> --- a/drivers/ufs/host/ufs-qcom.c
+> +++ b/drivers/ufs/host/ufs-qcom.c
+> @@ -494,12 +494,8 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
+>  	 * If the HS-G5 PHY gear is used, update host_params->hs_rate to Rate-A,
+>  	 * so that the subsequent power mode change shall stick to Rate-A.
+>  	 */
+> -	if (host->hw_ver.major == 0x5) {
+> -		if (host->phy_gear == UFS_HS_G5)
+> -			host_params->hs_rate = PA_HS_MODE_A;
+> -		else
+> -			host_params->hs_rate = PA_HS_MODE_B;
+> -	}
+> +	if (host->hw_ver.major == 0x5 && host->phy_gear == UFS_HS_G5)
+> +		host_params->hs_rate = PA_HS_MODE_A;
 
-1/ the ia_ctime is always clobbered by notify_change(), so setting the
-ia_ctime to the same value as the ia_mtime in nfsd4_decode_fattr4()
-doesn't work.
+Why? This doesn't seem related.
 
-2/ while it does test the ctime's validity vs. the existing ctime and
-current_time(), the same is not done for the atime or mtime. The spec
-requires this.
+>  
+>  	mode = host_params->hs_rate == PA_HS_MODE_B ? PHY_MODE_UFS_HS_B : PHY_MODE_UFS_HS_A;
+>  
+> @@ -1096,6 +1092,25 @@ static void ufs_qcom_set_phy_gear(struct ufs_qcom_host *host)
+>  	}
+>  }
+>  
+> +static void ufs_qcom_parse_limits(struct ufs_qcom_host *host)
+> +{
+> +	struct ufs_host_params *host_params = &host->host_params;
+> +	struct device_node *np = host->hba->dev->of_node;
+> +	u32 hs_gear, hs_rate = 0;
+> +
+> +	if (!np)
+> +		return;
+> +
+> +	if (!of_property_read_u32(np, "limit-hs-gear", &hs_gear)) {
 
-Add a new setattr_copy_delegts() function that handles updating the
-timestamps whenever ATTR_DELEG is set. For both atime and mtime,
-validate and clamp the value to current_time(), and then set it. If the
-mtime gets updated, also update the ctime.
+These are generic properties, so they need to be handled in a generic
+code path.
 
-Fixes: 7f2c86cba3c5 ("fs: handle delegated timestamps in setattr_copy_mgtime")
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/attr.c         | 52 ++++++++++++++++++++++++++++++++++++++--------------
- fs/nfsd/nfs4xdr.c |  4 +---
- 2 files changed, 39 insertions(+), 17 deletions(-)
+Also, the patch with bindings should preceed driver and DT changes.
 
-diff --git a/fs/attr.c b/fs/attr.c
-index 9caf63d20d03e86c535e9c8c91d49c2a34d34b7a..3e636943d26a36aeeed0ff8b428b6dd3e63f8dde 100644
---- a/fs/attr.c
-+++ b/fs/attr.c
-@@ -287,14 +287,7 @@ static void setattr_copy_mgtime(struct inode *inode, const struct iattr *attr)
- 	struct timespec64 now;
- 
- 	if (ia_valid & ATTR_CTIME) {
--		/*
--		 * In the case of an update for a write delegation, we must respect
--		 * the value in ia_ctime and not use the current time.
--		 */
--		if (ia_valid & ATTR_DELEG)
--			now = inode_set_ctime_deleg(inode, attr->ia_ctime);
--		else
--			now = inode_set_ctime_current(inode);
-+		now = inode_set_ctime_current(inode);
- 	} else {
- 		/* If ATTR_CTIME isn't set, then ATTR_MTIME shouldn't be either. */
- 		WARN_ON_ONCE(ia_valid & ATTR_MTIME);
-@@ -312,6 +305,39 @@ static void setattr_copy_mgtime(struct inode *inode, const struct iattr *attr)
- 		inode_set_mtime_to_ts(inode, now);
- }
- 
-+/*
-+ * Skip update if new value is older than existing time. Clamp
-+ * to current_time() if it's in the future.
-+ */
-+static void setattr_copy_delegts(struct inode *inode, const struct iattr *attr)
-+{
-+	struct timespec64 now = current_time(inode);
-+	unsigned int ia_valid = attr->ia_valid;
-+
-+	if (ia_valid & ATTR_MTIME) {
-+		struct timespec64 cur = inode_get_mtime(inode);
-+
-+		if (timespec64_compare(&attr->ia_mtime, &cur) > 0) {
-+			if (timespec64_compare(&attr->ia_mtime, &now) > 0)
-+				inode_set_mtime_to_ts(inode, now);
-+			else
-+				inode_set_mtime_to_ts(inode, attr->ia_mtime);
-+			inode_set_ctime_deleg(inode, attr->ia_mtime);
-+		}
-+	}
-+
-+	if (ia_valid & ATTR_ATIME) {
-+		struct timespec64 cur = inode_get_atime(inode);
-+
-+		if (timespec64_compare(&attr->ia_atime, &cur) > 0) {
-+			if (timespec64_compare(&attr->ia_atime, &now) > 0)
-+				inode_set_atime_to_ts(inode, now);
-+			else
-+				inode_set_atime_to_ts(inode, attr->ia_atime);
-+		}
-+	}
-+}
-+
- /**
-  * setattr_copy - copy simple metadata updates into the generic inode
-  * @idmap:	idmap of the mount the inode was found from
-@@ -352,6 +378,8 @@ void setattr_copy(struct mnt_idmap *idmap, struct inode *inode,
- 		inode->i_mode = mode;
- 	}
- 
-+	if (ia_valid & ATTR_DELEG)
-+		return setattr_copy_delegts(inode, attr);
- 	if (is_mgtime(inode))
- 		return setattr_copy_mgtime(inode, attr);
- 
-@@ -359,12 +387,8 @@ void setattr_copy(struct mnt_idmap *idmap, struct inode *inode,
- 		inode_set_atime_to_ts(inode, attr->ia_atime);
- 	if (ia_valid & ATTR_MTIME)
- 		inode_set_mtime_to_ts(inode, attr->ia_mtime);
--	if (ia_valid & ATTR_CTIME) {
--		if (ia_valid & ATTR_DELEG)
--			inode_set_ctime_deleg(inode, attr->ia_ctime);
--		else
--			inode_set_ctime_to_ts(inode, attr->ia_ctime);
--	}
-+	if (ia_valid & ATTR_CTIME)
-+		inode_set_ctime_to_ts(inode, attr->ia_ctime);
- }
- EXPORT_SYMBOL(setattr_copy);
- 
-diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-index 8b68f74a8cf08c6aa1305a2a3093467656085e4a..e6899a3502332d686138abee2284c87fc7fbc0ae 100644
---- a/fs/nfsd/nfs4xdr.c
-+++ b/fs/nfsd/nfs4xdr.c
-@@ -537,9 +537,7 @@ nfsd4_decode_fattr4(struct nfsd4_compoundargs *argp, u32 *bmval, u32 bmlen,
- 			return nfserr_bad_xdr;
- 		iattr->ia_mtime.tv_sec = modify.seconds;
- 		iattr->ia_mtime.tv_nsec = modify.nseconds;
--		iattr->ia_ctime.tv_sec = modify.seconds;
--		iattr->ia_ctime.tv_nsec = modify.seconds;
--		iattr->ia_valid |= ATTR_CTIME | ATTR_MTIME | ATTR_MTIME_SET | ATTR_DELEG;
-+		iattr->ia_valid |= ATTR_MTIME | ATTR_MTIME_SET | ATTR_DELEG;
- 	}
- 
- 	/* request sanity: did attrlist4 contain the expected number of words? */
+> +		host_params->hs_tx_gear = hs_gear;
+> +		host_params->hs_rx_gear = hs_gear;
+> +		host->phy_gear = hs_gear;
+> +	}
+> +
+> +	if (!of_property_read_u32(np, "limit-rate", &hs_rate))
+> +		host_params->hs_rate = hs_rate;
+> +}
+> +
+>  static void ufs_qcom_set_host_params(struct ufs_hba *hba)
+>  {
+>  	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
+> @@ -1337,6 +1352,7 @@ static int ufs_qcom_init(struct ufs_hba *hba)
+>  	ufs_qcom_advertise_quirks(hba);
+>  	ufs_qcom_set_host_params(hba);
+>  	ufs_qcom_set_phy_gear(host);
+> +	ufs_qcom_parse_limits(host);
+>  
+>  	err = ufs_qcom_ice_init(host);
+>  	if (err)
+> -- 
+> 2.50.1
+> 
 
 -- 
-2.50.1
-
+With best wishes
+Dmitry
 
