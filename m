@@ -1,180 +1,143 @@
-Return-Path: <linux-kernel+bounces-740423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96BBAB0D404
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:58:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19E42B0D3F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:57:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45A78166146
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:56:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E46EB188A217
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:57:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1BD2BE053;
-	Tue, 22 Jul 2025 07:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A9E2BE051;
+	Tue, 22 Jul 2025 07:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fzAW2O7m"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fel.cvut.cz header.i=@fel.cvut.cz header.b="ec9LZCKq";
+	dkim=pass (2048-bit key) header.d=fel.cvut.cz header.i=@fel.cvut.cz header.b="ZRRnQR8j"
+Received: from smtpx1.feld.cvut.cz (smtpx1.feld.cvut.cz [147.32.210.191])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE43289340;
-	Tue, 22 Jul 2025 07:56:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D1D273FD;
+	Tue, 22 Jul 2025 07:57:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=147.32.210.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753171008; cv=none; b=F/lu0+gJe/Xx4RhUsrNMs4DULy6em2fGytdBNWBFX4fQQoHtcvYfOALyrotljRAc9JRdEwUH4FVfHMRwo/VsHe4JOfGEZgwRFPMFqSXT778nuED0hqdOmlxw2EgKEnrI/V+DKFJ/UnTZor2MYCq+Ktdvc544XQI0inqA2McF5kc=
+	t=1753171035; cv=none; b=YKWpFPRRcTa4C2433I4lTtRxTaHxiQX0ZrAWWApMtwqVS579ZegMldeVnPfmtxtMbrfCafe+d6IzPa2nz+un0W7vspBSuxuXcGbUv+bCsWjSIciczlcXWMStwQiu0Bc1uDIqdP/ANWQ+fyIi+NRazO07elhWEGtSQJLOMT7m9Q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753171008; c=relaxed/simple;
-	bh=3Mq8C1u4uiVOenLn4D4MoCQKayAJRO/M2RtqmPGx1NM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BGr/zZKj84BOr87E0M/ZioHBiMebN8ejx0fvqsK/HB86Vbh/Yr2AZ/ne8dZqxibIzsNohjeJVgV0PZdDO4ySer/RKaOezlFw8/dNIyWArKrW1fyDHPLmVHRvCwoUghi9Gosf/LWCyo0WS3yABnNW5GShE+jVylE5FUfnMyHg9gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fzAW2O7m; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ae0a0cd709bso1132414766b.0;
-        Tue, 22 Jul 2025 00:56:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753171005; x=1753775805; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=unD8x7uEw9NRMW10AGCq7RHtH0IeVfWW1oGZH9PpU7w=;
-        b=fzAW2O7m2KynRiBwvyXd8ChdiieuHjEBvOlJc3MMfTgXCRS92/jIx7eIce8K+wc78w
-         VunmgZMqYy5zSOcRuxAJcqNoEXTils3/CVwUpCXvfliPQa/4b24uL97Ff/CCQtJM4W+a
-         Aml+libqU/WsolfitI7xGa5JA/c4srRjh9DQTlrd2+vWC9TqaTVNTm302QBZgJfoO6pu
-         SxFPid8MJoJkSFDmMTpeqZfip8ed8lYE5O3suga+t7GQuNivgZ9en+KW+gr38PcNk/KY
-         JKLKbLUyJvT5vMWfTsSd40xL/l9lfBKt92Jn1c5usQziy8YlR1l/gffQpiQ6+VqIvPX/
-         Sqbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753171005; x=1753775805;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=unD8x7uEw9NRMW10AGCq7RHtH0IeVfWW1oGZH9PpU7w=;
-        b=GNVOi1x5GC1a3cIHxFLpJiwe6pPxbCrml7C+glxdYak4wqZ5K2l8oNw3cgPwjx3Pki
-         85bu66RdxVmRIA/jVN9VxfoBc6plQdiagCmqT5kwhLgr8+w2sAd8SQKsu+VR2o9f6bGT
-         0RlkqC1rBCdQTk7mp+STV/hD7GQ7omEP7/jUofJR2iHclJzPR6Q0MicgAS+2PJ+AP+tQ
-         yJYSwMxXlUzf9fk65bXUr02L45xx6pBurHwuUXKdzc+44IdeAt1+Mk/rhnnoxtUyPyZx
-         PY/ZYERoAN1J43zUw5ELO9KCoIZ6HxHURFOBLx2gl5oXZKkjkeLNRkXyQQXsqruxxhfe
-         AfvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUlPNLYKK6Ptw0vSkh9NeehntAGCHt7rTfm8HdrpvwDXSoPEdvSby6e6nhgg2gc9jv4KL14rfzAcyGV3y4P@vger.kernel.org, AJvYcCWqM3OLNhFs4Fb+i0imQuGBpgCjZIXYFALK+cOv+9fHFAG7SoC80dG9LD1JN5oGpLbntgQe6V0XKBc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzlu7p7IlAIdN9sFdkDtRLWe/m5CaOf1wVsL/hg9ycvMcMdvGwa
-	U/TVRaDW7ft03FPAHmhdcMaYHjVBDcj1/+g4GRG7/fwDU7wAcMTgyUrO
-X-Gm-Gg: ASbGncsbSxftWV68Eo7bEcJJqBN2PxIbsQ4bRhRBn988atMyZzTXdYB7epn/6AGxHBd
-	SKVmpXBVjVGyeKINpJKOiY+5n3meiusTJRIvrnIVAq7/smZ0O7L6VrsJk+MLJgjw8JjkGPmZWG+
-	iGdad2ibMa+5+QcNI3XPhL5vT2Zj8SokTlkVqZSBkgoOMtv+3EZoK9JU+tQoxyy0C3VLzbVKjJM
-	QJ+ptwPUY8zod8u5zFZ7fwCH2DMZTFTAl2sfWABBLzjdxcY8tWyQc9zx2ndKOVbX5iY6aFIs/qS
-	5Kp7n3r9TSvxPOrB2NlO2SJfmM1yFgtyticrpLVAGktrKEnooGy1r4SK0VjxfYIZyp65bdFjuxz
-	B7pWSrEe+hY8xCiJVNQWQDaoRmntWS9X+kW91EPms7Rg=
-X-Google-Smtp-Source: AGHT+IE9Tt3yHLnFYuZt7ysenasNtrJZi9n6PvwKoOLgTsyUs4RdX++j7gPboADxbM0FqIPSi0xqHg==
-X-Received: by 2002:a17:907:2683:b0:af1:4c23:c8c8 with SMTP id a640c23a62f3a-af152bfacdbmr291849166b.12.1753171004719;
-        Tue, 22 Jul 2025 00:56:44 -0700 (PDT)
-Received: from HYB-DlYm71t3hSl.ad.analog.com ([137.71.226.91])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af244a659a4sm4369166b.22.2025.07.22.00.56.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 00:56:44 -0700 (PDT)
-Date: Tue, 22 Jul 2025 09:56:41 +0200
-From: Jorge Marques <gastmaier@gmail.com>
-To: "Guntupalli, Manikanta" <manikanta.guntupalli@amd.com>
-Cc: David Lechner <dlechner@baylibre.com>, 
-	Andy Shevchenko <andriy.shevchenko@intel.com>, "git (AMD-Xilinx)" <git@amd.com>, 
-	"Simek, Michal" <michal.simek@amd.com>, "lorenzo@kernel.org" <lorenzo@kernel.org>, 
-	"jic23@kernel.org" <jic23@kernel.org>, "nuno.sa@analog.com" <nuno.sa@analog.com>, 
-	"andy@kernel.org" <andy@kernel.org>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>, 
-	"Goud, Srinivas" <srinivas.goud@amd.com>, "manion05gk@gmail.com" <manion05gk@gmail.com>
-Subject: Re: [PATCH] iio: imu: lsm6dsx: Add shutdown callback support for I3C
- interface
-Message-ID: <3d7w3rczrdics77nt7lig5rsj2bmfubpwzhffarzlxmo5w2g4a@baewpltdovhk>
-References: <20250721110741.2380963-1-manikanta.guntupalli@amd.com>
- <aH4mwkh80TUTNXtS@smile.fi.intel.com>
- <83798680-8e3f-4899-8c58-d7da5587653e@baylibre.com>
- <DM4PR12MB61095749195041654F6D560D8C5CA@DM4PR12MB6109.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1753171035; c=relaxed/simple;
+	bh=0ER8Oi/jWdnMSjU24pmXL/+FuCkHbk/CujAL/bqS8/4=;
+	h=From:To:Subject:Date:Cc:References:In-Reply-To:MIME-Version:
+	 Content-Type:Content-Disposition:Message-Id; b=HdrmB2fhm5BQhkrwxnq42K5di45b1dVJKW1zC+wmpDnBNB1qfGi58+aaQAA1pBeQMq6njuxU3opMFvKiLbnLhQJhA7+rfoX7VH03KrA07lV2BjCqrI3GdnJdubWKNLrNPonWf6h+4cCza502c5012kIDqOCYGQzy9UsAtOvTqx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fel.cvut.cz; spf=pass smtp.mailfrom=fel.cvut.cz; dkim=pass (2048-bit key) header.d=fel.cvut.cz header.i=@fel.cvut.cz header.b=ec9LZCKq; dkim=pass (2048-bit key) header.d=fel.cvut.cz header.i=@fel.cvut.cz header.b=ZRRnQR8j; arc=none smtp.client-ip=147.32.210.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fel.cvut.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fel.cvut.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fel.cvut.cz;
+	s=felmail; t=1753171029;
+	bh=XUoJqx+1FPCFGqroj3LyhlD2zFfnmK3x2BRB4HpHBao=;
+	h=From:To:Subject:Date:Cc:References:In-Reply-To:From;
+	b=ec9LZCKqwqNKY1YMkKxJtY3e+sGVbocnOTUlHRkx4jgsUHLVn4tMsuL+VyY+Ow3/s
+	 9NGhbRp2NeROxlfo33nmOTuT2jTRVWsmKetG9zx4y9SRqQUVqusbY/AdGxLahwxGFf
+	 fyXQe5PKYt9GrT7nH5/jMSIjrbrJIUqAXL3jBGvRsKaduzrcRgcVfWFpnz8pZIoKnU
+	 A+MvjtM8qaMw7yfgpf8/1SxqnVCxQ0DUFxk2WKIXqG6BJvNLViNNwZeNS6FP0i9+80
+	 mm8lm2OO5jShmfCQ+RS5PmAL6N03EyHJs+H8h8GMkIBKtBepw5cCPbVdbeVOzf0nUM
+	 XZOmNBQ4/RXUg==
+Received: from smtpx.fel.cvut.cz (smtpx.feld.cvut.cz [147.32.210.153])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by smtpx1.feld.cvut.cz (Postfix) with ESMTPS id 8E9542E4A0;
+	Tue, 22 Jul 2025 09:57:09 +0200 (CEST)
+Received: from localhost (unknown [192.168.200.27])
+	by smtpx.fel.cvut.cz (Postfix) with ESMTP id 8C2A74933A;
+	Tue, 22 Jul 2025 09:57:09 +0200 (CEST)
+X-Virus-Scanned: IMAP STYX AMAVIS
+Received: from smtpx.fel.cvut.cz ([192.168.200.2])
+ by localhost (cerokez-250.feld.cvut.cz [192.168.200.27]) (amavis, port 10060)
+ with ESMTP id 8bFl3xiDcrEl; Tue, 22 Jul 2025 09:57:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fel.cvut.cz;
+	s=felmail; t=1753171028;
+	bh=XUoJqx+1FPCFGqroj3LyhlD2zFfnmK3x2BRB4HpHBao=;
+	h=From:To:Subject:Date:Cc:References:In-Reply-To:From;
+	b=ZRRnQR8j2Pypk5JEPQqlMMVeCJez8/6iiULVE+I7YebY5dQjKPFeUMrBmIev5onTj
+	 /0m3Llmd1NCCS6uMW0S3EKT/Uxq/BFE7S2YkbDc5nfEBbrx5dv8eeTA/EAu2rRO3QM
+	 bdHggeF0A1GZvDyvLF86HMRDXUMuVodm4Tjgy5D3KcH5PwR9TQtN1TbvR0Ta/Pgqar
+	 5CuswheYh/MhnsaI51eDYnhNpKK8/wLPZTjZRdOjSrQw0u39gQvD+OCw/xxPRm9+2y
+	 DHXZ8ck8gkKTAPOZ+bvEmmQAP4eddVzV9ct9etfYLmBistxk1xQlWFwLEUGZGQwA39
+	 1cvoiAEZY1BnQ==
+Received: from [10.0.1.189] (unknown [80.188.199.122])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pisa)
+	by smtpx.fel.cvut.cz (Postfix) with ESMTPSA id A04F349337;
+	Tue, 22 Jul 2025 09:57:06 +0200 (CEST)
+From: Pavel Pisa <pisa@fel.cvut.cz>
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Subject: Re: [PATCH v3] docs: Fix kernel-doc error in CAN driver
+Date: Tue, 22 Jul 2025 09:57:14 +0200
+User-Agent: KMail/1.9.10
+Cc: Luis Felipe Hernandez <luis.hernandez093@gmail.com>,
+ Randy Dunlap <rdunlap@infradead.org>,
+ Ondrej Ille <ondrej.ille@gmail.com>,
+ linux-can@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ "Marc Kleine-Budde" <mkl@pengutronix.de>
+References: <20250722035352.21807-1-luis.hernandez093@gmail.com> <202507220837.23333.pisa@fel.cvut.cz> <399941c7-2ee5-4d8b-a7c6-c8ed7d85b565@wanadoo.fr>
+In-Reply-To: <399941c7-2ee5-4d8b-a7c6-c8ed7d85b565@wanadoo.fr>
+X-KMail-QuotePrefix: > 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <DM4PR12MB61095749195041654F6D560D8C5CA@DM4PR12MB6109.namprd12.prod.outlook.com>
+Message-Id: <202507220957.14122.pisa@fel.cvut.cz>
 
-On Tue, Jul 22, 2025 at 07:32:54AM +0000, Guntupalli, Manikanta wrote:
-> [AMD Official Use Only - AMD Internal Distribution Only]
-> 
-> Hi @David Lechner,
-> 
-> > -----Original Message-----
-> > From: David Lechner <dlechner@baylibre.com>
-> > Sent: Tuesday, July 22, 2025 2:31 AM
-> > To: Andy Shevchenko <andriy.shevchenko@intel.com>; Guntupalli, Manikanta
-> > <manikanta.guntupalli@amd.com>
-> > Cc: git (AMD-Xilinx) <git@amd.com>; Simek, Michal <michal.simek@amd.com>;
-> > lorenzo@kernel.org; jic23@kernel.org; nuno.sa@analog.com; andy@kernel.org;
-> > linux-iio@vger.kernel.org; linux-kernel@vger.kernel.org; Pandey, Radhey Shyam
-> > <radhey.shyam.pandey@amd.com>; Goud, Srinivas <srinivas.goud@amd.com>;
-> > manion05gk@gmail.com
-> > Subject: Re: [PATCH] iio: imu: lsm6dsx: Add shutdown callback support for I3C
-> > interface
+On Tuesday 22 of July 2025 09:27:39 Vincent Mailhol wrote:
+> On 22/07/2025 at 15:37, Pavel Pisa wrote:
+> > On Tuesday 22 of July 2025 06:06:30 Vincent Mailhol wrote:
+> >> On 22/07/2025 at 12:53, Luis Felipe Hernandez wrote:
+> >>> Fix kernel-doc formatting issue causing unexpected indentation error
+> >>> in ctucanfd driver documentation build. Convert main return values
+> >>> to bullet list format while preserving numbered sub-list in order to
+> >>> correct indentation error and visual structure in rendered html.
+> >>>
+> >>> Signed-off-by: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
+> >>
+> >> Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
 > >
-> > On 7/21/25 6:38 AM, Andy Shevchenko wrote:
-> > > On Mon, Jul 21, 2025 at 04:37:41PM +0530, Manikanta Guntupalli wrote:
-> > >> Add a shutdown handler for the ST LSM6DSx I3C driver to perform a
-> > >> hardware reset during system shutdown. This ensures the sensor is
-> > >> placed in a well-defined reset state, preventing issues during
-> > >> subsequent reboots, such as kexec, where the device may fail to
-> > >> respond correctly during enumeration.
-> > >
-> > > Do you imply that tons of device drivers missing this? I don't think
-> > > we have even 5% of the drivers implementing the feature.
-> > >
-> > In the IIO drivers I've worked on, we always do reset in the probe() function. The
-> > shutdown() function might not run, e.g. if the board loses power, so it doesn't fix
-> > 100% of the cases.
-> 
-> Thank you for the input.
-> 
-> You're absolutely right — shutdown() may not cover all cases like power loss. However, in scenarios such as a warm reboot (kexec), the situation is different.
-> 
-> Before the probe is called in the next boot, device enumeration takes place. During this process, the I3C framework compares the device’s PID, BCR, and DCR values against the ones registered in the driver:
-> 
-> static const struct i3c_device_id st_lsm6dsx_i3c_ids[] = {
->         I3C_DEVICE(0x0104, 0x006C, (void *)ST_LSM6DSO_ID),
->         I3C_DEVICE(0x0104, 0x006B, (void *)ST_LSM6DSR_ID),
->         { }
-> };
-> 
-> Only if this matching succeeds, the probe will be invoked.
-> 
-> Since the sensor reset logic is placed inside the probe, the device must be in a responsive state during enumeration. In the case of kexec, we observed that the sensor does not respond correctly unless it is explicitly reset during shutdown(). Hence, adding the reset in shutdown() addresses this specific case where the probe isn't reached due to failed enumeration.
-> 
-Hi Manikanta,
+> > Reviewed-by: Vincent Mailhol <pisa@fel.cvut.cz>
+>
+>                ^^^^^^^^^^^^^^^
+> Are you trying to impersonate me?
+>
+> Can you reply again with the proper Reviewed-by tag? ;)
+>
+>
+> Yours sincerely,
+> Vincent Mailhol
 
-During i3c bus init, the CCC RSTDAA is emitted to reset all DAs of all
-devices in the bus (drivers/i3c/master.c@i3c_master_bus_init ->
-i3c_master_rstdaa_locked). Is the LSM6DSX not compliant with that?
+Reviewed-by: Pavel Pisa <pisa@fel.cvut.cz>
 
-I get your solution but find odd to use the same method as in the probe.
-In the probe, you would, in general, reset the device logic, but leave
-the i3c peripheral logic intact, because you don't want to undo whatever
-the controller has set-up for the current bus attached devices (ibi
-config, da, max devices speed, all the good i3c stuff).
-For this device, the st_lsm6dsx_reset_device seems to flush a FIFO,
-do a software reset, and reload a trimming parameter; which are necessary
-to solve the bug you are observed?
+Excuse, I have been in too much hurry.
 
-If possible, please explain better why the device won't enumerate
-correctly after a reboot without the reset. If it is a device bug,
-explicitly state that and that it is not compliant. Also, take a look
-at fig.100 of the i3c spec basic 1.1.1.
+Best wishes,
 
-Thank you for looking into this, this type of corner case is usually
-overlooked.
-
-Best regards,
-Jorge
-
-> Thanks,
-> Manikanta.
+                Pavel Pisa
+    phone:      +420 603531357
+    e-mail:     pisa@cmp.felk.cvut.cz
+    Department of Control Engineering FEE CVUT
+    Karlovo namesti 13, 121 35, Prague 2
+    university: http://control.fel.cvut.cz/
+    personal:   http://cmp.felk.cvut.cz/~pisa
+    social:     https://social.kernel.org/ppisa
+    projects:   https://www.openhub.net/accounts/ppisa
+    CAN related:http://canbus.pages.fel.cvut.cz/
+    RISC-V education: https://comparch.edu.cvut.cz/
+    Open Technologies Research Education and Exchange Services
+    https://gitlab.fel.cvut.cz/otrees/org/-/wikis/home
 
