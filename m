@@ -1,152 +1,212 @@
-Return-Path: <linux-kernel+bounces-741449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02A5AB0E44B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 21:36:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C8E5B0E44A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 21:35:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0789E7B5E1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:34:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18A281C804DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:35:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB55283FFA;
-	Tue, 22 Jul 2025 19:36:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB31284674;
+	Tue, 22 Jul 2025 19:35:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PTrlriGp"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="jpPxN/Hu"
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1D3156677
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 19:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94701281353
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 19:35:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753212964; cv=none; b=nCWVKELfAPZUXo8lqDMEwvDo63kx8nanKs2sDvAemMnXbRpZJhQVh8G2kslA/QHz/YIVyk4eRDD/Fqc9hstwJEhYDhh0J+yLNeT8Rm85MbMchOKGV6AqnpOam3m8hsF9n8W02RLrpjYpcOuvH3nrQF8kZLJ0NAOnV1vyhoNYMhA=
+	t=1753212916; cv=none; b=C+kufRkUkNRWuFZ0LDFz9z+1wzIvy4LeweEpyTlubICtrtZW3mEdj2+ZuBcwSmQYkj7VHhQXrJhB4eQD5W5gk3ymz4ggMfFLIpT62IhM4xgZqHy0MLBHOdArin+oUR7DLZmMMuNnV9f9+l5YGI/fgwHBBORyu883rlwVw7zCHGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753212964; c=relaxed/simple;
-	bh=0IlvhvfDrw5+9DTE/LPj4HOX+CjBvksRT2GhOo67isk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NQ742fM5NQFeUmht7tph2PG1T4q4o0KAU9d5AE5uPipVGzHe8DMPAkdi3e4PeRG7geiXEQQ6yy42D+N+1d01GTH7oH7UarO0NefUGzoZyaxTv/kmD+m+V4RZk9We9NSFkme/k78T7iuhfrUTMy55rDpZkUnVguKqX9A6KpLLx8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PTrlriGp; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753212962; x=1784748962;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=0IlvhvfDrw5+9DTE/LPj4HOX+CjBvksRT2GhOo67isk=;
-  b=PTrlriGp/mzQJwNxjHBwvzgj9bPtePkfodtz8pq90GGiFzfqTLHUle/c
-   2WFDx2FKgIPDvw+lIay4lxVsW0ui4xeYRQgbOvy9DVSMyR/7OOfZBiwlt
-   enUXRd+Tt0tNkmbwiOCt9Xsj/tvFyLPZGYCjLE/aakLfqEV8JYijTNC8i
-   RawgJt3Jvkm8i8DeJVqQqFXc3Z/CxAYFrYsL5aYrlBHFnqTSoqf/B5x6a
-   ahI1ojf8k5LRR2JnEdg4o6BpwHCh8RHHiJ9MFL7h5s/Cts5cmzKSZ5Ytm
-   rkstyXPVpLqnfrqI63gmeEbsol/zop0raKvY66MeNoWePQGkE5cVmuWvb
-   Q==;
-X-CSE-ConnectionGUID: Y8Y5dHTUT3SbGqv9xZljiA==
-X-CSE-MsgGUID: LbvWu9CJRQKIkycXrGh83w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11500"; a="59136991"
-X-IronPort-AV: E=Sophos;i="6.16,332,1744095600"; 
-   d="scan'208";a="59136991"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 12:36:01 -0700
-X-CSE-ConnectionGUID: sgG2HkpsSwKu61a54UBRDw==
-X-CSE-MsgGUID: /Knu5S8VQyuatVyQZle/zQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,332,1744095600"; 
-   d="scan'208";a="164694647"
-Received: from pgcooper-mobl3.ger.corp.intel.com (HELO fdugast-desk.intel.com) ([10.245.244.157])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 12:35:56 -0700
-From: Francois Dugast <francois.dugast@intel.com>
-To: balbirs@nvidia.com
-Cc: airlied@gmail.com,
-	akpm@linux-foundation.org,
-	apopple@nvidia.com,
-	baohua@kernel.org,
-	baolin.wang@linux.alibaba.com,
-	dakr@kernel.org,
-	david@redhat.com,
-	donettom@linux.ibm.com,
-	francois.dugast@intel.com,
-	jane.chu@oracle.com,
-	jglisse@redhat.com,
-	kherbst@redhat.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	lyude@redhat.com,
-	matthew.brost@intel.com,
-	peterx@redhat.com,
-	ryan.roberts@arm.com,
-	shuah@kernel.org,
-	simona@ffwll.ch,
-	wangkefeng.wang@huawei.com,
-	willy@infradead.org,
-	ziy@nvidia.com
-Subject: [PATCH] mm/hmm: Do not fault in device private pages owned by the caller
-Date: Tue, 22 Jul 2025 21:34:45 +0200
-Message-ID: <20250722193445.1588348-1-francois.dugast@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <9ae3e014-c7d0-4d58-af0e-925bcd9e4cfd@nvidia.com>
-References: <9ae3e014-c7d0-4d58-af0e-925bcd9e4cfd@nvidia.com>
+	s=arc-20240116; t=1753212916; c=relaxed/simple;
+	bh=yRFRhMPm7jNLGGqB0LF4R3l3KyFeu06cYWiQMGcs2t8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=jDbtwEGB6tQwBGCC2ppBh7owUdv9Brn0rhp+uT+MXk7BbubrX7+WiN6HoXSw4gOWX89Bua48KS0IGo5vvli30naPaQ82wMhMY5uOfOXA7Ag9B/JUAiAflTfTPpgaEw/AUU5iMPeW0svHFcTRppw6tg2tzzYkUuXhvkJja7xMLN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=jpPxN/Hu; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-73e810dc22dso2650236a34.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 12:35:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1753212912; x=1753817712; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oWqidPkEwwKODP+KFOjNIgdSCFO9hHiUxuXFTn1kZ7o=;
+        b=jpPxN/HudjZoaAvK3AfTHQZQpiP/0BsGf1YPTuopO5mM0t4oYMaUV5CgGSYW7H8Ugk
+         xTQOE3S6iB3nKo5/jr4ZrmF2Ox2ov/wdMWIm70Fr1O+w+CPYMfPlxTy/R0XP5D39yWY8
+         tsgYl+PgWLH9dn0autTIjHk1v0Zk0USnIFY8FQWxefSfl0fgYOpiduWyRA4NmhEb/RVN
+         8z+Y8yFpxPrYhan7UijdOvlfKsCPE8Wmn9nFymoolC+0E2A92VQqwqO5Y2nuYCHW8xIL
+         74qPbKpia04kVL/CmJPWcF56CmnpDR/83pQHhrnufa1oPQYSjuUJZldrba+StXrlw1JH
+         dkSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753212912; x=1753817712;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oWqidPkEwwKODP+KFOjNIgdSCFO9hHiUxuXFTn1kZ7o=;
+        b=tioBfdrlo0NGnSWnKrWOIkw5cvgYslxDm++2015WGp0JuNtLEkXmAvdnal/qmRJP0K
+         QSRL8a8hoZGiJLkWAe5+DXgIp00SnIk3YdNUJvTInOLtk0Ot9gIXO6sWZn54PZ7DbCdC
+         9eqUOhANpP1PvMeGirUL8wyoD4BhgI3U8D5xgp+ER/WTocNktbzNTCuB8sMd0mWKs0rs
+         oRXB+GXoYl7rWA5x8UUr2b3mYo//uxP4sJ/69kXkky1iXCz48pGRB2XtX+2Y+lIKcXvY
+         4YPxmmfP8kVRM8gkidJn/mpveVGUMPPlbI5Yz2sAF2KdCmRIWyQE8YdHjTjyP7jXJS2K
+         oAUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUSH50uCPLuFHlHqh6AVee8+xtKsAl0LPFc8nCh5rKexVO2dXEKPHH6+K7+KkQIG7f77sbFWhPMQBQLC5o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVYNFSAhFsg7btwEOQ5QaKAEYaD0UVkPbWxb19fBl2UC8i4Mw0
+	nFEtQ8barnE7hIxFSij/3rt7BWetjh3zwlHRAwJswBcYUQTRyRarBGtgoA8+Qf6mMQM=
+X-Gm-Gg: ASbGncv7x5iikmHAtEk0Qx8Jf9e4vc3cV8DkgmEv++mua6LluJ+Z0f//k1TUMRX2ZJg
+	ImsE5ogN1+iIkH+U+62JkPPznXVzcNPZ+HcoAkW4xgZxGM8QfQ2Lw8nEn3mJHj0DLcNbuQntjAp
+	MrPAZPuNT+nnqdpBQa1mKQwfWVkcllFDLfp4cEyi3KWaiVeD3dqZHzIb4WScnkE7fUunPK9h8ek
+	gbtF9wMVQ/RkLxoeL3+3xVMpxGWRAxnTDMATaifs5h2YtUNHEV0LXtbJj8ZeF1VxsEOyitoK8sg
+	meMpKkXErQB8J8StQfIP55jT19ldk+sTda4GVQUbBPcHE+V2Voa6fJWkxLRrpSn21S57bRDQk5Y
+	imyOM2mONa/X39T4LmCBH4wF45yzL
+X-Google-Smtp-Source: AGHT+IHWjjjnvGCMQyiHrwuY7qYrjByD+x94DB6d6OoorDDQ+V8cuPmoT2p26TZIB9h6fNK3fjiziA==
+X-Received: by 2002:a05:6830:8206:b0:73e:9d9d:8562 with SMTP id 46e09a7af769-74080537cecmr306315a34.8.1753212912449;
+        Tue, 22 Jul 2025 12:35:12 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:2a79:4b55:6a01:85d7])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73e8354df6dsm3515525a34.5.2025.07.22.12.35.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jul 2025 12:35:12 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Date: Tue, 22 Jul 2025 14:35:02 -0500
+Subject: [PATCH v2] iio: proximity: sx9500: use stack allocated struct for
+ scan data
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250722-iio-use-more-iio_declare_buffer_with_ts-4-v2-1-9e566f3a4c6a@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIAOXnf2gC/53NTQqDMBCG4avIrJtiUn+gq96jSIjJpA6oKRO1F
+ fHujR6hzOqZxfduEJEJI9yzDRgXihTGBHXJwHZmfKEglwwqV2VeSymIgpgjiiEwHtAObW8YdTt
+ 7j6w/NHV6iqIQVeWcdVhWN4+Q9t6Mnr5n69kkdxSnwOuZXuTx/aeySJHOSCyVtL4u6kdr1p5ax
+ qsNAzT7vv8ACNTGCOUAAAA=
+X-Change-ID: 20250711-iio-use-more-iio_declare_buffer_with_ts-4-66ddcde563fe
+To: Jonathan Cameron <jic23@kernel.org>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3486; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=yRFRhMPm7jNLGGqB0LF4R3l3KyFeu06cYWiQMGcs2t8=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBof+fpswTuivJAp1iQQuPyc7MzRJv3EIyU6cyBr
+ o9RkiUpboqJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaH/n6QAKCRDCzCAB/wGP
+ wPhWB/97aMoX5H0VD5kyF7x8QAP7S2CwPjDf/F+Cjy2J7CXuJCua0lwwFw4RYadCaDz1do1Kbab
+ QkTrxu4/VL/h5CtIXQ051zwdLbb3s+dpsvDWBpT6JUloArshE9J5v/kAg06MQkkgKAEEBZk2CKf
+ PXAKiiowl5AX/KOcEK2aRU6A2iFlO5fDNxFGBwOXf1309UtVhj5nyHs+T2bDlG+YrXbmSgaz8Lw
+ dRf+I45vVfwjB1beNRzmtm/isp0zDkKaaomuMM0hZI+FXNHDoV0pfIq043ytjVtZjoOOt1HhBpq
+ TGEpH3kk71/jUD8RvJmMu/FX9KYjAPypFXoLNGoisae4jreJ
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-When the PMD swap entry is device private and owned by the caller,
-skip the range faulting and instead just set the correct HMM PFNs.
-This is similar to the logic for PTEs in hmm_vma_handle_pte().
+Use a stack-allocated struct in sx9500_trigger_handler() to hold the
+IIO buffer scan data. Since the scan buffer isn't used outside of this
+function, it doesn't need to be in struct sx9500_data.
 
-For now, each hmm_pfns[i] entry is populated as it is currently done
-in hmm_vma_handle_pmd() but this might not be necessary. A follow-up
-optimization could be to make use of the order and skip populating
-subsequent PFNs.
+By always allocating enough space for the maximum number of channels,
+we can avoid having to reallocate the buffer each time buffered reads
+are enabled.
 
-Signed-off-by: Francois Dugast <francois.dugast@intel.com>
+Signed-off-by: David Lechner <dlechner@baylibre.com>
 ---
- mm/hmm.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+Changes in v2:
+- Replaced `IIO_DECLARE_BUFFER_WITH_TS()` with struct.
+- I didn't pick up Andy's review tag since I don't consider this a trivial
+  change and deserves a 2nd look.
+- Link to v1: https://lore.kernel.org/r/20250711-iio-use-more-iio_declare_buffer_with_ts-4-v1-1-1a1e521cf747@baylibre.com
+---
+ drivers/iio/proximity/sx9500.c | 27 ++++++---------------------
+ 1 file changed, 6 insertions(+), 21 deletions(-)
 
-diff --git a/mm/hmm.c b/mm/hmm.c
-index f2415b4b2cdd..63ec1b18a656 100644
---- a/mm/hmm.c
-+++ b/mm/hmm.c
-@@ -355,6 +355,31 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
+diff --git a/drivers/iio/proximity/sx9500.c b/drivers/iio/proximity/sx9500.c
+index 05844f17a15f6980ab7d55536e5fecfc5e4fe8c0..6c67bae7488c4533ea513597f182af504a22c86d 100644
+--- a/drivers/iio/proximity/sx9500.c
++++ b/drivers/iio/proximity/sx9500.c
+@@ -88,7 +88,6 @@ struct sx9500_data {
+ 	bool prox_stat[SX9500_NUM_CHANNELS];
+ 	bool event_enabled[SX9500_NUM_CHANNELS];
+ 	bool trigger_enabled;
+-	u16 *buffer;
+ 	/* Remember enabled channels and sample rate during suspend. */
+ 	unsigned int suspend_ctrl0;
+ 	struct completion completion;
+@@ -578,22 +577,6 @@ static int sx9500_write_event_config(struct iio_dev *indio_dev,
+ 	return ret;
+ }
+ 
+-static int sx9500_update_scan_mode(struct iio_dev *indio_dev,
+-				   const unsigned long *scan_mask)
+-{
+-	struct sx9500_data *data = iio_priv(indio_dev);
+-
+-	mutex_lock(&data->mutex);
+-	kfree(data->buffer);
+-	data->buffer = kzalloc(indio_dev->scan_bytes, GFP_KERNEL);
+-	mutex_unlock(&data->mutex);
+-
+-	if (data->buffer == NULL)
+-		return -ENOMEM;
+-
+-	return 0;
+-}
+-
+ static IIO_CONST_ATTR_SAMP_FREQ_AVAIL(
+ 	"2.500000 3.333333 5 6.666666 8.333333 11.111111 16.666666 33.333333");
+ 
+@@ -612,7 +595,6 @@ static const struct iio_info sx9500_info = {
+ 	.write_raw = &sx9500_write_raw,
+ 	.read_event_config = &sx9500_read_event_config,
+ 	.write_event_config = &sx9500_write_event_config,
+-	.update_scan_mode = &sx9500_update_scan_mode,
+ };
+ 
+ static int sx9500_set_trigger_state(struct iio_trigger *trig,
+@@ -649,6 +631,10 @@ static irqreturn_t sx9500_trigger_handler(int irq, void *private)
+ 	struct iio_dev *indio_dev = pf->indio_dev;
+ 	struct sx9500_data *data = iio_priv(indio_dev);
+ 	int val, bit, ret, i = 0;
++	struct {
++		u16 chan[SX9500_NUM_CHANNELS];
++		aligned_s64 timestamp;
++	} scan = { };
+ 
+ 	mutex_lock(&data->mutex);
+ 
+@@ -658,10 +644,10 @@ static irqreturn_t sx9500_trigger_handler(int irq, void *private)
+ 		if (ret < 0)
+ 			goto out;
+ 
+-		data->buffer[i++] = val;
++		scan.chan[i++] = val;
  	}
  
- 	if (!pmd_present(pmd)) {
-+		swp_entry_t entry = pmd_to_swp_entry(pmd);
-+
-+		/*
-+		 * Don't fault in device private pages owned by the caller,
-+		 * just report the PFNs.
-+		 */
-+		if (is_device_private_entry(entry) &&
-+		    pfn_swap_entry_folio(entry)->pgmap->owner ==
-+		    range->dev_private_owner) {
-+			unsigned long cpu_flags = HMM_PFN_VALID |
-+				hmm_pfn_flags_order(PMD_SHIFT - PAGE_SHIFT);
-+			unsigned long pfn = swp_offset_pfn(entry);
-+			unsigned long i;
-+
-+			if (is_writable_device_private_entry(entry))
-+				cpu_flags |= HMM_PFN_WRITE;
-+
-+			for (i = 0; addr < end; addr += PAGE_SIZE, i++, pfn++) {
-+				hmm_pfns[i] &= HMM_PFN_INOUT_FLAGS;
-+				hmm_pfns[i] |= pfn | cpu_flags;
-+			}
-+
-+			return 0;
-+		}
-+
- 		if (hmm_range_need_fault(hmm_vma_walk, hmm_pfns, npages, 0))
- 			return -EFAULT;
- 		return hmm_pfns_fill(start, end, range, HMM_PFN_ERROR);
+-	iio_push_to_buffers_with_timestamp(indio_dev, data->buffer,
++	iio_push_to_buffers_with_timestamp(indio_dev, &scan,
+ 					   iio_get_time_ns(indio_dev));
+ 
+ out:
+@@ -984,7 +970,6 @@ static void sx9500_remove(struct i2c_client *client)
+ 	iio_triggered_buffer_cleanup(indio_dev);
+ 	if (client->irq > 0)
+ 		iio_trigger_unregister(data->trig);
+-	kfree(data->buffer);
+ }
+ 
+ static int sx9500_suspend(struct device *dev)
+
+---
+base-commit: cd2731444ee4e35db76f4fb587f12d327eec5446
+change-id: 20250711-iio-use-more-iio_declare_buffer_with_ts-4-66ddcde563fe
+
+Best regards,
 -- 
-2.43.0
+David Lechner <dlechner@baylibre.com>
 
 
