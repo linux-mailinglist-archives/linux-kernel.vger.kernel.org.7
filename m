@@ -1,72 +1,63 @@
-Return-Path: <linux-kernel+bounces-740758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DC69B0D8B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:59:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11DE5B0D8AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:58:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 414F26C4F69
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:59:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 055E2172EBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:58:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5DD2E499D;
-	Tue, 22 Jul 2025 11:59:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507102E3B1D;
+	Tue, 22 Jul 2025 11:58:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SF6WVNh2"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nIAbi65q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81AA62E4244
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 11:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5CF2E3384
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 11:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753185563; cv=none; b=l+L97+Z7c6jaLyVC6jiMg3kd3OFoKQ3THK1MRUODG0g9E1tlj/wWfIqlDMffDUKQAecGHy6idlL/IdvvlrXh7A2KOhYjGAv95K8y9uOxAtCv9XjpkWTWKlC6SuU5CmxA486iYf84M26LV8Rl/FIKxt+Lmi9MCk4LUDhvrHQwak8=
+	t=1753185518; cv=none; b=LsEfK0m1tfLrwaybGQlIZOzsLSh7psUpGvAP0SEnlCfgJ3Y42vO+OH/l6Z2o24P6bPITg0u1wuFY3v70mIVofKXeDZmQSG1FsXNghuHO71vWIAAJoywXcLtvOCpUXUqVX3rkcrn7raRwr64zvOuFnC0hk8lDkT6lXwOsY3VWPm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753185563; c=relaxed/simple;
-	bh=leNGTHvWWp46LZgpi1BTmu0wvBgAK2ri4Pf1+TdGgyI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=r5mh3opAtJDY/zeI6/B6/2/jqtQpdHrJrG1bYyvEIlVNifdhnkRZ2SQgIVgTPWjfTwCyuP+WlERsYBZOStRdXklYZ30x4qYn1unNnMl5+3ChRodzcE/prSVBYRtw5NWECoFBtAqs2duuDv0Kt7FHN1FfcwNxqton94RX3XL5zsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SF6WVNh2; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753185559;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L7UAU5cTx6BEldPZMK7N1hTK4sqGjpRmtie4vkjgCL8=;
-	b=SF6WVNh2CRTN1u7oMFJCGrmBqPNYRS7OYStOpDp/qdV0j3J68xW+FmLFqo+zlbJ2MkLE5j
-	8T/hXOcYNsfkBF9EMhELaGSa+Ix9Xoh8wXOz/ymPwdUc2vvua/ld9HDc6M3xSA3NgBrzNc
-	JDb5k7I8ywtWvbICl5ynXcRhUJAPuZY=
-From: Tao Chen <chen.dylane@linux.dev>
-To: qmo@kernel.org,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	davem@davemloft.net,
-	kuba@kernel.org,
-	hawk@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Tao Chen <chen.dylane@linux.dev>
-Subject: [PATCH bpf-next v2 3/3] bpftool: Add bash completion for token argument
-Date: Tue, 22 Jul 2025 19:58:15 +0800
-Message-ID: <20250722115815.1390761-3-chen.dylane@linux.dev>
-In-Reply-To: <20250722115815.1390761-1-chen.dylane@linux.dev>
-References: <20250722115815.1390761-1-chen.dylane@linux.dev>
+	s=arc-20240116; t=1753185518; c=relaxed/simple;
+	bh=VRNKdOARxyNPiIG9RaGx/LmFv7pgt5os0GiM6h2e3U0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nK3DOv7MfJKhYhL4Pp4emjvNTCNA3iZYaeGR9JVJm3Lm1oAFRb1y6/Q/dhx9cSK6WJ0dL+1rpYns+7WeUpRx27z+nZpJ6ftLYNgBHpRQcflg0QtQ8FVXVQ/wZGIjvp6bWjugnfAT/eosPhDFAUHTD1s9GV0aoD6Hd5BIoahReNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nIAbi65q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F9C2C4CEEB;
+	Tue, 22 Jul 2025 11:58:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753185517;
+	bh=VRNKdOARxyNPiIG9RaGx/LmFv7pgt5os0GiM6h2e3U0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=nIAbi65qjf9cnS+TorEe2+9FEwihDkYar+X0ybyntOh810E7zZqNCJnMvdCm2uYEC
+	 V9MXrMaDiq7oRRQ8uyfJ6YPbs3gEqbBy6yNUssRPSA0aOzxsIrt3QVTfs9CIZVa0rl
+	 7YtlvIoyur0fa4ysyZr9zYREVF5ncTADJEBL72VH+U4WxqHU/mfD5vK3R4e3H8EplL
+	 7DyWa5GsNYETBrWPOudp/VYzusJSNscayVR8MrasRCW0YcQPJuFKvLKDaK6wPLQDhH
+	 3GzghzRyhtVPdIDXvaKgTy23vLYlQD8K1UyU6p+07sZCloU1I/9Z2pGoYA7824TnU9
+	 55Oi5zob3ytzw==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: Satadru Pramanik <satadru@gmail.com>,
+	Chris Bainbridge <chris.bainbridge@gmail.com>,
+	Ben Skeggs <bskeggs@nvidia.com>,
+	Timur Tabi <ttabi@nvidia.com>,
+	Dave Airlie <airlied@redhat.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	dri-devel@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] Revert "drm/nouveau: check ioctl command codes better"
+Date: Tue, 22 Jul 2025 13:58:18 +0200
+Message-Id: <20250722115830.2587297-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,42 +65,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-This commit updates the bash completion script with the new token
-argument.
-$ bpftool
-batch       cgroup      gen         iter        map         perf        struct_ops
-btf         feature     help        link        net         prog        token
+From: Arnd Bergmann <arnd@arndb.de>
 
-Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+My previous patch ended up causing a regression for the
+DRM_IOCTL_NOUVEAU_NVIF ioctl. The intention of my patch was to only
+pass ioctl commands that have the correct dir/type/nr bits into the
+nouveau_abi16_ioctl() function.
+
+This turned out to be too strict, as userspace does use at least
+write-only and write-read direction settings. Checking for both of these
+still did not fix the issue, so the best we can do for the 6.16 release
+is to revert back to what we've had since linux-3.16.
+
+This version is still fragile, but at least it is known to work with
+existing userspace. Fixing this properly requires a better understanding
+of what commands are being passed from userspace in practice, and how
+that relies on the undocumented (mis)behavior in nouveau_drm_ioctl().
+
+Fixes: e5478166dffb ("drm/nouveau: check ioctl command codes better")
+Link: https://lore.kernel.org/dri-devel/CAFrh3J85tsZRpOHQtKgNHUVnn=EG=QKBnZTRtWS8eWSc1K1xkA@mail.gmail.com/
+Reported-by: Satadru Pramanik <satadru@gmail.com>
+Reported-by: Chris Bainbridge <chris.bainbridge@gmail.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- tools/bpf/bpftool/bash-completion/bpftool | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/gpu/drm/nouveau/nouveau_drm.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/tools/bpf/bpftool/bash-completion/bpftool b/tools/bpf/bpftool/bash-completion/bpftool
-index a759ba24471..527bb47ac46 100644
---- a/tools/bpf/bpftool/bash-completion/bpftool
-+++ b/tools/bpf/bpftool/bash-completion/bpftool
-@@ -1215,6 +1215,17 @@ _bpftool()
-                     ;;
-             esac
-             ;;
-+        token)
-+            case $command in
-+               show|list)
-+                   return 0
-+                   ;;
-+               *)
-+                   [[ $prev == $object ]] && \
-+                       COMPREPLY=( $( compgen -W 'help show list' -- "$cur" ) )
-+                   ;;
-+            esac
-+            ;;
-     esac
- } &&
- complete -F _bpftool bpftool
+diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
+index 7bb64fcdd497..1527b801f013 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_drm.c
++++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
+@@ -1284,9 +1284,6 @@ nouveau_ioctls[] = {
+ 	DRM_IOCTL_DEF_DRV(NOUVEAU_EXEC, nouveau_exec_ioctl_exec, DRM_RENDER_ALLOW),
+ };
+ 
+-#define DRM_IOCTL_NOUVEAU_NVIF _IOC(_IOC_READ | _IOC_WRITE, DRM_IOCTL_BASE, \
+-				    DRM_COMMAND_BASE + DRM_NOUVEAU_NVIF, 0)
+-
+ long
+ nouveau_drm_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ {
+@@ -1300,10 +1297,14 @@ nouveau_drm_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 		return ret;
+ 	}
+ 
+-	if ((cmd & ~IOCSIZE_MASK) == DRM_IOCTL_NOUVEAU_NVIF)
++	switch (_IOC_NR(cmd) - DRM_COMMAND_BASE) {
++	case DRM_NOUVEAU_NVIF:
+ 		ret = nouveau_abi16_ioctl(filp, (void __user *)arg, _IOC_SIZE(cmd));
+-	else
++		break;
++	default:
+ 		ret = drm_ioctl(file, cmd, arg);
++		break;
++	}
+ 
+ 	pm_runtime_mark_last_busy(dev->dev);
+ 	pm_runtime_put_autosuspend(dev->dev);
 -- 
-2.48.1
+2.39.5
 
 
