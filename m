@@ -1,129 +1,77 @@
-Return-Path: <linux-kernel+bounces-741609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B808B0E69A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 00:42:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14D0AB0E69B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 00:42:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41A931C87933
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 22:42:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EA4E6C6306
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 22:42:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7453F289809;
-	Tue, 22 Jul 2025 22:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OiwP4pKb"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D98F28936F;
+	Tue, 22 Jul 2025 22:42:30 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB2C728727A;
-	Tue, 22 Jul 2025 22:42:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B28526A0F8;
+	Tue, 22 Jul 2025 22:42:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753224141; cv=none; b=VBYcB75dINq0DtfznHP+rdD5BCZXwAbOmAdau9YW3B8292wxHudIPeHmjbCF+tZsYGbO66rV+RQ0c47eiMiCPnyrAv8K5vh6arIiA20uDQritQTrpF1ORRU7JukZlEJhROew/b1Znf3bqm6hSeOXS9HMAaP5yjU4Tpm0auXkFJA=
+	t=1753224150; cv=none; b=U31z6yWfY7zE28Oqw4nwTYObZusrkE7NudtW6+jicLIaLuQc20xO4UQptLi9ivOSuV9p28df3guTFqDr1SXVMrZHKCaQhekvnHRNbx1vLXvEIlpqA7qNztjEpR5QUgB7yDf5w8pXoHLSgrJwgME4N3ttPZFDece6JzcBAAceg6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753224141; c=relaxed/simple;
-	bh=ldaHuURYnlqZqVA1+U4sCKk5t6+FG1lj5JJep03e6hg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m9jii7WSFCYbEM6xBBwWsGyipk6teiC3gC7v7InFA8iz8NbT5N+EWk4EL+xMv95fCtjZfSGjq4dHDIt0kgAz9tR6r/Gc5u4CXIGvKAe+Xh6Ny5O9t7Tr82A763grVKQcLzUbUSbPzDqpXWFDBo7kGvmMCzjhozsvoSAZQllctwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OiwP4pKb; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 69C9943275;
-	Tue, 22 Jul 2025 22:42:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1753224136;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=b5Yg+pdTXpo6t0O7UQl+RIbiB4LOKOnIdXdXoBOJyck=;
-	b=OiwP4pKbiIk4mcSLaL9RdN2P/6K+rHryH62SPWAsZd52iz5Z/rFoylJzCtRSvzA2tb7on4
-	Cc+C1huFf+QizyFqpxlSeHww+c27B+NZbxavUsmSYrsFLRmzmwATEOBRdHu/X4+i8rNedF
-	2Rt+a/ijrDx8kZhxNeKML482g2M6o/w7sLBzT7INqvxOROp87kjKZhylh0BO0pXsSKSaAm
-	8TCPBtxwgM1FWhZWQj5TMO6jTubmAUh0Ad+QSa1VcFrFdJ291BxVmw0E+cYdPHvpUTuVT3
-	uHDpKLgC1+i+WXdaDsm52o61H8G7VrwA+8WYRlDT/vS+J283lNr85hBFHGxudw==
-Date: Wed, 23 Jul 2025 00:42:14 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Harshit Shah <hshah@axiado.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Michal Simek <michal.simek@amd.com>,
-	=?utf-8?Q?Przemys=C5=82aw?= Gaj <pgaj@cadence.com>,
-	Frank Li <Frank.Li@nxp.com>,
-	Boris Brezillon <bbrezillon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Arnd Bergmann <arnd@arndb.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, soc@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-	Jan Kotas <jank@cadence.com>, linux-serial@vger.kernel.org,
-	linux-i3c@lists.infradead.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v6 06/10] dt-bindings: i3c: cdns: add Axiado AX3000 I3C
- controller
-Message-ID: <20250722224214cd72ae8b@mail.local>
-References: <20250722-axiado-ax3000-soc-and-evaluation-board-support-v6-0-543979a60ccf@axiado.com>
- <20250722-axiado-ax3000-soc-and-evaluation-board-support-v6-6-543979a60ccf@axiado.com>
+	s=arc-20240116; t=1753224150; c=relaxed/simple;
+	bh=E8qS2UJP7xzTkCk1g61fB6Lsrt4JCrgssiJBZSy527M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qo0IW9k1cU1CN3kjtmnfq1OkB/Df0qpYQlF9UXz/3ld9wYdWkDB79ppKU7KZ+EyVFoepScm+KIfuJbv582RA0+l7rZH1uVq4iYOIwuq7lOZVjMWZ5BUX0FO0OzW7DjgeH8rPnzP10kHwTYM+eeYUqiRbWbYBy86KKFagw6/MlRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf04.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay02.hostedemail.com (Postfix) with ESMTP id 61B0D132A1A;
+	Tue, 22 Jul 2025 22:42:21 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf04.hostedemail.com (Postfix) with ESMTPA id BD0D420024;
+	Tue, 22 Jul 2025 22:42:19 +0000 (UTC)
+Date: Tue, 22 Jul 2025 18:42:19 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 6/7] tracing: uprobe-event: Allocate string buffers
+ from heap
+Message-ID: <20250722184219.2e16e288@gandalf.local.home>
+In-Reply-To: <175322174554.44400.67987510323737083.stgit@devnote2>
+References: <175322168606.44400.9155291012158349647.stgit@devnote2>
+	<175322174554.44400.67987510323737083.stgit@devnote2>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250722-axiado-ax3000-soc-and-evaluation-board-support-v6-6-543979a60ccf@axiado.com>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejiedufecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehlvgigrghnughrvgcuuegvlhhlohhnihcuoegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegieduueethefhkeegjeevfefhiedujeeuhffgleejgfejgeekueejuefgheeggfenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegvtdgrmegsieehmegsvdhftdemkegsleekmeejledtheemrggsvgelmeduhedvvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemvgdtrgemsgeiheemsgdvfhdtmeeksgelkeemjeeltdehmegrsggvleemudehvddvpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvgedprhgtphhtthhopehhshhhrghhsegrgihirgguohdrtghomhdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehjihhrihhsl
- hgrsgihsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmihgthhgrlhdrshhimhgvkhesrghmugdrtghomhdprhgtphhtthhopehpghgrjhestggruggvnhgtvgdrtghomhdprhgtphhtthhopefhrhgrnhhkrdfnihesnhigphdrtghomhdprhgtphhtthhopegssghrvgiiihhllhhonheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrgh
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: w6tiqu5c9uit4a4mmoqb9ykq8utpumre
+X-Rspamd-Server: rspamout05
+X-Rspamd-Queue-Id: BD0D420024
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19IMc4crnsQgGfC5US9IgTmgzIgjBiwLXo=
+X-HE-Tag: 1753224139-776578
+X-HE-Meta: U2FsdGVkX1/TxaA1f7R8PVYItBr/5UOaduf/Fx7mllgfnp/1xclEL+lS3O3zqfgRPvisMHMTuhoDv4GtuVVUyQOcZcLOew3PmFON9ComjvyO0/lUXyA24E73DjebQPIe6L6WgWh8/pBXJ3vhUiE4EDiP/sISyDDU3kpFM7DoJlFlcN7UV1kyuyaQLj8VHiNOG1ph5EcgxYYbi+Bvx/CPhGbkwvxrdrvAKCHiGEceZY+BvdAdwZQVoZJY8xTMnXBWFACy6SAD2C3CZ+bSZA4u5CBNVgF5/b3iRt0MDIom6CuvHSiQVg9FEfZnHZXUBeIqWlTBVeinseDyPnJk+e1EHHDOkoMJA6r4IhxXPCtpKccLwZr7uWiXSpIoLb0atjTVfbEbTfAjVXp9049s9LptWQ==
 
-On 22/07/2025 13:15:34-0700, Harshit Shah wrote:
-> Add binding for AX3000 I3C controller. So far, no changes known,
-> so it can fallback to default compatible.
+On Wed, 23 Jul 2025 07:02:25 +0900
+"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+
+> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 > 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Harshit Shah <hshah@axiado.com>
-
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-
-
-
-> ---
->  Documentation/devicetree/bindings/i3c/cdns,i3c-master.yaml | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
+> Allocate temporary string buffers for parsing uprobe-events
+> from heap instead of stack.
 > 
-> diff --git a/Documentation/devicetree/bindings/i3c/cdns,i3c-master.yaml b/Documentation/devicetree/bindings/i3c/cdns,i3c-master.yaml
-> index cad6d53d0e2e35ddaaad35215ec93dd182f28319..6fa3078074d0298d9786a26d7f1f2dd2c15329a7 100644
-> --- a/Documentation/devicetree/bindings/i3c/cdns,i3c-master.yaml
-> +++ b/Documentation/devicetree/bindings/i3c/cdns,i3c-master.yaml
-> @@ -14,7 +14,12 @@ allOf:
->  
->  properties:
->    compatible:
-> -    const: cdns,i3c-master
-> +    oneOf:
-> +      - const: cdns,i3c-master
-> +      - items:
-> +          - enum:
-> +              - axiado,ax3000-i3c
-> +          - const: cdns,i3c-master
->  
->    reg:
->      maxItems: 1
-> 
-> -- 
-> 2.25.1
-> 
+> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+
+-- Steve
 
