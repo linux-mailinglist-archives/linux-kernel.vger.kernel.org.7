@@ -1,252 +1,302 @@
-Return-Path: <linux-kernel+bounces-740821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3D6BB0D9A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:29:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6930B0DB3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:47:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E18B6C633D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:29:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E48D2560933
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:47:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346A52E9753;
-	Tue, 22 Jul 2025 12:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3F56433A8;
+	Tue, 22 Jul 2025 13:46:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZE+SifE+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="K9/RXUck"
+Received: from smtp100.iad3b.emailsrvr.com (smtp100.iad3b.emailsrvr.com [146.20.161.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884782E9733;
-	Tue, 22 Jul 2025 12:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153272E9EDA
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 13:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=146.20.161.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753187374; cv=none; b=ccDtKE3rdU60cgOm/mtSbgT7kHcSgSJkbFFpttS+/RdNkn+YmFAVF+vSxYlliFg9yMwzGENbWQ2f882d7HIwO181NYr02ZXvgq8PsNxrbR3Oz7qfkiO7pQbDMnrYQiSJx6Ul04vvoFY/L+joJkBcisj18briw2FTF2OGaM/rx8U=
+	t=1753192012; cv=none; b=nOdBlvAu0WCBewK1lvIxNHfnUChg2oFLFM9mRnI7TKoEEv7k3/4aEtCqxIfE4se3BlNfMbqQUoj0iyUnAFs8zyqsxR3vhTmenvWCzMmR4NZEX/QtOzK9ZayAFAmZUBoQ6BsAdh8GWj2RY1But4DuJvHbaNqI3FmUdcAVr4e5Lwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753187374; c=relaxed/simple;
-	bh=ugYgb0RNPFqmdXsGr0G/GGIYY2Anwmf6OjdxW7Uub6E=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=JZvL/DM7R1gH+RS4DbsZbLqZuiY5h1r9V/VxbTjLSRjb1V3sCe56XA+D950txCKwCnPcJd3urijRnm30zC9NHP5IWErO223ICElLWR6D4gi0BWGSRnlEpATdcQNsh4/enon7DofVAhrOOiZ3LpMuonFhTS77MPAYoqV6hFfMNQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZE+SifE+; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753187373; x=1784723373;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=ugYgb0RNPFqmdXsGr0G/GGIYY2Anwmf6OjdxW7Uub6E=;
-  b=ZE+SifE+0EJ9uS04jZVCTZqBTsG+9lFb/GWt7Aw/JP/cCoF1MaS94pM6
-   JxDlUzJ0ARzoDdSahyHYHyHfIBb9ggbXHr/2EY92eQm362CXW7x26BLWt
-   egeNZ9Bnmb/lcxOKv2iCKLPfJmfCdRivRbItnoASkVrNSAHsRUrYalGa4
-   9QcJ2Sv3GMOb+gec3BOpU7OdgVMDfSKkuL0GA6FfQwrWaXhNPnlhtlv7a
-   JH/xpKzhHIIf6p+IHEaJU+xK5ynGZufcCJIRxgfe7UCKM+QM0HClDg3qc
-   3ErQwgeoDsm0+pukde8kqUv7W7ix4iuhEOlIci4Jsu3PJCXC0wuNBpq4N
-   Q==;
-X-CSE-ConnectionGUID: EBs+HQPoQT6/qN8fsRFiWg==
-X-CSE-MsgGUID: OWEPZKTGRviNmDuLUMS6fA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11500"; a="55376698"
-X-IronPort-AV: E=Sophos;i="6.16,331,1744095600"; 
-   d="scan'208";a="55376698"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 05:29:31 -0700
-X-CSE-ConnectionGUID: tfh2GasuSKmcPJKOS2cYAg==
-X-CSE-MsgGUID: 4/tBAQZUT3elnO5/NEQTaQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,331,1744095600"; 
-   d="scan'208";a="158446969"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.254])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 05:29:23 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 22 Jul 2025 15:29:20 +0300 (EEST)
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-cc: Matthew W Carlis <mattc@purestorage.com>, helgaas@kernel.org, 
-    Lukas Wunner <lukas@wunner.de>, anil.s.keshavamurthy@intel.com, 
-    bhelgaas@google.com, bp@alien8.de, davem@davemloft.net, 
-    linux-edac@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    linux-pci@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-    mark.rutland@arm.com, mathieu.desnoyers@efficios.com, mhiramat@kernel.org, 
-    naveen@kernel.org, oleg@redhat.com, peterz@infradead.org, 
-    rostedt@goodmis.org, tianruidong@linux.alibaba.com, tony.luck@intel.com
-Subject: Re: [PATCH v8] PCI: hotplug: Add a generic RAS tracepoinggt for
- hotplug event
-In-Reply-To: <fcfc51c0-6a1f-435b-844b-4daba132f7b6@linux.alibaba.com>
-Message-ID: <d3de8888-5ba8-c27c-2a6a-eecf3cc284da@linux.intel.com>
-References: <20250717235055.GA2664149@bhelgaas> <20250718034616.26250-1-mattc@purestorage.com> <e92f8d1f-457c-4248-8397-81b0e20ff4af@linux.alibaba.com> <11119800-3b6a-a683-3500-115a057c2826@linux.intel.com>
- <fcfc51c0-6a1f-435b-844b-4daba132f7b6@linux.alibaba.com>
+	s=arc-20240116; t=1753192012; c=relaxed/simple;
+	bh=Ti7WDj2VCaG6NyzBBiXIWzolXvvMYApNtHm4f66+knk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=CF9dNQPKXuOYY9RsOhLzXLokfGy1+ejAB2IxBleLcWnLosTtPR1V2feNoWL9VPpLyXcEGIXVjwXcsg05mfb1RWUEUnNKa3Cr/JhIBiOYUpRSjfR5XZCAmnogjCgvr8sR4I0aBNVykcipxnQO0II/OTsOc8FqkAaLs30r4kIH3HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=K9/RXUck; arc=none smtp.client-ip=146.20.161.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
+	s=20221208-6x11dpa4; t=1753187413;
+	bh=Ti7WDj2VCaG6NyzBBiXIWzolXvvMYApNtHm4f66+knk=;
+	h=Date:Subject:To:From:From;
+	b=K9/RXUckuLIbE2yYpoS/d2O7TdVKfEGzKTZY9C5SsUdwJQR2gVG4QTz5v+7uvmgL3
+	 aAof+BchOt2kJRE2jhmEbgocKHwLHtUjDyDuRXJl5Wbxo/odl0YFQCdjQ65ymZ+Y0E
+	 +TYMMx46P1cd2LTbb1De1J4gbqjV20k+bSVR+MR4=
+X-Auth-ID: abbotti@mev.co.uk
+Received: by smtp5.relay.iad3b.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 2CCD2400C2;
+	Tue, 22 Jul 2025 08:30:12 -0400 (EDT)
+Message-ID: <19daff9b-9b57-406b-8ee5-1d4ef5ba2855@mev.co.uk>
+Date: Tue, 22 Jul 2025 13:30:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-198401369-1753187360=:920"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [io-uring?] KASAN: slab-use-after-free Read in
+ io_poll_remove_entries
+To: Jens Axboe <axboe@kernel.dk>,
+ syzbot <syzbot+01523a0ae5600aef5895@syzkaller.appspotmail.com>,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com, hsweeten@visionengravers.com,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <687bd5fe.a70a0220.693ce.0091.GAE@google.com>
+ <9385a1a6-8c10-4eb5-9ab9-87aaeb6a7766@kernel.dk>
+ <ede52bb4-c418-45c0-b133-4b5fb6682b04@kernel.dk>
+ <d407c9f1-e625-4153-930f-6e44d82b32b5@kernel.dk>
+ <f8aae677-09a4-4d4c-beab-b164beb43089@kernel.dk>
+Content-Language: en-GB
+From: Ian Abbott <abbotti@mev.co.uk>
+Organization: MEV Ltd.
+In-Reply-To: <f8aae677-09a4-4d4c-beab-b164beb43089@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Classification-ID: b117189b-c98a-46c7-860b-f3e6c0f5a7c0-1-1
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On 22/07/2025 13:21, Jens Axboe wrote:
+> On 7/20/25 1:00 PM, Jens Axboe wrote:
+>> On 7/20/25 12:49 PM, Jens Axboe wrote:
+>>> On 7/20/25 12:24 PM, Jens Axboe wrote:
+>>>> On 7/19/25 11:29 AM, syzbot wrote:
+>>>>> Hello,
+>>>>>
+>>>>> syzbot found the following issue on:
+>>>>>
+>>>>> HEAD commit:    4871b7cb27f4 Merge tag 'v6.16-rc6-smb3-client-fixes' of gi..
+>>>>> git tree:       upstream
+>>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=1288c38c580000
+>>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=fa738a4418f051ee
+>>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=01523a0ae5600aef5895
+>>>>> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+>>>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1688c38c580000
+>>>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=166ed7d4580000
+>>>>>
+>>>>> Downloadable assets:
+>>>>> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-4871b7cb.raw.xz
+>>>>> vmlinux: https://storage.googleapis.com/syzbot-assets/4a9dea51d821/vmlinux-4871b7cb.xz
+>>>>> kernel image: https://storage.googleapis.com/syzbot-assets/f96c723cdfe6/bzImage-4871b7cb.xz
+>>>>>
+>>>>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+>>>>> Reported-by: syzbot+01523a0ae5600aef5895@syzkaller.appspotmail.com
+>>>>>
+>>>>> ==================================================================
+>>>>> BUG: KASAN: slab-use-after-free in __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
+>>>>> BUG: KASAN: slab-use-after-free in _raw_spin_lock_irq+0x36/0x50 kernel/locking/spinlock.c:170
+>>>>> Read of size 1 at addr ffff88803c6f42b0 by task kworker/2:2/1339
+>>>>>
+>>>>> CPU: 2 UID: 0 PID: 1339 Comm: kworker/2:2 Not tainted 6.16.0-rc6-syzkaller-00253-g4871b7cb27f4 #0 PREEMPT(full)
+>>>>> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+>>>>> Workqueue: events io_fallback_req_func
+>>>>> Call Trace:
+>>>>>   <TASK>
+>>>>>   __dump_stack lib/dump_stack.c:94 [inline]
+>>>>>   dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+>>>>>   print_address_description mm/kasan/report.c:378 [inline]
+>>>>>   print_report+0xcd/0x610 mm/kasan/report.c:480
+>>>>>   kasan_report+0xe0/0x110 mm/kasan/report.c:593
+>>>>>   __kasan_check_byte+0x36/0x50 mm/kasan/common.c:557
+>>>>>   kasan_check_byte include/linux/kasan.h:399 [inline]
+>>>>>   lock_acquire kernel/locking/lockdep.c:5845 [inline]
+>>>>>   lock_acquire+0xfc/0x350 kernel/locking/lockdep.c:5828
+>>>>>   __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
+>>>>>   _raw_spin_lock_irq+0x36/0x50 kernel/locking/spinlock.c:170
+>>>>>   spin_lock_irq include/linux/spinlock.h:376 [inline]
+>>>>>   io_poll_remove_entry io_uring/poll.c:146 [inline]
+>>>>>   io_poll_remove_entries.part.0+0x14e/0x7e0 io_uring/poll.c:179
+>>>>>   io_poll_remove_entries io_uring/poll.c:159 [inline]
+>>>>>   io_poll_task_func+0x4cd/0x1130 io_uring/poll.c:326
+>>>>>   io_fallback_req_func+0x1c7/0x6d0 io_uring/io_uring.c:259
+>>>>>   process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3238
+>>>>>   process_scheduled_works kernel/workqueue.c:3321 [inline]
+>>>>>   worker_thread+0x6c8/0xf10 kernel/workqueue.c:3402
+>>>>>   kthread+0x3c5/0x780 kernel/kthread.c:464
+>>>>>   ret_from_fork+0x5d4/0x6f0 arch/x86/kernel/process.c:148
+>>>>>   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+>>>>>   </TASK>
+>>>>>
+>>>>> Allocated by task 6154:
+>>>>>   kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+>>>>>   kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+>>>>>   poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+>>>>>   __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
+>>>>>   kmalloc_noprof include/linux/slab.h:905 [inline]
+>>>>>   kzalloc_noprof include/linux/slab.h:1039 [inline]
+>>>>>   __comedi_device_postconfig_async drivers/comedi/drivers.c:664 [inline]
+>>>>>   __comedi_device_postconfig drivers/comedi/drivers.c:721 [inline]
+>>>>>   comedi_device_postconfig+0x2cb/0xc80 drivers/comedi/drivers.c:756
+>>>>>   comedi_device_attach+0x3cf/0x900 drivers/comedi/drivers.c:998
+>>>>>   do_devconfig_ioctl+0x1a7/0x580 drivers/comedi/comedi_fops.c:855
+>>>>>   comedi_unlocked_ioctl+0x15bb/0x2e90 drivers/comedi/comedi_fops.c:2136
+>>>>>   vfs_ioctl fs/ioctl.c:51 [inline]
+>>>>>   __do_sys_ioctl fs/ioctl.c:907 [inline]
+>>>>>   __se_sys_ioctl fs/ioctl.c:893 [inline]
+>>>>>   __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:893
+>>>>>   do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>>>>>   do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+>>>>>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>>>>>
+>>>>> Freed by task 6156:
+>>>>>   kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+>>>>>   kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+>>>>>   kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:576
+>>>>>   poison_slab_object mm/kasan/common.c:247 [inline]
+>>>>>   __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
+>>>>>   kasan_slab_free include/linux/kasan.h:233 [inline]
+>>>>>   slab_free_hook mm/slub.c:2381 [inline]
+>>>>>   slab_free mm/slub.c:4643 [inline]
+>>>>>   kfree+0x2b4/0x4d0 mm/slub.c:4842
+>>>>>   comedi_device_detach_cleanup drivers/comedi/drivers.c:171 [inline]
+>>>>>   comedi_device_detach+0x2a4/0x9e0 drivers/comedi/drivers.c:208
+>>>>>   do_devconfig_ioctl+0x46c/0x580 drivers/comedi/comedi_fops.c:833
+>>>>>   comedi_unlocked_ioctl+0x15bb/0x2e90 drivers/comedi/comedi_fops.c:2136
+>>>>>   vfs_ioctl fs/ioctl.c:51 [inline]
+>>>>>   __do_sys_ioctl fs/ioctl.c:907 [inline]
+>>>>>   __se_sys_ioctl fs/ioctl.c:893 [inline]
+>>>>>   __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:893
+>>>>>   do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>>>>>   do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+>>>>>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>>>>
+>>>> I took a quick look at this, and surely looks like a comedi bug. If you
+>>>> call the ioctl part (do_devconfig_ioctl()) with a NULL arg, it just does
+>>>> a detach and frees the device, regardless of whether anyone has it
+>>>> opened or not?! It's got some odd notion of checking whether it's busy
+>>>> or not. For this case, someone has a poll active on the device, yet it
+>>>> still happily frees it.
+>>>>
+>>>> CC'ing some folks, as this looks utterly broken.
+>>>
+>>> Case in point, I added:
+>>>
+>>> diff --git a/drivers/comedi/drivers.c b/drivers/comedi/drivers.c
+>>> index 376130bfba8a..4d5fde012558 100644
+>>> --- a/drivers/comedi/drivers.c
+>>> +++ b/drivers/comedi/drivers.c
+>>> @@ -167,6 +167,7 @@ static void comedi_device_detach_cleanup(struct comedi_device *dev)
+>>>   				kfree(s->private);
+>>>   			comedi_free_subdevice_minor(s);
+>>>   			if (s->async) {
+>>> +				WARN_ON_ONCE(waitqueue_active(&s->async->wait_head));
+>>>   				comedi_buf_alloc(dev, s, 0);
+>>>   				kfree(s->async);
+>>>   			}
+>>>
+>>> and this is the first thing that triggers:
+>>>
+>>> WARNING: CPU: 1 PID: 807 at drivers/comedi/drivers.c:170 comedi_device_detach+0x510/0x720
+>>> Modules linked in:
+>>> CPU: 1 UID: 0 PID: 807 Comm: comedi Not tainted 6.16.0-rc6-00281-gf4a40a4282f4-dirty #1438 NONE
+>>> Hardware name: linux,dummy-virt (DT)
+>>> pstate: 21400005 (nzCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+>>> pc : comedi_device_detach+0x510/0x720
+>>> lr : comedi_device_detach+0x1dc/0x720
+>>> sp : ffff80008aeb7880
+>>> x29: ffff80008aeb7880 x28: 1fffe00020251205 x27: ffff000101289028
+>>> x26: ffff00010578a000 x25: ffff000101289000 x24: 0000000000000007
+>>> x23: 1fffe00020af1437 x22: 1fffe00020af1438 x21: 0000000000000000
+>>> x20: 0000000000000000 x19: dfff800000000000 x18: ffff0000db102ec0
+>>> x17: ffff80008208e6dc x16: ffff80008362e120 x15: ffff800080a47c1c
+>>> x14: ffff8000826f5aec x13: ffff8000836a0cc4 x12: ffff700010adcd15
+>>> x11: 1ffff00010adcd14 x10: ffff700010adcd14 x9 : ffff8000836a105c
+>>> x8 : ffff800085bc0cc0 x7 : ffff00000b035b50 x6 : 0000000000000000
+>>> x5 : 0000000000000000 x4 : ffff800080960e08 x3 : 0000000000000001
+>>> x2 : ffff00000b4bf930 x1 : 0000000000000000 x0 : ffff0000d7e2b0d8
+>>> Call trace:
+>>>   comedi_device_detach+0x510/0x720 (P)
+>>>   do_devconfig_ioctl+0x37c/0x4b8
+>>>   comedi_unlocked_ioctl+0x33c/0x2bd8
+>>>   __arm64_sys_ioctl+0x124/0x1a0
+>>>   invoke_syscall.constprop.0+0x60/0x2a0
+>>>   el0_svc_common.constprop.0+0x148/0x240
+>>>   do_el0_svc+0x40/0x60
+>>>   el0_svc+0x44/0xe0
+>>>   el0t_64_sync_handler+0x104/0x130
+>>>   el0t_64_sync+0x170/0x178
+>>>
+>>> Not sure what the right fix for comedi is here, it'd probably be at
+>>> least somewhat saner if it only allowed removal of the device when the
+>>> ref count would be 1 (for the ioctl itself). Just ignoring the file ref
+>>> and allowing blanket removal seems highly suspicious / broken.
+>>>
+>>> As there's no comedi subsystem in syzbot, moving it to kernel:
+>>>
+>>> #syz set subsystems: kernel
+>>
+>> Something like the below may help, at least it'll tell us the device is
+>> busy if there's a poll active on it.
+>>
+>> #syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+>>
+>>
+>> diff --git a/drivers/comedi/comedi_fops.c b/drivers/comedi/comedi_fops.c
+>> index 3383a7ce27ff..ea96bc4b818e 100644
+>> --- a/drivers/comedi/comedi_fops.c
+>> +++ b/drivers/comedi/comedi_fops.c
+>> @@ -785,21 +785,31 @@ void comedi_device_cancel_all(struct comedi_device *dev)
+>>   static int is_device_busy(struct comedi_device *dev)
+>>   {
+>>   	struct comedi_subdevice *s;
+>> -	int i;
+>> +	int i, is_busy = 0;
+>>   
+>>   	lockdep_assert_held(&dev->mutex);
+>>   	if (!dev->attached)
+>>   		return 0;
+>>   
+>> +	/* prevent new polls */
+>> +	down_write(&dev->attach_lock);
+>> +
+>>   	for (i = 0; i < dev->n_subdevices; i++) {
+>>   		s = &dev->subdevices[i];
+>> -		if (s->busy)
+>> -			return 1;
+>> -		if (s->async && comedi_buf_is_mmapped(s))
+>> -			return 1;
+>> +		if (s->busy) {
+>> +			is_busy = 1;
+>> +			break;
+>> +		}
+>> +		if (!s->async)
+>> +			continue;
+>> +		if (comedi_buf_is_mmapped(s) ||
+>> +		    waitqueue_active(&s->async->wait_head)) {
+>> +			is_busy = 1;
+>> +			break;
+>> +		}
+>>   	}
+>> -
+>> -	return 0;
+>> +	up_write(&dev->attach_lock);
+>> +	return is_busy;
+>>   }
+>>   
+>>   /*
+> 
+> Haven't heard anything back, so I guess I'll send it out as a patch?
+> 
 
---8323328-198401369-1753187360=:920
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Not yet, please. I'm working on it to close the remaining part of the 
+race condition window.
 
-On Tue, 22 Jul 2025, Shuai Xue wrote:
-> =E5=9C=A8 2025/7/21 18:18, Ilpo J=C3=A4rvinen =E5=86=99=E9=81=93:
-> > On Fri, 18 Jul 2025, Shuai Xue wrote:
-> > > =E5=9C=A8 2025/7/18 11:46, Matthew W Carlis =E5=86=99=E9=81=93:
-> > > > On Thu, Jul 17, 2025 Bjorn Helgaas wrote
-> > > > > So I think your idea of adding current link speed/width to the "L=
-ink
-> > > > > Up" event is still on the table, and that does sound useful to me=
-=2E
-> > > >=20
-> > > > We're already reading the link status register here to check DLLA s=
-o
-> > > > it would be nice. I guess if everything is healthy we're probably
-> > > > already
-> > > > at the maximum speed by this point.
-> > > >=20
-> > > > > In the future we might add another tracepoint when we enumerate t=
-he
-> > > > > device and know the Vendor/Device ID.
-> > > >=20
-> > > > I think we might have someone who would be interested in doing it.
-> > >=20
-> > >=20
-> > > Hi, all,
-> > >=20
-> > > IIUC, the current hotplug event (or presence event) is enough for Mat=
-thew.
-> > > and we would like a new tracepoing for link speed change which report=
-s
-> > > speeds.
-> > >=20
-> > > For hotplug event, I plan to send a new version to
-> > >=20
-> > > 1. address Bjorn' concerns about event strings by removing its spaces=
-=2E
-> > >=20
-> > > #define PCI_HOTPLUG_EVENT
-> > > \
-> > > =09EM(PCI_HOTPLUG_LINK_UP,=09=09=09"PCI_HOTPLUG_LINK_UP")
-> > > \
-> > > =09EM(PCI_HOTPLUG_LINK_DOWN,=09=09"PCI_HOTPLUG_LINK_DOWN")
-> > > \
-> > > =09EM(PCI_HOTPLUG_CARD_PRESENT,=09=09"PCI_HOTPLUG_CARD_PRESENT")
-> > > \
-> > > =09EMe(PCI_HOTPLUG_CARD_NOT_PRESENT,
-> > > "PCI_HOTPLUG_CARD_NOT_PRESENT")
-> > >=20
-> > > 2. address Ilpo comments by moving pci_hp_event to a common place
-> > > (include/trace/events/pci.h) so that the new comming can also use it.
-> >=20
-> > Ah, I only now noticed you've decided to re-place them. Please disregar=
-d
-> > my other comment about this being still open/undecided item.
-> >=20
-> > > For link speed change event (perhaps named as pci_link_event),
-> > > I plan to send a seperate patch, which provides:
-> > >=20
-> > > =09TP_STRUCT__entry(
-> > > =09=09__string(=09port_name,=09port_name=09)
-> > > =09=09__field(=09unsigned char,=09cur_bus_speed=09)
-> > > =09=09__field(=09unsigned char,=09max_bus_speed=09)
-> > >   =09=09__field(=09unsigned char,=09width=09=09)
-> > >   =09=09__field(=09unsigned int,=09flit_mode=09)
-> > > =09=09__field(=09unsigned char,=09reason=09=09)
-> > > =09=09),
-> > >=20
-> > > The reason field is from Lukas ideas which indicates why the link spe=
-ed
-> > > changed, e.g. "hotplug", "autonomous", "thermal", "retrain", etc.
-> > >=20
-> > > Are you happy with above changes?
-> >=20
-> > Since you're probably quite far with the pcie link event patch too give=
-n
-> > above, could you take a look at the LNKSTA flags representation in my
-> > patch and incorporate those as well as there seems to always lot of
-> > uncertainty about those flags when investigating the LBMS/bwctrl relate=
-d
-> > issues so it seems prudent to explicitly include them into the traceeve=
-nt
-> > output:
-> >=20
-> > https://lore.kernel.org/linux-pci/7c289bba-3133-0989-6333-41fc41fe3504@=
-linux.intel.com/
-> >=20
-> >=20
->=20
-> Sure, Thank you for the feedback.
->=20
-> I like the LNKSTA flags, LNKSTA flags provides better genericity
-> compared to the custom reason field I initially proposed. But it may
-> cause confusion when used in pcie_retrain_link(). However, I've
-> identified a potential issue when this approach is applied in
-> pcie_retrain_link() scenarios.
-
-I was trying to say the flags should be in addition to the other=20
-information, not replace reason.
-
-> Consider the following trace output when a device hotpluged:
->=20
-> $ cat /sys/kernel/debug/tracing/trace_pipe
-> $ cat /sys/kernel/debug/tracing/trace_pipe
->            <...>-118     [002] .....    28.414220: pci_hp_event: 0000:00:=
-03.0
-> slot:30, event:PCI_HOTPLUG_CARD_PRESENT
->=20
->            <...>-118     [002] .....    28.414273: pci_hp_event: 0000:00:=
-03.0
-> slot:30, event:PCI_HOTPLUG_LINK_UP
->=20
->    irq/57-pciehp-118     [002] .....    28.540189: pcie_link_event:
-> 0000:00:03.0 type:4, cur_bus_speed:2.5 GT/s PCIe, max_bus_speed:16.0 GT/s
-> PCIe, width:1, flit_mode:0, status:DLLLA
->=20
->    irq/57-pciehp-118     [002] .....    28.544999: pcie_link_event:
-> 0000:00:03.0 type:4, cur_bus_speed:2.5 GT/s PCIe, max_bus_speed:16.0 GT/s
-> PCIe, width:1, flit_mode:0, status:DLLLA
->=20
-> The problem is that both trace events show status:DLLLA (Data Link Layer
-> Link Active), which is the direct reading from PCI_EXP_LNKSTA. However,
-> this doesn't accurately reflect the underlying context:
->=20
-> - First DLLLA: Triggered by board_added() - link establishment after
->   card insertion
-> - Second DLLLA: Triggered by pcie_retrain_link() - link retraining
->   completion
->=20
-> ( I trace the events in pcie_update_link_speed() )
->=20
-> In the second case, the more relevant status would be PCI_EXP_LNKSTA_LT
-> (Link Training) to indicate that link retraining was performed, even
-> though the final register state shows DLLLA.
->=20
-> Question: Should we explicitly report the contextual status (e.g.,
-> PCI_EXP_LNKSTA_LT for retraining scenarios) rather than always reading
-> the current register field? This would provide more meaningful trace
-> information for debugging link state transitions.
-
-I'd prefer it coming from the LNKSTA register (TBH, I don't see much value=
-=20
-in synthetizing it at all). If we start to synthetize them, it will=20
-potentially hide hw issues. I see on some platforms two LBMS assertions=20
-per bwctrl speed change (which is done by retraining the link), one with=20
-LT=3D1 and the second with LT=3D0.
-
-=2E..But I never meant to replace "reason" with "flags".
-
-> Additionally, I'd appreciate your thoughts on the overall tracepoint
-> format shown above. Does this structure provide sufficient information
-> for hotplug and link analysis while maintaining readability?
-
-I don't have ideas how it could be improved beyond having those 4 flags=20
-available. I suspect noone does as we've not had ability to collect this=20
-information before when investigating issues so we're yet to understand=20
-all its potential.
-
---=20
- i.
-
---8323328-198401369-1753187360=:920--
+-- 
+-=( Ian Abbott <abbotti@mev.co.uk> || MEV Ltd. is a company  )=-
+-=( registered in England & Wales.  Regd. number: 02862268.  )=-
+-=( Regd. addr.: S11 & 12 Building 67, Europa Business Park, )=-
+-=( Bird Hall Lane, STOCKPORT, SK3 0XA, UK. || www.mev.co.uk )=-
 
