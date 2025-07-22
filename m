@@ -1,111 +1,129 @@
-Return-Path: <linux-kernel+bounces-741049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC384B0DF72
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D37A5B0DF73
 	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:50:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BE833A5A33
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:45:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACA321891B17
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:46:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6980D2EB5CC;
-	Tue, 22 Jul 2025 14:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 663042EBBB9;
+	Tue, 22 Jul 2025 14:45:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0ON5ihzK"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iObvlvFJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1772EACE3
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 14:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D3C1C84DD;
+	Tue, 22 Jul 2025 14:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753195509; cv=none; b=nY+HPQEZBUIeT9woP1wzaemq6wIICq3qiR3iNlIDiWxH9M+YjKvz1MATVO8ApMwIQnD1y2avIjnkEBgxydzZoxsBBcbJF23ipW5H5iL8ykwS/FIjYjO0xiK0ENaotO4YDwyld6Dm7W3yfDTL0k4yx3Z1Yv0vpWKgKpXvLJKtUBY=
+	t=1753195531; cv=none; b=DbFPkpOZZPwc5DFfyeWMyJBFfVTAk+roL9LxyJtwoHshAkZC/EmowtnMj5NCv3kJFtEyXC4UK2HJ30MU0x4v5yOdHWDIAglAUivgL1ljfkCjwWgYgvOFU7hCf5B1J9OcsFzx7+Db1i3M0uKu/VEB1zcDkd6dLcGHIJbVJIJEDoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753195509; c=relaxed/simple;
-	bh=HVfN2TYraPSfCxVo0AJHXJQLDHAZdY3bb6bzfYt4LeA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Rtjd/Rr+FH4jFCIKsUf6JBmdPwFFvOplJQJPG9ue5LYJweKFQydYqg1FpL8iAe0TctsxUfjDn0VOk7i6m6hOk0IsszK4bxEtyPMKFBO6ruYOrUODHXa8w7i3WNFmcvXZyKcfDBLNcumbqIQpsWqPzLWrLAh8sSeyyAiqUIMdZqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0ON5ihzK; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b321087b1cdso6369225a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 07:45:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753195507; x=1753800307; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nZgPKLrP/qotO+TNh068TYlpA/4yneLkKMwvnezIBBc=;
-        b=0ON5ihzKHu3w+2mvEp1zUZ1v3JNv3S9uPQlKy2+3GwmSOfJFlzYE1IsB4r9pfJAihB
-         DOMhSpYLfYWb/iKrac3pyHyTdvnSZ/KF3EY9S29qoZVTiqRqJVKpWktQAAWjU/d4UaMC
-         1y6s4GlF5gutBCccizeD3Ytm+5ZQ8iDUZb+NM2jN3oib52ra6KkA7QoMxFQuJn34KiNY
-         SzX3v27wdfZ/ABd0i5b/mY3oTsDI1IoUAiZ8Or11TF7H8LJ24KERnQ0ktADNmar0aHCx
-         WUcvB33W+xAqJ9EDtq5JVjphoI635Ezixsj+829iVEb6nUNSuEzaOu1h8fVbHZz5NSJS
-         nhzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753195507; x=1753800307;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nZgPKLrP/qotO+TNh068TYlpA/4yneLkKMwvnezIBBc=;
-        b=RrRL0l8XCbLfcge5uJiXZFXMnOQgB8Z24s69UIocc7uYUvN+pMPeTepm6pbWTz1QMq
-         HdejSBhSrpnVRJiRv6Z6aia6s1bn4QWvsSNI0KFE05gy+UEvEUfcw1VX2I+Q1DqA5cI8
-         34rPVRSBNJRM1n/2REp9Eepc6JnMo1m8M9Llw0/Dvc9hXqHAg+PDJ9S4wyO2F7Ml0o/B
-         9EdtNYY8q/4l8pS6gCWub2dCV5zkbW7yGElF5+CtMAguIGotC5m2jFr4gNT/xUCt+wbp
-         5f9uBKAjIe8WYj9fXJCwHpo+UKnyL8QIGKJKUu9gakLpjLexxc3CUbsZtm0/0u/AY8EY
-         iePg==
-X-Forwarded-Encrypted: i=1; AJvYcCWqhlItzgTXhaZJxGZu5beavlequ1exup3Xg/a4bO6msueXfRSoTivYI49uAGKODAsPqW7y9ftNXT0Dxwo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+1f/wPYkq3awu7x9SZVoBZhTArMBuOIEWrCE3lap5kJRNrvcu
-	J075G06PCBDTDfztScYe7Senx2j2/LFsQRaJqCrcn+ETvMGoHjz/J+MddlEq1w7/dmXWzWlnIJb
-	UY3E7iA==
-X-Google-Smtp-Source: AGHT+IEye6ryF3i4GwrrW44YhrNpbw96+Sg2XleT9SYl1PadbAW/x1ROmWdG2BYhq8vejYeKBT2EUnzq5Ms=
-X-Received: from pgbfm10.prod.google.com ([2002:a05:6a02:498a:b0:b2c:4fcd:fe1b])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:1508:b0:220:94b1:f1b8
- with SMTP id adf61e73a8af0-2380db8e8d7mr31142351637.0.1753195507419; Tue, 22
- Jul 2025 07:45:07 -0700 (PDT)
-Date: Tue, 22 Jul 2025 07:45:05 -0700
-In-Reply-To: <bdce1a12-ab73-4de1-892b-f8e849a8ab51@redhat.com>
+	s=arc-20240116; t=1753195531; c=relaxed/simple;
+	bh=gbnu6v4qJ8E6RxAmysMcS7ozBaN1WJkvfllvPveke1w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g+DSZnKk0O5h55/DiREaYDnU+dqiKacF2CmWRSYPUq4SACO9URd2R6HjB7Xqfv5uv1Pqnf6TVDyIWu+M+0uXzEjL1VjjFdFhe4aYp8B/ELLFc05pCr/pzfcmJT0rUzjxbbp1CEXbTOaBjyQ9gk4wz1X/Odck7Gu6KL7TDOPE+ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iObvlvFJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59462C4CEF1;
+	Tue, 22 Jul 2025 14:45:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753195531;
+	bh=gbnu6v4qJ8E6RxAmysMcS7ozBaN1WJkvfllvPveke1w=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iObvlvFJoDDH3xMhNJJVO6d5Xj+rdJGAdrzfzTVdtmscgkINHdOLbmh3YBF5jQf1f
+	 ZB4aGP9JA3tWbfJzH63/YqwnM/QPTnJs41gYNDs3NG3bGwmF1UbiDgWrvYJYquVZIv
+	 xy6WaCTItaAnhzSYjNyTBt7r0L14WLewWMEmDjjROKMUpvQMaZYbYIuD4QtoqYRCPs
+	 l1DLZFvcYrDngoH4ZhhglHCUGEm9sT2+B5jGoNQRwJOcEcxT4Lw4IBot1vysrh1uYf
+	 eFOd80riEbwzpnw1P0COKS5VETCMQ1QMoU9xPfpA4c6ii0NkofZqCFmqPEv2pnpfDN
+	 YcHTvfLkZT9nQ==
+Message-ID: <3e260136-009b-44cd-8fe8-85c34cd93ff8@kernel.org>
+Date: Tue, 22 Jul 2025 09:45:28 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250713174339.13981-2-shivankg@amd.com> <bdce1a12-ab73-4de1-892b-f8e849a8ab51@redhat.com>
-Message-ID: <aH-j8bOXMfOKdpHp@google.com>
-Subject: Re: [PATCH V9 0/7] Add NUMA mempolicy support for KVM guest-memfd
-From: Sean Christopherson <seanjc@google.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Shivank Garg <shivankg@amd.com>, vbabka@suse.cz, willy@infradead.org, 
-	akpm@linux-foundation.org, shuah@kernel.org, pbonzini@redhat.com, 
-	brauner@kernel.org, viro@zeniv.linux.org.uk, ackerleytng@google.com, 
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz, 
-	bfoster@redhat.com, tabba@google.com, vannapurve@google.com, 
-	chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com, 
-	shdhiman@amd.com, yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, 
-	thomas.lendacky@amd.com, michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, 
-	kalyazin@amazon.com, peterx@redhat.com, jack@suse.cz, rppt@kernel.org, 
-	hch@infradead.org, cgzones@googlemail.com, ira.weiny@intel.com, 
-	rientjes@google.com, roypat@amazon.co.uk, ziy@nvidia.com, 
-	matthew.brost@intel.com, joshua.hahnjy@gmail.com, rakie.kim@sk.com, 
-	byungchul@sk.com, gourry@gourry.net, kent.overstreet@linux.dev, 
-	ying.huang@linux.alibaba.com, apopple@nvidia.com, chao.p.peng@intel.com, 
-	amit@infradead.org, ddutile@redhat.com, dan.j.williams@intel.com, 
-	ashish.kalra@amd.com, gshan@redhat.com, jgowans@amazon.com, 
-	pankaj.gupta@amd.com, papaluri@amd.com, yuzhao@google.com, 
-	suzuki.poulose@arm.com, quic_eberman@quicinc.com, 
-	aneeshkumar.kizhakeveetil@arm.com, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 8/9] fbcon: Use screen info to find primary device
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: David Airlie <airlied@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Simona Vetter <simona@ffwll.ch>, Lukas Wunner <lukas@wunner.de>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>,
+ Alex Williamson <alex.williamson@redhat.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:INTEL IOMMU (VT-d)" <iommu@lists.linux.dev>,
+ "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+ "open list:VFIO DRIVER" <kvm@vger.kernel.org>,
+ "open list:SOUND" <linux-sound@vger.kernel.org>,
+ Daniel Dadap <ddadap@nvidia.com>,
+ Mario Limonciello <mario.limonciello@amd.com>
+References: <20250722143817.GA2783917@bhelgaas>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <20250722143817.GA2783917@bhelgaas>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 22, 2025, David Hildenbrand wrote:
-> Just to clarify: this is based on Fuad's stage 1 and should probably still be
-> tagged "RFC" until stage-1 is finally upstream.
+On 7/22/25 9:38 AM, Bjorn Helgaas wrote:
+> On Thu, Jul 17, 2025 at 12:38:11PM -0500, Mario Limonciello wrote:
+>> From: Mario Limonciello <mario.limonciello@amd.com>
+>>
+>> On systems with non VGA GPUs fbcon can't find the primary GPU because
+>> video_is_primary_device() only checks the VGA arbiter.
+>>
+>> Add a screen info check to video_is_primary_device() so that callers
+>> can get accurate data on such systems.
 > 
-> (I was hoping stage-1 would go upstream in 6.17, but I am not sure yet if that is
-> still feasible looking at the never-ending review)
+> This relies on screen_info, which I think is an x86 BIOS-ism.  Isn't
+> there a UEFI console path?  How does that compare with this?  Is that
+> relevant or is it something completely different?
 
-6.17 is very doable.
+When I created and tested this I actually did this on a UEFI system 
+(which provides a UEFI GOP driver).
+  >
+>>   bool video_is_primary_device(struct device *dev)
+>>   {
+>> +#ifdef CONFIG_SCREEN_INFO
+>> +	struct screen_info *si = &screen_info;
+>> +#endif
+>>   	struct pci_dev *pdev;
+>>   
+>>   	if (!dev_is_pci(dev))
+>> @@ -34,7 +38,18 @@ bool video_is_primary_device(struct device *dev)
+>>   
+>>   	pdev = to_pci_dev(dev);
+>>   
+>> -	return (pdev == vga_default_device());
+>> +	if (!pci_is_display(pdev))
+>> +		return false;
+>> +
+>> +	if (pdev == vga_default_device())
+>> +		return true;
+>> +
+>> +#ifdef CONFIG_SCREEN_INFO
+>> +	if (pdev == screen_info_pci_dev(si))
+>> +		return true;
+>> +#endif
+>> +
+>> +	return false;
+>>   }
+>>   EXPORT_SYMBOL(video_is_primary_device);
+>>   
+>> -- 
+>> 2.43.0
+>>
+
 
