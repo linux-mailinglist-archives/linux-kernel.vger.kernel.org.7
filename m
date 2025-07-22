@@ -1,76 +1,133 @@
-Return-Path: <linux-kernel+bounces-741353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF56EB0E31C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:56:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AABA6B0E32B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:59:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEB501C854FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:56:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7593E1C85E19
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BA627EFE1;
-	Tue, 22 Jul 2025 17:56:04 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9FE8280A51;
+	Tue, 22 Jul 2025 17:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PUcx40e/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9FF27A446
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 17:56:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD7C279DC4
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 17:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753206964; cv=none; b=jzzGNdL2/uiEYQTQqVC24gsEE/LOgVMIhMf5Kvu2AeR2k7mtn0/W1d6CoHLQTAcdMyrhVJ1rUw8kwzrp8ZbVyGB0fXiRcS8JMjC+vRm2DAizq+Bo6LahWYjVE5KyBKKnVW4AVfOOC9gmuBiZqjv/Ez7n8FJR7HQWqk9Wq2oP+rE=
+	t=1753207171; cv=none; b=ibAziCchSlmUzmOKRjBqY1OgyRSWD5i2eWbdIUbbCeJNmcH+D5esETfqoGtUid6v/uDEm3XmZb6B3e3RkCavHoov8Jx56C19YjgeF+mWvTQLnAoJj9EbBcABGeO4CzX1u6rajl7sdzdMLBN7CtlPRJh8lVi2Zkm8rROlAMN0gC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753206964; c=relaxed/simple;
-	bh=NOf3jzSAuifGwfThcIJ86rWzIoM44yQsqfX0CmmqWhU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=U84qWXmQk1irSuWxGYWOskNiFQekhcmYG9IRWwo47/foNnqQkp4BrFj6AP/WmIyP20NebNn0bjtP2KdPt3vlhmj7pakwH4IuS4zac5Esn8/cRfDJWzh/RIRaH2TU4XkUonQ6DvjJ4AchO8r5OHo5l3QMZo+RFqVUrCQuICkgQHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-87c583fcf77so123974939f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 10:56:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753206962; x=1753811762;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OzVMaPcbA0DVhTlcNqL+t8rzvoYeDtFk+nBOmPPb534=;
-        b=fOmDYzgv8vcGSPRUd3k0S+Y18RY5cSiBLsprOfk4pv60RcHV3kjRw/y+nS7kTZCSit
-         JcxVV68NKd0pZVd3NSEVXJhbu0mRE3boy9mCICx3UDgDpwJoHh+77AANKVkgcZXTt88X
-         LOO5sjZ29EsgTwBN5IZilUqTOKhjYkDnmcgHtluOLPAsNkiI4qnftbeEbqd9mh8SdUEV
-         xmq0/IFEafleXuJ0WGex8G7jwcdApyYrs4JBlELAxeOgtW23nu04gEFLyzkN8KiMTw9d
-         Y3MAALiOHjlwCS5llnXK9ci9TXefwovqeAu2SIMII+rIbNgZ8rrFvEKmHJM7zp4GKDJW
-         nnpA==
-X-Gm-Message-State: AOJu0Yx8IxSyjGyRsd6zr/VO5TQBh7Ul9Pji9LbwHwZW8vFn0RpIZ1oa
-	7lKT0K8dzlFRSWMdIcjv4Ah+c1Ivv6TMu9obmn+HF2PtO70/O8FKPm2aCXFdLmq7H4VHciAeXZK
-	HznUsqpffS11t6doIgNsCm7XRNeqI9fhS8VtNkWhNL6YF3JOBqchWxmGUeqg=
-X-Google-Smtp-Source: AGHT+IFE8JZ92UR0G80WEmtuvIvlfEEFb9k3KcP8quHMkRcw+rjxclb1z6+NYrp8ATJ7E7p3gS8MqSPEIaTLxADkcCn7YhdLNJRJ
+	s=arc-20240116; t=1753207171; c=relaxed/simple;
+	bh=czaYoBEurRMRb+9N79DjVDatKAVLUHXTeVHfQTimLsA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=neBOJwPcoeTbjM0y+XI7Rc/qQNIWb8EfKYKm3YYyCIvh/HSFRgDLYv8WVfmnFYL96HWzplqo9FhOk36cfu1qOJQh4uIav2ePauIY08EmwGF1fbtQ3MlOcSYWndSt0QjVUREXeh3MD/bnRm8JCCYrypF3RsXCRrc6Y6ENdtjPqb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PUcx40e/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753207168;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5nxph+5cHIivsGtMSNfnw31CbFRsbsVvb6kQWxmkU7o=;
+	b=PUcx40e/gHMNVauuAr4WbQCFeeEltJ8WwzrNxyOmElT9e0SyelBnDUfGKdrsjxWQb+S5Pu
+	Orp7tYmNNlHy8PUjvBNyBeUbubJTedNxcHHzwhnElB+Jxs4YpO57/Df/BVirKefx8Bapwr
+	MxbrVtfdTDKU1Xi9bmhLXFXpsrBSquI=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-15-xC33Smn6P3ytJoRBJvUlrA-1; Tue,
+ 22 Jul 2025 13:59:23 -0400
+X-MC-Unique: xC33Smn6P3ytJoRBJvUlrA-1
+X-Mimecast-MFC-AGG-ID: xC33Smn6P3ytJoRBJvUlrA_1753207161
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 16AA119373D8;
+	Tue, 22 Jul 2025 17:59:20 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.33.79])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 5A3E6195608D;
+	Tue, 22 Jul 2025 17:59:15 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue, 22 Jul 2025 19:58:14 +0200 (CEST)
+Date: Tue, 22 Jul 2025 19:58:08 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: David Laight <david.laight.linux@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"Li,Rongqing" <lirongqing@baidu.com>,
+	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Subject: Re: [PATCH] x86/math64: handle #DE in mul_u64_u64_div_u64()
+Message-ID: <20250722175807.GC2845@redhat.com>
+References: <20250721130422.GA31640@redhat.com>
+ <20250721192053.58843751@pumpkin>
+ <20250722105034.GA2845@redhat.com>
+ <0818676F-ED90-44B1-AB10-42DDB7F1B139@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:7197:b0:87c:a4e:fc7d with SMTP id
- ca18e2360f4ac-87c0a4f1147mr2941997739f.14.1753206961846; Tue, 22 Jul 2025
- 10:56:01 -0700 (PDT)
-Date: Tue, 22 Jul 2025 10:56:01 -0700
-In-Reply-To: <68036084.050a0220.297747.0018.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <687fd0b1.a70a0220.21b99c.0012.GAE@google.com>
-Subject: Forwarded: 
-From: syzbot <syzbot+4eb503ec2b8156835f24@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0818676F-ED90-44B1-AB10-42DDB7F1B139@zytor.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On 07/22, H. Peter Anvin wrote:
+>
+> On July 22, 2025 3:50:35 AM PDT, Oleg Nesterov <oleg@redhat.com> wrote:
+> >
+> >The generic implementation doesn't WARN... OK, I won't argue.
+> >How about
+> >
+> >	static inline u64 mul_u64_u64_div_u64(u64 a, u64 mul, u64 div)
+> >	{
+> >		char ok = 0;
+> >		u64 q;
+> >
+> >		asm ("mulq %3; 1: divq %4; movb $1,%1; 2:\n"
+> >			_ASM_EXTABLE(1b, 2b)
+> >			: "=a" (q), "+r" (ok)
+> >			: "a" (a), "rm" (mul), "rm" (div)
+> >			: "rdx");
+> >
+> >		if (ok)
+> >			return q;
+> >		BUG_ON(!div);
+> >		WARN_ON_ONCE(1);
+> >		return ~(u64)0;
+> >	}
+> >
+> >?
+> >
+> >Oleg.
+>
+> Maybe the generic version *should* warn?
 
-***
+David is going to change the generic version to WARN.
 
-Subject: 
-Author: kent.overstreet@linux.dev
+> As far as the ok output, the Right Way™ to do it is with an asm goto instead
+> of a status variable; the second best tends to be to use the flags output.
 
-#syz set subsystems: block fs
+This is what I was going to do initially. But this needs
+CONFIG_CC_HAS_ASM_GOTO_OUTPUT
+
+Oleg.
+
 
