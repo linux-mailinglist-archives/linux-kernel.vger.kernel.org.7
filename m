@@ -1,104 +1,82 @@
-Return-Path: <linux-kernel+bounces-740578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79738B0D5F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:27:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1715CB0D5FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:29:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78C5A16E2A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:27:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B1073B3E3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7491A2DCF4A;
-	Tue, 22 Jul 2025 09:27:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ABCB2DCC1A;
+	Tue, 22 Jul 2025 09:29:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fZfm9RJR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="epOLk3cq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60C02DC35C;
-	Tue, 22 Jul 2025 09:27:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F242BEFE3;
+	Tue, 22 Jul 2025 09:29:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753176469; cv=none; b=MhtxPg+vTRToT3U8AeolNV1L2dGUPDm0pKlJ04EEDKxDAd4ei6gc4iXa80FY//73IH6DTFt89BPU+DlFtbBHWQICkYNsGG91Gr+3BwlUnIkpdJurTqfjrNB4awZ179h19Vs6/8cev69wyIhKcuICBZa+WeRg6T9zEL9SARORbes=
+	t=1753176552; cv=none; b=ckuSjqgAS8RqjwuTaLU4e9XHKSp9HwwV9pBaN6DG7YCIjxd3BeeYzkJUt86zHtRcWqhxNQSW0pW71jTrIM8M5MWgNe64517a0/2rLN2QtJzHq94CBn5/+E+sgNJ0VewNbnE+gNVuoNWSTZX6suLhAnQgwAflVd059eMhQ6wXQaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753176469; c=relaxed/simple;
-	bh=VTOBb6nBpFUj+KE94TVU4rw/yZM3+SNTYOwcbQSppQk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HEY8V0zqz6qmftobulQOvqMK8OcWASHSDcA9nX/ajgdLA3tjSCAquA0+x9PUOXlAxFhDVnWN3FCdwS63GUfHzkkDeQrWAHIgByE1G3aEDhhVe6fWYHlMRwHRmQT8UHxOs/t39JtDRCkWeqrnTa8TZARLiCqRTPxEM6/aFjBPdU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fZfm9RJR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65517C4CEEB;
-	Tue, 22 Jul 2025 09:27:49 +0000 (UTC)
+	s=arc-20240116; t=1753176552; c=relaxed/simple;
+	bh=enVP14U28hE+PnqiYzRdLrXgVSE41+FcW7F4HH/TMug=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=D5NakjeSRobNl2zQis9f9E3ib7Ufa28LMOu+Maa5hPLsUP6rPLFCVjEip9VG0rjDS3fNA9rCzIXP9Z+Tcshgb3mn6eepURhSX3/nQKL2gB9tywPNiDSmPDYQXLyQnCeYHFji3Bijz6CJhxE2Uw8lGaujJxTFhTX864Sqx6RSDpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=epOLk3cq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79EFCC4CEEB;
+	Tue, 22 Jul 2025 09:29:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753176469;
-	bh=VTOBb6nBpFUj+KE94TVU4rw/yZM3+SNTYOwcbQSppQk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=fZfm9RJRju+Gpg+NyeURunZ6YiGhcnGfuCO8h42Yt4aULE8qFDRd8xlxe2mIo+EWs
-	 4to72BKo0RmUSeM53nqddAMDXTqIZTJQ9c9yEF5Wm/hHhrBqz+L743AbsT00c+Nut9
-	 bwIsZCVwM2krBfhDKFP2QrbPqTp5DMMeaQLxXTsdltvtrcP9i83X45RRDl+09qc9f0
-	 LceOfe6B+gfLLR7qyY4ZB7870VzlI/9TIMcp/6m7a64XEFscAOKCAVKQAoVkFIYAjA
-	 /H9RxmjBREAZxIysVW5rv89rZXoSfsyg2ggakyCJTQgYbcGJvsWrekNoSl6+7yBkr9
-	 XSBHkJtyBfnMQ==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1ue9He-0000000007G-3858;
-	Tue, 22 Jul 2025 11:27:38 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-mediatek@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan@kernel.org>,
-	stable@vger.kernel.org,
-	"Nancy.Lin" <nancy.lin@mediatek.com>
-Subject: [PATCH] drm/mediatek: fix device leaks at bind
-Date: Tue, 22 Jul 2025 11:27:22 +0200
-Message-ID: <20250722092722.425-1-johan@kernel.org>
-X-Mailer: git-send-email 2.49.1
+	s=k20201202; t=1753176552;
+	bh=enVP14U28hE+PnqiYzRdLrXgVSE41+FcW7F4HH/TMug=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=epOLk3cqY1C1/UIHczxHBajXBQ7VAK5QENDgP7SOlW3GcnU7EDU9dsqQ+DMvpiTd6
+	 40R4RWsysPr4dEkLSRwobE22Z2CLghn529FXtvOftLptOlOjLxEA3CowZVyw921Vmk
+	 W94sIIEuarC5f0ixcqjJCAKeDR4Jho+YWoe/EoXUlTq5LPqeX9mtjPdmkgbFw7+ZHl
+	 wGoRcmiDDHHJaW6aKhKmq99ZXGiiAauy9fptjv4AproU/f3ZOZ38D1ge5e4Q29UcGo
+	 a0WoE0b5I+WGWFItv3SZ4ILXV1ls4mG8jTPTfLgj3tn0HYfrjY7D1bmRPd7dLvHMt2
+	 81V/qu8lhw8fA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 22 Jul 2025 11:29:07 +0200
+Message-Id: <DBIH7VEMJY0E.4KMGP0KSLZHG@kernel.org>
+Subject: Re: [PATCH 1/2] rust: io: fix broken intra-doc link to missing
+ `flags` module
+Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <patches@lists.linux.dev>
+To: "Miguel Ojeda" <ojeda@kernel.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250722085500.1360401-1-ojeda@kernel.org>
+In-Reply-To: <20250722085500.1360401-1-ojeda@kernel.org>
 
-Make sure to drop the references to the sibling platform devices and
-their child drm devices taken by of_find_device_by_node() and
-device_find_child() when initialising the driver data during bind().
+On Tue Jul 22, 2025 at 10:54 AM CEST, Miguel Ojeda wrote:
+> There is no `mod flags` in this case, unlike others. Instead, they are
+> associated constants for the `Flags` type.
+>
+> Thus reword the sentence to fix the broken intra-doc link, providing
+> an example of constant and linking to it to clarify which ones we are
+> referring to.
+>
+> Fixes: 493fc33ec252 ("rust: io: add resource abstraction")
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-Fixes: 1ef7ed48356c ("drm/mediatek: Modify mediatek-drm for mt8195 multi mmsys support")
-Cc: stable@vger.kernel.org	# 6.4
-Cc: Nancy.Lin <nancy.lin@mediatek.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- drivers/gpu/drm/mediatek/mtk_drm_drv.c | 2 ++
- 1 file changed, 2 insertions(+)
+Thanks for catching this and the other documentation warning.
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-index 7c0c12dde488..33b83576af7e 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-@@ -395,10 +395,12 @@ static bool mtk_drm_get_all_drm_priv(struct device *dev)
- 			continue;
- 
- 		drm_dev = device_find_child(&pdev->dev, NULL, mtk_drm_match);
-+		put_device(&pdev->dev);
- 		if (!drm_dev)
- 			continue;
- 
- 		temp_drm_priv = dev_get_drvdata(drm_dev);
-+		put_device(drm_dev);
- 		if (!temp_drm_priv)
- 			continue;
- 
--- 
-2.49.1
-
+Applied to driver-core-testing, thanks!
 
