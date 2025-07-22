@@ -1,88 +1,116 @@
-Return-Path: <linux-kernel+bounces-741080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1A39B0DFD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:03:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B09F1B0DFDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:04:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1963F17E73F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:59:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86EA11C2343D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD96F226533;
-	Tue, 22 Jul 2025 14:59:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AAE22EBDE0;
+	Tue, 22 Jul 2025 14:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="1mRleX5Q"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="UkQPPri7"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C56239E9E;
-	Tue, 22 Jul 2025 14:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A73162E1724;
+	Tue, 22 Jul 2025 14:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753196360; cv=none; b=Wxv5sQeImTKOJt+Etse2A0eKZ9iNdvG7fez4pV4Tv7tPDjVGh/US4P/y+Ld5X8wxOE2PJeGN0/czdIuAGcP/GjAOpkzZoSlrJLx15DH97NTaY/L0qe48BOal1i2+KGhL18qu9iBJo8TW6BMql414dcXOwfJvmGshygyn3W2wW/0=
+	t=1753196244; cv=none; b=AeD1UZkCsURQRF9k9kUCrLKFgP8H4QsYkOVmwtU2+mCmRzqc7n7FYcxiAkd6L/sWYvitDx1KHjELoPXMyVYGr5elzH58LyKKWUSTwsV7b0f6VfGW26Umjx7rBCDKfRg51spxZiO6BO2a73onJfdF9/y7DgBjl06RCnZhqT8UfzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753196360; c=relaxed/simple;
-	bh=ou7A8dCtajtd2EqlFdUb122ILRZkFdkN1YbKnDqV3tA=;
+	s=arc-20240116; t=1753196244; c=relaxed/simple;
+	bh=3xnLaWnOmOkuJ0977o3SrFUG6qb/RVNQZ8CVCCYJzww=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W6XQ/7alryNKgmauJB0ixB7cZ+0CWxM0KE2El60rO8K5gFGUTcfkpq0kDQEZEHt+cxLFQYAH/o3MhwPZnaIPRAeAld9Ro+TF5IJvn4j/sJXtD48uyNYZox85pwhK4gP0EDf7w7KtBU5XZGxsFjoFq1t4gMAQgXmgQG6+DPzSPR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=1mRleX5Q; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=qXqgH+7Pf8+YOQt42JO04/xiRlrY25OPKvo6NdI8jhU=; b=1mRleX5QRWQZbkWvtmnIFJ4XZ/
-	gt9P3d9AJKA4hTjBiS+wkEwXnqHsh0AyuXqXN5pxL//H5Kc/lNw4YAwfa9YRZyM/+xdH/LJ7lW6NA
-	1aZd7S4UKw4KmsczXyW6B9tGPHNu22aqewBOoN5Kv3lRdruVtQ5vYa01a2qn6a5mCAB0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1ueERs-002Tkl-HD; Tue, 22 Jul 2025 16:58:32 +0200
-Date: Tue, 22 Jul 2025 16:58:32 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Yibo Dong <dong100@mucse.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
-	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 01/15] net: rnpgbe: Add build support for rnpgbe
-Message-ID: <53710a91-a4b1-4ce9-a9f7-b32a74dec3fc@lunn.ch>
-References: <20250721113238.18615-1-dong100@mucse.com>
- <20250721113238.18615-2-dong100@mucse.com>
- <552cb3f0-bf17-449b-b113-02202127e650@lunn.ch>
- <146B634370ED44A0+20250722033841.GB96891@nic-Precision-5820-Tower>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FQEtcVjlZzPv54EPi7YhczYVZij4ncz18O0SMGVdEG7GW7QzrFALBd6GLHWTGuappbKkq7MDl77J8u/dosQVJhCDdeRxP5ygdTHdjgNHEuWqokZF5+svEBHiJ5Hbx7nL68LBsqAWnV2YNqbtfctncbjwXUT0XRDCX6xpemMXMfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=UkQPPri7; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6AA9D40E026C;
+	Tue, 22 Jul 2025 14:57:19 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 1y_-TjzpZqNK; Tue, 22 Jul 2025 14:57:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1753196236; bh=CV12ZyPTxqPmlSN7j772KXpPQFGLihlZuz2lc7oVyx4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UkQPPri7/pKRTQnzkIWK5s0tfRVwYGY7qg8j8odxh9zx2KVuGkK024yEVjJElO7aq
+	 bwK98klfCEphi4/LXhmAxJ7E8JMpl6AwZR3NNwGE0qYBCnAs27XhnN6fF6a818y11E
+	 8DYTip6Dm62MkTF8FFKxtnDjPwZzNNiB6gD5yD5CTAXok1xEJ21RXRhHvAJBJhv8ps
+	 Qapkq66PqUbRyXG7/fTFE4dCLEke+4mjMNi++OlS6hKParGax79OKIaUuCCPdU/pHt
+	 7ZpVY/iqEA5nlGhmYboOGrBbBM8LzeGm0atnLGIR0yCSIAYRotHnNH4tSRzpFZRE4H
+	 X82QqiI3jNwjLckbnNnBYVerRXpebpHEm4iItVgHmO5jkIepjnkFh5Xnn2d1H3ZYeG
+	 cJn8bqjnIga98fENoyKJG+izJxx7Xn8NKjqt0P8E8vAv4BKzdhD95zDcwx0sVg4hYo
+	 p8a6qPzNnO7pmuyq5eAaW5PLxH2XU7vM7mEHk5g4FmafjOV9Mx0mXhQSADIC8cj56V
+	 Dl17qhTNidU/w9Z2cRrr4KAetogvP8VX46MIUs9TuCSA3/fsYv+tmVIb8dgxV51L8l
+	 Cn+YB4pKapuEnNuH9BatPUho0cfLi4cmzeQvlrc4f0tnpxaiNQZ8PaFMD5dea4Gznt
+	 T0deDF0MZ/QMfc1sfFvblgH8=
+Received: from rn.tnic (unknown [78.130.214.207])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id A10CC40E0265;
+	Tue, 22 Jul 2025 14:56:53 +0000 (UTC)
+Date: Tue, 22 Jul 2025 16:58:54 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Huang, Kai" <kai.huang@intel.com>
+Cc: "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"peterz@infradead.org" <peterz@infradead.org>,
+	"Hansen, Dave" <dave.hansen@intel.com>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"hpa@zytor.com" <hpa@zytor.com>, "Gao, Chao" <chao.gao@intel.com>,
+	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+	"seanjc@google.com" <seanjc@google.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"kas@kernel.org" <kas@kernel.org>,
+	"sagis@google.com" <sagis@google.com>,
+	"Chatre, Reinette" <reinette.chatre@intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Williams, Dan J" <dan.j.williams@intel.com>,
+	"nik.borisov@suse.com" <nik.borisov@suse.com>,
+	"ashish.kalra@amd.com" <ashish.kalra@amd.com>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"Yamahata, Isaku" <isaku.yamahata@intel.com>
+Subject: Re: [PATCH v4 1/7] x86/kexec: Consolidate relocate_kernel() function
+ parameters
+Message-ID: <20250722145854.GAaH-nLpCa12zaiOPa@renoirsky.local>
+References: <cover.1752730040.git.kai.huang@intel.com>
+ <c7356a40384a70b853b6913921f88e69e0337dd8.1752730040.git.kai.huang@intel.com>
+ <5dc4745c-4608-a070-d8a8-6afb6f9b14a9@amd.com>
+ <45ecb02603958fa6b741a87bc415ec2639604faa.camel@intel.com>
+ <7eb254a7-473a-94c6-8dd5-24377ed67a34@amd.com>
+ <1d2956ba8c7f0198ed76e09e2f1540d53c96815b.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <146B634370ED44A0+20250722033841.GB96891@nic-Precision-5820-Tower>
+In-Reply-To: <1d2956ba8c7f0198ed76e09e2f1540d53c96815b.camel@intel.com>
 
-> > > +#include <linux/types.h>
-> > > +#include <linux/module.h>
-> > > +#include <linux/pci.h>
-> > > +#include <linux/netdevice.h>
-> > > +#include <linux/string.h>
-> > > +#include <linux/etherdevice.h>
-> > 
-> > It is also reasonably normal to sort includes.
-> > 
-> 
-> Got it, I will also check all other files. But what rules should be
-> followed? General to specific?
+On Mon, Jul 21, 2025 at 09:36:48PM +0000, Huang, Kai wrote:
+> Np and thanks! I'll address your other comments but I'll see whether Boris
+> has any other comments first.
 
-All global imports first, and then local.
+Nah, he hasn't. This looks exactly like what I had in mind so thanks for
+doing it.
 
-    Andrew
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
