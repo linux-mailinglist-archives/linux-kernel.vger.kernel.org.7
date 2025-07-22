@@ -1,129 +1,176 @@
-Return-Path: <linux-kernel+bounces-740755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11DE5B0D8AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:58:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71C7AB0D8C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:00:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 055E2172EBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:58:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E26E7AA342
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507102E3B1D;
-	Tue, 22 Jul 2025 11:58:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F782E425F;
+	Tue, 22 Jul 2025 12:00:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nIAbi65q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mZISTQk5"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5CF2E3384
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 11:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0419F2D3A88
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 12:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753185518; cv=none; b=LsEfK0m1tfLrwaybGQlIZOzsLSh7psUpGvAP0SEnlCfgJ3Y42vO+OH/l6Z2o24P6bPITg0u1wuFY3v70mIVofKXeDZmQSG1FsXNghuHO71vWIAAJoywXcLtvOCpUXUqVX3rkcrn7raRwr64zvOuFnC0hk8lDkT6lXwOsY3VWPm0=
+	t=1753185632; cv=none; b=Ss+ZhRjpZqIruQ2InIoUDWty82kkcGlpnES2NI6XSeN0i+j8/ad8+sDSWIwzhXUvDzd/eQbhoL1emLhNG70rYbsjD4V5WFnSGH3B0yf8lISd/7puTN8U8BACHfmnSioPWFveHRvUncUkYNNRvn4M55lPvATP2rA8LCb5ruUf4kM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753185518; c=relaxed/simple;
-	bh=VRNKdOARxyNPiIG9RaGx/LmFv7pgt5os0GiM6h2e3U0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nK3DOv7MfJKhYhL4Pp4emjvNTCNA3iZYaeGR9JVJm3Lm1oAFRb1y6/Q/dhx9cSK6WJ0dL+1rpYns+7WeUpRx27z+nZpJ6ftLYNgBHpRQcflg0QtQ8FVXVQ/wZGIjvp6bWjugnfAT/eosPhDFAUHTD1s9GV0aoD6Hd5BIoahReNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nIAbi65q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F9C2C4CEEB;
-	Tue, 22 Jul 2025 11:58:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753185517;
-	bh=VRNKdOARxyNPiIG9RaGx/LmFv7pgt5os0GiM6h2e3U0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=nIAbi65qjf9cnS+TorEe2+9FEwihDkYar+X0ybyntOh810E7zZqNCJnMvdCm2uYEC
-	 V9MXrMaDiq7oRRQ8uyfJ6YPbs3gEqbBy6yNUssRPSA0aOzxsIrt3QVTfs9CIZVa0rl
-	 7YtlvIoyur0fa4ysyZr9zYREVF5ncTADJEBL72VH+U4WxqHU/mfD5vK3R4e3H8EplL
-	 7DyWa5GsNYETBrWPOudp/VYzusJSNscayVR8MrasRCW0YcQPJuFKvLKDaK6wPLQDhH
-	 3GzghzRyhtVPdIDXvaKgTy23vLYlQD8K1UyU6p+07sZCloU1I/9Z2pGoYA7824TnU9
-	 55Oi5zob3ytzw==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Lyude Paul <lyude@redhat.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Arnd Bergmann <arnd@arndb.de>
-Cc: Satadru Pramanik <satadru@gmail.com>,
-	Chris Bainbridge <chris.bainbridge@gmail.com>,
-	Ben Skeggs <bskeggs@nvidia.com>,
-	Timur Tabi <ttabi@nvidia.com>,
-	Dave Airlie <airlied@redhat.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Revert "drm/nouveau: check ioctl command codes better"
-Date: Tue, 22 Jul 2025 13:58:18 +0200
-Message-Id: <20250722115830.2587297-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1753185632; c=relaxed/simple;
+	bh=TyKN+XzYCkV6rwuA3vy4eTsqF3nFqVxpsgelQW7FRPI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ny+MlRrGWCKWEVZrEho2tdrcpcn0imqxaZj+htaP0qIWCq4eF3r472el4riPVNq4fVWbmnhdEMPrud5YtBI3BARDd8aK8+pEFBZwqWHKcyxRxq/NdPgHM+cIyESY/Ghv05Ux3WchJgeGc8n536682iNhqqjBXiLQMMFOGVGNOzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mZISTQk5; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-75001b1bd76so3345695b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 05:00:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753185630; x=1753790430; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ptH7TdqJ1a9RBPR6TZDZBqzzcIS8gfN8+gNc7Nchtao=;
+        b=mZISTQk5ifn97Cs+yFblJMTrviWVKG6QQSiD+iA8OMiMRBYkg8b+LdCspi0PCwHWQ0
+         jqd+rYEbohqtz8veSa2zResH6/d/pcvlfHQZgaapnbVlhTU0gtZhHxNpnavAp95dM7Pb
+         gPOg4WTG//4iO97V6NPkEETpUzvYci3JosnJNb+aCO2CAsxtyXHvn6x2+qsDXuFFMTyv
+         aiFfw8lwb9r/fRQDeqKsElYQwo3q6EtOhzHj4bfeVJg7pYLXyoMyC0SiIZ3SfHtJIOXQ
+         IFv1raMvPBMck/ZkEaq0AazukXEfBTclmTIoxMEvLXnBR/OCVzICYs22CXiFYla738z4
+         0CJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753185630; x=1753790430;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ptH7TdqJ1a9RBPR6TZDZBqzzcIS8gfN8+gNc7Nchtao=;
+        b=aByD3vv2qjU/aaG/vJHf3trMZ+kNUW9KYcbJcK5Rohd9JPwNb7FfSBSCDyNOPx0jNc
+         qX7ZYu7vb1nlMqeM0J3Hp7geW/ftWR//JGfMtT0ACzI0ES1OksD/6cs89bVcKymNqHf9
+         Zl6TDhk5oQKreq63nSr8jpwnqm2GPhuwUpE0KOlZm3vcMJEyv6KnOc83XYneLPA9Mlx7
+         hHYiMzMshd632h68s4eUqAirY3UEyvv+hPYcNZNylSGPf/U58Ko8j6GHu2nHb8irrv5q
+         AFEhvpiZ/z8qcGSzHG4pES/7bOK00DZKC0+r7s2BSydVGQ1Fa2nHSaLTe9M0zJF8kxwh
+         g2xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUdymQXGSk8XVrGMwPqgF/Q3Bd2jx/NWAH8hFwMyG2nFAPM1ShWczC5gcY9wb+KmRy0cs9mxwszsF43yVo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzafYHsE65UWHYIykYURp0sJ/opm9jEZMYvq4G1t1pDdGoIF3Jo
+	LdWU/bsX9aV+MIqzpyoX2Hcbm7bsEyBFW0oSRN78m1SbDJnjl43A89GeFTRFiB0oXlGyQpyVnRd
+	DzJFhjPw3bjyeClZE7sg0ehWVYajS2AIQB7WpO9Qz2Q==
+X-Gm-Gg: ASbGncu94juMXl1m3xjB+ZIS9Aqj1tZABksRgdUBt/BajCTR3ig8W2sxuftvjsPJTmP
+	iqFWT9KTi2JVHrr9HjKQiRa85DrW2WmPgiFpbXYpN+yrJiS3MudIytJH6N5sI+Zkwxe30gOCRo5
+	6Kt8+zCqDQ1L9ILG+xYUGP373bOmOgne48PZlo6egHIR1GQKH8tMah9Jd/5XIV4v0GdkwUVfI8u
+	+H/xuDr
+X-Google-Smtp-Source: AGHT+IGTyCeY3UMh/uN26NrX+9pLVitYu44Yg1Cv05hntn0WmZXzyYQmgf2Srl3Zso4XLkxJAtt8NFNBvWJVP5c1/co=
+X-Received: by 2002:a05:6a21:6016:b0:1ee:a914:1d67 with SMTP id
+ adf61e73a8af0-23810e50f83mr36040966637.2.1753185629855; Tue, 22 Jul 2025
+ 05:00:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250722081405.2947294-1-quic_jinlmao@quicinc.com>
+ <20250722081405.2947294-2-quic_jinlmao@quicinc.com> <727fa9f4-fe25-495e-9d8d-48e504fbe6b0@arm.com>
+ <20250722091425.GH3137075@e132581.arm.com>
+In-Reply-To: <20250722091425.GH3137075@e132581.arm.com>
+From: Mike Leach <mike.leach@linaro.org>
+Date: Tue, 22 Jul 2025 13:00:18 +0100
+X-Gm-Features: Ac12FXxwWOJchARr8CvJVCGpP9c_3WusEBTfWMpJDyd4T_uRT6DBiailwW2ufC8
+Message-ID: <CAJ9a7VhLLgAak_4FB=iW0izXprM4W+RsKfHUeo=XUHh9LwtUsA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: arm: Add Qualcomm extended CTI
+To: Leo Yan <leo.yan@arm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, Mao Jinlong <quic_jinlmao@quicinc.com>, 
+	James Clark <james.clark@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Yingchao Deng <quic_yingdeng@quicinc.com>, coresight@lists.linaro.org, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Arnd Bergmann <arnd@arndb.de>
+Hi
 
-My previous patch ended up causing a regression for the
-DRM_IOCTL_NOUVEAU_NVIF ioctl. The intention of my patch was to only
-pass ioctl commands that have the correct dir/type/nr bits into the
-nouveau_abi16_ioctl() function.
+On Tue, 22 Jul 2025 at 10:14, Leo Yan <leo.yan@arm.com> wrote:
+>
+> On Tue, Jul 22, 2025 at 09:49:28AM +0100, Suzuki Kuruppassery Poulose wrote:
+> > On 22/07/2025 09:14, Mao Jinlong wrote:
+> > > From: Yingchao Deng <quic_yingdeng@quicinc.com>
+> > >
+> > > Add Qualcomm extended CTI support in CTI binding file. Qualcomm
+> > > extended CTI supports up to 128 triggers.
+> > >
+> > > Signed-off-by: Yingchao Deng <quic_yingdeng@quicinc.com>
+> > > Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
+> > > ---
+> > >   Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml | 4 +++-
+> > >   1 file changed, 3 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml b/Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml
+> > > index 2d5545a2b49c..1aa27461f5bc 100644
+> > > --- a/Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml
+> > > +++ b/Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml
+> > > @@ -84,7 +84,9 @@ properties:
+> > >             - const: arm,coresight-cti
+> > >             - const: arm,primecell
+> > >         - items:
+> > > -          - const: arm,coresight-cti-v8-arch
+> > > +          - enum:
+> > > +              - arm,coresight-cti-v8-arch
+> > > +              - qcom,coresight-cti-extended
+> >
+> > Why not call it qcom,coresight-cti ?
+> >
+> > There are no other "qcom,coresight-cti", so "extended" is not required.
+> > Is this specific to CPU (i.e., CPU bound) ?
+>
+> I roughly went through the second path. Combining two patches in this
+> series, I am wandering if can directly check registers (e.g. PID/CID)
+> to find CTI with qcom extension. If so, you do not need an extra DT
+> binding, right?
+>
+> Thanks,
+> Leo
+>
+> > Suzuki
+> >
+> > >             - const: arm,coresight-cti
+> > >             - const: arm,primecell
+> >
+> > _______________________________________________
+> > CoreSight mailing list -- coresight@lists.linaro.org
+> > To unsubscribe send an email to coresight-leave@lists.linaro.org
 
-This turned out to be too strict, as userspace does use at least
-write-only and write-read direction settings. Checking for both of these
-still did not fix the issue, so the best we can do for the 6.16 release
-is to revert back to what we've had since linux-3.16.
+For a change of this magnitude to a CS component, that the ID
+registers will also have to change. This is a requirement of the
+Visible Component Architecture in the CoreSight specification.
+External tools cannot see the device tree.
 
-This version is still fragile, but at least it is known to work with
-existing userspace. Fixing this properly requires a better understanding
-of what commands are being passed from userspace in practice, and how
-that relies on the undocumented (mis)behavior in nouveau_drm_ioctl().
+This is effectively no longer an ARM designed component, so the
+CoreSight specification requires that the DEVARCH register change to
+show qualcomm as the designer, and the architecture value change to
+represent this component.
+DEVID should be used to allow the driver to pick up parameters such as
+number of triggers as per the existing CTI component.
 
-Fixes: e5478166dffb ("drm/nouveau: check ioctl command codes better")
-Link: https://lore.kernel.org/dri-devel/CAFrh3J85tsZRpOHQtKgNHUVnn=EG=QKBnZTRtWS8eWSc1K1xkA@mail.gmail.com/
-Reported-by: Satadru Pramanik <satadru@gmail.com>
-Reported-by: Chris Bainbridge <chris.bainbridge@gmail.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/gpu/drm/nouveau/nouveau_drm.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+If this component is Coresight compliant then the driver can use the
+ID registers to configure to the extended trigger architecture.
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
-index 7bb64fcdd497..1527b801f013 100644
---- a/drivers/gpu/drm/nouveau/nouveau_drm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-@@ -1284,9 +1284,6 @@ nouveau_ioctls[] = {
- 	DRM_IOCTL_DEF_DRV(NOUVEAU_EXEC, nouveau_exec_ioctl_exec, DRM_RENDER_ALLOW),
- };
- 
--#define DRM_IOCTL_NOUVEAU_NVIF _IOC(_IOC_READ | _IOC_WRITE, DRM_IOCTL_BASE, \
--				    DRM_COMMAND_BASE + DRM_NOUVEAU_NVIF, 0)
--
- long
- nouveau_drm_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- {
-@@ -1300,10 +1297,14 @@ nouveau_drm_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 		return ret;
- 	}
- 
--	if ((cmd & ~IOCSIZE_MASK) == DRM_IOCTL_NOUVEAU_NVIF)
-+	switch (_IOC_NR(cmd) - DRM_COMMAND_BASE) {
-+	case DRM_NOUVEAU_NVIF:
- 		ret = nouveau_abi16_ioctl(filp, (void __user *)arg, _IOC_SIZE(cmd));
--	else
-+		break;
-+	default:
- 		ret = drm_ioctl(file, cmd, arg);
-+		break;
-+	}
- 
- 	pm_runtime_mark_last_busy(dev->dev);
- 	pm_runtime_put_autosuspend(dev->dev);
--- 
-2.39.5
+With complete remapping of most of the registers, and the dropping of
+claim tag compatibility - which appears to be a breach of the
+CoreSight specification - it may be better to have a completely
+separate driver for this component.
 
+Regards
+
+
+Mike
+
+--
+Mike Leach
+Principal Engineer, ARM Ltd.
+Manchester Design Centre. UK
 
