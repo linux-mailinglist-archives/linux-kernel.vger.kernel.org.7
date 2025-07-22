@@ -1,107 +1,147 @@
-Return-Path: <linux-kernel+bounces-740877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7F5DB0DA8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:10:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 204A5B0DA82
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:07:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6B4516D5E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:10:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A05983AA6DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3160A2E9ED0;
-	Tue, 22 Jul 2025 13:10:42 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF1ADDC3;
-	Tue, 22 Jul 2025 13:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25632E9ECA;
+	Tue, 22 Jul 2025 13:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JvLprJn5"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9697A2E972E
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 13:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753189841; cv=none; b=ba/vDxDkqvorXcxrvYPD2GCY5xkabV+xrf1+IE2IWeZbWwG0lUH+YuiU7pYtdWP774fFK1+7I+WNAVKaNcyeg6ttDHo7p2IWN/G5vWiw0dzfyge2F3eIc5iUihLX9Hx66+ew8GGNDFhOzTVLlRQvDAh916IGQYkTdcCtA1cns7E=
+	t=1753189620; cv=none; b=Un6cng8fStqW2FxDV3VVfnEOhgZR9YSVFkPyPeJcVNJEUPnVwDZSuyqRizervrLNITAauaYPVykTNXNI90cM584uqi/p5Cm7dke5d1c1KxOZ7JwjrpxPcbq8qgOgMuFKn/pub7bJTQZtah37lp5uJ/DV4T2zr7sI7+HN0R+Wt9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753189841; c=relaxed/simple;
-	bh=xhp3IAbv15GIwkAcxXSngNn7XHPu7+cNfK2ox5C6KZ8=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=vCai6HReg68r/X3+IIACB5F+bw2I41WBdI417ZRfrMpFC5XWpivvgnWKgDVhJa/zq9No8CKS9V/TYWvLIDlK4gOkcccMci9WDmeRMIkTRrykpSVEB95xVMRtuwYDSRzpyd51u2GCthC/oS8Z2X/7R+dF37l3i9gQHEirXEMgcSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8BxJHDJjX9o0ZsvAQ--.55754S3;
-	Tue, 22 Jul 2025 21:10:33 +0800 (CST)
-Received: from [10.130.10.66] (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowJCxdOTHjX9ooeQhAA--.45201S3;
-	Tue, 22 Jul 2025 21:10:31 +0800 (CST)
-Subject: Re: [PATCH net-next 1/2] net: stmmac: Return early if invalid in
- loongson_dwmac_fix_reset()
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250722062716.29590-1-yangtiezhu@loongson.cn>
- <20250722062716.29590-2-yangtiezhu@loongson.cn>
- <20250722144802.637bfde0@fedora.home>
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <2fea78e7-9e0a-4c6b-9d86-6433e4c28e5e@loongson.cn>
-Date: Tue, 22 Jul 2025 21:10:31 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1753189620; c=relaxed/simple;
+	bh=hilKGZUP7y5d1I7SUkMYXuUmhe9zt7HQf/8BUez4l/s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=peosrZ73yo/vtJRwO9FtrBMmAP2RtZArECbp5cef1EFbUyvILEIz9h5dvA1c2CxZ/rFJrjHuEdhxhZ11ksnKAEwUwUq2wBeeechJ1gLrIyBzQ+xe/1yeuK7D5MYxwGEdVl9NsO6UWqBOPopk2Te0+c/u2aqdqLUd7Us8expscd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JvLprJn5; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4ab58105261so101269551cf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 06:06:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753189617; x=1753794417; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wHXGkDCdTi/1FkvrPEpgEX+BFsQbleVdLRAj1y6UuUA=;
+        b=JvLprJn5gd4PYFv+E1dRx/LmZ1CMBkdt8d7T9earOL+kyrXh7l5wkj41dw9aOK802C
+         WrRDTaWPlF4efKz7HezTJYIcNW/aMjJXhw4xaczTVq5wxsWMkBjh10JyKrq1MSWpQ1mV
+         38/DIM/L3jw813waIVS+ei8WAqCF6fKf6duI/jlt9kuz0VPNysBZ8d1ebApeJbbOJHec
+         sapNEsu73BGMTAXT0bH8F/XCH6sFYPjKkrYRct8BIHidhKuGG9C7g8tiwT+2N7fE5Qci
+         SDyXoq9W+NBgdf4RlkWd22Pswwe7fedG2Qll91Fxvf3e4d287G+7wk0r6/2P7tzolDFZ
+         LZYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753189617; x=1753794417;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wHXGkDCdTi/1FkvrPEpgEX+BFsQbleVdLRAj1y6UuUA=;
+        b=UmTWVd5sTb0vqVQjYr+LFuBCIxCDDt99Ru/A53dgkrqxsIPG61z9odHQ4+6MzfQbh+
+         xhRBomutUAbxUo8KKvCOCDNxQtCOEfmijIi0Vjbknc1qo+KmxfOM7SNALtIjUN4uga3n
+         FXcjJXbV0GB5L6V51gCtN2aROHnWRWgRHp6MCjA3fEuO+fvQaHZJNrTEKRcj+8ZFV2v4
+         8TmzcamGG70ZbI9iYL3+Dlvhduo9lvxkNwIgABbgm0Hjca0OWHQWemFnMNUW4awgEKTh
+         xUyuJIULQZLmwIP0xK56rJO4xTnYyvCVQ9u4waXJ/BGVwHSdSSHZJq7vxe2aVlnk7NKM
+         D+og==
+X-Forwarded-Encrypted: i=1; AJvYcCXU+hV/3W4p4loI5ODu7otiP9ksPkSf7ccvsAMHL2C0YD8csQvilx5ae1G2UYW8+RM9dV4EvzqSjgPQFd8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1BB8d5RTlkkJyq86LO1n7z/9jm7qv0flk9T70xUMU2ec6Hjef
+	jl5CcHDjKKXddIDsuXXEWetaaRg0hzmW1AJqPZ2dFmCubn8YRhB1j6Ti
+X-Gm-Gg: ASbGncu3/el/UYzsmcYAbcxXIdUi+2lNBtZ5C9zZkMQN5UeBjYgyVyWzwvffQpn+Gle
+	4SWUqr5a0FtDRETsiwNxh69s3UkxT7nl4hb4E9IQPRqAJJ/KlrPG/h11Clr97sZZeE+UtcY1cj/
+	sE9gbDlEKNNmsWJ9pmU706F6XlcdzppizxgSq+Z4iC79Kge/bu+4RyQqNaGY6mOUgSE4oZgVE3k
+	66kE8IfCc6bbH+r2OJz1j7giI/2Y1moiGtezUO+IPfOFQ6E9HRjQsGC4HG84KB6yCQyRRJZFE7M
+	i8mSFAG0eGM0MnqVCps3NuLIXpG4EyTodoCtFB9ohIN36tX/mxEyFMSESbHHf4oDS7NiuhfpG4l
+	JeRTt/MHe+LtWrQHIB/4WJQ==
+X-Google-Smtp-Source: AGHT+IF6IjDqyjw6zDnG3oxKNR+WfveKAXP2vd7OChY+/7yqNei8ee7Mwd/9T8BjrslIPwUvBnIohw==
+X-Received: by 2002:ac8:7d82:0:b0:4ab:62cc:971b with SMTP id d75a77b69052e-4abb2cab50amr310328961cf.17.1753189617109;
+        Tue, 22 Jul 2025 06:06:57 -0700 (PDT)
+Received: from iman-pc.home ([142.186.9.88])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4abb49802efsm53977981cf.7.2025.07.22.06.06.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jul 2025 06:06:56 -0700 (PDT)
+From: Seyediman Seyedarab <imandevel@gmail.com>
+X-Google-Original-From: Seyediman Seyedarab <ImanDevel@gmail.com>
+To: dwmw2@infradead.org,
+	baolu.lu@linux.intel.com,
+	joro@8bytes.org,
+	will@kernel.org,
+	robin.murphy@arm.com
+Cc: skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Seyediman Seyedarab <ImanDevel@gmail.com>
+Subject: [PATCH] iommu/vt-d: replace snprintf with scnprintf in dmar_latency_snapshot()
+Date: Tue, 22 Jul 2025 09:11:17 -0400
+Message-ID: <20250722131117.2739-1-ImanDevel@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250722144802.637bfde0@fedora.home>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJCxdOTHjX9ooeQhAA--.45201S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj9xXoWrurW7KrW5JFWkGF47WrWrXrc_yoWkGFX_WF
-	ZYk3WUW3W5Zr4fCwnFgF9xZrnrX34UG34UWw4UXrnrK345t3srGFs5Zrn5uF43Kan3Jr98
-	Gan8WryaywnF9osvyTuYvTs0mTUanT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUj1kv1TuYvT
-	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-	cSsGvfJTRUUUbDAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
-	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1D
-	McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7
-	I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCF
-	x2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r
-	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij
-	64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
-	0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF
-	0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jFApnUUUUU=
 
-On 2025/7/22 下午8:48, Maxime Chevallier wrote:
-> On Tue, 22 Jul 2025 14:27:15 +0800
-> Tiezhu Yang <yangtiezhu@loongson.cn> wrote:
-> 
->> If the DMA_BUS_MODE_SFT_RESET bit is 1 before software reset,
->> there is no need to do anything for this abnormal case, just
->> return -EINVAL immediately in loongson_dwmac_fix_reset().
->>
->> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
-> 
-> Do you know when that could ever happen ? I'm asking because this logic
-> for the DMA reset is duplicated in several places in this driver, maybe
-> this could be useful for other users as well. I'm guessing this is to
-> avoid waiting for the timeout when the DMA reset fails, but that is
-> usually when there's a missing clock somewhere (such as the RGMII clock
-> from the PHY), in which case I don't think the RST bit will be set.
+snprintf returns the number of bytes that would have been written,
+not the number actually written to the buffer. When accumulating
+the byte count with the return value of snprintf, this can cause
+the offset to exceed the actual buffer size if truncation occurs.
 
-To be honest, I am not quite sure the root cause but this actually
-happened on the test environment, I guess there is a missing clock.
+The byte count is passed to seq_puts() in latency_show_one() with-
+out checking for truncation.
 
-You are right, the initial aim of this patch is to return early for
-this case to avoid waiting for the timeout when the DMA reset fails.
+Replace snprintf with scnprintf, ensuring the buffer offset stays
+within bound.
 
-Thanks,
-Tiezhu
+Signed-off-by: Seyediman Seyedarab <ImanDevel@gmail.com>
+---
+ drivers/iommu/intel/perf.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/iommu/intel/perf.c b/drivers/iommu/intel/perf.c
+index adc4de6bb..cee4821f4 100644
+--- a/drivers/iommu/intel/perf.c
++++ b/drivers/iommu/intel/perf.c
+@@ -122,7 +122,7 @@ int dmar_latency_snapshot(struct intel_iommu *iommu, char *str, size_t size)
+ 	memset(str, 0, size);
+ 
+ 	for (i = 0; i < COUNTS_NUM; i++)
+-		bytes += snprintf(str + bytes, size - bytes,
++		bytes += scnprintf(str + bytes, size - bytes,
+ 				  "%s", latency_counter_names[i]);
+ 
+ 	spin_lock_irqsave(&latency_lock, flags);
+@@ -130,7 +130,7 @@ int dmar_latency_snapshot(struct intel_iommu *iommu, char *str, size_t size)
+ 		if (!dmar_latency_enabled(iommu, i))
+ 			continue;
+ 
+-		bytes += snprintf(str + bytes, size - bytes,
++		bytes += scnprintf(str + bytes, size - bytes,
+ 				  "\n%s", latency_type_names[i]);
+ 
+ 		for (j = 0; j < COUNTS_NUM; j++) {
+@@ -156,7 +156,7 @@ int dmar_latency_snapshot(struct intel_iommu *iommu, char *str, size_t size)
+ 				break;
+ 			}
+ 
+-			bytes += snprintf(str + bytes, size - bytes,
++			bytes += scnprintf(str + bytes, size - bytes,
+ 					  "%12lld", val);
+ 		}
+ 	}
+-- 
+2.50.1
 
 
