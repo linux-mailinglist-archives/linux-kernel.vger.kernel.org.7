@@ -1,220 +1,401 @@
-Return-Path: <linux-kernel+bounces-741436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89887B0E411
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 21:23:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D5ECB0E412
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 21:24:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A911BAA0FEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:22:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1DF31894C2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0B6D284B51;
-	Tue, 22 Jul 2025 19:23:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0E1283CB1;
+	Tue, 22 Jul 2025 19:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="P7LkkL52"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YjMIKqoa"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CFE422FF59
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 19:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F262727A92B
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 19:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753212200; cv=none; b=qRYC6X3n9M72MSV+fvwKiSimOsam2sAMsrpAYjLGYPB8JyJJM/L3S9Teh5yLBcos55Lgh89edvWctVFCZwrQ93cHGYWEHf7K06TV1Ccf1xYQzSbELNCpwwpS+l4XOnneFwUQmJtjn99eN/UEjIxUiYPAtQ/wwDIuNpE1ysAjVVs=
+	t=1753212251; cv=none; b=Tf0ZcAelGt1Qw8wBIvfMy9X2jj/qmy1aPwbBDnZ9qJwxvd9l+B4kfr2aTSmCOX8Y5i9L6LQ7Fdcnsk47GFYDtcnpqvOvPwOnviueoAL3Db9lBB5VOAbDD7Ff4d6zQSP/fWlABvu/skUz9e4bC3W7OWpEDe3bJCXXbNV4wsyYpZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753212200; c=relaxed/simple;
-	bh=Pc+h1H+E8xxMtQSsFjUW0wc/6IGU/hjboocuEOxYosM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IbBXGU0/huaTaDtWztO6GpOZOZ4Nd7Ccx8k9C2BzvZlLtBVn4h8L5Ijs1AwryjW7ninqmINRYyVXxGkNYpjOxTo05vbn8goIItu0WJfWLE/WOxHcESI5Jx97CUQOwIbmMC1jRvdAGVjlmODbSy9BgZcB1E0yv+ZBKB1U27C9D44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=P7LkkL52; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56MEdxDD012849
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 19:23:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	y6OxZtp9vvZax/Q2qqYgpUgRGF5sEqL1kmgDnxhJH5c=; b=P7LkkL52ERTbjHsM
-	LLHB4s9DlE2TsSs+B4PA8dwpR6Yx4ivpDYflwu+p+Wk/49kTHe+bGho87QCGVty9
-	8pmGkd8M3cx1kpOOQ9wHWb5ODpfmKg3DvTcuiyArX1fxU44wmQ4JuO/IKsnQm1fS
-	RtSBvCpxvI5OvR1g/AWZvbTPpnOiKof6eaOg8FdXCDdb3PgPu367Sr6BytaTJkN/
-	YpVannprLo7ORZ8TvRuOAlP0qgZfMUUMxTDc4Musv3kpV9oGcbgwpy0QOqKFqLex
-	z762B31vkHmx03C3wN+HsXAkZtDbtuYxMGUCsDcTCgkW3+KAHH9atn7757kvhYk1
-	40j9Vg==
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 481g3enes6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 19:23:17 +0000 (GMT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-74943a7cd9aso8777840b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 12:23:17 -0700 (PDT)
+	s=arc-20240116; t=1753212251; c=relaxed/simple;
+	bh=A32hbVnyJUL/EIxxvz8NZtumv2p18qbLzg216awHUCo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SnIpX+B4a3UsBZMPyPZSaMVjCdQKAWHXKG+sFXC9Jz3GoXbZYks+m/OTx3gWFmToGBXLFc4HqKjk+qabcMHVJvZGZSCUHpDqvE6+6K1osgsvQ8SjdoDK4CGWFHicjU74qpKrXiwFH0PD+sqq3FZbb2H1USaYE2My4XQ0TFahb78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YjMIKqoa; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753212248;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VoPpnzfO/x9/yJX0rcftjTQw+19C2QQbHVAgxYrYBgE=;
+	b=YjMIKqoafp5IARdIUQs4rV93lz0VDdRPTd5SZp+O2CvKOKKZ1ceA28aE/1pPZKDJrhi72i
+	lXEpdvd1Etr8miVwZNCNwhoMDW1tDNZexjNq6iLSP1gs8CUYAH8GESvythFT0ZgbVDD4JD
+	PPkHwnsEV6pp4xD9WPvw9QjuknHyt2E=
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com
+ [209.85.166.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-665-LYuZXQN0M82YmTap2hWCvg-1; Tue, 22 Jul 2025 15:24:06 -0400
+X-MC-Unique: LYuZXQN0M82YmTap2hWCvg-1
+X-Mimecast-MFC-AGG-ID: LYuZXQN0M82YmTap2hWCvg_1753212246
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3e0564038f5so10231425ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 12:24:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753212196; x=1753816996;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y6OxZtp9vvZax/Q2qqYgpUgRGF5sEqL1kmgDnxhJH5c=;
-        b=ZzLto6rQsTW7H16ak/zLQNOOlTZM8tCvr9xNgVi7jJ7HmwKMUh0agOmEEPPOvjwHMT
-         OIr6xNT5eeIZTcYC2uzlcTSwW5uJA6NDYcaij3Vl9Dq82XzSlMlOm/lyHnUg7LrQP26C
-         mI+kIMurBHqImsX7gUUPNiW9ppOm9n3M9YcMUEvplXpwQSlOaY1S/5qHwpEbQCXFpd0m
-         LR5P6Sj5bOsO4cwnufHus0EQi/D49vNYnzU9DnaNj1KpF6VDA3AmWr93UTS/+r3NoQnG
-         WQf9BdRF7FjF+AV5wlLuuHS1jMW5QsAaGk044vak9VlbhGU00n1Y7g0d2GOKKjcfgwB3
-         jA8A==
-X-Forwarded-Encrypted: i=1; AJvYcCXtzAWPIV7T362m8A1hEgkpfOrRl0ycd1H53dnnXqr58aIClwDLLqeg0QsoWTmeVx74n9qy/WyLI5ULYnM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxX+WahEx0OdLzaske9K2lyRVZWYlUYNgRHbd11hoeAZcQMQwPs
-	nsOa1a+uxYUmkX/VCPzuM739o9+/xl2UvRM5DE/dMqH8KQMaYclM59f/iE4/47Hiqn5wCNjldS6
-	sKYNn7xlbEKRjyosaYF6NO0/4RS6YHA8Jr1hYuKW88O9wnCsJzPAcLmyvbxvFKyqFQyU=
-X-Gm-Gg: ASbGncsXnJyJcHerCLI1o8ZsaiF0nikH058BvBjm1NVHTGlGHPJ/7UR2pX0CkW2tkr7
-	nxkfliu615c7GZ3Uq882X3Jz8i61e5QEqhCzR1/6NGQLjSpPGN3Z5qw/dlpyM6b/ekhmw55mG3E
-	8DTn5wUxHfpwf74LZ5ifC6DkY1J8MvZHIAekiRsW3fMGDYghig0Ybt3jtP/LQ1rdVohyPyJeoGN
-	1wVgWv8vt5frQTAyI+D7U5zO9aXmEdmZwclS2RKBa0+91xlrRu9kNXX9kqjle+Y9Zypfa3FhXk+
-	2oBdFftM0zQYbunCijkWTD+/NAyOiADA38elQM/y7Pb/2HfdDbx60iA3XOFUVgvx
-X-Received: by 2002:a05:6a00:1909:b0:736:5b85:a911 with SMTP id d2e1a72fcca58-76034c4da07mr691862b3a.8.1753212196502;
-        Tue, 22 Jul 2025 12:23:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHZto37mgHShkAsmIcFVd1Yhzk4xGY6Lskz4Tb57kthENKf/xIJ68iAYMK1aJLYGAgBaOdIuA==
-X-Received: by 2002:a05:6a00:1909:b0:736:5b85:a911 with SMTP id d2e1a72fcca58-76034c4da07mr691818b3a.8.1753212195961;
-        Tue, 22 Jul 2025 12:23:15 -0700 (PDT)
-Received: from [192.168.1.4] ([106.222.235.133])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759cb1569f5sm8187912b3a.80.2025.07.22.12.23.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Jul 2025 12:23:15 -0700 (PDT)
-Message-ID: <800f8c9d-5586-46a7-aa83-dfb3b97633e0@oss.qualcomm.com>
-Date: Wed, 23 Jul 2025 00:53:10 +0530
+        d=1e100.net; s=20230601; t=1753212246; x=1753817046;
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VoPpnzfO/x9/yJX0rcftjTQw+19C2QQbHVAgxYrYBgE=;
+        b=ReTleL99VKlyqcSpwS2NovqCA8tQzLHwbh6U6rVKi10GsYosx8arEoc5brku9Wi0VD
+         4ByK5Bveacl/cySajLOuEOHARQK+gytlzmq8GVN0rRaxe0PkH7e77cfZXzLpGVP8TKkk
+         Sb3m4mvyWVWdHXulJKMev216uVCM58Yf0H641NbsMHJ0QYuEBBJU6H4QDtJpSKMNLqjf
+         C978yL2HIWZcaA5wMfkLDDzF9CA/lEer4XV/47abVjNAl7r8YIJ8gxkXVfChAsfBlnj5
+         pWOrXdeamn8+9qXQV8G0+le2HU+NgS/tkkHCFrXy3cU+RCPmh20YK9eCv/+SpOyqTeBl
+         KDKA==
+X-Forwarded-Encrypted: i=1; AJvYcCUo+6XqsATKzFMcOwBJQflCZbTqbBUIXdm+WeM4ddtxmCYxDk31s3rvb3PCpu9u9WFWnxOEsPJ86NsxVxE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziA12DeVf96uS3eKl2uz5qBreBTtr3iSdL51ddqtlKny25+Q6N
+	zroG01MXgDmjZBBUV5U09gXMWaGysenVtmaknCY9k5mkWqWTpFb+GODdObXWL05YDv3SbD0O8tm
+	gHYUFic0WOZBhGNRdHFxgpmN7w7YDFxiQmotMwxnoeZVpOAxPU10inOCfTGuNqa85Cw==
+X-Gm-Gg: ASbGncu6LpxB5GB+iO0s4xOiMHr1H98JLAvZgUL4fSYQpiq4II6uOgCssfxbvMbNEfW
+	j+Xj6eqIDpBTu/c5TpwaC5xsAMuBHcBuF8CsGC45NWBlsVps9KG7VRYRmiMNxlA3wYQKu4P52fQ
+	5/rCOz2lRhs4bq3vrMlcuL0IUfq3p4ecbZ1YewURQIG3Kf2nCp0HSmgszFmlzpsFTFHk8tSo+ht
+	1dHbY0kGB6wggsZtiso85u0liWscDc8BbH4o2qjpSeBB7UpYKKheNWpOgwKWcEe6TTWjWo9C/RA
+	gX0iQehvHFbRdaxB52A1Zsww1qIT/9ioKXovYXZT3+M=
+X-Received: by 2002:a05:6e02:b4e:b0:3e2:b511:1257 with SMTP id e9e14a558f8ab-3e32fbe6d02mr1429555ab.1.1753212245298;
+        Tue, 22 Jul 2025 12:24:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGtVPfNQQZe8DOqCr9vtTkI2cNKOF9UOY8F0gy0NieHMIPzKntZTVJ6/MWE3j5uJcQHKrMd+Q==
+X-Received: by 2002:a05:6e02:b4e:b0:3e2:b511:1257 with SMTP id e9e14a558f8ab-3e32fbe6d02mr1429355ab.1.1753212244681;
+        Tue, 22 Jul 2025 12:24:04 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5084ca61845sm2706151173.126.2025.07.22.12.24.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jul 2025 12:24:03 -0700 (PDT)
+Date: Tue, 22 Jul 2025 13:23:58 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Eric Farman <farman@linux.ibm.com>
+Cc: lizhe.67@bytedance.com, akpm@linux-foundation.org, david@redhat.com,
+ jgg@ziepe.ca, peterx@redhat.com, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v4 2/5] vfio/type1: optimize vfio_pin_pages_remote()
+Message-ID: <20250722132358.5ab61377.alex.williamson@redhat.com>
+In-Reply-To: <1bd50178755535ee0a3b0b2164acf9319079a3d5.camel@linux.ibm.com>
+References: <20250710085355.54208-1-lizhe.67@bytedance.com>
+	<20250710085355.54208-3-lizhe.67@bytedance.com>
+	<1bd50178755535ee0a3b0b2164acf9319079a3d5.camel@linux.ibm.com>
+Organization: Red Hat
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/17] drm/msm: Skip devfreq IDLE when possible
-To: rob.clark@oss.qualcomm.com,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar
- <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250720-ifpc-support-v1-0-9347aa5bcbd6@oss.qualcomm.com>
- <20250720-ifpc-support-v1-12-9347aa5bcbd6@oss.qualcomm.com>
- <vng6tut4sv3zfbwogsb74omqsbqutpeskqdnezbs4ftsanqyb4@nv35r7mqmcva>
- <CACSVV01EhWWohUDQ8n=FQeDuaDcgmYnMBJDMJ8D1Gist1NR4QQ@mail.gmail.com>
-From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <CACSVV01EhWWohUDQ8n=FQeDuaDcgmYnMBJDMJ8D1Gist1NR4QQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: zuuUmF728pUUwk6D93rLq6Y8RxWdYEoS
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDE2NiBTYWx0ZWRfXycGC/IMUbRoM
- u+aAlIq/8QPGGW1RLIj/xL5F2ZeMPsjydHkXyoaChuhgiU4kx+TkeyMEpB5OMCyY2xle/5oBqF/
- kakZdUbUrD12civ4BJ8Wm1UBTTs3+tLRzdJrUmxybQPpJexUoxrdyuqAXFlsd7Yvp1lppacG4uy
- W04pLAgTDoH+h6rqZiKfDjXqgNptfXBQr+7z+SHL/62DRvZ/V3j/Cyhu4gQVygFC3giIiA0HDz6
- 9YrK4xiOL5k91fQDLKbH53IQLBd572XNjEOc90p4/Q7MBWvGAFGQGklQQfaXSSAZuOY4nJ649ET
- w2amAmg9Y8wFHjPfSLKB9Y8N+ZoL5URKaxiKhwmPhuXd5kaw54K4Tj6P/ItvnsCVWg1MEpmrJv1
- TN2sbXURh+6zK0h+Jb7DiTLsZP5tIM7X9K5nG2FPBZIORfFfjVJF82N9CHi6gq51oixunPG2
-X-Authority-Analysis: v=2.4 cv=Q+fS452a c=1 sm=1 tr=0 ts=687fe525 cx=c_pps
- a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=4dphQItTPUswyQvINXrzgA==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=pGLkceISAAAA:8
- a=blXxefCSwbONkpe3GJMA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=OpyuDcXvxspvyRM73sMx:22
-X-Proofpoint-GUID: zuuUmF728pUUwk6D93rLq6Y8RxWdYEoS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-22_02,2025-07-21_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 adultscore=0 phishscore=0 mlxscore=0 lowpriorityscore=0
- mlxlogscore=999 suspectscore=0 spamscore=0 priorityscore=1501 malwarescore=0
- bulkscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507220166
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 7/22/2025 9:08 PM, Rob Clark wrote:
-> On Tue, Jul 22, 2025 at 6:50 AM Dmitry Baryshkov
-> <dmitry.baryshkov@oss.qualcomm.com> wrote:
->>
->> On Sun, Jul 20, 2025 at 05:46:13PM +0530, Akhil P Oommen wrote:
->>> When IFPC is supported, devfreq idling is redundant and adds
->>> unnecessary pm suspend/wake latency. So skip it when IFPC is
->>> supported.
->>
->> With this in place we have a dummy devfreq instance which does nothing.
->> Wouldn't it be better to skip registering devfreq if IFPC is supported
->> on the platform?
+On Tue, 22 Jul 2025 12:32:59 -0400
+Eric Farman <farman@linux.ibm.com> wrote:
+
+> On Thu, 2025-07-10 at 16:53 +0800, lizhe.67@bytedance.com wrote:
+> > From: Li Zhe <lizhe.67@bytedance.com>
+> > 
+> > When vfio_pin_pages_remote() is called with a range of addresses that
+> > includes large folios, the function currently performs individual
+> > statistics counting operations for each page. This can lead to significant
+> > performance overheads, especially when dealing with large ranges of pages.
+> > Batch processing of statistical counting operations can effectively enhance
+> > performance.
+> > 
+> > In addition, the pages obtained through longterm GUP are neither invalid
+> > nor reserved. Therefore, we can reduce the overhead associated with some
+> > calls to function is_invalid_reserved_pfn().
+> > 
+> > The performance test results for completing the 16G VFIO IOMMU DMA mapping
+> > are as follows.
+> > 
+> > Base(v6.16-rc4):
+> > ------- AVERAGE (MADV_HUGEPAGE) --------
+> > VFIO MAP DMA in 0.047 s (340.2 GB/s)
+> > ------- AVERAGE (MAP_POPULATE) --------
+> > VFIO MAP DMA in 0.280 s (57.2 GB/s)
+> > ------- AVERAGE (HUGETLBFS) --------
+> > VFIO MAP DMA in 0.052 s (310.5 GB/s)
+> > 
+> > With this patch:
+> > ------- AVERAGE (MADV_HUGEPAGE) --------
+> > VFIO MAP DMA in 0.027 s (602.1 GB/s)
+> > ------- AVERAGE (MAP_POPULATE) --------
+> > VFIO MAP DMA in 0.257 s (62.4 GB/s)
+> > ------- AVERAGE (HUGETLBFS) --------
+> > VFIO MAP DMA in 0.031 s (517.4 GB/s)
+> > 
+> > For large folio, we achieve an over 40% performance improvement.
+> > For small folios, the performance test results indicate a
+> > slight improvement.
+> > 
+> > Signed-off-by: Li Zhe <lizhe.67@bytedance.com>
+> > Co-developed-by: Alex Williamson <alex.williamson@redhat.com>
+> > Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+> > Acked-by: David Hildenbrand <david@redhat.com>
+> > ---
+> >  drivers/vfio/vfio_iommu_type1.c | 83 ++++++++++++++++++++++++++++-----
+> >  1 file changed, 71 insertions(+), 12 deletions(-)  
 > 
-> devfreq is still scaling the freq.  What is being bypassed is
-> essentially a CPU based version of IFPC (because on sc7180 we didn't
-> have IFPC
+> Hi,
 > 
-> Currently only a618 and 7c3 enable gpu_clamp_to_idle.. if at some
-> point those grew IFPC support we could remove the trickery to drop GPU
-> to min freq when it is idle altogether.
-
-There are 2 functionalities here:
-1. Clamp-to-idle: enabled only on a618/7c3
-2. boost-after-idle: Enabled for all GPUs.
-
-With this patch, we are skipping both when IFPC is supported. In the
-absence of latency due to clamp-to-idle, do you think a618 (relatively
-weaker GPU) would require boost-after-idle to keep with the
-UI/composition workload for its typical configuration (1080p@60hz)? If
-yes, I should probably create a quirk to disable boost-after-idle for
-premium tier GPUs, instead of tying it to IFPC feature.
-
--Akhil.
-
+> Our CI started flagging some crashes running vfio-ccw regressions on the -next kernel beginning with
+> next-20250717, and bisect points to this particular commit.
 > 
-> BR,
-> -R
+> I can reproduce by cherry-picking this series onto 6.16-rc7, so it's not something else lurking.
+> Without panic_on_warn, I get a handful of warnings from vfio_remove_dma() (after starting/stopping
+> guests with an mdev attached), before eventually triggering a BUG() in vfio_dma_do_unmap() running a
+> hotplug test. I've attached an example of a WARNING before the eventual BUG below. I can help debug
+> this if more doc is needed, but admit I haven't looked at this patch in any detail yet.
+
+Thanks for the report.  I'm out of the office this week, but I'll keep
+an eye on how this progresses and we can drop it if we haven't come to
+a resolution in the next few days.  Thanks,
+
+Alex
+
+
+> [  215.671885] ------------[ cut here ]------------
+> [  215.671893] WARNING: CPU: 10 PID: 6210 at drivers/vfio/vfio_iommu_type1.c:1204
+> vfio_remove_dma+0xda/0xf0 [vfio_iommu_type1]
+> [  215.671902] Modules linked in: vhost_vsock vmw_vsock_virtio_transport_common vsock vhost
+> vhost_iotlb algif_hash af_alg kvm nft_masq nft_ct nft_reject_ipv4 nf_reject_ipv4 nft_reject act_csum
+> cls_u32 sch_htb nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 nf_tables pkey_pckmo
+> s390_trng pkey_ep11 pkey_cca zcrypt_cex4 zcrypt eadm_sch rng_core vfio_ccw mdev vfio_iommu_type1
+> vfio drm sch_fq_codel i2c_core drm_panel_orientation_quirks dm_multipath loop nfnetlink ctcm fsm
+> zfcp scsi_transport_fc mlx5_ib diag288_wdt mlx5_core ghash_s390 prng aes_s390 des_s390 libdes
+> sha3_512_s390 sha3_256_s390 sha512_s390 sha1_s390 sha_common rpcrdma sunrpc rdma_ucm rdma_cm
+> configfs iw_cm ib_cm ib_uverbs ib_core scsi_dh_rdac scsi_dh_emc scsi_dh_alua pkey autofs4
+> [  215.671946] CPU: 10 UID: 107 PID: 6210 Comm: qemu-system-s39 Kdump: loaded Not tainted 6.16.0-
+> rc7-00005-g4ff8295d8d61 #79 NONE 
+> [  215.671950] Hardware name: IBM 3906 M05 780 (LPAR)
+> [  215.671951] Krnl PSW : 0704c00180000000 000002482f7ee55e (vfio_remove_dma+0xde/0xf0
+> [vfio_iommu_type1])
+> [  215.671956]            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:0 PM:0 RI:0 EA:3
+> [  215.671959] Krnl GPRS: 006d010100000000 000000009d8a4c40 000000008f3b1c80 0000000092ffad20
+> [  215.671961]            0000000090b57880 006e010100000000 000000008f3b1c80 000000008f3b1cc8
+> [  215.671963]            0000000085b3ff00 000000008f3b1cc0 000000008f3b1c80 0000000092ffad20
+> [  215.671964]            000003ff867acfa8 000000008f3b1ca0 000001c8b36c3be0 000001c8b36c3ba8
+> [  215.671972] Krnl Code: 000002482f7ee550: c0e53ff9fcc8	brasl	%r14,00000248af72dee0
+>            000002482f7ee556: a7f4ffcf		brc	15,000002482f7ee4f4
+>           #000002482f7ee55a: af000000		mc	0,0
+>           >000002482f7ee55e: a7f4ffa9		brc	15,000002482f7ee4b0  
+>            000002482f7ee562: 0707		bcr	0,%r7
+>            000002482f7ee564: 0707		bcr	0,%r7
+>            000002482f7ee566: 0707		bcr	0,%r7
+>            000002482f7ee568: 0707		bcr	0,%r7
+> [  215.672006] Call Trace:
+> [  215.672008]  [<000002482f7ee55e>] vfio_remove_dma+0xde/0xf0 [vfio_iommu_type1] 
+> [  215.672013]  [<000002482f7f03de>] vfio_iommu_type1_detach_group+0x3de/0x5f0 [vfio_iommu_type1] 
+> [  215.672016]  [<000002482f7d4c4e>] vfio_group_detach_container+0x5e/0x180 [vfio] 
+> [  215.672023]  [<000002482f7d2ce0>] vfio_group_fops_release+0x50/0x90 [vfio] 
+> [  215.672027]  [<00000248af25e1ee>] __fput+0xee/0x2e0 
+> [  215.672031]  [<00000248aef19f18>] task_work_run+0x88/0xd0 
+> [  215.672036]  [<00000248aeef559a>] do_exit+0x18a/0x4e0 
+> [  215.672042]  [<00000248aeef5ab0>] do_group_exit+0x40/0xc0 
+> [  215.672045]  [<00000248aeef5b5e>] __s390x_sys_exit_group+0x2e/0x30 
+> [  215.672048]  [<00000248afc81e56>] __do_syscall+0x136/0x340 
+> [  215.672054]  [<00000248afc8da7e>] system_call+0x6e/0x90 
+> [  215.672058] Last Breaking-Event-Address:
+> [  215.672059]  [<000002482f7ee4aa>] vfio_remove_dma+0x2a/0xf0 [vfio_iommu_type1]
+> [  215.672062] ---[ end trace 0000000000000000 ]---
+> [  219.861940] ------------[ cut here ]------------
 > 
->>>
->>> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
->>> ---
->>>  drivers/gpu/drm/msm/msm_gpu_devfreq.c | 6 ++++++
->>>  1 file changed, 6 insertions(+)
->>>
->>> diff --git a/drivers/gpu/drm/msm/msm_gpu_devfreq.c b/drivers/gpu/drm/msm/msm_gpu_devfreq.c
->>> index 2e1d5c3432728cde15d91f69da22bb915588fe86..53ef2add5047e7d6b6371af949cab36ce8409372 100644
->>> --- a/drivers/gpu/drm/msm/msm_gpu_devfreq.c
->>> +++ b/drivers/gpu/drm/msm/msm_gpu_devfreq.c
->>> @@ -4,6 +4,7 @@
->>>   * Author: Rob Clark <robdclark@gmail.com>
->>>   */
->>>
->>> +#include "adreno/adreno_gpu.h"
->>>  #include "msm_gpu.h"
->>>  #include "msm_gpu_trace.h"
->>>
->>> @@ -300,6 +301,8 @@ void msm_devfreq_active(struct msm_gpu *gpu)
->>>       if (!has_devfreq(gpu))
->>>               return;
->>>
->>> +     if (to_adreno_gpu(gpu)->info->quirks & ADRENO_QUIRK_IFPC)
->>> +             return;
->>>       /*
->>>        * Cancel any pending transition to idle frequency:
->>>        */
->>> @@ -370,6 +373,9 @@ void msm_devfreq_idle(struct msm_gpu *gpu)
->>>       if (!has_devfreq(gpu))
->>>               return;
->>>
->>> +     if (to_adreno_gpu(gpu)->info->quirks & ADRENO_QUIRK_IFPC)
->>> +             return;
->>> +
->>>       msm_hrtimer_queue_work(&df->idle_work, ms_to_ktime(1),
->>>                              HRTIMER_MODE_REL);
->>>  }
->>>
->>> --
->>> 2.50.1
->>>
->>
->> --
->> With best wishes
->> Dmitry
+> ...
+> 
+> [  241.164333] ------------[ cut here ]------------
+> [  241.164340] kernel BUG at drivers/vfio/vfio_iommu_type1.c:1480!
+> [  241.164358] monitor event: 0040 ilc:2 [#1]SMP 
+> [  241.164363] Modules linked in: vhost_vsock vmw_vsock_virtio_transport_common vsock vhost
+> vhost_iotlb algif_hash af_alg kvm nft_masq nft_ct nft_reject_ipv4 nf_reject_ipv4 nft_reject act_csum
+> cls_u32 sch_htb nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 nf_tables pkey_pckmo
+> s390_trng pkey_ep11 pkey_cca zcrypt_cex4 zcrypt eadm_sch rng_core vfio_ccw mdev vfio_iommu_type1
+> vfio drm sch_fq_codel i2c_core drm_panel_orientation_quirks dm_multipath loop nfnetlink ctcm fsm
+> zfcp scsi_transport_fc mlx5_ib diag288_wdt mlx5_core ghash_s390 prng aes_s390 des_s390 libdes
+> sha3_512_s390 sha3_256_s390 sha512_s390 sha1_s390 sha_common rpcrdma sunrpc rdma_ucm rdma_cm
+> configfs iw_cm ib_cm ib_uverbs ib_core scsi_dh_rdac scsi_dh_emc scsi_dh_alua pkey autofs4
+> [  241.164399] CPU: 14 UID: 107 PID: 6581 Comm: qemu-system-s39 Kdump: loaded Tainted: G        W  
+> 6.16.0-rc7-00005-g4ff8295d8d61 #79 NONE 
+> [  241.164403] Tainted: [W]=WARN
+> [  241.164404] Hardware name: IBM 3906 M05 780 (LPAR)
+> [  241.164406] Krnl PSW : 0704e00180000000 000002482f7f132a (vfio_dma_do_unmap+0x4aa/0x4b0
+> [vfio_iommu_type1])
+> [  241.164413]            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:2 PM:0 RI:0 EA:3
+> [  241.164415] Krnl GPRS: 0000000000000000 000000000000000b 0000000040000000 000000008cfdcb40
+> [  241.164418]            0000000000001001 0000000000000001 0000000000000000 0000000040000000
+> [  241.164419]            0000000000000000 0000000000000000 00000001fbe7f140 000000008cfdcb40
+> [  241.164421]            000003ff97dacfa8 0000000000000000 00000000871582c0 000001c8b4177cd0
+> [  241.164428] Krnl Code: 000002482f7f131e: a7890000		lghi	%r8,0
+>            000002482f7f1322: a7f4feeb		brc	15,000002482f7f10f8
+>           #000002482f7f1326: af000000		mc	0,0
+>           >000002482f7f132a: 0707		bcr	0,%r7  
+>            000002482f7f132c: 0707		bcr	0,%r7
+>            000002482f7f132e: 0707		bcr	0,%r7
+>            000002482f7f1330: c0040000803c	brcl	0,000002482f8013a8
+>            000002482f7f1336: eb6ff0480024	stmg	%r6,%r15,72(%r15)
+> [  241.164458] Call Trace:
+> [  241.164459]  [<000002482f7f132a>] vfio_dma_do_unmap+0x4aa/0x4b0 [vfio_iommu_type1] 
+> [  241.164463]  [<000002482f7f1d08>] vfio_iommu_type1_ioctl+0x1c8/0x370 [vfio_iommu_type1] 
+> [  241.164466]  [<00000248af27704e>] vfs_ioctl+0x2e/0x70 
+> [  241.164471]  [<00000248af278610>] __s390x_sys_ioctl+0xe0/0x100 
+> [  241.164474]  [<00000248afc81e56>] __do_syscall+0x136/0x340 
+> [  241.164477]  [<00000248afc8da7e>] system_call+0x6e/0x90 
+> [  241.164481] Last Breaking-Event-Address:
+> [  241.164482]  [<000002482f7f1238>] vfio_dma_do_unmap+0x3b8/0x4b0 [vfio_iommu_type1]
+> [  241.164486] Kernel panic - not syncing: Fatal exception: panic_on_oops
+> 
+> > 
+> > diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+> > index 1136d7ac6b59..6909275e46c2 100644
+> > --- a/drivers/vfio/vfio_iommu_type1.c
+> > +++ b/drivers/vfio/vfio_iommu_type1.c
+> > @@ -318,7 +318,13 @@ static void vfio_dma_bitmap_free_all(struct vfio_iommu *iommu)
+> >  /*
+> >   * Helper Functions for host iova-pfn list
+> >   */
+> > -static struct vfio_pfn *vfio_find_vpfn(struct vfio_dma *dma, dma_addr_t iova)
+> > +
+> > +/*
+> > + * Find the highest vfio_pfn that overlapping the range
+> > + * [iova_start, iova_end) in rb tree.
+> > + */
+> > +static struct vfio_pfn *vfio_find_vpfn_range(struct vfio_dma *dma,
+> > +		dma_addr_t iova_start, dma_addr_t iova_end)
+> >  {
+> >  	struct vfio_pfn *vpfn;
+> >  	struct rb_node *node = dma->pfn_list.rb_node;
+> > @@ -326,9 +332,9 @@ static struct vfio_pfn *vfio_find_vpfn(struct vfio_dma *dma, dma_addr_t iova)
+> >  	while (node) {
+> >  		vpfn = rb_entry(node, struct vfio_pfn, node);
+> >  
+> > -		if (iova < vpfn->iova)
+> > +		if (iova_end <= vpfn->iova)
+> >  			node = node->rb_left;
+> > -		else if (iova > vpfn->iova)
+> > +		else if (iova_start > vpfn->iova)
+> >  			node = node->rb_right;
+> >  		else
+> >  			return vpfn;
+> > @@ -336,6 +342,11 @@ static struct vfio_pfn *vfio_find_vpfn(struct vfio_dma *dma, dma_addr_t iova)
+> >  	return NULL;
+> >  }
+> >  
+> > +static inline struct vfio_pfn *vfio_find_vpfn(struct vfio_dma *dma, dma_addr_t iova)
+> > +{
+> > +	return vfio_find_vpfn_range(dma, iova, iova + PAGE_SIZE);
+> > +}
+> > +
+> >  static void vfio_link_pfn(struct vfio_dma *dma,
+> >  			  struct vfio_pfn *new)
+> >  {
+> > @@ -614,6 +625,39 @@ static long vaddr_get_pfns(struct mm_struct *mm, unsigned long vaddr,
+> >  	return ret;
+> >  }
+> >  
+> > +
+> > +static long vpfn_pages(struct vfio_dma *dma,
+> > +		dma_addr_t iova_start, long nr_pages)
+> > +{
+> > +	dma_addr_t iova_end = iova_start + (nr_pages << PAGE_SHIFT);
+> > +	struct vfio_pfn *top = vfio_find_vpfn_range(dma, iova_start, iova_end);
+> > +	long ret = 1;
+> > +	struct vfio_pfn *vpfn;
+> > +	struct rb_node *prev;
+> > +	struct rb_node *next;
+> > +
+> > +	if (likely(!top))
+> > +		return 0;
+> > +
+> > +	prev = next = &top->node;
+> > +
+> > +	while ((prev = rb_prev(prev))) {
+> > +		vpfn = rb_entry(prev, struct vfio_pfn, node);
+> > +		if (vpfn->iova < iova_start)
+> > +			break;
+> > +		ret++;
+> > +	}
+> > +
+> > +	while ((next = rb_next(next))) {
+> > +		vpfn = rb_entry(next, struct vfio_pfn, node);
+> > +		if (vpfn->iova >= iova_end)
+> > +			break;
+> > +		ret++;
+> > +	}
+> > +
+> > +	return ret;
+> > +}
+> > +
+> >  /*
+> >   * Attempt to pin pages.  We really don't want to track all the pfns and
+> >   * the iommu can only map chunks of consecutive pfns anyway, so get the
+> > @@ -680,32 +724,47 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
+> >  		 * and rsvd here, and therefore continues to use the batch.
+> >  		 */
+> >  		while (true) {
+> > +			long nr_pages, acct_pages = 0;
+> > +
+> >  			if (pfn != *pfn_base + pinned ||
+> >  			    rsvd != is_invalid_reserved_pfn(pfn))
+> >  				goto out;
+> >  
+> > +			/*
+> > +			 * Using GUP with the FOLL_LONGTERM in
+> > +			 * vaddr_get_pfns() will not return invalid
+> > +			 * or reserved pages.
+> > +			 */
+> > +			nr_pages = num_pages_contiguous(
+> > +					&batch->pages[batch->offset],
+> > +					batch->size);
+> > +			if (!rsvd) {
+> > +				acct_pages = nr_pages;
+> > +				acct_pages -= vpfn_pages(dma, iova, nr_pages);
+> > +			}
+> > +
+> >  			/*
+> >  			 * Reserved pages aren't counted against the user,
+> >  			 * externally pinned pages are already counted against
+> >  			 * the user.
+> >  			 */
+> > -			if (!rsvd && !vfio_find_vpfn(dma, iova)) {
+> > +			if (acct_pages) {
+> >  				if (!dma->lock_cap &&
+> > -				    mm->locked_vm + lock_acct + 1 > limit) {
+> > +				     mm->locked_vm + lock_acct + acct_pages > limit) {
+> >  					pr_warn("%s: RLIMIT_MEMLOCK (%ld) exceeded\n",
+> >  						__func__, limit << PAGE_SHIFT);
+> >  					ret = -ENOMEM;
+> >  					goto unpin_out;
+> >  				}
+> > -				lock_acct++;
+> > +				lock_acct += acct_pages;
+> >  			}
+> >  
+> > -			pinned++;
+> > -			npage--;
+> > -			vaddr += PAGE_SIZE;
+> > -			iova += PAGE_SIZE;
+> > -			batch->offset++;
+> > -			batch->size--;
+> > +			pinned += nr_pages;
+> > +			npage -= nr_pages;
+> > +			vaddr += PAGE_SIZE * nr_pages;
+> > +			iova += PAGE_SIZE * nr_pages;
+> > +			batch->offset += nr_pages;
+> > +			batch->size -= nr_pages;
+> >  
+> >  			if (!batch->size)
+> >  				break;  
+> 
 
 
