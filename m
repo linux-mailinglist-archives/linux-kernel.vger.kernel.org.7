@@ -1,272 +1,146 @@
-Return-Path: <linux-kernel+bounces-740270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75FAAB0D211
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:50:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91506B0D213
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 832A41C21E5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:50:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 786FD1C21843
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CBA1272E6B;
-	Tue, 22 Jul 2025 06:50:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C81C28937F;
+	Tue, 22 Jul 2025 06:50:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="06//BmhD"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2061.outbound.protection.outlook.com [40.107.244.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TFFwD7EG"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5996F2BF3CF;
-	Tue, 22 Jul 2025 06:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.61
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753167004; cv=fail; b=Hkxrgl+lWRVUfbnuCDRWWfuAAM8GF+di/oiSRqZLKN0KhZ3jy0zC5cgBRSRsEv3f4g545Aho+frosGh5x8jHFpYzLLJJyYBTS0/q0fvBZfVfDlSSLtudn0KFXqjLz+gqQATmiilSsjEvaCgUxEi2M1+Ca9iS2LPp8YPRzyy38ik=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753167004; c=relaxed/simple;
-	bh=IQpOqi9yDfTlrAd98h0DcfUuVxBUCXVK8fjk64QH9Cw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oRB5TR+W0nksCmeD7j8sifhfDhbKqvN3WLZbrpPQqSPV7kngEvshz3z1BpB7/qcsJzvBXrdF0ypTBgGxrJ9n/gRygh7jSFZwR1VwwDi3VJZuokXeqhylmC6Bh+f/dyFizZClD/wJq6rjMXseKvKXt9c161TV5iC7B/JuFufgmLY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=06//BmhD; arc=fail smtp.client-ip=40.107.244.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZRecqizvpaIUgf+pxrfMt/+aG4NY1U8oVfEu5RcLFAmUh9YgJSKGgAL/N01ea+mU2H4N+0snRlJ1cC7MhbNyY2twJBxWryiP0y8D332L9xgT63naWF7rZLmwULh9Q4bA7NdlvOumljibAvQU6zf2NVrKlEL40ctKjeXeg+QmMOisJ89M4sTXTfKvkRlapvjONrbN3pqCQKeBoXvUDl5IROuQFcDpcVYDm1VqWhv3ULiFvXURZNsty7OZg4QLD4rwuKIFWnSJQ1l3oOrhZGl2RXyuuZjLjM3vmzl7UZZDvrNrnCDCtbck4ESzMoDQ+zls6djAc0LxcmknsKUfZlnSDQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+LvDyrAPbnb5pS9lo4AgL367xCWvRNqh3eloM/faNIY=;
- b=bkfD8GUBVE9htnERaiuyBF05dRvHTqEwcFgJzMPimK+MK+CPejhvw6uXcBUEZC8v/c2MQdG2EnfGtS/7fLBx0zS4xbZjneQC9lqwm29hcSx99KgV+9W2goDIYhiOvEXldNdqp4m25GGfgYs6BucR0UGr1mMDFDShQNaUfuXEbNKLk4lDWVB68sKqs0igg/E0dPzVzmK4j/Yl5yR6JT6i7mP7cKImXD3OY9BDcD8JymgN3VQ7YnGqpJFgUKtdZPzoY24GiEGwMBCixnWHLX0bS1upF8rLLVxEXflpjhEGfKzczVWsbNKWQLc6HrmOfNwuoc3okz5AJED5QYQvF/Qqfw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+LvDyrAPbnb5pS9lo4AgL367xCWvRNqh3eloM/faNIY=;
- b=06//BmhDwkcvnCKO+N4nd1FceFT1w8rubPbG3JR2dyopgJvWrQ0b47vGJ3eW31zkADTHSUcaThW6YiYAmpjh75zEMtrSt0a0YVBpW8noi9db//i2Th1BUQ8wg3JWBnDcvlzxJXL02LI3OLmUL15jXc5xBlbmOGIvnoVuL+vkEOQ=
-Received: from BN0PR10CA0001.namprd10.prod.outlook.com (2603:10b6:408:143::31)
- by LV3PR12MB9142.namprd12.prod.outlook.com (2603:10b6:408:198::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Tue, 22 Jul
- 2025 06:49:58 +0000
-Received: from BL6PEPF00020E61.namprd04.prod.outlook.com
- (2603:10b6:408:143:cafe::1a) by BN0PR10CA0001.outlook.office365.com
- (2603:10b6:408:143::31) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.23 via Frontend Transport; Tue,
- 22 Jul 2025 06:49:58 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BL6PEPF00020E61.mail.protection.outlook.com (10.167.249.22) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8964.20 via Frontend Transport; Tue, 22 Jul 2025 06:49:58 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 22 Jul
- 2025 01:49:56 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 22 Jul
- 2025 01:49:55 -0500
-Received: from localhost (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39 via Frontend
- Transport; Tue, 22 Jul 2025 01:49:54 -0500
-From: Michal Simek <michal.simek@amd.com>
-To: <linux-kernel@vger.kernel.org>, <monstr@monstr.eu>,
-	<michal.simek@xilinx.com>, <git@xilinx.com>
-CC: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Thomas Gleixner
-	<tglx@linutronix.de>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE
- BINDINGS" <devicetree@vger.kernel.org>
-Subject: [PATCH] dt-bindings: interrupt-controller: Add Xilinx INTC binding
-Date: Tue, 22 Jul 2025 08:49:42 +0200
-Message-ID: <6ddaf6f1e3748cdeda2e2e32ee69343a06c60dcb.1753166980.git.michal.simek@amd.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7380F289364
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 06:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753167037; cv=none; b=n/Ap2JCqNkYWqm3ZwlLK+QAxxhruOUFc4rxXgI/qgsai1ITs/KdFUd82zedmTeP8RSdPGqFRdGqsaAiNfd+oMdT/Pk+1JEE7TTYUc9HPN/gqhGMaKF4iU4rMANejDz29urnfvbXNJdawWS9Qn4KCiShDXGzkZkrfNGjRzPqHsxg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753167037; c=relaxed/simple;
+	bh=b+1B+Wn7HNOWmy4ymusRgiKtdV+zyXXU8YbrbkuG2KM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=HUlt31nZQ6oXfBay+ctPV3odIfaOlCLX1F4cYch2TyTzHlGOPaIunoQP8XrXJRPVgIUSdns+bgQ1Y3ad6Q8YBGa32M8c6jFVpBr2ZBQi2bkUjxpZ2BB4ESMVsYVSjrWu3GaH3iH4DHdQEM2HRc+/Co7f7kkc9vjQQLP4NB5pKOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joonwonkang.bounces.google.com; dkim=fail (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TFFwD7EG reason="signature verification failed"; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joonwonkang.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b00e4358a34so3329622a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 23:50:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753167036; x=1753771836;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :precedence:mime-version:list-unsubscribe:list-subscribe:list-id
+         :in-reply-to:dkim-signature:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L4fsLwxmK2ZnQnVdh655BQ3QV8h38rfOFwSvZPlcffU=;
+        b=IeFcKi1FSDTDpgkeVvPFKWdgsMp4nnHPYXCfePdnl96OF7GtpfzEdK9uuib0MJEODY
+         YhWbRECfU5ktAhp6EpiLhIHPKkPVYv4kWM7YIvtL7TAwYCRGAY+N5MiOWb6x4MQr5koI
+         sYfDspJwVHdIxfNI112x2WUeh6RVLfpqai9mkwmN7zzCRiffBsD8CGjVa5312/TNcJFg
+         rwcZ177vhzTuII8nrJBhT9w9r+6K8WlfJszfZp9L/f5JLOdNueAXngOPSxm0C37QPEHf
+         JmaOAxEnYhw3THuxv6xxAhddG1m4oOm0FeezCdVtZDewE9RBJdWjY/+jCvHSGneGlNBE
+         YuYA==
+X-Forwarded-Encrypted: i=1; AJvYcCXjPbtKiUEc1F/IBtah2tnRPGt2HlWeKwS36agqVyTILqpbGGAgkLdvBlrQvRYmWWAOJ/AfRxH1b7C1dwQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxf0X1dUh8a+n00scwwygK/1zmazSiC8COVmFXliKOuov/4/3Wk
+	4XprHWaPKEkBXO6WowkZtUUoylDXdUzBvFBWkhaulU7ACqvPHmS+LWid0fSDhRKomX2qP4oUfCg
+	cmoKsmLyCGbVBB5q6qFcIahToIg==
+X-Received: from pfblu8.prod.google.com ([2002:a05:6a00:7488:b0:746:3244:f1e6])
+ (user=joonwonkang job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a20:4304:b0:236:5ceb:b9d with SMTP id adf61e73a8af0-23811d5ac1emr34751483637.5.1753167035810;
+ Mon, 21 Jul 2025 23:50:35 -0700 (PDT)
+Date: Tue, 22 Jul 2025 06:50:32 +0000
+Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=20230601;
+ t=1753046000; x=1753650800; darn=vger.kernel.org; h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to; bh=o6gErZMJt76V1eqKZ0fc9t2jYBpWpuemhCSqXUz2On8=;
+ b=TFFwD7EGeRt+h9AJJPWjbV1uKa2gKH3vS/z9rxSxoUHBGmEXAS7a0h1r6Xs3Xy6li/
+ OhFAm1p/YZ7nTp3ycyyrh4J7khfJF/llMwAwIAn+x62R2XSkPNjttPCxmGD8ZQO0zRxQ
+ yyDUIVMIDuLOHbPptc+gsmkO5b4Oxj2EZ27rz4r1XQnNmEqLjZUHWa72ij/uIwd8yGIm
+ V0ZzpFSqa8zBn38m1Xe8w+q6BTpgGBaeVreDkHoXXxnI46KtoosiVmAh4pksyM1QDF1+
+ 6NAYDv5Pj0hXY2BEoovwatezwn9+JbIZlEEIcApvc/GfSBKRHJpxuVV1B2Gs8LkulgOi RsYA==
+In-Reply-To: <20250618080339.969173-1-joonwonkang@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3779; i=michal.simek@amd.com; h=from:subject:message-id; bh=IQpOqi9yDfTlrAd98h0DcfUuVxBUCXVK8fjk64QH9Cw=; b=owGbwMvMwCG2mv3fB7+vgl8ZT6slMWTUm7T/dje40nhiapPG313nH+9Z/UNu4SdBY72LIUWMs 298LNff31HKwiDGwSArpsgynUnHYc23a0vFlkfmw8xhZQIZwsDFKQATCf7DyPDu1x+bTNeU96VV LhWy+xpN4sO5vNtSTIo2XNgk3/IxIpuR4bwVp9pl+81fjx35dov1XorxsknzZlZbbmRgNi2Wtji +kwcA
-X-Developer-Key: i=michal.simek@amd.com; a=openpgp; fpr=67350C9BF5CCEE9B5364356A377C7F21FE3D1F91
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB05.amd.com: michal.simek@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF00020E61:EE_|LV3PR12MB9142:EE_
-X-MS-Office365-Filtering-Correlation-Id: b4d67c0c-fe0c-43d5-3453-08ddc8ebf993
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?/A7FnIMKugcTjPcTs42Ih2JXsaj+m895FYk8PVUX5pYmtY8M3tGkAWe8XsE8?=
- =?us-ascii?Q?nbK6PQnyNaOa4gDge1AlTk5UI/HnQEwtF3iquM3HIOhuYGxN3v/0MfnRUelu?=
- =?us-ascii?Q?LuBF02oCR+uxG1cbqZ/y8KCA1XZlmXk7pm5cQjIkOLvXO2U46Ma6eykam3Qg?=
- =?us-ascii?Q?9+vga0+vT7LooqNORFIEYJ8y20WKNNqTOMPALAzWncGtGBdPhze4A0vStLKT?=
- =?us-ascii?Q?Vy4eLXL69du9E064pgwuhgoJOTIqFhGGOVdzOJ8Q+plStEaUDMxCFYkoC4/Q?=
- =?us-ascii?Q?eW3PNSSfIO37aQjTcB7QWdtmHHg0KPCMvxfpbwRe0ib/Kj8pRWLHS/y0xdqv?=
- =?us-ascii?Q?X7oZcYnmfIXiuq1aLZ8Vd75R8zDudBm+2khQxkPt52jSvXyxRkkcMeM2tQLV?=
- =?us-ascii?Q?YMgD33Cy0lg+fWk4/8KNOFon9/Uo3UxPgSzCWYBe/1eD2kfqF5+snjgsh2CZ?=
- =?us-ascii?Q?urMn0FF2SQAPavUhHB2u+w3uGSReqWOZ/BRiCZMyk9Bexazht2tTUtMUXGm8?=
- =?us-ascii?Q?u62j21ypYwlhXkVXKpS9eOB2A9SXmoOC5XyVCXGUqkQIJbdfr9Ywo3CHpoEC?=
- =?us-ascii?Q?Qr3sE8pMLZ0ljYti1NP4pSgcD8CQb4Fx6QbAcs21eZWcSbUGxclXqNAgQvUE?=
- =?us-ascii?Q?2EkN6P1FAnKA+xwOEnuzJnzhuV31sqJnOKshB1hlnGHMPpTrQTdjF5+a8PXJ?=
- =?us-ascii?Q?I+VGPhJ4G/ykxbKhGkwK275IQncZiQavPXHkq6Xe/R24sZruqBLegVMi+hVI?=
- =?us-ascii?Q?hFUNHx0W+SP1nQrrqMgXygJ09CalUvdc/mctIkp/d9/x1x4jwPHoY4z1Mkqp?=
- =?us-ascii?Q?QWyKpZ+e0ImUpwYdkJbu0kLciNK9yh5/JJZ8FccGqQnCjsKjGhi2GpaHUamD?=
- =?us-ascii?Q?0/XsO+bsZGccLCy9z8WaVklBrWjCr2Yr1n0/uFaPSN+y4UbD7Al2bq4wCWoV?=
- =?us-ascii?Q?IZxp6ULXbCdiLrg1LxohsP3Sz3/01R8q9iDBLwZ/Dyovud4zQOgBU3/lUI9/?=
- =?us-ascii?Q?HwDmt7l9kozqBjPONQhrzZ5r8ALrCpsP7gZjWU7h3m3BkxgzIV/52wyGJY5B?=
- =?us-ascii?Q?NZSL/Dt4bSb/V0BrUwi+zcS20jqZeoFimQCZ6ODPZ6q2YTDRdp0aX94AohzB?=
- =?us-ascii?Q?570VewnOt4xDwKCHMrtFlVrRaom3jTOqvtr3wPfkcIQeN0uEyNOGnCQb6Ud6?=
- =?us-ascii?Q?8RRfJ5HqC5yxMrLGLhNoYXCwxx6bjKiD0sOFKIjmZT2oJJ+okLuky4ohUZtt?=
- =?us-ascii?Q?JZTbeXJmZ4Yv9WjfgRFycdwX1zLmG4gd9rOoKj1fmjUp6DPxJx6HOEcux7AZ?=
- =?us-ascii?Q?uFmwee3Y/rVxrdrZH681XbHLkuqA7KXQffigLeHzPgb0yCT0oZLHXpweRxRk?=
- =?us-ascii?Q?UX0svIifrWVaXY4oe16H6E+wXaGHG1WpVecCO+XsYMuEWDGUmllMNHJ8psay?=
- =?us-ascii?Q?tJnwi4wuaVzRszGD/in5OOFscGscJDGtYm5RdSk8r9s2cyRvPJvJYQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2025 06:49:58.6069
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b4d67c0c-fe0c-43d5-3453-08ddc8ebf993
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF00020E61.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9142
+Mime-Version: 1.0
+Precedence: bulk
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com
+ [209.85.167.176]) (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256
+ (128/128 bits)) (No client certificate requested) by smtp.subspace.kernel.org
+ (Postfix) with ESMTPS id 5FAA98F40; Sun, 20 Jul 2025 21:13:21 +0000 (UTC)
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-41baecbdd33so2143031b6e.1;
+ Sun, 20 Jul 2025 14:13:21 -0700 (PDT)
+References: <20250618080339.969173-1-joonwonkang@google.com>
+X-Forwarded-Encrypted: i=1; AJvYcCUIqRTYVk5DYU47Vtl0BVlM+j5m8FCTAvv/bbWeYafgWJ8vbNgxpINfVmp9r3Gmsuwd3vvoeWadLJN/2NQ=@vger.kernel.org,
+ AJvYcCV+cDgLTOR7OFFUgRvrYh3E0RkOINWlRAwkK26rULp0BJlx0pS52imLKkgbJFOK9Pdis3xB9QH4zJ+06Lk=@vger.kernel.org
+X-Gm-Features: Ac12FXz9vOtA1Fg51kXnXqCTNXVof0pWwc5qQoUQiAq93e2W0_AVQrge6SyFrZM
+X-Gm-Gg: ASbGncsOZshUrwHwD1EBaqV6YDYpT13TvMxXalipJgouXw1wUTtvrItcHOI+B5cb76O
+ E45apbK+Il8vixR39xAccGfQ3cJv6a0ulWhbGIH6Q9AjUmNAvUpV6zWxDrotD2w2Mclc3iw0CJq
+ gLc3RTDcZrw7KmQZczGqMUD5UBsluWhM5f7p3yhSo/jkCdDHI907P+XhEgtPw3YjxlTaBLqHlGF 7c+s9lp
+X-Google-Smtp-Source: AGHT+IGQBjCiAD9vIQwxV0rJzEKHpmjX4gL4eliT0pjfkXkTEmtGeAlanzndulSYj+eEPQNmRrUoqpol2Hvsi+3CglM=
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+X-Received: by 2002:a05:6808:81c7:b0:41f:79f9:1b6b with SMTP id
+ 5614622812f47-41f79f9201emr6057246b6e.34.1753046000383; Sun, 20 Jul 2025
+ 14:13:20 -0700 (PDT)
+Message-ID: <CABb+yY3CBiLpZ1KrD8RFypRgkP9MOzBf1FB+gL2E-qEuSbrj6A@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mailbox: Use per-thread completion to fix wrong
+ completion order
+From: Joonwon Kang <joonwonkang@google.com>
+To: jassisinghbrar@gmail.com, Joonwon Kang <joonwonkang@google.com>
+Cc: alexey.klimov@arm.com, jonathanh@nvidia.com, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, sudeep.holla@arm.com, thierry.reding@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add description for AMD/Xilinx interrupt controller.
-IP acts as primary interrupt controller on Microblaze systems or can be
-used as secondary interrupt controller on ARM based systems like Zynq,
-ZynqMP, Versal or Versal Gen 2. Also as secondary interrupt controller on
-Microblaze-V (Risc-V) systems.
+From: Jassi Brar <jassisinghbrar@gmail.com>
 
-Over the years IP exists in multiple variants based on attached bus as OPB,
-PLB or AXI that's why generic filename is used.
+On Wed, Jun 18, 2025 at 3:04=E2=80=AFAM Joonwon Kang <joonwonkang@google.co=
+m> wrote:
+>>
+>> Previously, a sender thread in mbox_send_message() could be woken up at
+>> a wrong time in blocking mode. It is because there was only a single
+>> completion for a channel whereas messages from multiple threads could be
+>> sent in any order; since the shared completion could be signalled in any
+>> order, it could wake up a wrong sender thread.
+>>
+>> This commit resolves the false wake-up issue with the following changes:
+>> - Completions are created as many as the number of concurrent sender
+>>   threads
+>> - A completion is created in a sender thread's stack
+>> - Each slot of the message queue, i.e. `msg_data`, contains a pointer to
+>>   its target completion
+>> - tx_tick() signals the completion of the currently active slot of the
+>>   message queue
+>>
+>> Link: https://lore.kernel.org/all/1490809381-28869-1-git-send-email-jasw=
+i>nder.singh@linaro.org
+>
+> Is your issue different from what is described in the Link?
+>
+> thanks
 
-Signed-off-by: Michal Simek <michal.simek@amd.com>
----
+The issue is the same, but the solution is different.
 
-https://docs.amd.com/v/u/en-US/pg099-axi-intc
----
- .../interrupt-controller/xlnx,intc.yaml       | 95 +++++++++++++++++++
- 1 file changed, 95 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/xlnx,intc.yaml
-
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/xlnx,intc.yaml b/Documentation/devicetree/bindings/interrupt-controller/xlnx,intc.yaml
-new file mode 100644
-index 000000000000..816f78d4e8c4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/interrupt-controller/xlnx,intc.yaml
-@@ -0,0 +1,95 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/interrupt-controller/xlnx,intc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Xilinx Interrupt Controller
-+
-+maintainers:
-+  - Michal Simek <michal.simek@amd.com>
-+
-+description:
-+  The controller is a soft IP core that is configured at build time for the
-+  number of interrupts and the type of each interrupt. These details cannot
-+  be changed at run time.
-+
-+properties:
-+  compatible:
-+    const: xlnx,xps-intc-1.00.a
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  resets:
-+    maxItems: 1
-+
-+  "#interrupt-cells":
-+    const: 2
-+    description:
-+      Specifies the number of cells needed to encode an interrupt source.
-+      The value shall be a minimum of 1. The Xilinx device trees typically
-+      use 2 but the 2nd value is not used.
-+
-+  interrupt-controller: true
-+
-+  interrupts:
-+    maxItems: 1
-+    description:
-+      Specifies the interrupt of the parent controller from which it is chained.
-+
-+  xlnx,kind-of-intr:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      A 32 bit value specifying the interrupt type for each possible interrupt
-+      (1 = edge, 0 = level). The interrupt type typically comes in thru
-+      the device tree node of the interrupt generating device, but in this case
-+      the interrupt type is determined by the interrupt controller based on how
-+      it was implemented.
-+
-+  xlnx,num-intr-inputs:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      Specifies the number of interrupts supported by the specific
-+      implementation of the controller (1-32).
-+
-+required:
-+  - reg
-+  - "#interrupt-cells"
-+  - interrupt-controller
-+  - xlnx,kind-of-intr
-+  - xlnx,num-intr-inputs
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    interrupt-controller@41800000 {
-+      compatible = "xlnx,xps-intc-1.00.a";
-+      reg = <0x41800000 0x10000>;
-+      #interrupt-cells = <2>;
-+      interrupt-controller;
-+      xlnx,kind-of-intr = <0x1>;
-+      xlnx,num-intr-inputs = <0x1>;
-+    };
-+
-+  - |
-+    /*
-+     * Chained Example - The interrupt is chained to hardware
-+     * interrupt 61 (29 + 32) of the GIC for Zynq.
-+     */
-+    interrupt-controller@41800000 {
-+      compatible = "xlnx,xps-intc-1.00.a";
-+      reg = <0x41800000 0x10000>;
-+      #interrupt-cells = <2>;
-+      interrupt-controller;
-+      interrupts = <0 29 4>;
-+      xlnx,kind-of-intr = <0x1>;
-+      xlnx,num-intr-inputs = <0x1>;
-+    };
--- 
-2.43.0
-
+The previous solution in the Link tried to have per-message completion; eac=
+h
+completion belongs to each slot of the message queue. However, the solution=
+ in
+this patch tries to have per-thread completion; each completion belongs to =
+each
+sender thread and each slot of the message queue has a pointer to that
+completion; `struct mbox_message` has the "pointer" field
+`struct completion *tx_complete` which points to the completion which is
+created in the stack of the sender instead of owning the completion by havi=
+ng
+the non-pointer field `struct completion tx_complete`. This way, we could a=
+void
+the window where the same completion is reused by different sender threads
+which could lead to a wrong completion order, IMHO.
 
