@@ -1,147 +1,124 @@
-Return-Path: <linux-kernel+bounces-740813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62D12B0D97E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:25:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F97DB0D998
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:28:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26EBB547FBB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:24:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DC1C1C24B32
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1438B2E92DD;
-	Tue, 22 Jul 2025 12:23:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A5012E9EB7;
+	Tue, 22 Jul 2025 12:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="kTNHUfSm"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OshxhfJX"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E622C2E3B1E;
-	Tue, 22 Jul 2025 12:22:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C4723AB8D;
+	Tue, 22 Jul 2025 12:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753186979; cv=none; b=sLaUFQJZDDxykfojFornbcH2pI5i35z8hfZ6UfUIpx29b5nJ3/io/UyJTrSuib1zQitqupSB4rkh8dcU5k4N4PC9e4IA5G3dLSKpanOnJP6sbZAYiGtJjAF2oBQ+9HC2pUqUOG+HfJFJFY2usIyJN7/tjl5nsnN3fRnIOO7JL28=
+	t=1753187038; cv=none; b=L06G+eGPze4dYSXIarUnwvjQzk94g9+0/7gN5mqzM4wTHfFmqCT7Pt+iiVqNNRVdnTJh7mVAhHeDljApAU1qWiftkVtX/0OOVJi0oE6pSmv4Zq5DQj0V1zYiRcp8mgEsZDSprdGPkMw9He4t6MKYPmtFAN/3uHZg2JpehRrnqdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753186979; c=relaxed/simple;
-	bh=keCgDURcv9+m6vpU6rHa61mzyeJqReGQO4z/vF4svIQ=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sZGRryfWuF7wTxNYAaHxaQz+QsZEzUkm/KJfUFMkztZ4iID3oH2uN8o+kAMzaQKraTg7xmz++w1maz0RZg/omxsgWSc2GPEzHHBrRa2i+mdfk3WDv21mlH+w7wqiMEDaNmK8lht1HfOXV+zS/OmlggwY9Y3ceYlT23bJRCu3Vb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=kTNHUfSm; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:To:From:Subject:Message-ID:Sender:
-	Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=KnwXTqtHOleKG0B9HcgxxzHBfNasjXdXwWf+q1NedP4=;
-	t=1753186978; x=1754396578; b=kTNHUfSmas1DAkQMW1SlSFKjYA93+g7DH9LwVLJYi+pA/aE
-	LfKDhmm/58gv3v9hNGJqLwnilPtCHRFNcvvD+FP8lbVVww8dlyVgMTC6quGpMP2WbhyKGOFqBen0h
-	cH8xmSxXTHH4pNZuRfL2Y0Fcn1ECB1tGYx6DIKGa3M440mcsuDVSRxa/D4ALC7XVxbWIt8mTli+1O
-	gfOOUwX4lTcbSqche/EIJQQOK8iqt1yuQ/WldMw+ysGouHoKh87kEzPcIf5BFwthJ5MyYYaHhPbHt
-	Ut635lSC9KM9EBWJNlmyOoX1YKl5+LQezmL31I2k4SMKg7GVJlxqAbr+VnIuJgSg==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1ueC1H-000000026Pp-1C60;
-	Tue, 22 Jul 2025 14:22:55 +0200
-Message-ID: <d59c69a46c36db6fb6616b4c2ba9847cccd29e5d.camel@sipsolutions.net>
-Subject: Re: [RFC PACTH v2 wireless-next 1/3] wifi: mac80211: Get link_id
- from freq for received management frame
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Remi Pommarel <repk@triplefau.lt>, linux-wireless@vger.kernel.org, 
+	s=arc-20240116; t=1753187038; c=relaxed/simple;
+	bh=WeTPywAQLUuchrmA0NvHrm6ddehj4OFPXPzgdioHAnw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=owLzFiWQxu54Tjgd3IF9mRgcJF9p2rSHBcM6v3Wy/kL2ZjyyUgUmejZDK8Q+b6G/NEk226bFml7vmAES4tBFyT2h1PiE76pQqanVAofFNOC+2Qc05HhwEDaJbBkXbUajZMk7eQaM0PJikF7a7La3L7ZP8qvGDZ8Bp62OhJliTAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OshxhfJX; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ae6fa02d8feso791092066b.0;
+        Tue, 22 Jul 2025 05:23:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753187035; x=1753791835; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=o9zVmz81PD3EcDqh5BGdUlKDbC/PBBgCXACORglCMmc=;
+        b=OshxhfJX1h7xkzClEekXTwDpl3I/BW6vkfq55EEtfJsOPKNI7ZU1zvHvKTXydggNcI
+         YI5tUjpKMoaH5cji9yKVJOnH9hSkMkcc5RY0yMi5dwzguuGVV0vqUkSc9EfJeIb03hJx
+         BoPPFVF/+2LSWrs0yhtUJ9DDCvByc3ARPrYjNRj8ULnkkkyrOBdAOdwFGQ/NV8wl9PnO
+         fWKYz7Qs+K8PzYk+dCwQGi/yCGlFIGHGkxtDbmjgEvmfN5ibXMGMta9PHAcga9P33LPF
+         BMGiaz99FKQgfxUxh0wIwNxntZHDD5atq7bYcJP3aWlNq1HQHYpQhI/R3jfVtxnaKTLK
+         aYfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753187035; x=1753791835;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o9zVmz81PD3EcDqh5BGdUlKDbC/PBBgCXACORglCMmc=;
+        b=gETbwkcuqxlTAIJ5Ebh+WlZst5g7WRHuJC+wZ5cwAqypHwCh7z75e81j1k8CX5sEcx
+         vcIVLVLHJ2kH86D1JSpqG2nFIPTl5NX7n9zFd20MWUqLniSzuzuBngkSfQOZxaEIEqKm
+         wIDKvAbCGIClIkmWRNG/2U58PgGYq+gmsv+6Hzg7dBaRYqbtBUHDcx8sL2yyZToX6/c4
+         DiLk78gRQy8R/ES7xAmSjx3qzlJcU/pWLke+WVxAAV8RNbldZy9tmOIvng4uXhrR9351
+         POoDvhcNfjNRW+si4QDeJxxS2bVGynBgpbSbkVurJ2HNnKl04LC4Kk4k1n/Op6teO/dv
+         kuQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVi30HHFMjUZCDoKsyglykS9yxP/EgnpnKuI2yP3bGMJg4ShyDKW5//+eFRtrBuUkcO/Btoq18wck1eXy5E@vger.kernel.org, AJvYcCWwQTjJhPrh0GrZOhEJAQpOTClRHIe6A/mSH83OMYqP/D/r2ef8BhDO7jGTSG+ootHQs7WII9BwoJZJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmJqf4CezCX+Ud1nOPJmlPPc+Yf7Be+IlkUPIBbYKx+tSUihjh
+	YQ3cOGfOGxTjoU9ecJ1VTjSYOgTYwFm6g5uyUX9Klf0FmVp0NXBUzXhndxiCtg==
+X-Gm-Gg: ASbGnctGQT7pWtcGA5dJ5r9W/nzJ1dgWBHHA4GdVyCvxt9DaQpY/CmZdDAb8wF9Aa4N
+	riM+oBeqreMmqfAm0nYhnKFQ7J6kX88FF2OOSi0Rkhv0lLGaGkPGALtgE0jwuXhY9qM96xicMTN
+	t1guxxN6+dXghXxiWqJ43I+VSzwwc/4zCOX9eInZGo5kwthqxJS7MTEOBaWm3WZftYhDK4W2OTM
+	lqMrfmDz86jzDJGo66jBWMXbI7sY11v+5gCdxTIgVkSIWaBEf2LD/KIEUvONHX6E2ChAhyRYm+s
+	0v4EPt/JgzVBCXqybhWIkUXpmLuVhMah4Yx8C9RLTedH1cHAZrMqF5U7apC0MiFxBW+Xtoi+bc5
+	MaEr8fcusqHLomNy6N+waov+mmtTK7wB0q+U+1WoF83HENN0Im/EPtr0eNCVhCOUV7Bk197rLOA
+	==
+X-Google-Smtp-Source: AGHT+IGLZ9hBnU0L+6iBn36Ar8EtrC0DggxduYejAe7GRNOw5gatUgZQ863G8i/REynVRkoMww08NQ==
+X-Received: by 2002:a17:906:c00f:b0:ae3:7058:7b48 with SMTP id a640c23a62f3a-ae9cde31899mr1973204166b.25.1753187034636;
+        Tue, 22 Jul 2025 05:23:54 -0700 (PDT)
+Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6c79a056sm861358466b.14.2025.07.22.05.23.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jul 2025 05:23:54 -0700 (PDT)
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Date: Tue, 22 Jul 2025 14:22:54 +0200
-In-Reply-To: <dd0eb517cf088f386b00c138563bda3c778ebe41.1752225123.git.repk@triplefau.lt>
-References: <cover.1752225123.git.repk@triplefau.lt>
-	 <dd0eb517cf088f386b00c138563bda3c778ebe41.1752225123.git.repk@triplefau.lt>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+Subject: [PATCH v1 0/4] arm64: dts: exynos2200: introduce serial busses, except spi
+Date: Tue, 22 Jul 2025 15:23:46 +0300
+Message-ID: <20250722122350.444019-1-ivo.ivanov.ivanov1@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Transfer-Encoding: 8bit
 
-On Fri, 2025-07-11 at 12:03 +0200, Remi Pommarel wrote:
->=20
-> +static int ieee80211_rx_get_link_from_freq(struct ieee80211_rx_data *rx,
-> +					   struct sk_buff *skb,
-> +					   struct link_sta_info *link_sta)
-> +{
-> +	struct ieee80211_rx_status *status =3D IEEE80211_SKB_RXCB(skb);
-> +	struct ieee80211_sta *sta =3D &link_sta->sta->sta;
-> +	struct ieee80211_link_data *link;
-> +	struct ieee80211_bss_conf *bss_conf;
-> +	struct ieee80211_chanctx_conf *conf;
-> +
-> +	if (!status->freq)
-> +		return link_sta->link_id;
-> +
-> +	for_each_link_data(rx->sdata, link) {
+Hey, folks!
 
+Before anything, this patchset only has binding dependencies, without
+which it will have undocumented compatibles. They are the following:
 
-..._rcu()
+[1] - https://lore.kernel.org/all/20250722120859.443283-1-ivo.ivanov.ivanov1@gmail.com/
+[2] - https://lore.kernel.org/all/20250722121037.443385-1-ivo.ivanov.ivanov1@gmail.com/
+[3] - https://lore.kernel.org/all/20250722121434.443648-1-ivo.ivanov.ivanov1@gmail.com/
 
-> +		bss_conf =3D link->conf;
-> +		if (!bss_conf)
-> +			continue;
-> +		conf =3D rcu_dereference(bss_conf->chanctx_conf);
-> +		if (!conf || !conf->def.chan)
-> +			continue;
-> +
-> +		if (conf->def.chan->center_freq !=3D status->freq)
-> +			continue;
-> +
-> +		if (ieee80211_rx_is_valid_sta_link_id(sta, link->link_id))
-> +			return link->link_id;
-> +	}
+This patchset adds serial busses, implemented in usi, as well as serial_0
+and serial_1 for exynos2200. It's missing spi, due to me having troubles
+with reads when testing.
 
-But this is now almost the same as the code added via
-https://patch.msgid.link/20250721062929.1662700-1-michael-cy.lee@mediatek.c=
-om
-so I think it should be refactored/combined.
+Best regards,
+Ivaylo
 
-> @@ -5131,7 +5162,15 @@ static bool ieee80211_rx_for_interface(struct ieee=
-80211_rx_data *rx,
->  	link_sta =3D link_sta_info_get_bss(rx->sdata, hdr->addr2);
->  	if (link_sta) {
->  		sta =3D link_sta->sta;
-> -		link_id =3D link_sta->link_id;
-> +
-> +		/* Use freq to get link id information on management frames to
-> +		 * allow for offchannel scan, roaming, etc.
-> +		 */
-> +		if (ieee80211_is_mgmt(hdr->frame_control))
-> +			link_id =3D ieee80211_rx_get_link_from_freq(rx, skb,
-> +								  link_sta);
+Ivaylo Ivanov (4):
+  arm64: dts: exynos2200: fix typo in hsi2c23 bus pins label
+  arm64: dts: exynos2200: increase peric1 and cmgp syscon sizes
+  arm64: dts: exynos2200: add serial_0/1 nodes
+  arm64: dts: exynos2200: define all usi nodes
 
-It seems to me taht _iff_ the link ID ends up not being link_sta-
->link_id here, we should set link_sta=3DNULL. Otherwise we think we're
-actually receiving from that STA but we aren't really, and if we then
-use sta->link[link_id] we'd crash, and I'd be very surprised if this
-were impossible.
+ .../boot/dts/exynos/exynos2200-pinctrl.dtsi   |    2 +-
+ arch/arm64/boot/dts/exynos/exynos2200.dtsi    | 1391 ++++++++++++++++-
+ 2 files changed, 1390 insertions(+), 3 deletions(-)
 
-I'm not sure what consequences that has, but OTOH it really should not
-be sending anything other than probe requests, authentication frames and
-some few public action frames on another link. We need not handle other
-frames as if we didn't realise the link was different, it's fine to even
-just drop them because we don't recognise the STA there.
+-- 
+2.43.0
 
-So I think that's what we should do. As written this seems really
-problematic to have a link_sta !=3D NULL and thus sta !=3D NULL but then
-sta->link[link_id] =3D=3D NULL and not =3D=3D link_sta.
-
-
-Arguably, given the code we already have, we should perhaps implement
-this in another way and after doing the link_sta lookup via
-link_sta_info_get_bss() simply reject the link_sta (set it to NULL) if
-the RX link doesn't match the link it's expected to be on. Then we'd
-fall back to the existing code I linked to above anyway, which seems
-almost better.
-
-johannes
 
