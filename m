@@ -1,123 +1,165 @@
-Return-Path: <linux-kernel+bounces-740710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4711AB0D834
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:28:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A1EDB0D86B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:41:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADBF91C27016
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:28:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AE7B7B3BA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 764512E2F1C;
-	Tue, 22 Jul 2025 11:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="KuAvm1U7"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960B42E2EFF;
+	Tue, 22 Jul 2025 11:41:43 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2A930100;
-	Tue, 22 Jul 2025 11:28:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753183693; cv=pass; b=sRSst3wN240U5lh7fzqlaqg4/dT5MBdxvrb/V29Oby1CAFmSKHheHUfGFlHpW/fFM4Rt8cgxpkJQgmqqT+6MSCNYiVW4M4MJnwWnLKzgtfizkg022mAPdoM+s8V37tftmu0c8oReHpxTlAk5sbq5fW3ZlEYKXvoaA6LcSZs74lQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753183693; c=relaxed/simple;
-	bh=ikD0rMcKmRVjoAxqulFqg/X3a6tVlFz2ZfIGnWg5/Bk=;
-	h=MIME-Version:From:To:In-Reply-To:Cc:Subject:Message-ID:Date:
-	 Content-Type; b=gRcPJ2LqJ+9gAY/kYQDSwGhMkpM9cPLmyE96dRUeSa7l0WVz0GJOSEidkomQgzf8Hiebnxbg/Qt0fQl7Vyac+ynOKO7iKMK2DC0/ZXzz/HIcewfZypKWpzjvWxoFVF6zzVMerb5/akQCIM0lLhiVvMgZlavCnwGWbj8zQn4e+2w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=KuAvm1U7; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
-ARC-Seal: i=1; a=rsa-sha256; t=1753183646; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=L8uXSYQxwzi6GnqOKA5+M/zFPG4YsKprlvaiueZ6tyTNaDL5JdRi7F4krtqMduJ4Ag69Rg7U4KPh8r5llGt06szaffvPBwsjPG0Le/CnRbR41qo1u8JBxhK3xiCfh25Qe6QdZrzckGLUiHvZWTJDa2Lh7TQZOFLxLKr6lu3WOQs=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753183646; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=oSWzK9+1+wJc6wh6CDIQZWQCvimKKJe8O5m5BgUOpHM=; 
-	b=jrZKYr4L4LdOFAuzndQZW5Qz+Lz1wmRU490h2L4eC6Dm7C9X8bR490PUz42rHs55ViumCFNLmb3iufzWwCweDrl45bjqjmsw4JatKBu9sJKx0MY8pNkHVBJRTExu6uVWhYFPEH83ifRRTLuzU0+RPMY/hB1j8jI6sOUcSLnwtLA=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=pigmoral.tech;
-	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
-	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753183646;
-	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
-	h=MIME-Version:From:From:To:To:In-Reply-To:Cc:Cc:Subject:Subject:Message-ID:Date:Date:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=oSWzK9+1+wJc6wh6CDIQZWQCvimKKJe8O5m5BgUOpHM=;
-	b=KuAvm1U7/rkniCfUxMjB0BR6KZ2ypIXEi2EuO2iqtr7dyL10XVPnZaVwSM6o14Sj
-	38SyFAnkKq7IVnSYBHIVmUJx0CNsrmkcDmyn4geRQiBGTO5bg4Vz8byXslcL198w104
-	zbn14B6zSUpYB83NsJcFigm/jWU7OkcYb3JkyYwg=
-Received: by mx.zohomail.com with SMTPS id 1753183643006882.6847732993253;
-	Tue, 22 Jul 2025 04:27:23 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B4E2417C8;
+	Tue, 22 Jul 2025 11:41:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753184503; cv=none; b=IcjMbp7p3r3sNP0CG46pU0mCIvTKGzgC/ESzRdICBllK4RwNki+XZ5+/RaRrxs0g5YSUAQEvQC3pH0x/oZ1QfUZI8APPADm730I6up63qeg/FLcR8bN8uzLPIEbvx2zbzkUvXAWatimzzQLDXLj48A3aFSIzD/2Q+vnPEfUdRns=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753184503; c=relaxed/simple;
+	bh=HRNfBZNWFjtpD2gokYphudl6CAUUrfBTg0zEgE6J9V4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Gzr/ArWRRe0k0Wr3m9eFNk/o84vkZJ0o0GdYF0JBHVZDi7BWSAwrqxpxves7kqa0z9713DOPOC9dXUDFf2knuNHmNuLskrmftYjm94B5Wsj33Vncfls//XIv4otyYlXvJh1O4wNe7lject6KrD8JndZsAa9vZUdv95IFTK4yZ/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bmb2R6GTDzYQv48;
+	Tue, 22 Jul 2025 19:41:35 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 95D5D1A0D48;
+	Tue, 22 Jul 2025 19:41:34 +0800 (CST)
+Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
+	by APP2 (Coremail) with SMTP id Syh0CgDH07XjeH9ove1hBA--.34468S2;
+	Tue, 22 Jul 2025 19:41:34 +0800 (CST)
+From: Chen Ridong <chenridong@huaweicloud.com>
+To: tj@kernel.org,
+	hannes@cmpxchg.org,
+	mkoutny@suse.com,
+	lizefan@huawei.com
+Cc: cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lujialin4@huawei.com,
+	chenridong@huawei.com,
+	gaoyingjie@uniontech.com
+Subject: [PATCH v2 -next] cgroup: remove offline draining in root destruction to avoid hung_tasks
+Date: Tue, 22 Jul 2025 11:27:33 +0000
+Message-Id: <20250722112733.4113237-1-chenridong@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Junhui Liu" <junhui.liu@pigmoral.tech>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>
-In-Reply-To: <20250722-berserk-octopus-of-destiny-f4475e@kuoka>
-Cc: "Rob Herring" <robh@kernel.org>, 
-	"Krzysztof Kozlowski" <krzk+dt@kernel.org>, 
-	"Conor Dooley" <conor+dt@kernel.org>, 
-	"Paul Walmsley" <paul.walmsley@sifive.com>, 
-	"Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>, 
-	"Alexandre Ghiti" <alex@ghiti.fr>, 
-	"Daniel Lezcano" <daniel.lezcano@linaro.org>, 
-	"Thomas Gleixner" <tglx@linutronix.de>, 
-	"Samuel Holland" <samuel.holland@sifive.com>, 
-	"Anup Patel" <anup@brainfault.org>, 
-	"Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, 
-	"Jiri Slaby" <jirislaby@kernel.org>, <devicetree@vger.kernel.org>, 
-	<linux-kernel@vger.kernel.org>, "Palmer Dabbelt" <palmer@sifive.com>, 
-	"Conor Dooley" <conor@kernel.org>, <linux-riscv@lists.infradead.org>, 
-	<linux-serial@vger.kernel.org>
-Subject: Re: [PATCH RFC 07/10] riscv: Add Anlogic SoC famly Kconfig support
-Message-ID: <18548f39bd190d28.fca9acf422f7bf67.f37c65074e24e08a@Jude-Air.local>
-Date: Tue, 22 Jul 2025 11:27:13 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgDH07XjeH9ove1hBA--.34468S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxZryrXF4fXFWrKFyruw13XFb_yoW5ZrWrpF
+	s8Cw12yw4rGF1Dt3ykta4Iga4F9a10qw4jq3WIg3y8AF17Xryqq3Z2yF1jqF10yFsrCay2
+	vrZ0vrn5G34jywUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI
+	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
+	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
+	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
+	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
+From: Chen Ridong <chenridong@huawei.com>
 
+A hung task can occur during [1] LTP cgroup testing when repeatedly
+mounting/unmounting perf_event and net_prio controllers with
+systemd.unified_cgroup_hierarchy=1. The hang manifests in
+cgroup_lock_and_drain_offline() during root destruction.
 
-On 22/07/2025 09:29, Krzysztof Kozlowski wrote:
-> On Mon, Jul 21, 2025 at 11:46:13PM +0800, Junhui Liu wrote:
->> The first SoC in the Anlogic series is DR1V90, which contains a RISC-V
->> core from Nuclei.
->>=20
->> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
->> ---
->>  arch/riscv/Kconfig.socs | 5 +++++
->>  1 file changed, 5 insertions(+)
->>=20
->> diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
->> index a9c3d2f6debca1469f4a912b3414711eb709baab..de163cdddcda1c08e7c9e9871=
-6eaf043d4c4555a 100644
->> --- a/arch/riscv/Kconfig.socs
->> +++ b/arch/riscv/Kconfig.socs
->> @@ -1,5 +1,10 @@
->>  menu "SoC selection"
->> =20
->> +config ARCH_ANLOGIC
->> +	bool "Anlogic SoCs"
->> +	help
->> +		This enables support for Anlogic SoC platform hardware.
->=20
-> Wrong indentation. See everything else in this file or just read coding
-> style.
+Related case:
+cgroup_fj_function_perf_event cgroup_fj_function.sh perf_event
+cgroup_fj_function_net_prio cgroup_fj_function.sh net_prio
 
-Thanks for pointing this out. I overlooked it and will fix it in the
-next version.
+Call Trace:
+	cgroup_lock_and_drain_offline+0x14c/0x1e8
+	cgroup_destroy_root+0x3c/0x2c0
+	css_free_rwork_fn+0x248/0x338
+	process_one_work+0x16c/0x3b8
+	worker_thread+0x22c/0x3b0
+	kthread+0xec/0x100
+	ret_from_fork+0x10/0x20
 
->=20
-> Best regards,
-> Krzysztof
+Root Cause:
 
---=20
-Best regards,
-Junhui Liu
+CPU0                            CPU1
+mount perf_event                umount net_prio
+cgroup1_get_tree                cgroup_kill_sb
+rebind_subsystems               // root destruction enqueues
+				// cgroup_destroy_wq
+// kill all perf_event css
+                                // one perf_event css A is dying
+                                // css A offline enqueues cgroup_destroy_wq
+                                // root destruction will be executed first
+                                css_free_rwork_fn
+                                cgroup_destroy_root
+                                cgroup_lock_and_drain_offline
+                                // some perf descendants are dying
+                                // cgroup_destroy_wq max_active = 1
+                                // waiting for css A to die
+
+Problem scenario:
+1. CPU0 mounts perf_event (rebind_subsystems)
+2. CPU1 unmounts net_prio (cgroup_kill_sb), queuing root destruction work
+3. A dying perf_event CSS gets queued for offline after root destruction
+4. Root destruction waits for offline completion, but offline work is
+   blocked behind root destruction in cgroup_destroy_wq (max_active=1)
+
+Solution:
+Move cgroup_lock_and_drain_offline() to the start of unmount operations.
+This ensures:
+1. cgroup_lock_and_drain_offline() will not be called within
+   cgroup_destroy_wq context.
+2. No new dying csses for the subsystem being unmounted can appear in
+   cgrp_dfl_root between unmount start and subsystem rebinding.
+
+[1] https://github.com/linux-test-project/ltp/blob/master/runtest/controllers
+Fixes: 334c3679ec4b ("cgroup: reimplement rebind_subsystems() using cgroup_apply_control() and friends")
+Reported-by: Gao Yingjie <gaoyingjie@uniontech.com>
+Signed-off-by: Chen Ridong <chenridong@huawei.com>
+---
+ kernel/cgroup/cgroup.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index 312c6a8b55bb..af81a90f8c92 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -1346,8 +1346,7 @@ static void cgroup_destroy_root(struct cgroup_root *root)
+ 
+ 	trace_cgroup_destroy_root(root);
+ 
+-	cgroup_lock_and_drain_offline(&cgrp_dfl_root.cgrp);
+-
++	cgroup_lock();
+ 	BUG_ON(atomic_read(&root->nr_cgrps));
+ 	BUG_ON(!list_empty(&cgrp->self.children));
+ 
+@@ -2336,6 +2335,8 @@ static void cgroup_kill_sb(struct super_block *sb)
+ 	 *
+ 	 * And don't kill the default root.
+ 	 */
++	cgroup_lock_and_drain_offline(&cgrp_dfl_root.cgrp);
++	cgroup_unlock();
+ 	if (list_empty(&root->cgrp.self.children) && root != &cgrp_dfl_root &&
+ 	    !percpu_ref_is_dying(&root->cgrp.self.refcnt))
+ 		percpu_ref_kill(&root->cgrp.self.refcnt);
+-- 
+2.34.1
 
 
