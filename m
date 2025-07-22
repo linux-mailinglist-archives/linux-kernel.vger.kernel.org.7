@@ -1,297 +1,236 @@
-Return-Path: <linux-kernel+bounces-741518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 181C6B0E53C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 23:06:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EE87B0E53F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 23:08:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D4B97B52FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 21:04:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44D1C1C27791
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 21:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C982F284678;
-	Tue, 22 Jul 2025 21:05:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Inhn0cIH"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A9F9285C8D;
+	Tue, 22 Jul 2025 21:08:18 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3260286425
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 21:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2436F156677;
+	Tue, 22 Jul 2025 21:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753218342; cv=none; b=fNtfqbajr6Zk0bR1Vylo2zPTNVK0qZ7G2x6FY+9+fySurh7naZrcIFclr2GDKIGwfo4InKTdoHoPYt6SDpAopYvzkMfKHeqN3bi1igYc6XHIcz6uwQTDxM+Qvs7c+EZHBs0fqWqeeKhyjqSEXVGSyIc77RnWry+M9zpc2YSmkg4=
+	t=1753218497; cv=none; b=rkUits87dkZ9b8TbCIVK+oKINSaewtkgAKmXiI+66y7UH7EcvAAZKb+7KyTeTStwIVsrMmC0LRImG+L2lftFlmVlvTqgdCkajRfHTpiJfiEQ7A7jNSiX7QITr2c4SViFZRkEHqdjKaz3shsfDxtpF9kwIFzIlYzxrHFbP83xu0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753218342; c=relaxed/simple;
-	bh=ydvx5NU4z9Jw6G8c2IMmv+IUBO2ptrL6FEtdDrsqWM4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gF7yEDTloBmOOx+HY1i3VltqfZlSI7mYN6ddY4s0FtUsUmD1YqeF9Sxq8J3elpxdHzDMaiKFceybdIczIz3AQqmQEx215NlWPXo0IXS9JPROC3uC9LrahPEtMO2CLgkk9/h+Dpagzv5IC7rWCQjvb5FH+YrUO0bRuZ1pGPRyVik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Inhn0cIH; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56MKTuml015638
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 21:05:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0355SZkFbrW4clUa8O8bfxTWToKcdMQi7Sj9d0UwLZs=; b=Inhn0cIHMZRRlzL7
-	bg+q0pzZBRRLjjBpEcaBW3ohg5fF33XXvQXIm1imaeRIvhPE6+LZizPx901aOTSu
-	axaEaoZjfOPT3gnQuWqLScMQT0lMUpRijQQ7zG2G+lCUI8ru7ymvsiFuCr1DW9m9
-	bFbISlAgrw6f1uDgzRAbkHao0vJOhWqD1Qaa0u+Wd4c4whUZAFmJKhKtO9h24+Au
-	YDwj+syxHybXZ6OvAeI/ppyzGv0U3xcpLLJjMRyMT/xznmPKfkdTQ73R1qH9lsde
-	/z21AASY06JAmceQay5N4TkowXx8Pb7UktzP9Ku8JpzPVTn4QCQ4416JelHOB/Wq
-	R6TGpw==
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48045w177b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 21:05:37 +0000 (GMT)
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b3f33295703so5342885a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 14:05:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753218337; x=1753823137;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0355SZkFbrW4clUa8O8bfxTWToKcdMQi7Sj9d0UwLZs=;
-        b=mnYK3kum2JAwIJ1V9Mp6t0a9IyP9efF27DtJ6n8ed9QwlYMyGl1tph6vXuzM438H6w
-         9QUshafzr6/hUq6wa2lmwIdYjvQ9trs8MHjLHON5CkzAdxWDvK9Tg25/rwDy0MBz8oKn
-         y4/2HIBItN3hwIbhELmQgLfelzOMoK2AS4OA2CHG24MXiXzovhchx7yIVwLVsGlAL9cA
-         7QDdGACt5dV43v3cr/jcCCiU4AX3jch9qeJDMO2ci8qFTGbEZT7tJsSZAbaz4hMZtlsc
-         s8dD9JMnrMn+YqCfF/IKsHlbczKLOwOQOpJYAhEKYdLKtfthFBz9aZntlXSeP88uKtPO
-         tNpg==
-X-Forwarded-Encrypted: i=1; AJvYcCWj8pZemim9C+QPpF4lKrL2JYKZDjJZZZbc+f3L7AmSbzzOSXyxewC0aMl6pG7XgX16Mh9dlYnZ8fiwbrI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxScs6yr4WBAFhmZY/HbkgRZQuETYQQMAEZQ8Zu7B2up6FFur48
-	BsanCrnR9t/R+GpKbTnNY0qdk9q2J9LnQOPitOaGEb3ad4HGaspD9ig+re3WkqmNPFq9m2R2dyq
-	IuEYyVRb8X74EVUgTw9QRoNiWel503DzWmKHq9ggOZOQpjWQwJL6uyBpCXBfuktdZ1+w=
-X-Gm-Gg: ASbGncvORIIDQXCKmAxAO+BGFgA7Eed/Nh115E0R15muovNyM88PIilN+HKsVsctfIc
-	eqiJ+PIEkqK/LpvN4ju39bYBI0uIouVkklmAfbnRLXWICzkLZqN2WEbjxLXE08Bh+6RGnyDegUX
-	Wgtuc8eZS9PxMmxo3MdopWoGT22mypWyVtYxFmFu7HlD81RO4K5ImqcNlZXcEx2DMbNr3qXJOF3
-	Xqk7xwY6rKaPvMtlgxQqS4rboig7p1LA6mB7p8JBAmfdewd7lVYxYka81+bpjKFxQG7yDFgjqLF
-	OxMDlIaN6BjFlKhh4ku1rBq75ZS0oLfuAT+4s909cdCo0qXRUNruxeOMUtONUbG3
-X-Received: by 2002:a05:6a20:4324:b0:1f5:8eec:e517 with SMTP id adf61e73a8af0-23d48fb2511mr523023637.9.1753218337003;
-        Tue, 22 Jul 2025 14:05:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH1BjhTkdCWRXxjTiz3Zh9W88aQWhh4MT8oN3QDovcTtPwknTU/tKfCx8XWQk2PaJJlB2Ehhg==
-X-Received: by 2002:a05:6a20:4324:b0:1f5:8eec:e517 with SMTP id adf61e73a8af0-23d48fb2511mr522956637.9.1753218336447;
-        Tue, 22 Jul 2025 14:05:36 -0700 (PDT)
-Received: from [192.168.1.4] ([106.222.235.133])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759c8eb0e98sm8313876b3a.66.2025.07.22.14.05.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Jul 2025 14:05:36 -0700 (PDT)
-Message-ID: <f1070069-7220-4351-845a-2929d1e65a71@oss.qualcomm.com>
-Date: Wed, 23 Jul 2025 02:35:31 +0530
+	s=arc-20240116; t=1753218497; c=relaxed/simple;
+	bh=0QiBRgGwvjCuCX8kb0kVm0xQWdttx6I/T7Itq+8XYgA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=d26yFifyED2Ppopc2vudX/K5uhNa0jNaIy/lWNspApR5t8lCrEa1FHuDC8/UH4bFY+MKLWIREap4V7inwVFrQ9XToZoOXhFNW1Xl3qr1rWNr8xMO8DNSKpNQ/U4bV1bB/xtl227V65L7rujjrw8cwvwz4rD+gcZNOhNd2u7FF/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf18.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay06.hostedemail.com (Postfix) with ESMTP id 6B0C8112D11;
+	Tue, 22 Jul 2025 21:08:11 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf18.hostedemail.com (Postfix) with ESMTPA id B58E731;
+	Tue, 22 Jul 2025 21:08:07 +0000 (UTC)
+Date: Tue, 22 Jul 2025 17:08:06 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>, "linux-trace-users@vger.kernel.org"
+ <linux-trace-users@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>,
+ Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Namhyung Kim <namhyung@kernel.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Al Viro
+ <viro@ZenIV.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
+ <jack@suse.cz>, Arnaldo Carvalho de Melo <acme@kernel.org>, Frederic
+ Weisbecker <fweisbec@gmail.com>, Jiri Olsa <jolsa@kernel.org>, Ian Rogers
+ <irogers@google.com>
+Subject: [RESEND][PATCH v3] tracing: Deprecate auto-mounting tracefs in
+ debugfs
+Message-ID: <20250722170806.40c068c6@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/17] drm/msm/a6xx: Fix PDC sleep sequence
-To: rob.clark@oss.qualcomm.com,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar
- <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250720-ifpc-support-v1-0-9347aa5bcbd6@oss.qualcomm.com>
- <20250720-ifpc-support-v1-5-9347aa5bcbd6@oss.qualcomm.com>
- <avni4utnzdmmafc2mf7aqgva3osbhuiqtia7gdngqswk5cmtn6@zo65ir7gyj6y>
- <CACSVV0346j2y-1Jkj=wasekYy5syax_E495AQZv0bvrrqwCSRw@mail.gmail.com>
-From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <CACSVV0346j2y-1Jkj=wasekYy5syax_E495AQZv0bvrrqwCSRw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=LL1mQIW9 c=1 sm=1 tr=0 ts=687ffd22 cx=c_pps
- a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=4dphQItTPUswyQvINXrzgA==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=q7gkdMK14rNBkceAJS4A:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=_Vgx9l1VpLgwpw_dHYaR:22
-X-Proofpoint-GUID: C52E8jOGGVVq6KS6uvo758MVZyNjtdxS
-X-Proofpoint-ORIG-GUID: C52E8jOGGVVq6KS6uvo758MVZyNjtdxS
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDE4MiBTYWx0ZWRfXxeehZQSyDKbn
- X+wZqsvKJTADYEciA7tuyaSGrgnR19GRujYha3LGSVGzR8HW+zbf9bkzLr97/4mZw9GTrVyrBl7
- uufqZZC1bqVpYTUFrulKa3odv+v8VcD/FCcPiG3JNZin8LC/kV5KbNJ666czw5Kary5l+mnN7qN
- XcOYiMxFQ04Mv5i30wSuwqY4NWRovMAdTzA0E7YukyJi9mhyz3qrNwLej88R7x2b53vhPCN8rom
- Lph5f1VBjgs0TzrIb2RZZBZo/JzYJtTbBpIBBoS2oKELO1/nOpVc/LSvO6BrBu6uP1SA6f6M7eg
- UfY2/jaEf4tA2pH/A1XJB5eByj7vu5RRtY+aaMjkN+Q4y/r5l9Z79P4KnzODaOPndcKOMg3nTze
- tl5Noe7Lcj6tLNXoAUItmLsUQoJkApZcF5dIRW6sODuSkVuXKRmmtA39Y4G7OkjgTCupMt95
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-22_03,2025-07-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 mlxlogscore=999 clxscore=1015 mlxscore=0 adultscore=0
- suspectscore=0 spamscore=0 malwarescore=0 impostorscore=0 bulkscore=0
- lowpriorityscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507220182
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: f5b1gffxfp433okad4njjbxpjxf88ub9
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: B58E731
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+0rDTvL5ctrPISeOmyVD1ODfdNFO0Mvw4=
+X-HE-Tag: 1753218487-586842
+X-HE-Meta: U2FsdGVkX18pxv3p7s3sTPJP1pPeiaLUvO/CmMUtfuD0IHQDMK9HG0cVd5GuMaNBMk4BQYlCkN0XiPt+zYhFxF+Xe26CAbOJEg1NINgvr5OlO/UBedyy8XzyuNOddg3D2wQka3jvWPGCOkMTkaowYaXdtjRcxsuTyKKea4CLs/4PkEIWNYncJSpmdMUeo7Y+OST7mRkx/hVn7SOLyC4vFVMxkMEtn9Gx344HrPVS4KNGsVVgiU+J0FVF16GuRR00FdmDBzIgu3yqndgHm3icSDng7RJq0FB+nVS97vCstdiQSMEsIEzwUufR8iu6TSqQrHWCprbnQ5sqW/QaQgd73FJSCRBq2EPK9mXH3GYK4Pnx3BFRIqINRXCBnHt3BSz8GJvuRq8A/eXdLBNB06PQPg==
 
-On 7/22/2025 10:56 PM, Rob Clark wrote:
-> On Tue, Jul 22, 2025 at 6:33 AM Dmitry Baryshkov
-> <dmitry.baryshkov@oss.qualcomm.com> wrote:
->>
->> On Sun, Jul 20, 2025 at 05:46:06PM +0530, Akhil P Oommen wrote:
->>> Since the PDC resides out of the GPU subsystem and cannot be reset in
->>> case it enters bad state, utmost care must be taken to trigger the PDC
->>> wake/sleep routines in the correct order.
->>>
->>> The PDC wake sequence can be exercised only after a PDC sleep sequence.
->>> Additionally, GMU firmware should initialize a few registers before the
->>> KMD can trigger a PDC sleep sequence. So PDC sleep can't be done if the
->>
->> s/KMD/the driver/
-> 
-> IMHO for gpu things "KMD" makes sense, to differentiate between kernel
-> and user mode (UMD).. this is perhaps different from other areas where
-> there isn't a userspace component to the driver stack
+From: Steven Rostedt <rostedt@goodmis.org>
 
-Ack
+In January 2015, tracefs was created to allow access to the tracing
+infrastructure without needing to compile in debugfs. When tracefs is
+configured, the directory /sys/kernel/tracing will exist and tooling is
+expected to use that path to access the tracing infrastructure.
 
-> 
-> BR,
-> -R
-> 
->>> GMU firmware has not initialized. Track these dependencies using a new
->>> status variable and trigger PDC sleep/wake sequences appropriately.
->>
->> Again, it looks like there should be a Fixes tag here.
+To allow backward compatibility, when debugfs is mounted, it would
+automount tracefs in its "tracing" directory so that tooling that had hard
+coded /sys/kernel/debug/tracing would still work.
 
-Ack. I guess it is not a bad idea to backport this one too.
+It has been over 10 years since the new interface was introduced, and all
+tooling should now be using it. Start the process of deprecating the old
+path so that it doesn't need to be maintained anymore.
 
->>
->>>
->>> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
->>> ---
->>>  drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 30 +++++++++++++++++++-----------
->>>  drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  6 ++++++
->>>  2 files changed, 25 insertions(+), 11 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
->>> index 3bebb6dd7059782ceca29f2efd2acee24d3fc930..4d6c70735e0892ed87d6a68d64f24bda844e5e16 100644
->>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
->>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
->>> @@ -279,6 +279,8 @@ static int a6xx_gmu_start(struct a6xx_gmu *gmu)
->>>       if (ret)
->>>               DRM_DEV_ERROR(gmu->dev, "GMU firmware initialization timed out\n");
->>>
->>> +     set_bit(GMU_STATUS_FW_START, &gmu->status);
->>> +
->>>       return ret;
->>>  }
->>>
->>> @@ -528,6 +530,9 @@ static int a6xx_rpmh_start(struct a6xx_gmu *gmu)
->>>       int ret;
->>>       u32 val;
->>>
->>> +     if (!test_and_clear_bit(GMU_STATUS_PDC_SLEEP, &gmu->status))
->>> +             return 0;
->>> +
->>>       gmu_write(gmu, REG_A6XX_GMU_RSCC_CONTROL_REQ, BIT(1));
->>>
->>>       ret = gmu_poll_timeout(gmu, REG_A6XX_GMU_RSCC_CONTROL_ACK, val,
->>> @@ -555,6 +560,11 @@ static void a6xx_rpmh_stop(struct a6xx_gmu *gmu)
->>>       int ret;
->>>       u32 val;
->>>
->>> +     if (test_and_clear_bit(GMU_STATUS_FW_START, &gmu->status))
->>> +             return;
->>> +
->>> +     /* TODO: should we skip if IFPC is not enabled */
->>
->> Is this a question or a statement?
+A new config is added to allow distributions to disable automounting of
+tracefs on debugfs.
 
-It was a reminder to myself which I forgot to revisit later. Will
-addresss this in the next revision.
+If /sys/kernel/debug/tracing is accessed, a pr_warn() will trigger stating:
 
--Akhil.
+"NOTICE: Automounting of tracing to debugfs is deprecated and will be removed in 2030"
 
->>
->>> +
->>>       gmu_write(gmu, REG_A6XX_GMU_RSCC_CONTROL_REQ, 1);
->>>
->>>       ret = gmu_poll_timeout_rscc(gmu, REG_A6XX_GPU_RSCC_RSC_STATUS0_DRV0,
->>> @@ -563,6 +573,8 @@ static void a6xx_rpmh_stop(struct a6xx_gmu *gmu)
->>>               DRM_DEV_ERROR(gmu->dev, "Unable to power off the GPU RSC\n");
->>>
->>>       gmu_write(gmu, REG_A6XX_GMU_RSCC_CONTROL_REQ, 0);
->>> +
->>> +     set_bit(GMU_STATUS_PDC_SLEEP, &gmu->status);
->>>  }
->>>
->>>  static inline void pdc_write(void __iomem *ptr, u32 offset, u32 value)
->>> @@ -691,8 +703,6 @@ static void a6xx_gmu_rpmh_init(struct a6xx_gmu *gmu)
->>>       /* ensure no writes happen before the uCode is fully written */
->>>       wmb();
->>>
->>> -     a6xx_rpmh_stop(gmu);
->>> -
->>>  err:
->>>       if (!IS_ERR_OR_NULL(pdcptr))
->>>               iounmap(pdcptr);
->>> @@ -852,19 +862,15 @@ static int a6xx_gmu_fw_start(struct a6xx_gmu *gmu, unsigned int state)
->>>       else
->>>               gmu_write(gmu, REG_A6XX_GMU_GENERAL_7, 1);
->>>
->>> -     if (state == GMU_WARM_BOOT) {
->>> -             ret = a6xx_rpmh_start(gmu);
->>> -             if (ret)
->>> -                     return ret;
->>> -     } else {
->>> +     ret = a6xx_rpmh_start(gmu);
->>> +     if (ret)
->>> +             return ret;
->>> +
->>> +     if (state == GMU_COLD_BOOT) {
->>>               if (WARN(!adreno_gpu->fw[ADRENO_FW_GMU],
->>>                       "GMU firmware is not loaded\n"))
->>>                       return -ENOENT;
->>>
->>> -             ret = a6xx_rpmh_start(gmu);
->>> -             if (ret)
->>> -                     return ret;
->>> -
->>>               ret = a6xx_gmu_fw_load(gmu);
->>>               if (ret)
->>>                       return ret;
->>> @@ -1046,6 +1052,8 @@ static void a6xx_gmu_force_off(struct a6xx_gmu *gmu)
->>>
->>>       /* Reset GPU core blocks */
->>>       a6xx_gpu_sw_reset(gpu, true);
->>> +
->>> +     a6xx_rpmh_stop(gmu);
->>>  }
->>>
->>>  static void a6xx_gmu_set_initial_freq(struct msm_gpu *gpu, struct a6xx_gmu *gmu)
->>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
->>> index b2d4489b40249b1916ab4a42c89e3f4bdc5c4af9..034f1b4e5a3fb9cd601bfbe6d06d64e5ace3b6e7 100644
->>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
->>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
->>> @@ -117,6 +117,12 @@ struct a6xx_gmu {
->>>
->>>       struct qmp *qmp;
->>>       struct a6xx_hfi_msg_bw_table *bw_table;
->>> +
->>> +/* To check if we can trigger sleep seq at PDC. Cleared in a6xx_rpmh_stop() */
->>> +#define GMU_STATUS_FW_START  0
->>> +/* To track if PDC sleep seq was done */
->>> +#define GMU_STATUS_PDC_SLEEP 1
->>> +     unsigned long status;
->>>  };
->>>
->>>  static inline u32 gmu_read(struct a6xx_gmu *gmu, u32 offset)
->>>
->>> --
->>> 2.50.1
->>>
->>
->> --
->> With best wishes
->> Dmitry
+Expect to remove this feature in 5 years (2030).
+
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+
+[ RESEND due to using old address for Jiri Olsa that was on my laptop ]
+
+Changes since v2: https://lore.kernel.org/20250617162625.1d44862b@gandalf.local.home
+
+- Change the time to remove it from 2 to 5 years, as that should
+  hopefully be plenty enough.
+
+
+ .../ABI/obsolete/automount-tracefs-debugfs    | 20 +++++++++++++++++++
+ kernel/trace/Kconfig                          | 13 ++++++++++++
+ kernel/trace/trace.c                          | 14 +++++++++----
+ 3 files changed, 43 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/ABI/obsolete/automount-tracefs-debugfs
+
+diff --git a/Documentation/ABI/obsolete/automount-tracefs-debugfs b/Documentation/ABI/obsolete/automount-tracefs-debugfs
+new file mode 100644
+index 000000000000..8d03cf9e579f
+--- /dev/null
++++ b/Documentation/ABI/obsolete/automount-tracefs-debugfs
+@@ -0,0 +1,20 @@
++What:		/sys/kernel/debug/tracing
++Date:		May 2008
++KernelVersion:	2.6.27
++Contact:	linux-trace-kernel@vger.kernel.org
++Description:
++
++	The ftrace was first added to the kernel, its interface was placed
++	into the debugfs file system under the "tracing" directory. Access
++	to the files were in /sys/kernel/debug/tracing. As systems wanted
++	access to the tracing interface without having to enable debugfs, a
++	new interface was created called "tracefs". This was a stand alone
++	file system and was usually mounted in /sys/kernel/tracing.
++
++	To allow older tooling to continue to operate, when mounting
++	debugfs, the tracefs file system would automatically get mounted in
++	the "tracing" directory of debugfs. The tracefs interface was added
++	in January 2015 in the v4.1 kernel.
++
++	All tooling should now be using tracefs directly and the "tracing"
++	directory in debugfs should be removed by January 2030.
+diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
+index c2ce834313a9..a3ae11beafb2 100644
+--- a/kernel/trace/Kconfig
++++ b/kernel/trace/Kconfig
+@@ -194,6 +194,19 @@ menuconfig FTRACE
+ 
+ if FTRACE
+ 
++config TRACEFS_AUTOMOUNT_DEPRECATED
++	bool "Automount tracefs on debugfs [DEPRECATED]"
++	depends on TRACING
++	default y
++	help
++	  The tracing interface was moved from /sys/kernel/debug/tracing
++	  to /sys/kernel/tracing in 2015, but the tracing file system
++	  was still automounted in /sys/kernel/debug for backward
++	  compatibility with tooling.
++
++	  The new interface has been around for more than 10 years and
++	  the old debug mount will soon be removed.
++
+ config BOOTTIME_TRACING
+ 	bool "Boot-time Tracing support"
+ 	depends on TRACING
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 95ae7c4e5835..2dafe2748b16 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -6303,7 +6303,7 @@ static bool tracer_options_updated;
+ static void add_tracer_options(struct trace_array *tr, struct tracer *t)
+ {
+ 	/* Only enable if the directory has been created already. */
+-	if (!tr->dir)
++	if (!tr->dir && !(tr->flags & TRACE_ARRAY_FL_GLOBAL))
+ 		return;
+ 
+ 	/* Only create trace option files after update_tracer_options finish */
+@@ -8984,13 +8984,13 @@ static inline __init int register_snapshot_cmd(void) { return 0; }
+ 
+ static struct dentry *tracing_get_dentry(struct trace_array *tr)
+ {
+-	if (WARN_ON(!tr->dir))
+-		return ERR_PTR(-ENODEV);
+-
+ 	/* Top directory uses NULL as the parent */
+ 	if (tr->flags & TRACE_ARRAY_FL_GLOBAL)
+ 		return NULL;
+ 
++	if (WARN_ON(!tr->dir))
++		return ERR_PTR(-ENODEV);
++
+ 	/* All sub buffers have a descriptor */
+ 	return tr->dir;
+ }
+@@ -10256,6 +10256,7 @@ init_tracer_tracefs(struct trace_array *tr, struct dentry *d_tracer)
+ 	ftrace_init_tracefs(tr, d_tracer);
+ }
+ 
++#ifdef CONFIG_TRACEFS_AUTOMOUNT_DEPRECATED
+ static struct vfsmount *trace_automount(struct dentry *mntpt, void *ingore)
+ {
+ 	struct vfsmount *mnt;
+@@ -10277,6 +10278,8 @@ static struct vfsmount *trace_automount(struct dentry *mntpt, void *ingore)
+ 	if (IS_ERR(fc))
+ 		return ERR_CAST(fc);
+ 
++	pr_warn("NOTICE: Automounting of tracing to debugfs is deprecated and will be removed in 2030\n");
++
+ 	ret = vfs_parse_fs_string(fc, "source",
+ 				  "tracefs", strlen("tracefs"));
+ 	if (!ret)
+@@ -10287,6 +10290,7 @@ static struct vfsmount *trace_automount(struct dentry *mntpt, void *ingore)
+ 	put_fs_context(fc);
+ 	return mnt;
+ }
++#endif
+ 
+ /**
+  * tracing_init_dentry - initialize top level trace array
+@@ -10311,6 +10315,7 @@ int tracing_init_dentry(void)
+ 	if (WARN_ON(!tracefs_initialized()))
+ 		return -ENODEV;
+ 
++#ifdef CONFIG_TRACEFS_AUTOMOUNT_DEPRECATED
+ 	/*
+ 	 * As there may still be users that expect the tracing
+ 	 * files to exist in debugfs/tracing, we must automount
+@@ -10319,6 +10324,7 @@ int tracing_init_dentry(void)
+ 	 */
+ 	tr->dir = debugfs_create_automount("tracing", NULL,
+ 					   trace_automount, NULL);
++#endif
+ 
+ 	return 0;
+ }
+-- 
+2.47.2
 
 
