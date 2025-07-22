@@ -1,129 +1,162 @@
-Return-Path: <linux-kernel+bounces-741237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 934FFB0E1E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:28:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 393A5B0E1E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:30:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2845D1C864F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:28:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 949047B6800
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937CE27B4FB;
-	Tue, 22 Jul 2025 16:28:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB9827BF6C;
+	Tue, 22 Jul 2025 16:30:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="N8vHy8OQ"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bBgpmfqF"
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CCF27978C
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 16:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3D42652AC
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 16:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753201709; cv=none; b=TRZ520jl0HJ0UeTEHCNlynTleXfj8LZZMFVKx9+YSuNhk577kPUxc6WaSyv9WTkHPQ/7SfUedZ3V3O8sPWIafAUXJbHS1eYHzX6zy8iEqdWNxp0bN9d0Wx8dRCGq11NPZAJ4d9p3aNU9b2RSQfEOFPoLAtvdlFnTGNq43pniTx4=
+	t=1753201804; cv=none; b=Hh+yEb4rfNy/8o0wq3qtPIUbjDQUyhTvH4/Sw4ykIX7V67XerFtlhLle8kyBJtsFRbgmPrRPmUDejHU24CWzBxODjvfOdZOBAfP3fvcIe+PpceGE8bESI34MBf12s9B4kw4RIzqk3J6fWsDJ3NZ/XNsNABn47rpJ9dLl4pNpPwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753201709; c=relaxed/simple;
-	bh=2ngJ2kRGxmj//2+PG4hWPab7EQBzvrPtsys183PFZbo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RaMQaVdU2XzTJdibQ4kj6RTtW826gNM7jKms7H5IhtDQFG6VQZzClNoDPsiqmTMrhQbUzlZ7lmT4FEU6GEzHMmJh8SkHjrqus/BZeo0nCMBa5GJ8/yGXonZOw3OLf2m/Fl3P8XmXUtXVkJGtUintYdBwyZbIB6nY0z70lVbqzeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=N8vHy8OQ; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4ab380b8851so49274131cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 09:28:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753201706; x=1753806506; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9sCVh46Bww8YRXEQZffVRJrwKL4AozPZ8WZKTowec4g=;
-        b=N8vHy8OQ9bsblLRAzmvynCHnw0vLIt+CFVyvhvdlDniFHfYd9TxvQgfU+p6upH4gjn
-         YltGolAWxmtkvHQ3aB0TnmkKd4kMsngQt5aeBtoP1O3OOwoDQoA/Y8ZxOxHN0PKdbeca
-         ApQGypgC5Nda5ihtdsoN9fMA0sPazRrDIBc53j7bZkX8qawu6cwSNT//qoFOmKlnqYsE
-         U4yBhKrCXtIfNkEnV2mQ7BHs1H1+rMV1ZKFdrqSJgS2+hLO9snm2V/HT00gZi9/6zadF
-         Fjuv9ZQe41MEEEZWQjVHphlgbppl4G55cKzn4ruNpm8HSCNX4Vj4XqDNwxeWnazvMS4b
-         mOiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753201706; x=1753806506;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9sCVh46Bww8YRXEQZffVRJrwKL4AozPZ8WZKTowec4g=;
-        b=wZisCg+MOkUUiDKiU9eDJobO31SO6OTQljMtWlPbHmIwg6kcLfnUlxUINbw2C+K4XV
-         EHoBQ+/Q/BU2THoFoX6zXkRAHGZabRSIGQMT9p+p1RwvAGG9NVyy7DshH7MRligNok5J
-         8AMI0oP75Wx+ZOPJa+QOgt645tTlRdzsEnugty+uo1QEu5yQ1idukHILZ9m3Jjq0kGIr
-         w4bvtDWe9DcDUe2sIOhijExnBGK184SvAJXcN2toANl0JjUPDnx2Wjqi2KkJb800c34x
-         TuC478/6QtOwaNVBNRPv2X6J9/l21e8UtU8/Do8GC1ysmGLCrXhUf4lvLEdbogEesQ+6
-         YCbw==
-X-Forwarded-Encrypted: i=1; AJvYcCUtK68/D0I19KHCv16DdFHloCFjDZMNzGQWQelaN1jM13iy+7qZ2ngw1pT36mcAJW1J1dJqosSs93Ax9y8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyu4Zu9jI0Fc/ZXZZkWH+TC39Gp0j8XXQW+L9DIX5lzFZBTrYAC
-	cJuHGjnXavZfWRtKRFZuD9JLkw3BtgZj5J/E3UQzIuGsyUlcCAXZr391nV//UrFoGHpFkhhqWpp
-	oG+X7K2fl3eXIz1wTWdBKvktV4UW+bcqtHae5rTb0
-X-Gm-Gg: ASbGnct+uiTMUP1H9XqtVuG04EdmtqqG5JFykPf8Dr9VAQhq5HCJIvFOj9+IqyapyIi
-	bmqzMFMS5XBLabt82NtGIRFwgkgxBRTrlYHk8bf/OzIofOWAhi2Mjy9bP72CbK0J9unh9fgRcmp
-	pXegHFe4EiR9VwvsnGs2wI7UmJr8viljCwsmHL3RPR9QwJDpZ/qVq6r5Y5Gf7hvbbTnPAEBVGB6
-	Q8wGka0gdOSYiO3
-X-Google-Smtp-Source: AGHT+IGKZynev0wRanI4s1eGTM+ft5BRNAdPwJV6J2EKTZZT9RumWxttQkZsc++d0yfo5VetxU5YpsYhHadXnkW1sEs=
-X-Received: by 2002:a05:622a:15c1:b0:4ab:6e68:117d with SMTP id
- d75a77b69052e-4ab93d4837amr332784471cf.24.1753201705864; Tue, 22 Jul 2025
- 09:28:25 -0700 (PDT)
+	s=arc-20240116; t=1753201804; c=relaxed/simple;
+	bh=AsQvfMdiK8W8NFN90GSwW6ec0JqJcr6L/UUrJiXti/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y4T1NOCYtwCEvsWk+yl7x4HUxiOOdE8qKD9JW/G387ATx1Bg9zNINCeGErw92D9BCn0lE1RHJuG55tomGmUyHDphjylN4wMnUqPYIY+FNX1ECMtm06mWG/gzERXCdb8K28oLNU5V91cbh6/Tb6yd2or8EnP6y4vdkQmYw09UNaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bBgpmfqF; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 22 Jul 2025 12:29:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753201799;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lPK6JrqfYtm3z9mCpw0FeYHI7qE2MbHiCCmZEkPxiSM=;
+	b=bBgpmfqFy50cyG8WqIfqp7eGnTvggVuaYx9Ns5zjMXguNkLVj/7XoAQE89jc/pmLHWFQ3M
+	CCNULdQ6uYYd/obxPq+Vufy9FlCp3EnZfbpdpdTGFJfrloW+osNQA8Mr0hftFiIiIsMNDd
+	r326Df0jhBjCPWJdgkErT3p8mGUJQkU=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: syzbot <syzbot+e99c7092c361b53acda2@syzkaller.appspotmail.com>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bcachefs?] WARNING in bch2_verify_accounting_clean
+Message-ID: <jv7oulzafj2lzcp7un5h7n46xg7gt7dvkvaz6vyos3jkfxhomu@jvowpwx7nzac>
+References: <67a79f76.050a0220.110943.000e.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250722071508.12497-1-suchitkarunakaran@gmail.com>
- <CANn89iJgG3yRQv+a04wzUtgqorSOM3DOFvGV2mgFV8QTVFjYxg@mail.gmail.com> <CAO9wTFgzNfPKBOY5XanjnUeE9FfAGovg02ZU6Q1TH-EnA52LAA@mail.gmail.com>
-In-Reply-To: <CAO9wTFgzNfPKBOY5XanjnUeE9FfAGovg02ZU6Q1TH-EnA52LAA@mail.gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 22 Jul 2025 09:28:14 -0700
-X-Gm-Features: Ac12FXy4knn3eMDleOqMY1e7I4kseMX2vfET1LKRx4dKWQ_shE1ef1-YvpuilDg
-Message-ID: <CANn89i+dif2qjKM6oO1o=BKutXoO6w9kWnnPfc50BDBJ7VpAeQ@mail.gmail.com>
-Subject: Re: [PATCH] net: Revert tx queue length on partial failure in dev_qdisc_change_tx_queue_len()
-To: Suchit K <suchitkarunakaran@gmail.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
-	jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us, sdf@fomichev.me, 
-	kuniyu@google.com, aleksander.lobakin@intel.com, netdev@vger.kernel.org, 
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67a79f76.050a0220.110943.000e.GAE@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Jul 22, 2025 at 9:22=E2=80=AFAM Suchit K <suchitkarunakaran@gmail.c=
-om> wrote:
->
-> >
-> > WRITE_ONCE() is missing.
->
-> Oops, I'm sorry about that.
->
-> >
-> > > +               while (i >=3D 0) {
-> > > +                       qdisc_change_tx_queue_len(dev, &dev->_tx[i]);
-> >
-> > What happens if one of these calls fails ?
-> >
-> > I think a fix will be more complicated...
->
-> I did consider that, but since I didn=E2=80=99t have a solution, I assume=
-d it
-> wouldn=E2=80=99t fail.
+On Sat, Feb 08, 2025 at 10:16:22AM -0800, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    7ee983c850b4 Merge tag 'drm-fixes-2025-02-08' of https://g..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=11f75ca4580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=147b7d49d83b8036
+> dashboard link: https://syzkaller.appspot.com/bug?extid=e99c7092c361b53acda2
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/54ead761f64f/disk-7ee983c8.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/95e57de2a045/vmlinux-7ee983c8.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/d24a612a8ac7/bzImage-7ee983c8.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+e99c7092c361b53acda2@syzkaller.appspotmail.com
+> 
+> bcachefs (loop3): flushing journal and stopping allocators, journal seq 9
+> bcachefs (loop3): flushing journal and stopping allocators complete, journal seq 9
+> bcachefs (loop3): clean shutdown complete, journal seq 10
+> bcachefs: bch2_verify_accounting_clean() fs_usage_base.nr_inodes mismatch: 0 != 1
+> ------------[ cut here ]------------
+> WARNING: CPU: 1 PID: 5823 at fs/bcachefs/disk_accounting.c:993 bch2_verify_accounting_clean+0x2917/0x2ad0 fs/bcachefs/disk_accounting.c:993
+> Modules linked in:
+> CPU: 1 UID: 0 PID: 5823 Comm: syz-executor Not tainted 6.14.0-rc1-syzkaller-00181-g7ee983c850b4 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
+> RIP: 0010:bch2_verify_accounting_clean+0x2917/0x2ad0 fs/bcachefs/disk_accounting.c:993
+> Code: e9 8f fe ff ff e8 09 6b 6d fd 48 c7 c7 a0 6c 52 8c 48 c7 c6 21 c9 12 8e 48 c7 c2 80 6d 52 8c 31 c9 4d 89 e0 e8 3a 0d d5 fc 90 <0f> 0b 90 e9 93 fe ff ff e8 dc 6a 6d fd e9 63 fb ff ff e8 d2 6a 6d
+> RSP: 0018:ffffc9000413f5e0 EFLAGS: 00010246
+> RAX: 0000000000000051 RBX: 0000000000000000 RCX: 193b5623fccba700
+> RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+> RBP: ffffc9000413fa30 R08: ffffffff819f140c R09: fffffbfff1cfa588
+> R10: dffffc0000000000 R11: fffffbfff1cfa588 R12: 0000000000000001
+> R13: 0000000000000000 R14: 0000000000000000 R15: fffff52000827eec
+> FS:  000055557e55e500(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f8ed0a00000 CR3: 000000005ee48000 CR4: 00000000003526f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  bch2_fs_read_only+0x1150/0x12a0 fs/bcachefs/super.c:379
+>  __bch2_fs_stop+0x105/0x5c0 fs/bcachefs/super.c:634
+>  generic_shutdown_super+0x139/0x2d0 fs/super.c:642
+>  bch2_kill_sb+0x41/0x50 fs/bcachefs/fs.c:2312
+>  deactivate_locked_super+0xc4/0x130 fs/super.c:473
+>  cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1413
+>  task_work_run+0x24f/0x310 kernel/task_work.c:227
+>  resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+>  exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+>  exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+>  __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+>  syscall_exit_to_user_mode+0x13f/0x340 kernel/entry/common.c:218
+>  do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f049258e117
+> Code: a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 a8 ff ff ff f7 d8 64 89 02 b8
+> RSP: 002b:00007ffee7626798 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+> RAX: 0000000000000000 RBX: 00007f049260e08c RCX: 00007f049258e117
+> RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffee7626850
+> RBP: 00007ffee7626850 R08: 0000000000000000 R09: 0000000000000000
+> R10: 00000000ffffffff R11: 0000000000000246 R12: 00007ffee76278e0
+> R13: 00007f049260e08c R14: 0000000000010591 R15: 00007ffee7627920
+>  </TASK>
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 
-But this definitely could fail. Exactly the same way than the first time.
+There were a few recent fixes for accounting updates prior to going
+read-write - these were discovered as part of the 'bcachefs image
+update' work, which is adding a new device before bch2_fs_start().
 
-I also have a question. In the Qdisc_ops structure,
-> there=E2=80=99s a function pointer for change_tx_queue_len, but I was onl=
-y
-> able to find a single implementation which is
-> pfifo_fast_change_tx_queue_len. Is that the only one? Apologies if
-> this isn=E2=80=99t the right place to ask such questions. I=E2=80=99d rea=
-lly
-> appreciate any feedback. Thank you!
+So the last of the "in-mem accounting going out of sync with the btree"
+bugs should be fixed.
 
-I think only pfifo_fast has to re-allocate its data structures.
-
-Other qdiscs eventually dynamically read dev->tx_queue_len (thus the
-WRITE_ONCE() I mentioned to you)
+#syz fix: bcachefs: do_bch2_trans_commit_to_journal_replay handles accounting
 
