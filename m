@@ -1,131 +1,105 @@
-Return-Path: <linux-kernel+bounces-741110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DB47B0E023
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:15:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4034AB0E038
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:18:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C87593B8276
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:12:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 734F418834F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FFF32EAB6A;
-	Tue, 22 Jul 2025 15:13:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF3C1239E8A;
+	Tue, 22 Jul 2025 15:15:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d8Dc+MrA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Cyb+difb"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83EA0273815
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 15:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 793DE23AB8F;
+	Tue, 22 Jul 2025 15:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753197186; cv=none; b=ESGh1JK15CQGuMJNu2tIQMmjiNL7FK8ZQysxA008uD1jdV9qct0OmIgPjkZRVaIjY0CmHTqdW5MD8D8GaCZ6nC/F4ZRc643RuQjAZQYXl7vfTb6KHvqzGg0sb73DI+FjNDKtADEKc//eigyMiXGm9iDTUpR4FfH0WUb0/9x61LM=
+	t=1753197353; cv=none; b=Iy2yYWS3kKKleYE287YK1UeTdlMGDEzfk3J6s9VcPYqSpUc1H+EdW3h4WUqJiTxrEwvKvlfbw1jEukO+TtkAmNBC/fmXUUiMOKH2PiKL3rNEnYsxzlqcSWrbiqM96SbqUxDsrtU+Pv9+cv/seYbo0Zt8U2+a5C+QlQXqjFCC4EA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753197186; c=relaxed/simple;
-	bh=jWRuxfsCH5trOeU3YbGYfVITvNEnt57i+X2yCHxLeqE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dHOWhuz4GYvcqFfHJjHw6lKZZYAQU+nDW9VLF+EMGyuFg8n0UQsFXm8b0WHKa3JIgpvpJcTIOSHwqtzJRv1aO2cFNA6c2jkFnlAeBGpBu8WZr4EytH/2bbPhIdLnETGt9quc6x1ZI9/iP3QbUSyr7jDi3aShW7GWCAZgwO9tPEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d8Dc+MrA; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753197183;
+	s=arc-20240116; t=1753197353; c=relaxed/simple;
+	bh=1Sg74Q4pmuIxKFb45pFmDzFgYvD2TpGqT1mRFZ92sqM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ViX0hDi9h/svJ9UXon5HMKUn4RVT7nykgU06VV5wcoYl5WuKSqnm0glQjZqIA/ONWFIfuNVMlcGBmdypRwwbJRHUK6F2q0+KQHSfBLXcTUZX7mnZBA0sseoB3zYcN7ybfCx3xRoJLWMCosIuUu1aPXDN5/5TcUXv/nyJgqrb5A8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Cyb+difb; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CB903438CA;
+	Tue, 22 Jul 2025 15:15:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1753197348;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zsT9YUfB4TQbSuR6h8dYsaFfEiXDrUH9Zy2B0wO6l0k=;
-	b=d8Dc+MrAF5lLifeqt1FVShQgrILUg7Xiu2Uc7GwNCKGuARehGdP0GEmJ2oFJhFX1yAffVN
-	ABik7sbYsfcxVyg5QVXmSPil3pSktwtw971+TR22JMnV12NGnZDnaMOezEmyTkf3bGZlp0
-	OKmTzErez5x8wJ76cptudWPbXfSYGHc=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-278-E16bIlZ0NUGhZBPTRnytqA-1; Tue,
- 22 Jul 2025 11:13:00 -0400
-X-MC-Unique: E16bIlZ0NUGhZBPTRnytqA-1
-X-Mimecast-MFC-AGG-ID: E16bIlZ0NUGhZBPTRnytqA_1753197179
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 515A319541A7;
-	Tue, 22 Jul 2025 15:12:58 +0000 (UTC)
-Received: from [192.168.37.1] (unknown [10.22.76.8])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B0BE618016F9;
-	Tue, 22 Jul 2025 15:12:50 +0000 (UTC)
-From: Benjamin Coddington <bcodding@redhat.com>
-To: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- Laurence Oberman <loberman@redhat.com>, Jeff Layton <jlayton@kernel.org>,
- Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v3] NFS: Fixup allocation flags for nfsiod's __GFP_NORETRY
-Date: Tue, 22 Jul 2025 11:12:48 -0400
-Message-ID: <315CF087-770E-464A-A4D5-70FA658357BA@redhat.com>
-In-Reply-To: <f83ac1155a4bc670f2663959a7a068571e06afd9.1752111622.git.bcodding@redhat.com>
-References: <f83ac1155a4bc670f2663959a7a068571e06afd9.1752111622.git.bcodding@redhat.com>
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=JoXwtxCcaF7qyRR1rprGAYD5Yhzf/5ulPNtGR6S7Rqg=;
+	b=Cyb+difbG37Qat5MG7CP41QiN/5NsBJOiulZF8oDfd8N74myQQMM0dy0YiM2DIJfKWLv1H
+	hzJ71BNsEA8QKZ7XIh5U/HzIBKts3LesKgS3jMoD4efyPRqOy7H7E2n9xtwpuR7idTldXY
+	Z6UVMwqLKAadB/NO9x5Ok3AxE0eGYhsQwjDaYgA1VqcqV65RQrtWWDPvS4x7vRlSGqfXUD
+	qLZM2YP85CsoYZfgg21ZzYbu9uB/UlkDAP6wi8H3amj/8+P04LLU8SmVV6pVBj4DKJ4Cse
+	CdxUCjVGIpK64/cwvt3LlhMXNj+qTPEluWfjjZld/L9dXIY2uPmeog8fhc/wog==
+From: =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>
+Subject: [PATCH 0/2] MIPS: mobileye: dts: rename the emmc controller
+Date: Tue, 22 Jul 2025 17:15:19 +0200
+Message-Id: <20250722-mmc_dts_warnings-v1-0-8a8a1594dfd2@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAAerf2gC/x3MwQpAQBCA4VfRnG2tYSOvImlagzlY2hFK3t3m+
+ B3+/wHlKKzQZg9EPkVlCwlFnoFfKMxsZEwGtOhsjWjW1Q/jocNFMUiY1RA7X1nCkhoHKdsjT3L
+ /y65/3w/AzAPHYgAAAA==
+X-Change-ID: 20250722-mmc_dts_warnings-ae5c40a23a85
+To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ Gregory CLEMENT <gregory.clement@bootlin.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>, 
+ kernel test robot <lkp@intel.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejhedvfecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffufffkgggtgffvvefosehtkeertdertdejnecuhfhrohhmpeeuvghnohpfthcuofhonhhinhcuoegsvghnohhithdrmhhonhhinhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveejueelgfdtfeelfeehkefgffdtudehueejtdefveehkeelfeejvdevffegleffnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemudehfeejmehffeehmeelfeeiugemvgelvdehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeduheefjeemfhefheemleefiegumegvledvhedphhgvlhhopegludelvddrudeikedruddtrddujedvngdpmhgrihhlfhhrohhmpegsvghnohhithdrmhhonhhinhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudegpdhrtghpthhtohepuggvvhhitggvthhrvggvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrn
+ hgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehtrgiffhhikhdrsggrhihouhhksehmohgsihhlvgihvgdrtghomhdprhgtphhtthhopehlihhnuhigqdhmihhpshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopehtshgsohhgvghnugesrghlphhhrgdrfhhrrghnkhgvnhdruggv
+X-GND-Sasl: benoit.monin@bootlin.com
 
-Gentle ping on this one - let me know if anyone has further review or
-critique.
+I somehow missed running dtbs_check with W=1 but the kernel test robot
+did...
 
-Ben
+This patchset change the name of the SDHCI controller to match the
+expected pattern from the mmc-controller binding in the eyeQ5 and eyeQ6H
+device trees.
 
-On 9 Jul 2025, at 21:47, Benjamin Coddington wrote:
+Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
+---
+Benoît Monin (2):
+      MIPS: mobileye: dts: eyeq5: rename the emmc controller
+      MIPS: mobileye: dts: eyeq6h: rename the emmc controller
 
-> If the NFS client is doing writeback from a workqueue context, avoid using
-> __GFP_NORETRY for allocations if the task has set PF_MEMALLOC_NOIO or
-> PF_MEMALLOC_NOFS.  The combination of these flags makes memory allocation
-> failures much more likely.
->
-> We've seen those allocation failures show up when the loopback driver is
-> doing writeback from a workqueue to a file on NFS, where memory allocation
-> failure results in errors or corruption within the loopback device's
-> filesystem.
->
-> Suggested-by: Trond Myklebust <trondmy@kernel.org>
-> Fixes: 0bae835b63c5 ("NFS: Avoid writeback threads getting stuck in mempool_alloc()")
-> Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
-> Reviewed-by: Laurence Oberman <loberman@redhat.com>
-> Tested-by: Laurence Oberman <loberman@redhat.com>
-> Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> ---
->
-> 	On V3: fix ugly return (Thanks Paulo), add Jeff's R-b
-> 	On V2: add missing 'Fixes' and Laurence's R-b T-b
->
->  fs/nfs/internal.h | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
-> index 69c2c10ee658..d8f768254f16 100644
-> --- a/fs/nfs/internal.h
-> +++ b/fs/nfs/internal.h
-> @@ -671,9 +671,12 @@ nfs_write_match_verf(const struct nfs_writeverf *verf,
->
->  static inline gfp_t nfs_io_gfp_mask(void)
->  {
-> -	if (current->flags & PF_WQ_WORKER)
-> -		return GFP_KERNEL | __GFP_NORETRY | __GFP_NOWARN;
-> -	return GFP_KERNEL;
-> +	gfp_t ret = current_gfp_context(GFP_KERNEL);
-> +
-> +	/* For workers __GFP_NORETRY only with __GFP_IO or __GFP_FS */
-> +	if ((current->flags & PF_WQ_WORKER) && ret == GFP_KERNEL)
-> +		ret |= __GFP_NORETRY | __GFP_NOWARN;
-> +	return ret;
->  }
->
->  /*
-> -- 
-> 2.47.0
+ arch/mips/boot/dts/mobileye/eyeq5.dtsi  | 2 +-
+ arch/mips/boot/dts/mobileye/eyeq6h.dtsi | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+---
+base-commit: 05adbee3ad528100ab0285c15c91100e19e10138
+change-id: 20250722-mmc_dts_warnings-ae5c40a23a85
+
+Best regards,
+-- 
+Benoît Monin, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
