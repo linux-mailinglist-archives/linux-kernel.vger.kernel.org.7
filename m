@@ -1,96 +1,157 @@
-Return-Path: <linux-kernel+bounces-740599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7364B0D644
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:48:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 007DCB0D64A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:51:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00DB4179B88
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:48:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 850973A4934
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F532DECB1;
-	Tue, 22 Jul 2025 09:48:22 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D137723C4F6
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 09:48:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AFDF2DEA82;
+	Tue, 22 Jul 2025 09:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HaIsBVE8"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8DD2CCC1;
+	Tue, 22 Jul 2025 09:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753177702; cv=none; b=Jx9CSH6qbXp9mdLhKqmGEho9sBMNxFwVEsSSoNJh1gtCKmRbYhd240qTUHUqf8RfAVA/B2hVHHfHt8RZdbDyOZzr/yiu6Bu4TdP7u2jjztWkMueVxnAmFyCkK1m1q5bIuJOvehqkAYoCv9fV7+V/UQjkpewETrzijLJlfA0fzYo=
+	t=1753177895; cv=none; b=R8+PggxT3027qBE3zm4E2xGle0EdFNxe+3fCb4DPZjTe8epwdkfJJSTDfGxn9gUIkO0gmLcW1OXlb6au4GnL9CiYnxnUBdPdwBto7Qrb/8kc5lpMGSP88miZvMoFU0phmnbQThNt7vw62Hlzj6UAsC+C/okHtyD1gI0rIHnPWxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753177702; c=relaxed/simple;
-	bh=dVcikr205Ak80qRUlwLt6JjiveksBUipnmRSJ08H5Go=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JjA2WLZas9ro5I9pOm/tTh6qbMbztRK8wBcSNC+CHKYui5X6QQJP5h2TcjJCROBnwy3P2Mv5I9Nrsz1wXgiF8ok/Lxu/BS5jWBa/XUW2fg0ds4tZ1LJunrtABKapBG4MytftGxVUx+9oREP94UnUpjourlNMEshXTYXcgxuz/3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AF0A2152B;
-	Tue, 22 Jul 2025 02:48:13 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 86D623F66E;
-	Tue, 22 Jul 2025 02:48:17 -0700 (PDT)
-Date: Tue, 22 Jul 2025 10:48:12 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Alexey Gladkov <legion@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	MengEn Sun <mengensun@tencent.com>,
-	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Subject: Re: [PATCH RESEND v2 1/2] ucount: Fix atomic_long_inc_below()
- argument type
-Message-ID: <aH9eXGb7QJ7fZl1t@J2N7QTR9R3>
-References: <20250721174610.28361-1-ubizjak@gmail.com>
- <20250721154325.476b87e09aa5d778bcead478@linux-foundation.org>
- <CAFULd4bLXhnNzbitQ8mX8-L-3HhW1BAGN0hzCpbAu58cTcRS2w@mail.gmail.com>
+	s=arc-20240116; t=1753177895; c=relaxed/simple;
+	bh=lVxHa2zhNH+2LvdHq/VYL69cUHX2Etw2hbHzGQ0URVo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=A2MpzADBvKPsRGYDZkkMAJW50y9q8zrRxOXDbATVaw4MIJps7Pd28IiU/Z5gzdLEAUXnUX1Jc/KGsUuibPOng8U9H4FChRnCZ/0fpoEJ0VVvy13ISEVixUron11jRg/4ZFSeauuRwzEwAceEc5mmMY7qFQ2M6QUt4kkRfgjGlc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HaIsBVE8; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1753177892;
+	bh=lVxHa2zhNH+2LvdHq/VYL69cUHX2Etw2hbHzGQ0URVo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=HaIsBVE8eb/H8dV25NCgrOEWFYTe4t/eYFuI/rz3+JDB+8bOoCx4I/92/IvQb5kcc
+	 cqq1Gn+T91lmo3V7bp9P1lUM2TZN755yPWu4pszqk5oxSaQJj3woP59HmLtiMY2Ljd
+	 G7WYyATvPVKQCWH/6UENC+7bTtSF4+pVO1IV9txxnpH31sQRIHoNfzXtXPooYZolGF
+	 pvKdFcs7RX7wJFTbxBJEWM2am1eizZU2h+vFnCpiqo1ytdiU9N3NugbEKZIP3oa+wW
+	 ZtXKGlxCT3YJPA5SbOL/0IfIAV4OYkNgNKfqxZ/aNYWqp8DV/YZDfJk+atR9mHB893
+	 IT0sZ5j8piJ0g==
+Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:bd9c:eae9:88b0:783c])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: laura.nao)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id AAF6817E10D6;
+	Tue, 22 Jul 2025 11:51:30 +0200 (CEST)
+From: Laura Nao <laura.nao@collabora.com>
+To: wenst@chromium.org
+Cc: andrew-ct.chen@mediatek.com,
+	angelogioacchino.delregno@collabora.com,
+	arnd@arndb.de,
+	bchihi@baylibre.com,
+	colin.i.king@gmail.com,
+	conor+dt@kernel.org,
+	daniel.lezcano@linaro.org,
+	devicetree@vger.kernel.org,
+	kernel@collabora.com,
+	krzk+dt@kernel.org,
+	lala.lin@mediatek.com,
+	laura.nao@collabora.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-pm@vger.kernel.org,
+	lukasz.luba@arm.com,
+	matthias.bgg@gmail.com,
+	nfraprado@collabora.com,
+	rafael@kernel.org,
+	robh@kernel.org,
+	rui.zhang@intel.com,
+	srini@kernel.org,
+	u.kleine-koenig@baylibre.com
+Subject: Re: [PATCH 0/9] Add thermal sensor driver support for Mediatek MT8196
+Date: Tue, 22 Jul 2025 11:50:46 +0200
+Message-Id: <20250722095046.27549-1-laura.nao@collabora.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <CAGXv+5EmigF=m1zDZ71AMv02XwyYWQxpiRpiwc7YMg=8vc2FZA@mail.gmail.com>
+References: <CAGXv+5EmigF=m1zDZ71AMv02XwyYWQxpiRpiwc7YMg=8vc2FZA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFULd4bLXhnNzbitQ8mX8-L-3HhW1BAGN0hzCpbAu58cTcRS2w@mail.gmail.com>
 
-On Tue, Jul 22, 2025 at 08:44:29AM +0200, Uros Bizjak wrote:
-> On Tue, Jul 22, 2025 at 12:43 AM Andrew Morton
-> <akpm@linux-foundation.org> wrote:
-> >
-> > On Mon, 21 Jul 2025 19:45:57 +0200 Uros Bizjak <ubizjak@gmail.com> wrote:
-> >
-> > > The type of u argument of atomic_long_inc_below() should be long
-> > > to avoid unwanted truncation to int.
-> > >
-> > > Fixes: f9c82a4ea89c ("Increase size of ucounts to atomic_long_t")
-> >
-> > Please (always!) provide a description of the userspace-visible effects
-> > of the bug.  That way I (and others) can decide whether the fix should
-> > be backported.  And people will be able to determine whether this patch
-> > may fix problems which they are observing.  Thanks.
-> 
-> The patch fixes the wrong argument type of an internal function to
-> prevent unwanted argument truncation. It fixes an internal locking
-> primitive; it should not have any direct effect on userspace.
+Hi ChenYu,
 
-AFAICT there's no problem in practice because atomic_long_inc_below() is
-only used by inc_ucount(), and it looks like the value is constrained
-between 0 and INT_MAX.
+On 7/22/25 09:40, Chen-Yu Tsai wrote:
+> Hi,
+>
+> On Mon, Jul 21, 2025 at 4:18 PM Laura Nao <laura.nao@collabora.com> wrote:
+>>
+>> This patch series extends the MediaTek LVTS thermal driver to support the
+>> MT8196 SoC.
+>>
+>> MT8196 uses a positive temp_factor for temperature conversion, requiring
+>> slight adjustments in the conversion logic.
+>>
+>> To support this, the series introduces:
+>>
+>> - A new struct lvts_platform_ops to allow platform-specific
+>>   conversion logic between raw sensor values and temperature
+>> - A variant of the lvts_temp_to_raw() implementation for SoCs with positive
+>>   temp_factor values
+>> - Platform data and controller definitions for MT8196
+>
+> I see the GPU and APU thermal sensors were left out. Was there a reason
+> for this?
+>
 
-In inc_ucount() the limit value is taken from
-user_namespace::ucount_max[], and AFAICT that's only written by sysctls,
-to the table setup by setup_userns_sysctls(), where UCOUNT_ENTRY()
-limits the value between 0 and INT_MAX.
+Based on my testing, the GPU and APU sensors are not functional at this 
+stage - the APU controller returns an invalid ID, and the GPU sensors 
+report invalid values. I suspect that both the GPU and APU need to be 
+fully initialized for the sensors to operate correctly, so I'm planning 
+to upstream support for those at a later stage.
 
-This is certainly a cleanup, but there might be no functional issue in
-practice as above.
+Best,
 
-Mark.
+Laura
+
+> Thanks
+> ChenYu
+>
+>> Laura Nao (9):
+>>   dt-bindings: thermal: mediatek: Add LVTS thermal controller support
+>>     for MT8196
+>>   thermal/drivers/mediatek/lvts: Make number of calibration offsets
+>>     configurable
+>>   thermal/drivers/mediatek/lvts: Guard against zero temp_factor in
+>>     lvts_raw_to_temp
+>>   thermal: mediatek: lvts: Add platform ops to support alternative
+>>     conversion logic
+>>   thermal/drivers/mediatek/lvts: Add lvts_temp_to_raw variant for
+>>     positive temp_factor
+>>   thermal/drivers/mediatek/lvts: Add support for ATP mode
+>>   thermal/drivers/mediatek/lvts: Support MSR offset for 16-bit
+>>     calibration data
+>>   thermal/drivers/mediatek/lvts_thermal: Add MT8196 support
+>>   dt-bindings: nvmem: mediatek: efuse: Add support for MT8196
+>>
+>>  .../bindings/nvmem/mediatek,efuse.yaml        |   1 +
+>>  .../thermal/mediatek,lvts-thermal.yaml        |   2 +
+>>  drivers/thermal/mediatek/lvts_thermal.c       | 315 ++++++++++++++++--
+>>  .../thermal/mediatek,lvts-thermal.h           |  26 ++
+>>  4 files changed, 325 insertions(+), 19 deletions(-)
+>>
+>> --
+>> 2.39.5
+>>
+>>
+
 
