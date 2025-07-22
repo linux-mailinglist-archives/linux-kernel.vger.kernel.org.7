@@ -1,146 +1,173 @@
-Return-Path: <linux-kernel+bounces-741092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA415B0DFF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:07:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99EAEB0E002
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:09:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8590F6C4A02
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:04:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1334216FC3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:06:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813B528B7C7;
-	Tue, 22 Jul 2025 15:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B143C289812;
+	Tue, 22 Jul 2025 15:06:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bxvFj3Id"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="acPssfsk"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5BE4273D8E;
-	Tue, 22 Jul 2025 15:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753196603; cv=none; b=GyDvUB5ByyVyjaWK3K8kpOI/g8c+P8yqbU10IokM+vvYe6/RUpU8j3yWMZvtMvxvzPOmhyfWyvuZ1IMvum6+bvt13bZCl3wry5oIcd88y87QI2+IXCL6PYlFjQchtF7uyivaEnr6eG2wB0rO4nWeSAgjJaqWyYwmFQ8oz3En8MQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753196603; c=relaxed/simple;
-	bh=kXPT0dANIkrJJY1VuefhAj1+pXyPTF/bsoGD7gD8RZQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ku93WxEa3jea3IUX5ni5WjTKWyb2fMdGHV8WQD6hSPfxESizxcy8rE8gcDFQjfMgqIyBeqMJVHKsZsZrn79xT7vR7CGT7zW46SFvV7Peo7rmnCJUSlmCccVQjW8WgUV/AGC8kPtQLWxIiP5I8lwtB8X4+rX4+TEY10Sdm6Cuokc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bxvFj3Id; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AF76C4CEEB;
-	Tue, 22 Jul 2025 15:03:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753196603;
-	bh=kXPT0dANIkrJJY1VuefhAj1+pXyPTF/bsoGD7gD8RZQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bxvFj3Ids7b5ooeDjHKGD+kxXcO/wCmcOJUTUv+9O4ljd/fMgmlBWSkkNk6lP+VH2
-	 Dv6d+/9uw7ecXZ4YTO3Kl036ISUbGBztHVqOYvF4Ap7a9napJt1E5bYBBiK403YiK6
-	 Gof5xNITzx1V4i7n1S8R/aFOqN9pgO7eAeO/IaT/oF6Kvy9d5iqY9IC350JAQEefF+
-	 Kg9ldnZreptFPNqnyT4Ooi7IgSxESJ2X3Im0QQsm9qL8rQNc/qUBx3MDQI5bz/yNA6
-	 0q33fmsR3m21zc+YxPqJSVT10XBF597UISvKN6EHl8SQA2v4MdZ32wvcue7R8Fv6p8
-	 JnnQhHwwj4otQ==
-Date: Tue, 22 Jul 2025 16:03:16 +0100
-From: Will Deacon <will@kernel.org>
-To: Per Larsen <perl@immunant.com>
-Cc: perlarsen@google.com, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, ahomescu@google.com,
-	armellel@google.com, arve@android.com, ayrton@google.com,
-	qperret@google.com, sebastianene@google.com, qwandor@google.com
-Subject: Re: [PATCH v7 5/5] KVM: arm64: Support FFA_MSG_SEND_DIRECT_REQ2 in
- host handler
-Message-ID: <aH-oNE4xTakicyC_@willie-the-truck>
-References: <20250701-virtio-msg-ffa-v7-0-995afc3d385e@google.com>
- <20250701-virtio-msg-ffa-v7-5-995afc3d385e@google.com>
- <aHpRvBO864x1vvqP@willie-the-truck>
- <25ba5929-79c0-40b8-b529-79a37914605d@immunant.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D341DDA0E;
+	Tue, 22 Jul 2025 15:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753196760; cv=pass; b=J6J0l1pRptIONmM6cBQZpyBSkCFsYEHKW76k1qXV7iM4ihUXPKd9kxjmk3zTwdKZ6IA1+PK2/AEwRF9zc5HXJWJHiG1srojxZ3AvPRV+2FfFVh0WCaP7jKO+pt0sNR7St3EpYiZcgJRufL1OjoDgmLFsS2KapIv+pi435x3BEFc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753196760; c=relaxed/simple;
+	bh=S9NzapF48kcQ0t4yyxgo8oZIiRW3qF4ZSzJJumpQekk=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=QEZmMhgc7X2tJ9zWT96QqsWYp3DwiYhaxb2M+icgbWbnuPZ1Nl0w97oR+5r4NY7aSzAvkjn3MSJ1afITt54CusTzL9LgXVajuZkI+dGTVEpq6o6vopjClVKAQpIJl5q1O8E6du1QV5iWCSLvWsvvxdv3h7k+JfapW7ApPp48jWE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=acPssfsk; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753196713; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=ZfS92ml7oakJK2191UnaySAdgMEQgM2gWjzxlfcSiIKuhjdrGJo1jyKFC5fMh32h4KedpJ2cWBFLq0ikPectQ0Ho8doXaUETDRDJAPOI6Ni+3aKQOMZNh91Z7YDdWPdKCBQrxgvmQOveFtuTDVk9bj6zpvUPCCBpgGrFnFxCYr4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753196713; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=B6h9KYWTByAokR/crJv4d6XMusmoK5pSX1xCNc0XzKc=; 
+	b=XWy0zr8fDeSinpfTGEu6uJ190C9sO5amsAuz8BWD3c/5awedWBhoq7LR/2tqxlnq4iafMApiwKdFvZVMj7ixf0KWn7Eky17JiXIvKldTNkC15kfEddTT9deLDbJDHjo6AQ6x7j8ERNY+s5zY7IobEj1+U1PdU36XValA1iqcOgw=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
+	dmarc=pass header.from=<usama.anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753196713;
+	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=B6h9KYWTByAokR/crJv4d6XMusmoK5pSX1xCNc0XzKc=;
+	b=acPssfskuhVxZGjeP5/h0MnKPl7yzuFa3ElacUGYiujjk/rtWsrrSqH7RSVI++Jb
+	sF4wKJAqm1u5+v+lmxs6B2YMgoxXczc9C7f01kzj2TUAKYsoRmaa+qCBWabawjYqrjH
+	ivq8pjpTDst9Q5hG1VNCNoYZQE5A76a6vx9UWEfo=
+Received: by mx.zohomail.com with SMTPS id 175319671119016.921485936466638;
+	Tue, 22 Jul 2025 08:05:11 -0700 (PDT)
+Message-ID: <86c465a3-f9a1-4a63-9e21-7529a5634301@collabora.com>
+Date: Tue, 22 Jul 2025 20:05:01 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <25ba5929-79c0-40b8-b529-79a37914605d@immunant.com>
+User-Agent: Mozilla Thunderbird
+Cc: usama.anjum@collabora.com, kernel@collabora.com, stable@vger.kernel.org,
+ Muna Sinada <quic_msinada@quicinc.com>,
+ Anilkumar Kolli <quic_akolli@quicinc.com>, Miles Hu <milehu@codeaurora.org>,
+ linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>,
+ Baochen Qiang <baochen.qiang@oss.qualcomm.com>,
+ Sathishkumar Muruganandam <quic_murugana@quicinc.com>,
+ Jeff Johnson <jjohnson@kernel.org>, kbuild test robot <lkp@intel.com>,
+ Manikanta Pubbisetty <quic_mpubbise@quicinc.com>,
+ Sven Eckelmann <sven@narfation.org>
+Subject: Re: [PATCH v3] wifi: ath11k: HAL SRNG: don't deinitialize and
+ re-initialize again
+To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+ Kalle Valo <kvalo@kernel.org>
+References: <20250722053121.1145001-1-usama.anjum@collabora.com>
+ <1598d25d-e254-410e-ac5c-66d5450fd686@oss.qualcomm.com>
+ <ae7a08cb-af73-4a27-aad4-c852be5f77aa@collabora.com>
+ <ab5af5b9-d5a7-434c-938d-3f9aac388542@oss.qualcomm.com>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <ab5af5b9-d5a7-434c-938d-3f9aac388542@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On Mon, Jul 21, 2025 at 03:43:42PM -0700, Per Larsen wrote:
+On 7/22/25 7:07 PM, Jeff Johnson wrote:
+> On 7/22/2025 4:23 AM, Muhammad Usama Anjum wrote:
+>> Hi Kalle,
 > 
+> Kalle is no longer a maintainer -- I am currently the only ath11k maintainer.
+Sorry, I missed it.
+
 > 
-> On 7/18/25 6:53 AM, Will Deacon wrote:
-> > On Tue, Jul 01, 2025 at 10:06:38PM +0000, Per Larsen via B4 Relay wrote:
-> > > From: Per Larsen <perlarsen@google.com>
-> > > 
-> > > FF-A 1.2 adds the DIRECT_REQ2 messaging interface which is similar to
-> > > the existing FFA_MSG_SEND_DIRECT_{REQ,RESP} functions except that it
-> > > uses the SMC calling convention v1.2 which allows calls to use x4-x17 as
-> > > argument and return registers. Add support for FFA_MSG_SEND_DIRECT_REQ2
-> > > in the host ffa handler.
-> > > 
-> > > Signed-off-by: Per Larsen <perlarsen@google.com>
-> > > ---
-> > >   arch/arm64/kvm/hyp/nvhe/ffa.c | 24 +++++++++++++++++++++++-
-> > >   include/linux/arm_ffa.h       |  2 ++
-> > >   2 files changed, 25 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> > > index 79d834120a3f3d26e17e9170c60012b60c6f5a5e..21225988a9365219ccfd69e8e599d7403b5cdf05 100644
-> > > --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
-> > > +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> > > @@ -679,7 +679,6 @@ static bool ffa_call_supported(u64 func_id)
-> > >   	case FFA_NOTIFICATION_GET:
-> > >   	case FFA_NOTIFICATION_INFO_GET:
-> > >   	/* Optional interfaces added in FF-A 1.2 */
-> > > -	case FFA_MSG_SEND_DIRECT_REQ2:		/* Optional per 7.5.1 */
-> > 
-> > I think that's the only change needed. In fact, maybe just don't add it
-> > in the earlier patch?
-> > 
-> > >   	case FFA_MSG_SEND_DIRECT_RESP2:		/* Optional per 7.5.1 */
-> > >   	case FFA_CONSOLE_LOG:			/* Optional per 13.1: not in Table 13.1 */
-> > >   	case FFA_PARTITION_INFO_GET_REGS:	/* Optional for virtual instances per 13.1 */
-> > > @@ -862,6 +861,22 @@ static void do_ffa_part_get(struct arm_smccc_1_2_regs *res,
-> > >   	hyp_spin_unlock(&host_buffers.lock);
-> > >   }
-> > > +static void do_ffa_direct_msg2(struct arm_smccc_1_2_regs *regs,
-> > > +			       struct kvm_cpu_context *ctxt,
-> > > +			       u64 vm_handle)
-> > > +{
-> > > +	DECLARE_REG(u32, endp, ctxt, 1);
-> > > +
-> > > +	struct arm_smccc_1_2_regs *args = (void *)&ctxt->regs.regs[0];
-> > > +
-> > > +	if (FIELD_GET(FFA_SRC_ENDPOINT_MASK, endp) != vm_handle) {
-> > > +		ffa_to_smccc_error(regs, FFA_RET_INVALID_PARAMETERS);
-> > > +		return;
-> > > +	}
-> > 
-> > Why do we care about checking the src id? We don't check that for
-> > FFA_MSG_SEND_DIRECT_REQ and I don't think we need to care about it here
-> > either.
-> FFA_MSG_SEND_DIRECT_REQ is handled by do_ffa_direct_msg [0] (in the android
-> common kernels, I'm not aware of efforts to upstream this).
->
-> I patterned the check in do_ffa_direct_msg2 off the checking done in
-> do_ffa_direct_msg. I pressume your reasoning is that this check can
-> never fail since we pass in HOST_FFA_ID in kvm_host_ffa_handler. My
-> thinking was that we do need to validate the source ID once we start
-> using this function for requests that come from a guest VM. I could
-> of course add the check in an android-specific patch, WDYT is best?
+>>
+>> On 7/22/25 2:47 PM, Baochen Qiang wrote:
+>>>
+>>>
+>>> On 7/22/2025 1:31 PM, Muhammad Usama Anjum wrote:
+>>>> Don't deinitialize and reinitialize the HAL helpers. The dma memory is
+>>>> deallocated and there is high possibility that we'll not be able to get
+>>>> the same memory allocated from dma when there is high memory pressure.
+>>>>
+>>>> Tested-on: WCN6855 hw2.0 PCI WLAN.HSP.1.1-03926.13-QCAHSPSWPL_V2_SILICONZ_CE-2.52297.6
+>>>>
+>>>> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
+>>>> Cc: stable@vger.kernel.org
+>>>> Cc: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
+>>>> Reviewed-by: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
+>>>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+>>>> ---
+>>>> Changes since v1:
+>>>> - Cc stable and fix tested on tag
+>>>> - Clear essential fields as they may have stale data
+>>>>
+>>>> Changes since v2:
+>>>> - Add comment and reviewed by tag
+>>>> ---
+>>>>  drivers/net/wireless/ath/ath11k/core.c |  6 +-----
+>>>>  drivers/net/wireless/ath/ath11k/hal.c  | 16 ++++++++++++++++
+>>>>  drivers/net/wireless/ath/ath11k/hal.h  |  1 +
+>>>>  3 files changed, 18 insertions(+), 5 deletions(-)
+>>>>
+>>>> diff --git a/drivers/net/wireless/ath/ath11k/core.c b/drivers/net/wireless/ath/ath11k/core.c
+>>>> index 4488e4cdc5e9e..34b27711ed00f 100644
+>>>> --- a/drivers/net/wireless/ath/ath11k/core.c
+>>>> +++ b/drivers/net/wireless/ath/ath11k/core.c
+>>>> @@ -2213,14 +2213,10 @@ static int ath11k_core_reconfigure_on_crash(struct ath11k_base *ab)
+>>>>  	mutex_unlock(&ab->core_lock);
+>>>>  
+>>>>  	ath11k_dp_free(ab);
+>>>> -	ath11k_hal_srng_deinit(ab);
+>>>> +	ath11k_hal_srng_clear(ab);
+>>>>  
+>>>>  	ab->free_vdev_map = (1LL << (ab->num_radios * TARGET_NUM_VDEVS(ab))) - 1;
+>>>>  
+>>>> -	ret = ath11k_hal_srng_init(ab);
+>>>> -	if (ret)
+>>>> -		return ret;
+>>>> -
+>>>>  	clear_bit(ATH11K_FLAG_CRASH_FLUSH, &ab->dev_flags);
+>>>>  
+>>>>  	ret = ath11k_core_qmi_firmware_ready(ab);
+>>>> diff --git a/drivers/net/wireless/ath/ath11k/hal.c b/drivers/net/wireless/ath/ath11k/hal.c
+>>>> index b32de563d453a..e8ebf963f195c 100644
+>>>> --- a/drivers/net/wireless/ath/ath11k/hal.c
+>>>> +++ b/drivers/net/wireless/ath/ath11k/hal.c
+>>>> @@ -1359,6 +1359,22 @@ void ath11k_hal_srng_deinit(struct ath11k_base *ab)
+>>>>  }
+>>>>  EXPORT_SYMBOL(ath11k_hal_srng_deinit);
+>>>>  
+>>>> +void ath11k_hal_srng_clear(struct ath11k_base *ab)
+>>>> +{
+>>>> +	/* No need to memset rdp and wrp memory since each individual
+>>>> +	 * segment would get cleared ath11k_hal_srng_src_hw_init() and
+>>>
+>>> nit: s/cleared /cleared in/
+>> Please can you make this change while applying the patch?
+> 
+> I can make this change when I pull the patch into the pending branch.
+> I'd like to see a public Reviewed-by before doing so.
+> 
+> Also note that, except for anything critical, I'm not taking any patches into
+> ath-next until the upcoming v6.17 merge window closes and all changes made to
+> Linus' tree have been backmerged via net-next => wireless-next => ath-next.
+Thank you for mentioning. I didn't know the workflow.
 
-As long as upstream only has one ID for the whole of non-secure, I don't
-think it makes sense to check it. So either we drop this patch or teach
-upstream about different IDs, which is probably a separate series.
+No problem. There is no hurry.
 
-What I want to avoid is upstream becoming a frankenkernel comprised of
-random parts of Android that don't make sense in isolation.
+> 
+> /jeff
 
-Will
 
