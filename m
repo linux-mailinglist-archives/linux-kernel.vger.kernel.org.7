@@ -1,60 +1,61 @@
-Return-Path: <linux-kernel+bounces-740946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CED3B0DCAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:04:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C0B6B0DCC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:05:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DBE21608E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:02:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC188188F7B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871962EA15B;
-	Tue, 22 Jul 2025 14:01:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0383E2E975F;
+	Tue, 22 Jul 2025 14:03:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G44437V6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YPdOBtGx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA88F2E9759
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 14:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505E11A255C;
+	Tue, 22 Jul 2025 14:03:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753192919; cv=none; b=MHQw34Mu25a9NUEimH9+Dx8aOoaik8Yibsz2xAZGXJh73O8rkVRcjVIs58uDkAZv+5AfrCErwiHsdfDV5kPZCa9YRy3cXOMeNi7pjGnfgDkMIEfNKaB8mmV45koxKK7FOhAkn7izFEcc9kGNgsJhRet/PjLMQF4eJDJCZ0zBFHk=
+	t=1753193012; cv=none; b=LX7twg0uNiXjQOkbei3+PA8TLCVzqf/mLndHuGHPenSIvFZ9jwDosaFI9Ns9aWSyJOv0z/td1/8qeNYxXiJr+y+M2NZ77bn39a9b46Vn4LOtCjNQIhlBTlrickVnwtmgEx8Q8yuXEXbfkhZ5C7ny1I3oSEgowwO6G6zzufdeaNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753192919; c=relaxed/simple;
-	bh=oujexYziHgPEDcDx7x1RYjfQC+/RIpBUJRP2MbMPYJE=;
+	s=arc-20240116; t=1753193012; c=relaxed/simple;
+	bh=OIhJT9qB4odJKDzQ05OJtu5Oq7f7NSRQ22vsVg7V6hI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Eg76uRZHItZnzD9/Isv0H5wgY0QLmZa5tL6kK57PdBMzM35b5Es4kr/ZepiCD1RLfxmWgqrhgyk+d58kbWF6w5eD+bk7Rw/tyWCuo9JyYao1hrpnmPRcMw7ZLMxp+JVIwyICGxNEmc2fezklM3GuSkkiz/2Ru4GLytdzPx9Xp0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G44437V6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7561AC4CEF7;
-	Tue, 22 Jul 2025 14:01:56 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=QU30pMtJ+z+Qu/moLnbXordeCCaIVphKXiEGrm+dMjcteUEyVODIkQIW4W7yLPlpfqeYkQVRDu+zYwtBlWm+4hwnvXNFFK1sOu724PMW6Q+PVdUq3QXwIWNZdXuumNsfThrepXu/wgX++pL51pcDNUahuw8z7mMH+xP1PHM4ZzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YPdOBtGx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4829EC4CEEB;
+	Tue, 22 Jul 2025 14:03:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753192918;
-	bh=oujexYziHgPEDcDx7x1RYjfQC+/RIpBUJRP2MbMPYJE=;
+	s=k20201202; t=1753193012;
+	bh=OIhJT9qB4odJKDzQ05OJtu5Oq7f7NSRQ22vsVg7V6hI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G44437V6zc3RRb1EuCGCfuuEnJ07kAW/wsYjpBm8OmiB9hTdtAv80wb1ej2FX2EnN
-	 6+HmEVHCE1bDMhZAF+Vt8TYCvH71Q+HtgWWukjAJu+KaZYNC5GbBhqeuC12GXOz6Va
-	 bvPuGtxnV8YqXpR1IpQ/+pRPFEp1/pI5hgv0np+dO5+J5xFiknR3J61cL0A9o7cJZm
-	 54PdtwRRVaTH5sPuotqtWT7QjUQdIDJUMNs7cGWIRCJSe5cUHKOSbvi2EqsyGZqtTL
-	 sEF6B9IiUtrnq3AaEUQZNOd4FjMOE4x2mbp5enjjF0v21taQAIZvOY4DcMHV3dSUNF
-	 NwFyFRSblIffg==
-Date: Tue, 22 Jul 2025 15:01:53 +0100
-From: Will Deacon <will@kernel.org>
-To: James Morse <james.morse@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>, sudeep.holla@arm.com,
-	Rob Herring <robh@kernel.org>, Ben Horgan <ben.horgan@arm.com>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Gavin Shan <gshan@redhat.com>
-Subject: Re: [PATCH v3 3/3] arm64: cacheinfo: Provide helper to compress
- MPIDR value into u32
-Message-ID: <aH-Z0SNzNVz0cToB@willie-the-truck>
-References: <20250711182743.30141-1-james.morse@arm.com>
- <20250711182743.30141-4-james.morse@arm.com>
+	b=YPdOBtGx3RpdDNa0PyBrTiXWHyr8V3H106YhdqtxzagIUw/hWj0zVKijWdYEPEvtU
+	 4VwBvg3U+BlKaILat2fMeJ+7bvUct00xticXiWaTZKBcGf5qUsv5RoSZ8Vijha1B6u
+	 fbZQlIjkgQnR5cySRc3ZsXfK8/drnE2EVRMkfSy34hWFnGuI6nEEoE8mGtAreQH8C9
+	 50Ft/lsZNYJz/vLo5GhMC0XH5yPA5iXljkccMPSoNhs4k0hU8eL5ZgY5ze/qnYEUre
+	 YvG7Q6fyM0RPNjQJU7J7v1LeF9U9vGgxYyRjddmpFzAKC61I0aeOtYg+4TStMaFgjf
+	 XN1aC3ea8h1bA==
+Date: Tue, 22 Jul 2025 15:03:26 +0100
+From: Simon Horman <horms@kernel.org>
+To: Dong Yibo <dong100@mucse.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, corbet@lwn.net,
+	gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
+	danishanwar@ti.com, lee@trager.us, gongfan1@huawei.com,
+	lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 10/15] net: rnpgbe: Add netdev irq in open
+Message-ID: <20250722140326.GJ2459@horms.kernel.org>
+References: <20250721113238.18615-1-dong100@mucse.com>
+ <20250721113238.18615-11-dong100@mucse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,63 +64,139 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250711182743.30141-4-james.morse@arm.com>
+In-Reply-To: <20250721113238.18615-11-dong100@mucse.com>
 
-On Fri, Jul 11, 2025 at 06:27:43PM +0000, James Morse wrote:
-> Filesystems like resctrl use the cache-id exposed via sysfs to identify
-> groups of CPUs. The value is also used for PCIe cache steering tags. On
-> DT platforms cache-id is not something that is described in the
-> device-tree, but instead generated from the smallest MPIDR of the CPUs
-> associated with that cache. The cache-id exposed to user-space has
-> historically been 32 bits.
+On Mon, Jul 21, 2025 at 07:32:33PM +0800, Dong Yibo wrote:
+> Initialize irq for tx/rx in open func.
 > 
-> MPIDR values may be larger than 32 bits.
-> 
-> MPIDR only has 32 bits worth of affinity data, but the aff3 field lives
-> above 32bits. The corresponding lower bits are masked out by
-> MPIDR_HWID_BITMASK and contain an SMT flag and Uni-Processor flag.
-> 
-> Swizzzle the aff3 field into the bottom 32 bits and using that.
-> 
-> In case more affinity fields are added in the future, the upper RES0
-> area should be checked. Returning a value greater than 32 bits from
-> this helper will cause the caller to give up on allocating cache-ids.
-> 
-> Signed-off-by: James Morse <james.morse@arm.com>
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-> Reviewed-by: Gavin Shan <gshan@redhat.com>
-> ---
-> Changes since v1:
->  * Removal of unrelated changes.
->  * Added a comment about how the RES0 bit safety net works.
-> ---
->  arch/arm64/include/asm/cache.h | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
-> 
-> diff --git a/arch/arm64/include/asm/cache.h b/arch/arm64/include/asm/cache.h
-> index 99cd6546e72e..09963004ceea 100644
-> --- a/arch/arm64/include/asm/cache.h
-> +++ b/arch/arm64/include/asm/cache.h
-> @@ -87,6 +87,23 @@ int cache_line_size(void);
->  
->  #define dma_get_cache_alignment	cache_line_size
->  
-> +/* Compress a u64 MPIDR value into 32 bits. */
-> +static inline u64 arch_compact_of_hwid(u64 id)
+> Signed-off-by: Dong Yibo <dong100@mucse.com>
+
+...
+
+> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+
+...
+
+> +/**
+> + * rnpgbe_set_mac_hw_ops_n500 - Setup mac address to hw
+> + * @hw: pointer to hw structure
+> + * @mac: pointer to mac addr
+> + *
+> + * Setup a mac address to hw.
+> + **/
+> +static void rnpgbe_set_mac_hw_ops_n500(struct mucse_hw *hw, u8 *mac)
 > +{
-> +	u64 aff3 = MPIDR_AFFINITY_LEVEL(id, 3);
+> +	struct mucse_eth_info *eth = &hw->eth;
+> +	struct mucse_mac_info *mac_info = &hw->mac;
+
+Reverse xmas tree here please.
+
 > +
-> +	/*
-> +	 * These bits are expected to be RES0. If not, return a value with
-> +	 * the upper 32 bits set to force the caller to give up on 32 bit
-> +	 * cache ids.
-> +	 */
-> +	if (FIELD_GET(GENMASK_ULL(63, 40), id))
-> +		return id;
+> +	/* use idx 0 */
+> +	eth->ops.set_rar(eth, 0, mac);
+> +	mac_info->ops.set_mac(mac_info, mac, 0);
+> +}
 
-Why is it safe to ignore the other RES bits (i.e. 31, 29:25)? If the
-architects decide to pack some additional affinity information in there,
-we're in trouble, no?
+...
 
-Will
+> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_lib.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_lib.c
+
+...
+
+> +/**
+> + * rnpgbe_msix_clean_rings - msix irq handler for ring irq
+> + * @irq: irq num
+> + * @data: private data
+> + *
+> + * rnpgbe_msix_clean_rings handle irq from ring, start napi
+
+Please also document the return value of this function.
+Likewise for rnpgbe_request_msix_irqs(), rnpgbe_intr() and
+rnpgbe_request_irq().
+
+> + **/
+> +static irqreturn_t rnpgbe_msix_clean_rings(int irq, void *data)
+> +{
+> +	return IRQ_HANDLED;
+> +}
+
+...
+
+> +/**
+> + * rnpgbe_request_msix_irqs - Initialize MSI-X interrupts
+> + * @mucse: pointer to private structure
+> + *
+> + * rnpgbe_request_msix_irqs allocates MSI-X vectors and requests
+> + * interrupts from the kernel.
+> + **/
+> +static int rnpgbe_request_msix_irqs(struct mucse *mucse)
+> +{
+> +	struct net_device *netdev = mucse->netdev;
+> +	int q_off = mucse->q_vector_off;
+> +	struct msix_entry *entry;
+> +	int i = 0;
+> +	int err;
+> +
+> +	for (i = 0; i < mucse->num_q_vectors; i++) {
+> +		struct mucse_q_vector *q_vector = mucse->q_vector[i];
+> +
+> +		entry = &mucse->msix_entries[i + q_off];
+> +		if (q_vector->tx.ring && q_vector->rx.ring) {
+> +			snprintf(q_vector->name, sizeof(q_vector->name) - 1,
+> +				 "%s-%s-%d", netdev->name, "TxRx", i);
+
+Probably the full range of i is not used, in particular I assume
+it is never negative, and thus i and mucse->num_q_vectors
+could be unsigned int rather than int.
+
+But as it stands q_vector->name is once character too short to
+fit the maximum possible string formatted by snprintf().
+
+I was able to address the warning flagged by GCC 15.0.0 about this by
+increasing the size of q_vector->name by one byte.
+
+  .../rnpgbe_lib.c: In function 'rnpgbe_request_irq':
+  .../rnpgbe_lib.c:1015:43: warning: 'snprintf' output may be truncated before the last format character [-Wformat-truncation=]
+   1015 |                                  "%s-%s-%d", netdev->name, "TxRx", i);
+        |                                           ^
+  In function 'rnpgbe_request_msix_irqs',
+      inlined from 'rnpgbe_request_irq' at drivers/net/ethernet/mucse/rnpgbe/rnpgbe_lib.c:1069:9:
+  .../rnpgbe_lib.c:1014:25: note: 'snprintf' output between 8 and 33 bytes into a destination of size 32
+   1014 |                         snprintf(q_vector->name, sizeof(q_vector->name) - 1,
+        |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   1015 |                                  "%s-%s-%d", netdev->name, "TxRx", i);
+        |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+> +		} else {
+> +			/* skip this unused q_vector */
+> +			continue;
+> +		}
+> +		err = request_irq(entry->vector, &rnpgbe_msix_clean_rings, 0,
+> +				  q_vector->name, q_vector);
+> +		if (err)
+> +			goto free_queue_irqs;
+> +		/* register for affinity change notifications */
+> +		q_vector->affinity_notify.notify = rnpgbe_irq_affinity_notify;
+> +		q_vector->affinity_notify.release = rnpgbe_irq_affinity_release;
+> +		irq_set_affinity_notifier(entry->vector,
+> +					  &q_vector->affinity_notify);
+> +		irq_set_affinity_hint(entry->vector, &q_vector->affinity_mask);
+> +	}
+> +
+> +	return 0;
+> +
+> +free_queue_irqs:
+> +	while (i) {
+> +		i--;
+> +		entry = &mucse->msix_entries[i + q_off];
+> +		irq_set_affinity_hint(entry->vector, NULL);
+> +		free_irq(entry->vector, mucse->q_vector[i]);
+> +		irq_set_affinity_notifier(entry->vector, NULL);
+> +		irq_set_affinity_hint(entry->vector, NULL);
+> +	}
+> +	return err;
+> +}
+
+...
 
