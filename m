@@ -1,176 +1,100 @@
-Return-Path: <linux-kernel+bounces-740125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FFFCB0D03E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 05:24:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27CFDB0D043
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 05:25:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A59AD1651EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:24:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58BF41698FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178971E32D7;
-	Tue, 22 Jul 2025 03:24:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 207D328BAB0;
+	Tue, 22 Jul 2025 03:25:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P0GnCNbj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="LVHFLvCC";
+	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="T9uXlCKt"
+Received: from mail.netfilter.org (mail.netfilter.org [217.70.190.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798F42E3701
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 03:24:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F2232E3701;
+	Tue, 22 Jul 2025 03:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.190.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753154686; cv=none; b=ujDUyKlETh0+NQHSp13TzBN1VDAIspE1J3tP8jVlEYCPJTLl0h+IG2j8X6X8NBFVZdAq+VJ/sD1hqMDPUcpvyFqiV+KS58TfSi33EZI5n5K/UdA891WQb/M8Vo+F0xVQ9AepFMM4YCZgR3bE0WG0rNgiqVnjAelGM0g1JlC3gJU=
+	t=1753154718; cv=none; b=WLEWqgf8/IzfsyOJpPaL4txFGfc9n7PP6ox3+MjUNb33GV/wPhf4q/bHdP6K8AaoM6b1vPpMe6qsaEcGC3uOUG3QOLSUnxQjRT7uWPxu1ePekRqW61cYOJplZtZxEMYp60dVPlaTrNJ7MU0ObQAbBOmAxNGBdQVQQGUeckCz+/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753154686; c=relaxed/simple;
-	bh=5Rzof64fbH46b5Fd+gNbyuLMkJ3pMKbLw+hfXRsX4cA=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=iBk70hJr0RydsMwssabEkvV227hnPM6ajx4CEnpVhM+zh3qlIvjFVPTdPjVuZxz/+JYBPdTyDP98yEZJ4Cjnl0vUkE1RGNqHdCbTL/GG4/rcOq4d/XPC/fyiB8ENCEJdFZBZeKdI2X17Oq2XGcTE/1ZBz0IgFaw00BcsF8ZQERQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P0GnCNbj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0FCEC4CEEB;
-	Tue, 22 Jul 2025 03:24:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753154685;
-	bh=5Rzof64fbH46b5Fd+gNbyuLMkJ3pMKbLw+hfXRsX4cA=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=P0GnCNbjOg9KTNNwMCEcpDJHy3RTpbjeJJiWKW5XZ4Q1/2lkC7btnAzESoG35AoUw
-	 meLA0fvlvlkpMnqoBLn4R3QHkLk/nxf9s8+3j0SwGOdW0BGccLX62ela1psk2G8SpG
-	 SQPnGZkTdImqiayEX6dmwTbSXnqftBHjwKC3ijaBll3BJPqQP6a9d8NWBl7QiNyrPx
-	 GQAjQvMc/IWwsLxQUFFCLgienXW/dsx6tJj9PZG5wFfrNYl4wlNOX+bQG5wnzjiaIj
-	 Iuq/toP211c+fqtgwVVusg2oh/h/BLqphyNx1Nl6O6uNLcWl29xlnOSrqWy9RWFT0c
-	 zPiB6q9RpBqjA==
-Message-ID: <6c26bcaa-7a9d-4b30-b326-90395f55e155@kernel.org>
-Date: Tue, 22 Jul 2025 11:24:41 +0800
+	s=arc-20240116; t=1753154718; c=relaxed/simple;
+	bh=MkHa2Rdf1jArpN8hWytBpulfVw27vR2vgyRxDMy6PZo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ThnMRzsWh2vmUFdkDWb0F6TFAns0x0G3qOBwF0B5715LULE8VEOtrHk/DsInA+Vd8iAj7/GHtRxu1g7l2ukuIqAmiNqlUgijuNoH1sonzFEMHqj/kJuvYgGx0n+/MdBXFWtGXV8KcHTcxnx3kceqtZyfBMXInR9z7N/7pM3Uzt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=netfilter.org; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=LVHFLvCC; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=T9uXlCKt; arc=none smtp.client-ip=217.70.190.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netfilter.org
+Received: by mail.netfilter.org (Postfix, from userid 109)
+	id 6FFED600B5; Tue, 22 Jul 2025 05:25:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
+	s=2025; t=1753154714;
+	bh=vSmlOCs6gbQah62oYlIxODdqyVaW5UP6v8LmxDYaaKo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LVHFLvCCcHNTAHRzbn95RxCrd74PD6GFF8aR3tBeJZTNhqIC0CRjQXEcP3BCCAm2m
+	 u3+p1N4abgGxYHtNsdlmlptkCAa6RKurZlmFM75o5/fk2vi049eb8gxWTxfnNEeIs/
+	 hD7nYdX0Q2TxI9tTvyIAG7hnP13cUqD4dU5a1eUx4t75u0FrU9lbuAflkn8NSyUOGD
+	 jGVVFzgtxnv4VF64einUQ9aUSGw46RIqz/I+N03e05tG9oK528LVjK7sDfKe5Tv0nK
+	 m/7TuyF7e8/W2dQpd7jaOg8pe+134N2x01DS4WqGjczC27cPeFAOGskHjZCvDUS5er
+	 yPt+8AK4tw16Q==
+X-Spam-Level: 
+Received: from netfilter.org (mail-agni [217.70.190.124])
+	by mail.netfilter.org (Postfix) with ESMTPSA id 64652600B5;
+	Tue, 22 Jul 2025 05:25:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
+	s=2025; t=1753154711;
+	bh=vSmlOCs6gbQah62oYlIxODdqyVaW5UP6v8LmxDYaaKo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=T9uXlCKtDZASD999IgqgLU6aw90CeEfxIsYDOvODaqu4pzvNsocV9HVZMrC34y256
+	 wXnahlMO90OXKGQFbZRDAFSWzw7NUBsg5ALj2VHT4ZsQbkZxJIragcypeJ1uiGIJDB
+	 1xJwI7j9xta7bhpwYWHXsOZD+ySgRil2ZiCjf/eQlJjIdpoNI01lrYL9shcEz/kb6e
+	 HlAbiKRyPd94PUXXcZylXyyHxMYcyRGTlFz9RzfSvATNz7qGI/QTgvUPZ8j7ksHdvr
+	 HSef6jMkYibxo5d+4fw0YulLfTP4sX50dYiR5hhYS0xwujxDvPuT+ZuHWQ9waGuiHk
+	 +jwLP0gDh48Fw==
+Date: Tue, 22 Jul 2025 05:25:07 +0200
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: WangYuli <wangyuli@uniontech.com>
+Cc: horms@verge.net.au, ja@ssi.bg, kadlec@netfilter.org,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org, linux-kernel@vger.kernel.org,
+	zhanjun@uniontech.com, niecheng1@uniontech.com,
+	guanwentao@uniontech.com, wangyuli@deepin.org
+Subject: Re: [PATCH RESEND] ipvs: ip_vs_conn_expire_now: Rename del_timer in
+ comment
+Message-ID: <aH8Ek6XA_EFr_XWh@calendula>
+References: <E5403EE80920424D+20250704083553.313144-1-wangyuli@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, Daeho Jeong <daehojeong@google.com>
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: add gc_boost_gc_greedy sysfs node
-To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
-References: <20250718215003.2283009-1-daeho43@gmail.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20250718215003.2283009-1-daeho43@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <E5403EE80920424D+20250704083553.313144-1-wangyuli@uniontech.com>
 
-On 7/19/25 05:50, Daeho Jeong wrote:
-> From: Daeho Jeong <daehojeong@google.com>
-> 
-> Add this to control GC algorithm for boost GC.
-> 
-> Signed-off-by: Daeho Jeong <daehojeong@google.com>
-> ---
-> v2: use GC_GREEDY instead of 1
-> ---
->  Documentation/ABI/testing/sysfs-fs-f2fs |  8 +++++++-
->  fs/f2fs/gc.c                            |  3 ++-
->  fs/f2fs/gc.h                            |  1 +
->  fs/f2fs/sysfs.c                         | 16 ++++++++++++++++
->  4 files changed, 26 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-> index 931c1f63aa2e..2158055cd9d1 100644
-> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
-> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-> @@ -866,6 +866,12 @@ What:		/sys/fs/f2fs/<disk>/gc_boost_gc_multiple
->  Date:		June 2025
->  Contact:	"Daeho Jeong" <daehojeong@google.com>
->  Description:	Set a multiplier for the background GC migration window when F2FS GC is
-> -		boosted.
-> +		boosted. the range should be from 1 to the segment count in a section.
->  		Default: 5
->  
-> +What:		/sys/fs/f2fs/<disk>/gc_boost_gc_greedy
-> +Date:		June 2025
-> +Contact:	"Daeho Jeong" <daehojeong@google.com>
-> +Description:	Control GC algorithm for boost GC. 0: cost benefit, 1: greedy
-> +		Default: 1
-> +
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index de7e59bc0906..0d7703e7f9e0 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -141,7 +141,7 @@ static int gc_thread_func(void *data)
->  					FOREGROUND : BACKGROUND);
->  
->  		sync_mode = (F2FS_OPTION(sbi).bggc_mode == BGGC_MODE_SYNC) ||
-> -				gc_control.one_time;
-> +			(gc_control.one_time && gc_th->boost_gc_greedy);
->  
->  		/* foreground GC was been triggered via f2fs_balance_fs() */
->  		if (foreground)
-> @@ -198,6 +198,7 @@ int f2fs_start_gc_thread(struct f2fs_sb_info *sbi)
->  	gc_th->urgent_sleep_time = DEF_GC_THREAD_URGENT_SLEEP_TIME;
->  	gc_th->valid_thresh_ratio = DEF_GC_THREAD_VALID_THRESH_RATIO;
->  	gc_th->boost_gc_multiple = BOOST_GC_MULTIPLE;
-> +	gc_th->boost_gc_greedy = GC_GREEDY;
->  
->  	if (f2fs_sb_has_blkzoned(sbi)) {
->  		gc_th->min_sleep_time = DEF_GC_THREAD_MIN_SLEEP_TIME_ZONED;
-> diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
-> index efa1968810a0..1a2e7a84b59f 100644
-> --- a/fs/f2fs/gc.h
-> +++ b/fs/f2fs/gc.h
-> @@ -69,6 +69,7 @@ struct f2fs_gc_kthread {
->  	unsigned int boost_zoned_gc_percent;
->  	unsigned int valid_thresh_ratio;
->  	unsigned int boost_gc_multiple;
-> +	unsigned int boost_gc_greedy;
->  };
->  
->  struct gc_inode_list {
-> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> index b0270b1c939c..3a52f51ee3c6 100644
-> --- a/fs/f2fs/sysfs.c
-> +++ b/fs/f2fs/sysfs.c
-> @@ -824,6 +824,20 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
->  		return count;
->  	}
->  
-> +	if (!strcmp(a->attr.name, "gc_boost_gc_multiple")) {
-> +		if (t < 1 || t > SEGS_PER_SEC(sbi))
-> +			return -EINVAL;
-> +		sbi->gc_thread->boost_gc_multiple = (unsigned int)t;
-> +		return count;
-> +	}
+On Fri, Jul 04, 2025 at 04:35:53PM +0800, WangYuli wrote:
+> Commit 8fa7292fee5c ("treewide: Switch/rename to timer_delete[_sync]()")
+> switched del_timer to timer_delete, but did not modify the comment for
+> ip_vs_conn_expire_now(). Now fix it.
 
-This check should be in ("f2fs: add gc_boost_gc_multiple sysfs node"), right?
+$ git grep del_timer net/netfilter/
+net/netfilter/ipvs/ip_vs_lblc.c: *     Julian Anastasov        :    replaced del_timer call with del_timer_sync
+net/netfilter/ipvs/ip_vs_lblc.c: *                                   handler and del_timer thread in SMP
 
-Thanks,
+Wider search, in the net tree:
 
-> +
-> +	if (!strcmp(a->attr.name, "gc_boost_gc_greedy")) {
-> +		if (t > GC_GREEDY)
-> +			return -EINVAL;
-> +		sbi->gc_thread->boost_gc_greedy = (unsigned int)t;
-> +		return count;
-> +	}
-> +
->  	*ui = (unsigned int)t;
->  
->  	return count;
-> @@ -1051,6 +1065,7 @@ GC_THREAD_RW_ATTR(gc_no_zoned_gc_percent, no_zoned_gc_percent);
->  GC_THREAD_RW_ATTR(gc_boost_zoned_gc_percent, boost_zoned_gc_percent);
->  GC_THREAD_RW_ATTR(gc_valid_thresh_ratio, valid_thresh_ratio);
->  GC_THREAD_RW_ATTR(gc_boost_gc_multiple, boost_gc_multiple);
-> +GC_THREAD_RW_ATTR(gc_boost_gc_greedy, boost_gc_greedy);
->  
->  /* SM_INFO ATTR */
->  SM_INFO_RW_ATTR(reclaim_segments, rec_prefree_segments);
-> @@ -1222,6 +1237,7 @@ static struct attribute *f2fs_attrs[] = {
->  	ATTR_LIST(gc_boost_zoned_gc_percent),
->  	ATTR_LIST(gc_valid_thresh_ratio),
->  	ATTR_LIST(gc_boost_gc_multiple),
-> +	ATTR_LIST(gc_boost_gc_greedy),
->  	ATTR_LIST(gc_idle),
->  	ATTR_LIST(gc_urgent),
->  	ATTR_LIST(reclaim_segments),
+net/ipv4/igmp.c: *                                      which caused a "del_timer() called
+net/ipv4/igmp.c: *              Christian Daudt :       removed del_timer from
 
+Maybe these are only for historical purpose, so leaving them untouched
+is fine.
 
