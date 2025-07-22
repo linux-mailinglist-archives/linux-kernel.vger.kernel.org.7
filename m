@@ -1,98 +1,123 @@
-Return-Path: <linux-kernel+bounces-741641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C4F3B0E71F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:21:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E889B0E723
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:22:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18AD0AA33AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 23:20:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9253156589A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 23:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8599D28C2C3;
-	Tue, 22 Jul 2025 23:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFFDE289809;
+	Tue, 22 Jul 2025 23:22:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rQzkUCvi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hkgaunPK"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C0B28C037;
-	Tue, 22 Jul 2025 23:20:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A53F242925
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 23:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753226407; cv=none; b=JBCmPt5N6AvSScOWZFWQ8qREUaed9bmalUWKnIaPbwPx4b7BbB9T0BzRP9gEsr/GhGy33a47zQWb7pVF1d4iK06RYkigbxesAC/qMrl5R8L9GkZhyTM8SZ40IYHA7pmseeLjUubgrMdC+YFtJHpCU1bOJyhsS/b16S758RkDKYo=
+	t=1753226570; cv=none; b=jBMkukg473Kok1DDgiolK6aY55NOPXNTPi9lnKUzMRlGTRzoj5vKgAzQo8DWdyhl8Tj3tHDy+Q7RXRTDz/SifqKANhSR+Pm+SJewUNEIM3YAoJJwDgUflgML9akU+tXLDuV9mOgeotNQzG4+NZyYcNov+UPi9w+KsRIPGCIBYsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753226407; c=relaxed/simple;
-	bh=8pybEgbErGd+tMQC9DyRAG2Z29bUyHeydTBP0D5gbzI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Mzk4aQBwfyQsSkwB3YJIhe34jXMyR4uWZ9zPL69qM9rFgZTWpzg9gr+jeJM+WbPXME24zVLbUYHIHAuGdkWeDe5LFT5lZgXITj8x2jLzxAgqYePT/cQq7Xv8qxpDXkON4c3XP6KE3BPlY1utDdsxWfIY93tgF7w7+fj3h7n8wqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rQzkUCvi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51096C4CEEB;
-	Tue, 22 Jul 2025 23:20:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753226406;
-	bh=8pybEgbErGd+tMQC9DyRAG2Z29bUyHeydTBP0D5gbzI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=rQzkUCvi2KWssfusM1lqDkexxy6Y0ssLH3rF7PKJuO3k5HlgQ7HWjMdOZ6goQwUCD
-	 NcZtivABjEdNh9FV+ZSxmaDwoe1y5uM4SC5f2S8/1xX6uoiy5GKd3nOp0PNul7O8ha
-	 8SEK/dCRmUu60LmXGpKD//V+ZxPJK4mzMo27jpHzsprC27v866Z8vf7Gu0hEfOJsyU
-	 74zel6TVBIf98eDFOXGRWl+ie1fRayX3ZfpzHHuyAYbX0ee/zcvPSNuIJwiFEpUvP/
-	 NeTH86kf4W84RCuhpTHM3a3PedkSXmRa96k+ubjHH8YTh+hkcBI2xHC5eqDpHlFRW6
-	 pN/fG2JLDxljw==
-Date: Tue, 22 Jul 2025 18:20:05 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>, Nam Cao <namcao@linutronix.de>
-Subject: Re: [PATCH] pci/controller: Use dev_fwnode()
-Message-ID: <20250722232005.GA2863060@bhelgaas>
+	s=arc-20240116; t=1753226570; c=relaxed/simple;
+	bh=x8byBPpEXxWatkvCWs7x97Jr9xkqRXLni8IvMAfRSEA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ePDRTQYXLGHaqfTajjZVqkVgEI2i3+QSVOK4xxItx18c+D6cn9xS4d75M65Vxrn7OhvVMp73Toodyh6fEuiLbgo2cylpKXS12OfsPDg59f+ZQlVFSYuGgkfGrGMvhnxONSQJ+dfJBpN2ojH1X2xVjbEBBh9UmGVqcZoQ0lA93R4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=hkgaunPK; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753226401;
+	bh=I6+4AojL6apT7pBl3Dr61QWpp9cicoMY/IflLlo6moE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hkgaunPKJMQq2e81bD74L0ZesWHNIWj3oIX6Bv4f/kbTzCQoDCg7Vm7fYB6QAzCQb
+	 9vtweeaccFrirKsdWEkwzuShzOCWmFgFDKS9osEDVzxaMPoUTRDXmHfiBAdOKGlM6j
+	 i6oh4uukm7fR+PqWH8yEAGEpOYnxDoYyIn7fsXrhtD/oLz71BrZJg1pAdBViY8eceA
+	 ZNP3wy84/LCW9Fpl8j3hnWZFnyopFy+6tzJpb7f2vYxh7JGFgPt9PBji/xSg14LgZp
+	 0woJAJnrEG6RdW6I3LdX5R28sD14DB9Fk3nhaC0McfAMUhXDDg8C5f0xXxDdzdAB5f
+	 olPixOFMQT3aw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bmtXJ358rz4x7F;
+	Wed, 23 Jul 2025 09:20:00 +1000 (AEST)
+Date: Wed, 23 Jul 2025 09:22:43 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+Cc: maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
+ christophe.leroy@csgroup.eu, linuxppc-dev@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arch:powerpc:tools This file was missing shebang line,
+ so added it
+Message-ID: <20250723092243.7056fda4@canb.auug.org.au>
+In-Reply-To: <20250722220043.14862-1-unixbhaskar@gmail.com>
+References: <20250722220043.14862-1-unixbhaskar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b4ddaa9e-3ebd-4ef9-8db1-a8277e166b1b@kernel.org>
+Content-Type: multipart/signed; boundary="Sig_/jF+OHy2nqh20Km65bZTZda+";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Tue, Jul 22, 2025 at 08:24:26AM +0200, Jiri Slaby wrote:
-> On 21. 07. 25, 19:08, Bjorn Helgaas wrote:
-> > Jiri, question for you below about more possible drivers/pci/
-> > conversions to use dev_fwnode() for struct device * cases.
-> 
-> Sorry, I am a way too occupied :/.
-> 
-> > Would like to get this in for v6.17 if these should be changed.
-> 
-> It's not necessary, but a good to have cleanup (opposed to the posted fixes,
-> which were required). I will switch those eventually, but I don't promise
-> 6.17. (If someone does not beat me to it.)
+--Sig_/jF+OHy2nqh20Km65bZTZda+
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-It's not clear from the commit log:
+Hi Bhaskar,
 
-  irq_domain_create_simple() takes fwnode as the first argument. It can be
-  extracted from the struct device using dev_fwnode() helper instead of
-  using of_node with of_fwnode_handle().
+On Wed, 23 Jul 2025 03:29:36 +0530 Bhaskar Chowdhury <unixbhaskar@gmail.com=
+> wrote:
+>
+> This file was missing the shebang line, so added it.
+>=20
+> Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+> ---
+>  arch/powerpc/tools/head_check.sh | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/arch/powerpc/tools/head_check.sh b/arch/powerpc/tools/head_c=
+heck.sh
+> index 689907cda996..a9cd06958921 100644
+> --- a/arch/powerpc/tools/head_check.sh
+> +++ b/arch/powerpc/tools/head_check.sh
+> @@ -1,3 +1,4 @@
+> +#!/bin/sh
+>  # Copyright =C2=A9 2016 IBM Corporation
+>=20
+>  # This program is free software; you can redistribute it and/or
 
-  So use the dev_fwnode() helper.
+Reviewed-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-why the posted fixes are required (other than Arnd's change to
-altera_pcie_init_irq_domain(), which fixes an unused variable warning
-when CONFIG_OF is not enabled).
+I used "shellcheck -s sh" to double check that it is in fact a bourne
+shell script and it is invoked with $(CONFIG_SHELL), so it had better
+be :-)
 
-Since it sounds like no changes are required for the other ones I
-mentioned, I'm going to leave them alone for now:
+--=20
+Cheers,
+Stephen Rothwell
 
-  dw_pcie_allocate_domains()
-  mobiveil_allocate_msi_domains()
-  altera_allocate_domains()
-  mtk_pcie_allocate_msi_domains()
-  xilinx_pl_dma_pcie_init_msi_irq_domain()
-  nwl_pcie_init_msi_irq_domain()
-  plda_allocate_msi_domains()
+--Sig_/jF+OHy2nqh20Km65bZTZda+
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Bjorn
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiAHUMACgkQAVBC80lX
+0GxLhQgAoWwpJ+cqayclBRh58CAfTt4q8zaZwKDB6vTZTUPvoqVa/OOLw4a7wJHs
+2T3rRx1Muq7gz5qjLFf7aaiQirIUMLk1mYCWiQ1QsVFWJ+8Nmy0zonEPP0m1Z7dN
+22E7BQGke1R4C5r0rmEi5hoCUWLAitQrN2CFQglvx1IQs3DP+2lexirD0pdfBjdF
+ttza1JCotNaWHjM0m6jByGlmc6dmUFjIttr8JULzYgO475QDvj/IjQm/nIRWJx5g
+MWRhCk+Waz4fyT75dlQaDX8P3BfVLJldjtcu6HljwA5eSsMYYG7WKpi7mrqx+OaG
+fSvKyKRhDfuRiP1KpflprETAcrkMtg==
+=w66r
+-----END PGP SIGNATURE-----
+
+--Sig_/jF+OHy2nqh20Km65bZTZda+--
 
