@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-740353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE7D2B0D310
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:31:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2997EB0D359
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:37:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E88FF7A97A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:30:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E0707B4329
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827CD2DC353;
-	Tue, 22 Jul 2025 07:30:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874972DC33E;
+	Tue, 22 Jul 2025 07:30:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jmfAN8GL"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q6I5RBFL"
+Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904422D3EFF
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 07:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749A22DAFB2
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 07:30:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753169401; cv=none; b=Rwidx5dAXz/rQN1/DQblSoiwCcX2VaFXzuDr6KIqH9+8wS6PnkhidD6Jes5gJyNUzIO1S9+tOcecwXmMO3+sfHEfC/NO6rn+kkZ6+aiVnc3cGkcl5JuorBTrII99En9D/pJnQgqgKKydflCNsOXnBJmtZQp/T+N47nVyjY8clYU=
+	t=1753169402; cv=none; b=jXtJPqkqIemdjSouh4lfCwGIF85UH23RrJSpjsJd91hHIOZGtDKuQDTMqXryxoIOwo1Yc1c7y5CUC6xTn+MKTal6cuO19tXTq8+L4BgLz4wBnECz428gUT0O+Ap65BtcWXnKXWrwzu62HG3hISaXtjfHMwq4oodDt+3pFXuB9F4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753169401; c=relaxed/simple;
-	bh=4fA/3jUJ6zj7k5uvYOOJQ0pRZCt2PaXp+jR/8krEmo8=;
+	s=arc-20240116; t=1753169402; c=relaxed/simple;
+	bh=F4GGrXQWJpn+IE4X0hI0Q7l6iGGha3gkPT7tK9TWOE0=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=WKq1GG4PvtifBNlIDirtzbTgbFqeEQCW+KJvQptcFMXnUSzF4xKOREwNc0/2il3TRKEVgJB6gu5fy4tEz8oj+3FLJVBK6xwFUF2NXkoVWalkgcmf15hyfiUH8e3F3vQnS7Ak5hnpGBUTSgWusK0CeX8zvkuq/k6/hJtQe+b2vcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jmfAN8GL; arc=none smtp.client-ip=209.85.221.74
+	 To:Cc:Content-Type; b=NRVLYon/qm8yVo2PeS/7ydtU/Q3jvHXhbQg/uRe2LIyeHPYjYcNQzVNEqN7STpvwXVL++pLk4wVVUq9UiMSvzfyFhIcqjl+cQvIfl0PVQeC/6DHL72marHfXNVSymct3GfZAhtm1WYDXx44p9h0jDRlNfFb3Cs6qWrUwOnEpWmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q6I5RBFL; arc=none smtp.client-ip=209.85.218.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3b5fe97af5fso2160593f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 00:29:59 -0700 (PDT)
+Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-aef68ca533aso166279866b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 00:30:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753169398; x=1753774198; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1753169399; x=1753774199; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QL6EcrfjzsGpyxx4RdNqdRqQCUuAPIThcF8MuxlBsx8=;
-        b=jmfAN8GLSTQG7TrsPGq8hh3PGgUUgRftSIohmEwUyWKNTkvhW8yrFHHR2BrqUgzXEa
-         fCXAZrQx1yDhm23SqpOvWM/ZtPaMhwownsq2e2eW3ionojbJDeTTMdxcziNEKGXZEkbu
-         1AVT0/GHpUgR87Np4gdvr97Wd+QPXiuvk1One4R2jDhUcPfDPnPF/Kx+kDywPhhkBfLZ
-         wxYp7WqUwgI5rcF5l95LoSinU6o7fHUpoOBXRemxt1AyNadQIo3hcraNJSDvSdC2OuGT
-         oGxmV+ZhDur4+GNquiw5cWAbIjQJqm+gLO5szYitV1g4ec7PYSSpegx2Y6vJvJEagLBB
-         1vmw==
+        bh=Dc7ioZTDG8dak/c8Dymf0TAZzxDxWJ7AYZQNsj1jaTY=;
+        b=q6I5RBFLPMQPMCxVROf/WEGCYLEg6F0YH+TViUGUwGgea15+DB5qCj/IO7vISSCImw
+         L1UdjQu5WH5iVQ9jyCZP07MvE9t5taf1lJZlsWh/ESLw0nQJLIHnEd2gyFU1lTllttSK
+         N0xFrgkNob6goZTsTdkhX2/XgNYRs7kTGOrgZzIL6Yydfz6e1ahJZSk407WRhiQurm6H
+         exVa3bWKOYtue9pcze89Q0ZkLWC7WdroOgsIiS2rbr6RpCJpa8LbxH3zQ+kONfVcCKEu
+         JWQFuPlAVzoIyV4ejW0dz2KYEM+Oyp5LxoKouV3fA6smALK3nO9za+3yZQz74jVh2R0a
+         tE8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753169398; x=1753774198;
+        d=1e100.net; s=20230601; t=1753169399; x=1753774199;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QL6EcrfjzsGpyxx4RdNqdRqQCUuAPIThcF8MuxlBsx8=;
-        b=UZpKEuJU+8QySshXjFEwJGOBT+SLQB1yHbG36514YmkrJp5v4gTN/DDsjwkC4TNb30
-         xcHf1OEsYI5F+6jLoNC/vNQX1BHRCKmLSs/wtwI8RkpXrAuwD6VPbIVguQZpBstVB5T2
-         YAxzYsIKRhEGlwuykM2XWTqUaY7OQvX+9CztNGD21OF+BtiNt96eAU8k2VkYop7/QYrL
-         ILrf9z+PG+3WLpi0pRSsWEeGUYvOGgqh+ZTOmHXMGzdaXRdAtvGJ5UMCV4UFPv/J3xs8
-         DoXemRcUwVI1BMQCvWz7rSIE22JtqfyPk6oYG9rzJRJZWP5hFXxg5DH5/wjFj30mhXLH
-         yfwg==
-X-Gm-Message-State: AOJu0Yx1HAc0pzwtt6YJh6KWzEc8NN6zQQ4N7nJBI/E+OkiuQqII9jCK
-	TdnZ8iEUtLMM3ZxdZh6o0IFWvAiwTqIltIEhFPCkEHg1IPMd82fZcsuxMAg85U33uAplEdw2GsY
-	tm9rMAPOtT6+/H/oHNarXadXkO7tdIpO4u20oY1+9rw9xRnNmxnG0NHWz4SkZtZFz7n1T1hainx
-	x4JvRkkB5wRx8AjvZdMPppjByz24r4XWWEAA==
-X-Google-Smtp-Source: AGHT+IE0baTcNVeiZy4pavD88v4Cu6Po7vw8UnqpAdLO4ZzSpg+xDJKOEammOnC2ugQTcaUAaNo1vUlE
-X-Received: from wroi16.prod.google.com ([2002:adf:f310:0:b0:3b3:9c56:9547])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6000:230e:b0:3b3:9cb4:43f9
- with SMTP id ffacd0b85a97d-3b60e4d0135mr18273497f8f.16.1753169397888; Tue, 22
- Jul 2025 00:29:57 -0700 (PDT)
-Date: Tue, 22 Jul 2025 09:27:17 +0200
+        bh=Dc7ioZTDG8dak/c8Dymf0TAZzxDxWJ7AYZQNsj1jaTY=;
+        b=GIgbCWC9I0UCyIOsjXvdrlBjxX+k8v3c8/4GggesMnehbjbqKuUXTQO+oV5d6oa+L4
+         GUjBN8wA0WDAPNGiw6PC4iQHxox6eqnSx6suqq2Fl0jdJ90gMncFkU82NvYX9+H9bxq1
+         vudRxyznS7wfs4b/SLPL6gcuIc9iA3a4bL+c97Tzx2GuCnlAgH2nbUo8gqUO1egxMBQQ
+         uVrXS16i88DFTwd+cFroxcNxH3iroNjWSxMuDaVb0t2Lji35yIo+2eSpsKlJ+j6BnhN/
+         zgebn077r9oZse+p1WUIPhqpRDxj6h6i+ep01WgiL/gWAONeuQhDLw54bpXXVxx5av4v
+         dNTg==
+X-Gm-Message-State: AOJu0YzYZgXHLYAu8alx/sNvy969D6PpV+4Oupf1u4C27soq9ZFaIOpC
+	XTabzt4G9KQPkj6xfGp969H487njdrkrhPJGV/9JQdxl3EQ7/OMzriY0ZNw1XiuQgEhJFi80vkt
+	AnWa4HWN5jIDLTS+eHLE9qzX2w6o3ESM+mOhTEmwj5LLF4q5WGuaHPdghjWVbsGSb8g3Y3FcjBq
+	f8l38zG76XUzShBCna+bFrazbTmmmCH+n1KA==
+X-Google-Smtp-Source: AGHT+IGFC3i6TV46/FHVJ7XlKvlXXseDbsOWjOBT2bwYV8b0c9a09n+NkEFxzJUxUmUh9w15L4cyCxyH
+X-Received: from ejczh18.prod.google.com ([2002:a17:907:e912:b0:ae9:ba12:ebd1])
+ (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a17:907:501e:b0:ae3:8c9b:bd61
+ with SMTP id a640c23a62f3a-aec4fa438c3mr1257714766b.12.1753169398866; Tue, 22
+ Jul 2025 00:29:58 -0700 (PDT)
+Date: Tue, 22 Jul 2025 09:27:18 +0200
 In-Reply-To: <20250722072708.2079165-24-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,15 +73,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250722072708.2079165-24-ardb+git@google.com>
 X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7692; i=ardb@kernel.org;
- h=from:subject; bh=pJz4SrafHjQuXPeBtx71UqIsmXAoLC/0qFiDEMr9UIA=;
- b=owGbwMvMwCVmkMcZplerG8N4Wi2JIaPetnSqV5CO2qf/5+/8ejDfaV73RW/d/ZsNXHn31RbkP
- d2wXHZnRykLgxgXg6yYIovA7L/vdp6eKFXrPEsWZg4rE8gQBi5OAZhIZiUjw03HyrBbjG+nLi/8
- vnLm1vOf9jEJSDy6cnZh4ZmXqe4sd4QYGSZ0RhRsORsckMqYlF5//cxlRj1f8xmfHiVHGOt8mNv mxQQA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5481; i=ardb@kernel.org;
+ h=from:subject; bh=U5+R57w6urjcMH6V7vXc1AZ3AS7l8D6IN1d+7fzQ4zE=;
+ b=owGbwMvMwCVmkMcZplerG8N4Wi2JIaPetkqz8zGn1tmMtLJM1d21qSfz2UsFeHekhusJfa164
+ RVj9rSjlIVBjItBVkyRRWD233c7T0+UqnWeJQszh5UJZAgDF6cATKT5CcM/zYU7F9WZWSi0z154
+ M0PJ6J/HTHGWQznnrv2xftvicEpVk+G/T+dj/XdKH//OfK30RFrondclc/fZ/+Uv+W223Ve6cU4 OMwA=
 X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250722072708.2079165-32-ardb+git@google.com>
-Subject: [PATCH v6 08/22] x86/sev: Pass SVSM calling area down to early page
- state change API
+Message-ID: <20250722072708.2079165-33-ardb+git@google.com>
+Subject: [PATCH v6 09/22] x86/sev: Use boot SVSM CA for all startup and init code
 From: Ard Biesheuvel <ardb+git@google.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-efi@vger.kernel.org, x86@kernel.org, 
@@ -93,204 +92,178 @@ Content-Type: text/plain; charset="UTF-8"
 
 From: Ard Biesheuvel <ardb@kernel.org>
 
-The early page state change API is mostly only used very early, when
-only the boot time SVSM calling area is in use. However, this API is
-also called by the kexec finishing code, which runs very late, and
-potentially from a different CPU (which uses a different calling area).
+To avoid having to reason about whether or not to use the per-CPU SVSM
+calling area when running startup and init code on the boot CPU, reuse
+the boot SVSM calling area as the per-CPU area for CPU #0.
 
-To avoid pulling the per-CPU SVSM calling area pointers and related SEV
-state into the startup code, refactor the page state change API so the
-SVSM calling area virtual and physical addresses can be provided by the
-caller.
-
-No functional change intended.
+This removes the need to make the per-CPU variables and associated state
+in sev_cfg accessible to the startup code once confined.
 
 Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 ---
- arch/x86/boot/compressed/sev.c      | 12 +++++++++---
- arch/x86/boot/startup/sev-shared.c  | 17 +++++++++--------
- arch/x86/boot/startup/sev-startup.c | 11 +++++++----
- arch/x86/coco/sev/core.c            |  3 ++-
- arch/x86/include/asm/sev-internal.h |  3 ++-
- 5 files changed, 29 insertions(+), 17 deletions(-)
+ arch/x86/boot/compressed/sev.c      | 13 ------
+ arch/x86/boot/startup/sev-startup.c |  7 +--
+ arch/x86/coco/sev/core.c            | 47 +++++++++-----------
+ arch/x86/include/asm/sev-internal.h | 16 -------
+ 4 files changed, 24 insertions(+), 59 deletions(-)
 
 diff --git a/arch/x86/boot/compressed/sev.c b/arch/x86/boot/compressed/sev.c
-index f714235d3222..18b0ccf517eb 100644
+index 18b0ccf517eb..4bdf5595ed96 100644
 --- a/arch/x86/boot/compressed/sev.c
 +++ b/arch/x86/boot/compressed/sev.c
-@@ -65,7 +65,9 @@ void snp_set_page_private(unsigned long paddr)
- 	if (!sev_snp_enabled())
- 		return;
+@@ -37,19 +37,6 @@ struct ghcb *boot_ghcb;
  
--	__page_state_change(paddr, paddr, SNP_PAGE_STATE_PRIVATE);
-+	__page_state_change(paddr, paddr, SNP_PAGE_STATE_PRIVATE,
-+			    (struct svsm_ca *)boot_svsm_caa_pa,
-+			    boot_svsm_caa_pa);
- }
+ #define __BOOT_COMPRESSED
  
- void snp_set_page_shared(unsigned long paddr)
-@@ -73,7 +75,9 @@ void snp_set_page_shared(unsigned long paddr)
- 	if (!sev_snp_enabled())
- 		return;
+-extern u64 boot_svsm_caa_pa;
+-
+-struct svsm_ca *svsm_get_caa(void)
+-{
+-	/* The decompressor is mapped 1:1 so VA == PA */
+-	return (struct svsm_ca *)boot_svsm_caa_pa;
+-}
+-
+-u64 svsm_get_caa_pa(void)
+-{
+-	return boot_svsm_caa_pa;
+-}
+-
+ u8 snp_vmpl;
  
--	__page_state_change(paddr, paddr, SNP_PAGE_STATE_SHARED);
-+	__page_state_change(paddr, paddr, SNP_PAGE_STATE_SHARED,
-+			    (struct svsm_ca *)boot_svsm_caa_pa,
-+			    boot_svsm_caa_pa);
- }
- 
- bool early_setup_ghcb(void)
-@@ -99,7 +103,9 @@ bool early_setup_ghcb(void)
- void snp_accept_memory(phys_addr_t start, phys_addr_t end)
- {
- 	for (phys_addr_t pa = start; pa < end; pa += PAGE_SIZE)
--		__page_state_change(pa, pa, SNP_PAGE_STATE_PRIVATE);
-+		__page_state_change(pa, pa, SNP_PAGE_STATE_PRIVATE,
-+				    (struct svsm_ca *)boot_svsm_caa_pa,
-+				    boot_svsm_caa_pa);
- }
- 
- void sev_es_shutdown_ghcb(void)
-diff --git a/arch/x86/boot/startup/sev-shared.c b/arch/x86/boot/startup/sev-shared.c
-index 1da1afa8677a..5992c82572d1 100644
---- a/arch/x86/boot/startup/sev-shared.c
-+++ b/arch/x86/boot/startup/sev-shared.c
-@@ -599,7 +599,8 @@ static int __head svsm_call_msr_protocol(struct svsm_call *call)
- 	return ret;
- }
- 
--static void __head svsm_pval_4k_page(unsigned long paddr, bool validate)
-+static void __head svsm_pval_4k_page(unsigned long paddr, bool validate,
-+				     struct svsm_ca *caa, u64 caa_pa)
- {
- 	struct svsm_pvalidate_call *pc;
- 	struct svsm_call call = {};
-@@ -612,10 +613,10 @@ static void __head svsm_pval_4k_page(unsigned long paddr, bool validate)
- 	 */
- 	flags = native_local_irq_save();
- 
--	call.caa = svsm_get_caa();
-+	call.caa = caa;
- 
- 	pc = (struct svsm_pvalidate_call *)call.caa->svsm_buffer;
--	pc_pa = svsm_get_caa_pa() + offsetof(struct svsm_ca, svsm_buffer);
-+	pc_pa = caa_pa + offsetof(struct svsm_ca, svsm_buffer);
- 
- 	pc->num_entries = 1;
- 	pc->cur_index   = 0;
-@@ -640,12 +641,12 @@ static void __head svsm_pval_4k_page(unsigned long paddr, bool validate)
- }
- 
- static void __head pvalidate_4k_page(unsigned long vaddr, unsigned long paddr,
--				     bool validate)
-+				     bool validate, struct svsm_ca *caa, u64 caa_pa)
- {
- 	int ret;
- 
- 	if (snp_vmpl) {
--		svsm_pval_4k_page(paddr, validate);
-+		svsm_pval_4k_page(paddr, validate, caa, caa_pa);
- 	} else {
- 		ret = pvalidate(vaddr, RMP_PG_SIZE_4K, validate);
- 		if (ret)
-@@ -654,7 +655,7 @@ static void __head pvalidate_4k_page(unsigned long vaddr, unsigned long paddr,
- }
- 
- static void __head __page_state_change(unsigned long vaddr, unsigned long paddr,
--				       enum psc_op op)
-+				       enum psc_op op, struct svsm_ca *caa, u64 caa_pa)
- {
- 	u64 val, msr;
- 
-@@ -663,7 +664,7 @@ static void __head __page_state_change(unsigned long vaddr, unsigned long paddr,
- 	 * state change in the RMP table.
- 	 */
- 	if (op == SNP_PAGE_STATE_SHARED)
--		pvalidate_4k_page(vaddr, paddr, false);
-+		pvalidate_4k_page(vaddr, paddr, false, caa, caa_pa);
- 
- 	/* Save the current GHCB MSR value */
- 	msr = sev_es_rd_ghcb_msr();
-@@ -685,7 +686,7 @@ static void __head __page_state_change(unsigned long vaddr, unsigned long paddr,
- 	 * consistent with the RMP entry.
- 	 */
- 	if (op == SNP_PAGE_STATE_PRIVATE)
--		pvalidate_4k_page(vaddr, paddr, true);
-+		pvalidate_4k_page(vaddr, paddr, true, caa, caa_pa);
- }
- 
- /*
+ /* Include code for early handlers */
 diff --git a/arch/x86/boot/startup/sev-startup.c b/arch/x86/boot/startup/sev-startup.c
-index 5eb7d939ebd3..22b8667310d5 100644
+index 22b8667310d5..55fc6d0641d3 100644
 --- a/arch/x86/boot/startup/sev-startup.c
 +++ b/arch/x86/boot/startup/sev-startup.c
-@@ -132,7 +132,8 @@ noinstr void __sev_put_ghcb(struct ghcb_state *state)
+@@ -50,9 +50,6 @@ u64 sev_secrets_pa __ro_after_init;
+ /* For early boot SVSM communication */
+ struct svsm_ca boot_svsm_ca_page __aligned(PAGE_SIZE);
  
- void __head
- early_set_pages_state(unsigned long vaddr, unsigned long paddr,
--		      unsigned long npages, enum psc_op op)
-+		      unsigned long npages, enum psc_op op,
-+		      struct svsm_ca *caa, u64 caa_pa)
- {
- 	unsigned long paddr_end;
- 
-@@ -142,7 +143,7 @@ early_set_pages_state(unsigned long vaddr, unsigned long paddr,
- 	paddr_end = paddr + (npages << PAGE_SHIFT);
- 
- 	while (paddr < paddr_end) {
--		__page_state_change(vaddr, paddr, op);
-+		__page_state_change(vaddr, paddr, op, caa, caa_pa);
- 
- 		vaddr += PAGE_SIZE;
- 		paddr += PAGE_SIZE;
-@@ -165,7 +166,8 @@ void __head early_snp_set_memory_private(unsigned long vaddr, unsigned long padd
- 	  * Ask the hypervisor to mark the memory pages as private in the RMP
+-DEFINE_PER_CPU(struct svsm_ca *, svsm_caa);
+-DEFINE_PER_CPU(u64, svsm_caa_pa);
+-
+ /*
+  * Nothing shall interrupt this code path while holding the per-CPU
+  * GHCB. The backup GHCB is only for NMIs interrupting this path.
+@@ -167,7 +164,7 @@ void __head early_snp_set_memory_private(unsigned long vaddr, unsigned long padd
  	  * table.
  	  */
--	early_set_pages_state(vaddr, paddr, npages, SNP_PAGE_STATE_PRIVATE);
-+	early_set_pages_state(vaddr, paddr, npages, SNP_PAGE_STATE_PRIVATE,
-+			      svsm_get_caa(), svsm_get_caa_pa());
+ 	early_set_pages_state(vaddr, paddr, npages, SNP_PAGE_STATE_PRIVATE,
+-			      svsm_get_caa(), svsm_get_caa_pa());
++			      rip_rel_ptr(&boot_svsm_ca_page), boot_svsm_caa_pa);
  }
  
  void __head early_snp_set_memory_shared(unsigned long vaddr, unsigned long paddr,
-@@ -181,7 +183,8 @@ void __head early_snp_set_memory_shared(unsigned long vaddr, unsigned long paddr
- 		return;
+@@ -184,7 +181,7 @@ void __head early_snp_set_memory_shared(unsigned long vaddr, unsigned long paddr
  
  	 /* Ask hypervisor to mark the memory pages shared in the RMP table. */
--	early_set_pages_state(vaddr, paddr, npages, SNP_PAGE_STATE_SHARED);
-+	early_set_pages_state(vaddr, paddr, npages, SNP_PAGE_STATE_SHARED,
-+			      svsm_get_caa(), svsm_get_caa_pa());
+ 	early_set_pages_state(vaddr, paddr, npages, SNP_PAGE_STATE_SHARED,
+-			      svsm_get_caa(), svsm_get_caa_pa());
++			      rip_rel_ptr(&boot_svsm_ca_page), boot_svsm_caa_pa);
  }
  
  /*
 diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
-index bea67d017bf0..7a86a2fe494d 100644
+index 7a86a2fe494d..4fe0928bc0ad 100644
 --- a/arch/x86/coco/sev/core.c
 +++ b/arch/x86/coco/sev/core.c
-@@ -585,7 +585,8 @@ static void set_pages_state(unsigned long vaddr, unsigned long npages, int op)
+@@ -46,6 +46,25 @@
+ #include <asm/cmdline.h>
+ #include <asm/msr.h>
  
- 	/* Use the MSR protocol when a GHCB is not available. */
- 	if (!boot_ghcb)
--		return early_set_pages_state(vaddr, __pa(vaddr), npages, op);
-+		return early_set_pages_state(vaddr, __pa(vaddr), npages, op,
-+					     svsm_get_caa(), svsm_get_caa_pa());
++DEFINE_PER_CPU(struct svsm_ca *, svsm_caa);
++DEFINE_PER_CPU(u64, svsm_caa_pa);
++
++static inline struct svsm_ca *svsm_get_caa(void)
++{
++	if (sev_cfg.use_cas)
++		return this_cpu_read(svsm_caa);
++	else
++		return rip_rel_ptr(&boot_svsm_ca_page);
++}
++
++static inline u64 svsm_get_caa_pa(void)
++{
++	if (sev_cfg.use_cas)
++		return this_cpu_read(svsm_caa_pa);
++	else
++		return boot_svsm_caa_pa;
++}
++
+ /* AP INIT values as documented in the APM2  section "Processor Initialization State" */
+ #define AP_INIT_CS_LIMIT		0xffff
+ #define AP_INIT_DS_LIMIT		0xffff
+@@ -1287,7 +1306,8 @@ static void __init alloc_runtime_data(int cpu)
+ 		struct svsm_ca *caa;
  
- 	vaddr = vaddr & PAGE_MASK;
- 	vaddr_end = vaddr + (npages << PAGE_SHIFT);
+ 		/* Allocate the SVSM CA page if an SVSM is present */
+-		caa = memblock_alloc_or_panic(sizeof(*caa), PAGE_SIZE);
++		caa = cpu ? memblock_alloc_or_panic(sizeof(*caa), PAGE_SIZE)
++			  : &boot_svsm_ca_page;
+ 
+ 		per_cpu(svsm_caa, cpu) = caa;
+ 		per_cpu(svsm_caa_pa, cpu) = __pa(caa);
+@@ -1341,32 +1361,9 @@ void __init sev_es_init_vc_handling(void)
+ 		init_ghcb(cpu);
+ 	}
+ 
+-	/* If running under an SVSM, switch to the per-cpu CA */
+-	if (snp_vmpl) {
+-		struct svsm_call call = {};
+-		unsigned long flags;
+-		int ret;
+-
+-		local_irq_save(flags);
+-
+-		/*
+-		 * SVSM_CORE_REMAP_CA call:
+-		 *   RAX = 0 (Protocol=0, CallID=0)
+-		 *   RCX = New CA GPA
+-		 */
+-		call.caa = svsm_get_caa();
+-		call.rax = SVSM_CORE_CALL(SVSM_CORE_REMAP_CA);
+-		call.rcx = this_cpu_read(svsm_caa_pa);
+-		ret = svsm_perform_call_protocol(&call);
+-		if (ret)
+-			panic("Can't remap the SVSM CA, ret=%d, rax_out=0x%llx\n",
+-			      ret, call.rax_out);
+-
++	if (snp_vmpl)
+ 		sev_cfg.use_cas = true;
+ 
+-		local_irq_restore(flags);
+-	}
+-
+ 	sev_es_setup_play_dead();
+ 
+ 	/* Secondary CPUs use the runtime #VC handler */
 diff --git a/arch/x86/include/asm/sev-internal.h b/arch/x86/include/asm/sev-internal.h
-index ffe4755962fe..3b72d8217827 100644
+index 3b72d8217827..bdfe008120f3 100644
 --- a/arch/x86/include/asm/sev-internal.h
 +++ b/arch/x86/include/asm/sev-internal.h
-@@ -55,7 +55,8 @@ DECLARE_PER_CPU(struct sev_es_runtime_data*, runtime_data);
- DECLARE_PER_CPU(struct sev_es_save_area *, sev_vmsa);
+@@ -63,22 +63,6 @@ DECLARE_PER_CPU(u64, svsm_caa_pa);
  
- void early_set_pages_state(unsigned long vaddr, unsigned long paddr,
--			   unsigned long npages, enum psc_op op);
-+			   unsigned long npages, enum psc_op op,
-+			   struct svsm_ca *ca, u64 caa_pa);
+ extern u64 boot_svsm_caa_pa;
  
- DECLARE_PER_CPU(struct svsm_ca *, svsm_caa);
- DECLARE_PER_CPU(u64, svsm_caa_pa);
+-static __always_inline struct svsm_ca *svsm_get_caa(void)
+-{
+-	if (sev_cfg.use_cas)
+-		return this_cpu_read(svsm_caa);
+-	else
+-		return rip_rel_ptr(&boot_svsm_ca_page);
+-}
+-
+-static __always_inline u64 svsm_get_caa_pa(void)
+-{
+-	if (sev_cfg.use_cas)
+-		return this_cpu_read(svsm_caa_pa);
+-	else
+-		return boot_svsm_caa_pa;
+-}
+-
+ enum es_result verify_exception_info(struct ghcb *ghcb, struct es_em_ctxt *ctxt);
+ void vc_forward_exception(struct es_em_ctxt *ctxt);
+ 
 -- 
 2.50.0.727.gbf7dc18ff4-goog
 
