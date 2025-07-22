@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-740078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB8DBB0CF6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:54:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9DEAB0CF6E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:54:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C420546ACE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 01:53:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04687176A57
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 01:54:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0EB91E22E9;
-	Tue, 22 Jul 2025 01:53:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711701E5B71;
+	Tue, 22 Jul 2025 01:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b="YHDfZls4"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b="d/mxqrVu"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7046A1DE8A0
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 01:53:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1001DFE0B
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 01:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753149208; cv=none; b=nPKR2sgqRj4SngC5B6YW8XIRjis5Pfn5E7hO2I18O5T7TkBhK7IZvvNXoDAVoGzIe0ke7pQx8wbOjqtqlFC1KCe9DoGA7jEKkwOB5Pp0SHnoSoiZztyTCy7mYX4koCzzqZGhoZeJE8Vow3/iMIeYRES/+MHFjU3OLsUszGE38L4=
+	t=1753149209; cv=none; b=AfJImu5t6cdxe8uVSsB7Ig1gEvZszYLnEBDu7HU4jV5Rv9wmc6gHcgTM6yKzkoRnwegXolyLQx/w1tBHqnnSUz6pCm5qJU4qZt/splDDDJIP+jG2uvuD+zEg5CJg2uqxpxkmjzGYe+/+qBokOZGaDvhGfuRaWp8ny5mPbcBK8TY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753149208; c=relaxed/simple;
-	bh=UGjriME1ipcli1o9i6srAJ2jQYa/wzdVFweQP30jMJk=;
+	s=arc-20240116; t=1753149209; c=relaxed/simple;
+	bh=7Eifg3KSSA5Jt2qx/3hzXf0HaiUdAumge8P2aIN3a9M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Oowb1RMeaUQTluSMXkTZGlltoY8kUNhvaEo1cikB2GJ0PGS36v494bjHY0oA74qlxC3rnrHIusckQfZs3w4EHdj44ySME6ybhRLxbQ6BU2128Rx8x9RUzoBDN/1mX7nn7h4undGdeKXj7wr8XD2CUasBzN86bU572eXc1GOMWds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com; spf=pass smtp.mailfrom=brighamcampbell.com; dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b=YHDfZls4; arc=none smtp.client-ip=209.85.210.173
+	 MIME-Version; b=P7JY1FrwzDGWQdTYAiJQa0TMp25Gx5OU9c+AOX70Eqkn3R6NHrvSj+At4fS2dUUtSJYoAi5VXBy/GP9/ul2Prz+unNnZnXuSyE946Qo5G3YWcjxlLCHsRnfBwsoGRzpaCZ6UGaL3Ye9yH2PhItw1gakRJ3Tyjq6EGeidl40TTpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com; spf=pass smtp.mailfrom=brighamcampbell.com; dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b=d/mxqrVu; arc=none smtp.client-ip=209.85.210.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brighamcampbell.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-748d982e97cso4430671b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 18:53:26 -0700 (PDT)
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-748fe69a7baso4436393b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 18:53:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brighamcampbell.com; s=google; t=1753149206; x=1753754006; darn=vger.kernel.org;
+        d=brighamcampbell.com; s=google; t=1753149208; x=1753754008; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sdRj+I88N+R+RVdcFm7ubWhFSooeArA2NulQ8/PI04M=;
-        b=YHDfZls4GDtf0mn6lHnkGZ+FzQbFUGrF2AML+cK7f6Lxe6Pf3jNcA8Gdf+Gi/jBkR7
-         2AJEqoBcYX2oGdcaal4cFhAykVy/qqSQSQjQrunmNfEv2W5gODvrw06OkjMKvK7OaiW9
-         dFIm3jdk7YP+vNpp9uECVHS15P6guWcLDPuaVjnhxLZKQiLasF9/Kaz4Q67Vb1/YO/PS
-         ElmrdO/2Ku6ZSdbXn1540rEy+MfIQWwXCyRoOd1CQ0/bXEswl6fPD1OgYQqY0EnlXeGw
-         k/28TWJ9xT2FPq3L+rPsP8gxUDqIi4V3qP5V1aQh3ull9kamikXGm/lj//jxq5twvGZq
-         IpUg==
+        bh=4rHylqCjx1w2oDPs7/xM2Riq8NSJ9PhhkdUN4+cutX8=;
+        b=d/mxqrVuV/nJGiDTPI4uKTSBnYtBuGqiWTEBw/GpcyLGTr9ymVkBt0rr+BZcmMvC5w
+         MiwwRwJH150Mq2n7/tX0XePIdYryksrd/NJcspM1iuf/lSQRP2vqozqIhjRl1tyR3pEz
+         gdJ9xefFjurGdpWo1lPzPDUIF4VJTOzjXNr2gUkg+Ok7ubHv9UzIzkqrzQ+B7wpx/h+R
+         R8hsoh4dZg/HjfiBvX28JGz68nq161pz1jCHiFHorhNxEoBKQF9OG4J2LYPPmFsJ0RfW
+         sJJ8WlH+kuXrNtjMbX0WBwCbltsIEa/o2Zt3zoFl1vf10XntK/qW5J9kKp5qzer3QwjN
+         nZKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753149206; x=1753754006;
+        d=1e100.net; s=20230601; t=1753149208; x=1753754008;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sdRj+I88N+R+RVdcFm7ubWhFSooeArA2NulQ8/PI04M=;
-        b=o16w1RJE2ynWtBZH0y8ESla6azDb7bJjE7GLGvryVR7bSJNQtm6kzxV2RYQzjAwGYC
-         Zj7slLt94nXVZtDr80snFM2XsZtfEcpJg/b0WNEKzFWoWOFuo43/CFND/l/CrL14WBA2
-         L8ydTr/k8ua+FpVSPezpgI8zWPW9OnW5H9sg7qVW1GK7goLh1Bb472RVWHRH5kH19cVW
-         yCd1TEzYF2AcujhFEdi2Yz3kFoaboq9RyIcdU8ZeOb6YQX2px82a7EifXofVU9mJZdwL
-         XmSpDeDTzxxeRdFxevRUqp0GCo1LTilIycUaEN61btZSQeqyFa5AliSDfodwpcvFKIW3
-         LZcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVPPWNxT0/g15SrrkzNQ/GoH4oGZqTDcUrLT2c3YFwcxCrn0msfXn83AvWCMVghpqh6nrfbVaLEFFyO98k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8LnTxAM0tF7/MFNEZ2qulRpjyopsBRlxbcCMouU8wJQBp2MvX
-	Z1cnNVFLCHy3rV26L5T4La3R95yJPMjp6RTMnCouMf8NuhQmNmfFSaovpFSI7aCfdPsXeS1e5SY
-	agbSRmO+gmw==
-X-Gm-Gg: ASbGncsu6FcV6QHz3YGq/gNQdhzriLwDOS08QUGMUr41ghUHuNOBgsEz9WoUoprgwcK
-	Gn1IDHfTUbB38OpM/q60RodrLpF1leBSS1fytKZJDnuwLxSCv0XwmwrN+7j1hQiDBpO6Kd9Foy/
-	JBuFXga4jQA4IW6FIZAEI476E3Z8fuuX4xI6kQ/l0jXccre0SeXDLInisac7l2vCehXdSNwMAXX
-	nNSipdh16GebKnwXMh6RIpk39WEUfQYQQSDEqQiZ8bXOAMzDHpjiUH2zOrbTWxbeeFnJiy7jEVW
-	ZSPky8TkekxS4UiJFRuQTlBKNEZY+3qPhWaDc7mMv+8XuRhAEXDcqEFM0/q4VA0mlLyg0mVEVLZ
-	e/MZ23CFADFpc6OE9KO4SbfRRVPfnvSADRYF5tB3YJeB/2FNQYQ==
-X-Google-Smtp-Source: AGHT+IG6tNXplzhOlO9KMayA+8YKZtftV5rzHK8TvneHGceF0dD/1zLLjMy0L2fZ+upC9WT9XqLSug==
-X-Received: by 2002:a05:6a00:1945:b0:747:bd28:1ca1 with SMTP id d2e1a72fcca58-75722771f31mr32750586b3a.3.1753149205584;
-        Mon, 21 Jul 2025 18:53:25 -0700 (PDT)
+        bh=4rHylqCjx1w2oDPs7/xM2Riq8NSJ9PhhkdUN4+cutX8=;
+        b=QcM4+Q8H6QawfVVMV7LK3bkzAYAeHDWO/f7+8Q4Hy4oV2UHj6xvu8iLWOW/cVKUGZ4
+         nmHDlvg4TtE3rf9ahs47ekpwHFWiUPx1vWE9VkcxxVueSWdTeFlkcWoNTHz2OSbpy8jM
+         z2D61PJUaSqNoVunj9KPEsHEA/J9XGkuoqx4l+o44djJiRKvmlrgAhjc5/kwIv1TJI3X
+         sLizFSdgGXtdNqbFhxcgTARCSb5COWiPlCz8lXrNsRmxc2UkVRQhLiNmeC28bBhr7lp1
+         dX8Nk/m/DpFVhy/hBHgaRSwWuzF4Qbulp97Pg5wxeyJFrueLRoNeK7al/4/jI1RbGdSD
+         xeFg==
+X-Forwarded-Encrypted: i=1; AJvYcCVR55KkAwOb+EZQWtrcsSyOWhyzoreKiP2Mco9ONJSWH2onq9c70q+3zmzCNbC6lKSEUSm/tfWllKmhwbs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSppl15oP0XvrC05lBPZL+ZleuO1pGxoZLVCGcrL2pa9/K7M6r
+	GtPIth2Ek6lX02tEwUi2JFm5IDsIm8qtTaLEL6Dt367l5p/jZQLpj/iPVwDZsIuFebPyUZB0EY0
+	FImS4WL5xjQ==
+X-Gm-Gg: ASbGncucYiP53abIKXJbTUgcJ2vnKUIWF0Qy+KOUkT8BksE2nGhTNV38IyfHAgzzBFX
+	2HQKGEVb/cqZTXI5/mhP6NkpL2UK7Va8HnwqPjUy/DaL91TURc16t6EfAwHzS7c6hDpbY0tmEW/
+	x2d84bRkVu+XVxXGWh26Is8LOTd2b99J60gom3uycrRnwsmwloBjL5l2CMdGzbpb7JJ0YevmOSv
+	28XZYE40tt3EoioDs64i5g6CzQaod/joY/r95eh9yMbADA8rDtKlMThmZs90qQUOu4ZOgv82QZk
+	DotFtDS6CbV9Mo0HDOiavcLtI31zCk6HfSySIFGbTpi+MENORF5iTyVApR9H/nHENr0YtoNL34m
+	R5+jQmet7y0ww7ZK/EwLVGIuBZkhjdQVWdydcqy4ANUAxBhYTiA==
+X-Google-Smtp-Source: AGHT+IE6DV4AnVW0+4Gsag1rZoVLI3l8Jq88LM8p0J3ZdDdDROI+eXGNgt3ap9Wn8cOMjGOum41DxA==
+X-Received: by 2002:a05:6a00:2e0d:b0:740:67aa:94ab with SMTP id d2e1a72fcca58-758462d74b4mr25646084b3a.0.1753149207483;
+        Mon, 21 Jul 2025 18:53:27 -0700 (PDT)
 Received: from mystery-machine.tail542cf.ts.net ([64.71.154.6])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f2fe62d9fsm6017441a12.1.2025.07.21.18.53.24
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f2fe62d9fsm6017441a12.1.2025.07.21.18.53.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 18:53:25 -0700 (PDT)
+        Mon, 21 Jul 2025 18:53:27 -0700 (PDT)
 From: Brigham Campbell <me@brighamcampbell.com>
 To: dianders@chromium.org,
 	tejasvipin76@gmail.com,
@@ -82,15 +82,16 @@ To: dianders@chromium.org,
 	dri-devel@lists.freedesktop.org,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
+	Jonathan Corbet <corbet@lwn.net>
 Cc: Brigham Campbell <me@brighamcampbell.com>
-Subject: [PATCH v6 3/4] drm: Remove unused MIPI write seq and chatty functions
-Date: Mon, 21 Jul 2025 19:53:10 -0600
-Message-ID: <20250722015313.561966-4-me@brighamcampbell.com>
+Subject: [PATCH v6 4/4] drm: docs: Update task from drm TODO list
+Date: Mon, 21 Jul 2025 19:53:11 -0600
+Message-ID: <20250722015313.561966-5-me@brighamcampbell.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250722015313.561966-1-me@brighamcampbell.com>
 References: <20250722015313.561966-1-me@brighamcampbell.com>
@@ -102,107 +103,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove the deprecated mipi_dsi_generic_write_seq() and
-mipi_dsi_generic_write_chatty() functions now that they are no longer
-used.
+Update TODO item from drm documentation to contain more applicable
+information regarding the removal of deprecated MIPI DSI functions and
+no longer reference functions which have already been removed from the
+kernel.
 
 Reviewed-by: Douglas Anderson <dianders@chromium.org>
 Signed-off-by: Brigham Campbell <me@brighamcampbell.com>
 ---
- drivers/gpu/drm/drm_mipi_dsi.c | 34 +++-------------------------------
- include/drm/drm_mipi_dsi.h     | 23 -----------------------
- 2 files changed, 3 insertions(+), 54 deletions(-)
+ Documentation/gpu/todo.rst | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mipi_dsi.c
-index 5b387543de28..ca77f152404a 100644
---- a/drivers/gpu/drm/drm_mipi_dsi.c
-+++ b/drivers/gpu/drm/drm_mipi_dsi.c
-@@ -772,41 +772,13 @@ ssize_t mipi_dsi_generic_write(struct mipi_dsi_device *dsi, const void *payload,
- EXPORT_SYMBOL(mipi_dsi_generic_write);
+diff --git a/Documentation/gpu/todo.rst b/Documentation/gpu/todo.rst
+index be8637da3fe9..92db80793bba 100644
+--- a/Documentation/gpu/todo.rst
++++ b/Documentation/gpu/todo.rst
+@@ -497,19 +497,19 @@ Contact: Douglas Anderson <dianders@chromium.org>
  
- /**
-- * mipi_dsi_generic_write_chatty() - mipi_dsi_generic_write() w/ an error log
-- * @dsi: DSI peripheral device
-- * @payload: buffer containing the payload
-- * @size: size of payload buffer
-- *
-- * Like mipi_dsi_generic_write() but includes a dev_err()
-- * call for you and returns 0 upon success, not the number of bytes sent.
-- *
-- * Return: 0 on success or a negative error code on failure.
-- */
--int mipi_dsi_generic_write_chatty(struct mipi_dsi_device *dsi,
--				  const void *payload, size_t size)
--{
--	struct device *dev = &dsi->dev;
--	ssize_t ret;
--
--	ret = mipi_dsi_generic_write(dsi, payload, size);
--	if (ret < 0) {
--		dev_err(dev, "sending generic data %*ph failed: %zd\n",
--			(int)size, payload, ret);
--		return ret;
--	}
--
--	return 0;
--}
--EXPORT_SYMBOL(mipi_dsi_generic_write_chatty);
--
--/**
-- * mipi_dsi_generic_write_multi() - mipi_dsi_generic_write_chatty() w/ accum_err
-+ * mipi_dsi_generic_write_multi() - mipi_dsi_generic_write() w/ accum_err
-  * @ctx: Context for multiple DSI transactions
-  * @payload: buffer containing the payload
-  * @size: size of payload buffer
-  *
-- * Like mipi_dsi_generic_write_chatty() but deals with errors in a way that
-- * makes it convenient to make several calls in a row.
-+ * A wrapper around mipi_dsi_generic_write() that deals with errors in a way
-+ * that makes it convenient to make several calls in a row.
-  */
- void mipi_dsi_generic_write_multi(struct mipi_dsi_multi_context *ctx,
- 				  const void *payload, size_t size)
-diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
-index f1dc822f69d6..ea523eb35b08 100644
---- a/include/drm/drm_mipi_dsi.h
-+++ b/include/drm/drm_mipi_dsi.h
-@@ -285,8 +285,6 @@ void mipi_dsi_picture_parameter_set_multi(struct mipi_dsi_multi_context *ctx,
+ Level: Intermediate
  
- ssize_t mipi_dsi_generic_write(struct mipi_dsi_device *dsi, const void *payload,
- 			       size_t size);
--int mipi_dsi_generic_write_chatty(struct mipi_dsi_device *dsi,
--				  const void *payload, size_t size);
- void mipi_dsi_generic_write_multi(struct mipi_dsi_multi_context *ctx,
- 				  const void *payload, size_t size);
- void mipi_dsi_dual_generic_write_multi(struct mipi_dsi_multi_context *ctx,
-@@ -387,27 +385,6 @@ void mipi_dsi_dcs_set_tear_scanline_multi(struct mipi_dsi_multi_context *ctx,
- 					  u16 scanline);
- void mipi_dsi_dcs_set_tear_off_multi(struct mipi_dsi_multi_context *ctx);
+-Transition away from using mipi_dsi_*_write_seq()
+--------------------------------------------------
++Transition away from using deprecated MIPI DSI functions
++--------------------------------------------------------
  
--/**
-- * mipi_dsi_generic_write_seq - transmit data using a generic write packet
-- *
-- * This macro will print errors for you and will RETURN FROM THE CALLING
-- * FUNCTION (yes this is non-intuitive) upon error.
-- *
-- * Because of the non-intuitive return behavior, THIS MACRO IS DEPRECATED.
-- * Please replace calls of it with mipi_dsi_generic_write_seq_multi().
-- *
-- * @dsi: DSI peripheral device
-- * @seq: buffer containing the payload
-- */
--#define mipi_dsi_generic_write_seq(dsi, seq...)                                \
--	do {                                                                   \
--		static const u8 d[] = { seq };                                 \
--		int ret;                                                       \
--		ret = mipi_dsi_generic_write_chatty(dsi, d, ARRAY_SIZE(d));    \
--		if (ret < 0)                                                   \
--			return ret;                                            \
--	} while (0)
--
- /**
-  * mipi_dsi_generic_write_seq_multi - transmit data using a generic write packet
-  *
+-The macros mipi_dsi_generic_write_seq() and mipi_dsi_dcs_write_seq() are
+-non-intuitive because, if there are errors, they return out of the *caller's*
+-function. We should move all callers to use mipi_dsi_generic_write_seq_multi()
+-and mipi_dsi_dcs_write_seq_multi() macros instead.
++There are many functions defined in ``drm_mipi_dsi.c`` which have been
++deprecated. Each deprecated function was deprecated in favor of its `multi`
++variant (e.g. `mipi_dsi_generic_write()` and `mipi_dsi_generic_write_multi()`).
++The `multi` variant of a function includes improved error handling and logic
++which makes it more convenient to make several calls in a row, as most MIPI
++drivers do.
+ 
+-Once all callers are transitioned, the macros and the functions that they call,
+-mipi_dsi_generic_write_chatty() and mipi_dsi_dcs_write_buffer_chatty(), can
+-probably be removed. Alternatively, if people feel like the _multi() variants
+-are overkill for some use cases, we could keep the mipi_dsi_*_write_seq()
+-variants but change them not to return out of the caller.
++Drivers should be updated to use undeprecated functions. Once all usages of the
++deprecated MIPI DSI functions have been removed, their definitions may be
++removed from ``drm_mipi_dsi.c``.
+ 
+ Contact: Douglas Anderson <dianders@chromium.org>
+ 
 -- 
 2.50.1
 
