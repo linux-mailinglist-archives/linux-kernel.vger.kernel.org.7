@@ -1,133 +1,159 @@
-Return-Path: <linux-kernel+bounces-740573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7A99B0D5E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:24:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 81599B0D613
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:39:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77D1A164466
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:24:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B652017EB81
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915282DCF65;
-	Tue, 22 Jul 2025 09:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MjJRYeJZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134202DEA88;
+	Tue, 22 Jul 2025 09:39:01 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8218F189902;
-	Tue, 22 Jul 2025 09:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04F11DFE0B;
+	Tue, 22 Jul 2025 09:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753176272; cv=none; b=DlUlAhNpldZkz0ooqfPapBxY/KnuOA6TrrMT4w0sE6uE1V/ZuM+iGZC/sEMdeniXDgqhatVUoy1nc+Q0XO/MtZyOk+zNL3htQRzS5nAECnc590d4MdaZ+yrD5dPn/SLP6rt6Sw6FnM7u7UY1lU2VH/ZNOnzuGjgw+1iHWXoGOKo=
+	t=1753177140; cv=none; b=Dx5+NIkMU9YTD0/3UQod/ulWHsY5SeIU6XmtValUjSjopHOXr6DDHGPsaJ1q5Hr1+P4v8ufGOg2lrZKMmXOqSkT+a+yaKbqVIhHwH25G86vH9AKRTZXNJDwBwZnn4YXtzq+yxJeIrjN6aXoWAaV2R5rf3zdHdkabLmAZzU9NzjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753176272; c=relaxed/simple;
-	bh=Ksr4RcpyiaVxvdAz9Ft+gR94b9IMq2d1CEO85zHMm3o=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ozdi7zxKbUqjVpS7bhPaGPOyba+XSkcY455kr2390EfonGP85biUUp9cXiGLNr9gVbbeTJ+MgwGtO0D32hkHab3nWo1xwF/bGoaBk/cKjpIi85g6kTgFijANpAAaCz9w+glrzCbw2yUhCsIgjDjHfmCUPY2N4E2iLwGsY0Fld2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MjJRYeJZ; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753176271; x=1784712271;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=Ksr4RcpyiaVxvdAz9Ft+gR94b9IMq2d1CEO85zHMm3o=;
-  b=MjJRYeJZpalrlHw+UcPoLhG0hsnDsFWT4Vl198E033SFSD8VB0j88IgK
-   tsdjYlB+nUlOBtv2gmxqzWzz9v+1Vz7qcqmQRLBAvR7KjSNbfuZ3TSzwx
-   6qaTp8+EIIpqjbs7F1OpPp5qYQBh9Dmgn1p5WW0Z46zH98v9JSfFuaIof
-   mP7E3btZygMf7XIArG3cCmTUHgD3AJV5tezE1D566DfnmyOrKeYuvS5xy
-   aEiF4fT4jF51WLsfHPlb0dYBL8C8bnah7e9LuE9zS+DhxKao1yeS5i3uh
-   FKU4YUYIuD8NilU9B5NSz6N2dJHzhdmg7f0JBMvNqHTQ++GDVFQ8Titq4
-   w==;
-X-CSE-ConnectionGUID: dXx7JM3uS8aac5OU3dpXgA==
-X-CSE-MsgGUID: L+02RNx2QLSMDZdllhWsjQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11499"; a="55574717"
-X-IronPort-AV: E=Sophos;i="6.16,331,1744095600"; 
-   d="scan'208";a="55574717"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 02:24:30 -0700
-X-CSE-ConnectionGUID: cbehGU95QkWPRtX5+LVZGA==
-X-CSE-MsgGUID: 7OhfXV8JRdOAnLadikdZ1w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,331,1744095600"; 
-   d="scan'208";a="163133052"
-Received: from vpanait-mobl.ger.corp.intel.com (HELO [10.245.244.202]) ([10.245.244.202])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 02:24:17 -0700
-Message-ID: <ffd58e1a8b51c98cac9be49e85d367f1a3a24c2d.camel@linux.intel.com>
-Subject: Re: [PATCH v3 3/8] drm/xe: Fix typo "notifer"
-From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
-To: WangYuli <wangyuli@uniontech.com>
-Cc: airlied@gmail.com, akpm@linux-foundation.org,
- alison.schofield@intel.com, 	andrew+netdev@lunn.ch,
- andriy.shevchenko@linux.intel.com, 	arend.vanspriel@broadcom.com,
- bp@alien8.de, brcm80211-dev-list.pdl@broadcom.com, 
-	brcm80211@lists.linux.dev, colin.i.king@gmail.com, cvam0000@gmail.com, 
-	dan.j.williams@intel.com, dave.hansen@linux.intel.com,
- dave.jiang@intel.com, 	dave@stgolabs.net, davem@davemloft.net,
- dri-devel@lists.freedesktop.org, 	edumazet@google.com,
- gregkh@linuxfoundation.org, guanwentao@uniontech.com, 	hpa@zytor.com,
- ilpo.jarvinen@linux.intel.com, intel-xe@lists.freedesktop.org, 
-	ira.weiny@intel.com, j@jannau.net, jeff.johnson@oss.qualcomm.com,
- jgross@suse.com, 	jirislaby@kernel.org, johannes.berg@intel.com,
- jonathan.cameron@huawei.com, 	kuba@kernel.org, kvalo@kernel.org,
- kvm@vger.kernel.org, linux-cxl@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, linux@treblig.org,
- lucas.demarchi@intel.com, 	marcin.s.wojtas@gmail.com, ming.li@zohomail.com,
- mingo@kernel.org, 	mingo@redhat.com, netdev@vger.kernel.org,
- niecheng1@uniontech.com, 	oleksandr_tyshchenko@epam.com, pabeni@redhat.com,
- pbonzini@redhat.com, 	quic_ramess@quicinc.com, ragazenta@gmail.com,
- rodrigo.vivi@intel.com, 	seanjc@google.com, shenlichuan@vivo.com,
- simona@ffwll.ch, sstabellini@kernel.org, 	tglx@linutronix.de,
- vishal.l.verma@intel.com, wangyuli@deepin.org, x86@kernel.org, 
-	xen-devel@lists.xenproject.org, yujiaoliang@vivo.com, zhanjun@uniontech.com
-Date: Tue, 22 Jul 2025 11:24:15 +0200
-In-Reply-To: <94190C5F54A19F3E+20250722073431.21983-3-wangyuli@uniontech.com>
-References: <576F0D85F6853074+20250722072734.19367-1-wangyuli@uniontech.com>
-	 <94190C5F54A19F3E+20250722073431.21983-3-wangyuli@uniontech.com>
-Organization: Intel Sweden AB, Registration Number: 556189-6027
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1753177140; c=relaxed/simple;
+	bh=qEiN+8NGsRRggnwR8H/Pc0+TGCIZldtdbKd45XV0l7E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KtnrCGUTTAepBKsn/oJ28OB6KNUshYwhDkgz2e0vfxkFHu/VZhY/cv7J8S0GSdFsGzCObVvx5+rs+okiU3iTKmPB/gQzKA/BEelqwrS+O9TQSHIji+UxvU7+ABqiVN0PyU5409Smf/sGcGPmOOsaGk7AjCk00WGtNYKv8gBBYB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bmXJv61ZLzKHMrg;
+	Tue, 22 Jul 2025 17:38:55 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 8D58D1A1983;
+	Tue, 22 Jul 2025 17:38:54 +0800 (CST)
+Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
+	by APP4 (Coremail) with SMTP id gCh0CgCHURIaXH9oCzBnBA--.21969S2;
+	Tue, 22 Jul 2025 17:38:54 +0800 (CST)
+From: Chen Ridong <chenridong@huaweicloud.com>
+To: tj@kernel.org,
+	hannes@cmpxchg.org,
+	mkoutny@suse.com,
+	lizefan@huawei.com
+Cc: cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lujialin4@huawei.com,
+	chenridong@huawei.com,
+	gaoyingjie@uniontech.com
+Subject: [PATCH -next] cgroup: remove offline draining in root destruction to avoid hung_tasks
+Date: Tue, 22 Jul 2025 09:24:44 +0000
+Message-Id: <20250722092444.4108989-1-chenridong@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCHURIaXH9oCzBnBA--.21969S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxZry8Kr4rAw17tF1xuF1kuFg_yoW5Ar1DpF
+	s8Cw12yw4rWFn8K3ykta4Iga4F9a10qw4Uta4Igw48AF17Xryjq3Z2yF1UXF10yFsrCay2
+	yrWYvrn7C34jy37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI
+	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
+	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
+	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
+	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On Tue, 2025-07-22 at 15:34 +0800, WangYuli wrote:
-> There is a spelling mistake of 'notifer' in the comment which
-> should be 'notifier'.
->=20
-> Signed-off-by: WangYuli <wangyuli@uniontech.com>
-Reviewed-by: Thomas Hellstr=C3=B6m <thomas.hellstrom@linux.intel.com>
+From: Chen Ridong <chenridong@huawei.com>
 
-> ---
-> =C2=A0drivers/gpu/drm/xe/xe_vm_types.h | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/xe/xe_vm_types.h
-> b/drivers/gpu/drm/xe/xe_vm_types.h
-> index 1979e9bdbdf3..0ca27579fd1f 100644
-> --- a/drivers/gpu/drm/xe/xe_vm_types.h
-> +++ b/drivers/gpu/drm/xe/xe_vm_types.h
-> @@ -259,7 +259,7 @@ struct xe_vm {
-> =C2=A0		 * up for revalidation. Protected from access with
-> the
-> =C2=A0		 * @invalidated_lock. Removing items from the list
-> =C2=A0		 * additionally requires @lock in write mode, and
-> adding
-> -		 * items to the list requires either the
-> @userptr.notifer_lock in
-> +		 * items to the list requires either the
-> @userptr.notifier_lock in
-> =C2=A0		 * write mode, OR @lock in write mode.
-> =C2=A0		 */
-> =C2=A0		struct list_head invalidated;
+A hung task can occur during LTP cgroup testing when repeatedly
+mounting/unmounting perf_event and net_prio controllers with
+systemd.unified_cgroup_hierarchy=1. The hang manifests in
+cgroup_lock_and_drain_offline() during root destruction.
+
+Call Trace:
+	cgroup_lock_and_drain_offline+0x14c/0x1e8
+	cgroup_destroy_root+0x3c/0x2c0
+	css_free_rwork_fn+0x248/0x338
+	process_one_work+0x16c/0x3b8
+	worker_thread+0x22c/0x3b0
+	kthread+0xec/0x100
+	ret_from_fork+0x10/0x20
+
+Root Cause:
+
+CPU0                            CPU1
+mount perf_event                umount net_prio
+cgroup1_get_tree                cgroup_kill_sb
+rebind_subsystems               // root destruction enqueues
+				// cgroup_destroy_wq
+// kill all perf_event css
+                                // one perf_event css A is dying
+                                // css A offline enqueues cgroup_destroy_wq
+                                // root destruction will be executed first
+                                css_free_rwork_fn
+                                cgroup_destroy_root
+                                cgroup_lock_and_drain_offline
+                                // some perf descendants are dying
+                                // cgroup_destroy_wq max_active = 1
+                                // waiting for css A to die
+
+Problem scenario:
+1. CPU0 mounts perf_event (rebind_subsystems)
+2. CPU1 unmounts net_prio (cgroup_kill_sb), queuing root destruction work
+3. A dying perf_event CSS gets queued for offline after root destruction
+4. Root destruction waits for offline completion, but offline work is
+   blocked behind root destruction in cgroup_destroy_wq (max_active=1)
+
+Solution:
+Move cgroup_lock_and_drain_offline() to the start of unmount operations.
+This ensures:
+1. cgroup_lock_and_drain_offline() will not be called within
+   cgroup_destroy_wq context.
+2. No new dying csses for the subsystem being unmounted can appear in
+   cgrp_dfl_root between unmount start and subsystem rebinding.
+
+Fixes: 334c3679ec4b ("cgroup: reimplement rebind_subsystems() using cgroup_apply_control() and friends")
+Reported-by: Gao Yingjie <gaoyingjie@uniontech.com>
+Signed-off-by: Chen Ridong <chenridong@huawei.com>
+---
+ kernel/cgroup/cgroup.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index 312c6a8b55bb..7a71410b350e 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -1346,8 +1346,7 @@ static void cgroup_destroy_root(struct cgroup_root *root)
+ 
+ 	trace_cgroup_destroy_root(root);
+ 
+-	cgroup_lock_and_drain_offline(&cgrp_dfl_root.cgrp);
+-
++	cgroup_lock();
+ 	BUG_ON(atomic_read(&root->nr_cgrps));
+ 	BUG_ON(!list_empty(&cgrp->self.children));
+ 
+@@ -2336,6 +2335,7 @@ static void cgroup_kill_sb(struct super_block *sb)
+ 	 *
+ 	 * And don't kill the default root.
+ 	 */
++	cgroup_lock_and_drain_offline(&cgrp_dfl_root.cgrp);
+ 	if (list_empty(&root->cgrp.self.children) && root != &cgrp_dfl_root &&
+ 	    !percpu_ref_is_dying(&root->cgrp.self.refcnt))
+ 		percpu_ref_kill(&root->cgrp.self.refcnt);
+-- 
+2.34.1
 
 
