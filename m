@@ -1,56 +1,99 @@
-Return-Path: <linux-kernel+bounces-740749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 173F6B0D899
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D0FAB0D89A
 	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:54:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E5B06C02FC
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9350F3BD483
 	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B94F2E425E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49C3F2E4260;
 	Tue, 22 Jul 2025 11:54:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FESul+EF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DjtDc0LH"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D102E1753;
-	Tue, 22 Jul 2025 11:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC3649659
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 11:54:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753185253; cv=none; b=iLTQfsz93eTgEQ+hYY4JwIqesoJcenzOPU6xDbwvK+pahxILcdr9naEejdnbRcOiqjkPEg8ruTKsTv52GOVo/Lu6vUJB6rMoRAAO5ZPVBqCouhvOrtqTbQ4ZUHJWDpt3g7RLnKq6JbEn9dRX3877kNgFJggEZg7/3CoQSZ9grg0=
+	t=1753185253; cv=none; b=mJAiraxDadM9hLqCbzkzMgK3DBdZZxrr8BCs39l8rM94JQsfS3d9y2IhMYVcTJqfEOUaDSEEnwmR50HaZ0IhldX/bmnRiYbfL2k7UaBH6sG2JVKI4gDrQhwRwtmFMbMEJkv+K7p5jNRitF622qR5419SIjKDsnqsVchHJITtqE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1753185253; c=relaxed/simple;
-	bh=B9E98Eh1WXnC39xyxUMFUauO9zpXBqS/fOh6mlUvJSA=;
+	bh=Fla3OlF+/YSMx3UOhbmIQazfbvpT43e/E5z5T5vEJVM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f7A/z8njpG3qr5Ukn4UVM5dKGB/sXVp3LaFtyEYc3zfiUDSi9tZjxXRGR2TW4SfEmqZHYj3FmfI3vvOfWO3No59ru1oZxTc+wRj0W0wof2YArT4zcTE0S7SaoaNx/gP0xZnSummaOOYxB173fQTmP4N8fcGMt7mhpY0xp5Cyp9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FESul+EF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41E8CC4CEEB;
-	Tue, 22 Jul 2025 11:54:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753185253;
-	bh=B9E98Eh1WXnC39xyxUMFUauO9zpXBqS/fOh6mlUvJSA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FESul+EFfx0IOy9epSM4NK9vIs+nEBxJxGSaNo3a9L6cgXUnKDUzjoFb0Jb/dEf4t
-	 cHaQTmP92G1VeYeBrL0LyBIAjAHEKJ8KaqjYIpFOgi1RGtgY2VSKMf2129Zgu357lD
-	 pgzohjSwYO5J9f4UMiCvwJJQd6VNnVfGfh6jlLZrYf3R8n4Vr/br3cbpRuJa3YGWhu
-	 NDEyeq6rInYgYcfxr6+T1+0+cNdMQcrUGJBC9ljeG7djKP+aRwkvUev+PME262TyX2
-	 SoThCJoZ850e/IlaXn++XmCPqiDzCALuEmAW5RR+aQaSyW+EfzDbehP4Q+KvlUUSDy
-	 JoYV5XT+gWq4A==
-Date: Tue, 22 Jul 2025 12:54:07 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: jeff_chang@richtek.com, lgirdwood@gmail.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] dt-bindings: regulator: Add Richtek RTR5133
- Support
-Message-ID: <50908790-f4a3-41ee-a270-83be3e74c1a1@sirena.org.uk>
-References: <20250722083543.2730796-1-jeff_chang@richtek.com>
- <f4505b19-3496-4fab-ad74-d190d847eb17@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cg+xW/GyvtNIXhfHBAWZtO2RPGPxqXkmoR2K8yzV8z6ta+1j7IJ1DiMoHdteHc9Ogq4vEY7KOlvbTXxOQKDo/NJNVjwUOhSOFPsaaCFZMrZFlPqEktDS6xmsknxkm+zmhD2fbi+UtCwjIC57Bzag5XS1vzolJaBmO8es+XltO64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DjtDc0LH; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ae9c2754a00so916262366b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 04:54:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1753185250; x=1753790050; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9kKt2BVvYAWPd9RG6IbzHHUIGJ1xcLJOliFtWnoC7pE=;
+        b=DjtDc0LHqZeKUILy3s2oQKZYOl67ZHw3E6MR8ZsoFMudW1LCstl+1eVWktnLYedAyc
+         QHAZDacJek7qNDVWuqyXRaQr0SahdEmxNND230oHu5FmwnW0nLv4tUMhBUQBLw6eGB79
+         RX/2eypfTwu4wocmsOlkZfQrIPfk98OvbmqZJdAh+YOn4PDQTyQ3kvMocezzh3W7IBWs
+         yfTyz630RbtfHiirLXjmBYuUMoTKwY74jQ55U76ttqlOKqb8HsCqMXo2/r0gsOVbeMZ0
+         CK964OQlGW2Dn4GhoJftIcb33+ypxiWkR2Sy+n4aOO/oaHjtr0giypvSCv9snrk+VJb2
+         nR3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753185250; x=1753790050;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9kKt2BVvYAWPd9RG6IbzHHUIGJ1xcLJOliFtWnoC7pE=;
+        b=RHMOEt500NNE5FUIEvJPjOJGaBi5IhyW0RrNfVmLZiwvj5RlsH4hMtxhKmFaWz08P3
+         W/fYikj+sl6ShaznAJC6lahK5H4lnuV7c16zZy7p3tADuVSaj8zhdr33+bXKo2vQiXZx
+         bQjOL1SqDtdBojJpuQZJ1TMy1Bw+HRIaz+wKzoQX0q71o3sLWcqORlKQ+N6r6BEMN2lX
+         W+P2kB/MjNjdTNtzDYvbSfPDzjn0YzRAeJn/gQHJ9UR+G+UKFDzJg/mwSI3MJUEV3KCv
+         vDMWJBqBWf3Ir7vMyV8XApFdc9d0FjFTSAWA62CIyzwww3TEw8tz1g4CjOwUo266Hzj/
+         vU1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV+4yRQu6L27b7dSz7UFG1/ClHStlgRG9pXs23ucSB+lIR+D3vzAaXTbWmmiE4gJLk6g7UiHk5V4E+h+VM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRi3QP2/5Io7eRLwguryvi0gu7UMZc0qBqe43NvV8b7N8Reyry
+	8XXZq5aGznm9X+x5tgNwutFAHknf9AGHUPbk6z76b+OjhiLIFVJNczP0Xg5OPmTd7Ik=
+X-Gm-Gg: ASbGnct+vCrz/9D+Y21a7lfwQ5zMxuyT1heRKEmbvEl4K45KzOL1VCA5RgPTAORLU00
+	njSYmjPNUoX5kcoWsd0qS23dZfeFYhEthR0bhIlRFZA8sdtJp19Rgk3VJ6f/eYp/9aE1P56AXvM
+	rJWQVyYKa39EAsNgkoumU5LeLPWDBDwFDG3XPY0GAG0/PpyE5MdiULy/Mn0+zFBJ4n7VL1CNl+D
+	VeDnOqfuUhLRTa0qDfLdEJQg1hqPFEAVkbwevk9G4af3eKcxE4IEcHhv8tCT52MDBt8kxwI+3OD
+	h1o0cpcQ2FvjGXER1oMgoCxVOzGythRmFSC/u4WwwNRzG2ObhV653neh8M7CKrqORMoZWkJQxSs
+	7G216+R0YNvmmSNHoNKnfqy+X6oAVL5R5YGHOLpRG2eXz57ERFWqk
+X-Google-Smtp-Source: AGHT+IEfIxYTONnhe+xRu0jikk0G+zzebdF83eXd074o2mrK0k86lhWSA/IBxcIozC2KvB4QKVdAMQ==
+X-Received: by 2002:a17:906:165a:b0:ae7:ec3:ef41 with SMTP id a640c23a62f3a-aec4fc42368mr1727192666b.45.1753185249984;
+        Tue, 22 Jul 2025 04:54:09 -0700 (PDT)
+Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6ca2f19csm849926466b.70.2025.07.22.04.54.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jul 2025 04:54:09 -0700 (PDT)
+Date: Tue, 22 Jul 2025 13:54:07 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Chen Ridong <chenridong@huaweicloud.com>
+Cc: Tejun Heo <tj@kernel.org>, Tiffany Yang <ynaffit@google.com>, 
+	linux-kernel@vger.kernel.org, John Stultz <jstultz@google.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
+	Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Pavel Machek <pavel@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Chen Ridong <chenridong@huawei.com>, kernel-team@android.com, Jonathan Corbet <corbet@lwn.net>, 
+	cgroups@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: cpu.stat in core or cpu controller (was Re: [RFC PATCH v2]
+ cgroup: Track time in cgroup v2 freezer)
+Message-ID: <adrjkqsqqwxcsdr5z4wmxcrvgvutkulzgka6pjjv23v6242txr@vv2ysb46nhpk>
+References: <20250714050008.2167786-2-ynaffit@google.com>
+ <5rm53pnhpdeqljxqywh26gffh6vlyb5j5s6pzxhv52odhkl4fm@o6p7daoponsn>
+ <aHktSgmh-9dyB7bz@slm.duckdns.org>
+ <mknvbcalyaheobnfeeyyldytcoyturmeuq3twcrri5gaxtjojs@bbyqhshtjfab>
+ <180b4c3f-9ea2-4124-b014-226ff8a97877@huaweicloud.com>
+ <jyvlpm6whamo5ge533xdsvqnsjsxdonpvdjbtt5gqvcw5fjp56@q4ej7gy5frj7>
+ <e065b8da-9e7c-4214-9122-83d83700a729@huaweicloud.com>
+ <aHvHb0i6c8A_aCIo@slm.duckdns.org>
+ <2c723007-710f-4592-9fe2-7534eb47e74f@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,53 +101,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ESxqwv6SVKxL8cxQ"
+	protocol="application/pgp-signature"; boundary="euhvc2odhqtm7xfg"
 Content-Disposition: inline
-In-Reply-To: <f4505b19-3496-4fab-ad74-d190d847eb17@kernel.org>
-X-Cookie: Don't Worry, Be Happy.
+In-Reply-To: <2c723007-710f-4592-9fe2-7534eb47e74f@huaweicloud.com>
 
 
---ESxqwv6SVKxL8cxQ
-Content-Type: text/plain; charset=us-ascii
+--euhvc2odhqtm7xfg
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: cpu.stat in core or cpu controller (was Re: [RFC PATCH v2]
+ cgroup: Track time in cgroup v2 freezer)
+MIME-Version: 1.0
 
-On Tue, Jul 22, 2025 at 11:04:51AM +0200, Krzysztof Kozlowski wrote:
-> On 22/07/2025 10:34, jeff_chang@richtek.com wrote:
+On Tue, Jul 22, 2025 at 05:01:50PM +0800, Chen Ridong <chenridong@huaweiclo=
+ud.com> wrote:
+> Specifically, this change would allow us to:
+>=20
+> 1.Remove these CPU-specific callbacks from the core:
+>   css_extra_stat_show()
+>   css_local_stat_show()
+> 2. Clean up the 'is_self' logic in rstat.c.
 
-> > +      base:
-> > +        type: object
-> > +        $ref: regulator.yaml#
-> > +        unevaluatedProperties: false
-> > +        description:
-> > +          Properties for base regulator which control force-off base circuit.
-> > +          Base circuit is the power source for LDO1~LDO6. Disabling it will
-> > +          reduce IQ for Chip.
+If you see an option to organize the code better, why not. (At the same
+time, I currently also don't see the "why.)
 
-> I don't understand what this regulator is for. Your example is also
-> incomplete - missing min/max constraints like voltage.
 
-> Explain, what is this output pin? I already asked for explanations. I
-> have diagram in front of me, so explain precisely instead of sending THE
-> SAME again - which pin is it?
+> 3. Make the stat handling consistent across subsystems (currently cpu.sta=
+t is the only
+> subsystem-specific stat implemented in the core).
 
-It's the top level supply for the chip, it's likely not externally
-visible and sounds like it's just an on/off switch rather than
-regulating voltages.  This seems fairly clear with domain knowledge.
+But beware that the possibility of having cpu.stat without enabling the
+cpu controller on v2 is a user visible behavior and I'm quite sure some
+userspace relies on it, so you'd need to preserve that.
 
---ESxqwv6SVKxL8cxQ
+Michal
+
+--euhvc2odhqtm7xfg
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmh/e94ACgkQJNaLcl1U
-h9AgaAf/XwVPnaOAi8nc84FMjLYM0D6FojULEW9XQuYYHe6oyjnJin0+iChgWHB+
-TnEMFZvXRF52mT7kpLAdl1cZbxoaZlx0Io/TmjGoPuu01PM1dAidyyHUSqXD6YFm
-9+ww8QVAGYlnfSigDDmzxFSeczgko5uy/+KrAY+B2EnMo3Cbwnjh9kYFzj9abwil
-UMHAiRX8X6Ab9X525Xu/H4IgHw9836Rmtm/gn1iMPVh9RCwtg4oLK+ocDbsMyK3L
-HsSUcMNyPEaE/KDI53H28y6TSKWRVBaG9V26cFp4xFGSmQjdJgnLnmo3kJEAZp4Y
-LZpF/JtFy5NgPVMR9g1btq0xOavp1g==
-=Em+H
+iHUEABYKAB0WIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaH973QAKCRB+PQLnlNv4
+CFq/AQClJUmKOphL5NvNc5AVqGOpLStkEZI+TheupLy0GZFR7gEAnedr53Iw59zU
+//68DI0J9sYoXIgmUXii8bcidi8uwwY=
+=Mri+
 -----END PGP SIGNATURE-----
 
---ESxqwv6SVKxL8cxQ--
+--euhvc2odhqtm7xfg--
 
