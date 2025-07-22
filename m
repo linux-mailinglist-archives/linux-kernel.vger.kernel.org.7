@@ -1,87 +1,73 @@
-Return-Path: <linux-kernel+bounces-740849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1886B0D9F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:44:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CC82B0D9F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:45:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4620C172433
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:44:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3780C7A8EB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:43:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A612E9EA8;
-	Tue, 22 Jul 2025 12:44:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5932E9EAC;
+	Tue, 22 Jul 2025 12:44:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AfKo1a1U"
-Received: from relay15.mail.gandi.net (relay15.mail.gandi.net [217.70.178.235])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tGN9yf+g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00A528C2DE;
-	Tue, 22 Jul 2025 12:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C551D2E8E16;
+	Tue, 22 Jul 2025 12:44:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753188257; cv=none; b=CkiRW9TmOLyRbUjZlPy/H3UDbPIzezGm7VtUkvW5nchvFjWTiGcarXYpMeYTHzvtf9vmaQ7wvxjNucxJ5KAmA+c6xJWer8jwohkm2JSR+d10HRuVC8UvOyBNcnBGegK4bD4R4ZhYx57Fo+ON1cdAwwRE88TJE3FOPRXQHJact3o=
+	t=1753188293; cv=none; b=D8N5cArxL3pYUURvCpla3y6D5tQEPShtBggebCBOCXcJ6+36NLS0/HeI9T7tNt2q1OFu67E8eHHAIlglMiW0RSTI5TUl0AdBRmn55Bn3cycc5DrkAqFkFKCelTpgcGDTm7+qxp1GFKqik3NBZdzAwPJ+8WYRavoI24xWZHh5Ph4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753188257; c=relaxed/simple;
-	bh=6nLcuLW2GIpVhXNXP2vLv8B8EKF8M+ZWP1AwkGvq7XY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OothEmkp+nnjBrRP3fZMIweS0/0RvJB1Sg5b6m747mJvIS5KU+A84+JSlFpFxBE+O+5GhOrpRcZBVSmehyO9uX/7DpegeRqTgYaDZqsgQMUyiKfA1/5tyP8kHcmU508+eXpozsiwE3d17HVbPC/0wZHCbq9YA4UH4SZ3Mpo7FXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AfKo1a1U; arc=none smtp.client-ip=217.70.178.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6A0884317F;
-	Tue, 22 Jul 2025 12:44:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1753188246;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tF7WN9uFRv1gjyhhbMaSaPZJD2NsGzk5bTg83j7U7Zc=;
-	b=AfKo1a1UwDZi3i+n3ImaXaa9KS0gwye0vX1J1Heodyg9d3nyVinUGlWp9osJZ9tE8o8FQa
-	up0xAo2U9u3QnWgcXgf1aUn33BkqPFG1HeiKTuSxKSJwh8kaLPowh+kGtipZbPKgQVMdms
-	ebbfWRtf7cIkaE+bTGDjh5ZK+7yObEJCAeUbFvCgLMHfAvTzykwFT9fKzC8DlSyPNubpwE
-	CyUK+bDLk9qzVFp/Ts3VJM1/RAR9yduU1rJ3jovK9nARvxhqL9pehFM9hEX3hxTU2JnK1Z
-	7Lk6JUov7Q8xop4e58Kaf1SdPMyRFn59wu6TNhxcB5/4emdBH2PlIVqj81J9Lw==
-Date: Tue, 22 Jul 2025 14:44:01 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/2] net: stmmac: Check stmmac_hw_setup() in
- stmmac_resume()
-Message-ID: <20250722144401.3cedec44@fedora.home>
-In-Reply-To: <20250722062716.29590-3-yangtiezhu@loongson.cn>
-References: <20250722062716.29590-1-yangtiezhu@loongson.cn>
-	<20250722062716.29590-3-yangtiezhu@loongson.cn>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1753188293; c=relaxed/simple;
+	bh=LTP+X29U8OinALdzWxmJt0BbYlJ8HxjqisnVaKRqWTA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fC2hntqSGHNmgHiYh3Y1bgalIo34bTCv69VVsWflEWCZwhx9J+ZxWeS8fTCFv+cMlTzgh1A6nZSx26aEnLyv//YxEjdlcsWLzWN4sfuJVourksYp1rf8TKYzWBUQmS+2g6vPsokeHGm27MDKO2W2AdJY+20o15t1SF8+lin1om0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tGN9yf+g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 578A1C4CEEB;
+	Tue, 22 Jul 2025 12:44:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753188293;
+	bh=LTP+X29U8OinALdzWxmJt0BbYlJ8HxjqisnVaKRqWTA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tGN9yf+gymgu/emqmM87rloRm8ydzhoczpcBLdP2O2edbSppA6iWkbBl3soJzuXWp
+	 X38TS7ROSKR6KgWcQhRb9zTcIvZUEwZ0a91dCBela8lauPLSD4laxd00PIlGLcIFtu
+	 4zvmRigCemk21AmWQVXv01HwFrRxWE2BH2PYW4bFnxFVI6KZR3m7qA0w4vh26kM7c+
+	 NW4ZtgnHldOwzxcA+mMq75pUhppXDzNf+E8kv01z5NSpkhMx8vPQGXBPhPZbGOs6Sk
+	 /W811gx8/frgvngJyeBtjVrfdV3A97IFjr6BVOAJkhizR9WFNdnBfejRTWx+QoXNdz
+	 3JsNtm3SkkuYA==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1ueCMM-000000002YK-31Hj;
+	Tue, 22 Jul 2025 14:44:43 +0200
+Date: Tue, 22 Jul 2025 14:44:42 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Slark Xiao <slark_xiao@163.com>
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] USB: serial: option: add Foxconn T99W709
+Message-ID: <aH-HuqRx4VJebW3W@hovoldconsulting.com>
+References: <20250721113919.28577-1-slark_xiao@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdejgeelfecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepledtrdejiedriedvrddujedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdejiedriedvrddujedupdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeekpdhrtghpthhtohephigrnhhgthhivgiihhhusehlohhonhhgshhonhdrtghnpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrt
- ghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250721113919.28577-1-slark_xiao@163.com>
 
-On Tue, 22 Jul 2025 14:27:16 +0800
-Tiezhu Yang <yangtiezhu@loongson.cn> wrote:
+On Mon, Jul 21, 2025 at 07:39:19PM +0800, Slark Xiao wrote:
+> T99W709 is designed based on MTK T300(5G redcap) chip. There are
+> 7 serial ports to be enumerated: AP_LOG, GNSS, AP_META, AT,
+> MD_META, NPT, DBG. RSVD(5) for ADB port.
 
-> stmmac_hw_setup() may return 0 on success and an appropriate negative
-> integer as defined in errno.h file on failure, just check it and then
-> return early if failed in stmmac_resume().
-> 
-> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+Applied, thanks.
 
-Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-
-Maxime
+Johan
 
