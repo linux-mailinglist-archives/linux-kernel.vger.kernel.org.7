@@ -1,173 +1,186 @@
-Return-Path: <linux-kernel+bounces-740387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C721B0D39C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:43:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48486B0D3CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:48:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1537AA019E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:40:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60E1E162065
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 558872E3361;
-	Tue, 22 Jul 2025 07:36:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449202D3EFF;
+	Tue, 22 Jul 2025 07:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="G8PLRas7"
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="6eOnM2ju"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8FD2E267C;
-	Tue, 22 Jul 2025 07:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DAF02C158F;
+	Tue, 22 Jul 2025 07:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753169803; cv=none; b=rppzZGTNAh1R0mVSYFxqa7LeMuCxNNva7gcNUHXDyKlQEJUA51mKIQSi21w0z9/uapSXZE3Fhnlo02Ggfdq2CmrJ8pztYKAKtKqnvWbw0W1pH4kg4aOjcGCk0HTXuM52M9YEQCgnaX0nZa8ZSCAmgF/77D7WWKLnGXLyMA1osAA=
+	t=1753169894; cv=none; b=nNPh4qNJ2yfU7FLah1vPKr24FGotdHCErj90fQoEQmKInAUjcQ9bSTTY/Bytqw+n3YatbqumaJQcemSa62PIoeWgOXOE87rk4EKLKw3D7eE1G2PkFS9NSDhQ+3UUT9edTA/jknfGmprjX4y4kH7M+rvkV5HdXlz3XVjnxdyHlhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753169803; c=relaxed/simple;
-	bh=Mse6PLszhO3cdngmicTOnCA0f5skvbJPHBfXnrnGxpw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AH4BM/9w5twKvuA+vLyn8vIgP9R/mNT5yvfI63G5WJJNypITrNWOQkXCtuW8vwvvhEin2t6vrbQznWmORfpDv1+p6zZLpkQJ4PCsOWh+AACaOqBAWCRHK/yaKl3jecfIOIHc53aihaGeTjSu0JskI67PCl/nrsZWNFgmSEhyaJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=G8PLRas7; arc=none smtp.client-ip=18.194.254.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1753169796;
-	bh=Ln6z5UMdHfy09BVb3ISvR9kteELxlxv1r4Jb0WU5wac=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=G8PLRas7qKBE3FwocDAWOZIqW604sBKmiQqhP4JIpufmY1QoGYABgK1G40TUOEmFt
-	 CurwW5rrg/OgCSCOX9U6H25bB6cJTuGZDNHejBN34/IGpljWdcaBKPRzLfiVgLiY4E
-	 TXNnaCWIOVPNMgFgIroKh99fqoudchDSNIQ8eils=
-X-QQ-mid: zesmtpip2t1753169738t55bf3778
-X-QQ-Originating-IP: KSjByG7dJMLO7TG5I1iv5PR6js3yTNO4FTwwtL4j6qI=
-Received: from avenger-e500 ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 22 Jul 2025 15:35:33 +0800 (CST)
-X-QQ-SSF: 0002000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 10523341223142092495
-EX-QQ-RecipientCnt: 64
-From: WangYuli <wangyuli@uniontech.com>
-To: wangyuli@uniontech.com
-Cc: airlied@gmail.com,
-	akpm@linux-foundation.org,
-	alison.schofield@intel.com,
-	andrew+netdev@lunn.ch,
-	andriy.shevchenko@linux.intel.com,
-	arend.vanspriel@broadcom.com,
-	bp@alien8.de,
-	brcm80211-dev-list.pdl@broadcom.com,
-	brcm80211@lists.linux.dev,
-	colin.i.king@gmail.com,
-	cvam0000@gmail.com,
-	dan.j.williams@intel.com,
-	dave.hansen@linux.intel.com,
-	dave.jiang@intel.com,
-	dave@stgolabs.net,
-	davem@davemloft.net,
-	dri-devel@lists.freedesktop.org,
-	edumazet@google.com,
-	gregkh@linuxfoundation.org,
-	guanwentao@uniontech.com,
-	hpa@zytor.com,
-	ilpo.jarvinen@linux.intel.com,
-	intel-xe@lists.freedesktop.org,
-	ira.weiny@intel.com,
-	j@jannau.net,
-	jeff.johnson@oss.qualcomm.com,
-	jgross@suse.com,
-	jirislaby@kernel.org,
-	johannes.berg@intel.com,
-	jonathan.cameron@huawei.com,
-	kuba@kernel.org,
-	kvalo@kernel.org,
-	kvm@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	linux@treblig.org,
-	lucas.demarchi@intel.com,
-	marcin.s.wojtas@gmail.com,
-	ming.li@zohomail.com,
-	mingo@kernel.org,
-	mingo@redhat.com,
-	netdev@vger.kernel.org,
-	niecheng1@uniontech.com,
-	oleksandr_tyshchenko@epam.com,
-	pabeni@redhat.com,
-	pbonzini@redhat.com,
-	quic_ramess@quicinc.com,
-	ragazenta@gmail.com,
-	rodrigo.vivi@intel.com,
-	seanjc@google.com,
-	shenlichuan@vivo.com,
-	simona@ffwll.ch,
-	sstabellini@kernel.org,
-	tglx@linutronix.de,
-	thomas.hellstrom@linux.intel.com,
-	vishal.l.verma@intel.com,
-	wangyuli@deepin.org,
-	x86@kernel.org,
-	xen-devel@lists.xenproject.org,
-	yujiaoliang@vivo.com,
-	zhanjun@uniontech.com
-Subject: [PATCH v3 8/8] scripts/spelling.txt: Add notifer||notifier to spelling.txt
-Date: Tue, 22 Jul 2025 15:34:31 +0800
-Message-ID: <02153C05ED7B49B7+20250722073431.21983-8-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <576F0D85F6853074+20250722072734.19367-1-wangyuli@uniontech.com>
-References: <576F0D85F6853074+20250722072734.19367-1-wangyuli@uniontech.com>
+	s=arc-20240116; t=1753169894; c=relaxed/simple;
+	bh=tU/hC7YARMy7oCIo5NRGQiO3UOJ8Lk4XsFZ1nZnZ9NA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SfoinEAHeLSxYvUD+61WAkl0RdHNhU2cfoW6oOzLGJNUdWVvZpR1LBqZK6rsZWlf3FznAQX5Q3hiw7TsLOvQmeZ812gUnV7BxQRAockWeMLgcoPyVXTmKnm4XnOZKWzoAGaI+P8kcX+/j6N03YH5KD8gEx/w24EOVlNKX4LoMS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=6eOnM2ju; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56M7YcI1017113;
+	Tue, 22 Jul 2025 09:37:50 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	0zlU1QEnD+GWl8jLtn5YK4PZ5fpcfWzBw9uHGSBFh90=; b=6eOnM2juSbRcr0EU
+	IFyVZkojXeQ6Q+YR1EBl3sKBCrityklC8iGDAreH+nVxIlQpGGJ1de2LWFwc4l+l
+	GHdzI1aEcjrUG02EEdibktt04EsuROdoHalxZc6A/VFGiV2d32zsW/LP3ZkEoX8L
+	ed7/sijJ7vkE5DhE2qQgYCwZk7ehjOBdHFYiVBGxRKng/BGeMgMSFprH5ze62kZr
+	rdI9euM21E3mDHLQTqM0HE2BU2fY7b1L1YSL/0CRLPYRX5Nqjz+RIPRaUovQk6Au
+	arroznHHnk0RY1lQ6URTxAejKDuzunNFX2iACfiTmpBsv3BZltL9HBZqRv3WTZUo
+	DVCk5Q==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 480mx4hq09-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Jul 2025 09:37:50 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 571CB4005B;
+	Tue, 22 Jul 2025 09:36:26 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1132476DC2F;
+	Tue, 22 Jul 2025 09:35:09 +0200 (CEST)
+Received: from [10.48.86.185] (10.48.86.185) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 22 Jul
+ 2025 09:35:07 +0200
+Message-ID: <ed0efd83-8471-4fce-9745-54d85d6268f9@foss.st.com>
+Date: Tue, 22 Jul 2025 09:35:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 05/16] dt-bindings: memory: add jedec,ddr[3-4]-channel
+ binding
+To: Rob Herring <robh@kernel.org>
+CC: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Gatien Chevallier
+	<gatien.chevallier@foss.st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Gabriel Fernandez
+	<gabriel.fernandez@foss.st.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Le
+ Goffic <legoffic.clement@gmail.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-perf-users@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+References: <20250711-ddrperfm-upstream-v2-0-cdece720348f@foss.st.com>
+ <20250711-ddrperfm-upstream-v2-5-cdece720348f@foss.st.com>
+ <20250721200926.GA1179079-robh@kernel.org>
+Content-Language: en-US
+From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
+In-Reply-To: <20250721200926.GA1179079-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MClLvxZc1QnM/wj2Wk3jR26+OjsxVDiMy0TUPxB/sehera5uDfi+6PDH
-	DKPTpIbyOSUwM9saQbyBWT3OLKm9v2GRNddNkwf/NvPPIA8u8jd2lnl3nugLbG/fjZrTNq9
-	P6LqF3J0YOVfKF/Id+BwrTcipop5Lev8xUcQU16whJxFMaRE4fJICyiFBgaxHHyXGZcZMdh
-	pjg8yeTtLWhLV1KJP2cn8xknaKnUP0ixK4gYJyROGLy0kDB3OtvkWb9mwiR7hF8nDLU6DPW
-	aaNSWWYCTdmdZPULu9S7tH53RiVlCQAUTcvevC+rdoTZEzxgCBye7SiRjp2e16QTBLNzFpN
-	3n0QHhIWRTEb/p3Wo67+SYrS9r2y4g7TPDDJ5FufZHcjS8WNsmmUsho0CVjI5ZesB7JM/O3
-	tfE/NnV1DbpmaXnyJWNHILKKSZuUaA0EFYhtZzJgX2uY/QoAzlZnWF/qKHC4m4LwWO5wTIP
-	b7Xt4ZIyBkQBQX+f3nXDHp4XtKou3Is4C7RytJkHHheG7Fv6vp8GQ+B8a1FihPvp2bMCP6N
-	5aMLqFVhS/vQQKU4hYYX6M4BAk+AWnKWwxusGbHeh/KPw1v2i9IY1/3+vwqc5cx17LLwe+S
-	ox8Cqgyvn+xCwvcEm7GdCMdwkH+m5Fo+ZmBTdHMX1ymwJlLhSoxY6+55tg4pEj5ecuQo/HW
-	k78SBssDXSLTefCwJXyHf6+wKQVH8cdJs0JzP5Vx1Y5C+Y1VF28rakgqvV545c3GnCxYShy
-	i1JNcZIghWkkkmVzhUyjxl6YlsEliKEtGZVw4msKwmwKcS9IPANDg65Vf2TFFL+OUf9UZzb
-	ZjKJuCBJX+JS8OBBYp8IicK0u2Fm+l0/1U7dpdD02x90w6Czdd9wTmk/Lr7+/RPnhtrdr8/
-	J3j+UdgvAiiBWX7uddxUoBgmZcy0kf3oMHTB01g90aJLe106daPQqqgqdaWRhtxYHW6HBme
-	KkOo+R4bQ+/gsbHfVZ6wKBONH070vigYt7a+tlGef+Asdf/giXAj8LioRHVNncucLLFsaL3
-	d6wjz5Ihc59ytyIDfghqDdND6XUKrQe6/tX9VFwFrhKrfbF2TV5Chkvuzkr574EYF7qL4Fq
-	OHA1PKS1Pf124UfX7wm96iuOaeRsXzHrkS4SYJ1qR/qM47q7bzIgMY=
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-X-QQ-RECHKSPAM: 0
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-22_01,2025-07-21_02,2025-03-28_01
 
-This typo was not listed in scripts/spelling.txt, thus it was more
-difficult to detect. Add it for convenience.
+Hi Rob,
 
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- scripts/spelling.txt | 1 +
- 1 file changed, 1 insertion(+)
+On 7/21/25 22:09, Rob Herring wrote:
+> On Fri, Jul 11, 2025 at 04:48:57PM +0200, Clément Le Goffic wrote:
+>> Introduce as per jedec,lpddrX-channel binding, jdec,ddr[3-4]-channel
+>> binding.
+>>
+>> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+>> ---
+>>   .../memory-controllers/ddr/jedec,ddr-channel.yaml  | 53 ++++++++++++++++++++++
+>>   1 file changed, 53 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,ddr-channel.yaml b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,ddr-channel.yaml
+>> new file mode 100644
+>> index 000000000000..31daa22bcd4a
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,ddr-channel.yaml
+>> @@ -0,0 +1,53 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/memory-controllers/ddr/jedec,ddr-channel.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: DDR channel with chip/rank topology description
+>> +
+>> +description:
+>> +  A DDR channel is a logical grouping of memory chips that are connected
+>> +  to a host system. The main purpose of this node is to describe the
+>> +  overall DDR topology of the system, including the amount of individual
+>> +  DDR chips.
+>> +
+>> +maintainers:
+>> +  - Clément Le Goffic <legoffic.clement@gmail.com>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - jedec,ddr3-channel
+>> +      - jedec,ddr4-channel
+>> +
+>> +  io-width:
+>> +    description:
+>> +      The number of DQ pins in the channel. If this number is different
+>> +      from (a multiple of) the io-width of the DDR chip, that means that
+>> +      multiple instances of that type of chip are wired in parallel on this
+>> +      channel (with the channel's DQ pins split up between the different
+>> +      chips, and the CA, CS, etc. pins of the different chips all shorted
+>> +      together).  This means that the total physical memory controlled by a
+>> +      channel is equal to the sum of the densities of each rank on the
+>> +      connected DDR chip, times the io-width of the channel divided by
+>> +      the io-width of the DDR chip.
+>> +    enum:
+>> +      - 8
+>> +      - 16
+>> +      - 32
+>> +      - 64
+>> +      - 128
+> 
+> This is duplicating what's in jedec,lpddr-channel.yaml. Refactor or add
+> to it rather than duplicating.
 
-diff --git a/scripts/spelling.txt b/scripts/spelling.txt
-index c9a6df5be281..d824c4b17390 100644
---- a/scripts/spelling.txt
-+++ b/scripts/spelling.txt
-@@ -1099,6 +1099,7 @@ notication||notification
- notications||notifications
- notifcations||notifications
- notifed||notified
-+notifer||notifier
- notity||notify
- notfify||notify
- nubmer||number
--- 
-2.50.0
+Yes I wanted something unique as "jedec,lpddr-channel.yaml" is 
+specifically for lpddr.
+I think I'll refactor and rename it "jedec,memory-channel.yaml" so it is 
+more generic.
+
+> Is there some reason regular DDR3/4 doesn't have ranks? I'm pretty sure
+> it can...
+
+Yes it does but I wasn't needing it and they are not required in case of 
+lpddr. It will be fixed by refactoring jedec,lpddr-channel.yaml binding.
+
+Best regards,
+Clément
+
+
 
 
