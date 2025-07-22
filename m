@@ -1,140 +1,126 @@
-Return-Path: <linux-kernel+bounces-740150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20C7EB0D0AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 05:54:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFF55B0D0B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 05:55:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5703F164A3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:54:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 155FA3A61DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E58D328B7D4;
-	Tue, 22 Jul 2025 03:54:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B4F28B7EA;
+	Tue, 22 Jul 2025 03:55:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FkWIxvw7"
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VwwGWnNk"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9FCF1CAA4;
-	Tue, 22 Jul 2025 03:54:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CDB35223;
+	Tue, 22 Jul 2025 03:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753156448; cv=none; b=G2wAxRi8jKp1Y05PZat1EbDoU15pXzepupi/dFp7vYPWjYi7t3SKMuAZe6M5+l32yN/RMsJGLIXxIcc56dCSFEsZ2ezbF76iMJBcyfETDz1+YmGZ04vMYB4UxxysLQ40LuvWzm5O5KVwGyVo5LN6cMLiSgRcbKBPHO4m/ZtEpCQ=
+	t=1753156520; cv=none; b=NpA4WfvBD3Y4pAd2ZqLnAzYbqWHiDNsP+qAWLTRtk/jzLtJDnx7MZWuXmMuUmnx6wNshnet07f595HHYKcR7o7opUMJpRMmNDYuoQ+2pE3shbyfqKdc/OykqMwiPytJKeZS3/Vg1AO2Jq6MCVKbx0voEw0XIaJ+dQN5tJbW4Ip8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753156448; c=relaxed/simple;
-	bh=hCdryV5QFRBfr2B0RVaRuQUdv/Q1jzCNPLW3U5UJdgI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PrfLeTseXbCtON2UFXa2pJIu0cOFVtmmCC3bDJrXOJxWMy6qgM6AKuVAi5s+WD9COH4UpgYRVK2z5xW2T2QUuKd7jxt8p5a9rQvO8paw2JHos7dcrYoTstCTG2FTYr8o63YiD3VQWTVoiqLM/SwP6MRxQ51Gl12uGHJIPOQl4Dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FkWIxvw7; arc=none smtp.client-ip=209.85.221.180
+	s=arc-20240116; t=1753156520; c=relaxed/simple;
+	bh=uLfI0JdQxtNSl4dFDlXZIYKwg2EUg7kNLzBl+vl1h8g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BC1gQEPhxv0rACytqwy1PH/Zo9WjW5VO5gFkLfa3l0qJvjr2+CygqweeopSdPr+6n1lPJjRpdqk+kxeKilj7Xipyd5CSRnot5BHg96V+CsupdW2VaYrq92jY2HTeTJmaPEe/97LvH9BcFKjgVDXRb3yRReil63lBpKVIlGiGPfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VwwGWnNk; arc=none smtp.client-ip=209.85.208.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-537a0d384b2so155562e0c.2;
-        Mon, 21 Jul 2025 20:54:05 -0700 (PDT)
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-32b31afa781so39662851fa.3;
+        Mon, 21 Jul 2025 20:55:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753156445; x=1753761245; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=21ekDrlNtK124pRxXdO9fUdOwEz2jnVWaTrXgj0bM14=;
-        b=FkWIxvw7Y/Nc4vtk9hUSsHdRloFc52nNRDtbUDIoWCZ32cK134K/Kn2JRwMRk5j+26
-         KTG1w6oxGSFUukILZnXohN0ZeXID/y2xiZXXOesyCiTZJE+YJd0Jm8vqOSkP/WGdK/Ct
-         4wrYrZqJeqJxnog4AOcP6woFT7riMu93V3XMjmbPVXgITYfdXb7iTAXYz5Re7hDg8z/e
-         chy+5m7sWF1wkwQYxvzxsPwLbMKWseDXo+c405FAN5ZWP6Xz/WLUhYzhMDYXDUjzWT5j
-         Hoc67qtHqs28ueZaWD5wHFixmfvHcGbQzgozJWNOj+1rdXoNXvW/9knN1hVGz8igLAjP
-         jZEA==
+        d=gmail.com; s=20230601; t=1753156516; x=1753761316; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6qYa8mLH7rDMD8Oz20MA0QmEr0Exb8HL03mKYAlm/SA=;
+        b=VwwGWnNkd9jqGVa7M+WNp3Jtylaxaw/DNxVWMDVH78J23jEY1ZXtUPN36uwqOtO6On
+         l/KRg6BKMQ9duSVsJnJRobBHUtC5uUP0uyTsZ8bZ7dCUQ3vj9pItycBmPYCaV2ued1Qc
+         K9nNfFPZo04348WH2ZtTEsXpn1nUmmIYs3n1s2WW2Cj2w9UmkAJAu2AmRzHYCa2UGacJ
+         fDU0xQkEdGzZ6rDBDfBojwrTNAotqO6HsltgiRSzgrEjPHGtTjGiHj9zGigp45e9bIM0
+         Kdxws2XhcyqTI7ifKdovJDWBcUgmNDt88wYrzjvulj6fCyJRwvWWO5G+hfACQllG35n8
+         nPhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753156445; x=1753761245;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=21ekDrlNtK124pRxXdO9fUdOwEz2jnVWaTrXgj0bM14=;
-        b=gayBaFwrQ2P3CMrrxMdoWE4n4Yqv5Jnf1d0T3OnMMC4E+Beh1tDKzg0Y2hLAsWirgF
-         N6eRwAI9Wn+R0h4vP+DzZjkOjUdZstvbl/Ust9WvFAPS8i73weTpEhUueD3esFL6Nabc
-         VjykNPCsLH2Tk2/cb6Sj5Rb1007mIZDCyFa/7PIRKiCfPucXyJn8kl9s5NZEMYeYg/up
-         khNK+8QipmKIXmH38AEQsKw7HqAGHq2jXVi07kBNfPjY3rL4X0qGDkkE/XyAAJt5bW1d
-         mvX6xizx52GNinCQxsuK6kuz+350Dn9uc9xC2XGHdJfYcerrlc3fL887ZZZgnJt16fhB
-         s7RQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW04rMcE2Bf8cbEr5Ro3B3/Mz0qxradw18yoGAudXncDgYoq2RUTol9oeTxMCQodk6dSTZNUiyRYumKN7z2@vger.kernel.org, AJvYcCW0yUKtOaXFiFOSAAPfoo0euqoJYMIj+QhOrE+sXEJ7yTvIX5vpkI/FsaSq9EbUCWZUssivJGzMz90=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQHAocWziOUVWm63Qy4zzJH63EQktNOGiwQfhBdh1U7xByWKN/
-	I8ca0pUte8iAcw0R92WSrpqLbcErvt+SIWNmAL7VVAJm8EYlsCZ0alZx
-X-Gm-Gg: ASbGncuOYENCQN2581doiITMhZpOa8G8ZpZxKIyD4KNtc30yyzlWhDSY5qCuxXf/0cd
-	wH4UMeRC94uDnRgjLxd+08Q0hXxWHsQALI4oO6j8RZKF/HqkAxjYuHkx8cfBAzW9fruDd6+rsPg
-	fHQqNzMzjywvw/+1kojUrgSt5nC6f8Z3kAmvqx6Jsi7+HOjSCNxbh24XX4wTgMLwqQ1htGBjLAe
-	wThJlaSnSOyg9wdVGcIBbkXUkHUNZ3DTSbrL5nH21xTDN5m5M91h5p7YHgZtTh+TJkq45FT6MZO
-	twtCw7wPgQaxBy+Ch0LpcRX0cre3fJ+C2xkEUEVmJF6b+CeH9IwegWND2aiVjqhEf2By6zPMX58
-	CyLlWpYU1Un9WJyGyw5ddZik49fxfP54BxHin3IasD79315qKFoPSHqip57cC8BPcUWNbkYiBV1
-	C653JixQ==
-X-Google-Smtp-Source: AGHT+IFuz0ehb9BOLO/9vlqICsYb1/rPA68CDWJySSMTqYmS9ifVuxgRbdtqjxGBix8ZzTUfvMHVrw==
-X-Received: by 2002:a05:6122:45a7:b0:530:6e61:d1e1 with SMTP id 71dfb90a1353d-53764739eb7mr6529696e0c.4.1753156444711;
-        Mon, 21 Jul 2025 20:54:04 -0700 (PDT)
-Received: from 9950X.localdomain (syn-142-197-132-170.res.spectrum.com. [142.197.132.170])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-88b0add3dabsm3496078241.32.2025.07.21.20.54.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 20:54:04 -0700 (PDT)
-From: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
-To: Pavel Pisa <pisa@cmp.felk.cvut.cz>,
-	Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-	Ondrej Ille <ondrej.ille@gmail.com>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	linux-can@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Luis Felipe Hernandez <luis.hernandez093@gmail.com>
-Subject: [PATCH v3] docs: Fix kernel-doc error in CAN driver
-Date: Mon, 21 Jul 2025 23:53:52 -0400
-Message-ID: <20250722035352.21807-1-luis.hernandez093@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1753156516; x=1753761316;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6qYa8mLH7rDMD8Oz20MA0QmEr0Exb8HL03mKYAlm/SA=;
+        b=wY7zY33vZPmqfE1ithEnIwE+9aQl68UootDkF+2hA1w4ud/tbJrJitHKCTWWAC5IY4
+         owjKIUC9gcAUE1aii0uC+7h/rG8SG3amxdoqcBRZOr7QjYRnw/osEByTHRl33CZ3BxFO
+         ld76GC4sxRl8Va9MaYdp+A9Lq2i8CJRJAuhXMinv28f8e2UyKyYFtyPOyFB+Iel08QPH
+         I0KltzuvFdHq5lNHrWDMMvD1XfHcvK7NcZuM1umUp7UMg4r2y/7jpLa83RPWgDm+vbYo
+         pNDCty3WDPeNnXtHFXtX+WPdKSSRcUgPqd3XyG+qM9QE8pvGYJLNARyRUs0164PjFCpZ
+         paaw==
+X-Forwarded-Encrypted: i=1; AJvYcCWO0Z91xF7Y6uW3wqhNzuxawBCwzvECqJBzCwDmGQRTRrOmUc4uHIK12DRKbBXevdXhGWNka5swZzdPsxHx@vger.kernel.org, AJvYcCX+vkieS45663gaenFLt+hdSzuIRAnPobsmcnCkN9WacWRB5goGDCXJJBOXBbLZzrrqHX1caTRbpew=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNYd8PaMKnY35dUc5ciEQsGQ/fUsfrxr7f+qY6Tbd6/9msMG5x
+	qd590xduN71fLm2nx2tDAaZLv40njWOhK/bhUvZzNJgEiZ0E3QEoSUktmSbSOBdASp/TT12cP38
+	Na3zJ9q3K5wR90vkD5hUf0ODSmpYIvyZqOaFS
+X-Gm-Gg: ASbGnctzo/VZgPW4OgZsQFhFTWNAFcblDDF3Hd3s+DJa/o6CseRDJUT1bYh8k52qImX
+	M6qHSh+Ls1WIz+bSZ3ZQaH3MrGUzZ7CwhOYoNMA8CwrMAZdqn3pbxQsa3HURK9b0oW3ZuKVY9tN
+	4sAjl1XjZbCOD9Sm7ky3tMmXutDjjemn47bl2s9poL9Um3WpLyPwsjNmYpArz/ap/uMMDZ0CESt
+	8c2U93Ow3ir7zX2PYCNf9rjdScfLf3WcuACB+SMeg==
+X-Google-Smtp-Source: AGHT+IFG3grN5CXSu4ye5TD0PuqXwFECq2wqrMA2A0V3dbWck7PI8idYAn60Mv+QvrontLo7RKveT4mmWeFARTCFoXU=
+X-Received: by 2002:a05:651c:220d:b0:32b:4521:73cf with SMTP id
+ 38308e7fff4ca-3308f4c38e6mr64872831fa.2.1753156515844; Mon, 21 Jul 2025
+ 20:55:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250721195419.526920-1-akshayaj.lkd@gmail.com> <a88e1a8e-d29c-41e7-b3cd-5db965a055df@baylibre.com>
+In-Reply-To: <a88e1a8e-d29c-41e7-b3cd-5db965a055df@baylibre.com>
+From: Akshay Jindal <akshayaj.lkd@gmail.com>
+Date: Tue, 22 Jul 2025 09:25:02 +0530
+X-Gm-Features: Ac12FXx1WJOmzkBIaDREcUL_9375l_OH-2EpTkgK9yrcGJ3fmlkoI2YIP4ZoDKU
+Message-ID: <CAE3SzaTG-re2HPRAcPWuo2YmM9mxLWndpN_SQOAZg7MP_B3xDg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] iio: light: ltr390: Add sysfs attribute to report
+ data freshness
+To: David Lechner <dlechner@baylibre.com>
+Cc: anshulusr@gmail.com, jic23@kernel.org, nuno.sa@analog.com, andy@kernel.org, 
+	shuah@kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fix kernel-doc formatting issue causing unexpected indentation error
-in ctucanfd driver documentation build. Convert main return values
-to bullet list format while preserving numbered sub-list in order to
-correct indentation error and visual structure in rendered html.
+Thanks David for the swift and valuable feedback. Please find replies inlin=
+e.
 
-Signed-off-by: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
+On Tue, Jul 22, 2025 at 1:55=E2=80=AFAM David Lechner <dlechner@baylibre.co=
+m> wrote:
+>
+> For debugging, using debugfs would make more sense.
+Will it make sense if I simply give register access via debugfs?
+Something like this:
+static const struct iio_info ad7606_info_sw_mode =3D {
+    .read_raw =3D &ad7606_read_raw,
+    .write_raw =3D &ad7606_write_raw,
+    .debugfs_reg_access =3D &ad7606_reg_access,<---------
+    .validate_trigger =3D &ad7606_validate_trigger,
+    .update_scan_mode =3D &ad7606_update_scan_mode,
+};
+This way the information about data status will be available on demand,
+without exposing any special sysfs attribute.
+>
+> For application level filtering, why does it matter if we have
+> read the same value before or not? The sampling_frequency is
+> available, so the application should be able to deduce when
+> fresh data should be available based on time.
+Agreed.
+>
+> I could see maybe polling this in the kernel in order to implement
+> a buffered capture mode, but not sure passing this on to userspace
+> is the best way to go about it.
+I had sent 2 patches. This was my PATCH 1 of 2. In patch 2 of 2,
+I have done something similar to what you mentioned, not exactly polling,
+but reading the data status bit before reading actual data.
+Both patches are independent. Please have a look at that as well.
 
----
-Changes since v2:
-- Focus only on CAN driver (GPU and I3C already fixed by Bagas Sanjaya)
-- Remove blank line that caused unwanted 'Description' output
-- Keep numbered sub-list format as suggested by Randy Dunlap
-- Move changelog after cutter as suggested by Vincent Mailhol
-
-Link(v2): https://lore.kernel.org/all/20250720152401.70720-1-luis.hernandez093@gmail.com/
-Link(v1): https://lore.kernel.org/all/20250703023511.82768-1-luis.hernandez093@gmail.com/
----
- drivers/net/can/ctucanfd/ctucanfd_base.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/net/can/ctucanfd/ctucanfd_base.c b/drivers/net/can/ctucanfd/ctucanfd_base.c
-index bf6398772960..8bd3f0fc385c 100644
---- a/drivers/net/can/ctucanfd/ctucanfd_base.c
-+++ b/drivers/net/can/ctucanfd/ctucanfd_base.c
-@@ -506,11 +506,12 @@ static bool ctucan_is_txt_buf_writable(struct ctucan_priv *priv, u8 buf)
-  * @buf:	TXT Buffer index to which frame is inserted (0-based)
-  * @isfdf:	True - CAN FD Frame, False - CAN 2.0 Frame
-  *
-- * Return: True - Frame inserted successfully
-- *	   False - Frame was not inserted due to one of:
-- *			1. TXT Buffer is not writable (it is in wrong state)
-- *			2. Invalid TXT buffer index
-- *			3. Invalid frame length
-+ * Return:
-+ * * True - Frame inserted successfully
-+ * * False - Frame was not inserted due to one of:
-+ *	1. TXT Buffer is not writable (it is in wrong state)
-+ *	2. Invalid TXT buffer index
-+ *	3. Invalid frame length
-  */
- static bool ctucan_insert_frame(struct ctucan_priv *priv, const struct canfd_frame *cf, u8 buf,
- 				bool isfdf)
--- 
-2.43.0
-
+Thanks,
+Akshay
 
