@@ -1,122 +1,178 @@
-Return-Path: <linux-kernel+bounces-740367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04560B0D36C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:38:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8CCFB0D309
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:31:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5C423A6223
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:35:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D112165226
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A20E2E3B07;
-	Tue, 22 Jul 2025 07:30:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40652D1301;
+	Tue, 22 Jul 2025 07:28:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IPCZT3UU"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="SEf5Ikf3"
+Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5862E3382
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 07:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E3F28B7CC;
+	Tue, 22 Jul 2025 07:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753169415; cv=none; b=QD4w0JIFhrt0kgDGEAPaaJXE7N4gQCUYaxlqgcpdjb+lpL/CJIsTHK6Ksldzlii/JRNRcg5+ehKf7+AmE+NC1o3nL0agmNTT9lIIhINt0nnw1O8mnMgY81nkWAfiQJgX8PZvk92o+L6cp8GGlXo+cg1E0rQFOxqvTkxo/812WUw=
+	t=1753169338; cv=none; b=XT5EyAesTKGCuGznTF+IKYZCYhOrBWbqpBIG/yQfgcgOlEitN3reiVfaylOQJiWUGjf8g8pOXY+j8V52wOiYjmjsM/N2lhoQAWBHISdKYiETf6B319zruRdjKjab/XKPCycFTvrWevra1XdRX5CVQCRFTkMk/W3rqo2R9oH1lDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753169415; c=relaxed/simple;
-	bh=MlIRBxRaja7ZlU2OXFrbRrUPNNl74/HsMd4o37sL9hE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hLjhnXSzFqITN1FbJF8m3iaY09PAmWGvh/9YytGPlDqOgfLu8MooXXaktahsEqLDTDUMqQJXTJvZ1ECkoaKXCtSJUQPeJARD26eXk1D+aQJUm5uXDsokjCxBaz88PwKixnPbU2UIkohUyD0WCmoes3l6NCsH/3V6JLKi2cIQav4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IPCZT3UU; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-455e9daab1cso10840505e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 00:30:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753169412; x=1753774212; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sRQugI64DfH4l5motO7Op00/v3FgIyII8TOhMD/41k4=;
-        b=IPCZT3UUPCUicdgRendY75IhkzSoJHNjsfb4VPfAv1pGutN2BQvgjnfUtMYbU94iTW
-         ZGzKPKRUmrYDi6vELbHEZQ9j5jJWjraNJvcpLJi0TxgXQiFPprHq8DUbSFDT90SEW0ta
-         a6z4Hri6oORrHPSN3kge+OS+8BIX3NR18JvFdX+yoQvDqlXO0sg3+oCti+GLZFqFsndQ
-         mEqdAqWcDwHIM7uiquDZAlbpFbz3/xOMv9MMvcI7TEU6GLn1nwIGOTcCtCZAi7oILmk2
-         4arIYhjdp3gFtx5E33OrdaYtJ5l3p1orU0IPjLvi1PgnSra28PodSH6kMUpKbiW6j4In
-         P0SQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753169412; x=1753774212;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sRQugI64DfH4l5motO7Op00/v3FgIyII8TOhMD/41k4=;
-        b=qQ0i1AGFqBfrycDg/CDPKOYvWXgNxqfk4RZnDPfcWNqiKHK6C4PTnxXX7sHaNWamx0
-         MHN2OD+6m2Pi5PWUTz9oWQ5SoNU9LWYB4FCnAgNu6KbNInER3AkwU4hSoV3aXz6xfQQ+
-         Gv5v3JFc2FFOuhiDMDTvN6gb1kJgWLGF/+ZYqpkQKDdFXOxTpLozTIwBRDyguGxBbQLn
-         c/iPjfOeeUhJzo10jwyK/4no0ZrcvAJJdHRTPJoZNbqfNim33nRQ8utKqsQ9cREQuIWc
-         i87jWMWik1fp8SBi2dgSe27uYO1F7KZXf8Je722ZgY0iVoClKl4hWszNc2F76Lx3DpeY
-         9A/g==
-X-Gm-Message-State: AOJu0YwZkIVuSly9Bbnx8Z25z3Hf2e1Z3LdkGFDlKjj1rcaR13ZxIHjE
-	F+70vdGW38VXSL2AjZwd0g3tIkX/P8h66N9zow7z2g68+A48/OX8UDu8AQwMZ0Jt7+Rm5/w1vJX
-	uAoafuDyiPMBcE8O5yHupbSXz2tOgDhnRBU9fuZMean58jPRHn5j8+HGfHlvRXJuHbOo62FoftS
-	kQlGD/a6gxv8k/+76Tx1Gum7LQQEDT8SZkKA==
-X-Google-Smtp-Source: AGHT+IFHQkrfJj9WX8KbnmcOtmg/6CDYAHe6Xbecpjb7ImR9En+2bUK1m4cqvZAIzJuTNGaHE6HnMSMz
-X-Received: from wmqb14.prod.google.com ([2002:a05:600c:4e0e:b0:456:1e7:c024])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:4fc1:b0:454:ccd6:327
- with SMTP id 5b1f17b1804b1-4562e039d10mr224727535e9.1.1753169412279; Tue, 22
- Jul 2025 00:30:12 -0700 (PDT)
-Date: Tue, 22 Jul 2025 09:27:31 +0200
-In-Reply-To: <20250722072708.2079165-24-ardb+git@google.com>
+	s=arc-20240116; t=1753169338; c=relaxed/simple;
+	bh=BZK13xTTjt/5UmV5jMd6YK/1RBHQ5TbhsdLSTIR7ksA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qhK2u72/iTh72sIebQRIUoge0WjcvJULc6DQvJw/RUU4NlgOwTZlxgBRAqULScnMZqrLIa/3tEiSAh9e0IoWo8sZauI/7jjveVYdervQaMTUIXVi9QZv5mWeOcLzJFgdofeHN7ZyQb0nJH/CtpnYkOv57e9nQIoj5SFov0lYPko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=SEf5Ikf3; arc=none smtp.client-ip=54.207.22.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1753169325;
+	bh=x+S0lLyonKMBOYVe3hwfq+3jtrctPFlVfJ/rovDXpoI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=SEf5Ikf32A4aGlE+OAr8Dh5+t8GSbdDKQOuxCFSVVn+Imhs2GtfwEQtewvKAiGXoo
+	 jA4sdSxpoTl97KN1ufZfz5feDxSF9BxvlQWAyOJE2njO1wLW+TZ1gM8x+HU964jofx
+	 ddqJk/k0JVtDK5Thug2vwxKesIwQD6GF3lEbivto=
+X-QQ-mid: zesmtpip3t1753169263t53df68e6
+X-QQ-Originating-IP: rTOvj0yplF8v1TzV+LE7s5Wipo1URwqutr9CN7Z1bPc=
+Received: from avenger-e500 ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 22 Jul 2025 15:27:37 +0800 (CST)
+X-QQ-SSF: 0002000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 4379188185935626122
+EX-QQ-RecipientCnt: 64
+From: WangYuli <wangyuli@uniontech.com>
+To: seanjc@google.com,
+	pbonzini@redhat.com,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com,
+	dave@stgolabs.net,
+	jonathan.cameron@huawei.com,
+	dave.jiang@intel.com,
+	alison.schofield@intel.com,
+	vishal.l.verma@intel.com,
+	ira.weiny@intel.com,
+	dan.j.williams@intel.com,
+	lucas.demarchi@intel.com,
+	thomas.hellstrom@linux.intel.com,
+	rodrigo.vivi@intel.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	marcin.s.wojtas@gmail.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	arend.vanspriel@broadcom.com,
+	ilpo.jarvinen@linux.intel.com,
+	andriy.shevchenko@linux.intel.com,
+	gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	jgross@suse.com,
+	sstabellini@kernel.org,
+	oleksandr_tyshchenko@epam.com,
+	akpm@linux-foundation.org
+Cc: kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	wangyuli@uniontech.com,
+	ming.li@zohomail.com,
+	linux-cxl@vger.kernel.org,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	netdev@vger.kernel.org,
+	kvalo@kernel.org,
+	johannes.berg@intel.com,
+	quic_ramess@quicinc.com,
+	ragazenta@gmail.com,
+	jeff.johnson@oss.qualcomm.com,
+	mingo@kernel.org,
+	j@jannau.net,
+	linux@treblig.org,
+	linux-wireless@vger.kernel.org,
+	brcm80211@lists.linux.dev,
+	brcm80211-dev-list.pdl@broadcom.com,
+	linux-serial@vger.kernel.org,
+	xen-devel@lists.xenproject.org,
+	shenlichuan@vivo.com,
+	yujiaoliang@vivo.com,
+	colin.i.king@gmail.com,
+	cvam0000@gmail.com,
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	guanwentao@uniontech.com,
+	wangyuli@deepin.org
+Subject: [PATCH v3 0/8] treewide: Fix typo "notifer"
+Date: Tue, 22 Jul 2025 15:27:34 +0800
+Message-ID: <576F0D85F6853074+20250722072734.19367-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250722072708.2079165-24-ardb+git@google.com>
-X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=737; i=ardb@kernel.org;
- h=from:subject; bh=2wDANTljMa+3l9R4Cw8PAic5NzJMQu4mfQTgCSM10MY=;
- b=owGbwMvMwCVmkMcZplerG8N4Wi2JIaPedscv7sVf5+tNDPLYtDlYzOSK1yfL44x1l4WeK/9+V
- nE+ImdGRykLgxgXg6yYIovA7L/vdp6eKFXrPEsWZg4rE8gQBi5OAZhIWhsjw7ZFh2580rgz5RJj
- o2hfkkLwj6C4DSzu8yOVV6zZqf9/XiUjw+yKpsIdB99nr5ozVVn9dPwF7xjxzVzSxlPvKfxzunF PmhkA
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250722072708.2079165-46-ardb+git@google.com>
-Subject: [PATCH v6 22/22] x86/boot: Get rid of the .head.text section
-From: Ard Biesheuvel <ardb+git@google.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-efi@vger.kernel.org, x86@kernel.org, 
-	Ard Biesheuvel <ardb@kernel.org>, Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>, 
-	Kevin Loughlin <kevinloughlin@google.com>, Tom Lendacky <thomas.lendacky@amd.com>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Nikunj A Dadhania <nikunj@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MDWLyYWhrZ/VSgDYBpGTTfaWvBcvfP8fpLHi2v8+x+sw9UQkcllGdlmP
+	56uh4oGiAPJj/aMzs0e/cAqJ924/hfFMCSwJUNxRH4zkOuX0t9oj41+1nF75vaW5B65J973
+	V47FfialPScBVysbe4ZS4p3/zYGyES424NQck5GvbU3Ty0KCF46yGh6dPYY1YAjDtb+MDzz
+	a8EeF37kwGAjn9LdwgpO8zZeQIdrlbLPXD9oWXORt3ViHBL9W/qGJQw7TmYRXdTAZ+P0Kfm
+	2uLk7z4hrS8Df1MNm31/bh0x9tOg83p5cYcjgNsG7n+PH7KrDWNV9FGU5ejaOl1kGqipq74
+	lCyrBOUd4Jt1KUS2XJdxlGsnrLBECEQYLOB6vc3cdDdLr92D4kAt7SudKQ19nZA3fOaJnuQ
+	pOhGxyCw/FXF3+jpc6GPxaVTiAQ/DgBTu94rczoLx80/fMK1p/kFJjapEMhc++e0qv33TkS
+	CS2xwKmW1K3aymPLigfg3PBRQhfFkzf/i7i8XO1pbknRZgnvAx7im7QQ0y7sjpVkPba7RPl
+	Zit3Rn5swvh9d/KqcWDe7Ki0oF59j5EPOMDbUKm7vom/qyXYLuEr37Cu1akWPp5UrXDC+ol
+	4a5aQwZ2qE6pZ1eyMRPK7pZRyLLs5uhNAglL2Q8rDY7tDfX23dicoLn8TrSLNcmkJMMkg7Q
+	shPWfiuA6aDTmJr00ua9WIQKZ7z6Mfmqpz120cWVMGY2Vl+zH4ZrD/cwss8kqaAYBfnNzjZ
+	BoS2/yQ+75A6VMaM1yTHzrpx1qnylqHQsi/NW4aidb5RLA/FJpxECWTUWxnXqRlBfaDBxRE
+	9g2Bw5Vt7AGlhfHrx3KP/t7IhUsAhml00WWpM23ILcfKE+dhu06D4FvlzIlKX/RW+bTkLRV
+	as8vbxKDlbmEPsPgj+HW5ITAq/1SX5G5C0Xk0b+8/y5JhcGxG83WzG6I1s3kCsMU9ebkZyY
+	3X6fnVq9YWMb6l3/9fbK+CxzYNZW74mXPHzOhbx2a2tnTVnJQhWhqHvBFUAjZnF5g+oydr0
+	Q5jJ4NrpXlKa49L8006wPSquXqBTDz8ZJQjBtxHikovmWuNpC/ZuyibdcLmW97IwdgJMN9t
+	+KWEFH7n6a7cVJtco3BlVsMeOi2ol3YUQ==
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-From: Ard Biesheuvel <ardb@kernel.org>
+There are some spelling mistakes of 'notifer' in comments which
+should be 'notifier'.
 
-The .head.text section is now empty, so it can be dropped from the
-linker script.
+Fix them and add it to scripts/spelling.txt.
 
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+WangYuli (8):
+  KVM: x86: Fix typo "notifer"
+  cxl: mce: Fix typo "notifer"
+  drm/xe: Fix typo "notifer"
+  net: mvneta: Fix typo "notifer"
+  wifi: brcmfmac: Fix typo "notifer"
+  serial: 8250_dw: Fix typo "notifer"
+  xen/xenbus: Fix typo "notifer"
+  scripts/spelling.txt: Add notifer||notifier to spelling.txt
+
+ arch/x86/kvm/i8254.c                                        | 4 ++--
+ drivers/cxl/core/mce.h                                      | 2 +-
+ drivers/gpu/drm/xe/xe_vm_types.h                            | 2 +-
+ drivers/net/ethernet/marvell/mvneta.c                       | 2 +-
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c | 2 +-
+ drivers/tty/serial/8250/8250_dw.c                           | 2 +-
+ include/xen/xenbus.h                                        | 2 +-
+ scripts/spelling.txt                                        | 1 +
+ 8 files changed, 9 insertions(+), 8 deletions(-)
 ---
- arch/x86/kernel/vmlinux.lds.S | 5 -----
- 1 file changed, 5 deletions(-)
+Changelog:
+ *v1->v2: Break patch v1 up into one-patch-per-subsystem.
+  v2->v3: Remove links to my patch v1 and add some "Reviewed-by" tags.
 
-diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-index 4277efb26358..d7af4a64c211 100644
---- a/arch/x86/kernel/vmlinux.lds.S
-+++ b/arch/x86/kernel/vmlinux.lds.S
-@@ -160,11 +160,6 @@ SECTIONS
- 
- 	} :text = 0xcccccccc
- 
--	/* bootstrapping code */
--	.head.text : AT(ADDR(.head.text) - LOAD_OFFSET) {
--		HEAD_TEXT
--	} :text = 0xcccccccc
--
- 	/* End of text section, which should occupy whole number of pages */
- 	_etext = .;
- 	. = ALIGN(PAGE_SIZE);
 -- 
-2.50.0.727.gbf7dc18ff4-goog
+2.50.0
 
 
