@@ -1,354 +1,198 @@
-Return-Path: <linux-kernel+bounces-740867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0F32B0DA5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:01:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70195B0DA78
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:03:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D45FB16B75B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:01:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 047171C23B2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:03:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7A82E975D;
-	Tue, 22 Jul 2025 13:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4072E9ECC;
+	Tue, 22 Jul 2025 13:02:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="GLjIIlYK"
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=fronius.com header.i=@fronius.com header.b="OipAOWrJ"
+Received: from mx01.fronius.com (mx01.fronius.com [213.33.117.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396E08F40
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 13:00:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D7A2DA767;
+	Tue, 22 Jul 2025 13:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.33.117.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753189256; cv=none; b=Z20e59Ce9v+LnnEwTLLmbVyr09uTfYLu1Jy5Ef8myfy5RNT2WR5Bj2Iv2qcD9AB7WldgCfIdF24ZRFHGHXhi+CW3r4bjI+vV+Clwkmnr9Ro+mMaPdAYJ3EuqG/MAC/BpuS78fxlu/B8R+Is441OA9mbU3+l4WLDGoDXQEldJvO4=
+	t=1753189333; cv=none; b=WYsVJj9YGWb00+wj/pOthSG7vZdfD8E9TEXer8Y+6sd7zmifHOsu2gGU7xO8GDcKAzK59ZrxPBZqz8PKPIejIeewf+iTRrFxtSrOcCIs5TXEyf/QdRB2CuoSOgNuvqfcGz9YAFDs0KKtnX9ZEQQx4LdX3AJR3Jtz0uxiDGnA5As=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753189256; c=relaxed/simple;
-	bh=WjhXQvfg1MJPWNOejVjsSuvC08OH8KAvMfmy13OlWLQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iDUObl2I08Stq+DwXD0ndv4jD4E+q8mXCu574REwHz9eDiewMK0owgOjvlU9SpFvSmoZ9ObAnQYRXpGYPkYxyFUJ6xo4w+OQtIwP/sToOS+xKaSreyaWYAtHSIM+jChW5wjvApNtTlsfSnjS8vZ/gfuFU+SfjSltP1fo86swT2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=GLjIIlYK; arc=none smtp.client-ip=209.85.160.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-302effd5978so1307175fac.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 06:00:52 -0700 (PDT)
+	s=arc-20240116; t=1753189333; c=relaxed/simple;
+	bh=VqMMqbK/fst5K37xnNgIoLGKG0pUcpwCFbhYyZmDf2s=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=e5MfYbeu3jX07ueHmf+x9FfHKTutR/5h8m+gDWi3nHJJBEWLAxpYwd4K3Wzhnmpid0sFKznTUH92QMqz8I0Jnjbw/nd8jB52la5szAYM8Tb1plyVTtRQrcz5kan1JL+fIFaMx3wR/4oUFpR6s3WUPMiO9ruwaW3hdP6j7inkJto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fronius.com; spf=pass smtp.mailfrom=fronius.com; dkim=pass (1024-bit key) header.d=fronius.com header.i=@fronius.com header.b=OipAOWrJ; arc=none smtp.client-ip=213.33.117.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fronius.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fronius.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1753189252; x=1753794052; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HMcsMF9k1slr1QbFQOJC8G2xDwN8Orda2DHqp1vpPFg=;
-        b=GLjIIlYK7QDAvccAmNcLXDQ1Fa0pIs2ESwr3gYS74pjOTrYlhc2J8sC08hmUrawRDw
-         cfnHoA9ULnSCsLjOOhBjyyehu7fmej5I3xY1n9eEk7wGY8Q9wIrorO5kTosVzdEwUh02
-         h0yUDW9ammB6zVP/OCq+us83WQbLNv07OSZvdev0nLL53Tq5onLXMCUVaj+DpCz9tDEF
-         W6ijrzX81csRN9JDCrpF05ql5h5Gm4qsv5fF7c+b2JCAYCxNXUYPgoX2nbMp99IfHx4p
-         ++TKBs16Uun/s6hlshbz1HoILadc1nzvAi+BNCDElD3dQBty/Xkxhp0lM/Mfe3l4Y5bK
-         PgQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753189252; x=1753794052;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HMcsMF9k1slr1QbFQOJC8G2xDwN8Orda2DHqp1vpPFg=;
-        b=mu4h+C6VS11O+SdvCqAiiYRcbaSl0dIPkbZiiQnJCipCdUM4svSMhvlFYUL0XKw+Am
-         KVcqhZ4a2nBvTGbusfau42Na6vlsxDS1UYooOaMXNc5klAoplsBvH+2O3aZQLpYLSmgu
-         SDpD0iXFFDzr6wZ4qJykL4fJtJe4N3Wi8xiQhXQBBT5BypbNUEycc+iCf6DeadOE0CGZ
-         hGRrJhrmp4UVy8QmVR25ybCXp8Cq1IEuq9cjlf+vQGzVOQWfpMJ4X/Ftc9dkPkR5YqtZ
-         EuxFZ1nYb+kOnGz6DobJF3hv9EMdQU1bak3JLl4JtxDAB2Q6miE2ZcoaZJdbPREN6LQK
-         4nqw==
-X-Forwarded-Encrypted: i=1; AJvYcCWhi2nzCue+WnBHVBZKo7oOhZrnCy2DdnxhwvFOod3gX0sCRTr7iYxyIeDq8HflpS+22Fw3tMCLuoe0BdM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKS+ykURoQI3PgUDNNJROOtRQFmWv88MG5cwlZ2lCg845UGjBx
-	e3FR+DdpB+XGjazS02ug4biIAMABVdj2NUhngYZ80ePUKoxt7yM+bVtlVtFo8ORdPWFC8kFfTvZ
-	a82T4
-X-Gm-Gg: ASbGnctlF+icQQJR3ViBPCbUtOawo6yWG+8KOOAHLFEIl50a0mCX+3+MJkTrq6hPNFe
-	Ohnf6bqZ2mwokvgAxL+IHCMYIW8zBJ4+sgD2paiYR2ia1cyz04o9T9A5ndGhg7OcIT4/2jQrIKL
-	c16eLoIYmGb+fxWvM0e5rQFHHFOOzW7w629FmA6JAlD2mZ00utfEXlNZ0oHOWUf65MJl9+imlQM
-	bvM/n5s9xDdEWH4YkS+CYKxcTwvtceFhcv6RoiHmeQn5l/pDlx8JaLiVSpL75u3G964BL7/hMNc
-	i2idO1o1IRqPZaEHSPVLU8JmPZ4MOze0jJhOr0ILKcPszPkcdhIqSKdfYYZc3NtKyhgIZd7fWYy
-	WB/Eqw/ihr4bMJyxj4H8=
-X-Google-Smtp-Source: AGHT+IHPeOHF2gIHh++qvuHaSZFmcB7BsWRyjN14L/aRGhFjgvqYB6fc5PmJ/raaJb2e0GX6eF4wig==
-X-Received: by 2002:a05:6e02:220d:b0:3e2:c350:2e61 with SMTP id e9e14a558f8ab-3e2c35031fdmr22792935ab.20.1753189239444;
-        Tue, 22 Jul 2025 06:00:39 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e2982d14f8sm30774605ab.62.2025.07.22.06.00.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Jul 2025 06:00:38 -0700 (PDT)
-Message-ID: <e029eef8-2c2b-4dfe-a01f-9903f309e39e@kernel.dk>
-Date: Tue, 22 Jul 2025 07:00:38 -0600
+  d=fronius.com; s=s1;
+  h=from:to:cc:subject:date:message-id:
+   content-transfer-encoding:mime-version;
+  bh=lZXg7IlYCNysrBEGTDmUEgh4K7F5kJfCBni7fk6/FZA=;
+  b=OipAOWrJn+ULO+s8Wxf5YX1d3UBlcxOeVd3WdMsnP/9fmz6MnQKQO3jX
+   CspzPkFXfQdZ6VU8TiRd0IdkTUndC9Df6ITjf4FUT3wAyy2A2L/t0ydU4
+   pDhc5wvgGjWSwBzQ/daZ+tFXfzEc5/uyipEv740ohMoXDXSN1h5chZu/8
+   s=;
+X-CSE-ConnectionGUID: 4tdAo4QURf+u0PMgFJcGpw==
+X-CSE-MsgGUID: 9kacHeSvQK+XGkmIdZybFw==
+X-ThreatScanner-Verdict: Negative
+IronPort-Data: A9a23:YVjWz6vVlVeCzyAW2r9cNhAcZ+fnVPFfMUV32f8akzHdYApBsoF/q
+ tZmKTzVOfaMazHwKd9xOYuz8B5XvsSAmodiGQI//iowEi1H9ZOVVN+UEBzMMnLJJKUvbq7HA
+ +byyzXkBJppJpMJjk71atANlVEli+fQAOO6ULeVUsxIbVcMYD87jh5+kPIOjIdtgNyoayuAo
+ tqaT/f3YTdJ4BYqdDtKg06/gEk35qmq52lC5gVWic1j5zcyqVFEVPrzGonsdxMUcqEMdsamS
+ uDKyq2O/2+x138FFtO/n7/nRVYBS7jUMBLmoiI+t3+K20UqSoQai87XBdJEAatlo2zhc+NZk
+ b2hgaeNpTIBZcUgrgi/vy5wSEmSNYUekFPOCSLi4JbLlxWun3HEmp2CB2lvVWEU0rwqUDsWr
+ aRwxJngoXlvisrvqI9XRNWAiex/MMXCO98mh0tujiyBNdMpb7LIbL3VsIowMDcY3qiiHN73W
+ 480UgpRSVGZP0MQfFkND5Q/gfzujX76G9FagAvN4/BxujGVkFEZPLvFabI5fvSlTMFRn12Do
+ X6A2m3lAhAXKfSR0z2D82+3wOTImEsXXapLROPiqaYw3gz7Kmo7WR4fXnu2mueAqQ2OdNFaC
+ kAm6yAAsv1nnKCsZpynN/Gim1aGsxASHdFQHusNsSmL2rKS6AGcbkAOVD9Ibpomr9IeQywyk
+ FSOmrvBDyZuubuTTmiH96y8pjOoPi0UMGpEYjULJSML+dDlq4wohRXnQtFnG6+zj5v0BVnYw
+ TeKpS44iq47ls8TzKK/4EzGhDS34J7EUmYd4gTRQ3Lg7Q5jYoOhT5Kn5EKd7vtaKoudCF6bs
+ xAsn8mY8fBLEpCXmSiAW/4lAr6k/bCGPSfajFopGIMunxy2vX6qYI1KyClzIkh0LtwDfz75J
+ kPe0StN/4JVMz6qdq56ZcSxEMUnzYDmBcyjXffRBueiebAoLEndung3IxLNt4zwrHURfWgEE
+ c/zWa6R4bwyUsyLEBLeqz8h7IIW
+IronPort-HdrOrdr: A9a23:D57CbqqbV3QVKf2lh03c1UcaV5odeYIsimQD101hICG9Kvbo9f
+ xHnJwguSMc+wxhPU3I/urwQJVoIEmsjKKdjrNwAV7PZmPbUQiTXfpfBOnZsl7d8kTFn4Y36U
+ 4KScdD4ajLbGSS+vyV3ODXKbsdKZK8gcSVbK/lvhBQpC9RGsdd0zs=
+X-Talos-CUID: 9a23:7CdkZ2991QszpE7o9jGVvxIIFukiLkTg9nmTPheALGlHara6UUDFrQ==
+X-Talos-MUID: =?us-ascii?q?9a23=3A9jtIMg054D6me0pYiXRWpJqm6jUjsqenA2AAqos?=
+ =?us-ascii?q?/mIq0Gi91GjuvnT6ZXdpy?=
+X-IronPort-AV: E=Sophos;i="6.16,331,1744063200"; 
+   d="scan'208";a="186270269"
+X-IronPort-Outbreak-Status: No, level 0, Unknown - Unknown
+From: Gallissot Mathieu <Gallissot.Mathieu@fronius.com>
+To: "jeff.chen_1@nxp.com" <jeff.chen_1@nxp.com>
+CC: "brian.hsu@nxp.com" <brian.hsu@nxp.com>, "briannorris@chromium.org"
+	<briannorris@chromium.org>, "francesco@dolcini.it" <francesco@dolcini.it>,
+	"johannes@sipsolutions.net" <johannes@sipsolutions.net>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+	"tsung-hsien.hsieh@nxp.com" <tsung-hsien.hsieh@nxp.com>
+Subject: Re: [PATCH v4 00/22] wifi: nxpwifi: create nxpwifi to support iw61x
+Thread-Topic: Re: [PATCH v4 00/22] wifi: nxpwifi: create nxpwifi to support
+ iw61x
+Thread-Index: Adv7B52mU5UDxz+jT+K2qBGBtnR/zg==
+Date: Tue, 22 Jul 2025 13:00:57 +0000
+Message-ID: <cb3be497fa7a45e68d9be6f9b8bc47b5@fronius.com>
+Accept-Language: fr-FR, de-AT, en-US
+Content-Language: fr-FR
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] KASAN: slab-use-after-free Read in
- io_poll_remove_entries
-To: Ian Abbott <abbotti@mev.co.uk>
-Cc: syzbot <syzbot+01523a0ae5600aef5895@syzkaller.appspotmail.com>,
- io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com, hsweeten@visionengravers.com,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <687bd5fe.a70a0220.693ce.0091.GAE@google.com>
- <9385a1a6-8c10-4eb5-9ab9-87aaeb6a7766@kernel.dk>
- <ede52bb4-c418-45c0-b133-4b5fb6682b04@kernel.dk>
- <d407c9f1-e625-4153-930f-6e44d82b32b5@kernel.dk>
- <20250722134724.6671e45b@ian-deb>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250722134724.6671e45b@ian-deb>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 7/22/25 6:47 AM, Ian Abbott wrote:
-> On Sun, 20 Jul 2025 13:00:59 -0600
-> Jens Axboe <axboe@kernel.dk> wrote:
-> 
->> On 7/20/25 12:49 PM, Jens Axboe wrote:
->>> On 7/20/25 12:24 PM, Jens Axboe wrote:  
->>>> On 7/19/25 11:29 AM, syzbot wrote:  
->>>>> Hello,
->>>>>
->>>>> syzbot found the following issue on:
->>>>>
->>>>> HEAD commit:    4871b7cb27f4 Merge tag
->>>>> 'v6.16-rc6-smb3-client-fixes' of gi.. git tree:       upstream
->>>>> console output:
->>>>> https://syzkaller.appspot.com/x/log.txt?x=1288c38c580000 kernel
->>>>> config:
->>>>> https://syzkaller.appspot.com/x/.config?x=fa738a4418f051ee
->>>>> dashboard link:
->>>>> https://syzkaller.appspot.com/bug?extid=01523a0ae5600aef5895
->>>>> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU
->>>>> Binutils for Debian) 2.40 syz repro:
->>>>> https://syzkaller.appspot.com/x/repro.syz?x=1688c38c580000 C
->>>>> reproducer:
->>>>> https://syzkaller.appspot.com/x/repro.c?x=166ed7d4580000
->>>>>
->>>>> Downloadable assets:
->>>>> disk image (non-bootable):
->>>>> https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-4871b7cb.raw.xz
->>>>> vmlinux:
->>>>> https://storage.googleapis.com/syzbot-assets/4a9dea51d821/vmlinux-4871b7cb.xz
->>>>> kernel image:
->>>>> https://storage.googleapis.com/syzbot-assets/f96c723cdfe6/bzImage-4871b7cb.xz
->>>>>
->>>>> IMPORTANT: if you fix the issue, please add the following tag to
->>>>> the commit: Reported-by:
->>>>> syzbot+01523a0ae5600aef5895@syzkaller.appspotmail.com
->>>>>
->>>>> ==================================================================
->>>>> BUG: KASAN: slab-use-after-free in __raw_spin_lock_irq
->>>>> include/linux/spinlock_api_smp.h:119 [inline] BUG: KASAN:
->>>>> slab-use-after-free in _raw_spin_lock_irq+0x36/0x50
->>>>> kernel/locking/spinlock.c:170 Read of size 1 at addr
->>>>> ffff88803c6f42b0 by task kworker/2:2/1339
->>>>>
->>>>> CPU: 2 UID: 0 PID: 1339 Comm: kworker/2:2 Not tainted
->>>>> 6.16.0-rc6-syzkaller-00253-g4871b7cb27f4 #0 PREEMPT(full)
->>>>> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS
->>>>> 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014 Workqueue: events
->>>>> io_fallback_req_func Call Trace: <TASK>
->>>>>  __dump_stack lib/dump_stack.c:94 [inline]
->>>>>  dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
->>>>>  print_address_description mm/kasan/report.c:378 [inline]
->>>>>  print_report+0xcd/0x610 mm/kasan/report.c:480
->>>>>  kasan_report+0xe0/0x110 mm/kasan/report.c:593
->>>>>  __kasan_check_byte+0x36/0x50 mm/kasan/common.c:557
->>>>>  kasan_check_byte include/linux/kasan.h:399 [inline]
->>>>>  lock_acquire kernel/locking/lockdep.c:5845 [inline]
->>>>>  lock_acquire+0xfc/0x350 kernel/locking/lockdep.c:5828
->>>>>  __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
->>>>>  _raw_spin_lock_irq+0x36/0x50 kernel/locking/spinlock.c:170
->>>>>  spin_lock_irq include/linux/spinlock.h:376 [inline]
->>>>>  io_poll_remove_entry io_uring/poll.c:146 [inline]
->>>>>  io_poll_remove_entries.part.0+0x14e/0x7e0 io_uring/poll.c:179
->>>>>  io_poll_remove_entries io_uring/poll.c:159 [inline]
->>>>>  io_poll_task_func+0x4cd/0x1130 io_uring/poll.c:326
->>>>>  io_fallback_req_func+0x1c7/0x6d0 io_uring/io_uring.c:259
->>>>>  process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3238
->>>>>  process_scheduled_works kernel/workqueue.c:3321 [inline]
->>>>>  worker_thread+0x6c8/0xf10 kernel/workqueue.c:3402
->>>>>  kthread+0x3c5/0x780 kernel/kthread.c:464
->>>>>  ret_from_fork+0x5d4/0x6f0 arch/x86/kernel/process.c:148
->>>>>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
->>>>>  </TASK>
->>>>>
->>>>> Allocated by task 6154:
->>>>>  kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
->>>>>  kasan_save_track+0x14/0x30 mm/kasan/common.c:68
->>>>>  poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
->>>>>  __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
->>>>>  kmalloc_noprof include/linux/slab.h:905 [inline]
->>>>>  kzalloc_noprof include/linux/slab.h:1039 [inline]
->>>>>  __comedi_device_postconfig_async drivers/comedi/drivers.c:664
->>>>> [inline] __comedi_device_postconfig drivers/comedi/drivers.c:721
->>>>> [inline] comedi_device_postconfig+0x2cb/0xc80
->>>>> drivers/comedi/drivers.c:756 comedi_device_attach+0x3cf/0x900
->>>>> drivers/comedi/drivers.c:998 do_devconfig_ioctl+0x1a7/0x580
->>>>> drivers/comedi/comedi_fops.c:855
->>>>> comedi_unlocked_ioctl+0x15bb/0x2e90
->>>>> drivers/comedi/comedi_fops.c:2136 vfs_ioctl fs/ioctl.c:51
->>>>> [inline] __do_sys_ioctl fs/ioctl.c:907 [inline] __se_sys_ioctl
->>>>> fs/ioctl.c:893 [inline] __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:893
->>>>>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->>>>>  do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
->>>>>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->>>>>
->>>>> Freed by task 6156:
->>>>>  kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
->>>>>  kasan_save_track+0x14/0x30 mm/kasan/common.c:68
->>>>>  kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:576
->>>>>  poison_slab_object mm/kasan/common.c:247 [inline]
->>>>>  __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
->>>>>  kasan_slab_free include/linux/kasan.h:233 [inline]
->>>>>  slab_free_hook mm/slub.c:2381 [inline]
->>>>>  slab_free mm/slub.c:4643 [inline]
->>>>>  kfree+0x2b4/0x4d0 mm/slub.c:4842
->>>>>  comedi_device_detach_cleanup drivers/comedi/drivers.c:171
->>>>> [inline] comedi_device_detach+0x2a4/0x9e0
->>>>> drivers/comedi/drivers.c:208 do_devconfig_ioctl+0x46c/0x580
->>>>> drivers/comedi/comedi_fops.c:833
->>>>> comedi_unlocked_ioctl+0x15bb/0x2e90
->>>>> drivers/comedi/comedi_fops.c:2136 vfs_ioctl fs/ioctl.c:51
->>>>> [inline] __do_sys_ioctl fs/ioctl.c:907 [inline] __se_sys_ioctl
->>>>> fs/ioctl.c:893 [inline] __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:893
->>>>>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->>>>>  do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
->>>>>  entry_SYSCALL_64_after_hwframe+0x77/0x7f  
->>>>
->>>> I took a quick look at this, and surely looks like a comedi bug.
->>>> If you call the ioctl part (do_devconfig_ioctl()) with a NULL arg,
->>>> it just does a detach and frees the device, regardless of whether
->>>> anyone has it opened or not?! It's got some odd notion of checking
->>>> whether it's busy or not. For this case, someone has a poll active
->>>> on the device, yet it still happily frees it.
->>>>
->>>> CC'ing some folks, as this looks utterly broken.  
->>>
->>> Case in point, I added:
->>>
->>> diff --git a/drivers/comedi/drivers.c b/drivers/comedi/drivers.c
->>> index 376130bfba8a..4d5fde012558 100644
->>> --- a/drivers/comedi/drivers.c
->>> +++ b/drivers/comedi/drivers.c
->>> @@ -167,6 +167,7 @@ static void comedi_device_detach_cleanup(struct
->>> comedi_device *dev) kfree(s->private);
->>>  			comedi_free_subdevice_minor(s);
->>>  			if (s->async) {
->>> +
->>> WARN_ON_ONCE(waitqueue_active(&s->async->wait_head));
->>> comedi_buf_alloc(dev, s, 0); kfree(s->async);
->>>  			}
->>>
->>> and this is the first thing that triggers:
->>>
->>> WARNING: CPU: 1 PID: 807 at drivers/comedi/drivers.c:170
->>> comedi_device_detach+0x510/0x720 Modules linked in:
->>> CPU: 1 UID: 0 PID: 807 Comm: comedi Not tainted
->>> 6.16.0-rc6-00281-gf4a40a4282f4-dirty #1438 NONE Hardware name:
->>> linux,dummy-virt (DT) pstate: 21400005 (nzCv daif +PAN -UAO -TCO
->>> +DIT -SSBS BTYPE=--) pc : comedi_device_detach+0x510/0x720
->>> lr : comedi_device_detach+0x1dc/0x720
->>> sp : ffff80008aeb7880
->>> x29: ffff80008aeb7880 x28: 1fffe00020251205 x27: ffff000101289028
->>> x26: ffff00010578a000 x25: ffff000101289000 x24: 0000000000000007
->>> x23: 1fffe00020af1437 x22: 1fffe00020af1438 x21: 0000000000000000
->>> x20: 0000000000000000 x19: dfff800000000000 x18: ffff0000db102ec0
->>> x17: ffff80008208e6dc x16: ffff80008362e120 x15: ffff800080a47c1c
->>> x14: ffff8000826f5aec x13: ffff8000836a0cc4 x12: ffff700010adcd15
->>> x11: 1ffff00010adcd14 x10: ffff700010adcd14 x9 : ffff8000836a105c
->>> x8 : ffff800085bc0cc0 x7 : ffff00000b035b50 x6 : 0000000000000000
->>> x5 : 0000000000000000 x4 : ffff800080960e08 x3 : 0000000000000001
->>> x2 : ffff00000b4bf930 x1 : 0000000000000000 x0 : ffff0000d7e2b0d8
->>> Call trace:
->>>  comedi_device_detach+0x510/0x720 (P)
->>>  do_devconfig_ioctl+0x37c/0x4b8
->>>  comedi_unlocked_ioctl+0x33c/0x2bd8
->>>  __arm64_sys_ioctl+0x124/0x1a0
->>>  invoke_syscall.constprop.0+0x60/0x2a0
->>>  el0_svc_common.constprop.0+0x148/0x240
->>>  do_el0_svc+0x40/0x60
->>>  el0_svc+0x44/0xe0
->>>  el0t_64_sync_handler+0x104/0x130
->>>  el0t_64_sync+0x170/0x178
->>>
->>> Not sure what the right fix for comedi is here, it'd probably be at
->>> least somewhat saner if it only allowed removal of the device when
->>> the ref count would be 1 (for the ioctl itself). Just ignoring the
->>> file ref and allowing blanket removal seems highly suspicious /
->>> broken.
->>>
->>> As there's no comedi subsystem in syzbot, moving it to kernel:
->>>
->>> #syz set subsystems: kernel  
->>
->> Something like the below may help, at least it'll tell us the device
->> is busy if there's a poll active on it.
->>
->> #syz test:
->> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
->> master
->>
->>
->> diff --git a/drivers/comedi/comedi_fops.c
->> b/drivers/comedi/comedi_fops.c index 3383a7ce27ff..ea96bc4b818e 100644
->> --- a/drivers/comedi/comedi_fops.c
->> +++ b/drivers/comedi/comedi_fops.c
->> @@ -785,21 +785,31 @@ void comedi_device_cancel_all(struct
->> comedi_device *dev) static int is_device_busy(struct comedi_device
->> *dev) {
->>  	struct comedi_subdevice *s;
->> -	int i;
->> +	int i, is_busy = 0;
->>  
->>  	lockdep_assert_held(&dev->mutex);
->>  	if (!dev->attached)
->>  		return 0;
->>  
->> +	/* prevent new polls */
->> +	down_write(&dev->attach_lock);
->> +
->>  	for (i = 0; i < dev->n_subdevices; i++) {
->>  		s = &dev->subdevices[i];
->> -		if (s->busy)
->> -			return 1;
->> -		if (s->async && comedi_buf_is_mmapped(s))
->> -			return 1;
->> +		if (s->busy) {
->> +			is_busy = 1;
->> +			break;
->> +		}
->> +		if (!s->async)
->> +			continue;
->> +		if (comedi_buf_is_mmapped(s) ||
->> +		    waitqueue_active(&s->async->wait_head)) {
->> +			is_busy = 1;
->> +			break;
->> +		}
->>  	}
->> -
->> -	return 0;
->> +	up_write(&dev->attach_lock);
->> +	return is_busy;
->>  }
->>  
->>  /*
->>
-> 
-> Thanks for your investigation and initial fix. I think dev->attach_lock
-> needs to be write-locked before calling is_device_busy() and released
-> after comedi_device_detach() (although that also write-locks it, so we
-> need to refactor that). Otherwise, someone could get added to the
-> wait_head after is_device_busy() returns.
+Hi,
 
-That's fine too, this is what my v2 addressed as well. I don't know
-comedi well enough so I was worried about having ->attach_lock held over
-comedi_device_cancel_all() -> do_cancel() -> s->cancel() as that appears
-to be a new pattern. If you know this is fine, then yes by all means, we
-should just hold ->attach_lock over the whole thing and not need a
-detaching state.
+I've been try to compile this patch on 6.12.33 (commit id e03ced99c437f4a79=
+92b8fa3d97d598f55453fd0), I've got the following error messages. Which vers=
+ion of kernel does this patch applies?
 
--- 
-Jens Axboe
+drivers/net/wireless/nxp/nxpwifi/cmdevt.c:8:10: fatal error: asm/unaligned.=
+h: No such file or directory
+    8 | #include <asm/unaligned.h>
+      |          ^~~~~~~~~~~~~~~~~
+compilation terminated.
+make[7]: *** [scripts/Makefile.build:287: drivers/net/wireless/nxp/nxpwifi/=
+cmdevt.o] Error 1
+make[7]: *** Waiting for unfinished jobs....
+  CC [M]  drivers/net/wireless/ti/wlcore/scan.o
+  CC [M]  drivers/net/wireless/ti/wlcore/sysfs.o
+  CC [M]  drivers/net/wireless/rsi/rsi_91x_sdio_ops.o
+  CC [M]  drivers/net/wireless/ti/wlcore/vendor_cmd.o
+drivers/net/wireless/nxp/nxpwifi/main.c: In function 'nxpwifi_unregister':
+drivers/net/wireless/nxp/nxpwifi/main.c:114:9: error: implicit declaration =
+of function 'del_timer_syn'; did you mean 'dev_mc_sync'? [-Werror=3Dimplici=
+t-function-declaration]
+  114 |         del_timer_sync(&adapter->cmd_timer);
+      |         ^~~~~~~~~~~~~~
+      |         dev_mc_sync
+  CC [M]  drivers/net/wireless/rsi/rsi_91x_usb.o
+drivers/net/wireless/nxp/nxpwifi/main.c: In function 'nxpwifi_main_process'=
+:
+drivers/net/wireless/nxp/nxpwifi/main.c:274:25: error: implicit declaration=
+ of function 'del_timer'; did you mean 'add_timer'? [-Werror=3Dimplicit-fun=
+ction-declaration]
+  274 |                         del_timer(&adapter->wakeup_timer);
+      |                         ^~~~~~~~~
+      |                         add_timer
+In file included from ./include/linux/export.h:5,
+                 from ./include/linux/linkage.h:7,
+                 from ./include/linux/preempt.h:10,
+                 from ./include/linux/spinlock.h:56,
+                 from ./include/linux/swap.h:5,
+                 from ./include/linux/suspend.h:5,
+                 from drivers/net/wireless/nxp/nxpwifi/main.c:8:
+drivers/net/wireless/nxp/nxpwifi/main.c: In function 'nxpwifi_hard_start_xm=
+it':
+drivers/net/wireless/nxp/nxpwifi/main.c:838:50: error: 'SKBTX_WIFI_STATUS' =
+undeclared (first use in this function); did you mean 'SOCK_WIFI_STATUS'?
+  838 |                      skb_shinfo(skb)->tx_flags & SKBTX_WIFI_STATUS =
+&&
+      |                                                  ^~~~~~~~~~~~~~~~~
+./include/linux/compiler.h:77:45: note: in definition of macro 'unlikely'
+   77 | # define unlikely(x)    __builtin_expect(!!(x), 0)
+      |                                             ^
+drivers/net/wireless/nxp/nxpwifi/main.c:838:50: note: each undeclared ident=
+ifier is reported only once for each function it appears in
+  838 |                      skb_shinfo(skb)->tx_flags & SKBTX_WIFI_STATUS =
+&&
+      |                                                  ^~~~~~~~~~~~~~~~~
+./include/linux/compiler.h:77:45: note: in definition of macro 'unlikely'
+   77 | # define unlikely(x)    __builtin_expect(!!(x), 0)
+      |                                             ^
+cc1: some warnings being treated as errors
+drivers/net/wireless/nxp/nxpwifi/init.c: In function 'wakeup_timer_fn':
+drivers/net/wireless/nxp/nxpwifi/init.c:43:43: error: implicit declaration =
+of function 'from_timer'; did you mean 'mod_timer'? [-Werror=3Dimplicit-fun=
+ction-declaration]
+   43 |         struct nxpwifi_adapter *adapter =3D from_timer(adapter, t, =
+wakeup_timer);
+      |                                           ^~~~~~~~~~
+      |                                           mod_timer
+drivers/net/wireless/nxp/nxpwifi/init.c:43:66: error: 'wakeup_timer' undecl=
+ared (first use in this function); did you mean 'wakeup_timer_fn'?
+   43 |         struct nxpwifi_adapter *adapter =3D from_timer(adapter, t, =
+wakeup_timer);
+      |                                                                  ^~=
+~~~~~~~~~~
+      |                                                                  wa=
+keup_timer_fn
+drivers/net/wireless/nxp/nxpwifi/init.c:43:66: note: each undeclared identi=
+fier is reported only once for each function it appears in
+make[7]: *** [scripts/Makefile.build:287: drivers/net/wireless/nxp/nxpwifi/=
+main.o] Error 1
+drivers/net/wireless/nxp/nxpwifi/init.c: In function 'nxpwifi_adapter_clean=
+up':
+drivers/net/wireless/nxp/nxpwifi/init.c:361:9: error: implicit declaration =
+of function 'del_timer'; did you mean 'add_timer'? [-Werror=3Dimplicit-func=
+tion-declaration]
+  361 |         del_timer(&adapter->wakeup_timer);
+      |         ^~~~~~~~~
+      |         add_timer
+  CC [M]  drivers/net/wireless/rsi/rsi_91x_usb_ops.o
+  CC [M]  drivers/net/wireless/ti/wlcore/sdio.o
+drivers/net/wireless/nxp/nxpwifi/init.c: In function 'nxpwifi_shutdown_drv'=
+:
+drivers/net/wireless/nxp/nxpwifi/init.c:577:17: error: implicit declaration=
+ of function 'del_timer_sync'; did you mean 'dev_mc_sync'? [-Werror=3Dimpli=
+cit-function-declaration]
+  577 |                 del_timer_sync(&adapter->cmd_timer);
+      |                 ^~~~~~~~~~~~~~
+      |                 dev_mc_sync
+cc1: some warnings being treated as errors
+
+Thanks,
+Mathieu
 
