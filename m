@@ -1,106 +1,148 @@
-Return-Path: <linux-kernel+bounces-741152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 598E5B0E0B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:39:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3478AB0E0BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:39:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB02BAC1767
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:38:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73AA4566257
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:39:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC61D27934A;
-	Tue, 22 Jul 2025 15:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61898262FC5;
+	Tue, 22 Jul 2025 15:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AQmgkO6g"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R7Pltk+9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D79925C833;
-	Tue, 22 Jul 2025 15:39:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA2725C833;
+	Tue, 22 Jul 2025 15:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753198748; cv=none; b=eXccJplFDjhtPMuSKnQ7Spwo8pJBROJ36ccR/iYqcgFccS9XntbLm6kJtYkYJZHD8caZGzcoxoPY3FjO4hflZs3G1SZpOA8biS3rAUlmed2fcY4vgrzKi44MitIiNckE8WXpmlOFPtq182pNC2v5Z+iwNzTXeoYQm9yNpQmHgJ4=
+	t=1753198751; cv=none; b=No8haoM6cK7VBh5tN47d4kw6tyl5lnlrmrqS0dKMeuR4csSrmi4KjlgnX09Fq30Xq6+dlQWRUJweUKdDi2otl6g/7lk2+zP2PgSV9AGYDBMwSrCyYlqIWd5DONeuyxxu7uC68lzm0Z3e3bD6Efz5p1wwwhtWPXc6+fk9K8Kk/lU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753198748; c=relaxed/simple;
-	bh=L1qIlieTBeJjLKSC5FnO3Bi7aA/JmO6/0ewBKzSFvjg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=QrOSxsnTdcgagxxrukmJIqHw797xGlzXGKRXDMZJIdFHykR5Mb93WdbUjgQHKBBt0IqtCHroYx+6ulwC00A+lEuNS9DqwvBd6KpO7UMxMIMOIVlGO5LfmKc32hYuUYm7ZBxgwIc1K4E+xeYGV0wJ10V8exKbxQ7gfoN7xGUkJNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AQmgkO6g; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753198747; x=1784734747;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=L1qIlieTBeJjLKSC5FnO3Bi7aA/JmO6/0ewBKzSFvjg=;
-  b=AQmgkO6ggsvnZrfQNrjs03oIuwSP/RPu73yKSDr0jQoU7Ytw21sTy0k2
-   IO/19gybix2fFOjNHBqCUi0C/79ScT/133l1zdmRvfXNNNbGODlXWdomo
-   +2Az/+sEGbypPWpBT6gssafZtQlwqrlpH3I9sNu3Si2LDEwbF+c8njheK
-   oARyJvnMKcCEUxJtO7b5BEiDOGGe5dtAM4t+zyD6exSQhUNSXNgXvO9kG
-   J+9+45/eYGtJJpx0JTX6M1Olv2QfsJ3NlHdXNRv3dttFqc5jnMyHGongf
-   ndDNln2BRii5xa1RLSc473tpGmjAmQflIDLJMmQyPk8czkpSeKv6RmNNG
-   g==;
-X-CSE-ConnectionGUID: Qw1hEQUbTAOGS5vknMuZsg==
-X-CSE-MsgGUID: Y9dYjJB6RUGbRcH4/narIg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11500"; a="55336927"
-X-IronPort-AV: E=Sophos;i="6.16,331,1744095600"; 
-   d="scan'208";a="55336927"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 08:39:07 -0700
-X-CSE-ConnectionGUID: KcsF1a1LRQaJf2IO32Mehg==
-X-CSE-MsgGUID: a8HZiMMGQ4Gua8iYk0ip3w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,331,1744095600"; 
-   d="scan'208";a="159229404"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.254])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 08:39:03 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: platform-driver-x86@vger.kernel.org, 
- Antheas Kapenekakis <lkml@antheas.dev>
-Cc: linux-kernel@vger.kernel.org, 
- Derek John Clark <derekjohn.clark@gmail.com>, 
- =?utf-8?q?Joaqu=C3=ADn_Ignacio_Aramend=C3=ADa?= <samsagax@gmail.com>, 
- Eileen <eileen@one-netbook.com>, Hans de Goede <hansg@kernel.org>
-In-Reply-To: <20250718163305.159232-1-lkml@antheas.dev>
-References: <20250718163305.159232-1-lkml@antheas.dev>
-Subject: Re: [PATCH v1 1/2] platform/x86: oxpec: Fix turbo register for G1
- AMD
-Message-Id: <175319873747.17914.9743576512932520356.b4-ty@linux.intel.com>
-Date: Tue, 22 Jul 2025 18:38:57 +0300
+	s=arc-20240116; t=1753198751; c=relaxed/simple;
+	bh=/Gjkuw+5Y7LJ0hoFeke0nCDcX+sNxHdnXykOv3WdwLI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NNuiMxXM3yq6hbsGT5zVsAH2yfGgG8efLSPptsCGlbipSUyk9M1mV6MCZNv8YdVahv55WWFe4oKdyUAg/C/uWjDNCFKpuRR0aJTH3MB+1PshhpwrUKMBctumCTJ4TlfIpAssQxgzcbHKEKlWvyz+0bq3sSOlkmBbX2NltshhFm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R7Pltk+9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E0C0C4CEF1;
+	Tue, 22 Jul 2025 15:39:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753198751;
+	bh=/Gjkuw+5Y7LJ0hoFeke0nCDcX+sNxHdnXykOv3WdwLI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=R7Pltk+9rewNqhHJrfLjs8QVOCuOal4FZD8jjgzvt+aAdMBSsX0KA/oG4AVdfnOE7
+	 CDtUTsFpa7w/LRaxgrBzDbhFbV7u7RmMpz3Tp4PQZ13+bwBGmTm0FS50D2Ullb7MOZ
+	 6twI50kQ0hUpFsdvBEKDXmItWkIW4Qjymiv96G70JOHSatn0Dv6NKWFT+7UCAG/QC5
+	 IfZqHlByrcE4HaeSViJU8fEKUgXYxVBnXz0XBtWUh4aUokxQ+LEUJOZVM2xtjaSsUy
+	 5swpx0d9Rg0QGKxoNsbVN6oKtNsh6565sqhioEC0+lVfveb2WqK04ENVtQQ0UgMgcB
+	 /8/aLpaVhX0BQ==
+Message-ID: <93253093-f6a8-4c34-988d-bdc9489cf4f0@kernel.org>
+Date: Tue, 22 Jul 2025 10:39:08 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 8/9] fbcon: Use screen info to find primary device
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: David Airlie <airlied@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Simona Vetter <simona@ffwll.ch>, Lukas Wunner <lukas@wunner.de>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>,
+ Alex Williamson <alex.williamson@redhat.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:INTEL IOMMU (VT-d)" <iommu@lists.linux.dev>,
+ "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+ "open list:VFIO DRIVER" <kvm@vger.kernel.org>,
+ "open list:SOUND" <linux-sound@vger.kernel.org>,
+ Daniel Dadap <ddadap@nvidia.com>,
+ Mario Limonciello <mario.limonciello@amd.com>
+References: <20250722153322.GA2785882@bhelgaas>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <20250722153322.GA2785882@bhelgaas>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
 
-On Fri, 18 Jul 2025 18:33:04 +0200, Antheas Kapenekakis wrote:
-
-> Turns out that the AMD variant of the G1 uses different turbo registers
-> than the Intel variant. Differentiate them and apply the correct ones
-> to the AMD variant.
+On 7/22/25 10:33 AM, Bjorn Helgaas wrote:
+> On Tue, Jul 22, 2025 at 09:45:28AM -0500, Mario Limonciello wrote:
+>> On 7/22/25 9:38 AM, Bjorn Helgaas wrote:
+>>> On Thu, Jul 17, 2025 at 12:38:11PM -0500, Mario Limonciello wrote:
+>>>> From: Mario Limonciello <mario.limonciello@amd.com>
+>>>>
+>>>> On systems with non VGA GPUs fbcon can't find the primary GPU because
+>>>> video_is_primary_device() only checks the VGA arbiter.
+>>>>
+>>>> Add a screen info check to video_is_primary_device() so that callers
+>>>> can get accurate data on such systems.
+>>>
+>>> This relies on screen_info, which I think is an x86 BIOS-ism.  Isn't
+>>> there a UEFI console path?  How does that compare with this?  Is that
+>>> relevant or is it something completely different?
+>>
+>> When I created and tested this I actually did this on a UEFI system (which
+>> provides a UEFI GOP driver).
 > 
+> I guess screen_info is actually *not* an x86 BIOS-ism, and on UEFI
+> systems, we do actually rely on UEFI, e.g., in efi_setup_gop(),
+> alloc_screen_info(), init_screen_info()?
+
+Right.  This all works because of the framebuffer allocated pre-boot and 
+reused by the kernel.
+
 > 
+> But this patch is x86-specific, so I'm guessing the same problem could
+> occur on arm64, Loongson, or other UEFI platforms, and this series
+> doesn't address those?
 
+I've never seen a multi GPU solution on another architecture, but that 
+of course doesn't preclude one being created some day.
 
-Thank you for your contribution, it has been applied to my local
-review-ilpo-next branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo-next branch only once I've pushed my
-local branch there, which might take a while.
+The series lays the groundwork that if it happens on another 
+architecture we can easily add an architecture specific solution for 
+those.  If the solution is the same we could switch to a common helper.
 
-The list of commits applied:
-[1/2] platform/x86: oxpec: Fix turbo register for G1 AMD
-      commit: 232b41d3c2ce8cf4641a174416676458bf0de5b2
-[2/2] platform/x86: oxpec: Add support for OneXPlayer X1 Mini Pro (Strix Point)
-      commit: 1798561befd8be1e52feb54f850efcab5a595f43
-
---
- i.
+> 
+>>>>    bool video_is_primary_device(struct device *dev)
+>>>>    {
+>>>> +#ifdef CONFIG_SCREEN_INFO
+>>>> +	struct screen_info *si = &screen_info;
+>>>> +#endif
+>>>>    	struct pci_dev *pdev;
+>>>>    	if (!dev_is_pci(dev))
+>>>> @@ -34,7 +38,18 @@ bool video_is_primary_device(struct device *dev)
+>>>>    	pdev = to_pci_dev(dev);
+>>>> -	return (pdev == vga_default_device());
+>>>> +	if (!pci_is_display(pdev))
+>>>> +		return false;
+>>>> +
+>>>> +	if (pdev == vga_default_device())
+>>>> +		return true;
+>>>> +
+>>>> +#ifdef CONFIG_SCREEN_INFO
+>>>> +	if (pdev == screen_info_pci_dev(si))
+>>>> +		return true;
+>>>> +#endif
+>>>> +
+>>>> +	return false;
+>>>>    }
+>>>>    EXPORT_SYMBOL(video_is_primary_device);
+>>>> -- 
+>>>> 2.43.0
+>>>>
+>>
 
 
