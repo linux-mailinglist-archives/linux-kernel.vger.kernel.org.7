@@ -1,92 +1,118 @@
-Return-Path: <linux-kernel+bounces-740752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AF4FB0D89D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:55:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26C81B0D885
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:47:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A1D4169E7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:55:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 015C07B4537
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 637812E4259;
-	Tue, 22 Jul 2025 11:54:53 +0000 (UTC)
-Received: from hs01.dakr.org (hs01.dakr.org [173.249.23.66])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05762E3380;
+	Tue, 22 Jul 2025 11:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="NgCQTdb/"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391A72E4270
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 11:54:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.249.23.66
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753185293; cv=none; b=DXueovdSmRN6zhkBbaLh/8ffKC9+u+efinkw68AuU0Z+zqXe9L0wkd9mOGT7AlRMz8bXMX/TISGJFyqm/rDSmKNOwQO85B0jV+hPzNe+3ywrhX770KQIdPBlOrDIszVM/YDs7EN1yovTKrgpYVkXGrGUA9Non5I9cfkBmYQu+QA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753185293; c=relaxed/simple;
-	bh=xEqdm+sQv2ZkI+2l9UOdpVbsMDF2QWzk37cj/CM6EZQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P/FY1dDktAbLORUlgvBNaYr4w7N+BA0ZEOt5vp0JM9RBT8ikbNpVMe7CJAyrEVYcBPW5+FLwTXubGA/WCM88jBRMSq1bDh1fgpv3Nv0KhO60Nbpoivjx8kVPyzED5auSw2BEhLYyevk/m9DoOsxyQWA2wfooGp+UKsMBmCyzRZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dakr.org; spf=pass smtp.mailfrom=dakr.org; arc=none smtp.client-ip=173.249.23.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dakr.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dakr.org
-Message-ID: <2e94329d-04c7-4cd5-bce4-235a81db214b@dakr.org>
-Date: Tue, 22 Jul 2025 13:45:41 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3AD7289811;
+	Tue, 22 Jul 2025 11:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753184853; cv=pass; b=HEuPl7P2h/9qN6tZFuKfSrpwaGP3SScKJ+Cn5QZwcWhN65O6JSHw/LTEkJbATzpz2TRS+WGLO00S/NmGzBnJdDjURi1B5cKtpKHpeDUWmhNoBGzWzGk1Ft2mLXnCWz/SwJvIgtOqWAm5U1cZ0Qchs1f3DuPwHJmuSONUXTDImPE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753184853; c=relaxed/simple;
+	bh=xpegnxQs3ZbtY7JbpoeqaEx7Okr5XdmawkN2WmtMZnQ=;
+	h=MIME-Version:From:To:In-Reply-To:Cc:Subject:Message-ID:Date:
+	 Content-Type; b=Y6sovS6F9bXHFKKU/CZGX4vtxJFVi5ZH/NsE2U5l0waPPXxmstylCRx77KnLXf7UhqgGjgOviGnpPfY2LMGa3MDyDD6SnFmblV/Ezb9HfG9G0jxF2eM34mo3itEqLOXw7Al4qeY9bwZMq1njDcUWXojn1RrAMYj4kYNhSkwG3sk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=NgCQTdb/; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
+ARC-Seal: i=1; a=rsa-sha256; t=1753184822; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=DdBCLaeCsAfj/AcN99FfwGfHj8oCOHBcr24JxgrFvH7b49ZdsHVI7xw74RCbY++5eysOePiGQzNZCU5huPjEw0UBIunOaO42tf8col8GXE/ScGkF3pOFEY8jjTY3g4bKgJa0fYN1NYUnwiqTca7rwa7I8DxXUH4yS5Hg7WRmBtw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753184822; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=iLoaiwS+Ud2yCbXeC9zL0Mtugd211TCM6YPAiCXDkGs=; 
+	b=WcNS2HjKW4KJIauGA/uu5xDWgUkHF7q+I84+DA22Stjr9UjuOQVA71A2EhiOo/L39QzJIP9ENcimPH1cLvWLs81irpd6HIBPdUspriV/OIS9Ei96uNC6lxoZ0IPSrkpSKTWANywBJ8j97nTVL4IpUgJD5BjeAc0AUEtsXcpwRbw=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=pigmoral.tech;
+	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
+	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753184822;
+	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
+	h=MIME-Version:From:From:To:To:In-Reply-To:Cc:Cc:Subject:Subject:Message-ID:Date:Date:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=iLoaiwS+Ud2yCbXeC9zL0Mtugd211TCM6YPAiCXDkGs=;
+	b=NgCQTdb/5h4sQYxngtfLCx56kgvIKBKfK43c0olNs8WqxaXrbI1RINvaX/npx/G4
+	kTsXKPscdSZUbIexWIJMWZaEwxmmM/1KHXfONk6/RKO0ZsNOM+304c0jH36hUA7Xkgo
+	qEBCSyt7r8DMh9gKInrUkIJdRPFzNZB3W28xJVqE=
+Received: by mx.zohomail.com with SMTPS id 1753184818692439.0197627599191;
+	Tue, 22 Jul 2025 04:46:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] drm/nouveau: check ioctl command codes better
-To: Arnd Bergmann <arnd@arndb.de>, Satadru Pramanik <satadru@gmail.com>
-Cc: Chris Bainbridge <chris.bainbridge@gmail.com>,
- Arnd Bergmann <arnd@kernel.org>, Dave Airlie <airlied@gmail.com>,
- Dave Airlie <airlied@redhat.com>, Ben Skeggs <bskeggs@nvidia.com>,
- "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
- open list <linux-kernel@vger.kernel.org>, Lyude Paul <lyude@redhat.com>,
- "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
- Simona Vetter <simona@ffwll.ch>, Timur Tabi <ttabi@nvidia.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, regressions@lists.linux.dev
-References: <CAFrh3J85tsZRpOHQtKgNHUVnn=EG=QKBnZTRtWS8eWSc1K1xkA@mail.gmail.com>
- <aH9n_QGMFx2ZbKlw@debian.local>
- <d5010230-b718-4770-b731-f62225f1f808@app.fastmail.com>
-From: Danilo Krummrich <kernel@dakr.org>
-Content-Language: en-US
-In-Reply-To: <d5010230-b718-4770-b731-f62225f1f808@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: "Junhui Liu" <junhui.liu@pigmoral.tech>
+To: "Krzysztof Kozlowski" <krzk@kernel.org>
+In-Reply-To: <20250722-proud-polar-mink-12caa8@kuoka>
+Cc: "Rob Herring" <robh@kernel.org>, 
+	"Krzysztof Kozlowski" <krzk+dt@kernel.org>, 
+	"Conor Dooley" <conor+dt@kernel.org>, 
+	"Paul Walmsley" <paul.walmsley@sifive.com>, 
+	"Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>, 
+	"Alexandre Ghiti" <alex@ghiti.fr>, 
+	"Daniel Lezcano" <daniel.lezcano@linaro.org>, 
+	"Thomas Gleixner" <tglx@linutronix.de>, 
+	"Samuel Holland" <samuel.holland@sifive.com>, 
+	"Anup Patel" <anup@brainfault.org>, 
+	"Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, 
+	"Jiri Slaby" <jirislaby@kernel.org>, <devicetree@vger.kernel.org>, 
+	<linux-kernel@vger.kernel.org>, "Palmer Dabbelt" <palmer@sifive.com>, 
+	"Conor Dooley" <conor@kernel.org>, <linux-riscv@lists.infradead.org>, 
+	<linux-serial@vger.kernel.org>
+Subject: Re: [PATCH RFC 09/10] riscv: dts: anlogic: Add Milianke MLKPAI FS01
+	 board
+Message-ID: <1854904c2bf8d2d8.e7cd4abd4f21761b.29b7782965d4456e@Jude-Air.local>
+Date: Tue, 22 Jul 2025 11:46:51 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
 
-On 7/22/25 12:52 PM, Arnd Bergmann wrote:
-> On Tue, Jul 22, 2025, at 12:29, Chris Bainbridge wrote:
->> On Mon, Jul 21, 2025 at 08:22:48AM -0400, Satadru Pramanik wrote:
->>> Hello all,
->>>
->>> I suspect this commit in 6.16-rc7 has broken acceleration with Mesa's
->>> nouveau drivers on my machine.
 
-Thanks for the report!
 
-Please make sure to keep maintainers in the loop, for some reason I was removed
-from the recipient list for this regression report.
+On 22/07/2025 09:31, Krzysztof Kozlowski wrote:
+> On Mon, Jul 21, 2025 at 11:46:15PM +0800, Junhui Liu wrote:
+>> Add support for the Milianke MLKPAI FS01 board based on the Anlogic
+>> DR1V90 SoC. The board features 512MB of onboard memory, with the region
+>> after 0x1fe00000 reserved for OpenSBI.
+>>=20
+>> Currently, the board can boot to a console via UART1, which is connected
+>> to the onboard serial chip and routed to the Type-C interface.
+>>=20
+>> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
+>> ---
+>>  arch/riscv/boot/dts/Makefile                       |  1 +
+>>  arch/riscv/boot/dts/anlogic/Makefile               |  2 ++
+>>  arch/riscv/boot/dts/anlogic/dr1v90-mlkpai-fs01.dts | 28 ++++++++++++++++=
+++++++
+>>  3 files changed, 31 insertions(+)
+>=20
+> You need maintainers entry for your entire sub-arch. Otherwise why would
+> we want unmaintained code?
 
->>>
->>> glxinfo -B reports that I'm using llvmpipe.
->>>
->>> Reverting this in 6.16-rc7 restores nouveau acceleration, and glxinfo
->>> then reports: "OpenGL renderer string: NVE7"
->>
->> I also bisected an issue to this commit. On my laptop, this commit
->> results in an intermittent desktop crash (Xorg segfault) when changing
->> display scale, which can be more reliably reproduced with:
->>
->> for x in {1..100}; do
->>    xrandr --output eDP-1 --mode 2560x1600 --scale 0.5 --filter nearest
->>    xrandr --output eDP-1 --mode 2560x1600 --scale 1 --filter nearest
->> done
->>
-> 
-> I won't have time to work on fixing my patch before the merge window,
-> let's just revert it.
+Thanks for your reminder, I will add the relevant information to the
+MAINTAINERS file.
 
-@Arnd: Yes, given the short timeframe I think that's the best. Can you please 
-send the revert?
+>=20
+> Best regards,
+> Krzysztof
+
+--=20
+Best regards,
+Junhui Liu
+
 
