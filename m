@@ -1,148 +1,110 @@
-Return-Path: <linux-kernel+bounces-740748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9911DB0D895
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:53:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 173F6B0D899
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:54:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82BB4188723B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:53:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E5B06C02FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDBA2E3AF6;
-	Tue, 22 Jul 2025 11:53:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B94F2E425E;
+	Tue, 22 Jul 2025 11:54:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="j9pFeYis"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FESul+EF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23AE24467B;
-	Tue, 22 Jul 2025 11:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D102E1753;
+	Tue, 22 Jul 2025 11:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753185214; cv=none; b=F/JXU2sapFfNbJvy0i7Toc1SxYPjjjiRP7ImDQyHcpHNjX7I6OtPqJ70/RcTrwZeHS/UnUKjnoAcwL0yo2vGPfShHy/ySjUU/dcbmfGt6oejWCUaCpPb/V9vAQ4zkvBS6wqZq2leR1921VYtfG9aB9wfaApnwjAUBT/xDi1s2kQ=
+	t=1753185253; cv=none; b=iLTQfsz93eTgEQ+hYY4JwIqesoJcenzOPU6xDbwvK+pahxILcdr9naEejdnbRcOiqjkPEg8ruTKsTv52GOVo/Lu6vUJB6rMoRAAO5ZPVBqCouhvOrtqTbQ4ZUHJWDpt3g7RLnKq6JbEn9dRX3877kNgFJggEZg7/3CoQSZ9grg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753185214; c=relaxed/simple;
-	bh=jvBKfE1yswDHbfnFEAykBvnA9GCH0i9lDLsN+F3UpGc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uoPsSWlziF2MlYaSpOzfzFndXqPT+Lhy3KxICQqAPcyedUjpvpRk7sDb9MhbMFFJyeFycf1xX5GPmzVObARlOiOaQr0/lrs1s4bLOb8w6JXii/SGGnkjvMQSi7MX2HRgTvnh4zrmUHrAC79P0Vo6VBp4DMstHCIjXa8B9pquv0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=j9pFeYis; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.116] (p5de459a9.dip0.t-ipconnect.de [93.228.89.169])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 7DF8B2FC0074;
-	Tue, 22 Jul 2025 13:53:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1753185208;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D6JCU07cqhLJNWeA69beIg7C0Vl6H9lLjQM+IRcUJKo=;
-	b=j9pFeYishUrrLtkfxjnAQR7P/LhhXRdxcCDyyYWl2eTsko5GLgQeWi4STgxxejeBezsUwt
-	B2YrCrNsXsQ0k2Z/y9jo6932oJSEoZX0MjsmoBys69eCYam2RYDsoivU0bbTpoNa6VL5TZ
-	Dl5qYRxn+XbHHsZ1nB9KbAjBcQrG/VU=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <dfde599f-c01d-48a2-a315-0b80d5954623@tuxedocomputers.com>
-Date: Tue, 22 Jul 2025 13:53:28 +0200
+	s=arc-20240116; t=1753185253; c=relaxed/simple;
+	bh=B9E98Eh1WXnC39xyxUMFUauO9zpXBqS/fOh6mlUvJSA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f7A/z8njpG3qr5Ukn4UVM5dKGB/sXVp3LaFtyEYc3zfiUDSi9tZjxXRGR2TW4SfEmqZHYj3FmfI3vvOfWO3No59ru1oZxTc+wRj0W0wof2YArT4zcTE0S7SaoaNx/gP0xZnSummaOOYxB173fQTmP4N8fcGMt7mhpY0xp5Cyp9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FESul+EF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41E8CC4CEEB;
+	Tue, 22 Jul 2025 11:54:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753185253;
+	bh=B9E98Eh1WXnC39xyxUMFUauO9zpXBqS/fOh6mlUvJSA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FESul+EFfx0IOy9epSM4NK9vIs+nEBxJxGSaNo3a9L6cgXUnKDUzjoFb0Jb/dEf4t
+	 cHaQTmP92G1VeYeBrL0LyBIAjAHEKJ8KaqjYIpFOgi1RGtgY2VSKMf2129Zgu357lD
+	 pgzohjSwYO5J9f4UMiCvwJJQd6VNnVfGfh6jlLZrYf3R8n4Vr/br3cbpRuJa3YGWhu
+	 NDEyeq6rInYgYcfxr6+T1+0+cNdMQcrUGJBC9ljeG7djKP+aRwkvUev+PME262TyX2
+	 SoThCJoZ850e/IlaXn++XmCPqiDzCALuEmAW5RR+aQaSyW+EfzDbehP4Q+KvlUUSDy
+	 JoYV5XT+gWq4A==
+Date: Tue, 22 Jul 2025 12:54:07 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: jeff_chang@richtek.com, lgirdwood@gmail.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] dt-bindings: regulator: Add Richtek RTR5133
+ Support
+Message-ID: <50908790-f4a3-41ee-a270-83be3e74c1a1@sirena.org.uk>
+References: <20250722083543.2730796-1-jeff_chang@richtek.com>
+ <f4505b19-3496-4fab-ad74-d190d847eb17@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] Input: atkbd - Correctly map F13 - F24
-To: Hans de Goede <hansg@kernel.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250311180643.1107430-1-wse@tuxedocomputers.com>
- <20250311180643.1107430-2-wse@tuxedocomputers.com>
- <76c57b22-04d3-4331-a10c-b210db5f9055@redhat.com>
- <9da24c58-25ab-4b21-b0ed-f777970affe7@tuxedocomputers.com>
- <de3969b9-7134-4bfd-bc65-9d5b7e53a31c@redhat.com>
- <1331ddc4-fb74-4985-a309-87fd97d0583b@tuxedocomputers.com>
- <e8b1c0b3-83d0-4e0a-9dad-7d59329fe3ce@tuxedocomputers.com>
- <75e0be49-0040-4830-a115-1daea0b73f93@kernel.org>
-Content-Language: en-US
-From: Werner Sembach <wse@tuxedocomputers.com>
-In-Reply-To: <75e0be49-0040-4830-a115-1daea0b73f93@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ESxqwv6SVKxL8cxQ"
+Content-Disposition: inline
+In-Reply-To: <f4505b19-3496-4fab-ad74-d190d847eb17@kernel.org>
+X-Cookie: Don't Worry, Be Happy.
 
-Hi,
 
-Am 22.07.25 um 09:04 schrieb Hans de Goede:
-> Hi Werner,
->
-> On 21-Jul-25 10:36 PM, Werner Sembach wrote:
->> Hi,
->>
->> Am 15.05.25 um 14:26 schrieb Werner Sembach:
->>> Hi,
->>>
->>> Am 17.03.25 um 23:23 schrieb Hans de Goede:
->>>> Hi Werner,
->>>>
->>>> On 17-Mar-25 6:00 PM, Werner Sembach wrote:
->>>>> [...]
->>>> I think this one will apply cleanly without applying patch 1/2
->>>> first, so no reason for a resend / v3 AFAICT.
->>>>
->>>> Let's wait and see what feedback Dmitry have once he can make
->>>> some time to take a look at this.
->>> Hope a gentle bump is ok by now?
->>>
->>> Best regards,
->>>
->>> Werner
->> Small bump again, just so that this does not get forgotten.
-> It might be best to just resend this (rebased on the latest
-> upstream) as a standalone v3 patch (with my reviewed-by
-> added).
+--ESxqwv6SVKxL8cxQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-kk
+On Tue, Jul 22, 2025 at 11:04:51AM +0200, Krzysztof Kozlowski wrote:
+> On 22/07/2025 10:34, jeff_chang@richtek.com wrote:
 
-Best Regards,
+> > +      base:
+> > +        type: object
+> > +        $ref: regulator.yaml#
+> > +        unevaluatedProperties: false
+> > +        description:
+> > +          Properties for base regulator which control force-off base circuit.
+> > +          Base circuit is the power source for LDO1~LDO6. Disabling it will
+> > +          reduce IQ for Chip.
 
-Werner
+> I don't understand what this regulator is for. Your example is also
+> incomplete - missing min/max constraints like voltage.
 
->
-> Regards,
->
-> Hans
->
->
->
->
->
->
->>>>>>> ---
->>>>>>>     drivers/input/keyboard/atkbd.c | 12 ++++++------
->>>>>>>     1 file changed, 6 insertions(+), 6 deletions(-)
->>>>>>>
->>>>>>> diff --git a/drivers/input/keyboard/atkbd.c b/drivers/input/keyboard/atkbd.c
->>>>>>> index 3598a21d9d014..4bd6e6ef0715e 100644
->>>>>>> --- a/drivers/input/keyboard/atkbd.c
->>>>>>> +++ b/drivers/input/keyboard/atkbd.c
->>>>>>> @@ -84,12 +84,12 @@ static const unsigned short atkbd_set2_keycode[ATKBD_KEYMAP_SIZE] = {
->>>>>>>     #include "hpps2atkbd.h"    /* include the keyboard scancodes */
->>>>>>>       #else
->>>>>>> -      0, 67, 65, 63, 61, 59, 60, 88,  0, 68, 66, 64, 62, 15, 41,117,
->>>>>>> -      0, 56, 42, 93, 29, 16,  2,  0,  0,  0, 44, 31, 30, 17,  3,  0,
->>>>>>> -      0, 46, 45, 32, 18,  5,  4, 95,  0, 57, 47, 33, 20, 19,  6,183,
->>>>>>> -      0, 49, 48, 35, 34, 21,  7,184,  0,  0, 50, 36, 22, 8,  9,185,
->>>>>>> -      0, 51, 37, 23, 24, 11, 10,  0,  0, 52, 53, 38, 39, 25, 12,  0,
->>>>>>> -      0, 89, 40,  0, 26, 13,  0,193, 58, 54, 28, 27,  0, 43,  0, 85,
->>>>>>> +      0, 67, 65, 63, 61, 59, 60, 88,183, 68, 66, 64, 62, 15, 41,117,
->>>>>>> +    184, 56, 42, 93, 29, 16,  2,  0,185,  0, 44, 31, 30, 17,  3,  0,
->>>>>>> +    186, 46, 45, 32, 18,  5,  4, 95,187, 57, 47, 33, 20, 19,  6,183,
->>>>>>> +    188, 49, 48, 35, 34, 21,  7,184,189,  0, 50, 36, 22, 8,  9,185,
->>>>>>> +    190, 51, 37, 23, 24, 11, 10,  0,191, 52, 53, 38, 39, 25, 12,  0,
->>>>>>> +    192, 89, 40,  0, 26, 13,  0,193, 58, 54, 28, 27,  0, 43,  0,194,
->>>>>>>           0, 86, 91, 90, 92,  0, 14, 94,  0, 79,124, 75, 71,121,  0,  0,
->>>>>>>          82, 83, 80, 76, 77, 72,  1, 69, 87, 78, 81, 74, 55, 73, 70, 99,
+> Explain, what is this output pin? I already asked for explanations. I
+> have diagram in front of me, so explain precisely instead of sending THE
+> SAME again - which pin is it?
+
+It's the top level supply for the chip, it's likely not externally
+visible and sounds like it's just an on/off switch rather than
+regulating voltages.  This seems fairly clear with domain knowledge.
+
+--ESxqwv6SVKxL8cxQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmh/e94ACgkQJNaLcl1U
+h9AgaAf/XwVPnaOAi8nc84FMjLYM0D6FojULEW9XQuYYHe6oyjnJin0+iChgWHB+
+TnEMFZvXRF52mT7kpLAdl1cZbxoaZlx0Io/TmjGoPuu01PM1dAidyyHUSqXD6YFm
+9+ww8QVAGYlnfSigDDmzxFSeczgko5uy/+KrAY+B2EnMo3Cbwnjh9kYFzj9abwil
+UMHAiRX8X6Ab9X525Xu/H4IgHw9836Rmtm/gn1iMPVh9RCwtg4oLK+ocDbsMyK3L
+HsSUcMNyPEaE/KDI53H28y6TSKWRVBaG9V26cFp4xFGSmQjdJgnLnmo3kJEAZp4Y
+LZpF/JtFy5NgPVMR9g1btq0xOavp1g==
+=Em+H
+-----END PGP SIGNATURE-----
+
+--ESxqwv6SVKxL8cxQ--
 
