@@ -1,142 +1,130 @@
-Return-Path: <linux-kernel+bounces-740836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD8E3B0D9CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:38:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10D02B0D9D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:39:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96AE7188E66F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:38:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B135C17AF25
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9AE2E9EA8;
-	Tue, 22 Jul 2025 12:38:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A5E2E1C61;
+	Tue, 22 Jul 2025 12:38:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r2VFj8Wl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cWSeNUvb"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86CAC2E1C61;
-	Tue, 22 Jul 2025 12:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11809288518;
+	Tue, 22 Jul 2025 12:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753187894; cv=none; b=H5NI4L66X/yWvBe+WWe75Gzy00M4TZaKJ9YeOXBrtr3oGEFSAz/DnWadtq7ylNrIXD0T6govTjjUVt39SRiHFI+TwVHRdwf19mHmEoylUuZ9F+JFVgdr7GyKyhZu79GwBPXpeDEolpQ3d+oUgQ/8SVrP7CiMtfXMROu4OCDSF2s=
+	t=1753187932; cv=none; b=mxqgwWLpD5BfA11Zw17bNrhe7CQO6I+sBmWTNKtIQFA2L1fz0+qvK+HWFSBscva089LnslnhNvq2AqRUR1iPpnPijES1rARpb5bWfRw9+AEMC06c5T5rje6P8v755J5Xg6x3He+A5c1wEfRM52aqnfg/BCSWfHDGygCJGpyrV6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753187894; c=relaxed/simple;
-	bh=I3rviDa1O2L3b0pjuLc++5NqfNWR6zeybu3KptpK4Mw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pBF8cM3Ke0Mu7zjxfJLmGD0q3+qz15zNzrTPvADw/y7x5Zfck49VQre10lQlnZ7Cc9JO3CWymDLa1fKUy0yOE8TryzyIdUh/A5dM94P1Z6cjpIRenD4HPv59JpFqEz7m0mujFopQowCUs7ytBkc3ffL6a1wSIXz+Tw7NZ08YwgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r2VFj8Wl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8702EC4CEF1;
-	Tue, 22 Jul 2025 12:38:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753187894;
-	bh=I3rviDa1O2L3b0pjuLc++5NqfNWR6zeybu3KptpK4Mw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=r2VFj8WlXA+xb6SpmAdz5ypeVpsdiJsh9JwD5rCFy3MPHrpiNO4eW9i9yWrMsQvEu
-	 6oOijUTe7VvhJBzzA8OWz2xY3gVC9TNyBf+nqzDj3Po4AjF9Jt5FwSlezqmGivVG0u
-	 C0ruySyeXRX+uSGCBnutZXa7uHJQ45vrBNIfLAxWKZHSMyTfyGzfWGS/VmJWZc9sIg
-	 jgYFeijLIuT/v70h51vCwj2ZpIhOzfeDvs9Ol0thGU8g0w4ZwoyW4Nq5OUDu7Wyrgm
-	 DVWTZfs9TjRIN2eX6wKGMyn03FtPr9MsCGNDiNKcWNvAqPT2/B+gfGQr9Dkqi/9io3
-	 /AvXRiUnbxcpg==
-Message-ID: <3ba94864-769c-4a73-8e70-a3904280317f@kernel.org>
-Date: Tue, 22 Jul 2025 14:38:07 +0200
+	s=arc-20240116; t=1753187932; c=relaxed/simple;
+	bh=92HkkJP6zvatheJ4wBH4adOxsGd5ZbuSby0AscE/0Bg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d/beRmjFTVwBtoDYv7mQ4jaV5EI81aU2kE7dxgDSWiK8y/CBmi12lxxAY3sXhK1PaYIrICD8sdJcdtgm8jYRialoN2gyujYSVxRMjBHIpKalJcWoH20/SJrgcB+uQofdhiXNykI3EfD5PQVaaYOklLExPxgo0NhZTxr8DarT1C4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cWSeNUvb; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3ab112dea41so3179676f8f.1;
+        Tue, 22 Jul 2025 05:38:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753187929; x=1753792729; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iA+c5Pv9/CEehwhoCiWsw+/fTrurkwoLP7xmk75QXCk=;
+        b=cWSeNUvbcLsjflKOxIMaS+Z/IXkpAoepC1/QPvjBkRBHHCAtcpd3lSX+u8gzn4QD4/
+         FFq/IhbP6Y22QdoCxW0SQBtwwIu7Mln0sBTytmA30dsk68bfdVggy4cSsJ92PmuitmPm
+         gKl948kKoYjp/MCGQg0SwkwD2LWabwSQkoRxNoKTaXK3gNczODs0sffJ4Y4AYwngg8mb
+         lyb9zmMHlaMvFuCDLjbJUd5E6jnoK+y+ZaMsTzfQUBMyEnQVjepcWZFuw7Ft/UN9S/rF
+         mdx+zIE132wxStVN9sVnzW5aIj4AfJjJxJafRQPoa82AFZtdRXuoLtX5rWU0vTfXfDaJ
+         FFsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753187929; x=1753792729;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iA+c5Pv9/CEehwhoCiWsw+/fTrurkwoLP7xmk75QXCk=;
+        b=lNQ1Tz/ExFTVpfd6H1SuPpbXIvR4/DTaZ/Zd6xjEPAoq7C+hucqoQKc4m8P61/2Lf3
+         sgD7Q16uo/2YBXeJ94MnLGZMY3wedFQFNeIlBqTy9SZjfaRLEaUZw/+clf7wKUOs2NNy
+         RNmjOikwbBz4Pau2TBFIHVyIKmF8x+zfedhJ682Gx1a67FDS3T4PQew8LQmHaG9J5Czi
+         BxgSJU53kr6bnJlqgZj8KW5BHUAx/tzHxwvFk/HbsBWKMW6h6ELEiNa5chZTA/8LK7xi
+         hVudiaEGrfRdbwvkfDn7q1BM4MsGbBOLcZdaNzntl26Mzxy58/7lu/A7f6+xs2/MyZDp
+         Q7mg==
+X-Forwarded-Encrypted: i=1; AJvYcCVwIasf2pFo5pH8oTPJzeSP8OcSLEsKnHMKjgmyCHvU0h4wusSPh2vGj2XjotQCdWuQhb90Z5xoAj3gxqo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhosX9YNQXVCpRUb7Uj0ZQtgXHlctYy7w8z7bypLaIKKRxmtN6
+	hpUccs1erOADNEnXTAcRl8VKgdWWwVMi1h1h6D3l/DS89FoqeQf5aG6H
+X-Gm-Gg: ASbGncvYZNxDHvoxS3RXRpKvUiRDQvqFjHcljUsoPZeAuGXJhEy1d0WmU0VyegouF72
+	RHXbPSalMfQ05T8GuAOKxYSPGvdBoDRoWTSD5r4kwbugOs2PKepAGCBuJ3sVxE7tjOpKnSr0FlV
+	BEI+KDb9s2rXy9B1BPDdyzS+2aqVOWaDXWt6wp1OJd/jOzdnVpwMKhSES/7MKGjCtS7RWf51QhL
+	tEicF/1K/k0W5yhrQkxYhzU5m5+mWMaPgDgkx+9U9mlGeJT5WZ7vVMeHVXun8gIlRITADFm1Fjh
+	9VmFoKPo3160rTJxfg0H+GDv2mDA+pVcs7qUCZFWFE3eEB/0HnV6Z+r0ElqhUb/RRZAdbUuiMNI
+	KYMSb4jGQKy66+Os3QS6ApSqJTkY=
+X-Google-Smtp-Source: AGHT+IFGeyK+QeZM1N0c07OjUQkxi0BPV4rB9krjYHbqPUETa+tP2IlFN/9f5P/Sb+JdAB4YU44LxA==
+X-Received: by 2002:a05:6000:2c06:b0:3a4:ee40:6c85 with SMTP id ffacd0b85a97d-3b60ddc61d8mr19147649f8f.54.1753187928796;
+        Tue, 22 Jul 2025 05:38:48 -0700 (PDT)
+Received: from tearch ([46.104.48.188])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca48c40sm13525197f8f.58.2025.07.22.05.38.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jul 2025 05:38:48 -0700 (PDT)
+From: muhammed.efecetin.67@gmail.com
+X-Google-Original-From: muhammed.efecetin67@gmail.com
+To: linux-rockchip@lists.infradead.org
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	heiko@sntech.de,
+	neil.armstrong@linaro.org,
+	lee@kernel.org,
+	rafael@kernel.org,
+	efectn@protonmail.com,
+	daniel.lezcano@linaro.org
+Subject: [PATCH v2 0/5] Add Khadas MCU and fan control support for Khadas Edge 2
+Date: Tue, 22 Jul 2025 15:38:10 +0300
+Message-ID: <cover.1753179491.git.efectn@protonmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] ASoC: codecs: wsa883x: Handle shared reset GPIO
- for WSA883x speakers
-To: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-Cc: Srinivas Kandagatla <srini@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, quic_pkumpatl@quicinc.com,
- kernel@oss.qualcomm.com
-References: <20250718104628.3732645-1-mohammad.rafi.shaik@oss.qualcomm.com>
- <20250718104628.3732645-3-mohammad.rafi.shaik@oss.qualcomm.com>
- <20250721-hairy-aardwolf-of-enterprise-bbc99f@kuoka>
- <d614d8e3-963d-4d34-9b15-1544c7a22cf0@oss.qualcomm.com>
- <a006f099-578f-45aa-b165-64e28b8f930e@kernel.org>
- <8d488066-6f29-4ef8-8f09-26328b5213f1@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <8d488066-6f29-4ef8-8f09-26328b5213f1@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 22/07/2025 13:11, Mohammad Rafi Shaik wrote:
+From: Muhammed Efe Cetin <efectn@protonmail.com>
 
-Again, trim the output from irrelevant parts.
+This patch series adds support for the Khadas MCU and fan control for Khadas Edge 2 board.
 
-> [   10.928781][   T90] Call trace:
-> [   10.932024][   T90]  _regulator_put+0x50/0x60 (P)
-> [   10.936877][   T90]  regulator_put+0x30/0x48
-> [   10.941276][   T90]  devm_regulator_release+0x14/0x20
-> [   10.946486][   T90]  release_nodes+0x60/0xfc
-> [   10.950886][   T90]  devres_release_all+0x90/0xe0
-> [   10.955737][   T90]  device_unbind_cleanup+0x18/0x60
-> [   10.960846][   T90]  really_probe+0x210/0x2c0
-> [   10.965341][   T90]  __driver_probe_device+0x78/0x120
+The first patch updates the device tree bindings to add new "khadas,mcu-v2" compatible for Khadas Edge 2.
+The second mfd patch removes unused nvmem code.
+The third patch adds the Khadas Edge 2 registers to the mfd driver.
+The fourth patch adds support for Khadas Edge 2's new fan control registers to MCU thermal driver and the last one adds the Khadas Edge 2 device tree node for the MCU and fan control.
+And the final patch adds the Khadas Edge 2 device tree node for the MCU and fan control.
 
-Although wsa probe function is not here, but this feels like it deferred
-or exited with failure and some cleanups were incomplete. Current code
-looks correct, so I suspect that whatever you did there introduced the
-errors. So bug in your code is the answer that you converted it to devm
-interface. That conversion should be rather separate patch.
+Changes in v2:
+- Added a new compatible "khadas,mcu-v2" for Khadas Edge 2 instead of cooling-levels property in old variant.
+- Added Khadas Edge 2 registers with KHADAS_MCU_V2 prefix.
 
-Best regards,
-Krzysztof
+Muhammed Efe Cetin (5):
+  dt-bindings: mfd: khadas-mcu: add new compatible for Khadas Edge 2
+  mfd: khadas-mcu: drop unused nvmem code
+  mfd: add Khadas Edge 2 registers to khadas-mcu.
+  thermal: khadas_mcu_fan: add support for Khadas Edge 2
+  arm64: dts: rockchip: add Khadas MCU and fan control nodes
+
+ .../devicetree/bindings/mfd/khadas,mcu.yaml   |  5 +-
+ .../dts/rockchip/rk3588s-khadas-edge2.dts     | 58 +++++++++++++++++++
+ drivers/mfd/khadas-mcu.c                      | 56 +++++++++++++-----
+ drivers/thermal/khadas_mcu_fan.c              | 20 +++++--
+ include/linux/mfd/khadas-mcu.h                | 32 ++++++++++
+ 5 files changed, 152 insertions(+), 19 deletions(-)
+
+-- 
+2.50.1
+
 
