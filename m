@@ -1,246 +1,134 @@
-Return-Path: <linux-kernel+bounces-740715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1114B0D841
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:31:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E73CB0D83F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:30:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7C221898ABE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:31:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 707A716F9E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A96452E424D;
-	Tue, 22 Jul 2025 11:30:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2228243374;
+	Tue, 22 Jul 2025 11:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b="Ws1wdTgN"
-Received: from pf-012.whm.fr-par.scw.cloud (pf-012.whm.fr-par.scw.cloud [51.159.173.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XQr+DWFJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638092E3B00;
-	Tue, 22 Jul 2025 11:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.173.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BEC022D785;
+	Tue, 22 Jul 2025 11:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753183854; cv=none; b=swdIx7v8vEYES1OMC89h0Jtb8YWxP+9FsF0h74B/Ed52IUYEPsOlqWPN/mBsTqY1h4u4sSA3he1+1MLi+Mv2JDiefqTihUcSL67SZH2XTgIY4hUxWs+L772+44BgqYgvRL1Clz19XAmI3wRiVdLDNM5R+GgqyVryDAgNlpha1Es=
+	t=1753183850; cv=none; b=aK8aEcprCYXtuF1FdEkJpoWXf95ePNSn4dQiWIceDOjP4LZEJkLOS49KR9z6wDQRvvAESGHIqS9OZ5mjG3FGKhxqTaGglObeerUNoc/w6xBWmW+D+tZrnQ1XVRFHZx2DLoa7icNAFeCNxPjadWavkNWbv794SO/C6p4wTHG8tFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753183854; c=relaxed/simple;
-	bh=MITJCE1IlF6HT+V9//MbpyHBWeYN/SUaK1bNE4b6PVI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UQuavpKtiIvdrOStQZmVkBrEhe+LzVeCd3lArftH6Ip7cEfvhFMN0ydA5TblWAeEoekZ/ACYzygQJ8f/lnDjDvgzl8RMai1d+8Q2tpm5Jrg0cA1nm7ynWnJT27akopGOIYf4VIQ0ew8KzJzX1UtftfW0Gc+ArucA85LMIJQJtR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr; spf=pass smtp.mailfrom=oss.cyber.gouv.fr; dkim=pass (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b=Ws1wdTgN; arc=none smtp.client-ip=51.159.173.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=oss.cyber.gouv.fr; s=default; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=TLBwGdInAMAznILJMgBOsr3ecDdxzL5Zq1ZKt71+DkU=; b=Ws1wdTgNMeHozBhz8Yd5hE14Rt
-	qnTCwNo0mWGpq82BU91+vg+mha9MDmgdf1gEi+fQyCdrlG+futLG3vUGkDYctPPF4xN02TFpDTZ3j
-	nNXn6wyLcpvDY5n6mo1gLnW7MU6/ALWH9ZTRY/DnxAgDhEuLloYMGFeWhqoAkHj/TYbi5IwgNvL5F
-	vDRytTbBJ31yA/aE42Lxb6qxgJlhzB9/CtKxp6JNr2IvmuK/wwtKRAhUL7/EGbuWQA/MDl7XxAPZl
-	PVpCLrbCDYsLstiSbxxXCXnlRLj/ssZw01b6RbcUONFarWf1Wwq+vQ4fGxLsmKuXSEl8aXlxKwTxo
-	TMBFZtkA==;
-Received: from laubervilliers-658-1-215-187.w90-63.abo.wanadoo.fr ([90.63.246.187]:39555 helo=archlinux)
-	by pf-012.whm.fr-par.scw.cloud with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <nicolas.bouchinet@oss.cyber.gouv.fr>)
-	id 1ueBCs-0000000GpCM-23ll;
-	Tue, 22 Jul 2025 13:30:50 +0200
-Date: Tue, 22 Jul 2025 13:30:45 +0200
-From: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
-To: Jann Horn <jannh@google.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Olivier Bal-Petre <olivier.bal-petre@oss.cyber.gouv.fr>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
-Subject: Re: [PATCH] fs: hidepid: Fixes hidepid non dumpable behavior
-Message-ID: <ksm3jnswlqb7wqc3ea3uxdrqqnoqcle7bfndg6d2c3vmgt62ay@ctpei66gjh5b>
-References: <20250718-hidepid_fix-v1-1-3fd5566980bc@ssi.gouv.fr>
- <CAG48ez3u09TK=Ju3xdEKzKuM_-sO_y9150NBx3Drs8T1G-V9AQ@mail.gmail.com>
- <s7no7daeq6nmkwrf5w63srpmxzzqk5uor2kxdvrvrskoahh7un@h6kubn7qxli2>
- <CAG48ez1ERkkwd+cJPmLmVj4JKpj5Uq=LaUEpb6_TgC4PRXosUw@mail.gmail.com>
+	s=arc-20240116; t=1753183850; c=relaxed/simple;
+	bh=TK9EYYruh2F06Jrfhx9PUGH3rMdXnLUpiSRSNrwKVTA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Twp7JfFYMos/SuXPpAJJmh9ftCAQ8TUK7f0mNdZVPCMXuECsc3GjWhdarh5UTZ9TIGfq+eDzwxo6IRYc4eoEULggWUTpruNJERzcOmJcQOiqDqQD+LolwTsq/ewQE3OFz3hAD+I+JndZSEWp9JQ9OVxcFyNgnr16+oBN8GB7O5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XQr+DWFJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C9DBBC4CEEB;
+	Tue, 22 Jul 2025 11:30:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753183849;
+	bh=TK9EYYruh2F06Jrfhx9PUGH3rMdXnLUpiSRSNrwKVTA=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=XQr+DWFJL/Xdw2blAlg/cgn9xTKY6/UMIcBc+FzpfH4AHDpkcww26bu0ScnCDNnlx
+	 ahSgxHZAVV+yKalhBqcXcYDgDPZsd7zFQJD94aW7x3wsEy7M51tiPqPNcg/xYIoKt+
+	 RGcMmSSHfSbgqKEsGXQQZkkAC1xFRLqi+5FRpyBpRSFfZufIQ7FGH7VxTd1ElaKSlI
+	 mZsnRExo8qY2993ipVvCs+zix2BSuAXq/DpeoWBrZSi6ZaR0IzsSSgm31cAGcFodow
+	 1igMfxJ7SQyopKX3zwfj7JBszE4RqeQwS74BpZAH+yNRu6/5//kO7iiuZVqH6cz874
+	 ZPiDiQAGsY61w==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B99C7C83F1A;
+	Tue, 22 Jul 2025 11:30:49 +0000 (UTC)
+From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
+Date: Tue, 22 Jul 2025 19:30:48 +0800
+Subject: [PATCH v2] rtc: amlogic-a4: Optimize global variables
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez1ERkkwd+cJPmLmVj4JKpj5Uq=LaUEpb6_TgC4PRXosUw@mail.gmail.com>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - pf-012.whm.fr-par.scw.cloud
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - oss.cyber.gouv.fr
-X-Get-Message-Sender-Via: pf-012.whm.fr-par.scw.cloud: authenticated_id: nicolas.bouchinet@oss.cyber.gouv.fr
-X-Authenticated-Sender: pf-012.whm.fr-par.scw.cloud: nicolas.bouchinet@oss.cyber.gouv.fr
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250722-rtc-regmap-v2-1-58bc17187a11@amlogic.com>
+X-B4-Tracking: v=1; b=H4sIAGd2f2gC/23MQQ7CIBCF4as0sxYDVMV25T1MF0CndBIpDTRE0
+ 3B3sWuX/0vet0PCSJigb3aImClRWGrIUwN21otDRmNtkFxeuRKKxc2yiM7rlYkLR2zvRplJQT2
+ sESd6H9hzqD1T2kL8HHYWv/UvkwUTTI+iU+3NWsO7h/av4MiebfAwlFK+9U/PgqYAAAA=
+To: Yiting Deng <yiting.deng@amlogic.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: linux-amlogic@lists.infradead.org, linux-rtc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Xianwei Zhao <xianwei.zhao@amlogic.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753183848; l=1493;
+ i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
+ bh=9dM7dYiSAIYeWx8dG0E9yLzdI2cirE8OM6/rYACd5eg=;
+ b=tn0iCa4/fCE+b5om7zwj5nHT9XwVZ+HF0aeqTeNuyh4Iwxx4lPfDBh6ojC8BzTqjKxGyEf9oT
+ hd+6OIsagGNCQt1jqbiC+ZBDzTD3FgftuTHRbqZVx5rBRlSu1QFtB3K
+X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
+ pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
+X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
+ auth_id=107
+X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Reply-To: xianwei.zhao@amlogic.com
 
-On Fri, Jul 18, 2025 at 06:48:54PM +0200, Jann Horn wrote:
-> On Fri, Jul 18, 2025 at 5:47 PM Nicolas Bouchinet
-> <nicolas.bouchinet@oss.cyber.gouv.fr> wrote:
-> > Hi Jann, thanks for your review !
-> >
-> > On Fri, Jul 18, 2025 at 04:45:15PM +0200, Jann Horn wrote:
-> > > On Fri, Jul 18, 2025 at 10:47 AM <nicolas.bouchinet@oss.cyber.gouv.fr> wrote:
-> > > > The hidepid mount option documentation defines the following modes:
-> > > >
-> > > > - "noaccess": user may not access any `/proc/<pid>/ directories but
-> > > >   their own.
-> > > > - "invisible": all `/proc/<pid>/` will be fully invisible to other users.
-> > > > - "ptraceable": means that procfs should only contain `/proc/<pid>/`
-> > > >   directories that the caller can ptrace.
-> > > >
-> > > > We thus expect that with "noaccess" and "invisible" users would be able to
-> > > > see their own processes in `/proc/<pid>/`.
-> > >
-> > > "their own" is very fuzzy and could be interpreted many ways.
-> > >
-> > > > The implementation of hidepid however control accesses using the
-> > > > `ptrace_may_access()` function in any cases. Thus, if a process set
-> > > > itself as non-dumpable using the `prctl(PR_SET_DUMPABLE,
-> > > > SUID_DUMP_DISABLE)` it becomes invisible to the user.
-> > >
-> > > As Aleksa said, a non-dumpable processes is essentially like a setuid
-> > > process (even if its UIDs match yours, it may have some remaining
-> > > special privileges you don't have), so it's not really "your own".
-> > >
-> >
-> > Also replying to  :
-> >
-> > > What's the background here - do you have a specific usecase that
-> > > motivated this patch?
-> >
-> > The case I encountered is using the zathura-sandbox pdf viewer which
-> > sandboxes itself with Landlock and set itself as non-dumpable.
-> 
-> It kind of sounds like an issue with your PDF viewer if that just sets
-> the non-dumpable flag for no reason...
-> 
-> > If my PDF viewer freezes and I want to kill it as an unprivileged user,
-> > I'm not able to get its PID from `/proc` since its fully invisible to my
-> > user.
-> >
-> > > > This patch fixes the `has_pid_permissions()` function in order to make
-> > > > its behavior to match the documentation.
-> > >
-> > > I don't think "it doesn't match the documentation" is good enough
-> > > reason to change how the kernel works.
-> > >
-> > > > Note that since `ptrace_may_access()` is not called anymore with
-> > > > "noaccess" and "invisible", the `security_ptrace_access_check()` will no
-> > > > longer be called either.
-> > > >
-> > > > Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
-> > > > ---
-> > > >  fs/proc/base.c | 27 ++++++++++++++++++++++++---
-> > > >  1 file changed, 24 insertions(+), 3 deletions(-)
-> > > >
-> > > > diff --git a/fs/proc/base.c b/fs/proc/base.c
-> > > > index c667702dc69b8ca2531e88e12ed7a18533f294dd..fb128cb5f95fe65016fce96c75aee18c762a30f2 100644
-> > > > --- a/fs/proc/base.c
-> > > > +++ b/fs/proc/base.c
-> > > > @@ -746,9 +746,12 @@ static bool has_pid_permissions(struct proc_fs_info *fs_info,
-> > > >                                  struct task_struct *task,
-> > > >                                  enum proc_hidepid hide_pid_min)
-> > > >  {
-> > > > +       const struct cred *cred = current_cred(), *tcred;
-> > > > +       kuid_t caller_uid;
-> > > > +       kgid_t caller_gid;
-> > > >         /*
-> > > > -        * If 'hidpid' mount option is set force a ptrace check,
-> > > > -        * we indicate that we are using a filesystem syscall
-> > > > +        * If 'hidepid=ptraceable' mount option is set, force a ptrace check.
-> > > > +        * We indicate that we are using a filesystem syscall
-> > > >          * by passing PTRACE_MODE_READ_FSCREDS
-> > > >          */
-> > > >         if (fs_info->hide_pid == HIDEPID_NOT_PTRACEABLE)
-> > > > @@ -758,7 +761,25 @@ static bool has_pid_permissions(struct proc_fs_info *fs_info,
-> > > >                 return true;
-> > > >         if (in_group_p(fs_info->pid_gid))
-> > > >                 return true;
-> > > > -       return ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS);
-> > > > +
-> > > > +       task_lock(task);
-> > > > +       rcu_read_lock();
-> > > > +       caller_uid = cred->fsuid;
-> > > > +       caller_gid = cred->fsgid;
-> > > > +       tcred = __task_cred(task);
-> > > > +       if (uid_eq(caller_uid, tcred->euid) &&
-> > > > +           uid_eq(caller_uid, tcred->suid) &&
-> > > > +           uid_eq(caller_uid, tcred->uid)  &&
-> > > > +           gid_eq(caller_gid, tcred->egid) &&
-> > > > +           gid_eq(caller_gid, tcred->sgid) &&
-> > > > +           gid_eq(caller_gid, tcred->gid)) {
-> > > > +               rcu_read_unlock();
-> > > > +               task_unlock(task);
-> > > > +               return true;
-> > > > +       }
-> > > > +       rcu_read_unlock();
-> > > > +       task_unlock(task);
-> > > > +       return false;
-> > > >  }
-> > >
-> > > I think this is a bad idea for several reasons:
-> > >
-> > > 1. It duplicates existing logic.
-> > I open to work on that.
-> >
-> > > 2. I think it prevents a process with euid!=ruid from introspecting
-> > > itself through procfs.
-> > Great question, I'll test that and write some hidepid tests to check that.
-> >
-> > > 3. I think it prevents root from viewing all processes through procfs.
-> > Yes only if combined with yama="no attach", and IMHO, that would make sense.
-> 
-> Why only if combined with yama? Doesn't your code always "return
-> false" on a UID/GID mismatch?
-> 
-Ah yes indeed, if the gid=1000 mount option is used, processes become
-invisible to root since the cap_sys_ptrace check is not called anymore.
+From: Xianwei Zhao <xianwei.zhao@amlogic.com>
 
-I understand now it would need almost all of `ptrace_may_access()`
-checks and thus will lead to the same exact behavior. So useless patch.
+Convert a global variable into a local one of aml_rtc_probe().
 
-> > > 4. It allows processes to view metadata about each other when that was
-> > > previously blocked by the combination of hidepid and an LSM such as
-> > > Landlock or SELinux.
-> > Arf, you're absolutely right about this, my bad.
-> >
-> > > 5. It ignores capabilities held by the introspected process but not
-> > > the process doing the introspection (which is currently checked by
-> > > cap_ptrace_access_check()).
-> > As suggested by Aleksa, I can add some capabilities checks here.
-> >
-> > >
-> > > What's the background here - do you have a specific usecase that
-> > > motivated this patch?
-> >
-> > The second motivation is that the "ptraceable" mode didn't worked with
-> > the yama LSM, which doesn't care about `PTRACE_MODE_READ_FSCREDS` trace
-> > mode. Thus, using hidepid "ptraceable" mode with yama "restricted",
-> > "admin-only" or "no attach" modes doesn't do much.
-> >
-> > As you have seen, I also have submited a fix to yama in order to make it
-> > take into account `PTRACE_MODE_READ_FSCREDS` traces.
-> 
-> I don't think that's really a fix - that's more of a new feature
-> you're proposing. Yama currently explicitly only restricts ATTACH-mode
-> ptrace access (which can read all process memory or modify the state
-> of a process), and it doesn't restrict less invasive introspection
-> that uses READ-mode ptrace checks.
-> 
-Forget the patch sorry for that, I'll update hidepid documentation in
-order to describe the exact behavior it have. Will send a V2.
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+---
+Convert a global variable into a local one of aml_rtc_probe().
+---
+Changes in v2:
+- Modify the submission description.
+- Link to v1: https://lore.kernel.org/r/20250717-rtc-regmap-v1-1-ad19736ccb09@amlogic.com
+---
+ drivers/rtc/rtc-amlogic-a4.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-> > I have to admit I'm not really found of the fact that those two patch
-> > are so tightly linked.
-> >
-> > Thanks again for your review,
-> >
-> > Nicolas
+diff --git a/drivers/rtc/rtc-amlogic-a4.c b/drivers/rtc/rtc-amlogic-a4.c
+index 09d78c2cc691..1928b29c1045 100644
+--- a/drivers/rtc/rtc-amlogic-a4.c
++++ b/drivers/rtc/rtc-amlogic-a4.c
+@@ -72,13 +72,6 @@ struct aml_rtc_data {
+ 	const struct aml_rtc_config *config;
+ };
+ 
+-static const struct regmap_config aml_rtc_regmap_config = {
+-	.reg_bits = 32,
+-	.val_bits = 32,
+-	.reg_stride = 4,
+-	.max_register = RTC_REAL_TIME,
+-};
+-
+ static inline u32 gray_to_binary(u32 gray)
+ {
+ 	u32 bcd = gray;
+@@ -328,6 +321,13 @@ static int aml_rtc_probe(struct platform_device *pdev)
+ 	void __iomem *base;
+ 	int ret = 0;
+ 
++	const struct regmap_config aml_rtc_regmap_config = {
++		.reg_bits = 32,
++		.val_bits = 32,
++		.reg_stride = 4,
++		.max_register = RTC_REAL_TIME,
++	};
++
+ 	rtc = devm_kzalloc(dev, sizeof(*rtc), GFP_KERNEL);
+ 	if (!rtc)
+ 		return -ENOMEM;
+
+---
+base-commit: 0bafe291cb429d39b5ff70bcf7b2f3ab026dcb02
+change-id: 20250717-rtc-regmap-140ee38b7bf7
+
+Best regards,
+-- 
+Xianwei Zhao <xianwei.zhao@amlogic.com>
+
+
 
