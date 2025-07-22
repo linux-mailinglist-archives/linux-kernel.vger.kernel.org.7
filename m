@@ -1,122 +1,82 @@
-Return-Path: <linux-kernel+bounces-740489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 898B9B0D4D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:43:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07CAEB0D4E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:46:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7743A174F8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:43:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF3AF189950C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:46:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CDD62D46A3;
-	Tue, 22 Jul 2025 08:43:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B012D1F69;
+	Tue, 22 Jul 2025 08:46:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SdRS63dk"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="hyhFTuSs"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010059.outbound.protection.outlook.com [52.101.69.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0539E228C86
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 08:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C7E7482;
+	Tue, 22 Jul 2025 08:46:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.59
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753173806; cv=fail; b=c16bJiO+te/chHW5KHKN0+v0lrFaj7whp/Of22bFS87xmqqrE+3V29xTkNM0V5Velqt0GMusyYfSLEHZWv5DJBL6M1iZxMEJynAAK8DwAhpq/ponvSdbhhuyZ8wMHtahiSkUDrLQ4FoYGbUMOINs2nc2VUWGmYZpCeh26IBTmfc=
+	t=1753173985; cv=fail; b=TQF9cMgMkScNTeWFZpbUsw2ecbJV/x60PkLKbbhFIeD/tBIXdSDxwjfnTYgdH9FgmTWrON4thFowJ9atfhZ2PQ8H3PkmaioTSEZEda7Tpliop5KBl/uU+zbTZUFpYG5qhOIKmkPdOhDz1Y3z+pNN6Dn088uRul4AM6Q2JVQI7Dk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753173806; c=relaxed/simple;
-	bh=oNYhlaY/y79VZsA/3dv09PQbsuDuEHkfLPmy63jUIrQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=aafMlE1o+cOKH7wS8YGs6n/71e7mVy7z8Rr1kzg8S9xgaKNfK/q4x6Ye0xhl/nK0nhLzW7E/nNjPWrzPlgw/BjPYiWtZI0OXbqxvQ2WWSI76cJPf/9QBBaICloGWdMMNkzquFhbMCuacpdHE9o1ZFUEvqXjN7/zd7wj2lQ4GmJM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SdRS63dk; arc=fail smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753173805; x=1784709805;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=oNYhlaY/y79VZsA/3dv09PQbsuDuEHkfLPmy63jUIrQ=;
-  b=SdRS63dkNBvAWhrteSLBj99X7jcgqeEISlgfMG3hlpVN5vZjA/yFPO7w
-   z1rxHdpKTgbhE+Igb0KLxaoeOItRamOmj86SchxUs3QwcaAXVrWanuVe3
-   +idvkhM3XBlOdwNGZpw9X4C92+ei/tWH100UhE2URrcBbo0EgM5Ovuze3
-   pucrSQKJbPdQciV1frSLP3Z6vPQQ9Jl943mGvopc0MF0KhwScodvoBQj7
-   F1hc8WTxix3uaXHRsr7yGg6FB6BgMZkDvf1Gdf7QJa9VUv1gMWpQwQDf4
-   o6jvW0HhjH7kjfYjv1wsHbMUVFEhtErDJHs+JKweMA1BbfCReYVyii7ld
-   A==;
-X-CSE-ConnectionGUID: CDdWs0buQvexVSrB0I48wA==
-X-CSE-MsgGUID: ciCiAu5GQdyJnrq9QCalfA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11499"; a="72982332"
-X-IronPort-AV: E=Sophos;i="6.16,331,1744095600"; 
-   d="scan'208";a="72982332"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 01:43:24 -0700
-X-CSE-ConnectionGUID: +SRQp/wpQfGFSlPNjSsDGQ==
-X-CSE-MsgGUID: pMKqaNC6Q36jSMtKOt1kDA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,331,1744095600"; 
-   d="scan'208";a="158744685"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 01:43:23 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Tue, 22 Jul 2025 01:43:23 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Tue, 22 Jul 2025 01:43:23 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (40.107.92.43) by
- edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Tue, 22 Jul 2025 01:43:23 -0700
+	s=arc-20240116; t=1753173985; c=relaxed/simple;
+	bh=ypIVSbMfWJ7QXn50SNHoM2MWOpgqMW7ra3XCyWnN9V4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=IG+qU5PVirhxOQF8a19GNxSntt30Gn/AZoI70gTIlrqRGNZTfMtomCSu9Zi6NC+o9gVwdc7eAXUAIB3j5an5shtbzU8HVFAl42MV2oIELOuIrN1agf2+cnNFuzd6qNPC3zmuc2uhe7w4e3+KhTJwM7DTXa6PUj+wXHa38sqAS4Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=hyhFTuSs; arc=fail smtp.client-ip=52.101.69.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=N3kqeJwj4PKHqIwkXY0p0nAxn2d1K4Z9JTOy3VG9izDh1dzvPTm2WVjgD56PYc9gnu+VPlllVXrPu223dxnJt3z7WyL0SEqaIuWTjiPki+o4A5ZEHwXNwLTyiIZk6e+ZzPse9fMbPE2zQuxoQQorzAmXmWprAI0YkTC9xbDdnrc57Z85IHIF6tj6va9asCUVLon9iK7ia5q76m3m8xHVroEjNrYAF47H+Nxtsbj0GvFlLsExwzE84asbAI20iIicxyM0+uRoIDf1WUD7go3KgUiCP0o3tSv6ZXdXBZBUtYuBe84Jtv3UNjryqViN1q+Kj2SiJknR6iRlkyufZlU2Ow==
+ b=k+a7EbGbQTPeL0UCelOCfANVMLJm1esJeequOiyngGrJJ7H3QGpDVFdNZrDEAUsub0oUwJwFmVQwQSa90c8F83AwCW2OZlMGd97p7h1IfkNr8sov46TGzLDOop1XRVXwqHK+vQdkhmX2VyQi+sJJuS5zvgKuavraK6jr8Sweev/0JfBqShmw5z2F1mLdDSuXmV1cIa24Zv+8GyQSJFyAo8LbHjAqBIEciI6Rq/saTyJCWQo/amDvuhKSxW8krjPjhAJbU/7YYv8kKauZG14K6cmuVl0rymqrN86AOK9/EFNKcasqRycjFVW1Ey//XwEp7HUXOPFS7D89AfPvvknSrg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=060ee1RXEUhuiLHC6bypZSiw+AlCaYbJznUKNL9V1ZM=;
- b=lGpTsd7iLOWcfYErP4E2qjQZpMP2kPTHVsYLjwgpqwfubYWWM/6gP6fLJfIKszQDofhMwOiNZCMtG4k+pk3nEILVhQYJObGxejHOoDPOSJDYjaI10ma4D5+Ys7l+CijP1NGRvnp38I1zMWCWRK5NtgmSK2vsIQzT9BxOPZqSLXF9yRjexcoAtrvya9wEyEbA/b6/TSwSCgeavWicN7ULkmEtdBP+LQseHYycup8k31EMvQJBI86B7BbZeBP5OzGiXpwJrIhWa7sdhxlcGALKg5mkPg6aM3lkCMHv6hRXlzVMc7b8VIQl4QSoPhMrktlBnZFYQESiP8QT5/hboaK3Dg==
+ bh=XWeKGrfhFrJV30e21A+Dh5M2MzUz8z7U4nsik1mx/YY=;
+ b=MuUeX85TCgzhh75DuIIaLHx7s6Uatzy7zyUot0Qo8FoN76NRpCAtM0DgyTOdPhC39p6J21Hisf0uQoA4DtYx+Mp08IEctCuyO1YnvZ3gAw8tcusYFkctYZ9teOhrCpLKBuubUGEw7KTHFvx1NVj5RxtCU+/zUuJM2BRc1gG00fIfB1ZPL1gfFtMXb/cVGxU+kpQXOtJ7jpVhJLdn8P0mXHaGAr8hTeG99HGnhQW3nYyYxo4yblCBkRgFVph8TqKRxxZqZT1m39aZGhqxzVMdRtvs8o2zRxqIfxPJIjYIKH3zQO5txPlpZOtYMCXSblyI9CAyBlwa0r5k8tImtMS3TA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XWeKGrfhFrJV30e21A+Dh5M2MzUz8z7U4nsik1mx/YY=;
+ b=hyhFTuSsfFM144FNmW2s0WZ0910wu1hwKKrijEMw4JpSd8I29NBnNUm89jH9jWIx7hDk5tM8SZBWELRiVKt+0OWd/Zpwq+HsoZn9yhvE1hJYnNG3YVV6Uz0Gx+GeQNXZQrTGTrQjGgOPUZJ1R6ShhEd0T13KXcgp4O1n3yiJGDKPBXceBX6CsnJkZmAdA0sSbWT4NZfv8wnCgw/KTYUpYZDDMRmltkxQX/Gc8stolWNGh49vpoRtF+yuldChKyHJOcBh1S8Xkhbo71hy1g41bFw9MYcWZ5OvMOBKjSdqoBPzUV8LfKAbBsdWhLJKMpILYRz4Ic5fKJQdAeLKYYCbnQ==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BL3PR11MB6508.namprd11.prod.outlook.com (2603:10b6:208:38f::5)
- by CYXPR11MB8711.namprd11.prod.outlook.com (2603:10b6:930:d7::9) with
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM9PR04MB8147.eurprd04.prod.outlook.com (2603:10a6:20b:3e0::22)
+ by GV1PR04MB10989.eurprd04.prod.outlook.com (2603:10a6:150:200::6) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Tue, 22 Jul
- 2025 08:43:18 +0000
-Received: from BL3PR11MB6508.namprd11.prod.outlook.com
- ([fe80::1a0f:84e3:d6cd:e51]) by BL3PR11MB6508.namprd11.prod.outlook.com
- ([fe80::1a0f:84e3:d6cd:e51%7]) with mapi id 15.20.8943.028; Tue, 22 Jul 2025
- 08:43:18 +0000
-Date: Tue, 22 Jul 2025 01:45:03 -0700
-From: Matthew Brost <matthew.brost@intel.com>
-To: <phasta@kernel.org>
-CC: Danilo Krummrich <dakr@kernel.org>, James Flowers
-	<bold.zone2373@fastmail.com>, <ckoenig.leichtzumerken@gmail.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
-	<skhan@linuxfoundation.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <linux-kernel-mentees@lists.linux.dev>,
-	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-Subject: Re: [PATCH] drm/sched: Prevent stopped entities from being added to
- the run queue.
-Message-ID: <aH9Pj+eIuIgNiL69@lstrano-desk.jf.intel.com>
-References: <20250720235748.2798-1-bold.zone2373@fastmail.com>
- <66a14b005fa3dc874f4f3261b93901af1292bde9.camel@mailbox.org>
- <e7c0f63678a93261182b69aa526217821552a150.camel@mailbox.org>
- <DBHNK2XQHUIW.TQHV41LR5D8I@kernel.org>
- <aH6B7JruWCkReaLw@lstrano-desk.jf.intel.com>
- <80f569dd3c42f11927324ea80e7c14ac2d3352b5.camel@mailbox.org>
- <aH9GwaquE7OR0HFY@lstrano-desk.jf.intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aH9GwaquE7OR0HFY@lstrano-desk.jf.intel.com>
-X-ClientProxiedBy: BYAPR07CA0028.namprd07.prod.outlook.com
- (2603:10b6:a02:bc::41) To BL3PR11MB6508.namprd11.prod.outlook.com
- (2603:10b6:208:38f::5)
+ 2025 08:46:19 +0000
+Received: from AM9PR04MB8147.eurprd04.prod.outlook.com
+ ([fe80::eace:e980:28a4:ef8a]) by AM9PR04MB8147.eurprd04.prod.outlook.com
+ ([fe80::eace:e980:28a4:ef8a%6]) with mapi id 15.20.8964.019; Tue, 22 Jul 2025
+ 08:46:19 +0000
+Message-ID: <ebff73fd-292d-459a-9ebe-cbbc6ef2b39b@nxp.com>
+Date: Tue, 22 Jul 2025 10:46:16 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 0/2] Add standard exposure and gain controls for multiple
+ captures
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mirela Rabulea <mirela.rabulea@nxp.com>
+Cc: mchehab@kernel.org, sakari.ailus@linux.intel.com,
+ hverkuil-cisco@xs4all.nl, ribalda@chromium.org, jai.luthra@ideasonboard.com,
+ laurentiu.palcu@nxp.com, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, LnxRevLi@nxp.com, celine.laurencin@nxp.com
+References: <20250710220544.89066-1-mirela.rabulea@nxp.com>
+ <20250715235952.GE19299@pendragon.ideasonboard.com>
+ <20250716001205.GG19299@pendragon.ideasonboard.com>
+Content-Language: en-US
+From: Julien Vuillaumier <julien.vuillaumier@nxp.com>
+In-Reply-To: <20250716001205.GG19299@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0360.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:f4::13) To AM9PR04MB8147.eurprd04.prod.outlook.com
+ (2603:10a6:20b:3e0::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -124,296 +84,189 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL3PR11MB6508:EE_|CYXPR11MB8711:EE_
-X-MS-Office365-Filtering-Correlation-Id: 701449bb-540d-4083-f493-08ddc8fbce2a
+X-MS-TrafficTypeDiagnostic: AM9PR04MB8147:EE_|GV1PR04MB10989:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4a4a2170-eade-4056-25c1-08ddc8fc39d5
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?eXdTNHdjRytNQ0YyQURRd25aVlZNVjIveE9TaHlTc1FvUUtaMzV6YmVJMFUw?=
- =?utf-8?B?aTM1Q3JoN1UvR3lNWHlueGNISGZRQ0tyazVodUkrZUMzUUthVVNYbFFaWEdr?=
- =?utf-8?B?OGxHL2Z1L0x1N09xZW5GaXF3azRyOTNlQkxCQ1Z4aUpBSHpZMlR0aW4zWFlY?=
- =?utf-8?B?QW5JL01zKyt4ZXM2ZVgrS2VIVmpqTFVGUWRkZGJrQ0JBYjNxOUlvcjFtZjJn?=
- =?utf-8?B?Y0RYSC9CaFlyVFRySGQ2cHgzVFRRWWVGQStlM3ZlUjJtYWdJaXRQRWFhU3J1?=
- =?utf-8?B?ZlVvNWtzb1NBaUhLZkVUb2J2dXVEdktydzBXN2RuRGZXckJ3SVdCbjBOQ0FT?=
- =?utf-8?B?My9SNnZnTjdiZy93T2VKRGlPMEJxSXlpbG13M2dIeVVxdS9KZTBzbG9rQkp0?=
- =?utf-8?B?L044UDdhQ3FWcFRpM3pCRTN0eWxvSDFqYzNyem9WWjh0ejRtOGd2WDNOWEdU?=
- =?utf-8?B?aWpsalQ5NDNTOGNwR3pvM0RxTXQ5R01aWnNBNkltcEtaSlZiWW9qNHRmL0o0?=
- =?utf-8?B?RkRWbjNRUzVod1hwUi9TSW5YbCtDbWVqQlJKNDF0b2hxekwyc09xSWR1b3Mr?=
- =?utf-8?B?SjgzRHpJZlhINGdRcFlGcHFGam5aTEZzUS8rYTE0YXNTZlBLeTcvcEkxM0xH?=
- =?utf-8?B?a1dYV2hnYlRFTEUyNHV6bHdqZEhZaUhEcWp0YXh2NlhJTHhmVFdnK0NteUll?=
- =?utf-8?B?L3pOWXpiS2JBY2JENGpkM08wV3NWOGRZL3dWeHhPUDNYMzk1UTBoVDhrWHYw?=
- =?utf-8?B?QTRmcmhmOWlCeVVrc1ZkejVQcHROS1JuTXp6VkZ0SGlUSk1ONFVvUy81dGxu?=
- =?utf-8?B?MFJHQi9wZ1BaWEprN3VuSVBELzlmSVZ1NHZCRUVOOEkrY01zOTBxajVJb2xz?=
- =?utf-8?B?UFZRSGhtcVI0dW43MmFyZVVtTzh2bUhKd2N0MGxPMGtuSDRuSnNPaGZPY3Vp?=
- =?utf-8?B?YWNaSnhocU95Q1RwSHV1ZVdUc0Z0YmRmUUhYQzJhRG92ODhnZ2ZPQ0dxSWFJ?=
- =?utf-8?B?Y0JTUmtueWFMSEdLOFR2c1Q3OUVTcU1zQVdCbWtFcGtTREtYSkswWndJUnMz?=
- =?utf-8?B?dXc0VkdUdXpNRC9WQWpGR0hLdHg0VWV2THovK1AwTTRGVGdsV09ibWU1Mkw2?=
- =?utf-8?B?YklmU3EyS2dYaVVzOEJ2QS9SRjB6VUdHWFd3S25NVlRpN0Eyd3RyNEdneEw0?=
- =?utf-8?B?L0hXUDVWRUJwVmxuL1JnOHN4TWhBNTFCc3p3TFVjYW1WcmUySzRKc1d2Rjk0?=
- =?utf-8?B?TVh6R2lYbG9mb0xQanNYMXZLR1VQUGpRS1NQT0piTk51R0RKVXR4ZXpiWjVV?=
- =?utf-8?B?U0JyNlRnVUVaajRUcmpYY09QdlFTb2dlMXBYeHR1YVpFRW9kMThrdmo3aWlq?=
- =?utf-8?B?eStMMm1QNnd4dldQa2dudWR6QjczMkhLM3Z1bW5Pd3Flc3BjaW1DS2FjZEo4?=
- =?utf-8?B?Q1ozUHhpL245U0RuQ1BlZ05uUWxBVm1aeXo0bnF3aktWclVDRS8zcnJVYnBh?=
- =?utf-8?B?R0h1aGZ5QngxclJuKzZjRGJJU1NuMmY3UFBtc0xIYzdwRVJWNnJvWlMyMUxF?=
- =?utf-8?B?bnNwUGlIVVpoUEMzRlBKWjlVbElHMjBsYWVVcFZwL2FnTHIxbnhuWUhNM3k5?=
- =?utf-8?B?Wi9ZR09yc0VWL3N3TkZyT1pJUHlaZmo3RDk3RW9UcHRjVW0rb21tZDVjb0Jr?=
- =?utf-8?B?MjJNWGxZRHBpTnJNOE55SnhOTlZhbDBkZFI4bTlKSS82WkJsQklOaldzanh6?=
- =?utf-8?B?OEI2TTRXdzlOQXdibUtxUW5DTTJ3Kzc1WnM0R2pGL3RESVJQSURCenhrWFJZ?=
- =?utf-8?B?OEllUUxmZE90YTVqRGp3Zk1NZ2diUTBMamZvTmFvSlYrN1kwaXdrMzA5UktM?=
- =?utf-8?B?aklqR3gyOFNhUFdpNEw3ZFh5S3Y1aUNjMlNvWGliWE1Dd3lhVFJ1UWpXd2RX?=
- =?utf-8?Q?4OtgWjGU28M=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR11MB6508.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|19092799006|376014;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?dWN0V1RZRjNyLzZteWwvRVZwVE52aVZQdDZqK0hYL28wdkJ2TWtRSC9PUlMy?=
+ =?utf-8?B?VzVKeG1BOHV2OFI1R2JTVENwV0lpaG9Wc09sMGVsWG8vMEN2MmxQTklERlJV?=
+ =?utf-8?B?dnhKcHQxNTlhaTBDTlNEOEowRU9VODE5WlMxWndBQStMdXA0eUJUZ1pGVElZ?=
+ =?utf-8?B?Smp6VG0rYzMyOGYxeGNURjYzRHFhc2pPZDIvMStCM2tDQjZSM3ZDenZUM0Fh?=
+ =?utf-8?B?K0ZHNnIzcElnSGpRQko1ZlRjYUJXalNnSW80d3phL05YQlZhdDcrK2JQbE5V?=
+ =?utf-8?B?blgzcW1pR1BxYlBMaFlrenYwaXN2b3NDQ2ZVc3VOaWgwUHdqQkFuOG90UEsr?=
+ =?utf-8?B?TXQ5T00zQWNQYWhiVGJ4bUh0TkZzVjk5TUlyNHc3WGJuOHVrYnUwbW1NS3FV?=
+ =?utf-8?B?THZMQjQrbnAzeko3MTRKSWxENHVZU3NINVd6amkzT3VyamdBZ1ZXeHZoSzdv?=
+ =?utf-8?B?UWtxMzl5MHc1cklrVTJ3Njk4WmZQWTJPRmdVTW54Y3JLejBud1l0Zm96U1NG?=
+ =?utf-8?B?bi9pd01oa2JLbEdoM0lIdmtXTW9GV2dzUkRIYThpWEJrejZGSm0vb3RYTWdq?=
+ =?utf-8?B?OEppS1dkakhTZ1ZqZ21VU01jTFgvVWp5dnl2ZndCS21LSlNDV3JMdkkvVGhV?=
+ =?utf-8?B?TFBHSjQ0Y2t4dG5rbmZ2V3RId1VBUUR4bUFLajNwRlY4L3ZNcXpSUFZUcU5V?=
+ =?utf-8?B?clh4ZzhKdDdRdWIzRjVrVkYwSUF6RHkrZzZqYUNVd0tnSzlUQ3hHU2FEZFhv?=
+ =?utf-8?B?ajhVSElONHUvUkcvalpTT29CcG1NQkZjMEtXRjNWN2VYem81ckdtUXBzcXFR?=
+ =?utf-8?B?NlZpYS8rckNhQW5EUU5LYUMxcXI5ZlRYd2MzZlNKVjlJaTFIb05hWkx4N01M?=
+ =?utf-8?B?Vk9Fa1I4UlNqTEZ6a2NxcFRFRGQ4ZVo3bUhCa3JHSHhRVjEwaWNTTmU3MVlI?=
+ =?utf-8?B?bUo1MmQ1KzZ0aXVhNUExZmZKMVVwa0UzK3Z4WWRleVlJU2F3S05MRG9sVHR2?=
+ =?utf-8?B?VXFOWDhRMWhxRUNDL1lueVdPTmh5eEVQTFBlYnlnYTJhdnBGa3hxZzZnaW1v?=
+ =?utf-8?B?RlJ2eEhJRlBNcjEzWjhCVjB3V0ZXMTUvL0J6NGc4aGZrREVLeWM1Qmtqb3lr?=
+ =?utf-8?B?UUxnRXRKRWx5b1Q5WGtKbmJkQlZhVmtGSDVZMVNsSVF6Q3lKWHZvZ1ZWeDBu?=
+ =?utf-8?B?aG81cWpNNkQ0eWRudzRiWlJDS2lLUjY2RkxiVHR3TnRuZWJmSFo3UUFGQncr?=
+ =?utf-8?B?aDRpTnltWlh6TmRYNCtqeDQrUllEMnc4b0FJc3VZTTVVNjRvaGxZZ3FJSGp5?=
+ =?utf-8?B?MURtcmhLTC9WTis4cGMrS3JiRUFQbnMySUh4aU93bjkvQXAyWTVKKzI2enBD?=
+ =?utf-8?B?Ujc2MEQyL2w2TGxZOHpwK0h5MUcrTzlTNzNVMysvNkg1Nm9HTHgzV1dPaUpT?=
+ =?utf-8?B?YjRlSXhsTTREbFhvYmFwZWFjMzlFWDFWd3NrU2syZldXbTNNZGUybDdMZ1Jo?=
+ =?utf-8?B?a3FPQ1pUMFRrOVNTOERxTk5XVy9rcXVNRkpxUmJZQzdzZ1FYT0E3VmYxaVY5?=
+ =?utf-8?B?bjhKdXN5OUxwM3hVY3BybjhnUjMzVFdlbVVqQ2R4ZnA2WmhSNElTTG5BQWUy?=
+ =?utf-8?B?UG1tTHVjY2h5Nk1UL2N0UWRlTStRUzVvRk5WVTBhWW9tc0M4dE1RdGZuWXNZ?=
+ =?utf-8?B?L1poT2tFdEsxWFNYaHF4OU5WYTNtd3ptdzJUdWF4ZHFSaTdWSWJvNm53MXgz?=
+ =?utf-8?B?OW1Td0R6WU5YemkxekhNbE1LMncrTndvSjVzczlqUGdUcnljemRIQlk2WDZm?=
+ =?utf-8?B?NjQ0OFlWZWk3SGNwdGZab24vcXVzTlc4RFAwSXdubVdIUmVtN0RRMGhMdEI0?=
+ =?utf-8?B?SDVpVFY0bGFVc2NiNmRUWkVmSkFxNmc4akRORXg2Vkd2NEdFMUx4UkdNMDNM?=
+ =?utf-8?Q?fOVlZ4qWh6E=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8147.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UU1xTGZ1ZFpwWUZ1ZFErdFFEYzcxa29oUENKS0piTFJhOE55OG9TeGxJM0xK?=
- =?utf-8?B?ck1MbzJVRUEvbTh1QWVnNkN3M0xJckFOcW9ScHJGZHZCMUJYNFp6QWZ2NGE1?=
- =?utf-8?B?dVhPRjRlYVVtR3U4dUFUM2dLRVYzRE1sNU02K1o1enpndUFaR2RlRnBzL2E1?=
- =?utf-8?B?L3I3L3lFNDJzdkZldUtra3hkUkdCOGFDSXZnRDVYQlg1S3pCZFNXWUxhNWJq?=
- =?utf-8?B?RVE1QWFVaURSd1hjbWFOU2JucVh5K0ZaREo1cnhpY2svdmxmeVRES1F1K0I2?=
- =?utf-8?B?YmVxdjFGcS9BcEIzY2xmb0JVL1o1YXRGVis4TFg4MmxTMFNoVzlUM3BLQXov?=
- =?utf-8?B?UzVMemJyWWRzRU5IQTZ2YkhCS3I5bmZmemRtazlkSUxwdmUydTdDSHRPdml6?=
- =?utf-8?B?VGZMMXE5dkYyVGViVEo3cDNCMDh1RUNlK1RyQkZaS2pUTnBKS0Z0NmQ4WnZz?=
- =?utf-8?B?QlFmUnNqUVYyMS9majBLVEdCSEpDYU4yekhwdy9zbTFqR0Vpa0R6Y1FVa3pK?=
- =?utf-8?B?OGNVM3JRUDByOFhwdml1RU12MVF5am5WQTloQU14VDNOVXB2K044eTh5Tld1?=
- =?utf-8?B?bFM2UVFaS0krNnlDUENXWGhiU3ljc1JqbDVyUXZ3SlZkcGlVc2VQaDFUQ0U3?=
- =?utf-8?B?dVl2ejFUell6SWtIWWZscVZVdEZDSWg5OVVybmRkS052My9hN2NZRUFERVA5?=
- =?utf-8?B?TWFTTmd4ajBkR0E5ZHdKNm1OUWpMVGZRekRuYXQ4cWJVZXc5azZvU0RGUjll?=
- =?utf-8?B?by9Fd29QYWtScFFTZE5zYm5LbStvV1pQbVZoV0ZYekFGZGJmNi9OY0pqNytF?=
- =?utf-8?B?bjVXN0pOc1E5YVFXRll3MUtCNjhRS2Z6WDVjZUxhaWoxamZHWHg4WWsrNHRQ?=
- =?utf-8?B?MzQ1enhCeUxLRUwxeTJsUi9QTGxGeDZoT0hBd3o0cWMzUVZKNnlQaGxuOUVL?=
- =?utf-8?B?OTRWOGR5L1VVWlFFdGxIRi94OEVCMXlZQjhMTjBwWHZ1MUNHSjBiWlc0M3pX?=
- =?utf-8?B?dVpNcHdWVlFKNzFmTUVCYm1PTEhja2RZWWVIcjFaQ3c0M3pGbVo4N1Rvd2hp?=
- =?utf-8?B?M2hGQW5hSTZzMzhtUEdMSUFtVng3aFlhOGRIa0ZrUjlYSVpLanl2YU8vQ2Zj?=
- =?utf-8?B?ZzVTYVRtcG5UM2hhaFN4NjVxb3ZYNWdBcHlHZWd6UkpVRXRpK014aURudEV6?=
- =?utf-8?B?NTNKUkRCMGFKay91S1FHcVdibDhCM2FZS1huclR6MnlJL0t6RzVMa3haSEJp?=
- =?utf-8?B?a09kaXVwMkZuTXJJZm9NWVdRdGR5ZUxZQkNkRkhUQ0FObGFUQ0JZVURUcit0?=
- =?utf-8?B?UUpOd3ZBU09VVE5KaVB2UmI0TEl1SVZDbFdQdU5UOHdIaTlua2ZmTldqbjdj?=
- =?utf-8?B?QnlXZGRtSkZOWFA1aUoweHJEazdJUzNZdnNmdUpTODU1WjhPUytCRllUMFdw?=
- =?utf-8?B?SGNvZzVPc3BUaXBhL296U1dIa25sLzAyai94VDJxK3c5MkdJS3N6Q2NneUVK?=
- =?utf-8?B?YlFpKzA1QkRqK09qWUh0MzF3TlpEVytoQ1p6VHF0S0t2eEtibGI4bGcwRkhk?=
- =?utf-8?B?TjlHemFLNlhhQUdOZUdsOS9Ic3dNQW5NV1RscGN3eXdKcHhoT0dXZVhVKzJv?=
- =?utf-8?B?SVFaRVVZa3hJUG95cm9VS0o2eU0wT280dXlhb1VpU3ZjOERLSEFpd3UydDNr?=
- =?utf-8?B?ZlNvb3kwSlhuaUE2em9DL1JNdXRNdzRyeWtGeHdFa1ZBaW9mUk95YTdHMUxQ?=
- =?utf-8?B?My9GM3ZEQ2VxUmVhZFh5dHpFdmpDdzRZRGplMVNxSHpPcG1lS0FRN0VtYnJB?=
- =?utf-8?B?NjNkUWs1ZXh6a0dNK1MyM1IrZXZBOW9JNHJvaDR2MEFnY2NVWDFiaUk2cGtB?=
- =?utf-8?B?Y2lueUFwK2FLYkRUK2JKc2RreFVNNDRRM0g3NHVrNTVISFFqazZ3RGxIVTdF?=
- =?utf-8?B?aFpYUWs4c09RTStpNVpyMU5NT0E1dHNTYXBKQ1FmWVRkZjF1SStaa1ZJS1J0?=
- =?utf-8?B?QmJoMEQyK0lrR1dadUlOMlhoRnNBV25tVnNJdTJ4emlpSUVWNVRpaW5IanNp?=
- =?utf-8?B?OElaUzhHVUNuQUMrOHZnQjdvQ3dia0pieGxLcG8rMWhxcFZLejI3dlE0UDAw?=
- =?utf-8?B?WFJWK1orcUF6dUxsSlhnV096cWpnaDhUYitqanZXNlF2UUpwbGUvdjduVWpE?=
- =?utf-8?B?MHc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 701449bb-540d-4083-f493-08ddc8fbce2a
-X-MS-Exchange-CrossTenant-AuthSource: BL3PR11MB6508.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?TlZZS0xGVUFmbmhmYXl0dmpoek9ZK3FSUVhiK1NPSUpUV0ZCR0pFaDNJVUpz?=
+ =?utf-8?B?WUoyamdnenpLZmVUOEkzMitoOTc1cGQxLzZKT1h5OTAyUjhvbEROaG90cVR1?=
+ =?utf-8?B?elJYVHBTa0Fyd04vRTNTWWlZOGdWamt3SVA4RVJUaE41TFY3Y3JJMDgrY095?=
+ =?utf-8?B?a2luYnVGSWMvM3NYd0h1U1lFWjB0MG1IZ0FQaVJ3bEpvcXREK2wwcTB5bkV4?=
+ =?utf-8?B?bzFvSU5LREcwSE9ObytjelBibWpVSTFFclFVd0JwTnNnZGIrNDRXQ3NzZnRj?=
+ =?utf-8?B?amRPa0R5c1pEQk1mRmtTZS82Mmdkc2RxOFVOZFJhUVFVL0ozRUwyUUhURERV?=
+ =?utf-8?B?cjc4Sk1VTFBHQmRqSE10RnN5T1lKNnRERDl4YTFQcmRVNzZXM0tHUTVFVFg0?=
+ =?utf-8?B?NWk3RXY4UWxubk9PNFluYllpTnF6KzUxU3pIWVhhdWRvZ3A5MUhMbXBCckQy?=
+ =?utf-8?B?QVlaaTBtbFAxYzRtQlZxMSs2V3VYQUVacDVwRzBCdWllL3cxVlRScGRnQnkz?=
+ =?utf-8?B?b2gwNWhXQmozeEIyUTIrYVdwRHRkOUFUZGFKaW5yb1lPVlVyOHBvYUhRK2Nj?=
+ =?utf-8?B?QWdIS20veWFqUUx0QkQ3MDBVZ1BMZFhJejhPc0hXSWV5NXBBZVRxRjIvYlgy?=
+ =?utf-8?B?cHdiVFRxK1NQd1JuMVg2S3pTNHdnNzFYYUMwa09XdlV0MmF4WnpzRzZtb1Nh?=
+ =?utf-8?B?UFdtMWI1M1FkMHdHYnNSRk5saFJKSXdrcm4vczEzdUNnTnlaK1FjMzRUWDRj?=
+ =?utf-8?B?cVQwejBjRzF1TlRtVTBrWUpNRmd6SkEySDUvbDJnb21XUHQ5V1hGQXlETUxl?=
+ =?utf-8?B?WWE4dXUwN1NTZGc1UEI2REcySjRBSlJCQ2g1SkJSbmpmOUkvejZSRlRqbUhn?=
+ =?utf-8?B?QXg2dTF5M0tQQU9PL29ZR1FobHBuM2ZtdXpwbWdlTlZRaWZmdkRnSUZweVMy?=
+ =?utf-8?B?ZjNZVXBHSXF0cTU2VFR6Q2lLRzJQOGNqNFBmWUltTmFYSmUyeFJST21Sa3Fp?=
+ =?utf-8?B?Y0dPVmVSZXhCdHdJY2Y5dW1mN0lQZkZsSTVaR1VhWDYvazlLaDRhR0JuYThz?=
+ =?utf-8?B?dVRlaHhHWVFiTWloWDNobnNiS09hUWU5WENvcmFFeE5oaTVQMXpzdWZScVZJ?=
+ =?utf-8?B?S2tCS01kU1dnVzhiekpuNGpNaEtPWFVjbUlPMlZtVEx4S2dSUWVaYUdGSHJ6?=
+ =?utf-8?B?RVVGcXNTYjMzbFo3dVlodkNHQ2ZJOW1idFdndWxpRkVSTWxjbmtraitGRnFY?=
+ =?utf-8?B?UVRaTk1jbVBycHcyVGJmV0JISzhzekhmWVdiZDQ4dHFGZjFzT0Zic0FZSk9D?=
+ =?utf-8?B?QmtJT3VJRnIyZ2s4NzZIZVk4eE1hR04yam8xODlhS1RpQldkbm5tL0lDYll1?=
+ =?utf-8?B?TGR4dnFuSlVGdXUvQ1BGR3NnRm9Ra2dGSFphNXZFK2FseTZsUG81OWtQVWJ3?=
+ =?utf-8?B?MEIzYnpZS1BCTmp5M05JV1gvalJ0Y1BURGtQOXBxMnZoSVF3SXprVlFUWXpi?=
+ =?utf-8?B?ODIrV0hLMU4yYmZicDdJanZRTnBNZVJqS25VZmE2WjM3cjJXOGg1UFRkMHly?=
+ =?utf-8?B?KzlwM1lvbmI0WGk5RGJ2RFkxQ3A5ZUxGZWVuRVI1WVRtemg5MTdRdUdnb3NV?=
+ =?utf-8?B?bmRjMXAwNGc4bkh3SWwzSndyNm1kbVh4UVNLWnR0ZHZJc0VrRFpBbTRkdGVo?=
+ =?utf-8?B?NHRKakozZ2p0TlJiZnVwOGoxVHROWDdYc1kzVy9zMjROKzJZN3pPcVhDdlBC?=
+ =?utf-8?B?eU5aRkNiWlpscnJQK0FlZlptdHhpZ3pEb3gwN0twZmhRK1k3bVA1OEcxazJY?=
+ =?utf-8?B?Mkp1VFlnWWNYUEIwOExoYlNCRWxFYXJHYzBybkQyR2NFT0NHdFIyeTNFbEc5?=
+ =?utf-8?B?KytROGxnUlBMdWw4clR1djVpRkc3Rld5cks2RWU5dnp4TEtlUVg2YXY1ZW8x?=
+ =?utf-8?B?cUIyN09ZSUJuWWE0UzRJby9lUkJ1K2FTYkV2L1J1NDlhV2VieUttRGtJTjBP?=
+ =?utf-8?B?ZlBhM2taazU5S2xBR2VWakgrbzZ6Yk91ai8zNU44dlE5LzRTYXRPL0lESGJV?=
+ =?utf-8?B?OEhINm9CK2p3Yk5YTk83TEJENmlTTHY2clhZelA2TUhSRmJGWGdwQjNqcTdk?=
+ =?utf-8?B?SDRIWDdrRk1wdUgxUVFZTmV4U08rUWxyOXhDK0d3emlXSU5NMTlUVU9scXVs?=
+ =?utf-8?B?TVE9PQ==?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4a4a2170-eade-4056-25c1-08ddc8fc39d5
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8147.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2025 08:43:18.0914
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2025 08:46:18.9704
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2LCuZTZrOOE1tUJtN4Sns7Mf+WmB5HQI6J9H4iMBJlFHlZRR5CWQoOq1K0iwU2oPd7rWMx0hA7RONEBF+VItiw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR11MB8711
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-UserPrincipalName: jqhwHiG1T53Zh3vTpFXGmO8HmZiAbJChzlJ6Qb+vdV02eUJ354vxkWMbkdvuZ3o9An1rgf8pLdznD1DcsP7uarU2HH5ip/iHtZZ34kSIILI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10989
 
-On Tue, Jul 22, 2025 at 01:07:29AM -0700, Matthew Brost wrote:
-> On Tue, Jul 22, 2025 at 09:37:11AM +0200, Philipp Stanner wrote:
-> > On Mon, 2025-07-21 at 11:07 -0700, Matthew Brost wrote:
-> > > On Mon, Jul 21, 2025 at 12:14:31PM +0200, Danilo Krummrich wrote:
-> > > > On Mon Jul 21, 2025 at 10:16 AM CEST, Philipp Stanner wrote:
-> > > > > On Mon, 2025-07-21 at 09:52 +0200, Philipp Stanner wrote:
-> > > > > > On Sun, 2025-07-20 at 16:56 -0700, James Flowers wrote:
-> > > > > > > diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-> > > > > > > index bfea608a7106..997a2cc1a635 100644
-> > > > > > > --- a/drivers/gpu/drm/scheduler/sched_main.c
-> > > > > > > +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> > > > > > > @@ -172,8 +172,10 @@ void drm_sched_rq_update_fifo_locked(struct drm_sched_entity *entity,
-> > > > > > >  
-> > > > > > >  	entity->oldest_job_waiting = ts;
-> > > > > > >  
-> > > > > > > -	rb_add_cached(&entity->rb_tree_node, &rq->rb_tree_root,
-> > > > > > > -		      drm_sched_entity_compare_before);
-> > > > > > > +	if (!entity->stopped) {
-> > > > > > > +		rb_add_cached(&entity->rb_tree_node, &rq->rb_tree_root,
-> > > > > > > +			      drm_sched_entity_compare_before);
-> > > > > > > +	}
-> > > > > > 
-> > > > > > If this is a race, then this patch here is broken, too, because you're
-> > > > > > checking the 'stopped' boolean as the callers of that function do, too
-> > > > > > – just later. :O
-> > > > > > 
-> > > > > > Could still race, just less likely.
-> > > > > > 
-> > > > > > The proper way to fix it would then be to address the issue where the
-> > > > > > locking is supposed to happen. Let's look at, for example,
-> > > > > > drm_sched_entity_push_job():
-> > > > > > 
-> > > > > > 
-> > > > > > void drm_sched_entity_push_job(struct drm_sched_job *sched_job)
-> > > > > > {
-> > > > > > 	(Bla bla bla)
-> > > > > > 
-> > > > > >  	…………
-> > > > > > 
-> > > > > > 	/* first job wakes up scheduler */
-> > > > > > 	if (first) {
-> > > > > > 		struct drm_gpu_scheduler *sched;
-> > > > > > 		struct drm_sched_rq *rq;
-> > > > > > 
-> > > > > > 		/* Add the entity to the run queue */
-> > > > > > 		spin_lock(&entity->lock);
-> > > > > > 		if (entity->stopped) {                  <---- Aha!
-> > > > > > 			spin_unlock(&entity->lock);
-> > > > > > 
-> > > > > > 			DRM_ERROR("Trying to push to a killed entity\n");
-> > > > > > 			return;
-> > > > > > 		}
-> > > > > > 
-> > > > > > 		rq = entity->rq;
-> > > > > > 		sched = rq->sched;
-> > > > > > 
-> > > > > > 		spin_lock(&rq->lock);
-> > > > > > 		drm_sched_rq_add_entity(rq, entity);
-> > > > > > 
-> > > > > > 		if (drm_sched_policy == DRM_SCHED_POLICY_FIFO)
-> > > > > > 			drm_sched_rq_update_fifo_locked(entity, rq, submit_ts); <---- bumm!
-> > > > > > 
-> > > > > > 		spin_unlock(&rq->lock);
-> > > > > > 		spin_unlock(&entity->lock);
-> > > > > > 
-> > > > > > But the locks are still being hold. So that "shouldn't be happening"(tm).
-> > > > > > 
-> > > > > > Interesting. AFAICS only drm_sched_entity_kill() and drm_sched_fini()
-> > > > > > stop entities. The former holds appropriate locks, but drm_sched_fini()
-> > > > > > doesn't. So that looks like a hot candidate to me. Opinions?
-> > > > > > 
-> > > > > > On the other hand, aren't drivers prohibited from calling
-> > > > > > drm_sched_entity_push_job() after calling drm_sched_fini()? If the
-> > > > > > fuzzer does that, then it's not the scheduler's fault.
-> > > > 
-> > > > Exactly, this is the first question to ask.
-> > > > 
-> > > > And I think it's even more restrictive:
-> > > > 
-> > > > In drm_sched_fini()
-> > > > 
-> > > > 	for (i = DRM_SCHED_PRIORITY_KERNEL; i < sched->num_rqs; i++) {
-> > > > 		struct drm_sched_rq *rq = sched->sched_rq[i];
-> > > > 
-> > > > 		spin_lock(&rq->lock);
-> > > > 		list_for_each_entry(s_entity, &rq->entities, list)
-> > > > 			/*
-> > > > 			 * Prevents reinsertion and marks job_queue as idle,
-> > > > 			 * it will be removed from the rq in drm_sched_entity_fini()
-> > > > 			 * eventually
-> > > > 			 */
-> > > > 			s_entity->stopped = true;
-> > > > 		spin_unlock(&rq->lock);
-> > > > 		kfree(sched->sched_rq[i]);
-> > > > 	}
-> > > > 
-> > > > In drm_sched_entity_kill()
-> > > > 
-> > > > 	static void drm_sched_entity_kill(struct drm_sched_entity *entity)
-> > > > 	{
-> > > > 		struct drm_sched_job *job;
-> > > > 		struct dma_fence *prev;
-> > > > 
-> > > > 		if (!entity->rq)
-> > > > 			return;
-> > > > 
-> > > > 		spin_lock(&entity->lock);
-> > > > 		entity->stopped = true;
-> > > > 		drm_sched_rq_remove_entity(entity->rq, entity);
-> > > > 		spin_unlock(&entity->lock);
-> > > > 
-> > > > 		[...]
-> > > > 	}
-> > > > 
-> > > > If this runs concurrently, this is a UAF as well.
-> > > > 
-> > > > Personally, I have always been working with the assupmtion that entites have to
-> > > > be torn down *before* the scheduler, but those lifetimes are not documented
-> > > > properly.
-> > > 
-> > > Yes, this is my assumption too. I would even take it further: an entity
-> > > shouldn't be torn down until all jobs associated with it are freed as
-> > > well. I think this would solve a lot of issues I've seen on the list
-> > > related to UAF, teardown, etc.
-> > 
-> > That's kind of impossible with the new tear down design, because
-> > drm_sched_fini() ensures that all jobs are freed on teardown. And
-> > drm_sched_fini() wouldn't be called before all jobs are gone,
-> > effectively resulting in a chicken-egg-problem, or rather: the driver
-> > implementing its own solution for teardown.
-> > 
-> 
-> I've read this four times and I'm still generally confused.
-> 
-> "drm_sched_fini ensures that all jobs are freed on teardown" — Yes,
-> that's how a refcounting-based solution works. drm_sched_fini would
-> never be called if there were pending jobs.
-> 
-> "drm_sched_fini() wouldn't be called before all jobs are gone" — See
-> above.
-> 
-> "effectively resulting in a chicken-and-egg problem" — A job is created
-> after the scheduler, and it holds a reference to the scheduler until
-> it's freed. I don't see how this idiom applies.
-> 
-> "the driver implementing its own solution for teardown" — It’s just
-> following the basic lifetime rules I outlined below. Perhaps Xe was
-> ahead of its time, but the number of DRM scheduler blowups we've had is
-> zero — maybe a strong indication that this design is correct.
-> 
+Hi Laurent,
 
-Sorry—self-reply.
-
-To expand on this: the reason Xe implemented a refcount-based teardown
-solution is because the internals of the DRM scheduler during teardown
-looked wildly scary. A lower layer should not impose its will on upper
-layers. I think that’s the root cause of all the problems I've listed.
-
-In my opinion, we should document the lifetime rules I’ve outlined, fix
-all drivers accordingly, and assert these rules in the scheduler layer.
-
-Matt
-
-> Matt
+On 16/07/2025 02:12, Laurent Pinchart wrote:
+> On Wed, Jul 16, 2025 at 02:59:54AM +0300, Laurent Pinchart wrote:
+>> On Fri, Jul 11, 2025 at 01:05:42AM +0300, Mirela Rabulea wrote:
+>>> Add new standard controls as U32 arrays, for sensors with multiple
+>>> captures: V4L2_CID_EXPOSURE_MULTI, V4L2_CID_AGAIN_MULTI and
+>>> V4L2_CID_DGAIN_MULTI. These will be particularly useful for sensors
+>>> that have multiple captures, but the HDR merge is done inside the sensor,
+>>> in the end exposing a single stream, but still requiring AEC control
+>>> for all captures.
+>>
+>> It's also useful for sensors supporting DOL or DCG with HDR merge being
+>> performed outside of the sensor.
 > 
-> > P.
-> > 
-> > 
-> > > 
-> > > > 
-> > > > There are two solutions:
-> > > > 
-> > > >   (1) Strictly require all entities to be torn down before drm_sched_fini(),
-> > > >       i.e. stick to the natural ownership and lifetime rules here (see below).
-> > > > 
-> > > >   (2) Actually protect *any* changes of the relevent fields of the entity
-> > > >       structure with the entity lock.
-> > > > 
-> > > > While (2) seems rather obvious, we run into lock inversion with this approach,
-> > > > as you note below as well. And I think drm_sched_fini() should not mess with
-> > > > entities anyways.
-> > > > 
-> > > > The ownership here seems obvious:
-> > > > 
-> > > > The scheduler *owns* a resource that is used by entities. Consequently, entities
-> > > > are not allowed to out-live the scheduler.
-> > > > 
-> > > > Surely, the current implementation to just take the resource away from the
-> > > > entity under the hood can work as well with appropriate locking, but that's a
-> > > > mess.
-> > > > 
-> > > > If the resource *really* needs to be shared for some reason (which I don't see),
-> > > > shared ownership, i.e. reference counting, is much less error prone.
-> > > 
-> > > Yes, Xe solves all of this via reference counting (jobs refcount the
-> > > entity). It's a bit easier in Xe since the scheduler and entities are
-> > > the same object due to their 1:1 relationship. But even in non-1:1
-> > > relationships, an entity could refcount the scheduler. The teardown
-> > > sequence would then be: all jobs complete on the entity → teardown the
-> > > entity → all entities torn down → teardown the scheduler.
-> > > 
-> > > Matt
-> > 
+> Regarless of where HDR merge is implemented, we will also need controls
+> to select the HDR mode. We have V4L2_CID_HDR_SENSOR_MODE, which doesn't
+> standardize the values, and that's not good enough. At least for DOL and
+> DCG with HDR merge implemented outside of the sensor, we need to
+> standardize the modes.
+
+For the HDR-capable sensors with the HDR merge implemented outside, the 
+short capture(s) are likely implemented as separate streams, in order to 
+match the raw camera sensor model.
+In that case, the SDR/HDR mode switch, when supported, can be done by 
+configuring the sensor device internal route for the short capture stream.
+
+You mentioned the need to be able to select the HDR mode in a standard 
+way. Could you elaborate on the foreseen usage: would it be to select 
+SDR/HDR operation, to select between different HDR sub-modes, to inform 
+user space about HDR capability... ?
+
+> 
+> Can you tell which sensor(s) you're working with ?
+> 
+>>> All controls are in the same class, so they could all be set
+>>> atomically via VIDIOC_S_EXT_CTRLS, this could turn out to be
+>>> useful in case of sensors with context switching.
+>>
+>> Agreed, we should be able to set them all. Are we still unable to set
+>> controls from multiple classes atomatically ? I thought that limitation
+>> has been lifted.
+>>
+>>> Each element of the array will hold an u32 value (exposure or gain)
+>>> for one capture. The size of the array is up to the sensor driver which
+>>> will implement the controls and initialize them via v4l2_ctrl_new_custom().
+>>> With this approach, the user-space will have to set valid values
+>>> for all the captures represented in the array.
+>>
+>> I'll comment on the controls themselves in patch 2/2.
+>>
+>>> The v4l2-core only supports one scalar min/max/step value for the
+>>> entire array, and each element is validated and adjusted to be within
+>>> these bounds in v4l2_ctrl_type_op_validate(). The significance for the
+>>> maximum value for the exposure control could be "the max value for the
+>>> long exposure" or "the max value for the sum of all exposures". If none
+>>> of these is ok, the sensor driver can adjust the values as supported and
+>>> the user space can use the TRY operation to query the sensor for the
+>>> minimum or maximum values.
+>>
+>> Hmmmm... I wonder if we would need the ability to report different
+>> limits for different array elements. There may be over-engineering
+>> though, my experience with libcamera is that userspace really needs
+>> detailed information about those controls, and attempting to convey the
+>> precise information through the kernel-userspace API is bound to fail.
+>> That's why we implement a sensor database in libcamera, with information
+>> about how to convert control values to real gain and exposure time.
+>> Exposing (close to) raw register values and letting userspace handle the
+>> rest may be better.
+>>
+>>> Mirela Rabulea (2):
+>>>    LF-15161-6: media: Add exposure and gain controls for multiple
+>>>      captures
+>>>    LF-15161-7: Documentation: media: Describe exposure and gain controls
+>>>      for multiple captures
+>>
+>> Did you forget to remove the LF-* identifiers ? :-)
+>>
+>>>
+>>>   .../media/v4l/ext-ctrls-image-source.rst             | 12 ++++++++++++
+>>>   drivers/media/v4l2-core/v4l2-ctrls-defs.c            |  8 ++++++++
+>>>   include/uapi/linux/v4l2-controls.h                   |  3 +++
+>>>   3 files changed, 23 insertions(+)
+> 
+> --
+> Regards,
+> 
+> Laurent Pinchart
+
+Thanks,
+Julien
+
 
