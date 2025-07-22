@@ -1,133 +1,148 @@
-Return-Path: <linux-kernel+bounces-740747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C185B0D893
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:53:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9911DB0D895
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:53:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB8A2162B95
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:53:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82BB4188723B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:53:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 945402E3397;
-	Tue, 22 Jul 2025 11:53:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDBA2E3AF6;
+	Tue, 22 Jul 2025 11:53:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iMnw82v+"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="j9pFeYis"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB4A22D785;
-	Tue, 22 Jul 2025 11:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23AE24467B;
+	Tue, 22 Jul 2025 11:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753185191; cv=none; b=ReUrT2tCpMsvt0sN17H6kEuwdp8328Xb7I6DjAsjlmhkEmFNRhZJ9+qqnA98vQSqsRaeoK+FoMFS+QnO3A1+DVdOeQS/vmIaqtCnfNDDHQTaQJb2Lqg4W551YcinwLLubs4HC3mZlwVev4ROAHYNHmoB6a9YwSdv8lztvvuexHM=
+	t=1753185214; cv=none; b=F/JXU2sapFfNbJvy0i7Toc1SxYPjjjiRP7ImDQyHcpHNjX7I6OtPqJ70/RcTrwZeHS/UnUKjnoAcwL0yo2vGPfShHy/ySjUU/dcbmfGt6oejWCUaCpPb/V9vAQ4zkvBS6wqZq2leR1921VYtfG9aB9wfaApnwjAUBT/xDi1s2kQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753185191; c=relaxed/simple;
-	bh=loqztyaiUITTlGaYUo7RdoMuPE8I9gB9XD4AoEiAqyY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CgcigzOSdyIpaRCRBCS/42dU6i+9UIw8xQS41trBxMCSaynIyvJHMLjbkV/OyX5GqHw5+Sj8Gvo+4BsCb647cT0kg2LOd0/c0loPvHU/f4tGOw6ZXcMcmAqF1MMBh0yUS3QS4EunT/z4LlEr6mQa/p31QHsVkREHlvOPdtGSmRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iMnw82v+; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-451dbe494d6so59079405e9.1;
-        Tue, 22 Jul 2025 04:53:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753185188; x=1753789988; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fkp/rv74miGjepFs+AgLfe7Nd1NYRVijo7ZDQwRdmcc=;
-        b=iMnw82v+4Kbs0B7Aim59ca0GykKY0fthuoPxPMoM9NMJ9rft3/SOwUzA8VR5bmca6w
-         aV+UQ3O/SycTqIgwjjygPn1jPYh/S2140eGrmuiHebk5EjlGxf6QUSXgiB8YvNt7IuT4
-         eGCwbypNYJWIa2mkDSy4nBE8ILYDS4NDTysLgSHAXjfwub7j4S/qsv0X01PaGQglkXLT
-         2Zri6ID8vDRoxngNT9gvR785EyC9yCFkKCt6XKCf0bRLUTEYnc2LBl5W4ptbknQkF5Md
-         1f3b5jW0MxWgUE+ozch7TN30InEKv25O53CsDJRGewDByufJEgMRkwmCYJDzKaWbC1zy
-         16lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753185188; x=1753789988;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fkp/rv74miGjepFs+AgLfe7Nd1NYRVijo7ZDQwRdmcc=;
-        b=DaejTcfIqjDkbTaqyjKLsa1IToEmtK6fk6cmay5J3iYtJ9HgbbmiXkLLJeveBsl+3+
-         CIJIYOeUE8Pn6QyQXAfxdvg6XthC0YRRG9PZPAUzjSXgXJ347wgO6qyqbOI8mCL5vx35
-         173bD6Pym1dq3FZBN56f+siHE66T4CFEM5JMIyglaUc+pBRWo2JjR4XKARUz9fwV7wuY
-         GkstnZynpvBkZiVuS76eW8WJjnJna6hUmKyoDCx7njfGAJAK5JscZOJLuOB1tt19LGt2
-         cEvZ6LUc3xHQ9C5Bvgb4pdOyH7wTC/NUMGQM0JCrakIOuSypaa2PTf3LAHP+c0PPMSzB
-         fRZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV6bzhp15oYYbZmwcvidp7eaN/PDhEC387H14VYBMc8X5i1b5fVoHxj80XjcgmO/T4MLbGNaY4o@vger.kernel.org, AJvYcCVcr5iG+Pt+Ms9FnViO+Tte0px+IQJu3M2HYlHR3aGI7KNqn1ynsFI/iUTsmnmwGam2nm3ydu56QxHr1po=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEAEBFF714dfIUBGeRTZKce5y6kH3qnyQvkCyjdKd6V6S/tsnU
-	FtFLu2eYXlwISGqLQp9y3MY+1AO7dY5H3dPwNKf4XKG0Jpal22kIQ+LA
-X-Gm-Gg: ASbGnctR3lliEk8PpG9XLMj6EetYOrSEs91bE80VXWnURkkMwZEg+ywxhe0w23t5/xF
-	HyZj39S+IaIAAhlSlq3b8SjCP6t1qyikt6ef24EfSun8EoMANw6O2OC9riJgQtmhr/kUBw+pvDT
-	tJ5yxAkFNIxjbFGX5AF8tOFrCPC7ItOsopi9F1JWAR8gIp+wru4zT+ZJaYkcOzIsZ3BTWQc8Amr
-	5F5e9SCag8goEvfnpQV8NuZ/JJkI/pdkgBJc1ULsfhrVUTTYcPlPDHVJ1gHfTYCXcCpEZebY1iR
-	fSiB4wEwndcyraR+Mz/OAjHs6k67BXakCLWc0G4l/TgdSZp+h/Eqtm9DjJcYInfIrvWVLrShFVc
-	H7dMGV1dJqs33skXpCv94rMqXUg1JSoJ91gmLx06or5V5tA==
-X-Google-Smtp-Source: AGHT+IGCf91BAOWUwlwAPbJxz/0CA+eqb9blpY9HNaDeUUuvBuznH5spHuwtcT2o8JH6NfXKK0Pfmg==
-X-Received: by 2002:a05:600c:19cb:b0:43c:ee3f:2c3 with SMTP id 5b1f17b1804b1-4562e37a0ecmr186920655e9.7.1753185187369;
-        Tue, 22 Jul 2025 04:53:07 -0700 (PDT)
-Received: from Reodus.localdomain ([192.15.193.80])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e88474fsm192631615e9.22.2025.07.22.04.53.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 04:53:06 -0700 (PDT)
-From: Amir Mohammad Jahangirzad <a.jahangirzad@gmail.com>
-To: anthony.l.nguyen@intel.com,
-	przemyslaw.kitszel@intel.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Amir Mohammad Jahangirzad <a.jahangirzad@gmail.com>
-Subject: [PATCH] i40e: replace snprintf() with scnprintf()
-Date: Tue, 22 Jul 2025 15:20:17 +0330
-Message-ID: <20250722115017.206969-1-a.jahangirzad@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1753185214; c=relaxed/simple;
+	bh=jvBKfE1yswDHbfnFEAykBvnA9GCH0i9lDLsN+F3UpGc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uoPsSWlziF2MlYaSpOzfzFndXqPT+Lhy3KxICQqAPcyedUjpvpRk7sDb9MhbMFFJyeFycf1xX5GPmzVObARlOiOaQr0/lrs1s4bLOb8w6JXii/SGGnkjvMQSi7MX2HRgTvnh4zrmUHrAC79P0Vo6VBp4DMstHCIjXa8B9pquv0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=j9pFeYis; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.42.116] (p5de459a9.dip0.t-ipconnect.de [93.228.89.169])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 7DF8B2FC0074;
+	Tue, 22 Jul 2025 13:53:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1753185208;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D6JCU07cqhLJNWeA69beIg7C0Vl6H9lLjQM+IRcUJKo=;
+	b=j9pFeYishUrrLtkfxjnAQR7P/LhhXRdxcCDyyYWl2eTsko5GLgQeWi4STgxxejeBezsUwt
+	B2YrCrNsXsQ0k2Z/y9jo6932oJSEoZX0MjsmoBys69eCYam2RYDsoivU0bbTpoNa6VL5TZ
+	Dl5qYRxn+XbHHsZ1nB9KbAjBcQrG/VU=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+Message-ID: <dfde599f-c01d-48a2-a315-0b80d5954623@tuxedocomputers.com>
+Date: Tue, 22 Jul 2025 13:53:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] Input: atkbd - Correctly map F13 - F24
+To: Hans de Goede <hansg@kernel.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250311180643.1107430-1-wse@tuxedocomputers.com>
+ <20250311180643.1107430-2-wse@tuxedocomputers.com>
+ <76c57b22-04d3-4331-a10c-b210db5f9055@redhat.com>
+ <9da24c58-25ab-4b21-b0ed-f777970affe7@tuxedocomputers.com>
+ <de3969b9-7134-4bfd-bc65-9d5b7e53a31c@redhat.com>
+ <1331ddc4-fb74-4985-a309-87fd97d0583b@tuxedocomputers.com>
+ <e8b1c0b3-83d0-4e0a-9dad-7d59329fe3ce@tuxedocomputers.com>
+ <75e0be49-0040-4830-a115-1daea0b73f93@kernel.org>
+Content-Language: en-US
+From: Werner Sembach <wse@tuxedocomputers.com>
+In-Reply-To: <75e0be49-0040-4830-a115-1daea0b73f93@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-In i40e_dbg_command_read(), a 256-byte buffer is allocated and filled
-using snprintf(), then copied to userspace via copy_to_user().
+Hi,
 
-The issue is that snprintf() returns the number of characters that
-*Would* have been written, not the number that actually fit in the buffer.
-If the combined length of the netdev name and i40e_dbg_command_buf is
-long (e.g. 288 + 3 bytes), snprintf() still returns 291 - even though only
-256 bytes were written.
+Am 22.07.25 um 09:04 schrieb Hans de Goede:
+> Hi Werner,
+>
+> On 21-Jul-25 10:36 PM, Werner Sembach wrote:
+>> Hi,
+>>
+>> Am 15.05.25 um 14:26 schrieb Werner Sembach:
+>>> Hi,
+>>>
+>>> Am 17.03.25 um 23:23 schrieb Hans de Goede:
+>>>> Hi Werner,
+>>>>
+>>>> On 17-Mar-25 6:00 PM, Werner Sembach wrote:
+>>>>> [...]
+>>>> I think this one will apply cleanly without applying patch 1/2
+>>>> first, so no reason for a resend / v3 AFAICT.
+>>>>
+>>>> Let's wait and see what feedback Dmitry have once he can make
+>>>> some time to take a look at this.
+>>> Hope a gentle bump is ok by now?
+>>>
+>>> Best regards,
+>>>
+>>> Werner
+>> Small bump again, just so that this does not get forgotten.
+> It might be best to just resend this (rebased on the latest
+> upstream) as a standalone v3 patch (with my reviewed-by
+> added).
 
-This value is passed to copy_to_user(), which may read past the end of
-the buffer and leak kernel memory to userspace.
+kk
 
-Replacing snprintf() with scnprintf() fixes this. It returns the actual
-number of bytes written, ensuring we only copy valid data.
+Best Regards,
 
-Signed-off-by: Amir Mohammad Jahangirzad <a.jahangirzad@gmail.com>
----
- drivers/net/ethernet/intel/i40e/i40e_debugfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Werner
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_debugfs.c b/drivers/net/ethernet/intel/i40e/i40e_debugfs.c
-index 6cd9da662ae1..19a78052800f 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_debugfs.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_debugfs.c
-@@ -70,7 +70,7 @@ static ssize_t i40e_dbg_command_read(struct file *filp, char __user *buffer,
- 		return -ENOSPC;
- 
- 	main_vsi = i40e_pf_get_main_vsi(pf);
--	len = snprintf(buf, buf_size, "%s: %s\n", main_vsi->netdev->name,
-+	len = scnprintf(buf, buf_size, "%s: %s\n", main_vsi->netdev->name,
- 		       i40e_dbg_command_buf);
- 
- 	bytes_not_copied = copy_to_user(buffer, buf, len);
--- 
-2.43.0
-
+>
+> Regards,
+>
+> Hans
+>
+>
+>
+>
+>
+>
+>>>>>>> ---
+>>>>>>>     drivers/input/keyboard/atkbd.c | 12 ++++++------
+>>>>>>>     1 file changed, 6 insertions(+), 6 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/drivers/input/keyboard/atkbd.c b/drivers/input/keyboard/atkbd.c
+>>>>>>> index 3598a21d9d014..4bd6e6ef0715e 100644
+>>>>>>> --- a/drivers/input/keyboard/atkbd.c
+>>>>>>> +++ b/drivers/input/keyboard/atkbd.c
+>>>>>>> @@ -84,12 +84,12 @@ static const unsigned short atkbd_set2_keycode[ATKBD_KEYMAP_SIZE] = {
+>>>>>>>     #include "hpps2atkbd.h"    /* include the keyboard scancodes */
+>>>>>>>       #else
+>>>>>>> -      0, 67, 65, 63, 61, 59, 60, 88,  0, 68, 66, 64, 62, 15, 41,117,
+>>>>>>> -      0, 56, 42, 93, 29, 16,  2,  0,  0,  0, 44, 31, 30, 17,  3,  0,
+>>>>>>> -      0, 46, 45, 32, 18,  5,  4, 95,  0, 57, 47, 33, 20, 19,  6,183,
+>>>>>>> -      0, 49, 48, 35, 34, 21,  7,184,  0,  0, 50, 36, 22, 8,  9,185,
+>>>>>>> -      0, 51, 37, 23, 24, 11, 10,  0,  0, 52, 53, 38, 39, 25, 12,  0,
+>>>>>>> -      0, 89, 40,  0, 26, 13,  0,193, 58, 54, 28, 27,  0, 43,  0, 85,
+>>>>>>> +      0, 67, 65, 63, 61, 59, 60, 88,183, 68, 66, 64, 62, 15, 41,117,
+>>>>>>> +    184, 56, 42, 93, 29, 16,  2,  0,185,  0, 44, 31, 30, 17,  3,  0,
+>>>>>>> +    186, 46, 45, 32, 18,  5,  4, 95,187, 57, 47, 33, 20, 19,  6,183,
+>>>>>>> +    188, 49, 48, 35, 34, 21,  7,184,189,  0, 50, 36, 22, 8,  9,185,
+>>>>>>> +    190, 51, 37, 23, 24, 11, 10,  0,191, 52, 53, 38, 39, 25, 12,  0,
+>>>>>>> +    192, 89, 40,  0, 26, 13,  0,193, 58, 54, 28, 27,  0, 43,  0,194,
+>>>>>>>           0, 86, 91, 90, 92,  0, 14, 94,  0, 79,124, 75, 71,121,  0,  0,
+>>>>>>>          82, 83, 80, 76, 77, 72,  1, 69, 87, 78, 81, 74, 55, 73, 70, 99,
 
