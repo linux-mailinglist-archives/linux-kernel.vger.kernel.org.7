@@ -1,177 +1,149 @@
-Return-Path: <linux-kernel+bounces-741098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70E3EB0E007
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:11:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 708E6B0E003
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:10:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1070F56483B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:07:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70B88AA5583
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E7B92EBDE6;
-	Tue, 22 Jul 2025 15:06:32 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C21A28CF47
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 15:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E062EB5DB;
+	Tue, 22 Jul 2025 15:06:28 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01EB2EAB88
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 15:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753196791; cv=none; b=kJPzQglWKT4xHFj1yy4GhH2ohzhUnu/5NaaXP0q8Ib22HNNSBHAvrsli8CEtXx1m9HNFdslW/fIeuR45wrj912QQEpAfslMHGIMVEJAN8LnJ2isxJM9JaYMGXIYhXqrilcivnEK+9AF6MeSaln54uKaneHVWiBbS6sg+FozQlcs=
+	t=1753196787; cv=none; b=Ms+VCgzQZGrfYU+uPFf5nB3TREc3UjYAxsuhzFP1IhtIHHLj0W9dvqvkDjwf7FU6EGzBPeNfbqnC0xyW+pMrklqR5wRf36jt3DB6EarGkjrgRSIPYeaNmwePjmuRm5/LhNilbIodJb9sSCyRVnwPCwnpdpVA3UpHxH7+1vaerKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753196791; c=relaxed/simple;
-	bh=DDdUn0036EOEcs0aETvQn2pUt2pDL5Df0uvPUlfO6tQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GId0lg2KelQVDSUeQBa5TQjRyEP9fhMqdsErv2GofuquDCOkePTzAcn5lbvMJMLJuimAqnIr+4bo3hBvcozez7PfPUfGTGdWcLX0PrSvbmw/SlxhmAWupDWAyK8qcj9fYFbThMNGx6q+Bt7+pROdYENUCMlSVwHv10lVBzaHMcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 14530152B;
-	Tue, 22 Jul 2025 08:06:24 -0700 (PDT)
-Received: from localhost.localdomain (unknown [10.163.92.223])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AFC053F6A8;
-	Tue, 22 Jul 2025 08:06:25 -0700 (PDT)
-From: Dev Jain <dev.jain@arm.com>
-To: akpm@linux-foundation.org,
-	david@redhat.com
-Cc: ziy@nvidia.com,
-	baolin.wang@linux.alibaba.com,
-	lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	npache@redhat.com,
-	ryan.roberts@arm.com,
-	baohua@kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Dev Jain <dev.jain@arm.com>
-Subject: [PATCH v3 3/3] khugepaged: Optimize collapse_pte_mapped_thp() by PTE batching
-Date: Tue, 22 Jul 2025 20:35:59 +0530
-Message-Id: <20250722150559.96465-4-dev.jain@arm.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250722150559.96465-1-dev.jain@arm.com>
-References: <20250722150559.96465-1-dev.jain@arm.com>
+	s=arc-20240116; t=1753196787; c=relaxed/simple;
+	bh=1jZ0+Cej6ZpsPWurWvHhQrdO6TxHoqgG1ejRKx1MFIw=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Z2v9xS58WtnNFW+ZPWSh39HtlV5NQhSk92akb7xdxAZdqB3nWxzI+YNqGRNJEsO9/SLHlk9hbKHZhg3+/VVinlFPAZCU63mrbhKOzVWXCohtSAiiZSRhVqarlUoKldFcG31nIu+pnKqZt+5LJWy3pVNvAah5CDZ68T65auy+0f4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bmgY56zWsz6H7X6;
+	Tue, 22 Jul 2025 23:04:57 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 08056140446;
+	Tue, 22 Jul 2025 23:06:22 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 22 Jul
+ 2025 17:06:20 +0200
+Date: Tue, 22 Jul 2025 16:06:18 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: James Morse <james.morse@arm.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	"Rob Herring" <robh@kernel.org>, Ben Horgan <ben.horgan@arm.com>, Rohit
+ Mathew <rohit.mathew@arm.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+	"Zeng Heng" <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>,
+	"Carl Worth" <carl@os.amperecomputing.com>,
+	<shameerali.kolothum.thodi@huawei.com>, D Scott Phillips OS
+	<scott@os.amperecomputing.com>, <lcherian@marvell.com>,
+	<bobo.shaobowang@huawei.com>, <tan.shaopeng@fujitsu.com>,
+	<baolin.wang@linux.alibaba.com>, Jamie Iles <quic_jiles@quicinc.com>, Xin Hao
+	<xhao@linux.alibaba.com>, <peternewman@google.com>, <dfustini@baylibre.com>,
+	<amitsinght@marvell.com>, David Hildenbrand <david@redhat.com>, Rex Nie
+	<rex.nie@jaguarmicro.com>, Dave Martin <dave.martin@arm.com>, Koba Ko
+	<kobak@nvidia.com>
+Subject: Re: [RFC PATCH 25/36] arm_mpam: Register and enable IRQs
+Message-ID: <20250722160618.0000598f@huawei.com>
+In-Reply-To: <20250711183648.30766-26-james.morse@arm.com>
+References: <20250711183648.30766-1-james.morse@arm.com>
+	<20250711183648.30766-26-james.morse@arm.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Use PTE batching to optimize collapse_pte_mapped_thp().
+On Fri, 11 Jul 2025 18:36:37 +0000
+James Morse <james.morse@arm.com> wrote:
 
-On arm64, suppose khugepaged is scanning a pte-mapped 2MB THP for collapse.
-Then, calling ptep_clear() for every pte will cause a TLB flush for every
-contpte block. Instead, clear_ptes() does a contpte_try_unfold_partial()
-which will flush the TLB only for the (if any) starting and ending contpte
-block, if they partially overlap with the range khugepaged is looking at.
+> Register and enable error IRQs. All the MPAM error interrupts indicate a
+> software bug, e.g. out of range partid. If the error interrupt is ever
+> signalled, attempt to disable MPAM.
+> 
+> Only the irq handler accesses the ESR register, so no locking is needed.
+> The work to disable MPAM after an error needs to happen at process
+> context, use a threaded interrupt.
+> 
+> There is no support for percpu threaded interrupts, for now schedule
+> the work to be done from the irq handler.
+> 
+> Enabling the IRQs in the MSC may involve cross calling to a CPU that
+> can access the MSC.
+> 
+> CC: Rohit Mathew <rohit.mathew@arm.com>
+> Tested-by: Rohit Mathew <rohit.mathew@arm.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
+Sparse gives an imbalance warning in mpam_register_irqs()
 
-For all arches, there should be a benefit due to batching atomic operations
-on mapcounts due to folio_remove_rmap_ptes() and saving some calls.
+> +static int mpam_register_irqs(void)
+> +{
+> +	int err, irq, idx;
+> +	struct mpam_msc *msc;
+> +
+> +	lockdep_assert_cpus_held();
+> +
+> +	idx = srcu_read_lock(&mpam_srcu);
+> +	list_for_each_entry_srcu(msc, &mpam_all_msc, glbl_list, srcu_read_lock_held(&mpam_srcu)) {
+> +		irq = platform_get_irq_byname_optional(msc->pdev, "error");
+> +		if (irq <= 0)
+> +			continue;
+> +
+> +		/* The MPAM spec says the interrupt can be SPI, PPI or LPI */
+> +		/* We anticipate sharing the interrupt with other MSCs */
+> +		if (irq_is_percpu(irq)) {
+> +			err = request_percpu_irq(irq, &mpam_ppi_handler,
+> +						 "mpam:msc:error",
+> +						 msc->error_dev_id);
+> +			if (err)
+> +				return err;
 
-Note that we do not need to make a change to the check
-"if (folio_page(folio, i) != page)"; if i'th page of the folio is equal
-to the first page of our batch, then i + 1, .... i + nr_batch_ptes - 1
-pages of the folio will be equal to the corresponding pages of our
-batch mapping consecutive pages.
+Looks like the srcu_read_lock is still held.
 
-Signed-off-by: Dev Jain <dev.jain@arm.com>
----
- mm/khugepaged.c | 32 ++++++++++++++++++++------------
- 1 file changed, 20 insertions(+), 12 deletions(-)
+There is a DEFINE_LOCK_GUARD_1() in srcu.h so you can do
 
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index 63517ef7eafb..1ff0c7dd2be4 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1503,15 +1503,16 @@ static int set_huge_pmd(struct vm_area_struct *vma, unsigned long addr,
- int collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long addr,
- 			    bool install_pmd)
- {
-+	int nr_mapped_ptes = 0, nr_batch_ptes, result = SCAN_FAIL;
- 	struct mmu_notifier_range range;
- 	bool notified = false;
- 	unsigned long haddr = addr & HPAGE_PMD_MASK;
-+	unsigned long end = haddr + HPAGE_PMD_SIZE;
- 	struct vm_area_struct *vma = vma_lookup(mm, haddr);
- 	struct folio *folio;
- 	pte_t *start_pte, *pte;
- 	pmd_t *pmd, pgt_pmd;
- 	spinlock_t *pml = NULL, *ptl;
--	int nr_ptes = 0, result = SCAN_FAIL;
- 	int i;
- 
- 	mmap_assert_locked(mm);
-@@ -1625,11 +1626,15 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long addr,
- 		goto abort;
- 
- 	/* step 2: clear page table and adjust rmap */
--	for (i = 0, addr = haddr, pte = start_pte;
--	     i < HPAGE_PMD_NR; i++, addr += PAGE_SIZE, pte++) {
-+	for (i = 0, addr = haddr, pte = start_pte; i < HPAGE_PMD_NR;
-+	     i += nr_batch_ptes, addr += nr_batch_ptes * PAGE_SIZE,
-+	     pte += nr_batch_ptes) {
-+		int max_nr_batch_ptes = (end - addr) >> PAGE_SHIFT;
- 		struct page *page;
- 		pte_t ptent = ptep_get(pte);
- 
-+		nr_batch_ptes = 1;
-+
- 		if (pte_none(ptent))
- 			continue;
- 		/*
-@@ -1643,26 +1648,29 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long addr,
- 			goto abort;
- 		}
- 		page = vm_normal_page(vma, addr, ptent);
-+
- 		if (folio_page(folio, i) != page)
- 			goto abort;
- 
-+		nr_batch_ptes = folio_pte_batch(folio, pte, ptent, max_nr_batch_ptes);
-+
- 		/*
- 		 * Must clear entry, or a racing truncate may re-remove it.
- 		 * TLB flush can be left until pmdp_collapse_flush() does it.
- 		 * PTE dirty? Shmem page is already dirty; file is read-only.
- 		 */
--		ptep_clear(mm, addr, pte);
--		folio_remove_rmap_pte(folio, page, vma);
--		nr_ptes++;
-+		clear_ptes(mm, addr, pte, nr_batch_ptes);
-+		folio_remove_rmap_ptes(folio, page, nr_batch_ptes, vma);
-+		nr_mapped_ptes += nr_batch_ptes;
- 	}
- 
- 	if (!pml)
- 		spin_unlock(ptl);
- 
- 	/* step 3: set proper refcount and mm_counters. */
--	if (nr_ptes) {
--		folio_ref_sub(folio, nr_ptes);
--		add_mm_counter(mm, mm_counter_file(folio), -nr_ptes);
-+	if (nr_mapped_ptes) {
-+		folio_ref_sub(folio, nr_mapped_ptes);
-+		add_mm_counter(mm, mm_counter_file(folio), -nr_mapped_ptes);
- 	}
- 
- 	/* step 4: remove empty page table */
-@@ -1695,10 +1703,10 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long addr,
- 			: SCAN_SUCCEED;
- 	goto drop_folio;
- abort:
--	if (nr_ptes) {
-+	if (nr_mapped_ptes) {
- 		flush_tlb_mm(mm);
--		folio_ref_sub(folio, nr_ptes);
--		add_mm_counter(mm, mm_counter_file(folio), -nr_ptes);
-+		folio_ref_sub(folio, nr_mapped_ptes);
-+		add_mm_counter(mm, mm_counter_file(folio), -nr_mapped_ptes);
- 	}
- unlock:
- 	if (start_pte)
--- 
-2.30.2
+	guard(srcu)(&mpam_srcu, idx);
 
+I think and not worry about releasing it in errors or the good path.
+
+> +
+> +			msc->reenable_error_ppi = irq;
+> +			smp_call_function_many(&msc->accessibility,
+> +					       &_enable_percpu_irq, &irq,
+> +					       true);
+> +		} else {
+> +			err = devm_request_threaded_irq(&msc->pdev->dev, irq,
+> +							&mpam_spi_handler,
+> +							&mpam_disable_thread,
+> +							IRQF_SHARED,
+> +							"mpam:msc:error", msc);
+> +			if (err)
+> +				return err;
+> +		}
+> +
+> +		msc->error_irq_requested = true;
+> +		mpam_touch_msc(msc, mpam_enable_msc_ecr, msc);
+> +		msc->error_irq_hw_enabled = true;
+> +	}
+> +	srcu_read_unlock(&mpam_srcu, idx);
+> +
+> +	return 0;
+> +}
 
