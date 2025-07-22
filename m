@@ -1,114 +1,123 @@
-Return-Path: <linux-kernel+bounces-741006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30879B0DEA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:31:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBB20B0DEC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:35:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA8861883722
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:28:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEF2FAC0425
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:28:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E495928BA96;
-	Tue, 22 Jul 2025 14:28:15 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E2F92E8E16;
+	Tue, 22 Jul 2025 14:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="eZtIqqwp";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="QWzlBzep"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2158221D3CD
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 14:28:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD473195
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 14:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753194495; cv=none; b=FKYAPQtkZnciHDAtq7TOlB9Bjtf5oSkqSgR6XM6i0ZcD3pYZtFOtPLs71OaN40GWcBlbAQwTuO7tihTpryfXNiYi7ee7dEYrocI3yEpRtxS9HnZg6Rj6kp4bsv98qqy+VM6EeBY+FfprdR4RhaphMQW8P+ajTlbkTblyXGX1l6o=
+	t=1753194507; cv=none; b=idRZIVA/Uxo6wY0Gief3hguC52g5yCMIIJnX1EqKBmEQjhKvIz52fN784RmPIrZYSUz+/NKLLCNhOZObeqh+tfaMnqFtC4OQmEepj4P+Alatcgg74DObV7wORBHLTdaYk0A68pYOUhUYAswXXJ/WL3a4DlSAzVzd1vVkjpvIyPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753194495; c=relaxed/simple;
-	bh=B3bygHlyEuQarYDMb68vgIOtWnbigauGCxhWDgOrMho=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m9EzSSdfiA2xUm3dw/t7qDJgEeN1NNhnLPdSuFl68ZJqCci+ceQIpaoW3t6+oHpIraw1BqC3v9XqIvOEhbMRcyZoVNbofjRqCTWTuGWLmvVZAOffdqbU+2Nfekp7p8T8IZ60qrpnNcTyGiliga/c6vLvq9Q/9CfBBsI4msQXDsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bmffD2LSjz6L4sV;
-	Tue, 22 Jul 2025 22:24:20 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id A7A961402C8;
-	Tue, 22 Jul 2025 22:28:10 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 22 Jul
- 2025 16:28:09 +0200
-Date: Tue, 22 Jul 2025 15:28:07 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: James Morse <james.morse@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	"Rob Herring" <robh@kernel.org>, Ben Horgan <ben.horgan@arm.com>, Rohit
- Mathew <rohit.mathew@arm.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
-	"Zeng Heng" <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>,
-	"Carl Worth" <carl@os.amperecomputing.com>,
-	<shameerali.kolothum.thodi@huawei.com>, D Scott Phillips OS
-	<scott@os.amperecomputing.com>, <lcherian@marvell.com>,
-	<bobo.shaobowang@huawei.com>, <tan.shaopeng@fujitsu.com>,
-	<baolin.wang@linux.alibaba.com>, Jamie Iles <quic_jiles@quicinc.com>, Xin Hao
-	<xhao@linux.alibaba.com>, <peternewman@google.com>, <dfustini@baylibre.com>,
-	<amitsinght@marvell.com>, David Hildenbrand <david@redhat.com>, Rex Nie
-	<rex.nie@jaguarmicro.com>, Dave Martin <dave.martin@arm.com>, Koba Ko
-	<kobak@nvidia.com>, Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [RFC PATCH 05/36] ACPI / PPTT: Add a helper to fill a cpumask
- from a processor container
-Message-ID: <20250722152807.000069d3@huawei.com>
-In-Reply-To: <20250711183648.30766-6-james.morse@arm.com>
-References: <20250711183648.30766-1-james.morse@arm.com>
-	<20250711183648.30766-6-james.morse@arm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1753194507; c=relaxed/simple;
+	bh=JXdRMsGOqPckUaxt3XKUqYvo7xGP2i9WBfQTeTjMbHk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iNSXPubRf4gd2ijIvMAsl0OyrotWuEhtzcobnKhQF769jc7M1GltTxYmpPh9YDhi8Fgdmqb1bk+xk4jRSxbsRzNwEyZXV7Uwh7J9PKFG8/gFzznp1PmNimmx0VlWHG+cwLcg4i4W3fEOq6zBskvFx6ip+9/KoPqq5csVJXOrN6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=eZtIqqwp; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=QWzlBzep; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bmfkt5gPlz9sqs;
+	Tue, 22 Jul 2025 16:28:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1753194502;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QoZeSq3Ft9zf022HB19vAIpK1dHjyTYwqBtZvyRFCXI=;
+	b=eZtIqqwp/7w6FnBDYMq9ulsCseyYSJI6D81LFNCvmmCN+Eh4peo1IvAV1sDxLtyVYQXsra
+	lKfqeZ92TJqSGet9uB1onzjqbe5WzYx6VAf/SM8crVDKIpItL/SbSb7GaDK2UghkLyj9YQ
+	HI2JWfx0nV6zIoF6bZe3ndqBZcTTPQ2dJvuqJYHJh6O1bg+z5Icqr8aDwGT9EC3FO7Z3gb
+	q8rxT9XdTsQ0TZc2SJR0dPKgE7tkvBmEzl2WsVKovlFmYye9KboGwLOPHSWjqUN8s2FoFl
+	xKFUuNGRNu2+cKK8r/YgG6t68xb77pnA36R6LTtLSbXhP/TEj1wr92WDk5IHDg==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=QWzlBzep;
+	spf=pass (outgoing_mbo_mout: domain of marek.vasut@mailbox.org designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=marek.vasut@mailbox.org
+Message-ID: <62383ff7-0a14-4f15-818b-f5e5c56332c5@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1753194500;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QoZeSq3Ft9zf022HB19vAIpK1dHjyTYwqBtZvyRFCXI=;
+	b=QWzlBzepyhq2y1E5mc3THppQod1M4AOspjRIxVn/hXKoPsFj0opxOLv2xncbqHqdDKgiZ1
+	rEF1juluq6IUvCPSfESIWmA+xZm87wPSdIPEpx1Cuo47u+yn8hoCT0Avwx/VxZoWqHIDiU
+	HrnJKGuJjA8S6KG5xpL1oRXDiKzVuB/LFqxbRA+w4xsZAWGYukQlWVZZMwCfECjHXcjoHi
+	TnaU/e6BHnkazTUm4PVmkqGG4vctDbqPbmTs4j8PJIge6RJ1dAHCN1LT7J53EkIwsPqACP
+	p6kgupxN4nPLayYLh8kySqki7J1CuOfyu07NWNB1BWImY1elWE7KWDnz9fhLIQ==
+Date: Tue, 22 Jul 2025 16:28:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Subject: Re: [PATCH v2] mtd: spi-nor: winbond: Add support for W77Q51NW
+To: Michael Walle <mwalle@kernel.org>,
+ Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-mtd@lists.infradead.org, Miquel Raynal <miquel.raynal@bootlin.com>,
+ Pratyush Yadav <pratyush@kernel.org>, Richard Weinberger <richard@nod.at>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Vignesh Raghavendra <vigneshr@ti.com>, linux-kernel@vger.kernel.org
+References: <20250721202257.83936-1-marek.vasut+renesas@mailbox.org>
+ <9eabfe619554cbdd493086dcffef8f44@kernel.org>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <9eabfe619554cbdd493086dcffef8f44@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: 9hjry69xq8ezz76u599fti8f57agswgn
+X-MBO-RS-ID: 39ef04fce8a48af26b9
+X-Rspamd-Queue-Id: 4bmfkt5gPlz9sqs
 
-On Fri, 11 Jul 2025 18:36:17 +0000
-James Morse <james.morse@arm.com> wrote:
+On 7/22/25 10:43 AM, Michael Walle wrote:
+> Hi Marek,
 
-> The PPTT describes CPUs and caches, as well as processor containers.
-> The ACPI table for MPAM describes the set of CPUs that can access an MSC
-> with the UID of a processor container.
->=20
-> Add a helper to find the processor container by its id, then walk
-> the possible CPUs to fill a cpumask with the CPUs that have this
-> processor container as a parent.
->=20
-> CC: Dave Martin <dave.martin@arm.com>
-> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
+Hi,
 
+>> --- a/drivers/mtd/spi-nor/winbond.c
+>> +++ b/drivers/mtd/spi-nor/winbond.c
+>> @@ -343,6 +343,10 @@ static const struct flash_info 
+>> winbond_nor_parts[] = {
+>>          .id = SNOR_ID(0xef, 0x80, 0x20),
+>>          .name = "w25q512nwm",
+>>          .otp = SNOR_OTP(256, 3, 0x1000, 0x1000),
+>> +    }, {
+>> +        /* W77Q51NW */
+>> +        .id = SNOR_ID(0xef, 0x8a, 0x1a),
+>> +        .otp = SNOR_OTP(256, 3, 0x1000, 0x1000),
+> 
+> Did you also test the OTP read and write? I'd guess so, because otherwise
+> you wouldn't need that entry at all, right? Or is it because of the
+> winbond_nor_late_init() which will be called as a manufacturer fixup?
+> In that case we could do the same as in commit afe1ea1344bb ("mtd: spi-nor:
+> add support for Macronix Octal flash").
 
-> +/**
-> + * acpi_pptt_get_cpus_from_container() - Populate a cpumask with all CPU=
-s in a
-> + *                                       processor containers
-> + * @acpi_cpu_id:	The UID of the processor container.
-> + * @cpus		The resulting CPU mask.
-Missing colon.
+I have limited supply of these devices, so OTP is untested. The flash 
+does have OTP registers, that's why the .otp entry is there. Why should 
+I remove it if the OTP registers are in the chip ?
 
-=46rom a W=3D1 build (and hence kernel-doc warning).
-> + *
-> + * Find the specified Processor Container, and fill @cpus with all the c=
-pus
-> + * below it.
-> + *
-> + * Not all 'Processor' entries in the PPTT are either a CPU or a Process=
-or
-> + * Container, they may exist purely to describe a Private resource. CPUs
-> + * have to be leaves, so a Processor Container is a non-leaf that has the
-> + * 'ACPI Processor ID valid' flag set.
-> + *
-> + * Return: 0 for a complete walk, or an error if the mask is incomplete.
-> + */
-> +int acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t *cpus)
+-- 
+Best regards,
+Marek Vasut
 
