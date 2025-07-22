@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-740681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02CB9B0D7B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:06:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B611B0D7DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:09:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CC6D560091
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:06:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93F6617562F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9B82C159F;
-	Tue, 22 Jul 2025 11:06:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20712E3397;
+	Tue, 22 Jul 2025 11:07:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eI6CL/zW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gW45WRJ6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EADE2D77EF;
-	Tue, 22 Jul 2025 11:06:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D8D28C2B2;
+	Tue, 22 Jul 2025 11:07:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753182391; cv=none; b=a+4uZcH11cINDNxzGzhWkKUeL/wD+kWQXzTXV5AxPJh52tMa0ulaRGcExeItLQsJNuJDO71Dw0Qs3xGpBWDtCkUD0KPUsRgyvBM35fRWKHY7ZPdzD29cHDj8OhGaKqz9iumGVh2mQY1qC4dTAFaSUbZCNnCmvTyyLplEGpfTHyU=
+	t=1753182468; cv=none; b=HO0541ePuy2NhNmaCudXcbeLJHMlUaHk9syEweaKOoTh1cWGxL9UhPwqowCuXkSmbC66r9noNVA0/HL+8kadPo6miUT5ZR8CC1IZ4Mm8Wsusz3JNr3M5GNWec91CrZNR4ZTJ/wjBASUeelareZWD9mXYc/nL5tnIJaAmGzeNjiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753182391; c=relaxed/simple;
-	bh=WmTyzbLH4oLKJgpVVgk7hwxo8f7Kv2pNKzivxS+yqXs=;
+	s=arc-20240116; t=1753182468; c=relaxed/simple;
+	bh=/14uXHwAwgSzAFwwMlCyP9/kFWZdtLnT4aQT+J/gJeM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fgtXql4hTl2oEy/mmtqWID300LKzGuwf44G4pPOx4E4NRMBMXoD3XLn4jeXTYQtKqFjWqM8nNd/BW8TIeHUpqZ5Zxe8MCLOE12bFKzydy/zUaW0Xmi2lTtiw1XAI7WVwDm18c3BLslBJwgByVPwrWyr2fNjVEfevcn4kLp2dmbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eI6CL/zW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70AC8C4CEF4;
-	Tue, 22 Jul 2025 11:06:26 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=LzkVDtSq+MVevwrhk3/PA6sgn2lv1JFXc4gMb7YpYl33XzrRnF3GQ9pI8ULLkYM4j39aszUP7HilwZINi+zkX+16aBmrpK0R/uSKCwog3+Bm/c6fwgWCasXO2kjLj1HeWtCGsHgb4npsSmMWFsuZrk3nWkRiNVVSAlM2pQwBpeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gW45WRJ6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8896CC4CEEB;
+	Tue, 22 Jul 2025 11:07:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753182390;
-	bh=WmTyzbLH4oLKJgpVVgk7hwxo8f7Kv2pNKzivxS+yqXs=;
+	s=k20201202; t=1753182467;
+	bh=/14uXHwAwgSzAFwwMlCyP9/kFWZdtLnT4aQT+J/gJeM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eI6CL/zW2RxWAh0gdUpOCkIIZ2CjTyOMwXT6Kw0khI+yLqpmGmxphPQRrXePcJ+wN
-	 BAeP+sRmRe/0UhT/lOswVwyEWeWyHgcSCNI7JBlPuP7ZFH+uLcE6KaGUhCrOB9VWBx
-	 2TAe6VRpAjIa2trToznqyJ2bsGx0nCZjgdG15Jo7tV0wX++5kX9W+/a0+2m2YM4e4J
-	 ajA7v50mvLbelDh4reRr1XOmnITRN7elYcCbInXs49jhdR606/XlhkHFMpbN/R1PrJ
-	 JgHJi3O4XyNbU8UNPimcwpu/e5C+KyeyEPmQpZXRKh1DxP5D0VD62IoGmIFfQxNG0P
-	 1/BN7KiExH75w==
-Message-ID: <a006f099-578f-45aa-b165-64e28b8f930e@kernel.org>
-Date: Tue, 22 Jul 2025 13:06:24 +0200
+	b=gW45WRJ6520Gtzde2MTNJNG/WTRctoEQS/jOoYMh5KKIZkAcxGIJT6aa/TV3WyHmK
+	 X2fXDNM6iwYTuSZkQndh1aBuyrg14w4hVGkLtvP29O/SdOILBp3UT6OlD704hPR0o5
+	 9NyImMd6XXmkcJ96Sb6OSxMTgbV1LMoBtKFdslSQv5LYY0JuWzW/RHdM1wS2AW2gQZ
+	 DLgtz0SytHpEebb6LhMrlbB8bFi3V0Q2A+3ZvlPa2pkU/CHXywOobI4ZsuhV/DgAcH
+	 aICP06t3ew7J6TupHEJEdFnMCHNCV8RGaSqvN8vj3xg878T2+9dGxJwYuagZt53cwa
+	 mazM7CaZESpsg==
+Message-ID: <07ac9244-c4cb-441e-83c1-20dfd01b2fe7@kernel.org>
+Date: Tue, 22 Jul 2025 13:07:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,23 +49,27 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] ASoC: codecs: wsa883x: Handle shared reset GPIO
- for WSA883x speakers
-To: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-Cc: Srinivas Kandagatla <srini@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, quic_pkumpatl@quicinc.com,
- kernel@oss.qualcomm.com
-References: <20250718104628.3732645-1-mohammad.rafi.shaik@oss.qualcomm.com>
- <20250718104628.3732645-3-mohammad.rafi.shaik@oss.qualcomm.com>
- <20250721-hairy-aardwolf-of-enterprise-bbc99f@kuoka>
- <d614d8e3-963d-4d34-9b15-1544c7a22cf0@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH v1 0/3] spidev: introduce trivial abb sensor
+ device
+To: hs@denx.de, Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Andrei Lalaev <andrey.lalaev@gmail.com>,
+ Chanh Nguyen <chanh@os.amperecomputing.com>,
+ Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>,
+ Grant Peltier <grantpeltier93@gmail.com>, Guenter Roeck
+ <linux@roeck-us.net>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Michal Simek <michal.simek@amd.com>,
+ Naresh Solanki <naresh.solanki@9elements.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Rob Herring <robh@kernel.org>, Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org
+References: <20250719063355.73111-1-hs@denx.de>
+ <175311337130.327079.7374455187420344577.b4-ty@kernel.org>
+ <d677ecd9-42d6-43fe-8fe1-a5afd4d270e2@kernel.org>
+ <8a8106ea-83d3-e02a-9ae7-ea4a66e4c248@denx.de>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -111,122 +115,71 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <d614d8e3-963d-4d34-9b15-1544c7a22cf0@oss.qualcomm.com>
+In-Reply-To: <8a8106ea-83d3-e02a-9ae7-ea4a66e4c248@denx.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 22/07/2025 12:56, Mohammad Rafi Shaik wrote:
+On 22/07/2025 06:05, Heiko Schocher wrote:
+> Hello Krzysztof,
 > 
-> 
-> On 7/21/2025 1:53 PM, Krzysztof Kozlowski wrote:
->> On Fri, Jul 18, 2025 at 04:16:28PM +0530, Mohammad Rafi Shaik wrote:
->>> On some Qualcomm platforms such as QCS6490-RB3Gen2, the multiple
->>> WSA8830/WSA8835 speakers share a common reset (shutdown) GPIO.
->>> To handle such cases, use the reset controller framework along
->>> with the "reset-gpio" driver.
+> On 21.07.25 18:24, Krzysztof Kozlowski wrote:
+>> On 21/07/2025 17:56, Mark Brown wrote:
+>>> On Sat, 19 Jul 2025 08:33:51 +0200, Heiko Schocher wrote:
+>>>> This series introduces the changes needed for trivial spi
+>>>> based sensors from ABB, currently operated from userspace.
+>>>>
+>>>> The last patch adds the spidevices to the DTS files, already
+>>>> in mainline.
+>>>>
+>>>> make dtbs_check showed no errors/warnings for the dts files
+>>>>
+>>>> [...]
 >>>
->>> Register devm action to safely disable the regulator on device removal
->>> to prevents a potential release warning from _regulator_put().
+>>> Applied to
+>>>
+>>>     https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+>>>
+>>> Thanks!
+>>>
+>>> [1/3] dt-bindings: trivial-devices: Document ABB sensors
+>>>        commit: aad2f87cbcab56b322109d26d7b11842a09df91f
+>>> [2/3] spi: spidev: Add an entry for the ABB spi sensors
+>>>        commit: d60f7cab7c04944a79af16caa43c141e780a59c6
+>>>
 >>
->> It is not possible to remove the device - suppress bind attrs. How did
->> you trigger that?
 >>
-> Ack,
-> 
-> I encountered the warning as regulator was being released unexpectedly,
-> triggering _regulator_put() warnings. While the device itself isn't 
-> removed, Registering the devm action ensures safe cleanup without 
-> triggering warnings.
-
-Logs are cut - you do not see the most important part, who puts the
-regulator?
-
-How unregistering regulator solves the incomplete get/put paths? It
-feels like you are hiding real problem instead of fixing it.
-
-> 
-> Please check the below logs.
-> 
-> I could use some suggestions for this issue. please help with some 
-> suggestions how i can approve this design.
-> 
-> Thanks,
-> Rafi.
-
-
-...
-
-> [   10.679294][   T90] ------------[ cut here ]------------
-> [   10.684772][   T90] WARNING: CPU: 1 PID: 90 at 
-> /drivers/regulator/core.c:2450 _regulator_put+0x50/0x60
-> [   10.694344][   T90] Modules linked in: snd_soc_hdmi_codec 
-> phy_qcom_edp venus_dec venus_enc videobuf2_dma_contig rpmsg_ctrl 
-> qrtr_smd fastrpc rpmsg_char videobuf2_memops qcom_pd_mapper nb7vpq904m 
-> msm lontium_lt9611uxc ucsi_glink typec_ucsi pmic_glink_altmode 
-> qcom_battmgr aux_hpd_bridge ath11k_ahb ath11k hci_uart rtc_pm8xxx btqca 
-> coresight_stm bluetooth qcom_pon stm_core venus_core pwrseq_qcom_wcn 
-> drm_exec mac80211 ocmem v4l2_mem2mem gpu_sched videobuf2_v4l2 videodev 
-> nvmem_qcom_spmi_sdam qcom_spmi_adc_tm5 snd_soc_sc8280xp 
-> drm_display_helper qcom_vadc_common snd_soc_qcom_sdw coresight_tmc 
-> snd_soc_qcom_common videobuf2_common qcom_stats coresight_etm4x 
-> qcom_q6v5_pas phy_qcom_qmp_combo usb_f_qdss mc drm_dp_aux_bus 
-> ecdh_generic qcom_pil_info qcom_q6v5 ecc coresight_replicator aux_bridge 
-> coresight_csr qcom_sysmon coresight_funnel pwrseq_core gpi typec 
-> i2c_qcom_geni qcom_common coresight icc_bwmon llcc_qcom qcom_glink_smem 
-> qcrypto pinctrl_sc7280_lpass_lpi mdt_loader snd_soc_lpass_wsa_macro 
-> sha256_generic pinctrl_lpass_lpi
-> [   10.694524][   T90]  snd_soc_lpass_va_macro display_connector 
-> snd_soc_lpass_macro_common authenc drm_kms_helper libdes qrtr libarc4 
-> icc_osm_l3 qcom_rng pmic_glink cfg80211 rfkill drm fuse ipv6
-> [   10.804083][   T90] CPU: 1 UID: 0 PID: 90 Comm: kworker/u32:4 Not 
-> tainted 6.14.0 #1
-> [   10.811959][   T90] Hardware name: Qualcomm Technologies, Inc. 
-> Robotics RB3gen2 (DT)
-> [   10.819920][   T90] Workqueue: events_unbound deferred_probe_work_func
-> [   10.826643][   T90] pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT 
-> -SSBS BTYPE=--)
-> [   10.834510][   T90] pc : _regulator_put+0x50/0x60
-> [   10.839362][   T90] lr : regulator_put+0x30/0x48
-> [   10.844118][   T90] sp : ffff8000809e3670
-> [   10.848244][   T90] x29: ffff8000809e3670 x28: 0000000000000000 x27: 
-> ffff70941a04a080
-> [   10.856300][   T90] x26: 0000000000000000 x25: ffffbfa860a9bee8 x24: 
-> ffffbfa860e79cb0
-> [   10.864354][   T90] x23: ffff709406e62640 x22: ffff709418668808 x21: 
-> ffff8000809e3710
-> [   10.872409][   T90] x20: ffff709415e81840 x19: ffffbfa86119b680 x18: 
-> 00000000ffffffff
-> [   10.880462][   T90] x17: ffffbfa86013d058 x16: ffffbfa8601cbac4 x15: 
-> ffff709419a70b48
-> [   10.888517][   T90] x14: 0000000000000000 x13: ffff709400032b10 x12: 
-> 0000000000000000
-> [   10.896573][   T90] x11: 0000000000000000 x10: ffffbfa85fdbcc60 x9 : 
-> ffffbfa85fdbc7e0
-> [   10.904627][   T90] x8 : ffff709418668ab0 x7 : ffff709418668ab0 x6 : 
-> ffff709418668ab0
-> [   10.912676][   T90] x5 : ffff709418668ab0 x4 : ffff709418668ab0 x3 : 
-> ffff709415e807c0
-> [   10.920727][   T90] x2 : ffff709406e62640 x1 : 0000000000000001 x0 : 
-
-Everything above is irrelevant.
-
-> ffff709415e81840
-> [   10.928781][   T90] Call trace:
-> [   10.932024][   T90]  _regulator_put+0x50/0x60 (P)
-> [   10.936877][   T90]  regulator_put+0x30/0x48
-> -----------
-
-And this is only relevant information which tells nothing. Are you sure
-you pasted FULL log?
-
-> 
-> Thanks & Regards,
-> Rafi.
-> 
->> Best regards,
->> Krzysztof
+>> That's unexpected, Mark. Patches received two objections/comments and I
+>> don't think discussion was resolved.
 >>
+>> ABB is huge company, probably making hundreds or more of sensors. The
+>> patchset basically claims that all of them work with spidev. It does not
+>> providing any model names or details, so it seems really incomplete to
+>> call them trivial devices.
 > 
+> I do not know how many different sensors they have, nor if that department can
+> speak for the whole company...
+
+Considering how big company is, they could have 1 or 1000 sensors.
+
+> 
+> What I have as information is:
+> https://lore.kernel.org/linux-spi/2477dc64-92a0-9dc9-d168-56646d0d796e@denx.de/
+> 
+> and I get no more information about them currently. May I should
+> add some sort of trivial into compatible name? Something like
+> 
+> "abb,spi-trivial-sensor"
+> or
+> "abb,spidev-trivial-sensor"
+
+No, you need model numbers.
+
+> 
+> which makes it clearer, that only ABB trivial sensor, controlled through spidev
+> driver, is connected here?
+
+No, what is trivial? Which one is trivial and which one is not? How one
+judges that one sensor should go here and other should not?
 
 
 Best regards,
