@@ -1,165 +1,180 @@
-Return-Path: <linux-kernel+bounces-740285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADB9DB0D244
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:57:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66732B0D241
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:57:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 628D11AA6A8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:57:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C4361AA8952
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4633B2BE7CC;
-	Tue, 22 Jul 2025 06:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD7028B4FA;
+	Tue, 22 Jul 2025 06:56:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="jLm3ReU3"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7378B288531
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 06:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CpfcgUnu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B986288531;
+	Tue, 22 Jul 2025 06:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753167389; cv=none; b=lXIepygBo/bkk61i5y90Ksw/6OBmu8BU+KxMaZ2mtE74lOi3Q0SVrBFwvLK97J6KevIX5RpMF7ujMzpFwLVYqRAucSVeElERdYj/Hz49GY70GDnPVLbEEZROOFJr+8wfnTKsmr4fp+/iynpG9iXK1DymIar+FzOn54UEKKKBZpI=
+	t=1753167361; cv=none; b=eiblMF0NaWZeKcDKG3HuFak0dGEIvvCBC+0Bt8yAM4gxP7GBhsxU8UJliQnKT0CqE+1yl2XZOTfwsqe+gVU8o81Y9pojwDCMkGpX3WlaM7nDhVToa7uyQHBh+mTrINmoprr7O5aavvbnJCd46PpYC/6n2R5i72IW+RLL2xXLRhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753167389; c=relaxed/simple;
-	bh=a61F7LqyyZ88hlE8b82eUkHYVRSQ4f/MKO5zAqlG+a0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=sZag/JzCsW3HaqgFeL+Vnybkdsx5nfUlC5aPIge69s8/mBF3SsV2sinThggthtVPKnmeUQdctnmIO/U+DX0xjL8wBsgPPxX6DsxNoidPWmVolrliIvmkEe537nB0ASiD+XBXUr5TJsZdj9yzqsOm243DHjX5ng+nVAnwEYP4j00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=jLm3ReU3 reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=Od2N/35x0n354N5QbOs1x7Zwbn1xkujRTkM0QU+Krc4=; b=j
-	Lm3ReU3BJJa092GingCNVpiE8NPy8AFOpwXf9oyRdkpHwZ4kPJeWedm/vN9X79CS
-	u92+uU4vb+6usS+PEElSMslBVDDtSk+lg3D8OjakzMRt5ogj71Lcl55XAmt13xpV
-	Q2kvPEymIbedrkQ1cpEhHPHmjiwrp1LKpZddxZ1O0g=
-Received: from andyshrk$163.com ( [58.22.7.114] ) by
- ajax-webmail-wmsvr-40-106 (Coremail) ; Tue, 22 Jul 2025 14:55:06 +0800
- (CST)
-Date: Tue, 22 Jul 2025 14:55:06 +0800 (CST)
-From: "Andy Yan" <andyshrk@163.com>
-To: "Cristian Ciocaltea" <cristian.ciocaltea@collabora.com>
-Cc: "Algea Cao" <algea.cao@rock-chips.com>,
-	"Sandy Huang" <hjc@rock-chips.com>,
-	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-	"Andy Yan" <andy.yan@rock-chips.com>,
-	"Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
-	"Maxime Ripard" <mripard@kernel.org>,
-	"Thomas Zimmermann" <tzimmermann@suse.de>,
-	"David Airlie" <airlied@gmail.com>,
-	"Simona Vetter" <simona@ffwll.ch>,
-	"Andrzej Hajda" <andrzej.hajda@intel.com>,
-	"Neil Armstrong" <neil.armstrong@linaro.org>,
-	"Robert Foss" <rfoss@kernel.org>,
-	"Laurent Pinchart" <Laurent.pinchart@ideasonboard.com>,
-	"Jonas Karlman" <jonas@kwiboo.se>,
-	"Jernej Skrabec" <jernej.skrabec@gmail.com>, kernel@collabora.com,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re:Re: [PATCH 1/5] drm/rockchip: vop2: Add high color depth support
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20250519(9504565a)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <c5624dad-93cb-4cc3-88ad-808dcc43274d@collabora.com>
-References: <20250721-rk3588-10bpc-v1-0-e95a4abcf482@collabora.com>
- <20250721-rk3588-10bpc-v1-1-e95a4abcf482@collabora.com>
- <3ceb2c70.2145.1982ff28b9c.Coremail.andyshrk@163.com>
- <c5624dad-93cb-4cc3-88ad-808dcc43274d@collabora.com>
-X-NTES-SC: AL_Qu2eAf2duEsr4CKQZekfmUkTh+o2Xca5uf0j3YBWOZh+jCDp+QI/WUd7PHfV+c6FAj2WqyCvXhFv2v9ITLdpdJIwnenVIiESySmfHn87IETmow==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1753167361; c=relaxed/simple;
+	bh=DqE2r+jnLUTL7QjlcN7tboq45VqA22jH4eIVD8o4Gmo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QAJgP20a1duVeppOqeal2e+DlUQ49vNLLuIzhW2wJ9VfGd9Q9ReBA3bS2yIttHRwmIO+oXx5OM3w8k/iMi3VkJ/trhvV8btukQ4rk1T3l5v8yBDll3Vqy3dEgR00YTrNKG/tdXfZhM0zyOjt8wiHo6H9Od/YA+MuTwcte1dhiFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CpfcgUnu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB071C19421;
+	Tue, 22 Jul 2025 06:56:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753167360;
+	bh=DqE2r+jnLUTL7QjlcN7tboq45VqA22jH4eIVD8o4Gmo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=CpfcgUnuDL0Vl921O+6i/yShR++00pNLOKABN64TGoQv08s4JWDaq5R787TzRwPYd
+	 SOxP3mvcTg3o5UodLqlybzcfO2KW0UIPKod6tyjXn4Q6f0Jg20Bo4EcbVyst6PFIeD
+	 9wwLag5HZhkuEkGdG4rGL0/xDa1dd1XF4wE0tl/b+CrzT64kGYr4RZg1sRlNLV6OW9
+	 D1EcUuEM2t8ys5AutC5biwDJeSbkbVn8adA+/943wMPAxGJivryo7aGbp+SI8Q2V02
+	 kg6rNPNzOZNNl41J5VZzJI8EAO2Ut8rnz8gAHCFuXdd0jodm+XgB+V+DD74LOgNTj5
+	 FmJF7Vu5xhdxg==
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-32b7f41d3e6so48641711fa.1;
+        Mon, 21 Jul 2025 23:56:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUX5wKbZm2IOtUum/OGqvpO4z6HuCoB1LDU2yLwkY/f5Plsi8y4zE7js47QLNR0MkFLXMM=@vger.kernel.org, AJvYcCVDFvz1UDnN4bfMZaZgoSiBU61uNCyrxz+1ErMzitvXnzAlZWI9i5+nvxqxh5s7fy2Laa8PrZJbca+7@vger.kernel.org, AJvYcCVXWLC8kFscT4NpsDZZFxDbZ1pu5IWgbTG27fSBGPQgOFAhz6tYiTgQZGgiFozgYMae+vl17pTXVFmX2O5WaB9jXRhz/g==@vger.kernel.org, AJvYcCVfWZPG7npEyTbMf5CuHA0vK3Bh81fIGfE5oziQZ9WMjmNkuKAYdW+D81lLZlHoZy6rErgEY+L/QCHc@vger.kernel.org, AJvYcCVj6WVTPqRmsxR9US0Joe4xnrPVkYsbsYT++zuIpmTRkEHX9xvIqIZ7MyFjVPnW3CqfuvbKMr5vEoLa6A==@vger.kernel.org, AJvYcCWIhHeca4enoslA8mdW5sv2IpglC0O/kcNO1B+dftXygCOgwvIKyfDo3YJI5TkOiCO80vNC+35WXCRown6gjbS4SyGc@vger.kernel.org, AJvYcCWKpdWnXbrCDuydrQBZwMHAUbEn6sGmeLTp+AYxZyVQ+HylMHErW7RpIkJHS8eog07E4je8+5aK+LCcalpzfDgM@vger.kernel.org, AJvYcCWWRMDezKzELWTei7j8lwehVzYU2wXXzGpbEo9LsULQJqvW/sAJPS8rUcyMNoX/SLuhruyJ0kaXOfp1Q1wH@vger.kernel.org, AJvYcCWaFIstkBLEsbsyiPCjVFAr09vbqxYy8dhM+o9xHEbwxdiirKcP4bmleBRy7fZerOWHI+VknG0EVklZ07EU@vger.kernel.org, AJvYcCWwTRRT
+ 6vJOEDwauzGDPFuIsF6zvAqUmVu976G21HrW9NMF8co5qYnVLJeRX66VOCgFq0Bw717UdQRQGTUdWBC64c/Try4J@vger.kernel.org, AJvYcCWyes6iceGphS7jGv/ls1AtiWGzyXRtfigL4fqxx/xrf/Sw+WaanLwDyp+k2kIwaF7mtt845IqkLVHm8g==@vger.kernel.org, AJvYcCX8rIOD/qSM4PM4IVveozDj2YjXy0m4kU8jyFdGCHpBY4yFfq0NewdYaQIULZezfmeXafsp/IRUX1DL1wmGhiVp@vger.kernel.org, AJvYcCXcRc3v6VqLNOTSPnRuq5qB7YOR3ONHs/zUFF1SQ6LHMLYPwCyGFQ+xAzBHWMT73HhYpC4LGQp8KHP/Vg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3Cy5HykqPvtQ5L4xKmkwIDzkKvL6nHs1mHEJ4eifUwYsfa/DJ
+	C+/llk2ypanRlVGw/69/D1y6SVgb4NgL6jYrUBzsTgVraZGV964/HhlSXLoWc2zuCuVkXbH2viD
+	CPk7MY3bCa8axRF4IL3qKDHpWaHWCJ3s=
+X-Google-Smtp-Source: AGHT+IHafl72rt/goLHslFsPSeMLrUwjaR0SoHeFAxURGVfbf4gcV3AlCo9M3FCJzrvPSuMBFqrA7K/+xkn2H/6KxwI=
+X-Received: by 2002:a05:651c:b11:b0:32b:952f:3e0 with SMTP id
+ 38308e7fff4ca-330d25506d3mr8241951fa.7.1753167358762; Mon, 21 Jul 2025
+ 23:55:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <4966b602.5395.19830ea1e2f.Coremail.andyshrk@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:aigvCgD3lz_KNX9oftoDAA--.34909W
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbBEgCSXmh-NBYeHAABso
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+References: <20250717231756.make.423-kees@kernel.org> <20250717232519.2984886-4-kees@kernel.org>
+ <aHoHkDvvp4AHIzU1@kernel.org> <202507181541.B8CFAC7E@keescook>
+ <CAMj1kXGAwjChyFvjQcTbL8dFXkFWnn9n47bkN7FP=+EsLNsJdg@mail.gmail.com>
+ <aH42--h-ARsvX5Wk@willie-the-truck> <202507211311.8DAC4C7@keescook> <202507211349.D93679FB25@keescook>
+In-Reply-To: <202507211349.D93679FB25@keescook>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 22 Jul 2025 16:55:47 +1000
+X-Gmail-Original-Message-ID: <CAMj1kXGoy7D+_hKyQrT_uXdjuFMYGUEMDYdRf6mx69PLeuBQQg@mail.gmail.com>
+X-Gm-Features: Ac12FXxN7NYW1J5gsbL-uJ8eWKShqoH6QBvGfux9lCX9EcW_ZhNmDxq92IzpXG0
+Message-ID: <CAMj1kXGoy7D+_hKyQrT_uXdjuFMYGUEMDYdRf6mx69PLeuBQQg@mail.gmail.com>
+Subject: Re: [PATCH v3 04/13] x86: Handle KCOV __init vs inline mismatches
+To: Kees Cook <kees@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Mike Rapoport <rppt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Vitaly Kuznetsov <vkuznets@redhat.com>, Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
+	Hans de Goede <hdegoede@redhat.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Michal Wilczynski <michal.wilczynski@intel.com>, 
+	Juergen Gross <jgross@suse.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Roger Pau Monne <roger.pau@citrix.com>, 
+	David Woodhouse <dwmw@amazon.co.uk>, Usama Arif <usama.arif@bytedance.com>, 
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, Thomas Huth <thuth@redhat.com>, Brian Gerst <brgerst@gmail.com>, 
+	kvm@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net, 
+	platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-efi@vger.kernel.org, 
+	linux-mm@kvack.org, Ingo Molnar <mingo@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Christoph Hellwig <hch@lst.de>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas.schier@linux.dev>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org, 
+	kasan-dev@googlegroups.com, linux-doc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	sparclinux@vger.kernel.org, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-CkhlbGxvIENyaXN0aWFuLAoK5ZyoIDIwMjUtMDctMjIgMTQ6MTY6MjbvvIwiQ3Jpc3RpYW4gQ2lv
-Y2FsdGVhIiA8Y3Jpc3RpYW4uY2lvY2FsdGVhQGNvbGxhYm9yYS5jb20+IOWGmemBk++8mgo+SGkg
-QW5keSwKPgo+T24gNy8yMi8yNSA1OjI0IEFNLCBBbmR5IFlhbiB3cm90ZToKPj4gCj4+IEhlbGxv
-IENyaXN0aWFu77yMCj4+IAo+PiBBdCAyMDI1LTA3LTIyIDAxOjM5OjA0LCAiQ3Jpc3RpYW4gQ2lv
-Y2FsdGVhIiA8Y3Jpc3RpYW4uY2lvY2FsdGVhQGNvbGxhYm9yYS5jb20+IHdyb3RlOgo+Pj4gVGFr
-ZSB0aGUgYml0cyBwZXIgY29sb3IgY2hhbm5lbCBpbnRvIGNvbnNpZGVyYXRpb24gd2hlbiBjb21w
-dXRpbmcgRENMSwo+Pj4gcmF0ZS4KPj4+Cj4+PiBTaWduZWQtb2ZmLWJ5OiBDcmlzdGlhbiBDaW9j
-YWx0ZWEgPGNyaXN0aWFuLmNpb2NhbHRlYUBjb2xsYWJvcmEuY29tPgo+Pj4gLS0tCj4+PiBkcml2
-ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX3ZvcDIuYyB8IDMgKysrCj4+PiAxIGZp
-bGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspCj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-Z3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fdm9wMi5jIGIvZHJpdmVycy9ncHUvZHJtL3Jv
-Y2tjaGlwL3JvY2tjaGlwX2RybV92b3AyLmMKPj4+IGluZGV4IDE4NmY2NDUyYTdkMzU5ZjA3OTY2
-MmJjNTgwODUwOTI5NjMyZWE4ZmUuLmE3MTRiY2JiMDJkZTE2MjY3ZTdmZWJiYWViMWViMjcwYzcw
-YWFlZjIgMTAwNjQ0Cj4+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBf
-ZHJtX3ZvcDIuYwo+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2Ry
-bV92b3AyLmMKPj4+IEBAIC0xNzMxLDYgKzE3MzEsOSBAQCBzdGF0aWMgdm9pZCB2b3AyX2NydGNf
-YXRvbWljX2VuYWJsZShzdHJ1Y3QgZHJtX2NydGMgKmNydGMsCj4+PiAJCWNsb2NrICo9IDI7Cj4+
-PiAJfQo+Pj4KPj4+ICsJaWYgKHZjc3RhdGUtPm91dHB1dF9icGMgPiA4KQo+Pj4gKwkJY2xvY2sg
-PSBESVZfUk9VTkRfQ0xPU0VTVChjbG9jayAqIHZjc3RhdGUtPm91dHB1dF9icGMsIDgpOwo+PiAK
-Pj4gCj4+IFRoaXMgc2VlbXMgbm90IHJpZ2h0LCAgcmVnYXJkbGVzcyBvZiB0aGUgdmFsdWUgb2Yg
-YnBjLCB0aGUgZGNsayBvZiBWT1AgbXVzdCBiZQo+PiBjb25zaXN0ZW50IHdpdGggbW9kZS0+Y3J0
-Y19jbG9jay4KPj4gSWYgdGhlIGRjbGsgb2YgVk9QIGlzIGluY3JlYXNlZCBpbiBhY2NvcmRhbmNl
-IHdpdGggdGhlIEJQQyByYXRpbyBoZXJlLCB0aGVuIHRoZSByZWZyZXNoIHJhdGUgb2YgVk9QIHdp
-bGwgYWxzbyBpbmNyZWFzZSBwcm9wb3J0aW9uYWxseS4KPj4gVGhpcyB3b3VsZCBiZSBpbmNvbnNp
-c3RlbnQgd2l0aCB0aGUgdGltaW5nIGRlc2NyaWJlZCBpbiB0aGUgbW9kZS4KPj4gRm9yIGEgaGln
-aHQgY29sb3IgZGVwdGgsICB0aGUgZnJlcXVlbmN5IG5lZWRzIHRvIGJlIGluY3JlYXNlZCBmb3Ig
-dGhlIEhETUkgUEhZJ3MgY2xvY2suCj4KPlRoZSBIRE1JIFBIWSdzIGNsb2NrIGlzIGFjdHVhbGx5
-IGNvbXB1dGVkIGF0IEhETUkgY29ubmVjdG9yIGZyYW1ld29yayBsZXZlbAo+WzFdLCB0YWtpbmcg
-aW50byBhY2NvdW50IHRoZSBjdXJyZW50IGJwYyB2YWx1ZSwgd2hpY2ggaXMgZGV0ZXJtaW5lZCBh
-cyBwYXJ0Cj5vZiBoZG1pX2NvbXB1dGVfY29uZmlnKCkgWzJdLgo+Cj5UaGF0IG1lYW5zIGNvbm5f
-c3RhdGUtPmhkbWkudG1kc19jaGFyX3JhdGUgaW4KPmR3X2hkbWlfcXBfcm9ja2NoaXBfZW5jb2Rl
-cl9hdG9taWNfY2hlY2soKSBkb2VzIGFscmVhZHkgaW5jbHVkZSB0aGUgYnBjCj5yZWxhdGVkIGFk
-anVzdG1lbnQsIGFuZCB3ZSBwYXNzIHRoYXQgZGlyZWN0bHkgdG8gdGhlIFBIWSB2aWEKPnBoeV9j
-b25maWd1cmUoKS4gIE5vdGUgdGhlcmUncyBzdGlsbCB0aGUgbmVlZCB0byBoYW5kbGUgYnBjIHNl
-cGFyYXRlbHkgdmlhCj5waHlfY29uZmlndXJlX29wdHMgaW4gb3JkZXIgdG8gc2V0dXAgQ01OX1JF
-RygwMDg2KSBbM10uCj4KPlNpbmNlIFZPUDIgc3dpdGNoZXMgdG8gUEhZIFBMTCBhcyBEQ0xLIHNv
-dXJjZSBmb3IgbW9kZXMgdXAgdG8gNEtANjBIeiwgaXQKPm5lZWRzIHRvIHRha2UgY29sb3IgZGVw
-dGggaW50byBhY2NvdW50LCB0byBrZWVwIHRoZW0gaW4gc3luYy4gIEFzIGEgbWF0dGVyCj5vZiBm
-YWN0LCB0aGUgY2xvY2sgYWRqdXN0bWVudCBpbiBWT1AyIGlzIG1haW5seSBuZWNlc3NhcnkgZm9y
-IGxlZ2FjeQo+cmVhc29ucywgc2luY2UgSERQVFggUEhZIGFsbG93ZWQgY2hhbmdpbmcgVE1EUyBj
-aGFyIHJhdGUgdmlhIHRoZSBDb21tb24KPkNsb2NrIEZyYW1ld29yayBBUEkuICBXZSBsYW5kZWQg
-YSBwcm9wZXIgc29sdXRpb24gZm9yIHRoYXQgdmlhIHRoZSBIRE1JIFBIWQo+QVBJLCBoZW5jZSB0
-aGUgcGxhbiB3b3VsZCBiZSB0byBtYWtlIENDRiBBUEkgcmVhZG9ubHkgYWZ0ZXIgdGhlIHN3aXRj
-aCB0bwo+UEhZIEFQSSBpcyBjb21wbGV0ZWQsIHdoaWNoIG1lYW5zIFZPUDIgc2hvdWxkbid0IGRl
-YWwgYW55bW9yZSB3aXRoIGNsb2NrCj5jYWxjdWxhdGlvbnMgd2hlbiB1c2luZyB0aGUgUEhZIFBM
-TCBhcyBEQ0xLIHNvdXJjZS4KCldoYXQgSSB3YW50IHRvIGVtcGhhc2l6ZSBpcyB0aGF0IG9uIHRo
-ZSB2b3AvY3J0YyBzaWRlLCB3aGF0IHdlIHNob3VsZCBiZSBjb25jZXJuZWQgYWJvdXQgaXMgbW9k
-ZSAtPiBjbG9jaywgCm5vdCB0aGUgSERNSSBQSFkgY2xvY2suIFRoZSBIRE1JIFBIWSBjbG9jayBp
-cyBzb21ldGhpbmcgdGhhdCB0aGUgSERNSSBicmlkZ2Ugb3IgdGhlIEhETUkgUEhZIGRyaXZlciBu
-ZWVkcyB0byBwYXkgYXR0ZW50aW9uIHRvLgoKVGhpcyBwYXRjaCB3b3JrcyBqdXN0IGJlY2F1c2Ug
-Y3VycmVudGx5LCBvbiBSSzM1NzYgYW5kIFJLMzU4OCwgdGhlIEhETUkgUEhZIFBMTCBjYW4gYmUg
-dXNlZCBhcyB0aGUgZGNsayBzb3VyY2UgZm9yIHRoZSB2b3AuCkFmdGVyIGNvcnJlY3RseSBzZXR0
-aW5nIENNTl9SRUcwMDg2LCBpdCBjYW4gcHJlY2lzZWx5IGFkanVzdCB0aGUgSERNSSBIUFkgUExM
-IGNsb2NrIGFkanVzdGVkIGFjY29yZGluZyB0byB0aGUgYnBjIGZ1cnRoZXIgdG8KdGhlIGZyZXF1
-ZW5jeSBvZiBtb2RlLT5jbG9jaywgYW5kIHRoZW4gdXNlIGl0IGFzIHRoZSBkY2xrIGZvciB0aGUg
-dm9wLgpIb3dldmVyLCB3ZSBhbHNvIG5lZWQgdG8gYmUgYXdhcmUgb2YgdGhlIGZvbGxvd2luZyBz
-aXR1YXRpb25zOgoKMSkgV2hlbiB3ZSBhcmUgdXNpbmcgSERNSSwgd2UgY2FuIHN0aWxsIGNob29z
-ZSB0aGUgc3lzdGVtIFBMTCBpbnN0ZWFkIG9mIHRoZSBIRE1JIFBIWSBQTEwgYXMKICAgIHRoZSBj
-bG9jayBzb3VyY2UgZm9yIGRjbGsuIEluIHRoaXMgY2FzZSwgdGhpcyBwYXRjaCB3aWxsIGNhdXNl
-IGluY29ycmVjdCBtb2RlLT5jbG9jay4KMikgIFdoZW4gd2UgYXJlIHVzaW5nIEhETUkgYWJvdmUg
-dGhlIDRLNjAgbW9kZSg0SzEyMCksIHdlIGNhbiBvbmx5IHVzZSB0aGUgc3lzdGVtIFBMTCBpbnN0
-ZWFkCiAgICAgb2YgdGhlIEhETUlQSFkgUExMIGFzIHRoZSBjbG9jayBzb3VyY2UgZm9yIHRoZSB2
-b3AgZGNsaywgIHRoaXMgcGF0Y2ggd2lsbCBjYXVzZSBpbmNvcnJlY3QgbW9kZS0+Y2xvY2suCjMp
-IEZvciBSSzM1NzYgYW5kIFJLMzU4OCwgIGludGVyZmFjZXMgc3VjaCBhcyBEUCwgZURQLCBhbmQg
-RFNJIGFsc28gc3VwcG9ydCAxMC1iaXQgbW9kZS4gCiAgICBIb3dldmVyLCBpbiBtb3N0IGNhc2Vz
-LCB0aGV5IHdpbGwgY2hvb3NlIHRoZSBzeXN0ZW0gUExMIGFzIHRoZSB2b3AgZGNsayBjbG9jayBz
-b3VyY2UsdGhpcyBwYXRjaCB3aWxsIGNhdXNlIGluY29ycmVjdCBtb2RlLT5jbG9jay4KNCkgVGhl
-cmUgYXJlIGFsc28gb3RoZXIgcGxhdGZvcm1zLCBzdWNoIGFzIFJLMzU2OCwgZXZlbiBmb3IgSERN
-SSAsIGl0IHN0aWxsIHVzZXMgdGhlIHN5c3RlbSBQTEwgYXMgdGhlIGRjbGsgY2xvY2sgc291cmNl
-IGZvciB2b3AuCiAgICAgdGhpcyBwYXRjaCB3aWxsIGNhdXNlIGluY29ycmVjdCBtb2RlLT5jbG9j
-ay4KCgo+Cj5SZWdhcmRsZXNzLCBJIHNob3VsZCBwcm9iYWJseSBtb3ZlIHRoaXMgY2xvY2sgYWRq
-dXN0bWVudCB0byB0aGUgY29uZGl0aW9uYWwKPmJsb2NrIGhhbmRsaW5nIERDTEsgc291cmNlIHN3
-aXRjaC4KPgo+WzFdIGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwv
-Z2l0L3RvcnZhbGRzL2xpbnV4LmdpdC90cmVlL2RyaXZlcnMvZ3B1L2RybS9kaXNwbGF5L2RybV9o
-ZG1pX3N0YXRlX2hlbHBlci5jP2g9djYuMTYtcmM3I241MjUKPlsyXSBodHRwczovL2dpdC5rZXJu
-ZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC90b3J2YWxkcy9saW51eC5naXQvdHJlZS9k
-cml2ZXJzL2dwdS9kcm0vZGlzcGxheS9kcm1faGRtaV9zdGF0ZV9oZWxwZXIuYz9oPXY2LjE2LXJj
-NyNuNjA4Cj5bM10gaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9n
-aXQvdG9ydmFsZHMvbGludXguZ2l0L3RyZWUvZHJpdmVycy9waHkvcm9ja2NoaXAvcGh5LXJvY2tj
-aGlwLXNhbXN1bmctaGRwdHguYz9oPXY2LjE2LXJjNyNuMTAzNAo=
+On Tue, 22 Jul 2025 at 06:49, Kees Cook <kees@kernel.org> wrote:
+>
+> On Mon, Jul 21, 2025 at 01:14:36PM -0700, Kees Cook wrote:
+> > On Mon, Jul 21, 2025 at 01:47:55PM +0100, Will Deacon wrote:
+> > > On Sun, Jul 20, 2025 at 04:10:01PM +1000, Ard Biesheuvel wrote:
+> > > > On Sat, 19 Jul 2025 at 08:51, Kees Cook <kees@kernel.org> wrote:
+> > > > > On Fri, Jul 18, 2025 at 11:36:32AM +0300, Mike Rapoport wrote:
+> > > > > > On Thu, Jul 17, 2025 at 04:25:09PM -0700, Kees Cook wrote:
+> > > > > > > When KCOV is enabled all functions get instrumented, unless the
+> > > > > > > __no_sanitize_coverage attribute is used. To prepare for
+> > > > > > > __no_sanitize_coverage being applied to __init functions, we have to
+> > > > > > > handle differences in how GCC's inline optimizations get resolved. For
+> > > > > > > x86 this means forcing several functions to be inline with
+> > > > > > > __always_inline.
+> > > > > > >
+> > > > > > > Signed-off-by: Kees Cook <kees@kernel.org>
+> > > > > >
+> > > > > > ...
+> > > > > >
+> > > > > > > diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+> > > > > > > index bb19a2534224..b96746376e17 100644
+> > > > > > > --- a/include/linux/memblock.h
+> > > > > > > +++ b/include/linux/memblock.h
+> > > > > > > @@ -463,7 +463,7 @@ static inline void *memblock_alloc_raw(phys_addr_t size,
+> > > > > > >                                       NUMA_NO_NODE);
+> > > > > > >  }
+> > > > > > >
+> > > > > > > -static inline void *memblock_alloc_from(phys_addr_t size,
+> > > > > > > +static __always_inline void *memblock_alloc_from(phys_addr_t size,
+> > > > > > >                                             phys_addr_t align,
+> > > > > > >                                             phys_addr_t min_addr)
+> > > > > >
+> > > > > > I'm curious why from all memblock_alloc* wrappers this is the only one that
+> > > > > > needs to be __always_inline?
+> > > > >
+> > > > > Thread-merge[1], adding Will Deacon, who was kind of asking the same
+> > > > > question.
+> > > > >
+> > > > > Based on what I can tell, GCC has kind of fragile inlining logic, in the
+> > > > > sense that it can change whether or not it inlines something based on
+> > > > > optimizations. It looks like the kcov instrumentation being added (or in
+> > > > > this case, removed) from a function changes the optimization results,
+> > > > > and some functions marked "inline" are _not_ inlined. In that case, we end up
+> > > > > with __init code calling a function not marked __init, and we get the
+> > > > > build warnings I'm trying to eliminate.
+> > >
+> > > Got it, thanks for the explanation!
+> > >
+> > > > > So, to Will's comment, yes, the problem is somewhat fragile (though
+> > > > > using either __always_inline or __init will deterministically solve it).
+> > > > > We've tripped over this before with GCC and the solution has usually
+> > > > > been to just use __always_inline and move on.
+> > > > >
+> > > >
+> > > > Given that 'inline' is already a macro in the kernel, could we just
+> > > > add __attribute__((__always_inline__)) to it when KCOV is enabled?
+> > >
+> > > That sounds like a more robust approach and, by the sounds of it, we
+> > > could predicate it on GCC too. That would also provide a neat place for
+> > > a comment describing the problem.
+> > >
+> > > Kees, would that work for you?
+> >
+> > That seems like an extremely large hammer for this problem, IMO. It
+> > feels like it could cause new strange corner cases. I'd much prefer the
+> > small fixes I've currently got since it keeps it focused. KCOV is
+> > already enabled for "allmodconfig", so any new instances would be found
+> > very quickly, etc. (And GCC's fragility in this regard has already been
+> > exposed to these cases -- it's just that I changed one of the
+> > combinations of __init vs inline vs instrumentation.
+> >
+> > I could give it a try, if you really prefer the big hammer approach...
+>
+> I gave it a try -- it fails spectacularly. ;) Let's stick to my small
+> fixes instead?
+>
+
+Fair enough :-)
 
