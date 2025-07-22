@@ -1,177 +1,147 @@
-Return-Path: <linux-kernel+bounces-740981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 676F5B0DDE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:21:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEF5AB0DE30
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:24:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 922C61884044
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:15:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35B81AC6E63
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:15:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0652ED16B;
-	Tue, 22 Jul 2025 14:09:47 +0000 (UTC)
-Received: from lgeamrelo07.lge.com (lgeamrelo07.lge.com [156.147.51.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178FD2EE27F;
+	Tue, 22 Jul 2025 14:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lMXDxgab"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F4A2ED15A
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 14:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.51.103
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 052FA2EE267
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 14:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753193386; cv=none; b=nxkJebU7SMEaa3FtW88+3wxfEptYjFKDBVgs5hENwZQuL8TpyxNGFcBnLd/cRU6EupgyQ33FHY+15jdz8/J43L5dbQ9hiXiJVo7E//ewbAsnjpr66TvZYJz/vpRCpWvob+ckAm32An9K3GHphQiW+V6lYfLyRSNnTNajtLja6Ok=
+	t=1753193479; cv=none; b=DoKJkaefcbNlvuXPsFwvlsgsXV/R756R3zjOu/lEvUy4V60VZE0gCbT5yQb2jNVICDXheQFsLoe8ILwNGE0+dEKbmLx6LGkVDSXBmaK2MV9V/oRjcxdV3sRsi5bNf+q0IzJqtFVUIRLxbzMykUv5IsICuY3IEI963EJLKBJSvIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753193386; c=relaxed/simple;
-	bh=6xQCdPO/kHsh1LWL6WOEJdUPJtG0FLS+QPoPtGb4Wes=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j2rQ8EzMXINOD6FNUxKHyDmNJY16NQFWcED2i5+3NG8bSLbVVr52jqCZoMlz6XxDEeedGKdGhuMhrR8dH96s5GgpgOgNcWLXIZGABsteQQyj8KMQ90ueXvxBt4uLarzmHfLYm3DtXdLemSjseKy/KpKlQ6yo9Pgvbj2DPgb4wm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.51.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
-Received: from unknown (HELO yjaykim-PowerEdge-T330) (10.177.112.156)
-	by 156.147.51.103 with ESMTP; 22 Jul 2025 23:09:37 +0900
-X-Original-SENDERIP: 10.177.112.156
-X-Original-MAILFROM: youngjun.park@lge.com
-Date: Tue, 22 Jul 2025 23:09:37 +0900
-From: YoungJun Park <youngjun.park@lge.com>
-To: kernel test robot <lkp@intel.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org,
-	oe-kbuild-all@lists.linux.dev, mhocko@kernel.org,
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, shikemeng@huaweicloud.com,
-	kasong@tencent.com, nphamcs@gmail.com, bhe@redhat.com,
-	baohua@kernel.org, chrisl@kernel.org, cgroups@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, gunho.lee@lge.com,
-	iamjoonsoo.kim@lge.com, taejoon.song@lge.com,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-Subject: Re: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for
- cgroup-based swap priority
-Message-ID: <aH+boS+lxLapI796@yjaykim-PowerEdge-T330>
-References: <20250716202006.3640584-2-youngjun.park@lge.com>
- <202507171936.fGW4muEc-lkp@intel.com>
+	s=arc-20240116; t=1753193479; c=relaxed/simple;
+	bh=wRwXjhWlbKKzAfQxAC+BDSH/bfNklI92eBAGV10UszE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=DkCoyLtxtHmxFUqmIhhq1/W1usHnn65ZKH2uKyM/wWmypA21yVtz5VOdRa7O+HL9/fvUjx4fSS9Zor1H4n3VjiebzU4qwtsUjp/zAIOPrUnh7bvrpXFFjF/cjxiYPcmafp0kMZc5Abms2zz6JxNBSsEotPrebrdTQH924sK+YYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lMXDxgab; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-312df02acf5so6378654a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 07:11:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753193476; x=1753798276; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yhr5DdAG1y4qmrkRFBW7TPP793xjLuWMlbUZVYJdXY0=;
+        b=lMXDxgabbUNfLs2Jolc7mh5wCxHRrJaCR0/9UPy7YP89yoMeW8Ps0xtO1gZHZblsYU
+         1yRGwjl5Fks1XpiQa4CewjTo6fFDc/vd84TZoT5XXd8ndogLNivG3luTvy5uXqGgkAEz
+         yM4YGST3KGW/klvgGCgL33wKP6jcWtS0iqqdWnnleb//KqcFkULLs4Vq9rpS32oWPxyk
+         RWxgWUu6/b6/DRkeoa3IJKE03v/SJZJ+nkzOf2e5kybI5VN0Hdqm793PYERRZz6iroOi
+         8IyIELzAbD24KtRLSirUDRQeFc9JGKoxFqbhJFPOlClAMLmlUOc9VIPpl+aVVZsqT1aW
+         0Cmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753193476; x=1753798276;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yhr5DdAG1y4qmrkRFBW7TPP793xjLuWMlbUZVYJdXY0=;
+        b=bxXE+BubZx9zdZh8LFL6OD1Ik02xYVhBJs5hIyBKaGEvrSgdtqm9w5a1Jk53MHTbt4
+         Y5NshIp288NgXwOMaLiva8FU8VnbpWeHmOUhQGr8a+1bDAj0ec4NUmhZNmWuolC+H5qH
+         DjMRF8lXuLnos6Z+ruOwOFPgGzHEDxS3FVBB/79eJgLhL3GxAc/bWozL8cl3KizNyHze
+         aJJ/+RCfOcjx1Wkx8gapxtspZ43PsVkB1OZTamH016m+WflwKflAGAJlbMsy8jRfQWXU
+         OwtM5TKHeKVv+PgKhFB9QesEyXDkoNTXrJYbwNpnbnRDXgz4C3MGKoc4AWN42YmSO9/z
+         4qOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWUHgCtQE0HCinZi3q0sp2SlzAEVccK8rbg/uQC+DAUvKCUo9bCbGtkTsdpU7vHZNMONE+vVd8oMXnduhY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuT+VG8pgrl6fzCNugX/VW+EPYWo3pfsDAIzxvgCkdkF6T6ZG3
+	To22+Iq4ZurELACdT4zXlde35c6TEJoaXAzNCsLTSXSJ3OzedlCyfH3PmvxyB2phruRKGGJU5AD
+	f4i7WBg==
+X-Google-Smtp-Source: AGHT+IHz6YqAcopC+P6ScKSU5WWDSjba8vHQ5SgWsdgu/3WXQBnQE+NEWNjk1kKSfQgkq2XdBsLFy0RsPC8=
+X-Received: from pjbrs12.prod.google.com ([2002:a17:90b:2b8c:b0:312:187d:382d])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:350e:b0:315:f6d6:d29c
+ with SMTP id 98e67ed59e1d1-31e3e1f12a8mr4913476a91.15.1753193476158; Tue, 22
+ Jul 2025 07:11:16 -0700 (PDT)
+Date: Tue, 22 Jul 2025 07:11:14 -0700
+In-Reply-To: <20250722131533.106473-2-adrian.hunter@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202507171936.fGW4muEc-lkp@intel.com>
+Mime-Version: 1.0
+References: <20250722131533.106473-1-adrian.hunter@intel.com> <20250722131533.106473-2-adrian.hunter@intel.com>
+Message-ID: <aH-b5UAkokFocLvG@google.com>
+Subject: Re: [PATCH V3 1/2] x86/tdx: Eliminate duplicate code in tdx_clear_page()
+From: Sean Christopherson <seanjc@google.com>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, pbonzini@redhat.com, vannapurve@google.com, 
+	Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, x86@kernel.org, H Peter Anvin <hpa@zytor.com>, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, rick.p.edgecombe@intel.com, 
+	kas@kernel.org, kai.huang@intel.com, reinette.chatre@intel.com, 
+	xiaoyao.li@intel.com, tony.lindgren@linux.intel.com, 
+	binbin.wu@linux.intel.com, isaku.yamahata@intel.com, yan.y.zhao@intel.com, 
+	chao.gao@intel.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, Jul 17, 2025 at 07:20:58PM +0800, kernel test robot wrote:
-> Hi Youngjun,
-> 
-> kernel test robot noticed the following build warnings:
-> 
-> [auto build test WARNING on 347e9f5043c89695b01e66b3ed111755afcf1911]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Youngjun-Park/mm-swap-memcg-Introduce-infrastructure-for-cgroup-based-swap-priority/20250717-042648
-> base:   347e9f5043c89695b01e66b3ed111755afcf1911
-> patch link:    https://lore.kernel.org/r/20250716202006.3640584-2-youngjun.park%40lge.com
-> patch subject: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for cgroup-based swap priority
-> config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20250717/202507171936.fGW4muEc-lkp@intel.com/config)
-> compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 16534d19bf50bde879a83f0ae62875e2c5120e64)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250717/202507171936.fGW4muEc-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202507171936.fGW4muEc-lkp@intel.com/
-> 
-> All warnings (new ones prefixed by >>):
-> 
-> >> mm/memcontrol.c:5462:12: warning: variable 'id' is uninitialized when used here [-Wuninitialized]
->     5462 |                                 memcg, id, SWAP_PRIORITY_GLOBAL);
->          |                                        ^~
->    mm/memcontrol.c:5414:8: note: initialize the variable 'id' to silence this warning
->     5414 |         u64 id;
->          |               ^
->          |                = 0
->    1 warning generated.
-> 
-> 
-> vim +/id +5462 mm/memcontrol.c
-> 
->   5408	
->   5409	#ifdef CONFIG_SWAP_CGROUP_PRIORITY
->   5410	static ssize_t swap_cgroup_priority_write(struct kernfs_open_file *of,
->   5411						  char *buf, size_t nbytes, loff_t off)
->   5412	{
->   5413		struct mem_cgroup *memcg = mem_cgroup_from_css(of_css(of));
->   5414		u64 id;
->   5415		int prio;
->   5416		int ret;
->   5417		char first_token[32];
->   5418		char second_token[32];
->   5419		char dummy[2];
->   5420		char *stripped_buf;
->   5421		int num_parsed;
->   5422	
->   5423		stripped_buf = strstrip(buf);
->   5424		num_parsed = sscanf(stripped_buf, "%31s %31s %1s", first_token,
->   5425				    second_token, dummy);
->   5426		if (num_parsed == 2) {
->   5427			if (strcmp(first_token, "default") == 0) {
->   5428				if (strcmp(second_token, "none") == 0)
->   5429					ret = apply_swap_cgroup_priority(
->   5430						memcg, DEFAULT_ID, SWAP_PRIORITY_GLOBAL);
->   5431				else if (strcmp(second_token, "disabled") == 0)
->   5432					ret = apply_swap_cgroup_priority(
->   5433						memcg, DEFAULT_ID, SWAP_PRIORITY_DISABLE);
->   5434				else
->   5435					ret = -EINVAL;
->   5436			} else {
->   5437				ret = kstrtoull(first_token, 10, &id);
->   5438				if (ret)
->   5439					return -EINVAL;
->   5440	
->   5441				if (strcmp(second_token, "none") == 0) {
->   5442					ret = apply_swap_cgroup_priority(
->   5443						memcg, id, SWAP_PRIORITY_GLOBAL);
->   5444				} else if (strcmp(second_token, "disabled") == 0) {
->   5445					ret = apply_swap_cgroup_priority(
->   5446						memcg, id, SWAP_PRIORITY_DISABLE);
->   5447				} else {
->   5448					ret = kstrtoint(second_token, 10, &prio);
->   5449					if (ret)
->   5450						return -EINVAL;
->   5451					if (prio == -1)
->   5452						return -EINVAL;
->   5453					else if (prio > SHRT_MAX || prio < SHRT_MIN)
->   5454						return -EINVAL;
->   5455					ret = apply_swap_cgroup_priority(memcg, id,
->   5456									 prio);
->   5457				}
->   5458			}
->   5459		} else if (num_parsed == 1) {
->   5460			if (strcmp(first_token, "none") == 0)
->   5461				ret = apply_swap_cgroup_priority(
-> > 5462					memcg, id, SWAP_PRIORITY_GLOBAL);
->   5463			else if (strcmp(first_token, "disabled") == 0)
->   5464				ret = apply_swap_cgroup_priority(
->   5465					memcg, id, SWAP_PRIORITY_DISABLE);
->   5466			else
->   5467				ret = -EINVAL;
->   5468		} else {
->   5469			return -EINVAL;
->   5470		}
->   5471	
->   5472		if (ret)
->   5473			return ret;
->   5474	
->   5475		return nbytes;
->   5476	}
->   5477	
+On Tue, Jul 22, 2025, Adrian Hunter wrote:
+> diff --git a/arch/x86/include/asm/tdx.h b/arch/x86/include/asm/tdx.h
+> index 7ddef3a69866..f66328404724 100644
+> --- a/arch/x86/include/asm/tdx.h
+> +++ b/arch/x86/include/asm/tdx.h
+> @@ -131,6 +131,8 @@ int tdx_guest_keyid_alloc(void);
+>  u32 tdx_get_nr_guest_keyids(void);
+>  void tdx_guest_keyid_free(unsigned int keyid);
+>  
+> +void tdx_quirk_reset_paddr(unsigned long base, unsigned long size);
+> +
+>  struct tdx_td {
+>  	/* TD root structure: */
+>  	struct page *tdr_page;
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index 573d6f7d1694..1b549de6da06 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -283,25 +283,6 @@ static inline void tdx_disassociate_vp(struct kvm_vcpu *vcpu)
+>  	vcpu->cpu = -1;
+>  }
+>  
+> -static void tdx_clear_page(struct page *page)
+> -{
+> -	const void *zero_page = (const void *) page_to_virt(ZERO_PAGE(0));
+> -	void *dest = page_to_virt(page);
+> -	unsigned long i;
+> -
+> -	/*
+> -	 * The page could have been poisoned.  MOVDIR64B also clears
+> -	 * the poison bit so the kernel can safely use the page again.
+> -	 */
+> -	for (i = 0; i < PAGE_SIZE; i += 64)
+> -		movdir64b(dest + i, zero_page);
+> -	/*
+> -	 * MOVDIR64B store uses WC buffer.  Prevent following memory reads
+> -	 * from seeing potentially poisoned cache.
+> -	 */
+> -	__mb();
+> -}
+> -
+>  static void tdx_no_vcpus_enter_start(struct kvm *kvm)
+>  {
+>  	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
+> @@ -347,7 +328,7 @@ static int tdx_reclaim_page(struct page *page)
+>  
+>  	r = __tdx_reclaim_page(page);
+>  	if (!r)
+> -		tdx_clear_page(page);
+> +		tdx_quirk_reset_paddr(page_to_phys(page), PAGE_SIZE);
 
-This is an initialization bug where the "default" value may not be handled
-correctly in certain cases, such as:
+This is silly.  Literally every use in KVM is on a struct page.  I agree with
+Dave that having a wrapper with a completely unrelated name is confusing, but
+that's a naming problem, not a code problem.
 
-  e.g. echo none > memory.swap.priority
-
-I should have checked this more carefully. I will fix the issue and add
-a test case in the next patch revision.
-
-Best regards,
-Youngjun Park
+And FWIW, I find tdx_quirk_reset_paddr() confusing, because it reads like it's
+resetting the address itself.  But if KVM only ever uses tdx_quirk_reset_page(),
+I don't care what you call the inner helper.
 
