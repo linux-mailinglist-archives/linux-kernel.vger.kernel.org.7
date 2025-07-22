@@ -1,122 +1,106 @@
-Return-Path: <linux-kernel+bounces-740735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B97FB0D860
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:39:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E469B0D865
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:40:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55C6AAA4E68
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:38:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 594B5188ABE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C73622E3397;
-	Tue, 22 Jul 2025 11:38:03 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E512E2F1C
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 11:38:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B852E3397;
+	Tue, 22 Jul 2025 11:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ELC2jZjR"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43562417C8;
+	Tue, 22 Jul 2025 11:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753184283; cv=none; b=UIJ9Qmtbsny1n+SpZw9BTRRQ5dmEk5L04Bh9KTaOrkfIZU5okBqOQqViGrod7Bcv8EV87SpcepgywksdrybQnyFsK+diiYdRh3tMYF8cLNObaie7d+RYhUHRS1N52HKmvhW7Ns7vlOvIG9Wr5rDTlEIbtOfnZlXau2Bmkf3nGS4=
+	t=1753184407; cv=none; b=K1GZYT10ycDIRvDsQOLoBiVfORmeoR+WFKWuTy9NkUNte5ukK+ScZ0fEVey4bke2OvNaeZQla4qRln8akFWKc2vXVoP2djWbJakjmKSG0eM7UXe7EtPPEMXUtI2KnLIdUltaxEKO5GRhf2MIwdmcIck5TZ2XurYSxqENwsTlu2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753184283; c=relaxed/simple;
-	bh=O7dV4Fo3MDBZoBMUb0U5snvvyOSp/rzRYC/FsUwwoyU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dLe2iG+PXw5grxRcnBhlDp1PuCCe9zcfcHic4UeeFerGiQDKFIDU9IE+c0AwHAGeqRar5FlO0hRBnafv7YYSFFFjT0OcPRyZUihVzeXdoNIu3B+opkOiUsf6mzXFclvXslGkcqGFx9w6iHOee4o9XRDN49gMllC4VDeRjHjEV50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 852BF152B;
-	Tue, 22 Jul 2025 04:37:54 -0700 (PDT)
-Received: from [10.1.30.167] (XHFQ2J9959.cambridge.arm.com [10.1.30.167])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C77853F6A8;
-	Tue, 22 Jul 2025 04:37:56 -0700 (PDT)
-Message-ID: <ac0b2fcd-6f90-4802-be46-dc1c20d55d2e@arm.com>
-Date: Tue, 22 Jul 2025 12:37:55 +0100
+	s=arc-20240116; t=1753184407; c=relaxed/simple;
+	bh=tnML+5yTFNBC2rK++K7WRcgFRoT8kDGnbLmMXmAO0Jk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hoMffvtrY/d5DWvdVp3Vfr5CJ5biLXZzkWX/ioOBHMDrdxq26rqLJCp3gN3rTGAhJtQ9q5CJsL1QgkMzlCqYEEncZkbDyPQ03F1H5BmtQi1rr2AgmT4Pob2XOd1tnV0dmTFTJm9o4LxWZyxHz/mDZKpdw2+fzXvdQtv+Sf8l3f0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ELC2jZjR; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-234b122f2feso5830325ad.0;
+        Tue, 22 Jul 2025 04:40:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753184405; x=1753789205; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tnML+5yTFNBC2rK++K7WRcgFRoT8kDGnbLmMXmAO0Jk=;
+        b=ELC2jZjRt9tzp7BM4Z53FiqbTgn7GP7BE7jXCQ9kTuObIF5r/X3mEvunNaJyziydeK
+         r4W9Zq3OVbiEloMcJrQG5/QQXILbCiY1vNF5dZVTZD6vcaSV7TytZe8IqrUWkzw7yfZU
+         4Q45Ybg4ef2Vion+sHfQMC64i7tIvYG2cfW88ZULH/NecR8txGQVvAObVE2kn7DGJtxF
+         TiWe1ZChYH368hBO5FgPSb6sOHHuTisZK5uQ3a3Zj5JHiZzh4nwuOGxiXv0bjsyy66BI
+         +t4+0Jjp6AI9pu1FjC1LJH6FnhVMq3l0PLeWPJJThjjUZ8sqCjn4ITjv8avFzaM+twp6
+         ojnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753184405; x=1753789205;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tnML+5yTFNBC2rK++K7WRcgFRoT8kDGnbLmMXmAO0Jk=;
+        b=n9DbO5MEptvdyoXsujh2yt35SY0J2l1BQy4t2vaRTWnueEEd1TXnHHrYfoezWsuE/W
+         exoyHkXKB6QXn1PZTRTNyPBR9K/RuGfO0sYH008nlBCjsgk8+fenw5sdRUL4koizxVOp
+         7d3aa9cupiKxZWaLX570VLLBZJKyVqqSF0TNtCway0L6pWba5uxZXHNotzBeD4Oc0XPs
+         RLUrIL0fs1AkflxswK7oVn1xrLPIOM7KoS12BaGVBhWx6wraMNN2pkCLcO1GijxXSvki
+         jIluRsKXlFj4W5n0HeyLq4wnDb8GzNDx0ymEgZ3rbiDOmmQATWhZdJLJ23rqEE18HfYd
+         0sag==
+X-Forwarded-Encrypted: i=1; AJvYcCVuidDwMo3ZlDTUu/SPGCp33XE/anqDD6KRkKYjs1C0FM2VIjk3taa0sovAdeVCzo4q3C2TTVjSm8e6MC4JES0=@vger.kernel.org, AJvYcCXOD+uf+56A/WzrNOdcXNetiksp2VqM7DCT2hKbHFomTT35kK16WT9eUg+odOBhfLfwnXM9B1c8blf2iKQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywo+Z/luc5T7rieuQ2iK1ICk2S4z4W63dIHmzuhMyle5sCnLwbr
+	tiTVZXAuel4KW1ScBfvfZkurGn/BeJjo8p2+A9WDgSmuge/sZ9dQwszw1/1PXNROSChAT7jqhSm
+	DygX/C+lXKUWO8beVskwCeOdUMaPjFW8=
+X-Gm-Gg: ASbGncs+uQuKtaNOCDiegEt5+fmO0K8xMHQx1uhKCMwwSv4ClKs3CZpL4khkBATIqw0
+	4Cg3Ru/y7ovfL+qg/psVWW7A+0BljNxS606ff6SRRb/1WIuFX3pgURA0Mm6BWUnWjxDi45naEHh
+	XtEO9SoxL3GwJ4Frdl0rHIJZCWR+ZoLMFv3Pw2+ufYK12rG7zjjqhMjWok9IrzlHLX1tECWqvNt
+	zCQRIo+
+X-Google-Smtp-Source: AGHT+IEbdCBZvlB/GejgG1g+RqBB3MqgA3hZpFmYgzG8Cex0ZLgargr5t3nsLv6aQ58m0ZcdSh1SOurU9tQP0CYO+/o=
+X-Received: by 2002:a17:902:f547:b0:234:ef42:5d52 with SMTP id
+ d9443c01a7336-23e24efa96fmr129398595ad.6.1753184404989; Tue, 22 Jul 2025
+ 04:40:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/7] mm: Introduce FPB_RESPECT_WRITE for PTE batching
- infrastructure
-Content-Language: en-GB
-To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org
-Cc: david@redhat.com, willy@infradead.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, catalin.marinas@arm.com, will@kernel.org,
- Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz,
- jannh@google.com, anshuman.khandual@arm.com, peterx@redhat.com,
- joey.gouly@arm.com, ioworker0@gmail.com, baohua@kernel.org,
- kevin.brodsky@arm.com, quic_zhenhuah@quicinc.com,
- christophe.leroy@csgroup.eu, yangyicong@hisilicon.com,
- linux-arm-kernel@lists.infradead.org, hughd@google.com,
- yang@os.amperecomputing.com, ziy@nvidia.com
-References: <20250718090244.21092-1-dev.jain@arm.com>
- <20250718090244.21092-5-dev.jain@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20250718090244.21092-5-dev.jain@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250520231714.323931-1-lossin@kernel.org> <DBIJLR7XNI6U.21PMPODHE83DZ@kernel.org>
+In-Reply-To: <DBIJLR7XNI6U.21PMPODHE83DZ@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 22 Jul 2025 13:39:52 +0200
+X-Gm-Features: Ac12FXxbzIlBUxG320GgZ3aYPXgLuQbrj_jdd-5FoBbNMvneFjuDW_s41-WIGX8
+Message-ID: <CANiq72k+_UsRTVNWzz3jT+Nkjb-Xom2JmZ9Kaoba4=Omh2EgaA@mail.gmail.com>
+Subject: Re: [PATCH] rust: sync: fix safety comment for `static_lock_class`
+To: Benno Lossin <lossin@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Lyude Paul <lyude@redhat.com>, 
+	Mitchell Levy <levymitchell0@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 18/07/2025 10:02, Dev Jain wrote:
-> Patch 6 optimizes mprotect() by batch clearing the ptes, masking in the new
-> protections, and batch setting the ptes. Suppose that the first pte
-> of the batch is writable - with the current implementation of
-> folio_pte_batch(), it is not guaranteed that the other ptes in the batch
-> are already writable too, so we may incorrectly end up setting the
-> writable bit on all ptes via modify_prot_commit_ptes().
-> 
-> Therefore, introduce FPB_RESPECT_WRITE so that all ptes in the batch
-> are writable or not.
-> 
-> Signed-off-by: Dev Jain <dev.jain@arm.com>
+On Tue, Jul 22, 2025 at 1:21=E2=80=AFPM Benno Lossin <lossin@kernel.org> wr=
+ote:
+>
+> We can take this patch, as it definitely is an improvement, but I think
 
-Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+Yeah, thanks, that was the intention -- we were checking a few older series=
+ :)
 
-> ---
->  mm/internal.h | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/mm/internal.h b/mm/internal.h
-> index 5b0f71e5434b..28d2d5b051df 100644
-> --- a/mm/internal.h
-> +++ b/mm/internal.h
-> @@ -208,17 +208,20 @@ typedef int __bitwise fpb_t;
->  /* Compare PTEs respecting the soft-dirty bit. */
->  #define FPB_RESPECT_SOFT_DIRTY		((__force fpb_t)BIT(1))
->  
-> +/* Compare PTEs respecting the writable bit. */
-> +#define FPB_RESPECT_WRITE		((__force fpb_t)BIT(2))
-> +
->  /*
->   * Merge PTE write bits: if any PTE in the batch is writable, modify the
->   * PTE at @ptentp to be writable.
->   */
-> -#define FPB_MERGE_WRITE			((__force fpb_t)BIT(2))
-> +#define FPB_MERGE_WRITE			((__force fpb_t)BIT(3))
->  
->  /*
->   * Merge PTE young and dirty bits: if any PTE in the batch is young or dirty,
->   * modify the PTE at @ptentp to be young or dirty, respectively.
->   */
-> -#define FPB_MERGE_YOUNG_DIRTY		((__force fpb_t)BIT(3))
-> +#define FPB_MERGE_YOUNG_DIRTY		((__force fpb_t)BIT(4))
->  
->  static inline pte_t __pte_batch_clear_ignored(pte_t pte, fpb_t flags)
->  {
-> @@ -226,7 +229,9 @@ static inline pte_t __pte_batch_clear_ignored(pte_t pte, fpb_t flags)
->  		pte = pte_mkclean(pte);
->  	if (likely(!(flags & FPB_RESPECT_SOFT_DIRTY)))
->  		pte = pte_clear_soft_dirty(pte);
-> -	return pte_wrprotect(pte_mkold(pte));
-> +	if (likely(!(flags & FPB_RESPECT_WRITE)))
-> +		pte = pte_wrprotect(pte);
-> +	return pte_mkold(pte);
->  }
->  
->  /**
-
+Cheers,
+Miguel
 
