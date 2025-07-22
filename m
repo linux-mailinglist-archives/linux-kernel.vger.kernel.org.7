@@ -1,120 +1,127 @@
-Return-Path: <linux-kernel+bounces-741029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CE68B0DEF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:39:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34751B0DEE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:38:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E1F17A5665
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:38:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E18A61725B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:33:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39C6D2EAB88;
-	Tue, 22 Jul 2025 14:39:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CABA2EA73B;
+	Tue, 22 Jul 2025 14:32:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hjGF1Ng9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=criticallink.com header.i=@criticallink.com header.b="g8peOOS8"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB63570838;
-	Tue, 22 Jul 2025 14:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810682EA177
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 14:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753195165; cv=none; b=Ye6SaRxDmiHWTHISlxNsAh1SV42InU1SSwMXi5Q6VZ/qVqpjP+KB3tROMyGD8jmYLj3YGgYeAlo698fcgEDKyUUeC1n+taHxITgUEMcogiS8jvMw7sgJfEbr9Bw7iCois7Q5lM0YDbFAAHQOJw84c7IlyX4GDsD55fV/AeqD4AQ=
+	t=1753194775; cv=none; b=mwdi/t4oyC2YngNgUkH2ds0ixGlCN8+WomQFcv6Kut5Ta/IgN0C46hLLj9JyaU5gCWTLq8/+ArPG8/Xgon7wRjPrmN95rhG6rk3PlAeY8CmIXYxEk/o6FGaGOYnlDrYU1iiq8XeD40SwKQq5q5PVc2Yq3JeX8semStKPSrjawCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753195165; c=relaxed/simple;
-	bh=evC1DJGyohfqttWOa/YapWO9JgbCdy7a+QBu40TKE8M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qgzI9XIKFJcwIlVsKwhBxOAju7/trWHPuZK/14GDlp8/DbgsPllms8/RfLkHrDo2hTaiG+Pg2sowxvybC0lYEfaHNvqB/SwZ1QnU6b4a7ZjlZ4VGt/C3YP3Js3bItYDQnlH/4/rM93ccJpDgkS1ETOy7bmEXZr6xv2fWtXwj4qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hjGF1Ng9; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753195164; x=1784731164;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=evC1DJGyohfqttWOa/YapWO9JgbCdy7a+QBu40TKE8M=;
-  b=hjGF1Ng9AbYfmcOUjNEZCmJlTpLVSeONoIjCnEX6SE/T7BeebeeqBQut
-   zeEH8m0c+8R23Qv/EmhEtEE61S2eI0C8qxxMlL7llUB+pbP70tVg41JV/
-   wG0HDN4dj3nKWWVI3c9UfQsjN5D0RM/X8QP4XgLSAKyvr+CedSxpp65pU
-   PYb9whHN3SwTy+XgppRohhxFgiafnf6wlX/EuIlrQ/0vQoX4mGa64oSih
-   L/XNmhvTSpg0+cf70o3wmGn3z3HGn0NnY4Qfdiw1g6duF1jyQH2Qf3ymu
-   RMibpT6vIUaf9bbnu73ChNFIuh2ttqOt2V278JPBUHVHPMU1EdrvegKUA
-   w==;
-X-CSE-ConnectionGUID: 6Xv/qgDoS3uyo4e8OlEgDg==
-X-CSE-MsgGUID: F5ESOWFgTmy2T6QhDKy2AA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11500"; a="54667676"
-X-IronPort-AV: E=Sophos;i="6.16,331,1744095600"; 
-   d="scan'208";a="54667676"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 07:39:23 -0700
-X-CSE-ConnectionGUID: 8pnyQWiGTMO7UiIPOZIabg==
-X-CSE-MsgGUID: GO5eu8wfR+ugLAPG1lQrog==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,331,1744095600"; 
-   d="scan'208";a="164820245"
-Received: from chenyu-dev.sh.intel.com ([10.239.62.107])
-  by orviesa005.jf.intel.com with ESMTP; 22 Jul 2025 07:39:21 -0700
-From: Chen Yu <yu.c.chen@intel.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Len Brown <lenb@kernel.org>,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Yu <yu.chen.surf@foxmail.com>,
-	Chen Yu <yu.c.chen@intel.com>,
-	"Govindarajulu, Hariganesh" <hariganesh.govindarajulu@intel.com>
-Subject: [PATCH] ACPI: pfr_update: Fix the driver update version check
-Date: Tue, 22 Jul 2025 22:32:33 +0800
-Message-Id: <20250722143233.3970607-1-yu.c.chen@intel.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1753194775; c=relaxed/simple;
+	bh=RsyPlufZr31PVPnh/EWX43+9YZNSLPJR8i+ZYcSJ4Ag=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LnmxRnkovcgVUPtez9ZsIGWkQc6+ELPwizczp3c+9OB2WRX14V5lrh+EIKb7lC1X0B/DcwMhhiGeEQjaxtcbNY3sMEPJLriviIKAiNFHDXXvqsL+3pmRviN5TyUFX+rchUzTm9F6GCLkpfmOCDYx+fKf6H34fQK/VVBq2TB45qE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=criticallink.com; spf=pass smtp.mailfrom=criticallink.com; dkim=pass (2048-bit key) header.d=criticallink.com header.i=@criticallink.com header.b=g8peOOS8; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=criticallink.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=criticallink.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-719a4206caeso7663207b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 07:32:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=criticallink.com; s=google; t=1753194772; x=1753799572; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Iy3jvsb4tc1nMnyuXE7xVv3bbQGwBcqiT9b1E5knZ2Q=;
+        b=g8peOOS8ecf+5OCnOfgRvCAK+mgnADuVd/6KlRsaeHpMDK9FdYWm76Yb3MGtE2DetK
+         hB5aldX544w+KsL3a9dPArCjovkvTMnZagd9EUwepuMyD4hBX/b0U3dkV3WzeXBtm0vF
+         +9NZJ8FkdpkG09MhAW+dDTULmSEc5vbjaM+EHXlF9dE2oa2EgM4QlwJxDrWG1sTobtbK
+         lEsjSR26l2w+O6iJHXJDAvvEM6YszcRLexjC3eySYZF/ukRplm96aQI1uqfjtcJ0Kobp
+         yWvd9/tZbtnVuxQRAJWGjC6Kpa0mSV2D/FtJAEEf3tMfjOpVa/LdHrMwcXiRGmqqBRhO
+         /z1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753194772; x=1753799572;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Iy3jvsb4tc1nMnyuXE7xVv3bbQGwBcqiT9b1E5knZ2Q=;
+        b=kiwhEs/WWilx6izGWzY7+E9VMJdlwCuMebYVAcU3WFz0JJ7Nnbs0SYxqpEWJy5XuwX
+         NsQqQCAHOX7qPqj5ax6Cm5kVdoUtxFOxeUO7fI+p6I0v11qtrLFI6/SgL3+/WWtKAvuN
+         e3pC5IGWMsoZ3/OLqENtVbDuVwg4cg+VJ5U4p9JKh0nbYmvp3jlPwsKWHSQ14cFOUAtL
+         fTFT/x1fn+uIZ+s6hLQeCx4qa7NFY55oJG1ERq1iihGUEw7ojOXO14SFgfXy4qSOLaJc
+         jur/+uM8jcwHkQMvYXeJiK9FvK1g7KlQERKXh5zlq2Fcw3ARspl/3tUZNf2dEjhcNv1b
+         naiA==
+X-Forwarded-Encrypted: i=1; AJvYcCVnjAQL0Kt1fC0W11nwyoN70G3f5OoSHThSrmsHiq728sNeF/Esx8r0yB+iUysfJECzwEDnJaCjQgHVn9Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzW4qUCbCpGEddJubf6rmbb5phI0RCrmmrn+jusWfYtC+fz5Hpc
+	8UnjsP54xkY/okyHfBcEgxsTjXrOVPj7cRE8ezhN3M4Ae5LSxSWJxETVNc8avT+pmGwg46N3+LP
+	lnmOXTj4V4C1Ma2T4OH6zY8o97wy9gaAGU5zhEfAYlHpPY2R3D2SxkmXX
+X-Gm-Gg: ASbGncvvIT+8y1uf2GjvfSdsShdJuQn0pqSplkFe4Dxjkzj/wEg7GPlgUqIz4vOd7fL
+	Z1H9bXpI7nv74kSnklsxjesqRFeNHxkFhaVa+wL+A2FsGD13OdhONQ9u+35WI9TmZPy+1YJSh3D
+	cLHOHmbJh/u4DfL027hoDCGi5gAH3QOJhNMy7vLBam3AuqbLFfZhDqizV0d1dcJ4xxnqD0SwGlL
+	1kh4g==
+X-Google-Smtp-Source: AGHT+IHLgyQbkmFbEUr6Uh7LewyrDsSpPOOYRIa+mMtbYtSMJpZG7OcUm1mC18zFZvRZ3UoLNegv8l+Q7RI3hzXSuhE=
+X-Received: by 2002:a05:690c:6c08:b0:719:7123:ce3a with SMTP id
+ 00721157ae682-7197123f70amr165110647b3.2.1753194772136; Tue, 22 Jul 2025
+ 07:32:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250721233146.962225-1-s-ramamoorthy@ti.com> <CAMRc=McTJnTn1sf6Kc42yePvUyP87h1utJ7B_ynWjUxxm0E4Lw@mail.gmail.com>
+ <CADL8D3YaF4zt2Wu0Vv1=8W9e9n5BKM+2npgfVmLhJ=wz-jHMKQ@mail.gmail.com> <CAMRc=Me7ade2aSJhn4tEAdNUvB3Y5TRLp8j8w8zgP5J3C6_MkQ@mail.gmail.com>
+In-Reply-To: <CAMRc=Me7ade2aSJhn4tEAdNUvB3Y5TRLp8j8w8zgP5J3C6_MkQ@mail.gmail.com>
+From: Jon Cormier <jcormier@criticallink.com>
+Date: Tue, 22 Jul 2025 10:32:40 -0400
+X-Gm-Features: Ac12FXxo7kCyXFb0iFwNr6tR3KknB8DInMm27gp30SPu0B8ZIwZZ304YZgGvPf0
+Message-ID: <CADL8D3Zw9L+UABmSGdZio_Bq1Nx5tJ226EFtVY6DT3xgYBs92w@mail.gmail.com>
+Subject: Re: [PATCH v7 0/2] Add TI TPS65214 PMIC GPIO Support
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Shree Ramamoorthy <s-ramamoorthy@ti.com>, aaro.koskinen@iki.fi, andreas@kemnade.info, 
+	khilman@baylibre.com, rogerq@kernel.org, tony@atomide.com, 
+	linus.walleij@linaro.org, linux-omap@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, m-leonard@ti.com, 
+	praneeth@ti.com, christophe.jaillet@wanadoo.fr
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The security-version-number check should be used rather
-than the runtime version check for driver update. Otherwise
-the firmware update would fail when the update binary
-has a lower number of the runtime version than the
-current one.
+On Tue, Jul 22, 2025 at 10:31=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl=
+> wrote:
+>
+> On Tue, Jul 22, 2025 at 4:16=E2=80=AFPM Jon Cormier <jcormier@criticallin=
+k.com> wrote:
+> > >
+> > > This doesn't apply on top of my gpio/for-next branch. Do you think yo=
+u
+> > > can quickly submit another iteration rebased on top of it?
+> > Maybe this is a basic question but is there a rule of thumb for where
+> > to base patches to be submitted to the mailing lists?  I've generally
+> > been basing them off the latest tag in linux-stable/master.  I suppose
+> > this might be one of those it depends on the subsystem things?
+> > >
+>
+> I feed my tree into linux next, so generally using linux-next/master
+> would be your best bet. The rule of thumb typically is checking the
+> subsystem's git tree in MAINTAINERS and using whatever branch goes
+> into the next release.
+Awesome, thanks for the info!
+>
+> Bartosz
 
-Reported-by: "Govindarajulu, Hariganesh" <hariganesh.govindarajulu@intel.com>
-Signed-off-by: Chen Yu <yu.c.chen@intel.com>
----
- drivers/acpi/pfr_update.c  | 2 +-
- include/uapi/linux/pfrut.h | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/acpi/pfr_update.c b/drivers/acpi/pfr_update.c
-index 031d1ba81b86..08b9b2bc2d97 100644
---- a/drivers/acpi/pfr_update.c
-+++ b/drivers/acpi/pfr_update.c
-@@ -310,7 +310,7 @@ static bool applicable_image(const void *data, struct pfru_update_cap_info *cap,
- 	if (type == PFRU_CODE_INJECT_TYPE)
- 		return payload_hdr->rt_ver >= cap->code_rt_version;
- 
--	return payload_hdr->rt_ver >= cap->drv_rt_version;
-+	return payload_hdr->svn_ver >= cap->drv_svn;
- }
- 
- static void print_update_debug_info(struct pfru_updated_result *result,
-diff --git a/include/uapi/linux/pfrut.h b/include/uapi/linux/pfrut.h
-index 42fa15f8310d..b77d5c210c26 100644
---- a/include/uapi/linux/pfrut.h
-+++ b/include/uapi/linux/pfrut.h
-@@ -89,6 +89,7 @@ struct pfru_payload_hdr {
- 	__u32 hw_ver;
- 	__u32 rt_ver;
- 	__u8 platform_id[16];
-+	__u32 svn_ver;
- };
- 
- enum pfru_dsm_status {
--- 
-2.25.1
 
+--=20
+Jonathan Cormier
+Senior Software Engineer
+
+Voice:  315.425.4045 x222
+
+http://www.CriticalLink.com
+6712 Brooklawn Parkway, Syracuse, NY 13211
 
