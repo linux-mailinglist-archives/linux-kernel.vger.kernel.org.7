@@ -1,275 +1,166 @@
-Return-Path: <linux-kernel+bounces-740540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C6A1B0D579
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:13:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7CBDB0D564
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:11:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EC011C24E47
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:13:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D0841897B62
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:12:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A21D2DFA28;
-	Tue, 22 Jul 2025 09:12:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD852DC33A;
+	Tue, 22 Jul 2025 09:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SzVKdjg4"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Is1HL1do"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A682DC33F;
-	Tue, 22 Jul 2025 09:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0B22DAFD6;
+	Tue, 22 Jul 2025 09:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753175537; cv=none; b=VAxUruPkI425wC2e9ITBOAfwJuKSg77Q/rU+CBdAWMfLm41ZyyjkC0i6Bad96sFU9WhycZty5vCgIB+Zb/EYIEa9G+rgUlU3fcvp7yT4rEC10V41PnI/xeCTx2m108qQR+HDnWOLUQHFmNuNxqEzu3dzoIAYw/KsOpc9xh1OqqA=
+	t=1753175514; cv=none; b=KmXBpOHVvMRWmMh5ExPBDW29VqeN9ETu3/7zUOt2QL+56cUAoLWDNZyYfE/aXK02JNp5gHas/ME0tsZmlDkMUeZCWSRgDpj2SVbmXr2oiW9RzorVVrw9GFFejMxjGkwPmn/exDCBnwkJ44MnahP4eLDm7akF79Bu/p51S+DQnWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753175537; c=relaxed/simple;
-	bh=6l1b7InLD/CO33AXqnUGPVR6oq5wTfk704YDcX5Oxxw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EZveseNk9bgOG39Psed14skNdhkyFHWTCZFFhFEQh29hI6YoHsraj3b/iUBSvsD+0xBBL/BpuB4++JCpGnCknorBmn7rsGSoBwz9MNdzfLg1O210T5evKUJ8cBYRfhqkrRB7sgRK6n1PkFwidGTe9fVL9MLLia5D8t11JN/uBnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SzVKdjg4; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56M7WdWu009373;
-	Tue, 22 Jul 2025 09:12:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=jGU4UszTVjl
-	07iZLTGJkGYdlRfex/TCVBYWysgVcCd8=; b=SzVKdjg4bWVQV31RejnegVX1PMk
-	PMk6Hi0LtfEiqdQAZ7nmc0ParxfzOb13PUXtdb8uaeH1v2+dhDsJI+cgp3gd10G5
-	T4BjLgteo7N6BnUvhlCJXVUFcey4PIKcR8K84DfekwZaluJNLFGDMbif3aTHHyLQ
-	ensXp2dU+j8ntGkTHGod1NdsubhAglxyduGDAagl0LOnyrLy6KBz5YHds5g/Ea6D
-	QwAn5jgVEKtoeLi297IQFdnSmv6shDpqDuJ3heSzEMSGIp4nDLclB7CNXWZvl8/m
-	w6/j75JgjCGtV96FB/JiuW9ERFMPcKyldGxOMraM8XThWDc0+I0p6xy7myw==
-Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48045vy6um-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Jul 2025 09:12:04 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 56M9C2q8028242;
-	Tue, 22 Jul 2025 09:12:02 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 4804em6vqv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Jul 2025 09:12:02 +0000
-Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56M9C15i028229;
-	Tue, 22 Jul 2025 09:12:02 GMT
-Received: from cbsp-sh-gv.ap.qualcomm.com (CBSP-SH-gv.ap.qualcomm.com [10.231.249.68])
-	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 56M9C1aW028212
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 22 Jul 2025 09:12:01 +0000
-Received: by cbsp-sh-gv.ap.qualcomm.com (Postfix, from userid 4635958)
-	id 9538B40D28; Tue, 22 Jul 2025 17:12:00 +0800 (CST)
-From: Wenbin Yao <quic_wenbyao@quicinc.com>
-To: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
-        robh@kernel.org, bhelgaas@google.com, sfr@canb.auug.org.au,
-        qiang.yu@oss.qualcomm.com, quic_wenbyao@quicinc.com,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc: krishna.chundru@oss.qualcomm.com, quic_vbadigan@quicinc.com,
-        quic_mrana@quicinc.com, quic_cang@quicinc.com,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: [PATCH v5 3/3] arm64: dts: qcom: x1e80100-qcp: enable pcie3 x8 slot for X1E80100-QCP
-Date: Tue, 22 Jul 2025 17:11:51 +0800
-Message-Id: <20250722091151.1423332-4-quic_wenbyao@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250722091151.1423332-1-quic_wenbyao@quicinc.com>
-References: <20250722091151.1423332-1-quic_wenbyao@quicinc.com>
+	s=arc-20240116; t=1753175514; c=relaxed/simple;
+	bh=V71dXBdRCBG4o/DpeRxfVK3GevSvOrrgaXfPXIhBv4k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q715dDGmh6omsomV/OVAenAnZr+a/Pi++wbk6iN3tklkuUzpCe67FFAUsrBQRBYKbZB1oUfXsFqdmQoJzVVxYwJd0/cyC8UoaBxxPoUvaq9TZ/L+8Sb9Is9nGbtt4GoCDXJKFVrYt7jcFcSpEaaMpuH5fEsIYTsQIgbWEr1N0Oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Is1HL1do; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45611a6a706so27714855e9.1;
+        Tue, 22 Jul 2025 02:11:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753175511; x=1753780311; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Xe+LfQoQqZdpkbn0iRWweZPGdh/gK7VZcmE3J/COUkY=;
+        b=Is1HL1doRrrzQB6bzcY6c57b/8o64gTFNy57jiNqu8+xvmiH1PNY2Cx0PnR80jIXT8
+         eXONcD56xhYehwiTUiHJxuyI2UctC9iMk7TWQEoR8VJnJbCTkZ1wR8gTyEgb3658mrk2
+         Fi3vxLI4/17LBTsFIbp1K1EcxF2fe4MwiDpzi/EH3m8vB8wsO6ZGbOR4mxNbLRtZnI41
+         Y2qSczKHIDFvwbWJjW0OFgVB7pDblzjFy4A2/nrni8YPMO9PaLcR3KnvO0f9FfI1Mna/
+         kQQJRsHrFjV4me1+G2bQ1MhuhVWNa+l++ADI05svRc1jqWV0QKMyconBSYKgVEKuYFIZ
+         qfpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753175511; x=1753780311;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xe+LfQoQqZdpkbn0iRWweZPGdh/gK7VZcmE3J/COUkY=;
+        b=vhA762SthytTBrFg7rzv9JUwK7WuuauARo8nXjgRvcY4raB+lTbdpq/89ImolJbE72
+         mHv4SSQCmYvWKB1JFVd6KwaNFqNwtSkHRClb4p57crFpFGWaAjSr+8eq1+qXlesJdWd7
+         JGPijrqI8uNz4AY9vfcm/6hdOsAm645KgrwHyfkg6Z6pFJOO7ne6j+BeH7IorMHPL98R
+         tj2GSvTYKVAfAFRIMqya4X6HvfUse7dr1/pav+0kaYyC046S3Ynvm+x4OuvkLP5XlO6w
+         mSR3Jbo+lfLV4W5lpyqWthA4HhJIz/nRbpJ4bsZBUdy+J2STTL8WcUC12bhsh1yeA/mt
+         x54A==
+X-Forwarded-Encrypted: i=1; AJvYcCWrDs4/s7prLck4svxkSDKXTvnawr6P+y15Ku/sauKXHVlOmakp2KV1iFvlepdVbPzfb5GISaTbzfRlUXoO@vger.kernel.org, AJvYcCXIeDMX8Ga9ystZgygVeArdifY90mGZ1zi/LhSfnrGK/gYx9zQF7c99zSI1lCxSeOy91CNpgBaBUrc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLiDDqN/18CrYB8ccz/ynCho/jGtxcMnUlHhuPj646FdBGd8OS
+	Ir+Mga21YKiequemjimqmFTGIkybPTCrranvPdQdwHuz0rJZadIRs8Cc86GoF1+V06hbIQ==
+X-Gm-Gg: ASbGncsNW6tIq/L5Nw5mBTPFg1wngiJH4O2Q/zbpqzZudUsG3vmJ2RVwcqX/pyY9S+Q
+	cmb64CDhfBkgrT4cyRx0X3AvgNqskPAhQxYSeA+AvnJNryMOWHfPTLK2ZXienaYRdm8dGRoCrm/
+	cEXeL45YeDKFc1MRHbSBT2P1A0xY9cwmEBHQQzYwbLpN+kbYsAJTR+ptSTs1rs4laCg0T3H0FIT
+	TCH/HlvmgHxeKLy1GvlRoIIA6cDYsgjDWhsHCeu/QcSKofl3Krzi07ErfEhHkwAXaV8MKyvpMWH
+	T3rIRxohr3RMSgJBrtpT44okCZdl9++H3NZG9nb30V6sX3rgcH1RC97jDAGmO5DMY+LXXvHwE4/
+	j6SqbzS7vdQ==
+X-Google-Smtp-Source: AGHT+IHZiWdGjk7aG/k0R/ELi3c5rR+m0yZ9pXhCcbhjjPHVXj8Q8JrtcDdRzucGTcotnXuf/C8Oow==
+X-Received: by 2002:a05:6000:2288:b0:3b2:dfc6:2485 with SMTP id ffacd0b85a97d-3b60e4c5127mr17581723f8f.4.1753175511069;
+        Tue, 22 Jul 2025 02:11:51 -0700 (PDT)
+Received: from nsa ([89.40.212.7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca4d48bsm12821903f8f.62.2025.07.22.02.11.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jul 2025 02:11:50 -0700 (PDT)
+Date: Tue, 22 Jul 2025 10:12:04 +0100
+From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] iio: accel: bma180: use stack allocated buffer for
+ scan
+Message-ID: <wwwdesuaxl4w32cf6l2bna4bixrxe4pwy4i3briysda3mjvnku@wyvpeirvf34y>
+References: <20250721-iio-use-more-iio_declare_buffer_with_ts-v2-1-f8fb11b8add8@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=LL1mQIW9 c=1 sm=1 tr=0 ts=687f55e4 cx=c_pps
- a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=I4_V4ABcpVmACwlpt_QA:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: t3NXWUxDLtnjKOFrKloTpIu8AYpNJ5kI
-X-Proofpoint-ORIG-GUID: t3NXWUxDLtnjKOFrKloTpIu8AYpNJ5kI
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDA3NSBTYWx0ZWRfX33nhxujHZd5R
- UhW6Yair9D4HsMKS3jYVeej7m7vetsvaHCmNE4IzqFm2d4jC83V2cKIGqXSixZH6q5j8lmtjApN
- IWi/nTz5C3oHtS7bBRooN6H1Q9a/JNgnICdjnu1m6VFAmSwfxyCrsOK+Q8k2pakh1w3KXBjMzVs
- hB3yCsc9HKE73kpgUX0x7s79fOvNb+yACacWfRMZbi6vzOYfAqzgMNkz1RtcBbhtO26WqFs1sGy
- d3J4bK2cf0VoQBhyh4IFvaM2kSCxZPnwjfUsLnZQJ8zU28uRQwy+12jS6zH7bDrhxs5bV5xuGk4
- 6rP3CTmyO7qZevlrJS9ClGukT3nQjLXoIFHoVURPn1pG2DlsC2MNwoIjWjZJ8ikA7KZoEpKvnxu
- ZSZL8fKhBBn0x9Xukc8JgpYGksXccM5losEhI9AU82B0tJRbK5fZCiEb9tBrPjbxVFKcc8S3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-22_01,2025-07-21_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 mlxlogscore=878 clxscore=1011 mlxscore=0 adultscore=0
- suspectscore=0 spamscore=0 malwarescore=0 impostorscore=0 bulkscore=0
- lowpriorityscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507220075
+In-Reply-To: <20250721-iio-use-more-iio_declare_buffer_with_ts-v2-1-f8fb11b8add8@baylibre.com>
 
-From: Qiang Yu <qiang.yu@oss.qualcomm.com>
+On Mon, Jul 21, 2025 at 06:16:34PM -0500, David Lechner wrote:
+> Move the scan struct to the stack instead of being in the driver state
+> struct. The buffer is only used in a single function and does not need
+> to be DMA-safe so it does not need to exist outside of that function's
+> scope.
+> 
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
+> Changes in v2:
+> - Preserve the struct instead of using IIO_DECLARE_BUFFER_WITH_TS()
+> - Did not pick up Andy's review tag since the entire patch changed.
+> - Link to v1: https://lore.kernel.org/r/20250710-iio-use-more-iio_declare_buffer_with_ts-v1-1-df6498f54095@baylibre.com
+> ---
 
-Add perst, wake and clkreq sideband signals and required regulators in
-PCIe3 controller and PHY device tree node. Describe the voltage rails of
-the x8 PCI slots for PCIe3 port.
+Reviewed-by: Nuno Sá <nuno.sa@analog.com>
 
-Signed-off-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
-Signed-off-by: Wenbin Yao <quic_wenbyao@quicinc.com>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/x1e80100-qcp.dts | 118 ++++++++++++++++++++++
- 1 file changed, 118 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-index 4dfba835a..71c44e37a 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-@@ -318,6 +318,48 @@ vreg_wcn_3p3: regulator-wcn-3p3 {
- 		regulator-boot-on;
- 	};
- 
-+	vreg_pcie_12v: regulator-pcie-12v {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_PCIE_12V";
-+		regulator-min-microvolt = <12000000>;
-+		regulator-max-microvolt = <12000000>;
-+
-+		gpio = <&pm8550ve_8_gpios 8 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&pcie_x8_12v>;
-+		pinctrl-names = "default";
-+	};
-+
-+	vreg_pcie_3v3_aux: regulator-pcie-3v3-aux {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_PCIE_3P3_AUX";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&pmc8380_3_gpios 8 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&pm_sde7_aux_3p3_en>;
-+		pinctrl-names = "default";
-+	};
-+
-+	vreg_pcie_3v3: regulator-pcie-3v3 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_PCIE_3P3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&pmc8380_3_gpios 6 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&pm_sde7_main_3p3_en>;
-+		pinctrl-names = "default";
-+};
-+
- 	usb-1-ss0-sbu-mux {
- 		compatible = "onnn,fsusb42", "gpio-sbu-mux";
- 
-@@ -908,6 +950,59 @@ &mdss_dp3_phy {
- 	status = "okay";
- };
- 
-+&pm8550ve_8_gpios {
-+	pcie_x8_12v: pcie-12v-default-state {
-+		pins = "gpio8";
-+		function = "normal";
-+		output-enable;
-+		output-high;
-+		bias-pull-down;
-+		power-source = <0>;
-+	};
-+};
-+
-+&pmc8380_3_gpios {
-+	pm_sde7_aux_3p3_en: pcie-aux-3p3-default-state {
-+		pins = "gpio8";
-+		function = "normal";
-+		output-enable;
-+		output-high;
-+		bias-pull-down;
-+		power-source = <0>;
-+	};
-+
-+	pm_sde7_main_3p3_en: pcie-main-3p3-default-state {
-+		pins = "gpio6";
-+		function = "normal";
-+		output-enable;
-+		output-high;
-+		bias-pull-down;
-+		power-source = <0>;
-+	};
-+};
-+
-+&pcie3 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pcie3_default>;
-+	perst-gpios = <&tlmm 143 GPIO_ACTIVE_LOW>;
-+	wake-gpios = <&tlmm 145 GPIO_ACTIVE_LOW>;
-+
-+	status = "okay";
-+};
-+
-+&pcie3_phy {
-+	vdda-phy-supply = <&vreg_l3c_0p8>;
-+	vdda-pll-supply = <&vreg_l3e_1p2>;
-+
-+	status = "okay";
-+};
-+
-+&pcie3_port {
-+	vpcie12v-supply = <&vreg_pcie_12v>;
-+	vpcie3v3-supply = <&vreg_pcie_3v3>;
-+	vpcie3v3aux-supply = <&vreg_pcie_3v3_aux>;
-+};
-+
- &pcie4 {
- 	perst-gpios = <&tlmm 146 GPIO_ACTIVE_LOW>;
- 	wake-gpios = <&tlmm 148 GPIO_ACTIVE_LOW>;
-@@ -1119,6 +1214,29 @@ nvme_reg_en: nvme-reg-en-state {
- 		bias-disable;
- 	};
- 
-+	pcie3_default: pcie3-default-state {
-+		clkreq-n-pins {
-+			pins = "gpio144";
-+			function = "pcie3_clk";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+
-+		perst-n-pins {
-+			pins = "gpio143";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-down;
-+		};
-+
-+		wake-n-pins {
-+			pins = "gpio145";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+	};
-+
- 	pcie4_default: pcie4-default-state {
- 		clkreq-n-pins {
- 			pins = "gpio147";
--- 
-2.34.1
-
+>  drivers/iio/accel/bma180.c | 13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/iio/accel/bma180.c b/drivers/iio/accel/bma180.c
+> index 4fccbcb76e0423bee37463a72c637af80e356a19..8925f5279e627a67c8e2928b10bee04185663e10 100644
+> --- a/drivers/iio/accel/bma180.c
+> +++ b/drivers/iio/accel/bma180.c
+> @@ -139,11 +139,6 @@ struct bma180_data {
+>  	int scale;
+>  	int bw;
+>  	bool pmode;
+> -	/* Ensure timestamp is naturally aligned */
+> -	struct {
+> -		s16 chan[4];
+> -		aligned_s64 timestamp;
+> -	} scan;
+>  };
+>  
+>  enum bma180_chan {
+> @@ -870,6 +865,10 @@ static irqreturn_t bma180_trigger_handler(int irq, void *p)
+>  	struct bma180_data *data = iio_priv(indio_dev);
+>  	s64 time_ns = iio_get_time_ns(indio_dev);
+>  	int bit, ret, i = 0;
+> +	struct {
+> +		s16 chan[4];
+> +		aligned_s64 timestamp;
+> +	} scan = { };
+>  
+>  	mutex_lock(&data->mutex);
+>  
+> @@ -879,12 +878,12 @@ static irqreturn_t bma180_trigger_handler(int irq, void *p)
+>  			mutex_unlock(&data->mutex);
+>  			goto err;
+>  		}
+> -		data->scan.chan[i++] = ret;
+> +		scan.chan[i++] = ret;
+>  	}
+>  
+>  	mutex_unlock(&data->mutex);
+>  
+> -	iio_push_to_buffers_with_ts(indio_dev, &data->scan, sizeof(data->scan), time_ns);
+> +	iio_push_to_buffers_with_ts(indio_dev, &scan, sizeof(scan), time_ns);
+>  err:
+>  	iio_trigger_notify_done(indio_dev->trig);
+>  
+> 
+> ---
+> base-commit: cd2731444ee4e35db76f4fb587f12d327eec5446
+> change-id: 20250710-iio-use-more-iio_declare_buffer_with_ts-0924382d38c6
+> 
+> Best regards,
+> -- 
+> David Lechner <dlechner@baylibre.com>
+> 
 
