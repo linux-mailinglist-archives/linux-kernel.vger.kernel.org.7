@@ -1,65 +1,63 @@
-Return-Path: <linux-kernel+bounces-740909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58829B0DAFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:37:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1575B0DAFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:38:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6EFB3BE088
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:37:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2137B563931
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:37:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C122EA469;
-	Tue, 22 Jul 2025 13:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596692EA48A;
+	Tue, 22 Jul 2025 13:37:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qzwu8WvU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lWaFhGhm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E61F2E9EB9;
-	Tue, 22 Jul 2025 13:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A724A28AB11;
+	Tue, 22 Jul 2025 13:37:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753191448; cv=none; b=S8GqOWupD0B674HbFQRlQyICeMiE5v9Q8S4Ls5zMfcYWW7f7i/13Aqym9xLjckSunF+TcirlSQC2/0xMHp5zgfIhYIXxSI+pN/QAvjGBWA+xNMoCS8JKBjlX3JKJl7oE81gyP5Xaa2BuyD8sGLvF18hh7mokT9Uo9A8FNn6fMOE=
+	t=1753191453; cv=none; b=IMWaVD5Ncy4nRd7R7JKJf67p9u1uHo3LEIyvEiOcXyiOESUpiLHDyZjUsKMb/KV6TZehB4H+9LOInocVRXHSUfBQRE2Hhl7awGM02nxH9JeDQp0T2WbeOUSbcCy2aOdpI9LvF5TRr/6Okk7mkKM3cK9kc98jVHebLsBMnX7/LPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753191448; c=relaxed/simple;
-	bh=ldeVLAYqLGElj4agrBFxudHwOutEqS6Dqz8z/EKBx/Y=;
+	s=arc-20240116; t=1753191453; c=relaxed/simple;
+	bh=znd0BpuwRyqMnjpW3g9CjauNbjE2GqxOTGIzyRzKmUY=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ddfCiei7lOBC0VZUPDmH5q/8STUOzn/WDD7ryUO3J/7N5kbSAo4ZBuVorfEqwFmMDRMVM6k5Wxk5pqe6DxnGPKi+G3tHIREWsylCjNr6s0wvtIRf26is/g0HfQmaK0OIliDhkRbUdO3nArWl5a9buJhwUQv23l9hynd6FKqt02w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qzwu8WvU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D9F3C4CEEB;
-	Tue, 22 Jul 2025 13:37:23 +0000 (UTC)
+	 MIME-Version:Content-Type; b=rvzN9veFEo26dThL7u/t05yfpqPBkLsuS5fRoD0uL9oHiu6bMTVat3qEHwkwf6wErGzsBAyUsBYIRiKD01YvaPy/anoFQXlMjfROLrFLims0lwL03ZO0ZAaDR4QM147hMAp2MO3TxcirhDIXNWuDlgrXK8ZvEZLuWP6NJMwz2Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lWaFhGhm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 697D6C4CEEB;
+	Tue, 22 Jul 2025 13:37:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753191447;
-	bh=ldeVLAYqLGElj4agrBFxudHwOutEqS6Dqz8z/EKBx/Y=;
+	s=k20201202; t=1753191453;
+	bh=znd0BpuwRyqMnjpW3g9CjauNbjE2GqxOTGIzyRzKmUY=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Qzwu8WvUnCoSWHubicThQ9HH8uBprGz+8IW2608cpnFrZqSMz/vmnaBrYDeEftn+m
-	 zwQp+Bucb+LuPRR07EKbVBE3QkO8OZM+vMfJcAp8f73uzehcmUBazjMzvr9FXoxvBw
-	 s+qGYizK/NvlJti6vJ3pY6r2Z8FLLjrq1tw8NynObz1e0KoTW+XLDK4xE1VG3yULMb
-	 BuaPPGeBWs5vk1E8MNleteL4U4AOHEhRXDUTkYgjo1u/8Lyb8juAP9DyiYuu2wnAH5
-	 bz1SZZphEgQbQH7Htnn7IDTGZw5XXzGUvoxzLWNUQio+kmWZuySTAB0vHUo0zviVVU
-	 HeiOfVIQ2qd6A==
+	b=lWaFhGhmI344Ewhq2Jysi1G024uYpZARoP07K2ynbC7BwiVk3ia475yWj+Vv0+EX/
+	 +g5+aQXTVzBhXzRPOL5tEn2ewlWk5vI7PK78NylHKX7J2hjo3rZNsTfHGEbfmb3CmP
+	 H6guKKhJ2/sVfISkX7cQGu2Z/fhgCaeDREGizRR1sBtbEFPucQkO2Ek0pS1PI8j4V4
+	 8QUmgi4w/hR+JLU9YkRrHh/43yejbUL8JUDAU2XjGqVS2Wx/RtwDJTi3Oq0BnTncdD
+	 z5EFH8x9k0wBhrcwuyM8vQbEpGns63x5kMn+pW9g1AvkGV7Vwn/hWTeTO7WfgbHt5U
+	 VECtYxvJrCdGw==
 From: Vinod Koul <vkoul@kernel.org>
-To: linux-rockchip@lists.infradead.org, 
- Geraldo Nascimento <geraldogabriel@gmail.com>
-Cc: Shawn Lin <shawn.lin@rock-chips.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
- Bjorn Helgaas <bhelgaas@google.com>, Heiko Stuebner <heiko@sntech.de>, 
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Wesley Cheng <quic_wcheng@quicinc.com>, 
  Kishon Vijay Abraham I <kishon@kernel.org>, 
- Rick wertenbroek <rick.wertenbroek@gmail.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Valmantas Paliksa <walmis@gmail.com>, linux-phy@lists.infradead.org, 
- linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-In-Reply-To: <cover.1751322015.git.geraldogabriel@gmail.com>
-References: <cover.1751322015.git.geraldogabriel@gmail.com>
-Subject: Re: (subset) [RESEND PATCH v9 0/4] PCI: rockchip: Improve driver
- quality
-Message-Id: <175319144299.114152.2563260088897607918.b4-ty@kernel.org>
-Date: Tue, 22 Jul 2025 19:07:22 +0530
+ Abel Vesa <abel.vesa@linaro.org>, Luca Weiss <luca.weiss@fairphone.com>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-phy@lists.infradead.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+In-Reply-To: <20250715-sm7635-eusb-phy-v3-0-6c3224085eb6@fairphone.com>
+References: <20250715-sm7635-eusb-phy-v3-0-6c3224085eb6@fairphone.com>
+Subject: Re: [PATCH v3 0/4] Changes for the eUSB2 PHY on Milos
+Message-Id: <175319144804.114152.2528801468931632951.b4-ty@kernel.org>
+Date: Tue, 22 Jul 2025 19:07:28 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,24 +69,21 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.13.0
 
 
-On Mon, 30 Jun 2025 19:24:15 -0300, Geraldo Nascimento wrote:
-> During a 30-day debugging-run fighting quirky PCIe devices on RK3399
-> some quality improvements began to take form and after feedback from
-> community they reached more polished state.
+On Tue, 15 Jul 2025 09:29:33 +0200, Luca Weiss wrote:
+> Document the eUSB2 PHY on Milos and add some driver changes for it.
 > 
-> This will ensure maximum chance of retraining to 5.0GT/s, on all four
-> lanes and fix async strobe TEST_WRITE disablement. On top of this,
-> standard PCIe defines are now used to reference registers from offset
-> at Capabilities Register.
 > 
-> [...]
 
 Applied, thanks!
 
-[3/4] phy: rockchip-pcie: Enable all four lanes if required
-      commit: c3fe7071e196e25789ecf90dbc9e8491a98884d7
-[4/4] phy: rockchip-pcie: Properly disable TEST_WRITE strobe signal
-      commit: 25facbabc3fc33c794ad09d73f73268c0f8cbc7d
+[1/4] dt-bindings: usb: qcom,snps-dwc3: Add Milos compatible
+      commit: 9e891b0d21bc889898e726783f20bd81f5fd4056
+[2/4] dt-bindings: phy: qcom,snps-eusb2: document the Milos Synopsys eUSB2 PHY
+      commit: bb39f49a433312ba7558b7cc44cfd9131b46bce1
+[3/4] phy: qcom: phy-qcom-snps-eusb2: Add missing write from init sequence
+      commit: 7f5f703210109366c1e1b685086c9b0a4897ea54
+[4/4] phy: qcom: phy-qcom-snps-eusb2: Update init sequence per HPG 1.0.2
+      commit: 828c3e9dce25a9551e52fd076136f4d9936c0498
 
 Best regards,
 -- 
