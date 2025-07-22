@@ -1,218 +1,147 @@
-Return-Path: <linux-kernel+bounces-740565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B0AEB0D5C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:21:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1F5EB0D5CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:21:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82887174A85
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:21:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 523A61891703
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183D92DC348;
-	Tue, 22 Jul 2025 09:21:14 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C652DAFCE;
+	Tue, 22 Jul 2025 09:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cWn0jZkU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4899A238C21;
-	Tue, 22 Jul 2025 09:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3BA1DFFC;
+	Tue, 22 Jul 2025 09:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753176073; cv=none; b=jNQNri0i4O0d0Mz32Zr0I9TdO7fErsdLBcrWwzJOIEMWUqOP4LorRxzyX6lrMwvqNnNWvbtVWXm2HKqPc6zNCcf1eZr5NrwiGyVDGKAFwGaSQf290xSNg6+/n0ZPPg5eNC9aGwBvh82VqeJMsne/wLjBJN48f/e63LyOwPWdr8U=
+	t=1753176108; cv=none; b=dhjW644AP8T1bOzBu9af6yihf9gZuD94C+cOSvpsluzfVuqVT5eTVArtd/YbGJUuMEF45uZ+tLgU1f+qhis1dTlCYVGhHXtmIhyM8OyHh9q8bE7e7mpCutzNUZxhi7371mH9EBULRRO6wH/KDJhutg4JL+oE4fyLDSyhG7p7Gcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753176073; c=relaxed/simple;
-	bh=gD+1KoPxD7j0X9n4QTuWeNii1Ldwc+riVNjyd3Y0S+4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E3Sx72Hd+NqyD5JYrp7knQb3c9db55cmhdWMvHA3Ro5rLWbhIKZrt121d54iJ2dnfQx08HiMOQJoeyB0W4xqpREybG9N+E6MDDBtn70IbY6jksi3Y5wkZakZgfDVhQxtPTi7+S7L04MWq1YtcLn57rhFdflum5S8Cpxy5LP30gY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.48.207])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id A2A59341707;
-	Tue, 22 Jul 2025 09:21:10 +0000 (UTC)
-Date: Tue, 22 Jul 2025 17:21:01 +0800
-From: Yixun Lan <dlan@gentoo.org>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Alex Elder <elder@riscstar.com>,
-	Haylen Chu <heylenay@4d2.org>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] dt-bindings: clock: spacemit: CLK_SSPA_I2S_BCLK
- for SSPA
-Message-ID: <20250722092101-GYB724801@gentoo>
-References: <20250722-k1-clk-i2s-v2-0-2f8edfe3dab4@linux.spacemit.com>
- <20250722-k1-clk-i2s-v2-2-2f8edfe3dab4@linux.spacemit.com>
+	s=arc-20240116; t=1753176108; c=relaxed/simple;
+	bh=03h99rwdlaftyLCQRNswUUAcFdErDW9dGKOcWE+JySo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n7O+haX7i0y4jKWX3plEq/XYSBp/Rc4Qv2XGP03MENtA61oK/WUPDuYA9SVY1zxU0ec8RGNlrp/7wTmPRnJ15XsqqJ6Gd1EIO+Zv/JKFAdHIYxDN3YdN4iox6dXTICSAkeoudsjEcw205OX0Ka1hM2oRccXzE885rKeUHElQNVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cWn0jZkU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC046C4CEEB;
+	Tue, 22 Jul 2025 09:21:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753176108;
+	bh=03h99rwdlaftyLCQRNswUUAcFdErDW9dGKOcWE+JySo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=cWn0jZkUFZOluvKv6bmbyATKVWy1bkg+lnaGFGhNjCvP7/rYMSavgYwuJrgYP54lr
+	 gJgttUHbssF+a8ZyVhH7i6BcqJIPGltXcAL1ylzxzG8AqEVTk9MYgWelPCYj4nFiv4
+	 IpfLpo0Pg+lph878RN6vKNnwxue/S0Kbd69fXilhr60tG4MW3Y9IBY7y2siD/yWFvl
+	 T4aUobIZgT1RPIP/6MgfJQRzSOwD4JSzx6ox25pVf5DEy9cvJ5CcfZuzaMy5zf4iyF
+	 qyncpPdW259n2TQMntkRLq82EFyimrCcKa7WMY0UTyGsMtaNJrFXKHufUjtS/FrKek
+	 P8r9HEqg7kWYA==
+Message-ID: <bca68e7a-cb36-4903-bde9-15cb1945c71e@kernel.org>
+Date: Tue, 22 Jul 2025 11:21:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250722-k1-clk-i2s-v2-2-2f8edfe3dab4@linux.spacemit.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 12/13] drm/msm/dp: Add DisplayPort support for QCS615
+To: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>,
+ Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov
+ <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+ dmitry.baryshkov@oss.qualcomm.com, konrad.dybcio@oss.qualcomm.com,
+ fange.zhang@oss.qualcomm.com, quic_lliu6@quicinc.com,
+ quic_yongmou@quicinc.com
+References: <20250722-add-displayport-support-for-qcs615-platform-v2-0-42b4037171f8@oss.qualcomm.com>
+ <20250722-add-displayport-support-for-qcs615-platform-v2-12-42b4037171f8@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250722-add-displayport-support-for-qcs615-platform-v2-12-42b4037171f8@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Troy,
-
-On 15:36 Tue 22 Jul     , Troy Mitchell wrote:
-> This patch adds macro definitions: SSPAx_I2S_BCLK,
-this is obvious, so no need to repeat, please add something useful
-
-> to introduce a dummy gate for i2s_bclk.
-                ~~~~~~ 'virtual'? if it isn't a real gate clock,
-	but I'm not sure it's a good approach to introduce such
-	virtual clock if underlying hw doesn't comply with this
-
+On 22/07/2025 09:22, Xiangxu Yin wrote:
+> The Qualcomm QCS615 platform comes with a DisplayPort controller use the
+> same base offset as sc7180. add support for this in DP driver.
 > 
-> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
 > ---
->  include/dt-bindings/clock/spacemit,k1-syscon.h | 114 +++++++++++++------------
->  1 file changed, 58 insertions(+), 56 deletions(-)
-dt-binding patch should always go first
-
+>  drivers/gpu/drm/msm/dp/dp_display.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/include/dt-bindings/clock/spacemit,k1-syscon.h b/include/dt-bindings/clock/spacemit,k1-syscon.h
-> index 35968ae98246609c889eb4a7d08b4ff7360de53b..6914ccf5be45a1071d5b6eac354cacb67888e00c 100644
-> --- a/include/dt-bindings/clock/spacemit,k1-syscon.h
-> +++ b/include/dt-bindings/clock/spacemit,k1-syscon.h
-> @@ -123,62 +123,64 @@
->  #define CLK_TIMERS2		41
->  #define CLK_AIB			42
->  #define CLK_ONEWIRE		43
-> -#define CLK_SSPA0		44
-> -#define CLK_SSPA1		45
-> -#define CLK_DRO			46
-> -#define CLK_IR			47
-> -#define CLK_TSEN		48
-> -#define CLK_IPC_AP2AUD		49
-> -#define CLK_CAN0		50
-> -#define CLK_CAN0_BUS		51
-> -#define CLK_UART0_BUS		52
-> -#define CLK_UART2_BUS		53
-> -#define CLK_UART3_BUS		54
-> -#define CLK_UART4_BUS		55
-> -#define CLK_UART5_BUS		56
-> -#define CLK_UART6_BUS		57
-> -#define CLK_UART7_BUS		58
-> -#define CLK_UART8_BUS		59
-> -#define CLK_UART9_BUS		60
-> -#define CLK_GPIO_BUS		61
-> -#define CLK_PWM0_BUS		62
-> -#define CLK_PWM1_BUS		63
-> -#define CLK_PWM2_BUS		64
-> -#define CLK_PWM3_BUS		65
-> -#define CLK_PWM4_BUS		66
-> -#define CLK_PWM5_BUS		67
-> -#define CLK_PWM6_BUS		68
-> -#define CLK_PWM7_BUS		69
-> -#define CLK_PWM8_BUS		70
-> -#define CLK_PWM9_BUS		71
-> -#define CLK_PWM10_BUS		72
-> -#define CLK_PWM11_BUS		73
-> -#define CLK_PWM12_BUS		74
-> -#define CLK_PWM13_BUS		75
-> -#define CLK_PWM14_BUS		76
-> -#define CLK_PWM15_BUS		77
-> -#define CLK_PWM16_BUS		78
-> -#define CLK_PWM17_BUS		79
-> -#define CLK_PWM18_BUS		80
-> -#define CLK_PWM19_BUS		81
-> -#define CLK_SSP3_BUS		82
-> -#define CLK_RTC_BUS		83
-> -#define CLK_TWSI0_BUS		84
-> -#define CLK_TWSI1_BUS		85
-> -#define CLK_TWSI2_BUS		86
-> -#define CLK_TWSI4_BUS		87
-> -#define CLK_TWSI5_BUS		88
-> -#define CLK_TWSI6_BUS		89
-> -#define CLK_TWSI7_BUS		90
-> -#define CLK_TWSI8_BUS		91
-> -#define CLK_TIMERS1_BUS		92
-> -#define CLK_TIMERS2_BUS		93
-> -#define CLK_AIB_BUS		94
-> -#define CLK_ONEWIRE_BUS		95
-> -#define CLK_SSPA0_BUS		96
-> -#define CLK_SSPA1_BUS		97
-> -#define CLK_TSEN_BUS		98
-> -#define CLK_IPC_AP2AUD_BUS	99
-> +#define CLK_SSPA0_I2S_BCLK	44
-> +#define CLK_SSPA1_I2S_BCLK	45
-just append the clock at the end, instead of doing massive renaming
+> diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
+> index d87d47cc7ec3eb757ac192c411000bc50b824c59..ddb22b50490035779904d4cab20e2fee7e0f9657 100644
+> --- a/drivers/gpu/drm/msm/dp/dp_display.c
+> +++ b/drivers/gpu/drm/msm/dp/dp_display.c
+> @@ -196,6 +196,7 @@ static const struct of_device_id msm_dp_dt_match[] = {
+>  	{ .compatible = "qcom,sc8280xp-dp", .data = &msm_dp_desc_sc8280xp },
+>  	{ .compatible = "qcom,sc8280xp-edp", .data = &msm_dp_desc_sc8280xp },
+>  	{ .compatible = "qcom,sdm845-dp", .data = &msm_dp_desc_sdm845 },
+> +	{ .compatible = "qcom,sm6150-dp", .data = &msm_dp_desc_sc7180 },
 
-> +#define CLK_SSPA0		46
-> +#define CLK_SSPA1		47
-> +#define CLK_DRO			48
-> +#define CLK_IR			49
-> +#define CLK_TSEN		50
-> +#define CLK_IPC_AP2AUD		51
-> +#define CLK_CAN0		52
-> +#define CLK_CAN0_BUS		53
-> +#define CLK_UART0_BUS		54
-> +#define CLK_UART2_BUS		55
-> +#define CLK_UART3_BUS		56
-> +#define CLK_UART4_BUS		57
-> +#define CLK_UART5_BUS		58
-> +#define CLK_UART6_BUS		59
-> +#define CLK_UART7_BUS		60
-> +#define CLK_UART8_BUS		61
-> +#define CLK_UART9_BUS		62
-> +#define CLK_GPIO_BUS		63
-> +#define CLK_PWM0_BUS		64
-> +#define CLK_PWM1_BUS		65
-> +#define CLK_PWM2_BUS		66
-> +#define CLK_PWM3_BUS		67
-> +#define CLK_PWM4_BUS		68
-> +#define CLK_PWM5_BUS		69
-> +#define CLK_PWM6_BUS		70
-> +#define CLK_PWM7_BUS		71
-> +#define CLK_PWM8_BUS		72
-> +#define CLK_PWM9_BUS		73
-> +#define CLK_PWM10_BUS		74
-> +#define CLK_PWM11_BUS		75
-> +#define CLK_PWM12_BUS		76
-> +#define CLK_PWM13_BUS		77
-> +#define CLK_PWM14_BUS		78
-> +#define CLK_PWM15_BUS		79
-> +#define CLK_PWM16_BUS		80
-> +#define CLK_PWM17_BUS		81
-> +#define CLK_PWM18_BUS		82
-> +#define CLK_PWM19_BUS		83
-> +#define CLK_SSP3_BUS		84
-> +#define CLK_RTC_BUS		85
-> +#define CLK_TWSI0_BUS		86
-> +#define CLK_TWSI1_BUS		87
-> +#define CLK_TWSI2_BUS		88
-> +#define CLK_TWSI4_BUS		89
-> +#define CLK_TWSI5_BUS		90
-> +#define CLK_TWSI6_BUS		91
-> +#define CLK_TWSI7_BUS		92
-> +#define CLK_TWSI8_BUS		93
-> +#define CLK_TIMERS1_BUS		94
-> +#define CLK_TIMERS2_BUS		95
-> +#define CLK_AIB_BUS		96
-> +#define CLK_ONEWIRE_BUS		97
-> +#define CLK_SSPA0_BUS		98
-> +#define CLK_SSPA1_BUS		99
-> +#define CLK_TSEN_BUS		100
-> +#define CLK_IPC_AP2AUD_BUS	101
->  
->  /* APMU clocks */
->  #define CLK_CCI550		0
-> 
-> -- 
-> 2.50.1
-> 
 
--- 
-Yixun Lan (dlan)
+So devices are compatible? Why are you adding this entry instead of
+expressing compatibility?
+
+Best regards,
+Krzysztof
 
