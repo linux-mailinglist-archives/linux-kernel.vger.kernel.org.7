@@ -1,139 +1,153 @@
-Return-Path: <linux-kernel+bounces-740334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 193EEB0D2E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:27:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E360B0D2EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:28:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 634881887132
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:26:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FE5A1888F6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:26:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 550AF2D23B7;
-	Tue, 22 Jul 2025 07:24:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10102D6630;
+	Tue, 22 Jul 2025 07:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vxoeHQTl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="DRjxpDyC"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88CB62BF015;
-	Tue, 22 Jul 2025 07:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F412D5C89;
+	Tue, 22 Jul 2025 07:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753169079; cv=none; b=MT75Lhj/h9EskBFD6Ih3vWTIQk1Xt7ji9dCaSzEHG+DXrbK+K0eP6wvNcCi2cUXFW9EiAZVJGQq3mgvHckRIHlJ7jP3W5W93y3bemi/sFkuy/8NJwwyJdPuXifjChyy0cYfoIX29E0f2U1O+PV8/RW5zhTB52bwc1jqRUA5V+EQ=
+	t=1753169089; cv=none; b=jL4iJHXPUaqKNrVSjku5FQcoqgt3+/9uUVmemmz1/pkG5MP/+yooe+C+s3nMW4jC6sDqE6DMIq61caDze0velNgN6NpiKBEFjUJfci49x36YBcSzh6yGGfmLVbmPdiOcInY+JYHz3m5ea96YEpi9kwnuWdCrbsyzvyCvROlLvEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753169079; c=relaxed/simple;
-	bh=+Gt5hHL8vsJF557nqKxPeraB+jDGTIGJbmdALX74w+Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mE7JOwjKVZfbeRYap4yHSl3xOZDug9R6mdG9/vuT8UMpc2Vvk2G19ccUM65K3BA5rPOhVVVMr3P4oU8BZt3vgbt7yMmB90V98T441kuVJOg+Uyn4RJSIEXNvk9B40Z3l3NjJGFKJgpVfgUUbCLf24NgS5GC4kFxcnwdEKyxNH+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vxoeHQTl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FD00C4CEEB;
-	Tue, 22 Jul 2025 07:24:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1753169079;
-	bh=+Gt5hHL8vsJF557nqKxPeraB+jDGTIGJbmdALX74w+Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vxoeHQTlL35niXbDoAKxUJjOUh031FdFVUqPxnrZxBQWG9rgpDPgRipAePBa/Y9NO
-	 J99hZmXLd3FYktHC+ESNiZkTgaGi3Ol4CyUlod3527XwLeUbU+JznS/Z5xpAFokWCD
-	 d0IwAk7rcaBsWk/EfuvrN8y2Oa+pUpJPlPKgr+Gg=
-Date: Tue, 22 Jul 2025 09:24:35 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	Baochen Qiang <baochen.qiang@oss.qualcomm.com>,
-	Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Jeff Johnson <jjohnson@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	kernel@collabora.com, Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	Robin Murphy <robin.murphy@arm.com>
-Subject: Re: Excessive page cache occupies DMA32 memory
-Message-ID: <2025072234-cork-unadvised-24d3@gregkh>
-References: <766ef20e-7569-46f3-aa3c-b576e4bab4c6@collabora.com>
- <aH51JnZ8ZAqZ6N5w@casper.infradead.org>
- <2025072238-unplanted-movable-7dfb@gregkh>
- <91fc0c41-6d25-4f60-9de3-23d440fc8e00@collabora.com>
+	s=arc-20240116; t=1753169089; c=relaxed/simple;
+	bh=NKFAAK1bYRNZFBYpr97jStjHpbFo4r8a32WqU1lxnrA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ipP9AO0CACedQ4tgmibKDOAhBodrr2cuhw4S7l32bpji4zYzW78J1b9N4nBGvt+Cv4+lUof7gLo+L6Xdk7exUcsqxCFxI/Vo1SX/ZC83NhZwoqxp7X2BigNimSCb9jhr18HS0atuGAsZh3c3qpFPz688V07Fp7r87SCIWzwpI7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=DRjxpDyC; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1753169084;
+	bh=NKFAAK1bYRNZFBYpr97jStjHpbFo4r8a32WqU1lxnrA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DRjxpDyCILnHFo0KPUjoa0uDdfeXKcbhuDlahuHjD+jDd7z5z9fzghPvgO3uPs23+
+	 olfWegtqHZ8yYAxyhjZytlH4Z72QnXLGzUt0953OAf7qdhzA14ADL0Ec1yi16yzJU2
+	 EuqydPziE/j7MrcA31pLoib+mId5ZEgp8tionlM/xsdR7pfkOrTb0V9O2egnjUDiIk
+	 tniez+qBh4wd40wLSacMRBNLwOSVGb1qjamU3qSuTfdTb4So4Sdf3TUos3mAXL2Xkq
+	 fUGcwpkxFFxpeg6gf5Fhi76XsFt1MSxwlyhPyfgUxPlA2Y0iSiusrcZxyWjs+pnehd
+	 8We8H77Kd339g==
+Received: from [192.168.1.90] (unknown [82.79.138.60])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 894FA17E05F0;
+	Tue, 22 Jul 2025 09:24:44 +0200 (CEST)
+Message-ID: <44468cbc-6dc1-4b73-a2f5-eca7742241b3@collabora.com>
+Date: Tue, 22 Jul 2025 10:24:44 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <91fc0c41-6d25-4f60-9de3-23d440fc8e00@collabora.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/11] HID: playstation: Add support for audio jack
+ handling on DualSense
+To: Roderick Colenbrander <thunderbird2k@gmail.com>
+Cc: Roderick Colenbrander <roderick.colenbrander@sony.com>,
+ Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
+ Henrik Rydberg <rydberg@bitmath.org>, kernel@collabora.com,
+ linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250625-dualsense-hid-jack-v2-0-596c0db14128@collabora.com>
+ <s4596421-sr43-893r-o90r-86nr588sp32q@xreary.bet>
+ <74d4675d-d6f5-41ed-b715-f62fb569df5d@collabora.com>
+ <CAEc3jaAFV_PXdFAX9th4-hhKNAhBKdVCNP+Qf8nH=g8FwoCabQ@mail.gmail.com>
+ <CAEc3jaAGP3HV_+tGLHWZXA-baD4HkA2nYWGxpmox4cuZMh+ksw@mail.gmail.com>
+Content-Language: en-US
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+In-Reply-To: <CAEc3jaAGP3HV_+tGLHWZXA-baD4HkA2nYWGxpmox4cuZMh+ksw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 22, 2025 at 11:05:11AM +0500, Muhammad Usama Anjum wrote:
-> Adding ath/mhi and dma API developers to the discussion.
+Hi Roderick,
+
+On 7/22/25 8:47 AM, Roderick Colenbrander wrote:
+> Hi Christian,
 > 
-> On 7/22/25 10:32 AM, Greg KH wrote:
-> > On Mon, Jul 21, 2025 at 06:13:10PM +0100, Matthew Wilcox wrote:
-> >> On Mon, Jul 21, 2025 at 08:03:12PM +0500, Muhammad Usama Anjum wrote:
-> >>> Hello,
-> >>>
-> >>> When 10-12GB our of total 16GB RAM is being used as page cache
-> >>> (active_file + inactive_file) at suspend time, the drivers fail to allocate
-> >>> dma memory at resume as dma memory is either occupied by the page cache or
-> >>> fragmented. Example:
-> >>>
-> >>> kworker/u33:5: page allocation failure: order:7, mode:0xc04(GFP_NOIO|GFP_DMA32), nodemask=(null),cpuset=/,mems_allowed=0
-> >>
-> >> Just to be clear, this is not a page cache problem.  The driver is asking
-> >> us to do a 512kB allocation without doing I/O!  This is a ridiculous
-> >> request that should be expected to fail.
-> >>
-> >> The solution, whatever it may be, is not related to the page cache.
-> >> I reject your diagnosis.  Almost all of the page cache is clean and
-> >> could be dropped (as far as I can tell from the output below).
-> >>
-> >> Now, I'm not too familiar with how the page allocator chooses to fail
-> >> this request.  Maybe it should be trying harder to drop bits of the page
-> >> cache.  Maybe it should be doing some compaction. 
-> That's very thoughtful. I'll look at the page allocator why isn't it dropping
-> cache or doing compaction.
+> I just got back from Japan (trip was a bit extended). In the meantime
+> I had some of employees had a look as well.
 > 
-> >> I am not inclined to
-> >> go digging on your behalf, because frankly I'm offended by the suggestion
-> >> that the page cache is at fault.
-> I apologize—that wasn't my intention.
+> The audio patches towards the end seem to be okay. We tried to dig for
+> the official volume numbers, but they were too hard to find (too many
+> layers, too many repositories). When we use a PS5, the default volume
+> for the headset and speaker are both close to 70% (just eyeballing).
+> At the hardware level the volume is quite non-linear and internally we
+> use a mapping table (not sure what the curve is based on). For the
+> speaker this starts at 0x3d as you found out already. The 70% volume
+> for the speaker seems to correspond to a value of 93 and headphones
+> 83.
+> The set pre-amp gain of 0x2 is a common value we seem to set and means
+> +6dB, so change comment around to mean that I guess.
+
+Thanks for the additional clarifications.  I added a fixup below, if Jiri is
+fine applying that before merging, just to avoid respinning the whole
+series:
+
+Subject: [PATCH] fixup! HID: playstation: Support DualSense audio jack
+ hotplug detection
+
+---
+ drivers/hid/hid-playstation.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/hid/hid-playstation.c b/drivers/hid/hid-playstation.c
+index 4285260c7e22..641c6337ff63 100644
+--- a/drivers/hid/hid-playstation.c
++++ b/drivers/hid/hid-playstation.c
+@@ -1352,7 +1352,7 @@ static void dualsense_output_worker(struct work_struct *work)
+ 				 */
+ 				common->valid_flag0 |= DS_OUTPUT_VALID_FLAG0_SPEAKER_VOLUME_ENABLE;
+ 				common->speaker_volume = 0x64;
+-				/* Set SP preamp gain to ~30% */
++				/* Set SP preamp gain to +6dB */
+ 				common->valid_flag1 = DS_OUTPUT_VALID_FLAG1_AUDIO_CONTROL2_ENABLE;
+ 				common->audio_control2 =
+ 					FIELD_PREP(DS_OUTPUT_AUDIO_FLAGS2_SP_PREAMP_GAIN, 0x2);
+
+
+> As for the other patches I'm not entirely sure yet. I know they were
+> well intended, but let me just say, they rubbed some of my team
+> members quite the wrong way resulting in some heavy discussion. I have
+> somewhat similar feelings about the ultra strict checkpatch toggle as
+> well.
 > 
-> >>
-> >> Perhaps somebody else will help you, or you can dig into this yourself.
-> > 
-> > I'm with Matthew, this really looks like a driver bug somehow.  If there
-> > is page cache memory that is "clean", the driver should be able to
-> > access it just fine if really required.
-> > 
-> > What exact driver(s) is having this problem?  What is the exact error,
-> > and on what lines of code?
-> The issue occurs on both ath11k and mhi drivers during resume, when
-> dma_alloc_coherent(GFP_KERNEL) fails and returns -ENOMEM. This failure has
-> been observed at multiple points in these drivers.
+> We had to move mountains to be allowed to even upstream controller
+> code among our limited time (it is closer to a hobby thing, even
+> though many products nowadays use it as well). So that's a factor
+> which adds up a bit as well.
 > 
-> For example, in the mhi driver, the failure is triggered when the
-> MHI's st_worker gets scheduled-in at resume.
+> I think some of the patches we could live with if it came to it. There
+> is no real agreed up full kernel standard (as it is contentious). So
+> for example we tend to prefer more uint8_t family, where older kernel
+> style was more u8 and the kernel allows for both. I think we would
+> probably lean towards keeping it at the modern form.
 > 
-> mhi_pm_st_worker()
-> -> mhi_fw_load_handler()
->    -> mhi_load_image_bhi()
->       -> mhi_alloc_bhi_buffer()
->          -> dma_alloc_coherent(GFP_KERNEL) returns -ENOMEM
+> Some of the macros also felt a little too magical. Our feeling tends
+> to be if you have to go many layers deep to understand what a macro or
+> line of code does (and it is easier to then printk the value),
+> something feels off...
 
-And what is the exact size you are asking for here?
-What is the dma ops set to for your system?  Are you sure that is
-working properly for your platform?  What platform is this exactly?
+I'm sorry for all the troubles introduced with the additional patches! My
+intention was not to highlight deficiencies with the current implementation,
+but to bring the driver as close as possible to the coding standard agreed
+by the kernel community, to avoid dealing with the kind of problems that I
+tried to explain a while ago.
 
-The driver isn't asking for DMA32 here, so that shouldn't be the issue,
-so why do you feel it is?  Have you tried using the tracing stuff for
-dma allocations to see exactly what is going on for this failure?
-
-I think you need to do a bit more debugging :)
-
-thanks,
-
-greg k-h
+Thanks again for your support,
+Cristian
 
