@@ -1,142 +1,133 @@
-Return-Path: <linux-kernel+bounces-740301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12601B0D263
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:16:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF210B0D26F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:17:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3554A546FEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:16:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22BED3BDD8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:17:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3FF028C5AC;
-	Tue, 22 Jul 2025 07:15:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A00828C034;
+	Tue, 22 Jul 2025 07:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="GmLsYwfE"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZrIrzC3i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8051E1DB122
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 07:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929202206BE;
+	Tue, 22 Jul 2025 07:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753168553; cv=none; b=pWEh47IsAKpeR81Bh3uVO+hSEQo4AV0lal5h8nReBI/15PhvaSSEGiDPtOjJa6Mzm5PudPM1YofxaOpOHQg99vknKLAY6KmNrhY8OwDmHGAEL+n8eX+6PbIaOugLp/H3xbifh7TyKsJNU4yMJp67K9o2rbfEkS/UbjMP7WMW5r0=
+	t=1753168660; cv=none; b=UlH3jnl094PfWJ+jQDEUkMdW1ot2TqIH6/q9lJw+eHTHCZ8txwD86BQXppf9IhFlGt5fiz7zU8iz2JgEbW8PO5Ju2yXRg9A/TYvdEaN1TM3tVV4eYciH6rjOQyOjgMNMH4y6IqvwRX/UzNS2FCyaEp74giWdbNNyKWLIxCdsPLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753168553; c=relaxed/simple;
-	bh=j3SEh17yKJdtaTA6jlli22VQ1COpA7yRszYPMxwE5ZA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q6PRCdgw30ZRRMLLiVS+wqaMHkS4VQGjEUYIWJSjKTe79DoXMpmlOjQ59oHgDwPLxHMacAigxgPHFihBEgHAvbikZfyYaLE/ARxxtNJeREQjbAQZm60BuHHOK7XZtU18AFKJ35YC04Cs09ixUV0H5KIN5dWp0QAQAe8pMvVFx/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=GmLsYwfE; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a6e8b1fa37so3584474f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 00:15:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1753168549; x=1753773349; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yQ3vEmjwKiSfWo9bCKh2Tpilewzv/3IegJxtxqqielQ=;
-        b=GmLsYwfEZt2DxPLbUbEpaM+uBrXlN3zh4WmYZS8AdHX/DOEAaZUTYpyXoawmqGjg9b
-         UsOnA/k0djcWLvz/BibjV8yHSqlxv2xcPDz+MRWyyvb846obFzPMHXLhGqC30rpz1nMS
-         kitUX3FhbD4Ec+FJ0NI98wlkAjr8HShYdsaZ4ueRmOolVE/IjPciwdiOpt0fy9xi8USu
-         Bt2icd2yIj7gonF7Z93qNkdeeIJSFEmX6uE8Rjqwz950XMjNxR0h3BMAbDUa3y3NDzrg
-         +MTStH7bfn1H1Y+/Ws7EsGm5C9l4fb77kH+B8nBBXtedKTvEkq6KL4ZI7smHpph4So4k
-         F55w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753168549; x=1753773349;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yQ3vEmjwKiSfWo9bCKh2Tpilewzv/3IegJxtxqqielQ=;
-        b=oXpnLFFP3NKWWaiXYqBF/dnfm8ZJGgapgEUsHnMHC6vLCde0Ekn76eUw3lxFE8GvL0
-         rp+btdFVOQlVFOvYDj6ENjBx55J0ZIddvu9AUpM8jgqwcl/vUfbjs9anXgx4yFTFOvrp
-         DR/WDeFDRoIa2cuv5OPazCAUrTtY2iEamghT+ODWq4A5vkpoNmVoi1qcrSMMHBUCiI4s
-         tW22Kbk8JKq+mYBDctJzDk0pxNJ14gSQc8oePDW4VjsOJbXVJgLgF1Mou1Fd6V975kvS
-         D1z7jD4YOLRNP33YXLC22asz8OpB7BLs8Tm6XHaWRJWQ15jStYjrs7o6tO0ZRUMNzeH0
-         FfBg==
-X-Forwarded-Encrypted: i=1; AJvYcCWt787g5VZSaglrcUgqC6VFYuP54RWTSZMsoGTzV4gW+ZC5twr8iEy624nJkqtpkt3sRMV69G11GLIk2EI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8r7EcMOvNGMEQXrDKDp/5HYsuoQgrNNXMkFtcRJkBRGWe12wW
-	84AnXo0GqwgpQHJzpGakm/2C2H25AYz0/5pG0dXbkUFBducudy62UWALWHcyt9cCN30=
-X-Gm-Gg: ASbGncts4xqdd9fN1jItlR49ZBSWrLWkznMM2BeJ7K+Sd6+rNvyU+soiSm5EUZJUtya
-	TrUdgkQb5it7AqbjY++BbjjiQxWwQjWK0KbScPGhilbSuBrP2BOWmGgUT+tNfR3eD6CizF1lAyw
-	Hw5w0++MKe8qMJkrnii+lpIvpk7q1wZXUd3mQzCyMW5s9mj7l6eMKyNfTK12hAXf24fcqsWMShM
-	oA5fd0gFpJm8qVxUGNfw2jZEO7qXSEuvz1RAMpCvX+7iZW9QMwPhCXLGZq0oMMVqkVuhXi0tE/r
-	k5LR6Df/4RJrt+Tw55z4b2pmy87ZFJfgjHUrZ98/1YvgcZD2OKTdxkp34WN7yEXW+MU0Sm0ICDC
-	2XxByGJyWjaCcd+BXmCly1Nte/chwrLdi
-X-Google-Smtp-Source: AGHT+IHYIREMnXqJzvIrKSlpu72TKoCe2oI41qKi1zUISJbrlyCEP1q0OUDLmdmVYJabSs5VX3PelA==
-X-Received: by 2002:a5d:64c3:0:b0:3a3:71cb:f0bd with SMTP id ffacd0b85a97d-3b60e4d2b7amr16271092f8f.23.1753168548308;
-        Tue, 22 Jul 2025 00:15:48 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:2548:4ac:d051:6197])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca5c632sm12725706f8f.80.2025.07.22.00.15.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 00:15:47 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Arnd Bergmann <arnd@arndb.de>,
-	Russell King <linux@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jiri Slaby <jirislaby@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH] ARM: sa110/gpio: convert set_multiple() to returning an integer
-Date: Tue, 22 Jul 2025 09:15:42 +0200
-Message-ID: <20250722071542.19030-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1753168660; c=relaxed/simple;
+	bh=UnM0XetP9015APA0XDwLmMavdgwwGph4dzK0I7WJMkI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bjOFRrVXUjvUyH64vwytLbFhAWOlpobMLCdqV/mxPJrHtVl1t9LAst7+szdummX0m3iJedom6dGFbt+UrQtRwhZvgSiT6MDt0l4H2MyE3svTEGjdhnHnsO8DT8Iurx2RGi/5DqarXHIobgjQRGXvY/LPWLxYLkHsTyf8m9Jb5po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZrIrzC3i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C66A4C4CEEB;
+	Tue, 22 Jul 2025 07:17:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753168660;
+	bh=UnM0XetP9015APA0XDwLmMavdgwwGph4dzK0I7WJMkI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ZrIrzC3ixati2oQzIaQo37QXSgV6RnYhJfRUb0En51Iff+zCrl8bDa5Ytlk111wG0
+	 IJMWyqe1f80A6yqQFRdTpmMkxVrPYAXbzV4X2ZvhR9QbZgR0M3SISef+09NHiNEtXE
+	 Ephx4/3B8Pj8X8ohF/dC87s2Znxnks0GVHhweTW3LHipMD2c5NCdzzpRSQzbVVrmhS
+	 LcfNPTgpUJ0/cwj6BF9lloCvp3u8mwuSfQoNdbSQCVr5+z3ZXYtxDuVoC35u3yWgwl
+	 2HMuuIWApQtNihWCy3OAbUM2WSGPQbRkk7qDiZOnzwPFnRmf9mDB5TnYT1nfmWaDHU
+	 IQqqvT2M7bGWQ==
+Message-ID: <b30f00c3-9062-4d19-8088-5fc5e951eb5d@kernel.org>
+Date: Tue, 22 Jul 2025 09:17:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: interrupt-controller: Add Xilinx INTC
+ binding
+To: Michal Simek <michal.simek@amd.com>, linux-kernel@vger.kernel.org,
+ monstr@monstr.eu, michal.simek@xilinx.com, git@xilinx.com
+Cc: Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>
+References: <6ddaf6f1e3748cdeda2e2e32ee69343a06c60dcb.1753166980.git.michal.simek@amd.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <6ddaf6f1e3748cdeda2e2e32ee69343a06c60dcb.1753166980.git.michal.simek@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On 22/07/2025 08:49, Michal Simek wrote:
+> Add description for AMD/Xilinx interrupt controller.
+> IP acts as primary interrupt controller on Microblaze systems or can be
+> used as secondary interrupt controller on ARM based systems like Zynq,
+> ZynqMP, Versal or Versal Gen 2. Also as secondary interrupt controller on
+> Microblaze-V (Risc-V) systems.
+> 
+> Over the years IP exists in multiple variants based on attached bus as OPB,
+> PLB or AXI that's why generic filename is used.
+> 
+> Signed-off-by: Michal Simek <michal.simek@amd.com>
+> ---
+> 
+> https://docs.amd.com/v/u/en-US/pg099-axi-intc
 
-The conversion to using the new GPIO line setter callbacks missed the
-set_multiple() in this file. Convert it to using the new callback.
 
-Fixes: 9c3782118a57 ("ARM: sa1100/gpio: use new line value setter callbacks")
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- arch/arm/common/sa1111.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+We usually do not take bindings without users, that's why bindings patch
+is always part of some other patchset. Commit msg also did not clarify
+the usecase here (or exception).
 
-diff --git a/arch/arm/common/sa1111.c b/arch/arm/common/sa1111.c
-index 86b271cc29e1..d7e2ea27ce59 100644
---- a/arch/arm/common/sa1111.c
-+++ b/arch/arm/common/sa1111.c
-@@ -578,8 +578,8 @@ static int sa1111_gpio_set(struct gpio_chip *gc, unsigned int offset, int value)
- 	return 0;
- }
- 
--static void sa1111_gpio_set_multiple(struct gpio_chip *gc, unsigned long *mask,
--	unsigned long *bits)
-+static int sa1111_gpio_set_multiple(struct gpio_chip *gc, unsigned long *mask,
-+				    unsigned long *bits)
- {
- 	struct sa1111 *sachip = gc_to_sa1111(gc);
- 	unsigned long flags;
-@@ -597,6 +597,8 @@ static void sa1111_gpio_set_multiple(struct gpio_chip *gc, unsigned long *mask,
- 	sa1111_gpio_modify(reg + SA1111_GPIO_PCDWR, (msk >> 12) & 255, val >> 12);
- 	sa1111_gpio_modify(reg + SA1111_GPIO_PCSSR, (msk >> 12) & 255, val >> 12);
- 	spin_unlock_irqrestore(&sachip->lock, flags);
-+
-+	return 0;
- }
- 
- static int sa1111_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
-@@ -616,7 +618,7 @@ static int sa1111_setup_gpios(struct sa1111 *sachip)
- 	sachip->gc.direction_output = sa1111_gpio_direction_output;
- 	sachip->gc.get = sa1111_gpio_get;
- 	sachip->gc.set_rv = sa1111_gpio_set;
--	sachip->gc.set_multiple = sa1111_gpio_set_multiple;
-+	sachip->gc.set_multiple_rv = sa1111_gpio_set_multiple;
- 	sachip->gc.to_irq = sa1111_gpio_to_irq;
- 	sachip->gc.base = -1;
- 	sachip->gc.ngpio = 18;
--- 
-2.48.1
-
+Best regards,
+Krzysztof
 
