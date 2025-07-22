@@ -1,44 +1,87 @@
-Return-Path: <linux-kernel+bounces-740767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9E4EB0D8ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:05:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 508FDB0D8EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:05:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAA00189A6CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:05:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F60F6C296F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:05:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD822E427B;
-	Tue, 22 Jul 2025 12:04:48 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F842E427C;
+	Tue, 22 Jul 2025 12:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cQ3mzrxN"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D284423ED63;
-	Tue, 22 Jul 2025 12:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9E12E4255
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 12:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753185887; cv=none; b=Poo31KytzbhFxK/e7jiLJDNvuNWnP+eD/dTs/32Rxy913tWSSpkTl97/cRz4QtmuxR8Q4tWwIhKXFA0dFrC+kfYRUR+0Q2NzODOlsxCngPqV6VQLb7sq/jw5yunuRGniI8S1oMfPOOM1rJ4FoUtIlCEKd6wZgqzbiTJ4t5Co0jY=
+	t=1753185922; cv=none; b=Eu1Wyx6t4VYUJZvTux/bKIbXCkFe6ypZpnZHqvlT9ZEzMfgtBVK4ENMK+jrmwdV/ha9lLuI/iav4Y4Q6yF1o6v2HfKiiqQ/FPFmseujv81Opv4mAgkZ3ndty5OqTXKklJ1kmn+PHVBzT7dvSMGvngAcYtFD8SNwoMGEw8kwQX74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753185887; c=relaxed/simple;
-	bh=1e86FHXECSA7B/9He/EyVQ3vWyUCvZTev6yfI/xG+ZA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=KABaFYDU1Y81ogSDnQ3RZy5W9S2AvcANF9u0MGoh45TU3Rxji8ggMgWOMJPJ2Qn4VxFz1fzWU8w7rkmRYKYpdMa4+26X+TFTDbECqJ3oi4qYt81Wxfx9A9Y0tDJCWDAl07A0XjWAIyH2tHmUiu2evzMlpa7TNjV0ry35ZceKP9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bmbY71RNbzKHLt7;
-	Tue, 22 Jul 2025 20:04:43 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id E218E1A14F6;
-	Tue, 22 Jul 2025 20:04:41 +0800 (CST)
-Received: from [10.67.111.192] (unknown [10.67.111.192])
-	by APP4 (Coremail) with SMTP id gCh0CgC3gBFYfn9oFJ1yBA--.23985S2;
-	Tue, 22 Jul 2025 20:04:41 +0800 (CST)
-Message-ID: <490b965b-21eb-46a2-b3d5-f49271fd7542@huaweicloud.com>
-Date: Tue, 22 Jul 2025 20:04:40 +0800
+	s=arc-20240116; t=1753185922; c=relaxed/simple;
+	bh=vAjk5EdrVfsB9uNIF3ywSNNttFckv3DpPn6PfbgJzX8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Boh0a/i9vJwmv2pq4yJahTjXEd+p1W+uWO1YHmUDwhtbNISbal5WtZFdH7vYDVYXj831dG5DX2H4zNUoMkv588Gu7EegSl9c/EzyZTGr8BhkwByD1YcwSOanjflpVjIfjWM4UuM7THLrLBTouPhnkFN+Mq3u5xMdSmgzs6c9rRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cQ3mzrxN; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56MBa7YH005655
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 12:05:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	iyIbCMFrlPdmkgoKqjBfMM2i4HyJIcVeeKjewThJMrU=; b=cQ3mzrxNu4xA2qQl
+	15LSXW1qN4oae5WXWOBB3WKRr0CFk0URXkVWpuv8FyM3dDfrh1enzJIjYxsz1Nw5
+	C+uTK+VtUmdGuo0uI2ojVSs8csmJvW5dPwV79wAH8Sxyz3mtsXWfXiBtb2kXZjfr
+	MtF83WGtuMThSBrpjkvSjGFdNbzBfz8m5s9xpQ/mzXMkcWYqKx8v+YpQ/z9manIv
+	wKE0UO8Z7FDY6XTjii8KQlLk0KgjDIKRH4P2HjWEYzZWPRzuLMUdloGJRKZdUyMM
+	129Et38wqLP+ex0G+B3BfAGPQFZR5sGQESMY6IorZlseTIgDAgcXjOblYigbiiJM
+	uyeibQ==
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48047q9c6f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 12:05:18 +0000 (GMT)
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-7ea7906b242so296235a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 05:05:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753185918; x=1753790718;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=iyIbCMFrlPdmkgoKqjBfMM2i4HyJIcVeeKjewThJMrU=;
+        b=LgsW+rXx/hbG15NZp4nLvfm0TaZFaS6wd50CiWdceRB2s6CC+iq/JP7RBKMq7al3Uy
+         sYmacGZAwVzz0lCtubtydynRC2hA4Cu2P1zQr6hbXStAZh+hL+xQXhxu2iUvJIUmxoJQ
+         zc7MeE+onYqHOP4qAoFkDFn+1IJCOaOvrFiClRysxk1Jja4qTxmUyuQyidBolPgkoFW0
+         r7Fau0gJ3cppnx2+o3qBq+S9Cg1VgtYR3lWkAkZijA1PtkupabxklsbVy84/7dEzZ+l1
+         diZHIQjQT7Sa/sOR/Xs1R1HPA2nNsKeYLqfd01f62+UrhK+PQQCCopnHaB24/qav9VKS
+         X9Gg==
+X-Forwarded-Encrypted: i=1; AJvYcCUjnx4v/yyU2oWtUstVzDIdS3iO6Bh4GApQtM87MNtHYk7hzA96iLWSu0Ue8fGH4Izk3Mz+RgCdHt5lgCU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkfxnX0LBkWesMzT3Z5VYAv2+h0Ue3AwAnXzd13PNrPGtRDxKv
+	/sUuyG7WoBa9r9x+9NjWDSoZBvkPushBzt2Ew0o9nj38gLQDjDp/4ox4wslHFgXfhjJTV6Vsv3F
+	W42B2GT0wRHg31S59z6wFY0a50Uv3jxwCMsWsdgg0TTWU0bhledjPgFvQpSJ97yJH0kc=
+X-Gm-Gg: ASbGncsj8f0W79Iv7IaQYRwLjBG4YaTmwzfr1x9aqWAL35vEixsQvCizVRqJAm2/jTd
+	FE4vxB2b44+mWXjxB8NbBMNhTMTBtn6tx/dsSZGJwYYYCSfUOqaCVRHhYkhSzks6Bo2Q6/d+c+l
+	9eKlaQLYa/ioaW1CWgx7+1PHWzsAi45Hm8RYzkbnH3n74wkLqDxx8MVdDRVD69qB+GxwoCsH2ht
+	mKJL4UWeIO010vJAOqsBXRyp7tzgMV9YU+fL9xUUYx4q5lttVMmep86km9JX34b70XummWjehaD
+	tW9v/BUYbgwiUzvfq5/gDut7t+IxfYJBgIv9Sm41PjcAoQIq9tbKNzvYnEudCuhybNqDZfIaQCr
+	7HJQEL7ld/IFeaCrBr0HhLo1mEh2i
+X-Received: by 2002:a05:6a00:4fc9:b0:736:559f:eca9 with SMTP id d2e1a72fcca58-756e99fe5afmr14912590b3a.3.1753185917435;
+        Tue, 22 Jul 2025 05:05:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFoGJCKiTPaM45TrN+M/E5LCa63vjhB/iRPsOdQ17RiEy//OhqN7LQOTuKba6p+/2B4x4JuLw==
+X-Received: by 2002:a05:6a00:4fc9:b0:736:559f:eca9 with SMTP id d2e1a72fcca58-756e99fe5afmr14912493b3a.3.1753185915178;
+        Tue, 22 Jul 2025 05:05:15 -0700 (PDT)
+Received: from [10.133.33.17] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f2fe8dc8fsm6980846a12.28.2025.07.22.05.05.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Jul 2025 05:05:14 -0700 (PDT)
+Message-ID: <e673a3a3-6924-49db-9040-e34b82199a43@oss.qualcomm.com>
+Date: Tue, 22 Jul 2025 20:05:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,232 +89,267 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v12 3/3] arm64/cfi,bpf: Support kCFI + BPF on
- arm64
-Content-Language: en-US
-From: Xu Kuohai <xukuohai@huaweicloud.com>
-To: Sami Tolvanen <samitolvanen@google.com>, bpf@vger.kernel.org,
- Puranjay Mohan <puranjay@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Andrii Nakryiko <andrii@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Maxwell Bland <mbland@motorola.com>, Puranjay Mohan <puranjay12@gmail.com>,
- Dao Huang <huangdao1@oppo.com>
-References: <20250721202015.3530876-5-samitolvanen@google.com>
- <20250721202015.3530876-8-samitolvanen@google.com>
- <74bd0822-c8c1-47cc-b816-78036abff8ee@huaweicloud.com>
-In-Reply-To: <74bd0822-c8c1-47cc-b816-78036abff8ee@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v2 02/13] dt-bindings: phy: Add binding for QCS615
+ standalone QMP DP PHY
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar
+ <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Kuogee Hsieh <quic_khsieh@quicinc.com>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+        konrad.dybcio@oss.qualcomm.com, fange.zhang@oss.qualcomm.com,
+        quic_lliu6@quicinc.com, quic_yongmou@quicinc.com
+References: <20250722-add-displayport-support-for-qcs615-platform-v2-0-42b4037171f8@oss.qualcomm.com>
+ <20250722-add-displayport-support-for-qcs615-platform-v2-2-42b4037171f8@oss.qualcomm.com>
+ <jemfu5sy7k4a2iar55im5bhyhxzlrwpftmpqmps3b2tco7r6a2@oodls7gi45yy>
+From: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+In-Reply-To: <jemfu5sy7k4a2iar55im5bhyhxzlrwpftmpqmps3b2tco7r6a2@oodls7gi45yy>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgC3gBFYfn9oFJ1yBA--.23985S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3Aw18AFy5JFyfXr18tF4Utwb_yoW3uryxpF
-	ykGF45GrWkJr1xJFWUJr1UAFy5Kw4kA3W7Jry8Za45KF12gr10gF15WrWj9rW5ArW8tw1x
-	JF1qqrnF9a1UJw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
-	7KsUUUUUU==
-X-CM-SenderInfo: 50xn30hkdlqx5xdzvxpfor3voofrz/
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDA5OCBTYWx0ZWRfX5hqPdFJxvhYg
+ vUzNrYsskCygy7y7c2VjDKcscBEOdHGk9bpbC/nqLfm1IYkbIPMInd2pfhsf0/CFsC7dSkqaLMH
+ XqvvojE/DkDqsHZxCi+pJyzak8UK5RbRFXYeEUx35sPVXzExrwFlX72USy79BLdRL8RmG+S5Uy7
+ xHdrTeSV2yGpWtdN1c5H2jyBsD4ZOvDT5x1cteZ2SE4YpTxihH121hJJB1klqSvyop6gKp9TlQE
+ xXAWJrfKxOlPsOQxuroJO5RYBLx/mLoC0Lyl+go4KQ07mpyt7n8WcXtfdZIetbYJn4R2NBinItP
+ JtxvyzjQ9WU5qTDwbHjjMskR3axHl3ZXX5sedDAI2wSnfCo+UsHj5gZWgtWwEi801osICSKFdm6
+ h4H/3Q0+3O5XXkn2ZhWB0ABArMY6TGq3Z3JWkE6a9qauEV38XZjYi6ywmJR0u5F8y537fWF+
+X-Proofpoint-ORIG-GUID: vZcFatbpyCaYBg_0dFoC61qkXtZktINZ
+X-Proofpoint-GUID: vZcFatbpyCaYBg_0dFoC61qkXtZktINZ
+X-Authority-Analysis: v=2.4 cv=IrMecK/g c=1 sm=1 tr=0 ts=687f7e7f cx=c_pps
+ a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=Oh2cFVv5AAAA:8 a=gEfo2CItAAAA:8
+ a=EUspDBNiAAAA:8 a=VwQbUJbxAAAA:8 a=cRT8ne84DSJdP7yTid4A:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22 a=7KeoIwV6GZqOttXkcoxL:22
+ a=sptkURWiP4Gy88Gu7hUp:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-22_02,2025-07-21_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 lowpriorityscore=0 malwarescore=0 adultscore=0 clxscore=1015
+ priorityscore=1501 spamscore=0 mlxscore=0 mlxlogscore=999 phishscore=0
+ impostorscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507220098
 
-On 7/22/2025 11:44 AM, Xu Kuohai wrote:
-> On 7/22/2025 4:20 AM, Sami Tolvanen wrote:
->> From: Puranjay Mohan <puranjay12@gmail.com>
+
+On 7/22/2025 4:38 PM, Dmitry Baryshkov wrote:
+> On Tue, Jul 22, 2025 at 03:22:03PM +0800, Xiangxu Yin wrote:
+>> Introduce device tree binding documentation for the Qualcomm QMP DP PHY
+>> on QCS615 SoCs. This PHY supports DisplayPort functionality and is
+>> designed to operate independently from the USB3 PHY.
 >>
->> Currently, bpf_dispatcher_*_func() is marked with `__nocfi` therefore
->> calling BPF programs from this interface doesn't cause CFI warnings.
->>
->> When BPF programs are called directly from C: from BPF helpers or
->> struct_ops, CFI warnings are generated.
->>
->> Implement proper CFI prologues for the BPF programs and callbacks and
->> drop __nocfi for arm64. Fix the trampoline generation code to emit kCFI
->> prologue when a struct_ops trampoline is being prepared.
->>
->> Signed-off-by: Puranjay Mohan <puranjay12@gmail.com>
->> Co-developed-by: Maxwell Bland <mbland@motorola.com>
->> Signed-off-by: Maxwell Bland <mbland@motorola.com>
->> Co-developed-by: Sami Tolvanen <samitolvanen@google.com>
->> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
->> Tested-by: Dao Huang <huangdao1@oppo.com>
->> Acked-by: Will Deacon <will@kernel.org>
->> ---
->>   arch/arm64/include/asm/cfi.h  |  7 +++++++
->>   arch/arm64/net/bpf_jit_comp.c | 22 +++++++++++++++++++---
->>   2 files changed, 26 insertions(+), 3 deletions(-)
->>   create mode 100644 arch/arm64/include/asm/cfi.h
->>
->> diff --git a/arch/arm64/include/asm/cfi.h b/arch/arm64/include/asm/cfi.h
->> new file mode 100644
->> index 000000000000..ab90f0351b7a
->> --- /dev/null
->> +++ b/arch/arm64/include/asm/cfi.h
->> @@ -0,0 +1,7 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +#ifndef _ASM_ARM64_CFI_H
->> +#define _ASM_ARM64_CFI_H
->> +
->> +#define __bpfcall
->> +
->> +#endif /* _ASM_ARM64_CFI_H */
->> diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
->> index 89b1b8c248c6..f4a98c1a1583 100644
->> --- a/arch/arm64/net/bpf_jit_comp.c
->> +++ b/arch/arm64/net/bpf_jit_comp.c
->> @@ -10,6 +10,7 @@
->>   #include <linux/arm-smccc.h>
->>   #include <linux/bitfield.h>
->>   #include <linux/bpf.h>
->> +#include <linux/cfi.h>
->>   #include <linux/filter.h>
->>   #include <linux/memory.h>
->>   #include <linux/printk.h>
->> @@ -166,6 +167,12 @@ static inline void emit_bti(u32 insn, struct jit_ctx *ctx)
->>           emit(insn, ctx);
->>   }
->> +static inline void emit_kcfi(u32 hash, struct jit_ctx *ctx)
->> +{
->> +    if (IS_ENABLED(CONFIG_CFI_CLANG))
->> +        emit(hash, ctx);
-> 
-> I guess this won't work on big-endian cpus, since arm64 instructions
-> are always stored in little-endian, but data not.
+>> Unlike combo PHYs found on other platforms, the QCS615 DP PHY is
+>> standalone and does not support USB/DP multiplexing. The binding
+>> describes the required clocks, resets, TCSR configuration, and clock/PHY
+>> cells for proper integration.
+> Simply put: no, this is not correct. Even if you go to the SM6150 block
+> diagram, it points out that DP uses the USB3 PHY, not a separate DP PHY.
 >
-
-There is indeed an issue. I built a big-endian kernel with this patch
-and tested it on qemu, a CFI failure is triggered on kernel booting:
-
-CFI failure at kern_sys_bpf+0x2d4/0x4f0 (target: bpf_prog_dc1d7467ed3b3c17___loader.prog+0x0/0x6dc; expected type: 0xd9421881)
-Internal error: Oops - CFI: 00000000f2008228 [#1]  SMP
-Modules linked in:
-CPU: 2 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.16.0-rc6-ge72c32d6c27a-dirty #10 NONE
-Hardware name: linux,dummy-virt (DT)
-pstate: 80000005 (Nzcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : kern_sys_bpf+0x2d4/0x4f0
-lr : kern_sys_bpf+0x290/0x4f0
-sp : ffff8000844e7320
-x29: ffff8000844e7390 x28: ffff80008436f000 x27: 1fffe00018268040
-x26: ffff8000844e7400 x25: ffff8000844e77c0 x24: 0000000000000030
-x23: 1ffff0001089ce68 x22: dfff800000000000 x21: ffff80008455b030
-x20: ffff0000c1340200 x19: ffff80008455b000 x18: ffffffff00000000
-x17: 00000000d9421881 x16: 00000000811842d9 x15: 0000000000000001
-x14: 0000000000000001 x13: ffff0001b5b947f4 x12: 1fffe0001807a001
-x11: 0000000000000001 x10: 0000000000000000 x9 : 1ffff000108ab606
-x8 : ffff800084979894 x7 : ffff8000805a5ce8 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000010
-x2 : 0000000000000000 x1 : ffff80008455b048 x0 : ffff0000c1340200
-Call trace:
-  kern_sys_bpf+0x2d4/0x4f0 (P)
-  load+0x324/0x7a4
-  do_one_initcall+0x1e8/0x7a0
-  do_initcall_level+0x180/0x36c
-  do_initcalls+0x60/0xa4
-  do_basic_setup+0x9c/0xb0
-  kernel_init_freeable+0x270/0x390
-  kernel_init+0x2c/0x1c8
-  ret_from_fork+0x10/0x20
-Code: 72831031 72bb2851 6b11021f 54000040 (d4304500)
----[ end trace 0000000000000000 ]---
-Kernel panic - not syncing: Oops - CFI: Fatal exception
-SMP: stopping secondary CPUs
-Kernel Offset: disabled
-CPU features: 0x1000,000800d0,02000800,0400420b
-Memory Limit: none
----[ end Kernel panic - not syncing: Oops - CFI: Fatal exception ]---
-
-
-And the failure can be fixed with the following change:
-
---- a/arch/arm64/net/bpf_jit_comp.c
-+++ b/arch/arm64/net/bpf_jit_comp.c
-@@ -107,6 +107,14 @@ static inline void emit(const u32 insn, struct jit_ctx *ctx)
-         ctx->idx++;
-  }
-
-+static inline void emit_u32_data(const u32 data, struct jit_ctx *ctx)
-+{
-+       if (ctx->image != NULL && ctx->write)
-+               ctx->image[ctx->idx] = data;
-+
-+       ctx->idx++;
-+}
-+
-  static inline void emit_a64_mov_i(const int is64, const int reg,
-                                   const s32 val, struct jit_ctx *ctx)
-  {
-@@ -170,7 +178,7 @@ static inline void emit_bti(u32 insn, struct jit_ctx *ctx)
-  static inline void emit_kcfi(u32 hash, struct jit_ctx *ctx)
-  {
-         if (IS_ENABLED(CONFIG_CFI_CLANG))
--               emit(hash, ctx);
-+               emit_u32_data(hash, ctx);
-  }
-
->> +}
+> I thought that we have discussed it beforehand.
+>
+> I can quote my comment from the previous thread:
+>
+>>> No. It means replacing extending existing entries with bigger reg and
+>>> #phy-cells = <1>. The driver must keep working with old node definitions
+>>> as is to ensure backwards compatibility. New nodes should make it
+>>> register two PHYs (USB3 and DP). On the driver side modify generic code
+>>> paths, all platforms supported by the driver should be able to support
+>>> USB3+DP combination.
+> Looking at the hardware memory maps:
+>
+> MSM8998: USB3 PHY regs at 0xc010000, DP PHY regs at 0xc011000
+> SDM660: USB3 PHY regs at 0xc010000, DP PHY regs at 0xc011000
+> QCM2290: USB3 PHY regs at 0x1615000, DP PHY regs at 0x1616000
+> SM6115: USB3 PHY regs at 0x1615000, DP PHY regs at 0x1616000
+>
+> Now:
+> SM6150: USB3 PHY regs at 0x88e6000
+>         USB3 PHY regs at 0x88e8000, DP PHY regs at 0x88e9000
+>
+> I do not know, why msm-4.14 didn't describe second USB3 PHY. Maybe you
+> can comment on it.
+>
+> But based on that list, the only special case that we need to handle is
+> the first USB3 PHY, which doesn't have a corresponding DP PHY block. But
+> it will be handled anyway by the code that implements support for the
+> existing DT entries. All other hardware blocks are combo USB+DP PHYs.
+>
+> Having all of that in mind, please, for v3 patchset implement USB+DP
+> support in the phy-qcom-qmp-usbc driver and add the following logic
+> that also was requested in v1 review:
+>
+>>> Not quite. Both USB3 and DP drivers should be calling power_on / _off.
+>>> If USB3 is on, powering on DP PHY should fail. Vice versa, if DP is on,
+>>> powering on USB should fail.
+> I think our understanding might not be fully aligned. 
+> Perhaps this is because I didn’t accurately update the mutual exclusion relationships and test results for the different PHYs. 
+> Let me clarify my latest findings and explain why I believe these are separate PHYs that require mutual exclusion via TCSR.
+>
+> 1. About the TCSR DP_PHYMODE Registers
+>
+> MSM8998/SDM660:
+> 	Only one TCSR_USB3_DP_PHYMODE register at 0x1FCB248.
+> QCM2290/SM6115:
+> 	TCSR_USB3_0_DP_PHYMODE at 0x3CB248
+> 	TCSR_USB3_1_DP_PHYMODE at 0x3CB24C
+> SM6150:
+> 	TCSR_USB3_0_DP_PHYMODE at 0x1FCB248
+> 	TCSR_USB3_1_DP_PHYMODE at 0x1FCB24C
+> Even though MSM8998, SDM660, QCM2290, and SM6115 all have one USB3 PHY and one DP PHY, the TCSR DP_PHYMODE register configuration is different on each platform.
+>
+> Additionally, I found some interesting register documentation for QCM2290/SM6115:
+> 	TCSR_USB3_0_DP_PHYMODE: “In kamorta this one is for mobile usb. DP not supported.”
+> 	TCSR_USB3_1_DP_PHYMODE: “DP mode supported for Auto usb in kamorta.”
+> I think the reason for having two different TCSR registers is to allow both the USB3.0 and DP PHYs to be useds at the same time in certain product configurations.
+>
+> 2. SM6150 Test Results
+> When TCSR_DP_PHYMODE_0 is switched to DP, the USB3 primary PHY cannot work, and the DP PHY is also not functional (possibly due to clock lack or other configuration mismatch with this TCSR setting).
+> When TCSR_DP_PHYMODE_1 is switched to DP, both the USB3 primary PHY and the DP PHY work normally.
+> I think "why msm-4.14 didn't describe second USB3 PHY", because TCSR_DP_PHYMODE_1 always works in DP mode.
+> https://android.googlesource.com/kernel/msm/+/af03eef7d4c3cbd1fe26c67d4f1915b05d0c1488/drivers/gpu/drm/msm/dp/dp_catalog_v200.c
+>
+> Based on these info, I believe these are separate PHYs, and only the TCSR DP_PHYMODE registers determine which USB3/DP PHYs are paired or mutually exclusive. This is why I have maintained separate private data for each PHY and implemented Power on mutex control via TCSR, rather than using a qmp_combo-like structure.
+>
+> Given the above, do you think we still need to force USB and DP to be strictly bound together like a combo PHY?
+>
+>> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+>> ---
+>>  .../bindings/phy/qcom,qcs615-qmp-dp-phy.yaml       | 111 +++++++++++++++++++++
+>>  1 file changed, 111 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/phy/qcom,qcs615-qmp-dp-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,qcs615-qmp-dp-phy.yaml
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..17e37c1df7b61dc2f7aa35ee106fd94ee2829c5f
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/phy/qcom,qcs615-qmp-dp-phy.yaml
+>> @@ -0,0 +1,111 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/phy/qcom,qcs615-qmp-dp-phy.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 >> +
->>   /*
->>    * Kernel addresses in the vmalloc space use at most 48 bits, and the
->>    * remaining bits are guaranteed to be 0x1. So we can compose the address
->> @@ -476,7 +483,6 @@ static int build_prologue(struct jit_ctx *ctx, bool ebpf_from_cbpf)
->>       const bool is_main_prog = !bpf_is_subprog(prog);
->>       const u8 fp = bpf2a64[BPF_REG_FP];
->>       const u8 arena_vm_base = bpf2a64[ARENA_VM_START];
->> -    const int idx0 = ctx->idx;
->>       int cur_offset;
->>       /*
->> @@ -502,6 +508,9 @@ static int build_prologue(struct jit_ctx *ctx, bool ebpf_from_cbpf)
->>        *
->>        */
->> +    emit_kcfi(is_main_prog ? cfi_bpf_hash : cfi_bpf_subprog_hash, ctx);
->> +    const int idx0 = ctx->idx;
-> 
-> move the idx0 definition back to its original position to match the
-> coding style of the rest of the file?
-> 
+>> +title: Qualcomm QMP PHY controller (DP, QCS615)
 >> +
->>       /* bpf function may be invoked by 3 instruction types:
->>        * 1. bl, attached via freplace to bpf prog via short jump
->>        * 2. br, attached via freplace to bpf prog via long jump
->> @@ -2055,9 +2064,9 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
->>           jit_data->ro_header = ro_header;
->>       }
->> -    prog->bpf_func = (void *)ctx.ro_image;
->> +    prog->bpf_func = (void *)ctx.ro_image + cfi_get_offset();
->>       prog->jited = 1;
->> -    prog->jited_len = prog_size;
->> +    prog->jited_len = prog_size - cfi_get_offset();
->>       if (!prog->is_func || extra_pass) {
->>           int i;
->> @@ -2426,6 +2435,12 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
->>       /* return address locates above FP */
->>       retaddr_off = stack_size + 8;
->> +    if (flags & BPF_TRAMP_F_INDIRECT) {
->> +        /*
->> +         * Indirect call for bpf_struct_ops
->> +         */
->> +        emit_kcfi(cfi_get_func_hash(func_addr), ctx);
->> +    }
->>       /* bpf trampoline may be invoked by 3 instruction types:
->>        * 1. bl, attached to bpf prog or kernel function via short jump
->>        * 2. br, attached to bpf prog or kernel function via long jump
->> @@ -2942,6 +2957,7 @@ void bpf_jit_free(struct bpf_prog *prog)
->>                          sizeof(jit_data->header->size));
->>               kfree(jit_data);
->>           }
->> +        prog->bpf_func -= cfi_get_offset();
->>           hdr = bpf_jit_binary_pack_hdr(prog);
->>           bpf_jit_binary_pack_free(hdr, NULL);
->>           WARN_ON_ONCE(!bpf_prog_kallsyms_verify_off(prog));
-> 
-> 
-
+>> +maintainers:
+>> +  - Vinod Koul <vkoul@kernel.org>
+>> +
+>> +description:
+>> +  The QMP DP PHY controller supports DisplayPort physical layer functionality
+>> +  on Qualcomm QCS615 SoCs. This PHY is independent from USB3 PHY and does not
+>> +  support combo mode.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - qcom,qcs615-qmp-dp-phy
+>> +
+>> +  reg:
+>> +    maxItems: 4
+>> +
+>> +  clocks:
+>> +    maxItems: 2
+>> +
+>> +  clock-names:
+>> +    items:
+>> +      - const: cfg_ahb
+>> +      - const: ref
+>> +
+>> +  clock-output-names:
+>> +    maxItems: 2
+>> +    description:
+>> +      Names of the clocks provided by the PHY.
+>> +
+>> +  qcom,tcsr-reg:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>> +    items:
+>> +      - items:
+>> +          - description: phandle to TCSR hardware block
+>> +          - description: offset of the DP PHY moode register
+>> +    description:
+>> +      DP PHY moode register present in the TCSR
+>> +
+>> +  resets:
+>> +    maxItems: 1
+>> +
+>> +  reset-names:
+>> +    items:
+>> +      - const: phy
+>> +
+>> +  vdda-phy-supply: true
+>> +
+>> +  vdda-pll-supply: true
+>> +
+>> +  "#clock-cells":
+>> +    const: 1
+>> +    description:
+>> +      See include/dt-bindings/phy/phy-qcom-qmp.h
+>> +
+>> +  "#phy-cells":
+>> +    const: 1
+>> +    description:
+>> +      See include/dt-bindings/phy/phy-qcom-qmp.h
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - clocks
+>> +  - clock-names
+>> +  - clock-output-names
+>> +  - qcom,tcsr-reg
+>> +  - resets
+>> +  - reset-names
+>> +  - vdda-phy-supply
+>> +  - vdda-pll-supply
+>> +  - "#clock-cells"
+>> +  - "#phy-cells"
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/clock/qcom,qcs615-gcc.h>
+>> +    #include <dt-bindings/clock/qcom,rpmh.h>
+>> +
+>> +    phy@88e9000 {
+>> +      compatible = "qcom,qcs615-qmp-dp-phy";
+>> +      reg = <0x088e9000 0x200>,
+>> +            <0x088e9400 0x10c>,
+>> +            <0x088e9800 0x10c>,
+>> +            <0x088e9c00 0x200>;
+>> +
+>> +      clocks = <&gcc GCC_AHB2PHY_WEST_CLK>,
+>> +               <&gcc GCC_USB3_SEC_CLKREF_CLK>;
+>> +      clock-names = "cfg_ahb", "ref";
+>> +      clock-output-names = "dp_phy_link_clk", "dp_phy_vco_div_clk";
+>> +
+>> +      qcom,tcsr-reg = <&tcsr 0xb24c>;
+>> +
+>> +      resets = <&gcc GCC_USB3_DP_PHY_SEC_BCR>;
+>> +      reset-names = "phy";
+>> +
+>> +      vdda-phy-supply = <&vreg_l11a>;
+>> +      vdda-pll-supply = <&vreg_l5a>;
+>> +
+>> +      #clock-cells = <1>;
+>> +      #phy-cells = <1>;
+>> +    };
+>>
+>> -- 
+>> 2.34.1
+>>
 
