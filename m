@@ -1,167 +1,113 @@
-Return-Path: <linux-kernel+bounces-741176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 874BBB0E104
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:56:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86B84B0E106
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:56:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B65C0580E58
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:56:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61F8FAA53F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8146927A129;
-	Tue, 22 Jul 2025 15:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EDB5279DDC;
+	Tue, 22 Jul 2025 15:56:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="R2kR/Wp2"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gnZ1XUG9";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HnYfVNio"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB11C27815F
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 15:55:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C91C19E7F9;
+	Tue, 22 Jul 2025 15:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753199755; cv=none; b=pCijxzehAPU7es7n6m569yUbdZiOS0OVaviJ+J2YGQPefNQSrse6bWAKBMQ61+Lu2xpI2R9TtF3yg5PQPNhUNeB/f6Fk10Sbl4LzhTar0K0hGFRTTADon84eHOvXGfATPutHkHXp9+FhhlF3xDtk96vG45tOriWpBevu01iYCWw=
+	t=1753199790; cv=none; b=gJsed2ctW2bVwryxWaytoCkuMJ04yTuNQFRUluoUa9D9BXj89yBnmZ8HOEMAm/gEIDOMkkRqqOogxro1Rkeoglo1SidVLxGgTMVwggu+jHhHiRwNrgOmKtM7vn1XuyjbLYamD+HKJZo9dcp66mFRYnP7RnGiVTiSJvISe0wcu6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753199755; c=relaxed/simple;
-	bh=R51j62/d3CRnomk9oqStk+xbuVTnaY01yvb81U2I9eI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SCqvEpR1O7MQJqg5Yg/WU6tXrcR+n9UMd7t73C7BKSsRqYpaXMr4nF0AsNRnj5R+zTezyYwDFbmOGkWmaU05s7nMx0nkN/5aoIv6ptNnTTroVcprmwcxRIQeZ0sAY8ukLr7C+95033X1BDtozYGwFRnmi0tNM6p22IyigZCmJ/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=R2kR/Wp2; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 22 Jul 2025 23:55:46 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753199752;
+	s=arc-20240116; t=1753199790; c=relaxed/simple;
+	bh=ehonnbedT4DZldR5JroAFWGY9SqxMYm2QDP/tjyZQeA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=XGsuqsuokCwDnvS6EQIABsdrC/sGBk7MNctKXKtGLsEP5NIzzrCnmCoJmLsXOISW7p2LtkiUtjmkel0lJhpYDE49zUxFru7WJcwpe8OJig9NjBt9Azz+osdzzU8SJ/AVfvwaaisymaF4AIMyC2lm1dBgWfYOIugnCRu/la52oLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gnZ1XUG9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HnYfVNio; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1753199786;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=8KY8tFgOhzhn8LNLMXuaA9xgGEARgCxSjBTz/EP1VVU=;
-	b=R2kR/Wp2Mi8qtrn439VWPFydY4QshjUyYiawYDYZeGH/x+EbV4oDOYKzqSVYo36mR8xw2r
-	vPOYdVTKNiLmmtAN0XeGDnyKuVc5H3jGinAYZScLSCcT2BuQfa8AMm6vCd5Brxvu9XXLgz
-	4BVvqd01NDmH8FlEpM+GoLB1VQ6zIOQ=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Ze Huang <huang.ze@linux.dev>
-To: Yao Zi <ziyao@disroot.org>, Ze Huang <huang.ze@linux.dev>,
-	Alex Elder <elder@ieee.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 2/2] usb: dwc3: add generic driver to support flattened
-Message-ID: <aH-0d0OyLIo9tlkd@monica.localdomain>
-References: <20250712-dwc3_generic-v6-0-cc87737cc936@linux.dev>
- <20250712-dwc3_generic-v6-2-cc87737cc936@linux.dev>
- <d2e9a521-568e-433d-a59b-9b98138ace2b@ieee.org>
- <aHyN3-uoHofF8Hg3@monica.localdomain>
- <aH4tpgVPbf9DOzSe@monica.localdomain>
- <aH7cpr0faRPVnxXL@pie>
+	bh=ZkEw/lTmafJr2SSwmjCrpMZhRZR91UCU4u4JDdbQoLQ=;
+	b=gnZ1XUG9t4b5lhL+OjoV8CtdguTP0aTMm7UTaZVmxRBHwchR9i/fTO93JR5u+sxSptwdxa
+	pKn2sjVcYLgkcu/0JBmqNM0xctHWBsNKzFNYqDH/0byKvqe3qWp65lmkj/KilHRTYKpxWw
+	eCB+NqzMLbjzAUQwXHWCfvIe73yq2mPOen6lwpa1X9828azVQFuw+Us1RSdeZ8t+jF/gKV
+	fTW1uKva2W8B+te4zQXOQi8/NyogAI+lHpVfq4pbLVF9Meb39Po5Dw+ICfXegEJOq7MXk+
+	9YPQUV8/ikJ0ar/oXZcGobR4i2RraAQ7VytF44VKRQE5PoFwD5/VniQWcMTSsw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1753199786;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZkEw/lTmafJr2SSwmjCrpMZhRZR91UCU4u4JDdbQoLQ=;
+	b=HnYfVNiouLI/UrUTVrH5vXV03Mh01KEYd2ZsEEztUAEaCOxN+aucJHMnX5YH6MJibflEdh
+	6q4uJOC3ORTvtUCw==
+To: kernel test robot <lkp@intel.com>, Ian Rogers <irogers@google.com>, Eric
+ Biggers <ebiggers@google.com>, Yuzhuo Jing <yuzhuo@google.com>, Andy
+ Lutomirski <luto@kernel.org>, Vincenzo Frascino
+ <vincenzo.frascino@arm.com>, Arnaldo Carvalho de Melo <acme@redhat.com>,
+ Al Viro <viro@zeniv.linux.org.uk>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, Ian Rogers
+ <irogers@google.com>
+Subject: Re: [PATCH v3 1/3] vdso: Switch get/put unaligned from packed
+ struct to memcpy
+In-Reply-To: <202507050736.b4hX0Xks-lkp@intel.com>
+References: <20250626054826.433453-2-irogers@google.com>
+ <202507050736.b4hX0Xks-lkp@intel.com>
+Date: Tue, 22 Jul 2025 17:56:25 +0200
+Message-ID: <87o6tcrzh2.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aH7cpr0faRPVnxXL@pie>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
 
-On Tue, Jul 22, 2025 at 12:34:46AM +0000, Yao Zi wrote:
-> On Mon, Jul 21, 2025 at 08:08:06PM +0800, Ze Huang wrote:
-> > On Sun, Jul 20, 2025 at 02:34:07PM +0800, Ze Huang wrote:
-> > > On Tue, Jul 15, 2025 at 03:50:54PM -0500, Alex Elder wrote:
-> > > > On 7/12/25 2:49 AM, Ze Huang wrote:
-> > > > > To support flattened dwc3 dt model and drop the glue layer, introduce the
-> > > > > `dwc3-generic` driver. This enables direct binding of the DWC3 core driver
-> > > > > and offers an alternative to the existing glue driver `dwc3-of-simple`.
-> > > > 
-> > > > I'm not familiar with dwc-of-simple.c, and won't comment on
-> > > > how this differs from that (or does not).
-> > > > 
-> > > > Given you're implementing an alternative though, can you explain
-> > > > in a little more detail what's different between the two?  Why
-> > > > would someone choose to use this driver rather than the other one?
-> > > 
-> > > They are basically the same.
-> > > 
-> > > dwc-generic use a plain dt node while dwc-of-simple will nest the dwc3
-> > > node as its child.
-> > > 
-> > > Both will use dwc3_core_probe() to finish the probe process. But now we
-> > > can simplify the process by just calling it, instead of calling
-> > > of_platform_populate() and create another snps,dwc3 device driver.
-> > 
-> > [...]
-> > 
-> > > > > +	ret = reset_control_assert(dwc3->resets);
-> > > > > +	if (ret)
-> > > > > +		return dev_err_probe(dev, ret, "failed to assert resets\n");
-> > > > > +
-> > > > > +	ret = devm_add_action_or_reset(dev, dwc3_generic_reset_control_assert, dwc3->resets);
-> > > > > +	if (ret)
-> > > > > +		return ret;
-> > > > 
-> > > > The re-assert shouldn't be set up unless the deassert below
-> > > > succeeds.
-> > > > 
-> > > 
-> > > Will move behind the deassert.
-> > > 
-> > > > > +	usleep_range(10, 1000);
-> > > > 
-> > > > This seems like a large range.  You could just do msleep(1);
-> > > > Also, can you add a comment explaining why a delay is needed,
-> > > > and why 1 millisecond is the right amount of time to sleep?
-> > > > 
-> > > 
-> > > I will check the range with spacemit and reply soon.
-> > > 
-> > 
-> > the resets are asynchronous with no strict timing. But to be safe, each
-> > reset should stay active for at least 1 µs. I’ll switch to a udelay(2)
-> > and add comment accordingly.
-> 
-> This may be a little farsight: do you think it's better to make the
-> reset timing part of the of_match_data? This is more flexible and
-> reduces future burden when introducing a new platform that comes with a
-> different reset timing, which is a very likely case we'll face since
-> it's a "generic" driver.
-> 
+Ian!
 
-Hi Zi Yao, thanks for the suggestion.
+On Sat, Jul 05 2025 at 08:05, kernel test robot wrote:
+> kernel test robot noticed the following build warnings:
+>
+> [auto build test WARNING on linus/master]
+> [also build test WARNING on tip/timers/vdso v6.16-rc4 next-20250704]
+> [cannot apply to acme/perf/core]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>
+> url:    https://github.com/intel-lab-lkp/linux/commits/Ian-Rogers/vdso-Switch-get-put-unaligned-from-packed-struct-to-memcpy/20250626-135005
+> base:   linus/master
+> patch link:    https://lore.kernel.org/r/20250626054826.433453-2-irogers%40google.com
+> patch subject: [PATCH v3 1/3] vdso: Switch get/put unaligned from packed struct to memcpy
+> config: s390-randconfig-002-20250705 (https://download.01.org/0day-ci/archive/20250705/202507050736.b4hX0Xks-lkp@intel.com/config)
+> compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 61529d9e36fa86782a2458e6bdeedf7f376ef4b5)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250705/202507050736.b4hX0Xks-lkp@intel.com/reproduce)
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202507050736.b4hX0Xks-lkp@intel.com/
+>
+> All warnings (new ones prefixed by >>):
+>
+>    In file included from arch/s390/boot/decompressor.c:48:
+>    In file included from arch/s390/include/uapi/../../../../lib/decompress_unlz4.c:10:
+>    In file included from arch/s390/include/uapi/../../../../lib/lz4/lz4_decompress.c:36:
+>>> arch/s390/include/uapi/../../../../lib/lz4/lz4defs.h:109:9: warning: default initialization of an object of type 'typeof (*((const U16 *)ptr))' (aka 'const unsigned short') leaves the object uninitialized [-Wdefault-const-init-var-unsafe]
+>      109 |         return get_unaligned((const U16 *)ptr);
+>          |                ^
 
-The delay is only for safety. I think there will not be much device require
-this setting. I'd prefer to keep the logic simple and just cover the
-currently known compatible devices.
-
-If we encounter future platforms that require different timing constraints,
-we can revisit this and introduce of_match_data as needed.
-
-> > > > > +	ret = reset_control_deassert(dwc3->resets);
-> > > > > +	if (ret)
-> > > > > +		return dev_err_probe(dev, ret, "failed to deassert resets\n");
-> > > > > +
-> > > > > +	ret = devm_clk_bulk_get_all(dwc3->dev, &dwc3->clks);
-> > > > > +	if (ret < 0)
-> > > > > +		return dev_err_probe(dev, ret, "failed to get clocks\n");
-> > > > 
-> > > > Call devm_clk_bulk_get_all_enabled() instead of doing the two
-> > > > steps separately here.
-> > > > 
-> > > 
-> > > Will do, thanks.
-> > > 
-> > > > 					-Alex
-> > 
-> 
-> Regards,
-> Yao Zi
+Any update on this one?
 
