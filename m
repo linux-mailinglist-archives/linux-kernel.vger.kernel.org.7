@@ -1,656 +1,515 @@
-Return-Path: <linux-kernel+bounces-741340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF0C4B0E30F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:52:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24BC2B0E2E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:46:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 775A37B85DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:46:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 420E4564C8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA5372857F8;
-	Tue, 22 Jul 2025 17:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB0F283FE5;
+	Tue, 22 Jul 2025 17:44:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B/KdZ7qL"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="DSTBMOys"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11olkn2043.outbound.protection.outlook.com [40.92.20.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1FDD28134F;
-	Tue, 22 Jul 2025 17:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753206332; cv=none; b=bHZzDsliUU2lVXdBzQJAo+dMm6pAczFt5tCKO3QUJNAyy20J4aRf6frE5vdzUeh2aWG7C7vqhgc606vaExT6zqMpSJie3Hg+G7I1L5SIvNutodbzbocbtn7eS1zvX5w3fPcHb/owqpcvJLfJAMzx12BV7qp7zoQGzPZ62PCa/0s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753206332; c=relaxed/simple;
-	bh=rOgq3i3j5TiypNmfGfxrmV389ym7bTxBHNRGTJKz+5c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NYsIkkmLKRgjIEuCjiihtT1T3XGgLX76axaEr3NRS0+E++WML/9TfFAH9GLvuKmmUhs6jtb6laheJ5JHZaBZnP7QvZfbkFYXP9PSQZZ+rTt6MnbOnE5mHDnAbj8TCRdF3AJQDjvKhqnPsjhJ06h8PWSwIPLG7qy2A6apUrHnNw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B/KdZ7qL; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-32f1aaf0d60so58643251fa.1;
-        Tue, 22 Jul 2025 10:45:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753206328; x=1753811128; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XjFuwE8taiWiJN5pZzHXNakG5MTT87qFINxfeX0KwoI=;
-        b=B/KdZ7qLjbNXbQq3UmyUq8IBVWC9bvAQEZVfCcF3AZiJWc4Ni/MxWSzHIFI6S4BBiG
-         SalIO+I1EIEYEyh/BJqTnen1YpQU0KgsUWusruI/bgvo0Kwu2QlwvUBLCcAxjX3yILJc
-         ADD5vZvtGoJ2XJnTrdmKB2uUV2zqpUpOWb6/21rbB5VKxk9KfbqbyXNGcA/8WG2l2oyD
-         WTDGEzO/xrJt6hVoTJu5gd0BxMe0qAje0CwQ2F7Fl82AHxltOhW5GS4QZpZalZWSiS1Y
-         sf5oD8kKYKExcxy/nwWdVmNyy5U7IpAyAaTV4UoFsCxZwzMFyjs8QoL8SfkQeoeT4m8j
-         x3pQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753206328; x=1753811128;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XjFuwE8taiWiJN5pZzHXNakG5MTT87qFINxfeX0KwoI=;
-        b=JnQcPSmKe0bgWFleKXaOhvV9QV4GRkKZB7+bsWlNtAGWINoF8rFue8BPk484Y1HB4U
-         sjxurSoV0XLveCvYdBuy5IFstqqWX+Mmwncp+7iUEaK3926UQZN494Ve8feJRFaBN4BP
-         FveIivlKZR7UH3ma9KX2ONmL7ynrxbtt4AvWkjVwyORD3yYtFy2dqUpm0j0LGmbHcwwx
-         eUnrP1pl/vQVTPM6uEdRdiwJGN6CUXkIBWZsxWeKB7UFqbAL4X8996Olocxn0OGJcndf
-         T8LZ2LOaF+WGvUzCTrDGZXDN0FkDwgMyonxv3fK4mxVqUf6XtJDXqKUjfpUVIOUScRyw
-         weTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDy4gkryi1moyFspQtSUJWK/DQTx10tNONa6Ene1alJ6/7bd5TmqMI//ZUBbv/6cO857ssIQl8aIWkdJ2C@vger.kernel.org, AJvYcCWsguIWIYPAbVcE9CwpOyH6wldav5BWBASdw/dAK5d6s11XabvBbbEUwyGXVZNs62jQ72DKuthV@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIfcbtV9sBkjfL5A3wvHG7MFt4jIcfzptMFxp/rmX90wmePeqW
-	rT990I92i8OTKm5kdsTKcdzyElhxIaUZtcvYRzNOkDL2ZAEBxEZAHYiWg1NeYFOYNwD376F+vz1
-	+SYYAw/Sb+LbUj/COaNkutw0LvOxjtzE=
-X-Gm-Gg: ASbGncujh6eNQt8hzlqpW9U+6DIWil7UdYlmRkfqzlapDuWXaq0GEbOnO2FoIglzvTa
-	RICgxswZUZrasXMOcHCCzblF6HL26ST6Fut+z6Skmh8CXY20NEkWyZ/UtmYHoBk6TY6qMm0JwRL
-	TPN2YoSUuTgcJe6Q2dAaSSLczDcmFi8omwzCrBa9PMc0nb5sqNhYs/o7KvfQTGmccixZQBUHjUy
-	jsxvpM=
-X-Google-Smtp-Source: AGHT+IFDF2mlLYaYBZGWLln98c4PCkofuMMIHb20qfTy6ayrJ+cpDu7CIoPj4/AIk3dXq3Z3l24UI3QC+X31rLhOYGA=
-X-Received: by 2002:a05:651c:211b:b0:32f:1f1b:1e68 with SMTP id
- 38308e7fff4ca-3309a4fa50bmr65974791fa.18.1753206327200; Tue, 22 Jul 2025
- 10:45:27 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1752280CD5;
+	Tue, 22 Jul 2025 17:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.20.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753206295; cv=fail; b=ryBJFF71YDslzg8UKhtXWIeQM/ZMTV2VGD6pQmWT5RKyZBT/W1vSy/tEYcGDyjEJSiTSNxvaIBIO0h25JYYwtrMKkQDTmu+LNeBxTzNmRBrOnbEZ8fLtxAWUX4aQcRDKXCHkVp0XVNpjQL6YZeubbPKyyXUgNK2+OUrRhGMvvSs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753206295; c=relaxed/simple;
+	bh=uF914qubEIkWy1xicHCcPh2rxTnghsE3mJ4dEoyU8Ag=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=p4q8COw6xmEzPMwocXZrxOj6u+dbKg7CJCnO53C4F77mE2orSFY6fbvxCKApKIxDYIEMhiXQpIla1kv6ym+zN8VGQ/y+dSWGRxdG2nqet9tn8uIOTC7Nkwx+7qjFSpi92G/tQmGp/Lum6mS1wPSs8SsbTuht1K++M5I703MvYFo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=DSTBMOys; arc=fail smtp.client-ip=40.92.20.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZIBq5KfoQTMRPEquFBjVLhusfo2xd8G0TXkBQMftUOd/R1BUoNlMlHuz8AHV7Is4EOlureVc5LQII5Oa71b2j1S8+5lJe5OP4oRc4GNJV8xRkH+mrMgRpwa8Jl8R33FH/Xx5OB5D54H/If9jdjivukKjpeP7wFi/3tASwsHPleNJZVXTv/wCmVPoxjgTt1ZnMC49KcCTlANuBvHX6Z63s8nEIT4d17SeO8EsRS+1GFlBh/tLiYeB9jHc2tfz6fXx1sOPz7uqpefRMRLKt2BZa81Nf2aDaMVb+TRp9JwJ68tVFsz70QIQ/fibEV68quwMm5H2XwkifgU0dgtL0bj9PQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=h3U3clk92HF7P+2MQP6naLI/nRUwzdR78DWApD+zVp8=;
+ b=gdRZH1oxof8IvL4EX2EJlqF8DjuZeW8SmLFEvNkcGgygM/qUlx9639lA/k9B4e4SDwChpt4xP9ekYgVzrA7qOI4H5oeSYiq6qhi537NYRZS8WenCaR9itPuZfVyuRecOIdQGNiKtiA0opsf9UiJ6+uP3LeLrcLgYL5HtmHdFM9A6njEJGoC7RdRGF0u5SidgAtrCjdXg9GQJedzzg7k0IEwWgw6/ebWb67eZ6UCK5sRMNkzD8b75HlWQuZIgU5LwZtHzZrY/RZ3rJPtSR3s00mhhGwOUd7E7jRKd53nDLefqZ3JY4rcyOGwCVriJKRjkXKvPHBBKq3u/rmdy4QYqSA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=h3U3clk92HF7P+2MQP6naLI/nRUwzdR78DWApD+zVp8=;
+ b=DSTBMOys118yuf3Q3FtSWVshqVGo/yUjIjK+o2hCX5jZnL4BrUEQxDjs7k/qc6x4u/twsp5pIalCnQKye5KgCzOvg8SFmiSVmrayxGF6a6U15LWqvU2nj7ezVhLYOzGEptsgj3y2u5dZzdCDAM/fKS12ogOwXof9b5IdRJ6NGB0Wb7R5vinL1dWbBtUVzureN4/HYAJHbI8sCgFyA47qU8XGoP/mj2oWR/TqAOGcnM1Xj1DHiJxigjXkobf6YFD0lwujnFifAjDx1ABLlxoJrusov68fFjNp5Avt7Dpk8mUm2ozih7D0MFLUeGs/4JlzTVrFsb5aTb7Q58YLpYyLxw==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by CY8PR02MB9201.namprd02.prod.outlook.com (2603:10b6:930:9c::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.28; Tue, 22 Jul
+ 2025 17:44:49 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%4]) with mapi id 15.20.8943.029; Tue, 22 Jul 2025
+ 17:44:49 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Roman Kisel <romank@linux.microsoft.com>, "alok.a.tiwari@oracle.com"
+	<alok.a.tiwari@oracle.com>, "arnd@arndb.de" <arnd@arndb.de>, "bp@alien8.de"
+	<bp@alien8.de>, "corbet@lwn.net" <corbet@lwn.net>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"decui@microsoft.com" <decui@microsoft.com>, "haiyangz@microsoft.com"
+	<haiyangz@microsoft.com>, "hpa@zytor.com" <hpa@zytor.com>,
+	"kys@microsoft.com" <kys@microsoft.com>, "mingo@redhat.com"
+	<mingo@redhat.com>, "rdunlap@infradead.org" <rdunlap@infradead.org>,
+	"tglx@linutronix.de" <tglx@linutronix.de>, "Tianyu.Lan@microsoft.com"
+	<Tianyu.Lan@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>
+CC: "apais@microsoft.com" <apais@microsoft.com>, "benhill@microsoft.com"
+	<benhill@microsoft.com>, "bperkins@microsoft.com" <bperkins@microsoft.com>,
+	"sunilmut@microsoft.com" <sunilmut@microsoft.com>
+Subject: RE: [PATCH hyperv-next v4 11/16] Drivers: hv: Functions for setting
+ up and tearing down the paravisor SynIC
+Thread-Topic: [PATCH hyperv-next v4 11/16] Drivers: hv: Functions for setting
+ up and tearing down the paravisor SynIC
+Thread-Index: AQHb9Qzd+C+jxXe5VUuRLdwhjD6dOLQ4m6iQ
+Date: Tue, 22 Jul 2025 17:44:49 +0000
+Message-ID:
+ <SN6PR02MB415792CF274383E808ABCD79D45CA@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20250714221545.5615-1-romank@linux.microsoft.com>
+ <20250714221545.5615-12-romank@linux.microsoft.com>
+In-Reply-To: <20250714221545.5615-12-romank@linux.microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|CY8PR02MB9201:EE_
+x-ms-office365-filtering-correlation-id: e669871a-1869-4118-c006-08ddc94774f5
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|15080799012|461199028|41001999006|56899033|40105399003|3412199025|440099028|12091999003|102099032;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?q6/KZbH1Ha9HfvPhe8CgiakXRSJ2vr/+ffl7R0ms5MNoqQ9e3IZH8CyqWold?=
+ =?us-ascii?Q?lm3ACkTHAgvxIwIIp80FUHa84L4uo5I1Nzw6eNf4fnr2rh/kIFKnTnibQ8Od?=
+ =?us-ascii?Q?Gmeno2e8Vc6Xlmo6pJX6A7ZHINF7wYQdtPZWdO0AVXm8Mc1EQ4dOGu3J/ebq?=
+ =?us-ascii?Q?uagYIGsDA2r+qY+PK9kkUA0+RFqo9gOslsvsdXFWE302E922koROz7SGMK76?=
+ =?us-ascii?Q?IKFPefu41GdQLH3N4Uk5yA9U7xaQGittNO7607e1IVAveGG81eKOmPy8A9fU?=
+ =?us-ascii?Q?lWi7wfqVgLue16EiEajWv6laLujI9vpCt1HAQNDVvEYhlrR/XzoURGQD4X7z?=
+ =?us-ascii?Q?06ayzIs8lx5UxftNaZSl56oGkQ4YaXC4j/bID6xiKvihQb5/81GBeaASAyQF?=
+ =?us-ascii?Q?sJdVFRbaoS21TEbVG2IteWlW8HVRbeBA5eQUEsUyv+JSn+0aIIbQEKfZPSet?=
+ =?us-ascii?Q?GMjECW7onjNmSZtARzUdR9dSVVBixstiJQvZmcixWXXMhEl7l7Ynzru9YWNJ?=
+ =?us-ascii?Q?QUVb8gv3yHqe2h8MwNez8SVdeIarGiF2kDEbmaqCeocwaEGAtXObIlY8Ie69?=
+ =?us-ascii?Q?UaRIfJeXQuRp4xocsrumd0USB+J1IFN+YqRIw9EqNnqjUrm8KR6U+Q/DtRxA?=
+ =?us-ascii?Q?rVEYVnLzKxJwebyV7w5tc40a5Sq/woP+PQqVIGi3j/Y6MBpnh4DJDU5BUREf?=
+ =?us-ascii?Q?gHXvUlc6Pa9rRUXkx//YdnjnhLY/ZMjkX6/eyogjdeyjicP7Y3qSB/0nE9lU?=
+ =?us-ascii?Q?Dbt+kOPg3y9P6iH82G36M91sIpx0WLM50/cAkAckF3bS3zGI202SFGepT3RW?=
+ =?us-ascii?Q?psis5YgLeJpteUgqaSRO247NM4T3YBBNYqGW4L6pupgzmhmBdXFzYPYJSoxL?=
+ =?us-ascii?Q?KTQo3COGXhSU5OoH39Ay2plBEPDGQ/mx2Nidv5DTxU+jCUXhzOCuY+MB0AX5?=
+ =?us-ascii?Q?rBSObfOZtp2o5jJKR3xn0BfrOKO3rbvvA5BVgVzkmB7jvWZR6I+7nkQqbpXR?=
+ =?us-ascii?Q?QLjJgSe9XDTxE5L0t3akwqYuci6YjZZZ/FzoiWgsM00AKTu0wc1HrdXMt25J?=
+ =?us-ascii?Q?lYWFJ4k7ifP9uAItbnmVc/itjhHk9A=3D=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?avRFsIRfrZh9tK7fNTYSnoinVwofkw8kG9osMoPTePRz5fPqKCq9rHugz3B3?=
+ =?us-ascii?Q?W2W7M4a84Uh6C6AzsRwdAzEE4mBNlFUy8J5dGo9XlicGDIAyHqU0ciVOf3O+?=
+ =?us-ascii?Q?F2bQXU6AQRYczTRl+DjhQlPSx0H8L0Zbx1+JgcambvE3hm2Qqv0IuzzO/PJi?=
+ =?us-ascii?Q?Cq5KL+Au0p8an4QLOjH77hHcvaZnKT4GZ8h56pY+Zb2jUMA5YcJeiV9Xrjw0?=
+ =?us-ascii?Q?E1SNwjBtfH0gqisH3lF1CU7fG+YLZnPG7ruOyU/wO8tZBGu26fEQec2taP7w?=
+ =?us-ascii?Q?/QJefGXY6Ics7MDiZsOqZDHmkvhdllrXYhEHIEgrQ1onfbKDZUxjwTYb/7Uo?=
+ =?us-ascii?Q?1IB1n+xo+jSAwp6EvPn2x1qQd3QgqNckFPiYWriqNPvFD4DR+ksNvPh4YjPD?=
+ =?us-ascii?Q?pMuHXrZB18qu2LAzsRwXSJlCDqVb6DEB8PNlSMw62Y5K5n9wamJBfi0cPf8P?=
+ =?us-ascii?Q?l/h97jj2A/ikJaf5L7RMS2j83e8vHaAhMQwXYveIFmBa5esnVgOqsOsvljdF?=
+ =?us-ascii?Q?7IFPGwQWL3VaptqDNIS6wAaERaiI3gEidbVm2lthNqS46P+TyQqPPc3bYNl0?=
+ =?us-ascii?Q?TiZIttO9Fw1gYS6cAAzjcUJpAbjakmQusJeUic8+4UfPfv4Wi7p7pQH3igzH?=
+ =?us-ascii?Q?nmpKmy+Xez8jDiq6MiyKDRs9u7ZjAvfPnX0Oncx9KMw8DGGHKjQ4JFR0ENDM?=
+ =?us-ascii?Q?ZitDdbXWGsyd98W0eMfBPsFhieAIAAeCaAgXMfwSzgV1sbpdvrIAEuEm2Kdf?=
+ =?us-ascii?Q?Yr0CnvuUfPiyWwkBlxXWvPOWlksipqNviRlvVOvJq/+iuky2pQCiiy9ux1PD?=
+ =?us-ascii?Q?HWxH0oqm7Xx3RaYCeKUh8TZPO4Z7/QwMGE1DDSF+9cJceR/VC48IBPoDl4/1?=
+ =?us-ascii?Q?3GJF6Pj9LAi2s29YXDBLm6z2tb1dvspqMnL5xVJ/OZn1dvdvACb4GkjVQLX3?=
+ =?us-ascii?Q?ypntm1Did65a3TAEmoSQrcYmfmbuB1IQfwbwRyauFlXG8nP/d6XsH1vn6wKK?=
+ =?us-ascii?Q?3kXcT00JeUXsSA/cDnvjochLN8C+mzGX7G2mx3fNZojkbOocjJSdIb8tcKap?=
+ =?us-ascii?Q?43+JR1fYPe3aFApnhBtJViEa62fCfLhdhf1qa2SbBDLOD9d2X6QfLoXZcwZ7?=
+ =?us-ascii?Q?eqwm3PoxmKSWJ1zUu/g9HOLr74dfEtuqLcbnnPH/gyCjIiq1SR5eTPFSBgXB?=
+ =?us-ascii?Q?cbgiupNZi4BD0to7v31uu0n3V2lUSiY+O8BzDIgY5wXmf8qZsfJolotpS1s?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250716202006.3640584-1-youngjun.park@lge.com> <20250716202006.3640584-5-youngjun.park@lge.com>
-In-Reply-To: <20250716202006.3640584-5-youngjun.park@lge.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Wed, 23 Jul 2025 01:44:49 +0800
-X-Gm-Features: Ac12FXzJvzXCImBzHeVF2F_uGI5AlIAZiwACCt3ZAEB8qvt4tn9o8yZaQ-naP_E
-Message-ID: <CAMgjq7COLbfGwd4CYxNBaLTi4UaPDkKQzkLhsV-caoA-xq1V-g@mail.gmail.com>
-Subject: Re: [PATCH 4/4] mm: swap: Per-cgroup per-CPU swap device cache with
- shared clusters
-To: Youngjun Park <youngjun.park@lge.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org, 
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev, 
-	shikemeng@huaweicloud.com, nphamcs@gmail.com, bhe@redhat.com, 
-	baohua@kernel.org, chrisl@kernel.org, cgroups@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, gunho.lee@lge.com, 
-	iamjoonsoo.kim@lge.com, taejoon.song@lge.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: e669871a-1869-4118-c006-08ddc94774f5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jul 2025 17:44:49.8039
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR02MB9201
 
-On Thu, Jul 17, 2025 at 4:21=E2=80=AFAM Youngjun Park <youngjun.park@lge.co=
-m> wrote:
->
-> This patch introduces a new swap allocation mechanism that supports
-> per-cgroup per-CPU swap device caches, combined with per-device per-CPU
-> cluster management.
->
-> The existing global swap allocator uses a per-CPU device cache and
-> cluster, shared by all cgroups. Under this model, per-cgroup swap
-> priorities cannot be effectively honored on the fast path, as allocations
-> do not distinguish between cgroups.
->
-> To address this, we introduce per-cgroup per-CPU swap device caches.
-> This allows fast-path swap allocations to respect each cgroup=E2=80=99s
-> individual priority settings.
->
-> To avoid an explosion of cluster structures proportional to the number
-> of cgroups, clusters remain per-device and are shared across cgroups.
-> This strikes a balance between performance and memory overhead.
->
-> Suggested-by: Nhat Pham <nphamcs@gmail.com>
-> Suggested-by: Kairui Song <kasong@tencent.com>
-> Signed-off-by: Youngjun Park <youngjun.park@lge.com>
+From: Roman Kisel <romank@linux.microsoft.com> Sent: Monday, July 14, 2025 =
+3:16 PM
+>=20
+> The confidential VMBus runs with the paravisor SynIC and requires
+> configuring it with the paravisor.
+>=20
+> Add the functions for configuring the paravisor SynIC. Update
+> overall SynIC initialization logic to initialize the SynIC if it
+> is present. Finally, break out SynIC interrupt enable/disable
+> code into separate functions so that SynIC interrupts can be
+> enabled or disabled via the paravisor instead of the hypervisor
+> if the paravisor SynIC is present.
+>=20
+> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+
+See some comments below about the comments in the code.
+Those notwithstanding,
+Reviewed-by: Michael Kelley <mhklinux@outlook.com>
+
 > ---
->  include/linux/swap.h      |   7 ++
->  mm/swap_cgroup_priority.c | 156 +++++++++++++++++++++++++++++++++++++-
->  mm/swap_cgroup_priority.h |  39 ++++++++++
->  mm/swapfile.c             |  47 +++++++-----
->  4 files changed, 228 insertions(+), 21 deletions(-)
->
-> diff --git a/include/linux/swap.h b/include/linux/swap.h
-> index bfddbec2ee28..ab15f4c103a1 100644
-> --- a/include/linux/swap.h
-> +++ b/include/linux/swap.h
-> @@ -283,6 +283,12 @@ enum swap_cluster_flags {
->  #define SWAP_NR_ORDERS         1
->  #endif
->
-> +#ifdef CONFIG_SWAP_CGROUP_PRIORITY
-> +struct percpu_cluster {
-> +       unsigned int next[SWAP_NR_ORDERS]; /* Likely next allocation offs=
-et */
-> +};
-> +#endif
+>  drivers/hv/hv.c | 197 +++++++++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 185 insertions(+), 12 deletions(-)
+>=20
+> diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
+> index 94a81bb3c8c7..9d85d5e62968 100644
+> --- a/drivers/hv/hv.c
+> +++ b/drivers/hv/hv.c
+> @@ -276,9 +276,8 @@ void hv_hyp_synic_enable_regs(unsigned int cpu)
+>  	union hv_synic_simp simp;
+>  	union hv_synic_siefp siefp;
+>  	union hv_synic_sint shared_sint;
+> -	union hv_synic_scontrol sctrl;
+>=20
+> -	/* Setup the Synic's message page */
+> +	/* Setup the Synic's message page with the hypervisor. */
+>  	simp.as_uint64 =3D hv_get_msr(HV_MSR_SIMP);
+>  	simp.simp_enabled =3D 1;
+>=20
+> @@ -297,7 +296,7 @@ void hv_hyp_synic_enable_regs(unsigned int cpu)
+>=20
+>  	hv_set_msr(HV_MSR_SIMP, simp.as_uint64);
+>=20
+> -	/* Setup the Synic's event page */
+> +	/* Setup the Synic's event page with the hypervisor. */
+>  	siefp.as_uint64 =3D hv_get_msr(HV_MSR_SIEFP);
+>  	siefp.siefp_enabled =3D 1;
+>=20
+> @@ -325,6 +324,11 @@ void hv_hyp_synic_enable_regs(unsigned int cpu)
+>  	shared_sint.masked =3D false;
+>  	shared_sint.auto_eoi =3D hv_recommend_using_aeoi();
+>  	hv_set_msr(HV_MSR_SINT0 + VMBUS_MESSAGE_SINT, shared_sint.as_uint64);
+> +}
 > +
->  /*
->   * We keep using same cluster for rotational device so IO will be sequen=
-tial.
->   * The purpose is to optimize SWAP throughput on these device.
-> @@ -341,6 +347,7 @@ struct swap_info_struct {
->         struct list_head discard_clusters; /* discard clusters list */
->  #ifdef CONFIG_SWAP_CGROUP_PRIORITY
->         u64 id;
-> +       struct percpu_cluster __percpu *percpu_cluster; /* per cpu's swap=
- location */
->  #endif
->         struct plist_node avail_lists[]; /*
->                                            * entries in swap_avail_heads,=
- one
-> diff --git a/mm/swap_cgroup_priority.c b/mm/swap_cgroup_priority.c
-> index 84e876b77f01..f960c3dcab48 100644
-> --- a/mm/swap_cgroup_priority.c
-> +++ b/mm/swap_cgroup_priority.c
-> @@ -21,6 +21,17 @@
->  #include "swap_cgroup_priority.h"
->  #include "memcontrol-v1.h"
->
+> +static void hv_hyp_synic_enable_interrupts(void)
+> +{
+> +	union hv_synic_scontrol sctrl;
+>=20
+>  	/* Enable the global synic bit */
+>  	sctrl.as_uint64 =3D hv_get_msr(HV_MSR_SCONTROL);
+> @@ -333,13 +337,100 @@ void hv_hyp_synic_enable_regs(unsigned int cpu)
+>  	hv_set_msr(HV_MSR_SCONTROL, sctrl.as_uint64);
+>  }
+>=20
 > +/*
-> + * We do maintain a cache on a per-cgroup-per-swap-device basis.
-> + * However, the underlying cluster cache itself is managed
-> + * per-swap-device. This design prevents each individual
-> + * swap_cgroup_priority entry from caching its own cluster data,
-> + * even as the number of such entries increases.
+> + * The paravisor might not support proxying SynIC, and this
+> + * function may fail.
 > + */
-> +struct percpu_swap_device {
-> +       struct swap_info_struct *si[SWAP_NR_ORDERS];
-> +};
-> +
->  static DEFINE_MUTEX(swap_cgroup_priority_inherit_lck);
->  static LIST_HEAD(swap_cgroup_priority_list);
->
-> @@ -49,6 +60,7 @@ static LIST_HEAD(swap_cgroup_priority_list);
->   * least_priority - Current lowest priority.
->   * distance - Priority differences from global swap priority.
->   * default_prio - Default priority for this cgroup.
-> + * pcpu_swapdev - Per-CPU swap device.
->   * plist - Priority list head.
->   */
->  struct swap_cgroup_priority {
-> @@ -64,6 +76,7 @@ struct swap_cgroup_priority {
->         int least_priority;
->         s8 distance;
->         int default_prio;
-> +       struct percpu_swap_device __percpu *pcpu_swapdev;
->         struct plist_head plist[];
->  };
->
-> @@ -132,6 +145,21 @@ static struct swap_cgroup_priority *get_effective_sw=
-ap_cgroup_priority(
->         return swap_priority->effective;
->  }
->
-> +static struct swap_cgroup_priority *get_effective_swap_cgroup_priority_r=
-cu(
-> +       struct mem_cgroup *memcg)
+> +static int hv_para_synic_enable_regs(unsigned int cpu)
 > +{
-> +       struct swap_cgroup_priority *swap_priority;
+> +	int err;
+> +	union hv_synic_simp simp;
+> +	union hv_synic_siefp siefp;
+> +	struct hv_per_cpu_context *hv_cpu
+> +		=3D per_cpu_ptr(hv_context.cpu_context, cpu);
 > +
-> +       if (!memcg)
-> +               return NULL;
+> +	/* Setup the Synic's message page with the paravisor. */
+> +	err =3D hv_para_get_synic_register(HV_MSR_SIMP, &simp.as_uint64);
+> +	if (err)
+> +		return err;
+> +	simp.simp_enabled =3D 1;
+> +	simp.base_simp_gpa =3D virt_to_phys(hv_cpu->para_synic_message_page)
+> +			>> HV_HYP_PAGE_SHIFT;
+> +	err =3D hv_para_set_synic_register(HV_MSR_SIMP, simp.as_uint64);
+> +	if (err)
+> +		return err;
 > +
-> +       swap_priority =3D rcu_dereference(memcg->swap_priority);
-> +       if (!swap_priority)
-> +               return NULL;
-> +
-> +       return rcu_dereference(swap_priority->effective);
+> +	/* Setup the Synic's event page with the paravisor. */
+> +	err =3D hv_para_get_synic_register(HV_MSR_SIEFP, &siefp.as_uint64);
+> +	if (err)
+> +		return err;
+> +	siefp.siefp_enabled =3D 1;
+> +	siefp.base_siefp_gpa =3D virt_to_phys(hv_cpu->para_synic_event_page)
+> +			>> HV_HYP_PAGE_SHIFT;
+> +	return hv_para_set_synic_register(HV_MSR_SIEFP, siefp.as_uint64);
 > +}
 > +
->  static bool validate_effective_swap_cgroup_priority(
->         struct mem_cgroup *memcg,
->         struct swap_cgroup_priority **swap_priority)
-> @@ -172,6 +200,9 @@ static void free_swap_cgroup_priority_pnode(
->  static void free_swap_cgroup_priority(
->         struct swap_cgroup_priority *swap_priority)
+> +static int hv_para_synic_enable_interrupts(void)
+> +{
+> +	union hv_synic_scontrol sctrl;
+> +	int err;
+> +
+> +	/* Enable the global synic bit */
+> +	err =3D hv_para_get_synic_register(HV_MSR_SCONTROL, &sctrl.as_uint64);
+> +	if (err)
+> +		return err;
+> +	sctrl.enable =3D 1;
+> +
+> +	return hv_para_set_synic_register(HV_MSR_SCONTROL, sctrl.as_uint64);
+> +}
+> +
+>  int hv_synic_init(unsigned int cpu)
 >  {
-> +       if (swap_priority->pcpu_swapdev)
-> +               free_percpu(swap_priority->pcpu_swapdev);
+> +	int err;
 > +
->         for (int i =3D 0; i < MAX_SWAPFILES; i++)
->                 free_swap_cgroup_priority_pnode(swap_priority->pnode[i]);
->
-> @@ -187,6 +218,12 @@ static struct swap_cgroup_priority *alloc_swap_cgrou=
-p_priority(void)
->         if (!swap_priority)
->                 return NULL;
->
-> +       swap_priority->pcpu_swapdev =3D alloc_percpu(struct percpu_swap_d=
-evice);
-> +       if (!swap_priority->pcpu_swapdev) {
-> +               kvfree(swap_priority);
-> +               return NULL;
-> +       }
+> +	/*
+> +	 * The paravisor may not support the confidential VMBus,
+> +	 * check on that first.
+> +	 */
+> +	if (vmbus_is_confidential()) {
+> +		err =3D hv_para_synic_enable_regs(cpu);
+> +		if (err)
+> +			goto fail;
+> +	}
 > +
->         /*
->          * Pre-allocates pnode array up to nr_swapfiles at init.
->          * Individual pnodes are assigned on swapon, but not freed
-> @@ -326,10 +363,34 @@ bool swap_alloc_cgroup_priority(struct mem_cgroup *=
-memcg,
->         unsigned long offset;
->         int node;
->
-> -       /*
-> -        * TODO: Per-cpu swap cluster cache can't be used directly
-> -        * as cgroup-specific priorities may select different devices.
-> -        */
-> +       rcu_read_lock();
-> +       if (!(swap_priority =3D get_effective_swap_cgroup_priority_rcu(me=
-mcg))) {
-> +               rcu_read_unlock();
-> +               return false;
-> +       }
+> +	/*
+> +	 * The SINT is set in hv_hyperv_synic_enable_regs() by calling
+
+s/hv_hyperv_synic_enable_regs/hv_hyp_synic_enable_regs/
+
+> +	 * hv_set_msr(). hv_set_msr() in turn has special case code for the
+> +	 * SINT MSRs that write to the hypervisor version of the MSR *and*
+> +	 * the paravisor version of the MSR (but *without* the proxy bit when
+> +	 * VMBus is confidential). Then the code above enables interrupts
+
+This reference to "the code above" is wrong. It's actually the code below.
+Perhaps just do "Then enable interrupts via the paravisor ...." as a new
+paragraph in the comment.
+
+> +	 * via the paravisor if VMBus is confidential, and otherwise via the
+> +	 * hypervisor.
+> +	 */
 > +
-> +       /* Fast path */
-> +       si =3D this_cpu_read(swap_priority->pcpu_swapdev->si[order]);
-> +       if (si && get_swap_device_info(si)) {
-> +               offset =3D cluster_alloc_swap_entry(si, order, SWAP_HAS_C=
-ACHE);
-> +               if (offset) {
-> +                       *entry =3D swp_entry(si->type, offset);
-> +                       /*
-> +                        * Protected by 'percpu_swap_cluster' local_lock;
-> +                        * CPU migration is disabled during this operatio=
-n.
-> +                        */
-> +                       this_cpu_write(swap_priority->pcpu_swapdev->si[or=
-der],
-> +                                      si);
-> +                       put_swap_device(si);
-> +                       rcu_read_unlock();
+>  	hv_hyp_synic_enable_regs(cpu);
+> +	if (vmbus_is_confidential()) {
+> +		err =3D hv_para_synic_enable_interrupts();
+> +		if (err)
+> +			goto fail;
+> +	} else
+> +		hv_hyp_synic_enable_interrupts();
+>=20
+>  	hv_stimer_legacy_init(cpu, VMBUS_MESSAGE_SINT);
+>=20
+>  	return 0;
 > +
-> +                       return true;
-> +               }
-> +               put_swap_device(si);
-> +       }
-> +       rcu_read_unlock();
-> +
-> +       /* Slow path */
-
-Hi Youngjun
-
-One thing I noticed after a quick glance is that this
-swap_alloc_cgroup_priority is bloated and it is doing similar things
-as folio_alloc_swap.
-
-I imagined that we can just have a struct (eg. let's call it struct
-swap_percpu_info / pi) as a closure of what the allocator needs, it
-contains the plist and fast path device.
-
-With slight changes to folio_alloc_swap, it can respect either the
-cgroup's pi or global pi. (might be a horrible name though, feel free
-to change it)
-
-For example first thing swap_alloc_fast do will be:
-
-`struct swap_percpu_info *pi =3D folio_swap_percpu_info(folio);`
-
-folio_swap_percpu_info returns the cgroup's swap_percpu_info or the global =
-one.
-
-swap_alloc_slow can do a similar thing, it then can just use pi->plist
-and pi->pcpu_swapdev, (cluster info will be in si) ignoring all the
-cgroup differences.
-
-Also it is better to check your patches with ./scripts/checkpatch.pl,
-I'm seeing some styling issues.
-
-I'll check your other patches too later this week, thanks for the
-update on this idea.
-
->         spin_lock(&swap_avail_lock);
->         node =3D numa_node_id();
->
-> @@ -350,6 +411,14 @@ bool swap_alloc_cgroup_priority(struct mem_cgroup *m=
-emcg,
->                 if (get_swap_device_info(si)) {
->                         offset =3D cluster_alloc_swap_entry(si, order,
->                                                           SWAP_HAS_CACHE)=
+> +fail:
+> +	/*
+> +	 * The failure may only come from enabling the paravisor SynIC.
+> +	 * That in turn means that the confidential VMBus cannot be used
+> +	 * which is not an error: the setup will be re-tried with the
+> +	 * non-confidential VMBus.
+> +	 *
+> +	 * We also don't bother attempting to reset the paravisor registers
+> +	 * as something isn't working there anyway.
+> +	 */
+> +	return err;
+>  }
+>=20
+>  void hv_hyp_synic_disable_regs(unsigned int cpu)
+> @@ -349,7 +440,6 @@ void hv_hyp_synic_disable_regs(unsigned int cpu)
+>  	union hv_synic_sint shared_sint;
+>  	union hv_synic_simp simp;
+>  	union hv_synic_siefp siefp;
+> -	union hv_synic_scontrol sctrl;
+>=20
+>  	shared_sint.as_uint64 =3D hv_get_msr(HV_MSR_SINT0 + VMBUS_MESSAGE_SINT)=
 ;
-> +                       /*
-> +                        * Protected by 'percpu_swap_cluster' local_lock;
-> +                        * CPU migration is disabled during this operatio=
-n.
-> +                        */
-> +                       if (memcg->swap_priority =3D=3D swap_priority)
-> +                               this_cpu_write(
-> +                                       swap_priority->pcpu_swapdev->si[o=
-rder],
-> +                                       si);
->                         put_swap_device(si);
->                         if (offset) {
->                                 *entry =3D swp_entry(si->type, offset);
-> @@ -687,6 +756,21 @@ static int __apply_swap_cgroup_priority(
->         return 0;
+>=20
+> @@ -361,7 +451,7 @@ void hv_hyp_synic_disable_regs(unsigned int cpu)
+>=20
+>  	simp.as_uint64 =3D hv_get_msr(HV_MSR_SIMP);
+>  	/*
+> -	 * In Isolation VM, sim and sief pages are allocated by
+> +	 * In Isolation VM, simp and sief pages are allocated by
+>  	 * paravisor. These pages also will be used by kdump
+>  	 * kernel. So just reset enable bit here and keep page
+>  	 * addresses.
+> @@ -391,14 +481,64 @@ void hv_hyp_synic_disable_regs(unsigned int cpu)
+>  	}
+>=20
+>  	hv_set_msr(HV_MSR_SIEFP, siefp.as_uint64);
+> +}
+> +
+> +static void hv_hyp_synic_disable_interrupts(void)
+> +{
+> +	union hv_synic_scontrol sctrl;
+>=20
+>  	/* Disable the global synic bit */
+>  	sctrl.as_uint64 =3D hv_get_msr(HV_MSR_SCONTROL);
+>  	sctrl.enable =3D 0;
+>  	hv_set_msr(HV_MSR_SCONTROL, sctrl.as_uint64);
+> +}
+>=20
+> -	if (vmbus_irq !=3D -1)
+> -		disable_percpu_irq(vmbus_irq);
+> +static void hv_para_synic_disable_regs(unsigned int cpu)
+> +{
+> +	/*
+> +	 * When a get/set register error is encountered, the function
+> +	 * returns as the paravisor may not support these registers.
+> +	 */
+> +	int err;
+> +	union hv_synic_simp simp;
+> +	union hv_synic_siefp siefp;
+> +
+> +	/*
+> +	 * Don't deallocate memory here as the function is called on
+> +	 * CPU online and offline operations. The guest will find
+> +	 * itself without means of communication when resumed.
+> +	 */
+
+This comment feels unnecessary because deallocating memory in
+this function should not be an expectation. Lacking that expectation,
+there's no reason to explain why it is not done. Looking at the larger
+context, the paired function hv_para_synic_enable_regs() doesn't
+allocate memory, and the parallel function hv_hyp_synic_disable_regs()
+also doesn't do memory deallocation. FWIW, the first sentence of the
+comment is slightly inaccurate because the function is called only
+when a CPU goes offline. But I would remove the comment entirely
+so as to not imply that it's reasonable to expect the deallocation
+should be done here.
+
+CPU offlining is not the justification for why deallocation is not done
+here. In my comments on v3 of this patch, my intent was to use CPU
+offlining just as an example of why deallocating here would break
+things. The deallocation is already properly done in hv_synic_free().
+
+> +
+> +	/* Disable SynIC's message page in the paravisor. */
+> +	err =3D hv_para_get_synic_register(HV_MSR_SIMP, &simp.as_uint64);
+> +	if (err)
+> +		return;
+> +	simp.simp_enabled =3D 0;
+> +
+> +	err =3D hv_para_set_synic_register(HV_MSR_SIMP, simp.as_uint64);
+> +	if (err)
+> +		return;
+> +
+> +	/* Disable SynIC's event page in the paravisor. */
+> +	err =3D hv_para_get_synic_register(HV_MSR_SIEFP, &siefp.as_uint64);
+> +	if (err)
+> +		return;
+> +	siefp.siefp_enabled =3D 0;
+> +
+> +	hv_para_set_synic_register(HV_MSR_SIEFP, siefp.as_uint64);
+> +}
+> +
+> +static void hv_para_synic_disable_interrupts(void)
+> +{
+> +	union hv_synic_scontrol sctrl;
+> +	int err;
+> +
+> +	/* Disable the global synic bit */
+> +	err =3D hv_para_get_synic_register(HV_MSR_SCONTROL, &sctrl.as_uint64);
+> +	if (err)
+> +		return;
+> +	sctrl.enable =3D 0;
+> +	hv_para_set_synic_register(HV_MSR_SCONTROL, sctrl.as_uint64);
 >  }
->
-> +static int init_swap_cgroup_priority_pcpu_swapdev_cache(
-> +       struct swap_cgroup_priority *swap_priority)
-> +{
-> +       int cpu;
-> +
-> +       for_each_possible_cpu(cpu) {
-> +               struct percpu_swap_device *pcp_swap_dev =3D
-> +                       per_cpu_ptr(swap_priority->pcpu_swapdev, cpu);
-> +               for (int i =3D 0; i < SWAP_NR_ORDERS; i++)
-> +                       pcp_swap_dev->si[i] =3D NULL;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
->  /*
->   * If this is the top-level swap_cgroup_priority, propagation is needed.
->   * We traverse the 'mem_cgroup_tree' using 'for_each_mem_cgroup_tree'.
-> @@ -795,6 +879,8 @@ int apply_swap_cgroup_priority(struct mem_cgroup *mem=
-cg, u64 id, int prio)
->         for_each_node(nid)
->                 plist_head_init(&swap_priority->plist[nid]);
->
-> +       init_swap_cgroup_priority_pcpu_swapdev_cache(swap_priority);
-> +
->  prio_set:
->         spin_lock(&swap_lock);
->         spin_lock(&swap_avail_lock);
-> @@ -843,6 +929,23 @@ int apply_swap_cgroup_priority(struct mem_cgroup *me=
-mcg, u64 id, int prio)
->
->         spin_unlock(&swap_avail_lock);
->         spin_unlock(&swap_lock);
-> +       /*
-> +        * XXX: We cannot fully synchronize with swap_alloc_cgroup_priori=
-ty
-> +        * when updating the next si.
-> +        * Still, we ensure that flush operations inside swap_priority
-> +        * are performed as reliably as possible.
-> +        */
-> +       if (id !=3D DEFAULT_ID &&
-> +           swap_priority =3D=3D swap_priority->effective && !new) {
-> +               int cpu;
-> +               struct swap_info_struct **pcp_si;
-> +               for_each_possible_cpu(cpu) {
-> +                       pcp_si =3D per_cpu_ptr(
-> +                               swap_priority->pcpu_swapdev->si, cpu);
-> +                       for (int i =3D 0; i < SWAP_NR_ORDERS; i++)
-> +                               pcp_si[i] =3D NULL;
-> +               }
-> +       }
->         mutex_unlock(&swap_cgroup_priority_inherit_lck);
->         return 0;
->
-> @@ -886,3 +989,48 @@ void delete_swap_cgroup_priority(struct mem_cgroup *=
-memcg)
->         spin_unlock(&swap_avail_lock);
->         mutex_unlock(&swap_cgroup_priority_inherit_lck);
->  }
-> +
-> +void flush_swap_cgroup_priority_percpu_swapdev(struct swap_info_struct *=
-si)
-> +{
-> +       int cpu, i;
-> +       struct swap_info_struct **pcp_si;
-> +       struct swap_cgroup_priority *swap_priority;
-> +
-> +       rcu_read_lock();
-> +       list_for_each_entry_rcu(swap_priority,
-> +                               &swap_cgroup_priority_list, link) {
-> +               for_each_possible_cpu(cpu) {
-> +                       pcp_si =3D per_cpu_ptr(
-> +                                       swap_priority->pcpu_swapdev->si, =
-cpu);
-> +
-> +                       for (i =3D 0; i < SWAP_NR_ORDERS; i++)
-> +                               cmpxchg(&pcp_si[i], si, NULL);
-> +               }
-> +       }
-> +       rcu_read_unlock();
-> +}
-> +
-> +bool alloc_percpu_swap_cluster(struct swap_info_struct *si)
-> +{
-> +       si->percpu_cluster =3D alloc_percpu(struct percpu_cluster);
-> +       if (!si->percpu_cluster)
-> +               return false;
-> +
-> +       int cpu;
-> +       int i;
-> +       for_each_possible_cpu(cpu) {
-> +               struct percpu_cluster *cluster;
-> +
-> +               cluster =3D per_cpu_ptr(si->percpu_cluster, cpu);
-> +               for (i =3D 0; i < SWAP_NR_ORDERS; i++)
-> +                       cluster->next[i] =3D SWAP_ENTRY_INVALID;
-> +       }
-> +
-> +       return true;
-> +}
-> +
-> +void free_percpu_swap_cluster(struct swap_info_struct *si)
-> +{
-> +       free_percpu(si->percpu_cluster);
-> +       si->percpu_cluster =3D NULL;
-> +}
-> diff --git a/mm/swap_cgroup_priority.h b/mm/swap_cgroup_priority.h
-> index 5d16b63d12e0..815822ebd0d1 100644
-> --- a/mm/swap_cgroup_priority.h
-> +++ b/mm/swap_cgroup_priority.h
-> @@ -47,6 +47,22 @@ struct swap_cgroup_priority *inherit_swap_cgroup_prior=
-ity(
->  bool swap_alloc_cgroup_priority(struct mem_cgroup *memcg, swp_entry_t *e=
-ntry,
->                                 int order);
->  void delete_swap_cgroup_priority(struct mem_cgroup *memcg);
-> +void flush_swap_cgroup_priority_percpu_swapdev(struct swap_info_struct *=
-si);
-> +
-> +bool alloc_percpu_swap_cluster(struct swap_info_struct *si);
-> +void free_percpu_swap_cluster(struct swap_info_struct *si);
-> +static inline void write_percpu_swap_cluster_next(struct swap_info_struc=
-t *si,
-> +                                                 int order,
-> +                                                 unsigned int next)
-> +{
-> +       this_cpu_write(si->percpu_cluster->next[order], next);
-> +}
-> +
-> +static inline unsigned int read_percpu_swap_cluster_next(
-> +       struct swap_info_struct *si, int order)
-> +{
-> +        return __this_cpu_read(si->percpu_cluster->next[order]);
-> +}
->  #else
->  int swap_node(struct swap_info_struct *si);
->  unsigned long cluster_alloc_swap_entry(struct swap_info_struct *si, int =
-order,
-> @@ -85,5 +101,28 @@ static inline bool swap_alloc_cgroup_priority(struct =
-mem_cgroup *memcg,
->  static inline void delete_swap_cgroup_priority(struct mem_cgroup *memcg)
+>=20
+>  #define HV_MAX_TRIES 3
+> @@ -411,16 +551,18 @@ void hv_hyp_synic_disable_regs(unsigned int cpu)
+>   * that the normal interrupt handling mechanism will find and process th=
+e channel interrupt
+>   * "very soon", and in the process clear the bit.
+>   */
+> -static bool hv_synic_event_pending(void)
+> +static bool __hv_synic_event_pending(union hv_synic_event_flags *event, =
+int sint)
 >  {
+> -	struct hv_per_cpu_context *hv_cpu =3D this_cpu_ptr(hv_context.cpu_conte=
+xt);
+> -	union hv_synic_event_flags *event =3D
+> -		(union hv_synic_event_flags *)hv_cpu->hyp_synic_event_page + VMBUS_MES=
+SAGE_SINT;
+> -	unsigned long *recv_int_page =3D event->flags; /* assumes VMBus version=
+ >=3D VERSION_WIN8 */
+> +	unsigned long *recv_int_page;
+>  	bool pending;
+>  	u32 relid;
+>  	int tries =3D 0;
+>=20
+> +	if (!event)
+> +		return false;
+> +
+> +	event +=3D sint;
+> +	recv_int_page =3D event->flags; /* assumes VMBus version >=3D VERSION_W=
+IN8 */
+>  retry:
+>  	pending =3D false;
+>  	for_each_set_bit(relid, recv_int_page, HV_EVENT_FLAGS_COUNT) {
+> @@ -437,6 +579,17 @@ static bool hv_synic_event_pending(void)
+>  	return pending;
 >  }
-> +static inline void flush_swap_cgroup_priority_percpu_swapdev(
-> +       struct swap_info_struct *si)
+>=20
+> +static bool hv_synic_event_pending(void)
 > +{
-> +}
-> +static inline bool alloc_percpu_swap_cluster(struct swap_info_struct *si=
-)
-> +{
-> +       return true;
-> +}
-> +static inline void free_percpu_swap_cluster(struct swap_info_struct *si)
-> +{
-> +}
-> +static inline void write_percpu_swap_cluster_next(struct swap_info_struc=
-t *si,
-> +                                                 int order,
-> +                                                 unsigned int next)
-> +{
-> +       return;
+> +	struct hv_per_cpu_context *hv_cpu =3D this_cpu_ptr(hv_context.cpu_conte=
+xt);
+> +	union hv_synic_event_flags *hyp_synic_event_page =3D hv_cpu->hyp_synic_=
+event_page;
+> +	union hv_synic_event_flags *para_synic_event_page =3D hv_cpu->para_syni=
+c_event_page;
+> +
+> +	return
+> +		__hv_synic_event_pending(hyp_synic_event_page, VMBUS_MESSAGE_SINT) ||
+> +		__hv_synic_event_pending(para_synic_event_page, VMBUS_MESSAGE_SINT);
 > +}
 > +
-> +static inline unsigned int read_percpu_swap_cluster_next(
-> +       struct swap_info_struct *si, int order)
-> +{
-> +       return SWAP_ENTRY_INVALID;
-> +}
->  #endif
->  #endif
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index bfd0532ad250..6a5ac9962e9f 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -817,12 +817,15 @@ static unsigned int alloc_swap_scan_cluster(struct =
-swap_info_struct *si,
->  out:
->         relocate_cluster(si, ci);
->         unlock_cluster(ci);
-> +
->         if (si->flags & SWP_SOLIDSTATE) {
->                 this_cpu_write(percpu_swap_cluster.offset[order], next);
-
-Why not just remove the `percpu_swap_cluster.offset` and just share
-si->percpu_cluster among all cgroups (including root cgroup)?
-
-Otherwise, eg. if rootcg's pcpu cluster and one cgroup's pcpu
-cluster are pointing to one same cluster, they might be in
-contention on allocation of different order, or even in the same order
-the performance might not be good as multiple CPUs will race
-with each other.
-
-It will be easier to implement too.
-
-
-
-
->                 this_cpu_write(percpu_swap_cluster.si[order], si);
-> +               write_percpu_swap_cluster_next(si, order, next);
->         } else {
->                 si->global_cluster->next[order] =3D next;
->         }
-> +
->         return found;
->  }
->
-> @@ -892,26 +895,29 @@ unsigned long cluster_alloc_swap_entry(struct swap_=
-info_struct *si, int order,
->         if (order && !(si->flags & SWP_BLKDEV))
->                 return 0;
->
-> -       if (!(si->flags & SWP_SOLIDSTATE)) {
-> +       if (si->flags & SWP_SOLIDSTATE) {
-> +               offset =3D read_percpu_swap_cluster_next(si, order);
-> +       } else {
->                 /* Serialize HDD SWAP allocation for each device. */
->                 spin_lock(&si->global_cluster_lock);
->                 offset =3D si->global_cluster->next[order];
-> -               if (offset =3D=3D SWAP_ENTRY_INVALID)
-> -                       goto new_cluster;
-> +       }
->
-> -               ci =3D lock_cluster(si, offset);
-> -               /* Cluster could have been used by another order */
-> -               if (cluster_is_usable(ci, order)) {
-> -                       if (cluster_is_empty(ci))
-> -                               offset =3D cluster_offset(si, ci);
-> -                       found =3D alloc_swap_scan_cluster(si, ci, offset,
-> -                                                       order, usage);
-> -               } else {
-> -                       unlock_cluster(ci);
-> -               }
-> -               if (found)
-> -                       goto done;
-> +       if (offset =3D=3D SWAP_ENTRY_INVALID)
-> +               goto new_cluster;
-> +
-> +       ci =3D lock_cluster(si, offset);
-> +       /* Cluster could have been used by another order */
-> +       if (cluster_is_usable(ci, order)) {
-> +               if (cluster_is_empty(ci))
-> +                       offset =3D cluster_offset(si, ci);
-> +               found =3D alloc_swap_scan_cluster(si, ci, offset,
-> +                                               order, usage);
-> +       } else {
-> +               unlock_cluster(ci);
->         }
-> +       if (found)
-> +               goto done;
->
->  new_cluster:
->         ci =3D isolate_lock_cluster(si, &si->free_clusters);
-> @@ -991,6 +997,7 @@ unsigned long cluster_alloc_swap_entry(struct swap_in=
-fo_struct *si, int order,
->  done:
->         if (!(si->flags & SWP_SOLIDSTATE))
->                 spin_unlock(&si->global_cluster_lock);
-> +
->         return found;
->  }
->
-> @@ -2674,6 +2681,8 @@ static void flush_percpu_swap_cluster(struct swap_i=
-nfo_struct *si)
->                 for (i =3D 0; i < SWAP_NR_ORDERS; i++)
->                         cmpxchg(&pcp_si[i], si, NULL);
->         }
-> +
-> +       flush_swap_cgroup_priority_percpu_swapdev(si);
->  }
->
->
-> @@ -2802,6 +2811,7 @@ SYSCALL_DEFINE1(swapoff, const char __user *, speci=
-alfile)
->         arch_swap_invalidate_area(p->type);
->         zswap_swapoff(p->type);
->         mutex_unlock(&swapon_mutex);
-> +       free_percpu_swap_cluster(p);
->         kfree(p->global_cluster);
->         p->global_cluster =3D NULL;
->         vfree(swap_map);
-> @@ -2900,7 +2910,6 @@ static void swap_stop(struct seq_file *swap, void *=
-v)
->         mutex_unlock(&swapon_mutex);
->  }
->
-> -
->  #ifndef CONFIG_SWAP_CGROUP_PRIORITY
->  static int swap_show(struct seq_file *swap, void *v)
+>  static int hv_pick_new_cpu(struct vmbus_channel *channel)
 >  {
-> @@ -3239,7 +3248,10 @@ static struct swap_cluster_info *setup_clusters(st=
-ruct swap_info_struct *si,
->         for (i =3D 0; i < nr_clusters; i++)
->                 spin_lock_init(&cluster_info[i].lock);
->
-> -       if (!(si->flags & SWP_SOLIDSTATE)) {
-> +       if (si->flags & SWP_SOLIDSTATE) {
-> +               if (!alloc_percpu_swap_cluster(si))
-> +                       goto err_free;
-> +       } else {
->                 si->global_cluster =3D kmalloc(sizeof(*si->global_cluster=
-),
->                                      GFP_KERNEL);
->                 if (!si->global_cluster)
-> @@ -3532,6 +3544,7 @@ SYSCALL_DEFINE2(swapon, const char __user *, specia=
-lfile, int, swap_flags)
->  bad_swap_unlock_inode:
->         inode_unlock(inode);
->  bad_swap:
-> +       free_percpu_swap_cluster(si);
->         kfree(si->global_cluster);
->         si->global_cluster =3D NULL;
->         inode =3D NULL;
+>  	int ret =3D -EBUSY;
+> @@ -529,7 +682,27 @@ int hv_synic_cleanup(unsigned int cpu)
+>  always_cleanup:
+>  	hv_stimer_legacy_cleanup(cpu);
+>=20
+> +	/*
+> +	 * First, disable the event and message pages
+> +	 * used for communicating with the host, and then
+> +	 * disable the host interrupts if VMBus is not
+> +	 * confidential.
+> +	 */
+>  	hv_hyp_synic_disable_regs(cpu);
+> +	if (!vmbus_is_confidential())
+> +		hv_hyp_synic_disable_interrupts();
+> +
+> +	/*
+> +	 * Perform the same steps for the Confidential VMBus.
+> +	 * The sequencing provides the gurantee that no data
+
+s/gurantee/guarantee/
+
+> +	 * may be posted for processing before disabling interrupts.
+> +	 */
+> +	if (vmbus_is_confidential()) {
+> +		hv_para_synic_disable_regs(cpu);
+> +		hv_para_synic_disable_interrupts();
+> +	}
+> +	if (vmbus_irq !=3D -1)
+> +		disable_percpu_irq(vmbus_irq);
+>=20
+>  	return ret;
+>  }
 > --
-> 2.34.1
->
->
+> 2.43.0
+
 
