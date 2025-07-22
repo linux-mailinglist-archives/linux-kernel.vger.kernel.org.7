@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-740862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3877AB0DA24
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:50:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90DABB0DA28
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E572C18853ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:50:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 302EF7A4C99
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:52:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BADF02E8E16;
-	Tue, 22 Jul 2025 12:49:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A302E4266;
+	Tue, 22 Jul 2025 12:53:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JtyPEni2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fYkIGOCR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EFE02E3361;
-	Tue, 22 Jul 2025 12:49:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25AB1B667
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 12:53:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753188579; cv=none; b=dbai6WvVwm2TdDZwFRqxpNQaT1Bb8U1dQ05iooLBUn8u1z+ueQaT478g6pKUiQRz7RMyKdIkh4HBwFPPwGdUkR8U08vuoj+r1NMLexW3cAtG5EGSr0Ym//FdwxViV7FvOA1lSZRNnIV0T6cmZcIjHTN52p+C7X+mIo7DC2MQ2FY=
+	t=1753188837; cv=none; b=oMgR9y7/5CSqnN/lSXGxm/iKw7+jYTDAnri2W0m1rSXf+hXPy+/EuYNujtl1ib0Ve8AjeANTFFKd54FLFMX767F3Cf1iD/bvgDpnV0Ko1dvk5kL/S/v9CRxLrg7SPYNqdjhQ69h2cBmYlaPrGqEiv57C93l+68rDsHTIjRIyzlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753188579; c=relaxed/simple;
-	bh=oNwMiBXgoxAtXhsHS6DKVIyV2eUv8rV5AOhnRZAWJ2E=;
+	s=arc-20240116; t=1753188837; c=relaxed/simple;
+	bh=l36K1arYiCPZuEsEChdSPm/wgV9PJ5GgyMMrjLPPdys=;
 	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=R9/oWEtuC+O1J2GUwem6W9lV2d6liskg3RvH+czQTeeXi/6cvs6hPwfjXK3QFhqUcNYT763CNYLm3RECocAxCqgz7hxnKBP/IHxtxd26AIa6nqe0waTwHIjd4SLZ1/i7otDauXRB5bLn0SYOakSqVLNpFZPv5uZqdJgQR8ceKJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JtyPEni2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15FF1C4CEEB;
-	Tue, 22 Jul 2025 12:49:34 +0000 (UTC)
+	 References:In-Reply-To; b=Tirr3HeVo2at89HeU07aA9HBfTBV3QIDMB4XRN5q3l9Z6LKIwPSYlORnywCTK5Lm4X/58zIyR/vRiIjvdWSmZGknbv5QPqvQJMCSdFLCUsSr48vpmwrkW7pO2NnSTNYUGIWNhYQlue1FMRg29/S31ezm7Fk0Vl7pX52U4F6Udmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fYkIGOCR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A56BC4CEEB;
+	Tue, 22 Jul 2025 12:53:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753188578;
-	bh=oNwMiBXgoxAtXhsHS6DKVIyV2eUv8rV5AOhnRZAWJ2E=;
+	s=k20201202; t=1753188836;
+	bh=l36K1arYiCPZuEsEChdSPm/wgV9PJ5GgyMMrjLPPdys=;
 	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=JtyPEni2pn3zIZBbMRXsPZRCZxDuIZH+7lkzf9SixKAErZdKqkxbHXKyC5BNPKQrQ
-	 jKcmHIlHtAAEvKsGQEtFbKESYHoFWSsZIbWVUGGknV0ZGcDJw1Mfjd6F/GwFd+ub6+
-	 4G0cpruII5Etz3YAjHMXvaGJGkxlWT2cbx1FLzpUC8J8vx5QQP9cpwHqxj1a+9eJ4k
-	 dArNEBEpCx3acyQ15vyMWH4FadVVBoekvdVSKnWlL+nbsNqOsd0g6LDLakRgPRLi/t
-	 McOzDVtORpMv7PMbqlwkgi+qmETPr/PeZzklNhZKsn+2mvf6WDybNFBg2UnDYDJlUt
-	 h3F9uOCTLxSBQ==
+	b=fYkIGOCRlImvJJtBzEwQb6Bk5uiYGRbwN/JRMt5gkmj9bwHltVcsWQXO+j0l9/2Xr
+	 ZIayfwC4znACkCcOP6pc3uvvmy36X0i2UYksFwxVjavrIwIZI92HOFjMIZqwVEnxTd
+	 jXRy+MVECjq7qiibmuELUDkxQITc520xDW1TUCJbJKGMx2MkQHcuGE4O9P8x1ZMJOX
+	 cW3lt9nIRjt+dyYa+2tPh0pLKeZV+nPti49J7ryozKsBtFXVubBXpy8QYRoJSo6Q97
+	 kFzUJ/oKuzEydTt1VkhdRnZ7LYXxuwzV8gwz6DTAR7DRmesdiOVWA95PbcaUYuqmqM
+	 FjF1NgJ2mrXlw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,90 +48,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Tue, 22 Jul 2025 14:49:33 +0200
-Message-Id: <DBILHBVA0NKJ.3R2QIVE9QIMM3@kernel.org>
-Subject: Re: [PATCH v2 1/2] rust: Update PCI binding safety comments and add
- inline compiler hint
-Cc: "Alice Ryhl" <aliceryhl@google.com>, "Alistair Popple"
- <apopple@nvidia.com>, <rust-for-linux@vger.kernel.org>, "Bjorn Helgaas"
- <bhelgaas@google.com>, =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Trevor Gross" <tmgross@umich.edu>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "John Hubbard" <jhubbard@nvidia.com>, "Alexandre Courbot"
- <acourbot@nvidia.com>, <linux-pci@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-To: "Benno Lossin" <lossin@kernel.org>
+Date: Tue, 22 Jul 2025 14:53:52 +0200
+Message-Id: <DBILKMS2C1HI.QDSXTIXBVWV2@kernel.org>
+Subject: Re: [PATCH] Revert "drm/nouveau: check ioctl command codes better"
+Cc: "Lyude Paul" <lyude@redhat.com>, "David Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Arnd Bergmann" <arnd@arndb.de>,
+ "Satadru Pramanik" <satadru@gmail.com>, "Chris Bainbridge"
+ <chris.bainbridge@gmail.com>, "Ben Skeggs" <bskeggs@nvidia.com>, "Timur
+ Tabi" <ttabi@nvidia.com>, "Dave Airlie" <airlied@redhat.com>, "Thomas
+ Zimmermann" <tzimmermann@suse.de>, <dri-devel@lists.freedesktop.org>,
+ <nouveau@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+To: "Arnd Bergmann" <arnd@kernel.org>
 From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250710022415.923972-1-apopple@nvidia.com>
- <DB87TX9Y5018.N1WDM8XRN74K@kernel.org>
- <DB9BF6WK8KMH.1RQOOMYBL6UAO@kernel.org>
- <DB9FUEJUOH3L.14CYPZ8YQT52E@kernel.org>
- <DB9H6HEF9CKG.2SAPXM8F9KOO3@kernel.org>
- <DB9IQAU4WPSP.XZL4ZDPT59KU@kernel.org>
- <bwbern2t7k5fcj6zxze6bjpasu3t26n6dmfptlmhbhd7qmligs@3fgwifsw7qai>
- <DBIHP8IP3OHA.8Y1S9ZV1Y1SZ@kernel.org>
- <DBIJ3POBANNM.KSO1I5557PFV@kernel.org>
- <CAH5fLghic7MZd-BO=Z-ostGLgWmBciQmZp9VjQpLGWskFK_gyQ@mail.gmail.com>
- <DBIKM7U4TSB8.17MTNSR81W8F3@kernel.org>
-In-Reply-To: <DBIKM7U4TSB8.17MTNSR81W8F3@kernel.org>
+References: <20250722115830.2587297-1-arnd@kernel.org>
+In-Reply-To: <20250722115830.2587297-1-arnd@kernel.org>
 
-On Tue Jul 22, 2025 at 2:08 PM CEST, Benno Lossin wrote:
-> On Tue Jul 22, 2025 at 1:35 PM CEST, Alice Ryhl wrote:
->> On Tue, Jul 22, 2025 at 12:57=E2=80=AFPM Benno Lossin <lossin@kernel.org=
-> wrote:
->>>
->>> On Tue Jul 22, 2025 at 11:51 AM CEST, Danilo Krummrich wrote:
->>> > I think they're good, but we're pretty late in the cycle now. That sh=
-ould be
->>> > fine though, we can probably take them through the nova tree, or in t=
-he worst
->>> > case share a tag, if needed.
->>> >
->>> > Given that, it would probably be good to add the Guarantee section on=
- as_raw(),
->>> > as proposed by Benno, right away.
->>> >
->>> > @Benno: Any proposal on what this section should say?
->>>
->>> At a minimum I'd say "The returned pointer is valid.", but that doesn't
->>> really say for what it's valid... AFAIK you're mostly using this pointe=
-r
->>> to pass it to the C side, in that case, how about:
->>>
->>>     /// # Guarantees
->>>     ///
->>>     /// The returned pointer is valid for reads and writes from the C s=
-ide for as long as `self` exists.
->>>
->>> Maybe we need to change it a bit more, but let's just start with this.
->>>
->>> (If you're also using the pointer from Rust, then we need to make
->>> changes)
->>
->> Honestly I think this is a bit over the top. I wouldn't bother adding
->> a section like that to every single as_raw() method out there.
+On Tue Jul 22, 2025 at 1:58 PM CEST, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 >
-> Hmm. And then just assume that these kinds of functions return valid
-> pointers? I get that this is annoying to put on every function...
+> My previous patch ended up causing a regression for the
+> DRM_IOCTL_NOUVEAU_NVIF ioctl. The intention of my patch was to only
+> pass ioctl commands that have the correct dir/type/nr bits into the
+> nouveau_abi16_ioctl() function.
 >
-> Another option would be to have a `Ptr<'a, T>` type that is a valid
-> pointer, but doesn't allow writing/reading safely (you need to justify
-> why it's not a data race). And for FFI there could be an `as_ptr`
-> function.
+> This turned out to be too strict, as userspace does use at least
+> write-only and write-read direction settings. Checking for both of these
+> still did not fix the issue, so the best we can do for the 6.16 release
+> is to revert back to what we've had since linux-3.16.
+>
+> This version is still fragile, but at least it is known to work with
+> existing userspace. Fixing this properly requires a better understanding
+> of what commands are being passed from userspace in practice, and how
+> that relies on the undocumented (mis)behavior in nouveau_drm_ioctl().
+>
+> Fixes: e5478166dffb ("drm/nouveau: check ioctl command codes better")
+> Link: https://lore.kernel.org/dri-devel/CAFrh3J85tsZRpOHQtKgNHUVnn=3DEG=
+=3DQKBnZTRtWS8eWSc1K1xkA@mail.gmail.com/
+> Reported-by: Satadru Pramanik <satadru@gmail.com>
+> Reported-by: Chris Bainbridge <chris.bainbridge@gmail.com>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-I don't understand where's the difference between the two. For FFI calls we=
-'d
-also have to justify it's not a data race, no?
+Applied to drm-misc-fixes, thanks!
 
-The only guarantee we take as granted from as_raw() is that it returns a ra=
-w
-pointer to the wrapped FFI type in Self, i.e. it points to valid memory. An=
-y
-additional guarantees may come from the context where the pointer is used a=
-nd
-which specific fields it is used to access.
+  [ Add Closes: tags, fix minor typo in commit message. - Danilo ]
 
