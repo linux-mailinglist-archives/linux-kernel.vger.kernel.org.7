@@ -1,118 +1,126 @@
-Return-Path: <linux-kernel+bounces-741090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 693C1B0DFEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:07:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36433B0E005
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:10:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 065216C38B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:04:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEF0F1C8599B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20CA52EE299;
-	Tue, 22 Jul 2025 15:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29ECC28A73C;
+	Tue, 22 Jul 2025 15:03:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iCDgh9AH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K1h+YCFX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C55240BF5;
-	Tue, 22 Jul 2025 15:02:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E6A26E6FA;
+	Tue, 22 Jul 2025 15:03:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753196545; cv=none; b=cFEven4qFn7dxQXGskZOtdgXNE4Ax+0OnXAKFdgORvO0XzZ4CXIV5D3zrx4ddaCIrTifCrvh8J81eA9tRUpmFUbU5dDoIGULTVPJ+KNeWGdTsDEbNl8iy8UYXdLZCo8g6ppp6hseE2xnWZ0AR+L8JXlqpWr6IKEeWlSik5k52Jg=
+	t=1753196603; cv=none; b=U+Gfud1bk7tf3J82C+Wmntoam4SlnxBh0ha8LOaJRaa+UPxr/DX+M2l7z2uU4UxjAh9ibeoRA0rDvcQGLySnzC6zxEW8/tCCHZIhV99gzXZK9lHHIBrhn4TQyRLnhzCc0e2AoOzWUKF6iZVExeTOGHQIArDGUjGoWmtOv2vveRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753196545; c=relaxed/simple;
-	bh=eYADMR6LO4fHCLCJvykODtjoG7IOJ0s2vHb6JBwmIV8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aIstBkete+Lq5bBK0xRn+7+dlYF93u31icD+QnyKTM/Y0ciGwPb81L42GkOfDKdSmLw6Cy+zfxvndYfhLMWRHr5tWplUu9/obvsmzCvnRm/f2GeyJ5eeVueCAjaqehe9wqKUFdtb5FChi1nTi53beU0IlFoEYR/2utzQ+WDZ+K8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iCDgh9AH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5354EC4CEF9;
-	Tue, 22 Jul 2025 15:02:22 +0000 (UTC)
+	s=arc-20240116; t=1753196603; c=relaxed/simple;
+	bh=WrJfhW2FFrEF+JQZ8I5Jn8OMm3uwbSOIl4zkfTApTBk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gsIqBIzzNZyDML/d++xvWIRlzcIT62YdPMTqsGFKTXqZxviLreWyCFGqVBKfs2smerQdGjm0LYpJ3rfaNGV4xHpPc7Ld8xxfwxfQgGQtuZ56zSwLZDljtAD62kQZOsZaLV4a9al8CUrpXzNdm1d1awXm+KF8DHVKopArjjcN5xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K1h+YCFX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06758C4CEF6;
+	Tue, 22 Jul 2025 15:03:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753196545;
-	bh=eYADMR6LO4fHCLCJvykODtjoG7IOJ0s2vHb6JBwmIV8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iCDgh9AHBayEk9cF6vgzaxQUFF3Ny2e09DsikQgzHEzTvKuX0/+DXQnoWcS49m8+I
-	 uzng26X5THwPiBtHmKA9GAAz6c/o1mzbc9ygUY9ixg6a4LnSHDuEcZegkTdoNExHyC
-	 9Dnzg/NZ3Xj0AgEbJyf8nXoVxVm5wUrnDG5qzBwhcaJ3OB24BnE6TCAa7xaJFICL9N
-	 X7TsdnjuhTsj8vDIvhM3vFKqgnyQCNN0JQBJy+hiSZfDmP53MV1GIakidk8K+8Ffe+
-	 EQf86qEupaQha7ts6er8w0guj6RyGZUiAtoK3MIOUQpfqBQXVlQ1jSNF2XwnOkm41e
-	 Yfw0U24qtL78Q==
-Message-ID: <ba84629f-5675-4793-9320-25d9029d2a35@kernel.org>
-Date: Tue, 22 Jul 2025 16:02:21 +0100
+	s=k20201202; t=1753196603;
+	bh=WrJfhW2FFrEF+JQZ8I5Jn8OMm3uwbSOIl4zkfTApTBk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=K1h+YCFXb1/0DYQGo8pS/HTyHovKPNqg80SN3t6kfOXeeSy1RlpIuTKctrxHXJn07
+	 OugEnVTd7Wgv6y172Kcu1hD5l7cnJENVKdH83vIOacMwNtbpAhfMfcUxBwSXXP+7Jt
+	 bAjvW5c4N4t3iSEuNaxS0QAA12oPmuJf1VomphoJqCvb1M+FrX1AYo8MiLyDHQ9brj
+	 5L+YGOf/eifYswNPpaf4lnrx+cV3I7e1OJaTC5umdpZhWBvpzaMQcEO9nsibVAEGiH
+	 ORaEjDLL7tLAvIwh6iM2H0eRyNendzgOnuhMB7L3PiF4ErpH46ZtiSrByuY6rAyEqb
+	 w3POI6vw1i5Pw==
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-615da180061so1207126eaf.2;
+        Tue, 22 Jul 2025 08:03:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW9dJKyber/KG/BvvrmoqTNeYrVJU3DhFEaJqua7jrVlMLM8uEgJ5WlYCd3oiNViJqljmuYkDYFM0tUVQkA@vger.kernel.org, AJvYcCWKl9b0TpZ93pvnHjEfIWG0qs9Gyd7igNYwKMDjk6LtuMkc6eW8v5f1s5w04TtlKVPotjqBy054nqBu@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6ZpqhuaOC8YjOxsYTlPMpMfkKPQl6PsLc3fdxv66fDPJOdpn/
+	3co439ZG4zJkViRzHqNqAT8aMnFDGMbLlaMSSUJS2M61xJd50IEpVrQT8y5hIw5cPL9W3OoEqoS
+	STyBCzC6dLQ66sOqnYyqT354tRAIvCNU=
+X-Google-Smtp-Source: AGHT+IH0PlftDSNVnw1T1Idhd4i3XAxqQOFc54z8aiS56mvx/uvEmDvq16gM0Wl98Cpztj4H4E59EMPC4c3eJ1d2hpw=
+X-Received: by 2002:a05:6808:4f22:b0:40c:f220:67fd with SMTP id
+ 5614622812f47-41d036edf01mr16442152b6e.9.1753196597403; Tue, 22 Jul 2025
+ 08:03:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v2 3/3] bpftool: Add bash completion for token
- argument
-To: Tao Chen <chen.dylane@linux.dev>, ast@kernel.org, daniel@iogearbox.net,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, davem@davemloft.net,
- kuba@kernel.org, hawk@kernel.org
-Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org
-References: <20250722120912.1391604-1-chen.dylane@linux.dev>
- <20250722120912.1391604-3-chen.dylane@linux.dev>
-From: Quentin Monnet <qmo@kernel.org>
-Content-Language: en-GB
-In-Reply-To: <20250722120912.1391604-3-chen.dylane@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250722143233.3970607-1-yu.c.chen@intel.com>
+In-Reply-To: <20250722143233.3970607-1-yu.c.chen@intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 22 Jul 2025 17:03:06 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hskeS3fKU3OPow=i8Nh4NojsUrJJrW=oNJAb7tP9P6=g@mail.gmail.com>
+X-Gm-Features: Ac12FXyl9FBnG7SOF-FL2Kagr1SkzlQKPJqC8-4NX8asBX1zPGXFF1yyyhXl9-8
+Message-ID: <CAJZ5v0hskeS3fKU3OPow=i8Nh4NojsUrJJrW=oNJAb7tP9P6=g@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: pfr_update: Fix the driver update version check
+To: Chen Yu <yu.c.chen@intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Chen Yu <yu.chen.surf@foxmail.com>, 
+	"Govindarajulu, Hariganesh" <hariganesh.govindarajulu@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-2025-07-22 20:09 UTC+0800 ~ Tao Chen <chen.dylane@linux.dev>
-> This commit updates the bash completion script with the new token
-> argument.
-> $ bpftool
-> batch       cgroup      gen         iter        map         perf        struct_ops
-> btf         feature     help        link        net         prog        token
+On Tue, Jul 22, 2025 at 4:39=E2=80=AFPM Chen Yu <yu.c.chen@intel.com> wrote=
+:
+>
+> The security-version-number check should be used rather
+> than the runtime version check for driver update. Otherwise
+> the firmware update would fail when the update binary
+> has a lower number of the runtime version than the
+> current one.
+>
+> Reported-by: "Govindarajulu, Hariganesh" <hariganesh.govindarajulu@intel.=
+com>
+> Signed-off-by: Chen Yu <yu.c.chen@intel.com>
 
+A Fixes: tag, please?
 
-This is a terrible example, offering "token" as completion for just
-"bpftool [tab]" works without this patch :) The main commands are parsed
-from the output of "bpftool help" so it should work after your first
-patch. In this one, we add "list", "show" and "help" for completing
-"bpftool token [tab]".
+Also, this is unlikely to get into 6.17-rc1, but I can make it into
+6.17-rc2 if it is urgent enough, so how urgent is it?
 
-
-> 
-> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
 > ---
->  tools/bpf/bpftool/bash-completion/bpftool | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/tools/bpf/bpftool/bash-completion/bpftool b/tools/bpf/bpftool/bash-completion/bpftool
-> index a759ba24471..527bb47ac46 100644
-> --- a/tools/bpf/bpftool/bash-completion/bpftool
-> +++ b/tools/bpf/bpftool/bash-completion/bpftool
-> @@ -1215,6 +1215,17 @@ _bpftool()
->                      ;;
->              esac
->              ;;
-> +        token)
-> +            case $command in
-> +               show|list)
-> +                   return 0
-> +                   ;;
-> +               *)
-> +                   [[ $prev == $object ]] && \
-> +                       COMPREPLY=( $( compgen -W 'help show list' -- "$cur" ) )
-> +                   ;;
-> +            esac
-> +            ;;
->      esac
->  } &&
->  complete -F _bpftool bpftool
-
-
-Other than the example in the description, this looks good.
-
-Reviewed-by: Quentin Monnet <qmo@kernel.org>
-
-Thanks
+>  drivers/acpi/pfr_update.c  | 2 +-
+>  include/uapi/linux/pfrut.h | 1 +
+>  2 files changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/acpi/pfr_update.c b/drivers/acpi/pfr_update.c
+> index 031d1ba81b86..08b9b2bc2d97 100644
+> --- a/drivers/acpi/pfr_update.c
+> +++ b/drivers/acpi/pfr_update.c
+> @@ -310,7 +310,7 @@ static bool applicable_image(const void *data, struct=
+ pfru_update_cap_info *cap,
+>         if (type =3D=3D PFRU_CODE_INJECT_TYPE)
+>                 return payload_hdr->rt_ver >=3D cap->code_rt_version;
+>
+> -       return payload_hdr->rt_ver >=3D cap->drv_rt_version;
+> +       return payload_hdr->svn_ver >=3D cap->drv_svn;
+>  }
+>
+>  static void print_update_debug_info(struct pfru_updated_result *result,
+> diff --git a/include/uapi/linux/pfrut.h b/include/uapi/linux/pfrut.h
+> index 42fa15f8310d..b77d5c210c26 100644
+> --- a/include/uapi/linux/pfrut.h
+> +++ b/include/uapi/linux/pfrut.h
+> @@ -89,6 +89,7 @@ struct pfru_payload_hdr {
+>         __u32 hw_ver;
+>         __u32 rt_ver;
+>         __u8 platform_id[16];
+> +       __u32 svn_ver;
+>  };
+>
+>  enum pfru_dsm_status {
+> --
+> 2.25.1
+>
 
