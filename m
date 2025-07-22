@@ -1,155 +1,228 @@
-Return-Path: <linux-kernel+bounces-740079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9DEAB0CF6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:54:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 806CAB0CF74
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:59:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04687176A57
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 01:54:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FF747AD220
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 01:58:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711701E5B71;
-	Tue, 22 Jul 2025 01:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B297E1DC198;
+	Tue, 22 Jul 2025 01:59:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b="d/mxqrVu"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EWC0dAlh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1001DFE0B
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 01:53:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C2A469D;
+	Tue, 22 Jul 2025 01:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753149209; cv=none; b=AfJImu5t6cdxe8uVSsB7Ig1gEvZszYLnEBDu7HU4jV5Rv9wmc6gHcgTM6yKzkoRnwegXolyLQx/w1tBHqnnSUz6pCm5qJU4qZt/splDDDJIP+jG2uvuD+zEg5CJg2uqxpxkmjzGYe+/+qBokOZGaDvhGfuRaWp8ny5mPbcBK8TY=
+	t=1753149580; cv=none; b=MsG2tHqZ4pEHvTCV8VizobZJ8NfLaw9Fu87xQtLik2ez3xt/4cD5Tb227ABUiT4EbNbef5bjsosHwTo98p5Cy6hbBvr0m8Ym9Iig4vktHAPWiJQMfliOO/K5gMUMrUcN4ATx2INj5GUfN3S5kl+d7OCALRn+RPs5GCRRcGKEUHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753149209; c=relaxed/simple;
-	bh=7Eifg3KSSA5Jt2qx/3hzXf0HaiUdAumge8P2aIN3a9M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=P7JY1FrwzDGWQdTYAiJQa0TMp25Gx5OU9c+AOX70Eqkn3R6NHrvSj+At4fS2dUUtSJYoAi5VXBy/GP9/ul2Prz+unNnZnXuSyE946Qo5G3YWcjxlLCHsRnfBwsoGRzpaCZ6UGaL3Ye9yH2PhItw1gakRJ3Tyjq6EGeidl40TTpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com; spf=pass smtp.mailfrom=brighamcampbell.com; dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b=d/mxqrVu; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brighamcampbell.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-748fe69a7baso4436393b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 18:53:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brighamcampbell.com; s=google; t=1753149208; x=1753754008; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4rHylqCjx1w2oDPs7/xM2Riq8NSJ9PhhkdUN4+cutX8=;
-        b=d/mxqrVuV/nJGiDTPI4uKTSBnYtBuGqiWTEBw/GpcyLGTr9ymVkBt0rr+BZcmMvC5w
-         MiwwRwJH150Mq2n7/tX0XePIdYryksrd/NJcspM1iuf/lSQRP2vqozqIhjRl1tyR3pEz
-         gdJ9xefFjurGdpWo1lPzPDUIF4VJTOzjXNr2gUkg+Ok7ubHv9UzIzkqrzQ+B7wpx/h+R
-         R8hsoh4dZg/HjfiBvX28JGz68nq161pz1jCHiFHorhNxEoBKQF9OG4J2LYPPmFsJ0RfW
-         sJJ8WlH+kuXrNtjMbX0WBwCbltsIEa/o2Zt3zoFl1vf10XntK/qW5J9kKp5qzer3QwjN
-         nZKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753149208; x=1753754008;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4rHylqCjx1w2oDPs7/xM2Riq8NSJ9PhhkdUN4+cutX8=;
-        b=QcM4+Q8H6QawfVVMV7LK3bkzAYAeHDWO/f7+8Q4Hy4oV2UHj6xvu8iLWOW/cVKUGZ4
-         nmHDlvg4TtE3rf9ahs47ekpwHFWiUPx1vWE9VkcxxVueSWdTeFlkcWoNTHz2OSbpy8jM
-         z2D61PJUaSqNoVunj9KPEsHEA/J9XGkuoqx4l+o44djJiRKvmlrgAhjc5/kwIv1TJI3X
-         sLizFSdgGXtdNqbFhxcgTARCSb5COWiPlCz8lXrNsRmxc2UkVRQhLiNmeC28bBhr7lp1
-         dX8Nk/m/DpFVhy/hBHgaRSwWuzF4Qbulp97Pg5wxeyJFrueLRoNeK7al/4/jI1RbGdSD
-         xeFg==
-X-Forwarded-Encrypted: i=1; AJvYcCVR55KkAwOb+EZQWtrcsSyOWhyzoreKiP2Mco9ONJSWH2onq9c70q+3zmzCNbC6lKSEUSm/tfWllKmhwbs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSppl15oP0XvrC05lBPZL+ZleuO1pGxoZLVCGcrL2pa9/K7M6r
-	GtPIth2Ek6lX02tEwUi2JFm5IDsIm8qtTaLEL6Dt367l5p/jZQLpj/iPVwDZsIuFebPyUZB0EY0
-	FImS4WL5xjQ==
-X-Gm-Gg: ASbGncucYiP53abIKXJbTUgcJ2vnKUIWF0Qy+KOUkT8BksE2nGhTNV38IyfHAgzzBFX
-	2HQKGEVb/cqZTXI5/mhP6NkpL2UK7Va8HnwqPjUy/DaL91TURc16t6EfAwHzS7c6hDpbY0tmEW/
-	x2d84bRkVu+XVxXGWh26Is8LOTd2b99J60gom3uycrRnwsmwloBjL5l2CMdGzbpb7JJ0YevmOSv
-	28XZYE40tt3EoioDs64i5g6CzQaod/joY/r95eh9yMbADA8rDtKlMThmZs90qQUOu4ZOgv82QZk
-	DotFtDS6CbV9Mo0HDOiavcLtI31zCk6HfSySIFGbTpi+MENORF5iTyVApR9H/nHENr0YtoNL34m
-	R5+jQmet7y0ww7ZK/EwLVGIuBZkhjdQVWdydcqy4ANUAxBhYTiA==
-X-Google-Smtp-Source: AGHT+IE6DV4AnVW0+4Gsag1rZoVLI3l8Jq88LM8p0J3ZdDdDROI+eXGNgt3ap9Wn8cOMjGOum41DxA==
-X-Received: by 2002:a05:6a00:2e0d:b0:740:67aa:94ab with SMTP id d2e1a72fcca58-758462d74b4mr25646084b3a.0.1753149207483;
-        Mon, 21 Jul 2025 18:53:27 -0700 (PDT)
-Received: from mystery-machine.tail542cf.ts.net ([64.71.154.6])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f2fe62d9fsm6017441a12.1.2025.07.21.18.53.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 18:53:27 -0700 (PDT)
-From: Brigham Campbell <me@brighamcampbell.com>
-To: dianders@chromium.org,
-	tejasvipin76@gmail.com,
-	diogo.ivo@tecnico.ulisboa.pt,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	dri-devel@lists.freedesktop.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
+	s=arc-20240116; t=1753149580; c=relaxed/simple;
+	bh=bm0m4nJCJwr818tAwn/pFGu42E+zoi1w1iM6fehYaY4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=DYaOQtddDmMUkfOYfdOesNhD9pSxqE4hC0CSZ6M+1f2PkKAWwifEidv7/txoQgeMYyek2QcSIg8O4IuiCaB3Bb/c02gIpkNMd7B/cZdsZLC+l046/liNIDQyUuWFAtAFdXs1Gje70YZqcSiGRbwEz2F5G2yK4vERx2nm63nA0ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EWC0dAlh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31C6EC4CEF1;
+	Tue, 22 Jul 2025 01:59:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753149576;
+	bh=bm0m4nJCJwr818tAwn/pFGu42E+zoi1w1iM6fehYaY4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=EWC0dAlhj3RGOrRbeKwXNZEQj7dwLpmNlpJMJOGQFJE85GZ+moiEa1Lo5iMos3Qjr
+	 P9nKYIeDLQ4eZy0j7EiIWFsHjBTwjNESgh3OSUPqB7N7PW7quWVlVHqlONZtK0g8lF
+	 KJ1oidnQYnfWv7Q8vIVp65CV6DUkdL+QnxJfOZXNcw3OSkjTFxFXT1rr0R8rsDpY2K
+	 ucJCsndqhKZW8W29Y/taeY0dH/RYfm1yodHowS3LRR9UKf92hKqZPyPhytsK3OFjLD
+	 v1k5RcwtfMZ6LCbEpQGU4fldzhk5SDEE8kKB4AqQrAUPuZEs1TypBGhJ9m7qreBZG5
+	 Xs6Eq5MSZ11og==
+Date: Mon, 21 Jul 2025 20:59:34 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Mario Limonciello <superm1@kernel.org>
+Cc: David Airlie <airlied@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	Simona Vetter <simona@ffwll.ch>, Lukas Wunner <lukas@wunner.de>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Brigham Campbell <me@brighamcampbell.com>
-Subject: [PATCH v6 4/4] drm: docs: Update task from drm TODO list
-Date: Mon, 21 Jul 2025 19:53:11 -0600
-Message-ID: <20250722015313.561966-5-me@brighamcampbell.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250722015313.561966-1-me@brighamcampbell.com>
-References: <20250722015313.561966-1-me@brighamcampbell.com>
+	David Woodhouse <dwmw2@infradead.org>,
+	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:INTEL IOMMU (VT-d)" <iommu@lists.linux.dev>,
+	"open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+	"open list:VFIO DRIVER" <kvm@vger.kernel.org>,
+	"open list:SOUND" <linux-sound@vger.kernel.org>,
+	Daniel Dadap <ddadap@nvidia.com>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH v9 9/9] PCI: Add a new 'boot_display' attribute
+Message-ID: <20250722015934.GA2763711@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <860bcc59-f0d0-4c8d-865c-89127c213cdf@kernel.org>
 
-Update TODO item from drm documentation to contain more applicable
-information regarding the removal of deprecated MIPI DSI functions and
-no longer reference functions which have already been removed from the
-kernel.
+On Mon, Jul 21, 2025 at 07:28:07PM -0500, Mario Limonciello wrote:
+> On 7/21/25 6:00 PM, Bjorn Helgaas wrote:
+> > On Fri, Jul 18, 2025 at 12:44:11PM -0500, Mario Limonciello wrote:
+> > > On 7/18/2025 12:36 PM, Bjorn Helgaas wrote:
+> > > > On Fri, Jul 18, 2025 at 12:29:05PM -0500, Mario Limonciello wrote:
+> > > > > On 7/18/2025 12:25 PM, Bjorn Helgaas wrote:
+> > > > > > On Thu, Jul 17, 2025 at 12:38:12PM -0500, Mario Limonciello wrote:
+> > > > > > > From: Mario Limonciello <mario.limonciello@amd.com>
+> > > > > > > 
+> > > > > > > On systems with multiple GPUs there can be uncertainty which GPU is the
+> > > > > > > primary one used to drive the display at bootup. In some desktop
+> > > > > > > environments this can lead to increased power consumption because
+> > > > > > > secondary GPUs may be used for rendering and never go to a low power
+> > > > > > > state. In order to disambiguate this add a new sysfs attribute
+> > > > > > > 'boot_display' that uses the output of video_is_primary_device() to
+> > > > > > > populate whether a PCI device was used for driving the display.
+> > > > > > 
+> > > > > > > +What:		/sys/bus/pci/devices/.../boot_display
+> > > > > > > +Date:		October 2025
+> > > > > > > +Contact:	Linux PCI developers <linux-pci@vger.kernel.org>
+> > > > > > > +Description:
+> > > > > > > +		This file indicates that displays connected to the device were
+> > > > > > > +		used to display the boot sequence.  If a display connected to
+> > > > > > > +		the device was used to display the boot sequence the file will
+> > > > > > > +		be present and contain "1".
+> > > > > > 
+> > > > > > >     int __must_check pci_create_sysfs_dev_files(struct pci_dev *pdev)
+> > > > > > >     {
+> > > > > > > +	int retval;
+> > > > > > > +
+> > > > > > >     	if (!sysfs_initialized)
+> > > > > > >     		return -EACCES;
+> > > > > > > +	retval = pci_create_boot_display_file(pdev);
+> > > > > > 
+> > > > > > In addition to Mani's question about whether /sys/bus/pci/ is
+> > > > > > the right place for this (which is a very good question), it's
+> > > > > > also been pointed out to me that we've been trying to get rid
+> > > > > > of pci_create_sysfs_dev_files() for years.
+> > > > > > 
+> > > > > > If it's possible to make this a static attribute that would be
+> > > > > > much, much cleaner.
+> > > > > 
+> > > > > Right - I tried to do this, but the problem is at the time the
+> > > > > PCI device is created the information needed to make the
+> > > > > judgement isn't ready.  The options end up being:
+> > > > > * a sysfs file for every display device with 0/1
+> > > > > * a sysfs file that is not accurate until later in the boot
+> > > > 
+> > > > What's missing?  The specifics might be helpful if someone has
+> > > > another crack at getting rid of pci_create_sysfs_dev_files() in
+> > > > the future.
+> > > 
+> > > The underlying SCREEN_INFO code tries to walk through all the PCI
+> > > devices in a loop, but at the time all the devices are walked the
+> > > memory regions associated with the device weren't populated.
+> > 
+> > Which loop are you referring to that walks through all the PCI
+> > devices?  I see this:
+> > 
+> >    efifb_set_system
+> >      for_each_pci_dev(dev)
+> > 
+> > but that only looks at VGA devices and IIUC you also want to look at
+> > non-VGA GPUs.
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Brigham Campbell <me@brighamcampbell.com>
----
- Documentation/gpu/todo.rst | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+[I assume the loop is the "while (pdev =
+pci_get_base_class(PCI_BASE_CLASS_DISPLAY))" in
+__screen_info_pci_dev(), which indeed walks through all known PCI
+devices]
 
-diff --git a/Documentation/gpu/todo.rst b/Documentation/gpu/todo.rst
-index be8637da3fe9..92db80793bba 100644
---- a/Documentation/gpu/todo.rst
-+++ b/Documentation/gpu/todo.rst
-@@ -497,19 +497,19 @@ Contact: Douglas Anderson <dianders@chromium.org>
- 
- Level: Intermediate
- 
--Transition away from using mipi_dsi_*_write_seq()
---------------------------------------------------
-+Transition away from using deprecated MIPI DSI functions
-+--------------------------------------------------------
- 
--The macros mipi_dsi_generic_write_seq() and mipi_dsi_dcs_write_seq() are
--non-intuitive because, if there are errors, they return out of the *caller's*
--function. We should move all callers to use mipi_dsi_generic_write_seq_multi()
--and mipi_dsi_dcs_write_seq_multi() macros instead.
-+There are many functions defined in ``drm_mipi_dsi.c`` which have been
-+deprecated. Each deprecated function was deprecated in favor of its `multi`
-+variant (e.g. `mipi_dsi_generic_write()` and `mipi_dsi_generic_write_multi()`).
-+The `multi` variant of a function includes improved error handling and logic
-+which makes it more convenient to make several calls in a row, as most MIPI
-+drivers do.
- 
--Once all callers are transitioned, the macros and the functions that they call,
--mipi_dsi_generic_write_chatty() and mipi_dsi_dcs_write_buffer_chatty(), can
--probably be removed. Alternatively, if people feel like the _multi() variants
--are overkill for some use cases, we could keep the mipi_dsi_*_write_seq()
--variants but change them not to return out of the caller.
-+Drivers should be updated to use undeprecated functions. Once all usages of the
-+deprecated MIPI DSI functions have been removed, their definitions may be
-+removed from ``drm_mipi_dsi.c``.
- 
- Contact: Douglas Anderson <dianders@chromium.org>
- 
--- 
-2.50.1
+> > I don't see a loop in *this* series, where the screen_info path looks
+> > like this:
+> > 
+> >    pci_create_boot_display_file
+> >      video_is_primary_device
+> >        screen_info_pci_dev      # added by "fbcon: Use screen info to find primary device"
+> >          screen_info_resources
+> >          __screen_info_pci_dev
+> > 
+> > and we're basically matching the screen_info base/address with BAR
+> > values.
+> > 
+> > The usual problem is that BARs may not have been assigned by the
+> > time pci_device_add() -> device_add() creates the static
+> > attributes.
+> > 
+> > So we call pci_assign_unassigned_root_bus_resources() to assign
+> > all the BARs.  Then we call pci_create_sysfs_dev_files(), where
+> > pci_create_resource_files() creates a "resource%d" file for each
+> > BAR.
+> > 
+> > But since we're trying to find the GPU that was used by BIOS, I
+> > assume its BARs were programmed by BIOS and we shouldn't have to
+> > wait until after pci_assign_unassigned_root_bus_resources().
+> 
+> Yes it was screen_info_pci_dev() and __screen_info_pci_dev().  The
+> resources weren't ready on the first call into
+> __screen_info_pci_dev().
+>
+> That's why the attribute needed to be created later.
 
+I don't understand this.  IIUC, screen_info contains addresses
+programmed by BIOS.  If we want to use that to match with a PCI
+device, we have to compare with the BAR contents *before* Linux does
+any assignments of its own.
+
+So the only thing this should depend on is the BAR value at BIOS ->
+Linux handoff, which we know at the time of device_add(), and we
+should be able to do something like this:
+
+  bool pci_video_is_primary_device(struct pci_dev *pdev)
+  {
+    struct screen_info *si = &screen_info;
+    struct resource res[SCREEN_INFO_MAX_RESOURCES];
+    ssize_t i, numres;
+
+    numres = screen_info_resources(si, res, ARRAY_SIZE(res));
+    ...
+
+    for (i = 0; i < numres; ++i) {
+      if (pci_find_resource(pdev, &res[i]))
+        return true;
+    }
+
+    return false;
+  }
+
+  static umode_t pci_dev_boot_display_is_visible(...)
+  {
+    struct pci_dev *pdev = to_pci_dev(kobj_to_dev(kobj));
+
+    if (pci_video_is_primary_device(pdev))
+      return a->mode;
+
+    return 0;
+  }
+
+We should be able to check each BAR of each device in this path, with
+no loop through the devices at all:
+
+  pci_device_add
+    device_add
+      device_add_attrs
+        device_add_groups
+          ...
+            create_files
+              grp->is_visible()
+                pci_dev_boot_display_is_visible
+
+Bjorn
 
