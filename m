@@ -1,63 +1,92 @@
-Return-Path: <linux-kernel+bounces-741277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54C45B0E255
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:01:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6A24B0E25C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:05:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37AB61AA7FE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:02:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B0F0567B60
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C79D27BF93;
-	Tue, 22 Jul 2025 17:01:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8070227EC78;
+	Tue, 22 Jul 2025 17:05:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qSuKYSqN"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="bibkTVKv"
+Received: from smtp.smtpout.orange.fr (smtp-72.smtpout.orange.fr [80.12.242.72])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF9E27C17E
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 17:01:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63D825F7B4;
+	Tue, 22 Jul 2025 17:05:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753203709; cv=none; b=MSmMecEET9XXsq3kC3oSU+FoIgxb1plb/hTPySU6SI1W7NqHt48EM3tp3KOSZ3ZdFyuVczxzlCjwWKE23+P48QWTW4YV0mArDgYXqbUtKtGh1Mw8oUvbe4Rv65rHkuWxT0XD59KacPGBU4K7MvgXkNXmZbRh9zK/JcTeNoDNKzI=
+	t=1753203917; cv=none; b=US+NhSf6zaHv45gi8/xo0OrJpKkPDYfEKoc+J2l4nMwIutys88j0pvX+TJDYpqPXb+0tr1/FFfb0GmnKtFUkb6RS1yPbHg+jHssMOuY3LCKffqRzrpRtT8qnUmBkTgwAJtJuek88QO+Jaz+KUO4t7dCYUXV18iBoepxZTv+mUEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753203709; c=relaxed/simple;
-	bh=vK/01zHaEb7rQXNVgPmV0SjAJ+RqFTCi8Dw4/oQ9KnE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bdDzahS3sTvNMBC/OmdUKaqCpXimzH4gmMGXNJ89/x+ZLT9W1UE+AE9CzqJ6P+8WKDifng0uDq74cadKDpbgjQhbAcqNRHmqF5j5fiY/9bCn9BZs3s6AOBpwIigj+3ct95apOH+qaxl6UcZvBsF2YpQuinHDxnieJvIS3y5ofJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qSuKYSqN; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 22 Jul 2025 13:01:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753203695;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vK/01zHaEb7rQXNVgPmV0SjAJ+RqFTCi8Dw4/oQ9KnE=;
-	b=qSuKYSqNf10j5b+cihA/2+klt+XGV1OG2CptgAQsDdGu/Ddu2/NyFRWf+M3IwiSJV81Buq
-	sR7FaNAMQ/hNFXku74kMZhEbeVRTd8fTrTtfLIIWU+Uu6PU/hS09mf7Ct1XbzA0MRRhFKw
-	Sh6wUJ9YJGTdL1Z30TUBel9IroamtHE=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: syzbot <syzbot+4e41a25632658c77b441@syzkaller.appspotmail.com>
-Cc: bfoster@redhat.com, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] WARNING in bch2_prt_printf
-Message-ID: <qdgygvgppw6vqjvyxi56tqfkdakctxzbj6gly33655idvkzzju@yzxuwegnlff3>
-References: <00000000000090ebe40618212a25@google.com>
+	s=arc-20240116; t=1753203917; c=relaxed/simple;
+	bh=MsbOBqCdhvkmcT8garlNkx4qKXvrWtrbDvujJZN40gM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=epO3Gv1gfXFFDZjo0QJI6nR1S/rAg1UkBeYoKzj+0AuEm83EO8kPkE1JU56oPBmArEYYRwrecQuklwBBwlgBznKff6UI1SOMohUuLcO8R4wuIl1c2ey4KiH/uEUS1QhV77lEd1K9V1LwKbXq7s76wIF+bemZUcCJsN3db7rDXzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=bibkTVKv; arc=none smtp.client-ip=80.12.242.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id eGPCuzqqs7oQQeGPCuolrN; Tue, 22 Jul 2025 19:03:59 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1753203839;
+	bh=1LCUcL331vbtCzLQERTjWDc5Tg4pTHQ4IJIaPEGil/4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=bibkTVKvhqyulsY6SdBhylzp97cisGjwyScpE7k7Yf+TUaaP5+B0vWFPGI8XMyMR+
+	 tEuEcFpwIZ0jyD9T01jJZ5Zq3HZ/zqfdSSNewExqUp5oiQ02CpJo3RD8HNnjXpwJ7l
+	 jf0PCyZhinbPAR9q0gSKIckIk8zlYS1SJienqmdt8WkTsazwoLbbEB0Gz3w2YdSFjW
+	 3UOjV+0Jc3PbF9UvO2J+3i+08YVatQeoOLyHFUkcAYQ7PwbQspoePI1msCrf4rN9Rh
+	 UQjhZ9QUbdA5+9x99LBEfFsbMGkDNH7renvIG1NI+SWG4epBYY2LkJHpDcxORVMH+s
+	 OMgir8sKITTFQ==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Tue, 22 Jul 2025 19:03:59 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <ac2ace68-e88f-4055-9b01-45a2eaab50fc@wanadoo.fr>
+Date: Tue, 22 Jul 2025 19:03:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00000000000090ebe40618212a25@google.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] crypto: caam - switch to use devm_kmemdup_array()
+To: zhang.enpei@zte.com.cn
+Cc: horia.geanta@nxp.com, pankaj.gupta@nxp.com, gaurav.jain@nxp.com,
+ herbert@gondor.apana.org.au, davem@davemloft.net,
+ linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <e4c297a7-1ef1-4c39-8daa-8acdade47508@wanadoo.fr>
+ <20250721100618249bnR0yTtsh0IeGzAdt8Fuu@zte.com.cn>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20250721100618249bnR0yTtsh0IeGzAdt8Fuu@zte.com.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-#syz fix: bcachefs: journal_entry_btree_keys_to_text() is more careful
+Le 21/07/2025 à 04:06, zhang.enpei@zte.com.cn a écrit :
+> Thanks for the review!
+> devm_kmemdup_array() will call size_mul() to combine its third and fourth parameters into
+> length for devm_kmemdup(). So keep the same value sizeof(data->clks[0]) here as before.
+> 
+> 
+
+sizeof(data->clks[0]) and sizeof(*data->clks) are the same.
+
+But the second version is the preferred style. See [1].
+
+So while touching these lines of code, updating the style looked a good 
+idea to me.
+
+CJ
+
+
+[1]: 
+https://docs.kernel.org/6.15/process/coding-style.html#allocating-memory
 
