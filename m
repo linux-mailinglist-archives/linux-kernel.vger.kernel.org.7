@@ -1,266 +1,188 @@
-Return-Path: <linux-kernel+bounces-741022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5923AB0DF07
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:41:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40E48B0DF1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:42:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66E59583F24
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:35:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20ECF5816F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:37:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70892EAB7A;
-	Tue, 22 Jul 2025 14:35:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 337C82EAD0B;
+	Tue, 22 Jul 2025 14:36:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OzlmYC83"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b="Mg6C/twq"
+Received: from mta22.hihonor.com (mta22.hihonor.com [81.70.192.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221E928C017
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 14:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284622E49AF
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 14:36:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753194947; cv=none; b=bjUG4l5ma7/dJIUxLgutsApX+AM74+SLPa0Y5shU8ZreVLSSk7CNtfsr5zf/KPgqTRHN3YQfuG9JYXAmkpKrC5w/wMAC+NSFhjF9LGgr9JUcA7MvFDLbMbl+B6qe+EHXoMi2iTVgV3heZqsNmUS9tEVnllWYl4eyQXF8gcR+5Zg=
+	t=1753195003; cv=none; b=K6wDycvulSlf2Q5g/y2yR2T27SbZE/FE7F9TGrp0vQ6pgEdx46ENW2OYyM2uFGl8iOEF7WJIC2K1T76LlElMbjxgmC+lQxDHs971+1AhEQ/7qi6OOJFC6eMydqISyFxWDKjFKPumnRf+mfQxd4LjWBiQp2Qm41ZNipKIDRlU3Mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753194947; c=relaxed/simple;
-	bh=FtMcpts9tF0PQFNX2Xy1OLTiS5qBzXfp3waJCk/dUso=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=emNtWGkRg2i6oYEkie1x2ZvCqsf+mEpL8eGEYtUoVDwTt/mFElDy7m6El5/QyAYSv7p4D8ta7WL5JYXkBrH1NbSfrj3xt9ah8WSRLFINV2eKM0PWG/EX7ek5kpBgMGi2hKCYQ0xT1GWVSmkVpVrZKF7Xa56viEi+6p+/gEzkIOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OzlmYC83; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753194945;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fzB7P1BusfnapG0uVAVGElcUdQoH/V3AcX2/zWIOBVg=;
-	b=OzlmYC83I/SGl5fUi+JgMaK569Ve3WoZH/AtZMuneSo6vPFsvQQx/QjDYg3PvX1XGyihh4
-	w83KaBMy1WF+OuE2hL26q02rfVio3Yp0hqjoxeaj7MVLsfuwWm/suimUY8Q05VTnWuDvb2
-	wIFNQTDOvGEGNFgEAM2pkCn8fMDNJYw=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-308-JhJAX_5LNayi7q0Zs-g7Lw-1; Tue, 22 Jul 2025 10:35:42 -0400
-X-MC-Unique: JhJAX_5LNayi7q0Zs-g7Lw-1
-X-Mimecast-MFC-AGG-ID: JhJAX_5LNayi7q0Zs-g7Lw_1753194941
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-ade6db50b9cso562169266b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 07:35:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753194941; x=1753799741;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fzB7P1BusfnapG0uVAVGElcUdQoH/V3AcX2/zWIOBVg=;
-        b=s4WguhRqzLb07COjv5/DjaWDooiRIQGblwYk4sozQMF4Rx7i1z33ioEZN4DQIpXV/W
-         +R5v8ID+H3G1kieUYuqszvU+UG3qIm2c2jQeaDB6c7nbe5V4lvo+P6Q3Fvz09BiCZ6cX
-         KsgjR/ZK/UXvZetNwrcyyEU38NnCxfXrDsFo0G7HRnKu+jBs96n8xq8Vh9yRy/bzSViK
-         zpuitou5Qd1UGSUs8FeyhO5v/qlmv80aTY8q9Ukc6MFVfKPvMwfFaog7Kcw4j0MoNWiT
-         Jq++19sdgGIw4ZYTmU6Jkmcc4vJD+Iy4H/UWqglgwCP+hs04g8LCOOmmVAzvjvBZDU4h
-         R+Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCWR4T7bTtQGXA/nF0doEUgOkqcDz0aGSknD7OyC6hcXJ4kOB5fR1WNNwY/zHEAN9IJ3yCRXiS3Nh/cz4Dw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaPCRK0bIvoIduOy94CTMXCBbcMEzfXvZAo6zipQ5nbAMeTmc4
-	BLaNsV2hUNNNUmKnSddHydZiKf6HMcfFmpqvonaoy+HXk7I8sm09OM6/PoShPfcMiya/zklRI5i
-	hxWpEefzCYhIY9v8hgil8/iQOIT+sDr3DlNfsNTTF4FIaV3B6rGnF0ilKyfnaG8vjiw==
-X-Gm-Gg: ASbGncux1yX/4ft7HJEioUHUUUBjfALWOeZjVojy5cRKCnmlp+byoWCjoLeqWuiJzde
-	AC5SejScaoluNv6Qu42C7ONigaBDsDMh0ful+BPqQI7tcV6G6dgCG7qi2ipDHjT01EUbVQyiSl1
-	9m3LhbJvQkUrwmkAWCozdUSlwHJwDTP/b8gP1XkJaq/bAcANgy3cbze7WE9GuAXEcExZkDKH1Y4
-	hCzdnvEypCr9GgKjA4QW7WiCfdfeWjeho9xUaaHqItDPAe2j8KU14pYU8JV6B8wVJOUpSB0+vBY
-	grSQ1Kev6CUo7txl04qfxUGkGQ0/Ityl9qfTK931X/lChaoeD1Ij5We+8tMSPneb95ltTuESQOA
-	X+M+FKnQjM9N9mjE=
-X-Received: by 2002:a17:906:7946:b0:ae9:8dcb:4dac with SMTP id a640c23a62f3a-ae9c99bac5fmr2438078166b.14.1753194941127;
-        Tue, 22 Jul 2025 07:35:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF/TeWm8DeewR5crPsEXii/8MlhRmlF6n2C6fHO5dz/5iDDWZFbxMXiWYmWah7yJm8iOWS6rw==
-X-Received: by 2002:a17:906:7946:b0:ae9:8dcb:4dac with SMTP id a640c23a62f3a-ae9c99bac5fmr2438071766b.14.1753194940260;
-        Tue, 22 Jul 2025 07:35:40 -0700 (PDT)
-Received: from sgarzare-redhat (host-79-45-205-118.retail.telecomitalia.it. [79.45.205.118])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6c7d9941sm879107266b.56.2025.07.22.07.35.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 07:35:39 -0700 (PDT)
-Date: Tue, 22 Jul 2025 16:35:25 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Amery Hung <ameryhung@gmail.com>
-Cc: stefanha@redhat.com, mst@redhat.com, jasowang@redhat.com, 
-	xuanzhuo@linux.alibaba.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org, 
-	decui@microsoft.com, bryantan@vmware.com, vdasa@vmware.com, pv-drivers@vmware.com, 
-	dan.carpenter@linaro.org, simon.horman@corigine.com, oxffffaa@gmail.com, 
-	kvm@vger.kernel.org, virtualization@lists.linux-foundation.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org, 
-	bpf@vger.kernel.org, bobby.eshleman@bytedance.com, jiang.wang@bytedance.com, 
-	amery.hung@bytedance.com, xiyou.wangcong@gmail.com
-Subject: Re: [RFC PATCH net-next v6 00/14] virtio/vsock: support datagrams
-Message-ID: <dsamf7k2byoflztkwya3smj7jyczyq7aludvd36lufdrboxdqk@u73iwrcyb5am>
-References: <20240710212555.1617795-1-amery.hung@bytedance.com>
+	s=arc-20240116; t=1753195003; c=relaxed/simple;
+	bh=muKAnqICHJs6bEPFgHyb0rayGEZHaGih0lb2NWf38Ps=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WhnwVvy2UHQjlqo4PaxzhL8QmlNmTYSqyeSaxTPoSGqRsfNXukityxBHWtHtfhNLTpM5TnnlHDvMbJzgXEmboj0ONKROLri7CSypFVjlR1vCAqKMoXgawZq77XfRwv085hTno2FIwagf1AJE7epxGd05O6a93XDdc+G/bUa0zJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b=Mg6C/twq; arc=none smtp.client-ip=81.70.192.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+dkim-signature: v=1; a=rsa-sha256; d=honor.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=To:From;
+	bh=9mMZv3fRPcTWhmon7ZbWPzuWZxJN9vWK45/lrMBtpSg=;
+	b=Mg6C/twqRDRZr7USz8b8PaDHWA+2mKe1Lda6S+s3cROZ7Fy2Fy9OmGOkxSgufmGMexeTIAE7M
+	mQAScEUKq2Zi7edM5dlEA8enZtBMapphWCtgCr++nd7vjwDgZn6glWngLDCuj6m4XEfpb48dMxv
+	hCogN2PJVyEzJge0YeWmXpo=
+Received: from w002.hihonor.com (unknown [10.68.28.120])
+	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4bmfsg1bqfzYldV3;
+	Tue, 22 Jul 2025 22:34:15 +0800 (CST)
+Received: from a011.hihonor.com (10.68.31.243) by w002.hihonor.com
+ (10.68.28.120) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 22 Jul
+ 2025 22:36:30 +0800
+Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
+ (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 22 Jul
+ 2025 22:36:30 +0800
+From: wangzijie <wangzijie1@honor.com>
+To: <jaegeuk@kernel.org>, <chao@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
+	<bintian.wang@honor.com>, <feng.han@honor.com>, wangzijie
+	<wangzijie1@honor.com>
+Subject: [f2fs-dev] [PATCH v2 1/2] f2fs: avoid redundant clean nat entry move in lru list
+Date: Tue, 22 Jul 2025 22:36:27 +0800
+Message-ID: <20250722143628.430776-1-wangzijie1@honor.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20240710212555.1617795-1-amery.hung@bytedance.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: w001.hihonor.com (10.68.25.235) To a011.hihonor.com
+ (10.68.31.243)
 
-Hi Amery,
+__lookup_nat_cache follows LRU manner to move clean nat entry, when nat
+entries are going to be dirty, no need to move them to tail of lru list.
+Introduce a parameter 'for_dirty' to avoid it.
 
-On Wed, Jul 10, 2024 at 09:25:41PM +0000, Amery Hung wrote:
->Hey all!
->
->This series introduces support for datagrams to virtio/vsock.
+Signed-off-by: wangzijie <wangzijie1@honor.com>
+---
+v2:
+- followed by Jaegeuk's suggestion to add a parameter in __lookup_nat_cache
+---
+ fs/f2fs/node.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-any update on v7 of this series?
-
-Thanks,
-Stefano
-
->
->It is a spin-off (and smaller version) of this series from the summer:
->  https://lore.kernel.org/all/cover.1660362668.git.bobby.eshleman@bytedance.com/
->
->Please note that this is an RFC and should not be merged until
->associated changes are made to the virtio specification, which will
->follow after discussion from this series.
->
->Another aside, the v4 of the series has only been mildly tested with a
->run of tools/testing/vsock/vsock_test. Some code likely needs cleaning
->up, but I'm hoping to get some of the design choices agreed upon before
->spending too much time making it pretty.
->
->This series first supports datagrams in a basic form for virtio, and
->then optimizes the sendpath for all datagram transports.
->
->The result is a very fast datagram communication protocol that
->outperforms even UDP on multi-queue virtio-net w/ vhost on a variety
->of multi-threaded workload samples.
->
->For those that are curious, some summary data comparing UDP and VSOCK
->DGRAM (N=5):
->
->	vCPUS: 16
->	virtio-net queues: 16
->	payload size: 4KB
->	Setup: bare metal + vm (non-nested)
->
->	UDP: 287.59 MB/s
->	VSOCK DGRAM: 509.2 MB/s
->
->Some notes about the implementation...
->
->This datagram implementation forces datagrams to self-throttle according
->to the threshold set by sk_sndbuf. It behaves similar to the credits
->used by streams in its effect on throughput and memory consumption, but
->it is not influenced by the receiving socket as credits are.
->
->The device drops packets silently.
->
->As discussed previously, this series introduces datagrams and defers
->fairness to future work. See discussion in v2 for more context around
->datagrams, fairness, and this implementation.
->
->Signed-off-by: Bobby Eshleman <bobby.eshleman@bytedance.com>
->Signed-off-by: Amery Hung <amery.hung@bytedance.com>
->---
->Changes in v6:
->- allow empty transport in datagram vsock
->- add empty transport checks in various paths
->- transport layer now saves source cid and port to control buffer of skb
->  to remove the dependency of transport in recvmsg()
->- fix virtio dgram_enqueue() by looking up the transport to be used when
->  using sendto(2)
->- fix skb memory leaks in two places
->- add dgram auto-bind test
->- Link to v5: https://lore.kernel.org/r/20230413-b4-vsock-dgram-v5-0-581bd37fdb26@bytedance.com
->
->Changes in v5:
->- teach vhost to drop dgram when a datagram exceeds the receive buffer
->  - now uses MSG_ERRQUEUE and depends on Arseniy's zerocopy patch:
->	"vsock: read from socket's error queue"
->- replace multiple ->dgram_* callbacks with single ->dgram_addr_init()
->  callback
->- refactor virtio dgram skb allocator to reduce conflicts w/ zerocopy series
->- add _fallback/_FALLBACK suffix to dgram transport variables/macros
->- add WARN_ONCE() for table_size / VSOCK_HASH issue
->- add static to vsock_find_bound_socket_common
->- dedupe code in vsock_dgram_sendmsg() using module_got var
->- drop concurrent sendmsg() for dgram and defer to future series
->- Add more tests
->  - test EHOSTUNREACH in errqueue
->  - test stream + dgram address collision
->- improve clarity of dgram msg bounds test code
->- Link to v4: https://lore.kernel.org/r/20230413-b4-vsock-dgram-v4-0-0cebbb2ae899@bytedance.com
->
->Changes in v4:
->- style changes
->  - vsock: use sk_vsock(vsk) in vsock_dgram_recvmsg instead of
->    &sk->vsk
->  - vsock: fix xmas tree declaration
->  - vsock: fix spacing issues
->  - virtio/vsock: virtio_transport_recv_dgram returns void because err
->    unused
->- sparse analysis warnings/errors
->  - virtio/vsock: fix unitialized skerr on destroy
->  - virtio/vsock: fix uninitialized err var on goto out
->  - vsock: fix declarations that need static
->  - vsock: fix __rcu annotation order
->- bugs
->  - vsock: fix null ptr in remote_info code
->  - vsock/dgram: make transport_dgram a fallback instead of first
->    priority
->  - vsock: remove redundant rcu read lock acquire in getname()
->- tests
->  - add more tests (message bounds and more)
->  - add vsock_dgram_bind() helper
->  - add vsock_dgram_connect() helper
->
->Changes in v3:
->- Support multi-transport dgram, changing logic in connect/bind
->  to support VMCI case
->- Support per-pkt transport lookup for sendto() case
->- Fix dgram_allow() implementation
->- Fix dgram feature bit number (now it is 3)
->- Fix binding so dgram and connectible (cid,port) spaces are
->  non-overlapping
->- RCU protect transport ptr so connect() calls never leave
->  a lockless read of the transport and remote_addr are always
->  in sync
->- Link to v2: https://lore.kernel.org/r/20230413-b4-vsock-dgram-v2-0-079cc7cee62e@bytedance.com
->
->
->Bobby Eshleman (14):
->  af_vsock: generalize vsock_dgram_recvmsg() to all transports
->  af_vsock: refactor transport lookup code
->  af_vsock: support multi-transport datagrams
->  af_vsock: generalize bind table functions
->  af_vsock: use a separate dgram bind table
->  virtio/vsock: add VIRTIO_VSOCK_TYPE_DGRAM
->  virtio/vsock: add common datagram send path
->  af_vsock: add vsock_find_bound_dgram_socket()
->  virtio/vsock: add common datagram recv path
->  virtio/vsock: add VIRTIO_VSOCK_F_DGRAM feature bit
->  vhost/vsock: implement datagram support
->  vsock/loopback: implement datagram support
->  virtio/vsock: implement datagram support
->  test/vsock: add vsock dgram tests
->
-> drivers/vhost/vsock.c                   |   62 +-
-> include/linux/virtio_vsock.h            |    9 +-
-> include/net/af_vsock.h                  |   24 +-
-> include/uapi/linux/virtio_vsock.h       |    2 +
-> net/vmw_vsock/af_vsock.c                |  343 ++++++--
-> net/vmw_vsock/hyperv_transport.c        |   13 -
-> net/vmw_vsock/virtio_transport.c        |   24 +-
-> net/vmw_vsock/virtio_transport_common.c |  188 ++++-
-> net/vmw_vsock/vmci_transport.c          |   61 +-
-> net/vmw_vsock/vsock_loopback.c          |    9 +-
-> tools/testing/vsock/util.c              |  177 +++-
-> tools/testing/vsock/util.h              |   10 +
-> tools/testing/vsock/vsock_test.c        | 1032 ++++++++++++++++++++---
-> 13 files changed, 1638 insertions(+), 316 deletions(-)
->
->-- 
->2.20.1
->
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 76aba1961..a23db6238 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -204,14 +204,14 @@ static struct nat_entry *__init_nat_entry(struct f2fs_nm_info *nm_i,
+ 	return ne;
+ }
+ 
+-static struct nat_entry *__lookup_nat_cache(struct f2fs_nm_info *nm_i, nid_t n)
++static struct nat_entry *__lookup_nat_cache(struct f2fs_nm_info *nm_i, nid_t n, bool for_dirty)
+ {
+ 	struct nat_entry *ne;
+ 
+ 	ne = radix_tree_lookup(&nm_i->nat_root, n);
+ 
+-	/* for recent accessed nat entry, move it to tail of lru list */
+-	if (ne && !get_nat_flag(ne, IS_DIRTY)) {
++	/* for recent accessed(not used to set dirty) nat entry, move it to tail of lru list */
++	if (ne && !get_nat_flag(ne, IS_DIRTY) && !for_dirty) {
+ 		spin_lock(&nm_i->nat_list_lock);
+ 		if (!list_empty(&ne->list))
+ 			list_move_tail(&ne->list, &nm_i->nat_entries);
+@@ -383,7 +383,7 @@ int f2fs_need_dentry_mark(struct f2fs_sb_info *sbi, nid_t nid)
+ 	bool need = false;
+ 
+ 	f2fs_down_read(&nm_i->nat_tree_lock);
+-	e = __lookup_nat_cache(nm_i, nid);
++	e = __lookup_nat_cache(nm_i, nid, false);
+ 	if (e) {
+ 		if (!get_nat_flag(e, IS_CHECKPOINTED) &&
+ 				!get_nat_flag(e, HAS_FSYNCED_INODE))
+@@ -400,7 +400,7 @@ bool f2fs_is_checkpointed_node(struct f2fs_sb_info *sbi, nid_t nid)
+ 	bool is_cp = true;
+ 
+ 	f2fs_down_read(&nm_i->nat_tree_lock);
+-	e = __lookup_nat_cache(nm_i, nid);
++	e = __lookup_nat_cache(nm_i, nid, false);
+ 	if (e && !get_nat_flag(e, IS_CHECKPOINTED))
+ 		is_cp = false;
+ 	f2fs_up_read(&nm_i->nat_tree_lock);
+@@ -414,7 +414,7 @@ bool f2fs_need_inode_block_update(struct f2fs_sb_info *sbi, nid_t ino)
+ 	bool need_update = true;
+ 
+ 	f2fs_down_read(&nm_i->nat_tree_lock);
+-	e = __lookup_nat_cache(nm_i, ino);
++	e = __lookup_nat_cache(nm_i, ino, false);
+ 	if (e && get_nat_flag(e, HAS_LAST_FSYNC) &&
+ 			(get_nat_flag(e, IS_CHECKPOINTED) ||
+ 			 get_nat_flag(e, HAS_FSYNCED_INODE)))
+@@ -439,7 +439,7 @@ static void cache_nat_entry(struct f2fs_sb_info *sbi, nid_t nid,
+ 		return;
+ 
+ 	f2fs_down_write(&nm_i->nat_tree_lock);
+-	e = __lookup_nat_cache(nm_i, nid);
++	e = __lookup_nat_cache(nm_i, nid, false);
+ 	if (!e)
+ 		e = __init_nat_entry(nm_i, new, ne, false);
+ 	else
+@@ -460,7 +460,7 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
+ 	struct nat_entry *new = __alloc_nat_entry(sbi, ni->nid, true);
+ 
+ 	f2fs_down_write(&nm_i->nat_tree_lock);
+-	e = __lookup_nat_cache(nm_i, ni->nid);
++	e = __lookup_nat_cache(nm_i, ni->nid, true);
+ 	if (!e) {
+ 		e = __init_nat_entry(nm_i, new, NULL, true);
+ 		copy_node_info(&e->ni, ni);
+@@ -502,7 +502,7 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
+ 
+ 	/* update fsync_mark if its inode nat entry is still alive */
+ 	if (ni->nid != ni->ino)
+-		e = __lookup_nat_cache(nm_i, ni->ino);
++		e = __lookup_nat_cache(nm_i, ni->ino, false);
+ 	if (e) {
+ 		if (fsync_done && ni->nid == ni->ino)
+ 			set_nat_flag(e, HAS_FSYNCED_INODE, true);
+@@ -562,7 +562,7 @@ int f2fs_get_node_info(struct f2fs_sb_info *sbi, nid_t nid,
+ retry:
+ 	/* Check nat cache */
+ 	f2fs_down_read(&nm_i->nat_tree_lock);
+-	e = __lookup_nat_cache(nm_i, nid);
++	e = __lookup_nat_cache(nm_i, nid, false);
+ 	if (e) {
+ 		ni->ino = nat_get_ino(e);
+ 		ni->blk_addr = nat_get_blkaddr(e);
+@@ -2371,7 +2371,7 @@ static bool add_free_nid(struct f2fs_sb_info *sbi,
+ 		 *   - __remove_nid_from_list(PREALLOC_NID)
+ 		 *                         - __insert_nid_to_list(FREE_NID)
+ 		 */
+-		ne = __lookup_nat_cache(nm_i, nid);
++		ne = __lookup_nat_cache(nm_i, nid, false);
+ 		if (ne && (!get_nat_flag(ne, IS_CHECKPOINTED) ||
+ 				nat_get_blkaddr(ne) != NULL_ADDR))
+ 			goto err_out;
+@@ -2936,7 +2936,7 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
+ 
+ 		raw_ne = nat_in_journal(journal, i);
+ 
+-		ne = __lookup_nat_cache(nm_i, nid);
++		ne = __lookup_nat_cache(nm_i, nid, true);
+ 		if (!ne) {
+ 			ne = __alloc_nat_entry(sbi, nid, true);
+ 			__init_nat_entry(nm_i, ne, &raw_ne, true);
+-- 
+2.25.1
 
 
