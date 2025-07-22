@@ -1,102 +1,141 @@
-Return-Path: <linux-kernel+bounces-740070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA268B0CF42
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:45:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A2E4B0CF46
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:47:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95A9F1C21A9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 01:45:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB5703BC96E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 01:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D75D1A256B;
-	Tue, 22 Jul 2025 01:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CECB01917E3;
+	Tue, 22 Jul 2025 01:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="aF+mAlx0"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B37A2AE8B;
-	Tue, 22 Jul 2025 01:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="bmn0F9G4"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66AF1D54D8;
+	Tue, 22 Jul 2025 01:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753148730; cv=none; b=DEFS101UTcqvbo0/YdZGCyBbvVf6x9sK2HukWa40+UoeSQfoqarOzNqdh63xzZobbZlht1HC4tjM+vwEqnznmex6cWXn2WAToWG9iJyvDWQJDb+2DLeFI97llYgeQQR4ZRhmya+sxEJT1QDSUOU9CkHjFHmD+BPlvFJm2JsUSXs=
+	t=1753148856; cv=none; b=gbFwBuuC2cyxa6zbat7m3Hnv9U7N6lhAU0hdNVFGte75j4wHA3Xoie0CzxTE+7/Syum2Dl3fmjvDWjBuDt6do6jxtaRK/7O7xRDfHvOMvkIDHkKuagaAcsPrEw7P1g5vsOrL0DGQD4t3+BR1oaLZZeJnMFLaTt70GxJ/kXOrnCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753148730; c=relaxed/simple;
-	bh=6RNhgi/PXkNLVR8WSHnE0+PAMzxrnisixktxjpca+u0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=JB+siij8i7LkySGNzYiRiqAt9o1+Pq0vwdxON5zjVEG0dhw2rA+VvpZyEszJtaZSwj1pjiw18SndMrBQ0x+9mpmXOHqvtUBUtMcRmz5LyK46kZxDUb/H8b6vG+KHdyg7MvKKanS6MFDkda24oyAUjxwwpEH8H/cFlQA2DGpUzvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=aF+mAlx0; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1753148568;
-	bh=7DKLwT9mb5UPlpRe0SGUa89oe5NkFCe16RM/PX/+BRI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=aF+mAlx056+xrDqK9l8n4mADEokcBAIae0zWLrwIgOyY6Wkw2MizGkgjZHihj7mDf
-	 iO8SXmkD5m90a7P8Cgw2NMkJUrFNu1YwWAWdqIBY6V0tnRXvnqBQr7VqgTZq6Bb/Jd
-	 tbFrqBuieekKjYh5EfecQT57gBjK4+JOeky7WGaYEuhMfWVO+nMjxj7z8OxEbzgZNH
-	 fhhMXXhmOJOWJyCth7M11dOO8Jv02taqeT0UKPSRsyAAIqUZVyTlF0zo50jBUc8JnG
-	 j41Gn9XNBP915mJGPDnDTR3Vaez7sUWerlUxYkhQkAV0rNxq/QIaqXfSzyqCT7+0no
-	 PUoPa6KqUPX5g==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bmKlX2XcRz4x11;
-	Tue, 22 Jul 2025 11:42:48 +1000 (AEST)
-Date: Tue, 22 Jul 2025 11:45:24 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the clockevents tree
-Message-ID: <20250722114524.078e3036@canb.auug.org.au>
+	s=arc-20240116; t=1753148856; c=relaxed/simple;
+	bh=wA1QITrQBhdk+4tvlTm+Tov0pvRC29l4XibQzq+mUzE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=NiVaenqMju9/UvNy03ctaS5Lf5oDp7LS/btuyAn20c9LksE6O1d7mY8P9rOVEUfNz8bcLsELkj1E7J7wuKfP+eNE0T0jhnzm3PDPd9QgfazLyR1xjfhsVRIqZV4zp585I7vPcc8vXpyB4H0eXrH30uZ4Ayep9WKpxE3H0LdAxFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=bmn0F9G4; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=UF
+	FA3TVgkftJ5l67i2jAJr8Ojd09cjfv7mgXsQZyJeA=; b=bmn0F9G4mKZ2F778aD
+	edxDi8mBkR7SetlQS5yOTRQrNroAO0kbbja7VZQ0o55LGMag8rPSv2hfcK7SA6XM
+	uiewlmDxhrKH+rG0Z1OmI2JMguAFyn67iRJWc6/ittmRBU8xZiijgFHwAGQwj2uP
+	ZL37BdojAMbNXUJX4SFfrGuoI=
+Received: from 163.com (unknown [])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wD3P0WJ7X5oMjZkGg--.28519S2;
+	Tue, 22 Jul 2025 09:46:49 +0800 (CST)
+From: chenyuan_fl@163.com
+To: qmo@kernel.org,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	yonghong.song@linux.dev
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yuan Chen <chenyuan@kylinos.com>
+Subject: [PATCH v4] bpftool: Add CET-aware symbol matching for x86/x86_64 architectures
+Date: Tue, 22 Jul 2025 09:46:42 +0800
+Message-Id: <20250722014642.14073-1-chenyuan_fl@163.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <9f233a20-6649-4796-9ef4-a499382b0006@linux.dev>
+References: <9f233a20-6649-4796-9ef4-a499382b0006@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Q6y4ME1usX3zAYNY/lAkbcL";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3P0WJ7X5oMjZkGg--.28519S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxWF43uw13tFyruw1fJFy7Wrg_yoW5Jw47pr
+	WrAwsYyFWUXrW3Wws3Aa15AFW3tFsavw47Ar97G34a9r45Zrn2yF1xKF1IyF1aqr1kJw47
+	AFnI9FZ0gFZIvrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jFq2NUUUUU=
+X-CM-SenderInfo: xfkh05pxdqswro6rljoofrz/1tbiUQ+SvWh+7IsVFQAAsA
 
---Sig_/Q6y4ME1usX3zAYNY/lAkbcL
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Yuan Chen <chenyuan@kylinos.com>
 
-Hi all,
+Adjust symbol matching logic to account for Control-flow Enforcement
+Technology (CET) on x86/x86_64 systems. CET prefixes functions with
+a 4-byte 'endbr' instruction, shifting the actual hook entry point to
+symbol + 4.
 
-The following commit is also in the arm-soc tree as a different commit
-(but the same patch):
+Changed in PATCH v4:
+* Refactor repeated code into a function.
+* Add detection for the x86 architecture.
 
-  c4a134f5af13 ("dt-bindings: timer: add Andes machine timer")
+Signed-off-by: Yuan Chen <chenyuan@kylinos.com>
+---
+ tools/bpf/bpftool/link.c | 27 +++++++++++++++++++++++++--
+ 1 file changed, 25 insertions(+), 2 deletions(-)
 
-This is commit
+diff --git a/tools/bpf/bpftool/link.c b/tools/bpf/bpftool/link.c
+index a773e05d5ade..9e5d85421919 100644
+--- a/tools/bpf/bpftool/link.c
++++ b/tools/bpf/bpftool/link.c
+@@ -282,6 +282,28 @@ get_addr_cookie_array(__u64 *addrs, __u64 *cookies, __u32 count)
+ 	return data;
+ }
+ 
++static bool
++symbol_matches_target(__u64 sym_addr, __u64 target_addr)
++{
++	if (sym_addr == target_addr)
++		return true;
++
++#if defined(__i386__) || defined(__x86_64__)
++	/*
++	 * On x86 architectures with CET (Control-flow Enforcement Technology),
++	 * function entry points have a 4-byte 'endbr' instruction prefix.
++	 * This causes kprobe hooks to target the address *after* 'endbr'
++	 * (symbol address + 4), preserving the CET instruction.
++	 * Here we check if the symbol address matches the hook target address minus 4,
++	 * indicating a CET-enabled function entry point.
++	 */
++	if (sym_addr == target_addr - 4)
++		return true;
++#endif
++
++	return false;
++}
++
+ static void
+ show_kprobe_multi_json(struct bpf_link_info *info, json_writer_t *wtr)
+ {
+@@ -307,8 +329,9 @@ show_kprobe_multi_json(struct bpf_link_info *info, json_writer_t *wtr)
+ 		goto error;
+ 
+ 	for (i = 0; i < dd.sym_count; i++) {
+-		if (dd.sym_mapping[i].address != data[j].addr)
++		if (!symbol_matches_target(dd.sym_mapping[i].address, data[j].addr))
+ 			continue;
++
+ 		jsonw_start_object(json_wtr);
+ 		jsonw_uint_field(json_wtr, "addr", dd.sym_mapping[i].address);
+ 		jsonw_string_field(json_wtr, "func", dd.sym_mapping[i].name);
+@@ -744,7 +767,7 @@ static void show_kprobe_multi_plain(struct bpf_link_info *info)
+ 
+ 	printf("\n\t%-16s %-16s %s", "addr", "cookie", "func [module]");
+ 	for (i = 0; i < dd.sym_count; i++) {
+-		if (dd.sym_mapping[i].address != data[j].addr)
++		if (!symbol_matches_target(dd.sym_mapping[i].address, data[j].addr))
+ 			continue;
+ 		printf("\n\t%016lx %-16llx %s",
+ 		       dd.sym_mapping[i].address, data[j].cookie, dd.sym_mapping[i].name);
+-- 
+2.25.1
 
-  65bbf10b934a ("dt-bindings: timer: add Andes machine timer")
-
-in the arm-soc tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Q6y4ME1usX3zAYNY/lAkbcL
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmh+7TQACgkQAVBC80lX
-0Gxh7AgAmIH23+bnDA8H+xMzq6AFgh+VyWp/wGwuQ2a8CCYEV9AKHT11YeY1vW+M
-ql4/eXU1QRaHGTi9HhTUiXto0/YftJuAawet3Bt4IKQkMsWpgqWqqpoKI77veA90
-3pCA7w7siPb7wagajALITydRl8KeSkSQWJYRN+ZMpVDZRI6nwqjDNCQZIx/NiZ5+
-SHmu6cNy2luq9vuJcieHmjZ4JjfNpJj560L+awG2C3+vCgP3b0kZVL9WroMWM6hx
-6IewZ5tlvEIyBg/D6zV8kUSCgSJPELEwoRDNsWaBDnRbiHVHZ6yEzzIyjkl4QymZ
-N6z1wclSsTMnerHg7vq6v5DR4XxLRw==
-=TiJ7
------END PGP SIGNATURE-----
-
---Sig_/Q6y4ME1usX3zAYNY/lAkbcL--
 
