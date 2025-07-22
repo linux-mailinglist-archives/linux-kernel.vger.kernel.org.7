@@ -1,72 +1,184 @@
-Return-Path: <linux-kernel+bounces-740636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E63D8B0D6FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:11:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FE15B0D709
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:13:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20A84164DC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:11:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0B101696D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:13:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA3D2E0925;
-	Tue, 22 Jul 2025 10:11:23 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18442E0B45;
+	Tue, 22 Jul 2025 10:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ivd4Ms00"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9632E06ED
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 10:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC0C19DF62;
+	Tue, 22 Jul 2025 10:13:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753179082; cv=none; b=GGKoPakM2s2UsCwOY8tlUTloXCK+6mhKZsCbtVi3/x21uJObISOohdkPlrxoS183CR5dkK/ObQESoBA4bKFAPzOOCXKpU0CoQRFSq8vhPknGoUkJx95XRVjATxn0E211Axb7FSoGwCVrFjfAZ55e54sXIGeUVROAGXs2CUMwyUk=
+	t=1753179208; cv=none; b=rz61h9SNY8KwwJmkWDSRdSiM22mkhFTrLVD0sgnofuZQZ5M1dBVgFvubqLcquMrzdBzk7MffoXdrMyobtwj2XpFk3EBoHjHGeWiBF++vCpYKcstezuf+POR5x2iuuPC5hk7R4yFfm/m7D7TB6r8oMo3J9Su7Op7TsVJJYl/7PCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753179082; c=relaxed/simple;
-	bh=k7gk/WSw0/gQja9vwG1q7rESJp43kvSAGFsgPignS0s=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fTcK+1pulOlQ6J7VQUzmNZi6rp88h/0S6s1kM0D3bI2upaq8EQ2vd/IhgKOJ9Sv0D8MEuzDiMiwux/43VBtbkQ8cKm/suTjl66OAqebTv++hviofEJS5gAlHBLCbW5peSfDCVMsOnhbQkHCV0kONtMaDXu6EhTv6WQE5xfI770c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF2F5C4CEEB;
-	Tue, 22 Jul 2025 10:11:20 +0000 (UTC)
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: linux-arm-kernel@lists.infradead.org,
-	Kevin Brodsky <kevin.brodsky@arm.com>
-Cc: Will Deacon <will@kernel.org>,
+	s=arc-20240116; t=1753179208; c=relaxed/simple;
+	bh=963RdGEbtN6pVtOsnahKRKmPTAcKJFsBWCunaa6yuxs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gfPAuCK7mKvZrK/pF2DUVhOKX6mvhF3MqASuveBz8n+Pnj5IO1pb6l4ztqjWJpNWNyLmHvjKtXpUSoaQmZH/XXF0NVMtj5SyDVwn3sjDn8pid2BB167ATS35iaGPe71lXXNUynz8vjPzmypp6vKNyBMb+wZd2yWyHwfz6W1o+qQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ivd4Ms00; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1753179204;
+	bh=963RdGEbtN6pVtOsnahKRKmPTAcKJFsBWCunaa6yuxs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ivd4Ms00xPAZrb6qsS7ImkVywhM68D0nSXqsjd8jV6LT2rBBoHa4ftpU4h0bPhuAR
+	 EGi5pkCvbBdU6KSiJ4ELBaYiY2VpyBHhmATKikwxYWQqek2SLaq5MPQpUeDIDnADfE
+	 Ie/sbsY+4eYYRA6aNskol7Nm6bPO5to/A7zpHExYL6YM7a/XpesrC04BHQYdjYhC3Q
+	 gklM1FqlpMB2iFGZyjPyXn5aNxVbIf8s2uhjIVCPOqUMb48lQ2X/LExMLtj4GpudDk
+	 e6WHfvcf4u8sfCr1Vql9w/MuJzhYzBHXDRJD+d14pRoJrgSknunT1FetSn276Dm1H8
+	 u/5JZ2Vr6Eyqw==
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 15E9817E1301;
+	Tue, 22 Jul 2025 12:13:23 +0200 (CEST)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: sboyd@kernel.org
+Cc: jic23@kernel.org,
+	dlechner@baylibre.com,
+	nuno.sa@analog.com,
+	andy@kernel.org,
+	arnd@arndb.de,
+	gregkh@linuxfoundation.org,
+	srini@kernel.org,
+	vkoul@kernel.org,
+	kishon@kernel.org,
+	sre@kernel.org,
+	krzysztof.kozlowski@linaro.org,
+	u.kleine-koenig@baylibre.com,
+	angelogioacchino.delregno@collabora.com,
+	linux-arm-msm@vger.kernel.org,
+	linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	"Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-	Joey Gouly <joey.gouly@arm.com>
-Subject: Re: (subset) [PATCH 0/2] Improve POE handling for uaccess
-Date: Tue, 22 Jul 2025 11:11:18 +0100
-Message-Id: <175317907573.3058594.12056270289383660598.b4-ty@arm.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250619160042.2499290-1-kevin.brodsky@arm.com>
-References: <20250619160042.2499290-1-kevin.brodsky@arm.com>
+	linux-phy@lists.infradead.org,
+	linux-pm@vger.kernel.org,
+	kernel@collabora.com,
+	wenst@chromium.org,
+	casey.connolly@linaro.org
+Subject: [PATCH v2 0/7] SPMI: Implement sub-devices and migrate drivers
+Date: Tue, 22 Jul 2025 12:13:10 +0200
+Message-ID: <20250722101317.76729-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Thu, 19 Jun 2025 17:00:40 +0100, Kevin Brodsky wrote:
-> This short series attempts to approach POE (Overlay) faults consistently
-> w.r.t. uaccess. We currently assume that spurious Overlay faults are
-> handled by retrying the access [1], but this isn't the case.
-> 
-> Patch 1 ensures that spurious Overlay faults are indeed ignored. This
-> being done, it typically isn't worth using an ISB when writing to
-> POR_EL0. Patch 2 removes the remaining ISB in the signal handling code.
-> 
-> [...]
+Changes in v2:
+ - Fixed missing `sparent` initialization in phy-qcom-eusb2-repeater
+ - Changed val_bits to 8 in all Qualcomm drivers to ensure
+   compatibility as suggested by Casey
+ - Added struct device pointer in all conversion commits as suggested
+   by Andy
+ - Exported newly introduced functions with a new "SPMI" namespace
+   and imported the same in all converted drivers as suggested by Andy
+ - Added missing error checking for dev_set_name() call in spmi.c
+   as suggested by Andy
+ - Added comma to last entry of regmap_config as suggested by Andy
 
-Applied to arm64 (for-next/misc), thanks!
+While adding support for newer MediaTek platforms, featuring complex
+SPMI PMICs, I've seen that those SPMI-connected chips are internally
+divided in various IP blocks, reachable in specific contiguous address
+ranges... more or less like a MMIO, but over a slow SPMI bus instead.
 
-[2/2] arm64: signal: Remove ISB when resetting POR_EL0
-      https://git.kernel.org/arm64/c/1a665a71ef0f
+I recalled that Qualcomm had something similar... and upon checking a
+couple of devicetrees, yeah - indeed it's the same over there.
+
+What I've seen then is a common pattern of reading the "reg" property
+from devicetree in a struct member and then either
+ A. Wrapping regmap_{read/write/etc}() calls in a function that adds
+    the register base with "base + ..register", like it's done with
+    writel()/readl() calls; or
+ B. Doing the same as A. but without wrapper functions.
+
+Even though that works just fine, in my opinion it's wrong.
+
+The regmap API is way more complex than MMIO-only readl()/writel()
+functions for multiple reasons (including supporting multiple busses
+like SPMI, of course) - but everyone seemed to forget that regmap
+can manage register base offsets transparently and automatically in
+its API functions by simply adding a `reg_base` to the regmap_config
+structure, which is used for initializing a `struct regmap`.
+
+So, here we go: this series implements the software concept of an SPMI
+Sub-Device (which, well, also reflects how Qualcomm and MediaTek's
+actual hardware is laid out anyway).
+
+               SPMI Controller
+                     |                ______
+                     |               /       Sub-Device 1
+                     V              /
+              SPMI Device (PMIC) ----------- Sub-Device 2
+                                    \
+                                     \______ Sub-Device 3
+
+As per this implementation, an SPMI Sub-Device can be allocated/created
+and added in any driver that implements a... well.. subdevice (!) with
+an SPMI "main" device as its parent: this allows to create and finally
+to correctly configure a regmap that is specific to the sub-device,
+operating on its specific address range and reading, and writing, to
+its registers with the regmap API taking care of adding the base address
+of a sub-device's registers as per regmap API design.
+
+All of the SPMI Sub-Devices are therefore added as children of the SPMI
+Device (usually a PMIC), as communication depends on the PMIC's SPMI bus
+to be available (and the PMIC to be up and running, of course).
+
+Summarizing the dependency chain (which is obvious to whoever knows what
+is going on with Qualcomm and/or MediaTek SPMI PMICs):
+    "SPMI Sub-Device x...N" are children "SPMI Device"
+    "SPMI Device" is a child of "SPMI Controller"
+
+(that was just another way to say the same thing as the graph above anyway).
+
+Along with the new SPMI Sub-Device registration functions, I have also
+performed a conversion of some Qualcomm SPMI drivers and only where the
+actual conversion was trivial.
+
+I haven't included any conversion of more complex Qualcomm SPMI drivers
+because I don't have the required bandwidth to do so (and besides, I think,
+but haven't exactly verified, that some of those require SoCs that I don't
+have for testing anyway).
+
+AngeloGioacchino Del Regno (7):
+  spmi: Implement spmi_subdevice_alloc_and_add() and devm variant
+  nvmem: qcom-spmi-sdam: Migrate to devm_spmi_subdevice_alloc_and_add()
+  power: reset: qcom-pon: Migrate to devm_spmi_subdevice_alloc_and_add()
+  phy: qualcomm: eusb2-repeater: Migrate to
+    devm_spmi_subdevice_alloc_and_add()
+  misc: qcom-coincell: Migrate to devm_spmi_subdevice_alloc_and_add()
+  iio: adc: qcom-spmi-iadc: Migrate to
+    devm_spmi_subdevice_alloc_and_add()
+  iio: adc: qcom-spmi-iadc: Remove regmap R/W wrapper functions
+
+ drivers/iio/adc/qcom-spmi-iadc.c              | 113 ++++++++----------
+ drivers/misc/qcom-coincell.c                  |  44 +++++--
+ drivers/nvmem/qcom-spmi-sdam.c                |  43 +++++--
+ .../phy/qualcomm/phy-qcom-eusb2-repeater.c    |  51 +++++---
+ drivers/power/reset/qcom-pon.c                |  37 ++++--
+ drivers/spmi/spmi-devres.c                    |  23 ++++
+ drivers/spmi/spmi.c                           |  83 +++++++++++++
+ include/linux/spmi.h                          |  16 +++
+ 8 files changed, 302 insertions(+), 108 deletions(-)
 
 -- 
-Catalin
+2.50.1
 
 
