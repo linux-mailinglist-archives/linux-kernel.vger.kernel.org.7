@@ -1,94 +1,82 @@
-Return-Path: <linux-kernel+bounces-740478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1A9CB0D4B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:31:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E97FEB0D4B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:32:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA7CD542C1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:31:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C5556C5E14
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:32:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05122C158F;
-	Tue, 22 Jul 2025 08:30:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 343762D3207;
+	Tue, 22 Jul 2025 08:32:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HhlxpS42";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9fZNr1pA";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HhlxpS42";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9fZNr1pA"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xfjmor6s"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C201ADC90
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 08:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B49222FDFF
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 08:32:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753173055; cv=none; b=cGYaYvFSmQLPuxO7ae3conK5aGgKs99cvibqCqiHaIONQ9bXEH7EnnozcDCZVA2wiU2z4Wie88gHqZXKlE6ZUa+zfZy+Hm5iJEHXH36aQiuDAoyOyeLGDFPeUk1hXOWEl/CgGVNjASMnyGrmoNveH+9x2t+hacCY/ZfCcIs9uOg=
+	t=1753173142; cv=none; b=XKC3yvzNgEAl1JXu3ivFbDEz5isPJkw4QF0+gHotFHc7ELY1uR1O/MjXZK8cdeG03kpe5EVK5+pU5RFEkAXGuQcjPSnAxR23uVJVdaUYcfzN1bRTOViAMTJbI0FqJT6U0dloaL9vN7fxSh4OxAjcVHmBdf19RxR1y6FVjIQZkcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753173055; c=relaxed/simple;
-	bh=nuMrp4FEiuu3MP7bNP6Sa2dcUb0guT+ZuN70gdGDV7E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eZfabRuHhr9Vex5xaJPqNE+6g6MSe8Vhskr22Lqcrr2hUBDcZpwpph2dbEhtVZCRSp5r/2At1Cwq2CKU+ExUBoFOGJFwdKsoa3TbdKbexKgg/zLesMonYvJCGOBB9Z5OJzDoTfnHGha9qSuT7L7XcRxUnIMmcsAhgETs1jSfZcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HhlxpS42; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9fZNr1pA; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HhlxpS42; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9fZNr1pA; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9B36D1FB3E;
-	Tue, 22 Jul 2025 08:30:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753173045; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=i0fdf9kvnx2xDWK8fxogdC6MbmVtc5r9ZvknpyoLGxQ=;
-	b=HhlxpS426F2IiCn7NI9GByqcRHgXvWi1C4sqMawxxC6puz0UnSotm72eoKB/9No+8IEPjp
-	LgvGA4PfvItwCJMjMxi30M8fU9Y8EgVqnGg8CUV/xJE/WrP/i78eZwDgmhQxGJanK/22oo
-	bmw3uPNr6HOOniSV47XbGVFhcFPH5nw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753173045;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=i0fdf9kvnx2xDWK8fxogdC6MbmVtc5r9ZvknpyoLGxQ=;
-	b=9fZNr1pAnR/+eLNiqQXUkCfFhEFpvChNsDhkcI1oKIxIFrBvPi2Aa1yRzZw9ibHRdST3it
-	DqI+wM6GoZyXpJAw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753173045; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=i0fdf9kvnx2xDWK8fxogdC6MbmVtc5r9ZvknpyoLGxQ=;
-	b=HhlxpS426F2IiCn7NI9GByqcRHgXvWi1C4sqMawxxC6puz0UnSotm72eoKB/9No+8IEPjp
-	LgvGA4PfvItwCJMjMxi30M8fU9Y8EgVqnGg8CUV/xJE/WrP/i78eZwDgmhQxGJanK/22oo
-	bmw3uPNr6HOOniSV47XbGVFhcFPH5nw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753173045;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=i0fdf9kvnx2xDWK8fxogdC6MbmVtc5r9ZvknpyoLGxQ=;
-	b=9fZNr1pAnR/+eLNiqQXUkCfFhEFpvChNsDhkcI1oKIxIFrBvPi2Aa1yRzZw9ibHRdST3it
-	DqI+wM6GoZyXpJAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 895F7132EA;
-	Tue, 22 Jul 2025 08:30:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 5hUfITVMf2jQDwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 22 Jul 2025 08:30:45 +0000
-Message-ID: <4fe82763-09ec-4b3c-bfda-5997c55996a9@suse.cz>
-Date: Tue, 22 Jul 2025 10:30:45 +0200
+	s=arc-20240116; t=1753173142; c=relaxed/simple;
+	bh=rAgS6t6wG20qiV2by2xORtgcZUviNn8FpaxxBJIUk60=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=bxIojQPYbmWfJxIdzv1+gHrd/O8k3c5VHBwDae09fItMCKeNNoZxVSlBS0ootKFeMrwk30s9i/guOUMiw3+WyCmccMz/oOuueecqcO3Xg/nUFo8rupqp3bAWLhLQe8djzC3MGAsYbULhgI9uUhrKPeQGwTAQuMzaFbIT3o9FhO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xfjmor6s; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-454f428038eso44519845e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 01:32:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753173139; x=1753777939; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EmqRihQE4cEXI6g+dRmCaPE8w5nJ7dL9XpOBOkXpgns=;
+        b=xfjmor6svATxlZ8LmTGr1Kz+UJlTuyf42SExZT6xP2k5IRtpvKYnU3zc51KFLKd4LY
+         DhO+a/BU9307Tg1eP9znKspXzKV7qvox0KHNs3UKr2FJ9Z9j0H74kz8W1JiYtDS/rUY0
+         BFpsprylV4JvPDkot+SlkOZd6NKQqDjnNxCIKn6FY6ucsfyd0Sbb7Ydk4VJ3xdEm1ReE
+         bcLaxrGmYCSfGeHoHokKxIJ5LjuIFRGv2pwIHpzzr6gj73A7fPxP+SEtFofU7cp49AFu
+         riVtijoonipwwopdDsXELOX+ygzJAwDGgj6PNZkIxK7xv5Wpqb3kX6+0PLhP8vH4TcPo
+         WiYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753173139; x=1753777939;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=EmqRihQE4cEXI6g+dRmCaPE8w5nJ7dL9XpOBOkXpgns=;
+        b=a8S+gMyIKvpGT7C51tetAzlhjxS0v9Js8S4RHYZeBD/1tb5PcaWGwxYkS6NCeyakkX
+         Kqw0nZA0nax7VLWoQAEKYpwsrhqnjzj1L6MWb9zMyEba1dKPVT85ixQdKkubAQ2vvulZ
+         yGbZFtCr3QV4LDQd3/iHxnBGizmYmmG98YI6qAevfIl/CZcb9WMajFWkBeLeHVBKseve
+         3R4aAwqUrHe1/qEyLSjXnay4kvPqeK7bdPnEdyh0hUx5585bUh+uTq1LRkhpTY+4o6Tx
+         yO7TsKZt28HT+KHSn1t/OC+WFzqIPLLI/V+XuFRWIw83OxXfBmlrQs2cD6tj9rQVjgQo
+         hzbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXr/CjU/0mxjR6KkqNwyTlkrESl095v2NBrhXuLZ3ySyzisP9FHr4ede5fPnzuERzy+cyOkfoI5A+dOe78=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywfqa9tRIdnv/4so+/E1uKuQDHGGXTGbdg59bwGnb98bpnqz/nI
+	e86ldZAff4rrcrX6lQZCB3SJVeMfb9WqUVZ1s2umThuYLwJO40mQUTp6OBHMjJpiFFw=
+X-Gm-Gg: ASbGnctMYYjpw+uwcalkgZ498wWxAsEpKJCRrIru9pKCjB2zrQ92Z0Rt9wqWPdH/DNd
+	oc42Yj8WApDs1CBOewvwajPkoLjCvwC32RvTbuN10qriAAbmUwejOBUeYTYLc914z6FLuUVKX6q
+	gRWiZujqiOGOlJ/auOieNeA0IhCen7QJcScmcZeUupEiFeNSN1paaje6tjr125/OX5p0cOkTulm
+	QpYsInJRO2+D05wdUWp9lYUmHOfnDNwAAEamdBBUm2p7LJka6vRIXhPFKkFgIZTR4Xo4wBMBle1
+	M/7XOJEn0YxLn2oQPsIXxyBZ2TZtY+IU1dS8dtesYkdDxvMwR8lnnT4jaVeh2ii4a/F3rUiQfRD
+	jSTfHjIHrRoTOrC/6fUDsIGd+U17q+qTBWBqRsd6Pa+IGeliWFQ+K7ggtH0xyQ2XVSaGuIGuN55
+	M=
+X-Google-Smtp-Source: AGHT+IGZH+cXUgzHi50tWmYat0JhKpfjMAywO/xvrjiS+LeEv8IM/8RbRGSLqjTRz/gsQJZp0D0k7Q==
+X-Received: by 2002:a05:600c:1c88:b0:455:fc16:9ed8 with SMTP id 5b1f17b1804b1-4562e3b9144mr229030715e9.30.1753173138546;
+        Tue, 22 Jul 2025 01:32:18 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:bce4:725d:6922:d1ba? ([2a01:e0a:3d9:2080:bce4:725d:6922:d1ba])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4563b5a4055sm126753905e9.5.2025.07.22.01.32.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Jul 2025 01:32:18 -0700 (PDT)
+Message-ID: <33d76d7f-ab14-4e76-8ffb-eb370901a046@linaro.org>
+Date: Tue, 22 Jul 2025 10:32:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,132 +84,166 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: manual merge of the slab tree with the mm-unstable
- tree
-To: Luiz Capitulino <luizcap@redhat.com>, Matthew Wilcox
- <willy@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- David Hildenbrand <david@redhat.com>
-References: <20250721142001.3d1c8777@canb.auug.org.au>
- <aH6XIUX4xyo2pZfY@casper.infradead.org>
- <954b5aa4-0dbd-445f-8859-320fb6a1186d@redhat.com>
-Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <954b5aa4-0dbd-445f-8859-320fb6a1186d@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	MIME_TRACE(0.00)[0:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -4.30
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH 2/2] phy: qcom-mipi-csi2: Add a CSI2 MIPI D-PHY driver
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250710-x1e-csi2-phy-v1-0-74acbb5b162b@linaro.org>
+ <20250710-x1e-csi2-phy-v1-2-74acbb5b162b@linaro.org>
+ <11b573d5-ce4d-476c-b94c-216d427cd838@linaro.org>
+ <08261aa4-689b-4d6b-bfd2-221c1976d254@linaro.org>
+ <a7f64b31-4767-4281-b452-a2bc5351d745@mleia.com>
+ <c93624bb-ee7b-45ac-8b53-b5391f11c9c9@linaro.org>
+ <eac3a877-a4aa-4789-9013-ab8b6c91e0f3@linaro.org>
+ <0a12879f-dc4a-47fb-87a0-ac4b8bcd4d75@linaro.org>
+ <53a19b1d-5665-4937-a07c-5dd1fcde06c5@linaro.org>
+ <3b760685-97db-46e3-80a3-7fad69ad31cd@oss.qualcomm.com>
+ <94b75177-9401-4e0c-966b-5847a29cb6f7@linaro.org>
+ <427548c0-b0e3-4462-a15e-bd7843f00c7f@oss.qualcomm.com>
+ <3UXVZ6ANM9mDjVdMV4SXsiIx_pT3S1lp3RC_Q7mh_o7jF2dpYsni1Sl2TAWv6OCMCRTFmi9aE6BxDquGkOnwEg==@protonmail.internalid>
+ <8b908a20-0bf3-447d-82ea-a5ecee1bf54c@linaro.org>
+ <57501e81-7e9c-4cb1-9a37-18307d1e06ca@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <57501e81-7e9c-4cb1-9a37-18307d1e06ca@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 7/21/25 23:35, Luiz Capitulino wrote:
-> On 2025-07-21 15:38, Matthew Wilcox wrote:
->> On Mon, Jul 21, 2025 at 02:20:01PM +1000, Stephen Rothwell wrote:
->>> Hi all,
+On 21/07/2025 18:16, Bryan O'Donoghue wrote:
+> On 21/07/2025 16:46, neil.armstrong@linaro.org wrote:
+>> On 15/07/2025 11:33, Konrad Dybcio wrote:
+>>> On 7/15/25 11:20 AM, Vladimir Zapolskiy wrote:
+>>>> On 7/15/25 12:01, Konrad Dybcio wrote:
+>>>>> On 7/15/25 8:35 AM, Vladimir Zapolskiy wrote:
+>>>>>> On 7/15/25 03:13, Bryan O'Donoghue wrote:
+>>>>>>> On 14/07/2025 16:30, Vladimir Zapolskiy wrote:
+>>>>>>>>>
+>>>>>>>>> I think that is genuinely something we should handle in camss-csid.c
+>>>>>>>>> maybe with some meta-data inside of the ports/endpoints..
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>> This is a CSIPHY property, a CSIPHY hardware configuration and a wiring
+>>>>>>>> of sensors to a CSIPHY. Where is the relation to CSID here? There is no.
+>>>>>>>
+>>>>>>> All the PHY really needs to know is the # of lanes in aggregate, which
+>>>>>>> physical lanes to map to which logical lanes and the pixel clock.
+>>>>>>>
+>>>>>>> We should add additional support to the Kernel's D-PHY API parameters
+>>>>>>> mechanism to support that physical-to-logical mapping but, that's not
+>>>>>>> required for this series or for any currently know upstream user of CAMSS.
+>>>>>>>
+>>>>>>>> Please share at least a device tree node description, which supports
+>>>>>>>> a connection of two sensors to a single CSIPHY, like it shall be done
+>>>>>>>> expectedly.
+>>>>>>> &camss {
+>>>>>>>          port@0 {
+>>>>>>>              csiphy0_lanes01_ep: endpoint0 {
+>>>>>>>                  data-lanes = <0 1>;
+>>>>>>>                  remote-endpoint = <&sensor0_ep>;
+>>>>>>>              };
+>>>>>>>
+>>>>>>>              csiphy0_lanes23_ep: endpoint0 {
+>>>>>>>                  data-lanes = <2 3>;
+>>>>>>>                  remote-endpoint = <&sensor1_ep>;
+>>>>>>>              };
+>>>>>>>           };
+>>>>>>> };
+>>>>>>
+>>>>>> Don't you understand that this is broken?.. That's no good.
+>>>>>>
+>>>>>> Please listen and reread the messages given to you above, your proposed
+>>>>>> "solution" does not support by design a valid hardware setup of two
+>>>>>> sensors connected to the same CSIPHY.
+>>>>>>
+>>>>>> I would propose to stop force pushing an uncorrectable dt scheme, it
+>>>>>> makes no sense.
+>>>>>
+>>>>> If all you're asking for is an ability to grab an of_graph reference
+>>>>> from the camss (v4l2) driver, you can simply do something along the
+>>>>> lines of of_graph_get_remote_port(phy->dev->of_node)
+>>>>>
+>>>>
+>>>> It's not about the driver specifics, my comment is about a proper
+>>>> hardware description in dts notation, please see the device tree node
+>>>> names.
 >>>
->>> Today's linux-next merge of the slab tree got a conflict in:
+>>> I'm a little lost on what you're trying to argue for..
 >>>
->>>    fs/proc/page.c
+>>> I could make out:
 >>>
->>> between commit:
+>>> 1. "the phy should be a multimedia device"
+>>> 2. "There is no ports at all, which makes the device tree node unusable,
+>>>     since you can not provide a way to connect any sensors to the phy."
 >>>
->>>    a602ee331e31 ("fs: stable_page_flags(): use snapshot_page()")
+>>> I don't really understand #1.. maybe that could be the case if the PHY
+>>> has a multitude of tunables (which I don't know if it does, but wouldn't
+>>> be exactly surprised if it did) that may be usecase/pipeline-specific
 >>>
->>> from the mm-unstable tree and commit:
->>>
->>>    d8178294c53e ("proc: Remove mention of PG_slab")
->>>
->>> from the slab tree.
->>>
->>> I fixed it up (I just used the former version) and can carry the fix as
->>> necessary. This is now fixed as far as linux-next is concerned, but any
->> 
->> I think the snapshot_page commit was incorrect in removing this comment.
->> It is still valuable information.  I think the comment from d8178294c53e
->> should remain in the tree after the resolution.
+>>> As for #2, I do think it makes sense to connect the sensors to the PHY,
+>>> as that's a representation of electrical signals travelling from the
+>>> producer to the consumer (plus the data passed in e.g. data-lanes is
+>>> directly related to the PHY and necessarily consumed by its driver)
+>>
+>> The port/endpoint should represent the data flow, and if the signal is the following:
+>>
+>> sensor -> csiphy -> csid
 > 
-> The comment wasn't just dropped, David suggested a new version for the comment
-> (which is similar to yours). The new comment is now part of set_ps_flags()
-> which is where we set this flag in the snapshot_page() implementation:
+> I'll be honest.
 > 
-> static void set_ps_flags(struct page_snapshot *ps, const struct folio *folio,
->                           const struct page *page)
-> {
->          /*
->           * Only the first page of a high-order buddy page has PageBuddy() set.
->           * So we have to check manually whether this page is part of a high-
->           * order buddy page.
->           */
->          if (PageBuddy(page))
->                  ps->flags |= PAGE_SNAPSHOT_PG_BUDDY;
+> I looked at your upstreamed code
+> 
+> drivers/phy/amlogic/phy-meson-axg-mipi-dphy.c Documentation/devicetree/bindings/parch/arm64/boot/dts/amlogic/meson-khadas-vim3-ts050.dtsoc/meson-axg.dtsi
+> 
+> And didn't really think CSIPHY needed to be included in the data-graph.
 
-That seems to work. I can therefore simply drop d8178294c53e from the slab tree.
+This is DSI, but I understand your point.
 
->          else if (page_count(page) == 0 && is_free_buddy_page(page))
->                  ps->flags |= PAGE_SNAPSHOT_PG_BUDDY;
+The whole key point here is the combo mode, as I understood the combo mode feature
+makes the PHY lanes available as 2 separate streams, like if you got 2 "controllers"
+attached to the same PHY. So in fact, the PHY should have a single node, but 2 PHY
+interfaces in combo mode.
+
+This makes all this controller/phy model very complex to handle and add a lot of
+logic in the camss side. Moving the "csiphy" as an independent media device that
+can declare up to 2 endpoints in combo mode makes things much simpler, and allows
+us to attach each "csiphy" stream to any "controller" side of camss.
+
+Neil
+
 > 
->          if (folio_test_idle(folio))
->                  ps->flags |= PAGE_SNAPSHOT_PG_IDLE;
-> }
-> 
+> ---
+> bod
 
 
