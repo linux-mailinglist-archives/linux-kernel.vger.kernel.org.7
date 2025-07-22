@@ -1,159 +1,149 @@
-Return-Path: <linux-kernel+bounces-740466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FA38B0D477
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:24:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29B54B0D47B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:25:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8CE217B288
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:23:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A52B3BF291
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C102D373B;
-	Tue, 22 Jul 2025 08:23:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12FA12D3A97;
+	Tue, 22 Jul 2025 08:24:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vJKu2eJa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qDCYuOjQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105032BEFE8
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 08:23:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E722BEFE8;
+	Tue, 22 Jul 2025 08:24:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753172611; cv=none; b=X9321txcM7N7VCPE3bu4tV2UtD6YFNXzISaYVDt/C4Z5dxeaZlzIZJxglYckRLTxWKQbYJ/aS//lTJT6Hk2GsccTjhMBSb8SM7CqBR0KEkVcwlxu45Xei8U95YUmPWHZ8TVmcSl/dYWKAyhFNTtkGvXFcSpJp0b/Ma3jlcVcYQo=
+	t=1753172643; cv=none; b=DAoX6JDidhykiB4cOF8ncw2EgfoNG5WOARBn8+cWV2igESvw61lsRkRxzE5dcbVsyfXP+Aksa0KEo/a1Ui+BidlK2wUe7We0mFnvJQAX2hVvBqOe+iZAV4g8Kc80+BQQd+8p1a0DwjRH/xZVPR3jpA3wmVBHyD9JITf4FCB8klw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753172611; c=relaxed/simple;
-	bh=Y7L/rRO5yyKs2AKEjD3Is669RR4GnyvoU1Va0/d4nes=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CxBsKBTlA/HsXSw6Q7NE0nIDBMmKv68X2yBVO0cUEFq8POc2YetpEv4XeI90ijiCKtUuTToCiquI9cztiNlovmUyw6AySnsdRpNjU2+LTohw4jjyR+w7HS0dhFQhGm12EABTxjSB4gO9bKSzgMLXpCWssVD7yumqA5hULD9nl2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vJKu2eJa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C65EAC4CEF4;
-	Tue, 22 Jul 2025 08:23:28 +0000 (UTC)
+	s=arc-20240116; t=1753172643; c=relaxed/simple;
+	bh=rAbn1W2T42+hEDaVyaZcCAf8xf0v3e37cobnvY2B8+8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=YCQheIh8832J1smPt3m7/SSZy4bzivqvd4Ss6SJEq6SzcHI3DLwSUliApBF/kuop8pyA0UI9EFeY4LKQevkYkOkQglo4Sa3hvBe1me2+MEOEfhVoxCDD8BJdTh9Im+gbxMkPhwYA/CjQY5+s0LVcWu4ZdxBWy+y9XyVl+DmV3PI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qDCYuOjQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AC3FC4CEEB;
+	Tue, 22 Jul 2025 08:24:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753172610;
-	bh=Y7L/rRO5yyKs2AKEjD3Is669RR4GnyvoU1Va0/d4nes=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vJKu2eJataVITCVflCr840wmheOuK4XZlYWs6rrrZpZ8f8334JvjTIPjTBtcg9wmK
-	 hR5ceZw2sIh+Bc1ywwL2YvnTVUnnhu5pNNCs4fpc4ayWUqS5XcKkPeUvBsSeB5DxEG
-	 0/CXdshl05qh+Ss1Nmh0QUeiSO3LavlTOlLASQnBZnEMPKLDhte/RyXse9forwWwKE
-	 o1DDCseBL37p9rIcjs59P5Lc6q3DSY6ZZ9ZZTUuzJvC2FesBKpl29GOEAy1h/BDi/T
-	 yLyGxV3knvDunrs7c0b1bDSieX44bXlDNDruNlVmKPYTgNSZqKxMJvWYJOHtQXJgYJ
-	 leAGO78mPSmuQ==
-Date: Tue, 22 Jul 2025 11:23:25 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: mawupeng <mawupeng1@huawei.com>
-Cc: akpm@linux-foundation.org, ardb@kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: ignore nomap memory during mirror init
-Message-ID: <aH9KfV8XM5fNsR/Y@kernel.org>
-References: <20250717085723.1875462-1-mawupeng1@huawei.com>
- <aHjQp9zPVPuPyP3B@kernel.org>
- <9688e968-e9af-4143-b550-16c02a0b4ceb@huawei.com>
- <aHj8mfecDhJJZW1Y@kernel.org>
- <8d604308-36d3-4b55-8ddb-b33f8b586c1a@huawei.com>
- <aHzjOxg_oPp06blC@kernel.org>
- <205873c9-b8cd-4aa7-822e-3c1d6a5a5ea7@huawei.com>
+	s=k20201202; t=1753172643;
+	bh=rAbn1W2T42+hEDaVyaZcCAf8xf0v3e37cobnvY2B8+8=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=qDCYuOjQ1Z3sJrBUEl/0mKHhTfxoOJp+YK3gd/KbYWejRcvAdAUnROeavsRpLkHY1
+	 aacJIjH0zYe/gDHlaZYWeO7ZwbbMQ7hYNJieJ6x7mpTAJw9d8UM5eADhwDMkbvuNxF
+	 COjB6sV2A1KSkAKy6P5Vo1pUujJSmM71mWtmFnmpC4pVQW8C1XEFz/tg1RDy7zKaiM
+	 FbQWkFFqWaCU+f1voC2PxIAOeVG4gRp+CMHGCTX1U2npMqrMjr3WUmsDUCp/sk4Opx
+	 VpUmCciEE5pJgLZQ+EBdIFM286nmnK9D+KM31GStAvYfchbe9ejDnH1lTAU4sKYFZo
+	 dsDYzsfNiyGBA==
+Message-ID: <4c7cbd2e-7f94-4f02-b18a-7b2694e93412@kernel.org>
+Date: Tue, 22 Jul 2025 10:23:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <205873c9-b8cd-4aa7-822e-3c1d6a5a5ea7@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] KVM: PPC: use for_each_set_bit() in IRQ_check()
+To: Yury Norov <yury.norov@gmail.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Nicholas Piggin <npiggin@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250717192418.207114-1-yury.norov@gmail.com>
+ <20250717192418.207114-4-yury.norov@gmail.com>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <20250717192418.207114-4-yury.norov@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 21, 2025 at 10:11:11AM +0800, mawupeng wrote:
-> On 2025/7/20 20:38, Mike Rapoport wrote:
-> > On Fri, Jul 18, 2025 at 09:37:48AM +0800, mawupeng wrote:
-> >>
-> >>
-> >> On 2025/7/17 21:37, Mike Rapoport wrote:
-> >>> On Thu, Jul 17, 2025 at 07:06:52PM +0800, mawupeng wrote:
-> >>>>
-> >>>> On 2025/7/17 18:29, Mike Rapoport wrote:
-> >>>>> On Thu, Jul 17, 2025 at 04:57:23PM +0800, Wupeng Ma wrote:
-> >>>>>> When memory mirroring is enabled, the BIOS may reserve memory regions
-> >>>>>> at the start of the physical address space without the MR flag. This will
-> >>>>>> lead to zone_movable_pfn to be updated to the start of these reserved
-> >>>>>> regions, resulting in subsequent mirrored memory being ignored.
-> >>>>>>
-> >>>>>> Here is the log with efi=debug enabled:
-> >>>>>>   efi:   0x084004000000-0x0842bf37ffff [Conventional|   |  |MR|...|WB|WT|WC|  ]
-> >>>>>>   efi:   0x0842bf380000-0x0842c21effff [Loader Code |   |  |MR|...|WB|WT|WC|  ]
-> >>>>>>   efi:   0x0842c21f0000-0x0847ffffffff [Conventional|   |  |MR|...|WB|WT|WC|  ]
-> >>>>>>   efi:   0x085000000000-0x085fffffffff [Conventional|   |  |  |...|WB|WT|WC|  ]
-> >>>>>> ...
-> >>>>>>   efi:   0x084000000000-0x084003ffffff [Reserved    |   |  |  |...|WB|WT|WC|  ]
-> >>>>>>
-> >>>>>> Since this kind of memory can not be used by kernel. ignore nomap memory to fix
-> >>>>>> this issue.
-> >>>>
-> >>>> Since the first non-mirror pfn of this node is 0x084000000000, then zone_movable_pfn 
-> >>>> for this node will be updated to this. This will lead to Mirror Region 
-> >>>>   - 0x084004000000-0x0842bf37ffff
-> >>>>   - 0x0842bf380000-0x0842c21effff 
-> >>>>   - 0x0842c21f0000-0x0847ffffffff
-> >>>> be seen as non-mirror memory since zone_movable_pfn will be the start_pfn of this node
-> >>>> in adjust_zone_range_for_zone_movable().
-> >>>
-> >>> What do you mean by "seen as non-mirror memory"?
-> >>
-> >> It mean these memory range will be add to movable zone.
-> >>
-> >>>
-> >>> What is the problem with having movable zone on that node start at
-> >>> 0x084000000000?
-> >>>
-> >>> Can you post the kernel log up to "Memory: nK/mK available" line for more
-> >>> context?
-> >>
-> >> Memory: nK/mK available can not see be problem here, since there is nothing wrong
-> >> with the total memory. However this problem can be shown via lsmem --output-all
-> > 
-> > I didn't ask for that particular line but for *up to that line*.
-> >  
-> >> w/o this patch
-> >> [root@localhost ~]# lsmem --output-all
-> >> RANGE                                  SIZE  STATE REMOVABLE         BLOCK NODE   ZONES
-> >> 0x0000084000000000-0x00000847ffffffff   32G online       yes   67584-67839    0 Movable
-> >> 0x0000085000000000-0x0000085fffffffff   64G online       yes   68096-68607    0 Movable
-> >>
-> >> w/ this patch
-> >> [root@localhost ~]# lsmem --output-all
-> >> RANGE                                  SIZE  STATE REMOVABLE         BLOCK NODE   ZONES
-> >> 0x0000084000000000-0x00000847ffffffff   32G online       yes   8448-8479    0  Normal
-> >> 0x0000085000000000-0x0000085fffffffff   64G online       yes   8512-8575    0 Movable
-> > 
-> > As I see the problem, you have a problematic firmware that fails to report
-> > memory as mirrored because it reserved for firmware own use. This causes
-> > for non-mirrored memory to appear before mirrored memory. And this breaks
-> > an assumption in find_zone_movable_pfns_for_nodes() that mirrored memory
-> > always has lower addresses than non-mirrored memory and you end up wiht
-> > having all the memory in movable zone.
+On 17. 07. 25, 21:24, Yury Norov wrote:
+> From: Yury Norov (NVIDIA) <yury.norov@gmail.com>
 > 
-> Yes.
+> The function opencodes for_each_set_bit() macro.
 > 
-> > 
-> > So to workaround this firmware issue you propose a hack that would skip
-> > NOMAP regions while calculating zone_movable_pfn because your particular
-> > firmware reports the reserved mirrored memory as NOMAP.
-> > 
-> > Why don't you simply pass "kernelcore=32G" on the command line and you'll
-> > get the same result.
+> Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+> ---
+>   arch/powerpc/kvm/mpic.c | 8 ++------
+>   1 file changed, 2 insertions(+), 6 deletions(-)
 > 
-> Since mirrored memory are in each node, not only one, "kernelcore=32G" can
-> not fix this problem.
+> diff --git a/arch/powerpc/kvm/mpic.c b/arch/powerpc/kvm/mpic.c
+> index 23e9c2bd9f27..ae68b213f0f9 100644
+> --- a/arch/powerpc/kvm/mpic.c
+> +++ b/arch/powerpc/kvm/mpic.c
+> @@ -290,15 +290,11 @@ static inline void IRQ_resetbit(struct irq_queue *q, int n_IRQ)
+>   
+>   static void IRQ_check(struct openpic *opp, struct irq_queue *q)
+>   {
+> -	int irq = -1;
+> +	int irq;
 
-I don't see other nodes in lsmem output. And I asked for the kernel log
-exactly to see how kernel sees the memory on the system.
- 
-Another question is do you really need ZONE_MOVABLE? Most of the time MM
-core operates on the pageblock granularity and even if all the memory are
-in ZONE_NORMAL the pageblocks are still movable.
+Can be unsigned now, right?
 
+>   	int next = -1;
+>   	int priority = -1;
+>   
+> -	for (;;) {
+> -		irq = find_next_bit(q->queue, opp->max_irq, irq + 1);
+> -		if (irq == opp->max_irq)
+> -			break;
+> -
+> +	for_each_set_bit(irq, q->queue, opp->max_irq) {
+>   		pr_debug("IRQ_check: irq %d set ivpr_pr=%d pr=%d\n",
+>   			irq, IVPR_PRIORITY(opp->src[irq].ivpr), priority);
+>   
+
+thanks,
 -- 
-Sincerely yours,
-Mike.
+js
+suse labs
+
 
