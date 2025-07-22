@@ -1,84 +1,144 @@
-Return-Path: <linux-kernel+bounces-740820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5EAEB0D993
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:27:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 328E9B0D9A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:31:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F0D15632BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:26:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72496188603D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E632E2F05;
-	Tue, 22 Jul 2025 12:26:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02602E975F;
+	Tue, 22 Jul 2025 12:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="TfRMkSZ7"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b="C/Oa7IzQ"
+Received: from mx0a-00190b01.pphosted.com (mx0a-00190b01.pphosted.com [67.231.149.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA8F1A0712;
-	Tue, 22 Jul 2025 12:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A652E2F04;
+	Tue, 22 Jul 2025 12:29:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753187196; cv=none; b=IcrykrgqP0yRHqI05GUvjSz5qaLZ2PLYz232k18Jxvacu4zu8DBycpB1cZ8llAE6mytNSkwy6WBKDjzPRHNVZMDPc6DLemQ1JNrpySXk4O2JuHQZ4Mezyyn2GS/qxwLbqi7foays5O/YOqpF0swLh5vAlPIC9ZSd+lUQ1vzG9Kg=
+	t=1753187375; cv=none; b=KaYqC6hj2ILCVJC2x0x8Czj3vRA7lLKKlwiPUBLXCuyHQYbaOi+aOExV+7vLYVrHSqK7dKif0KbJzpi3QIPhdTkafMBw3OBh0EY8U0cJJ4MNFLZ2rSgJrYnKxzxLPR+Nla6GQEiuyDgm7MQGdwih+BIjWfdEdFmUcTOOvjSw4LY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753187196; c=relaxed/simple;
-	bh=K4/7wWuzRzd2WkprSHGz3PIxrxEYd3qOezXv0jUGxhU=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XGw/Rhypy6CEj2NFP/DIy1DaXkqjn3vqJuJT2irrsAF06ZNhOwYsdOhMuy3nESkPXQqiGFFHM1annWGMTI3SAyKGMJ/DFvrXprB4cTLVfqXqFTK84h613yh2wg2uYG3J0VMoEoFdivHNvKujimByRvFCOIu6SGJTfLejVJWcVgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=TfRMkSZ7; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:To:From:Subject:Message-ID:Sender:
-	Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=K4/7wWuzRzd2WkprSHGz3PIxrxEYd3qOezXv0jUGxhU=;
-	t=1753187194; x=1754396794; b=TfRMkSZ7R+C4bTUOB3Or2UqWvHNqX3DszSjpn96tUFrs3OO
-	AkJss7ZM6ESasiso0UGthATR9GlqmT8eCDFvyFS8OJDnRlzMQ9EfvWE3mxLZXDtU0cfRTCpuRFJsQ
-	5QLjU4eqEG0WoCC+mjUQxdLLQV4q100UrpYTqwzfFTcnJO54AfMwAA1zOiVR8HOB/mI0seu7zf70X
-	+yjuxAQhQC3QjqdWVrdgEL0uIjzPKEyZDUkI3c8EsIarKAriS7eCcS+35UmWMuhu6zBGbe6fRb5i6
-	qIJitWMGsinVPadyFY+nXTkSBsWsx72x3WO/cuvylBZ2sJ22+SL+ukujMIQuERwQ==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1ueC4l-000000026gk-28pj;
-	Tue, 22 Jul 2025 14:26:32 +0200
-Message-ID: <e3c98a92b7c6177f7784387f6f2038ca0b11c57c.camel@sipsolutions.net>
-Subject: Re: [RFC PATCH v2 wireless-next 3/3] wifi: mac80211: Check link id
- at station removal
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Remi Pommarel <repk@triplefau.lt>, linux-wireless@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Tue, 22 Jul 2025 14:26:30 +0200
-In-Reply-To: <ce42107117526535474cf81d514fd030c7376e85.1752225123.git.repk@triplefau.lt> (sfid-20250711_121425_681537_FFC4AA99)
-References: <cover.1752225123.git.repk@triplefau.lt>
-	 <ce42107117526535474cf81d514fd030c7376e85.1752225123.git.repk@triplefau.lt>
-	 (sfid-20250711_121425_681537_FFC4AA99)
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1753187375; c=relaxed/simple;
+	bh=H6bvARozgPG1wqUKeZIQSmayUowJ0OhxNhPVUX87UPo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VmEepsrp+WXZM7kogcEnTiDmfEprxeHBofTNa2bxYNvH3qrb1RcbDroGNUtdPZoCZsFDtXSovVbAHNcQmtYLv1N7NoP2tx9fk66tiE3EgDrMUc8C9VHWbB4kue+rCN/3hsLbhSttTK7LWdiznRhjvltJk6NQ+6qkQMqgitvrNK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com; spf=pass smtp.mailfrom=akamai.com; dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b=C/Oa7IzQ; arc=none smtp.client-ip=67.231.149.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=akamai.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=akamai.com
+Received: from pps.filterd (m0122332.ppops.net [127.0.0.1])
+	by mx0a-00190b01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56MC8Gvl025577;
+	Tue, 22 Jul 2025 13:29:08 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=jan2016.eng; bh=iw9zjpJXKCZsEgNg5I4C
+	o8x8E+jUJm1BJg8AN+fVQH8=; b=C/Oa7IzQHezJch+9gDd+fdmMblDbs+/VTrT9
+	YRKYrHrvpuZrwQ9/MgZE1hR1bKs6P4kWP7/YPa5Xq9BGTRgw333PrdJhma4uTDSA
+	rXPQL2xoo+CWXQg0xPB3IN3p09f3gqrUBikMApmI06h90p5/D0jIEL8+XYM7WC9l
+	LiKUKxrvxMnBp7VgOeai3Ke+mlbYex73OxOn+p1t9eBRCjBQpbM3uJWkTV5yZzlY
+	R90GyLlc6b9DSh1Pj/9Xy5uq5ON3OutUykndWK3D5nDPsguqz1ahH4wQsWlkykeB
+	nqhOzKhinsqTNWS/JK5dhzFfsMOQxwHw9hGxWAvcfOPW4Pg7eA==
+Received: from prod-mail-ppoint7 (a72-247-45-33.deploy.static.akamaitechnologies.com [72.247.45.33] (may be forged))
+	by mx0a-00190b01.pphosted.com (PPS) with ESMTPS id 4804980hqe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Jul 2025 13:29:07 +0100 (BST)
+Received: from pps.filterd (prod-mail-ppoint7.akamai.com [127.0.0.1])
+	by prod-mail-ppoint7.akamai.com (8.18.1.2/8.18.1.2) with ESMTP id 56MAR5Zs022022;
+	Tue, 22 Jul 2025 08:29:06 -0400
+Received: from email.msg.corp.akamai.com ([172.27.91.22])
+	by prod-mail-ppoint7.akamai.com (PPS) with ESMTPS id 4806px6fda-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Jul 2025 08:29:06 -0400
+Received: from usma1ex-dag4mb4.msg.corp.akamai.com (172.27.91.23) by
+ usma1ex-dag4mb3.msg.corp.akamai.com (172.27.91.22) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Tue, 22 Jul 2025 08:29:05 -0400
+Received: from bos-lhvzmp.bos01.corp.akamai.com (172.28.221.177) by
+ usma1ex-dag4mb4.msg.corp.akamai.com (172.27.91.23) with Microsoft SMTP Server
+ id 15.2.1748.26 via Frontend Transport; Tue, 22 Jul 2025 08:29:05 -0400
+Received: by bos-lhvzmp.bos01.corp.akamai.com (Postfix, from userid 42339)
+	id A323C15F582; Tue, 22 Jul 2025 08:29:05 -0400 (EDT)
+From: Michael Zhivich <mzhivich@akamai.com>
+To: <stable@vger.kernel.org>, <bp@alien8.de>
+CC: <tglx@linutronix.de>, <mingo@redhat.com>, <dave.hansen@linux.intel.com>,
+        <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
+        Michael Zhivich
+	<mzhivich@akamai.com>
+Subject: [PATCH v2] x86/bugs: Fix use of possibly uninit value in amd_check_tsa_microcode()
+Date: Tue, 22 Jul 2025 08:28:44 -0400
+Message-ID: <20250722122844.2199661-1-mzhivich@akamai.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-22_02,2025-07-21_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 malwarescore=0
+ suspectscore=0 mlxscore=0 spamscore=0 phishscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2507220101
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDEwMiBTYWx0ZWRfX8wo69AXnXZdu
+ HIjxXgqXVGoc3VZcxhXGIGTQ8URhBpcvUIdsx20z3vY/YDi6A7RS4ZVd5Opf8rQrNEEbYpfu/6i
+ WHRi55s5WfPOjuO2/7vveQp4Y4krsO16vKcQaNFrKlVVl5mqrG8ys4d/LRPyVD48R8dtJ+Cy+J+
+ ofgI9GHl8f1dQ5sSRr4/OxFgvtyY1jIVDkBlbyBaIjyQxgygEqYxOq083DqDe3AA8ojVU6A6sEx
+ 2Co4ETAVmAxnKHiO6DOrO19ma7iov0lQXe6CNN73YDM371zjZ4K1SPZfVJZ1vHPTB0vzkK/7iA/
+ rlGVz+jCtm07QZxMONZrbEDCKrDKz3GVzMhzro6ZjAItVWNX+EoZ6YA00qDFUIYfxd8hgBNSJou
+ v5cmsI0EhNUoeyFxVpkbpGzxqm5ebm+2ufC3iEiWuiY1AQXmwbOhM32U44s69aqnyxUkUr7s
+X-Proofpoint-GUID: kcexfW2z2x8Rgo-taRY0L8EXvUTwYDst
+X-Proofpoint-ORIG-GUID: kcexfW2z2x8Rgo-taRY0L8EXvUTwYDst
+X-Authority-Analysis: v=2.4 cv=H8Pbw/Yi c=1 sm=1 tr=0 ts=687f8413 cx=c_pps
+ a=3lD5tZmBJQAvN++OlPJl4w==:117 a=3lD5tZmBJQAvN++OlPJl4w==:17
+ a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=X7Ea-ya5AAAA:8 a=pmTPSbCVOfBdVNymtuMA:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-22_02,2025-07-21_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0
+ mlxlogscore=893 priorityscore=1501 impostorscore=0 lowpriorityscore=0
+ malwarescore=0 suspectscore=0 mlxscore=0 adultscore=0 phishscore=0
+ bulkscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507220102
 
-On Fri, 2025-07-11 at 12:03 +0200, Remi Pommarel wrote:
-> hostapd can remove a non-MLD sta connected to one link of one MLD AP
-> several times. If the sta roamed to another link of the same MLD AP
-> between two of those removals the wrong sta_info could be removed.
->=20
-> To fix that remove sta only if it is currently using the link specified
-> in NL80211_CMD_DEL_STATION if they are any.
+For kernels compiled with CONFIG_INIT_STACK_NONE=y, the value of __reserved
+field in zen_patch_rev union on the stack may be garbage.  If so, it will
+prevent correct microcode check when consulting p.ucode_rev, resulting in
+incorrect mitigation selection.
 
-That also looks fine.
+Cc: <stable@vger.kernel.org>
+Signed-off-by:  Michael Zhivich <mzhivich@akamai.com>
+Fixes: 7a0395f6607a5 ("x86/bugs: Add a Transient Scheduler Attacks mitigation")
+---
 
-Would be nice if you could later contribute the hwsim test for it, since
-it sounded like you had one :)
+Changes in v2:
+- Rework patch per feedback
+- Add Cc: stable
 
-johannes
+ arch/x86/kernel/cpu/amd.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index efd42ee9d1cc..289ff197b1b3 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -378,6 +378,8 @@ static bool amd_check_tsa_microcode(void)
+ 	p.model		= c->x86_model;
+ 	p.ext_model	= c->x86_model >> 4;
+ 	p.stepping	= c->x86_stepping;
++	/* reserved bits are expected to be 0 in test below */
++	p.__reserved    = 0;
+ 
+ 	if (cpu_has(c, X86_FEATURE_ZEN3) ||
+ 	    cpu_has(c, X86_FEATURE_ZEN4)) {
+-- 
+2.34.1
+
 
