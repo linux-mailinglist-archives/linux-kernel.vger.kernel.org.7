@@ -1,106 +1,85 @@
-Return-Path: <linux-kernel+bounces-741653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9A16B0E74D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:46:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A2A4B0E752
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:51:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19BAF3AFA07
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 23:45:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D922D4E4EBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 23:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 762E328B3EC;
-	Tue, 22 Jul 2025 23:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4914A28C03F;
+	Tue, 22 Jul 2025 23:51:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="s6jcfCpU"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857E6E555;
-	Tue, 22 Jul 2025 23:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="MRl51+q8"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A90F2E371F;
+	Tue, 22 Jul 2025 23:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753227972; cv=none; b=JITkPhrXoFmhfFN6mxrN9oLCXRzF88D1BUHwBMDDH+ps0Mj+RpSMM2BJtc4A/zbd34aAc0rTy/H2+arqfS5HVOBmIgp/5liWjHxQ3EBuUpWc4tBQ6lGchC7uJMynDV0Tp5WHIrY3CV9oyhwLomGb4m/8QGeS9VyvZVIUQ5H/4vU=
+	t=1753228266; cv=none; b=oGwwVxLSXRJGXzZ1WYcuAjK1IejIuPSXKvYIuuK/719QN6fmv76Bh4myYKN3lu0mqGLEkucKV87qpYpeL3UJBaFLmikzQmz3BLWVG5gKY8dt7ng6yMwJMSOkr9N2c+A82SX9+CpQ2dgXlcF/4STbbOWYI6PodFjM1xlWgkVjBTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753227972; c=relaxed/simple;
-	bh=jcXrRP5I6TzRxlrs7fYkLBzLeKyEl/9AhZdKRjISDxc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=RNTksiyV2ewG//AJzKZcPQrkNbmxW+WcSUyR4uTIQSbF1P5yGZLcZBJNdJ4qTPGEzgSKbhKw9zCLOQyYYFLiZFq28DR3Uwd9dAvfHbgTMG5/Ndy/pfBYMBfvEUcSPgB0q+a7tt5b2S6o/UC02LzTL/7lCO15Hxegtl2qgo1m340=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=s6jcfCpU; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1753227796;
-	bh=RcSuioHgqQvCMYpuNH5o7E0rW1clnpzbAkq57g8dlHs=;
-	h=Date:From:To:Cc:Subject:From;
-	b=s6jcfCpUsBKTqHO4zuns4rOE2gE/EkPJ8Ps6wEQv9hscbZ3IIDlBwvgKI+un0wnoV
-	 uOSCfKFFESl1RX2g8YkPFxKhkHjimIvdo9d7cM8SIETPnOGvpoGkR0PFeUEtGaJ8hv
-	 55BfZn1Y/jSvHqpWMngX+kSVCHjJ2wQiaRK7QNQDdpWtA//ERPuetFrI4R0z1NYlCY
-	 vllbD/v/JQ/kXYyaSiIWz6JVkm2JpIvgoeEiP9Cw6RMB+fq+kqclUKqS3Lq8rBHcWU
-	 J6xntTfbpeA/b12ITSVaio+ovyqyn0ANtzna86MYREbG4cjNqUb1zQrALkJ0crok8C
-	 nmC9imENwZU/Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bmv372pPKz4wbY;
-	Wed, 23 Jul 2025 09:43:15 +1000 (AEST)
-Date: Wed, 23 Jul 2025 09:45:58 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>, Arnd Bergmann
- <arnd@arndb.de>
-Cc: ARM <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the fsl tree
-Message-ID: <20250723094558.5bcfca69@canb.auug.org.au>
+	s=arc-20240116; t=1753228266; c=relaxed/simple;
+	bh=Q7rDaadWUaiFBWLQaOtVnTh5/YkO0Bd2ftMVkBR0SrE=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=oNWj93hOEwZF2p4u0+GNKa8UoJLX2SB5jh+kdMo55cdlAQM7LRItm9dOJXOi2xgWktdvZ+fAn7t26wJK8I5HTg8vRCLUa+Svj69MmsIEPb/D3Ne6ZwBJUwLop/pmGPoXEb2NOPyH1xvmgcjqfbImGbm1GUcETNKCxOb6C+oNLUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=MRl51+q8; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1006)
+	id CAF6621268BD; Tue, 22 Jul 2025 16:51:04 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com CAF6621268BD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1753228264;
+	bh=XgRbQ4iYi0QXOMX0YcD9rS2ZxOfBzg6PE36kygAaWpA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=MRl51+q8Fx7bJ/ZI1imlAB/gWxTUx8nfwKgpwjnez9zCq38PVzSnB8ZeP+4VL2kWU
+	 1xFM5yF9UCtPhKJlfLxy+BBOrzLZIuyhgmHFu2UPQx8v62JcyFD651Vew9Phy0D1pB
+	 xD0kzN4NMg0gLrLkLHYmKTcXrI6mAjgXgHutJZ5A=
+From: Haiyang Zhang <haiyangz@linux.microsoft.com>
+To: linux-hyperv@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: haiyangz@microsoft.com,
+	kys@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	andrew+netdev@lunn.ch,
+	sd@queasysnail.net,
+	viro@zeniv.linux.org.uk,
+	chuck.lever@oracle.com,
+	neil@brown.name,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	davem@davemloft.net,
+	kuniyu@google.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net, 0/2] net: Add llist_node init and fix hv_netvsc namespace error
+Date: Tue, 22 Jul 2025 16:50:46 -0700
+Message-Id: <1753228248-20865-1-git-send-email-haiyangz@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/WJAG2PuqecvQ03WJeBM4B/8";
- protocol="application/pgp-signature"; micalg=pgp-sha256
 
---Sig_/WJAG2PuqecvQ03WJeBM4B/8
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Haiyang Zhang <haiyangz@microsoft.com>
 
-Hi all,
+Add llist_node init to setup_net(), so we can check if the node is on list.
+Then, fix the namespace callback function in hv_netvsc.
 
-The following commit is also in the arm-soc tree as a different commit
-(but the same patch):
+Haiyang Zhang (2):
+  net: core: Fix missing init of llist_node in setup_net()
+  hv_netvsc: Fix panic during namespace deletion with VF
 
-  8b3da0519ae6 ("soc: fsl: qe: convert set_multiple() to returning an integ=
-er")
+ drivers/net/hyperv/netvsc_drv.c | 10 +++++++++-
+ net/core/net_namespace.c        |  3 +++
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
-This is commit
+-- 
+2.34.1
 
-  12702f0c3834 ("soc: fsl: qe: convert set_multiple() to returning an integ=
-er")
-
-in the arm-soc tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/WJAG2PuqecvQ03WJeBM4B/8
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiAIrYACgkQAVBC80lX
-0Gz8tAgAm64hSR4znmbazwp3rKdkOF6D+jSnwMdhch4uF3Uqf1MXN+YdkAaa7hOj
-tuHgKe6uZ+olwXIP+dK7ZStD9GFcLCZ0hNc4Y3PZQJduvMJKtffSlwAqKBLVsDuQ
-UuwqdTE09kHoCYebJR2eHiO0PI2gBOhY1OSOH/jFl+Kj7UlLzqNrGT4Lt1RU8sqX
-6A+rVmFkHFaESbLP0oXC5u/zzifIXM5weeaXmHWEK8uyeB8WuloY9CWMcJGLhgbC
-QkGC/CIK2422WnGG/9ORThsbENFwCUBhbJGuYGMnbTyMIw7XQWW035egC7XXt5BP
-y8GiSa2aQanEXYgK4QHxdLdpwZczLw==
-=SgVy
------END PGP SIGNATURE-----
-
---Sig_/WJAG2PuqecvQ03WJeBM4B/8--
 
