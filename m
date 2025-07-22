@@ -1,41 +1,54 @@
-Return-Path: <linux-kernel+bounces-740463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 848AFB0D46B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:23:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 149AEB0D475
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:24:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 909847AD8C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:21:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB8046C4B0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E6D2D3A97;
-	Tue, 22 Jul 2025 08:22:48 +0000 (UTC)
-Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E53CB2D3EE6;
+	Tue, 22 Jul 2025 08:23:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="T6Z23uPn"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24DF01ABED9;
-	Tue, 22 Jul 2025 08:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814FE2C158F;
+	Tue, 22 Jul 2025 08:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753172567; cv=none; b=KxuUnwq0+5QSaJB5D6y24bShKCV0uDt+5FtgPf/1ehXtDu8lipG7Yya2l1egBrcz+CE1EuQ2TwxMuVcUaJSV5t5MwP/J4GWV/cCjg35B42/18Ovx0XttI6OGD2ehUxtTm7kulXFm8HjfKJClRoEhB3/Yoi/fkxOpT9EyLRwXyVo=
+	t=1753172598; cv=none; b=gOuYNogbqc4XB6AOSSRSuap6usw5aSkhD5xdiuqrLDJxFR2o/tk8iBg2fGwAo15tCTfo/97iqvQ5N4TPX7iJpgkp4V5C8RohLXZGFRaJ9x25N91FTRnSfXHIT5YO032Kd+MU0EbHBzI/Ghn3JYpV1Fz4Iuf5ENzeHcM5s/eIuJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753172567; c=relaxed/simple;
-	bh=2VOw9OZQqJGqbwq5qu3nzTogcdWhKeuGiM8fJb6jDZo=;
+	s=arc-20240116; t=1753172598; c=relaxed/simple;
+	bh=N0IwDglj6zSDqLUhBc9b9TtUj63SYVStoAHb/ApAGa8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tGUcipBwTv5nMmtuRlXjcBFWzQeDTgBW4g9iigLswzH10DqJUm6c3bYvV0EVCIZJ/6/uNYgNpEnpCgojWMYuTM9i48mBV6G8eU3M5IfWPoLWxvOdTNdbNX6Zzk4jPcjXkUGYC7GfZ+oKeLJn0/tFrjWCcrqV51L2R7MZwrUN3Vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
-Received: from [10.48.133.23] (unknown [15.248.2.227])
-	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id F2F9F41584;
-	Tue, 22 Jul 2025 08:22:36 +0000 (UTC)
-Authentication-Results: Plesk;
-        spf=pass (sender IP is 15.248.2.227) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=[10.48.133.23]
-Received-SPF: pass (Plesk: connection is authenticated)
-Message-ID: <f4d33bc8-f988-4237-ad99-ceb2036bc197@arnaud-lcm.com>
-Date: Tue, 22 Jul 2025 09:22:36 +0100
+	 In-Reply-To:Content-Type; b=mFIkFxMejPPPFtREsaugl+T/j6mBdD37IvvH4q/n2akq5ajkAOaZ5pDC/7ipME1DYrZg3UDAI+Q+KmksDN7sXGIV0fDDGHCV+em39ASSi+UzKsldCQ1me0RqwTYjUgilO5kbcNwfanHNLJreFwQSi+PBcMTmJgEd9vZZi/r+gvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=T6Z23uPn; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1753172593;
+	bh=N0IwDglj6zSDqLUhBc9b9TtUj63SYVStoAHb/ApAGa8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=T6Z23uPnpPGz0LE3TTjwNcaxdcsZMHNY8/rod19dpxEoFcaVzm6Tzmt7zNWezEc/q
+	 8LiN4xJzF0rlqKYeSpr8ruwFD5pv+9hzjLzoBrnvYe8ldcXFebnXhIRLukAeR5ZnS5
+	 HX4alCC8uCPyliygXz6lSmWLP5W7KLjb2gjaBrfcs3KXo2bmWNSWNpk/yy2T4snXl9
+	 UtxsWmLfEmelygGOfZFcCqf/g8JWGQZbqkhfJQyEDVp6CqE7tTAxolmiyVGDxVSqNu
+	 5T6h4YmbmLH7Z8JQpJefVcR10xHil5WgcFKwkf+7BX3vYMOsBRNMA4ZfWJFeL/rC1O
+	 z36DYY3p4OsSw==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id B5F3E17E0D15;
+	Tue, 22 Jul 2025 10:23:12 +0200 (CEST)
+Message-ID: <d14b616c-3d74-477e-a45f-5b890df4fe46@collabora.com>
+Date: Tue, 22 Jul 2025 10:23:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -43,41 +56,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: mon: Fix slab-out-of-bounds in mon_bin_event due to
- unsafe URB transfer_buffer access
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk, snovitoll@gmail.com,
- syzbot+86b6d7c8bcc66747c505@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com
-References: <20250720200057.19720-1-contact@arnaud-lcm.com>
- <8bbc84ee-44c9-4a85-b5bf-3980b3c81e5c@rowland.harvard.edu>
- <6cd8b6bd-d07b-404c-af23-42fcae9ed9df@arnaud-lcm.com>
- <cfc6d242-df9d-42cf-b275-08de2da669e8@rowland.harvard.edu>
+Subject: Re: [PATCH v1 3/7] power: reset: qcom-pon: Migrate to
+ devm_spmi_subdevice_alloc_and_add()
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: sboyd@kernel.org, jic23@kernel.org, dlechner@baylibre.com,
+ nuno.sa@analog.com, andy@kernel.org, arnd@arndb.de,
+ gregkh@linuxfoundation.org, srini@kernel.org, vkoul@kernel.org,
+ kishon@kernel.org, sre@kernel.org, krzysztof.kozlowski@linaro.org,
+ u.kleine-koenig@baylibre.com, linux-arm-msm@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-pm@vger.kernel.org,
+ kernel@collabora.com, wenst@chromium.org
+References: <20250721075525.29636-1-angelogioacchino.delregno@collabora.com>
+ <20250721075525.29636-4-angelogioacchino.delregno@collabora.com>
+ <aH4mWfgQt_Q0O-7S@smile.fi.intel.com>
+ <f5d529c3-b898-48ac-8e5a-f587db72dc82@collabora.com>
+ <aH51idxbwW1SAExG@smile.fi.intel.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-From: "Lecomte, Arnaud" <contact@arnaud-lcm.com>
-In-Reply-To: <cfc6d242-df9d-42cf-b275-08de2da669e8@rowland.harvard.edu>
+In-Reply-To: <aH51idxbwW1SAExG@smile.fi.intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: <175317255751.8396.11842046552390480196@Plesk>
-X-PPP-Vhost: arnaud-lcm.com
+Content-Transfer-Encoding: 7bit
 
-It clarifies things and makes more sense now.
-Appreciate the explanation :), thanks for your time
-
-Arnaud
-
-On 21/07/2025 14:51, Alan Stern wrote:
-> On Mon, Jul 21, 2025 at 09:22:40AM +0100, Lecomte, Arnaud wrote:
->> Hi Alan, thanks for your reply.
+Il 21/07/25 19:14, Andy Shevchenko ha scritto:
+> On Mon, Jul 21, 2025 at 03:05:46PM +0200, AngeloGioacchino Del Regno wrote:
+>> Il 21/07/25 13:36, Andy Shevchenko ha scritto:
+>>> On Mon, Jul 21, 2025 at 09:55:21AM +0200, AngeloGioacchino Del Regno wrote:
+> 
+> ...
+> 
+>>>> +	if (!pdev->dev.parent)
+>>>> +		return -ENODEV;
+>>>
+>>> You can start using
+>>>
+>>> 	struct device *dev = &pdev->dev;
+>>>
+>>> here and perhaps one may convert the rest to it...
+>>>
+>>> ...
+>>>
+>>>>    	error = of_property_read_u32(pdev->dev.of_node, "reg",
+>>>
+>>> ...including, but not limited to, use of device_property_read_u32(dev, ...) here.
+>>>
 >>
->> Your point raises an important question for me: Is there a specific reason
->> why we don’t have
->>   a synchronization mechanism in place to protect the URB's transfer buffer ?
-> Protect it from what?  Access by some driver at an inappropriate time?
-> Drivers are supposed to know (and this is alluded to in the kerneldoc
-> for usb_submit_urb()) that they aren't allowed to touch the transfer
-> buffer while an URB is queued.
->
-> Alan Stern
+>> I didn't do that for one single reason: I did not want to add noise to the commits
+>> and wanted those to exclusively migrate the drivers to the new API, literally
+>> without doing *anything* else unnecessary, even if I have located some almost
+>> effortless improvements that I could've done to those drivers.
+>>
+>> Please - I prefer to keep it this way: these are the first commits that add the
+>> usage of the new functions and of the concept of SPMI subdevices, and I really
+>> want those to contain just that and nothing else - because I suspect that these
+>> will be taken as example and will be read by the next person that is implementing
+>> a new SPMI (sub)driver or converting any remaining ones to subdevice.
+> 
+> You can introduce a temporary variable in this change and use it only in the
+> lines you have added/touched. We have similar approach in several drivers.
+> Then somebody (not specifically should be you) can move it forward.
+> 
+
+Makes sense, okay!
+
+Cheers,
+Angelo
 
