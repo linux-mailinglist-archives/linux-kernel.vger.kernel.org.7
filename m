@@ -1,134 +1,195 @@
-Return-Path: <linux-kernel+bounces-740505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5670DB0D50B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:56:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C4219B0D50D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:56:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88E481C244FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:56:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 997C51C246B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ECDD2D97A9;
-	Tue, 22 Jul 2025 08:56:01 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F792D9497
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 08:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EB6B2D9ED3;
+	Tue, 22 Jul 2025 08:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b="XYGRkAO+"
+Received: from nbd.name (nbd.name [46.4.11.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C755D2D3EFA;
+	Tue, 22 Jul 2025 08:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.4.11.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753174561; cv=none; b=fzI4iUAneK1Fdlp5uYsAxaUWc+42JqE4D+blsi7PeaSohFNahxTwIkNe21G4XkT2PCnu5wK0jPiOYmHSlUZbfr2SnD1OhbfvfuS/BXHVVWb9JCAhJku/q3RXwHRCP3cgb5eNptlCZX0lVB+9sG4SMotq5DdOMYnI++eNh87unMQ=
+	t=1753174588; cv=none; b=A0cdXWFHfBgyenc2SkmvsTZr2oiGE0lDmucK2+f2vL92e1X98avmZCqPkh7MQ0O0ek4WnFDhcP/qHSAZuxP5D0Akg6cuCbKJcKOCDeBSFww03M7SRDaScFqmk34W1Tx3C9YseIGd0yxQfjN6SMFECfjMsqsWy6S661M40J/ecpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753174561; c=relaxed/simple;
-	bh=s0J+ssL0OGtRm/HV9JGbxizeCnhuuijegazWnFBNyQs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YVGa8yGHmGk7cHQ+XDqhh0nH5sVMvd67Cb9si/+ZSsoYlKGIm1vqsEuaz/qWlhDMbDjdEXO7NgjAhChLUq3wHsSCTzh6KP/5ulGuCHkKHJH9i0hFtt25NbxlYX0IXGWsCe0eihe9cqKUhtZsAvEFn9ZWyGTG8w6+WDYADaOB8LY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9702D152B
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 01:55:53 -0700 (PDT)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D1E5B3F66E
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 01:55:58 -0700 (PDT)
-Date: Tue, 22 Jul 2025 09:55:46 +0100
-From: Liviu Dudau <liviu.dudau@arm.com>
-To: Erik Faye-Lund <erik.faye-lund@collabora.com>
-Cc: Karunika Choo <karunika.choo@arm.com>, dri-devel@lists.freedesktop.org,
-	nd@arm.com, Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 3/6] drm/panthor: Add support for Mali-G710, Mali-G510
- and Mali-G310
-Message-ID: <aH9SEno547vpIJxy@e110455-lin.cambridge.arm.com>
-References: <20250721111344.1610250-1-karunika.choo@arm.com>
- <20250721111344.1610250-4-karunika.choo@arm.com>
- <abc0eae5319ed14409c88baab3160b7aed2061b2.camel@collabora.com>
+	s=arc-20240116; t=1753174588; c=relaxed/simple;
+	bh=m2/SoCy033eFdvUM3uwvIKWCZnJzqCos3X0mAJqgUTU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=R2cK/uVD4I/f+ZtrNlaQjTiWr5kDT7iMhEA8pWlWSCHJrI8GnZpmSkSkYoA3dzqbGzaPtgYzZSVHBgaVRZZgBHQlADag/gvahBgLInXYyzwvoLRB9oRXDSgMu4reM59l7uUupT4pLJ1TzbFX6BKzncitrxHjf1OQH9j7wtXcTcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name; spf=none smtp.mailfrom=nbd.name; dkim=pass (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b=XYGRkAO+; arc=none smtp.client-ip=46.4.11.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nbd.name
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
+	s=20160729; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:
+	Cc:To:Subject:From:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=pliG9VjeTwO/N4yx9xnQv4JLuAZH9QSufm1+l9RWH9o=; b=XYGRkAO+rJYUMcNvPjEGp7bEkg
+	uXOImkNSvHyxEJMWbNoVHZRKB9x/Q8+HcMrWBiTcyzp/dKEGWH8pMAW2ZSu4vWpwVBCkxzgshiCoZ
+	E46Ql4qpVLXURPMpRpzliGsShet05EpBOFT/rMk4LixRCJhHR1AuZT3xDtzZYdEJTr0I=;
+Received: from p5b2062ed.dip0.t-ipconnect.de ([91.32.98.237] helo=nf.local)
+	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96)
+	(envelope-from <nbd@nbd.name>)
+	id 1ue8nD-00Finr-0I;
+	Tue, 22 Jul 2025 10:56:11 +0200
+Message-ID: <0861d960-d1e7-4b51-b320-c2e033b49f12@nbd.name>
+Date: Tue, 22 Jul 2025 10:56:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <abc0eae5319ed14409c88baab3160b7aed2061b2.camel@collabora.com>
+User-Agent: Mozilla Thunderbird
+From: Felix Fietkau <nbd@nbd.name>
+Subject: Re: [PATCH net-next v2] net: pppoe: implement GRO support
+To: Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+ Michal Ostrowski <mostrows@earthlink.net>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+References: <20250716081441.93088-1-nbd@nbd.name>
+ <5f250beb-6a81-42b2-bf6f-da02c04cbf15@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=nbd@nbd.name; keydata=
+ xsDiBEah5CcRBADIY7pu4LIv3jBlyQ/2u87iIZGe6f0f8pyB4UjzfJNXhJb8JylYYRzIOSxh
+ ExKsdLCnJqsG1PY1mqTtoG8sONpwsHr2oJ4itjcGHfn5NJSUGTbtbbxLro13tHkGFCoCr4Z5
+ Pv+XRgiANSpYlIigiMbOkide6wbggQK32tC20QxUIwCg4k6dtV/4kwEeiOUfErq00TVqIiEE
+ AKcUi4taOuh/PQWx/Ujjl/P1LfJXqLKRPa8PwD4j2yjoc9l+7LptSxJThL9KSu6gtXQjcoR2
+ vCK0OeYJhgO4kYMI78h1TSaxmtImEAnjFPYJYVsxrhay92jisYc7z5R/76AaELfF6RCjjGeP
+ wdalulG+erWju710Bif7E1yjYVWeA/9Wd1lsOmx6uwwYgNqoFtcAunDaMKi9xVQW18FsUusM
+ TdRvTZLBpoUAy+MajAL+R73TwLq3LnKpIcCwftyQXK5pEDKq57OhxJVv1Q8XkA9Dn1SBOjNB
+ l25vJDFAT9ntp9THeDD2fv15yk4EKpWhu4H00/YX8KkhFsrtUs69+vZQwc0cRmVsaXggRmll
+ dGthdSA8bmJkQG5iZC5uYW1lPsJgBBMRAgAgBQJGoeQnAhsjBgsJCAcDAgQVAggDBBYCAwEC
+ HgECF4AACgkQ130UHQKnbvXsvgCgjsAIIOsY7xZ8VcSm7NABpi91yTMAniMMmH7FRenEAYMa
+ VrwYTIThkTlQzsFNBEah5FQQCACMIep/hTzgPZ9HbCTKm9xN4bZX0JjrqjFem1Nxf3MBM5vN
+ CYGBn8F4sGIzPmLhl4xFeq3k5irVg/YvxSDbQN6NJv8o+tP6zsMeWX2JjtV0P4aDIN1pK2/w
+ VxcicArw0VYdv2ZCarccFBgH2a6GjswqlCqVM3gNIMI8ikzenKcso8YErGGiKYeMEZLwHaxE
+ Y7mTPuOTrWL8uWWRL5mVjhZEVvDez6em/OYvzBwbkhImrryF29e3Po2cfY2n7EKjjr3/141K
+ DHBBdgXlPNfDwROnA5ugjjEBjwkwBQqPpDA7AYPvpHh5vLbZnVGu5CwG7NAsrb2isRmjYoqk
+ wu++3117AAMFB/9S0Sj7qFFQcD4laADVsabTpNNpaV4wAgVTRHKV/kC9luItzwDnUcsZUPdQ
+ f3MueRJ3jIHU0UmRBG3uQftqbZJj3ikhnfvyLmkCNe+/hXhPu9sGvXyi2D4vszICvc1KL4RD
+ aLSrOsROx22eZ26KqcW4ny7+va2FnvjsZgI8h4sDmaLzKczVRIiLITiMpLFEU/VoSv0m1F4B
+ FtRgoiyjFzigWG0MsTdAN6FJzGh4mWWGIlE7o5JraNhnTd+yTUIPtw3ym6l8P+gbvfoZida0
+ TspgwBWLnXQvP5EDvlZnNaKa/3oBes6z0QdaSOwZCRA3QSLHBwtgUsrT6RxRSweLrcabwkkE
+ GBECAAkFAkah5FQCGwwACgkQ130UHQKnbvW2GgCeMncXpbbWNT2AtoAYICrKyX5R3iMAoMhw
+ cL98efvrjdstUfTCP2pfetyN
+In-Reply-To: <5f250beb-6a81-42b2-bf6f-da02c04cbf15@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 22, 2025 at 10:29:21AM +0200, Erik Faye-Lund wrote:
-> On Mon, 2025-07-21 at 12:13 +0100, Karunika Choo wrote:
-> > This patch adds GPU model name and FW binary support for Mali-G710,
-> > Mali-G510, and Mali-G310.
-> > 
-> > Signed-off-by: Karunika Choo <karunika.choo@arm.com>
-> > ---
-> >  drivers/gpu/drm/panthor/panthor_fw.c | 2 ++
-> >  drivers/gpu/drm/panthor/panthor_hw.c | 6 ++++++
-> >  2 files changed, 8 insertions(+)
-> > 
-> > diff --git a/drivers/gpu/drm/panthor/panthor_fw.c
-> > b/drivers/gpu/drm/panthor/panthor_fw.c
-> > index 36f1034839c2..b7b454d16f12 100644
-> > --- a/drivers/gpu/drm/panthor/panthor_fw.c
-> > +++ b/drivers/gpu/drm/panthor/panthor_fw.c
-> > @@ -1402,3 +1402,5 @@ int panthor_fw_init(struct panthor_device
-> > *ptdev)
-> >  }
-> >  
-> >  MODULE_FIRMWARE("arm/mali/arch10.8/mali_csffw.bin");
-> > +MODULE_FIRMWARE("arm/mali/arch10.10/mali_csffw.bin");
-> > +MODULE_FIRMWARE("arm/mali/arch10.12/mali_csffw.bin");
+On 22.07.25 10:36, Paolo Abeni wrote:
+> On 7/16/25 10:14 AM, Felix Fietkau wrote:
+>> +static struct sk_buff *pppoe_gro_receive(struct list_head *head,
+>> +					 struct sk_buff *skb)
+>> +{
+>> +	const struct packet_offload *ptype;
+>> +	unsigned int hlen, off_pppoe;
+>> +	struct sk_buff *pp = NULL;
+>> +	struct pppoe_hdr *phdr;
+>> +	struct sk_buff *p;
+>> +	__be16 type;
+>> +	int flush = 1;
 > 
-> This isn't a problem with this series per-se, but these (as well as the
-> ones you're adding in later commits here) are all missing from here:
+> Minor nit: please respect the reverse christmas tree order above
+
+Will do
+
+>> +	off_pppoe = skb_gro_offset(skb);
+>> +	hlen = off_pppoe + sizeof(*phdr) + 2;
+>> +	phdr = skb_gro_header(skb, hlen, off_pppoe);
+>> +	if (unlikely(!phdr))
+>> +		goto out;
+>> +
+>> +	/* ignore packets with padding or invalid length */
+>> +	if (skb_gro_len(skb) != be16_to_cpu(phdr->length) + hlen - 2)
+>> +		goto out;
+>> +
+>> +	NAPI_GRO_CB(skb)->network_offsets[NAPI_GRO_CB(skb)->encap_mark] = hlen;
+>> +
+>> +	type = pppoe_hdr_proto(phdr);
+>> +	if (!type)
+>> +		goto out;
+>> +
+>> +	ptype = gro_find_receive_by_type(type);
+>> +	if (!ptype)
+>> +		goto out;
+>> +
+>> +	flush = 0;
+>> +
+>> +	list_for_each_entry(p, head, list) {
+>> +		struct pppoe_hdr *phdr2;
+>> +
+>> +		if (!NAPI_GRO_CB(p)->same_flow)
+>> +			continue;
+>> +
+>> +		phdr2 = (struct pppoe_hdr *)(p->data + off_pppoe);
+>> +		if (compare_pppoe_header(phdr, phdr2))
+>> +			NAPI_GRO_CB(p)->same_flow = 0;
+>> +	}
+>> +
+>> +	skb_gro_pull(skb, sizeof(*phdr) + 2);
+>> +	skb_gro_postpull_rcsum(skb, phdr, sizeof(*phdr) + 2);
+>> +
+>> +	pp = ptype->callbacks.gro_receive(head, skb);
 > 
-> https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/tree/arm/mali
+> Here you can use INDIRECT_CALL_INET()
+
+I did that in the initial version, but then I got reports of build 
+failures with the patch:
+
+ERROR: modpost: "inet_gro_receive" [drivers/net/ppp/pppoe.ko] undefined!
+ERROR: modpost: "inet_gro_complete" [drivers/net/ppp/pppoe.ko] undefined!
+
+Should I leave it out, or export inet_gro_receive/complete?
+>> +
+>> +out:
+>> +	skb_gro_flush_final(skb, pp, flush);
+>> +
+>> +	return pp;
+>> +}
+>> +
+>> +static int pppoe_gro_complete(struct sk_buff *skb, int nhoff)
+>> +{
+>> +	struct pppoe_hdr *phdr = (struct pppoe_hdr *)(skb->data + nhoff);
+>> +	__be16 type = pppoe_hdr_proto(phdr);
+>> +	struct packet_offload *ptype;
+>> +	int err = -ENOENT;
+>> +
+>> +	ptype = gro_find_complete_by_type(type);
+>> +	if (ptype)
+>> +		err = ptype->callbacks.gro_complete(skb, nhoff +
+>> +						    sizeof(*phdr) + 2);
 > 
-> Any plans on upstreaming these so people without DDK access can
-> actually try these patches?
-
-If you want to try the patches the cover letter has the link for the binaries.
-Once we're happy with the patches I will send a pull request to linux-firmware for the binaries.
-
-Best regards,
-Liviu
-
+> Possibly even here but it's less relevant.
 > 
-> > diff --git a/drivers/gpu/drm/panthor/panthor_hw.c
-> > b/drivers/gpu/drm/panthor/panthor_hw.c
-> > index f39010c0ca86..7f138974d43b 100644
-> > --- a/drivers/gpu/drm/panthor/panthor_hw.c
-> > +++ b/drivers/gpu/drm/panthor/panthor_hw.c
-> > @@ -15,8 +15,14 @@ static char *get_gpu_model_name(struct
-> > panthor_device *ptdev)
-> >  						GPU_PROD_MAJOR(gpu_i
-> > d));
-> >  
-> >  	switch (product_id) {
-> > +	case GPU_PROD_ID_MAKE(10, 2):
-> > +		return "Mali-G710";
-> >  	case GPU_PROD_ID_MAKE(10, 7):
-> >  		return "Mali-G610";
-> > +	case GPU_PROD_ID_MAKE(10, 3):
-> > +		return "Mali-G510";
-> > +	case GPU_PROD_ID_MAKE(10, 4):
-> > +		return "Mali-G310";
-> >  	}
-> >  
-> >  	return "(Unknown Mali GPU)";
+>> +
+>> +	return err;
+>> +}
+>> +
+>> +static struct packet_offload pppoe_packet_offload __read_mostly = {
+>> +	.type = cpu_to_be16(ETH_P_PPP_SES),
+>> +	.priority = 10,
+> 
+> The priority value should be IMHO greater then the exiting ones to avoid
+> possible regressions on other protocols. i.e. 20 should do.
+I'll fix it in v3.
 
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+Thanks,
+
+- Felix
 
