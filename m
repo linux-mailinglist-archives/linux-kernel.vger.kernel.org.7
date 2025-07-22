@@ -1,74 +1,77 @@
-Return-Path: <linux-kernel+bounces-740548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D4B3B0D593
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:15:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C96FB0D595
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:16:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BE8F1709FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:15:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58157547BE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:15:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25AF22D7805;
-	Tue, 22 Jul 2025 09:15:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE9AE23ED6F;
+	Tue, 22 Jul 2025 09:15:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="g63L2QrV"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="JCgNoXij"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D233223644F
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 09:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17DBE23AB96
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 09:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753175720; cv=none; b=KLbH2R0gvmXb/z2PPriTthr2lWBdGFnYuE/4fz0WWtpxic3a0Hnn5rw9UqM7Lu7MZatnfiqD4YtzvpJdqhZX6+LJffdbTeUHa964D74GjvwqHpzPgYB9fttYTeBxbcPCdSm6t53ZsrtDfKZI1sR7J8EtAJQwMfbH4NSTFFRH/eE=
+	t=1753175727; cv=none; b=Y4UVtiL7Egjl0SAhtFRGg+Xwr4tfQ7zgsQ8Vdd6mlEa4EFFyIUR/Z2JqQqVeEtMF1QM41QD0Pp5pOkCvoP4xhjPsP6fea9khXLquI6hLptAH5DPF6xrhIuumHBdsMZHOqtlXqdSzytCjB8vANdV5CE/VO2XCNEZVo0+123LyuzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753175720; c=relaxed/simple;
-	bh=MdWshbce3XUzAERPh+DbFtCFVpzrXq2WR7/dSR+x+10=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=NXcTQjyw7WsZBUyUtFFPvV9bOybjL4U7d7ZalPn4QPaTdWkin2hmST7PIXi1/EyzLwQKu45y6YSN5fzDVGsKo22y8YWNY8+qj2y9WBL4fyk/Q7vNhDkRac6Bb+6ZLHECXzrTQJXIF82u/FlqOU0560+8Onh3IUUCCYelSfNGQjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=g63L2QrV; arc=none smtp.client-ip=209.85.210.182
+	s=arc-20240116; t=1753175727; c=relaxed/simple;
+	bh=2Y6zuF0N83/R8DsFiR6r67BBtZOoXRw/MV4+JLjKNSs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Av1OndqRHGlpbr41GJuaO1BkFEFABaaEpesF0US7TJn3C24ZJGAdcmdBbcuf7eXh0BC09vqRmpiczL3gpnD111XPebRPa63XUI1v3h0q+eK4dYk3IXM3anuUTMoJ3bs9vKezpdanQ4dLk7kLkPikUBOLyXaLno4KSdOYK1p3ElY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=JCgNoXij; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-74b56b1d301so3439083b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 02:15:18 -0700 (PDT)
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-748e378ba4fso6109565b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 02:15:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1753175718; x=1753780518; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sDpd/9R1FbFO45b0pyVOCvmilI+82TcVxnKdkYIR8qQ=;
-        b=g63L2QrV71D1KPI5bRt4z8FkpiWo8Yatj0L3DcTcX12l48cYpuk4587C9YL+aq6OkD
-         z0Eyh8dXoMYBWcttbD4LWfYwvPeUx1XJYOzhhDqneBepWA7zHZGcICMENo2+aLfQgbei
-         /SCSahw+Crn0B3/O4A1b3cZn6ksqpvZ1sy/+03asKrMqhy5QZbwcHly/UGLAU4KolOl3
-         gEMku751a3gl9lpEevk6mSkd1DlWRO7YZnGAxNZ3SvS39U/PXTU6Z+OwXx1K7xO3U4xj
-         uihJtgzlwxElvTPJtPnJg8q/R8XCgWOagr78tiKbhdnzOvi8WqMuROVC0nr3qAqRqDDW
-         9XgA==
+        d=bytedance.com; s=google; t=1753175724; x=1753780524; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KSJEZmkPgfnKjnqaAxlDxuBrFCv+rDIHtV6Q4YGYv1Q=;
+        b=JCgNoXijC0ZA4HAQ7mi4YBx1fYJEA6cqu8IyKmCOxnNSgbFFerIbyX3IsGoHiM6ra0
+         tBfgqU7ywsOfUNyVG1gyeFuTDZiNi7msEis1IJeUy5wlBk1FDT2qXrQETFjCUTBgKhXO
+         1T8ujkZgWc3/RgaCfQmsh7yFdr9TJfL3y8UnGsGeNminVenLD+kF8H6nKQZhmIdHLkPr
+         QKcNEhLiZ8uCmdfI6YEK+cIz2N+xEirCfyYz+dB5I8KFl7ounJ73i0gnPFWP6hYO0gem
+         wZ6sob1WzMXU+V4cuxV+cXVak5yeVKfRTBku6trP7GnMPrPkgbWvs+CT/rjdRorA1HKZ
+         Algw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753175718; x=1753780518;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sDpd/9R1FbFO45b0pyVOCvmilI+82TcVxnKdkYIR8qQ=;
-        b=Q7jk44tJP+5vrPQOiOn3KBtzgY3wPqW4umXHVlEZB9fPNMNRrRcFcM2WosYavAEIr1
-         9rVxmx0kGAtX/IQoGtz3SzvyggnmO6ga53AoizDpCo29cC0Ybv7sV8GxLn8Yp3kyMjV5
-         rfp23Mj7dIWAxUZucVLiozxnKX6ef2Er9oXmdOhVttgY5C7LQctuUstK1eM+7bFY15qY
-         TMkBs8l3FSl65HMvwHjCmCq97FVQ+2i4JZtjcIkzHAJzA/GT0WWGxP+zwUGGLbZ6DWUk
-         h/TuZ7Ag4Mv8kl1ML6zLvV/we+Fg3Eywsst/OuwwVH09HyK6uKc9le4RapVjyZGrjf5N
-         L9nA==
-X-Forwarded-Encrypted: i=1; AJvYcCWrExbZJ/eibBHtBOJzJGjfZJVT3vCCLMUWcrWxJK3lDZ/sP2RbR8GWow/OWMKW/d9IVYmLP0w7geML6MA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxasUCKBiaQ9LelTjSgA+9OiMXE/1HG8ej1+6ywNicMQV9kPYGd
-	lYsgP5z2Cw4G4nF8xP71bql+OlyyczDket3kWdsLF2PoctzoGqdBlL8UPy82hPxG78I=
-X-Gm-Gg: ASbGncsTboD6+RDL8TFlS3qCzyHgsObW0KPEQr6/aEFfHuqZ+0TGJy6Ewe6jjiZiGIt
-	ICs8LG+UCy6mNlv8MXOqn0aT22Gzlrx+LswECkLulDMmabYXe+McBZqFxgay+2JR++pwBYE95u8
-	rvQFmY8CrkIs/sk5BYjTzkW6eydkr2etOVsQjis71dqbsHMIc4+Di40ApU7bqbdvYLwAmNQQTQH
-	pd+41TdLPX3m+IdkTV7uzd9apmVKCCKpZuQlDAAMwWXh6bqcyBueO85Ya8FoHD29eS26j3ipkZg
-	7GFrA+PhrrMLUT91iUSogVRQs+XyW5KqSnYizU4sxvXho8rB+8MEG/TTLNjkc/oOAsyxZ9GzhRn
-	oOKE7mES7s0R/W0h5AE1XZdO4O5Bh4rlgWxIBBMS/CqN8Mmim4gJqMXEj
-X-Google-Smtp-Source: AGHT+IFdLWXKtYtTpg9kzQmOA7PQCO4tbUE9up/LbFHwS0ttZD0Bn895xLmmJwWm4I3jiNDzOrHtgw==
-X-Received: by 2002:a05:6a00:2d19:b0:749:14b5:921f with SMTP id d2e1a72fcca58-75724a8ac06mr32920614b3a.18.1753175717942;
-        Tue, 22 Jul 2025 02:15:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753175724; x=1753780524;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KSJEZmkPgfnKjnqaAxlDxuBrFCv+rDIHtV6Q4YGYv1Q=;
+        b=e4WhI3yerQ+LSy+Vy5CcNmnPZP1BJHPSYWdYFdwVyoQiYGuTjIckLnirC9ODcY/kjW
+         20ZtL28Xm5FBdcOlnHkMrnaEq5QEIRe1qeEmL2/KJGGGxOEJLRHfDme+ahHuZqWm57R7
+         X5wC4J7j4hbb2v6qMExfSGjCmMLPq7bzrYQbdGLpo45ULfy3a1wItDHJA0U5+c+CT5S/
+         UAlBBdAK6rz7pdl5edhmRpoE2AmRupNXUbEdfua2JZdb1OK4ydKLHe/FaQvWdYa2Idx3
+         CrlzqCRp6L2Mv8+wAREjAmJdyFN1W++j1Q0dIJuZDH4tYD6r3CHcVWvAGopq2Rv9pXo2
+         z5SA==
+X-Forwarded-Encrypted: i=1; AJvYcCXSd0gmYZ5Ctg91KJYlrw7LP41C7PAJhhNh6MS4ZiwLvBmfrZPhPxTk9zpjb6WolOzSGzkOZ21zePl6QgU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQWJFfQ5VVsH23W56Tm45OdokY0u5v4jxY/6PkQ6mVyLxLW8oS
+	vXEuSoKbKvogu8hjbDGyL8o9WUcg48/KvKLE67fLxxemPoO4Wy9f1USbtZib0m8PMfU=
+X-Gm-Gg: ASbGncvRCbxMwPPYoAWRQPM5dwSLNCGs1tJpoSKflkKbY/R6s0vkcud0dpMtUsF8bc/
+	e9IKy1UPy/2rjNtFgG03CmrbJ1FU/mBQAqZ7e9/eUCLVURmQaHCOrOruhcYhHlgfGJAL7YUfkIv
+	9j4C6qcVDM0rJ6V4LYoUjfnFRw2KfcVx2+194VqKgKt8cmC78rUgnhZ5mSNbYNbfWuFyIxA7/5o
+	xjuD3yTbrzGhfc6k1legkzAYx+rU/nlw4uOZaFRjbREZacnWhd7E2E66jULk63lmyuATiTcfNYq
+	FpyNG/rKs4T9Gq9aWsUYJGjsrnRcO8xJXqYrvJgdmN/+1qTIXT7/GopLyNb1sx4cGkUUF3Z6bvr
+	wW5CS3wVhjj7wyynHrMa8jNc0XDWoxUrkucrVBLqJGOhR1IQmX5nekpE8
+X-Google-Smtp-Source: AGHT+IE8nn7g0sfttFkjFPlktCQQfoskYiWx8F7P7RBaYgJMDYxpTs0UIiig0ZzTsouqdeR9MRSjXw==
+X-Received: by 2002:a05:6a00:bd93:b0:751:6ff5:df35 with SMTP id d2e1a72fcca58-758492e7360mr31464955b3a.8.1753175724338;
+        Tue, 22 Jul 2025 02:15:24 -0700 (PDT)
 Received: from L6YN4KR4K9.bytedance.net ([139.177.225.236])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759c84e2008sm6676900b3a.30.2025.07.22.02.15.11
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759c84e2008sm6676900b3a.30.2025.07.22.02.15.18
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 22 Jul 2025 02:15:17 -0700 (PDT)
+        Tue, 22 Jul 2025 02:15:24 -0700 (PDT)
 From: Yunhui Cui <cuiyunhui@bytedance.com>
 To: paul.walmsley@sifive.com,
 	palmer@dabbelt.com,
@@ -88,10 +91,13 @@ To: paul.walmsley@sifive.com,
 	apopple@nvidia.com,
 	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/1] introduce ioremap_wc()
-Date: Tue, 22 Jul 2025 17:15:03 +0800
-Message-Id: <20250722091504.45974-1-cuiyunhui@bytedance.com>
+Cc: Qingfang Deng <qingfang.deng@siflower.com.cn>
+Subject: [PATCH 1/1] riscv: introduce ioremap_wc()
+Date: Tue, 22 Jul 2025 17:15:04 +0800
+Message-Id: <20250722091504.45974-2-cuiyunhui@bytedance.com>
 X-Mailer: git-send-email 2.39.2 (Apple Git-143)
+In-Reply-To: <20250722091504.45974-1-cuiyunhui@bytedance.com>
+References: <20250722091504.45974-1-cuiyunhui@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,18 +110,40 @@ Compared with IO attributes, NC attributes can improve performance,
 specifically in these aspects: Relaxed Order, Gathering, Supports Read
 Speculation, Supports Unaligned Access.
 
-When I replied to this patch (https://lore.kernel.org/all/CAEEQ3wmVPrZ6s8msM8RgcyZePGhXM1ikYMc5wW2n8q3Bf90EVw@mail.gmail.com/),
-I found the author's email address was invalid. So, based on this patch,
-I made slight modifications and resubmitted it.
-
-
-Yunhui Cui (1):
-  riscv: introduce ioremap_wc()
-
+Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+Signed-off-by: Qingfang Deng <qingfang.deng@siflower.com.cn>
+---
  arch/riscv/include/asm/io.h      | 4 ++++
  arch/riscv/include/asm/pgtable.h | 1 +
  2 files changed, 5 insertions(+)
 
+diff --git a/arch/riscv/include/asm/io.h b/arch/riscv/include/asm/io.h
+index a0e51840b9db4..09bb5f57a9d34 100644
+--- a/arch/riscv/include/asm/io.h
++++ b/arch/riscv/include/asm/io.h
+@@ -28,6 +28,10 @@
+ #ifdef CONFIG_MMU
+ #define IO_SPACE_LIMIT		(PCI_IO_SIZE - 1)
+ #define PCI_IOBASE		((void __iomem *)PCI_IO_START)
++
++#define ioremap_wc(addr, size)	\
++	ioremap_prot((addr), (size), __pgprot(_PAGE_KERNEL_NC))
++
+ #endif /* CONFIG_MMU */
+ 
+ /*
+diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+index 91697fbf1f901..3d17399a06c77 100644
+--- a/arch/riscv/include/asm/pgtable.h
++++ b/arch/riscv/include/asm/pgtable.h
+@@ -203,6 +203,7 @@ extern struct pt_alloc_ops pt_ops __meminitdata;
+ 
+ #define PAGE_TABLE		__pgprot(_PAGE_TABLE)
+ 
++#define _PAGE_KERNEL_NC ((_PAGE_KERNEL & ~_PAGE_MTMASK) | _PAGE_NOCACHE)
+ #define _PAGE_IOREMAP	((_PAGE_KERNEL & ~_PAGE_MTMASK) | _PAGE_IO)
+ #define PAGE_KERNEL_IO		__pgprot(_PAGE_IOREMAP)
+ 
 -- 
 2.39.5
 
