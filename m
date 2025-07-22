@@ -1,105 +1,175 @@
-Return-Path: <linux-kernel+bounces-741580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F398B0E60C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 00:03:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2BBAB0E60F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 00:03:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7C52175422
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 22:03:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 258DFAA15E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 22:03:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 829A42877F1;
-	Tue, 22 Jul 2025 22:02:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FAC2286412;
+	Tue, 22 Jul 2025 22:03:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NQJpCg6A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JEOdT0+n"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B0B287246;
-	Tue, 22 Jul 2025 22:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8EE4221FC9
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 22:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753221759; cv=none; b=Lgobp3tEMM7FVJ9p+Fx4G2K5YpKtSsS4YIvRh+ANIHrQWz2YVzf/yKmQrF1Nkta2ZkaFfOVhhTOfzemoND6jcGtoOIh+c7CMh/grjupPAEU+yqs/PAKo2u3obNkG+SOgeYqmkWddHFJa4dXRMwui9Kh7JbdGIUOa2BxYKvTIl20=
+	t=1753221827; cv=none; b=icVq/wxdssFqDUO+lLHgiBriZsdignRdEdEjlizyTotJHdJU58gAARdZevrRpv2Kk9zHjfZotx0Uh+KYaGcsfNnlfnrUMbAaG7T/L7Dw3rgXi6uH19ECk47ckgvwXfUw9F/U6eRgWBQYnhbHXtjMEdDDtDwPE1xO+vJ8gUUGmPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753221759; c=relaxed/simple;
-	bh=EPde5y9stfjJcaIFZ59a2xBrgJx9wnyVqR7ktHXVogo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CADGdqm4I3u8HBLaU1ORJA/UwC8KEsmqKH/W+5hQRGOA8iFKlwzqVFWRraQS4uLNfLgXHWlxjIel/V2YR61nXlE6jSl1IkcYhBcAYfzTNQeSnfH1xFFuKkpE7VAwGuP5pFY1tI72YOkTnR94Wi40wCbVKi4Y9zbSlecLY36plRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NQJpCg6A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FD9AC4CEEB;
-	Tue, 22 Jul 2025 22:02:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753221759;
-	bh=EPde5y9stfjJcaIFZ59a2xBrgJx9wnyVqR7ktHXVogo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NQJpCg6AvytfkgaTGtRyuH3K2pj/l/Em5crR1Gy7SZ9iAfU6D8FGatEUKMDz13a3/
-	 tzSZjj2PUD2AezrtDfE3OTn9Qacc1GsJowERERspwM2wK1gZjd+9J4ELbG/bGqXqrQ
-	 FhjGsDBcEzxIh/WpZct4zGaf313cOIawMaJKj3imldkYF8xYO8VitP0KDpTJI4JHd8
-	 GnAdp03m69thJwndwQI1tcS5NO6Bn9MRGtN+NTWhwCoSBQFp1FgleSJPctRzNlQg7a
-	 qssT6G/QBza02EGY6GJg2xoYWDBnD8JL7w3nc6+IjaGzq2ZjrWToAhKLQO5MugJhO/
-	 64jgMs5Wlpd9Q==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH v3 7/7] tracing: probes: Add a kerneldoc for traceprobe_parse_event_name()
-Date: Wed, 23 Jul 2025 07:02:35 +0900
-Message-ID: <175322175536.44400.179953626110801411.stgit@devnote2>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <175322168606.44400.9155291012158349647.stgit@devnote2>
-References: <175322168606.44400.9155291012158349647.stgit@devnote2>
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1753221827; c=relaxed/simple;
+	bh=/hk2v2tKv0aFWXaDAiRWiAFceqvq13jW55sQUz1Uo0c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IzKAZhXN+bSPXKWUf6L9Xk9ItmmV7W4LDlW4SJfXwWSSX6SIOtnOXOQCWdzUQAPa9LceAhr3fSHeNiPmsT1GwsfxFox4FB5dIsMCKqs6swE8bljJhtdjzrV4ua0vor4TbpzJwWUM9rj6cLHi3gdzemmHQpPOHVu2HSRlINntxS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JEOdT0+n; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3b45edf2303so5368558f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 15:03:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753221823; x=1753826623; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N+DOeS9uvizxe1iKfrbv/q108eWGpF97/hTRUl3WnSM=;
+        b=JEOdT0+neNjs4U1mMJAUZDY9SaE2+7sVIO20E63tzXlbQ07ZLYHHbM07lsaL+0Szv5
+         vQKkmuzk4A7yLxgrKN380l0CE2VSB0g6DyIzVMXWa9wgXdKEZj3+xF8eXskNOXgDkhnt
+         bcM/45pItez7mupqxjKrzJxZ6v6ykZtDbFhO65ufS2QZ/kce7Z4jaraw+eZjXXjUOF5s
+         9p9O7itsK+3EyPoMpvGF/JDMR1ymKc4St8l+UpLLvVAisMCGzuVyUdNNW2XQPoUe+ed5
+         BBbaS4ssylDbFLeU4UA9mLytdxene7qQyw+AFDpXXXFz+LchMQRAE2A3ud6B/D8+/Yxe
+         o8tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753221823; x=1753826623;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=N+DOeS9uvizxe1iKfrbv/q108eWGpF97/hTRUl3WnSM=;
+        b=NXi4oPhlHURG4Ok/bwKgaFxA/MTRH3TP57fK+N+YNv9e27UL8AvDG924HuC0JOkTvV
+         0kdGJv3qR2knKhwQ4TMVn11STNGLnMWRLvHrnsK610EdymUlUvfwdXMoXlLlmgwL3NGp
+         pnY5oShPlPAvWFgg6rKwhBXijgXPkeMWgn82aak0mNgqKWKRVdWna7C55D4XIUfRTf1G
+         RTV98VCQGB2/+7SEbNMTJ6tstWN9YT7nUmSTYZr0hOOhQTU+djeQvdcKUz+yLhVmkR5J
+         IX8C13D7n87+766dK4DOskatHYIsea93z4i8GssIVQ7TFUiCWLsbfCI8InTIEz3cvOj3
+         rD5g==
+X-Forwarded-Encrypted: i=1; AJvYcCXz+yMfKla82Dgp3bBDaqGpXJLB7A0/NpUn/w1kaSeFH9YjrQkJSAPwP0jpKsdqMNjZxp0DNmlx9o6D6Ak=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxR7mwYufXafQyVsah/FS4iSVBiA3biSDQbwC7C0cZeEnmWOL+7
+	mUlL74Y3sgaDGgdueTpW5M+YJmCx8vBoPqiu1QmwmDQzHClB5lFqxyGG
+X-Gm-Gg: ASbGncu+itsvsN+Ht91WoxwoLbgpz4QnSY5+ZzvhMEtVyhk1Rt9y46N5cpHGpqxWXN9
+	IkorR9geNiTYlqSSojvRAAbPlF9pokwRUpML8jVd5DzHv3sfxCP8yZt7z87+NgKNQfXZpos/2fC
+	tJp75LyVdc/3IcPL/hXUaahqVG/RmnpqO9FYA2rPz7OzikHA2PQtRJIx7E5+/YBBS4GJbaC8Svm
+	Q5MJkQK7rV3iXpq/jU89q5lhaH5h0vfqKa+GdxeKZXAvimGfcV2edCcp0zVeFak+Um16LJomiRM
+	Qc3ZeEY9E2kGPZYN5U3PSTRSmsIcFfdldrnfxYLIFK2JPi4LsgEPe2DOH/OSunXkeXbVh22yBRp
+	ovaqSHTEe32YnPH/qjAKfWYNL5r6ITa5evuvvd+4PpE3poE4bxBPsokiqKkmr
+X-Google-Smtp-Source: AGHT+IHyxNg6IcA0YWHkdLgK6kpJvHyE1C0rTSBwsx4+hXBqvXstyEz8R51T6mj4iw7srnhvf35Cnw==
+X-Received: by 2002:a5d:5d0c:0:b0:3a5:527b:64c6 with SMTP id ffacd0b85a97d-3b768caa10cmr542755f8f.1.1753221823022;
+        Tue, 22 Jul 2025 15:03:43 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45869182fa5sm2668325e9.2.2025.07.22.15.03.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jul 2025 15:03:42 -0700 (PDT)
+Date: Tue, 22 Jul 2025 23:03:41 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Dave
+ Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ "Li,Rongqing" <lirongqing@baidu.com>, Steven Rostedt <rostedt@goodmis.org>,
+ linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH] x86/math64: handle #DE in mul_u64_u64_div_u64()
+Message-ID: <20250722230341.5a1cc5e5@pumpkin>
+In-Reply-To: <20250722132147.GB2845@redhat.com>
+References: <20250721130422.GA31640@redhat.com>
+	<20250721192053.58843751@pumpkin>
+	<20250722105034.GA2845@redhat.com>
+	<20250722130947.0c97c96a@pumpkin>
+	<20250722132147.GB2845@redhat.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On Tue, 22 Jul 2025 15:21:48 +0200
+Oleg Nesterov <oleg@redhat.com> wrote:
 
-Since traceprobe_parse_event_name() is a bit complicated, add a
-kerneldoc for explaining the behavior.
+> On 07/22, David Laight wrote:
+> >
+> > On Tue, 22 Jul 2025 12:50:35 +0200
+> > Oleg Nesterov <oleg@redhat.com> wrote:
+> >  
+> > > 	static inline u64 mul_u64_u64_div_u64(u64 a, u64 mul, u64 div)
+> > > 	{
+> > > 		char ok = 0;
+> > > 		u64 q;
+> > >
+> > > 		asm ("mulq %3; 1: divq %4; movb $1,%1; 2:\n"
+> > > 			_ASM_EXTABLE(1b, 2b)
+> > > 			: "=a" (q), "+r" (ok)  
+> >
+> > That needs to be "+q" (ok)  
+> 
+> Thanks... I will never understand the asm constraints.
 
-Suggested-by: Steven Rostedt <rostedt@goodmis.org>
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- kernel/trace/trace_probe.c |   17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+I'm not sure I understand all of them.
+But the previous version wouldn't compile.
 
-diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
-index 9d26d901c9e5..7dcc4a548c69 100644
---- a/kernel/trace/trace_probe.c
-+++ b/kernel/trace/trace_probe.c
-@@ -247,7 +247,22 @@ int traceprobe_split_symbol_offset(char *symbol, long *offset)
- 	return 0;
- }
- 
--/* @buf must has MAX_EVENT_NAME_LEN size */
-+/**
-+ * traceprobe_parse_event_name - Parse a string into group and event names
-+ * @pevent: A pointer to the string to be parsed. On return, this is updated
-+ *          to point to the event name part of the string.
-+ * @pgroup: A pointer to the group name. This is updated to point to the parsed
-+ *          group name, which is stored in @buf.
-+ * @buf:    A buffer to store the parsed group name.
-+ * @offset: The offset of the string in the original user command, for logging.
-+ *
-+ * Description: This parses a string with the format `[GROUP/][EVENT]` or
-+ *          `[GROUP.][EVENT]` (either GROUP or EVENT or both must be specified).
-+ *          The parsed group name is stored in @buf.
-+ *          The caller must ensure @buf is at least MAX_EVENT_NAME_LEN bytes.
-+ *
-+ * Return: 0 on success, or -EINVAL on failure.
-+ */
- int traceprobe_parse_event_name(const char **pevent, const char **pgroup,
- 				char *buf, int offset)
- {
+> 
+> > > 		if (ok)
+> > > 			return q;
+> > > 		BUG_ON(!div);
+> > > 		WARN_ON_ONCE(1);  
+> >
+> > I know there are are a lot of WARN_ON_ONCE(1) out there,
+> > but maybe WARN_ON_ONCE("muldiv overflow") would be better?
+> > (The linker will merge the strings).  
+> 
+> OK. If you are fine with this version I'll send V2.
+> 
+> 	/*
+> 	 * Returns ULONG_MAX when the result doesn't fit u64.
+> 	 */
+> 	static inline u64 mul_u64_u64_div_u64(u64 a, u64 mul, u64 div)
+> 	{
+> 		char ok = 0;
+> 		u64 q;
+> 
+> 		asm ("mulq %3; 1: divq %4; movb $1,%1; 2:\n"
+> 			_ASM_EXTABLE(1b, 2b)
+> 			: "=a" (q), "+q" (ok)
+> 			: "a" (a), "rm" (mul), "rm" (div)
+> 			: "rdx");
+> 
+> 		if (ok)
+> 			return q;
+> 		BUG_ON(!div);
+> 		WARN_ONCE(1, "muldiv overflow.\n");
+
+I wonder what WARN_ON_ONCE("muldiv overflow") outputs?
+
+Actually, without the BUG or WARN you want:
+	u64 fail = ~(u64)0;
+then
+	incq $1 ... "+r" (fail)
+and finally
+	return q | fail;
+to remove the conditional branches from the normal path
+(apart from one the caller might do)
+
+	David
+
+> 		return ~(u64)0;
+> 	}
+> 
+> Oleg.
+> 
 
 
