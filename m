@@ -1,164 +1,149 @@
-Return-Path: <linux-kernel+bounces-740083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD676B0CF7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 04:04:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AF70B0CF83
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 04:05:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72BC21AA18E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 02:04:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8847D1AA1D31
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 02:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 130AD1DB377;
-	Tue, 22 Jul 2025 02:04:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65241B87F2;
+	Tue, 22 Jul 2025 02:04:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A80U6ifq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DE2Xj4zX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BFF912CDAE
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 02:04:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E0C1AA7A6
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 02:04:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753149863; cv=none; b=iv3pLaF4Or9E64EjaGfxQTlTngmm1Wqp+3WGF4ade0Nfs4do8D67YRDqZ/JqRwy5OOwRN8iSKuXW/X8GtnULwQ3kUvu+M0pD/gbEnkEBmzqjvXcNG8ZH8r0wNs9FGzYH09cAzQc9+qPca5tqFQ5jfbt1G4ZZqwgM8n1K20Y75A8=
+	t=1753149895; cv=none; b=Mo0H4iS2C0LVvUVDmToir6ru02DqDgNP3P1J/94poZVgLqFip6ttoGejD+mqnYmkw+GcetHAHvQW69KD6JnOL5JTxv5JimFimX8LpD9dyc6XhqawlhnD0osIz0kPMgM3qph59JFPzDGRND21z4VrjYAeJozBewYfrKaWRUdyssg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753149863; c=relaxed/simple;
-	bh=8F6mTLmJlh4i3Fet3JGrhPNNSnQhPigFYr8g61jXIp8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=H5GiiEvTpiC+IQ0fD/YRbD5FPjMIjCim3zpt4npuL12aqC5eYnveBBvc7BCXMcz/FXf8331LFYDqwKo0NpUJpTmlR8uK5zs3qc37C3MXailI2e9ZZHlyfZlIfa5uXjD0GDlKqtfcKBWwZKeM6xBJNH1i9SHlu6ibvi5l7Bv0cAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A80U6ifq; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1753149895; c=relaxed/simple;
+	bh=bIjUT1U7Vz8QnmyjIn9UODVHrfNoZzjGGz0TU5LVdwI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pdS4fj3DhiZyUN9y8dsUqlvJoCf4S0Mukx83oE6m1/DvQnKOZgV+Cdt73GFy4fFJC/E7VDps1SqhA7YnmS2X+JWhLcTCNsRyaq/46XuKQSifhzYNOIamARWC13zR2h35Z6AIL3EDH8NyqveDIqFh4yl21hrGnwWz6wPh8X1j3xE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DE2Xj4zX; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753149861;
+	s=mimecast20190719; t=1753149892;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=BNCqutEYCGxkPLPPDptf/fqRtu8WQpYy2xLrXDrGIyA=;
-	b=A80U6ifq+M+ijiVWygwM7hvvPaxQz6mnickz0yj2DZWXwKonAHoXNdfozCcx+5hVzM4egK
-	+9WrHrVXpuOHQR3bfdgjtubrZWnRBlfrMNKDWD0YDB3wNHKyCEbc16KKV/Gm0eNO/eOdAn
-	V3lgPJGmfInEaVGE8edgKFLNJw83Lgo=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-613-YEplb8HYO_2Qo6bhdbxZqQ-1; Mon,
- 21 Jul 2025 22:04:17 -0400
-X-MC-Unique: YEplb8HYO_2Qo6bhdbxZqQ-1
-X-Mimecast-MFC-AGG-ID: YEplb8HYO_2Qo6bhdbxZqQ_1753149855
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9A0981956088;
-	Tue, 22 Jul 2025 02:04:14 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.72.112.104])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C28BF180045B;
-	Tue, 22 Jul 2025 02:04:03 +0000 (UTC)
-From: Pingfan Liu <piliu@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: Pingfan Liu <piliu@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	Jeremy Linton <jeremy.linton@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Simon Horman <horms@kernel.org>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Philipp Rudo <prudo@redhat.com>,
-	Viktor Malik <vmalik@redhat.com>,
-	Jan Hendrik Farr <kernel@jfarr.cc>,
-	Baoquan He <bhe@redhat.com>,
-	Dave Young <dyoung@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	kexec@lists.infradead.org,
-	bpf@vger.kernel.org
-Subject: [PATCHv4 02/12] lib/decompress: Keep decompressor when CONFIG_KEXEC_PE_IMAGE
-Date: Tue, 22 Jul 2025 10:03:09 +0800
-Message-ID: <20250722020319.5837-3-piliu@redhat.com>
-In-Reply-To: <20250722020319.5837-1-piliu@redhat.com>
-References: <20250722020319.5837-1-piliu@redhat.com>
+	bh=bIjUT1U7Vz8QnmyjIn9UODVHrfNoZzjGGz0TU5LVdwI=;
+	b=DE2Xj4zXcB91WkWZT5HCDpd2rlu2XxR9bghiEQTv3r6+dBEl4xFCahu6gJmI+rjLu2XIth
+	toAJRujfMwHdEQbI98opcCaE5NymkqnMvgF6KKU8BvshqCBmBjuOSSebfxmQJWDl2yL89A
+	g8hqI+SzkwhjxrzdBzTlqasKnaefw9o=
+Received: from mail-vs1-f72.google.com (mail-vs1-f72.google.com
+ [209.85.217.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-688-mSrKQambMZGSChwN8fbt3g-1; Mon, 21 Jul 2025 22:04:50 -0400
+X-MC-Unique: mSrKQambMZGSChwN8fbt3g-1
+X-Mimecast-MFC-AGG-ID: mSrKQambMZGSChwN8fbt3g_1753149890
+Received: by mail-vs1-f72.google.com with SMTP id ada2fe7eead31-4f7ccde3f2cso128556137.3
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 19:04:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753149890; x=1753754690;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bIjUT1U7Vz8QnmyjIn9UODVHrfNoZzjGGz0TU5LVdwI=;
+        b=F1miCxjSMh8iUvpqUpkIrulicU9pvBKg3ZQxRbvYOv9koi44phJ2Ao33VhpWsIRErk
+         PK9YNFHxi3IPjd/+gnvuhd51IVBw1TcivZCvsuDmVIA2pzNYu7UOK4iSJRnLXSiSBVqZ
+         crEqOOku/wRBhPuDXa84OFr9f6RdisCOj3SC2h0xRxYteq7nynVrIQzZpL7l1cT7WnCa
+         pFwMQmwgEkBDdc2eAOg6QToaWuzyvT3zdb58zQJqdBkIWEVudfW8ZqtgaTHd1V1X3l5X
+         trPLalwxB/InrFYIorkldC+md+1CJR7h4Bxkw9DsoNuqUwiZ1g5h8jGpXv+ZBS265RZ8
+         fSlw==
+X-Forwarded-Encrypted: i=1; AJvYcCWpu6c2pc8sQdhu1mjmsd+0OWHnAkNteO/lKDxxaZ3TIb1gkqye1dsM6bxs7H4r+DmS7yNUXh7FkqNfdWo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJyK6SWajs33ZMeT0PwXn1+oLsfVmfaYyyAEUlL6uAxc2sG1WK
+	ApvtxPIHU1ZgojkUhK+HHq6qe/rtPePnK86k47qabsTrbKU7wi53IANy2nC0zfXZnWec14I2DAF
+	qy6TpdT6xdRGbhFsGZp4Ab2kf2fEMNVD48gh72SU0Ytx96DZgXlE/lgev7QcjdHJYO7xPq6eGEK
+	T3CpzfGV7H1Rj8y8NNIlg5rzg97k+OX5WNmDjLNu3A
+X-Gm-Gg: ASbGncvdGySXR0r3n23HaLLf9Zt4d23jzMC5vdEJUSWHPRbmJ5rNuv3/slged1NoXZX
+	N4LVdLxn3ixhzT6yCOXLcw2c32fAlGQEThZ8GLHlx2o7dUqhcooL1q3Q4HjCl9z/Gf7PgNm3t8j
+	j4pxg/FskoxY2JIgKFx7n1Ww==
+X-Received: by 2002:a05:6102:ccb:b0:4dd:b82d:e0de with SMTP id ada2fe7eead31-4f9ab36d3d8mr6612140137.17.1753149890330;
+        Mon, 21 Jul 2025 19:04:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEzkyjLEZd6sf+Ej+AUlulyAL0R4JIzoMwrGqi8s+KIvdvWhpHy011avGsCSL6qTpWhViHyY43qbrYraDMw+QU=
+X-Received: by 2002:a05:6102:ccb:b0:4dd:b82d:e0de with SMTP id
+ ada2fe7eead31-4f9ab36d3d8mr6612124137.17.1753149889948; Mon, 21 Jul 2025
+ 19:04:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+References: <20250718061812.238412-1-lulu@redhat.com> <20250721162834.484d352a@kernel.org>
+ <CACGkMEtqhjTjdxPc=eqMxPNKFsKKA+5YP+uqWtonm=onm0gCrg@mail.gmail.com> <20250721181807.752af6a4@kernel.org>
+In-Reply-To: <20250721181807.752af6a4@kernel.org>
+From: Cindy Lu <lulu@redhat.com>
+Date: Tue, 22 Jul 2025 10:04:10 +0800
+X-Gm-Features: Ac12FXwbctLUtOGy2Wpgo513rvoL7lTRBVB3h49HlisYxpbYr28YuZNNY6OZJsc
+Message-ID: <CACLfguXG7Mpsp=z4zCE7H4CMA_s9qV86SkeL7Q=WxChXcFpNfA@mail.gmail.com>
+Subject: Re: [PATCH RESEND] netvsc: transfer lower device max tso size
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Jason Wang <jasowang@redhat.com>, "K. Y. Srinivasan" <kys@microsoft.com>, 
+	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
+	Dexuan Cui <decui@microsoft.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Michael Kelley <mhklinux@outlook.com>, Shradha Gupta <shradhagupta@linux.microsoft.com>, 
+	Kees Cook <kees@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Kuniyuki Iwashima <kuniyu@google.com>, 
+	Alexander Lobakin <aleksander.lobakin@intel.com>, Guillaume Nault <gnault@redhat.com>, 
+	Joe Damato <jdamato@fastly.com>, Ahmed Zaki <ahmed.zaki@intel.com>, 
+	"open list:Hyper-V/Azure CORE AND DRIVERS" <linux-hyperv@vger.kernel.org>, 
+	"open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The KEXE PE format parser needs the kernel built-in decompressor to
-decompress the kernel image. So moving the decompressor out of __init
-sections.
+On Tue, Jul 22, 2025 at 9:18=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wr=
+ote:
+>
+> On Tue, 22 Jul 2025 09:04:20 +0800 Jason Wang wrote:
+> > On Tue, Jul 22, 2025 at 7:28=E2=80=AFAM Jakub Kicinski <kuba@kernel.org=
+> wrote:
+> > > On Fri, 18 Jul 2025 14:17:55 +0800 Cindy Lu wrote:
+> > > > Subject: [PATCH RESEND] netvsc: transfer lower device max tso size
+> > >
+> > > You say RESEND but I don't see a link to previous posting anywhere.
+>
+> Someone should respond to this part, please.
+>
+Hi Jakub,
+sorry for the confusion. I previously sent this mail
+(https://lore.kernel.org/all/20250718060615.237986-1-lulu@redhat.com/)
+to the wrong mailing list, so I'm resended it here.
+I've also submitted a v2 of this patch:
+https://lore.kernel.org/all/20250718082909.243488-1-lulu@redhat.com/
+Sorry again for the mix-up.
+thanks
 
-Signed-off-by: Pingfan Liu <piliu@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-To: linux-kernel@vger.kernel.org
----
- include/linux/decompress/mm.h | 7 +++++++
- lib/decompress.c              | 6 +++---
- 2 files changed, 10 insertions(+), 3 deletions(-)
+cindy
 
-diff --git a/include/linux/decompress/mm.h b/include/linux/decompress/mm.h
-index ac862422df158..e8948260e2bbe 100644
---- a/include/linux/decompress/mm.h
-+++ b/include/linux/decompress/mm.h
-@@ -92,7 +92,14 @@ MALLOC_VISIBLE void free(void *where)
- #define large_malloc(a) vmalloc(a)
- #define large_free(a) vfree(a)
- 
-+#ifdef CONFIG_KEXEC_PE_IMAGE
-+#define INIT
-+#define INITCONST
-+#else
- #define INIT __init
-+#define INITCONST __initconst
-+#endif
-+
- #define STATIC
- 
- #include <linux/init.h>
-diff --git a/lib/decompress.c b/lib/decompress.c
-index ab3fc90ffc646..3d5b6304bb0f1 100644
---- a/lib/decompress.c
-+++ b/lib/decompress.c
-@@ -6,7 +6,7 @@
-  */
- 
- #include <linux/decompress/generic.h>
--
-+#include <linux/decompress/mm.h>
- #include <linux/decompress/bunzip2.h>
- #include <linux/decompress/unlzma.h>
- #include <linux/decompress/unxz.h>
-@@ -48,7 +48,7 @@ struct compress_format {
- 	decompress_fn decompressor;
- };
- 
--static const struct compress_format compressed_formats[] __initconst = {
-+static const struct compress_format compressed_formats[] INITCONST = {
- 	{ {0x1f, 0x8b}, "gzip", gunzip },
- 	{ {0x1f, 0x9e}, "gzip", gunzip },
- 	{ {0x42, 0x5a}, "bzip2", bunzip2 },
-@@ -60,7 +60,7 @@ static const struct compress_format compressed_formats[] __initconst = {
- 	{ {0, 0}, NULL, NULL }
- };
- 
--decompress_fn __init decompress_method(const unsigned char *inbuf, long len,
-+decompress_fn INIT decompress_method(const unsigned char *inbuf, long len,
- 				const char **name)
- {
- 	const struct compress_format *cf;
--- 
-2.49.0
+> > > I'd rather we didn't extend the magic behavior of hyperv/netvsc any
+> > > further.
+> >
+> > Are you referring to the netdev coupling model of the VF acceleration?
+>
+> Yes, it tries to apply whole bunch of policy automatically in
+> the kernel.
+>
+> > > We have enough problems with it.
+> >
+> > But this fixes a real problem, otherwise nested VM performance will be
+> > broken due to the GSO software segmentation.
+>
+> Perhaps, possibly, a migration plan can be devised, away from the
+> netvsc model, so we don't have to deal with nuggets of joy like:
+> https://lore.kernel.org/all/1752870014-28909-1-git-send-email-haiyangz@li=
+nux.microsoft.com/
+>
 
 
