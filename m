@@ -1,118 +1,142 @@
-Return-Path: <linux-kernel+bounces-741628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF64EB0E6DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:00:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 877C9B0E6DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:03:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2146B6C7CED
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 23:00:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D782171340
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 23:03:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CA32877CE;
-	Tue, 22 Jul 2025 23:00:25 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F28E82877E5;
+	Tue, 22 Jul 2025 23:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dke1QX+a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A979228153A;
-	Tue, 22 Jul 2025 23:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC4F19DF62;
+	Tue, 22 Jul 2025 23:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753225225; cv=none; b=gbnxl62YrERIXYKL3zVl3YN5wYsGdH6faqZuhROxpJwfES997cSzNjnAKbWZKcJ/rWiPI8nDjRbKCADpmZFdWERuEkG3BSlpLYIQOyfAPqCaiz8nAnq2Uq2+SOIfTbz+0BeB17uT7OMlaDSmUuWGfJQJEunVxaX1Zkn9YIe/BQk=
+	t=1753225403; cv=none; b=Ty+Z8BtTtptqXHWVJKSgPB/vs40dq3SUxm8TQY4TOBNvF1HQgyxxU6/kKlAK3MBNfafPFH2VrwbZBTYxbQ9ZIoGt+dHpyfU3CFGrpD2SeXeBHOQI3h27JbZ+kl36q8dr5TmkExmxBfms/zgHXGDAyMXy8lZWcIXQ9GirnjWCUOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753225225; c=relaxed/simple;
-	bh=CRFhfV141swPD8l+LLZFt1GQAYLI8Qvph8qAL0gbGBM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e+2n400P6oKsMSOB6kQgvxl++9HISHHkfypevAJOsnkUSl8ZKnYj2E665f/bxQkpWTaQX5XDXc53FAj9mNLTNe/lZxteoU1zo4GEh73Ruaq57h+RRqp0Z3wVH9Zs3IPbRCAr6nriYGAQd/ZMI6FZRZyT12TEw45wsmH+qzIfxis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay05.hostedemail.com (Postfix) with ESMTP id AA82C58AC7;
-	Tue, 22 Jul 2025 23:00:19 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf08.hostedemail.com (Postfix) with ESMTPA id 64B6520025;
-	Tue, 22 Jul 2025 23:00:17 +0000 (UTC)
-Date: Tue, 22 Jul 2025 19:00:16 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Ingo Molnar <mingo@kernel.org>, Peter
- Zijlstra <peterz@infradead.org>, Vincent Guittot
- <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>
-Subject: Re: [PATCH] tracing: sched: Hide numa balancing trace events
-Message-ID: <20250722190016.7c462d56@gandalf.local.home>
-In-Reply-To: <20250722104820.6c629734@batman.local.home>
-References: <20250722104820.6c629734@batman.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753225403; c=relaxed/simple;
+	bh=H4/Fw/YMMr0MMtlaU/LX3CjtnXZ0L6wq4mkRrxSMTNg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=uyb0mO83ocy+dT4eyZr3UHAmdNZc4O6fsCi+SWobVzUEZmEqjTycToK/spFZUy5qJGYb2q343hYcmsaZ0HU9gBGAG9BfbeJCWiw7TlQPce7ig1305NKMcR6TGVkAj7WuUHi30bhz6A6aPMFtr7h4VZVl5CB1Nyhv94JPVTv/SlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dke1QX+a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11A27C4CEEB;
+	Tue, 22 Jul 2025 23:03:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753225403;
+	bh=H4/Fw/YMMr0MMtlaU/LX3CjtnXZ0L6wq4mkRrxSMTNg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=Dke1QX+a+FR7P/hDbBEi1WxSbuHdxEb91hDy/7lOn8xOFpSytQgbqTUxnNf2cXPKF
+	 z5Rl2nM5IUObXDSbi/j/pvgdcCXW3lweVx1yKK1UYQUKki9ZL3cLyKBNKfHnTDXFAr
+	 iXYcO6bx3woIrlTswLh/oglT2XjesWnv37NMr5NGcWGJfEbHZE5/XWw58PfyfaK8If
+	 Z64RaAaIjn1UDHel+QGoY7nffWy9uPzye8t/oPKix3ZiBUVjmvmLTTaNrVpp3+2kNQ
+	 vkNuCoSlKf9ouoMShWHIKMTiHoPkdW9M/rsImNAgnmkYGPUyr3P+t/mRk6H5fd2QEi
+	 8ThN+5bYvlLPg==
+Date: Tue, 22 Jul 2025 18:03:21 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, David Matlack <dmatlack@google.com>,
+	Vipin Sharma <vipinsh@google.com>,
+	Aaron Lewis <aaronlewis@google.com>
+Subject: Re: [PATCH v2] PCI: Support Immediate Readiness on devices without
+ PM capabilities
+Message-ID: <20250722230321.GA2861805@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: zt6hqkzrthfmtqkjg7fydzzmpgc5n9ta
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: 64B6520025
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19WiFuqgyxBH6LA4hu1ZcV8o+KAAXzu0MU=
-X-HE-Tag: 1753225217-5500
-X-HE-Meta: U2FsdGVkX18s6pmuHFRVWSSP+I+IAIBmqBIFxzZ7ayy/uOXZi+SvTZnWwmi9kKP9ikqVWO9wX/VXbKS6DNpuwu5iTxjbeM4waKKbbH+3zyhYNHNN72ADzfe/WVKXJ+D7aaiLxjDKg9OJRvsi6Qcz6Sd86F6BHvjOD3HPXwXxwdu6EVniFzvH+4HtpPTUjSsLE6jg17Ef4Jhm3sJ8Ee+mwqxOJLHqmPpo2gfy1dKBx3tuLCPg/i91tem0n59uOda34crVgosOhQ9+O+7RxVuhI9PjE8Gw+sigoCIafx70N29hOWi7kTlAYxE9g/oI1SRqXL4aMRDrnXvx/lJnkTVMlBpLQPQUezWZFZu+9BErahGoEFGp8hkwGZM2sjHG5QlaKWBZEGtyUtE2GZZ3zZ99nA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250722155926.352248-1-seanjc@google.com>
 
-On Tue, 22 Jul 2025 10:48:20 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> From: Steven Rostedt <rostedt@goodmis.org>
+On Tue, Jul 22, 2025 at 08:59:26AM -0700, Sean Christopherson wrote:
+> Query support for Immediate Readiness irrespective of whether or not the
+> device supports PM capabilities, as nothing in the PCIe spec suggests that
+> Immediate Readiness is in any way dependent on PM functionality.
 > 
-> The trace events sched_move_numa, sched_swap_numa and sched_stick_numa are
-> only used when CONFIG_NUMA_BALANCING is enabled. Put an #ifdef guard
-> around the definitions of these trace events so they are not defined when
-> numa balancing is not enabled, otherwise they waste a bit of memory being
-> unused.
-> 
+> Fixes: d6112f8def51 ("PCI: Add support for Immediate Readiness")
+> Cc: David Matlack <dmatlack@google.com>
+> Cc: Vipin Sharma <vipinsh@google.com>
+> Cc: Aaron Lewis <aaronlewis@google.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-I just noticed that I already sent out a version of this patch here:
+Applied to pci/enumeration for v6.17, thanks!
 
-  https://lore.kernel.org/linux-trace-kernel/20250612100552.39672cf9@batman.local.home/
-
-Which is a better version than this one.
-
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 > ---
->  include/trace/events/sched.h | 2 ++
->  1 file changed, 2 insertions(+)
 > 
-> diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
-> index 4e6b2910cec3..51776b45549a 100644
-> --- a/include/trace/events/sched.h
-> +++ b/include/trace/events/sched.h
-> @@ -628,6 +628,7 @@ TRACE_EVENT(sched_process_hang,
->  );
->  #endif /* CONFIG_DETECT_HUNG_TASK */
+> v2: Move logic to pci_init_capabilities() instead of piggybacking the
+>     PM initialization code. [Vipin, Bjorn]
+> 
+> v1 [RFC]:  https://lore.kernel.org/all/20250624171637.485616-1-seanjc@google.com
+> 
+>  drivers/pci/pci.c   |  4 ----
+>  drivers/pci/probe.c | 10 ++++++++++
+>  2 files changed, 10 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 9e42090fb108..4a1ba5c017cd 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -3205,7 +3205,6 @@ void pci_pm_power_up_and_verify_state(struct pci_dev *pci_dev)
+>  void pci_pm_init(struct pci_dev *dev)
+>  {
+>  	int pm;
+> -	u16 status;
+>  	u16 pmc;
 >  
-> +#ifdef CONFIG_NUMA_BALANCING
->  /*
->   * Tracks migration of tasks from one runqueue to another. Can be used to
->   * detect if automatic NUMA balancing is bouncing between nodes.
-> @@ -719,6 +720,7 @@ DEFINE_EVENT(sched_numa_pair_template, sched_swap_numa,
+>  	device_enable_async_suspend(&dev->dev);
+> @@ -3266,9 +3265,6 @@ void pci_pm_init(struct pci_dev *dev)
+>  		pci_pme_active(dev, false);
+>  	}
 >  
->  	TP_ARGS(src_tsk, src_cpu, dst_tsk, dst_cpu)
->  );
-> +#endif /* CONFIG_NUMA_BALANCING */
+> -	pci_read_config_word(dev, PCI_STATUS, &status);
+> -	if (status & PCI_STATUS_IMM_READY)
+> -		dev->imm_ready = 1;
+>  poweron:
+>  	pci_pm_power_up_and_verify_state(dev);
+>  	pm_runtime_forbid(&dev->dev);
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index 4b8693ec9e4c..d33b8af37247 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -2595,6 +2595,15 @@ void pcie_report_downtraining(struct pci_dev *dev)
+>  	__pcie_print_link_status(dev, false);
+>  }
 >  
->  #ifdef CONFIG_NUMA_BALANCING
-
-Because You can just remove the above two CPP directives.
-
-So please ignore this one.
-
--- Steve
-
-
->  #define NUMAB_SKIP_REASON					\
-
+> +static void pci_imm_ready_init(struct pci_dev *dev)
+> +{
+> +	u16 status;
+> +
+> +	pci_read_config_word(dev, PCI_STATUS, &status);
+> +	if (status & PCI_STATUS_IMM_READY)
+> +		dev->imm_ready = 1;
+> +}
+> +
+>  static void pci_init_capabilities(struct pci_dev *dev)
+>  {
+>  	pci_ea_init(dev);		/* Enhanced Allocation */
+> @@ -2604,6 +2613,7 @@ static void pci_init_capabilities(struct pci_dev *dev)
+>  	/* Buffers for saving PCIe and PCI-X capabilities */
+>  	pci_allocate_cap_save_buffers(dev);
+>  
+> +	pci_imm_ready_init(dev);	/* Immediate Ready */
+>  	pci_pm_init(dev);		/* Power Management */
+>  	pci_vpd_init(dev);		/* Vital Product Data */
+>  	pci_configure_ari(dev);		/* Alternative Routing-ID Forwarding */
+> 
+> base-commit: 89be9a83ccf1f88522317ce02f854f30d6115c41
+> -- 
+> 2.50.0.727.gbf7dc18ff4-goog
+> 
 
