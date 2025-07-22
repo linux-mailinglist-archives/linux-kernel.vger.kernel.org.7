@@ -1,176 +1,117 @@
-Return-Path: <linux-kernel+bounces-740759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71C7AB0D8C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:00:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F309B0D8C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:01:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E26E7AA342
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:59:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F28017A3FE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F782E425F;
-	Tue, 22 Jul 2025 12:00:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452D22E3B0F;
+	Tue, 22 Jul 2025 12:01:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mZISTQk5"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="slrGHiF3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0419F2D3A88
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 12:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C96B2356DA;
+	Tue, 22 Jul 2025 12:01:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753185632; cv=none; b=Ss+ZhRjpZqIruQ2InIoUDWty82kkcGlpnES2NI6XSeN0i+j8/ad8+sDSWIwzhXUvDzd/eQbhoL1emLhNG70rYbsjD4V5WFnSGH3B0yf8lISd/7puTN8U8BACHfmnSioPWFveHRvUncUkYNNRvn4M55lPvATP2rA8LCb5ruUf4kM=
+	t=1753185661; cv=none; b=WmY9GDQyyRivWdtyuBDnPsYn51KUuAnXcU/WPwQPzoeSYvcNIJEJ4DR8A+vRFhnQwi0zTAV05M+XOYEQPTmd25mt5Uk0nkghxIZ8A7l9N5xJbMgz/kLrVIe+VhNbJ0IhB+lI3ml0qF4cjlSpjan3+PHwe7YARsTIRbNJvUtdX/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753185632; c=relaxed/simple;
-	bh=TyKN+XzYCkV6rwuA3vy4eTsqF3nFqVxpsgelQW7FRPI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ny+MlRrGWCKWEVZrEho2tdrcpcn0imqxaZj+htaP0qIWCq4eF3r472el4riPVNq4fVWbmnhdEMPrud5YtBI3BARDd8aK8+pEFBZwqWHKcyxRxq/NdPgHM+cIyESY/Ghv05Ux3WchJgeGc8n536682iNhqqjBXiLQMMFOGVGNOzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mZISTQk5; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-75001b1bd76so3345695b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 05:00:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753185630; x=1753790430; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ptH7TdqJ1a9RBPR6TZDZBqzzcIS8gfN8+gNc7Nchtao=;
-        b=mZISTQk5ifn97Cs+yFblJMTrviWVKG6QQSiD+iA8OMiMRBYkg8b+LdCspi0PCwHWQ0
-         jqd+rYEbohqtz8veSa2zResH6/d/pcvlfHQZgaapnbVlhTU0gtZhHxNpnavAp95dM7Pb
-         gPOg4WTG//4iO97V6NPkEETpUzvYci3JosnJNb+aCO2CAsxtyXHvn6x2+qsDXuFFMTyv
-         aiFfw8lwb9r/fRQDeqKsElYQwo3q6EtOhzHj4bfeVJg7pYLXyoMyC0SiIZ3SfHtJIOXQ
-         IFv1raMvPBMck/ZkEaq0AazukXEfBTclmTIoxMEvLXnBR/OCVzICYs22CXiFYla738z4
-         0CJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753185630; x=1753790430;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ptH7TdqJ1a9RBPR6TZDZBqzzcIS8gfN8+gNc7Nchtao=;
-        b=aByD3vv2qjU/aaG/vJHf3trMZ+kNUW9KYcbJcK5Rohd9JPwNb7FfSBSCDyNOPx0jNc
-         qX7ZYu7vb1nlMqeM0J3Hp7geW/ftWR//JGfMtT0ACzI0ES1OksD/6cs89bVcKymNqHf9
-         Zl6TDhk5oQKreq63nSr8jpwnqm2GPhuwUpE0KOlZm3vcMJEyv6KnOc83XYneLPA9Mlx7
-         hHYiMzMshd632h68s4eUqAirY3UEyvv+hPYcNZNylSGPf/U58Ko8j6GHu2nHb8irrv5q
-         AFEhvpiZ/z8qcGSzHG4pES/7bOK00DZKC0+r7s2BSydVGQ1Fa2nHSaLTe9M0zJF8kxwh
-         g2xQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUdymQXGSk8XVrGMwPqgF/Q3Bd2jx/NWAH8hFwMyG2nFAPM1ShWczC5gcY9wb+KmRy0cs9mxwszsF43yVo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzafYHsE65UWHYIykYURp0sJ/opm9jEZMYvq4G1t1pDdGoIF3Jo
-	LdWU/bsX9aV+MIqzpyoX2Hcbm7bsEyBFW0oSRN78m1SbDJnjl43A89GeFTRFiB0oXlGyQpyVnRd
-	DzJFhjPw3bjyeClZE7sg0ehWVYajS2AIQB7WpO9Qz2Q==
-X-Gm-Gg: ASbGncu94juMXl1m3xjB+ZIS9Aqj1tZABksRgdUBt/BajCTR3ig8W2sxuftvjsPJTmP
-	iqFWT9KTi2JVHrr9HjKQiRa85DrW2WmPgiFpbXYpN+yrJiS3MudIytJH6N5sI+Zkwxe30gOCRo5
-	6Kt8+zCqDQ1L9ILG+xYUGP373bOmOgne48PZlo6egHIR1GQKH8tMah9Jd/5XIV4v0GdkwUVfI8u
-	+H/xuDr
-X-Google-Smtp-Source: AGHT+IGTyCeY3UMh/uN26NrX+9pLVitYu44Yg1Cv05hntn0WmZXzyYQmgf2Srl3Zso4XLkxJAtt8NFNBvWJVP5c1/co=
-X-Received: by 2002:a05:6a21:6016:b0:1ee:a914:1d67 with SMTP id
- adf61e73a8af0-23810e50f83mr36040966637.2.1753185629855; Tue, 22 Jul 2025
- 05:00:29 -0700 (PDT)
+	s=arc-20240116; t=1753185661; c=relaxed/simple;
+	bh=ftwyc4Rsa5PkJtcbA2GUll7HG+Q6Q06RPAVEveTG0uk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MWWppPUCzrWWLhBQ0GsdyRNoy/KYsYKirPzVum1b2eJRO4sAZ4e/Uu1VOB0wS5BalzqB4Bs7xt2E4ugt5wQy2oQxHm8wYtARyehJnBbFquur+UnyrLLKbGsFRvU8jvueuMAKcy/mGtuF+17NBlhci/i4La26LW8zJyrirMJ4fLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=slrGHiF3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18838C4CEEB;
+	Tue, 22 Jul 2025 12:01:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753185661;
+	bh=ftwyc4Rsa5PkJtcbA2GUll7HG+Q6Q06RPAVEveTG0uk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=slrGHiF3zjYaMc60IUNK6RjWE3rdbO2DQBO8dNxOtCo8AqXh+e8ZVnFDuTJLKm3sV
+	 qPxxiVnx6HuvBdZBICMTbRy6cys+7bQwWK6PWUJncEcga/3onpycniF3/PcKP4o9sV
+	 W4hhlTq7WGbYYIZdegFSm8/UANecYid4haKbKnziKFJE2mfRl+1T8bbvn58cW3VIRh
+	 R/JfaPOum/o5RRxKYUcxvVAfpmGxKzDiUjQZU/FJOdzhe6M8ne8yDD/lfnhG6b1rXQ
+	 GkZb/G1XOSjVESgAML8GizFmHrK6lO2l7WyqUMniRJtRk2clg2JPszFUeGRZ3o3uoa
+	 8qYtcPnJGQhGg==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1ueBfu-000000002NY-0V1w;
+	Tue, 22 Jul 2025 14:00:50 +0200
+Date: Tue, 22 Jul 2025 14:00:50 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Manivannan Sadhasivam <mani@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 1/3] PCI/pwrctrl: Fix device leak at registration
+Message-ID: <aH99cmBkOwCOkIZk@hovoldconsulting.com>
+References: <20250721153609.8611-1-johan+linaro@kernel.org>
+ <20250721153609.8611-2-johan+linaro@kernel.org>
+ <20250722110526.00002a60@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250722081405.2947294-1-quic_jinlmao@quicinc.com>
- <20250722081405.2947294-2-quic_jinlmao@quicinc.com> <727fa9f4-fe25-495e-9d8d-48e504fbe6b0@arm.com>
- <20250722091425.GH3137075@e132581.arm.com>
-In-Reply-To: <20250722091425.GH3137075@e132581.arm.com>
-From: Mike Leach <mike.leach@linaro.org>
-Date: Tue, 22 Jul 2025 13:00:18 +0100
-X-Gm-Features: Ac12FXxwWOJchARr8CvJVCGpP9c_3WusEBTfWMpJDyd4T_uRT6DBiailwW2ufC8
-Message-ID: <CAJ9a7VhLLgAak_4FB=iW0izXprM4W+RsKfHUeo=XUHh9LwtUsA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: arm: Add Qualcomm extended CTI
-To: Leo Yan <leo.yan@arm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, Mao Jinlong <quic_jinlmao@quicinc.com>, 
-	James Clark <james.clark@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Yingchao Deng <quic_yingdeng@quicinc.com>, coresight@lists.linaro.org, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250722110526.00002a60@huawei.com>
 
-Hi
+On Tue, Jul 22, 2025 at 11:05:26AM +0100, Jonathan Cameron wrote:
+> On Mon, 21 Jul 2025 17:36:07 +0200
+> Johan Hovold <johan+linaro@kernel.org> wrote:
 
-On Tue, 22 Jul 2025 at 10:14, Leo Yan <leo.yan@arm.com> wrote:
->
-> On Tue, Jul 22, 2025 at 09:49:28AM +0100, Suzuki Kuruppassery Poulose wrote:
-> > On 22/07/2025 09:14, Mao Jinlong wrote:
-> > > From: Yingchao Deng <quic_yingdeng@quicinc.com>
-> > >
-> > > Add Qualcomm extended CTI support in CTI binding file. Qualcomm
-> > > extended CTI supports up to 128 triggers.
-> > >
-> > > Signed-off-by: Yingchao Deng <quic_yingdeng@quicinc.com>
-> > > Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
-> > > ---
-> > >   Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml | 4 +++-
-> > >   1 file changed, 3 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml b/Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml
-> > > index 2d5545a2b49c..1aa27461f5bc 100644
-> > > --- a/Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml
-> > > +++ b/Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml
-> > > @@ -84,7 +84,9 @@ properties:
-> > >             - const: arm,coresight-cti
-> > >             - const: arm,primecell
-> > >         - items:
-> > > -          - const: arm,coresight-cti-v8-arch
-> > > +          - enum:
-> > > +              - arm,coresight-cti-v8-arch
-> > > +              - qcom,coresight-cti-extended
-> >
-> > Why not call it qcom,coresight-cti ?
-> >
-> > There are no other "qcom,coresight-cti", so "extended" is not required.
-> > Is this specific to CPU (i.e., CPU bound) ?
->
-> I roughly went through the second path. Combining two patches in this
-> series, I am wandering if can directly check registers (e.g. PID/CID)
-> to find CTI with qcom extension. If so, you do not need an extra DT
-> binding, right?
->
-> Thanks,
-> Leo
->
-> > Suzuki
-> >
-> > >             - const: arm,coresight-cti
-> > >             - const: arm,primecell
-> >
-> > _______________________________________________
-> > CoreSight mailing list -- coresight@lists.linaro.org
-> > To unsubscribe send an email to coresight-leave@lists.linaro.org
+> Perhaps time for 
+> DEFINE_FREE(put_pdev, struct platform_device *, if (_T) put_device(&_T->dev));
+> 
+> then...
+> 
+> > ---
+> >  drivers/pci/bus.c | 14 +++++++++-----
+> >  1 file changed, 9 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
+> > index 69048869ef1c..0394a9c77b38 100644
+> > --- a/drivers/pci/bus.c
+> > +++ b/drivers/pci/bus.c
+> > @@ -362,11 +362,15 @@ void pci_bus_add_device(struct pci_dev *dev)
+> >  	 * before PCI client drivers.
+> >  	 */
+> >  	pdev = of_find_device_by_node(dn);
+> > -	if (pdev && of_pci_supply_present(dn)) {
+> > -		if (!device_link_add(&dev->dev, &pdev->dev,
+> > -				     DL_FLAG_AUTOREMOVE_CONSUMER))
+> > -			pci_err(dev, "failed to add device link to power control device %s\n",
+> > -				pdev->name);
+> 
+> 	struct platform_device *pdev __free(put_pdev) =
+> 		of_find_device_by_node(dn);
+> > +	if (pdev) {
+> > +		if (of_pci_supply_present(dn)) {
+> > +			if (!device_link_add(&dev->dev, &pdev->dev,
+> > +					     DL_FLAG_AUTOREMOVE_CONSUMER)) {
+> > +				pci_err(dev, "failed to add device link to power control device %s\n",
+> > +					pdev->name);
+> > +			}
+> > +		}
+> > +		put_device(&pdev->dev);
+> 
+> and no need for any explicit put.
+> 
+> We already do this extensively in some subsystems (e.g. CXL) and it
+> greatly simplifies code.
 
-For a change of this magnitude to a CS component, that the ID
-registers will also have to change. This is a requirement of the
-Visible Component Architecture in the CoreSight specification.
-External tools cannot see the device tree.
+No, I'm no fan of those kind of changes which I find leads to less
+readable code (e.g. with those in-code declarations).
 
-This is effectively no longer an ARM designed component, so the
-CoreSight specification requires that the DEVARCH register change to
-show qualcomm as the designer, and the architecture value change to
-represent this component.
-DEVID should be used to allow the driver to pick up parameters such as
-number of triggers as per the existing CTI component.
-
-If this component is Coresight compliant then the driver can use the
-ID registers to configure to the extended trigger architecture.
-
-With complete remapping of most of the registers, and the dropping of
-claim tag compatibility - which appears to be a breach of the
-CoreSight specification - it may be better to have a completely
-separate driver for this component.
-
-Regards
-
-
-Mike
-
---
-Mike Leach
-Principal Engineer, ARM Ltd.
-Manchester Design Centre. UK
+Johan
 
