@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-741084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92547B0DFD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:04:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA898B0DFF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:08:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB95D3B7F15
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:02:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2974188E5C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:03:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88990273815;
-	Tue, 22 Jul 2025 15:01:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DD0E2ECEB9;
+	Tue, 22 Jul 2025 15:01:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UTlZEkBr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MMb1KFi6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51942ECE89;
-	Tue, 22 Jul 2025 15:01:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E402ECEAB;
+	Tue, 22 Jul 2025 15:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753196487; cv=none; b=XSOJN52YsWtx6JpYSjdvc6rITWSYOihFrGq4OInMim+LmL8pH6+xrI55KFQ6o5FVnLI23UGIx7jp9+k5wNRCIWikXxf5ihJITjFuDhBOpHuy3vNn4Iw1g3b4fZG5zb6D00ChBdEBEpwS0AITCJAEzqBfSPQhtQhPRVLpI/Utdhk=
+	t=1753196491; cv=none; b=aOqOXiEFyrrtbZqJEPZgvM5iGnhuF5JTsH5hJZA/dFKLIbsLPLtC0V7PGaXQpRu2CTiYMgnqfaWki/dmiKRqfl+e1vQ9/BxlnBEXU74oK4J8AxnMUj5B+ZFBUU21jL/r1b7hJ42xw4MN2uMQvKN+R4n1tELEX2WrPmSs5wn2Z70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753196487; c=relaxed/simple;
-	bh=y/u2dKefOvvJa3r/lkuSNuJJvDKeMjJ5Xk8vtaghlOw=;
+	s=arc-20240116; t=1753196491; c=relaxed/simple;
+	bh=cZJQooCjCy4KF7VmqkC4rIymUInoRT314LZ1r8AK4Wg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WcXLuTW1/2tpUlOakND+EHm3vkPSupbEQl9j7WSJRST//hgVfwCMMzNwetxW7blv0KZO6N9Bpf8Zn+tS6SdAjFXwy44WziiN4fsLwb0orX+15+0uaZ/PgJyOoD/tnrQgT3G8HkQ2Zugm6r1Vyv65Ah7k/xXFVJHgcJ14iv+auMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UTlZEkBr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59300C4CEEB;
-	Tue, 22 Jul 2025 15:01:24 +0000 (UTC)
+	 MIME-Version; b=ffHzuqhKcVLEH7Ftau+HNZI/2A/rWu+5rBWaP6AH73YqdQ6VzO6sL0ZwyUHe28ayWju1CHalGPe9COY0uqlszj8DTt6epFhot50dcKpLbiXPEKqhihXOW8NbCpgTqxbkoZgzkyScMG02XujstAIMLfaMo7/fTQ+2jYoOvjum/wY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MMb1KFi6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D43BFC4CEF6;
+	Tue, 22 Jul 2025 15:01:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753196487;
-	bh=y/u2dKefOvvJa3r/lkuSNuJJvDKeMjJ5Xk8vtaghlOw=;
+	s=k20201202; t=1753196490;
+	bh=cZJQooCjCy4KF7VmqkC4rIymUInoRT314LZ1r8AK4Wg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UTlZEkBr0B5DmXKpWTIa1jL2lvpO5odXosuLAB12tXZbDPJN6t9d70yZbYQO3MO/q
-	 EDGWFy33TYI4JTg5H+35dDsoV91zHo5CNs15hTWMUgleTphmbgCkAKcoN3o5GLDBYf
-	 fg1pcdZnFn0exu7fE31C4HNO2DqALAJ2WEtdrEtZIvoXvqiBMcndfUga1VxKp88Tr5
-	 e5yvi3DuroC9e/9gNftErQEOSpTrC73rzkyt8e41gXewt1DICOx3YI2xuv8s8ps65B
-	 8LiZD7GNE7VIqd1ZnG5juZL3ZwN7Naoebu2rQ4TVllmg4i57PlTpkN67njBEy1Vzc3
-	 N1S+znwoptyeg==
+	b=MMb1KFi6BiYCo6N3hjauUkvLKcJosMdskKRmTkIuWX+Dbkn0AjwXdXMkSLcx6Wd0+
+	 hKJ01sQATRlzNAmmHRsyc/QIM9oQ2NzsvAxbbAHnQlVugdGVCFHb6xr+Kk/OXUGn70
+	 HeSGCfLiT2f2G/xwdX87FrNnMyZMsWZZKMqS7QzHhLU3hNvN4VVRxDmFMG8VG5QACP
+	 FDMnVFYU0NncsgmSJWl0UsI7KhxE+PigBXRh0AwtCFSHd6vSRbp6/qPEnvb0XtATN3
+	 RLndET21iwi5K4KKnRlvQ7yaUfEos4Ex/XfvkLB1p6aVrSQclMXMSpb9/MSmailo9z
+	 +iOygu3Gpr7VQ==
 From: Danilo Krummrich <dakr@kernel.org>
 To: gregkh@linuxfoundation.org,
 	rafael@kernel.org,
@@ -56,9 +56,9 @@ Cc: rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Danilo Krummrich <dakr@kernel.org>,
 	Daniel Almeida <daniel.almeida@collabora.com>
-Subject: [PATCH v2 2/3] device: rust: expand documentation for Device
-Date: Tue, 22 Jul 2025 17:00:00 +0200
-Message-ID: <20250722150110.23565-3-dakr@kernel.org>
+Subject: [PATCH v2 3/3] driver: rust: expand documentation for driver infrastructure
+Date: Tue, 22 Jul 2025 17:00:01 +0200
+Message-ID: <20250722150110.23565-4-dakr@kernel.org>
 X-Mailer: git-send-email 2.50.0
 In-Reply-To: <20250722150110.23565-1-dakr@kernel.org>
 References: <20250722150110.23565-1-dakr@kernel.org>
@@ -70,181 +70,120 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The documentation for the generic Device type is outdated and deserves
-much more detail.
+Add documentation about generic driver infrastructure, representing a
+guideline on how the generic driver infrastructure is intended to be
+used to implement bus specific driver APIs.
 
-Hence, expand the documentation and cover topics such as device types,
-device contexts, as well as information on how to use the generic device
-infrastructure to implement bus and class specific device types.
+This covers aspects such as the bus specific driver trait, adapter
+implementation, driver registration and custom device ID types.
 
 Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
 Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 ---
- rust/kernel/device.rs | 139 ++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 126 insertions(+), 13 deletions(-)
+ rust/kernel/driver.rs | 89 ++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 87 insertions(+), 2 deletions(-)
 
-diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
-index f5d1db568f00..9cc35ea6db98 100644
---- a/rust/kernel/device.rs
-+++ b/rust/kernel/device.rs
-@@ -15,23 +15,130 @@
+diff --git a/rust/kernel/driver.rs b/rust/kernel/driver.rs
+index a8f2675ba7a7..279e3af20682 100644
+--- a/rust/kernel/driver.rs
++++ b/rust/kernel/driver.rs
+@@ -2,8 +2,93 @@
  
- pub mod property;
+ //! Generic support for drivers of different buses (e.g., PCI, Platform, Amba, etc.).
+ //!
+-//! Each bus / subsystem is expected to implement [`RegistrationOps`], which allows drivers to
+-//! register using the [`Registration`] class.
++//! This documentation describes how to implement a bus specific driver API and how to align it with
++//! the design of (bus specific) devices.
++//!
++//! Note: Readers are expected to know the content of the documentation of [`Device`] and
++//! [`DeviceContext`].
++//!
++//! # Driver Trait
++//!
++//! The main driver interface is defined by a bus specific driver trait. For instance:
++//!
++//! ```ignore
++//! pub trait Driver: Send {
++//!     /// The type holding information about each device ID supported by the driver.
++//!     type IdInfo: 'static;
++//!
++//!     /// The table of OF device ids supported by the driver.
++//!     const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> = None;
++//!
++//!     /// The table of ACPI device ids supported by the driver.
++//!     const ACPI_ID_TABLE: Option<acpi::IdTable<Self::IdInfo>> = None;
++//!
++//!     /// Driver probe.
++//!     fn probe(dev: &Device<device::Core>, id_info: &Self::IdInfo) -> Result<Pin<KBox<Self>>>;
++//!
++//!     /// Driver unbind (optional).
++//!     fn unbind(dev: &Device<device::Core>, this: Pin<&Self>) {
++//!         let _ = (dev, this);
++//!     }
++//! }
++//! ```
++//!
++//! For specific examples see [`auxiliary::Driver`], [`pci::Driver`] and [`platform::Driver`].
++//!
++//! The `probe()` callback should return a `Result<Pin<KBox<Self>>>`, i.e. the driver's private
++//! data. The bus abstraction should store the pointer in the corresponding bus device. The generic
++//! [`Device`] infrastructure provides common helpers for this purpose on its
++//! [`Device<CoreInternal>`] implementation.
++//!
++//! All driver callbacks should provide a reference to the driver's private data. Once the driver
++//! is unbound from the device, the bus abstraction should take back the ownership of the driver's
++//! private data from the corresponding [`Device`] and [`drop`] it.
++//!
++//! All driver callbacks should provide a [`Device<Core>`] reference (see also [`device::Core`]).
++//!
++//! # Adapter
++//!
++//! The adapter implementation of a bus represents the abstraction layer between the C bus
++//! callbacks and the Rust bus callbacks. It therefore has to be generic over an implementation of
++//! the [driver trait](#driver-trait).
++//!
++//! ```ignore
++//! pub struct Adapter<T: Driver>;
++//! ```
++//!
++//! There's a common [`Adapter`] trait that can be implemented to inherit common driver
++//! infrastructure, such as finding the ID info from an [`of::IdTable`] or [`acpi::IdTable`].
++//!
++//! # Driver Registration
++//!
++//! In order to register C driver types (such as `struct platform_driver`) the [adapter](#adapter)
++//! should implement the [`RegistrationOps`] trait.
++//!
++//! This trait implementation can be used to create the actual registration with the common
++//! [`Registration`] type.
++//!
++//! Typically, bus abstractions want to provide a bus specific `module_bus_driver!` macro, which
++//! creates a kernel module with exactly one [`Registration`] for the bus specific adapter.
++//!
++//! The generic driver infrastructure provides a helper for this with the [`module_driver`] macro.
++//!
++//! # Device IDs
++//!
++//! Besides the common device ID types, such as [`of::DeviceId`] and [`acpi::DeviceId`], most buses
++//! may need to implement their own device ID types.
++//!
++//! For this purpose the generic infrastructure in [`device_id`] should be used.
++//!
++//! [`auxiliary::Driver`]: kernel::auxiliary::Driver
++//! [`Core`]: device::Core
++//! [`Device`]: device::Device
++//! [`Device<Core>`]: device::Device<device::Core>
++//! [`Device<CoreInternal>`]: device::Device<device::CoreInternal>
++//! [`DeviceContext`]: device::DeviceContext
++//! [`device_id`]: kernel::device_id
++//! [`module_driver`]: kernel::module_driver
++//! [`pci::Driver`]: kernel::pci::Driver
++//! [`platform::Driver`]: kernel::platform::Driver
  
--/// A reference-counted device.
-+/// The core representation of a device in the kernel's driver model.
- ///
--/// This structure represents the Rust abstraction for a C `struct device`. This implementation
--/// abstracts the usage of an already existing C `struct device` within Rust code that we get
--/// passed from the C side.
-+/// This structure represents the Rust abstraction for a C `struct device`. A [`Device`] can either
-+/// exist as temporary reference (see also [`Device::from_raw`]), which is only valid within a
-+/// certain scope or as [`ARef<Device>`], owning a dedicated reference count.
- ///
--/// An instance of this abstraction can be obtained temporarily or permanent.
-+/// # Device Types
- ///
--/// A temporary one is bound to the lifetime of the C `struct device` pointer used for creation.
--/// A permanent instance is always reference-counted and hence not restricted by any lifetime
--/// boundaries.
-+/// A [`Device`] can represent either a bus device or a class device.
- ///
--/// For subsystems it is recommended to create a permanent instance to wrap into a subsystem
--/// specific device structure (e.g. `pci::Device`). This is useful for passing it to drivers in
--/// `T::probe()`, such that a driver can store the `ARef<Device>` (equivalent to storing a
--/// `struct device` pointer in a C driver) for arbitrary purposes, e.g. allocating DMA coherent
--/// memory.
-+/// ## Bus Devices
-+///
-+/// A bus device is a [`Device`] that is associated with a physical or virtual bus. Examples of
-+/// buses include PCI, USB, I2C, and SPI. Devices attached to a bus are registered with a specific
-+/// bus type, which facilitates matching devices with appropriate drivers based on IDs or other
-+/// identifying information. Bus devices are visible in sysfs under `/sys/bus/<bus-name>/devices/`.
-+///
-+/// ## Class Devices
-+///
-+/// A class device is a [`Device`] that is associated with a logical category of functionality
-+/// rather than a physical bus. Examples of classes include block devices, network interfaces, sound
-+/// cards, and input devices. Class devices are grouped under a common class and exposed to
-+/// userspace via entries in `/sys/class/<class-name>/`.
-+///
-+/// # Device Context
-+///
-+/// [`Device`] references are generic over a [`DeviceContext`], which represents the type state of
-+/// a [`Device`].
-+///
-+/// As the name indicates, this type state represents the context of the scope the [`Device`]
-+/// reference is valid in. For instance, the [`Bound`] context guarantees that the [`Device`] is
-+/// bound to a driver for the entire duration of the existence of a [`Device<Bound>`] reference.
-+///
-+/// Other [`DeviceContext`] types besides [`Bound`] are [`Normal`], [`Core`] and [`CoreInternal`].
-+///
-+/// Unless selected otherwise [`Device`] defaults to the [`Normal`] [`DeviceContext`], which by
-+/// itself has no additional requirements.
-+///
-+/// It is always up to the caller of [`Device::from_raw`] to select the correct [`DeviceContext`]
-+/// type for the corresponding scope the [`Device`] reference is created in.
-+///
-+/// All [`DeviceContext`] types other than [`Normal`] are intended to be used with
-+/// [bus devices](#bus-devices) only.
-+///
-+/// # Implementing Bus Devices
-+///
-+/// This section provides a guideline to implement bus specific devices, such as [`pci::Device`] or
-+/// [`platform::Device`].
-+///
-+/// A bus specific device should be defined as follows.
-+///
-+/// ```ignore
-+/// #[repr(transparent)]
-+/// pub struct Device<Ctx: device::DeviceContext = device::Normal>(
-+///     Opaque<bindings::bus_device_type>,
-+///     PhantomData<Ctx>,
-+/// );
-+/// ```
-+///
-+/// Since devices are reference counted, [`AlwaysRefCounted`] should be implemented for `Device`
-+/// (i.e. `Device<Normal>`). Note that [`AlwaysRefCounted`] must not be implemented for any other
-+/// [`DeviceContext`], since all other device context types are only valid in a certain scope.
-+///
-+/// In order to be able to implement the [`DeviceContext`] dereference hierarchy, bus device
-+/// implementations should call the [`impl_device_context_deref`] macro as shown below.
-+///
-+/// ```ignore
-+/// // SAFETY: `Device` is a transparent wrapper of a type that doesn't depend on `Device`'s
-+/// // generic argument.
-+/// kernel::impl_device_context_deref!(unsafe { Device });
-+/// ```
-+/// In order to convert from a any [`Device<Ctx>`] to [`ARef<Device>`], bus devices can implement
-+/// the following macro call.
-+///
-+/// ```ignore
-+/// kernel::impl_device_context_into_aref!(Device);
-+/// ```
-+/// Bus devices should also implement the following [`AsRef`] implementation, such that users can
-+/// easily derive a generic [`Device`] reference.
-+///
-+/// ```ignore
-+/// impl<Ctx: device::DeviceContext> AsRef<device::Device<Ctx>> for Device<Ctx> {
-+///     fn as_ref(&self) -> &device::Device<Ctx> {
-+///         ...
-+///     }
-+/// }
-+/// ```
-+///
-+/// # Implementing Class Devices
-+///
-+/// Class device implementations require less infrastructure and depend slightly more on the
-+/// specific subsystem.
-+///
-+/// An example implementation for a class device could look like this.
-+///
-+/// ```ignore
-+/// #[repr(C)]
-+/// #[pin_data]
-+/// pub struct Device<T: class::Driver> {
-+///     dev: Opaque<bindings::class_device_type>,
-+///     #[pin]
-+///     data: T::Data,
-+/// }
-+/// ```
-+///
-+/// This class device uses the sub-classing pattern to embed the driver's private data within the
-+/// allocation of the class device. For this to be possible the class device is generic over the
-+/// class specific `Driver` trait implementation.
-+///
-+/// Just like any device, class devices are reference counted and should hence implement
-+/// [`AlwaysRefCounted`] for `Device`.
-+///
-+/// Class devices should also implement the following [`AsRef`] implementation, such that users can
-+/// easily derive a generic [`Device`] reference.
-+///
-+/// ```ignore
-+/// impl<T: class::Driver> AsRef<device::Device> for Device<T> {
-+///     fn as_ref(&self) -> &device::Device {
-+///         ...
-+///     }
-+/// }
-+/// ```
-+///
-+/// An example for a class device implementation is [`drm::Device`].
- ///
- /// # Invariants
- ///
-@@ -42,6 +149,12 @@
- ///
- /// `bindings::device::release` is valid to be called from any thread, hence `ARef<Device>` can be
- /// dropped from any thread.
-+///
-+/// [`AlwaysRefCounted`]: kernel::types::AlwaysRefCounted
-+/// [`drm::Device`]: kernel::drm::Device
-+/// [`impl_device_context_deref`]: kernel::impl_device_context_deref
-+/// [`pci::Device`]: kernel::pci::Device
-+/// [`platform::Device`]: kernel::platform::Device
- #[repr(transparent)]
- pub struct Device<Ctx: DeviceContext = Normal>(Opaque<bindings::device>, PhantomData<Ctx>);
- 
+ use crate::error::{Error, Result};
+ use crate::{acpi, device, of, str::CStr, try_pin_init, types::Opaque, ThisModule};
 -- 
 2.50.0
 
