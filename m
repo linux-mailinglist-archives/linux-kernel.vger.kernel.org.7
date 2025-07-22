@@ -1,149 +1,212 @@
-Return-Path: <linux-kernel+bounces-740131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67E5AB0D061
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 05:35:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3091EB0D063
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 05:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9386B16CA16
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:35:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8C7F1AA3B51
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:37:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA87E28B406;
-	Tue, 22 Jul 2025 03:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDDB628B7F8;
+	Tue, 22 Jul 2025 03:37:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PLU6Qq6m"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jmma1k4U"
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 578222737F0
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 03:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91FB22576;
+	Tue, 22 Jul 2025 03:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753155352; cv=none; b=AZREYPgQbjP8zA2PBwrhMEFiHXL9fN7yUcPk/5N6Iq8SgEyjGyHnU4ISd7DYMhYdbXNJcPu5ksBfIHjxugCXVMnWl4hWRKviWksXrfSw3Tn5fdN/TEB2P4xr//DV/Cliy5H7dR99O53e7dzm2DD8of8qhZvvEceYbcTiPrvmJxQ=
+	t=1753155442; cv=none; b=YcF9qJ3eDdnKrvYIhyFlTj6m7x2RGucFEVHVaUK/n+vZHkPk8tWEUWBMRJ8J2jBZ1122TvNUDyQwwSu8Y3n1mgMAyuZ9hFbWU46a6MGTKMjOGK1yvvPhvVN8rg4kOwqPRGXSf7LxBLG4H7z3i7l2JBaQgLfc38v6poIDTZyUF6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753155352; c=relaxed/simple;
-	bh=9XEHvf4vG1D4yyvbE6MLh31skmRGLDLGj0AHdpDV6CQ=;
-	h=Date:From:To:Cc:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=X0H3fwe6Fa9sSLjhY7okzrabac3hMoVjoyWi//viR9UF3Cm7Te21x0Bm8QbYMaoJkN3haUhmScRz2jtwDca69cOGEikLBUqK4tt14Cg591k351lceswXUPCsuFIo1qJEchkxClvnelRHM6oChgdpn2kAcVxsTQP3956CidxvgwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PLU6Qq6m; arc=none smtp.client-ip=209.85.210.178
+	s=arc-20240116; t=1753155442; c=relaxed/simple;
+	bh=A0vuGMfZNRIrHTYRNAiLt7mQa+x6fC50iVkYrq5GlPg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FiGH4VI2K39QK9Gag0DQw5f3XH3oNFHlYSiezQt4Ln0Za8MXvwp/roHWeJJyX6e2irHqI3y7/S/W7zrEzwwtmr5CrtVOkjoimLAeXtrI9/q2sebzxLgIsSkVRgD8aR4H+2sq5XPCEIeS1KevZ6OUHxB0WhQl0cwWzjAdYP/WEjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jmma1k4U; arc=none smtp.client-ip=209.85.222.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-74b27c1481bso3127023b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 20:35:50 -0700 (PDT)
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-880f92a63c7so2499002241.1;
+        Mon, 21 Jul 2025 20:37:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753155349; x=1753760149; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=F2LbdLcacR9W8sqqUGkM7qsaJ4maKUnitzkAiJJt3Aw=;
-        b=PLU6Qq6mu8WsA4fj6dIpDZvfm7lW2F2THF0wrvG7gC9XgAzKtnuQvcfVu8g25Ijmhc
-         dakIbbIILd5J1uccCyTTo9wqsGenyjOYaGrhzjosXNsKMgL4USsBi5EX656HZUtcOqWM
-         HeAemmw7SIGQn6rAsuHsPqwp8e0wIWNR/YrDe3vwWFAMxsYvbvBBorsALhpGi99uCKe2
-         EVeaxD/h+JOTxmZPY5OLt3Pc+x+3OaEZ3lVB5uFVGBaN5GSTjfQ4Av5IIn+OrgvBx4Jv
-         i8Pgv8B0w3J3URqejrhlgC1LPaFofvUtBUEZKha9R7MCUwQ2mBh/+9LdUWCvfrhVYZ6n
-         Ljow==
+        d=gmail.com; s=20230601; t=1753155439; x=1753760239; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nVrKVkdiE3XI9rtU+WROK7PUvC79wNx/ZAhQmWdv0qU=;
+        b=jmma1k4Uyoep2+a2CapHgq4bmslogjxF+khONtno60Vgr00+m4a04S5NbDTKB0GbD9
+         oDfs4JNpPm22yyj0J85X0+Mioygop1zM2dF2sx/Mf6z/51ElyIDHwRh5YR8R5mNUbBTq
+         gqDKV1EzZwuETDCgsCuObra1o87Aq0EwbVcVp/Sgb/soh0H3S4/afRO43NQ3QUsadYPT
+         ED6st/pESwkrNPgcLR3woXAWQNzOlWNq6yQVPDJYvB3L/41DAQf7LTfn7+JgFKwCXgC+
+         VaHDsGe2rE8QkzY9NB5QE48/DBk35mHR7VVwlpdwkzcZ4er7uIYZfLHgyIUPX6i80A98
+         PlyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753155349; x=1753760149;
-        h=content-disposition:mime-version:message-id:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=F2LbdLcacR9W8sqqUGkM7qsaJ4maKUnitzkAiJJt3Aw=;
-        b=KnfrF/a0WVqySy4GXMLd9lA0e75RECZfBp625jbxtubLzNyBK5kGB+57K+3Yxs7Tm0
-         RKemtJ4HFRWGBvt0xsoLMm5JMS8i5JYinVp9oxxEC7der9DqR/WHvGqakempbrQxvHLc
-         JUqPJ5xsBHzss+chbKQF7+BnNVqWVBRjWG6DaSNch476jFtH544j+kZ9I7ENQpZ1ghnW
-         LSRAmLPJRMykdkgLVtky90ZoKw2GPYTa/8r0hOdSP5drbQ1HgFyzDAlifxYzypuFXP8F
-         AH+7brk+pRSMEex9qoxWTbU2D4EQMSRYIdI4hALKH8CvJEHvgeTUKTwS022h2oRqVRMg
-         3vxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXCq3cWQm/ir7G/NeS8T8ONxQO1WvaKMHA5t2bFcRMuzJ5kLYOMNcTdQQDR0VJFBmz2pxdauZr8IXSkd38=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7FHQFwg1eT+TNOG3tUUh0siDWId6DJWIzQrIngmuoMJmXQJt5
-	z/lIXjX9Al8m8fSsfO5+BLEKEYQC9rlN6PbI7xfFqZJWn4m3w+o4tJVECgG81Q==
-X-Gm-Gg: ASbGncv3vIDU32awvQo6gESuHWpKLUbdNyMaXawUTr9Y/Q/zvazGkg4I0dYo4HGNaB1
-	f8t7hujEN3Th72FUS92YrDzqL0NTxd9DHa7cdgsnlS8O3s8bT99j83Bl3G4OsgMNlfet4dgXn6t
-	rA1fYtAOnV0yKNTUm4UgLIOJopXc1J50bypCPDTsuFLIeBZkHAj3EsT2F3/AT8oToQ+RAvAtsyz
-	mbahcpLY0jFHYX83vGr38WFevFADfx62f6pinZ9qWFhzzmaaNYBCbT4JTEDuID85hmSYTq9jaUB
-	Ke29HWO+TtAiK8gqcqyxOlbc+P0Rfzs1rHOoTBs0v70EFpPWxHMTctzLYdFfAzEX3RzhJ40cHS4
-	ycc3AwPLa3ngH5z3u+g97DwPOuuMgE6Y=
-X-Google-Smtp-Source: AGHT+IHv2JveUKY4jPAPdg0y0FEpCFWmS72cA64bGwD9nQdsd9BsKzCXCJ4dAYh7/e8A0baYOoHK7A==
-X-Received: by 2002:a05:6a21:6da8:b0:239:c7c:8de8 with SMTP id adf61e73a8af0-2390c7cf703mr28643449637.12.1753155349537;
-        Mon, 21 Jul 2025 20:35:49 -0700 (PDT)
-Received: from brak3rDesk ([115.96.77.246])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f2ff61ff2sm5028368a12.35.2025.07.21.20.35.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 20:35:49 -0700 (PDT)
-Date: Tue, 22 Jul 2025 09:05:45 +0530
-From: Rujra Bhatt <braker.noob.kernel@gmail.com>
-To: geert@linux-m68k.org
-Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org
-Message-ID: <aH8HEQoqGhSN9AJ9@brak3rDesk>
+        d=1e100.net; s=20230601; t=1753155439; x=1753760239;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nVrKVkdiE3XI9rtU+WROK7PUvC79wNx/ZAhQmWdv0qU=;
+        b=V8IXs8cdATR50KJ36415Qr098dUSd+utHauNAnGBF948oztvAIjkBDACpmEHuzFMcq
+         QIV5mWJ0EtH8+MRvqsMTwtVJl2cAZ/T/OYGcVe3qqdhzykpGGt+5FZY2tO1ZID/AruQ6
+         fxg1ebz41bAV6THR5VXir4fdcbULqLtr/MZgtoxpgN7u+iI69yj6lUCd1CE9Zs/Q/XJh
+         CV1L6iM45zMA//EI1SwgdBbVRgJDgLM3eFbnQsKo3yXWUKbYxImzDfPy4IKszDRroIGz
+         rLlL76nXLsBQbFRL6yM0AigrdNwIu8x87B1JRZfztjgZGUWDIGnWOpHp8/82h8sWmi0N
+         ZySQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUH7Nw+5iuK9ZPHlKfgv6GGkDxUYW3f33a+6CWZ3yBzRFYLqMuYMZrPHKl0k5teRbZWW7mgDjW5ql0=@vger.kernel.org, AJvYcCVihr95E98v8GcWKiYWmHUwLR7jEFKL/ufzMPuj4ffwjatn5oX1/6kkPxK/SC4cTtkQLMMrom5bsrplxhjX@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxd/9EYz/DcOKbTJccZuddbi0+QeaM6dj7pOBCn/r+Qbcko5t1J
+	rXr36mePd2kcSgHUJVkzXkQP0YfGzLdAJIB2TIQu41SGn55mmFBBXpBG+V6nf7c27vuIDzI7G86
+	/u38weH9Rj0ZND4f3mgKaeIRgvsd3l/6R4hgJq3o=
+X-Gm-Gg: ASbGncvh7w3TqyZcI7yCz3kpAv4tNx/RT7UEbgQSKBwLC4ov890jbO+keZw3lyYq5Jp
+	WjB7eywOD7rDEAcYcIJ8GoeYadHP4k0f0r4TX/eirrkCa1fnCW7LwSLxPBaktcZDZMdpcs7jIzY
+	FOmEheoOpAFL4tVjGMFb7cLQAxufUr2bayduL3sTbS+nm1gZwhbZB0acxG/yFIQV0nLhDuBKxr/
+	xib1cs=
+X-Google-Smtp-Source: AGHT+IFclDmfRZMBfgkRo+vyKsonZXTN77cM0X+Su+luJY37jRTemshTbwfhPv2FeuLITlw1fo3isL2Cssdeh3MP1Bo=
+X-Received: by 2002:a05:6102:3f52:b0:4e9:b0d4:1133 with SMTP id
+ ada2fe7eead31-4f95f410c3cmr11992642137.20.1753155439176; Mon, 21 Jul 2025
+ 20:37:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250721155530.75944-1-lorenzo.stoakes@oracle.com>
+ <35df32ae-dc95-48e1-bdb1-90f17bfd4d5c@linux.alibaba.com> <CAGsJ_4yMLi_+yxJYebTbEALujcVmeqbfHh=ArkZRxMwE+OBWgQ@mail.gmail.com>
+ <a7062d0d-804f-4b9a-ba7f-62d67064c584@linux.alibaba.com>
+In-Reply-To: <a7062d0d-804f-4b9a-ba7f-62d67064c584@linux.alibaba.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Tue, 22 Jul 2025 11:37:07 +0800
+X-Gm-Features: Ac12FXxqTKKk2Dd1pvj17lLGUdPMo1rMsVF70mOgS6Fje2FH4DvbmpyAcqvjEpY
+Message-ID: <CAGsJ_4wvWZwG6agXOzDoYBD_vnN6k4TRJjhFfR5dw5pQrk2mwQ@mail.gmail.com>
+Subject: Re: [PATCH] docs: update THP documentation to clarify sysfs "never" setting
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
+	Jonathan Corbet <corbet@lwn.net>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-linux-kernel-mentees@lists.linux.dev 
-Bcc: 
-Subject: [PATCH] drivers:zorro:zorro-sysfs.c Replace sprintf() with
- sysfs_emit()
-Reply-To: 
+On Tue, Jul 22, 2025 at 10:33=E2=80=AFAM Baolin Wang
+<baolin.wang@linux.alibaba.com> wrote:
+>
+>
+>
+> On 2025/7/22 10:23, Barry Song wrote:
+> > On Tue, Jul 22, 2025 at 9:30=E2=80=AFAM Baolin Wang
+> > <baolin.wang@linux.alibaba.com> wrote:
+> >>
+> >>
+> >>
+> >> On 2025/7/21 23:55, Lorenzo Stoakes wrote:
+> >>> Rather confusingly, setting all Transparent Huge Page sysfs settings =
+to
+> >>> "never" does not in fact result in THP being globally disabled.
+> >>>
+> >>> Rather, it results in khugepaged being disabled, but one can still ob=
+tain
+> >>> THP pages using madvise(..., MADV_COLLAPSE).
+> >>>
+> >>> This is something that has remained poorly documented for some time, =
+and it
+> >>> is likely the received wisdom of most users of THP that never does, i=
+n
+> >>> fact, mean never.
+> >>>
+> >>> It is therefore important to highlight, very clearly, that this is no=
+t the
+> >>> ase.
+> >>>
+> >>> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> >>> ---
+> >>>    Documentation/admin-guide/mm/transhuge.rst | 11 +++++++++--
+> >>>    1 file changed, 9 insertions(+), 2 deletions(-)
+> >>>
+> >>> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentati=
+on/admin-guide/mm/transhuge.rst
+> >>> index dff8d5985f0f..182519197ef7 100644
+> >>> --- a/Documentation/admin-guide/mm/transhuge.rst
+> >>> +++ b/Documentation/admin-guide/mm/transhuge.rst
+> >>> @@ -107,7 +107,7 @@ sysfs
+> >>>    Global THP controls
+> >>>    -------------------
+> >>>
+> >>> -Transparent Hugepage Support for anonymous memory can be entirely di=
+sabled
+> >>> +Transparent Hugepage Support for anonymous memory can be disabled
+> >>>    (mostly for debugging purposes) or only enabled inside MADV_HUGEPA=
+GE
+> >>>    regions (to avoid the risk of consuming more memory resources) or =
+enabled
+> >>>    system wide. This can be achieved per-supported-THP-size with one =
+of::
+> >>> @@ -119,6 +119,11 @@ system wide. This can be achieved per-supported-=
+THP-size with one of::
+> >>>    where <size> is the hugepage size being addressed, the available s=
+izes
+> >>>    for which vary by system.
+> >>>
+> >>> +.. note:: Setting "never" in all sysfs THP controls does **not** dis=
+able
+> >>> +          Transparent Huge Pages globally. This is because ``madvise=
+(...,
+> >>> +          MADV_COLLAPSE)`` ignores these settings and collapses rang=
+es to
+> >>> +          PMD-sized huge pages unconditionally.
+> >>> +
+> >>>    For example::
+> >>>
+> >>>        echo always >/sys/kernel/mm/transparent_hugepage/hugepages-204=
+8kB/enabled
+> >>> @@ -187,7 +192,9 @@ madvise
+> >>>        behaviour.
+> >>>
+> >>>    never
+> >>> -     should be self-explanatory.
+> >>> +     should be self-explanatory. Note that ``madvise(...,
+> >>> +     MADV_COLLAPSE)`` can still cause transparent huge pages to be
+> >>> +     obtained even if this mode is specified everywhere.
+> >>
+> >> I hope this part of the explanation is also copy-pasted into the
+> >> 'Hugepages in tmpfs/shmem' section. Otherwise look good to me. Thanks.
+> >
+> > Apologies if this is a silly question, but regarding this patchset:
+> > https://lore.kernel.org/linux-mm/cover.1750815384.git.baolin.wang@linux=
+.alibaba.com/
+> >
+> > It looks like the intention is to disable hugepages even for
+> > `MADV_COLLAPSE` when the user has set the policy to 'never'. However,
+> > based on Lorenzo's documentation update, it seems we still want to allo=
+w
+> > hugepages for `MADV_COLLAPSE` even if 'never' is set?
+> >
+> > Could you clarify what the intended behavior is? It seems we've decided
+> > to keep the existing behavior unchanged=E2=80=94am I understanding that
+> > correctly?
+>
+> Yes, Hugh has already explicitly opposed the current changes to the
+> MADV_COLLAPSE logic[1], although there are still some disagreements that
+> cannot be resolved.
+>
+> At least we reached the consensus to update the documentation to reflect
+> the current sysfs THP control logic first, to avoid the misunderstanding
+> that 'sysfs THP controls can disable Transparent Huge Pages globally'.
 
-replace sprintf() with sysfs_emit() in sysfs
-*_show() functions in zorro-sysfs.c to follow the kernel's guidelines
-from Documentation/filesystems/sysfs.rst.
+Nice, thanks! Personally, I prefer this approach as well. Updating the
+man page feels a bit odd, since it's something people are already
+familiar with and may have memorized.
 
-This improves consistency, safety, and makes the code easier to
-maintain and update in the future.
+>
+> [1]
+> https://lore.kernel.org/linux-mm/75c02dbf-4189-958d-515e-fa80bb2187fc@goo=
+gle.com/
 
-Signed-off-by: Rujra Bhatt <braker.noob.kernel@gmail.com>
----
- drivers/zorro/zorro-sysfs.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/zorro/zorro-sysfs.c b/drivers/zorro/zorro-sysfs.c
-index 10aedcd21363..a552724b7fc7 100644
---- a/drivers/zorro/zorro-sysfs.c
-+++ b/drivers/zorro/zorro-sysfs.c
-@@ -29,7 +29,7 @@ static ssize_t name##_show(struct device *dev,				\
- 	struct zorro_dev *z;						\
- 									\
- 	z = to_zorro_dev(dev);						\
--	return sprintf(buf, format_string, z->field);			\
-+	return sysfs_emit(buf, format_string, z->field);			\
- }									\
- static DEVICE_ATTR_RO(name);
- 
-@@ -44,7 +44,7 @@ static ssize_t serial_show(struct device *dev, struct device_attribute *attr,
- 	struct zorro_dev *z;
- 
- 	z = to_zorro_dev(dev);
--	return sprintf(buf, "0x%08x\n", be32_to_cpu(z->rom.er_SerialNumber));
-+	return sysfs_emit(buf, "0x%08x\n", be32_to_cpu(z->rom.er_SerialNumber));
- }
- static DEVICE_ATTR_RO(serial);
- 
-@@ -53,7 +53,7 @@ static ssize_t resource_show(struct device *dev, struct device_attribute *attr,
- {
- 	struct zorro_dev *z = to_zorro_dev(dev);
- 
--	return sprintf(buf, "0x%08lx 0x%08lx 0x%08lx\n",
-+	return sysfs_emit(buf, "0x%08lx 0x%08lx 0x%08lx\n",
- 		       (unsigned long)zorro_resource_start(z),
- 		       (unsigned long)zorro_resource_end(z),
- 		       zorro_resource_flags(z));
-@@ -65,7 +65,7 @@ static ssize_t modalias_show(struct device *dev, struct device_attribute *attr,
- {
- 	struct zorro_dev *z = to_zorro_dev(dev);
- 
--	return sprintf(buf, ZORRO_DEVICE_MODALIAS_FMT "\n", z->id);
-+	return sysfs_emit(buf, ZORRO_DEVICE_MODALIAS_FMT "\n", z->id);
- }
- static DEVICE_ATTR_RO(modalias);
- 
--- 
-2.43.0
-
+Best regards
+Barry
 
