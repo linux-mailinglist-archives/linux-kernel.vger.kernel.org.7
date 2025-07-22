@@ -1,274 +1,226 @@
-Return-Path: <linux-kernel+bounces-741474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 504A9B0E49B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 22:14:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EBD6B0E49F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 22:14:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 599EF6C4632
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:13:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41DF57AC6A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:12:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C71728506B;
-	Tue, 22 Jul 2025 20:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C522853EB;
+	Tue, 22 Jul 2025 20:14:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G7ACjVcf"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="abEMxOQl"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E59A4A2D
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 20:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3BC284674
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 20:14:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753215232; cv=none; b=ka0dDf9LHYdGhhlHc1XVVWxlT5PRYqxeQJEu4G8Kpj+31svoRDCwDe7of/IoWhEVdi4SDV85tc7410v0tyaUra+QInKm6TqB8+Q2pWBfEl1oSeqqc9i1nbMU4nS0HLSQIbYmTi9Xx32ajevRQXdh/FEueWwmW1wnkoa6w80Xlv8=
+	t=1753215248; cv=none; b=jLMBZ3xZdOCqZrstI6k/Gvz3c8BwMVA2ffSab/4pxYpAulx+lYdGbV7gJYOv9Qjx0DdTWLArTKRL1gL5gi6aCyNPERKZMekf5RXorbllRZvRmtRi0ev4Hvub1JuHpPKkOSHFnBUCbLnFeQvr/+dZAcmElHl9Ds1wYeQfoOYP0E8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753215232; c=relaxed/simple;
-	bh=rDAIMQYH6dvCuGp+VBPWuSK7uca+XrXAS3NCKTDNgSQ=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=rDRlyqu5qZ/xR/FhibN/gFzr5Ad6crPu85sc59c0fI9ztSOVEgTJnjg0vEAVxFrEhSZWBC7BFir63+p6tdExA4mrhP27URuxTV74t+/Z1LIFSBbZJOKa/0YtHUb/A5lMBlahP7iGZJwECAq6xdQ5Rcv8Xgay99Ry0vBe1IebQhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--blakejones.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G7ACjVcf; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--blakejones.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-31215090074so8682401a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 13:13:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753215230; x=1753820030; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xBZDX9JIee77RQPW7HLVLrza5s/GtaJTWmqzTatpclI=;
-        b=G7ACjVcfKSqEKx/nanVOLZkcVxuI2vFez9w6Q6FXRYsVMMGeSNrAWF585/jBxKETrg
-         2g9iGdRXTPY1vzxjfUrowSblA1I86U3IWVmLsF+1nJdXMOsq3azhzmag/IAvBnm7AoVz
-         AZeIAAvkgYysHPUcxzbJc/uOc8ZP5ffvUZyod+pD3qWhls66VIf4DCGhgGbdpcyFw2y/
-         yqKP6X+svGJB1QXlahccOPZuB47A+zIQHx8f/UYYFQPfGHZbyG/McmUmZ7Pnyi97BDyr
-         Gisf7gMEvHoRvVMYk/uU/XO9mUG60SR3cIuG+AKIJr6ym6441WTKclFUpsx6n/w38hlI
-         bIcw==
+	s=arc-20240116; t=1753215248; c=relaxed/simple;
+	bh=nG3j+TKBEBa0wv2W3QoXKtILsgLTnZbud3R5SU9tZt0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tr5GsiEFUClPIy871ncJHpN8JYcwXMZlZexRHpNAT2Oebb3ei8/8zWuVgTwCxZ4gVGgKDFfW06VPUFuuyS6IoHrGBEPTpyv3a6nQgqT7OZFo8AZ/d8LmftN6aa8O9RS3XTZhxQOhtLDBWbvjpe7P8DfV0me1n8GvF/ZMJLdyog0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=abEMxOQl; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56MFJmgA003605
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 20:14:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:to; s=
+	qcppdkim1; bh=8stxXKOwM0cdX2+Hk7JZb+wP6e0PjVEkB1BIKQ6OkUU=; b=ab
+	EMxOQlbIye5IyDYIVRYHKHyrh7d0fIUPvDupUlUSzKRJqQ2pKh0IUoYZw8fAqN9R
+	fwF0uvNqCOMHssewh0YxGnzxy+OvtAVvj+oUwlCTSJzlhKdJCS1Ms+9a2XcQLOd7
+	mK5vW7Qnk5gsXqP1tQJy2tNFbOQCQhh5Fmyl8D89I97h3f5eA7+M7ecwqO89uAJJ
+	AzUHah4KylF1a9SUW4aVd2D5Pp/xvDzhdPt6dAU15H7coBQUwNpR7QFrNRJwNA2H
+	7WwFz8y0FFW6VNfy7sBxpc7yDStp7Efj2eHzhtve0odiSO0VtVGDjh4nawq4EKnQ
+	PYH9N43+QAjpYovmPXFg==
+Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com [209.85.161.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48048v92j5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 20:14:05 +0000 (GMT)
+Received: by mail-oo1-f72.google.com with SMTP id 006d021491bc7-615c6bacd06so1520242eaf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 13:14:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753215230; x=1753820030;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+        d=1e100.net; s=20230601; t=1753215244; x=1753820044;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=xBZDX9JIee77RQPW7HLVLrza5s/GtaJTWmqzTatpclI=;
-        b=H2rklh+bGf5rqp/3CmJmw17LhMJs394bvPre/OOIpz8idj3rDwoMA7bQ67xEXTTRaL
-         zorVI1Te4qjiVziga7Vg3+B8x22d4aW72unuisWSy3WIrKPfbF3jKC15/JIrJ105I09I
-         UPhmx6h+nnmiXYuH9p551QQL4LX1g/bqua9px9yQle8nJDnhAxrVJs566PS8RHaj6mtl
-         Spvn/xPMuUsLL/0ol1qm5pmJlwqzkMRIiLn+ots1nZx8rBdCrfG5rmh9GR64hADngAl4
-         9AFS8GJmqG1/iG9kop6ncfbbL6e4lJnEhOQLP152nbtubDyX6/uSb/JNoLBKBsi/PIeq
-         GwgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfiH5JLrDEQnIPJRTXufv9nDnBJTR9BW9EUfEhfyeQhbAI8KsmTNkblzlrD8RW/08P8mYaZnZbXOpHlEw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBzw+258KhQUZHyDiibstdv9Za2ZIUBrinspbrHh+rDC+4Aq39
-	yrNYhBfedTN6PH1OFg9OEb1SZy3/CgpoF8BH2vfpGm4lgT2FdbhmMtodQ+Fmldcnw6sabixdvbd
-	01U90l8Z0DwEfFixVbXQ3UA==
-X-Google-Smtp-Source: AGHT+IF5q8b3RmoFGeHuTYWqFnv7gSNOHPsiPLeuKaV8BZVe3hAaky1fBqwSqHXcodyVUYnPVMSXk3hR+bTzOblV
-X-Received: from pjbpm18.prod.google.com ([2002:a17:90b:3c52:b0:314:626:7b97])
- (user=blakejones job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:3c88:b0:312:eaea:afa1 with SMTP id 98e67ed59e1d1-31e507e27e2mr915829a91.29.1753215230358;
- Tue, 22 Jul 2025 13:13:50 -0700 (PDT)
-Date: Tue, 22 Jul 2025 13:13:39 -0700
+        bh=8stxXKOwM0cdX2+Hk7JZb+wP6e0PjVEkB1BIKQ6OkUU=;
+        b=dpd3eOhetpJJLwqCKf6+CSFw+jKSMPk3jcVhno7blRMZkavtGaY5cHM8tmKFB+Rz1D
+         mqr9EZdjzqp9b0oH+gEhhNlRQmvshcpU/ceGm/VCA2FNeNgow6o67r9ZEUEX0ibQ0iUt
+         8XzyxhPNUXEw2zB0jNeo4g8CeB2fioyl3PGkI/bkYxM23zLkEsEM+S5KVQqSsfmMLHa0
+         HXZw1gECN6PBLYwEbCplmvGWSZrth8wMuqksSf2BWRebDHwe+3gCbeu8nSMmgp9Fys7M
+         /KIPng0Co7j7nphZ415mHQh7Z9pt25aZ7XtTlGHxb0JIgOiM/ijm4eOJ9Q0j40SCW7Wx
+         1jSw==
+X-Forwarded-Encrypted: i=1; AJvYcCVD96wMh0DJioO4+47hZEmwYA4I54DxJTMgopJBKXJt/o/Wd7gG9kQRb+Ggz2+srdzDAbYKnIkSCNbSTJY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz52ilDGWQulvtZ6ARXl9G90NZghg72+Ha8DOpbNKzaEFMP1o9X
+	Y58+B0vUm57FhuDMIXKTjptyNAyvBrawnNNh/wHBaEzvTlymMOVcqx7Zodi96sYqTGzBkDKDGc1
+	Q9JxpAvM61ZT10ncpUvncJRH96MhhGmKoYcM8pTqxiyVf9JWsBWKF9uR6lFisKcjwd7YUADGOCc
+	wKJz3rwvzlHMcdvlGzTvEaWiE0ZzXaTWgMX9/haMRsZTVVZHcYMw==
+X-Gm-Gg: ASbGncs45s6W9QqJYJ6zVLBcgDjQSibgZHC8rxalHt9EwB5iRpX1BjPq7GSVdg4VIyk
+	oxIfFOYXfCuBG0mQZCA0Rjut+fqsyqb4TLNJGgjcam59wUm8wQcynIxTFaMNDRk+32ovQz2VJr9
+	YXtHohuSDAhp59vhHYVBu3Eroadq6kl6XyiIZ/JE1FhdA+fTbvUli8
+X-Received: by 2002:a05:6820:a0b:b0:615:ac59:7613 with SMTP id 006d021491bc7-6187d8bb150mr216592eaf.5.1753215244318;
+        Tue, 22 Jul 2025 13:14:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHRLfuP1mZvVGnFE90xA1qN98KJGEEZE/W+UJS6YZQ2+JoDxvhTQ5iyKIyEb8QPf1XuzCh9CdlUZbBrwge/XuA=
+X-Received: by 2002:a05:6820:a0b:b0:615:ac59:7613 with SMTP id
+ 006d021491bc7-6187d8bb150mr216565eaf.5.1753215243967; Tue, 22 Jul 2025
+ 13:14:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250722201339.1198239-1-blakejones@google.com>
-Subject: [PATCH] Reorder some fields in struct rq.
-From: Blake Jones <blakejones@google.com>
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Josh Don <joshdon@google.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org, 
-	Blake Jones <blakejones@google.com>
+MIME-Version: 1.0
+References: <20250720-ifpc-support-v1-0-9347aa5bcbd6@oss.qualcomm.com>
+ <20250720-ifpc-support-v1-12-9347aa5bcbd6@oss.qualcomm.com>
+ <vng6tut4sv3zfbwogsb74omqsbqutpeskqdnezbs4ftsanqyb4@nv35r7mqmcva>
+ <CACSVV01EhWWohUDQ8n=FQeDuaDcgmYnMBJDMJ8D1Gist1NR4QQ@mail.gmail.com> <800f8c9d-5586-46a7-aa83-dfb3b97633e0@oss.qualcomm.com>
+In-Reply-To: <800f8c9d-5586-46a7-aa83-dfb3b97633e0@oss.qualcomm.com>
+Reply-To: rob.clark@oss.qualcomm.com
+From: Rob Clark <rob.clark@oss.qualcomm.com>
+Date: Tue, 22 Jul 2025 13:13:53 -0700
+X-Gm-Features: Ac12FXxPdajDniaWioq_6FbnrOl577Rcgtye0_PYpxo5MDWq0dAn_9MbJWgKs3E
+Message-ID: <CACSVV00d4rbNDOLVZJTBNRmUsGyY6Tkwzv0cHRomeYyMXWHZVA@mail.gmail.com>
+Subject: Re: [PATCH 12/17] drm/msm: Skip devfreq IDLE when possible
+To: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-GUID: cs7yIlduDckx4aymefwIGjrf9Uw1co4f
+X-Authority-Analysis: v=2.4 cv=SYL3duRu c=1 sm=1 tr=0 ts=687ff10d cx=c_pps
+ a=wURt19dY5n+H4uQbQt9s7g==:117 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10
+ a=EUspDBNiAAAA:8 a=pGLkceISAAAA:8 a=DNA1iQAdpGljtBPL7O4A:9 a=QEXdDO2ut3YA:10
+ a=-UhsvdU3ccFDOXFxFb4l:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDE3NCBTYWx0ZWRfX1QqlPNfcyfZD
+ peI5W7DedJ1YAcuKayWXCOlwi2MuXySeqlf/O0uvgTHCpjeymvRTxi/9ExS7iL97tsJeiMraeSf
+ rYMW9zAu83EpJ3GzV2Zgh+9HG5DdnhIznrIQ5O5QT91c2kP+ziJIfVW3xs1DDGN5XquARF2ERkW
+ retevHQZKClOfa5WML4XCCKfCu0Hk9OejUUfTMl72bnyDlV4SeGwQFPFATb7IqFsZqdVOzgTQmq
+ ii1FIDrIeuLwm2+iP40L6Zdc7jEP/RGctKeBLxOC67r61G768R7B+g6jT+9Tk/eolPzqQ+Tfr5D
+ tMT37HnXVxIismAd5mRQgEPGqaucNgwsPUQiYcGBEWH8N3q+1btYFbVsWnLzipcX3oAxM13Xpmm
+ IPlmmdIeWhVylayQYqJ4uRKCtH2DsUM8zWI23tP6t2MovqhuUOMeRDLKNEVhNyIL1W1/RfRl
+X-Proofpoint-ORIG-GUID: cs7yIlduDckx4aymefwIGjrf9Uw1co4f
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-22_02,2025-07-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 suspectscore=0 mlxscore=0 bulkscore=0 mlxlogscore=999
+ lowpriorityscore=0 phishscore=0 malwarescore=0 spamscore=0 clxscore=1015
+ priorityscore=1501 adultscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507220174
 
-This colocates some hot fields in "struct rq" to be on the same cache line
-as others that are often accessed at the same time or in similar ways.
+On Tue, Jul 22, 2025 at 12:23=E2=80=AFPM Akhil P Oommen
+<akhilpo@oss.qualcomm.com> wrote:
+>
+> On 7/22/2025 9:08 PM, Rob Clark wrote:
+> > On Tue, Jul 22, 2025 at 6:50=E2=80=AFAM Dmitry Baryshkov
+> > <dmitry.baryshkov@oss.qualcomm.com> wrote:
+> >>
+> >> On Sun, Jul 20, 2025 at 05:46:13PM +0530, Akhil P Oommen wrote:
+> >>> When IFPC is supported, devfreq idling is redundant and adds
+> >>> unnecessary pm suspend/wake latency. So skip it when IFPC is
+> >>> supported.
+> >>
+> >> With this in place we have a dummy devfreq instance which does nothing=
+.
+> >> Wouldn't it be better to skip registering devfreq if IFPC is supported
+> >> on the platform?
+> >
+> > devfreq is still scaling the freq.  What is being bypassed is
+> > essentially a CPU based version of IFPC (because on sc7180 we didn't
+> > have IFPC
+> >
+> > Currently only a618 and 7c3 enable gpu_clamp_to_idle.. if at some
+> > point those grew IFPC support we could remove the trickery to drop GPU
+> > to min freq when it is idle altogether.
+>
+> There are 2 functionalities here:
+> 1. Clamp-to-idle: enabled only on a618/7c3
+> 2. boost-after-idle: Enabled for all GPUs.
+>
+> With this patch, we are skipping both when IFPC is supported. In the
+> absence of latency due to clamp-to-idle, do you think a618 (relatively
+> weaker GPU) would require boost-after-idle to keep with the
+> UI/composition workload for its typical configuration (1080p@60hz)? If
+> yes, I should probably create a quirk to disable boost-after-idle for
+> premium tier GPUs, instead of tying it to IFPC feature.
 
-Using data from a Google-internal fleet-scale profiler, I found three
-distinct groups of hot fields in struct rq:
+Hmm, yeah.. I suppose _this_ patch should only skip clamp-to-idle.  It
+is a different topic, boost-after-idle.
 
-- (1) The runqueue lock: __lock.
+BR,
+-R
 
-- (2) Those accessed from hot code in pick_next_task_fair():
-      nr_running, nr_numa_running, nr_preferred_running,
-      ttwu_pending, cpu_capacity, curr, idle.
-
-- (3) Those accessed from some other hot codepaths, e.g.
-      update_curr(), update_rq_clock(), and scheduler_tick():
-      clock_task, clock_pelt, clock, lost_idle_time,
-      clock_update_flags, clock_pelt_idle, clock_idle.
-
-The cycles spent on accessing these different groups of fields broke down
-roughly as follows:
-
-- 50% on group (1) (the runqueue lock, always read-write)
-- 39% on group (2) (load:store ratio around 38:1)
--  8% on group (3) (load:store ratio around 5:1)
--  3% on all the other fields
-
-Most of the fields in group (3) are already in a cache line grouping; this
-patch just adds "clock" and "clock_update_flags" to that group. The fields
-in group (2) are scattered across several cache lines; the main effect of
-this patch is to group them together, on a single line at the beginning of
-the structure. A few other less performance-critical fields (nr_switches,
-numa_migrate_on, has_blocked_load, nohz_csd, last_blocked_load_update_tick)
-were also reordered to reduce holes in the data structure.
-
-Since the runqueue lock is acquired from so many different contexts, and is
-basically always accessed using an atomic operation, putting it on either
-of the cache lines for groups (2) or (3) would slow down accesses to those
-fields dramatically, since those groups are read-mostly accesses.
-
-This patch does not change the size of "struct rq" on machines with 64-byte
-cache lines. The additional "____cacheline_aligned" to put the runqueue
-lock on the next cache line will add an additional 64 bytes of padding on
-machines with 128-byte cache lines; although this is unfortunate, it seemed
-more likely to lead to stably good performance than e.g. by just putting
-the runqueue lock somewhere in the middle of the structure and hoping it
-wasn't on an otherwise busy cache line.
-
-I ran "hackbench" to test this change, but it didn't show very conclusive
-results.  Looking at a profile of the hackbench run, it was spending 95% of
-its cycles inside __alloc_skb(), __kfree_skb(), or kmem_cache_free() -
-almost all of which was spent updating memcg counters or contending on the
-list_lock in kmem_cache_node. In contrast, it spent less than 0.5% of its
-cycles inside either schedule() or try_to_wake_up(). So it's not surprising
-that it didn't show useful results here.
-
-Instead, to test this, I wrote a focused load test that would put load on
-the pick_next_task_fair() path. A parent process would fork many child
-processes, and each child would nanosleep() for 1 msec many times in a
-loop. The load test was monitored with "perf", and I looked at the amount
-of cycles that were spent with sched_balance_rq() on the stack. The test
-reliably showed 15-25% of all cycles were spent there. I ran it 80 times on
-a pair of 2-socket Intel GNR machines (480 vCPUs per machine) - one running
-6.16-rc7, the other running this change - using 4800 child processes and
-8000 1-msec sleeps per child.  The mean cycle count dropped from 405.4B to
-387.6B, or a 4.4% decrease.
-
-More importantly, given that this change reduces cache misses in a very hot
-kernel codepath, there's likely to be additional application performance
-improvement due to reduced cache conflicts from kernel data structures.
-
-Signed-off-by: Blake Jones <blakejones@google.com>
----
- kernel/sched/sched.h | 59 +++++++++++++++++++++++++++-----------------
- 1 file changed, 37 insertions(+), 22 deletions(-)
-
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 83e3aa9171429..b21be28823609 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1097,30 +1097,45 @@ DECLARE_STATIC_KEY_FALSE(sched_uclamp_used);
-  * acquire operations must be ordered by ascending &runqueue.
-  */
- struct rq {
--	/* runqueue lock: */
--	raw_spinlock_t		__lock;
--
-+	/*
-+	 * The following members are loaded together from pick_next_task(),
-+	 * and should be on an isolated cache line to avoid cache pollution.
-+	 */
- 	unsigned int		nr_running;
- #ifdef CONFIG_NUMA_BALANCING
- 	unsigned int		nr_numa_running;
- 	unsigned int		nr_preferred_running;
--	unsigned int		numa_migrate_on;
- #endif
-+#ifdef CONFIG_SMP
-+	unsigned int		ttwu_pending;
-+	unsigned long		cpu_capacity;
-+#endif
-+	union {
-+		struct task_struct __rcu *donor; /* Scheduler context */
-+		struct task_struct __rcu *curr;  /* Execution context */
-+	};
-+	struct task_struct	*idle;
-+	/* padding left here deliberately */
-+
-+	/*
-+	 * The next cacheline holds the runqueue lock, as well as some
-+	 * other less performance-critical fields.
-+	 */
-+	u64			nr_switches	____cacheline_aligned;
-+
-+	/* runqueue lock: */
-+	raw_spinlock_t		__lock;
-+
- #ifdef CONFIG_NO_HZ_COMMON
-+	unsigned int		nohz_tick_stopped;
-+	atomic_t		nohz_flags;
- #ifdef CONFIG_SMP
--	unsigned long		last_blocked_load_update_tick;
- 	unsigned int		has_blocked_load;
-+	unsigned long		last_blocked_load_update_tick;
- 	call_single_data_t	nohz_csd;
- #endif /* CONFIG_SMP */
--	unsigned int		nohz_tick_stopped;
--	atomic_t		nohz_flags;
- #endif /* CONFIG_NO_HZ_COMMON */
- 
--#ifdef CONFIG_SMP
--	unsigned int		ttwu_pending;
--#endif
--	u64			nr_switches;
--
- #ifdef CONFIG_UCLAMP_TASK
- 	/* Utilization clamp values based on CPU's RUNNABLE tasks */
- 	struct uclamp_rq	uclamp[UCLAMP_CNT] ____cacheline_aligned;
-@@ -1143,6 +1158,9 @@ struct rq {
- 	struct list_head	*tmp_alone_branch;
- #endif /* CONFIG_FAIR_GROUP_SCHED */
- 
-+#ifdef CONFIG_NUMA_BALANCING
-+	unsigned int		numa_migrate_on;
-+#endif
- 	/*
- 	 * This is part of a global counter where only the total sum
- 	 * over all CPUs matters. A task can increase this counter on
-@@ -1151,24 +1169,23 @@ struct rq {
- 	 */
- 	unsigned long 		nr_uninterruptible;
- 
--	union {
--		struct task_struct __rcu *donor; /* Scheduler context */
--		struct task_struct __rcu *curr;  /* Execution context */
--	};
- 	struct sched_dl_entity	*dl_server;
--	struct task_struct	*idle;
- 	struct task_struct	*stop;
- 	unsigned long		next_balance;
- 	struct mm_struct	*prev_mm;
- 
--	unsigned int		clock_update_flags;
--	u64			clock;
--	/* Ensure that all clocks are in the same cache line */
-+	/*
-+	 * The following fields of clock data are frequently referenced
-+	 * and updated together, and should go on their own cache line.
-+	 */
- 	u64			clock_task ____cacheline_aligned;
- 	u64			clock_pelt;
-+	u64			clock;
- 	unsigned long		lost_idle_time;
-+	unsigned int		clock_update_flags;
- 	u64			clock_pelt_idle;
- 	u64			clock_idle;
-+
- #ifndef CONFIG_64BIT
- 	u64			clock_pelt_idle_copy;
- 	u64			clock_idle_copy;
-@@ -1187,8 +1204,6 @@ struct rq {
- 	struct root_domain		*rd;
- 	struct sched_domain __rcu	*sd;
- 
--	unsigned long		cpu_capacity;
--
- 	struct balance_callback *balance_callback;
- 
- 	unsigned char		nohz_idle_balance;
--- 
-2.50.0.727.gbf7dc18ff4-goog
-
+> -Akhil.
+>
+> >
+> > BR,
+> > -R
+> >
+> >>>
+> >>> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+> >>> ---
+> >>>  drivers/gpu/drm/msm/msm_gpu_devfreq.c | 6 ++++++
+> >>>  1 file changed, 6 insertions(+)
+> >>>
+> >>> diff --git a/drivers/gpu/drm/msm/msm_gpu_devfreq.c b/drivers/gpu/drm/=
+msm/msm_gpu_devfreq.c
+> >>> index 2e1d5c3432728cde15d91f69da22bb915588fe86..53ef2add5047e7d6b6371=
+af949cab36ce8409372 100644
+> >>> --- a/drivers/gpu/drm/msm/msm_gpu_devfreq.c
+> >>> +++ b/drivers/gpu/drm/msm/msm_gpu_devfreq.c
+> >>> @@ -4,6 +4,7 @@
+> >>>   * Author: Rob Clark <robdclark@gmail.com>
+> >>>   */
+> >>>
+> >>> +#include "adreno/adreno_gpu.h"
+> >>>  #include "msm_gpu.h"
+> >>>  #include "msm_gpu_trace.h"
+> >>>
+> >>> @@ -300,6 +301,8 @@ void msm_devfreq_active(struct msm_gpu *gpu)
+> >>>       if (!has_devfreq(gpu))
+> >>>               return;
+> >>>
+> >>> +     if (to_adreno_gpu(gpu)->info->quirks & ADRENO_QUIRK_IFPC)
+> >>> +             return;
+> >>>       /*
+> >>>        * Cancel any pending transition to idle frequency:
+> >>>        */
+> >>> @@ -370,6 +373,9 @@ void msm_devfreq_idle(struct msm_gpu *gpu)
+> >>>       if (!has_devfreq(gpu))
+> >>>               return;
+> >>>
+> >>> +     if (to_adreno_gpu(gpu)->info->quirks & ADRENO_QUIRK_IFPC)
+> >>> +             return;
+> >>> +
+> >>>       msm_hrtimer_queue_work(&df->idle_work, ms_to_ktime(1),
+> >>>                              HRTIMER_MODE_REL);
+> >>>  }
+> >>>
+> >>> --
+> >>> 2.50.1
+> >>>
+> >>
+> >> --
+> >> With best wishes
+> >> Dmitry
+>
 
