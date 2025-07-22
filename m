@@ -1,136 +1,140 @@
-Return-Path: <linux-kernel+bounces-740258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ED50B0D1F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:37:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 846DDB0D1BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:16:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 068E51C20DD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:37:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4EB3166A3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E27228CF41;
-	Tue, 22 Jul 2025 06:37:08 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826C028D844;
+	Tue, 22 Jul 2025 06:16:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="oNLRZH83"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D48346BF
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 06:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C54190477
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 06:16:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753166228; cv=none; b=iFsuom8L1+8CY/4Wn/Ktm9cMsg4tR5QmfaoD5ZLsmbOx8tw+Ml9dyTMA2gkqGEZ6aWDVgsrQ6YgAthEX/v2DQigaTdFfdVsN5WzcXSJbRLRDQy2mQLai5hg2Ji6u3YU3BArHxcaLc7dY/NB0LsM+BtDoq6W4jpST5Sjhci08Yrs=
+	t=1753164997; cv=none; b=h8AsFpj6zVng9vy8jclpyBgE17tmSukMU6cWoDojcgow5vpsLB/huSB5Picao4hjCVm7tjzNYZ0A+RWtpO1Cxkh4HFudzHw587YeadS9bgQ/xtLWt/QvMvLglRmdgYsSeB297uSGKuLZDZDuxstBQuLnRXJaPH60qEr+7OuHSt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753166228; c=relaxed/simple;
-	bh=jCVxSs5/ByMnfGQFjYimCBNfjmeace0P6sd54K5DxyU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SAJJlJi2yjccSEpnJfEVmGa816+9KnR7+uGKzFHGSPvoM+n/Pt6wCwVM6ckU8kDSDruX9p9rsb6FKxE+05wYL+m92nfbmy+0i5mPMRXMTksjOuOl9ez5fvuu91C4xunWH7/u0LIwESHYeBmKbtTSg7I6sRJuS44oV1SaPUmRPw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.8/8.18.1.8) with ESMTP id 56M4OXdD3385850;
-	Mon, 21 Jul 2025 23:13:53 -0700
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 481vqv0cxy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Mon, 21 Jul 2025 23:13:53 -0700 (PDT)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.57; Mon, 21 Jul 2025 23:13:41 -0700
-Received: from pek-lpg-core6.wrs.com (147.11.136.210) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.57 via Frontend Transport; Mon, 21 Jul 2025 23:13:39 -0700
-From: <changqing.li@windriver.com>
-To: <namhyung@kernel.org>, <charlie@rivosinc.com>, <james.clark@linaro.org>,
-        <irogers@google.com>, <linux-kernel@vger.kernel.org>
-CC: <changqing.li@windriver.com>
-Subject: [PATCH 1/1] tools/build: Let link command read option from file
-Date: Tue, 22 Jul 2025 14:13:35 +0800
-Message-ID: <20250722061335.285249-2-changqing.li@windriver.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250722061335.285249-1-changqing.li@windriver.com>
-References: <20250722061335.285249-1-changqing.li@windriver.com>
+	s=arc-20240116; t=1753164997; c=relaxed/simple;
+	bh=hQmYNw1nxxnjx5AEwNuBdEzfygugW6y3m3bQETQLK1A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dRre388f4yBEXhXpSHUWapJmZpGi3iHm2WV3IM5zfHu5pRqEJ/EONOw7GiRBnN0JPRv4q0ZcmuGfU22HjOQ/Bh/4591F99KIWlgYOg+tnSoYoBXU81Zy4ay1ddwdT0wr3/ZKR0A9vSjLXMhuMpOx0QnZ9cR3yU7TlBwDevmCb2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=oNLRZH83; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1753164987;
+	bh=hQmYNw1nxxnjx5AEwNuBdEzfygugW6y3m3bQETQLK1A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oNLRZH830rm/on4tkN3zXpzMq0pa4V7HFVCHhV+cb5mNxE5g84KOmLHpDLkzEroQX
+	 +olYVd9AZj6OIj+GO5ETwk/R34sIhslu+G57OM03t1nOL4FIYTKo0UxIrVh4PrxeT8
+	 5426rc6mK3G1PE+4HLHi5RLL7W9+LKjuSxWeBWpYZsIRJ6o1sP0o1po2+55EhCfpro
+	 ymeA9lxg/w4n9gglwocZs6bqKz+dY7pk4cukbRtX5cQnycKHinZEvr+JqbAqXJnaQ2
+	 tQY9xoK//oO9DHgu9nonm6PRg2fCxhuGqKiBG9Lwsgi/Q7WnXyCHD31Mn/fkFxi017
+	 bkSfPZ1/PoXvg==
+Received: from [192.168.1.90] (unknown [82.79.138.60])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id BB2AC17E0F66;
+	Tue, 22 Jul 2025 08:16:26 +0200 (CEST)
+Message-ID: <c5624dad-93cb-4cc3-88ad-808dcc43274d@collabora.com>
+Date: Tue, 22 Jul 2025 09:16:26 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] drm/rockchip: vop2: Add high color depth support
+To: Andy Yan <andyshrk@163.com>, Algea Cao <algea.cao@rock-chips.com>
+Cc: Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
+ <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250721-rk3588-10bpc-v1-0-e95a4abcf482@collabora.com>
+ <20250721-rk3588-10bpc-v1-1-e95a4abcf482@collabora.com>
+ <3ceb2c70.2145.1982ff28b9c.Coremail.andyshrk@163.com>
+Content-Language: en-US
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+In-Reply-To: <3ceb2c70.2145.1982ff28b9c.Coremail.andyshrk@163.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: -jFbBqqelArViv3NDqMmVQQg6IKzQsjv
-X-Authority-Analysis: v=2.4 cv=coubk04i c=1 sm=1 tr=0 ts=687f2c21 cx=c_pps
- a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17
- a=Wb1JkmetP80A:10 a=t7CeM3EgAAAA:8 a=qdclRBtFDC5OSZBgxNEA:9
- a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-GUID: -jFbBqqelArViv3NDqMmVQQg6IKzQsjv
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDA0OSBTYWx0ZWRfX5uCl+xKuUeMa
- LU4oU8ZmJhNPqtAeSW+BEFZpnal4PxIUpPY2hMfVcLWcDemur33zbUsVb0pSN15AeLxntqwFceD
- QC0djQGwQbmjHM7tujmkMKl2IETFvwfln8k0d5+3Jx3Ly10Qz7cfhsglRtrFt0kT4y/XFXuumEV
- VToT9uercVEsQvQC5z/OaQzjvCCOuXtYeofO8gMg3UYTUb7VTS0roPedjf+r4JylqXMbvnzg66Z
- mABi8WoIgYEbZKMnwnrZzxuD/pAWOC+kJuSMOTUVCSXMjaBwjsVGkYwXhy+RyjMzm4G2Rx3FVeO
- EUEPU5JiL3UEH/oxO8TcxV3ISPmQvCvr4TFREZ0WeurdQpYN6JUzjpe5E7mhxv6t7lqmG947u/y
- vDrr++1I
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-22_01,2025-07-21_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 impostorscore=0 suspectscore=0 clxscore=1011 phishscore=0
- adultscore=0 spamscore=0 bulkscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2507210000 definitions=main-2507210183
 
-From: Changqing Li <changqing.li@windriver.com>
+Hi Andy,
 
-ld_multi will link multiple objects, when there are many objects, and
-O=[absolute_path] is set, and the absolute_path is relatively long. It
-is possile that this line "$(call if_changed,$(host)ld_multi)" will
-report error:
-"make[4]: /bin/sh: Argument list too long"
+On 7/22/25 5:24 AM, Andy Yan wrote:
+> 
+> Hello Cristian，
+> 
+> At 2025-07-22 01:39:04, "Cristian Ciocaltea" <cristian.ciocaltea@collabora.com> wrote:
+>> Take the bits per color channel into consideration when computing DCLK
+>> rate.
+>>
+>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+>> ---
+>> drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 3 +++
+>> 1 file changed, 3 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+>> index 186f6452a7d359f079662bc580850929632ea8fe..a714bcbb02de16267e7febbaeb1eb270c70aaef2 100644
+>> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+>> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+>> @@ -1731,6 +1731,9 @@ static void vop2_crtc_atomic_enable(struct drm_crtc *crtc,
+>> 		clock *= 2;
+>> 	}
+>>
+>> +	if (vcstate->output_bpc > 8)
+>> +		clock = DIV_ROUND_CLOSEST(clock * vcstate->output_bpc, 8);
+> 
+> 
+> This seems not right,  regardless of the value of bpc, the dclk of VOP must be
+> consistent with mode->crtc_clock.
+> If the dclk of VOP is increased in accordance with the BPC ratio here, then the refresh rate of VOP will also increase proportionally.
+> This would be inconsistent with the timing described in the mode.
+> For a hight color depth,  the frequency needs to be increased for the HDMI PHY's clock.
 
-So make the ld command read option from file to fix above error. In
-order to convenient debug, write the file content in dot-target.cmd
-as comments.
+The HDMI PHY's clock is actually computed at HDMI connector framework level
+[1], taking into account the current bpc value, which is determined as part
+of hdmi_compute_config() [2].
 
-Signed-off-by: Changqing Li <changqing.li@windriver.com>
----
- tools/build/Makefile.build | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+That means conn_state->hdmi.tmds_char_rate in
+dw_hdmi_qp_rockchip_encoder_atomic_check() does already include the bpc
+related adjustment, and we pass that directly to the PHY via
+phy_configure().  Note there's still the need to handle bpc separately via
+phy_configure_opts in order to setup CMN_REG(0086) [3].
 
-diff --git a/tools/build/Makefile.build b/tools/build/Makefile.build
-index 3584ff308607..e57ce8c34685 100644
---- a/tools/build/Makefile.build
-+++ b/tools/build/Makefile.build
-@@ -70,11 +70,13 @@ quiet_cmd_gen = GEN     $@
- # If there's nothing to link, create empty $@ object.
- quiet_cmd_ld_multi = LD      $@
-       cmd_ld_multi = $(if $(strip $(obj-y)),\
--                     $(LD) -r -o $@  $(filter $(obj-y),$^),rm -f $@; $(AR) rcs $@)
-+                     $(LD) -r -o $@ @$@.in,rm -f $@; $(AR) rcs $@)
- 
- quiet_cmd_host_ld_multi = HOSTLD  $@
-       cmd_host_ld_multi = $(if $(strip $(obj-y)),\
--                          $(HOSTLD) -r -o $@  $(filter $(obj-y),$^),rm -f $@; $(HOSTAR) rcs $@)
-+                          $(HOSTLD) -r -o $@ @$@.in,rm -f $@; $(HOSTAR) rcs $@)
-+
-+output_ld_multi_dotin = $(if $(quiet),,@printf "# %s:\n# " $@.in >> $(dot-target).cmd;cat $@.in >> $(dot-target).cmd)
- 
- ifneq ($(filter $(obj),$(hostprogs)),)
-   host = host_
-@@ -145,7 +147,10 @@ $(sort $(subdir-obj-y)): $(subdir-y) ;
- 
- $(in-target): $(obj-y) $(test-y) FORCE
- 	$(call rule_mkdir)
-+	$(file >$@.in,$(filter $(obj-y),$^))
- 	$(call if_changed,$(host)ld_multi)
-+	$(if $(strip $(any-prereq) $(arg-check)), $(output_ld_multi_dotin))
-+	@rm $@.in
- 
- __build: $(in-target)
- 	@:
--- 
-2.34.1
+Since VOP2 switches to PHY PLL as DCLK source for modes up to 4K@60Hz, it
+needs to take color depth into account, to keep them in sync.  As a matter
+of fact, the clock adjustment in VOP2 is mainly necessary for legacy
+reasons, since HDPTX PHY allowed changing TMDS char rate via the Common
+Clock Framework API.  We landed a proper solution for that via the HDMI PHY
+API, hence the plan would be to make CCF API readonly after the switch to
+PHY API is completed, which means VOP2 shouldn't deal anymore with clock
+calculations when using the PHY PLL as DCLK source.
 
+Regardless, I should probably move this clock adjustment to the conditional
+block handling DCLK source switch.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/gpu/drm/display/drm_hdmi_state_helper.c?h=v6.16-rc7#n525
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/gpu/drm/display/drm_hdmi_state_helper.c?h=v6.16-rc7#n608
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c?h=v6.16-rc7#n1034
 
