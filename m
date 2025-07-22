@@ -1,136 +1,113 @@
-Return-Path: <linux-kernel+bounces-740237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 805CBB0D1B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:10:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7A35B0D1BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:14:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54EFB5459A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:10:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A1981884391
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31C5528F53B;
-	Tue, 22 Jul 2025 06:10:29 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9CE128F50F;
+	Tue, 22 Jul 2025 06:14:06 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110C01CF7AF;
-	Tue, 22 Jul 2025 06:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BEFD22FF59
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 06:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753164628; cv=none; b=jvQykfDaId5L+e+AejgEu/Ru9YFC1rsH3gv4u/T0HO2lFEOPEiGOS6N3qmmkb/iUcrAIHannmbEye1qfbzzPAyRJzGdsElbieyeZwd/DxncNCMthsyr6kd5mU5T3ibM+ZVN/ruPEAG1LgpC2jxxqS0+o2HyGUlqsauE05N88VkY=
+	t=1753164846; cv=none; b=tnUEfDnv1ROfXmgpdVmaZ0dR9plxuTVq0RhFmvHeb2VvhFqM7CAoSBIW99k1a41FjsKDhWwhZJf4gr0aM4PVQhs1ssCG1qqoLrKNK3WFGI+ssS5zTAC7MH73vWWmxwMqz9yMCoEgUYhrLzXDSu8qhvUrNASFKGBinDuz1kLusXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753164628; c=relaxed/simple;
-	bh=X3m0bEDpzyejvM3oMqRL6s6ZB4rqOd4i/z4KryWrKS4=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=pzc9ruLSgKcFu8BL1mhAM58Dry9kGLFJHYQwrRqY7LXE5ryxbQVGFnFz2vwf9lFUsflpqsy0yMkzpdvy4+ziY8t0Zx4HRGm/cjPMso7PP3nXmKhAJ3J3SKuwgOaewb2nq0pRt2NZK7bZl+L0AHi6gCo3Y8bLhM393EwotOoKOBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4bmRh63sV3z6FyBr;
-	Tue, 22 Jul 2025 14:10:14 +0800 (CST)
-Received: from xaxapp04.zte.com.cn ([10.99.98.157])
-	by mse-fl2.zte.com.cn with SMTP id 56M6A2Th040888;
-	Tue, 22 Jul 2025 14:10:02 +0800 (+08)
-	(envelope-from fan.yu9@zte.com.cn)
-Received: from mapi (xaxapp01[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Tue, 22 Jul 2025 14:10:04 +0800 (CST)
-Date: Tue, 22 Jul 2025 14:10:04 +0800 (CST)
-X-Zmail-TransId: 2af9687f2b3c7ca-68dd4
-X-Mailer: Zmail v1.0
-Message-ID: <20250722141004103ZDPniL4wEAkAUVVhyyQMW@zte.com.cn>
-In-Reply-To: <CAAVpQUDaSccbmOC0sgihBYPTdtSE2OsFOJXC6s58QS81a+8nkA@mail.gmail.com>
-References: 20250721171333.6caced4f@kernel.org,20250722094808945ENOLvzY108YsJFz4CqbaI@zte.com.cn,CAAVpQUDaSccbmOC0sgihBYPTdtSE2OsFOJXC6s58QS81a+8nkA@mail.gmail.com
+	s=arc-20240116; t=1753164846; c=relaxed/simple;
+	bh=Gj9QaybhIqly2/7J7gq7nUvOuxTueMq+b67/K+Jmcdo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qEXvyknlVuVlNueqTYEWVlxcKtJED+8gOr7WvbNGg8D7BBnk/3vD8dV4OBaDGL44tClPQ8a3UZOCdC1BLwFfnMIxxOWLqsN/M1f3VIDLj2/ttfnnLOsJXa94x+X89GXBJpjA+Vk6dGzk2tF9aiOyGAtyyn9lZO1qG88qf+maGeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.8/8.18.1.8) with ESMTP id 56M4EhO63321257;
+	Tue, 22 Jul 2025 06:13:52 GMT
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 481vqmrcuy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Tue, 22 Jul 2025 06:13:52 +0000 (GMT)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.57; Mon, 21 Jul 2025 23:13:38 -0700
+Received: from pek-lpg-core6.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.57 via Frontend Transport; Mon, 21 Jul 2025 23:13:36 -0700
+From: <changqing.li@windriver.com>
+To: <namhyung@kernel.org>, <charlie@rivosinc.com>, <james.clark@linaro.org>,
+        <irogers@google.com>, <linux-kernel@vger.kernel.org>
+CC: <changqing.li@windriver.com>
+Subject: [RFC][PATCH 0/1] tools/build: Let link command read option from file
+Date: Tue, 22 Jul 2025 14:13:34 +0800
+Message-ID: <20250722061335.285249-1-changqing.li@windriver.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <fan.yu9@zte.com.cn>
-To: <kuniyu@google.com>
-Cc: <kuba@kernel.org>, <edumazet@google.com>, <ncardwell@google.com>,
-        <davem@davemloft.net>, <dsahern@kernel.org>, <pabeni@redhat.com>,
-        <horms@kernel.org>, <rostedt@goodmis.org>, <mhiramat@kernel.org>,
-        <mathieu.desnoyers@efficios.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
-        <yang.yang29@zte.com.cn>, <xu.xin16@zte.com.cn>,
-        <tu.qiang35@zte.com.cn>, <jiang.kun2@zte.com.cn>,
-        <qiu.yutan@zte.com.cn>, <wang.yaxin@zte.com.cn>,
-        <he.peilin@zte.com.cn>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCBuZXQtbmV4dCB2NyBSRVNFTkRdIHRjcDogdHJhY2UgcmV0cmFuc21pdCBmYWlsdXJlcyBpbiB0Y3BfcmV0cmFuc21pdF9za2I=?=
-Content-Type: multipart/mixed;
-	boundary="=====_001_next====="
-X-MAIL:mse-fl2.zte.com.cn 56M6A2Th040888
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: fan.yu9@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.133 unknown Tue, 22 Jul 2025 14:10:14 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 687F2B46.001/4bmRh63sV3z6FyBr
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: XhnvlUYu9HJwNByTt9Ov9a9y13MaSc20
+X-Proofpoint-GUID: XhnvlUYu9HJwNByTt9Ov9a9y13MaSc20
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDA0OSBTYWx0ZWRfX9HbNTfco+/b0
+ JQOwDDWhvxOaSHEOHM5ZHtM2qdqFq/5KbcCDbRCYHuCgSp7/GnH6ZhlWcAXf6WpCA250k+ZiCgA
+ x4jM2HJP0qRB2/6xc0c2XhuiNPRL1OFfWaJjD++K2ptdeDtW9WnabB2UmMfDCX9bmeO/aA/1IfK
+ YxsMgr1DfsaoYgHoFK/yn55Muet3Y7Xm7NMQZyQHPIwFWn0kWNinbI6nRJe4BY/KiXgCkFW4M3x
+ E7u2/RNBwe9eiD9N9UhjO3q4PqFYVFXyoChUncIDiRHICDLtM5q4nELY0glSRynKKr4M+I13bf6
+ CdbbqIhiJt1cU7KOC+4Ubja5aXCBiarOJPsZZa9qSyXCBbHrlcSrl+b5KSjtS6sUqP+XA9viTVA
+ cBisTN6J
+X-Authority-Analysis: v=2.4 cv=BbrY0qt2 c=1 sm=1 tr=0 ts=687f2c20 cx=c_pps
+ a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17
+ a=Wb1JkmetP80A:10 a=t7CeM3EgAAAA:8 a=snzuE9bSp9PWNWwjNH8A:9
+ a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-22_01,2025-07-21_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 bulkscore=0 impostorscore=0 phishscore=0 suspectscore=0
+ spamscore=0 priorityscore=1501 adultscore=0 clxscore=1011
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2507210000 definitions=main-2507210183
 
+From: Changqing Li <changqing.li@windriver.com>
 
+Hi, Dear Maintainers
 
---=====_001_next=====
-Content-Type: multipart/related;
-	boundary="=====_002_next====="
+I am building perf with yocto project, and we don't want to put compile
+object files to source folder, so pass O=xxx;
 
+When we use a relatively long path like this:
+O=/buildarea1/wrlinux-10.25/build/Virtualization/customized-WRLINUX1025_Nightly_Linux_systemd/250609-044304/lxbuilds/Harcuvar_platform_up/intel-x86-64-preempt-rt-glibc-std/wrlinux/build/tmp/work/intel_x86_64-wrs-linux/perf/1.0/perf-1.0
 
---=====_002_next=====
-Content-Type: multipart/alternative;
-	boundary="=====_003_next====="
+perf will compile failed with error:
+| make[4]: /bin/sh: Argument list too long
+| make[4]: *** [.../perf/1.0/perf-1.0/tools/build/Makefile.build:156: .../perf/1.0/perf-1.0/util/perf-in.o] Error 127
 
+The error is from this line: "$(call if_changed,$(host)ld_multi)", 
+Since perf have many .o, and when above long O passed,  if_changed will
+evoke sh with long argument list.
 
---=====_003_next=====
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
+So I try to fix this issue by this RFC patch. This is the first time I
+touch this part, so the patch may not perfect, please help to review and
+give your comments, thanks. 
 
-PiA+IFRoYW5rcyBmb3IgY2hlY2tpbmchIEkganVzdCB3YW50ZWQgdG8gZW5zdXJlIHRoZSB2NyBw
-YXRjaCB3YXNu4oCZdCBtaXNzZWQg4oCUIGl04oCZcyBpZGVudGljYWwgdG8gdGhlIG9yaWdpbmFs
-Lg0KPiANCj4gWW91IGNhbiBjaGVjayB0aGUgcGF0Y2ggc3RhdHVzIGluIHBhdGNod29yaywgYW5k
-IGFjdHVhbGx5IHRoaXMgdjcNCj4gbWFya2VkIHRoZSBwcmV2aW91cyB2NyBhcyBTdXBlcnNlZGVk
-LCBzbyB5b3UgZGlkbid0IG5lZWQgdG8gcmVzZW5kIDopDQo+IA0KPiBodHRwczovL3BhdGNod29y
-ay5rZXJuZWwub3JnL3Byb2plY3QvbmV0ZGV2YnBmL2xpc3QvP3N1Ym1pdHRlcj0yMTc1NDkmc3Rh
-dGU9Kg0KDQpIaSBLdW5peXVraSwNCg0KVGhhbmtzIGZvciB0aGUgY2xhcmlmaWNhdGlvbiEgSeKA
-mXZlIGNoZWNrZWQgdGhlIFBhdGNod29yayBsaW5rIGFuZCBub3cNCnNlZSB0aGUgdjcgc3RhdHVz
-KCJOZXciKS4gTXkgYXBvbG9naWVzIGZvciB0aGUgcmVkdW5kYW50IHJlc2VuZCDigJQgSeKAmWxs
-DQphdm9pZCB0aGlzIGluIHRoZSBmdXR1cmUuDQoNCkFwcHJlY2lhdGUgeW91ciBwYXRpZW5jZSBh
-bmQgZ3VpZGFuY2UhDQoNCkJlc3QgcmVnYXJkcywNCkZhbiBZdQ==
+Changqing Li (1):
+  tools/build: Let link command read option from file
 
+ tools/build/Makefile.build | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---=====_003_next=====
-Content-Type: text/html ;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-PGRpdiBjbGFzcz0iemNvbnRlbnRSb3ciPjxwPiZndDsgJmd0OyBUaGFua3MgZm9yIGNoZWNraW5n
-ISBJIGp1c3Qgd2FudGVkIHRvIGVuc3VyZSB0aGUgdjcgcGF0Y2ggd2FzbuKAmXQgbWlzc2VkIOKA
-lCBpdOKAmXMgaWRlbnRpY2FsIHRvIHRoZSBvcmlnaW5hbC48L3A+PHA+Jmd0OyZuYnNwOzwvcD48
-cD4mZ3Q7IFlvdSBjYW4gY2hlY2sgdGhlIHBhdGNoIHN0YXR1cyBpbiBwYXRjaHdvcmssIGFuZCBh
-Y3R1YWxseSB0aGlzIHY3PC9wPjxwPiZndDsgbWFya2VkIHRoZSBwcmV2aW91cyB2NyBhcyBTdXBl
-cnNlZGVkLCBzbyB5b3UgZGlkbid0IG5lZWQgdG8gcmVzZW5kIDopPC9wPjxwPiZndDsmbmJzcDs8
-L3A+PHA+Jmd0OyBodHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL3Byb2plY3QvbmV0ZGV2YnBm
-L2xpc3QvP3N1Ym1pdHRlcj0yMTc1NDkmYW1wO3N0YXRlPSo8L3A+PHA+PGJyPjwvcD48cD5IaSBL
-dW5peXVraSw8L3A+PHA+PGJyPjwvcD48cD5UaGFua3MgZm9yIHRoZSBjbGFyaWZpY2F0aW9uISBJ
-4oCZdmUgY2hlY2tlZCB0aGUgUGF0Y2h3b3JrIGxpbmsgYW5kIG5vdzwvcD48cD5zZWUgdGhlIHY3
-IHN0YXR1cygiTmV3IikuIE15IGFwb2xvZ2llcyBmb3IgdGhlIHJlZHVuZGFudCByZXNlbmQg4oCU
-IEnigJlsbDwvcD48cD5hdm9pZCB0aGlzIGluIHRoZSBmdXR1cmUuPC9wPjxwPjxicj48L3A+PHA+
-QXBwcmVjaWF0ZSB5b3VyIHBhdGllbmNlIGFuZCBndWlkYW5jZSE8L3A+PHA+PGJyPjwvcD48cD5C
-ZXN0IHJlZ2FyZHMsPC9wPjxwPkZhbiBZdTwvcD48L2Rpdj4=
-
-
---=====_003_next=====--
-
---=====_002_next=====--
-
---=====_001_next=====--
+-- 
+2.34.1
 
 
