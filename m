@@ -1,117 +1,126 @@
-Return-Path: <linux-kernel+bounces-740760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F309B0D8C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:01:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02E14B0D8D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:03:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F28017A3FE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:59:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6839216E647
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452D22E3B0F;
-	Tue, 22 Jul 2025 12:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 702332D3EFB;
+	Tue, 22 Jul 2025 12:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="slrGHiF3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jt5ETB0w"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C96B2356DA;
-	Tue, 22 Jul 2025 12:01:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE084199237;
+	Tue, 22 Jul 2025 12:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753185661; cv=none; b=WmY9GDQyyRivWdtyuBDnPsYn51KUuAnXcU/WPwQPzoeSYvcNIJEJ4DR8A+vRFhnQwi0zTAV05M+XOYEQPTmd25mt5Uk0nkghxIZ8A7l9N5xJbMgz/kLrVIe+VhNbJ0IhB+lI3ml0qF4cjlSpjan3+PHwe7YARsTIRbNJvUtdX/o=
+	t=1753185810; cv=none; b=ZDyD1UXrKtVQsKxELPmZs0TVR4pYTZ0fKLM1Fz134CJcFHX8TxVc2uaPymN4PfKHQncLVt/Vd4ZcgaN2+fqPhjFxeVfygiHv2fD/aWSGC5IJRbBaE+mqyElJwYVp8qjrswlB1zwm4kUj0XzDUkdKZ8s5ElvlAV7H9sbo3mfY04M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753185661; c=relaxed/simple;
-	bh=ftwyc4Rsa5PkJtcbA2GUll7HG+Q6Q06RPAVEveTG0uk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MWWppPUCzrWWLhBQ0GsdyRNoy/KYsYKirPzVum1b2eJRO4sAZ4e/Uu1VOB0wS5BalzqB4Bs7xt2E4ugt5wQy2oQxHm8wYtARyehJnBbFquur+UnyrLLKbGsFRvU8jvueuMAKcy/mGtuF+17NBlhci/i4La26LW8zJyrirMJ4fLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=slrGHiF3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18838C4CEEB;
-	Tue, 22 Jul 2025 12:01:01 +0000 (UTC)
+	s=arc-20240116; t=1753185810; c=relaxed/simple;
+	bh=TXAjYkdUmXyPxBwsH1cflQGs0k1rSPQ8+883CPwRwOo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=h/aM44HVJHpwCdKvPGrh/C8cHLLsMBOiyj+CJC8VK4b2Ci+pxarl2rheNpKS6vXX0fJ/q2JhLhAe1rt2qmZNBbS15r7KBP26fBtDCZUVP1vqxCbhUd2KP7PJbwUr7PZEySOof0TYonEfilJO/QtzLZEqI8H+rQFc3QsgcoF+780=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jt5ETB0w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83DA4C4CEEB;
+	Tue, 22 Jul 2025 12:03:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753185661;
-	bh=ftwyc4Rsa5PkJtcbA2GUll7HG+Q6Q06RPAVEveTG0uk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=slrGHiF3zjYaMc60IUNK6RjWE3rdbO2DQBO8dNxOtCo8AqXh+e8ZVnFDuTJLKm3sV
-	 qPxxiVnx6HuvBdZBICMTbRy6cys+7bQwWK6PWUJncEcga/3onpycniF3/PcKP4o9sV
-	 W4hhlTq7WGbYYIZdegFSm8/UANecYid4haKbKnziKFJE2mfRl+1T8bbvn58cW3VIRh
-	 R/JfaPOum/o5RRxKYUcxvVAfpmGxKzDiUjQZU/FJOdzhe6M8ne8yDD/lfnhG6b1rXQ
-	 GkZb/G1XOSjVESgAML8GizFmHrK6lO2l7WyqUMniRJtRk2clg2JPszFUeGRZ3o3uoa
-	 8qYtcPnJGQhGg==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1ueBfu-000000002NY-0V1w;
-	Tue, 22 Jul 2025 14:00:50 +0200
-Date: Tue, 22 Jul 2025 14:00:50 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Manivannan Sadhasivam <mani@kernel.org>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 1/3] PCI/pwrctrl: Fix device leak at registration
-Message-ID: <aH99cmBkOwCOkIZk@hovoldconsulting.com>
-References: <20250721153609.8611-1-johan+linaro@kernel.org>
- <20250721153609.8611-2-johan+linaro@kernel.org>
- <20250722110526.00002a60@huawei.com>
+	s=k20201202; t=1753185810;
+	bh=TXAjYkdUmXyPxBwsH1cflQGs0k1rSPQ8+883CPwRwOo=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=Jt5ETB0wHQro9lz4ZFiHkk6tvmI/w4jvZLH/tR+MyNg4aU9LTRQ03V20uw0NPCK7r
+	 7ERTgdunLqC5ZSyOKRjNL9DKDgKxWzsqjeflPjujp9f/N97i1u04D/F/hbe7Rs6vqq
+	 YBuNTICWJtn1abp1UPA7v2TJWTGhXEdcH5ea+z6PlJ6qCjn2gi5k1iA6+JAyHuolvN
+	 5tXw6rXWZwVWGrjtAWUnAeKW2N5HJRmu+JG7kh9/8jRMSWxuiRmiXbYQqO/dD6DEob
+	 e1g9Q+srhAVSFSNLIq4lCQn9jYWO5ulSOdViZK11k9sC44ZI1YabAvm/h1IzsoxGGC
+	 8KYTgkfBFhJ3g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250722110526.00002a60@huawei.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 22 Jul 2025 14:03:25 +0200
+Message-Id: <DBIKI0KDP1J8.3MOHF5G3A6JEH@kernel.org>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <benno.lossin@proton.me>,
+ "Andreas Hindborg" <a.hindborg@kernel.org>, "Trevor Gross"
+ <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>, "Lyude Paul"
+ <lyude@redhat.com>, "Mitchell Levy" <levymitchell0@gmail.com>, "Wedson
+ Almeida Filho" <wedsonaf@gmail.com>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] rust: sync: fix safety comment for `static_lock_class`
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+X-Mailer: aerc 0.20.1
+References: <20250520231714.323931-1-lossin@kernel.org>
+ <DBIJLR7XNI6U.21PMPODHE83DZ@kernel.org>
+ <CAH5fLgh9aEF5V9rNq2a8utS=NxSU8rdxpKsNbsuPoMpDfHN0fg@mail.gmail.com>
+In-Reply-To: <CAH5fLgh9aEF5V9rNq2a8utS=NxSU8rdxpKsNbsuPoMpDfHN0fg@mail.gmail.com>
 
-On Tue, Jul 22, 2025 at 11:05:26AM +0100, Jonathan Cameron wrote:
-> On Mon, 21 Jul 2025 17:36:07 +0200
-> Johan Hovold <johan+linaro@kernel.org> wrote:
+On Tue Jul 22, 2025 at 1:34 PM CEST, Alice Ryhl wrote:
+> On Tue, Jul 22, 2025 at 1:21=E2=80=AFPM Benno Lossin <lossin@kernel.org> =
+wrote:
+>> On Wed May 21, 2025 at 1:17 AM CEST, Benno Lossin wrote:
+>> > The safety comment mentions lockdep -- which from a Rust perspective
+>> > isn't important -- and doesn't mention the real reason for why it's
+>> > sound to create `LockClassKey` as uninitialized memory.
+>> >
+>> > Signed-off-by: Benno Lossin <lossin@kernel.org>
+>> > ---
+>> >
+>> > I don't think we need to backport this.
+>> >
+>> > ---
+>> >  rust/kernel/sync.rs | 7 +++++--
+>> >  1 file changed, 5 insertions(+), 2 deletions(-)
+>> >
+>> > diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
+>> > index 36a719015583..a10c812d8777 100644
+>> > --- a/rust/kernel/sync.rs
+>> > +++ b/rust/kernel/sync.rs
+>> > @@ -93,8 +93,11 @@ fn drop(self: Pin<&mut Self>) {
+>> >  macro_rules! static_lock_class {
+>> >      () =3D> {{
+>> >          static CLASS: $crate::sync::LockClassKey =3D
+>> > -            // SAFETY: lockdep expects uninitialized memory when it's=
+ handed a statically allocated
+>> > -            // lock_class_key
+>> > +            // Lockdep expects uninitialized memory when it's handed =
+a statically allocated `struct
+>> > +            // lock_class_key`.
+>> > +            //
+>> > +            // SAFETY: `LockClassKey` transparently wraps `Opaque` wh=
+ich permits uninitialized
+>> > +            // memory.
+>> >              unsafe { ::core::mem::MaybeUninit::uninit().assume_init()=
+ };
+>>
+>> Looking at this patch with fresh eyes (thanks for the bump, Alice :) I
+>> think we should rather have a public unsafe function on `LockClassKey`
+>> that creates an uninitialized lock class key. I'd like to avoid the
+>> `MaybeUninit::uninit().assume_init()` pattern, as it might confuse
+>> people & it looks very wrong.
+>>
+>> We can take this patch, as it definitely is an improvement, but I think
+>> we should also just fix this properly. Any thoughts?
+>
+> Could that constructor be used in non-static cases?
 
-> Perhaps time for 
-> DEFINE_FREE(put_pdev, struct platform_device *, if (_T) put_device(&_T->dev));
-> 
-> then...
-> 
-> > ---
-> >  drivers/pci/bus.c | 14 +++++++++-----
-> >  1 file changed, 9 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
-> > index 69048869ef1c..0394a9c77b38 100644
-> > --- a/drivers/pci/bus.c
-> > +++ b/drivers/pci/bus.c
-> > @@ -362,11 +362,15 @@ void pci_bus_add_device(struct pci_dev *dev)
-> >  	 * before PCI client drivers.
-> >  	 */
-> >  	pdev = of_find_device_by_node(dn);
-> > -	if (pdev && of_pci_supply_present(dn)) {
-> > -		if (!device_link_add(&dev->dev, &pdev->dev,
-> > -				     DL_FLAG_AUTOREMOVE_CONSUMER))
-> > -			pci_err(dev, "failed to add device link to power control device %s\n",
-> > -				pdev->name);
-> 
-> 	struct platform_device *pdev __free(put_pdev) =
-> 		of_find_device_by_node(dn);
-> > +	if (pdev) {
-> > +		if (of_pci_supply_present(dn)) {
-> > +			if (!device_link_add(&dev->dev, &pdev->dev,
-> > +					     DL_FLAG_AUTOREMOVE_CONSUMER)) {
-> > +				pci_err(dev, "failed to add device link to power control device %s\n",
-> > +					pdev->name);
-> > +			}
-> > +		}
-> > +		put_device(&pdev->dev);
-> 
-> and no need for any explicit put.
-> 
-> We already do this extensively in some subsystems (e.g. CXL) and it
-> greatly simplifies code.
+I don't know lockdep, so maybe yes? Or do you mean that it could be
+abused?
 
-No, I'm no fan of those kind of changes which I find leads to less
-readable code (e.g. with those in-code declarations).
-
-Johan
+---
+Cheers,
+Benno
 
