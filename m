@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-741153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3478AB0E0BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:39:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65234B0E0BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:39:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73AA4566257
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:39:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A72546C7F43
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61898262FC5;
-	Tue, 22 Jul 2025 15:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 389C4278E7E;
+	Tue, 22 Jul 2025 15:39:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R7Pltk+9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BzvFqCVC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA2725C833;
-	Tue, 22 Jul 2025 15:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8282A7F9;
+	Tue, 22 Jul 2025 15:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753198751; cv=none; b=No8haoM6cK7VBh5tN47d4kw6tyl5lnlrmrqS0dKMeuR4csSrmi4KjlgnX09Fq30Xq6+dlQWRUJweUKdDi2otl6g/7lk2+zP2PgSV9AGYDBMwSrCyYlqIWd5DONeuyxxu7uC68lzm0Z3e3bD6Efz5p1wwwhtWPXc6+fk9K8Kk/lU=
+	t=1753198787; cv=none; b=Go5DWqpCqzt77EjSfKUXmWQz60DhzeKHFTzaCrDb9kl6kJMLY1AJCLOVe6wUuaHgFlv2ZBwcsOzRXxE00KDsad9/lEWi7GeIusoMR7d/h6KyeJ9YkyxcfIIVSY80AWjKv6m4nwU4nWPW0drds4I32DYoevoyHtZB21zPpAJaniQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753198751; c=relaxed/simple;
-	bh=/Gjkuw+5Y7LJ0hoFeke0nCDcX+sNxHdnXykOv3WdwLI=;
+	s=arc-20240116; t=1753198787; c=relaxed/simple;
+	bh=2T8ZH1HyZDNhXxPm85UiHpTaZiBGX7WQnZsC+C+Ii4c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NNuiMxXM3yq6hbsGT5zVsAH2yfGgG8efLSPptsCGlbipSUyk9M1mV6MCZNv8YdVahv55WWFe4oKdyUAg/C/uWjDNCFKpuRR0aJTH3MB+1PshhpwrUKMBctumCTJ4TlfIpAssQxgzcbHKEKlWvyz+0bq3sSOlkmBbX2NltshhFm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R7Pltk+9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E0C0C4CEF1;
-	Tue, 22 Jul 2025 15:39:09 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=EyKjQmcRFD3A34BY9zPr3kGst86RJJFUIgITTqpR/YHgZFhIHV/xx/XClxRCHmLbivUWJIG6oA5DuNfyXwefCwDoiEKebDdc/rhUpOg66F1WEQVV4bP0rNmIMzx6y4u2qCN8m5a0O4Sk98LPfSS4rwvbRG30eraDza53Lby8lmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BzvFqCVC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBEA2C4CEF6;
+	Tue, 22 Jul 2025 15:39:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753198751;
-	bh=/Gjkuw+5Y7LJ0hoFeke0nCDcX+sNxHdnXykOv3WdwLI=;
+	s=k20201202; t=1753198786;
+	bh=2T8ZH1HyZDNhXxPm85UiHpTaZiBGX7WQnZsC+C+Ii4c=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=R7Pltk+9rewNqhHJrfLjs8QVOCuOal4FZD8jjgzvt+aAdMBSsX0KA/oG4AVdfnOE7
-	 CDtUTsFpa7w/LRaxgrBzDbhFbV7u7RmMpz3Tp4PQZ13+bwBGmTm0FS50D2Ullb7MOZ
-	 6twI50kQ0hUpFsdvBEKDXmItWkIW4Qjymiv96G70JOHSatn0Dv6NKWFT+7UCAG/QC5
-	 IfZqHlByrcE4HaeSViJU8fEKUgXYxVBnXz0XBtWUh4aUokxQ+LEUJOZVM2xtjaSsUy
-	 5swpx0d9Rg0QGKxoNsbVN6oKtNsh6565sqhioEC0+lVfveb2WqK04ENVtQQ0UgMgcB
-	 /8/aLpaVhX0BQ==
-Message-ID: <93253093-f6a8-4c34-988d-bdc9489cf4f0@kernel.org>
-Date: Tue, 22 Jul 2025 10:39:08 -0500
+	b=BzvFqCVCqsh+JLOq4YnBjmkFLFVwcp2LCfnTBGeA3e6jS2HZcnaSMp+YgdWnwYPb+
+	 +MRnh7r40H6PRx9iLyt9ZDTE7uij5zoRuljlHMDmbP+YAFg+MPk4EeZp6io6NlJ9ec
+	 5KX7Ze/RQW1qsRnsHOWwzoFA5SwxEMlc0Mg/GEis2pw4jvSFzX6G/RYC2TTg0sI7DA
+	 EcuxLPzP9PxQknzj0lV1QsmqwHtuix4xyGg793hxZ1+HDeBupkIKI25q8jtLy9jXDi
+	 v3cD1lElltNRk6uQTzfF/DwNxuIkPedHAbCmR9rizXpWMpAzYsS6yUSk/oGobB1LH6
+	 hz4ClYcCjlxUQ==
+Message-ID: <fed126f4-20e6-4d7b-a29e-e7206875b5a0@kernel.org>
+Date: Tue, 22 Jul 2025 17:39:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,100 +49,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 8/9] fbcon: Use screen info to find primary device
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: David Airlie <airlied@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Simona Vetter <simona@ffwll.ch>, Lukas Wunner <lukas@wunner.de>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>,
- Alex Williamson <alex.williamson@redhat.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:INTEL IOMMU (VT-d)" <iommu@lists.linux.dev>,
- "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
- "open list:VFIO DRIVER" <kvm@vger.kernel.org>,
- "open list:SOUND" <linux-sound@vger.kernel.org>,
- Daniel Dadap <ddadap@nvidia.com>,
- Mario Limonciello <mario.limonciello@amd.com>
-References: <20250722153322.GA2785882@bhelgaas>
+Subject: Re: [PATCH 1/2] MIPS: mobileye: dts: eyeq5: rename the emmc
+ controller
+To: =?UTF-8?Q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>,
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+ Gregory CLEMENT <gregory.clement@bootlin.com>,
+ =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ kernel test robot <lkp@intel.com>
+References: <20250722-mmc_dts_warnings-v1-0-8a8a1594dfd2@bootlin.com>
+ <20250722-mmc_dts_warnings-v1-1-8a8a1594dfd2@bootlin.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <20250722153322.GA2785882@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250722-mmc_dts_warnings-v1-1-8a8a1594dfd2@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 7/22/25 10:33 AM, Bjorn Helgaas wrote:
-> On Tue, Jul 22, 2025 at 09:45:28AM -0500, Mario Limonciello wrote:
->> On 7/22/25 9:38 AM, Bjorn Helgaas wrote:
->>> On Thu, Jul 17, 2025 at 12:38:11PM -0500, Mario Limonciello wrote:
->>>> From: Mario Limonciello <mario.limonciello@amd.com>
->>>>
->>>> On systems with non VGA GPUs fbcon can't find the primary GPU because
->>>> video_is_primary_device() only checks the VGA arbiter.
->>>>
->>>> Add a screen info check to video_is_primary_device() so that callers
->>>> can get accurate data on such systems.
->>>
->>> This relies on screen_info, which I think is an x86 BIOS-ism.  Isn't
->>> there a UEFI console path?  How does that compare with this?  Is that
->>> relevant or is it something completely different?
->>
->> When I created and tested this I actually did this on a UEFI system (which
->> provides a UEFI GOP driver).
+On 22/07/2025 17:15, Benoît Monin wrote:
+> The name should match the pattern defined in the mmc-controller binding.
 > 
-> I guess screen_info is actually *not* an x86 BIOS-ism, and on UEFI
-> systems, we do actually rely on UEFI, e.g., in efi_setup_gop(),
-> alloc_screen_info(), init_screen_info()?
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202507220336.JhvVLL7k-lkp@intel.com/
+> Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
 
-Right.  This all works because of the framebuffer allocated pre-boot and 
-reused by the kernel.
+The important point of that binding here:
+https://lore.kernel.org/linux-devicetree/9b34b471d1e71cf47c503aed7145fab896767ba7.1750156323.git.benoit.monin@bootlin.com/
 
-> 
-> But this patch is x86-specific, so I'm guessing the same problem could
-> occur on arm64, Loongson, or other UEFI platforms, and this series
-> doesn't address those?
+was to USE it for testing it. Before you send such work, you are
+supposed to check your code with the toolset.
 
-I've never seen a multi GPU solution on another architecture, but that 
-of course doesn't preclude one being created some day.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-The series lays the groundwork that if it happens on another 
-architecture we can easily add an architecture specific solution for 
-those.  If the solution is the same we could switch to a common helper.
-
-> 
->>>>    bool video_is_primary_device(struct device *dev)
->>>>    {
->>>> +#ifdef CONFIG_SCREEN_INFO
->>>> +	struct screen_info *si = &screen_info;
->>>> +#endif
->>>>    	struct pci_dev *pdev;
->>>>    	if (!dev_is_pci(dev))
->>>> @@ -34,7 +38,18 @@ bool video_is_primary_device(struct device *dev)
->>>>    	pdev = to_pci_dev(dev);
->>>> -	return (pdev == vga_default_device());
->>>> +	if (!pci_is_display(pdev))
->>>> +		return false;
->>>> +
->>>> +	if (pdev == vga_default_device())
->>>> +		return true;
->>>> +
->>>> +#ifdef CONFIG_SCREEN_INFO
->>>> +	if (pdev == screen_info_pci_dev(si))
->>>> +		return true;
->>>> +#endif
->>>> +
->>>> +	return false;
->>>>    }
->>>>    EXPORT_SYMBOL(video_is_primary_device);
->>>> -- 
->>>> 2.43.0
->>>>
->>
-
+Best regards,
+Krzysztof
 
