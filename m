@@ -1,245 +1,84 @@
-Return-Path: <linux-kernel+bounces-740886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 425F0B0DAA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:19:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CD61B0DAA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:20:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72F4C3A2411
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:18:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEBA53AB449
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:19:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC122E426F;
-	Tue, 22 Jul 2025 13:19:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2EBA2DEA8D;
+	Tue, 22 Jul 2025 13:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iq+lxiGc"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dfpmbrNo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48285242D94;
-	Tue, 22 Jul 2025 13:19:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2325E282F5;
+	Tue, 22 Jul 2025 13:20:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753190358; cv=none; b=FoQxHKLJEZcIuN1YY4P85whwYL9Lz0O2IlRlH0cQHYIjV4fYtunvu9KjRdOvXxSBUVxlE61hUhhA/sZxB9kHmQJ1hGcfkLV4NCuV3gslM9Oin7hhH/+s95M8l+8eUv1En9lD62KNOXym6mzVfAaCC+Iqzyv9V05LyN50eX4sxXk=
+	t=1753190402; cv=none; b=h10Nqb38at0VG1MH/IfL5UnEodo97BDN+YWswWoAvxBSUpCERILrme3UYP35lR40QFkWOe+D5B5GWTXHNZhnzd++M+G26nyQcXYYGtA5CmNCJA7c1kTNXN6gJxtdNshUYzc1rrARwZDjsB5leergClBZyJje/4pqNL6Dz5McKzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753190358; c=relaxed/simple;
-	bh=P/WzJ2D9t/ao8VHQl5uRNGISLH+oh58TVVF1a3iiIzk=;
+	s=arc-20240116; t=1753190402; c=relaxed/simple;
+	bh=yJib0iOZQEofOelVhYch2rjGbC0RQyv5LUtihrEDWS8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qqur/ILUC63w07MfGmcGt68qf6ctkR6y404BZ/HiBhF3j5XAE4NG554yQ4OkFkDrr681/xyeyhkb58eM5obvXSGJg5rpsf8MhQeLw0pbF3Q/PnIfxomUgCJWayBkrhr+WxaEdtANG4f0vat00ZEA04SZku4gnbHX6xZFBGBzgH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iq+lxiGc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D72FFC4CEF1;
-	Tue, 22 Jul 2025 13:19:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753190357;
-	bh=P/WzJ2D9t/ao8VHQl5uRNGISLH+oh58TVVF1a3iiIzk=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=EBkjjnYCNam8jXedItFmhReaz4SQjj2bKsS76NuQDPcWJ9Fp5/lQPPhBEuSztSAQsDM/1mpxb5CIBKbkUWatLTMouM7bMhZsG+ptLjmdFF5vvDrC0mksEXipSLY2EkNHqzmAtbKjUQhVmzg2NrOZq/Y6pScIjf4+XakpxJnmhsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dfpmbrNo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ED1DC4CEEB;
+	Tue, 22 Jul 2025 13:20:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1753190401;
+	bh=yJib0iOZQEofOelVhYch2rjGbC0RQyv5LUtihrEDWS8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iq+lxiGcFWezWsXBtQ//ad86nasH9e1YuE6TQ2fxJB2uKgCqHG646V9iQjX+E7yaw
-	 ya1Nr28lfdtv83ebYJRcEb0J1glIRtoTJn83Z+GoFb3Iv2Y365Tlbf5VCMNGKsuL7X
-	 QQZPPgn86YflmG81yBbJhplRD7hzSCBlKE6ifE6THzvvZG5oETKlsIz2TyEK5JRyrU
-	 CzdxvfF0/IcG5WLoqMw4IZnGUSefpDwKp9p9UaecrnHp1JZPe86dcq7n46w3ZAR4RZ
-	 S3I5L7k+7T+uB/CXdIMWszW7a4Owjy362YSHHjfdqCsuIdgPfsty1qiFBDtc7jvvry
-	 a8TBzP7gZ+scw==
-Date: Tue, 22 Jul 2025 14:19:11 +0100
-From: Simon Horman <horms@kernel.org>
-To: Dong Yibo <dong100@mucse.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, corbet@lwn.net,
-	gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
-	danishanwar@ti.com, lee@trager.us, gongfan1@huawei.com,
-	lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 04/15] net: rnpgbe: Add get_capability mbx_fw ops
- support
-Message-ID: <20250722131911.GH2459@horms.kernel.org>
-References: <20250721113238.18615-1-dong100@mucse.com>
- <20250721113238.18615-5-dong100@mucse.com>
+	b=dfpmbrNoMfXrtHC5vf3Ha4Wrlb4aQIrOeQk1NZN02aMeuLtbG6cnc8l6eQmXDGoGZ
+	 8YcV4p2P1pH01KNp+nOFFnvwEzUcnHxOBL9pPv4/ZgKBFobin0mQrhg2/MMIscXLV4
+	 jZUd9rF2aYnx2z4yJwTr61IGfMQh9qxugwObZxbo=
+Date: Tue, 22 Jul 2025 15:19:58 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Ban ZuoXiang <bbaa@bbaa.fun>
+Cc: Baolu Lu <baolu.lu@linux.intel.com>, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, bbaa@bbaa.moe
+Subject: Re: [REGRESSION][BISECTED] PCI =?utf-8?Q?P?=
+ =?utf-8?Q?assthrough_=2F_SR-IOV_Failure_on_Stable_Kernel_?= =?utf-8?B?4oml?=
+ v6.12.35
+Message-ID: <2025072222-dose-lifting-e325@gregkh>
+References: <721D44AF820A4FEB+722679cb-2226-4287-8835-9251ad69a1ac@bbaa.fun>
+ <6294f64a-d92d-4619-aef1-a142f5e8e4a5@linux.intel.com>
+ <5F974FF84FAB6BD8+4a13da11-7f32-4f58-987a-9b7e1eaeb4aa@bbaa.fun>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250721113238.18615-5-dong100@mucse.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5F974FF84FAB6BD8+4a13da11-7f32-4f58-987a-9b7e1eaeb4aa@bbaa.fun>
 
-On Mon, Jul 21, 2025 at 07:32:27PM +0800, Dong Yibo wrote:
-> Initialize get hw capability from mbx_fw ops.
+On Tue, Jul 22, 2025 at 09:14:08PM +0800, Ban ZuoXiang wrote:
+> > Thanks for reporting. Can this issue be reproduced with the latest
+> > mainline linux kernel? Can it work if you simply revert this commit?
+> >
+> > Thanks,
+> > baolu 
 > 
-> Signed-off-by: Dong Yibo <dong100@mucse.com>
+> Hi, baolu
+> 
+> The issue cannot be reproduced on the latest mainline kernel (6.16.0-rc7-1-mainline).
+> The Ubuntu v6.14-series kernel which also include the commit is also not affected.
+> I think the issue only affects the v6.12 series in linux-stable tree. Should I wait for the stable maintainers to solve it?
 
-...
+Nope!  We need your help as you are the one that can reproduce it :)
 
-> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.h
+Are we missing a backport?  Did we get the backport incorrect?  Should
+we just revert it?
 
-...
+thanks,
 
-> +struct hw_abilities {
-> +	u8 link_stat;
-> +	u8 lane_mask;
-> +	__le32 speed;
-> +	__le16 phy_type;
-> +	__le16 nic_mode;
-> +	__le16 pfnum;
-> +	__le32 fw_version;
-> +	__le32 axi_mhz;
-> +	union {
-> +		u8 port_id[4];
-> +		__le32 port_ids;
-> +	};
-> +	__le32 bd_uid;
-> +	__le32 phy_id;
-> +	__le32 wol_status;
-> +	union {
-> +		__le32 ext_ability;
-> +		struct {
-> +			__le32 valid : 1; /* 0 */
-> +			__le32 wol_en : 1; /* 1 */
-> +			__le32 pci_preset_runtime_en : 1; /* 2 */
-> +			__le32 smbus_en : 1; /* 3 */
-> +			__le32 ncsi_en : 1; /* 4 */
-> +			__le32 rpu_en : 1; /* 5 */
-> +			__le32 v2 : 1; /* 6 */
-> +			__le32 pxe_en : 1; /* 7 */
-> +			__le32 mctp_en : 1; /* 8 */
-> +			__le32 yt8614 : 1; /* 9 */
-> +			__le32 pci_ext_reset : 1; /* 10 */
-> +			__le32 rpu_availble : 1; /* 11 */
-> +			__le32 fw_lldp_ability : 1; /* 12 */
-> +			__le32 lldp_enabled : 1; /* 13 */
-> +			__le32 only_1g : 1; /* 14 */
-> +			__le32 force_down_en: 1; /* 15 */
-> +		} e;
-
-I am not sure how __le32 bitfields work on big endian hosts. Do they?
-
-I would suggest using some combination of BIT/GENMASK,
-FIELD_PREP/FIELT_GET, and le32_from_cpu/cpu_from_le32 instead.
-
-Flagged by Sparse.
-
-> +		struct {
-> +			u32 valid : 1; /* 0 */
-> +			u32 wol_en : 1; /* 1 */
-> +			u32 pci_preset_runtime_en : 1; /* 2 */
-> +			u32 smbus_en : 1; /* 3 */
-> +			u32 ncsi_en : 1; /* 4 */
-> +			u32 rpu_en : 1; /* 5 */
-> +			u32 v2 : 1; /* 6 */
-> +			u32 pxe_en : 1; /* 7 */
-> +			u32 mctp_en : 1; /* 8 */
-> +			u32 yt8614 : 1; /* 9 */
-> +			u32 pci_ext_reset : 1; /* 10 */
-> +			u32 rpu_availble : 1; /* 11 */
-> +			u32 fw_lldp_ability : 1; /* 12 */
-> +			u32 lldp_enabled : 1; /* 13 */
-> +			u32 only_1g : 1; /* 14 */
-> +			u32 force_down_en: 1; /* 15 */
-> +		} e_host;
-> +	};
-> +} __packed;
-
-...
-
-> +/* req is little endian. bigendian should be conserened */
-> +struct mbx_fw_cmd_req {
-
-...
-
-> +		struct {
-> +			__le32 lane;
-> +			__le32 op;
-> +			__le32 enable;
-> +			__le32 inteval;
-
-interval
-
-Flagged by checkpatch.pl --codespell
-
-...
-
-> +/* firmware -> driver */
-> +struct mbx_fw_cmd_reply {
-> +	/* fw must set: DD, CMP, Error(if error), copy value */
-> +	__le16 flags;
-> +	/* from command: LB,RD,VFC,BUF,SI,EI,FE */
-> +	__le16 opcode; /* 2-3: copy from req */
-> +	__le16 error_code; /* 4-5: 0 if no error */
-> +	__le16 datalen; /* 6-7: */
-> +	union {
-> +		struct {
-> +			__le32 cookie_lo; /* 8-11: */
-> +			__le32 cookie_hi; /* 12-15: */
-> +		};
-> +		void *cookie;
-> +	};
-> +	/* ===== data ==== [16-64] */
-> +	union {
-> +		u8 data[40];
-> +
-> +		struct version {
-> +			__le32 major;
-> +			__le32 sub;
-> +			__le32 modify;
-> +		} version;
-> +
-> +		struct {
-> +			__le32 value[4];
-> +		} r_reg;
-> +
-> +		struct {
-> +			__le32 new_value;
-> +		} modify_reg;
-> +
-> +		struct get_temp {
-> +			__le32 temp;
-> +			__le32 volatage;
-
-voltage
-
-> +		} get_temp;
-> +
-> +		struct {
-> +#define MBX_SFP_READ_MAX_CNT 32
-> +			u8 value[MBX_SFP_READ_MAX_CNT];
-> +		} sfp_read;
-> +
-> +		struct mac_addr {
-> +			__le32 lanes;
-> +			struct _addr {
-> +				/*
-> +				 * for macaddr:01:02:03:04:05:06
-> +				 * mac-hi=0x01020304 mac-lo=0x05060000
-> +				 */
-> +				u8 mac[8];
-> +			} addrs[4];
-> +		} mac_addr;
-> +
-> +		struct get_dump_reply {
-> +			__le32 flags;
-> +			__le32 version;
-> +			__le32 bytes;
-> +			__le32 data[4];
-> +		} get_dump;
-> +
-> +		struct get_lldp_reply {
-> +			__le32 value;
-> +			__le32 inteval;
-
-interval
-
-> +		} get_lldp;
-> +
-> +		struct rnpgbe_eee_cap phy_eee_abilities;
-> +		struct lane_stat_data lanestat;
-> +		struct hw_abilities hw_abilities;
-> +		struct phy_statistics phy_statistics;
-> +	};
-> +} __packed;
-
-...
+greg k-h
 
