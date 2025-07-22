@@ -1,72 +1,93 @@
-Return-Path: <linux-kernel+bounces-740495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1777B0D4E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:46:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3CE4B0D4F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:47:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0306A16F08D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:46:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AD1A1C22D25
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC732D8DC4;
-	Tue, 22 Jul 2025 08:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754A52D97A2;
+	Tue, 22 Jul 2025 08:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NMjsurnV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="db9MJRWp"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1A7228C86;
-	Tue, 22 Jul 2025 08:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346B528A3E2;
+	Tue, 22 Jul 2025 08:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753174007; cv=none; b=R79G2QcRpBgln9wqEqPRYHypCIRVtLNj0JDCX1rTw4Uf8Zxwprfmk9MAGq2xy1ZkK0syo+PVfGM0/djLcZwsP9rqXhRsrezvAV91B9UpzgGlI3NrQfMSKvQmEwBOGY1ORju/hbbgqus5ft0ulLNig3WiVqAJkonkdCoj4YaRQUM=
+	t=1753174062; cv=none; b=pUEnLxpNZYZ+0qJ/COHACE5Wv80ZlBDWqTVtGaB+xzMFF9cuous/Nn7Y3BMa6CzpT8kpLajSlV6SLjExjQFhbRBJtiPML04EofD32hxDmRsO3Uj2uRbyt1i/VjKuTrWG7A/nJ/Z95nKtmwJZabBEMCt7UqRilwSczqaYSuBUon0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753174007; c=relaxed/simple;
-	bh=krNhBku5aOG3IQKlQEyqHMSsuj6wOY9UA31yqhLFTQM=;
+	s=arc-20240116; t=1753174062; c=relaxed/simple;
+	bh=o4ITgAzkFAbQTkygTxs+hGAZKG+lRrwfSadsb29Xvis=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HRV/3lH61pHg2Bmu+9/cY1i+Ui+9gM/DvseehOux29ZJsctWaZUzV+23LsFm/F73Vjj3MPhX7stUHgotmv8OMX96MAdSzCDJY/MYbFiyZCmWLA90R8pN2p5+gZ7d+DFJ5gDblEzblc/+3gxxJd15ANeirNm4u2Ui4saQfo04t/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NMjsurnV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A7E3C4CEEB;
-	Tue, 22 Jul 2025 08:46:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1753174007;
-	bh=krNhBku5aOG3IQKlQEyqHMSsuj6wOY9UA31yqhLFTQM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NMjsurnVWRCSe47Zs5hnngqPc7f01jQFTGsDQbXfUEto7VYfI1/gzAyFLfoippZFB
-	 4bM03oOFh+TQyc1KfF439Tki1/Pd6fbzOaOF0KLO43a1DX22PbaZJe0wqrJrnnF58y
-	 jU5W2GrHZRAsMmsvkLzCOcFxrzjP8J3s8/RkXLHw=
-Date: Tue, 22 Jul 2025 10:46:44 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Daniel Gomez <da.gomez@kernel.org>
-Cc: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Matthias Maennich <maennich@google.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Christoph Hellwig <hch@infradead.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	David Hildenbrand <david@redhat.com>,
-	Shivank Garg <shivankg@amd.com>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3] module: Rename EXPORT_SYMBOL_GPL_FOR_MODULES to
- EXPORT_SYMBOL_FOR_MODULES
-Message-ID: <2025072219-dollhouse-margarita-de67@gregkh>
-References: <20250715-export_modules-v3-1-11fffc67dff7@suse.cz>
- <b340eb9f-a336-461c-befe-6b09c68b731e@kernel.org>
- <24f995fe-df76-4495-b9c6-9339b6afa6be@suse.cz>
- <49eeff09-993f-42a0-8e3b-b3f95b41dbcf@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WerPedtOPq8hi7RaEd8GrfybJaCf5Er6TlCPrO6OQute555zkC4v0KxezF6V5EviLBl90xBjXrVllbFr+EDmyYMlR+cJqfKXu0a77vinyFW3ywAFCi1IJL3aSYFzO59BzLg2vnp75AeBboyTDVmD8BCeou+hgC+yU0QKMwNHT6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=db9MJRWp; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56M2VYd1027323;
+	Tue, 22 Jul 2025 08:47:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=+w2y0K65jhToR49D5iq9NrD5o0Ku8I
+	TXpDRw/BW1X94=; b=db9MJRWpmUGEcTlBlVx/R8AP7UbMuTV+0aV56YFQfYAzU9
+	dAtNSnC60+6tDDPReC80kGmtZVcJB42DgCWpNz9WxbRD99xupd0DUXW9R9n0p1dU
+	kEyTBVHox1BMnFX0e0pw8kuaKa1JLsCkqYoAtAE6jzy3RBwfRhIb7naZRHuCzK2r
+	iQd/N4pv3k/Fk8WQiPAdV95JA/moGfE6wPrc+ucVsIIYi6tAn46O/c05tzfXTQnS
+	4XfdByvNyukr14+FzfoTq7UIkkx/DcIpXOBqLP+G1WcVLnJNLvID6sMz/C2+LzCQ
+	JQcZJhhuw2bFTImwa7OMcdkF8cGO3IWbvCI9Vb4w==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4805uqwacn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Jul 2025 08:47:33 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 56M8lWee024513;
+	Tue, 22 Jul 2025 08:47:32 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4805uqwacj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Jul 2025 08:47:32 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56M6AFgX004727;
+	Tue, 22 Jul 2025 08:47:32 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 480u8fs7jj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Jul 2025 08:47:31 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56M8lUIE24380126
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 22 Jul 2025 08:47:30 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 084C62004B;
+	Tue, 22 Jul 2025 08:47:30 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A366820040;
+	Tue, 22 Jul 2025 08:47:27 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.18.185])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 22 Jul 2025 08:47:27 +0000 (GMT)
+Date: Tue, 22 Jul 2025 14:17:24 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
+        Ritesh Harjani <ritesh.list@gmail.com>, djwong@kernel.org,
+        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v3 05/13] generic/1226: Add atomic write test using fio
+ crc check verifier
+Message-ID: <aH9PwFm06n9KQ0mE@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <cover.1752329098.git.ojaswin@linux.ibm.com>
+ <1e6dad5f4bdc8107e670cc0bd3ce0fccd0c9037a.1752329098.git.ojaswin@linux.ibm.com>
+ <5211dff7-579b-48ea-8180-72d8c6083400@oracle.com>
+ <aHkAJJkvaWYJu7gC@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <b270bb66-721e-4433-adaf-fe5ae100ca6e@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,65 +96,87 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <49eeff09-993f-42a0-8e3b-b3f95b41dbcf@kernel.org>
+In-Reply-To: <b270bb66-721e-4433-adaf-fe5ae100ca6e@oracle.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: SQFbqDHPjYj27IoY55UmaGyQPvNXYcnJ
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDA3MSBTYWx0ZWRfXwzlFntubH1e2
+ aCZdIxxLr0w4OnPgPqap2muy1NrQxTQNAUDArssN/8hh7hF8Y7xqqInmqJzD7nFIZgk8eqVZmHc
+ NoeKSL0h6iwZeta8akkoDO6rFdOLhwpeZbmRTDiAWcBVlc2qDDiyfEsNiSY32S+FOHR5b1WVbVR
+ fDfEz5kKfYJgS5LXdF2u3X+EuA+thwaKkhSvSMx8s22olVOb/w6TeUfQXPsbYCTLCO3TmnVJd3d
+ wxIvcDYaJwzTMLHMz8MhPrGdAkpAva8dfnhB67bg2BLixUB9/C8THGj8/9e6ZtvU/KFeTZHUR7p
+ bLur77/qyZ4e8BBE2J6geML1IIUZGvzyDTmJ92CUuDFXXPo6OHnRNUb+HUOln7wE9Gv8UT+0V6I
+ scgahz9KMVXSbFER0td7dRVA8W+o+Wopoc9t/VUPUWQIEpL58N23jgQF5kL7Q8geCt7ozWE/
+X-Authority-Analysis: v=2.4 cv=dpnbC0g4 c=1 sm=1 tr=0 ts=687f5025 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=pGLkceISAAAA:8 a=VnNF1IyMAAAA:8
+ a=9kuFc5caclUvU4WTlC0A:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-GUID: u0iMYmm1INaOaeqJ-op82qMK-WTPtMYa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-22_01,2025-07-21_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 impostorscore=0 suspectscore=0 adultscore=0 phishscore=0
+ lowpriorityscore=0 priorityscore=1501 bulkscore=0 mlxscore=0 malwarescore=0
+ mlxlogscore=851 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507220071
 
-On Tue, Jul 22, 2025 at 10:26:43AM +0200, Daniel Gomez wrote:
-> On 21/07/2025 12.40, Vlastimil Babka wrote:
-> > On 7/15/25 20:58, Daniel Gomez wrote:
-> >> On 15/07/2025 10.43, Vlastimil Babka wrote:
-> >>> Christoph suggested that the explicit _GPL_ can be dropped from the
-> >>> module namespace export macro, as it's intended for in-tree modules
-> >>> only. It would be possible to restrict it technically, but it was
-> >>> pointed out [2] that some cases of using an out-of-tree build of an
-> >>> in-tree module with the same name are legitimate. But in that case those
-> >>> also have to be GPL anyway so it's unnecessary to spell it out in the
-> >>> macro name.
-> >>>
-> >>> Link: https://lore.kernel.org/all/aFleJN_fE-RbSoFD@infradead.org/ [1]
-> >>> Link: https://lore.kernel.org/all/CAK7LNATRkZHwJGpojCnvdiaoDnP%2BaeUXgdey5sb_8muzdWTMkA@mail.gmail.com/ [2]
-> >>> Suggested-by: Christoph Hellwig <hch@infradead.org>
-> >>> Reviewed-by: Shivank Garg <shivankg@amd.com>
-> >>> Acked-by: David Hildenbrand <david@redhat.com>
-> >>> Acked-by: Nicolas Schier <n.schier@avm.de>
-> >>> Reviewed-by: Daniel Gomez <da.gomez@samsung.com>
-> >>> Reviewed-by: Christian Brauner <brauner@kernel.org>
-> >>> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> >>> ---
-> >>> Daniel, please clarify if you'll take this via module tree or Christian
-> >>> can take it via vfs tree?
-> >>
-> >> Patch 707f853d7fa3 ("module: Provide EXPORT_SYMBOL_GPL_FOR_MODULES() helper")
-> >> from Peter was merged through Masahiro in v6.16-rc1. Since this is a related
-> >> fix/rename/cleanup, it'd make sense for it to go through his kbuild tree as
-> >> well. Masahiro, please let me know if you'd prefer otherwise. If not, I'll queue
-> >> it up in the modules tree.
+On Thu, Jul 17, 2025 at 03:06:01PM +0100, John Garry wrote:
+> On 17/07/2025 14:52, Ojaswin Mujoo wrote:
+> > On Thu, Jul 17, 2025 at 02:00:18PM +0100, John Garry wrote:
+> > > On 12/07/2025 15:12, Ojaswin Mujoo wrote:
+> > > > From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+> > > > 
+> > > > This adds atomic write test using fio based on it's crc check verifier.
+> > > > fio adds a crc for each data block. If the underlying device supports atomic
+> > > > write then it is guaranteed that we will never have a mix data from two
+> > > > threads writing on the same physical block.
+> > > 
+> > > I think that you should mention that 2-phase approach.
 > > 
-> > Maybe with no reply, you can queue it then?
+> > Sure I can add a comment and update the commit message with this.
+> > 
+> > > 
+> > > Is there something which ensures that we have fio which supports RWF_ATOMIC?
+> > > fio for some time supported the "atomic" cmdline param, but did not do
+> > > anything until recently
+> > 
+> > We do have _require_fio which ensures the options passed are supported
+> > by the current fio. If you are saying some versions of fio have --atomic
+> > valid but dont do an RWF_ATOMIC then I'm not really sure if that can be
+> > caught though.
 > 
-> + Jiri, Stephen and Greg, added to the To: list.
+> Can you check the fio version?
+
+We don't have a helper but yes I think that should be possible
 > 
-> EXPORT_SYMBOL_GPL_FOR_MODULES macro was merged [1] through Masahiro's
-> pull request in v6.16-rc1. This patch from Vlastimil renames the macro to
-> EXPORT_SYMBOL_FOR_MODULES. This means Jiri's patch b20d6576cdb3 "serial: 8250:
-> export RSA functions" will need to be updated accordingly. I'd like like to
-> know how you prefer to proceed, since it was requested to have this merged as a
-> fix before Linus releases a new kernel with the former name.
+> > 
+> > > 
+> > > > 
+> > > > Co-developed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> > > > Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> > > > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> > > > ---
+> > > >    tests/generic/1226     | 101 +++++++++++++++++++++++++++++++++++++++++
+> > > >    tests/generic/1226.out |   2 +
+> > > 
+> > > Was this tested with xfs?
+> > 
+> > Yes, I've tested with XFS with software fallback as well. Also, tested
+> > xfs while keeping io size as 16kb so we stress the hw paths too.
+> 
+> so is that requirement implemented with the _require_scratch_write_atomic
+> check?
 
-So you want this in 6.16-final?  Ok, do so and then someone needs to fix
-up the build breakage in linux-next and in all of the pull requests to
-Linus for 6.17-rc1 :)
+No, its just something i hardcoded for that particular run. This patch
+doesn't enforce hardware only atomic writes 
 
-> Link: https://lore.kernel.org/all/CAK7LNAQunzxOHR+vMZLf8kqxyRtLx-Z2G2VZquJmndrT9TZjiQ@mail.gmail.com/ [1]
+Regards,
+ojaswin
+> 
+> > Both
+> > seem to be passing as expected.
+> > > 
 > 
 > 
-> Masahiro, just a heads-up that I plan to merge this through the linux-modules
-> tree unless you advise otherwise.
-
-Why not just do the rename after 6.17-rc1 is out?  That way all new
-users will be able to be caught at that point in time.  There's no issue
-with the name being as it is for 6.16-final that I can determine, right?
-
-thanks,
-
-greg k-h
 
