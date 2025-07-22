@@ -1,133 +1,136 @@
-Return-Path: <linux-kernel+bounces-740286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64ECDB0D24A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:03:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02A82B0D24D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:04:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C1A63BE055
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:03:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D32021AA2041
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:05:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FBE928A407;
-	Tue, 22 Jul 2025 07:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B22628B7C7;
+	Tue, 22 Jul 2025 07:04:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Af9HBqiN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z1WjXliL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 235E41DB122
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 07:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021C5288C80;
+	Tue, 22 Jul 2025 07:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753167822; cv=none; b=n6cALbwfZaBIApQKmgh51IsS3qNs8a4qOagUja7hmQwrnd/r6MaKWLNADLxxINmGSKTYAv4JHAiNhL3PuWOrAVgN52YwiyblwqA9/GLQpkum1hNbjb7V8ax3PFgZcVU6Cd+ce8SUm8PWydRDKGs2ZE23TgkE9I07L+ThgRm+fa4=
+	t=1753167880; cv=none; b=AAf6hg3KiQ1EMEyoGM0DVgp2cdIFij/O+8bLp0seIYcMxz3RrD2evveHdS0qDJyiRX33FRbb/Cuh1hvISTRN3ytQYRUhiyoO+yq5gyavrtz4STe2FXOTjIvzWA6UHHd072qFBzT7qeN1zLw37OZvWe3V+7Dsbf+uYaS80cGUC9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753167822; c=relaxed/simple;
-	bh=94YH95Kqg56L0NGAhzRVzTprjMBr1gaZFjXLE1bEm7Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k5zQIbuzXjukf2RIU8obMAb3TE/+pZh93bhA03zZjFayyNa1JZNLcN/9Yn6QB83Brnx5aeBirG/ZHgxR5nnwsiVbEo2hpGpbLS9R14Z2YOn3Rp4TdTVEsCId7oeyAB295j4PRqrxDC39AAZdFZkEAwkTzjADR/J/9I1nvJ65iWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Af9HBqiN; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753167819;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=94YH95Kqg56L0NGAhzRVzTprjMBr1gaZFjXLE1bEm7Y=;
-	b=Af9HBqiN7Gb29VlD8LpiwphXIZ91zAHX05f7cPANINO3cCc+TifQ0ezWCrPhij1q+ajAcJ
-	IVL4Q4B/sDaUdOV1LfPVcb0OIvdACjvOYqTYleHoh4QY9Mu1RhX8GwhyutukPLfXcU+vKQ
-	grsuWhwRtDM5dAk493pHjq5dtNp++M4=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-686-59vKCXo2NwyFYmy_lZCRSw-1; Tue, 22 Jul 2025 03:03:38 -0400
-X-MC-Unique: 59vKCXo2NwyFYmy_lZCRSw-1
-X-Mimecast-MFC-AGG-ID: 59vKCXo2NwyFYmy_lZCRSw_1753167817
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-ae0d76b4f84so451357666b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 00:03:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753167816; x=1753772616;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=94YH95Kqg56L0NGAhzRVzTprjMBr1gaZFjXLE1bEm7Y=;
-        b=GpFz6tYr5baikY7Hg6BbZv6hXPdV++tAl2XdlqvriILzr2Z7YNmyfdw2YANvfpxabG
-         hCgxGWbYK7nn5lMnGYsIlloToncrfRaY98lmiuLByu8o3IJKXd1CoD34OvUVDxf0/5tP
-         1o/UPuH4KY0CxPKWw9Tajk9z/M04tZrQOcrUelWl+fB4/GDzENonJYLBZM1zVzGtFww4
-         Bp9l/FFA2nwSJa1CZQgqGZwE2/lqf9hZ5IuTgaZqDgryjaVVG+IRfdxFKIv/Otkj8MIq
-         P6ASazuYTcY/IA5as8OrbxCFKWKI+JTxuGWVgHpnuVK9Aj0NkN3vsAwXTGBJjeQ5/Jca
-         pvOw==
-X-Forwarded-Encrypted: i=1; AJvYcCXnbwwOXBukMPed2jKn7n6d/BhE13RUVWxW5+3YJ5Ta8/vfmYup/mhnOpR2Lc6IwE7D71pZnvBIlZWUSP8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAGIn7I32JtrEBM8dyCPLOrxi1OOgd9l86WDshaNrSr+j02rJY
-	v4HjJIWEvbw2hlYgcIKtIe8yfPzTWD1YjHEoyK6gMD7b5N/r4+OfOjAky6wLMt4F/t9TGWnMM74
-	18PreGed+F55TDuAhApWv+RJf/9aZWkn0MXewJDuBuaxAimUMg79Us/DViOtmUCnft6/wJaipyP
-	BdqSfHUN/2sKwWOWyDZRvKTSePgYwtulZ4CdiiZR7YBdNqs/UY
-X-Gm-Gg: ASbGnctVltZIX007l51Iw0trjhsAJzMzK4mRTy3vCU15zO/1l5wqmGjJjVgrCVmIwro
-	M4v7aVW0rEEmllDVCQxOOYnkgGYm/43wX9ezeABLrUc9Qsl94Qcc0ruWqXN2TRhYUT9dMti52oc
-	8FJar5QrjVnjDB0wPeTcM=
-X-Received: by 2002:a17:907:724c:b0:ae3:6744:3677 with SMTP id a640c23a62f3a-aec6a5fa9f8mr1431815266b.32.1753167816587;
-        Tue, 22 Jul 2025 00:03:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHUS1C4M+sqJMBlVVOE3zFSmnosEzS/DCoJtMWBdNIwIY9r/Y+OIaF5oI+nbiWF7pf7JaO7/YLTOiG/Al9Kfl0=
-X-Received: by 2002:a17:907:724c:b0:ae3:6744:3677 with SMTP id
- a640c23a62f3a-aec6a5fa9f8mr1431810666b.32.1753167816060; Tue, 22 Jul 2025
- 00:03:36 -0700 (PDT)
+	s=arc-20240116; t=1753167880; c=relaxed/simple;
+	bh=gYoa7W18uiTzGym1uVGYEWQ4lu4rqpNQhQZViyWE2Rk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fbEmSH68DSKE3T2iREVqKMBPbOueJgU/OAn8xHyJ48LmodCa2vJg/XUjakM0LFsLTYfRQI7BiCxdwcTYOYWgY/jW95ac4uEAO04pPEpZHoyYfOfJUuyInMHNZUP5ZE1+kqDfzroEfw04Y2+V+7ZD3mSPC4uOOGNwQv5CLvR17Gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z1WjXliL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93310C4CEEB;
+	Tue, 22 Jul 2025 07:04:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753167877;
+	bh=gYoa7W18uiTzGym1uVGYEWQ4lu4rqpNQhQZViyWE2Rk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Z1WjXliLj0kU8hEQ+9pS2z22M4csJGf5Bl7AspYdEV6PFAVVzs71wMefRbkFyqoNA
+	 wGBtdHOFth7ExVNAJjcifs0Sqdr/IsKJinTbmtQJCZsG/shl+tfviUrLGrUGJHo3jD
+	 E1/5iJ1xsy86LpP1WygPf+xP6PPkf68xkYpRPvTDDKhwJHonGf5mVeI/FlwZ5emDN1
+	 TMWa6lIXZ2LNRzIAuz6HSDB0lmii/OcYiCSgFlaLVATqYYzLGIb486Y/ciyohUEK+e
+	 YLXVfzvCV6kBAq5v3+K2N/dzp4yPmYrKB70UE/L32RTFRRrnQUoL5CT40DU2IZvUs0
+	 7x/KXu2wj8euQ==
+Message-ID: <75e0be49-0040-4830-a115-1daea0b73f93@kernel.org>
+Date: Tue, 22 Jul 2025 09:04:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250626123405.1496931-1-tglozar@redhat.com> <20250626123405.1496931-10-tglozar@redhat.com>
- <20250721183606.0489b1cd@gandalf.local.home>
-In-Reply-To: <20250721183606.0489b1cd@gandalf.local.home>
-From: Tomas Glozar <tglozar@redhat.com>
-Date: Tue, 22 Jul 2025 09:03:24 +0200
-X-Gm-Features: Ac12FXwIQm1h_qa8RXimPv2lpTVEqVoAuExH-2hEnAe5PwJDJ8uOLrUDIYGzoxI
-Message-ID: <CAP4=nvQWCWAOefHAqA82-VDb-00_y1-0fPOPBEyETJ2Q1EWEwg@mail.gmail.com>
-Subject: Re: [PATCH v2 9/9] Documentation/rtla: Add actions feature
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	John Kacur <jkacur@redhat.com>, Luis Goncalves <lgoncalv@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Chang Yin <cyin@redhat.com>, 
-	Costa Shulyupin <costa.shul@redhat.com>, Crystal Wood <crwood@redhat.com>, 
-	Gabriele Monaco <gmonaco@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] Input: atkbd - Correctly map F13 - F24
+To: Werner Sembach <wse@tuxedocomputers.com>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250311180643.1107430-1-wse@tuxedocomputers.com>
+ <20250311180643.1107430-2-wse@tuxedocomputers.com>
+ <76c57b22-04d3-4331-a10c-b210db5f9055@redhat.com>
+ <9da24c58-25ab-4b21-b0ed-f777970affe7@tuxedocomputers.com>
+ <de3969b9-7134-4bfd-bc65-9d5b7e53a31c@redhat.com>
+ <1331ddc4-fb74-4985-a309-87fd97d0583b@tuxedocomputers.com>
+ <e8b1c0b3-83d0-4e0a-9dad-7d59329fe3ce@tuxedocomputers.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hansg@kernel.org>
+In-Reply-To: <e8b1c0b3-83d0-4e0a-9dad-7d59329fe3ce@tuxedocomputers.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-=C3=BAt 22. 7. 2025 v 0:35 odes=C3=ADlatel Steven Rostedt <rostedt@goodmis.=
-org> napsal:
->
-> I'm curious to what is looked for for triggering an action. We can poll o=
-n
-> events and get woken when they are triggered. It may be possible to add
-> even more ways to wake a task waiting for something to happen.
->
+Hi Werner,
 
-Threshold actions are triggered immediately after a sample over the
-set threshold is detected by rtla. For BPF mode, this happens almost
-right after the sample is processed in the BPF program and the
-scheduler gets to waking up rtla following a BPF ringbuffer write.
-There is only a short delay (up to tens of microseconds) because the
-BPF helper defers the wake-up into irq_work.
+On 21-Jul-25 10:36 PM, Werner Sembach wrote:
+> Hi,
+> 
+> Am 15.05.25 um 14:26 schrieb Werner Sembach:
+>> Hi,
+>>
+>> Am 17.03.25 um 23:23 schrieb Hans de Goede:
+>>> Hi Werner,
+>>>
+>>> On 17-Mar-25 6:00 PM, Werner Sembach wrote:
+>>>> [...]
+>>> I think this one will apply cleanly without applying patch 1/2
+>>> first, so no reason for a resend / v3 AFAICT.
+>>>
+>>> Let's wait and see what feedback Dmitry have once he can make
+>>> some time to take a look at this.
+>>
+>> Hope a gentle bump is ok by now?
+>>
+>> Best regards,
+>>
+>> Werner
+> 
+> Small bump again, just so that this does not get forgotten.
 
-For non-BPF mode, rtla periodically pulls samples from tracefs, when
-it does that, it also checks whether tracing has been turned off. If
-yes, that means there was a threshold overflow, and actions are
-triggered. Since the period for that is currently set to 1 second, the
-action might be delayed up to one second from the threshold occurring,
-That delay might be a problem if you need to collect a lot of data
-from a ringbuffer in the action, e.g. global Intel PT data collection
-for precise troubleshooting of difficult latencies.
+It might be best to just resend this (rebased on the latest
+upstream) as a standalone v3 patch (with my reviewed-by
+added).
 
-Of course, this is just an implementational limitation of the timerlat
-tracer. If timerlat had an event (like osnoise's "sample_threshold")
-triggered on threshold overflow and if it is possible to wait on it
-even without BPF, rtla could wait on that for both BPF and non-BPF
-mode instead of what it is currently doing.
+Regards,
 
-Tomas
+Hans
+
+
+
+
+
+
+>>>>>> ---
+>>>>>>    drivers/input/keyboard/atkbd.c | 12 ++++++------
+>>>>>>    1 file changed, 6 insertions(+), 6 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/input/keyboard/atkbd.c b/drivers/input/keyboard/atkbd.c
+>>>>>> index 3598a21d9d014..4bd6e6ef0715e 100644
+>>>>>> --- a/drivers/input/keyboard/atkbd.c
+>>>>>> +++ b/drivers/input/keyboard/atkbd.c
+>>>>>> @@ -84,12 +84,12 @@ static const unsigned short atkbd_set2_keycode[ATKBD_KEYMAP_SIZE] = {
+>>>>>>    #include "hpps2atkbd.h"    /* include the keyboard scancodes */
+>>>>>>      #else
+>>>>>> -      0, 67, 65, 63, 61, 59, 60, 88,  0, 68, 66, 64, 62, 15, 41,117,
+>>>>>> -      0, 56, 42, 93, 29, 16,  2,  0,  0,  0, 44, 31, 30, 17,  3,  0,
+>>>>>> -      0, 46, 45, 32, 18,  5,  4, 95,  0, 57, 47, 33, 20, 19,  6,183,
+>>>>>> -      0, 49, 48, 35, 34, 21,  7,184,  0,  0, 50, 36, 22, 8,  9,185,
+>>>>>> -      0, 51, 37, 23, 24, 11, 10,  0,  0, 52, 53, 38, 39, 25, 12,  0,
+>>>>>> -      0, 89, 40,  0, 26, 13,  0,193, 58, 54, 28, 27,  0, 43,  0, 85,
+>>>>>> +      0, 67, 65, 63, 61, 59, 60, 88,183, 68, 66, 64, 62, 15, 41,117,
+>>>>>> +    184, 56, 42, 93, 29, 16,  2,  0,185,  0, 44, 31, 30, 17,  3,  0,
+>>>>>> +    186, 46, 45, 32, 18,  5,  4, 95,187, 57, 47, 33, 20, 19,  6,183,
+>>>>>> +    188, 49, 48, 35, 34, 21,  7,184,189,  0, 50, 36, 22, 8,  9,185,
+>>>>>> +    190, 51, 37, 23, 24, 11, 10,  0,191, 52, 53, 38, 39, 25, 12,  0,
+>>>>>> +    192, 89, 40,  0, 26, 13,  0,193, 58, 54, 28, 27,  0, 43,  0,194,
+>>>>>>          0, 86, 91, 90, 92,  0, 14, 94,  0, 79,124, 75, 71,121,  0,  0,
+>>>>>>         82, 83, 80, 76, 77, 72,  1, 69, 87, 78, 81, 74, 55, 73, 70, 99,
+> 
 
 
