@@ -1,166 +1,273 @@
-Return-Path: <linux-kernel+bounces-741412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3BE3B0E3C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:55:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2EC8B0E3C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:57:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88B401C8204F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:55:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1E0C17F8CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:57:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77642283FCD;
-	Tue, 22 Jul 2025 18:55:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED572283C90;
+	Tue, 22 Jul 2025 18:57:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Yl4laYLO"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=gnu.org header.i=@gnu.org header.b="VmxvRIhG"
+Received: from eggs.gnu.org (eggs.gnu.org [209.51.188.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839402798F3
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 18:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C5D21516E;
+	Tue, 22 Jul 2025 18:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.51.188.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753210523; cv=none; b=JJN3NxnHdJiCySgfIxsyr4hXwFm6F2gQPgiufTKxyrjUaBpjsgcwVVAgOTNYYFAYATeHRRcZ+LICk7o5c1a7wTs7pujnRN44HXpZ+JsM7dHwxuJMd1GQG1lr7rcLqUcGrdHNjowhzkj2XQhU48T+t0ixB2mFIiNj2p5wVzXkJRk=
+	t=1753210630; cv=none; b=X78Aze0SaUQkEWt1k5TViQ7DeiRqGbMtWqgRUXDl2G0xMphuwF+4BZGGujaTlrJO0HjQi0/aVTtNbnEe8yaOGb+DEYJVhAQWsbTlm2pDPe33ugXQYO72Y32X1cZzWKlSjGUaXefj4C6K4Wo8x/KaJqQhr2Hmi4QcB8ylQmENQD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753210523; c=relaxed/simple;
-	bh=5QY0ZBT0oOOO0nndZd7h0v+4kaypL91h5hBfStoNEuM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HVlacgiOfWWPCU3GiktTWtBzM81VaTEbIfBQRBV/xK3U9XkFTAzfRA+L6HcklFfjSQd8XQRUxXmzESk0oC05hp/lr/JKs3JEPpgDbGjE8GYtDZTL2t3A+9XyY1gjccObfbaaJDb960XH/lMKuxoo5mVWp+iuzSED417qU0BHdqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Yl4laYLO; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56MEXMMS015114
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 18:55:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=6BKqR8929ZlHM9nTa+e8Knv7
-	7GCKjeguQdgKc3ESW7k=; b=Yl4laYLOP5V48dNaAN2Dg/rXt9/yvG3zedNbt8mr
-	/2JGccPEbhD2cw82gJ9PgCugnqRRnNtIk2ahHF2HMvm4gVpZXr2RvoHwXqPhZc+s
-	7OmSoW0W+wzfYeJFD9oXIUwV7wEMS8iZrap6puZfdy1CVfV4ZG5Up8nfGl459b3U
-	1m/oDS766ZzUY+yrv+6QdCB09EDdDqOCnsf95UfVHuQaFEX4yZ2BSLR2c0H196PL
-	Q5EiDolx2RGf8zbPeFW4QsT/kQ3yEq+/zgSJnBUuENkxhk/u+T4/IJw7g6bCcz5f
-	5k2fELcqZnQnVnuSlM502a2zYfk9mgsOnXcX2fMf/ff4Kw==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4804na0y6b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 18:55:21 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7e207330a45so823722985a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 11:55:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753210520; x=1753815320;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6BKqR8929ZlHM9nTa+e8Knv77GCKjeguQdgKc3ESW7k=;
-        b=MnrRsKZuIkIgW2j4XphRETri9uv4XhkoOq0v2jjIteb3xyUJQ7zhQzaYR+VhLeyNBe
-         wyo3cUQSOSDoL90pVbQZxDDYdrRG+MT47iIQDQ4s6HPET8WROPbsQ+GQ8ieqAG4HopZ2
-         CAj6CXOXAb9Uw0jla2xBpSy9EFY2Zdw/b42UXK/AZmhkumnahw8L+e/tBrb7P/ZIf7nC
-         BqycLl/IaacotEz0vejzyL6yuOHdY9iZZTzvllL8gDHgt3zvfYmyWuZrS1xFqB2aQ1O2
-         qVjyMFLbUl/jkNmwmlhIg/WEynZo7THwK6bVqc60rS6xfLNlGbO30LI1838bgIJo1wNb
-         P8gQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWthWGRmOFNNQCxEMR47sTSGezZ5gwMnmh3cKE/0GM/i5WxhfSW2nAk3Z6FM1wSdimOoHECuSwxiu521OU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx54TkynyTptLgwsLoTql38VvXuV1deOSRi9Y6D92ASWLhw0FSD
-	iH53Cf42oZYKzH6yy+BuGCrcgqFrlqHRrcB20mw7StD/6ziTzZKt8wt+ttPBMFoPJd1lG76Dqit
-	L6EBWSZb4e71jYGaYjwNLdcLP3rjeEnhvH8dhf96/0YtgX+0Yy9irGW3xoxqoBjXWM34=
-X-Gm-Gg: ASbGnctK1zluX42fIw5mEiq/UdY/VshiXJF00IsIJutgrWAaQX36blH/QCjYraKHFer
-	eD2nGJWxWYqPAXxzEv4VRMOzUIzHyVKU4DqftwCFI0hMMyaB+gCGJEShjaw6FJJlI0AhR0kKHf2
-	Y1mLYONcFeS4EYNZ6/QCaDb18siH+jTlHOh1cFa9MVRTEHp1VeHonsSA0yZ57f69n/EmGOjMjuA
-	dgJbRhIClBd4ROYwjSsYkmchcfk6xP9DC9Gw/7dIPqicLl2QpkmxUCHT64G/yfLMiCvYvjfMQck
-	rr7qh6o2HqfDQY7tQGKwvxce84/mkWSEv15P+1F6vW6VFl+J+Svy2RFTSD0ZYKSnhw0XAUIqJl1
-	LOuLmuF70ORIE+nARzllerOqIfMkziA2M+uTLT88h3QdKgmDL2eRm
-X-Received: by 2002:a05:620a:258d:b0:7e6:234e:8e8b with SMTP id af79cd13be357-7e62a17cbd0mr33307485a.39.1753210520186;
-        Tue, 22 Jul 2025 11:55:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE0JkKltrirF9ixXg7tHwQG49S1rE2Y01788xVR7C3PcWVSHdggi98ryTWzd0HejsZYizLvmw==
-X-Received: by 2002:a05:620a:258d:b0:7e6:234e:8e8b with SMTP id af79cd13be357-7e62a17cbd0mr33303585a.39.1753210519558;
-        Tue, 22 Jul 2025 11:55:19 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-330a91c228bsm17136171fa.62.2025.07.22.11.55.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 11:55:17 -0700 (PDT)
-Date: Tue, 22 Jul 2025 21:55:14 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-Cc: mani@kernel.org, alim.akhtar@samsung.com, avri.altman@wdc.com,
-        bvanassche@acm.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
-        James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
-        agross@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] arm64: dts: qcom: sa8155: Add gear and rate limit
- properties to UFS
-Message-ID: <kavkq2wgtapagzcdvm3lcvy52bcgbqul6oqjaluvzi3q2a5z6g@jzrowliqets6>
-References: <20250722161103.3938-1-quic_rdwivedi@quicinc.com>
- <20250722161103.3938-3-quic_rdwivedi@quicinc.com>
+	s=arc-20240116; t=1753210630; c=relaxed/simple;
+	bh=y06okttLR5j4WdfvEBAadxdMbLH1n0jASr+C+48ORkc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=njlugQKDTSlfleaP1O2qtoW+m2T9nd3cONbaRGF95eXBwJeoIdGZDVkPf5ARPESPasNExHLdWTvPZff3XqwOFsx/vHcwtH04m/gH3/OrY3LtdY3i4nbIXba61Yg/07NZ/n5R18zgayYDlj6vNARvgdMRhsmXSXoaEO2YGeiwYzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gnu.org; spf=pass smtp.mailfrom=gnu.org; dkim=pass (2048-bit key) header.d=gnu.org header.i=@gnu.org header.b=VmxvRIhG; arc=none smtp.client-ip=209.51.188.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gnu.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnu.org
+Received: from fencepost.gnu.org ([2001:470:142:3::e])
+	by eggs.gnu.org with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.90_1)
+	(envelope-from <jemarch@gnu.org>)
+	id 1ueIAa-00062W-7M; Tue, 22 Jul 2025 14:56:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=gnu.org;
+	s=fencepost-gnu-org; h=MIME-Version:Date:References:In-Reply-To:Subject:To:
+	From; bh=aAAwLyaVcwXH/duwwsN0rNSdcbswQHnMOC5LpUD0RKM=; b=VmxvRIhG8+X4kqRfyqyl
+	M0c1M/ZEVKcp9xG5P/2iRn3jj+jSni3gsR/NFukWDLdcCDzXUQKJwQtqMrr59Y0gzgYGKRORcix8n
+	eWxJVvm8OLSRfIXLZDEnLl+VixK7ltblZM7+w0d98FXWgvE6IXwGd1h+MNmYhHMswLaACPSsKVOj9
+	0veTPm2ZSLOJ0q+vy/B1nrpQuWhb143Dbn7fwmuwXyGfBDFo7waAK2otW/hsQjE0hNAbATe0ja0iu
+	IOSUJusnFwvMITP6ExBjB6encV0SKpH31DWjawkuRlLyIQ3BZqX15VwExxUGqA+C58u8g8O+J8HgZ
+	Xs1xpVdZXhKpng==;
+From: "Jose E. Marchesi" <jemarch@gnu.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+  linux-kernel@vger.kernel.org,  linux-trace-kernel@vger.kernel.org,
+  bpf@vger.kernel.org,  x86@kernel.org,  Masami Hiramatsu
+ <mhiramat@kernel.org>,  Josh Poimboeuf <jpoimboe@kernel.org>,  Peter
+ Zijlstra <peterz@infradead.org>,  Ingo Molnar <mingo@kernel.org>,  Jiri
+ Olsa <jolsa@kernel.org>,  Namhyung Kim <namhyung@kernel.org>,  Thomas
+ Gleixner <tglx@linutronix.de>,  Andrii Nakryiko <andrii@kernel.org>,  Indu
+ Bhagat <indu.bhagat@oracle.com>,  Beau Belgrave
+ <beaub@linux.microsoft.com>,  Jens Remus <jremus@linux.ibm.com>,  Linus
+ Torvalds <torvalds@linux-foundation.org>,  Andrew Morton
+ <akpm@linux-foundation.org>,  Jens Axboe <axboe@kernel.dk>,  Florian
+ Weimer <fweimer@redhat.com>,  Sam James <sam@gentoo.org>,  Brian Robbins
+ <brianrob@microsoft.com>,  Elena Zannoni <elena.zannoni@oracle.com>
+Subject: Re: [RFC] New codectl(2) system call for sframe registration
+In-Reply-To: <20250722122538.6ce25ca2@batman.local.home>
+References: <2fa31347-3021-4604-bec3-e5a2d57b77b5@efficios.com>
+	<20250721145343.5d9b0f80@gandalf.local.home>
+	<e7926bca-318b-40a0-a586-83516302e8c1@efficios.com>
+	<20250721171559.53ea892f@gandalf.local.home>
+	<1c00790c-66c4-4bce-bd5f-7c67a3a121be@efficios.com>
+	<20250722122538.6ce25ca2@batman.local.home>
+Date: Tue, 22 Jul 2025 20:56:47 +0200
+Message-ID: <87jz40hx5c.fsf@gnu.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250722161103.3938-3-quic_rdwivedi@quicinc.com>
-X-Proofpoint-GUID: VLTASfrU4dFUIvuY0lWYKer2_IXXfQ9Y
-X-Proofpoint-ORIG-GUID: VLTASfrU4dFUIvuY0lWYKer2_IXXfQ9Y
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDE2MSBTYWx0ZWRfX5Frj7xgwCjzo
- P36sNMLV8d8e/UY+tBZTAmUN0jLD6t0Pcd0vpCN17kKcCaZaqpNWAiLO5Oq2ZPgh8O2WHqOFTfL
- 2zvjcntfxW8OIAb5fNjKB33hwCuTv9PqYDZvq5LYnxkGCA/ccNeMjaQfJy4kRgJ0RqfBqTwG7Cs
- tt6pd/2Kwm550CczrdRpyD5ogagn6c1/m/oe6JGMy8d36G7O+mQaDQE40OikEnKH+O4rjx2uziw
- TNEl/m9ftUDjo2PFUJDht/PjEANQiivqW2ao03zdBoyIat4hqN6Z/bu3FIIOtIwnq8OhxokgwQp
- NL5OoUy//aEf4JKaYNPAKNvFrKj7+4o9B2b6rRPUjuT67vrku0m40SptPcJ37kk7r1i96nsTKBN
- T5ECStNSEYF6j8OPYjfoTA361H7qj+ZJj+ewLL4g55EzrBS2yi+Yq/1uIlGF1FukjJtPKuvo
-X-Authority-Analysis: v=2.4 cv=DoFW+H/+ c=1 sm=1 tr=0 ts=687fde99 cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=PsoIiSmMjj9FaRidGiUA:9 a=CjuIK1q_8ugA:10
- a=NFOGd7dJGGMPyQGDc5-O:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-22_02,2025-07-21_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 clxscore=1015 mlxscore=0 mlxlogscore=999
- bulkscore=0 impostorscore=0 malwarescore=0 lowpriorityscore=0 adultscore=0
- spamscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507220161
-
-On Tue, Jul 22, 2025 at 09:41:02PM +0530, Ram Kumar Dwivedi wrote:
-> Add optional limit-hs-gear and limit-rate properties to the UFS node to
-> support automotive use cases that require limiting the maximum Tx/Rx HS
-> gear and rate due to hardware constraints.
+Content-Type: text/plain
 
 
-If they are optional and they are for automotive, then why are you
-adding them to the SM8150 DTSi file, enforcing them for all SM8150
-targets?
+> On Tue, 22 Jul 2025 09:51:22 -0400
+> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+>
+>> > Here's a hypothetical, what if for some reason (say having the sframe
+>> > sections outside of the elf file) that the linker shares that?  
+>> 
+>> So your hypothetical scenario is having sframe provided as a separate
+>> file. This sframe file (or part of it) would still describe how to
+>> unwind a given elf file text range. So I would argue that this would
+>
+> No. It should describe how to get access to an sframe section for some
+> text that has already been loaded in memory.
+>
+> I'm looking for a mapping between already loaded text memory to how to
+> unwind it that will be in an sframe format somewhere on disk.
+>
+>> still fit into the model of CODE_REGISTER_ELF, it's just that the
+>> address range from sframe_start to sframe_end would be mapped from
+>> a different file. This is entirely up to the dynamic loader and should
+>> not impact the kernel ABI.
+>> 
+>> AFAIK the a.out binary support was deprecated in Linux kernel v5.1. So
+>> being elf specific is not an issue.
+>
+> Yes, but we are not registering ELF. We are registering how to unwind
+> something with sframes. If it's not sframes we are registering, what is
+> it?
+>
+>> 
+>> And if for some reason we end up inventing a new model to hand over the
+>> sframe information in the future, for instance if we choose not to map
+>> the sframe information in userspace and hand over a sframe-file pathname
+>> and offset instead, we'll just extend the code_opt enum with a new
+>> label.
+>
+> This is not a new model. We could likely do it today without much
+> effort. We are handing over sframe data regardless if it's in an ELF
+> file or not.
+>
+> The systemcall is to let the dynamic linker know where the kernel can
+> find the sframes for newly loaded text.
+>
+>> 
+>> > 
+>> > For instance, if the sframe sections are downloaded separately as a
+>> > separate package for a given executable (to make it not mandatory for an
+>> > install), the linker could be smart enough to see that they exist in some
+>> > special location and then pass that to the kernel. In other words, this is
+>> > option is specific for sframe and not ELF. I rather call it by that.  
+>> 
+>> As I explained above, if the dynamic loader populates the sframe section
+>> in userspace memory, this fits within the CODE_REGISTER_ELF ABI. If we
+>
+> But this isn't about ELF! It's about sframes! Why not name it that?
+>
+>> eventually choose not to map the sframe section into userspace memory
+>> (even though this is not an envisioned use-case at the moment), we can
+>> just extend enum code_opt with a new label.
+>
+> Why call this at all if you don't plan on mapping sframes?
+>
+>> 
+>> >   
+>> >>
+>> >> If there are other file types in the future that happen to contain an
+>> >> sframe section (but are not ELF), then we can simply add a new label to
+>> >> enum code_opt.
+>> >>  
+>> >>>      
+>> >>>>
+>> >>>> sys_codectl(2)
+>> >>>> =================
+>> >>>>
+>> >>>> * arg0: unsigned int @option:
+>> >>>>
+>> >>>> /* Additional labels can be added to enum code_opt, for extensibility. */
+>> >>>>
+>> >>>> enum code_opt {
+>> >>>>        CODE_REGISTER_ELF,  
+>> >>>
+>> >>> Perhaps the above should be: CODE_REGISTER_SFRAME,
+>> >>>
+>> >>> as currently SFrame is read only via files.  
+>> >>
+>> >> As I pointed out above, on GNU/Linux, sframe is always an allocated,loaded
+>> >> ELF section. AFAIU, your comment implies that we'd want to support other scenarios
+>> >> where the sframe is in files outside of elf binary sframe sections. Can you
+>> >> expand on the use-case you have for this, or is it just for future-proofing ?  
+>> > 
+>> > Heh, I just did above (before reading this). But yeah, it could be. As I
+>> > mentioned above, this is not about ELF files. Sframes just happen to be in
+>> > an ELF file. CODE_REGISTER_ELF sounds like this is for doing special
+>> > actions to an ELF file, when in reality it is doing special actions to tell
+>> > the kernel this is an sframe table. It just happens that sframes are in
+>> > ELF. Let's call it for what it is used for.  
+>> 
+>> I see sframe as one "aspect" of an ELF file. Sure, we could do one
+>> system call for every aspect of an ELF file that we want to register,
+>> but that would require many round trips from userspace to the kernel
+>> every time a library is loaded. In my opinion it makes sense to combine
+>> all aspects of an elf file that we want the kernel to know about into
+>> one registration system call. In that sense, we're not registering just
+>> sframe, but the various aspects of an ELF file, which include sframe.
+>
+> So you are making this a generic ELF function?  What other functions do
+> you plan to do with this system call?
+>
+>> 
+>> By the way, the sframe section is optional as well. If we allow
+>> sframe_start and sframe_end to be NULL, this would let libc register
+>> an sframe-less ELF file with its pathname, build-id, and debug info
+>> to the kernel. This would be immediately useful on its own for
+>> distributions that have frame pointers enabled even without sframe
+>> section.
+>
+> The above is called mission creep. Looks to me that you are using this
+> as a way to have LTTng get easier access to build ids and such. We can
+> add *that* later if needed, as a separate option. This has nothing to
+> do with the current requirements.
 
-> 
-> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/sm8150.dtsi | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sm8150.dtsi b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-> index b5494bcf5cff..87e8b60b3b2d 100644
-> --- a/arch/arm64/boot/dts/qcom/sm8150.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-> @@ -2082,6 +2082,9 @@ ufs_mem_hc: ufshc@1d84000 {
->  			resets = <&gcc GCC_UFS_PHY_BCR>;
->  			reset-names = "rst";
->  
-> +			limit-hs-gear = <3>;
-> +			limit-rate = <1>;
-> +
->  			iommus = <&apps_smmu 0x300 0>;
->  
->  			clock-names =
-> -- 
-> 2.50.1
-> 
+I also think that involving ELF in the interface at this point without
+having a good reason for doing so is probably not a good idea.  Linked
+and loaded SFrame data is pretty much self-contained and can be used as
+such, but only if it gets loaded along with the text segments it referts
+to.  See below...
 
--- 
-With best wishes
-Dmitry
+>
+>> >>>
+>> >>> And call it "struct code_sframe_info"
+>> >>>      
+>> >>>>        __u64 text_start;
+>> >>>>        __u64 text_end;  
+>> >>>      
+>> >>>>        __u64 sframe_start;
+>> >>>>        __u64 sframe_end;  
+>> >>>
+>> >>> What is the above "sframe" for?  
+>> > 
+>> > Still wondering what the above is for.  
+>> 
+>> Well we have an sframe section which is mapped into userspace memory
+>> from sframe_start to sframe_end, which contains the unwind information
+>> that covers the code from text_start to text_end.
+>
+> Actually, the sframe section shouldn't be mapped into user space
+> memory. The kernel will be doing that, not the linker. I would say that
+> the system call can give a hint of where it would like it mapped, but
+> it should allow the kernel to decide where to map it as the user space
+> code doesn't care where it gets mapped.
+
+The SFrame data actually lives in a loadable segment in the ELF file
+(and actually not alone, it has flatmates).  This is important. The FDEs
+in the SFrame section refer to the start of the functions they apply to.
+These references take the form of an offset between the VM address where
+the FDE itself gets loaded and the VM address of the beginning of the
+function, which are also valid as file offsets, since all segments get
+loaded together always keeping the same order.  That's how dynamic
+relocs are avoided.
+
+This makes SFrame pretty self-contained, provided it gets loaded/mapped
+along with the other loadable segments in the ELF file it comes from.
+The loader will assure that.
+
+I think glibc could "register" loaded SFrame data by just pointing the
+kernel to the VM address where it got loaded, "you got some SFrame
+there".  Starting from that address it is then possible to find the
+referred code locations just by applying the offsets, without needing
+any additional information nor ELF foobar...
+
+Or thats how I understand it.  Indu will undoubtly correct me if I am
+wrong 8-)
+
+> In the future, if we wants to compress the sframe section, it will not
+> even be a loadable ELF section. But the system call can tell the
+> kernel: "there's a sframe compressed section at this offset/size in
+> this file" for this text address range and then the kernel will do the
+> rest.
+
+I think supporting compressed SFrame will probably require to do some
+sort of relocation of the offsets in the uncompressed data, depending on
+where the uncompressed data will get eventually loaded.
+
+>> 
+>> Am I unknowingly adding some kind of redundancy here ?
+>> 
+>
+> Maybe. This systemcall was to add unwinding information for the kernel.
+> It looks like you are having it be much more than that. I'm not against
+> that, but that should only be for extensions, and currently, this is
+> supposed to only make sframes work.
+>
+> -- Steve
 
