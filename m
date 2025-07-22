@@ -1,251 +1,201 @@
-Return-Path: <linux-kernel+bounces-740704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ABA5B0D820
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:26:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33A9CB0D81A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:25:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8A3D3A54EB
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E08FC189BBE4
 	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:25:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24CCB2E336B;
-	Tue, 22 Jul 2025 11:25:52 +0000 (UTC)
-Received: from sgoci-sdnproxy-4.icoremail.net (sgoci-sdnproxy-4.icoremail.net [129.150.39.64])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C4823814C;
-	Tue, 22 Jul 2025 11:25:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.150.39.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1022E2F1C;
+	Tue, 22 Jul 2025 11:25:07 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B887289811
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 11:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753183551; cv=none; b=vB+8H3yYfVfgNAdxGQapHHdi65TrojRQROG5pQJPaAHJKxvMLGgKewFNtdDPHnc4fed5KX4PBZN9rvYIvyWWhnPeJxk+mkl7EMvrqeiit2LmvFf6BgF7CkxXAw+UFgPVsHv0KZ9GZ1NgJhl3eOhBOGRejjvw/BySx9ZLsETG4Zo=
+	t=1753183507; cv=none; b=ko8AqMAm+eFtSsz33FUV5JS7sAPBa4Ao8phIF+TBJeQ6HxaqW2gx+rwWmH93nqyL9QL1I2fbdPhnqp9ptHuLw1In+FVV67F4cso3GW9RVZpqzBg9PyfGQcDTjKJAbC9I/ctC3rLbRsRKxIs1gi6vfPhJYkSMHAdPz8TZOTgFaDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753183551; c=relaxed/simple;
-	bh=aYMZo2Hb/mbL4EnmPmmbJxUgHmuK9W0AgbX8MY4vV7Q=;
-	h=From:To:Cc:References:In-Reply-To:Subject:Date:Message-ID:
-	 MIME-Version:Content-Type; b=AE+eY4ydX2DM6FLiACHGxW/Bqaiy/WvPY5w9V3qI57oKAnBTK/5vghzibxj6wqmBmth+Sx4xCyH73HenGRtFHn7BSZsN/8VHWVaPGypBW5sFT8vqwvGFg/Wv7vpnuHu6hP8brqrgnOlhxCRiDL6CF8+79qlkTmwiJsPk2hHq4Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=129.150.39.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from E0004057DT (unknown [10.11.96.26])
-	by app1 (Coremail) with SMTP id TAJkCgD3GxL8dH9oJr61AA--.44915S2;
-	Tue, 22 Jul 2025 19:24:46 +0800 (CST)
-From: =?gb2312?B?wO7Wvg==?= <lizhi2@eswincomputing.com>
-To: "'Andrew Lunn'" <andrew@lunn.ch>
-Cc: <weishangjuan@eswincomputing.com>,
-	<andrew+netdev@lunn.ch>,
-	<davem@davemloft.net>,
-	<edumazet@google.com>,
-	<kuba@kernel.org>,
-	<robh@kernel.org>,
-	<krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>,
-	<netdev@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>,
-	<mcoquelin.stm32@gmail.com>,
-	<alexandre.torgue@foss.st.com>,
-	<rmk+kernel@armlinux.org.uk>,
-	<yong.liang.choong@linux.intel.com>,
-	<vladimir.oltean@nxp.com>,
-	<jszhang@kernel.org>,
-	<jan.petrous@oss.nxp.com>,
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	<inochiama@gmail.com>,
-	<boon.khai.ng@altera.com>,
-	<dfustini@tenstorrent.com>,
-	<0x1207@gmail.com>,
-	<linux-stm32@st-md-mailman.stormreply.com>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<ningyu@eswincomputing.com>,
-	<linmin@eswincomputing.com>,
-	<pinkesh.vaghela@einfochips.com>
-References: <20250703091808.1092-1-weishangjuan@eswincomputing.com> <20250703092015.1200-1-weishangjuan@eswincomputing.com> <c212c50e-52ae-4330-8e67-792e83ab29e4@lunn.ch> <7ccc507d.34b1.1980d6a26c0.Coremail.lizhi2@eswincomputing.com> <e734f2fd-b96f-4981-9f00-a94f3fd03213@lunn.ch> <6c5f12cd.37b0.1982ada38e5.Coremail.lizhi2@eswincomputing.com> <6b3c8130-77f0-4266-b1ed-2de80e0113b0@lunn.ch>
-In-Reply-To: <6b3c8130-77f0-4266-b1ed-2de80e0113b0@lunn.ch>
-Subject: Re: Re: Re: Re: [PATCH v3 2/2] ethernet: eswin: Add eic7700 ethernet driver
-Date: Tue, 22 Jul 2025 19:24:44 +0800
-Message-ID: <006c01dbfafb$3a99e0e0$afcda2a0$@eswincomputing.com>
+	s=arc-20240116; t=1753183507; c=relaxed/simple;
+	bh=CHS+1lDwG4RKhNRs4RdFSgLJwKj3ZZWuLF23+NulHjo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jKYemmRV6c8/pnVo/fpy7qKQim8ZOvUuDVYAlCGk3Ow/tDDDQe+QFDUhwcoUxF5EEyd9DrhB61JKv+WdGhmhKtKmiaQwN386gSHumSwXZdEGacSCI0oWGF5+xVYTbfWSTrZTAOH7++QvUuMtax4vYo/6ntrDv6raVSzZLSP59aM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EBEB8152B;
+	Tue, 22 Jul 2025 04:24:58 -0700 (PDT)
+Received: from [10.1.30.167] (XHFQ2J9959.cambridge.arm.com [10.1.30.167])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5C27A3F66E;
+	Tue, 22 Jul 2025 04:25:01 -0700 (PDT)
+Message-ID: <dc0b5e94-f5aa-407e-bad2-150814dc4885@arm.com>
+Date: Tue, 22 Jul 2025 12:25:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="gb2312"
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIWEBQeOCNcc3c3gjOhxIq/03sunAItNhDMAcjfDh0CUDC4/wE99IgTAia8sUkCW0gSXwGv9voh
-Content-Language: zh-cn
-X-CM-TRANSID:TAJkCgD3GxL8dH9oJr61AA--.44915S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxtrWxuF1rJrW7ur4rGw45KFg_yoW7tw15pr
-	W3XF4UWrWDKr1xtwnFkw48uF1rZa95GF13CF1DJr95Jws0vF9avr12kFWYgFy8Wr4v9F1j
-	9rWUWan5ua1qkFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjTRM6wCDUUUU
-X-CM-SenderInfo: xol2xx2s6h245lqf0zpsxwx03jof0z/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/7] mm: Refactor MM_CP_PROT_NUMA skipping case into
+ new function
+Content-Language: en-GB
+To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org
+Cc: david@redhat.com, willy@infradead.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, catalin.marinas@arm.com, will@kernel.org,
+ Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz,
+ jannh@google.com, anshuman.khandual@arm.com, peterx@redhat.com,
+ joey.gouly@arm.com, ioworker0@gmail.com, baohua@kernel.org,
+ kevin.brodsky@arm.com, quic_zhenhuah@quicinc.com,
+ christophe.leroy@csgroup.eu, yangyicong@hisilicon.com,
+ linux-arm-kernel@lists.infradead.org, hughd@google.com,
+ yang@os.amperecomputing.com, ziy@nvidia.com
+References: <20250718090244.21092-1-dev.jain@arm.com>
+ <20250718090244.21092-2-dev.jain@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20250718090244.21092-2-dev.jain@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Dear Andrew Lunn,
-Thank you for your professional and valuable suggestions.
-Our questions are embedded below your comments in the
-original email below.
+On 18/07/2025 10:02, Dev Jain wrote:
+> Reduce indentation by refactoring the prot_numa case into a new function.
+> No functional change intended.
+> 
+> Signed-off-by: Dev Jain <dev.jain@arm.com>
+> ---
+>  mm/mprotect.c | 101 +++++++++++++++++++++++++++-----------------------
+>  1 file changed, 55 insertions(+), 46 deletions(-)
+> 
+> diff --git a/mm/mprotect.c b/mm/mprotect.c
+> index 88709c01177b..2a9c73bd0778 100644
+> --- a/mm/mprotect.c
+> +++ b/mm/mprotect.c
+> @@ -83,6 +83,59 @@ bool can_change_pte_writable(struct vm_area_struct *vma, unsigned long addr,
+>  	return pte_dirty(pte);
+>  }
+>  
+> +static bool prot_numa_skip(struct vm_area_struct *vma, unsigned long addr,
+> +			   pte_t oldpte, pte_t *pte, int target_node)
+> +{
+> +	struct folio *folio;
+> +	bool toptier;
+> +	int nid;
+> +
+> +	/* Avoid TLB flush if possible */
+> +	if (pte_protnone(oldpte))
+> +		return true;
+> +
+> +	folio = vm_normal_folio(vma, addr, oldpte);
+> +	if (!folio)
+> +		return true;
+> +
+> +	if (folio_is_zone_device(folio) || folio_test_ksm(folio))
+> +		return true;
+> +
+> +	/* Also skip shared copy-on-write pages */
+> +	if (is_cow_mapping(vma->vm_flags) &&
+> +	    (folio_maybe_dma_pinned(folio) || folio_maybe_mapped_shared(folio)))
+> +		return true;
+> +
+> +	/*
+> +	 * While migration can move some dirty pages,
+> +	 * it cannot move them all from MIGRATE_ASYNC
+> +	 * context.
+> +	 */
+> +	if (folio_is_file_lru(folio) && folio_test_dirty(folio))
+> +		return true;
+> +
+> +	/*
+> +	 * Don't mess with PTEs if page is already on the node
+> +	 * a single-threaded process is running on.
+> +	 */
+> +	nid = folio_nid(folio);
+> +	if (target_node == nid)
+> +		return true;
+> +
+> +	toptier = node_is_toptier(nid);
+> +
+> +	/*
+> +	 * Skip scanning top tier node if normal numa
+> +	 * balancing is disabled
+> +	 */
+> +	if (!(sysctl_numa_balancing_mode & NUMA_BALANCING_NORMAL) && toptier)
+> +		return true;
+> +
+> +	if (folio_use_access_time(folio))
+> +		folio_xchg_access_time(folio, jiffies_to_msecs(jiffies));
 
+Perhaps this bit should be kept in the original location? It's got nothing to do
+with determining if the pte should be skipped.
 
-Best regards,
+Thanks,
+Ryan
 
-Li Zhi
-Eswin Computing
-
-
-> -----=D4=AD=CA=BC=D3=CA=BC=FE-----
-> =B7=A2=BC=FE=C8=CB: "Andrew Lunn" <andrew@lunn.ch>
-> =B7=A2=CB=CD=CA=B1=BC=E4:2025-07-21 21:10:55 (=D0=C7=C6=DA=D2=BB)
-> =CA=D5=BC=FE=C8=CB: =C0=EE=D6=BE <lizhi2@eswincomputing.com>
-> =B3=AD=CB=CD: weishangjuan@eswincomputing.com, andrew+netdev@lunn.ch,
-davem@davemloft.net, edumazet@google.com, kuba@kernel.org, =
-robh@kernel.org,
-krzk+dt@kernel.org, conor+dt@kernel.org, netdev@vger.kernel.org,
-devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
-rmk+kernel@armlinux.org.uk, yong.liang.choong@linux.intel.com,
-vladimir.oltean@nxp.com, jszhang@kernel.org, jan.petrous@oss.nxp.com,
-prabhakar.mahadev-lad.rj@bp.renesas.com, inochiama@gmail.com,
-boon.khai.ng@altera.com, dfustini@tenstorrent.com, 0x1207@gmail.com,
-linux-stm32@st-md-mailman.stormreply.com,
-linux-arm-kernel@lists.infradead.org, ningyu@eswincomputing.com,
-linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com
-> =D6=F7=CC=E2: Re: Re: Re: [PATCH v3 2/2] ethernet: eswin: Add eic7700 =
-ethernet
-driver
->=20
-> > > > Let me clarify the purpose of the three elements in each =
-dly_param_*
-array:
-> > > >   dly_param_[x][0]: Delay configuration for TXD signals
-> > > >   dly_param_[x][1]: Delay configuration for control signals =
-(e.g.,
-TX_EN, RX_DV, RX_CLK)
-> > > >   dly_param_[x][2]: Delay configuration for RXD signals
-> > >=20
-> > > Maybe add a #define or an enum for the index.
-> > >=20
-> > > Do these delays represent the RGMII 2ns delay?
-> > >=20
-> >=20
-> > Yes, these delays refer to the RGMII delay, but they are not =
-strictly
-2ns. There are a few points that require further clarification:
-> > 1. Regarding delay configuration logic:
-> >    As you mentioned in version V2, rx-internal-delay-ps and
-tx-internal-delay-ps will be mapped to and overwrite the corresponding =
-bits
-in the EIC7700_DELAY_VALUE1 register, which controls the rx_clk and =
-tx_clk
-delays. Is this understanding and approach correct and feasible?
->=20
-> Please configure your email client to wrap at about 78
-> characters. Standard network etiquette.
->=20
-> Yes, if rx-internal-delay-ps or/and tx-internal-delay-ps are in DT,
-> they should configure the delay the MAC applies.
->=20
->=20
-> > 2. About the phy-mode setting:
-> >    In our platform, the internal delays are provided by the MAC. =
-When
-configuring rx-internal-delay-ps and tx-internal-delay-ps in the device
-tree, is it appropriate to set phy-mode =3D "rgmii-id" in this case?
->=20
-> Please read:
->=20
->
-https://elixir.bootlin.com/linux/v6.15.7/source/Documentation/devicetree/=
-bin
-dings/net/ethernet-controller.yaml#L287
->=20
-> It gives a detailed description of what phy-mode =3D "rmgii-id" means. =
-
->=20
-> > 3. Delay values being greater than 2ns:
-> >    In our platform, the optimal delay values for rx_clk and tx_clk =
-are
-determined based on the board-level timing adjustment, and both are =
-greater
-than 2ns. Given this, is it reasonable and compliant with the RGMII
-specification to set both rx-internal-delay-ps and tx-internal-delay-ps =
-to
-values greater than 2ns in the Device Tree?
->=20
-> It is O.K. when the total delay is > 2ns. However, please note what is
-> said, the normal way to implement delays in Linux. The PHY does the
-> 2ns delay. The MAC can then do fine tuning, adding additional small
-> delays.
->=20
-> > There is a question that needs clarification:
-> > The EIC7700_DELAY_VALUE0 and EIC7700_DELAY_VALUE1 registers contain =
-the
-optimal delay configurations determined through board-level phase
-adjustment. Therefore, they are also used as the default values in our
-platform. If the default delay is set to 0ps, the Ethernet interface may
-fail to function correctly in our platform.
->=20
-> So there is only every going to be one board? There will never produce
-> a cost optimised version with a different, cheaper PHY? You will never
-> support connecting the MAC directly an Ethernet switch? You will never
-> make use of a PHY which can translate to SGMII/1000BaseX, and then
-> have an SFP cage?
->=20
-> DT properties are there to make your hardware more flexible. You can
-> use it to describe such setups, and handle the timing needed for each.
->=20
-> By default, when phy-mode is rgmii-id, the MAC adds 0ns, the PHY 2ns,
-> and most systems will just work. That 2ns is what the RGMII standard
-> requires. You can then fine tune it with rx-internal-delay-ps and
-> tx-internal-delay-ps if your design does not correctly follow the
-> RGMII standard.
->=20
-
-Yes, DT properties are there to make our hardware more flexible.
-
-Our platform uses three dedicated registers to configure RGMII signal
-delays, due to differences in board-level designs. These registers =
-control
-delays for signals including RXD0=A8C3, TXD0=A8C3, RXDV, RXCLK, and =
-TXCLK.
-Among these, RXCLK and TXCLK are directly related to the standard DT
-properties `rx-internal-delay-ps` and `tx-internal-delay-ps`, =
-respectively.
-The remaining signals (such as RXD0-4, TXD0-4, RXDV, etc.) require
-additional configuration that cannot be expressed using standard
-properties.
-
-In v2, `eswin,dly-param-xxx` is used to configure all delay registers =
-via
-device tree, including RXCLK and TXCLK. Based on the latest discussion,
-this approach in the next version:
-- The delay configuration for RXCLK and TXCLK will be handled using the
- standard DT properties `rx-internal-delay-ps` and =
-`tx-internal-delay-ps`.
-- The remaining delay configuration (e.g., for RXD0-4, TXD0-4, RXDV) =
-will
- continue to use the vendor-specific `eswin,dly-param-xxx` properties.
-- If the standard delay properties are not specified in DT, a default of =
-0
-ps
- will be assumed.
-
-Is this understanding and approach correct and feasible?
-
-> 	Andrew
+> +	return false;
+> +}
+> +
+>  static long change_pte_range(struct mmu_gather *tlb,
+>  		struct vm_area_struct *vma, pmd_t *pmd, unsigned long addr,
+>  		unsigned long end, pgprot_t newprot, unsigned long cp_flags)
+> @@ -117,53 +170,9 @@ static long change_pte_range(struct mmu_gather *tlb,
+>  			 * pages. See similar comment in change_huge_pmd.
+>  			 */
+>  			if (prot_numa) {
+> -				struct folio *folio;
+> -				int nid;
+> -				bool toptier;
+> -
+> -				/* Avoid TLB flush if possible */
+> -				if (pte_protnone(oldpte))
+> -					continue;
+> -
+> -				folio = vm_normal_folio(vma, addr, oldpte);
+> -				if (!folio || folio_is_zone_device(folio) ||
+> -				    folio_test_ksm(folio))
+> -					continue;
+> -
+> -				/* Also skip shared copy-on-write pages */
+> -				if (is_cow_mapping(vma->vm_flags) &&
+> -				    (folio_maybe_dma_pinned(folio) ||
+> -				     folio_maybe_mapped_shared(folio)))
+> -					continue;
+> -
+> -				/*
+> -				 * While migration can move some dirty pages,
+> -				 * it cannot move them all from MIGRATE_ASYNC
+> -				 * context.
+> -				 */
+> -				if (folio_is_file_lru(folio) &&
+> -				    folio_test_dirty(folio))
+> -					continue;
+> -
+> -				/*
+> -				 * Don't mess with PTEs if page is already on the node
+> -				 * a single-threaded process is running on.
+> -				 */
+> -				nid = folio_nid(folio);
+> -				if (target_node == nid)
+> -					continue;
+> -				toptier = node_is_toptier(nid);
+> -
+> -				/*
+> -				 * Skip scanning top tier node if normal numa
+> -				 * balancing is disabled
+> -				 */
+> -				if (!(sysctl_numa_balancing_mode & NUMA_BALANCING_NORMAL) &&
+> -				    toptier)
+> +				if (prot_numa_skip(vma, addr, oldpte, pte,
+> +						   target_node))
+>  					continue;
+> -				if (folio_use_access_time(folio))
+> -					folio_xchg_access_time(folio,
+> -						jiffies_to_msecs(jiffies));
+>  			}
+>  
+>  			oldpte = ptep_modify_prot_start(vma, addr, pte);
 
 
