@@ -1,87 +1,94 @@
-Return-Path: <linux-kernel+bounces-740031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED1C2B0CED8
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 02:49:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BCC4B0CEDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 02:50:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0DB71892FDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 00:49:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B34C6C6137
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 00:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8894F13D24D;
-	Tue, 22 Jul 2025 00:49:14 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D5B315442A;
+	Tue, 22 Jul 2025 00:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DhTYHwIR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8848D2F50;
-	Tue, 22 Jul 2025 00:49:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB8D13C81B;
+	Tue, 22 Jul 2025 00:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753145354; cv=none; b=TDN/rL13cVtigDqIexZbW1PrLeqqUaB9HxTsRszImj8JJ/KShC+sv/BBw4PRp8Xtyf71ZFv6DAfmgrxQS1nzYLnMu5DGvNntHa0zV80UqOpQRCRN0nhg3wjyTu9r4YjApYsUw/ZQVwIEPZVqVGeZSClo3e6B0jONOMbqhN96H+E=
+	t=1753145390; cv=none; b=S7ht1t3MnXzEHPe9RCXiHNp+ouXidOJ36GcL3jsmDB3M5Nk1yAdcChFYvWu5z8cuKWDr+8dBNLZL3Ky6nXJc1EqkYAv6wIgkPOHvbhh/h5QVz/2XHCf9c9gX0xNKwbEgOky/87FxGLlCM85zG55Ln7m+6Btborfwu6t0YuJXMU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753145354; c=relaxed/simple;
-	bh=KVI9k7s/L4Ayeqhq7kJYG7hPHnV7SbdabPHTTfX+jr8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gNOr2CGLc9AF3bFen0N1r72txnHYtmn/qVgyogGiIK/+8M7hs8BujVwKUi7Rv26mBqJGRUizRB4VJhYNGXpBZuEyPiEPFkaCiyYjKW9Oyyckf1WWESnodCxu+GE26QK/QEtpJ31m8HiPlL3BclTE7vLGJuAHcHNstlrVbsGL/OU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf16.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay09.hostedemail.com (Postfix) with ESMTP id 6DD3C80220;
-	Tue, 22 Jul 2025 00:49:03 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf16.hostedemail.com (Postfix) with ESMTPA id 880462000D;
-	Tue, 22 Jul 2025 00:49:01 +0000 (UTC)
-Date: Mon, 21 Jul 2025 20:49:32 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Gabriele Monaco <gmonaco@redhat.com>,
- john.ogness@linutronix.de
-Subject: Re: [PATCH] tracing: Remove pointless memory barriers
-Message-ID: <20250721204932.306da76c@gandalf.local.home>
-In-Reply-To: <20250626160459.soHxOROG@linutronix.de>
-References: <20250626151940.1756398-1-namcao@linutronix.de>
-	<20250626113520.315db641@gandalf.local.home>
-	<20250626160459.soHxOROG@linutronix.de>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753145390; c=relaxed/simple;
+	bh=qqVtg7wIZdHVzZMMsK9AjxJx4S/Xq3p0wGOEHw6p0V4=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=uCY52bX0RUXAG+izheYhhSvPY+RSVqYczvXkECPm5oeVqoH5i/1fDC6CMm4O974LGqpNr/znf0NRoPxcevjJX4dxea5G54EbV8ondKYDlSugD9MM8ijLxWdKeUnzxpZ9V+n1+3s0G5wr5FNWvKNYHG7rRN944yteCLb1eYncGNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DhTYHwIR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00C89C4CEED;
+	Tue, 22 Jul 2025 00:49:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753145390;
+	bh=qqVtg7wIZdHVzZMMsK9AjxJx4S/Xq3p0wGOEHw6p0V4=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=DhTYHwIRAQuW4LM7++mtXEFNLpWYAjOi0dkD4mGH/Az+QiTol5w/HG6Cu0ARKO/NF
+	 qw/+DC+3c5eksZhZmV9AFsXploQrV+hjHiAxdr1z1Cm3OHqT8eKVlf4kSk0ee1Dzgx
+	 LJVHbWa1yWNNO0c9Dqr9t/ujCrJP7zZ3tmuBaDzI0ak3C2OBcgHJcXsCbWEPUymHlm
+	 34MHuY67ipSRXUDxJz43vRz6uBaS7p8Pk0T/Xo3rQ8IrINrmotTPMFagJDqZSjoagC
+	 MLzHgklQmR5iTMiFxC0pqKPzD3IFTbC21LM6wJPbC9F9BKWjbn+ZZHq/UIZqQQeTIt
+	 v0f0MVA50XDeg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id E1767383B267;
+	Tue, 22 Jul 2025 00:50:09 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 6n9ez7isuyrhxjostx31dwy4reqs3m16
-X-Rspamd-Server: rspamout07
-X-Rspamd-Queue-Id: 880462000D
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19Y0Rjjwhtck8BgjauIYgM8gaipfMNLK88=
-X-HE-Tag: 1753145341-930020
-X-HE-Meta: U2FsdGVkX19QYcHnL34WLPTvZXgaVWQno+rmFQQzkd7ot3CDZMVSpZXlBzuFS6XetEN13QEJBOkDhhtC8DHeyVrZEYwDHQqANz1/pKsryPLTX2QbHr2vv8dq+Di+nS1kEZVeVGA7UPtKGic6Harcx7ME1wZYbjl1rkf7F2AzhveqjSo3iBDtaAhZ1qB4n14wGLgLHjh7TMw0hOo225+Iv57bzYz5Dx+495LQyktAM4+JWlAFH6i3pS355uhQdIYEs8eRbSlcrXMOjPayJV/XF3ICrCXwp6CLIvBvzq/K8nJSYjlSTGUY00IZE3RTbbnD
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: phy: qcom: qca807x: Enable WoL support
+ using
+ shared library
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175314540876.247888.8839150831029400214.git-patchwork-notify@kernel.org>
+Date: Tue, 22 Jul 2025 00:50:08 +0000
+References: <20250718-qca807x_wol_support-v1-1-cfe323cbb4e8@quicinc.com>
+In-Reply-To: <20250718-qca807x_wol_support-v1-1-cfe323cbb4e8@quicinc.com>
+To: Luo Jie <quic_luoj@quicinc.com>
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, maxime.chevallier@bootlin.com
 
-On Thu, 26 Jun 2025 18:04:59 +0200
-Nam Cao <namcao@linutronix.de> wrote:
+Hello:
 
-> > The above three interact with each other. Without the barriers, the
-> > tr->buffer_disabled = 0, can be set on one CPU, and the other CPU can think
-> > the buffer is still enabled and do work that will end up doing nothing. Or
-> > it can be set to 1, and the other CPU still sees it disabled and will not
-> > do work when it can.  
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Fri, 18 Jul 2025 21:57:48 +0800 you wrote:
+> The Wake-on-LAN (WoL) functionality for the QCA807x series is identical
+> to that of the AT8031. WoL support for QCA807x is enabled by utilizing
+> the at8031_set_wol() function provided in the shared library.
 > 
-> (I'm not that experienced with memory barrier, so I may be writing nonsense
-> here)
+> Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+> 
+> [...]
 
-So I did some git archeology and realized that the buffer_disabled is just
-a cache to make irqsoff tracing faster. The commit even said it's not going
-to be accurate.
+Here is the summary with links:
+  - [net-next] net: phy: qcom: qca807x: Enable WoL support using shared library
+    https://git.kernel.org/netdev/net-next/c/14e710d7080f
 
-OK, I'll just take this patch.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Thanks,
 
--- Steve
 
