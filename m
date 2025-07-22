@@ -1,47 +1,39 @@
-Return-Path: <linux-kernel+bounces-740721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB13CB0D850
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:36:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B97FB0D860
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:39:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01FDF5618E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:36:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55C6AAA4E68
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 438232E3B03;
-	Tue, 22 Jul 2025 11:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="StWvaIKB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B302E2EFF;
-	Tue, 22 Jul 2025 11:36:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C73622E3397;
+	Tue, 22 Jul 2025 11:38:03 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E512E2F1C
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 11:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753184175; cv=none; b=bNZDAVezy98RwH96rDIsUHrZl6S6bx1Q4BVpl18pUIAWhqLEI/MhMI174FxiLRJWdm14BBkC+z+VuV14bua8SpQsjRIbtdI+hI1ECUjxdhUYq4mrAsuV9aOf+eTrJTT72iy3nyTnZTqdHwG+kuZmaLfMU3IgNAxHqYr334NO+E0=
+	t=1753184283; cv=none; b=UIJ9Qmtbsny1n+SpZw9BTRRQ5dmEk5L04Bh9KTaOrkfIZU5okBqOQqViGrod7Bcv8EV87SpcepgywksdrybQnyFsK+diiYdRh3tMYF8cLNObaie7d+RYhUHRS1N52HKmvhW7Ns7vlOvIG9Wr5rDTlEIbtOfnZlXau2Bmkf3nGS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753184175; c=relaxed/simple;
-	bh=6jt5GTK+6dNViwg0jv8XmC2xhjI3baxH4ZvaFc5mP4s=;
+	s=arc-20240116; t=1753184283; c=relaxed/simple;
+	bh=O7dV4Fo3MDBZoBMUb0U5snvvyOSp/rzRYC/FsUwwoyU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b3eoOocaYrcY8QeJciIk86ngYn7YHX+oFF2lX8dnjlIixhuycg96lmjDAsCNqFFmCNode8krBPPJXOaiAo2z68X9B3qA3Jkx0zGNpY95xX0HpiZPY0/i352BmcofvyBJiYmZF0GvMuDxCpGLybTfEebdf4ics4eeEofafN2SRaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=StWvaIKB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79D10C4CEEB;
-	Tue, 22 Jul 2025 11:36:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753184175;
-	bh=6jt5GTK+6dNViwg0jv8XmC2xhjI3baxH4ZvaFc5mP4s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=StWvaIKBx7VqaynVbI/AZYu1cCXsyFJRkejL4J2AtdBwwEPMzat9W0QAvS+9Mh0ei
-	 /3BwOJ+McrGyto0rwKt8CG72NBFVbZLVQYFqTSvXoWfHETVXJ+D00MGkN7FHxefHkn
-	 7DheYPT3W5Jy4AKGs9gekdZlz4LTxboWrqKS8a2KVx6I9HR/XFvSDv/gZ5NcZ12Vp0
-	 jEHB/cfAN/0moVw5FGPsOlsTQh9YsEpY9uk8pJl2BXPgNX2XWwnzmyzcpfrEIvXeiW
-	 eR1UdYPwjd8VmOiDJ8ALnaDXoqpKNt+dvjlp/heCDnyKK/lqcFY44fLaTruWHQFcKv
-	 Mhf5hzPoS/Ltw==
-Message-ID: <c5ba329d-ea62-4a8c-97df-594eb8c6b3af@kernel.org>
-Date: Tue, 22 Jul 2025 13:36:09 +0200
+	 In-Reply-To:Content-Type; b=dLe2iG+PXw5grxRcnBhlDp1PuCCe9zcfcHic4UeeFerGiQDKFIDU9IE+c0AwHAGeqRar5FlO0hRBnafv7YYSFFFjT0OcPRyZUihVzeXdoNIu3B+opkOiUsf6mzXFclvXslGkcqGFx9w6iHOee4o9XRDN49gMllC4VDeRjHjEV50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 852BF152B;
+	Tue, 22 Jul 2025 04:37:54 -0700 (PDT)
+Received: from [10.1.30.167] (XHFQ2J9959.cambridge.arm.com [10.1.30.167])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C77853F6A8;
+	Tue, 22 Jul 2025 04:37:56 -0700 (PDT)
+Message-ID: <ac0b2fcd-6f90-4802-be46-dc1c20d55d2e@arm.com>
+Date: Tue, 22 Jul 2025 12:37:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,59 +41,82 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] rust: Update PCI binding safety comments and add
- inline compiler hint
-To: Benno Lossin <lossin@kernel.org>
-Cc: Alistair Popple <apopple@nvidia.com>, rust-for-linux@vger.kernel.org,
- Bjorn Helgaas <bhelgaas@google.com>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, John Hubbard <jhubbard@nvidia.com>,
- Alexandre Courbot <acourbot@nvidia.com>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250710022415.923972-1-apopple@nvidia.com>
- <DB87TX9Y5018.N1WDM8XRN74K@kernel.org>
- <DB9BF6WK8KMH.1RQOOMYBL6UAO@kernel.org>
- <DB9FUEJUOH3L.14CYPZ8YQT52E@kernel.org>
- <DB9H6HEF9CKG.2SAPXM8F9KOO3@kernel.org>
- <DB9IQAU4WPSP.XZL4ZDPT59KU@kernel.org>
- <bwbern2t7k5fcj6zxze6bjpasu3t26n6dmfptlmhbhd7qmligs@3fgwifsw7qai>
- <DBIHP8IP3OHA.8Y1S9ZV1Y1SZ@kernel.org> <DBIJ3POBANNM.KSO1I5557PFV@kernel.org>
- <be42295e-63e1-4e2f-986f-aef962f531bd@kernel.org>
- <DBIJM4PTRHAS.3KXPG1MHNS8K0@kernel.org>
-From: Danilo Krummrich <dakr@kernel.org>
-Content-Language: en-US
-In-Reply-To: <DBIJM4PTRHAS.3KXPG1MHNS8K0@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v5 4/7] mm: Introduce FPB_RESPECT_WRITE for PTE batching
+ infrastructure
+Content-Language: en-GB
+To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org
+Cc: david@redhat.com, willy@infradead.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, catalin.marinas@arm.com, will@kernel.org,
+ Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz,
+ jannh@google.com, anshuman.khandual@arm.com, peterx@redhat.com,
+ joey.gouly@arm.com, ioworker0@gmail.com, baohua@kernel.org,
+ kevin.brodsky@arm.com, quic_zhenhuah@quicinc.com,
+ christophe.leroy@csgroup.eu, yangyicong@hisilicon.com,
+ linux-arm-kernel@lists.infradead.org, hughd@google.com,
+ yang@os.amperecomputing.com, ziy@nvidia.com
+References: <20250718090244.21092-1-dev.jain@arm.com>
+ <20250718090244.21092-5-dev.jain@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20250718090244.21092-5-dev.jain@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 7/22/25 1:21 PM, Benno Lossin wrote:
-> On Tue Jul 22, 2025 at 1:02 PM CEST, Danilo Krummrich wrote:
->> On 7/22/25 12:57 PM, Benno Lossin wrote:
->>> On Tue Jul 22, 2025 at 11:51 AM CEST, Danilo Krummrich wrote:
->>>> I think they're good, but we're pretty late in the cycle now. That should be
->>>> fine though, we can probably take them through the nova tree, or in the worst
->>>> case share a tag, if needed.
->>>>
->>>> Given that, it would probably be good to add the Guarantee section on as_raw(),
->>>> as proposed by Benno, right away.
->>>>
->>>> @Benno: Any proposal on what this section should say?
->>>
->>> At a minimum I'd say "The returned pointer is valid.", but that doesn't
->>> really say for what it's valid... AFAIK you're mostly using this pointer
->>> to pass it to the C side, in that case, how about:
->>
->> It is used for for FFI calls and to access fields of the underlying
->> struct pci_dev.
+On 18/07/2025 10:02, Dev Jain wrote:
+> Patch 6 optimizes mprotect() by batch clearing the ptes, masking in the new
+> protections, and batch setting the ptes. Suppose that the first pte
+> of the batch is writable - with the current implementation of
+> folio_pte_batch(), it is not guaranteed that the other ptes in the batch
+> are already writable too, so we may incorrectly end up setting the
+> writable bit on all ptes via modify_prot_commit_ptes().
 > 
-> By "access fields" you mean read-only?
+> Therefore, introduce FPB_RESPECT_WRITE so that all ptes in the batch
+> are writable or not.
+> 
+> Signed-off-by: Dev Jain <dev.jain@arm.com>
 
-We might also write them, but currently we only write them through FFI calls on
-the C side.
+Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+
+> ---
+>  mm/internal.h | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/mm/internal.h b/mm/internal.h
+> index 5b0f71e5434b..28d2d5b051df 100644
+> --- a/mm/internal.h
+> +++ b/mm/internal.h
+> @@ -208,17 +208,20 @@ typedef int __bitwise fpb_t;
+>  /* Compare PTEs respecting the soft-dirty bit. */
+>  #define FPB_RESPECT_SOFT_DIRTY		((__force fpb_t)BIT(1))
+>  
+> +/* Compare PTEs respecting the writable bit. */
+> +#define FPB_RESPECT_WRITE		((__force fpb_t)BIT(2))
+> +
+>  /*
+>   * Merge PTE write bits: if any PTE in the batch is writable, modify the
+>   * PTE at @ptentp to be writable.
+>   */
+> -#define FPB_MERGE_WRITE			((__force fpb_t)BIT(2))
+> +#define FPB_MERGE_WRITE			((__force fpb_t)BIT(3))
+>  
+>  /*
+>   * Merge PTE young and dirty bits: if any PTE in the batch is young or dirty,
+>   * modify the PTE at @ptentp to be young or dirty, respectively.
+>   */
+> -#define FPB_MERGE_YOUNG_DIRTY		((__force fpb_t)BIT(3))
+> +#define FPB_MERGE_YOUNG_DIRTY		((__force fpb_t)BIT(4))
+>  
+>  static inline pte_t __pte_batch_clear_ignored(pte_t pte, fpb_t flags)
+>  {
+> @@ -226,7 +229,9 @@ static inline pte_t __pte_batch_clear_ignored(pte_t pte, fpb_t flags)
+>  		pte = pte_mkclean(pte);
+>  	if (likely(!(flags & FPB_RESPECT_SOFT_DIRTY)))
+>  		pte = pte_clear_soft_dirty(pte);
+> -	return pte_wrprotect(pte_mkold(pte));
+> +	if (likely(!(flags & FPB_RESPECT_WRITE)))
+> +		pte = pte_wrprotect(pte);
+> +	return pte_mkold(pte);
+>  }
+>  
+>  /**
+
 
