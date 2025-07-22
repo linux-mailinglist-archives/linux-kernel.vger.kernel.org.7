@@ -1,116 +1,97 @@
-Return-Path: <linux-kernel+bounces-741079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B09F1B0DFDD
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:04:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01452B0DFF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:07:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86EA11C2343D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:58:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 756C17B8B8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:00:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AAE22EBDE0;
-	Tue, 22 Jul 2025 14:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F9D273D6E;
+	Tue, 22 Jul 2025 15:01:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="UkQPPri7"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tlvs6Qto"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A73162E1724;
-	Tue, 22 Jul 2025 14:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F03F41EDA0F;
+	Tue, 22 Jul 2025 15:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753196244; cv=none; b=AeD1UZkCsURQRF9k9kUCrLKFgP8H4QsYkOVmwtU2+mCmRzqc7n7FYcxiAkd6L/sWYvitDx1KHjELoPXMyVYGr5elzH58LyKKWUSTwsV7b0f6VfGW26Umjx7rBCDKfRg51spxZiO6BO2a73onJfdF9/y7DgBjl06RCnZhqT8UfzQ=
+	t=1753196481; cv=none; b=MQFKM5D9LUtVIJ6Amx8Nqz0mKHPEZ37u8ib3MHdgjRJVoi6rkMDnpVvrKMOpmEAn4wfDdNSdE1S8yPftPSHs8boe5Y1raP4Q0XEnJmgONiZL8tMad33sBKjDnyBDxVugNrLyDy348Ewh7+8tlWCK5iVsULR/AKxnRyFAEtauNn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753196244; c=relaxed/simple;
-	bh=3xnLaWnOmOkuJ0977o3SrFUG6qb/RVNQZ8CVCCYJzww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FQEtcVjlZzPv54EPi7YhczYVZij4ncz18O0SMGVdEG7GW7QzrFALBd6GLHWTGuappbKkq7MDl77J8u/dosQVJhCDdeRxP5ygdTHdjgNHEuWqokZF5+svEBHiJ5Hbx7nL68LBsqAWnV2YNqbtfctncbjwXUT0XRDCX6xpemMXMfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=UkQPPri7; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6AA9D40E026C;
-	Tue, 22 Jul 2025 14:57:19 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 1y_-TjzpZqNK; Tue, 22 Jul 2025 14:57:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1753196236; bh=CV12ZyPTxqPmlSN7j772KXpPQFGLihlZuz2lc7oVyx4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UkQPPri7/pKRTQnzkIWK5s0tfRVwYGY7qg8j8odxh9zx2KVuGkK024yEVjJElO7aq
-	 bwK98klfCEphi4/LXhmAxJ7E8JMpl6AwZR3NNwGE0qYBCnAs27XhnN6fF6a818y11E
-	 8DYTip6Dm62MkTF8FFKxtnDjPwZzNNiB6gD5yD5CTAXok1xEJ21RXRhHvAJBJhv8ps
-	 Qapkq66PqUbRyXG7/fTFE4dCLEke+4mjMNi++OlS6hKParGax79OKIaUuCCPdU/pHt
-	 7ZpVY/iqEA5nlGhmYboOGrBbBM8LzeGm0atnLGIR0yCSIAYRotHnNH4tSRzpFZRE4H
-	 X82QqiI3jNwjLckbnNnBYVerRXpebpHEm4iItVgHmO5jkIepjnkFh5Xnn2d1H3ZYeG
-	 cJn8bqjnIga98fENoyKJG+izJxx7Xn8NKjqt0P8E8vAv4BKzdhD95zDcwx0sVg4hYo
-	 p8a6qPzNnO7pmuyq5eAaW5PLxH2XU7vM7mEHk5g4FmafjOV9Mx0mXhQSADIC8cj56V
-	 Dl17qhTNidU/w9Z2cRrr4KAetogvP8VX46MIUs9TuCSA3/fsYv+tmVIb8dgxV51L8l
-	 Cn+YB4pKapuEnNuH9BatPUho0cfLi4cmzeQvlrc4f0tnpxaiNQZ8PaFMD5dea4Gznt
-	 T0deDF0MZ/QMfc1sfFvblgH8=
-Received: from rn.tnic (unknown [78.130.214.207])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id A10CC40E0265;
-	Tue, 22 Jul 2025 14:56:53 +0000 (UTC)
-Date: Tue, 22 Jul 2025 16:58:54 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Huang, Kai" <kai.huang@intel.com>
-Cc: "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"Hansen, Dave" <dave.hansen@intel.com>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"hpa@zytor.com" <hpa@zytor.com>, "Gao, Chao" <chao.gao@intel.com>,
-	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-	"seanjc@google.com" <seanjc@google.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"kas@kernel.org" <kas@kernel.org>,
-	"sagis@google.com" <sagis@google.com>,
-	"Chatre, Reinette" <reinette.chatre@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Williams, Dan J" <dan.j.williams@intel.com>,
-	"nik.borisov@suse.com" <nik.borisov@suse.com>,
-	"ashish.kalra@amd.com" <ashish.kalra@amd.com>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"Yamahata, Isaku" <isaku.yamahata@intel.com>
-Subject: Re: [PATCH v4 1/7] x86/kexec: Consolidate relocate_kernel() function
- parameters
-Message-ID: <20250722145854.GAaH-nLpCa12zaiOPa@renoirsky.local>
-References: <cover.1752730040.git.kai.huang@intel.com>
- <c7356a40384a70b853b6913921f88e69e0337dd8.1752730040.git.kai.huang@intel.com>
- <5dc4745c-4608-a070-d8a8-6afb6f9b14a9@amd.com>
- <45ecb02603958fa6b741a87bc415ec2639604faa.camel@intel.com>
- <7eb254a7-473a-94c6-8dd5-24377ed67a34@amd.com>
- <1d2956ba8c7f0198ed76e09e2f1540d53c96815b.camel@intel.com>
+	s=arc-20240116; t=1753196481; c=relaxed/simple;
+	bh=pFvy2HWeqCbXyhfHJLCUaU+GPIWDOQBcfZOPTiK4syY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iDPBrfMiMRG5jbX0rBXS6JSD0iqxKG6BKbT8s9MvymgLx5ZZJmRNEt0R7mt/07DJHzn3B+65KKmla9G5WWnbj9WgVyyy4nCvR4xCeoaQcIm7hpKLoIKxOwqbSHSNxYPoWhjhHDnqeHYNfCd46BoOlI+jq3Hn5G86jChHWMZ4at4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tlvs6Qto; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA7F8C4CEEB;
+	Tue, 22 Jul 2025 15:01:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753196480;
+	bh=pFvy2HWeqCbXyhfHJLCUaU+GPIWDOQBcfZOPTiK4syY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Tlvs6Qto6iGLoZqpIbv4UGfdlxahWXAFepTa7+hiBeajN4rFW40N9myFE09eCPecW
+	 32NQuaYECvm47PPEQ1+NvvIPmKQks7O6oQ/rkgDrmryjxisoMDT+ISmLKU1gVB5JXb
+	 XDYieTMwIXH+bG754OaHN33KOwUufO1bL2qj77ooUQFu5Y6LaVwz0env16hY/q0KGr
+	 LgLYBi51QvbcAg/sFqWfKdg/+f9wTk+2fj0rm+Y2qY7AuZBeopxpDDhDlpXbGT9S+T
+	 7CLbHdsvUvyvuT9gE5jFne3NNhD5o1r6gpHzb7UkQ6KqaFA6CQP0xXOdJ8WqXOngEx
+	 y7iaNDw7sFPLQ==
+From: Danilo Krummrich <dakr@kernel.org>
+To: gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	lossin@kernel.org,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu
+Cc: rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH v2 0/3] Documentation for Device / Driver infrastructure
+Date: Tue, 22 Jul 2025 16:59:58 +0200
+Message-ID: <20250722150110.23565-1-dakr@kernel.org>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1d2956ba8c7f0198ed76e09e2f1540d53c96815b.camel@intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 21, 2025 at 09:36:48PM +0000, Huang, Kai wrote:
-> Np and thanks! I'll address your other comments but I'll see whether Boris
-> has any other comments first.
+This patch series expands the documentation for the generic device and driver
+infrastructure and provides a guideline on how to implement bus and class
+specific devices as well as bus specific driver infrastructure, i.e. bus
+abstractions. It also expands on the existing documentation of device context
+types.
 
-Nah, he hasn't. This looks exactly like what I had in mind so thanks for
-doing it.
+Changes in v2:
+  - Remove redundant DeviceContext dereference hierarchy.
+  - Separate links as suggested by Alice.
+  - Add a note that the guarantee for a Device reference to have a certain
+    DeviceContext comes from the specific scope the Device reference is valid
+    in.
+  - "structures" -> "types"
 
+Danilo Krummrich (3):
+  device: rust: expand documentation for DeviceContext
+  device: rust: expand documentation for Device
+  driver: rust: expand documentation for driver infrastructure
+
+ rust/kernel/device.rs | 208 +++++++++++++++++++++++++++++++++++++-----
+ rust/kernel/driver.rs |  89 +++++++++++++++++-
+ 2 files changed, 271 insertions(+), 26 deletions(-)
+
+
+base-commit: 51a486feac0ca002bee6429f03da0a6c206d0dc5
 -- 
-Regards/Gruss,
-    Boris.
+2.50.0
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
