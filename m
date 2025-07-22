@@ -1,125 +1,163 @@
-Return-Path: <linux-kernel+bounces-741357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 106C4B0E32A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:59:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EEF7B0E32E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:00:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 956EC1C85D66
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:00:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 735F0AA40FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15280280335;
-	Tue, 22 Jul 2025 17:59:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 731C327F013;
+	Tue, 22 Jul 2025 18:00:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KZ7KKXF0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zSTmL38H"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D532928031C
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 17:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE2F27EFE1
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 18:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753207170; cv=none; b=CvIfnOeRUiHzV4QoM0ATm87lGFiOguBEwGjRDCxQdwubjbsAiLePGEUHyaucQb50fY7JmNefWw8wBvTJ4/2bOHtg/DPu1Xs/NPg6HBVYLHbNyFejtdA53gziLfd/OHLgmoqZuLbfsWVBRYrQAQCVfFTTuBo/MNKmU1A8iycORUM=
+	t=1753207246; cv=none; b=FqPLRYjcLVYmPDmc9WFv3BeQ62o0QwQU4LmIn9b+zGTIsYJ/jSCW4M7GBL5Y3bGDfZOP2VCrkhvVllqVe7EAAS6+mU7fCsG0xs1YFFPjLLL1fk9OcdlRZAssdHcgpoQzGOU2f2c+qqujku94i1l9ZdRXnjaMRJhrpI8PTqv1auQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753207170; c=relaxed/simple;
-	bh=JiX+WUAcLJXpo4QerqRjpVTvbXXolkhGNQpOPlELs5Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NQAc71RAKzx2CyXYoXnhpnc/Kj90Tvfp8YzKc4Ww2P9KEtkY0IUJj0Kmmjd8e+SxMqvy6+UK8zemPzKg5VYdcimURpKUNaX4/ztlU1DJf+umurKfOJ1by8OmW5nrB0y9I5DuTfWnO7bssUt2vm630qPh3TNEn4mIqgMec2/lSXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KZ7KKXF0; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753207167;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nh3RxMWKI0vx/8E9XE0zit4VRevVC1NeFnlkYll0kJM=;
-	b=KZ7KKXF0VMDMalqNX6d35DJc6lhuj125uDWy6KT84rU9kZrd6x0FJroROqHvPsGVkdmPW1
-	gLXQi+C/MeV3Uk7Ixjs8ydTJMec6CB+2lS6ui1wu0uZzQb6io1d+KWzQZCnRq4QbJVyb4g
-	eTZXSp5ypaa7s+ICO1j5Gpldj+4EvHg=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-163-by6hv_79P7qjrkMqLJD7wA-1; Tue, 22 Jul 2025 13:59:25 -0400
-X-MC-Unique: by6hv_79P7qjrkMqLJD7wA-1
-X-Mimecast-MFC-AGG-ID: by6hv_79P7qjrkMqLJD7wA_1753207164
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6fab979413fso107810836d6.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 10:59:25 -0700 (PDT)
+	s=arc-20240116; t=1753207246; c=relaxed/simple;
+	bh=YVtu41alI3J1y0N+ZggPSzt7lkdH9t/iPzc26jPFrYQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mdaV4dkZkCA2VJysLY5bh0XZFADDPLCspnjfrWNDpixPuLxuCX+rmJp867Z1tVa2i6W3DVZuz+sJMOMKIxFZuOeuFjFk8B85022qmL3tEC9Egk1HMbr6OHSFfeWznzNH4PKyR6rUtB6S1vofp3h2W9PIL+E+9+ID5SS8q6T/7OI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zSTmL38H; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-313f68bc519so3678097a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 11:00:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753207244; x=1753812044; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Px2ISLgVozuB6r8zgwA8tkISmDkVGlK4ZTL8goB7E8M=;
+        b=zSTmL38H3byXvemZ0Nd611RvCtnf+mO2jKbqoAaS88EofYkoOXdZhPq2QgHcPSpyZD
+         ssJ07u+aA9EqUnpxis8t1LkB5LqCbtry6NEu5L9TsCpijO9haJncsFRFPCghJdeCANIA
+         BbI73Ii1qEMhvz4XR1+ZWK6KFH6QX0Wj28CVkSHskNA9RP5L6g+hwd68ElyUqfc0y710
+         cNMB/FEzUzFUsLtX/uJ9Hgnpr5kJUAuSKF/FxudRVyLnMVIOG6aLLOpCuWaj2n4zgrBW
+         knHiVgZ3LzZuThJ1EXoDkq0LRpSQwixZkRK6BpF3oSkuHcuF/05Cv5zauDD31+UzdOWn
+         ZQew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753207164; x=1753811964;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nh3RxMWKI0vx/8E9XE0zit4VRevVC1NeFnlkYll0kJM=;
-        b=YBs/X2s/hFSd0OZCl4ZNE3K52lCiGiaZ0vMlPo257u+in8h1rjA0+LTRBcXbnMXLaF
-         int4KY8D3ABJf7UCT4+afUZGSPUjZScdmWY42PRmFba5nOoEvSS9Yph6wZxfkMEdMVlv
-         +Uk2aVyLGFww97+ofkRLFd4UnL6zocQMJ2L0hLHgzUk3rZIJv8niqak/bOJ/VSRZgHwP
-         nT+D755DRsHXtBvoQnXNBMY22KIPHN5MJvCAXr4tBI2Nx52miPEZF7yWgA8HaKJRXogE
-         BdFETWXFqkB5MNtAna0b1pAtLXBr36/YvRcy2eBvtYtwqKX56WRFiqCBl7enSUmnCgcq
-         8JgA==
-X-Forwarded-Encrypted: i=1; AJvYcCUiIsSz673LKsCMHFBrgO9OiK16Byg0QDGX7IWESKFDUMLT+jl9rLR80FAghqOapqmIryKTV2GA5WxrfcE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDqO6qVPx6GuiOz4y5B65f++T5aYWnMc9FsM06YoT1t464EVXK
-	pUaHaJeiLNzmQTEvnSZbBGvlqojbdrHY05k3++mWgLNEcO+U6ZVGUpSGnSMV9vb28m2p82Kw1EQ
-	o6JLSJNa1hzIhtlDLZtIBWwd0nQ85Juldl3yAzmYFyFF0g3skESZNifvw09WPC3NgPA==
-X-Gm-Gg: ASbGncuTrD7TAawyt0qXnVKLgSoj3fmrVS6M0gcVYQR7YIyp7+TI4+QrxL6RzmD7kdg
-	5iJPnsnRdnWM2+kiDSpro/W7gWQUJMo58P1Lt9gW3OUVr+ra2Q7YO9Q6BvUcrHttGLkc311U1Tx
-	pa6/vAgeaHwtlAz6SuL9jhsPAPsn9WHWz47gfO6IGW5O/I3C3vNFuEHf5DdAo4xKOT2oW5zaxLS
-	cfFCVGThdwh8kXMHkjwyK7ZziklZUmqkzR3GAlDlW23FF/nQt+P0nO4CvpX7YgGAh/2fTBkPqxj
-	XmmUbnNnQbqSdUlYmA5ufIxvhTVfbw6p6vso
-X-Received: by 2002:ad4:4eee:0:b0:6fb:5f97:510f with SMTP id 6a1803df08f44-7070087533bmr173316d6.44.1753207164563;
-        Tue, 22 Jul 2025 10:59:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGeND15EoY0kc7n9IteeVLBb4rW6kvwLwTt2goaOdVkAt7hhA9cKMxKBefg1R6RRXfZP7oCYA==
-X-Received: by 2002:ad4:4eee:0:b0:6fb:5f97:510f with SMTP id 6a1803df08f44-7070087533bmr173036d6.44.1753207164206;
-        Tue, 22 Jul 2025 10:59:24 -0700 (PDT)
-Received: from thinkpad2024 ([71.217.76.174])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-706e09879a8sm24041736d6.72.2025.07.22.10.59.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 10:59:23 -0700 (PDT)
-Date: Tue, 22 Jul 2025 13:59:21 -0400
-From: "John B. Wyatt IV" <jwyatt@redhat.com>
-To: "Shinji Nomoto (Fujitsu)" <fj5851bi@fujitsu.com>
-Cc: Shuah Khan <skhan@linuxfoundation.org>,
-	Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>,
-	John Kacur <jkacur@redhat.com>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/2] cpupower: Allow control of boost feature on non-x86
- based systems with boost support.
-Message-ID: <aH_RecWNuC_UqUlx@thinkpad2024>
-References: <20250522061122.2149188-1-fj5851bi@fujitsu.com>
- <aDhJdTWzDihchywc@thinkpad2024>
- <OS9PR01MB14003E72236096AD987D2D4CED96DA@OS9PR01MB14003.jpnprd01.prod.outlook.com>
- <0053926a-7b0a-4e49-9acf-fcb1d73134cc@linuxfoundation.org>
- <aFWZyPs4eBwGcKPu@thinkpad2024>
- <OS9PR01MB1400335E9E14CF505B8AD26DED95CA@OS9PR01MB14003.jpnprd01.prod.outlook.com>
+        d=1e100.net; s=20230601; t=1753207244; x=1753812044;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Px2ISLgVozuB6r8zgwA8tkISmDkVGlK4ZTL8goB7E8M=;
+        b=ptOWeCxUY6aMmux7YERWIF6h6wZkNi/52Afu5IJlG3mk79xrYvAXxMY/Gdi0ByslZU
+         fDDh3HdkNGR/fAQ0s5hSO7RkwPF0aJot83/ivz4qmkvkXPaEP2sfWar+7d4wfTv084iN
+         zrEx1TmAtuR671l2y83Mh4iumo21Yv0lFvg9eHUbpRlog/28s2ARhZpuhavAfh3VukZv
+         gK9fPvTzAHLwgfahgsc1U3ebA4spwmkLddGTXNfpwErCJIzkAp/lZQNztT8ZCCsJ14gX
+         DKzZcL+P/p7u1xmabXaUsVr5D8XWeV+Kbbn3bBMTQYD9vXtk49d1lm8/VuNTUhWH2SRo
+         KxUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUsri0tS/Aii2xegZwTrz2Fa4coEoz9886WmiG+U3yMS1mN8/p9QeGMXPegnbLRPhusWCKE4AgJhClJEYE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMOgk6ukvR3pwompYuMAqX9mhu5YIIZ8aGGqWall8bmIFr2PT2
+	x/TpoZot/yn6m589J5UK7aZYHviURqKLd3a9R0cm17argSb4XeB4A2PAXIngOucekfNm9mdIcn8
+	bE9yasI20Xmr6CLQlTxE+9hgycItj+1U1psXfSJPisA==
+X-Gm-Gg: ASbGncsNbMBVpr1RHI+rC4k7OhXwKH8uWKzGq9YxmSm3xiAudcuAy6e4e5/TDLAX+JS
+	J0HKOO/+yo4DRcwAuYuhouL8nV06u/jqoGZMNzul+OL0FlLK9uBiz3ZfIoD59f1MNlJMry2nJcg
+	yAMzyGrP2czME0tMXQPu4QOU621I/n9FZh7ZL4cGaCDq31L+AA5oqpzidV0B5DhaS6/xhjfkted
+	7OW/95/guJ/e35XjYMXVdRoShryjHvzKFqTUw==
+X-Google-Smtp-Source: AGHT+IF1c0ECz1dHQBMozDVaGJegjDQ+xVWv6X/ujXbFpey4CFIuQxZFRfSj60viTUAnlrJuZLxqs44XGNMAeZvlUx8=
+X-Received: by 2002:a17:90a:d60b:b0:311:f30b:c21 with SMTP id
+ 98e67ed59e1d1-31e5082cc31mr280553a91.26.1753207244493; Tue, 22 Jul 2025
+ 11:00:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <OS9PR01MB1400335E9E14CF505B8AD26DED95CA@OS9PR01MB14003.jpnprd01.prod.outlook.com>
+References: <20250722134340.596340262@linuxfoundation.org>
+In-Reply-To: <20250722134340.596340262@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 22 Jul 2025 23:30:32 +0530
+X-Gm-Features: Ac12FXzKOsmLQ8yujNcTxBZG6536oHN-0krbleAUzT7bCEwfhEyQGS7hbv_zCoY
+Message-ID: <CA+G9fYu8JY=k-r0hnBRSkQQrFJ1Bz+ShdXNwC1TNeMt0eXaxeA@mail.gmail.com>
+Subject: Re: [PATCH 6.12 000/158] 6.12.40-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, clang-built-linux <llvm@lists.linux.dev>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org, Nathan Chancellor <nathan@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
+	Ben Copeland <benjamin.copeland@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jul 22, 2025 at 07:30:27AM +0000, Shinji Nomoto (Fujitsu) wrote:
-> Hi, John and Shuah
-> 
-> Regarding the subject, I submitted patches to cpupower, but so far I haven't received confirmation that the content has been approved, nor does it appear to have been merged into the shuah/linux.git master branch.
-> Could you please inform me about the current status of the patches?
-> 
-> Thank you for your time and consideration.
+On Tue, 22 Jul 2025 at 19:27, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.12.40 release.
+> There are 158 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 24 Jul 2025 13:43:10 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.40-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-I do not see any issues with the answer Shinji gave on testing.
+With addition to the previous report on the stable-rc 6.15.8-rc1 review
+While building allyesconfig build for arm64 and x86 with the toolchain
+clang-nightly version 22.0.0 the following build warnings / errors
+noticed on the stable-rc 6.12.40-rc1 review.
 
-I am fine with it being merged.
+Regression Analysis:
+- New regression? Yes
+- Reproducibility? Yes
 
--- 
-Sincerely,
-John Wyatt
-Software Engineer, Core Kernel
-Red Hat
+Build regression: arm64 x86 kcsan_test.c error variable 'dummy' is
+uninitialized when passed as a const pointer argument here
 
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Build log
+
+kernel/kcsan/kcsan_test.c:591:41: error: variable 'dummy' is
+uninitialized when passed as a const pointer argument here
+[-Werror,-Wuninitialized-const-pointer]
+  591 |         KCSAN_EXPECT_READ_BARRIER(atomic_read(&dummy), false);
+      |                                                ^~~~~
+1 error generated.
+
+
+## Source
+* Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+* Git sha: 596aae841edf981aab1df1845e6df012bed94594
+* Git describe: v6.12.39-159-g596aae841edf
+* Architectures: arm64 x86
+* Toolchains: Debian clang version 22.0.0
+(++20250721112855+43a829a7e894-1~exp1~20250721112913.1588)
+* Kconfigs: allyesconfig
+
+## Build
+* Build log: https://regressions.linaro.org/lkft/linux-stable-rc-linux-6.12.y/v6.12.39-159-g596aae841edf/build/clang-nightly-allyesconfig/
+* Build run: https://regressions.linaro.org/lkft/linux-stable-rc-linux-6.12.y/v6.12.39-159-g596aae841edf/testruns/1703644/
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/30EXE6Cnct6e7DCgsWWrXlMdO0z/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/30EXE6Cnct6e7DCgsWWrXlMdO0z/config
+
+## Steps to reproduce
+* tuxmake --runtime podman --target-arch arm64 --toolchain
+clang-nightly --kconfig allyesconfig LLVM=1 LLVM_IAS=1
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
