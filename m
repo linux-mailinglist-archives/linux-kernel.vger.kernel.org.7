@@ -1,134 +1,236 @@
-Return-Path: <linux-kernel+bounces-741274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8C80B0E248
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:00:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CCC3FB0E24F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:01:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02F053A862F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:59:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00F473AD5F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8FA27F18B;
-	Tue, 22 Jul 2025 17:00:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B28C27E7DF;
+	Tue, 22 Jul 2025 17:01:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="nLYtFGj+"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="v81RZ1t6"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E52D279DBA;
-	Tue, 22 Jul 2025 16:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A2B27A129
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 17:01:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753203601; cv=none; b=P2pkNt0C5N2jBrR/2aGaIiUZEhlaNiTpwXoMrFZJxUq4XAFF76PaDFA8u3vSh6Io1pf8prO905tfoHY1wPnuWWSrPC7wyIhjKXF3e0ghbH4ua46DOa0zIE23BiiImeLVIzaJy60k+b7d4z3+H8yzQ+vf0SkFZHWaupyZ5iUMNag=
+	t=1753203666; cv=none; b=JukmFXorPxhWLwd4MtY+9HP/Rv+H++bwCJLrlhdWFnOZnf7zk/QuxVc+58Eeuq3GRi8e7onajCy9Y5DKbuvAx4B/3qERCFSlti2jJ0JTfDBxd7rvqUJ8IZHRNaOhiychDXYR+ptoAa5tIYigXa6iuIZd7ulfhbYFbRS60LiJcb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753203601; c=relaxed/simple;
-	bh=FMRnyRhitE21Y1CE7xWJUhAoijIeW5UjFQ+cU+mOOMc=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=YByRglemgoY6ne7QnrfbTtD0mXZCMC2/D9rm4l+Bor2E9N3/WtJHfagLm12yRTAL6Om6QihM3PLcWaKgqOigkgePTb+kpHAqGw1DAa9rLdC7UAOu/6po+4TfgjHFqySCh/ccfa+xtpmo2u/coW0zKB1x3kR2fWn6wkgKEGzwB5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=nLYtFGj+; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56MGwnFd657671
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 22 Jul 2025 09:58:49 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56MGwnFd657671
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025062101; t=1753203533;
-	bh=zcW3ufrPeS9z5vjFN56GirhJJTbdaCIUAEbrqpAovKM=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=nLYtFGj+YjoGNEYGiQTtSSrpLjsViKYD5wc5TuPqddAJ8ED6zjoIGvwZgXShXXwZt
-	 Z82UlljOtC8H/vyP3+1XHhLAhJvsSdBXSHJ84a1lkAM+dC0eOenHEapfk4l+xPw3Yp
-	 Tt3Lpn5k1a8EeQHBGdtankMXR8c2x9H6h+0GL1KdQYwwtXGBVhacT1Ab7+XMA9Vwvr
-	 jaS1KWf/6v6gMYlrDFaRXV8sXwAbLXlPwERIbq3nL8fW2l05WOB61yjvWDeSWsbJtw
-	 LjgcnAROyJDyAmDWXrktO4r2jj7OpE+JXGo7pOG10BKOA/G6IDssVi679Ct4qgRD8y
-	 fQKKcG4D5VH1Q==
-Date: Tue, 22 Jul 2025 09:58:48 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Greg KH <gregkh@linuxfoundation.org>, WangYuli <wangyuli@uniontech.com>
-CC: airlied@gmail.com, akpm@linux-foundation.org, alison.schofield@intel.com,
-        andrew+netdev@lunn.ch, andriy.shevchenko@linux.intel.com,
-        arend.vanspriel@broadcom.com, bp@alien8.de,
-        brcm80211-dev-list.pdl@broadcom.com, brcm80211@lists.linux.dev,
-        colin.i.king@gmail.com, cvam0000@gmail.com, dan.j.williams@intel.com,
-        dave.hansen@linux.intel.com, dave.jiang@intel.com, dave@stgolabs.net,
-        davem@davemloft.net, dri-devel@lists.freedesktop.org,
-        edumazet@google.com, guanwentao@uniontech.com,
-        ilpo.jarvinen@linux.intel.com, intel-xe@lists.freedesktop.org,
-        ira.weiny@intel.com, j@jannau.net, jeff.johnson@oss.qualcomm.com,
-        jgross@suse.com, jirislaby@kernel.org, johannes.berg@intel.com,
-        jonathan.cameron@huawei.com, kuba@kernel.org, kvalo@kernel.org,
-        kvm@vger.kernel.org, linux-cxl@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-wireless@vger.kernel.org, linux@treblig.org,
-        lucas.demarchi@intel.com, marcin.s.wojtas@gmail.com,
-        ming.li@zohomail.com, mingo@kernel.org, mingo@redhat.com,
-        netdev@vger.kernel.org, niecheng1@uniontech.com,
-        oleksandr_tyshchenko@epam.com, pabeni@redhat.com, pbonzini@redhat.com,
-        quic_ramess@quicinc.com, ragazenta@gmail.com, rodrigo.vivi@intel.com,
-        seanjc@google.com, shenlichuan@vivo.com, simona@ffwll.ch,
-        sstabellini@kernel.org, tglx@linutronix.de,
-        thomas.hellstrom@linux.intel.com, vishal.l.verma@intel.com,
-        x86@kernel.org, xen-devel@lists.xenproject.org, yujiaoliang@vivo.com,
-        zhanjun@uniontech.com
-Subject: Re: [PATCH v2 6/8] serial: 8250_dw: Fix typo "notifer"
-User-Agent: K-9 Mail for Android
-In-Reply-To: <2025072252-halves-sadness-18dc@gregkh>
-References: <BD5C52D2838AEA48+20250715134050.539234-1-wangyuli@uniontech.com> <2BF1749F02ADE664+20250715134407.540483-6-wangyuli@uniontech.com> <2025071607-outbid-heat-b0ba@gregkh> <634BA467821D37FE+0b2ace38-07d9-4500-8bb7-5a4fa65c4b9f@uniontech.com> <2025072252-halves-sadness-18dc@gregkh>
-Message-ID: <10127165-7020-4D35-B0F3-099F58B2AF4E@zytor.com>
+	s=arc-20240116; t=1753203666; c=relaxed/simple;
+	bh=RozRmBpgPdHgFhGbUCcQ7z8NNdDISN+K64Cuc6NwFaU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZuehUkDSY6JII2BVZ5Bdd2zDN9xbVmZnnYeoCpyXA23bmOFTeXajHQoBsWrogSi0HNgHj55lcUQaslBTqwlh6ZvHQu4JhKx2UVy0K8GTXw15xkWcLewIlrzA229il/oQ/peksVjqwV/uH80m9+ymaFBLoRekIimfEMoQ6cVBAdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=v81RZ1t6; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3ddc99e0b77so13825ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 10:01:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753203664; x=1753808464; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JMWl+IVSXU3UWMDRzWAL2yct7yvUc0gdtp2ypyWEquo=;
+        b=v81RZ1t6KRbSzkfTPuIGoKDr7zykwzPKVdgLPfw4BIdu63Ji0g/6lTJbkXDkDK9gb3
+         oF8oA6s11msCpmHc1KOaC4OOUUsB2WkehR/tDi4AASBi3I0zKnH4H8adS9N1w2vcfAtp
+         IgrJp3ZD35yTeYHshxRCEcIpJ15MMGSm76PSbWwDQrCMx3zAqTsHm429skd66CyyTPAI
+         APjCIC63TDQtI2A1KPQWxp6Ne0maz3Ks9SdXYG1JAInAu7qfuKljYwze/3D6yMeH9wtE
+         Ju6hkTKybu2OraKFz+K6NFNl1BeRW5fuTM876BAEJnXA/rG02Qe92LHUH3QjqLmhmxLi
+         cbfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753203664; x=1753808464;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JMWl+IVSXU3UWMDRzWAL2yct7yvUc0gdtp2ypyWEquo=;
+        b=i3Z8AFSipYYop6ae3b/UxVMmoIbw3JXMbnLZCHB+QCjAywVBSX9JMd2uj7gPV0di89
+         HaVWvP8C2lbxa0PQ3t2ft3z8jhhUtGXqVZC36AnO/gCIgx6tg+ByRd/qhNNcpEshtF6J
+         PNuUR5UUqrjaiVCO8A9I6HXyTvbCnBe0TKlGH9aPEQutd2MEWV0Ob/fhEO8H11GwAFGR
+         Szg2YwtBnp4UyqJshcXZLpuc6tcvEjhJqOigvPDxiS5LAw9lIeRHHxu4icJunIOBHalA
+         oI7f/K9662i7MLGTqIWWX63w4oL/Pk/SxYEraEwirsNfw4Z+IUYugMDDZYOsQ9f9QbOo
+         RbTw==
+X-Forwarded-Encrypted: i=1; AJvYcCUL+I1O7j9OUlw49DOBHHJPb/3QHRKZ1P+6EV/2Y9zsCrdt+7WUJL1itAUMQ+gWhHC8HEyZ1a2v/qoy4Sk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcTP4Skf7I1PBFysqhd18XxGuSHgP4gLGEgSppqBrqO2mOdI3L
+	kGxFWsThHvH65OVpxhzn33Y0aeKuQmINbep6jWOhJRtqRYGkFniwTJfUYMA9W4lQwYe/y3ZQcRt
+	Z/daXwXBx5MRdiYNQbSrYOyBOH4760OYQfrZNSvBv
+X-Gm-Gg: ASbGnctz9Wn7JqbnRLaj44oi+0zXRCZfIrRlcKvyeAYv/nU1xOG0kr7DbGqdeHJLKB0
+	9JMdHg2E4qee2QYe5SdHtEEB3VVuJq/nob4WRlKmY5MS2ThfOx/vU4UkFIbcu38woI04R2q2JvG
+	WyTFcQqWpteYN6WiBsdiYVLnIc6VDYr3lZvUdaEDrx0m120VM7PYKSmo9BxDcPRX1Rdb196/jo4
+	/et5NkKJW6cPyofnNi7oxpo9tASUTAc1jtG
+X-Google-Smtp-Source: AGHT+IEpvXyjeWxRcF/tu++Jd7SjfKR5DekS7xK1pGaWvDF8YHnNhRtkTHcjlr/j3YuSDcN0aAqV8516n/nUez2TuD0=
+X-Received: by 2002:a05:6e02:461b:b0:3e2:c215:1388 with SMTP id
+ e9e14a558f8ab-3e2c21515c2mr3649285ab.19.1753203663507; Tue, 22 Jul 2025
+ 10:01:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+References: <20250626054826.433453-2-irogers@google.com> <202507050736.b4hX0Xks-lkp@intel.com>
+ <87o6tcrzh2.ffs@tglx> <CAP-5=fWbmo3ejmeWbweSk5waPtS2VTc1obtaWiibZC3cVmvVvg@mail.gmail.com>
+In-Reply-To: <CAP-5=fWbmo3ejmeWbweSk5waPtS2VTc1obtaWiibZC3cVmvVvg@mail.gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 22 Jul 2025 10:00:51 -0700
+X-Gm-Features: Ac12FXzd_gAiZTQN5n1xPWmuULZhc8NKzh5QjOASDGMh9-MiyBPpltLGiJE_8A4
+Message-ID: <CAP-5=fWeK4RnL8=BQm3o3u0KoONYEptwEYFBC5_DkJTbgpbx9g@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] vdso: Switch get/put unaligned from packed struct
+ to memcpy
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: kernel test robot <lkp@intel.com>, Eric Biggers <ebiggers@google.com>, Yuzhuo Jing <yuzhuo@google.com>, 
+	Andy Lutomirski <luto@kernel.org>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+	Arnaldo Carvalho de Melo <acme@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, "Jason A. Donenfeld" <Jason@zx2c4.com>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On July 22, 2025 12:57:33 AM PDT, Greg KH <gregkh@linuxfoundation=2Eorg> wr=
-ote:
->On Tue, Jul 22, 2025 at 03:22:18PM +0800, WangYuli wrote:
->> Hi greg k-h,
->>=20
->> On 2025/7/16 16:08, Greg KH wrote:
->> > > Signed-off-by: WangYuli <wangyuli@uniontech=2Ecom>
->> > Is your name all one word like that, or should there be a " " between
->> > them?
->>=20
->> If I were to follow Western naming conventions, my name would be writte=
-n as
->> 'Yuli Wang'=2E
->>=20
->> However, frankly, I find it unnecessary and can't be bothered to follow
->> their customs, unless a maintainer strongly insists=2E (For example, yo=
-u can
->> see that my signature on commits for the LoongArch subsystem is differe=
-nt
->> from my other contributions)=2E
->>=20
->> Since Chinese names are written without any spaces in Chinese character=
-s, I
->> don't think it matters=2E
+On Tue, Jul 22, 2025 at 9:44=E2=80=AFAM Ian Rogers <irogers@google.com> wro=
+te:
 >
->Then use your Chinese name, don't feel like you need to change it to any
->other naming convention=2E  There's no requirement here at all to do so=
-=2E
+> On Tue, Jul 22, 2025 at 8:56=E2=80=AFAM Thomas Gleixner <tglx@linutronix.=
+de> wrote:
+> >
+> > Ian!
+> >
+> > On Sat, Jul 05 2025 at 08:05, kernel test robot wrote:
+> > > kernel test robot noticed the following build warnings:
+> > >
+> > > [auto build test WARNING on linus/master]
+> > > [also build test WARNING on tip/timers/vdso v6.16-rc4 next-20250704]
+> > > [cannot apply to acme/perf/core]
+> > > [If your patch is applied to the wrong git tree, kindly drop us a not=
+e.
+> > > And when submitting patch, we suggest to use '--base' as documented i=
+n
+> > > https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> > >
+> > > url:    https://github.com/intel-lab-lkp/linux/commits/Ian-Rogers/vds=
+o-Switch-get-put-unaligned-from-packed-struct-to-memcpy/20250626-135005
+> > > base:   linus/master
+> > > patch link:    https://lore.kernel.org/r/20250626054826.433453-2-irog=
+ers%40google.com
+> > > patch subject: [PATCH v3 1/3] vdso: Switch get/put unaligned from pac=
+ked struct to memcpy
+> > > config: s390-randconfig-002-20250705 (https://download.01.org/0day-ci=
+/archive/20250705/202507050736.b4hX0Xks-lkp@intel.com/config)
+> > > compiler: clang version 21.0.0git (https://github.com/llvm/llvm-proje=
+ct 61529d9e36fa86782a2458e6bdeedf7f376ef4b5)
+> > > reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/a=
+rchive/20250705/202507050736.b4hX0Xks-lkp@intel.com/reproduce)
+> > >
+> > > If you fix the issue in a separate patch/commit (i.e. not just a new =
+version of
+> > > the same patch/commit), kindly add following tags
+> > > | Reported-by: kernel test robot <lkp@intel.com>
+> > > | Closes: https://lore.kernel.org/oe-kbuild-all/202507050736.b4hX0Xks=
+-lkp@intel.com/
+> > >
+> > > All warnings (new ones prefixed by >>):
+> > >
+> > >    In file included from arch/s390/boot/decompressor.c:48:
+> > >    In file included from arch/s390/include/uapi/../../../../lib/decom=
+press_unlz4.c:10:
+> > >    In file included from arch/s390/include/uapi/../../../../lib/lz4/l=
+z4_decompress.c:36:
+> > >>> arch/s390/include/uapi/../../../../lib/lz4/lz4defs.h:109:9: warning=
+: default initialization of an object of type 'typeof (*((const U16 *)ptr))=
+' (aka 'const unsigned short') leaves the object uninitialized [-Wdefault-c=
+onst-init-var-unsafe]
+> > >      109 |         return get_unaligned((const U16 *)ptr);
+> > >          |                ^
+> >
+> > Any update on this one?
 >
->thanks,
+> Hi Thomas!
 >
->greg k-h
+> Thanks for the interest. I'm not sure how to resolve this.
+> Basically the story in the code is:
+>
+>   get_unaligned((const U16 *)ptr);
+>
+> is being expanded by:
+>
+>   #define get_unaligned(ptr)      __get_unaligned_t(typeof(*(ptr)), (ptr)=
+)
+>   #define __get_unaligned_t(type, ptr) ({
+>           \
+>        type __get_unaligned_ctrl_type __always_unused;                 \
+>        __unqual_scalar_typeof(__get_unaligned_ctrl_type) __get_unaligned_=
+val; \
+>        __builtin_memcpy(&__get_unaligned_val, (void *)(ptr),           \
+>                         sizeof(__get_unaligned_val));                  \
+>        __get_unaligned_val;                                            \
+>   })
+>
+> to:
+>
+>   ({
+>   const U16 __get_unaligned_ctrl_type __always_unused;
+>   __unqual_scalar_typeof(__get_unaligned_ctrl_type) __get_unaligned_val;
+>   __builtin_memcpy(&__get_unaligned_val, (void *)(ptr),
+>    sizeof(__get_unaligned_val));
+>   __get_unaligned_val;
+>   })
+>
+> which is then expanded to:
+>
+>   ({
+>   const U16 __get_unaligned_ctrl_type __always_unused;
+>   U16 __get_unaligned_val;
+>   __builtin_memcpy(&__get_unaligned_val, (void *)(ptr),
+>    sizeof(__get_unaligned_val));
+>   __get_unaligned_val;
+>   })
+>
+> so the analysis is correct that __get_unaligned_ctrl_type is
+> unused, however, I've also put __always_unused on the variable.
+> The purpose of that variable is for __unqual_scalar_typeof that
+> passes the value to _Generic. I truly don't care about that
+> variable but I care about it causing _Generic to get the correct
+> type for __get_unaligned_val (that value can't be const as it is
+> the destination of the memcpy). Why even declare
+> __get_unaligned_ctrl_type? Well we want the result of __get_unaligned_t t=
+o
+> match its type argument which needn't match the dereference of
+> its pointer argument (*ptr) - I accept that in many cases it
+> will. The value passed to _Generic is an expression and not a
+> type, so declaring the variable and using the variable for
+> _Generic allows this.
+>
+> My feeling is that my patch is correct and I'm not clear how to
+> improve upon it. I believe it is a weakness in the analysis that
+> the __always_unused isn't having an effect.
+>
+> Should adding new warnings for analysis on the code base be
+> allowed for this patch? Well the upside to the patch is getting
+> closer to not requiring -fno-strict-aliasing, or not introducing
+> requiring that flag for things in the tools directory. I think
+> the upside is good, I don't know how to mitigate the downside
+> with poor analysis by certain tools.
 
-To put it differently: what Greg (and the rest of us) want to make sure is=
- that your name appears the way you prefer=2E=20
+Oh, the actual warning is "leaves the object uninitialized". It is
+possible to silence this by changing:
 
-Having the Latin transliteration in whatever form you prefer is greatly ap=
-preciated, of course, since the knowledge of Chinese script is limited outs=
-ide East Asia, but that's just about it=2E
+  const U16 __get_unaligned_ctrl_type __always_unused;
 
-If you want to add your name in proper Chinese script in addition that sho=
-uld be fine, too=2E
+to something like:
+
+  const U16 __get_unaligned_ctrl_type __always_unused =3D 0;
+
+You then get complained at that the code is using 0 instead of NULL
+when instead of U16 the type of the __get_unaligned_t is a pointer.
+Basically I've entered into an analysis tool wac-a-mole and I don't
+have a combination to make them all happy.
+
+Thanks,
+Ian
 
