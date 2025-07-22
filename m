@@ -1,226 +1,219 @@
-Return-Path: <linux-kernel+bounces-740610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE1CBB0D666
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:59:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF4DEB0D676
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:00:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D2F55483A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:58:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C406F3BB373
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AAF22DE6F4;
-	Tue, 22 Jul 2025 09:58:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4DDB2E11CC;
+	Tue, 22 Jul 2025 09:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CT8sh2cb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="m/O49DTU"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A9128C873;
-	Tue, 22 Jul 2025 09:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE012E03E0;
+	Tue, 22 Jul 2025 09:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753178333; cv=none; b=kmU7o6gQnjEF0aQ0nrzv6v0FYneW1VPdFPTOYtC5WTsK7qEZzJjyOgDjSS+kJlYH0ohqvHmXkDAs37rmL2N7vkk4Hics0Vh+U0t1m16+bN6haRscomIFzs/0CPMKZ1O5ySxLyrlo9xoxW4mpLMSNeVp7C7rZZLymwcp4qVprc28=
+	t=1753178381; cv=none; b=VpERZmFdDGD8Nkgt4npf4dHrDN0olwyTcNv89Znnw8YGllTK+To2i54QMykYIC5FQ6i3KvyY5+vswzVBL5JPIKY+NsqYfCana8BF+51DvGA3e316n8oFso12Ul7MfzyGK4qEDmPSWp69hIjIwdp6MYE/I8mGu2MjAe4RZqBO6Ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753178333; c=relaxed/simple;
-	bh=qEeWfk6RMw0ttB9++h2U3jo0V/IeWqr7albfrVsTTOQ=;
+	s=arc-20240116; t=1753178381; c=relaxed/simple;
+	bh=9lAHiBwoo8jGTNinYh/ijsaneKOOiolgCjybVc2fj1U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NCjcigcnyxD87lmbhZrzvq38xAmRBdz/4WJ4hN9PoafFYMts/qxCkKJ47U2Wjr3XdLd7MB5jl7xixHAHqdrWwSOfFcJvdkukwpkfT+8d0ahsBgGLkYsgKGxKbDba36o2Pfs0fQnfi3A2OHGKiEBBLe95IKR0VK1VY82Jc7BeQQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CT8sh2cb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC9F0C4CEEB;
-	Tue, 22 Jul 2025 09:58:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753178333;
-	bh=qEeWfk6RMw0ttB9++h2U3jo0V/IeWqr7albfrVsTTOQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CT8sh2cbnPBOabSSjlEaI0mTXUClBT9FBUgNopwaM+SsRWYmKBIErMSJttydoupWu
-	 D4I7WH2N2PtoWMOaz9XIiitcS9EZE2Lij6PQN0FtKfuT2TffB7oTmMK5l1+65ZVbf1
-	 FFH9jMt55hIuiP6Rn71r73Poby+Sm8UU9xiG5PjJtWFuobUoGdsbB8HwEPms4e60rQ
-	 G32GVoNzUKOfxhTuQr+5pgREaXNz5e5LijGZKFIfSwRlkWdMOqDAPORVvVOEPusH8u
-	 RWvOLLh96OMQw+k5DdsQ+fjpowV+rVxV9hBsxQ0ij09lhcl4PPZS80LyIiYd5QiIqQ
-	 2mL/jhj/rXM5A==
-Date: Tue, 22 Jul 2025 11:58:48 +0200
-From: Joel Granados <joel.granados@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Feng Tang <feng.tang@linux.alibaba.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the sysctl tree with the
- mm-nonmm-unstable tree
-Message-ID: <lzabgfj2r5uf4gnmuibx6vhgdddi7bhqv3wj3ty6arnquu4itw@wsj4knxljyv6>
-References: <20250708190003.4eabc8ab@canb.auug.org.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UO8k3Vl5n44oWn/pCI832ulSxn1OQoL7WXaI2+XM4xkbamEhZev8vRLm0mevlCQ8frBeRnNON9l2mqo//yvjfWzLGTuXa0CRGggrCXmB9YXYJ73qANosZEyf7gpS5yvxcRdJlr6Utv9n+jhWD0qWMjrgPssr/ZiUqqPH3dcETQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=m/O49DTU; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56M8xTd5009164;
+	Tue, 22 Jul 2025 09:59:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=QNi9XzvfVxCwjgas+8tBNVhNwsc6Wl
+	y29wriyx3/p7g=; b=m/O49DTUDdwY7AISTXrwrRvug3FDe4RCwEjkgJMjIK5f8k
+	gTPyiraUNoWEe8n6MOFReNFfHX/GjX1upniWgyTpj5NPKFFqKhmXIk3U417BqDI2
+	7AYPlDiJ78cvytPbXcfbJXKTMUgIzWsLc9l9pbQc7N3kpaTyOwuHiBEbj5e+ynbZ
+	+so/XPY+QDg2H1ZiSbHAC+tnKDTqlvGWrocHSNkFvC0oALERZRjocTGXGiulzjmC
+	Vj+42bzcmVWJL5mOr/um2ifK9WD/nkE5Rxk8W+TJCmQEwj8cMM82wlgngCuMdy2f
+	CxFOWpPDFf0U+68u/BVrQbAWmzUbFl9u7GRwM90Q==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4805ut5grt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Jul 2025 09:59:11 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 56M9vwHl015887;
+	Tue, 22 Jul 2025 09:59:10 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4805ut5grn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Jul 2025 09:59:10 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56M6AHHd005470;
+	Tue, 22 Jul 2025 09:59:09 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 480tvqsfua-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Jul 2025 09:59:09 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56M9x7gN52822374
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 22 Jul 2025 09:59:07 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C56B520043;
+	Tue, 22 Jul 2025 09:59:07 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8760020040;
+	Tue, 22 Jul 2025 09:59:05 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.18.185])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 22 Jul 2025 09:59:05 +0000 (GMT)
+Date: Tue, 22 Jul 2025 15:29:02 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
+        Ritesh Harjani <ritesh.list@gmail.com>, john.g.garry@oracle.com,
+        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v3 04/13] ltp/fsx.c: Add atomic writes support to fsx
+Message-ID: <aH9g5jkwnXAkQUJl@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <cover.1752329098.git.ojaswin@linux.ibm.com>
+ <5bbd19e1615ca2a485b3b430c92f0260ee576f5e.1752329098.git.ojaswin@linux.ibm.com>
+ <20250717161747.GG2672039@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3olfnkpid3bjzui6"
-Content-Disposition: inline
-In-Reply-To: <20250708190003.4eabc8ab@canb.auug.org.au>
-
-
---3olfnkpid3bjzui6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250717161747.GG2672039@frogsfrogsfrogs>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDA3OSBTYWx0ZWRfX1d0DcaK6nuRc
+ Ykn4QE+rWz1xLNyk01nNXPFVshatEvYaqlOcrLWJGMLyRu1RUIH/8Gu09U1vTZpVggolp4Ou29q
+ Zslfq1aTj8mJqCILMhvecMIZUcF3aNsH4pKz3W+zZTViYEM93jLgGFjUPSYKs1muVRTDXho61pd
+ 9hCg0niKlOeCzNXKgV1wVt8i1x4/fIqhe/AnJWUK6UiknngXwMseG+h8B1Eglxn+7eC0aXzVzeV
+ SvAqVnH7znABNEW5aemXvsAe28E+QfVrfJau33rAqZ2POOGQUuqAqhcKJw+OBYDfEcL1S3m7Ty4
+ CgEDHFuPmZRvcDUn46/67MhnaRweUfkGHBkwSm6aHQhnvtfqSRdaoU4wTk7Bz1cAiopHfUuT4fA
+ CFYeu8V3M66kbub9Ck1FRWJ2xLu1+NfN0tJLaugSFDFI7Ie2rmwvI+ku7jZkwmSUfcyJZ6RO
+X-Proofpoint-ORIG-GUID: xmIFSctcK-dyd90AKesi5vAaqMFHatIm
+X-Authority-Analysis: v=2.4 cv=cIDgskeN c=1 sm=1 tr=0 ts=687f60ef cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=IipzgdfrNufsr-TDSacA:9
+ a=CjuIK1q_8ugA:10
+X-Proofpoint-GUID: pLWncaHFwhK7sN5QcqX_s5BCD-TJg0qo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-22_01,2025-07-21_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 mlxlogscore=999 mlxscore=0 spamscore=0 suspectscore=0
+ adultscore=0 phishscore=0 impostorscore=0 bulkscore=0 lowpriorityscore=0
+ priorityscore=1501 clxscore=1015 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507220079
 
-On Tue, Jul 08, 2025 at 07:00:03PM +1000, Stephen Rothwell wrote:
-> Hi all,
->=20
-> Today's linux-next merge of the sysctl tree got a conflict in:
->=20
->   kernel/panic.c
->=20
-> between commits:
->=20
->   f8dbd6138e05 ("panic: add 'panic_sys_info' sysctl to take human readabl=
-e string parameter")
->   3699d83ae18b ("panic: add note that panic_print sysctl interface is dep=
-recated")
->=20
-> from the mm-nonmm-unstable tree and commits:
->=20
->   48f1dc94d25e ("sysctl: Move tainted ctl_table into kernel/panic.c")
->   9aa4e27ef60c ("sysctl: Move sysctl_panic_on_stackoverflow to kernel/pan=
-ic.c")
->=20
-> from the sysctl tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+On Thu, Jul 17, 2025 at 09:17:47AM -0700, Darrick J. Wong wrote:
 
-I double checked these, and they seem ok from the sysctl side.
+<snip>
 
-@Stephen: Do you prefer an actual acknowledgement that everything is
-good? Or would you prefer no answer to these merge conflict advisories?
-I personally, always make sure that things look sane, but always feel
-that sending out the ACK is a bit of a waste.
+> > +
+> > +/*
+> > + * Round down n to nearest power of 2.
+> > + * If n is already a power of 2, return n;
+> > + */
+> > +static int rounddown_pow_of_2(int n) {
+> > +	int i = 0;
+> > +
+> > +	if (is_power_of_2(n))
+> > +		return n;
+> > +
+> > +	for (; (1 << i) < n; i++);
+> > +
+> > +	return 1 << (i - 1);
+> > +}
+> > +
+> >  void
+> >  dowrite(unsigned offset, unsigned size, int flags)
+> >  {
+> > @@ -1081,6 +1113,27 @@ dowrite(unsigned offset, unsigned size, int flags)
+> >  	offset -= offset % writebdy;
+> >  	if (o_direct)
+> >  		size -= size % writebdy;
+> > +	if (flags & RWF_ATOMIC) {
+> > +		/* atomic write len must be inbetween awu_min and awu_max */
+> > +		if (size < awu_min)
+> > +			size = awu_min;
+> > +		if (size > awu_max)
+> > +			size = awu_max;
+> > +
+> > +		/* atomic writes need power-of-2 sizes */
+> > +		size = rounddown_pow_of_2(size);
+> > +
+> > +		/* atomic writes need naturally aligned offsets */
+> > +		offset -= offset % size;
+> 
+> I don't think you should be modifying offset/size here.  Normally for
+> fsx we do all the rounding of the file range in the switch statement
+> after the "calculate appropriate op to run" comment statement.
+> 
+> --D
 
-Best
+Yes, I noticed that but then I saw we make size/offset adjustments in
+do write for writebdy and I wanted atomic writes adjustments to be done
+after that.
 
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell
->=20
-> diff --cc kernel/panic.c
-> index df92b763f857,64e58835086d..000000000000
-> --- a/kernel/panic.c
-> +++ b/kernel/panic.c
-> @@@ -78,13 -84,50 +78,56 @@@ ATOMIC_NOTIFIER_HEAD(panic_notifier_lis
->   EXPORT_SYMBOL(panic_notifier_list);
->  =20
->   #ifdef CONFIG_SYSCTL
->  +static int sysctl_panic_print_handler(const struct ctl_table *table, in=
-t write,
->  +			   void *buffer, size_t *lenp, loff_t *ppos)
->  +{
->  +	pr_info_once("Kernel: 'panic_print' sysctl interface will be obsoleted=
- by both 'panic_sys_info' and 'panic_console_replay'\n");
->  +	return proc_doulongvec_minmax(table, write, buffer, lenp, ppos);
->  +}
->  =20
-> + /*
-> +  * Taint values can only be increased
-> +  * This means we can safely use a temporary.
-> +  */
-> + static int proc_taint(const struct ctl_table *table, int write,
-> + 			       void *buffer, size_t *lenp, loff_t *ppos)
-> + {
-> + 	struct ctl_table t;
-> + 	unsigned long tmptaint =3D get_taint();
-> + 	int err;
-> +=20
-> + 	if (write && !capable(CAP_SYS_ADMIN))
-> + 		return -EPERM;
-> +=20
-> + 	t =3D *table;
-> + 	t.data =3D &tmptaint;
-> + 	err =3D proc_doulongvec_minmax(&t, write, buffer, lenp, ppos);
-> + 	if (err < 0)
-> + 		return err;
-> +=20
-> + 	if (write) {
-> + 		int i;
-> +=20
-> + 		/*
-> + 		 * If we are relying on panic_on_taint not producing
-> + 		 * false positives due to userspace input, bail out
-> + 		 * before setting the requested taint flags.
-> + 		 */
-> + 		if (panic_on_taint_nousertaint && (tmptaint & panic_on_taint))
-> + 			return -EINVAL;
-> +=20
-> + 		/*
-> + 		 * Poor man's atomic or. Not worth adding a primitive
-> + 		 * to everyone's atomic.h for this
-> + 		 */
-> + 		for (i =3D 0; i < TAINT_FLAGS_COUNT; i++)
-> + 			if ((1UL << i) & tmptaint)
-> + 				add_taint(i, LOCKDEP_STILL_OK);
-> + 	}
-> +=20
-> + 	return err;
-> + }
-> +=20
->   static const struct ctl_table kern_panic_table[] =3D {
->   #ifdef CONFIG_SMP
->   	{
-> @@@ -134,13 -183,16 +183,23 @@@
->   		.mode           =3D 0644,
->   		.proc_handler   =3D proc_douintvec,
->   	},
->  +	{
->  +		.procname	=3D "panic_sys_info",
->  +		.data		=3D &panic_print,
->  +		.maxlen         =3D sizeof(panic_print),
->  +		.mode		=3D 0644,
->  +		.proc_handler	=3D sysctl_sys_info_handler,
->  +	},
-> + #if (defined(CONFIG_X86_32) || defined(CONFIG_PARISC)) && \
-> + 	defined(CONFIG_DEBUG_STACKOVERFLOW)
-> + 	{
-> + 		.procname	=3D "panic_on_stackoverflow",
-> + 		.data		=3D &sysctl_panic_on_stackoverflow,
-> + 		.maxlen		=3D sizeof(int),
-> + 		.mode		=3D 0644,
-> + 		.proc_handler	=3D proc_dointvec,
-> + 	},
-> + #endif
->   };
->  =20
->   static __init int kernel_panic_sysctls_init(void)
+Regads,
+ojaswin
 
-
-
---=20
-
-Joel Granados
-
---3olfnkpid3bjzui6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmh/YM0ACgkQupfNUreW
-QU+7gAv8CbB+tvR1CAoqpttZiblZm595dw0OX5Jq9gGGXP/Tj9Ri1QO14LbpQTWx
-5G0bn7e4tGGfwV5JScHnYM30XO3IW6NRmt2FTNacieXhQ6Meg4hJ1umAZXuT65sR
-DfpzY1QdDs1zWUXD5Ef5dXTs9X92VuHN+Ux339KNz3LTHskP/fj0d/kQE42ywqvk
-nngLF6fMD/nuFgA+nI+5JS6rwW08gdmGjjYt1gnS9TTmPyxPsl4b27YpmNDTXr05
-Gu5WsAJAFKdnD2cE/j4v288wyfV2k+azrVv5g0Xt9cqiLU56ySVOK1a2ay9dw9ee
-kvHOSBkIAl9f+rDQka0bZyWA6YvnkcSwvM73JP9cp/j/3i/5rzPdyOkCyTkNA8it
-UJTiCw8FuM8oRTHQPB6/GxZqgfmAROUyVGuAibXjbIvZ+Olf3Y2JFdHXm6Uhg1oX
-jICa3lW1Mtc2vtHqhU60d+KAlCTc2VWPmzISLExjhb5oNpFnoh+ejl8bahySpXQZ
-tDcjr2Ky
-=YUf+
------END PGP SIGNATURE-----
-
---3olfnkpid3bjzui6--
+> 
+> > +
+> > +		/* Skip the write if we are crossing max filesize */
+> > +		if ((offset + size) > maxfilelen) {
+> > +			if (!quiet && testcalls > simulatedopcount)
+> > +				prt("skipping atomic write past maxfilelen\n");
+> > +			log4(OP_WRITE_ATOMIC, offset, size, FL_SKIPPED);
+> > +			return;
+> > +		}
+> > +	}
+> >  	if (size == 0) {
+> >  		if (!quiet && testcalls > simulatedopcount && !o_direct)
+> >  			prt("skipping zero size write\n");
+> > @@ -1088,7 +1141,10 @@ dowrite(unsigned offset, unsigned size, int flags)
+> >  		return;
+> >  	}
+> >  
+> > -	log4(OP_WRITE, offset, size, FL_NONE);
+> > +	if (flags & RWF_ATOMIC)
+> > +		log4(OP_WRITE_ATOMIC, offset, size, FL_NONE);
+> > +	else
+> > +		log4(OP_WRITE, offset, size, FL_NONE);
+> >  
+> >  	gendata(original_buf, good_buf, offset, size);
+> >  	if (offset + size > file_size) {
+> > @@ -1108,8 +1164,9 @@ dowrite(unsigned offset, unsigned size, int flags)
+> >  		       (monitorstart == -1 ||
+> >  			(offset + size > monitorstart &&
+> >  			(monitorend == -1 || offset <= monitorend))))))
+> > -		prt("%lld write\t0x%x thru\t0x%x\t(0x%x bytes)\tdontcache=%d\n", testcalls,
+> > -		    offset, offset + size - 1, size, (flags & RWF_DONTCACHE) != 0);
+> > +		prt("%lld write\t0x%x thru\t0x%x\t(0x%x bytes)\tdontcache=%d atomic_wr=%d\n", testcalls,
+> > +		    offset, offset + size - 1, size, (flags & RWF_DONTCACHE) != 0,
+> > +		    (flags & RWF_ATOMIC) != 0);
+> >  	iret = fsxwrite(fd, good_buf + offset, size, offset, flags);
+> >  	if (iret != size) {
+> >  		if (iret == -1)
+> > @@ -1785,6 +1842,30 @@ do_dedupe_range(unsigned offset, unsigned length, unsigned dest)
+> >  }
+> >  #endif
+> >  
+> > +int test_atomic_writes(void) {
+> > +	int ret;
+> > +	struct statx stx;
+> > +
 
