@@ -1,83 +1,82 @@
-Return-Path: <linux-kernel+bounces-741562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B75BAB0E5CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 23:58:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E112B0E5D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 23:58:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4508A566523
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 21:57:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07B201602DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 21:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1511607A4;
-	Tue, 22 Jul 2025 21:57:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74A232877C5;
+	Tue, 22 Jul 2025 21:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="U4G4LDxz"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PgQxFV3x"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C4827F171
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 21:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273E7286D5B
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 21:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753221466; cv=none; b=BXgJf8REu9cTPqssg+cFGDFJvzJdQAZolGLFLdhESkN9lDqGqylWDkuyeYAvH0UL9WZDur+VOkKzL81ug2oDpKgRpb1QRjwTpi6piPNskHK5FIqqYS0uyrhiS/SGPq9+C20tkkH42NC0RSl+bDeiXJ1S0d3Uapaxv8Qb4Ku5Nl4=
+	t=1753221484; cv=none; b=Z0hj5d4SewuRXo2kAisL/2+XLfNp+QBcrLZjYVvr+hVVPEwvjGttHscVR1k0YpglN/4R/KXjvA8d3mDjcxvL5QVS40Ogv1ObunCObqYLEfT+vYAvrrAiOhzPVRDkWZatApUwuFQ9tHSzjCV8dshgB271v0KL/0e236kG30HJYU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753221466; c=relaxed/simple;
-	bh=hWtdbECSOx65U0/2471YPriOi+gPt8KDy8AE8lUQLhs=;
+	s=arc-20240116; t=1753221484; c=relaxed/simple;
+	bh=lYiKyYXdjjhyUxtYTcfFpjzBCFZEpw5hRFn/BBVvuuw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mh1wy9u4k7eV0nkFQlwITVl656qXTcoyJI+zZxMpEcIzFbqxCzClMvNF0KT8OwQx0K1MvfQIhe6oovBaJ+EivBZCeq4lC0fByJ5x9oCy+yJfu1OytjmbieYFO8JKl4DKzxSMbT8skMunpOhKBNyHFiROry7IIapCLMTazKRuATw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=google.com; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=U4G4LDxz; arc=none smtp.client-ip=209.85.208.47
+	 To:Cc:Content-Type; b=L22vkyrWYP9n5Zp3DDEOLwhwEIkujT2qgJSwuhxmuHEd4kvWNHN8Hzy48TXCb1pGP++hb9OMTeq/to/9NdjRyiCj4rYX0BE5jc1GYbtJjZ9qxLdJ8gn+9IiTkl7kYdSlI4ulOpYbe75NI7xbq7G4xE7WVP1MnnfR6GLXzkDoSdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=google.com; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PgQxFV3x; arc=none smtp.client-ip=209.85.208.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-60b86fc4b47so1999a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 14:57:44 -0700 (PDT)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-60b86fc4b47so2004a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 14:58:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1753221463; x=1753826263; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1753221481; x=1753826281; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cwvuUXqMXjlcbclmWLcZY6jJ7xmd1w9ykxymttXedcE=;
-        b=U4G4LDxzVrpUkJ8xMrld7i3geG0B9tnnVrNUp44IB9vWu9qcCzXYnI/1M4BH9AFpKC
-         vDskffH4E+EIl/t5HPUfktmgVp/5bcHnZAqM5hWSg7tTzG44168wEaM/G9HFpZ+Zihb+
-         o+iVT+i/z7pMgJ8062M6dE/DaLOhVVisab/88=
+        bh=w8hcD+fzN/rLyW2ntnhyBmLcEi4uK+H7gUEsQ2j7Juc=;
+        b=PgQxFV3xVIYVzvqWxGeXB8OHIHNRoHKHmCv76q4RO7nQqdxZQcLB1ty5/mVtzmWnwG
+         CYrnztOoFpxdfzJbLKQ+RtauRKd5aUt8LmxexpNafhIWydzVe1oLnNWOnH7bcJc5Plae
+         Phwml768EXjZoAvaIxiXDoeC4RIPomr8tMQlc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753221463; x=1753826263;
+        d=1e100.net; s=20230601; t=1753221481; x=1753826281;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=cwvuUXqMXjlcbclmWLcZY6jJ7xmd1w9ykxymttXedcE=;
-        b=lkbFWIjuBRYuI+JLJlxi3iWhmDPc8/P1u8lTkGeAiZmX/mWQibEzIbGBVdc0U4vQDs
-         oFsiGU5g/zDgSUTdjNwosT2Oz506dz6nNC+o9K3dtslxL2DZZTl4oLRoz2ZVqKWi4stD
-         kcCFGl/rCTfzjvBqyZBn9bG6493wdlETZUyFGLJBraJGh1ez78Bq1s55ozu4ulu9bwoD
-         mmXUYJFp01iSgtkitz8ZzeReDFocMV5dpViP7lOKfEq/FXkhoY5fskDPGnhtdrm+kGwn
-         bus+rsBPMK7kUaRsp3W/7O+hECb3wZlzBVDH9Wu7q3gHpu2+FpFWERBh28+eKx16N1jS
-         VPGg==
-X-Forwarded-Encrypted: i=1; AJvYcCXhVdqTN1Cqb3AanVrA2aIgWyVrzziIXpzHI0xcPEP3GAAO+rQ8fry4TZNc92dRkmniyjs7Ge4nmf2GiMs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHllH9DvSDFOqnf5VMU2KOI9/iofIbJh22FWVShWe3N43Jd+ZA
-	8e1NvoKxnyIv7EA/qD58DFIMG7MyNt8TAmzrBmgfsVt0sXM7fT0MOQqojHB+NgVUze0SfXukIPi
-	DwivJDeTShgSqP10xO4YFVGG8S7vBFIjH1NRemYNd
-X-Gm-Gg: ASbGncvL22cO4nY0cHN9SloVeUPHbfxU403w993/CxjwcSQSdcpP/u+u3qt6mr3/k8o
-	fxbFL6kjIImCZfLbWlrbCeLtpNzYwAQshg0qzS3qSHA++buOwd24MdsPukYwb7RnUNJskXwPuSu
-	yWuFmyc3+6h4ZP8Y2cpk/HNhJzDmE2/PPnvaAiza8M7RPtM9CaTIjpKPfJ5+le93JFWd2i50/Xg
-	0AGq6XBB1ZYYgi/bs8mOStg79FAgfcMMgLYGgIsq1jG
-X-Google-Smtp-Source: AGHT+IHkklfoV2jGZf2D1jPpYNy6n0EzpENuUlCVLYxgOK9YU79IkYyUGg7ZPnpy5rOLdzOyNuNgg4SRmVW6s9CMDc0=
-X-Received: by 2002:a50:aa87:0:b0:609:99a7:efdb with SMTP id
- 4fb4d7f45d1cf-6149a3beea3mr33693a12.2.1753221462404; Tue, 22 Jul 2025
- 14:57:42 -0700 (PDT)
+        bh=w8hcD+fzN/rLyW2ntnhyBmLcEi4uK+H7gUEsQ2j7Juc=;
+        b=SMYaFr7vvIVTKFOCBCyZjbl7SIYJomyPwbww57iKbk0amoZg68cn7NoJzY0FSO8Dpq
+         FmMEicbAN8Wbo5HeIhbit76lX1n3aW2S3tSJR3daydwBgjn9T2Ft64tg8jjZYreC8rZ5
+         zDdOkk+NbSslqtm7oCEtpo3IddLhVAo6kXnrAg2eweCH6cFeFAqeavoj/NgyX0KwEcFb
+         XQMISb9o+UqbSMHOpQiOmaPtJsy8rIec3UsLneGHUOKDJe6PNBzpAn29V4LDeL6a+uiX
+         YB7WghLtvX+7LE99v8Bbp5Bc/H5xNLL/jtR3y+2nAYGGbWhCsfQ+pz97NFnlJQsA7nIS
+         IVmw==
+X-Forwarded-Encrypted: i=1; AJvYcCV3e9HTb69jwYGxDIPzofbyvwE0JVVX+ePMmw8/MmBCF+8RtBaNmIBKNc7ktZzcdkiiOUOSf8mFfdqGYHM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOKNsYW/vyynP/rAGbXML70UszsDbXwQ2Tl6q1stWDqHUJ7Znj
+	WfvpTyFH7v6aLbcV69p7SGm1JonrT6y9W1p9knVlXvbhJLDiXlIwSst1bR7T2hLpvguyH41oRZm
+	HMe1WdGmFJFMNShSKackGUn/SPxkroBzuSNh8uJE2
+X-Gm-Gg: ASbGnctYCkXhNezBu85siJKzfaMMbga+JNMZ0n5S5Q2zDm/CMay4k/+ableqoQ8P3H4
+	+jrpRKGJTjrfuHeSah/R5bpJnPlSypOlW+9KJ3SK3G60QFq+9UcH3DLG6v8qpu4z8vfb2VJT/oh
+	F+X29GrvII3PuJ4Tw9dJHriuILno1inQLnMQ2YW02sagSk1jTB7wnEs2B7NHlv6wVscNUwoyn/t
+	DYayzjApfWQPIYs5qcSYlh+12iTz0Rezg==
+X-Google-Smtp-Source: AGHT+IFuRyHVLlTc9+mvjyXn9nDzKUxgSkHkWINR1NMMOVHEBiRhg+HBPAtm00VgI63bbY4a+rdh39BgoHymQ+H8ciM=
+X-Received: by 2002:a50:cd42:0:b0:612:ce4f:39c with SMTP id
+ 4fb4d7f45d1cf-6149a332acamr34752a12.0.1753221481275; Tue, 22 Jul 2025
+ 14:58:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250722-ddrperfm-upstream-v3-0-7b7a4f3dc8a0@foss.st.com> <20250722-ddrperfm-upstream-v3-5-7b7a4f3dc8a0@foss.st.com>
-In-Reply-To: <20250722-ddrperfm-upstream-v3-5-7b7a4f3dc8a0@foss.st.com>
+References: <20250722-ddrperfm-upstream-v3-0-7b7a4f3dc8a0@foss.st.com> <20250722-ddrperfm-upstream-v3-6-7b7a4f3dc8a0@foss.st.com>
+In-Reply-To: <20250722-ddrperfm-upstream-v3-6-7b7a4f3dc8a0@foss.st.com>
 From: Julius Werner <jwerner@chromium.org>
-Date: Tue, 22 Jul 2025 14:57:28 -0700
-X-Gm-Features: Ac12FXxqqdXiBOsL8hY8DFhm2tyZoxR-txMizljLW540w1cjvBjPCidmbvKnAZQ
-Message-ID: <CAODwPW_fDPY78bmwvLmLkt1yWpVdG=VC8h2NSdWtoiEknajhNw@mail.gmail.com>
-Subject: Re: [PATCH v3 05/19] dt-bindings: memory: factorise LPDDR props into
- memory props
+Date: Tue, 22 Jul 2025 14:57:48 -0700
+X-Gm-Features: Ac12FXzhD62MTJBHmWXOCNn35YJ884MYdMc4gPYhqJDJjbLE29Cjc-kRxryta0g
+Message-ID: <CAODwPW_7aYdEzdUJ7b2nT4-zS9bu_hbNqjc7+_wSHbedXZXJ=Q@mail.gmail.com>
+Subject: Re: [PATCH v3 06/19] dt-bindings: memory: introduce DDR4
 To: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
 Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -92,36 +91,13 @@ Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herr
 	linux-doc@vger.kernel.org, linux-clk@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
->        Compatible strings can be either explicit vendor names and part numbers
->        (e.g. elpida,ECB240ABACN), or generated strings of the form
->        lpddrX-YY,ZZZZ where X is the LPDDR version, YY is the manufacturer ID
+> +      - pattern: "^ddr4-[0-9a-f]{2},[0-9a-f]{4}$"
 
-When you say "in case of LPDDR" below, you should also change this
-line to take other cases into account. Maybe the best way to write
-this would be something like:
-
-...or generated strings of a memory type dependent form. For LPDDR
-types, that form is lpddrX-YY,ZZZZ where X is [...same text...]. For
-DDR types, that form is ddrX-YY,ZZZZZ... where X is [...new definition
-for DDR types, based on what's available in SPD...].
-
->    revision-id:
->      $ref: /schemas/types.yaml#/definitions/uint32-array
->      description:
-> -      Revision IDs read from Mode Register 6 and 7. One byte per uint32 cell (i.e. <MR6 MR7>).
-> +      Revision IDs read from Mode Register 6 and 7 in case of LPDDR.
-> +      One byte per uint32 cell (i.e. <MR6 MR7>).
-
-If this doesn't exist for DDR, then rather than "in case of LPDDR"
-this should probably say something like "LPDDR only"?
-
->    density:
->      $ref: /schemas/types.yaml#/definitions/uint32
->      description:
-> -      Density in megabits of SDRAM chip. Decoded from Mode Register 8.
-> +      Density in megabits of SDRAM chip. Decoded from Mode Register 8 in case of
-> +      LPDDR.
-
-Can you list here where in SPD density and I/O width are stored for
-the various DDR types?
+This pattern doesn't really make sense when DDR4 doesn't have the same
+manufacturer ID / revision ID format as LPDDR. You could either only
+leave the fallback constant for now, or define a new auto-generated
+format that matches what DDR4 SPD provides (which I believe, if I read
+Wikipedia right, is a two byte manufacturer ID and then an up to 20
+character ASCII part number string -- so it could be
+`^ddr4-[0-9a-f{2},[0-9A-Za-z]{1,20}$`).
 
