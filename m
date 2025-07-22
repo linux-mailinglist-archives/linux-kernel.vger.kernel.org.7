@@ -1,129 +1,130 @@
-Return-Path: <linux-kernel+bounces-741302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C17FCB0E295
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:27:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56758B0E297
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:29:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA9B917F838
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:27:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 719CBAC22DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1EBB4685;
-	Tue, 22 Jul 2025 17:27:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7050D27FB25;
+	Tue, 22 Jul 2025 17:29:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q45HmErC"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AYxMkcH/"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09CE27AC45
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 17:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A97277CBA;
+	Tue, 22 Jul 2025 17:29:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753205265; cv=none; b=oTRnIlbDcS9qCmRyuVIJIebsv5NehtUzHN73AmW2EVIOv/bxqX+bgcBtBvJhd5gEzGw3rCk3Ba0DO9zDWHYyk0rOHgLgFtzale197lu8hZimcykHODi5WI37W7vtXV87zuCAnAGZQ6FezHT1RK0PtL+vJ8Hu2jlyV0kQUyq+kt0=
+	t=1753205353; cv=none; b=sHhqYDi/itEZ+DFswLGYq2X/O8mRDeZ+hG8OyRB7D2dqa0CMirRj4v/QJM8LU9tOsl4CONhMMaPjwJRp1hW+8Cnsm8UQN5F1hcm8f+NscX4q2pG8CE23wpI+dlOGivq+KgRfB+Kq5djxOy7pZOdxVqxYscfkLvNP7PySNCRBl5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753205265; c=relaxed/simple;
-	bh=syxL5yFIfrXhC+h4Uv6eBBsalk6IqK7By/q7/N6YndA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=LlSegg2uXkP67HQeKlP0GqnsHW/Oav9lg/ozxklnVyb0oPLrC8VljfR2hAepU5SfapnxAnYtzD5xQZL9JajIR7YMUxrAHC70sVPpAV4UBBYvl/FDejFZV0PzT3SYjkWU+5HUBWcHKFixPONRUkgZ1tCbcyUURtwSwRNQhpEz9P4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Q45HmErC; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-23494a515e3so47203655ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 10:27:42 -0700 (PDT)
+	s=arc-20240116; t=1753205353; c=relaxed/simple;
+	bh=0+JauH28HYVUWG6hrxFn1yDspMA1MTZm2Hxl3u21BHM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QOZAAkVpRr+XLFvkhZBGewWlS7pRPR6UwLZMWA0O4qcy9+aoj/6/bkoRK6A93UGj/H7uytB9OpV1B0w6W3c3r4i/1l0yiTIufdU0OxoXzmGyK+bBUuB46mMTjgJwhzXZn67vXrAze1YptvUA4LDinelm2heeICGiMYBtJ8az6bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AYxMkcH/; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-75001b1bd76so3661050b3a.2;
+        Tue, 22 Jul 2025 10:29:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753205262; x=1753810062; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gNuep+WR+auVA36XZo3u/qqPdLw6h3Tg29vPjRH6q58=;
-        b=Q45HmErC57yTnIxKh43vbtFhCuYSIO86jfWOqskujsasYE5v5NWqQp/ZV8BfiAHy4I
-         KlU0vvyZqPIVgHQlHT9d9yjC17Pw+VLtjIwPiIQLf7Opxpw4AYh/g+BWFSV/nShYpCLa
-         CoE2bHjodyqbblCnxV6a1XYG15e8xoV0Sq/40NekF9+W3dF0yek3f92dR6F3742eSHkb
-         5pqB1YdpgIVgx4jC7rtyIheMPCQiv1ND462D0m9z1rDiqq+VNjOc1Up/zRy3YFgNyOhj
-         MqJl5wFWIXPVWJrxaVxLFR5Zm2DAu7frTdh+6qHsChmr+7+JKBwt9dL97hw6wd3r8oFg
-         KpJg==
+        d=gmail.com; s=20230601; t=1753205351; x=1753810151; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+Hh9rn2Pq0w8+Rx4ALg0gLyUsE3RWAfCvKLiuX/Mgyk=;
+        b=AYxMkcH/m5uMnCbgQdXqyJaEQC8p4C2JhmSWLQ8ynAFb2yiUAccKu8kkFhmEnQpz0F
+         9D2qTgcE3fhHOk2jcvD03uLAzPjrn0piboByaBP+SJlN4w1Z4u9eA1O5x5cQK9kCxlwX
+         7RKvPJwe71hS0QdwAHGQWQAjaNYCrmqKeWpw+Al7BVB2p62UFY0dvAhAuxc2cS0wM3fQ
+         tZ/FSX46Uf5bAH2lEt2pc2fFdhuBt9QUUlZHz2MWt0ezR017MWJoZUIkpW4U/ovITSDr
+         UwvF83oE4WoWRq60nLl1ZiHj+U7Zz/GDRvucEJ5W0yRtMFloLmJypKh7B+faTYkZ7+NZ
+         A7sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753205262; x=1753810062;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gNuep+WR+auVA36XZo3u/qqPdLw6h3Tg29vPjRH6q58=;
-        b=HCoU1uEd3J8oXIHxLz86MubS23rrTZ/YgcXTprD6ACMOPJe3tRm5JhtjNJOu1BWt3Y
-         kRrBVLmp2HSG51NJCKfPU8JoS7C0/J9zoJoDgUcllIUjnl8EM5aI08ZVF7AqSrC8M7jy
-         1iZJ+bhvEhiVtOSAyCTox1F2mwH2/F1ofW7T5C+VO58LiXpoKgV1jj1cefqvj1ScRm3G
-         vigUVNs2ElIs5v1xM//7qtac/FsPuQe38b369Tm9aofIFJJnBgVlkEAzJAag9wvQLd0y
-         VK437bO7Uho+aRmS9WEK8X/Azi60ry9LHWDBo2vWsKzRn2eYsHh6B77B1PINRuhmq0Bm
-         ZhIw==
-X-Forwarded-Encrypted: i=1; AJvYcCW+7ImGGt++B9uBpBSGssrljIPDe+wXaQobcVCYecxra3HJTUKM/HTy7Efb0RKTI3MN/tuxsVhbbmy/BZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1DdN1TjQom9ZtgaU4idib6Qp27LWmV5HitTh3j/PYrSDOoPrI
-	20wy+rxDEMufHn68XSEtEpanUfPUUfw+c4EzpRXewV030Hr+qYZgDZGaY7uhDu/YRnMIwbYOFux
-	GdVVkCg==
-X-Google-Smtp-Source: AGHT+IGlPsKj2kXWks86x+28HfdK7Z/QqkDwZwVYgVnNVIpsClfKH/9J41q2BYHdfvNQBrCCOD4NuTpzbJE=
-X-Received: from pjbcz15.prod.google.com ([2002:a17:90a:d44f:b0:312:f650:c7aa])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:3c6c:b0:235:f51f:c9e4
- with SMTP id d9443c01a7336-23e24f49430mr394121175ad.12.1753205262126; Tue, 22
- Jul 2025 10:27:42 -0700 (PDT)
-Date: Tue, 22 Jul 2025 10:27:40 -0700
-In-Reply-To: <20250722074958.2567-1-lirongqing@baidu.com>
+        d=1e100.net; s=20230601; t=1753205351; x=1753810151;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+Hh9rn2Pq0w8+Rx4ALg0gLyUsE3RWAfCvKLiuX/Mgyk=;
+        b=gOD1IbCMt4q9iSojuNW6rBP7GxXi55/9bNcwc6D3DZ5OtztTo+aloKP7qdEq/Q1Hzj
+         0nitFDI5WX4DCRlPxn1z12KLsCHKUkWxh2etMkZSSBJqAFlGk19lcKn9SL0UKIFc+vvz
+         Vcot8iNI5BvdoBFiIFZrTqjn3bmNgY6wz+yKCT3dqM2vbsZsFxMiQVsizWJlxNc5b0ly
+         onDLh+46EcCir0lyzap94E9xu6h30C6+2TDzlKCep3UMlZwOxhefoCKGaFnrRHecEn1q
+         eSxkWo9F61Cj76NcHZbi9z5sLYIIt26lmbEPU2uUGKUBg5eQGGLz7y7knCK3iDgjuTtL
+         szyA==
+X-Forwarded-Encrypted: i=1; AJvYcCUw2itTzTvw7QWdSlTtLcqW9IaNyMqFGPMh9r9qWbP0IiexQBUDhgXEzdupnEMZQP1n+TsIQcOmLWQNmOE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKFTnTElxpaeZmhfeEZWhJUSqApMlKdg/Dti5GTRYlEjmaz257
+	i/6un84cO/6QaoegnTzAV1UXjDh/BBDNXoKn/qm6RBfkIkswPBK2pjmFkgh6nw==
+X-Gm-Gg: ASbGncvHlB3fMo7Cz07y3N2yGDwQ9uHxmfHsC7hqYFh0yjDdxsJ5edft60czfOOpkRD
+	SYmmX+nXz8rqU5xQbCts4fF4Te6CTmCh4dwUqTh/HdtQfcuclErmR0CGeepeA+9vta7+hS0d4bQ
+	5RZ9Dfa2VdPEs1GnxOyeA/8SXv1TU1T7aJUcblNCYnSRAEMyPLYt9da0SRUOpreqvGrGQecFlR9
+	grmluaZqMIkrT3/sPNVDbTEZAnAIGvT39MOR454ufb4p1EubrELITzxuuZ0aXoLr9GXOBoajP4P
+	HSKFYzO9XXTcB6JBB5Qogm92uTWDP9+dAmy7XaVzdDkdcLvrC7dPMAXsY6vbAN062YyHGLQC/lw
+	lUBXvsGHqN72MqJ9fKwSPgQsCI8qS56ZXtECv
+X-Google-Smtp-Source: AGHT+IG2xUjr6hY0DIyG0TnPvyMMo2piQomAOlh2Okyn9A006ocqDc3HT2OIJTuxbHqnojNQtP58Aw==
+X-Received: by 2002:a05:6a00:198e:b0:73e:23be:11fc with SMTP id d2e1a72fcca58-760369d5ff5mr95676b3a.22.1753205351333;
+        Tue, 22 Jul 2025 10:29:11 -0700 (PDT)
+Received: from shankari-IdeaPad.. ([103.24.60.31])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759c89cfb3dsm7920061b3a.34.2025.07.22.10.29.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jul 2025 10:29:10 -0700 (PDT)
+From: Shankari Anand <shankari.ak0208@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Shankari Anand <shankari.ak0208@gmail.com>,
+	Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH v2] kconfig: nconf: Fix uncleared lines on help screens
+Date: Tue, 22 Jul 2025 22:58:37 +0530
+Message-Id: <20250722172837.140328-1-shankari.ak0208@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250722074958.2567-1-lirongqing@baidu.com>
-Message-ID: <aH_KDFJsH3i7xF-e@google.com>
-Subject: Re: [PATCH] x86/kvm: Downgrade host poll messages to pr_debug_once()
-From: Sean Christopherson <seanjc@google.com>
-To: lirongqing <lirongqing@baidu.com>
-Cc: pbonzini@redhat.com, vkuznets@redhat.com, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	hpa@zytor.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 22, 2025, lirongqing wrote:
-> From: Li RongQing <lirongqing@baidu.com>
-> 
-> The current host-side polling messages are misleading, as they will be
-> printed when the hypervisor intentionally disables polling (by providing
-> MWAIT to the guest) rather than due to version incompatibility. so
-> Downgrade to pr_debug_once() to prevent spurious log messages.
+Commit 1b92b18ec419 ("kconfig: nconf: Ensure null termination where
+strncpy is used") introduced a regression where
+help screens (F1, F2, F3) no longer properly clear short lines of text,
+resulting in duplicated or trailing content when lines are overwritten.
 
-I agree the messages are unfortunate, but the guest can't possibly know that the
-host is correctly configured.  E.g. if MWAIT is allowed, but the host is still
-intercepting HLT and the guest happens to choose HLT for idling, then the guest
-is absolutely right to complain.
+Revert the null-termination change to match
+the actual length of the copied string.
 
-And there's really no reason for the host to NOT provide KVM_FEATURE_POLL_CONTROL.
-The only thing the guest can do with MSR_KVM_POLL_CONTROL is to disable host-side
-halt-polling, and for a KVM_HINTS_REALTIME vCPU, single_task_running() should hold
-true the vast majority of the time.  I.e. a properly configured host won't actually
-poll anyways, so providing KVM_FEATURE_POLL_CONTROL is basically a nop.
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Closes: https://lore.kernel.org/lkml/CAK7LNAT54nvwYmTy20Ep8U2kr4thn68yYWXi9R-d3Yx3iXs=Bg@mail.gmail.com/T/#
+Fixes: 1b92b18ec419 ("kconfig: nconf: Ensure null termination where strncpy is used")
+Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
+---
+v1 -> v2: Add closes tag to the report.
+Carry-forwarded acked-by and tested-by from previous version
+---
+ scripts/kconfig/nconf.gui.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-In other words, I agree using pr_err is annoying, but I don't think downgrading
-it is quite right either.
+diff --git a/scripts/kconfig/nconf.gui.c b/scripts/kconfig/nconf.gui.c
+index 475a403ab8ba..7206437e784a 100644
+--- a/scripts/kconfig/nconf.gui.c
++++ b/scripts/kconfig/nconf.gui.c
+@@ -177,7 +177,7 @@ void fill_window(WINDOW *win, const char *text)
+ 		const char *line = get_line(text, i);
+ 		int len = get_line_length(line);
+ 		strncpy(tmp, line, min(len, x));
+-		tmp[sizeof(tmp) - 1] = '\0';
++		tmp[len] = '\0';
+ 		mvwprintw(win, i, 0, "%s", tmp);
+ 	}
+ }
 
-> Signed-off-by: Li RongQing <lirongqing@baidu.com>
-> ---
->  arch/x86/kernel/kvm.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-> index 9cda79f..c5f96ee 100644
-> --- a/arch/x86/kernel/kvm.c
-> +++ b/arch/x86/kernel/kvm.c
-> @@ -1136,8 +1136,8 @@ static void kvm_enable_host_haltpoll(void *i)
->  void arch_haltpoll_enable(unsigned int cpu)
->  {
->  	if (!kvm_para_has_feature(KVM_FEATURE_POLL_CONTROL)) {
-> -		pr_err_once("host does not support poll control\n");
-> -		pr_err_once("host upgrade recommended\n");
-> +		pr_debug_once("host does not support poll control\n");
-> +		pr_debug_once("host upgrade recommended\n");
->  		return;
->  	}
->  
-> -- 
-> 2.9.4
-> 
+base-commit: 05adbee3ad528100ab0285c15c91100e19e10138
+-- 
+2.34.1
+
 
