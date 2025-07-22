@@ -1,140 +1,127 @@
-Return-Path: <linux-kernel+bounces-740160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 243C6B0D0CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:09:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D94BB0D0CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:10:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAB4F7A1FCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 04:07:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA255188AE69
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 04:11:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28804287261;
-	Tue, 22 Jul 2025 04:09:06 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7B94C92
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 04:09:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA8128B7F9;
+	Tue, 22 Jul 2025 04:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wr/BPF+v"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F27D4C92
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 04:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753157345; cv=none; b=h6O8j0RiB1lvJIxlL2sqaZkiAWg00fpZsrvF76WDv2PXeozZ8xQ7XSb9VL7pBI6+/uFx7VWvyeq5tuEEAZ4wd9CJQ+ULbrh458fw5EkAP6HNRYrSUdOuTsBVC7IwSZlKzQYMq4BYpMJ0o2MHZuoqXHXet/kGsFLxE1U1dvpOGgE=
+	t=1753157451; cv=none; b=amoE+T3LrUGGCWIkQdR1c2gxF/qexg5eEvI30wUBFC+TfsZ8OtS9blR9VRUe46+a1GunYIqsDSJoaOdYUmJvnPvmR4YGarX1R+yStWrJenhAPvJFVDhyu89weVA5aPPkWcvHLmRptlg3YIIaIea9AoilI3otrZKP+/YeZx2OiWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753157345; c=relaxed/simple;
-	bh=oV930V0vgZOPZQBst2ouNy+2AEJ43ck0gfx9T+8ZoGg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sit2Tv0gnWGghL6SZXiUSItOxVpyckUeOrpL1rZWFKKxgiBg0I70XZbYFj8g5C3v/PyKxIB2yINdadhMevOZK2G0N43Nol9prdPbHaJM1p0eMe99xc0oOvewy7/hX7519BKQeytjukvGNEt/RozoX6sCbDnVrcaNTiLxwUYik/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5C0B3152B;
-	Mon, 21 Jul 2025 21:08:56 -0700 (PDT)
-Received: from entos-yitian-01.shanghai.arm.com (unknown [10.169.217.82])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CF0CD3F66E;
-	Mon, 21 Jul 2025 21:08:57 -0700 (PDT)
-From: Jia He <justin.he@arm.com>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Uladzislau Rezki <urezki@gmail.com>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Peter Xu <peterx@redhat.com>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	s=arc-20240116; t=1753157451; c=relaxed/simple;
+	bh=OqCNRS+72uajszDzG6n+T34z5A+LL4ACekiWWd6EEzc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hfdR3Yo+E74QWROunb+xbEHAzl5YiVmwEhiQOaPdH7gnQuXbesoFR4lmyzrOf3BIg2blUDsml3KhHUV9NUHOK2vgBwiPhDzqX5u+1FNahXWupjGJoLB1LMSbJjIkEnc3S8mRMQVYpN9RQ9d0hhqUvyW4loiGPMeqbBBrBv8H9XQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Wr/BPF+v; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-74b52bf417cso3314346b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 21:10:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753157449; x=1753762249; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nlBEY6HRx3gs6GmX9n8FOaCyjO7em88PtYwWGu+mg9c=;
+        b=Wr/BPF+vf/8Jh980foQMoEUznzRA7ZAjuL3JQ+v8LvyydzqW1nNIZBWDXvAzE4qfAG
+         xKz54LHvoq4IRfpFzYo2PWvqNb7t9Jsw5K5qRJl3rzI9EDyaMs+MAEx5wHm7BVGSJCni
+         XBbs/wnGUmxlDyTtf6pIynJrBFtYJpk4pKxb7wvl/ct4gRuVTJXPB9WoVCdAMW3Z3RZK
+         kA/r/AG90FM0V03YkXEJB5LwLCONJir1WUq7x2BkeFD/5LRLfr3bgZgBWqYN3ZGAQSsI
+         uqa11XqJPLt0hXQmtGJHoCmLLj6v6MkaDP9QqdCCD5OrKqxIEpzhKbhOOWkiODpImmDh
+         VqPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753157449; x=1753762249;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nlBEY6HRx3gs6GmX9n8FOaCyjO7em88PtYwWGu+mg9c=;
+        b=Voa+xw+uLlfw3pmZrx1aW80BZ1geb986+5jcv0cziNYQ1/bMnbpgtIp+6zbFT8O2yV
+         SMqZkRD8+ixdY22g1LvJbeWIutsLaCmwV41py7X48xRbMxw6udC499g0jDxS1Yh2lt9Y
+         o1Ex/bAei6vwm1pKH3oYtrrjAAyjMk36vA3UBmpqZoum4szdo9RljrnpdS63XS/NWT/W
+         LWXcgr5ZG50VcC4At/FqEoohXMJeKjgpx/iDYfOgp8O7iiSWfmBnaKJZjHzCFcAIq0kA
+         3FPNA3r6ukrBk6YdrbLOiTrNhOAUoP/UHMeZuH/4YgxwLuzDShB1lpWn+p0XjrsSieVL
+         P+aw==
+X-Forwarded-Encrypted: i=1; AJvYcCWogekUPjhEJ8aFGk6MEnNTtZhyh0P/yyWkiWI5I63KHAuVo2kKlX9kVbZpL8p5PydgWSi8mNMOpnSTFg0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEpEuDH1mCQuPodyRnxynEd6lUkjGcfK4GA6/o9reIVqLqGv/N
+	pv4dKiWWTLSBO3UTH/enkcgMIF5SP5V7qZ48CN8u1PI9ptMzE6w0FCf5nXQy8GUheD8=
+X-Gm-Gg: ASbGnct525Zp1i1XhzVq8yVy0sHZ2CZZ5C10Y2lX3i/ffjj+PR9QTafFCaukgznKlPs
+	eJ/pt+bJFglj0a2sQnudXC9uRiecU3WySyfJyh0Vw7LFx8s1NaSjlF4jMXtuMNE67wNnIND5yxa
+	bBuL7LWfBhJHn/RmoJzCejH+9blWeeBV8XsTGYBkKohCl3OEs1pjUnsuibrAW/ciytbwuUw/YcW
+	t/j4iLXeBrpF9rfY8MLscgGeg/fN+bFaOMo+T7mQKccoi0t1i6Kyt9GvAXHwwvNajuYqvJTM/32
+	eR+VRlto+1P04GP/AMibTteRtQN1imJu3mvtzBI7gSAhERtmy6/cMHrcTzzFCwY6d4Ng5vF79lq
+	Jn2RYi/Orwmc3M5bCwXwgbrg7kw3BIkak1Q==
+X-Google-Smtp-Source: AGHT+IHOKWMEzyu46KKsaJPjgo0xgycpcDzWx6CxVzgF6SZy+41yLFML71qXIxEHlqlltMpTlo5GzA==
+X-Received: by 2002:a05:6a21:648a:b0:231:4bbc:ff09 with SMTP id adf61e73a8af0-2381313ca9bmr31553876637.36.1753157449486;
+        Mon, 21 Jul 2025 21:10:49 -0700 (PDT)
+Received: from localhost ([122.172.81.72])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759c84e2c91sm6537501b3a.5.2025.07.21.21.10.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Jul 2025 21:10:48 -0700 (PDT)
+Date: Tue, 22 Jul 2025 09:40:46 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	kernel@collabora.com, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Jia He <justin.he@arm.com>
-Subject: [PATCH] mm: vmalloc: use VMALLOC_EARLY_START boundary for early vmap area
-Date: Tue, 22 Jul 2025 04:08:50 +0000
-Message-Id: <20250722040850.2017769-1-justin.he@arm.com>
-X-Mailer: git-send-email 2.34.1
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v3 0/4] MT8196 CPUFreq Support
+Message-ID: <20250722041046.lf4b267bmolm4exq@vireshk-i7>
+References: <20250716-mt8196-cpufreq-v3-0-d440fb810d7e@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250716-mt8196-cpufreq-v3-0-d440fb810d7e@collabora.com>
 
-When VMALLOC_START is redefined to a new boundary, most subsystems
-continue to function correctly. However, vm_area_register_early()
-assumes the use of the global _vmlist_ structure before vmalloc_init()
-is invoked. This assumption can lead to issues during early boot.
+On 16-07-25, 19:51, Nicolas Frattaroli wrote:
+> This series adds the necessary bindings and driver changes to integrate
+> MT8196 CPUFreq into the existing mediatek-cpufreq-hw driver. This
+> necessitated two preparatory cleanup patches to the driver.
+> 
+> The CPU frequency was verified to actually be changing by comparing
+> sysbench cpu numbers between fdvfs being enabled and it not being
+> enabled.
+> 
+> Enablement in the DT will be done once the MT8196 DT lands, so don't be
+> surprised that no node uses these new compatibles so far.
+> 
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> ---
+> Changes in v3:
+> - bindings: changed title as per angelo's suggestions
+> - bindings: dropped the fdvfs magic register range
+> - bindings: dropped redundant description for #performance-domain-cells
+> - driver: made fdvfs frequency divisor a `#define` instead of part of
+>   the variant struct
+> - driver: dropped fdvfs magic check
+> - driver: reworked performance domain resource offset
+> - Link to v2: https://lore.kernel.org/r/20250714-mt8196-cpufreq-v2-0-cc85e78855c7@collabora.com
 
-See the calltrace as follows:
-	start_kernel()
-		setup_per_cpu_areas()
-			pcpu_page_first_chunk()
-				vm_area_register_early()
-		mm_core_init()
-			vmalloc_init()
+Applied. Thanks.
 
-The early vm areas will be added to vmlist at declare_kernel_vmas()
-->declare_vma(): 
-ffff800080010000 T _stext
-ffff800080da0000 D __start_rodata
-ffff800081890000 T __inittext_begin
-ffff800081980000 D __initdata_begin
-ffff800081ee0000 D _data
-The starting address of the early areas is tied to the *old* VMALLOC_START
-(i.e. 0xffff800080000000 on an arm64 N2 server).
-
-If VMALLOC_START is redefined, it can disrupt early VM area allocation,
-particularly in like pcpu_page_first_chunk()->vm_area_register_early().
-
-To address this potential risk on arm64, introduce a new boundary,
-VMALLOC_EARLY_START, to avoid boot issues when VMALLOC_START is
-occasionaly redefined.
-
-Signed-off-by: Jia He <justin.he@arm.com>
----
- arch/arm64/include/asm/pgtable.h | 2 ++
- mm/vmalloc.c                     | 6 +++++-
- 2 files changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index 192d86e1cc76..91031912a906 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -18,9 +18,11 @@
-  * VMALLOC range.
-  *
-  * VMALLOC_START: beginning of the kernel vmalloc space
-+ * VMALLOC_EARLY_START: early vm area before vmalloc_init()
-  * VMALLOC_END: extends to the available space below vmemmap
-  */
- #define VMALLOC_START		(MODULES_END)
-+#define VMALLOC_EARLY_START	(MODULES_END)
- #if VA_BITS == VA_BITS_MIN
- #define VMALLOC_END		(VMEMMAP_START - SZ_8M)
- #else
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 6dbcdceecae1..86ab1e99641a 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -50,6 +50,10 @@
- #include "internal.h"
- #include "pgalloc-track.h"
- 
-+#ifndef VMALLOC_EARLY_START
-+#define VMALLOC_EARLY_START		VMALLOC_START
-+#endif
-+
- #ifdef CONFIG_HAVE_ARCH_HUGE_VMAP
- static unsigned int __ro_after_init ioremap_max_page_shift = BITS_PER_LONG - 1;
- 
-@@ -3126,7 +3130,7 @@ void __init vm_area_add_early(struct vm_struct *vm)
-  */
- void __init vm_area_register_early(struct vm_struct *vm, size_t align)
- {
--	unsigned long addr = ALIGN(VMALLOC_START, align);
-+	unsigned long addr = ALIGN(VMALLOC_EARLY_START, align);
- 	struct vm_struct *cur, **p;
- 
- 	BUG_ON(vmap_initialized);
 -- 
-2.34.1
-
+viresh
 
