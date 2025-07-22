@@ -1,310 +1,131 @@
-Return-Path: <linux-kernel+bounces-741109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C662B0E02F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:16:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DB47B0E023
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:15:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0BED188C075
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:11:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C87593B8276
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:12:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A91128B7C7;
-	Tue, 22 Jul 2025 15:10:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FFF32EAB6A;
+	Tue, 22 Jul 2025 15:13:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qQImAd8V"
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d8Dc+MrA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4BFC1C84DE
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 15:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83EA0273815
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 15:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753197053; cv=none; b=NpnrqabmD/1NnhCj6Vwf0D+afAL2pznbin3lwFpVy1Y42B038xgeYrRvGT2+d47kFKg+kSRIUAGB3W/xzxclZ59wbhAcIfcXh31XYW6GFT+YouBIE0ArEfAWfgnQAmO/bk8v08sbnHpeOfO3hbINctLmhSlHwP72oBTSx/xLZYc=
+	t=1753197186; cv=none; b=ESGh1JK15CQGuMJNu2tIQMmjiNL7FK8ZQysxA008uD1jdV9qct0OmIgPjkZRVaIjY0CmHTqdW5MD8D8GaCZ6nC/F4ZRc643RuQjAZQYXl7vfTb6KHvqzGg0sb73DI+FjNDKtADEKc//eigyMiXGm9iDTUpR4FfH0WUb0/9x61LM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753197053; c=relaxed/simple;
-	bh=bXiIcUS4ZKUlE5EGfppXIJnyr0fdlKsJLvXnKOv53uo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YbwB5gLWrqu6zXC6+A1lq3QklGDMYcVjBJF5NWyyyoPVp6qrKY2jM3m9SnajN3dXVbHOn/VunIhIXzrlddUzybx2PnfqYYsRZMY+J1hCuc2BsV8ilE1FqsJhK2Ds/cHoIsTYsWlvfn2jV6VoJb2L9ZBaHnNkNPzoG7kwG5kntyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qQImAd8V; arc=none smtp.client-ip=209.85.166.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3df371e1d29so115415ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 08:10:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753197051; x=1753801851; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UrnjuIg4e+o8/wr4oPnV/ZDCtxDk7IDXvR/lvcR7L34=;
-        b=qQImAd8VSxpvdBSvfDThmr2e25VBbAXwKZqoTTbvEZmdMNSiCi5Keh0ERyuVOCBJ2j
-         7UyDJcLS28+Ue6zbMJjFRfl71x56kKKl7uJ7TiQ2lxKyBkoXFCCRfQWXPTngiRfcqsUu
-         xQW2+1zvmXlB7sKhaAYCp2B5hw+J+A06tMEa5TmAESrm7ARSvfqcxHkGeX9Fzhka6glT
-         7+jI2zkOXlz3fM8EmgmLxPAQ3lqDHXP+mwtvASMmkd6IjWwhz3phBCo0L9NpSQbj/sJ9
-         uVfu4ItHud9qIJR/nKlKuUFwDUp2WrqRTSsONxUXkfV+LhwBtGS0KxXne/Qz4daxPQxf
-         Vswg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753197051; x=1753801851;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UrnjuIg4e+o8/wr4oPnV/ZDCtxDk7IDXvR/lvcR7L34=;
-        b=Jsa/uZJYHVxn2opEisPnAI7RGQa+axAcU5z8tMsAk1KIvxGKlic7pymM/FfYukbnaa
-         6o8Ves6qBGZFbRXXQwWwyZLYA4jeJ1dil16/XYX1aDtNmejiJyiD6ZCCBMNHtyUB4UHz
-         vdzFAep9rbufR+/ZP7uxSBmC2wbkFTRNbmUulUpjcF+25rRznhDSsnkU5IKShA+Hsrpv
-         Yi1Wf93YeNQITke26QuTyUiOe/o+Cr2nvyUF5moxjx8CXkE2npgglJSJUtHDNoG0nRiS
-         GwhJaE2PJkNUQJppCHghHBOG4MAImhPiZ5E9HxomXaDHb3fb84ehGH6KWr7JzMZl3t1P
-         MBdw==
-X-Forwarded-Encrypted: i=1; AJvYcCUqurQ4t5o1bhyy5SXSBAqx4HcrtR09j8WalRXi2AUvDGZA+2qPSabRc69G+uwwDon8sTwcb3uH4A8+cPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNDjZpOTKEGF11F5bXd4Ee9Rhle8xQnEaUBl6VBEDRKdz72s+6
-	5DnBWW8DHJrothFIFaFr0X9x4ENGCjW1JUR/BR2S1wHbtxPl/hvnvc0j0fQMmGJKzfmgO3z8Ncd
-	uQgvJhuvCz94h12n0BPdSZpYXwvPr6agL6fbSVJ3T
-X-Gm-Gg: ASbGncvcdGWGi3RvX0zPPxe5tCpq3yYVbrLhouJYY6lYBmfFcUJJRx9uFBzGGvhTVnk
-	2gWVzJ3ujOrozDaxZUFJcavyUWnDs/wi6td7SS5DOZeM2naNWYR8LrIZ/esWGmH8/1VRM9+tZeo
-	2SiXSnKaC0wAsu3nugQ9Clr+wx3EOHcCUIrTIHxcvbFgFfDqRmBBAQFHCmtE9Rn6/Wu8cY4YDE0
-	pXg3Fuusnm4M0aGvpJoIe5HJGQigkct20xs
-X-Google-Smtp-Source: AGHT+IE2E7+83BOEx6tLs/66ORgFia6L7tH6SAgAtRa4Ppe0kHWFhpLdHDLDf1GERndmzTI1sLB37BFfvgRJ09LGfEY=
-X-Received: by 2002:a05:6e02:2282:b0:3dd:872d:b3fd with SMTP id
- e9e14a558f8ab-3e2bf1152a8mr4685215ab.2.1753197049845; Tue, 22 Jul 2025
- 08:10:49 -0700 (PDT)
+	s=arc-20240116; t=1753197186; c=relaxed/simple;
+	bh=jWRuxfsCH5trOeU3YbGYfVITvNEnt57i+X2yCHxLeqE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dHOWhuz4GYvcqFfHJjHw6lKZZYAQU+nDW9VLF+EMGyuFg8n0UQsFXm8b0WHKa3JIgpvpJcTIOSHwqtzJRv1aO2cFNA6c2jkFnlAeBGpBu8WZr4EytH/2bbPhIdLnETGt9quc6x1ZI9/iP3QbUSyr7jDi3aShW7GWCAZgwO9tPEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d8Dc+MrA; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753197183;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zsT9YUfB4TQbSuR6h8dYsaFfEiXDrUH9Zy2B0wO6l0k=;
+	b=d8Dc+MrAF5lLifeqt1FVShQgrILUg7Xiu2Uc7GwNCKGuARehGdP0GEmJ2oFJhFX1yAffVN
+	ABik7sbYsfcxVyg5QVXmSPil3pSktwtw971+TR22JMnV12NGnZDnaMOezEmyTkf3bGZlp0
+	OKmTzErez5x8wJ76cptudWPbXfSYGHc=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-278-E16bIlZ0NUGhZBPTRnytqA-1; Tue,
+ 22 Jul 2025 11:13:00 -0400
+X-MC-Unique: E16bIlZ0NUGhZBPTRnytqA-1
+X-Mimecast-MFC-AGG-ID: E16bIlZ0NUGhZBPTRnytqA_1753197179
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 515A319541A7;
+	Tue, 22 Jul 2025 15:12:58 +0000 (UTC)
+Received: from [192.168.37.1] (unknown [10.22.76.8])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B0BE618016F9;
+	Tue, 22 Jul 2025 15:12:50 +0000 (UTC)
+From: Benjamin Coddington <bcodding@redhat.com>
+To: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Laurence Oberman <loberman@redhat.com>, Jeff Layton <jlayton@kernel.org>,
+ Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v3] NFS: Fixup allocation flags for nfsiod's __GFP_NORETRY
+Date: Tue, 22 Jul 2025 11:12:48 -0400
+Message-ID: <315CF087-770E-464A-A4D5-70FA658357BA@redhat.com>
+In-Reply-To: <f83ac1155a4bc670f2663959a7a068571e06afd9.1752111622.git.bcodding@redhat.com>
+References: <f83ac1155a4bc670f2663959a7a068571e06afd9.1752111622.git.bcodding@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250613114048.132336-1-changbin.du@huawei.com>
-In-Reply-To: <20250613114048.132336-1-changbin.du@huawei.com>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 22 Jul 2025 08:10:38 -0700
-X-Gm-Features: Ac12FXwWJZVb2aJmP4nhddrCkEkMezDz_pPuVMIzQRc4SFP-iDAuPJGdnMDR4Ks
-Message-ID: <CAP-5=fX6jNrGhP9xH=KhGgT60r+SDgLpUT6jc0V67jAu2H5YOg@mail.gmail.com>
-Subject: Re: [PATCH] perf: ftrace: add graph tracer options args/retval/retval-hex/retaddr
-To: Changbin Du <changbin.du@huawei.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Fri, Jun 13, 2025 at 4:41=E2=80=AFAM Changbin Du <changbin.du@huawei.com=
-> wrote:
+Gentle ping on this one - let me know if anyone has further review or
+critique.
+
+Ben
+
+On 9 Jul 2025, at 21:47, Benjamin Coddington wrote:
+
+> If the NFS client is doing writeback from a workqueue context, avoid using
+> __GFP_NORETRY for allocations if the task has set PF_MEMALLOC_NOIO or
+> PF_MEMALLOC_NOFS.  The combination of these flags makes memory allocation
+> failures much more likely.
 >
-> This change adds support for new funcgraph tracer options funcgraph-args,
-> funcgraph-retval, funcgraph-retval-hex and funcgraph-retaddr.
+> We've seen those allocation failures show up when the loopback driver is
+> doing writeback from a workqueue to a file on NFS, where memory allocation
+> failure results in errors or corruption within the loopback device's
+> filesystem.
 >
-> The new added options are:
->   - args       : Show function arguments.
->   - retval     : Show function return value.
->   - retval-hex : Show function return value in hexadecimal format.
->   - retaddr    : Show function return address.
->
->  # ./perf ftrace -G vfs_write --graph-opts retval,retaddr
->  # tracer: function_graph
->  #
->  # CPU  DURATION                  FUNCTION CALLS
->  # |     |   |                     |   |   |   |
->  5)               |  mutex_unlock() { /* <-rb_simple_write+0xda/0x150 */
->  5)   0.188 us    |    local_clock(); /* <-lock_release+0x2ad/0x440 ret=
-=3D0x3bf2a3cf90e */
->  5)               |    rt_mutex_slowunlock() { /* <-rb_simple_write+0xda/=
-0x150 */
->  5)               |      _raw_spin_lock_irqsave() { /* <-rt_mutex_slowunl=
-ock+0x4f/0x200 */
->  5)   0.123 us    |        preempt_count_add(); /* <-_raw_spin_lock_irqsa=
-ve+0x23/0x90 ret=3D0x0 */
->  5)   0.128 us    |        local_clock(); /* <-__lock_acquire.isra.0+0x17=
-a/0x740 ret=3D0x3bf2a3cfc8b */
->  5)   0.086 us    |        do_raw_spin_trylock(); /* <-_raw_spin_lock_irq=
-save+0x4a/0x90 ret=3D0x1 */
->  5)   0.845 us    |      } /* _raw_spin_lock_irqsave ret=3D0x292 */
->  5)               |      _raw_spin_unlock_irqrestore() { /* <-rt_mutex_sl=
-owunlock+0x191/0x200 */
->  5)   0.097 us    |        local_clock(); /* <-lock_release+0x2ad/0x440 r=
-et=3D0x3bf2a3cff1f */
->  5)   0.086 us    |        do_raw_spin_unlock(); /* <-_raw_spin_unlock_ir=
-qrestore+0x23/0x60 ret=3D0x1 */
->  5)   0.104 us    |        preempt_count_sub(); /* <-_raw_spin_unlock_irq=
-restore+0x35/0x60 ret=3D0x0 */
->  5)   0.726 us    |      } /* _raw_spin_unlock_irqrestore ret=3D0x8000000=
-0 */
->  5)   1.881 us    |    } /* rt_mutex_slowunlock ret=3D0x0 */
->  5)   2.931 us    |  } /* mutex_unlock ret=3D0x0 */
->
-> Signed-off-by: Changbin Du <changbin.du@huawei.com>
-
-I tried testing but lacked the kernel features. It built and I checked the =
-code:
-
-Reviewed-by: Ian Rogers <irogers@google.com>
-
-Thanks,
-Ian
-
+> Suggested-by: Trond Myklebust <trondmy@kernel.org>
+> Fixes: 0bae835b63c5 ("NFS: Avoid writeback threads getting stuck in mempool_alloc()")
+> Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
+> Reviewed-by: Laurence Oberman <loberman@redhat.com>
+> Tested-by: Laurence Oberman <loberman@redhat.com>
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
 > ---
->  tools/perf/Documentation/perf-ftrace.txt |  4 ++
->  tools/perf/builtin-ftrace.c              | 60 +++++++++++++++++++++++-
->  tools/perf/util/ftrace.h                 |  4 ++
->  3 files changed, 67 insertions(+), 1 deletion(-)
 >
-> diff --git a/tools/perf/Documentation/perf-ftrace.txt b/tools/perf/Docume=
-ntation/perf-ftrace.txt
-> index b77f58c4d2fd..4b21a755132f 100644
-> --- a/tools/perf/Documentation/perf-ftrace.txt
-> +++ b/tools/perf/Documentation/perf-ftrace.txt
-> @@ -123,6 +123,10 @@ OPTIONS for 'perf ftrace trace'
->  --graph-opts::
->         List of options allowed to set:
+> 	On V3: fix ugly return (Thanks Paulo), add Jeff's R-b
+> 	On V2: add missing 'Fixes' and Laurence's R-b T-b
 >
-> +         - args         - Show function arguments.
-> +         - retval       - Show function return value.
-> +         - retval-hex   - Show function return value in hexadecimal form=
-at.
-> +         - retaddr      - Show function return address.
->           - nosleep-time - Measure on-CPU time only for function_graph tr=
-acer.
->           - noirqs       - Ignore functions that happen inside interrupt.
->           - verbose      - Show process names, PIDs, timestamps, etc.
-> diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
-> index bba36ebc2aa7..f7cf1dd7b64b 100644
-> --- a/tools/perf/builtin-ftrace.c
-> +++ b/tools/perf/builtin-ftrace.c
-> @@ -301,6 +301,10 @@ static void reset_tracing_options(struct perf_ftrace=
- *ftrace __maybe_unused)
->         write_tracing_option_file("funcgraph-proc", "0");
->         write_tracing_option_file("funcgraph-abstime", "0");
->         write_tracing_option_file("funcgraph-tail", "0");
-> +       write_tracing_option_file("funcgraph-args", "0");
-> +       write_tracing_option_file("funcgraph-retval", "0");
-> +       write_tracing_option_file("funcgraph-retval-hex", "0");
-> +       write_tracing_option_file("funcgraph-retaddr", "0");
->         write_tracing_option_file("latency-format", "0");
->         write_tracing_option_file("irq-info", "0");
->  }
-> @@ -542,6 +546,41 @@ static int set_tracing_sleep_time(struct perf_ftrace=
- *ftrace)
->         return 0;
->  }
+>  fs/nfs/internal.h | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
 >
-> +static int set_tracing_funcgraph_args(struct perf_ftrace *ftrace)
-> +{
-> +       if (ftrace->graph_args) {
-> +               if (write_tracing_option_file("funcgraph-args", "1") < 0)
-> +                       return -1;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static int set_tracing_funcgraph_retval(struct perf_ftrace *ftrace)
-> +{
-> +       if (ftrace->graph_retval || ftrace->graph_retval_hex) {
-> +               if (write_tracing_option_file("funcgraph-retval", "1") < =
-0)
-> +                       return -1;
-> +       }
-> +
-> +       if (ftrace->graph_retval_hex) {
-> +               if (write_tracing_option_file("funcgraph-retval-hex", "1"=
-) < 0)
-> +                       return -1;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static int set_tracing_funcgraph_retaddr(struct perf_ftrace *ftrace)
-> +{
-> +       if (ftrace->graph_retaddr) {
-> +               if (write_tracing_option_file("funcgraph-retaddr", "1") <=
- 0)
-> +                       return -1;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
->  static int set_tracing_funcgraph_irqs(struct perf_ftrace *ftrace)
+> diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
+> index 69c2c10ee658..d8f768254f16 100644
+> --- a/fs/nfs/internal.h
+> +++ b/fs/nfs/internal.h
+> @@ -671,9 +671,12 @@ nfs_write_match_verf(const struct nfs_writeverf *verf,
+>
+>  static inline gfp_t nfs_io_gfp_mask(void)
 >  {
->         if (!ftrace->graph_noirqs)
-> @@ -642,6 +681,21 @@ static int set_tracing_options(struct perf_ftrace *f=
-trace)
->                 return -1;
->         }
+> -	if (current->flags & PF_WQ_WORKER)
+> -		return GFP_KERNEL | __GFP_NORETRY | __GFP_NOWARN;
+> -	return GFP_KERNEL;
+> +	gfp_t ret = current_gfp_context(GFP_KERNEL);
+> +
+> +	/* For workers __GFP_NORETRY only with __GFP_IO or __GFP_FS */
+> +	if ((current->flags & PF_WQ_WORKER) && ret == GFP_KERNEL)
+> +		ret |= __GFP_NORETRY | __GFP_NOWARN;
+> +	return ret;
+>  }
 >
-> +       if (set_tracing_funcgraph_args(ftrace) < 0) {
-> +               pr_err("failed to set tracing option funcgraph-args\n");
-> +               return -1;
-> +       }
-> +
-> +       if (set_tracing_funcgraph_retval(ftrace) < 0) {
-> +               pr_err("failed to set tracing option funcgraph-retval\n")=
-;
-> +               return -1;
-> +       }
-> +
-> +       if (set_tracing_funcgraph_retaddr(ftrace) < 0) {
-> +               pr_err("failed to set tracing option funcgraph-retaddr\n"=
-);
-> +               return -1;
-> +       }
-> +
->         if (set_tracing_funcgraph_irqs(ftrace) < 0) {
->                 pr_err("failed to set tracing option funcgraph-irqs\n");
->                 return -1;
-> @@ -1607,6 +1661,10 @@ static int parse_graph_tracer_opts(const struct op=
-tion *opt,
->         int ret;
->         struct perf_ftrace *ftrace =3D (struct perf_ftrace *) opt->value;
->         struct sublevel_option graph_tracer_opts[] =3D {
-> +               { .name =3D "args",               .value_ptr =3D &ftrace-=
->graph_args },
-> +               { .name =3D "retval",             .value_ptr =3D &ftrace-=
->graph_retval },
-> +               { .name =3D "retval-hex",         .value_ptr =3D &ftrace-=
->graph_retval_hex },
-> +               { .name =3D "retaddr",            .value_ptr =3D &ftrace-=
->graph_retaddr },
->                 { .name =3D "nosleep-time",       .value_ptr =3D &ftrace-=
->graph_nosleep_time },
->                 { .name =3D "noirqs",             .value_ptr =3D &ftrace-=
->graph_noirqs },
->                 { .name =3D "verbose",            .value_ptr =3D &ftrace-=
->graph_verbose },
-> @@ -1699,7 +1757,7 @@ int cmd_ftrace(int argc, const char **argv)
->         OPT_CALLBACK('g', "nograph-funcs", &ftrace.nograph_funcs, "func",
->                      "Set nograph filter on given functions", parse_filte=
-r_func),
->         OPT_CALLBACK(0, "graph-opts", &ftrace, "options",
-> -                    "Graph tracer options, available options: nosleep-ti=
-me,noirqs,verbose,thresh=3D<n>,depth=3D<n>",
-> +                    "Graph tracer options, available options: args,retva=
-l,retval-hex,retaddr,nosleep-time,noirqs,verbose,thresh=3D<n>,depth=3D<n>",
->                      parse_graph_tracer_opts),
->         OPT_CALLBACK('m', "buffer-size", &ftrace.percpu_buffer_size, "siz=
-e",
->                      "Size of per cpu buffer, needs to use a B, K, M or G=
- suffix.", parse_buffer_size),
-> diff --git a/tools/perf/util/ftrace.h b/tools/perf/util/ftrace.h
-> index a9bc47da83a5..782c33227e92 100644
-> --- a/tools/perf/util/ftrace.h
-> +++ b/tools/perf/util/ftrace.h
-> @@ -29,6 +29,10 @@ struct perf_ftrace {
->         int                     graph_depth;
->         int                     func_stack_trace;
->         int                     func_irq_info;
-> +       int                     graph_args;
-> +       int                     graph_retval;
-> +       int                     graph_retval_hex;
-> +       int                     graph_retaddr;
->         int                     graph_nosleep_time;
->         int                     graph_noirqs;
->         int                     graph_verbose;
-> --
-> 2.43.0
->
+>  /*
+> -- 
+> 2.47.0
+
 
