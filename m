@@ -1,115 +1,94 @@
-Return-Path: <linux-kernel+bounces-740995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4798B0DEB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:32:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA289B0DEAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:32:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0DA43B70A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:21:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 225106C103A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:22:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41CA2EA74C;
-	Tue, 22 Jul 2025 14:20:04 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8108B2BE045;
+	Tue, 22 Jul 2025 14:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tnBhUf0z"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CCAB2C159F;
-	Tue, 22 Jul 2025 14:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CC0176AC5;
+	Tue, 22 Jul 2025 14:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753194004; cv=none; b=AVpliAjEOgzN9CfscPcE+39u4Ktgvqw6coSuqd941asr18tNvKH3FA+xj/zmMStCX8dKBDRnsga2iAj6XeKG+KVqDn17ueh0jut+UbRnrm24/u5WK/JLDNgfzB+3xchm2IkrkSQU5zAOP402VrOreSNVDDu9JkIAfnjiRfvG7tQ=
+	t=1753194150; cv=none; b=Am2KVoB8s69+4HAKn2feWSLy0Do5aMKrAD9Mmtwiqk+SQIXWe9zlqt89CvWe43ySWqkSRRhWThFJgF/QNtrxs0JIjqw+SR9HQigY6JXk4EKRj4OwYAWD+7+xosNDPnQecvO9gt/rvJL5falwLVkhHMVNw+51kR8W3ZpNK4z+9Dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753194004; c=relaxed/simple;
-	bh=u/XPPTPM2HV+PCBZb6VZfHt7+7wTVbn0NocEtxJmV4M=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sEoCYQDHfwczSVHgLwVTZKsfteP42wH57dEg+A9/nOHs7uTrLumGZ3RXz6urV7+aoasATE8IOA3JDb9TPQXlRqf7Att2SrWo4rq0n1K+4O8D0JlKAM23hjEWThgNjKB1iCePgnFJkotAg1KE75FUEqO5p9uRl77DPGVAW+6Y9xM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bmfWb5N70z6H7Kd;
-	Tue, 22 Jul 2025 22:18:35 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id B7B751402C8;
-	Tue, 22 Jul 2025 22:19:59 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 22 Jul
- 2025 16:19:58 +0200
-Date: Tue, 22 Jul 2025 15:19:56 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-CC: <sboyd@kernel.org>, <jic23@kernel.org>, <dlechner@baylibre.com>,
-	<nuno.sa@analog.com>, <andy@kernel.org>, <arnd@arndb.de>,
-	<gregkh@linuxfoundation.org>, <srini@kernel.org>, <vkoul@kernel.org>,
-	<kishon@kernel.org>, <sre@kernel.org>, <krzysztof.kozlowski@linaro.org>,
-	<u.kleine-koenig@baylibre.com>, <linux-arm-msm@vger.kernel.org>,
-	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-phy@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-	<kernel@collabora.com>, <wenst@chromium.org>, <casey.connolly@linaro.org>
-Subject: Re: [PATCH v2 7/7] iio: adc: qcom-spmi-iadc: Remove regmap R/W
- wrapper functions
-Message-ID: <20250722151956.000043a0@huawei.com>
-In-Reply-To: <20250722101317.76729-8-angelogioacchino.delregno@collabora.com>
-References: <20250722101317.76729-1-angelogioacchino.delregno@collabora.com>
-	<20250722101317.76729-8-angelogioacchino.delregno@collabora.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1753194150; c=relaxed/simple;
+	bh=sgOD/G9e6sAkJSDLY7bbLHHkVxGsSaAU85Cwyqt1/Wk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mxeq99G4n8wO55BwTZ414874+b/zmLrDCtmQ62O2GG3MGTZ2ChofW4Dwrt3ZSX5QD8R3NdwqxUVwmMmi6L7nIgXxh8NB4jeqA2JOrxo3cXQBSgG4qiLjfz6ETnhpTmB/bLmT6rzSHFhQNSiPrxm8t0lbkmWMjzTirm4my0gzzsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=tnBhUf0z; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=pxn4/Gktw1UVxYCnmMHxZiZ9oPqC1b4PgCug8zFDoYg=; b=tnBhUf0zpeHM9OrWGJ+Zy0hxQP
+	XvAi49KngmJbTeocjxFjxtlMbduApJ2Xyj92Oflm7BCUXFIJDkaVzQHt7Ih2bOhST0fhMCZGM1XjH
+	v7zpome4QE9I0CmQKdsnmNYRUmd574Mx0lgQQopSGK4rt2LygWS7usYGr3vqPouuUUryD3P3Qhdvx
+	TUg8k3vAWDWKdj8t8J6mzL2QEB5JpZcAc2cP1dc0lZBl/Wm+Tj11RFPW7SebaT4Ey6ayHk3jpyLno
+	BfnsCJgTMoGoGsKv7Ljvhr+suSeyW6GpPe2pAk6c7JkzacHJuwCEgZZzCSqrgwccaXlB7D4xHQOmZ
+	0wsb9eBQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ueDsq-0000000BJVm-2v5f;
+	Tue, 22 Jul 2025 14:22:20 +0000
+Date: Tue, 22 Jul 2025 15:22:20 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
+	"glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+	"frank.li@vivo.com" <frank.li@vivo.com>,
+	"slava@dubeyko.com" <slava@dubeyko.com>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>
+Subject: Re: [PATCH v3] hfs: remove BUG() from
+ hfs_release_folio()/hfs_test_inode()/hfs_write_inode()
+Message-ID: <aH-enGSS7zWq0jFf@casper.infradead.org>
+References: <4c1eb34018cabe33f81b1aa13d5eb0adc44661e7.camel@dubeyko.com>
+ <175a5ded-518a-4002-8650-cffc7f94aec4@I-love.SAKURA.ne.jp>
+ <954d2bfa-f70b-426b-9d3d-f709c6b229c0@I-love.SAKURA.ne.jp>
+ <aHlQkTHYxnZ1wrhF@casper.infradead.org>
+ <5684510c160d08680f4c35b2f70881edc53e83aa.camel@ibm.com>
+ <93338c04-75d4-474e-b2d9-c3ae6057db96@I-love.SAKURA.ne.jp>
+ <b601d17a38a335afbe1398fc7248e4ec878cc1c6.camel@ibm.com>
+ <38d8f48e-47c3-4d67-9caa-498f3b47004f@I-love.SAKURA.ne.jp>
+ <aH-SbYUKE1Ydb-tJ@casper.infradead.org>
+ <8333cf5e-a9cc-4b56-8b06-9b55b95e97db@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8333cf5e-a9cc-4b56-8b06-9b55b95e97db@I-love.SAKURA.ne.jp>
 
-On Tue, 22 Jul 2025 12:13:17 +0200
-AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com> wrote:
-
-> This driver doesn't need to add any register base address to any
-> regmap call anymore since it was migrated to register as a SPMI
-> subdevice with its own regmap reg_base, which makes the regmap
-> API to automatically add such base address internally.
+On Tue, Jul 22, 2025 at 11:04:30PM +0900, Tetsuo Handa wrote:
+> On 2025/07/22 22:30, Matthew Wilcox wrote:
+> > On Tue, Jul 22, 2025 at 07:42:35PM +0900, Tetsuo Handa wrote:
+> >> I can update patch description if you have one, but I don't plan to try something like below.
+> > 
+> > Why not?  Papering over the underlying problem is what I rejected in v1,
+> > and here we are months later with you trying a v4.
 > 
-> Since the iadc_{read,write,read_result}() functions now only do
-> call regmap_{read,write,bulk_read}() and nothing else, simplify
-> the driver by removing them and by calling regmap APIs directly.
+> Because I don't know how HFS/HFS+ filesystems work.
+> I just want to close these nearly 1000 days old bugs.
 > 
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-One trivial comment following on from previous.
-Either way
+> You can write your patches.
 
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-
-> @@ -267,11 +249,6 @@ static int iadc_poll_wait_eoc(struct iadc_chip *iadc, unsigned int interval_us)
->  	return -ETIMEDOUT;
->  }
->  
-> -static int iadc_read_result(struct iadc_chip *iadc, u16 *data)
-> -{
-> -	return regmap_bulk_read(iadc->regmap, IADC_DATA, data, 2);
-> -}
-> -
->  static int iadc_do_conversion(struct iadc_chip *iadc, int chan, u16 *data)
->  {
->  	unsigned int wait;
-> @@ -296,7 +273,7 @@ static int iadc_do_conversion(struct iadc_chip *iadc, int chan, u16 *data)
->  	}
->  
->  	if (!ret)
-> -		ret = iadc_read_result(iadc, data);
-> +		ret = regmap_bulk_read(iadc->regmap, IADC_DATA, data, 2);
-
-sizeof(*data) would be better than the magic 2.  This is probably a good
-place to tidy that up given you are replacing the line anyway.
-
-
->  exit:
->  	iadc_set_state(iadc, false);
->  	if (ret < 0)
-
+I don't understand this attitude at all.  Are you in QA and being paid
+by "number of bugs closed per week"?
 
