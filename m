@@ -1,92 +1,78 @@
-Return-Path: <linux-kernel+bounces-741551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1555B0E5A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 23:40:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DBE0B0E5A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 23:40:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FC857A6287
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 21:39:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94DD13B2160
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 21:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A63A286D52;
-	Tue, 22 Jul 2025 21:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB222286429;
+	Tue, 22 Jul 2025 21:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="aX37a1Rz"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Op1G5WdA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8BBE284B5D;
-	Tue, 22 Jul 2025 21:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D654028541F
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 21:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753220417; cv=none; b=rehuOiW/uibbINar82zBXxRVaZ4YqyG+3EFU7Xai8i1I6taZ4M7LDQNkxgjnoVPE+w0n8iEDY6YOxjsDfljOognVVHo5mf3YbciSISxioCB3l1kzB3TxRzn1vXFNf3rq/YXO4BZ+o3ozgghEazfvaFK1m5I/0XINfB7QOhDyLww=
+	t=1753220449; cv=none; b=B6bClvjB2omrouF+R97OYNaiM2VkMWgIRzMDBNrpu28s3hZXjU+4Q8hVW1v7i8AmBjhLD3O7GWojykiT32tIDC/f0PrjBvs0zFbIw2RVFcvZTMrWgAjcC1HQWYad3Ocl+F2Lq3/8PdtG5CgmJnkrEQgV4VLbvDv7QsXAXgaEV1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753220417; c=relaxed/simple;
-	bh=bCHXTqLhFd6VRoxKB9pYjZ6+JNbveHiRWnOYS/2Xryo=;
+	s=arc-20240116; t=1753220449; c=relaxed/simple;
+	bh=qiReswE8/+4iVK+wineobsk/lyxBNtH9smHzwQ1PNpQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fa7Nx4L16ou/wFwJNYaR+2JqrE34SJNVeTtbPKOUub2koPIpZV87emUvPT2j22t4U4HEZIeS5AQYGF6vv+g+e9SqRBCjZzKHvT6kuS/ClDMu+uz56R1hdqOqplgQ/WcAbeC9Zxni29EzEFmOpBn24DHORxKZn0rJJVHtzLQI79c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=aX37a1Rz; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=QekdXNQU2gB5u6wAx4HFWIhwWvDRVo65LWC/6zm1k0s=; b=aX37a1Rz2YzyNrGAowMhxVDcRg
-	arIHJPBJkAEkkPtbjiC0svOsEC4EvGT0Z0R8NoxNQYMfpulErUWNaBuh/yKy7odP2J7DkW083mbIM
-	CPAMjoE9TGoJHHTUNHnS5qnY5uSz2WCPorKksvp8dASKu9BU69Ymtp6HQXCiRnI8BXNWH2LPnCOz4
-	lxrrbmd7P47utevVl/XfQqwnlTF0Tup/8OckYwp1zGawnPLhorxrkS8nUhDX287pGn1Xc4Ci8hoiH
-	E94mOUnJHd2N9YQJW9i/E753Dy/mj7PDOhsMMwhnBYZlUv47rhBy8ZBtnH/+wXCqQv5C+YgdZWivq
-	Abd//GWw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:53462)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1ueKiM-0000f5-0Q;
-	Tue, 22 Jul 2025 22:39:58 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1ueKiH-0007U5-22;
-	Tue, 22 Jul 2025 22:39:53 +0100
-Date: Tue, 22 Jul 2025 22:39:53 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Christophe Roullier <christophe.roullier@foss.st.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Simon Horman <horms@kernel.org>,
-	Tristram Ha <Tristram.Ha@microchip.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 1/4] dt-bindings: net: document st,phy-wol
- property
-Message-ID: <aIAFKcJApcl5r7tL@shell.armlinux.org.uk>
-References: <20250721-wol-smsc-phy-v1-1-89d262812dba@foss.st.com>
- <faea23d5-9d5d-4fbb-9c6a-a7bc38c04866@kernel.org>
- <f5c4bb6d-4ff1-4dc1-9d27-3bb1e26437e3@foss.st.com>
- <e3c99bdb-649a-4652-9f34-19b902ba34c1@lunn.ch>
- <38278e2a-5a1b-4908-907e-7d45a08ea3b7@foss.st.com>
- <5b8608cb-1369-4638-9cda-1cf90412fc0f@lunn.ch>
- <383299bb-883c-43bf-a52a-64d7fda71064@foss.st.com>
- <2563a389-4e7c-4536-b956-476f98e24b37@lunn.ch>
- <aH_yiKJURZ80gFEv@shell.armlinux.org.uk>
- <ae31d10f-45cf-47c8-a717-bb27ba9b7fbe@lunn.ch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tx+0k8+sZWHrdHkfXmM14CsmvlCpIK98w2QEl/ZaLr/JxF+ogUC2dVzeGMn9I3ElsWtxDlrBOZfrVGunVwz3sEPeT7zWq/g5CvSgpDeYheK+0e1xSWsTtmnEjl7taAhRGExkhMUOfLOZSsh9tyfGZorSAGpS/jmbUncIIQ8T+10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Op1G5WdA; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753220448; x=1784756448;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qiReswE8/+4iVK+wineobsk/lyxBNtH9smHzwQ1PNpQ=;
+  b=Op1G5WdAMiVDNjBRQ69+346oEMexqt/pQfzVdXBRIiGFTGu7nboB8o9o
+   UmlWLEoWRB/EMpamGrCMFKtJgyBXKR7NlyG4vfP3eqQ7TcVsCf5vjbRAR
+   W//pRrYVP0ODGgJjU6QWqSwA6Mi48RpjiShDqdtLITjYjCHmMxa8H9sEs
+   F9A9+q/jhD1V5tmn4E7qgUkPcPh6B1C2QS00MBYBcG+JTLc8WNfmT8VzH
+   j01xrZQ3Ix1das7Vh8ii9GNA/RSQFIaSyJLlxxS719pc502dkQwMAzpkZ
+   fDW9+jbIEbrKIKfbp88LrRStb2PFs39kCuuJvd9eLNePJZ8e+rPUes7xV
+   Q==;
+X-CSE-ConnectionGUID: tX+dW7psQeCl7+aLsrXJfg==
+X-CSE-MsgGUID: rzkk6jX6R12AfTiEbCD3lg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11500"; a="66829971"
+X-IronPort-AV: E=Sophos;i="6.16,332,1744095600"; 
+   d="scan'208";a="66829971"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 14:40:47 -0700
+X-CSE-ConnectionGUID: IYD1rorpRraSq8kzCk+mCQ==
+X-CSE-MsgGUID: k+VwqMUtSM6o59wVqaBPuw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,332,1744095600"; 
+   d="scan'208";a="196340436"
+Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 22 Jul 2025 14:40:45 -0700
+Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ueKj4-000IjH-36;
+	Tue, 22 Jul 2025 21:40:42 +0000
+Date: Wed, 23 Jul 2025 05:40:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jia He <justin.he@arm.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Jia He <justin.he@arm.com>
+Subject: Re: [PATCH] mm: percpu: Introduce normalized CPU-to-NUMA node
+ mapping to  reduce max_distance
+Message-ID: <202507230509.juShbryQ-lkp@intel.com>
+References: <20250722041418.2024870-1-justin.he@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,78 +81,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ae31d10f-45cf-47c8-a717-bb27ba9b7fbe@lunn.ch>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <20250722041418.2024870-1-justin.he@arm.com>
 
-On Tue, Jul 22, 2025 at 10:59:51PM +0200, Andrew Lunn wrote:
-> >         if (!priv->plat->pmt) {
-> 
-> Let me start with maybe a dumb question. What does pmt mean? Why would
-> it be true?
+Hi Jia,
 
-->pmt being true means the MAC supports remote wakeup (in other words,
-magic packet or unicast), and the glue driver has not set the
-STMMAC_FLAG_USE_PHY_WOL flag to force the use of PHY WoL.
+kernel test robot noticed the following build warnings:
 
-->pmt being false means that the MAC doesn't support remote wakeup
-(in other words, has no ability to wake the system itself) _or_ the
-platform wishes to force the use of PHY WoL when the MAC does support
-remote wakeup.
+[auto build test WARNING on akpm-mm/mm-everything]
 
-> 
-> >                 struct ethtool_wolinfo wol = { .cmd = ETHTOOL_GWOL };
-> > 
-> >                 phylink_ethtool_get_wol(priv->phylink, &wol);
-> >                 device_set_wakeup_capable(priv->device, !!wol.supported);
-> >                 device_set_wakeup_enable(priv->device, !!wol.wolopts);
-> 
-> Without knowing what pmt means, this is pure speculation....  Maybe it
-> means the WoL output from the PHY is connected to a pin of the stmmac.
-> It thus needs stmmac to perform the actual wakeup of the system, as a
-> proxy for the PHY?
+url:    https://github.com/intel-lab-lkp/linux/commits/Jia-He/mm-percpu-Introduce-normalized-CPU-to-NUMA-node-mapping-to-reduce-max_distance/20250722-121559
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20250722041418.2024870-1-justin.he%40arm.com
+patch subject: [PATCH] mm: percpu: Introduce normalized CPU-to-NUMA node mapping to  reduce max_distance
+config: arm64-randconfig-001-20250722 (https://download.01.org/0day-ci/archive/20250723/202507230509.juShbryQ-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 853c343b45b3e83cc5eeef5a52fc8cc9d8a09252)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250723/202507230509.juShbryQ-lkp@intel.com/reproduce)
 
-stmmac itself doesn't have an input for PHY interrupts, so a PHY
-which signals WoL via its interrupt pin (e.g. AR8035) wouldn't go
-through stmmac.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507230509.juShbryQ-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/base/arch_numa.c:154:12: warning: no previous prototype for function 'early_cpu_to_norm_node' [-Wmissing-prototypes]
+     154 | int __init early_cpu_to_norm_node(int cpu)
+         |            ^
+   drivers/base/arch_numa.c:154:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+     154 | int __init early_cpu_to_norm_node(int cpu)
+         | ^
+         | static 
+   1 warning generated.
 
 
-I mentioned above the STMMAC_FLAG_USE_PHY_WOL flag. To see why this
-flag is needed, on the Jetson Xavier NX platform, a RTL8211 PHY is used
-with stmmac - I think it's RTL8211F (without powering it back up, I
-can't check.) This PHY supports WoL, but signals wake-up through a
-dedicated PMEB pin. If a platform decides not to wire the PMEB pin, WoL
-on the PHY is unusable.
+vim +/early_cpu_to_norm_node +154 drivers/base/arch_numa.c
 
-rtl8211f_get_wol() does not take account of whether the PMEB pin is
-wired or not. Thus, stmmac can't just forward the get_wol() and
-set_wol() ops to the PHY driver and let it decide, as suggested
-earlier. As stmmac gets used with multiple PHYs, (and hey, we can't
-tell what they are, because DT doesn't list what the PHY actually is!)
-we can't know how many other PHY drivers also have this problem.
-
-So, the idea put forward that ethernet drivers should forward get_wol()
-and set_wol() to the PHY driver and only do WoL at the MAC if the PHY
-doesn't support it is, I'm afraid, now fundamentally flawed.
-
-We can't retrofit such detection into PHY drivers - if we do so, we'll
-break WoL on lots of boards (we'd need to e.g. describe PMEB in DT for
-RTL8211F PHYs. While we can add it, if a newer kernel that expects
-PMEB to be described to allow WoL is run with an older DT, then that
-will be a regression.) Thus, I don't see how we could retrofit PHY
-WoL support detection to MAC drivers.
-
-So, while it is undesirable to have a flag in DT to say "we can use
-PHY WoL on this platform" and we can whinge that it isn't "describing
-hardware", DT _hasn't_ been describing the hardware, and trying to fix
-DT to properly describe the hardware now is going to cause _lots_ of
-breakage.
-
-I can't see a way forward on this unless someone is willing to relax
-over what seem to be hard requirements (e.g. no we don't want a flag
-in DT to say use PHY WoL.) We have collectively boxed ourselves into
-a corner on this.
+   153	
+ > 154	int __init early_cpu_to_norm_node(int cpu)
+   155	{
+   156		return cpu_to_norm_node_map[cpu];
+   157	}
+   158	
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
