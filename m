@@ -1,60 +1,59 @@
-Return-Path: <linux-kernel+bounces-740911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF587B0DAFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:38:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2BC3B0DB05
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:38:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB9431C8100E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:38:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A409F160A18
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B2D2EA72A;
-	Tue, 22 Jul 2025 13:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726802EA72B;
+	Tue, 22 Jul 2025 13:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VrCNr7Td"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="os3M/V60"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF5128AB11;
-	Tue, 22 Jul 2025 13:37:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB35D2EA73A;
+	Tue, 22 Jul 2025 13:37:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753191457; cv=none; b=bG0XbJ1yZdg8KdS2AShAnpx/+eKOEszPD297mGgQhvmd4EUOe4WWZAo7K4wmAkd8yVQObOHozdK0Z/EquA29YYBahw3iOz07SfduRikvYaPBgbTM6oUn/J57q1esiQ9SdQomK9+8j8wkjZGTrCfuYmMRACyCauWD+cHoY7wU/rE=
+	t=1753191459; cv=none; b=H3Znpm5AP12mKgq3bDt2jWdqHZlx72v4zMko6AcMcBNHcnWduys80/E5syljPjBBMr3BDf6OFEINnrvKUMpewyMAfDz5BiBtFRBNyJmxJEVvMk/iJ87+0okZ4PygwO94rNHBBJwOif9X8L9XpQC8HNwqhLEtuADBsMBkhYPTmRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753191457; c=relaxed/simple;
-	bh=rI+1S1kmO3QI9TmwvrHiGuc2Jv3Xex+oryrpyYJLimg=;
+	s=arc-20240116; t=1753191459; c=relaxed/simple;
+	bh=SNlXAgT++4m4TKztvKkQemORHWb8VSygCQCGkQvTGqs=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Lyj+BXZyp+yC/NyVvZGhGpDSdrybz9g7ceZ+wssQgLRqsmgWcDa2YWNu1AOzK5x/VMRjNqwWmH9VPomGyhO3fi6ISDtNFJPUAcKbUhO1ZVo7bRvTWrxFdJ95H1Lr7qdQ1iuT1nfeBsAVxpFIHMiYYX7maPmG6n6yl41LUFWkxME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VrCNr7Td; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFB47C4CEF1;
-	Tue, 22 Jul 2025 13:37:33 +0000 (UTC)
+	 MIME-Version:Content-Type; b=GdPDbrgCVPU38cMMAS9EPblpWXFVtzyqdLqRjXFsrrokc7X6DD9XIEusTvIP11BKvXEzFi/tX73RFRCbevbfqPQ8P68HekviVbLvc1jAfv4JT/72L6wJdNYZ3s3ObfWivSsVCgBfdX/Bv1O+IoV/oJc2T39oizujbf3q7m3MDZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=os3M/V60; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02005C4CEF6;
+	Tue, 22 Jul 2025 13:37:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753191456;
-	bh=rI+1S1kmO3QI9TmwvrHiGuc2Jv3Xex+oryrpyYJLimg=;
+	s=k20201202; t=1753191459;
+	bh=SNlXAgT++4m4TKztvKkQemORHWb8VSygCQCGkQvTGqs=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=VrCNr7TdjDJGqXP1DsaR6hIoBd4m2fdsKaGsIv0aSPeiwe71UTgxu0dA0DxTDWk7E
-	 Fh7WL2+eKjgaqA/2p+nY+7cvcpJSjcbDMG4Dx/aqKU72SNf4/PIZ7JqxWe7a4SPlC6
-	 MsXwO98fHc1XSJ5ZdFDz7zUXY2vMDboh57SwUvOxGTocgrtD5zR4dvxyUM/NcsN2Ar
-	 4oVLhDepkThAe5CA4V3MZNaIi3LhIA1flPX4hYT9HdZTiRKKuOr22x06jH3/hoas3q
-	 GggWp1mcqJ7kwrCcIa2tax2VmFoYemhEsg4G9UImygq+8UhN1veAZa74188YyQ4Xkp
-	 XwBRoh/3q4bKA==
+	b=os3M/V6064U011WPLr6/inhse5tmffGbF+A/kDc7oWH/l96EUna0n1Uwap08rd+4l
+	 +5xbh88EjKUOnhZFHR9Eqgg6BhIrGn9A9F/nAccoiTcuJZP63xLjU6+DCpT1O/uI7o
+	 0DT/5bakRSDKp+izCyb11VaFIS6JtV4wrL4WpBh/eJyYhkyg+pODGjeA8rHvJn+E0c
+	 6qkkxrXC++tmpWviZZX+88q/l44W+Ha8NHANOf0Rh62UQZEA7TDsDQhQt9hSAQwXPL
+	 YY39QLPrHsSkrPWjifBI0h1bnP1/4xy3FCyj3mfu3H5zBF925BZtwWelPAeskyjew6
+	 odi1KOfkMebiw==
 From: Vinod Koul <vkoul@kernel.org>
 To: Kishon Vijay Abraham I <kishon@kernel.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250710-exynos7870-mipi-phy-fix-v2-1-5cf50d69c9d7@disroot.org>
-References: <20250710-exynos7870-mipi-phy-fix-v2-1-5cf50d69c9d7@disroot.org>
-Subject: Re: [PATCH v2] phy: exynos-mipi-video: correct cam0 sysreg
- property name for exynos7870
-Message-Id: <175319145333.114152.12348662786862068642.b4-ty@kernel.org>
-Date: Tue, 22 Jul 2025 19:07:33 +0530
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>, 
+ Liu Ying <victor.liu@nxp.com>
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev
+In-Reply-To: <20250707-dt-bindings-phy-mixel-mipi-dsi-phy-allow-assign-clock-properties-v1-1-5e34b257e1ef@nxp.com>
+References: <20250707-dt-bindings-phy-mixel-mipi-dsi-phy-allow-assign-clock-properties-v1-1-5e34b257e1ef@nxp.com>
+Subject: Re: [PATCH] dt-bindings: phy: mixel, mipi-dsi-phy: Allow
+ assigned-clock* properties
+Message-Id: <175319145662.114152.5665167328510255793.b4-ty@kernel.org>
+Date: Tue, 22 Jul 2025 19:07:36 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,17 +65,15 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.13.0
 
 
-On Thu, 10 Jul 2025 16:42:48 +0530, Kaustabh Chakraborty wrote:
-> Fix the cam0 sysreg property name (samsung,cam0-sysreg), which has been
-> erroneously declared as samsung,cam-sysreg. This follows the same name
-> used in Exynos5433 PHY.
+On Mon, 07 Jul 2025 10:47:00 +0800, Liu Ying wrote:
+> assigned-clock* properties can be used by default now, so allow them.
 > 
 > 
 
 Applied, thanks!
 
-[1/1] phy: exynos-mipi-video: correct cam0 sysreg property name for exynos7870
-      commit: f31ac39c037a77a87e210b0f6d86fdefe8fc7258
+[1/1] dt-bindings: phy: mixel, mipi-dsi-phy: Allow assigned-clock* properties
+      commit: 429efeb1900d4a3164e1233b392ee5f489b6c3f8
 
 Best regards,
 -- 
