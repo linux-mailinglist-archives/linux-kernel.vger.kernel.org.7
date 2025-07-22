@@ -1,273 +1,158 @@
-Return-Path: <linux-kernel+bounces-741428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12A71B0E3FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 21:16:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01972B0E3FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 21:17:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3521C6C8046
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:16:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFD9918953B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E66927A121;
-	Tue, 22 Jul 2025 19:16:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66E8284694;
+	Tue, 22 Jul 2025 19:16:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GNciOfGC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DFFR2ij5"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5299520C478
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 19:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8439027B4F9;
+	Tue, 22 Jul 2025 19:16:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753211794; cv=none; b=IhSmaAW97CTXAH2P3y1ZyBDSawTLAjTniW391QhM+pxkONsZQlZsEZDajq6WOLSWHCoJ07HfPUZY9th+MebUVlOXgguw7jPyzAqT3pRdOum7vIoVfA5dCBW+dliLmNmaWIB9S9i+TDsFx6Dw3HKdtvaonNIHD2YaX9Tfs+DAv2U=
+	t=1753211818; cv=none; b=de5yb7F0WJiPTpj/TOptFivcYIwGa4Zih5XbAf22dZhSDL3Pu7VC/SJPqoflNoksKB2211nK7jerrjblMNImvqdooafF2wAvCOsGPrA5Hef+Pdk0YeZnLcwhcZAUycZj6YJkmMIcGKnm/6CTDx9Y5t2vkbfVBLGTwIk6zQxlWzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753211794; c=relaxed/simple;
-	bh=q6AjGlOzfh86zQnmEZn+snTngrgv8gEG4hbyhaZM9jI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=DRImLDmLnfrT825yoT6b5dM5SIaFaBPREU0dVCi5QArotEZGu+45L7RdMDQlWQj4iLEFanU+HvZ3PmWI5dZaI8EZrp2DGbk18XIluj25BR7MnrIp4sbijMyViuqdLCJ8SLA2Tcm3p0eVKpbN/ugUfry/4ta4TX2BoiifIpxMKKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GNciOfGC; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753211792; x=1784747792;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=q6AjGlOzfh86zQnmEZn+snTngrgv8gEG4hbyhaZM9jI=;
-  b=GNciOfGCF2y9JIzT0TrjkxgGaZCKDJbrwc/T1ANYvLOualGg+W6HJXPu
-   2r8w79xtlMurYH0SngDPF6VtKXfbxaq1ufFeGGfxY+PJgccjVBZE9cYq0
-   zXdV/z2jhMQH1LuEkI/cXjzqW9oqIV6t81Ai+joq7iek6HIRqEGmMJBnJ
-   7bO6C0LzSWkuFVP4f+zCPKWMw+NmszvwcTKjz2PMw8ZlVVHhQr40Pgq9o
-   53hZWwYtkPFk97cufBR42TFr6eNE0w6AD3ofDi6DPBu2j9WRHx9YrXUyj
-   Lws9dcjQfLWQ9fyee6z7tKxU9mfjU2k0EgsWSIGJhgLqVRpWzJrC2EHYG
-   g==;
-X-CSE-ConnectionGUID: Ro2/8DVYTyW5eK/Y9buhpw==
-X-CSE-MsgGUID: Q0GuXg3CSuOe2bJ9sOyPoQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11500"; a="66546678"
-X-IronPort-AV: E=Sophos;i="6.16,332,1744095600"; 
-   d="scan'208";a="66546678"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 12:16:32 -0700
-X-CSE-ConnectionGUID: 2lYRumrbQYasG8JkVw7nrg==
-X-CSE-MsgGUID: pHVyGR6mRUGBJkZFDRpK1g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,332,1744095600"; 
-   d="scan'208";a="190205547"
-Received: from lkp-server01.sh.intel.com (HELO 9ee84586c615) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 22 Jul 2025 12:16:30 -0700
-Received: from kbuild by 9ee84586c615 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ueITU-000Idd-2H;
-	Tue, 22 Jul 2025 19:16:28 +0000
-Date: Wed, 23 Jul 2025 03:15:45 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dave Penkler <dpenkler@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: drivers/staging/gpib/eastwood/fluke_gpib.c:1013:21: error: implicit
- declaration of function 'ioremap'; did you mean 'iounmap'?
-Message-ID: <202507230313.UPr1pPAJ-lkp@intel.com>
+	s=arc-20240116; t=1753211818; c=relaxed/simple;
+	bh=dd5RGWofHC4xPOJvaPYCb1csWyG+efVlR+JerfWTlp0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KXPbV+f/jMeHvzoUNXP5oxuixDPRPkc4ngalBd/42fgJR0u5iPgF6OKkhxIkBbOLNa12v62Hz8iVvVs0nD3py9ZOeJyzXxAkq6x4312PK5hHxUpx9j0smO4zcPuP+q5wdnzQE/LnbI/G3FfnfGOD9UJnm8zwEbP1UIs3bCM8AyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DFFR2ij5; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7e29d5f7672so525707185a.3;
+        Tue, 22 Jul 2025 12:16:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753211815; x=1753816615; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=HezAxjd9jV3el2JNP/W7rwAM9i6vSfM2srD0goJbh5E=;
+        b=DFFR2ij5x7GfLNLHq0uQn98QPK1nnSKGjw5dZ7kTSPR5WiN1wxhhywfmF2l1ndKviZ
+         FAA6UxduA0V6JU4Mibs5h3Gsk5npiEgcg597Lr6oAf3Ce5uZP5HCwNrqHxynkqJAV3kx
+         szGkNZRaPAUwEOJgCE75GmKS5q163FMHImopTkw7NdmHsTVsG97TorAygmp7vOI8n+V0
+         uvIjdeio+xCVgIaodGbJwBYXvoysFOhIABtAPEUXqgW08MnIX3bqjTtBtKq+0+Q6DCcM
+         GFUAmHwUO3JPvMMjf8ZwA5gmdm1GSOBRT5RDGZRvysrLHh+TwD/HqenrHqsrH2UkTOtd
+         gZYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753211815; x=1753816615;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HezAxjd9jV3el2JNP/W7rwAM9i6vSfM2srD0goJbh5E=;
+        b=YAA5MWw8LJ0Gt3xsbBvi3bHw8+s9IZLD5KomUfpnl9EUu6Q4aF6RNO6BO16qMjk481
+         GFHlN4mGUlCbqKVK0qnjO3jNn+bDb/1BPTh9pZxExeZ9hdTPOk7nSQjt3LPtW0Gg3qGs
+         ewx3XoerGfgVY4OK6J1B84dkxIJZGs6pmroGoI22TpFsZ9PKheKdETZpR+ig4xpa9StE
+         1PL2Lk2m9jrMnImgHvw4wpJmSiL2tWVnlgqbob0Vsn8atY1qkDMuFVQePyi3h2m7OSAP
+         yIle9JI4WjqSQaBSf0dJEW7V6z4EJFRb5Dzg1F0CYsdudESlIl/R9ciLKI1zithpVu9L
+         nuSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWT7pV0SzCCA0xmmfqP1KUGucklW2vFSsm5xW7ta1Cf/zenGYMpMnoiVG5u83E0uT5X9fVCh6T8@vger.kernel.org, AJvYcCX+1h7+hQ1VAaaY9h0MxuG3R5IedHyyoxkVMRYnD+Gy3Gd7JvLYYh4J0m52fGX6Q1pLO+R0h2olHe9TgVw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsjCMQoQawgOHFdP30KvgFea61ZqbWxm4oPfuPE5i2+haq9WMk
+	R9crhuW52rSWLjPJmfvz4FEEoU7phwtOpKwntS6QED7USkEuReEQ4iQx
+X-Gm-Gg: ASbGncvme0UlHMnjJ5mr56mVGmy1GY9vbi9TjjlKnQ9tzMYP5nDGX+Oluh1tvNRMzeK
+	1J3Ic1XSW3ilth4/RYoqS43CERkAADs9E96r3FRjTD86DIIGdUjYih8NHeYcbtILnIxcWUbd8aq
+	Ey6AoECQA1e66qqjeoysv+TMEhjcWLRQefnOTC0Hgb7sjbp+nrGbQLrtLHREyn6F3v1ciPrQVj4
+	ihP58sqhTu+9l2K5CGyXeG3oiBysfD+CJHhyOXRlqXI03t7CFnZNsAmqoQ12C4Hn4IfywCELUQ1
+	robsD3Kpmo6VZYj3W704iF6zHgHTDLmEPAqjiEhs7VN+Xk+EJWfDe5JOH5kVv61PbSgRWvagm4r
+	ZCa1Y15DaXxmOflHhXCSStCd1p2r+zj6WEFmdaeMTqLEhoyJCPA==
+X-Google-Smtp-Source: AGHT+IHQ/cixMvkcUt9nivXutdja90YGJTdFNISD6ryZBEuFB6UrhR8v3P3q8XPTO9cbxX4eKkqjrQ==
+X-Received: by 2002:a05:620a:13da:b0:7ca:efbd:f4f4 with SMTP id af79cd13be357-7e62a18d3c8mr53078485a.56.1753211815067;
+        Tue, 22 Jul 2025 12:16:55 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e623ec39b7sm92654785a.79.2025.07.22.12.16.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Jul 2025 12:16:54 -0700 (PDT)
+Message-ID: <ebc60d3f-ab92-4ec9-9955-d22046caf7f7@gmail.com>
+Date: Tue, 22 Jul 2025 12:16:45 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.15 000/187] 6.15.8-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250722134345.761035548@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ WlfRzlpjIPmdjgoicA==
+In-Reply-To: <20250722134345.761035548@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Dave,
+On 7/22/25 06:42, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.15.8 release.
+> There are 187 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 24 Jul 2025 13:43:10 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.15.8-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.15.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-First bad commit (maybe != root cause):
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   89be9a83ccf1f88522317ce02f854f30d6115c41
-commit: 165e8cc3cfec9ef51f3376b0d49b115294f34f3b staging: gpib: Add KBUILD files for GPIB drivers
-date:   10 months ago
-config: s390-randconfig-r051-20250722 (https://download.01.org/0day-ci/archive/20250723/202507230313.UPr1pPAJ-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 9.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250723/202507230313.UPr1pPAJ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507230313.UPr1pPAJ-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/staging/gpib/eastwood/fluke_gpib.c: In function 'fluke_line_status':
-   drivers/staging/gpib/eastwood/fluke_gpib.c:196:23: warning: variable 'nec_priv' set but not used [-Wunused-but-set-variable]
-     196 |  struct nec7210_priv *nec_priv;
-         |                       ^~~~~~~~
-   drivers/staging/gpib/eastwood/fluke_gpib.c: In function 'fluke_attach_impl':
->> drivers/staging/gpib/eastwood/fluke_gpib.c:1013:21: error: implicit declaration of function 'ioremap'; did you mean 'iounmap'? [-Werror=implicit-function-declaration]
-    1013 |  nec_priv->iobase = ioremap(e_priv->gpib_iomem_res->start,
-         |                     ^~~~~~~
-         |                     iounmap
-   drivers/staging/gpib/eastwood/fluke_gpib.c:1013:19: warning: assignment to 'void *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-    1013 |  nec_priv->iobase = ioremap(e_priv->gpib_iomem_res->start,
-         |                   ^
-   drivers/staging/gpib/eastwood/fluke_gpib.c:1050:33: warning: assignment to 'void *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-    1050 |  e_priv->write_transfer_counter = ioremap(e_priv->write_transfer_counter_res->start,
-         |                                 ^
-   In file included from drivers/staging/gpib/eastwood/fluke_gpib.c:10:
-   At top level:
-   drivers/staging/gpib/eastwood/fluke_gpib.h:140:18: warning: 'fluke_num_regs' defined but not used [-Wunused-const-variable=]
-     140 | static const int fluke_num_regs = 8;
-         |                  ^~~~~~~~~~~~~~
-   In file included from drivers/staging/gpib/include/nec7210.h:17,
-                    from drivers/staging/gpib/eastwood/fluke_gpib.h:13,
-                    from drivers/staging/gpib/eastwood/fluke_gpib.c:10:
-   drivers/staging/gpib/include/nec7210_registers.h:21:18: warning: 'nec7210_num_registers' defined but not used [-Wunused-const-variable=]
-      21 | static const int nec7210_num_registers = 8;
-         |                  ^~~~~~~~~~~~~~~~~~~~~
-   In file included from drivers/staging/gpib/include/gpib_types.h:16,
-                    from drivers/staging/gpib/include/nec7210.h:16,
-                    from drivers/staging/gpib/eastwood/fluke_gpib.h:13,
-                    from drivers/staging/gpib/eastwood/fluke_gpib.c:10:
-   drivers/staging/gpib/uapi/gpib_user.h:344:18: warning: 'request_service_bit' defined but not used [-Wunused-const-variable=]
-     344 | static const int request_service_bit = 0x40;
-         |                  ^~~~~~~~~~~~~~~~~~~
-   drivers/staging/gpib/uapi/gpib_user.h:264:18: warning: 'gpib_addr_max' defined but not used [-Wunused-const-variable=]
-     264 | static const int gpib_addr_max = 30; /* max address for primary/secondary gpib addresses */
-         |                  ^~~~~~~~~~~~~
-   drivers/staging/gpib/uapi/gpib_user.h:212:22: warning: 'gpib_command_mask' defined but not used [-Wunused-const-variable=]
-     212 | static const uint8_t gpib_command_mask = 0x7f;
-         |                      ^~~~~~~~~~~~~~~~~
-   drivers/staging/gpib/uapi/gpib_user.h:53:18: warning: 'board_status_mask' defined but not used [-Wunused-const-variable=]
-      53 | static const int board_status_mask = ERR | TIMO | END | CMPL | SPOLL |
-         |                  ^~~~~~~~~~~~~~~~~
-   drivers/staging/gpib/uapi/gpib_user.h:52:18: warning: 'device_status_mask' defined but not used [-Wunused-const-variable=]
-      52 | static const int device_status_mask = ERR | TIMO | END | CMPL | RQS;
-         |                  ^~~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
-
-
-vim +1013 drivers/staging/gpib/eastwood/fluke_gpib.c
-
-55936779f49612 Dave Penkler 2024-09-18   973  
-55936779f49612 Dave Penkler 2024-09-18   974  static int fluke_attach_impl(gpib_board_t *board, const gpib_board_config_t *config,
-55936779f49612 Dave Penkler 2024-09-18   975  			     unsigned int handshake_mode)
-55936779f49612 Dave Penkler 2024-09-18   976  {
-55936779f49612 Dave Penkler 2024-09-18   977  	struct fluke_priv *e_priv;
-55936779f49612 Dave Penkler 2024-09-18   978  	struct nec7210_priv *nec_priv;
-55936779f49612 Dave Penkler 2024-09-18   979  	int isr_flags = 0;
-55936779f49612 Dave Penkler 2024-09-18   980  	int retval;
-55936779f49612 Dave Penkler 2024-09-18   981  	int irq;
-55936779f49612 Dave Penkler 2024-09-18   982  	struct resource *res;
-55936779f49612 Dave Penkler 2024-09-18   983  	dma_cap_mask_t dma_cap;
-55936779f49612 Dave Penkler 2024-09-18   984  
-55936779f49612 Dave Penkler 2024-09-18   985  	if (!fluke_gpib_pdev) {
-55936779f49612 Dave Penkler 2024-09-18   986  		pr_err("No gpib platform device was found, attach failed.\n");
-55936779f49612 Dave Penkler 2024-09-18   987  		return -ENODEV;
-55936779f49612 Dave Penkler 2024-09-18   988  	}
-55936779f49612 Dave Penkler 2024-09-18   989  
-55936779f49612 Dave Penkler 2024-09-18   990  	retval = fluke_generic_attach(board);
-55936779f49612 Dave Penkler 2024-09-18   991  	if (retval)
-55936779f49612 Dave Penkler 2024-09-18   992  		return retval;
-55936779f49612 Dave Penkler 2024-09-18   993  
-55936779f49612 Dave Penkler 2024-09-18   994  	e_priv = board->private_data;
-55936779f49612 Dave Penkler 2024-09-18   995  	nec_priv = &e_priv->nec7210_priv;
-55936779f49612 Dave Penkler 2024-09-18   996  	nec_priv->offset = fluke_reg_offset;
-55936779f49612 Dave Penkler 2024-09-18   997  	board->dev = &fluke_gpib_pdev->dev;
-55936779f49612 Dave Penkler 2024-09-18   998  
-55936779f49612 Dave Penkler 2024-09-18   999  	res = platform_get_resource(fluke_gpib_pdev, IORESOURCE_MEM, 0);
-55936779f49612 Dave Penkler 2024-09-18  1000  	if (!res) {
-55936779f49612 Dave Penkler 2024-09-18  1001  		dev_err(&fluke_gpib_pdev->dev, "Unable to locate mmio resource for cb7210 gpib\n");
-55936779f49612 Dave Penkler 2024-09-18  1002  		return -ENODEV;
-55936779f49612 Dave Penkler 2024-09-18  1003  	}
-55936779f49612 Dave Penkler 2024-09-18  1004  
-55936779f49612 Dave Penkler 2024-09-18  1005  	if (request_mem_region(res->start,
-55936779f49612 Dave Penkler 2024-09-18  1006  			       resource_size(res),
-55936779f49612 Dave Penkler 2024-09-18  1007  			       fluke_gpib_pdev->name) == NULL) {
-55936779f49612 Dave Penkler 2024-09-18  1008  		dev_err(&fluke_gpib_pdev->dev, "cannot claim registers\n");
-55936779f49612 Dave Penkler 2024-09-18  1009  		return -ENXIO;
-55936779f49612 Dave Penkler 2024-09-18  1010  	}
-55936779f49612 Dave Penkler 2024-09-18  1011  	e_priv->gpib_iomem_res = res;
-55936779f49612 Dave Penkler 2024-09-18  1012  
-55936779f49612 Dave Penkler 2024-09-18 @1013  	nec_priv->iobase = ioremap(e_priv->gpib_iomem_res->start,
-55936779f49612 Dave Penkler 2024-09-18  1014  				   resource_size(e_priv->gpib_iomem_res));
-55936779f49612 Dave Penkler 2024-09-18  1015  	pr_info("gpib: iobase %lx remapped to %p, length=%d\n",
-55936779f49612 Dave Penkler 2024-09-18  1016  		(unsigned long)e_priv->gpib_iomem_res->start,
-55936779f49612 Dave Penkler 2024-09-18  1017  		nec_priv->iobase, (int)resource_size(e_priv->gpib_iomem_res));
-55936779f49612 Dave Penkler 2024-09-18  1018  	if (!nec_priv->iobase) {
-55936779f49612 Dave Penkler 2024-09-18  1019  		dev_err(&fluke_gpib_pdev->dev, "Could not map I/O memory\n");
-55936779f49612 Dave Penkler 2024-09-18  1020  		return -ENOMEM;
-55936779f49612 Dave Penkler 2024-09-18  1021  	}
-55936779f49612 Dave Penkler 2024-09-18  1022  
-55936779f49612 Dave Penkler 2024-09-18  1023  	res = platform_get_resource(fluke_gpib_pdev, IORESOURCE_MEM, 1);
-55936779f49612 Dave Penkler 2024-09-18  1024  	if (!res) {
-55936779f49612 Dave Penkler 2024-09-18  1025  		dev_err(&fluke_gpib_pdev->dev, "Unable to locate mmio resource for gpib dma port\n");
-55936779f49612 Dave Penkler 2024-09-18  1026  		return -ENODEV;
-55936779f49612 Dave Penkler 2024-09-18  1027  	}
-55936779f49612 Dave Penkler 2024-09-18  1028  	if (request_mem_region(res->start,
-55936779f49612 Dave Penkler 2024-09-18  1029  			       resource_size(res),
-55936779f49612 Dave Penkler 2024-09-18  1030  			       fluke_gpib_pdev->name) == NULL) {
-55936779f49612 Dave Penkler 2024-09-18  1031  		dev_err(&fluke_gpib_pdev->dev, "cannot claim registers\n");
-55936779f49612 Dave Penkler 2024-09-18  1032  		return -ENXIO;
-55936779f49612 Dave Penkler 2024-09-18  1033  	}
-55936779f49612 Dave Penkler 2024-09-18  1034  	e_priv->dma_port_res = res;
-55936779f49612 Dave Penkler 2024-09-18  1035  
-55936779f49612 Dave Penkler 2024-09-18  1036  	res = platform_get_resource(fluke_gpib_pdev, IORESOURCE_MEM, 2);
-55936779f49612 Dave Penkler 2024-09-18  1037  	if (!res) {
-55936779f49612 Dave Penkler 2024-09-18  1038  		dev_err(&fluke_gpib_pdev->dev, "Unable to locate mmio resource for write transfer counter\n");
-55936779f49612 Dave Penkler 2024-09-18  1039  		return -ENODEV;
-55936779f49612 Dave Penkler 2024-09-18  1040  	}
-55936779f49612 Dave Penkler 2024-09-18  1041  
-55936779f49612 Dave Penkler 2024-09-18  1042  	if (request_mem_region(res->start,
-55936779f49612 Dave Penkler 2024-09-18  1043  			       resource_size(res),
-55936779f49612 Dave Penkler 2024-09-18  1044  			       fluke_gpib_pdev->name) == NULL) {
-55936779f49612 Dave Penkler 2024-09-18  1045  		dev_err(&fluke_gpib_pdev->dev, "cannot claim registers\n");
-55936779f49612 Dave Penkler 2024-09-18  1046  		return -ENXIO;
-55936779f49612 Dave Penkler 2024-09-18  1047  	}
-55936779f49612 Dave Penkler 2024-09-18  1048  	e_priv->write_transfer_counter_res = res;
-55936779f49612 Dave Penkler 2024-09-18  1049  
-55936779f49612 Dave Penkler 2024-09-18  1050  	e_priv->write_transfer_counter = ioremap(e_priv->write_transfer_counter_res->start,
-55936779f49612 Dave Penkler 2024-09-18  1051  						 resource_size(e_priv->write_transfer_counter_res));
-55936779f49612 Dave Penkler 2024-09-18  1052  	pr_info("gpib: write transfer counter %lx remapped to %p, length=%d\n",
-55936779f49612 Dave Penkler 2024-09-18  1053  		(unsigned long)e_priv->write_transfer_counter_res->start,
-55936779f49612 Dave Penkler 2024-09-18  1054  		e_priv->write_transfer_counter,
-55936779f49612 Dave Penkler 2024-09-18  1055  		(int)resource_size(e_priv->write_transfer_counter_res));
-55936779f49612 Dave Penkler 2024-09-18  1056  	if (!e_priv->write_transfer_counter) {
-55936779f49612 Dave Penkler 2024-09-18  1057  		dev_err(&fluke_gpib_pdev->dev, "Could not map I/O memory\n");
-55936779f49612 Dave Penkler 2024-09-18  1058  		return -ENOMEM;
-55936779f49612 Dave Penkler 2024-09-18  1059  	}
-55936779f49612 Dave Penkler 2024-09-18  1060  
-55936779f49612 Dave Penkler 2024-09-18  1061  	irq = platform_get_irq(fluke_gpib_pdev, 0);
-55936779f49612 Dave Penkler 2024-09-18  1062  	pr_info("gpib: irq %d\n", irq);
-55936779f49612 Dave Penkler 2024-09-18  1063  	if (irq < 0) {
-55936779f49612 Dave Penkler 2024-09-18  1064  		dev_err(&fluke_gpib_pdev->dev, "fluke_gpib: request for IRQ failed\n");
-55936779f49612 Dave Penkler 2024-09-18  1065  		return -EBUSY;
-55936779f49612 Dave Penkler 2024-09-18  1066  	}
-55936779f49612 Dave Penkler 2024-09-18  1067  	retval = request_irq(irq, fluke_gpib_interrupt, isr_flags, fluke_gpib_pdev->name, board);
-55936779f49612 Dave Penkler 2024-09-18  1068  	if (retval) {
-55936779f49612 Dave Penkler 2024-09-18  1069  		dev_err(&fluke_gpib_pdev->dev,
-55936779f49612 Dave Penkler 2024-09-18  1070  			"cannot register interrupt handler err=%d\n",
-55936779f49612 Dave Penkler 2024-09-18  1071  			retval);
-55936779f49612 Dave Penkler 2024-09-18  1072  		return retval;
-55936779f49612 Dave Penkler 2024-09-18  1073  	}
-55936779f49612 Dave Penkler 2024-09-18  1074  	e_priv->irq = irq;
-55936779f49612 Dave Penkler 2024-09-18  1075  
-55936779f49612 Dave Penkler 2024-09-18  1076  	dma_cap_zero(dma_cap);
-55936779f49612 Dave Penkler 2024-09-18  1077  	dma_cap_set(DMA_SLAVE, dma_cap);
-55936779f49612 Dave Penkler 2024-09-18  1078  	e_priv->dma_channel = dma_request_channel(dma_cap, gpib_dma_channel_filter, NULL);
-55936779f49612 Dave Penkler 2024-09-18  1079  	if (!e_priv->dma_channel) {
-55936779f49612 Dave Penkler 2024-09-18  1080  		pr_err("fluke_gpib: failed to allocate a dma channel.\n");
-55936779f49612 Dave Penkler 2024-09-18  1081  		// we don't error out here because unaccel interface will still
-55936779f49612 Dave Penkler 2024-09-18  1082  		// work without dma
-55936779f49612 Dave Penkler 2024-09-18  1083  	}
-55936779f49612 Dave Penkler 2024-09-18  1084  
-55936779f49612 Dave Penkler 2024-09-18  1085  	return fluke_init(e_priv, board, handshake_mode);
-55936779f49612 Dave Penkler 2024-09-18  1086  }
-55936779f49612 Dave Penkler 2024-09-18  1087  
-
-:::::: The code at line 1013 was first introduced by commit
-:::::: 55936779f4961299efa99a6843c8ff3b019d3858 staging: gpib: Add Fluke cda based cards GPIB driver
-
-:::::: TO: Dave Penkler <dpenkler@gmail.com>
-:::::: CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Florian
 
