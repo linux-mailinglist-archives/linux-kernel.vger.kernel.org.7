@@ -1,138 +1,153 @@
-Return-Path: <linux-kernel+bounces-740668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9A05B0D778
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:38:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20809B0D77C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:41:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5C911C2529A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:38:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A2DA7A1C6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C39D2BEFE3;
-	Tue, 22 Jul 2025 10:38:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="eXdbux7Q"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 286B32E0417;
+	Tue, 22 Jul 2025 10:41:38 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A58A28A725;
-	Tue, 22 Jul 2025 10:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11207DA7F
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 10:41:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753180702; cv=none; b=eNSPc0ptoaYgxK7u4pTjQ0BuVeK8PuZ1Mg8SSagTpGmspUWw0Kazu/kjC+/RoyP1J7oOqwkkyNWnwOJ7fug3ZkBCP13Wmqm25jBAaGr2XNo3wv67swfi+ZK4EIl0VyBDyUvQuhU50LfqDn6wwPF9PomvE/A1RVcGETzPn2ceiw0=
+	t=1753180897; cv=none; b=VMj9zRABp0j2hOOtmJObcBHgSyPFIpGPHxP/tDC5vQ6bXr4f2Sh/xZkhVZ+qRpJipOWVsevRw9yGRWboir+kXNkngibyUsrYv0VzoPk2jQOi+u2QixxzvWjsfXQE83ORdwLm6V3cJZqnD6WLOJ8cJuRrCkg2YDFedUVOP/mYqpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753180702; c=relaxed/simple;
-	bh=bkY2GEXAbZCEgimSdKFm2IARS0ffaAm1hymKFyKVnv0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hZfNGvrpuBK7oJlfsbGG6QeZyd8AOfsq6qTegUKezeRXoga585kr0hNO9Feg/eE6WxCuW7E4z7FW/CWxSLUed0vzTRKsQ8v+kAOV64C5H/ZW3D8+X2xQUv8Z2JnL+tSMkVBmP58w/RiYyQq83U4ORzcy5dykZCnqLXHyUFnb3nM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=eXdbux7Q; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1753180698;
-	bh=bkY2GEXAbZCEgimSdKFm2IARS0ffaAm1hymKFyKVnv0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=eXdbux7QGObp+HZOOdFAxjOZIbimZVtKUGpGttgN9rUum33zjv7HhTR3SrOKrEJdi
-	 2DtVVJqbiPby5tbabC6G6tSXm49COXRayntenGTka9I05bOYpYLKwyowdvpVqeC/T4
-	 a5QWU2DOjmMPRGcdWi6e4eEyMhcjVLwKrwGYpMXs0W/rBHeNhImne8tCTdALWPExtX
-	 0/VrL/Cg24AdWQ8LOZotmViIrpd+bTCF/U705jqr4NM5p9r6ZYaAmnqjFWTiPi21fX
-	 nseJPXOlNyRwyo79RS6rdTSxGO138uwH58XH/W/m0AfQmAl2YptMjpXf0174UX+iGy
-	 wPtOhZacXN/Wg==
-Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:bd9c:eae9:88b0:783c])
+	s=arc-20240116; t=1753180897; c=relaxed/simple;
+	bh=Bm+drY1+FBOiszmInR5pRtFvHGfuncjYGS4zRB5DLv4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N2Y+0Se2AOCeJUTG2VYMJQuudY5UUTPJov24oVXpkrerB1aFQKs9nMnW0PMEl/jM/PoDXl87CTjI1BRpbHMKK+R5pN0JAp5FHhcYs8Q47Z5zKGiAjqa5MGZ9fuRFtCcMxtRTaPaCD+8xzlglQgKfOMEFosIxlt6BIdN2YmcVaVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1ueAR6-0002fs-Mw; Tue, 22 Jul 2025 12:41:28 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1ueAR6-009i0Q-1F;
+	Tue, 22 Jul 2025 12:41:28 +0200
+Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laura.nao)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 22DF017E0B72;
-	Tue, 22 Jul 2025 12:38:17 +0200 (CEST)
-From: Laura Nao <laura.nao@collabora.com>
-To: angelogioacchino.delregno@collabora.com
-Cc: andrew-ct.chen@mediatek.com,
-	arnd@arndb.de,
-	bchihi@baylibre.com,
-	colin.i.king@gmail.com,
-	conor+dt@kernel.org,
-	daniel.lezcano@linaro.org,
-	devicetree@vger.kernel.org,
-	frank-w@public-files.de,
-	kernel@collabora.com,
-	krzk+dt@kernel.org,
-	lala.lin@mediatek.com,
-	laura.nao@collabora.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-pm@vger.kernel.org,
-	lukasz.luba@arm.com,
-	matthias.bgg@gmail.com,
-	nfraprado@collabora.com,
-	rafael@kernel.org,
-	robh@kernel.org,
-	rui.zhang@intel.com,
-	srini@kernel.org,
-	u.kleine-koenig@baylibre.com
-Subject: Re: [PATCH 9/9] dt-bindings: nvmem: mediatek: efuse: Add support for MT8196
-Date: Tue, 22 Jul 2025 12:37:18 +0200
-Message-Id: <20250722103718.31804-1-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <24c65ecf-ab89-4970-b2ae-00185259d359@collabora.com>
-References: <24c65ecf-ab89-4970-b2ae-00185259d359@collabora.com>
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 178D94463A5;
+	Tue, 22 Jul 2025 10:41:28 +0000 (UTC)
+Date: Tue, 22 Jul 2025 12:41:27 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Cc: Pavel Pisa <pisa@fel.cvut.cz>, 
+	Luis Felipe Hernandez <luis.hernandez093@gmail.com>, Randy Dunlap <rdunlap@infradead.org>, 
+	Ondrej Ille <ondrej.ille@gmail.com>, linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] docs: Fix kernel-doc error in CAN driver
+Message-ID: <20250722-warm-stereotyped-falcon-edfbf9-mkl@pengutronix.de>
+References: <20250722035352.21807-1-luis.hernandez093@gmail.com>
+ <202507220837.23333.pisa@fel.cvut.cz>
+ <399941c7-2ee5-4d8b-a7c6-c8ed7d85b565@wanadoo.fr>
+ <202507220957.14122.pisa@fel.cvut.cz>
+ <83498a43-9e39-44ae-821d-7a7492f57a83@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="hoe54zqjfgsfiff4"
+Content-Disposition: inline
+In-Reply-To: <83498a43-9e39-44ae-821d-7a7492f57a83@wanadoo.fr>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 7/22/25 11:04, AngeloGioacchino Del Regno wrote:
-> Il 21/07/25 10:14, Laura Nao ha scritto:
->> Add compatible for MT8196 SoC.
->>
->
-> This is compatible with MT8186's layout - not with the others - and
-> besides: "mediatek,efuse" is deprecated.
->
-> Adding something to deprecated bindings is not even really permitted (unless
-> there's a *very* good reason to, which you definitely don't have in this case).
->
-> Also, this commit has no description - repeating the same as the title adds
-> no information and doesn't help at all.
->
-> NACK.
->
 
-Got it, thanks both for the feedback - I'll fix this in the next 
-revision.
+--hoe54zqjfgsfiff4
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3] docs: Fix kernel-doc error in CAN driver
+MIME-Version: 1.0
 
-Best,
+On 22.07.2025 17:50:56, Vincent Mailhol wrote:
+> On 22/07/2025 at 16:57, Pavel Pisa wrote:
+> > On Tuesday 22 of July 2025 09:27:39 Vincent Mailhol wrote:
+> >> On 22/07/2025 at 15:37, Pavel Pisa wrote:
+> >>> On Tuesday 22 of July 2025 06:06:30 Vincent Mailhol wrote:
+> >>>> On 22/07/2025 at 12:53, Luis Felipe Hernandez wrote:
+> >>>>> Fix kernel-doc formatting issue causing unexpected indentation error
+> >>>>> in ctucanfd driver documentation build. Convert main return values
+> >>>>> to bullet list format while preserving numbered sub-list in order to
+> >>>>> correct indentation error and visual structure in rendered html.
+> >>>>>
+> >>>>> Signed-off-by: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
+> >>>>
+> >>>> Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+> >>>
+> >>> Reviewed-by: Vincent Mailhol <pisa@fel.cvut.cz>
+> >>
+> >>                ^^^^^^^^^^^^^^^
+> >> Are you trying to impersonate me?
+> >>
+> >> Can you reply again with the proper Reviewed-by tag? ;)
+> >>
+> >>
+> >> Yours sincerely,
+> >> Vincent Mailhol
+> >=20
+> > Reviewed-by: Pavel Pisa <pisa@fel.cvut.cz>
+> >=20
+> > Excuse, I have been in too much hurry.
+>=20
+> No problem :)
+>=20
+> Marc, b4 will not be able to manage the review tags correctly. Can you pl=
+ease
+> fix it manually when picking up the patch?
 
-Laura
+Thanks, for the heads up.
 
-> Regards,
-> Angelo
->
->> Signed-off-by: Laura Nao <laura.nao@collabora.com>
->> ---
->>   Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml b/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml
->> index 32b8c1eb4e80..e209a1132a26 100644
->> --- a/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml
->> +++ b/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml
->> @@ -37,6 +37,7 @@ properties:
->>                 - mediatek,mt8188-efuse
->>                 - mediatek,mt8192-efuse
->>                 - mediatek,mt8195-efuse
->> +              - mediatek,mt8196-efuse
->>                 - mediatek,mt8516-efuse
->>             - const: mediatek,efuse
->>         - const: mediatek,mt8173-efuse 
->
->
->
+I wrote to the tools mailing list and described the problem, maybe
+someone comes up with a fix.
 
+Applied to linux-can-next.
+
+Gr=C3=BC=C3=9Fe,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--hoe54zqjfgsfiff4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmh/atQACgkQDHRl3/mQ
+kZzcpQf/TPgIhCNfWhl9hMIwy5Sh45WDOgOksaQcRTQNjqpsIeClSCw++ynTDmtu
+iXPtmczEgpNna7Py3U8JTB9Nf0sQMO/d1wApTAVAVEDSp6C8V9XcqB6lVsDK1FFV
+1EOFbKfeS9DOozbRfmQCnuRcjsCpgI7iYhFjGypNhI+BXyuwXzeZL+aJqX3JZlyZ
+IUwCILgRvewziCNrLZBHSpAHLn0dRKXLZYWoQVok6t0pC6whtHx39ReU5BYy9kD4
+69e6ahSey82Ia8sqxFkfumEEp3j6l4GARchGSSPb7jYYuSiumyQidwuhkSwn/szj
+nCDG2+/Lj7RAG+76X0bMmSLUE73Uog==
+=v+KC
+-----END PGP SIGNATURE-----
+
+--hoe54zqjfgsfiff4--
 
