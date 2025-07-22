@@ -1,160 +1,233 @@
-Return-Path: <linux-kernel+bounces-740396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E672B0D3CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:47:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC28DB0D3D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:49:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E9F8161D61
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:43:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00D83169104
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:43:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ECFA1534EC;
-	Tue, 22 Jul 2025 07:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE6B2DA765;
+	Tue, 22 Jul 2025 07:38:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JNe1h8Q8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="B79FXuzW"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6E8F2D29C7
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 07:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B522E611F
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 07:38:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753169876; cv=none; b=jZ5kWMPHxRblr/5EXbsTp9ycByQ92ZyrVjJMgG+SVUkV4VaUR7Xei0Pa6Ns9HNZdaE/IGloi3B2vPtnYjGHyDu671AYuouKnEGlDVwQV2jIsdEe988uuoh/Ajmh7RyRQvIgcXB/ujdLwri6nb07XfB3wuNLUA1Fyj+8IP2UZons=
+	t=1753169901; cv=none; b=hpW4+jivOwNSJdRo3NMJ+ca3nQazNm6BiMw7Nx9VRnwryAvQjYG8IklDGd/4CTJ6k7I/w6ehJAQUcsA2r/Qoc/8mqoQPiRjILCufxqdU7bSrb2o6QC2a1Is5Nw3MUcrYww7u1epRl7MANJDYpaFRx4VqdGXZ+q/iMzfx+NXn6sA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753169876; c=relaxed/simple;
-	bh=KEQ+1POGwaZLlQgPaSk5QV7eY0bwG1NFxzwzgBt6IOY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BhV3KqYtq6oqtVtSMhDMh9ClBtLmVDs0s3ytjSPBB6E4axUH+raYx2H3TaEp/XFswXvvZiw+lU+gZwtgtM2gOyOUjR6AhpTFLRkdoGnWQ/xO76ZBlnKtHzL0IMLIlLmKqADWZo8/jSsL3OS9OgXprEjoiUg3tw4YZAPBfxr0GnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JNe1h8Q8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A87DC4CEEB;
-	Tue, 22 Jul 2025 07:37:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753169876;
-	bh=KEQ+1POGwaZLlQgPaSk5QV7eY0bwG1NFxzwzgBt6IOY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JNe1h8Q8yecuwmh3vm/HYNH/I/9bA9rU2cr1dJikFEVczhC6GfSvpzJlQe+ekCNdv
-	 oSu8zS2k+UThTq2OSG8fbCr7uz3sV2OxFYbX0iLkEzmRx3mltfY0gThzk37Yx9UCsa
-	 KnSB1rUacxc4Sl9r6dSKmzr91FuStL7qBhx+vwBLYa6AwXgJXY/8+DgotXc46R0B3L
-	 tJ2BP8hKCBebR1h8VtU1PdIKnWu/BXhJYr9M4cscchvMzKDILsRQ8kUuaPuEzKXTp/
-	 7s+5sn2d5zF1OfkLGOZgtYdvUPNEY8+GOUw53yX5vcW8FQNZ9ydrx5M3pTNqCBC83l
-	 kUowG0DmFMq6w==
-Message-ID: <7d18317b-5a3a-435e-8620-6f978dc84e8f@kernel.org>
-Date: Tue, 22 Jul 2025 09:37:53 +0200
+	s=arc-20240116; t=1753169901; c=relaxed/simple;
+	bh=GCED/hlCsBSaeWbx6CONP03k4BitQzfwd38u+tep5bs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o/+/TC0WePQty/99AMMWZOKZS/rI1LmY9C2ztfMN491RER7e5ViryEQT9jTYdRs0iN9626sQaFXHluZxraz4HkyayDYi+4xjbM3zZoNec8IHYuE4JWw00sp5YXHTnP9C6T5jCRia655XZH+Mv4gcWL1rh9tOZqkMH2BEROl7cHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=B79FXuzW; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-32b43c5c04fso55894541fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 00:38:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1753169897; x=1753774697; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p1N+wgj9qJtb+bRk0/YzXSA+bhNFySP+cY66IIckDgM=;
+        b=B79FXuzWRFyukO7ROF0wuBa1bIfITECa+33OFDXA8OdaAlIDbHvLn1mhnWGIzRBOni
+         FDx3gqAa5fQtiUd8gi3blCz+PECxLQd4dxIOQ3CSMQoj1jo5GUsAnd8kcUOBvY6bzvA6
+         ePEE6EJMm6orGKU4XXVGMkmcQIHZmGWRN8yro=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753169897; x=1753774697;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p1N+wgj9qJtb+bRk0/YzXSA+bhNFySP+cY66IIckDgM=;
+        b=EzpogyHNJlaNKUswDcVKyDICxMRodUw7O72ayc7k5hBRorqeWnqRpGkiZuhxJp079/
+         oL4DpM696oBQjIb9jC8oU5inhiNbEOpZrBEK5hX4OZ55aUZYbhmE7IAdvF02lJQHlcWo
+         4C+TzxriGLmEeC6T4ym8rBllpUCd2oddAXJ65ovOBFgVe/WmzXO+KVHOV44LVlKs4qJe
+         YppIkhTQIt1GMgkWzEgbdd4d89eOjag2G1662z42x0D23lTUnthzbmogXZnZbU5kJ9WC
+         PWsu8OWF+jnsopKYhTH7RrdvKnIBByOQILOytfglS14dneYNz5tIZw/0XsJQzIVNyWxx
+         eofw==
+X-Forwarded-Encrypted: i=1; AJvYcCW3VVk9qJVTVInxxFdKZLgrSk2chb82wOK8mSu4XuZekhjt+/0+zttgr53CDDs1kirIyhESt83+ZvGvfxw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvOjJENlUhhkBEZv9X6ljBRkAfEGEXOZOPLhzF3aeYx1bLC4ea
+	1JaSnKT6SO0BRJiKXdE7G7WXFz9GK16UXRCjlRyf9nqdN4g1dBcmcDVPw9acXgO5sFDal9FUs2A
+	/7RsdYmVzVPrjIQMY4F9WupZBZ8rLOEILq825zBxo
+X-Gm-Gg: ASbGncvERhbbQENx0+AZTlZIyzG2G8M1fWrTlhTTQk5KfSJNvWfG1Ds5IWdfcOQQo7N
+	6f8Qi4OmvemjgGFcRVt/eolNhO0Mplh5Qflp6aHBjc0b4Nbw2NlD0VGAZ4age4iQ0PtsJxDGl6c
+	X8yr8mjtIEUMPvIMHr1BeUXASio2OVfQRx8Z8y/Q6ASNWGGD3pBkmNuKbtIJcmFeR0JvrMx2MjZ
+	0EQRAbC/MihlIXLgmOitgf5j5j3UvIoKGQ=
+X-Google-Smtp-Source: AGHT+IHIEXGhSQKNLTR3joj0qjwcB1T77Dp8iSOMV7/+3N11OuF7i8eFvD4xY1tQQW+z6w+ni2WlHZTcDNTAtH00llM=
+X-Received: by 2002:a2e:b8d1:0:b0:32a:e7b9:1dc9 with SMTP id
+ 38308e7fff4ca-330d24f7ef4mr6438751fa.3.1753169896490; Tue, 22 Jul 2025
+ 00:38:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [patch 4/4] genirq: Prevent migration live lock in
- handle_edge_irq()
-To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-Cc: Liangyan <liangyan.peng@bytedance.com>,
- Yicong Shen <shenyicong.1023@bytedance.com>
-References: <20250718184935.232983339@linutronix.de>
- <20250718185312.076515034@linutronix.de>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20250718185312.076515034@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250708111806.3992-1-darren.ye@mediatek.com> <20250708111806.3992-2-darren.ye@mediatek.com>
+In-Reply-To: <20250708111806.3992-2-darren.ye@mediatek.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Tue, 22 Jul 2025 15:38:05 +0800
+X-Gm-Features: Ac12FXx-ybyxFVMO-dZm2uMvhIKao-9eybKP9nlbQtMW_02h967WNikXB-wqqjk
+Message-ID: <CAGXv+5HQcGiUnsaOxHz86Y8JxUHh6e0ypusFEBLKchNx3fqKBA@mail.gmail.com>
+Subject: Re: [PATCH v6 01/10] ASoC: mediatek: common: modify mtk afe platform
+ driver for mt8196
+To: "Darren.Ye" <darren.ye@mediatek.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Jaroslav Kysela <perex@perex.cz>, 
+	Takashi Iwai <tiwai@suse.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 18. 07. 25, 20:54, Thomas Gleixner wrote:
-> Yicon reported and Liangyan debugged a live lock in handle_edge_irq()
-> related to interrupt migration.
-> 
-> If the interrupt affinity is moved to a new target CPU and the interrupt is
-> currently handled on the previous target CPU for edge type interrupts the
-> handler might get stuck on the previous target:
-> 
-> CPU 0 (previous target)		CPU 1 (new target)
-> 
->    handle_edge_irq()
->     repeat:
-> 	handle_event()		handle_edge_irq()
-> 			        if (INPROGESS) {
-> 				  set(PENDING);
-> 				  mask();
-> 				  return;
-> 				}
-> 	if (PENDING) {
-> 	  clear(PENDING);
-> 	  unmask();
-> 	  goto repeat;
-> 	}
-> 
-> The migration in software never completes and CPU0 continues to handle the
-> pending events forever. This happens when the device raises interrupts with
-> a high rate and always before handle_event() completes and before the CPU0
-> handler can clear INPROGRESS so that CPU1 sets the PENDING flag over and
-> over. This has been observed in virtual machines.
-> 
-> Prevent this by checking whether the CPU which observes the INPROGRESS flag
-> is the new affinity target. If that's the case, do not set the PENDING flag
-> and wait for the INPROGRESS flag to be cleared instead, so that the new
-> interrupt is handled on the new target CPU and the previous CPU is released
-> from the action.
-> 
-> This is restricted to the edge type handler and only utilized on systems,
-> which use single CPU targets for interrupt affinity.
+Hi,
 
-LGTM
+On Tue, Jul 8, 2025 at 7:33=E2=80=AFPM Darren.Ye <darren.ye@mediatek.com> w=
+rote:
+>
+> From: Darren Ye <darren.ye@mediatek.com>
+>
+> Mofify the pcm pointer interface to support 64-bit address access.
 
-Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
+  ^ Modify
+
+And the subject should say the same, or shorter:
+
+    Support 64-bit addresses in PCM pointer callback
+
+> Signed-off-by: Darren Ye <darren.ye@mediatek.com>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
+ora.com>
+> Tested-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+> ---
+>  .../mediatek/common/mtk-afe-platform-driver.c | 47 ++++++++++++-------
+>  .../mediatek/common/mtk-afe-platform-driver.h |  2 +
+>  2 files changed, 33 insertions(+), 16 deletions(-)
+>
+> diff --git a/sound/soc/mediatek/common/mtk-afe-platform-driver.c b/sound/=
+soc/mediatek/common/mtk-afe-platform-driver.c
+> index 70fd05d5ff48..cab4ef035199 100644
+> --- a/sound/soc/mediatek/common/mtk-afe-platform-driver.c
+> +++ b/sound/soc/mediatek/common/mtk-afe-platform-driver.c
+> @@ -86,29 +86,44 @@ snd_pcm_uframes_t mtk_afe_pcm_pointer(struct snd_soc_=
+component *component,
+>         const struct mtk_base_memif_data *memif_data =3D memif->data;
+>         struct regmap *regmap =3D afe->regmap;
+>         struct device *dev =3D afe->dev;
+> -       int reg_ofs_base =3D memif_data->reg_ofs_base;
+> -       int reg_ofs_cur =3D memif_data->reg_ofs_cur;
+> -       unsigned int hw_ptr =3D 0, hw_base =3D 0;
+> -       int ret, pcm_ptr_bytes;
+> -
+> -       ret =3D regmap_read(regmap, reg_ofs_cur, &hw_ptr);
+> -       if (ret || hw_ptr =3D=3D 0) {
+> -               dev_err(dev, "%s hw_ptr err\n", __func__);
+> -               pcm_ptr_bytes =3D 0;
+> +       unsigned int hw_ptr_lower32 =3D 0, hw_ptr_upper32 =3D 0;
+> +       unsigned int hw_base_lower32 =3D 0, hw_base_upper32 =3D 0;
+> +       unsigned long long hw_ptr =3D 0, hw_base =3D 0;
+> +       int ret;
+> +       unsigned long long pcm_ptr_bytes =3D 0;
+> +
+> +       ret =3D regmap_read(regmap, memif_data->reg_ofs_cur, &hw_ptr_lowe=
+r32);
+> +       if (ret || hw_ptr_lower32 =3D=3D 0) {
+
+I'm not sure how the hardware is, but I think hw_ptr_lower32 =3D=3D 0
+should no longer be a failure, since it could be 0x100000000 or
+some other address with the lower 32-bits all zero. Instead the
+check should be done once the addresses are put together.
+
+> +               dev_err(dev, "%s hw_ptr_lower32 err\n", __func__);
+>                 goto POINTER_RETURN_FRAMES;
+
+This is out of scope, but maybe this should just return zero directly
+to simplify reading.
+
+>         }
+>
+> -       ret =3D regmap_read(regmap, reg_ofs_base, &hw_base);
+> -       if (ret || hw_base =3D=3D 0) {
+> -               dev_err(dev, "%s hw_ptr err\n", __func__);
+> -               pcm_ptr_bytes =3D 0;
+> -               goto POINTER_RETURN_FRAMES;
+> +       if (memif_data->reg_ofs_cur_msb) {
+> +               ret =3D regmap_read(regmap, memif_data->reg_ofs_cur_msb, =
+&hw_ptr_upper32);
+> +               if (ret) {
+> +                       dev_err(dev, "%s hw_ptr_upper32 err\n", __func__)=
+;
+> +                       goto POINTER_RETURN_FRAMES;
+> +               }
+>         }
+>
+> -       pcm_ptr_bytes =3D hw_ptr - hw_base;
+> +       ret =3D regmap_read(regmap, memif_data->reg_ofs_base, &hw_base_lo=
+wer32);
+> +       if (ret || hw_base_lower32 =3D=3D 0) {
+
+Same here.
+
+> +               dev_err(dev, "%s hw_base_lower32 err\n", __func__);
+> +               goto POINTER_RETURN_FRAMES;
+> +       }
+> +       if (memif_data->reg_ofs_base_msb) {
+> +               ret =3D regmap_read(regmap, memif_data->reg_ofs_base_msb,=
+ &hw_base_upper32);
+> +               if (ret) {
+> +                       dev_err(dev, "%s hw_base_upper32 err\n", __func__=
+);
+> +                       goto POINTER_RETURN_FRAMES;
+> +               }
+> +       }
+> +       hw_ptr =3D ((unsigned long long)hw_ptr_upper32 << 32) + hw_ptr_lo=
+wer32;
+> +       hw_base =3D ((unsigned long long)hw_base_upper32 << 32) + hw_base=
+_lower32;
+
+Instead the check should be here. And to follow the original logic,
+if either pointer value is zero, the function should return zero here
+directly.
 
 
-> Reported-by: Yicong Shen <shenyicong.1023@bytedance.com>
-> Reported-by: Liangyan <liangyan.peng@bytedance.com>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Link: https://lore.kernel.org/all/20250701163558.2588435-1-liangyan.peng@bytedance.com
+ChenYu
 
-thanks,
--- 
-js
-suse labs
+>  POINTER_RETURN_FRAMES:
+> -       return bytes_to_frames(substream->runtime, pcm_ptr_bytes);
+> +       pcm_ptr_bytes =3D MTK_ALIGN_16BYTES(hw_ptr - hw_base);
+> +       return bytes_to_frames(substream->runtime, (ssize_t)pcm_ptr_bytes=
+);
+>  }
+>  EXPORT_SYMBOL_GPL(mtk_afe_pcm_pointer);
+>
+> diff --git a/sound/soc/mediatek/common/mtk-afe-platform-driver.h b/sound/=
+soc/mediatek/common/mtk-afe-platform-driver.h
+> index fcc923b88f12..71070b26f8f8 100644
+> --- a/sound/soc/mediatek/common/mtk-afe-platform-driver.h
+> +++ b/sound/soc/mediatek/common/mtk-afe-platform-driver.h
+> @@ -12,6 +12,8 @@
+>  #define AFE_PCM_NAME "mtk-afe-pcm"
+>  extern const struct snd_soc_component_driver mtk_afe_pcm_platform;
+>
+> +#define MTK_ALIGN_16BYTES(x) ((x) & GENMASK_ULL(39, 4))
+> +
+>  struct mtk_base_afe;
+>  struct snd_pcm;
+>  struct snd_soc_component;
+> --
+> 2.45.2
+>
+>
 
