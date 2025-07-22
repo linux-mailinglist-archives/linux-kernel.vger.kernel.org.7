@@ -1,81 +1,125 @@
-Return-Path: <linux-kernel+bounces-740223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1D87B0D190
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:59:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9457DB0D193
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:00:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F399F188F5DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 05:59:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B00E26C144F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 05:59:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC9328D8DA;
-	Tue, 22 Jul 2025 05:59:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9051C28D85C;
+	Tue, 22 Jul 2025 05:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="P3kDcJ1c"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="iz36moVP"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5D928CF6B;
-	Tue, 22 Jul 2025 05:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E2F28B507;
+	Tue, 22 Jul 2025 05:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753163955; cv=none; b=OPLD2Kc3xM0BNy4GJXw03fV2AWxHKySw40PLZwZU7Q3YKCZkvzCqKGoNz1CwkvW812xTpmvV4fDtyGxZRBJCcNLhITovMPHxz8J0QFYL7I4yUkTu/wf5O8mx5eu87UO2XN++dFKyiQyZ1TOXfr1FgPsAufEvrsitVdWM3/T5AG0=
+	t=1753163996; cv=none; b=j/cNOkHMfXriMpudbEeJC2J7vzRCfWndFtLeKY85zdxImiwMSpSXTh/Ons5/maofCGUm3TclsfwzkLCn/CfyewEPy9QU4eCsEJiHvhiXYdMh/Qa4kjg3lroc7d7EO6iRpLEpf/f+hwo4K8JqhH5y06BCYewqk/fKViSiEusSbYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753163955; c=relaxed/simple;
-	bh=dinlk1QJwMX/+sI/SBiMKZoOUaM/VmxQzR0V0OiFN4E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RKUvR7rUWgrfjUJFHvAO60rbSZTzYmpqcPN3oopCPijyv9k4QHgsJBHkgsysDXeKPy9H3LfeqRsbFeOvhx0cEDszk4jdl3C3HXmPj/HYunK4Gq858ykTfmSFRtGG2YgXdYLRHbbAhH/UUoucr2ZgMgaCmV53M7thQfYpPnjBe60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=P3kDcJ1c; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=dinlk1QJwMX/+sI/SBiMKZoOUaM/VmxQzR0V0OiFN4E=; b=P3kDcJ1cLjlA778aEHPIId4xkO
-	GxsWuvToia4Ks95bIa7pLdq4Acyf2auvafrCcuUlkYTTBqCW95+KF4/4rtiaZm3oe4MwoZ8s0upjP
-	5hiRLEnh55Doc367UoyTJsC7Jhayk0R9BSfLLkrN3ClYGWLpCcAt2bK2w0LDYTTWyB2/C3XBUjwSA
-	vgQQfpsDuSrIxvOKrIH+lgU/536FjD5tRv32M+5+9o5RxMVvXzQPKE5uc9m5PBXKAx5kD47lmRCb7
-	i3SSQ9s1vXLzpkAGs20tLhdWeb6PjH/irCdFxpipNs8aFmUROLmoeCnClBdNF90t7c9vaq7y6QQKe
-	vAYyy4Ug==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ue61x-00000001Nkf-1F3m;
-	Tue, 22 Jul 2025 05:59:13 +0000
-Date: Mon, 21 Jul 2025 22:59:13 -0700
-From: 'Christoph Hellwig' <hch@infradead.org>
-To: hoyoung seo <hy50.seo@samsung.com>
-Cc: 'Christoph Hellwig' <hch@infradead.org>, linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, alim.akhtar@samsung.com,
-	avri.altman@wdc.com, jejb@linux.ibm.com, martin.petersen@oracle.com,
-	beanhuo@micron.com, bvanassche@acm.org, kwangwon.min@samsung.com,
-	kwmad.kim@samsung.com, cpgs@samsung.com, h10.kim@samsung.com,
-	willdeacon@google.com, jaegeuk@google.com, chao@kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v1] writback: remove WQ_MEM_RECLAIM flag in bdi_wq
-Message-ID: <aH8osRbuecxTLur4@infradead.org>
-References: <CGME20250721062037epcas2p25fd6fcf66914a419ceefca3285ea09f3@epcas2p2.samsung.com>
- <20250721064024.113841-1-hy50.seo@samsung.com>
- <aH3on5GBd6AfgJuw@infradead.org>
- <000001dbfa1a$a2a1ad80$e7e50880$@samsung.com>
+	s=arc-20240116; t=1753163996; c=relaxed/simple;
+	bh=hdMrxJ8Zr6JIBWaI8Iy3x33b6Iff3LdwD8t3CXUT3SA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AYVbsyRAKmnGWGgGDf7Zki46M5qbPda3TAMzPWFT3zUsdV8I1AoJo56t//XOcLw/AiCFYxZKDUeURBszHOslIpwDCWXQ12T5/xwobNKBNATu5/h7THGbEziK3dsxajRBMo5j/xFoD9NF8XtRJwYyWfAA/W5U+1lxGLLBzTdehO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=iz36moVP; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1753163984; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=ySiCGZAtj55OzR0IrY3iVRy0mm6ioSQe3uf0JRqArwE=;
+	b=iz36moVPk2dom6dlJW1RxPVksiKYXMFR7OaliGSOZvdR846s+UnDp8lR99WKY9bZgbYL+ZR0Xu066un1nnKJr2eBeT1clycTRErjV+qnTwxqqA7GzraDhj9xhQj3MXfk5AXmv57LKuTEhhCOH8xOnwnH7rZ9qCi9HcIznvfaEyE=
+Received: from 30.74.144.108(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WjUhTET_1753163982 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 22 Jul 2025 13:59:43 +0800
+Message-ID: <bea04294-3302-42f1-ade1-e4ec6aa80b99@linux.alibaba.com>
+Date: Tue, 22 Jul 2025 13:59:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000001dbfa1a$a2a1ad80$e7e50880$@samsung.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] docs: update THP documentation to clarify sysfs "never"
+ setting
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
+ <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250721155530.75944-1-lorenzo.stoakes@oracle.com>
+ <d54d1dfb-f06d-4979-983b-73998f05867e@lucifer.local>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <d54d1dfb-f06d-4979-983b-73998f05867e@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 21, 2025 at 05:37:03PM +0900, hoyoung seo wrote:
-> No way..
-> It's because i just don't know much about this part.
-> And WQ_MEM_RECLAIM flag is absolutely necessary.
 
-As a rule of thumb try to write an explanation why a change is safe.
-That usually kicks of a process to think about the implications.
+
+On 2025/7/22 13:34, Lorenzo Stoakes wrote:
+> Hi Andrew,
+> 
+> Could you apply this fix-patch? It adds the caveat regarding MADV_COLLAPSE in a
+> couple other places whwere the sysfs 'never' mode is mentioned.
+> 
+> Thanks, Lorenzo
+> 
+> ----8<----
+>  From 7c0bdda6a633bc38e7d5a3b0acf2cef7bdc961af Mon Sep 17 00:00:00 2001
+> From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Date: Tue, 22 Jul 2025 06:32:18 +0100
+> Subject: [PATCH] docs: update admin guide transhuge page to mention
+>   MADV_COLLAPSE everywhere
+> 
+> We previously missed a couple places where the 'never' mode was described,
+> put the caveat regarding MADV_COLLAPSE in these locations also.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+
+Thanks.
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+
+> ---
+>   Documentation/admin-guide/mm/transhuge.rst | 8 ++++++--
+>   1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+> index 182519197ef7..370fba113460 100644
+> --- a/Documentation/admin-guide/mm/transhuge.rst
+> +++ b/Documentation/admin-guide/mm/transhuge.rst
+> @@ -385,7 +385,9 @@ always
+>       Attempt to allocate huge pages every time we need a new page;
+> 
+>   never
+> -    Do not allocate huge pages;
+> +    Do not allocate huge pages. Note that ``madvise(..., MADV_COLLAPSE)``
+> +    can still cause transparent huge pages to be obtained even if this mode
+> +    is specified everywhere;
+> 
+>   within_size
+>       Only allocate huge page if it will be fully within i_size.
+> @@ -441,7 +443,9 @@ inherit
+>       have enabled="inherit" and all other hugepage sizes have enabled="never";
+> 
+>   never
+> -    Do not allocate <size> huge pages;
+> +    Do not allocate <size> huge pages. Note that ``madvise(...,
+> +    MADV_COLLAPSE)`` can still cause transparent huge pages to be obtained
+> +    even if this mode is specified everywhere;
+> 
+>   within_size
+>       Only allocate <size> huge page if it will be fully within i_size.
+> --
+> 2.50.1
 
 
