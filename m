@@ -1,134 +1,141 @@
-Return-Path: <linux-kernel+bounces-741660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30CEAB0E761
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:57:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D98C2B0E74A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 01:45:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1729B1C878B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 23:57:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6BF83AFE50
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 23:44:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4568A28C2C3;
-	Tue, 22 Jul 2025 23:57:00 +0000 (UTC)
-Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1373528C2C3;
+	Tue, 22 Jul 2025 23:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XBkXtInU"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6452B239082;
-	Tue, 22 Jul 2025 23:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1004B28C2A3
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 23:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753228619; cv=none; b=iFWncRh/Fh/BAmhpLPpeWDTZ3aY+6IQRa7x6FYdGz0bY2LXz4r7rPcNMicAWPcHva/P2i/ff2iS9acOoC6KOutmPxc0gJoZrnrhu2esFGLHprxFBgkeQmkAIlUIV4ky/JIEfAr+3BKaMQvsg8ngPW/7kGVfm/i+gG6pkjOOUnSs=
+	t=1753227914; cv=none; b=S9isGLQq435gvr4qLcPKdN5T19rk4RLXwjQDy/LoKyp6ifEfF+CdIL6BaoQjbpCGAaH3hs8Yo7hJL8yU8Ds7MZmD9Oj9H9AZq6qZiRiSITF6hehVvfaeNbUt+7owhflGz9JpYaffhWUt2hgwV5gJVGp+oNLwGmus/+/YIomYjGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753228619; c=relaxed/simple;
-	bh=a8eCLYQCbaGuBj9/91as4Az7N2duReG1uoUUWGuLhzY=;
-	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=DIQ7VKxzdEcCR5TSmXdbt8C1XBNO/wA/RrpL7n1txWmx303Nxq63NfGqdHaQS1kSs+pE801UG7rkmsUye4EMnISKYL/lT/fSxDN/pvf+NAHhhqffMTDPe0CyGzAWgKCY4L3NUJbinwKVE8tZwFPUqlTess9QXt+IEkQT0RFnYq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in01.mta.xmission.com ([166.70.13.51]:54088)
-	by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1ueMW1-000zuR-EC; Tue, 22 Jul 2025 17:35:21 -0600
-Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:46488 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1ueMW0-00E3C9-Cu; Tue, 22 Jul 2025 17:35:21 -0600
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,  Thomas =?utf-8?Q?W?=
- =?utf-8?Q?ei=C3=9Fschuh?=
- <thomas.weissschuh@linutronix.de>,  Alexander Viro
- <viro@zeniv.linux.org.uk>,  Alexei Starovoitov <ast@kernel.org>,  Daniel
- Borkmann <daniel@iogearbox.net>,  Andrii Nakryiko <andrii@kernel.org>,
-  Martin KaFai Lau <martin.lau@linux.dev>,  Eduard Zingerman
- <eddyz87@gmail.com>,  Song Liu <song@kernel.org>,  Yonghong Song
- <yonghong.song@linux.dev>,  John Fastabend <john.fastabend@gmail.com>,  KP
- Singh <kpsingh@kernel.org>,  Stanislav Fomichev <sdf@fomichev.me>,  Hao
- Luo <haoluo@google.com>,  Jiri Olsa <jolsa@kernel.org>,  Linux-Fsdevel
- <linux-fsdevel@vger.kernel.org>,  bpf <bpf@vger.kernel.org>,  LKML
- <linux-kernel@vger.kernel.org>
-References: <20250721-remove-usermode-driver-v1-0-0d0083334382@linutronix.de>
-	<20250721-remove-usermode-driver-v1-2-0d0083334382@linutronix.de>
-	<CAADnVQ+Mw=bG-HZ5KMMDWzr_JqcCwWNQNf-JRvRsTLZ6P7-tUw@mail.gmail.com>
-	<20250722063328.GA15403@lst.de>
-Date: Tue, 22 Jul 2025 18:33:47 -0500
-In-Reply-To: <20250722063328.GA15403@lst.de> (Christoph Hellwig's message of
-	"Tue, 22 Jul 2025 08:33:28 +0200")
-Message-ID: <87cy9rpzqc.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1753227914; c=relaxed/simple;
+	bh=iR/ZFHDpx0HlMe6VYcX3WRXKOTGGqNHYMiXkNaaepLA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=nO0RL13TFDjSkx/HnLnKH6FnLZ1ghiRbQ/y2jO9sjfdzog853opJKQYJdEDmohFZV0/xoNdh8cMFzqS7RSHf6FctphCh6W195cU9hHJmxZzzn5gVhRnwVfJWcdlvAz/6/DqnR6M9oguPpkQAMb0KEs0piOm7gGDjPcjH3lzS6bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XBkXtInU; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ynaffit.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-74ad608d60aso5013303b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 16:45:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753227912; x=1753832712; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=bzB90mjYhl9cVeG8WmHQFXv2htyBjKdEHyc4UVAP4Ek=;
+        b=XBkXtInU/Ux1jcL4QihVMyqe/r/bsu5LkR43HjUwRZ1DSG7qvArbmIEyk6mmYnYbnh
+         Wio9bOnJ5GiYX5dN4hrki8gjV5Z3qzvhCpDClBIG4R0EWn95ZlrSJiQu7KbCYx6GllSP
+         tS5ajJW4zbMU9fBFoW1g/BnDO/MiB73CKU1O/Ro8pibJ7C/EYy6754WnnQrvYVTNtpmQ
+         jE6gfr6Ak/gnWz9cfH6gtdoDQ91lQk3IvZIC8fNnPjfNwD0VJZ2m8ZdAK7ECl6EsU18L
+         ftpuAeWhRUxozr6U8A/8tit93NqepgXZZi8jrtWu65Ts6A+CUE9JF7HhG59uTUpxWbfQ
+         uEjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753227912; x=1753832712;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bzB90mjYhl9cVeG8WmHQFXv2htyBjKdEHyc4UVAP4Ek=;
+        b=R+oV2v2LVflwRboJK+32XBV8ai0nzn2PqcMt5PAogQLIljqGWKF1lWgnuy3a/P0ddp
+         Y8WkS1PEM1w/lnvD9LAivLOLD8BgcWtGAuHomRZJ3K+07lhiiWq9wp6VBZxHX6x/FD3b
+         nLxy2zl9tnAGDA1WQGpUH92p+DOf1ET42rbq2kQbMLNipH29uZKNObXMrLlk2gTB9fdR
+         8q7cVt+1dxAa+Ph+w3vqTKomt6ACOQrOrxuwOSnLJgv76SeBx8zR+t0HegFuqjgCg3iO
+         pm5HjUe8ii60aKF5vsCgorlXNIK1fbTNr9N2ioYRFX3iNWgL3w63bYo0KO/3vWMzGNYD
+         nTYA==
+X-Gm-Message-State: AOJu0YzTviNlhRWVCOnugU1938AXmUapEP5LEnlGYIujh7DFU4xsANw6
+	h7S2MBqOH+GC3DQRUDXjd8sLsmTq+2393vV5m+UeDVeMaPdPb+9nYYVTQD5DMRxhT9Gk6MQ5gVc
+	MFr6qNdN2VadWGzn1HhlaJoUiQ/KsyjEuaJcjxov2ko8dEn+VAEtZBjmCEXWbAOrJ/57CpMy72W
+	xbhhpHql8b9WVjO4Cvop2Q9sNxIe6vQLVNgcj9Z6lb7tJi2r9gJg==
+X-Google-Smtp-Source: AGHT+IFfQxoWz0Fx1mfiwT12DdcIjNjYDEhezz3S0TsdPyGeMl/ALE7N6gjqiDWmebB61JqAUdwnDVB1zCDt
+X-Received: from pfbct19.prod.google.com ([2002:a05:6a00:f93:b0:73c:26eb:39b0])
+ (user=ynaffit job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:2d0c:b0:749:456:4082
+ with SMTP id d2e1a72fcca58-76033a13dd9mr1325216b3a.1.1753227912111; Tue, 22
+ Jul 2025 16:45:12 -0700 (PDT)
+Date: Tue, 22 Jul 2025 16:45:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-XM-SPF: eid=1ueMW0-00E3C9-Cu;;;mid=<87cy9rpzqc.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX199tPFUBRTw11rx3Pb8fqqmAgjycIgSwCI=
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	* -0.0 BAYES_40 BODY: Bayes spam probability is 20 to 40%
-	*      [score: 0.3244]
-	*  0.7 XMSubLong Long Subject
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	*  0.0 XM_B_Unicode BODY: Testing for specific types of unicode
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa05 1397; Body=1 Fuz1=1 Fuz2=1]
-	*  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa05 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Christoph Hellwig <hch@lst.de>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 565 ms - load_scoreonly_sql: 0.05 (0.0%),
-	signal_user_changed: 15 (2.6%), b_tie_ro: 13 (2.3%), parse: 1.64
-	(0.3%), extract_message_metadata: 26 (4.6%), get_uri_detail_list: 1.85
-	(0.3%), tests_pri_-2000: 34 (6.0%), tests_pri_-1000: 4.3 (0.8%),
-	tests_pri_-950: 1.42 (0.3%), tests_pri_-900: 1.16 (0.2%),
-	tests_pri_-90: 85 (15.0%), check_bayes: 81 (14.3%), b_tokenize: 9
-	(1.6%), b_tok_get_all: 8 (1.4%), b_comp_prob: 2.5 (0.4%),
-	b_tok_touch_all: 58 (10.2%), b_finish: 1.13 (0.2%), tests_pri_0: 378
-	(66.9%), check_dkim_signature: 0.70 (0.1%), check_dkim_adsp: 3.6
-	(0.6%), poll_dns_idle: 0.80 (0.1%), tests_pri_10: 3.9 (0.7%),
-	tests_pri_500: 11 (2.0%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH bpf-next 2/2] umd: Remove usermode driver framework
-X-SA-Exim-Connect-IP: 166.70.13.51
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, jolsa@kernel.org, haoluo@google.com, sdf@fomichev.me, kpsingh@kernel.org, john.fastabend@gmail.com, yonghong.song@linux.dev, song@kernel.org, eddyz87@gmail.com, martin.lau@linux.dev, andrii@kernel.org, daniel@iogearbox.net, ast@kernel.org, viro@zeniv.linux.org.uk, thomas.weissschuh@linutronix.de, alexei.starovoitov@gmail.com, hch@lst.de
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-SA-Exim-Scanned: No (on out03.mta.xmission.com); SAEximRunCond expanded to false
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <20250722234508.232228-1-ynaffit@google.com>
+Subject: [PATCH v2 1/2] binder: Add copyright notice to new kunit files
+From: Tiffany Yang <ynaffit@google.com>
+To: linux-kernel@vger.kernel.org
+Cc: Carlos Llamas <cmllamas@google.com>, Joel Fernandes <joelagnelf@nvidia.com>, kernel-team@android.com, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Christian Brauner <brauner@kernel.org>, Suren Baghdasaryan <surenb@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Christoph Hellwig <hch@lst.de> writes:
+Clean up for the binder_alloc kunit test series. Add a copyright notice
+to new files, as suggested by Carlos [1].
 
-> On Mon, Jul 21, 2025 at 08:51:22AM -0700, Alexei Starovoitov wrote:
->> On Mon, Jul 21, 2025 at 2:05=E2=80=AFAM Thomas Wei=C3=9Fschuh
->> <thomas.weissschuh@linutronix.de> wrote:
->> >
->> > The code is unused since commit 98e20e5e13d2 ("bpfilter: remove bpfilt=
-er"),
->> > remove it.
->>=20
->> Correct, but we have plans to use it.
->> Since it's not causing any problems we prefer to keep it
->> to avoid reverting the removal later.
->
-> Plans to eventually use something are no reason to keep code that's been
-> unused for almost 2 years around.  Unless the removal would conflict with
-> currently queued up in linux-next code it is always better to just drop
-> it and reinstate it when (or rather usually IFF) it is used again.
+[1] https://lore.kernel.org/all/CAFuZdDLD=3CBOLSWw3VxCf7Nkf884SSNmt1wresQgxgBwED=eQ@mail.gmail.com/
 
-I wonder if those are the same plans that existed in June of 2020 when I
-split out the usermode driver code from user mode helper?
+Fixes: 5e024582f494 ("binder: Scaffolding for binder_alloc KUnit tests")
+Suggested-by: Carlos Llamas <cmllamas@google.com>
+Cc: Joel Fernandes <joelagnelf@nvidia.com>
+Signed-off-by: Tiffany Yang <ynaffit@google.com>
+---
+This patch is based on top of char-misc-next.
+---
+ drivers/android/tests/.kunitconfig         | 4 ++++
+ drivers/android/tests/Makefile             | 3 +++
+ drivers/android/tests/binder_alloc_kunit.c | 5 ++++-
+ 3 files changed, 11 insertions(+), 1 deletion(-)
 
-As far as I know this code has never been seriously used, so I am in
-favor of simplifying the maintenance burden.
-
-Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
-
-Eric
+diff --git a/drivers/android/tests/.kunitconfig b/drivers/android/tests/.kunitconfig
+index a73601231049..39b76bab9d9a 100644
+--- a/drivers/android/tests/.kunitconfig
++++ b/drivers/android/tests/.kunitconfig
+@@ -1,3 +1,7 @@
++#
++# Copyright 2025 Google LLC.
++#
++
+ CONFIG_KUNIT=y
+ CONFIG_ANDROID_BINDER_IPC=y
+ CONFIG_ANDROID_BINDER_ALLOC_KUNIT_TEST=y
+diff --git a/drivers/android/tests/Makefile b/drivers/android/tests/Makefile
+index 6780967e573b..27268418eb03 100644
+--- a/drivers/android/tests/Makefile
++++ b/drivers/android/tests/Makefile
+@@ -1,3 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0-only
++#
++# Copyright 2025 Google LLC.
++#
+ 
+ obj-$(CONFIG_ANDROID_BINDER_ALLOC_KUNIT_TEST)	+= binder_alloc_kunit.o
+diff --git a/drivers/android/tests/binder_alloc_kunit.c b/drivers/android/tests/binder_alloc_kunit.c
+index 02aa4a135eb5..f8c05bf15c2d 100644
+--- a/drivers/android/tests/binder_alloc_kunit.c
++++ b/drivers/android/tests/binder_alloc_kunit.c
+@@ -1,6 +1,9 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Test cases for binder allocator code
++ * Test cases for binder allocator code.
++ *
++ * Copyright 2025 Google LLC.
++ * Author: Tiffany Yang <ynaffit@google.com>
+  */
+ 
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+-- 
+2.50.0.727.gbf7dc18ff4-goog
 
 
