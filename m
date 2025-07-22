@@ -1,108 +1,95 @@
-Return-Path: <linux-kernel+bounces-740248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 364A1B0D1D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:28:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6717CB0D1D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:28:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4EC56C47D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:27:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9067546FC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 414F31DED5D;
-	Tue, 22 Jul 2025 06:27:29 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813AE1DF246;
-	Tue, 22 Jul 2025 06:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD9F2BE63D;
+	Tue, 22 Jul 2025 06:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l3yhXiBP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C4328B50B;
+	Tue, 22 Jul 2025 06:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753165648; cv=none; b=ReqH6zHM1od+CR6oVA0ZF3rmhpVgFGVUxVO/y3K9QBASr78at8wCEUxkIh3bX8+C45qLk1T9iTyq9XWpjn+PUC2dhL5niYDVbPIJTpxcoIX64TYJkfR0+q7z02ukiCHCCp6MFJV05dFGQqhGVbjdzeq2BSHO1SJM0DTiUwIWIlw=
+	t=1753165682; cv=none; b=OJkVM3aUxVp/US4FU7v2mgcMglXFPfH6dTu/tY1+/EuBlwlhpTuqj24557frHviVkUWD3d3tm2k0Obym8FPLfrOiTYOy1f05onDTSnW0OJXHqlTMOxT7EZojBPZoOUM4lJv+B2NO1uS98/ipGRVPOBpx/M2KOroHnCOlgvEx49k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753165648; c=relaxed/simple;
-	bh=2I7wcjB5020T/1e8E1MNHCvajb2TFC13MQwLsNrz8fs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KhUmyztx2xEPrusC1FB20gIJf7l9p2lS+6Ntbts/dalmR9KJwEBPI7T5fM3/FMDwcqH2trAkZPfYIZjj6IH7rbJlQXqTn+uGv1EKxpGVF3mtVz57oT+L311CQZEG3hfC0wIBcxVFtkTn4wiBCi5+Gk7SpOuBfu7ZeROyqoJWgOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8DxzOJLL39oFWgvAQ--.30012S3;
-	Tue, 22 Jul 2025 14:27:23 +0800 (CST)
-Received: from linux.localdomain (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowJAxvsFFL39oIIchAA--.2200S4;
-	Tue, 22 Jul 2025 14:27:20 +0800 (CST)
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 2/2] net: stmmac: Check stmmac_hw_setup() in stmmac_resume()
-Date: Tue, 22 Jul 2025 14:27:16 +0800
-Message-ID: <20250722062716.29590-3-yangtiezhu@loongson.cn>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20250722062716.29590-1-yangtiezhu@loongson.cn>
-References: <20250722062716.29590-1-yangtiezhu@loongson.cn>
+	s=arc-20240116; t=1753165682; c=relaxed/simple;
+	bh=pJZ8mhS5LDJbKuAjpcYWd1QM10ESPDFde8uZW8OLd90=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ANOozpFWeeAM8A1QIpTUZTsitbT6R7Od7yON3avXGn7CtXTpqr/hoqCEAS6GWF6ZVd4M2yF23WX2fzhjCOiN5N1sNzKCcwS2LuoYBoBSNufg9FslGUUqqCgYTyfyqQAoMOYzCXTGSxFDaNmLdtDxZ7T6guS77qYqo0yOI145F9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l3yhXiBP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B532C4CEEB;
+	Tue, 22 Jul 2025 06:28:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753165682;
+	bh=pJZ8mhS5LDJbKuAjpcYWd1QM10ESPDFde8uZW8OLd90=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l3yhXiBPVEf315vdyJEOMAP3o7xujPgnL9BivoCYfTKWYDKT5AzaPrI+K/G15S9Ck
+	 rUtLcYBzWx88LmS/QHppHCBojbbTWzcN+23Q3Xo6c0olL1S+n+Jcq+3tQnAYKQb2NZ
+	 VT/yxfGZPwDO5X6tlCr0Cwz1Nukb32uMLtXZEukKEEE1pDr/b5pyUGcJ7OQJkYMzqc
+	 tQGKbSOkVTI/hwjk6eiEPV11qOeQptDSYOyXHb7z2R8M1/ZhZeEigDcSZXEMeaoHU8
+	 DbmnIQD6f9mqTTePOfnY2JTRwAV5PqFKeEK2OA5ZqbqJ71+7MHSVNP3AUR3nHrDhw4
+	 bXy3HMh7RNtgQ==
+Date: Tue, 22 Jul 2025 08:27:59 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Praveen Talari <quic_ptalari@quicinc.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+	devicetree@vger.kernel.org, dmitry.baryshkov@oss.qualcomm.com, bryan.odonoghue@linaro.org, 
+	psodagud@quicinc.com, djaggi@quicinc.com, quic_msavaliy@quicinc.com, 
+	quic_vtanuku@quicinc.com, quic_arandive@quicinc.com, quic_cchiluve@quicinc.com, 
+	quic_shazhuss@quicinc.com
+Subject: Re: [PATCH v7 0/8] Enable QUPs and Serial on SA8255p Qualcomm
+ platforms
+Message-ID: <20250722-curious-attentive-moth-e3d52c@kuoka>
+References: <20250721174532.14022-1-quic_ptalari@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAxvsFFL39oIIchAA--.2200S4
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj9xXoW7JF4xXr17uw1rZF4DWFW7GFX_yoWktrcEgF
-	1Ivrn5Xw1UGF43KryUKr43Zry09F4Du3W09F4UGayfu3Z7Was8XF98Wr9xAF1rZry5CFyD
-	Wr1xtr1fAw45KosvyTuYvTs0mTUanT9S1TB71UUUUj7qnTZGkaVYY2UrUUUUj1kv1TuYvT
-	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-	cSsGvfJTRUUUbS8YFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
-	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6F4UJVW0owAaw2AFwI0_JF0_Jw1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0c
-	Ia020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jw0_
-	WrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwI
-	xGrwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWU
-	JVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
-	vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IY
-	x2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26c
-	xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAF
-	wI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jz5lbUUUUU=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250721174532.14022-1-quic_ptalari@quicinc.com>
 
-stmmac_hw_setup() may return 0 on success and an appropriate negative
-integer as defined in errno.h file on failure, just check it and then
-return early if failed in stmmac_resume().
+On Mon, Jul 21, 2025 at 11:15:24PM +0530, Praveen Talari wrote:
+> The Qualcomm automotive SA8255p SoC relies on firmware to configure
+> platform resources, including clocks, interconnects and TLMM. The device
+> drivers request resources operations over SCMI using power and
+> performance protocols.
+> 
+> The SCMI power protocol enables or disables resources like clocks,
+> interconnect paths, and TLMM (GPIOs) using runtime PM framework APIs,
+> such as resume/suspend, to control power states(on/off).
+> 
+> The SCMI performance protocol manages UART baud rates, with each baud
+> rate represented by a performance level. Drivers use the
+> dev_pm_opp_set_level() API to request the desired baud rate by
+> specifying the performance level.
+> 
+> The QUP drivers are SCMI clients, with clocks, interconnects, pinctrl
+> and power-domains abstracted by a SCMI server.
+> 
+> The serial driver has a dependency on the dev_pm_opp_set_level() function,
+> which is applied in the OPP tree's linux-next branch.
 
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+Where is the changelog with lore links?
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index b948df1bff9a..2bfacab71ab9 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -7975,7 +7975,14 @@ int stmmac_resume(struct device *dev)
- 	stmmac_free_tx_skbufs(priv);
- 	stmmac_clear_descriptors(priv, &priv->dma_conf);
- 
--	stmmac_hw_setup(ndev, false);
-+	ret = stmmac_hw_setup(ndev, false);
-+	if (ret < 0) {
-+		netdev_err(priv->dev, "%s: Hw setup failed\n", __func__);
-+		mutex_unlock(&priv->lock);
-+		rtnl_unlock();
-+		return ret;
-+	}
-+
- 	stmmac_init_coalesce(priv);
- 	phylink_rx_clk_stop_block(priv->phylink);
- 	stmmac_set_rx_mode(ndev);
--- 
-2.42.0
+Best regards,
+Krzysztof
 
 
