@@ -1,194 +1,165 @@
-Return-Path: <linux-kernel+bounces-740570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E97AB0D5DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:23:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C71DB0D5DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:24:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E6BE6C43A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:23:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F8DD168F93
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:24:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3752E2DE1E5;
-	Tue, 22 Jul 2025 09:23:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 587A12DCBF5;
+	Tue, 22 Jul 2025 09:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RuTV563L"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hnpr+OvF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6574323AE84;
-	Tue, 22 Jul 2025 09:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFBCB1D5CD4;
+	Tue, 22 Jul 2025 09:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753176196; cv=none; b=VnZDfNmIQe1XdO0oYKxplDbceeFZL7FykEnIwAbWpsD9bzNPKkRtMgeiJDasrkOE4dkl6LiaD42a5ZsMiRnRWkgbbr/pnw/wWbeYwQ2QqslO6jNDQH2E5sADXNwS0eCZgTkHS2bLS7fgCU4t+p3CryxJ3vTuL/05MFt/4oZgvCU=
+	t=1753176237; cv=none; b=YPUOFVJxhOW54hkpCdSH5EJnzxgBerVxBdaWUh9w/XAURZWIjjlx840GIdVyE0E5UG0rBYlR30kE/w6pSvGujOnn1QK+0eFITfAWs/n4fGAQWv/YNWLsEh95yeVEY4LE+1SVpyt1N/BN6kUkkKCxByXIUTDTYt8Q6RS2lJLWIRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753176196; c=relaxed/simple;
-	bh=ZwKkSsRNiK4vw3joNNnkDFtMauOnJ34010/H72gzG/8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FK0nIVo61AQnoThfrYvSH8FBr5LrTHOS2kTSlCDWQdhXEZJmolOqyNI0ITfFmuFlvIxw+2z42kaSCmY8xpr/mwPRf7bDuuAuxwDIqBFMZS8RWNj6k/pxrNLU8fs1qp7HO/KtQOM633tRMLjOOAKMtsV3AOWJo4mGUtcPUE0sbuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RuTV563L; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4561ca74829so57809445e9.0;
-        Tue, 22 Jul 2025 02:23:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753176190; x=1753780990; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=1+4woj2blIMxZESntw7ogJ3WkdZPq4l3eTQIyRBKHxg=;
-        b=RuTV563L7F1JVeoIyYkr8+ShImVfHwHUksLHgjX1dDfGJqkuKYqD8gu3/bT+6buZku
-         gAqbSjh944PakCPhFo75Tq2En7Ej7PC3cmTTtidAtq0fWztEVJCQ8tOX7QhfBSksqCRf
-         0S5u24zVOmuuBT2nmyGNcBF0x0OGlshQc9A3v+h+4SCbSaoIevm93I8aMYWBKnxv6PNZ
-         DrJliISpCvVO/YDItwT18M7Zmx6yN9hTEAin9XctFSFJdUUHcICUJcLdchoJiS8C5cg4
-         f8EB38FgS2sI85hy0AmPW27+TpNLFeffNLj39SPQkdh1hnIYQ8EDvjqYS28cNw9G7N8t
-         IHdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753176190; x=1753780990;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1+4woj2blIMxZESntw7ogJ3WkdZPq4l3eTQIyRBKHxg=;
-        b=N2vPlngSkTVyGyxxO9Y+XV7hMEWdVnSsG+iIJmzQGIPvSJvlycpDp8ksZh8xoe8YpA
-         4Xd3awv0Lye2cn0f2K+4TPM+tvLsm52J5KoDn8yWUdAtuctfjvv7qIVjPZGb5MLaY+9S
-         nkMTHM54EO3WcN/eVEZVD674fIHg08iQBRO0mY9XQsp7L83yyeOMST1SEHJw3uIZzyM5
-         5c2xB8aI+/mxTPj2asrYsYsmejlSuJYq9INy2/b56XxdMqFeLY99KZLsUl7kxVjPt/2Z
-         NEmFY5hLk0rcY9lUSJ0hVD6ZkQ5PR1GXl2jFniYPB7LhgJ0zgcGenYIA9OKXolqLR7mf
-         3Glw==
-X-Forwarded-Encrypted: i=1; AJvYcCUhIl7xaE8Gu7fG3wqVNZitSCAs/2mQ5GdScIS7KJOsOOKKSwjlAvVnSAm4KPdipP5F7sAOhNGC2QzeVonM@vger.kernel.org, AJvYcCXCZPtV7HK/bY1hFwBbyM8xNA3Hzn77+JlTiMTBA2F4BsdssyRkdZbnEOYEn8muUo2xi0I/KksX02g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3ISvNfsbDRygUcHWXQMCzJdLjsRqeRFdbJD47zeiJpGYfz6JP
-	P//9zcum/cjSjMpzSxvjw19ttWWvU7MKFNJmYd7bmu4XNsqO+n2aJRle
-X-Gm-Gg: ASbGncsQYYkf1cdttHjRHmdwdHIKHjU4yrNILMZ9qvOBQpnXjiQYVZSMropAlwQgiDR
-	5R67SIwmsd8JdFy+aOXWKXhC+9ARQSf4sIjM4o6q49RYESNmIdfl3IYBh6ZWGdPgpjTcXJ3BWxj
-	HmAJ4t+Wm3s2OWySWB/N0nevjplVt8TIYwx2WmzcEcQj896S9B+0luVl86jQ0ry7GKFBxyyK41H
-	qPSEdNDYSKaDbDKbxx83qEg0ZKfecATQ9XnqSf1tIaO3GIvYiIi7egesOKq/6G5asedMzY9p0rQ
-	ohagApYOSYokxDWeWUcKfIq9hQLmlVR3cF0JyAbwObQnDGX5tne38mjnqk2L6/jK+Bn9QAcoMii
-	mDYJe/ieKuA==
-X-Google-Smtp-Source: AGHT+IHVWrEROMcnqT4miDnQ7GxbEIR5JrMq3IhppJY/3sv/iFGHOzAOkTsX1+81XKwkX2SaNmarNA==
-X-Received: by 2002:a05:600c:5298:b0:456:15c7:ce90 with SMTP id 5b1f17b1804b1-4562e38a72fmr234178475e9.12.1753176189335;
-        Tue, 22 Jul 2025 02:23:09 -0700 (PDT)
-Received: from nsa ([89.40.212.7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca4d732sm12803311f8f.61.2025.07.22.02.23.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 02:23:09 -0700 (PDT)
-Date: Tue, 22 Jul 2025 10:23:22 +0100
-From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, 
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, 
-	Matt Ranostay <mranostay@gmail.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] iio: temperature: maxim_thermocouple: use DMA-safe
- buffer for spi_read()
-Message-ID: <tazq2tbbg3trlhrpcozznyaa3yujqijdxrurjruuvbzrjaah7i@nupdjs7vi4qp>
-References: <20250721-iio-use-more-iio_declare_buffer_with_ts-3-v2-1-0c68d41ccf6c@baylibre.com>
+	s=arc-20240116; t=1753176237; c=relaxed/simple;
+	bh=a+8E4SAu1ib+nNJy6o6lE6mpCzXJ/lWhWHoAp+XIqMQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qj3rhWKNK+zMr8F9FFDdg7U6nYLTV/eJp4WhhJs4BmI5cpiBLgJiTLFX2y+9RDyoJHMo70rbT0jogZEheS9deMi/wQSEmy4PvJMDRWdKy/UFnWYrwsBK4BtmLJC9+7Jx5RGJ7y5eePshcBlwJHZXoWme9AdXtpp0Tv9E96uLMic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hnpr+OvF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C4B7C4CEEB;
+	Tue, 22 Jul 2025 09:23:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753176237;
+	bh=a+8E4SAu1ib+nNJy6o6lE6mpCzXJ/lWhWHoAp+XIqMQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hnpr+OvFQrLwa9kjrXjGWutJC5Mk7eTwdSFAzB04Y0W/gneYBFZu6N+XiTI1FhnJ9
+	 fasF4G353RSl1Zv7ZsgcE623tPIDs3J7bvNvCSe254Ucr2PWxfr1O0G+PeMRR/VfDv
+	 mgbBc9cvhWwm5LfvExkE1vAKzuP6EiAd0RFZB8iGt5nbVLkS9CovoHGT9Ixr1rCUJ0
+	 xBvvI9fQ57+uvh7g7l6EceitjKj/idoXSHxs2xa8UJ6d4KefJ27L7eTkuwSgroGHfK
+	 yTH2wRCISnEZ02CCi/yfj8N3VREIOTE7u9M5pZ4zvzcUReNHeqqqPlf41r1L+G7Q3u
+	 G6/a/k/3b4t+w==
+Message-ID: <f956664e-24a2-410a-be9b-4d90e08c7c64@kernel.org>
+Date: Tue, 22 Jul 2025 10:23:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next 1/2] bpftool: Add bpf_token show
+To: Tao Chen <chen.dylane@linux.dev>, ast@kernel.org, daniel@iogearbox.net,
+ andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, davem@davemloft.net,
+ kuba@kernel.org, hawk@kernel.org
+Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org
+References: <20250720173310.1334483-1-chen.dylane@linux.dev>
+ <6b0669fd-fef6-4f4e-b80d-512769e86938@kernel.org>
+ <06387128-8d34-49fd-a409-d35f5d60b094@linux.dev>
+From: Quentin Monnet <qmo@kernel.org>
+Content-Language: en-GB
+In-Reply-To: <06387128-8d34-49fd-a409-d35f5d60b094@linux.dev>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250721-iio-use-more-iio_declare_buffer_with_ts-3-v2-1-0c68d41ccf6c@baylibre.com>
 
-On Mon, Jul 21, 2025 at 06:04:04PM -0500, David Lechner wrote:
-> Replace using stack-allocated buffers with a DMA-safe buffer for use
-> with spi_read(). This allows the driver to be safely used with
-> DMA-enabled SPI controllers.
+2025-07-22 13:48 UTC+0800 ~ Tao Chen <chen.dylane@linux.dev>
+> 在 2025/7/22 00:23, Quentin Monnet 写道:
+>> Thanks a lot for this!
+>>
 > 
-> The buffer array is also converted to a struct with a union to make the
-> usage of the memory in the buffer more clear and ensure proper alignment.
+> Hi Quenin,
 > 
-> Fixes: 1f25ca11d84a ("iio: temperature: add support for Maxim thermocouple chips")
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
-> Changes in v2:
-> - This is a new patch since when looking at it again, I noticed a bug
->   with passing stack-allocated memory to spi_read(). So now the primary
->   purpose is a fix and converting the array to a struct comes free with
->   it.
-> - Link to v1: https://lore.kernel.org/r/20250711-iio-use-more-iio_declare_buffer_with_ts-3-v1-1-f6dd3363fd85@baylibre.com
-> ---
+>>
+>> 2025-07-21 01:33 UTC+0800 ~ Tao Chen <chen.dylane@linux.dev>
+>>> Add `bpftool token show` command to get token info
+>>> from bpf fs in /proc/mounts.
+>>>
+>>> Example plain output for `token show`:
+>>> token_info:
+>>>          /sys/fs/bpf/token
+>>>
+>>> allowed_cmds:
+>>>          map_create          prog_load
+>>>
+>>> allowed_maps:
+>>>
+>>> allowed_progs:
+>>>          kprobe
+>>>
+>>> allowed_attachs:
+>>>          xdp
+>>>
+>>> Example json output for `token show`:
+>>> {
+>>>      "token_info": "/sys/fs/bpf/token",
+>>>      "allowed_cmds": ["map_create","prog_load"
+>>>      ],
+>>>      "allowed_maps":
+>>
+>>
+>> This is not valid JSON. You're missing a value for "allowed_maps" (here
+>> it should likely be an empty array), and the comma:
+>>
+>>     "allowed_maps": [],
+>>
+>>
+>>>      "allowed_progs": ["kprobe"
+>>>      ],
+>>>      "allowed_attachs": ["xdp"
+>>>      ]
+>>> }
+>>>
+>>> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+>>> ---
+>>>   tools/bpf/bpftool/main.c  |   3 +-
+>>>   tools/bpf/bpftool/main.h  |   1 +
+>>>   tools/bpf/bpftool/token.c | 229 ++++++++++++++++++++++++++++++++++++++
+>>>   3 files changed, 232 insertions(+), 1 deletion(-)
+>>>   create mode 100644 tools/bpf/bpftool/token.c
+>>>
 
-Reviewed-by: Nuno Sá <nuno.sa@analog.com>
+[...]
 
->  drivers/iio/temperature/maxim_thermocouple.c | 26 ++++++++++++++++----------
->  1 file changed, 16 insertions(+), 10 deletions(-)
+>>> diff --git a/tools/bpf/bpftool/token.c b/tools/bpf/bpftool/token.c
+>>> new file mode 100644
+>>> index 00000000000..2fcaff4f2ba
+>>> --- /dev/null
+>>> +++ b/tools/bpf/bpftool/token.c
+
+[...]
+
+>>> +            if (has_delegate_options(ent->mnt_opts)) {
+>>> +                hit = true;
+>>> +                break;
+>>
+>>
+>> Apologies, my knowledge of BPF tokens is limited. Can you have only one
+>> token exposed through a bpffs at a time? Asking because I know you can
+>> have several bpffs on your system, if each can have delegate options
+>> then why stop after the first bpffs mount point you find?
+>>
 > 
-> diff --git a/drivers/iio/temperature/maxim_thermocouple.c b/drivers/iio/temperature/maxim_thermocouple.c
-> index cae8e84821d7fd521d59432580d51def939fa4d1..fa648a6542a4e2f08adb556c776b68331ae69631 100644
-> --- a/drivers/iio/temperature/maxim_thermocouple.c
-> +++ b/drivers/iio/temperature/maxim_thermocouple.c
-> @@ -11,6 +11,7 @@
->  #include <linux/module.h>
->  #include <linux/err.h>
->  #include <linux/spi/spi.h>
-> +#include <linux/types.h>
->  #include <linux/iio/iio.h>
->  #include <linux/iio/sysfs.h>
->  #include <linux/iio/trigger.h>
-> @@ -121,8 +122,15 @@ struct maxim_thermocouple_data {
->  	struct spi_device *spi;
->  	const struct maxim_thermocouple_chip *chip;
->  	char tc_type;
-> -
-> -	u8 buffer[16] __aligned(IIO_DMA_MINALIGN);
-> +	/* Buffer for reading up to 2 hardware channels. */
-> +	struct {
-> +		union {
-> +			__be16 raw16;
-> +			__be32 raw32;
-> +			__be16 raw[2];
-> +		};
-> +		aligned_s64 timestamp;
-> +	} buffer __aligned(IIO_DMA_MINALIGN);
->  };
->  
->  static int maxim_thermocouple_read(struct maxim_thermocouple_data *data,
-> @@ -130,18 +138,16 @@ static int maxim_thermocouple_read(struct maxim_thermocouple_data *data,
->  {
->  	unsigned int storage_bytes = data->chip->read_size;
->  	unsigned int shift = chan->scan_type.shift + (chan->address * 8);
-> -	__be16 buf16;
-> -	__be32 buf32;
->  	int ret;
->  
->  	switch (storage_bytes) {
->  	case 2:
-> -		ret = spi_read(data->spi, (void *)&buf16, storage_bytes);
-> -		*val = be16_to_cpu(buf16);
-> +		ret = spi_read(data->spi, &data->buffer.raw16, storage_bytes);
-> +		*val = be16_to_cpu(data->buffer.raw16);
->  		break;
->  	case 4:
-> -		ret = spi_read(data->spi, (void *)&buf32, storage_bytes);
-> -		*val = be32_to_cpu(buf32);
-> +		ret = spi_read(data->spi, &data->buffer.raw32, storage_bytes);
-> +		*val = be32_to_cpu(data->buffer.raw32);
->  		break;
->  	default:
->  		ret = -EINVAL;
-> @@ -166,9 +172,9 @@ static irqreturn_t maxim_thermocouple_trigger_handler(int irq, void *private)
->  	struct maxim_thermocouple_data *data = iio_priv(indio_dev);
->  	int ret;
->  
-> -	ret = spi_read(data->spi, data->buffer, data->chip->read_size);
-> +	ret = spi_read(data->spi, &data->buffer.raw, data->chip->read_size);
->  	if (!ret) {
-> -		iio_push_to_buffers_with_ts(indio_dev, data->buffer,
-> +		iio_push_to_buffers_with_ts(indio_dev, &data->buffer,
->  					    sizeof(data->buffer),
->  					    iio_get_time_ns(indio_dev));
->  	}
-> 
-> ---
-> base-commit: cd2731444ee4e35db76f4fb587f12d327eec5446
-> change-id: 20250711-iio-use-more-iio_declare_buffer_with_ts-3-2cc387a66bdc
-> 
-> Best regards,
-> -- 
-> David Lechner <dlechner@baylibre.com>
-> 
+> Yes it is, only the first bpffs with token info will be showed above.
+> Actually, it will not be limited how many bpffs ceated in kernel, it
+> depends on the user scenarios. In most cases, only one will be created.
+> But, maybe it's better to show all. I will change it in v2.
+
+Yes please. If there are several tokens available, bpftool should "list"
+them all, as the command name implies. The user scenarios don't really
+count here, we should just dump all token info we can see. In the
+future, we could then add the possibility to take an argument (likely a
+path to a bpffs) to show info for a particular mountpoint; a bit like
+you can list all existing programs with "bpftool prog show" but can also
+chose to pick one with "bpftool prog show id ...".
+
+If we print info for several mountpoint, I'd suggest adjusting the
+format for the plain output slightly: I'd remove the blank lines between
+the different sections to get something more compact, maybe play with
+the indent as well, like when we list programs or maps.
+
+Thanks,
+Quentin
 
