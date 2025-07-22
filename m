@@ -1,137 +1,106 @@
-Return-Path: <linux-kernel+bounces-740422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91C1DB0D3FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:57:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C684B0D409
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:58:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FC64161C3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:55:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED880169E0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E0A293B48;
-	Tue, 22 Jul 2025 07:55:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71F72BE7DA;
+	Tue, 22 Jul 2025 07:57:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z7E8Ostb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="IyBJDlZ/"
+Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04013289340
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 07:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D8428D8F5;
+	Tue, 22 Jul 2025 07:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753170942; cv=none; b=hMYTA/wccskhOZOIECsxx2oOa4FzWMd/VcG2YdW61gJaKJOrNeXynpcggV9dz7AUVcsSvNPM0uoj0JKkO6cjsUiEgSLFvMbJcI+lwB/EoqZoJjpVUMyLvxgKDxR0pBMiKn9a2HGPI7rXIckpozVZ+rNsUHTpfimOsFjLT52A1UQ=
+	t=1753171051; cv=none; b=hu/d6LJWeODqAHyKzOHmmBVHrhtK8oteWkCwpvAUhYaEGNpB1k8/tmxBlunQrj7gIkXF9LmzTYVsd1+Ql8RZ75vggfhcK6E5iMEfOkqYXJbM+MRRm5szo70L62kHCLcoVzRtXelWp15uEOYD4foXF8ehumYQ7LxJaLyEmMEm2s8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753170942; c=relaxed/simple;
-	bh=538BX0oOECz/l/2l9Mo1894gIcR3ZyqW32EhlafprQA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=NoRkDYrpHAijKaOmI0S/DKFdHVm0yeEf6v6zS1kqnZqemmOsEkK0gOyK99aq1mW+HppPF7JT6gqBhto6Qop+USzc7Ah59VfaNb4gwj5Xr6Gicdgi20NyJSsZzvPI0oo/3NlMZeZieIONSeL8lo9+EaPOBDU8mEUjabCEQVqAiQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z7E8Ostb; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753170941; x=1784706941;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=538BX0oOECz/l/2l9Mo1894gIcR3ZyqW32EhlafprQA=;
-  b=Z7E8OstbUsnbyCdUyYXHPq1jsElXtLOllfMTNZglL4wEWYbM8/q7EA0u
-   XuKlaviB+uuyaGMbgVk9DwHHds9dI9D3LNxRWNBAXVaOiNwI0YKk5XVhV
-   P9xISfEjiW+MCrx99DGVAHhlRgbtg1zqdLCOmOj+oG+R+0WaNMU+rR87d
-   A3Mp9uDT5TNtSn9sKk9HxVdUpG05hzB/UZMGcmwVHDPgNh3PkDKCnIsIf
-   aohyrTIbfOuskacQYMMKrUgd+0cyV92Q8CucBpuH+evihuHtfTFaOTsYj
-   Wg4rwthPP6BbeOMpvjcmo/VsNB3z9X4iCWfR8vterekplDZZ8Ub4sk03g
-   Q==;
-X-CSE-ConnectionGUID: F/NcocXYQtyJyCrOuprb7w==
-X-CSE-MsgGUID: feOVxQ5QQYipJuIGkhx60Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11499"; a="77947062"
-X-IronPort-AV: E=Sophos;i="6.16,331,1744095600"; 
-   d="scan'208";a="77947062"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 00:55:40 -0700
-X-CSE-ConnectionGUID: tGbBdjeuRN2HT1zmZaohPw==
-X-CSE-MsgGUID: /aq+xyXuS/26s2GRvXURew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,331,1744095600"; 
-   d="scan'208";a="158373034"
-Received: from wdziedzi-mobl.ger.corp.intel.com (HELO [10.245.113.213]) ([10.245.113.213])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 00:55:39 -0700
-Message-ID: <fc12ee3d-1b76-43e1-98a6-b5b647fbb603@linux.intel.com>
-Date: Tue, 22 Jul 2025 09:55:36 +0200
+	s=arc-20240116; t=1753171051; c=relaxed/simple;
+	bh=sEi6Qc+0LMLSRWy4yxxZXRzpQLiDwl7qhwa3kf4qeBE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=setH0eLdzw38epfuWqAbpFJcQxLeoiPb++TAUunT9TtYHrexynrvaO1f63M7t09C2wS6XLjgJSRiE3Thz7aN5/rKAwp7/707iqcgscD+eMmdubl//2B1Nq8TgFN8EMgwnE+j3f3y+S2VxyK4cZe7vi+0kpnPEzK9CSxaH+Cr5kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=IyBJDlZ/; arc=none smtp.client-ip=54.204.34.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1753170976;
+	bh=sEi6Qc+0LMLSRWy4yxxZXRzpQLiDwl7qhwa3kf4qeBE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=IyBJDlZ/46kFPBbWehvroWoU9cTUfolUS5qddaAsKRZn80OHNHmJXL5SFicbDZ43U
+	 sh+1rL2SBYiGrF4x6AsgQNw0sgJQRUNmAYRGP+5mzxgNm3XLGJuvOpYonGAWl7cHDT
+	 kR2L1iNLPssExD0XV37gu8ZhIxeCv2cEuLyGM+6c=
+X-QQ-mid: zesmtpip2t1753170967t5ee6ac39
+X-QQ-Originating-IP: RjCZbseQq4oikT5GmR1Rbfwt8wXQmxJlvGsd6iZwE7U=
+Received: from avenger-e500 ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 22 Jul 2025 15:56:05 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 5626045234927739205
+From: WangYuli <wangyuli@uniontech.com>
+To: jiang.peng9@zte.com.cn
+Cc: christian.koenig@amd.com,
+	dri-devel@lists.freedesktop.org,
+	eperezma@redhat.com,
+	jasowang@redhat.com,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	mst@redhat.com,
+	sumit.semwal@linaro.org,
+	virtualization@lists.linux.dev,
+	xu.xin16@zte.com.cn,
+	xuanzhuo@linux.alibaba.com,
+	yang.yang29@zte.com.cn
+Subject: Re: Re: [PATCH v3] virtio: Update kerneldoc in drivers/virtio/virtio_dma_buf.c
+Date: Tue, 22 Jul 2025 15:56:05 +0800
+Message-ID: <B54095728F89524F+20250722075605.24998-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.50.0
+In-Reply-To: <20250717160707018ilXWr01CnLXI8dTRDVKy4@zte.com.cn>
+References: <20250717160707018ilXWr01CnLXI8dTRDVKy4@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] accel/amdxdna: Delete pci_free_irq_vectors()
-To: Salah Triki <salah.triki@gmail.com>, Min Ma <min.ma@amd.com>,
- Lizhi Hou <lizhi.hou@amd.com>, Oded Gabbay <ogabbay@kernel.org>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <aHs8QAfUlFeNp7qL@pc>
-Content-Language: en-US
-From: Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>
-Organization: Intel Technology Poland sp. z o.o. - ul. Slowackiego 173, 80-298
- Gdansk - KRS 101882 - NIP 957-07-52-316
-In-Reply-To: <aHs8QAfUlFeNp7qL@pc>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: M5znx2hx04lbAGhAtTpGT8TMqZAxGzKRNrEQKddeNz1di6XnjLJi+ZP8
+	1PyOHEVqrJ0Mi7j9Sw5Cs/HRnL0Ie7HPuBQrTUrna+KUM5YGK8qBDDGNdIfeeRP1CVS3v4W
+	b/ZQODKSPJpiShXBdy9z2RUMCJUkUoEAp4E1bMf9eLKDVl+v/dxYIHUVViBJlOR9E00E7la
+	gA+sZYSWsUOda8Z3mxZgb5LvLgDzWuhX2Lm/Soh/uULxK1kxidGERc9+M/s7aOnHh3ONFPx
+	3nkkQOm2wcYSWFPnRTRXIvgISlmGd+El90qdPzstqYKJ/rP2xr81zI3NXB+6ph/bnbDvrqI
+	vkaXwqMVvjtYbtjmJ4NdZBd8/7dEmAe4dslbt42DQMoeHVnw9XE2akbEgA5tXEDL2afKWw+
+	5xN7dFv+yg6OmDR1ZmbebaPmNvMxBghAwq1J3vDmFpq04u4dNEo1+3oYK+dLXWMG1NoTvly
+	bFCdJxD2EMoMfC2LmuZ2+Gb8v3+fQGgdug9WE/oAhay6Eov78myJTv4xhDhfyMXnI1o1FtU
+	FajytM7SwA8NVxAk/tfXWWMD5XzkIigtJmKlPpfB2hdvUjvP0u7HfeMRUHrF6brg1zWuFfJ
+	jJ/t8KnTsx2h9UiFaF0Gg8dWfn5ZgNZPxiBcTJoD2cgJZ2CAPIC90VTdSZk5jI2COSh9O6O
+	yNJBGUlrsfF63AnVN8n1E4X2mUIOcBHG3or5IBa8oh4cjwH0p/FJqn1J53i8IiDyeBfGHQ3
+	+fm9QOuDVTdWtW20pYb4hRSCzOmNgknkJ+5EpWPaxcBoX/lYFtRudWcVcW/r/ZQO3D/u2KX
+	hVk/2bz2q7KAUxp3p4QmbfwRN1Rz5/ADplFZVSZ0vutMJLCPKtSYWMxHd7fgS++fOQOCDJk
+	6yF7fjZXQ2u50BFKUtwrEsfBAsPV+Th5+rnRn7OoJ9VlXA73mc/dxu0j9dYoW/eSVyIsGTl
+	FVdCF4NLkXB5oH/xnSLkbIJs7ynIrd3EuRqfkECoAu4cnXVdkHCzXPg5mRJjE6Q12nSBR3z
+	2E3Xa1vRDnJ/s4KC+c1bJ2t7wpIMZq4S20KMZ9Nw==
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-RECHKSPAM: 0
 
-Reviewed-by: Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>
+Hi Peng Jiang,
 
-On 7/19/2025 8:33 AM, Salah Triki wrote:
-> The device is managed so pci_free_irq_vectors() is called automatically
-> no need to do it manually.
-> 
-> Signed-off-by: Salah Triki <salah.triki@gmail.com>
-> ---
->  drivers/accel/amdxdna/aie2_pci.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/accel/amdxdna/aie2_pci.c b/drivers/accel/amdxdna/aie2_pci.c
-> index c6cf7068d23c..3474a8d4e560 100644
-> --- a/drivers/accel/amdxdna/aie2_pci.c
-> +++ b/drivers/accel/amdxdna/aie2_pci.c
-> @@ -520,14 +520,14 @@ static int aie2_init(struct amdxdna_dev *xdna)
->  	if (!ndev->psp_hdl) {
->  		XDNA_ERR(xdna, "failed to create psp");
->  		ret = -ENOMEM;
-> -		goto free_irq;
-> +		goto release_fw;
->  	}
->  	xdna->dev_handle = ndev;
->  
->  	ret = aie2_hw_start(xdna);
->  	if (ret) {
->  		XDNA_ERR(xdna, "start npu failed, ret %d", ret);
-> -		goto free_irq;
-> +		goto release_fw;
->  	}
->  
->  	ret = aie2_mgmt_fw_query(ndev);
-> @@ -578,8 +578,6 @@ static int aie2_init(struct amdxdna_dev *xdna)
->  	aie2_error_async_events_free(ndev);
->  stop_hw:
->  	aie2_hw_stop(xdna);
-> -free_irq:
-> -	pci_free_irq_vectors(pdev);
->  release_fw:
->  	release_firmware(fw);
->  
-> @@ -588,12 +586,10 @@ static int aie2_init(struct amdxdna_dev *xdna)
->  
->  static void aie2_fini(struct amdxdna_dev *xdna)
->  {
-> -	struct pci_dev *pdev = to_pci_dev(xdna->ddev.dev);
->  	struct amdxdna_dev_hdl *ndev = xdna->dev_handle;
->  
->  	aie2_hw_stop(xdna);
->  	aie2_error_async_events_free(ndev);
-> -	pci_free_irq_vectors(pdev);
->  }
->  
->  static int aie2_get_aie_status(struct amdxdna_client *client,
+Please feel free to add "Reviewed-by: WangYuli <wangyuli@uniontech.com>"
+to your patch v4. [1]
 
+[1]. https://lore.kernel.org/all/20250716094357-mutt-send-email-mst@kernel.org/
+
+Thanks,
+--
+WangYuli
 
