@@ -1,133 +1,130 @@
-Return-Path: <linux-kernel+bounces-740475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B64EB0D4A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:30:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81611B0D4AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:30:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99B6B1AA49EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:30:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 095F61AA2113
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:31:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62C932D8793;
-	Tue, 22 Jul 2025 08:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=erik.faye-lund@collabora.com header.b="ONH9fMJ0"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74A4A2D97A2;
+	Tue, 22 Jul 2025 08:30:00 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1102D8767
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 08:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753172987; cv=pass; b=odj6J9Gun69nulX5BZZdQqParBON6adcsTkTkfbS5SLAV6PUtou8gcRX87T8dPOc5aaPownjtzDd1gcpeoyxpo/IGUAQRA98cWRQtTXPbBuOelEczNu6YxUyWOtiO+bReb5oRiEe/d7Ojk7437jOhe6U7aGTrJ+T3827hkBG5rs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753172987; c=relaxed/simple;
-	bh=BR8KPmhFM1TbcMnG0LwzavzLcKBTwQeuDOBo5sxlB4Y=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jEHZi9HrYhf7EtzvzbyN8OHkW/EoGtNodMx3njykr9trzNTo+KvWGIO6qPI3Xnrk5jnMUibVjuFcdsj6Ux5eQ8D9uoHR6HQFTL2crChu1dXwOugUxnscE7yJ7/4gRQsYJ2mUSgma7JebZUq0Jub5P1MvtwGvI06Ea70PqSQ2/1M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=erik.faye-lund@collabora.com header.b=ONH9fMJ0; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1753172971; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Z26ZDr2WLRHM13aYU8MWWF7ViIeVdELRGUeCtqUXv/KLj0zY48Q+tIOdo9dd43pmWmyyVmcvP/EhodgZMp/9RaglQRrw8jzY7k/Zaaae7AdQAmkS1cIJqPYeXG57/8yWQJYlByTYzRSKLmN5n904DcNfDsFgy1VFHn3bxWdff6A=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753172971; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=kYLsrkqZUuwVDb1Zq02YDwQ1D3jxtY8K+gjAuZAnlfQ=; 
-	b=DH3gecS/oiFPuJfENf/iceDqjXYWUVBsnoVWBZi+1bgPTQwsCYCWpX/FlSEAOm2pgsJDzwxgKQ8aCCJCxhiwwJ4BP54nLLoBp9VQm+2DG37isDAFFzGZ25UhgC8UrAlDIfiMeMAr/tFREY3FcEy9Mh0QCzJZ/C+2+oMcUmm+4DM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=erik.faye-lund@collabora.com;
-	dmarc=pass header.from=<erik.faye-lund@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753172971;
-	s=zohomail; d=collabora.com; i=erik.faye-lund@collabora.com;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=kYLsrkqZUuwVDb1Zq02YDwQ1D3jxtY8K+gjAuZAnlfQ=;
-	b=ONH9fMJ0NUgRgf4llJvYo0IgVw1sCDZrA1nVU3dWI8JK64DeqPMN8eBlRagQ3wzi
-	e2tDGdODUoptcWLeJ2lGxAXbyGMe0vaKYYOHQCzWKzsww85U4MqjWN8hP7hJof5SUPk
-	1Vex0bKmVPYk43WQCc46Fn6gXCq8R8D4BBRIlGGM=
-Received: by mx.zohomail.com with SMTPS id 175317296642515.56143309745596;
-	Tue, 22 Jul 2025 01:29:26 -0700 (PDT)
-Message-ID: <abc0eae5319ed14409c88baab3160b7aed2061b2.camel@collabora.com>
-Subject: Re: [PATCH v5 3/6] drm/panthor: Add support for Mali-G710,
- Mali-G510 and Mali-G310
-From: Erik Faye-Lund <erik.faye-lund@collabora.com>
-To: Karunika Choo <karunika.choo@arm.com>, dri-devel@lists.freedesktop.org
-Cc: nd@arm.com, Boris Brezillon <boris.brezillon@collabora.com>, Steven
- Price	 <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, Maarten
- Lankhorst	 <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>,  Thomas Zimmermann <tzimmermann@suse.de>, David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	linux-kernel@vger.kernel.org
-Date: Tue, 22 Jul 2025 10:29:21 +0200
-In-Reply-To: <20250721111344.1610250-4-karunika.choo@arm.com>
-References: <20250721111344.1610250-1-karunika.choo@arm.com>
-	 <20250721111344.1610250-4-karunika.choo@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (by Flathub.org) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92AA52D3202;
+	Tue, 22 Jul 2025 08:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753173000; cv=none; b=UclxTxr1kldC9Wcu8W6dTVFPXvNwQ9lco1UAE/RSnFxFFVD7/A/lKX/mfPdhQeGeGuwBXrMZKdz+7CfSN2dZAcrZtVX0YVBPFhm/1LpQhsKSPZZ4nN3NHtjng57H1nrLG0l3OGHeDMMNwIkZrBcnLcD4r8pL7TXvs+bPm2RV50w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753173000; c=relaxed/simple;
+	bh=dijSbF5TgUCZOZmfbIuovzO+IaPCj3LNBI05XaAR3jA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IiazdyvJ08xxmPfkE4ZMypsM8wy3mg6xD0bkz4n9CFB8f5UDWMc9o+ZlvRvlRumZGWehc+725Q/QDdH18F/SZg6XFAiJKGalGtqFK866eKw4t/ZbTuYPYXwHS1EwW5jlr7ambvfLamthb2gm4V43MaqArfKgLxzsj4bAzublyE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bmVnJ0c7XzYQvKb;
+	Tue, 22 Jul 2025 16:29:56 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id C6BB41A092F;
+	Tue, 22 Jul 2025 16:29:54 +0800 (CST)
+Received: from [10.174.179.247] (unknown [10.174.179.247])
+	by APP4 (Coremail) with SMTP id gCh0CgDXUxQATH9oJeFhBA--.54737S3;
+	Tue, 22 Jul 2025 16:29:54 +0800 (CST)
+Message-ID: <2c943ca4-7bd2-4c2e-8b7a-8f7edee4adff@huaweicloud.com>
+Date: Tue, 22 Jul 2025 16:29:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v4 00/11] md/llbitmap: md/md-llbitmap: introduce a new
+ lockless bitmap
+To: Yu Kuai <yukuai@kernel.org>, corbet@lwn.net, agk@redhat.co,
+ snitzer@kernel.org, mpatocka@redhat.com, hch@lst.de, song@kernel.org,
+ hare@suse.de
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dm-devel@lists.linux.dev, linux-raid@vger.kernel.org, yukuai3@huawei.com,
+ yangerkun@huawei.com, yi.zhang@huawei.com, johnny.chenyi@huawei.com
+References: <20250721171557.34587-1-yukuai@kernel.org>
+From: Li Nan <linan666@huaweicloud.com>
+In-Reply-To: <20250721171557.34587-1-yukuai@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDXUxQATH9oJeFhBA--.54737S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7KF48CF1ktF1xGryxCF15Arb_yoW8Xr48pa
+	4kK34ru343Ar17XF13ZryUAFyrJan7JrZrKr1xCw1F9a4DZF98Gr18K3WDtwn3Wr13JF1q
+	qr15K3s3Wr1rXaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBSb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487
+	Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aV
+	AFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E
+	8cxan2IY04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82
+	IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC2
+	0s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMI
+	IF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF
+	0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87
+	Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUwb18UUUUU
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-On Mon, 2025-07-21 at 12:13 +0100, Karunika Choo wrote:
-> This patch adds GPU model name and FW binary support for Mali-G710,
-> Mali-G510, and Mali-G310.
->=20
-> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
-> ---
-> =C2=A0drivers/gpu/drm/panthor/panthor_fw.c | 2 ++
-> =C2=A0drivers/gpu/drm/panthor/panthor_hw.c | 6 ++++++
-> =C2=A02 files changed, 8 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/panthor/panthor_fw.c
-> b/drivers/gpu/drm/panthor/panthor_fw.c
-> index 36f1034839c2..b7b454d16f12 100644
-> --- a/drivers/gpu/drm/panthor/panthor_fw.c
-> +++ b/drivers/gpu/drm/panthor/panthor_fw.c
-> @@ -1402,3 +1402,5 @@ int panthor_fw_init(struct panthor_device
-> *ptdev)
-> =C2=A0}
-> =C2=A0
-> =C2=A0MODULE_FIRMWARE("arm/mali/arch10.8/mali_csffw.bin");
-> +MODULE_FIRMWARE("arm/mali/arch10.10/mali_csffw.bin");
-> +MODULE_FIRMWARE("arm/mali/arch10.12/mali_csffw.bin");
 
-This isn't a problem with this series per-se, but these (as well as the
-ones you're adding in later commits here) are all missing from here:
 
-https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git=
-/tree/arm/mali
+在 2025/7/22 1:15, Yu Kuai 写道:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> Changes from v3:
+>   - fix redundant setting mddev->bitmap_id in patch 6;
+>   - add explanation of bitmap attributes in Documentation;
+>   - add llbitmap/barrier_idle in patch 11;
+>   - add some comments in patch 11;
 
-Any plans on upstreaming these so people without DDK access can
-actually try these patches?
+[...]
 
-> diff --git a/drivers/gpu/drm/panthor/panthor_hw.c
-> b/drivers/gpu/drm/panthor/panthor_hw.c
-> index f39010c0ca86..7f138974d43b 100644
-> --- a/drivers/gpu/drm/panthor/panthor_hw.c
-> +++ b/drivers/gpu/drm/panthor/panthor_hw.c
-> @@ -15,8 +15,14 @@ static char *get_gpu_model_name(struct
-> panthor_device *ptdev)
-> =C2=A0						GPU_PROD_MAJOR(gpu_i
-> d));
-> =C2=A0
-> =C2=A0	switch (product_id) {
-> +	case GPU_PROD_ID_MAKE(10, 2):
-> +		return "Mali-G710";
-> =C2=A0	case GPU_PROD_ID_MAKE(10, 7):
-> =C2=A0		return "Mali-G610";
-> +	case GPU_PROD_ID_MAKE(10, 3):
-> +		return "Mali-G510";
-> +	case GPU_PROD_ID_MAKE(10, 4):
-> +		return "Mali-G310";
-> =C2=A0	}
-> =C2=A0
-> =C2=A0	return "(Unknown Mali GPU)";
+Patches 01–10 look good:
+
+Reviewed-by: Li Nan <linan122@huawei.com>
+
+> 
+> Yu Kuai (11):
+>    md: add a new parameter 'offset' to md_super_write()
+>    md: factor out a helper raid_is_456()
+>    md/md-bitmap: support discard for bitmap ops
+>    md: add a new mddev field 'bitmap_id'
+>    md/md-bitmap: add a new sysfs api bitmap_type
+>    md/md-bitmap: delay registration of bitmap_ops until creating bitmap
+>    md/md-bitmap: add a new method skip_sync_blocks() in bitmap_operations
+>    md/md-bitmap: add a new method blocks_synced() in bitmap_operations
+>    md: add a new recovery_flag MD_RECOVERY_LAZY_RECOVER
+>    md/md-bitmap: make method bitmap_ops->daemon_work optional
+>    md/md-llbitmap: introduce new lockless bitmap
+> 
+>   Documentation/admin-guide/md.rst |   86 +-
+>   drivers/md/Kconfig               |   11 +
+>   drivers/md/Makefile              |    1 +
+>   drivers/md/md-bitmap.c           |   15 +-
+>   drivers/md/md-bitmap.h           |   45 +-
+>   drivers/md/md-llbitmap.c         | 1598 ++++++++++++++++++++++++++++++
+>   drivers/md/md.c                  |  288 ++++--
+>   drivers/md/md.h                  |   20 +-
+>   drivers/md/raid5.c               |    6 +
+>   9 files changed, 1963 insertions(+), 107 deletions(-)
+>   create mode 100644 drivers/md/md-llbitmap.c
+> 
+
+-- 
+Thanks,
+Nan
+
 
