@@ -1,140 +1,108 @@
-Return-Path: <linux-kernel+bounces-741389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F589B0E384
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:30:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B753AB0E388
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:31:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5128E16B68E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:30:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B662D16FC45
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:31:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C510828136E;
-	Tue, 22 Jul 2025 18:30:39 +0000 (UTC)
-Received: from lgeamrelo03.lge.com (lgeamrelo03.lge.com [156.147.51.102])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9402820C6;
+	Tue, 22 Jul 2025 18:31:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QmLSTXc1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5727827FB3E
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 18:30:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.51.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5EB11B808;
+	Tue, 22 Jul 2025 18:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753209039; cv=none; b=H9Si7o+jmnB5f6GRK4hqMHPZwu3aQ6ULoKD07G0rM7a8SFlsSRxXsV7yVQhadG3gA/x3elsMjBumtyFYyS6B0BfTBk3IVyFfUwkBG5nkbuKfOFKoqQNshq5FF7LnKFif9VKj2ts1Z0AviGMWALgcVlF+vzUQ5RKC395GPnof41w=
+	t=1753209107; cv=none; b=KeEK5wnUoefbl3cvJV1aQJwSgk85MBvibpGr/yKWE0D2rQD2i00G5KfmXkW+2fpm1q/C7OOYLT8gD6ZGuAChKF+JneB/9Pz+2/YuNRJi7afjLYLbDeEYNZ9eQ6vsYVy+qCPo9XZ17X+FjCu85xdfZXFbjndC38+EzKkAjd3ErqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753209039; c=relaxed/simple;
-	bh=s93iSOLHKAqJafoXuoEukzfOjYM4TGn2cfZlmM72xLw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kqYG5T6jlPRcisC70lTNgDWv2GfWyn9Vxi0VEM4HoYxJl9DGeuvGuC5goe7bQBY5XSMwonSuYQQ7/eSeoeSMWH7tnEZ+NHo7TqM60P67utjQR0Z2xCh/Xs9EQ1oApicjz7V1ZmheeoBWlZmnkbPtaXd45OXkRxowK0dedJKy4ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.51.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
-Received: from unknown (HELO yjaykim-PowerEdge-T330) (10.177.112.156)
-	by 156.147.51.102 with ESMTP; 23 Jul 2025 03:30:33 +0900
-X-Original-SENDERIP: 10.177.112.156
-X-Original-MAILFROM: youngjun.park@lge.com
-Date: Wed, 23 Jul 2025 03:30:33 +0900
-From: YoungJun Park <youngjun.park@lge.com>
-To: Kairui Song <ryncsn@gmail.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org,
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, shikemeng@huaweicloud.com, nphamcs@gmail.com,
-	bhe@redhat.com, baohua@kernel.org, chrisl@kernel.org,
-	cgroups@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, gunho.lee@lge.com,
-	iamjoonsoo.kim@lge.com, taejoon.song@lge.com
-Subject: Re: [PATCH 4/4] mm: swap: Per-cgroup per-CPU swap device cache with
- shared clusters
-Message-ID: <aH/YyRs+UFBAtkza@yjaykim-PowerEdge-T330>
-References: <20250716202006.3640584-1-youngjun.park@lge.com>
- <20250716202006.3640584-5-youngjun.park@lge.com>
- <CAMgjq7COLbfGwd4CYxNBaLTi4UaPDkKQzkLhsV-caoA-xq1V-g@mail.gmail.com>
+	s=arc-20240116; t=1753209107; c=relaxed/simple;
+	bh=Q/0E6JHsPi8XYLDrJkMZKXjLB1qJHoT/TNwskfXMQCg=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=k0f3uPuaBHI+i/6lRoiHsSulAH2WqlD5KhQSe00lZ0gtKC5BMwi+VTY//gv2Zt6tsXcVXkzPAWaed4cfO/ZSikx5qqv/XFDK5KMBkBdRGDmgG5v39i+QS2HJsToinB3woj4IomEJFUw+bQwpSyT5FbqtzZZzQO0EJIP0HISpKxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QmLSTXc1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 540BFC4CEEB;
+	Tue, 22 Jul 2025 18:31:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753209106;
+	bh=Q/0E6JHsPi8XYLDrJkMZKXjLB1qJHoT/TNwskfXMQCg=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=QmLSTXc1GMykeDVdkpfMPcoCwHgVW9zIqYzyqIJ+ijo63BkcEtMHjYVeD/4Rf9uwj
+	 NsYnTr3P8tKnEE5wZ9aC4f8Wedd04vdXqZn5KPGsl7mp4AvmcCEmfgYk46woOP99gS
+	 5Xxc3WH6pMBagyfEQdhLr+T5fPkn6vQfKXWd5jIgd6++tiDlbdkI0rDn4g7QBC2QcS
+	 6X3K8jVQhdXMNDwbF1riQGiwqfUfXz54Xc4xV6GLlw+qWz2qIlkW/j2ZH2NzRx2JLX
+	 YUkuo8sDQU/2gyJckaH0lsf+rKa1iOaByR/hZQ0zPFFmemYl7HqcjiCBs6/j5JobAK
+	 BVWLtw65SgXWQ==
+Date: Tue, 22 Jul 2025 13:31:45 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMgjq7COLbfGwd4CYxNBaLTi4UaPDkKQzkLhsV-caoA-xq1V-g@mail.gmail.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: James.Bottomley@HansenPartnership.com, conor+dt@kernel.org, 
+ martin.petersen@oracle.com, agross@kernel.org, linux-kernel@vger.kernel.org, 
+ linux-scsi@vger.kernel.org, andersson@kernel.org, bvanassche@acm.org, 
+ konradybcio@kernel.org, mani@kernel.org, krzk+dt@kernel.org, 
+ linux-arm-msm@vger.kernel.org, avri.altman@wdc.com, alim.akhtar@samsung.com, 
+ devicetree@vger.kernel.org
+To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+In-Reply-To: <20250722161103.3938-4-quic_rdwivedi@quicinc.com>
+References: <20250722161103.3938-1-quic_rdwivedi@quicinc.com>
+ <20250722161103.3938-4-quic_rdwivedi@quicinc.com>
+Message-Id: <175320910547.321086.3713659278575298880.robh@kernel.org>
+Subject: Re: [PATCH 3/3] dt-bindings: ufs: qcom: Document HS gear and rate
+ limit properties
 
-On Wed, Jul 23, 2025 at 01:44:49AM +0800, Kairui Song wrote:
-> On Thu, Jul 17, 2025 at 4:21 AM Youngjun Park <youngjun.park@lge.com> wrote:
+
+On Tue, 22 Jul 2025 21:41:03 +0530, Ram Kumar Dwivedi wrote:
+> Add documentation for two new optional properties:
+>   - limit-hs-gear
+>   - limit-rate
 > 
-> Hi Youngjun
+> These properties allow platforms to restrict the maximum high-speed
+> gear and rate used by the UFS controller. This is required for
+> certain automotive platforms with hardware constraints.
 > 
-> One thing I noticed after a quick glance is that this
-> swap_alloc_cgroup_priority is bloated and it is doing similar things
-> as folio_alloc_swap.
+> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+> ---
+>  Documentation/devicetree/bindings/ufs/qcom,ufs.yaml | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
 > 
-> I imagined that we can just have a struct (eg. let's call it struct
-> swap_percpu_info / pi) as a closure of what the allocator needs, it
-> contains the plist and fast path device.
-> 
-> With slight changes to folio_alloc_swap, it can respect either the
-> cgroup's pi or global pi. (might be a horrible name though, feel free
-> to change it)
-> 
-> For example first thing swap_alloc_fast do will be:
-> 
-> `struct swap_percpu_info *pi = folio_swap_percpu_info(folio);`
-> 
-> folio_swap_percpu_info returns the cgroup's swap_percpu_info or the global one.
-> 
-> swap_alloc_slow can do a similar thing, it then can just use pi->plist
-> and pi->pcpu_swapdev, (cluster info will be in si) ignoring all the
-> cgroup differences.
 
-I was also considering whether the priority handling (like `plist`) could be  
-abstracted to unify the allocation logic across paths.  
+My bot found errors running 'make dt_binding_check' on your patch:
 
-At the time, I leaned toward keeping the existing allocator logic intact as    
-much as possible, which is why I avoided introducing a new struct and instead  
-duplicated some logic.  
+yamllint warnings/errors:
 
-Your suggestion with `swap_percpu_info` makes the design clearer and aligns    
-well with what I had in mind — I’ll review this direction more closely. If my  
-thoughts change during the process, I’ll make sure to share the update on the  
-mailing list.  
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml: limit-hs-gear: missing type definition
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml: limit-rate: missing type definition
 
-Thanks again for the helpful input!
+doc reference errors (make refcheckdocs):
 
-> Also it is better to check your patches with ./scripts/checkpatch.pl,
-> I'm seeing some styling issues.
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250722161103.3938-4-quic_rdwivedi@quicinc.com
 
-I should have paid more attention to this.  
-I’ll be sure to run `./scripts/checkpatch.pl` more carefully and address those 
-issues in the next version of the patch. Thanks for the reminder!
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
-> I'll check your other patches too later this week, thanks for the
-> update on this idea.
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
-Thanks again for the great idea, and I really appreciate you taking the time to
-review this in the middle of your busy schedule.
+pip3 install dtschema --upgrade
 
-> 
-> Why not just remove the `percpu_swap_cluster.offset` and just share
-> si->percpu_cluster among all cgroups (including root cgroup)?
-> 
-> Otherwise, eg. if rootcg's pcpu cluster and one cgroup's pcpu
-> cluster are pointing to one same cluster, they might be in
-> contention on allocation of different order, or even in the same order
-> the performance might not be good as multiple CPUs will race
-> with each other.
-> 
-> It will be easier to implement too.
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
-I originally kept `percpu_swap_cluster.offset` around to
-preserve compatibility when swap cgroup priority is not enabled, and to        
-minimize disruption to the existing fast path.  
-
-But after reviewing your suggestion, I agree it makes more sense to unify this 
-path and always rely on `si->percpu_cluster`, even for the root cgroup.  
-
-This simplifies the implementation, and as you pointed out, avoids potential   
-contention and complexity that could arise from sharing per-cgroup clusters    
-across CPUs.  
-
-Thanks again for the clear and helpful insight.
 
