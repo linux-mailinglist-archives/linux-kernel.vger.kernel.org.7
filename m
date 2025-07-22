@@ -1,134 +1,135 @@
-Return-Path: <linux-kernel+bounces-740824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F206B0D9AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:32:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A89B0B0D9B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:33:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 665C83A7971
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:31:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D776A547A68
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:33:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F2824167C;
-	Tue, 22 Jul 2025 12:31:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5A228C5AC;
+	Tue, 22 Jul 2025 12:33:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QkMOPEzN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="mn8J/94c"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF09DDC3
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 12:31:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614B123AB8D
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 12:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753187518; cv=none; b=K+z2lzSIWvQoO5DO6sNfre3YKf6mz2kRdFRAe6WD09uNe62d8GaD7IHFivOgbWbbBzQBNKsFR+nTvMIy98Su9LGN7FAWmZq9lsBbOoV4F3x/yAl1w4ipge19jcNsl3HQZaHhL7MzBa5ZVaOQcEqfBPFH8/hcLflaqbC0T4l0P9M=
+	t=1753187583; cv=none; b=rJAXqg3oP/gtt1SQvfE9hpmgYdnx6qvOY0eJ+J8OQTBPu4aFlbeHdFmBwf/6SZza5ETdaILlF+5+QWQ53nQaNzo7cI0DfXpHvClSqBruzoeNH0t+jaOtzZQeSA0h0LYihbLJ1f6k9fhKaQpgKJt1TQZEiGi2hMJmspne+dhQV6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753187518; c=relaxed/simple;
-	bh=4nWfOgAtDJRiUKwl4CEAmak9LoVjK6F6e7GI51ynqlY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=V2N3BGEPuxDBa9fE7eyzCbDRjFli0bEG55ECFRcDWBlcgWIMHMCEvV9RscDO7aISBsqNPCbn/YVQhu9EZ5IKaDQxrz/EQR3PZl/lFVLnXR5hDZjCbPeKUXd2MWcGb4peDgC03snn7Y4WH/bm9fCYMIEUsL435QINBVSlberX/L4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QkMOPEzN; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753187515;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uytWltKrstTEMZ/fxOMVemtki77h53KI7bgXkDpu9yg=;
-	b=QkMOPEzN7/305ZoIwpcWUL68oJ/qZcpeyyeMfIgd8qwUCDT48zjMQ2yr8fC7YpfekR21k1
-	9mFNby79dfgO4gYQoal5jWE/MCWS38rF5R3itVA9tnIJonYBwPRtqGHtdI+8GMQ0NMwJ3G
-	PYvLX7ZUkOyHb96uQupF5ZwLo/g4X+c=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-621-GWesnsSoN8W22w_9CdGkmw-1; Tue, 22 Jul 2025 08:31:54 -0400
-X-MC-Unique: GWesnsSoN8W22w_9CdGkmw-1
-X-Mimecast-MFC-AGG-ID: GWesnsSoN8W22w_9CdGkmw_1753187513
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45639e6a320so27556245e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 05:31:53 -0700 (PDT)
+	s=arc-20240116; t=1753187583; c=relaxed/simple;
+	bh=XhhXlVRw6F1HLo12SCcAfi2XIRnFu3XLfX0xBUiPuF0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=suZ0hdTvt2N10pf5OIvAwj/xQwXTQuYal3ZjWb0AkqPjV+8ZAhcQDXbGl3SmXrFywlVqcdLKCxF4m/RP4r3Ai1MHtOhDZfxPlJPphfl5uUGbt6GJRN5W/U7bqW6cipHuqFH6MskBhD9yLN/24XnQ5uX5VZkGG5cBj3OTfaVnvw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=mn8J/94c; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-700c7e4c048so85791586d6.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 05:33:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1753187580; x=1753792380; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GIXKcH5BFLN2ZbzCLvQD1G6ItZu5liVuUr8w7IySvR4=;
+        b=mn8J/94ckas+qD6AHT1wxCGpWUUDbTsFqRK2rmVvvc2KJP+c37eNIDchT4R232r0V9
+         JICl9zzUkYIkjSRJY+h3o7vY5fQFOEWUzjgTUBxhk89P7WAQZuQz9N6OzFIUVommiUdK
+         e9DqWKT3cCZEvsSshQXzoLnD3/gWD2srsF6lHwNa3MdkuB5gTrw0HJ+4+OL/zF1OdLDD
+         Hk+jE+yqqqNzVe6WvPWMGNiN97rfPjRlrMpg7EfwBZaYQ2dXdO490NqSM1YJlZ9bv0Dk
+         UvL7km8+wBo8iqBB+Ir+S1c0LDEoNiURLpQn6tUSF621M0vbt/FF4pZaabKtpq6L//po
+         WimA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753187512; x=1753792312;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uytWltKrstTEMZ/fxOMVemtki77h53KI7bgXkDpu9yg=;
-        b=j+mlPq8H1yXtT0fGlPw2IVol29s8tcjbt/yBc0CECsYUqNIFJsbplrJLA431yy7ZKW
-         DP115pB7+adULq/UGiNqFcTFu7UVjpdLTfuyf2kXT+caEAV5HuA8j1fSAvm2vdT7+Sfk
-         DG7zzRlfslQQM+9dtQMcfdQktEFNf5sn4gCwbUQtTkn/tdzOvnK5j4ydjVFdkcFT82JN
-         9kF6jh7XXMUETlgj4VO6whTogaMDtMQ0IpQO7mOX1Q+CNTSTW6CYC6E9cFQK2FkBC/Qh
-         MFyrb41IqMScJHMU7dcvjRoCFSE/hJJgsUNHSyNAp8ZL0R02iOyD1gRBKyM7s1f5qeoN
-         RTMg==
-X-Forwarded-Encrypted: i=1; AJvYcCWugeJtnPzM+eGToQmY45yZgZUTiNDyG7x9v982zZVteS9MuN9t9WAGhEtC7UJsJflRSF8238KHIb+M97U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpA28zrbvRonica95HVRAxExO2znnUhfvhqd59NmRib8vWMUud
-	Jq1UXXDuF267nWOXvZ5OE8FZKekK4EqyQ0ykkejgTFFoBzyq64jcVma2bs4YdNIFD+hhfJLEm7w
-	sv9QsjhdhTVuT7gUIlh30sJ984r0v9rqhFgjCE/iONarLUA+aDPFRn8iDBOf/NeEmaJwpiRToVg
-	==
-X-Gm-Gg: ASbGncuryhqiNLt2XVW50petrSQ/O74DFT5XeOo/klooK3zF7S6wCI2inRHXW8k11TU
-	KC8m99A3Yo+sOWdJVx4ZUxZBm4E9+nltR8efFVNWL6TMZKA7yhp2/WGYzy9xHnyEgw5RiDKhgr4
-	v+VrX28xuhi8rXu4bhmdOeqfNhWjXRafOIPXflCZnhSV//caCenDcZpHRVF2DjicoP3UEzxGNyU
-	glOOxUTVvPCdDvQCI0m+u4zbSWhZV82+ozkHta7MK6XOWTJtwZw5RhjvlDNpXlAuZFWNd4N5ryy
-	/kviPss2oSpbZiFT9aRafKMi76X2D7HYwPZ/G1KClK4RDElEF+ljlVB6VpjcbEn0QZNMOGLfRBM
-	zu+JLgZK2o5CQ/nyDd30t8SnZ
-X-Received: by 2002:a05:600c:3e09:b0:450:d4a6:79ad with SMTP id 5b1f17b1804b1-45631f87c31mr181301185e9.23.1753187512486;
-        Tue, 22 Jul 2025 05:31:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH4my1j/WYJuwr9m+hNLzJ2DZBCwfcZJAPgIp4WhpZ9p0NPXJOwuF4NQsIbzxcCa/EayJOxMg==
-X-Received: by 2002:a05:600c:3e09:b0:450:d4a6:79ad with SMTP id 5b1f17b1804b1-45631f87c31mr181300905e9.23.1753187512054;
-        Tue, 22 Jul 2025 05:31:52 -0700 (PDT)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-135-146.abo.bbox.fr. [213.44.135.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e89c87esm187616275e9.33.2025.07.22.05.31.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 05:31:51 -0700 (PDT)
-From: Valentin Schneider <vschneid@redhat.com>
-To: Huang Shijie <shijie@os.amperecomputing.com>, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org
-Cc: patches@amperecomputing.com, cl@linux.com,
- Shubhang@os.amperecomputing.com, dietmar.eggemann@arm.com,
- rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
- linux-kernel@vger.kernel.org, Huang Shijie <shijie@os.amperecomputing.com>
-Subject: Re: [PATCH v5] sched/fair: do not scan twice in detach_tasks()
-In-Reply-To: <20250722102600.25976-1-shijie@os.amperecomputing.com>
-References: <20250722102600.25976-1-shijie@os.amperecomputing.com>
-Date: Tue, 22 Jul 2025 14:31:50 +0200
-Message-ID: <xhsmhpldse79l.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+        d=1e100.net; s=20230601; t=1753187580; x=1753792380;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GIXKcH5BFLN2ZbzCLvQD1G6ItZu5liVuUr8w7IySvR4=;
+        b=WedZ4arBL+HOgHjS7bOa9tegq428tI0WqWAhupAk0YqlN/T95g7GtNSFVX4XQZTeiW
+         fz6AKi93YeTc60R+XoqLNdcWIspeAWTu7gT4wCPfWU4aVohot5GpPwiL2GYmSFjfaSC6
+         ZifZNUhAe9o62JHjzuSpdKKPstoLtVTAk1HO3eTiwRBD44Nl0Y/Tx0Yng7CmYm9jJ7oi
+         Qv+/9H6DRj8aKBx+HmLSCT7+j4RXziOItCOcFGeQauawRq9lPk0g5c3IdlP6kkRT8aB5
+         ViATIb+WFCJAJpUH9GEZk8EwDj2DzrZDKrbaCq3LgTi8rpgKbZjbdJ+7xmrRllIQ2iS4
+         ohTw==
+X-Forwarded-Encrypted: i=1; AJvYcCVC/8C7OXpSa6jGtJKRT4TXhFD5IHssbe4VQ2wvMe2jS22gf35uqi6ipCY4MrTsKn9jw+2Uta3oSQagm4w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfAAcLpxwhaWZRltNfdN83rDKQOvErp+AwuUbG8+FgzdeFE8XC
+	e2MEDxqOnRCgGVkofe0mzUkVDd+5Riot8MWmD5RTrprPC2q7Sr9Iv+LGeCSlBOjGZnQ=
+X-Gm-Gg: ASbGncuP6LgJsxtkpLq0BUmaxvXnmUB7+ExbwuFSi/4DGKi2dlwt8X0YyRLvFVEqkck
+	HOnbA7WWGHmBYwAoCLcuCUeh3iyh4FkoEcmPFrnA8/jQFukWNDO2jN6S3M3TmWd5XoFnSj+1cls
+	8R7qUrSkwOsxomiqIOs8VPFfC1Hgw69ICEd/oM4ygv+C6ieP8V7khgu8ys4wRCCdjCGhNGc79iU
+	c6mJUBO8TtGIop1EbMfRuqtp0ULI1DKgkAqz77xXtv+7+2ez4e49YYDCE7zL7CiyGVMBIVgSYMg
+	qitIzenytaHvK0Yn6oXofCADl2TrzKJFKBp9k6DZXNwq8QA77wSr4WeqvqYG4EJnQE+dpmk7NpS
+	Ab1owoEylERevCeeqOhOv3Wgi6RY+QCE35n9U7RtqiM/Uic0yAKxJJqjVwkVSxBM8zKd9/hI=
+X-Google-Smtp-Source: AGHT+IG1XORWN4jprJEi5Zq8+C3EGaNg8eBzovmEwMCoERAkUr764LT8y1WytHb49WzOljrg37pQSg==
+X-Received: by 2002:a05:6214:5886:b0:6fa:c2a4:f806 with SMTP id 6a1803df08f44-7051a11461dmr225240826d6.29.1753187578843;
+        Tue, 22 Jul 2025 05:32:58 -0700 (PDT)
+Received: from [10.211.55.5] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7051baa8760sm50251346d6.92.2025.07.22.05.32.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Jul 2025 05:32:58 -0700 (PDT)
+Message-ID: <d6f147bf-2816-47d7-9a48-47562b8dde06@riscstar.com>
+Date: Tue, 22 Jul 2025 07:32:56 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: spacemit: ccu_pll: fix error return value in
+ recalc_rate callback
+To: Akhilesh Patil <akhilesh@ee.iitb.ac.in>, mturquette@baylibre.com,
+ sboyd@kernel.org, dlan@gentoo.org, heylenay@4d2.org, inochiama@outlook.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ heylenay@outlook.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, alex@ghiti.fr
+Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
+ unicornxdotw@foxmail.com, jszhang@kernel.org,
+ zhangmeng.kevin@linux.spacemit.com, akhileshpatilvnit@gmail.com,
+ skhan@linuxfoundation.org
+References: <aH6P3lChCXhi3pe4@bhairav-test.ee.iitb.ac.in>
+Content-Language: en-US
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <aH6P3lChCXhi3pe4@bhairav-test.ee.iitb.ac.in>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 22/07/25 18:26, Huang Shijie wrote:
-> detach_tasks() uses struct lb_env.loop_max as an env.src_rq->cfs_tasks
-> iteration count limit. It is however set without the source RQ lock held.
->
-> This means that env.loop_max and the actual length of env.src_rq->cfs_tasks
-> as observed within detach_tasks() can differ. This can cause some tasks to
-> be unnecessarily iterated over more than once, for instance:
->
->   env.loop_max := 4
->   detach_tasks()
->     // Here env.src->cfs_tasks only contains two tasks which can't be
->     // migrated anywhere, so they're put back in the list each time.
->     env.src->cfs_tasks := [p1, p0]
->     // The iteration goes:
->     p0; cfs_tasks := [p0, p1]
->     p1; cfs_tasks := [p1, p0]
->     p0; cfs_tasks := [p0, p1]
->     p1; cfs_tasks := [p1, p0]
->
->     // IOW we iterate over each task twice
->
-> In the Specjbb test, the similar issues can be caught many times.
-> (Over 330,000 times in a 30-minites Specjbb test)
->
-> This patch sets env.loop_max only once RQ lock is taken,
-> and uses busiest->cfs.h_nr_queued for setting the env.loop_max.
->
-> After this patch, I cannot catch any above issue in the Specjbb test.
->
-> Signed-off-by: Huang Shijie <shijie@os.amperecomputing.com>
+On 7/21/25 2:07 PM, Akhilesh Patil wrote:
+> Return 0 instead of -EINVAL if function ccu_pll_recalc_rate() fails to
+> get correct rate entry. Follow .recalc_rate callback documentation
+> as mentioned in include/linux/clk-provider.h for error return value.
 
-Reviewed-by: Valentin Schneider <vschneid@redhat.com>
+"If the driver cannot figure out a rate for this clock, it
+must return 0."
+
+Looks good.
+
+Reviewed-by: Alex Elder <elder@riscstar.com>
+
+> 
+> Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+> ---
+>   drivers/clk/spacemit/ccu_pll.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/spacemit/ccu_pll.c b/drivers/clk/spacemit/ccu_pll.c
+> index 4427dcfbbb97..45f540073a65 100644
+> --- a/drivers/clk/spacemit/ccu_pll.c
+> +++ b/drivers/clk/spacemit/ccu_pll.c
+> @@ -122,7 +122,7 @@ static unsigned long ccu_pll_recalc_rate(struct clk_hw *hw,
+>   
+>   	WARN_ON_ONCE(!entry);
+>   
+> -	return entry ? entry->rate : -EINVAL;
+> +	return entry ? entry->rate : 0;
+>   }
+>   
+>   static long ccu_pll_round_rate(struct clk_hw *hw, unsigned long rate,
 
 
