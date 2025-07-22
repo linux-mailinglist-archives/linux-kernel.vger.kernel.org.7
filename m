@@ -1,132 +1,227 @@
-Return-Path: <linux-kernel+bounces-740477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2CE0B0D4B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:31:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1A9CB0D4B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:31:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C88221897C25
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:31:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA7CD542C1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:31:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A27B221127D;
-	Tue, 22 Jul 2025 08:30:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05122C158F;
+	Tue, 22 Jul 2025 08:30:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RmqixFoE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HhlxpS42";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9fZNr1pA";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HhlxpS42";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9fZNr1pA"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BCFE1ADC90
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 08:30:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C201ADC90
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 08:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753173048; cv=none; b=I9nBGW7rbvx9OwwTFdDjrjsAGkSQ7bTS5e4s4eZhMEyWOjBUDZsIJSxGU90h8yf+QKTIM4j4KjpVyQEacxZuN5jjS1tES7YcCQvKTSt3EhRz74mk/l7K/zyDrF4WoShD5rifmVGX2eAVJLvj/Z5VanfYKmPOWh4PKRPCJkQ14Vs=
+	t=1753173055; cv=none; b=cGYaYvFSmQLPuxO7ae3conK5aGgKs99cvibqCqiHaIONQ9bXEH7EnnozcDCZVA2wiU2z4Wie88gHqZXKlE6ZUa+zfZy+Hm5iJEHXH36aQiuDAoyOyeLGDFPeUk1hXOWEl/CgGVNjASMnyGrmoNveH+9x2t+hacCY/ZfCcIs9uOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753173048; c=relaxed/simple;
-	bh=QiYxraNy+bvn6efAc9zLaMPBsRjqwvrvbjsSdMT2p58=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=A+ckdkRvWzcsBf+QmLBA+3p0oMU7JYXk8gMeqgLhN12/d4UMNyCykqq6SBEixH3pYK8OWBZ4c1WXQIaLrDhcpEP7Zgjd3zw7Hibf+zFKvhFqEq0GxgLzLRr76kn0S+YBQwD3iYwpqJhoZgMi2hoLUtwYsxtKvBIpSxhiKQZivRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RmqixFoE; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753173045;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1753173055; c=relaxed/simple;
+	bh=nuMrp4FEiuu3MP7bNP6Sa2dcUb0guT+ZuN70gdGDV7E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eZfabRuHhr9Vex5xaJPqNE+6g6MSe8Vhskr22Lqcrr2hUBDcZpwpph2dbEhtVZCRSp5r/2At1Cwq2CKU+ExUBoFOGJFwdKsoa3TbdKbexKgg/zLesMonYvJCGOBB9Z5OJzDoTfnHGha9qSuT7L7XcRxUnIMmcsAhgETs1jSfZcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HhlxpS42; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9fZNr1pA; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HhlxpS42; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9fZNr1pA; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 9B36D1FB3E;
+	Tue, 22 Jul 2025 08:30:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753173045; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=QiYxraNy+bvn6efAc9zLaMPBsRjqwvrvbjsSdMT2p58=;
-	b=RmqixFoEt5RMZgG0Bo9Ge3R1AeAa9Vu4+QorFand4s8V6TiUfcK71Hnk0Hi//IW5vtJPlc
-	Mrn594gJw+ZnmOXF6aY1PHO3W2jRb1ESYKD1nUI4Cs2EWAVB1GhZv8j7p08J17r7+MuZ9d
-	huik5ixR8lT15wkN7Tz3YhK/uyZcVp4=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-248-iPIZ2JadNzOyj_hpX_KNiw-1; Tue, 22 Jul 2025 04:30:43 -0400
-X-MC-Unique: iPIZ2JadNzOyj_hpX_KNiw-1
-X-Mimecast-MFC-AGG-ID: iPIZ2JadNzOyj_hpX_KNiw_1753173042
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-456267c79deso17471305e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 01:30:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753173042; x=1753777842;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QiYxraNy+bvn6efAc9zLaMPBsRjqwvrvbjsSdMT2p58=;
-        b=u+lDNIeuH+E5+UYNkONQhNLHEhOW/DjGweZWyq/Hlw3ip64/an23vb/Di5fQHFPNvI
-         rezHBQW6O82YFW1RicqYFSB5H++oId61GuC9G7YsKw6W4916R1LkGV541ZLWl8Prv3yc
-         IXMXM2pcaYdUnlcX9mj5JxwSbec91TEFcD+dn+MeYczF1x9Hb86xQUMTk9jHL3mSo5J9
-         mn8mCeXUZkuQYjML5UvNnYuj3vzGDYnAlF58K9sTOjpR5rB/XYosPH80uM3ibfJgSi8e
-         U1B8ZaME3XweCFwwUwdafT1SCK4SA7fZCuvrD6oHBGlqrfEz70q+YdWI14T458uTqmyw
-         Kp9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVyUIkXVI2XYrezbEEDLmCeZvGxwb1Ut4GKfxjpZp+B4+YD9lBLTw0f9u3P4KvycWDHD1vUal2UTviadzo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPhPLaOcuQQQ9BNseQBzte2OinXVEz9GtXz0DB8xrwDv/bRCkS
-	d1r8g2NOtJphXQk49pVvV8T6VV/cVwHxyYR1NVjFpzpFnCPA1a7+smReAIpgf/wkHZGdpPLd1Zg
-	w3AjUl5Lrynx2ktS9Lv9H3pH4v3sb4mOM3HC3IENcefzoDsvexmT8sm1GqBCxf8OINQ==
-X-Gm-Gg: ASbGncsyfikHSEAjXyQ3hOFmingcoXtb/Dfh5aLMjpObABILsgvxNLg2j5HHafgQWGl
-	5CpXAwJRJ9FcCSJ+5qmw1bTLCp3f8xcvBtyr74clWYKPZwuf4oFESpopMV9AAeZ+pXiP2ebzEFC
-	OZHRBH+KrpFffsCaB5Bn5vCXyPfe8gkoDY+VYrFNyqnC1jPN29mwNt/x9R+GtElBYB/YFU5dJ8h
-	Sl3YZNW/4AE/OBAOnQl/Z0EL/bnji/ppRztY7FzRUfs5BmNM3r78iLL9v5KAifMNjUFkRek8AUc
-	QcpC4N51w+Z85UChWdTB+nxn1VfyVeshflWhKIjiHMIlpj7u8seqrUKBi5Pq340cHg==
-X-Received: by 2002:a05:600c:4709:b0:456:1560:7c63 with SMTP id 5b1f17b1804b1-4562e379f80mr220963315e9.3.1753173042407;
-        Tue, 22 Jul 2025 01:30:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHGWUbHXE64+JIbc1psRBua8Ih3NqnkWKbU691zIYC/x16+2NNJqu/u4RN+P0cSm668Iu0SmQ==
-X-Received: by 2002:a05:600c:4709:b0:456:1560:7c63 with SMTP id 5b1f17b1804b1-4562e379f80mr220963015e9.3.1753173041968;
-        Tue, 22 Jul 2025 01:30:41 -0700 (PDT)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.42])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e802afasm182592635e9.12.2025.07.22.01.30.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 01:30:41 -0700 (PDT)
-Message-ID: <0e05cce85c4f2c44123a52bd909a555d98fda8a5.camel@redhat.com>
-Subject: Re: [PATCH 4/6] rv: Remove rv_reactor's reference counter
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>,  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 22 Jul 2025 10:30:39 +0200
-In-Reply-To: <20250722082740.a0kYzRv_@linutronix.de>
-References: <cover.1753091084.git.namcao@linutronix.de>
-	 <4ebe4d49e07890eadae41da233e111f8723fba12.1753091084.git.namcao@linutronix.de>
-	 <2de814842fbbeee888e076db2f80bf2028fdbb0d.camel@redhat.com>
-	 <20250721140425.OeD16I4D@linutronix.de>
-	 <eabfae8b0f29c88437cc51af21797e869d99aef6.camel@redhat.com>
-	 <20250722082740.a0kYzRv_@linutronix.de>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
- xyhmqeUWOzFx5P43S1E1dhsrLWgP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	bh=i0fdf9kvnx2xDWK8fxogdC6MbmVtc5r9ZvknpyoLGxQ=;
+	b=HhlxpS426F2IiCn7NI9GByqcRHgXvWi1C4sqMawxxC6puz0UnSotm72eoKB/9No+8IEPjp
+	LgvGA4PfvItwCJMjMxi30M8fU9Y8EgVqnGg8CUV/xJE/WrP/i78eZwDgmhQxGJanK/22oo
+	bmw3uPNr6HOOniSV47XbGVFhcFPH5nw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753173045;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=i0fdf9kvnx2xDWK8fxogdC6MbmVtc5r9ZvknpyoLGxQ=;
+	b=9fZNr1pAnR/+eLNiqQXUkCfFhEFpvChNsDhkcI1oKIxIFrBvPi2Aa1yRzZw9ibHRdST3it
+	DqI+wM6GoZyXpJAw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753173045; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=i0fdf9kvnx2xDWK8fxogdC6MbmVtc5r9ZvknpyoLGxQ=;
+	b=HhlxpS426F2IiCn7NI9GByqcRHgXvWi1C4sqMawxxC6puz0UnSotm72eoKB/9No+8IEPjp
+	LgvGA4PfvItwCJMjMxi30M8fU9Y8EgVqnGg8CUV/xJE/WrP/i78eZwDgmhQxGJanK/22oo
+	bmw3uPNr6HOOniSV47XbGVFhcFPH5nw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753173045;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=i0fdf9kvnx2xDWK8fxogdC6MbmVtc5r9ZvknpyoLGxQ=;
+	b=9fZNr1pAnR/+eLNiqQXUkCfFhEFpvChNsDhkcI1oKIxIFrBvPi2Aa1yRzZw9ibHRdST3it
+	DqI+wM6GoZyXpJAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 895F7132EA;
+	Tue, 22 Jul 2025 08:30:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 5hUfITVMf2jQDwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 22 Jul 2025 08:30:45 +0000
+Message-ID: <4fe82763-09ec-4b3c-bfda-5997c55996a9@suse.cz>
+Date: Tue, 22 Jul 2025 10:30:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: manual merge of the slab tree with the mm-unstable
+ tree
+To: Luiz Capitulino <luizcap@redhat.com>, Matthew Wilcox
+ <willy@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>,
+ David Hildenbrand <david@redhat.com>
+References: <20250721142001.3d1c8777@canb.auug.org.au>
+ <aH6XIUX4xyo2pZfY@casper.infradead.org>
+ <954b5aa4-0dbd-445f-8859-320fb6a1186d@redhat.com>
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <954b5aa4-0dbd-445f-8859-320fb6a1186d@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	MIME_TRACE(0.00)[0:+]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -4.30
 
-On Tue, 2025-07-22 at 10:27 +0200, Nam Cao wrote:
-> On Mon, Jul 21, 2025 at 05:49:02PM +0200, Gabriele Monaco wrote:
->=20
-> > Also, I'd need to verify this but depending on the order of exit
-> > functions, we might be seeing the same problems with built-in
-> > reactors when active on shutdown. I'm going to play a bit with this
-> > and see if this workaround of not deleting the reactor was
-> > introduced for that (I doubt though).
->=20
-> I'm not sure I follow. exit functions are never called for built-in
-> reactors. They are even discarded out of the built image.
->=20
+On 7/21/25 23:35, Luiz Capitulino wrote:
+> On 2025-07-21 15:38, Matthew Wilcox wrote:
+>> On Mon, Jul 21, 2025 at 02:20:01PM +1000, Stephen Rothwell wrote:
+>>> Hi all,
+>>>
+>>> Today's linux-next merge of the slab tree got a conflict in:
+>>>
+>>>    fs/proc/page.c
+>>>
+>>> between commit:
+>>>
+>>>    a602ee331e31 ("fs: stable_page_flags(): use snapshot_page()")
+>>>
+>>> from the mm-unstable tree and commit:
+>>>
+>>>    d8178294c53e ("proc: Remove mention of PG_slab")
+>>>
+>>> from the slab tree.
+>>>
+>>> I fixed it up (I just used the former version) and can carry the fix as
+>>> necessary. This is now fixed as far as linux-next is concerned, but any
+>> 
+>> I think the snapshot_page commit was incorrect in removing this comment.
+>> It is still valuable information.  I think the comment from d8178294c53e
+>> should remain in the tree after the resolution.
+> 
+> The comment wasn't just dropped, David suggested a new version for the comment
+> (which is similar to yours). The new comment is now part of set_ps_flags()
+> which is where we set this flag in the snapshot_page() implementation:
+> 
+> static void set_ps_flags(struct page_snapshot *ps, const struct folio *folio,
+>                           const struct page *page)
+> {
+>          /*
+>           * Only the first page of a high-order buddy page has PageBuddy() set.
+>           * So we have to check manually whether this page is part of a high-
+>           * order buddy page.
+>           */
+>          if (PageBuddy(page))
+>                  ps->flags |= PAGE_SNAPSHOT_PG_BUDDY;
 
-You're right, was tripping, ignore what I just said..
+That seems to work. I can therefore simply drop d8178294c53e from the slab tree.
 
-Reviewed-by: Gabriele Monaco <gmonaco@redhat.com>
-
-Thanks,
-Gabriele
+>          else if (page_count(page) == 0 && is_free_buddy_page(page))
+>                  ps->flags |= PAGE_SNAPSHOT_PG_BUDDY;
+> 
+>          if (folio_test_idle(folio))
+>                  ps->flags |= PAGE_SNAPSHOT_PG_IDLE;
+> }
+> 
 
 
