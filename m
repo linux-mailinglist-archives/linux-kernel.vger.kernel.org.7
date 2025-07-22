@@ -1,103 +1,154 @@
-Return-Path: <linux-kernel+bounces-740157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE31FB0D0C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:04:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2178B0D0C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:05:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E53553A5634
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 04:03:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D99557AA112
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 04:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3404287261;
-	Tue, 22 Jul 2025 04:04:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CCD51E260D;
+	Tue, 22 Jul 2025 04:05:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jFtutMOc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="SDY32tfS"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547A91922ED;
-	Tue, 22 Jul 2025 04:04:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86FF81A0BDB;
+	Tue, 22 Jul 2025 04:05:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753157047; cv=none; b=smclvtzo5C3QEgPCecQR1QvPh7WwItw2FgnX5mQzTqxq80ULxPkZKofxipXkNcwMRkcLRG62c7Llol4aShdv6OUbeRYNe3tpNC6F3WpXZtv/Zi0Iq7S2j9qh+F1WqOnjM3U2nGoIDQ/J7PMEZRkb18roDtGpzvVta4+Hot719yw=
+	t=1753157126; cv=none; b=DmOEBiCrDLpE2tFuBUh+ZzcjatwSYTy6Sxt41ybGnDAMTKsmLopmnLaQHrs3XfNXzW9UP9DQ7q3Vp/2OlFokA89tK5gq4lgWMeMUoYgv5UBpzcbfMv+rf7r0R8Hojplemfv6IqnWX8eYnGHDQS3uErGoPCmAFMfnCTnqvvjkxLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753157047; c=relaxed/simple;
-	bh=sWFLbPKdRogAeCO4NDj6dit5DKLdo1elGMqIueuiDEw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WUwSBAR5a7ncwuM5+dRjrjlwdyzEQtoa/8T5C9ZfaDbeanjl/CLidOvcp1BaH2TuFGNCOuEfXMc19o/RTzj7FfA0+I7bjdVxjFw64Y+G+gBiKP5c5BKSjFseqAfQzbKg9DMFelGy9xRrfPuZL6LEFUF1FPVNoUJ+eEjJ3g3fzNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jFtutMOc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ACF4C4CEEB;
-	Tue, 22 Jul 2025 04:04:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753157046;
-	bh=sWFLbPKdRogAeCO4NDj6dit5DKLdo1elGMqIueuiDEw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jFtutMOcE08vlLS9/lRevrcIsHge7VHmofxu2T4R5WSoI1A5XNViB10nmON/w4rov
-	 NA2sZwDB2idnXsjS2OFybxYKwIxOwd3Fl1JTue6LxK8b0xRShnH8xfoT+wyK7qO79g
-	 Ly4vyFgQ/j/3GpBlgOl0pPGmNU/59hdT3SrPgACAdLlxImd8NH7oQ5Bv6X2Obh+dfU
-	 GGBDJ+W/2qoygGPTZVFKdEL65T26w0eo/SZvUNlinY60ZCj3xqLhDquUCLHBU1PR2d
-	 zzzaLuouyx7zKl2pzXNYxQaRNVuBgwIfdvGUBZROzf6jdbXvV2GBxcWkf3UkYY5sDj
-	 J0C0uQ2UxszgQ==
-From: SeongJae Park <sj@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	damon@lists.linux.dev,
-	kernel-team@meta.com,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH 16/22] selftests/damon/sysfs.py: generalize DAMOS schemes commit assertion
-Date: Mon, 21 Jul 2025 21:04:02 -0700
-Message-Id: <20250722040402.56960-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250721200922.79b34a049af4a02947c716ee@linux-foundation.org>
-References: 
+	s=arc-20240116; t=1753157126; c=relaxed/simple;
+	bh=K55yD1Ma6eC2A9HLm8c2k7UNaTufGqyNoR229HTD7Jk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bCBJ+KgZEG37eZjonP9eDxOlOWkBXH05+rhqv2fXrijx8RbnNdiSmiFh+wnnZB0/az+jYVMjeZNNsRwNC3fvGStnFB45il3+AFncZXs7ZVwhHGvezMb08LyaitLOcrNIhgvBTL3037d+VtDmGO5bjJ1b+WemP0Cmvr93QG5g+H4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=SDY32tfS; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 824221026E02A;
+	Tue, 22 Jul 2025 06:05:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1753157121;
+	h=from:reply-to:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=m7b5hGarLAQZ7wJX3z+HKwupNShCIskH0D5h01nt0B4=;
+	b=SDY32tfSFz9zqLNKR+pX3Uk/W/Xzd5ZVXPEe2q4ZUeHX9EYBDOu+y3zT0mwKenJdgN3v+0
+	5+MD523v3CJvOvs2LVpxJ7xzUTuZYyCiqaUxeKBa83xzMdTf3e1G7Lgbmytn0OFHvKh0bS
+	JMDz4IVw0Ztc628Hbc0RqGVbYBg3Hi9SQrB8eSKCk84hsLWAkde6tW86HY5+rGgI0dZlFH
+	yl7LppaXBVsN8EMt1+4CQMcmvXcWfXSep+IFQIUyHspcOlre4bdBSWZrjan7oheXBckaNp
+	lFByEhJrXrlDnVH2AR+Im6UKjYKVFrvAMEQR8T3N2t261YXDOWPGTXVfrNVTzw==
+Message-ID: <8a8106ea-83d3-e02a-9ae7-ea4a66e4c248@denx.de>
+Date: Tue, 22 Jul 2025 06:05:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: (subset) [PATCH v1 0/3] spidev: introduce trivial abb sensor
+ device
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>,
+ linux-spi@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Andrei Lalaev <andrey.lalaev@gmail.com>,
+ Chanh Nguyen <chanh@os.amperecomputing.com>,
+ Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>,
+ Grant Peltier <grantpeltier93@gmail.com>, Guenter Roeck
+ <linux@roeck-us.net>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Michal Simek <michal.simek@amd.com>,
+ Naresh Solanki <naresh.solanki@9elements.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Rob Herring <robh@kernel.org>, Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org
+References: <20250719063355.73111-1-hs@denx.de>
+ <175311337130.327079.7374455187420344577.b4-ty@kernel.org>
+ <d677ecd9-42d6-43fe-8fe1-a5afd4d270e2@kernel.org>
+Reply-To: hs@denx.de
+From: Heiko Schocher <hs@denx.de>
+In-Reply-To: <d677ecd9-42d6-43fe-8fe1-a5afd4d270e2@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, 21 Jul 2025 20:09:22 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
+Hello Krzysztof,
 
-> On Sun, 20 Jul 2025 10:16:46 -0700 SeongJae Park <sj@kernel.org> wrote:
+On 21.07.25 18:24, Krzysztof Kozlowski wrote:
+> On 21/07/2025 17:56, Mark Brown wrote:
+>> On Sat, 19 Jul 2025 08:33:51 +0200, Heiko Schocher wrote:
+>>> This series introduces the changes needed for trivial spi
+>>> based sensors from ABB, currently operated from userspace.
+>>>
+>>> The last patch adds the spidevices to the DTS files, already
+>>> in mainline.
+>>>
+>>> make dtbs_check showed no errors/warnings for the dts files
+>>>
+>>> [...]
+>>
+>> Applied to
+>>
+>>     https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+>>
+>> Thanks!
+>>
+>> [1/3] dt-bindings: trivial-devices: Document ABB sensors
+>>        commit: aad2f87cbcab56b322109d26d7b11842a09df91f
+>> [2/3] spi: spidev: Add an entry for the ABB spi sensors
+>>        commit: d60f7cab7c04944a79af16caa43c141e780a59c6
+>>
 > 
-> > DAMOS scheme commitment assertion is hard-coded for a specific test
-> > case.  Split it out into a general version that can be reused for
-> > different test cases.
-> > 
 > 
-> This patch has the same name as [18/22].  I renamed this patch to
+> That's unexpected, Mark. Patches received two objections/comments and I
+> don't think discussion was resolved.
 > 
-> "selftests/damon/sysfs.py: generalize DAMOS access pattern commit assertion"
-> 
-> and altered its changelog to
-> 
-> : DAMOS scheme access pattern assertion is hard-coded for a specific test
-> : case.  Split it out into a general version that can be reused for
-> : different test cases.
+> ABB is huge company, probably making hundreds or more of sensors. The
+> patchset basically claims that all of them work with spidev. It does not
+> providing any model names or details, so it seems really incomplete to
+> call them trivial devices.
 
-Thank you for catching this and fixing on your side, Andrew!  But, the actual
-change that this patch is adding is the assertion of individual scheme, while
-the 18th patch for the assertion of multiple schemes.  That is, this patch has
-actually wrong subject, but the changelog is correct.
+I do not know how many different sensors they have, nor if that department can
+speak for the whole company...
 
-So, could you please make the changelog back to the original, but fix the
-subject by 's/schemes/scheme/', as below?
+What I have as information is:
+https://lore.kernel.org/linux-spi/2477dc64-92a0-9dc9-d168-56646d0d796e@denx.de/
 
-"selftests/damon/sysfs.py: generalize DAMOS scheme commit assertion"
+and I get no more information about them currently. May I should
+add some sort of trivial into compatible name? Something like
 
-Sorry for making things unnecessarily complicated.  Please let me know if there
-is anything that I can help for this.
+"abb,spi-trivial-sensor"
+or
+"abb,spidev-trivial-sensor"
 
+which makes it clearer, that only ABB trivial sensor, controlled through spidev
+driver, is connected here?
 
-Thanks,
-SJ
+Looking into definiton of "trivial devices" in
+Documentation/devicetree/bindings/trivial-devices.yaml
+"""
+description: |
+   This is a list of trivial I2C and SPI devices that have simple device tree
+   bindings, consisting only of a compatible field, an address and possibly an
+   interrupt line.
+"""
 
-[...]
+which fits exactly, as they even have nothing more than the SPI lines
+connected to the carrier board(s).
+
+bye,
+Heiko
+-- 
+DENX Software Engineering GmbH, Managing Director: Johanna Denk, Tabea Lutz
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: +49-8142-66989-52   Fax: +49-8142-66989-80   Email: hs@denx.de
 
