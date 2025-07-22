@@ -1,84 +1,56 @@
-Return-Path: <linux-kernel+bounces-740049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 407DCB0CF0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:22:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D77ACB0CEF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:03:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EADEB1AA5DF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 01:23:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1052754209A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 01:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B2C189B80;
-	Tue, 22 Jul 2025 01:22:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="huHajcKc";
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="wgJqGZBM"
-Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D84686D17;
-	Tue, 22 Jul 2025 01:22:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81815188734;
+	Tue, 22 Jul 2025 01:03:46 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D21C10E5;
+	Tue, 22 Jul 2025 01:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753147363; cv=none; b=rOa7QZ7TmF0097zXDMdTdRKNuv5tC0jPjJ9wGvq2hk+75YBlDRsIg2usx85BCBXobnQmxtcNhHpP/IT6KbRlpX27AuLUlsbK5qsQHTPNwLRxRjpVu8ka1XxZbigBfboKa/SGc95MVX5AW7/4g5NLOzvexHa4EgHp95thoNUDzNU=
+	t=1753146226; cv=none; b=DYZTSDlAoxFSn64SdO6P02AiBqwOI7MxrkCwZa/wQDWPkA9ZObudo2+aS/TWEqmvA9rTZ4zrv9Xj9rBQBO9rQwi7U8qBsD9JcgNpruBx4XZzxzZAaA31kRBQOT0JzAPz//I1EVYzNB0RgbCYX6C6FObXkrf1mdLBj6SQ7iqJKQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753147363; c=relaxed/simple;
-	bh=EY7ok2pqfxBJbKCKYKEiVz7SgLQ58DjtTaUal/8LobY=;
+	s=arc-20240116; t=1753146226; c=relaxed/simple;
+	bh=DXASI+KcllIoznSfl+B3VIAReIqMda3Z/G7kKrcujQU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eHKx4p1Y2VRJ7NDqmW4Bvdpo4hg/U5YI6prtO5k8dOLn1PoWYHN5lEdJ4uys7LKr0pSYMNs0IXMFFDrcZQgY5b2wpUyvv94bvVNFVdXKln6Gtdwg6QDLqigaCaqypdfEBmcCuhRcGXdAv1fLtnk0Q/6Rac+ySYSYWKPBGish4A8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=huHajcKc; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=wgJqGZBM; arc=none smtp.client-ip=155.254.16.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
-Received: from localhost (bayard.4d2.org [127.0.0.1])
-	by bayard.4d2.org (Postfix) with ESMTP id E3C1312FB42B;
-	Mon, 21 Jul 2025 18:02:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1753146178; bh=EY7ok2pqfxBJbKCKYKEiVz7SgLQ58DjtTaUal/8LobY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=huHajcKcVf0JO7BF/aTB4JZNS68kbeIswtO0pLah4JsDd91aD8to+xPXH1s+8ppL0
-	 Qb4M70RAfoA+aAcBosR9DutrX7iRLV9eEZmMx0Yxlf+RzU7tkHpWWcLa3+Yt60xKXf
-	 FJjWdVAfvEjfCFUmWfIYzS8w2v1gcUkaMRF/+av8gnzEVx0b9y+wzZ4rUprnXFJfYa
-	 Hrot1RPjrdXdJHU2DzTkzvqU6/tTm1gBWplYVBjS6rFvS2wWfE5iIR2z75yiZcA4q2
-	 LjerUWJErk+wifOoupRYnY3d9aazGoZVE/SXl/bCo4NUrIvU+cJc2ndb4g2XODWPRg
-	 uQQy54Lrmv/sg==
-X-Virus-Scanned: amavis at 4d2.org
-Received: from bayard.4d2.org ([127.0.0.1])
- by localhost (bayard.4d2.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id QtJ0SlhhwE5J; Mon, 21 Jul 2025 18:02:54 -0700 (PDT)
-Received: from ketchup (unknown [117.171.64.151])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: heylenay@4d2.org)
-	by bayard.4d2.org (Postfix) with ESMTPSA id BA8A212FB405;
-	Mon, 21 Jul 2025 18:02:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1753146174; bh=EY7ok2pqfxBJbKCKYKEiVz7SgLQ58DjtTaUal/8LobY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=wgJqGZBM8kn437TuW3Ur0ouaNXpgPGF9aviI22AC1XS8pksglo7CSpJ1jSoo0ozkM
-	 86Z55J0U75IZ7FKzdMF25pTX9KkpuLW0OF9J4hQBwaYFnbk1IvOB/dc2k2qqHUQPC9
-	 dH1GLNVVq3dp1HF4jo1SiXzEyaukzk/oJqo3In2cuXUQyBaKP9XNfrSE7sbhczYOSP
-	 ASnUPPQ3s8K2zRtNPznMvWto5DRrfilS31WHQNb9ihGkfZQ9Lf7Fx3F6tNYoCql6UG
-	 +v1a89i80omG9joEhjsXpklfarC8url7K8ih0wbLzWCKU0wCA8HzF9ylWIYh3eT/F+
-	 m3w1c6V27hpQQ==
-Date: Tue, 22 Jul 2025 01:02:43 +0000
-From: Haylen Chu <heylenay@4d2.org>
-To: Akhilesh Patil <akhilesh@ee.iitb.ac.in>, mturquette@baylibre.com,
-	sboyd@kernel.org, dlan@gentoo.org, elder@riscstar.com,
-	inochiama@outlook.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, heylenay@outlook.com, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr
-Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
-	unicornxdotw@foxmail.com, jszhang@kernel.org,
-	zhangmeng.kevin@linux.spacemit.com, akhileshpatilvnit@gmail.com,
-	skhan@linuxfoundation.org
-Subject: Re: [PATCH] clk: spacemit: fix error handling in
- ccu_pll_set_rate/_round_rate
-Message-ID: <aH7jM_q3y85o2Daf@ketchup>
-References: <aH6OC1aV6IcQnoSC@bhairav-test.ee.iitb.ac.in>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hnklwmZdUquw3FS2jKOMX28eMXNhTIZtvDz00X6RPNAXmDMoniv4RNqCQvbbe3TB3g0wTBa6GtXzgatiJVLvhBw/rmJ/IvELoxYDnVBsfAo6Snb7gX8JSbda29rinP3kl6IR66ANk3SxYjl6LM55WiALS/7EZSH9AQU/pUD+ZMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-681ff7000002311f-88-687ee3638325
+Date: Tue, 22 Jul 2025 10:03:26 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: linux-mm@kvack.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+	harry.yoo@oracle.com, ast@kernel.org, daniel@iogearbox.net,
+	davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
+	john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com,
+	leon@kernel.org, tariqt@nvidia.com, mbloch@nvidia.com,
+	andrew+netdev@lunn.ch, edumazet@google.com, pabeni@redhat.com,
+	akpm@linux-foundation.org, david@redhat.com,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+	rppt@kernel.org, surenb@google.com, mhocko@suse.com,
+	horms@kernel.org, jackmanb@google.com, hannes@cmpxchg.org,
+	ziy@nvidia.com, ilias.apalodimas@linaro.org, willy@infradead.org,
+	brauner@kernel.org, kas@kernel.org, yuzhao@google.com,
+	usamaarif642@gmail.com, baolin.wang@linux.alibaba.com,
+	almasrymina@google.com, toke@redhat.com, bpf@vger.kernel.org,
+	linux-rdma@vger.kernel.org
+Subject: Re: [PATCH] mm, page_pool: introduce a new page type for page pool
+ in page type
+Message-ID: <20250722010326.GA45337@system.software.com>
+References: <20250721054903.39833-1-byungchul@sk.com>
+ <77ee68c4-f265-4e55-9889-43ab08f26efd@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,103 +59,87 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aH6OC1aV6IcQnoSC@bhairav-test.ee.iitb.ac.in>
+In-Reply-To: <77ee68c4-f265-4e55-9889-43ab08f26efd@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRiA+c45O+c4XJ2W1VcWxLoIk25S8HbF/n1/pKAIWlANPbTRvDDT
+	tIutNCpLk8rKuWIV6XTCasbczFnO5a0f2bq4tLTsAqGtslzZTNuUqH8Pz/vy8P54eVrukMzh
+	tWn7RH2aWqdgpYz0U/T1Jclv8zTLXWeXgclWw4L1Zw5UvnZKwFTtQPB9pIeDcXcLgm/eVhYG
+	mocQ3LgWpMH0qICBYdsvGt639HNgtSdBX8UHBhpO1NHQf7aNhaKCEA3ukQAHx5wWCky1Bg46
+	HcUSuPDrJg11htccPKk3sdBbMy6BD54iBtqNVQx8KfXS0FecCC3mmRB8OIjAa6ujIHjmCgvP
+	yuopOO8zs/C2oA+Br7mfgdLRkyyUHy1GEPoZrgVKvkug/EEvl6gkzYOfaXKn6gVF/I0dFHEZ
+	X3HEbM8itRYlKfT7aGKvPsUS+9A5jrx83sCStsshhrjerCYu5zeKFOUHWPL1fTdDPjc+YzdP
+	V0nXpYg6bbaoX7Zht1Qz4LMxGf7onCpPt8SAnkQVoigeCytxZXuv5C8/db9kIswIi/ClbusE
+	s0Ic9vtH6AjHCPF4oMvDFSIpTwsXOXzC1sBGBtMFFe40uKkIywTAv3/fm/ByQYNdNdfZST8N
+	t5e9m4jSghL7xz6G9/kwx+LKMT6io4T12DjcxUV4hrAA33e0UpO3+XncdXrJJM/GTRY/U4IE
+	439V439V47+qGdHVSK5Ny05Va3Url2py07Q5S5PTU+0o/E0Vh0d3ONFQ5xYPEnikiJbNN+Rp
+	5BJ1dmZuqgdhnlbEyIJ3w0qWos49IOrTd+mzdGKmB8XyjGKWLCG4P0Uu7FHvE/eKYoao/zul
+	+Kg5BmTdmeg7057VOvdhq7uowuqojwndOugwGMduK7TlStW9OK9quKMjocX5sTxuLze6cFr1
+	+I/V0t6Nt4evhkqimywKe+OtIxaKGGqa8vjBg/NqzT2H1oZKvI+PrXp6PH67ShWr3Zaf/GM0
+	STfTsiqgWFyxJmXT1vipSfUZgRtXpvQnKJhMjXqFktZnqv8AAVMpTEkDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SWUwTYRSF889M/xmaNhkr6ghKpEZNQHEJxosI4c2JicTEBxN9kFFG27CI
+	rSIYJVVIUEIRFVRKibiwFm1SCZRVLcgixKWIVHZBMQbEhSXs2GKMvn35zj3n6TKkIkviwaij
+	z4iaaCFSiaWUNDQwccvxwQTVtiq9AozmEgymqTgo6LdKwFhchmB8uouGxZoGBGP1jRiG634h
+	eHBvkgTj6yQKJswzJHxuGKDBZNkPfflDFFQnl5MwcK0Jgz5ploSa6VEaLlsLCTA+0dFQl9Ms
+	gTdlaRLImMkjoVzXT0NbpRFDb8miBIZsegqaDUUU/MisJ6EvLQQaclfCZMsIgnpzOQGTqTkY
+	2rMqCbhpz8UwmNSHwF43QEHm3BUM2ZfSEMxOOddG08clkP2ilw7x5etGvpN8adEHgnfUviT4
+	CkMPzedazvJPCn34FIed5C3FVzFv+XWD5rvfV2O+6c4sxVd8DOArrGMEr08cxfzPz50U/722
+	HR9wPyzdEy5GqmNFzdbgMKlq2G6mYhyyuCJbp0SH2txSkBvDsf7cu5puysUUu4G73WlaYsxu
+	4hyOadLF7qwvN9xho1OQlCHZWzSXbK7GrmA5e5h7o6shXCxngZuff7rkFayKqyi5j//4ZVxz
+	1qelUZL14RwLX533jJM9uYIFxqXd2CDOMNFBu3gFu557VtZIpCO54b+24b+24V87F5HFyF0d
+	HRslqCN3+mkjVPHR6ji/46eiLMj5MPkX565b0XjbXhtiGaSUydfpElQKiRCrjY+yIY4hle7y
+	ySqnkocL8edFzamjmrORotaGPBlKuUq+75AYpmBPCmfECFGMETV/U4Jx89ChULPorT6xXjYm
+	i8pbO9hz2mvXOeOXj8JPeOiNF8JM9wK7WlOfz4VerG/O3PFMef/lC/EQGeip929d9SpmpsG+
+	8YPX7sWAIy0ZK0bnPlUftBYEt8tCBoyejy54mTYLGXRHeK39bsAxmRB0/nH/Nx9HozIev+1d
+	E/FgtYoaKc3OtikprUrY7kNqtMJvRgCHhywDAAA=
+X-CFilter-Loop: Reflected
 
-On Tue, Jul 22, 2025 at 12:29:23AM +0530, Akhilesh Patil wrote:
-> Initialize best_entry pointer with NULL in ccu_pll_lookup_best_rate()
-> to avoid returning garbage value when function fails to assign it
-> a valid rate entry.
-
-This doesn't sound very reasonable to me. Looking through
-ccu_pll_lookup_best_rate(),
-
-	static const struct ccu_pll_rate_tbl *
-	ccu_pll_lookup_best_rate(struct ccu_pll *pll, unsigned long rate)
-	{
-	        struct ccu_pll_config *config = &pll->config;
-	        const struct ccu_pll_rate_tbl *best_entry;
-	        unsigned long best_delta = ULONG_MAX;
-	        int i;
-
-	        for (i = 0; i < config->tbl_num; i++) {
-	                const struct ccu_pll_rate_tbl *entry = &config->rate_tbl[i];
-	                unsigned long delta = abs_diff(entry->rate, rate);
-
-	                if (delta < best_delta) {
-	                        best_delta = delta;
-	                        best_entry = entry;
-	                }
-	        }
-
-	        return best_entry;
-	}
-
-best_entry is assigned as long as there's one entry fits the delta
-better. Since best_delta is set to ULONG_MAX, any entry with non-zero
-rates fits the required rate "better" at start of the loop. As long as
-we have at least one non-zero entry defined for the PLL, best_entry is
-always initialized and ccu_pll_lookup_best_rate() cannot return an
-invalid pointer. And all existing PLLs do define at least one entry.
-
-> Avoid passing invalid rate entry reference to
-> ccu_pll_update_param by adding appropriate error handling in
-> ccu_pll_set_rate and ccu_pll_round_rate.
-> Address the effects of uninitialized pointer as reported
-> by smatch and coverity static code analysis tools.
+On Mon, Jul 21, 2025 at 12:12:39PM +0100, Pavel Begunkov wrote:
+> On 7/21/25 06:49, Byungchul Park wrote:
+> > Hi,
+> > 
+> > I focused on converting the existing APIs accessing ->pp_magic field to
+> > page type APIs.  However, yes.  Additional works would better be
+> > considered on top like:
+> > 
+> >     1. Adjust how to store and retrieve dma index.  Maybe network guys
+> >        can work better on top.
+> > 
+> >     2. Move the sanity check for page pool in mm/page_alloc.c to on free.
 > 
-> Addresses-Coverity-ID: 1649164
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/r/202505111057.ejK2J56K-lkp@intel.com/
+> Don't be in a hurry, I've got a branch, but as mentioned before,
+> it'll be for-6.18. And there will also be more time for testing.
 
-Thus this looks like a false-positive to me.
+I'm not.  I listed the two items above wishing someone to work on it on
+top of this patch in the future.
 
-> Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-
-Regards,
-Haylen Chu
-
-> ---
->  drivers/clk/spacemit/ccu_pll.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
+> > This work was inspired by the following link by Pavel:
 > 
-> diff --git a/drivers/clk/spacemit/ccu_pll.c b/drivers/clk/spacemit/ccu_pll.c
-> index 4427dcfbbb97..3fc6a30f98b7 100644
-> --- a/drivers/clk/spacemit/ccu_pll.c
-> +++ b/drivers/clk/spacemit/ccu_pll.c
-> @@ -21,7 +21,7 @@ static const struct ccu_pll_rate_tbl *ccu_pll_lookup_best_rate(struct ccu_pll *p
->  							       unsigned long rate)
->  {
->  	struct ccu_pll_config *config = &pll->config;
-> -	const struct ccu_pll_rate_tbl *best_entry;
-> +	const struct ccu_pll_rate_tbl *best_entry = NULL;
->  	unsigned long best_delta = ULONG_MAX;
->  	int i;
->  
-> @@ -107,6 +107,10 @@ static int ccu_pll_set_rate(struct clk_hw *hw, unsigned long rate,
->  	const struct ccu_pll_rate_tbl *entry;
->  
->  	entry = ccu_pll_lookup_best_rate(pll, rate);
-> +
-> +	if (!entry)
-> +		return -EINVAL;
-> +
->  	ccu_pll_update_param(pll, entry);
->  
->  	return 0;
-> @@ -129,8 +133,11 @@ static long ccu_pll_round_rate(struct clk_hw *hw, unsigned long rate,
->  			       unsigned long *prate)
->  {
->  	struct ccu_pll *pll = hw_to_ccu_pll(hw);
-> +	const struct ccu_pll_rate_tbl *entry;
-> +
-> +	entry = ccu_pll_lookup_best_rate(pll, rate);
->  
-> -	return ccu_pll_lookup_best_rate(pll, rate)->rate;
-> +	return entry ? entry->rate : 0;
->  }
->  
->  static int ccu_pll_init(struct clk_hw *hw)
-> -- 
-> 2.34.1
+> The idea came from David, let's add
 > 
+> Suggested-by: David Hildenbrand <david@redhat.com>
+
+Okay.  I will replace the current one with this.
+
+> ...> -
+> >   static inline bool netmem_is_pp(netmem_ref netmem)
+> >   {
+> > -     return (netmem_get_pp_magic(netmem) & PP_MAGIC_MASK) == PP_SIGNATURE;
+> > +     if (netmem_is_net_iov(netmem))
+> 
+> This needs to return false for tx niovs. Seems like all callers are
+> gated on ->pp_recycle, so maybe it's fine, but we can at least
+> check pp. Mina, you've been checking tx doesn't mix with rx, any
+> opinion on that?
+
+I will wait for the answer of this before going ahead.
+
+> Question to net maintainers, can a ->pp_recycle marked skb contain
+> not page pool originated pages or a mix?
+
+This too.
+
+	Byungchul
+
+> --
+> Pavel Begunkov
 
