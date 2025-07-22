@@ -1,102 +1,116 @@
-Return-Path: <linux-kernel+bounces-741407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67418B0E3B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:52:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55C17B0E3B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:52:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 515CE1AA09D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:52:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DA5E175230
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:52:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346322836BF;
-	Tue, 22 Jul 2025 18:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C471C283C9F;
+	Tue, 22 Jul 2025 18:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SnK2HYU7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mell/UAH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89CEA21516E;
-	Tue, 22 Jul 2025 18:52:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284B0280CD5;
+	Tue, 22 Jul 2025 18:52:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753210329; cv=none; b=W23RLUK1e83qBo4Gx4+5Y61PF9iYF3sYz5gdzsNdplnr+5VDFuXKnsHnLbOiA9vA/OVn4Yy5DW5up1iA8I//H6lQuMui4R0USerfy0pvNv3Blq6BPfdFD1pmEKP8h5QJw1j8FWT/2QL19xfgT0emO+MZFoHGcVErlHdiWaUM8nE=
+	t=1753210361; cv=none; b=XpESH9lTMabKgbam4ZOKQGLh0xAyIDuOFL5t1tlJ19hh+dY1OvZpKhBEWtqyjlpXFADtdV3mELcfq2muv3Wu08thEgA4K8ZHaMiqAxirHAm9bUcNT/aDuBud19cDiqoP+hBp9EwxqQEjMiCG0pXJjxVfeEEI1tabXVhwoYbWmEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753210329; c=relaxed/simple;
-	bh=ncQDcwLtFXrjxRWbHOnOf177mQ7JXQHPpytEH3Fg8+w=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=PHLS1asyK6fO67z3BipEgptEMpJBlrMt76NlDm6EkVmYos9+FggxVSeRgE9uWGPTJZoYyARq/m1yrMCsin0BmWTmaz6Ws7D6BTF9skHE3jOOEdQ/ih0QOJAixDqI1nKe//kkATxG/0kQF4jpA5SvTgvn0QJ90U6l0FGJF89UAGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SnK2HYU7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75DE6C4CEEB;
-	Tue, 22 Jul 2025 18:52:07 +0000 (UTC)
+	s=arc-20240116; t=1753210361; c=relaxed/simple;
+	bh=0bqNmtkfCsYAScjWaHpJG8KA1tQSPtNgsYNa1N1PLBc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=tFmH9pVrX5rLfmcVlf2aFFxMVj+6bLycVvlFvc/zgAEnbsfHEZPS6hn1S1aRGAiOfLfDGxVk8bhdDCpGxmtAn+RH2O0nWe/QPUleLsG0uyKpjJY+Cjpce8KgFKqQYHjgnW6BNTya2gtQh6B6LQPFjhitkyj5QTF+f9NyqLlEYNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mell/UAH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68FD2C4CEEB;
+	Tue, 22 Jul 2025 18:52:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753210329;
-	bh=ncQDcwLtFXrjxRWbHOnOf177mQ7JXQHPpytEH3Fg8+w=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=SnK2HYU7grJiwjXNxheqxrKGhKHtJyDSZQuKzilLPG1K3UhEf+w8fLQEseNI/5JbS
-	 34L4mfJmoVzaL4jVzgmNyYZLm3ezaf0LhL4VrJ+aawt2U2MI17ye/IQ9lYaOHib13q
-	 uH8sFnySvRLuKw5nWXWTbfJiBP70cw3CaQqQ7kZ4Wqt4E/98t8XZsWbiuoFhyJme3C
-	 am38NQU5nhSpRVnZgN0xDyZurUaQBB2mFjg0qAu81XQGq0vSaE5leZ2x0BdB1pI6En
-	 g4wNLBDwD6WasTx4CJdD9TpxBNcp5e+wePvv2Zf9LDQy5LsWTxOCIYUR/BEcFJN9xw
-	 oeb2DJfxTWSwA==
+	s=k20201202; t=1753210360;
+	bh=0bqNmtkfCsYAScjWaHpJG8KA1tQSPtNgsYNa1N1PLBc=;
+	h=From:Subject:Date:To:Cc:From;
+	b=mell/UAHhEupqN1ihr8wD2p+a66P894U7xosZGiCFUFhI/gqe6gCdspjjfLESve+4
+	 K7aJUAF9YrfIr6sFDtwVljCtWvDk9VyrWRIR7BshauRwqBnq14DrlMw8cittZW6aDQ
+	 8ZevBhSkkfxnqgEoN0UpNLEM7mkGjhMnQ5vAYXnIMb0aqseKmdAUyhfjoFZLmJDts+
+	 fJfvBytXGLRFX+ei+gFfHrKd72p9xKhjF0EfrAKeL+kXkmlXNsS9rbzO6R+YphDh/n
+	 vVhf/SUJfAeInkxNgsMWWdEUV1Jt+/D8jB4XwGlIDayDAw0tiBUgXQ5L0VJJbps28w
+	 6JAk2CHVkAFHQ==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH 0/2] vfs: fix delegated timestamp updates
+Date: Tue, 22 Jul 2025 14:52:26 -0400
+Message-Id: <20250722-nfsd-testing-v1-0-31321c7fc97f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 22 Jul 2025 20:52:05 +0200
-Message-Id: <DBIT6WL2C5MG.2J7OBX6LCVYP7@kernel.org>
-Cc: "Caleb Sander Mateos" <csander@purestorage.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Arnd Bergmann" <arnd@arndb.de>, "Jens Axboe"
- <axboe@kernel.dk>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <io-uring@vger.kernel.org>
-Subject: Re: [PATCH 2/4] rust: io_uring: introduce rust abstraction for
- io-uring cmd
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Sidong Yang" <sidong.yang@furiosa.ai>
-X-Mailer: aerc 0.20.1
-References: <20250719143358.22363-1-sidong.yang@furiosa.ai>
- <20250719143358.22363-3-sidong.yang@furiosa.ai>
- <CADUfDZoBrnDpnTOxiDq6pBkctJ3NDJq7Wcqm2pUu_ooqMy8yyw@mail.gmail.com>
- <aH3OsKD6l18pLG92@sidongui-MacBookPro.local>
- <CADUfDZrLKrf6evTXQ03cJ1W4kj0gxsF9Bopu+i2SjkBObXKnMA@mail.gmail.com>
- <aH5g-Q_hu6neI5em@sidongui-MacBookPro.local>
- <DBHVI5WDLCY3.33K0F1UAJSHPK@kernel.org>
- <aH-ga6WdOpkbRK3T@sidongui-MacBookPro.local>
-In-Reply-To: <aH-ga6WdOpkbRK3T@sidongui-MacBookPro.local>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOrdf2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDcyMj3by04hTdktTiksy8dF3TVAszw0Tj5DTjRAMloJaCotS0zAqwcdG
+ xtbUARkr6rV4AAAA=
+X-Change-ID: 20250722-nfsd-testing-5e861a3cf3a0
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Steven Rostedt <rostedt@goodmis.org>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, 
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+ Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
+ Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-trace-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+ Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1178; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=0bqNmtkfCsYAScjWaHpJG8KA1tQSPtNgsYNa1N1PLBc=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBof93wGhlWpmqTHkzCVVjiwNm1iAoAltacYDp32
+ Vm/gjLcF9SJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaH/d8AAKCRAADmhBGVaC
+ FT5AD/0Rx12McPNE4b5aGc9AGUIGbtrY77+YpbumA/EcSrCy80NEeLNvwJfKTNuxCmbIeloOOSa
+ vjPnB8bc90nWQ60oDLHuEBMpVEKt6lApjbvUQLjlrbdFpm5oTCqlxeby2oWAunG7evpBzYpaEM6
+ 5kIw58XIUBWqWkjtNdhaHt8oSvLomvV/rNoa2tkdAUekuOyU6P+93SKt3E3lekA2p9YYeJndRXN
+ JVlqGvnwYbyWfSBmikTy516CbtGEUxaT9oIdzMqZT2FYsM+VvJnhBUHN1taUMn8f4ThYqZRU0DS
+ VxbRicmMgB1o3PEftEmqLMSYaL/8mCz60trN339kBdzTk/BIJRzhpYVjzM4ccFJQqHsDJUIzWrz
+ SODxO6oLVPw/qcXVyimeuO/z/k5+RnoSAKraCH8Fhjf3UIQpRB1uzdG6PtlBw2gFQzkZL94atXN
+ BuBqDt/CEtfi2vpCJAYhhak3U97v3b7lZ4MX/kHfcROSU/isjoFoOE4lNsL8zNCDYgfR6XHspNV
+ qg1kTpG0VdmLGn+A2HQk5qZ9p6QSwCNKmE27xKuIaBlJu5TeqmHqVhd1blgLQgUvd90RwRU4R0R
+ jVq6g8nNI2unchG4r8Ne93S7oUngDJBwZ8bmUZu5dJ8afk44kRS59uB2Mp0IVZDafujcBLHLsaO
+ 7cyCjK9XTVKApLA==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On Tue Jul 22, 2025 at 4:30 PM CEST, Sidong Yang wrote:
-> On Mon, Jul 21, 2025 at 06:28:09PM +0200, Benno Lossin wrote:
->> On Mon Jul 21, 2025 at 5:47 PM CEST, Sidong Yang wrote:
->> > It's safest to get NonNull from from_raw and it returns
->> > Pin<&mut IoUringCmd>.
->>=20
->> I don't think you need `NonNull<T>`.
->
-> NonNull<T> gurantees that it's not null. It could be also dangling but it=
-'s
-> safer than *mut T. Could you tell me why I don't need it?
+We had been seeing some failures in the git regression testsuite when
+run on NFS with delegated timestamps enabled. The first patch adds a
+tracepoint that was helpful for tracking down the problem. The second
+patch _mostly_ fixes the actual issue. With this, the git regression
+testsuite is passing a lot more often for me, even when run in the
+"stress" configuration under kdevops.
 
-Raw pointers have better ergonomics and if you're just passing it back
-into ffi, I don't see the point of using `NonNull`...
+That said, I'm still seeing an occasional failure that I think may be a
+problem on the client. I'll send email about that separately.
 
->> > from_raw() name is weird. it should be from_nonnnull()? Also, done()
->> > would get Pin<&mut Self>.
->>=20
->> That sounds reasonable.
->>=20
->> Are you certain that it's an exclusive reference?
->
-> As far as I know, yes.
-
-So the `IoUringCmd` is not refcounted and it is also not owned by the
-`done` callee?
-
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
-Cheers,
-Benno
+Jeff Layton (2):
+      vfs: add tracepoints in inode_set_ctime_deleg
+      vfs: fix delegated timestamp handling in setattr_copy()
+
+ fs/attr.c                        | 52 +++++++++++++++++++++++++++++-----------
+ fs/inode.c                       |  5 +++-
+ fs/nfsd/nfs4xdr.c                |  4 +---
+ include/trace/events/timestamp.h | 40 +++++++++++++++++++++++++++++++
+ 4 files changed, 83 insertions(+), 18 deletions(-)
+---
+base-commit: bab771b8eba6f3b13446ced52751be122af0d3b7
+change-id: 20250722-nfsd-testing-5e861a3cf3a0
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
 
