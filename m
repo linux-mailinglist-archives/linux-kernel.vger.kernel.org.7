@@ -1,226 +1,168 @@
-Return-Path: <linux-kernel+bounces-741508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B50DEB0E51F
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 22:54:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5940DB0E521
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 22:55:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E37956C7422
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:54:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAA62547C39
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:55:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31E37287246;
-	Tue, 22 Jul 2025 20:54:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126DC285C92;
+	Tue, 22 Jul 2025 20:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xN5WF5sX"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="RB/3EyAj"
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F6327FD56
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 20:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A2D285C8E
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 20:54:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753217649; cv=none; b=HimP0GEkkwo6rfazSt+stErif8d/1n4zcCMQ8cVtLhW4eYzxVMXTwXUgdstzdruLrHj7dgvkSuKlYCFJLLnWbPnkJas4ImkQsGW/ci6ir3UmyQUn0yMR4AKn1kxqUdbBOHJq5fqvIP+ZsfccQ/YMVesWkW+gzKaKgS8mrPw+JkU=
+	t=1753217674; cv=none; b=CqWleWJDrZck6rkzZbY+JFYRLBN6WOs6FqGk36WrsjVEmiXdi1YtLaBN4r+IYJYNYg7KcpB+zZKqg7NsROo0VosTZEHXYpc0uIKvZY2ArqRh0q+yDNsF0PVRIWCAFZAy46cz7jahYy/G05nDhtQ4H84vNnEhkSGdi0LTNM0oYzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753217649; c=relaxed/simple;
-	bh=66hctsnDvcPeo4bcqizkbbYExehSgXT0Gg3yUrHXPfc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OsGB20kCq+tGjeyzFyeH5ELTOnnpKYOTq2cfEWsfdtWdrQnGgc8a6mo4+yi2ilSCzcrFDSK+HiStEWWQb4kAHrMDGYHCCfu8fc2bgNiWPeqVCBJD3OzeEHlyYUHC4vDLzM9KsArZDjWQgShCSjvWRn/voDTnj8zR1s8h4jSPIC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--samitolvanen.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xN5WF5sX; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--samitolvanen.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-74ea5d9982cso4474162b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 13:54:07 -0700 (PDT)
+	s=arc-20240116; t=1753217674; c=relaxed/simple;
+	bh=NnWRWqBvReMHmWJs47rzjgvayXdAyRE7j16CS2mN938=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HyuGqdRmvtB+XzKAjJ8f/QuS3I0sV6+DMC+YmVVHCweMxye8x4/9I2FdLHRFwSGl1RY4JYtC7oRMRVl9bfGFAMFwgcqRv4s6HQDHNGz6hz6aK0l6riHSiHFia0b7L5+OJSfRe8pMkc5gHCH4hZhuulBpnEKrE2uryqjTpQMzswU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=RB/3EyAj; arc=none smtp.client-ip=209.85.210.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-73e88bc3776so1461044a34.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 13:54:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753217647; x=1753822447; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=v0xky3Tz++dR8wOWXy0XI+fGsD8WnNLUtoliWtDdioM=;
-        b=xN5WF5sXn6P7AA42S3lTILffuA9N4fySl2C2qry0n7o/Qo/m11eLOOpTKgvG+mL6kL
-         H9WeQhfNjcpnpcHsIx5/ewVB9GQ6HEs8oaU3kqAs/sV/h7NVnphJxuMeKJVnK0znamuA
-         rCUmwq/nvO6BCsVde6aDeIFuOYxXoRGq26TaEsRBXhCLoRuVI1jYZw8N/BTO8ELBpoCn
-         CI/104+7orPlKfoHJomIaQPF6PnzTnYLsFWYsY2Y9YaC5xe8qhCxFzlWx9sEJKwct+fX
-         BSnlJwZCKDMPZ3y+qh78ZuhpGYX4w2kGnwLQ9ysy5vg7to0wqd8hXfPN6V7gBBaXh7kZ
-         51ig==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1753217670; x=1753822470; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jtYLUVKT3EJ2aCiWti9B6lnDSXEv36NupqDq3ze/PBs=;
+        b=RB/3EyAj6QDKMHA53diEIas6ipDkeTTwRcfKIE/gKW+u+via1zhIVSYNI/ZBPVmExC
+         JqfKhVCItLTpYhhf5Vsc+rMyC8kIwKYAiyMzwPdVgQDCS3+wY4/WO9m7Gb1ArW7Hh2ZV
+         7714Mbw/e3DqW5QXczX7Af4SLhuxLajlLp6IOzliGpKIvMskDoRIdk+l7nODYNBRc39n
+         cB3MAhueFBJOjSLyhRiIwhI1RWpl1XFa4UAnEW4flPxvvQyuC3/IT9YhnzgxDlbEe1Cr
+         bEvfbbGaYKrcHwHt4QRUJPd4r2+D+QvOrCdhWVDR8xDxiOWBsvSckVpsNXIDJnaRjpZT
+         DgFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753217647; x=1753822447;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v0xky3Tz++dR8wOWXy0XI+fGsD8WnNLUtoliWtDdioM=;
-        b=SnWtkonYkaWmhBpKeQIq8+qZ4h5LzistVxP06pBwWUHsnhypjDjsEwGAsbTFAYg6aw
-         rjab5xXUBtEo5OGBkgfbVvPPT/R80Cwnpf+K+bRfomhF3TZYgSceuHOx6oA4Am6dc6+T
-         rzdk6DzE0RsQo4kEtQB/0QGBgUnSzhh84sYq+AecPLo/A6r26uSYxKtodnXNKTjoPMg9
-         MpHFhoSPYVCrhCCFKxDReHA1C7UvSzehYDNC+ykxXqhTp0OK6OamiHH7mGQhed2DNImP
-         sLSSUUM4SFRd58Srsw++luvoTBjDIA3CnK4WSOV+/ksY6Lg+O80jgtexOW3Qa8BFot0g
-         fq3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWpSU6SqiLzHSa+xWVAb89NgdGzWD3jvawZb870l1PQmSG6XggcVMKTGpDr4eA06ovlkaVKjt5/X2jo2U4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCibJeYnW4YdsjEI5vrwSZHUbFuvMNhID20mFDhiF/GMiGFhxf
-	S+TZC/CxhY4S7X8BfBVx42b27H1zKp3VdGuSoV2hKGmfFcd+JVrTc4dauJlHPNwu1Bh+F3rsZrt
-	uBLNkpeaMCMpc0QRvMtFAXA4+Z6D87A==
-X-Google-Smtp-Source: AGHT+IH6x4q5kLczvA9H+m286fHAokh7HU92JRe53jNpVYETLy7h6qxVO9bNE0XMECCrfd5TA/Z0QoAyJ5vJf8ucB2k=
-X-Received: from pfbha4.prod.google.com ([2002:a05:6a00:8504:b0:746:2897:67e3])
- (user=samitolvanen job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a21:1fc3:b0:23d:35f2:4e69 with SMTP id adf61e73a8af0-23d490f6100mr432417637.23.1753217647145;
- Tue, 22 Jul 2025 13:54:07 -0700 (PDT)
-Date: Tue, 22 Jul 2025 20:54:01 +0000
-In-Reply-To: <20250722205357.3347626-5-samitolvanen@google.com>
+        d=1e100.net; s=20230601; t=1753217670; x=1753822470;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jtYLUVKT3EJ2aCiWti9B6lnDSXEv36NupqDq3ze/PBs=;
+        b=Q6mviCcf3W1rDk9KMiSDTaSYxfKOrf20OHdWW3cogkNKITSwvVhf8kFzNddK4AWCe0
+         lUG/gLnIdOqDUZx1GyWvzWkSqRKeoDcr7L0E860Lnut35YEt/Ndjy9Xgstp5VIhvrEah
+         fWHSqTpqEpUDFvF+DON09785NYfQE+sOAv3erLE8U6z2UbSHBt3CTazpz1D//lD8eyMc
+         rVrW4yJGQ4UgZYiqoo4EQyJ/j7PWBHsCnGY2fts/9Gvj/jsSV8BVyq9Pg/arlbODGu3O
+         7sVK1OOOQhk89a69VhJABGVvaOP1N15CvB6KhcRBnrpO7cQHwqlM+I89ad/LSGjpQar6
+         3zPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWN+YaiB8R8Qb79uFQzLYP31/QvQlcQy+GTZ8nGp//xvsXqp4txyK3AhWvxH5QPmL0T2V2Ltd4CrVw/VSA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhNKsTg75/9QQF9dow+G0PKgqo2jCxnvZs5VqgwK5C5qBNGwUP
+	p1VLmjOoA+IDxzE4zQ5eLs5F19pyBCivmosqhDlAEg1Um/Kou2w7TLoCpCNtXKTCzzw=
+X-Gm-Gg: ASbGncs//MW/Ua95we+KEC78CbIrYzZefpn4DBLAfnYewMxS4Ntv0+Jrxi6PpRa/v1P
+	6NNoJky16RaqaS/vJsBe3dURIKuVUsNMjxS3KhNPkIfi3S8rcGUrgrRV9pVdNR5BdUGuc2RlgQt
+	hhdJ3Rs+ZqnZWOHmNfI/3G5c16PmPLMhaA83puFzyCNUHA9olbHhYTNBjcOMBfbyHWvIkqNXygE
+	5OAJv0zmaDJ4+ikzL8w53tbMoFo0BMAqpt+RAGAmgoxQoulTRRA1CcMKGB/ENOQbvASY3ZpVixe
+	pQv7q1lIjJ6GDaOvj03vRJl7Rjm+5VFGYc1mByEKeQc4bKc688ikHkvJcpPXGQ76/zAUQPQwnUl
+	w1VzsXlaiPYJHiP5VH1hsw7fAJbKcA/kWWHd9hmE=
+X-Google-Smtp-Source: AGHT+IFNPX9fsChpVJmdX+dZS4oONm0mg+uzGXO2ed5W1O5w6MGHprAcem1dwesjGge9QOuX0kCmQQ==
+X-Received: by 2002:a05:6871:79b:b0:306:bd25:6d34 with SMTP id 586e51a60fabf-306c727a354mr328144fac.29.1753217670159;
+        Tue, 22 Jul 2025 13:54:30 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:2a79:4b55:6a01:85d7])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-30101ccfbdbsm4690173fac.10.2025.07.22.13.54.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jul 2025 13:54:29 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Date: Tue, 22 Jul 2025 15:54:21 -0500
+Subject: [PATCH v2] iio: proximity: isl29501: fix buffered read on
+ big-endian systems
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250722205357.3347626-5-samitolvanen@google.com>
-X-Developer-Key: i=samitolvanen@google.com; a=openpgp; fpr=35CCFB63B283D6D3AEB783944CB5F6848BBC56EE
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4527; i=samitolvanen@google.com;
- h=from:subject; bh=V2hbK6L5Ngvs6CaLj1XnAp6J1iiarTYTez80LhYwsI4=;
- b=owGbwMvMwCUWxa662nLh8irG02pJDBn1v9I5n4RtPnZpu4LCIsOEhytmr2wSm7Bl7r4PE5YcN
- AzVFpxh3VHKwiDGxSArpsjS8nX11t3fnVJffS6SgJnDygQyhIGLUwAmwhzCyHA8ZdFRGXGj7H3m
- hcF8nw+xrJNYb3aRyVxu/b1fSybV9aYw/Pe4pPziyteDP3gibqY7T+XMu1ZoJl5VMkO3/+uVq9t uHmIHAA==
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250722205357.3347626-8-samitolvanen@google.com>
-Subject: [PATCH bpf-next v13 3/3] arm64/cfi,bpf: Support kCFI + BPF on arm64
-From: Sami Tolvanen <samitolvanen@google.com>
-To: bpf@vger.kernel.org, Puranjay Mohan <puranjay@kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Maxwell Bland <mbland@motorola.com>, Puranjay Mohan <puranjay12@gmail.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Dao Huang <huangdao1@oppo.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250722-iio-use-more-iio_declare_buffer_with_ts-7-v2-1-d3ebeb001ed3@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIAHz6f2gC/53NQQ6CMBCF4auQrh3TFgnElfcwpCl0KpMANVNAC
+ eHuFo7g8nuL928iIhNGcc82wbhQpDAm6Esm2s6OLwRyyUJLXchSKSAKMEeEITAeMA7b3jKaZvY
+ e2Xxo6swUoYSqks555XJZSpH+3oyevmfrWSd3FKfA65le1LH+U1kUKLC510VuW403+2js2lPDe
+ G3DIOp9338lQAdG5QAAAA==
+X-Change-ID: 20250711-iio-use-more-iio_declare_buffer_with_ts-7-880ddf1d3070
+To: Jonathan Cameron <jic23@kernel.org>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>, Mathieu Othacehe <othacehe@gnu.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2369; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=NnWRWqBvReMHmWJs47rzjgvayXdAyRE7j16CS2mN938=;
+ b=owGbwMvMwMV46IwC43/G/gOMp9WSGDLqf9V5H+uIZ+VkYJHLyjyo9HJn4iTjgHNiJ9PLbqSdr
+ 5tcwB3YyWjMwsDIxSArpsjyRuLmvCS+5mtzbmTMgBnEygQyhYGLUwAmUhXN/odzrmVJTuQL5/z1
+ mVtWntnJ7t78gvlh0TQTzXd/FttJ14THpfAWqi267Muw6N6ywG3Wr91YriSsSQjxsnxx0GqvTfp
+ RfwbhhVMvblYRi3uscyH0UtG3pTfFTHYw+7JHTlqefNhVOeVoq7NjXI+rQEnY9uqo6ftzgjaf7e
+ de9USk+PXTYzy5c+YeZi5+cac7LKc39r6Wqpu3iOY5y9We/pdY5e1CvYq7t3Uz/XPfNGW1ebCSl
+ JSp5vb5XNuczzYmMMU5yt3W//12d+vL4x6/zc9Omx/iW5a496pntFtdy4rGzp7fT0pZm4oPqTz1
+ Nvudy+Rjov7YnoVjNutHkS9yrFpT3qgn3t9gGf7QfrUGAA==
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-From: Puranjay Mohan <puranjay12@gmail.com>
+Fix passing a u32 value as a u16 buffer scan item. This works on little-
+endian systems, but not on big-endian systems.
 
-Currently, bpf_dispatcher_*_func() is marked with `__nocfi` therefore
-calling BPF programs from this interface doesn't cause CFI warnings.
+A new local variable is introduced for getting the register value and
+the array is changed to a struct to make the data layout more explicit
+rather than just changing the type and having to recalculate the proper
+length needed for the timestamp.
 
-When BPF programs are called directly from C: from BPF helpers or
-struct_ops, CFI warnings are generated.
-
-Implement proper CFI prologues for the BPF programs and callbacks and
-drop __nocfi for arm64. Fix the trampoline generation code to emit kCFI
-prologue when a struct_ops trampoline is being prepared.
-
-Signed-off-by: Puranjay Mohan <puranjay12@gmail.com>
-Co-developed-by: Maxwell Bland <mbland@motorola.com>
-Signed-off-by: Maxwell Bland <mbland@motorola.com>
-Co-developed-by: Sami Tolvanen <samitolvanen@google.com>
-Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-Tested-by: Dao Huang <huangdao1@oppo.com>
-Acked-by: Will Deacon <will@kernel.org>
+Fixes: 1c28799257bc ("iio: light: isl29501: Add support for the ISL29501 ToF sensor.")
+Signed-off-by: David Lechner <dlechner@baylibre.com>
 ---
- arch/arm64/include/asm/cfi.h  |  7 +++++++
- arch/arm64/net/bpf_jit_comp.c | 30 +++++++++++++++++++++++++++---
- 2 files changed, 34 insertions(+), 3 deletions(-)
- create mode 100644 arch/arm64/include/asm/cfi.h
+Changes in v2:
+- Use u16 to match channel scan_type and introduce new local u32 variable
+  for getting the register value.
+- Reword subject and commit message since we now consider this a bug fix.
+- Fix not zero-initializing the new struct.
+- Link to v1: https://lore.kernel.org/r/20250711-iio-use-more-iio_declare_buffer_with_ts-7-v1-1-a3f253ac2e4a@baylibre.com
+---
+ drivers/iio/proximity/isl29501.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm64/include/asm/cfi.h b/arch/arm64/include/asm/cfi.h
-new file mode 100644
-index 000000000000..ab90f0351b7a
---- /dev/null
-+++ b/arch/arm64/include/asm/cfi.h
-@@ -0,0 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_ARM64_CFI_H
-+#define _ASM_ARM64_CFI_H
+diff --git a/drivers/iio/proximity/isl29501.c b/drivers/iio/proximity/isl29501.c
+index d1510fe2405088adc0998e28aa9f36e0186fafae..f69db6f2f380313b8444ee21399ee3a9faed6f04 100644
+--- a/drivers/iio/proximity/isl29501.c
++++ b/drivers/iio/proximity/isl29501.c
+@@ -938,12 +938,18 @@ static irqreturn_t isl29501_trigger_handler(int irq, void *p)
+ 	struct iio_dev *indio_dev = pf->indio_dev;
+ 	struct isl29501_private *isl29501 = iio_priv(indio_dev);
+ 	const unsigned long *active_mask = indio_dev->active_scan_mask;
+-	u32 buffer[4] __aligned(8) = {}; /* 1x16-bit + naturally aligned ts */
+-
+-	if (test_bit(ISL29501_DISTANCE_SCAN_INDEX, active_mask))
+-		isl29501_register_read(isl29501, REG_DISTANCE, buffer);
++	u32 value;
++	struct {
++		u16 data;
++		aligned_s64 ts;
++	} scan = { };
 +
-+#define __bpfcall
-+
-+#endif /* _ASM_ARM64_CFI_H */
-diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
-index 89b1b8c248c6..993b5d6e1525 100644
---- a/arch/arm64/net/bpf_jit_comp.c
-+++ b/arch/arm64/net/bpf_jit_comp.c
-@@ -10,6 +10,7 @@
- #include <linux/arm-smccc.h>
- #include <linux/bitfield.h>
- #include <linux/bpf.h>
-+#include <linux/cfi.h>
- #include <linux/filter.h>
- #include <linux/memory.h>
- #include <linux/printk.h>
-@@ -106,6 +107,14 @@ static inline void emit(const u32 insn, struct jit_ctx *ctx)
- 	ctx->idx++;
- }
- 
-+static inline void emit_u32_data(const u32 data, struct jit_ctx *ctx)
-+{
-+	if (ctx->image != NULL && ctx->write)
-+		ctx->image[ctx->idx] = data;
-+
-+	ctx->idx++;
-+}
-+
- static inline void emit_a64_mov_i(const int is64, const int reg,
- 				  const s32 val, struct jit_ctx *ctx)
- {
-@@ -166,6 +175,12 @@ static inline void emit_bti(u32 insn, struct jit_ctx *ctx)
- 		emit(insn, ctx);
- }
- 
-+static inline void emit_kcfi(u32 hash, struct jit_ctx *ctx)
-+{
-+	if (IS_ENABLED(CONFIG_CFI_CLANG))
-+		emit_u32_data(hash, ctx);
-+}
-+
- /*
-  * Kernel addresses in the vmalloc space use at most 48 bits, and the
-  * remaining bits are guaranteed to be 0x1. So we can compose the address
-@@ -476,7 +491,6 @@ static int build_prologue(struct jit_ctx *ctx, bool ebpf_from_cbpf)
- 	const bool is_main_prog = !bpf_is_subprog(prog);
- 	const u8 fp = bpf2a64[BPF_REG_FP];
- 	const u8 arena_vm_base = bpf2a64[ARENA_VM_START];
--	const int idx0 = ctx->idx;
- 	int cur_offset;
- 
- 	/*
-@@ -502,6 +516,9 @@ static int build_prologue(struct jit_ctx *ctx, bool ebpf_from_cbpf)
- 	 *
- 	 */
- 
-+	emit_kcfi(is_main_prog ? cfi_bpf_hash : cfi_bpf_subprog_hash, ctx);
-+	const int idx0 = ctx->idx;
-+
- 	/* bpf function may be invoked by 3 instruction types:
- 	 * 1. bl, attached via freplace to bpf prog via short jump
- 	 * 2. br, attached via freplace to bpf prog via long jump
-@@ -2055,9 +2072,9 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
- 		jit_data->ro_header = ro_header;
- 	}
- 
--	prog->bpf_func = (void *)ctx.ro_image;
-+	prog->bpf_func = (void *)ctx.ro_image + cfi_get_offset();
- 	prog->jited = 1;
--	prog->jited_len = prog_size;
-+	prog->jited_len = prog_size - cfi_get_offset();
- 
- 	if (!prog->is_func || extra_pass) {
- 		int i;
-@@ -2426,6 +2443,12 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
- 	/* return address locates above FP */
- 	retaddr_off = stack_size + 8;
- 
-+	if (flags & BPF_TRAMP_F_INDIRECT) {
-+		/*
-+		 * Indirect call for bpf_struct_ops
-+		 */
-+		emit_kcfi(cfi_get_func_hash(func_addr), ctx);
++	if (test_bit(ISL29501_DISTANCE_SCAN_INDEX, active_mask)) {
++		isl29501_register_read(isl29501, REG_DISTANCE, &value);
++		scan.data = value;
 +	}
- 	/* bpf trampoline may be invoked by 3 instruction types:
- 	 * 1. bl, attached to bpf prog or kernel function via short jump
- 	 * 2. br, attached to bpf prog or kernel function via long jump
-@@ -2942,6 +2965,7 @@ void bpf_jit_free(struct bpf_prog *prog)
- 					   sizeof(jit_data->header->size));
- 			kfree(jit_data);
- 		}
-+		prog->bpf_func -= cfi_get_offset();
- 		hdr = bpf_jit_binary_pack_hdr(prog);
- 		bpf_jit_binary_pack_free(hdr, NULL);
- 		WARN_ON_ONCE(!bpf_prog_kallsyms_verify_off(prog));
+ 
+-	iio_push_to_buffers_with_timestamp(indio_dev, buffer, pf->timestamp);
++	iio_push_to_buffers_with_timestamp(indio_dev, &scan, pf->timestamp);
+ 	iio_trigger_notify_done(indio_dev->trig);
+ 
+ 	return IRQ_HANDLED;
+
+---
+base-commit: cd2731444ee4e35db76f4fb587f12d327eec5446
+change-id: 20250711-iio-use-more-iio_declare_buffer_with_ts-7-880ddf1d3070
+
+Best regards,
 -- 
-2.50.0.727.gbf7dc18ff4-goog
+David Lechner <dlechner@baylibre.com>
 
 
