@@ -1,184 +1,178 @@
-Return-Path: <linux-kernel+bounces-740873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26A48B0DA76
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:02:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3480AB0DA2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:56:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 690EE1C236B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:03:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49A265430B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3AF32EA73B;
-	Tue, 22 Jul 2025 13:01:45 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98EA2E9740;
+	Tue, 22 Jul 2025 12:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U8DZTfVj"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7C92E9EB3;
-	Tue, 22 Jul 2025 13:01:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6971C32;
+	Tue, 22 Jul 2025 12:56:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753189305; cv=none; b=F7cVKbfts6ElnQt8i89w7f7DImkjVhfcxHntR5UolMGni8kzhTXohF+b6HJ/ZmbmaXITMgrfbFMZmVU/7T/0XeL4csIu7ohuMs+RfuwxyGwy7eCt4NhrYgMXBJC9cqfwjTmhhPjg1zfkJbH7L/5StYAczbtmYmJkpdZp1Q3DyLM=
+	t=1753188986; cv=none; b=oeYZVr5GHCzOLcL2JELdhB6mK1r/QUQYoWRmy/UKf2XnlTKseq0F1A6+hwIOoDgqc93WcZZZbU7LemLHXMrHtg1wPvcfKmpIv8fxH2y1NhIIJ8bj63mIApx3Yg/dM99Ausrj6I7RvNAaWuyUeWFRh+cK2XsWKBKRRc9MWzqormg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753189305; c=relaxed/simple;
-	bh=dszFGtW+Te4PST7MdphqIHU1b5o5LV/pqetfG6W/1QY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oKgPofIOeHC1yHd0qCftVzCGwOcW5GAgHNJAVKAfJj0vmjvCTUVs2C4dVpgQ3bZTbeti49uF7vW1+N5xQShi+ACPw1L1LQQLW7f/3YkJZdWX5UJX3M/6Sc2rwJyAmdHMl2h8kojBOG07LhGQ10F0yTfh4co3JrYdw4W7ykpiGr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bmcnZ2pfDztSvB;
-	Tue, 22 Jul 2025 21:00:34 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 545101402C4;
-	Tue, 22 Jul 2025 21:01:38 +0800 (CST)
-Received: from localhost.localdomain (10.90.31.46) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 22 Jul 2025 21:01:37 +0800
-From: Jijie Shao <shaojijie@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>
-CC: <shenjian15@huawei.com>, <liuyonglong@huawei.com>,
-	<chenhao418@huawei.com>, <jonathan.cameron@huawei.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<shaojijie@huawei.com>
-Subject: [PATCH V2 net 4/4] net: hns3: default enable tx bounce buffer when smmu enabled
-Date: Tue, 22 Jul 2025 20:54:23 +0800
-Message-ID: <20250722125423.1270673-5-shaojijie@huawei.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20250722125423.1270673-1-shaojijie@huawei.com>
-References: <20250722125423.1270673-1-shaojijie@huawei.com>
+	s=arc-20240116; t=1753188986; c=relaxed/simple;
+	bh=c2L6rHjmtCJeciELiYPIjGCjIfrsQARmY4/qEmALyGE=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Iq0X+ByNodj8/X99rin2orJ7HCt+OIejmsa0A/CxS3c2dksIHfqi7ipGtvtEnG5LUELaVhYuTEgdQSjJ4c7O3cOGIKk4SGTSMgeaDQzPcnfFYDPv3Mf1vXk17LyrbaaYf1N1vnzjQWmiYWP88VQuaJ58bLCbSD90myR9kwC/pew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U8DZTfVj; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753188984; x=1784724984;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=c2L6rHjmtCJeciELiYPIjGCjIfrsQARmY4/qEmALyGE=;
+  b=U8DZTfVjyQ1jga4qv4cwR+dEKrZxu//pbG3aKDlyaei7weazKuTyOjiR
+   uwx1OGmDSOcNhVyaK0zvHE4xacU9eNdBcKXDJMaMELep9/ndVKTOJ7ync
+   cDAxSrzWPjuKDREikBJMUKqDDzFNctPSw++BupOyvwJnxCQgPtRyL4Evf
+   gRz0ud/Os+ucex5zg9E8pOh+eiPCWHQQo1rPhj26LzuIE2IVHwOKIsguy
+   ROIhg08PKu2Y38W46jD90Vc2oIdatM9wdhiWMqYNtSCtRsmDCw/5opnkB
+   zRuGASZOJP8XnfJHApfCegsWzUoOT/4uCTHHEAINt7sDpop5DEfISb0mt
+   Q==;
+X-CSE-ConnectionGUID: wUMpMEzPTr+XO6Q3JDeytQ==
+X-CSE-MsgGUID: BoMDM1ZYSAyWHRDyPKUupA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11500"; a="66121521"
+X-IronPort-AV: E=Sophos;i="6.16,331,1744095600"; 
+   d="scan'208";a="66121521"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 05:56:23 -0700
+X-CSE-ConnectionGUID: scgFeFDvR7O3N7BwwGx8Bw==
+X-CSE-MsgGUID: Du0Jm0HnRzOfSC4GwKBEkw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,331,1744095600"; 
+   d="scan'208";a="164604090"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.254])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 05:56:19 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 22 Jul 2025 15:56:16 +0300 (EEST)
+To: Bjorn Helgaas <helgaas@kernel.org>
+cc: Icenowy Zheng <uwu@icenowy.me>, Bjorn Helgaas <bhelgaas@google.com>, 
+    Lucas De Marchi <lucas.demarchi@intel.com>, 
+    =?ISO-8859-15?Q?Thomas_Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>, 
+    Rodrigo Vivi <rodrigo.vivi@intel.com>, linux-pci@vger.kernel.org, 
+    intel-xe@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>, 
+    Han Gao <rabenda.cn@gmail.com>, Vivian Wang <wangruikang@iscas.ac.cn>
+Subject: Re: [PATCH] PCI: hide mysterious 8MB 64-bit pref BAR on Intel Arc
+ PCIe Switch
+In-Reply-To: <20250721202401.GA2751369@bhelgaas>
+Message-ID: <380aa860-89a4-08dc-7d39-b7b212546415@linux.intel.com>
+References: <20250721202401.GA2751369@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemk100013.china.huawei.com (7.202.194.61)
+Content-Type: text/plain; charset=US-ASCII
 
-The SMMU engine on HIP09 chip has a hardware issue.
-SMMU pagetable prefetch features may prefetch and use a invalid PTE
-even the PTE is valid at that time. This will cause the device trigger
-fake pagefaults. The solution is to avoid prefetching by adding a
-SYNC command when smmu mapping a iova. But the performance of nic has a
-sharp drop. Then we do this workaround, always enable tx bounce buffer,
-avoid mapping/unmapping on TX path.
+On Mon, 21 Jul 2025, Bjorn Helgaas wrote:
 
-This issue only affects HNS3, so we always enable
-tx bounce buffer when smmu enabled to improve performance.
+> [+cc Ilpo]
+> 
+> On Tue, Jul 22, 2025 at 01:30:57AM +0800, Icenowy Zheng wrote:
+> > The upstream port device of Intel Arc series dGPUs' internal PCIe switch
+> > contains a mysterious 8MB 64-bit prefetchable BAR. All reads to memory
+> > mapped to that BAR returns 0xFFFFFFFF and writes have no effect.
+> > 
+> > When the PCI bus isn't configured by any firmware (e.g. a PCIe
+> > controller solely initialized by Linux kernel), the PCI space allocation
+> > algorithm of Linux will allocate the main VRAM BAR of Arc dGPU device at
+> > base+0, and then the 8MB BAR at base+256M, which prevents the main VRAM
+> > BAR gets resized.
 
-Fixes: 295ba232a8c3 ("net: hns3: add device version to replace pci revision")
-Signed-off-by: Jian Shen <shenjian15@huawei.com>
-Signed-off-by: Jijie Shao <shaojijie@huawei.com>
----
-ChangeLog:
-v1 -> v2:
-  - Split this patch, omits the ethtool changes,
-    ethtool changes will be sent to net-next, suggested by Simon Horman
-  v1: https://lore.kernel.org/all/20250702130901.2879031-1-shaojijie@huawei.com/
----
- .../net/ethernet/hisilicon/hns3/hns3_enet.c   | 31 +++++++++++++++++++
- .../net/ethernet/hisilicon/hns3/hns3_enet.h   |  2 ++
- 2 files changed, 33 insertions(+)
+__resource_resize_store() tries to release all resoures with the same 
+flags as the resource to be resized. But it seems the release doesn't work 
+across devices.
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index b03b8758c777..aaa803563bd2 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -11,6 +11,7 @@
- #include <linux/irq.h>
- #include <linux/ip.h>
- #include <linux/ipv6.h>
-+#include <linux/iommu.h>
- #include <linux/module.h>
- #include <linux/pci.h>
- #include <linux/skbuff.h>
-@@ -1039,6 +1040,8 @@ static bool hns3_can_use_tx_sgl(struct hns3_enet_ring *ring,
- static void hns3_init_tx_spare_buffer(struct hns3_enet_ring *ring)
- {
- 	u32 alloc_size = ring->tqp->handle->kinfo.tx_spare_buf_size;
-+	struct net_device *netdev = ring_to_netdev(ring);
-+	struct hns3_nic_priv *priv = netdev_priv(netdev);
- 	struct hns3_tx_spare *tx_spare;
- 	struct page *page;
- 	dma_addr_t dma;
-@@ -1080,6 +1083,7 @@ static void hns3_init_tx_spare_buffer(struct hns3_enet_ring *ring)
- 	tx_spare->buf = page_address(page);
- 	tx_spare->len = PAGE_SIZE << order;
- 	ring->tx_spare = tx_spare;
-+	ring->tx_copybreak = priv->tx_copybreak;
- 	return;
- 
- dma_mapping_error:
-@@ -4874,6 +4878,30 @@ static void hns3_nic_dealloc_vector_data(struct hns3_nic_priv *priv)
- 	devm_kfree(&pdev->dev, priv->tqp_vector);
- }
- 
-+static void hns3_update_tx_spare_buf_config(struct hns3_nic_priv *priv)
-+{
-+#define HNS3_MIN_SPARE_BUF_SIZE (2 * 1024 * 1024)
-+#define HNS3_MAX_PACKET_SIZE (64 * 1024)
-+
-+	struct iommu_domain *domain = iommu_get_domain_for_dev(priv->dev);
-+	struct hnae3_ae_dev *ae_dev = hns3_get_ae_dev(priv->ae_handle);
-+	struct hnae3_handle *handle = priv->ae_handle;
-+
-+	if (ae_dev->dev_version < HNAE3_DEVICE_VERSION_V3)
-+		return;
-+
-+	if (!(domain && iommu_is_dma_domain(domain)))
-+		return;
-+
-+	priv->min_tx_copybreak = HNS3_MAX_PACKET_SIZE;
-+	priv->min_tx_spare_buf_size = HNS3_MIN_SPARE_BUF_SIZE;
-+
-+	if (priv->tx_copybreak < priv->min_tx_copybreak)
-+		priv->tx_copybreak = priv->min_tx_copybreak;
-+	if (handle->kinfo.tx_spare_buf_size < priv->min_tx_spare_buf_size)
-+		handle->kinfo.tx_spare_buf_size = priv->min_tx_spare_buf_size;
-+}
-+
- static void hns3_ring_get_cfg(struct hnae3_queue *q, struct hns3_nic_priv *priv,
- 			      unsigned int ring_type)
- {
-@@ -5107,6 +5135,7 @@ int hns3_init_all_ring(struct hns3_nic_priv *priv)
- 	int i, j;
- 	int ret;
- 
-+	hns3_update_tx_spare_buf_config(priv);
- 	for (i = 0; i < ring_num; i++) {
- 		ret = hns3_alloc_ring_memory(&priv->ring[i]);
- 		if (ret) {
-@@ -5311,6 +5340,8 @@ static int hns3_client_init(struct hnae3_handle *handle)
- 	priv->ae_handle = handle;
- 	priv->tx_timeout_count = 0;
- 	priv->max_non_tso_bd_num = ae_dev->dev_specs.max_non_tso_bd_num;
-+	priv->min_tx_copybreak = 0;
-+	priv->min_tx_spare_buf_size = 0;
- 	set_bit(HNS3_NIC_STATE_DOWN, &priv->state);
- 
- 	handle->msg_enable = netif_msg_init(debug, DEFAULT_MSG_LEVEL);
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-index d36c4ed16d8d..caf7a4df8585 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-@@ -596,6 +596,8 @@ struct hns3_nic_priv {
- 	struct hns3_enet_coalesce rx_coal;
- 	u32 tx_copybreak;
- 	u32 rx_copybreak;
-+	u32 min_tx_copybreak;
-+	u32 min_tx_spare_buf_size;
- };
- 
- union l3_hdr_info {
+I don't like that flags check anyway, I'd want to replace all such black 
+magic with a function that consistently determines the bridge window a 
+resouce is assigned to. I've a series to that effect but it doesn't cover 
+resize cases yet and it requires more testing anyway to confirm it doesn't 
+change any parent windows resources get assigned to.
+
+So IMO, the correct logic on resize would be to:
+
+1) Get the relevant upstream bridge window
+2) Release all child resource of that bridge window. But that will 
+require further checks whether all those resources (from foreign PCI devs) 
+can be released which might run a foul with dev lock ordering.
+
+...So it might turn out hard to implement in practice.
+
+> > As the functionality and performance of Arc dGPU will
+> > get severely restricted with small BAR, this makes a problem.
+> > 
+> > Hide the mysterious 8MB BAR to Linux PCI subsystem, to allow resizing
+> > the VRAM BAR to VRAM size with the Linux PCI space allocation algorithm.
+> 
+> There's no reason a switch upstream port should not have a BAR.  I
+> suspect this BAR probably does have a legitimate purpose, and it's
+> only "mysterious" because we don't know how to use it.
+> 
+> This sounds like it may be a deficiency in the Linux BAR assignment
+> code.  Any other device could have a similar problem.  
+
+I'm still working also with the resource fitting logic to make it consider 
+resizable BARs when sizing the resource which would address this problem 
+another way.
+
+> > Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+> > ---
+> >  drivers/pci/quirks.c | 16 ++++++++++++++++
+> >  1 file changed, 16 insertions(+)
+> > 
+> > diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> > index d7f4ee634263..df304bfec6e9 100644
+> > --- a/drivers/pci/quirks.c
+> > +++ b/drivers/pci/quirks.c
+> > @@ -3650,6 +3650,22 @@ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x37d0, quirk_broken_intx_masking);
+> >  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x37d1, quirk_broken_intx_masking);
+> >  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x37d2, quirk_broken_intx_masking);
+> >  
+> > +/*
+> > + * Intel Arc dGPUs' internal switch upstream port contains a mysterious 8MB
+> > + * 64-bit prefetchable BAR that blocks resize of main dGPU VRAM BAR with
+> > + * Linux's PCI space allocation algorithm.
+> > + */
+> > +static void quirk_intel_xe_upstream(struct pci_dev *pdev)
+> > +{
+> > +	memset(&pdev->resource[0], 0, sizeof(pdev->resource[0]));
+> 
+> This doesn't touch the BAR itself, so we may be leaving the BAR
+> decoding accesses, which could lead to an address conflict.  It also
+> prevents a driver for the upstream port from using the BAR.
+> 
+> > +}
+> > +/* Intel Arc A380 PCI Express Switch Upstream Port */
+> > +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x4fa1, quirk_intel_xe_upstream);
+> > +/* Intel Arc A770 PCI Express Switch Upstream Port */
+> > +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x4fa0, quirk_intel_xe_upstream);
+> > +/* Intel Arc B580 PCI Express Switch Upstream Port */
+> > +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0xe2ff, quirk_intel_xe_upstream);
+> > +
+> >  static u16 mellanox_broken_intx_devs[] = {
+> >  	PCI_DEVICE_ID_MELLANOX_HERMON_SDR,
+> >  	PCI_DEVICE_ID_MELLANOX_HERMON_DDR,
+> > -- 
+> > 2.50.1
+> > 
+> 
+
 -- 
-2.33.0
+ i.
 
 
