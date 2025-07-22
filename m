@@ -1,431 +1,261 @@
-Return-Path: <linux-kernel+bounces-740923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6147EB0DB3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:47:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ACFAB0DB2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:44:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 034D13A5A99
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:46:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C47C1AA1C9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F902E4266;
-	Tue, 22 Jul 2025 13:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548152EA15A;
+	Tue, 22 Jul 2025 13:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OyJqZeM8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Of93aJyQ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 479ED2E36E8;
-	Tue, 22 Jul 2025 13:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03CA4185E4A
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 13:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753192007; cv=none; b=qxsDnUWM1eDMNR/BjqofY38c95DunK3K0V+qT2V0xIFxxxPnU/oC7l9lxYE0+KiWOBBMgglm6197Xr5a7XiVHnJPOtewB7mc5kEkjm5PPYvxERNqDKZuYkin0QzK9yGa848M5dQbobTuVdMr8ABfJFmYUP8gzVdJEbR/pUv/yGk=
+	t=1753191864; cv=none; b=TIMkuE4IM5KEjE6utsr3ZEV66imZvCUAFc+NCmpYtqOrRSctAqwfjaQDP2RcpE6lGNuKaOjiNuGdD5Qqhs81th76tFusFg3YqJ2oKoi0iqmWv7zG4Wc8UOm22zvWslIjHkek9BjboPQviFZAuYGQKaBRyiayf+crh1h5+irX+7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753192007; c=relaxed/simple;
-	bh=QRFDcyKqLWaedS6UMHL8OTtI2p9yrMYu+BmweiiucRQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=efdfoAz/89NUhAS70FUX6FPTZuVYam0vJG03cYeOqbkntqStbtPvl3sp+/92LySgv5J7uY8CuCu4jAZeDAR2RIwPtxRSu49Mx4Eh1AmvguXfG/Twzq0GNdpjeuJy8BVXhsE7AKHESuzIZfp7LlOs0xoILDwTGTmSQBy0rdnDzvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OyJqZeM8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E4AFC4CEEB;
-	Tue, 22 Jul 2025 13:46:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1753192006;
-	bh=QRFDcyKqLWaedS6UMHL8OTtI2p9yrMYu+BmweiiucRQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=OyJqZeM8QVLexld77mcguPqGLwuRUQbQek01GXjScqatawl7FxoGZvB4fa5Yyznet
-	 4dHjJjpPk9K9/aVxt8i4/veuNljdIwOTwnFcCvd/mzGHKIcx0a/QRgIEZbo6HRhAI2
-	 6NpCvDMkvkd2bGi9e0PLYs4ecSGVt0Ojw3Igoa+s=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	hargar@microsoft.com,
-	broonie@kernel.org
-Subject: [PATCH 6.1 00/79] 6.1.147-rc1 review
-Date: Tue, 22 Jul 2025 15:43:56 +0200
-Message-ID: <20250722134328.384139905@linuxfoundation.org>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1753191864; c=relaxed/simple;
+	bh=dTywX+BFLFdP4+hIWj9tRp0IJ9gnnMfS5H4sld7dZvU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DrF7FJchxUp3VdOfDxfM3907+xRBQ+7ISO4x4te6fJR1YYhDWtz6brYB9NqD9dkDdiWNiMjVqGHNr3gZ5H4Y+XEbygTEukbXNAqabAXbGdEHkoJSe466vhd47FYga3uk48+IDT4mvbajRdMduj767V1gDBebxvje0xqbsd0kq5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Of93aJyQ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56M8hZ3M012572
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 13:44:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=/PlvjBmBNhRqz0BnasHFhjw6
+	BKLI8rWtueB1348TmAU=; b=Of93aJyQ8B2IXq//kHIuNs5oNAeHAckqmlzzEHin
+	JB0jbnxK3HwqmVrHsXdArPWFtS5InJJECABp1JqgOORgL/j51qy9VArRt/ZqegY7
+	SRXubWmx6w4Ca6cx60eifdX/A6beIlp2D9WPZSHC3R9A0aI0KRADO8OF3K/uGbg6
+	xnelwe9XrpQ1rA1wqz8L2sclzfUaBBp1hNSBcvmZdzz8PcxkT+6dD9iJfze8djQt
+	chkRh1WJpqmcvOdijECtCl+fHhCvFt7+BgcAVx6TcFLsC2z40n14TNybb1T7L7y4
+	0Eu76qghAovYfV294L5ZFHuqm1ERp1Dc82PxjHmIcW20Dg==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 481qh6kvdw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 13:44:21 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7e34399a08fso1270208285a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 06:44:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753191861; x=1753796661;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/PlvjBmBNhRqz0BnasHFhjw6BKLI8rWtueB1348TmAU=;
+        b=wTmDtal8Yq6mjIL5AfAvGXRycSlL4gyTVpoVJZmZVAfFHZBJBsZiWNep2RtyzgyNEp
+         75wOFZG61jJV820FBZzPa6Uwf/oqpQ/Bpv6n22SZWtm6jPh3f4HuJ1K04152m9dLT4b6
+         SJt8RNEXlfoEr5rWSuSMXqgk79yCHwf2emRNg2+waVm6wnYBshEHSXmAdupl0oQD/lxF
+         m7eKyshV1adz8pJsuUnIdlZGARKe9E0/CeyIimSlcTJ4Hd+WinvLYhSbVQCWQzPTpMaY
+         ph3ShrUiwdjPIb4x8+TzJuK7dSopuAleK3DRySxVQtKw48Na21ScrlCJmMiwxWoQKK+L
+         bFBg==
+X-Forwarded-Encrypted: i=1; AJvYcCWR61ouqJza/Bww/7af6X5yeIVjQafnTdkXEv+fkAqpg38Z2pCkaRPEUxJ1HNPbR1shAx37Ehfw/4Z2yGw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZC24t51ONAYVGkM0lLHYHiu0wbX4lfjK7r7ncZa93IuP4ZqOQ
+	SDcFDPuNXA0bsZLWRt6fxyymQs3yeVveFA6qgxi6EmGsWjgy4wtvpl/osjvpkLzzBVIgItBuPfG
+	o/XiY+ENlnb/GA/lA5FHCg6jYg6UxcnU4JQU/Ocp4tb7OnEj49BxHJNlMuPN84PH08t4=
+X-Gm-Gg: ASbGncvqRFLYNkwd5NiEnt9bP8ed1vHtrGPQZhHwtvc5y0jyGAW4spaJe+Fm6UkQNdW
+	+z15wVBnYJw1sv+aCpFq7XEaWmf0B6mRzExoOu8hoaH3/aj92sivpH3SidRLRRbu1XxM1RNtpTz
+	HmjIM2So1vPYpYydaSTJOVr2JvzJKxbksbtJcMott7fHx1sG5aCdQEF278bitKovE6pihCMxXhA
+	f88uPqe2Z8Uxtrxi2dP66tPUz+UInuH+kS5Xc7Ycsow5VuT7Yc9DiBKAbQ3QHWuC4TpvC1mbz5k
+	wbreUZ6CFvjj5uJl9H+jUPGDDjP5t3AwNCgU1Vw5GPuzBdtyJUxjWucvhIHZ4wiJBgTkDVX0yew
+	43pqR5LdRrYwwWzS5V49ILZ2Fg7E+o8g5xQ5fn/VKNlVcY/HTUWUg
+X-Received: by 2002:a05:620a:d96:b0:7e6:2167:6fb with SMTP id af79cd13be357-7e6216707e1mr450346385a.57.1753191860656;
+        Tue, 22 Jul 2025 06:44:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFJYjfAd2lPvfeopVnQTvfIiKF4FZMT25Jj8QNn5OT3bmUYHUVmlPAwFf/7JubdQINFF9syIw==
+X-Received: by 2002:a05:620a:d96:b0:7e6:2167:6fb with SMTP id af79cd13be357-7e6216707e1mr450339985a.57.1753191859973;
+        Tue, 22 Jul 2025 06:44:19 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-330a9109c31sm16373981fa.43.2025.07.22.06.44.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jul 2025 06:44:17 -0700 (PDT)
+Date: Tue, 22 Jul 2025 16:44:16 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/17] drm/msm/a6xx: Set Keep-alive votes to block IFPC
+Message-ID: <jvn44gmttkidyy4emnz6mytqqjbwltlxibywfr6bfbqjfbq35e@fuvvefesqbzw>
+References: <20250720-ifpc-support-v1-0-9347aa5bcbd6@oss.qualcomm.com>
+ <20250720-ifpc-support-v1-8-9347aa5bcbd6@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: quilt/0.68
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.147-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-6.1.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 6.1.147-rc1
-X-KernelTest-Deadline: 2025-07-24T13:43+00:00
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-This is the start of the stable review cycle for the 6.1.147 release.
-There are 79 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
-
-Responses should be made by Thu, 24 Jul 2025 13:43:10 +0000.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.147-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 6.1.147-rc1
-
-Michael C. Pratt <mcpratt@pm.me>
-    nvmem: layouts: u-boot-env: remove crc32 endianness conversion
-
-Alexander Gordeev <agordeev@linux.ibm.com>
-    mm/vmalloc: leave lazy MMU mode on PTE mapping error
-
-Christian Eggers <ceggers@arri.de>
-    Bluetooth: HCI: Set extended advertising data synchronously
-
-Arun Raghavan <arun@asymptotic.io>
-    ASoC: fsl_sai: Force a software reset when starting in consumer mode
-
-Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-    usb: dwc3: qcom: Don't leave BCR asserted
-
-Drew Hamilton <drew.hamilton@zetier.com>
-    usb: musb: fix gadget state on disconnect
-
-Paul Cercueil <paul@crapouillou.net>
-    usb: musb: Add and use inline functions musb_{get,set}_state
-
-Mathias Nyman <mathias.nyman@linux.intel.com>
-    usb: hub: Don't try to recover devices lost during warm reset.
-
-Mathias Nyman <mathias.nyman@linux.intel.com>
-    usb: hub: Fix flushing of delayed work used for post resume purposes
-
-Mathias Nyman <mathias.nyman@linux.intel.com>
-    usb: hub: Fix flushing and scheduling of delayed work that tunes runtime pm
-
-Mathias Nyman <mathias.nyman@linux.intel.com>
-    usb: hub: fix detection of high tier USB3 devices behind suspended hubs
-
-Al Viro <viro@zeniv.linux.org.uk>
-    clone_private_mnt(): make sure that caller has CAP_SYS_ADMIN in the right userns
-
-Hamish Martin <hamish.martin@alliedtelesis.co.nz>
-    HID: mcp2221: Set driver data before I2C adapter add
-
-Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
-    sched: Change nr_uninterruptible type to unsigned long
-
-Chen Ridong <chenridong@huawei.com>
-    Revert "cgroup_freezer: cgroup_freezing: Check if not frozen"
-
-William Liu <will@willsroot.io>
-    net/sched: Return NULL when htb_lookup_leaf encounters an empty rbtree
-
-Joseph Huang <Joseph.Huang@garmin.com>
-    net: bridge: Do not offload IGMP/MLD messages
-
-Dong Chenchen <dongchenchen2@huawei.com>
-    net: vlan: fix VLAN 0 refcount imbalance of toggling filtering during runtime
-
-Jakub Kicinski <kuba@kernel.org>
-    tls: always refresh the queue when reading sock
-
-Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-    Bluetooth: L2CAP: Fix attempting to adjust outgoing MTU
-
-Florian Westphal <fw@strlen.de>
-    netfilter: nf_conntrack: fix crash due to removal of uninitialised entry
-
-Yue Haibing <yuehaibing@huawei.com>
-    ipv6: mcast: Delay put pmc->idev in mld_del_delrec()
-
-Christoph Paasch <cpaasch@openai.com>
-    net/mlx5: Correctly set gso_size when LRO is used
-
-Zijun Hu <zijun.hu@oss.qualcomm.com>
-    Bluetooth: btusb: QCA: Fix downloading wrong NVM for WCN6855 GF variant without board ID
-
-Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-    Bluetooth: SMP: Fix using HCI_ERROR_REMOTE_USER_TERM on timeout
-
-Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-    Bluetooth: SMP: If an unallowed command is received consider it a failure
-
-Alessandro Gasbarroni <alex.gasbarroni@gmail.com>
-    Bluetooth: hci_sync: fix connectable extended advertising when using static random address
-
-Kuniyuki Iwashima <kuniyu@google.com>
-    Bluetooth: Fix null-ptr-deref in l2cap_sock_resume_cb()
-
-Oliver Neukum <oneukum@suse.com>
-    usb: net: sierra: check for no status endpoint
-
-Marius Zachmann <mail@mariuszachmann.de>
-    hwmon: (corsair-cpro) Validate the size of the received input buffer
-
-Paolo Abeni <pabeni@redhat.com>
-    selftests: net: increase inter-packet timeout in udpgro.sh
-
-Yu Kuai <yukuai3@huawei.com>
-    nvme: fix misaccounting of nvme-mpath inflight I/O
-
-Wang Zhaolong <wangzhaolong@huaweicloud.com>
-    smb: client: fix use-after-free in cifs_oplock_break
-
-Kuniyuki Iwashima <kuniyu@google.com>
-    rpl: Fix use-after-free in rpl_do_srh_inline().
-
-Xiang Mei <xmei5@asu.edu>
-    net/sched: sch_qfq: Fix race condition on qfq_aggregate
-
-Alok Tiwari <alok.a.tiwari@oracle.com>
-    net: emaclite: Fix missing pointer increment in aligned_read()
-
-Zizhi Wo <wozizhi@huawei.com>
-    cachefiles: Fix the incorrect return value in __cachefiles_write()
-
-Paul Chaignon <paul.chaignon@gmail.com>
-    bpf: Reject %p% format string in bprintf-like helpers
-
-Ian Abbott <abbotti@mev.co.uk>
-    comedi: Fix initialization of data for instructions that write to subdevice
-
-Ian Abbott <abbotti@mev.co.uk>
-    comedi: Fix use of uninitialized data in insn_rw_emulate_bits()
-
-Ian Abbott <abbotti@mev.co.uk>
-    comedi: Fix some signed shift left operations
-
-Ian Abbott <abbotti@mev.co.uk>
-    comedi: Fail COMEDI_INSNLIST ioctl if n_insns is too large
-
-Ian Abbott <abbotti@mev.co.uk>
-    comedi: das6402: Fix bit shift out of bounds
-
-Ian Abbott <abbotti@mev.co.uk>
-    comedi: das16m1: Fix bit shift out of bounds
-
-Ian Abbott <abbotti@mev.co.uk>
-    comedi: aio_iiro_16: Fix bit shift out of bounds
-
-Ian Abbott <abbotti@mev.co.uk>
-    comedi: pcl812: Fix bit shift out of bounds
-
-Chen Ni <nichen@iscas.ac.cn>
-    iio: adc: stm32-adc: Fix race in installing chained IRQ handler
-
-Fabio Estevam <festevam@denx.de>
-    iio: adc: max1363: Reorder mode_list[] entries
-
-Fabio Estevam <festevam@denx.de>
-    iio: adc: max1363: Fix MAX1363_4X_CHANS/MAX1363_8X_CHANS[]
-
-Sean Nyekjaer <sean@geanix.com>
-    iio: accel: fxls8962af: Fix use after free in fxls8962af_fifo_flush
-
-Andrew Jeffery <andrew@codeconstruct.com.au>
-    soc: aspeed: lpc-snoop: Don't disable channels that aren't enabled
-
-Andrew Jeffery <andrew@codeconstruct.com.au>
-    soc: aspeed: lpc-snoop: Cleanup resources in stack-order
-
-Wang Zhaolong <wangzhaolong@huaweicloud.com>
-    smb: client: fix use-after-free in crypt_message when using async crypto
-
-Maulik Shah <maulik.shah@oss.qualcomm.com>
-    pmdomain: governor: Consider CPU latency tolerance from pm_domain_cpu_gov
-
-Judith Mendez <jm@ti.com>
-    mmc: sdhci_am654: Workaround for Errata i2312
-
-Edson Juliano Drosdeck <edson.drosdeck@gmail.com>
-    mmc: sdhci-pci: Quirk for broken command queuing on Intel GLK-based Positivo models
-
-Thomas Fourier <fourier.thomas@gmail.com>
-    mmc: bcm2835: Fix dma_unmap_sg() nents value
-
-Nathan Chancellor <nathan@kernel.org>
-    memstick: core: Zero initialize id_reg in h_memstick_read_dev_id()
-
-Jan Kara <jack@suse.cz>
-    isofs: Verify inode mode when loading from disk
-
-Dan Carpenter <dan.carpenter@linaro.org>
-    dmaengine: nbpfaxi: Fix memory corruption in probe()
-
-Yun Lu <luyun@kylinos.cn>
-    af_packet: fix soft lockup issue caused by tpacket_snd()
-
-Yun Lu <luyun@kylinos.cn>
-    af_packet: fix the SO_SNDTIMEO constraint not effective on tpacked_snd()
-
-Francesco Dolcini <francesco.dolcini@toradex.com>
-    arm64: dts: freescale: imx8mm-verdin: Keep LDO5 always on
-
-Maor Gottlieb <maorg@nvidia.com>
-    net/mlx5: Update the list of the PCI supported devices
-
-Nathan Chancellor <nathan@kernel.org>
-    phonet/pep: Move call to pn_skb_get_dst_sockaddr() earlier in pep_sock_accept()
-
-Pavel Begunkov <asml.silence@gmail.com>
-    io_uring/poll: fix POLLERR handling
-
-Steven Rostedt <rostedt@goodmis.org>
-    tracing: Add down_write(trace_event_sem) when adding trace event
-
-Benjamin Tissoires <bentiss@kernel.org>
-    HID: core: do not bypass hid_hw_raw_request
-
-Benjamin Tissoires <bentiss@kernel.org>
-    HID: core: ensure __hid_request reserves the report ID as the first byte
-
-Benjamin Tissoires <bentiss@kernel.org>
-    HID: core: ensure the allocated report buffer can contain the reserved report ID
-
-Thomas Fourier <fourier.thomas@gmail.com>
-    pch_uart: Fix dma_sync_sg_for_device() nents value
-
-Nilton Perim Neto <niltonperimneto@gmail.com>
-    Input: xpad - set correct controller type for Acer NGR200
-
-Alok Tiwari <alok.a.tiwari@oracle.com>
-    thunderbolt: Fix bit masking in tb_dp_port_set_hops()
-
-Clément Le Goffic <clement.legoffic@foss.st.com>
-    i2c: stm32: fix the device used for the DMA map
-
-Xinyu Liu <1171169449@qq.com>
-    usb: gadget: configfs: Fix OOB read on empty string write
-
-Ryan Mann (NDI) <rmann@ndigital.com>
-    USB: serial: ftdi_sio: add support for NDI EMGUIDE GEMINI
-
-Slark Xiao <slark_xiao@163.com>
-    USB: serial: option: add Foxconn T99W640
-
-Fabio Porcedda <fabio.porcedda@gmail.com>
-    USB: serial: option: add Telit Cinterion FE910C04 (ECM) composition
-
-Wayne Chang <waynec@nvidia.com>
-    phy: tegra: xusb: Fix unbalanced regulator disable in UTMI PHY mode
-
-
--------------
-
-Diffstat:
-
- Makefile                                         |   4 +-
- arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi |   1 +
- drivers/base/power/domain_governor.c             |  18 +-
- drivers/bluetooth/btusb.c                        |  78 ++++----
- drivers/comedi/comedi_fops.c                     |  30 +++-
- drivers/comedi/drivers.c                         |  17 +-
- drivers/comedi/drivers/aio_iiro_16.c             |   3 +-
- drivers/comedi/drivers/das16m1.c                 |   3 +-
- drivers/comedi/drivers/das6402.c                 |   3 +-
- drivers/comedi/drivers/pcl812.c                  |   3 +-
- drivers/dma/nbpfaxi.c                            |  11 +-
- drivers/hid/hid-core.c                           |  21 ++-
- drivers/hid/hid-mcp2221.c                        |   2 +-
- drivers/hwmon/corsair-cpro.c                     |   5 +
- drivers/i2c/busses/i2c-stm32.c                   |   8 +-
- drivers/i2c/busses/i2c-stm32f7.c                 |   4 +-
- drivers/iio/accel/fxls8962af-core.c              |   2 +
- drivers/iio/adc/max1363.c                        |  43 +++--
- drivers/iio/adc/stm32-adc-core.c                 |   7 +-
- drivers/input/joystick/xpad.c                    |   2 +-
- drivers/memstick/core/memstick.c                 |   2 +-
- drivers/mmc/host/bcm2835.c                       |   3 +-
- drivers/mmc/host/sdhci-pci-core.c                |   3 +-
- drivers/mmc/host/sdhci_am654.c                   |   9 +-
- drivers/net/ethernet/mellanox/mlx5/core/en_rx.c  |  12 +-
- drivers/net/ethernet/mellanox/mlx5/core/main.c   |   1 +
- drivers/net/ethernet/xilinx/xilinx_emaclite.c    |   2 +-
- drivers/net/usb/sierra_net.c                     |   4 +
- drivers/nvme/host/core.c                         |   4 +
- drivers/nvmem/u-boot-env.c                       |   2 +-
- drivers/phy/tegra/xusb-tegra186.c                |  61 ++++---
- drivers/soc/aspeed/aspeed-lpc-snoop.c            |  13 +-
- drivers/thunderbolt/switch.c                     |   2 +-
- drivers/tty/serial/pch_uart.c                    |   2 +-
- drivers/usb/core/hub.c                           |  36 +++-
- drivers/usb/core/hub.h                           |   1 +
- drivers/usb/dwc3/dwc3-qcom.c                     |   7 +-
- drivers/usb/gadget/configfs.c                    |   2 +
- drivers/usb/musb/musb_core.c                     |  62 +++----
- drivers/usb/musb/musb_core.h                     |  11 ++
- drivers/usb/musb/musb_debugfs.c                  |   6 +-
- drivers/usb/musb/musb_gadget.c                   |  30 ++--
- drivers/usb/musb/musb_host.c                     |   6 +-
- drivers/usb/musb/musb_virthub.c                  |  18 +-
- drivers/usb/serial/ftdi_sio.c                    |   2 +
- drivers/usb/serial/ftdi_sio_ids.h                |   3 +
- drivers/usb/serial/option.c                      |   5 +
- fs/cachefiles/io.c                               |   2 -
- fs/cachefiles/ondemand.c                         |   4 +-
- fs/isofs/inode.c                                 |   9 +-
- fs/namespace.c                                   |   5 +
- fs/smb/client/file.c                             |  10 +-
- fs/smb/client/smb2ops.c                          |   7 +-
- include/net/netfilter/nf_conntrack.h             |  15 +-
- io_uring/net.c                                   |  12 +-
- io_uring/poll.c                                  |   2 -
- kernel/bpf/helpers.c                             |  11 +-
- kernel/cgroup/legacy_freezer.c                   |   8 +-
- kernel/sched/loadavg.c                           |   2 +-
- kernel/sched/sched.h                             |   2 +-
- kernel/trace/trace_events.c                      |   5 +
- mm/vmalloc.c                                     |  22 ++-
- net/8021q/vlan.c                                 |  42 ++++-
- net/8021q/vlan.h                                 |   1 +
- net/bluetooth/hci_event.c                        |  36 ----
- net/bluetooth/hci_sync.c                         | 217 ++++++++++++++---------
- net/bluetooth/l2cap_core.c                       |  26 ++-
- net/bluetooth/l2cap_sock.c                       |   3 +
- net/bluetooth/smp.c                              |  21 ++-
- net/bluetooth/smp.h                              |   1 +
- net/bridge/br_switchdev.c                        |   3 +
- net/ipv6/mcast.c                                 |   2 +-
- net/ipv6/rpl_iptunnel.c                          |   8 +-
- net/netfilter/nf_conntrack_core.c                |  26 ++-
- net/packet/af_packet.c                           |  27 ++-
- net/phonet/pep.c                                 |   2 +-
- net/sched/sch_htb.c                              |   4 +-
- net/sched/sch_qfq.c                              |  30 +++-
- net/tls/tls_strp.c                               |   3 +-
- sound/soc/fsl/fsl_sai.c                          |  14 +-
- tools/testing/selftests/net/udpgro.sh            |   8 +-
- 81 files changed, 744 insertions(+), 420 deletions(-)
-
-
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250720-ifpc-support-v1-8-9347aa5bcbd6@oss.qualcomm.com>
+X-Authority-Analysis: v=2.4 cv=CZ4I5Krl c=1 sm=1 tr=0 ts=687f95b5 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=kzfAnjQGA3Um0d4qlLMA:9 a=CjuIK1q_8ugA:10
+ a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-ORIG-GUID: 59ezrU1YLJgUAD8EOBxSGMoy195n_udw
+X-Proofpoint-GUID: 59ezrU1YLJgUAD8EOBxSGMoy195n_udw
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDExMiBTYWx0ZWRfX92bNQKwbmi/g
+ ywcXPAmIt4Hnt//E0b8AJjD3j74ztwg8NdPEB0LtE+FiCWAhNI+KBZF/iK4cbJ4S9AbcI9XknIF
+ M6VyJNPFVx+MYDzBHGi/aN3Cz0EMqDAQLSHBbeRlWaoiH2t+CIUiXRAQhI6TixMLvT8bpTwKG8K
+ t9+dMJBnF96NaEpEtH54ECynKYRe4XSYidc3iBLBqLKWh0icew+/zJY6D+qeSoGMb/MCOLxIPS2
+ 5JCCnQQksBmDO8kBPzr79rFDm2frol1NX5ZYuqieLzVRfcWnxoxY3h7Ti/hTwloeNSPLj1qNEv/
+ BLh7J5zxB/wosuBfRYyY+BAuBDw+KyhU2tGeIeBawyu9DZMR2y3W94Mh+stdGlqGU9Xe+6d2p7E
+ m8L1jdjvJDLIV0tzhuVubqaO/fgLA1WoXR0ADcnTcAXxxB+IXNloSR/IPMSmEjjPdt6YgcuQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-22_02,2025-07-21_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 suspectscore=0 mlxlogscore=999 impostorscore=0
+ clxscore=1015 mlxscore=0 lowpriorityscore=0 phishscore=0 adultscore=0
+ bulkscore=0 spamscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507220112
+
+On Sun, Jul 20, 2025 at 05:46:09PM +0530, Akhil P Oommen wrote:
+> Set Keepalive votes at appropriate places to block IFPC power collapse
+> until we access all the required registers. This is required during gpu
+> IRQ handling and also during preemption.
+> 
+> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+> ---
+>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 26 +++++++++++++++++---------
+>  drivers/gpu/drm/msm/adreno/a6xx_preempt.c | 20 ++++++++++++++++++++
+>  2 files changed, 37 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> index 8c004fc3abd2896d467a9728b34e99e4ed944dc4..6770f0363e7284e4596b1188637a4615d2c0779b 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> @@ -1752,8 +1752,6 @@ static void a6xx_cp_hw_err_irq(struct msm_gpu *gpu)
+>  
+>  static void a6xx_fault_detect_irq(struct msm_gpu *gpu)
+>  {
+> -	struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
+> -	struct a6xx_gpu *a6xx_gpu = to_a6xx_gpu(adreno_gpu);
+>  	struct msm_ringbuffer *ring = gpu->funcs->active_ring(gpu);
+>  
+>  	/*
+> @@ -1765,13 +1763,6 @@ static void a6xx_fault_detect_irq(struct msm_gpu *gpu)
+>  	if (gpu_read(gpu, REG_A6XX_RBBM_STATUS3) & A6XX_RBBM_STATUS3_SMMU_STALLED_ON_FAULT)
+>  		return;
+>  
+> -	/*
+> -	 * Force the GPU to stay on until after we finish
+> -	 * collecting information
+> -	 */
+> -	if (!adreno_has_gmu_wrapper(adreno_gpu))
+> -		gmu_write(&a6xx_gpu->gmu, REG_A6XX_GMU_GMU_PWR_COL_KEEPALIVE, 1);
+> -
+>  	DRM_DEV_ERROR(&gpu->pdev->dev,
+>  		"gpu fault ring %d fence %x status %8.8X rb %4.4x/%4.4x ib1 %16.16llX/%4.4x ib2 %16.16llX/%4.4x\n",
+>  		ring ? ring->id : -1, ring ? ring->fctx->last_fence : 0,
+> @@ -1810,9 +1801,24 @@ static void a7xx_sw_fuse_violation_irq(struct msm_gpu *gpu)
+>  	}
+>  }
+>  
+> +static void set_keepalive_vote(struct msm_gpu *gpu, bool on)
+
+a6xx_set_keepalive_vote()
+
+> +{
+> +	struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
+> +	struct a6xx_gpu *a6xx_gpu = to_a6xx_gpu(adreno_gpu);
+> +
+> +	if (adreno_has_gmu_wrapper(adreno_gpu))
+> +		return;
+> +
+> +	gmu_write(&a6xx_gpu->gmu, REG_A6XX_GMU_GMU_PWR_COL_KEEPALIVE, on);
+> +}
+> +
+>  static irqreturn_t a6xx_irq(struct msm_gpu *gpu)
+>  {
+>  	struct msm_drm_private *priv = gpu->dev->dev_private;
+> +
+> +	/* Set keepalive vote to avoid power collapse after RBBM_INT_0_STATUS is read */
+> +	set_keepalive_vote(gpu, true);
+> +
+>  	u32 status = gpu_read(gpu, REG_A6XX_RBBM_INT_0_STATUS);
+>  
+>  	gpu_write(gpu, REG_A6XX_RBBM_INT_CLEAR_CMD, status);
+> @@ -1849,6 +1855,8 @@ static irqreturn_t a6xx_irq(struct msm_gpu *gpu)
+>  	if (status & A6XX_RBBM_INT_0_MASK_CP_SW)
+>  		a6xx_preempt_irq(gpu);
+>  
+> +	set_keepalive_vote(gpu, false);
+> +
+>  	return IRQ_HANDLED;
+>  }
+>  
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_preempt.c b/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
+> index 5b0fd510ff58d989ab285f1a2497f6f522a6b187..1c8ec1911010c00a000d195116fc950c4d947cac 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
+> @@ -136,6 +136,21 @@ static void preempt_disable_postamble(struct a6xx_gpu *a6xx_gpu)
+>  	a6xx_gpu->postamble_enabled = false;
+>  }
+>  
+> +/*
+> + * Set preemption keepalive vote. Please note that this vote is different from the one used in
+> + * a6xx_irq()
+> + */
+> +static void set_keepalive_vote(struct msm_gpu *gpu, bool on)
+
+a6xx_set_preempt_keepalive_vote();
+
+> +{
+> +	struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
+> +	struct a6xx_gpu *a6xx_gpu = to_a6xx_gpu(adreno_gpu);
+> +
+> +	if (adreno_has_gmu_wrapper(adreno_gpu))
+> +		return;
+> +
+> +	gmu_write(&a6xx_gpu->gmu, REG_A6XX_GMU_PWR_COL_PREEMPT_KEEPALIVE, on);
+> +}
+> +
+>  void a6xx_preempt_irq(struct msm_gpu *gpu)
+>  {
+>  	uint32_t status;
+> @@ -176,6 +191,8 @@ void a6xx_preempt_irq(struct msm_gpu *gpu)
+>  
+>  	set_preempt_state(a6xx_gpu, PREEMPT_NONE);
+>  
+> +	set_keepalive_vote(gpu, false);
+> +
+>  	trace_msm_gpu_preemption_irq(a6xx_gpu->cur_ring->id);
+>  
+>  	/*
+> @@ -302,6 +319,9 @@ void a6xx_preempt_trigger(struct msm_gpu *gpu)
+>  
+>  	spin_unlock_irqrestore(&ring->preempt_lock, flags);
+>  
+> +	/* Set the keepalive bit to keep the GPU ON until preemption is complete */
+> +	set_keepalive_vote(gpu, true);
+> +
+>  	a6xx_fenced_write(a6xx_gpu,
+>  		REG_A6XX_CP_CONTEXT_SWITCH_SMMU_INFO, a6xx_gpu->preempt_smmu_iova[ring->id],
+>  		BIT(1), true);
+> 
+> -- 
+> 2.50.1
+> 
+
+-- 
+With best wishes
+Dmitry
 
