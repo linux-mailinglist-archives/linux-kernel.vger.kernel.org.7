@@ -1,130 +1,116 @@
-Return-Path: <linux-kernel+bounces-740055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8E9DB0CF1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:33:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD669B0CF23
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:35:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A79A23ACD35
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 01:33:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E82B3AF4FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 01:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 240EE1A3178;
-	Tue, 22 Jul 2025 01:33:51 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0272557C
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 01:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE2441805B;
+	Tue, 22 Jul 2025 01:34:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MvlcyMGk"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38EDB640
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 01:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753148030; cv=none; b=te9qEW72Wr5wLDOC/Hhs4BgoB38xRNWcOGpVylKLxtLKt/HsnGVcNBGP6bDFq5/YeMzOeiE66Bkrk08+ncZX/kxbQJeMz3kIKTSfMzkfBblPaLZwLmfLV3RfQVj6V3psXvQmZUYE1ZARvm+3i6Cwa+Ak03JQZ78uzZTzN/Ppqlo=
+	t=1753148096; cv=none; b=eQOMhf6joOu7ARSTtVknzNA6yha2xHPE9Jm+QICkIPB24fkOvt3vmeLVdqDi8tgiaZ6HHRspOrZz7d2c1fBfxn64IxtE0Vt1hTIjkdug8s/xP5yToNVayeUbGoIClYVaWn6G29nzXIYxhFnh3bXjWpYQ/6YBms0aacOHP2FKtdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753148030; c=relaxed/simple;
-	bh=wp8zq+CwqXM4wW1l/Z2citGvtshsWLFeNika/T5VD7M=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=odlEss6fZ8DZidskBCJIehD7H4F1Os/HSK2dYGfASuZkaeiQT28ZBrsXyuiVElZjWldKXvQUk7RUiCScP/HYdpQATPiKbaX20fkWanD8cbX9A0uOslEuPU7Pb6wfoClFOQz3IdSVfv1GyD++Xyokzj84hHlj/B86nrtffD0sUuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8BxrnJu6n5o0kQvAQ--.31464S3;
-	Tue, 22 Jul 2025 09:33:34 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowJBxpeRm6n5oHzQhAA--.42270S3;
-	Tue, 22 Jul 2025 09:33:28 +0800 (CST)
-Subject: Re: [PATCH v2] LoongArch: Implement physical address with ELF program
- header
-To: kernel test robot <lkp@intel.com>, Huacai Chen <chenhuacai@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
- WANG Xuerui <kernel@xen0n.name>, Xi Ruoyao <xry111@xry111.site>,
- loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250721091248.3896152-1-maobibo@loongson.cn>
- <202507220309.mDl9W32Y-lkp@intel.com>
-From: Bibo Mao <maobibo@loongson.cn>
-Message-ID: <7a5789f1-d6a5-3892-98c1-2c4b8515459d@loongson.cn>
-Date: Tue, 22 Jul 2025 09:31:47 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1753148096; c=relaxed/simple;
+	bh=ml+CruI2TrPMvJL6Ve9QrgFk1hQk6xyzgZpDd4Hsx9k=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=NNCuI1MHEd4nUkXUFgBpOIJfFCB8Qvz0dQd3Og4kY3i8TbhJvhgCKdZ/95UFu+FvmDYw5zKWVWMyu2jNhHGfxrUOuBLvtuq5758IUHtfoJYFRnvQNxv7NYIaCj8oVBnmoiZuAZJYqlK53X/RXUXtA++FvZxU4pYfbBVAaMpJ6nE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MvlcyMGk; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-311ef4fb5fdso5767908a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 18:34:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753148094; x=1753752894; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=QX1c9/Mh/EGaQrrI9AS/O0cONZegTS8Gy7pO7vmBK3s=;
+        b=MvlcyMGkvguZyE/HX2S3tFptEZmfdf6um0/FPqZHi8UMivcsnUEi554qlrqwNVihUA
+         xuZE15yOrxj6NGIcNs8E2aZtIPeH/PZeAKyUECUZMiV6+GCqt+uNIMqvNfqZjKGr9zcd
+         yfDAknww3QNBPAXAalZr5TdhZM3DzPPfbOVgHbvmUMAuOPQYzqAtR6qyY2Yo8CUW5KUi
+         8J7FcJiY9tZMmI/8Y32oEUWXFDIW3eKfHVp6jcEnEw5u8iMtN0stAJVb9EscxiNqSrJ1
+         E9SNUROma8V0OcmmFYMocQQRRNN33B+CtT8T5kZgu8Tgqv7QFmtXT59hzr2ZAqWbiYfF
+         BAVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753148094; x=1753752894;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QX1c9/Mh/EGaQrrI9AS/O0cONZegTS8Gy7pO7vmBK3s=;
+        b=W05PpF02H6tswGERnn7utVEE6w3kWdkgIQIKg+5J70i1BnDB5bG//D54xiNKmcqDx0
+         58Vw7QWMbB9wmeIOvYcxAFojBJXvdurWrA5m0xqh8j6MZGXutqfMv2sw4DT53/jZpPC9
+         5u2dAzuDhRe4GtVXWCWm14HtkkEIp+Qpi14JBg/G4StvzKswXyH0PA/rtAdQIekIYULp
+         EF+FhLUL46K4CUloP/xRgnw3P+UYvRcSTBTlsH7eRmV7vhM429J2DRiwuhVbcU7XKIxu
+         xmO0gTknVqHxiFJ13WUN6O9+zFavE0MSEnSFA/KVpn6bLBPirV6nmhW1hLWDsy8dvtme
+         GuTA==
+X-Forwarded-Encrypted: i=1; AJvYcCVEchDv/mydaoWWvtsiMysXy9TN1wadfkqf5T1QOntTCVcMxS4Z8oZNoDQ1L75sHnstnNEPiaA9lFSRG1E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrLg7+5T8xe8b2bM9r3DX4emJDmR55uNqxn88gCx15squF2lh1
+	IO/wA3l0phW4pvJnjT10R04P0hSkD7VY+7YLw36Rj/4AZsQSzXj6spNlYa4FdC/gaTkV7UgkrNe
+	diLRN94dxvw==
+X-Google-Smtp-Source: AGHT+IFuiYRn2c2rkf0K51zFEPQoIVUZo3CfbVzecU8nFOP9As6coBCa/SJWHmxy0MbELM4WWmNrSHBrySJ6
+X-Received: from pjuj4.prod.google.com ([2002:a17:90a:d004:b0:313:242b:1773])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5281:b0:310:8d4a:a246
+ with SMTP id 98e67ed59e1d1-31c9e6e515cmr29689084a91.1.1753148093986; Mon, 21
+ Jul 2025 18:34:53 -0700 (PDT)
+Date: Mon, 21 Jul 2025 18:34:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <202507220309.mDl9W32Y-lkp@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJBxpeRm6n5oHzQhAA--.42270S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxJFyktw13Xw4fKr1DKrykJFc_yoW5KryUpr
-	n5A3yqqr4jgr93Xw1DKF9ag34qqrnxWr42qa45J3Z3CFy7XF1jv3s7Cr9rWa42q34UKa10
-	gFyrGayjya4UG3cCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPIb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	XVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
-	8JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jOa93UUU
-	UU=
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <20250722013449.146233-1-irogers@google.com>
+Subject: [PATCH v1] perf pfm: Don't force loading of all PMUs
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, 
+	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Oops, it is the obvious compile issue. And I am messed with parallel 
-tasks and do not notice this, what I test is old kernel.
+Force loading all PMUs adds significant cost because DRM and other
+PMUs are loaded, it should also not be required if the pmus__
+functions are used.
 
-Regards
-Bibo Mao
+Tested by run perf test, in particular the pfm related tests. Also
+`perf list` is identical before and after.
 
-On 2025/7/22 上午3:19, kernel test robot wrote:
-> Hi Bibo,
-> 
-> kernel test robot noticed the following build errors:
-> 
-> [auto build test ERROR on 89be9a83ccf1f88522317ce02f854f30d6115c41]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Bibo-Mao/LoongArch-Implement-physical-address-with-ELF-program-header/20250721-171418
-> base:   89be9a83ccf1f88522317ce02f854f30d6115c41
-> patch link:    https://lore.kernel.org/r/20250721091248.3896152-1-maobibo%40loongson.cn
-> patch subject: [PATCH v2] LoongArch: Implement physical address with ELF program header
-> config: loongarch-allnoconfig (https://download.01.org/0day-ci/archive/20250722/202507220309.mDl9W32Y-lkp@intel.com/config)
-> compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 853c343b45b3e83cc5eeef5a52fc8cc9d8a09252)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250722/202507220309.mDl9W32Y-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202507220309.mDl9W32Y-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>):
-> 
->>> ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:15: symbol not found: PHYS_OFFSET
->     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:18: symbol not found: PHYS_OFFSET
->     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:33: symbol not found: PHYS_OFFSET
->     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:34: symbol not found: PHYS_OFFSET
->     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:41: symbol not found: PHYS_OFFSET
->     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:46: symbol not found: PHYS_OFFSET
->     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:47: symbol not found: PHYS_OFFSET
->     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:50: symbol not found: PHYS_OFFSET
->     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:57: symbol not found: PHYS_OFFSET
->     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:57: symbol not found: PHYS_OFFSET
->     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:57: symbol not found: PHYS_OFFSET
->     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:57: symbol not found: PHYS_OFFSET
->     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:57: symbol not found: PHYS_OFFSET
->     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:57: symbol not found: PHYS_OFFSET
->     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:57: symbol not found: PHYS_OFFSET
->     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:57: symbol not found: PHYS_OFFSET
->     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:57: symbol not found: PHYS_OFFSET
->     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:57: symbol not found: PHYS_OFFSET
->     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:57: symbol not found: PHYS_OFFSET
->     ld.lld: error: ./arch/loongarch/kernel/vmlinux.lds:57: symbol not found: PHYS_OFFSET
->     ld.lld: error: too many errors emitted, stopping now (use --error-limit=0 to see all errors)
-> 
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/util/pfm.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/tools/perf/util/pfm.c b/tools/perf/util/pfm.c
+index 0dacc133ed39..e89395814e88 100644
+--- a/tools/perf/util/pfm.c
++++ b/tools/perf/util/pfm.c
+@@ -47,10 +47,6 @@ int parse_libpfm_events_option(const struct option *opt, const char *str,
+ 	p_orig = p = strdup(str);
+ 	if (!p)
+ 		return -1;
+-	/*
+-	 * force loading of the PMU list
+-	 */
+-	perf_pmus__scan(NULL);
+ 
+ 	for (q = p; strsep(&p, ",{}"); q = p) {
+ 		sep = p ? str + (p - p_orig - 1) : "";
+-- 
+2.50.0.727.gbf7dc18ff4-goog
 
 
