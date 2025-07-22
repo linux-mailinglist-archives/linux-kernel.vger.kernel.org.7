@@ -1,139 +1,107 @@
-Return-Path: <linux-kernel+bounces-740711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29B4EB0D836
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:28:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9E39B0D83C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:29:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 487397B2A48
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:27:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1D69AA16F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080592E2F1C;
-	Tue, 22 Jul 2025 11:28:31 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAE642E3B1E;
+	Tue, 22 Jul 2025 11:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VfgIhHKh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1279928981C;
-	Tue, 22 Jul 2025 11:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5622E3B1D;
+	Tue, 22 Jul 2025 11:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753183710; cv=none; b=oB5HWGN498iR8CpGi/zn1wxQEITHn3dd9W/qccUd95pr2TEgVdfLvpCdcxbLGvIJL2oEbbLNwQ7NM+ygYeGztF9mEC2cfpXNKOcXOo+Dy0q2aAts1aUTrsIedGNDD5WXA3bKAJ2iFdkVqQFC1AvADZiMe2yjXvvRevF0ebp0s/s=
+	t=1753183757; cv=none; b=NdSDD9fPGzixgrFXhDvih9ZuwwzBQ5Qx6HVz22M/rIN6FMaobFzQHZg9r7wqvrQcxdFgTeo7rXZR0hjmaDy0Dq2McDVIclGyMd7OsRAYzk/h8lVbx614Cu0iHw7Rnv1iEINe4fQ6GGCFHGLm3EFhMynWOFwdsyzkUEzWjqfTA6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753183710; c=relaxed/simple;
-	bh=At2V/kMEVAMOc7rwa0q0cMeLRXXO35/EMTiaaPc0a+8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=n/N/28L0OejyU/k3yK4Dz1+WlyoorPNYtZKmNHajvEYTTJSyk9KYFS/nzETrwAR5fd/APinRFj5hLGYBpbIGY8Z7QeJ58gFtQ06Y4q06U9ttTp/6wU/8FVV0ljiNuD8kRxUo1jk6VHmvEg3eRFSCZutEUYsbSjFz0Qlb3MYBLf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bmZgr0sw1z13Ld1;
-	Tue, 22 Jul 2025 19:25:28 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id E22BE140202;
-	Tue, 22 Jul 2025 19:28:23 +0800 (CST)
-Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 22 Jul 2025 19:28:23 +0800
-Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
- (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 22 Jul
- 2025 19:28:22 +0800
-Message-ID: <d768fd79-ef55-4d40-829f-7ca4749c8370@huawei.com>
-Date: Tue, 22 Jul 2025 19:28:22 +0800
+	s=arc-20240116; t=1753183757; c=relaxed/simple;
+	bh=MnJhslS49tnWuQbbIYAtWlEf8qcibmuZw4zBE4RSBHQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jHJmobEbpWync+gdqrDElgZhZGaT+EDyvS7hSaRyXnpKG0KDOa44WJmytb1EbUyJCiNkst5Iup7uGSme9a8/BCG3XcYNWS0qThrrXjdSPJe6Fsr8KJEwIg4/IVZ3WCn+JNlbfEOeC5jGxGJiH1BCb8vJQGnlxuIBESPu2xGvwuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VfgIhHKh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6B71C4CEEB;
+	Tue, 22 Jul 2025 11:29:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753183755;
+	bh=MnJhslS49tnWuQbbIYAtWlEf8qcibmuZw4zBE4RSBHQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VfgIhHKhqcS3U5brP2JdGm2gQTrQNJL6bCwSbh6djQamWyHxJpis8fFRKDSo0l0bv
+	 8jI9dZ0/Ri/4sP3okA/f20452ETbFIR6KATlc1UVcnpMYrsIMOKkSObtWOl2BulXTd
+	 KPPJLLA183PaG1v8lPwQvyAMzBWrR9iBb6iKwwGOI5I0RsmYmfc1CwKf1RLYvcz8Jt
+	 ISQx7cUYnmNDjGXnFu0LydHR5DRhfjtjq4OTiDsa3Kt2r/hWwvKGFC9XHg7RCMxfRq
+	 2GEHTb6xGvbuGBefVSOH2GBi3/Eln01WCcJCPZTjhGlsk3RV2GRc9fXTGNVQgiG9AK
+	 5AhMYEm1jLKPg==
+Date: Tue, 22 Jul 2025 12:29:09 +0100
+From: Simon Horman <horms@kernel.org>
+To: Dong Yibo <dong100@mucse.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, corbet@lwn.net,
+	gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
+	danishanwar@ti.com, lee@trager.us, gongfan1@huawei.com,
+	lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 01/15] net: rnpgbe: Add build support for rnpgbe
+Message-ID: <20250722112909.GF2459@horms.kernel.org>
+References: <20250721113238.18615-1-dong100@mucse.com>
+ <20250721113238.18615-2-dong100@mucse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ACPI: processor: idle: Fix resource rollback in
- acpi_processor_power_init
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-CC: <lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-	<jonathan.cameron@huawei.com>, <zhanjie9@hisilicon.com>,
-	<zhenglifeng1@huawei.com>, <yubowen8@huawei.com>, <liuyonglong@huawei.com>,
-	<lihuisong@huawei.com>
-References: <20250619061327.1674384-1-lihuisong@huawei.com>
- <CAJZ5v0gjkZ3a-BwgJxjUJbNwu5E_j9VUUHrR3M=a+KPTA-tZcA@mail.gmail.com>
- <6a35291a-32e8-461e-a0e5-405b7b5d24ce@huawei.com>
- <CAJZ5v0hXHgyCKoEOMTtp0c_yu__vGGDcPnqaUML2Xg7hyJWc3g@mail.gmail.com>
- <4c1926ef-f9fa-49d5-8d5f-ed4ee2638d62@huawei.com>
- <CAJZ5v0j8k3FXx0TCF8nF+KTGcZL8CG7yZ6_Z11jpqOM9x_0w6g@mail.gmail.com>
-From: "lihuisong (C)" <lihuisong@huawei.com>
-In-Reply-To: <CAJZ5v0j8k3FXx0TCF8nF+KTGcZL8CG7yZ6_Z11jpqOM9x_0w6g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemn100009.china.huawei.com (7.202.194.112)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250721113238.18615-2-dong100@mucse.com>
 
+On Mon, Jul 21, 2025 at 07:32:24PM +0800, Dong Yibo wrote:
+> Add build options and doc for mucse.
+> Initialize pci device access for MUCSE devices.
+> 
+> Signed-off-by: Dong Yibo <dong100@mucse.com>
 
-在 2025/7/22 19:10, Rafael J. Wysocki 写道:
-> On Mon, Jul 14, 2025 at 3:34 AM lihuisong (C) <lihuisong@huawei.com> wrote:
->>
->> 在 2025/7/3 19:09, Rafael J. Wysocki 写道:
->>> On Thu, Jul 3, 2025 at 8:23 AM lihuisong (C) <lihuisong@huawei.com> wrote:
->>>> Hi,
->>>>
->>>> Thanks for your review.
->>>>
->>>>
->>>> 在 2025/7/3 1:42, Rafael J. Wysocki 写道:
->>>>> On Thu, Jun 19, 2025 at 8:13 AM Huisong Li <lihuisong@huawei.com> wrote:
->>>>>> There are two resource rollback issues in acpi_processor_power_init:
->>>>>> 1> Do not unregister acpi_idle_driver when do kzalloc failed.
->>>>>> 2> Do not free cpuidle device memory when register cpuidle device failed.
->>>>>>
->>>>>> Signed-off-by: Huisong Li <lihuisong@huawei.com>
->>>>>> ---
->>>>>>     drivers/acpi/processor_idle.c | 24 +++++++++++++++++-------
->>>>>>     1 file changed, 17 insertions(+), 7 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
->>>>>> index 2c2dc559e0f8..3548ab9dac9e 100644
->>>>>> --- a/drivers/acpi/processor_idle.c
->>>>>> +++ b/drivers/acpi/processor_idle.c
->>>>>> @@ -1392,8 +1392,10 @@ int acpi_processor_power_init(struct acpi_processor *pr)
->>>>>>                    }
->>>>>>
->>>>>>                    dev = kzalloc(sizeof(*dev), GFP_KERNEL);
->>>>>> -               if (!dev)
->>>>>> -                       return -ENOMEM;
->>>>>> +               if (!dev) {
->>>>>> +                       retval = -ENOMEM;
->>>>>> +                       goto unregister_driver;
->>>>> No, unregistering the driver here is pointless.
->>>> I don't quite understand why here is pointless. Can you explain it?
->>> When this function is run for another CPU, it will attempt to register
->>> the driver again if it is unregistered here.
->> Yeah, got it.
->> So registering cpuidle also has a potential race issue here.
->>> Quite frankly, the driver should be registered before running this
->>> function because it is a CPU hotplug callback and registering a
->>> cpuidle driver from within it is quite questionable.
->>>
->>> Alternatively, it can be registered when all of the CPUs have been brought up.
->> Agree with you.
->> The reason why is that the initialization of acpi_idle_driver depands on
->> the power management information of CPU.
->> But the power management information of CPU is obtained in this callback.
->> I have an idea.
->> Because acpi_idle_driver is applied to all possiable CPUs. And use the
->> power information of the first onlined CPU to initialize and register
->> acpi_idle_driver, currently.
->> So I think we can use this logic and dependency to extract a function to
->> initialize and register acpi_idle_driver. And put this function to
->> acpi_processor_driver_init().
->> I tested it is ok.
->> What do you think about this?
-> This is one of the options I mentioned above, isn't it?
-Yes, it is what you mentioned. I think this option is relatively easier 
-to handle.
-I am not sure if I understand correctly.
-So I wanted to confirmed with you.
+...
+
+> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
+> new file mode 100644
+> index 000000000000..13b49875006b
+> --- /dev/null
+> +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
+> @@ -0,0 +1,226 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* Copyright(c) 2020 - 2025 Mucse Corporation. */
+> +
+> +#include <linux/types.h>
+> +#include <linux/module.h>
+> +#include <linux/pci.h>
+> +#include <linux/netdevice.h>
+> +#include <linux/string.h>
+> +#include <linux/etherdevice.h>
+> +
+> +#include "rnpgbe.h"
+> +
+> +char rnpgbe_driver_name[] = "rnpgbe";
+
+At least with (only) this patch applied, rnpgbe_driver_name
+appears to only be used in this file. So it should be static.
+
+Flagged by Sparse.
+
+Please make sure that when each patch in the series is applied in turn,
+no new Sparse warnings are introduced. Likewise for build errors.
+And ideally warnings for W=1 builds.
+
+...
 
