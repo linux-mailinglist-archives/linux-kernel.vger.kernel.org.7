@@ -1,169 +1,120 @@
-Return-Path: <linux-kernel+bounces-740561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EE61B0D5BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:20:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E74B2B0D5BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:20:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BE37189AE53
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:20:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6754316692B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515DF2DC35C;
-	Tue, 22 Jul 2025 09:20:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15DC42DE213;
+	Tue, 22 Jul 2025 09:20:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iXUykyln"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fBBqhM69";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XfUk3igr"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB5523A564;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA24D2DAFC1;
 	Tue, 22 Jul 2025 09:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753176007; cv=none; b=knzUF29lrp5zvouYhM00HG1e/MtVoH7nfq2v6vObftwlCgY/ihBcpZIznZFuQam+Mp416lFf4nCXjVw25q/VI8Mtmc3FcnNfeOfXkJUEERkoGpsJGvT0GyRQ2GgczkzUn1zbr36BHWc8a23/4HgCO9G+DzDvknWrBzPJfZ3XVFc=
+	t=1753176009; cv=none; b=lRqHdpu5sWkcYCH9QDQr5P2HGR6yVupOgeJPsDAO5p1IAZkht8CjC6FgARnbvQHKWuN7+/J39+yBfng+IcUWSodbNCCEtwI8TDpErKQ0tnFn5HGz6o1rnMisJX9eA86z5dSLWsl+SXn3PBjWOrvlg82omSPurOSsjgVftYQv3Vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753176007; c=relaxed/simple;
-	bh=B1T2MWPDPDtUYOSFsDx/tfdQ/pEGziEZ3AKWuscvoqs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q8kmb/hDvsK5PFVvurG790yUVach2K1IK1dUAky0Xl6UWnqd2bvlYfraXgeapJr7ZgWpZxHSAySlF/xhvfRRXGyMOO0MmAl3k2v0QMzCadCbCrugwjiDEOEtYrM3LvWXOKpJtLpxFKHRKeYUajJbkrFFsatAjfrxMTEa3KHP80c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iXUykyln; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECA3CC4CEEB;
-	Tue, 22 Jul 2025 09:20:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753176007;
-	bh=B1T2MWPDPDtUYOSFsDx/tfdQ/pEGziEZ3AKWuscvoqs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iXUykyln4dJhQGpxCRNG5+tveBFfMM/aZyBOVCGy/PEZz9eR8G5iK1skRzqTr0fHq
-	 kN0teNAZyFW9l2F+koQIDL7iZU03RH4YYLAd8CEV0PviK9kAPjeCVFV1fh2scUA2xe
-	 dBlku0E1DO2YV1HCqX3mZZCpqpdyxKVfk3A7scH8wkQ771S8yuJkbMATcAyI95r38W
-	 ORg2mmWFd0g3dlAVVN6cvqtBxpq2JNXja6QBPiGoWO3WMrBgyayUjFy0G5WSh6+1Qk
-	 rxbugE3vsX/PSap08fUMLLVLWKfh5YrypS4A1UMGSl2P0PYdWrwbKWxGebPbk95dTD
-	 kEDEgFR3jfiow==
-Message-ID: <2fd202a6-2c92-469c-81c0-8852562d4e35@kernel.org>
-Date: Tue, 22 Jul 2025 11:19:59 +0200
+	s=arc-20240116; t=1753176009; c=relaxed/simple;
+	bh=GQ7aUZteCZupCARROJAkrgkzAlNnwNkip843/jexfGI=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=F2T5BBMKZq85jGqI+8o9DvbqHr9Tc0Wr5x2Pm1eDsARYsqA33ZumT3KD5KTpM8kE4Ve9YvrHbH5lKcC0o+rMqFsThNSMA/fJVGaUfQkBgd8J8bNUJgNHohQmBpgACoeMjA5KnkwGG6Pg0yRpPjUz07YxYYA8sL5LOrHzPtfg29k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fBBqhM69; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XfUk3igr; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 22 Jul 2025 09:20:04 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1753176005;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uhY9yHhrsUq8+kCfxK6mh8qD5dOSU1tprBc8CHj94Zo=;
+	b=fBBqhM69oWMZ2GgTxG3eNrcZTOlQ5KiwKgatWtBgIM2biD4Ix1qU6ruX9xs/NE9HE8rCbT
+	NhAsuRESGSgx40AGkAVP3C6owJa6Fnh5M0FZTv+egrqpizrqeItTFJ1PK8xhFQxYysoF0n
+	qhxbBkqOmumc4bbaYGltynS0bg2sO5KZQ/eLWJsDxPT10+BKVYdMzBy791YyNqOmEVjNJx
+	9CNbogKK1wStIojE1AB+HCz6bGNlfV//lACh5TJGqp5mrf3qj0/0Jx29VtuOqW+tSBr+Tt
+	lehs9FwNSWnNRkI8IAqktdf2FnlYkxsc78eYowzaoLHUu7qwnYRhTmQhax9MVQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1753176005;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uhY9yHhrsUq8+kCfxK6mh8qD5dOSU1tprBc8CHj94Zo=;
+	b=XfUk3igrmCNsG0wNRShz/GUCbC8Q6reHCrGcWa76E4EcGX/jBZ5wffO98YuRBvniA4eMZB
+	7Ryf7U5rZaJvygDw==
+From: "tip-bot2 for Feng Lee" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/core] sched/idle: Remove play_idle()
+Cc: Feng Lee <379943137@qq.com>, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <tencent_C3E0BD9B812C27A30FC49F1EA6A4B1352707@qq.com>
+References: <tencent_C3E0BD9B812C27A30FC49F1EA6A4B1352707@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/13] dt-bindings: phy: qcom,msm8998-qmp-usb3-phy:
- support dual TCSR registers
-To: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>,
- Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov
- <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>,
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
- dmitry.baryshkov@oss.qualcomm.com, konrad.dybcio@oss.qualcomm.com,
- fange.zhang@oss.qualcomm.com, quic_lliu6@quicinc.com,
- quic_yongmou@quicinc.com
-References: <20250722-add-displayport-support-for-qcs615-platform-v2-0-42b4037171f8@oss.qualcomm.com>
- <20250722-add-displayport-support-for-qcs615-platform-v2-3-42b4037171f8@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250722-add-displayport-support-for-qcs615-platform-v2-3-42b4037171f8@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Message-ID: <175317600420.1420.1846913174693376674.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 22/07/2025 09:22, Xiangxu Yin wrote:
-> Add support for specifying two TCSR register addresses in the
-> qcom,tcsr-reg property to enable DP-only mode switching. This change
-> maintains backward compatibility with the original single-register
-> format.
-> 
-> Also update #clock-cells and #phy-cells to <1> to support clock and PHY
-> provider interfaces, respectively. This is required for platforms that
-> consume the PHY clock and select PHY mode dynamically.
-> 
-> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
-> ---
->  .../bindings/phy/qcom,msm8998-qmp-usb3-phy.yaml    | 28 +++++++++++++++++-----
->  1 file changed, 22 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/qcom,msm8998-qmp-usb3-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,msm8998-qmp-usb3-phy.yaml
-> index 1636285fbe535c430fdf792b33a5e9c523de323b..badfc46cda6c3a128688ac63b00d97dc2ba742d6 100644
-> --- a/Documentation/devicetree/bindings/phy/qcom,msm8998-qmp-usb3-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/qcom,msm8998-qmp-usb3-phy.yaml
-> @@ -44,13 +44,21 @@ properties:
->    vdda-pll-supply: true
->  
->    "#clock-cells":
-> -    const: 0
-> +    oneOf:
-> +      - description: Set to 0 for legacy platforms without clock provider
-> +        const: 0
-> +      - description: Set to 1 to expose PHY pipe clock.
-> +        const: 1
->  
->    clock-output-names:
->      maxItems: 1
->  
->    "#phy-cells":
-> -    const: 0
-> +    oneOf:
-> +      - description: Set to 0 for legacy platforms
-> +        const: 0
-> +      - description: Set to 1 to supports mode selection (e.g. USB/DP)
-> +        const: 1
+The following commit has been merged into the sched/core branch of tip:
 
-I don't understand why EXISTING platforms now get more clocks. What did
-you change in the hardware? This you must explain in the commit msg.
+Commit-ID:     1b5f1454091e9e9fb5c944b3161acf4ec0894d0d
+Gitweb:        https://git.kernel.org/tip/1b5f1454091e9e9fb5c944b3161acf4ec08=
+94d0d
+Author:        Feng Lee <379943137@qq.com>
+AuthorDate:    Mon, 21 Jul 2025 16:04:35 +08:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Tue, 22 Jul 2025 11:10:43 +02:00
 
+sched/idle: Remove play_idle()
 
-Best regards,
-Krzysztof
+play_idle() is no longer in use, so delete it.
+
+Signed-off-by: Feng Lee <379943137@qq.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/tencent_C3E0BD9B812C27A30FC49F1EA6A4B135270=
+7@qq.com
+
+---
+ include/linux/cpu.h | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/include/linux/cpu.h b/include/linux/cpu.h
+index 6378370..8b1abbf 100644
+--- a/include/linux/cpu.h
++++ b/include/linux/cpu.h
+@@ -187,11 +187,6 @@ static inline void arch_cpu_finalize_init(void) { }
+=20
+ void play_idle_precise(u64 duration_ns, u64 latency_ns);
+=20
+-static inline void play_idle(unsigned long duration_us)
+-{
+-	play_idle_precise(duration_us * NSEC_PER_USEC, U64_MAX);
+-}
+-
+ #ifdef CONFIG_HOTPLUG_CPU
+ void cpuhp_report_idle_dead(void);
+ #else
 
