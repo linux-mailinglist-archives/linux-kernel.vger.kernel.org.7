@@ -1,144 +1,236 @@
-Return-Path: <linux-kernel+bounces-741234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0A4DB0E1D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:26:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3608BB0E1DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 18:27:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FEC016E86E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:26:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67F6416B934
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13EBE27C17E;
-	Tue, 22 Jul 2025 16:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cYZAwplb"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF9851F3FE9;
+	Tue, 22 Jul 2025 16:25:50 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C6C185E4A
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 16:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 041CF27A90A;
+	Tue, 22 Jul 2025 16:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753201536; cv=none; b=I0HJLjBL+utQTSkrrutlUwlY3Ac26CThP/5w5GXAtalPE3oPf2/hllk6szDlEfwQQFNA5qYeUHVtOzMpAroGyi4MMH+EStOZR3ubHej/TWk4O8j25eBQ38y/A3tT3xv8D0d+7ukhLpZpKaoGRDR9W2P5JMnT0PvJqVaXunCbs8A=
+	t=1753201550; cv=none; b=ltkwvOOcU65e6hzFxaL6SbWPL5SqrEwwuTYqPq49xTTbRlnVgHKt3D9xRaGM4Sj5d7UDTByqG8crb68Ni90dm+TeoJRAjucFIEqpQ//pzE1jZhZfk+z+Ew7aGhNNliw4s8Orcw09ngX3baFXOcA4MJzsLPuS6OCOvyz7qTvYP8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753201536; c=relaxed/simple;
-	bh=LsJrl5YU5FmJ++eDK4f7mINLKFSTqistBIDSWE3w4As=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t1fS573TKRVAqFapuCwReM88rFMjP9Fb1gINM3Q/SKsYPhYcvIwvmAsjxb/9TDOSZ/XUOQZ1d8IUosjtDGutK89vCdsu2W9bcCSEy+h8Z+Mld3LsvAEfzyd/9H7G/iSB5rbR7YNoneVpGbprWrdzGudYYdJX0fO4HEKHO+4YsAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cYZAwplb; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 22 Jul 2025 12:25:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753201521;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RIXLg9v/IdS1mS4xLfLFZRiF5wBRttJDXmavwXsuWE8=;
-	b=cYZAwplbUJTotwba/+KO7TaIa35r7BGrlRDwOnzzqnlDdv+eX0VJOXLhbSzme4OMw3oJ3P
-	7F6lKpQSy9X3KlAcjyjqKmUPasen2cQ4ddLpfKk6O0EMQPpxQE7XIa/3xR3n0YCRg+1qDv
-	V0n1gwZ5r8fMVp2d55fc3MjTNUBo8h8=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: syzbot <syzbot+0ea2c41a649240197795@syzkaller.appspotmail.com>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] WARNING in closure_put_after_sub
-Message-ID: <xebzu2wivmygmp2vv7warfdogmde3ythapjlxzfmlxm5seoq3x@zksozuaettul>
-References: <68784c5f.a70a0220.693ce.0036.GAE@google.com>
+	s=arc-20240116; t=1753201550; c=relaxed/simple;
+	bh=iQ0L7zKGp9vE7yevaZZ7xufM0R/kXL2KFMRA6YVCZkU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ITgm7B8yivhJ5FYh3Va/pruiMRE1ZxuyTuBXkRmmDXMh4sYiNHPLnUAxJD9DOIM0LpwoabQOBWPBsTvBJSMmwCk+Dufh369n7MP7BZgAJcFnS4Ix1CHVec8XBwdj6P3PIXoLSfkHnqKlMDe1yTE65AOohW/W4BMBlKfVox5bR+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay09.hostedemail.com (Postfix) with ESMTP id DCE0980490;
+	Tue, 22 Jul 2025 16:25:44 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf03.hostedemail.com (Postfix) with ESMTPA id CB3206000A;
+	Tue, 22 Jul 2025 16:25:39 +0000 (UTC)
+Date: Tue, 22 Jul 2025 12:25:38 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu
+ <mhiramat@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri Olsa
+ <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat
+ <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, Beau
+ Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, Florian Weimer
+ <fweimer@redhat.com>, Sam James <sam@gentoo.org>, Brian Robbins
+ <brianrob@microsoft.com>, Elena Zannoni <elena.zannoni@oracle.com>
+Subject: Re: [RFC] New codectl(2) system call for sframe registration
+Message-ID: <20250722122538.6ce25ca2@batman.local.home>
+In-Reply-To: <1c00790c-66c4-4bce-bd5f-7c67a3a121be@efficios.com>
+References: <2fa31347-3021-4604-bec3-e5a2d57b77b5@efficios.com>
+	<20250721145343.5d9b0f80@gandalf.local.home>
+	<e7926bca-318b-40a0-a586-83516302e8c1@efficios.com>
+	<20250721171559.53ea892f@gandalf.local.home>
+	<1c00790c-66c4-4bce-bd5f-7c67a3a121be@efficios.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <68784c5f.a70a0220.693ce.0036.GAE@google.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: ryndd718dgoaufxffm3zwm8crqeuj3rd
+X-Rspamd-Server: rspamout05
+X-Rspamd-Queue-Id: CB3206000A
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+LpuwOIAPhxCnhK/c1MU3fQFDCY4qIJ0A=
+X-HE-Tag: 1753201539-523560
+X-HE-Meta: U2FsdGVkX19zubIwvDTsndw7WRIvMZu7CGBsWfzGhpwFuCSxr33qvs/TUJEXKGeshuibdaRejjw1yoD+i7GClP5ki5uYlA7g+QAzn38HeXcahTMxfGMqLiYLe/6+xuZMuin5noAOL+ede5tI/uHytsrpWEgl2MbGJq8+2HUBvdBEI7cTq6nTier36EtvsEMLG1t7B8bjsq/0+O1dSB6F2DEr7I34H98sc+MZM4VEZFpKYRVQBOE4kg8Djmrv1ynOaRbWdGsL6G7aT7h33WaSPrvtVZVY6PP7/wTQOqGU0X/cJL34OgaC8+Kxt929DVz00GD0gUyzYiyZAWxl09RcFer1H4EJlibCWBZiZIMCFlAkAjkz1dkS7IUSHSUoUY9w
 
-On Wed, Jul 16, 2025 at 06:05:35PM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    3f31a806a62e Merge tag 'mm-hotfixes-stable-2025-07-11-16-1..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=116e1d82580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=b309c907eaab29da
-> dashboard link: https://syzkaller.appspot.com/bug?extid=0ea2c41a649240197795
-> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-3f31a806.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/7304d62ced97/vmlinux-3f31a806.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/4913df6ab730/bzImage-3f31a806.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+0ea2c41a649240197795@syzkaller.appspotmail.com
-> 
-> ------------[ cut here ]------------
-> closure has guard bits set: a8000000 (25)
-> WARNING: CPU: 0 PID: 5328 at lib/closure.c:22 closure_put_after_sub_checks lib/closure.c:20 [inline]
-> WARNING: CPU: 0 PID: 5328 at lib/closure.c:22 closure_put_after_sub+0x173/0x320 lib/closure.c:32
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 5328 Comm: kworker/u5:2 Not tainted 6.16.0-rc5-syzkaller-00266-g3f31a806a62e #0 PREEMPT(full) 
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> Workqueue: bcachefs_journal journal_write_done
-> RIP: 0010:closure_put_after_sub_checks lib/closure.c:20 [inline]
-> RIP: 0010:closure_put_after_sub+0x173/0x320 lib/closure.c:32
-> Code: c1 6e 50 ff cd 4c 89 f3 e9 c8 fe ff ff e8 85 f7 c9 fc 90 44 89 f0 48 0f bd d0 48 c7 c7 40 f5 e4 8b 44 89 fe e8 3e da 8d fc 90 <0f> 0b 90 90 e9 d0 fe ff ff e8 5f f7 c9 fc 90 89 ee 81 e6 00 00 00
-> RSP: 0018:ffffc9000d5ef820 EFLAGS: 00010246
-> RAX: 641034d4b1ecad00 RBX: ffffffff936402f0 RCX: ffff88801c734880
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000002
-> RBP: 00000000efffffff R08: ffff88801fc24293 R09: 1ffff11003f84852
-> R10: dffffc0000000000 R11: ffffed1003f84853 R12: dffffc0000000000
-> R13: ffff88805324a9f0 R14: 0000000003ffffff R15: 00000000a8000000
-> FS:  0000000000000000(0000) GS:ffff88808d21b000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000563f86c91bc0 CR3: 0000000033352000 CR4: 0000000000352ef0
-> Call Trace:
->  <TASK>
->  closure_sub lib/closure.c:61 [inline]
->  __closure_wake_up+0x81/0xb0 lib/closure.c:91
->  closure_wake_up include/linux/closure.h:349 [inline]
->  journal_write_done+0x994/0x1270 fs/bcachefs/journal_io.c:1768
->  process_one_work kernel/workqueue.c:3238 [inline]
->  process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3321
->  worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
->  kthread+0x70e/0x8a0 kernel/kthread.c:464
->  ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
->  </TASK>
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
+On Tue, 22 Jul 2025 09:51:22 -0400
+Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
 
-ec.c was returning with the passed-in closure on c->freelist_wait,
-without returning an error that indicated we were blocking
+> > Here's a hypothetical, what if for some reason (say having the sframe
+> > sections outside of the elf file) that the linker shares that?  
+> 
+> So your hypothetical scenario is having sframe provided as a separate
+> file. This sframe file (or part of it) would still describe how to
+> unwind a given elf file text range. So I would argue that this would
 
-#syz fix: bcachefs: Ensure we don't return with closure on waitlist
+No. It should describe how to get access to an sframe section for some
+text that has already been loaded in memory.
+
+I'm looking for a mapping between already loaded text memory to how to
+unwind it that will be in an sframe format somewhere on disk.
+
+> still fit into the model of CODE_REGISTER_ELF, it's just that the
+> address range from sframe_start to sframe_end would be mapped from
+> a different file. This is entirely up to the dynamic loader and should
+> not impact the kernel ABI.
+> 
+> AFAIK the a.out binary support was deprecated in Linux kernel v5.1. So
+> being elf specific is not an issue.
+
+Yes, but we are not registering ELF. We are registering how to unwind
+something with sframes. If it's not sframes we are registering, what is
+it?
+
+> 
+> And if for some reason we end up inventing a new model to hand over the
+> sframe information in the future, for instance if we choose not to map
+> the sframe information in userspace and hand over a sframe-file pathname
+> and offset instead, we'll just extend the code_opt enum with a new
+> label.
+
+This is not a new model. We could likely do it today without much
+effort. We are handing over sframe data regardless if it's in an ELF
+file or not.
+
+The systemcall is to let the dynamic linker know where the kernel can
+find the sframes for newly loaded text.
+
+> 
+> > 
+> > For instance, if the sframe sections are downloaded separately as a
+> > separate package for a given executable (to make it not mandatory for an
+> > install), the linker could be smart enough to see that they exist in some
+> > special location and then pass that to the kernel. In other words, this is
+> > option is specific for sframe and not ELF. I rather call it by that.  
+> 
+> As I explained above, if the dynamic loader populates the sframe section
+> in userspace memory, this fits within the CODE_REGISTER_ELF ABI. If we
+
+But this isn't about ELF! It's about sframes! Why not name it that?
+
+> eventually choose not to map the sframe section into userspace memory
+> (even though this is not an envisioned use-case at the moment), we can
+> just extend enum code_opt with a new label.
+
+Why call this at all if you don't plan on mapping sframes?
+
+> 
+> >   
+> >>
+> >> If there are other file types in the future that happen to contain an
+> >> sframe section (but are not ELF), then we can simply add a new label to
+> >> enum code_opt.
+> >>  
+> >>>      
+> >>>>
+> >>>> sys_codectl(2)
+> >>>> =================
+> >>>>
+> >>>> * arg0: unsigned int @option:
+> >>>>
+> >>>> /* Additional labels can be added to enum code_opt, for extensibility. */
+> >>>>
+> >>>> enum code_opt {
+> >>>>        CODE_REGISTER_ELF,  
+> >>>
+> >>> Perhaps the above should be: CODE_REGISTER_SFRAME,
+> >>>
+> >>> as currently SFrame is read only via files.  
+> >>
+> >> As I pointed out above, on GNU/Linux, sframe is always an allocated,loaded
+> >> ELF section. AFAIU, your comment implies that we'd want to support other scenarios
+> >> where the sframe is in files outside of elf binary sframe sections. Can you
+> >> expand on the use-case you have for this, or is it just for future-proofing ?  
+> > 
+> > Heh, I just did above (before reading this). But yeah, it could be. As I
+> > mentioned above, this is not about ELF files. Sframes just happen to be in
+> > an ELF file. CODE_REGISTER_ELF sounds like this is for doing special
+> > actions to an ELF file, when in reality it is doing special actions to tell
+> > the kernel this is an sframe table. It just happens that sframes are in
+> > ELF. Let's call it for what it is used for.  
+> 
+> I see sframe as one "aspect" of an ELF file. Sure, we could do one
+> system call for every aspect of an ELF file that we want to register,
+> but that would require many round trips from userspace to the kernel
+> every time a library is loaded. In my opinion it makes sense to combine
+> all aspects of an elf file that we want the kernel to know about into
+> one registration system call. In that sense, we're not registering just
+> sframe, but the various aspects of an ELF file, which include sframe.
+
+So you are making this a generic ELF function?  What other functions do
+you plan to do with this system call?
+
+> 
+> By the way, the sframe section is optional as well. If we allow
+> sframe_start and sframe_end to be NULL, this would let libc register
+> an sframe-less ELF file with its pathname, build-id, and debug info
+> to the kernel. This would be immediately useful on its own for
+> distributions that have frame pointers enabled even without sframe
+> section.
+
+The above is called mission creep. Looks to me that you are using this
+as a way to have LTTng get easier access to build ids and such. We can
+add *that* later if needed, as a separate option. This has nothing to
+do with the current requirements.
+
+
+> >>>
+> >>> And call it "struct code_sframe_info"
+> >>>      
+> >>>>        __u64 text_start;
+> >>>>        __u64 text_end;  
+> >>>      
+> >>>>        __u64 sframe_start;
+> >>>>        __u64 sframe_end;  
+> >>>
+> >>> What is the above "sframe" for?  
+> > 
+> > Still wondering what the above is for.  
+> 
+> Well we have an sframe section which is mapped into userspace memory
+> from sframe_start to sframe_end, which contains the unwind information
+> that covers the code from text_start to text_end.
+
+Actually, the sframe section shouldn't be mapped into user space
+memory. The kernel will be doing that, not the linker. I would say that
+the system call can give a hint of where it would like it mapped, but
+it should allow the kernel to decide where to map it as the user space
+code doesn't care where it gets mapped.
+
+In the future, if we wants to compress the sframe section, it will not
+even be a loadable ELF section. But the system call can tell the
+kernel: "there's a sframe compressed section at this offset/size in
+this file" for this text address range and then the kernel will do the
+rest.
+
+> 
+> Am I unknowingly adding some kind of redundancy here ?
+> 
+
+Maybe. This systemcall was to add unwinding information for the kernel.
+It looks like you are having it be much more than that. I'm not against
+that, but that should only be for extensions, and currently, this is
+supposed to only make sframes work.
+
+-- Steve
 
