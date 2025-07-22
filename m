@@ -1,165 +1,89 @@
-Return-Path: <linux-kernel+bounces-740571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C71DB0D5DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:24:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4FCBB0D5E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:24:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F8DD168F93
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:24:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A765F18978A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:24:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 587A12DCBF5;
-	Tue, 22 Jul 2025 09:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB0D2DCBE3;
+	Tue, 22 Jul 2025 09:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hnpr+OvF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Vap6x1qD";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LbQI0CjY"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFBCB1D5CD4;
-	Tue, 22 Jul 2025 09:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8A32DAFC1
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 09:24:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753176237; cv=none; b=YPUOFVJxhOW54hkpCdSH5EJnzxgBerVxBdaWUh9w/XAURZWIjjlx840GIdVyE0E5UG0rBYlR30kE/w6pSvGujOnn1QK+0eFITfAWs/n4fGAQWv/YNWLsEh95yeVEY4LE+1SVpyt1N/BN6kUkkKCxByXIUTDTYt8Q6RS2lJLWIRM=
+	t=1753176247; cv=none; b=A/veUyklyTtIOFvRyzJsEPAb6sENDjkNpXpBM4q1qnLqBM14TTfHJwd7eiMZ2mXtfcWM6uPR/C9MddXsPuKELnPZu1uNgabWZRowEGAwWdgs+FtuN6L1qBD4AQ+hqhFIEZvrU59gH+2HNvUhoHSH5bzVzU22PsIJbt5EknI8eVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753176237; c=relaxed/simple;
-	bh=a+8E4SAu1ib+nNJy6o6lE6mpCzXJ/lWhWHoAp+XIqMQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qj3rhWKNK+zMr8F9FFDdg7U6nYLTV/eJp4WhhJs4BmI5cpiBLgJiTLFX2y+9RDyoJHMo70rbT0jogZEheS9deMi/wQSEmy4PvJMDRWdKy/UFnWYrwsBK4BtmLJC9+7Jx5RGJ7y5eePshcBlwJHZXoWme9AdXtpp0Tv9E96uLMic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hnpr+OvF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C4B7C4CEEB;
-	Tue, 22 Jul 2025 09:23:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753176237;
-	bh=a+8E4SAu1ib+nNJy6o6lE6mpCzXJ/lWhWHoAp+XIqMQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hnpr+OvFQrLwa9kjrXjGWutJC5Mk7eTwdSFAzB04Y0W/gneYBFZu6N+XiTI1FhnJ9
-	 fasF4G353RSl1Zv7ZsgcE623tPIDs3J7bvNvCSe254Ucr2PWxfr1O0G+PeMRR/VfDv
-	 mgbBc9cvhWwm5LfvExkE1vAKzuP6EiAd0RFZB8iGt5nbVLkS9CovoHGT9Ixr1rCUJ0
-	 xBvvI9fQ57+uvh7g7l6EceitjKj/idoXSHxs2xa8UJ6d4KefJ27L7eTkuwSgroGHfK
-	 yTH2wRCISnEZ02CCi/yfj8N3VREIOTE7u9M5pZ4zvzcUReNHeqqqPlf41r1L+G7Q3u
-	 G6/a/k/3b4t+w==
-Message-ID: <f956664e-24a2-410a-be9b-4d90e08c7c64@kernel.org>
-Date: Tue, 22 Jul 2025 10:23:53 +0100
+	s=arc-20240116; t=1753176247; c=relaxed/simple;
+	bh=BFmGu5onRhNC7oCFD6HQWHvUKHNJDs2FmdzhpgzLs44=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kHt1WjqmYONnTxLEOmMpCMGLzC3BeCMUf8JpdQKr/+FjUE5aq47zmu89MqC8RbdYPUdPT4QYe904HWWztXePLPmXZH2t2BiNGYSCZvVTyvas6Psd0tRMavw8zbZGrkq3BCm9K4IZBRZny6YwaKKgUvJvXJZ5dAGd9FyR8Sex1mY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Vap6x1qD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LbQI0CjY; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 22 Jul 2025 11:24:02 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1753176244;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BFmGu5onRhNC7oCFD6HQWHvUKHNJDs2FmdzhpgzLs44=;
+	b=Vap6x1qDls3aE1XarapJgdisRQ84gWiHdxF+OZlLlHab1Wi/pkGoKAX04NZv2jV1LRwa4N
+	B1uae0PVks7/UKezhCChoeMJl8xgxi/a3ZOC1FIFeyFRCPAWHWxZbgWQUPz8CT+mPxKH6q
+	tPzUOuypFdF2Sdby0CGbxwgIg1y5xr2xXGpPILAyJtiEok7srAXBJH7gUfpFhYlq6yTD5x
+	GW8TepMfPiY71MaHbdzAAPcgx7VbUFgvbi919T1FteBxxTMu32XH/L7HsdhcqbGfDsAkwJ
+	OxATR/OaOOrhCHf9FUYFhUGgkh4mx9/LBLCjZpngnQlOTCczsWnxf4WdMr2xmQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1753176244;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BFmGu5onRhNC7oCFD6HQWHvUKHNJDs2FmdzhpgzLs44=;
+	b=LbQI0CjY/6FtiEgNBnARlAY/0AQbn08RbLGf/Y9w9iyW6yeX+K4YtAzKScr1iPov7hP+cd
+	kGFC2X1d8EIWIGDg==
+From: Nam Cao <namcao@linutronix.de>
+To: Gautam Menghani <gautam@linux.ibm.com>
+Cc: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] powerpc: Cleanup and convert to MSI parent domain
+Message-ID: <20250722092402.uMLOYoII@linutronix.de>
+References: <cover.1750861319.git.namcao@linutronix.de>
+ <aH9Na8ZqrI0jPhtl@li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next 1/2] bpftool: Add bpf_token show
-To: Tao Chen <chen.dylane@linux.dev>, ast@kernel.org, daniel@iogearbox.net,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, davem@davemloft.net,
- kuba@kernel.org, hawk@kernel.org
-Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org
-References: <20250720173310.1334483-1-chen.dylane@linux.dev>
- <6b0669fd-fef6-4f4e-b80d-512769e86938@kernel.org>
- <06387128-8d34-49fd-a409-d35f5d60b094@linux.dev>
-From: Quentin Monnet <qmo@kernel.org>
-Content-Language: en-GB
-In-Reply-To: <06387128-8d34-49fd-a409-d35f5d60b094@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aH9Na8ZqrI0jPhtl@li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com>
 
-2025-07-22 13:48 UTC+0800 ~ Tao Chen <chen.dylane@linux.dev>
-> 在 2025/7/22 00:23, Quentin Monnet 写道:
->> Thanks a lot for this!
->>
-> 
-> Hi Quenin,
-> 
->>
->> 2025-07-21 01:33 UTC+0800 ~ Tao Chen <chen.dylane@linux.dev>
->>> Add `bpftool token show` command to get token info
->>> from bpf fs in /proc/mounts.
->>>
->>> Example plain output for `token show`:
->>> token_info:
->>>          /sys/fs/bpf/token
->>>
->>> allowed_cmds:
->>>          map_create          prog_load
->>>
->>> allowed_maps:
->>>
->>> allowed_progs:
->>>          kprobe
->>>
->>> allowed_attachs:
->>>          xdp
->>>
->>> Example json output for `token show`:
->>> {
->>>      "token_info": "/sys/fs/bpf/token",
->>>      "allowed_cmds": ["map_create","prog_load"
->>>      ],
->>>      "allowed_maps":
->>
->>
->> This is not valid JSON. You're missing a value for "allowed_maps" (here
->> it should likely be an empty array), and the comma:
->>
->>     "allowed_maps": [],
->>
->>
->>>      "allowed_progs": ["kprobe"
->>>      ],
->>>      "allowed_attachs": ["xdp"
->>>      ]
->>> }
->>>
->>> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
->>> ---
->>>   tools/bpf/bpftool/main.c  |   3 +-
->>>   tools/bpf/bpftool/main.h  |   1 +
->>>   tools/bpf/bpftool/token.c | 229 ++++++++++++++++++++++++++++++++++++++
->>>   3 files changed, 232 insertions(+), 1 deletion(-)
->>>   create mode 100644 tools/bpf/bpftool/token.c
->>>
+On Tue, Jul 22, 2025 at 02:05:55PM +0530, Gautam Menghani wrote:
+> I am seeing a boot failure after applying this series on top of the pci
+> tree [1]. Note that this error was seen on a system where I have a
+> dedicated NVME. Systems without dedicated disk boot fine
 
-[...]
+Thanks for the report.
 
->>> diff --git a/tools/bpf/bpftool/token.c b/tools/bpf/bpftool/token.c
->>> new file mode 100644
->>> index 00000000000..2fcaff4f2ba
->>> --- /dev/null
->>> +++ b/tools/bpf/bpftool/token.c
+Using QEMU, I cannot reproduce the exact same problem, but I do observe a
+different one. They are likely from the same root cause.
 
-[...]
+Let me investigate..
 
->>> +            if (has_delegate_options(ent->mnt_opts)) {
->>> +                hit = true;
->>> +                break;
->>
->>
->> Apologies, my knowledge of BPF tokens is limited. Can you have only one
->> token exposed through a bpffs at a time? Asking because I know you can
->> have several bpffs on your system, if each can have delegate options
->> then why stop after the first bpffs mount point you find?
->>
-> 
-> Yes it is, only the first bpffs with token info will be showed above.
-> Actually, it will not be limited how many bpffs ceated in kernel, it
-> depends on the user scenarios. In most cases, only one will be created.
-> But, maybe it's better to show all. I will change it in v2.
-
-Yes please. If there are several tokens available, bpftool should "list"
-them all, as the command name implies. The user scenarios don't really
-count here, we should just dump all token info we can see. In the
-future, we could then add the possibility to take an argument (likely a
-path to a bpffs) to show info for a particular mountpoint; a bit like
-you can list all existing programs with "bpftool prog show" but can also
-chose to pick one with "bpftool prog show id ...".
-
-If we print info for several mountpoint, I'd suggest adjusting the
-format for the plain output slightly: I'd remove the blank lines between
-the different sections to get something more compact, maybe play with
-the indent as well, like when we list programs or maps.
-
-Thanks,
-Quentin
+Nam
 
