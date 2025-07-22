@@ -1,124 +1,121 @@
-Return-Path: <linux-kernel+bounces-740645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2F2CB0D72A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:16:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D4230B0D72C
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:17:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F35118877AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:16:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC19618872E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:17:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 284261A08DB;
-	Tue, 22 Jul 2025 10:15:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7720B23C4F5;
+	Tue, 22 Jul 2025 10:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k/lJoeji"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="iQ3EoUxg"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE662DEA9B;
-	Tue, 22 Jul 2025 10:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAEBF15748F
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 10:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753179341; cv=none; b=Zc9XhIHRNa1Olv0QzzL9fVdwJ7d1TU56GYi5XhpGZxcJZEhmUZBkk3oyFG8q7CPt3ZeDI8L3CSptSHPRruxHzHJw0e52/01oxVSmIusOff5UmDTigLB2cq5MDOzLKCeSgs5uVXo7wtm3kFZJYoQOfEDfcW1YMR4GrRFDNIwqGtU=
+	t=1753179432; cv=none; b=MapMPmBg1aiCALzciDawQvBcQkqfVO9tlgUD0hNm+UB5zpo0GJOzR3PW5SjFcgBvv8xNEfgTbNAWvalK7z0IO5MMkCf2WHDiDJRSHcje1mSmIqgszVVSyhVXVbjGJJXvyWmktZ0E77TaYTCZeT4FyoSG3qsyaCx5STE/2CSkF70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753179341; c=relaxed/simple;
-	bh=vgdtWTy+OU03fgHA88AqjQprjEpjM4D4FU/Fd8fBqVg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q+ngQBMlvRCzZCylOzxeYceipC0LysV/rQxMhKIMai2dKwrKoHR5KW4um4MiXwG1M+Mb+5YvS5XYVJUK8i6UseFnf30FeNnIVNSzhOJefafwKVeWD+jytgFnMhKuubqUzc5jMrDxzE4lLUSy6e9K52NlHZaFeCNtJd/ctjUHPhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k/lJoeji; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B11DDC4CEF5;
-	Tue, 22 Jul 2025 10:15:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753179340;
-	bh=vgdtWTy+OU03fgHA88AqjQprjEpjM4D4FU/Fd8fBqVg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=k/lJoejiqTfV53iDchuP7eEtK6sMSbeGWTRdeeP1StKgVS8HxBjERAYNVn94lbK8N
-	 o2uy0tBXsPHRt3+eF9S68iqvfpCgN7mVtfw8oDlqCHD2qovMPvoKJFzyQKRBG4pVF7
-	 /k5C1QIVBa9/KJENZP6oB292LJBK/DAvj3Z/3ilrRG4wUMMsVWMUKRI6q+5AM/l/Cj
-	 XLulmy7pBgMAQkAmGNLRZ6f76SfNv1Dz9uz6z5e9y5LD+yMeZCE6gKnR15E+/xlWNh
-	 s18AvmEM13rMLRDaGhLfupy1dNmiBdn7EDRre3A2qAgK4OyoxRPheCdpZYn42UGaTH
-	 5mr+mg/KjHrdw==
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-615da180061so1079465eaf.2;
-        Tue, 22 Jul 2025 03:15:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVvZnTjr2eOceU6pufFVlzPrNzfHKgpNOexSOwFtRlZH68/ngKp2xbE3tCjZxJKSRjsf/hu8QBa+A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2K+Rl1zWUc1SpRc2WR0MDCxmf7SE93De24yE6jgZBJGL7sKMU
-	gZURx9m/VzAo8E8mIAQ2WEl7KwPpOv0vnazqg6yZvuJ2iPR/AejNe3BApbdAyaZ7mLoJPr0cx4N
-	2Lkc9mj3qvo1YHqYZJVXHfT6dfzUwvr4=
-X-Google-Smtp-Source: AGHT+IGE0hmdSQyJ9XbmUvGsf/YpiOKrtMvtXj6ut103LgiOuskz5Z24p/bjl/azbW9zxB0Y/CsZ5aj/KSGj8tc4wA8=
-X-Received: by 2002:a05:6820:2004:b0:615:b293:1f17 with SMTP id
- 006d021491bc7-615b2932180mr13775048eaf.8.1753179339998; Tue, 22 Jul 2025
- 03:15:39 -0700 (PDT)
+	s=arc-20240116; t=1753179432; c=relaxed/simple;
+	bh=8zuS2Vzm+tEOQV4oYYQFSbyQSMoniG/oIs0YaI2b90M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=egP6TZb6VaIkuwsBKSBj4fMVKlT/e59epEge4F4TAUh3u5HDEnLPv9tRLvRT4XeRBoW495t2/jGYwcMAzE7hPliKKt7NKuMdv/A7l0gBxGzxcf0H8ckIxr01S9RTSpW9s8vfWq/5iOWgfBZ7hVxmUT7NE/9FO2/AW7ZhiYGQQTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=iQ3EoUxg; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <60ac707f-b57b-4f31-8c54-b59e75200181@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753179426;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tAK/szCwAUl9Nc/zNWVtzXtl2k6tosWPZ26fi0u2HZA=;
+	b=iQ3EoUxg3VOUDHLv+lwTX/EjNWg7DAPbM3lfuvAwsE/IqEDS1E4TCxigwbP26N9AOtdrkn
+	GHjtikCGMqUbCVjzpGOBqJnwk+o8t17ua6t0c+95gqEqNFPbBEpgDKI+JuOD8jQ1GalGQF
+	HGOcwfbKtZS6NS0Gvl2njHNRJ6CYPhQ=
+Date: Tue, 22 Jul 2025 11:17:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250722055611.130574-2-pmalani@google.com> <20250722060352.pdwk2nrrth4uph2s@vireshk-i7>
-In-Reply-To: <20250722060352.pdwk2nrrth4uph2s@vireshk-i7>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 22 Jul 2025 12:15:27 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iUjOitwHYFqRgQY=h+Z-5of+3myDGDJKC8GcSOOSwYAA@mail.gmail.com>
-X-Gm-Features: Ac12FXwzNYiAnpxS80e9nkG6rPTtD3O5MDapn5yoUXSg8yLyJX9rHJ3xM0BK5Iw
-Message-ID: <CAJZ5v0iUjOitwHYFqRgQY=h+Z-5of+3myDGDJKC8GcSOOSwYAA@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: CPPC: Mark driver with NEED_UPDATE_LIMITS flag
-To: Viresh Kumar <viresh.kumar@linaro.org>, Prashant Malani <pmalani@google.com>
-Cc: open list <linux-kernel@vger.kernel.org>, 
-	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Beata Michalska <beata.michalska@arm.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 01/15] net: rnpgbe: Add build support for rnpgbe
+To: Yibo Dong <dong100@mucse.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
+ gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
+ danishanwar@ti.com, lee@trager.us, gongfan1@huawei.com, lorenzo@kernel.org,
+ geert+renesas@glider.be, Parthiban.Veerasooran@microchip.com,
+ lukas.bulwahn@redhat.com, alexanderduyck@fb.com, richardcochran@gmail.com,
+ netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250721113238.18615-1-dong100@mucse.com>
+ <20250721113238.18615-2-dong100@mucse.com>
+ <32fc367c-46a4-4c76-b8a8-494bf79a6409@linux.dev>
+ <D6DDF24A13236761+20250722030245.GA96891@nic-Precision-5820-Tower>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <D6DDF24A13236761+20250722030245.GA96891@nic-Precision-5820-Tower>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Jul 22, 2025 at 8:03=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.o=
-rg> wrote:
->
-> On 22-07-25, 05:55, Prashant Malani wrote:
-> > AMU counters on certain CPPC-based platforms tend to yield inaccurate
-> > delivered performance measurements on systems that are idle/mostly idle=
-.
-> > This results in an inaccurate frequency being stored by cpufreq in its
-> > policy structure when the CPU is brought online. [1]
-> >
-> > Consequently, if the userspace governor tries to set the frequency to a
-> > new value, there is a possibility that it would be the erroneous value
-> > stored earlier. In such a scenario, cpufreq would assume that the
-> > requested frequency has already been set and return early, resulting in
-> > the correct/new frequency request never making it to the hardware.
-> >
-> > Since the operating frequency is liable to this sort of inconsistency,
-> > mark the CPPC driver with CPUFREQ_NEED_UPDATE_LIMITS so that it is alwa=
-ys
-> > invoked when a target frequency update is requested.
-> >
-> > [1] https://lore.kernel.org/linux-pm/20250619000925.415528-3-pmalani@go=
-ogle.com/
-> >
-> > Cc: Beata Michalska <beata.michalska@arm.com>
-> > Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> > Suggested-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > Signed-off-by: Prashant Malani <pmalani@google.com>
-> > ---
-> >  drivers/cpufreq/cppc_cpufreq.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpuf=
-req.c
-> > index a1fd0ff22bc5..4a17162a392d 100644
-> > --- a/drivers/cpufreq/cppc_cpufreq.c
-> > +++ b/drivers/cpufreq/cppc_cpufreq.c
-> > @@ -910,7 +910,7 @@ static struct freq_attr *cppc_cpufreq_attr[] =3D {
-> >  };
-> >
-> >  static struct cpufreq_driver cppc_cpufreq_driver =3D {
-> > -     .flags =3D CPUFREQ_CONST_LOOPS,
-> > +     .flags =3D CPUFREQ_CONST_LOOPS | CPUFREQ_NEED_UPDATE_LIMITS,
-> >       .verify =3D cppc_verify_policy,
-> >       .target =3D cppc_cpufreq_set_target,
-> >       .get =3D cppc_cpufreq_get_rate,
->
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+On 22/07/2025 04:02, Yibo Dong wrote:
+> On Mon, Jul 21, 2025 at 02:30:40PM +0100, Vadim Fedorenko wrote:
+>> On 21/07/2025 12:32, Dong Yibo wrote:
+>>> Add build options and doc for mucse.
+>>> Initialize pci device access for MUCSE devices.
+>>>
+>>> Signed-off-by: Dong Yibo <dong100@mucse.com>
+>>> ---
 
-Applied as 6.17 material, thanks!
+[...]
+
+>>> +
+>>> +struct mucse {
+>>> +	struct net_device *netdev;
+>>> +	struct pci_dev *pdev;
+>>> +	/* board number */
+>>> +	u16 bd_number;
+>>> +
+>>> +	char name[60];
+>>> +};
+>>> +
+>>> +/* Device IDs */
+>>> +#ifndef PCI_VENDOR_ID_MUCSE
+>>> +#define PCI_VENDOR_ID_MUCSE 0x8848
+>>> +#endif /* PCI_VENDOR_ID_MUCSE */
+>>
+>> this should go to include/linux/pci_ids.h without any ifdefs
+>>
+> 
+> Got it, I will update this.
+
+As Andrew said, my suggestion is not fully correct, if you are not going
+to implement more drivers, keep PCI_VENDOR_ID_MUCSE in rnpgbe.h but
+without #ifdef
+
+
+>>> +
+>>> +#define PCI_DEVICE_ID_N500_QUAD_PORT 0x8308
+>>> +#define PCI_DEVICE_ID_N500_DUAL_PORT 0x8318
+>>> +#define PCI_DEVICE_ID_N500_VF 0x8309
+>>> +#define PCI_DEVICE_ID_N210 0x8208
+>>> +#define PCI_DEVICE_ID_N210L 0x820a
+>>> +
+>>> +#endif /* _RNPGBE_H */
+>>
+>> [...]
+>>
+
 
