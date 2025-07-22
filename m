@@ -1,165 +1,139 @@
-Return-Path: <linux-kernel+bounces-740738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A1EDB0D86B
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:41:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29B4EB0D836
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:28:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AE7B7B3BA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:40:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 487397B2A48
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:27:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960B42E2EFF;
-	Tue, 22 Jul 2025 11:41:43 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080592E2F1C;
+	Tue, 22 Jul 2025 11:28:31 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B4E2417C8;
-	Tue, 22 Jul 2025 11:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1279928981C;
+	Tue, 22 Jul 2025 11:28:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753184503; cv=none; b=IcjMbp7p3r3sNP0CG46pU0mCIvTKGzgC/ESzRdICBllK4RwNki+XZ5+/RaRrxs0g5YSUAQEvQC3pH0x/oZ1QfUZI8APPADm730I6up63qeg/FLcR8bN8uzLPIEbvx2zbzkUvXAWatimzzQLDXLj48A3aFSIzD/2Q+vnPEfUdRns=
+	t=1753183710; cv=none; b=oB5HWGN498iR8CpGi/zn1wxQEITHn3dd9W/qccUd95pr2TEgVdfLvpCdcxbLGvIJL2oEbbLNwQ7NM+ygYeGztF9mEC2cfpXNKOcXOo+Dy0q2aAts1aUTrsIedGNDD5WXA3bKAJ2iFdkVqQFC1AvADZiMe2yjXvvRevF0ebp0s/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753184503; c=relaxed/simple;
-	bh=HRNfBZNWFjtpD2gokYphudl6CAUUrfBTg0zEgE6J9V4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Gzr/ArWRRe0k0Wr3m9eFNk/o84vkZJ0o0GdYF0JBHVZDi7BWSAwrqxpxves7kqa0z9713DOPOC9dXUDFf2knuNHmNuLskrmftYjm94B5Wsj33Vncfls//XIv4otyYlXvJh1O4wNe7lject6KrD8JndZsAa9vZUdv95IFTK4yZ/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bmb2R6GTDzYQv48;
-	Tue, 22 Jul 2025 19:41:35 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 95D5D1A0D48;
-	Tue, 22 Jul 2025 19:41:34 +0800 (CST)
-Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
-	by APP2 (Coremail) with SMTP id Syh0CgDH07XjeH9ove1hBA--.34468S2;
-	Tue, 22 Jul 2025 19:41:34 +0800 (CST)
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: tj@kernel.org,
-	hannes@cmpxchg.org,
-	mkoutny@suse.com,
-	lizefan@huawei.com
-Cc: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lujialin4@huawei.com,
-	chenridong@huawei.com,
-	gaoyingjie@uniontech.com
-Subject: [PATCH v2 -next] cgroup: remove offline draining in root destruction to avoid hung_tasks
-Date: Tue, 22 Jul 2025 11:27:33 +0000
-Message-Id: <20250722112733.4113237-1-chenridong@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1753183710; c=relaxed/simple;
+	bh=At2V/kMEVAMOc7rwa0q0cMeLRXXO35/EMTiaaPc0a+8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=n/N/28L0OejyU/k3yK4Dz1+WlyoorPNYtZKmNHajvEYTTJSyk9KYFS/nzETrwAR5fd/APinRFj5hLGYBpbIGY8Z7QeJ58gFtQ06Y4q06U9ttTp/6wU/8FVV0ljiNuD8kRxUo1jk6VHmvEg3eRFSCZutEUYsbSjFz0Qlb3MYBLf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bmZgr0sw1z13Ld1;
+	Tue, 22 Jul 2025 19:25:28 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id E22BE140202;
+	Tue, 22 Jul 2025 19:28:23 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 22 Jul 2025 19:28:23 +0800
+Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
+ (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 22 Jul
+ 2025 19:28:22 +0800
+Message-ID: <d768fd79-ef55-4d40-829f-7ca4749c8370@huawei.com>
+Date: Tue, 22 Jul 2025 19:28:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ACPI: processor: idle: Fix resource rollback in
+ acpi_processor_power_init
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+CC: <lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+	<jonathan.cameron@huawei.com>, <zhanjie9@hisilicon.com>,
+	<zhenglifeng1@huawei.com>, <yubowen8@huawei.com>, <liuyonglong@huawei.com>,
+	<lihuisong@huawei.com>
+References: <20250619061327.1674384-1-lihuisong@huawei.com>
+ <CAJZ5v0gjkZ3a-BwgJxjUJbNwu5E_j9VUUHrR3M=a+KPTA-tZcA@mail.gmail.com>
+ <6a35291a-32e8-461e-a0e5-405b7b5d24ce@huawei.com>
+ <CAJZ5v0hXHgyCKoEOMTtp0c_yu__vGGDcPnqaUML2Xg7hyJWc3g@mail.gmail.com>
+ <4c1926ef-f9fa-49d5-8d5f-ed4ee2638d62@huawei.com>
+ <CAJZ5v0j8k3FXx0TCF8nF+KTGcZL8CG7yZ6_Z11jpqOM9x_0w6g@mail.gmail.com>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <CAJZ5v0j8k3FXx0TCF8nF+KTGcZL8CG7yZ6_Z11jpqOM9x_0w6g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgDH07XjeH9ove1hBA--.34468S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxZryrXF4fXFWrKFyruw13XFb_yoW5ZrWrpF
-	s8Cw12yw4rGF1Dt3ykta4Iga4F9a10qw4jq3WIg3y8AF17Xryqq3Z2yF1jqF10yFsrCay2
-	vrZ0vrn5G34jywUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
-	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
 
-From: Chen Ridong <chenridong@huawei.com>
 
-A hung task can occur during [1] LTP cgroup testing when repeatedly
-mounting/unmounting perf_event and net_prio controllers with
-systemd.unified_cgroup_hierarchy=1. The hang manifests in
-cgroup_lock_and_drain_offline() during root destruction.
-
-Related case:
-cgroup_fj_function_perf_event cgroup_fj_function.sh perf_event
-cgroup_fj_function_net_prio cgroup_fj_function.sh net_prio
-
-Call Trace:
-	cgroup_lock_and_drain_offline+0x14c/0x1e8
-	cgroup_destroy_root+0x3c/0x2c0
-	css_free_rwork_fn+0x248/0x338
-	process_one_work+0x16c/0x3b8
-	worker_thread+0x22c/0x3b0
-	kthread+0xec/0x100
-	ret_from_fork+0x10/0x20
-
-Root Cause:
-
-CPU0                            CPU1
-mount perf_event                umount net_prio
-cgroup1_get_tree                cgroup_kill_sb
-rebind_subsystems               // root destruction enqueues
-				// cgroup_destroy_wq
-// kill all perf_event css
-                                // one perf_event css A is dying
-                                // css A offline enqueues cgroup_destroy_wq
-                                // root destruction will be executed first
-                                css_free_rwork_fn
-                                cgroup_destroy_root
-                                cgroup_lock_and_drain_offline
-                                // some perf descendants are dying
-                                // cgroup_destroy_wq max_active = 1
-                                // waiting for css A to die
-
-Problem scenario:
-1. CPU0 mounts perf_event (rebind_subsystems)
-2. CPU1 unmounts net_prio (cgroup_kill_sb), queuing root destruction work
-3. A dying perf_event CSS gets queued for offline after root destruction
-4. Root destruction waits for offline completion, but offline work is
-   blocked behind root destruction in cgroup_destroy_wq (max_active=1)
-
-Solution:
-Move cgroup_lock_and_drain_offline() to the start of unmount operations.
-This ensures:
-1. cgroup_lock_and_drain_offline() will not be called within
-   cgroup_destroy_wq context.
-2. No new dying csses for the subsystem being unmounted can appear in
-   cgrp_dfl_root between unmount start and subsystem rebinding.
-
-[1] https://github.com/linux-test-project/ltp/blob/master/runtest/controllers
-Fixes: 334c3679ec4b ("cgroup: reimplement rebind_subsystems() using cgroup_apply_control() and friends")
-Reported-by: Gao Yingjie <gaoyingjie@uniontech.com>
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
----
- kernel/cgroup/cgroup.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index 312c6a8b55bb..af81a90f8c92 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -1346,8 +1346,7 @@ static void cgroup_destroy_root(struct cgroup_root *root)
- 
- 	trace_cgroup_destroy_root(root);
- 
--	cgroup_lock_and_drain_offline(&cgrp_dfl_root.cgrp);
--
-+	cgroup_lock();
- 	BUG_ON(atomic_read(&root->nr_cgrps));
- 	BUG_ON(!list_empty(&cgrp->self.children));
- 
-@@ -2336,6 +2335,8 @@ static void cgroup_kill_sb(struct super_block *sb)
- 	 *
- 	 * And don't kill the default root.
- 	 */
-+	cgroup_lock_and_drain_offline(&cgrp_dfl_root.cgrp);
-+	cgroup_unlock();
- 	if (list_empty(&root->cgrp.self.children) && root != &cgrp_dfl_root &&
- 	    !percpu_ref_is_dying(&root->cgrp.self.refcnt))
- 		percpu_ref_kill(&root->cgrp.self.refcnt);
--- 
-2.34.1
-
+在 2025/7/22 19:10, Rafael J. Wysocki 写道:
+> On Mon, Jul 14, 2025 at 3:34 AM lihuisong (C) <lihuisong@huawei.com> wrote:
+>>
+>> 在 2025/7/3 19:09, Rafael J. Wysocki 写道:
+>>> On Thu, Jul 3, 2025 at 8:23 AM lihuisong (C) <lihuisong@huawei.com> wrote:
+>>>> Hi,
+>>>>
+>>>> Thanks for your review.
+>>>>
+>>>>
+>>>> 在 2025/7/3 1:42, Rafael J. Wysocki 写道:
+>>>>> On Thu, Jun 19, 2025 at 8:13 AM Huisong Li <lihuisong@huawei.com> wrote:
+>>>>>> There are two resource rollback issues in acpi_processor_power_init:
+>>>>>> 1> Do not unregister acpi_idle_driver when do kzalloc failed.
+>>>>>> 2> Do not free cpuidle device memory when register cpuidle device failed.
+>>>>>>
+>>>>>> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+>>>>>> ---
+>>>>>>     drivers/acpi/processor_idle.c | 24 +++++++++++++++++-------
+>>>>>>     1 file changed, 17 insertions(+), 7 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
+>>>>>> index 2c2dc559e0f8..3548ab9dac9e 100644
+>>>>>> --- a/drivers/acpi/processor_idle.c
+>>>>>> +++ b/drivers/acpi/processor_idle.c
+>>>>>> @@ -1392,8 +1392,10 @@ int acpi_processor_power_init(struct acpi_processor *pr)
+>>>>>>                    }
+>>>>>>
+>>>>>>                    dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+>>>>>> -               if (!dev)
+>>>>>> -                       return -ENOMEM;
+>>>>>> +               if (!dev) {
+>>>>>> +                       retval = -ENOMEM;
+>>>>>> +                       goto unregister_driver;
+>>>>> No, unregistering the driver here is pointless.
+>>>> I don't quite understand why here is pointless. Can you explain it?
+>>> When this function is run for another CPU, it will attempt to register
+>>> the driver again if it is unregistered here.
+>> Yeah, got it.
+>> So registering cpuidle also has a potential race issue here.
+>>> Quite frankly, the driver should be registered before running this
+>>> function because it is a CPU hotplug callback and registering a
+>>> cpuidle driver from within it is quite questionable.
+>>>
+>>> Alternatively, it can be registered when all of the CPUs have been brought up.
+>> Agree with you.
+>> The reason why is that the initialization of acpi_idle_driver depands on
+>> the power management information of CPU.
+>> But the power management information of CPU is obtained in this callback.
+>> I have an idea.
+>> Because acpi_idle_driver is applied to all possiable CPUs. And use the
+>> power information of the first onlined CPU to initialize and register
+>> acpi_idle_driver, currently.
+>> So I think we can use this logic and dependency to extract a function to
+>> initialize and register acpi_idle_driver. And put this function to
+>> acpi_processor_driver_init().
+>> I tested it is ok.
+>> What do you think about this?
+> This is one of the options I mentioned above, isn't it?
+Yes, it is what you mentioned. I think this option is relatively easier 
+to handle.
+I am not sure if I understand correctly.
+So I wanted to confirmed with you.
 
