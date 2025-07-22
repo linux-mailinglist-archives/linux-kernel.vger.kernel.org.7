@@ -1,85 +1,79 @@
-Return-Path: <linux-kernel+bounces-740510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58A18B0D51A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:58:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C0E1B0D523
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:59:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84E087AF43C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:56:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36841AA1A39
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:58:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 926692DC33C;
-	Tue, 22 Jul 2025 08:57:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7AAA2DA77B;
+	Tue, 22 Jul 2025 08:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="iogyFG8G"
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="fwKaXxTL"
 Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9646A2D879C;
-	Tue, 22 Jul 2025 08:57:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C001A3A8A;
+	Tue, 22 Jul 2025 08:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753174664; cv=none; b=qWJebYNrCXm+XHeh9GMYaoLvH5bdGgzqjNtHsiFqv2LD0x7mRMjTF1fn+AN4Wq6TaPXoT/suZO/itVtrJmBJ2ytXqrc8Xwf2E4hxFYhtM7agLHpocHPU7YKpmU97PjadGt5yUBKqQqsENXDDdUkAFR7uHCiYGxlwGXtjB5PL4rY=
+	t=1753174705; cv=none; b=QGmJJjYdPVehiSy+XCpkkVaL34YoLYtcuFXvaEL8LrSKzZoWucOV8/V8EHKbI9kWkupd0eFZ4izeqRvO2TTnqOGBiaToeXqpL7M6Q6ZB/aB6hCxqkQjhlbA5rXekZenihosf2XhBdi+Hr/w17vZJAWb6v7Zqxznq7RfPRdBepzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753174664; c=relaxed/simple;
-	bh=KvN8sv7w9wmnqUZhglPw2qvSYexcIFtg6NvjXipUAYc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AdXXrhDAQhwDT5WucQs5hENSVIsDMk+5ivUg6y1QcrrCexg2LBhhxq1hs6X+OpdfCGBCJRvDEOmmrYwFJSp7zPQeVOViWIFWaJ4OZOHjnQ/7miL6yyQh1USA+9ao7jDd9QxcY7NjNXQlikiDKTeUX7z0l+6an/rbQdwYJcetolo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=iogyFG8G; arc=none smtp.client-ip=210.61.82.184
+	s=arc-20240116; t=1753174705; c=relaxed/simple;
+	bh=QFvK1fcPuHhSUP+FGKhnrOv8INun7TEkxsGsudEqbUY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FIcvQQK08sM2TaaWDnuUK5TCCDngrqN9iP16XG0FZb/bIsHaKCLS1YUVL0Yww2aYcvIzJMPjrvUidhHj6vPo1r6OW5tLjiWFSrSls1ng/WAyhbqr2y7hUmWtSYkCWFvrpByf1jndfpIycSu8H0LkWzQzVjRrgxjIIY+dxr+V8Uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=fwKaXxTL; arc=none smtp.client-ip=210.61.82.184
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: eaac5b1c66d911f0b33aeb1e7f16c2b6-20250722
+X-UUID: 03414c1466da11f0b33aeb1e7f16c2b6-20250722
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=oKOODA8AhDMVK+3zgK4+VmsoIhuWOIaeZX3PHT4WMgo=;
-	b=iogyFG8GP6r6CrRcKehdXCLuO6JV4CAbBsmF2LulpIBsuQi2XnEDEUcT+D0sBq1x6HVVasBVt+H7ORbHncKPQgPpwHPZNbrps7hk6PoXiW/dekG4jw2lG3xqC7z1wil+yIeMg02DLkmi/IlhX1vDpocACRyrVi9+Y5h8b/TXJhU=;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=hzGaDLq+m+tkcXVtKTD2IW0RV5HAF+3qtFsfZ6wKMV0=;
+	b=fwKaXxTL3zUYfrePKAYQ/lPWjBkZH3c/h7lQKYnPopNeZKYgrD7rKI+VdjBkkozXVdQsCxuLCYYwQkFwuAcjN3jT2pAcSXCd0b9J8seTxIXM8Wh5F5i9XpSiZorDrD6J1wrsGLLxODIQVHS1LryGrCsjQG9c3OJByjTit8vEkP8=;
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.2,REQID:9b63e1e1-7fb2-45cc-b6bd-bc8eb27ea4cc,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:9eb4ff7,CLOUDID:83a3249a-32fc-44a3-90ac-aa371853f23f,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:-3
-	,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV
-	:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
+X-CID-O-INFO: VERSION:1.3.2,REQID:e7c63eb1-2020-43ba-8b61-bccd9ca48e25,IP:0,UR
+	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:-5
+X-CID-META: VersionHash:9eb4ff7,CLOUDID:75a5249a-32fc-44a3-90ac-aa371853f23f,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
 X-CID-FACTOR: TF_CID_SPAM_SNR
 X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: eaac5b1c66d911f0b33aeb1e7f16c2b6-20250722
-Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
+X-UUID: 03414c1466da11f0b33aeb1e7f16c2b6-20250722
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
 	(envelope-from <macpaul.lin@mediatek.com>)
 	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1538084935; Tue, 22 Jul 2025 16:57:37 +0800
+	with ESMTP id 1680871045; Tue, 22 Jul 2025 16:58:19 +0800
 Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Tue, 22 Jul 2025 16:57:37 +0800
+ 15.2.1258.39; Tue, 22 Jul 2025 16:58:17 +0800
 Received: from mtksitap99.mediatek.inc (10.233.130.16) by
  mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Tue, 22 Jul 2025 16:57:36 +0800
+ 15.2.1258.39 via Frontend Transport; Tue, 22 Jul 2025 16:58:17 +0800
 From: Macpaul Lin <macpaul.lin@mediatek.com>
-To: Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
-	Bart Van Assche <bvanassche@acm.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Peter Wang
-	<peter.wang@mediatek.com>, Stanley Jhu <chu.stanley@gmail.com>, "James E . J
- . Bottomley" <James.Bottomley@HansenPartnership.com>, "Martin K . Petersen"
-	<martin.petersen@oracle.com>, <linux-scsi@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Catalin Marinas
+	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Sean Wang
+	<sean.wang@mediatek.com>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>
 CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
 	Ramax Lo <ramax.lo@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>,
 	Macpaul Lin <macpaul@gmail.com>, MediaTek Chromebook Upstream
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Rice Lee
-	<ot_riceyj.lee@mediatek.com>, Eric Lin <ht.lin@mediatek.com>
-Subject: [PATCH v2 4/4] arm64: dts: mediatek: mt8195: add UFSHCI node
-Date: Tue, 22 Jul 2025 16:57:20 +0800
-Message-ID: <20250722085721.2062657-4-macpaul.lin@mediatek.com>
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [PATCH v2 1/4] dt-bindings: arm64: mediatek: add mt8395-evk-ufs board
+Date: Tue, 22 Jul 2025 16:58:08 +0800
+Message-ID: <20250722085811.2062790-1-macpaul.lin@mediatek.com>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250722085721.2062657-1-macpaul.lin@mediatek.com>
-References: <20250722085721.2062657-1-macpaul.lin@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,58 +84,33 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-MTK: N
 
-From: Rice Lee <ot_riceyj.lee@mediatek.com>
+Add a compatible string for the MediaTek mt8395-evk-ufs board.
+This board is the origin Genio 1200 EVK already mounted two main storages,
+one is eMMC, and the other is UFS. The system automatically prioritizes
+between eMMC and UFS via BROM detection, so user could not use both storage
+types simultaneously. As a result, mt8395-evk-ufs must be treated as a
+separate board.
 
-Add a UFS host controller interface (UFSHCI) node to mt8195.dtsi.
-Introduce the 'mediatek,ufs-disable-mcq' property to allow disabling
-Multiple Circular Queue (MCQ) support.
-
-Signed-off-by: Rice Lee <ot_riceyj.lee@mediatek.com>
-Signed-off-by: Eric Lin <ht.lin@mediatek.com>
 Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
 ---
- arch/arm64/boot/dts/mediatek/mt8195.dtsi | 25 ++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ Documentation/devicetree/bindings/arm/mediatek.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
 Changes for v2:
  - No change.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-index dd065b1bf94a..8877953ce292 100644
---- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-@@ -1430,6 +1430,31 @@ mmc2: mmc@11250000 {
- 			status = "disabled";
- 		};
- 
-+		ufshci: ufshci@11270000 {
-+			compatible = "mediatek,mt8195-ufshci";
-+			reg = <0 0x11270000 0 0x2300>;
-+			interrupts = <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH 0>;
-+			phys = <&ufsphy>;
-+			clocks = <&infracfg_ao CLK_INFRA_AO_AES_UFSFDE>,
-+				 <&infracfg_ao CLK_INFRA_AO_AES>,
-+				 <&infracfg_ao CLK_INFRA_AO_UFS_TICK>,
-+				 <&infracfg_ao CLK_INFRA_AO_UNIPRO_SYS>,
-+				 <&infracfg_ao CLK_INFRA_AO_UNIPRO_TICK>,
-+				 <&infracfg_ao CLK_INFRA_AO_UFS_MP_SAP_B>,
-+				 <&infracfg_ao CLK_INFRA_AO_UFS_TX_SYMBOL>,
-+				 <&infracfg_ao CLK_INFRA_AO_PERI_UFS_MEM_SUB>;
-+			clock-names = "ufs", "ufs_aes", "ufs_tick",
-+					"unipro_sysclk", "unipro_tick",
-+					"unipro_mp_bclk", "ufs_tx_symbol",
-+					"ufs_mem_sub";
-+			freq-table-hz = <0 0>, <0 0>, <0 0>,
-+					<0 0>, <0 0>, <0 0>,
-+					<0 0>, <0 0>;
-+
-+			mediatek,ufs-disable-mcq;
-+			status = "disabled";
-+		};
-+
- 		lvts_mcu: thermal-sensor@11278000 {
- 			compatible = "mediatek,mt8195-lvts-mcu";
- 			reg = <0 0x11278000 0 0x1000>;
+diff --git a/Documentation/devicetree/bindings/arm/mediatek.yaml b/Documentation/devicetree/bindings/arm/mediatek.yaml
+index 19ed9448c9c2..34b9e254a563 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek.yaml
++++ b/Documentation/devicetree/bindings/arm/mediatek.yaml
+@@ -443,6 +443,7 @@ properties:
+           - enum:
+               - kontron,3-5-sbc-i1200
+               - mediatek,mt8395-evk
++              - mediatek,mt8395-evk-ufs
+               - radxa,nio-12l
+           - const: mediatek,mt8395
+           - const: mediatek,mt8195
 -- 
 2.45.2
 
