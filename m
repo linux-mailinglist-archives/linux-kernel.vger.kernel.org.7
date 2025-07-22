@@ -1,141 +1,102 @@
-Return-Path: <linux-kernel+bounces-740072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A2E4B0CF46
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:47:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BE0FB0CF44
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:47:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB5703BC96E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 01:47:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F379C3B2BCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 01:47:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CECB01917E3;
-	Tue, 22 Jul 2025 01:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="bmn0F9G4"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66AF1D54D8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5491A8F60;
 	Tue, 22 Jul 2025 01:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9BCBA2E
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 01:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753148856; cv=none; b=gbFwBuuC2cyxa6zbat7m3Hnv9U7N6lhAU0hdNVFGte75j4wHA3Xoie0CzxTE+7/Syum2Dl3fmjvDWjBuDt6do6jxtaRK/7O7xRDfHvOMvkIDHkKuagaAcsPrEw7P1g5vsOrL0DGQD4t3+BR1oaLZZeJnMFLaTt70GxJ/kXOrnCU=
+	t=1753148849; cv=none; b=VAPNYGac97gZ3Ftfdc3tl/SpzukrKIEK4FUU34a4o7xGn4QMZSEHM1nDKr5+2FipQehlOgJ33jtTzQ7I3yuXC3nDu94adsrEfYwi+nPLvYflY1n5J2KQZCvRO5bseambBHEl3bwPxtHzUu20/TP8tHwBMWOLsBMkQkF8HMcqzAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753148856; c=relaxed/simple;
-	bh=wA1QITrQBhdk+4tvlTm+Tov0pvRC29l4XibQzq+mUzE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NiVaenqMju9/UvNy03ctaS5Lf5oDp7LS/btuyAn20c9LksE6O1d7mY8P9rOVEUfNz8bcLsELkj1E7J7wuKfP+eNE0T0jhnzm3PDPd9QgfazLyR1xjfhsVRIqZV4zp585I7vPcc8vXpyB4H0eXrH30uZ4Ayep9WKpxE3H0LdAxFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=bmn0F9G4; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=UF
-	FA3TVgkftJ5l67i2jAJr8Ojd09cjfv7mgXsQZyJeA=; b=bmn0F9G4mKZ2F778aD
-	edxDi8mBkR7SetlQS5yOTRQrNroAO0kbbja7VZQ0o55LGMag8rPSv2hfcK7SA6XM
-	uiewlmDxhrKH+rG0Z1OmI2JMguAFyn67iRJWc6/ittmRBU8xZiijgFHwAGQwj2uP
-	ZL37BdojAMbNXUJX4SFfrGuoI=
-Received: from 163.com (unknown [])
-	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wD3P0WJ7X5oMjZkGg--.28519S2;
-	Tue, 22 Jul 2025 09:46:49 +0800 (CST)
-From: chenyuan_fl@163.com
-To: qmo@kernel.org,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	yonghong.song@linux.dev
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yuan Chen <chenyuan@kylinos.com>
-Subject: [PATCH v4] bpftool: Add CET-aware symbol matching for x86/x86_64 architectures
-Date: Tue, 22 Jul 2025 09:46:42 +0800
-Message-Id: <20250722014642.14073-1-chenyuan_fl@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <9f233a20-6649-4796-9ef4-a499382b0006@linux.dev>
-References: <9f233a20-6649-4796-9ef4-a499382b0006@linux.dev>
+	s=arc-20240116; t=1753148849; c=relaxed/simple;
+	bh=QEf8gRu6CbJlbgIes0s2sFChPCGsXGhPHEpLakDwMqI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=QbYE/QJSgl6xkPSdp6v9By3cm6KonMDKP/PExBvutiEb6NTdcNAnYtzvPEnZP4uCsHqg4iSoZfmUlJL0rNhcpHEqhuG6e5eXywdVb/d/uKNPpuZ38PaZ4mZ5XdP+Sz0nMA8zIb0x068krfkk+zJAvZ0SM53v0lFervMh1BmUWm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bmKlB38Wjz14M4L;
+	Tue, 22 Jul 2025 09:42:30 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id C4902140275;
+	Tue, 22 Jul 2025 09:47:19 +0800 (CST)
+Received: from kwepemq200011.china.huawei.com (7.202.195.155) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 22 Jul 2025 09:47:19 +0800
+Received: from [10.67.110.108] (10.67.110.108) by
+ kwepemq200011.china.huawei.com (7.202.195.155) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 22 Jul 2025 09:47:18 +0800
+Message-ID: <d84b1955-3ee5-4c12-ba3c-1a45ac4d3700@huawei.com>
+Date: Tue, 22 Jul 2025 09:47:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] SCTLR_EL1.TIDCP toggling for performance
+To: Catalin Marinas <catalin.marinas@arm.com>
+CC: <kristina.martsenko@arm.com>, <will@kernel.org>, <mark.rutland@arm.com>,
+	<sashal@kernel.org>, <yangjiangshui@h-partners.com>, <zouyipeng@huawei.com>,
+	<justin.he@arm.com>, <zengheng4@huawei.com>, <yangyicong@hisilicon.com>,
+	ruanjinjie <ruanjinjie@huawei.com>, <inux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+References: <24afb8de-622a-4865-bd8e-8e89ccfff8f4@huawei.com>
+ <aHqamaqueuk18NyS@arm.com>
+From: "Liao, Chang" <liaochang1@huawei.com>
+In-Reply-To: <aHqamaqueuk18NyS@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3P0WJ7X5oMjZkGg--.28519S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxWF43uw13tFyruw1fJFy7Wrg_yoW5Jw47pr
-	WrAwsYyFWUXrW3Wws3Aa15AFW3tFsavw47Ar97G34a9r45Zrn2yF1xKF1IyF1aqr1kJw47
-	AFnI9FZ0gFZIvrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jFq2NUUUUU=
-X-CM-SenderInfo: xfkh05pxdqswro6rljoofrz/1tbiUQ+SvWh+7IsVFQAAsA
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemq200011.china.huawei.com (7.202.195.155)
 
-From: Yuan Chen <chenyuan@kylinos.com>
 
-Adjust symbol matching logic to account for Control-flow Enforcement
-Technology (CET) on x86/x86_64 systems. CET prefixes functions with
-a 4-byte 'endbr' instruction, shifting the actual hook entry point to
-symbol + 4.
 
-Changed in PATCH v4:
-* Refactor repeated code into a function.
-* Add detection for the x86 architecture.
+在 2025/7/19 3:03, Catalin Marinas 写道:
+> On Fri, Jul 18, 2025 at 10:32:00AM +0800, Liao, Chang wrote:
+>> I've reviewed your patch [1] for FEAT_TIDCP1 support, which by default traps EL0
+>> accesses to implementation-defined system registers and instructions at EL1/EL2.
+>>
+>> Do you have any plans to add support for toggling the SCTLR_EL1.TIDCP1 bit? I'm
+>> encountering performance degradation on CPU where certain implementation-defined
+>> registers and instructions are designed for EL0 performance use. The trapping
+>> overhead is substantial enough to compromise any benefits, and it's even worse
+>> in virtualization. Therefore, I'm hoping there's a way to clear the SCTLR_EL1.TIDCP1
+>> bit on such platforms, perhaps via a kernel config option or command-line parameter.
+>> Alternatively, do you have a better solution for gracefully toggling this bit on
+>> and off?
+> 
+> Given that we don't know what imp def functionality is available, what
+> side-effects it has, we should not allow user-space to toggle such bit,
+> nor allow the user access to those registers.
+> 
+> System-wide, passing id_aa64mmfr1.tidcp1=0 on the kernel command line
+> may work.
 
-Signed-off-by: Yuan Chen <chenyuan@kylinos.com>
----
- tools/bpf/bpftool/link.c | 27 +++++++++++++++++++++++++--
- 1 file changed, 25 insertions(+), 2 deletions(-)
+Thanks for the suggestion. I'll prepare a patch to support id_aa64mmfr1.tidcp1=0
+on the kernel command line.
 
-diff --git a/tools/bpf/bpftool/link.c b/tools/bpf/bpftool/link.c
-index a773e05d5ade..9e5d85421919 100644
---- a/tools/bpf/bpftool/link.c
-+++ b/tools/bpf/bpftool/link.c
-@@ -282,6 +282,28 @@ get_addr_cookie_array(__u64 *addrs, __u64 *cookies, __u32 count)
- 	return data;
- }
- 
-+static bool
-+symbol_matches_target(__u64 sym_addr, __u64 target_addr)
-+{
-+	if (sym_addr == target_addr)
-+		return true;
-+
-+#if defined(__i386__) || defined(__x86_64__)
-+	/*
-+	 * On x86 architectures with CET (Control-flow Enforcement Technology),
-+	 * function entry points have a 4-byte 'endbr' instruction prefix.
-+	 * This causes kprobe hooks to target the address *after* 'endbr'
-+	 * (symbol address + 4), preserving the CET instruction.
-+	 * Here we check if the symbol address matches the hook target address minus 4,
-+	 * indicating a CET-enabled function entry point.
-+	 */
-+	if (sym_addr == target_addr - 4)
-+		return true;
-+#endif
-+
-+	return false;
-+}
-+
- static void
- show_kprobe_multi_json(struct bpf_link_info *info, json_writer_t *wtr)
- {
-@@ -307,8 +329,9 @@ show_kprobe_multi_json(struct bpf_link_info *info, json_writer_t *wtr)
- 		goto error;
- 
- 	for (i = 0; i < dd.sym_count; i++) {
--		if (dd.sym_mapping[i].address != data[j].addr)
-+		if (!symbol_matches_target(dd.sym_mapping[i].address, data[j].addr))
- 			continue;
-+
- 		jsonw_start_object(json_wtr);
- 		jsonw_uint_field(json_wtr, "addr", dd.sym_mapping[i].address);
- 		jsonw_string_field(json_wtr, "func", dd.sym_mapping[i].name);
-@@ -744,7 +767,7 @@ static void show_kprobe_multi_plain(struct bpf_link_info *info)
- 
- 	printf("\n\t%-16s %-16s %s", "addr", "cookie", "func [module]");
- 	for (i = 0; i < dd.sym_count; i++) {
--		if (dd.sym_mapping[i].address != data[j].addr)
-+		if (!symbol_matches_target(dd.sym_mapping[i].address, data[j].addr))
- 			continue;
- 		printf("\n\t%016lx %-16llx %s",
- 		       dd.sym_mapping[i].address, data[j].cookie, dd.sym_mapping[i].name);
+> 
+
 -- 
-2.25.1
+BR
+Liao, Chang
 
 
