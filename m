@@ -1,118 +1,112 @@
-Return-Path: <linux-kernel+bounces-740743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26C81B0D885
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:47:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56E27B0D8CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:03:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 015C07B4537
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:46:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CB8F6C3074
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05762E3380;
-	Tue, 22 Jul 2025 11:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="NgCQTdb/"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E20482E3384;
+	Tue, 22 Jul 2025 12:02:53 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3AD7289811;
-	Tue, 22 Jul 2025 11:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753184853; cv=pass; b=HEuPl7P2h/9qN6tZFuKfSrpwaGP3SScKJ+Cn5QZwcWhN65O6JSHw/LTEkJbATzpz2TRS+WGLO00S/NmGzBnJdDjURi1B5cKtpKHpeDUWmhNoBGzWzGk1Ft2mLXnCWz/SwJvIgtOqWAm5U1cZ0Qchs1f3DuPwHJmuSONUXTDImPE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753184853; c=relaxed/simple;
-	bh=xpegnxQs3ZbtY7JbpoeqaEx7Okr5XdmawkN2WmtMZnQ=;
-	h=MIME-Version:From:To:In-Reply-To:Cc:Subject:Message-ID:Date:
-	 Content-Type; b=Y6sovS6F9bXHFKKU/CZGX4vtxJFVi5ZH/NsE2U5l0waPPXxmstylCRx77KnLXf7UhqgGjgOviGnpPfY2LMGa3MDyDD6SnFmblV/Ezb9HfG9G0jxF2eM34mo3itEqLOXw7Al4qeY9bwZMq1njDcUWXojn1RrAMYj4kYNhSkwG3sk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=NgCQTdb/; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
-ARC-Seal: i=1; a=rsa-sha256; t=1753184822; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=DdBCLaeCsAfj/AcN99FfwGfHj8oCOHBcr24JxgrFvH7b49ZdsHVI7xw74RCbY++5eysOePiGQzNZCU5huPjEw0UBIunOaO42tf8col8GXE/ScGkF3pOFEY8jjTY3g4bKgJa0fYN1NYUnwiqTca7rwa7I8DxXUH4yS5Hg7WRmBtw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753184822; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=iLoaiwS+Ud2yCbXeC9zL0Mtugd211TCM6YPAiCXDkGs=; 
-	b=WcNS2HjKW4KJIauGA/uu5xDWgUkHF7q+I84+DA22Stjr9UjuOQVA71A2EhiOo/L39QzJIP9ENcimPH1cLvWLs81irpd6HIBPdUspriV/OIS9Ei96uNC6lxoZ0IPSrkpSKTWANywBJ8j97nTVL4IpUgJD5BjeAc0AUEtsXcpwRbw=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=pigmoral.tech;
-	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
-	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753184822;
-	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
-	h=MIME-Version:From:From:To:To:In-Reply-To:Cc:Cc:Subject:Subject:Message-ID:Date:Date:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=iLoaiwS+Ud2yCbXeC9zL0Mtugd211TCM6YPAiCXDkGs=;
-	b=NgCQTdb/5h4sQYxngtfLCx56kgvIKBKfK43c0olNs8WqxaXrbI1RINvaX/npx/G4
-	kTsXKPscdSZUbIexWIJMWZaEwxmmM/1KHXfONk6/RKO0ZsNOM+304c0jH36hUA7Xkgo
-	qEBCSyt7r8DMh9gKInrUkIJdRPFzNZB3W28xJVqE=
-Received: by mx.zohomail.com with SMTPS id 1753184818692439.0197627599191;
-	Tue, 22 Jul 2025 04:46:58 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16AAA238D5A;
+	Tue, 22 Jul 2025 12:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753185773; cv=none; b=hg4l/LhBCojWQWFNRkUB0jgxzvK77LzQXWpjU7u+qf9HnWqckNfTSP3V62VZCjFCBgxYBKgYVmClLH1njarbfwjGCuVCig21mEkdMONFMYHH79zrxHPtYVuKq/RuwTL8jvXO4V8p5PBnHbfonC9YwVTb5B1Ip+5A7//RQ/w70Ws=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753185773; c=relaxed/simple;
+	bh=tS+oyFiKULziXi6kE9tTCrN/rFgvZ1uqe7kGi9KMqQ0=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BNCLUBClu+4TQPhpM2VAiINZADVSuPl9AXweT0V+XdhFLvDfbyTFoj7xtxugo2c9ZmVn1BihAEsosI/wxmIiBImVQBO8nKbNBAt/23tbEl9cPlgTNZmH6tlPd/kJ62P8BgIVyj6yiiId6Dlnac1KHY5iDviqVUPBZUJoWUoZ8E4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bmbRn5c4Rz1R8gj;
+	Tue, 22 Jul 2025 20:00:05 +0800 (CST)
+Received: from dggpemf100009.china.huawei.com (unknown [7.185.36.128])
+	by mail.maildlp.com (Postfix) with ESMTPS id D970E140118;
+	Tue, 22 Jul 2025 20:02:45 +0800 (CST)
+Received: from huawei.com (10.67.175.29) by dggpemf100009.china.huawei.com
+ (7.185.36.128) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 22 Jul
+ 2025 20:02:45 +0800
+From: Wang Tao <wangtao554@huawei.com>
+To: <graf@amazon.com>
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <mingo@redhat.com>,
+	<nh-open-source@amazon.com>, <peterz@infradead.org>, <sieberf@amazon.com>,
+	<vincent.guittot@linaro.org>, <tanghui20@huawei.com>
+Subject: [PATCH] Re: [PATCH] sched/fair: Only increment deadline once on yield
+Date: Tue, 22 Jul 2025 11:46:54 +0000
+Message-ID: <20250722114654.2620626-1-wangtao554@huawei.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <7eed0c3d-6a78-4724-b204-a3b99764d839@amazon.com>
+References: <7eed0c3d-6a78-4724-b204-a3b99764d839@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Junhui Liu" <junhui.liu@pigmoral.tech>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>
-In-Reply-To: <20250722-proud-polar-mink-12caa8@kuoka>
-Cc: "Rob Herring" <robh@kernel.org>, 
-	"Krzysztof Kozlowski" <krzk+dt@kernel.org>, 
-	"Conor Dooley" <conor+dt@kernel.org>, 
-	"Paul Walmsley" <paul.walmsley@sifive.com>, 
-	"Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>, 
-	"Alexandre Ghiti" <alex@ghiti.fr>, 
-	"Daniel Lezcano" <daniel.lezcano@linaro.org>, 
-	"Thomas Gleixner" <tglx@linutronix.de>, 
-	"Samuel Holland" <samuel.holland@sifive.com>, 
-	"Anup Patel" <anup@brainfault.org>, 
-	"Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, 
-	"Jiri Slaby" <jirislaby@kernel.org>, <devicetree@vger.kernel.org>, 
-	<linux-kernel@vger.kernel.org>, "Palmer Dabbelt" <palmer@sifive.com>, 
-	"Conor Dooley" <conor@kernel.org>, <linux-riscv@lists.infradead.org>, 
-	<linux-serial@vger.kernel.org>
-Subject: Re: [PATCH RFC 09/10] riscv: dts: anlogic: Add Milianke MLKPAI FS01
-	 board
-Message-ID: <1854904c2bf8d2d8.e7cd4abd4f21761b.29b7782965d4456e@Jude-Air.local>
-Date: Tue, 22 Jul 2025 11:46:51 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ dggpemf100009.china.huawei.com (7.185.36.128)
+
+>> On 01/04/25 18:06, Fernand Sieber wrote:
+>> If a task yields, the scheduler may decide to pick it again. The task in
+>> turn may decide to yield immediately or shortly after, leading to a tight
+>> loop of yields.
+>>
+>> If there's another runnable task as this point, the deadline will be
+>> increased by the slice at each loop. This can cause the deadline to runaway
+>> pretty quickly, and subsequent elevated run delays later on as the task
+>> doesn't get picked again. The reason the scheduler can pick the same task
+>> again and again despite its deadline increasing is because it may be the
+>> only eligible task at that point.
+>>
+>> Fix this by updating the deadline only to one slice ahead.
+>>
+>> Note, we might want to consider iterating on the implementation of yield as
+>> follow up:
+>> * the yielding task could be forfeiting its remaining slice by
+>>    incrementing its vruntime correspondingly
+>> * in case of yield_to the yielding task could be donating its remaining
+>>    slice to the target task
+>>
+>> Signed-off-by: Fernand Sieber <sieberf@amazon.com>
 
 
+>IMHO it's worth noting that this is not a theoretical issue. We have 
+>seen this in real life: A KVM virtual machine's vCPU which runs into a 
+>busy guest spin lock calls kvm_vcpu_yield_to() which eventually ends up 
+>in the yield_task_fair() function. We have seen such spin locks due to 
+>guest contention rather than host overcommit, which means we go into a 
+>loop of vCPU execution and spin loop exit, which results in an 
+>undesirable increase in the vCPU thread's deadline.
 
-On 22/07/2025 09:31, Krzysztof Kozlowski wrote:
-> On Mon, Jul 21, 2025 at 11:46:15PM +0800, Junhui Liu wrote:
->> Add support for the Milianke MLKPAI FS01 board based on the Anlogic
->> DR1V90 SoC. The board features 512MB of onboard memory, with the region
->> after 0x1fe00000 reserved for OpenSBI.
->>=20
->> Currently, the board can boot to a console via UART1, which is connected
->> to the onboard serial chip and routed to the Type-C interface.
->>=20
->> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
->> ---
->>  arch/riscv/boot/dts/Makefile                       |  1 +
->>  arch/riscv/boot/dts/anlogic/Makefile               |  2 ++
->>  arch/riscv/boot/dts/anlogic/dr1v90-mlkpai-fs01.dts | 28 ++++++++++++++++=
-++++++
->>  3 files changed, 31 insertions(+)
->=20
-> You need maintainers entry for your entire sub-arch. Otherwise why would
-> we want unmaintained code?
+>Given this impacts real workloads and is a bug present since the 
+>introduction of EEVDF, I would say it warrants a
 
-Thanks for your reminder, I will add the relevant information to the
-MAINTAINERS file.
+>Fixes: 147f3efaa24182 ("sched/fair: Implement an EEVDF-like scheduling 
+>policy")
 
->=20
-> Best regards,
-> Krzysztof
+>tag.
 
---=20
-Best regards,
-Junhui Liu
 
+>Alex
+
+Actually, as Alex described, we encountered the same issue in this 
+testing scenario: starting qemu, binding cores to the cpuset group, 
+setting cpuset.cpus=1-3 for stress testing in qemu, 
+running taskset -c 1-3 ./stress-ng -c 20, and then encountering an error where qemu freezes, 
+reporting a soft lockup issue in qemu. After applying this patch, the problem was resolved.
+Do we have plans to merge this patch into the mainline?
 
