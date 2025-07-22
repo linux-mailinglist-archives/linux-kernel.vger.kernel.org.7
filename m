@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-740340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5392AB0D2EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:28:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24A8FB0D30D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:31:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BCE27B3006
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:26:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39342161DE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93FF02D23A8;
-	Tue, 22 Jul 2025 07:28:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 522D028B7CC;
+	Tue, 22 Jul 2025 07:29:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Anb5ftzH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IRfa5n5T"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E729F1DF990;
-	Tue, 22 Jul 2025 07:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62D62D3742;
+	Tue, 22 Jul 2025 07:29:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753169283; cv=none; b=gzCiuMjZ8hT7lNP7gx8cCuFDahVNDIs1vaznOldNXW4SIESjfZO1ccrVAVl/Ju6dOVIuoLoGjKFc+rKToF8LvT7T3EoDeIbT2VXHD5hm7HV3ngBQPwYpUGthVxoPcGVfjbi0eeZwR9wyTAqsauNAp80ssEZ+0nT64mNh69sYK1Y=
+	t=1753169340; cv=none; b=SCjzlnwLlpVCZ6DXkJLiB1PU2wcJinCETJLsn5smWMkA4vkO0VhHkI0+Ttzhpq/tjIUVxe/txIM6lb40xyMR0o3fJF3T1KpfG4TVvpdILtCoHxnazVwfB4S6S+qt6d2IVWAwRGIIcG4VlosPHUpkuohcEmp3ehlCQBAlSph4gUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753169283; c=relaxed/simple;
-	bh=OS1W1F3+uicr+BJ96OdK0Fwq1c/V2PKY69jVU9c7b1E=;
+	s=arc-20240116; t=1753169340; c=relaxed/simple;
+	bh=DuHZ7czdryVEz7C9CcRR7EyNqzZMMuJFxmfzQEZzp7Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YgoE44USUg0NViRzWKB14d9pRdBb6s1IjCvDlDcBt4eQauv00s/bcwDrrF2CtrYAYv99JgYnNMA/Jj6OJwlESAbN6SZmfRKUDas6mC82LpOMhJQny8y0elJwhxMJMBCdMKc0rrxrYBQyELH5Toooqly9c2+i/zITQZ9RD876ngk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Anb5ftzH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB287C4CEEB;
-	Tue, 22 Jul 2025 07:28:01 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ILU/i4g/Up0ARYE91nn8QFm5WMEqyjfYSMf9rkWdB0EqXzTXYprSFWJ5P7Lu2uhnFSSkfDor3tsKLGT9WWT+fYFLC+h9iJxZ+NXNTwETrLscsCGNQZagdOgZhGYgVouZeH0QD2l6fM7Ra7LN5EwYlQN0iXssI9eDoKWOdGeGFPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IRfa5n5T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80FBBC4CEF4;
+	Tue, 22 Jul 2025 07:28:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753169282;
-	bh=OS1W1F3+uicr+BJ96OdK0Fwq1c/V2PKY69jVU9c7b1E=;
+	s=k20201202; t=1753169340;
+	bh=DuHZ7czdryVEz7C9CcRR7EyNqzZMMuJFxmfzQEZzp7Y=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Anb5ftzHQ/yX14xJp8PsiMzrMY9MEeKaMm0E7CtepaK9fz3qD32p+mSm+VxnacIaq
-	 uTed1zP9zxx+3p1YJEHuNUe2M+2hkS5okxg3hAdudS6oaDy8ZDDDvFaJqZ3dBVMJk9
-	 6AVXN5T+UUdkKagrek0uBrKfyB3iEawqBiTFUT6IWFpOKD916pivrYdbwtixibiCqb
-	 5Q/bQZL9I3lESdWUJVbnqQ5R6jm7y7j5ccdH9EcFfWYZ94Zy/WSHnHlMA92qH5cegE
-	 lAjV1zRlqTZ6vnrkcZwbimKHVPc5F0077eA69+0EbWwRC5ikbLCrOqoO12IiyyuPuS
-	 SfB1yGOVJPJyQ==
-Date: Tue, 22 Jul 2025 09:27:59 +0200
+	b=IRfa5n5TNwEg+TnfggjHWux6R/kw/kHjtCirmgr/apR87i24zYilcVME9gQ7t9KJu
+	 ef64v385Z4Yv3Wbzpu2TjYoXvPvk2ZlAu5xveBbAkplyAnbN0fs0MfLzZ6mr/vI83c
+	 eWad2kBy5zfz5VKym+OEom09eKkeFB7EIWxf3wcyHIqOISY1OvoXUbA7+I2o/ySkJy
+	 XFdGHaTQULboEiB7Hk+6f0+k4EwHMfZ9pTnSZ5dMeVD0Hw5f+sTacehfFgX/s4tBwE
+	 R84oZG49U9XVMxCIHje42tGc6BcFph3sOF4BTOeODwkXgYjieUr/SZ+6ITz6IiMYgH
+	 m/HiBFbQGxYOg==
+Date: Tue, 22 Jul 2025 09:28:57 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Junhui Liu <junhui.liu@pigmoral.tech>
 Cc: Rob Herring <robh@kernel.org>, 
@@ -52,11 +52,10 @@ Cc: Rob Herring <robh@kernel.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, devicetree@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@sifive.com>, 
 	Conor Dooley <conor@kernel.org>, linux-riscv@lists.infradead.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH RFC 01/10] dt-bindings: vendor-prefixes: Add Anlogic,
- Milianke and Nuclei
-Message-ID: <20250722-elite-topaz-parrot-9c5a5e@kuoka>
+Subject: Re: [PATCH RFC 03/10] dt-bindings: riscv: Add Anlogic DR1V90
+Message-ID: <20250722-hungry-kind-horse-ead44e@kuoka>
 References: <20250721-dr1v90-basic-dt-v1-0-5740c5199c47@pigmoral.tech>
- <20250721-dr1v90-basic-dt-v1-1-5740c5199c47@pigmoral.tech>
+ <20250721-dr1v90-basic-dt-v1-3-5740c5199c47@pigmoral.tech>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,38 +64,15 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250721-dr1v90-basic-dt-v1-1-5740c5199c47@pigmoral.tech>
+In-Reply-To: <20250721-dr1v90-basic-dt-v1-3-5740c5199c47@pigmoral.tech>
 
-On Mon, Jul 21, 2025 at 11:46:07PM +0800, Junhui Liu wrote:
-> Add vendor prefixes for "anlogic", "milianke" and "nuclei". These are
-> required for describing the Milianke MLKPAI-FS01 board with DR1V90 SoC
-> from Anlogic, which uses a processor core designed by Nuclei.
-> 
-> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
-> ---
->  Documentation/devicetree/bindings/vendor-prefixes.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
+On Mon, Jul 21, 2025 at 11:46:09PM +0800, Junhui Liu wrote:
+> Add Anlogic DR1V90 FPSoC, which is used by the Milianke MLKPAI-FS01
+> board.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Here you describe the hardware with more details.
 
-<form letter>
-This is an automated instruction, just in case, because many review
-tags are being ignored. If you know the process, just skip it entirely
-(please do not feel offended by me posting it here - no bad intentions
-intended, no patronizing, I just want to avoid wasted efforts). If you
-do not know the process, here is a short explanation:
-
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions of patchset, under or above your Signed-off-by tag, unless
-patch changed significantly (e.g. new properties added to the DT
-bindings). Tag is "received", when provided in a message replied to you
-on the mailing list. Tools like b4 can help here ('b4 trailers -u ...').
-However, there's no need to repost patches *only* to add the tags. The
-upstream maintainer will do that for tags received on the version they
-apply.
-
-https://elixir.bootlin.com/linux/v6.15/source/Documentation/process/submitting-patches.rst#L591
-</form letter>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
