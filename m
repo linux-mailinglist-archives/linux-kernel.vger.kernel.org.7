@@ -1,180 +1,202 @@
-Return-Path: <linux-kernel+bounces-740284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66732B0D241
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:57:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AE99B0D24F
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:06:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C4361AA8952
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 06:57:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D4D017B2F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 07:06:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD7028B4FA;
-	Tue, 22 Jul 2025 06:56:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4494028B7C7;
+	Tue, 22 Jul 2025 07:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CpfcgUnu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="CdBWmK4s"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2041.outbound.protection.outlook.com [40.107.244.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B986288531;
-	Tue, 22 Jul 2025 06:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753167361; cv=none; b=eiblMF0NaWZeKcDKG3HuFak0dGEIvvCBC+0Bt8yAM4gxP7GBhsxU8UJliQnKT0CqE+1yl2XZOTfwsqe+gVU8o81Y9pojwDCMkGpX3WlaM7nDhVToa7uyQHBh+mTrINmoprr7O5aavvbnJCd46PpYC/6n2R5i72IW+RLL2xXLRhA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753167361; c=relaxed/simple;
-	bh=DqE2r+jnLUTL7QjlcN7tboq45VqA22jH4eIVD8o4Gmo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QAJgP20a1duVeppOqeal2e+DlUQ49vNLLuIzhW2wJ9VfGd9Q9ReBA3bS2yIttHRwmIO+oXx5OM3w8k/iMi3VkJ/trhvV8btukQ4rk1T3l5v8yBDll3Vqy3dEgR00YTrNKG/tdXfZhM0zyOjt8wiHo6H9Od/YA+MuTwcte1dhiFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CpfcgUnu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB071C19421;
-	Tue, 22 Jul 2025 06:56:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753167360;
-	bh=DqE2r+jnLUTL7QjlcN7tboq45VqA22jH4eIVD8o4Gmo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=CpfcgUnuDL0Vl921O+6i/yShR++00pNLOKABN64TGoQv08s4JWDaq5R787TzRwPYd
-	 SOxP3mvcTg3o5UodLqlybzcfO2KW0UIPKod6tyjXn4Q6f0Jg20Bo4EcbVyst6PFIeD
-	 9wwLag5HZhkuEkGdG4rGL0/xDa1dd1XF4wE0tl/b+CrzT64kGYr4RZg1sRlNLV6OW9
-	 D1EcUuEM2t8ys5AutC5biwDJeSbkbVn8adA+/943wMPAxGJivryo7aGbp+SI8Q2V02
-	 kg6rNPNzOZNNl41J5VZzJI8EAO2Ut8rnz8gAHCFuXdd0jodm+XgB+V+DD74LOgNTj5
-	 FmJF7Vu5xhdxg==
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-32b7f41d3e6so48641711fa.1;
-        Mon, 21 Jul 2025 23:56:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUX5wKbZm2IOtUum/OGqvpO4z6HuCoB1LDU2yLwkY/f5Plsi8y4zE7js47QLNR0MkFLXMM=@vger.kernel.org, AJvYcCVDFvz1UDnN4bfMZaZgoSiBU61uNCyrxz+1ErMzitvXnzAlZWI9i5+nvxqxh5s7fy2Laa8PrZJbca+7@vger.kernel.org, AJvYcCVXWLC8kFscT4NpsDZZFxDbZ1pu5IWgbTG27fSBGPQgOFAhz6tYiTgQZGgiFozgYMae+vl17pTXVFmX2O5WaB9jXRhz/g==@vger.kernel.org, AJvYcCVfWZPG7npEyTbMf5CuHA0vK3Bh81fIGfE5oziQZ9WMjmNkuKAYdW+D81lLZlHoZy6rErgEY+L/QCHc@vger.kernel.org, AJvYcCVj6WVTPqRmsxR9US0Joe4xnrPVkYsbsYT++zuIpmTRkEHX9xvIqIZ7MyFjVPnW3CqfuvbKMr5vEoLa6A==@vger.kernel.org, AJvYcCWIhHeca4enoslA8mdW5sv2IpglC0O/kcNO1B+dftXygCOgwvIKyfDo3YJI5TkOiCO80vNC+35WXCRown6gjbS4SyGc@vger.kernel.org, AJvYcCWKpdWnXbrCDuydrQBZwMHAUbEn6sGmeLTp+AYxZyVQ+HylMHErW7RpIkJHS8eog07E4je8+5aK+LCcalpzfDgM@vger.kernel.org, AJvYcCWWRMDezKzELWTei7j8lwehVzYU2wXXzGpbEo9LsULQJqvW/sAJPS8rUcyMNoX/SLuhruyJ0kaXOfp1Q1wH@vger.kernel.org, AJvYcCWaFIstkBLEsbsyiPCjVFAr09vbqxYy8dhM+o9xHEbwxdiirKcP4bmleBRy7fZerOWHI+VknG0EVklZ07EU@vger.kernel.org, AJvYcCWwTRRT
- 6vJOEDwauzGDPFuIsF6zvAqUmVu976G21HrW9NMF8co5qYnVLJeRX66VOCgFq0Bw717UdQRQGTUdWBC64c/Try4J@vger.kernel.org, AJvYcCWyes6iceGphS7jGv/ls1AtiWGzyXRtfigL4fqxx/xrf/Sw+WaanLwDyp+k2kIwaF7mtt845IqkLVHm8g==@vger.kernel.org, AJvYcCX8rIOD/qSM4PM4IVveozDj2YjXy0m4kU8jyFdGCHpBY4yFfq0NewdYaQIULZezfmeXafsp/IRUX1DL1wmGhiVp@vger.kernel.org, AJvYcCXcRc3v6VqLNOTSPnRuq5qB7YOR3ONHs/zUFF1SQ6LHMLYPwCyGFQ+xAzBHWMT73HhYpC4LGQp8KHP/Vg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3Cy5HykqPvtQ5L4xKmkwIDzkKvL6nHs1mHEJ4eifUwYsfa/DJ
-	C+/llk2ypanRlVGw/69/D1y6SVgb4NgL6jYrUBzsTgVraZGV964/HhlSXLoWc2zuCuVkXbH2viD
-	CPk7MY3bCa8axRF4IL3qKDHpWaHWCJ3s=
-X-Google-Smtp-Source: AGHT+IHafl72rt/goLHslFsPSeMLrUwjaR0SoHeFAxURGVfbf4gcV3AlCo9M3FCJzrvPSuMBFqrA7K/+xkn2H/6KxwI=
-X-Received: by 2002:a05:651c:b11:b0:32b:952f:3e0 with SMTP id
- 38308e7fff4ca-330d25506d3mr8241951fa.7.1753167358762; Mon, 21 Jul 2025
- 23:55:58 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F10C1581F8;
+	Tue, 22 Jul 2025 07:06:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753167967; cv=fail; b=A5x8qyWhpbExEdltsjsqlup3qUxtekueysUDbofkYAnp0I1DAO4J1tcSfXFVfyaCtcH7jswytDzuiyjsR/RKf1PFLWIxkBGUKqIC350t2x8r3yneFoX+uhjsAul+gQ+KzDoekQXBVORS/8UEzWwjUsSEK7ztHNJcyfCVQkdSD4U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753167967; c=relaxed/simple;
+	bh=9ixKSRTp2gPgsESpSO/3dFw69kh0IMIEito20NAa7/M=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TRtjUAT36anjXZ92UUn5zmVe5KKrTTKqyu7tvNN48icYr5K0sagm1niR/hW/S4rSzJIc9/o9VrUPOE2oMBgAUgrVFIUOcGXLAJNNY2rXjjg6YFX2Vm6hkF/cfQYjrAF3Pz7DxQm6ubleQfE9THlXZOf+HFnI2DEDR6yu1fHyCWc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=CdBWmK4s; arc=fail smtp.client-ip=40.107.244.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yTT/cB+wMNwQfIkrHU4y7QvzW7/5VwVZi1XcLd6hfL+ZocR/LLgIk+rj3Cmq7qkGdO+6Cj6Ia2NKM5dYQLaM/9usRKH8IoH3/Kd7K3j+4BCrLA9eXpzPLxXELKOx9KfByvhom/bExovvj7a/cOf5J77uxgWe2hPY5V5aTykvy7Di0wk5u7a1rRd/ScCjkLeiesLVF24IhTDlRjVXxTYZibCXtOLvQ38y70+WSkTOtaW18vwDqNTRdFlEaXl1TzK032Ivf3YOsNZvdCEdBj0yDLU1l2VtX30B71sTmuvlUXBQ3KomzrtVxs+Ahh758NhCEDLAfZG4/y8WCltxBfAy3g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4wSxFYPnJad7bm+jV/SYavTLH96P2ba3VZaWS9Ifz3A=;
+ b=q875rlUlfFouwf9sclzcKvU9DDyS2czWPL6gHeHZc+AryWe4tIN46HD7huayAUhdq8wKsjOzJQdpfLvm8/gN+maZMAsM8XIwPrZhnnES6osjZyfAH8M8RX5uShdQ/5jwM59A+nTdlNUK8WM5rm0dVaA/nFUcLMcsXhts9FRm+/kKFUJbiVhoB731uHphgVbEyXpYwQUn+FNjyVwny2iyDF6tz4+EOalI3i1eUNnJxX/ACj4PuVsj8oFcq7BbuyVtce3OdLl91/br0g2RXqRqOwwrwn+Xqwa0NkVu2jsiUHBjqOmzc2yGgSDAIdfE7yI8iVaa9Q4q4xDJ+MyZisx/RA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4wSxFYPnJad7bm+jV/SYavTLH96P2ba3VZaWS9Ifz3A=;
+ b=CdBWmK4sfK48p7bSwN8zk5R2F8liG6tfdw2J2+YbKSXzuC92H3QS73syyoM0KIC0onVN8v3KsphDKcvZzrJcesKomU+d5Id8t0FNwNvJaBOxo9GFxdB8PqSerJW/OLMJVCuLHzPOf2534A3X0FWK6hHrSm1S2qIrAfbOS63nZuE=
+Received: from SJ0PR13CA0039.namprd13.prod.outlook.com (2603:10b6:a03:2c2::14)
+ by SA1PR12MB7294.namprd12.prod.outlook.com (2603:10b6:806:2b8::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Tue, 22 Jul
+ 2025 07:05:57 +0000
+Received: from MWH0EPF000989E9.namprd02.prod.outlook.com
+ (2603:10b6:a03:2c2:cafe::a8) by SJ0PR13CA0039.outlook.office365.com
+ (2603:10b6:a03:2c2::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8964.12 via Frontend Transport; Tue,
+ 22 Jul 2025 07:05:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ MWH0EPF000989E9.mail.protection.outlook.com (10.167.241.136) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8964.20 via Frontend Transport; Tue, 22 Jul 2025 07:05:57 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 22 Jul
+ 2025 02:04:44 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 22 Jul
+ 2025 02:02:58 -0500
+Received: from xhdharinik40.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Tue, 22 Jul 2025 02:02:55 -0500
+From: Abin Joseph <abin.joseph@amd.com>
+To: <vkoul@kernel.org>, <michal.simek@amd.com>, <yanzhen@vivo.com>,
+	<radhey.shyam.pandey@amd.com>, <palmer@rivosinc.com>,
+	<u.kleine-koenig@baylibre.com>
+CC: <git@amd.com>, <abin.joseph@amd.com>, <dmaengine@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3] dmaengine: zynqmp_dma: Add shutdown operation support
+Date: Tue, 22 Jul 2025 12:32:55 +0530
+Message-ID: <20250722070255.28944-1-abin.joseph@amd.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250717231756.make.423-kees@kernel.org> <20250717232519.2984886-4-kees@kernel.org>
- <aHoHkDvvp4AHIzU1@kernel.org> <202507181541.B8CFAC7E@keescook>
- <CAMj1kXGAwjChyFvjQcTbL8dFXkFWnn9n47bkN7FP=+EsLNsJdg@mail.gmail.com>
- <aH42--h-ARsvX5Wk@willie-the-truck> <202507211311.8DAC4C7@keescook> <202507211349.D93679FB25@keescook>
-In-Reply-To: <202507211349.D93679FB25@keescook>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 22 Jul 2025 16:55:47 +1000
-X-Gmail-Original-Message-ID: <CAMj1kXGoy7D+_hKyQrT_uXdjuFMYGUEMDYdRf6mx69PLeuBQQg@mail.gmail.com>
-X-Gm-Features: Ac12FXxN7NYW1J5gsbL-uJ8eWKShqoH6QBvGfux9lCX9EcW_ZhNmDxq92IzpXG0
-Message-ID: <CAMj1kXGoy7D+_hKyQrT_uXdjuFMYGUEMDYdRf6mx69PLeuBQQg@mail.gmail.com>
-Subject: Re: [PATCH v3 04/13] x86: Handle KCOV __init vs inline mismatches
-To: Kees Cook <kees@kernel.org>
-Cc: Will Deacon <will@kernel.org>, Mike Rapoport <rppt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Vitaly Kuznetsov <vkuznets@redhat.com>, Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
-	Hans de Goede <hdegoede@redhat.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Michal Wilczynski <michal.wilczynski@intel.com>, 
-	Juergen Gross <jgross@suse.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Roger Pau Monne <roger.pau@citrix.com>, 
-	David Woodhouse <dwmw@amazon.co.uk>, Usama Arif <usama.arif@bytedance.com>, 
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, Thomas Huth <thuth@redhat.com>, Brian Gerst <brgerst@gmail.com>, 
-	kvm@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net, 
-	platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux-efi@vger.kernel.org, 
-	linux-mm@kvack.org, Ingo Molnar <mingo@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Christoph Hellwig <hch@lst.de>, 
-	Andrey Konovalov <andreyknvl@gmail.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas.schier@linux.dev>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org, 
-	kasan-dev@googlegroups.com, linux-doc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	sparclinux@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000989E9:EE_|SA1PR12MB7294:EE_
+X-MS-Office365-Filtering-Correlation-Id: 17cdf52f-7709-40f8-86e9-08ddc8ee34f5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?dfhZ1gqjoFUZaHdJ/Lzik0z/3g3paRKXnzAcArmcjDA7Tz2wpSvYLD5ZpJWP?=
+ =?us-ascii?Q?av8qtE/DLj6R9aCdArHYanjUxvNEMJm3jsgm028ViGszUhHD1fzRnVPruzkD?=
+ =?us-ascii?Q?TSoRQ+8aG2klsj0mrnmg58ka4C0nvrxe7gNWLu203KMzh0oApV8SCBQ286ea?=
+ =?us-ascii?Q?TepD6r0Xd5+7t+L4bjWgQpTEISq9dI2QVQI/QJTzS5cLQSqi81mlNMc25jsI?=
+ =?us-ascii?Q?Dk7cuUHX20DBxZN72BHVE/Q/c42uH8YWHCLZJEh+Wg8hNjIi6aF5BRPjyroq?=
+ =?us-ascii?Q?U1Uc7fhRJ2mUIXACCEp/mXON2r5D7XUfWNWmuc8dTF908t+h1+NESMazV84Q?=
+ =?us-ascii?Q?FYBcNKyRzX9kX1dREm/028KJJSTcro4CX8ptBhF5EV02eyytSoBF8MdctrwW?=
+ =?us-ascii?Q?G0i40nF+6ivE0i0gbksBcThGCQi3Ni4QG9PJjyIAUzuZeferP9LqutbDTF8A?=
+ =?us-ascii?Q?hpJEnJrB7W5G9rJbRgjc25HbVKduQ4DEscsdihETLMEZEVqk9ejAiid8Rz2p?=
+ =?us-ascii?Q?MGzUmJr0wwpFoy27s9Brp9t7Ofe0+BCcQZFBbohG9ZYfT53LlbuyqoHOrEaN?=
+ =?us-ascii?Q?vhac/dhgLRzlSXvFHUzUBOPmxnDIp+OsgCfkyR1XaXXSrTmabYf4TB8Tf9Mt?=
+ =?us-ascii?Q?+vvqr/CAuIlDf809f91CDwdWIE1bfED9aoZpxXlRdUCwOhMtwtUc4FswxtmS?=
+ =?us-ascii?Q?KxNdpD0BIi8R06l/Z9IhVhH6XV3JaGxXVd2Zb6Yk4NLJWCCp9NREDgFt9sh0?=
+ =?us-ascii?Q?0TUr7Y3DWkr+BstwSMOXiv582vnBDBQ3JXCNz7hPZU3v4gsBwt6MaMIgCxFV?=
+ =?us-ascii?Q?jYmeUz5chWEZ7i4D3YGAuV4Ls8dYkKbm848NEsVfZrWUjK2VsUh1RtTouebE?=
+ =?us-ascii?Q?w4y4eSb5kWEo6fbcfYGawNGqAAyVjZqEf/9mmxqnK56qf3k1S2yeQR3kq6WE?=
+ =?us-ascii?Q?v4njFk4WyZsKOPv/AG7DE6SY/8f99mv/GO3Fvdfa+ZnYu7WipyrtZPiCJkJ1?=
+ =?us-ascii?Q?vN5VQItdr7Xg1765mIIqYPqbSlF+OAPPqXML5fXz8N5HWC0pMOecBq/qkVWj?=
+ =?us-ascii?Q?35yUxtx40tO0Bia0yvdBkdHnAzikuUqWB3FIVOMr/HufLk9boorCW2Hiqy9L?=
+ =?us-ascii?Q?epp8IujK0y6kWC1o78+2SpeHmjT8vGzNvxoNw8jJe2gkZqz57l/M0Ke1jV9c?=
+ =?us-ascii?Q?bNgbMB1zknqVjWLMgOL+BXPiPw0INFmEd9/BffQBaG5Aks09pCiJRxUbx9pu?=
+ =?us-ascii?Q?xzh3SxqyKrz106M7NAqbLw0HLRqGgNnYeZ+qnLXsfxTubM3Vg05MeXRwKjz/?=
+ =?us-ascii?Q?yzHzBD0+AK7VOvPu3guZSZFFcFTC1ypPTaGNkKKGXD7iUdgsvsJv3S/MYmVR?=
+ =?us-ascii?Q?ftX3HC9wz3HxIXISwKW6BYkza+kQLsAKibZTG7CYzRgiJM1c3RV0uA8DQ0jl?=
+ =?us-ascii?Q?frYuRgwEmUU11ouianjmm/GcCVlLb5jxEzohIXf7GtL8BkiPka4c1k0utLKO?=
+ =?us-ascii?Q?rJy4w3Ll8ZdfXzwlPp/gQ5xlsCjwOO/0X+QW?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2025 07:05:57.1399
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 17cdf52f-7709-40f8-86e9-08ddc8ee34f5
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000989E9.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7294
 
-On Tue, 22 Jul 2025 at 06:49, Kees Cook <kees@kernel.org> wrote:
->
-> On Mon, Jul 21, 2025 at 01:14:36PM -0700, Kees Cook wrote:
-> > On Mon, Jul 21, 2025 at 01:47:55PM +0100, Will Deacon wrote:
-> > > On Sun, Jul 20, 2025 at 04:10:01PM +1000, Ard Biesheuvel wrote:
-> > > > On Sat, 19 Jul 2025 at 08:51, Kees Cook <kees@kernel.org> wrote:
-> > > > > On Fri, Jul 18, 2025 at 11:36:32AM +0300, Mike Rapoport wrote:
-> > > > > > On Thu, Jul 17, 2025 at 04:25:09PM -0700, Kees Cook wrote:
-> > > > > > > When KCOV is enabled all functions get instrumented, unless the
-> > > > > > > __no_sanitize_coverage attribute is used. To prepare for
-> > > > > > > __no_sanitize_coverage being applied to __init functions, we have to
-> > > > > > > handle differences in how GCC's inline optimizations get resolved. For
-> > > > > > > x86 this means forcing several functions to be inline with
-> > > > > > > __always_inline.
-> > > > > > >
-> > > > > > > Signed-off-by: Kees Cook <kees@kernel.org>
-> > > > > >
-> > > > > > ...
-> > > > > >
-> > > > > > > diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-> > > > > > > index bb19a2534224..b96746376e17 100644
-> > > > > > > --- a/include/linux/memblock.h
-> > > > > > > +++ b/include/linux/memblock.h
-> > > > > > > @@ -463,7 +463,7 @@ static inline void *memblock_alloc_raw(phys_addr_t size,
-> > > > > > >                                       NUMA_NO_NODE);
-> > > > > > >  }
-> > > > > > >
-> > > > > > > -static inline void *memblock_alloc_from(phys_addr_t size,
-> > > > > > > +static __always_inline void *memblock_alloc_from(phys_addr_t size,
-> > > > > > >                                             phys_addr_t align,
-> > > > > > >                                             phys_addr_t min_addr)
-> > > > > >
-> > > > > > I'm curious why from all memblock_alloc* wrappers this is the only one that
-> > > > > > needs to be __always_inline?
-> > > > >
-> > > > > Thread-merge[1], adding Will Deacon, who was kind of asking the same
-> > > > > question.
-> > > > >
-> > > > > Based on what I can tell, GCC has kind of fragile inlining logic, in the
-> > > > > sense that it can change whether or not it inlines something based on
-> > > > > optimizations. It looks like the kcov instrumentation being added (or in
-> > > > > this case, removed) from a function changes the optimization results,
-> > > > > and some functions marked "inline" are _not_ inlined. In that case, we end up
-> > > > > with __init code calling a function not marked __init, and we get the
-> > > > > build warnings I'm trying to eliminate.
-> > >
-> > > Got it, thanks for the explanation!
-> > >
-> > > > > So, to Will's comment, yes, the problem is somewhat fragile (though
-> > > > > using either __always_inline or __init will deterministically solve it).
-> > > > > We've tripped over this before with GCC and the solution has usually
-> > > > > been to just use __always_inline and move on.
-> > > > >
-> > > >
-> > > > Given that 'inline' is already a macro in the kernel, could we just
-> > > > add __attribute__((__always_inline__)) to it when KCOV is enabled?
-> > >
-> > > That sounds like a more robust approach and, by the sounds of it, we
-> > > could predicate it on GCC too. That would also provide a neat place for
-> > > a comment describing the problem.
-> > >
-> > > Kees, would that work for you?
-> >
-> > That seems like an extremely large hammer for this problem, IMO. It
-> > feels like it could cause new strange corner cases. I'd much prefer the
-> > small fixes I've currently got since it keeps it focused. KCOV is
-> > already enabled for "allmodconfig", so any new instances would be found
-> > very quickly, etc. (And GCC's fragility in this regard has already been
-> > exposed to these cases -- it's just that I changed one of the
-> > combinations of __init vs inline vs instrumentation.
-> >
-> > I could give it a try, if you really prefer the big hammer approach...
->
-> I gave it a try -- it fails spectacularly. ;) Let's stick to my small
-> fixes instead?
->
+Add shutdown callback to ensure that DMA operations are properly stopped
+and resources are released during system shutdown or kexec operations.
+Fix incorrect PM state handling in the remove function that was causing
+clock disable warnings during the shutdown operations, which was not
+implemented earlier. The original logic used pm_runtime_enabled() check
+after calling the pm_runtime_disable(), would always evaluate to true
+after the disable call, which leads to unconditionally calling the
+runtime_suspend regardless of the device's actual power state.
 
-Fair enough :-)
+During shutdown, the device may already be suspended with clock disabled
+from the autosuspend timer, causing the clock framework to warn about
+the double-disable attempt. The pm_runtime_active() function checks the
+actual device power state rather than the PM subsystem's enabled/disabled
+status. ensuring the runtime_suspend is only called when the device is in
+active power state. This prevents clock warnings during shutdown while
+maintaining proper cleanup during normal remove operations.
+
+Signed-off-by: Abin Joseph <abin.joseph@amd.com>
+---
+
+Changes in v3:
+Update the commit description
+Update to call remove directly from shutdown hook.
+
+Changes in v2:
+Update the shutdown to perform same operations as remove.
+
+---
+ drivers/dma/xilinx/zynqmp_dma.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/dma/xilinx/zynqmp_dma.c b/drivers/dma/xilinx/zynqmp_dma.c
+index d05fc5fcc77d..f7e584de4335 100644
+--- a/drivers/dma/xilinx/zynqmp_dma.c
++++ b/drivers/dma/xilinx/zynqmp_dma.c
+@@ -1173,9 +1173,9 @@ static void zynqmp_dma_remove(struct platform_device *pdev)
+ 	dma_async_device_unregister(&zdev->common);
+ 
+ 	zynqmp_dma_chan_remove(zdev->chan);
+-	pm_runtime_disable(zdev->dev);
+-	if (!pm_runtime_enabled(zdev->dev))
++	if (pm_runtime_active(zdev->dev))
+ 		zynqmp_dma_runtime_suspend(zdev->dev);
++	pm_runtime_disable(zdev->dev);
+ }
+ 
+ static const struct of_device_id zynqmp_dma_of_match[] = {
+@@ -1193,6 +1193,7 @@ static struct platform_driver zynqmp_dma_driver = {
+ 	},
+ 	.probe = zynqmp_dma_probe,
+ 	.remove = zynqmp_dma_remove,
++	.shutdown = zynqmp_dma_remove,
+ };
+ 
+ module_platform_driver(zynqmp_dma_driver);
+-- 
+2.43.0
+
 
