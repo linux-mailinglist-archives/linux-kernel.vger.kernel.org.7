@@ -1,129 +1,127 @@
-Return-Path: <linux-kernel+bounces-740143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AA27B0D099
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 05:48:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CDA7B0D0A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 05:51:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B3C1172131
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:48:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D844165943
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 03:51:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18F828D844;
-	Tue, 22 Jul 2025 03:47:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427F628A73D;
+	Tue, 22 Jul 2025 03:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="AArSDzSu"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Je266k/F"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CDA273810;
-	Tue, 22 Jul 2025 03:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F9422FF59
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 03:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753156071; cv=none; b=ts1XGtJVcPh6bddPYYzjrgScPb5bMSDplXC1RIOPllKBPW0QafONlscaBH9dgeHFirs+BCKTHnvOSjP/uNKa/BRgv7LX5xBkh5oHrhvoxtsZBPIEoqFW6ATqy0Ujx084mYNq7XAHD5/BsQjFBosR6qD8tEuHRA2H3xbrx3E8VC0=
+	t=1753156272; cv=none; b=rmmmxC+tUyXVkWpHjgucsTfXdu6p3Q8FzflWEorn/jN1KQrF/w7lFugtkj1FDnMTSlIpjDk8YuNxjvXS+/xqg1wzkYdttKQaY0Hqmkxt6TlWDOb91rRJi5v5cUgUo7ed7uMuiZnv+njkpFiWb2OOsDzIv5MN+Jjvqn9x3utaBxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753156071; c=relaxed/simple;
-	bh=VlZoKkXfILCyhXWvhcKL/QC8xzbbAYgtnW23SdG77m8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iDOQHAt9XtBV1VqNmN8PEn/dBsiJGVSUkBkQ19cbSzDQJKsHWQi38UjAuKUWG4NFVHW591j0d7YLa1LjYVmyTRq+x8BgIAHTb+fKRZkqrvbBM8k9AtTMP2b8C099pDqYIsv6ldq9ZnAMtWd1WrmcWO36vDEHhxl46qfE634Pafg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=AArSDzSu; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56M1C55d019819;
-	Tue, 22 Jul 2025 03:47:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=0vRilnNnXZdvoasg9Ce1BQpVV8hGMzrXKEEvgSPViTI=; b=
-	AArSDzSuQOfdjNlakSBXL0hlENtl2zmfH+TpcG41Lr/o5db6ls/Iw+TUHN2D+KyF
-	tTgk3gE81SnQ/GSL3ojVFU6AEbsGmV13oUlyqiuf4Pd5L1wVGTiKGnJ0XXDE5NK6
-	CuuPH70ADgYdWYX5Gbolqobhi2ipOw1DNqtiarW82urV4miISjF+Aesk0NyGeqTn
-	o+LN6fQ8ZgJnmBDiUP6A7WyBLBA/KtbAZtcHbbUcvLDb7DsKxuBc14MjD30fE8Aj
-	+bBJ8SFwBUEWyBOdTsRayPb28r5+fhHmmK9xlaGS4Xw+2quYdiI3Gd9V9pfx4zJ0
-	M1+yqfwqSeyqRyvBu/N7yw==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 480576m5vt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 22 Jul 2025 03:47:40 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56M0F3XL038366;
-	Tue, 22 Jul 2025 03:47:39 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4801t8tean-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 22 Jul 2025 03:47:39 +0000
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56M3lZjH031915;
-	Tue, 22 Jul 2025 03:47:39 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 4801t8te8u-10;
-	Tue, 22 Jul 2025 03:47:39 +0000
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: mani@kernel.org, James.Bottomley@HansenPartnership.com, bvanassche@acm.org,
-        avri.altman@wdc.com, ebiggers@google.com, neil.armstrong@linaro.org,
-        konrad.dybcio@oss.qualcomm.com,
-        Nitin Rawat <quic_nitirawa@quicinc.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org
-Subject: Re: [PATCH V5 0/3] ufs: ufs-qcom: Align programming sequence as per HW spec
-Date: Mon, 21 Jul 2025 23:47:03 -0400
-Message-ID: <175315388541.3946361.263020629496331023.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250714075336.2133-1-quic_nitirawa@quicinc.com>
-References: <20250714075336.2133-1-quic_nitirawa@quicinc.com>
+	s=arc-20240116; t=1753156272; c=relaxed/simple;
+	bh=lJDeYXSX/bvDetfHjkTeV2ORKfWv7rgs+Q7ECkeHLK0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f6ttiq+CBfpS4i4vNHoYkM4eBiQY1w+8qXvnMnqnlO9liQiXNcVUWgyJtf72dKJ0pcj6GCKBor62mLbbrdYMo890XkQ71VAhoWdnxUQoxQ5jY34RBCVr2ZRZ4GnqFcjKTgzH9hh7+aD7PTWq+/EyWmUsddQZwXGhivVHld+gYto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Je266k/F; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b3aa2a0022cso5109170a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 21 Jul 2025 20:51:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753156270; x=1753761070; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lJDeYXSX/bvDetfHjkTeV2ORKfWv7rgs+Q7ECkeHLK0=;
+        b=Je266k/F/o/W4OSEELSDKY9x8+y7O2WK1BEfFnA3WRHBkpb1FSv+T5VehlPm/GysCK
+         VRqxjO1O8u5y4RsFdExyjT3AvRuyyiEJsP8yrDZuzG+ezMubS2qRATWZ9/EVRwNsSz7S
+         F0u9O3AFs0Xd9+wtKmYjMt5YOt5xitThgZj3qpGBmZ2CNpnfGqgokHkOg/JCkUDSoc7Y
+         wW15tpUsF76us7oVA64S/44+JS9mfqCJvOrPgqrcLfl9W2p5eSZQsz7wLzAzN448tOnk
+         4TOyMwbWYeFCw/0qtKTk8mTqjOCjq6inmw/Oh/QqDP5kg09eoQEAYL5bxT5cOp9FM8aI
+         jpNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753156270; x=1753761070;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lJDeYXSX/bvDetfHjkTeV2ORKfWv7rgs+Q7ECkeHLK0=;
+        b=adOLJxw/l/62yUz3qMUpb2ucob9HSXUg8MjT/AtojJmsBcr7S4YShImPurjuFi0U+X
+         ouP1Xnc3VXR1VvUirMOGb8OioxtaPozKddH1vLo9OmLW0zVzX6dYVymGkFdgNGqMpkdt
+         g+LWPaqaPhhdCgWHBAk/jJUxH8rpV4oXQiJQEbCRFCl0w5XGlh4+LpALexKNCrIsrOg9
+         VlkxHbkBAG6qFJR1Iqeu5LR/kNRQ1t7E3Wt+XYvsMQ9RbEF/9nr4ieQJwMBVVd4vW2eR
+         EAlfwobF2VgOIQPOV0yV8D0NZlb7/lrwa+6Kog7lY4vH8sOTAxoLs9UJJk73W2huuwWM
+         N1hw==
+X-Forwarded-Encrypted: i=1; AJvYcCX3OVs0HY6DYSp/efXKCrBOvefkMY+wUxmMHfyxCN7J+ZjEVr/LZiMu+2CvxmVLe+FSXPK256nlzldYhfw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwupnBRoTVX5Bgn9RbJ7R0Rh9eQdgzwej/OcMzlhhnJYb8nehp6
+	P5CaKLWdONORgq5CaWe2hDmaR7ztBd2AbCwuImy2JZ33CEvVXwkzC1XLzWRULLS6Zoov2PXv89+
+	yICmGoEJT3XIV6fX8vS0XxJZODKNI8CmQthV0QD6r
+X-Gm-Gg: ASbGncsyKdbdo4SDjQ14qGLNDh1fU0POZAcZL8Inoakpro7cKWH5hihZGfsw6i/pvr7
+	hUPpqfYeot55jtd0fsQeXkFKAbuNPZEbpae9LTnxE0rl9PT8DVvE6GWdS7THVAYXv3/OVf4WzH6
+	W3EMPyMXpTAoIWIHBzXSCmVHXTWLbyXfrQEeRe42T2HV4NnNJRVZWQwInvX/drzvXUG8xyQhipC
+	2qJM3rV+LfSBcVr7LFAtMU29AoVcls8Xpsv0sEw
+X-Google-Smtp-Source: AGHT+IHtpgoTus5lwayXM01SpaU4GwH90Y2FHf3kxlp2FjqLuyW/RgCCnGVdY5X+U0jWSMGmt4T9U/mpCcao819S7/E=
+X-Received: by 2002:a17:90b:35c7:b0:311:fde5:c4b6 with SMTP id
+ 98e67ed59e1d1-31c9f3efe45mr33017966a91.6.1753156270321; Mon, 21 Jul 2025
+ 20:51:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-21_05,2025-07-21_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 suspectscore=0
- bulkscore=0 malwarescore=0 adultscore=0 spamscore=0 mlxlogscore=615
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2507220028
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzIyMDAyOCBTYWx0ZWRfXye+kLrXN52Cn
- EOWvh+kr5Iaw3eG0Jy1YUmg6vFaRLKk8WfdHZI0V77HLEpRjNwOdI+gPVX+J+6mmLZ2lBicPiCd
- zJG1/NVmT0k7IYQvVViYAWhdoZbznjfKUcphfbOkm37L+fdlaPwWHbQBGc82SGNNLws1c10fudY
- O/bLKof/isWpHe6r3BP7TCxRAi68gUI5flP2hp8vyFXTjPQzMZzEo/LKF2SyCBW55yiCRf41PEl
- NH1cK3bWSoEZF+fTRPQdCJuMR1vEXAnBu/dVWndgGdVd5NxvQ1BtMLnRUqKDp8eMqHnD+mUTOxy
- Lc07gwBK/Xbw0aBicQGVID1dVdHML/GoEHFRXPOCOuSbtBIRijqJ1b1Oiwn/TmYsjUQKqHWhAgz
- /0hMQ+g9pUU7OdsPUTrfOEHQCp4Qgt3b7YlGiw8GQhZgSwLpUlnezL5RQWSc1NUl+n8d3ET8
-X-Authority-Analysis: v=2.4 cv=doDbC0g4 c=1 sm=1 tr=0 ts=687f09dc b=1 cx=c_pps
- a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=lFOT_AtsMLTQ2iPLmPAA:9
- a=QEXdDO2ut3YA:10 cc=ntf awl=host:12062
-X-Proofpoint-GUID: w_XxEuUbPxr4JrUdnduw_VYbu86WyTNK
-X-Proofpoint-ORIG-GUID: w_XxEuUbPxr4JrUdnduw_VYbu86WyTNK
+References: <20250721171333.6caced4f@kernel.org> <20250722094808945ENOLvzY108YsJFz4CqbaI@zte.com.cn>
+In-Reply-To: <20250722094808945ENOLvzY108YsJFz4CqbaI@zte.com.cn>
+From: Kuniyuki Iwashima <kuniyu@google.com>
+Date: Mon, 21 Jul 2025 20:50:57 -0700
+X-Gm-Features: Ac12FXy9v416hau5beJ-VqKZOCQ6TgCXB1FDXzhWQtKR1uiwNtaKySQQ5qbKjRo
+Message-ID: <CAAVpQUDaSccbmOC0sgihBYPTdtSE2OsFOJXC6s58QS81a+8nkA@mail.gmail.com>
+Subject: Re: [PATCH net-next v7 RESEND] tcp: trace retransmit failures in tcp_retransmit_skb
+To: fan.yu9@zte.com.cn
+Cc: kuba@kernel.org, edumazet@google.com, ncardwell@google.com, 
+	davem@davemloft.net, dsahern@kernel.org, pabeni@redhat.com, horms@kernel.org, 
+	rostedt@goodmis.org, mhiramat@kernel.org, mathieu.desnoyers@efficios.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, yang.yang29@zte.com.cn, 
+	xu.xin16@zte.com.cn, tu.qiang35@zte.com.cn, jiang.kun2@zte.com.cn, 
+	qiu.yutan@zte.com.cn, wang.yaxin@zte.com.cn, he.peilin@zte.com.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 14 Jul 2025 13:23:33 +0530, Nitin Rawat wrote:
+On Mon, Jul 21, 2025 at 6:48=E2=80=AFPM <fan.yu9@zte.com.cn> wrote:
+>
+> > On Mon, 21 Jul 2025 11:16:07 +0800 (CST) fan.yu9@zte.com.cn wrote:
+>
+> > > Subject: [PATCH net-next v7 RESEND] tcp: trace retransmit failures in=
+ tcp_retransmit_skb
+>
+> >
+>
+> > Why did you resend this??
+>
+>
+> Hi Jakub,
+>
+>
+> Thanks for checking! I just wanted to ensure the v7 patch wasn=E2=80=99t =
+missed =E2=80=94 it=E2=80=99s identical to the original.
 
-> This patch series adds programming support for Qualcomm UFS
-> to align with Hardware Specification.
-> 
-> In this patch series below changes are taken care.
-> 
-> 1. Enable QUnipro Internal Clock Gating
-> 2. Update esi_vec_mask for HW major version >= 6
-> 
-> [...]
+You can check the patch status in patchwork, and actually this v7
+marked the previous v7 as Superseded, so you didn't need to resend :)
 
-Applied to 6.17/scsi-queue, thanks!
+https://patchwork.kernel.org/project/netdevbpf/list/?submitter=3D217549&sta=
+te=3D*
 
-[1/3] ufs: ufs-qcom: Update esi_vec_mask for HW major version >= 6
-      https://git.kernel.org/mkp/scsi/c/7a9d5195a7f5
-[2/3] scsi: ufs: core: Add ufshcd_dme_rmw to modify DME attributes
-      https://git.kernel.org/mkp/scsi/c/c49601642f95
-[3/3] ufs: ufs-qcom: Enable QUnipro Internal Clock Gating
-      https://git.kernel.org/mkp/scsi/c/5a6f304f39c2
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+>
+> Please let me know if any updates are needed. Appreciate your time!
+>
+>
+> Best regards,
+>
+> Fan Yu
 
