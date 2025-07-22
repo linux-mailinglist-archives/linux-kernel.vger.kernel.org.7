@@ -1,191 +1,131 @@
-Return-Path: <linux-kernel+bounces-740436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A0E9B0D41E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:06:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19213B0D41A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:06:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 457981714EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:06:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48CA617054B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:06:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DFFA28CF41;
-	Tue, 22 Jul 2025 08:06:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA59C294A14;
+	Tue, 22 Jul 2025 08:05:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="JLUZkLPo"
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WndJokWB"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CE7A28B7F1;
-	Tue, 22 Jul 2025 08:06:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383822C326E
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 08:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753171582; cv=none; b=OYZ8kjmYqkrJs46k0EzoVI5LBQKItMXWK24tFQjhclwuPTzlhB0w5Ivzi629uHPXEZCX31AVJgibe4HAtdbVXOWAHeY4uWITunYxxLk110Yl6HMVL9QyvkZ7wU27Zyok+cRefRiOtzAOcvitPofe5LD7XYNTYt72lLRsHQraFL0=
+	t=1753171551; cv=none; b=rXMiaaDL1/ufjG7Ivg9s2LAQCpxR7ZCIABaIcotrbdXvamxNDcKlvA66bTik1F1G4Q+bhlvg4aFvtEHn84O69O/rzEQnIPrOOgdF4W+nuITlhfo6a6+BFqTMAZim3PdTTqDFYztQW31IySMUFGZ0Eh5LC5lucM/5jx7hv2selYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753171582; c=relaxed/simple;
-	bh=Jk2XBgvKJ+egnwck4cqJCxB9P39vR2BJ63hOYEVBH0M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tlZfVLB1zNOgU2uW6ZdEbohM/qfx4Lh5DJ1K9ANEJM2EAbBK05uTfUxeBRUDx7KB4BHiASgKTZlcWki898EORjdfeB5HthMH8THuXVKs9eSq5zw9aAX+sZUfqR5YDFPgE1U/b3d/WonNLPT5MZ16n8ykuHUPb2PwEEkk++upcsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=JLUZkLPo; arc=none smtp.client-ip=54.206.34.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1753171575;
-	bh=Jk2XBgvKJ+egnwck4cqJCxB9P39vR2BJ63hOYEVBH0M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=JLUZkLPogojFab+JQCr3BrRFI77kwCudHZiILKyOJGbsgG5QIKNjVZBzbUvqQ+miD
-	 riB28z4V4Ig51RBaSiGDmYDyTO2TQgz0PXiJjQ0qt1qt54FXw//tpvjVeGXJMmXb+2
-	 3mrySzazFccpKzPLxGlOMB3a8srIngR4R3HljyWM=
-X-QQ-mid: zesmtpip3t1753171528t3ec7333b
-X-QQ-Originating-IP: /pRypQO32Iz44++x6tk4NLGOP28Tf/v1ADE1NLN9Nek=
-Received: from [IPV6:240e:668:120a::212:232] ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 22 Jul 2025 16:05:26 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 4268784135301633643
-EX-QQ-RecipientCnt: 17
-Message-ID: <4DFD87AA0CE5EA72+aebc5df6-9174-4ecf-9dc9-3abb312defc1@uniontech.com>
-Date: Tue, 22 Jul 2025 16:05:26 +0800
+	s=arc-20240116; t=1753171551; c=relaxed/simple;
+	bh=CnMJw8qgm8jE4iaGeacCGl+54rCiaQEFHAWsMGaI+Gs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u25F2776LiJroHDFUJGsDQosRJPClq4Sc7hK1zmPTksq0UMrpybuv2iXzEkVxxII87PD5IJEnpbyl7+iY2f8nQQmMRcDIG/mIDC5k4VXltsW3i4mJGqw0BHTOzzSo4BO17oeb3wuq0bNAITL1cCxRLrAUbiC+OrB0q/tTXyzciI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WndJokWB; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-451d3f72391so52809175e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 01:05:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753171546; x=1753776346; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pfjnB0RzVX1onEBaivwGgg3zlp9uwBQhMC1tQmetXyk=;
+        b=WndJokWBT28u2yETPfCC7YrlyEJifav+jIGw/xBSJPHTnDNFZ+aeuTIfpXvlb5/pHO
+         jZkxU6nbu5UI8HiS5qYqWMrWIqHFMrI6JKw++CChmJHqqg3QocwhEBb9NtXHkqEH7VD6
+         DJEsogX32aKuVuOCk5GjLNmIc2FclSsojwP/WjXAtv1tDu51NZcH0DCWcb5VA/+jZJpJ
+         LOF0HZGpnnWpFFJJ6zMnqvVsBBNd3l5lCExs6amkDLw7mYhJfqTUpBaFYpo0gYZtUaxD
+         pNw+1FOFG3NycC+KotITYl/WjqY9kh9MKMwpYn0cPCrwfEJKbrSTVnoJJlvQvaalP8KW
+         oKBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753171546; x=1753776346;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pfjnB0RzVX1onEBaivwGgg3zlp9uwBQhMC1tQmetXyk=;
+        b=Tt9C20poOVl1YNsVS4Rt7Us9jPSIbl1dcDZEDSQ4Z5M6R0NeXrBLwST8XJTv9V//k0
+         1D8mSCHqlwr3uenTa8B8nX2Anim0kzQuCv5GuTIHYt68KNEIa1dfW3RSgslQc85pmTe0
+         sNdfBOVG2+4pm8ckR1TIom+l2WjX+c26EO5i/mP8QjR7pCgcMfG1kwNblvuLHCk9kziV
+         gd2UFWxK2Nu0vIx3olUIcuh1MVa6Wt1ekrc6pH1McZkdeElNy6zQUxWJvgMCPtrL4dgW
+         AZOltv46TEluiOiIBF2EbmNor1kJ738rfy9gf9/HyPEVrcl02uqMA+j2c86IL8FB3o7F
+         1fpA==
+X-Forwarded-Encrypted: i=1; AJvYcCVSMofxHFLbcR0dLVU6t3CL/zB94ncbdjXwP058FRWPIpmu4v1MrLThLn8IYDVN5zumbgZUGUh5Rd30m94=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwqEjN8SS3l3erW9odfjg2UPRC5QXti916dyNyafWpZUp2303m
+	KQNlDiibjwGLhNI7dAkdmdJvKH1Jd4571O3L+f5hFK289Vtq5aJiwZ7/X9aS9UNYaRDNTRckDKX
+	SIMXEZiOGXhSBTe+A3L978iPi53DICsThZYpiHssM
+X-Gm-Gg: ASbGncv97jLO7n5rrRpi29ceJ3/0yiAcOL+j3u2F6v9/Qvu+P+I0QwTjJVsP/VB4cDp
+	1UW3gZMUCwylBfykGBW/PlWY0fqCAxcr0CwAO1falfs1Qe0XI6dov6bohi2lZI31oXoZfKpQffS
+	O8YInRH/nmSYQhB1qGIVoK1hXB4qlTCkLyxSln67K5a3wVYNCkmL2HfD2MvoxN4m7Iua7HfzSaL
+	2AGBgHZ7XQiIOcaLLgTaxDpdRSWNQkxYAbv
+X-Google-Smtp-Source: AGHT+IEw84d53XcRHbzMwCvvvMTy56CE5J7Uzvc/tFQgaHNn6AVGRHDi9rYuYRwr5tK4BOrSh62WYx6dB29oES2mpvk=
+X-Received: by 2002:a05:600c:3589:b0:456:1d34:97a with SMTP id
+ 5b1f17b1804b1-456357faf96mr180725475e9.9.1753171546498; Tue, 22 Jul 2025
+ 01:05:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] ipvs: ip_vs_conn_expire_now: Rename del_timer in
- comment
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: horms@verge.net.au, ja@ssi.bg, kadlec@netfilter.org, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
- netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
- linux-kernel@vger.kernel.org, zhanjun@uniontech.com,
- niecheng1@uniontech.com, guanwentao@uniontech.com, wangyuli@deepin.org
-References: <E5403EE80920424D+20250704083553.313144-1-wangyuli@uniontech.com>
- <aH8Ek6XA_EFr_XWh@calendula>
-Content-Language: en-US
-From: WangYuli <wangyuli@uniontech.com>
-Autocrypt: addr=wangyuli@uniontech.com; keydata=
- xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
- IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
- qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
- 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
- 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
- VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
- DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
- o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
-In-Reply-To: <aH8Ek6XA_EFr_XWh@calendula>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------miZQFZGDnPdt0uLvzGTFutMR"
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NHAdjHOky+HcUZRg3WmYNwzcU2POO4FJYfH2wdaWRfmco+QK+g968rXU
-	pxEmoztRQC1bbWst3GFhTen7MTyOIVh8A/74JuXFqpGcOydyPoM9D47o/6wKvJbREYiUtq1
-	Nyyvt35CaISz8XAmLUbBwMu5UtHaPiBJQ4u/gEjr4Ve0R0qlCXgUR22f8txN1lDm0E/xra8
-	z+U5TUa+ErpRRlmK7jX4p/vkIyO+nK4fpjkiI2PtsYFnoe0GeueZuAjp1/3COMn0uho8fju
-	XSttYfG+zmH+qtciSi80hxnKIyyQ2HXMvofxVgCitNpI2g9S+HJ6VZE8Fyt6ANno31ipjpo
-	8BAkLEtBv/a7GLkr7PoQCKzbdBJyDrG9OjkUdG8B48jxCPIu4T/hzubmvh9eqDiKOjOG3Gd
-	frNRXK22A6iVQIx7Qx8FrLWVX1ErP07q2XxUpFVwu+GNPZ0CAd65HssEYf3KNCWXl2bEJuu
-	90fcNCsQhWRdPziPmeCK8RXLbJvrUPmneZnPw+j3lG+w4b+X2UP6lYC6B0TlWKCogZ1xvdG
-	3Y/kk+15RhKogpBbewKVL280LT2zqBgYHSHY/spjtS+LFa9Fe81QZgwDcCT6hBYC9qRUdNh
-	sxVdlGhJQayiOQoq5F1FpNBbq8Fxn+JJxGqBJ4UysSKkFsH9AbXW73kZboqvJpeyzQJQ2Ls
-	xdp3oMekR13zIVSl0k5YSh1vaDRuxBlCPpt+m2X6nSKtrHS321pH5Vif3ThgqPMC/bH/n1e
-	R7DW/M/fTcEqjMuZbCnmBL3P0RalwjZ9wxyYxe2Hm8wuqDJgL4iRN36tnmuiPsfzC15Pb9s
-	JM9D8ItuqkE6diBwltcUu06Mh6fSzkebp26cqirseaoO1k0KcWBbl7pYHMhkh2unw1esyA3
-	9qLyr9NHu9jmjjeXs9Mz10MHTAiJyl/ciGIRyEo6YheWummIxR3HxcWzN4LFtgkyTOcG9zy
-	SoMdj9TJPLjpJi+10OLa4Yx0NyJfHqRnItlME3Js5fDnfv1EZZXsgNuAkiD1RQyQIMJiMfZ
-	1sCfYRfxcLDtIUmWeZiKt/+l8+p1n9WB9sazW3u1BgRpKbkNa9Yqd6zrZMmsw+H8wi0V7UV
-	mPSLjjcGBLn9C+TsyIz8mrrKF/KX4lXrZcpPXlj8ICTHhRkYtMjAKuP31uqyQ05Vg==
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-X-QQ-RECHKSPAM: 0
-
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------miZQFZGDnPdt0uLvzGTFutMR
-Content-Type: multipart/mixed; boundary="------------wln8Z5WJ90acIPVp5CBvJ1Z0";
- protected-headers="v1"
-From: WangYuli <wangyuli@uniontech.com>
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: horms@verge.net.au, ja@ssi.bg, kadlec@netfilter.org, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
- netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
- linux-kernel@vger.kernel.org, zhanjun@uniontech.com,
- niecheng1@uniontech.com, guanwentao@uniontech.com, wangyuli@deepin.org
-Message-ID: <aebc5df6-9174-4ecf-9dc9-3abb312defc1@uniontech.com>
-Subject: Re: [PATCH RESEND] ipvs: ip_vs_conn_expire_now: Rename del_timer in
- comment
-References: <E5403EE80920424D+20250704083553.313144-1-wangyuli@uniontech.com>
- <aH8Ek6XA_EFr_XWh@calendula>
-In-Reply-To: <aH8Ek6XA_EFr_XWh@calendula>
-
---------------wln8Z5WJ90acIPVp5CBvJ1Z0
-Content-Type: multipart/mixed; boundary="------------07PXpVmU8b1YT04K6viN7jix"
-
---------------07PXpVmU8b1YT04K6viN7jix
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
-
-SGkgUGFibG8gTmVpcmEgQXl1c28sDQoNCk9uIDIwMjUvNy8yMiAxMToyNSwgUGFibG8gTmVp
-cmEgQXl1c28gd3JvdGU6DQo+IE9uIEZyaSwgSnVsIDA0LCAyMDI1IGF0IDA0OjM1OjUzUE0g
-KzA4MDAsIFdhbmdZdWxpIHdyb3RlOg0KPj4gQ29tbWl0IDhmYTcyOTJmZWU1YyAoInRyZWV3
-aWRlOiBTd2l0Y2gvcmVuYW1lIHRvIHRpbWVyX2RlbGV0ZVtfc3luY10oKSIpDQo+PiBzd2l0
-Y2hlZCBkZWxfdGltZXIgdG8gdGltZXJfZGVsZXRlLCBidXQgZGlkIG5vdCBtb2RpZnkgdGhl
-IGNvbW1lbnQgZm9yDQo+PiBpcF92c19jb25uX2V4cGlyZV9ub3coKS4gTm93IGZpeCBpdC4N
-Cj4gJCBnaXQgZ3JlcCBkZWxfdGltZXIgbmV0L25ldGZpbHRlci8NCj4gbmV0L25ldGZpbHRl
-ci9pcHZzL2lwX3ZzX2xibGMuYzogKiAgICAgSnVsaWFuIEFuYXN0YXNvdiAgICAgICAgOiAg
-ICByZXBsYWNlZCBkZWxfdGltZXIgY2FsbCB3aXRoIGRlbF90aW1lcl9zeW5jDQo+IG5ldC9u
-ZXRmaWx0ZXIvaXB2cy9pcF92c19sYmxjLmM6ICogICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgIGhhbmRsZXIgYW5kIGRlbF90aW1lciB0aHJlYWQgaW4gU01QDQo+DQo+IFdp
-ZGVyIHNlYXJjaCwgaW4gdGhlIG5ldCB0cmVlOg0KPg0KPiBuZXQvaXB2NC9pZ21wLmM6ICog
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHdoaWNoIGNhdXNlZCBhICJk
-ZWxfdGltZXIoKSBjYWxsZWQNCj4gbmV0L2lwdjQvaWdtcC5jOiAqICAgICAgICAgICAgICBD
-aHJpc3RpYW4gRGF1ZHQgOiAgICAgICByZW1vdmVkIGRlbF90aW1lciBmcm9tDQo+DQo+IE1h
-eWJlIHRoZXNlIGFyZSBvbmx5IGZvciBoaXN0b3JpY2FsIHB1cnBvc2UsIHNvIGxlYXZpbmcg
-dGhlbSB1bnRvdWNoZWQNCj4gaXMgZmluZS4NCj4NCkkgaW50ZW50aW9uYWxseSBtb2RpZmll
-ZCBvbmx5IHRoaXMgcGFydCwgbGVhdmluZyB0aGUgb3RoZXIgcGxhY2VzIHlvdSANCmZvdW5k
-IHVudG91Y2hlZC4NCg0KTXkgZ29hbCB3YXMgdG8gdXBkYXRlIG9ubHkgdGhlIGNvbW1lbnQg
-Zm9yIHRoaXMgY29kZSBibG9jaywgbm90IHRoZSANCmZpbGUncyBjaGFuZ2Vsb2cuDQoNCg0K
-VGhhbmtzLA0KDQotLSANCldhbmdZdWxpDQo=
---------------07PXpVmU8b1YT04K6viN7jix
-Content-Type: application/pgp-keys; name="OpenPGP_0xC5DA1F3046F40BEE.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xC5DA1F3046F40BEE.asc"
-Content-Description: OpenPGP public key
+References: <20250715075140.3174832-1-aliceryhl@google.com> <20250715-glotz-ungefiltert-70f4214f1dbd@brauner>
+In-Reply-To: <20250715-glotz-ungefiltert-70f4214f1dbd@brauner>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 22 Jul 2025 10:05:34 +0200
+X-Gm-Features: Ac12FXzK4ugn78BVvJfIdwke3mdfyD7-O9XOG5GpvkZVg6h4YYAhyi_ttzdDW6U
+Message-ID: <CAH5fLgg-yZ3C3r7psMJ7_rAC8Ep+OUMk6Kmek6u0VAB0RFnG+Q@mail.gmail.com>
+Subject: Re: [PATCH v2] vfs: add Rust files to MAINTAINERS
+To: Christian Brauner <brauner@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+On Tue, Jul 15, 2025 at 11:50=E2=80=AFAM Christian Brauner <brauner@kernel.=
+org> wrote:
+>
+> On Tue, 15 Jul 2025 07:51:40 +0000, Alice Ryhl wrote:
+> > These files are maintained by the VFS subsystem, thus add them to the
+> > relevant MAINTAINERS entry to ensure that the maintainers are ccd on
+> > relevant changes.
+> >
+> >
+>
+> Applied to the vfs-6.17.rust branch of the vfs/vfs.git tree.
+> Patches in the vfs-6.17.rust branch should appear in linux-next soon.
+>
+> Please report any outstanding bugs that were missed during review in a
+> new review to the original patch series allowing us to drop it.
+>
+> It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> patch has now been applied. If possible patch trailers will be updated.
+>
+> Note that commit hashes shown below are subject to change due to rebase,
+> trailer updates or similar. If in doubt, please check the listed branch.
+>
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> branch: vfs-6.17.rust
+>
+> [1/1] vfs: add Rust files to MAINTAINERS
+>       https://git.kernel.org/vfs/vfs/c/3ccc82e31d6a
 
-xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSK
-P+nX39DNIVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAx
-FiEEa1GMzYeuKPkgqDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMB
-AAAKCRDF2h8wRvQL7g0UAQCH3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfP
-bwD/SrncJwwPAL4GiLPEC4XssV6FPUAY0rA68eNNI9cJLArOOARmgSyJEgorBgEE
-AZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7VTL0dvPDofBTjFYDAQgHwngE
-GBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIbDAAKCRDF2h8wRvQL
-7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkUo9ERi7qS
-/hbUdUgtitI89efbY0TVetgDsyeQiwU=3D
-=3DBlkq
------END PGP PUBLIC KEY BLOCK-----
+Thanks! Just a quick follow-up on this. I also sent a patch for the
+pid namespace file:
+https://lore.kernel.org/rust-for-linux/20250714124637.1905722-2-aliceryhl@g=
+oogle.com/
 
---------------07PXpVmU8b1YT04K6viN7jix--
+Also, I forgot to pick up Miguel's Acked-by, but I believe it applies
+to v2 too, so you are welcome to include it in the commit.
 
---------------wln8Z5WJ90acIPVp5CBvJ1Z0--
-
---------------miZQFZGDnPdt0uLvzGTFutMR
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCaH9GRgUDAAAAAAAKCRDF2h8wRvQL7gwh
-AQD+b6zSXab3OX8ehDxFFWIDaNEuEcWNgwe8KckxeUJLCwEA/a+pT5OaBoXOrDvuUSxrem7LXlM6
-dIjddT3Qgh/H1gg=
-=xVG0
------END PGP SIGNATURE-----
-
---------------miZQFZGDnPdt0uLvzGTFutMR--
+Alice
 
