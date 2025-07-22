@@ -1,404 +1,181 @@
-Return-Path: <linux-kernel+bounces-740437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B3C1B0D420
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:07:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F3F40B0D427
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 10:09:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34AF23A44E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:06:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C44913A7393
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 08:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C53CA28C864;
-	Tue, 22 Jul 2025 08:06:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A3C2C08B2;
+	Tue, 22 Jul 2025 08:09:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jmaO4PIp"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GpFz6Snq"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9912828B7F1
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 08:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753171591; cv=fail; b=gmieG9Yt8iBpXCC4t5cdooTN7du6HNR+5c9drTdqzRpnTBLNzA+WZC1zxAO/fmW6hEaBmP2i7GcOZw3AlO1PzcqZsCtaiALN5XIa6a/7HsNVwi4Rp59FTmBJKLKHaOvBpSiAp4DSjYOUSB1D5MmsE/qopjPjJr0SmErJpVgf0Qk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753171591; c=relaxed/simple;
-	bh=j22Oy/bQnLJuvCSJd6nw1HjT7QAvp35WaC9Q7iXVpdo=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Ce4iOSd7P3DBQRXzweDel6yPeGIFzeSzIVQpQgx0CcAHyQ0Nzcz4gn+CK+YihVVaJh5Vt9wP/R0F4UTaY8CjLYDA7dkqPsu3p7SbCl+OwFcqMXbPUnK54fTLvKOK1Gu3u3uSRyq3N8/88OZkUpVsJp9hW2HVMGsYfXwklnqUKtk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jmaO4PIp; arc=fail smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753171588; x=1784707588;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=j22Oy/bQnLJuvCSJd6nw1HjT7QAvp35WaC9Q7iXVpdo=;
-  b=jmaO4PIpPN+M1FcpGoGxK6sjmGxg9cBZCLN3SsRkG4jYi524j0JOQdyF
-   vr+HKK5C96/WEWdHXN/++TXemaIlR8ux/y3dakvkYFeFufVJZaj8PYAuu
-   Kzzgub2Qr0zoUXjgub6my0xHfK8bR9aYV0XLQqvdZReuTz4GQRVq2hwgN
-   st1m6gvqQ/jqsQ6tuYMzKwIBwO+gFyRvX1xDac6ibMcVG1PF0xzlLqM29
-   zkE3UTxwjb5XNm7mPtdfXibCuBScjbTNtXySnNoseCQORnRbrdZYDUCQd
-   zktEpXLgJDyyRW5WtXVWn+D+QoORja1GPLSMJ6cx4bZHpuUY3IkTy9FCu
-   g==;
-X-CSE-ConnectionGUID: TFvqLcvhR2StItA4v0flhw==
-X-CSE-MsgGUID: uGIxYkx5S+ipOuOVKLI/JA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11499"; a="72864483"
-X-IronPort-AV: E=Sophos;i="6.16,331,1744095600"; 
-   d="scan'208";a="72864483"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 01:06:28 -0700
-X-CSE-ConnectionGUID: zz1SrMWFTn2KgMz32Oh2/A==
-X-CSE-MsgGUID: kBPgj1g9TJmbmhj9x9hZKg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,331,1744095600"; 
-   d="scan'208";a="164746163"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 01:06:28 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Tue, 22 Jul 2025 01:06:27 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Tue, 22 Jul 2025 01:06:27 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (40.107.237.70)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Tue, 22 Jul 2025 01:06:25 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GI1j33jxQvEAegXJQUxRadmIU+Ut/9Fa+bfqVRtrLKMf+Qw26s8Cmon5X1lV33Ff7el3+r50XJO1WadYLus9Op7zoYbblapZo3l2OZ1pUnv6mFN3bjcE7o/xB1gNFTygOLerk2/qY2YbdVUWaW5ul/mgS9nv7hU5pET0STzSgiNphIhaqsh3UU/k7xt80faPsxHY4nQX4i2IFqMAovePAJfpIWo4xntdhad2qD5leRCjiQwihJuXWaaOYTRsMGrEJyAS/dds8BMQBHzYF+Z6wx2roQz/EIi4fdakX/ORV5vtEN7hhgLkBo1Ld2w4yuIt0v/ygynoaH5AYeAG0l5OzQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=g6LX2Lc2FZgzXAbG8ayxdVjr6zhT1E3QZbP3IFevjBU=;
- b=ddeQaN2h0nc5EvIyHvjaNdzf7i7Wpm/Z7L5Cfoklz64p2GDZOjonCQVAA2ERwE6GzIk6ZzyAC98Z2hyuhXqJUJF0ZHtoxpNIfTXHYlL6RacaBglxrtT+hST8GY3rAK0jka+cl+JasFrLsW/Cwxk1mBYr3iDPBrLNfTSXXbyQZ70ybulipIYbO0wApp8QJHuWkSxIApM4UoOjq9qmZXPzMFzveeKBM/Mk+NxWUCMUHQXk8EBAyU1v0gwSmKKWrU62/Xxdr+a6jcfHuUStSTCzf1vsc2YlI4UQv9ulNHG+mqqoI5NOPvw7yqm/Z3WDtxIx6P2hRS9m3g8NP/WzImexjg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BL3PR11MB6508.namprd11.prod.outlook.com (2603:10b6:208:38f::5)
- by DM4PR11MB6144.namprd11.prod.outlook.com (2603:10b6:8:af::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Tue, 22 Jul
- 2025 08:05:43 +0000
-Received: from BL3PR11MB6508.namprd11.prod.outlook.com
- ([fe80::1a0f:84e3:d6cd:e51]) by BL3PR11MB6508.namprd11.prod.outlook.com
- ([fe80::1a0f:84e3:d6cd:e51%7]) with mapi id 15.20.8943.028; Tue, 22 Jul 2025
- 08:05:43 +0000
-Date: Tue, 22 Jul 2025 01:07:29 -0700
-From: Matthew Brost <matthew.brost@intel.com>
-To: <phasta@kernel.org>
-CC: Danilo Krummrich <dakr@kernel.org>, James Flowers
-	<bold.zone2373@fastmail.com>, <ckoenig.leichtzumerken@gmail.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
-	<skhan@linuxfoundation.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <linux-kernel-mentees@lists.linux.dev>,
-	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-Subject: Re: [PATCH] drm/sched: Prevent stopped entities from being added to
- the run queue.
-Message-ID: <aH9GwaquE7OR0HFY@lstrano-desk.jf.intel.com>
-References: <20250720235748.2798-1-bold.zone2373@fastmail.com>
- <66a14b005fa3dc874f4f3261b93901af1292bde9.camel@mailbox.org>
- <e7c0f63678a93261182b69aa526217821552a150.camel@mailbox.org>
- <DBHNK2XQHUIW.TQHV41LR5D8I@kernel.org>
- <aH6B7JruWCkReaLw@lstrano-desk.jf.intel.com>
- <80f569dd3c42f11927324ea80e7c14ac2d3352b5.camel@mailbox.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <80f569dd3c42f11927324ea80e7c14ac2d3352b5.camel@mailbox.org>
-X-ClientProxiedBy: SJ0PR13CA0216.namprd13.prod.outlook.com
- (2603:10b6:a03:2c1::11) To BL3PR11MB6508.namprd11.prod.outlook.com
- (2603:10b6:208:38f::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8523A288C97;
+	Tue, 22 Jul 2025 08:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753171790; cv=none; b=Fl1iNbVEKzGLxhETd2/TtMQt2tFO3Of47M/biEXAnQX2uw1fF9mZ94oczKAO/2WBHANaMoA4mt4UEiLp97t7UPfXEA2U71u1Ur2+LO02BVHwyoHsikkJWqgrf3DTo3/yorM0sz6lG1YB3Jv0wu5P6dxpu8+3UZ75OD2zP40a/uY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753171790; c=relaxed/simple;
+	bh=gn+iuOkeXx5CXapSR8JX4rx1rvfdQeO7EY0UGX2skyA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RlcEzHf4OpIZheOeFCNgPq6K60mFp2VnVqNdD2NNowTuUDmOIc22gOEoIiAuYOSFP7bJKM5cg+9lJBsw5WUvudPC1CJaC9hpVhfBa9g01lKYean9hQpaSqUxBypQccjs8LO/savDNuyyAOE5Emj9yG8Me/P1VcRvtCVZ12KpcOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GpFz6Snq; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7e182e4171bso550134085a.3;
+        Tue, 22 Jul 2025 01:09:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753171787; x=1753776587; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=IkMRut42JbXCcjzEF/zhUxhw62vCyXsodJ4Y7LczqSg=;
+        b=GpFz6SnqGhDC3Gi/h/UOySdZA32ramjNnKx07up0ld7agvd4D1QcfAA0X7nUAJZS1l
+         x2fTGhlhTF+WC9hOk20Q78SE1A81OHsKOAIEUMMvpg6zzW7tPIHBa0A38upfJy6JWs5i
+         0A/bXrOqBDhbcrysIBbU6H/axADaviHnP6aUfyT7xn1U7c1VycWiZAwANlnsk5mUmMyJ
+         7jE+w/wrqh+78FJ6DV3UCfSpU9BUQ3enR0iPkmv7iXTJLrkhAmCOTNAq93wc75g4Th3u
+         vj4b/SvwR5yq3R3WYr5m55eauxt4BB1R7917USOfs01tOAxo43JfeXiC5Sn9fn11JZpg
+         +iRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753171787; x=1753776587;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IkMRut42JbXCcjzEF/zhUxhw62vCyXsodJ4Y7LczqSg=;
+        b=Zz/grrw7KIz6QuDP/imQi7dKI4tIpeSN8Aoz9p4jQZ7Q0p6zs5TV/s1wzm426yhgZm
+         1BxHgB3mgOWCEn+c8WpqPlpgE74k+1me2XW2RGMSHHwnMStRSNuft21ms/g6zMuZQV9o
+         IIw2WpiLJdvN4h7FX+6wjsuch3cyEOedVHMDYYp/hwsyY7YPmeH/KuSo2Jox2Ci4ZbhM
+         5mLIWx67SUpjRShb1NTl8KhZw5ouRQ21jb2rmAZsAwYg8por6iriXh+tBw0KasTwDIJt
+         HW2F5r0da54ezPA2ypH3EdGso6mdr/0nhmrCL5brdVfJ+PJ92p+/myEdCv7HAQkMxPLi
+         ZE7g==
+X-Forwarded-Encrypted: i=1; AJvYcCUElC8yLir+S/YFhoHjc9BtupeTJkQPyupzZnUiQ9C8n4/lDg/xTcUfVb4yzq50ULGrw7vzHssrsH+CwA==@vger.kernel.org, AJvYcCUWUZp4xYWcbSrCNBxEM4nmW4xAqGs5FGa/2++31t9ObS5FA5FzBysgNT8wJFYS39rRuCJMmNIxpALLDSZ4@vger.kernel.org, AJvYcCUbY9Z0iaZBHPb1+2YqO0ePz3VvVEu71fWH3qUWpapAeszSuoSERhukKLOlDvCdhxZzNWaC563J@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaVzE0b0HOj8CaLp7DdYg9zs7Mn+RUGCdzF9pweCq8FQBrHQge
+	yzCRLfAIIR9Xgrmwry1PKz4e6BOvD0lN/UNP3KpZT6h/qtvS4mikbgD0IGt36gaaFwIi+ptPNNn
+	Eky9eSdIeNhu6wZmhu9ExpJswpQon4tU=
+X-Gm-Gg: ASbGnctY09WGd9+gGp3srN1bk6woFp5Vi3j+WB/QYIIofYvAsW0yaFdvixV93HNi6To
+	2VaWFJJdqqCKswFw7WIAXTLvgtyCL5+e5sK5081vXf6ZHIPHNog2+3equVUbRSS+A7qXvMWj3qH
+	UyTKCtVqpWA961ONjskhqjNMkUx5tK5Fh5/kKGxBrejSoXv5wUE+keOC5a20ZRpLy1QjJG4LoEM
+	F4lGm2tDQaGOaKuEQjkYwccPrW5m9ymeUgdvkgf
+X-Google-Smtp-Source: AGHT+IHLdTP29vGvUZLmpbgdjueMPFa6ju4C/ky1Y5qT2wkgHAQc0YoCIuQb3roEVQW6tc9ak88IWATJBWQrGV46Nxw=
+X-Received: by 2002:a05:6214:419c:b0:6fd:4cd1:c79a with SMTP id
+ 6a1803df08f44-704f6adc103mr357084356d6.21.1753171787424; Tue, 22 Jul 2025
+ 01:09:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL3PR11MB6508:EE_|DM4PR11MB6144:EE_
-X-MS-Office365-Filtering-Correlation-Id: c4682e38-5654-4842-d09c-08ddc8f68e5b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?N1hrWmdhTXprVjRKL2dmWHhWZm0zSUpLOGtoL0FEcGh2dVEvZE54WUkwZ2d0?=
- =?utf-8?B?cXJWcUhnUzRuZnlnQ1BMT1pKNnNuaE5RQTR6S0FwYTZSblo0bVlsekc4R0dB?=
- =?utf-8?B?YUZYN2x0dFVEWEQvb0pFejhIaXZFRFdpa1huUXM5ZU9JTU9kMEhuSytYQldF?=
- =?utf-8?B?ZXYrdVFHSHgxT1NZOUprT3d2bDlHMEVScmdTTWZvSk84bUtGUmJ2RFkycU91?=
- =?utf-8?B?WGhLa08vWXlwdXpkK3hEbUtvamRYMmhtMURaY001NjVxTWlmUDE4akF2RTFr?=
- =?utf-8?B?N2pXaTB3V0pLdmo4VmtVcUx4UEtManZrYlR3emZuY09xL1ZReXhHbUY3eGNa?=
- =?utf-8?B?bVVsWFQ1cnRtZUp2S1ZiZS9EQ1dpQ2dUWTRCVmFwRDlJN1BKalBUMEY4RW9p?=
- =?utf-8?B?bVVkU3RyZGNzM2RZRyt2N1grRHB0YjFrUzdoR29RVS9RWDhpOXJ3c3FDSWxn?=
- =?utf-8?B?YlVpNEVsdVVVTWlhR1NmbDI2bnRlOEtpOEt5bmFja0MvbTJFek03YTQzRS94?=
- =?utf-8?B?V0thczIyc3I3UXQ3a29ETW8zTFExMkh0VmdQamdqV2hqQnRLYWNWRkI4Mldi?=
- =?utf-8?B?QjBRalNmbmNHb0pwV3phL2dKYmc1Uk1CcGgzZ2RTR3NzNytrZkhoQmo5aThT?=
- =?utf-8?B?aERwWTczVUo1NVZLeHpndktGcU4rZjAwamFXVGxRNm4zbTBaSS9xQjFIVDNK?=
- =?utf-8?B?b2pnSnVWU2dDK2N0T2RoODNrTGpmQTBUOVEvM2pjcWhaODgzSHNxUWlnVnhk?=
- =?utf-8?B?YUk5Nk54WmcwRFVTdU9UdXArT2hWb1grZTUzS0RqNHpnbDNnR2RyS01KSWgy?=
- =?utf-8?B?WXVLbFUxanN6WTNCKzFlYytQeS8ycFE5K2V3TU5Tc1BaV05XeVJIYzhHTU1i?=
- =?utf-8?B?dmxScmFLbDYwdC9TQyt1dTV2dU8zbVpscVRwb0ZNU2lQVkJ0Rjd5dTBIMGlL?=
- =?utf-8?B?bExFd1IyRld2YWN2TEIvaWNrWWtSaDA4RVRlMlJ5b05vOTMyV094aHV0dUxm?=
- =?utf-8?B?ZHJ0em5kV1p6eG9UOVlXMUdVWDRENVNnUDViQ3o5TFp5dktPQW9kOVE4OWU3?=
- =?utf-8?B?Smt3TkxLUERmNUwzb2Rvdk5peHVYQTNyOHR2UzVoL2gxSjQvem9CbnZYejhh?=
- =?utf-8?B?QlR2N1FFK3cwV3krTWptSUhwR0dlWmcvRmhVVmNrT2lZRzBSZGk0a3RWZlEw?=
- =?utf-8?B?cm9ONVhQcGdpcXliNnppcHkyMjdzZi9tSVN3cjErY0wxeEN5dnpBU2svYVNQ?=
- =?utf-8?B?eGplUGxTRHJHbXJZWDJ0d05HYk5JWGtNRzVBNFhsTGR5YkxDTmhjTlA4UWw3?=
- =?utf-8?B?QlRUSDBETHZEaUJxNmIzdjdkSmE3aWN5UzI1U1BSd0x6V3JKbkZwTU9CSHZy?=
- =?utf-8?B?aXJjTGxhbUNBRTA3VW1uVVF3YkRHb082RnVCRGVrd0ZJZ2lGbGk2Z3pzdnU0?=
- =?utf-8?B?ak5OUmRVRWl6TEpLVUJiS21rdFdpcHhRdGNNS1liMThUY3NWbTdZRkJiZS9P?=
- =?utf-8?B?cHphUUFZNUYvcGNDU2phM0hDUjRaVlRjU2xUYXZod2RLbmY0V2tZZDFtT2VC?=
- =?utf-8?B?T3RWVURXelFhL0JYYnFoUHFzOEdJNUJnckFQTjlhWFBSQWtabWY0SVZFWnNK?=
- =?utf-8?B?SEN1Q3hiSGhkcUdMR2d1VzJNM0tpU1lPUENrcENITmFOQi9mMHhOYkxEek5N?=
- =?utf-8?B?WEZWODdNanBwbGdoSnJjb0VMd2JmSXVzSTdBSVJLbHJSVVNNUkM0czVibkR2?=
- =?utf-8?B?SHQ3VGlicGQzZWJ6QWhUM016RkVrM09GS1JMSUtMTXgyYzA5QlVHYUpUSDMy?=
- =?utf-8?B?em9ZTkF1ajFDc0dHeGJqZU1vTlduVHcrL0wyblNOdkhMTmZBOUM3cXhmQnNE?=
- =?utf-8?B?Y0RmYXBlNEVrOVp0UkdIYWs1Z2tYTkhZejlKN25SSzltKzhCbmF2NnQyVzBF?=
- =?utf-8?Q?e5n7M3EV1Q0=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR11MB6508.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VExFMithNjF2S0xTSVRaVVBQeFBReVUyVkhYMXhuN0dIUURSTWNSNEp0SFhK?=
- =?utf-8?B?TCtYU2c1ajg5bFN3NHJmcit1bElrUTdzalMvNjh4S3Q3eUQwS2d3QW5mcENF?=
- =?utf-8?B?djVPNTk4VjZ3b0UwaE9RMWs4Vlg5V0tWRndEbi9SbTVqMzY2bk5hSERQREQr?=
- =?utf-8?B?MlRsNzl6VkgzSmllUlpFWm0wWEsvd2pxUzdiblE3RytKOUMrdURqUDFNUytS?=
- =?utf-8?B?bHF1aDhmMUdFWThWdXh5aXBQM1Y0eVB6NzAwT2Q5cktIMjV1V1g5dmdHcG55?=
- =?utf-8?B?bHh3MUpFRGNkbkNwbVpYelMwS296Z2R0cnFlWW13dzlYOWpZN1c5NlAvM3l5?=
- =?utf-8?B?YXc3QzVubnd5aGpvbHJ4L0gzSmVTcVY0U1JWRUFPU3hRMU1tTzdlbnVqRUd0?=
- =?utf-8?B?RUhpZE1WbFNsZXVhSnI0aExtTzZaWnBBSjI0VEEvQmg0d3NKK3FBYWZIVSsv?=
- =?utf-8?B?bWtYblFEd0VvT2t6M1JFdmt6aDJzRGdYNk11MktQbUtzOVJwUmVNQm9OanFK?=
- =?utf-8?B?UVFGajdXN3F1c3hLY1Z1U3BoZ1pLOHpOeWdCY09HWTFhS2JrekhrMmZJeE9E?=
- =?utf-8?B?dmtibUZEVEJucjNRbFEwLythL2xtYVoxNHJCOEN6ZGtUYjdsWkhVcldSR25Q?=
- =?utf-8?B?YTdnbWZ1UVRLbmdNZm9LUjFHaXVvS0N2MkI0NlpKS2w3ZDRDampSVkloc2hJ?=
- =?utf-8?B?eDV3a0JSVjFLSmxrTEFkZmxoSUlBTU1VQ2hzbUhEb1ZVMGVZTVNHTm9KMCth?=
- =?utf-8?B?VXlxOWpHbFVMb2hacjFtdlRFVk9CZ2FBQWJrSWlqc0gyNXZXWWZreGx0RXQv?=
- =?utf-8?B?WENxMzJuV3hJMGJVS2FnZGlCd2NGbnlCRFNsbk5ESHRySy9xN0Y5YStiaUND?=
- =?utf-8?B?a25GTnltcnpqNFg3QTFEcUZFTHZZd2w3WjUrTzZTK3lZZkZsdm5GNFd3OG4r?=
- =?utf-8?B?RGJtUFR4QnpKeDdjMnI3ZVQ2SDB3RmJBMUs1QTlEMW9SMS9wam1USXNnS04v?=
- =?utf-8?B?SnlnUHlidU1mLzI0VHBnR3ZjdllRNGFQUFM0Y21Ic0JPQmEvWGIyRFZaK0dy?=
- =?utf-8?B?NHNjT2lLWDVISjhvL1lubGJ0ZDBndmh1RkE1VW5zSUNETWc1ZWhZYWFPYnpU?=
- =?utf-8?B?ajdwZUFud1RYMjVpN1M3dU80a0lKM1ZpajYrbnFKeHpOczJSL2UvazUyenpP?=
- =?utf-8?B?aTV5SlNFMHZwc1JJUHZ5b0pETDRlQW9BUGM3NGovRFZJZVB5R3ZXOFhlU01F?=
- =?utf-8?B?R2t1MERNU3lNSXp5blE4YmNacHNHNTRSNzRKaVV1Mnp6UERpZnIySkJBTGo4?=
- =?utf-8?B?elFDVTF3M21YQ2prVzVra2l5aHJSbGFTbStzODAzb2x1eDRJdFJpZlZPNnY3?=
- =?utf-8?B?TEdpc2pzMlVJTW5vYldoeTZ5Mkg3R3J3WnI3ZWl0TDdLMmpiWTBZZ2htTmcy?=
- =?utf-8?B?UmR6djltNStoSGM2ZmhKVlpkVVk0dFVXVkt5UjFodlBOMVhDV3hhR2NqRTYy?=
- =?utf-8?B?N1R5cmN2TkxkazY2T1VBaWY1dE9RRUR0S1dxTUtrMkFXdmlBeHpTU0M3WUMx?=
- =?utf-8?B?UURoOWh4OXZmRy9zRXJxUFg2VVJnK3psTGZjV2p1T3JhN2lMMWxUWTdtYkpO?=
- =?utf-8?B?WlRPZktTMzNUbjI0S0tueEtyT1F1WmJmT0VCM0hPWko2TjVaL2gxaGlFcHdI?=
- =?utf-8?B?LzNlNHlsY3RNc0Y4MGlKTkFIaWhLL3pTYjlKZmdsTncwOUowRHA3YXlWb0ZT?=
- =?utf-8?B?alZDZ0o1YlV4M3JVaFNXWFJYRzZWMDEwc1AvSTVTdVJKd3N4NVZ2OGZjazc4?=
- =?utf-8?B?SzYyblJuRXdJaDZxODUxMUhxZ25oNFBTdmNTMVV6cExVOWFiZThhOEcrNFk3?=
- =?utf-8?B?cGtWcWxhTGRMQzBEdEdYWWpob1RLNURsM0ZWdVUzNEVMSXh5NUorUGdqQzU0?=
- =?utf-8?B?NnZOTmlod1VEeXZHdUk3Qy9qT1RMNFNZVWxIVjFNN2JscUJqdDBSZ01LdWZu?=
- =?utf-8?B?dlFmaWY4LyswOE5mdzlOSGZnNHNmWElqVFRqdDlaVXAxTVlxVWhHL2d2V0ZE?=
- =?utf-8?B?S2JlbEZTK25wM0VFWFBzbm9xSFFQQ0Z4VlArUS9KQytCYnNocUorOSt0WHc2?=
- =?utf-8?B?TFhleTZFNWFjMXRranQyNm44cEh5REFGOHBNYmYvbzlXL21sR044LzgrdjFH?=
- =?utf-8?B?NEE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: c4682e38-5654-4842-d09c-08ddc8f68e5b
-X-MS-Exchange-CrossTenant-AuthSource: BL3PR11MB6508.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2025 08:05:43.4004
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2tAGgZ4AK+1J4I0ofsiS+Wvrqs+WFsKdEGY8qfMB/6A8s/HE8/SMBmREZJ/geoJaCYuPwnezdFxKv5TDnmXL/A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6144
-X-OriginatorOrg: intel.com
+References: <20250722080003.3605-1-qasdev00@gmail.com>
+In-Reply-To: <20250722080003.3605-1-qasdev00@gmail.com>
+From: Dmitry Savin <envelsavinds@gmail.com>
+Date: Tue, 22 Jul 2025 09:09:35 +0100
+X-Gm-Features: Ac12FXwaASSHloXD55ijQi_eIPwUCNTSkE1tUTMXeaCahvY7RWmwi-wYMnuFwEg
+Message-ID: <CAP+4zOfi4v-MZoOeQmkD99-QhV45KEyHSXV2CSGtAaqOyGb6CQ@mail.gmail.com>
+Subject: Re: [PATCH RESEND] HID: multitouch: fix slab out-of-bounds access in mt_report_fixup()
+To: Qasim Ijaz <qasdev00@gmail.com>
+Cc: jikos@kernel.org, bentiss@kernel.org, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jul 22, 2025 at 09:37:11AM +0200, Philipp Stanner wrote:
-> On Mon, 2025-07-21 at 11:07 -0700, Matthew Brost wrote:
-> > On Mon, Jul 21, 2025 at 12:14:31PM +0200, Danilo Krummrich wrote:
-> > > On Mon Jul 21, 2025 at 10:16 AM CEST, Philipp Stanner wrote:
-> > > > On Mon, 2025-07-21 at 09:52 +0200, Philipp Stanner wrote:
-> > > > > On Sun, 2025-07-20 at 16:56 -0700, James Flowers wrote:
-> > > > > > diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-> > > > > > index bfea608a7106..997a2cc1a635 100644
-> > > > > > --- a/drivers/gpu/drm/scheduler/sched_main.c
-> > > > > > +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> > > > > > @@ -172,8 +172,10 @@ void drm_sched_rq_update_fifo_locked(struct drm_sched_entity *entity,
-> > > > > >  
-> > > > > >  	entity->oldest_job_waiting = ts;
-> > > > > >  
-> > > > > > -	rb_add_cached(&entity->rb_tree_node, &rq->rb_tree_root,
-> > > > > > -		      drm_sched_entity_compare_before);
-> > > > > > +	if (!entity->stopped) {
-> > > > > > +		rb_add_cached(&entity->rb_tree_node, &rq->rb_tree_root,
-> > > > > > +			      drm_sched_entity_compare_before);
-> > > > > > +	}
-> > > > > 
-> > > > > If this is a race, then this patch here is broken, too, because you're
-> > > > > checking the 'stopped' boolean as the callers of that function do, too
-> > > > > – just later. :O
-> > > > > 
-> > > > > Could still race, just less likely.
-> > > > > 
-> > > > > The proper way to fix it would then be to address the issue where the
-> > > > > locking is supposed to happen. Let's look at, for example,
-> > > > > drm_sched_entity_push_job():
-> > > > > 
-> > > > > 
-> > > > > void drm_sched_entity_push_job(struct drm_sched_job *sched_job)
-> > > > > {
-> > > > > 	(Bla bla bla)
-> > > > > 
-> > > > >  	…………
-> > > > > 
-> > > > > 	/* first job wakes up scheduler */
-> > > > > 	if (first) {
-> > > > > 		struct drm_gpu_scheduler *sched;
-> > > > > 		struct drm_sched_rq *rq;
-> > > > > 
-> > > > > 		/* Add the entity to the run queue */
-> > > > > 		spin_lock(&entity->lock);
-> > > > > 		if (entity->stopped) {                  <---- Aha!
-> > > > > 			spin_unlock(&entity->lock);
-> > > > > 
-> > > > > 			DRM_ERROR("Trying to push to a killed entity\n");
-> > > > > 			return;
-> > > > > 		}
-> > > > > 
-> > > > > 		rq = entity->rq;
-> > > > > 		sched = rq->sched;
-> > > > > 
-> > > > > 		spin_lock(&rq->lock);
-> > > > > 		drm_sched_rq_add_entity(rq, entity);
-> > > > > 
-> > > > > 		if (drm_sched_policy == DRM_SCHED_POLICY_FIFO)
-> > > > > 			drm_sched_rq_update_fifo_locked(entity, rq, submit_ts); <---- bumm!
-> > > > > 
-> > > > > 		spin_unlock(&rq->lock);
-> > > > > 		spin_unlock(&entity->lock);
-> > > > > 
-> > > > > But the locks are still being hold. So that "shouldn't be happening"(tm).
-> > > > > 
-> > > > > Interesting. AFAICS only drm_sched_entity_kill() and drm_sched_fini()
-> > > > > stop entities. The former holds appropriate locks, but drm_sched_fini()
-> > > > > doesn't. So that looks like a hot candidate to me. Opinions?
-> > > > > 
-> > > > > On the other hand, aren't drivers prohibited from calling
-> > > > > drm_sched_entity_push_job() after calling drm_sched_fini()? If the
-> > > > > fuzzer does that, then it's not the scheduler's fault.
-> > > 
-> > > Exactly, this is the first question to ask.
-> > > 
-> > > And I think it's even more restrictive:
-> > > 
-> > > In drm_sched_fini()
-> > > 
-> > > 	for (i = DRM_SCHED_PRIORITY_KERNEL; i < sched->num_rqs; i++) {
-> > > 		struct drm_sched_rq *rq = sched->sched_rq[i];
-> > > 
-> > > 		spin_lock(&rq->lock);
-> > > 		list_for_each_entry(s_entity, &rq->entities, list)
-> > > 			/*
-> > > 			 * Prevents reinsertion and marks job_queue as idle,
-> > > 			 * it will be removed from the rq in drm_sched_entity_fini()
-> > > 			 * eventually
-> > > 			 */
-> > > 			s_entity->stopped = true;
-> > > 		spin_unlock(&rq->lock);
-> > > 		kfree(sched->sched_rq[i]);
-> > > 	}
-> > > 
-> > > In drm_sched_entity_kill()
-> > > 
-> > > 	static void drm_sched_entity_kill(struct drm_sched_entity *entity)
-> > > 	{
-> > > 		struct drm_sched_job *job;
-> > > 		struct dma_fence *prev;
-> > > 
-> > > 		if (!entity->rq)
-> > > 			return;
-> > > 
-> > > 		spin_lock(&entity->lock);
-> > > 		entity->stopped = true;
-> > > 		drm_sched_rq_remove_entity(entity->rq, entity);
-> > > 		spin_unlock(&entity->lock);
-> > > 
-> > > 		[...]
-> > > 	}
-> > > 
-> > > If this runs concurrently, this is a UAF as well.
-> > > 
-> > > Personally, I have always been working with the assupmtion that entites have to
-> > > be torn down *before* the scheduler, but those lifetimes are not documented
-> > > properly.
-> > 
-> > Yes, this is my assumption too. I would even take it further: an entity
-> > shouldn't be torn down until all jobs associated with it are freed as
-> > well. I think this would solve a lot of issues I've seen on the list
-> > related to UAF, teardown, etc.
-> 
-> That's kind of impossible with the new tear down design, because
-> drm_sched_fini() ensures that all jobs are freed on teardown. And
-> drm_sched_fini() wouldn't be called before all jobs are gone,
-> effectively resulting in a chicken-egg-problem, or rather: the driver
-> implementing its own solution for teardown.
-> 
+Reviewed-by: Dmitry Savin <envelsavinds@gmail.com>
 
-I've read this four times and I'm still generally confused.
-
-"drm_sched_fini ensures that all jobs are freed on teardown" — Yes,
-that's how a refcounting-based solution works. drm_sched_fini would
-never be called if there were pending jobs.
-
-"drm_sched_fini() wouldn't be called before all jobs are gone" — See
-above.
-
-"effectively resulting in a chicken-and-egg problem" — A job is created
-after the scheduler, and it holds a reference to the scheduler until
-it's freed. I don't see how this idiom applies.
-
-"the driver implementing its own solution for teardown" — It’s just
-following the basic lifetime rules I outlined below. Perhaps Xe was
-ahead of its time, but the number of DRM scheduler blowups we've had is
-zero — maybe a strong indication that this design is correct.
-
-Matt
-
-> P.
-> 
-> 
-> > 
-> > > 
-> > > There are two solutions:
-> > > 
-> > >   (1) Strictly require all entities to be torn down before drm_sched_fini(),
-> > >       i.e. stick to the natural ownership and lifetime rules here (see below).
-> > > 
-> > >   (2) Actually protect *any* changes of the relevent fields of the entity
-> > >       structure with the entity lock.
-> > > 
-> > > While (2) seems rather obvious, we run into lock inversion with this approach,
-> > > as you note below as well. And I think drm_sched_fini() should not mess with
-> > > entities anyways.
-> > > 
-> > > The ownership here seems obvious:
-> > > 
-> > > The scheduler *owns* a resource that is used by entities. Consequently, entities
-> > > are not allowed to out-live the scheduler.
-> > > 
-> > > Surely, the current implementation to just take the resource away from the
-> > > entity under the hood can work as well with appropriate locking, but that's a
-> > > mess.
-> > > 
-> > > If the resource *really* needs to be shared for some reason (which I don't see),
-> > > shared ownership, i.e. reference counting, is much less error prone.
-> > 
-> > Yes, Xe solves all of this via reference counting (jobs refcount the
-> > entity). It's a bit easier in Xe since the scheduler and entities are
-> > the same object due to their 1:1 relationship. But even in non-1:1
-> > relationships, an entity could refcount the scheduler. The teardown
-> > sequence would then be: all jobs complete on the entity → teardown the
-> > entity → all entities torn down → teardown the scheduler.
-> > 
-> > Matt
-> 
+On Tue, 22 Jul 2025 at 09:00, Qasim Ijaz <qasdev00@gmail.com> wrote:
+>
+> A malicious HID device can trigger a slab out-of-bounds during
+> mt_report_fixup() by passing in report descriptor smaller than
+> 607 bytes. mt_report_fixup() attempts to patch byte offset 607
+> of the descriptor with 0x25 by first checking if byte offset
+> 607 is 0x15 however it lacks bounds checks to verify if the
+> descriptor is big enough before conducting this check. Fix
+> this vulnerability by ensuring the descriptor size is
+> greater than or equal to 608 before accessing it.
+>
+> Below is the KASAN splat after the out of bounds access happens:
+>
+> [   13.671954] ==================================================================
+> [   13.672667] BUG: KASAN: slab-out-of-bounds in mt_report_fixup+0x103/0x110
+> [   13.673297] Read of size 1 at addr ffff888103df39df by task kworker/0:1/10
+> [   13.673297]
+> [   13.673297] CPU: 0 UID: 0 PID: 10 Comm: kworker/0:1 Not tainted 6.15.0-00005-gec5d573d83f4-dirty #3
+> [   13.673297] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/04
+> [   13.673297] Call Trace:
+> [   13.673297]  <TASK>
+> [   13.673297]  dump_stack_lvl+0x5f/0x80
+> [   13.673297]  print_report+0xd1/0x660
+> [   13.673297]  kasan_report+0xe5/0x120
+> [   13.673297]  __asan_report_load1_noabort+0x18/0x20
+> [   13.673297]  mt_report_fixup+0x103/0x110
+> [   13.673297]  hid_open_report+0x1ef/0x810
+> [   13.673297]  mt_probe+0x422/0x960
+> [   13.673297]  hid_device_probe+0x2e2/0x6f0
+> [   13.673297]  really_probe+0x1c6/0x6b0
+> [   13.673297]  __driver_probe_device+0x24f/0x310
+> [   13.673297]  driver_probe_device+0x4e/0x220
+> [   13.673297]  __device_attach_driver+0x169/0x320
+> [   13.673297]  bus_for_each_drv+0x11d/0x1b0
+> [   13.673297]  __device_attach+0x1b8/0x3e0
+> [   13.673297]  device_initial_probe+0x12/0x20
+> [   13.673297]  bus_probe_device+0x13d/0x180
+> [   13.673297]  device_add+0xe3a/0x1670
+> [   13.673297]  hid_add_device+0x31d/0xa40
+> [...]
+>
+> Fixes: c8000deb6836 ("HID: multitouch: Add support for GT7868Q")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
+> Reviewed-by: Dmitry Savin <envelsavinds@gmail.com>
+> ---
+>  drivers/hid/hid-multitouch.c | 25 ++++++++++++++++---------
+>  1 file changed, 16 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+> index 7ac8e16e6158..af4abe3ba410 100644
+> --- a/drivers/hid/hid-multitouch.c
+> +++ b/drivers/hid/hid-multitouch.c
+> @@ -1461,18 +1461,25 @@ static const __u8 *mt_report_fixup(struct hid_device *hdev, __u8 *rdesc,
+>         if (hdev->vendor == I2C_VENDOR_ID_GOODIX &&
+>             (hdev->product == I2C_DEVICE_ID_GOODIX_01E8 ||
+>              hdev->product == I2C_DEVICE_ID_GOODIX_01E9)) {
+> -               if (rdesc[607] == 0x15) {
+> -                       rdesc[607] = 0x25;
+> -                       dev_info(
+> -                               &hdev->dev,
+> -                               "GT7868Q report descriptor fixup is applied.\n");
+> +               if (*size >= 608) {
+> +                       if (rdesc[607] == 0x15) {
+> +                               rdesc[607] = 0x25;
+> +                               dev_info(
+> +                                       &hdev->dev,
+> +                                       "GT7868Q report descriptor fixup is applied.\n");
+> +                       } else {
+> +                               dev_info(
+> +                                       &hdev->dev,
+> +                                       "The byte is not expected for fixing the report descriptor. \
+> +                                       It's possible that the touchpad firmware is not suitable for applying the fix. \
+> +                                       got: %x\n",
+> +                                       rdesc[607]);
+> +                       }
+>                 } else {
+>                         dev_info(
+>                                 &hdev->dev,
+> -                               "The byte is not expected for fixing the report descriptor. \
+> -It's possible that the touchpad firmware is not suitable for applying the fix. \
+> -got: %x\n",
+> -                               rdesc[607]);
+> +                               "GT7868Q fixup: report descriptor only %u bytes, skipping\n",
+> +                               *size);
+>                 }
+>         }
+>
+> --
+> 2.39.5
+>
 
