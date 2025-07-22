@@ -1,260 +1,112 @@
-Return-Path: <linux-kernel+bounces-740864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA286B0DA2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:54:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1394FB0D9EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:43:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7E051AA3A54
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:54:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4833F3B2387
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1642C2E9EB1;
-	Tue, 22 Jul 2025 12:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DUPEnHeU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FB112E498E;
+	Tue, 22 Jul 2025 12:43:38 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE682E9740;
-	Tue, 22 Jul 2025 12:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABCC12E3701
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 12:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753188862; cv=none; b=ZdPPWPvOhFo/G49zpCMfcG2L7o1kMy1NzQ8xdA+n3NVycQ6Awp5t8YAGZn5BdppmWd3K3f+BEw9rV41P00G9os29SdFiaM9lOdBXP7v9J3KD3PMTwMqqWDJYsaWa7p1lLeMBrh0nBqn3lZmWgardXOoQZrK7g4HsPlVto4VQlyI=
+	t=1753188218; cv=none; b=PokF6gaVzJg0h7WKyFjHaul8jJghItwKKd/TCao/Ak/Tp8m5MWw0YMa/hc1/G+A4QqU8ZsEx8l+A9yMgrUyK5TUnuDQeC4I4Hh5GT3xraKi9vXPm39NlzOZ/EAhk5AEtJ1+259unBduQv3GVL44LiKrlpab3omru41mgrBiQcrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753188862; c=relaxed/simple;
-	bh=0ZfWD3fGMg7venJRU+xdGNcfzv1XmoENYubvOaZ6XD0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l6v1mRgLwp6UVfY9Fdnm7FoNd7jIW3c0qH7/JdWOevzRn05vUucrF/neYjboQhk+gkhOB2QKeb1uQAd6w9rYWkbhJoX/y5hGYfwINtDJgb2swBDe3pl/DpX3bzL941PBnUfCgbIr9BUusV2cwg58X3VVNj3MDWFTYYOpT/ODHWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DUPEnHeU; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753188861; x=1784724861;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=0ZfWD3fGMg7venJRU+xdGNcfzv1XmoENYubvOaZ6XD0=;
-  b=DUPEnHeUDYgi/9xjjGuE/kxVxmwImNCQ7eAEElXjNfj6/nSoWA+rJtGO
-   Iwrc/0IxtYzRXbEQW8TDtDaXwqXgWi+s6jNde93HRvL+wrEAgO1o80oMl
-   +7L/IgQKGN3Qz+JAOK7iFVjCJq8tuvE2XaY4AKdMoRxoXTBEqSRJLD2eK
-   JFzZqBNuhh8L9+mYLbV9BxyRUPvuYracwOJ9LTJkdnVspyxVdxWKo0TQk
-   TlCSRVB+ZPqMvPkFyyp8Hi/3ADPDTil8GMPAByAdO2mYVd7c0ceEJpzFx
-   rEVUs5QKHCruAT6ucfHUwNSQvMOdezJkG4Mb+QPj5mRIw9agIbybH1SAY
-   A==;
-X-CSE-ConnectionGUID: AgRA7D+uRJmSxbN0ALKhlQ==
-X-CSE-MsgGUID: /fCBP6rmR66kVGtZN5k9aA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11500"; a="65698847"
-X-IronPort-AV: E=Sophos;i="6.16,331,1744095600"; 
-   d="scan'208";a="65698847"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 05:54:15 -0700
-X-CSE-ConnectionGUID: Z6o+nlcaRlmnQMXVc94yAA==
-X-CSE-MsgGUID: ujjhqxBrSh6hdYofHteW3w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,331,1744095600"; 
-   d="scan'208";a="159453856"
-Received: from irvmail002.ir.intel.com ([10.43.11.120])
-  by fmviesa009.fm.intel.com with ESMTP; 22 Jul 2025 05:54:10 -0700
-Received: from GK6031-HR8-NF5280M7-41522.igk.intel.com (GK6031-HR8-NF5280M7-41522.igk.intel.com [10.91.175.72])
-	by irvmail002.ir.intel.com (Postfix) with ESMTP id D38422FC5B;
-	Tue, 22 Jul 2025 13:54:08 +0100 (IST)
-From: Bertrand Wlodarczyk <bertrand.wlodarczyk@intel.com>
-To: tj@kernel.org,
-	hannes@cmpxchg.org,
-	mkoutny@suse.com,
-	cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: shakeel.butt@linux.dev,
-	inwardvessel@gmail.com,
-	Bertrand Wlodarczyk <bertrand.wlodarczyk@intel.com>
-Subject: [PATCH] cgroup/rstat: move css_rstat_lock outside cpu loop
-Date: Tue, 22 Jul 2025 14:43:19 +0200
-Message-ID: <20250722124317.2698497-3-bertrand.wlodarczyk@intel.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1753188218; c=relaxed/simple;
+	bh=OEEo5QZ0zrycMs4eocYeRQEGw9OPdWr5gFXO/9eQzhU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=c6Agzk63T3dMPIc1UW6DnMUHC+niHqDvUMQOyt2ViT/CP2Yk0CqTKynPMVVIgPsRJt3XxnZsg4igB1Yx2OIuAkaYeUBUzeXfHqYpZlmc6CtBShZPqwS6NL0NKNSAzc8gdRUwojGFuf6XN4z2WaKf3RqaImsfEKJZvPMCs2kptSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-87c43c2af72so208047839f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 05:43:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753188215; x=1753793015;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yCK/CoDQa4+fiUlH5iG7Umnl8iLRsK5lK8skAbpq76I=;
+        b=PZ4UTV7fgV/OcEryvYs9oaLQ3Q+bbDclozg4cnDD6AZdICkHT5eWeVRP2ScXGimPK2
+         v8jFnFC8XLFhmf1yv86YY+5faWzogXCrvOKDqqM6nik3WBZIc/pqvvxyoXAVUO37pX3t
+         uBDJzAO4dtuQS/SoNI6aWVOfm3TJICLIxAeBw8MYi+yJpTljss/h+vkNi0fCLEK04hq8
+         sdhcLopnaQG5E/MHBvXdzi9r7ib/jw+z+aL9fD0GqW9K8l8WBRc1BPhlY4kLgHPLszTN
+         vqkPFXuUeryBKhuwPByLAYA4W5P1Vz+AaKTtRzSrNZSL2brr0295uQZMo50jtDZ16F/F
+         5V8w==
+X-Forwarded-Encrypted: i=1; AJvYcCXhUgaVWMXwULdn6Prix0LN1nlN8Wd8//7jWBFaUWqaGdXxoV44DiZSbICl5yTWX2NpugKyFzMYhSuhzI4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywbddj+rRbFgl1036HSWxX9QiJuGxItt6mV7GK0SoqiukGMjhdD
+	VpEK8RwwpouINX5m43vhNbIprdTA4d6j/xnPlhZHgJbpeHeZfciKUCCYFW0Wjrq0Sj2B3AvAhE3
+	I5cy7R0c6MTorNQ+x7cx7WRuCaRhY5Meen1oyTMaXQ9XunM/oQFrw+e11sNc=
+X-Google-Smtp-Source: AGHT+IFJQbh/pzXQNp9St2OMEZQF7qEK8sDQHk1iqLkUqW77BKWGwVl/IhabTazb6kYBuQBXMUajXBW6sDifu8RTq5PooVRf+KlE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a6b:5110:0:b0:87c:bf5:c242 with SMTP id
+ ca18e2360f4ac-87c0bf5c480mr1943777739f.3.1753188214817; Tue, 22 Jul 2025
+ 05:43:34 -0700 (PDT)
+Date: Tue, 22 Jul 2025 05:43:34 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <687f8776.a70a0220.693ce.0102.GAE@google.com>
+Subject: [syzbot] Monthly jfs report (Jul 2025)
+From: syzbot <syzbot+list7cfc8445997df7df0f0f@syzkaller.appspotmail.com>
+To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-By moving the lock outside the CPU loop, we reduce the frequency
-of costly lock acquisition.
-This adjustment slightly improves performance in scenarios where
-multiple CPUs concurrently attempt to acquire the lock for
-the same css.
+Hello jfs maintainers/developers,
 
-The cpu argument passed to __css_rstat_lock, which was utilized
-by the event system, has been removed because it is no longer in use.
+This is a 31-day syzbot report for the jfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/jfs
+
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 53 issues are still open and 60 have already been fixed.
+
+Some of the still happening issues:
+
+Ref  Crashes Repro Title
+<1>  57987   Yes   kernel BUG in jfs_evict_inode
+                   https://syzkaller.appspot.com/bug?extid=9c0c58ea2e4887ab502e
+<2>  30948   Yes   WARNING in dbAdjTree
+                   https://syzkaller.appspot.com/bug?extid=ab18fa9c959320611727
+<3>  28598   Yes   kernel BUG in txUnlock
+                   https://syzkaller.appspot.com/bug?extid=a63afa301d1258d09267
+<4>  6827    Yes   general protection fault in lmLogSync (2)
+                   https://syzkaller.appspot.com/bug?extid=e14b1036481911ae4d77
+<5>  4026    Yes   kernel BUG in dbFindLeaf
+                   https://syzkaller.appspot.com/bug?extid=dcea2548c903300a400e
+<6>  3466    Yes   INFO: task hung in lock_metapage
+                   https://syzkaller.appspot.com/bug?extid=1d84a1682e4673d5c4fb
+<7>  3309    Yes   KASAN: user-memory-access Write in __destroy_inode
+                   https://syzkaller.appspot.com/bug?extid=dcc068159182a4c31ca3
+<8>  3083    Yes   INFO: trying to register non-static key in txEnd (2)
+                   https://syzkaller.appspot.com/bug?extid=5b27962d84feb4acb5c1
+<9>  2413    Yes   general protection fault in jfs_flush_journal
+                   https://syzkaller.appspot.com/bug?extid=194bfe3476f96782c0b6
+<10> 2364    Yes   general protection fault in write_special_inodes
+                   https://syzkaller.appspot.com/bug?extid=c732e285f8fc38d15916
+
 ---
-Results:
- 
-QEMU vm
-+-------+---------+
-| main  | patched |
-+-------+---------+
-| 9.17s | 2.36s   |
-+-------+---------+
-ext4 raw image with debian:
-qemu-system-x86_64 -enable-kvm -cpu host -smp 102 -m 16G -kernel linux-cgroup/arch/x86/boot/bzImage -drive file=rootfs.ext4,if=virtio,format=raw -append "rootwait root=/dev/vda console=tty1 console=ttyS0 nokaslr cgroup_enable=memory cgroup_memory=1" -net nic,model=virtio -net user -nographic
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Benchmark code: https://gist.github.com/bwlodarcz/c955b36b5667f0167dffcff23953d1da
-musl-gcc -o benchmark -static -g3 -DNUM_THREADS=10 -DNUM_ITER=10000 -O2 -Wall benchmark.c -pthread
----
- include/trace/events/cgroup.h | 22 ++++++++++------------
- kernel/cgroup/rstat.c         | 20 +++++++++-----------
- 2 files changed, 19 insertions(+), 23 deletions(-)
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
-diff --git a/include/trace/events/cgroup.h b/include/trace/events/cgroup.h
-index ba9229af9a34..eb674eef8b99 100644
---- a/include/trace/events/cgroup.h
-+++ b/include/trace/events/cgroup.h
-@@ -206,15 +206,14 @@ DEFINE_EVENT(cgroup_event, cgroup_notify_frozen,
- 
- DECLARE_EVENT_CLASS(cgroup_rstat,
- 
--	TP_PROTO(struct cgroup *cgrp, int cpu, bool contended),
-+	TP_PROTO(struct cgroup *cgrp, bool contended),
- 
--	TP_ARGS(cgrp, cpu, contended),
-+	TP_ARGS(cgrp, contended),
- 
- 	TP_STRUCT__entry(
- 		__field(	int,		root			)
- 		__field(	int,		level			)
- 		__field(	u64,		id			)
--		__field(	int,		cpu			)
- 		__field(	bool,		contended		)
- 	),
- 
-@@ -222,13 +221,12 @@ DECLARE_EVENT_CLASS(cgroup_rstat,
- 		__entry->root = cgrp->root->hierarchy_id;
- 		__entry->id = cgroup_id(cgrp);
- 		__entry->level = cgrp->level;
--		__entry->cpu = cpu;
- 		__entry->contended = contended;
- 	),
- 
--	TP_printk("root=%d id=%llu level=%d cpu=%d lock contended:%d",
-+	TP_printk("root=%d id=%llu level=%d lock contended:%d",
- 		  __entry->root, __entry->id, __entry->level,
--		  __entry->cpu, __entry->contended)
-+		  __entry->contended)
- );
- 
- /*
-@@ -238,23 +236,23 @@ DECLARE_EVENT_CLASS(cgroup_rstat,
-  */
- DEFINE_EVENT(cgroup_rstat, cgroup_rstat_lock_contended,
- 
--	TP_PROTO(struct cgroup *cgrp, int cpu, bool contended),
-+	TP_PROTO(struct cgroup *cgrp, bool contended),
- 
--	TP_ARGS(cgrp, cpu, contended)
-+	TP_ARGS(cgrp, contended)
- );
- 
- DEFINE_EVENT(cgroup_rstat, cgroup_rstat_locked,
- 
--	TP_PROTO(struct cgroup *cgrp, int cpu, bool contended),
-+	TP_PROTO(struct cgroup *cgrp, bool contended),
- 
--	TP_ARGS(cgrp, cpu, contended)
-+	TP_ARGS(cgrp, contended)
- );
- 
- DEFINE_EVENT(cgroup_rstat, cgroup_rstat_unlock,
- 
--	TP_PROTO(struct cgroup *cgrp, int cpu, bool contended),
-+	TP_PROTO(struct cgroup *cgrp, bool contended),
- 
--	TP_ARGS(cgrp, cpu, contended)
-+	TP_ARGS(cgrp, contended)
- );
- 
- #endif /* _TRACE_CGROUP_H */
-diff --git a/kernel/cgroup/rstat.c b/kernel/cgroup/rstat.c
-index c8a48cf83878..dd312fe1896d 100644
---- a/kernel/cgroup/rstat.c
-+++ b/kernel/cgroup/rstat.c
-@@ -326,8 +326,7 @@ __bpf_hook_end();
-  * value -1 is used when obtaining the main lock else this is the CPU
-  * number processed last.
-  */
--static inline void __css_rstat_lock(struct cgroup_subsys_state *css,
--		int cpu_in_loop)
-+static inline void __css_rstat_lock(struct cgroup_subsys_state *css)
- 	__acquires(ss_rstat_lock(css->ss))
- {
- 	struct cgroup *cgrp = css->cgroup;
-@@ -337,21 +336,20 @@ static inline void __css_rstat_lock(struct cgroup_subsys_state *css,
- 	lock = ss_rstat_lock(css->ss);
- 	contended = !spin_trylock_irq(lock);
- 	if (contended) {
--		trace_cgroup_rstat_lock_contended(cgrp, cpu_in_loop, contended);
-+		trace_cgroup_rstat_lock_contended(cgrp, contended);
- 		spin_lock_irq(lock);
- 	}
--	trace_cgroup_rstat_locked(cgrp, cpu_in_loop, contended);
-+	trace_cgroup_rstat_locked(cgrp, contended);
- }
- 
--static inline void __css_rstat_unlock(struct cgroup_subsys_state *css,
--				      int cpu_in_loop)
-+static inline void __css_rstat_unlock(struct cgroup_subsys_state *css)
- 	__releases(ss_rstat_lock(css->ss))
- {
- 	struct cgroup *cgrp = css->cgroup;
- 	spinlock_t *lock;
- 
- 	lock = ss_rstat_lock(css->ss);
--	trace_cgroup_rstat_unlock(cgrp, cpu_in_loop, false);
-+	trace_cgroup_rstat_unlock(cgrp, false);
- 	spin_unlock_irq(lock);
- }
- 
-@@ -381,11 +379,11 @@ __bpf_kfunc void css_rstat_flush(struct cgroup_subsys_state *css)
- 		return;
- 
- 	might_sleep();
-+	__css_rstat_lock(css);
- 	for_each_possible_cpu(cpu) {
- 		struct cgroup_subsys_state *pos;
- 
- 		/* Reacquire for each CPU to avoid disabling IRQs too long */
--		__css_rstat_lock(css, cpu);
- 		pos = css_rstat_updated_list(css, cpu);
- 		for (; pos; pos = pos->rstat_flush_next) {
- 			if (is_self) {
-@@ -395,10 +393,10 @@ __bpf_kfunc void css_rstat_flush(struct cgroup_subsys_state *css)
- 			} else
- 				pos->ss->css_rstat_flush(pos, cpu);
- 		}
--		__css_rstat_unlock(css, cpu);
- 		if (!cond_resched())
- 			cpu_relax();
- 	}
-+	__css_rstat_unlock(css);
- }
- 
- int css_rstat_init(struct cgroup_subsys_state *css)
-@@ -685,11 +683,11 @@ void cgroup_base_stat_cputime_show(struct seq_file *seq)
- 
- 	if (cgroup_parent(cgrp)) {
- 		css_rstat_flush(&cgrp->self);
--		__css_rstat_lock(&cgrp->self, -1);
-+		__css_rstat_lock(&cgrp->self);
- 		bstat = cgrp->bstat;
- 		cputime_adjust(&cgrp->bstat.cputime, &cgrp->prev_cputime,
- 			       &bstat.cputime.utime, &bstat.cputime.stime);
--		__css_rstat_unlock(&cgrp->self, -1);
-+		__css_rstat_unlock(&cgrp->self);
- 	} else {
- 		root_cgroup_cputime(&bstat);
- 	}
--- 
-2.49.0
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
 
+You may send multiple commands in a single email message.
 
