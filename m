@@ -1,192 +1,144 @@
-Return-Path: <linux-kernel+bounces-741119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1286B0E047
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:21:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C907BB0E050
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:21:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C639E54270C
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:20:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EC69177F8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:21:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 237032609EE;
-	Tue, 22 Jul 2025 15:20:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56975265CAD;
+	Tue, 22 Jul 2025 15:21:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hoHEsi/6"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="utueuAUP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE1325F799
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 15:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B60E25B1C4;
+	Tue, 22 Jul 2025 15:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753197633; cv=none; b=jbCRMNWsDD/HN0bwW1R6dXA/L5trWfc9dNLcnK7L0tYbmp8Cdu1y66CNcTx7tcRaN34zsu3ylYsMvvCZMgc1QRAlRs70ycbIZI2yHE72nqf3QN/w/EkEFw3pxKsdD+uoUGxpQ3Qp+ZqP6q6MrvfbN8lwIb/kH2ATkmUGCsG7lE0=
+	t=1753197685; cv=none; b=sY0wdhFe7JVhDemzSFX96mploN3f3tEduNoF/7DKOyEbJqNJq8SFEhriochaQFvGLIgQqyJB0zL6N2zXBdwYNAwtipMmC5ZJqtHG4OMi+xfWC0fJd9oRvj6S2swLpjFHTrl1c21i3KkdFswIpUGaVlHLAf/j3v/VP8GWDqcPB4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753197633; c=relaxed/simple;
-	bh=EgrrwcZ6j7CSJT5s0hlrma2bExgZWXc7DwZ6upbMXg0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dT29Xon9COqPb44Y6L+3ba1Sk1thJicU/FDH1/4iKVewHBECUJmAFnm/CxO/c9EOVhN4X0B+fQAU7TKTjb8hpR60vOVQkKyo2X6el/7yzBsC8m1ZcjapQdZJG8DmXEL8SNR6Cf2whObKzKnF1h8mAU7NXwr/mVZEEJRGJ9PNinQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hoHEsi/6; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753197630;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=UR686UB6W95T3RcYAhWHnco9tSypYtrsdOEb8UEkv7E=;
-	b=hoHEsi/66pffmkvxXXf03JMlFY38CKwJH+nWsdaHsZWNrgXOMXuFMgjdSlDifZJs/7j6pQ
-	ZZMdcQUEaqb8r2Z6+ON+UYRPNnsPDNMtENIiXul2zovCyhNxL+M77NyoU0yUVeKnmTbzoQ
-	wU3v3WjPePjV/BdMjyHGKTUBM7BN6ek=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-274-Hy7TuL_PO-uj1vYMSqFueQ-1; Tue, 22 Jul 2025 11:20:28 -0400
-X-MC-Unique: Hy7TuL_PO-uj1vYMSqFueQ-1
-X-Mimecast-MFC-AGG-ID: Hy7TuL_PO-uj1vYMSqFueQ_1753197627
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-454dee17a91so48275935e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 08:20:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753197627; x=1753802427;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UR686UB6W95T3RcYAhWHnco9tSypYtrsdOEb8UEkv7E=;
-        b=gRI+LvFgblSWpoJM5urfU2EPpDfN7w9FlRCEy0+EbJNWgHlQCqYufImb1VO+puwDPy
-         o69vtPHKVZ/VBmqV4nbrZLCFt3l9V1tH3V451ZQY89ecAI9nV4vGJwQjzaD/O2FPWpTq
-         Y1yscFpMVJT2lH4UtdB8H2NYoz6GHYL2/tr94iqWZR3SVWaXhi4B6v4OIhdXwTockOfh
-         ghSAErD/g+F/n2TEsJ1DTXakg6s4A23bj7vgEVA6PVJ6v1sq0NztxegouhFOILLXRSwt
-         DDqVPx2/3SgUgP4aPQ7Sj8TGWpCKKt99O5q2hbKD06j4vP6gRKEUJBXLpkpAQnH3sEul
-         iDag==
-X-Forwarded-Encrypted: i=1; AJvYcCUDe94zoCGhmefdDSU6lmudrf4OY3XaCVVXbAvBsnxC55A0/z7dLKyLSog0duN0ZYhRLmuu5ocWkgK44Kw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUliWP6FtSkakUDqIZNPxt8qE8PRJzMjhksKdgtOf7rDU8xj9F
-	AOBVgSU0UXbehrPM9E0HZHA3J/GtCTY13TfLPeglVyNlDIIbFiHshm9ecVJvzDpjWA34BT1JRIm
-	Q9b3CNrjcilVJOUzjOQNRSbFMTJkMFdNo9YSEVGKjGQ1+Wf0Axgjx0HRSjOv7eDtBjQ==
-X-Gm-Gg: ASbGncseglmKZYt7SeXPWG8ZiLHIOJ0skbn5Qu4EnblQyEuZmkuNegudrop9brIxRI2
-	DI/8ienh6F/4QIZVhk6Bifz5eKWIQv5Q7075pJ5zlsp3RL9ZAkZEIYKStixq11U1dfEOAZ2B6lm
-	lyHU07caSN/uXly7nM0Ud6Od16pVUBwdbrPgzRA5cwgM2sAo5NtiaEHg7vP0Xx2wAtiSZU0Mt5E
-	BTiBWX76xFoIFRXIBBmza8sUIlYrViiAX+qkAMkTMbAenR6MDwbvcIBEtOMAjp+2fuSxbwEnbMe
-	WkRhJDtQs1y4caXuu9LUxW2gqYp8/ZvP9WgWtqCfDRxwqzFH42Agbs8O79+4xScF6SAeR1YCdnm
-	mpyZ1XYnLyFAY9U83pqjnixYTLNX0UAh+ufBwslvo761VnfFKz6XWnNmG/y/Jkf1mzkY=
-X-Received: by 2002:a05:600c:4f4b:b0:450:d01f:de6f with SMTP id 5b1f17b1804b1-456340160d3mr221374475e9.15.1753197626658;
-        Tue, 22 Jul 2025 08:20:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHa43nqfLMQERCC1j/wmVHQ7UtK8l0NZCMFbPH2YHsoDOoAl1UMnjReWSKUBgR3S4TG9WNPmw==
-X-Received: by 2002:a05:600c:4f4b:b0:450:d01f:de6f with SMTP id 5b1f17b1804b1-456340160d3mr221373905e9.15.1753197625794;
-        Tue, 22 Jul 2025 08:20:25 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f28:de00:1efe:3ea4:63ba:1713? (p200300d82f28de001efe3ea463ba1713.dip0.t-ipconnect.de. [2003:d8:2f28:de00:1efe:3ea4:63ba:1713])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4586144f80asm38163855e9.1.2025.07.22.08.20.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Jul 2025 08:20:25 -0700 (PDT)
-Message-ID: <2dae19aa-7913-4350-b031-38d00a20057f@redhat.com>
-Date: Tue, 22 Jul 2025 17:20:22 +0200
+	s=arc-20240116; t=1753197685; c=relaxed/simple;
+	bh=gOCuZvkmjwwVrNCSUeQSPcF994zEyy2TkJIMewgYLQc=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=Hvjn5RS1iDI6m4ZZRX5KIUHV7HGPhDWIzRC8LYtMRhRD/aXUzI6AwhQnkCQypeD1MvJakYwgagdcXK3Bv/nvlnoYvrzUIO+9YduJG5fIuYgbt+O6l/t8InBKVqV+Dv+FwtLNYnkcqSB64CwcxmNRIGT1ic7PDLyvdaUJjzvsS7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=utueuAUP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D160C4CEF1;
+	Tue, 22 Jul 2025 15:21:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753197685;
+	bh=gOCuZvkmjwwVrNCSUeQSPcF994zEyy2TkJIMewgYLQc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=utueuAUPwZ9GZM3TGpEKRZKwfGCnI/a4v4upmUdDWVN+v8/xb7O9JQAvnKwjRi5TX
+	 C2gqV00L3ZchlLoMJJTUvTf+EPLz9V7IHnw4E2OSiZl+HHnD8TkKodNcVUUGHP+baJ
+	 6j5EmA/GwiFilD7qFoZKrVIaRxqgEUkLaHy4CLYNBnCZUNwzJh3DtGS3Nmo9s5BPP3
+	 wvSE5qj64sIJyiyOgg3xeIW/FCqKi1r8db050Nhd2bbI0I2e6QGB0fwvV5oNODdBV7
+	 6qjXJWAt7Kv+3MIkLArKud/gHw3eWY/FkRpkpwZULN0tU4iahzhYtdZvHX8lFAJTcJ
+	 lpGMurVhBKhWw==
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@kernel.org>)
+	id 1ueEoX-0000000AYxs-2fFC;
+	Tue, 22 Jul 2025 11:21:57 -0400
+Message-ID: <20250722152053.343028095@kernel.org>
+User-Agent: quilt/0.68
+Date: Tue, 22 Jul 2025 11:20:53 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org,
+ linux-kbuild@vger.kernel.org,
+ llvm@lists.linux.dev
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Masahiro Yamada <masahiroy@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nicolas Schier <nicolas.schier@linux.dev>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH v3 0/5] tracepoints: Add warnings for unused tracepoints and trace events
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V9 2/7] mm/filemap: Add NUMA mempolicy support to
- filemap_alloc_folio()
-To: Shivank Garg <shivankg@amd.com>, seanjc@google.com, vbabka@suse.cz,
- willy@infradead.org, akpm@linux-foundation.org, shuah@kernel.org,
- pbonzini@redhat.com, brauner@kernel.org, viro@zeniv.linux.org.uk
-Cc: ackerleytng@google.com, paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com, tabba@google.com,
- vannapurve@google.com, chao.gao@intel.com, bharata@amd.com, nikunj@amd.com,
- michael.day@amd.com, shdhiman@amd.com, yan.y.zhao@intel.com,
- Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, michael.roth@amd.com,
- aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com, peterx@redhat.com,
- jack@suse.cz, rppt@kernel.org, hch@infradead.org, cgzones@googlemail.com,
- ira.weiny@intel.com, rientjes@google.com, roypat@amazon.co.uk,
- ziy@nvidia.com, matthew.brost@intel.com, joshua.hahnjy@gmail.com,
- rakie.kim@sk.com, byungchul@sk.com, gourry@gourry.net,
- kent.overstreet@linux.dev, ying.huang@linux.alibaba.com, apopple@nvidia.com,
- chao.p.peng@intel.com, amit@infradead.org, ddutile@redhat.com,
- dan.j.williams@intel.com, ashish.kalra@amd.com, gshan@redhat.com,
- jgowans@amazon.com, pankaj.gupta@amd.com, papaluri@amd.com,
- yuzhao@google.com, suzuki.poulose@arm.com, quic_eberman@quicinc.com,
- aneeshkumar.kizhakeveetil@arm.com, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-security-module@vger.kernel.org, kvm@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
-References: <20250713174339.13981-2-shivankg@amd.com>
- <20250713174339.13981-5-shivankg@amd.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <20250713174339.13981-5-shivankg@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 13.07.25 19:43, Shivank Garg wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> 
-> Add a mempolicy parameter to filemap_alloc_folio() to enable NUMA-aware
-> page cache allocations. This will be used by upcoming changes to
-> support NUMA policies in guest-memfd, where guest_memory need to be
-> allocated NUMA policy specified by VMM.
-> 
-> All existing users pass NULL maintaining current behavior.
-> 
-> Reviewed-by: Pankaj Gupta <pankaj.gupta@amd.com>
-> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Signed-off-by: Shivank Garg <shivankg@amd.com>
-> ---
+Every trace event can take up to 5K of memory in text and metadata regardless
+if they are used or not. Trace events should not be created if they are not
+used.  Currently there's over a hundred events in the kernel that are defined
+but unused, either because their callers were removed without removing the
+trace event with it, or a config hides the trace event caller but not the
+trace event itself. And in some cases, trace events were simply added but were
+never called for whatever reason. The number of unused trace events continues
+to grow.
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
+This patch series aims to fix this.
 
--- 
-Cheers,
+The first patch creates a new section called __tracepoint_check, where all
+callers of a tracepoint creates a variable that is placed in this section with
+a pointer to the tracepoint they use. Then on boot up, it iterates this
+section and will modify the tracepoint's "func" field to a value of 1 (all
+tracepoints "func" fields are initialized to NULL and is only set when they
+are registered). This takes place before any tracepoint can be registered.
 
-David / dhildenb
+Then each tracepoint is iterated on and if any tracepoint does not have its
+"func" field set to 1 a warning is triggered and every tracepoint that doesn't
+have that field set is printed. The "func" field is then reset back to NULL.
 
+The second patch modifies scripts/sorttable.c to read the __tracepoint_check
+section. It sorts it, and then reads the __tracepoint_ptr section that has all
+compiled in tracepoints. It makes sure that every tracepoint is found in the
+check section and if not, it prints a warning message about it. This lists the
+missing tracepoints at build time.
+
+The third patch updates sorttable to work for arm64 when compiled with gcc. As
+gcc's arm64 build doesn't put addresses in their section but saves them off in
+the RELA sections. This mostly takes the work done that was needed to do the
+mcount sorting at boot up on arm64.
+
+The fourth patch adds EXPORT_TRACEPOINT() to the __tracepoint_check section as
+well. There was several locations that adds tracepoints in the kernel proper
+that are only used in modules. It was getting quite complex trying to move
+things around that I just decided to make any tracepoint in a
+EXPORT_TRACEPOINT "used". I'm using the analogy of static and global
+functions. An unused static function gets a warning but an unused global one
+does not.
+
+The last patch updates the trace_ftrace_test_filter boot up self test. That
+selftest creates a trace event to run a bunch of filter tests on it without
+actually calling the tracepoint. To quiet the warning, the selftest tracepoint
+is called within a if (!trace_<event>_enabled()) section, where it will not be
+optimized out, nor will it be called.
+
+Changes since v2: https://lore.kernel.org/all/20250612235827.011358765@goodmis.org/
+
+- Fixed some typos in the above change log, and in comments within patches.
+
+- Have the build warning on unused events be default off. There is still too
+  many events that are unused to make a warning a default. But after all
+  current offenders are fixed, I plan on making it default enabled to prevent
+  new trace events from being added when they are unused.
+
+Steven Rostedt (5):
+      tracepoints: Add verifier that makes sure all defined tracepoints are used
+      tracing: sorttable: Add a tracepoint verification check at build time
+      tracing: sorttable: Find unused tracepoints for arm64 that uses reloc for address
+      tracepoint: Do not warn for unused event that is exported
+      tracing: Call trace_ftrace_test_filter() for the event
+
+----
+ include/asm-generic/vmlinux.lds.h  |   1 +
+ include/linux/tracepoint.h         |  13 ++
+ kernel/trace/Kconfig               |  30 +++
+ kernel/trace/trace_events_filter.c |   4 +
+ kernel/tracepoint.c                |  26 +++
+ scripts/Makefile                   |   4 +
+ scripts/sorttable.c                | 444 ++++++++++++++++++++++++++++++-------
+ 7 files changed, 436 insertions(+), 86 deletions(-)
 
