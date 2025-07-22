@@ -1,130 +1,179 @@
-Return-Path: <linux-kernel+bounces-741303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56758B0E297
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:29:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97F97B0E29D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 19:31:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 719CBAC22DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:28:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 528061C8558B
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:31:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7050D27FB25;
-	Tue, 22 Jul 2025 17:29:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 668F827E056;
+	Tue, 22 Jul 2025 17:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AYxMkcH/"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BShZqh2i"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A97277CBA;
-	Tue, 22 Jul 2025 17:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4876219D082
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 17:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753205353; cv=none; b=sHhqYDi/itEZ+DFswLGYq2X/O8mRDeZ+hG8OyRB7D2dqa0CMirRj4v/QJM8LU9tOsl4CONhMMaPjwJRp1hW+8Cnsm8UQN5F1hcm8f+NscX4q2pG8CE23wpI+dlOGivq+KgRfB+Kq5djxOy7pZOdxVqxYscfkLvNP7PySNCRBl5c=
+	t=1753205476; cv=none; b=qibgNkG7twtrGV8Bs6xUDycRHU+juCBXjI1xuoHZJpxUgyrVt2Q8cb5NeyxAYKWq/Dt0yDfzK7IDca8zKayXUywvktmV1ewYXMbOR+WsYduBIxxVAG0KHI5nBhdFbYSHNjFxt5JSPqbu3Logc2mchbuEJ1dRVAc0slP8q78MyUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753205353; c=relaxed/simple;
-	bh=0+JauH28HYVUWG6hrxFn1yDspMA1MTZm2Hxl3u21BHM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QOZAAkVpRr+XLFvkhZBGewWlS7pRPR6UwLZMWA0O4qcy9+aoj/6/bkoRK6A93UGj/H7uytB9OpV1B0w6W3c3r4i/1l0yiTIufdU0OxoXzmGyK+bBUuB46mMTjgJwhzXZn67vXrAze1YptvUA4LDinelm2heeICGiMYBtJ8az6bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AYxMkcH/; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-75001b1bd76so3661050b3a.2;
-        Tue, 22 Jul 2025 10:29:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753205351; x=1753810151; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+Hh9rn2Pq0w8+Rx4ALg0gLyUsE3RWAfCvKLiuX/Mgyk=;
-        b=AYxMkcH/m5uMnCbgQdXqyJaEQC8p4C2JhmSWLQ8ynAFb2yiUAccKu8kkFhmEnQpz0F
-         9D2qTgcE3fhHOk2jcvD03uLAzPjrn0piboByaBP+SJlN4w1Z4u9eA1O5x5cQK9kCxlwX
-         7RKvPJwe71hS0QdwAHGQWQAjaNYCrmqKeWpw+Al7BVB2p62UFY0dvAhAuxc2cS0wM3fQ
-         tZ/FSX46Uf5bAH2lEt2pc2fFdhuBt9QUUlZHz2MWt0ezR017MWJoZUIkpW4U/ovITSDr
-         UwvF83oE4WoWRq60nLl1ZiHj+U7Zz/GDRvucEJ5W0yRtMFloLmJypKh7B+faTYkZ7+NZ
-         A7sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753205351; x=1753810151;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+Hh9rn2Pq0w8+Rx4ALg0gLyUsE3RWAfCvKLiuX/Mgyk=;
-        b=gOD1IbCMt4q9iSojuNW6rBP7GxXi55/9bNcwc6D3DZ5OtztTo+aloKP7qdEq/Q1Hzj
-         0nitFDI5WX4DCRlPxn1z12KLsCHKUkWxh2etMkZSSBJqAFlGk19lcKn9SL0UKIFc+vvz
-         Vcot8iNI5BvdoBFiIFZrTqjn3bmNgY6wz+yKCT3dqM2vbsZsFxMiQVsizWJlxNc5b0ly
-         onDLh+46EcCir0lyzap94E9xu6h30C6+2TDzlKCep3UMlZwOxhefoCKGaFnrRHecEn1q
-         eSxkWo9F61Cj76NcHZbi9z5sLYIIt26lmbEPU2uUGKUBg5eQGGLz7y7knCK3iDgjuTtL
-         szyA==
-X-Forwarded-Encrypted: i=1; AJvYcCUw2itTzTvw7QWdSlTtLcqW9IaNyMqFGPMh9r9qWbP0IiexQBUDhgXEzdupnEMZQP1n+TsIQcOmLWQNmOE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKFTnTElxpaeZmhfeEZWhJUSqApMlKdg/Dti5GTRYlEjmaz257
-	i/6un84cO/6QaoegnTzAV1UXjDh/BBDNXoKn/qm6RBfkIkswPBK2pjmFkgh6nw==
-X-Gm-Gg: ASbGncvHlB3fMo7Cz07y3N2yGDwQ9uHxmfHsC7hqYFh0yjDdxsJ5edft60czfOOpkRD
-	SYmmX+nXz8rqU5xQbCts4fF4Te6CTmCh4dwUqTh/HdtQfcuclErmR0CGeepeA+9vta7+hS0d4bQ
-	5RZ9Dfa2VdPEs1GnxOyeA/8SXv1TU1T7aJUcblNCYnSRAEMyPLYt9da0SRUOpreqvGrGQecFlR9
-	grmluaZqMIkrT3/sPNVDbTEZAnAIGvT39MOR454ufb4p1EubrELITzxuuZ0aXoLr9GXOBoajP4P
-	HSKFYzO9XXTcB6JBB5Qogm92uTWDP9+dAmy7XaVzdDkdcLvrC7dPMAXsY6vbAN062YyHGLQC/lw
-	lUBXvsGHqN72MqJ9fKwSPgQsCI8qS56ZXtECv
-X-Google-Smtp-Source: AGHT+IG2xUjr6hY0DIyG0TnPvyMMo2piQomAOlh2Okyn9A006ocqDc3HT2OIJTuxbHqnojNQtP58Aw==
-X-Received: by 2002:a05:6a00:198e:b0:73e:23be:11fc with SMTP id d2e1a72fcca58-760369d5ff5mr95676b3a.22.1753205351333;
-        Tue, 22 Jul 2025 10:29:11 -0700 (PDT)
-Received: from shankari-IdeaPad.. ([103.24.60.31])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-759c89cfb3dsm7920061b3a.34.2025.07.22.10.29.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 10:29:10 -0700 (PDT)
-From: Shankari Anand <shankari.ak0208@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Shankari Anand <shankari.ak0208@gmail.com>,
-	Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH v2] kconfig: nconf: Fix uncleared lines on help screens
-Date: Tue, 22 Jul 2025 22:58:37 +0530
-Message-Id: <20250722172837.140328-1-shankari.ak0208@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1753205476; c=relaxed/simple;
+	bh=PrQAZTg14IOAm+DRtwIuL1ZvBzxMtVGxSxhr7HUmZVs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZjPL7+yWO+WpPkhd12O5aCj9Vmi84JAZorLFAF/PXvysx5+kjOf3NNfVsz5SyEqJRPK8odmOG0q+PmH9837u6ZGZzxUFBhZQ40sNCs1hY6v44bsLyZ20RnPgHJcAKd1ya7D8UeOH1eaZhqmXQtLBEp0GAkf0442YDftdpPF9Aqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BShZqh2i; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 22 Jul 2025 13:31:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753205470;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XpnmGx8Qe1HEPsT1JE8ns7neS7sOfpbPECAjbCeJMzg=;
+	b=BShZqh2iCTxQIRMFWJ5QzeiI9riLGBk5t7ICvYSx3yCv/eu1n+iaCEAb8EC7JQf/zGcJ02
+	nXKXIZoosXwz1sLODbgtr1YwwF6v3r6yspD0ZysAqjeMJ0IgOMt+Fj/Germb3C4mrKnNIO
+	2zwQgN0tSdLyQ1Dk3sDXVX/oe8lNKE8=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: syzbot <syzbot+0ee1ef35cf7e70ce55d7@syzkaller.appspotmail.com>
+Cc: brauner@kernel.org, gregkh@linuxfoundation.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	tj@kernel.org, viro@zeniv.linux.org.uk
+Subject: Re: [syzbot] [kernfs?] INFO: task hung in fdget_pos
+Message-ID: <cu7oc32pbuz42gsd3bsmwjns54bqhtlpdi5xlimnjx4rebp3yz@fps6oycum3rf>
+References: <670658e6.050a0220.22840d.0012.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <670658e6.050a0220.22840d.0012.GAE@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-Commit 1b92b18ec419 ("kconfig: nconf: Ensure null termination where
-strncpy is used") introduced a regression where
-help screens (F1, F2, F3) no longer properly clear short lines of text,
-resulting in duplicated or trailing content when lines are overwritten.
+On Wed, Oct 09, 2024 at 03:20:22AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    fc20a3e57247 Merge tag 'for-linus-6.12a-rc2-tag' of git://..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=110fb307980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=9775e9a1af839423
+> dashboard link: https://syzkaller.appspot.com/bug?extid=0ee1ef35cf7e70ce55d7
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d0a79f980000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/64ef5d6cfda3/disk-fc20a3e5.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/42c0ee676795/vmlinux-fc20a3e5.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/a3072d6383ea/bzImage-fc20a3e5.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/a8f928c45431/mount_0.gz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+0ee1ef35cf7e70ce55d7@syzkaller.appspotmail.com
+> 
+> INFO: task syz.2.17:5434 blocked for more than 159 seconds.
+>       Not tainted 6.12.0-rc1-syzkaller-00330-gfc20a3e57247 #0
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:syz.2.17        state:D stack:27424 pid:5434  tgid:5432  ppid:5316   flags:0x00000004
+> Call Trace:
+>  <TASK>
+>  context_switch kernel/sched/core.c:5315 [inline]
+>  __schedule+0x1843/0x4ae0 kernel/sched/core.c:6675
+>  __schedule_loop kernel/sched/core.c:6752 [inline]
+>  schedule+0x14b/0x320 kernel/sched/core.c:6767
+>  schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
+>  __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+>  __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
+>  fdget_pos+0x24e/0x320 fs/file.c:1160
+>  ksys_read+0x7e/0x2b0 fs/read_write.c:703
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f993c77dff9
+> RSP: 002b:00007f993d54e038 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+> RAX: ffffffffffffffda RBX: 00007f993c936058 RCX: 00007f993c77dff9
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
+> RBP: 00007f993c7f0296 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 0000000000000001 R14: 00007f993c936058 R15: 00007fffb8436518
+>  </TASK>
+> INFO: task syz.3.18:5439 blocked for more than 167 seconds.
+>       Not tainted 6.12.0-rc1-syzkaller-00330-gfc20a3e57247 #0
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:syz.3.18        state:D stack:27424 pid:5439  tgid:5436  ppid:5317   flags:0x00000004
+> Call Trace:
+>  <TASK>
+>  context_switch kernel/sched/core.c:5315 [inline]
+>  __schedule+0x1843/0x4ae0 kernel/sched/core.c:6675
+>  __schedule_loop kernel/sched/core.c:6752 [inline]
+>  schedule+0x14b/0x320 kernel/sched/core.c:6767
+>  schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
+>  __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+>  __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
+>  fdget_pos+0x24e/0x320 fs/file.c:1160
+>  ksys_read+0x7e/0x2b0 fs/read_write.c:703
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f1134d7dff9
+> RSP: 002b:00007f1135adc038 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+> RAX: ffffffffffffffda RBX: 00007f1134f36058 RCX: 00007f1134d7dff9
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
+> RBP: 00007f1134df0296 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 0000000000000001 R14: 00007f1134f36058 R15: 00007ffe6e122188
+>  </TASK>
+> INFO: task syz.4.19:5441 blocked for more than 168 seconds.
+>       Not tainted 6.12.0-rc1-syzkaller-00330-gfc20a3e57247 #0
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:syz.4.19        state:D stack:27424 pid:5441  tgid:5438  ppid:5327   flags:0x00000004
+> Call Trace:
+>  <TASK>
+>  context_switch kernel/sched/core.c:5315 [inline]
+>  __schedule+0x1843/0x4ae0 kernel/sched/core.c:6675
+>  __schedule_loop kernel/sched/core.c:6752 [inline]
+>  schedule+0x14b/0x320 kernel/sched/core.c:6767
+>  schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
+>  __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+>  __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
+>  fdget_pos+0x24e/0x320 fs/file.c:1160
+>  ksys_read+0x7e/0x2b0 fs/read_write.c:703
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f4c9ad7dff9
+> RSP: 002b:00007f4c9bc43038 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> If you want to overwrite report's subsystems, reply with:
 
-Revert the null-termination change to match
-the actual length of the copied string.
+Someone assigned this to bcachefs, and it's clearly not:
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Closes: https://lore.kernel.org/lkml/CAK7LNAT54nvwYmTy20Ep8U2kr4thn68yYWXi9R-d3Yx3iXs=Bg@mail.gmail.com/T/#
-Fixes: 1b92b18ec419 ("kconfig: nconf: Ensure null termination where strncpy is used")
-Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
----
-v1 -> v2: Add closes tag to the report.
-Carry-forwarded acked-by and tested-by from previous version
----
- scripts/kconfig/nconf.gui.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/scripts/kconfig/nconf.gui.c b/scripts/kconfig/nconf.gui.c
-index 475a403ab8ba..7206437e784a 100644
---- a/scripts/kconfig/nconf.gui.c
-+++ b/scripts/kconfig/nconf.gui.c
-@@ -177,7 +177,7 @@ void fill_window(WINDOW *win, const char *text)
- 		const char *line = get_line(text, i);
- 		int len = get_line_length(line);
- 		strncpy(tmp, line, min(len, x));
--		tmp[sizeof(tmp) - 1] = '\0';
-+		tmp[len] = '\0';
- 		mvwprintw(win, i, 0, "%s", tmp);
- 	}
- }
-
-base-commit: 05adbee3ad528100ab0285c15c91100e19e10138
--- 
-2.34.1
-
+#syz set subsystems: fs kernfs
 
