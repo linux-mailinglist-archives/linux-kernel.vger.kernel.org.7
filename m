@@ -1,108 +1,120 @@
-Return-Path: <linux-kernel+bounces-740784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89901B0D91E
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:14:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79FCBB0D923
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:14:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8AD9547DBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:14:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95DC43AAE4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 701C72E92A5;
-	Tue, 22 Jul 2025 12:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80422E92B7;
+	Tue, 22 Jul 2025 12:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="KlyEiMC2"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cIl9xJNp"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A5D92E8E09
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 12:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932EE2E4271;
+	Tue, 22 Jul 2025 12:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753186462; cv=none; b=K3woERz++DLQC7izQLMAd2Zhr3VlNXIJt3vJJlLzeWcsJ7Z0PVP4xEalxJVndFRsu17e3ewkjMsQM2qcTS2z8og1tp3e6xWPeXVQZRQVHbKkt42M26O/sJxj5iWBCL/K8UnTmouahXQs5qqaUHqzvEazAbWFhOgvsUcGKz8llyk=
+	t=1753186486; cv=none; b=pr3Mj0bJRqP6tHCyuyjIgVHMF2zZgfe8RQoqOkVF1V/X69QWQMr+EMT65j/WswJ8ibHnfb3IExsomQfHbsoPtxzGFIISIl1zR/xNSVyYal8xkC+Pgm4QC5Sd1PCz0CsxJHjN6MOdLAZXHDItz1XXkoXTV3MToMAsh+Fzh7XJeJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753186462; c=relaxed/simple;
-	bh=sf1+T0JcwOlPtAmaW12tuPWOakYQlJPwEqSiEGG12QU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nMMGdkEHDNilERmPHoD5CYk3Zb/HUzYEuAr6UHTCNzgjxi/HrA+Sp5eZerV0x7K+qWikfxSMT9n2eQwtdmXkYC3F5otLsSzR0oR+WPniSMYy7AILGdmlxYCnkyk97IUChfOqa5ZkE0iSEJb4KxaeSX0mikM/5hv8pDRoyn2X8II=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=KlyEiMC2; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3e2a7908838so11509135ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 05:14:20 -0700 (PDT)
+	s=arc-20240116; t=1753186486; c=relaxed/simple;
+	bh=wYA+tGJ4iaNqAl71+ugrW7w5EiuR472bCCRturb1O7k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DfJ1F/v4TenFBpqTogxiWBCraYeJ5NZrnrbdfbpZZRXDiM7fTZCe8BqYKI+sDTf09ACcQC/ebT4gWzdpI+ZlLr9HxOxhjt6gmDIXqLACtGx56iVWB7mSB5l9+1Q1+20GiZcAW/js8nhOklYyql7mhxQMK/u6uDxbDh/yIOEWizw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cIl9xJNp; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ae9be1697easo1177243366b.1;
+        Tue, 22 Jul 2025 05:14:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1753186460; x=1753791260; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aPVTwTdFTsc751gaYm/Hhn67W96rQTewFcoGBTIznqI=;
-        b=KlyEiMC2gZlyfQCsKckCWISWqfpY6xjbr9ICQsO3Uu5Qc2CyuxQHQ3aVy4MeLvsI8Z
-         8BJWLzKFlDVgZGoMON1k7utu/g0SkpkkWKjLrVNr7zG02u3m8vGBgrOFkOVeyLFIVaU7
-         cKc47QIreCbAKCtz1ep84VnpebxO2TpkzzGsSv3C3Pz28YMBKU4QPVI4Ds58KIj/tHli
-         xTwqymMSicoASwZuev2rEPNiesNHr3Mama25tHBz/JpuryZQWz8rikAU0vMcEwjz+6td
-         5stsPl74bYY1QoeCbTwLDz8g5xk4IkQpsgYdm6/IlRyplfruuDDdG+S8Rxz+4zoPnCJv
-         A0UA==
+        d=gmail.com; s=20230601; t=1753186482; x=1753791282; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nqDzbvTFUCnNJAo/5cnzfm9fwZI1Vw0IZkVaSkNbQRY=;
+        b=cIl9xJNpZcrcQn3MvMScCsN+0dm3SQ2sW6PzPcuStTqIZOnmbaqC0Wzn+aivcUBI76
+         Z3lllVx45kSX0UOFXOYVT0MH2Lk2fIan94h1hpPOAppPXrWiJBA5lLnoPnzrAx+7PjKY
+         T4bOOXXaUpeNnF3s6e6zMAygZhDM8hiasPRk7LbFjJwQjXgq6Jq3tP6JIWGWsyY6n2hP
+         3+5Q4AllAPVRuvovyYH2AgvZw/HzIiwgJFib9x+hgBl3+gIqumBJG9hcgn4ct4/KtqhS
+         pXpKOft4g4d5UDYDQHQ9sBKtMSqfsxrnC8VavMXdYSauVLcyzjrGoE6GJhKYi+YV57wQ
+         36gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753186460; x=1753791260;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aPVTwTdFTsc751gaYm/Hhn67W96rQTewFcoGBTIznqI=;
-        b=ns9/tEHNuOFPiTZsGYwUBO1sl+mpW9FUMaAor7oX+hLckKg7LF6i0+SJXmVc1ITlou
-         VmxbOl23bjBOq6/vPqN1vxPEDIHE3DAOHxPlH9oNalBvhIH6b14NNY4lalXYauYYZng9
-         uS599ZD5ZRdK1OcM9tDo2SeNBB1TLKe/qRVzOnVqBX85yt5dDwQ1BlPOCjeUyocjQyYm
-         da3JI6fdhGHOe3bOP/CpFCCZbC1GNc4osL2RrIQYRGNfVDwSpAa+Dj/lZZy1wrsvV2O9
-         pXR6zvq4b5tPvtULymY6EAvFzc8MWiYwrugku2CxJvoXJLHj22TuWAOFfSmE7+iil1NT
-         xpYw==
-X-Forwarded-Encrypted: i=1; AJvYcCWIONe274fIZkswOL5el1T+DolPpmCerM785/rAfzIJags9DPWScxVevHrb29r0RpU14zyTSvb+rDEBoA0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfpMgVzLyfqT4zQLGhm3/Sg3wyjrFFZf9Em1HrToqWSiuJreil
-	QdMMdpKlBHgP6ySdPKM4Io2je0vw7Mz/fK+x7+t/4UX4sw6z8cNUUvYgtvMFvLPoSKU=
-X-Gm-Gg: ASbGncuM3LPtWsT0FPTxq6BAoI6cLyE7U2nDpmOF8st66OdhR2nxdG1zPlBwZSWbk26
-	KwJE6Ad/Z88oMiHl0emoAzc8sVm3Hk2czHICeOATf0ZZu8/mu6NMxjc+nUfngQZkBpxjf6g9xIx
-	akcL9LK2QZMnLg7R6asf7l6mwa01Ycd1+TdVsGCHMBU0a1ifp0vaIJi91SzwWmb2+YDJAw5a5en
-	08xToKY/Ne7AH5uHWL82Fk+8bVrvQ78L9owj+w0xQUD8U8oVx1LGyPoN6/zalFIpWe/lBIX9CU7
-	89+dRD708A09WXq6ABxJ1PsQouxxCA8/U7wGtrGb2hv8paxE8WZKQ14GQkYnvzXDQasJrJh7p2x
-	R2m4JEQSP1yVbMuzeP+g=
-X-Google-Smtp-Source: AGHT+IGWtOls1B66eWDWTPlotWRsVDE8PPR3Zo1JfCpc3xDLAOtrzQLxt3z8FA6rIVPpDcscI4nFOA==
-X-Received: by 2002:a05:6e02:3c87:b0:3df:5333:c2ab with SMTP id e9e14a558f8ab-3e282e64ee3mr277030295ab.17.1753186459712;
-        Tue, 22 Jul 2025 05:14:19 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5084c787e63sm2495145173.9.2025.07.22.05.14.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Jul 2025 05:14:19 -0700 (PDT)
-Message-ID: <8acbc346-98f8-44fc-9675-0c3a7da87d21@kernel.dk>
-Date: Tue, 22 Jul 2025 06:14:18 -0600
+        d=1e100.net; s=20230601; t=1753186482; x=1753791282;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nqDzbvTFUCnNJAo/5cnzfm9fwZI1Vw0IZkVaSkNbQRY=;
+        b=b/THhDU8vC9s+17Yp9rJPvlhGDfJ6GD+KGStAUPTv1W6bgh26eBCW62UGZ/8SCizE5
+         T5KfKFbGJZYmITaMT55GNfr068A8+SGjXcelvwL1rL0RQnMbWefgZR6pZh19swoc8pFP
+         kUENuXUJZPqYcnACnRtoOpZjmzJPx/7sMZgR82Yl33PegjEQ/VEiyltl4GRe7NTw+54s
+         hmO9NDmMWa+Ppd/qKPt1ONme4wCmvVYaNOv6R+h5k4cJUPSUzSGjQYNPnK4DQg6mseeI
+         GDT7i+guYjFJQV9b2pA/2XU0kWrq6jX/a8jAsTnTyHFQPU10Dj4J0DcJ8ri3qVm/acdN
+         Ocgw==
+X-Forwarded-Encrypted: i=1; AJvYcCV+I3ywFZ6TNGUqKRjWAZmj1ZRoK1UtvJa+hugKueEKgqnEg/1dRXavARALou7rLVYbqFyo/bWpH5uH@vger.kernel.org, AJvYcCWaEbn75qfPxFlsA/WX6ue6RJGTFmb+HKJ+38bkjnixBeQxCw40ZqQu3viVwO7V5bRI6P/GTbSc1PiUUjK9@vger.kernel.org, AJvYcCXkBptNbMYpFZ167JJzcc3E+w7qv7VDQJ1Mpj3166enZnEd/LYrolhK8ym04Xo6riqf41FZNRgBY521nBuBa4NGhcE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVicLkQejCqHNgn8TIQzJQUBFbjVwt2bsE8DYsbLB7yLn3VnxL
+	GPeO4Mj4kYyUSeCnTIp/5mtBNyCE9DG06kqv7DRtaENcMoIT/P6PPosI
+X-Gm-Gg: ASbGncvA56dCER0TaCOJHmsCjbmpPACggmBDzOJrBGGBSq1hGrs7UdfToq2SaIN4o8C
+	Y+KcLXBWikH7H9ch1gPQQLNRWqK3slueFN5CbpI390KekJ7lEKrUZ13WXMVchtSG3ac/sZsYKWU
+	9H09/VDmgXAOPBxn6XLEU8QASGidxaxP0P0ygXMCHw6qqJc26ygJO+TEqZfGCII62GrJklFTnR6
+	gorLzTSzdoFqGhB/s+Nzu9SRu9ffyfHVNbTqiDkz/AJn4wquZ/pnEL7huqAEJDSjcQFkiw1mV5K
+	gmbdSmmxQj6OLGhBdhYNwCxSl9Iulq9iLOKN8OQauZpELOJblBcjOt+PT9rwXJV7Dq56YV33fuN
+	S7+LzIEZD3gmrN5yS5aGKG6MGspLCYUgFhl3C1xJVuG6qBDpIdadg0hoJpk3XtUvhYNzi6MHBwQ
+	==
+X-Google-Smtp-Source: AGHT+IEJeLyW+u4ycTMqgYxs6NJLL3r5OO1XqbswJb79Eo8rI5BTivFIQk7F1kvNyi4zz8SC00zzcA==
+X-Received: by 2002:a17:907:7f18:b0:ae9:cc51:40d6 with SMTP id a640c23a62f3a-af15433635amr357787766b.28.1753186481641;
+        Tue, 22 Jul 2025 05:14:41 -0700 (PDT)
+Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6ca2eb90sm858660266b.90.2025.07.22.05.14.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jul 2025 05:14:41 -0700 (PDT)
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-i2c@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] dt-bindings: i2c: exynos5: add samsung,exynos2200-hsi2c compatible
+Date: Tue, 22 Jul 2025 15:14:34 +0300
+Message-ID: <20250722121434.443648-1-ivo.ivanov.ivanov1@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: 6.15/regression/bisected - lockdep warning: circular locking
- dependency detected when plugging USB stick after ffa1e7ada456
-To: Hillf Danton <hdanton@sina.com>,
- Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Cc: thomas.hellstrom@linux.intel.com, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, Ming Lei <ming.lei@redhat.com>,
- regressions@lists.linux.dev
-References: <20250722005125.2765-1-hdanton@sina.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250722005125.2765-1-hdanton@sina.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 7/21/25 6:51 PM, Hillf Danton wrote:
-> Try the diff that serializes elevator_change() with q->elevator_lock if
-> reproducer is available.
+Add samsung,exynos2200-hsi2c compatible, reusing the autov9 support
+since it's compatible with exynos2200's i2c controllers.
 
-Hillf, these seemingly random and not tested or thought through patches
-flung out in response to reports is not useful. It just wastes peoples
-time and resources.
+Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+---
+ Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
+index 8d47b290b..7ae8c7b1d 100644
+--- a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
++++ b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
+@@ -36,6 +36,7 @@ properties:
+       - items:
+           - enum:
+               - google,gs101-hsi2c
++              - samsung,exynos2200-hsi2c
+               - samsung,exynos850-hsi2c
+           - const: samsung,exynosautov9-hsi2c
+       - const: samsung,exynos5-hsi2c    # Exynos5250 and Exynos5420
 -- 
-Jens Axboe
+2.43.0
+
 
