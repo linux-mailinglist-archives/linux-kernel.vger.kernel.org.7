@@ -1,192 +1,149 @@
-Return-Path: <linux-kernel+bounces-740897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D49CB0DAC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:29:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54FF2B0DAC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 15:29:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F073560542
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:28:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 822DB1886584
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 13:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25ABF2EA171;
-	Tue, 22 Jul 2025 13:28:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5602EA498;
+	Tue, 22 Jul 2025 13:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="lFSTZNe7"
-Received: from relay12.grserver.gr (relay12.grserver.gr [88.99.38.195])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b="L8Rycg9Q"
+Received: from nbd.name (nbd.name [46.4.11.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB1B42E11BA;
-	Tue, 22 Jul 2025 13:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.99.38.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB022E338B;
+	Tue, 22 Jul 2025 13:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.4.11.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753190901; cv=none; b=l+ZYL/oaABFflwmBHr8mOyZb5e7Bx4HCpO3hF9Lp+Pa/GoKFnXQG0gBiKQeeM19hAVdkMI6VN27OLhZFgiZWoU+Fewe13QBqGn8rW8FgdnczyJ4gP6CV70jWX3sWblYFNYp+bdRtwOyVgASLHUs30mshyMvS64m3TEw2kABcmZE=
+	t=1753190907; cv=none; b=W275R69pgAWmdUtbyKJBzPRq9wM0PybJ50WArJpY0W4X5anrAaEh+Gqg686ohZhZbYVxvyJmHZ3N/46e/o5Ie8d0jcofH3FwzUBy/72rq9JPrzS/Je7okltLUnE4GwBNusxAdWSS4o+8VXVp4kEY6TWC68obQ/36/vALoXUC7vA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753190901; c=relaxed/simple;
-	bh=ih6W084s0+qNpeeKlj+/IX2juni66kZK1UPaHdiDB8Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h4bIynUgcROpjeDEdEbMlVBVD0gLH+kONkBo8ltaLNx86DYY0PIIDgJezbdXws5zTyNsQh5PIx73S+GuAFzl+59uJT07N/HPUHUafP8FLszhNo372f4ulI0X0bt5jfO8j2vklnfhFmgeMtQYxtAiw2UrrcCHAMtBEdIExid2GK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=lFSTZNe7; arc=none smtp.client-ip=88.99.38.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from relay12 (localhost [127.0.0.1])
-	by relay12.grserver.gr (Proxmox) with ESMTP id A3396BE3FB;
-	Tue, 22 Jul 2025 16:28:07 +0300 (EEST)
-Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by relay12.grserver.gr (Proxmox) with ESMTPS id 358E5BE3BE;
-	Tue, 22 Jul 2025 16:28:06 +0300 (EEST)
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	by linux3247.grserver.gr (Postfix) with ESMTPSA id C1EE11FD50D;
-	Tue, 22 Jul 2025 16:28:05 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1753190885;
-	bh=/wLMAPlnrdxZdacm1RYW8res/EQP52wJ1y7o/GCWAlg=;
-	h=Received:From:Subject:To;
-	b=lFSTZNe7AQPWxp78HygWg2Zg+p/4WMj2iNtSX4pfpYabSWs3smn/dOzuMjTmU0Or+
-	 kjuddqMRsIY/I1cWPmi6RlGZT/wAf6zDI+5NA/3c8zV+CPpQ0C4jCRVMolnpM7OzjB
-	 3IaVBN38/0i0P6UQ0CeK9IuJqLcbWA1Yaz7u3iSKWYE7m2P4iixagJhBMuW/6ADqxu
-	 l8Lgn+lR0dePMF0FHPR/xMAllKuvWuEO3ejam+gdeovHyXo0tZ3+9nqkmJRDoXAofF
-	 bmXA4jICDIObh8BwH4VzmXwUJVuci4Dyu95oQR9Z7drlt1DO+8YMNqhbPl9NS/Ibib
-	 HdhyGyn+USxdw==
-Authentication-Results: linux3247.grserver.gr;
-        spf=pass (sender IP is 209.85.208.177) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f177.google.com
-Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
-Received: by mail-lj1-f177.google.com with SMTP id
- 38308e7fff4ca-32b7cf56cacso51405181fa.1;
-        Tue, 22 Jul 2025 06:28:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1;
- AJvYcCXyZowKgH3p4GQc+wbQ8tcjQI5MHNSnMSX1Ij4NeAMaR8UhvDYUEy8SFcVurRbJwNDF9cFPv/COU7IGf10=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRcP8Cy7qLPDs+AgkZgZjBopAMpcWD6G5uDoquVZtM25suSpR6
-	8Vh7kPPQRlipApixmFMAm6lj0M4F1dAIEbwmCTeFmnwnUAo/t9mGXGlWmwqkpqBq9JultgMxhZc
-	NkIlpJ9bfSDReyT/CSH1/BdR2AG751Yw=
-X-Google-Smtp-Source: 
- AGHT+IFiW6yJ1+5zJBmeLLHTkCBQQxIBXxImMX8vGF0PUHqVxXdsAFdOYfl24Mvk2wS+mQRpPCpMEgyimDei4lkeZrg=
-X-Received: by 2002:a05:651c:1505:b0:32a:6312:bfc6 with SMTP id
- 38308e7fff4ca-3308e58cb51mr82492481fa.35.1753190885323; Tue, 22 Jul 2025
- 06:28:05 -0700 (PDT)
+	s=arc-20240116; t=1753190907; c=relaxed/simple;
+	bh=UlPoVR5QC1KhInRk9vJr6g7Szxa5HcUjm/ee86z3yn0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ZRyrEXGXRTlzBonmdF3y93KrIzRXWV18lldFyxkuJr5IYb0sWA7mhnQ7h77n9Hs/K97AzfU4gOELpotbcLN1bhDPyM2Do1+TySi9c2RM0zuYUmwEvWnCePPgpyzOK+M7yDFGBIXSyHaDhcw/WW4cmaXModq45Va7Fo5kzI2+NfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name; spf=none smtp.mailfrom=nbd.name; dkim=pass (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b=L8Rycg9Q; arc=none smtp.client-ip=46.4.11.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nbd.name
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
+	s=20160729; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=cQbj0cQcdo0qq8guQgb1++o9RIM4pgMuhBXxGM8ddco=; b=L8Rycg9Qrn7ru2lad/IIluFfsQ
+	TljNaD1lcdmbBIVU4EmLMl12zfqoVbR2y5U32E5r/s1IM/S0q7YlGJ/ztDOPIc2X3pqx08GT+B76l
+	taeTyVtiuA9TX6kRIw9xaT4OeO0cFo9V3g6Ww1SSt9Qi9Fh3lQm+pBpl3NtvA4G+5vms=;
+Received: from p5b2062ed.dip0.t-ipconnect.de ([91.32.98.237] helo=nf.local)
+	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96)
+	(envelope-from <nbd@nbd.name>)
+	id 1ueD2U-00Fylh-0O;
+	Tue, 22 Jul 2025 15:28:14 +0200
+Message-ID: <2e267b4b-0540-45d8-9310-e127bf95fc63@nbd.name>
+Date: Tue, 22 Jul 2025 15:28:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250718163305.159232-1-lkml@antheas.dev>
- <710baf02-fc18-6752-b8bd-bbf1354227e8@linux.intel.com>
-In-Reply-To: <710baf02-fc18-6752-b8bd-bbf1354227e8@linux.intel.com>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Tue, 22 Jul 2025 15:27:53 +0200
-X-Gmail-Original-Message-ID: 
- <CAGwozwFvWuXM_oSzY9S+2CdW+dHiusuYra6kJeA+Vo00NZFb4g@mail.gmail.com>
-X-Gm-Features: Ac12FXzPLXSU0G-YWITT4Wv5JVvws76F8drbvzJkJj_rVguY7w3qSuti0otwOys
-Message-ID: 
- <CAGwozwFvWuXM_oSzY9S+2CdW+dHiusuYra6kJeA+Vo00NZFb4g@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] platform/x86: oxpec: Fix turbo register for G1 AMD
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-	Derek John Clark <derekjohn.clark@gmail.com>,
-	=?UTF-8?Q?Joaqu=C3=ADn_Ignacio_Aramend=C3=ADa?= <samsagax@gmail.com>,
-	Hans de Goede <hdegoede@redhat.com>, Eileen <eileen@one-netbook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-PPP-Message-ID: 
- <175319088594.299230.17518193628529675272@linux3247.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 1.0.9 at linux3247.grserver.gr
-X-Virus-Status: Clean
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next 1/1] bpf: fix WARNING in __bpf_prog_ret0_warn
+ when jit failed
+To: KaFai Wan <mannkafai@gmail.com>, ast@kernel.org, daniel@iogearbox.net,
+ john.fastabend@gmail.com, andrii@kernel.org, martin.lau@linux.dev,
+ eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
+ kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250526133358.2594176-1-mannkafai@gmail.com>
+From: Felix Fietkau <nbd@nbd.name>
+Content-Language: en-US
+Autocrypt: addr=nbd@nbd.name; keydata=
+ xsDiBEah5CcRBADIY7pu4LIv3jBlyQ/2u87iIZGe6f0f8pyB4UjzfJNXhJb8JylYYRzIOSxh
+ ExKsdLCnJqsG1PY1mqTtoG8sONpwsHr2oJ4itjcGHfn5NJSUGTbtbbxLro13tHkGFCoCr4Z5
+ Pv+XRgiANSpYlIigiMbOkide6wbggQK32tC20QxUIwCg4k6dtV/4kwEeiOUfErq00TVqIiEE
+ AKcUi4taOuh/PQWx/Ujjl/P1LfJXqLKRPa8PwD4j2yjoc9l+7LptSxJThL9KSu6gtXQjcoR2
+ vCK0OeYJhgO4kYMI78h1TSaxmtImEAnjFPYJYVsxrhay92jisYc7z5R/76AaELfF6RCjjGeP
+ wdalulG+erWju710Bif7E1yjYVWeA/9Wd1lsOmx6uwwYgNqoFtcAunDaMKi9xVQW18FsUusM
+ TdRvTZLBpoUAy+MajAL+R73TwLq3LnKpIcCwftyQXK5pEDKq57OhxJVv1Q8XkA9Dn1SBOjNB
+ l25vJDFAT9ntp9THeDD2fv15yk4EKpWhu4H00/YX8KkhFsrtUs69+vZQwc0cRmVsaXggRmll
+ dGthdSA8bmJkQG5iZC5uYW1lPsJgBBMRAgAgBQJGoeQnAhsjBgsJCAcDAgQVAggDBBYCAwEC
+ HgECF4AACgkQ130UHQKnbvXsvgCgjsAIIOsY7xZ8VcSm7NABpi91yTMAniMMmH7FRenEAYMa
+ VrwYTIThkTlQzsFNBEah5FQQCACMIep/hTzgPZ9HbCTKm9xN4bZX0JjrqjFem1Nxf3MBM5vN
+ CYGBn8F4sGIzPmLhl4xFeq3k5irVg/YvxSDbQN6NJv8o+tP6zsMeWX2JjtV0P4aDIN1pK2/w
+ VxcicArw0VYdv2ZCarccFBgH2a6GjswqlCqVM3gNIMI8ikzenKcso8YErGGiKYeMEZLwHaxE
+ Y7mTPuOTrWL8uWWRL5mVjhZEVvDez6em/OYvzBwbkhImrryF29e3Po2cfY2n7EKjjr3/141K
+ DHBBdgXlPNfDwROnA5ugjjEBjwkwBQqPpDA7AYPvpHh5vLbZnVGu5CwG7NAsrb2isRmjYoqk
+ wu++3117AAMFB/9S0Sj7qFFQcD4laADVsabTpNNpaV4wAgVTRHKV/kC9luItzwDnUcsZUPdQ
+ f3MueRJ3jIHU0UmRBG3uQftqbZJj3ikhnfvyLmkCNe+/hXhPu9sGvXyi2D4vszICvc1KL4RD
+ aLSrOsROx22eZ26KqcW4ny7+va2FnvjsZgI8h4sDmaLzKczVRIiLITiMpLFEU/VoSv0m1F4B
+ FtRgoiyjFzigWG0MsTdAN6FJzGh4mWWGIlE7o5JraNhnTd+yTUIPtw3ym6l8P+gbvfoZida0
+ TspgwBWLnXQvP5EDvlZnNaKa/3oBes6z0QdaSOwZCRA3QSLHBwtgUsrT6RxRSweLrcabwkkE
+ GBECAAkFAkah5FQCGwwACgkQ130UHQKnbvW2GgCeMncXpbbWNT2AtoAYICrKyX5R3iMAoMhw
+ cL98efvrjdstUfTCP2pfetyN
+In-Reply-To: <20250526133358.2594176-1-mannkafai@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 22 Jul 2025 at 15:22, Ilpo J=C3=A4rvinen
-<ilpo.jarvinen@linux.intel.com> wrote:
->
-> On Fri, 18 Jul 2025, Antheas Kapenekakis wrote:
->
-> > Turns out that the AMD variant of the G1 uses different turbo registers
-> > than the Intel variant. Differentiate them and apply the correct ones
-> > to the AMD variant.
-> >
-> > Fixes: b369395c895b ("platform/x86: oxpec: Add support for the OneXPlay=
-er G1")
-> > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> > ---
-> >  drivers/platform/x86/oxpec.c | 37 +++++++++++++++++++++++-------------
-> >  1 file changed, 24 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/drivers/platform/x86/oxpec.c b/drivers/platform/x86/oxpec.=
-c
-> > index 06759036945d..9839e8cb82ce 100644
-> > --- a/drivers/platform/x86/oxpec.c
-> > +++ b/drivers/platform/x86/oxpec.c
-> > @@ -58,7 +58,8 @@ enum oxp_board {
-> >       oxp_mini_amd_a07,
-> >       oxp_mini_amd_pro,
-> >       oxp_x1,
-> > -     oxp_g1,
-> > +     oxp_g1_i,
-> > +     oxp_g1_a,
-> >  };
-> >
-> >  static enum oxp_board board;
-> > @@ -247,14 +248,14 @@ static const struct dmi_system_id dmi_table[] =3D=
- {
-> >                       DMI_MATCH(DMI_BOARD_VENDOR, "ONE-NETBOOK"),
-> >                       DMI_EXACT_MATCH(DMI_BOARD_NAME, "ONEXPLAYER G1 A"=
-),
-> >               },
-> > -             .driver_data =3D (void *)oxp_g1,
-> > +             .driver_data =3D (void *)oxp_g1_a,
-> >       },
-> >       {
-> >               .matches =3D {
-> >                       DMI_MATCH(DMI_BOARD_VENDOR, "ONE-NETBOOK"),
-> >                       DMI_EXACT_MATCH(DMI_BOARD_NAME, "ONEXPLAYER G1 i"=
-),
-> >               },
-> > -             .driver_data =3D (void *)oxp_g1,
-> > +             .driver_data =3D (void *)oxp_g1_i,
-> >       },
-> >       {
-> >               .matches =3D {
->
->
-> > -     case oxp_g1:
-> > +     case oxp_g1_i:
-> >               return read_from_ec(OXP_2_SENSOR_FAN_REG, 2, val);
-> > @@ -757,6 +765,7 @@ static int oxp_pwm_fan_speed(long *val)
-> > +     case oxp_g1_a:
-> >               return read_from_ec(OXP_SENSOR_FAN_REG, 2, val);
->
-> > -     case oxp_g1:
-> > +     case oxp_g1_i:
-> >               /* scale to range [0-184] */
-> >               val =3D (val * 184) / 255;
-> >               return write_to_ec(OXP_SENSOR_PWM_REG, val);
-> > @@ -796,6 +805,7 @@ static int oxp_pwm_input_write(long val)
-> > +     case oxp_g1_a:
-> >               return write_to_ec(OXP_SENSOR_PWM_REG, val);
-> > @@ -816,7 +826,7 @@ static int oxp_pwm_input_read(long *val)
-> > -     case oxp_g1:
-> > +     case oxp_g1_i:
-> >               ret =3D read_from_ec(OXP_SENSOR_PWM_REG, 1, val);
-> > @@ -842,6 +852,7 @@ static int oxp_pwm_input_read(long *val)
-> > +     case oxp_g1_a:
-> >       default:
-> >               ret =3D read_from_ec(OXP_SENSOR_PWM_REG, 1, val);
->
-> Do these FAN and PWM registers fall under what is described in the
-> changelog as "turbo registers"? Or did you extend the scope of this patch
-> and forgot to update the changelog?
+Hi,
 
-Yes. Perhaps its not the best wording and it should have said EC registers.
+On 26.05.25 15:33, KaFai Wan wrote:
+> syzkaller reported an issue:
+> 
+> WARNING: CPU: 3 PID: 217 at kernel/bpf/core.c:2357 __bpf_prog_ret0_warn+0xa/0x20 kernel/bpf/core.c:2357
+> Modules linked in:
+> CPU: 3 UID: 0 PID: 217 Comm: kworker/u32:6 Not tainted 6.15.0-rc4-syzkaller-00040-g8bac8898fe39 #0 PREEMPT(full)
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> Workqueue: ipv6_addrconf addrconf_dad_work
+> RIP: 0010:__bpf_prog_ret0_warn+0xa/0x20 kernel/bpf/core.c:2357
+> RSP: 0018:ffffc900031f6c18 EFLAGS: 00010293
+> RAX: 0000000000000000 RBX: ffffc9000006e000 RCX: 1ffff9200000dc06
+> RDX: ffff8880234ba440 RSI: ffffffff81ca6979 RDI: ffff888031e93040
+> RBP: ffffc900031f6cb8 R08: 0000000000000001 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000000 R12: ffff88802b61e010
+> R13: ffff888031e93040 R14: 00000000000000a0 R15: ffff88802c3d4800
+> FS:  0000000000000000(0000) GS:ffff8880d6ce2000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000055557b6d2ca8 CR3: 000000002473e000 CR4: 0000000000352ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>   <TASK>
+>   bpf_dispatcher_nop_func include/linux/bpf.h:1316 [inline]
+>   __bpf_prog_run include/linux/filter.h:718 [inline]
+>   bpf_prog_run include/linux/filter.h:725 [inline]
+>   cls_bpf_classify+0x74a/0x1110 net/sched/cls_bpf.c:105
+>   ...
+> 
+> When creating bpf program, 'fp->jit_requested' depends on bpf_jit_enable.
+> Currently the value of bpf_jit_enable is available from 0 to 2, 0 means use
+> interpreter and not jit, 1 and 2 means need to jit. When
+> CONFIG_BPF_JIT_ALWAYS_ON is enabled, bpf_jit_enable is permanently set
+> to 1, when it's not set or disabled, we can set bpf_jit_enable via proc.
+> 
+> This issue is triggered because of CONFIG_BPF_JIT_ALWAYS_ON is not set
+> and bpf_jit_enable is set to 1, causing the arch to attempt JIT the prog,
+> but jit failed due to FAULT_INJECTION. As a result, incorrectly
+> treats the program as valid, when the program runs it calls
+> `__bpf_prog_ret0_warn` and triggers the WARN_ON_ONCE(1).
+> 
+> Reported-by: syzbot+0903f6d7f285e41cdf10@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/bpf/6816e34e.a70a0220.254cdc.002c.GAE@google.com
+> Fixes: fa9dd599b4da ("bpf: get rid of pure_initcall dependency to enable jits")
+> Signed-off-by: KaFai Wan <mannkafai@gmail.com>
 
-Antheas
+I think this patch may have caused a regression in configurations with 
+CONFIG_BPF_JIT_DEFAULT_ON=y when programs can't be JITed. Attaching the 
+program fails with error -ENOTSUPP.
 
->
-> --
->  i.
->
->
+Please see https://github.com/openwrt/openwrt/issues/19405 for more 
+information.
 
+- Felix
 
