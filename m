@@ -1,102 +1,107 @@
-Return-Path: <linux-kernel+bounces-741513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 207E4B0E529
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 22:59:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1815CB0E52D
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 23:00:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39D9B5805DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 20:59:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B70E1C852C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 21:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A2D2857D2;
-	Tue, 22 Jul 2025 20:59:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9295285CB5;
+	Tue, 22 Jul 2025 21:00:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ndu7+U4I"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="DMD8TWmY"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B9F157A67;
-	Tue, 22 Jul 2025 20:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01D22857F0;
+	Tue, 22 Jul 2025 21:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753217981; cv=none; b=bcQuCto6nU+4amBtD0/67L+2Sw5fs0/5zy6oJRzaRqV8j3csmjjcTvdtDZyQuxejc0TWoWyeeVM/1X+2l/TbSPXFBncNqjPBFwCQghBfEA+ZoLdPMZGsBAFXu7VWBbXakFiitTTx/ylDJHYBZUfh7nzdCRY/jCT2qboecs0JmsY=
+	t=1753218012; cv=none; b=Z58v2115a9vgU/A4RxgtKTZBNGvrKT8620MAuUxvDcdTqgio4ieho74lQNR6rZEjH25luGI3zj8Uu1g7hiz5Yy9ezvsMOZuY07qpOEGGYuqbyr+D4T7DGbkNj6iJiZaHI6MsFeUhPej4lOrg65nwycP7ElEjXUTILA54HXZr6vQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753217981; c=relaxed/simple;
-	bh=uAtBAfrRltBsbn1PP/aSEFmfzzF7bww7zAy3s85o/8o=;
+	s=arc-20240116; t=1753218012; c=relaxed/simple;
+	bh=424qtBj7As3BusOn+abIiFBQyCjPATLbPyyiCsGTn/I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VqZbNZTKL3thmLinpaj3g2H7c8iidTb0kjVN1gQyTCEyYXejGiwT1G/ICtGWW1fO/Yh4CsXitPdLG4Om8NDJJ5JxZE1ChqxXasaIOy0FpPsEjG3WbvBJzHsuOMhKp0WCrrS0NTb4p8duXUsrpUYsO1AWvtDr0p93hD/X7PLL5uE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ndu7+U4I; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753217980; x=1784753980;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=uAtBAfrRltBsbn1PP/aSEFmfzzF7bww7zAy3s85o/8o=;
-  b=Ndu7+U4IXPRYK/l+xsU6R+8jmf40/kXs1+jPa/mbQ8Aas2QDaWniIkHE
-   Ifx5Y/RgrqhJ2nbdol6Ac4D9aQK9SSFAJl1rd5cPfm2dWfAK63UNGiP7n
-   2BXYkP05rhp4/ybRelZFQYqe+nC4Buc3j9AVMAg10WBYak3ZkiNCWvDJt
-   6DzM+33lqCQqGltlY/UOrGFF65jmAKyiKcCKOT3xTQeXr7x9H3uVa9qoj
-   3vSnulfY5TtsRZJhEfARlj3NC+phT9TRhvjSdmSKy5nNhPfc7gF5BnoU8
-   4mlHMCs5V60UTsrfdniV5yJNJibF9CFa/sJ/cKfTqM0FO6TwSmN+wdKdz
-   g==;
-X-CSE-ConnectionGUID: wqGorkLPQ26UYC2I4HnNyA==
-X-CSE-MsgGUID: Cmy0aQ9aTUapjbStXHZSqw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11500"; a="55426009"
-X-IronPort-AV: E=Sophos;i="6.16,332,1744095600"; 
-   d="scan'208";a="55426009"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 13:59:39 -0700
-X-CSE-ConnectionGUID: bNR4YOIOR+ui5jDYvqfMWw==
-X-CSE-MsgGUID: B9Rj/7+KSlKsEtV5H0ysYQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,332,1744095600"; 
-   d="scan'208";a="164899590"
-Received: from tassilo.jf.intel.com (HELO tassilo) ([10.54.38.190])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2025 13:59:39 -0700
-Date: Tue, 22 Jul 2025 13:59:37 -0700
-From: Andi Kleen <ak@linux.intel.com>
-To: Baokun Li <libaokun1@huawei.com>
-Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 01/17] ext4: add ext4_try_lock_group() to skip busy
- groups
-Message-ID: <aH_7ue3fNcLjzxYw@tassilo>
-References: <20250714130327.1830534-1-libaokun1@huawei.com>
- <20250714130327.1830534-2-libaokun1@huawei.com>
- <87pldy78qc.fsf@linux.intel.com>
- <d87eab9a-8224-477f-ae81-d4f205ee78b6@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=T4dDJMiTKqR89eP63vP9R2dyFQxBHspYIdTcWjcjefz36iC6GpEEjg4Htb7G+2YpnuJAD58iDa0d0rhAMR+ewvO85i3NdmdwWGLfhF+MxRvRkLKxXfEVc5lal4idv5QKsWRloxRF9GhVJMV2ouIqDkDyCXKi2U8Lvr3+PFWp04s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=DMD8TWmY; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=eVLbWCzQczw2dFn7K3G8G8HQYlWdsk18wtghWYXLXEs=; b=DMD8TWmYpjGyDAzTKybNamT+9v
+	SMMohcfkCxMGht1XfGZKiyP/Qib/NSMjLLos+LeLQa96Y4GQGSFrjFFwqk/pQ5VgZmgaYiqNsVZi9
+	5T9ER95fROMwNnkI03V/xl204eX2geij4sBPIBBSPkjVK3onQrXq4cPe4MPu/8yU1NOM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1ueK5X-002VRl-Bv; Tue, 22 Jul 2025 22:59:51 +0200
+Date: Tue, 22 Jul 2025 22:59:51 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Christophe Roullier <christophe.roullier@foss.st.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Simon Horman <horms@kernel.org>,
+	Tristram Ha <Tristram.Ha@microchip.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 1/4] dt-bindings: net: document st,phy-wol
+ property
+Message-ID: <ae31d10f-45cf-47c8-a717-bb27ba9b7fbe@lunn.ch>
+References: <20250721-wol-smsc-phy-v1-0-89d262812dba@foss.st.com>
+ <20250721-wol-smsc-phy-v1-1-89d262812dba@foss.st.com>
+ <faea23d5-9d5d-4fbb-9c6a-a7bc38c04866@kernel.org>
+ <f5c4bb6d-4ff1-4dc1-9d27-3bb1e26437e3@foss.st.com>
+ <e3c99bdb-649a-4652-9f34-19b902ba34c1@lunn.ch>
+ <38278e2a-5a1b-4908-907e-7d45a08ea3b7@foss.st.com>
+ <5b8608cb-1369-4638-9cda-1cf90412fc0f@lunn.ch>
+ <383299bb-883c-43bf-a52a-64d7fda71064@foss.st.com>
+ <2563a389-4e7c-4536-b956-476f98e24b37@lunn.ch>
+ <aH_yiKJURZ80gFEv@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d87eab9a-8224-477f-ae81-d4f205ee78b6@huawei.com>
+In-Reply-To: <aH_yiKJURZ80gFEv@shell.armlinux.org.uk>
 
-> As Ted mentioned, Ext4 has never guaranteed deterministic allocation. We
-> do attempt a predetermined goal in ext4_mb_find_by_goal(), and this part
-> has no trylock logic, meaning we'll always attempt to scan the target
-> group once—that's deterministic.
+>         if (!priv->plat->pmt) {
+
+Let me start with maybe a dumb question. What does pmt mean? Why would
+it be true?
+
+>                 struct ethtool_wolinfo wol = { .cmd = ETHTOOL_GWOL };
 > 
-> However, if the target attempt fails, the primary goal for subsequent
-> allocation is to find suitable free space as quickly as possible, so
-> there's no need to contend with other processes for non-target groups.
+>                 phylink_ethtool_get_wol(priv->phylink, &wol);
+>                 device_set_wakeup_capable(priv->device, !!wol.supported);
+>                 device_set_wakeup_enable(priv->device, !!wol.wolopts);
 
-If you want to do it as quickly as possible then trylock is also not a good
-strategy. It requires moving the cache line of the lock from EXCLUSIVE
-(on the owning CPU) to SHARED and then later back to unlock, which all require
-slow communication. On a large system or with contention you will still
-observe considerable latencies.
+Without knowing what pmt means, this is pure speculation....  Maybe it
+means the WoL output from the PHY is connected to a pin of the stmmac.
+It thus needs stmmac to perform the actual wakeup of the system, as a
+proxy for the PHY?
 
-Better to figure out a scheme that doesn't require touching the lock
-at all.
-
--Andi
+	Andrew
 
 
