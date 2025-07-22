@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-740558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9939B0D5B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:19:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1226B0D5B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 11:19:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA0323AA1C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:18:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA4297AAD57
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 09:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 189822DC32B;
-	Tue, 22 Jul 2025 09:19:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B025028C034;
+	Tue, 22 Jul 2025 09:19:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KJBgUbzu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V5Tr6YSl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4969528D854;
-	Tue, 22 Jul 2025 09:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1978F1DE2B5;
+	Tue, 22 Jul 2025 09:19:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753175948; cv=none; b=qBivbAwqWE4FjNRulxO7wV5VVRPPt80pUBDMXC6eooGMMS2H23W8rU3fjTfGo45dsxf47/fcdnikIadxcfq8iBuNhJfWuwpspg6BrmWg6ZbvnJDTaA7XVvbVVkiOuMcA3bCKr0daJMnmeK5qKzFLBEZWy6nADM9cYBGOj7+LgKI=
+	t=1753175963; cv=none; b=UcnC7uBagwJHR/7rd8sWJdZFdui+1sGF/oDkGMspbJmrrkzvZMHJPv/A243Tiw8//O53zhVdDWAPJMT9CekYSZY4gaANbYUxnbWvSFk8D4WLfUWOt14J37+XnrBvgATtDk7GJSZX35FtKyIK+fPPwpoSb5T6cqggtcz2wMuerPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753175948; c=relaxed/simple;
-	bh=5lRPv2f/qyW3DqGyiltC1DhUAYkoI/BAX4G5BcSjXKg=;
+	s=arc-20240116; t=1753175963; c=relaxed/simple;
+	bh=Nwdkj1kr2rK/j77XUJHH7vixRUv2FJO1h9CH+6r1NUo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Yv9aTcT9DmEiLO9K4H0kmkMmGSNn4fh41Tbep/wqfm1YquH81Gtl3TfVUXnm1/ei5mvlC5E43vX6fJRZ9R315EQb4iI8x3vVVNHS3AJ6ZTENxKEPHnvwNAIgHvkNNCZrrfRU4LzwD03IbCH4jEtB2dlCeqoIx9Z34oniIly0xvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KJBgUbzu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA66DC4CEEB;
-	Tue, 22 Jul 2025 09:19:01 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=Yfrkkeaf8ruayM5hcACDcl36JpyPKgWMwlxyz+S/xxO6wbfz5UHb3ojDO6T6ASQozGYuBHLPbDc6rArkxDXm1v6Qx+OjgFW0mXyrXeSqjoTJzjgemWBoP/fFavxFhqzD6jfIriZKTcOrOPbkX7LHo6odR/lmcjaQZFXR+11P5Lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V5Tr6YSl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9831C4CEEB;
+	Tue, 22 Jul 2025 09:19:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753175947;
-	bh=5lRPv2f/qyW3DqGyiltC1DhUAYkoI/BAX4G5BcSjXKg=;
+	s=k20201202; t=1753175962;
+	bh=Nwdkj1kr2rK/j77XUJHH7vixRUv2FJO1h9CH+6r1NUo=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KJBgUbzuv3sf8jL/JvhMOe5M95a4a4ETaRYi/72QkcP7RbfhXq+81NSf78vYqbGYu
-	 IB+n463y6TCxEyejBDX+mmibKVCHw5f3ES6K8eYf+vCRlmyt87mT1AjGRJXlbTVGH7
-	 nfcMYLZmtfJw42Y1M6wcHH2vFZuKTtUChy7pUlBeMmkT1y1Bizxa470AV/U54AQqlr
-	 2eOAWJtWHujITd+zeIAm6RJYJz3N8QHvCibHiV44HfyLzKMrVCfNeEYtEKPI4qixFj
-	 ErBLVB1IqqZ+KT71bSrS+dh/gUfopO3uluKYZW3IhEwDIYa3SnZlhsp5zFtIt8F3yK
-	 kpjJ670cdZROg==
-Message-ID: <0c94206c-f70f-4bed-81ec-bb2870748121@kernel.org>
-Date: Tue, 22 Jul 2025 11:18:59 +0200
+	b=V5Tr6YSl7tQB2eeE5109l/f/dsAgAyA2miZ04Ekj2t2cZX3K126/0/oTKaSdr1MF+
+	 RhlObg1mcDij1c1rQJ8EqAldA0lPyWf3z+wg86rFUXW8MzYeLXn+OUvDwFvBvtLRlK
+	 p3fOm+/uTs+o+A8y0O7WVKZ6y1RyRcLMGafG5HJyZAC5JLj7RUmGWa8c8wSDXxH8Sl
+	 wcySvX3I+Ech1Rys4TPx26PChUiHxQ2eOqrF8+RKO5EUA9sWxgpGBBJYTUEjePU1CF
+	 xhQGA3SGgPZpZLkuUEWh0cyxldjxB6e72tb3Sjdyy7mN6GuYhKUag+qeCXiX/golr1
+	 OqNZEjn4MtF2g==
+Message-ID: <2ea2202c-d9bf-4fc1-a33f-2565ebe1d425@kernel.org>
+Date: Tue, 22 Jul 2025 11:19:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,211 +49,112 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/13] dt-bindings: phy: Add binding for QCS615
- standalone QMP DP PHY
-To: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>,
- Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov
- <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>,
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
- dmitry.baryshkov@oss.qualcomm.com, konrad.dybcio@oss.qualcomm.com,
- fange.zhang@oss.qualcomm.com, quic_lliu6@quicinc.com,
- quic_yongmou@quicinc.com
-References: <20250722-add-displayport-support-for-qcs615-platform-v2-0-42b4037171f8@oss.qualcomm.com>
- <20250722-add-displayport-support-for-qcs615-platform-v2-2-42b4037171f8@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250722-add-displayport-support-for-qcs615-platform-v2-2-42b4037171f8@oss.qualcomm.com>
+Subject: Re: [PATCH] media: ov8865: Preserve hflip in
+ ov8865_mode_binning_configure
+To: Allen Ballway <ballway@chromium.org>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250717-su-v1-1-0f740fd8bfb6@chromium.org>
+ <7ebb8be3-ce67-4989-bae6-8459aef74528@kernel.org>
+ <CAEs41JAt5Hjp7G6LPr36e+BT0dp6RU5p25kzCwnwBpBfF-3dJw@mail.gmail.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hansg@kernel.org>
+In-Reply-To: <CAEs41JAt5Hjp7G6LPr36e+BT0dp6RU5p25kzCwnwBpBfF-3dJw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 22/07/2025 09:22, Xiangxu Yin wrote:
-> Introduce device tree binding documentation for the Qualcomm QMP DP PHY
-> on QCS615 SoCs. This PHY supports DisplayPort functionality and is
-> designed to operate independently from the USB3 PHY.
+Hi,
 
-A nit, subject: drop second/last, redundant "binding for". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
-
+On 21-Jul-25 7:46 PM, Allen Ballway wrote:
+> Hello,
 > 
-> Unlike combo PHYs found on other platforms, the QCS615 DP PHY is
-> standalone and does not support USB/DP multiplexing. The binding
-> describes the required clocks, resets, TCSR configuration, and clock/PHY
-> cells for proper integration.
+> On Mon, Jul 21, 2025 at 4:51 AM Hans de Goede <hansg@kernel.org> wrote:
+>>
+>> Hi,
+>>
+>> On 17-Jul-25 11:07 PM, Allen Ballway wrote:
+>>> Prevents ov8865_mode_binning_configure from overwriting the hflip
+>>> register values. Allows programs to configure the hflip.
+>>>
+>>> Signed-off-by: Allen Ballway <ballway@chromium.org>
+>>
+>> Thank you for your patch.
+>>
+>>> ---
+>>>  drivers/media/i2c/ov8865.c | 8 +++++++-
+>>>  1 file changed, 7 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/media/i2c/ov8865.c b/drivers/media/i2c/ov8865.c
+>>> index 95ffe7536aa6aba814f4e5c3d12e7279470b2f07..40a852d31f13aff960acfd09b378d71525e19332 100644
+>>> --- a/drivers/media/i2c/ov8865.c
+>>> +++ b/drivers/media/i2c/ov8865.c
+>>> @@ -1746,7 +1746,13 @@ static int ov8865_mode_binning_configure(struct ov8865_sensor *sensor,
+>>>       if (ret)
+>>>               return ret;
+>>>
+>>> -     value = OV8865_FORMAT2_HSYNC_EN;
+>>> +     ret = ov8865_read(sensor, OV8865_FORMAT2_REG, &value);
+>>> +     if (ret)
+>>> +             return ret;
+>>> +
+>>> +     value &= OV8865_FORMAT2_FLIP_HORZ_ISP_EN |
+>>> +               OV8865_FORMAT2_FLIP_HORZ_SENSOR_EN;
+>>> +     value |= OV8865_FORMAT2_HSYNC_EN;
+>>>
+>>>       if (mode->binning_x)
+>>>               value |= OV8865_FORMAT2_FST_HBIN_EN;
+>>
+>> this change should not be necessary. Lets assume we start
+>> with the sensor runtime-suspended, then ov8865_resume()
+>> will call:
+>>
+>> ov8865_sensor_power(true)
+>> ov8865_sensor_init()
+>>   ov8865_state_configure()
+>>     ov8865_mode_configure()
+>>       ov8865_mode_binning_configure()
+>> __v4l2_ctrl_handler_setup()
+>>
+>> Where the __v4l2_ctrl_handler_setup() call will apply
+>> all control settings including hflip.
+>>
+>> So unless you manage to hit a code-path where somehow
+>> ov8865_state_configure() gets called without calling
+>> __v4l2_ctrl_handler_setup() afterwards then this should
+>> not be necessary.
 > 
-> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
-> ---
->  .../bindings/phy/qcom,qcs615-qmp-dp-phy.yaml       | 111 +++++++++++++++++++++
->  1 file changed, 111 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/qcom,qcs615-qmp-dp-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,qcs615-qmp-dp-phy.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..17e37c1df7b61dc2f7aa35ee106fd94ee2829c5f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/qcom,qcs615-qmp-dp-phy.yaml
-> @@ -0,0 +1,111 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/phy/qcom,qcs615-qmp-dp-phy.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm QMP PHY controller (DP, QCS615)
+> ov8865_state_configure() is also being called from ov8865_set_fmt(),
+> and makes no calls to __v4l2_ctrl_handler_setup(). I'm not sure if
+> calling __v4l2_ctrl_handler_setup() here as well is the right fix, but
+> the driver ov8865 seems to be based upon, ov5648, seems to avoid
+> this issue by preserving the flip values when setting the binning
+> register values in ov5648_mode_configure by using
+> ov5648_update_bits() rather than ov5648_write(). I believe that we
+> just need to preserve the register values unrelated to binning inside
+> ov8865_mode_binning_configure, possibly by just using
+> ov8865_update_bits() instead of ov8865_write().
 
-That's too vague title. You are not adding here Qualcomm QMP PHY
-controllers.
+But you cannot call ov8865_set_fmt() while streaming, since
+it has :
 
-> +
-> +maintainers:
-> +  - Vinod Koul <vkoul@kernel.org>
+        if (sensor->state.streaming) {
+                ret = -EBUSY;
+                goto complete;
+        }
 
-Hm? Why?
+in there.
 
-> +
-> +description:
-> +  The QMP DP PHY controller supports DisplayPort physical layer functionality
-> +  on Qualcomm QCS615 SoCs. This PHY is independent from USB3 PHY and does not
-> +  support combo mode.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,qcs615-qmp-dp-phy
-> +
-> +  reg:
-> +    maxItems: 4
+And when not streaming the sensor is off. So inside ov8865_state_configure()
+the ov8865_mode_configure() and thus ov8865_mode_binning_configure()
+will be skipped since that is protected by if (!pm_runtime_suspended())
+as mentioned before this is all a bit messy in this driver and it would
+be good to untangle this a bit, I think the ov8865_mode_configure()
+should be moved out of ov8865_state_configure() and instead done
+separately on power-up.
 
-I don't understand what you are doing here. Why previous patch evolved
-into this? Where is any reasoning for that in the changelog? You said:
+Regards,
 
-"- Add new binding qcom,qcs615-qmp-dp-phy.yaml for QCS615 standalone DP
-[Krzysztof]"
+Hans
 
-but you must say WHY you are doing things...
-
-Anyway, missing constraints. Look at other Qualcomm bindings.
-
-> +
-> +  clocks:
-> +    maxItems: 2
-> +
-> +  clock-names:
-> +    items:
-> +      - const: cfg_ahb
-> +      - const: ref
-> +
-> +  clock-output-names:
-> +    maxItems: 2
-> +    description:
-> +      Names of the clocks provided by the PHY.
-
-Drop description, redundant. It cannot be anything else.
-
-> +
-> +  qcom,tcsr-reg:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    items:
-> +      - items:
-> +          - description: phandle to TCSR hardware block
-> +          - description: offset of the DP PHY moode register
-> +    description:
-> +      DP PHY moode register present in the TCSR
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  reset-names:
-> +    items:
-> +      - const: phy
-
-Drop reset-names, useless.
-
-> +
-> +  vdda-phy-supply: true
-> +
-> +  vdda-pll-supply: true
-> +
-> +  "#clock-cells":
-> +    const: 1
-> +    description:
-> +      See include/dt-bindings/phy/phy-qcom-qmp.h
-> +
-> +  "#phy-cells":
-> +    const: 1
-> +    description:
-> +      See include/dt-bindings/phy/phy-qcom-qmp.h
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - clock-output-names
-> +  - qcom,tcsr-reg
-> +  - resets
-> +  - reset-names
-> +  - vdda-phy-supply
-> +  - vdda-pll-supply
-> +  - "#clock-cells"
-> +  - "#phy-cells"
-> +
-Why introducing completely different order? See existing binding and DTS
-coding style.
-
-Best regards,
-Krzysztof
 
