@@ -1,88 +1,136 @@
-Return-Path: <linux-kernel+bounces-741076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A778B0DFD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 17:03:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0765BB0DFBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 16:59:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D5021893AB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:57:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B0373A97EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E322EBDD9;
-	Tue, 22 Jul 2025 14:56:32 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D2B2BF010
-	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 14:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BDEC2EAB8B;
+	Tue, 22 Jul 2025 14:56:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B51E228C5B4
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 14:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753196191; cv=none; b=NpGRaG+b0ikWtRNF9LMg3B9f53fRRSIg6682F4IO2aXFwzNKkHdy24mIygGqk7HNlogdjhLqv00iW7URt7E9ASnBY2Pl+iBYQzYQXuZ8GzXyokOahhyU+E32qBst+0kfvnWgKNuCMK+9zV6a+lMjN9CW+JAYIuU6IKbCYiGfeJ8=
+	t=1753196189; cv=none; b=OYRYh6iBibXF93j1fGOJShl7xWnbxvFcQwoLF7WPvFeXk83CKmRmNHMDLyUrf/B/C1CUlG5HOvLLzbgn6s5iuFY4qluPATTwoIRORFR2LH3UP6Vy6joCpFa2bZhg+Z96fHTxhLZbCW82dqnqwZ1q9Tg4IipULDawS8Z1OaPRvN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753196191; c=relaxed/simple;
-	bh=9E9NiM4J7eOwpyi1IrtDfZYpDhCjuN4hB6VjhVlUwo4=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=QBQSrlVUSr8Um7IZm1EPiv+8O02U6FFB5LMoj8ftVkeW0P2oG6Et/sHTV/i9ba8WXmkGOxb4TVNY4Eo+LwZcVNBPkQjVh5ltxtzhVlGWs/+0Mu1nvWmlMezok+eljymTBfz9/w29dk6TD/SfOLw24ergPiGnRcGJO89IDzRDvJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4bmgM70SvMz59trK;
-	Tue, 22 Jul 2025 22:56:19 +0800 (CST)
-Received: from szxlzmapp04.zte.com.cn ([10.5.231.166])
-	by mse-fl1.zte.com.cn with SMTP id 56MEuDZ4051863;
-	Tue, 22 Jul 2025 22:56:13 +0800 (+08)
-	(envelope-from yang.yang29@zte.com.cn)
-Received: from mapi (szxlzmapp02[null])
-	by mapi (Zmail) with MAPI id mid14;
-	Tue, 22 Jul 2025 22:56:17 +0800 (CST)
-Date: Tue, 22 Jul 2025 22:56:17 +0800 (CST)
-X-Zmail-TransId: 2b04687fa691ffffffffecb-246be
-X-Mailer: Zmail v1.0
-Message-ID: <20250722225617123Fj3T0Py6UEGIXmSx1VH7s@zte.com.cn>
-In-Reply-To: <20250722165841838ou4ZoIujZCCgIG2HAu1T8@zte.com.cn>
-References: 20250721094049958ImB8XG_imntcPqpQn1KfG@zte.com.cn,20250722165841838ou4ZoIujZCCgIG2HAu1T8@zte.com.cn
+	s=arc-20240116; t=1753196189; c=relaxed/simple;
+	bh=DwcswQ0G98csfq+HjDJJZQ4vC+N5acrodfen4/TmfRw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y6o5pv+r2BJKJJ4rawSwiOpGbGR03cIVsr3u1e4/QmI/H17nZlRS5Yjnx34YpTDLg0HI4w2M0kJ4wMls9QFrSMWNj5ilCikV71LLbxi4c6OEQZCq1I7gCGQVnf/+vJoT/rOYIEs/IfNhvYftTVZrz1wcP0MBtnnA1KyImNdL6BY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3425A152B;
+	Tue, 22 Jul 2025 07:56:21 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B543F3F6A8;
+	Tue, 22 Jul 2025 07:56:25 -0700 (PDT)
+Date: Tue, 22 Jul 2025 15:56:20 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Weikang Guo <guoweikang.kernel@gmail.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: mm: Ensure phys_to_ttbr on pgdir for
+ idmap_cpu_replace_ttbr1
+Message-ID: <aH-mlN88NrTzahfM@J2N7QTR9R3>
+References: <20250722082117.1777570-1-guoweikang.kernel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <yang.yang29@zte.com.cn>
-To: <wang.yaxin@zte.com.cn>, <fan.yu9@zte.com.cn>
-Cc: <krzk@kernel.org>, <jiang.kun2@zte.com.cn>, <akpm@linux-foundation.org>,
-        <xu.xin16@zte.com.cn>, <bbonev@devuan.org>,
-        <linux-kernel@vger.kernel.org>, <bsingharora@gmail.com>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCBsaW51eCBuZXh0XSBNQUlOVEFJTkVSUzogYWRkIG1haW50YWluZXJzIGZvciBkZWxheXRvcA==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 56MEuDZ4051863
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: yang.yang29@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.132 unknown Tue, 22 Jul 2025 22:56:19 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 687FA693.000/4bmgM70SvMz59trK
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250722082117.1777570-1-guoweikang.kernel@gmail.com>
 
-> which is highly beneficial for improving system performance. Wang Yaxin
-> and her colleague Fan Yu focus on locating system delay issues. To promote
-> the thriving development of delaytop, we hope to serve as maintainers to
-> continuously improve it, aiming to provide a more effective solution for
-> system latency issues in the future.
-I'm pleased to see young colleagues contributing multiple patches in the field of
-delay observation and aspiring to become maintainers of new tools. With more
-and more latency-sensitive devices running Linux, such as communication
-equipment and intelligent vehicles, I believe delay observation is a promising
-area, and thus delaytop has good potential for application. On the other hand,
-the tool is still somewhat simple, and I have already replied with some suggestions
-—I would feel happy if you adopt them. I thingk becoming a maintainer means
-passion and responsibility, hope you will keep moving forward. Best of luck!
+On Tue, Jul 22, 2025 at 04:21:13PM +0800, Weikang Guo wrote:
+> Commit 5ffdfaedfa0a ("arm64: mm: Support Common Not Private translations")
+> changed the contract of idmap_cpu_replace_ttbr1, requiring that the TTBR
+> argument passed in should already be processed by phys_to_ttbr (i.e., in
+> TTBR format, not just a raw physical address).
+> 
+> However, the current map_kernel implementation does not always convert the
+> pgdir/ttbr argument via phys_to_ttbr before calling
+> idmap_cpu_replace_ttbr1. This can lead to issues on systems with
+> CONFIG_ARM64_PA_BITS_52 enabled, as the TTBR would not be properly folded
+> per the ARMv8.2+ requirements.
 
-Reviewed-by: Yang Yang <yang.yang29@zte.com.cn>
+For the cases below I don't believe that this is actually a problem.
+Since commit:
+
+  453dfcee70c5c344 ("arm64: booting: Require placement within 48-bit addressable memory")
+
+... we require that the kernel Image (including any trailing unallocated
+bytes accounted for in image_size) are below the 48-bit address limit,
+and so there should be no difference between the PA and TTBR format.
+
+We could probably test and enforce that in the early boot code somehow,
+if we're not doing that already.
+
+If we were going to change things to avoid accidents in future, I think
+it would be better to enforce this with the type system. e.g. we could
+have a ttbr_val type that's distinct from phys_addr_t. Even then, for
+the idmap code I think it's better to avoid the phys_to_ttbr() dance,
+since that has runtime patching.
+
+Mark.
+
+> 
+> Signed-off-by: Weikang Guo <guoweikang.kernel@gmail.com>
+> 
+> ---
+> Note: I do not currently have access to ARM64 hardware or an emulation
+> environment that supports 52-bit physical address (PA52). I would
+> greatly appreciate if anyone with such a platform could help test
+> this patch. Thank you!
+> ---
+>  arch/arm64/kernel/pi/map_kernel.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm64/kernel/pi/map_kernel.c b/arch/arm64/kernel/pi/map_kernel.c
+> index 0f4bd7771859..05a04eb91e81 100644
+> --- a/arch/arm64/kernel/pi/map_kernel.c
+> +++ b/arch/arm64/kernel/pi/map_kernel.c
+> @@ -18,7 +18,7 @@
+>  
+>  extern const u8 __eh_frame_start[], __eh_frame_end[];
+>  
+> -extern void idmap_cpu_replace_ttbr1(void *pgdir);
+> +extern void idmap_cpu_replace_ttbr1(phys_addr_t);
+>  
+>  static void __init map_segment(pgd_t *pg_dir, u64 *pgd, u64 va_offset,
+>  			       void *start, void *end, pgprot_t prot,
+> @@ -90,7 +90,7 @@ static void __init map_kernel(u64 kaslr_offset, u64 va_offset, int root_level)
+>  		    true, root_level);
+>  	dsb(ishst);
+>  
+> -	idmap_cpu_replace_ttbr1(init_pg_dir);
+> +	idmap_cpu_replace_ttbr1(phys_to_ttbr((u64)init_pg_dir));
+>  
+>  	if (twopass) {
+>  		if (IS_ENABLED(CONFIG_RELOCATABLE))
+> @@ -129,7 +129,7 @@ static void __init map_kernel(u64 kaslr_offset, u64 va_offset, int root_level)
+>  	/* Copy the root page table to its final location */
+>  	memcpy((void *)swapper_pg_dir + va_offset, init_pg_dir, PAGE_SIZE);
+>  	dsb(ishst);
+> -	idmap_cpu_replace_ttbr1(swapper_pg_dir);
+> +	idmap_cpu_replace_ttbr1(phys_to_ttbr((u64)swapper_pg_dir));
+>  }
+>  
+>  static void noinline __section(".idmap.text") set_ttbr0_for_lpa2(u64 ttbr)
+> -- 
+> 2.25.1
+> 
+> 
 
