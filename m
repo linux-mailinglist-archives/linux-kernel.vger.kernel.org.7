@@ -1,91 +1,62 @@
-Return-Path: <linux-kernel+bounces-740785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79FCBB0D923
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:14:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6329CB0D924
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:15:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95DC43AAE4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:14:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98599547DCD
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80422E92B7;
-	Tue, 22 Jul 2025 12:14:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60712E92C8;
+	Tue, 22 Jul 2025 12:14:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cIl9xJNp"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N5nPqevr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932EE2E4271;
-	Tue, 22 Jul 2025 12:14:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2A02E4271;
+	Tue, 22 Jul 2025 12:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753186486; cv=none; b=pr3Mj0bJRqP6tHCyuyjIgVHMF2zZgfe8RQoqOkVF1V/X69QWQMr+EMT65j/WswJ8ibHnfb3IExsomQfHbsoPtxzGFIISIl1zR/xNSVyYal8xkC+Pgm4QC5Sd1PCz0CsxJHjN6MOdLAZXHDItz1XXkoXTV3MToMAsh+Fzh7XJeJU=
+	t=1753186493; cv=none; b=fyic6MnFbl5RBf/q8Q9GzTKnnf+HDGimyavesTUdjhqOdQNEwPY223/8kZz6KuUccF9up11gZs3z8LaZPlasCzLBhSFvdmu5d7S52NhrDgrcuGFrtupmxE2Gz18nIipZSvCdVqJDKOh+ZdHtIQEJxeObh36KCnEMrV4KJ8v0WU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753186486; c=relaxed/simple;
-	bh=wYA+tGJ4iaNqAl71+ugrW7w5EiuR472bCCRturb1O7k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DfJ1F/v4TenFBpqTogxiWBCraYeJ5NZrnrbdfbpZZRXDiM7fTZCe8BqYKI+sDTf09ACcQC/ebT4gWzdpI+ZlLr9HxOxhjt6gmDIXqLACtGx56iVWB7mSB5l9+1Q1+20GiZcAW/js8nhOklYyql7mhxQMK/u6uDxbDh/yIOEWizw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cIl9xJNp; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ae9be1697easo1177243366b.1;
-        Tue, 22 Jul 2025 05:14:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753186482; x=1753791282; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nqDzbvTFUCnNJAo/5cnzfm9fwZI1Vw0IZkVaSkNbQRY=;
-        b=cIl9xJNpZcrcQn3MvMScCsN+0dm3SQ2sW6PzPcuStTqIZOnmbaqC0Wzn+aivcUBI76
-         Z3lllVx45kSX0UOFXOYVT0MH2Lk2fIan94h1hpPOAppPXrWiJBA5lLnoPnzrAx+7PjKY
-         T4bOOXXaUpeNnF3s6e6zMAygZhDM8hiasPRk7LbFjJwQjXgq6Jq3tP6JIWGWsyY6n2hP
-         3+5Q4AllAPVRuvovyYH2AgvZw/HzIiwgJFib9x+hgBl3+gIqumBJG9hcgn4ct4/KtqhS
-         pXpKOft4g4d5UDYDQHQ9sBKtMSqfsxrnC8VavMXdYSauVLcyzjrGoE6GJhKYi+YV57wQ
-         36gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753186482; x=1753791282;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nqDzbvTFUCnNJAo/5cnzfm9fwZI1Vw0IZkVaSkNbQRY=;
-        b=b/THhDU8vC9s+17Yp9rJPvlhGDfJ6GD+KGStAUPTv1W6bgh26eBCW62UGZ/8SCizE5
-         T5KfKFbGJZYmITaMT55GNfr068A8+SGjXcelvwL1rL0RQnMbWefgZR6pZh19swoc8pFP
-         kUENuXUJZPqYcnACnRtoOpZjmzJPx/7sMZgR82Yl33PegjEQ/VEiyltl4GRe7NTw+54s
-         hmO9NDmMWa+Ppd/qKPt1ONme4wCmvVYaNOv6R+h5k4cJUPSUzSGjQYNPnK4DQg6mseeI
-         GDT7i+guYjFJQV9b2pA/2XU0kWrq6jX/a8jAsTnTyHFQPU10Dj4J0DcJ8ri3qVm/acdN
-         Ocgw==
-X-Forwarded-Encrypted: i=1; AJvYcCV+I3ywFZ6TNGUqKRjWAZmj1ZRoK1UtvJa+hugKueEKgqnEg/1dRXavARALou7rLVYbqFyo/bWpH5uH@vger.kernel.org, AJvYcCWaEbn75qfPxFlsA/WX6ue6RJGTFmb+HKJ+38bkjnixBeQxCw40ZqQu3viVwO7V5bRI6P/GTbSc1PiUUjK9@vger.kernel.org, AJvYcCXkBptNbMYpFZ167JJzcc3E+w7qv7VDQJ1Mpj3166enZnEd/LYrolhK8ym04Xo6riqf41FZNRgBY521nBuBa4NGhcE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVicLkQejCqHNgn8TIQzJQUBFbjVwt2bsE8DYsbLB7yLn3VnxL
-	GPeO4Mj4kYyUSeCnTIp/5mtBNyCE9DG06kqv7DRtaENcMoIT/P6PPosI
-X-Gm-Gg: ASbGncvA56dCER0TaCOJHmsCjbmpPACggmBDzOJrBGGBSq1hGrs7UdfToq2SaIN4o8C
-	Y+KcLXBWikH7H9ch1gPQQLNRWqK3slueFN5CbpI390KekJ7lEKrUZ13WXMVchtSG3ac/sZsYKWU
-	9H09/VDmgXAOPBxn6XLEU8QASGidxaxP0P0ygXMCHw6qqJc26ygJO+TEqZfGCII62GrJklFTnR6
-	gorLzTSzdoFqGhB/s+Nzu9SRu9ffyfHVNbTqiDkz/AJn4wquZ/pnEL7huqAEJDSjcQFkiw1mV5K
-	gmbdSmmxQj6OLGhBdhYNwCxSl9Iulq9iLOKN8OQauZpELOJblBcjOt+PT9rwXJV7Dq56YV33fuN
-	S7+LzIEZD3gmrN5yS5aGKG6MGspLCYUgFhl3C1xJVuG6qBDpIdadg0hoJpk3XtUvhYNzi6MHBwQ
-	==
-X-Google-Smtp-Source: AGHT+IEJeLyW+u4ycTMqgYxs6NJLL3r5OO1XqbswJb79Eo8rI5BTivFIQk7F1kvNyi4zz8SC00zzcA==
-X-Received: by 2002:a17:907:7f18:b0:ae9:cc51:40d6 with SMTP id a640c23a62f3a-af15433635amr357787766b.28.1753186481641;
-        Tue, 22 Jul 2025 05:14:41 -0700 (PDT)
-Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6ca2eb90sm858660266b.90.2025.07.22.05.14.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Jul 2025 05:14:41 -0700 (PDT)
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-i2c@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1753186493; c=relaxed/simple;
+	bh=JQgWORT+yd+fNVMRTNPdGaw2laFR3PPdmmdnmMN0VOA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Pkw4rT9gBJdkjZJHUKd7ffnEiJAQUAnKHeYvW3xtjfJPvtKusMWfvWm+78S0+PXMQI1nmiFvsVoyxXuZbBCTfBr8MZ73WfUXzTNkh+6AN+OJCv9o8rRV+EsTY+Tulxgl+589XELBJ+BsmhsNxK1J1LzpnNPXriVHhCM5htS8n3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N5nPqevr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 290A0C4CEEB;
+	Tue, 22 Jul 2025 12:14:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753186492;
+	bh=JQgWORT+yd+fNVMRTNPdGaw2laFR3PPdmmdnmMN0VOA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=N5nPqevrwnRlYNqrHyZz3RjvCvV5Wgy+HNDXh7jIthqM9Tm2E+1+Se5JRSLuFJehJ
+	 NacatAEgqmo2fQfmTVL0BkTCkDA1EWeXXfifB2N0IG1Zf7ATzjbeDVYe/p+ps3XYsT
+	 W2c0LPeAeDNuuXKO7vyD0VTBngr7s65pPuJ/KwflJ7YBIQMQzAnsfMG135llNM8o3D
+	 RiW3+1OTVB/hBVtTPaE2legoTpbpoe0QM9fm1a66VKQJh66UWH8b3ajXd7pR1O6pH7
+	 XaE/SiHcU8AMAPFdUPeEvB0b4lx53W1ZMuMnIWOdPR/313xpsLLlOBiNgzPC9X0p1L
+	 jEZy1QKkxDvgw==
+From: Benno Lossin <lossin@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Shankari Anand <shankari.ak0208@gmail.com>
+Cc: rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] dt-bindings: i2c: exynos5: add samsung,exynos2200-hsi2c compatible
-Date: Tue, 22 Jul 2025 15:14:34 +0300
-Message-ID: <20250722121434.443648-1-ivo.ivanov.ivanov1@gmail.com>
-X-Mailer: git-send-email 2.43.0
+Subject: [PATCH] rust: sync: extend module documentation of aref
+Date: Tue, 22 Jul 2025 14:14:38 +0200
+Message-ID: <20250722121441.224439-1-lossin@kernel.org>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,27 +65,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add samsung,exynos2200-hsi2c compatible, reusing the autov9 support
-since it's compatible with exynos2200's i2c controllers.
+Commit 07dad44aa9a9 ("rust: kernel: move ARef and AlwaysRefCounted to
+sync::aref") moved `ARef` and `AlwaysRefCounted` into their own module.
+In that process only a short, single line description of the module was
+added. Extend the description by explaining what is meant by "internal
+reference counting", the two items in the trait & the difference to
+`Arc`.
 
-Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Signed-off-by: Benno Lossin <lossin@kernel.org>
 ---
- Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ rust/kernel/sync/aref.rs | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
-index 8d47b290b..7ae8c7b1d 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
-+++ b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
-@@ -36,6 +36,7 @@ properties:
-       - items:
-           - enum:
-               - google,gs101-hsi2c
-+              - samsung,exynos2200-hsi2c
-               - samsung,exynos850-hsi2c
-           - const: samsung,exynosautov9-hsi2c
-       - const: samsung,exynos5-hsi2c    # Exynos5250 and Exynos5420
+diff --git a/rust/kernel/sync/aref.rs b/rust/kernel/sync/aref.rs
+index dbd77bb68617..1c212238c0e5 100644
+--- a/rust/kernel/sync/aref.rs
++++ b/rust/kernel/sync/aref.rs
+@@ -1,6 +1,21 @@
+ // SPDX-License-Identifier: GPL-2.0
+ 
+ //! Internal reference counting support.
++//!
++//! Many C types already have their own reference counting mechanism (e.g. by storing a
++//! `refcount_t`). This module provides support for directly using their internal reference count
++//! from Rust; instead of making users have to use an additional Rust-reference count in the form of
++//! [`Arc`].
++//!
++//! The smart pointer [`ARef<T>`] acts similarly to [`Arc<T>`] in that it holds a refcount on the
++//! underlying object, but this refcount is internal to the object. It essentially is a Rust
++//! implementation of the `get_` and `put_` pattern used in C for reference counting.
++//!
++//! To make use of [`ARef<MyType>`], `MyType` needs to implement [`AlwaysRefCounted`]. It is a trait
++//! for accessing the internal reference count of an object of the `MyType` type.
++//!
++//! [`Arc`]: crate::sync::Arc
++//! [`Arc<T>`]: crate::sync::Arc
+ 
+ use core::{marker::PhantomData, mem::ManuallyDrop, ops::Deref, ptr::NonNull};
+ 
+
+base-commit: 07dad44aa9a93b16af19e8609a10b241c352b440
 -- 
-2.43.0
+2.50.0
 
 
