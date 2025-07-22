@@ -1,127 +1,126 @@
-Return-Path: <linux-kernel+bounces-740772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-740773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 742CFB0D8F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:09:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2030B0D8FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 14:09:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CD271883E86
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:09:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2F697A3A52
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 12:07:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6299C2E8E09;
-	Tue, 22 Jul 2025 12:09:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3B82E92C3;
+	Tue, 22 Jul 2025 12:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tgh1FQ8v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pw4EHjEq"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA08528A1D5;
-	Tue, 22 Jul 2025 12:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45DC2E92B7;
+	Tue, 22 Jul 2025 12:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753186140; cv=none; b=vGqpjUkXwCvePqcPV+Ge2O7+genlAFts4xD3SWotQNjt9GZKqDMwVdLVZ2iSLJpD0/AuRe6M6A9OTQKoAB0T5InblGGPoidL00yPsqb+6YYbbFCDGPyoDAcyCByizZmOvHzDDXC6Gmti0GX+jUeEKokOrZkmSULRmIFXf3Ys1zA=
+	t=1753186146; cv=none; b=REXBQT8/Y4uP+ofZvg/JGwxZMT0WGk9oaSC2m/pPvfvPmWbAnPWab1QmCJXK/D6GOqK1qeB3YlmePf6BTGYZjg8rOr26Jq8AMxg0l/czYAjTkncnUFwb4MtdyS4k2B3Q6nrbc/LKJxs+aD47Hy+7z2dmW7NDE1Ob9maSITgHwf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753186140; c=relaxed/simple;
-	bh=9tnk65GQHOuj2Pt0uMyPZaXg1fEIkfzRLOs6t+AmPis=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Jy3lOXzzlEnozqfG2iqGAAvwbZjpjc+bdJCD5jKPBAhoo5S7cOZCpJLT5Fh2JeynmRxb7+4DM6KoRJl+axbiZcMttZzx6MMZ6W1WxuFXlGbr4Nocno5wFpeO0b0foUnYOVA8gzKrx6cwWXSZb+F/JVe+LuG72hjvFjJIGleQ218=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tgh1FQ8v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6439C4CEEB;
-	Tue, 22 Jul 2025 12:08:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753186140;
-	bh=9tnk65GQHOuj2Pt0uMyPZaXg1fEIkfzRLOs6t+AmPis=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=tgh1FQ8vA1ApjRpCVZoxwWfdsxjI65drnmgyfCudJMagNtFQiuyKiPPzx0V6+D2eA
-	 ELWFlOlAJRPfiaf8Yk5ZbcSDY8Ea/W5OQYqTm9vc/MN7P6Lx31Suw9+PbFcwhwxDyj
-	 XkkQC4A6/WkcRpCHDKWrfEVxjYTNYp+UX+HZPaJu7dm2QXDWXi86C7P1n/48fWRzf8
-	 JgGnHqqOl1fhVjpgsaEF3y6A8TBoulnI8kcImHn1GUf1zpnUSILEx6ychMLLlJtsdA
-	 r0Zcla4jJPEq+Zy+6NwIo6sfFT5/vnMyuyDeT+4l56928DE5ZJOUPqdMwACmH+j3Uh
-	 fnML9SCe9s1YA==
+	s=arc-20240116; t=1753186146; c=relaxed/simple;
+	bh=/M6JFQ2h1CU2nv3SZRy8IgVgox5k7S4bcL/1CYucyUg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z4XVSBhsnzKdXfm7O7FXKxHIJhv6r0LLMXkPH66rpGfPgxuNSolOG8MbqrXfUeJH/mvDzv2syjPubEe5iR2WAh5r37NeciKZgM3w0+NhfOMAgQrRkY0J1gOuxyXMq2w4WNycl/q7EBRY8ZyNeuioaJiC68DcD07uYXL6BPrPdJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pw4EHjEq; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ae0de0c03e9so810201666b.2;
+        Tue, 22 Jul 2025 05:09:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753186143; x=1753790943; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=i/zN+BCB9PDyNDE9R4NEw3s0veUZFcpZLCmrjf9UE/w=;
+        b=Pw4EHjEqCdcmvmT59rEZfF77g75GBAa6Ha+o6BZ3gJiNE2BAJE41YxmtldrK9tB0Sx
+         xP1yFamtX/+AIB9ob0FsWMu1avuWAWLVAz7V7Z2waW+X2NJQ9EcvYKZSMuR1nn3BLeO7
+         di2aHYAgZuRfLJZQ1kBKTVL04bV5Fv7kEHdNnvk3UrN2CejEl5ZECj52yaYUgAJNgdeG
+         SFCMPQZ4CZx+WAV425IIXtMQaCAcqllU2+bOfRjS2jHb0w9d2JebrSwDDdDHw+aAqA5f
+         qrMo21zuF1h6DaJr1xZu2CSn+obQZU7dRk8hVUZQDQ36dM2zmqF2tUUE+k5N3X0TJ3HZ
+         umxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753186143; x=1753790943;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=i/zN+BCB9PDyNDE9R4NEw3s0veUZFcpZLCmrjf9UE/w=;
+        b=QKLCxs+846FJhSuenNnGfDtYi/W48vBBcJh2fRdt1jcpqtbYKUKWfA1n+ChcXd3Pot
+         azwQT+lAOCGLlLEK52tUCxUUY6pMe56uSa5x+fOoOIJVX0VlCWtEwf/56FL9nu1VmXFZ
+         Qw5cTI/wUdDPLewA4xA5j5MnPXrBioMCe9EW4XV4/GS2aWAUXHFs/RKHfx/1abpVOrKl
+         TkMBSXCUTQkMDdBGQWoRwh2ihSciAzj5rTRDSNuhzcS6WPAy5zwdt065uQuNq3QJZtYA
+         uIjZW4p3UapP1PnlbektL25Eg1TQJRz20FyEnHuIYc0fQ5aVu8vcwvEoGEXVgsIKlExL
+         TH0w==
+X-Forwarded-Encrypted: i=1; AJvYcCUMrTxdIt8YZPfsOvlGS20XFprzAaUlQavXWcE6ZjXHaVDtbgM06NQMTl5ZhUz0ggsM3W/3KfOlrDkf@vger.kernel.org, AJvYcCV4t+Ayk5cbHb08T1GuhZS+QeK6X0rEo0CkFp+yx67Og9yeWyBrpIMHzdI8D1WnaAGdmAV1WbO/F73yxMiR@vger.kernel.org, AJvYcCXL7vsFO5Nn+mGkzI9CZHMHEHe4jcdp9/k3FtI2jDeN09a+wXabjh68PdZdStAhXnxPRhEPeXRMKuE897oY@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeUoMuPsQTDmZgGs+gwrtWjRQZdhONmm0DDclwssHUdULXUKx8
+	+/9EoDD2nbBdgs3S587FyF/wGdg6pVGSRUugdDO078S2fTI4l7FFvcOtcfkX+Q==
+X-Gm-Gg: ASbGncup5KMzb/1JdB4wlXUr4hY1SH9qHuGfc8khgtjoE+15Wm3VkyNriUgFvE/BnyT
+	M5pGlPtC0vAXVzS2Zh8E/Ry1NFNurWOGumIiZPH0haX3XYW0NvUJjs8/bYn9+Em/Xhbmfrx4vNa
+	QAC/5iQm9fJ2JBpISg21tUD4DsF4fKMkvyHLzvVc/8gvCVnRcF8Ow4bg2Vp7nkhhBXwylcsFqsQ
+	W4SsWM1f2bkUww0IarlKNZ9DjyDP7wt8ezU4A+oRGHj9rJIZ/l7dbRpi4+yDtacK3TlCrw5S1Zn
+	BMyH2dcT2VA9zz8xhxsU6sVEJYGuD1sU91FG4+Opg/RwtCtS+9GYXIHqzEt0snDDmCgpf34xpvz
+	XxU1Fha3kGJnbMh/uSZpNiahOtFYf9ItcQoG2vS9q1NgKM8Zr155YNwnRV77ZK531Is8SN5OmFQ
+	==
+X-Google-Smtp-Source: AGHT+IELdo3U27oOgtv6Kv6ED6xgavO/dGRHioarTGley0NsAKeI8rQbhsUM6DVDUWHgEzZ0n6rdvw==
+X-Received: by 2002:a17:907:3e9f:b0:ae3:a812:a780 with SMTP id a640c23a62f3a-ae9c9ba7b98mr2301348066b.61.1753186142732;
+        Tue, 22 Jul 2025 05:09:02 -0700 (PDT)
+Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aec6c79551esm850878566b.4.2025.07.22.05.09.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jul 2025 05:09:02 -0700 (PDT)
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] dt-bindings: serial: samsung: add samsung,exynos2200-uart compatible
+Date: Tue, 22 Jul 2025 15:08:59 +0300
+Message-ID: <20250722120859.443283-1-ivo.ivanov.ivanov1@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 22 Jul 2025 14:08:55 +0200
-Message-Id: <DBIKM7U4TSB8.17MTNSR81W8F3@kernel.org>
-Cc: "Danilo Krummrich" <dakr@kernel.org>, "Alistair Popple"
- <apopple@nvidia.com>, <rust-for-linux@vger.kernel.org>, "Bjorn Helgaas"
- <bhelgaas@google.com>, =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Trevor Gross" <tmgross@umich.edu>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "John Hubbard" <jhubbard@nvidia.com>, "Alexandre Courbot"
- <acourbot@nvidia.com>, <linux-pci@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] rust: Update PCI binding safety comments and add
- inline compiler hint
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-X-Mailer: aerc 0.20.1
-References: <20250710022415.923972-1-apopple@nvidia.com>
- <DB87TX9Y5018.N1WDM8XRN74K@kernel.org>
- <DB9BF6WK8KMH.1RQOOMYBL6UAO@kernel.org>
- <DB9FUEJUOH3L.14CYPZ8YQT52E@kernel.org>
- <DB9H6HEF9CKG.2SAPXM8F9KOO3@kernel.org>
- <DB9IQAU4WPSP.XZL4ZDPT59KU@kernel.org>
- <bwbern2t7k5fcj6zxze6bjpasu3t26n6dmfptlmhbhd7qmligs@3fgwifsw7qai>
- <DBIHP8IP3OHA.8Y1S9ZV1Y1SZ@kernel.org>
- <DBIJ3POBANNM.KSO1I5557PFV@kernel.org>
- <CAH5fLghic7MZd-BO=Z-ostGLgWmBciQmZp9VjQpLGWskFK_gyQ@mail.gmail.com>
-In-Reply-To: <CAH5fLghic7MZd-BO=Z-ostGLgWmBciQmZp9VjQpLGWskFK_gyQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue Jul 22, 2025 at 1:35 PM CEST, Alice Ryhl wrote:
-> On Tue, Jul 22, 2025 at 12:57=E2=80=AFPM Benno Lossin <lossin@kernel.org>=
- wrote:
->>
->> On Tue Jul 22, 2025 at 11:51 AM CEST, Danilo Krummrich wrote:
->> > I think they're good, but we're pretty late in the cycle now. That sho=
-uld be
->> > fine though, we can probably take them through the nova tree, or in th=
-e worst
->> > case share a tag, if needed.
->> >
->> > Given that, it would probably be good to add the Guarantee section on =
-as_raw(),
->> > as proposed by Benno, right away.
->> >
->> > @Benno: Any proposal on what this section should say?
->>
->> At a minimum I'd say "The returned pointer is valid.", but that doesn't
->> really say for what it's valid... AFAIK you're mostly using this pointer
->> to pass it to the C side, in that case, how about:
->>
->>     /// # Guarantees
->>     ///
->>     /// The returned pointer is valid for reads and writes from the C si=
-de for as long as `self` exists.
->>
->> Maybe we need to change it a bit more, but let's just start with this.
->>
->> (If you're also using the pointer from Rust, then we need to make
->> changes)
->
-> Honestly I think this is a bit over the top. I wouldn't bother adding
-> a section like that to every single as_raw() method out there.
+Add dedicated samsung,exynos2200-uart compatible to the dt-schema for
+representing uart of the exynos2200.
 
-Hmm. And then just assume that these kinds of functions return valid
-pointers? I get that this is annoying to put on every function...
+Like GS101, it has a required DT property samsung,uart-fifosize and
+exhibits the 32 bit register access limit, so reuse support for it.
 
-Another option would be to have a `Ptr<'a, T>` type that is a valid
-pointer, but doesn't allow writing/reading safely (you need to justify
-why it's not a data race). And for FFI there could be an `as_ptr`
-function.
-
+Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
 ---
-Cheers,
-Benno
+ Documentation/devicetree/bindings/serial/samsung_uart.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.yaml b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+index 83d9986d8..1a1f991d5 100644
+--- a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
++++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+@@ -28,6 +28,10 @@ properties:
+           - samsung,exynos5433-uart
+           - samsung,exynos850-uart
+           - samsung,exynos8895-uart
++      - items:
++          - enum:
++              - samsung,exynos2200-uart
++          - const: google,gs101-uart
+       - items:
+           - enum:
+               - samsung,exynos7-uart
+-- 
+2.43.0
+
 
