@@ -1,243 +1,141 @@
-Return-Path: <linux-kernel+bounces-741583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-741584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B6B4B0E611
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 00:05:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18A5EB0E613
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Jul 2025 00:06:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBEFD17EA27
-	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 22:05:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5272617F3BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 22 Jul 2025 22:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BDBA287271;
-	Tue, 22 Jul 2025 22:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD22287255;
+	Tue, 22 Jul 2025 22:06:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KOQAx4x5"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2077.outbound.protection.outlook.com [40.107.237.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="JnN3kkXK"
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F6D280A5C;
-	Tue, 22 Jul 2025 22:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753221894; cv=fail; b=LHVdY17J7zGRwjWU1nyz/enRbuNSkMT+Udy5IPGkS2HQQ1qy9TdtivmVce0UJyrTPaX7ntglq/LWQbRx/9WBI7FQKYcn/4+5L0757kNQ2REowhdqnY0Ih3/kH6VYwuVplaLtO5wVxx0n+RRx50ZxFOz31TapbJ2p+o2KSvhcsag=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753221894; c=relaxed/simple;
-	bh=amNwqheSlHatBwROOVi19h5pzBAP/KhAsex9UIP1awo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=hA3aI0yZjCZUtPhP+hC56tZrG+MjbngsikDlpz0AKK6SW++W+694i//SF+Ofm6zi9l9wXstaby2KEZ32ka7OltVQ+rUz4t6IGmqqGeFb/s8n3lOu8IU6/1oBfXA0OY1zeufVsFhiFLePtXWvrk/JI9q75Kt/5tqzQc3EyGgdZ3E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KOQAx4x5; arc=fail smtp.client-ip=40.107.237.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oSxF5qreuh1MFXV5S47e0IZAOx7uzggUQx08PpIafhbhoPSSVsFGJv0s75FrTXe9HO1Be37sS4HQdaWgZt11ck5d+MuY6ucnYBPNEa/d3yLq34nwFF8PBuEYOcW14ogjpgf0S6HKAWbqJBBnGco8qBbQtpdFSNTm48mLEA/hn3Zb5tfc03IuljBaEDzZmrlCcGAy51SbbG4ctzH5KYVxs06QzbCLhQJ+lVmi3e0nS0JWW38VN6l6RIkJUrCP6OPZxASy3BkhJhUuS8yMD6BUeNmINGCmJHXcy/TNJj9S5sLeiqAGUeb5B+ElLKQCSRKqeUpcCXd7YijbYm62Pl5D0Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lQIUBBAhh0VnQk6zI2ks4HourXCI0ssqN8yihr6Kctc=;
- b=CEDDZb7GXA03kAfpvXVeIRqC64IVDGpjFnt4XgKlxlVPrJuoCxVwmAZCswPWbn1k6WLCu7EmXNeHQK608sEPOOwhGyZCL/3Ygbl8fOI9JJuxFHNXVwORB4skSJyu39DR2NHWas5G+GAJvdH4wPTjGPM/gHHPCUW4mhXfZK2+xqXmEjtO97ogi10lBvP6Z69DfKQSiBj8vddj/2lkzw6daDwm70rrqi0bQbc8mCddaGtJqdbFPlWLE1mIbxMRs9GKSOZsaQStyywEJzO3lLdsXx4q8ChXikshgINxjDlcki0A4Zu1vsRVii/oaTVcTKfLRGmBNsjswS7KtzUP0EH95g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lQIUBBAhh0VnQk6zI2ks4HourXCI0ssqN8yihr6Kctc=;
- b=KOQAx4x5Y2QAm8ZkFk3qCen1zlUGWlhKp9oYaY+N2jKrHsIzM9WLDhGfTy/4NynSEtTLBYlYt641bD+Mc3vIVCmAYE8n185uqQMeofmHrRLhS94aEOz/14USdJpL/K/BmRkDnlR/DsyuJJ6xex4a9QXOOmmVMZm/qoM1C1IbV7ba7OynhOztU5qCzYe/yD/pRaKmZOKtOlbg8lm6yAYe3GoIS/KX57USspWKdkRz8pCu6sFAci67khLO1PYGrb2gpS08YlA4HzlR1+f3We/fwkJzHxjw3bAWPO+a0bLWDmsT+oO2UNEe+zIIFqWZjTaXo2sm7dihOt/L0GIh7OGDVw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by DS5PPFA3734E4BA.namprd12.prod.outlook.com (2603:10b6:f:fc00::65c) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Tue, 22 Jul
- 2025 22:04:48 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%7]) with mapi id 15.20.8943.028; Tue, 22 Jul 2025
- 22:04:48 +0000
-Date: Tue, 22 Jul 2025 18:04:46 -0400
-From: Joel Fernandes <joelagnelf@nvidia.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH v3 1/4] srcu: Move rcu_is_watching() checks to
- srcu_read_{,un}lock_fast()
-Message-ID: <20250722220446.GA376252@joelbox2>
-References: <7387f0c2-75bc-420d-aa7e-3a9ac72d369c@paulmck-laptop>
- <20250721162433.10454-1-paulmck@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250721162433.10454-1-paulmck@kernel.org>
-X-ClientProxiedBy: MN2PR05CA0066.namprd05.prod.outlook.com
- (2603:10b6:208:236::35) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6D544C94
+	for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 22:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753221964; cv=none; b=tZ1hI4mV15DrMtGdLY7rs+hTN9sWMcwFNM947/w5avzhzRC8ze7wASu+a/sJZZrWA4BR6fv0LPI1SF2aGzRrfSQHhLrrl9n/ILUybafhI9RXk/tJ3nGYjrMkZW4b4XsxvgwQ2JO1THQzZ1M6uIFwF56EuprV55qmCIc/p/I/F3k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753221964; c=relaxed/simple;
+	bh=lpFJnljj6qw5DPDCllOk3KLfDdS3/fflg4syde/pRRw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=qW1In9FQIRV0p09QD9Nnzp9UwOxJDjgr2bjon+3XpoRfcVXZtO7gktzX5Zlop5TS6iLkHgmMPaxQrEoOsziECquMevABYGyFMVGDC/CCty7FDqCKOrzu86qlttUqvdRR+XGadfxdCVfzyzH75X9mEshcUjtloP18AwI0DviJDdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=JnN3kkXK; arc=none smtp.client-ip=209.85.160.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-30174a93186so2961346fac.3
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Jul 2025 15:06:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1753221961; x=1753826761; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UHWF2/V5NpEgDswj8L/zqvJZDHIBpGOIkvyGm+1bSdo=;
+        b=JnN3kkXK5wJik/0Dqf2HteE8s9BxXdkY5CI6uRQAotFF4mdwjs9H4EIAX6BI0R4DRl
+         nC6li6sTJbr2O3JhgIMkY9N3Wm/da38/ddbFpy1jDZDcXFsYUdBy+zgr8BH/JeEpaLQv
+         3FUWGQri0SL9dj1HA8dyvcNdQyXEVSAKJ5XJz0od4YD86UVrdViPf3A1UIbOgIB9CEQm
+         buGOr3XZKMJjy8/nIx7vrUk60oZeB3zZu68SSX3FgoggmeRhTOulgW9P9gPE8zHCetPo
+         VuyqeuxFlwpLg5Zo4zDTzsFuo9//sLck6i9Xh1Szzoo9aHKs4u2K94Iy5Lx3sQfj9waz
+         c5+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753221961; x=1753826761;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UHWF2/V5NpEgDswj8L/zqvJZDHIBpGOIkvyGm+1bSdo=;
+        b=og/7/AZFPsjFkcck3Jln+OiVYJihOCNDtiLSfwXtHMvTUMpA6/zpaOAH3rNcc/KnmY
+         rvA328xQfVJ/Wxwg5SkdEJ/Px/cEnjFIAj6JIcl/N23wKt/ORHhNsOhvzOFslbI2aVO5
+         3MnuX60CV4JHaeQ6WGvd0RLEjXbjiKHR9KDsM1VWucZdhgTKR+TMck2f86fP6Cw5Sbev
+         3pvTITbY2t8J0nbfs+2fEghorkjSbgqjW246O5/jQMz/uf+zFBxRDeU4E/Pk49qsZAuM
+         awAJ+e4c0V83Fum5XDeKGTM+cGjeievXvUHuUzIgTGnlYQQ1+lx2XZOUZupRBKWP83Z/
+         WoQw==
+X-Forwarded-Encrypted: i=1; AJvYcCXdH8fVapeLdjC1/s3alWvki8y9qdQ09DjjNSdKZwtBPMBLZlDLjXA4ghJgMEMBUH8cVWz9YmhWSfYV5/0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTYmrgmkjGCts1ewlOnXBNha61P0A++4iD0iEaNMf6AxA6Gmim
+	Xa13clYR5uuIAH2dmJ59xBsrzYCuZCVqAdE/cmo/3PDPTiGgbjgmElvmgrJLrJ2pxvg=
+X-Gm-Gg: ASbGncsIj4ydkQ37VjnrAyvm+XVJvWAhw32K7eHyE4W+UohJuZnDxszYbYiuhEJx0QT
+	5ukXNTMOxw5UyT22TpkBhZWPio02prD3LbFg+g1Che86nN3xItcAqV41662R4QJrwG9ngTyWdVF
+	h/kkqcsjz2ZMLDFiqQcR6WtCsV7tvrOwvZBf2P12p48gd5U62oSGO7fZXHH9AtruOK4mAadjdBI
+	riCpdMo0cc5Kl8nUaKoEuNPc52qANr4IL9zn3fsvS0h2q/P2MeqQMugCwBk8j1anhaKm0AkIl4x
+	OsK+jqCR6W9kwGEyK3I30iZRa8oAW80K0d82KlajOLq9w8otWcgYbqYiEdi1vkqiDQKKVjd1UmU
+	OIWLVbH5NTbZxJSIFf8ZSBa8Fo6bwlFEuJeh1zw==
+X-Google-Smtp-Source: AGHT+IG8AZUaOOthsN+h4ZByvI4M5G8r0CxEn7gVrJrhlLHm1ZIS6+SECI89whk6IPjJs2cOzTYtUg==
+X-Received: by 2002:a05:6870:d24b:b0:2ff:a802:6885 with SMTP id 586e51a60fabf-306c6fb8174mr511708fac.11.1753221960919;
+        Tue, 22 Jul 2025 15:06:00 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:11dd:c0f5:968d:e96])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-615bcda2865sm2191120eaf.26.2025.07.22.15.05.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Jul 2025 15:06:00 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Date: Tue, 22 Jul 2025 17:05:46 -0500
+Subject: [PATCH] media: pci: mg4b: fix uninitialized iio scan data
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|DS5PPFA3734E4BA:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1d6e1fb6-9730-4d4c-d509-08ddc96bc642
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5XI73JGjQ08m2V3L64siintTgJdy63hAU7ZFzJkH/QBwwN104dMBEoWv/J9G?=
- =?us-ascii?Q?x1CJ13fL9rW1jqIcV58aW/CNBuqueFExIJEJCj4/ysEW6QnnukSmB6Y1Velg?=
- =?us-ascii?Q?iJOEc+yJYHu+Dwt2ZOB/m8K1LN0cawTN0zR69j2tR2IZYZ95JcPjHslVTRhw?=
- =?us-ascii?Q?GcvU3Lavb0nIsYctdVKF/h+RA5XwkbEwEmMa4vkAXx2zkLlGQrCRJ5bhfMF2?=
- =?us-ascii?Q?YGVVbKwFZhhioPAJdbAUkGYj88jlxO6Advntfn2/9w0DJ+3IClwnpDPZjnFx?=
- =?us-ascii?Q?R4hgPsbz+EboveE8qEwHlYGOI9TBfOmoqH0Ex0sSDGeVsI2mFZpk+3S0T2Ah?=
- =?us-ascii?Q?6BF5VTeGEUM/cqWZ6fmioUR9Ir1O+SfBTqzV9SjikqEtyRahIcjbd9uNAchY?=
- =?us-ascii?Q?eKEm6xt0M3umWB/Gkr8l8jtkPOe1Mc37VjKN46bLd3JAEI9u9vknNmbjAe26?=
- =?us-ascii?Q?Ss2HLBaYdhwyonWf39LKp2olCXJTF4C+0/d6G4Qw2sc1wMumHcdKRr1pOb5G?=
- =?us-ascii?Q?l3BFuOHH6hbFR/Q7dHd/YnrYxnWaHarGDVXqmyf/oDOo7lNCp6Mzck1kNhIA?=
- =?us-ascii?Q?VkrY7W3ik8CLoF4WDtk7KR/TJs+Amqkn9IUsT2MrG8b5EFrq7QOTLC59l/eh?=
- =?us-ascii?Q?3ON1RLXwVrTHq4BloQ6N9vPvlXNkZ46YEo6VOEWqJ7edUtzeAjlybkh95+K6?=
- =?us-ascii?Q?oukHbdcihowKmD0XZp5qzoAitnB6eZZN8gzEC9y+1mprbx95FaNYiIxIqZSS?=
- =?us-ascii?Q?T3BoCFU8EzVTvnBf4xfbtxNPwvHqVSgn3+fVVYrGNRl7pbuwvUfhCTnDaDZa?=
- =?us-ascii?Q?gOfxSsfMVSy3CurhfXtSl2zWSvnWxpyFSyqbk6r5LszVI51rr4M0rcoZpUFQ?=
- =?us-ascii?Q?Zbhj8oyl1hNj5dCkFPQkpHT4aJchzeuDPgQe4CnwhFA1dsqo31+Jj+Zi3yxC?=
- =?us-ascii?Q?9LBHuXC+l0FIHeO7SLoT4Tq/jVtAHYSh4l7rYZdrr+Yx4TkbpTasP+chkKh5?=
- =?us-ascii?Q?3W3peY+OpDoEfobEGCEEcydQyapp0LPB5oqh5XyRD5jvw80SLSrGYcfhvuk4?=
- =?us-ascii?Q?S5k1057Nk6Iv7cbHPFlBK/2YeDhrzbSiKdJGKNnNJXA3b2b9AlINTMtzTAkM?=
- =?us-ascii?Q?nnLgj/fdp/G9QOxocSMT5knNCUxTLN2T2ERfTAfg8SEG62K0++UwJvS5U+T5?=
- =?us-ascii?Q?0YCwI6TKvbOZmCZRO0adSigkdXsuVei7FFYUlZj4pOOgfd0VEpgXRejcyWPm?=
- =?us-ascii?Q?mFcijgElEWjyVSWnwsyymnStky5J5dofAz31mhmNJmb3OmL4YOUbSU9iDNTG?=
- =?us-ascii?Q?CcHCEG3Zr1z/W6vF5/i3qGdlocWwYMa/wVa1J5W/wDuuQ6R1oWaiEIEykbZ3?=
- =?us-ascii?Q?pPnYV8by6BZXWCz2ofAP5AA3g2DEXpiuJ23lnuojoZyhs8ndyCjCUiz0zzJ/?=
- =?us-ascii?Q?12hEE36vRm8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Zoy0Uni5JoRh+qtecb2SlaxqwMW3TDHgnjgmGnlkONqLz5ffHEIOuoBXDV89?=
- =?us-ascii?Q?snZqtrZyjd1eku37wFUaMUJ2pWJX/blkY8L5zm3KI6ScoUq6CBW2S7xgDfKP?=
- =?us-ascii?Q?C8K15O8TmAmGmGOwNQMpjA05HdNbWDWuGiW83cMxZTb0xtNWhVb6fxsS/0/g?=
- =?us-ascii?Q?WS8HrmTrfHTqUDt/vTYhx3UK5dUuR7aWRHPkMTJFCj5RUG/vZ6HKH4AA+HbL?=
- =?us-ascii?Q?BjJFZGoZK/4d8ubfCsHRiy6sVx7UniNiXCT0Th8rQvwCEQkCGwTT0jLqOnk1?=
- =?us-ascii?Q?w7YiayVZgRStpxZ7sv/fkdqxAQSFq56XKibngQoIJQ3/prklBK7dyA2lZFTv?=
- =?us-ascii?Q?BYtSm6AjKlqY4fl4HyNrtDuDzuOY1f6mUYtEbz782KTgrqZ/vCGEs/+D5NE6?=
- =?us-ascii?Q?NOZyjw2BBnUp7ZgFMqlMKhcQg7FVoq5ae16zvM2fvFOQSydYK41H4/79y3r7?=
- =?us-ascii?Q?hLl6Fn/lIwESBAm1W8LGSIIYkut6HqcYqfyL5NQMv3GaMZnUAN2SMNidew6x?=
- =?us-ascii?Q?LwT9zJcK1fc3E6qE1vpe2RpZ1xMofdAsEOnP41Oym6xMMi6NO7wssl3vW0Dl?=
- =?us-ascii?Q?WMAjSrmLNbYrYxhTIpXNnNE45eSlFeTnALhAjBKV2f+uJwochs6ZZtIw6BHX?=
- =?us-ascii?Q?KwTsnyClqngpG7C1oahcqewGyvHzi322IvW/vY0BhzcYVuprpTd+1bR2wuWn?=
- =?us-ascii?Q?Ke9gD8mUftMuCD/zNb3j+M2vYkXd13kbq6bmRQJdVNomho8z9GaBMrgddENg?=
- =?us-ascii?Q?lj85NeHymfdqXDXT9j2T2iLQLLKRsoEWHQnqgjPlxyD9QthFteAOSOa0an0m?=
- =?us-ascii?Q?sCvxYGlwwDiu+8rx6F0kLc1ycdtMaa6fgLt8IHTnmth0xeEEWZVfmvSpdwQR?=
- =?us-ascii?Q?Ulg7t9wEvZIaVUI79d9cod3V6kKB2rOgq9OQooLk8E34zqTCGtvWwk3vnmdO?=
- =?us-ascii?Q?PtzU6A5fXwsdmIX8gGpgU8f5IDqOwXxHwRYUD2WWGLjaByBhDUeBn9CZhwEP?=
- =?us-ascii?Q?poib4r8BBC646bFf16sJrf5utnkX61/C/DCPX2iA7MbUsZiB2efDKCUFu1EF?=
- =?us-ascii?Q?Ng9nYT0Eq/+7yOo0hUJc0NJOOZfpRKxyN998LLVDdv9qnnm26dsoO/gaBApk?=
- =?us-ascii?Q?sWnlZxryWYZll40ZvZkI4yX0Te6VANu0iK+7IyjSVCR6nPww2FCQfcdHXpFV?=
- =?us-ascii?Q?sEWV5yst5PkKU9vZtwyNFESS29QbiHSX7zcF0U0NEMG+0UqzYtcn2WElpLs0?=
- =?us-ascii?Q?6xNYWrfXUd+KThMvCFzWZObQkobB0/JFPtfmYyyaWLz45qEcrvdONT6TkgJ/?=
- =?us-ascii?Q?E+2n/KuzzfO3m7wm5O8ZMdnoWbxSEr/dnABvJ+OghvStFK0iiZm3mZWv70oh?=
- =?us-ascii?Q?w5xg80i2+H6ukYl2sBJmAYwP1O5GQMi8rAEUx4STC9qclWgKM5ewQDrfrvtb?=
- =?us-ascii?Q?7ncm3oIyyRwprhPxgeQUHLkArk+eAwkZLnVLJwUNwqJPxGi1XAl1BPwwLn3h?=
- =?us-ascii?Q?uVG8wclKlImfCOFxRo29lkA1TMOLFYTNYqIpj1mKXq7H/l9RzDh+ez2NrExU?=
- =?us-ascii?Q?WNw0HDwRWzsZJYQk+P9dMZw0T6LT9XyWw7uRLeoa?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1d6e1fb6-9730-4d4c-d509-08ddc96bc642
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2025 22:04:48.2661
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FeVUc7YGXPYXUAgcnDxFD3Tr8hfy+OFg0BnlZAj2SemABlqtnB1MREraqll4x0ohhvG5JGLKOeQhrno+Uog5Lw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS5PPFA3734E4BA
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250722-media-pci-mg4b-fix-uninitialized-iio-scan-data-v1-1-5b236115264a@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIADkLgGgC/x2NwQrCQAwFf6XkbKAbWor+iniIm1gf2G3ZbUUs/
+ XcXj3OYmZ2KZ3ihS7NT9jcK5lQhnBqKT02jM6wySSt9O4jw5AblJYKnsbvzAx/eEhJW6AtfNwZ
+ mLlETm67KYtFDP3QW/Ew1umSvyn94vR3HDxp/4C2AAAAA
+X-Change-ID: 20250722-media-pci-mg4b-fix-uninitialized-iio-scan-data-2dce1574d1e9
+To: Martin Tuma <martin.tuma@digiteqautomotive.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jonathan Cameron <jic23@kernel.org>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1109; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=lpFJnljj6qw5DPDCllOk3KLfDdS3/fflg4syde/pRRw=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBogAtAZJN3Fu2i8eNt5P0L9WthmCBSa/IDvl7pN
+ 7pgwzYaa/aJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaIALQAAKCRDCzCAB/wGP
+ wMNOB/9jWyieuoXD5wmD38r6ar6s1K0cEqX9t/aCwGb+i/jdZqwTzjKHaI9vTuKHG5nXCk2G1DM
+ OL3OIES+c0pNaZ+RdYR47Q9XE4YxaKXJCm1epGD8idJQAZzYSOVJF/znQdUwXaO673j9A88c3R8
+ XhxT+9E5Q88BacHK65JYD+7HsICElpMrWV+g9CHqa0omWlbHg8qQG/GUe9hviScICLqCi5kcUmT
+ 4FVdDK5iX0eVZmuQbrfn68LEe/HOWcR93OyyKMCpUD8j3tPxMz0USutdawDigZEqwC1oBnEt4kJ
+ ENMY6IhLrJOrLpW5c+yqhY9nFNwkq9XEvdNNySK36BjGWjLY
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-On Mon, Jul 21, 2025 at 09:24:30AM -0700, Paul E. McKenney wrote:
-> The rcu_is_watching() warnings are currently in the SRCU-tree
-> implementations of __srcu_read_lock_fast() and __srcu_read_unlock_fast().
-> However, this makes it difficult to create _notrace variants of
-> srcu_read_lock_fast() and srcu_read_unlock_fast().  This commit therefore
-> moves these checks to srcu_read_lock_fast(), srcu_read_unlock_fast(),
-> srcu_down_read_fast(), and srcu_up_read_fast().
-> 
-> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Fix potential leak of uninitialized stack data to userspace by ensuring
+that the `scan` structure is zeroed before use.
 
-Reviewed-by: Joel Fernandes <joelagnelf@nvidia.com>
+Fixes: 0ab13674a9bd ("media: pci: mgb4: Added Digiteq Automotive MGB4 driver")
+Signed-off-by: David Lechner <dlechner@baylibre.com>
+---
+ drivers/media/pci/mgb4/mgb4_trigger.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-thanks,
+diff --git a/drivers/media/pci/mgb4/mgb4_trigger.c b/drivers/media/pci/mgb4/mgb4_trigger.c
+index 923650d53d4c82e87b542f87c3a0fbf6170dadc8..d7dddc5c8728e81c6249b03a4cbf692da15a4ced 100644
+--- a/drivers/media/pci/mgb4/mgb4_trigger.c
++++ b/drivers/media/pci/mgb4/mgb4_trigger.c
+@@ -91,7 +91,7 @@ static irqreturn_t trigger_handler(int irq, void *p)
+ 	struct {
+ 		u32 data;
+ 		s64 ts __aligned(8);
+-	} scan;
++	} scan = { };
+ 
+ 	scan.data = mgb4_read_reg(&st->mgbdev->video, 0xA0);
+ 	mgb4_write_reg(&st->mgbdev->video, 0xA0, scan.data);
 
- - Joel
+---
+base-commit: cd2731444ee4e35db76f4fb587f12d327eec5446
+change-id: 20250722-media-pci-mg4b-fix-uninitialized-iio-scan-data-2dce1574d1e9
 
+Best regards,
+-- 
+David Lechner <dlechner@baylibre.com>
 
-
-> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
->  include/linux/srcu.h     | 4 ++++
->  include/linux/srcutree.h | 2 --
->  2 files changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/srcu.h b/include/linux/srcu.h
-> index f179700fecafb..478c73d067f7d 100644
-> --- a/include/linux/srcu.h
-> +++ b/include/linux/srcu.h
-> @@ -275,6 +275,7 @@ static inline struct srcu_ctr __percpu *srcu_read_lock_fast(struct srcu_struct *
->  {
->  	struct srcu_ctr __percpu *retval;
->  
-> +	RCU_LOCKDEP_WARN(!rcu_is_watching(), "RCU must be watching srcu_read_lock_fast().");
->  	srcu_check_read_flavor_force(ssp, SRCU_READ_FLAVOR_FAST);
->  	retval = __srcu_read_lock_fast(ssp);
->  	rcu_try_lock_acquire(&ssp->dep_map);
-> @@ -295,6 +296,7 @@ static inline struct srcu_ctr __percpu *srcu_read_lock_fast(struct srcu_struct *
->  static inline struct srcu_ctr __percpu *srcu_down_read_fast(struct srcu_struct *ssp) __acquires(ssp)
->  {
->  	WARN_ON_ONCE(IS_ENABLED(CONFIG_PROVE_RCU) && in_nmi());
-> +	RCU_LOCKDEP_WARN(!rcu_is_watching(), "RCU must be watching srcu_down_read_fast().");
->  	srcu_check_read_flavor_force(ssp, SRCU_READ_FLAVOR_FAST);
->  	return __srcu_read_lock_fast(ssp);
->  }
-> @@ -389,6 +391,7 @@ static inline void srcu_read_unlock_fast(struct srcu_struct *ssp, struct srcu_ct
->  	srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_FAST);
->  	srcu_lock_release(&ssp->dep_map);
->  	__srcu_read_unlock_fast(ssp, scp);
-> +	RCU_LOCKDEP_WARN(!rcu_is_watching(), "RCU must be watching srcu_read_unlock_fast().");
->  }
->  
->  /**
-> @@ -405,6 +408,7 @@ static inline void srcu_up_read_fast(struct srcu_struct *ssp, struct srcu_ctr __
->  	WARN_ON_ONCE(IS_ENABLED(CONFIG_PROVE_RCU) && in_nmi());
->  	srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_FAST);
->  	__srcu_read_unlock_fast(ssp, scp);
-> +	RCU_LOCKDEP_WARN(!rcu_is_watching(), "RCU must be watching srcu_up_read_fast().");
->  }
->  
->  /**
-> diff --git a/include/linux/srcutree.h b/include/linux/srcutree.h
-> index bf44d8d1e69ea..043b5a67ef71e 100644
-> --- a/include/linux/srcutree.h
-> +++ b/include/linux/srcutree.h
-> @@ -244,7 +244,6 @@ static inline struct srcu_ctr __percpu *__srcu_read_lock_fast(struct srcu_struct
->  {
->  	struct srcu_ctr __percpu *scp = READ_ONCE(ssp->srcu_ctrp);
->  
-> -	RCU_LOCKDEP_WARN(!rcu_is_watching(), "RCU must be watching srcu_read_lock_fast().");
->  	if (!IS_ENABLED(CONFIG_NEED_SRCU_NMI_SAFE))
->  		this_cpu_inc(scp->srcu_locks.counter); /* Y */
->  	else
-> @@ -275,7 +274,6 @@ static inline void __srcu_read_unlock_fast(struct srcu_struct *ssp, struct srcu_
->  		this_cpu_inc(scp->srcu_unlocks.counter);  /* Z */
->  	else
->  		atomic_long_inc(raw_cpu_ptr(&scp->srcu_unlocks));  /* Z */
-> -	RCU_LOCKDEP_WARN(!rcu_is_watching(), "RCU must be watching srcu_read_unlock_fast().");
->  }
->  
->  void __srcu_check_read_flavor(struct srcu_struct *ssp, int read_flavor);
-> -- 
-> 2.40.1
-> 
 
